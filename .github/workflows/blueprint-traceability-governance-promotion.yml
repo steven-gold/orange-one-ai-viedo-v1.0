@@ -24,6 +24,20 @@ jobs:
         shell: bash
         run: |
           gzip -dc .github/governance-maintenance/promote_blueprint_traceability_governance.py.gz > .github/governance-maintenance/promote_blueprint_traceability_governance.py
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('.github/governance-maintenance/promote_blueprint_traceability_governance.py')
+          s=p.read_text(encoding='utf-8')
+          old_ref="    if 'governance_revision' in ref: ref['governance_revision']=NEW_SOURCE_REV\n"
+          new_ref="""    bt_ref=ref.setdefault('blueprint_type_identities',[])\n    if not any((x or {}).get('blueprint_type_uid')=='BPTYPE-GOV-007' for x in bt_ref):\n        bt_ref.append({'blueprint_type_uid':'BPTYPE-GOV-007','canonical_name':'CONSTRUCTION_BLUEPRINT_PACKAGE','planning_domain':'NON_OWNING_BINDING','created_stage_uid':'STAGE-04'})\n    if 'governance_revision' in ref: ref['governance_revision']=NEW_SOURCE_REV\n"""
+          old_sem="    sem['governance_revision']=NEW_SOURCE_REV\n"
+          new_sem="""    bt_sem=sem['semantic_snapshot'].setdefault('blueprint_type_identities',[])\n    if not any((x or {}).get('blueprint_type_uid')=='BPTYPE-GOV-007' for x in bt_sem):\n        bt_sem.append({'blueprint_type_uid':'BPTYPE-GOV-007','canonical_name':'CONSTRUCTION_BLUEPRINT_PACKAGE','planning_domain':'NON_OWNING_BINDING','created_stage_uid':'STAGE-04'})\n    sem['governance_revision']=NEW_SOURCE_REV\n"""
+          if s.count(old_ref)!=1:
+              raise SystemExit('PATCH_REF_ANCHOR_COUNT='+str(s.count(old_ref)))
+          if s.count(old_sem)!=1:
+              raise SystemExit('PATCH_SEM_ANCHOR_COUNT='+str(s.count(old_sem)))
+          p.write_text(s.replace(old_ref,new_ref,1).replace(old_sem,new_sem,1),encoding='utf-8')
+          PY
           if [ -f .github/governance-maintenance/BLUEPRINT_TRACEABILITY_PROMOTE_TRIGGER ]; then
             python .github/governance-maintenance/promote_blueprint_traceability_governance.py --mode promote
           else
