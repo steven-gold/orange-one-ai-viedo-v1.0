@@ -56,6 +56,79 @@ def resolve_current_stage2_product_root(state: dict) -> tuple[Path, Path, Path, 
             die(f'CURRENT_STAGE2_{label}_OUTSIDE_REPOSITORY')
     return product_root, successor, receipt, work
 
+def validate_materialization_credit_chain(work: dict, exact_receipt_path: Path, revalidation_mode: bool) -> int:
+    if not exact_receipt_path.is_file():
+        die('MATERIAL_REMEDIATION_RECEIPT_MISSING')
+    exact = load_yaml(exact_receipt_path)
+    exact_expected = int((work.get('exact_closure_materialization') or {}).get('materialized_closure_count') or 0)
+    exact_materialized = int(exact.get('materialized_closure_count') or 0)
+    if exact_expected <= 0 or exact_materialized != exact_expected:
+        die(f'MATERIAL_REMEDIATION_RECEIPT_DENOMINATOR_DRIFT:{exact_materialized}:{exact_expected}')
+    exact_status = exact.get('status')
+    if exact_status == 'MATERIALIZED_PENDING_FRESH_REVALIDATION':
+        if not revalidation_mode:
+            die('PENDING_MATERIALIZED_ROOT_REQUIRES_REVALIDATION_MODE')
+        if int(exact.get('product_blocker_credit_before_fresh_revalidation') or 0) != 0:
+            die('PENDING_MATERIALIZED_ROOT_PREMATURE_PRODUCT_CREDIT')
+        exact_credit = 0
+    elif exact_status == 'MATERIALIZED_FRESH_REVALIDATED':
+        exact_credit = int(exact.get('product_blocker_credit_after_fresh_revalidation') or 0)
+        if exact_credit != exact_materialized:
+            die(f'FRESH_REVALIDATED_EXACT_CREDIT_DRIFT:{exact_credit}:{exact_materialized}')
+    else:
+        die(f'MATERIAL_REMEDIATION_RECEIPT_STATUS_INVALID:{exact_status!r}')
+
+    design = work.get('design_contract_materialization')
+    if not design:
+        active_credit = int(work.get('product_blocker_credit') or 0)
+        if active_credit != exact_credit:
+            die(f'FRESH_REVALIDATED_PRODUCT_CREDIT_DRIFT:{exact_credit}:{active_credit}:{exact_materialized}')
+        return active_credit
+
+    receipt_ref = str(design.get('receipt_ref') or '')
+    approval_ref = str(design.get('approval_evidence_ref') or '')
+    if not receipt_ref or not approval_ref:
+        die('DESIGN_CONTRACT_MATERIALIZATION_RECEIPT_OR_APPROVAL_MISSING')
+    receipt_path = ROOT / receipt_ref
+    approval_path = ROOT / approval_ref
+    if not receipt_path.is_file() or not approval_path.is_file():
+        die('DESIGN_CONTRACT_MATERIALIZATION_EVIDENCE_NOT_FOUND')
+    receipt = load_yaml(receipt_path)
+    approval = load_yaml(approval_path)
+    if approval.get('decision') != 'APPROVE_NON_AMBIGUOUS_COHERENT_CANDIDATE_SCOPE':
+        die(f'DESIGN_CONTRACT_APPROVAL_DECISION_INVALID:{approval.get("decision")!r}')
+    if approval.get('explicit_user_decision_observed') is not True:
+        die('DESIGN_CONTRACT_EXPLICIT_USER_DECISION_REQUIRED')
+    approved_count = int(design.get('approved_problem_count') or 0)
+    if approved_count <= 0 or int(receipt.get('approved_problem_count') or 0) != approved_count:
+        die('DESIGN_CONTRACT_MATERIALIZATION_DENOMINATOR_DRIFT')
+    problem_uids = {str(x) for x in (design.get('approved_problem_uids') or []) if str(x)}
+    if len(problem_uids) != approved_count:
+        die('DESIGN_CONTRACT_APPROVED_UID_SET_DENOMINATOR_DRIFT')
+    prior_credit = int(design.get('prior_product_credit') or 0)
+    if prior_credit != exact_credit:
+        die(f'DESIGN_CONTRACT_PRIOR_CREDIT_DRIFT:{prior_credit}:{exact_credit}')
+    design_status = receipt.get('status')
+    active_credit = int(work.get('product_blocker_credit') or 0)
+    if design_status == 'MATERIALIZED_PENDING_FRESH_REVALIDATION':
+        if not revalidation_mode:
+            die('PENDING_DESIGN_CONTRACT_REQUIRES_REVALIDATION_MODE')
+        if active_credit != prior_credit:
+            die(f'PENDING_DESIGN_CONTRACT_PREMATURE_PRODUCT_CREDIT:{active_credit}:{prior_credit}')
+        if int(receipt.get('product_blocker_credit_before_fresh_revalidation') or -1) != prior_credit:
+            die('PENDING_DESIGN_CONTRACT_RECEIPT_PRIOR_CREDIT_DRIFT')
+        print('PASS: approved design-contract batch is materialized pending fresh revalidation with no premature credit')
+        return active_credit
+    if design_status == 'MATERIALIZED_FRESH_REVALIDATED':
+        design_credit = int(receipt.get('product_blocker_credit_after_fresh_revalidation') or 0)
+        expected_total = prior_credit + design_credit
+        if design_credit != approved_count or active_credit != expected_total:
+            die(f'FRESH_REVALIDATED_DESIGN_CREDIT_DRIFT:{design_credit}:{active_credit}:{expected_total}')
+        print(f'PASS: cumulative materialization credit chain exact={exact_credit} design={design_credit} total={active_credit}')
+        return active_credit
+    die(f'DESIGN_CONTRACT_MATERIALIZATION_RECEIPT_STATUS_INVALID:{design_status!r}')
+
+
 if not STATE.is_file():
     die('ACTIVE_STATE_MISSING')
 state = load_yaml(STATE)
@@ -151,28 +224,8 @@ if result == 'TEST_EXECUTED_BLOCKED':
             die('DECLARED_STAGE2_PRODUCT_ROOT_MISSING')
         if not CANONICAL_SUCCESSOR.is_file():
             die('DECLARED_STAGE2_CANONICAL_SUCCESSOR_MISSING')
-        if not REMEDIATION_RECEIPT.is_file():
-            die('MATERIAL_REMEDIATION_RECEIPT_MISSING')
-        receipt = load_yaml(REMEDIATION_RECEIPT)
-        materialized = int(receipt.get('materialized_closure_count') or 0)
-        expected_materialized = int((ACTIVE_WORK.get('exact_closure_materialization') or {}).get('materialized_closure_count') or 0)
-        if materialized <= 0 or materialized != expected_materialized:
-            die(f'MATERIAL_REMEDIATION_RECEIPT_DENOMINATOR_DRIFT:{materialized}:{expected_materialized}')
-        status = receipt.get('status')
         revalidation_mode = os.environ.get('STAGE02_REVALIDATION_MODE', '').strip() == '1'
-        if status == 'MATERIALIZED_PENDING_FRESH_REVALIDATION':
-            if not revalidation_mode:
-                die('PENDING_MATERIALIZED_ROOT_REQUIRES_REVALIDATION_MODE')
-            if int(receipt.get('product_blocker_credit_before_fresh_revalidation') or 0) != 0:
-                die('PENDING_MATERIALIZED_ROOT_PREMATURE_PRODUCT_CREDIT')
-            print('PASS: Current product root and exact-closure receipt are materialized pending fresh revalidation')
-        elif status == 'MATERIALIZED_FRESH_REVALIDATED':
-            credit = int(receipt.get('product_blocker_credit_after_fresh_revalidation') or 0)
-            if credit != materialized or int(ACTIVE_WORK.get('product_blocker_credit') or 0) != credit:
-                die(f'FRESH_REVALIDATED_PRODUCT_CREDIT_DRIFT:{credit}:{ACTIVE_WORK.get("product_blocker_credit")!r}:{materialized}')
-            print('PASS: Current product root and exact-closure receipt are fresh-revalidated')
-        else:
-            die(f'MATERIAL_REMEDIATION_RECEIPT_STATUS_INVALID:{status!r}')
+        validate_materialization_credit_chain(ACTIVE_WORK, REMEDIATION_RECEIPT, revalidation_mode)
     elif declared_root is False:
         if physical_exists:
             if not CANONICAL_SUCCESSOR.is_file() or not REMEDIATION_RECEIPT.is_file():
@@ -192,9 +245,7 @@ else:
         die('PASS_STATE_REQUIRES_VALID_STAGE2_PRODUCT_ARTIFACT_ROOT')
     if not CANONICAL_SUCCESSOR.is_file() or not REMEDIATION_RECEIPT.is_file():
         die('PASS_STATE_CURRENT_PRODUCT_OWNER_OR_RECEIPT_MISSING')
-    receipt = load_yaml(REMEDIATION_RECEIPT)
-    if receipt.get('status') != 'MATERIALIZED_FRESH_REVALIDATED':
-        die(f'PASS_STATE_REQUIRES_FRESH_REVALIDATED_RECEIPT:{receipt.get("status")!r}')
+    validate_materialization_credit_chain(ACTIVE_WORK, REMEDIATION_RECEIPT, False)
 
 print(f'PASS: Stage-02 successor integrity result={result} product_root_present={physical_exists} declared={declared_root}')
 print('PASS: Stage-01 closure continuity retained')
