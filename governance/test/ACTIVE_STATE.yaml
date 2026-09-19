@@ -104,8 +104,8 @@ specification_mutation_safety:
   ordinary_mid_stage_specification_mutation: BLOCK
   stage_end_consolidated_promotion_requires_new_explicit_directive: true
   execution_context_lock_required: true
-status: ACTIVE_ASSET01_REPLAY_HARNESS_PORTABILITY_REVALIDATION_REQUIRED
-next_action: VALIDATE_SHARED_STAGE02_PRODUCT_NEUTRAL_EXECUTION
+status: ASSET01_REPLAY_HARNESS_PORTABILITY_MAINTENANCE_CLOSED
+next_action: WORK_UNIT_RESOLUTION_GATE_FOR_ASSET01_FRESH_REPLAY
 previous_closed_product_work_unit:
   work_unit_uid: WU-STAGE02-CORE01-STRUCTURAL-REMEDIATION-001
   canonical_name: CORE01_STRUCTURAL_CONTRACT_REMEDIATION
@@ -284,17 +284,16 @@ previous_closed_work_unit:
     source_runtime_residual_count: 0
     product_stage_credit: 0
 resume_control:
-  current_resume_point: ASSET01_REPLAY_HARNESS_PORTABILITY_REVALIDATION_REQUIRED
-  current_work_unit_uid: WU-TEST-ASSET01-REPLAY-PORTABILITY-001
-  current_owner: governance/ci/run_current_stage2_actual_test.py
+  current_resume_point: ASSET01_FRESH_REPLAY_WUR_REQUIRED
+  current_work_unit_uid: null
+  current_owner: null
   historical_stage2_results_are_current_state: false
   stage2_execution_requires_fresh_entry_resolution: true
-  exact_next_action: VALIDATE_SHARED_STAGE02_PRODUCT_NEUTRAL_EXECUTION
-  parent_requested_primary_task_layer: PRODUCT_STAGE_EXECUTION
-  parent_requested_scope:
+  exact_next_action: WORK_UNIT_RESOLUTION_GATE_FOR_ASSET01_FRESH_REPLAY
+  next_primary_task_layer: PRODUCT_STAGE_EXECUTION
+  requested_scope:
   - ASSET-01
-  parent_requested_terminal_stage: STAGE-02
-  parent_resume_after_maintenance: WORK_UNIT_RESOLUTION_GATE_FOR_ASSET01_FRESH_REPLAY
+  requested_terminal_stage: STAGE-02
 governance_revision_transition:
   current_governance_uid: GOV-REV-20260919-SEMANTIC-BASELINE-CONSUMER-SINGLE-OWNER-HARDENING
   predecessor_governance_uid: GOV-REV-20260919-STRUCTURED-MUTATION-SELECTOR-HARDENING
@@ -1289,12 +1288,12 @@ work_unit_resolution_gate_asset01_replay_harness_portability:
   - GLOBAL_SOURCE_INTAKE_CLEANUP_WOULD_DELETE_PREDECESSOR_PAGE_CLOSURE_ARTIFACTS
   - ASSET01_MISSING_STAGE02_COMPLETENESS_CONTRACT_MUST_PERSIST_BLOCKED_EVIDENCE_NOT_THROW_OR_AUTOFILL
   product_stage_credit: 0
-active_work_unit:
+closed_test_validation_maintenance_work_unit_asset01_replay_portability:
   work_unit_uid: WU-TEST-ASSET01-REPLAY-PORTABILITY-001
   canonical_name: SHARED_STAGE02_PRODUCT_NEUTRAL_REPLAY_HARDENING
   primary_task_layer: TEST_OR_VALIDATION_MAINTENANCE
   canonical_owner: governance/ci/run_current_stage2_actual_test.py
-  current_status: IMPLEMENTATION_REVALIDATION_REQUIRED
+  current_status: CLOSED_VERIFIED_NO_PRODUCT_CREDIT
   scope:
   - REMOVE_FIXED_CORE01_WORKBENCH_IDENTITIES_FROM_SHARED_STAGE02_TEST
   - REMOVE_CORE01_SPECIFIC_FIELD_FROM_STABLE_FINALIZER
@@ -1332,6 +1331,25 @@ active_work_unit:
     mother_normative_change: false
     product_stage_credit: 0
     exact_head_revalidation_required: true
+  closure_evidence:
+    current_governance_uid: GOV-REV-20260919-SEMANTIC-BASELINE-CONSUMER-SINGLE-OWNER-HARDENING
+    implementation_head: d0e5785528d545632517c2e2482de06e4fde4041
+    dynamic_replay_integrity_run_id: 35425062828
+    dynamic_replay_integrity_result: success
+    selected_profile_run_id: 35425062835
+    selected_profile_result: success
+    stage02_boundary_run_id: 35425062830
+    stage02_boundary_result: success
+    full_line_run_id: 35425062824
+    full_line_result: success
+    branch_guard_run_id: 35425062823
+    branch_guard_result: success
+    fixed_product_identity_in_shared_stage02_consumer_count: 0
+    global_source_intake_delete_removed: true
+    missing_completeness_contract_disposition: PERSIST_BLOCKED_NO_AUTOFILL
+    mother_normative_change: false
+    product_stage_credit: 0
+    closure_persistence_revalidation_required: true
 closed_product_work_unit_core01_stage02_current_replay:
   work_unit_uid: WU-STAGE02-CORE01-D81DF9AC-REPLAY
   canonical_name: CORE01_STAGE02_FRESH_REPLAY
