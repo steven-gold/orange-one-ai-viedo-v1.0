@@ -694,6 +694,18 @@ findings:
   - github-actions:35420738808
   - github-actions:35420738840
   - github-actions:35420738801
+- finding_uid: FIND-20260919-BLUEPRINT-CONSTRUCTION-TRACEABILITY-001
+  class: GOVERNANCE_BLUEPRINT_COMPLETENESS_GAP
+  title: Initial blueprint standard does not hard-require construction-package depth, bidirectional function/visual traceability, multi-state visual evidence, existing-code delta classification, and quantitative freeze completeness
+  evidence: User-directed comparison against the 2026-09-11 construction blueprint package demonstrated that Current Mother principles can still be satisfied by a planning document without complete construction-level traceability and scenario visual binding.
+  disposition: AUTHORIZED_FOR_BOUNDED_GOVERNANCE_SUCCESSOR_REVIEW
+  specification_change_required: true
+  formal_specification_mutated_for_fix: false
+  current_specification_may_be_modified_from_this_finding_alone: false
+  explicit_user_directive_observed: true
+  planned_authorization_uid: USR-DIRECTIVE-20260919-BLUEPRINT-CONSTRUCTION-TRACEABILITY-HARDENING-R9
+  product_authority_change_allowed: false
+  product_stage_credit: 0
 historical_stage2_execution_findings:
   prior_CORE-01_STAGE02_BLOCKED: 7
   prior_ASSET-01_STAGE02_BLOCKED: 6
@@ -745,16 +757,3 @@ current_stage2_execution:
   execution_scope_manifest_ref: governance/test/CURRENT_EXECUTION_SCOPE_MANIFEST.yaml
   canonical_product_contract_owner_ref: 00_SOURCE_INTAKE/run_asset01_8133839f_stage02/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/FUNCTIONAL_CHAIN_SPEC.yaml
 status: ACTIVE_NON_NORMATIVE_FINDING_LEDGER
-
-- finding_uid: FIND-20260919-BLUEPRINT-CONSTRUCTION-TRACEABILITY-001
-  class: GOVERNANCE_BLUEPRINT_COMPLETENESS_GAP
-  title: Initial blueprint standard does not hard-require construction-package depth, bidirectional function/visual traceability, multi-state visual evidence, existing-code delta classification, and quantitative freeze completeness
-  evidence: User-directed comparison against the 2026-09-11 construction blueprint package demonstrated that Current Mother principles can still be satisfied by a planning document without complete construction-level traceability and scenario visual binding.
-  disposition: AUTHORIZED_FOR_BOUNDED_GOVERNANCE_SUCCESSOR_REVIEW
-  specification_change_required: true
-  formal_specification_mutated_for_fix: false
-  current_specification_may_be_modified_from_this_finding_alone: false
-  explicit_user_directive_observed: true
-  planned_authorization_uid: USR-DIRECTIVE-20260919-BLUEPRINT-CONSTRUCTION-TRACEABILITY-HARDENING-R2
-  product_authority_change_allowed: false
-  product_stage_credit: 0

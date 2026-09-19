@@ -26,8 +26,6 @@ jobs:
           set -euo pipefail
           gzip -dc .github/governance-maintenance/promote_blueprint_traceability_governance.py.gz > .github/governance-maintenance/promote_blueprint_traceability_governance.py
           python .github/governance-maintenance/patch_blueprint_type_identity.py
-          rm .github/governance-maintenance/patch_blueprint_type_identity.py
-          rm .github/governance-maintenance/promote_blueprint_traceability_governance.py.gz
           if [ -f .github/governance-maintenance/BLUEPRINT_TRACEABILITY_PROMOTE_TRIGGER ]; then
             python .github/governance-maintenance/promote_blueprint_traceability_governance.py --mode promote
           else
