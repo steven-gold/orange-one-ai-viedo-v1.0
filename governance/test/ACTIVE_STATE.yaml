@@ -104,8 +104,8 @@ specification_mutation_safety:
   ordinary_mid_stage_specification_mutation: BLOCK
   stage_end_consolidated_promotion_requires_new_explicit_directive: true
   execution_context_lock_required: true
-status: ACTIVE_ASSET01_STAGE02_EXACT_CLOSURES_MATERIALIZED_REVALIDATION_REQUIRED
-next_action: REVALIDATE_ASSET01_STAGE02_AFTER_EXACT_CLOSURE_MATERIALIZATION
+status: ACTIVE_ASSET01_STAGE02_REVALIDATION_TRIGGERED_PENDING_TERMINAL_RESULT
+next_action: CONSUME_ASSET01_STAGE02_REVALIDATION_TERMINAL_RESULT
 previous_closed_product_work_unit:
   work_unit_uid: WU-STAGE02-CORE01-STRUCTURAL-REMEDIATION-001
   canonical_name: CORE01_STRUCTURAL_CONTRACT_REMEDIATION
@@ -284,12 +284,12 @@ previous_closed_work_unit:
     source_runtime_residual_count: 0
     product_stage_credit: 0
 resume_control:
-  current_resume_point: ASSET01_STAGE2_EXACT_CLOSURES_MATERIALIZED_REVALIDATION_REQUIRED
+  current_resume_point: ASSET01_STAGE2_REVALIDATION_TRIGGERED_PENDING_TERMINAL_RESULT
   current_work_unit_uid: WU-STAGE02-ASSET01-8133839F-REPLAY
   current_owner: 00_SOURCE_INTAKE/run_asset01_8133839f_stage02/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/FUNCTIONAL_CHAIN_SPEC.yaml
   historical_stage2_results_are_current_state: false
   stage2_execution_requires_fresh_entry_resolution: false
-  exact_next_action: REVALIDATE_ASSET01_STAGE02_AFTER_EXACT_CLOSURE_MATERIALIZATION
+  exact_next_action: CONSUME_ASSET01_STAGE02_REVALIDATION_TERMINAL_RESULT
 governance_revision_transition:
   current_governance_uid: GOV-REV-20260919-SEMANTIC-BASELINE-CONSUMER-SINGLE-OWNER-HARDENING
   predecessor_governance_uid: GOV-REV-20260919-STRUCTURED-MUTATION-SELECTOR-HARDENING
@@ -1548,7 +1548,7 @@ active_work_unit:
   scope:
   - ASSET-01
   canonical_owner: 00_SOURCE_INTAKE/run_asset01_8133839f_stage02/04_PAGE_FUNCTIONAL_CONTRACT/CURRENT_PROBLEM_REGISTER.yaml
-  current_status: EXACT_CLOSURES_MATERIALIZED_REVALIDATION_REQUIRED
+  current_status: REVALIDATION_TRIGGERED_PENDING_TERMINAL_RESULT
   source_attempt_uid: STAGE02-ASSET01-8133839F-REPLAY
   source_problem_denominator: 106
   source_closure_blocker_denominator: 9
@@ -1718,6 +1718,21 @@ active_work_unit:
     exact_materialized_closure_count_pending_revalidation: 31
     product_blocker_credit_before_revalidation: 0
     rebootstrap_required_before_revalidation_trigger: true
+  stage02_revalidation_trigger:
+    trigger_kind: PERSISTED_CURRENT_STATE_PUSH_REVALIDATION
+    trigger_marker: '[stage02-revalidate]'
+    trigger_parent_head_sha: 5632d077e05b555e134b4f1523249a78141ad320
+    run_uid: FRESH-ASSET01-8133839F-STAGE02
+    attempt_uid: STAGE02-ASSET01-8133839F-REPLAY
+    expected_page_scope:
+    - ASSET-01
+    expected_revalidation_mode: SAME_ATTEMPT_BOUNDED_REMEDIATION_REVALIDATION
+    pre_revalidation_problem_denominator: 106
+    pre_revalidation_closure_blocker_denominator: 9
+    exact_materialized_closure_count_pending_credit: 31
+    product_blocker_credit_before_terminal_result: 0
+    current_specification_mutation: false
+    immutable_raw_source_mutation: false
 closed_test_validation_maintenance_work_unit_stage02_persisted_revalidation_entry:
   work_unit_uid: WU-TEST-STAGE02-PERSISTED-REVALIDATION-ENTRY-001
   canonical_name: STAGE02_PERSISTED_CURRENT_STATE_REVALIDATION_PUSH_ENTRY
@@ -2055,3 +2070,18 @@ stage02_persisted_revalidation_entry_maintenance_closure:
     product_blocker_credit: 0
   legal_next_transition: RESTORE_ASSET01_PRODUCT_STAGE_EXECUTION_LAYER_FOR_REVALIDATION
   closure_persistence_exact_head_revalidation_required: true
+stage02_current_revalidation_request:
+  request_uid: REVAL-STAGE02-ASSET01-8133839F-20260919-001
+  status: TRIGGER_COMMIT_PENDING_TERMINAL_WORKFLOW_RESULT
+  page_scope:
+  - ASSET-01
+  run_uid: FRESH-ASSET01-8133839F-STAGE02
+  attempt_uid: STAGE02-ASSET01-8133839F-REPLAY
+  authorization_uid: USR-DIRECTIVE-20260919-COMPLETE-ASSET01-STAGE02
+  execution_mode: SAME_ATTEMPT_BOUNDED_REMEDIATION_REVALIDATION
+  canonical_successor_ref: 00_SOURCE_INTAKE/run_asset01_8133839f_stage02/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/FUNCTIONAL_CHAIN_SPEC.yaml
+  source_problem_denominator: 106
+  source_closure_blocker_denominator: 9
+  exact_materialized_closure_count_pending_credit: 31
+  result_consumption_rule: OUTER_WORKFLOW_TERMINAL_SUCCESS_AND_FRESH_SCANNER_EVIDENCE_REQUIRED
+  product_blocker_credit_before_result: 0
