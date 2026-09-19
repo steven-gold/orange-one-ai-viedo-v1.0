@@ -104,8 +104,8 @@ specification_mutation_safety:
   ordinary_mid_stage_specification_mutation: BLOCK
   stage_end_consolidated_promotion_requires_new_explicit_directive: true
   execution_context_lock_required: true
-status: STAGE02_FINDINGS_RESULT_PROJECTOR_MAINTENANCE_CLOSED
-next_action: RESTORE_ASSET01_PRODUCT_STAGE_EXECUTION_LAYER_AFTER_FINDINGS_RESULT_REPAIR
+status: ACTIVE_ASSET01_STAGE02_EXACT_CLOSURES_MATERIALIZED_REVALIDATION_REQUIRED
+next_action: REVALIDATE_ASSET01_STAGE02_AFTER_EXACT_CLOSURE_MATERIALIZATION
 previous_closed_product_work_unit:
   work_unit_uid: WU-STAGE02-CORE01-STRUCTURAL-REMEDIATION-001
   canonical_name: CORE01_STRUCTURAL_CONTRACT_REMEDIATION
@@ -284,19 +284,12 @@ previous_closed_work_unit:
     source_runtime_residual_count: 0
     product_stage_credit: 0
 resume_control:
-  current_resume_point: STAGE02_FINDINGS_RESULT_PROJECTOR_CLOSED_PRODUCT_LAYER_RESTORE_REQUIRED
-  current_work_unit_uid: null
-  current_owner: null
+  current_resume_point: ASSET01_STAGE2_EXACT_CLOSURES_MATERIALIZED_REVALIDATION_REQUIRED
+  current_work_unit_uid: WU-STAGE02-ASSET01-8133839F-REPLAY
+  current_owner: 00_SOURCE_INTAKE/run_asset01_8133839f_stage02/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/FUNCTIONAL_CHAIN_SPEC.yaml
   historical_stage2_results_are_current_state: false
   stage2_execution_requires_fresh_entry_resolution: false
-  exact_next_action: RESTORE_ASSET01_PRODUCT_STAGE_EXECUTION_LAYER_AFTER_FINDINGS_RESULT_REPAIR
-  closed_maintenance_work_unit_uid: WU-TEST-STAGE02-FINDINGS-RESULT-PROJECTOR-001
-  closed_maintenance_owner: .github/governance-maintenance/run_fresh_stage_replay.py
-  parent_primary_task_layer: PRODUCT_STAGE_EXECUTION
-  parent_work_unit_uid: WU-STAGE02-ASSET01-8133839F-REPLAY
-  parent_resume_point: ASSET01_STAGE2_EXACT_CLOSURES_MATERIALIZED_REVALIDATION_REQUIRED
-  parent_exact_next_action: REVALIDATE_ASSET01_STAGE02_AFTER_EXACT_CLOSURE_MATERIALIZATION
-  next_primary_task_layer: PRODUCT_STAGE_EXECUTION
+  exact_next_action: REVALIDATE_ASSET01_STAGE02_AFTER_EXACT_CLOSURE_MATERIALIZATION
 governance_revision_transition:
   current_governance_uid: GOV-REV-20260919-SEMANTIC-BASELINE-CONSUMER-SINGLE-OWNER-HARDENING
   predecessor_governance_uid: GOV-REV-20260919-STRUCTURED-MUTATION-SELECTOR-HARDENING
@@ -350,7 +343,7 @@ pending_governance_review:
   - STAGE03
   - WEBSITE_CONSTRUCTION
   - DEPLOYMENT
-current_primary_task_layer: TEST_OR_VALIDATION_MAINTENANCE
+current_primary_task_layer: PRODUCT_STAGE_EXECUTION
 current_primary_task_authorization_uid: USR-DIRECTIVE-20260919-COMPLETE-ASSET01-STAGE02
 current_primary_task_product_stage_credit: 0
 earlier_closed_product_work_unit:
@@ -1546,7 +1539,7 @@ closed_product_work_unit_core01_stage02_current_replay:
     current_specification_mutated: false
     replay_context_terminal_state: CONSUMED
     exact_closure_head_revalidation_required: true
-suspended_product_work_unit_asset01_stage02_findings_result:
+active_work_unit:
   work_unit_uid: WU-STAGE02-ASSET01-8133839F-REPLAY
   canonical_name: ASSET01_STAGE02_FRESH_REPLAY
   stage_uid: STAGE-02
@@ -1555,7 +1548,7 @@ suspended_product_work_unit_asset01_stage02_findings_result:
   scope:
   - ASSET-01
   canonical_owner: 00_SOURCE_INTAKE/run_asset01_8133839f_stage02/04_PAGE_FUNCTIONAL_CONTRACT/CURRENT_PROBLEM_REGISTER.yaml
-  current_status: SUSPENDED_FOR_FINDINGS_RESULT_PROJECTOR_MAINTENANCE
+  current_status: EXACT_CLOSURES_MATERIALIZED_REVALIDATION_REQUIRED
   source_attempt_uid: STAGE02-ASSET01-8133839F-REPLAY
   source_problem_denominator: 106
   source_closure_blocker_denominator: 9
@@ -1770,7 +1763,19 @@ suspended_product_work_unit_asset01_stage02_findings_result:
     actual_stage02_scanner_executed: false
     product_denominator_changed: false
     product_blocker_credit: 0
-active_work_unit: null
+  restoration_after_findings_result_maintenance:
+    maintenance_closure_commit_sha: 54d7d31224300bb6bf3944d3a49aa9eee5faf21c
+    maintenance_exact_head_stage02_workflow_run_id: 35431527868
+    maintenance_exact_head_selected_profile_run_id: 35431527784
+    maintenance_exact_head_full_line_run_id: 35431527774
+    maintenance_exact_head_branch_guard_run_id: 35431527857
+    maintenance_exact_head_fresh_replay_run_id: 35431527837
+    all_required_outer_runs_success: true
+    source_problem_denominator: 106
+    source_closure_blocker_denominator: 9
+    exact_materialized_closure_count_pending_revalidation: 31
+    product_blocker_credit: 0
+    rebootstrap_required_before_revalidation_trigger: true
 closed_test_validation_maintenance_work_unit_stage02_findings_result_projector:
   work_unit_uid: WU-TEST-STAGE02-FINDINGS-RESULT-PROJECTOR-001
   canonical_name: STAGE02_FINDINGS_RESULT_PROJECTOR_ALIGNMENT
