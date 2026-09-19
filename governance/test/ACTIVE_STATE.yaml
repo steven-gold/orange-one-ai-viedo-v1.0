@@ -109,8 +109,8 @@ specification_mutation_safety:
   ordinary_mid_stage_specification_mutation: BLOCK
   stage_end_consolidated_promotion_requires_new_explicit_directive: true
   execution_context_lock_required: true
-status: STAGE02_CLOSED_VERIFIED_FRESH_RUN_006
-next_action: WORK_UNIT_RESOLUTION_GATE_FOR_STAGE03_AFTER_STAGE02_CLOSURE
+status: ACTIVE_CORE01_STAGE01_STAGE02_CLEAN_REPLAY_R4
+next_action: CLEAN_ALL_STAGE01_STAGE02_GENERATED_DATA_AND_REPLAY_CORE01
 previous_closed_product_work_unit:
   work_unit_uid: WU-STAGE02-CORE01-STRUCTURAL-REMEDIATION-001
   canonical_name: CORE01_STRUCTURAL_CONTRACT_REMEDIATION
@@ -289,12 +289,12 @@ previous_closed_work_unit:
     source_runtime_residual_count: 0
     product_stage_credit: 0
 resume_control:
-  current_resume_point: STAGE2_CORE01_CLOSED_STAGE3_WUR_REQUIRED
-  current_work_unit_uid: null
-  current_owner: null
+  current_resume_point: CORE01_STAGE01_STAGE02_CLEAN_REPLAY_R4_RESOLVED
+  current_work_unit_uid: WU-CORE01-STAGE01-STAGE02-CLEAN-REPLAY-R4
+  current_owner: .github/governance-maintenance/run_fresh_core01_stage01_stage02_replay_r3.py
   historical_stage2_results_are_current_state: false
   stage2_execution_requires_fresh_entry_resolution: false
-  exact_next_action: WORK_UNIT_RESOLUTION_GATE_FOR_STAGE03_AFTER_STAGE02_CLOSURE
+  exact_next_action: CLEAN_ALL_STAGE01_STAGE02_GENERATED_DATA_AND_REPLAY_CORE01
 governance_revision_transition:
   current_governance_uid: GOV-REV-20260919-PROFILE-TOKEN-DECONTAMINATION-HARDENING
   predecessor_governance_uid: GOV-REV-20260919-SCOPE-STAGE-REENTRY-PORTABILITY-HARDENING
@@ -349,7 +349,7 @@ pending_governance_review:
   - WEBSITE_CONSTRUCTION
   - DEPLOYMENT
 current_primary_task_layer: PRODUCT_STAGE_EXECUTION
-current_primary_task_authorization_uid: USR-DIRECTIVE-20260919-CORE01-STAGE02-COMPLETENESS-R3
+current_primary_task_authorization_uid: USR-DIRECTIVE-20260919-CLEAR-ALL-STAGE01-STAGE02-RERUN-CORE01-R4
 current_primary_task_product_stage_credit: 0
 earlier_closed_product_work_unit:
   work_unit_uid: WU-STAGE02-CORE01-FRESH-TEST-001
@@ -797,3 +797,40 @@ common_stage_execution_engine_closure:
   restored_resume_point: STAGE2_CORE01_CLOSED_STAGE3_WUR_REQUIRED
   restored_next_action: WORK_UNIT_RESOLUTION_GATE_FOR_STAGE03_AFTER_STAGE02_CLOSURE
   closure_commit_exact_head_revalidation_required: true
+work_unit_resolution_gate_core01_clean_replay_r4:
+  resolution_uid: WUR-CORE01-STAGE01-STAGE02-CLEAN-REPLAY-20260919-004
+  normative_authority: false
+  result: PASS_SINGLE_LEGAL_SUCCESSOR
+  requested_primary_task_layer: PRODUCT_STAGE_EXECUTION
+  resolved_work_unit_uid: WU-CORE01-STAGE01-STAGE02-CLEAN-REPLAY-R4
+  authorization_uid: USR-DIRECTIVE-20260919-CLEAR-ALL-STAGE01-STAGE02-RERUN-CORE01-R4
+  page_scope: [CORE-01]
+  cleanup_scope: [CORE-01, ASSET-01]
+  replay_excluded_page_scope: [ASSET-01]
+  predecessor_run_uid: FRESH-RUN-006
+  successor_run_uid: FRESH-RUN-007
+  product_stage_credit: 0
+active_work_unit:
+  work_unit_uid: WU-CORE01-STAGE01-STAGE02-CLEAN-REPLAY-R4
+  canonical_name: CORE01_STAGE01_STAGE02_DESTRUCTIVE_CLEAN_AND_FRESH_REPLAY_R4
+  primary_task_layer: PRODUCT_STAGE_EXECUTION
+  scope: [CORE-01]
+  cleanup_scope: [CORE-01, ASSET-01]
+  replay_scope: [CORE-01]
+  out_of_scope: [ASSET-01_REPLAY, STAGE-03, WEBSITE_CONSTRUCTION, DEPLOYMENT]
+  canonical_owner: .github/governance-maintenance/run_fresh_core01_stage01_stage02_replay_r3.py
+  current_status: READY_FOR_DESTRUCTIVE_CLEAN_REPLAY
+  product_stage_credit: 0
+  common_stage_engine_required: true
+  definition_of_done:
+  - ALL_PRIOR_CORE01_AND_ASSET01_STAGE01_STAGE02_GENERATED_PRODUCT_DATA_REMOVED
+  - CURRENT_STAGE02_TEST_EVIDENCE_REMOVED_BEFORE_REPLAY
+  - FRESH_RUN_007_CORE01_ONLY_MATERIALIZED
+  - ASSET01_REMAINS_GENERATED_DATA_ABSENT
+  - STAGE01_COMMON_ENGINE_ADMISSION_AND_GUARD_PASS
+  - STAGE02_COMMON_ENGINE_ADMISSION_AND_FRESH_SCAN_PASS
+  - PLANNING_BASELINE_COMPLETENESS_PASS
+  - FRESH_FUNCTIONAL_GAPS_ZERO
+  - CLOSURE_BLOCKERS_ZERO
+  - PRIOR_PRODUCT_OUTPUT_REUSE_FALSE
+  - EXACT_HEAD_TERMINAL_GATES_SUCCESS
