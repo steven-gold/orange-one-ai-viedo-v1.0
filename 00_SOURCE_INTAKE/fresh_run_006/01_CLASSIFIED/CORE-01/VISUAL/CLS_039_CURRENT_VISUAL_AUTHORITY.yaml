@@ -1,0 +1,35 @@
+artifact_uid: CLS-CORE-01-CURRENT-VISUAL-AUTHORITY-039
+page_uid: CORE-01
+planning_domain: VISUAL_CONSTRUCTION
+responsibility_uid: CURRENT_VISUAL_AUTHORITY
+responsibility_class: CURRENT_VISUAL_AUTHORITY
+responsibilities:
+- CURRENT_VISUAL_AUTHORITY
+canonical_owner_uid: OWNER-CLS-CORE-01-CURRENT-VISUAL-AUTHORITY-039
+target_path: 01_CLASSIFIED/CORE-01/VISUAL/CLS_039_CURRENT_VISUAL_AUTHORITY.yaml
+lifecycle_uid: LC-CURRENT-VISUAL-AUTHORITY
+approval_scope_uid: AP-CURRENT-VISUAL-AUTHORITY
+version_scope_uid: VER-CURRENT-VISUAL-AUTHORITY
+test_scope_uid: TEST-CURRENT-VISUAL-AUTHORITY
+source_lineage:
+- source_uid: SRC-CORE01-VISUAL
+  source_segment_uids:
+  - SEG-SRC-CORE01-VISUAL-039
+facts:
+- source_ref: $.authority
+  value:
+    id: CORE01_CURRENT_CANONICAL_VISUAL_OWNER
+    version: V1.0
+    status: FINAL_LOCKED
+    current_only: true
+    scope: CORE-01 PAGE-LEVEL CURRENT_CANONICAL_VISUAL IDENTITY ONLY
+    revision: 2026-09-11-CORE01-AUTHORITY-TRACE-CLOSURE
+    owner_path: authority/pages/workspace/CORE-01/CORE_CURRENT_CANONICAL_VISUAL_FINAL_LOCKED_V1.0.yaml
+    page_design_owner: authority/pages/workspace/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml
+    global_visual_owner: authority/global/GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY_FINAL_LOCKED.yaml
+    owns_page_layout: false
+    owns_child_visual_definitions: false
+    creates_new_ui_design: false
+    undefined_behavior: BLOCK + REPORT_AUTHORITY_GAP
+status: CURRENT_CLASSIFICATION
+content_hash: 5b40eba984e9388400cd8be8b675098f967ff0759529f375cdf3cca529172d5b

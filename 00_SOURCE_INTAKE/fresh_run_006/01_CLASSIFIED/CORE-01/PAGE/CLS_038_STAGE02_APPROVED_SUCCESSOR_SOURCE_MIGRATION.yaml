@@ -1,0 +1,34 @@
+artifact_uid: CLS-CORE-01-STAGE02-APPROVED-SUCCESSOR-SOURCE-MIGRATION-038
+page_uid: CORE-01
+planning_domain: PAGE_CONSTRUCTION
+responsibility_uid: STAGE02_APPROVED_SUCCESSOR_SOURCE_MIGRATION
+responsibility_class: STAGE02_APPROVED_SUCCESSOR_SOURCE_MIGRATION
+responsibilities:
+- STAGE02_APPROVED_SUCCESSOR_SOURCE_MIGRATION
+canonical_owner_uid: OWNER-CLS-CORE-01-STAGE02-APPROVED-SUCCESSOR-SOURCE-MIGRATION-038
+target_path: 01_CLASSIFIED/CORE-01/PAGE/CLS_038_STAGE02_APPROVED_SUCCESSOR_SOURCE_MIGRATION.yaml
+lifecycle_uid: LC-STAGE02-APPROVED-SUCCESSOR-SOURCE-MIGRATION
+approval_scope_uid: AP-STAGE02-APPROVED-SUCCESSOR-SOURCE-MIGRATION
+version_scope_uid: VER-STAGE02-APPROVED-SUCCESSOR-SOURCE-MIGRATION
+test_scope_uid: TEST-STAGE02-APPROVED-SUCCESSOR-SOURCE-MIGRATION
+source_lineage:
+- source_uid: SRC-CORE01-PAGE
+  source_segment_uids:
+  - SEG-SRC-CORE01-PAGE-038
+facts:
+- source_ref: $.stage02_approved_successor_source_migration
+  value:
+    authority_source: USR-DIRECTIVE-20260919-CORE01-STAGE02-COMPLETENESS-R3
+    source_canonical_owner_ref: 00_SOURCE_INTAKE/fresh_run_005/04_PAGE_FUNCTIONAL_CONTRACT/CORE-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    approval_evidence_ref: governance/test/stage02/STAGE02_CORE01_FRESH_DESIGN_CONTRACT_APPROVAL_R3.yaml
+    migrated_projection_keys:
+    - actions
+    - stages
+    - stage_transitions
+    - events
+    - integration_ports
+    controls_preserved_from_2026_09_11_planning_baseline: true
+    prior_generated_artifact_reused_as_fresh_output: false
+    purpose: Make approved payload/state-transition/audit contracts reproducible from source after destructive Stage-01/02 reset.
+status: CURRENT_CLASSIFICATION
+content_hash: b99f4c53895d756a8eb15eb6afce310709698e860407ade0376b93b74b8dcbfa

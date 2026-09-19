@@ -1,0 +1,82 @@
+artifact_uid: CLS-CORE-01-CONVERSATION-FINALIZATION-PIPELINE-CONTRACT-031
+page_uid: CORE-01
+planning_domain: PAGE_CONSTRUCTION
+responsibility_uid: CONVERSATION_FINALIZATION_PIPELINE_CONTRACT
+responsibility_class: CONVERSATION_FINALIZATION_PIPELINE_CONTRACT
+responsibilities:
+- CONVERSATION_FINALIZATION_PIPELINE_CONTRACT
+canonical_owner_uid: OWNER-CLS-CORE-01-CONVERSATION-FINALIZATION-PIPELINE-CONTRACT-031
+target_path: 01_CLASSIFIED/CORE-01/PAGE/CLS_031_CONVERSATION_FINALIZATION_PIPELINE_CONTRACT.yaml
+lifecycle_uid: LC-CONVERSATION-FINALIZATION-PIPELINE-CONTRACT
+approval_scope_uid: AP-CONVERSATION-FINALIZATION-PIPELINE-CONTRACT
+version_scope_uid: VER-CONVERSATION-FINALIZATION-PIPELINE-CONTRACT
+test_scope_uid: TEST-CONVERSATION-FINALIZATION-PIPELINE-CONTRACT
+source_lineage:
+- source_uid: SRC-CORE01-PAGE
+  source_segment_uids:
+  - SEG-SRC-CORE01-PAGE-031
+facts:
+- source_ref: $.conversation_finalization_pipeline_contract
+  value:
+    authority_source: USER_APPROVED_ACPOS_CORE01_CONSTRUCTION_BLUEPRINT_PACKAGE_2026-09-11
+    singular_pipeline: true
+    conversation_truth_rule: Conversation History is evidence/history, not Canonical Work Item truth.
+    steps:
+    - order: 1
+      name: Resolve Exact Context
+      formal_write: false
+    - order: 2
+      name: Conversation / Analysis
+      formal_write: false
+    - order: 3
+      name: Incremental Capture
+      owner_ref: AI Conversation Core
+      formal_write: false
+    - order: 4
+      name: Assistant Summary
+      object_uid: CORE-01-OBJ-SUMMARY
+      formal_write: false
+    - order: 5
+      name: CORE Evaluation
+      object_uid: CORE-01-OBJ-EVALUATION
+      formal_write: false
+    - order: 6
+      name: Human Decision
+      object_uid: CORE-01-OBJ-HUMAN-DECISION
+      formal_write: false
+    - order: 7
+      name: Assistant Structured Decision
+      object_uid: CORE-01-OBJ-STRUCTURED-DECISION
+      self_approval: FORBIDDEN
+      formal_write: false
+    - order: 8
+      name: Create Immutable Candidate
+      action_uid: CORE-01-ACT-CANDIDATE-CREATE
+      formal_write: true
+    - order: 9
+      name: Candidate Decision
+      action_uids:
+      - CORE-01-ACT-CANDIDATE-ACCEPT
+      - CORE-01-ACT-CANDIDATE-RETURN
+      formal_write: true
+    - order: 10
+      name: Domain-specific Confirm/Lock/Version
+      owner_rule: EXISTING_DOMAIN_OWNER
+      append_new_version_no_overwrite: true
+      formal_write: true
+    return_modify:
+      action_uid: CORE-01-ACT-CANDIDATE-RETURN
+      preserve:
+      - returned_candidate
+      - reason_and_evidence
+      - conversation_history
+      - exact_base_version_lineage
+      next: RESUME_GOVERNED_DISCUSSION_THEN_CREATE_NEW_IMMUTABLE_CANDIDATE
+    forbidden:
+    - LAST_AI_RESPONSE_EQUALS_FINAL_VERSION
+    - MULTI_AI_MAJORITY_VOTE_EQUALS_FORMAL_DECISION
+    - ASSISTANT_SUMMARY_AUTO_CONFIRMS
+    - OVERWRITE_CONFIRMED_OR_LOCKED_VERSION
+    - RAW_CONVERSATION_DIRECT_TO_CANON
+status: CURRENT_CLASSIFICATION
+content_hash: 402b65dd9f5314c88cbb6b3caeadd34c99bc003d6151295d5bba26f514c5e968

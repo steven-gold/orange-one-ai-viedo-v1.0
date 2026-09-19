@@ -1,0 +1,48 @@
+artifact_uid: CLS-CORE-01-CONVERSATION-POLICY-006
+page_uid: CORE-01
+planning_domain: PAGE_CONSTRUCTION
+responsibility_uid: CONVERSATION_POLICY
+responsibility_class: CONVERSATION_POLICY
+responsibilities:
+- CONVERSATION_POLICY
+canonical_owner_uid: OWNER-CLS-CORE-01-CONVERSATION-POLICY-006
+target_path: 01_CLASSIFIED/CORE-01/PAGE/CLS_006_CONVERSATION_POLICY.yaml
+lifecycle_uid: LC-CONVERSATION-POLICY
+approval_scope_uid: AP-CONVERSATION-POLICY
+version_scope_uid: VER-CONVERSATION-POLICY
+test_scope_uid: TEST-CONVERSATION-POLICY
+source_lineage:
+- source_uid: SRC-CORE01-PAGE
+  source_segment_uids:
+  - SEG-SRC-CORE01-PAGE-006
+facts:
+- source_ref: $.conversation_policy
+  value:
+    single_multi_same_context: true
+    assistant_is_third_mode: false
+    provider_model_picker: FORBIDDEN
+    assigned_ai_set: Resolved by ACPOS shared AI Router/Capability Assignment; page read-only
+    right_click_message_actions:
+    - 引用此訊息
+    - 繼續討論此主題
+    - 分析此內容
+    - 加入決策清單
+    - 建立分支討論
+    - 複製此訊息
+    hover_message_toolbar: FORBIDDEN
+    branch_discussion_is_production_topic: false
+    same_problem_rule: All selected AI receive the same Original User Question plus the same Exact Relevant Context for the current turn.
+    exact_relevant_context:
+    - Project
+    - Topic if applicable
+    - Work Item
+    - Thread
+    - Attachment refs
+    - Reference refs
+    - Context Package
+    response_traceability: Every Single/Multi AI response remains bound to the same governed conversation_id/thread_id, original question identity, exact context fingerprint and source
+      response identity.
+    mode_fluidity: Switching SINGLE/MULTI inside the same Conversation MUST NOT create a new Work Item, Topic, Thread, Candidate or Version solely because AI participation changed.
+    finalization_reentry: All Single/Multi/branch messages remain Conversation Evidence and re-enter the single Conversation Finalization Pipeline.
+status: CURRENT_CLASSIFICATION
+content_hash: 91eed9c0c816a0a5a9d538718350d57f526b3052e2ea9a0d90aef0975f122395

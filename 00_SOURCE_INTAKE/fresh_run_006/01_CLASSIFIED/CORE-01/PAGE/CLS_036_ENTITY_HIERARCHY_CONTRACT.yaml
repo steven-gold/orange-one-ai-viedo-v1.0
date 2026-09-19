@@ -1,0 +1,114 @@
+artifact_uid: CLS-CORE-01-ENTITY-HIERARCHY-CONTRACT-036
+page_uid: CORE-01
+planning_domain: PAGE_CONSTRUCTION
+responsibility_uid: ENTITY_HIERARCHY_CONTRACT
+responsibility_class: ENTITY_HIERARCHY_CONTRACT
+responsibilities:
+- ENTITY_HIERARCHY_CONTRACT
+canonical_owner_uid: OWNER-CLS-CORE-01-ENTITY-HIERARCHY-CONTRACT-036
+target_path: 01_CLASSIFIED/CORE-01/PAGE/CLS_036_ENTITY_HIERARCHY_CONTRACT.yaml
+lifecycle_uid: LC-ENTITY-HIERARCHY-CONTRACT
+approval_scope_uid: AP-ENTITY-HIERARCHY-CONTRACT
+version_scope_uid: VER-ENTITY-HIERARCHY-CONTRACT
+test_scope_uid: TEST-ENTITY-HIERARCHY-CONTRACT
+source_lineage:
+- source_uid: SRC-CORE01-PAGE
+  source_segment_uids:
+  - SEG-SRC-CORE01-PAGE-036
+facts:
+- source_ref: $.entity_hierarchy_contract
+  value:
+    authority_source: CURRENT_CORE_OBJECT_LINEAGE_AND_USER_APPROVED_2026-09-11_CONTEXT_RULES
+    relationships:
+    - object_uid: CORE-01-REF-PROJECT
+      relation_status: ROOT
+      parent_object_uid: null
+      relation: PROJECT_ROOT
+    - object_uid: CORE-01-REF-TOPIC
+      relation_status: EXACT
+      parent_object_uid: CORE-01-REF-PROJECT
+      relation: TOPIC_BELONGS_TO_PROJECT
+    - object_uid: CORE-01-OBJ-THREAD
+      relation_status: EXACT_WITH_CONDITIONAL_TOPIC
+      parent_object_uid: CORE-01-REF-PROJECT
+      conditional_parent_object_uid: CORE-01-REF-TOPIC
+      relation: THREAD_SCOPED_TO_PROJECT_TOPIC_WORK_ITEM
+    - object_uid: CORE-01-OBJ-MESSAGE
+      relation_status: EXACT
+      parent_object_uid: CORE-01-OBJ-THREAD
+      relation: MESSAGE_BELONGS_TO_THREAD
+    - object_uid: CORE-01-OBJ-CONTEXT
+      relation_status: EXACT
+      parent_object_uid: CORE-01-OBJ-THREAD
+      relation: CONTEXT_PACKAGE_BELONGS_TO_CURRENT_THREAD
+    - object_uid: CORE-01-REF-AI-SET
+      relation_status: EXACT
+      parent_object_uid: CORE-01-OBJ-CONTEXT
+      relation: ASSIGNED_AI_SET_BOUND_TO_EXACT_CONTEXT
+    - object_uid: CORE-01-OBJ-SUMMARY
+      relation_status: EXACT
+      parent_object_uid: CORE-01-OBJ-THREAD
+      relation: SUMMARY_DERIVED_FROM_THREAD_RESPONSES
+    - object_uid: CORE-01-OBJ-EVALUATION
+      relation_status: EXACT
+      parent_object_uid: CORE-01-OBJ-THREAD
+      relation: EVALUATION_BOUND_TO_THREAD_TARGET_AND_EVIDENCE
+    - object_uid: CORE-01-OBJ-HUMAN-DECISION
+      relation_status: EXACT
+      parent_object_uid: CORE-01-OBJ-THREAD
+      relation: HUMAN_DECISION_BOUND_TO_THREAD_TARGET
+    - object_uid: CORE-01-OBJ-STRUCTURED-DECISION
+      relation_status: EXACT
+      parent_object_uid: CORE-01-OBJ-HUMAN-DECISION
+      relation: STRUCTURED_DECISION_RESTATES_HUMAN_DECISION
+    - object_uid: CORE-01-OBJ-CANDIDATE
+      relation_status: EXACT
+      parent_object_uid: CORE-01-OBJ-HUMAN-DECISION
+      relation: CANDIDATE_CREATED_FROM_CONFIRMED_HUMAN_DECISION
+    - object_uid: CORE-01-OBJ-PROJECT-DRAFT
+      relation_status: EXACT
+      parent_object_uid: CORE-01-REF-PROJECT
+      relation: PROJECT_DRAFT_VERSION_LINEAGE
+    - object_uid: CORE-01-OBJ-STORY-CANDIDATE-SET
+      relation_status: EXACT
+      parent_object_uid: CORE-01-REF-PROJECT
+      relation: STORY_CANDIDATES_BELONG_TO_PROJECT
+    - object_uid: CORE-01-REF-CANON
+      relation_status: EXACT
+      parent_object_uid: CORE-01-REF-PROJECT
+      relation: CANON_COMPONENT_BELONGS_TO_PROJECT
+    - object_uid: CORE-01-REF-DNA
+      relation_status: EXACT
+      parent_object_uid: CORE-01-REF-PROJECT
+      relation: DNA_VERSION_BELONGS_TO_PROJECT_CANON
+    - object_uid: CORE-01-REF-BLUEPRINT
+      relation_status: EXACT_WITH_TOPIC_CONTEXT
+      parent_object_uid: CORE-01-REF-PROJECT
+      conditional_parent_object_uid: CORE-01-REF-TOPIC
+      relation: BLUEPRINT_BOUND_TO_PROJECT_TOPIC_LINEAGE
+    - object_uid: CORE-01-OBJ-TOPIC-SCOPE
+      relation_status: EXACT
+      parent_object_uid: CORE-01-REF-TOPIC
+      relation: TOPIC_SCOPE_BELONGS_TO_TOPIC
+    - object_uid: CORE-01-REF-CANONICAL-SCRIPT
+      relation_status: EXACT
+      parent_object_uid: CORE-01-REF-TOPIC
+      relation: CANONICAL_SCRIPT_BELONGS_TO_TOPIC
+    - object_uid: CORE-01-OBJ-PRODUCTION-PACKAGE
+      relation_status: EXACT
+      parent_object_uid: CORE-01-REF-TOPIC
+      relation: PRODUCTION_PACKAGE_BELONGS_TO_TOPIC
+    - object_uid: CORE-01-REF-NAMING
+      relation_status: EXTERNAL_ROOT
+      parent_object_uid: null
+      relation: GLOBAL_NAMING_AUTHORITY_REFERENCE
+    - object_uid: CORE-01-OBJ-DOWNSTREAM-READINESS
+      relation_status: EXACT
+      parent_object_uid: CORE-01-OBJ-PRODUCTION-PACKAGE
+      relation: DOWNSTREAM_READINESS_DERIVED_FROM_PRODUCTION_PACKAGE
+    - object_uid: CORE-01-OBJ-LOCK-REVIEW
+      relation_status: DYNAMIC_EXACT_TARGET_REF
+      parent_object_uid: null
+      relation: LOCK_REVIEW_PARENT_IS_EXACT_TARGET_REF_AND_HASH
+status: CURRENT_CLASSIFICATION
+content_hash: 8bb08b50990cf9782163b3cec2a5695b48c9591a33a1da072f2929e49b027ea2

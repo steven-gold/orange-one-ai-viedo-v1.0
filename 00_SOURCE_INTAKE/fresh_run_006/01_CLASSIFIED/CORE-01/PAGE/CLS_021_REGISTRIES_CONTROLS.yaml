@@ -1,0 +1,554 @@
+artifact_uid: CLS-CORE-01-REGISTRIES-CONTROLS-021
+page_uid: CORE-01
+planning_domain: PAGE_CONSTRUCTION
+responsibility_uid: REGISTRIES_CONTROLS
+responsibility_class: REGISTRIES_CONTROLS
+responsibilities:
+- REGISTRIES_CONTROLS
+canonical_owner_uid: OWNER-CLS-CORE-01-REGISTRIES-CONTROLS-021
+target_path: 01_CLASSIFIED/CORE-01/PAGE/CLS_021_REGISTRIES_CONTROLS.yaml
+lifecycle_uid: LC-REGISTRIES-CONTROLS
+approval_scope_uid: AP-REGISTRIES-CONTROLS
+version_scope_uid: VER-REGISTRIES-CONTROLS
+test_scope_uid: TEST-REGISTRIES-CONTROLS
+source_lineage:
+- source_uid: SRC-CORE01-PAGE
+  source_segment_uids:
+  - SEG-SRC-CORE01-PAGE-021
+facts:
+- source_ref: $.registries.controls
+  value:
+  - control_uid: CORE-01-CTL-PROJECT
+    section_uid: CORE-01-SEC-01
+    component_uid: CORE-01-CMP-CONTEXT
+    visual_uid: CORE-01-VIS-CONTEXT
+    type: SELECT
+    label: Project
+    action_uid: CORE-01-ACT-PROJECT-SELECT
+    gate_uid: CORE-01-GATE-PAGE
+    permission_uid: CORE_USE
+    default: —
+  - control_uid: CORE-01-BTN-PROJECT-CREATE
+    section_uid: CORE-01-SEC-01
+    component_uid: CORE-01-CMP-CONTEXT
+    visual_uid: CORE-01-VIS-CONTEXT
+    type: PRIMARY_BUTTON
+    label: 建立 Project
+    action_uid: CORE-01-ACT-PROJECT-CREATE
+    gate_uid: CORE-01-GATE-PROJECT-DRAFT
+    permission_uid: CORE_PROJECT_WRITE
+    default: —
+  - control_uid: CORE-01-CTL-TOPIC
+    section_uid: CORE-01-SEC-01
+    component_uid: CORE-01-CMP-CONTEXT
+    visual_uid: CORE-01-VIS-CONTEXT
+    type: SELECT
+    label: Topic
+    action_uid: CORE-01-ACT-TOPIC-SELECT
+    gate_uid: CORE-01-GATE-TOPIC-CONTEXT
+    permission_uid: CORE_USE
+    default: —
+  - control_uid: CORE-01-BTN-TOPIC-CREATE
+    section_uid: CORE-01-SEC-01
+    component_uid: CORE-01-CMP-CONTEXT
+    visual_uid: CORE-01-VIS-CONTEXT
+    type: PRIMARY_BUTTON
+    label: 建立 Topic
+    action_uid: CORE-01-ACT-TOPIC-CREATE
+    gate_uid: CORE-01-GATE-TOPIC-CREATE
+    permission_uid: CORE_TOPIC_WRITE
+    default: —
+  - control_uid: CORE-01-FLD-PAGE-MODE
+    section_uid: CORE-01-SEC-01
+    component_uid: CORE-01-CMP-CONTEXT
+    visual_uid: CORE-01-VIS-CONTEXT
+    type: READONLY
+    label: 'Mode: PROJECT_CORE / TOPIC_PRODUCTION'
+    action_uid: null
+    binding_semantics: DATA_OR_DRAFT_STATE_ONLY
+    data_binding: CURRENT_PAGE_MODE
+    gate_uid: CORE-01-GATE-PAGE
+    permission_uid: CORE_USE
+    default: —
+  - control_uid: CORE-01-FLD-NAMING-AUTHORITY
+    section_uid: CORE-01-SEC-01
+    component_uid: CORE-01-CMP-CONTEXT
+    visual_uid: CORE-01-VIS-CONTEXT
+    type: READONLY
+    label: Naming Authority = ACPOS_SYSTEM
+    action_uid: null
+    binding_semantics: DATA_OR_DRAFT_STATE_ONLY
+    data_binding: CORE-01-REF-NAMING
+    gate_uid: CORE-01-GATE-NAMING
+    permission_uid: CORE_USE
+    default: —
+  - control_uid: CORE-01-LST-WORK-ITEMS
+    section_uid: CORE-01-SEC-02
+    component_uid: CORE-01-CMP-NAV
+    visual_uid: CORE-01-VIS-LEFT
+    type: LIST
+    label: Work Items
+    action_uid: CORE-01-ACT-WORK-ITEM-SELECT
+    gate_uid: CORE-01-GATE-WORK-ITEM
+    permission_uid: CORE_USE
+    default: —
+  - control_uid: CORE-01-BTN-NEW-THREAD
+    section_uid: CORE-01-SEC-02
+    component_uid: CORE-01-CMP-THREADS
+    visual_uid: CORE-01-VIS-LEFT
+    type: BUTTON
+    label: ＋ 新增對話
+    action_uid: CORE-01-ACT-THREAD-CREATE
+    gate_uid: CORE-01-GATE-THREAD
+    permission_uid: CORE_CONVERSATION
+    default: —
+  - control_uid: CORE-01-LST-THREADS
+    section_uid: CORE-01-SEC-02
+    component_uid: CORE-01-CMP-THREADS
+    visual_uid: CORE-01-VIS-LEFT
+    type: LIST
+    label: Conversation Threads
+    action_uid: CORE-01-ACT-THREAD-SELECT
+    gate_uid: CORE-01-GATE-THREAD
+    permission_uid: CORE_USE
+    default: —
+  - control_uid: CORE-01-BTN-SINGLE-AI
+    section_uid: CORE-01-SEC-03
+    component_uid: CORE-01-CMP-CONV-HEADER
+    visual_uid: CORE-01-VIS-CENTER-HEADER
+    type: SEGMENT_BUTTON
+    label: SINGLE AI
+    action_uid: CORE-01-ACT-AI-MODE-SINGLE
+    gate_uid: CORE-01-GATE-WORK-ITEM
+    permission_uid: CORE_USE
+    default: —
+  - control_uid: CORE-01-BTN-MULTI-AI
+    section_uid: CORE-01-SEC-03
+    component_uid: CORE-01-CMP-CONV-HEADER
+    visual_uid: CORE-01-VIS-CENTER-HEADER
+    type: SEGMENT_BUTTON
+    label: MULTI AI
+    action_uid: CORE-01-ACT-AI-MODE-MULTI
+    gate_uid: CORE-01-GATE-MULTI-AI
+    permission_uid: CORE_USE
+    default: —
+  - control_uid: CORE-01-FLD-ASSIGNED-AI
+    section_uid: CORE-01-SEC-03
+    component_uid: CORE-01-CMP-CONV-HEADER
+    visual_uid: CORE-01-VIS-CENTER-HEADER
+    type: READONLY
+    label: Assigned AI Set / Route
+    action_uid: null
+    binding_semantics: DATA_OR_DRAFT_STATE_ONLY
+    data_binding: CORE-01-REF-AI-SET
+    gate_uid: CORE-01-GATE-MULTI-AI
+    permission_uid: CORE_USE
+    default: —
+  - control_uid: CORE-01-BTN-ASSISTANT-RECORD
+    section_uid: CORE-01-SEC-03
+    component_uid: CORE-01-CMP-CONV-HEADER
+    visual_uid: CORE-01-VIS-CENTER-HEADER
+    type: BUTTON
+    label: Assistant Record
+    action_uid: CORE-01-ACT-ASSISTANT-RECORD
+    gate_uid: CORE-01-GATE-PAGE
+    permission_uid: CORE_USE
+    default: —
+  - control_uid: CORE-01-MENU-QUOTE
+    section_uid: CORE-01-SEC-04
+    component_uid: CORE-01-CMP-MESSAGE-MENU
+    visual_uid: CORE-01-VIS-MESSAGES
+    type: CONTEXT_MENU_ITEM
+    label: 引用此訊息
+    action_uid: CORE-01-ACT-MSG-QUOTE
+    gate_uid: CORE-01-GATE-THREAD
+    permission_uid: CORE_USE
+    default: —
+  - control_uid: CORE-01-MENU-CONTINUE
+    section_uid: CORE-01-SEC-04
+    component_uid: CORE-01-CMP-MESSAGE-MENU
+    visual_uid: CORE-01-VIS-MESSAGES
+    type: CONTEXT_MENU_ITEM
+    label: 繼續討論此主題
+    action_uid: CORE-01-ACT-MSG-CONTINUE
+    gate_uid: CORE-01-GATE-THREAD
+    permission_uid: CORE_USE
+    default: —
+  - control_uid: CORE-01-MENU-ANALYZE
+    section_uid: CORE-01-SEC-04
+    component_uid: CORE-01-CMP-MESSAGE-MENU
+    visual_uid: CORE-01-VIS-MESSAGES
+    type: CONTEXT_MENU_ITEM
+    label: 分析此內容
+    action_uid: CORE-01-ACT-MSG-ANALYZE
+    gate_uid: CORE-01-GATE-THREAD
+    permission_uid: CORE_CONVERSATION
+    default: —
+  - control_uid: CORE-01-MENU-DECISION
+    section_uid: CORE-01-SEC-04
+    component_uid: CORE-01-CMP-MESSAGE-MENU
+    visual_uid: CORE-01-VIS-MESSAGES
+    type: CONTEXT_MENU_ITEM
+    label: 加入決策清單
+    action_uid: CORE-01-ACT-MSG-DECISION
+    gate_uid: CORE-01-GATE-THREAD
+    permission_uid: CORE_USE
+    default: —
+  - control_uid: CORE-01-MENU-BRANCH
+    section_uid: CORE-01-SEC-04
+    component_uid: CORE-01-CMP-MESSAGE-MENU
+    visual_uid: CORE-01-VIS-MESSAGES
+    type: CONTEXT_MENU_ITEM
+    label: 建立分支討論
+    action_uid: CORE-01-ACT-MSG-BRANCH
+    gate_uid: CORE-01-GATE-THREAD
+    permission_uid: CORE_CONVERSATION
+    default: —
+  - control_uid: CORE-01-MENU-COPY
+    section_uid: CORE-01-SEC-04
+    component_uid: CORE-01-CMP-MESSAGE-MENU
+    visual_uid: CORE-01-VIS-MESSAGES
+    type: CONTEXT_MENU_ITEM
+    label: 複製此訊息
+    action_uid: CORE-01-ACT-MSG-COPY
+    gate_uid: CORE-01-GATE-THREAD
+    permission_uid: CORE_USE
+    default: —
+  - control_uid: CORE-01-FLD-ASSISTANT-SUMMARY
+    section_uid: CORE-01-SEC-05
+    component_uid: CORE-01-CMP-SUMMARY
+    visual_uid: CORE-01-VIS-DECISION
+    type: READONLY
+    label: Assistant Summary
+    action_uid: null
+    binding_semantics: DATA_OR_DRAFT_STATE_ONLY
+    data_binding: CORE-01-OBJ-SUMMARY
+    gate_uid: CORE-01-GATE-SUMMARY
+    permission_uid: CORE_USE
+    default: —
+  - control_uid: CORE-01-FLD-EVALUATION
+    section_uid: CORE-01-SEC-05
+    component_uid: CORE-01-CMP-EVALUATION
+    visual_uid: CORE-01-VIS-DECISION
+    type: READONLY
+    label: CORE Evaluation / Criteria Version / Evidence
+    action_uid: null
+    binding_semantics: DATA_OR_DRAFT_STATE_ONLY
+    data_binding: CORE-01-OBJ-EVALUATION
+    gate_uid: CORE-01-GATE-EVALUATION
+    permission_uid: CORE_USE
+    default: —
+  - control_uid: CORE-01-FLD-HUMAN-DECISION
+    section_uid: CORE-01-SEC-05
+    component_uid: CORE-01-CMP-HUMAN-DECISION
+    visual_uid: CORE-01-VIS-DECISION
+    type: TEXTAREA
+    label: Human Decision
+    action_uid: null
+    binding_semantics: DATA_OR_DRAFT_STATE_ONLY
+    data_binding: CORE-01-OBJ-HUMAN-DECISION_DRAFT
+    gate_uid: CORE-01-GATE-HUMAN-DECISION
+    permission_uid: CORE_CANDIDATE_CREATE
+    default: —
+  - control_uid: CORE-01-FLD-STRUCTURED-DECISION
+    section_uid: CORE-01-SEC-05
+    component_uid: CORE-01-CMP-HUMAN-DECISION
+    visual_uid: CORE-01-VIS-DECISION
+    type: READONLY
+    label: Assistant Structured Decision
+    action_uid: null
+    binding_semantics: DATA_OR_DRAFT_STATE_ONLY
+    data_binding: CORE-01-OBJ-STRUCTURED-DECISION
+    gate_uid: CORE-01-GATE-CANDIDATE-CREATE
+    permission_uid: CORE_USE
+    default: —
+  - control_uid: CORE-01-BTN-CANDIDATE-CREATE
+    section_uid: CORE-01-SEC-05
+    component_uid: CORE-01-CMP-HUMAN-DECISION
+    visual_uid: CORE-01-VIS-DECISION
+    type: PRIMARY_BUTTON
+    label: 建立 Candidate
+    action_uid: CORE-01-ACT-CANDIDATE-CREATE
+    gate_uid: CORE-01-GATE-CANDIDATE-CREATE
+    permission_uid: CORE_CANDIDATE_CREATE
+    default: —
+  - control_uid: CORE-01-BTN-CANDIDATE-CONFIRM
+    section_uid: CORE-01-SEC-05
+    component_uid: CORE-01-CMP-HUMAN-DECISION
+    visual_uid: CORE-01-VIS-DECISION
+    type: PRIMARY_BUTTON
+    label: 確認 Candidate
+    action_uid: CORE-01-ACT-CANDIDATE-ACCEPT
+    gate_uid: CORE-01-GATE-CANDIDATE-DECIDE
+    permission_uid: CORE_CANDIDATE_DECIDE
+    default: —
+  - control_uid: CORE-01-BTN-RETURN-MODIFY
+    section_uid: CORE-01-SEC-05
+    component_uid: CORE-01-CMP-HUMAN-DECISION
+    visual_uid: CORE-01-VIS-DECISION
+    type: SECONDARY_BUTTON
+    label: 返回修改
+    action_uid: CORE-01-ACT-CANDIDATE-RETURN
+    gate_uid: CORE-01-GATE-CANDIDATE-DECIDE
+    permission_uid: CORE_CANDIDATE_DECIDE
+    default: —
+  - control_uid: CORE-01-FLD-RUNTIME-STAGE
+    section_uid: CORE-01-SEC-06
+    component_uid: CORE-01-CMP-RUNTIME
+    visual_uid: CORE-01-VIS-RUNTIME
+    type: READONLY
+    label: Current Runtime Stage
+    action_uid: null
+    binding_semantics: DATA_OR_DRAFT_STATE_ONLY
+    data_binding: CURRENT_RUNTIME_STAGE_STATE_ERROR
+    gate_uid: CORE-01-GATE-PAGE
+    permission_uid: CORE_USE
+    default: —
+  - control_uid: CORE-01-BTN-ATTACHMENT
+    section_uid: CORE-01-SEC-07
+    component_uid: CORE-01-CMP-COMPOSER
+    visual_uid: CORE-01-VIS-COMPOSER
+    type: ICON_BUTTON
+    label: 附件
+    action_uid: CORE-01-ACT-ATTACHMENT
+    gate_uid: CORE-01-GATE-THREAD
+    permission_uid: CORE_USE
+    default: —
+  - control_uid: CORE-01-BTN-REFERENCE
+    section_uid: CORE-01-SEC-07
+    component_uid: CORE-01-CMP-COMPOSER
+    visual_uid: CORE-01-VIS-COMPOSER
+    type: ICON_BUTTON
+    label: 參考資料
+    action_uid: CORE-01-ACT-REFERENCE-ATTACH
+    gate_uid: CORE-01-GATE-THREAD
+    permission_uid: CORE_USE
+    default: —
+  - control_uid: CORE-01-FLD-MESSAGE
+    section_uid: CORE-01-SEC-07
+    component_uid: CORE-01-CMP-COMPOSER
+    visual_uid: CORE-01-VIS-COMPOSER
+    type: MULTILINE_INPUT
+    label: 輸入訊息；@ 叫用 AI / Data / Reference / Assistant
+    action_uid: null
+    binding_semantics: DATA_OR_DRAFT_STATE_ONLY
+    data_binding: COMPOSER_MESSAGE_DRAFT
+    gate_uid: CORE-01-GATE-MESSAGE
+    permission_uid: CORE_CONVERSATION
+    default: —
+  - control_uid: CORE-01-BTN-SEND
+    section_uid: CORE-01-SEC-07
+    component_uid: CORE-01-CMP-COMPOSER
+    visual_uid: CORE-01-VIS-COMPOSER
+    type: PRIMARY_BUTTON
+    label: 傳送
+    action_uid: CORE-01-ACT-SEND
+    gate_uid: CORE-01-GATE-MESSAGE
+    permission_uid: CORE_CONVERSATION
+    default: —
+  - control_uid: CORE-01-BTN-PROJECT-VALIDATE
+    section_uid: CORE-01-SEC-08
+    component_uid: CORE-01-CMP-PROJECT-STATE
+    visual_uid: CORE-01-VIS-RIGHT-CORE
+    type: BUTTON
+    label: 驗證 Project Draft
+    action_uid: CORE-01-ACT-PROJECT-VALIDATE
+    gate_uid: CORE-01-GATE-PROJECT-DRAFT
+    permission_uid: CORE_PROJECT_WRITE
+    default: —
+  - control_uid: CORE-01-BTN-PROJECT-CONFIRM
+    section_uid: CORE-01-SEC-08
+    component_uid: CORE-01-CMP-PROJECT-STATE
+    visual_uid: CORE-01-VIS-RIGHT-CORE
+    type: BUTTON
+    label: 確認 Project Draft
+    action_uid: CORE-01-ACT-PROJECT-CONFIRM
+    gate_uid: CORE-01-GATE-PROJECT-CONFIRM
+    permission_uid: CORE_PROJECT_CONFIRM
+    default: —
+  - control_uid: CORE-01-BTN-STORY-CANDIDATE
+    section_uid: CORE-01-SEC-08
+    component_uid: CORE-01-CMP-PROJECT-STATE
+    visual_uid: CORE-01-VIS-RIGHT-CORE
+    type: BUTTON
+    label: 產生 Story Candidate Set
+    action_uid: CORE-01-ACT-STORY-CANDIDATE
+    gate_uid: CORE-01-GATE-STORY
+    permission_uid: CORE_STORY_WRITE
+    default: —
+  - control_uid: CORE-01-BTN-DNA-LOCK
+    section_uid: CORE-01-SEC-08
+    component_uid: CORE-01-CMP-PROJECT-STATE
+    visual_uid: CORE-01-VIS-RIGHT-CORE
+    type: BUTTON
+    label: 要求 DNA Lock
+    action_uid: CORE-01-ACT-DNA-LOCK-REQUEST
+    gate_uid: CORE-01-GATE-DNA-LOCK
+    permission_uid: CORE_DNA_LOCK
+    default: —
+  - control_uid: CORE-01-BTN-CORE-REVIEW
+    section_uid: CORE-01-SEC-08
+    component_uid: CORE-01-CMP-PROJECT-STATE
+    visual_uid: CORE-01-VIS-RIGHT-CORE
+    type: BUTTON
+    label: 送出 Project Core Review
+    action_uid: CORE-01-ACT-CORE-REVIEW-SUBMIT
+    gate_uid: CORE-01-GATE-CORE-REVIEW
+    permission_uid: CORE_PROJECT_WRITE
+    default: —
+  - control_uid: CORE-01-BTN-PROJECT-LOCK
+    section_uid: CORE-01-SEC-08
+    component_uid: CORE-01-CMP-PROJECT-STATE
+    visual_uid: CORE-01-VIS-RIGHT-CORE
+    type: BUTTON
+    label: 提出 Project Lock
+    action_uid: CORE-01-ACT-MOTHER-LOCK-REQUEST
+    gate_uid: CORE-01-GATE-PROJECT-LOCK-READY
+    permission_uid: CORE_LOCK_REQUEST
+    default: —
+  - control_uid: CORE-01-BTN-BLUEPRINT-CREATE
+    section_uid: CORE-01-SEC-08
+    component_uid: CORE-01-CMP-BLUEPRINT-STATE
+    visual_uid: CORE-01-VIS-RIGHT-CORE
+    type: BUTTON
+    label: 建立 Blueprint
+    action_uid: CORE-01-ACT-BLUEPRINT-CREATE
+    gate_uid: CORE-01-GATE-BLUEPRINT-CREATE
+    permission_uid: CORE_BLUEPRINT_WRITE
+    default: —
+  - control_uid: CORE-01-BTN-BLUEPRINT-VALIDATE
+    section_uid: CORE-01-SEC-08
+    component_uid: CORE-01-CMP-BLUEPRINT-STATE
+    visual_uid: CORE-01-VIS-RIGHT-CORE
+    type: BUTTON
+    label: 驗證 Blueprint
+    action_uid: CORE-01-ACT-BLUEPRINT-VALIDATE
+    gate_uid: CORE-01-GATE-BLUEPRINT-VALIDATE
+    permission_uid: CORE_BLUEPRINT_REVIEW
+    default: —
+  - control_uid: CORE-01-BTN-BLUEPRINT-APPROVE
+    section_uid: CORE-01-SEC-08
+    component_uid: CORE-01-CMP-BLUEPRINT-STATE
+    visual_uid: CORE-01-VIS-RIGHT-CORE
+    type: BUTTON
+    label: 核准 Blueprint
+    action_uid: CORE-01-ACT-BLUEPRINT-APPROVE
+    gate_uid: CORE-01-GATE-BLUEPRINT-APPROVE
+    permission_uid: CORE_BLUEPRINT_APPROVE
+    default: —
+  - control_uid: CORE-01-BTN-CHILD-LOCK
+    section_uid: CORE-01-SEC-08
+    component_uid: CORE-01-CMP-BLUEPRINT-STATE
+    visual_uid: CORE-01-VIS-RIGHT-CORE
+    type: BUTTON
+    label: 提出 Child Lock
+    action_uid: CORE-01-ACT-CHILD-LOCK-REQUEST
+    gate_uid: CORE-01-GATE-CHILD-LOCK
+    permission_uid: CORE_LOCK_REQUEST
+    default: —
+  - control_uid: CORE-01-FLD-TOPIC-SCOPE
+    section_uid: CORE-01-SEC-09
+    component_uid: CORE-01-CMP-TOPIC-PACKAGE
+    visual_uid: CORE-01-VIS-RIGHT-TOPIC
+    type: READONLY
+    label: Topic Production Scope / Contract Refs
+    action_uid: null
+    binding_semantics: DATA_OR_DRAFT_STATE_ONLY
+    data_binding: CORE-01-OBJ-TOPIC-SCOPE
+    gate_uid: CORE-01-GATE-TOPIC-CONTEXT
+    permission_uid: CORE_USE
+    default: —
+  - control_uid: CORE-01-BTN-CANONICAL-SCRIPT
+    section_uid: CORE-01-SEC-09
+    component_uid: CORE-01-CMP-TOPIC-PACKAGE
+    visual_uid: CORE-01-VIS-RIGHT-TOPIC
+    type: BUTTON
+    label: 查看 Canonical Production Script
+    action_uid: CORE-01-ACT-CANONICAL-SCRIPT-VIEW
+    gate_uid: CORE-01-GATE-CANONICAL-SCRIPT
+    permission_uid: CORE_SCRIPT_READ
+    default: —
+  - control_uid: CORE-01-FLD-PACKAGE
+    section_uid: CORE-01-SEC-09
+    component_uid: CORE-01-CMP-TOPIC-PACKAGE
+    visual_uid: CORE-01-VIS-RIGHT-TOPIC
+    type: READONLY
+    label: Production Package / Blueprint / DNA / Script refs
+    action_uid: null
+    binding_semantics: DATA_OR_DRAFT_STATE_ONLY
+    data_binding: CORE-01-OBJ-PRODUCTION-PACKAGE
+    gate_uid: CORE-01-GATE-TOPIC-CONTEXT
+    permission_uid: CORE_USE
+    default: —
+  - control_uid: CORE-01-FLD-DOWNSTREAM-ASSET
+    section_uid: CORE-01-SEC-09
+    component_uid: CORE-01-CMP-DOWNSTREAM
+    visual_uid: CORE-01-VIS-RIGHT-TOPIC
+    type: READONLY
+    label: ASSET Boundary Readiness
+    action_uid: null
+    binding_semantics: DATA_OR_DRAFT_STATE_ONLY
+    data_binding: CORE-01-OBJ-DOWNSTREAM-READINESS.ASSET
+    gate_uid: CORE-01-GATE-TOPIC-CONTEXT
+    permission_uid: CORE_USE
+    default: —
+  - control_uid: CORE-01-FLD-DOWNSTREAM-VIDEO
+    section_uid: CORE-01-SEC-09
+    component_uid: CORE-01-CMP-DOWNSTREAM
+    visual_uid: CORE-01-VIS-RIGHT-TOPIC
+    type: READONLY
+    label: VIDEO Boundary Readiness
+    action_uid: null
+    binding_semantics: DATA_OR_DRAFT_STATE_ONLY
+    data_binding: CORE-01-OBJ-DOWNSTREAM-READINESS.VIDEO
+    gate_uid: CORE-01-GATE-TOPIC-CONTEXT
+    permission_uid: CORE_USE
+    default: —
+  - control_uid: CORE-01-FLD-DOWNSTREAM-EDIT
+    section_uid: CORE-01-SEC-09
+    component_uid: CORE-01-CMP-DOWNSTREAM
+    visual_uid: CORE-01-VIS-RIGHT-TOPIC
+    type: READONLY
+    label: EDIT Boundary Readiness
+    action_uid: null
+    binding_semantics: DATA_OR_DRAFT_STATE_ONLY
+    data_binding: CORE-01-OBJ-DOWNSTREAM-READINESS.EDIT
+    gate_uid: CORE-01-GATE-TOPIC-CONTEXT
+    permission_uid: CORE_USE
+    default: —
+  - control_uid: CORE-01-BTN-CANDIDATE-COMPARE
+    section_uid: CORE-01-SEC-10
+    component_uid: CORE-01-CMP-VERSION
+    visual_uid: CORE-01-VIS-RIGHT-VERSION
+    type: BUTTON
+    label: 比較 Candidate
+    action_uid: CORE-01-ACT-CANDIDATE-COMPARE
+    gate_uid: CORE-01-GATE-CANDIDATE-DECIDE
+    permission_uid: CORE_USE
+    default: —
+  - control_uid: CORE-01-FLD-VERSION-STATE
+    section_uid: CORE-01-SEC-10
+    component_uid: CORE-01-CMP-VERSION
+    visual_uid: CORE-01-VIS-RIGHT-VERSION
+    type: READONLY
+    label: Current Candidate / Confirmed Version
+    action_uid: null
+    binding_semantics: DATA_OR_DRAFT_STATE_ONLY
+    data_binding: CORE-01-OBJ-CANDIDATE_OR_CONFIRMED_VERSION
+    gate_uid: CORE-01-GATE-PAGE
+    permission_uid: CORE_USE
+    default: —
+  - control_uid: CORE-01-FLD-LOCK-REVIEW
+    section_uid: CORE-01-SEC-10
+    component_uid: CORE-01-CMP-LOCK-REVIEW
+    visual_uid: CORE-01-VIS-RIGHT-VERSION
+    type: READONLY
+    label: Lock Review Status / Block Reason
+    action_uid: null
+    binding_semantics: DATA_OR_DRAFT_STATE_ONLY
+    data_binding: CORE-01-OBJ-LOCK-REVIEW
+    gate_uid: CORE-01-GATE-PAGE
+    permission_uid: CORE_USE
+    default: —
+status: CURRENT_CLASSIFICATION
+content_hash: 33b9165fa50a75d2b4539ec248683e53e67a5cca61db1793c91e99c23918af64

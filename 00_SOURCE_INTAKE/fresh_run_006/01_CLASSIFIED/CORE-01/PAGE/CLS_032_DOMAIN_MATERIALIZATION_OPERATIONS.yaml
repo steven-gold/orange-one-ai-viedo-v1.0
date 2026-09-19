@@ -1,0 +1,109 @@
+artifact_uid: CLS-CORE-01-DOMAIN-MATERIALIZATION-OPERATIONS-032
+page_uid: CORE-01
+planning_domain: PAGE_CONSTRUCTION
+responsibility_uid: DOMAIN_MATERIALIZATION_OPERATIONS
+responsibility_class: DOMAIN_MATERIALIZATION_OPERATIONS
+responsibilities:
+- DOMAIN_MATERIALIZATION_OPERATIONS
+canonical_owner_uid: OWNER-CLS-CORE-01-DOMAIN-MATERIALIZATION-OPERATIONS-032
+target_path: 01_CLASSIFIED/CORE-01/PAGE/CLS_032_DOMAIN_MATERIALIZATION_OPERATIONS.yaml
+lifecycle_uid: LC-DOMAIN-MATERIALIZATION-OPERATIONS
+approval_scope_uid: AP-DOMAIN-MATERIALIZATION-OPERATIONS
+version_scope_uid: VER-DOMAIN-MATERIALIZATION-OPERATIONS
+test_scope_uid: TEST-DOMAIN-MATERIALIZATION-OPERATIONS
+source_lineage:
+- source_uid: SRC-CORE01-PAGE
+  source_segment_uids:
+  - SEG-SRC-CORE01-PAGE-032
+facts:
+- source_ref: $.domain_materialization_operations
+  value:
+  - operation_uid: CORE-01-DOMAIN-OP-MATERIALIZE-STORY-VERSION
+    work_item: STORY
+    trigger: ACCEPTED_IMMUTABLE_CANDIDATE_FOR_STORY
+    runtime_owner: CORE
+    persistence_owner: CORE
+    required_inputs:
+    - project_ref
+    - accepted_candidate_ref
+    - exact_base_version_ref_if_revision
+    validation: candidate lineage and Project context exact; no overwrite
+    audit_event_uid: core.story.version.confirmed
+    failure_state: BLOCKED
+    recovery: preserve candidate and conversation; repair exact lineage then retry domain materialization
+    resulting_state: CONFIRMED_STORY_VERSION
+    transport_surface: EXISTING_DOMAIN_HANDLER_NOT_PAGE_LOCAL_API
+  - operation_uid: CORE-01-DOMAIN-OP-MATERIALIZE-CHAPTER-VERSION
+    work_item: CHAPTER
+    trigger: ACCEPTED_IMMUTABLE_CANDIDATE_FOR_CHAPTER
+    runtime_owner: CORE
+    persistence_owner: CORE
+    required_inputs:
+    - project_ref
+    - confirmed_story_ref
+    - accepted_candidate_ref
+    - exact_base_version_ref_if_revision
+    validation: confirmed Story dependency and candidate lineage exact; no overwrite
+    audit_event_uid: core.chapter.version.confirmed
+    failure_state: BLOCKED
+    recovery: preserve candidate and conversation; repair Story/base-version lineage then retry domain materialization
+    resulting_state: CONFIRMED_CHAPTER_VERSION
+    transport_surface: EXISTING_DOMAIN_HANDLER_NOT_PAGE_LOCAL_API
+  - operation_uid: CORE-01-DOMAIN-OP-MATERIALIZE-WORLD-VERSION
+    work_item: WORLD_SETTING
+    trigger: ACCEPTED_IMMUTABLE_CANDIDATE_FOR_WORLD_SETTING
+    runtime_owner: CORE
+    persistence_owner: CORE
+    required_inputs:
+    - project_ref
+    - confirmed_story_ref
+    - confirmed_chapter_ref
+    - accepted_candidate_ref
+    - exact_base_version_ref_if_revision
+    validation: confirmed Story/Chapter dependencies and candidate lineage exact; no overwrite
+    audit_event_uid: core.world.version.confirmed
+    failure_state: BLOCKED
+    recovery: preserve candidate and conversation; repair upstream/base-version lineage then retry domain materialization
+    resulting_state: CONFIRMED_WORLD_VERSION
+    transport_surface: EXISTING_DOMAIN_HANDLER_NOT_PAGE_LOCAL_API
+  - operation_uid: CORE-01-DOMAIN-OP-MATERIALIZE-TOPIC-SCOPE
+    work_item: TOPIC_SCOPE
+    trigger: ACCEPTED_IMMUTABLE_CANDIDATE_FOR_TOPIC_SCOPE
+    runtime_owner: CORE Topic
+    persistence_owner: CORE Topic
+    required_inputs:
+    - project_ref
+    - topic_ref
+    - confirmed_project_canon_refs
+    - blueprint_ref
+    - dna_refs
+    - accepted_candidate_ref
+    - exact_base_version_ref_if_revision
+    validation: Topic belongs to exact Project; Project Canon/Blueprint/DNA dependencies exact; no overwrite
+    audit_event_uid: core.topic_scope.version.confirmed
+    failure_state: BLOCKED
+    recovery: preserve candidate and conversation; repair exact Topic/upstream lineage then retry domain materialization
+    resulting_state: CONFIRMED_TOPIC_PRODUCTION_SCOPE
+    transport_surface: EXISTING_DOMAIN_HANDLER_NOT_PAGE_LOCAL_API
+  - operation_uid: CORE-01-DOMAIN-OP-MATERIALIZE-CANONICAL-SCRIPT
+    work_item: PRODUCTION_SCRIPT
+    trigger: ACCEPTED_IMMUTABLE_CANDIDATE_FOR_PRODUCTION_SCRIPT
+    runtime_owner: CORE Script System
+    persistence_owner: CORE Script System
+    required_inputs:
+    - project_ref
+    - topic_ref
+    - project_blueprint_ref
+    - topic_production_scope_ref
+    - project_canon_refs
+    - dna_refs
+    - accepted_candidate_ref
+    - exact_base_version_ref_if_revision
+    validation: CORE-01-CONTRACT-TOPIC-CANONICAL-PRODUCTION-SCRIPT
+    audit_event_uid: core.canonical_script.version.confirmed
+    failure_state: BLOCKED
+    recovery: preserve candidate and source bindings; repair exact lineage then retry existing CORE Script System materialization
+    resulting_state: CONFIRMED_CANONICAL_PRODUCTION_SCRIPT
+    transport_surface: EXISTING_CORE_SCRIPT_DOMAIN_HANDLER_NOT_PAGE_LOCAL_API
+status: CURRENT_CLASSIFICATION
+content_hash: 057faf4cc83d68d8ef6e039c10b9e547a1fc532bb79d836e767903e2d62ade24

@@ -1,0 +1,723 @@
+artifact_uid: CLS-CORE-01-REGISTRIES-INTEGRATION-PORTS-022
+page_uid: CORE-01
+planning_domain: PAGE_CONSTRUCTION
+responsibility_uid: REGISTRIES_INTEGRATION_PORTS
+responsibility_class: REGISTRIES_INTEGRATION_PORTS
+responsibilities:
+- REGISTRIES_INTEGRATION_PORTS
+canonical_owner_uid: OWNER-CLS-CORE-01-REGISTRIES-INTEGRATION-PORTS-022
+target_path: 01_CLASSIFIED/CORE-01/PAGE/CLS_022_REGISTRIES_INTEGRATION_PORTS.yaml
+lifecycle_uid: LC-REGISTRIES-INTEGRATION-PORTS
+approval_scope_uid: AP-REGISTRIES-INTEGRATION-PORTS
+version_scope_uid: VER-REGISTRIES-INTEGRATION-PORTS
+test_scope_uid: TEST-REGISTRIES-INTEGRATION-PORTS
+source_lineage:
+- source_uid: SRC-CORE01-PAGE
+  source_segment_uids:
+  - SEG-SRC-CORE01-PAGE-022
+facts:
+- source_ref: $.registries.integration_ports
+  value:
+  - port_uid: CORE-01-PORT-PROJECTION
+    boundary: Read Page Projection
+    operation: getUiProjection
+    method_path: GET /v1/ui-projections/{pageUid}
+    permission: page.view
+    state_event: read only
+    exposure: All page state/read cards; no invented data
+  - port_uid: CORE-01-PORT-PROJECT-CREATE
+    boundary: Project Draft
+    operation: createProjectDraft
+    method_path: POST /v1/projects/drafts
+    permission: entity.write
+    state_event: NONE | project.draft.created
+    exposure: CORE-01-ACT-PROJECT-CREATE
+    request_schema:
+      schema_uid: CORE01-SCHEMA-PROJECT-DRAFT-CREATE
+      path_params: []
+      required:
+      - project_name
+      optional:
+      - source_refs
+      fields:
+        project_name:
+          min_length: 1
+          source: USER_INPUT_TO_PROJECT_DRAFT
+          kind: scalar
+          scalar_type: string
+        source_refs:
+          items:
+            kind: opaque_ref
+            source_authority_term: source refs
+            no_new_entity: true
+          default: []
+          rule: REFERENCES_ONLY_NO_INLINE_AUTHORITY_COPY
+          kind: array
+      server_derived:
+      - project_id
+      - project_version_id
+      - status
+      - source_hash
+      rationale: Create a draft, not a confirmed Project. Keep creation payload minimal; IDs/version/status/hash remain runtime-owned.
+  - port_uid: CORE-01-PORT-PROJECT-VALIDATE
+    boundary: Project Draft
+    operation: validateProjectDraft
+    method_path: POST /v1/projects/drafts/{projectVersionId}/validate
+    permission: core.project.read
+    state_event: DRAFT→DRAFT | project.draft.validated
+    exposure: CORE-01-ACT-PROJECT-VALIDATE
+    request_schema:
+      schema_uid: CORE01-SCHEMA-PROJECT-DRAFT-VALIDATE
+      path_params:
+      - projectVersionId
+      required:
+      - expected_version
+      - expected_source_hash
+      optional: []
+      fields:
+        expected_version:
+          minimum: 1
+          role: OPTIMISTIC_CONCURRENCY_GUARD
+          kind: scalar
+          scalar_type: integer
+        expected_source_hash:
+          min_length: 1
+          role: EXACT_DRAFT_IDENTITY_GUARD
+          kind: scalar
+          scalar_type: string
+      server_derived:
+      - validation_result
+      - validation_errors
+      rationale: Validation operates on the exact existing ProjectDraftVersion and must not invent or mutate draft fields.
+  - port_uid: CORE-01-PORT-PROJECT-CONFIRM
+    boundary: Project Draft
+    operation: confirmProjectDraft
+    method_path: POST /v1/projects/drafts/{id}/confirm
+    permission: core.project.confirm
+    state_event: DRAFT→CORE_MODELING | project.created timing governed by runtime/pending decision
+    exposure: CORE-01-ACT-PROJECT-CONFIRM; do not duplicate event
+    request_schema:
+      schema_uid: CORE01-SCHEMA-PROJECT-DRAFT-CONFIRM
+      path_params:
+      - id
+      required:
+      - expected_version
+      - expected_source_hash
+      - adopt_refs
+      optional: []
+      fields:
+        expected_version:
+          minimum: 1
+          kind: scalar
+          scalar_type: integer
+        expected_source_hash:
+          min_length: 1
+          kind: scalar
+          scalar_type: string
+        adopt_refs:
+          items:
+            kind: opaque_ref
+            source_authority_term: exact adopt refs required by confirmProjectDraft
+            no_new_entity: true
+          min_items: 1
+          rule: EXACT_EXISTING_REFS_ONLY
+          kind: array
+      server_derived:
+      - confirmed_project_version
+      - confirmation_event_timing
+      rationale: 'Directly follows Current success contract: exact adopt refs/version, with runtime-owned event timing.'
+  - port_uid: CORE-01-PORT-STORY-CANDIDATE
+    boundary: Story
+    operation: createStoryCandidateSet
+    method_path: POST /v1/projects/{projectId}/story-candidate-sets
+    permission: core.story.write
+    state_event: DRAFT→GENERATING | story.candidate_set.created
+    exposure: CORE-01-ACT-STORY-CANDIDATE
+    request_schema:
+      schema_uid: CORE01-SCHEMA-STORY-CANDIDATE-SET-CREATE
+      path_params:
+      - projectId
+      required:
+      - project_ref
+      - source_decision_ref
+      - canon_refs
+      - context_ref
+      optional: []
+      fields:
+        project_ref:
+          kind: object_ref
+          object_uid: CORE-01-REF-PROJECT
+          no_new_entity: true
+        source_decision_ref:
+          kind: object_ref
+          object_uid: CORE-01-OBJ-STRUCTURED-DECISION
+          no_new_entity: true
+        canon_refs:
+          items:
+            kind: object_ref
+            object_uid: CORE-01-REF-CANON
+            no_new_entity: true
+          kind: array
+        context_ref:
+          kind: object_ref
+          object_uid: CORE-01-OBJ-CONTEXT
+          no_new_entity: true
+      server_derived:
+      - candidate_set_id
+      - candidate_refs
+      - candidate_set_hash
+      rationale: Preserves current Project/canon context and keeps generated candidates downstream of a structured decision.
+  - port_uid: CORE-01-PORT-THREAD-CREATE
+    boundary: Conversation
+    operation: createConversationThread
+    method_path: POST /v1/projects/{projectId}/conversations
+    permission: conversation.write
+    state_event: NONE→DRAFT | conversation.thread.created
+    exposure: CORE-01-ACT-THREAD-CREATE
+    request_schema:
+      schema_uid: CORE01-SCHEMA-CONVERSATION-THREAD-CREATE
+      path_params:
+      - projectId
+      required:
+      - work_item_uid
+      optional:
+      - topic_ref
+      - parent_thread_ref
+      - source_message_ref
+      fields:
+        work_item_uid:
+          min_length: 1
+          rule: CURRENT_MODE_WORK_ITEM_ONLY
+          kind: scalar
+          scalar_type: string
+        topic_ref:
+          nullable: true
+          rule: REQUIRED_IN_TOPIC_MODE
+          kind: object_ref
+          object_uid: CORE-01-REF-TOPIC
+          no_new_entity: true
+        parent_thread_ref:
+          nullable: true
+          kind: object_ref
+          object_uid: CORE-01-OBJ-THREAD
+          no_new_entity: true
+        source_message_ref:
+          nullable: true
+          rule: USED_FOR_BRANCH_RELATION
+          kind: object_ref
+          object_uid: CORE-01-OBJ-MESSAGE
+          no_new_entity: true
+      server_derived:
+      - thread_id
+      - history_scope
+      rationale: Matches ConversationThread required content and existing branch payload relation without creating a second conversation API.
+  - port_uid: CORE-01-PORT-MESSAGE-SEND
+    boundary: Conversation
+    operation: sendConversationMessage
+    method_path: POST /v1/conversations/{conversationId}/messages
+    permission: conversation.write
+    state_event: Conversation ACTIVE→ACTIVE; Core DRAFT→RUNNING | conversation.message.sent
+    exposure: CORE-01-ACT-SEND
+    request_schema:
+      schema_uid: CORE01-SCHEMA-CONVERSATION-MESSAGE-SEND
+      path_params:
+      - conversationId
+      required:
+      - message_text
+      - work_item_uid
+      - context_hash
+      optional:
+      - attachment_refs
+      - reference_refs
+      - mention_refs
+      - source_message_ref
+      - instruction_mode
+      fields:
+        message_text:
+          min_length: 1
+          kind: scalar
+          scalar_type: string
+        work_item_uid:
+          min_length: 1
+          kind: scalar
+          scalar_type: string
+        context_hash:
+          min_length: 1
+          kind: scalar
+          scalar_type: string
+        attachment_refs:
+          items:
+            kind: opaque_ref
+            source_authority_term: attachment_ref returned by the global attachment/reference boundary
+            no_new_entity: true
+          default: []
+          kind: array
+        reference_refs:
+          items:
+            kind: opaque_ref
+            source_authority_term: reference refs
+            no_new_entity: true
+          default: []
+          kind: array
+        mention_refs:
+          items:
+            kind: opaque_ref
+            source_authority_term: '@ parser target ref'
+            no_new_entity: true
+          default: []
+          kind: array
+        source_message_ref:
+          nullable: true
+          kind: object_ref
+          object_uid: CORE-01-OBJ-MESSAGE
+          no_new_entity: true
+        instruction_mode:
+          values:
+          - NORMAL
+          - CONTINUE
+          - ANALYZE
+          - QUOTE
+          default: NORMAL
+          kind: enum
+      forbidden_fields:
+      - provider
+      - model
+      - api_key
+      server_derived:
+      - assigned_ai_set
+      - provider_route
+      - model_route
+      - message_id
+      rationale: Composer owns message/reference intent; provider/model selection remains shared Router-owned and read-only to CORE-01.
+  - port_uid: CORE-01-PORT-CANDIDATE-CREATE
+    boundary: Candidate
+    operation: createCandidate
+    method_path: POST /v1/candidates
+    permission: candidate.create
+    state_event: '*→CANDIDATE | candidate.created'
+    exposure: CORE-01-ACT-CANDIDATE-CREATE
+    request_schema:
+      schema_uid: CORE01-SCHEMA-CANDIDATE-CREATE
+      path_params: []
+      required:
+      - target_ref
+      - human_decision_ref
+      - structured_decision_ref
+      - source_response_ids
+      - work_item_uid
+      optional:
+      - parent_candidate_ref
+      fields:
+        target_ref:
+          kind: opaque_ref
+          source_authority_term: target ref
+          no_new_entity: true
+        human_decision_ref:
+          kind: object_ref
+          object_uid: CORE-01-OBJ-HUMAN-DECISION
+          no_new_entity: true
+        structured_decision_ref:
+          kind: object_ref
+          object_uid: CORE-01-OBJ-STRUCTURED-DECISION
+          no_new_entity: true
+        source_response_ids:
+          items:
+            kind: scalar
+            scalar_type: string
+          min_items: 1
+          kind: array
+        work_item_uid:
+          min_length: 1
+          kind: scalar
+          scalar_type: string
+        parent_candidate_ref:
+          nullable: true
+          kind: object_ref
+          object_uid: CORE-01-OBJ-CANDIDATE
+          no_new_entity: true
+      server_derived:
+      - candidate_id
+      - candidate_version
+      - candidate_hash
+      - immutable_created_at
+      rationale: Candidate must be created only from confirmed human decision + structured restatement + exact source refs/version lineage.
+  - port_uid: CORE-01-PORT-CANDIDATE-COMPARE
+    boundary: Candidate
+    operation: compareCandidates
+    method_path: GET /v1/candidates/compare
+    permission: candidate.read
+    state_event: read only
+    exposure: CORE-01-ACT-CANDIDATE-COMPARE
+  - port_uid: CORE-01-PORT-CANDIDATE-DECIDE
+    boundary: Candidate
+    operation: decideCandidate
+    method_path: POST /v1/candidates/{id}/decision
+    permission: candidate.decide
+    state_event: CANDIDATE→ACCEPTED/REJECTED | candidate.decided
+    exposure: CORE-01-ACT-CANDIDATE-ACCEPT / RETURN
+    request_schema:
+      schema_uid: CORE01-SCHEMA-CANDIDATE-DECIDE
+      path_params:
+      - id
+      required:
+      - decision
+      - reason
+      - evidence_refs
+      - expected_candidate_hash
+      optional: []
+      fields:
+        decision:
+          values:
+          - ACCEPTED
+          kind: enum
+        reason:
+          min_length: 1
+          kind: scalar
+          scalar_type: string
+        evidence_refs:
+          items:
+            kind: opaque_ref
+            source_authority_term: evidence refs
+            no_new_entity: true
+          kind: array
+        expected_candidate_hash:
+          min_length: 1
+          kind: scalar
+          scalar_type: string
+      server_derived:
+      - decision_id
+      - decision_timestamp
+      rationale: Matches Current HumanDecision content and existing shared decision port; RETURN remains the existing sibling action using the same port.
+  - port_uid: CORE-01-PORT-DNA-LOCK
+    boundary: DNA Lock Review
+    operation: requestDNALock
+    method_path: POST /v1/state-commands/dnaversion/requestdnalock
+    permission: dna.lock.request
+    state_event: CANDIDATE→REVIEW_REQUIRED | dna.lock.requested
+    exposure: CORE-01-ACT-DNA-LOCK-REQUEST
+    request_schema:
+      schema_uid: CORE01-SCHEMA-DNA-LOCK-REQUEST
+      path_params: []
+      required:
+      - dna_version_ref
+      - expected_hash
+      - review_contract_ref
+      - evidence_refs
+      optional: []
+      fields:
+        dna_version_ref:
+          kind: object_ref
+          object_uid: CORE-01-REF-DNA
+          no_new_entity: true
+        expected_hash:
+          min_length: 1
+          kind: scalar
+          scalar_type: string
+        review_contract_ref:
+          rule: MUST_RESOLVE_REVIEWER_PATH_NO_CLIENT_FABRICATION
+          kind: opaque_ref
+          source_authority_term: resolvable LockReview evidence/reviewer-path/expected-hash contract
+          no_new_entity: true
+        evidence_refs:
+          items:
+            kind: opaque_ref
+            source_authority_term: evidence refs
+            no_new_entity: true
+          kind: array
+      server_derived:
+      - lock_review_id
+      - reviewer_path
+      - review_status
+      rationale: Request only; reviewer/evidence routing must resolve through the review contract rather than client-supplied identities.
+  - port_uid: CORE-01-PORT-CORE-REVIEW
+    boundary: Project Core Review
+    operation: submitCoreReview
+    method_path: POST /v1/state-commands/projectversion/submitcorereview
+    permission: core.project.write
+    state_event: CORE_MODELING→CORE_REVIEW | project.core_review_submitted
+    exposure: CORE-01-ACT-CORE-REVIEW-SUBMIT
+    request_schema:
+      schema_uid: CORE01-SCHEMA-PROJECT-CORE-REVIEW-SUBMIT
+      path_params: []
+      required:
+      - project_version_ref
+      - criteria_version_ref
+      - evidence_refs
+      - expected_hash
+      optional: []
+      fields:
+        project_version_ref:
+          kind: object_ref
+          object_uid: CORE-01-REF-PROJECT
+          no_new_entity: true
+        criteria_version_ref:
+          kind: opaque_ref
+          source_authority_term: approved CORE criteria version
+          no_new_entity: true
+        evidence_refs:
+          items:
+            kind: opaque_ref
+            source_authority_term: evidence refs
+            no_new_entity: true
+          kind: array
+        expected_hash:
+          min_length: 1
+          kind: scalar
+          scalar_type: string
+      server_derived:
+      - review_request_id
+      - review_status
+      rationale: Current success contract requires exact ProjectVersion; evaluation evidence and approved criteria remain explicit.
+  - port_uid: CORE-01-PORT-MOTHER-LOCK
+    boundary: Project Lock Review
+    operation: requestMotherLock
+    method_path: POST /v1/locks/mother-requests
+    permission: core.lock.request
+    state_event: READY_FOR_MOTHER_REVIEW→IN_REVIEW | lock.review_requested
+    exposure: CORE-01-ACT-MOTHER-LOCK-REQUEST; unresolved LockReview evidence/reviewer contract = BLOCK
+    request_schema:
+      schema_uid: CORE01-SCHEMA-MOTHER-LOCK-REQUEST
+      path_params: []
+      required:
+      - project_version_ref
+      - expected_hash
+      - review_contract_ref
+      - evidence_refs
+      optional: []
+      fields:
+        project_version_ref:
+          kind: object_ref
+          object_uid: CORE-01-REF-PROJECT
+          no_new_entity: true
+        expected_hash:
+          min_length: 1
+          kind: scalar
+          scalar_type: string
+        review_contract_ref:
+          rule: MUST_RESOLVE_REVIEWER_PATH_NO_CLIENT_FABRICATION
+          kind: opaque_ref
+          source_authority_term: resolvable LockReview evidence/reviewer-path/expected-hash contract
+          no_new_entity: true
+        evidence_refs:
+          items:
+            kind: opaque_ref
+            source_authority_term: evidence refs
+            no_new_entity: true
+          kind: array
+      server_derived:
+      - lock_review_id
+      - reviewer_path
+      - review_status
+      rationale: Preserves the existing fail-closed LockReview rule and removes any need to fabricate reviewer/evidence identity.
+  - port_uid: CORE-01-PORT-TOPIC-CREATE
+    boundary: Topic
+    operation: createTopic
+    method_path: POST /v1/projects/{projectId}/topics
+    permission: entity.write
+    state_event: business action | topic.created
+    exposure: CORE-01-ACT-TOPIC-CREATE; valid Topic draft lineage required; no fabricated fields
+    request_schema:
+      schema_uid: CORE01-SCHEMA-TOPIC-CREATE
+      path_params:
+      - projectId
+      required:
+      - topic_draft_contract_ref
+      - expected_project_version
+      optional:
+      - source_candidate_ref
+      fields:
+        topic_draft_contract_ref:
+          rule: MUST_RESOLVE_TOPIC_CODE_BOUNDARY_BRIDGE_FROM_VALID_LINEAGE
+          kind: opaque_ref
+          source_authority_term: valid Topic draft/contract lineage
+          no_new_entity: true
+        expected_project_version:
+          minimum: 1
+          kind: scalar
+          scalar_type: integer
+        source_candidate_ref:
+          nullable: true
+          kind: object_ref
+          object_uid: CORE-01-OBJ-CANDIDATE
+          no_new_entity: true
+      server_derived:
+      - topic_id
+      - topic_version
+      - topic_hash
+      - topic_status
+      rationale: CORE-01 must not fabricate topic_code/boundary/bridge. Payload points to a governed Topic draft/contract lineage instead.
+  - port_uid: CORE-01-PORT-BLUEPRINT-CREATE
+    boundary: Blueprint
+    operation: createBlueprint
+    method_path: POST /v1/topics/{id}/blueprints
+    permission: core.blueprint.write
+    state_event: READY_FOR_BLUEPRINT→BLUEPRINT_DRAFT | blueprint.created
+    exposure: CORE-01-ACT-BLUEPRINT-CREATE
+    request_schema:
+      schema_uid: CORE01-SCHEMA-BLUEPRINT-CREATE
+      path_params:
+      - id
+      required:
+      - project_ref
+      - topic_ref
+      - topic_production_scope_ref
+      - source_candidate_ref
+      optional:
+      - canon_refs
+      - dna_refs
+      fields:
+        project_ref:
+          kind: object_ref
+          object_uid: CORE-01-REF-PROJECT
+          no_new_entity: true
+        topic_ref:
+          kind: object_ref
+          object_uid: CORE-01-REF-TOPIC
+          no_new_entity: true
+        topic_production_scope_ref:
+          kind: object_ref
+          object_uid: CORE-01-OBJ-TOPIC-SCOPE
+          no_new_entity: true
+        source_candidate_ref:
+          kind: object_ref
+          object_uid: CORE-01-OBJ-CANDIDATE
+          no_new_entity: true
+        canon_refs:
+          items:
+            kind: object_ref
+            object_uid: CORE-01-REF-CANON
+            no_new_entity: true
+          default: []
+          kind: array
+        dna_refs:
+          items:
+            kind: object_ref
+            object_uid: CORE-01-REF-DNA
+            no_new_entity: true
+          default: []
+          kind: array
+      server_derived:
+      - blueprint_id
+      - blueprint_version
+      - blueprint_hash
+      - blueprint_state
+      rationale: Blueprint draft is derived from exact Topic/Project lineage and confirmed candidate context; no provider-specific fields.
+  - port_uid: CORE-01-PORT-BLUEPRINT-VALIDATE
+    boundary: Blueprint
+    operation: validateBlueprint
+    method_path: POST /v1/blueprints/{id}/validate
+    permission: core.blueprint.review
+    state_event: BLUEPRINT_DRAFT→BLUEPRINT_REVIEW | blueprint.validated
+    exposure: CORE-01-ACT-BLUEPRINT-VALIDATE
+    request_schema:
+      schema_uid: CORE01-SCHEMA-BLUEPRINT-VALIDATE
+      path_params:
+      - id
+      required:
+      - expected_blueprint_version
+      - expected_hash
+      optional: []
+      fields:
+        expected_blueprint_version:
+          minimum: 1
+          kind: scalar
+          scalar_type: integer
+        expected_hash:
+          min_length: 1
+          kind: scalar
+          scalar_type: string
+      server_derived:
+      - validation_result
+      - review_state
+      rationale: Validation is identity/concurrency guarded and does not alter blueprint content.
+  - port_uid: CORE-01-PORT-BLUEPRINT-APPROVE
+    boundary: Blueprint
+    operation: approveBlueprint
+    method_path: POST /v1/blueprints/{id}/approve
+    permission: core.blueprint.approve
+    state_event: BLUEPRINT_REVIEW→READY_FOR_CHILD_REVIEW | blueprint.approved
+    exposure: CORE-01-ACT-BLUEPRINT-APPROVE
+    request_schema:
+      schema_uid: CORE01-SCHEMA-BLUEPRINT-APPROVE
+      path_params:
+      - id
+      required:
+      - expected_blueprint_version
+      - expected_hash
+      - approval_evidence_refs
+      optional: []
+      fields:
+        expected_blueprint_version:
+          minimum: 1
+          kind: scalar
+          scalar_type: integer
+        expected_hash:
+          min_length: 1
+          kind: scalar
+          scalar_type: string
+        approval_evidence_refs:
+          items:
+            kind: opaque_ref
+            source_authority_term: evidence refs
+            no_new_entity: true
+          min_items: 1
+          kind: array
+      server_derived:
+      - approved_version_ref
+      - child_review_readiness
+      rationale: Approval acts on exact reviewed version and carries evidence; resulting readiness remains runtime-owned.
+  - port_uid: CORE-01-PORT-CHILD-LOCK
+    boundary: Blueprint/Topic Package Lock Review
+    operation: requestChildLock
+    method_path: POST /v1/locks/child-requests
+    permission: core.lock.request
+    state_event: READY_FOR_CHILD_REVIEW→IN_REVIEW | lock.review_requested
+    exposure: CORE-01-ACT-CHILD-LOCK-REQUEST; no hidden reviewer/exception
+    request_schema:
+      schema_uid: CORE01-SCHEMA-CHILD-LOCK-REQUEST
+      path_params: []
+      required:
+      - blueprint_version_ref
+      - topic_ref
+      - expected_hash
+      - review_contract_ref
+      - evidence_refs
+      optional: []
+      fields:
+        blueprint_version_ref:
+          kind: object_ref
+          object_uid: CORE-01-REF-BLUEPRINT
+          no_new_entity: true
+        topic_ref:
+          kind: object_ref
+          object_uid: CORE-01-REF-TOPIC
+          no_new_entity: true
+        expected_hash:
+          min_length: 1
+          kind: scalar
+          scalar_type: string
+        review_contract_ref:
+          rule: MUST_RESOLVE_REVIEWER_PATH_NO_CLIENT_FABRICATION
+          kind: opaque_ref
+          source_authority_term: resolvable LockReview evidence/reviewer-path/expected-hash contract
+          no_new_entity: true
+        evidence_refs:
+          items:
+            kind: opaque_ref
+            source_authority_term: evidence refs
+            no_new_entity: true
+          kind: array
+      server_derived:
+      - lock_review_id
+      - reviewer_path
+      - review_status
+      rationale: Child lock is a review request only; it cannot fabricate reviewer path, evidence, exception, or final lock.
+  - port_uid: CORE-01-PORT-CANONICAL-SCRIPT
+    boundary: Canonical Production Script
+    operation: getCanonicalScript
+    method_path: GET /v1/topics/{id}/scripts/canonical
+    permission: core.script.read
+    state_event: read only
+    exposure: CORE-01-ACT-CANONICAL-SCRIPT-VIEW
+status: CURRENT_CLASSIFICATION
+content_hash: f664301ad9269472a522df29e156d18f5bc2cb5e5d470a6560c965a25b01a6dd

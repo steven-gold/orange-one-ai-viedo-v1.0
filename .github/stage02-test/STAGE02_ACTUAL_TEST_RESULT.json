@@ -54,22 +54,12 @@
     "CORE-01": {
       "ai_interaction_profile_active": true,
       "automatic_completion_scope": "PRESENT",
-      "blueprint_uid": "BP-CORE-01-PAGE-FRESH-005",
+      "blueprint_uid": "BP-CORE-01-PAGE-FRESH-006",
       "closure_blocker_count": 0,
       "closure_blockers": [],
       "effective_contract_input": {
-        "applied": true,
-        "approval_evidence_ref": "governance/test/stage02/STAGE02_CORE01_FRESH_DESIGN_CONTRACT_APPROVAL_R3.yaml",
-        "canonical_owner_ref": "00_SOURCE_INTAKE/fresh_run_005/04_PAGE_FUNCTIONAL_CONTRACT/CORE-01/FUNCTIONAL_CHAIN_SPEC.yaml",
-        "overlay_registry_keys": [
-          "actions",
-          "controls",
-          "stages",
-          "stage_transitions",
-          "events",
-          "integration_ports"
-        ],
-        "raw_source_mutated": false
+        "applied": false,
+        "reason": "NO_APPROVED_CANONICAL_MATERIALIZATION"
       },
       "function_admission_scorecard": "PRESENT",
       "functional_chain_fresh_scan": {
@@ -92,10 +82,12 @@
           "stages": 5
         }
       },
+      "planning_baseline_completeness": "PASS",
       "unresolved_external_authority_ref_count": 7
     }
   },
   "physical_stage2_product_artifact_root_present": true,
+  "planning_baseline_completeness": "PASS",
   "preserved_external_authorities": {
     "GAP-EXT-3DD576F9FA3A": {
       "authority_ref": "GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY@V1.0",
@@ -156,7 +148,7 @@
   "result": "PASS",
   "schema_version": 1,
   "scope_mode": "ALL_REQUIRED_PAGES",
-  "source_head_sha": "c144d88b144deaa967be26bb37db78ba9bdc688c",
+  "source_head_sha": "59fe325a86b85dfc58ffc07e00b4bf904fcaae3f",
   "stage_entry_gate": "PASS",
   "stage_exit_allowed": true,
   "stage_name": "PAGE_FUNCTIONAL_CONTRACT",

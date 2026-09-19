@@ -1,0 +1,79 @@
+artifact_uid: CLS-CORE-01-FIELD-BINDING-CONTRACT-028
+page_uid: CORE-01
+planning_domain: PAGE_CONSTRUCTION
+responsibility_uid: FIELD_BINDING_CONTRACT
+responsibility_class: FIELD_BINDING_CONTRACT
+responsibilities:
+- FIELD_BINDING_CONTRACT
+canonical_owner_uid: OWNER-CLS-CORE-01-FIELD-BINDING-CONTRACT-028
+target_path: 01_CLASSIFIED/CORE-01/PAGE/CLS_028_FIELD_BINDING_CONTRACT.yaml
+lifecycle_uid: LC-FIELD-BINDING-CONTRACT
+approval_scope_uid: AP-FIELD-BINDING-CONTRACT
+version_scope_uid: VER-FIELD-BINDING-CONTRACT
+test_scope_uid: TEST-FIELD-BINDING-CONTRACT
+source_lineage:
+- source_uid: SRC-CORE01-PAGE
+  source_segment_uids:
+  - SEG-SRC-CORE01-PAGE-028
+facts:
+- source_ref: $.field_binding_contract
+  value:
+    authority_source: USER_APPROVED_ACPOS_CORE01_CONSTRUCTION_BLUEPRINT_PACKAGE_2026-09-11
+    planning_baseline_sha256: 9b0cc3c227cf53427e5cf60caf6b07f5e43a0a76f16800076641f22487642351
+    rule: Field controls bind data/state/draft only; they MUST NOT own or trigger unrelated Action UIDs. Send button uniquely owns CORE-01-ACT-SEND.
+    fields:
+    - control_uid: CORE-01-FLD-PAGE-MODE
+      binding_semantics: DATA_OR_DRAFT_STATE_ONLY
+      data_binding: CURRENT_PAGE_MODE
+    - control_uid: CORE-01-FLD-NAMING-AUTHORITY
+      binding_semantics: DATA_OR_DRAFT_STATE_ONLY
+      data_binding: CORE-01-REF-NAMING
+    - control_uid: CORE-01-FLD-ASSIGNED-AI
+      binding_semantics: DATA_OR_DRAFT_STATE_ONLY
+      data_binding: CORE-01-REF-AI-SET
+    - control_uid: CORE-01-FLD-ASSISTANT-SUMMARY
+      binding_semantics: DATA_OR_DRAFT_STATE_ONLY
+      data_binding: CORE-01-OBJ-SUMMARY
+    - control_uid: CORE-01-FLD-EVALUATION
+      binding_semantics: DATA_OR_DRAFT_STATE_ONLY
+      data_binding: CORE-01-OBJ-EVALUATION
+    - control_uid: CORE-01-FLD-HUMAN-DECISION
+      binding_semantics: DATA_OR_DRAFT_STATE_ONLY
+      data_binding: CORE-01-OBJ-HUMAN-DECISION_DRAFT
+    - control_uid: CORE-01-FLD-STRUCTURED-DECISION
+      binding_semantics: DATA_OR_DRAFT_STATE_ONLY
+      data_binding: CORE-01-OBJ-STRUCTURED-DECISION
+    - control_uid: CORE-01-FLD-RUNTIME-STAGE
+      binding_semantics: DATA_OR_DRAFT_STATE_ONLY
+      data_binding: CURRENT_RUNTIME_STAGE_STATE_ERROR
+    - control_uid: CORE-01-FLD-MESSAGE
+      binding_semantics: DATA_OR_DRAFT_STATE_ONLY
+      data_binding: COMPOSER_MESSAGE_DRAFT
+    - control_uid: CORE-01-FLD-TOPIC-SCOPE
+      binding_semantics: DATA_OR_DRAFT_STATE_ONLY
+      data_binding: CORE-01-OBJ-TOPIC-SCOPE
+    - control_uid: CORE-01-FLD-PACKAGE
+      binding_semantics: DATA_OR_DRAFT_STATE_ONLY
+      data_binding: CORE-01-OBJ-PRODUCTION-PACKAGE
+    - control_uid: CORE-01-FLD-DOWNSTREAM-ASSET
+      binding_semantics: DATA_OR_DRAFT_STATE_ONLY
+      data_binding: CORE-01-OBJ-DOWNSTREAM-READINESS.ASSET
+    - control_uid: CORE-01-FLD-DOWNSTREAM-VIDEO
+      binding_semantics: DATA_OR_DRAFT_STATE_ONLY
+      data_binding: CORE-01-OBJ-DOWNSTREAM-READINESS.VIDEO
+    - control_uid: CORE-01-FLD-DOWNSTREAM-EDIT
+      binding_semantics: DATA_OR_DRAFT_STATE_ONLY
+      data_binding: CORE-01-OBJ-DOWNSTREAM-READINESS.EDIT
+    - control_uid: CORE-01-FLD-VERSION-STATE
+      binding_semantics: DATA_OR_DRAFT_STATE_ONLY
+      data_binding: CORE-01-OBJ-CANDIDATE_OR_CONFIRMED_VERSION
+    - control_uid: CORE-01-FLD-LOCK-REVIEW
+      binding_semantics: DATA_OR_DRAFT_STATE_ONLY
+      data_binding: CORE-01-OBJ-LOCK-REVIEW
+    send_binding:
+      draft_control_uid: CORE-01-FLD-MESSAGE
+      send_control_uid: CORE-01-BTN-SEND
+      action_uid: CORE-01-ACT-SEND
+      unique_action_owner_required: true
+status: CURRENT_CLASSIFICATION
+content_hash: 29733fc1d7d8b2cac01b62143cf4b80ed1cc551da2b1a8368c16a991548da02e

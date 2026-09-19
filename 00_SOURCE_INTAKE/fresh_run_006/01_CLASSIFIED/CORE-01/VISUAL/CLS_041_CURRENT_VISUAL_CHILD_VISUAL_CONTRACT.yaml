@@ -1,0 +1,25 @@
+artifact_uid: CLS-CORE-01-CURRENT-VISUAL-CHILD-VISUAL-CONTRACT-041
+page_uid: CORE-01
+planning_domain: VISUAL_CONSTRUCTION
+responsibility_uid: CURRENT_VISUAL_CHILD_VISUAL_CONTRACT
+responsibility_class: CURRENT_VISUAL_CHILD_VISUAL_CONTRACT
+responsibilities:
+- CURRENT_VISUAL_CHILD_VISUAL_CONTRACT
+canonical_owner_uid: OWNER-CLS-CORE-01-CURRENT-VISUAL-CHILD-VISUAL-CONTRACT-041
+target_path: 01_CLASSIFIED/CORE-01/VISUAL/CLS_041_CURRENT_VISUAL_CHILD_VISUAL_CONTRACT.yaml
+lifecycle_uid: LC-CURRENT-VISUAL-CHILD-VISUAL-CONTRACT
+approval_scope_uid: AP-CURRENT-VISUAL-CHILD-VISUAL-CONTRACT
+version_scope_uid: VER-CURRENT-VISUAL-CHILD-VISUAL-CONTRACT
+test_scope_uid: TEST-CURRENT-VISUAL-CHILD-VISUAL-CONTRACT
+source_lineage:
+- source_uid: SRC-CORE01-VISUAL
+  source_segment_uids:
+  - SEG-SRC-CORE01-VISUAL-041
+facts:
+- source_ref: $.child_visual_contract
+  value:
+    count: 10
+    do_not_redefine_children_here: true
+    children_remain_owned_by: authority/pages/workspace/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml
+status: CURRENT_CLASSIFICATION
+content_hash: b5fdb44c7d1312a9793778acd8de0cca557c08c26bfd9903d10482c2ba85538e

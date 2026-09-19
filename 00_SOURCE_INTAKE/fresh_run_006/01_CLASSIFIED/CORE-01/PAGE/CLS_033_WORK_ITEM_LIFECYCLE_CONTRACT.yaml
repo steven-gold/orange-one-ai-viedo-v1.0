@@ -1,0 +1,88 @@
+artifact_uid: CLS-CORE-01-WORK-ITEM-LIFECYCLE-CONTRACT-033
+page_uid: CORE-01
+planning_domain: PAGE_CONSTRUCTION
+responsibility_uid: WORK_ITEM_LIFECYCLE_CONTRACT
+responsibility_class: WORK_ITEM_LIFECYCLE_CONTRACT
+responsibilities:
+- WORK_ITEM_LIFECYCLE_CONTRACT
+canonical_owner_uid: OWNER-CLS-CORE-01-WORK-ITEM-LIFECYCLE-CONTRACT-033
+target_path: 01_CLASSIFIED/CORE-01/PAGE/CLS_033_WORK_ITEM_LIFECYCLE_CONTRACT.yaml
+lifecycle_uid: LC-WORK-ITEM-LIFECYCLE-CONTRACT
+approval_scope_uid: AP-WORK-ITEM-LIFECYCLE-CONTRACT
+version_scope_uid: VER-WORK-ITEM-LIFECYCLE-CONTRACT
+test_scope_uid: TEST-WORK-ITEM-LIFECYCLE-CONTRACT
+source_lineage:
+- source_uid: SRC-CORE01-PAGE
+  source_segment_uids:
+  - SEG-SRC-CORE01-PAGE-033
+facts:
+- source_ref: $.work_item_lifecycle_contract
+  value:
+    authority_source: USER_APPROVED_ACPOS_CORE01_CONSTRUCTION_BLUEPRINT_PACKAGE_2026-09-11
+    principle: Each Work Item has governed Conversation continuity and immutable version lineage; AI participation is fluid and finalization is singular.
+    project_core_order:
+    - work_item: STORY
+      required_upstream:
+      - Project context
+      formal_output: Confirmed Story Version
+      finalization_operation_uid: CORE-01-DOMAIN-OP-MATERIALIZE-STORY-VERSION
+    - work_item: CHAPTER
+      required_upstream:
+      - Confirmed Story
+      formal_output: Confirmed Chapter Version
+      finalization_operation_uid: CORE-01-DOMAIN-OP-MATERIALIZE-CHAPTER-VERSION
+    - work_item: WORLD_SETTING
+      required_upstream:
+      - Confirmed Story
+      - Confirmed Chapter
+      formal_output: Confirmed World Version
+      finalization_operation_uid: CORE-01-DOMAIN-OP-MATERIALIZE-WORLD-VERSION
+    - work_item: DNA
+      required_upstream:
+      - Confirmed Story
+      - Confirmed Chapter
+      - Confirmed World
+      formal_output: Confirmed/Locked DNA Versions
+      finalization_action_uid: CORE-01-ACT-DNA-LOCK-REQUEST
+    - work_item: BLUEPRINT
+      required_upstream:
+      - Confirmed Story
+      - Confirmed Chapter
+      - Confirmed World
+      - Required DNA
+      formal_output: Confirmed/Approved Blueprint Version
+      finalization_action_uids:
+      - CORE-01-ACT-BLUEPRINT-VALIDATE
+      - CORE-01-ACT-BLUEPRINT-APPROVE
+      - CORE-01-ACT-CHILD-LOCK-REQUEST
+    topic_production_order:
+    - work_item: TOPIC_SCOPE
+      required_upstream:
+      - Confirmed/locked Project Canon
+      - Blueprint
+      - DNA refs
+      formal_output: Confirmed Topic Production Scope
+      finalization_operation_uid: CORE-01-DOMAIN-OP-MATERIALIZE-TOPIC-SCOPE
+    - work_item: PRODUCTION_SCRIPT
+      required_upstream:
+      - Exact Topic
+      - Project Blueprint
+      - Topic Scope
+      - source candidate lineage
+      formal_output: Confirmed Canonical Production Script
+      finalization_operation_uid: CORE-01-DOMAIN-OP-MATERIALIZE-CANONICAL-SCRIPT
+      authoring_contract_ref: CORE-01-CONTRACT-TOPIC-CANONICAL-PRODUCTION-SCRIPT
+    conversation_cycle_rules:
+      first_create: Create or resolve the first thread under exact Project/Topic + Work Item; no unrelated history.
+      resume_unfinished: Return to the same unfinished thread/cycle; do not create duplicate draft versions.
+      modify_before_confirm: Continue current conversation cycle; immutable candidate replacement requires a new Candidate.
+      modify_after_confirm_or_lock: Start a new revision Conversation bound to exact base version; prior version and prior thread remain immutable/read-only history.
+      branch_discussion: Branch stays under the same Work Item and is not a production Topic/formal truth until adopted through finalization.
+      switch_work_item: Load selected Work Item Conversation; confirmed upstream outputs enter Context; raw prior-item chat is not merged.
+    known_authority_gaps_open: []
+    chapter_world_gap_resolution:
+      GAP-CORE-01-WI-CHAPTER-FINALIZATION: CORE-01-DOMAIN-OP-MATERIALIZE-CHAPTER-VERSION
+      GAP-CORE-01-WI-WORLD-FINALIZATION: CORE-01-DOMAIN-OP-MATERIALIZE-WORLD-VERSION
+    page_local_api_invention: FORBIDDEN
+status: CURRENT_CLASSIFICATION
+content_hash: bdb4e9d73fa339c77c944a35eb8ef6c96f76d5c0455210ddae689c43cce1805f

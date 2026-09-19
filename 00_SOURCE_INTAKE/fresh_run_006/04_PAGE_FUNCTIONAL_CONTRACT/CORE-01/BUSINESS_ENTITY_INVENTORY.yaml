@@ -1,0 +1,175 @@
+schema_version: 1
+artifact_type: BUSINESS_ENTITY_INVENTORY
+stage_uid: STAGE-02
+page_uid: CORE-01
+planning_baseline_sha256: 9b0cc3c227cf53427e5cf60caf6b07f5e43a0a76f16800076641f22487642351
+derivation: EXACT_OBJECT_REGISTRY_PROJECTION_NO_NEW_ENTITY
+entity_count: 22
+entities:
+- object_uid: CORE-01-REF-PROJECT
+  entity: ProjectRef
+  owner: ACPOS Project
+  required_content: exact project id/version/status/source hash
+  applicability_profile: READ_ONLY_REFERENCE
+- object_uid: CORE-01-REF-TOPIC
+  entity: TopicRef
+  owner: ACPOS Topic
+  required_content: exact topic id/version/project lineage/contract refs
+  applicability_profile: READ_ONLY_REFERENCE
+- object_uid: CORE-01-OBJ-THREAD
+  entity: ConversationThread
+  owner: AI Conversation Core
+  required_content: project/topic/work_item/thread id + history scope
+  applicability_profile: CONVERSATION_THREAD
+- object_uid: CORE-01-OBJ-MESSAGE
+  entity: ConversationMessage
+  owner: AI Conversation Core
+  required_content: message id/type/thread/source refs/version
+  applicability_profile: CONVERSATION_MESSAGE
+- object_uid: CORE-01-OBJ-CONTEXT
+  entity: RelevantContextPackage
+  owner: Context Resolver
+  required_content: confirmed relevant refs only; no wrong version
+  applicability_profile: DERIVED_EVIDENCE
+- object_uid: CORE-01-REF-AI-SET
+  entity: AssignedAISetRef
+  owner: ACPOS AI Router
+  required_content: capability-resolved AI/provider assignment snapshot; read-only
+  applicability_profile: READ_ONLY_REFERENCE
+- object_uid: CORE-01-OBJ-SUMMARY
+  entity: AssistantSummary
+  owner: AI Assistant
+  required_content: source response ids + summary + context hash
+  applicability_profile: DERIVED_EVIDENCE
+- object_uid: CORE-01-OBJ-EVALUATION
+  entity: CoreEvaluation
+  owner: CORE Evaluation
+  required_content: criteria version + dimensions from authority + evidence + hard blocks + result
+  applicability_profile: DERIVED_EVIDENCE
+- object_uid: CORE-01-OBJ-HUMAN-DECISION
+  entity: HumanDecision
+  owner: Human
+  required_content: target ref + decision + reason + evidence refs
+  applicability_profile: HUMAN_DECISION
+- object_uid: CORE-01-OBJ-STRUCTURED-DECISION
+  entity: StructuredDecision
+  owner: AI Assistant
+  required_content: structured restatement of human decision; cannot self-approve
+  applicability_profile: DERIVED_EVIDENCE
+- object_uid: CORE-01-OBJ-CANDIDATE
+  entity: CandidateVersion
+  owner: Candidate Service
+  required_content: immutable candidate + parent/source refs + version lineage
+  applicability_profile: CANDIDATE_VERSION
+- object_uid: CORE-01-OBJ-PROJECT-DRAFT
+  entity: ProjectDraftVersion
+  owner: Project Service
+  required_content: registered create/validate/confirm Project draft fields
+  applicability_profile: PROJECT_DRAFT
+- object_uid: CORE-01-OBJ-STORY-CANDIDATE-SET
+  entity: StoryCandidateSet
+  owner: CORE Story
+  required_content: project ref + candidates + preserve canon refs
+  applicability_profile: VERSIONED_DOMAIN_ENTITY
+- object_uid: CORE-01-REF-CANON
+  entity: ProjectCanonComponentRef
+  owner: CORE
+  required_content: type=Story/Chapter/World; exact confirmed version/hash
+  applicability_profile: VERSIONED_DOMAIN_ENTITY
+- object_uid: CORE-01-REF-DNA
+  entity: DNAVersionRef
+  owner: CORE DNA
+  required_content: exact candidate/confirmed DNA version/hash/lock status
+  applicability_profile: VERSIONED_DOMAIN_ENTITY
+- object_uid: CORE-01-REF-BLUEPRINT
+  entity: BlueprintVersionRef
+  owner: CORE Blueprint
+  required_content: exact topic/project lineage + blueprint version/hash/state
+  applicability_profile: VERSIONED_DOMAIN_ENTITY
+- object_uid: CORE-01-OBJ-TOPIC-SCOPE
+  entity: TopicProductionScope
+  owner: CORE Topic
+  required_content: scope/boundary/bridge/product type/delivery unit refs from valid contract lineage
+  applicability_profile: VERSIONED_DOMAIN_ENTITY
+- object_uid: CORE-01-REF-CANONICAL-SCRIPT
+  entity: CanonicalProductionScriptRef
+  owner: CORE Script System
+  required_content: topic canonical production script exact version/hash; provider-neutral
+  applicability_profile: VERSIONED_DOMAIN_ENTITY
+- object_uid: CORE-01-OBJ-PRODUCTION-PACKAGE
+  entity: TopicProductionPackage
+  owner: CORE Orchestration Boundary
+  required_content: project lock + blueprint child lock + topic scope + canonical script + DNA refs + naming authority ref
+  applicability_profile: VERSIONED_DOMAIN_ENTITY
+- object_uid: CORE-01-REF-NAMING
+  entity: ACPOSNamingAuthorityRef
+  owner: ACPOS_SYSTEM
+  required_content: global naming policy/version ref only; no filename formula in CORE
+  applicability_profile: READ_ONLY_REFERENCE
+- object_uid: CORE-01-OBJ-DOWNSTREAM-READINESS
+  entity: DownstreamProjectionReadiness
+  owner: ACPOS Orchestration
+  required_content: read-only ASSET/VIDEO/EDIT boundary status + required refs; no downstream internals
+  applicability_profile: DERIVED_EVIDENCE
+- object_uid: CORE-01-OBJ-LOCK-REVIEW
+  entity: LockReviewRef
+  owner: VersionLockService boundary
+  required_content: target ref/hash + review status + resolvable evidence/reviewer path; unresolved contract remains blocker
+  applicability_profile: LOCK_REVIEW
+unresolved_external_authority_refs:
+- gap_uid: GAP-EXT-E9D39973941C
+  authority_ref: ACPOS_CURRENT_NAVIGATION_PERMISSION_AUTHORITY@V1.0
+  disposition: UNRESOLVED_AUTHORITY_GAP
+  authority_evidence_ref: 00_SOURCE_INTAKE/evidence/SOURCE_FACT_MATERIALIZATION_EVIDENCE.yaml
+  resolved: false
+  satisfied: false
+  auto_filled: false
+  inferred: false
+- gap_uid: GAP-EXT-E33DB032BE2B
+  authority_ref: ACPOS_PRODUCTION_SCRIPT_CONTENT_AND_PROVIDER_ADAPTER_CONTRACT@V1.3
+  disposition: UNRESOLVED_AUTHORITY_GAP
+  authority_evidence_ref: 00_SOURCE_INTAKE/evidence/SOURCE_FACT_MATERIALIZATION_EVIDENCE.yaml
+  resolved: false
+  satisfied: false
+  auto_filled: false
+  inferred: false
+- gap_uid: GAP-EXT-3EB9693EFA4B
+  authority_ref: ACPOS_SHARED_RUNTIME_OPERATION_AUTHORITY
+  disposition: UNRESOLVED_AUTHORITY_GAP
+  authority_evidence_ref: 00_SOURCE_INTAKE/evidence/SOURCE_FACT_MATERIALIZATION_EVIDENCE.yaml
+  resolved: false
+  satisfied: false
+  auto_filled: false
+  inferred: false
+- gap_uid: GAP-EXT-7AB7E9E8AEF0
+  authority_ref: ACPOS_SYSTEM
+  disposition: UNRESOLVED_AUTHORITY_GAP
+  authority_evidence_ref: 00_SOURCE_INTAKE/evidence/SOURCE_FACT_MATERIALIZATION_EVIDENCE.yaml
+  resolved: false
+  satisfied: false
+  auto_filled: false
+  inferred: false
+- gap_uid: GAP-EXT-9E571F6943CF
+  authority_ref: ACPOS_SYSTEM_AUTHORITY@V1.0
+  disposition: UNRESOLVED_AUTHORITY_GAP
+  authority_evidence_ref: 00_SOURCE_INTAKE/evidence/SOURCE_FACT_MATERIALIZATION_EVIDENCE.yaml
+  resolved: false
+  satisfied: false
+  auto_filled: false
+  inferred: false
+- gap_uid: GAP-EXT-8C12874DC1AE
+  authority_ref: GLOBAL_HOME_SHELL_TEMPLATE_AUTHORITY@V1.9
+  disposition: UNRESOLVED_AUTHORITY_GAP
+  authority_evidence_ref: 00_SOURCE_INTAKE/evidence/SOURCE_FACT_MATERIALIZATION_EVIDENCE.yaml
+  resolved: false
+  satisfied: false
+  auto_filled: false
+  inferred: false
+- gap_uid: GAP-EXT-3DD576F9FA3A
+  authority_ref: GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY@V1.0
+  disposition: UNRESOLVED_AUTHORITY_GAP
+  authority_evidence_ref: 00_SOURCE_INTAKE/evidence/SOURCE_FACT_MATERIALIZATION_EVIDENCE.yaml
+  resolved: false
+  satisfied: false
+  auto_filled: false
+  inferred: false

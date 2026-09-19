@@ -1,0 +1,44 @@
+artifact_uid: CLS-CORE-01-REGISTRIES-EVENTS-016
+page_uid: CORE-01
+planning_domain: PAGE_CONSTRUCTION
+responsibility_uid: REGISTRIES_EVENTS
+responsibility_class: REGISTRIES_EVENTS
+responsibilities:
+- REGISTRIES_EVENTS
+canonical_owner_uid: OWNER-CLS-CORE-01-REGISTRIES-EVENTS-016
+target_path: 01_CLASSIFIED/CORE-01/PAGE/CLS_016_REGISTRIES_EVENTS.yaml
+lifecycle_uid: LC-REGISTRIES-EVENTS
+approval_scope_uid: AP-REGISTRIES-EVENTS
+version_scope_uid: VER-REGISTRIES-EVENTS
+test_scope_uid: TEST-REGISTRIES-EVENTS
+source_lineage:
+- source_uid: SRC-CORE01-PAGE
+  source_segment_uids:
+  - SEG-SRC-CORE01-PAGE-016
+facts:
+- source_ref: $.registries.events
+  value:
+  - event_uid: CORE-01-EVT-CONTEXT-RESOLVED
+    event: context.resolved
+  - event_uid: CORE-01-EVT-CONVERSATION-SENT
+    event: conversation.message.sent
+  - event_uid: CORE-01-EVT-AI-RESPONSES-READY
+    event: ai.responses.ready
+  - event_uid: CORE-01-EVT-EVALUATION-READY
+    event: core.evaluation.ready
+  - event_uid: CORE-01-EVT-HUMAN-DECISION-CONFIRMED
+    event: human.decision.confirmed
+  - event_uid: CORE-01-EVT-CANDIDATE-CREATED
+    event: candidate.created
+  - event_uid: CORE-01-EVT-CANDIDATE-DECIDED
+    event: candidate.decided
+  - event_uid: CORE-01-EVT-BLUEPRINT-CREATED
+    event: blueprint.created
+  - event_uid: CORE-01-EVT-PROJECT-DRAFT-CREATED
+    event: project.draft.created
+  - event_uid: CORE-01-EVT-PROJECT-DRAFT-VALIDATED
+    event: project.draft.validated
+  - event_uid: CORE-01-EVT-TOPIC-CREATED
+    event: topic.created
+status: CURRENT_CLASSIFICATION
+content_hash: a719e9d8f9654a21179603098ed5769c64101c7bd90b8969578b683a45338ebd

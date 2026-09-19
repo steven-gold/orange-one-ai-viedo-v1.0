@@ -1,0 +1,230 @@
+artifact_uid: CLS-CORE-01-ENTITY-OPERATION-APPLICABILITY-CONTRACT-035
+page_uid: CORE-01
+planning_domain: PAGE_CONSTRUCTION
+responsibility_uid: ENTITY_OPERATION_APPLICABILITY_CONTRACT
+responsibility_class: ENTITY_OPERATION_APPLICABILITY_CONTRACT
+responsibilities:
+- ENTITY_OPERATION_APPLICABILITY_CONTRACT
+canonical_owner_uid: OWNER-CLS-CORE-01-ENTITY-OPERATION-APPLICABILITY-CONTRACT-035
+target_path: 01_CLASSIFIED/CORE-01/PAGE/CLS_035_ENTITY_OPERATION_APPLICABILITY_CONTRACT.yaml
+lifecycle_uid: LC-ENTITY-OPERATION-APPLICABILITY-CONTRACT
+approval_scope_uid: AP-ENTITY-OPERATION-APPLICABILITY-CONTRACT
+version_scope_uid: VER-ENTITY-OPERATION-APPLICABILITY-CONTRACT
+test_scope_uid: TEST-ENTITY-OPERATION-APPLICABILITY-CONTRACT
+source_lineage:
+- source_uid: SRC-CORE01-PAGE
+  source_segment_uids:
+  - SEG-SRC-CORE01-PAGE-035
+facts:
+- source_ref: $.entity_operation_applicability_contract
+  value:
+    authority_source: CURRENT_CORE_OBJECT_OWNERSHIP_PLUS_USER_APPROVED_2026-09-11_LIFECYCLE
+    operation_vocabulary:
+    - DISCOVER_OR_LIST
+    - SELECT_OR_OPEN
+    - CREATE
+    - CREATION_MODE
+    - PARENT_BIND
+    - CATEGORY_OR_GROUP_BIND
+    - DRAFT
+    - RESUME
+    - EDIT
+    - SAVE
+    - VALIDATE
+    - CONFIRM_OR_APPROVE
+    - VERSION
+    - REVISE
+    - LOCK_OR_UNLOCK
+    - REORDER
+    - MOVE_OR_REPARENT
+    - ARCHIVE_OR_DELETE
+    - RESTORE
+    - DEPENDENCY_IMPACT
+    - AUDIT
+    - ERROR_RECOVERY
+    - NEXT_STEP
+    profile_rule: Every operation not listed as REQUIRED or OPTIONAL in the bound profile is explicitly NOT_APPLICABLE under that profile.
+    profiles:
+      READ_ONLY_REFERENCE:
+        required:
+        - DISCOVER_OR_LIST
+        - SELECT_OR_OPEN
+        - DEPENDENCY_IMPACT
+        - AUDIT
+        - ERROR_RECOVERY
+        - NEXT_STEP
+        optional: []
+      CONVERSATION_THREAD:
+        required:
+        - DISCOVER_OR_LIST
+        - SELECT_OR_OPEN
+        - CREATE
+        - PARENT_BIND
+        - DRAFT
+        - RESUME
+        - SAVE
+        - VERSION
+        - REVISE
+        - DEPENDENCY_IMPACT
+        - AUDIT
+        - ERROR_RECOVERY
+        - NEXT_STEP
+        optional:
+        - ARCHIVE_OR_DELETE
+      CONVERSATION_MESSAGE:
+        required:
+        - DISCOVER_OR_LIST
+        - SELECT_OR_OPEN
+        - CREATE
+        - PARENT_BIND
+        - SAVE
+        - AUDIT
+        - ERROR_RECOVERY
+        - NEXT_STEP
+        optional: []
+      DERIVED_EVIDENCE:
+        required:
+        - DISCOVER_OR_LIST
+        - SELECT_OR_OPEN
+        - PARENT_BIND
+        - VALIDATE
+        - DEPENDENCY_IMPACT
+        - AUDIT
+        - ERROR_RECOVERY
+        - NEXT_STEP
+        optional: []
+      HUMAN_DECISION:
+        required:
+        - DISCOVER_OR_LIST
+        - SELECT_OR_OPEN
+        - CREATE
+        - PARENT_BIND
+        - DRAFT
+        - RESUME
+        - EDIT
+        - SAVE
+        - VALIDATE
+        - CONFIRM_OR_APPROVE
+        - VERSION
+        - REVISE
+        - DEPENDENCY_IMPACT
+        - AUDIT
+        - ERROR_RECOVERY
+        - NEXT_STEP
+        optional: []
+      CANDIDATE_VERSION:
+        required:
+        - DISCOVER_OR_LIST
+        - SELECT_OR_OPEN
+        - CREATE
+        - PARENT_BIND
+        - VALIDATE
+        - CONFIRM_OR_APPROVE
+        - VERSION
+        - REVISE
+        - DEPENDENCY_IMPACT
+        - AUDIT
+        - ERROR_RECOVERY
+        - NEXT_STEP
+        optional:
+        - ARCHIVE_OR_DELETE
+      PROJECT_DRAFT:
+        required:
+        - DISCOVER_OR_LIST
+        - SELECT_OR_OPEN
+        - CREATE
+        - PARENT_BIND
+        - DRAFT
+        - RESUME
+        - EDIT
+        - SAVE
+        - VALIDATE
+        - CONFIRM_OR_APPROVE
+        - VERSION
+        - REVISE
+        - DEPENDENCY_IMPACT
+        - AUDIT
+        - ERROR_RECOVERY
+        - NEXT_STEP
+        optional: []
+      VERSIONED_DOMAIN_ENTITY:
+        required:
+        - DISCOVER_OR_LIST
+        - SELECT_OR_OPEN
+        - CREATE
+        - PARENT_BIND
+        - DRAFT
+        - RESUME
+        - EDIT
+        - SAVE
+        - VALIDATE
+        - CONFIRM_OR_APPROVE
+        - VERSION
+        - REVISE
+        - DEPENDENCY_IMPACT
+        - AUDIT
+        - ERROR_RECOVERY
+        - NEXT_STEP
+        optional:
+        - LOCK_OR_UNLOCK
+      LOCK_REVIEW:
+        required:
+        - DISCOVER_OR_LIST
+        - SELECT_OR_OPEN
+        - CREATE
+        - PARENT_BIND
+        - RESUME
+        - VALIDATE
+        - CONFIRM_OR_APPROVE
+        - VERSION
+        - AUDIT
+        - ERROR_RECOVERY
+        - NEXT_STEP
+        optional: []
+    entity_profile_bindings:
+    - object_uid: CORE-01-REF-PROJECT
+      profile: READ_ONLY_REFERENCE
+    - object_uid: CORE-01-REF-TOPIC
+      profile: READ_ONLY_REFERENCE
+    - object_uid: CORE-01-OBJ-THREAD
+      profile: CONVERSATION_THREAD
+    - object_uid: CORE-01-OBJ-MESSAGE
+      profile: CONVERSATION_MESSAGE
+    - object_uid: CORE-01-OBJ-CONTEXT
+      profile: DERIVED_EVIDENCE
+    - object_uid: CORE-01-REF-AI-SET
+      profile: READ_ONLY_REFERENCE
+    - object_uid: CORE-01-OBJ-SUMMARY
+      profile: DERIVED_EVIDENCE
+    - object_uid: CORE-01-OBJ-EVALUATION
+      profile: DERIVED_EVIDENCE
+    - object_uid: CORE-01-OBJ-HUMAN-DECISION
+      profile: HUMAN_DECISION
+    - object_uid: CORE-01-OBJ-STRUCTURED-DECISION
+      profile: DERIVED_EVIDENCE
+    - object_uid: CORE-01-OBJ-CANDIDATE
+      profile: CANDIDATE_VERSION
+    - object_uid: CORE-01-OBJ-PROJECT-DRAFT
+      profile: PROJECT_DRAFT
+    - object_uid: CORE-01-OBJ-STORY-CANDIDATE-SET
+      profile: VERSIONED_DOMAIN_ENTITY
+    - object_uid: CORE-01-REF-CANON
+      profile: VERSIONED_DOMAIN_ENTITY
+    - object_uid: CORE-01-REF-DNA
+      profile: VERSIONED_DOMAIN_ENTITY
+    - object_uid: CORE-01-REF-BLUEPRINT
+      profile: VERSIONED_DOMAIN_ENTITY
+    - object_uid: CORE-01-OBJ-TOPIC-SCOPE
+      profile: VERSIONED_DOMAIN_ENTITY
+    - object_uid: CORE-01-REF-CANONICAL-SCRIPT
+      profile: VERSIONED_DOMAIN_ENTITY
+    - object_uid: CORE-01-OBJ-PRODUCTION-PACKAGE
+      profile: VERSIONED_DOMAIN_ENTITY
+    - object_uid: CORE-01-REF-NAMING
+      profile: READ_ONLY_REFERENCE
+    - object_uid: CORE-01-OBJ-DOWNSTREAM-READINESS
+      profile: DERIVED_EVIDENCE
+    - object_uid: CORE-01-OBJ-LOCK-REVIEW
+      profile: LOCK_REVIEW
+status: CURRENT_CLASSIFICATION
+content_hash: 4ed77748df9006f492afb60fe994d0171893c3a0ef3d9c96934e59fd99ddfa97

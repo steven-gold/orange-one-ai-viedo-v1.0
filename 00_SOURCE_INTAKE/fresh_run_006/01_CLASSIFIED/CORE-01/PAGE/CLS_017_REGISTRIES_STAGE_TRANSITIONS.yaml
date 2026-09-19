@@ -1,0 +1,127 @@
+artifact_uid: CLS-CORE-01-REGISTRIES-STAGE-TRANSITIONS-017
+page_uid: CORE-01
+planning_domain: PAGE_CONSTRUCTION
+responsibility_uid: REGISTRIES_STAGE_TRANSITIONS
+responsibility_class: REGISTRIES_STAGE_TRANSITIONS
+responsibilities:
+- REGISTRIES_STAGE_TRANSITIONS
+canonical_owner_uid: OWNER-CLS-CORE-01-REGISTRIES-STAGE-TRANSITIONS-017
+target_path: 01_CLASSIFIED/CORE-01/PAGE/CLS_017_REGISTRIES_STAGE_TRANSITIONS.yaml
+lifecycle_uid: LC-REGISTRIES-STAGE-TRANSITIONS
+approval_scope_uid: AP-REGISTRIES-STAGE-TRANSITIONS
+version_scope_uid: VER-REGISTRIES-STAGE-TRANSITIONS
+test_scope_uid: TEST-REGISTRIES-STAGE-TRANSITIONS
+source_lineage:
+- source_uid: SRC-CORE01-PAGE
+  source_segment_uids:
+  - SEG-SRC-CORE01-PAGE-017
+facts:
+- source_ref: $.registries.stage_transitions
+  value:
+  - transition_uid: CORE-01-STTR-01
+    from_stage: CORE-01-STAGE-01-CONTEXT
+    to_stage: CORE-01-STAGE-02-CONVERSE
+    trigger_event_uid: CORE-01-EVT-CONTEXT-RESOLVED
+    gate_uid: CORE-01-GATE-WORK-ITEM
+    mutation_owner: CORE-01
+    failure_state: CORE-01-ST-ERROR
+    recovery:
+      retain_stage: CORE-01-STAGE-01-CONTEXT
+      action: RESET_TO_EXACT_PROJECT_CONTEXT_AND_RERESOLVE_WORK_ITEM_THREAD_AND_AI_ROUTE
+      retry_condition: CORE-01-GATE-WORK-ITEM_PASS_AND_CORE-01-EVT-CONTEXT-RESOLVED
+    audit_event_uid: CORE-01-EVT-CONTEXT-RESOLVED
+    illegal_transition_tests:
+    - test_uid: CORE01-STTR-01-ILLEGAL-WRONG-FROM
+      reject_when: current_stage != CORE-01-STAGE-01-CONTEXT
+    - test_uid: CORE01-STTR-01-ILLEGAL-TRIGGER
+      reject_when: trigger_event_uid != CORE-01-EVT-CONTEXT-RESOLVED
+    - test_uid: CORE01-STTR-01-ILLEGAL-GATE
+      reject_when: CORE-01-GATE-WORK-ITEM != PASS
+    - test_uid: CORE01-STTR-01-ILLEGAL-REPLAY
+      reject_when: transition already committed or current_stage == CORE-01-STAGE-02-CONVERSE
+  - transition_uid: CORE-01-STTR-02
+    from_stage: CORE-01-STAGE-02-CONVERSE
+    to_stage: CORE-01-STAGE-03-SUMMARY-EVAL
+    trigger_event_uid: CORE-01-EVT-AI-RESPONSES-READY
+    gate_uid: CORE-01-GATE-SUMMARY
+    mutation_owner: CORE-01
+    failure_state: CORE-01-ST-ERROR
+    recovery:
+      retain_stage: CORE-01-STAGE-02-CONVERSE
+      action: PRESERVE_THREAD_AND_DRAFT_WAIT_FOR_COMPLETE_AI_RESPONSES_THEN_REEVALUATE_SUMMARY_GATE
+      retry_condition: CORE-01-GATE-SUMMARY_PASS_AND_CORE-01-EVT-AI-RESPONSES-READY
+    audit_event_uid: CORE-01-EVT-AI-RESPONSES-READY
+    illegal_transition_tests:
+    - test_uid: CORE01-STTR-02-ILLEGAL-WRONG-FROM
+      reject_when: current_stage != CORE-01-STAGE-02-CONVERSE
+    - test_uid: CORE01-STTR-02-ILLEGAL-TRIGGER
+      reject_when: trigger_event_uid != CORE-01-EVT-AI-RESPONSES-READY
+    - test_uid: CORE01-STTR-02-ILLEGAL-GATE
+      reject_when: CORE-01-GATE-SUMMARY != PASS
+    - test_uid: CORE01-STTR-02-ILLEGAL-REPLAY
+      reject_when: transition already committed or current_stage == CORE-01-STAGE-03-SUMMARY-EVAL
+  - transition_uid: CORE-01-STTR-03
+    from_stage: CORE-01-STAGE-03-SUMMARY-EVAL
+    to_stage: CORE-01-STAGE-04-HUMAN-DECIDE
+    trigger_event_uid: CORE-01-EVT-EVALUATION-READY
+    gate_uid: CORE-01-GATE-EVALUATION
+    mutation_owner: CORE-01
+    failure_state: CORE-01-ST-ERROR
+    recovery:
+      retain_stage: CORE-01-STAGE-03-SUMMARY-EVAL
+      action: PRESERVE_SUMMARY_AND_EVIDENCE_RESOLVE_APPROVED_CRITERIA_OR_EVALUATION_BLOCKER_THEN_REEVALUATE
+      retry_condition: CORE-01-GATE-EVALUATION_PASS_AND_CORE-01-EVT-EVALUATION-READY
+    audit_event_uid: CORE-01-EVT-EVALUATION-READY
+    illegal_transition_tests:
+    - test_uid: CORE01-STTR-03-ILLEGAL-WRONG-FROM
+      reject_when: current_stage != CORE-01-STAGE-03-SUMMARY-EVAL
+    - test_uid: CORE01-STTR-03-ILLEGAL-TRIGGER
+      reject_when: trigger_event_uid != CORE-01-EVT-EVALUATION-READY
+    - test_uid: CORE01-STTR-03-ILLEGAL-GATE
+      reject_when: CORE-01-GATE-EVALUATION != PASS
+    - test_uid: CORE01-STTR-03-ILLEGAL-REPLAY
+      reject_when: transition already committed or current_stage == CORE-01-STAGE-04-HUMAN-DECIDE
+  - transition_uid: CORE-01-STTR-04
+    from_stage: CORE-01-STAGE-04-HUMAN-DECIDE
+    to_stage: CORE-01-STAGE-02-CONVERSE
+    trigger_event_uid: CORE-01-EVT-HUMAN-DECISION-CONFIRMED
+    gate_uid: CORE-01-GATE-HUMAN-DECISION
+    mutation_owner: CORE-01
+    failure_state: CORE-01-ST-ERROR
+    recovery:
+      retain_stage: CORE-01-STAGE-04-HUMAN-DECIDE
+      action: PRESERVE_DECISION_DRAFT_REJECT_STALE_OR_INVALID_CONFIRMATION_AND_REQUIRE_RECONFIRM
+      retry_condition: CORE-01-GATE-HUMAN-DECISION_PASS_AND_CORE-01-EVT-HUMAN-DECISION-CONFIRMED
+    audit_event_uid: CORE-01-EVT-HUMAN-DECISION-CONFIRMED
+    illegal_transition_tests:
+    - test_uid: CORE01-STTR-04-ILLEGAL-WRONG-FROM
+      reject_when: current_stage != CORE-01-STAGE-04-HUMAN-DECIDE
+    - test_uid: CORE01-STTR-04-ILLEGAL-TRIGGER
+      reject_when: trigger_event_uid != CORE-01-EVT-HUMAN-DECISION-CONFIRMED
+    - test_uid: CORE01-STTR-04-ILLEGAL-GATE
+      reject_when: CORE-01-GATE-HUMAN-DECISION != PASS
+    - test_uid: CORE01-STTR-04-ILLEGAL-REPLAY
+      reject_when: transition already committed or current_stage == CORE-01-STAGE-02-CONVERSE
+  - transition_uid: CORE-01-STTR-05
+    from_stage: CORE-01-STAGE-04-HUMAN-DECIDE
+    to_stage: CORE-01-STAGE-05-CANDIDATE
+    trigger_event_uid: CORE-01-EVT-HUMAN-DECISION-CONFIRMED
+    gate_uid: CORE-01-GATE-CANDIDATE-CREATE
+    mutation_owner: CORE-01
+    failure_state: CORE-01-ST-ERROR
+    recovery:
+      retain_stage: CORE-01-STAGE-04-HUMAN-DECIDE
+      action: PRESERVE_CONFIRMED_STRUCTURED_DECISION_RESOLVE_CANDIDATE_SOURCE_LINEAGE_THEN_RETRY_CREATE
+      retry_condition: CORE-01-GATE-CANDIDATE-CREATE_PASS_AND_CORE-01-EVT-HUMAN-DECISION-CONFIRMED
+    audit_event_uid: CORE-01-EVT-HUMAN-DECISION-CONFIRMED
+    illegal_transition_tests:
+    - test_uid: CORE01-STTR-05-ILLEGAL-WRONG-FROM
+      reject_when: current_stage != CORE-01-STAGE-04-HUMAN-DECIDE
+    - test_uid: CORE01-STTR-05-ILLEGAL-TRIGGER
+      reject_when: trigger_event_uid != CORE-01-EVT-HUMAN-DECISION-CONFIRMED
+    - test_uid: CORE01-STTR-05-ILLEGAL-GATE
+      reject_when: CORE-01-GATE-CANDIDATE-CREATE != PASS
+    - test_uid: CORE01-STTR-05-ILLEGAL-REPLAY
+      reject_when: transition already committed or current_stage == CORE-01-STAGE-05-CANDIDATE
+status: CURRENT_CLASSIFICATION
+content_hash: 5ce4fe63324aa78da73ab9092ea250606ad56ddad5f09d9c2baaa133ec720b2d
