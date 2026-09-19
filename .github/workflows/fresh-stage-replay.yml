@@ -97,6 +97,8 @@ jobs:
       - name: Close maintenance and restore parent Product Work Unit structurally
         run: python .github/governance-maintenance/finalize_fresh_stage_replay.py --close-stage02-revalidation-persistence-maintenance
       - name: Validate restored Current State before persistence
+        env:
+          STAGE02_REVALIDATION_MODE: '1'
         run: |
           python governance/ci/validate_stage02_state_integrity.py
           python governance/ci/validate_active_consumer_reference_integrity.py
