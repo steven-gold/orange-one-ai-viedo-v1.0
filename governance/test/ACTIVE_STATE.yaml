@@ -104,8 +104,8 @@ specification_mutation_safety:
   ordinary_mid_stage_specification_mutation: BLOCK
   stage_end_consolidated_promotion_requires_new_explicit_directive: true
   execution_context_lock_required: true
-status: ACTIVE_ASSET01_STAGE02_DESIGN_CONTRACT_REMEDIATION
-next_action: BUILD_FRESH_ASSET-01_DESIGN_CONTRACT_CANDIDATE_FROM_CURRENT_GAPS
+status: ACTIVE_ASSET01_STAGE02_BOUNDED_REMEDIATION_PACKAGE_READY
+next_action: MATERIALIZE_ASSET01_STAGE02_EXACT_NON_AMBIGUOUS_CLOSURES
 previous_closed_product_work_unit:
   work_unit_uid: WU-STAGE02-CORE01-STRUCTURAL-REMEDIATION-001
   canonical_name: CORE01_STRUCTURAL_CONTRACT_REMEDIATION
@@ -284,12 +284,12 @@ previous_closed_work_unit:
     source_runtime_residual_count: 0
     product_stage_credit: 0
 resume_control:
-  current_resume_point: FRESH_ASSET-01_STAGE2_DESIGN_REMEDIATION_REQUIRED
+  current_resume_point: ASSET01_STAGE2_BOUNDED_REMEDIATION_PACKAGE_READY
   current_work_unit_uid: WU-STAGE02-ASSET01-8133839F-REPLAY
   current_owner: 00_SOURCE_INTAKE/run_asset01_8133839f_stage02/04_PAGE_FUNCTIONAL_CONTRACT/CURRENT_PROBLEM_REGISTER.yaml
   historical_stage2_results_are_current_state: false
   stage2_execution_requires_fresh_entry_resolution: false
-  exact_next_action: BUILD_FRESH_ASSET-01_DESIGN_CONTRACT_CANDIDATE_FROM_CURRENT_GAPS
+  exact_next_action: MATERIALIZE_ASSET01_STAGE02_EXACT_NON_AMBIGUOUS_CLOSURES
 governance_revision_transition:
   current_governance_uid: GOV-REV-20260919-SEMANTIC-BASELINE-CONSUMER-SINGLE-OWNER-HARDENING
   predecessor_governance_uid: GOV-REV-20260919-STRUCTURED-MUTATION-SELECTOR-HARDENING
@@ -1548,7 +1548,7 @@ active_work_unit:
   scope:
   - ASSET-01
   canonical_owner: 00_SOURCE_INTAKE/run_asset01_8133839f_stage02/04_PAGE_FUNCTIONAL_CONTRACT/CURRENT_PROBLEM_REGISTER.yaml
-  current_status: DESIGN_CONTRACT_REMEDIATION_REQUIRED
+  current_status: BOUNDED_REMEDIATION_PACKAGE_READY
   source_attempt_uid: STAGE02-ASSET01-8133839F-REPLAY
   source_problem_denominator: 106
   source_closure_blocker_denominator: 9
@@ -1679,6 +1679,20 @@ active_work_unit:
       fresh_closure_blocker_total: 9
     product_blocker_credit_from_maintenance: 0
     rebootstrap_required_before_product_mutation: true
+  bounded_remediation_package:
+    function_admission_scorecard_ref: 00_SOURCE_INTAKE/run_asset01_8133839f_stage02/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/FUNCTION_ADMISSION_SCORECARD.yaml
+    auto_completion_scope_ledger_ref: 00_SOURCE_INTAKE/run_asset01_8133839f_stage02/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/AUTO_COMPLETION_SCOPE_LEDGER.yaml
+    frozen_dependency_closure_ref: 00_SOURCE_INTAKE/run_asset01_8133839f_stage02/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/FROZEN_REMEDIATION_DEPENDENCY_CLOSURE.yaml
+    design_contract_candidate_ref: 00_SOURCE_INTAKE/run_asset01_8133839f_stage02/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/DESIGN_CONTRACT_CANDIDATE.yaml
+    semantic_review_ref: 00_SOURCE_INTAKE/run_asset01_8133839f_stage02/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/REMEDIATION_SEMANTIC_REVIEW.yaml
+    blocker_coverage_ref: 00_SOURCE_INTAKE/run_asset01_8133839f_stage02/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/REMEDIATION_BLOCKER_COVERAGE.yaml
+    exact_non_ambiguous_closure_count: 31
+    review_only_candidate_problem_count: 75
+    materialized_product_credit_before_revalidation: 0
+    current_raw_problem_denominator: 106
+    current_closure_blocker_denominator: 9
+    user_or_authority_selection_still_required_for:
+    - ASSET-01-ACT-FINDING-CREATE_TRIGGER_BEHAVIOR
 closed_test_validation_maintenance_work_unit_stage02_applicability_projection:
   work_unit_uid: WU-TEST-STAGE02-APPLICABILITY-PROJECTION-001
   canonical_name: STAGE02_APPLICABILITY_AND_SUCCESSOR_CONTRACT_PROJECTION_HARDENING

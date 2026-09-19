@@ -1,0 +1,36 @@
+{
+  "schema_version": 1,
+  "artifact_type": "DESIGN_CONTRACT_CANDIDATE_SEMANTIC_REVIEW",
+  "normative_authority": false,
+  "current_governance_uid": "GOV-REV-20260919-SEMANTIC-BASELINE-CONSUMER-SINGLE-OWNER-HARDENING",
+  "run_uid": "FRESH-ASSET01-8133839F-STAGE02",
+  "attempt_uid": "STAGE02-ASSET01-8133839F-REPLAY",
+  "page_uid": "ASSET-01",
+  "source_problem_register_ref": "00_SOURCE_INTAKE/run_asset01_8133839f_stage02/04_PAGE_FUNCTIONAL_CONTRACT/CURRENT_PROBLEM_REGISTER.yaml",
+  "source_problem_register_git_blob_sha": "57e4e37a21e93df7a96495cf306acce18dafeff7",
+  "immutable_raw_source_ref": "00_SOURCE_INTAKE/run_asset01_8133839f_stage02/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml",
+  "immutable_raw_source_git_blob_sha": "9668e2307c722ea4cf64f93f07c92da1b3abcc28",
+  "source_gap_denominator": 106,
+  "product_blocker_credit": 0,
+  "candidate_ref": "00_SOURCE_INTAKE/run_asset01_8133839f_stage02/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/DESIGN_CONTRACT_CANDIDATE.yaml",
+  "status": "PASS_AS_REVIEW_ONLY_PACKAGE_NOT_APPROVED_FOR_MATERIALIZATION",
+  "checks": {
+    "all_106_problems_classified": true,
+    "exact_closure_count": 31,
+    "review_only_count": 75,
+    "invalidated_R20_R22_closures_excluded": true,
+    "R24_R25_rollbacks_respected": true,
+    "immutable_raw_source_mutated": false,
+    "generated_history_promoted_to_authority": false,
+    "new_business_entity_invented": false,
+    "new_runtime_owner_invented": false,
+    "unresolved_materially_distinct_behavior_count": 1
+  },
+  "blocking_authority_selection": [
+    {
+      "target_uid": "ASSET-01-ACT-FINDING-CREATE",
+      "decision": "SYSTEM_TRIGGER_VS_EXPLICIT_USER_CONTROL",
+      "reason": "Two materially distinct viable interaction behaviors remain."
+    }
+  ]
+}
