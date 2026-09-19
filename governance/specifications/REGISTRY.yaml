@@ -8,8 +8,8 @@ stable_entrypoint:
   test_state_root: governance/test
   active_test_state: governance/test/ACTIVE_STATE.yaml
 active_specification:
-  governance_uid: GOV-REV-20260919-BLUEPRINT-CONSTRUCTION-TRACEABILITY-HARDENING
-  display_version: v2.2.10
+  governance_uid: GOV-REV-20260919-BASIC-DESIGN-VISUAL-INTEGRATION-HARDENING
+  display_version: v2.2.11
   version_role: CURRENT_GOVERNANCE_DISPLAY_VERSION
   aliases:
   - neutral-portable-governance
@@ -28,12 +28,13 @@ active_specification:
   - structured-mutation-selector-hardening
   - semantic-baseline-consumer-single-owner-hardening
   - blueprint-construction-traceability-hardening
+  - basic-design-visual-integration-hardening
   status: ACTIVE_CURRENT_GOVERNANCE
 immediate_predecessor:
-  governance_uid: GOV-REV-20260919-SEMANTIC-BASELINE-CONSUMER-SINGLE-OWNER-HARDENING
-  display_version: v2.2.9
+  governance_uid: GOV-REV-20260919-BLUEPRINT-CONSTRUCTION-TRACEABILITY-HARDENING
+  display_version: v2.2.10
   version_role: SUPERSEDED_CURRENT_GOVERNANCE_HISTORY
-  status: SUPERSEDED_HISTORY_ONLY_AFTER_BLUEPRINT_CONSTRUCTION_TRACEABILITY_HARDENING
+  status: SUPERSEDED_HISTORY_ONLY_AFTER_BASIC_DESIGN_VISUAL_INTEGRATION_HARDENING
 version_role_contract:
   current_governance_display_version_owner: active_specification
   verified_source_package_version_role: VERIFIED_SOURCE_LINEAGE_HISTORY

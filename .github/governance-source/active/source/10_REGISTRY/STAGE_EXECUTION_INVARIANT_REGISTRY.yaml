@@ -4,7 +4,7 @@ artifact_type: STAGE_EXECUTION_INVARIANT_REGISTRY
 status: CURRENT_CANDIDATE
 canonical_path: 10_REGISTRY/STAGE_EXECUTION_INVARIANT_REGISTRY.yaml
 owner_uid: OWNER-GOVERNANCE-STAGE-EXECUTION-INVARIANT
-governance_revision: v2.2.10-blueprint-construction-traceability-hardening
+governance_revision: v2.2.11-basic-design-visual-integration-hardening
 scope:
   applies_to_stages:
   - STAGE-01
@@ -727,39 +727,6 @@ invariants:
     git_diff_quiet_alone_sufficient: false
     status_or_equivalent_untracked_aware_check_required: true
     exact_output_path_persistence_proof_required: true
-  CONSTRUCTION_BLUEPRINT_PACKAGE_COMPLETENESS:
-    required_artifact: CONSTRUCTION_BLUEPRINT_PACKAGE
-    package_is_non_owning_binding: true
-    separate_page_and_visual_authority_preserved: true
-    required_domain_bindings:
-    - CURRENT_TRUTH_SOURCE_MAP
-    - REQUIREMENT_PROBLEM_DEFINITION
-    - BUSINESS_ENTITY_INVENTORY
-    - BUSINESS_ENTITY_OPERATION_MATRIX
-    - ENTITY_HIERARCHY_MATRIX
-    - USER_JOURNEY_REGISTRY
-    - FUNCTIONAL_WORKBENCH_CONTRACT
-    - INTERACTION_TOPOLOGY_MATRIX
-    - FUNCTIONAL_CHAIN
-    - CROSS_PAGE_FLOW_WHEN_APPLICABLE
-    - PAGE_DESIGN
-    - SECTION_COMPONENT_REGISTRY
-    - CONTROL_FIELD_ACTION_GATE_PERMISSION_BINDING
-    - STATE_TRANSITION_ERROR_RECOVERY
-    - DATA_OBJECT_BINDING
-    - FUNCTION_VISUAL_IMPACT_MATRIX
-    - VISUAL_ANCHOR_REGISTRY
-    - VISUAL_GENERATION_MANIFEST
-    - VISUAL_CANDIDATES
-    - CONSTRUCTION_DELTA_MATRIX_WHEN_PRIOR_IMPLEMENTATION_EXISTS
-    - PRE_IMPLEMENTATION_GUARDS
-    - BLUEPRINT_IMPLEMENTATION_HANDOFF
-    - ACCEPTANCE_MATRIX
-    - AUDIT_BASELINE
-    - DEFINITION_OF_DONE
-    - RESUME_NEXT_STEP
-    missing_applicable_package_item: BLUEPRINT_PACKAGE_INCOMPLETE
-    implementation_before_complete_package: BLOCK
   FUNCTION_VISUAL_BIDIRECTIONAL_TRACEABILITY:
     required_forward_trace:
     - BUSINESS_ENTITY
@@ -773,8 +740,7 @@ invariants:
     - STATE
     - VISUAL_ANCHOR
     - VISUAL_CANDIDATE
-    - IMPLEMENTATION_TARGET
-    - ACCEPTANCE_ITEM
+    - DESIGN_REVIEW_ITEM
     reverse_trace_required_for_visible_interactive_or_state_bearing_elements: true
     orphan_visual_element: BLOCK
     required_user_observable_function_without_visual_binding: BLOCK
@@ -782,19 +748,24 @@ invariants:
     arbitrary_visual_topology_change: BLOCK
   MANDATORY_MULTI_STATE_VISUAL_EVIDENCE:
     required_artifact: VISUAL_SCENARIO_EVIDENCE_SET
+    actual_visual_design_required: true
+    wireframe_only_is_complete_visual_design: false
+    style_application_required: true
     scenario_universe:
+    - VISUAL_ARCHITECTURE_OVERVIEW
     - CANONICAL_WORKSPACE_OVERVIEW
+    - VISUAL_STYLE_BOARD
     - INTERACTION_TOPOLOGY_DIAGRAM
     - INITIAL_OR_EMPTY_STATE
     - ACTIVE_WORKING_STATE
     - COMPLEX_OR_CONDITIONAL_STATE
     - FINALIZATION_OR_CONFIRMATION_STATE
     - ERROR_BLOCKED_RECOVERY_STATE
-    - CROSS_PAGE_HANDOFF_DIAGRAM
+    - CROSS_PAGE_RELATION_DIAGRAM
+    - RESPONSIVE_VARIANT
     applicability_required: true
-    moodboard_may_satisfy_actual_structure_preview: false
     missing_required_scenario: BLOCK
-    same_layout_tokens_anchors_topology_required_unless_change_set: true
+    same_style_layout_tokens_anchors_topology_required_unless_design_change_set: true
   VISUAL_REFERENCE_ANNOTATION:
     required_artifact: VISUAL_REFERENCE_ANNOTATION
     required_fields:
@@ -806,7 +777,7 @@ invariants:
     - journey_uid
     - parent_visual_uid
     - design_version
-    - change_set_uid
+    - basic_design_change_set_uid
     - viewport
     - language
     - theme
@@ -820,47 +791,10 @@ invariants:
     - disabled_or_blocked_controls
     - next_action_or_gate
     - source_authority_refs
+    - inherited_visual_authority_refs
     - authority_classification
     - verification_purpose
     unannotated_visual_may_pass_visual_review: false
-  CONSTRUCTION_DELTA_EXISTING_IMPLEMENTATION:
-    required_artifact: CONSTRUCTION_DELTA_MATRIX
-    activation: PRIOR_IMPLEMENTATION_EXISTS
-    existing_status_universe:
-    - EXISTS
-    - PARTIAL
-    - MISSING
-    - WRONG_BINDING
-    - OBSOLETE
-    - DUPLICATE
-    required_disposition_universe:
-    - KEEP
-    - MODIFY
-    - REMOVE
-    - MERGE
-    - REBIND
-    - ADD
-    required_fields:
-    - requirement_uid
-    - business_entity_operation
-    - current_program_artifact_or_code_owner
-    - current_path_or_identity
-    - existing_status
-    - required_disposition
-    - required_change
-    - authority_ref
-    - functional_impact
-    - visual_impact
-    - api_runtime_data_impact
-    - permission_impact
-    - state_impact
-    - cross_page_impact
-    - required_test_or_audit
-    - construction_owner
-    - blocking_state
-    - downstream_reverify_impact
-    already_auditable_gap_deferred_until_downstream_test: BLOCK
-    ambiguous_product_behavior_autofill: BLOCK
   SCENARIO_TO_FUNCTION_VISUAL_COVERAGE:
     denominator: APPROVED_REQUIRED_JOURNEY_STATE_BRANCH_SET
     required_mapping:
@@ -869,44 +803,109 @@ invariants:
     - STATE
     - CONTROLS
     - VISUAL_ANCHORS
-    - ACCEPTANCE_ITEMS
+    - VISUAL_STYLE_OR_INHERITANCE_REFS
+    - DESIGN_REVIEW_ITEMS
     required_coverage_percent: 100
     visual_scenario_drift: BLOCK
-  DESIGN_FREEZE_QUANTITATIVE_COMPLETENESS:
+  BASIC_DESIGN_PACKAGE_COMPLETENESS:
+    required_artifact: BASIC_DESIGN_PACKAGE
+    design_domain_only: true
+    independent_of_implementation_runtime_deployment: true
+    required_domains:
+    - REQUIREMENTS
+    - ARCHITECTURE
+    - BUSINESS_ENTITY_AND_OPERATION
+    - JOURNEY_WORKBENCH_TOPOLOGY
+    - PAGE_SURFACE_DESIGN
+    - VISUAL_ARCHITECTURE
+    - VISUAL_INHERITANCE_MATRIX
+    - VISUAL_STYLE_DEFINITION
+    - FUNCTION_VISUAL_TRACEABILITY
+    - VISUAL_SCENARIO_EVIDENCE_SET
+    - VISUAL_REFERENCE_ANNOTATION
+    - HUMAN_READABLE_DESIGN_DOCUMENT
+    - DESIGN_REVIEW_AND_FREEZE_STATE
+    missing_applicable_package_item: BASIC_DESIGN_PACKAGE_INCOMPLETE
+    basic_design_freeze_before_complete_package: BLOCK
+  VISUAL_INHERITANCE_AND_STYLE_DEFINITION:
+    required_artifacts:
+    - VISUAL_INHERITANCE_MATRIX
+    - VISUAL_STYLE_DEFINITION
+    read_current_visual_authorities_before_design: true
+    inherit_existing_current_visual_authority_when_present: true
+    silent_global_style_redefinition: BLOCK
+    missing_current_visual_authority_requires_new_style_definition_before_final_visuals: true
+    style_category_universe:
+    - DESIGN_INTENT
+    - COLOR_ROLE_TOKEN_MODEL
+    - TYPOGRAPHY
+    - SPACING_DENSITY_GRID
+    - GEOMETRY_RADIUS_BORDER_ELEVATION
+    - ICONOGRAPHY
+    - CONTROL_AND_COMPONENT_VARIANTS
+    - STATE_SEMANTICS
+    - MEDIA_ASSET_TREATMENT
+    - MOTION
+    - RESPONSIVE
+    - ACCESSIBILITY
+    - LOCALIZATION
+    - THEME_BRAND_CONSTRAINTS
+    page_local_specialization_requires_authority_open_slot: true
+    material_style_deviation_requires_basic_design_change_set: true
+  BASIC_DESIGN_FREEZE_QUANTITATIVE_COMPLETENESS:
     required_percent_fields:
+      requirement_architecture_coverage: 100
       business_entity_operation_coverage: 100
-      functional_chain_coverage: 100
+      journey_workbench_topology_coverage: 100
+      functional_chain_design_coverage: 100
       function_to_visual_binding_coverage: 100
       visible_visual_to_function_binding_coverage: 100
+      visual_authority_inheritance_classification: 100
+      visual_style_definition_category_coverage: 100
       required_state_scenario_visual_coverage: 100
-      cross_page_flow_coverage: 100
-      construction_delta_classification_when_applicable: 100
-      required_acceptance_item_definition: 100
+      cross_page_design_relation_coverage_when_applicable: 100
+      required_design_review_item_definition: 100
+      human_readable_embedded_figure_coverage: 100
     required_zero_fields:
     - orphan_visual_element_count
-    - unbound_control_count
-    - unbound_field_count
-    - undefined_next_step_count
+    - unbound_required_control_count
+    - unbound_required_field_count
+    - undefined_required_next_step_count
     - missing_required_recovery_path_count
     - missing_required_visual_candidate_count
+    - missing_visual_style_category_count
+    - missing_required_figure_annotation_count
+    - unresolved_visual_authority_conflict_count
     authority_gap_may_be_hidden_by_percentage: false
-    single_overview_visual_may_substitute_denominator: false
-  BLUEPRINT_TO_IMPLEMENTATION_HANDOFF:
-    required_artifact: BLUEPRINT_IMPLEMENTATION_HANDOFF
-    required_fields:
-    - frozen_artifact_uids_hashes
-    - construction_delta_rows
-    - program_artifact_or_construction_owner
-    - implementation_dependency_order
-    - visual_reference_uids
-    - functional_workbench_and_topology_refs
-    - state_gate_permission_behavior
-    - payload_input_contracts
-    - error_recovery_behavior
-    - acceptance_audit_refs
-    - reentry_rollback_conditions
-    implementation_outside_frozen_handoff: BLOCK_AND_REOPEN_OWNING_CAPABILITY
-    bidirectional_design_to_code_traceability_required: true
+    single_overview_or_wireframe_may_substitute_denominator: false
+  DESIGN_DOCUMENT_VISUAL_EMBEDDING:
+    applies_to_human_readable_design_deliverables:
+    - DOCX
+    - PDF
+    - HTML
+    - EQUIVALENT_REVIEW_FORMAT
+    external_image_only_delivery: BLOCK
+    required_figures_embedded_adjacent_to_relevant_section: true
+    figure_categories:
+    - ARCHITECTURE_OR_MODULE_RELATION
+    - ENTITY_OR_HIERARCHY_WHEN_MATERIAL
+    - JOURNEY_WORKBENCH_INTERACTION_TOPOLOGY
+    - HIGH_FIDELITY_PAGE_OR_WORKSPACE
+    - VISUAL_STYLE_BOARD_OR_DESIGN_SYSTEM_REFERENCE
+    - MULTI_STATE_VISUALS
+    - CROSS_PAGE_RELATION_WHEN_APPLICABLE
+    - RESPONSIVE_VARIANT_WHEN_APPLICABLE
+    required_caption_fields:
+    - figure_or_visual_uid
+    - title
+    - design_purpose
+    - page_or_scope
+    - scenario_or_state
+    - source_or_inherited_visual_authority_refs
+    - design_version_or_change_set
+    - key_review_notes
+    self_contained_human_review_required: true
+    implementation_artifacts_required: false
 stage02_observed_defect_mapping:
 - finding: PORT_EXPOSURE_WITHOUT_TRIGGER
   mapped_invariant: RELATION_SEMANTIC_SEPARATION

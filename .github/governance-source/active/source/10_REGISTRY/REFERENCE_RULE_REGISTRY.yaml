@@ -4,7 +4,7 @@ artifact_type: REFERENCE_RULE_REGISTRY
 status: CURRENT_CANDIDATE
 canonical_path: 10_REGISTRY/REFERENCE_RULE_REGISTRY.yaml
 owner_uid: OWNER-GOVERNANCE-REFERENCE-SEMANTICS
-governance_revision: v2.2.10-blueprint-construction-traceability-hardening
+governance_revision: v2.2.11-basic-design-visual-integration-hardening
 normative_section_uids:
 - WEB-GOV-01-S005
 - WEB-GOV-01-S006-03
@@ -165,6 +165,8 @@ stage_reference_rules:
     - WEB-GOV-01-S081
     - WEB-GOV-01-S082
     - WEB-GOV-01-S083
+    - WEB-GOV-01-S078
+    - WEB-GOV-01-S079
   STAGE-05:
     rule_uid: REFRULE-STAGE-05
     exact_required_normative_section_uids:
@@ -184,8 +186,6 @@ stage_reference_rules:
     - WEB-GOV-01-S075
     - WEB-GOV-03-S069
     - WEB-GOV-04-S083
-    - WEB-GOV-01-S080
-    - WEB-GOV-01-S083
   STAGE-06:
     rule_uid: REFRULE-STAGE-06
     exact_required_normative_section_uids:
@@ -654,8 +654,8 @@ blueprint_type_identities:
   planning_domain: ACCEPTANCE
   created_stage_uid: STAGE-04
 - blueprint_type_uid: BPTYPE-GOV-007
-  canonical_name: CONSTRUCTION_BLUEPRINT_PACKAGE
-  planning_domain: NON_OWNING_BINDING
+  canonical_name: BASIC_DESIGN_PACKAGE
+  planning_domain: BASIC_DESIGN
   created_stage_uid: STAGE-04
 normative_document_rules:
 - document_id: WEB-GOV-01

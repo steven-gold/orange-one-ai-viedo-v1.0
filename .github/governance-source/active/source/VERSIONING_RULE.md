@@ -81,3 +81,9 @@ The candidate package cannot self-prove integrity. The trust-root hash set is an
 - A blueprint is not implementation-ready merely because controls/components exist or one overview visual was produced.
 - Applicable blueprint artifacts, function-to-visual and visual-to-function traces, multi-state visual evidence/annotations, construction-delta classification, quantitative freeze coverage, and implementation handoff are Required before Design Freeze/implementation where applicable.
 - Product-specific behavior remains governed by Product Authority; these common rules define completeness and traceability and MUST_NOT invent product semantics.
+
+## v2.2.11 basic design visual integration rule
+- Basic Design and downstream implementation/execution are separate lifecycle concerns.
+- Basic Design MUST finish requirements, architecture, functional relationships, visual architecture, complete visual style, high-fidelity scenario visuals, document-embedded figures, design review, and freeze without requiring code/runtime/deployment evidence.
+- Existing project Visual Authority MUST be read and inherited first; if absent, Basic Design MUST define and approve a complete reusable visual style before final visual candidates.
+- Common Mother policy remains product-neutral and MUST NOT embed a product-specific palette, brand, shell geometry, page name, route, provider, or fixed implementation technology.

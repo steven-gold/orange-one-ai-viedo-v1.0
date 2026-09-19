@@ -4,7 +4,7 @@ artifact_type: IMMUTABLE_SEMANTIC_AUTHORITY_BASELINE
 status: CURRENT_CANDIDATE_IMMUTABLE
 canonical_path: 10_REGISTRY/SEMANTIC_AUTHORITY_BASELINE.yaml
 owner_uid: OWNER-GOVERNANCE-SEMANTIC-ANCHOR
-governance_revision: v2.2.10-blueprint-construction-traceability-hardening
+governance_revision: v2.2.11-basic-design-visual-integration-hardening
 anchor_policy:
   official_refresh_must_not_mutate: true
   compiler_must_not_regenerate: true
@@ -154,6 +154,8 @@ semantic_snapshot:
       - WEB-GOV-01-S081
       - WEB-GOV-01-S082
       - WEB-GOV-01-S083
+      - WEB-GOV-01-S078
+      - WEB-GOV-01-S079
     STAGE-05:
       rule_uid: REFRULE-STAGE-05
       exact_required_normative_section_uids:
@@ -173,8 +175,6 @@ semantic_snapshot:
       - WEB-GOV-01-S075
       - WEB-GOV-03-S069
       - WEB-GOV-04-S083
-      - WEB-GOV-01-S080
-      - WEB-GOV-01-S083
     STAGE-06:
       rule_uid: REFRULE-STAGE-06
       exact_required_normative_section_uids:
@@ -643,8 +643,8 @@ semantic_snapshot:
     planning_domain: ACCEPTANCE
     created_stage_uid: STAGE-04
   - blueprint_type_uid: BPTYPE-GOV-007
-    canonical_name: CONSTRUCTION_BLUEPRINT_PACKAGE
-    planning_domain: NON_OWNING_BINDING
+    canonical_name: BASIC_DESIGN_PACKAGE
+    planning_domain: BASIC_DESIGN
     created_stage_uid: STAGE-04
   normative_document_rules:
   - document_id: WEB-GOV-01
@@ -834,7 +834,7 @@ package_integrity_assets:
 - 09_TESTS/governance/test_v2_1_14_test_feedback_spec_evolution.py
 - 09_TESTS/governance/validate_product_neutral_entity_lifecycle.py
 - 09_TESTS/governance/test_v2_1_14_product_neutral_entity_lifecycle.py
-content_hash: fe2e39e4deedbdc610b927ccd7c5aa48da3f037f00aa99615a0b2c7f3ea1785a
+content_hash: 5b62fc6eaf15e56a63fca75d024e2068ed52b734697b377a8d8e2a8533321dbd
 protected_hash_paths:
 - 09_TESTS/governance/validate_test_feedback_spec_evolution.py
 - 09_TESTS/governance/test_v2_1_14_test_feedback_spec_evolution.py

@@ -1528,54 +1528,61 @@ When any later capability discovers a required semantic fact, interaction topolo
 Whenever a missing REQUIRED function or contract is analyzed for automatic completion or Design/Contract Remediation, FUNCTION_ADMISSION_SCORECARD and AUTO_COMPLETION_SCOPE_LEDGER are required analysis outputs even when the final disposition is NO_AUTO_COMPLETION, REVIEW_ONLY_DESIGN_CANDIDATE, AUTHORITY_GAP, or BLOCKED. Their purpose is to prove boundedness and routing; neither artifact creates Product Authority.
 
 <!-- SECTION_UID: WEB-GOV-01-S076 -->
-## 76. 施工藍圖包完整度 Gate / Construction Blueprint Package Completeness
+## 76. 基本設計包完整度 Gate / Basic Design Package Completeness
 
-Every governed Page, Surface, Module, or Cross-page Flow MUST materialize one complete `CONSTRUCTION_BLUEPRINT_PACKAGE` before Design Freeze or implementation handoff. The package is a non-owning binding package: it MUST reference the separate Current `PAGE_BASE_BLUEPRINT`, `VISUAL_BASE_BLUEPRINT`, functional-contract owners, and visual-design owners; it MUST_NOT become a second editable Page/Visual Authority.
+Every governed product/system scope MUST materialize one complete `BASIC_DESIGN_PACKAGE` before Basic Design Freeze. The package is a design-domain artifact and MUST be complete independently of downstream implementation, code construction, runtime verification, deployment, or production acceptance.
 
-The applicable package MUST contain, or bind by exact UID/hash to, at least:
+The applicable Basic Design Package MUST contain, or bind by exact UID/hash to, at least:
 
-1. Current Truth / Source Map and Requirement / Problem Definition.
-2. `BUSINESS_ENTITY_INVENTORY`, `BUSINESS_ENTITY_OPERATION_MATRIX`, and `ENTITY_HIERARCHY_MATRIX`.
-3. User Journey Registry, `FUNCTIONAL_WORKBENCH_CONTRACT`, `INTERACTION_TOPOLOGY_MATRIX`, and conditional AI interaction continuity contract when applicable.
-4. Complete Functional Chain and every applicable Cross-page Flow Contract.
-5. Page Design, Section Registry, Component Registry, and Control / Field / Action / Gate / Permission binding.
-6. State / Transition / Error / Recovery contract and Data Object Binding.
-7. `FUNCTION_VISUAL_IMPACT_MATRIX`, Visual Anchor Registry, Visual Generation Manifest, and required Visual Candidates.
-8. `CONSTRUCTION_DELTA_MATRIX` against the existing implementation when any implementation already exists.
-9. Pre-Implementation Guards, Implementation Handoff, Acceptance Matrix, Audit Baseline, Definition of Done, and Resume / Next Step.
+1. Scope, Business Goal, Target Users/Roles, Functional/Non-functional Requirements, Out-of-Scope, Glossary, and Naming intent.
+2. System/Module/Dependency/Navigation/User Flow/Business Flow/State/Data/Boundary architecture.
+3. Business Entity Inventory, Business Entity Operation Matrix, and Entity Hierarchy Matrix.
+4. User Journey Registry, Functional Workbench Contract, Interaction Topology, and conditional AI Interaction Continuity when applicable.
+5. Page/Surface information architecture, Sections, Components, Controls, Fields, states, permissions/gates at design semantics, and cross-page design relationships when applicable.
+6. Visual Architecture, Layout/Grid, responsive semantic order, accessibility focus intent, and all required visual anchors.
+7. `VISUAL_INHERITANCE_MATRIX` and `VISUAL_STYLE_DEFINITION` resolving inherited Current visual authorities or defining a new complete project visual system when none exists.
+8. Functional-Visual Bidirectional Traceability and Scenario-to-Function Visual Coverage.
+9. Required high-fidelity Visual Candidates for all applicable states/scenarios and their Visual Reference Annotations.
+10. Human-readable Basic Design deliverable with required figures embedded in context.
+11. Design review state, unresolved design gaps, approved change sets, and Basic Design Freeze status.
 
-Every item MUST declare `REQUIRED`, `OPTIONAL`, or `NOT_APPLICABLE`; `NOT_APPLICABLE` requires Authority evidence. A missing applicable item is `BLUEPRINT_PACKAGE_INCOMPLETE` and MUST block Design Freeze and implementation.
+Each item MUST declare `REQUIRED`, `OPTIONAL`, or `NOT_APPLICABLE`; `NOT_APPLICABLE` requires design/authority evidence. A missing applicable item is `BASIC_DESIGN_PACKAGE_INCOMPLETE` and MUST block Basic Design Freeze.
+
+Basic Design completion MUST_NOT require `CONSTRUCTION_DELTA_MATRIX`, source-code audit, implementation manifest, runtime test evidence, deployment evidence, production evidence, or implementation handoff. Those belong to later, independent lifecycle standards.
 
 <!-- SECTION_UID: WEB-GOV-01-S077 -->
 ## 77. 功能與視覺雙向追溯 Gate / Functional-Visual Bidirectional Traceability
 
-Every user-visible or user-observable REQUIRED function MUST resolve the exact forward trace:
+Every user-visible or user-observable REQUIRED function in Basic Design MUST resolve the exact forward design trace:
 
-`Business Entity -> Operation -> Journey -> Functional Workbench -> Section -> Component -> Control/System Trigger -> Field/Input -> State -> Visual Anchor -> Visual Candidate -> Implementation Target -> Acceptance Item`.
+`Business Entity -> Operation -> Journey -> Functional Workbench -> Section -> Component -> Control/System Trigger -> Field/Input -> State -> Visual Anchor -> Visual Candidate -> Design Review Item`.
 
 The reverse trace is also REQUIRED for every visible interactive or state-bearing visual element. Each Card, Panel, Tab, Button, Input, Selector, Badge, Drawer, Modal, Timeline, Conversation Surface, State Rail, Status Strip, and equivalent element MUST resolve backward to one governed Business Entity operation or registered non-entity utility operation.
 
-A visible element without such backward ownership is `ORPHAN_VISUAL_ELEMENT` and MUST block approval. A required user-observable function without a visual/state binding is `MISSING_VISUAL_BINDING` and MUST block approval unless Current Authority explicitly classifies it as `NON_VISUAL_SYSTEM_FUNCTION`.
+A visible element without backward ownership is `ORPHAN_VISUAL_ELEMENT` and MUST block Basic Design Freeze. A required user-observable function without a visual/state binding is `MISSING_VISUAL_BINDING` and MUST block Basic Design Freeze unless Current Authority explicitly classifies it as `NON_VISUAL_SYSTEM_FUNCTION`.
 
-Visual Design MUST preserve the approved Functional Workbench and Interaction Topology. Geometry MAY change within the approved design system and Change Set, but arbitrary visual regrouping, reordering, detaching, or separating operations from their required context is forbidden.
+Visual Design MUST preserve the approved Functional Workbench and Interaction Topology. Geometry and presentation MAY vary only within the Current Visual Authority / Design System and approved design change set; arbitrary visual regrouping, reordering, detaching, or separating operations from their required context is forbidden.
 
 <!-- SECTION_UID: WEB-GOV-01-S078 -->
-## 78. 強制多情境視覺證據集 / Mandatory Multi-State Visual Evidence Set
+## 78. 強制完整視覺設計與多情境圖面 Gate / Mandatory Complete Visual Design and Multi-State Evidence
 
-Visual Preview MUST cover the actual interaction states required by the Page Complexity Profile and approved journeys; one attractive overview image is insufficient.
+Basic Design MUST include actual visual design, not information architecture, wireframes, moodboards, or text-only layout descriptions alone. Every required Visual Candidate MUST apply the Current project visual style or the newly approved `VISUAL_STYLE_DEFINITION` and must be detailed enough for human design review before Basic Design Freeze.
 
 The applicability set MUST evaluate at least:
 
-- `CANONICAL_WORKSPACE_OVERVIEW`: complete desktop work area showing shell relationship, information hierarchy, primary workbench, primary actions, and next-step surface.
-- `INTERACTION_TOPOLOGY_DIAGRAM`: REQUIRED for complex, contiguous, multi-step, conditional, or cross-surface journeys.
-- `INITIAL_OR_EMPTY_STATE`: REQUIRED when the scope has create/select/empty prerequisites.
+- `VISUAL_ARCHITECTURE_OVERVIEW`: information hierarchy, workbench boundaries, adjacency, navigation intent, feedback location, and semantic order.
+- `CANONICAL_WORKSPACE_OVERVIEW`: complete primary page/workspace visual using the approved style, shell relationship, layout/grid, sections, controls, and primary next action.
+- `VISUAL_STYLE_BOARD`: color/token roles, typography, density/spacing, shape/elevation, iconography, surfaces, control variants, and state semantics.
+- `INTERACTION_TOPOLOGY_DIAGRAM`: REQUIRED for contiguous, multi-step, conditional, or cross-surface journeys.
+- `INITIAL_OR_EMPTY_STATE`: REQUIRED when create/select/empty prerequisites exist.
 - `ACTIVE_WORKING_STATE`: REQUIRED for every interactive workbench.
-- `COMPLEX_OR_CONDITIONAL_STATE`: REQUIRED when multi-agent, compare, correction, layer, provider/async, branch, review, or equivalent conditional behavior exists.
-- `FINALIZATION_OR_CONFIRMATION_STATE`: REQUIRED when candidate, approval, confirmation, version, lock, publish, or handoff exists.
-- `ERROR_BLOCKED_RECOVERY_STATE`: REQUIRED when a user-visible error, blocked gate, retry, rollback, or recovery path exists.
-- `CROSS_PAGE_HANDOFF_DIAGRAM`: REQUIRED for P4 or any flow whose output becomes another Page/Module input.
+- `COMPLEX_OR_CONDITIONAL_STATE`: REQUIRED when compare, multi-agent, correction, layer, async/provider, branch, review, or equivalent behavior exists.
+- `FINALIZATION_OR_CONFIRMATION_STATE`: REQUIRED when candidate, confirmation, approval, version, lock, publish, or equivalent finalization exists.
+- `ERROR_BLOCKED_RECOVERY_STATE`: REQUIRED when user-visible error, disabled gate, retry, rollback, or recovery exists.
+- `CROSS_PAGE_RELATION_DIAGRAM`: REQUIRED when another page/surface consumes or produces related design context.
+- `RESPONSIVE_VARIANT`: REQUIRED when responsive behavior materially changes layout while semantic order must remain stable.
 
-Every required visual MUST target actual website structure, not a moodboard. All visuals for one Page MUST use the same approved Layout, Design Tokens, Visual Anchors, and Functional Topology unless an authorized Change Set explicitly changes them.
+One overview image MUST_NOT substitute for the required scenario set. All visuals for one governed scope MUST use the same approved Layout, Visual Style, Design Tokens, Component State System, Visual Anchors, and Functional Topology unless an authorized Basic Design Change Set explicitly changes them.
 
 <!-- SECTION_UID: WEB-GOV-01-S079 -->
 ## 79. 視覺參考註解合約 / Visual Reference Annotation Contract
@@ -1583,65 +1590,102 @@ Every required visual MUST target actual website structure, not a moodboard. All
 Every Visual Candidate MUST carry a machine- and human-readable annotation record containing at least:
 
 - Visual UID, Page/Scope UID, Scenario UID, State UID, Workbench UID, Journey UID.
-- Parent Visual UID, Design Version, Change Set UID, Viewport, Language, Theme.
+- Parent Visual UID, Design Version, Basic Design Change Set UID, Viewport, Language, Theme when applicable.
 - Applicable Business Entity / Operation.
 - Visible Sections and Conditional Sections.
 - Locked Regions and Editable Regions.
 - Visual Anchor UIDs.
 - Primary Controls and Disabled/Blocked Controls with reason source.
-- Current Next Action / Next Gate.
+- Current Next Action / Next Gate where the design exposes one.
 - Source Authority references and Authority classification.
-- A concise `verification_purpose` stating exactly what product behavior/state the visual proves.
+- Inherited Visual Authority / Design System references.
+- A concise `verification_purpose` stating exactly what product behavior, relationship, or state the visual proves.
 
-An image without the required annotation MUST_NOT satisfy Visual Preview, Visual Review, Canonical Visual, Design Freeze, or implementation handoff.
+An image without the required annotation MUST_NOT satisfy Visual Preview, Visual Review, Basic Design Freeze, or a human-readable Basic Design deliverable.
 
 <!-- SECTION_UID: WEB-GOV-01-S080 -->
-## 80. 施工差異與既有實作缺口 Gate / Construction Delta and Existing Implementation Gap
+## 80. 視覺規範繼承與風格定義 Gate / Visual Authority Inheritance and Style Definition
 
-Before implementation begins, approved required design MUST be compared against the existing implementation whenever code, runtime, data schema, UI, route, or other prior construction exists. The result MUST materialize one `CONSTRUCTION_DELTA_MATRIX`.
+Before creating page/surface visual design, Basic Design MUST independently resolve and read the Current applicable Visual Architecture, Design System, Layout/Shell, Component, Iconography, Brand, Asset, and visual-state authorities for the project/scope. The design MUST produce a `VISUAL_INHERITANCE_MATRIX` recording at least: Source Authority UID/Path/Version/Hash; inherited rule/token/component; lock/override status; allowed page-local variation; and required Change Set when deviation is permitted.
 
-Each delta row MUST include at least: Requirement UID; Business Entity / Operation; Current Program Artifact or Code Owner; Current path/identity; Existing Status; Required Disposition; Required Change; Authority Ref; Functional Impact; Visual Impact; API/Runtime/Data Impact; Permission Impact; State Impact; Cross-page Impact; Required Test/Audit; Construction Owner; Blocking State; downstream `REVERIFY_REQUIRED` impact.
+If an applicable Current visual authority exists, Basic Design MUST inherit it and MUST_NOT silently redefine global palette, typography, density, icon language, control geometry, component states, layout shell, spacing scale, or visual semantics.
 
-`Existing Status` MUST use a governed class such as `EXISTS`, `PARTIAL`, `MISSING`, `WRONG_BINDING`, `OBSOLETE`, or `DUPLICATE`. `Required Disposition` MUST use an exact class such as `KEEP`, `MODIFY`, `REMOVE`, `MERGE`, `REBIND`, or `ADD`.
+If no applicable visual authority exists, Basic Design MUST create and approve a complete `VISUAL_STYLE_DEFINITION` before final Visual Candidates. The definition MUST cover at least:
 
-An already-auditable construction deficiency MUST be classified before implementation; it MUST_NOT be deferred until downstream testing merely because the current code compiles or a control visually exists. Unknown or ambiguous product behavior remains an Authority Gap and MUST_NOT be guessed through the Delta Matrix.
+- design intent / visual character / density level;
+- color roles and token model, including primary/secondary/surface/text/border/status semantics;
+- typography families/roles/scale/weight/line-height intent;
+- spacing/density scale, grid, section gaps, padding, alignment, and content width behavior;
+- geometry language: control heights, radius scale, borders, elevation/shadow, separators;
+- iconography: icon family/style, stroke/fill policy, sizes, semantic usage, active/disabled/status rules;
+- button, input, select, tab, card, table/list, badge/status, modal, drawer, tooltip/popover, conversation/message, and other applicable component variants;
+- default/hover/focus/active/selected/loading/disabled/success/warning/error/processing state semantics;
+- image/illustration/avatar/thumbnail/background treatment when applicable;
+- motion/transition intent when applicable;
+- responsive behavior and semantic reflow rules;
+- accessibility: focus visibility, contrast, touch target, reading/focus order, non-color-only state communication;
+- localization/i18n behavior and text expansion tolerance;
+- theme/brand constraints and prohibited visual deviations.
+
+The visual style MUST be coherent, reproducible, and reusable across the governed scope. Page-local design MAY specialize only what the Current Visual Authority explicitly leaves open. Any material style deviation from an existing Current Authority requires an authorized Basic Design Change Set and MUST update the inheritance matrix.
 
 <!-- SECTION_UID: WEB-GOV-01-S081 -->
 ## 81. 情境對功能視覺覆蓋 Gate / Scenario-to-Function Visual Coverage
 
 Every critical Journey step, legal state transition, decision branch, permission-disabled state, asynchronous pending state, finalization state, and registered recovery branch MUST have explicit visual coverage when user-visible or user-observable.
 
-Coverage MUST be computed from the approved Required Journey/State denominator, not from the number of screenshots produced. Each required scenario MUST map to exact Workbench, Function/Operation, State, Controls, Visual Anchors, and Acceptance Items. Multiple scenarios MAY share one visual only when the annotation proves all required states are simultaneously and unambiguously represented.
+Coverage MUST be computed from the approved Required Journey/State denominator, not from the number of images produced. Each required scenario MUST map to exact Workbench, Function/Operation, State, Controls, Visual Anchors, Visual Style/Inheritance references, and Design Review Items. Multiple scenarios MAY share one visual only when the annotation proves all required states are simultaneously and unambiguously represented.
 
-A visual scenario that changes layout topology, control ownership, semantic order, context identity, or next-step placement without an approved upstream contract/change set is `VISUAL_SCENARIO_DRIFT` and MUST block approval.
+A visual scenario that changes functional topology, semantic order, context identity, style authority, control ownership, or next-step placement without an approved Basic Design Change Set is `VISUAL_SCENARIO_DRIFT` and MUST block Basic Design Freeze.
 
 <!-- SECTION_UID: WEB-GOV-01-S082 -->
-## 82. 量化 Design Freeze 完整度 Gate / Quantitative Design Freeze Completeness
+## 82. 量化 Basic Design Freeze 完整度 Gate / Quantitative Basic Design Freeze Completeness
 
-`DESIGN_FROZEN` MUST require machine-checkable completeness for every applicable denominator. At minimum:
+`BASIC_DESIGN_FROZEN` MUST require machine-checkable design completeness for every applicable denominator. At minimum:
 
+- Requirement / Architecture coverage = 100%.
 - Required Business Entity Operation coverage = 100%.
-- Required Functional Chain coverage = 100%.
+- Required Journey / Workbench / Interaction Topology coverage = 100%.
+- Required Functional Chain design coverage = 100%.
 - Required Function -> Visual binding coverage = 100%.
 - Visible Visual Element -> Function/Utility binding coverage = 100%.
+- Visual Authority inheritance classification = 100%.
+- Required Visual Style Definition category coverage = 100%.
 - Required State/Scenario Visual coverage = 100%.
-- Required Cross-page Flow coverage = 100%.
-- Construction Delta classification = 100% when prior implementation exists.
-- Required Acceptance Item definition = 100%.
+- Required Cross-page design relationship coverage = 100% when applicable.
+- Required Design Review Item definition = 100%.
+- Required embedded-figure coverage in the human-readable Basic Design deliverable = 100%.
 - Orphan Visual Element count = 0.
-- Unbound Control count = 0.
-- Unbound Field count = 0.
-- Undefined Next Step count = 0.
+- Unbound required Control count = 0.
+- Unbound required Field count = 0.
+- Undefined required Next Step count = 0.
 - Missing required Recovery Path count = 0.
 - Missing required Visual Candidate count = 0.
+- Missing Visual Style category count = 0.
+- Missing required figure annotation/caption count = 0.
+- Unresolved Visual Authority conflict count = 0.
 
-A percentage MUST_NOT hide an unresolved `AUTHORITY_GAP`, `AUTHORITY_CONFLICT`, missing Current owner, or intentionally fail-closed condition. One overview screenshot, one mockup, or one successful visual review item MUST_NOT substitute for the complete denominator.
+A percentage MUST_NOT hide an unresolved `AUTHORITY_GAP`, `AUTHORITY_CONFLICT`, missing Current visual owner, or intentionally fail-closed condition. One overview screenshot, wireframe, moodboard, or successful visual review item MUST_NOT substitute for the complete Basic Design denominator.
 
 <!-- SECTION_UID: WEB-GOV-01-S083 -->
-## 83. 藍圖至施工交接合約 / Blueprint-to-Implementation Handoff Contract
+## 83. 設計文件圖面嵌入與自足性交付合約 / Design Document Embedded Visuals and Self-Contained Delivery Contract
 
-Before implementation, the Design Freeze Package MUST materialize one exact `BLUEPRINT_IMPLEMENTATION_HANDOFF` binding: frozen artifact UIDs/hashes; Construction Delta rows; Program Artifact/Construction owner; implementation dependency order; visual reference UIDs; required Workbench/Topology; state/gate/permission behavior; payload/input contracts; error/recovery behavior; acceptance/audit refs; and re-entry/rollback conditions.
+Every human-readable Basic Design deliverable — including DOCX, PDF, HTML, or equivalent review format — MUST embed the required design figures directly in the relevant document sections. External image files, links, registries, or machine-readable manifests MAY supplement the document but MUST_NOT be the only visual delivery.
 
-Implementation MAY construct only the frozen and approved requirements/deltas in this handoff. Discovery of a new Business Entity, operation, permission model, persistence owner, external dependency, visual interaction pattern, or topology change outside the frozen handoff MUST stop downstream implementation and reopen the owning capability.
+Applicable embedded figures MUST include, at minimum:
 
-The handoff MUST preserve bidirectional traceability from approved design to implementation target and from implementation target back to the exact approved Requirement/Operation/Visual/Acceptance identities. A code artifact that cannot resolve both directions is not handoff-complete.
+- Architecture / Module / Dependency diagram near the Architecture section when structural relationships are non-trivial.
+- Entity / Hierarchy / Relationship diagram when entity hierarchy or ownership relationships are material to use.
+- User Journey / Functional Workbench / Interaction Topology diagram near the corresponding flow/design section.
+- High-fidelity Page/Workspace visual near each Page/Surface Design section.
+- Visual Style Board / Design System reference near the Visual Style section.
+- Required multi-state visuals adjacent to their State / Interaction / Recovery sections.
+- Cross-page relationship diagram where cross-page design relationships are applicable.
+- Responsive variant figures where responsive behavior materially changes geometry or arrangement.
+
+Every embedded figure MUST have a readable resolution and an adjacent caption/annotation summary containing: Figure/Visual UID; title; design purpose; Page/Scope; Scenario/State; source/inherited Visual Authority references; Design Version/Change Set; and key review notes. The document MUST explain what each figure validates and which design relationships are intentionally locked.
+
+The human-readable design deliverable MUST be self-contained enough for a reviewer to understand the approved architecture, functional relationships, visual style, page composition, major states, and design constraints without opening separate image files merely to discover what the design looks like.
+
+This contract governs Basic Design documentation only. It does not require or define source code, construction delta, implementation manifest, runtime verification, deployment, or production evidence.
+

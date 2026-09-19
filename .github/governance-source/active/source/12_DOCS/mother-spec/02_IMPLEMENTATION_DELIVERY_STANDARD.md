@@ -1176,12 +1176,6 @@ For every automatically completed function, logic and visual delivery MUST remai
 Incremental construction and validation SHOULD use the registered manifest/index and reverse-dependency graph. Unchanged YAML/JSON/compiled normative content MAY be cached by exact content hash within a run, and mutation tests SHOULD use copy-on-write or in-memory overlays when physical-package integrity is not the subject of the test. Indexing MUST_NOT suppress an impacted validator. Full-package scans remain mandatory for declared integrity operations, high-pressure sweeps, index-drift audits, and Formal Freeze revalidation.
 
 
-### Blueprint package / construction delta consumption hardening
-
-Implementation MUST consume the frozen `CONSTRUCTION_BLUEPRINT_PACKAGE`, `CONSTRUCTION_DELTA_MATRIX`, required annotated Visual Candidates, and `BLUEPRINT_IMPLEMENTATION_HANDOFF` produced by the design/freeze owners. A visible element, code artifact, handler, runtime path, or state projection without bidirectional Requirement/Operation/Visual/Acceptance traceability is an implementation defect. Existing code marked `PARTIAL`, `WRONG_BINDING`, `OBSOLETE`, or `DUPLICATE` MUST follow the exact frozen disposition; implementation MUST_NOT preserve it merely because it already exists.
-
-Implementation MUST_NOT substitute an arbitrary UI layout for the approved Workbench/Interaction Topology. If code reality exposes a new required delta outside the frozen handoff, execution MUST re-enter the owning design capability rather than silently expanding implementation.
-
 <!-- SECTION_UID: WEB-GOV-02-S072 -->
 ## 72. Cohesive Interaction / Conversation-Continuity Delivery
 

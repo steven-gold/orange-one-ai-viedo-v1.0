@@ -5,7 +5,7 @@ blueprint_type: ACCEPTANCE_AUDIT_BLUEPRINT
 status: CURRENT_CANDIDATE
 canonical_path: 10_REGISTRY/GOVERNANCE_ACCEPTANCE_AUDIT_BLUEPRINT.yaml
 owner_uid: OWNER-GOVERNANCE-ACCEPTANCE
-governance_revision: v2.2.10-blueprint-construction-traceability-hardening
+governance_revision: v2.2.11-basic-design-visual-integration-hardening
 normative_section_uids:
 - WEB-GOV-04-S071
 - WEB-GOV-04-S076
@@ -228,14 +228,10 @@ product_neutral_entity_lifecycle_contract:
   raw_ai_output_direct_authoritative_promotion: BLOCK
   revision_context_continuity_required_when_applicable: true
   branch_context_isolation_and_explicit_adoption_required_when_applicable: true
-  construction_blueprint_package_required: true
   function_visual_bidirectional_traceability_required: true
   mandatory_multi_state_visual_evidence_required: true
   visual_reference_annotation_required: true
-  construction_delta_matrix_required_when_prior_implementation_exists: true
   scenario_to_function_visual_coverage_required: true
-  quantitative_design_freeze_completeness_required: true
-  blueprint_to_implementation_handoff_required: true
   orphan_visual_element_zero_required: true
   unbound_control_zero_required: true
   unbound_field_zero_required: true
@@ -243,6 +239,19 @@ product_neutral_entity_lifecycle_contract:
   missing_recovery_path_zero_required: true
   required_visual_candidate_missing_zero_required: true
   arbitrary_visual_layout_without_topology_binding: BLOCK
+  basic_design_package_required: true
+  basic_design_independent_of_implementation_runtime_deployment: true
+  mandatory_complete_visual_design_required: true
+  visual_inheritance_matrix_required: true
+  visual_style_definition_required: true
+  quantitative_basic_design_freeze_completeness_required: true
+  human_readable_design_document_embedded_visuals_required: true
+  visual_style_category_coverage_required: true
+  missing_visual_style_category_zero_required: true
+  missing_required_figure_annotation_zero_required: true
+  unresolved_visual_authority_conflict_zero_required: true
+  silent_global_style_redefinition: BLOCK
+  external_image_only_basic_design_delivery: BLOCK
 stage_execution_optimization_contract:
   required: true
   invariant_registry_uid: REG-STAGE-EXECUTION-INVARIANT-001

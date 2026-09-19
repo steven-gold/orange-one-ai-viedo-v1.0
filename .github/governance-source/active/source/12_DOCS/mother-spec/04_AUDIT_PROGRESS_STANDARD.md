@@ -1439,12 +1439,6 @@ Audit MUST verify each contiguous governed journey has an applicable functional-
 
 Audit MUST compare functional-contract Authority, approved visual projection, implementation evidence, verification evidence, and Production acceptance evidence semantically. Geometry may vary only within approved responsive/reflow constraints; functional topology and context continuity MUST remain equivalent unless an authorized upstream contract change exists.
 
-### Blueprint construction traceability / visual evidence audit hardening
-
-Audit MUST verify the applicable `CONSTRUCTION_BLUEPRINT_PACKAGE` is complete and non-owning, preserves separate Page/Visual Authorities, and binds every REQUIRED function bidirectionally through Entity/Operation/Journey/Workbench/Section/Component/Control-or-Trigger/Field-or-Input/State/Visual Anchor/Visual Candidate/Implementation Target/Acceptance Item.
-
-Audit MUST verify required multi-state visual scenarios and annotations, zero orphan visual elements, zero unbound required controls/fields, complete required state/recovery/cross-page visual coverage, complete `CONSTRUCTION_DELTA_MATRIX` classification when prior implementation exists, quantitative Design Freeze denominators, and an exact Blueprint-to-Implementation Handoff. A visually attractive overview without these bindings MUST_NOT PASS.
-
 <!-- SECTION_UID: WEB-GOV-04-S078 -->
 ## 78. Execution-Cycle Preflight / Single Current Problem-State Audit
 

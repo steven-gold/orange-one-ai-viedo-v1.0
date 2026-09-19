@@ -1,4 +1,4 @@
-schema_version: 3
+schema_version: 4
 artifact_uid: GOV-COMP-INTERACTION-TOPOLOGY-AI-CONTINUITY
 artifact_type: GOVERNANCE_SPECIFICATION_COMPONENT
 normative_status: ACTIVE_CURRENT_GOVERNANCE_COMPONENT
@@ -47,8 +47,7 @@ common_invariants:
     - STATE
     - VISUAL_ANCHOR
     - VISUAL_CANDIDATE
-    - IMPLEMENTATION_TARGET
-    - ACCEPTANCE_ITEM
+    - DESIGN_REVIEW_ITEM
     reverse_trace_for_visible_elements_required: true
     orphan_visual_element: BLOCK
     missing_visual_binding: BLOCK
@@ -58,6 +57,9 @@ common_invariants:
     applicability_required: true
     missing_required_scenario: BLOCK
     single_overview_substitutes_required_states: false
+    actual_visual_design_required: true
+    wireframe_only_is_complete_visual_design: false
+    style_application_required: true
   VISUAL_REFERENCE_ANNOTATION:
     required_contract: VISUAL_REFERENCE_ANNOTATION
     verification_purpose_required: true
@@ -66,6 +68,20 @@ common_invariants:
     required_coverage_percent: 100
     denominator: APPROVED_REQUIRED_JOURNEY_STATE_BRANCH_SET
     visual_scenario_drift: BLOCK
+  VISUAL_INHERITANCE_AND_STYLE_DEFINITION:
+    required_contracts:
+    - VISUAL_INHERITANCE_MATRIX
+    - VISUAL_STYLE_DEFINITION
+    read_current_visual_authorities_before_design: true
+    inherit_existing_current_visual_authority_when_present: true
+    silent_global_style_redefinition: BLOCK
+    complete_style_definition_required_when_authority_absent: true
+  DESIGN_DOCUMENT_VISUAL_EMBEDDING:
+    human_readable_design_document_required: true
+    embedded_required_figures: true
+    external_image_only_delivery: BLOCK
+    self_contained_human_review_required: true
+    implementation_artifacts_required: false
 authority_boundaries:
   functional_contract_authority: DEFINE_FUNCTIONAL_TOPOLOGY
   visual_design_authority: PROJECT_APPROVED_VISUAL_PROJECTION

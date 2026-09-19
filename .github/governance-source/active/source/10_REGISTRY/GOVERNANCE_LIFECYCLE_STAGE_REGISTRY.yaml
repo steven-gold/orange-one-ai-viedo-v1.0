@@ -4,7 +4,7 @@ artifact_type: EXECUTION_PROFILE_REGISTRY
 status: CURRENT_CANDIDATE
 canonical_path: 10_REGISTRY/GOVERNANCE_LIFECYCLE_STAGE_REGISTRY.yaml
 owner_uid: OWNER-GOVERNANCE-LIFECYCLE
-governance_revision: v2.2.10-blueprint-construction-traceability-hardening
+governance_revision: v2.2.11-basic-design-visual-integration-hardening
 normative_section_uids:
 - WEB-GOV-02-S004
 - WEB-GOV-02-S067
@@ -566,10 +566,12 @@ stages:
     VISUAL_DESIGN_SPEC_PACKAGE: STAGE-03_IMMUTABLE_REFERENCE_ONLY
     DEPENDENCY_MAP: STAGE-02
   operations:
+  - BASIC_DESIGN_PACKAGE_COMPILE
   - DESIGN_FREEZE_VALIDATE
   - ACCEPTANCE_AUDIT_BLUEPRINT_COMPILE
   - DESIGN_FREEZE_PACKAGE_BIND
   outputs:
+  - BASIC_DESIGN_PACKAGE
   - ACCEPTANCE_AUDIT_BLUEPRINT
   - DESIGN_FREEZE_PACKAGE
   - FOUNDATION_BARRIER_RECORD
@@ -577,6 +579,7 @@ stages:
     ACCEPTANCE_AUDIT_BLUEPRINT: ACCEPTANCE_AUDIT_BLUEPRINT_COMPILE
     DESIGN_FREEZE_PACKAGE: DESIGN_FREEZE_PACKAGE_BIND
     FOUNDATION_BARRIER_RECORD: DESIGN_FREEZE_VALIDATE
+    BASIC_DESIGN_PACKAGE: BASIC_DESIGN_PACKAGE_COMPILE
   validators:
   - VAL-GOV-006
   - VAL-GOV-001
@@ -601,6 +604,8 @@ stages:
   - WEB-GOV-01-S081
   - WEB-GOV-01-S082
   - WEB-GOV-01-S083
+  - WEB-GOV-01-S078
+  - WEB-GOV-01-S079
   pre_execution_gate: GOVERNANCE_LOAD_RECEIPT_PASS
   validator_names:
   - DESIGN_FREEZE_GUARD
@@ -732,8 +737,6 @@ stages:
   - WEB-GOV-01-S075
   - WEB-GOV-03-S069
   - WEB-GOV-04-S083
-  - WEB-GOV-01-S080
-  - WEB-GOV-01-S083
   pre_execution_gate: GOVERNANCE_LOAD_RECEIPT_PASS
   validator_names:
   - CONSTRUCTION_ARTIFACT_INDEX_GUARD
@@ -1802,14 +1805,16 @@ cross_stage_invariants:
     raw_ai_output_direct_authoritative_promotion: BLOCK
     revision_context_continuity_required_when_applicable: true
     branch_context_isolation_and_explicit_adoption_required_when_applicable: true
-    construction_blueprint_package_required_before_freeze_and_implementation: true
     function_visual_bidirectional_traceability_required: true
     mandatory_multi_state_visual_evidence_required_when_applicable: true
     visual_reference_annotation_required: true
-    construction_delta_matrix_required_when_prior_implementation_exists: true
     scenario_to_function_visual_coverage_required: true
-    quantitative_design_freeze_completeness_required: true
-    blueprint_to_implementation_handoff_required: true
+    basic_design_package_required_before_basic_design_freeze: true
+    mandatory_complete_visual_design_required_when_applicable: true
+    visual_inheritance_matrix_and_style_definition_required: true
+    quantitative_basic_design_freeze_completeness_required: true
+    human_readable_design_document_embedded_visuals_required: true
+    basic_design_independent_of_implementation_execution_and_deployment: true
   canonical_stage_execution_optimization:
     invariant_uid: GOV-INV-CANONICAL-STAGE-EXECUTION-OPTIMIZATION-001
     normative_section_uid: WEB-GOV-03-S062
