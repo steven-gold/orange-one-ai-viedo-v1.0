@@ -1,0 +1,55 @@
+artifact_uid: CLS-ASSET-01-DERIVED-VALIDATION-023
+page_uid: ASSET-01
+planning_domain: PAGE_CONSTRUCTION
+responsibility_uid: DERIVED_VALIDATION
+responsibility_class: DERIVED_VALIDATION
+responsibilities:
+- DERIVED_VALIDATION
+canonical_owner_uid: OWNER-CLS-ASSET-01-DERIVED-VALIDATION-023
+target_path: 01_CLASSIFIED/ASSET-01/PAGE/CLS_023_DERIVED_VALIDATION.yaml
+lifecycle_uid: LC-DERIVED-VALIDATION
+approval_scope_uid: AP-DERIVED-VALIDATION
+version_scope_uid: VER-DERIVED-VALIDATION
+test_scope_uid: TEST-DERIVED-VALIDATION
+source_lineage:
+- source_uid: SRC-ASSET-01-PAGE-VISUAL-AUTHORITY
+  source_segment_uids:
+  - SEG-SRC-ASSET-01-PAGE-VISUAL-AUTHORITY-023
+facts:
+- source_ref: $.derived_validation
+  value:
+    status: PASS
+    counts:
+      sections: 10
+      components: 16
+      visuals: 10
+      permissions: 8
+      gates: 21
+      actions: 44
+      controls: 85
+      objects: 18
+      errors: 17
+      stages: 5
+      stage_transitions: 5
+      ports: 19
+    script_roles: 2
+    asset_types: 10
+    validation_errors: []
+    checked_at_utc: '2026-08-27T16:43:31.799141+00:00'
+    final_gap_closure:
+      status: FINAL_GAP_CLOSED
+      source_action_count: 44
+      source_control_count: 85
+      action_runtime_binding_coverage: 44/44
+      control_runtime_binding_coverage: 85/85
+      unresolved_control_action_refs: 0
+      unbound_actions: 0
+      shared_delegations_are_explicit: true
+      frontend_route_inference_required: false
+    final_dedup_cleanup:
+      status: PASS
+      action_runtime_embedded_in_single_action_registry: true
+      parallel_action_runtime_registry: 0
+      parallel_control_binding_registry: 0
+status: CURRENT_CLASSIFICATION
+content_hash: a7e8ed9a2e439b0e32d67623135c6efbd05f8f1285d30a9798fe048767699441

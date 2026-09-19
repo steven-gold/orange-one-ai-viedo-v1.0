@@ -1,0 +1,70 @@
+artifact_uid: CLS-ASSET-01-REGISTRIES-COMPONENTS-009
+page_uid: ASSET-01
+planning_domain: PAGE_CONSTRUCTION
+responsibility_uid: REGISTRIES_COMPONENTS
+responsibility_class: REGISTRIES_COMPONENTS
+responsibilities:
+- REGISTRIES_COMPONENTS
+canonical_owner_uid: OWNER-CLS-ASSET-01-REGISTRIES-COMPONENTS-009
+target_path: 01_CLASSIFIED/ASSET-01/PAGE/CLS_009_REGISTRIES_COMPONENTS.yaml
+lifecycle_uid: LC-REGISTRIES-COMPONENTS
+approval_scope_uid: AP-REGISTRIES-COMPONENTS
+version_scope_uid: VER-REGISTRIES-COMPONENTS
+test_scope_uid: TEST-REGISTRIES-COMPONENTS
+source_lineage:
+- source_uid: SRC-ASSET-01-PAGE-VISUAL-AUTHORITY
+  source_segment_uids:
+  - SEG-SRC-ASSET-01-PAGE-VISUAL-AUTHORITY-009
+facts:
+- source_ref: $.registries.components
+  value:
+  - component_uid: ASSET-01-CMP-CONTEXT
+    section_uid: ASSET-01-SEC-01
+    name: Context/Execution Bar
+  - component_uid: ASSET-01-CMP-ASSET-LIST
+    section_uid: ASSET-01-SEC-02
+    name: Asset Manifest/List
+  - component_uid: ASSET-01-CMP-BINDING
+    section_uid: ASSET-01-SEC-03
+    name: Blueprint/Script/DNA/Manifest Binding
+  - component_uid: ASSET-01-CMP-PREVIEW
+    section_uid: ASSET-01-SEC-04
+    name: Preview Surface
+  - component_uid: ASSET-01-CMP-COMPARE
+    section_uid: ASSET-01-SEC-04
+    name: Compare Toolbar
+  - component_uid: ASSET-01-CMP-REUSE
+    section_uid: ASSET-01-SEC-05
+    name: Reuse/Generate Status
+  - component_uid: ASSET-01-CMP-SCRIPT
+    section_uid: ASSET-01-SEC-03
+    name: ASSET Script View
+  - component_uid: ASSET-01-CMP-CORRECTION
+    section_uid: ASSET-01-SEC-06
+    name: Correction Conversation
+  - component_uid: ASSET-01-CMP-LAYER-STACK
+    section_uid: ASSET-01-SEC-07
+    name: Layer Stack
+  - component_uid: ASSET-01-CMP-LAYER-INSPECTOR
+    section_uid: ASSET-01-SEC-07
+    name: Layer Properties/Mask
+  - component_uid: ASSET-01-CMP-PATCH
+    section_uid: ASSET-01-SEC-07
+    name: Asset Patch Decision
+  - component_uid: ASSET-01-CMP-RUNTIME
+    section_uid: ASSET-01-SEC-08
+    name: Runtime/Provider Read Model
+  - component_uid: ASSET-01-CMP-SCORE
+    section_uid: ASSET-01-SEC-09
+    name: ASSET Scorecard
+  - component_uid: ASSET-01-CMP-VERSION
+    section_uid: ASSET-01-SEC-09
+    name: Version/Compare
+  - component_uid: ASSET-01-CMP-DECISION
+    section_uid: ASSET-01-SEC-09
+    name: Decision Dock
+  - component_uid: ASSET-01-CMP-HANDOFF
+    section_uid: ASSET-01-SEC-10
+    name: Exact Handoff Manifest
+status: CURRENT_CLASSIFICATION
+content_hash: ff14c6171f84303bf2da9960689206ab0f08e275a9ca858ba79913c7afaf8135

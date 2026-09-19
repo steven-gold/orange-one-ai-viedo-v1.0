@@ -1,18 +1,30 @@
 schema_version: 1
 artifact_type: STAGE02_CURRENT_FINDINGS
 governance_uid: GOV-REV-20260919-SEMANTIC-BASELINE-CONSUMER-SINGLE-OWNER-HARDENING
-run_uid: FRESH-CORE01-D81DF9AC-STAGE02
+run_uid: FRESH-ASSET01-8133839F-STAGE02
 target_pages:
-- CORE-01
-fresh_functional_gap_total: 0
-closure_blocker_total: 0
-gap_classes: {}
-gap_categories: {}
-status: PASS
-attempt_uid: STAGE02-CORE01-D81DF9AC-REPLAY
-source_execution_sha: a54dd07b510168c33af42579aa146a7b459a1185
-source_workflow_run_id: 35423831950
-source_artifact_id: 10578591952
-source_artifact_sha256: 401d0c378ffb4bc580af2e46799240e16accffe8fa8fea55edfecf434091d341
+- ASSET-01
+fresh_functional_gap_total: 106
+closure_blocker_total: 9
+gap_classes:
+  ARCHITECTURE_GAP: 84
+  AUTHORITY_GAP: 4
+  INPUT_SOURCE_GAP: 18
+gap_categories:
+  ACTION_WITHOUT_CONTROL_OR_TRIGGER: 1
+  AUDIT_EVENT_NODE_MISSING: 9
+  FAILURE_STATE_ERROR_BINDING_MISSING: 23
+  PAYLOAD_INPUT_CONTRACT_MISSING: 18
+  POST_ACTION_VALIDATION_NODE_MISSING: 18
+  SHARED_OWNER_AUTHORITY_UNRESOLVED: 4
+  STAGE02_PLANNING_COMPLETENESS_CONTRACT_MISSING: 1
+  STATE_TRANSITION_LEDGER_FIELD_MISSING: 25
+  SUCCESS_NEXT_STATE_BINDING_MISSING: 7
+status: DESIGN_CONTRACT_REMEDIATION_REQUIRED
+attempt_uid: STAGE02-ASSET01-8133839F-REPLAY
+source_execution_sha: 23dbdb041d2f95056838c2dd0b94e7bba5180856
+source_workflow_run_id: 35425342223
+source_artifact_id: 10578232908
+source_artifact_sha256: 175738b0eedcac3eafd7dfa25e258f33bb92a84aa54b4b5a043f70dd97b267cd
 prior_stage2_results_used: false
 product_blocker_credit: 0

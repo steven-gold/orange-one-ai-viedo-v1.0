@@ -1,0 +1,38 @@
+artifact_uid: CLS-ASSET-01-PAGE-AUTHORITY-001
+page_uid: ASSET-01
+planning_domain: PAGE_CONSTRUCTION
+responsibility_uid: PAGE_AUTHORITY
+responsibility_class: PAGE_AUTHORITY
+responsibilities:
+- PAGE_AUTHORITY
+canonical_owner_uid: OWNER-CLS-ASSET-01-PAGE-AUTHORITY-001
+target_path: 01_CLASSIFIED/ASSET-01/PAGE/CLS_001_PAGE_AUTHORITY.yaml
+lifecycle_uid: LC-PAGE-AUTHORITY
+approval_scope_uid: AP-PAGE-AUTHORITY
+version_scope_uid: VER-PAGE-AUTHORITY
+test_scope_uid: TEST-PAGE-AUTHORITY
+source_lineage:
+- source_uid: SRC-ASSET-01-PAGE-VISUAL-AUTHORITY
+  source_segment_uids:
+  - SEG-SRC-ASSET-01-PAGE-VISUAL-AUTHORITY-001
+facts:
+- source_ref: $.authority
+  value:
+    id: ASSET_PAGE_VISUAL_AUTHORITY_FINAL
+    page_uid: ASSET-01
+    status: FINAL_LOCKED
+    current_only: true
+    legacy_merge: FORBIDDEN
+    scope: ASSET Main Workspace only
+    global_shell: GLOBAL_HOME_SHELL_TEMPLATE_AUTHORITY@V1.9
+    global_visual: GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY@V1.0
+    undefined_behavior: BLOCK + REPORT_AUTHORITY_GAP
+    real_data_only: true
+    missing_value_display: —
+    department_boundary: ASSET-only; no VIDEO/EDIT/VOICE/QA internal implementation
+    parallel_authority_for_same_page: FORBIDDEN
+    system_authority: ACPOS_SYSTEM_AUTHORITY@V1.0
+    navigation_authority: ACPOS_CURRENT_NAVIGATION_PERMISSION_AUTHORITY@V1.0
+    production_script_authority: ACPOS_PRODUCTION_SCRIPT_CONTENT_AND_PROVIDER_ADAPTER_CONTRACT@V1.3
+status: CURRENT_CLASSIFICATION
+content_hash: f354dc68c5e16bd8fda40d50fe849a4744bc4d3a7912cf01035a73c8581e3d05

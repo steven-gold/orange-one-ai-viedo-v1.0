@@ -1,0 +1,155 @@
+artifact_uid: CLS-ASSET-01-REGISTRIES-INTEGRATION-PORTS-021
+page_uid: ASSET-01
+planning_domain: PAGE_CONSTRUCTION
+responsibility_uid: REGISTRIES_INTEGRATION_PORTS
+responsibility_class: REGISTRIES_INTEGRATION_PORTS
+responsibilities:
+- REGISTRIES_INTEGRATION_PORTS
+canonical_owner_uid: OWNER-CLS-ASSET-01-REGISTRIES-INTEGRATION-PORTS-021
+target_path: 01_CLASSIFIED/ASSET-01/PAGE/CLS_021_REGISTRIES_INTEGRATION_PORTS.yaml
+lifecycle_uid: LC-REGISTRIES-INTEGRATION-PORTS
+approval_scope_uid: AP-REGISTRIES-INTEGRATION-PORTS
+version_scope_uid: VER-REGISTRIES-INTEGRATION-PORTS
+test_scope_uid: TEST-REGISTRIES-INTEGRATION-PORTS
+source_lineage:
+- source_uid: SRC-ASSET-01-PAGE-VISUAL-AUTHORITY
+  source_segment_uids:
+  - SEG-SRC-ASSET-01-PAGE-VISUAL-AUTHORITY-021
+facts:
+- source_ref: $.registries.integration_ports
+  value:
+  - port_uid: ASSET-01-PORT-IN-CORE-HANDOFF
+    boundary: Inbound / Task Ready
+    registered_operation: createDepartmentHandoff
+    method_effective_path: POST /v1/handoffs
+    registered_permission: department.handoff.create
+    state_event: Upstream HANDOFF_READY→HANDED_OFF; ASSET WAITING_DEPENDENCY→READY | handoff.created
+    exposure: Created upstream; ASSET validates exact task/blueprint/script/manifest refs only.
+  - port_uid: ASSET-01-PORT-EXECUTE
+    boundary: Execute Task
+    registered_operation: requestTaskExecution
+    method_effective_path: POST /v1/tasks/{taskId}/execute
+    registered_permission: department.task.execute
+    state_event: READY→ROUTING | provider.job.requested
+    exposure: ASSET-01-ACT-FLOW-START after all execute gates PASS.
+  - port_uid: ASSET-01-PORT-RETRY
+    boundary: Retry Task
+    registered_operation: retryTaskExecution
+    method_effective_path: POST /v1/tasks/{taskId}/retry
+    registered_permission: department.task.execute
+    state_event: BLOCKED/FAILED→ROUTING | provider.job.requested
+    exposure: ASSET-01-ACT-TASK-RETRY; policy eligible only.
+  - port_uid: ASSET-01-PORT-FINDING
+    boundary: Evaluation Finding
+    registered_operation: createFinding
+    method_effective_path: POST /v1/findings
+    registered_permission: finding.write
+    state_event: IN_REVIEW→FINDING_OPEN | finding.created
+    exposure: ASSET-01-ACT-FINDING-CREATE.
+  - port_uid: ASSET-01-PORT-CORRECTION
+    boundary: Correction Request
+    registered_operation: createCorrectionRequest
+    method_effective_path: POST /v1/correction-requests
+    registered_permission: correction.create
+    state_event: FINDING_OPEN→CORRECTION_REQUIRED | correction.requested
+    exposure: Correction references exact asset/layer/region; shared translation remains system-level.
+  - port_uid: ASSET-01-PORT-DECISION
+    boundary: Candidate Confirm
+    registered_operation: decideOutputCandidate
+    method_effective_path: POST /v1/tasks/{taskId}/outputs/{outputVersionId}/decision
+    registered_permission: department.output.decide
+    state_event: SCORE_PENDING→HANDOFF_READY | output.decision_recorded
+    exposure: ASSET-01-ACT-CANDIDATE-CONFIRM.
+  - port_uid: ASSET-01-PORT-SCORECARD
+    boundary: Score Persist
+    registered_operation: submitScorecard
+    method_effective_path: POST /v1/scorecards
+    registered_permission: department.score.write
+    state_event: CANDIDATE_OUTPUT→SCORE_PENDING or BLOCKED | scorecard.submitted
+    exposure: Persist bound ASSET criteria version; page never invents dimension schema.
+  - port_uid: ASSET-01-PORT-OUT-VIDEO
+    boundary: Outbound to VIDEO
+    registered_operation: createDepartmentHandoff
+    method_effective_path: POST /v1/handoffs
+    registered_permission: department.handoff.create
+    state_event: HANDOFF_READY→HANDED_OFF; VIDEO dependency→READY | handoff.created
+    exposure: ASSET-01-ACT-HANDOFF; exact locked manifest only.
+  - port_uid: ASSET-01-PORT-LAYER-DOC-CREATE
+    boundary: Layer Runtime
+    registered_operation: createLayerDocument
+    method_effective_path: POST /v1/layer-documents
+    registered_permission: asset.layer.write
+    state_event: DRAFT→ACTIVE | layer.document.created
+    exposure: Image-compatible asset only.
+  - port_uid: ASSET-01-PORT-LAYER-DOC-UPDATE
+    boundary: Layer Runtime
+    registered_operation: updateLayerDocument
+    method_effective_path: PATCH /v1/layer-documents/{layerDocumentId}
+    registered_permission: asset.layer.write
+    state_event: ACTIVE→ACTIVE | layer.document.updated
+    exposure: Versioned update only.
+  - port_uid: ASSET-01-PORT-LAYER-ADD
+    boundary: Layer Runtime
+    registered_operation: addLayer
+    method_effective_path: POST /v1/layer-documents/{layerDocumentId}/layers
+    registered_permission: asset.layer.write
+    state_event: layer document version increments
+    exposure: Add layer.
+  - port_uid: ASSET-01-PORT-LAYER-DELETE
+    boundary: Layer Runtime
+    registered_operation: deleteLayer
+    method_effective_path: DELETE /v1/layer-documents/{layerDocumentId}/layers/{layerId}
+    registered_permission: asset.layer.write
+    state_event: layer document version increments
+    exposure: Locked layer rejects destructive mutation.
+  - port_uid: ASSET-01-PORT-LAYER-DUP
+    boundary: Layer Runtime
+    registered_operation: duplicateLayer
+    method_effective_path: POST /v1/layer-documents/{layerDocumentId}/layers/{layerId}/duplicate
+    registered_permission: asset.layer.write
+    state_event: layer document version increments
+    exposure: Duplicate layer.
+  - port_uid: ASSET-01-PORT-LAYER-REORDER
+    boundary: Layer Runtime
+    registered_operation: reorderLayer
+    method_effective_path: POST /v1/layer-documents/{layerDocumentId}/layers/{layerId}/reorder
+    registered_permission: asset.layer.write
+    state_event: layer document version increments
+    exposure: z_index remains unique/compact.
+  - port_uid: ASSET-01-PORT-LAYER-PROPS
+    boundary: Layer Runtime
+    registered_operation: updateLayerProperties
+    method_effective_path: PATCH /v1/layer-documents/{layerDocumentId}/layers/{layerId}
+    registered_permission: asset.layer.write
+    state_event: layer document version increments
+    exposure: Opacity/blend/transform etc.
+  - port_uid: ASSET-01-PORT-LAYER-MASK
+    boundary: Layer Runtime
+    registered_operation: updateLayerMask
+    method_effective_path: PATCH /v1/layer-documents/{layerDocumentId}/layers/{layerId}/mask
+    registered_permission: asset.layer.write
+    state_event: layer document version increments
+    exposure: Mask/semantic region.
+  - port_uid: ASSET-01-PORT-PATCH-CREATE
+    boundary: Asset Patch
+    registered_operation: createAssetPatch
+    method_effective_path: POST /v1/asset-patches
+    registered_permission: asset.layer.write
+    state_event: asset.patch.created
+    exposure: Exact source asset/layer/blueprint/DNA refs required.
+  - port_uid: ASSET-01-PORT-PATCH-PREVIEW
+    boundary: Asset Patch
+    registered_operation: previewAssetPatch
+    method_effective_path: POST /v1/asset-patches/{patchId}/preview
+    registered_permission: asset.layer.write
+    state_event: Patch→PREVIEW_READY
+    exposure: No output version created yet.
+  - port_uid: ASSET-01-PORT-PATCH-DECIDE
+    boundary: Asset Patch
+    registered_operation: decideAssetPatch
+    method_effective_path: POST /v1/asset-patches/{patchId}/decision
+    registered_permission: asset.patch.decide
+    state_event: ACCEPT→new ASSET_VERSION + new LAYER_DOCUMENT_VERSION; REJECT/REVISE no output
+    exposure: No non-ASSET patch operation may bind to this port.
+status: CURRENT_CLASSIFICATION
+content_hash: 0da1ab276add1f02210f2860bbb5917d16d57ce5e834ddc81f5e4c1f5151a932

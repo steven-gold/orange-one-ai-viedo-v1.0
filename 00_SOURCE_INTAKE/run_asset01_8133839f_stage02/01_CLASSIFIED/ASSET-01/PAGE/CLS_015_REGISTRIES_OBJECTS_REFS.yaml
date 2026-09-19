@@ -1,0 +1,94 @@
+artifact_uid: CLS-ASSET-01-REGISTRIES-OBJECTS-REFS-015
+page_uid: ASSET-01
+planning_domain: PAGE_CONSTRUCTION
+responsibility_uid: REGISTRIES_OBJECTS_REFS
+responsibility_class: REGISTRIES_OBJECTS_REFS
+responsibilities:
+- REGISTRIES_OBJECTS_REFS
+canonical_owner_uid: OWNER-CLS-ASSET-01-REGISTRIES-OBJECTS-REFS-015
+target_path: 01_CLASSIFIED/ASSET-01/PAGE/CLS_015_REGISTRIES_OBJECTS_REFS.yaml
+lifecycle_uid: LC-REGISTRIES-OBJECTS-REFS
+approval_scope_uid: AP-REGISTRIES-OBJECTS-REFS
+version_scope_uid: VER-REGISTRIES-OBJECTS-REFS
+test_scope_uid: TEST-REGISTRIES-OBJECTS-REFS
+source_lineage:
+- source_uid: SRC-ASSET-01-PAGE-VISUAL-AUTHORITY
+  source_segment_uids:
+  - SEG-SRC-ASSET-01-PAGE-VISUAL-AUTHORITY-015
+facts:
+- source_ref: $.registries.objects_refs
+  value:
+  - object_uid: ASSET-01-REF-BLUEPRINT
+    entity: LockedBlueprintRef
+    owner: CORE/BLUEPRINT
+    required_content: immutable exact child lock/blueprint version/hash
+  - object_uid: ASSET-01-REF-SCRIPT
+    entity: AssetProductionScriptViewRef
+    owner: CORE/SCRIPT
+    required_content: provider-neutral ASSET Script View/Section/version/hash
+  - object_uid: ASSET-01-REF-DNA
+    entity: DNABindingRef
+    owner: CORE/BLUEPRINT
+    required_content: DNA/identity/continuity exact refs
+  - object_uid: ASSET-01-REF-MANIFEST
+    entity: AssetManifestRef
+    owner: CORE/BLUEPRINT
+    required_content: required asset items/type/purpose/reuse policy
+  - object_uid: ASSET-01-REF-NAMING
+    entity: SystemOutputNamingRef
+    owner: ACPOS_SYSTEM
+    required_content: canonical filename/output artifact identity/version/checksum policy; page read-only
+  - object_uid: ASSET-01-REF-INSTRUCTION
+    entity: InstructionPackageRef
+    owner: InstructionCompiler
+    required_content: approved provider-neutral instruction package
+  - object_uid: ASSET-01-REF-ROUTE
+    entity: ProviderRouteSnapshotRef
+    owner: ACPOS AI API Router
+    required_content: approved route/provider/model/capability snapshot; page read-only
+  - object_uid: ASSET-01-OBJ-INPUT-MANIFEST
+    entity: AssetExecutionInputManifest
+    owner: ASSET/ORCH
+    required_content: task+blueprint+script+DNA+manifest+naming+instruction+route+input fingerprint
+  - object_uid: ASSET-01-OBJ-CANDIDATE
+    entity: AssetCandidateOutput
+    owner: ASSET
+    required_content: candidate artifact exact version/uri/canonical filename/checksum/provenance
+  - object_uid: ASSET-01-OBJ-EVALUATION
+    entity: AssetEvaluation
+    owner: ASSET/EVALUATION
+    required_content: criteria version/dimension scores/hard blocks/evidence/result
+  - object_uid: ASSET-01-OBJ-FINDING
+    entity: AssetFinding
+    owner: ASSET/EVALUATION
+    required_content: issue type/asset/layer/region/evidence
+  - object_uid: ASSET-01-OBJ-CORRECTION
+    entity: AssetCorrectionContext
+    owner: ASSET/AI
+    required_content: current exact refs + issue + zh-TW request + candidate
+  - object_uid: ASSET-01-OBJ-CORRECTION-SCRIPT
+    entity: CorrectionScriptCandidate
+    owner: ACPOS Script System
+    required_content: provider-neutral delta; human approved before translation
+  - object_uid: ASSET-01-OBJ-LAYER-DOC
+    entity: VersionedLayerDocument
+    owner: AssetCatalogService
+    required_content: immutable versions of image-compatible layer document
+  - object_uid: ASSET-01-OBJ-ASSET-PATCH
+    entity: AssetPatch
+    owner: AssetCatalogService
+    required_content: source asset/layer/region/blueprint/DNA/preserve constraints/preview/decision
+  - object_uid: ASSET-01-OBJ-ASSET-VERSION
+    entity: AssetOutputVersion
+    owner: AssetCatalogService
+    required_content: immutable exact artifact version + canonical filename/checksum
+  - object_uid: ASSET-01-OBJ-SCORECARD
+    entity: AssetScorecard
+    owner: ASSET/EVALUATION
+    required_content: target output + criteria version + scores/issues/evidence
+  - object_uid: ASSET-01-OBJ-HANDOFF
+    entity: AssetHandoffManifest
+    owner: ASSET boundary
+    required_content: exact locked output + layer/composite refs + blueprint/script/DNA/manifest/naming/score/rights/contract hash
+status: CURRENT_CLASSIFICATION
+content_hash: 5c4a899838a59af2711dc6f16161fb13af2adb6a3191fb03e9b6da218e6eca2c

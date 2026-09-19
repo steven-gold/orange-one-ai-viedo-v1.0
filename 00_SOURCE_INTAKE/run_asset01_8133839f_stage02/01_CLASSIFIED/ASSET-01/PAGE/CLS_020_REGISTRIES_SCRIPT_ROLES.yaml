@@ -1,0 +1,30 @@
+artifact_uid: CLS-ASSET-01-REGISTRIES-SCRIPT-ROLES-020
+page_uid: ASSET-01
+planning_domain: PAGE_CONSTRUCTION
+responsibility_uid: REGISTRIES_SCRIPT_ROLES
+responsibility_class: REGISTRIES_SCRIPT_ROLES
+responsibilities:
+- REGISTRIES_SCRIPT_ROLES
+canonical_owner_uid: OWNER-CLS-ASSET-01-REGISTRIES-SCRIPT-ROLES-020
+target_path: 01_CLASSIFIED/ASSET-01/PAGE/CLS_020_REGISTRIES_SCRIPT_ROLES.yaml
+lifecycle_uid: LC-REGISTRIES-SCRIPT-ROLES
+approval_scope_uid: AP-REGISTRIES-SCRIPT-ROLES
+version_scope_uid: VER-REGISTRIES-SCRIPT-ROLES
+test_scope_uid: TEST-REGISTRIES-SCRIPT-ROLES
+source_lineage:
+- source_uid: SRC-ASSET-01-PAGE-VISUAL-AUTHORITY
+  source_segment_uids:
+  - SEG-SRC-ASSET-01-PAGE-VISUAL-AUTHORITY-020
+facts:
+- source_ref: $.registries.script_roles
+  value:
+  - script_role_uid: ASSET-01-SCRIPT-ROLE-PRODUCTION
+    view: Asset_Production_Script_View
+    required_content: 8-section field-level ASSET production script contract; provider-neutral; first production read-only
+    content_contract_ref: ACPOS_PRODUCTION_SCRIPT_CONTENT_AND_PROVIDER_ADAPTER_CONTRACT#department_production_scripts.ASSET
+  - script_role_uid: ASSET-01-SCRIPT-ROLE-CORRECTION
+    view: CorrectionScriptCandidate
+    required_content: only affected asset/layer/region delta derived from current ASSET script + issue; human approve before shared translation
+    content_contract_ref: ACPOS_PRODUCTION_SCRIPT_CONTENT_AND_PROVIDER_ADAPTER_CONTRACT#department_correction_content.ASSET
+status: CURRENT_CLASSIFICATION
+content_hash: a2995858307b0d1585d7e2a83cfc68e734b182b0812207272fac835afdc33227

@@ -1,9 +1,12 @@
 schema_version: 1
-artifact_type: STAGE02_FRESH_DESIGN_REMEDIATION_INTAKE
-governance_uid: GOV-REV-20260919-SEMANTIC-BASELINE-CONSUMER-SINGLE-OWNER-HARDENING
+artifact_type: CURRENT_PROBLEM_REGISTER
 run_uid: FRESH-ASSET01-8133839F-STAGE02
-page_uid: ASSET-01
-problem_count: 106
+stage_uid: STAGE-02
+target_pages:
+- ASSET-01
+fresh_physical_problem_count: 106
+open_problem_count: 106
+resolved_problem_count: 0
 problems:
 - problem_uid: STAGE02-PROBLEM-27112FFF8ECC
   page_uid: ASSET-01
@@ -959,6 +962,3 @@ problems:
   gap_owner: PAGE_FUNCTIONAL_CONTRACT
   status: OPEN_FRESH_CURRENT_RUN
   resolution_credit: 0
-candidate_reuse_from_prior_run: false
-prior_materialized_contract_reuse: false
-next_action: BUILD_FRESH_DESIGN_CONTRACT_CANDIDATE_FROM_CURRENT_GAPS

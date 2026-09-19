@@ -1,0 +1,42 @@
+artifact_uid: CLS-ASSET-01-REGISTRIES-PAGE-STATES-017
+page_uid: ASSET-01
+planning_domain: PAGE_CONSTRUCTION
+responsibility_uid: REGISTRIES_PAGE_STATES
+responsibility_class: REGISTRIES_PAGE_STATES
+responsibilities:
+- REGISTRIES_PAGE_STATES
+canonical_owner_uid: OWNER-CLS-ASSET-01-REGISTRIES-PAGE-STATES-017
+target_path: 01_CLASSIFIED/ASSET-01/PAGE/CLS_017_REGISTRIES_PAGE_STATES.yaml
+lifecycle_uid: LC-REGISTRIES-PAGE-STATES
+approval_scope_uid: AP-REGISTRIES-PAGE-STATES
+version_scope_uid: VER-REGISTRIES-PAGE-STATES
+test_scope_uid: TEST-REGISTRIES-PAGE-STATES
+source_lineage:
+- source_uid: SRC-ASSET-01-PAGE-VISUAL-AUTHORITY
+  source_segment_uids:
+  - SEG-SRC-ASSET-01-PAGE-VISUAL-AUTHORITY-017
+facts:
+- source_ref: $.registries.page_states
+  value:
+  - state_uid: ASSET-01-ST-PAGE-LOADING
+    display: LOADING
+  - state_uid: ASSET-01-ST-PAGE-READY
+    display: READY
+  - state_uid: ASSET-01-ST-PAGE-EXECUTING
+    display: EXECUTING
+  - state_uid: ASSET-01-ST-PAGE-CANDIDATE
+    display: CANDIDATE_OUTPUT
+  - state_uid: ASSET-01-ST-PAGE-WAIT-CONFIRM
+    display: WAIT_CONFIRMATION
+  - state_uid: ASSET-01-ST-PAGE-CORRECTION
+    display: CORRECTION_REQUIRED
+  - state_uid: ASSET-01-ST-PAGE-CONFIRMED
+    display: CONFIRMED
+  - state_uid: ASSET-01-ST-PAGE-LOCKED
+    display: LOCKED
+  - state_uid: ASSET-01-ST-PAGE-HANDOFF
+    display: HANDOFF
+  - state_uid: ASSET-01-ST-PAGE-ERROR
+    display: ERROR
+status: CURRENT_CLASSIFICATION
+content_hash: 4161d52a0658a78576d49101bb5d9ffe11171c19d7c5601be5fae6b6864897bf

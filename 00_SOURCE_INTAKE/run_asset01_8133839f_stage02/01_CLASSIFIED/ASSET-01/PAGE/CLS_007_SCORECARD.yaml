@@ -1,0 +1,34 @@
+artifact_uid: CLS-ASSET-01-SCORECARD-007
+page_uid: ASSET-01
+planning_domain: PAGE_CONSTRUCTION
+responsibility_uid: SCORECARD
+responsibility_class: SCORECARD
+responsibilities:
+- SCORECARD
+canonical_owner_uid: OWNER-CLS-ASSET-01-SCORECARD-007
+target_path: 01_CLASSIFIED/ASSET-01/PAGE/CLS_007_SCORECARD.yaml
+lifecycle_uid: LC-SCORECARD
+approval_scope_uid: AP-SCORECARD
+version_scope_uid: VER-SCORECARD
+test_scope_uid: TEST-SCORECARD
+source_lineage:
+- source_uid: SRC-ASSET-01-PAGE-VISUAL-AUTHORITY
+  source_segment_uids:
+  - SEG-SRC-ASSET-01-PAGE-VISUAL-AUTHORITY-007
+facts:
+- source_ref: $.scorecard
+  value:
+    source: Task-bound Approved ASSET Criteria Version
+    ui_fields:
+    - criteria_version_id
+    - dimension_uid
+    - label
+    - weight
+    - score
+    - hard_block
+    - evidence_refs
+    - overall_score
+    - issue_summary
+    rule: Do not hard-code a second scoring scheme in ASSET page. Render the approved ASSET criteria bound to current task.
+status: CURRENT_CLASSIFICATION
+content_hash: b9c4fd98d4b37666e5557e790e481a06dd7ec9ac92e3d9d9dc0414007739a3cc

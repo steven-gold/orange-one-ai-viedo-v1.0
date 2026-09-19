@@ -1,0 +1,40 @@
+artifact_uid: CLS-ASSET-01-SYSTEM-FILENAME-GOVERNANCE-002
+page_uid: ASSET-01
+planning_domain: PAGE_CONSTRUCTION
+responsibility_uid: SYSTEM_FILENAME_GOVERNANCE
+responsibility_class: SYSTEM_FILENAME_GOVERNANCE
+responsibilities:
+- SYSTEM_FILENAME_GOVERNANCE
+canonical_owner_uid: OWNER-CLS-ASSET-01-SYSTEM-FILENAME-GOVERNANCE-002
+target_path: 01_CLASSIFIED/ASSET-01/PAGE/CLS_002_SYSTEM_FILENAME_GOVERNANCE.yaml
+lifecycle_uid: LC-SYSTEM-FILENAME-GOVERNANCE
+approval_scope_uid: AP-SYSTEM-FILENAME-GOVERNANCE
+version_scope_uid: VER-SYSTEM-FILENAME-GOVERNANCE
+test_scope_uid: TEST-SYSTEM-FILENAME-GOVERNANCE
+source_lineage:
+- source_uid: SRC-ASSET-01-PAGE-VISUAL-AUTHORITY
+  source_segment_uids:
+  - SEG-SRC-ASSET-01-PAGE-VISUAL-AUTHORITY-002
+facts:
+- source_ref: $.system_filename_governance
+  value:
+    authority: ACPOS_SYSTEM
+    rule: ASSET、VIDEO、EDIT 的輸出檔名與 artifact identity 由 ACPOS_SYSTEM 統一治理；任何部門頁面不得自行產生、重新命名或覆寫 Canonical Filename。
+    page_behavior: READ_ONLY
+    required_runtime_fields:
+    - output_artifact_id
+    - canonical_filename
+    - exact_version_id
+    - extension_or_format
+    - checksum
+    - naming_policy_version
+    - source_binding_ref
+    forbidden:
+    - manual rename
+    - department-local filename formula
+    - filename parsing as business authority
+    - path guessing
+    - reuse of stale filename without exact version/checksum
+    downstream_reference: 下游 Script/Manifest 必須引用 exact artifact/reference ID + Version + Canonical Filename + Checksum；實際業務身分與路由以 exact ID/ref 為準，不得解析 filename 字串推論。
+status: CURRENT_CLASSIFICATION
+content_hash: 6d450f126fc7724e57719e9a72b1f66591f9c784cee3fe9a95a50f44a18747fe
