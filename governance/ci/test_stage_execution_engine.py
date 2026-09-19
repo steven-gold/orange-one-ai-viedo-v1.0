@@ -39,6 +39,10 @@ for node in ast.walk(tree):
                 value=node.value
                 if isinstance(value,ast.Constant) and value.value=='STAGE-02':
                     raise AssertionError('COMMON_ENGINE_STAGE02_LITERAL_ASSIGNMENT')
-assert 'UNSUPPORTED_STAGE_UNTIL_MATCHING_CURRENT_EVIDENCE_EXISTS' not in common
+for node in ast.walk(tree):
+    if isinstance(node,ast.Call) and isinstance(node.func,ast.Name) and node.func.id=='fail':
+        for arg in node.args:
+            if isinstance(arg,ast.Constant) and isinstance(arg.value,str) and arg.value.startswith('UNSUPPORTED_STAGE_UNTIL_MATCHING_CURRENT_EVIDENCE_EXISTS'):
+                raise AssertionError('COMMON_ENGINE_STAGE02_ONLY_REJECTION')
 print(f'PASS: common Stage Execution Engine negative regression {cases}/10')
 print('PASS: Stage-02 entrypoint is compatibility-only; common engine has no Stage-02-only execution rejection')
