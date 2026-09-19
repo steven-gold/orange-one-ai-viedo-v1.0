@@ -104,8 +104,8 @@ specification_mutation_safety:
   ordinary_mid_stage_specification_mutation: BLOCK
   stage_end_consolidated_promotion_requires_new_explicit_directive: true
   execution_context_lock_required: true
-status: GOVERNANCE_PROMOTED_STRUCTURED_MUTATION_HARDENING_PRODUCT_REVERIFY_REQUIRED
-next_action: FRESH_REVERIFY_CORE01_STAGE01_STAGE02_UNDER_CURRENT_GOVERNANCE
+status: GOVERNANCE_V2_2_8_POST_PROMOTION_RESIDUAL_CLEANUP
+next_action: REMOVE_COMPLETED_ONE_SHOT_AND_STALE_SOURCE_MIGRATION_CONSUMERS_THEN_PREPARE_FRESH_CORE01_REPLAY
 previous_closed_product_work_unit:
   work_unit_uid: WU-STAGE02-CORE01-STRUCTURAL-REMEDIATION-001
   canonical_name: CORE01_STRUCTURAL_CONTRACT_REMEDIATION
@@ -284,12 +284,12 @@ previous_closed_work_unit:
     source_runtime_residual_count: 0
     product_stage_credit: 0
 resume_control:
-  current_resume_point: POST_STRUCTURED_MUTATION_GOVERNANCE_PROMOTION_CORE01_REVERIFY_REQUIRED
+  current_resume_point: POST_V2_2_8_PROMOTION_RESIDUAL_CLEANUP
   current_work_unit_uid: WU-GOV-STRUCTURED-MUTATION-SELECTOR-HARDENING-001
   current_owner: governance/ci/validate_structured_mutation_safety.py
   historical_stage2_results_are_current_state: false
   stage2_execution_requires_fresh_entry_resolution: true
-  exact_next_action: FRESH_REVERIFY_CORE01_STAGE01_STAGE02_UNDER_CURRENT_GOVERNANCE
+  exact_next_action: REMOVE_COMPLETED_ONE_SHOT_AND_STALE_SOURCE_MIGRATION_CONSUMERS_THEN_PREPARE_FRESH_CORE01_REPLAY
 governance_revision_transition:
   current_governance_uid: GOV-REV-20260919-STRUCTURED-MUTATION-SELECTOR-HARDENING
   predecessor_governance_uid: GOV-REV-20260919-PROFILE-TOKEN-DECONTAMINATION-HARDENING
@@ -841,3 +841,25 @@ structured_mutation_selector_successor:
   mother_execution_rule_uid: WEB-GOV-03-S070
   mother_audit_rule_uid: WEB-GOV-04-S084
   status: GOVERNANCE_PROMOTED_PRODUCT_REVERIFY_REQUIRED
+
+post_v228_active_consumer_cleanup:
+  governance_uid: GOV-REV-20260919-STRUCTURED-MUTATION-SELECTOR-HARDENING
+  product_stage_credit: 0
+  classified_residuals:
+  - path: .github/workflows/mother-structured-mutation-selector-successor.yml
+    disposition: REMOVE_COMPLETED_ONE_SHOT_WORKFLOW
+    terminal_evidence: github-actions:35419926911
+  - path: .github/governance-maintenance/materialize_structured_mutation_selector_successor.py
+    disposition: REMOVE_COMPLETED_ONE_SHOT_MATERIALIZER
+    terminal_evidence: github-actions:35419926911
+  - path: .github/workflows/core01-stage02-source-migration.yml
+    disposition: REMOVE_STALE_COMPLETED_ONE_SHOT_WORKFLOW
+    reason: REFERENCES_DELETED_FRESH_RUN_005_AND_SUPERSEDED_GOVERNANCE
+  - path: .github/governance-maintenance/migrate_approved_stage02_contract_to_core01_source.py
+    disposition: REMOVE_STALE_COMPLETED_ONE_SHOT_MATERIALIZER
+    reason: SOURCE_MIGRATION_ALREADY_ABSORBED_IN_CURRENT_RAW_SOURCE_LINEAGE
+  retained_until_fresh_replay_completion:
+  - .github/workflows/fresh-core01-stage01-stage02-replay-r3.yml
+  - .github/governance-maintenance/run_fresh_core01_stage01_stage02_replay_r3.py
+  - .github/governance-maintenance/finalize_fresh_core01_stage01_stage02_r3.py
+  retained_reason: MUST_BE_REBOUND_TO_NEW_CURRENT_GOVERNANCE_AND_NEXT_FRESH_RUN_BEFORE_EXECUTION_THEN_RETIRED
