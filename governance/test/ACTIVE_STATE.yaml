@@ -104,8 +104,8 @@ specification_mutation_safety:
   ordinary_mid_stage_specification_mutation: BLOCK
   stage_end_consolidated_promotion_requires_new_explicit_directive: true
   execution_context_lock_required: true
-status: ACTIVE_DYNAMIC_EXECUTION_IDENTITY_MAINTENANCE_REVALIDATION_REQUIRED
-next_action: VALIDATE_DYNAMIC_EXECUTION_IDENTITY_MIGRATION
+status: DYNAMIC_EXECUTION_IDENTITY_MAINTENANCE_CLOSED
+next_action: WORK_UNIT_RESOLUTION_GATE_FOR_STAGE03
 previous_closed_product_work_unit:
   work_unit_uid: WU-STAGE02-CORE01-STRUCTURAL-REMEDIATION-001
   canonical_name: CORE01_STRUCTURAL_CONTRACT_REMEDIATION
@@ -284,14 +284,15 @@ previous_closed_work_unit:
     source_runtime_residual_count: 0
     product_stage_credit: 0
 resume_control:
-  current_resume_point: DYNAMIC_EXECUTION_IDENTITY_MIGRATION_PERSISTED_REVALIDATION_REQUIRED
-  current_work_unit_uid: WU-TEST-DYNAMIC-EXECUTION-IDENTITY-001
-  current_owner: .github/governance-maintenance/run_fresh_stage_replay.py
+  current_resume_point: STAGE2_CORE01_CLOSED_STAGE3_WUR_REQUIRED
+  current_work_unit_uid: null
+  current_owner: null
   historical_stage2_results_are_current_state: false
   stage2_execution_requires_fresh_entry_resolution: false
-  exact_next_action: VALIDATE_DYNAMIC_EXECUTION_IDENTITY_MIGRATION
-  parent_product_resume_point: STAGE2_CORE01_CLOSED_STAGE3_WUR_REQUIRED
-  parent_product_next_action: WORK_UNIT_RESOLUTION_GATE_FOR_STAGE03
+  exact_next_action: WORK_UNIT_RESOLUTION_GATE_FOR_STAGE03
+  closed_maintenance_work_unit_uid: WU-TEST-DYNAMIC-EXECUTION-IDENTITY-001
+  closed_maintenance_owner: .github/governance-maintenance/run_fresh_stage_replay.py
+  next_primary_task_layer: PRODUCT_STAGE_EXECUTION
   product_stage3_execution_started: false
 governance_revision_transition:
   current_governance_uid: GOV-REV-20260919-SEMANTIC-BASELINE-CONSUMER-SINGLE-OWNER-HARDENING
@@ -1068,12 +1069,12 @@ work_unit_resolution_gate_dynamic_execution_identity:
   - ACTIVE_R5_WORKFLOW_RUNNER_FINALIZER_CONTAIN_FIXED_RUN_GOVERNANCE_VERSION_IDENTITIES
   - EXISTING_CANONICAL_OWNERS_MUST_BE_MODIFIED_AND_MIGRATED_NOT_PARALLELIZED
   product_stage_credit: 0
-active_work_unit:
+closed_test_validation_maintenance_work_unit_dynamic_execution_identity:
   work_unit_uid: WU-TEST-DYNAMIC-EXECUTION-IDENTITY-001
   canonical_name: DYNAMIC_EXECUTION_IDENTITY_AND_STABLE_REPLAY_EXECUTABLE_MIGRATION
   primary_task_layer: TEST_OR_VALIDATION_MAINTENANCE
   canonical_owner: .github/governance-maintenance/run_fresh_stage_replay.py
-  current_status: IMPLEMENTATION_MIGRATED_REVALIDATION_REQUIRED
+  current_status: CLOSED_VERIFIED_NO_PRODUCT_CREDIT
   scope:
   - STABLE_REPLAY_WORKFLOW_OWNER
   - STABLE_REPLAY_RUNNER_OWNER
@@ -1136,6 +1137,26 @@ active_work_unit:
     mother_normative_change: false
     product_stage_credit: 0
     exact_head_revalidation_required: true
+  closure_evidence:
+    current_governance_uid: GOV-REV-20260919-SEMANTIC-BASELINE-CONSUMER-SINGLE-OWNER-HARDENING
+    implementation_head: 4d63462ed5075908a51d38887470b47aca3029a3
+    dynamic_replay_validation_run_id: 35423067253
+    dynamic_replay_validation_result: success
+    selected_profile_run_id: 35423067203
+    selected_profile_result: success
+    full_line_run_id: 35423067189
+    full_line_result: success
+    branch_guard_run_id: 35423067248
+    branch_guard_result: success
+    active_workflows_scanned: 8
+    active_transitive_executable_targets: 25
+    stable_runner_executable_sha256: 2358505e7f1c5a936263d4769e5422069ab59cc0c035d5feea4f1405a2940ce5
+    synthetic_context_portability_result: PASS_TWO_DISTINCT_RUN_AND_GOVERNANCE_CONTEXTS_ZERO_SOURCE_CHANGE
+    r5_specific_active_executable_current_tree_count: 0
+    fixed_current_run_identity_in_stable_replay_executable_count: 0
+    mother_normative_change: false
+    product_stage_credit: 0
+    closure_persistence_revalidation_required: true
 last_work_unit_resolution_gate:
   resolution_uid: WUR-STAGE02-CORE01-COMPLETENESS-20260919-005
   normative_authority: false
