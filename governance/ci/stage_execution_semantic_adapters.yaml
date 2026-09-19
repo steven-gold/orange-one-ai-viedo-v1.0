@@ -35,6 +35,33 @@ common_execution_skeleton:
   - TERMINAL_CLOSURE
   - PERSIST_RESUME
   - NEXT_STAGE
+  phase_contracts:
+    SESSION_BOOTSTRAP_RESUME_GATE: {required_artifact: SESSION_BOOTSTRAP_RESUME_RECEIPT, pass_condition: CURRENT_TRUTH_RESOLVED}
+    CURRENT_GOVERNANCE: {required_artifact: CURRENT_GOVERNANCE_RESOLUTION, pass_condition: CURRENT_GOVERNANCE_UID_BOUND}
+    CURRENT_SCOPE: {required_artifact: EXECUTION_SCOPE_MANIFEST, pass_condition: INCLUDED_EXCLUDED_REMAINING_SCOPE_BOUND}
+    WORK_UNIT: {required_artifact: WORK_UNIT_RESOLUTION_RECEIPT, pass_condition: ONE_LEGAL_ACTIVE_WORK_UNIT}
+    AUTHORITY: {required_artifact: AUTHORITY_RESOLUTION_RECEIPT, pass_condition: ONE_CURRENT_AUTHORITY_OWNER}
+    APPLICABILITY: {required_artifact: APPLICABILITY_DECISION, pass_condition: REQUIRED_OPTIONAL_NA_EXPLICIT}
+    DEPENDENCY: {required_artifact: DEPENDENCY_TOPOLOGY, pass_condition: EXACT_FORWARD_REVERSE_CLOSURE}
+    REQUIRED_FIELD_MANIFEST: {required_artifact: REQUIRED_FIELD_MANIFEST, pass_condition: REQUIRED_FIELDS_COMPLETE}
+    STAGE_INPUT_CONTRACT: {required_artifact: STAGE_INPUT_CONTRACT, pass_condition: ALL_INPUTS_HAVE_ONE_LEGAL_ORIGIN}
+    STAGE_OPERATIONS: {required_artifact: STAGE_OPERATION_MANIFEST, pass_condition: ALL_PROFILE_OPERATIONS_BOUND}
+    OUTPUT_PRODUCER: {required_artifact: OUTPUT_PRODUCER_BINDING, pass_condition: ALL_OUTPUTS_HAVE_ONE_REGISTERED_PRODUCER}
+    CURRENT_PROBLEM_REGISTER: {required_artifact: CURRENT_PROBLEM_REGISTER, pass_condition: ONE_CURRENT_PROBLEM_TRUTH}
+    DENOMINATOR_SNAPSHOT: {required_artifact: DENOMINATOR_SNAPSHOT, pass_condition: CURRENT_SCOPE_DENOMINATOR_FROZEN}
+    CHANGE_IMPACT: {required_artifact: CHANGE_IMPACT_MAP, pass_condition: REVERSE_DEPENDENCY_IMPACT_RESOLVED}
+    RESOLUTION_LEDGER: {required_artifact: RESOLUTION_LEDGER, pass_condition: APPEND_ONLY_RESOLUTION_HISTORY_BOUND}
+    FRESH_EXECUTION: {required_artifact: FRESH_EXECUTION_RECEIPT, pass_condition: PRIOR_RESULT_NOT_USED_AS_CURRENT_EXECUTION}
+    STAGE_SPECIFIC_SCANNER: {required_artifact: STAGE_SCAN_RESULT, pass_condition: ALL_REGISTERED_SCANNER_DIMENSIONS_EXECUTED}
+    GAP_CLASSIFICATION: {required_artifact: GAP_CLASSIFICATION_RESULT, pass_condition: EVERY_GAP_HAS_ONE_PRIMARY_OWNER}
+    OWNER_REMEDIATION: {required_artifact: OWNER_REMEDIATION_RESULT, pass_condition: REMEDIATION_OR_PROVEN_ZERO_GAP_NA}
+    FRESH_REEXECUTION: {required_artifact: FRESH_REEXECUTION_RECEIPT, pass_condition: REQUIRED_AFTER_ANY_REMEDIATION}
+    HIDDEN_DEFECT_SWEEP: {required_artifact: HIDDEN_DEFECT_SWEEP_RESULT, pass_condition: HIDDEN_DEFECT_SWEEP_EXECUTED}
+    REQUIRED_EVIDENCE: {required_artifact: REQUIRED_EVIDENCE_SET, pass_condition: ALL_REQUIRED_EVIDENCE_PARSED_AND_VALID}
+    EXACT_HEAD_GATES: {required_artifact: EXACT_HEAD_GATE_RECEIPTS, pass_condition: OUTER_TERMINAL_RECEIPTS_BIND_EXACT_HEAD}
+    TERMINAL_CLOSURE: {required_artifact: TERMINAL_CLOSURE_RECORD, pass_condition: ZERO_GAP_ZERO_BLOCKER_ZERO_REMAINING_SCOPE}
+    PERSIST_RESUME: {required_artifact: RESUME_PERSISTENCE_RECORD, pass_condition: NEXT_RESUME_PERSISTED}
+    NEXT_STAGE: {required_artifact: NEXT_STAGE_TRANSITION_RECORD, pass_condition: LEGAL_PROFILE_SUCCESSOR_ONLY}
 common_requirements:
   definition_audit_may_claim_product_completion: false
   governance_maintenance_product_stage_credit: 0
@@ -50,6 +77,18 @@ common_requirements:
   missing_semantic_adapter: BLOCK
   missing_product_evidence_in_execution_mode: BLOCK
   downstream_owned_gap_requires_owner_reentry: true
+  phase_trace_exact_order_required: true
+  phase_trace_terminal_status_required: true
+  operation_result_coverage_required: true
+  output_result_coverage_required: true
+  scanner_result_coverage_required: true
+  validator_result_coverage_required: true
+  remediation_reexecution_pair_required_when_gap_found: true
+  zero_gap_remediation_may_be_not_applicable_with_proof: true
+  hidden_defect_sweep_after_reexecution_required: true
+  terminal_closure_requires_exact_head_gate_receipts: true
+  persist_resume_before_next_stage_required: true
+  next_stage_must_match_profile: true
 owner_remediation_routes:
   GOVERNANCE_DEFECT: GOVERNANCE_MAINTENANCE
   AUTHORITY_GAP: AUTHORITY_OWNER

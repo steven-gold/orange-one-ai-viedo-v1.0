@@ -21,7 +21,9 @@ EXPECTED_PHASES=[
 'PERSIST_RESUME','NEXT_STAGE']
 REQUIRED_PREFLIGHT={'REQUIRED_FIELD_MANIFEST','FUNCTIONAL_CHAIN_MANIFEST','EFFECTIVE_CONTRACT_OVERLAY','DEPENDENCY_TOPOLOGY','DENOMINATOR_SNAPSHOT','CLASSIFICATION_RULESET','CHANGE_IMPACT_MAP','STAGE_EXECUTION_PREFLIGHT_RECEIPT'}
 ROUTE_KEYS={'GOVERNANCE_DEFECT','AUTHORITY_GAP','PRODUCT_CONTRACT_GAP','RUNTIME_IMPLEMENTATION_GAP','EVIDENCE_STATE_GAP','EXTERNAL_AUTHORITY_GAP'}
-EVIDENCE_FIELDS={'artifact_type','governance_uid','stage_uid','attempt_uid','scope_manifest_ref','actual_stage_execution_started','actual_stage_execution_completed','fresh_execution','prior_results_used','current_specification_mutated','denominator','gaps','closure_blockers','required_evidence','result','stage_exit_allowed','source_head_sha'}
+EVIDENCE_FIELDS={'artifact_type','governance_uid','stage_uid','attempt_uid','scope_manifest_ref','actual_stage_execution_started','actual_stage_execution_completed','fresh_execution','prior_results_used','current_specification_mutated','denominator','gaps','closure_blockers','required_evidence','result','stage_exit_allowed','source_head_sha','phase_trace','operation_results','output_results','scanner_results','validator_results','remediation','hidden_defect_sweep','exact_head_gate_receipts','resume_persistence','next_stage_transition'}
+PHASE_TERMINAL_STATUSES={'PASS','BLOCKED','NOT_APPLICABLE_WITH_PROOF','NOT_EXECUTED_AFTER_BLOCK'}
+RESULT_TERMINAL_STATUSES={'PASS','BLOCKED','NOT_APPLICABLE_WITH_PROOF'}
 
 class StageEngineError(RuntimeError): pass
 def fail(msg): raise StageEngineError(msg)
@@ -60,6 +62,12 @@ def validate_definition_data(profile,adapters):
     if int(profile.get('profile_local_denominator') or -1)!=len(stages): fail('PROFILE_DENOMINATOR_DRIFT')
     common=adapters.get('common_execution_skeleton') or {}
     if common.get('phases')!=EXPECTED_PHASES or int(common.get('phase_count') or -1)!=len(EXPECTED_PHASES): fail('COMMON_EXECUTION_SKELETON_DRIFT')
+    phase_contracts=common.get('phase_contracts') or {}
+    if set(phase_contracts)!=set(EXPECTED_PHASES): fail('COMMON_PHASE_CONTRACT_DENOMINATOR_DRIFT')
+    for ph in EXPECTED_PHASES:
+        contract=phase_contracts.get(ph)
+        if not isinstance(contract,dict) or not contract.get('required_artifact') or not contract.get('pass_condition'):
+            fail(f'COMMON_PHASE_CONTRACT_INVALID:{ph}')
     req=adapters.get('common_requirements') or {}
     expected={
       'definition_audit_may_claim_product_completion':False,'governance_maintenance_product_stage_credit':0,
@@ -68,7 +76,12 @@ def validate_definition_data(profile,adapters):
       'hidden_defect_sweep_required':True,'required_evidence_presence_only_is_pass':False,
       'exact_head_outer_terminal_conclusion_required':True,'stage_exit_requires_zero_open_gap_zero_blocker_zero_remaining_scope':True,
       'missing_stage_specific_scanner_contract':'BLOCK','missing_semantic_adapter':'BLOCK','missing_product_evidence_in_execution_mode':'BLOCK',
-      'downstream_owned_gap_requires_owner_reentry':True}
+      'downstream_owned_gap_requires_owner_reentry':True,'phase_trace_exact_order_required':True,
+      'phase_trace_terminal_status_required':True,'operation_result_coverage_required':True,'output_result_coverage_required':True,
+      'scanner_result_coverage_required':True,'validator_result_coverage_required':True,
+      'remediation_reexecution_pair_required_when_gap_found':True,'zero_gap_remediation_may_be_not_applicable_with_proof':True,
+      'hidden_defect_sweep_after_reexecution_required':True,'terminal_closure_requires_exact_head_gate_receipts':True,
+      'persist_resume_before_next_stage_required':True,'next_stage_must_match_profile':True}
     for k,v in expected.items():
         if req.get(k)!=v: fail(f'COMMON_REQUIREMENT_DRIFT:{k}')
     if set(adapters.get('owner_remediation_routes') or {})!=ROUTE_KEYS: fail('OWNER_REMEDIATION_ROUTE_DENOMINATOR_DRIFT')
@@ -133,7 +146,8 @@ def plan(stage_uid):
     if stage_uid not in stages: fail(f'UNKNOWN_STAGE:{stage_uid}')
     st,ad=stages[stage_uid],adapters['stages'][stage_uid]
     semantic_phases={'AUTHORITY','APPLICABILITY','REQUIRED_FIELD_MANIFEST','STAGE_INPUT_CONTRACT','STAGE_OPERATIONS','OUTPUT_PRODUCER','STAGE_SPECIFIC_SCANNER','GAP_CLASSIFICATION','OWNER_REMEDIATION','REQUIRED_EVIDENCE'}
-    return {'artifact_type':'COMMON_STAGE_EXECUTION_PLAN','normative_authority':False,'governance_uid':gov,'selected_profile_uid':profile.get('profile_uid'),'stage_uid':stage_uid,'stage_name':st.get('name'),'scope_mode':st.get('scope_mode'),'entry_gate':st.get('entry_gate'),'exit_gate':st.get('exit_gate'),'next_stage_uid':st.get('next_stage_uid'),'semantic_dimensions':ad.get('semantic_dimensions'),'scanner_dimensions':ad.get('scanner_dimensions'),'denominator_kind':ad.get('denominator_kind'),'operations':st.get('operations'),'outputs':st.get('outputs'),'output_producers':st.get('output_producers'),'validators':st.get('validators'),'required_evidence_types':st.get('required_evidence'),'phases':[{'ordinal':i+1,'phase_uid':ph,'executor_owner':'COMMON_STAGE_EXECUTION_ENGINE','semantic_owner':'STAGE_SEMANTIC_ADAPTER' if ph in semantic_phases else 'COMMON_STAGE_EXECUTION_ENGINE','definition_status':'BOUND'} for i,ph in enumerate(EXPECTED_PHASES)],'definition_audit_product_completion_credit':0}
+    contracts=(adapters.get('common_execution_skeleton') or {}).get('phase_contracts') or {}
+    return {'artifact_type':'COMMON_STAGE_EXECUTION_PLAN','normative_authority':False,'governance_uid':gov,'selected_profile_uid':profile.get('profile_uid'),'stage_uid':stage_uid,'stage_name':st.get('name'),'scope_mode':st.get('scope_mode'),'entry_gate':st.get('entry_gate'),'exit_gate':st.get('exit_gate'),'next_stage_uid':st.get('next_stage_uid'),'semantic_dimensions':ad.get('semantic_dimensions'),'scanner_dimensions':ad.get('scanner_dimensions'),'denominator_kind':ad.get('denominator_kind'),'operations':st.get('operations'),'outputs':st.get('outputs'),'output_producers':st.get('output_producers'),'validators':st.get('validators'),'required_evidence_types':st.get('required_evidence'),'phases':[{'ordinal':i+1,'phase_uid':ph,'executor_owner':'COMMON_STAGE_EXECUTION_ENGINE','semantic_owner':'STAGE_SEMANTIC_ADAPTER' if ph in semantic_phases else 'COMMON_STAGE_EXECUTION_ENGINE','required_artifact':contracts[ph]['required_artifact'],'pass_condition':contracts[ph]['pass_condition'],'definition_status':'BOUND'} for i,ph in enumerate(EXPECTED_PHASES)],'definition_audit_product_completion_credit':0}
 
 def active_product(stage_uid):
     entry,reg,gov,profile,adapters,stages=validate_definition()
@@ -158,34 +172,119 @@ def admission(stage_uid):
     print(f"PASS: common execution skeleton phases={len(pl['phases'])}/{len(EXPECTED_PHASES)}")
     print('PASS: admission check performs no product execution and grants zero completion credit')
 
-def validate_evidence(stage_uid,path):
+def _result_map(rows,key,label):
+    if not isinstance(rows,list): fail(f'{label}_INVALID')
+    out={}
+    for row in rows:
+        if not isinstance(row,dict) or not row.get(key): fail(f'{label}_ROW_INVALID')
+        uid=str(row[key])
+        if uid in out: fail(f'{label}_DUPLICATE:{uid}')
+        if row.get('status') not in RESULT_TERMINAL_STATUSES: fail(f'{label}_STATUS_INVALID:{uid}')
+        out[uid]=row
+    return out
+
+def validate_evidence_data(stage_uid,e):
     entry,reg,gov,profile,adapters,stages=validate_definition()
-    e=j(path); missing=sorted(EVIDENCE_FIELDS-set(e))
+    if stage_uid not in stages: fail(f'UNKNOWN_STAGE:{stage_uid}')
+    st=stages[stage_uid]; ad=adapters['stages'][stage_uid]
+    missing=sorted(EVIDENCE_FIELDS-set(e))
     if missing: fail(f'NORMALIZED_EVIDENCE_FIELD_MISSING:{missing}')
     if e.get('governance_uid')!=gov or e.get('stage_uid')!=stage_uid: fail('EVIDENCE_IDENTITY_DRIFT')
     if e.get('scope_manifest_ref')!=str(SCOPE.relative_to(ROOT)): fail('EVIDENCE_SCOPE_MANIFEST_REF_DRIFT')
     if e.get('actual_stage_execution_started') is not True or e.get('actual_stage_execution_completed') is not True: fail('EVIDENCE_ACTUAL_EXECUTION_NOT_COMPLETE')
     if e.get('fresh_execution') is not True or e.get('prior_results_used') is not False: fail('EVIDENCE_FRESH_EXECUTION_PROVENANCE_INVALID')
     if e.get('current_specification_mutated') is not False: fail('EVIDENCE_CURRENT_SPECIFICATION_MUTATION_FORBIDDEN')
+    head=str(e.get('source_head_sha') or '')
+    if len(head)!=40 or any(ch not in '0123456789abcdef' for ch in head.lower()): fail('EVIDENCE_SOURCE_HEAD_SHA_INVALID')
+
+    trace=e.get('phase_trace')
+    if not isinstance(trace,list) or len(trace)!=len(EXPECTED_PHASES): fail('PHASE_TRACE_DENOMINATOR_DRIFT')
+    seen=[]
+    blocked_seen=False
+    for idx,row in enumerate(trace):
+        if not isinstance(row,dict) or row.get('phase_uid')!=EXPECTED_PHASES[idx]: fail(f'PHASE_TRACE_ORDER_DRIFT:{idx+1}')
+        status=row.get('status')
+        if status not in PHASE_TERMINAL_STATUSES: fail(f'PHASE_TRACE_STATUS_INVALID:{EXPECTED_PHASES[idx]}')
+        if status=='NOT_APPLICABLE_WITH_PROOF' and not row.get('proof'): fail(f'PHASE_NA_PROOF_MISSING:{EXPECTED_PHASES[idx]}')
+        if status=='BLOCKED': blocked_seen=True
+        if status=='NOT_EXECUTED_AFTER_BLOCK' and not blocked_seen: fail(f'PHASE_NOT_EXECUTED_BEFORE_BLOCK:{EXPECTED_PHASES[idx]}')
+        seen.append(status)
+
+    ops=_result_map(e.get('operation_results'),'operation_uid','OPERATION_RESULTS')
+    expected_ops=set(map(str,st.get('operations') or []))
+    if set(ops)!=expected_ops: fail(f'OPERATION_RESULT_COVERAGE_DRIFT:expected={sorted(expected_ops)} actual={sorted(ops)}')
+    outs=_result_map(e.get('output_results'),'output_uid','OUTPUT_RESULTS')
+    expected_outs=set(map(str,st.get('outputs') or []))
+    if set(outs)!=expected_outs: fail(f'OUTPUT_RESULT_COVERAGE_DRIFT:expected={sorted(expected_outs)} actual={sorted(outs)}')
+    for uid,row in outs.items():
+        if row.get('producer_operation_uid')!=str((st.get('output_producers') or {}).get(uid)): fail(f'OUTPUT_PRODUCER_RESULT_DRIFT:{uid}')
+    scans=_result_map(e.get('scanner_results'),'scanner_dimension','SCANNER_RESULTS')
+    expected_scans=set(map(str,ad.get('scanner_dimensions') or []))
+    if set(scans)!=expected_scans: fail(f'SCANNER_RESULT_COVERAGE_DRIFT:expected={sorted(expected_scans)} actual={sorted(scans)}')
+    vals=_result_map(e.get('validator_results'),'validator_uid','VALIDATOR_RESULTS')
+    expected_vals=set(map(str,st.get('validators') or []))
+    if set(vals)!=expected_vals: fail(f'VALIDATOR_RESULT_COVERAGE_DRIFT:expected={sorted(expected_vals)} actual={sorted(vals)}')
+
     d=e.get('denominator')
     if not isinstance(d,dict): fail('EVIDENCE_DENOMINATOR_INVALID')
     for k in ('required_total','open_gap_total','closure_blocker_total','remaining_scope_total'):
         if not isinstance(d.get(k),int) or d.get(k)<0: fail(f'EVIDENCE_DENOMINATOR_FIELD_INVALID:{k}')
     if not isinstance(e.get('gaps'),list) or len(e['gaps'])!=d['open_gap_total']: fail('EVIDENCE_OPEN_GAP_DENOMINATOR_DRIFT')
     if not isinstance(e.get('closure_blockers'),list) or len(e['closure_blockers'])!=d['closure_blocker_total']: fail('EVIDENCE_BLOCKER_DENOMINATOR_DRIFT')
-    req=set(map(str,stages[stage_uid].get('required_evidence') or [])); items=e.get('required_evidence')
+
+    remediation=e.get('remediation')
+    if not isinstance(remediation,dict): fail('REMEDIATION_RESULT_INVALID')
+    for k in ('discovered_gap_total','remediated_gap_total','unresolved_gap_total'):
+        if not isinstance(remediation.get(k),int) or remediation.get(k)<0: fail(f'REMEDIATION_FIELD_INVALID:{k}')
+    if remediation['discovered_gap_total'] != remediation['remediated_gap_total'] + remediation['unresolved_gap_total']:
+        fail('REMEDIATION_DENOMINATOR_DRIFT')
+    if remediation['discovered_gap_total']>0:
+        if remediation.get('reexecution_required') is not True or remediation.get('reexecution_performed') is not True:
+            fail('REMEDIATION_FRESH_REEXECUTION_MISSING')
+    else:
+        if remediation.get('reexecution_required') not in {False,None}: fail('ZERO_GAP_REEXECUTION_REQUIREMENT_INVALID')
+    sweep=e.get('hidden_defect_sweep')
+    if not isinstance(sweep,dict) or sweep.get('performed') is not True or sweep.get('result') not in {'PASS','BLOCKED'}:
+        fail('HIDDEN_DEFECT_SWEEP_INVALID')
+    if not isinstance(sweep.get('discovered_defect_total'),int) or sweep['discovered_defect_total']<0: fail('HIDDEN_DEFECT_COUNT_INVALID')
+
+    req=set(map(str,st.get('required_evidence') or [])); items=e.get('required_evidence')
     if not isinstance(items,list): fail('REQUIRED_EVIDENCE_LEDGER_INVALID')
     got={str(x.get('evidence_type')) for x in items if isinstance(x,dict)}
     if not req.issubset(got): fail(f'REQUIRED_EVIDENCE_TYPE_MISSING:{sorted(req-got)}')
     for item in items:
         if not isinstance(item,dict) or item.get('status')!='PASS' or not item.get('ref'): fail('REQUIRED_EVIDENCE_ITEM_INVALID')
         if not item.get('external_receipt') and not (ROOT/str(item['ref'])).is_file(): fail(f'REQUIRED_EVIDENCE_PHYSICAL_REF_MISSING:{item["ref"]}')
+
+    gates=e.get('exact_head_gate_receipts')
+    if not isinstance(gates,list) or not gates: fail('EXACT_HEAD_GATE_RECEIPTS_MISSING')
+    for gate in gates:
+        if not isinstance(gate,dict) or gate.get('head_sha')!=head or gate.get('conclusion')!='success' or not gate.get('run_id') or not gate.get('gate_uid'):
+            fail('EXACT_HEAD_GATE_RECEIPT_INVALID')
+    resume=e.get('resume_persistence')
+    if not isinstance(resume,dict) or resume.get('performed') is not True or not resume.get('resume_point'):
+        fail('RESUME_PERSISTENCE_INVALID')
+    nxt=e.get('next_stage_transition')
+    if not isinstance(nxt,dict) or nxt.get('next_stage_uid')!=st.get('next_stage_uid') or nxt.get('status') not in {'READY','PROJECT_COMPLETE','NEXT_PAGE_READY'}:
+        fail('NEXT_STAGE_TRANSITION_INVALID')
+
     if e.get('result') not in {'PASS','BLOCKED'}: fail('EVIDENCE_RESULT_INVALID')
     if e['result']=='PASS':
         if any(d[k]!=0 for k in ('open_gap_total','closure_blocker_total','remaining_scope_total')): fail('PASS_WITH_NONZERO_DENOMINATOR')
         if e.get('stage_exit_allowed') is not True: fail('PASS_WITH_STAGE_EXIT_BLOCKED')
-    elif e.get('stage_exit_allowed') is not False: fail('BLOCKED_WITH_STAGE_EXIT_ALLOWED')
+        if any(x in {'BLOCKED','NOT_EXECUTED_AFTER_BLOCK'} for x in seen): fail('PASS_WITH_NONPASS_PHASE')
+        for label,rows in [('OPERATION',ops),('OUTPUT',outs),('SCANNER',scans),('VALIDATOR',vals)]:
+            bad=[uid for uid,row in rows.items() if row.get('status')!='PASS']
+            if bad: fail(f'PASS_WITH_NONPASS_{label}:{bad}')
+        if remediation['unresolved_gap_total']!=0: fail('PASS_WITH_UNRESOLVED_REMEDIATION')
+        if sweep.get('result')!='PASS' or sweep.get('discovered_defect_total')!=0: fail('PASS_WITH_HIDDEN_DEFECT')
+    else:
+        if e.get('stage_exit_allowed') is not False: fail('BLOCKED_WITH_STAGE_EXIT_ALLOWED')
+        if 'BLOCKED' not in seen: fail('BLOCKED_WITHOUT_BLOCKED_PHASE')
     return e
+
+def validate_evidence(stage_uid,path):
+    return validate_evidence_data(stage_uid,j(path))
 
 def validate_terminal(stage_uid,evidence,receipt):
     e=validate_evidence(stage_uid,evidence)
