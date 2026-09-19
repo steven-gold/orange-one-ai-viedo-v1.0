@@ -29,7 +29,7 @@ jobs:
         run: |
           set -euo pipefail
           grep -q 'artifact_type: SPECIFICATION_CHANGE_AUTHORIZATION_RECEIPT' governance/test/spec_change_authorizations/USR-DIRECTIVE-20260919-STRUCTURED-MUTATION-SELECTOR-HARDENING-R1.yaml
-          grep -q 'baseline_commit_sha: 3aa7ea7a2559b8f0017d83e73eebfad6e14a8962' governance/test/spec_change_authorizations/USR-DIRECTIVE-20260919-STRUCTURED-MUTATION-SELECTOR-HARDENING-R1.yaml
+          grep -q 'baseline_commit_sha: 31833f1362a72337fc7923c3b1c4e76d3e50e1a4' governance/test/spec_change_authorizations/USR-DIRECTIVE-20260919-STRUCTURED-MUTATION-SELECTOR-HARDENING-R1.yaml
           grep -q 'GOV-REV-20260919-PROFILE-TOKEN-DECONTAMINATION-HARDENING' governance/specifications/REGISTRY.yaml
       - name: Compile and preflight successor materializer
         run: |

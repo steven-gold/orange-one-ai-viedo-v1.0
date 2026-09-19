@@ -601,6 +601,26 @@ findings:
   required_fix: PARSE_STRUCTURED_YAML_MUTATE_EXACT_KEY_AND_RESERIALIZE
   product_stage_credit: 0
   reopen_condition: Reopen if active stress/destructive tests mutate structured governance artifacts by unscoped raw text replacement.
+- finding_uid: FIND-20260919-010
+  class: GOVERNANCE_SUCCESSOR_SEMANTIC_PROJECTION_SYNC_BUG
+  title: Structured-mutation successor updated immutable semantic baseline without synchronizing operational reference-rule registry
+  evidence: >-
+    Mother Structured Mutation Selector Successor run 35419121970 failed before persistence.
+    Section Registry validation passed, but validate_reference_semantics.py correctly blocked
+    reference_rule_registry_drift_from_immutable_baseline and common-bundle mismatches for the
+    construction and audit bundles.
+  defect_owner: GOVERNANCE_SUCCESSOR_MATERIALIZER_IMPLEMENTATION
+  generalizability_scope: SEMANTIC_BASELINE_AND_OPERATIONAL_REFERENCE_REGISTRY_ATOMIC_PROJECTION
+  blocking_state: REMEDIATION_IN_PROGRESS
+  disposition: IMPLEMENTATION_REMEDIATION_IN_PROGRESS
+  specification_change_required: false
+  formal_specification_mutated_for_fix: false
+  current_specification_may_be_modified_from_this_finding_alone: false
+  failure_run: github-actions:35419121970
+  authorization_uid: USR-DIRECTIVE-20260919-STRUCTURED-MUTATION-SELECTOR-HARDENING-R1
+  required_fix: ATOMICALLY_UPDATE_REFERENCE_RULE_REGISTRY_BEFORE_RECOMPUTING_SEMANTIC_BASELINE_HASH
+  product_stage_credit: 0
+  reopen_condition: Reopen if a semantic successor can change immutable semantic snapshot bindings without the operational reference registry changing in the same transaction.
 historical_stage2_execution_findings:
   prior_CORE-01_STAGE02_BLOCKED: 7
   prior_ASSET-01_STAGE02_BLOCKED: 6
