@@ -104,8 +104,8 @@ specification_mutation_safety:
   ordinary_mid_stage_specification_mutation: BLOCK
   stage_end_consolidated_promotion_requires_new_explicit_directive: true
   execution_context_lock_required: true
-status: STAGE2_CORE01_CLOSED_REVALIDATION_REQUIRED
-next_action: WORK_UNIT_RESOLUTION_GATE_AFTER_EXACT_HEAD_REVALIDATION
+status: ACTIVE_DYNAMIC_EXECUTION_IDENTITY_MAINTENANCE
+next_action: MIGRATE_FRESH_REPLAY_EXECUTABLES_TO_DYNAMIC_CONTEXT
 previous_closed_product_work_unit:
   work_unit_uid: WU-STAGE02-CORE01-STRUCTURAL-REMEDIATION-001
   canonical_name: CORE01_STRUCTURAL_CONTRACT_REMEDIATION
@@ -284,15 +284,15 @@ previous_closed_work_unit:
     source_runtime_residual_count: 0
     product_stage_credit: 0
 resume_control:
-  current_resume_point: STAGE2_CORE01_CLOSED_EXACT_HEAD_REVALIDATION_PENDING
-  current_work_unit_uid: null
-  current_owner: null
+  current_resume_point: DYNAMIC_EXECUTION_IDENTITY_MAINTENANCE_READY
+  current_work_unit_uid: WU-TEST-DYNAMIC-EXECUTION-IDENTITY-001
+  current_owner: .github/governance-maintenance/run_fresh_core01_stage01_stage02_replay_r5.py
   historical_stage2_results_are_current_state: false
   stage2_execution_requires_fresh_entry_resolution: false
-  exact_next_action: WORK_UNIT_RESOLUTION_GATE_AFTER_EXACT_HEAD_REVALIDATION
-  closed_work_unit_uid: WU-STAGE02-CORE01-COMPLETENESS-REPLAY-R5
-  closed_owner: 00_SOURCE_INTAKE/fresh_run_008/04_PAGE_FUNCTIONAL_CONTRACT/CURRENT_PROBLEM_REGISTER.yaml
-  legal_next_transition: WORK_UNIT_RESOLUTION_GATE
+  exact_next_action: MIGRATE_FRESH_REPLAY_EXECUTABLES_TO_DYNAMIC_CONTEXT
+  parent_product_resume_point: STAGE2_CORE01_CLOSED_STAGE3_WUR_REQUIRED
+  parent_product_next_action: WORK_UNIT_RESOLUTION_GATE_FOR_STAGE03
+  product_stage3_execution_started: false
 governance_revision_transition:
   current_governance_uid: GOV-REV-20260919-SEMANTIC-BASELINE-CONSUMER-SINGLE-OWNER-HARDENING
   predecessor_governance_uid: GOV-REV-20260919-STRUCTURED-MUTATION-SELECTOR-HARDENING
@@ -346,8 +346,8 @@ pending_governance_review:
   - STAGE03
   - WEBSITE_CONSTRUCTION
   - DEPLOYMENT
-current_primary_task_layer: PRODUCT_STAGE_EXECUTION
-current_primary_task_authorization_uid: USR-DIRECTIVE-20260919-CLEAR-ALL-STAGE01-STAGE02-RERUN-CORE01-R5
+current_primary_task_layer: TEST_OR_VALIDATION_MAINTENANCE
+current_primary_task_authorization_uid: USR-DIRECTIVE-20260919-OPTIMIZE-DYNAMIC-EXECUTION-IDENTITY-R1
 current_primary_task_product_stage_credit: 0
 earlier_closed_product_work_unit:
   work_unit_uid: WU-STAGE02-CORE01-FRESH-TEST-001
@@ -1048,6 +1048,84 @@ stage02_active_attempt:
   source_workflow_run_id: 35420941470
   source_artifact_id: 10577147985
   source_artifact_sha256: 3b23ba5424a32d2390be49988d9c9a333cae64f27437d11f508dcae5ae5f2cc5
+work_unit_resolution_gate_dynamic_execution_identity:
+  resolution_uid: WUR-TEST-DYNAMIC-EXECUTION-IDENTITY-20260919-001
+  normative_authority: false
+  result: PASS_SINGLE_LEGAL_SUCCESSOR
+  requested_primary_task_layer: TEST_OR_VALIDATION_MAINTENANCE
+  resolved_work_unit_uid: WU-TEST-DYNAMIC-EXECUTION-IDENTITY-001
+  authorization_uid: USR-DIRECTIVE-20260919-OPTIMIZE-DYNAMIC-EXECUTION-IDENTITY-R1
+  predecessor_product_closure_head: 2562a1841c5fadea2627701a184572dd5ee393b6
+  predecessor_selected_profile_run_id: 35422608348
+  predecessor_selected_profile_result: success
+  predecessor_full_line_run_id: 35422608362
+  predecessor_full_line_result: success
+  predecessor_branch_guard_run_id: 35422608339
+  predecessor_branch_guard_result: success
+  basis:
+  - EXPLICIT_USER_DIRECTIVE_OPTIMIZE_EXECUTION_MODE
+  - CURRENT_MOTHER_REUSABLE_EXECUTION_CONSUMERS_MUST_BE_SCOPE_PARAMETRIC
+  - ACTIVE_R5_WORKFLOW_RUNNER_FINALIZER_CONTAIN_FIXED_RUN_GOVERNANCE_VERSION_IDENTITIES
+  - EXISTING_CANONICAL_OWNERS_MUST_BE_MODIFIED_AND_MIGRATED_NOT_PARALLELIZED
+  product_stage_credit: 0
+active_work_unit:
+  work_unit_uid: WU-TEST-DYNAMIC-EXECUTION-IDENTITY-001
+  canonical_name: DYNAMIC_EXECUTION_IDENTITY_AND_STABLE_REPLAY_EXECUTABLE_MIGRATION
+  primary_task_layer: TEST_OR_VALIDATION_MAINTENANCE
+  canonical_owner: .github/governance-maintenance/run_fresh_core01_stage01_stage02_replay_r5.py
+  current_status: READY_FOR_IMPLEMENTATION
+  scope:
+  - STABLE_REPLAY_WORKFLOW_OWNER
+  - STABLE_REPLAY_RUNNER_OWNER
+  - STABLE_REPLAY_FINALIZER_OWNER
+  - CURRENT_GOVERNANCE_RUNTIME_RESOLUTION
+  - RUN_CONTEXT_RESOLUTION_FROM_PERSISTED_CURRENT_STATE
+  - ATOMIC_R5_REFERENCE_MIGRATION_AND_RETIREMENT
+  - ACTIVE_CONSUMER_FIXED_RUN_ID_GUARD
+  - TWO_SYNTHETIC_RUN_CONTEXT_PORTABILITY_REGRESSION
+  out_of_scope:
+  - MOTHER_NORMATIVE_CHANGE
+  - PRODUCT_CONTRACT_CHANGE
+  - NEW_PRODUCT_REPLAY_EXECUTION
+  - STAGE03_PRODUCT_EXECUTION
+  - WEBSITE_IMPLEMENTATION
+  - DEPLOYMENT
+  start_condition:
+  - STAGE02_CORE01_CLOSED
+  - PREDECESSOR_EXACT_HEAD_SELECTED_PROFILE_SUCCESS
+  - PREDECESSOR_EXACT_HEAD_FULL_LINE_SUCCESS
+  - PREDECESSOR_EXACT_HEAD_BRANCH_GUARD_SUCCESS
+  existing_owner_set:
+  - .github/workflows/fresh-core01-stage01-stage02-replay-r5.yml
+  - .github/governance-maintenance/run_fresh_core01_stage01_stage02_replay_r5.py
+  - .github/governance-maintenance/finalize_fresh_core01_stage01_stage02_r5.py
+  target_owner_set:
+  - .github/workflows/fresh-core-stage-replay.yml
+  - .github/governance-maintenance/run_fresh_stage_replay.py
+  - .github/governance-maintenance/finalize_fresh_stage_replay.py
+  dependencies:
+  - GOVERNANCE_CURRENT.yaml
+  - governance/specifications/REGISTRY.yaml
+  - governance/test/ACTIVE_STATE.yaml
+  - governance/test/CURRENT_EXECUTION_SCOPE_MANIFEST.yaml
+  - governance/ci/governance_resolver.py
+  - governance/ci/validate_active_consumer_reference_integrity.py
+  definition_of_done:
+  - R5_SPECIFIC_ACTIVE_EXECUTABLE_PATHS_ZERO
+  - ACTIVE_REPLAY_EXECUTABLE_FIXED_FRESH_RUN_LOCATORS_ZERO
+  - ACTIVE_REPLAY_EXECUTABLE_FIXED_GOVERNANCE_UID_LOCATORS_ZERO
+  - ACTIVE_REPLAY_EXECUTABLE_FIXED_DISPLAY_VERSION_LOCATORS_ZERO
+  - CURRENT_GOVERNANCE_RESOLVED_FROM_FORMAL_REGISTRY
+  - RUN_AND_PREDECESSOR_CONTEXT_RESOLVED_FROM_PERSISTED_STATE
+  - CURRENT_SCOPE_RESOLVED_FROM_CURRENT_EXECUTION_SCOPE_MANIFEST
+  - TWO_SYNTHETIC_RUN_CONTEXTS_PASS_WITH_IDENTICAL_EXECUTABLE_BYTES
+  - ACTIVE_CONSUMER_REFERENCE_INTEGRITY_PASS
+  - PYTHON_COMPILE_PASS
+  - EXACT_HEAD_SELECTED_PROFILE_PASS
+  - EXACT_HEAD_FULL_LINE_PASS
+  - EXACT_HEAD_BRANCH_GUARD_PASS
+  - PRODUCT_STAGE_CREDIT_ZERO
+  product_stage_credit: 0
 last_work_unit_resolution_gate:
   resolution_uid: WUR-STAGE02-CORE01-COMPLETENESS-20260919-005
   normative_authority: false
