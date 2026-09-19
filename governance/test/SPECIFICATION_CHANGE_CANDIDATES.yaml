@@ -765,8 +765,8 @@ findings:
   evidence: .github/workflows/fresh-stage-replay.yml execute-fresh-replay currently depends only on dynamic-identity-integrity and invokes run_fresh_stage_replay.py directly, while Current policy requires full_line_high_pressure before every fresh execution/reexecution.
   defect_owner: TEST_OR_VALIDATION_IMPLEMENTATION
   generalizability_scope: FRESH_REPLAY_PRODUCT_PREEXECUTION_ORDERING
-  blocking_state: IMPLEMENTED_REVALIDATION_REQUIRED
-  disposition: IMPLEMENTATION_REMEDIATED_PENDING_EXACT_HEAD_VALIDATION
+  blocking_state: RESOLVED_EXACT_HEAD_VERIFIED
+  disposition: IMPLEMENTATION_REMEDIATED
   specification_change_required: false
   mother_change_required: false
   formal_specification_mutated_for_fix: false
@@ -780,6 +780,13 @@ findings:
   - PRESERVE_EXISTING_SEPARATE_FULL_LINE_WORKFLOW_FOR_OUTER_EXACT_HEAD_EVIDENCE
   product_stage_credit: 0
   reopen_condition: Reopen if any Fresh Replay product execution path can start before the canonical Full-Line high-pressure gate passes on the same checked-out execution SHA.
+  resolution_commit: c15d7d7511c7e20df63dd986e0f905668d456082
+  validation_runs:
+  - github-actions:35461744327
+  - github-actions:35461744256
+  - github-actions:35461744433
+  - github-actions:35461744391
+  - github-actions:35461744318
 
 historical_stage2_execution_findings:
   prior_CORE-01_STAGE02_BLOCKED: 7
