@@ -53,6 +53,17 @@ def _stage02_problem_signature_from_problem(row:dict)->tuple:
 def _stage02_problem_signature_from_gap(row:dict)->tuple:
     return (str(row.get('page_uid') or ''),str(row.get('class') or ''),str(row.get('category') or ''),str(row.get('uid') or ''),str(row.get('detail') or ''),str(row.get('gap_owner') or ''))
 
+def _close_current_revalidation_transition(state:dict, current_uid:str, attempt:dict)->dict:
+    trans=state.setdefault('governance_revision_transition',{})
+    trans['current_governance_uid']=current_uid
+    trans['fresh_revalidation_required']=False
+    trans['current_product_attempt_uid']=attempt.get('attempt_uid')
+    trans['current_product_attempt_run_uid']=attempt.get('run_uid')
+    trans['current_product_attempt_workflow_run_id']=attempt.get('source_workflow_run_id')
+    trans['current_product_attempt_artifact_id']=attempt.get('source_artifact_id')
+    trans['current_product_attempt_artifact_sha256']=attempt.get('source_artifact_sha256')
+    return trans
+
 def _stage02_revalidation_reconcile(register:dict, ev:dict, authorized_problem_uids:set[str])->tuple[dict,list[dict]]:
     pages=ev.get('pages') or {}
     target_pages=ev.get('target_pages') or []
@@ -130,6 +141,20 @@ def _stage02_revalidation_self_test():
     assert 'deterministic_system_triggers' in EXACT_CLOSURE_COVERAGE_KEYS
     assert len(EXACT_CLOSURE_COVERAGE_KEYS)==5
     print('PASS: Stage-02 revalidation exact-closure coverage supports deterministic system-trigger closures')
+    synthetic_state={'governance_revision_transition':{'fresh_revalidation_required':True}}
+    synthetic_attempt={
+      'attempt_uid':'ATTEMPT-X','run_uid':'RUN-X','source_workflow_run_id':123,
+      'source_artifact_id':456,'source_artifact_sha256':'a'*64,
+    }
+    trans=_close_current_revalidation_transition(synthetic_state,'GOV-X',synthetic_attempt)
+    assert trans['fresh_revalidation_required'] is False
+    assert trans['current_governance_uid']=='GOV-X'
+    assert trans['current_product_attempt_uid']=='ATTEMPT-X'
+    assert trans['current_product_attempt_run_uid']=='RUN-X'
+    assert trans['current_product_attempt_workflow_run_id']==123
+    assert trans['current_product_attempt_artifact_id']==456
+    assert trans['current_product_attempt_artifact_sha256']=='a'*64
+    print('PASS: Stage-02 revalidation transition projector closes Current revalidation atomically')
     print('PASS: Stage-02 revalidation projector accepts exact authorized batch and rejects wrong/extra eliminations')
 
 def _stage02_revalidation_materialization_context(work:dict, page_root:Path)->dict:
@@ -535,10 +560,7 @@ def finalize_stage02_revalidation_persistence():
       'cumulative_product_credit':total_product_credit,
       'status':'CURRENT_SAME_ATTEMPT_REVALIDATION_EVIDENCE_BOUND',
     }
-    trans=state.setdefault('governance_revision_transition',{})
-    trans['current_product_attempt_workflow_run_id']=int(run_id) if run_id.isdigit() else run_id
-    trans['current_product_attempt_artifact_id']=int(artifact_id) if artifact_id.isdigit() else artifact_id
-    trans['current_product_attempt_artifact_sha256']=digest.lower()
+    trans=_close_current_revalidation_transition(state,current_uid,attempt)
     work['current_status']=work_status
     work['source_problem_denominator']=after_open
     work['source_closure_blocker_denominator']=int(ev.get('closure_blocker_total') or 0)
@@ -798,16 +820,9 @@ def main():
     profile=state.setdefault('selected_execution_profile_state',{})
     profile['active_attempt_state_key']='stage02_active_attempt'
 
-    trans=state.setdefault('governance_revision_transition',{})
-    trans['current_governance_uid']=CURRENT_UID
+    trans=_close_current_revalidation_transition(state,CURRENT_UID,attempt)
     trans['predecessor_attempt_preserved_as_historical_evidence']=True
     trans['predecessor_attempt_may_close_under_current_governance']=False
-    trans['fresh_revalidation_required']=False
-    trans['current_product_attempt_uid']=ATTEMPT_UID
-    trans['current_product_attempt_run_uid']=RUN_UID
-    trans['current_product_attempt_workflow_run_id']=attempt['source_workflow_run_id']
-    trans['current_product_attempt_artifact_id']=attempt['source_artifact_id']
-    trans['current_product_attempt_artifact_sha256']=attempt['source_artifact_sha256']
 
     s2['prior_results_authoritative_for_current_governance']=False
     s2['revalidation_required_under_current_governance']=False
