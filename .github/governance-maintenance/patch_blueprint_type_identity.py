@@ -4,11 +4,11 @@ import ast, re
 
 PROMOTION=Path('.github/governance-maintenance/promote_blueprint_traceability_governance.py')
 s=PROMOTION.read_text(encoding='utf-8')
-pat=re.compile(r'USR-DIRECTIVE-20260919-BLUEPRINT-CONSTRUCTION-TRACEABILITY-HARDENING-R\d+')
-found=sorted(set(pat.findall(s)))
+auth_pat=re.compile(r'USR-DIRECTIVE-20260919-BLUEPRINT-CONSTRUCTION-TRACEABILITY-HARDENING-R\d+')
+found=sorted(set(auth_pat.findall(s)))
 if not found:
     raise SystemExit('PROMOTION_AUTH_UID_PATTERN_NOT_FOUND')
-s=pat.sub('USR-DIRECTIVE-20260919-BLUEPRINT-CONSTRUCTION-TRACEABILITY-HARDENING-R10',s)
+s=auth_pat.sub('USR-DIRECTIVE-20260919-BLUEPRINT-CONSTRUCTION-TRACEABILITY-HARDENING-R11',s)
 
 tree=ast.parse(s)
 apply_fn=next((n for n in tree.body if isinstance(n,ast.FunctionDef) and n.name=='apply'),None)
@@ -27,8 +27,7 @@ if semantic_target is None or semantic_target.end_lineno is None:
 cleanup_target=None
 for n in ast.walk(main_fn):
     if isinstance(n,ast.Expr) and isinstance(n.value,ast.Call) and isinstance(n.value.func,ast.Name) and n.value.func.id=='run':
-        args=n.value.args
-        vals=[a.value for a in args[:2] if isinstance(a,ast.Constant)]
+        vals=[a.value for a in n.value.args[:2] if isinstance(a,ast.Constant)]
         if vals==['git','config']:
             cleanup_target=n
             break
@@ -60,7 +59,37 @@ insertions=[
 ]
 for idx,chunk in sorted(insertions,key=lambda x:x[0],reverse=True):
     lines[idx:idx]=chunk
-patched='\n'.join(lines)+'\n'
+s='\n'.join(lines)+'\n'
+
+tree=ast.parse(s)
+class ReplaceHardener(ast.NodeTransformer):
+    def __init__(self):
+        self.count=0
+    def visit_Call(self,node):
+        self.generic_visit(node)
+        if isinstance(node.func,ast.Attribute) and node.func.attr=='replace' and isinstance(node.func.value,ast.Name) and node.func.value.id=='s':
+            self.count+=1
+            return ast.copy_location(ast.Call(func=ast.Name(id='replace_exact_once',ctx=ast.Load()),args=[node.func.value,*node.args[:2]],keywords=[]),node)
+        return node
+
+hardener=ReplaceHardener()
+tree=hardener.visit(tree)
+ast.fix_missing_locations(tree)
+if hardener.count!=2:
+    raise SystemExit('RAW_TEXT_REPLACE_TARGET_COUNT='+str(hardener.count))
+helper_def=ast.parse("""def replace_exact_once(text, old, new):
+    count=text.count(old)
+    if count != 1:
+        raise RuntimeError(f'BOUNDED_REPLACE_TARGET_COUNT expected=1 actual={count}')
+    idx=text.index(old)
+    return text[:idx] + new + text[idx+len(old):]
+""").body[0]
+insert_at=0
+while insert_at < len(tree.body) and isinstance(tree.body[insert_at],(ast.Import,ast.ImportFrom)):
+    insert_at+=1
+tree.body.insert(insert_at,helper_def)
+ast.fix_missing_locations(tree)
+patched=ast.unparse(tree)+'\n'
 ast.parse(patched)
 PROMOTION.write_text(patched,encoding='utf-8')
-print('PASS: promotion authorization rebound from '+','.join(found)+' to R10; AST identity/cleanup patches inserted')
+print(f'PASS: authorization rebound from {found} to R11; AST identity/cleanup inserted; raw replacements hardened={hardener.count}')
