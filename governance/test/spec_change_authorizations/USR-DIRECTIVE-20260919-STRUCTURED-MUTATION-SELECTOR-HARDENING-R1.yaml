@@ -1,20 +1,44 @@
-schema_version: 1
-artifact_type: SPECIFICATION_CHANGE_AUTHORIZATION
+schema_version: 2
+artifact_type: SPECIFICATION_CHANGE_AUTHORIZATION_RECEIPT
 authorization_uid: USR-DIRECTIVE-20260919-STRUCTURED-MUTATION-SELECTOR-HARDENING-R1
+normative_authority: false
+authority_source: EXPLICIT_USER_DIRECTIVE
 status: APPROVED_FOR_EXACT_SCOPE
-source: EXPLICIT_USER_DIRECTIVE
-approved_at: '2026-09-19T00:00:00-05:00'
+single_use: true
+ai_may_expand_scope: false
+ai_may_reuse_authorization: false
+current_governance_uid: GOV-REV-20260919-PROFILE-TOKEN-DECONTAMINATION-HARDENING
+baseline_commit_sha: 3aa7ea7a2559b8f0017d83e73eebfad6e14a8962
+baseline_tree_sha: 31160e4b26c39323ba4f1bef13fde8e4fbc778bc
+governance_mutation_boundary: STAGE_END_CONSOLIDATION_AFTER_TERMINAL_CYCLE
+predecessor_execution_cycle_terminal: true
+predecessor_execution_cycle_terminal_disposition: STAGE02_CLOSED_VERIFIED_FRESH_RUN_007
+predecessor_execution_cycle_evidence_ref: governance/test/ACTIVE_STATE.yaml
+fatal_specification_contradiction_proven: false
+duplicate_and_residual_cleanup_required: true
+one_canonical_execution_closure_model_required: true
+pre_write_context_verification:
+  relevant_scope_read_complete: true
+  canonical_owner_resolution_complete: true
+  existing_semantics_comparison_complete: true
+  duplicate_search_complete: true
+  conflict_search_complete: true
+  second_system_search_complete: true
+  gap_proven_before_write: true
+  reviewed_authority_ref_count: 6
+  reviewed_existing_owner_ref_count: 4
+  write_disposition: MODIFY_EXISTING_CANONICAL_OWNER
+  comparison_result: NO_UNRESOLVED_DUPLICATE_CONFLICT_OR_SECOND_SYSTEM
 directive_summary: >-
   Determine whether the R4 duplicate-string mutation failure exposes a missing Mother rule;
   add the missing reusable rule, find and repair related Current bugs, then retest.
-scope:
-  predecessor_governance_uid: GOV-REV-20260919-PROFILE-TOKEN-DECONTAMINATION-HARDENING
+exact_scope:
   allowed:
   - ADD_PRODUCT_NEUTRAL_STRUCTURED_MUTATION_SELECTOR_RULE_TO_MOTHER_EXECUTION_CONTROL
   - ADD_MATCHING_STRUCTURED_MUTATION_AUDIT_RULE_TO_MOTHER_AUDIT_CONTROL
   - ADD_STRUCTURED_MUTATION_SELECTOR_CONTROL_TO_CURRENT_SPECIFICATION_COMPONENT
   - PROMOTE_ONE_ATOMIC_CURRENT_GOVERNANCE_SUCCESSOR_WITH_NEW_IMMUTABLE_UID
-  - UPDATE_REQUIRED_SECTION_REGISTRY_COMPILED_BASELINE_ROOT_MANIFEST_AND_SOURCE_IDENTITY
+  - UPDATE_SECTION_REGISTRY_COMPILED_BASELINE_ROOT_MANIFEST_SOURCE_IDENTITY
   - UPDATE_AFFECTED_CURRENT_PROJECTORS_AND_CONSUMERS
   - HARDEN_ACTIVE_CONSUMER_REFERENCE_GRAPH_FOR_GOVERNANCE_MAINTENANCE_EXECUTABLES
   - REMOVE_PROVEN_UNREACHABLE_STALE_ONE_SHOT_WORKFLOW
@@ -29,5 +53,4 @@ scope:
   - DEPLOYMENT
   - PRODUCT_AUTHORITY_AUTOFILL
   - PRODUCT_STAGE_CREDIT
-single_use: true
 product_stage_credit: 0
