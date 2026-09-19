@@ -6,6 +6,7 @@ from pathlib import Path
 import hashlib
 import json
 import copy
+import os
 import subprocess
 import sys
 import yaml
@@ -110,7 +111,45 @@ def _current_design_context():
     state = load(STATE)
     scope = load(scope_path)
     if state.get("current_primary_task_layer") != "PRODUCT_STAGE_EXECUTION":
-        die(f"APPROVED_DESIGN_MATERIALIZATION_REQUIRES_PRODUCT_LAYER:{state.get('current_primary_task_layer')!r}")
+        authorization_uid = os.environ.get("STAGE02_PRODUCT_REENTRY_AUTHORIZATION_UID", "").strip()
+        if not authorization_uid:
+            die(f"APPROVED_DESIGN_MATERIALIZATION_REQUIRES_PRODUCT_LAYER:{state.get('current_primary_task_layer')!r}")
+        preserved_key = "suspended_product_work_unit_asset01_stage02_design_projector_maintenance"
+        preserved = state.get(preserved_key) or {}
+        if (
+            preserved.get("work_unit_uid") != "WU-STAGE02-ASSET01-8133839F-REPLAY"
+            or preserved.get("stage_uid") != "STAGE-02"
+            or preserved.get("semantic_capability") != "PAGE_FUNCTIONAL_CONTRACT"
+            or preserved.get("scope") != list(scope.get("included_units") or [])
+        ):
+            die(f"ASSET01_PRODUCT_REENTRY_CONTEXT_INVALID:{preserved.get('work_unit_uid')!r}")
+        if "deferred_foreground_work_unit_after_asset01_stage02" in state:
+            die("ASSET01_PRODUCT_REENTRY_ALREADY_HAS_DEFERRED_FOREGROUND_WORK_UNIT")
+        state["deferred_foreground_work_unit_after_asset01_stage02"] = copy.deepcopy(state.get("active_work_unit") or {})
+        state["deferred_foreground_resume_control_after_asset01_stage02"] = copy.deepcopy(state.get("resume_control") or {})
+        state["deferred_foreground_primary_task_after_asset01_stage02"] = {
+            "current_primary_task_layer": state.get("current_primary_task_layer"),
+            "current_primary_task_authorization_uid": state.get("current_primary_task_authorization_uid"),
+            "current_primary_task_product_stage_credit": state.get("current_primary_task_product_stage_credit"),
+            "status": state.get("status"),
+            "next_action": state.get("next_action"),
+        }
+        product_work = copy.deepcopy(preserved)
+        product_work["current_status"] = "EXACT_CLOSURES_REVALIDATED_REVIEW_ONLY_PRODUCT_AUTHORITY_REQUIRED"
+        state["active_work_unit"] = product_work
+        state["current_primary_task_layer"] = "PRODUCT_STAGE_EXECUTION"
+        state["current_primary_task_authorization_uid"] = authorization_uid
+        state["current_primary_task_product_stage_credit"] = int(product_work.get("product_blocker_credit") or 0)
+        state["status"] = "ACTIVE_ASSET01_STAGE02_REVALIDATED_REVIEW_ONLY_PRODUCT_AUTHORITY_REQUIRED"
+        state["next_action"] = "MATERIALIZE_ASSET01_STAGE02_APPROVED_DESIGN_CONTRACT"
+        state["resume_control"] = {
+            "current_resume_point": "ASSET01_STAGE2_EXACT_CLOSURES_REVALIDATED_REVIEW_ONLY_PRODUCT_AUTHORITY_REQUIRED",
+            "current_work_unit_uid": product_work.get("work_unit_uid"),
+            "current_owner": product_work.get("canonical_owner"),
+            "historical_stage2_results_are_current_state": False,
+            "stage2_execution_requires_fresh_entry_resolution": False,
+            "exact_next_action": "MATERIALIZE_ASSET01_STAGE02_APPROVED_DESIGN_CONTRACT",
+        }
     work = state.get("active_work_unit") or {}
     if work.get("stage_uid") != "STAGE-02" or work.get("semantic_capability") != "PAGE_FUNCTIONAL_CONTRACT":
         die(f"CURRENT_STAGE02_PRODUCT_WORK_UNIT_REQUIRED:{work.get('work_unit_uid')!r}")
@@ -477,18 +516,21 @@ def materialize_current_approved_design_contract():
     rows = list(problem.get("problems") or [])
     if int(problem.get("open_problem_count") or 0) != len(rows):
         die("CURRENT_PROBLEM_REGISTER_OPEN_DENOMINATOR_DRIFT")
-    remaining = [x for x in rows if str(x.get("target_uid") or "") == authority_target and x.get("category") == "ACTION_WITHOUT_CONTROL_OR_TRIGGER"]
-    if len(remaining) != 1:
-        die(f"CURRENT_AUTHORITY_GAP_PROBLEM_IDENTITY_DRIFT:{[(x.get('problem_uid'),x.get('category'),x.get('target_uid')) for x in remaining]!r}")
-    remaining_uids = {str(remaining[0].get("problem_uid"))}
-    approved_rows = [x for x in rows if str(x.get("problem_uid") or "") not in remaining_uids]
+    finding_trigger_rows = [x for x in rows if str(x.get("target_uid") or "") == authority_target and x.get("category") == "ACTION_WITHOUT_CONTROL_OR_TRIGGER"]
+    if len(finding_trigger_rows) != 1:
+        die(f"CURRENT_AUTHORITY_GAP_PROBLEM_IDENTITY_DRIFT:{[(x.get('problem_uid'),x.get('category'),x.get('target_uid')) for x in finding_trigger_rows]!r}")
+    finding_decision = os.environ.get("STAGE02_FINDING_CREATE_TRIGGER_DECISION", "").strip()
+    if finding_decision != "SYSTEM_TRIGGER_FROM_EVALUATION_FINDING_DETECTION":
+        die(f"ASSET01_FINDING_CREATE_EXPLICIT_SYSTEM_TRIGGER_DECISION_REQUIRED:{finding_decision!r}")
+    remaining_uids = set()
+    approved_rows = list(rows)
     approved_uids = {str(x.get("problem_uid") or "") for x in approved_rows}
     boundaries = candidate.get("design_boundaries") or {}
     candidate_review_count = sum(
         int((boundaries.get(key) or {}).get("problem_count") or 0)
         for key in (
             "failure_error_binding", "payload_input_contract", "audit_event_binding",
-            "transition_required_fields", "post_action_validation_remaining", "stage02_planning_completeness",
+            "transition_required_fields", "post_action_validation_remaining", "finding_create_trigger", "stage02_planning_completeness",
         )
     )
     if candidate_review_count != len(approved_uids):
@@ -497,8 +539,11 @@ def materialize_current_approved_design_contract():
         die("REVIEW_ONLY_CANDIDATE_CURRENT_REGISTER_DENOMINATOR_DRIFT")
 
     current_uid = str(state.get("specification_uid") or "")
-    if candidate.get("current_governance_uid") != current_uid or semantic.get("current_governance_uid") != current_uid:
-        die("CURRENT_GOVERNANCE_UID_DRIFT_IN_DESIGN_PACKAGE")
+    frozen_product_uid = str((state.get("stage02_active_attempt") or {}).get("frozen_governance_uid") or "")
+    if not frozen_product_uid:
+        die("FROZEN_PRODUCT_GOVERNANCE_UID_MISSING")
+    if candidate.get("current_governance_uid") != frozen_product_uid or semantic.get("current_governance_uid") != frozen_product_uid:
+        die("FROZEN_PRODUCT_GOVERNANCE_UID_DRIFT_IN_DESIGN_PACKAGE")
     prior_credit = int(work.get("product_blocker_credit") or 0)
     exact = work.get("exact_closure_materialization") or {}
     if exact.get("revalidation_status") != "FRESH_REVALIDATED" or int(exact.get("product_blocker_credit_after_fresh_revalidation") or 0) != prior_credit:
@@ -557,7 +602,7 @@ def materialize_current_approved_design_contract():
         die("AUDIT_EVENT_PROPOSAL_DENOMINATOR_DRIFT")
     for proposal in audit_rows:
         aid = str(proposal.get("action_uid") or "")
-        event_uid = str(proposal.get("event_uid") or "")
+        event_uid = str(proposal.get("audit_event_uid") or proposal.get("event_uid") or "")
         action = actions.get(aid)
         if not action or not event_uid:
             die(f"AUDIT_EVENT_PROPOSAL_INVALID:{aid}:{event_uid}")
@@ -621,16 +666,29 @@ def materialize_current_approved_design_contract():
             die(f"POST_ACTION_VALIDATION_CONFLICT:{aid}")
         rb["validation"] = desired
 
-    # The one remaining authority gap is intentionally not materialized.
     finding_boundary = boundaries.get("finding_create_trigger") or {}
     if finding_boundary.get("status") != "AUTHORITY_SELECTION_REQUIRED" or str(finding_boundary.get("action_uid") or "") != authority_target:
         die("FINDING_CREATE_AUTHORITY_GAP_BOUNDARY_DRIFT")
+    alternatives = finding_boundary.get("alternatives") or []
+    selected = [x for x in alternatives if isinstance(x, dict) and x.get("behavior") == finding_decision]
+    if len(selected) != 1 or selected[0].get("new_visual_control") is not False:
+        die("FINDING_CREATE_SYSTEM_TRIGGER_SELECTION_NOT_EXACT")
     finding_action = actions.get(authority_target)
     if not finding_action:
         die("FINDING_CREATE_ACTION_MISSING")
-    for forbidden in ("trigger_event_uid", "trigger_uid", "invocation", "system_trigger", "trigger_kind"):
-        if finding_action.get(forbidden):
-            die(f"FINDING_CREATE_TRIGGER_PREMATURELY_SELECTED:{forbidden}")
+    for field in ("trigger_event_uid", "trigger_uid", "system_trigger", "trigger_kind"):
+        if finding_action.get(field):
+            die(f"FINDING_CREATE_TRIGGER_CONFLICT:{field}")
+    prior_invocation = finding_action.get("invocation")
+    if prior_invocation not in (None, "", finding_decision):
+        die(f"FINDING_CREATE_INVOCATION_CONFLICT:{prior_invocation!r}")
+    finding_action["invocation"] = finding_decision
+    finding_action["trigger_authority"] = {
+        "source": "EXPLICIT_USER_DIRECTIVE",
+        "authorization_uid": str(state.get("current_primary_task_authorization_uid") or ""),
+        "bug_ref": "FIND-20260919-015",
+        "new_visual_control": False,
+    }
 
     planning = boundaries.get("stage02_planning_completeness") or {}
     plan = planning.get("proposal") or {}
@@ -683,12 +741,12 @@ def materialize_current_approved_design_contract():
     remediation = chain.setdefault("design_contract_remediation", {})
     remediation.update({
         "canonical_owner_materialization": True,
-        "materialization_scope": "APPROVED_NON_AMBIGUOUS_REVIEW_ONLY_CANDIDATE",
+        "materialization_scope": "APPROVED_COHERENT_CANDIDATE_PLUS_EXPLICIT_SYSTEM_TRIGGER_SELECTION",
         "approved_design_contract_problem_count": len(approved_uids),
         "remaining_authority_gap_problem_count": len(remaining_uids),
         "candidate_bytes_became_authority_directly": False,
         "raw_source_mutated": False,
-        "approval_kind": "EXPLICIT_USER_APPROVAL_BOUNDED_NON_AMBIGUOUS_COHERENT_CANDIDATE",
+        "approval_kind": "EXPLICIT_USER_APPROVAL_COHERENT_CANDIDATE_PLUS_EXPLICIT_SYSTEM_TRIGGER_SELECTION",
         "approval_evidence_ref": approval_ref,
         "contract_projection_allowed": True,
         "approved_contract_projection_keys": [
@@ -711,19 +769,26 @@ def materialize_current_approved_design_contract():
         "schema_version": 1,
         "artifact_type": "PRODUCT_DESIGN_CONTRACT_PACKAGE_REVIEW_EVIDENCE",
         "normative_authority": False,
-        "current_governance_uid": str(state.get("specification_uid") or ""),
+        "current_governance_uid": current_uid,
+        "product_candidate_frozen_governance_uid": frozen_product_uid,
         "work_unit_uid": str(work.get("work_unit_uid") or ""),
         "page_uid": page,
-        "decision": "APPROVE_NON_AMBIGUOUS_COHERENT_CANDIDATE_SCOPE",
+        "decision": "APPROVE_COHERENT_CANDIDATE_PLUS_SYSTEM_TRIGGER_SELECTION",
         "approved_by": "USER",
         "explicit_user_decision_observed": True,
         "self_reported_approval": False,
         "authorization_uid": authorization_uid,
-        "authorization_directive": "繼續完成後續ASSET-01 Stage-02",
+        "authorization_directive": "把這部分列入待修正bug，先執行繼續跑完素材頁面stage-02，確認是否還有這些問題。",
+        "authority_selection": {
+            "target_uid": authority_target,
+            "decision": finding_decision,
+            "new_visual_control": False,
+            "bug_ref": "FIND-20260919-015",
+        },
         "approved_problem_count": len(approved_uids),
         "approved_problem_uids": sorted(approved_uids),
         "excluded_authority_selection_problem_uids": sorted(remaining_uids),
-        "excluded_authority_selection_target_uids": [authority_target],
+        "excluded_authority_selection_target_uids": [],
         "candidate_ref": str(paths["candidate"].relative_to(ROOT)),
         "candidate_sha256": sha256(paths["candidate"]),
         "semantic_review_ref": str(paths["semantic_review"].relative_to(ROOT)),
@@ -739,7 +804,8 @@ def materialize_current_approved_design_contract():
         "schema_version": 1,
         "artifact_type": "APPROVED_DESIGN_CONTRACT_MATERIALIZATION_RECEIPT",
         "normative_authority": False,
-        "current_governance_uid": str(state.get("specification_uid") or ""),
+        "current_governance_uid": current_uid,
+        "product_candidate_frozen_governance_uid": frozen_product_uid,
         "work_unit_uid": str(work.get("work_unit_uid") or ""),
         "page_uid": page,
         "canonical_successor_ref": str(paths["chain"].relative_to(ROOT)),
@@ -747,7 +813,7 @@ def materialize_current_approved_design_contract():
         "approved_problem_count": len(approved_uids),
         "approved_problem_uids": sorted(approved_uids),
         "remaining_authority_gap_problem_uids": sorted(remaining_uids),
-        "remaining_authority_gap_target_uids": [authority_target],
+        "remaining_authority_gap_target_uids": [],
         "prior_product_credit": prior_credit,
         "product_blocker_credit_before_fresh_revalidation": prior_credit,
         "generated_structural_outputs": structural,
