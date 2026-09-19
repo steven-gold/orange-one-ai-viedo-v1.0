@@ -104,8 +104,8 @@ specification_mutation_safety:
   ordinary_mid_stage_specification_mutation: BLOCK
   stage_end_consolidated_promotion_requires_new_explicit_directive: true
   execution_context_lock_required: true
-status: STAGE2_CORE01_FRESH_REPLAY_CLOSED
-next_action: WORK_UNIT_RESOLUTION_GATE_FOR_STAGE03
+status: ACTIVE_ASSET01_REPLAY_HARNESS_PORTABILITY_MAINTENANCE
+next_action: REPAIR_SHARED_STAGE02_PRODUCT_NEUTRAL_EXECUTION
 previous_closed_product_work_unit:
   work_unit_uid: WU-STAGE02-CORE01-STRUCTURAL-REMEDIATION-001
   canonical_name: CORE01_STRUCTURAL_CONTRACT_REMEDIATION
@@ -284,15 +284,17 @@ previous_closed_work_unit:
     source_runtime_residual_count: 0
     product_stage_credit: 0
 resume_control:
-  current_resume_point: STAGE2_CORE01_CLOSED_STAGE3_WUR_REQUIRED
-  current_work_unit_uid: null
-  current_owner: null
+  current_resume_point: ASSET01_REPLAY_HARNESS_PORTABILITY_MAINTENANCE_READY
+  current_work_unit_uid: WU-TEST-ASSET01-REPLAY-PORTABILITY-001
+  current_owner: governance/ci/run_current_stage2_actual_test.py
   historical_stage2_results_are_current_state: false
-  stage2_execution_requires_fresh_entry_resolution: false
-  exact_next_action: WORK_UNIT_RESOLUTION_GATE_FOR_STAGE03
-  closed_work_unit_uid: WU-STAGE02-CORE01-D81DF9AC-REPLAY
-  closed_owner: 00_SOURCE_INTAKE/run_core01_d81df9ac_stage02/04_PAGE_FUNCTIONAL_CONTRACT/CURRENT_PROBLEM_REGISTER.yaml
-  product_stage3_execution_started: false
+  stage2_execution_requires_fresh_entry_resolution: true
+  exact_next_action: REPAIR_SHARED_STAGE02_PRODUCT_NEUTRAL_EXECUTION
+  parent_requested_primary_task_layer: PRODUCT_STAGE_EXECUTION
+  parent_requested_scope:
+  - ASSET-01
+  parent_requested_terminal_stage: STAGE-02
+  parent_resume_after_maintenance: WORK_UNIT_RESOLUTION_GATE_FOR_ASSET01_FRESH_REPLAY
 governance_revision_transition:
   current_governance_uid: GOV-REV-20260919-SEMANTIC-BASELINE-CONSUMER-SINGLE-OWNER-HARDENING
   predecessor_governance_uid: GOV-REV-20260919-STRUCTURED-MUTATION-SELECTOR-HARDENING
@@ -346,8 +348,8 @@ pending_governance_review:
   - STAGE03
   - WEBSITE_CONSTRUCTION
   - DEPLOYMENT
-current_primary_task_layer: PRODUCT_STAGE_EXECUTION
-current_primary_task_authorization_uid: USR-DIRECTIVE-20260919-EXECUTE-CORE01-THROUGH-STAGE02
+current_primary_task_layer: TEST_OR_VALIDATION_MAINTENANCE
+current_primary_task_authorization_uid: USR-DIRECTIVE-20260919-EXECUTE-ASSET01-THROUGH-STAGE02
 current_primary_task_product_stage_credit: 0
 earlier_closed_product_work_unit:
   work_unit_uid: WU-STAGE02-CORE01-FRESH-TEST-001
@@ -1268,6 +1270,57 @@ fresh_replay_execution_context:
   consumed_source_sha: a54dd07b510168c33af42579aa146a7b459a1185
   evidence_artifact_id: 10578591952
   evidence_artifact_sha256: 401d0c378ffb4bc580af2e46799240e16accffe8fa8fea55edfecf434091d341
+work_unit_resolution_gate_asset01_replay_harness_portability:
+  resolution_uid: WUR-TEST-ASSET01-REPLAY-PORTABILITY-20260919-001
+  normative_authority: false
+  result: PASS_SINGLE_LEGAL_SUCCESSOR
+  requested_primary_task_layer: TEST_OR_VALIDATION_MAINTENANCE
+  parent_user_directive: EXECUTE_ASSET01_THROUGH_STAGE02
+  resolved_work_unit_uid: WU-TEST-ASSET01-REPLAY-PORTABILITY-001
+  authorization_uid: USR-DIRECTIVE-20260919-EXECUTE-ASSET01-THROUGH-STAGE02
+  predecessor_product_closure_head: a840225a7f09333d2eee6924de835fbe13ed5976
+  predecessor_selected_profile_run_id: 35423920769
+  predecessor_full_line_run_id: 35423920783
+  predecessor_branch_guard_run_id: 35423920822
+  basis:
+  - EXPLICIT_USER_DIRECTIVE_EXECUTE_ASSET01_STAGE01_STAGE02
+  - TRANSITIVE_STAGE02_CONSUMER_CONTAINS_CORE01_FIXED_SECTION_AND_WORKBENCH_IDENTITIES
+  - STABLE_FINALIZER_CONTAINS_CORE01_SPECIFIC_STATE_FIELD
+  - GLOBAL_SOURCE_INTAKE_CLEANUP_WOULD_DELETE_PREDECESSOR_PAGE_CLOSURE_ARTIFACTS
+  - ASSET01_MISSING_STAGE02_COMPLETENESS_CONTRACT_MUST_PERSIST_BLOCKED_EVIDENCE_NOT_THROW_OR_AUTOFILL
+  product_stage_credit: 0
+active_work_unit:
+  work_unit_uid: WU-TEST-ASSET01-REPLAY-PORTABILITY-001
+  canonical_name: SHARED_STAGE02_PRODUCT_NEUTRAL_REPLAY_HARDENING
+  primary_task_layer: TEST_OR_VALIDATION_MAINTENANCE
+  canonical_owner: governance/ci/run_current_stage2_actual_test.py
+  current_status: READY_FOR_IMPLEMENTATION
+  scope:
+  - REMOVE_FIXED_CORE01_WORKBENCH_IDENTITIES_FROM_SHARED_STAGE02_TEST
+  - REMOVE_CORE01_SPECIFIC_FIELD_FROM_STABLE_FINALIZER
+  - PRESERVE_PRIOR_PAGE_RUN_ROOTS_DURING_FRESH_REPLAY
+  - PERSIST_MISSING_COMPLETENESS_CONTRACT_AS_BLOCKED_PRODUCT_EVIDENCE
+  - EXTEND_ACTIVE_CONSUMER_PRODUCT_IDENTITY_GUARD_TO_TRANSITIVE_STAGE02_CONSUMER
+  out_of_scope:
+  - PRODUCT_AUTHORITY_AUTOFILL
+  - ASSET01_PRODUCT_CONTRACT_MATERIALIZATION
+  - MOTHER_NORMATIVE_CHANGE
+  - CURRENT_SPECIFICATION_MUTATION
+  - STAGE03
+  - WEBSITE_CONSTRUCTION
+  - DEPLOYMENT
+  definition_of_done:
+  - SHARED_STAGE02_TEST_HAS_ZERO_FIXED_PRODUCT_UIDS
+  - STABLE_FINALIZER_HAS_ZERO_PRODUCT_SPECIFIC_STATE_FIELDS
+  - FRESH_REPLAY_CLEANUP_IS_TARGET_RUN_SCOPED_NOT_GLOBAL_SOURCE_INTAKE_DELETE
+  - MISSING_SOURCE_COMPLETENESS_CONTRACT_RETURNS_BLOCKED_EVIDENCE
+  - ACTIVE_CONSUMER_REFERENCE_INTEGRITY_PASS
+  - DYNAMIC_IDENTITY_SELF_TEST_PASS
+  - EXACT_HEAD_SELECTED_PROFILE_PASS
+  - EXACT_HEAD_FULL_LINE_PASS
+  - EXACT_HEAD_BRANCH_GUARD_PASS
+  - PRODUCT_STAGE_CREDIT_ZERO
+  product_stage_credit: 0
 closed_product_work_unit_core01_stage02_current_replay:
   work_unit_uid: WU-STAGE02-CORE01-D81DF9AC-REPLAY
   canonical_name: CORE01_STAGE02_FRESH_REPLAY
