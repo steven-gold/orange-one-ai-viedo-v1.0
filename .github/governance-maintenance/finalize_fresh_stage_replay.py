@@ -184,7 +184,34 @@ def finalize_stage02_revalidation_persistence():
     projected['last_revalidation']={'source_execution_sha':source_sha,'source_workflow_run_id':int(run_id) if run_id.isdigit() else run_id,'source_artifact_id':int(artifact_id) if artifact_id.isdigit() else artifact_id,'source_artifact_sha256':digest.lower(),'fresh_elimination_count':fresh_credit,'closure_blocker_total':int(ev.get('closure_blocker_total') or 0),'test_mode':ev.get('test_mode')}
     dump_yaml(problem_path,projected)
 
-    receipt_ref=f'{run_root}/04_PAGE_FUNCTIONAL_CONTRACT/{PAGE}/EXACT_CLOSURE_MATERIALIZATION_RECEIPT.yaml'
+    materialization=work.get('exact_closure_materialization') or {}
+    receipt_ref=str(materialization.get('receipt_ref') or '')
+    if not receipt_ref:
+        raise RuntimeError('REVALIDATION_EXACT_CLOSURE_RECEIPT_REF_MISSING')
+    receipt_path=ROOT/receipt_ref
+    if not receipt_path.is_file():
+        raise RuntimeError('REVALIDATION_EXACT_CLOSURE_RECEIPT_MISSING')
+    receipt=load_yaml(receipt_path)
+    if int(receipt.get('materialized_closure_count') or 0)!=fresh_credit:
+        raise RuntimeError('REVALIDATION_EXACT_CLOSURE_RECEIPT_DENOMINATOR_DRIFT')
+    if receipt.get('status')!='MATERIALIZED_PENDING_FRESH_REVALIDATION':
+        raise RuntimeError(f'REVALIDATION_EXACT_CLOSURE_RECEIPT_STATUS_DRIFT:{receipt.get("status")!r}')
+    receipt['status']='MATERIALIZED_FRESH_REVALIDATED'
+    receipt['fresh_revalidation_evidence']={
+      'source_execution_sha':source_sha,
+      'source_workflow_run_id':int(run_id) if run_id.isdigit() else run_id,
+      'source_artifact_id':int(artifact_id) if artifact_id.isdigit() else artifact_id,
+      'source_artifact_sha256':digest.lower(),
+      'fresh_functional_gap_total':after_open,
+      'fresh_closure_blocker_total':int(ev.get('closure_blocker_total') or 0),
+    }
+    receipt['product_blocker_credit_after_fresh_revalidation']=fresh_credit
+    dump_yaml(receipt_path,receipt)
+    materialization['revalidation_status']='FRESH_REVALIDATED'
+    materialization['fresh_revalidation_source_sha']=source_sha
+    materialization['product_blocker_credit_after_fresh_revalidation']=fresh_credit
+    work['exact_closure_materialization']=materialization
+
     ledger=load_yaml(resolution_path)
     entries=list(ledger.get('entries') or [])
     existing={str(x.get('source_problem_uid') or '') for x in entries if isinstance(x,dict)}

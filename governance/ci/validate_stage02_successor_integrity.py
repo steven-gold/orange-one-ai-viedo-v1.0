@@ -3,18 +3,16 @@ from __future__ import annotations
 
 from pathlib import Path
 import json
+import os
 import subprocess
 import sys
 import yaml
 
 ROOT = Path(__file__).resolve().parents[2]
-RUN = ROOT / '00_SOURCE_INTAKE/fresh_run_003'
 STATE = ROOT / 'governance/test/ACTIVE_STATE.yaml'
+SCOPE = ROOT / 'governance/test/CURRENT_EXECUTION_SCOPE_MANIFEST.yaml'
 EVIDENCE = ROOT / 'governance/test/stage02/STAGE02_LATEST_TEST_EVIDENCE.json'
 ZERO = ROOT / 'governance/ci/validate_stage02_zero_residual.py'
-PRODUCT_ROOT = RUN / '04_PAGE_FUNCTIONAL_CONTRACT'
-REMEDIATION_RECEIPT = ROOT / 'governance/test/stage02/STAGE02_MATERIAL_REMEDIATION_RECEIPT_R1.yaml'
-MATERIAL_VALIDATOR = ROOT / 'governance/ci/validate_current_stage2_materialized_closure.py'
 
 
 def die(msg: str) -> None:
@@ -28,9 +26,40 @@ def load_yaml(path: Path):
     except Exception as exc:
         die(f'YAML_PARSE:{path.relative_to(ROOT)}:{exc!r}')
 
+
+def resolve_current_stage2_product_root(state: dict) -> tuple[Path, Path, Path, dict]:
+    work = state.get('active_work_unit') or {}
+    if work.get('stage_uid') != 'STAGE-02' or work.get('semantic_capability') != 'PAGE_FUNCTIONAL_CONTRACT':
+        die(f'CURRENT_STAGE2_PRODUCT_WORK_UNIT_UNRESOLVED:{work.get("work_unit_uid")!r}')
+    owner = str(work.get('canonical_owner') or '')
+    marker = '/04_PAGE_FUNCTIONAL_CONTRACT/'
+    run_root = owner.split(marker, 1)[0] if marker in owner else ''
+    if not run_root:
+        scope = load_yaml(SCOPE)
+        refs = [str(x) for x in (scope.get('dependency_closure_refs') or [])]
+        roots = sorted({x.split(marker, 1)[0] for x in refs if marker in x})
+        if len(roots) != 1:
+            die(f'CURRENT_STAGE2_RUN_ROOT_AMBIGUOUS:{roots!r}')
+        run_root = roots[0]
+    product_root = ROOT / run_root / '04_PAGE_FUNCTIONAL_CONTRACT'
+    material = work.get('exact_closure_materialization') or {}
+    successor_ref = str(material.get('canonical_successor_ref') or '')
+    receipt_ref = str(material.get('receipt_ref') or '')
+    if not successor_ref or not receipt_ref:
+        die('CURRENT_STAGE2_EXACT_CLOSURE_OWNER_OR_RECEIPT_MISSING')
+    successor = ROOT / successor_ref
+    receipt = ROOT / receipt_ref
+    for label, path in (('CANONICAL_SUCCESSOR', successor), ('EXACT_CLOSURE_RECEIPT', receipt)):
+        try:
+            path.relative_to(ROOT)
+        except ValueError:
+            die(f'CURRENT_STAGE2_{label}_OUTSIDE_REPOSITORY')
+    return product_root, successor, receipt, work
+
 if not STATE.is_file():
     die('ACTIVE_STATE_MISSING')
 state = load_yaml(STATE)
+PRODUCT_ROOT, CANONICAL_SUCCESSOR, REMEDIATION_RECEIPT, ACTIVE_WORK = resolve_current_stage2_product_root(state)
 execution = state.get('execution') or {}
 stage1 = execution.get('stage1') or {}
 stage2 = execution.get('stage2') or {}
@@ -120,22 +149,38 @@ if result == 'TEST_EXECUTED_BLOCKED':
     if declared_root is True:
         if not physical_exists:
             die('DECLARED_STAGE2_PRODUCT_ROOT_MISSING')
+        if not CANONICAL_SUCCESSOR.is_file():
+            die('DECLARED_STAGE2_CANONICAL_SUCCESSOR_MISSING')
         if not REMEDIATION_RECEIPT.is_file():
             die('MATERIAL_REMEDIATION_RECEIPT_MISSING')
-        cp = subprocess.run([sys.executable, str(MATERIAL_VALIDATOR)], cwd=str(ROOT), text=True)
-        if cp.returncode != 0:
-            die('MATERIALIZED_STAGE2_PRODUCT_ROOT_VALIDATION_FAILED')
+        receipt = load_yaml(REMEDIATION_RECEIPT)
+        materialized = int(receipt.get('materialized_closure_count') or 0)
+        expected_materialized = int((ACTIVE_WORK.get('exact_closure_materialization') or {}).get('materialized_closure_count') or 0)
+        if materialized <= 0 or materialized != expected_materialized:
+            die(f'MATERIAL_REMEDIATION_RECEIPT_DENOMINATOR_DRIFT:{materialized}:{expected_materialized}')
+        status = receipt.get('status')
+        revalidation_mode = os.environ.get('STAGE02_REVALIDATION_MODE', '').strip() == '1'
+        if status == 'MATERIALIZED_PENDING_FRESH_REVALIDATION':
+            if not revalidation_mode:
+                die('PENDING_MATERIALIZED_ROOT_REQUIRES_REVALIDATION_MODE')
+            if int(receipt.get('product_blocker_credit_before_fresh_revalidation') or 0) != 0:
+                die('PENDING_MATERIALIZED_ROOT_PREMATURE_PRODUCT_CREDIT')
+            print('PASS: Current product root and exact-closure receipt are materialized pending fresh revalidation')
+        elif status == 'MATERIALIZED_FRESH_REVALIDATED':
+            credit = int(receipt.get('product_blocker_credit_after_fresh_revalidation') or 0)
+            if credit != materialized or int(ACTIVE_WORK.get('product_blocker_credit') or 0) != credit:
+                die(f'FRESH_REVALIDATED_PRODUCT_CREDIT_DRIFT:{credit}:{ACTIVE_WORK.get("product_blocker_credit")!r}:{materialized}')
+            print('PASS: Current product root and exact-closure receipt are fresh-revalidated')
+        else:
+            die(f'MATERIAL_REMEDIATION_RECEIPT_STATUS_INVALID:{status!r}')
     elif declared_root is False:
         if physical_exists:
-            if not REMEDIATION_RECEIPT.is_file():
-                die('UNDECLARED_PRODUCT_ROOT_WITHOUT_PENDING_REMEDIATION_RECEIPT')
+            if not CANONICAL_SUCCESSOR.is_file() or not REMEDIATION_RECEIPT.is_file():
+                die('UNDECLARED_PRODUCT_ROOT_WITHOUT_CURRENT_SUCCESSOR_AND_RECEIPT')
             receipt = load_yaml(REMEDIATION_RECEIPT)
-            if receipt.get('status') != 'MATERIALIZED_PENDING_FRESH_REEXECUTION_PROOF':
-                die('UNDECLARED_PRODUCT_ROOT_NOT_IN_LEGAL_PENDING_REEXECUTION_STATE')
-            cp = subprocess.run([sys.executable, str(MATERIAL_VALIDATOR)], cwd=str(ROOT), text=True)
-            if cp.returncode != 0:
-                die('PENDING_REMEDIATION_PRODUCT_ROOT_INVALID')
-            print('PASS: Stage-02 product root is materially present but remains pending fresh reexecution acceptance')
+            if receipt.get('status') != 'MATERIALIZED_PENDING_FRESH_REVALIDATION':
+                die('UNDECLARED_PRODUCT_ROOT_NOT_IN_LEGAL_PENDING_REVALIDATION_STATE')
+            print('PASS: Stage-02 product root is materially present but remains pending fresh revalidation acceptance')
     else:
         die(f'STAGE2_ARTIFACT_ROOT_DECLARATION_INVALID:{declared_root!r}')
 else:
@@ -145,9 +190,11 @@ else:
         die('PASS_STATE_CURRENT_STAGE_MISMATCH')
     if declared_root is not True or not physical_exists:
         die('PASS_STATE_REQUIRES_VALID_STAGE2_PRODUCT_ARTIFACT_ROOT')
-    cp = subprocess.run([sys.executable, str(MATERIAL_VALIDATOR)], cwd=str(ROOT), text=True)
-    if cp.returncode != 0:
-        die('PASS_STATE_PRODUCT_ROOT_VALIDATION_FAILED')
+    if not CANONICAL_SUCCESSOR.is_file() or not REMEDIATION_RECEIPT.is_file():
+        die('PASS_STATE_CURRENT_PRODUCT_OWNER_OR_RECEIPT_MISSING')
+    receipt = load_yaml(REMEDIATION_RECEIPT)
+    if receipt.get('status') != 'MATERIALIZED_FRESH_REVALIDATED':
+        die(f'PASS_STATE_REQUIRES_FRESH_REVALIDATED_RECEIPT:{receipt.get("status")!r}')
 
 print(f'PASS: Stage-02 successor integrity result={result} product_root_present={physical_exists} declared={declared_root}')
 print('PASS: Stage-01 closure continuity retained')

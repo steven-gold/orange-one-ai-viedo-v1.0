@@ -258,7 +258,8 @@ jobs:
             "${ACPOS_RUN_ROOT}/04_PAGE_FUNCTIONAL_CONTRACT/CURRENT_PROBLEM_REGISTER.yaml" \
             "${ACPOS_RUN_ROOT}/04_PAGE_FUNCTIONAL_CONTRACT/DENOMINATOR_SNAPSHOT.yaml" \
             "${ACPOS_RUN_ROOT}/04_PAGE_FUNCTIONAL_CONTRACT/EFFECTIVE_CONTRACT_OVERLAY.yaml" \
-            "${ACPOS_RUN_ROOT}/04_PAGE_FUNCTIONAL_CONTRACT/RESOLUTION_LEDGER.yaml"
+            "${ACPOS_RUN_ROOT}/04_PAGE_FUNCTIONAL_CONTRACT/RESOLUTION_LEDGER.yaml" \
+            "${ACPOS_RUN_ROOT}/04_PAGE_FUNCTIONAL_CONTRACT/${STAGE02_PAGE_SCOPE}/EXACT_CLOSURE_MATERIALIZATION_RECEIPT.yaml"
           test -n "$(git status --short)" || {
             echo "BLOCK: revalidation persistence produced no tracked Current State change" >&2
             exit 1
