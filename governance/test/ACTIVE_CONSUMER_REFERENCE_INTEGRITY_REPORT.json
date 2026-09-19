@@ -5,17 +5,23 @@
   "missing_targets": {},
   "missing_reusable_workflows": [],
   "unsafe_preterminal_current_projection_workflows": [],
+  "dynamic_replay_executable_set": [
+    ".github/workflows/fresh-stage-replay.yml",
+    ".github/governance-maintenance/run_fresh_stage_replay.py",
+    ".github/governance-maintenance/finalize_fresh_stage_replay.py"
+  ],
+  "dynamic_replay_fixed_identity_guard": "ENFORCED",
   "active_governance_projectors": {
     "governance/specifications/current/SPECIFICATION_MANIFEST.yaml#artifact_uid": "GOV-REV-20260919-SEMANTIC-BASELINE-CONSUMER-SINGLE-OWNER-HARDENING",
     "GOVERNANCE_CURRENT.yaml#active_governance_uid": "GOV-REV-20260919-SEMANTIC-BASELINE-CONSUMER-SINGLE-OWNER-HARDENING",
     "governance/test/ACTIVE_STATE.yaml#specification_uid": "GOV-REV-20260919-SEMANTIC-BASELINE-CONSUMER-SINGLE-OWNER-HARDENING",
     "governance/test/ACTIVE_STATE.yaml#governance_revision_transition.current_governance_uid": "GOV-REV-20260919-SEMANTIC-BASELINE-CONSUMER-SINGLE-OWNER-HARDENING",
     "governance/test/SPECIFICATION_CHANGE_CANDIDATES.yaml#current_stage2_execution": {
-      "attempt_uid": "STAGE02-FRESH-20260919-CORE01-005",
+      "attempt_uid": "STAGE02-CORE01-D81DF9AC-REPLAY",
       "state": "TEST_EXECUTED_PASS"
     },
     "governance/test/stage02/STAGE02_CURRENT_FINDINGS.yaml#ROOT": {
-      "attempt_uid": "STAGE02-FRESH-20260919-CORE01-005",
+      "attempt_uid": "STAGE02-CORE01-D81DF9AC-REPLAY",
       "fresh_functional_gap_total": 0
     }
   },

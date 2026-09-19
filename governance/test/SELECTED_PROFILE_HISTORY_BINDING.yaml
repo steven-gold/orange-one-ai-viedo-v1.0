@@ -21,11 +21,11 @@ scope:
   CORE-01:
     expected_result: PASS
     artifacts:
-    - artifact_ref: 00_SOURCE_INTAKE/fresh_run_008/02_BASE_BLUEPRINT/CORE-01/PAGE_BASE_BLUEPRINT.yaml
+    - artifact_ref: 00_SOURCE_INTAKE/run_core01_d81df9ac_stage02/02_BASE_BLUEPRINT/CORE-01/PAGE_BASE_BLUEPRINT.yaml
       creation_governance_overlay: v2.2.9
-    - artifact_ref: 00_SOURCE_INTAKE/fresh_run_008/02_BASE_BLUEPRINT/CORE-01/VISUAL_BASE_BLUEPRINT.yaml
+    - artifact_ref: 00_SOURCE_INTAKE/run_core01_d81df9ac_stage02/02_BASE_BLUEPRINT/CORE-01/VISUAL_BASE_BLUEPRINT.yaml
       creation_governance_overlay: v2.2.9
-    - artifact_ref: 00_SOURCE_INTAKE/fresh_run_008/03_BLUEPRINT_BINDING/CORE-01/BLUEPRINT_BINDING_MANIFEST.yaml
+    - artifact_ref: 00_SOURCE_INTAKE/run_core01_d81df9ac_stage02/03_BLUEPRINT_BINDING/CORE-01/BLUEPRINT_BINDING_MANIFEST.yaml
       creation_governance_overlay: v2.2.9
     profile_step_uid: STAGE-01
 binding_rules:
@@ -35,7 +35,7 @@ binding_rules:
 - Historical artifact governance_overlay values are creation provenance only.
 - Historical artifact bytes and hashes MUST NOT be rewritten merely because Current Governance changes.
 current_scope_binding:
-  run_uid: FRESH-RUN-008
+  run_uid: FRESH-CORE01-D81DF9AC-STAGE02
   page_scope:
   - CORE-01
   excluded_page_scope:
