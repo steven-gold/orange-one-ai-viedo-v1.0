@@ -93,7 +93,30 @@ def main():
     attempt['active_findings_present']=True
     attempt['fresh_revalidation_required']=False
     attempt['closure_credit_under_current_governance']=True
+    attempt['fresh_functional_gap_total']=int(ev.get('fresh_functional_gap_total') or 0)
+    attempt['fresh_closure_blocker_total']=int(ev.get('closure_blocker_total') or 0)
+    attempt['preserved_external_authority_union_count']=int(ev.get('preserved_external_authority_union_count') or 0)
+    attempt['official_stage_output_denominator_count']=len(ev.get('official_stage_output_denominator') or [])
+    attempt['current_manifest_mandatory_stage_output_subset_count']=len(ev.get('execution_profile_mandatory_output_subset') or [])
+    attempt['next_action']=state.get('next_action')
     state['stage02_active_attempt']=attempt
+    state['stage2_result_evidence']={
+      'mode':'RUNTIME_GENERATED_GITHUB_ACTION_ARTIFACT',
+      'static_result_pointer_required':False,
+      'static_run_id_copy_forbidden':True,
+      'static_head_sha_copy_forbidden':True,
+      'static_specification_digest_copy_forbidden':True,
+      'tracked_current_evidence_ref':'governance/test/stage02/STAGE02_LATEST_TEST_EVIDENCE.json',
+      'artifact_provenance_recorded_in_active_attempt':True,
+    }
+    state['stage02_material_remediation']={
+      'material_remediation_started':bool(s2.get('artifact_root_present')),
+      'run_uid':RUN_UID,'attempt_uid':ATTEMPT_UID,
+      'source_problem_denominator':attempt['fresh_functional_gap_total'],
+      'source_closure_blocker_denominator':attempt['fresh_closure_blocker_total'],
+      'product_blocker_credit':0,
+      'status':'CURRENT_FRESH_PRODUCT_ROOT_PROVENANCE_BOUND',
+    }
 
     profile=state.setdefault('selected_execution_profile_state',{})
     profile['active_attempt_state_key']='stage02_active_attempt'
@@ -193,6 +216,8 @@ def main():
       'external_authority_elimination_count':0,
       'total_fresh_elimination_count':0,
       'preserved_external_authority_union_count':ev.get('preserved_external_authority_union_count'),
+      'official_stage_output_denominator_count':len(ev.get('official_stage_output_denominator') or []),
+      'current_manifest_mandatory_stage_output_subset_count':len(ev.get('execution_profile_mandatory_output_subset') or []),
       'prior_stage2_results_used':False,
       'source_workflow_run_id':attempt['source_workflow_run_id'],
       'source_artifact_id':attempt['source_artifact_id'],
@@ -214,12 +239,19 @@ def main():
     findings['attempt_uid']=ATTEMPT_UID
     findings['run_uid']=RUN_UID
     findings['governance_uid']=CURRENT_UID
+    findings['frozen_governance_uid']=CURRENT_UID
     findings['source_execution_sha']=source_sha
+    findings['source_head_sha']=source_sha
     findings['source_workflow_run_id']=attempt['source_workflow_run_id']
     findings['source_artifact_id']=attempt['source_artifact_id']
     findings['source_artifact_sha256']=attempt['source_artifact_sha256']
     findings['fresh_functional_gap_total']=attempt.get('fresh_functional_gap_total')
     findings['closure_blocker_total']=attempt.get('fresh_closure_blocker_total')
+    findings['fresh_closure_blocker_total']=attempt.get('fresh_closure_blocker_total')
+    findings['preserved_external_authority_union_count']=attempt.get('preserved_external_authority_union_count')
+    findings['official_stage_output_denominator_count']=attempt.get('official_stage_output_denominator_count')
+    findings['current_manifest_mandatory_stage_output_subset_count']=attempt.get('current_manifest_mandatory_stage_output_subset_count')
+    findings['next_action']=state.get('next_action')
     findings['prior_stage2_results_used']=False
     findings['product_blocker_credit']=0
     dump_yaml(FINDINGS,findings)

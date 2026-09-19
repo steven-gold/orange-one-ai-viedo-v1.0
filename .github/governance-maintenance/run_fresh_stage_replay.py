@@ -852,9 +852,17 @@ def materialize_stage2_projection(final):
     s2root=ROOT/'governance/test/stage02'
     s2root.mkdir(parents=True,exist_ok=True)
     jdump(s2root/'STAGE02_LATEST_TEST_EVIDENCE.json',final)
+    next_action=f'BUILD_FRESH_{safe_uid(PAGE)}_DESIGN_CONTRACT_CANDIDATE_FROM_CURRENT_GAPS' if problems else 'CLOSE_STAGE02'
     dump(s2root/'STAGE02_CURRENT_FINDINGS.yaml',{
       'schema_version':1,'artifact_type':'STAGE02_CURRENT_FINDINGS','governance_uid':CURRENT_UID,'run_uid':RUN_UID,
-      'target_pages':[PAGE],'fresh_functional_gap_total':len(problems),'closure_blocker_total':final.get('closure_blocker_total'),
+      'target_pages':[PAGE],'fresh_functional_gap_total':len(problems),
+      'closure_blocker_total':final.get('closure_blocker_total'),
+      'fresh_closure_blocker_total':int(final.get('closure_blocker_total') or 0),
+      'preserved_external_authority_union_count':int(final.get('preserved_external_authority_union_count') or 0),
+      'official_stage_output_denominator_count':len(final.get('official_stage_output_denominator') or []),
+      'current_manifest_mandatory_stage_output_subset_count':len(final.get('execution_profile_mandatory_output_subset') or []),
+      'attempt_uid':ATTEMPT_UID,'frozen_governance_uid':CURRENT_UID,'source_head_sha':git_head(),
+      'next_action':next_action,
       'gap_classes':(page.get('functional_chain_fresh_scan') or {}).get('gap_classes'),
       'gap_categories':(page.get('functional_chain_fresh_scan') or {}).get('gap_categories'),
       'status':'DESIGN_CONTRACT_REMEDIATION_REQUIRED' if problems else 'PASS',
@@ -880,9 +888,30 @@ def materialize_stage2_projection(final):
       'attempt_uid':attempt_uid,'run_uid':RUN_UID,'frozen_governance_uid':CURRENT_UID,
       'source_execution_sha':git_head(),'target_pages':[PAGE],
       'fresh_functional_gap_total':len(problems),'fresh_closure_blocker_total':int(final.get('closure_blocker_total') or 0),
+      'preserved_external_authority_union_count':int(final.get('preserved_external_authority_union_count') or 0),
+      'official_stage_output_denominator_count':len(final.get('official_stage_output_denominator') or []),
+      'current_manifest_mandatory_stage_output_subset_count':len(final.get('execution_profile_mandatory_output_subset') or []),
+      'next_action':next_action,
       'product_blocker_credit':0,'prior_results_used':False,
       'active_evidence_present':True,'active_findings_present':True,
       'fresh_revalidation_required':True,'closure_credit_under_current_governance':False,
+    }
+    state['stage2_result_evidence']={
+      'mode':'RUNTIME_GENERATED_GITHUB_ACTION_ARTIFACT',
+      'static_result_pointer_required':False,
+      'static_run_id_copy_forbidden':True,
+      'static_head_sha_copy_forbidden':True,
+      'static_specification_digest_copy_forbidden':True,
+      'tracked_current_evidence_ref':'governance/test/stage02/STAGE02_LATEST_TEST_EVIDENCE.json',
+      'artifact_provenance_recorded_in_active_attempt':False,
+    }
+    state['stage02_material_remediation']={
+      'material_remediation_started':bool(ex['stage2'].get('artifact_root_present')),
+      'run_uid':RUN_UID,'attempt_uid':attempt_uid,
+      'source_problem_denominator':len(problems),
+      'source_closure_blocker_denominator':int(final.get('closure_blocker_total') or 0),
+      'product_blocker_credit':0,
+      'status':'FRESH_PRODUCT_ROOT_MATERIALIZED_PENDING_PROVENANCE_FINALIZATION',
     }
     state.setdefault('selected_execution_profile_state',{})['active_attempt_state_key']='stage02_active_attempt'
     transition=state.setdefault('governance_revision_transition',{})
@@ -930,7 +959,7 @@ def materialize_stage2_projection(final):
       'product_blocker_credit':0,'out_of_scope':[*EXCLUDED_UNITS,'STAGE03','WEBSITE_CONSTRUCTION','DEPLOYMENT'],
     }
     state['status']='ACTIVE_STAGE2_TESTED_BLOCKED_FRESH_SCOPE' if problems else 'ACTIVE_STAGE2_READY_FOR_TERMINAL_CLOSURE'
-    state['next_action']=f'BUILD_FRESH_{safe_uid(PAGE)}_DESIGN_CONTRACT_CANDIDATE_FROM_CURRENT_GAPS' if problems else 'CLOSE_STAGE02'
+    state['next_action']=next_action
     state['resume_control']={
       'current_resume_point':f'FRESH_{safe_uid(PAGE)}_STAGE2_DESIGN_REMEDIATION_REQUIRED' if problems else f'FRESH_{safe_uid(PAGE)}_STAGE2_READY_TO_CLOSE',
       'current_work_unit_uid':state['active_work_unit']['work_unit_uid'],'current_owner':state['active_work_unit']['canonical_owner'],
