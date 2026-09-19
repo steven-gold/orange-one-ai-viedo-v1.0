@@ -480,14 +480,19 @@ findings:
   affected_identity: COMMON_STAGE_EXECUTION_ENGINE
   defect_owner: GOVERNANCE_MAINTENANCE
   generalizability_scope: ALL_SELECTED_PROFILE_STAGES
-  blocking_state: REMEDIATION_IN_PROGRESS
-  disposition: IMPLEMENTATION_REMEDIATION_IN_PROGRESS
+  blocking_state: RESOLVED
+  disposition: IMPLEMENTATION_REMEDIATED
   specification_change_required: false
   formal_specification_mutated_for_fix: false
   current_specification_may_be_modified_from_this_finding_alone: false
   authorization_uid: USR-DIRECTIVE-20260919-COMMON-STAGE-EXECUTION-ENGINE-R1
   work_unit_uid: WU-GOV-COMMON-STAGE-EXECUTION-ENGINE-001
   implementation_start_commit: ed25d756cc928373ab180c1dc6f4e0dc1e564ffe
+  resolution_commit: c70058f85131cd284ad91d3ec424fd03d3e4aa1f
+  selected_profile_validation_run: github-actions:35416573039
+  full_line_validation_run: github-actions:35416572972
+  branch_guard_validation_run: github-actions:35416573057
+  validation_summary: 11/11_STAGES_26/26_PHASES_32/32_NEGATIVE_REGRESSIONS_PASS
   product_stage_credit: 0
   reopen_condition: Reopen if a common execution consumer embeds a Stage-specific identity or bypasses the common 26-phase engine contract.
 - finding_uid: FIND-20260919-005
@@ -502,8 +507,8 @@ findings:
   affected_identity: governance/ci/test_stage_execution_engine.py
   defect_owner: TEST_OR_VALIDATION_IMPLEMENTATION
   generalizability_scope: COMMON_ENGINE_NEGATIVE_REGRESSION_SEMANTIC_INSPECTION
-  blocking_state: REMEDIATION_IN_PROGRESS
-  disposition: IMPLEMENTATION_REMEDIATION_IN_PROGRESS
+  blocking_state: RESOLVED
+  disposition: IMPLEMENTATION_REMEDIATED
   specification_change_required: false
   formal_specification_mutated_for_fix: false
   current_specification_may_be_modified_from_this_finding_alone: false
@@ -511,6 +516,10 @@ findings:
   - github-actions:35416200389
   - github-actions:35416253161
   resolution_type: AST_ASSIGNMENT_SEMANTIC_CHECK
+  resolution_commit: 2015f76f4cb1b3ff6f01d009f0bd9efe6836929a
+  terminal_validation_head: c70058f85131cd284ad91d3ec424fd03d3e4aa1f
+  selected_profile_validation_run: github-actions:35416573039
+  full_line_validation_run: github-actions:35416572972
   product_stage_credit: 0
   reopen_condition: Reopen if regression code again uses raw source spelling to infer a semantic Stage binding.
 historical_stage2_execution_findings:

@@ -109,8 +109,8 @@ specification_mutation_safety:
   ordinary_mid_stage_specification_mutation: BLOCK
   stage_end_consolidated_promotion_requires_new_explicit_directive: true
   execution_context_lock_required: true
-status: GOVERNANCE_MAINTENANCE_COMMON_STAGE_ENGINE_ACTIVE
-next_action: IMPLEMENT_COMMON_STAGE_EXECUTION_ENGINE
+status: STAGE02_CLOSED_VERIFIED_FRESH_RUN_006
+next_action: WORK_UNIT_RESOLUTION_GATE_FOR_STAGE03_AFTER_STAGE02_CLOSURE
 previous_closed_product_work_unit:
   work_unit_uid: WU-STAGE02-CORE01-STRUCTURAL-REMEDIATION-001
   canonical_name: CORE01_STRUCTURAL_CONTRACT_REMEDIATION
@@ -289,12 +289,12 @@ previous_closed_work_unit:
     source_runtime_residual_count: 0
     product_stage_credit: 0
 resume_control:
-  current_resume_point: GOVERNANCE_COMMON_STAGE_ENGINE_WU_RESOLVED
-  current_work_unit_uid: WU-GOV-COMMON-STAGE-EXECUTION-ENGINE-001
-  current_owner: governance/ci/stage_execution_engine.py
+  current_resume_point: STAGE2_CORE01_CLOSED_STAGE3_WUR_REQUIRED
+  current_work_unit_uid: null
+  current_owner: null
   historical_stage2_results_are_current_state: false
   stage2_execution_requires_fresh_entry_resolution: false
-  exact_next_action: IMPLEMENT_COMMON_STAGE_EXECUTION_ENGINE
+  exact_next_action: WORK_UNIT_RESOLUTION_GATE_FOR_STAGE03_AFTER_STAGE02_CLOSURE
 governance_revision_transition:
   current_governance_uid: GOV-REV-20260919-PROFILE-TOKEN-DECONTAMINATION-HARDENING
   predecessor_governance_uid: GOV-REV-20260919-SCOPE-STAGE-REENTRY-PORTABILITY-HARDENING
@@ -348,8 +348,8 @@ pending_governance_review:
   - STAGE03
   - WEBSITE_CONSTRUCTION
   - DEPLOYMENT
-current_primary_task_layer: GOVERNANCE_MAINTENANCE
-current_primary_task_authorization_uid: USR-DIRECTIVE-20260919-COMMON-STAGE-EXECUTION-ENGINE-R1
+current_primary_task_layer: PRODUCT_STAGE_EXECUTION
+current_primary_task_authorization_uid: USR-DIRECTIVE-20260919-CORE01-STAGE02-COMPLETENESS-R3
 current_primary_task_product_stage_credit: 0
 earlier_closed_product_work_unit:
   work_unit_uid: WU-STAGE02-CORE01-FRESH-TEST-001
@@ -706,7 +706,7 @@ work_unit_resolution_gate_common_stage_engine:
   - CURRENT_MACHINE_PREFLIGHT_COMPILER_HARD_BINDS_STAGE02
   - STAGE03_PRODUCT_EXECUTION_NOT_STARTED
   product_stage_credit: 0
-active_work_unit:
+closed_governance_maintenance_work_unit_common_stage_engine:
   work_unit_uid: WU-GOV-COMMON-STAGE-EXECUTION-ENGINE-001
   canonical_name: COMMON_STAGE_EXECUTION_ENGINE_ALL_PROFILE_STAGES
   primary_task_layer: GOVERNANCE_MAINTENANCE
@@ -725,7 +725,7 @@ active_work_unit:
   canonical_owner: governance/ci/stage_execution_engine.py
   semantic_adapter_owner: governance/ci/stage_execution_semantic_adapters.yaml
   compatibility_owner: governance/ci/compile_stage_execution_preflight.py
-  current_status: ACTIVE_IMPLEMENTATION
+  current_status: CLOSED_VERIFIED_NO_PRODUCT_CREDIT
   product_stage_credit: 0
   suspended_product_work_unit_uid: WU-STAGE03-CORE01-VISUAL-DESIGN-001
   product_execution_started_before_maintenance: false
@@ -742,3 +742,58 @@ active_work_unit:
   - NEGATIVE_REGRESSION_FOR_MISSING_ADAPTER_MISSING_PHASE_STAGE_MISMATCH_AND_PRODUCT_CREDIT_LEAK
   - FULL_LINE_AND_SELECTED_PROFILE_EXACT_HEAD_SUCCESS
   - PRODUCT_STAGE3_REMAINS_NOT_EXECUTED
+
+common_stage_execution_engine_closure:
+  status: CLOSED_VERIFIED_NO_PRODUCT_CREDIT
+  work_unit_uid: WU-GOV-COMMON-STAGE-EXECUTION-ENGINE-001
+  authorization_uid: USR-DIRECTIVE-20260919-COMMON-STAGE-EXECUTION-ENGINE-R1
+  governance_uid: GOV-REV-20260919-PROFILE-TOKEN-DECONTAMINATION-HARDENING
+  normative_mother_changed: false
+  current_specification_changed: false
+  product_stage_credit: 0
+  stage03_execution_started: false
+  common_engine_owner: governance/ci/stage_execution_engine.py
+  semantic_adapter_owner: governance/ci/stage_execution_semantic_adapters.yaml
+  stage02_compatibility_wrapper: governance/ci/compile_stage_execution_preflight.py
+  common_controller_workflow: .github/workflows/common-stage-execution-engine.yml
+  selected_profile_stage_coverage: 11/11
+  common_phase_coverage: 26/26
+  negative_regression_result: 32/32_PASS
+  enforced_common_execution_contracts:
+  - EXACT_STAGE_INPUT_ORIGIN_COVERAGE
+  - EXACT_STAGE_OPERATION_BINDING_COVERAGE
+  - EXACT_OUTPUT_PRODUCER_COVERAGE
+  - EXACT_SCANNER_BINDING_COVERAGE
+  - EXACT_VALIDATOR_RESULT_COVERAGE
+  - EXACT_26_PHASE_TRACE_ORDER
+  - CURRENT_PROBLEM_REGISTER
+  - DENOMINATOR_SNAPSHOT
+  - CHANGE_IMPACT_MAP
+  - APPEND_ONLY_RESOLUTION_LEDGER
+  - FRESH_EXECUTION
+  - GAP_CLASSIFICATION
+  - OWNER_REMEDIATION
+  - FRESH_REEXECUTION_AFTER_REMEDIATION
+  - HIDDEN_DEFECT_SWEEP
+  - REQUIRED_EVIDENCE_VALIDATION
+  - EXACT_HEAD_GATE_RECEIPTS
+  - TERMINAL_CLOSURE
+  - RESUME_PERSISTENCE
+  - LEGAL_NEXT_STAGE_TRANSITION
+  implementation_final_head: c70058f85131cd284ad91d3ec424fd03d3e4aa1f
+  preclosure_validation:
+    selected_profile:
+      run_id: 35416573039
+      conclusion: success
+    full_line:
+      run_id: 35416572972
+      conclusion: success
+    branch_guard:
+      run_id: 35416573057
+      conclusion: success
+  captured_findings:
+  - FIND-20260919-004
+  - FIND-20260919-005
+  restored_resume_point: STAGE2_CORE01_CLOSED_STAGE3_WUR_REQUIRED
+  restored_next_action: WORK_UNIT_RESOLUTION_GATE_FOR_STAGE03_AFTER_STAGE02_CLOSURE
+  closure_commit_exact_head_revalidation_required: true

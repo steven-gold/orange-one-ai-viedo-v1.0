@@ -2,49 +2,23 @@ schema_version: 1
 artifact_type: EXECUTION_SCOPE_MANIFEST
 normative_authority: false
 governance_uid: GOV-REV-20260919-PROFILE-TOKEN-DECONTAMINATION-HARDENING
-owning_capability: GOVERNANCE_MAINTENANCE
-scope_kind: COMMON_STAGE_EXECUTION_ENGINE_ALL_SELECTED_PROFILE_STAGES
+owning_capability: FUNCTIONAL_CONTRACT
+scope_kind: EXACT_SINGLE_PAGE_FRESH_REPLAY
 included_units:
-- STAGE-01
-- STAGE-02
-- STAGE-03
-- STAGE-04
-- STAGE-05
-- STAGE-06
-- STAGE-07
-- STAGE-08
-- STAGE-09
-- STAGE-10
-- STAGE-11
+- CORE-01
 excluded_units:
-- PRODUCT_STAGE03_EXECUTION
-- PRODUCT_MATERIALIZATION
-- WEBSITE_CONSTRUCTION
-- DEPLOYMENT
+- ASSET-01
 remaining_units: []
 stage_required_units:
-- STAGE-01
-- STAGE-02
-- STAGE-03
-- STAGE-04
-- STAGE-05
-- STAGE-06
-- STAGE-07
-- STAGE-08
-- STAGE-09
-- STAGE-10
-- STAGE-11
-scope_selection_authority: USR-DIRECTIVE-20260919-COMMON-STAGE-EXECUTION-ENGINE-R1
+- CORE-01
+scope_selection_authority: EXPLICIT_USER_DIRECTIVE_AND_FRESH_RAW_SOURCE_CAPTURE
 dependency_closure_refs:
-- governance/specifications/REGISTRY.yaml
-- GOVERNANCE_CURRENT.yaml
-- .github/governance-source/active/source/10_REGISTRY/GOVERNANCE_LIFECYCLE_STAGE_REGISTRY.yaml
-- .github/governance-source/active/source/10_REGISTRY/STAGE_EXECUTION_INVARIANT_REGISTRY.yaml
 - governance/test/ACTIVE_STATE.yaml
+- 00_SOURCE_INTAKE/fresh_run_006/04_PAGE_FUNCTIONAL_CONTRACT/DEPENDENCY_MAP.yaml
 denominator_source_refs:
-- .github/governance-source/active/source/10_REGISTRY/GOVERNANCE_LIFECYCLE_STAGE_REGISTRY.yaml
-- governance/ci/stage_execution_semantic_adapters.yaml
+- governance/test/stage02/STAGE02_LATEST_TEST_EVIDENCE.json
+- 00_SOURCE_INTAKE/fresh_run_006/04_PAGE_FUNCTIONAL_CONTRACT/CURRENT_PROBLEM_REGISTER.yaml
 partial_scope: false
-stage_exit_credit_allowed: false
-fresh_revalidation_required: true
-product_stage_credit: 0
+stage_exit_credit_allowed: true
+fresh_revalidation_required: false
+content_hash: 85d512c799bfdd0375194a94bacdc5b08c46289ef7dd62b43bef46b17cb21137
