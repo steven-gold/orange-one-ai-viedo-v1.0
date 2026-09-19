@@ -104,8 +104,8 @@ specification_mutation_safety:
   ordinary_mid_stage_specification_mutation: BLOCK
   stage_end_consolidated_promotion_requires_new_explicit_directive: true
   execution_context_lock_required: true
-status: GOVERNANCE_SEMANTIC_BASELINE_SINGLE_OWNER_PROMOTED_FULL_LINE_REVERIFY_REQUIRED
-next_action: EXACT_HEAD_FULL_LINE_REVERIFY_THEN_FRESH_CORE01_STAGE01_STAGE02
+status: GOVERNANCE_V2_2_9_EXACT_HEAD_REVALIDATION_ACTIVE
+next_action: OBSERVE_V2_2_9_EXACT_HEAD_SELECTED_PROFILE_FULL_LINE_BRANCH_GUARD
 previous_closed_product_work_unit:
   work_unit_uid: WU-STAGE02-CORE01-STRUCTURAL-REMEDIATION-001
   canonical_name: CORE01_STRUCTURAL_CONTRACT_REMEDIATION
@@ -284,12 +284,12 @@ previous_closed_work_unit:
     source_runtime_residual_count: 0
     product_stage_credit: 0
 resume_control:
-  current_resume_point: POST_SEMANTIC_BASELINE_SINGLE_OWNER_PROMOTION_FULL_LINE_REVERIFY
+  current_resume_point: V2_2_9_EXACT_HEAD_REVALIDATION
   current_work_unit_uid: WU-GOV-SEMANTIC-BASELINE-CONSUMER-SINGLE-OWNER-001
   current_owner: .github/governance-source/active/source/09_TESTS/governance/validate_reference_semantics.py
   historical_stage2_results_are_current_state: false
   stage2_execution_requires_fresh_entry_resolution: true
-  exact_next_action: EXACT_HEAD_FULL_LINE_REVERIFY_THEN_FRESH_CORE01_STAGE01_STAGE02
+  exact_next_action: OBSERVE_V2_2_9_EXACT_HEAD_SELECTED_PROFILE_FULL_LINE_BRANCH_GUARD
 governance_revision_transition:
   current_governance_uid: GOV-REV-20260919-SEMANTIC-BASELINE-CONSUMER-SINGLE-OWNER-HARDENING
   predecessor_governance_uid: GOV-REV-20260919-STRUCTURED-MUTATION-SELECTOR-HARDENING
@@ -925,3 +925,14 @@ semantic_baseline_consumer_single_owner_successor:
   program_artifact_guard_resolver: AST_BOUNDED_CANONICAL_OWNER_RESOLUTION
   product_stage_credit: 0
   status: PROMOTED_EXACT_HEAD_REVALIDATION_REQUIRED
+
+v229_exact_head_revalidation_trigger:
+  predecessor_promotion_head: c31e592a4c2b686e164e45c9612b85ac2878523b
+  one_shot_successor_workflow_removed_before_validation: true
+  one_shot_successor_materializer_removed_before_validation: true
+  trigger_owner: .github/governance-source/FULL_LINE_TRIGGER
+  required_gates:
+  - SELECTED_PROFILE
+  - FULL_LINE
+  - BRANCH_GUARD
+  product_stage_credit: 0
