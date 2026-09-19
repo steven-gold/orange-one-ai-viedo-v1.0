@@ -15,7 +15,7 @@ NEW_UID='GOV-REV-20260919-ASSET-STAGE01-STAGE02-SHARED-CONTRACT-HARDENING'
 OLD_DISPLAY='v2.2.12'
 NEW_DISPLAY='v2.2.13'
 NEW_SOURCE_REV='v2.2.13-asset-stage01-stage02-shared-contract-hardening'
-AUTH_UID='USR-DIRECTIVE-20260920-ASSET-STAGE01-STAGE02-SHARED-CONTRACT-HARDENING-R3'
+AUTH_UID='USR-DIRECTIVE-20260920-ASSET-STAGE01-STAGE02-SHARED-CONTRACT-HARDENING-R4'
 WORK_UNIT='WU-GOV-ASSET-STAGE01-STAGE02-SHARED-CONTRACT-HARDENING-001'
 NEW_PACKAGE='AI_WEB_GOVERNANCE_FULL_LIFECYCLE_v2.2.13_ASSET_STAGE01_STAGE02_SHARED_CONTRACT_HARDENING_LOCAL_VERIFIED.zip'
 
@@ -564,10 +564,12 @@ def source_revision_aux():
         p.write_text(p.read_text(encoding='utf-8').rstrip()+f"\n\n{marker}\n- v2.2.12 remains immutable predecessor history.\n- Missing explicit trigger syntax is not automatically a product Authority choice when structured Current evidence uniquely proves a system-owned operation.\n- Producer/consumer field-schema drift fails before materialization; alias fallback cannot hide the defect.\n- Historical product values cannot fill Current missing contracts.\n- Reusable Stage consumers remain product-neutral and task-layer order is not bypassable.\n",encoding='utf-8')
 
 def cleanup_promotion_scaffold():
-    # Workflow/promoter cleanup is intentionally deferred to a connector-authored
-    # post-promotion commit because the Actions token does not have workflows permission.
-    # Exact-head validation is run only after that cleanup commit.
-    return
+    # Actions cannot update workflow files with the current token. Keep the workflow edge
+    # temporarily intact, but terminalize this helper before active-consumer safety scans.
+    stub = """#!/usr/bin/env python3
+raise SystemExit("BLOCK: terminalized one-shot governance promotion helper; connector cleanup required")
+"""
+    Path(__file__).write_text(stub, encoding='utf-8')
 def static_current_consumer_assertions():
     mat=(ROOT/'governance/ci/materialize_current_stage2_closure_artifacts.py').read_text(encoding='utf-8')
     for forbidden in ['fresh_run_003','"CORE-01"','"ASSET-01"','STAGE02_PRODUCT_REENTRY_AUTHORIZATION_UID','deferred_foreground']:
