@@ -18,17 +18,17 @@ selected_execution_profile_state:
   active_attempt_state_key: stage02_active_attempt
 execution:
   branch: rebuild-v2.1.1
-  run_uid: FRESH-RUN-007
+  run_uid: FRESH-RUN-008
   scope_mode: EXACT_PAGE_SCOPE_ONLY
   target_pages:
   - CORE-01
-  current_stage: STAGE-02-CLOSED-VERIFIED
+  current_stage: STAGE-02-CLOSED
   stage1:
     CORE-01: PASS
   stage2:
     result: TEST_EXECUTED_PASS
     stage_entry_gate: PASS
-    stage_exit_allowed: false
+    stage_exit_allowed: true
     prior_results_used_in_current_run: false
     artifact_root_present: true
     tested_page_uids:
@@ -37,11 +37,11 @@ execution:
     stage_scope_complete: true
     current_scope_manifest_ref: governance/test/CURRENT_EXECUTION_SCOPE_MANIFEST.yaml
     prior_results_authoritative_for_current_governance: false
-    revalidation_required_under_current_governance: true
+    revalidation_required_under_current_governance: false
   stage3:
     result: NOT_EXECUTED
     work_unit_uid: null
-    work_unit_resolution: WORK_UNIT_RESOLUTION_GATE_REQUIRED_AFTER_STAGE02_CLOSURE
+    work_unit_resolution: NOT_RESOLVED_AFTER_FRESH_STAGE02
     execution_started: false
     pre_execution_gate: GOVERNANCE_LOAD_RECEIPT_PASS
     pre_execution_gate_status: NOT_EXECUTED
@@ -64,7 +64,7 @@ full_lifecycle_governance_system_test:
   skip_allowed: false
   timeout_may_be_treated_as_pass: false
   partial_suite_result_may_be_treated_as_full_line_pass: false
-  full_line_github_result: REVALIDATION_REQUIRED_AFTER_SEMANTIC_BASELINE_CONSUMER_SINGLE_OWNER_PROMOTION
+  full_line_github_result: REVALIDATION_REQUIRED_AFTER_PRODUCT_DATA_RESET_AND_FRESH_REPLAY
   exact_denominators_verified: true
   source_runtime_residual_count: 0
   persisted_head_revalidation_required: true
@@ -95,7 +95,7 @@ stage_execution_remediation_closure_protocol:
   fatal_specification_contradiction_requires_stage_stop_and_new_explicit_authorization: true
   pilot_full_lifecycle_required_before_other_page_scale_out: true
   later_pages_must_use_same_active_governance_after_calibration: true
-  binding_status: CURRENT_V2_2_9_PRODUCT_REVERIFY_REQUIRED
+  binding_status: CURRENT_V2_2_9_FRESH_REPLAY_STAGE1_CLOSED
 specification_mutation_safety:
   change_control_ref: governance/specifications/current/SPECIFICATION_MUTATION_CONTROL.yaml
   finding_ledger_ref: governance/test/SPECIFICATION_CHANGE_CANDIDATES.yaml
@@ -104,8 +104,8 @@ specification_mutation_safety:
   ordinary_mid_stage_specification_mutation: BLOCK
   stage_end_consolidated_promotion_requires_new_explicit_directive: true
   execution_context_lock_required: true
-status: CORE01_STAGE01_STAGE02_CLEAN_REPLAY_R5_AUTHORIZED
-next_action: EXECUTE_CORE01_STAGE01_STAGE02_CLEAN_REPLAY_R5
+status: ACTIVE_STAGE2_READY_FOR_TERMINAL_CLOSURE_R5
+next_action: CLOSE_STAGE02
 previous_closed_product_work_unit:
   work_unit_uid: WU-STAGE02-CORE01-STRUCTURAL-REMEDIATION-001
   canonical_name: CORE01_STRUCTURAL_CONTRACT_REMEDIATION
@@ -284,19 +284,19 @@ previous_closed_work_unit:
     source_runtime_residual_count: 0
     product_stage_credit: 0
 resume_control:
-  current_resume_point: CORE01_STAGE01_STAGE02_CLEAN_REPLAY_R5_AUTHORIZED
-  current_work_unit_uid: WU-CORE01-STAGE01-STAGE02-CLEAN-REPLAY-R5
-  current_owner: .github/governance-maintenance/run_fresh_core01_stage01_stage02_replay_r5.py
+  current_resume_point: FRESH_CORE01_STAGE2_READY_TO_CLOSE
+  current_work_unit_uid: WU-STAGE02-CORE01-COMPLETENESS-REPLAY-R5
+  current_owner: 00_SOURCE_INTAKE/fresh_run_008/04_PAGE_FUNCTIONAL_CONTRACT/CURRENT_PROBLEM_REGISTER.yaml
   historical_stage2_results_are_current_state: false
-  stage2_execution_requires_fresh_entry_resolution: true
-  exact_next_action: EXECUTE_CORE01_STAGE01_STAGE02_CLEAN_REPLAY_R5
+  stage2_execution_requires_fresh_entry_resolution: false
+  exact_next_action: CLOSE_STAGE02
 governance_revision_transition:
   current_governance_uid: GOV-REV-20260919-SEMANTIC-BASELINE-CONSUMER-SINGLE-OWNER-HARDENING
   predecessor_governance_uid: GOV-REV-20260919-STRUCTURED-MUTATION-SELECTOR-HARDENING
   predecessor_attempt_preserved_as_historical_evidence: true
   predecessor_attempt_history_ref: governance/test/history/stage02/design-remediation-routing-20260918/STAGE02_CORE01_DESIGN_REMEDIATION_TEST_EVIDENCE.json
   predecessor_attempt_may_close_under_current_governance: false
-  fresh_revalidation_required: true
+  fresh_revalidation_required: false
   fresh_revalidation_scope: CORE01_STAGE01_STAGE02_AND_AFFECTED_REUSABLE_CONSUMERS
   mother_machine_revalidation_complete: true
   mother_machine_revalidation_run_id: 35321233970
@@ -310,11 +310,11 @@ governance_revision_transition:
   website_construction_remains_blocked: true
   deployment_remains_blocked: true
   execution_scope_manifest_ref: governance/test/CURRENT_EXECUTION_SCOPE_MANIFEST.yaml
-  current_product_attempt_uid: STAGE02-FRESH-20260919-CORE01-004
-  current_product_attempt_run_uid: FRESH-RUN-007
-  current_product_attempt_workflow_run_id: 35418115888
-  current_product_attempt_artifact_id: 10576198733
-  current_product_attempt_artifact_sha256: 8efba832db6a1db191c7d82ccd0585903d7b937718c333df7818deffba1c77b1
+  current_product_attempt_uid: STAGE02-FRESH-20260919-CORE01-005
+  current_product_attempt_run_uid: FRESH-RUN-008
+  current_product_attempt_workflow_run_id: 35420941470
+  current_product_attempt_artifact_id: 10577147985
+  current_product_attempt_artifact_sha256: 3b23ba5424a32d2390be49988d9c9a333cae64f27437d11f508dcae5ae5f2cc5
 pending_governance_review:
   review_item_uid: REV-GOV-001
   review_type: PREFORMAL_GOVERNANCE_REVIEW
@@ -419,13 +419,13 @@ v227_promotion_consumer_sync_repair:
   product_stage_credit: 0
   status: DERIVED_CONSUMER_SYNC_REPAIRED_FULL_LINE_REVERIFY_REQUIRED
 fresh_replay_provenance:
-  run_uid: FRESH-RUN-007
+  run_uid: FRESH-RUN-008
   page_scope:
   - CORE-01
-  workflow_run_id: 35418115888
-  source_execution_sha: 9ffea6cfb5b5cb246d9b200358fcb37bb52ab6ad
-  evidence_artifact_id: 10576198733
-  evidence_artifact_sha256: 8efba832db6a1db191c7d82ccd0585903d7b937718c333df7818deffba1c77b1
+  workflow_run_id: 35420941470
+  source_execution_sha: ced59fe341449fde11c79810a488330c9283f4b3
+  evidence_artifact_id: 10577147985
+  evidence_artifact_sha256: 3b23ba5424a32d2390be49988d9c9a333cae64f27437d11f508dcae5ae5f2cc5
   prior_stage01_stage02_product_outputs_reused: false
   asset01_generated_data_present: false
   product_blocker_credit: 0
@@ -726,73 +726,6 @@ closed_stage02_clean_replay_work_unit_r4:
   - STAGE03
   - WEBSITE_CONSTRUCTION
   - DEPLOYMENT
-stage02_active_attempt:
-  attempt_uid: STAGE02-FRESH-20260919-CORE01-004
-  run_uid: FRESH-RUN-007
-  frozen_governance_uid: GOV-REV-20260919-PROFILE-TOKEN-DECONTAMINATION-HARDENING
-  source_execution_sha: 9ffea6cfb5b5cb246d9b200358fcb37bb52ab6ad
-  target_pages:
-  - CORE-01
-  fresh_functional_gap_total: 0
-  fresh_closure_blocker_total: 0
-  product_blocker_credit: 0
-  prior_results_used: false
-  active_evidence_present: true
-  active_findings_present: true
-  fresh_revalidation_required: true
-  closure_credit_under_current_governance: false
-  source_workflow_run_id: 35418115888
-  source_artifact_id: 10576198733
-  source_artifact_sha256: 8efba832db6a1db191c7d82ccd0585903d7b937718c333df7818deffba1c77b1
-last_work_unit_resolution_gate:
-  resolution_uid: WUR-STAGE02-CORE01-COMPLETENESS-20260919-004
-  normative_authority: false
-  result: PASS_SINGLE_LEGAL_SUCCESSOR
-  requested_primary_task_layer: PRODUCT_STAGE_EXECUTION
-  resolved_work_unit_uid: WU-STAGE02-CORE01-COMPLETENESS-REPLAY-R4
-  authorization_uid: USR-DIRECTIVE-20260919-CLEAR-ALL-STAGE01-STAGE02-RERUN-CORE01-R4
-  page_scope:
-  - CORE-01
-  excluded_page_scope:
-  - ASSET-01
-  source_problem_denominator: 0
-  source_closure_blocker_denominator: 0
-stage02_terminal_closure_r4:
-  status: CLOSED_VERIFIED
-  work_unit_uid: WU-STAGE02-CORE01-COMPLETENESS-REPLAY-R4
-  authorization_uid: USR-DIRECTIVE-20260919-CLEAR-ALL-STAGE01-STAGE02-RERUN-CORE01-R4
-  governance_uid: GOV-REV-20260919-PROFILE-TOKEN-DECONTAMINATION-HARDENING
-  run_uid: FRESH-RUN-007
-  attempt_uid: STAGE02-FRESH-20260919-CORE01-004
-  cleanup_scope:
-  - CORE-01
-  - ASSET-01
-  replay_scope:
-  - CORE-01
-  replay_excluded_scope:
-  - ASSET-01
-  prior_run_uid: FRESH-RUN-006
-  prior_run_root_present_after_cleanup: false
-  asset01_generated_data_present_after_replay: false
-  stage02_history_present_after_cleanup: false
-  planning_baseline_completeness: PASS
-  fresh_functional_gap_total: 0
-  closure_blocker_total: 0
-  remaining_required_units: 0
-  prior_stage2_results_used: false
-  stage1_result: PASS
-  stage2_result: TEST_EXECUTED_PASS
-  common_stage_engine_required: true
-  common_stage_engine_admission_applied:
-  - STAGE-01
-  - STAGE-02
-  source_replay_workflow_run_id: 35418115888
-  source_replay_artifact_id: 10576198733
-  source_replay_artifact_sha256: 8efba832db6a1db191c7d82ccd0585903d7b937718c333df7818deffba1c77b1
-  source_replay_commit: b21662f46941216de32217da746565d99b559705
-  stage03_execution_started: false
-  legal_next_transition: WORK_UNIT_RESOLUTION_GATE_FOR_STAGE03_AFTER_STAGE02_CLOSURE
-  closure_commit_exact_head_revalidation_required: true
 work_unit_resolution_gate_structured_mutation_hardening:
   resolution_uid: WUR-GOV-STRUCTURED-MUTATION-SELECTOR-20260919-001
   normative_authority: false
@@ -925,7 +858,6 @@ semantic_baseline_consumer_single_owner_successor:
   program_artifact_guard_resolver: AST_BOUNDED_CANONICAL_OWNER_RESOLUTION
   product_stage_credit: 0
   status: PROMOTED_EXACT_HEAD_REVALIDATION_REQUIRED
-
 v229_exact_head_revalidation_trigger:
   predecessor_promotion_head: c31e592a4c2b686e164e45c9612b85ac2878523b
   one_shot_successor_workflow_removed_before_validation: true
@@ -936,7 +868,6 @@ v229_exact_head_revalidation_trigger:
   - FULL_LINE
   - BRANCH_GUARD
   product_stage_credit: 0
-
 governance_maintenance_closure_before_core01_replay_r5:
   current_governance_uid: GOV-REV-20260919-SEMANTIC-BASELINE-CONSUMER-SINGLE-OWNER-HARDENING
   semantic_baseline_consumer_work_unit: WU-GOV-SEMANTIC-BASELINE-CONSUMER-SINGLE-OWNER-001
@@ -953,7 +884,6 @@ governance_maintenance_closure_before_core01_replay_r5:
   verified_source_python_files_scanned: 37
   literal_semantic_hash_owner_count: 1
   product_stage_credit: 0
-
 work_unit_resolution_gate_core01_clean_replay_r5:
   resolution_uid: WUR-CORE01-STAGE01-STAGE02-CLEAN-REPLAY-20260919-005
   normative_authority: false
@@ -962,32 +892,157 @@ work_unit_resolution_gate_core01_clean_replay_r5:
   resolved_work_unit_uid: WU-CORE01-STAGE01-STAGE02-CLEAN-REPLAY-R5
   authorization_uid: USR-DIRECTIVE-20260919-CLEAR-ALL-STAGE01-STAGE02-RERUN-CORE01-R5
   current_governance_uid: GOV-REV-20260919-SEMANTIC-BASELINE-CONSUMER-SINGLE-OWNER-HARDENING
-  page_scope: [CORE-01]
-  cleanup_scope: [CORE-01, ASSET-01]
-  replay_excluded_page_scope: [ASSET-01]
+  page_scope:
+  - CORE-01
+  cleanup_scope:
+  - CORE-01
+  - ASSET-01
+  replay_excluded_page_scope:
+  - ASSET-01
   predecessor_run_uid: FRESH-RUN-007
   successor_run_uid: FRESH-RUN-008
   product_stage_credit: 0
-
 active_work_unit:
-  work_unit_uid: WU-CORE01-STAGE01-STAGE02-CLEAN-REPLAY-R5
-  canonical_name: CORE01_STAGE01_STAGE02_CLEAN_REPLAY_R5
+  work_unit_uid: WU-STAGE02-CORE01-COMPLETENESS-REPLAY-R5
+  canonical_name: CORE01_STAGE02_20260911_PLANNING_COMPLETENESS_REMEDIATION_AND_FRESH_REPLAY
+  stage_uid: STAGE-02
+  semantic_capability: PAGE_FUNCTIONAL_CONTRACT
   primary_task_layer: PRODUCT_STAGE_EXECUTION
-  canonical_owner: .github/governance-maintenance/run_fresh_core01_stage01_stage02_replay_r5.py
-  current_status: AUTHORIZED_NOT_EXECUTED
-  scope: [CORE-01]
-  cleanup_scope: [CORE-01, ASSET-01]
-  excluded_replay_scope: [ASSET-01, STAGE-03, WEBSITE_CONSTRUCTION, DEPLOYMENT]
-  predecessor_run_root: 00_SOURCE_INTAKE/fresh_run_007
-  successor_run_root: 00_SOURCE_INTAKE/fresh_run_008
-  definition_of_done:
-  - PREDECESSOR_STAGE01_STAGE02_GENERATED_DATA_REMOVED
-  - ASSET01_GENERATED_DATA_ABSENT
-  - CURRENT_STAGE02_EVIDENCE_REMOVED_BEFORE_REPLAY
-  - FRESH_STAGE1_CORE01_PASS
-  - FRESH_STAGE2_CORE01_PASS
-  - PLANNING_BASELINE_COMPLETENESS_PASS
-  - FRESH_FUNCTIONAL_GAP_TOTAL_ZERO
-  - CLOSURE_BLOCKER_TOTAL_ZERO
-  - PRIOR_STAGE02_RESULTS_USED_FALSE
-  - EXACT_HEAD_TERMINAL_VALIDATION
+  scope:
+  - CORE-01
+  canonical_owner: 00_SOURCE_INTAKE/fresh_run_008/04_PAGE_FUNCTIONAL_CONTRACT/CURRENT_PROBLEM_REGISTER.yaml
+  current_status: READY_FOR_TERMINAL_CLOSURE
+  source_attempt_uid: STAGE02-FRESH-20260919-CORE01-005
+  source_problem_denominator: 0
+  source_closure_blocker_denominator: 0
+  dependencies:
+  - 00_SOURCE_INTAKE/fresh_run_008/02_BASE_BLUEPRINT/CORE-01/PAGE_BASE_BLUEPRINT.yaml
+  - 00_SOURCE_INTAKE/fresh_run_008/03_BLUEPRINT_BINDING/CORE-01/BLUEPRINT_BINDING_MANIFEST.yaml
+  required_outputs:
+  - FUNCTIONAL_CHAIN_SPEC
+  - DEPENDENCY_MAP
+  - PAGE_CONSTRUCTION_SPEC_PACKAGE
+  - ASYNC_PROVIDER_CONTRACT
+  - SHARED_OWNER_PORT_MAP
+  - FUNCTIONAL_WORKBENCH_CONTRACT
+  - INTERACTION_TOPOLOGY_SPEC
+  - REQUIRED_FIELD_MANIFEST
+  - FUNCTIONAL_CHAIN_MANIFEST
+  - EFFECTIVE_CONTRACT_OVERLAY
+  - DEPENDENCY_TOPOLOGY
+  - DENOMINATOR_SNAPSHOT
+  - CLASSIFICATION_RULESET
+  - CHANGE_IMPACT_MAP
+  - STAGE_EXECUTION_PREFLIGHT_RECEIPT
+  - CURRENT_PROBLEM_REGISTER
+  - RESOLUTION_LEDGER
+  - FUNCTION_ADMISSION_SCORECARD
+  - AUTO_COMPLETION_SCOPE_LEDGER
+  operation_bindings:
+    STAGE_EXECUTION_PREFLIGHT_COMPILE:
+      executor_owner: governance/ci/run_current_stage2_actual_test.py
+      result_owner: 00_SOURCE_INTAKE/fresh_run_008/04_PAGE_FUNCTIONAL_CONTRACT/CURRENT_PROBLEM_REGISTER.yaml
+    EFFECTIVE_CONTRACT_OVERLAY_COMPILE:
+      executor_owner: governance/ci/run_current_stage2_actual_test.py
+      result_owner: 00_SOURCE_INTAKE/fresh_run_008/04_PAGE_FUNCTIONAL_CONTRACT/CURRENT_PROBLEM_REGISTER.yaml
+    DEPENDENCY_TOPOLOGY_COMPILE:
+      executor_owner: governance/ci/run_current_stage2_actual_test.py
+      result_owner: 00_SOURCE_INTAKE/fresh_run_008/04_PAGE_FUNCTIONAL_CONTRACT/CURRENT_PROBLEM_REGISTER.yaml
+    CHANGE_IMPACT_MAP_COMPILE:
+      executor_owner: governance/ci/run_current_stage2_actual_test.py
+      result_owner: 00_SOURCE_INTAKE/fresh_run_008/04_PAGE_FUNCTIONAL_CONTRACT/CURRENT_PROBLEM_REGISTER.yaml
+    FUNCTIONAL_CHAIN_COMPILE:
+      executor_owner: governance/ci/run_current_stage2_actual_test.py
+      result_owner: 00_SOURCE_INTAKE/fresh_run_008/04_PAGE_FUNCTIONAL_CONTRACT/CURRENT_PROBLEM_REGISTER.yaml
+    DEPENDENCY_MAP_COMPILE:
+      executor_owner: governance/ci/run_current_stage2_actual_test.py
+      result_owner: 00_SOURCE_INTAKE/fresh_run_008/04_PAGE_FUNCTIONAL_CONTRACT/CURRENT_PROBLEM_REGISTER.yaml
+    PAGE_CONSTRUCTION_SPEC_COMPILE:
+      executor_owner: governance/ci/run_current_stage2_actual_test.py
+      result_owner: 00_SOURCE_INTAKE/fresh_run_008/04_PAGE_FUNCTIONAL_CONTRACT/CURRENT_PROBLEM_REGISTER.yaml
+    ASYNC_PROVIDER_CONTRACT_COMPILE:
+      executor_owner: governance/ci/run_current_stage2_actual_test.py
+      result_owner: 00_SOURCE_INTAKE/fresh_run_008/04_PAGE_FUNCTIONAL_CONTRACT/CURRENT_PROBLEM_REGISTER.yaml
+    SHARED_OWNER_PORT_RESOLVE:
+      executor_owner: governance/ci/run_current_stage2_actual_test.py
+      result_owner: 00_SOURCE_INTAKE/fresh_run_008/04_PAGE_FUNCTIONAL_CONTRACT/CURRENT_PROBLEM_REGISTER.yaml
+    FUNCTIONAL_WORKBENCH_CONTRACT_COMPILE:
+      executor_owner: governance/ci/run_current_stage2_actual_test.py
+      result_owner: 00_SOURCE_INTAKE/fresh_run_008/04_PAGE_FUNCTIONAL_CONTRACT/CURRENT_PROBLEM_REGISTER.yaml
+    INTERACTION_TOPOLOGY_COMPILE:
+      executor_owner: governance/ci/run_current_stage2_actual_test.py
+      result_owner: 00_SOURCE_INTAKE/fresh_run_008/04_PAGE_FUNCTIONAL_CONTRACT/CURRENT_PROBLEM_REGISTER.yaml
+    FUNCTION_ADMISSION_SCORECARD_COMPILE:
+      executor_owner: governance/ci/run_current_stage2_actual_test.py
+      result_owner: 00_SOURCE_INTAKE/fresh_run_008/04_PAGE_FUNCTIONAL_CONTRACT/CURRENT_PROBLEM_REGISTER.yaml
+    AUTO_COMPLETION_SCOPE_LEDGER_COMPILE:
+      executor_owner: governance/ci/run_current_stage2_actual_test.py
+      result_owner: 00_SOURCE_INTAKE/fresh_run_008/04_PAGE_FUNCTIONAL_CONTRACT/CURRENT_PROBLEM_REGISTER.yaml
+  scanner_bindings:
+    ENTITY_OPERATION_DENOMINATOR:
+      scanner_owner: governance/ci/run_current_stage2_actual_test.py
+      result_owner: governance/test/stage02/STAGE02_LATEST_TEST_EVIDENCE.json
+    CONTROL_ACTION_RUNTIME_CHAIN:
+      scanner_owner: governance/ci/run_current_stage2_actual_test.py
+      result_owner: governance/test/stage02/STAGE02_LATEST_TEST_EVIDENCE.json
+    PAYLOAD_INPUT:
+      scanner_owner: governance/ci/run_current_stage2_actual_test.py
+      result_owner: governance/test/stage02/STAGE02_LATEST_TEST_EVIDENCE.json
+    STATE_TRANSITION:
+      scanner_owner: governance/ci/run_current_stage2_actual_test.py
+      result_owner: governance/test/stage02/STAGE02_LATEST_TEST_EVIDENCE.json
+    ERROR_RECOVERY:
+      scanner_owner: governance/ci/run_current_stage2_actual_test.py
+      result_owner: governance/test/stage02/STAGE02_LATEST_TEST_EVIDENCE.json
+    AUDIT_EVENT:
+      scanner_owner: governance/ci/run_current_stage2_actual_test.py
+      result_owner: governance/test/stage02/STAGE02_LATEST_TEST_EVIDENCE.json
+    WORKBENCH_COHESION:
+      scanner_owner: governance/ci/run_current_stage2_actual_test.py
+      result_owner: governance/test/stage02/STAGE02_LATEST_TEST_EVIDENCE.json
+    INTERACTION_CONTINUITY:
+      scanner_owner: governance/ci/run_current_stage2_actual_test.py
+      result_owner: governance/test/stage02/STAGE02_LATEST_TEST_EVIDENCE.json
+    AI_CONTEXT_CONTINUITY:
+      scanner_owner: governance/ci/run_current_stage2_actual_test.py
+      result_owner: governance/test/stage02/STAGE02_LATEST_TEST_EVIDENCE.json
+    VERSION_FINALIZATION:
+      scanner_owner: governance/ci/run_current_stage2_actual_test.py
+      result_owner: governance/test/stage02/STAGE02_LATEST_TEST_EVIDENCE.json
+  product_blocker_credit: 0
+  out_of_scope:
+  - ASSET-01
+  - STAGE03
+  - WEBSITE_CONSTRUCTION
+  - DEPLOYMENT
+stage02_active_attempt:
+  attempt_uid: STAGE02-FRESH-20260919-CORE01-005
+  run_uid: FRESH-RUN-008
+  frozen_governance_uid: GOV-REV-20260919-SEMANTIC-BASELINE-CONSUMER-SINGLE-OWNER-HARDENING
+  source_execution_sha: ced59fe341449fde11c79810a488330c9283f4b3
+  target_pages:
+  - CORE-01
+  fresh_functional_gap_total: 0
+  fresh_closure_blocker_total: 0
+  product_blocker_credit: 0
+  prior_results_used: false
+  active_evidence_present: true
+  active_findings_present: true
+  fresh_revalidation_required: false
+  closure_credit_under_current_governance: true
+  source_workflow_run_id: 35420941470
+  source_artifact_id: 10577147985
+  source_artifact_sha256: 3b23ba5424a32d2390be49988d9c9a333cae64f27437d11f508dcae5ae5f2cc5
+last_work_unit_resolution_gate:
+  resolution_uid: WUR-STAGE02-CORE01-COMPLETENESS-20260919-005
+  normative_authority: false
+  result: PASS_SINGLE_LEGAL_SUCCESSOR
+  requested_primary_task_layer: PRODUCT_STAGE_EXECUTION
+  resolved_work_unit_uid: WU-STAGE02-CORE01-COMPLETENESS-REPLAY-R5
+  authorization_uid: USR-DIRECTIVE-20260919-CLEAR-ALL-STAGE01-STAGE02-RERUN-CORE01-R5
+  page_scope:
+  - CORE-01
+  excluded_page_scope:
+  - ASSET-01
+  source_problem_denominator: 0
+  source_closure_blocker_denominator: 0

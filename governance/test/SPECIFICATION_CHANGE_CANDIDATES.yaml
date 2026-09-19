@@ -710,57 +710,36 @@ current_stage2_execution:
   current_closure_blocker_count: 0
   active_evidence_present: true
   active_findings_present: true
-  stage_exit_allowed: false
+  stage_exit_allowed: true
   website_construction_allowed: false
   deployment_allowed: false
   historical_counts_may_be_treated_as_current: false
-  source_execution_sha: 9ffea6cfb5b5cb246d9b200358fcb37bb52ab6ad
-  reexecution_cycle: FRESH-RUN-007
+  source_execution_sha: ced59fe341449fde11c79810a488330c9283f4b3
+  reexecution_cycle: FRESH-RUN-008
   target_pages:
   - CORE-01
   remaining_pages: []
   stage_scope_complete: true
-  next_action: FRESH_CORE01_STAGE01_STAGE02_REVERIFY_AFTER_EXACT_HEAD_GOVERNANCE_PASS
-  attempt_uid: STAGE02-FRESH-20260919-CORE01-004
-  frozen_governance_uid: GOV-REV-20260919-PROFILE-TOKEN-DECONTAMINATION-HARDENING
+  next_action: CLOSE_STAGE02
+  attempt_uid: STAGE02-FRESH-20260919-CORE01-005
+  frozen_governance_uid: GOV-REV-20260919-SEMANTIC-BASELINE-CONSUMER-SINGLE-OWNER-HARDENING
   raw_discovery_gap_count: 0
   product_materialization_elimination_count: 0
   external_authority_elimination_count: 0
   total_fresh_elimination_count: 0
   preserved_external_authority_union_count: 7
   prior_stage2_results_used: false
-  source_workflow_run_id: 35418115888
-  source_artifact_id: 10576198733
-  source_artifact_sha256: 8efba832db6a1db191c7d82ccd0585903d7b937718c333df7818deffba1c77b1
+  source_workflow_run_id: 35420941470
+  source_artifact_id: 10577147985
+  source_artifact_sha256: 3b23ba5424a32d2390be49988d9c9a333cae64f27437d11f508dcae5ae5f2cc5
   product_blocker_reduction_credit: 0
   validated_product_successor_signature_count: 0
   effective_functional_gap_count: 0
   planning_baseline_completeness: PASS
-  core01_work_unit_status: CLOSED_VERIFIED_FRESH_RUN_007_ZERO_GAP_ZERO_BLOCKER
-  fresh_revalidation_required_under_current_governance: true
+  core01_work_unit_status: READY_FOR_TERMINAL_CLOSURE
+  fresh_revalidation_required_under_current_governance: false
   current_governance_uid: GOV-REV-20260919-SEMANTIC-BASELINE-CONSUMER-SINGLE-OWNER-HARDENING
-  closure_credit_under_current_governance: false
+  closure_credit_under_current_governance: true
   execution_scope_manifest_ref: governance/test/CURRENT_EXECUTION_SCOPE_MANIFEST.yaml
-  canonical_product_contract_owner_ref: 00_SOURCE_INTAKE/fresh_run_007/04_PAGE_FUNCTIONAL_CONTRACT/CORE-01/FUNCTIONAL_CHAIN_SPEC.yaml
-  terminal_closure:
-    run_uid: FRESH-RUN-007
-    attempt_uid: STAGE02-FRESH-20260919-CORE01-004
-    cleanup_scope:
-    - CORE-01
-    - ASSET-01
-    replay_scope:
-    - CORE-01
-    asset01_generated_data_present_after_replay: false
-    prior_run_root_present_after_cleanup: false
-    planning_baseline_completeness: PASS
-    fresh_functional_gap_total: 0
-    closure_blocker_total: 0
-    remaining_required_units: 0
-    prior_stage2_results_used: false
-    source_replay_workflow_run_id: 35418115888
-    source_replay_artifact_id: 10576198733
-    source_replay_artifact_sha256: 8efba832db6a1db191c7d82ccd0585903d7b937718c333df7818deffba1c77b1
-    source_replay_commit: b21662f46941216de32217da746565d99b559705
-    common_stage_engine_applied: true
-    closure_commit_exact_head_revalidation_required: true
+  canonical_product_contract_owner_ref: 00_SOURCE_INTAKE/fresh_run_008/04_PAGE_FUNCTIONAL_CONTRACT/CORE-01/FUNCTIONAL_CHAIN_SPEC.yaml
 status: ACTIVE_NON_NORMATIVE_FINDING_LEDGER
