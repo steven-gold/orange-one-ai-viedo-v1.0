@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 from copy import deepcopy
 from pathlib import Path
+import ast
 import sys
 ROOT=Path(__file__).resolve().parents[2]
 sys.path.insert(0,str(ROOT/'governance/ci'))
@@ -29,7 +30,15 @@ wrapper=(ROOT/'governance/ci/compile_stage_execution_preflight.py').read_text(en
 assert 'compatibility_main' in wrapper
 assert 'UNSUPPORTED_STAGE_UNTIL_MATCHING_CURRENT_EVIDENCE_EXISTS' not in wrapper
 common=(ROOT/'governance/ci/stage_execution_engine.py').read_text(encoding='utf-8')
-assert "STAGE='STAGE-02'" not in common
+tree=ast.parse(common)
+for node in ast.walk(tree):
+    if isinstance(node,(ast.Assign,ast.AnnAssign)):
+        targets=node.targets if isinstance(node,ast.Assign) else [node.target]
+        for target in targets:
+            if isinstance(target,ast.Name) and target.id=='STAGE':
+                value=node.value
+                if isinstance(value,ast.Constant) and value.value=='STAGE-02':
+                    raise AssertionError('COMMON_ENGINE_STAGE02_LITERAL_ASSIGNMENT')
 assert 'UNSUPPORTED_STAGE_UNTIL_MATCHING_CURRENT_EVIDENCE_EXISTS' not in common
 print(f'PASS: common Stage Execution Engine negative regression {cases}/10')
 print('PASS: Stage-02 entrypoint is compatibility-only; common engine has no Stage-02-only execution rejection')
