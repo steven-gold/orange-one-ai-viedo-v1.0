@@ -13,10 +13,11 @@ from pathlib import Path
 import yaml
 
 ROOT = Path(__file__).resolve().parents[2]
+SELF_TEST_REVALIDATION_AUTHORITY = '--self-test-revalidation-authority' in sys.argv
 RUN_ROOT_ENV = os.environ.get('ACPOS_RUN_ROOT', '').strip()
-if not RUN_ROOT_ENV:
+if not RUN_ROOT_ENV and not SELF_TEST_REVALIDATION_AUTHORITY:
     raise SystemExit('BLOCK: ACPOS_RUN_ROOT_REQUIRED')
-RUN = ROOT / RUN_ROOT_ENV
+RUN = ROOT / (RUN_ROOT_ENV or 'governance/test/temporary/stage02-self-test')
 STATE = ROOT / 'governance/test/ACTIVE_STATE.yaml'
 STAGE_REGISTRY = ROOT / '.github/governance-source/active/source/10_REGISTRY/GOVERNANCE_LIFECYCLE_STAGE_REGISTRY.yaml'
 RESULT = ROOT / '.github/stage02-test/STAGE02_ACTUAL_TEST_RESULT.json'
@@ -639,7 +640,7 @@ def fresh_scan(page: str, raw: dict, unresolved_authority_by_ref: dict):
         'functional_completion': len(unique) == 0,
     }
 
-if '--self-test-revalidation-authority' in sys.argv:
+if SELF_TEST_REVALIDATION_AUTHORITY:
     _self_test_external_authority_and_revalidation()
     raise SystemExit(0)
 
