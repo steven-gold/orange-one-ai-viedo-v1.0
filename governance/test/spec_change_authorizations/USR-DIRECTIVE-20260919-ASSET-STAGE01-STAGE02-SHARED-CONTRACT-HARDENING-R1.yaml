@@ -1,0 +1,77 @@
+schema_version: 2
+artifact_type: SPECIFICATION_CHANGE_AUTHORIZATION_RECEIPT
+authorization_uid: USR-DIRECTIVE-20260919-ASSET-STAGE01-STAGE02-SHARED-CONTRACT-HARDENING-R1
+normative_authority: false
+authority_source: EXPLICIT_USER_DIRECTIVE
+status: APPROVED_FOR_EXACT_SCOPE
+single_use: true
+ai_may_expand_scope: false
+ai_may_reuse_authorization: false
+current_governance_uid: GOV-REV-20260919-BASIC-DESIGN-ATOMIC-MATERIALIZATION-HARDENING
+baseline_commit_sha: 4b81c1d2083cbe1c54f8cb354817d61e6ed56e4d
+baseline_tree_sha: 312e01bee16059722505e1270780331d628e5b61
+governance_mutation_boundary: AFTER_CURRENT_GOVERNANCE_WORK_UNIT_TERMINAL_CLOSURE_AND_WORK_UNIT_RESOLUTION
+pre_write_context_verification:
+  relevant_scope_read_complete: true
+  canonical_owner_resolution_complete: true
+  existing_semantics_comparison_complete: true
+  duplicate_search_complete: true
+  conflict_search_complete: true
+  second_system_search_complete: true
+  gap_proven_before_write: true
+directive_summary: >-
+  Recheck ASSET-01 Stage-01/Stage-02 under Current Governance, fix the confirmed shared defects in Mother
+  Governance and machine consumers, then remove only replaceable ASSET Stage-01/02 generated data while
+  preserving immutable source/Authority, and execute a fresh Stage-01 -> Stage-02 replay. Ordering defects
+  must be corrected to the original governed Work Unit/Task Layer transition rather than changing product flow.
+exact_scope:
+  allowed:
+  - CONTROL_VS_SYSTEM_TRIGGER_SEMANTIC_RESOLUTION
+  - DETERMINISTIC_SYSTEM_TRIGGER_AUTO_REMEDIATION_BOUNDARY
+  - PRODUCER_CONSUMER_SCHEMA_IDENTITY_GATE
+  - AUDIT_EVENT_UID_CANONICAL_FIELD_CONTRACT
+  - REUSABLE_STAGE02_CONSUMER_PRODUCT_NEUTRALITY
+  - REMOVE_FIXED_PRODUCT_UID_AND_HISTORICAL_RUN_FALLBACK_FROM_ACTIVE_SHARED_STAGE02_PATHS
+  - NO_HISTORY_PRODUCT_VALUE_FALLBACK
+  - IMMUTABLE_INPUT_PRESERVING_CLEAN_REPLAY_BOUNDARY
+  - MACHINE_ENFORCEMENT_OF_EXISTING_TASK_LAYER_AND_WORK_UNIT_TRANSITION_ORDER
+  - TARGETED_NEGATIVE_REGRESSION_FOR_ABOVE_SHARED_DEFECTS
+  - ASSET01_STAGE01_STAGE02_FRESH_REVALIDATION_AFTER_GOVERNANCE_SUCCESSOR
+  forbidden:
+  - PRODUCT_AUTHORITY_CHANGE
+  - ASSET01_NEW_BUSINESS_BEHAVIOR
+  - NEW_CREATE_FINDING_VISUAL_CONTROL
+  - INVENT_NEW_TRIGGER_EVENT_UID_WITHOUT_CURRENT_AUTHORITY
+  - STAGE03_PRODUCT_EXECUTION
+  - WEBSITE_IMPLEMENTATION
+  - DEPLOYMENT
+  - HISTORICAL_STAGE_RESULT_AS_CURRENT_PRODUCT_CREDIT
+  - IMMUTABLE_RAW_SOURCE_MUTATION_OR_DELETION
+  - RESTORE_OLD_STAGE01_STAGE02_GENERATED_OUTPUT_AS_CURRENT
+canonical_owners:
+- .github/governance-source/active/source/12_DOCS/mother-spec/01_BLUEPRINT_DESIGN_GOVERNANCE.md
+- .github/governance-source/active/source/12_DOCS/mother-spec/02_IMPLEMENTATION_DELIVERY_STANDARD.md
+- .github/governance-source/active/source/12_DOCS/mother-spec/03_EXECUTION_CONTROL_STANDARD.md
+- .github/governance-source/active/source/12_DOCS/mother-spec/04_AUDIT_PROGRESS_STANDARD.md
+- .github/governance-source/active/source/10_REGISTRY/STAGE_EXECUTION_INVARIANT_REGISTRY.yaml
+- .github/governance-source/active/source/10_REGISTRY/GOVERNANCE_LIFECYCLE_STAGE_REGISTRY.yaml
+- .github/governance-source/active/source/10_REGISTRY/GOVERNANCE_ACCEPTANCE_AUDIT_BLUEPRINT.yaml
+- governance/specifications/current/BOUNDED_FUNCTIONAL_COMPLETION.yaml
+- governance/specifications/current/EXECUTION_CYCLE_CONTROL.yaml
+- governance/ci/run_current_stage2_actual_test.py
+- governance/ci/materialize_current_stage2_closure_artifacts.py
+- .github/workflows/stage02-actual-test.yml
+required_successor:
+  display_version: v2.2.13
+  governance_uid: GOV-REV-20260919-ASSET-STAGE01-STAGE02-SHARED-CONTRACT-HARDENING
+  immutable_governance_uid_must_change: true
+  registry_manifest_atomic_update_required: true
+  section_registry_sync_required_when_new_or_changed_section_identity: true
+  semantic_baseline_sync_required: true
+  acceptance_denominator_sync_required: true
+  source_identity_rebuild_required: true
+  active_consumer_reconciliation_required: true
+  exact_head_full_line_required: true
+  selected_profile_required: true
+  branch_guard_required: true
+product_stage_credit: 0
