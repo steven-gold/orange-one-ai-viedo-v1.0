@@ -2177,7 +2177,7 @@ stage02_persisted_revalidation_entry_maintenance_closure:
   closure_persistence_exact_head_revalidation_required: true
 stage02_current_revalidation_request:
   request_uid: REVAL-STAGE02-ASSET01-8133839F-20260919-001
-  status: BLOCKED_BY_PROJECTOR_PERSISTENCE_MAINTENANCE
+  status: RETRY_TRIGGER_COMMIT_PENDING_TERMINAL_WORKFLOW_RESULT
   page_scope:
   - ASSET-01
   run_uid: FRESH-ASSET01-8133839F-STAGE02
@@ -2194,6 +2194,10 @@ stage02_current_revalidation_request:
   failed_job_id: 105863152639
   scanner_executed: false
   product_blocker_credit_from_failed_revalidation: 0
+  retry_after_projector_repair: true
+  retry_trigger_parent_head_sha: c0254c547cc53b4f35679f8bbe667a4209b4f658
+  prior_failed_workflow_retained_as_history: true
+  product_blocker_credit_before_retry_result: 0
 stage2_result_evidence:
   mode: RUNTIME_GENERATED_GITHUB_ACTION_ARTIFACT
   static_result_pointer_required: false
