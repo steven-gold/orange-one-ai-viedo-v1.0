@@ -5,11 +5,9 @@ on:
     branches: [rebuild-v2.1.1]
     paths:
       - '.github/workflows/stage02-actual-test.yml'
-      - 'governance/ci/compile_stage_execution_preflight.py'
       - 'governance/ci/validate_stage02_entry_receipts.py'
       - '.github/governance-source/active/source/10_REGISTRY/REVIEW_PROGRESS_LEDGER.yaml'
       - '.github/governance-source/FULL_LINE_TRIGGER'
-      - 'governance/test/ACTIVE_STATE.yaml'
       - 'governance/test/stage02/STAGE02_STAGE_FROZEN_GOVERNANCE_RECEIPT.yaml'
       - 'governance/test/stage02/STAGE02_CLEAN_BASELINE_RESET_RECEIPT.yaml'
       - 'governance/ci/run_current_stage2_actual_test.py'

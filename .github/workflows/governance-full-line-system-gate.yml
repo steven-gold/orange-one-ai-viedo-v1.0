@@ -57,6 +57,10 @@ jobs:
         run: python governance/ci/stress_test_governance_registry.py
       - name: Validate selected execution profile and profile-local evidence
         run: python governance/ci/validate_selected_execution_profile_integrity.py
+      - name: Validate common Stage Execution Engine across selected profile
+        run: python governance/ci/stage_execution_engine.py --definition-audit-all
+      - name: Regression test common Stage Execution Engine
+        run: python governance/ci/test_stage_execution_engine.py
       - name: Validate profile-local finding closure readiness
         run: python governance/test/validate_selected_profile_finding_closure.py
       - name: Run complete 75-file full-lifecycle high-pressure system gate
