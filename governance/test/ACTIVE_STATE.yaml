@@ -1,3 +1,10 @@
+schema_version: 23
+artifact_type: ACTIVE_GOVERNANCE_TEST_STATE
+normative_authority: false
+specification_registry_ref: governance/specifications/REGISTRY.yaml
+specification_uid: GOV-REV-20260919-ASSET-STAGE01-STAGE02-SHARED-CONTRACT-HARDENING
+canonical_rule_registry_ref: governance/specifications/current/CANONICAL_RULE_REGISTRY.yaml
+canonical_rule_registry_uid: GOV-CANONICAL-RULE-REGISTRY-001
 selected_execution_profile_state:
   owner_ref: GOVERNANCE_CURRENT.yaml
   profile_uid: ACPOS-WEB-DELIVERY-PROFILE-11
@@ -97,8 +104,8 @@ specification_mutation_safety:
   ordinary_mid_stage_specification_mutation: BLOCK
   stage_end_consolidated_promotion_requires_new_explicit_directive: true
   execution_context_lock_required: true
-status: ACTIVE_STAGE2_TESTED_BLOCKED_FRESH_SCOPE
-next_action: BUILD_FRESH_ASSET-01_DESIGN_CONTRACT_CANDIDATE_FROM_CURRENT_GAPS
+status: COMMON_ENGINE_INTERRUPT_STAGE02_SYSTEM_TRIGGER_COVERAGE_SCHEMA
+next_action: FIX_STAGE02_REVALIDATION_SYSTEM_TRIGGER_COVERAGE_SCHEMA
 previous_closed_product_work_unit:
   work_unit_uid: WU-STAGE02-CORE01-STRUCTURAL-REMEDIATION-001
   canonical_name: CORE01_STRUCTURAL_CONTRACT_REMEDIATION
@@ -355,8 +362,8 @@ pending_governance_review:
   - STAGE03
   - WEBSITE_CONSTRUCTION
   - DEPLOYMENT
-current_primary_task_layer: PRODUCT_STAGE_EXECUTION
-current_primary_task_authorization_uid: USR-DIRECTIVE-20260920-RERUN-ASSET01-STAGE01-STAGE02-FRESH-R2
+current_primary_task_layer: TEST_OR_VALIDATION_MAINTENANCE
+current_primary_task_authorization_uid: USR-DIRECTIVE-20260920-SHARED-STAGE02-SYSTEM-TRIGGER-COVERAGE-SCHEMA-R1
 current_primary_task_product_stage_credit: 0
 earlier_closed_product_work_unit:
   work_unit_uid: WU-STAGE02-CORE01-FRESH-TEST-001
@@ -2438,8 +2445,3 @@ fresh_replay_provenance:
     CORE-01: false
   product_blocker_credit: 0
   status: CURRENT_FRESH_STAGE01_STAGE02_EXECUTION_EVIDENCE_BOUND
-status: COMMON_ENGINE_INTERRUPT_STAGE02_SYSTEM_TRIGGER_COVERAGE_SCHEMA
-next_action: FIX_STAGE02_REVALIDATION_SYSTEM_TRIGGER_COVERAGE_SCHEMA
-current_primary_task_layer: TEST_OR_VALIDATION_MAINTENANCE
-current_primary_task_authorization_uid: USR-DIRECTIVE-20260920-SHARED-STAGE02-SYSTEM-TRIGGER-COVERAGE-SCHEMA-R1
-current_primary_task_product_stage_credit: 0
