@@ -10,16 +10,13 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 WORKFLOW_ROOT = ROOT / ".github" / "workflows"
-EXEC_REF = re.compile(
-    r"python(?:3)?\s+(?:-m\s+)?"
-    r"((?:governance/(?:ci|test)|\.github/(?:governance-source|governance-maintenance))/[A-Za-z0-9_./-]+\.py)"
+from validate_active_consumer_reference_integrity import (
+    python_executable_refs,
+    workflow_executable_refs,
 )
 
 class MutationSafetyError(RuntimeError):
     pass
-
-def executable_refs(text: str) -> set[str]:
-    return {m.group(1) for m in EXEC_REF.finditer(text)}
 
 def _assigned_names(node: ast.AST) -> set[str]:
     if isinstance(node, ast.Name):
@@ -71,7 +68,7 @@ def active_reachable_python() -> tuple[set[str], dict[str,set[str]], list[str]]:
     workflows=sorted([*WORKFLOW_ROOT.glob("*.yml"),*WORKFLOW_ROOT.glob("*.yaml")])
     for wf in workflows:
         text=wf.read_text(encoding="utf-8")
-        for rel in executable_refs(text):
+        for rel in workflow_executable_refs(text):
             refs[rel].add(wf.relative_to(ROOT).as_posix())
             q.append(rel)
     seen=set()
@@ -85,7 +82,7 @@ def active_reachable_python() -> tuple[set[str], dict[str,set[str]], list[str]]:
             errors.append(f"MISSING_ACTIVE_EXECUTABLE:{rel}<-{','.join(sorted(refs[rel]))}")
             continue
         text=p.read_text(encoding="utf-8")
-        for child in executable_refs(text):
+        for child in python_executable_refs(text):
             refs[child].add(rel)
             if child not in seen:
                 q.append(child)
@@ -111,9 +108,12 @@ p.write_text(yaml.safe_dump(data))
     if fragile_mutation_violations(safe,"safe.py"):
         print("FAIL: structured YAML mutation falsely blocked",file=sys.stderr); return 1
     sample="python .github/governance-maintenance/missing.py"
-    if ".github/governance-maintenance/missing.py" not in executable_refs(sample):
-        print("FAIL: governance-maintenance executable ref escaped",file=sys.stderr); return 1
-    print("PASS: structured mutation safety negative regression 3/3")
+    if ".github/governance-maintenance/missing.py" not in workflow_executable_refs(sample):
+        print("FAIL: governance-maintenance workflow executable ref escaped",file=sys.stderr); return 1
+    fixture="""sample = 'python .github/governance-maintenance/missing.py'\nprint(sample)\n"""
+    if python_executable_refs(fixture):
+        print("FAIL: non-executed Python fixture contaminated executable graph",file=sys.stderr); return 1
+    print("PASS: structured mutation safety negative regression 4/4")
     return 0
 
 def main() -> int:

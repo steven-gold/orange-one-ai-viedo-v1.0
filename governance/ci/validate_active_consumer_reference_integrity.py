@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 from __future__ import annotations
 
+import ast
 import json
 import re
 import sys
@@ -47,8 +48,42 @@ def deep_get(data, dotted: str):
     return cur
 
 
-def executable_refs(text: str) -> set[str]:
+def workflow_executable_refs(text: str) -> set[str]:
     return {m.group(1) for m in EXEC_REF.finditer(text)}
+
+
+def _string_constants(node: ast.AST) -> list[str]:
+    out: list[str] = []
+    for child in ast.walk(node):
+        if isinstance(child, ast.Constant) and isinstance(child.value, str):
+            out.append(child.value)
+    return out
+
+
+def python_executable_refs(text: str) -> set[str]:
+    try:
+        tree = ast.parse(text)
+    except SyntaxError:
+        return set()
+    refs: set[str] = set()
+    allowed = re.compile(
+        r"^((?:governance/(?:ci|test)|\.github/(?:governance-source|governance-maintenance))/[A-Za-z0-9_./-]+\.py)$"
+    )
+    for node in ast.walk(tree):
+        if not isinstance(node, ast.Call):
+            continue
+        literals = []
+        for arg in node.args:
+            literals.extend(_string_constants(arg))
+        for kw in node.keywords:
+            literals.extend(_string_constants(kw.value))
+        for lit in literals:
+            for match in EXEC_REF.finditer(lit):
+                refs.add(match.group(1))
+            m = allowed.fullmatch(lit.strip())
+            if m and any(x in {"python", "python3"} for x in literals):
+                refs.add(m.group(1))
+    return refs
 
 
 def unsafe_preterminal_current_projection(text: str) -> bool:
@@ -254,7 +289,7 @@ def main() -> int:
             if not (ROOT / wf_ref).is_file():
                 missing_workflows.append(wf_ref)
                 errors.append(f"MISSING_REUSABLE_WORKFLOW_TARGET:{wf_ref}<-{rel(workflow)}")
-        for script_rel in executable_refs(text):
+        for script_rel in workflow_executable_refs(text):
             referenced_by[script_rel].add(rel(workflow))
             queue.append(script_rel)
 
@@ -270,7 +305,7 @@ def main() -> int:
         text = script.read_text(encoding="utf-8")
         if SEMVER_LOCATOR.search(text):
             errors.append(f"SEMVER_LOCATOR_IN_ACTIVE_CONSUMER:{script_rel}")
-        for child in executable_refs(text):
+        for child in python_executable_refs(text):
             referenced_by[child].add(script_rel)
             if child not in visited:
                 queue.append(child)
