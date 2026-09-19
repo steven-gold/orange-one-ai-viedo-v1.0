@@ -2,23 +2,22 @@ schema_version: 1
 artifact_type: EXECUTION_SCOPE_MANIFEST
 normative_authority: false
 governance_uid: GOV-REV-20260919-SEMANTIC-BASELINE-CONSUMER-SINGLE-OWNER-HARDENING
-owning_capability: FUNCTIONAL_CONTRACT
+owning_capability: SOURCE_INTAKE_AND_BASE_BLUEPRINT
 scope_kind: EXACT_SINGLE_PAGE_FRESH_REPLAY
 included_units:
-- CORE-01
-excluded_units:
 - ASSET-01
+excluded_units:
+- CORE-01
 remaining_units: []
 stage_required_units:
-- CORE-01
-scope_selection_authority: EXPLICIT_USER_DIRECTIVE_AND_FRESH_RAW_SOURCE_CAPTURE
+- ASSET-01
+scope_selection_authority: EXPLICIT_USER_DIRECTIVE_AND_RECOVERED_BYTE_EXACT_IMMUTABLE_SOURCE
 dependency_closure_refs:
 - governance/test/ACTIVE_STATE.yaml
-- 00_SOURCE_INTAKE/run_core01_d81df9ac_stage02/04_PAGE_FUNCTIONAL_CONTRACT/DEPENDENCY_MAP.yaml
+- 00_SOURCE_INTAKE/immutable_inputs/asset01_9668e230/RAW_SOURCE_RECOVERY_RECEIPT.yaml
 denominator_source_refs:
-- governance/test/stage02/STAGE02_LATEST_TEST_EVIDENCE.json
-- 00_SOURCE_INTAKE/run_core01_d81df9ac_stage02/04_PAGE_FUNCTIONAL_CONTRACT/CURRENT_PROBLEM_REGISTER.yaml
+- 00_SOURCE_INTAKE/immutable_inputs/asset01_9668e230/RAW_SOURCE_RECOVERY_RECEIPT.yaml
 partial_scope: false
-stage_exit_credit_allowed: true
-fresh_revalidation_required: false
-content_hash: 57b2543533765947b83cc3ba43b0aceb0b459f67d961aceb1892ecaa8791a3fc
+stage_exit_credit_allowed: false
+fresh_revalidation_required: true
+content_hash: 57d5ef05ac6eea1a68eec4b42a284ed27df25d1256286f83d3cbf80a824c4547

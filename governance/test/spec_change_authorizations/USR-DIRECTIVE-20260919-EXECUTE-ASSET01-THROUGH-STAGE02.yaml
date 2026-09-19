@@ -1,0 +1,48 @@
+schema_version: 1
+artifact_type: PRODUCT_EXECUTION_FRESH_REPLAY_AUTHORIZATION
+authorization_uid: USR-DIRECTIVE-20260919-EXECUTE-ASSET01-THROUGH-STAGE02
+normative_authority: false
+authority_source: EXPLICIT_USER_DIRECTIVE
+status: APPROVED_FOR_EXACT_SCOPE
+single_use: true
+ai_may_expand_scope: false
+current_governance_uid: GOV-REV-20260919-SEMANTIC-BASELINE-CONSUMER-SINGLE-OWNER-HARDENING
+authorization_baseline_commit_sha: 8133839fa7ba8f7e8c4f42120e3f295a305e005b
+user_directive:
+- "執行素材頁面跑stage-01.02"
+exact_scope:
+  predecessor_run_uid: IMMUTABLE-ASSET01-9668E230
+  predecessor_run_root: 00_SOURCE_INTAKE/immutable_inputs/asset01_9668e230
+  successor_run_uid: FRESH-ASSET01-8133839F-STAGE02
+  successor_run_root: 00_SOURCE_INTAKE/run_asset01_8133839f_stage02
+  replay_pages:
+  - ASSET-01
+  excluded_replay_pages:
+  - CORE-01
+  stages:
+  - STAGE-01
+  - STAGE-02
+  immutable_raw_sources:
+  - path: 00_SOURCE_INTAKE/immutable_inputs/asset01_9668e230/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    git_blob_sha: 9668e2307c722ea4cf64f93f07c92da1b3abcc28
+  allowed_actions:
+  - restore exact immutable ASSET-01 Raw Source bytes deleted with prior generated-data cleanup
+  - execute fresh ASSET-01 Stage-01 and Stage-02 through stable dynamic replay owner
+  - preserve unresolved external authorities without autofill or inference
+  - persist BLOCKED Stage-02 evidence when Current product Authority lacks required completion contracts
+  - persist exact workflow and artifact provenance
+  excluded_scope:
+  - CORE-01_REPLAY
+  - STAGE-03_EXECUTION
+  - WEBSITE_CONSTRUCTION
+  - DEPLOYMENT
+  - MOTHER_GOVERNANCE_MUTATION
+  - CURRENT_SPECIFICATION_MUTATION
+  - PRODUCT_AUTHORITY_INVENTION
+completion_requirements:
+  fresh_stage1_required: true
+  fresh_stage2_actual_test_required: true
+  prior_product_outputs_reused: false
+  external_authority_autofill_used: false
+  exact_workflow_artifact_provenance_required: true
+  exact_persisted_head_revalidation_required: true

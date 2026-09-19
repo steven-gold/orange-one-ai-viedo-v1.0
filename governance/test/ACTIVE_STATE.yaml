@@ -104,8 +104,8 @@ specification_mutation_safety:
   ordinary_mid_stage_specification_mutation: BLOCK
   stage_end_consolidated_promotion_requires_new_explicit_directive: true
   execution_context_lock_required: true
-status: ASSET01_REPLAY_HARNESS_PORTABILITY_MAINTENANCE_CLOSED
-next_action: WORK_UNIT_RESOLUTION_GATE_FOR_ASSET01_FRESH_REPLAY
+status: ACTIVE_ASSET01_FRESH_REPLAY_CONTEXT_READY
+next_action: REBOOTSTRAP_THEN_EXECUTE_ASSET01_FRESH_REPLAY
 previous_closed_product_work_unit:
   work_unit_uid: WU-STAGE02-CORE01-STRUCTURAL-REMEDIATION-001
   canonical_name: CORE01_STRUCTURAL_CONTRACT_REMEDIATION
@@ -284,15 +284,12 @@ previous_closed_work_unit:
     source_runtime_residual_count: 0
     product_stage_credit: 0
 resume_control:
-  current_resume_point: ASSET01_FRESH_REPLAY_WUR_REQUIRED
-  current_work_unit_uid: null
-  current_owner: null
+  current_resume_point: ASSET01_FRESH_REPLAY_CONTEXT_READY_REBOOTSTRAP_REQUIRED
+  current_work_unit_uid: WU-ASSET01-STAGE01-STAGE02-FRESH-REPLAY-8133839F
+  current_owner: 00_SOURCE_INTAKE/immutable_inputs/asset01_9668e230/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
   historical_stage2_results_are_current_state: false
   stage2_execution_requires_fresh_entry_resolution: true
-  exact_next_action: WORK_UNIT_RESOLUTION_GATE_FOR_ASSET01_FRESH_REPLAY
-  next_primary_task_layer: PRODUCT_STAGE_EXECUTION
-  requested_scope:
-  - ASSET-01
+  exact_next_action: REBOOTSTRAP_THEN_EXECUTE_ASSET01_FRESH_REPLAY
   requested_terminal_stage: STAGE-02
 governance_revision_transition:
   current_governance_uid: GOV-REV-20260919-SEMANTIC-BASELINE-CONSUMER-SINGLE-OWNER-HARDENING
@@ -347,7 +344,7 @@ pending_governance_review:
   - STAGE03
   - WEBSITE_CONSTRUCTION
   - DEPLOYMENT
-current_primary_task_layer: TEST_OR_VALIDATION_MAINTENANCE
+current_primary_task_layer: PRODUCT_STAGE_EXECUTION
 current_primary_task_authorization_uid: USR-DIRECTIVE-20260919-EXECUTE-ASSET01-THROUGH-STAGE02
 current_primary_task_product_stage_credit: 0
 earlier_closed_product_work_unit:
@@ -1350,6 +1347,92 @@ closed_test_validation_maintenance_work_unit_asset01_replay_portability:
     mother_normative_change: false
     product_stage_credit: 0
     closure_persistence_revalidation_required: true
+work_unit_resolution_gate_asset01_fresh_replay_current:
+  resolution_uid: WUR-ASSET01-STAGE01-STAGE02-8133839F
+  normative_authority: false
+  result: PASS_SINGLE_LEGAL_SUCCESSOR
+  requested_primary_task_layer: PRODUCT_STAGE_EXECUTION
+  resolved_work_unit_uid: WU-ASSET01-STAGE01-STAGE02-FRESH-REPLAY-8133839F
+  authorization_uid: USR-DIRECTIVE-20260919-EXECUTE-ASSET01-THROUGH-STAGE02
+  current_governance_uid: GOV-REV-20260919-SEMANTIC-BASELINE-CONSUMER-SINGLE-OWNER-HARDENING
+  page_scope:
+  - ASSET-01
+  excluded_page_scope:
+  - CORE-01
+  predecessor_input_uid: IMMUTABLE-ASSET01-9668E230
+  predecessor_input_root: 00_SOURCE_INTAKE/immutable_inputs/asset01_9668e230
+  successor_run_uid: FRESH-ASSET01-8133839F-STAGE02
+  successor_run_root: 00_SOURCE_INTAKE/run_asset01_8133839f_stage02
+  predecessor_maintenance_closure_head: 8133839fa7ba8f7e8c4f42120e3f295a305e005b
+  predecessor_maintenance_selected_profile_run_id: 35425124338
+  predecessor_maintenance_full_line_run_id: 35425124357
+  predecessor_maintenance_branch_guard_run_id: 35425124356
+  immutable_source_recovery:
+    source_git_history_commit: 6cc8b8646620be017d7d6b0dc0ccac8f725f7a19
+    deletion_commit: fb622bfc78f0e35763bcc21a5bca7d5eb869217a
+    original_git_blob_sha: 9668e2307c722ea4cf64f93f07c92da1b3abcc28
+    disposition: RESTORE_IMMUTABLE_INPUT_ONLY_NO_GENERATED_OUTPUT_RESTORE
+  result_target: EXECUTE_THROUGH_STAGE02_ONLY
+  product_stage_credit: 0
+active_work_unit:
+  work_unit_uid: WU-ASSET01-STAGE01-STAGE02-FRESH-REPLAY-8133839F
+  canonical_name: ASSET01_STAGE01_STAGE02_FRESH_REPLAY
+  primary_task_layer: PRODUCT_STAGE_EXECUTION
+  semantic_capability: SOURCE_INTAKE_BASE_BLUEPRINT_THROUGH_FUNCTIONAL_CONTRACT
+  scope:
+  - ASSET-01
+  canonical_owner: 00_SOURCE_INTAKE/immutable_inputs/asset01_9668e230/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+  execution_owner: .github/governance-maintenance/run_fresh_stage_replay.py
+  current_status: READY_AFTER_REQUIRED_REBOOTSTRAP
+  dependencies:
+  - 00_SOURCE_INTAKE/immutable_inputs/asset01_9668e230/RAW_SOURCE_RECOVERY_RECEIPT.yaml
+  - governance/test/CURRENT_EXECUTION_SCOPE_MANIFEST.yaml
+  - .github/workflows/fresh-stage-replay.yml
+  out_of_scope:
+  - CORE-01_REPLAY
+  - STAGE-03
+  - WEBSITE_CONSTRUCTION
+  - DEPLOYMENT
+  - EXTERNAL_AUTHORITY_AUTOFILL
+  - PRODUCT_AUTHORITY_INVENTION
+  definition_of_done:
+  - BYTE_EXACT_IMMUTABLE_ASSET01_SOURCE_RECOVERED
+  - FRESH_STAGE01_EXECUTION_FROM_REGISTERED_IMMUTABLE_INPUT
+  - FRESH_STAGE02_ACTUAL_PRODUCT_TEST_EXECUTED
+  - PRIOR_STAGE01_STAGE02_GENERATED_OUTPUTS_NOT_REUSED
+  - MISSING_PRODUCT_CONTRACTS_REPORTED_AS_BLOCKED_NOT_AUTOFILLED
+  - EXACT_WORKFLOW_AND_ARTIFACT_PROVENANCE_BOUND
+  - STAGE02_RESULT_PERSISTED
+  - EXACT_PERSISTED_HEAD_REVALIDATED
+  product_stage_credit: 0
+fresh_replay_execution_context:
+  status: READY_FOR_REPLAY
+  run_uid: FRESH-ASSET01-8133839F-STAGE02
+  run_root: 00_SOURCE_INTAKE/run_asset01_8133839f_stage02
+  predecessor_run_uid: IMMUTABLE-ASSET01-9668E230
+  predecessor_run_root: 00_SOURCE_INTAKE/immutable_inputs/asset01_9668e230
+  branch: rebuild-v2.1.1
+  authorization_uid: USR-DIRECTIVE-20260919-EXECUTE-ASSET01-THROUGH-STAGE02
+  authorization_ref: governance/test/spec_change_authorizations/USR-DIRECTIVE-20260919-EXECUTE-ASSET01-THROUGH-STAGE02.yaml
+  attempt_uid: STAGE02-ASSET01-8133839F-REPLAY
+  stage1_work_unit_uid: WU-STAGE01-ASSET01-8133839F-REPLAY
+  stage2_work_unit_uid: WU-STAGE02-ASSET01-8133839F-REPLAY
+  stage2_resolution_uid: WUR-STAGE02-ASSET01-8133839F-REPLAY
+  stage2_canonical_name: ASSET01_STAGE02_FRESH_REPLAY
+  page_scope:
+  - ASSET-01
+  excluded_page_scope:
+  - CORE-01
+  page_authority_source_file: ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+  raw_sources:
+  - filename: ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    source_uid: SRC-ASSET-01-PAGE-VISUAL-AUTHORITY
+    source_role: MIXED_PAGE_VISUAL_SOURCE_INPUT
+    source_domain_scope: MIXED_PAGE_VISUAL
+  local_authority_prefixes:
+  - ASSET_PAGE_VISUAL_AUTHORITY_FINAL
+  local_authority_path_prefixes:
+  - authority/pages/workspace/ASSET-01
 closed_product_work_unit_core01_stage02_current_replay:
   work_unit_uid: WU-STAGE02-CORE01-D81DF9AC-REPLAY
   canonical_name: CORE01_STAGE02_FRESH_REPLAY
