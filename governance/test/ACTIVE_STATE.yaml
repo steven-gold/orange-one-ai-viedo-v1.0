@@ -104,8 +104,8 @@ specification_mutation_safety:
   ordinary_mid_stage_specification_mutation: BLOCK
   stage_end_consolidated_promotion_requires_new_explicit_directive: true
   execution_context_lock_required: true
-status: ACTIVE_STAGE2_READY_FOR_TERMINAL_CLOSURE_R5
-next_action: CLOSE_STAGE02
+status: STAGE2_CORE01_CLOSED_REVALIDATION_REQUIRED
+next_action: WORK_UNIT_RESOLUTION_GATE_AFTER_EXACT_HEAD_REVALIDATION
 previous_closed_product_work_unit:
   work_unit_uid: WU-STAGE02-CORE01-STRUCTURAL-REMEDIATION-001
   canonical_name: CORE01_STRUCTURAL_CONTRACT_REMEDIATION
@@ -284,12 +284,15 @@ previous_closed_work_unit:
     source_runtime_residual_count: 0
     product_stage_credit: 0
 resume_control:
-  current_resume_point: FRESH_CORE01_STAGE2_READY_TO_CLOSE
-  current_work_unit_uid: WU-STAGE02-CORE01-COMPLETENESS-REPLAY-R5
-  current_owner: 00_SOURCE_INTAKE/fresh_run_008/04_PAGE_FUNCTIONAL_CONTRACT/CURRENT_PROBLEM_REGISTER.yaml
+  current_resume_point: STAGE2_CORE01_CLOSED_EXACT_HEAD_REVALIDATION_PENDING
+  current_work_unit_uid: null
+  current_owner: null
   historical_stage2_results_are_current_state: false
   stage2_execution_requires_fresh_entry_resolution: false
-  exact_next_action: CLOSE_STAGE02
+  exact_next_action: WORK_UNIT_RESOLUTION_GATE_AFTER_EXACT_HEAD_REVALIDATION
+  closed_work_unit_uid: WU-STAGE02-CORE01-COMPLETENESS-REPLAY-R5
+  closed_owner: 00_SOURCE_INTAKE/fresh_run_008/04_PAGE_FUNCTIONAL_CONTRACT/CURRENT_PROBLEM_REGISTER.yaml
+  legal_next_transition: WORK_UNIT_RESOLUTION_GATE
 governance_revision_transition:
   current_governance_uid: GOV-REV-20260919-SEMANTIC-BASELINE-CONSUMER-SINGLE-OWNER-HARDENING
   predecessor_governance_uid: GOV-REV-20260919-STRUCTURED-MUTATION-SELECTOR-HARDENING
@@ -902,7 +905,7 @@ work_unit_resolution_gate_core01_clean_replay_r5:
   predecessor_run_uid: FRESH-RUN-007
   successor_run_uid: FRESH-RUN-008
   product_stage_credit: 0
-active_work_unit:
+closed_product_work_unit_core01_stage02_r5:
   work_unit_uid: WU-STAGE02-CORE01-COMPLETENESS-REPLAY-R5
   canonical_name: CORE01_STAGE02_20260911_PLANNING_COMPLETENESS_REMEDIATION_AND_FRESH_REPLAY
   stage_uid: STAGE-02
@@ -911,7 +914,7 @@ active_work_unit:
   scope:
   - CORE-01
   canonical_owner: 00_SOURCE_INTAKE/fresh_run_008/04_PAGE_FUNCTIONAL_CONTRACT/CURRENT_PROBLEM_REGISTER.yaml
-  current_status: READY_FOR_TERMINAL_CLOSURE
+  current_status: CLOSED_VERIFIED_FRESH_REPLAY_ZERO_GAPS
   source_attempt_uid: STAGE02-FRESH-20260919-CORE01-005
   source_problem_denominator: 0
   source_closure_blocker_denominator: 0
@@ -1015,6 +1018,18 @@ active_work_unit:
   - STAGE03
   - WEBSITE_CONSTRUCTION
   - DEPLOYMENT
+  closure_evidence:
+    governance_uid: GOV-REV-20260919-SEMANTIC-BASELINE-CONSUMER-SINGLE-OWNER-HARDENING
+    source_execution_sha: ced59fe341449fde11c79810a488330c9283f4b3
+    source_workflow_run_id: 35420941470
+    source_workflow_result: success
+    source_artifact_id: 10577147985
+    source_artifact_sha256: 3b23ba5424a32d2390be49988d9c9a333cae64f27437d11f508dcae5ae5f2cc5
+    fresh_functional_gap_total: 0
+    fresh_closure_blocker_total: 0
+    prior_results_used: false
+    persistence_predecessor_head: 642d862a1ff429d12a052658d8dadfc6aae8989b
+    exact_head_governance_revalidation: REQUIRED_AFTER_CLOSURE_PERSISTENCE
 stage02_active_attempt:
   attempt_uid: STAGE02-FRESH-20260919-CORE01-005
   run_uid: FRESH-RUN-008
