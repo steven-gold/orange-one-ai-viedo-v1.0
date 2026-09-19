@@ -26,6 +26,7 @@ M4=SOURCE/'12_DOCS/mother-spec/04_AUDIT_PROGRESS_STANDARD.md'
 SECTION_REG=SOURCE/'10_REGISTRY/SECTION_NUMBER_REGISTRY.yaml'
 SEMANTIC=SOURCE/'10_REGISTRY/SEMANTIC_AUTHORITY_BASELINE.yaml'
 REFERENCE_RULES=SOURCE/'10_REGISTRY/REFERENCE_RULE_REGISTRY.yaml'
+CONSTRUCTION_INDEX=SOURCE/'10_REGISTRY/CONSTRUCTION_ARTIFACT_INDEX.yaml'
 SPEC_MUT=ROOT/'governance/specifications/current/SPECIFICATION_MUTATION_CONTROL.yaml'
 
 M3_SECTION_UID='WEB-GOV-03-S070'
@@ -179,6 +180,23 @@ def update_reference_rule_bundles():
     ref['governance_revision']=SOURCE_REVISION
     dump_yaml(REFERENCE_RULES,ref)
 
+def update_operational_common_bundle_index():
+    idx=load_yaml(CONSTRUCTION_INDEX)
+    bundles=idx.get('mandatory_common_normative_bundles') or {}
+    required=[
+      ('BUNDLE-GOV-CONSTRUCTION-BASE',M3_SECTION_UID),
+      ('BUNDLE-GOV-AUDIT-BASE',M4_SECTION_UID),
+    ]
+    for bundle_uid,section_uid in required:
+        b=bundles.get(bundle_uid)
+        if not isinstance(b,dict) or not isinstance(b.get('section_uids'),list):
+            raise RuntimeError(f'OPERATIONAL_BUNDLE_MISSING:{bundle_uid}')
+        if section_uid in b['section_uids']:
+            raise RuntimeError(f'OPERATIONAL_BUNDLE_SECTION_ALREADY_PRESENT:{bundle_uid}:{section_uid}')
+        b['section_uids'].append(section_uid)
+    idx['governance_revision']=SOURCE_REVISION
+    dump_yaml(CONSTRUCTION_INDEX,idx)
+
 def update_source_revision_and_semantic():
     for path in sorted((SOURCE/'10_REGISTRY').glob('*.yaml')):
         d=load_yaml(path)
@@ -186,6 +204,7 @@ def update_source_revision_and_semantic():
             d['governance_revision']=SOURCE_REVISION
             dump_yaml(path,d)
     update_reference_rule_bundles()
+    update_operational_common_bundle_index()
     sem=load_yaml(SEMANTIC)
     sem['governance_revision']=SOURCE_REVISION
     bundles=((sem.get('semantic_snapshot') or {}).get('common_bundle_reference_rules') or {})
@@ -425,7 +444,7 @@ def main():
     auth=load_yaml(AUTH)
     if auth.get('artifact_type')!='SPECIFICATION_CHANGE_AUTHORIZATION_RECEIPT' or auth.get('status')!='APPROVED_FOR_EXACT_SCOPE':
         raise RuntimeError('AUTHORIZATION_RECEIPT_INVALID')
-    if auth.get('baseline_commit_sha')!='31833f1362a72337fc7923c3b1c4e76d3e50e1a4' or auth.get('baseline_tree_sha')!='fca75b2497ffdb2a84133fd6d28a1cba96b05628':
+    if auth.get('baseline_commit_sha')!='49875efca61a21e4fe7ec17c2943fbd2404d327b' or auth.get('baseline_tree_sha')!='a4e5b9ff42ed3cba572f46df928b802991752bb2':
         raise RuntimeError('AUTHORIZATION_BASELINE_DRIFT')
     reg=load_yaml(ROOT/'governance/specifications/REGISTRY.yaml')
     if (reg.get('active_specification') or {}).get('governance_uid')!=OLD_UID:
