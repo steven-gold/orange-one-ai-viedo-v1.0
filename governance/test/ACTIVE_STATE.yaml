@@ -1652,6 +1652,38 @@ active_work_unit:
   - STAGE03
   - WEBSITE_CONSTRUCTION
   - DEPLOYMENT
+stage02_asset01_fresh_execution_checkpoint:
+  checkpoint_type: TEST_EXECUTION_TERMINAL_BLOCKED_PRODUCT_WORK_UNIT_REMAINS_OPEN
+  current_governance_uid: GOV-REV-20260919-SEMANTIC-BASELINE-CONSUMER-SINGLE-OWNER-HARDENING
+  run_uid: FRESH-ASSET01-8133839F-STAGE02
+  attempt_uid: STAGE02-ASSET01-8133839F-REPLAY
+  tested_page_scope:
+  - ASSET-01
+  excluded_page_scope:
+  - CORE-01
+  stage1_result: PASS
+  stage2_test_result: BLOCKED
+  stage2_scope_complete: true
+  stage2_exit_allowed: false
+  planning_baseline_completeness: BLOCKED
+  fresh_functional_gap_total: 106
+  fresh_closure_blocker_total: 9
+  unresolved_external_authority_union_count: 8
+  prior_stage2_results_used: false
+  ai_autofill_used: false
+  inference_used: false
+  current_specification_mutated: false
+  source_execution_sha: 23dbdb041d2f95056838c2dd0b94e7bba5180856
+  source_workflow_run_id: 35425342223
+  source_artifact_id: 10578232908
+  source_artifact_sha256: 175738b0eedcac3eafd7dfa25e258f33bb92a84aa54b4b5a043f70dd97b267cd
+  evidence_ref: governance/test/stage02/STAGE02_LATEST_TEST_EVIDENCE.json
+  findings_ref: governance/test/stage02/STAGE02_CURRENT_FINDINGS.yaml
+  problem_register_ref: 00_SOURCE_INTAKE/run_asset01_8133839f_stage02/04_PAGE_FUNCTIONAL_CONTRACT/CURRENT_PROBLEM_REGISTER.yaml
+  terminal_disposition: TEST_EXECUTED_BLOCKED_DESIGN_CONTRACT_REMEDIATION_REQUIRED
+  next_legal_action: BUILD_FRESH_ASSET-01_DESIGN_CONTRACT_CANDIDATE_FROM_CURRENT_GAPS
+  exact_persisted_head_revalidation_required: true
+  product_stage_credit: 0
 stage02_active_attempt:
   attempt_uid: STAGE02-ASSET01-8133839F-REPLAY
   run_uid: FRESH-ASSET01-8133839F-STAGE02
