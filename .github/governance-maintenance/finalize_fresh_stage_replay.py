@@ -91,12 +91,13 @@ def _stage02_revalidation_reconcile(register:dict, ev:dict, exact_problem_uids:s
     return out,resolved
 
 def _stage02_revalidation_self_test():
+    synthetic_page='UNIT-X'
     register={'resolved_problem_count':0,'problems':[
-      {'problem_uid':'P1','page_uid':'ASSET-01','class':'ARCHITECTURE_GAP','category':'C1','target_uid':'A1','detail':'d1','gap_owner':'PAGE_FUNCTIONAL_CONTRACT','status':'OPEN_FRESH_CURRENT_RUN','resolution_credit':0},
-      {'problem_uid':'P2','page_uid':'ASSET-01','class':'ARCHITECTURE_GAP','category':'C2','target_uid':'A2','detail':'d2','gap_owner':'PAGE_FUNCTIONAL_CONTRACT','status':'OPEN_FRESH_CURRENT_RUN','resolution_credit':0},
+      {'problem_uid':'P1','page_uid':synthetic_page,'class':'ARCHITECTURE_GAP','category':'C1','target_uid':'A1','detail':'d1','gap_owner':'PAGE_FUNCTIONAL_CONTRACT','status':'OPEN_FRESH_CURRENT_RUN','resolution_credit':0},
+      {'problem_uid':'P2','page_uid':synthetic_page,'class':'ARCHITECTURE_GAP','category':'C2','target_uid':'A2','detail':'d2','gap_owner':'PAGE_FUNCTIONAL_CONTRACT','status':'OPEN_FRESH_CURRENT_RUN','resolution_credit':0},
     ]}
-    ev={'target_pages':['ASSET-01'],'fresh_functional_gap_total':1,'pages':{'ASSET-01':{'functional_chain_fresh_scan':{'gaps':[
-      {'page_uid':'ASSET-01','class':'ARCHITECTURE_GAP','category':'C1','uid':'A1','detail':'d1','gap_owner':'PAGE_FUNCTIONAL_CONTRACT'}
+    ev={'target_pages':[synthetic_page],'fresh_functional_gap_total':1,'pages':{synthetic_page:{'functional_chain_fresh_scan':{'gaps':[
+      {'page_uid':synthetic_page,'class':'ARCHITECTURE_GAP','category':'C1','uid':'A1','detail':'d1','gap_owner':'PAGE_FUNCTIONAL_CONTRACT'}
     ]}}}}
     out,resolved=_stage02_revalidation_reconcile(register,ev,{'P2'})
     assert out['open_problem_count']==1 and out['resolved_problem_count']==1
@@ -134,7 +135,7 @@ def finalize_stage02_revalidation_persistence():
     state=load_yaml(STATE)
     current_uid=state.get('specification_uid')
     work=state.get('active_work_unit') or {}
-    if work.get('work_unit_uid')!='WU-STAGE02-ASSET01-8133839F-REPLAY' or work.get('primary_task_layer')!='PRODUCT_STAGE_EXECUTION':
+    if work.get('stage_uid')!='STAGE-02' or work.get('semantic_capability')!='PAGE_FUNCTIONAL_CONTRACT' or work.get('primary_task_layer')!='PRODUCT_STAGE_EXECUTION':
         raise RuntimeError(f'REVALIDATION_PRODUCT_WORK_UNIT_NOT_ACTIVE:{work.get("work_unit_uid")!r}')
     if work.get('current_status')!='EXACT_CLOSURES_MATERIALIZED_REVALIDATION_REQUIRED':
         raise RuntimeError(f'REVALIDATION_PRODUCT_WORK_UNIT_STATUS_DRIFT:{work.get("current_status")!r}')
@@ -143,8 +144,11 @@ def finalize_stage02_revalidation_persistence():
 
     scope=load_yaml(SCOPE)
     pages=list(scope.get('included_units') or [])
-    if ev.get('target_pages')!=pages or pages!=['ASSET-01']:
+    if len(pages)!=1 or ev.get('target_pages')!=pages:
         raise RuntimeError(f'REVALIDATION_SCOPE_DRIFT:state={pages!r}:evidence={ev.get("target_pages")!r}')
+    PAGE=pages[0]
+    if not isinstance(PAGE,str) or not PAGE:
+        raise RuntimeError('REVALIDATION_PAGE_SCOPE_INVALID')
     owner=str(work.get('canonical_owner') or '')
     marker='/04_PAGE_FUNCTIONAL_CONTRACT/'
     if marker not in owner:
@@ -155,7 +159,7 @@ def finalize_stage02_revalidation_persistence():
     denom_path=product_root/'DENOMINATOR_SNAPSHOT.yaml'
     overlay_path=product_root/'EFFECTIVE_CONTRACT_OVERLAY.yaml'
     resolution_path=product_root/'RESOLUTION_LEDGER.yaml'
-    page_root=product_root/'ASSET-01'
+    page_root=product_root/PAGE
     coverage=load_yaml(page_root/'REMEDIATION_BLOCKER_COVERAGE.yaml')
     exact_ids=set()
     for key in ('exact_external_authority','exact_port_state','deterministic_negative_transition_tests','exact_success_signal_wrappers'):
@@ -163,23 +167,24 @@ def finalize_stage02_revalidation_persistence():
         if not isinstance(rows,list):
             raise RuntimeError(f'REVALIDATION_COVERAGE_LIST_REQUIRED:{key}')
         exact_ids.update(str(x) for x in rows)
-    if len(exact_ids)!=31:
-        raise RuntimeError(f'REVALIDATION_EXACT_CLOSURE_DENOMINATOR_DRIFT:{len(exact_ids)}')
+    expected_exact=int((work.get('exact_closure_materialization') or {}).get('materialized_closure_count') or 0)
+    if expected_exact<=0 or len(exact_ids)!=expected_exact:
+        raise RuntimeError(f'REVALIDATION_EXACT_CLOSURE_DENOMINATOR_DRIFT:expected={expected_exact}:actual={len(exact_ids)}')
 
     register=load_yaml(problem_path)
     before_open=int(register.get('open_problem_count') or 0)
     projected,resolved=_stage02_revalidation_reconcile(register,ev,exact_ids)
     after_open=int(projected.get('open_problem_count') or 0)
     fresh_credit=before_open-after_open
-    if fresh_credit!=len(exact_ids) or fresh_credit!=31:
-        raise RuntimeError(f'REVALIDATION_FRESH_CREDIT_DRIFT:{fresh_credit}')
+    if fresh_credit!=len(exact_ids) or fresh_credit!=expected_exact:
+        raise RuntimeError(f'REVALIDATION_FRESH_CREDIT_DRIFT:expected={expected_exact}:actual={fresh_credit}')
     if after_open!=int(ev.get('fresh_functional_gap_total') or 0):
         raise RuntimeError('REVALIDATION_PROJECTED_OPEN_COUNT_DRIFT')
     projected['source_problem_count_before_revalidation']=before_open
     projected['last_revalidation']={'source_execution_sha':source_sha,'source_workflow_run_id':int(run_id) if run_id.isdigit() else run_id,'source_artifact_id':int(artifact_id) if artifact_id.isdigit() else artifact_id,'source_artifact_sha256':digest.lower(),'fresh_elimination_count':fresh_credit,'closure_blocker_total':int(ev.get('closure_blocker_total') or 0),'test_mode':ev.get('test_mode')}
     dump_yaml(problem_path,projected)
 
-    receipt_ref=f'{run_root}/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/EXACT_CLOSURE_MATERIALIZATION_RECEIPT.yaml'
+    receipt_ref=f'{run_root}/04_PAGE_FUNCTIONAL_CONTRACT/{PAGE}/EXACT_CLOSURE_MATERIALIZATION_RECEIPT.yaml'
     ledger=load_yaml(resolution_path)
     entries=list(ledger.get('entries') or [])
     existing={str(x.get('source_problem_uid') or '') for x in entries if isinstance(x,dict)}
@@ -204,7 +209,7 @@ def finalize_stage02_revalidation_persistence():
     tracked.update({'attempt_uid':state.get('stage02_active_attempt',{}).get('attempt_uid'),'frozen_governance_uid':current_uid,'source_workflow_run_id':int(run_id) if run_id.isdigit() else run_id,'source_artifact_id':int(artifact_id) if artifact_id.isdigit() else artifact_id,'source_artifact_sha256':digest.lower()})
     EVIDENCE.write_text(json.dumps(tracked,ensure_ascii=False,indent=2,sort_keys=True)+'\n',encoding='utf-8')
 
-    page=(ev.get('pages') or {}).get('ASSET-01') or {}
+    page=(ev.get('pages') or {}).get(PAGE) or {}
     scan=page.get('functional_chain_fresh_scan') or {}
     candidate_path=page_root/'DESIGN_CONTRACT_CANDIDATE.yaml'
     candidate_doc=load_yaml(candidate_path)
@@ -212,8 +217,9 @@ def finalize_stage02_revalidation_persistence():
         raise RuntimeError('REVALIDATION_REVIEW_ONLY_CANDIDATE_DENOMINATOR_DRIFT')
     if candidate_doc.get('status')!='REVIEW_ONLY_NON_AUTHORITY_NON_MATERIALIZABLE':
         raise RuntimeError('REVALIDATION_REMAINING_CANDIDATE_STATUS_DRIFT')
-    next_action='REVIEW_ASSET01_STAGE02_REMAINING_REVIEW_ONLY_DESIGN_CONTRACT_CANDIDATE'
-    resume_point='ASSET01_STAGE2_EXACT_CLOSURES_REVALIDATED_REVIEW_ONLY_PRODUCT_AUTHORITY_REQUIRED'
+    page_token=PAGE.replace('-','')
+    next_action=f'REVIEW_{page_token}_STAGE02_REMAINING_REVIEW_ONLY_DESIGN_CONTRACT_CANDIDATE'
+    resume_point=f'{page_token}_STAGE2_EXACT_CLOSURES_REVALIDATED_REVIEW_ONLY_PRODUCT_AUTHORITY_REQUIRED'
 
     findings=load_yaml(FINDINGS)
     findings.update({'governance_uid':current_uid,'fresh_functional_gap_total':after_open,'closure_blocker_total':int(ev.get('closure_blocker_total') or 0),'fresh_closure_blocker_total':int(ev.get('closure_blocker_total') or 0),'preserved_external_authority_union_count':int(ev.get('preserved_external_authority_union_count') or 0),'official_stage_output_denominator_count':len(ev.get('official_stage_output_denominator') or []),'current_manifest_mandatory_stage_output_subset_count':len(ev.get('execution_profile_mandatory_output_subset') or []),'gap_classes':scan.get('gap_classes') or {},'gap_categories':scan.get('gap_categories') or {},'status':'DESIGN_CONTRACT_REMEDIATION_REQUIRED' if ev.get('result')=='BLOCKED' else 'PASS','result':ev.get('result'),'source_head_sha':source_sha,'source_execution_sha':source_sha,'source_workflow_run_id':int(run_id) if run_id.isdigit() else run_id,'source_artifact_id':int(artifact_id) if artifact_id.isdigit() else artifact_id,'source_artifact_sha256':digest.lower(),'next_action':next_action,'prior_stage2_results_used':False,'product_blocker_credit':fresh_credit,'validated_exact_closure_count':fresh_credit})
@@ -221,7 +227,7 @@ def finalize_stage02_revalidation_persistence():
 
     candidates=load_yaml(CANDIDATES)
     cur=candidates.setdefault('current_stage2_execution',{})
-    cur.update({'state':'TEST_EXECUTED_BLOCKED' if ev.get('result')=='BLOCKED' else 'TEST_EXECUTED_PASS','current_functional_gap_count':after_open,'current_closure_blocker_count':int(ev.get('closure_blocker_total') or 0),'active_evidence_present':True,'active_findings_present':True,'stage_exit_allowed':bool(ev.get('stage_exit_allowed')),'website_construction_allowed':False,'deployment_allowed':False,'historical_counts_may_be_treated_as_current':False,'source_execution_sha':source_sha,'reexecution_cycle':'SAME_ATTEMPT_BOUNDED_REMEDIATION_REVALIDATION','target_pages':pages,'remaining_pages':list(ev.get('remaining_pages') or []),'stage_scope_complete':bool(ev.get('stage_scope_complete')),'next_action':next_action,'attempt_uid':findings.get('attempt_uid'),'frozen_governance_uid':current_uid,'raw_discovery_gap_count':after_open,'product_materialization_elimination_count':fresh_credit,'external_authority_elimination_count':len(coverage.get('exact_external_authority') or []),'total_fresh_elimination_count':fresh_credit,'preserved_external_authority_union_count':int(ev.get('preserved_external_authority_union_count') or 0),'official_stage_output_denominator_count':len(ev.get('official_stage_output_denominator') or []),'current_manifest_mandatory_stage_output_subset_count':len(ev.get('execution_profile_mandatory_output_subset') or []),'prior_stage2_results_used':False,'source_workflow_run_id':int(run_id) if run_id.isdigit() else run_id,'source_artifact_id':int(artifact_id) if artifact_id.isdigit() else artifact_id,'source_artifact_sha256':digest.lower(),'product_blocker_reduction_credit':fresh_credit,'validated_product_successor_signature_count':fresh_credit,'effective_functional_gap_count':after_open,'planning_baseline_completeness':ev.get('planning_baseline_completeness'),'current_work_unit_status':'REVIEW_ONLY_PRODUCT_AUTHORITY_REQUIRED','fresh_revalidation_required_under_current_governance':False,'current_governance_uid':current_uid,'closure_credit_under_current_governance':True,'execution_scope_manifest_ref':'governance/test/CURRENT_EXECUTION_SCOPE_MANIFEST.yaml','canonical_product_contract_owner_ref':f'{run_root}/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/FUNCTIONAL_CHAIN_SPEC.yaml'})
+    cur.update({'state':'TEST_EXECUTED_BLOCKED' if ev.get('result')=='BLOCKED' else 'TEST_EXECUTED_PASS','current_functional_gap_count':after_open,'current_closure_blocker_count':int(ev.get('closure_blocker_total') or 0),'active_evidence_present':True,'active_findings_present':True,'stage_exit_allowed':bool(ev.get('stage_exit_allowed')),'website_construction_allowed':False,'deployment_allowed':False,'historical_counts_may_be_treated_as_current':False,'source_execution_sha':source_sha,'reexecution_cycle':'SAME_ATTEMPT_BOUNDED_REMEDIATION_REVALIDATION','target_pages':pages,'remaining_pages':list(ev.get('remaining_pages') or []),'stage_scope_complete':bool(ev.get('stage_scope_complete')),'next_action':next_action,'attempt_uid':findings.get('attempt_uid'),'frozen_governance_uid':current_uid,'raw_discovery_gap_count':after_open,'product_materialization_elimination_count':fresh_credit,'external_authority_elimination_count':len(coverage.get('exact_external_authority') or []),'total_fresh_elimination_count':fresh_credit,'preserved_external_authority_union_count':int(ev.get('preserved_external_authority_union_count') or 0),'official_stage_output_denominator_count':len(ev.get('official_stage_output_denominator') or []),'current_manifest_mandatory_stage_output_subset_count':len(ev.get('execution_profile_mandatory_output_subset') or []),'prior_stage2_results_used':False,'source_workflow_run_id':int(run_id) if run_id.isdigit() else run_id,'source_artifact_id':int(artifact_id) if artifact_id.isdigit() else artifact_id,'source_artifact_sha256':digest.lower(),'product_blocker_reduction_credit':fresh_credit,'validated_product_successor_signature_count':fresh_credit,'effective_functional_gap_count':after_open,'planning_baseline_completeness':ev.get('planning_baseline_completeness'),'current_work_unit_status':'REVIEW_ONLY_PRODUCT_AUTHORITY_REQUIRED','fresh_revalidation_required_under_current_governance':False,'current_governance_uid':current_uid,'closure_credit_under_current_governance':True,'execution_scope_manifest_ref':'governance/test/CURRENT_EXECUTION_SCOPE_MANIFEST.yaml','canonical_product_contract_owner_ref':f'{run_root}/04_PAGE_FUNCTIONAL_CONTRACT/{PAGE}/FUNCTIONAL_CHAIN_SPEC.yaml'})
     dump_yaml(CANDIDATES,candidates)
 
     ex=state.setdefault('execution',{})
@@ -248,7 +254,7 @@ def finalize_stage02_revalidation_persistence():
     work['fresh_revalidation_evidence']={'source_execution_sha':source_sha,'source_workflow_run_id':int(run_id) if run_id.isdigit() else run_id,'source_artifact_id':int(artifact_id) if artifact_id.isdigit() else artifact_id,'source_artifact_sha256':digest.lower(),'pre_revalidation_problem_denominator':before_open,'fresh_problem_denominator':after_open,'fresh_closure_blocker_denominator':int(ev.get('closure_blocker_total') or 0),'exact_closure_product_credit':fresh_credit}
     state['active_work_unit']=work
     state['current_primary_task_product_stage_credit']=fresh_credit
-    state['status']='ACTIVE_ASSET01_STAGE02_REVALIDATED_REVIEW_ONLY_PRODUCT_AUTHORITY_REQUIRED'
+    state['status']=f'ACTIVE_{page_token}_STAGE02_REVALIDATED_REVIEW_ONLY_PRODUCT_AUTHORITY_REQUIRED'
     state['next_action']=next_action
     state['resume_control']={'current_resume_point':resume_point,'current_work_unit_uid':work.get('work_unit_uid'),'current_owner':str(candidate_path.relative_to(ROOT)),'historical_stage2_results_are_current_state':False,'stage2_execution_requires_fresh_entry_resolution':False,'exact_next_action':next_action}
     dump_yaml(STATE,state)
