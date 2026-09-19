@@ -12,6 +12,13 @@ CANDIDATES=ROOT/'governance/test/SPECIFICATION_CHANGE_CANDIDATES.yaml'
 FINDINGS=ROOT/'governance/test/stage02/STAGE02_CURRENT_FINDINGS.yaml'
 EVIDENCE=ROOT/'governance/test/stage02/STAGE02_LATEST_TEST_EVIDENCE.json'
 RUNNER=ROOT/'.github/governance-maintenance/run_fresh_stage_replay.py'
+EXACT_CLOSURE_COVERAGE_KEYS=(
+    'exact_external_authority',
+    'exact_port_state',
+    'deterministic_negative_transition_tests',
+    'exact_success_signal_wrappers',
+    'deterministic_system_triggers',
+)
 
 def load_runner():
     spec=importlib.util.spec_from_file_location('acpos_dynamic_fresh_replay_runner',RUNNER)
@@ -120,6 +127,9 @@ def _stage02_revalidation_self_test():
         assert 'REVALIDATION_RESOLVED_SET_NOT_AUTHORIZED_MATERIALIZATION' in str(exc)
     else:
         raise AssertionError('extra unapproved elimination was not rejected')
+    assert 'deterministic_system_triggers' in EXACT_CLOSURE_COVERAGE_KEYS
+    assert len(EXACT_CLOSURE_COVERAGE_KEYS)==5
+    print('PASS: Stage-02 revalidation exact-closure coverage supports deterministic system-trigger closures')
     print('PASS: Stage-02 revalidation projector accepts exact authorized batch and rejects wrong/extra eliminations')
 
 def _stage02_revalidation_materialization_context(work:dict, page_root:Path)->dict:
@@ -127,7 +137,7 @@ def _stage02_revalidation_materialization_context(work:dict, page_root:Path)->di
     if status=='EXACT_CLOSURES_MATERIALIZED_REVALIDATION_REQUIRED':
         coverage=load_yaml(page_root/'REMEDIATION_BLOCKER_COVERAGE.yaml')
         problem_uids=set()
-        for key in ('exact_external_authority','exact_port_state','deterministic_negative_transition_tests','exact_success_signal_wrappers'):
+        for key in EXACT_CLOSURE_COVERAGE_KEYS:
             rows=coverage.get(key) or []
             if not isinstance(rows,list):
                 raise RuntimeError(f'REVALIDATION_COVERAGE_LIST_REQUIRED:{key}')
