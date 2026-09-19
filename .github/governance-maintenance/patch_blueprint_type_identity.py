@@ -1,14 +1,14 @@
 #!/usr/bin/env python3
 from pathlib import Path
-import ast
+import ast, re
 
 PROMOTION=Path('.github/governance-maintenance/promote_blueprint_traceability_governance.py')
 s=PROMOTION.read_text(encoding='utf-8')
-old_auth='USR-DIRECTIVE-20260919-BLUEPRINT-CONSTRUCTION-TRACEABILITY-HARDENING-R1'
-new_auth='USR-DIRECTIVE-20260919-BLUEPRINT-CONSTRUCTION-TRACEABILITY-HARDENING-R9'
-if old_auth not in s:
-    raise SystemExit('PROMOTION_AUTH_UID_R1_NOT_FOUND')
-s=s.replace(old_auth,new_auth)
+pat=re.compile(r'USR-DIRECTIVE-20260919-BLUEPRINT-CONSTRUCTION-TRACEABILITY-HARDENING-R\d+')
+found=sorted(set(pat.findall(s)))
+if not found:
+    raise SystemExit('PROMOTION_AUTH_UID_PATTERN_NOT_FOUND')
+s=pat.sub('USR-DIRECTIVE-20260919-BLUEPRINT-CONSTRUCTION-TRACEABILITY-HARDENING-R10',s)
 
 tree=ast.parse(s)
 apply_fn=next((n for n in tree.body if isinstance(n,ast.FunctionDef) and n.name=='apply'),None)
@@ -63,4 +63,4 @@ for idx,chunk in sorted(insertions,key=lambda x:x[0],reverse=True):
 patched='\n'.join(lines)+'\n'
 ast.parse(patched)
 PROMOTION.write_text(patched,encoding='utf-8')
-print('PASS: one-shot promotion helper patched semantic identity, R9 authorization, and cleanup lifecycle')
+print('PASS: promotion authorization rebound from '+','.join(found)+' to R10; AST identity/cleanup patches inserted')
