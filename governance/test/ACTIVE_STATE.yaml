@@ -22,7 +22,7 @@ execution:
   scope_mode: EXACT_PAGE_SCOPE_ONLY
   target_pages:
   - CORE-01
-  current_stage: STAGE-02-CLOSED
+  current_stage: STAGE-02-CLOSED-VERIFIED
   stage1:
     CORE-01: PASS
   stage2:
@@ -41,10 +41,10 @@ execution:
   stage3:
     result: NOT_EXECUTED
     work_unit_uid: WU-STAGE03-CORE01-VISUAL-DESIGN-001
-    work_unit_resolution: SUSPENDED_BY_UPSTREAM_FUNCTIONAL_CONTRACT_REENTRY
+    work_unit_resolution: READY_FOR_RESUME_REVALIDATION_AFTER_STAGE02_CLOSURE
     execution_started: false
     predecessor_entry_condition: ALL_REQUIRED_PAGES_STAGE2_CLOSED
-    predecessor_entry_condition_status: REVERIFY_REQUIRED_AFTER_STAGE02_REENTRY
+    predecessor_entry_condition_status: SATISFIED_BY_FRESH_RUN_006_STAGE02_CLOSURE
     pre_execution_gate: GOVERNANCE_LOAD_RECEIPT_PASS
     pre_execution_gate_status: NOT_EXECUTED
     stage_exit_allowed: false
@@ -69,14 +69,14 @@ full_lifecycle_governance_system_test:
   skip_allowed: false
   timeout_may_be_treated_as_pass: false
   partial_suite_result_may_be_treated_as_full_line_pass: false
-  full_line_github_result: REVALIDATION_REQUIRED_AFTER_PRODUCT_DATA_RESET_AND_FRESH_REPLAY
+  full_line_github_result: success
   exact_denominators_verified: true
   source_runtime_residual_count: 0
-  persisted_head_revalidation_required: true
-  full_line_verification_run_id: 35401771995
-  full_line_verification_head_sha: e48ac1bce7e7798c107694087f0056b8a434bf08
+  persisted_head_revalidation_required: false
+  full_line_verification_run_id: 35411781006
+  full_line_verification_head_sha: 019470d82ba09c0ec48d9fd96f666be15c7d74cc
   terminal_run_conclusion: success
-  terminal_result_credit_allowed: false
+  terminal_result_credit_allowed: true
 stage_execution_loading:
   full_line_round_reads_all_source_files_for_integrity_and_regression: true
   normal_stage_execution_reads_only_stage_required_files_and_shared_dependencies: true
@@ -109,8 +109,8 @@ specification_mutation_safety:
   ordinary_mid_stage_specification_mutation: BLOCK
   stage_end_consolidated_promotion_requires_new_explicit_directive: true
   execution_context_lock_required: true
-status: ACTIVE_STAGE2_READY_FOR_TERMINAL_CLOSURE_R3
-next_action: CLOSE_STAGE02
+status: STAGE02_CLOSED_VERIFIED_FRESH_RUN_006
+next_action: WORK_UNIT_RESOLUTION_GATE_FOR_STAGE03_AFTER_STAGE02_CLOSURE
 previous_closed_product_work_unit:
   work_unit_uid: WU-STAGE02-CORE01-STRUCTURAL-REMEDIATION-001
   canonical_name: CORE01_STRUCTURAL_CONTRACT_REMEDIATION
@@ -289,12 +289,12 @@ previous_closed_work_unit:
     source_runtime_residual_count: 0
     product_stage_credit: 0
 resume_control:
-  current_resume_point: FRESH_CORE01_STAGE2_READY_TO_CLOSE
-  current_work_unit_uid: WU-STAGE02-CORE01-COMPLETENESS-REMEDIATION-R3
-  current_owner: 00_SOURCE_INTAKE/fresh_run_006/04_PAGE_FUNCTIONAL_CONTRACT/CURRENT_PROBLEM_REGISTER.yaml
+  current_resume_point: STAGE2_CORE01_CLOSED_STAGE3_WUR_REQUIRED
+  current_work_unit_uid: null
+  current_owner: null
   historical_stage2_results_are_current_state: false
   stage2_execution_requires_fresh_entry_resolution: false
-  exact_next_action: CLOSE_STAGE02
+  exact_next_action: WORK_UNIT_RESOLUTION_GATE_FOR_STAGE03_AFTER_STAGE02_CLOSURE
 governance_revision_transition:
   current_governance_uid: GOV-REV-20260919-PROFILE-TOKEN-DECONTAMINATION-HARDENING
   predecessor_governance_uid: GOV-REV-20260919-SCOPE-STAGE-REENTRY-PORTABILITY-HARDENING
@@ -495,7 +495,7 @@ suspended_stage03_work_unit:
   canonical_policy_owner: .github/governance-source/active/source/10_REGISTRY/GOVERNANCE_LIFECYCLE_STAGE_REGISTRY.yaml
   state_owner: governance/test/ACTIVE_STATE.yaml
   scope_manifest_ref: governance/test/CURRENT_EXECUTION_SCOPE_MANIFEST.yaml
-  current_status: ACTIVE_PREEXECUTION
+  current_status: SUSPENDED_RESUMABLE_PREEXECUTION
   canonical_owner_mapping:
     current_visual_base_blueprint_ref: 00_SOURCE_INTAKE/fresh_run_006/02_BASE_BLUEPRINT/CORE-01/VISUAL_BASE_BLUEPRINT.yaml
     layout_geometry_owner_uid: OWNER-CLS-CORE-01-LAYOUT-GEOMETRY-004
@@ -632,14 +632,14 @@ last_work_unit_resolution_gate:
   - ASSET-01
   source_problem_denominator: 0
   source_closure_blocker_denominator: 0
-active_work_unit:
+closed_stage02_completeness_work_unit:
   work_unit_uid: WU-STAGE02-CORE01-COMPLETENESS-REMEDIATION-R3
   canonical_name: CORE01_STAGE02_20260911_PLANNING_COMPLETENESS_REMEDIATION_AND_FRESH_REPLAY
   primary_task_layer: PRODUCT_STAGE_EXECUTION
   scope:
   - CORE-01
   canonical_owner: 00_SOURCE_INTAKE/fresh_run_006/04_PAGE_FUNCTIONAL_CONTRACT/CURRENT_PROBLEM_REGISTER.yaml
-  current_status: READY_FOR_TERMINAL_CLOSURE
+  current_status: CLOSED_VERIFIED
   source_attempt_uid: STAGE02-FRESH-20260919-CORE01-003
   source_problem_denominator: 0
   source_closure_blocker_denominator: 0
@@ -649,3 +649,46 @@ active_work_unit:
   - STAGE03
   - WEBSITE_CONSTRUCTION
   - DEPLOYMENT
+
+stage02_terminal_closure_r3:
+  status: CLOSED_VERIFIED
+  work_unit_uid: WU-STAGE02-CORE01-COMPLETENESS-REMEDIATION-R3
+  authorization_uid: USR-DIRECTIVE-20260919-CORE01-STAGE02-COMPLETENESS-R3
+  governance_uid: GOV-REV-20260919-PROFILE-TOKEN-DECONTAMINATION-HARDENING
+  run_uid: FRESH-RUN-006
+  attempt_uid: STAGE02-FRESH-20260919-CORE01-003
+  page_scope:
+  - CORE-01
+  excluded_scope:
+  - ASSET-01
+  planning_baseline_file: ACPOS_CORE01_CONSTRUCTION_BLUEPRINT_PACKAGE_2026-09-11 (2)(4).zip
+  planning_baseline_sha256: 9b0cc3c227cf53427e5cf60caf6b07f5e43a0a76f16800076641f22487642351
+  planning_baseline_completeness: PASS
+  fresh_functional_gap_total: 0
+  closure_blocker_total: 0
+  remaining_required_units: 0
+  prior_stage2_results_used: false
+  effective_contract_overlay_applied: false
+  stage1_result: PASS
+  stage2_result: TEST_EXECUTED_PASS
+  stage_exit_credit: true
+  source_replay_workflow_run_id: 35411692791
+  source_replay_artifact_id: 10574258526
+  source_replay_artifact_sha256: 955466b73a6f21aaeca65320c13fd545be1f445ad5cb4ba602e3a793de3bd6f1
+  preclosure_validation_head: 019470d82ba09c0ec48d9fd96f666be15c7d74cc
+  preclosure_terminal_runs:
+    full_line:
+      run_id: 35411781006
+      conclusion: success
+    selected_profile:
+      run_id: 35411780977
+      conclusion: success
+    stage02_boundary:
+      run_id: 35411781011
+      conclusion: success
+    branch_guard:
+      run_id: 35411780969
+      conclusion: success
+  stage03_execution_started: false
+  legal_next_transition: WORK_UNIT_RESOLUTION_GATE_FOR_STAGE03_AFTER_STAGE02_CLOSURE
+  closure_commit_exact_head_revalidation_required: true
