@@ -23,14 +23,6 @@ on:
         type: choice
         options:
           - actual-test
-      page_scope:
-        description: Stage-02 page scope
-        required: true
-        default: CORE-01
-        type: choice
-        options:
-          - CORE-01
-          - ALL_REQUIRED_PAGES
 
 permissions:
   contents: write
@@ -56,6 +48,10 @@ jobs:
         run: python governance/ci/run_current_stage2_actual_test.py --self-test-applicability-projection
       - name: Regression test bounded-remediation product-root continuity
         run: python governance/ci/validate_stage02_state_integrity.py --self-test-revalidation-root-continuity
+      - name: Regression test control-vs-system-trigger semantic resolution
+        run: python governance/ci/run_current_stage2_actual_test.py --self-test-shared-contract-hardening
+      - name: Regression test producer-consumer schema identity in materializer
+        run: python governance/ci/materialize_current_stage2_closure_artifacts.py --self-test-shared-contract-hardening
       - name: Regression test same-attempt revalidation persistence projector
         run: python .github/governance-maintenance/finalize_fresh_stage_replay.py --stage02-revalidation-self-test
       - name: Prove pending preformal review blocks before product execution
@@ -264,5 +260,5 @@ jobs:
             echo "BLOCK: revalidation persistence produced no tracked Current State change" >&2
             exit 1
           }
-          git commit -m "test(stage02): persist ASSET-01 bounded revalidation result"
+          git commit -m "test(stage02): persist current bounded revalidation result"
           git push origin "HEAD:${GITHUB_REF_NAME}"

@@ -15,7 +15,7 @@ NEW_UID='GOV-REV-20260919-ASSET-STAGE01-STAGE02-SHARED-CONTRACT-HARDENING'
 OLD_DISPLAY='v2.2.12'
 NEW_DISPLAY='v2.2.13'
 NEW_SOURCE_REV='v2.2.13-asset-stage01-stage02-shared-contract-hardening'
-AUTH_UID='USR-DIRECTIVE-20260920-ASSET-STAGE01-STAGE02-SHARED-CONTRACT-HARDENING-R2'
+AUTH_UID='USR-DIRECTIVE-20260920-ASSET-STAGE01-STAGE02-SHARED-CONTRACT-HARDENING-R3'
 WORK_UNIT='WU-GOV-ASSET-STAGE01-STAGE02-SHARED-CONTRACT-HARDENING-001'
 NEW_PACKAGE='AI_WEB_GOVERNANCE_FULL_LIFECYCLE_v2.2.13_ASSET_STAGE01_STAGE02_SHARED_CONTRACT_HARDENING_LOCAL_VERIFIED.zip'
 
@@ -479,27 +479,18 @@ def _self_test_shared_contract_hardening():
 def mutate_workflow():
     p=ROOT/'.github/workflows/stage02-actual-test.yml'
     s=p.read_text(encoding='utf-8')
-    block="""      page_scope:
-        description: Stage-02 page scope
-        required: true
-        default: CORE-01
-        type: choice
-        options:
-          - CORE-01
-          - ALL_REQUIRED_PAGES
-"""
-    if block in s: s=s.replace(block,'',1)
-    anchor="      - name: Regression test bounded-remediation product-root continuity\n        run: python governance/ci/validate_stage02_state_integrity.py --self-test-revalidation-root-continuity\n"
-    extra="""      - name: Regression test control-vs-system-trigger semantic resolution
-        run: python governance/ci/run_current_stage2_actual_test.py --self-test-shared-contract-hardening
-      - name: Regression test producer-consumer schema identity in materializer
-        run: python governance/ci/materialize_current_stage2_closure_artifacts.py --self-test-shared-contract-hardening
-"""
-    if 'Regression test control-vs-system-trigger semantic resolution' not in s:
-        s=replace_once(s,anchor,anchor+extra,'workflow self-tests')
-    s=s.replace('git commit -m "test(stage02): persist ASSET-01 bounded revalidation result"','git commit -m "test(stage02): persist current bounded revalidation result"')
-    p.write_text(s,encoding='utf-8')
-
+    required=[
+      'Regression test control-vs-system-trigger semantic resolution',
+      'python governance/ci/run_current_stage2_actual_test.py --self-test-shared-contract-hardening',
+      'Regression test producer-consumer schema identity in materializer',
+      'python governance/ci/materialize_current_stage2_closure_artifacts.py --self-test-shared-contract-hardening',
+      'git commit -m "test(stage02): persist current bounded revalidation result"',
+    ]
+    missing=[x for x in required if x not in s]
+    if missing:
+        raise RuntimeError(f'pre-applied stage02 workflow contract missing:{missing}')
+    if 'default: CORE-01' in s or '- CORE-01' in s:
+        raise RuntimeError('pre-applied stage02 workflow still has fixed CORE-01 dispatch scope')
 def mutate_semantic_baseline():
     p=SOURCE/'10_REGISTRY/SEMANTIC_AUTHORITY_BASELINE.yaml'
     d=load(p)
@@ -573,17 +564,10 @@ def source_revision_aux():
         p.write_text(p.read_text(encoding='utf-8').rstrip()+f"\n\n{marker}\n- v2.2.12 remains immutable predecessor history.\n- Missing explicit trigger syntax is not automatically a product Authority choice when structured Current evidence uniquely proves a system-owned operation.\n- Producer/consumer field-schema drift fails before materialization; alias fallback cannot hide the defect.\n- Historical product values cannot fill Current missing contracts.\n- Reusable Stage consumers remain product-neutral and task-layer order is not bypassable.\n",encoding='utf-8')
 
 def cleanup_promotion_scaffold():
-    wf=ROOT/'.github/workflows/fresh-stage-replay.yml'
-    s=wf.read_text(encoding='utf-8')
-    begin='  # ASSET_STAGE12_SHARED_PROMOTION_JOB_BEGIN'
-    end='  # ASSET_STAGE12_SHARED_PROMOTION_JOB_END'
-    if begin in s and end in s:
-        a=s.index(begin); b=s.index(end,a)+len(end)
-        s=s[:a]+s[b:]
-        wf.write_text(s.rstrip()+'\n',encoding='utf-8')
-    me=Path(__file__)
-    if me.exists(): me.unlink()
-
+    # Workflow/promoter cleanup is intentionally deferred to a connector-authored
+    # post-promotion commit because the Actions token does not have workflows permission.
+    # Exact-head validation is run only after that cleanup commit.
+    return
 def static_current_consumer_assertions():
     mat=(ROOT/'governance/ci/materialize_current_stage2_closure_artifacts.py').read_text(encoding='utf-8')
     for forbidden in ['fresh_run_003','"CORE-01"','"ASSET-01"','STAGE02_PRODUCT_REENTRY_AUTHORIZATION_UID','deferred_foreground']:
