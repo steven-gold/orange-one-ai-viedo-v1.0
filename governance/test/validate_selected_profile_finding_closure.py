@@ -180,7 +180,10 @@ for token in (
     "MATERIALIZED_FRESH_REVALIDATED",
     "FRESH_REVALIDATED_PRODUCT_CREDIT_DRIFT",
 ):
-    require(token in successor_strings, f"015_SUCCESSOR_SEMANTIC_GUARD_MISSING:{token}")
+    require(
+        any(value == token or value.startswith(token + ":") for value in successor_strings),
+        f"015_SUCCESSOR_SEMANTIC_GUARD_MISSING:{token}",
+    )
 for token in (
     "raw_actions", "raw_controls", "raw_sections", "raw_components", "raw_ports",
     "OPERATION_MATRIX_ACTION_UID_DRIFT", "FUNCTIONAL_CHAIN_ACTION_DRIFT", "FUNCTIONAL_CHAIN_PORT_DRIFT",
