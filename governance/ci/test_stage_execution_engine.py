@@ -72,6 +72,17 @@ block_evidence('scanner_coverage_drift',lambda x:x['scanner_results'].pop())
 block_evidence('remediation_without_reexecution',lambda x:x.__setitem__('remediation',{'discovered_gap_total':1,'remediated_gap_total':1,'unresolved_gap_total':0,'reexecution_required':True,'reexecution_performed':False}))
 block_evidence('hidden_defect_on_pass',lambda x:x.__setitem__('hidden_defect_sweep',{'performed':True,'result':'PASS','discovered_defect_total':1}))
 block_evidence('next_stage_drift',lambda x:x['next_stage_transition'].__setitem__('next_stage_uid','WRONG-STAGE'))
+block('driver_contract_missing',lambda p,a:a.pop('execution_driver_contract'))
+block('driver_operation_coverage_disabled',lambda p,a:a['execution_driver_contract'].__setitem__('exact_operation_binding_coverage_required',False))
+block_evidence('output_producer_result_drift',lambda x:x['output_results'][0].__setitem__('producer_operation_uid','WRONG'))
+block_evidence('validator_coverage_drift',lambda x:x['validator_results'].pop())
+block_evidence('required_evidence_missing',lambda x:x['required_evidence'].clear())
+block_evidence('exact_head_gate_drift',lambda x:x['exact_head_gate_receipts'][0].__setitem__('head_sha','2'*40))
+block_evidence('resume_persistence_missing',lambda x:x.__setitem__('resume_persistence',{'performed':False,'resume_point':None}))
+block_evidence('pass_nonzero_denominator',lambda x:x['denominator'].__setitem__('remaining_scope_total',1))
+def make_blocked_without_phase(x):
+    x['result']='BLOCKED'; x['stage_exit_allowed']=False
+block_evidence('blocked_without_blocked_phase',make_blocked_without_phase)
 wrapper=(ROOT/'governance/ci/compile_stage_execution_preflight.py').read_text(encoding='utf-8')
 assert 'compatibility_main' in wrapper
 assert 'UNSUPPORTED_STAGE_UNTIL_MATCHING_CURRENT_EVIDENCE_EXISTS' not in wrapper
@@ -90,5 +101,5 @@ for node in ast.walk(tree):
         for arg in node.args:
             if isinstance(arg,ast.Constant) and isinstance(arg.value,str) and arg.value.startswith('UNSUPPORTED_STAGE_UNTIL_MATCHING_CURRENT_EVIDENCE_EXISTS'):
                 raise AssertionError('COMMON_ENGINE_STAGE02_ONLY_REJECTION')
-print(f'PASS: common Stage Execution Engine negative regression {cases}/19')
+print(f'PASS: common Stage Execution Engine negative regression {cases}/28')
 print('PASS: Stage-02 entrypoint is compatibility-only; common engine has no Stage-02-only execution rejection')

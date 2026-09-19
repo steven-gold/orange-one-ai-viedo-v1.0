@@ -96,6 +96,22 @@ owner_remediation_routes:
   RUNTIME_IMPLEMENTATION_GAP: IMPLEMENTATION_CAPABILITY
   EVIDENCE_STATE_GAP: EVIDENCE_OR_STATE_OWNER
   EXTERNAL_AUTHORITY_GAP: EXTERNAL_OR_SHARED_AUTHORITY
+execution_driver_contract:
+  driver_binding_source: ACTIVE_WORK_UNIT
+  operation_universe_source: SELECTED_PROFILE_STAGE_OPERATIONS
+  output_producer_source: SELECTED_PROFILE_STAGE_OUTPUT_PRODUCERS
+  semantic_adapter_source: STAGE_EXECUTION_SEMANTIC_ADAPTER_REGISTRY
+  scanner_universe_source: STAGE_SEMANTIC_ADAPTER_SCANNER_DIMENSIONS
+  exact_operation_binding_coverage_required: true
+  exact_scanner_binding_coverage_required: true
+  executor_owner_required_per_operation: true
+  result_owner_required_per_operation: true
+  scanner_owner_required_per_dimension: true
+  arbitrary_shell_command_from_adapter: FORBIDDEN
+  unregistered_operation_execution: BLOCK
+  unregistered_scanner_execution: BLOCK
+  missing_operation_binding: BLOCK
+  missing_scanner_binding: BLOCK
 stages:
   STAGE-01:
     profile_name: SOURCE_INTAKE_AND_BASE_BLUEPRINT

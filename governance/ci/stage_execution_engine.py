@@ -85,6 +85,17 @@ def validate_definition_data(profile,adapters):
     for k,v in expected.items():
         if req.get(k)!=v: fail(f'COMMON_REQUIREMENT_DRIFT:{k}')
     if set(adapters.get('owner_remediation_routes') or {})!=ROUTE_KEYS: fail('OWNER_REMEDIATION_ROUTE_DENOMINATOR_DRIFT')
+    driver=adapters.get('execution_driver_contract') or {}
+    expected_driver={
+      'driver_binding_source':'ACTIVE_WORK_UNIT','operation_universe_source':'SELECTED_PROFILE_STAGE_OPERATIONS',
+      'output_producer_source':'SELECTED_PROFILE_STAGE_OUTPUT_PRODUCERS','semantic_adapter_source':'STAGE_EXECUTION_SEMANTIC_ADAPTER_REGISTRY',
+      'scanner_universe_source':'STAGE_SEMANTIC_ADAPTER_SCANNER_DIMENSIONS','exact_operation_binding_coverage_required':True,
+      'exact_scanner_binding_coverage_required':True,'executor_owner_required_per_operation':True,'result_owner_required_per_operation':True,
+      'scanner_owner_required_per_dimension':True,'arbitrary_shell_command_from_adapter':'FORBIDDEN',
+      'unregistered_operation_execution':'BLOCK','unregistered_scanner_execution':'BLOCK',
+      'missing_operation_binding':'BLOCK','missing_scanner_binding':'BLOCK'}
+    for k,v in expected_driver.items():
+        if driver.get(k)!=v: fail(f'EXECUTION_DRIVER_CONTRACT_DRIFT:{k}')
     ads=adapters.get('stages') or {}
     if set(ads)!=set(stages): fail('SEMANTIC_ADAPTER_DENOMINATOR_DRIFT')
     if adapters.get('derived_from_profile_uid')!=profile.get('profile_uid'): fail('SEMANTIC_ADAPTER_PROFILE_UID_DRIFT')
@@ -165,6 +176,20 @@ def active_product(stage_uid):
         if isinstance(rel,str) and '/' in rel and not (ROOT/rel).exists(): fail(f'ACTIVE_PRODUCT_WORK_UNIT_DEPENDENCY_MISSING:{rel}')
     req=set(map(str,work.get('required_outputs') or [])); prof=set(map(str,stages[stage_uid].get('outputs') or []))
     if req and not prof.issubset(req): fail('ACTIVE_WORK_UNIT_OUTPUT_DENOMINATOR_INCOMPLETE')
+    op_bindings=work.get('operation_bindings')
+    expected_ops=set(map(str,stages[stage_uid].get('operations') or []))
+    if not isinstance(op_bindings,dict) or set(map(str,op_bindings))!=expected_ops:
+        fail(f'ACTIVE_WORK_UNIT_OPERATION_BINDING_COVERAGE_INVALID:{stage_uid}')
+    for uid,binding in op_bindings.items():
+        if not isinstance(binding,dict) or not binding.get('executor_owner') or not binding.get('result_owner'):
+            fail(f'ACTIVE_WORK_UNIT_OPERATION_BINDING_INVALID:{uid}')
+    scan_bindings=work.get('scanner_bindings')
+    expected_scans=set(map(str,(adapters['stages'][stage_uid]).get('scanner_dimensions') or []))
+    if not isinstance(scan_bindings,dict) or set(map(str,scan_bindings))!=expected_scans:
+        fail(f'ACTIVE_WORK_UNIT_SCANNER_BINDING_COVERAGE_INVALID:{stage_uid}')
+    for uid,binding in scan_bindings.items():
+        if not isinstance(binding,dict) or not binding.get('scanner_owner') or not binding.get('result_owner'):
+            fail(f'ACTIVE_WORK_UNIT_SCANNER_BINDING_INVALID:{uid}')
     return work
 def admission(stage_uid):
     work=active_product(stage_uid); pl=plan(stage_uid)
