@@ -431,7 +431,7 @@ def materialize_stage1(raw_bytes:dict[str,bytes], source_head:str):
               'relation_type':'PREVIOUS_NEXT','source_evidence_ref':'00_SOURCE_INTAKE/evidence/SOURCE_ENUMERATION_EVIDENCE.yaml',
             })
     ctx={
-      'artifact_uid':'SF-CORE01-CONTEXT-FRESH-008','artifact_type':'SOURCE_CONTEXT_MANIFEST',
+      'artifact_uid':stable_uid('SF-CONTEXT',PAGE,RUN_UID),'artifact_type':'SOURCE_CONTEXT_MANIFEST',
       'page_uid_or_scope_uid':PAGE,'page_uids':[PAGE],'source_nodes':all_node_ids,'context_edges':edges,
       'source_lineage_refs':[r['source_uid'] for r in manifest_records],'status':'CURRENT_SOURCE_FACT',
     }
@@ -439,7 +439,7 @@ def materialize_stage1(raw_bytes:dict[str,bytes], source_head:str):
     dump(NEW/'00_SOURCE_INTAKE/SOURCE_CONTEXT_MANIFEST.yaml',ctx)
 
     conflict={
-      'artifact_uid':'SF-CORE01-CONFLICT-FRESH-008','artifact_type':'CONTENT_SUPERSESSION_CONFLICT_LEDGER',
+      'artifact_uid':stable_uid('SF-CONFLICT',PAGE,RUN_UID),'artifact_type':'CONTENT_SUPERSESSION_CONFLICT_LEDGER',
       'page_uid_or_scope_uid':PAGE,'page_uids':[PAGE],'items':[],'status':'CURRENT_SOURCE_FACT',
     }
     conflict['content_hash']=content_hash(conflict)
@@ -459,7 +459,7 @@ def materialize_stage1(raw_bytes:dict[str,bytes], source_head:str):
           'resolved':False,'satisfied':False,'auto_filled':False,'inferred':False,
         })
     dep={
-      'artifact_uid':'SF-CORE01-DEPENDENCY-FRESH-008','artifact_type':'SOURCE_DEPENDENCY_MAP',
+      'artifact_uid':stable_uid('SF-DEPENDENCY',PAGE,RUN_UID),'artifact_type':'SOURCE_DEPENDENCY_MAP',
       'page_uid_or_scope_uid':PAGE,'page_uids':[PAGE],
       'edges':[],'unresolved_authority_gaps':gaps,'invented_dependency_count':0,'status':'CURRENT_SOURCE_FACT',
     }
@@ -594,7 +594,7 @@ def reset_current_state_for_stage1():
       'website_construction_allowed':False,'deployment_allowed':False,
     })
     state['status']='ACTIVE_STAGE1_CLOSED_STAGE2_NOT_EXECUTED'
-    state['next_action']='WORK_UNIT_RESOLUTION_GATE_REQUIRED_FOR_FRESH_CORE01_STAGE02'
+    state['next_action']=f'WORK_UNIT_RESOLUTION_GATE_REQUIRED_FOR_FRESH_{safe_uid(PAGE)}_STAGE02'
     profile_state=state.setdefault('selected_execution_profile_state',{})
     profile_state['active_attempt_state_key']=None
     state['current_primary_task_layer']='PRODUCT_STAGE_EXECUTION'
@@ -609,16 +609,16 @@ def reset_current_state_for_stage1():
       'target_page_uids':[PAGE],'remaining_page_uids':[PAGE],
     }
     state['resume_control']={
-      'current_resume_point':'FRESH_CORE01_STAGE1_CLOSED_STAGE2_WUR_READY',
+      'current_resume_point':f'FRESH_{safe_uid(PAGE)}_STAGE1_CLOSED_STAGE2_WUR_READY',
       'current_work_unit_uid':None,'current_owner':None,
       'historical_stage2_results_are_current_state':False,
       'stage2_execution_requires_fresh_entry_resolution':True,
-      'exact_next_action':'WORK_UNIT_RESOLUTION_GATE_REQUIRED_FOR_FRESH_CORE01_STAGE02',
+      'exact_next_action':state['next_action'],
     }
     proto=state.get('stage_execution_remediation_closure_protocol')
     if isinstance(proto,dict):
         proto['frozen_specification_uid']=CURRENT_UID
-        proto['binding_status']='CURRENT_V2_2_9_FRESH_REPLAY_STAGE1_CLOSED'
+        proto['binding_status']='CURRENT_GOVERNANCE_FRESH_REPLAY_STAGE1_CLOSED'
     fl=state.get('full_lifecycle_governance_system_test')
     if isinstance(fl,dict):
         fl['persisted_head_revalidation_required']=True
@@ -928,10 +928,10 @@ def materialize_stage2_projection(final):
       },
       'product_blocker_credit':0,'out_of_scope':[*EXCLUDED_UNITS,'STAGE03','WEBSITE_CONSTRUCTION','DEPLOYMENT'],
     }
-    state['status']='ACTIVE_STAGE2_TESTED_BLOCKED_FRESH_CORE01' if problems else 'ACTIVE_STAGE2_READY_FOR_TERMINAL_CLOSURE'
-    state['next_action']='BUILD_FRESH_CORE01_DESIGN_CONTRACT_CANDIDATE_FROM_CURRENT_GAPS' if problems else 'CLOSE_STAGE02'
+    state['status']='ACTIVE_STAGE2_TESTED_BLOCKED_FRESH_SCOPE' if problems else 'ACTIVE_STAGE2_READY_FOR_TERMINAL_CLOSURE'
+    state['next_action']=f'BUILD_FRESH_{safe_uid(PAGE)}_DESIGN_CONTRACT_CANDIDATE_FROM_CURRENT_GAPS' if problems else 'CLOSE_STAGE02'
     state['resume_control']={
-      'current_resume_point':'FRESH_CORE01_STAGE2_DESIGN_REMEDIATION_REQUIRED' if problems else 'FRESH_CORE01_STAGE2_READY_TO_CLOSE',
+      'current_resume_point':f'FRESH_{safe_uid(PAGE)}_STAGE2_DESIGN_REMEDIATION_REQUIRED' if problems else f'FRESH_{safe_uid(PAGE)}_STAGE2_READY_TO_CLOSE',
       'current_work_unit_uid':state['active_work_unit']['work_unit_uid'],'current_owner':state['active_work_unit']['canonical_owner'],
       'historical_stage2_results_are_current_state':False,'stage2_execution_requires_fresh_entry_resolution':False,
       'exact_next_action':state['next_action'],
@@ -975,7 +975,7 @@ def main():
     for name in RAW_NAMES:
         p=OLD/'00_SOURCE_INTAKE/RAW_SOURCE'/PAGE/name
         if not p.is_file():
-            raise RuntimeError('CORE_RAW_SOURCE_MISSING:'+name)
+            raise RuntimeError('RAW_SOURCE_MISSING:'+name)
         raw_bytes[name]=p.read_bytes()
 
     cleanup_old()
@@ -1031,12 +1031,12 @@ def main():
       'fresh_functional_gap_total':final.get('fresh_functional_gap_total'),
       'closure_blocker_total':final.get('closure_blocker_total'),
       'planning_baseline_completeness':final.get('planning_baseline_completeness'),
-      'asset01_generated_data_present':False,
+      'excluded_unit_generated_data_present':{uid:False for uid in EXCLUDED_UNITS},
       'prior_run_root_present':OLD.exists(),
       'prior_stage2_history_present':(ROOT/'governance/test/history/stage02').exists(),
       'prior_stage2_candidate_reused':False,
       'product_blocker_credit':0,
-      'next_action':'BUILD_FRESH_CORE01_DESIGN_CONTRACT_CANDIDATE_FROM_CURRENT_GAPS' if final.get('fresh_functional_gap_total') else 'CLOSE_STAGE02',
+      'next_action':f'BUILD_FRESH_{safe_uid(PAGE)}_DESIGN_CONTRACT_CANDIDATE_FROM_CURRENT_GAPS' if final.get('fresh_functional_gap_total') else 'CLOSE_STAGE02',
     },ensure_ascii=False,indent=2))
 
 if __name__=='__main__':

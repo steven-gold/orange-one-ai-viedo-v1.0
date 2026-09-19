@@ -104,8 +104,8 @@ specification_mutation_safety:
   ordinary_mid_stage_specification_mutation: BLOCK
   stage_end_consolidated_promotion_requires_new_explicit_directive: true
   execution_context_lock_required: true
-status: ACTIVE_FRESH_REPLAY_TRIGGER_MAINTENANCE
-next_action: ENABLE_PERSISTED_CONTEXT_PUSH_EXECUTION_TRIGGER
+status: ACTIVE_FRESH_REPLAY_TRIGGER_MAINTENANCE_REVALIDATION_REQUIRED
+next_action: VALIDATE_PERSISTED_CONTEXT_PUSH_EXECUTION_TRIGGER
 previous_closed_product_work_unit:
   work_unit_uid: WU-STAGE02-CORE01-STRUCTURAL-REMEDIATION-001
   canonical_name: CORE01_STRUCTURAL_CONTRACT_REMEDIATION
@@ -284,12 +284,12 @@ previous_closed_work_unit:
     source_runtime_residual_count: 0
     product_stage_credit: 0
 resume_control:
-  current_resume_point: FRESH_REPLAY_TRIGGER_MAINTENANCE_READY
+  current_resume_point: FRESH_REPLAY_TRIGGER_MAINTENANCE_REVALIDATION_REQUIRED
   current_work_unit_uid: WU-TEST-FRESH-REPLAY-TRIGGER-001
-  current_owner: .github/workflows/fresh-core-stage-replay.yml
+  current_owner: .github/workflows/fresh-stage-replay.yml
   historical_stage2_results_are_current_state: false
   stage2_execution_requires_fresh_entry_resolution: true
-  exact_next_action: ENABLE_PERSISTED_CONTEXT_PUSH_EXECUTION_TRIGGER
+  exact_next_action: VALIDATE_PERSISTED_CONTEXT_PUSH_EXECUTION_TRIGGER
   parent_requested_primary_task_layer: PRODUCT_STAGE_EXECUTION
   parent_requested_scope:
   - CORE-01
@@ -1102,7 +1102,7 @@ closed_test_validation_maintenance_work_unit_dynamic_execution_identity:
   - .github/governance-maintenance/run_fresh_core01_stage01_stage02_replay_r5.py
   - .github/governance-maintenance/finalize_fresh_core01_stage01_stage02_r5.py
   target_owner_set:
-  - .github/workflows/fresh-core-stage-replay.yml
+  - .github/workflows/fresh-stage-replay.yml
   - .github/governance-maintenance/run_fresh_stage_replay.py
   - .github/governance-maintenance/finalize_fresh_stage_replay.py
   dependencies:
@@ -1131,7 +1131,7 @@ closed_test_validation_maintenance_work_unit_dynamic_execution_identity:
   implementation_evidence:
     migration_mode: ATOMIC_OWNER_REFERENCE_MIGRATION
     source_owner_disposition: RETIRED_FROM_CURRENT_TREE_PRESERVED_IN_GIT_HISTORY
-    stable_workflow_owner: .github/workflows/fresh-core-stage-replay.yml
+    stable_workflow_owner: .github/workflows/fresh-stage-replay.yml
     stable_runner_owner: .github/governance-maintenance/run_fresh_stage_replay.py
     stable_finalizer_owner: .github/governance-maintenance/finalize_fresh_stage_replay.py
     active_consumer_guard_owner: governance/ci/validate_active_consumer_reference_integrity.py
@@ -1177,8 +1177,8 @@ active_work_unit:
   work_unit_uid: WU-TEST-FRESH-REPLAY-TRIGGER-001
   canonical_name: STABLE_FRESH_REPLAY_PERSISTED_CONTEXT_PUSH_TRIGGER
   primary_task_layer: TEST_OR_VALIDATION_MAINTENANCE
-  canonical_owner: .github/workflows/fresh-core-stage-replay.yml
-  current_status: READY_FOR_IMPLEMENTATION
+  canonical_owner: .github/workflows/fresh-stage-replay.yml
+  current_status: IMPLEMENTATION_MIGRATED_REVALIDATION_REQUIRED
   scope:
   - GENERIC_PERSISTED_CONTEXT_PUSH_TRIGGER
   - ACTIVE_STATE_PATH_TRIGGER
@@ -1203,6 +1203,14 @@ active_work_unit:
   - EXACT_HEAD_BRANCH_GUARD_PASS
   - PRODUCT_STAGE_CREDIT_ZERO
   product_stage_credit: 0
+  implementation_evidence:
+    stable_workflow_owner: .github/workflows/fresh-stage-replay.yml
+    stable_finalizer_owner: .github/governance-maintenance/finalize_fresh_stage_replay.py
+    generic_push_trigger: '[fresh-replay-execute]'
+    execution_context_source: governance/test/ACTIVE_STATE.yaml
+    successful_context_terminal_state: CONSUMED
+    fixed_product_identity_in_reusable_replay_executable_required: 0
+    exact_head_revalidation_required: true
 last_work_unit_resolution_gate:
   resolution_uid: WUR-STAGE02-CORE01-COMPLETENESS-20260919-005
   normative_authority: false

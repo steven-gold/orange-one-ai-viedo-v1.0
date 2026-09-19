@@ -122,14 +122,23 @@ def main():
       'evidence_artifact_id':attempt['source_artifact_id'],
       'evidence_artifact_sha256':attempt['source_artifact_sha256'],
       'prior_stage01_stage02_product_outputs_reused':False,
-      'asset01_generated_data_present':False,
+      'excluded_unit_generated_data_present':{uid:False for uid in EXCLUDED_UNITS},
       'product_blocker_credit':0,
       'status':'CURRENT_FRESH_STAGE01_STAGE02_EXECUTION_EVIDENCE_BOUND',
     }
+    replay_ctx=state.get('fresh_replay_execution_context') or {}
+    if replay_ctx.get('run_uid')!=RUN_UID or replay_ctx.get('status')!='READY_FOR_REPLAY':
+        raise RuntimeError('FRESH_REPLAY_CONTEXT_CONSUMPTION_DRIFT')
+    replay_ctx['status']='CONSUMED'
+    replay_ctx['consumed_by_workflow_run_id']=attempt['source_workflow_run_id']
+    replay_ctx['consumed_source_sha']=source_sha
+    replay_ctx['evidence_artifact_id']=attempt['source_artifact_id']
+    replay_ctx['evidence_artifact_sha256']=attempt['source_artifact_sha256']
+    state['fresh_replay_execution_context']=replay_ctx
     dump_yaml(STATE,state)
 
     scope=load_yaml(SCOPE)
-    if scope.get('included_units')!=[PAGE] or scope.get('excluded_units')!=['ASSET-01']:
+    if scope.get('included_units')!=[PAGE] or scope.get('excluded_units')!=EXCLUDED_UNITS:
         raise RuntimeError('EXECUTION_SCOPE_DRIFT')
     scope['fresh_revalidation_required']=False
     scope['stage_exit_credit_allowed']=bool(s2.get('stage_exit_allowed'))

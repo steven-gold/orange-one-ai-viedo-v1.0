@@ -26,7 +26,7 @@ UNSAFE_TERMINAL_TOKENS = ("PASS_EXECUTION_SOURCE_HEAD", "CLOSED_VERIFIED")
 CURRENT_STATE_TOKENS = ("governance/test/ACTIVE_STATE.yaml", "ACTIVE_STATE.yaml")
 RUN_ID_TOKENS = ("GITHUB_RUN_ID", "github.run_id")
 DYNAMIC_REPLAY_EXECUTABLES = (
-    ".github/workflows/fresh-core-stage-replay.yml",
+    ".github/workflows/fresh-stage-replay.yml",
     ".github/governance-maintenance/run_fresh_stage_replay.py",
     ".github/governance-maintenance/finalize_fresh_stage_replay.py",
 )
@@ -36,6 +36,8 @@ FIXED_REPLAY_IDENTITY_PATTERNS = {
     "GOVERNANCE_UID": re.compile(r"\bGOV-REV-\d{8}-[A-Z0-9-]+\b"),
     "DISPLAY_VERSION": re.compile(r"(?<![A-Za-z0-9_-])v\d+\.\d+\.\d+\b"),
     "ROUND_LABEL": re.compile(r"\bR\d+\b"),
+    "PRODUCT_UID": re.compile(r"\b(?:CORE|ASSET|VIDEO|EDIT|VOICE|QA|SYS|ERP|AIAPI)-\d+\b"),
+    "COMPACT_PRODUCT_UID": re.compile(r"\b(?:CORE|ASSET|VIDEO|EDIT|VOICE|QA|SYS|ERP|AIAPI)\d+\b"),
 }
 
 
