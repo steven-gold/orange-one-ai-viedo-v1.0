@@ -1,0 +1,23 @@
+name: Basic Design Atomic Materialization Promotion
+on:
+  push:
+    branches:
+      - rebuild-v2.1.1
+    paths:
+      - .github/governance-maintenance/BASIC_DESIGN_ATOMIC_MATERIALIZATION_PROMOTE_TRIGGER
+permissions:
+  contents: write
+jobs:
+  promote:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: rebuild-v2.1.1
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install pyyaml pytest
+      - name: Promote atomic Basic Design successor
+        run: python .github/governance-maintenance/promote_basic_design_atomic_materialization.py
