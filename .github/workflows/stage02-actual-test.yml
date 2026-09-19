@@ -11,6 +11,7 @@ on:
       - 'governance/test/stage02/STAGE02_STAGE_FROZEN_GOVERNANCE_RECEIPT.yaml'
       - 'governance/test/stage02/STAGE02_CLEAN_BASELINE_RESET_RECEIPT.yaml'
       - 'governance/ci/run_current_stage2_actual_test.py'
+      - 'governance/test/ACTIVE_STATE.yaml'
       - 'governance/ci/validate_stage02_state_integrity.py'
       - 'governance/ci/validate_stage02_successor_integrity.py'
   workflow_dispatch:
@@ -92,19 +93,52 @@ jobs:
           PY
 
   stage02-actual-test:
-    if: ${{ github.event_name == 'workflow_dispatch' && inputs.mode == 'actual-test' }}
+    if: ${{ (github.event_name == 'workflow_dispatch' && inputs.mode == 'actual-test') || (github.event_name == 'push' && contains(github.event.head_commit.message, '[stage02-revalidate]')) }}
     runs-on: ubuntu-24.04
     timeout-minutes: 45
     env:
       PYTHONDONTWRITEBYTECODE: '1'
       PYTHONPYCACHEPREFIX: /tmp/acpos-governance-pycache
-      STAGE02_PAGE_SCOPE: ${{ inputs.page_scope }}
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
       - name: Install verifier dependency
         run: python -m pip install --disable-pip-version-check 'PyYAML==6.0.2'
+      - name: Resolve persisted Stage-02 execution context
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY' >> "$GITHUB_ENV"
+          from pathlib import Path
+          import os, yaml
+          state = yaml.safe_load(Path('governance/test/ACTIVE_STATE.yaml').read_text(encoding='utf-8')) or {}
+          scope = yaml.safe_load(Path('governance/test/CURRENT_EXECUTION_SCOPE_MANIFEST.yaml').read_text(encoding='utf-8')) or {}
+          work = state.get('active_work_unit') or {}
+          owner = str(work.get('canonical_owner') or '')
+          marker = '/04_PAGE_FUNCTIONAL_CONTRACT/'
+          run_root = owner.split(marker, 1)[0] if marker in owner else ''
+          if not run_root:
+              refs = [str(x) for x in (scope.get('dependency_closure_refs') or [])]
+              roots = sorted({x.split(marker,1)[0] for x in refs if marker in x})
+              if len(roots) != 1:
+                  raise SystemExit(f'BLOCK: cannot resolve one persisted Stage-02 run root: {roots}')
+              run_root = roots[0]
+          pages = [str(x) for x in (scope.get('included_units') or [])]
+          if not pages:
+              raise SystemExit('BLOCK: Current execution scope has no included units')
+          execution = state.get('execution') or {}
+          stage2 = execution.get('stage2') or {}
+          revalidation = execution.get('current_stage') == 'STAGE-02-TESTED-BLOCKED' and stage2.get('result') == 'TEST_EXECUTED_BLOCKED'
+          event = os.environ.get('GITHUB_EVENT_NAME','')
+          if event == 'push' and not revalidation:
+              raise SystemExit('BLOCK: explicit Stage-02 revalidation push requires one persisted blocked Current attempt')
+          page_scope = ','.join(pages)
+          print(f'ACPOS_RUN_ROOT={run_root}')
+          print(f'STAGE02_PAGE_SCOPE={page_scope}')
+          print(f'STAGE02_REVALIDATION_MODE={"1" if revalidation else "0"}')
+          print(f'STAGE02_CONTEXT_RESOLUTION_MODE=PERSISTED_CURRENT_STATE')
+          PY
       - name: Re-prove exact 75-file source identity
         run: python .github/governance-source/VERIFY_SOURCE_IDENTITY.py
       - name: Enforce Current Specification mutation authorization
@@ -134,8 +168,10 @@ jobs:
       - name: Validate Stage-02 admission predecessor state
         run: python governance/ci/validate_stage02_state_integrity.py
       - name: Validate Stage-02 frozen governance and clean baseline entry receipts
+        if: ${{ env.STAGE02_REVALIDATION_MODE != '1' }}
         run: python governance/ci/validate_stage02_entry_receipts.py
       - name: Prove pre-execution completion path before Stage-02 execution
+        if: ${{ env.STAGE02_REVALIDATION_MODE != '1' }}
         run: python governance/ci/compile_stage_execution_preflight.py --admission-check
       - name: Run complete 75-file full-lifecycle high-pressure system gate on exact Stage-02 execution SHA
         run: python .github/governance-source/RUN_FULL_LINE_SYSTEM_GATE.py
@@ -158,17 +194,11 @@ jobs:
           from pathlib import Path
           import subprocess, yaml
 
-          scope = yaml.safe_load(Path('governance/test/CURRENT_EXECUTION_SCOPE_MANIFEST.yaml').read_text(encoding='utf-8')) or {}
-          refs = [str(x) for x in (scope.get('dependency_closure_refs') or [])]
-          roots = []
-          for ref in refs:
-              marker = '/04_PAGE_FUNCTIONAL_CONTRACT/'
-              if ref.startswith('00_SOURCE_INTAKE/fresh_run_') and marker in ref:
-                  roots.append(ref.split(marker, 1)[0])
-          roots = sorted(set(roots))
-          if len(roots) != 1:
-              raise SystemExit(f'BLOCK: expected exactly one Current Stage-01/02 run root from scope dependency refs, got {roots}')
-          run_root = Path(roots[0])
+          import os
+          run_root_value = os.environ.get('ACPOS_RUN_ROOT','').strip()
+          if not run_root_value:
+              raise SystemExit('BLOCK: ACPOS_RUN_ROOT missing after persisted context resolution')
+          run_root = Path(run_root_value)
           for rel in ('02_BASE_BLUEPRINT', '03_BLUEPRINT_BINDING'):
               target = run_root / rel
               if not target.is_dir():
