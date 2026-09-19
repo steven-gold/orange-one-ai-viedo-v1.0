@@ -1,4 +1,4 @@
-# R4_PREPARED: CLEAN ALL STAGE-01/STAGE-02 GENERATED DATA AND FRESH CORE-01 REPLAY
+# R5_PREPARED: CLEAN ALL STAGE-01/STAGE-02 GENERATED DATA AND FRESH CORE-01 REPLAY
 #!/usr/bin/env python3
 from __future__ import annotations
 from pathlib import Path
@@ -7,15 +7,15 @@ import copy, hashlib, json, os, re, shutil, subprocess
 import yaml
 
 ROOT=Path(__file__).resolve().parents[2]
-OLD=ROOT/'00_SOURCE_INTAKE/fresh_run_006'
-NEW=ROOT/'00_SOURCE_INTAKE/fresh_run_007'
+OLD=ROOT/'00_SOURCE_INTAKE/fresh_run_007'
+NEW=ROOT/'00_SOURCE_INTAKE/fresh_run_008'
 SOURCE=ROOT/'.github/governance-source/active/source'
-AUTH=ROOT/'governance/test/spec_change_authorizations/USR-DIRECTIVE-20260919-CLEAR-ALL-STAGE01-STAGE02-RERUN-CORE01-R4.yaml'
+AUTH=ROOT/'governance/test/spec_change_authorizations/USR-DIRECTIVE-20260919-CLEAR-ALL-STAGE01-STAGE02-RERUN-CORE01-R5.yaml'
 STATE=ROOT/'governance/test/ACTIVE_STATE.yaml'
 SCOPE=ROOT/'governance/test/CURRENT_EXECUTION_SCOPE_MANIFEST.yaml'
 STAGE2_TEST=ROOT/'.github/stage02-test/STAGE02_ACTUAL_TEST_RESULT.json'
-CURRENT_UID='GOV-REV-20260919-PROFILE-TOKEN-DECONTAMINATION-HARDENING'
-RUN_UID='FRESH-RUN-007'
+CURRENT_UID='GOV-REV-20260919-SEMANTIC-BASELINE-CONSUMER-SINGLE-OWNER-HARDENING'
+RUN_UID='FRESH-RUN-008'
 PAGE='CORE-01'
 LIFECYCLE=ROOT/'.github/governance-source/active/source/10_REGISTRY/GOVERNANCE_LIFECYCLE_STAGE_REGISTRY.yaml'
 ADAPTERS=ROOT/'governance/ci/stage_execution_semantic_adapters.yaml'
@@ -180,14 +180,14 @@ def materialize_stage1(raw_bytes:dict[str,bytes], source_head:str):
           'page_uid':PAGE,
           'source_role':'MIXED_PAGE_VISUAL_SOURCE_INPUT' if source_uid.endswith('PAGE') else 'VISUAL_SOURCE_INPUT',
           'source_domain_scope':'MIXED_PAGE_VISUAL' if source_uid.endswith('PAGE') else 'VISUAL_CONSTRUCTION',
-          'source_path':f'git:{source_head}:00_SOURCE_INTAKE/fresh_run_006/00_SOURCE_INTAKE/RAW_SOURCE/CORE-01/{name}',
+          'source_path':f'git:{source_head}:00_SOURCE_INTAKE/fresh_run_007/00_SOURCE_INTAKE/RAW_SOURCE/CORE-01/{name}',
           'target_path':p.relative_to(NEW).as_posix(),
           'source_git_blob_sha':git_blob_sha_bytes(b),
           'target_git_blob_sha':git_blob_sha_bytes(b),
           'content_mutated':False,
         })
     dump(NEW/'00_SOURCE_INTAKE/RAW_SOURCE_REFERENCE_MANIFEST.yaml',{
-      'artifact_uid':'RAW-CAPTURE-FRESH-RUN-007-CORE01',
+      'artifact_uid':'RAW-CAPTURE-FRESH-RUN-008-CORE01',
       'artifact_type':'RAW_SOURCE_REFERENCE_MANIFEST',
       'status':'CURRENT_RAW_SOURCE_CAPTURE',
       'capture_root':'00_SOURCE_INTAKE/RAW_SOURCE',
@@ -282,7 +282,7 @@ def materialize_stage1(raw_bytes:dict[str,bytes], source_head:str):
               'relation_type':'PREVIOUS_NEXT','source_evidence_ref':'00_SOURCE_INTAKE/evidence/SOURCE_ENUMERATION_EVIDENCE.yaml',
             })
     ctx={
-      'artifact_uid':'SF-CORE01-CONTEXT-FRESH-007','artifact_type':'SOURCE_CONTEXT_MANIFEST',
+      'artifact_uid':'SF-CORE01-CONTEXT-FRESH-008','artifact_type':'SOURCE_CONTEXT_MANIFEST',
       'page_uid_or_scope_uid':PAGE,'page_uids':[PAGE],'source_nodes':all_node_ids,'context_edges':edges,
       'source_lineage_refs':[r['source_uid'] for r in manifest_records],'status':'CURRENT_SOURCE_FACT',
     }
@@ -290,7 +290,7 @@ def materialize_stage1(raw_bytes:dict[str,bytes], source_head:str):
     dump(NEW/'00_SOURCE_INTAKE/SOURCE_CONTEXT_MANIFEST.yaml',ctx)
 
     conflict={
-      'artifact_uid':'SF-CORE01-CONFLICT-FRESH-007','artifact_type':'CONTENT_SUPERSESSION_CONFLICT_LEDGER',
+      'artifact_uid':'SF-CORE01-CONFLICT-FRESH-008','artifact_type':'CONTENT_SUPERSESSION_CONFLICT_LEDGER',
       'page_uid_or_scope_uid':PAGE,'page_uids':[PAGE],'items':[],'status':'CURRENT_SOURCE_FACT',
     }
     conflict['content_hash']=content_hash(conflict)
@@ -310,7 +310,7 @@ def materialize_stage1(raw_bytes:dict[str,bytes], source_head:str):
           'resolved':False,'satisfied':False,'auto_filled':False,'inferred':False,
         })
     dep={
-      'artifact_uid':'SF-CORE01-DEPENDENCY-FRESH-007','artifact_type':'SOURCE_DEPENDENCY_MAP',
+      'artifact_uid':'SF-CORE01-DEPENDENCY-FRESH-008','artifact_type':'SOURCE_DEPENDENCY_MAP',
       'page_uid_or_scope_uid':PAGE,'page_uids':[PAGE],
       'edges':[],'unresolved_authority_gaps':gaps,'invented_dependency_count':0,'status':'CURRENT_SOURCE_FACT',
     }
@@ -325,7 +325,7 @@ def materialize_stage1(raw_bytes:dict[str,bytes], source_head:str):
 
     def blueprint(kind,domain,inputs,path,uid):
         d={
-          'blueprint_uid':uid,'page_uid':PAGE,'stage_uid':'STAGE-01','governance_overlay':'v2.2.7',
+          'blueprint_uid':uid,'page_uid':PAGE,'stage_uid':'STAGE-01','governance_overlay':'v2.2.9',
           'blueprint_type':kind,'planning_domain':domain,'target_path':path,
           'input_artifacts':[{'artifact_uid':a['artifact_uid'],'content_hash':a['content_hash']} for a in inputs],
           'required_responsibility_uids':[a['responsibility_uid'] for a in inputs],
@@ -335,10 +335,10 @@ def materialize_stage1(raw_bytes:dict[str,bytes], source_head:str):
         d['blueprint_hash']=content_hash(d)
         dump(NEW/path,d)
         return d
-    page_bp=blueprint('PAGE_BASE_BLUEPRINT','PAGE_CONSTRUCTION',page_artifacts,f'02_BASE_BLUEPRINT/{PAGE}/PAGE_BASE_BLUEPRINT.yaml',f'BP-{PAGE}-PAGE-FRESH-007')
-    visual_bp=blueprint('VISUAL_BASE_BLUEPRINT','VISUAL_CONSTRUCTION',visual_artifacts,f'02_BASE_BLUEPRINT/{PAGE}/VISUAL_BASE_BLUEPRINT.yaml',f'BP-{PAGE}-VISUAL-FRESH-007')
+    page_bp=blueprint('PAGE_BASE_BLUEPRINT','PAGE_CONSTRUCTION',page_artifacts,f'02_BASE_BLUEPRINT/{PAGE}/PAGE_BASE_BLUEPRINT.yaml',f'BP-{PAGE}-PAGE-FRESH-008')
+    visual_bp=blueprint('VISUAL_BASE_BLUEPRINT','VISUAL_CONSTRUCTION',visual_artifacts,f'02_BASE_BLUEPRINT/{PAGE}/VISUAL_BASE_BLUEPRINT.yaml',f'BP-{PAGE}-VISUAL-FRESH-008')
     binding={
-      'binding_uid':f'BIND-{PAGE}-FRESH-007','page_uid':PAGE,'stage_uid':'STAGE-01','governance_overlay':'v2.2.7',
+      'binding_uid':f'BIND-{PAGE}-FRESH-008','page_uid':PAGE,'stage_uid':'STAGE-01','governance_overlay':'v2.2.9',
       'target_path':f'03_BLUEPRINT_BINDING/{PAGE}/BLUEPRINT_BINDING_MANIFEST.yaml',
       'page_blueprint':{'blueprint_uid':page_bp['blueprint_uid'],'blueprint_hash':page_bp['blueprint_hash']},
       'visual_blueprint':{'blueprint_uid':visual_bp['blueprint_uid'],'blueprint_hash':visual_bp['blueprint_hash']},
@@ -388,10 +388,10 @@ def bind_common_stage_work_unit(stage_uid:str, canonical_owner:str, dependencies
         raise RuntimeError('COMMON_STAGE_ADAPTER_MISSING:'+stage_uid)
     state=load(STATE)
     state['current_primary_task_layer']='PRODUCT_STAGE_EXECUTION'
-    state['current_primary_task_authorization_uid']='USR-DIRECTIVE-20260919-CLEAR-ALL-STAGE01-STAGE02-RERUN-CORE01-R4'
+    state['current_primary_task_authorization_uid']='USR-DIRECTIVE-20260919-CLEAR-ALL-STAGE01-STAGE02-RERUN-CORE01-R5'
     state['active_work_unit']={
-      'work_unit_uid':f'WU-{stage_uid}-CORE01-FRESH-REPLAY-R4',
-      'canonical_name':f'CORE01_{stage_uid}_FRESH_REPLAY_R4',
+      'work_unit_uid':f'WU-{stage_uid}-CORE01-FRESH-REPLAY-R5',
+      'canonical_name':f'CORE01_{stage_uid}_FRESH_REPLAY_R5',
       'primary_task_layer':'PRODUCT_STAGE_EXECUTION',
       'stage_uid':stage_uid,
       'semantic_capability':stage.get('semantic_capability') or stage.get('name'),
@@ -402,7 +402,7 @@ def bind_common_stage_work_unit(stage_uid:str, canonical_owner:str, dependencies
       'required_outputs':list(stage.get('outputs') or []),
       'operation_bindings':{
         str(op):{
-          'executor_owner':'.github/governance-maintenance/run_fresh_core01_stage01_stage02_replay_r3.py',
+          'executor_owner':'.github/governance-maintenance/run_fresh_core01_stage01_stage02_replay_r5.py',
           'result_owner':canonical_owner,
         } for op in (stage.get('operations') or [])
       },
@@ -416,12 +416,12 @@ def bind_common_stage_work_unit(stage_uid:str, canonical_owner:str, dependencies
       'out_of_scope':['ASSET-01','STAGE-03','WEBSITE_CONSTRUCTION','DEPLOYMENT'],
     }
     state['resume_control']={
-      'current_resume_point':f'{stage_uid}_CORE01_R4_COMMON_ENGINE_BOUND',
+      'current_resume_point':f'{stage_uid}_CORE01_R5_COMMON_ENGINE_BOUND',
       'current_work_unit_uid':state['active_work_unit']['work_unit_uid'],
       'current_owner':canonical_owner,
       'historical_stage2_results_are_current_state':False,
       'stage2_execution_requires_fresh_entry_resolution':stage_uid=='STAGE-01',
-      'exact_next_action':f'EXECUTE_{stage_uid}_CORE01_FRESH_R4',
+      'exact_next_action':f'EXECUTE_{stage_uid}_CORE01_FRESH_R5',
     }
     dump(STATE,state)
     if run_admission:
@@ -449,7 +449,7 @@ def reset_current_state_for_stage1():
     profile_state=state.setdefault('selected_execution_profile_state',{})
     profile_state['active_attempt_state_key']=None
     state['current_primary_task_layer']='PRODUCT_STAGE_EXECUTION'
-    state['current_primary_task_authorization_uid']='USR-DIRECTIVE-20260919-CLEAR-ALL-STAGE01-STAGE02-RERUN-CORE01-R4'
+    state['current_primary_task_authorization_uid']='USR-DIRECTIVE-20260919-CLEAR-ALL-STAGE01-STAGE02-RERUN-CORE01-R5'
     state['current_primary_task_product_stage_credit']=0
     state.pop('previous_work_unit_resolution_gate_stage03',None)
     state.pop('suspended_stage03_work_unit',None)
@@ -469,7 +469,7 @@ def reset_current_state_for_stage1():
     proto=state.get('stage_execution_remediation_closure_protocol')
     if isinstance(proto,dict):
         proto['frozen_specification_uid']=CURRENT_UID
-        proto['binding_status']='CURRENT_V2_2_7_FRESH_REPLAY_STAGE1_CLOSED'
+        proto['binding_status']='CURRENT_V2_2_9_FRESH_REPLAY_STAGE1_CLOSED'
     fl=state.get('full_lifecycle_governance_system_test')
     if isinstance(fl,dict):
         fl['persisted_head_revalidation_required']=True
@@ -725,7 +725,7 @@ def materialize_stage2_projection(final):
       'artifact_root_present':True,'tested_page_uids':[PAGE],'remaining_page_uids':[],
       'stage_scope_complete':True,'current_scope_manifest_ref':'governance/test/CURRENT_EXECUTION_SCOPE_MANIFEST.yaml',
     }
-    attempt_uid='STAGE02-FRESH-20260919-CORE01-004'
+    attempt_uid='STAGE02-FRESH-20260919-CORE01-005'
     state['stage02_active_attempt']={
       'attempt_uid':attempt_uid,'run_uid':RUN_UID,'frozen_governance_uid':CURRENT_UID,
       'source_execution_sha':git_head(),'target_pages':[PAGE],
@@ -743,10 +743,10 @@ def materialize_stage2_projection(final):
     ex['stage2']['prior_results_authoritative_for_current_governance']=False
     ex['stage2']['revalidation_required_under_current_governance']=True
     state['last_work_unit_resolution_gate']={
-      'resolution_uid':'WUR-STAGE02-CORE01-COMPLETENESS-20260919-004','normative_authority':False,
+      'resolution_uid':'WUR-STAGE02-CORE01-COMPLETENESS-20260919-005','normative_authority':False,
       'result':'PASS_SINGLE_LEGAL_SUCCESSOR','requested_primary_task_layer':'PRODUCT_STAGE_EXECUTION',
-      'resolved_work_unit_uid':'WU-STAGE02-CORE01-COMPLETENESS-REPLAY-R4',
-      'authorization_uid':'USR-DIRECTIVE-20260919-CLEAR-ALL-STAGE01-STAGE02-RERUN-CORE01-R4',
+      'resolved_work_unit_uid':'WU-STAGE02-CORE01-COMPLETENESS-REPLAY-R5',
+      'authorization_uid':'USR-DIRECTIVE-20260919-CLEAR-ALL-STAGE01-STAGE02-RERUN-CORE01-R5',
       'page_scope':[PAGE],'excluded_page_scope':['ASSET-01'],'source_problem_denominator':len(problems),
       'source_closure_blocker_denominator':int(final.get('closure_blocker_total') or 0),
     }
@@ -755,7 +755,7 @@ def materialize_stage2_projection(final):
     stage2_def=next(x for x in stage_profile.get('stages',[]) if x.get('stage_uid')=='STAGE-02')
     stage2_ad=(stage_adapters.get('stages') or {})['STAGE-02']
     state['active_work_unit']={
-      'work_unit_uid':'WU-STAGE02-CORE01-COMPLETENESS-REPLAY-R4',
+      'work_unit_uid':'WU-STAGE02-CORE01-COMPLETENESS-REPLAY-R5',
       'canonical_name':'CORE01_STAGE02_20260911_PLANNING_COMPLETENESS_REMEDIATION_AND_FRESH_REPLAY',
       'stage_uid':'STAGE-02',
       'semantic_capability':stage2_def.get('semantic_capability') or stage2_def.get('name'),
@@ -779,7 +779,7 @@ def materialize_stage2_projection(final):
       },
       'product_blocker_credit':0,'out_of_scope':['ASSET-01','STAGE03','WEBSITE_CONSTRUCTION','DEPLOYMENT'],
     }
-    state['status']='ACTIVE_STAGE2_TESTED_BLOCKED_FRESH_CORE01' if problems else 'ACTIVE_STAGE2_READY_FOR_TERMINAL_CLOSURE_R4'
+    state['status']='ACTIVE_STAGE2_TESTED_BLOCKED_FRESH_CORE01' if problems else 'ACTIVE_STAGE2_READY_FOR_TERMINAL_CLOSURE_R5'
     state['next_action']='BUILD_FRESH_CORE01_DESIGN_CONTRACT_CANDIDATE_FROM_CURRENT_GAPS' if problems else 'CLOSE_STAGE02'
     state['resume_control']={
       'current_resume_point':'FRESH_CORE01_STAGE2_DESIGN_REMEDIATION_REQUIRED' if problems else 'FRESH_CORE01_STAGE2_READY_TO_CLOSE',

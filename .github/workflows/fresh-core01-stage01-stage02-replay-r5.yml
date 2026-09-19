@@ -1,23 +1,23 @@
-name: Fresh CORE-01 Stage01 Stage02 Replay R4
+name: Fresh CORE-01 Stage01 Stage02 Replay R5
 
 on:
   push:
     branches: [rebuild-v2.1.1]
     paths:
-      - '.github/governance-maintenance/run_fresh_core01_stage01_stage02_replay_r3.py'
+      - '.github/governance-maintenance/run_fresh_core01_stage01_stage02_replay_r5.py'
 
 permissions:
   contents: write
 
 jobs:
   fresh-replay:
-    if: "${{ github.event.head_commit.message == 'test(core01): stage clean Stage-01 Stage-02 fresh replay R4' }}"
+    if: "${{ github.event.head_commit.message == 'test(core01): stage clean Stage-01 Stage-02 fresh replay R5' }}"
     runs-on: ubuntu-24.04
     timeout-minutes: 45
     env:
       PYTHONDONTWRITEBYTECODE: '1'
       PYTHONPYCACHEPREFIX: /tmp/acpos-governance-pycache
-      ACPOS_RUN_ROOT: 00_SOURCE_INTAKE/fresh_run_007
+      ACPOS_RUN_ROOT: 00_SOURCE_INTAKE/fresh_run_008
       STAGE02_PAGE_SCOPE: CORE-01
     steps:
       - uses: actions/checkout@v4
@@ -30,41 +30,41 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          test -f governance/test/spec_change_authorizations/USR-DIRECTIVE-20260919-CLEAR-ALL-STAGE01-STAGE02-RERUN-CORE01-R4.yaml
-          grep -q 'GOV-REV-20260919-PROFILE-TOKEN-DECONTAMINATION-HARDENING' governance/specifications/REGISTRY.yaml
-          test -d 00_SOURCE_INTAKE/fresh_run_006
-          test -f 00_SOURCE_INTAKE/fresh_run_006/00_SOURCE_INTAKE/RAW_SOURCE/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml
-          test ! -e 00_SOURCE_INTAKE/fresh_run_007
-          test ! -e 00_SOURCE_INTAKE/fresh_run_006/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01
+          test -f governance/test/spec_change_authorizations/USR-DIRECTIVE-20260919-CLEAR-ALL-STAGE01-STAGE02-RERUN-CORE01-R5.yaml
+          grep -q 'GOV-REV-20260919-SEMANTIC-BASELINE-CONSUMER-SINGLE-OWNER-HARDENING' governance/specifications/REGISTRY.yaml
+          test -d 00_SOURCE_INTAKE/fresh_run_007
+          test -f 00_SOURCE_INTAKE/fresh_run_007/00_SOURCE_INTAKE/RAW_SOURCE/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml
+          test ! -e 00_SOURCE_INTAKE/fresh_run_008
+          test ! -e 00_SOURCE_INTAKE/fresh_run_007/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01
       - name: Compile fresh replay producer and provenance finalizer
         run: |
-          python -m py_compile .github/governance-maintenance/run_fresh_core01_stage01_stage02_replay_r3.py
-          python -m py_compile .github/governance-maintenance/finalize_fresh_core01_stage01_stage02_r3.py
+          python -m py_compile .github/governance-maintenance/run_fresh_core01_stage01_stage02_replay_r5.py
+          python -m py_compile .github/governance-maintenance/finalize_fresh_core01_stage01_stage02_r5.py
       - name: Validate common Stage Engine before destructive reset
         run: |
           python governance/ci/stage_execution_engine.py --definition-audit-all
           python governance/ci/test_stage_execution_engine.py
-      - name: Verify R4 source completeness and Current reentry scope before destructive reset
+      - name: Verify R5 source completeness and Current reentry scope before destructive reset
         shell: bash
         run: |
           set -euo pipefail
-          grep -q 'stage02_completeness_contract:' 00_SOURCE_INTAKE/fresh_run_006/00_SOURCE_INTAKE/RAW_SOURCE/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml
-          grep -q '9b0cc3c227cf53427e5cf60caf6b07f5e43a0a76f16800076641f22487642351' 00_SOURCE_INTAKE/fresh_run_006/00_SOURCE_INTAKE/RAW_SOURCE/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml
+          grep -q 'stage02_completeness_contract:' 00_SOURCE_INTAKE/fresh_run_007/00_SOURCE_INTAKE/RAW_SOURCE/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml
+          grep -q '9b0cc3c227cf53427e5cf60caf6b07f5e43a0a76f16800076641f22487642351' 00_SOURCE_INTAKE/fresh_run_007/00_SOURCE_INTAKE/RAW_SOURCE/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml
           grep -q 'owning_capability: FUNCTIONAL_CONTRACT' governance/test/CURRENT_EXECUTION_SCOPE_MANIFEST.yaml
-          grep -q 'WU-CORE01-STAGE01-STAGE02-CLEAN-REPLAY-R4' governance/test/ACTIVE_STATE.yaml
+          grep -q 'WU-CORE01-STAGE01-STAGE02-CLEAN-REPLAY-R5' governance/test/ACTIVE_STATE.yaml
       - name: Clear prior Stage-01 Stage-02 data and execute fresh CORE-01 replay
-        run: python .github/governance-maintenance/run_fresh_core01_stage01_stage02_replay_r3.py
+        run: python .github/governance-maintenance/run_fresh_core01_stage01_stage02_replay_r5.py
       - name: Verify exact cleanup and replay boundary
         shell: bash
         run: |
           set -euo pipefail
-          test ! -e 00_SOURCE_INTAKE/fresh_run_006
-          test -d 00_SOURCE_INTAKE/fresh_run_007
-          test ! -e 00_SOURCE_INTAKE/fresh_run_007/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01
-          test ! -e 00_SOURCE_INTAKE/fresh_run_007/01_CLASSIFIED/ASSET-01
-          test ! -e 00_SOURCE_INTAKE/fresh_run_007/02_BASE_BLUEPRINT/ASSET-01
-          test ! -e 00_SOURCE_INTAKE/fresh_run_007/03_BLUEPRINT_BINDING/ASSET-01
-          test ! -e 00_SOURCE_INTAKE/fresh_run_007/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01
+          test ! -e 00_SOURCE_INTAKE/fresh_run_007
+          test -d 00_SOURCE_INTAKE/fresh_run_008
+          test ! -e 00_SOURCE_INTAKE/fresh_run_008/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01
+          test ! -e 00_SOURCE_INTAKE/fresh_run_008/01_CLASSIFIED/ASSET-01
+          test ! -e 00_SOURCE_INTAKE/fresh_run_008/02_BASE_BLUEPRINT/ASSET-01
+          test ! -e 00_SOURCE_INTAKE/fresh_run_008/03_BLUEPRINT_BINDING/ASSET-01
+          test ! -e 00_SOURCE_INTAKE/fresh_run_008/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01
           test ! -e governance/test/history/stage02
           grep -q 'planning_baseline_completeness' governance/test/stage02/STAGE02_LATEST_TEST_EVIDENCE.json
           grep -q '"planning_baseline_completeness": "PASS"' governance/test/stage02/STAGE02_LATEST_TEST_EVIDENCE.json
@@ -75,11 +75,11 @@ jobs:
         id: evidence
         uses: actions/upload-artifact@v4
         with:
-          name: core01-stage01-stage02-fresh-run-007
+          name: core01-stage01-stage02-fresh-run-008
           if-no-files-found: error
           retention-days: 30
           path: |
-            00_SOURCE_INTAKE/fresh_run_007
+            00_SOURCE_INTAKE/fresh_run_008
             .github/stage02-test/STAGE02_ACTUAL_TEST_RESULT.json
             governance/test/stage02
       - name: Bind exact workflow and artifact provenance
@@ -88,7 +88,7 @@ jobs:
           FRESH_REPLAY_SOURCE_SHA: "${{ github.sha }}"
           FRESH_EVIDENCE_ARTIFACT_ID: "${{ steps.evidence.outputs.artifact-id }}"
           FRESH_EVIDENCE_ARTIFACT_DIGEST: "${{ steps.evidence.outputs.artifact-digest }}"
-        run: python .github/governance-maintenance/finalize_fresh_core01_stage01_stage02_r3.py
+        run: python .github/governance-maintenance/finalize_fresh_core01_stage01_stage02_r5.py
       - name: Validate current-attempt projection before persistence
         run: |
           python governance/ci/validate_validation_remediation_closure_protocol.py
@@ -110,7 +110,7 @@ jobs:
           git config user.email 'proorangeone@gmail.com'
           git add -A
           test -n "$(git diff --cached --name-only)" || { echo 'BLOCK: no fresh replay changes staged' >&2; exit 1; }
-          git commit -m "test(core01): persist clean Stage-01 Stage-02 fresh replay R4" \
-            -m "Execution-Authorization: USR-DIRECTIVE-20260919-CLEAR-ALL-STAGE01-STAGE02-RERUN-CORE01-R4" \
+          git commit -m "test(core01): persist clean Stage-01 Stage-02 fresh replay R5" \
+            -m "Execution-Authorization: USR-DIRECTIVE-20260919-CLEAR-ALL-STAGE01-STAGE02-RERUN-CORE01-R5" \
             -m "Scope: CORE-01 only; ASSET-01 remains absent; exact workflow/artifact provenance bound"
           git push origin HEAD:rebuild-v2.1.1

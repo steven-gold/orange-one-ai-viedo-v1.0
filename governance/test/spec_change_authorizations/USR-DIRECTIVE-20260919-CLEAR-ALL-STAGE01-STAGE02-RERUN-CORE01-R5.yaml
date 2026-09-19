@@ -1,0 +1,51 @@
+schema_version: 1
+artifact_type: PRODUCT_EXECUTION_RESET_AND_FRESH_REPLAY_AUTHORIZATION
+authorization_uid: USR-DIRECTIVE-20260919-CLEAR-ALL-STAGE01-STAGE02-RERUN-CORE01-R5
+normative_authority: false
+authority_source: EXPLICIT_USER_DIRECTIVE
+status: APPROVED_FOR_EXACT_SCOPE
+single_use: true
+ai_may_expand_scope: false
+current_governance_uid: GOV-REV-20260919-SEMANTIC-BASELINE-CONSUMER-SINGLE-OWNER-HARDENING
+authorization_baseline_commit_sha: 9869dea06a3ca7c357ddee1d679f8f627e2c8290
+user_directive:
+- "沒用到的已經補充過的就不要再造成被提取造成執行錯誤；類似問題補齊後再次實測"
+- "stage-01.02生產資料核心跟素材都清除後重新跑一次核心頁面資料"
+exact_scope:
+  cleanup:
+  - ALL_CURRENT_STAGE01_GENERATED_PRODUCT_DATA_CORE01
+  - ALL_CURRENT_STAGE01_GENERATED_PRODUCT_DATA_ASSET01
+  - ALL_CURRENT_STAGE02_GENERATED_PRODUCT_DATA_CORE01
+  - ALL_CURRENT_STAGE02_GENERATED_PRODUCT_DATA_ASSET01
+  - CURRENT_STAGE02_TEST_EVIDENCE
+  predecessor_run_root: 00_SOURCE_INTAKE/fresh_run_007
+  successor_run_root: 00_SOURCE_INTAKE/fresh_run_008
+  replay_pages: [CORE-01]
+  excluded_replay_pages: [ASSET-01]
+  stages: [STAGE-01, STAGE-02]
+  allowed_actions:
+  - preserve exact CORE-01 Raw Source bytes before destructive cleanup
+  - remove the entire current fresh_run_007 generated run root
+  - remove current Stage-02 evidence/history/test output
+  - keep Current Mother Governance and Current Specification byte-unchanged
+  - execute fresh CORE-01 Stage-01 and Stage-02 under the common Stage Execution Engine
+  - preserve unresolved external authorities without autofill
+  - persist fresh workflow/artifact provenance
+  excluded_scope: [ASSET-01_REPLAY, STAGE-03_EXECUTION, WEBSITE_CONSTRUCTION, DEPLOYMENT, MOTHER_GOVERNANCE_MUTATION, CURRENT_SPECIFICATION_MUTATION]
+planning_baseline:
+  filename: ACPOS_CORE01_CONSTRUCTION_BLUEPRINT_PACKAGE_2026-09-11 (2)(4).zip
+  sha256: 9b0cc3c227cf53427e5cf60caf6b07f5e43a0a76f16800076641f22487642351
+completion_requirements:
+  prior_core01_stage01_stage02_generated_data_removed: true
+  prior_asset01_stage01_stage02_generated_data_removed_or_already_absent: true
+  current_stage02_evidence_removed_before_replay: true
+  fresh_run_uid: FRESH-RUN-008
+  replay_page_scope: [CORE-01]
+  asset01_generated_data_present_after_replay: false
+  prior_stage01_stage02_product_outputs_reused: false
+  stage1_pass_required: true
+  stage2_planning_baseline_completeness_pass_required: true
+  stage2_functional_gap_total_zero_required: true
+  stage2_closure_blocker_total_zero_required: true
+  common_stage_engine_required: true
+  exact_head_terminal_validation_required: true

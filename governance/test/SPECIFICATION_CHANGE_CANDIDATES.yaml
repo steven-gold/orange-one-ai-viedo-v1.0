@@ -672,8 +672,8 @@ findings:
     own independent literal hashes.'
   defect_owner: GOVERNANCE_SOURCE_VALIDATION_IMPLEMENTATION
   generalizability_scope: SEMANTIC_BASELINE_TRUST_ROOT_CONSUMER_OWNERSHIP
-  blocking_state: PROMOTED_EXACT_HEAD_REVALIDATION_REQUIRED
-  disposition: IMPLEMENTATION_REMEDIATED_PENDING_EXACT_HEAD_VALIDATION
+  blocking_state: RESOLVED_EXACT_HEAD_VERIFIED
+  disposition: IMPLEMENTATION_REMEDIATED
   specification_change_required: false
   mother_change_required: false
   formal_specification_mutated_for_fix: false
@@ -688,6 +688,12 @@ findings:
   reopen_condition: Reopen if any verified-source validator independently copies the semantic baseline literal or if the program artifact guard can resolve zero/multiple semantic-hash
     owners.
   resolving_governance_uid: GOV-REV-20260919-SEMANTIC-BASELINE-CONSUMER-SINGLE-OWNER-HARDENING
+  resolution_commit: c31e592a4c2b686e164e45c9612b85ac2878523b
+  exact_head_validation_commit: 9869dea06a3ca7c357ddee1d679f8f627e2c8290
+  validation_runs:
+  - github-actions:35420738808
+  - github-actions:35420738840
+  - github-actions:35420738801
 historical_stage2_execution_findings:
   prior_CORE-01_STAGE02_BLOCKED: 7
   prior_ASSET-01_STAGE02_BLOCKED: 6

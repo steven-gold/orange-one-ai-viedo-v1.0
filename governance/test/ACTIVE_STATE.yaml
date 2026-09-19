@@ -104,8 +104,8 @@ specification_mutation_safety:
   ordinary_mid_stage_specification_mutation: BLOCK
   stage_end_consolidated_promotion_requires_new_explicit_directive: true
   execution_context_lock_required: true
-status: GOVERNANCE_V2_2_9_EXACT_HEAD_REVALIDATION_ACTIVE
-next_action: OBSERVE_V2_2_9_EXACT_HEAD_SELECTED_PROFILE_FULL_LINE_BRANCH_GUARD
+status: CORE01_STAGE01_STAGE02_CLEAN_REPLAY_R5_AUTHORIZED
+next_action: EXECUTE_CORE01_STAGE01_STAGE02_CLEAN_REPLAY_R5
 previous_closed_product_work_unit:
   work_unit_uid: WU-STAGE02-CORE01-STRUCTURAL-REMEDIATION-001
   canonical_name: CORE01_STRUCTURAL_CONTRACT_REMEDIATION
@@ -284,12 +284,12 @@ previous_closed_work_unit:
     source_runtime_residual_count: 0
     product_stage_credit: 0
 resume_control:
-  current_resume_point: V2_2_9_EXACT_HEAD_REVALIDATION
-  current_work_unit_uid: WU-GOV-SEMANTIC-BASELINE-CONSUMER-SINGLE-OWNER-001
-  current_owner: .github/governance-source/active/source/09_TESTS/governance/validate_reference_semantics.py
+  current_resume_point: CORE01_STAGE01_STAGE02_CLEAN_REPLAY_R5_AUTHORIZED
+  current_work_unit_uid: WU-CORE01-STAGE01-STAGE02-CLEAN-REPLAY-R5
+  current_owner: .github/governance-maintenance/run_fresh_core01_stage01_stage02_replay_r5.py
   historical_stage2_results_are_current_state: false
   stage2_execution_requires_fresh_entry_resolution: true
-  exact_next_action: OBSERVE_V2_2_9_EXACT_HEAD_SELECTED_PROFILE_FULL_LINE_BRANCH_GUARD
+  exact_next_action: EXECUTE_CORE01_STAGE01_STAGE02_CLEAN_REPLAY_R5
 governance_revision_transition:
   current_governance_uid: GOV-REV-20260919-SEMANTIC-BASELINE-CONSUMER-SINGLE-OWNER-HARDENING
   predecessor_governance_uid: GOV-REV-20260919-STRUCTURED-MUTATION-SELECTOR-HARDENING
@@ -343,8 +343,8 @@ pending_governance_review:
   - STAGE03
   - WEBSITE_CONSTRUCTION
   - DEPLOYMENT
-current_primary_task_layer: GOVERNANCE_MAINTENANCE
-current_primary_task_authorization_uid: USR-DIRECTIVE-20260919-SEMANTIC-BASELINE-CONSUMER-SINGLE-OWNER-R2
+current_primary_task_layer: PRODUCT_STAGE_EXECUTION
+current_primary_task_authorization_uid: USR-DIRECTIVE-20260919-CLEAR-ALL-STAGE01-STAGE02-RERUN-CORE01-R5
 current_primary_task_product_stage_credit: 0
 earlier_closed_product_work_unit:
   work_unit_uid: WU-STAGE02-CORE01-FRESH-TEST-001
@@ -805,12 +805,12 @@ work_unit_resolution_gate_structured_mutation_hardening:
   - R4_PREWRITE_DUPLICATE_RAW_STRING_SELECTOR_FAILURE
   - ACTIVE_WORKFLOW_MISSING_GOVERNANCE_MAINTENANCE_EXECUTABLE_ESCAPED_REFERENCE_GATE
   product_stage_credit: 0
-suspended_governance_work_unit_structured_mutation_selector_hardening:
+closed_governance_maintenance_work_unit_structured_mutation_selector_hardening:
   work_unit_uid: WU-GOV-STRUCTURED-MUTATION-SELECTOR-HARDENING-001
   canonical_name: STRUCTURED_MUTATION_SELECTOR_AND_ACTIVE_CONSUMER_GRAPH_HARDENING
   primary_task_layer: GOVERNANCE_MAINTENANCE
   canonical_owner: governance/ci/validate_structured_mutation_safety.py
-  current_status: SUSPENDED_FOR_SEMANTIC_BASELINE_CONSUMER_OWNER_REENTRY
+  current_status: CLOSED_VERIFIED_NO_PRODUCT_CREDIT
   product_stage_credit: 0
   suspended_product_resume_point: STAGE2_CORE01_CLOSED_STAGE3_WUR_REQUIRED
   suspended_product_stage3_execution_started: false
@@ -832,12 +832,12 @@ suspended_governance_work_unit_structured_mutation_selector_hardening:
   - CURRENT_GOVERNANCE_SUCCESSOR_ATOMIC_PROMOTION_PASS
   - EXACT_HEAD_SELECTED_PROFILE_AND_FULL_LINE_PASS
   - PRODUCT_STAGE_CREDIT_ZERO
-active_work_unit:
+closed_governance_maintenance_work_unit_semantic_baseline_consumer_single_owner:
   work_unit_uid: WU-GOV-SEMANTIC-BASELINE-CONSUMER-SINGLE-OWNER-001
   canonical_name: SEMANTIC_BASELINE_CONSUMER_SINGLE_OWNER_AND_SOURCE_IDENTITY_REPAIR
   primary_task_layer: GOVERNANCE_MAINTENANCE
   canonical_owner: .github/governance-source/active/source/09_TESTS/governance/validate_reference_semantics.py
-  current_status: PROMOTED_EXACT_HEAD_REVALIDATION_REQUIRED
+  current_status: CLOSED_VERIFIED_NO_PRODUCT_CREDIT
   product_stage_credit: 0
   predecessor_governance_uid: GOV-REV-20260919-STRUCTURED-MUTATION-SELECTOR-HARDENING
   source_defect_owner: .github/governance-source/active/source/09_TESTS/governance/program_artifact_instance_guard.py
@@ -936,3 +936,58 @@ v229_exact_head_revalidation_trigger:
   - FULL_LINE
   - BRANCH_GUARD
   product_stage_credit: 0
+
+governance_maintenance_closure_before_core01_replay_r5:
+  current_governance_uid: GOV-REV-20260919-SEMANTIC-BASELINE-CONSUMER-SINGLE-OWNER-HARDENING
+  semantic_baseline_consumer_work_unit: WU-GOV-SEMANTIC-BASELINE-CONSUMER-SINGLE-OWNER-001
+  structured_mutation_work_unit: WU-GOV-STRUCTURED-MUTATION-SELECTOR-HARDENING-001
+  validated_head: 9869dea06a3ca7c357ddee1d679f8f627e2c8290
+  selected_profile_run_id: 35420738808
+  selected_profile_result: success
+  full_line_run_id: 35420738840
+  full_line_result: success
+  branch_guard_run_id: 35420738801
+  branch_guard_result: success
+  stage02_boundary_run_id: 35420738816
+  stage02_boundary_result: success
+  verified_source_python_files_scanned: 37
+  literal_semantic_hash_owner_count: 1
+  product_stage_credit: 0
+
+work_unit_resolution_gate_core01_clean_replay_r5:
+  resolution_uid: WUR-CORE01-STAGE01-STAGE02-CLEAN-REPLAY-20260919-005
+  normative_authority: false
+  result: PASS_SINGLE_LEGAL_SUCCESSOR
+  requested_primary_task_layer: PRODUCT_STAGE_EXECUTION
+  resolved_work_unit_uid: WU-CORE01-STAGE01-STAGE02-CLEAN-REPLAY-R5
+  authorization_uid: USR-DIRECTIVE-20260919-CLEAR-ALL-STAGE01-STAGE02-RERUN-CORE01-R5
+  current_governance_uid: GOV-REV-20260919-SEMANTIC-BASELINE-CONSUMER-SINGLE-OWNER-HARDENING
+  page_scope: [CORE-01]
+  cleanup_scope: [CORE-01, ASSET-01]
+  replay_excluded_page_scope: [ASSET-01]
+  predecessor_run_uid: FRESH-RUN-007
+  successor_run_uid: FRESH-RUN-008
+  product_stage_credit: 0
+
+active_work_unit:
+  work_unit_uid: WU-CORE01-STAGE01-STAGE02-CLEAN-REPLAY-R5
+  canonical_name: CORE01_STAGE01_STAGE02_CLEAN_REPLAY_R5
+  primary_task_layer: PRODUCT_STAGE_EXECUTION
+  canonical_owner: .github/governance-maintenance/run_fresh_core01_stage01_stage02_replay_r5.py
+  current_status: AUTHORIZED_NOT_EXECUTED
+  scope: [CORE-01]
+  cleanup_scope: [CORE-01, ASSET-01]
+  excluded_replay_scope: [ASSET-01, STAGE-03, WEBSITE_CONSTRUCTION, DEPLOYMENT]
+  predecessor_run_root: 00_SOURCE_INTAKE/fresh_run_007
+  successor_run_root: 00_SOURCE_INTAKE/fresh_run_008
+  definition_of_done:
+  - PREDECESSOR_STAGE01_STAGE02_GENERATED_DATA_REMOVED
+  - ASSET01_GENERATED_DATA_ABSENT
+  - CURRENT_STAGE02_EVIDENCE_REMOVED_BEFORE_REPLAY
+  - FRESH_STAGE1_CORE01_PASS
+  - FRESH_STAGE2_CORE01_PASS
+  - PLANNING_BASELINE_COMPLETENESS_PASS
+  - FRESH_FUNCTIONAL_GAP_TOTAL_ZERO
+  - CLOSURE_BLOCKER_TOTAL_ZERO
+  - PRIOR_STAGE02_RESULTS_USED_FALSE
+  - EXACT_HEAD_TERMINAL_VALIDATION

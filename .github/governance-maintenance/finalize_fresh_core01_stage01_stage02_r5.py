@@ -11,10 +11,10 @@ HISTORY=ROOT/'governance/test/SELECTED_PROFILE_HISTORY_BINDING.yaml'
 CANDIDATES=ROOT/'governance/test/SPECIFICATION_CHANGE_CANDIDATES.yaml'
 FINDINGS=ROOT/'governance/test/stage02/STAGE02_CURRENT_FINDINGS.yaml'
 EVIDENCE=ROOT/'governance/test/stage02/STAGE02_LATEST_TEST_EVIDENCE.json'
-CURRENT_UID='GOV-REV-20260919-PROFILE-TOKEN-DECONTAMINATION-HARDENING'
-RUN_UID='FRESH-RUN-007'
+CURRENT_UID='GOV-REV-20260919-SEMANTIC-BASELINE-CONSUMER-SINGLE-OWNER-HARDENING'
+RUN_UID='FRESH-RUN-008'
 PAGE='CORE-01'
-ATTEMPT_UID='STAGE02-FRESH-20260919-CORE01-004'
+ATTEMPT_UID='STAGE02-FRESH-20260919-CORE01-005'
 
 def load_yaml(p:Path):
     obj=yaml.safe_load(p.read_text(encoding='utf-8'))
@@ -126,9 +126,9 @@ def main():
       PAGE:{
         'expected_result':'PASS',
         'artifacts':[
-          {'artifact_ref':'00_SOURCE_INTAKE/fresh_run_007/02_BASE_BLUEPRINT/CORE-01/PAGE_BASE_BLUEPRINT.yaml','creation_governance_overlay':'v2.2.7'},
-          {'artifact_ref':'00_SOURCE_INTAKE/fresh_run_007/02_BASE_BLUEPRINT/CORE-01/VISUAL_BASE_BLUEPRINT.yaml','creation_governance_overlay':'v2.2.7'},
-          {'artifact_ref':'00_SOURCE_INTAKE/fresh_run_007/03_BLUEPRINT_BINDING/CORE-01/BLUEPRINT_BINDING_MANIFEST.yaml','creation_governance_overlay':'v2.2.7'},
+          {'artifact_ref':'00_SOURCE_INTAKE/fresh_run_008/02_BASE_BLUEPRINT/CORE-01/PAGE_BASE_BLUEPRINT.yaml','creation_governance_overlay':'v2.2.9'},
+          {'artifact_ref':'00_SOURCE_INTAKE/fresh_run_008/02_BASE_BLUEPRINT/CORE-01/VISUAL_BASE_BLUEPRINT.yaml','creation_governance_overlay':'v2.2.9'},
+          {'artifact_ref':'00_SOURCE_INTAKE/fresh_run_008/03_BLUEPRINT_BINDING/CORE-01/BLUEPRINT_BINDING_MANIFEST.yaml','creation_governance_overlay':'v2.2.9'},
         ],
         'profile_step_uid':'STAGE-01',
       }
@@ -179,7 +179,7 @@ def main():
       'current_governance_uid':CURRENT_UID,
       'closure_credit_under_current_governance':True,
       'execution_scope_manifest_ref':'governance/test/CURRENT_EXECUTION_SCOPE_MANIFEST.yaml',
-      'canonical_product_contract_owner_ref':'00_SOURCE_INTAKE/fresh_run_007/04_PAGE_FUNCTIONAL_CONTRACT/CORE-01/FUNCTIONAL_CHAIN_SPEC.yaml',
+      'canonical_product_contract_owner_ref':'00_SOURCE_INTAKE/fresh_run_008/04_PAGE_FUNCTIONAL_CONTRACT/CORE-01/FUNCTIONAL_CHAIN_SPEC.yaml',
     }
     dump_yaml(CANDIDATES,candidates)
 
