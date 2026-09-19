@@ -1,8 +1,8 @@
 {
   "artifact_type": "NON_NORMATIVE_FULL_LINE_SYSTEM_GATE_EVIDENCE",
   "mode": "SYSTEM_ROUND_1_FULL_LINE_HIGH_PRESSURE",
-  "source_zip_sha256": "2e373a3bccf3d4aced04996a2a201522026767ce19b17989647e156e219cd209",
-  "deterministic_source_bundle_sha256": "1afa040b22abd2c7c5e5d28841be06329762c7818c29a570317329f7ad03cfc6",
+  "source_zip_sha256": "c2754c623184c3ab071acb0cea77e793f3729dda4ef5fc8cd51cfb0eb908395a",
+  "deterministic_source_bundle_sha256": "9241298d14ec95502a1c6342fdaa5312401bcca365fd360b1202dadc9bf2a19c",
   "lifecycle_stage_count": 11,
   "lifecycle_stage_uids": [
     "STAGE-01",
@@ -507,7 +507,7 @@
         "validator_identities": 36,
         "audit_types": 13,
         "naming_items": 13,
-        "semantic_anchor_hash": "f2f01d002e20568b892607f45beb3f7538ae32e9864e6f63287e9cbb98672053"
+        "semantic_anchor_hash": "b13b80f94fbdfc687c6062f0b3d2bc72813ce8cda2a1c465e8b2c395688220ca"
       },
       {
         "check_id": "program_artifact_instance_guard",
@@ -518,8 +518,8 @@
       {
         "check_id": "current_test_evidence_sync",
         "status": "PASS",
-        "current_revision": "v2.2.12",
-        "current_source_revision": "v2.2.12-basic-design-atomic-materialization-hardening",
+        "current_revision": "v2.2.13",
+        "current_source_revision": "v2.2.13-asset-stage01-stage02-shared-contract-hardening",
         "fresh_revalidation_required": true,
         "mandatory_suite_count": 17,
         "failures": []
@@ -550,7 +550,7 @@
       {
         "check_id": "stage_execution_invariants",
         "status": "PASS",
-        "invariant_count": 52,
+        "invariant_count": 56,
         "stage_count": 11,
         "failures": []
       },
@@ -575,7 +575,7 @@
       {
         "check_id": "acceptance_blueprint_compiled_baseline",
         "status": "PASS",
-        "compiled_requirements": 743,
+        "compiled_requirements": 756,
         "audit_denominator": 13,
         "failures": []
       },

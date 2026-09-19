@@ -15,8 +15,9 @@ import yaml
 ROOT = Path(__file__).resolve().parents[2]
 SELF_TEST_REVALIDATION_AUTHORITY = '--self-test-revalidation-authority' in sys.argv
 SELF_TEST_APPLICABILITY_PROJECTION = '--self-test-applicability-projection' in sys.argv
+SELF_TEST_SHARED_CONTRACT = '--self-test-shared-contract-hardening' in sys.argv
 RUN_ROOT_ENV = os.environ.get('ACPOS_RUN_ROOT', '').strip()
-if not RUN_ROOT_ENV and not (SELF_TEST_REVALIDATION_AUTHORITY or SELF_TEST_APPLICABILITY_PROJECTION):
+if not RUN_ROOT_ENV and not (SELF_TEST_REVALIDATION_AUTHORITY or SELF_TEST_APPLICABILITY_PROJECTION or SELF_TEST_SHARED_CONTRACT):
     raise SystemExit('BLOCK: ACPOS_RUN_ROOT_REQUIRED')
 RUN = ROOT / (RUN_ROOT_ENV or 'governance/test/temporary/stage02-self-test')
 STATE = ROOT / 'governance/test/ACTIVE_STATE.yaml'
@@ -585,6 +586,53 @@ def materialized_stage02_completeness_blockers(page_dir: Path, raw: dict) -> lis
 
     return sorted(set(blockers))
 
+def control_vs_system_trigger_resolution(aid: str, action: dict, controls_by_action: dict, transitions_by_action: dict, ports: dict):
+    if controls_by_action.get(aid):
+        return {'status':'CONTROL_BOUND'}
+    if present(action, 'trigger_event_uid', 'trigger_uid', 'invocation', 'system_trigger', 'trigger_kind') or bool(transitions_by_action.get(aid)):
+        return {'status':'EXPLICIT_TRIGGER_BOUND'}
+    rb=action.get('runtime_binding') or {}
+    decision=str(rb.get('decision') or '')
+    if decision not in {'SOURCE_DERIVED','SOURCE_DERIVED_CLOSURE'}:
+        return {'status':'UNRESOLVED'}
+    refs=[]
+    for field in ('port_uid','persist_via_port_uid','execute_port_uid','decision_port_uid'):
+        puid=rb.get(field)
+        if puid and puid in ports:
+            refs.append((field,puid,ports[puid]))
+    uniq={puid:(field,port) for field,puid,port in refs}
+    if len(uniq)!=1:
+        return {'status':'UNRESOLVED'}
+    puid,(field,port)=next(iter(uniq.items()))
+    operation=port.get('operation') or port.get('registered_operation')
+    permission=port.get('permission') or port.get('registered_permission')
+    state_event=str(port.get('state_event') or '')
+    if not operation or not permission or not state_event or not action.get('gate_uid') or not action.get('permission_uid'):
+        return {'status':'UNRESOLVED'}
+    return {'status':'DETERMINISTIC_SYSTEM_TRIGGER_REQUIRED','contract':{
+        'trigger_kind':'SYSTEM_DERIVED_GOVERNED_OPERATION',
+        'source_decision':decision,
+        'gate_uid':action.get('gate_uid'),
+        'runtime_port_uid':puid,
+        'runtime_port_binding_field':field,
+        'registered_operation':operation,
+        'success_state_event':state_event,
+        'user_control_required':False,
+    }}
+
+def _self_test_shared_contract_hardening():
+    controls=defaultdict(list); transitions=defaultdict(list)
+    ports={'PORT-1':{'registered_operation':'createDerivedRecord','registered_permission':'record.write','state_event':'REVIEW->OPEN | record.created'}}
+    action={'permission_uid':'PERM-1','gate_uid':'GATE-1','effect_type':'CREATE','runtime_binding':{'binding_kind':'SOURCE_INTEGRATION_PORT','port_uid':'PORT-1','decision':'SOURCE_DERIVED'}}
+    exact=control_vs_system_trigger_resolution('ACT-1',action,controls,transitions,ports)
+    assert exact.get('status')=='DETERMINISTIC_SYSTEM_TRIGGER_REQUIRED', exact
+    assert exact['contract']['user_control_required'] is False
+    ambiguous={**action,'runtime_binding':dict(action['runtime_binding'])}; ambiguous['runtime_binding'].pop('decision')
+    assert control_vs_system_trigger_resolution('ACT-2',ambiguous,controls,transitions,ports).get('status')=='UNRESOLVED'
+    controls['ACT-3'].append('CTRL-1')
+    assert control_vs_system_trigger_resolution('ACT-3',action,controls,transitions,ports).get('status')=='CONTROL_BOUND'
+    print('PASS: control-vs-system-trigger shared semantic resolution self-test')
+
 def fresh_scan(page: str, raw: dict, unresolved_authority_by_ref: dict):
     reg = raw.get('registries') or {}
     actions = idx(reg.get('actions'), 'action_uid')
@@ -655,9 +703,12 @@ def fresh_scan(page: str, raw: dict, unresolved_authority_by_ref: dict):
         elif not failure_recovery_not_applicable and not any((transitions.get(tid) or {}).get('recovery') for tid in transitions_by_action.get(aid, [])):
             add(gaps, page, 'ARCHITECTURE_GAP', 'FAILURE_STATE_ERROR_BINDING_MISSING', aid, 'no exact action->error/recovery or transition recovery binding')
 
-        explicit_trigger = present(action, 'trigger_event_uid', 'trigger_uid', 'invocation', 'system_trigger', 'trigger_kind') or bool(transitions_by_action.get(aid))
-        if not controls_by_action.get(aid) and not explicit_trigger:
-            add(gaps, page, 'ARCHITECTURE_GAP', 'ACTION_WITHOUT_CONTROL_OR_TRIGGER', aid, 'no registered control or exact transition/system trigger')
+        trigger_resolution = control_vs_system_trigger_resolution(aid, action, controls_by_action, transitions_by_action, ports)
+        if not controls_by_action.get(aid) and trigger_resolution.get('status') not in {'EXPLICIT_TRIGGER_BOUND','CONTROL_BOUND'}:
+            if trigger_resolution.get('status') == 'DETERMINISTIC_SYSTEM_TRIGGER_REQUIRED':
+                add(gaps, page, 'ARCHITECTURE_GAP', 'SYSTEM_TRIGGER_BINDING_MISSING', aid, json.dumps(trigger_resolution.get('contract') or {}, ensure_ascii=False, sort_keys=True), 'AUTO_REMEDIABLE_FUNCTIONAL_CLOSURE')
+            else:
+                add(gaps, page, 'ARCHITECTURE_GAP', 'ACTION_WITHOUT_CONTROL_OR_TRIGGER', aid, 'no registered control or deterministic system-trigger proof')
         if not kind:
             add(gaps, page, 'IMPLEMENTATION_GAP', 'RUNTIME_BINDING_MISSING', aid, 'runtime_binding.binding_kind absent')
             continue
@@ -756,6 +807,9 @@ if SELF_TEST_REVALIDATION_AUTHORITY:
     raise SystemExit(0)
 if SELF_TEST_APPLICABILITY_PROJECTION:
     _self_test_applicability_and_contract_projection()
+    raise SystemExit(0)
+if SELF_TEST_SHARED_CONTRACT:
+    _self_test_shared_contract_hardening()
     raise SystemExit(0)
 
 state = load(STATE)

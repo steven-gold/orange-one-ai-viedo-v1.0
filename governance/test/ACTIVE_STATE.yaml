@@ -2,7 +2,7 @@ schema_version: 23
 artifact_type: ACTIVE_GOVERNANCE_TEST_STATE
 normative_authority: false
 specification_registry_ref: governance/specifications/REGISTRY.yaml
-specification_uid: GOV-REV-20260919-BASIC-DESIGN-ATOMIC-MATERIALIZATION-HARDENING
+specification_uid: GOV-REV-20260919-ASSET-STAGE01-STAGE02-SHARED-CONTRACT-HARDENING
 canonical_rule_registry_ref: governance/specifications/current/CANONICAL_RULE_REGISTRY.yaml
 canonical_rule_registry_uid: GOV-CANONICAL-RULE-REGISTRY-001
 selected_execution_profile_state:
@@ -104,8 +104,8 @@ specification_mutation_safety:
   ordinary_mid_stage_specification_mutation: BLOCK
   stage_end_consolidated_promotion_requires_new_explicit_directive: true
   execution_context_lock_required: true
-status: ACTIVE_GOVERNANCE_BASIC_DESIGN_ATOMIC_MATERIALIZATION_PROMOTED_REVALIDATION_REQUIRED
-next_action: RUN_SUCCESSOR_EXACT_HEAD_VALIDATION_THEN_REEXECUTE_BASIC_DESIGN_WITH_ATOMIC_FULL_DENOMINATOR_DETAIL
+status: ACTIVE_ASSET_STAGE01_STAGE02_SHARED_CONTRACT_HARDENING_SUCCESSOR_PROMOTED_EXACT_HEAD_REVALIDATION_REQUIRED
+next_action: RUN_V2_2_13_EXACT_HEAD_VALIDATION_THEN_CLEAN_ASSET01_STAGE01_STAGE02_FRESH_REPLAY
 previous_closed_product_work_unit:
   work_unit_uid: WU-STAGE02-CORE01-STRUCTURAL-REMEDIATION-001
   canonical_name: CORE01_STRUCTURAL_CONTRACT_REMEDIATION
@@ -284,32 +284,31 @@ previous_closed_work_unit:
     source_runtime_residual_count: 0
     product_stage_credit: 0
 resume_control:
-  current_resume_point: ASSET_STAGE01_STAGE02_SHARED_CONTRACT_HARDENING_WUR_RESOLVED_READY_FOR_GOVERNANCE_SUCCESSOR
+  current_resume_point: ASSET_STAGE01_STAGE02_SHARED_CONTRACT_SUCCESSOR_PROMOTED_EXACT_HEAD_REVALIDATION_REQUIRED
   current_work_unit_uid: WU-GOV-ASSET-STAGE01-STAGE02-SHARED-CONTRACT-HARDENING-001
   current_owner: .github/governance-source/active/source/12_DOCS/mother-spec/01_BLUEPRINT_DESIGN_GOVERNANCE.md
   historical_stage2_results_are_current_state: false
   stage2_execution_requires_fresh_entry_resolution: true
-  exact_next_action: MATERIALIZE_V2_2_13_SHARED_STAGE02_CONTRACT_SUCCESSOR_THEN_EXACT_HEAD_REVALIDATE
+  exact_next_action: RUN_V2_2_13_EXACT_HEAD_VALIDATION_THEN_CLEAN_ASSET01_STAGE01_STAGE02_FRESH_REPLAY
   parent_work_unit_uid: WU-GOV-BASIC-DESIGN-ATOMIC-MATERIALIZATION-001
   parent_primary_task_layer: GOVERNANCE_MAINTENANCE
   preserved_product_work_unit_uid: WU-STAGE02-ASSET01-8133839F-REPLAY
   preserved_product_resume_point: ASSET01_STAGE2_EXACT_CLOSURES_REVALIDATED_REVIEW_ONLY_PRODUCT_AUTHORITY_REQUIRED
   preserved_product_next_action: CLEAN_ASSET01_STAGE01_STAGE02_GENERATED_OUTPUT_AND_FRESH_REPLAY_AFTER_SHARED_GOVERNANCE_SUCCESSOR
-
 governance_revision_transition:
-  current_governance_uid: GOV-REV-20260919-BASIC-DESIGN-ATOMIC-MATERIALIZATION-HARDENING
-  predecessor_governance_uid: GOV-REV-20260919-BASIC-DESIGN-VISUAL-INTEGRATION-HARDENING
+  current_governance_uid: GOV-REV-20260919-ASSET-STAGE01-STAGE02-SHARED-CONTRACT-HARDENING
+  predecessor_governance_uid: GOV-REV-20260919-BASIC-DESIGN-ATOMIC-MATERIALIZATION-HARDENING
   predecessor_attempt_preserved_as_historical_evidence: true
   predecessor_attempt_history_ref: governance/test/history/stage02/design-remediation-routing-20260918/STAGE02_CORE01_DESIGN_REMEDIATION_TEST_EVIDENCE.json
   predecessor_attempt_may_close_under_current_governance: false
   fresh_revalidation_required: true
-  fresh_revalidation_scope: BASIC_DESIGN_ATOMIC_MATERIALIZATION_AND_AFFECTED_DESIGN_CONSUMERS
-  mother_machine_revalidation_complete: true
-  mother_machine_revalidation_run_id: 35453114089
-  mother_machine_revalidation_head: 4b69f556d1c0da2ca71dca4d00ac49fd96dab730
-  mother_machine_revalidation_result: success
+  fresh_revalidation_scope: CONTROL_VS_SYSTEM_TRIGGER_PRODUCER_CONSUMER_SCHEMA_PRODUCT_NEUTRAL_STAGE02_CONSUMERS
+  mother_machine_revalidation_complete: false
+  mother_machine_revalidation_run_id: null
+  mother_machine_revalidation_head: null
+  mother_machine_revalidation_result: REVALIDATION_REQUIRED
   selected_execution_profile_preserved: true
-  selected_execution_profile_run_id: 35453114112
+  selected_execution_profile_run_id: null
   branch_guard_run_id: 35321234031
   stage02_boundary_run_id: 35321234019
   canonical_rule_registry_required_for_fresh_revalidation: true
@@ -350,7 +349,7 @@ pending_governance_review:
   - WEBSITE_CONSTRUCTION
   - DEPLOYMENT
 current_primary_task_layer: GOVERNANCE_MAINTENANCE
-current_primary_task_authorization_uid: USR-DIRECTIVE-20260919-ASSET-STAGE01-STAGE02-SHARED-CONTRACT-HARDENING-R1
+current_primary_task_authorization_uid: USR-DIRECTIVE-20260920-ASSET-STAGE01-STAGE02-SHARED-CONTRACT-HARDENING-R4
 current_primary_task_product_stage_credit: 0
 earlier_closed_product_work_unit:
   work_unit_uid: WU-STAGE02-CORE01-FRESH-TEST-001
@@ -2628,7 +2627,6 @@ closed_governance_maintenance_work_unit_basic_design_atomic_materialization:
   - EXACT_HEAD_BRANCH_GUARD_SUCCESS
   product_stage_credit: 0
   legal_next_transition: WORK_UNIT_RESOLUTION_GATE_FOR_ASSET_STAGE01_STAGE02_SHARED_CONTRACT_HARDENING
-
 work_unit_resolution_gate_asset_stage01_stage02_shared_contract_hardening:
   resolution_uid: WUR-GOV-ASSET-STAGE01-STAGE02-SHARED-CONTRACT-HARDENING-20260919-001
   normative_authority: false
@@ -2646,7 +2644,6 @@ work_unit_resolution_gate_asset_stage01_stage02_shared_contract_hardening:
   - SHARED_WORKFLOW_DISPATCH_STILL_CONTAINS_FIXED_CORE01_SCOPE_DEFAULT
   - EXISTING_MOTHER_TASK_LAYER_ORDER_MUST_BE_ENFORCED_NOT_BYPASSED
   product_stage_credit: 0
-
 active_work_unit:
   work_unit_uid: WU-GOV-ASSET-STAGE01-STAGE02-SHARED-CONTRACT-HARDENING-001
   canonical_name: ASSET_STAGE01_STAGE02_SHARED_CONTRACT_HARDENING
@@ -2661,7 +2658,7 @@ active_work_unit:
   - governance/ci/run_current_stage2_actual_test.py
   - governance/ci/materialize_current_stage2_closure_artifacts.py
   - .github/workflows/stage02-actual-test.yml
-  current_status: WUR_RESOLVED_READY_FOR_GOVERNANCE_SUCCESSOR
+  current_status: PROMOTION_MATERIALIZED_EXACT_HEAD_REVALIDATION_REQUIRED
   authorization_uid: USR-DIRECTIVE-20260919-ASSET-STAGE01-STAGE02-SHARED-CONTRACT-HARDENING-R1
   scope:
   - CONTROL_VS_SYSTEM_TRIGGER_SEMANTIC_RESOLUTION
@@ -2697,7 +2694,6 @@ active_work_unit:
   - EXACT_HEAD_BRANCH_GUARD_SUCCESS
   - PRODUCT_STAGE_CREDIT_ZERO
   product_stage_credit: 0
-
 work_unit_resolution_gate_blueprint_traceability:
   resolution_uid: WUR-GOV-BLUEPRINT-TRACEABILITY-20260919-001
   normative_authority: false

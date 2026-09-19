@@ -1,4 +1,4 @@
-schema_version: 4
+schema_version: 5
 artifact_uid: GOV-COMP-EXECUTION-CYCLE-CONTROL
 artifact_type: GOVERNANCE_SPECIFICATION_COMPONENT
 normative_status: ACTIVE_CURRENT_GOVERNANCE_COMPONENT
@@ -289,3 +289,31 @@ temporary_cycle_transition_contract:
   temporary_residual_classification: TEMPORARY_LIFECYCLE_RESIDUAL
   temporary_residual_is_candidate_semantic_failure: false
   promotion_requires_registered_candidate_approval_materialization_path: true
+producer_consumer_schema_identity:
+  required_before_materialization: true
+  required_identity:
+  - artifact_type
+  - schema_version
+  - canonical_field_names
+  - required_optional_status
+  - field_types
+  - producer_owner
+  - consumer_owner
+  - accepted_schema_revision
+  alias_fallback: false
+  mismatch: PRODUCER_CONSUMER_SCHEMA_MISMATCH
+  stage02_audit_event_canonical_field: audit_event_uid
+no_history_product_value_fallback:
+  historical_values_are_current_product_inputs: false
+  fresh_replay_source: REGISTERED_IMMUTABLE_INPUTS_PLUS_CURRENT_AUTHORITY
+  missing_current_value: EXPOSE_OWNING_GAP
+task_layer_effectful_transition_order:
+  required_order:
+  - TERMINALIZE_OR_LEGALLY_SUSPEND_CURRENT_WORK_UNIT
+  - PERSIST_RESUME
+  - WORK_UNIT_RESOLUTION_GATE_WHEN_PRIMARY_WORK_UNIT_CHANGES
+  - ACTIVATE_RESOLVED_WORK_UNIT
+  - SESSION_BOOTSTRAP_RESUME_GATE
+  - EFFECTFUL_EXECUTION
+  environment_override: false
+  materializer_override: false

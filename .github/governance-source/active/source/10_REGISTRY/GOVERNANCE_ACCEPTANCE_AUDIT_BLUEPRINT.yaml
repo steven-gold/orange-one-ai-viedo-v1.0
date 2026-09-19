@@ -5,7 +5,7 @@ blueprint_type: ACCEPTANCE_AUDIT_BLUEPRINT
 status: CURRENT_CANDIDATE
 canonical_path: 10_REGISTRY/GOVERNANCE_ACCEPTANCE_AUDIT_BLUEPRINT.yaml
 owner_uid: OWNER-GOVERNANCE-ACCEPTANCE
-governance_revision: v2.2.12-basic-design-atomic-materialization-hardening
+governance_revision: v2.2.13-asset-stage01-stage02-shared-contract-hardening
 normative_section_uids:
 - WEB-GOV-04-S071
 - WEB-GOV-04-S076
@@ -163,6 +163,12 @@ stage_execution_invariant_contract:
   - STAGE-11
   stage_specific_exception_without_registered_authority: BLOCK
   observed_stage_does_not_limit_scope: true
+  control_vs_system_trigger_resolution_required: true
+  deterministic_system_trigger_materialization_required: true
+  producer_consumer_schema_identity_required: true
+  producer_consumer_alias_fallback_blocked: true
+  no_history_product_value_fallback_required: true
+  task_layer_effectful_transition_order_required: true
 test_feedback_spec_evolution_contract:
   required: true
   applies_to_all_stages: true

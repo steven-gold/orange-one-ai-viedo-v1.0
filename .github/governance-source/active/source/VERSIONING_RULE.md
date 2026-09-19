@@ -93,3 +93,10 @@ The candidate package cannot self-prove integrity. The trust-root hash set is an
 - Normative content changed, therefore Current Governance UID and display version must change.
 - Required design denominators must be enumerated row-by-row; summary-only or representative-sample completion is forbidden.
 - Human and machine design deliverables must reconcile to the same exact required denominator before Basic Design Freeze.
+
+## v2.2.13 shared Stage-01/02 contract hardening rule
+- v2.2.12 remains immutable predecessor history.
+- Missing explicit trigger syntax is not automatically a product Authority choice when structured Current evidence uniquely proves a system-owned operation.
+- Producer/consumer field-schema drift fails before materialization; alias fallback cannot hide the defect.
+- Historical product values cannot fill Current missing contracts.
+- Reusable Stage consumers remain product-neutral and task-layer order is not bypassable.

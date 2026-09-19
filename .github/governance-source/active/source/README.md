@@ -61,3 +61,6 @@ This successor corrects the Basic Design boundary: Basic Design is complete inde
 
 ## v2.2.12 atomic basic design materialization
 Basic Design completeness requires full row-level denominator materialization, no summary/sample substitution, exact human/machine denominator reconciliation, and execution-detail completeness before Freeze. Page count is never a completeness metric.
+
+## v2.2.13 ASSET Stage-01/02 shared contract hardening
+This successor hardens product-neutral Stage-02 control-vs-system-trigger resolution, exact producer/consumer field-schema identity, no-history product-value fallback, legal task-layer transition order, and reusable Stage-02 consumer neutrality. It does not change ASSET product Authority.

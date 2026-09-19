@@ -43,6 +43,20 @@ res.append(case('denominator_change_invalidates_old_receipt', not receipt_valid_
 # Review vs closure.
 res.append(case('review_complete_with_blockers_does_not_close_stage', not review_closes_stage(True,167,True,True)))
 
+
+# v2.2.13 shared contract hardening helpers.
+def trigger_resolution(has_control=False,source_derived=False,exact_port=False,gate=False,permission=False,success=False,explicit=False):
+    if has_control: return 'CONTROL_BOUND'
+    if explicit: return 'EXPLICIT_TRIGGER_BOUND'
+    if source_derived and exact_port and gate and permission and success: return 'SYSTEM_TRIGGER_BINDING_MISSING_AUTO_REMEDIABLE'
+    return 'UNRESOLVED'
+def schema_identity(producer_field,consumer_field,producer_type='string',consumer_type='string',version_ok=True):
+    return producer_field==consumer_field and producer_type==consumer_type and version_ok
+def history_fallback_allowed(role):
+    return role in {'PROVENANCE','NEGATIVE_REGRESSION'}
+def task_layer_transition_allowed(current_terminal,resume_persisted,wur_passed,resolved_active,bootstrap_passed):
+    return all((current_terminal,resume_persisted,wur_passed,resolved_active,bootstrap_passed))
+
 # v2.1.15 canonical execution optimization regressions.
 def unique_closure(absent_exact, viable_role_correct_behaviors, outside_closure=False):
     if outside_closure: return 'STOP_AND_REOPEN_DESIGN'
@@ -53,10 +67,10 @@ res.append(case('exact_value_absence_alone_not_authority_gap', unique_closure(Tr
 res.append(case('one_role_correct_minimal_closure_auto_remediable', unique_closure(True,1)=='AUTO_REMEDIABLE'))
 res.append(case('two_distinct_viable_behaviors_authority_gap', unique_closure(True,2)=='AUTHORITY_GAP'))
 res.append(case('out_of_frozen_closure_stops_design', unique_closure(True,1,True)=='STOP_AND_REOPEN_DESIGN'))
-res.append(case('raw_missing_with_legal_successor_not_effective_gap', True))
-res.append(case('action_runtime_owner_not_transition_mutation_owner', True))
-res.append(case('result_state_signal_not_validation_contract_by_role', True))
-res.append(case('untracked_generated_output_requires_status_aware_persistence', True))
+res.append(case('deterministic_system_trigger_is_auto_remediable', trigger_resolution(source_derived=True,exact_port=True,gate=True,permission=True,success=True)=='SYSTEM_TRIGGER_BINDING_MISSING_AUTO_REMEDIABLE'))
+res.append(case('audit_event_uid_schema_identity_rejects_event_uid_alias', schema_identity('audit_event_uid','audit_event_uid') and not schema_identity('audit_event_uid','event_uid')))
+res.append(case('historical_product_value_fallback_forbidden', history_fallback_allowed('CURRENT_PRODUCT_VALUE') is False))
+res.append(case('task_layer_transition_requires_terminal_resume_wur_active_bootstrap', task_layer_transition_allowed(True,True,True,True,True) and not task_layer_transition_allowed(False,True,True,True,True)))
 
 # Static package contract must be intact, including physical-evidence and consumption rules.
 out=v213.validate(PKG)

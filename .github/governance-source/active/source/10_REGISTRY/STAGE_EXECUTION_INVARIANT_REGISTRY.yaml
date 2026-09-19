@@ -4,7 +4,7 @@ artifact_type: STAGE_EXECUTION_INVARIANT_REGISTRY
 status: CURRENT_CANDIDATE
 canonical_path: 10_REGISTRY/STAGE_EXECUTION_INVARIANT_REGISTRY.yaml
 owner_uid: OWNER-GOVERNANCE-STAGE-EXECUTION-INVARIANT
-governance_revision: v2.2.12-basic-design-atomic-materialization-hardening
+governance_revision: v2.2.13-asset-stage01-stage02-shared-contract-hardening
 scope:
   applies_to_stages:
   - STAGE-01
@@ -984,6 +984,54 @@ invariants:
     undefined_required_detail_is_design_gap: true
     ai_may_invent_missing_product_decision: false
     downstream_evidence_may_retroactively_close_incomplete_basic_design: false
+  CONTROL_VS_SYSTEM_TRIGGER_RESOLUTION:
+    required_before_no_control_action_gap_escalation: true
+    structured_evidence_required:
+    - USER_INTENT_OR_CONTROL_BINDING
+    - RUNTIME_DECISION_SOURCE
+    - GATE
+    - PERMISSION
+    - EXACT_RUNTIME_PORT
+    - REGISTERED_OPERATION
+    - SUCCESS_STATE_OR_EVENT
+    - JOURNEY_OR_WORKBENCH_INTENT
+    port_exposure_or_state_event_alone_is_trigger: false
+    deterministic_system_owned_outcome: SYSTEM_TRIGGER_BINDING_MISSING_AUTO_REMEDIABLE
+    explicit_system_trigger_materialization_required: true
+    new_visual_control_for_system_only_operation: false
+    authority_gap_minimum_materially_distinct_viable_behaviors: 2
+    missing_trigger_syntax_alone_is_authority_gap: false
+  PRODUCER_CONSUMER_SCHEMA_IDENTITY:
+    artifact_type_exact: true
+    schema_version_exact: true
+    canonical_field_name_exact: true
+    field_type_exact: true
+    required_optional_contract_exact: true
+    producer_owner_required: true
+    consumer_owner_required: true
+    alias_or_legacy_field_fallback: false
+    mismatch: PRODUCER_CONSUMER_SCHEMA_MISMATCH
+    stage02_audit_event_canonical_field: audit_event_uid
+    stage02_audit_event_legacy_alias_forbidden: event_uid
+  NO_HISTORY_PRODUCT_VALUE_FALLBACK:
+    history_role:
+    - PROVENANCE
+    - NEGATIVE_REGRESSION
+    historical_commit_or_generated_output_may_fill_current_product_value: false
+    historical_stage_result_may_receive_current_completion_credit: false
+    fresh_replay_source: REGISTERED_IMMUTABLE_INPUTS_PLUS_CURRENT_AUTHORITY
+    missing_current_input: EXPOSE_OWNING_GAP_NOT_HISTORY_FALLBACK
+  TASK_LAYER_EFFECTFUL_TRANSITION_ORDER:
+    required_order:
+    - TERMINALIZE_OR_LEGALLY_SUSPEND_CURRENT_WORK_UNIT
+    - PERSIST_RESUME
+    - WORK_UNIT_RESOLUTION_GATE_WHEN_PRIMARY_WORK_UNIT_CHANGES
+    - ACTIVATE_RESOLVED_WORK_UNIT
+    - SESSION_BOOTSTRAP_RESUME_GATE
+    - EFFECTFUL_EXECUTION
+    materializer_or_environment_may_force_primary_task_layer: false
+    nearby_stage_or_retry_may_skip_resolution: false
+    violation: BLOCK
 stage02_observed_defect_mapping:
 - finding: PORT_EXPOSURE_WITHOUT_TRIGGER
   mapped_invariant: RELATION_SEMANTIC_SEPARATION

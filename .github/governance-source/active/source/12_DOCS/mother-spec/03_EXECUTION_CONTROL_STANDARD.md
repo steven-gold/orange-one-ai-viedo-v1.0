@@ -1041,6 +1041,12 @@ Before remediation, the engine MUST validate `EXECUTION_CYCLE_PREFLIGHT_RECEIPT`
 
 Harness defects MUST NOT consume product blocker credit or create product Authority. Authorized normative promotion invalidates prior-cycle closure credit under the old UID; generated outputs/derived state are reset, immutable predecessor/external Authority is preserved at its owner, and fresh execution restarts under the new UID.
 
+COMMON_STAGE12_ORDER_AND_NO_HISTORY_FALLBACK
+
+Effectful Product Stage execution MUST preserve the governed task-layer order: terminalize or legally suspend the current Work Unit -> persist Resume -> execute WORK_UNIT_RESOLUTION_GATE when the primary Work Unit changes -> activate the resolved Work Unit -> rerun SESSION_BOOTSTRAP_RESUME_GATE -> execute. A materializer, validator, workflow input, environment variable, retry path, or nearby Stage identity MUST_NOT bypass this order or force a product Work Unit into the foreground.
+
+Historical commits, historical Stage outputs, superseded candidates, prior generated artifacts, and old run directories MAY be used only for provenance or registered negative regression. They MUST_NOT supply a missing Current product value, contract field, trigger, Authority binding, denominator, or completion credit. Fresh replay MUST begin from registered immutable inputs and Current Authority; if those Current inputs are insufficient, execution must expose the owning gap instead of reading history to manufacture the missing product data.
+
 <!-- SECTION_UID: WEB-GOV-03-S063 -->
 ## 63. Mandatory Session Bootstrap / Resume Gate
 

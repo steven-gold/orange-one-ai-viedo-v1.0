@@ -1446,6 +1446,12 @@ Audit MUST prove each governed execution cycle consumed one canonical preflight 
 
 All validators/scanners/classifiers/remediation executors MUST consume the same required-field, effective-contract, denominator, classification, impact, problem-register, and resolution-ledger truth. Local hard-coded subsets, stale prior-run denominators, profile-local policy overrides, or unpersisted generated evidence are blocking.
 
+COMMON_STAGE12_TRIGGER_SCHEMA_AUDIT
+
+Audit MUST verify CONTROL_VS_SYSTEM_TRIGGER_RESOLUTION occurred before any no-Control Action was escalated to Authority Gap, and MUST distinguish deterministic system-trigger binding gaps from genuinely ambiguous product choices. A deterministic system-only operation MUST have no invented visual Control and must reach the Current functional-contract owner through an explicit system_trigger materialization before receiving closure credit.
+
+Audit MUST also verify exact Producer/Consumer Schema Identity for every generated-to-consumer edge, including canonical field names/types/schema versions and owners. Alias fallback that hides schema drift is blocking. Reusable Stage consumers MUST contain no fixed product/page identity or historical run default as their implicit Current scope. Historical product values may not satisfy Current missing data. Task-layer activation must follow persisted terminal/resume/WUR order and may not be overridden by executor-local environment state.
+
 <!-- SECTION_UID: WEB-GOV-04-S079 -->
 ## 79. Session Bootstrap / Current Primary Task Audit
 

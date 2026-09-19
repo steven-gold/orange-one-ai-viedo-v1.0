@@ -1479,6 +1479,14 @@ The candidate MAY group multiple blocker identities into one coherent review pac
 Every admitted function MUST also classify visual impact through a `FUNCTION_VISUAL_IMPACT_MATRIX`. A user-visible or user-observable function MUST define the visual section/surface, component/control identity, interaction entry, state binding, pending/loading state, permission/disabled state, success/error/recovery feedback, version/revision visibility when applicable, responsive/overflow behavior, i18n reference when applicable, accessibility semantics, and visual Authority. `NO_VISUAL_DELTA` is allowed only with explicit Authority evidence. A new visual pattern MUST_NOT be invented during implementation when an approved existing design-system pattern is available.
 
 
+COMMON_STAGE12_CONTROL_VS_SYSTEM_TRIGGER_RESOLUTION
+
+For any required Action with no visible Control, the functional-contract capability MUST execute CONTROL_VS_SYSTEM_TRIGGER_RESOLUTION before classifying the absence as an Authority Gap. The resolver MUST use structured Current evidence, not labels or similarity: existing user-intent/control bindings; runtime_binding decision/source semantics; exact Gate and Permission; exactly resolved Runtime/Port and registered Operation; current State/Event or success transition; Journey/Workbench intent; and whether adding a Control would create a user behavior not present in Current Authority.
+
+When the combined Current evidence uniquely proves a system-owned/derived operation and no Current Authority defines explicit user initiation, the result MUST be SYSTEM_TRIGGER_BINDING_MISSING with AUTO_REMEDIABLE disposition. The owning functional-contract capability MUST materialize an explicit system_trigger contract into the single Current functional-contract owner and MUST_NOT create a new visual Control. Port exposure or result state_event alone is insufficient; the deterministic proof is the complete structured evidence set.
+
+Only when Current Authority materially supports two or more distinct viable initiation behaviors MAY the item become AUTHORITY_GAP / USER_DECISION_REQUIRED. Missing explicit trigger syntax by itself MUST_NOT manufacture a user-vs-system product choice.
+
 <!-- SECTION_UID: WEB-GOV-01-S072 -->
 ## 72. Functional / Visual / Interaction Authority Boundary
 
