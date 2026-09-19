@@ -706,6 +706,28 @@ findings:
   planned_authorization_uid: USR-DIRECTIVE-20260919-BLUEPRINT-CONSTRUCTION-TRACEABILITY-HARDENING-R9
   product_authority_change_allowed: false
   product_stage_credit: 0
+- finding_uid: FIND-20260919-015
+  class: STAGE02_SEMANTIC_TRIGGER_CLASSIFICATION_BUG
+  title: ASSET-01 system-owned Finding creation is repeatedly escalated as a false Control-vs-System-Trigger Authority choice
+  evidence: ASSET-01 Current product source binds AssetFinding owner to ASSET/EVALUATION, the Evaluation Finding port to createFinding, and the success event to IN_REVIEW→FINDING_OPEN | finding.created; no user Create Finding control is registered. Current Stage-02 scanner only accepts explicit trigger fields or direct transition bindings and therefore reports ACTION_WITHOUT_CONTROL_OR_TRIGGER for ASSET-01-ACT-FINDING-CREATE, causing the review candidate to manufacture a system-trigger-vs-user-control choice.
+  disposition: OPEN_PENDING_STAGE02_POST_RUN_FIX
+  specification_change_required: REVIEW_AFTER_ASSET01_STAGE02_COMPLETION
+  formal_specification_mutated_for_fix: false
+  current_specification_may_be_modified_from_this_finding_alone: false
+  defect_owner: STAGE02_FUNCTIONAL_SCANNER_AND_TRIGGER_RESOLUTION
+  affected_target_uid: ASSET-01-ACT-FINDING-CREATE
+  affected_category: ACTION_WITHOUT_CONTROL_OR_TRIGGER
+  current_product_direction: SYSTEM_TRIGGER_FROM_EVALUATION_FINDING_DETECTION
+  new_visual_control_required: false
+  product_stage_credit: 0
+  required_fix:
+  - ADD_SEMANTIC_CONTROL_VS_SYSTEM_TRIGGER_RESOLUTION_BEFORE_AUTHORITY_GAP_ESCALATION
+  - REUSE_EXISTING_ENTITY_OWNER_PORT_STATE_EVENT_GATE_AND_JOURNEY_EVIDENCE
+  - DO_NOT_INVENT_EXPLICIT_USER_CONTROL_WHEN_CURRENT_PRODUCT_TOPOLOGY_IS_SYSTEM_OWNED_AND_DETERMINISTIC
+  - ADD_REGRESSION_COVERAGE_FOR_SYSTEM_OWNED_ACTION_WITHOUT_VISIBLE_CONTROL
+  defer_fix_until: COMPLETE_CURRENT_ASSET01_STAGE02_RUN_AND_RESCAN_FOR_SAME_DEFECT_FAMILY
+  reopen_condition: Keep open until the completed ASSET-01 Stage-02 run proves the false authority-choice signature is eliminated or fully enumerated.
+
 historical_stage2_execution_findings:
   prior_CORE-01_STAGE02_BLOCKED: 7
   prior_ASSET-01_STAGE02_BLOCKED: 6
