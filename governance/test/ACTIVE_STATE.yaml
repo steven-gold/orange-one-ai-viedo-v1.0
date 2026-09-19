@@ -104,8 +104,8 @@ specification_mutation_safety:
   ordinary_mid_stage_specification_mutation: BLOCK
   stage_end_consolidated_promotion_requires_new_explicit_directive: true
   execution_context_lock_required: true
-status: ACTIVE_ASSET_STAGE01_STAGE02_SHARED_CONTRACT_HARDENING_SUCCESSOR_PROMOTED_EXACT_HEAD_REVALIDATION_REQUIRED
-next_action: RUN_V2_2_13_EXACT_HEAD_VALIDATION_THEN_CLEAN_ASSET01_STAGE01_STAGE02_FRESH_REPLAY
+status: ACTIVE_ASSET01_CLEAN_FRESH_REPLAY_BOOTSTRAP_REQUIRED
+next_action: SESSION_BOOTSTRAP_RESUME_GATE_THEN_REBUILD_FRESH_REPLAY_CONTEXT_FROM_IMMUTABLE_ASSET01_INPUT
 previous_closed_product_work_unit:
   work_unit_uid: WU-STAGE02-CORE01-STRUCTURAL-REMEDIATION-001
   canonical_name: CORE01_STRUCTURAL_CONTRACT_REMEDIATION
@@ -284,42 +284,54 @@ previous_closed_work_unit:
     source_runtime_residual_count: 0
     product_stage_credit: 0
 resume_control:
-  current_resume_point: ASSET_STAGE01_STAGE02_SHARED_CONTRACT_SUCCESSOR_PROMOTED_EXACT_HEAD_REVALIDATION_REQUIRED
-  current_work_unit_uid: WU-GOV-ASSET-STAGE01-STAGE02-SHARED-CONTRACT-HARDENING-001
-  current_owner: .github/governance-source/active/source/12_DOCS/mother-spec/01_BLUEPRINT_DESIGN_GOVERNANCE.md
+  current_resume_point: ASSET01_CLEAN_FRESH_REPLAY_PRODUCT_WU_ACTIVATED_BOOTSTRAP_REQUIRED
+  current_work_unit_uid: WU-ASSET01-STAGE01-STAGE02-FRESH-REPLAY-8133839F
+  current_owner: .github/governance-maintenance/run_fresh_stage_replay.py
   historical_stage2_results_are_current_state: false
   stage2_execution_requires_fresh_entry_resolution: true
-  exact_next_action: RUN_V2_2_13_EXACT_HEAD_VALIDATION_THEN_CLEAN_ASSET01_STAGE01_STAGE02_FRESH_REPLAY
-  parent_work_unit_uid: WU-GOV-BASIC-DESIGN-ATOMIC-MATERIALIZATION-001
+  exact_next_action: SESSION_BOOTSTRAP_RESUME_GATE_THEN_REBUILD_FRESH_REPLAY_CONTEXT_FROM_IMMUTABLE_ASSET01_INPUT
+  parent_work_unit_uid: WU-GOV-ASSET-STAGE01-STAGE02-SHARED-CONTRACT-HARDENING-001
   parent_primary_task_layer: GOVERNANCE_MAINTENANCE
-  preserved_product_work_unit_uid: WU-STAGE02-ASSET01-8133839F-REPLAY
-  preserved_product_resume_point: ASSET01_STAGE2_EXACT_CLOSURES_REVALIDATED_REVIEW_ONLY_PRODUCT_AUTHORITY_REQUIRED
-  preserved_product_next_action: CLEAN_ASSET01_STAGE01_STAGE02_GENERATED_OUTPUT_AND_FRESH_REPLAY_AFTER_SHARED_GOVERNANCE_SUCCESSOR
+  predecessor_product_work_unit_uid: WU-STAGE02-ASSET01-8133839F-REPLAY
+  predecessor_product_attempt_uid: STAGE02-ASSET01-8133839F-REPLAY
+  predecessor_product_evidence_role: HISTORICAL_PREDECESSOR_EVIDENCE_ONLY
+  current_governance_product_credit: 0
 governance_revision_transition:
   current_governance_uid: GOV-REV-20260919-ASSET-STAGE01-STAGE02-SHARED-CONTRACT-HARDENING
   predecessor_governance_uid: GOV-REV-20260919-BASIC-DESIGN-ATOMIC-MATERIALIZATION-HARDENING
   predecessor_attempt_preserved_as_historical_evidence: true
   predecessor_attempt_history_ref: governance/test/history/stage02/design-remediation-routing-20260918/STAGE02_CORE01_DESIGN_REMEDIATION_TEST_EVIDENCE.json
   predecessor_attempt_may_close_under_current_governance: false
-  fresh_revalidation_required: true
-  fresh_revalidation_scope: CONTROL_VS_SYSTEM_TRIGGER_PRODUCER_CONSUMER_SCHEMA_PRODUCT_NEUTRAL_STAGE02_CONSUMERS
-  mother_machine_revalidation_complete: false
-  mother_machine_revalidation_run_id: null
-  mother_machine_revalidation_head: null
-  mother_machine_revalidation_result: REVALIDATION_REQUIRED
+  fresh_revalidation_required: false
+  mother_machine_revalidation_complete: true
+  mother_machine_revalidation_run_id: 35459168158
+  mother_machine_revalidation_head: a01e9f6a1d0cfe2f77eee86c707477dc8292add3
+  mother_machine_revalidation_result: success
   selected_execution_profile_preserved: true
-  selected_execution_profile_run_id: null
-  branch_guard_run_id: 35321234031
-  stage02_boundary_run_id: 35321234019
+  selected_execution_profile_run_id: 35459168165
+  branch_guard_run_id: 35459168219
+  stage02_boundary_run_id: 35459168184
+  fresh_replay_identity_run_id: 35459168199
+  exact_head_outer_terminal_conclusions:
+  - FULL_LINE_SUCCESS
+  - SELECTED_PROFILE_SUCCESS
+  - BRANCH_GUARD_SUCCESS
+  - STAGE02_ADMISSION_BOUNDARY_SUCCESS_PRODUCT_EXECUTION_SKIPPED
+  - FRESH_REPLAY_IDENTITY_SUCCESS_PRODUCT_EXECUTION_SKIPPED
+  product_fresh_replay_required_after_governance_change: true
   canonical_rule_registry_required_for_fresh_revalidation: true
   website_construction_remains_blocked: true
   deployment_remains_blocked: true
   execution_scope_manifest_ref: governance/test/CURRENT_EXECUTION_SCOPE_MANIFEST.yaml
-  current_product_attempt_uid: STAGE02-ASSET01-8133839F-REPLAY
-  current_product_attempt_run_uid: FRESH-ASSET01-8133839F-STAGE02
-  current_product_attempt_workflow_run_id: 35435405975
-  current_product_attempt_artifact_id: 10581363345
-  current_product_attempt_artifact_sha256: a103e733a86be6f818e1f96411790b1bd75ba60f651ae6d2761d9ae1d83db342
+  predecessor_product_attempt_uid: STAGE02-ASSET01-8133839F-REPLAY
+  predecessor_product_attempt_run_uid: FRESH-ASSET01-8133839F-STAGE02
+  predecessor_product_attempt_workflow_run_id: 35435405975
+  predecessor_product_attempt_artifact_id: 10581363345
+  predecessor_product_attempt_artifact_sha256: a103e733a86be6f818e1f96411790b1bd75ba60f651ae6d2761d9ae1d83db342
+  predecessor_product_functional_gap_total: 75
+  predecessor_product_closure_blocker_total: 7
+  predecessor_product_credit: 31
+  current_governance_product_credit: 0
 pending_governance_review:
   review_item_uid: REV-GOV-001
   review_type: PREFORMAL_GOVERNANCE_REVIEW
@@ -348,8 +360,8 @@ pending_governance_review:
   - STAGE03
   - WEBSITE_CONSTRUCTION
   - DEPLOYMENT
-current_primary_task_layer: GOVERNANCE_MAINTENANCE
-current_primary_task_authorization_uid: USR-DIRECTIVE-20260920-ASSET-STAGE01-STAGE02-SHARED-CONTRACT-HARDENING-R4
+current_primary_task_layer: PRODUCT_STAGE_EXECUTION
+current_primary_task_authorization_uid: USR-DIRECTIVE-20260920-RERUN-ASSET01-STAGE01-STAGE02-AFTER-SHARED-HARDENING-R1
 current_primary_task_product_stage_credit: 0
 earlier_closed_product_work_unit:
   work_unit_uid: WU-STAGE02-CORE01-FRESH-TEST-001
@@ -1380,6 +1392,18 @@ work_unit_resolution_gate_asset01_fresh_replay_current:
     disposition: RESTORE_IMMUTABLE_INPUT_ONLY_NO_GENERATED_OUTPUT_RESTORE
   result_target: EXECUTE_THROUGH_STAGE02_ONLY
   product_stage_credit: 0
+next_fresh_replay_context_request:
+  request_uid: REPLAY-CONTEXT-ASSET01-V2213-20260920-001
+  status: BOOTSTRAP_REQUIRED_BEFORE_READY_FOR_REPLAY
+  current_governance_uid: GOV-REV-20260919-ASSET-STAGE01-STAGE02-SHARED-CONTRACT-HARDENING
+  authorization_uid: USR-DIRECTIVE-20260920-RERUN-ASSET01-STAGE01-STAGE02-AFTER-SHARED-HARDENING-R1
+  work_unit_uid: WU-ASSET01-STAGE01-STAGE02-FRESH-REPLAY-8133839F
+  predecessor_input_uid: IMMUTABLE-ASSET01-9668E230
+  predecessor_input_root: 00_SOURCE_INTAKE/immutable_inputs/asset01_9668e230
+  prior_consumed_context_may_be_reused_as_current: false
+  historical_product_values_may_fill_new_context: false
+  exact_next_action: SESSION_BOOTSTRAP_RESUME_GATE_THEN_MATERIALIZE_NEW_READY_FOR_REPLAY_CONTEXT
+
 fresh_replay_execution_context:
   status: CONSUMED
   run_uid: FRESH-ASSET01-8133839F-STAGE02
@@ -2644,56 +2668,117 @@ work_unit_resolution_gate_asset_stage01_stage02_shared_contract_hardening:
   - SHARED_WORKFLOW_DISPATCH_STILL_CONTAINS_FIXED_CORE01_SCOPE_DEFAULT
   - EXISTING_MOTHER_TASK_LAYER_ORDER_MUST_BE_ENFORCED_NOT_BYPASSED
   product_stage_credit: 0
-active_work_unit:
+closed_governance_maintenance_work_unit_asset_stage01_stage02_shared_contract_hardening:
   work_unit_uid: WU-GOV-ASSET-STAGE01-STAGE02-SHARED-CONTRACT-HARDENING-001
   canonical_name: ASSET_STAGE01_STAGE02_SHARED_CONTRACT_HARDENING
   primary_task_layer: GOVERNANCE_MAINTENANCE
   canonical_owner: .github/governance-source/active/source/12_DOCS/mother-spec/01_BLUEPRINT_DESIGN_GOVERNANCE.md
-  co_owners:
-  - .github/governance-source/active/source/12_DOCS/mother-spec/02_IMPLEMENTATION_DELIVERY_STANDARD.md
-  - .github/governance-source/active/source/12_DOCS/mother-spec/03_EXECUTION_CONTROL_STANDARD.md
-  - .github/governance-source/active/source/12_DOCS/mother-spec/04_AUDIT_PROGRESS_STANDARD.md
-  - .github/governance-source/active/source/10_REGISTRY/STAGE_EXECUTION_INVARIANT_REGISTRY.yaml
-  - .github/governance-source/active/source/10_REGISTRY/GOVERNANCE_ACCEPTANCE_AUDIT_BLUEPRINT.yaml
-  - governance/ci/run_current_stage2_actual_test.py
-  - governance/ci/materialize_current_stage2_closure_artifacts.py
-  - .github/workflows/stage02-actual-test.yml
-  current_status: PROMOTION_MATERIALIZED_EXACT_HEAD_REVALIDATION_REQUIRED
-  authorization_uid: USR-DIRECTIVE-20260919-ASSET-STAGE01-STAGE02-SHARED-CONTRACT-HARDENING-R1
-  scope:
-  - CONTROL_VS_SYSTEM_TRIGGER_SEMANTIC_RESOLUTION
-  - PRODUCER_CONSUMER_SCHEMA_IDENTITY_GATE
-  - AUDIT_EVENT_UID_CANONICAL_FIELD_CONTRACT
-  - REUSABLE_STAGE02_PRODUCT_NEUTRALITY
-  - NO_HISTORY_PRODUCT_VALUE_FALLBACK
-  - IMMUTABLE_INPUT_PRESERVING_CLEAN_REPLAY_BOUNDARY
-  - EXISTING_TASK_LAYER_TRANSITION_ORDER_MACHINE_ENFORCEMENT
-  - TARGETED_NEGATIVE_REGRESSION
-  out_of_scope:
-  - PRODUCT_AUTHORITY_CHANGE
-  - ASSET01_NEW_BUSINESS_BEHAVIOR
-  - NEW_CREATE_FINDING_VISUAL_CONTROL
-  - STAGE03_PRODUCT_EXECUTION
-  - WEBSITE_IMPLEMENTATION
-  - DEPLOYMENT
-  - PRODUCT_STAGE_CREDIT
-  definition_of_done:
-  - PREEXISTING_SINGLE_USE_SPEC_CHANGE_AUTHORIZATION
+  terminal_disposition: CLOSED_VERIFIED_NO_PRODUCT_CREDIT
+  governance_uid: GOV-REV-20260919-ASSET-STAGE01-STAGE02-SHARED-CONTRACT-HARDENING
+  validated_head_sha: a01e9f6a1d0cfe2f77eee86c707477dc8292add3
+  full_line_run_id: 35459168158
+  selected_profile_run_id: 35459168165
+  branch_guard_run_id: 35459168219
+  stage02_boundary_run_id: 35459168184
+  fresh_replay_identity_run_id: 35459168199
+  terminal_conclusions:
+  - FULL_LINE_SUCCESS
+  - SELECTED_PROFILE_SUCCESS
+  - BRANCH_GUARD_SUCCESS
+  - STAGE02_ADMISSION_BOUNDARY_SUCCESS_PRODUCT_EXECUTION_SKIPPED
+  - FRESH_REPLAY_IDENTITY_SUCCESS_PRODUCT_EXECUTION_SKIPPED
+  definition_of_done_verified:
   - V2_2_13_IMMUTABLE_GOVERNANCE_SUCCESSOR
   - CONTROL_VS_SYSTEM_TRIGGER_RESOLUTION_MOTHER_AND_MACHINE_RULE_CURRENT
   - PRODUCER_CONSUMER_SCHEMA_IDENTITY_MOTHER_AND_MACHINE_RULE_CURRENT
   - AUDIT_EVENT_UID_SINGLE_CANONICAL_FIELD_CONTRACT
   - ACTIVE_SHARED_STAGE02_PATH_ZERO_FIXED_PRODUCT_UID_OR_HISTORICAL_RUN_DEFAULT
   - TASK_LAYER_TRANSITION_CANNOT_BE_BYPASSED_BY_MATERIALIZER_ENVIRONMENT
-  - NO_GIT_HISTORY_PRODUCT_VALUE_FALLBACK_REGRESSION_PASS
+  - NO_HISTORY_PRODUCT_VALUE_FALLBACK_REGRESSION_PASS
   - IMMUTABLE_RAW_SOURCE_DELETE_GUARD_REGRESSION_PASS
   - TARGETED_NEGATIVE_REGRESSION_PASS
   - ACTIVE_CONSUMER_REFERENCE_INTEGRITY_PASS
+  - STRUCTURED_MUTATION_SAFETY_PASS
+  - PROMOTION_SCAFFOLD_RESIDUAL_ZERO
   - EXACT_HEAD_FULL_LINE_SUCCESS
   - EXACT_HEAD_SELECTED_PROFILE_SUCCESS
   - EXACT_HEAD_BRANCH_GUARD_SUCCESS
   - PRODUCT_STAGE_CREDIT_ZERO
   product_stage_credit: 0
+  legal_next_transition: WORK_UNIT_RESOLUTION_GATE_TO_EXISTING_ASSET01_CLEAN_FRESH_REPLAY
+
+work_unit_resolution_gate_asset01_clean_fresh_replay_after_shared_hardening:
+  resolution_uid: WUR-ASSET01-STAGE01-STAGE02-AFTER-SHARED-HARDENING-20260920-001
+  normative_authority: false
+  result: PASS_SINGLE_LEGAL_SUCCESSOR
+  requested_primary_task_layer: PRODUCT_STAGE_EXECUTION
+  resolved_work_unit_uid: WU-ASSET01-STAGE01-STAGE02-FRESH-REPLAY-8133839F
+  authorization_uid: USR-DIRECTIVE-20260920-RERUN-ASSET01-STAGE01-STAGE02-AFTER-SHARED-HARDENING-R1
+  current_governance_uid: GOV-REV-20260919-ASSET-STAGE01-STAGE02-SHARED-CONTRACT-HARDENING
+  existing_uid_reuse_basis:
+  - PRIOR_WUR_ASSET01_STAGE01_STAGE02_8133839F
+  - EXISTING_DYNAMIC_FRESH_REPLAY_OWNER
+  - EXISTING_IMMUTABLE_ASSET01_INPUT
+  - SAME_ASSET01_EXACT_SINGLE_PAGE_SCOPE
+  page_scope:
+  - ASSET-01
+  excluded_page_scope:
+  - CORE-01
+  predecessor_input_uid: IMMUTABLE-ASSET01-9668E230
+  predecessor_input_root: 00_SOURCE_INTAKE/immutable_inputs/asset01_9668e230
+  predecessor_raw_source_git_blob_sha: 9668e2307c722ea4cf64f93f07c92da1b3abcc28
+  prior_product_attempt_uid: STAGE02-ASSET01-8133839F-REPLAY
+  prior_product_attempt_role: HISTORICAL_PREDECESSOR_EVIDENCE_ONLY
+  prior_functional_gap_total: 75
+  prior_closure_blocker_total: 7
+  prior_product_credit: 31
+  current_governance_product_credit: 0
+  effectful_execution_allowed_before_rebootstrap: false
+  next_gate: SESSION_BOOTSTRAP_RESUME_GATE
+
+active_work_unit:
+  work_unit_uid: WU-ASSET01-STAGE01-STAGE02-FRESH-REPLAY-8133839F
+  canonical_name: ASSET01_STAGE01_STAGE02_CLEAN_FRESH_REPLAY
+  primary_task_layer: PRODUCT_STAGE_EXECUTION
+  canonical_owner: .github/governance-maintenance/run_fresh_stage_replay.py
+  state_owner: governance/test/ACTIVE_STATE.yaml
+  scope:
+  - ASSET-01
+  excluded_scope:
+  - CORE-01
+  current_status: ACTIVATED_BOOTSTRAP_REQUIRED_BEFORE_EFFECTFUL_EXECUTION
+  authorization_uid: USR-DIRECTIVE-20260920-RERUN-ASSET01-STAGE01-STAGE02-AFTER-SHARED-HARDENING-R1
+  current_governance_uid: GOV-REV-20260919-ASSET-STAGE01-STAGE02-SHARED-CONTRACT-HARDENING
+  start_condition:
+  - V2_2_13_SHARED_GOVERNANCE_WU_CLOSED
+  - IMMUTABLE_ASSET01_INPUT_PRESENT
+  - CLEAN_REPLAY_CONTEXT_NOT_YET_READY
+  - FULL_SESSION_BOOTSTRAP_RESUME_GATE_REQUIRED_BEFORE_EFFECTFUL_EXECUTION
+  dependencies:
+  - 00_SOURCE_INTAKE/immutable_inputs/asset01_9668e230/RAW_SOURCE_RECOVERY_RECEIPT.yaml
+  - 00_SOURCE_INTAKE/immutable_inputs/asset01_9668e230/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+  - governance/test/CURRENT_EXECUTION_SCOPE_MANIFEST.yaml
+  - GOVERNANCE_CURRENT.yaml
+  definition_of_done:
+  - REBUILD_READY_FOR_REPLAY_CONTEXT_FROM_CURRENT_GOVERNANCE_AND_IMMUTABLE_INPUT
+  - REMOVE_REPLACEABLE_ASSET_STAGE01_STAGE02_GENERATED_OUTPUT_ONLY
+  - PRESERVE_IMMUTABLE_RAW_SOURCE_AND_LEGAL_HISTORICAL_EVIDENCE
+  - FRESH_STAGE01_SOURCE_INTAKE_CLASSIFICATION_AUTHORITY_BINDING
+  - FRESH_STAGE02_FUNCTIONAL_CONTRACT_EXECUTION
+  - NO_HISTORICAL_PRODUCT_VALUE_FALLBACK
+  - NO_AI_PRODUCT_AUTHORITY_AUTOFILL
+  - REVIEW_ONLY_CANDIDATE_ZERO_PRODUCT_CREDIT
+  - APPROVED_CANONICAL_OWNER_ONLY_MATERIALIZATION
+  - FRESH_EXACT_HEAD_GATES_BEFORE_STAGE_EXIT
+  - STOP_AFTER_STAGE02
+  product_blocker_credit: 0
+  predecessor_product_evidence:
+    attempt_uid: STAGE02-ASSET01-8133839F-REPLAY
+    functional_gap_total: 75
+    closure_blocker_total: 7
+    product_credit: 31
+    role: HISTORICAL_PREDECESSOR_EVIDENCE_ONLY
+  next_action: SESSION_BOOTSTRAP_RESUME_GATE_THEN_REBUILD_FRESH_REPLAY_CONTEXT_FROM_IMMUTABLE_ASSET01_INPUT
 work_unit_resolution_gate_blueprint_traceability:
   resolution_uid: WUR-GOV-BLUEPRINT-TRACEABILITY-20260919-001
   normative_authority: false
