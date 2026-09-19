@@ -104,8 +104,8 @@ specification_mutation_safety:
   ordinary_mid_stage_specification_mutation: BLOCK
   stage_end_consolidated_promotion_requires_new_explicit_directive: true
   execution_context_lock_required: true
-status: ACTIVE_ASSET01_STAGE02_BOUNDED_REMEDIATION_PACKAGE_READY
-next_action: MATERIALIZE_ASSET01_STAGE02_EXACT_NON_AMBIGUOUS_CLOSURES
+status: ACTIVE_ASSET01_STAGE02_EXACT_CLOSURES_MATERIALIZED_REVALIDATION_REQUIRED
+next_action: REVALIDATE_ASSET01_STAGE02_AFTER_EXACT_CLOSURE_MATERIALIZATION
 previous_closed_product_work_unit:
   work_unit_uid: WU-STAGE02-CORE01-STRUCTURAL-REMEDIATION-001
   canonical_name: CORE01_STRUCTURAL_CONTRACT_REMEDIATION
@@ -284,12 +284,12 @@ previous_closed_work_unit:
     source_runtime_residual_count: 0
     product_stage_credit: 0
 resume_control:
-  current_resume_point: ASSET01_STAGE2_BOUNDED_REMEDIATION_PACKAGE_READY
+  current_resume_point: ASSET01_STAGE2_EXACT_CLOSURES_MATERIALIZED_REVALIDATION_REQUIRED
   current_work_unit_uid: WU-STAGE02-ASSET01-8133839F-REPLAY
-  current_owner: 00_SOURCE_INTAKE/run_asset01_8133839f_stage02/04_PAGE_FUNCTIONAL_CONTRACT/CURRENT_PROBLEM_REGISTER.yaml
+  current_owner: 00_SOURCE_INTAKE/run_asset01_8133839f_stage02/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/FUNCTIONAL_CHAIN_SPEC.yaml
   historical_stage2_results_are_current_state: false
   stage2_execution_requires_fresh_entry_resolution: false
-  exact_next_action: MATERIALIZE_ASSET01_STAGE02_EXACT_NON_AMBIGUOUS_CLOSURES
+  exact_next_action: REVALIDATE_ASSET01_STAGE02_AFTER_EXACT_CLOSURE_MATERIALIZATION
 governance_revision_transition:
   current_governance_uid: GOV-REV-20260919-SEMANTIC-BASELINE-CONSUMER-SINGLE-OWNER-HARDENING
   predecessor_governance_uid: GOV-REV-20260919-STRUCTURED-MUTATION-SELECTOR-HARDENING
@@ -1548,7 +1548,7 @@ active_work_unit:
   scope:
   - ASSET-01
   canonical_owner: 00_SOURCE_INTAKE/run_asset01_8133839f_stage02/04_PAGE_FUNCTIONAL_CONTRACT/CURRENT_PROBLEM_REGISTER.yaml
-  current_status: BOUNDED_REMEDIATION_PACKAGE_READY
+  current_status: EXACT_CLOSURES_MATERIALIZED_REVALIDATION_REQUIRED
   source_attempt_uid: STAGE02-ASSET01-8133839F-REPLAY
   source_problem_denominator: 106
   source_closure_blocker_denominator: 9
@@ -1693,6 +1693,17 @@ active_work_unit:
     current_closure_blocker_denominator: 9
     user_or_authority_selection_still_required_for:
     - ASSET-01-ACT-FINDING-CREATE_TRIGGER_BEHAVIOR
+  exact_closure_materialization:
+    canonical_successor_ref: 00_SOURCE_INTAKE/run_asset01_8133839f_stage02/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    receipt_ref: 00_SOURCE_INTAKE/run_asset01_8133839f_stage02/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/EXACT_CLOSURE_MATERIALIZATION_RECEIPT.yaml
+    materialized_closure_count: 31
+    exact_external_authority_binding_count: 4
+    exact_success_state_binding_count: 7
+    deterministic_negative_transition_test_count: 5
+    exact_post_action_validation_wrapper_count: 15
+    review_only_candidate_problem_count_unchanged: 75
+    raw_source_mutated: false
+    product_blocker_credit_before_fresh_revalidation: 0
 closed_test_validation_maintenance_work_unit_stage02_applicability_projection:
   work_unit_uid: WU-TEST-STAGE02-APPLICABILITY-PROJECTION-001
   canonical_name: STAGE02_APPLICABILITY_AND_SUCCESSOR_CONTRACT_PROJECTION_HARDENING
