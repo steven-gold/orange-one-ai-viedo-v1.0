@@ -11,7 +11,10 @@ from pathlib import Path
 import yaml
 
 ROOT = Path(__file__).resolve().parents[2]
-RUN = ROOT / os.environ.get('ACPOS_RUN_ROOT', '00_SOURCE_INTAKE/fresh_run_003')
+RUN_ROOT_ENV = os.environ.get('ACPOS_RUN_ROOT', '').strip()
+if not RUN_ROOT_ENV:
+    raise SystemExit('BLOCK: ACPOS_RUN_ROOT_REQUIRED')
+RUN = ROOT / RUN_ROOT_ENV
 STATE = ROOT / 'governance/test/ACTIVE_STATE.yaml'
 STAGE_REGISTRY = ROOT / '.github/governance-source/active/source/10_REGISTRY/GOVERNANCE_LIFECYCLE_STAGE_REGISTRY.yaml'
 RESULT = ROOT / '.github/stage02-test/STAGE02_ACTUAL_TEST_RESULT.json'
@@ -161,8 +164,11 @@ def declared_stage02_completeness_gaps(page: str, raw: dict, controls: dict, obj
 
     wb = raw.get('functional_workbench_topology_contract') or {}
     conv = wb.get('conversation_workbench') or {}
-    required_sections = ['CORE-01-SEC-03','CORE-01-SEC-04','CORE-01-SEC-06','CORE-01-SEC-07']
-    if conv.get('workbench_type') != 'ATOMIC_WORKBENCH' or conv.get('same_surface') != 'REQUIRED' or conv.get('section_order') != required_sections or conv.get('split_into_independent_surfaces') != 'FORBIDDEN':
+    section_registry = idx((raw.get('registries') or {}).get('sections'), 'section_uid')
+    required_sections = conv.get('section_order') or []
+    valid_section_order = isinstance(required_sections, list) and bool(required_sections) and all(str(x) in section_registry for x in required_sections)
+    if (not conv.get('workbench_uid') or conv.get('workbench_type') != 'ATOMIC_WORKBENCH' or conv.get('same_surface') != 'REQUIRED'
+            or not valid_section_order or conv.get('split_into_independent_surfaces') != 'FORBIDDEN'):
         add(gaps, page, 'ARCHITECTURE_GAP', 'CONVERSATION_ATOMIC_WORKBENCH_CONTRACT_INCOMPLETE', str(conv.get('workbench_uid') or page), str(conv))
 
     lifecycle = raw.get('work_item_lifecycle_contract') or {}
@@ -172,8 +178,9 @@ def declared_stage02_completeness_gaps(page: str, raw: dict, controls: dict, obj
             declared_items[str(row['work_item'])] = row
     modes = raw.get('page_modes') or {}
     expected_items = []
-    for mode in ('PROJECT_CORE','TOPIC_PRODUCTION'):
-        expected_items.extend((modes.get(mode) or {}).get('editable_work_items') or [])
+    for mode_record in modes.values() if isinstance(modes, dict) else []:
+        if isinstance(mode_record, dict):
+            expected_items.extend(mode_record.get('editable_work_items') or [])
     if set(declared_items) != set(expected_items):
         add(gaps, page, 'ARCHITECTURE_GAP', 'WORK_ITEM_LIFECYCLE_DENOMINATOR_DRIFT', page, str({'expected':sorted(expected_items),'actual':sorted(declared_items)}))
     domain_ops = {str(x.get('operation_uid')): x for x in (raw.get('domain_materialization_operations') or []) if isinstance(x, dict) and x.get('operation_uid')}
@@ -253,14 +260,15 @@ def declared_stage02_completeness_gaps(page: str, raw: dict, controls: dict, obj
 
     pipeline = raw.get('conversation_finalization_pipeline_contract') or {}
     steps = pipeline.get('steps') or []
-    if pipeline.get('singular_pipeline') is not True or [x.get('order') for x in steps if isinstance(x,dict)] != list(range(1,11)):
+    orders = [x.get('order') for x in steps if isinstance(x,dict)]
+    if pipeline.get('singular_pipeline') is not True or not orders or orders != list(range(1,len(orders)+1)):
         add(gaps, page, 'ARCHITECTURE_GAP', 'SINGULAR_FINALIZATION_PIPELINE_INCOMPLETE', page, str(pipeline.get('singular_pipeline')))
 
 
 def materialized_stage02_completeness_blockers(page_dir: Path, raw: dict) -> list[str]:
     meta = raw.get('stage02_completeness_contract')
     if not isinstance(meta, dict) or meta.get('status') != 'REQUIRED_FOR_STAGE02_CLOSURE':
-        return []
+        return ['STAGE02_PLANNING_COMPLETENESS_CONTRACT_MISSING']
     blockers = []
     baseline = meta.get('planning_baseline_sha256')
     reg = raw.get('registries') or {}
@@ -294,8 +302,12 @@ def materialized_stage02_completeness_blockers(page_dir: Path, raw: dict) -> lis
 
     wb = doc('FUNCTIONAL_WORKBENCH_CONTRACT.yaml')
     atomics = {str(x.get('workbench_uid')): x for x in (wb.get('atomic_workbenches') or []) if isinstance(x,dict)}
-    conv = atomics.get('CORE-01-WB-CONVERSATION') or {}
-    if conv.get('workbench_type') != 'ATOMIC_WORKBENCH' or conv.get('same_surface') != 'REQUIRED' or conv.get('section_order') != ['CORE-01-SEC-03','CORE-01-SEC-04','CORE-01-SEC-06','CORE-01-SEC-07']:
+    source_conv = ((raw.get('functional_workbench_topology_contract') or {}).get('conversation_workbench') or {})
+    source_conv_uid = str(source_conv.get('workbench_uid') or '')
+    conv = atomics.get(source_conv_uid) or {}
+    if (not source_conv_uid or conv.get('workbench_type') != source_conv.get('workbench_type')
+            or conv.get('same_surface') != source_conv.get('same_surface')
+            or conv.get('section_order') != source_conv.get('section_order')):
         blockers.append('CONVERSATION_ATOMIC_WORKBENCH_MISSING')
 
     topo = doc('INTERACTION_TOPOLOGY_SPEC.yaml')
@@ -308,7 +320,11 @@ def materialized_stage02_completeness_blockers(page_dir: Path, raw: dict) -> lis
         blockers.append('SEND_ACTION_TOPOLOGY_NOT_UNIQUE')
 
     ai = doc('AI_INTERACTION_CONTINUITY_CONTRACT.yaml')
-    if not ai.get('same_problem_rule') or ai.get('exact_relevant_context') != ['Project','Topic if applicable','Work Item','Thread','Attachment refs','Reference refs','Context Package'] or ai.get('single_finalization_pipeline') is not True:
+    source_conversation = raw.get('conversation_policy') or {}
+    source_pipeline = raw.get('conversation_finalization_pipeline_contract') or {}
+    if source_conversation and (ai.get('same_problem_rule') != source_conversation.get('same_problem_rule') or ai.get('exact_relevant_context') != source_conversation.get('exact_relevant_context')):
+        blockers.append('AI_SAME_QUESTION_CONTEXT_CONTINUITY_MISSING')
+    if source_pipeline and ai.get('single_finalization_pipeline') is not bool(source_pipeline.get('singular_pipeline')):
         blockers.append('AI_SAME_QUESTION_CONTEXT_CONTINUITY_MISSING')
 
     chain = doc('FUNCTIONAL_CHAIN_SPEC.yaml')

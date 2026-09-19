@@ -29,6 +29,7 @@ DYNAMIC_REPLAY_EXECUTABLES = (
     ".github/workflows/fresh-stage-replay.yml",
     ".github/governance-maintenance/run_fresh_stage_replay.py",
     ".github/governance-maintenance/finalize_fresh_stage_replay.py",
+    "governance/ci/run_current_stage2_actual_test.py",
 )
 FIXED_REPLAY_IDENTITY_PATTERNS = {
     "RUN_ROOT": re.compile(r"\bfresh_run_\d+\b"),
@@ -36,8 +37,8 @@ FIXED_REPLAY_IDENTITY_PATTERNS = {
     "GOVERNANCE_UID": re.compile(r"\bGOV-REV-\d{8}-[A-Z0-9-]+\b"),
     "DISPLAY_VERSION": re.compile(r"(?<![A-Za-z0-9_-])v\d+\.\d+\.\d+\b"),
     "ROUND_LABEL": re.compile(r"\bR\d+\b"),
-    "PRODUCT_UID": re.compile(r"\b(?:CORE|ASSET|VIDEO|EDIT|VOICE|QA|SYS|ERP|AIAPI)-\d+\b"),
-    "COMPACT_PRODUCT_UID": re.compile(r"\b(?:CORE|ASSET|VIDEO|EDIT|VOICE|QA|SYS|ERP|AIAPI)\d+\b"),
+    "PRODUCT_UID": re.compile(r"\b(?:CORE|ASSET|VIDEO|EDIT|VOICE|QA|SYS|ERP|AIAPI)-\d+\b", re.IGNORECASE),
+    "COMPACT_PRODUCT_UID": re.compile(r"\b(?:CORE|ASSET|VIDEO|EDIT|VOICE|QA|SYS|ERP|AIAPI)\d+\b", re.IGNORECASE),
 }
 
 

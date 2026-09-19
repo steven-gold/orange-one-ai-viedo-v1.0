@@ -104,8 +104,8 @@ specification_mutation_safety:
   ordinary_mid_stage_specification_mutation: BLOCK
   stage_end_consolidated_promotion_requires_new_explicit_directive: true
   execution_context_lock_required: true
-status: ACTIVE_ASSET01_REPLAY_HARNESS_PORTABILITY_MAINTENANCE
-next_action: REPAIR_SHARED_STAGE02_PRODUCT_NEUTRAL_EXECUTION
+status: ACTIVE_ASSET01_REPLAY_HARNESS_PORTABILITY_REVALIDATION_REQUIRED
+next_action: VALIDATE_SHARED_STAGE02_PRODUCT_NEUTRAL_EXECUTION
 previous_closed_product_work_unit:
   work_unit_uid: WU-STAGE02-CORE01-STRUCTURAL-REMEDIATION-001
   canonical_name: CORE01_STRUCTURAL_CONTRACT_REMEDIATION
@@ -284,12 +284,12 @@ previous_closed_work_unit:
     source_runtime_residual_count: 0
     product_stage_credit: 0
 resume_control:
-  current_resume_point: ASSET01_REPLAY_HARNESS_PORTABILITY_MAINTENANCE_READY
+  current_resume_point: ASSET01_REPLAY_HARNESS_PORTABILITY_REVALIDATION_REQUIRED
   current_work_unit_uid: WU-TEST-ASSET01-REPLAY-PORTABILITY-001
   current_owner: governance/ci/run_current_stage2_actual_test.py
   historical_stage2_results_are_current_state: false
   stage2_execution_requires_fresh_entry_resolution: true
-  exact_next_action: REPAIR_SHARED_STAGE02_PRODUCT_NEUTRAL_EXECUTION
+  exact_next_action: VALIDATE_SHARED_STAGE02_PRODUCT_NEUTRAL_EXECUTION
   parent_requested_primary_task_layer: PRODUCT_STAGE_EXECUTION
   parent_requested_scope:
   - ASSET-01
@@ -1294,7 +1294,7 @@ active_work_unit:
   canonical_name: SHARED_STAGE02_PRODUCT_NEUTRAL_REPLAY_HARDENING
   primary_task_layer: TEST_OR_VALIDATION_MAINTENANCE
   canonical_owner: governance/ci/run_current_stage2_actual_test.py
-  current_status: READY_FOR_IMPLEMENTATION
+  current_status: IMPLEMENTATION_REVALIDATION_REQUIRED
   scope:
   - REMOVE_FIXED_CORE01_WORKBENCH_IDENTITIES_FROM_SHARED_STAGE02_TEST
   - REMOVE_CORE01_SPECIFIC_FIELD_FROM_STABLE_FINALIZER
@@ -1321,6 +1321,17 @@ active_work_unit:
   - EXACT_HEAD_BRANCH_GUARD_PASS
   - PRODUCT_STAGE_CREDIT_ZERO
   product_stage_credit: 0
+  implementation_evidence:
+    shared_stage02_owner: governance/ci/run_current_stage2_actual_test.py
+    stable_replay_owner: .github/governance-maintenance/run_fresh_stage_replay.py
+    stable_finalizer_owner: .github/governance-maintenance/finalize_fresh_stage_replay.py
+    active_consumer_guard_owner: governance/ci/validate_active_consumer_reference_integrity.py
+    fixed_product_uid_expected_count: 0
+    global_source_intake_delete_removed: true
+    missing_completeness_contract_disposition: PERSIST_BLOCKED_NO_AUTOFILL
+    mother_normative_change: false
+    product_stage_credit: 0
+    exact_head_revalidation_required: true
 closed_product_work_unit_core01_stage02_current_replay:
   work_unit_uid: WU-STAGE02-CORE01-D81DF9AC-REPLAY
   canonical_name: CORE01_STAGE02_FRESH_REPLAY

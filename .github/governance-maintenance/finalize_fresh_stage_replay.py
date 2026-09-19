@@ -201,7 +201,7 @@ def main():
       'validated_product_successor_signature_count':0,
       'effective_functional_gap_count':attempt.get('fresh_functional_gap_total'),
       'planning_baseline_completeness':ev.get('planning_baseline_completeness'),
-      'core01_work_unit_status':'DESIGN_CONTRACT_REMEDIATION_REQUIRED' if attempt.get('fresh_functional_gap_total') else 'READY_FOR_TERMINAL_CLOSURE',
+      'current_work_unit_status':'DESIGN_CONTRACT_REMEDIATION_REQUIRED' if attempt.get('fresh_functional_gap_total') else 'READY_FOR_TERMINAL_CLOSURE',
       'fresh_revalidation_required_under_current_governance':False,
       'current_governance_uid':CURRENT_UID,
       'closure_credit_under_current_governance':True,

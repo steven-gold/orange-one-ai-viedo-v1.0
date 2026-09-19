@@ -307,7 +307,8 @@ def cleanup_old():
             shutil.rmtree(p)
     p=ROOT/'governance/test/STAGE02_EXECUTION_OPTIMIZATION_DEFECT_CONSOLIDATION.yaml'
     if p.exists(): p.unlink()
-    shutil.rmtree(ROOT/'00_SOURCE_INTAKE')
+    if NEW.exists():
+        shutil.rmtree(NEW)
     NEW.mkdir(parents=True,exist_ok=True)
 
 def materialize_stage1(raw_bytes:dict[str,bytes], source_head:str):
@@ -1015,9 +1016,14 @@ def main():
     initial=json.loads(STAGE2_TEST.read_text(encoding='utf-8'))
     jdump(ROOT/'governance/test/stage02/STAGE02_INITIAL_FRESH_SCAN.json',initial)
 
-    stage2_structural_materialize(None,initial)
-    run('python',str(ROOT/'governance/ci/run_current_stage2_actual_test.py'),env=env)
-    final=json.loads(STAGE2_TEST.read_text(encoding='utf-8'))
+    page_raw=load(NEW/'00_SOURCE_INTAKE/RAW_SOURCE'/PAGE/PAGE_AUTHORITY_SOURCE_FILE)
+    stage2_meta=page_raw.get('stage02_completeness_contract') or {}
+    if isinstance(stage2_meta,dict) and stage2_meta.get('status')=='REQUIRED_FOR_STAGE02_CLOSURE':
+        stage2_structural_materialize(None,initial)
+        run('python',str(ROOT/'governance/ci/run_current_stage2_actual_test.py'),env=env)
+        final=json.loads(STAGE2_TEST.read_text(encoding='utf-8'))
+    else:
+        final=initial
     if final.get('target_pages')!=[PAGE] or final.get('remaining_pages')!=[]:
         raise RuntimeError('FRESH_STAGE2_SCOPE_DRIFT')
     for excluded_uid in EXCLUDED_UNITS:
