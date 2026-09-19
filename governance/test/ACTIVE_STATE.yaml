@@ -104,8 +104,8 @@ specification_mutation_safety:
   ordinary_mid_stage_specification_mutation: BLOCK
   stage_end_consolidated_promotion_requires_new_explicit_directive: true
   execution_context_lock_required: true
-status: ACTIVE_ASSET01_STAGE02_REVALIDATION_HARNESS_REVALIDATION_REQUIRED
-next_action: VALIDATE_STAGE02_EXTERNAL_AUTHORITY_AND_BLOCKED_REVALIDATION
+status: STAGE02_REVALIDATION_HARNESS_MAINTENANCE_CLOSED
+next_action: RESTORE_ASSET01_PRODUCT_STAGE_EXECUTION_LAYER
 previous_closed_product_work_unit:
   work_unit_uid: WU-STAGE02-CORE01-STRUCTURAL-REMEDIATION-001
   canonical_name: CORE01_STRUCTURAL_CONTRACT_REMEDIATION
@@ -284,16 +284,19 @@ previous_closed_work_unit:
     source_runtime_residual_count: 0
     product_stage_credit: 0
 resume_control:
-  current_resume_point: ASSET01_STAGE02_REVALIDATION_HARNESS_IMPLEMENTED_REVALIDATION_REQUIRED
-  current_work_unit_uid: WU-TEST-STAGE02-REVALIDATION-HARNESS-001
-  current_owner: governance/ci/run_current_stage2_actual_test.py
+  current_resume_point: STAGE02_REVALIDATION_HARNESS_CLOSED_PRODUCT_LAYER_RESTORE_REQUIRED
+  current_work_unit_uid: null
+  current_owner: null
   historical_stage2_results_are_current_state: false
   stage2_execution_requires_fresh_entry_resolution: false
-  exact_next_action: VALIDATE_STAGE02_EXTERNAL_AUTHORITY_AND_BLOCKED_REVALIDATION
+  exact_next_action: RESTORE_ASSET01_PRODUCT_STAGE_EXECUTION_LAYER
+  closed_maintenance_work_unit_uid: WU-TEST-STAGE02-REVALIDATION-HARNESS-001
+  closed_maintenance_owner: governance/ci/run_current_stage2_actual_test.py
   parent_primary_task_layer: PRODUCT_STAGE_EXECUTION
   parent_work_unit_uid: WU-STAGE02-ASSET01-8133839F-REPLAY
   parent_resume_point: FRESH_ASSET-01_STAGE2_DESIGN_REMEDIATION_REQUIRED
   parent_exact_next_action: BUILD_FRESH_ASSET-01_DESIGN_CONTRACT_CANDIDATE_FROM_CURRENT_GAPS
+  next_primary_task_layer: PRODUCT_STAGE_EXECUTION
 governance_revision_transition:
   current_governance_uid: GOV-REV-20260919-SEMANTIC-BASELINE-CONSUMER-SINGLE-OWNER-HARDENING
   predecessor_governance_uid: GOV-REV-20260919-STRUCTURED-MUTATION-SELECTOR-HARDENING
@@ -1658,12 +1661,13 @@ suspended_product_work_unit_asset01_stage02:
   - DEPLOYMENT
   suspension_reason: SHARED_STAGE02_SCANNER_MISSING_CURRENT_EXTERNAL_AUTHORITY_RESOLUTION_AND_BLOCKED_ATTEMPT_REVALIDATION
   suspension_product_credit: 0
-active_work_unit:
+active_work_unit: null
+closed_test_validation_maintenance_work_unit_stage02_revalidation_harness:
   work_unit_uid: WU-TEST-STAGE02-REVALIDATION-HARNESS-001
   canonical_name: STAGE02_EXTERNAL_AUTHORITY_AND_BLOCKED_REVALIDATION_HARDENING
   primary_task_layer: TEST_OR_VALIDATION_MAINTENANCE
   canonical_owner: governance/ci/run_current_stage2_actual_test.py
-  current_status: IMPLEMENTATION_REVALIDATION_REQUIRED
+  current_status: CLOSED_VERIFIED_NO_PRODUCT_CREDIT
   parent_product_work_unit_uid: WU-STAGE02-ASSET01-8133839F-REPLAY
   scope:
   - CURRENT_EXTERNAL_AUTHORITY_EXACT_RESOLUTION_SUPPORT
@@ -1700,6 +1704,23 @@ active_work_unit:
     current_specification_change: false
     product_stage_credit: 0
     exact_head_revalidation_required: true
+  terminal_evidence:
+    implementation_head_sha: 386b1189e0e727ac19e286f00a72c026091c39e9
+    stage02_harness_run_id: 35427760827
+    stage02_harness_conclusion: SUCCESS
+    selected_profile_run_id: 35427760811
+    selected_profile_conclusion: SUCCESS
+    full_line_run_id: 35427760815
+    full_line_conclusion: SUCCESS
+    branch_guard_run_id: 35427760855
+    branch_guard_conclusion: SUCCESS
+    exact_external_authority_and_blocked_revalidation_self_test: PASS
+    current_product_gap_denominator_changed: false
+    current_product_closure_blocker_denominator_changed: false
+    product_stage_credit: 0
+    mother_normative_change: false
+    current_specification_change: false
+    closure_persistence_exact_head_revalidation_required: true
 work_unit_resolution_gate_stage02_revalidation_harness:
   resolution_uid: WUR-TEST-STAGE02-REVALIDATION-HARNESS-20260919-001
   normative_authority: false
@@ -1777,3 +1798,26 @@ last_work_unit_resolution_gate:
   - CORE-01
   source_problem_denominator: 106
   source_closure_blocker_denominator: 9
+
+stage02_revalidation_harness_maintenance_closure:
+  closure_uid: CLOSE-WU-TEST-STAGE02-REVALIDATION-HARNESS-20260919-001
+  work_unit_uid: WU-TEST-STAGE02-REVALIDATION-HARNESS-001
+  status: CLOSED_VERIFIED_NO_PRODUCT_CREDIT
+  exact_implementation_head_sha: 386b1189e0e727ac19e286f00a72c026091c39e9
+  exact_head_validation:
+    stage02_harness_run_id: 35427760827
+    selected_profile_run_id: 35427760811
+    full_line_run_id: 35427760815
+    branch_guard_run_id: 35427760855
+    conclusions:
+    - SUCCESS
+    - SUCCESS
+    - SUCCESS
+    - SUCCESS
+  preserved_product_state:
+    product_work_unit_uid: WU-STAGE02-ASSET01-8133839F-REPLAY
+    fresh_functional_gap_total: 106
+    fresh_closure_blocker_total: 9
+    product_blocker_credit: 0
+  legal_next_transition: RESTORE_ASSET01_PRODUCT_STAGE_EXECUTION_LAYER
+  closure_persistence_exact_head_revalidation_required: true
