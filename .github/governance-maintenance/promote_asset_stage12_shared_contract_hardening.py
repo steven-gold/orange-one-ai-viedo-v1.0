@@ -50,7 +50,7 @@ def mutate_mother():
 
 For any required Action with no visible Control, the functional-contract capability MUST execute CONTROL_VS_SYSTEM_TRIGGER_RESOLUTION before classifying the absence as an Authority Gap. The resolver MUST use structured Current evidence, not labels or similarity: existing user-intent/control bindings; runtime_binding decision/source semantics; exact Gate and Permission; exactly resolved Runtime/Port and registered Operation; current State/Event or success transition; Journey/Workbench intent; and whether adding a Control would create a user behavior not present in Current Authority.
 
-When the combined Current evidence uniquely proves a system-owned/derived operation and no Current Authority defines explicit user initiation, the result MUST be SYSTEM_TRIGGER_BINDING_MISSING with AUTO_REMEDIABLE disposition. Stage-02 MUST materialize an explicit system_trigger contract into the single Current functional-contract owner and MUST_NOT create a new visual Control. Port exposure or result state_event alone is insufficient; the deterministic proof is the complete structured evidence set.
+When the combined Current evidence uniquely proves a system-owned/derived operation and no Current Authority defines explicit user initiation, the result MUST be SYSTEM_TRIGGER_BINDING_MISSING with AUTO_REMEDIABLE disposition. The owning functional-contract capability MUST materialize an explicit system_trigger contract into the single Current functional-contract owner and MUST_NOT create a new visual Control. Port exposure or result state_event alone is insufficient; the deterministic proof is the complete structured evidence set.
 
 Only when Current Authority materially supports two or more distinct viable initiation behaviors MAY the item become AUTHORITY_GAP / USER_DECISION_REQUIRED. Missing explicit trigger syntax by itself MUST_NOT manufacture a user-vs-system product choice.''')
 
@@ -61,7 +61,7 @@ Only when Current Authority materially supports two or more distinct viable init
 
 Every generated or materialized Stage output consumed by another registered operation MUST satisfy an exact Producer/Consumer Schema Identity contract before the consumer may mutate Current product state. The contract MUST bind artifact_type, schema_version, canonical field names, required/optional status, field types, producer owner, consumer owner, and accepted schema revision.
 
-A consumer MUST_NOT silently accept a renamed, legacy, approximate, or alias field when the canonical producer field is missing. Such drift is PRODUCER_CONSUMER_SCHEMA_MISMATCH and MUST block before materialization. For the Stage-02 audit-event binding contract, audit_event_uid is the canonical field identity; event_uid MUST_NOT be used as a compatibility fallback for that field role.''')
+A consumer MUST_NOT silently accept a renamed, legacy, approximate, or alias field when the canonical producer field is missing. Such drift is PRODUCER_CONSUMER_SCHEMA_MISMATCH and MUST block before materialization. For the functional-contract audit-event binding role, audit_event_uid is the canonical field identity; event_uid MUST_NOT be used as a compatibility fallback for that field role.''')
 
     insert_before(SOURCE/'12_DOCS/mother-spec/03_EXECUTION_CONTROL_STANDARD.md',
       '<!-- SECTION_UID: WEB-GOV-03-S063 -->',
