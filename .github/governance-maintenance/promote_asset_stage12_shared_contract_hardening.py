@@ -187,7 +187,7 @@ def mutate_source_validator_and_regression():
 
     p=SOURCE/'09_TESTS/governance/test_v2_1_13_stage_execution_invariants.py'
     s=p.read_text(encoding='utf-8')
-    insert="""\n# v2.2.13 shared Stage-01/02 contract hardening regressions.
+    helper="""\n# v2.2.13 shared contract hardening helpers.
 def trigger_resolution(has_control=False,source_derived=False,exact_port=False,gate=False,permission=False,success=False,explicit=False):
     if has_control: return 'CONTROL_BOUND'
     if explicit: return 'EXPLICIT_TRIGGER_BOUND'
@@ -195,19 +195,28 @@ def trigger_resolution(has_control=False,source_derived=False,exact_port=False,g
     return 'UNRESOLVED'
 def schema_identity(producer_field,consumer_field,producer_type='string',consumer_type='string',version_ok=True):
     return producer_field==consumer_field and producer_type==consumer_type and version_ok
-res.append(case('deterministic_system_trigger_is_auto_remediable', trigger_resolution(source_derived=True,exact_port=True,gate=True,permission=True,success=True)=='SYSTEM_TRIGGER_BINDING_MISSING_AUTO_REMEDIABLE'))
-res.append(case('missing_trigger_syntax_alone_is_not_authority_gap', trigger_resolution(source_derived=True,exact_port=True,gate=True,permission=True,success=True)!='AUTHORITY_GAP'))
-res.append(case('user_control_remains_control_bound', trigger_resolution(has_control=True)=='CONTROL_BOUND'))
-res.append(case('ambiguous_no_control_action_remains_unresolved', trigger_resolution(source_derived=False,exact_port=True,gate=True,permission=True,success=True)=='UNRESOLVED'))
-res.append(case('audit_event_uid_exact_schema_passes', schema_identity('audit_event_uid','audit_event_uid')))
-res.append(case('event_uid_alias_cannot_substitute_audit_event_uid', not schema_identity('audit_event_uid','event_uid')))
-res.append(case('historical_product_value_fallback_forbidden', True))
-res.append(case('task_layer_environment_override_forbidden', True))
+def history_fallback_allowed(role):
+    return role in {'PROVENANCE','NEGATIVE_REGRESSION'}
+def task_layer_transition_allowed(current_terminal,resume_persisted,wur_passed,resolved_active,bootstrap_passed):
+    return all((current_terminal,resume_persisted,wur_passed,resolved_active,bootstrap_passed))
 """
-    marker="# Static package contract must be intact, including physical-evidence and consumption rules."
-    if 'deterministic_system_trigger_is_auto_remediable' not in s:
-        s=replace_once(s,marker,insert+'\n'+marker,'regression insert')
-    s=s.replace("out['total']==26 and out['passed_expectations']==26","out['total']==34 and out['passed_expectations']==34")
+    helper_anchor="# v2.1.15 canonical execution optimization regressions."
+    if 'def trigger_resolution(' not in s:
+        s=replace_once(s,helper_anchor,helper+'\n'+helper_anchor,'regression helper insert')
+    replacements={
+      "res.append(case('raw_missing_with_legal_successor_not_effective_gap', True))":
+      "res.append(case('deterministic_system_trigger_is_auto_remediable', trigger_resolution(source_derived=True,exact_port=True,gate=True,permission=True,success=True)=='SYSTEM_TRIGGER_BINDING_MISSING_AUTO_REMEDIABLE'))",
+      "res.append(case('action_runtime_owner_not_transition_mutation_owner', True))":
+      "res.append(case('audit_event_uid_schema_identity_rejects_event_uid_alias', schema_identity('audit_event_uid','audit_event_uid') and not schema_identity('audit_event_uid','event_uid')))",
+      "res.append(case('result_state_signal_not_validation_contract_by_role', True))":
+      "res.append(case('historical_product_value_fallback_forbidden', history_fallback_allowed('CURRENT_PRODUCT_VALUE') is False))",
+      "res.append(case('untracked_generated_output_requires_status_aware_persistence', True))":
+      "res.append(case('task_layer_transition_requires_terminal_resume_wur_active_bootstrap', task_layer_transition_allowed(True,True,True,True,True) and not task_layer_transition_allowed(False,True,True,True,True)))"
+    }
+    for old,new in replacements.items():
+        s=replace_once(s,old,new,'replace placeholder regression')
+    if "out['total']==26 and out['passed_expectations']==26" not in s:
+        raise RuntimeError('mandatory denominator drift before write')
     p.write_text(s,encoding='utf-8')
 
 def mutate_scanner():
@@ -497,7 +506,8 @@ def mutate_semantic_baseline():
     d['governance_revision']=NEW_SOURCE_REV
     for rec in d.get('mandatory_regression_assets') or []:
         if rec.get('path')=='09_TESTS/governance/test_v2_1_13_stage_execution_invariants.py':
-            rec['expected_total']=34; rec['expected_passed']=34
+            if (rec.get('expected_total'), rec.get('expected_passed')) != (26, 26):
+                raise RuntimeError('mandatory stage invariant denominator drift')
     d['content_hash']=base.hobj(d)
     dump(p,d)
     return d['content_hash']
