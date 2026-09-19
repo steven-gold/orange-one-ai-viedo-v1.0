@@ -104,8 +104,8 @@ specification_mutation_safety:
   ordinary_mid_stage_specification_mutation: BLOCK
   stage_end_consolidated_promotion_requires_new_explicit_directive: true
   execution_context_lock_required: true
-status: COMMON_ENGINE_INTERRUPT_STAGE02_SYSTEM_TRIGGER_COVERAGE_SCHEMA
-next_action: FIX_STAGE02_REVALIDATION_SYSTEM_TRIGGER_COVERAGE_SCHEMA
+status: ACTIVE_STAGE2_EXACT_CLOSURE_MATERIALIZED_REVALIDATION_REQUIRED
+next_action: RUN_SAME_ATTEMPT_STAGE02_REVALIDATION_AFTER_EXACT_CLOSURE_MATERIALIZATION
 previous_closed_product_work_unit:
   work_unit_uid: WU-STAGE02-CORE01-STRUCTURAL-REMEDIATION-001
   canonical_name: CORE01_STRUCTURAL_CONTRACT_REMEDIATION
@@ -284,15 +284,12 @@ previous_closed_work_unit:
     source_runtime_residual_count: 0
     product_stage_credit: 0
 resume_control:
-  current_resume_point: STAGE02_SYSTEM_TRIGGER_REVALIDATION_COVERAGE_SCHEMA_HARDENING
-  current_work_unit_uid: WU-TEST-STAGE02-SYSTEM-TRIGGER-COVERAGE-SCHEMA-001
-  current_owner: .github/governance-maintenance/finalize_fresh_stage_replay.py
-  exact_next_action: FIX_STAGE02_REVALIDATION_SYSTEM_TRIGGER_COVERAGE_SCHEMA
-  parent_resume_point: FRESH_ASSET-01_STAGE2_DESIGN_REMEDIATION_REQUIRED
-  parent_work_unit_uid: WU-STAGE02-ASSET01-V2213-20260920-R2
-  parent_owner: 00_SOURCE_INTAKE/run_asset01_8133839f_stage02/04_PAGE_FUNCTIONAL_CONTRACT/CURRENT_PROBLEM_REGISTER.yaml
-  return_after_closure: BUILD_FRESH_ASSET-01_DESIGN_CONTRACT_CANDIDATE_FROM_CURRENT_GAPS
+  current_resume_point: ASSET01_STAGE2_EXACT_SYSTEM_TRIGGER_CLOSURE_MATERIALIZED_REVALIDATION_REQUIRED
+  current_work_unit_uid: WU-STAGE02-ASSET01-V2213-20260920-R2
+  current_owner: 00_SOURCE_INTAKE/run_asset01_8133839f_stage02/04_PAGE_FUNCTIONAL_CONTRACT/CURRENT_PROBLEM_REGISTER.yaml
   historical_stage2_results_are_current_state: false
+  stage2_execution_requires_fresh_entry_resolution: false
+  exact_next_action: RUN_SAME_ATTEMPT_STAGE02_REVALIDATION_AFTER_EXACT_CLOSURE_MATERIALIZATION
 governance_revision_transition:
   current_governance_uid: GOV-REV-20260919-ASSET-STAGE01-STAGE02-SHARED-CONTRACT-HARDENING
   predecessor_governance_uid: GOV-REV-20260919-BASIC-DESIGN-ATOMIC-MATERIALIZATION-HARDENING
@@ -362,8 +359,8 @@ pending_governance_review:
   - STAGE03
   - WEBSITE_CONSTRUCTION
   - DEPLOYMENT
-current_primary_task_layer: TEST_OR_VALIDATION_MAINTENANCE
-current_primary_task_authorization_uid: USR-DIRECTIVE-20260920-SHARED-STAGE02-SYSTEM-TRIGGER-COVERAGE-SCHEMA-R1
+current_primary_task_layer: PRODUCT_STAGE_EXECUTION
+current_primary_task_authorization_uid: USR-DIRECTIVE-20260920-EXECUTE-ASSET01-STAGE02-EXACT-SYSTEM-TRIGGER-R1
 current_primary_task_product_stage_credit: 0
 earlier_closed_product_work_unit:
   work_unit_uid: WU-STAGE02-CORE01-FRESH-TEST-001
@@ -2361,26 +2358,131 @@ fresh_replay_execution_context:
   evidence_artifact_id: 10591438974
   evidence_artifact_sha256: 38420254af0944f845e04ae5e614e83b0be9c610ca657fd662d74a6ff5728db9
 active_work_unit:
-  work_unit_uid: WU-TEST-STAGE02-SYSTEM-TRIGGER-COVERAGE-SCHEMA-001
-  canonical_name: STAGE02_SYSTEM_TRIGGER_REVALIDATION_COVERAGE_SCHEMA_HARDENING
+  work_unit_uid: WU-STAGE02-ASSET01-V2213-20260920-R2
+  canonical_name: ASSET01_STAGE02_FRESH_REPLAY
   stage_uid: STAGE-02
-  semantic_capability: SHARED_REVALIDATION_PROJECTOR_SCHEMA
-  primary_task_layer: TEST_OR_VALIDATION_MAINTENANCE
+  semantic_capability: PAGE_FUNCTIONAL_CONTRACT
+  primary_task_layer: PRODUCT_STAGE_EXECUTION
   scope:
-  - SHARED_STAGE02_REVALIDATION_FINALIZER
-  canonical_owner: .github/governance-maintenance/finalize_fresh_stage_replay.py
-  current_status: IN_PROGRESS_COMMON_ENGINE_INTERRUPT
-  source_product_work_unit_uid: WU-STAGE02-ASSET01-V2213-20260920-R2
-  source_product_owner: 00_SOURCE_INTAKE/run_asset01_8133839f_stage02/04_PAGE_FUNCTIONAL_CONTRACT/CURRENT_PROBLEM_REGISTER.yaml
-  source_finding_category: SYSTEM_TRIGGER_BINDING_MISSING
-  defect: EXACT_CLOSURE_COVERAGE_SCHEMA_CANNOT_REPRESENT_DETERMINISTIC_SYSTEM_TRIGGER
+  - ASSET-01
+  canonical_owner: 00_SOURCE_INTAKE/run_asset01_8133839f_stage02/04_PAGE_FUNCTIONAL_CONTRACT/CURRENT_PROBLEM_REGISTER.yaml
+  current_status: EXACT_CLOSURES_MATERIALIZED_REVALIDATION_REQUIRED
+  source_attempt_uid: STAGE02-ASSET01-V2213-20260920-R2
+  source_problem_denominator: 106
+  source_closure_blocker_denominator: 9
+  dependencies:
+  - 00_SOURCE_INTAKE/run_asset01_8133839f_stage02/02_BASE_BLUEPRINT/ASSET-01/PAGE_BASE_BLUEPRINT.yaml
+  - 00_SOURCE_INTAKE/run_asset01_8133839f_stage02/03_BLUEPRINT_BINDING/ASSET-01/BLUEPRINT_BINDING_MANIFEST.yaml
+  required_outputs:
+  - FUNCTIONAL_CHAIN_SPEC
+  - DEPENDENCY_MAP
+  - PAGE_CONSTRUCTION_SPEC_PACKAGE
+  - ASYNC_PROVIDER_CONTRACT
+  - SHARED_OWNER_PORT_MAP
+  - FUNCTIONAL_WORKBENCH_CONTRACT
+  - INTERACTION_TOPOLOGY_SPEC
+  - REQUIRED_FIELD_MANIFEST
+  - FUNCTIONAL_CHAIN_MANIFEST
+  - EFFECTIVE_CONTRACT_OVERLAY
+  - DEPENDENCY_TOPOLOGY
+  - DENOMINATOR_SNAPSHOT
+  - CLASSIFICATION_RULESET
+  - CHANGE_IMPACT_MAP
+  - STAGE_EXECUTION_PREFLIGHT_RECEIPT
+  - CURRENT_PROBLEM_REGISTER
+  - RESOLUTION_LEDGER
+  - FUNCTION_ADMISSION_SCORECARD
+  - AUTO_COMPLETION_SCOPE_LEDGER
+  operation_bindings:
+    STAGE_EXECUTION_PREFLIGHT_COMPILE:
+      executor_owner: governance/ci/run_current_stage2_actual_test.py
+      result_owner: 00_SOURCE_INTAKE/run_asset01_8133839f_stage02/04_PAGE_FUNCTIONAL_CONTRACT/CURRENT_PROBLEM_REGISTER.yaml
+    EFFECTIVE_CONTRACT_OVERLAY_COMPILE:
+      executor_owner: governance/ci/run_current_stage2_actual_test.py
+      result_owner: 00_SOURCE_INTAKE/run_asset01_8133839f_stage02/04_PAGE_FUNCTIONAL_CONTRACT/CURRENT_PROBLEM_REGISTER.yaml
+    DEPENDENCY_TOPOLOGY_COMPILE:
+      executor_owner: governance/ci/run_current_stage2_actual_test.py
+      result_owner: 00_SOURCE_INTAKE/run_asset01_8133839f_stage02/04_PAGE_FUNCTIONAL_CONTRACT/CURRENT_PROBLEM_REGISTER.yaml
+    CHANGE_IMPACT_MAP_COMPILE:
+      executor_owner: governance/ci/run_current_stage2_actual_test.py
+      result_owner: 00_SOURCE_INTAKE/run_asset01_8133839f_stage02/04_PAGE_FUNCTIONAL_CONTRACT/CURRENT_PROBLEM_REGISTER.yaml
+    FUNCTIONAL_CHAIN_COMPILE:
+      executor_owner: governance/ci/run_current_stage2_actual_test.py
+      result_owner: 00_SOURCE_INTAKE/run_asset01_8133839f_stage02/04_PAGE_FUNCTIONAL_CONTRACT/CURRENT_PROBLEM_REGISTER.yaml
+    DEPENDENCY_MAP_COMPILE:
+      executor_owner: governance/ci/run_current_stage2_actual_test.py
+      result_owner: 00_SOURCE_INTAKE/run_asset01_8133839f_stage02/04_PAGE_FUNCTIONAL_CONTRACT/CURRENT_PROBLEM_REGISTER.yaml
+    PAGE_CONSTRUCTION_SPEC_COMPILE:
+      executor_owner: governance/ci/run_current_stage2_actual_test.py
+      result_owner: 00_SOURCE_INTAKE/run_asset01_8133839f_stage02/04_PAGE_FUNCTIONAL_CONTRACT/CURRENT_PROBLEM_REGISTER.yaml
+    ASYNC_PROVIDER_CONTRACT_COMPILE:
+      executor_owner: governance/ci/run_current_stage2_actual_test.py
+      result_owner: 00_SOURCE_INTAKE/run_asset01_8133839f_stage02/04_PAGE_FUNCTIONAL_CONTRACT/CURRENT_PROBLEM_REGISTER.yaml
+    SHARED_OWNER_PORT_RESOLVE:
+      executor_owner: governance/ci/run_current_stage2_actual_test.py
+      result_owner: 00_SOURCE_INTAKE/run_asset01_8133839f_stage02/04_PAGE_FUNCTIONAL_CONTRACT/CURRENT_PROBLEM_REGISTER.yaml
+    FUNCTIONAL_WORKBENCH_CONTRACT_COMPILE:
+      executor_owner: governance/ci/run_current_stage2_actual_test.py
+      result_owner: 00_SOURCE_INTAKE/run_asset01_8133839f_stage02/04_PAGE_FUNCTIONAL_CONTRACT/CURRENT_PROBLEM_REGISTER.yaml
+    INTERACTION_TOPOLOGY_COMPILE:
+      executor_owner: governance/ci/run_current_stage2_actual_test.py
+      result_owner: 00_SOURCE_INTAKE/run_asset01_8133839f_stage02/04_PAGE_FUNCTIONAL_CONTRACT/CURRENT_PROBLEM_REGISTER.yaml
+    FUNCTION_ADMISSION_SCORECARD_COMPILE:
+      executor_owner: governance/ci/run_current_stage2_actual_test.py
+      result_owner: 00_SOURCE_INTAKE/run_asset01_8133839f_stage02/04_PAGE_FUNCTIONAL_CONTRACT/CURRENT_PROBLEM_REGISTER.yaml
+    AUTO_COMPLETION_SCOPE_LEDGER_COMPILE:
+      executor_owner: governance/ci/run_current_stage2_actual_test.py
+      result_owner: 00_SOURCE_INTAKE/run_asset01_8133839f_stage02/04_PAGE_FUNCTIONAL_CONTRACT/CURRENT_PROBLEM_REGISTER.yaml
+  scanner_bindings:
+    ENTITY_OPERATION_DENOMINATOR:
+      scanner_owner: governance/ci/run_current_stage2_actual_test.py
+      result_owner: governance/test/stage02/STAGE02_LATEST_TEST_EVIDENCE.json
+    CONTROL_ACTION_RUNTIME_CHAIN:
+      scanner_owner: governance/ci/run_current_stage2_actual_test.py
+      result_owner: governance/test/stage02/STAGE02_LATEST_TEST_EVIDENCE.json
+    PAYLOAD_INPUT:
+      scanner_owner: governance/ci/run_current_stage2_actual_test.py
+      result_owner: governance/test/stage02/STAGE02_LATEST_TEST_EVIDENCE.json
+    STATE_TRANSITION:
+      scanner_owner: governance/ci/run_current_stage2_actual_test.py
+      result_owner: governance/test/stage02/STAGE02_LATEST_TEST_EVIDENCE.json
+    ERROR_RECOVERY:
+      scanner_owner: governance/ci/run_current_stage2_actual_test.py
+      result_owner: governance/test/stage02/STAGE02_LATEST_TEST_EVIDENCE.json
+    AUDIT_EVENT:
+      scanner_owner: governance/ci/run_current_stage2_actual_test.py
+      result_owner: governance/test/stage02/STAGE02_LATEST_TEST_EVIDENCE.json
+    WORKBENCH_COHESION:
+      scanner_owner: governance/ci/run_current_stage2_actual_test.py
+      result_owner: governance/test/stage02/STAGE02_LATEST_TEST_EVIDENCE.json
+    INTERACTION_CONTINUITY:
+      scanner_owner: governance/ci/run_current_stage2_actual_test.py
+      result_owner: governance/test/stage02/STAGE02_LATEST_TEST_EVIDENCE.json
+    AI_CONTEXT_CONTINUITY:
+      scanner_owner: governance/ci/run_current_stage2_actual_test.py
+      result_owner: governance/test/stage02/STAGE02_LATEST_TEST_EVIDENCE.json
+    VERSION_FINALIZATION:
+      scanner_owner: governance/ci/run_current_stage2_actual_test.py
+      result_owner: governance/test/stage02/STAGE02_LATEST_TEST_EVIDENCE.json
   product_blocker_credit: 0
   out_of_scope:
-  - PRODUCT_CONTRACT_VALUE_CREATION
-  - EXTERNAL_AUTHORITY_RESOLUTION
+  - CORE-01
   - STAGE03
   - WEBSITE_CONSTRUCTION
   - DEPLOYMENT
+  function_admission_scorecard_ref: 00_SOURCE_INTAKE/run_asset01_8133839f_stage02/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/FUNCTION_ADMISSION_SCORECARD.yaml
+  auto_completion_scope_ledger_ref: 00_SOURCE_INTAKE/run_asset01_8133839f_stage02/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/AUTO_COMPLETION_SCOPE_LEDGER.yaml
+  review_only_design_contract_candidate_ref: 00_SOURCE_INTAKE/run_asset01_8133839f_stage02/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/DESIGN_CONTRACT_CANDIDATE.yaml
+  exact_closure_materialization:
+    materialized_closure_count: 1
+    materialized_problem_uids:
+    - STAGE02-PROBLEM-AEB128237413
+    receipt_ref: 00_SOURCE_INTAKE/run_asset01_8133839f_stage02/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/EXACT_CLOSURE_MATERIALIZATION_RECEIPT.yaml
+    coverage_ref: 00_SOURCE_INTAKE/run_asset01_8133839f_stage02/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/REMEDIATION_BLOCKER_COVERAGE.yaml
+    canonical_product_contract_owner_ref: 00_SOURCE_INTAKE/run_asset01_8133839f_stage02/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    materialization_kind: DETERMINISTIC_SYSTEM_TRIGGER
+    prior_product_credit: 0
+    fresh_revalidation_required: true
 stage02_active_attempt:
   attempt_uid: STAGE02-ASSET01-V2213-20260920-R2
   run_uid: FRESH-ASSET01-V2213-20260920-R2
@@ -2393,16 +2495,18 @@ stage02_active_attempt:
   preserved_external_authority_union_count: 8
   official_stage_output_denominator_count: 19
   current_manifest_mandatory_stage_output_subset_count: 12
-  next_action: FIX_STAGE02_REVALIDATION_SYSTEM_TRIGGER_COVERAGE_SCHEMA
+  next_action: RUN_SAME_ATTEMPT_STAGE02_REVALIDATION_AFTER_EXACT_CLOSURE_MATERIALIZATION
   product_blocker_credit: 0
   prior_results_used: false
   active_evidence_present: true
   active_findings_present: true
-  fresh_revalidation_required: false
-  closure_credit_under_current_governance: true
+  fresh_revalidation_required: true
+  closure_credit_under_current_governance: false
   source_workflow_run_id: 35467769746
   source_artifact_id: 10591438974
   source_artifact_sha256: 38420254af0944f845e04ae5e614e83b0be9c610ca657fd662d74a6ff5728db9
+  exact_closure_materialization_pending_revalidation_count: 1
+  review_only_design_contract_candidate_ref: 00_SOURCE_INTAKE/run_asset01_8133839f_stage02/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/DESIGN_CONTRACT_CANDIDATE.yaml
 stage2_result_evidence:
   mode: RUNTIME_GENERATED_GITHUB_ACTION_ARTIFACT
   static_result_pointer_required: false
@@ -2418,7 +2522,13 @@ stage02_material_remediation:
   source_problem_denominator: 106
   source_closure_blocker_denominator: 9
   product_blocker_credit: 0
-  status: CURRENT_FRESH_PRODUCT_ROOT_PROVENANCE_BOUND
+  status: EXACT_CLOSURE_MATERIALIZED_REVALIDATION_REQUIRED
+  materialization_kind: EXACT_CLOSURE
+  materialized_closure_count: 1
+  materialized_problem_uids:
+  - STAGE02-PROBLEM-AEB128237413
+  receipt_ref: 00_SOURCE_INTAKE/run_asset01_8133839f_stage02/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/EXACT_CLOSURE_MATERIALIZATION_RECEIPT.yaml
+  coverage_ref: 00_SOURCE_INTAKE/run_asset01_8133839f_stage02/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/REMEDIATION_BLOCKER_COVERAGE.yaml
 last_work_unit_resolution_gate:
   resolution_uid: WUR-STAGE02-ASSET01-V2213-20260920-R2
   normative_authority: false
@@ -2445,3 +2555,25 @@ fresh_replay_provenance:
     CORE-01: false
   product_blocker_credit: 0
   status: CURRENT_FRESH_STAGE01_STAGE02_EXECUTION_EVIDENCE_BOUND
+closed_test_validation_maintenance_work_unit_stage02_system_trigger_coverage_schema:
+  work_unit_uid: WU-TEST-STAGE02-SYSTEM-TRIGGER-COVERAGE-SCHEMA-001
+  canonical_name: STAGE02_SYSTEM_TRIGGER_REVALIDATION_COVERAGE_SCHEMA_HARDENING
+  primary_task_layer: TEST_OR_VALIDATION_MAINTENANCE
+  canonical_owner: .github/governance-maintenance/finalize_fresh_stage_replay.py
+  terminal_disposition: CLOSED_VERIFIED_NO_PRODUCT_CREDIT
+  authorization_uid: USR-DIRECTIVE-20260920-SHARED-STAGE02-SYSTEM-TRIGGER-COVERAGE-SCHEMA-R1
+  validated_head_sha: 7f359fd78465d80f458c0e9b6d80edd688b285f3
+  full_line_run_id: 35468830740
+  selected_profile_run_id: 35468830747
+  branch_guard_run_id: 35468830746
+  stage02_boundary_run_id: 35468830736
+  fresh_replay_identity_run_id: 35468830738
+  definition_of_done_verified:
+  - DETERMINISTIC_SYSTEM_TRIGGER_EXACT_CLOSURE_COVERAGE_SCHEMA_SUPPORTED
+  - STAGE02_REVALIDATION_SELF_TEST_PASS
+  - ACTIVE_CONSUMER_DYNAMIC_IDENTITY_PASS
+  - SELECTED_PROFILE_PASS
+  - FULL_LINE_PASS
+  - PRODUCT_EXECUTION_SKIPPED
+  product_stage_credit: 0
+  legal_next_transition: RESTORE_ASSET01_STAGE02_PRODUCT_WORK_UNIT_AND_REVALIDATE_EXACT_CLOSURE

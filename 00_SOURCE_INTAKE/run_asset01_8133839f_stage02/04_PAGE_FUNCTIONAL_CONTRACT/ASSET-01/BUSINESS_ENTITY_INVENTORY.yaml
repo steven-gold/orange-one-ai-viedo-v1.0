@@ -1,0 +1,128 @@
+{
+  "schema_version": 2,
+  "layer_classification": "RUN_STATE",
+  "normative_authority": false,
+  "current_governance_uid": "GOV-REV-20260919-ASSET-STAGE01-STAGE02-SHARED-CONTRACT-HARDENING",
+  "run_uid": "FRESH-ASSET01-V2213-20260920-R2",
+  "attempt_uid": "STAGE02-ASSET01-V2213-20260920-R2",
+  "work_unit_uid": "WU-STAGE02-ASSET01-V2213-20260920-R2",
+  "page_uid": "ASSET-01",
+  "source_head_sha": "7f359fd78465d80f458c0e9b6d80edd688b285f3",
+  "source_raw_ref": "00_SOURCE_INTAKE/run_asset01_8133839f_stage02/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml",
+  "product_blocker_credit": 0,
+  "artifact_type": "BUSINESS_ENTITY_INVENTORY",
+  "artifact_uid": "STAGE02-ASSET01-BUSINESS-ENTITY-INVENTORY-R2",
+  "derivation": "EXACT_OBJECT_REGISTRY_PROJECTION_NO_NEW_ENTITY",
+  "entity_count": 18,
+  "entities": [
+    {
+      "object_uid": "ASSET-01-REF-BLUEPRINT",
+      "entity": "LockedBlueprintRef",
+      "owner": "CORE/BLUEPRINT",
+      "required_content": "immutable exact child lock/blueprint version/hash"
+    },
+    {
+      "object_uid": "ASSET-01-REF-SCRIPT",
+      "entity": "AssetProductionScriptViewRef",
+      "owner": "CORE/SCRIPT",
+      "required_content": "provider-neutral ASSET Script View/Section/version/hash"
+    },
+    {
+      "object_uid": "ASSET-01-REF-DNA",
+      "entity": "DNABindingRef",
+      "owner": "CORE/BLUEPRINT",
+      "required_content": "DNA/identity/continuity exact refs"
+    },
+    {
+      "object_uid": "ASSET-01-REF-MANIFEST",
+      "entity": "AssetManifestRef",
+      "owner": "CORE/BLUEPRINT",
+      "required_content": "required asset items/type/purpose/reuse policy"
+    },
+    {
+      "object_uid": "ASSET-01-REF-NAMING",
+      "entity": "SystemOutputNamingRef",
+      "owner": "ACPOS_SYSTEM",
+      "required_content": "canonical filename/output artifact identity/version/checksum policy; page read-only"
+    },
+    {
+      "object_uid": "ASSET-01-REF-INSTRUCTION",
+      "entity": "InstructionPackageRef",
+      "owner": "InstructionCompiler",
+      "required_content": "approved provider-neutral instruction package"
+    },
+    {
+      "object_uid": "ASSET-01-REF-ROUTE",
+      "entity": "ProviderRouteSnapshotRef",
+      "owner": "ACPOS AI API Router",
+      "required_content": "approved route/provider/model/capability snapshot; page read-only"
+    },
+    {
+      "object_uid": "ASSET-01-OBJ-INPUT-MANIFEST",
+      "entity": "AssetExecutionInputManifest",
+      "owner": "ASSET/ORCH",
+      "required_content": "task+blueprint+script+DNA+manifest+naming+instruction+route+input fingerprint"
+    },
+    {
+      "object_uid": "ASSET-01-OBJ-CANDIDATE",
+      "entity": "AssetCandidateOutput",
+      "owner": "ASSET",
+      "required_content": "candidate artifact exact version/uri/canonical filename/checksum/provenance"
+    },
+    {
+      "object_uid": "ASSET-01-OBJ-EVALUATION",
+      "entity": "AssetEvaluation",
+      "owner": "ASSET/EVALUATION",
+      "required_content": "criteria version/dimension scores/hard blocks/evidence/result"
+    },
+    {
+      "object_uid": "ASSET-01-OBJ-FINDING",
+      "entity": "AssetFinding",
+      "owner": "ASSET/EVALUATION",
+      "required_content": "issue type/asset/layer/region/evidence"
+    },
+    {
+      "object_uid": "ASSET-01-OBJ-CORRECTION",
+      "entity": "AssetCorrectionContext",
+      "owner": "ASSET/AI",
+      "required_content": "current exact refs + issue + zh-TW request + candidate"
+    },
+    {
+      "object_uid": "ASSET-01-OBJ-CORRECTION-SCRIPT",
+      "entity": "CorrectionScriptCandidate",
+      "owner": "ACPOS Script System",
+      "required_content": "provider-neutral delta; human approved before translation"
+    },
+    {
+      "object_uid": "ASSET-01-OBJ-LAYER-DOC",
+      "entity": "VersionedLayerDocument",
+      "owner": "AssetCatalogService",
+      "required_content": "immutable versions of image-compatible layer document"
+    },
+    {
+      "object_uid": "ASSET-01-OBJ-ASSET-PATCH",
+      "entity": "AssetPatch",
+      "owner": "AssetCatalogService",
+      "required_content": "source asset/layer/region/blueprint/DNA/preserve constraints/preview/decision"
+    },
+    {
+      "object_uid": "ASSET-01-OBJ-ASSET-VERSION",
+      "entity": "AssetOutputVersion",
+      "owner": "AssetCatalogService",
+      "required_content": "immutable exact artifact version + canonical filename/checksum"
+    },
+    {
+      "object_uid": "ASSET-01-OBJ-SCORECARD",
+      "entity": "AssetScorecard",
+      "owner": "ASSET/EVALUATION",
+      "required_content": "target output + criteria version + scores/issues/evidence"
+    },
+    {
+      "object_uid": "ASSET-01-OBJ-HANDOFF",
+      "entity": "AssetHandoffManifest",
+      "owner": "ASSET boundary",
+      "required_content": "exact locked output + layer/composite refs + blueprint/script/DNA/manifest/naming/score/rights/contract hash"
+    }
+  ],
+  "status": "CURRENT_SOURCE_FACT_PROJECTION"
+}

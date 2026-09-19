@@ -821,7 +821,7 @@ current_stage2_execution:
   - ASSET-01
   remaining_pages: []
   stage_scope_complete: true
-  next_action: BUILD_FRESH_ASSET-01_DESIGN_CONTRACT_CANDIDATE_FROM_CURRENT_GAPS
+  next_action: RUN_SAME_ATTEMPT_STAGE02_REVALIDATION_AFTER_EXACT_CLOSURE_MATERIALIZATION
   attempt_uid: STAGE02-ASSET01-V2213-20260920-R2
   frozen_governance_uid: GOV-REV-20260919-ASSET-STAGE01-STAGE02-SHARED-CONTRACT-HARDENING
   raw_discovery_gap_count: 106
@@ -845,4 +845,9 @@ current_stage2_execution:
   closure_credit_under_current_governance: true
   execution_scope_manifest_ref: governance/test/CURRENT_EXECUTION_SCOPE_MANIFEST.yaml
   canonical_product_contract_owner_ref: 00_SOURCE_INTAKE/run_asset01_8133839f_stage02/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/FUNCTIONAL_CHAIN_SPEC.yaml
+  review_only_design_contract_candidate_ref: 00_SOURCE_INTAKE/run_asset01_8133839f_stage02/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/DESIGN_CONTRACT_CANDIDATE.yaml
+  exact_closure_materialization_count: 1
+  exact_closure_materialization_problem_uids:
+  - STAGE02-PROBLEM-AEB128237413
+  exact_closure_product_credit_before_revalidation: 0
 status: ACTIVE_NON_NORMATIVE_FINDING_LEDGER

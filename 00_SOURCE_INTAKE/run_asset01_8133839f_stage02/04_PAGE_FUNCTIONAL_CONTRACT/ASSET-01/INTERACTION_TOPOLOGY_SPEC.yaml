@@ -1,0 +1,2571 @@
+{
+  "schema_version": 2,
+  "layer_classification": "RUN_STATE",
+  "normative_authority": false,
+  "current_governance_uid": "GOV-REV-20260919-ASSET-STAGE01-STAGE02-SHARED-CONTRACT-HARDENING",
+  "run_uid": "FRESH-ASSET01-V2213-20260920-R2",
+  "attempt_uid": "STAGE02-ASSET01-V2213-20260920-R2",
+  "work_unit_uid": "WU-STAGE02-ASSET01-V2213-20260920-R2",
+  "page_uid": "ASSET-01",
+  "source_head_sha": "7f359fd78465d80f458c0e9b6d80edd688b285f3",
+  "source_raw_ref": "00_SOURCE_INTAKE/run_asset01_8133839f_stage02/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml",
+  "product_blocker_credit": 0,
+  "artifact_type": "INTERACTION_TOPOLOGY_SPEC",
+  "artifact_uid": "STAGE02-ASSET01-INTERACTION-TOPOLOGY-R2",
+  "derivation": "EXACT_CURRENT_REGISTRY_UID_EDGES_NO_SEMANTIC_INFERENCE",
+  "semantic_edge_inference_used": false,
+  "edge_count": 510,
+  "edges": [
+    {
+      "from": "ASSET-01-SEC-01",
+      "to": "ASSET-01-CMP-CONTEXT",
+      "relation": "SECTION_HAS_COMPONENT"
+    },
+    {
+      "from": "ASSET-01-CMP-CONTEXT",
+      "to": "ASSET-01-CTL-PROJECT",
+      "relation": "COMPONENT_HAS_CONTROL"
+    },
+    {
+      "from": "ASSET-01-CTL-PROJECT",
+      "to": "ASSET-01-ACT-PROJECT-SELECT",
+      "relation": "CONTROL_TRIGGERS_ACTION"
+    },
+    {
+      "from": "ASSET-01-CTL-PROJECT",
+      "to": "ASSET-01-GATE-PAGE",
+      "relation": "CONTROL_REQUIRES_GATE"
+    },
+    {
+      "from": "ASSET-01-CTL-PROJECT",
+      "to": "ASSET_USE",
+      "relation": "CONTROL_REQUIRES_PERMISSION"
+    },
+    {
+      "from": "ASSET-01-CTL-PROJECT",
+      "to": "ASSET-01-VIS-CONTEXT",
+      "relation": "CONTROL_RENDERED_IN_VISUAL"
+    },
+    {
+      "from": "ASSET-01-SEC-01",
+      "to": "ASSET-01-CMP-CONTEXT",
+      "relation": "SECTION_HAS_COMPONENT"
+    },
+    {
+      "from": "ASSET-01-CMP-CONTEXT",
+      "to": "ASSET-01-CTL-TOPIC",
+      "relation": "COMPONENT_HAS_CONTROL"
+    },
+    {
+      "from": "ASSET-01-CTL-TOPIC",
+      "to": "ASSET-01-ACT-TOPIC-SELECT",
+      "relation": "CONTROL_TRIGGERS_ACTION"
+    },
+    {
+      "from": "ASSET-01-CTL-TOPIC",
+      "to": "ASSET-01-GATE-PAGE",
+      "relation": "CONTROL_REQUIRES_GATE"
+    },
+    {
+      "from": "ASSET-01-CTL-TOPIC",
+      "to": "ASSET_USE",
+      "relation": "CONTROL_REQUIRES_PERMISSION"
+    },
+    {
+      "from": "ASSET-01-CTL-TOPIC",
+      "to": "ASSET-01-VIS-CONTEXT",
+      "relation": "CONTROL_RENDERED_IN_VISUAL"
+    },
+    {
+      "from": "ASSET-01-SEC-01",
+      "to": "ASSET-01-CMP-CONTEXT",
+      "relation": "SECTION_HAS_COMPONENT"
+    },
+    {
+      "from": "ASSET-01-CMP-CONTEXT",
+      "to": "ASSET-01-FLD-TASK",
+      "relation": "COMPONENT_HAS_CONTROL"
+    },
+    {
+      "from": "ASSET-01-FLD-TASK",
+      "to": "ASSET-01-ACT-BINDING-VIEW",
+      "relation": "CONTROL_TRIGGERS_ACTION"
+    },
+    {
+      "from": "ASSET-01-FLD-TASK",
+      "to": "ASSET-01-GATE-CONTEXT",
+      "relation": "CONTROL_REQUIRES_GATE"
+    },
+    {
+      "from": "ASSET-01-FLD-TASK",
+      "to": "ASSET_USE",
+      "relation": "CONTROL_REQUIRES_PERMISSION"
+    },
+    {
+      "from": "ASSET-01-FLD-TASK",
+      "to": "ASSET-01-VIS-CONTEXT",
+      "relation": "CONTROL_RENDERED_IN_VISUAL"
+    },
+    {
+      "from": "ASSET-01-SEC-01",
+      "to": "ASSET-01-CMP-CONTEXT",
+      "relation": "SECTION_HAS_COMPONENT"
+    },
+    {
+      "from": "ASSET-01-CMP-CONTEXT",
+      "to": "ASSET-01-FLD-TASK-STATUS",
+      "relation": "COMPONENT_HAS_CONTROL"
+    },
+    {
+      "from": "ASSET-01-FLD-TASK-STATUS",
+      "to": "ASSET-01-ACT-BINDING-VIEW",
+      "relation": "CONTROL_TRIGGERS_ACTION"
+    },
+    {
+      "from": "ASSET-01-FLD-TASK-STATUS",
+      "to": "ASSET-01-GATE-CONTEXT",
+      "relation": "CONTROL_REQUIRES_GATE"
+    },
+    {
+      "from": "ASSET-01-FLD-TASK-STATUS",
+      "to": "ASSET_USE",
+      "relation": "CONTROL_REQUIRES_PERMISSION"
+    },
+    {
+      "from": "ASSET-01-FLD-TASK-STATUS",
+      "to": "ASSET-01-VIS-CONTEXT",
+      "relation": "CONTROL_RENDERED_IN_VISUAL"
+    },
+    {
+      "from": "ASSET-01-SEC-01",
+      "to": "ASSET-01-CMP-CONTEXT",
+      "relation": "SECTION_HAS_COMPONENT"
+    },
+    {
+      "from": "ASSET-01-CMP-CONTEXT",
+      "to": "ASSET-01-CTL-MODE",
+      "relation": "COMPONENT_HAS_CONTROL"
+    },
+    {
+      "from": "ASSET-01-CTL-MODE",
+      "to": "ASSET-01-ACT-MODE-SET",
+      "relation": "CONTROL_TRIGGERS_ACTION"
+    },
+    {
+      "from": "ASSET-01-CTL-MODE",
+      "to": "ASSET-01-GATE-CONTEXT",
+      "relation": "CONTROL_REQUIRES_GATE"
+    },
+    {
+      "from": "ASSET-01-CTL-MODE",
+      "to": "ASSET_USE",
+      "relation": "CONTROL_REQUIRES_PERMISSION"
+    },
+    {
+      "from": "ASSET-01-CTL-MODE",
+      "to": "ASSET-01-VIS-CONTEXT",
+      "relation": "CONTROL_RENDERED_IN_VISUAL"
+    },
+    {
+      "from": "ASSET-01-SEC-01",
+      "to": "ASSET-01-CMP-CONTEXT",
+      "relation": "SECTION_HAS_COMPONENT"
+    },
+    {
+      "from": "ASSET-01-CMP-CONTEXT",
+      "to": "ASSET-01-BTN-EXECUTE",
+      "relation": "COMPONENT_HAS_CONTROL"
+    },
+    {
+      "from": "ASSET-01-BTN-EXECUTE",
+      "to": "ASSET-01-ACT-FLOW-START",
+      "relation": "CONTROL_TRIGGERS_ACTION"
+    },
+    {
+      "from": "ASSET-01-BTN-EXECUTE",
+      "to": "ASSET-01-GATE-EXECUTE",
+      "relation": "CONTROL_REQUIRES_GATE"
+    },
+    {
+      "from": "ASSET-01-BTN-EXECUTE",
+      "to": "ASSET_EXECUTE",
+      "relation": "CONTROL_REQUIRES_PERMISSION"
+    },
+    {
+      "from": "ASSET-01-BTN-EXECUTE",
+      "to": "ASSET-01-VIS-CONTEXT",
+      "relation": "CONTROL_RENDERED_IN_VISUAL"
+    },
+    {
+      "from": "ASSET-01-SEC-01",
+      "to": "ASSET-01-CMP-CONTEXT",
+      "relation": "SECTION_HAS_COMPONENT"
+    },
+    {
+      "from": "ASSET-01-CMP-CONTEXT",
+      "to": "ASSET-01-FLD-STAGE",
+      "relation": "COMPONENT_HAS_CONTROL"
+    },
+    {
+      "from": "ASSET-01-FLD-STAGE",
+      "to": "ASSET-01-ACT-BINDING-VIEW",
+      "relation": "CONTROL_TRIGGERS_ACTION"
+    },
+    {
+      "from": "ASSET-01-FLD-STAGE",
+      "to": "ASSET-01-GATE-CONTEXT",
+      "relation": "CONTROL_REQUIRES_GATE"
+    },
+    {
+      "from": "ASSET-01-FLD-STAGE",
+      "to": "ASSET_USE",
+      "relation": "CONTROL_REQUIRES_PERMISSION"
+    },
+    {
+      "from": "ASSET-01-FLD-STAGE",
+      "to": "ASSET-01-VIS-CONTEXT",
+      "relation": "CONTROL_RENDERED_IN_VISUAL"
+    },
+    {
+      "from": "ASSET-01-SEC-02",
+      "to": "ASSET-01-CMP-ASSET-LIST",
+      "relation": "SECTION_HAS_COMPONENT"
+    },
+    {
+      "from": "ASSET-01-CMP-ASSET-LIST",
+      "to": "ASSET-01-FLD-SEARCH",
+      "relation": "COMPONENT_HAS_CONTROL"
+    },
+    {
+      "from": "ASSET-01-FLD-SEARCH",
+      "to": "ASSET-01-ACT-ASSET-SEARCH",
+      "relation": "CONTROL_TRIGGERS_ACTION"
+    },
+    {
+      "from": "ASSET-01-FLD-SEARCH",
+      "to": "ASSET-01-GATE-CONTEXT",
+      "relation": "CONTROL_REQUIRES_GATE"
+    },
+    {
+      "from": "ASSET-01-FLD-SEARCH",
+      "to": "ASSET_USE",
+      "relation": "CONTROL_REQUIRES_PERMISSION"
+    },
+    {
+      "from": "ASSET-01-FLD-SEARCH",
+      "to": "ASSET-01-VIS-LEFT",
+      "relation": "CONTROL_RENDERED_IN_VISUAL"
+    },
+    {
+      "from": "ASSET-01-SEC-02",
+      "to": "ASSET-01-CMP-ASSET-LIST",
+      "relation": "SECTION_HAS_COMPONENT"
+    },
+    {
+      "from": "ASSET-01-CMP-ASSET-LIST",
+      "to": "ASSET-01-CTL-FILTER",
+      "relation": "COMPONENT_HAS_CONTROL"
+    },
+    {
+      "from": "ASSET-01-CTL-FILTER",
+      "to": "ASSET-01-ACT-ASSET-FILTER",
+      "relation": "CONTROL_TRIGGERS_ACTION"
+    },
+    {
+      "from": "ASSET-01-CTL-FILTER",
+      "to": "ASSET-01-GATE-CONTEXT",
+      "relation": "CONTROL_REQUIRES_GATE"
+    },
+    {
+      "from": "ASSET-01-CTL-FILTER",
+      "to": "ASSET_USE",
+      "relation": "CONTROL_REQUIRES_PERMISSION"
+    },
+    {
+      "from": "ASSET-01-CTL-FILTER",
+      "to": "ASSET-01-VIS-LEFT",
+      "relation": "CONTROL_RENDERED_IN_VISUAL"
+    },
+    {
+      "from": "ASSET-01-SEC-02",
+      "to": "ASSET-01-CMP-ASSET-LIST",
+      "relation": "SECTION_HAS_COMPONENT"
+    },
+    {
+      "from": "ASSET-01-CMP-ASSET-LIST",
+      "to": "ASSET-01-LST-ASSET",
+      "relation": "COMPONENT_HAS_CONTROL"
+    },
+    {
+      "from": "ASSET-01-LST-ASSET",
+      "to": "ASSET-01-ACT-ASSET-SELECT",
+      "relation": "CONTROL_TRIGGERS_ACTION"
+    },
+    {
+      "from": "ASSET-01-LST-ASSET",
+      "to": "ASSET-01-GATE-CONTEXT",
+      "relation": "CONTROL_REQUIRES_GATE"
+    },
+    {
+      "from": "ASSET-01-LST-ASSET",
+      "to": "ASSET_USE",
+      "relation": "CONTROL_REQUIRES_PERMISSION"
+    },
+    {
+      "from": "ASSET-01-LST-ASSET",
+      "to": "ASSET-01-VIS-LEFT",
+      "relation": "CONTROL_RENDERED_IN_VISUAL"
+    },
+    {
+      "from": "ASSET-01-SEC-02",
+      "to": "ASSET-01-CMP-REUSE",
+      "relation": "SECTION_HAS_COMPONENT"
+    },
+    {
+      "from": "ASSET-01-CMP-REUSE",
+      "to": "ASSET-01-FLD-MANIFEST-REQUIRED",
+      "relation": "COMPONENT_HAS_CONTROL"
+    },
+    {
+      "from": "ASSET-01-FLD-MANIFEST-REQUIRED",
+      "to": "ASSET-01-ACT-BINDING-VIEW",
+      "relation": "CONTROL_TRIGGERS_ACTION"
+    },
+    {
+      "from": "ASSET-01-FLD-MANIFEST-REQUIRED",
+      "to": "ASSET-01-GATE-MANIFEST",
+      "relation": "CONTROL_REQUIRES_GATE"
+    },
+    {
+      "from": "ASSET-01-FLD-MANIFEST-REQUIRED",
+      "to": "ASSET_USE",
+      "relation": "CONTROL_REQUIRES_PERMISSION"
+    },
+    {
+      "from": "ASSET-01-FLD-MANIFEST-REQUIRED",
+      "to": "ASSET-01-VIS-LEFT",
+      "relation": "CONTROL_RENDERED_IN_VISUAL"
+    },
+    {
+      "from": "ASSET-01-SEC-02",
+      "to": "ASSET-01-CMP-REUSE",
+      "relation": "SECTION_HAS_COMPONENT"
+    },
+    {
+      "from": "ASSET-01-CMP-REUSE",
+      "to": "ASSET-01-FLD-MANIFEST-REUSE",
+      "relation": "COMPONENT_HAS_CONTROL"
+    },
+    {
+      "from": "ASSET-01-FLD-MANIFEST-REUSE",
+      "to": "ASSET-01-ACT-BINDING-VIEW",
+      "relation": "CONTROL_TRIGGERS_ACTION"
+    },
+    {
+      "from": "ASSET-01-FLD-MANIFEST-REUSE",
+      "to": "ASSET-01-GATE-MANIFEST",
+      "relation": "CONTROL_REQUIRES_GATE"
+    },
+    {
+      "from": "ASSET-01-FLD-MANIFEST-REUSE",
+      "to": "ASSET_USE",
+      "relation": "CONTROL_REQUIRES_PERMISSION"
+    },
+    {
+      "from": "ASSET-01-FLD-MANIFEST-REUSE",
+      "to": "ASSET-01-VIS-LEFT",
+      "relation": "CONTROL_RENDERED_IN_VISUAL"
+    },
+    {
+      "from": "ASSET-01-SEC-02",
+      "to": "ASSET-01-CMP-REUSE",
+      "relation": "SECTION_HAS_COMPONENT"
+    },
+    {
+      "from": "ASSET-01-CMP-REUSE",
+      "to": "ASSET-01-FLD-MANIFEST-MISSING",
+      "relation": "COMPONENT_HAS_CONTROL"
+    },
+    {
+      "from": "ASSET-01-FLD-MANIFEST-MISSING",
+      "to": "ASSET-01-ACT-BINDING-VIEW",
+      "relation": "CONTROL_TRIGGERS_ACTION"
+    },
+    {
+      "from": "ASSET-01-FLD-MANIFEST-MISSING",
+      "to": "ASSET-01-GATE-MANIFEST",
+      "relation": "CONTROL_REQUIRES_GATE"
+    },
+    {
+      "from": "ASSET-01-FLD-MANIFEST-MISSING",
+      "to": "ASSET_USE",
+      "relation": "CONTROL_REQUIRES_PERMISSION"
+    },
+    {
+      "from": "ASSET-01-FLD-MANIFEST-MISSING",
+      "to": "ASSET-01-VIS-LEFT",
+      "relation": "CONTROL_RENDERED_IN_VISUAL"
+    },
+    {
+      "from": "ASSET-01-SEC-02",
+      "to": "ASSET-01-CMP-REUSE",
+      "relation": "SECTION_HAS_COMPONENT"
+    },
+    {
+      "from": "ASSET-01-CMP-REUSE",
+      "to": "ASSET-01-FLD-MANIFEST-DEFERRED",
+      "relation": "COMPONENT_HAS_CONTROL"
+    },
+    {
+      "from": "ASSET-01-FLD-MANIFEST-DEFERRED",
+      "to": "ASSET-01-ACT-BINDING-VIEW",
+      "relation": "CONTROL_TRIGGERS_ACTION"
+    },
+    {
+      "from": "ASSET-01-FLD-MANIFEST-DEFERRED",
+      "to": "ASSET-01-GATE-MANIFEST",
+      "relation": "CONTROL_REQUIRES_GATE"
+    },
+    {
+      "from": "ASSET-01-FLD-MANIFEST-DEFERRED",
+      "to": "ASSET_USE",
+      "relation": "CONTROL_REQUIRES_PERMISSION"
+    },
+    {
+      "from": "ASSET-01-FLD-MANIFEST-DEFERRED",
+      "to": "ASSET-01-VIS-LEFT",
+      "relation": "CONTROL_RENDERED_IN_VISUAL"
+    },
+    {
+      "from": "ASSET-01-SEC-03",
+      "to": "ASSET-01-CMP-BINDING",
+      "relation": "SECTION_HAS_COMPONENT"
+    },
+    {
+      "from": "ASSET-01-CMP-BINDING",
+      "to": "ASSET-01-FLD-BLUEPRINT",
+      "relation": "COMPONENT_HAS_CONTROL"
+    },
+    {
+      "from": "ASSET-01-FLD-BLUEPRINT",
+      "to": "ASSET-01-ACT-BINDING-VIEW",
+      "relation": "CONTROL_TRIGGERS_ACTION"
+    },
+    {
+      "from": "ASSET-01-FLD-BLUEPRINT",
+      "to": "ASSET-01-GATE-CHILD-LOCK",
+      "relation": "CONTROL_REQUIRES_GATE"
+    },
+    {
+      "from": "ASSET-01-FLD-BLUEPRINT",
+      "to": "ASSET_USE",
+      "relation": "CONTROL_REQUIRES_PERMISSION"
+    },
+    {
+      "from": "ASSET-01-FLD-BLUEPRINT",
+      "to": "ASSET-01-VIS-BINDING",
+      "relation": "CONTROL_RENDERED_IN_VISUAL"
+    },
+    {
+      "from": "ASSET-01-SEC-03",
+      "to": "ASSET-01-CMP-BINDING",
+      "relation": "SECTION_HAS_COMPONENT"
+    },
+    {
+      "from": "ASSET-01-CMP-BINDING",
+      "to": "ASSET-01-FLD-SCRIPT",
+      "relation": "COMPONENT_HAS_CONTROL"
+    },
+    {
+      "from": "ASSET-01-FLD-SCRIPT",
+      "to": "ASSET-01-ACT-BINDING-VIEW",
+      "relation": "CONTROL_TRIGGERS_ACTION"
+    },
+    {
+      "from": "ASSET-01-FLD-SCRIPT",
+      "to": "ASSET-01-GATE-SCRIPT",
+      "relation": "CONTROL_REQUIRES_GATE"
+    },
+    {
+      "from": "ASSET-01-FLD-SCRIPT",
+      "to": "ASSET_USE",
+      "relation": "CONTROL_REQUIRES_PERMISSION"
+    },
+    {
+      "from": "ASSET-01-FLD-SCRIPT",
+      "to": "ASSET-01-VIS-BINDING",
+      "relation": "CONTROL_RENDERED_IN_VISUAL"
+    },
+    {
+      "from": "ASSET-01-SEC-03",
+      "to": "ASSET-01-CMP-BINDING",
+      "relation": "SECTION_HAS_COMPONENT"
+    },
+    {
+      "from": "ASSET-01-CMP-BINDING",
+      "to": "ASSET-01-FLD-DNA",
+      "relation": "COMPONENT_HAS_CONTROL"
+    },
+    {
+      "from": "ASSET-01-FLD-DNA",
+      "to": "ASSET-01-ACT-BINDING-VIEW",
+      "relation": "CONTROL_TRIGGERS_ACTION"
+    },
+    {
+      "from": "ASSET-01-FLD-DNA",
+      "to": "ASSET-01-GATE-MANIFEST",
+      "relation": "CONTROL_REQUIRES_GATE"
+    },
+    {
+      "from": "ASSET-01-FLD-DNA",
+      "to": "ASSET_USE",
+      "relation": "CONTROL_REQUIRES_PERMISSION"
+    },
+    {
+      "from": "ASSET-01-FLD-DNA",
+      "to": "ASSET-01-VIS-BINDING",
+      "relation": "CONTROL_RENDERED_IN_VISUAL"
+    },
+    {
+      "from": "ASSET-01-SEC-03",
+      "to": "ASSET-01-CMP-BINDING",
+      "relation": "SECTION_HAS_COMPONENT"
+    },
+    {
+      "from": "ASSET-01-CMP-BINDING",
+      "to": "ASSET-01-FLD-MANIFEST",
+      "relation": "COMPONENT_HAS_CONTROL"
+    },
+    {
+      "from": "ASSET-01-FLD-MANIFEST",
+      "to": "ASSET-01-ACT-BINDING-VIEW",
+      "relation": "CONTROL_TRIGGERS_ACTION"
+    },
+    {
+      "from": "ASSET-01-FLD-MANIFEST",
+      "to": "ASSET-01-GATE-MANIFEST",
+      "relation": "CONTROL_REQUIRES_GATE"
+    },
+    {
+      "from": "ASSET-01-FLD-MANIFEST",
+      "to": "ASSET_USE",
+      "relation": "CONTROL_REQUIRES_PERMISSION"
+    },
+    {
+      "from": "ASSET-01-FLD-MANIFEST",
+      "to": "ASSET-01-VIS-BINDING",
+      "relation": "CONTROL_RENDERED_IN_VISUAL"
+    },
+    {
+      "from": "ASSET-01-SEC-03",
+      "to": "ASSET-01-CMP-BINDING",
+      "relation": "SECTION_HAS_COMPONENT"
+    },
+    {
+      "from": "ASSET-01-CMP-BINDING",
+      "to": "ASSET-01-FLD-INPUT-FINGERPRINT",
+      "relation": "COMPONENT_HAS_CONTROL"
+    },
+    {
+      "from": "ASSET-01-FLD-INPUT-FINGERPRINT",
+      "to": "ASSET-01-ACT-BINDING-VIEW",
+      "relation": "CONTROL_TRIGGERS_ACTION"
+    },
+    {
+      "from": "ASSET-01-FLD-INPUT-FINGERPRINT",
+      "to": "ASSET-01-GATE-MANIFEST",
+      "relation": "CONTROL_REQUIRES_GATE"
+    },
+    {
+      "from": "ASSET-01-FLD-INPUT-FINGERPRINT",
+      "to": "ASSET_USE",
+      "relation": "CONTROL_REQUIRES_PERMISSION"
+    },
+    {
+      "from": "ASSET-01-FLD-INPUT-FINGERPRINT",
+      "to": "ASSET-01-VIS-BINDING",
+      "relation": "CONTROL_RENDERED_IN_VISUAL"
+    },
+    {
+      "from": "ASSET-01-SEC-03",
+      "to": "ASSET-01-CMP-BINDING",
+      "relation": "SECTION_HAS_COMPONENT"
+    },
+    {
+      "from": "ASSET-01-CMP-BINDING",
+      "to": "ASSET-01-FLD-NAMING-AUTHORITY",
+      "relation": "COMPONENT_HAS_CONTROL"
+    },
+    {
+      "from": "ASSET-01-FLD-NAMING-AUTHORITY",
+      "to": "ASSET-01-ACT-BINDING-VIEW",
+      "relation": "CONTROL_TRIGGERS_ACTION"
+    },
+    {
+      "from": "ASSET-01-FLD-NAMING-AUTHORITY",
+      "to": "ASSET-01-GATE-NAMING",
+      "relation": "CONTROL_REQUIRES_GATE"
+    },
+    {
+      "from": "ASSET-01-FLD-NAMING-AUTHORITY",
+      "to": "ASSET_USE",
+      "relation": "CONTROL_REQUIRES_PERMISSION"
+    },
+    {
+      "from": "ASSET-01-FLD-NAMING-AUTHORITY",
+      "to": "ASSET-01-VIS-BINDING",
+      "relation": "CONTROL_RENDERED_IN_VISUAL"
+    },
+    {
+      "from": "ASSET-01-SEC-03",
+      "to": "ASSET-01-CMP-BINDING",
+      "relation": "SECTION_HAS_COMPONENT"
+    },
+    {
+      "from": "ASSET-01-CMP-BINDING",
+      "to": "ASSET-01-FLD-CANONICAL-FILENAME",
+      "relation": "COMPONENT_HAS_CONTROL"
+    },
+    {
+      "from": "ASSET-01-FLD-CANONICAL-FILENAME",
+      "to": "ASSET-01-ACT-BINDING-VIEW",
+      "relation": "CONTROL_TRIGGERS_ACTION"
+    },
+    {
+      "from": "ASSET-01-FLD-CANONICAL-FILENAME",
+      "to": "ASSET-01-GATE-NAMING",
+      "relation": "CONTROL_REQUIRES_GATE"
+    },
+    {
+      "from": "ASSET-01-FLD-CANONICAL-FILENAME",
+      "to": "ASSET_USE",
+      "relation": "CONTROL_REQUIRES_PERMISSION"
+    },
+    {
+      "from": "ASSET-01-FLD-CANONICAL-FILENAME",
+      "to": "ASSET-01-VIS-BINDING",
+      "relation": "CONTROL_RENDERED_IN_VISUAL"
+    },
+    {
+      "from": "ASSET-01-SEC-03",
+      "to": "ASSET-01-CMP-BINDING",
+      "relation": "SECTION_HAS_COMPONENT"
+    },
+    {
+      "from": "ASSET-01-CMP-BINDING",
+      "to": "ASSET-01-FLD-OUTPUT-ID",
+      "relation": "COMPONENT_HAS_CONTROL"
+    },
+    {
+      "from": "ASSET-01-FLD-OUTPUT-ID",
+      "to": "ASSET-01-ACT-BINDING-VIEW",
+      "relation": "CONTROL_TRIGGERS_ACTION"
+    },
+    {
+      "from": "ASSET-01-FLD-OUTPUT-ID",
+      "to": "ASSET-01-GATE-NAMING",
+      "relation": "CONTROL_REQUIRES_GATE"
+    },
+    {
+      "from": "ASSET-01-FLD-OUTPUT-ID",
+      "to": "ASSET_USE",
+      "relation": "CONTROL_REQUIRES_PERMISSION"
+    },
+    {
+      "from": "ASSET-01-FLD-OUTPUT-ID",
+      "to": "ASSET-01-VIS-BINDING",
+      "relation": "CONTROL_RENDERED_IN_VISUAL"
+    },
+    {
+      "from": "ASSET-01-SEC-03",
+      "to": "ASSET-01-CMP-BINDING",
+      "relation": "SECTION_HAS_COMPONENT"
+    },
+    {
+      "from": "ASSET-01-CMP-BINDING",
+      "to": "ASSET-01-FLD-CHECKSUM",
+      "relation": "COMPONENT_HAS_CONTROL"
+    },
+    {
+      "from": "ASSET-01-FLD-CHECKSUM",
+      "to": "ASSET-01-ACT-BINDING-VIEW",
+      "relation": "CONTROL_TRIGGERS_ACTION"
+    },
+    {
+      "from": "ASSET-01-FLD-CHECKSUM",
+      "to": "ASSET-01-GATE-NAMING",
+      "relation": "CONTROL_REQUIRES_GATE"
+    },
+    {
+      "from": "ASSET-01-FLD-CHECKSUM",
+      "to": "ASSET_USE",
+      "relation": "CONTROL_REQUIRES_PERMISSION"
+    },
+    {
+      "from": "ASSET-01-FLD-CHECKSUM",
+      "to": "ASSET-01-VIS-BINDING",
+      "relation": "CONTROL_RENDERED_IN_VISUAL"
+    },
+    {
+      "from": "ASSET-01-SEC-03",
+      "to": "ASSET-01-CMP-BINDING",
+      "relation": "SECTION_HAS_COMPONENT"
+    },
+    {
+      "from": "ASSET-01-CMP-BINDING",
+      "to": "ASSET-01-FLD-RIGHTS",
+      "relation": "COMPONENT_HAS_CONTROL"
+    },
+    {
+      "from": "ASSET-01-FLD-RIGHTS",
+      "to": "ASSET-01-ACT-BINDING-VIEW",
+      "relation": "CONTROL_TRIGGERS_ACTION"
+    },
+    {
+      "from": "ASSET-01-FLD-RIGHTS",
+      "to": "ASSET-01-GATE-MANIFEST",
+      "relation": "CONTROL_REQUIRES_GATE"
+    },
+    {
+      "from": "ASSET-01-FLD-RIGHTS",
+      "to": "ASSET_USE",
+      "relation": "CONTROL_REQUIRES_PERMISSION"
+    },
+    {
+      "from": "ASSET-01-FLD-RIGHTS",
+      "to": "ASSET-01-VIS-BINDING",
+      "relation": "CONTROL_RENDERED_IN_VISUAL"
+    },
+    {
+      "from": "ASSET-01-SEC-03",
+      "to": "ASSET-01-CMP-BINDING",
+      "relation": "SECTION_HAS_COMPONENT"
+    },
+    {
+      "from": "ASSET-01-CMP-BINDING",
+      "to": "ASSET-01-FLD-INSTRUCTION",
+      "relation": "COMPONENT_HAS_CONTROL"
+    },
+    {
+      "from": "ASSET-01-FLD-INSTRUCTION",
+      "to": "ASSET-01-ACT-BINDING-VIEW",
+      "relation": "CONTROL_TRIGGERS_ACTION"
+    },
+    {
+      "from": "ASSET-01-FLD-INSTRUCTION",
+      "to": "ASSET-01-GATE-ROUTE",
+      "relation": "CONTROL_REQUIRES_GATE"
+    },
+    {
+      "from": "ASSET-01-FLD-INSTRUCTION",
+      "to": "ASSET_USE",
+      "relation": "CONTROL_REQUIRES_PERMISSION"
+    },
+    {
+      "from": "ASSET-01-FLD-INSTRUCTION",
+      "to": "ASSET-01-VIS-BINDING",
+      "relation": "CONTROL_RENDERED_IN_VISUAL"
+    },
+    {
+      "from": "ASSET-01-SEC-03",
+      "to": "ASSET-01-CMP-BINDING",
+      "relation": "SECTION_HAS_COMPONENT"
+    },
+    {
+      "from": "ASSET-01-CMP-BINDING",
+      "to": "ASSET-01-BTN-BLUEPRINT",
+      "relation": "COMPONENT_HAS_CONTROL"
+    },
+    {
+      "from": "ASSET-01-BTN-BLUEPRINT",
+      "to": "ASSET-01-ACT-BLUEPRINT-VIEW",
+      "relation": "CONTROL_TRIGGERS_ACTION"
+    },
+    {
+      "from": "ASSET-01-BTN-BLUEPRINT",
+      "to": "ASSET-01-GATE-CHILD-LOCK",
+      "relation": "CONTROL_REQUIRES_GATE"
+    },
+    {
+      "from": "ASSET-01-BTN-BLUEPRINT",
+      "to": "ASSET_USE",
+      "relation": "CONTROL_REQUIRES_PERMISSION"
+    },
+    {
+      "from": "ASSET-01-BTN-BLUEPRINT",
+      "to": "ASSET-01-VIS-BINDING",
+      "relation": "CONTROL_RENDERED_IN_VISUAL"
+    },
+    {
+      "from": "ASSET-01-SEC-03",
+      "to": "ASSET-01-CMP-SCRIPT",
+      "relation": "SECTION_HAS_COMPONENT"
+    },
+    {
+      "from": "ASSET-01-CMP-SCRIPT",
+      "to": "ASSET-01-BTN-SCRIPT",
+      "relation": "COMPONENT_HAS_CONTROL"
+    },
+    {
+      "from": "ASSET-01-BTN-SCRIPT",
+      "to": "ASSET-01-ACT-SCRIPT-VIEW",
+      "relation": "CONTROL_TRIGGERS_ACTION"
+    },
+    {
+      "from": "ASSET-01-BTN-SCRIPT",
+      "to": "ASSET-01-GATE-SCRIPT",
+      "relation": "CONTROL_REQUIRES_GATE"
+    },
+    {
+      "from": "ASSET-01-BTN-SCRIPT",
+      "to": "ASSET_USE",
+      "relation": "CONTROL_REQUIRES_PERMISSION"
+    },
+    {
+      "from": "ASSET-01-BTN-SCRIPT",
+      "to": "ASSET-01-VIS-BINDING",
+      "relation": "CONTROL_RENDERED_IN_VISUAL"
+    },
+    {
+      "from": "ASSET-01-SEC-04",
+      "to": "ASSET-01-CMP-COMPARE",
+      "relation": "SECTION_HAS_COMPONENT"
+    },
+    {
+      "from": "ASSET-01-CMP-COMPARE",
+      "to": "ASSET-01-BTN-SINGLE",
+      "relation": "COMPONENT_HAS_CONTROL"
+    },
+    {
+      "from": "ASSET-01-BTN-SINGLE",
+      "to": "ASSET-01-ACT-COMPARE-SINGLE",
+      "relation": "CONTROL_TRIGGERS_ACTION"
+    },
+    {
+      "from": "ASSET-01-BTN-SINGLE",
+      "to": "ASSET-01-GATE-COMPARE",
+      "relation": "CONTROL_REQUIRES_GATE"
+    },
+    {
+      "from": "ASSET-01-BTN-SINGLE",
+      "to": "ASSET_USE",
+      "relation": "CONTROL_REQUIRES_PERMISSION"
+    },
+    {
+      "from": "ASSET-01-BTN-SINGLE",
+      "to": "ASSET-01-VIS-PREVIEW",
+      "relation": "CONTROL_RENDERED_IN_VISUAL"
+    },
+    {
+      "from": "ASSET-01-SEC-04",
+      "to": "ASSET-01-CMP-COMPARE",
+      "relation": "SECTION_HAS_COMPONENT"
+    },
+    {
+      "from": "ASSET-01-CMP-COMPARE",
+      "to": "ASSET-01-BTN-AB",
+      "relation": "COMPONENT_HAS_CONTROL"
+    },
+    {
+      "from": "ASSET-01-BTN-AB",
+      "to": "ASSET-01-ACT-COMPARE-AB",
+      "relation": "CONTROL_TRIGGERS_ACTION"
+    },
+    {
+      "from": "ASSET-01-BTN-AB",
+      "to": "ASSET-01-GATE-COMPARE",
+      "relation": "CONTROL_REQUIRES_GATE"
+    },
+    {
+      "from": "ASSET-01-BTN-AB",
+      "to": "ASSET_USE",
+      "relation": "CONTROL_REQUIRES_PERMISSION"
+    },
+    {
+      "from": "ASSET-01-BTN-AB",
+      "to": "ASSET-01-VIS-PREVIEW",
+      "relation": "CONTROL_RENDERED_IN_VISUAL"
+    },
+    {
+      "from": "ASSET-01-SEC-04",
+      "to": "ASSET-01-CMP-COMPARE",
+      "relation": "SECTION_HAS_COMPONENT"
+    },
+    {
+      "from": "ASSET-01-CMP-COMPARE",
+      "to": "ASSET-01-BTN-ABC",
+      "relation": "COMPONENT_HAS_CONTROL"
+    },
+    {
+      "from": "ASSET-01-BTN-ABC",
+      "to": "ASSET-01-ACT-COMPARE-ABC",
+      "relation": "CONTROL_TRIGGERS_ACTION"
+    },
+    {
+      "from": "ASSET-01-BTN-ABC",
+      "to": "ASSET-01-GATE-COMPARE",
+      "relation": "CONTROL_REQUIRES_GATE"
+    },
+    {
+      "from": "ASSET-01-BTN-ABC",
+      "to": "ASSET_USE",
+      "relation": "CONTROL_REQUIRES_PERMISSION"
+    },
+    {
+      "from": "ASSET-01-BTN-ABC",
+      "to": "ASSET-01-VIS-PREVIEW",
+      "relation": "CONTROL_RENDERED_IN_VISUAL"
+    },
+    {
+      "from": "ASSET-01-SEC-04",
+      "to": "ASSET-01-CMP-COMPARE",
+      "relation": "SECTION_HAS_COMPONENT"
+    },
+    {
+      "from": "ASSET-01-CMP-COMPARE",
+      "to": "ASSET-01-BTN-ZOOM-OUT",
+      "relation": "COMPONENT_HAS_CONTROL"
+    },
+    {
+      "from": "ASSET-01-BTN-ZOOM-OUT",
+      "to": "ASSET-01-ACT-ZOOM-OUT",
+      "relation": "CONTROL_TRIGGERS_ACTION"
+    },
+    {
+      "from": "ASSET-01-BTN-ZOOM-OUT",
+      "to": "ASSET-01-GATE-CANDIDATE",
+      "relation": "CONTROL_REQUIRES_GATE"
+    },
+    {
+      "from": "ASSET-01-BTN-ZOOM-OUT",
+      "to": "ASSET_USE",
+      "relation": "CONTROL_REQUIRES_PERMISSION"
+    },
+    {
+      "from": "ASSET-01-BTN-ZOOM-OUT",
+      "to": "ASSET-01-VIS-PREVIEW",
+      "relation": "CONTROL_RENDERED_IN_VISUAL"
+    },
+    {
+      "from": "ASSET-01-SEC-04",
+      "to": "ASSET-01-CMP-COMPARE",
+      "relation": "SECTION_HAS_COMPONENT"
+    },
+    {
+      "from": "ASSET-01-CMP-COMPARE",
+      "to": "ASSET-01-BTN-ZOOM-IN",
+      "relation": "COMPONENT_HAS_CONTROL"
+    },
+    {
+      "from": "ASSET-01-BTN-ZOOM-IN",
+      "to": "ASSET-01-ACT-ZOOM-IN",
+      "relation": "CONTROL_TRIGGERS_ACTION"
+    },
+    {
+      "from": "ASSET-01-BTN-ZOOM-IN",
+      "to": "ASSET-01-GATE-CANDIDATE",
+      "relation": "CONTROL_REQUIRES_GATE"
+    },
+    {
+      "from": "ASSET-01-BTN-ZOOM-IN",
+      "to": "ASSET_USE",
+      "relation": "CONTROL_REQUIRES_PERMISSION"
+    },
+    {
+      "from": "ASSET-01-BTN-ZOOM-IN",
+      "to": "ASSET-01-VIS-PREVIEW",
+      "relation": "CONTROL_RENDERED_IN_VISUAL"
+    },
+    {
+      "from": "ASSET-01-SEC-04",
+      "to": "ASSET-01-CMP-COMPARE",
+      "relation": "SECTION_HAS_COMPONENT"
+    },
+    {
+      "from": "ASSET-01-CMP-COMPARE",
+      "to": "ASSET-01-BTN-FIT",
+      "relation": "COMPONENT_HAS_CONTROL"
+    },
+    {
+      "from": "ASSET-01-BTN-FIT",
+      "to": "ASSET-01-ACT-FIT",
+      "relation": "CONTROL_TRIGGERS_ACTION"
+    },
+    {
+      "from": "ASSET-01-BTN-FIT",
+      "to": "ASSET-01-GATE-CANDIDATE",
+      "relation": "CONTROL_REQUIRES_GATE"
+    },
+    {
+      "from": "ASSET-01-BTN-FIT",
+      "to": "ASSET_USE",
+      "relation": "CONTROL_REQUIRES_PERMISSION"
+    },
+    {
+      "from": "ASSET-01-BTN-FIT",
+      "to": "ASSET-01-VIS-PREVIEW",
+      "relation": "CONTROL_RENDERED_IN_VISUAL"
+    },
+    {
+      "from": "ASSET-01-SEC-04",
+      "to": "ASSET-01-CMP-COMPARE",
+      "relation": "SECTION_HAS_COMPONENT"
+    },
+    {
+      "from": "ASSET-01-CMP-COMPARE",
+      "to": "ASSET-01-BTN-REFERENCE",
+      "relation": "COMPONENT_HAS_CONTROL"
+    },
+    {
+      "from": "ASSET-01-BTN-REFERENCE",
+      "to": "ASSET-01-ACT-REFERENCE-TOGGLE",
+      "relation": "CONTROL_TRIGGERS_ACTION"
+    },
+    {
+      "from": "ASSET-01-BTN-REFERENCE",
+      "to": "ASSET-01-GATE-CANDIDATE",
+      "relation": "CONTROL_REQUIRES_GATE"
+    },
+    {
+      "from": "ASSET-01-BTN-REFERENCE",
+      "to": "ASSET_USE",
+      "relation": "CONTROL_REQUIRES_PERMISSION"
+    },
+    {
+      "from": "ASSET-01-BTN-REFERENCE",
+      "to": "ASSET-01-VIS-PREVIEW",
+      "relation": "CONTROL_RENDERED_IN_VISUAL"
+    },
+    {
+      "from": "ASSET-01-SEC-04",
+      "to": "ASSET-01-CMP-PREVIEW",
+      "relation": "SECTION_HAS_COMPONENT"
+    },
+    {
+      "from": "ASSET-01-CMP-PREVIEW",
+      "to": "ASSET-01-LST-COMPARE-VERSIONS",
+      "relation": "COMPONENT_HAS_CONTROL"
+    },
+    {
+      "from": "ASSET-01-LST-COMPARE-VERSIONS",
+      "to": "ASSET-01-ACT-COMPARE-SINGLE",
+      "relation": "CONTROL_TRIGGERS_ACTION"
+    },
+    {
+      "from": "ASSET-01-LST-COMPARE-VERSIONS",
+      "to": "ASSET-01-GATE-COMPARE",
+      "relation": "CONTROL_REQUIRES_GATE"
+    },
+    {
+      "from": "ASSET-01-LST-COMPARE-VERSIONS",
+      "to": "ASSET_USE",
+      "relation": "CONTROL_REQUIRES_PERMISSION"
+    },
+    {
+      "from": "ASSET-01-LST-COMPARE-VERSIONS",
+      "to": "ASSET-01-VIS-PREVIEW",
+      "relation": "CONTROL_RENDERED_IN_VISUAL"
+    },
+    {
+      "from": "ASSET-01-SEC-04",
+      "to": "ASSET-01-CMP-PREVIEW",
+      "relation": "SECTION_HAS_COMPONENT"
+    },
+    {
+      "from": "ASSET-01-CMP-PREVIEW",
+      "to": "ASSET-01-BTN-RESULT-DETAIL",
+      "relation": "COMPONENT_HAS_CONTROL"
+    },
+    {
+      "from": "ASSET-01-BTN-RESULT-DETAIL",
+      "to": "ASSET-01-ACT-RESULT-VIEW",
+      "relation": "CONTROL_TRIGGERS_ACTION"
+    },
+    {
+      "from": "ASSET-01-BTN-RESULT-DETAIL",
+      "to": "ASSET-01-GATE-EVALUATION",
+      "relation": "CONTROL_REQUIRES_GATE"
+    },
+    {
+      "from": "ASSET-01-BTN-RESULT-DETAIL",
+      "to": "ASSET_USE",
+      "relation": "CONTROL_REQUIRES_PERMISSION"
+    },
+    {
+      "from": "ASSET-01-BTN-RESULT-DETAIL",
+      "to": "ASSET-01-VIS-PREVIEW",
+      "relation": "CONTROL_RENDERED_IN_VISUAL"
+    },
+    {
+      "from": "ASSET-01-SEC-06",
+      "to": "ASSET-01-CMP-CORRECTION",
+      "relation": "SECTION_HAS_COMPONENT"
+    },
+    {
+      "from": "ASSET-01-CMP-CORRECTION",
+      "to": "ASSET-01-BTN-CORRECTION-OPEN",
+      "relation": "COMPONENT_HAS_CONTROL"
+    },
+    {
+      "from": "ASSET-01-BTN-CORRECTION-OPEN",
+      "to": "ASSET-01-ACT-CORRECTION-OPEN",
+      "relation": "CONTROL_TRIGGERS_ACTION"
+    },
+    {
+      "from": "ASSET-01-BTN-CORRECTION-OPEN",
+      "to": "ASSET-01-GATE-CORRECTION",
+      "relation": "CONTROL_REQUIRES_GATE"
+    },
+    {
+      "from": "ASSET-01-BTN-CORRECTION-OPEN",
+      "to": "ASSET_CORRECT",
+      "relation": "CONTROL_REQUIRES_PERMISSION"
+    },
+    {
+      "from": "ASSET-01-BTN-CORRECTION-OPEN",
+      "to": "ASSET-01-VIS-CORRECTION",
+      "relation": "CONTROL_RENDERED_IN_VISUAL"
+    },
+    {
+      "from": "ASSET-01-SEC-06",
+      "to": "ASSET-01-CMP-CORRECTION",
+      "relation": "SECTION_HAS_COMPONENT"
+    },
+    {
+      "from": "ASSET-01-CMP-CORRECTION",
+      "to": "ASSET-01-TXT-CORRECTION-REQUEST",
+      "relation": "COMPONENT_HAS_CONTROL"
+    },
+    {
+      "from": "ASSET-01-TXT-CORRECTION-REQUEST",
+      "to": "ASSET-01-ACT-CORRECTION-GENERATE",
+      "relation": "CONTROL_TRIGGERS_ACTION"
+    },
+    {
+      "from": "ASSET-01-TXT-CORRECTION-REQUEST",
+      "to": "ASSET-01-GATE-CORRECTION",
+      "relation": "CONTROL_REQUIRES_GATE"
+    },
+    {
+      "from": "ASSET-01-TXT-CORRECTION-REQUEST",
+      "to": "ASSET_CORRECT",
+      "relation": "CONTROL_REQUIRES_PERMISSION"
+    },
+    {
+      "from": "ASSET-01-TXT-CORRECTION-REQUEST",
+      "to": "ASSET-01-VIS-CORRECTION",
+      "relation": "CONTROL_RENDERED_IN_VISUAL"
+    },
+    {
+      "from": "ASSET-01-SEC-06",
+      "to": "ASSET-01-CMP-CORRECTION",
+      "relation": "SECTION_HAS_COMPONENT"
+    },
+    {
+      "from": "ASSET-01-CMP-CORRECTION",
+      "to": "ASSET-01-BTN-CORRECTION-GENERATE",
+      "relation": "COMPONENT_HAS_CONTROL"
+    },
+    {
+      "from": "ASSET-01-BTN-CORRECTION-GENERATE",
+      "to": "ASSET-01-ACT-CORRECTION-GENERATE",
+      "relation": "CONTROL_TRIGGERS_ACTION"
+    },
+    {
+      "from": "ASSET-01-BTN-CORRECTION-GENERATE",
+      "to": "ASSET-01-GATE-CORRECTION",
+      "relation": "CONTROL_REQUIRES_GATE"
+    },
+    {
+      "from": "ASSET-01-BTN-CORRECTION-GENERATE",
+      "to": "ASSET_CORRECT",
+      "relation": "CONTROL_REQUIRES_PERMISSION"
+    },
+    {
+      "from": "ASSET-01-BTN-CORRECTION-GENERATE",
+      "to": "ASSET-01-VIS-CORRECTION",
+      "relation": "CONTROL_RENDERED_IN_VISUAL"
+    },
+    {
+      "from": "ASSET-01-SEC-06",
+      "to": "ASSET-01-CMP-CORRECTION",
+      "relation": "SECTION_HAS_COMPONENT"
+    },
+    {
+      "from": "ASSET-01-CMP-CORRECTION",
+      "to": "ASSET-01-BTN-CORRECTION-APPROVE",
+      "relation": "COMPONENT_HAS_CONTROL"
+    },
+    {
+      "from": "ASSET-01-BTN-CORRECTION-APPROVE",
+      "to": "ASSET-01-ACT-CORRECTION-APPROVE",
+      "relation": "CONTROL_TRIGGERS_ACTION"
+    },
+    {
+      "from": "ASSET-01-BTN-CORRECTION-APPROVE",
+      "to": "ASSET-01-GATE-CORRECTION",
+      "relation": "CONTROL_REQUIRES_GATE"
+    },
+    {
+      "from": "ASSET-01-BTN-CORRECTION-APPROVE",
+      "to": "ASSET_CORRECT",
+      "relation": "CONTROL_REQUIRES_PERMISSION"
+    },
+    {
+      "from": "ASSET-01-BTN-CORRECTION-APPROVE",
+      "to": "ASSET-01-VIS-CORRECTION",
+      "relation": "CONTROL_RENDERED_IN_VISUAL"
+    },
+    {
+      "from": "ASSET-01-SEC-06",
+      "to": "ASSET-01-CMP-CORRECTION",
+      "relation": "SECTION_HAS_COMPONENT"
+    },
+    {
+      "from": "ASSET-01-CMP-CORRECTION",
+      "to": "ASSET-01-BTN-CORRECTION-EXECUTE",
+      "relation": "COMPONENT_HAS_CONTROL"
+    },
+    {
+      "from": "ASSET-01-BTN-CORRECTION-EXECUTE",
+      "to": "ASSET-01-ACT-CORRECTION-EXECUTE",
+      "relation": "CONTROL_TRIGGERS_ACTION"
+    },
+    {
+      "from": "ASSET-01-BTN-CORRECTION-EXECUTE",
+      "to": "ASSET-01-GATE-CORRECTION",
+      "relation": "CONTROL_REQUIRES_GATE"
+    },
+    {
+      "from": "ASSET-01-BTN-CORRECTION-EXECUTE",
+      "to": "ASSET_EXECUTE",
+      "relation": "CONTROL_REQUIRES_PERMISSION"
+    },
+    {
+      "from": "ASSET-01-BTN-CORRECTION-EXECUTE",
+      "to": "ASSET-01-VIS-CORRECTION",
+      "relation": "CONTROL_RENDERED_IN_VISUAL"
+    },
+    {
+      "from": "ASSET-01-SEC-07",
+      "to": "ASSET-01-CMP-LAYER-INSPECTOR",
+      "relation": "SECTION_HAS_COMPONENT"
+    },
+    {
+      "from": "ASSET-01-CMP-LAYER-INSPECTOR",
+      "to": "ASSET-01-BTN-LAYER-DOC-CREATE",
+      "relation": "COMPONENT_HAS_CONTROL"
+    },
+    {
+      "from": "ASSET-01-BTN-LAYER-DOC-CREATE",
+      "to": "ASSET-01-ACT-LAYER-DOC-CREATE",
+      "relation": "CONTROL_TRIGGERS_ACTION"
+    },
+    {
+      "from": "ASSET-01-BTN-LAYER-DOC-CREATE",
+      "to": "ASSET-01-GATE-LAYER-WRITE",
+      "relation": "CONTROL_REQUIRES_GATE"
+    },
+    {
+      "from": "ASSET-01-BTN-LAYER-DOC-CREATE",
+      "to": "ASSET_LAYER_WRITE",
+      "relation": "CONTROL_REQUIRES_PERMISSION"
+    },
+    {
+      "from": "ASSET-01-BTN-LAYER-DOC-CREATE",
+      "to": "ASSET-01-VIS-LAYER",
+      "relation": "CONTROL_RENDERED_IN_VISUAL"
+    },
+    {
+      "from": "ASSET-01-SEC-07",
+      "to": "ASSET-01-CMP-LAYER-INSPECTOR",
+      "relation": "SECTION_HAS_COMPONENT"
+    },
+    {
+      "from": "ASSET-01-CMP-LAYER-INSPECTOR",
+      "to": "ASSET-01-BTN-LAYER-DOC-UPDATE",
+      "relation": "COMPONENT_HAS_CONTROL"
+    },
+    {
+      "from": "ASSET-01-BTN-LAYER-DOC-UPDATE",
+      "to": "ASSET-01-ACT-LAYER-DOC-UPDATE",
+      "relation": "CONTROL_TRIGGERS_ACTION"
+    },
+    {
+      "from": "ASSET-01-BTN-LAYER-DOC-UPDATE",
+      "to": "ASSET-01-GATE-LAYER-WRITE",
+      "relation": "CONTROL_REQUIRES_GATE"
+    },
+    {
+      "from": "ASSET-01-BTN-LAYER-DOC-UPDATE",
+      "to": "ASSET_LAYER_WRITE",
+      "relation": "CONTROL_REQUIRES_PERMISSION"
+    },
+    {
+      "from": "ASSET-01-BTN-LAYER-DOC-UPDATE",
+      "to": "ASSET-01-VIS-LAYER",
+      "relation": "CONTROL_RENDERED_IN_VISUAL"
+    },
+    {
+      "from": "ASSET-01-SEC-07",
+      "to": "ASSET-01-CMP-LAYER-INSPECTOR",
+      "relation": "SECTION_HAS_COMPONENT"
+    },
+    {
+      "from": "ASSET-01-CMP-LAYER-INSPECTOR",
+      "to": "ASSET-01-BTN-LAYER-ADD",
+      "relation": "COMPONENT_HAS_CONTROL"
+    },
+    {
+      "from": "ASSET-01-BTN-LAYER-ADD",
+      "to": "ASSET-01-ACT-LAYER-ADD",
+      "relation": "CONTROL_TRIGGERS_ACTION"
+    },
+    {
+      "from": "ASSET-01-BTN-LAYER-ADD",
+      "to": "ASSET-01-GATE-LAYER-WRITE",
+      "relation": "CONTROL_REQUIRES_GATE"
+    },
+    {
+      "from": "ASSET-01-BTN-LAYER-ADD",
+      "to": "ASSET_LAYER_WRITE",
+      "relation": "CONTROL_REQUIRES_PERMISSION"
+    },
+    {
+      "from": "ASSET-01-BTN-LAYER-ADD",
+      "to": "ASSET-01-VIS-LAYER",
+      "relation": "CONTROL_RENDERED_IN_VISUAL"
+    },
+    {
+      "from": "ASSET-01-SEC-07",
+      "to": "ASSET-01-CMP-LAYER-INSPECTOR",
+      "relation": "SECTION_HAS_COMPONENT"
+    },
+    {
+      "from": "ASSET-01-CMP-LAYER-INSPECTOR",
+      "to": "ASSET-01-BTN-LAYER-DELETE",
+      "relation": "COMPONENT_HAS_CONTROL"
+    },
+    {
+      "from": "ASSET-01-BTN-LAYER-DELETE",
+      "to": "ASSET-01-ACT-LAYER-DELETE",
+      "relation": "CONTROL_TRIGGERS_ACTION"
+    },
+    {
+      "from": "ASSET-01-BTN-LAYER-DELETE",
+      "to": "ASSET-01-GATE-LAYER-WRITE",
+      "relation": "CONTROL_REQUIRES_GATE"
+    },
+    {
+      "from": "ASSET-01-BTN-LAYER-DELETE",
+      "to": "ASSET_LAYER_WRITE",
+      "relation": "CONTROL_REQUIRES_PERMISSION"
+    },
+    {
+      "from": "ASSET-01-BTN-LAYER-DELETE",
+      "to": "ASSET-01-VIS-LAYER",
+      "relation": "CONTROL_RENDERED_IN_VISUAL"
+    },
+    {
+      "from": "ASSET-01-SEC-07",
+      "to": "ASSET-01-CMP-LAYER-INSPECTOR",
+      "relation": "SECTION_HAS_COMPONENT"
+    },
+    {
+      "from": "ASSET-01-CMP-LAYER-INSPECTOR",
+      "to": "ASSET-01-BTN-LAYER-DUPLICATE",
+      "relation": "COMPONENT_HAS_CONTROL"
+    },
+    {
+      "from": "ASSET-01-BTN-LAYER-DUPLICATE",
+      "to": "ASSET-01-ACT-LAYER-DUPLICATE",
+      "relation": "CONTROL_TRIGGERS_ACTION"
+    },
+    {
+      "from": "ASSET-01-BTN-LAYER-DUPLICATE",
+      "to": "ASSET-01-GATE-LAYER-WRITE",
+      "relation": "CONTROL_REQUIRES_GATE"
+    },
+    {
+      "from": "ASSET-01-BTN-LAYER-DUPLICATE",
+      "to": "ASSET_LAYER_WRITE",
+      "relation": "CONTROL_REQUIRES_PERMISSION"
+    },
+    {
+      "from": "ASSET-01-BTN-LAYER-DUPLICATE",
+      "to": "ASSET-01-VIS-LAYER",
+      "relation": "CONTROL_RENDERED_IN_VISUAL"
+    },
+    {
+      "from": "ASSET-01-SEC-07",
+      "to": "ASSET-01-CMP-LAYER-INSPECTOR",
+      "relation": "SECTION_HAS_COMPONENT"
+    },
+    {
+      "from": "ASSET-01-CMP-LAYER-INSPECTOR",
+      "to": "ASSET-01-BTN-LAYER-REORDER",
+      "relation": "COMPONENT_HAS_CONTROL"
+    },
+    {
+      "from": "ASSET-01-BTN-LAYER-REORDER",
+      "to": "ASSET-01-ACT-LAYER-REORDER",
+      "relation": "CONTROL_TRIGGERS_ACTION"
+    },
+    {
+      "from": "ASSET-01-BTN-LAYER-REORDER",
+      "to": "ASSET-01-GATE-LAYER-WRITE",
+      "relation": "CONTROL_REQUIRES_GATE"
+    },
+    {
+      "from": "ASSET-01-BTN-LAYER-REORDER",
+      "to": "ASSET_LAYER_WRITE",
+      "relation": "CONTROL_REQUIRES_PERMISSION"
+    },
+    {
+      "from": "ASSET-01-BTN-LAYER-REORDER",
+      "to": "ASSET-01-VIS-LAYER",
+      "relation": "CONTROL_RENDERED_IN_VISUAL"
+    },
+    {
+      "from": "ASSET-01-SEC-07",
+      "to": "ASSET-01-CMP-LAYER-INSPECTOR",
+      "relation": "SECTION_HAS_COMPONENT"
+    },
+    {
+      "from": "ASSET-01-CMP-LAYER-INSPECTOR",
+      "to": "ASSET-01-CTL-LAYER-PROPERTIES",
+      "relation": "COMPONENT_HAS_CONTROL"
+    },
+    {
+      "from": "ASSET-01-CTL-LAYER-PROPERTIES",
+      "to": "ASSET-01-ACT-LAYER-PROPERTIES",
+      "relation": "CONTROL_TRIGGERS_ACTION"
+    },
+    {
+      "from": "ASSET-01-CTL-LAYER-PROPERTIES",
+      "to": "ASSET-01-GATE-LAYER-WRITE",
+      "relation": "CONTROL_REQUIRES_GATE"
+    },
+    {
+      "from": "ASSET-01-CTL-LAYER-PROPERTIES",
+      "to": "ASSET_LAYER_WRITE",
+      "relation": "CONTROL_REQUIRES_PERMISSION"
+    },
+    {
+      "from": "ASSET-01-CTL-LAYER-PROPERTIES",
+      "to": "ASSET-01-VIS-LAYER",
+      "relation": "CONTROL_RENDERED_IN_VISUAL"
+    },
+    {
+      "from": "ASSET-01-SEC-07",
+      "to": "ASSET-01-CMP-LAYER-INSPECTOR",
+      "relation": "SECTION_HAS_COMPONENT"
+    },
+    {
+      "from": "ASSET-01-CMP-LAYER-INSPECTOR",
+      "to": "ASSET-01-CTL-LAYER-MASK",
+      "relation": "COMPONENT_HAS_CONTROL"
+    },
+    {
+      "from": "ASSET-01-CTL-LAYER-MASK",
+      "to": "ASSET-01-ACT-LAYER-MASK",
+      "relation": "CONTROL_TRIGGERS_ACTION"
+    },
+    {
+      "from": "ASSET-01-CTL-LAYER-MASK",
+      "to": "ASSET-01-GATE-LAYER-WRITE",
+      "relation": "CONTROL_REQUIRES_GATE"
+    },
+    {
+      "from": "ASSET-01-CTL-LAYER-MASK",
+      "to": "ASSET_LAYER_WRITE",
+      "relation": "CONTROL_REQUIRES_PERMISSION"
+    },
+    {
+      "from": "ASSET-01-CTL-LAYER-MASK",
+      "to": "ASSET-01-VIS-LAYER",
+      "relation": "CONTROL_RENDERED_IN_VISUAL"
+    },
+    {
+      "from": "ASSET-01-SEC-07",
+      "to": "ASSET-01-CMP-PATCH",
+      "relation": "SECTION_HAS_COMPONENT"
+    },
+    {
+      "from": "ASSET-01-CMP-PATCH",
+      "to": "ASSET-01-BTN-PATCH-CREATE",
+      "relation": "COMPONENT_HAS_CONTROL"
+    },
+    {
+      "from": "ASSET-01-BTN-PATCH-CREATE",
+      "to": "ASSET-01-ACT-PATCH-CREATE",
+      "relation": "CONTROL_TRIGGERS_ACTION"
+    },
+    {
+      "from": "ASSET-01-BTN-PATCH-CREATE",
+      "to": "ASSET-01-GATE-LAYER-WRITE",
+      "relation": "CONTROL_REQUIRES_GATE"
+    },
+    {
+      "from": "ASSET-01-BTN-PATCH-CREATE",
+      "to": "ASSET_LAYER_WRITE",
+      "relation": "CONTROL_REQUIRES_PERMISSION"
+    },
+    {
+      "from": "ASSET-01-BTN-PATCH-CREATE",
+      "to": "ASSET-01-VIS-LAYER",
+      "relation": "CONTROL_RENDERED_IN_VISUAL"
+    },
+    {
+      "from": "ASSET-01-SEC-07",
+      "to": "ASSET-01-CMP-PATCH",
+      "relation": "SECTION_HAS_COMPONENT"
+    },
+    {
+      "from": "ASSET-01-CMP-PATCH",
+      "to": "ASSET-01-BTN-PATCH-PREVIEW",
+      "relation": "COMPONENT_HAS_CONTROL"
+    },
+    {
+      "from": "ASSET-01-BTN-PATCH-PREVIEW",
+      "to": "ASSET-01-ACT-PATCH-PREVIEW",
+      "relation": "CONTROL_TRIGGERS_ACTION"
+    },
+    {
+      "from": "ASSET-01-BTN-PATCH-PREVIEW",
+      "to": "ASSET-01-GATE-PATCH-PREVIEW",
+      "relation": "CONTROL_REQUIRES_GATE"
+    },
+    {
+      "from": "ASSET-01-BTN-PATCH-PREVIEW",
+      "to": "ASSET_LAYER_WRITE",
+      "relation": "CONTROL_REQUIRES_PERMISSION"
+    },
+    {
+      "from": "ASSET-01-BTN-PATCH-PREVIEW",
+      "to": "ASSET-01-VIS-LAYER",
+      "relation": "CONTROL_RENDERED_IN_VISUAL"
+    },
+    {
+      "from": "ASSET-01-SEC-07",
+      "to": "ASSET-01-CMP-PATCH",
+      "relation": "SECTION_HAS_COMPONENT"
+    },
+    {
+      "from": "ASSET-01-CMP-PATCH",
+      "to": "ASSET-01-BTN-PATCH-ACCEPT",
+      "relation": "COMPONENT_HAS_CONTROL"
+    },
+    {
+      "from": "ASSET-01-BTN-PATCH-ACCEPT",
+      "to": "ASSET-01-ACT-PATCH-ACCEPT",
+      "relation": "CONTROL_TRIGGERS_ACTION"
+    },
+    {
+      "from": "ASSET-01-BTN-PATCH-ACCEPT",
+      "to": "ASSET-01-GATE-PATCH-DECISION",
+      "relation": "CONTROL_REQUIRES_GATE"
+    },
+    {
+      "from": "ASSET-01-BTN-PATCH-ACCEPT",
+      "to": "ASSET_PATCH_DECIDE",
+      "relation": "CONTROL_REQUIRES_PERMISSION"
+    },
+    {
+      "from": "ASSET-01-BTN-PATCH-ACCEPT",
+      "to": "ASSET-01-VIS-LAYER",
+      "relation": "CONTROL_RENDERED_IN_VISUAL"
+    },
+    {
+      "from": "ASSET-01-SEC-07",
+      "to": "ASSET-01-CMP-PATCH",
+      "relation": "SECTION_HAS_COMPONENT"
+    },
+    {
+      "from": "ASSET-01-CMP-PATCH",
+      "to": "ASSET-01-BTN-PATCH-REJECT",
+      "relation": "COMPONENT_HAS_CONTROL"
+    },
+    {
+      "from": "ASSET-01-BTN-PATCH-REJECT",
+      "to": "ASSET-01-ACT-PATCH-REJECT",
+      "relation": "CONTROL_TRIGGERS_ACTION"
+    },
+    {
+      "from": "ASSET-01-BTN-PATCH-REJECT",
+      "to": "ASSET-01-GATE-PATCH-DECISION",
+      "relation": "CONTROL_REQUIRES_GATE"
+    },
+    {
+      "from": "ASSET-01-BTN-PATCH-REJECT",
+      "to": "ASSET_PATCH_DECIDE",
+      "relation": "CONTROL_REQUIRES_PERMISSION"
+    },
+    {
+      "from": "ASSET-01-BTN-PATCH-REJECT",
+      "to": "ASSET-01-VIS-LAYER",
+      "relation": "CONTROL_RENDERED_IN_VISUAL"
+    },
+    {
+      "from": "ASSET-01-SEC-07",
+      "to": "ASSET-01-CMP-PATCH",
+      "relation": "SECTION_HAS_COMPONENT"
+    },
+    {
+      "from": "ASSET-01-CMP-PATCH",
+      "to": "ASSET-01-BTN-PATCH-REVISE",
+      "relation": "COMPONENT_HAS_CONTROL"
+    },
+    {
+      "from": "ASSET-01-BTN-PATCH-REVISE",
+      "to": "ASSET-01-ACT-PATCH-REVISE",
+      "relation": "CONTROL_TRIGGERS_ACTION"
+    },
+    {
+      "from": "ASSET-01-BTN-PATCH-REVISE",
+      "to": "ASSET-01-GATE-PATCH-DECISION",
+      "relation": "CONTROL_REQUIRES_GATE"
+    },
+    {
+      "from": "ASSET-01-BTN-PATCH-REVISE",
+      "to": "ASSET_PATCH_DECIDE",
+      "relation": "CONTROL_REQUIRES_PERMISSION"
+    },
+    {
+      "from": "ASSET-01-BTN-PATCH-REVISE",
+      "to": "ASSET-01-VIS-LAYER",
+      "relation": "CONTROL_RENDERED_IN_VISUAL"
+    },
+    {
+      "from": "ASSET-01-SEC-08",
+      "to": "ASSET-01-CMP-RUNTIME",
+      "relation": "SECTION_HAS_COMPONENT"
+    },
+    {
+      "from": "ASSET-01-CMP-RUNTIME",
+      "to": "ASSET-01-FLD-ROUTE",
+      "relation": "COMPONENT_HAS_CONTROL"
+    },
+    {
+      "from": "ASSET-01-FLD-ROUTE",
+      "to": "ASSET-01-ACT-RUNTIME-VIEW",
+      "relation": "CONTROL_TRIGGERS_ACTION"
+    },
+    {
+      "from": "ASSET-01-FLD-ROUTE",
+      "to": "ASSET-01-GATE-PAGE",
+      "relation": "CONTROL_REQUIRES_GATE"
+    },
+    {
+      "from": "ASSET-01-FLD-ROUTE",
+      "to": "ASSET_USE",
+      "relation": "CONTROL_REQUIRES_PERMISSION"
+    },
+    {
+      "from": "ASSET-01-FLD-ROUTE",
+      "to": "ASSET-01-VIS-RUNTIME",
+      "relation": "CONTROL_RENDERED_IN_VISUAL"
+    },
+    {
+      "from": "ASSET-01-SEC-08",
+      "to": "ASSET-01-CMP-RUNTIME",
+      "relation": "SECTION_HAS_COMPONENT"
+    },
+    {
+      "from": "ASSET-01-CMP-RUNTIME",
+      "to": "ASSET-01-FLD-PROVIDER",
+      "relation": "COMPONENT_HAS_CONTROL"
+    },
+    {
+      "from": "ASSET-01-FLD-PROVIDER",
+      "to": "ASSET-01-ACT-RUNTIME-VIEW",
+      "relation": "CONTROL_TRIGGERS_ACTION"
+    },
+    {
+      "from": "ASSET-01-FLD-PROVIDER",
+      "to": "ASSET-01-GATE-PAGE",
+      "relation": "CONTROL_REQUIRES_GATE"
+    },
+    {
+      "from": "ASSET-01-FLD-PROVIDER",
+      "to": "ASSET_USE",
+      "relation": "CONTROL_REQUIRES_PERMISSION"
+    },
+    {
+      "from": "ASSET-01-FLD-PROVIDER",
+      "to": "ASSET-01-VIS-RUNTIME",
+      "relation": "CONTROL_RENDERED_IN_VISUAL"
+    },
+    {
+      "from": "ASSET-01-SEC-08",
+      "to": "ASSET-01-CMP-RUNTIME",
+      "relation": "SECTION_HAS_COMPONENT"
+    },
+    {
+      "from": "ASSET-01-CMP-RUNTIME",
+      "to": "ASSET-01-FLD-JOB",
+      "relation": "COMPONENT_HAS_CONTROL"
+    },
+    {
+      "from": "ASSET-01-FLD-JOB",
+      "to": "ASSET-01-ACT-RUNTIME-VIEW",
+      "relation": "CONTROL_TRIGGERS_ACTION"
+    },
+    {
+      "from": "ASSET-01-FLD-JOB",
+      "to": "ASSET-01-GATE-PAGE",
+      "relation": "CONTROL_REQUIRES_GATE"
+    },
+    {
+      "from": "ASSET-01-FLD-JOB",
+      "to": "ASSET_USE",
+      "relation": "CONTROL_REQUIRES_PERMISSION"
+    },
+    {
+      "from": "ASSET-01-FLD-JOB",
+      "to": "ASSET-01-VIS-RUNTIME",
+      "relation": "CONTROL_RENDERED_IN_VISUAL"
+    },
+    {
+      "from": "ASSET-01-SEC-08",
+      "to": "ASSET-01-CMP-RUNTIME",
+      "relation": "SECTION_HAS_COMPONENT"
+    },
+    {
+      "from": "ASSET-01-CMP-RUNTIME",
+      "to": "ASSET-01-FLD-ATTEMPT",
+      "relation": "COMPONENT_HAS_CONTROL"
+    },
+    {
+      "from": "ASSET-01-FLD-ATTEMPT",
+      "to": "ASSET-01-ACT-RUNTIME-VIEW",
+      "relation": "CONTROL_TRIGGERS_ACTION"
+    },
+    {
+      "from": "ASSET-01-FLD-ATTEMPT",
+      "to": "ASSET-01-GATE-PAGE",
+      "relation": "CONTROL_REQUIRES_GATE"
+    },
+    {
+      "from": "ASSET-01-FLD-ATTEMPT",
+      "to": "ASSET_USE",
+      "relation": "CONTROL_REQUIRES_PERMISSION"
+    },
+    {
+      "from": "ASSET-01-FLD-ATTEMPT",
+      "to": "ASSET-01-VIS-RUNTIME",
+      "relation": "CONTROL_RENDERED_IN_VISUAL"
+    },
+    {
+      "from": "ASSET-01-SEC-08",
+      "to": "ASSET-01-CMP-RUNTIME",
+      "relation": "SECTION_HAS_COMPONENT"
+    },
+    {
+      "from": "ASSET-01-CMP-RUNTIME",
+      "to": "ASSET-01-FLD-CALLBACK",
+      "relation": "COMPONENT_HAS_CONTROL"
+    },
+    {
+      "from": "ASSET-01-FLD-CALLBACK",
+      "to": "ASSET-01-ACT-RUNTIME-VIEW",
+      "relation": "CONTROL_TRIGGERS_ACTION"
+    },
+    {
+      "from": "ASSET-01-FLD-CALLBACK",
+      "to": "ASSET-01-GATE-PAGE",
+      "relation": "CONTROL_REQUIRES_GATE"
+    },
+    {
+      "from": "ASSET-01-FLD-CALLBACK",
+      "to": "ASSET_USE",
+      "relation": "CONTROL_REQUIRES_PERMISSION"
+    },
+    {
+      "from": "ASSET-01-FLD-CALLBACK",
+      "to": "ASSET-01-VIS-RUNTIME",
+      "relation": "CONTROL_RENDERED_IN_VISUAL"
+    },
+    {
+      "from": "ASSET-01-SEC-08",
+      "to": "ASSET-01-CMP-RUNTIME",
+      "relation": "SECTION_HAS_COMPONENT"
+    },
+    {
+      "from": "ASSET-01-CMP-RUNTIME",
+      "to": "ASSET-01-FLD-RETRY-ELIGIBILITY",
+      "relation": "COMPONENT_HAS_CONTROL"
+    },
+    {
+      "from": "ASSET-01-FLD-RETRY-ELIGIBILITY",
+      "to": "ASSET-01-ACT-RUNTIME-VIEW",
+      "relation": "CONTROL_TRIGGERS_ACTION"
+    },
+    {
+      "from": "ASSET-01-FLD-RETRY-ELIGIBILITY",
+      "to": "ASSET-01-GATE-PAGE",
+      "relation": "CONTROL_REQUIRES_GATE"
+    },
+    {
+      "from": "ASSET-01-FLD-RETRY-ELIGIBILITY",
+      "to": "ASSET_USE",
+      "relation": "CONTROL_REQUIRES_PERMISSION"
+    },
+    {
+      "from": "ASSET-01-FLD-RETRY-ELIGIBILITY",
+      "to": "ASSET-01-VIS-RUNTIME",
+      "relation": "CONTROL_RENDERED_IN_VISUAL"
+    },
+    {
+      "from": "ASSET-01-SEC-08",
+      "to": "ASSET-01-CMP-RUNTIME",
+      "relation": "SECTION_HAS_COMPONENT"
+    },
+    {
+      "from": "ASSET-01-CMP-RUNTIME",
+      "to": "ASSET-01-FLD-TRACE",
+      "relation": "COMPONENT_HAS_CONTROL"
+    },
+    {
+      "from": "ASSET-01-FLD-TRACE",
+      "to": "ASSET-01-ACT-RUNTIME-VIEW",
+      "relation": "CONTROL_TRIGGERS_ACTION"
+    },
+    {
+      "from": "ASSET-01-FLD-TRACE",
+      "to": "ASSET-01-GATE-PAGE",
+      "relation": "CONTROL_REQUIRES_GATE"
+    },
+    {
+      "from": "ASSET-01-FLD-TRACE",
+      "to": "ASSET_USE",
+      "relation": "CONTROL_REQUIRES_PERMISSION"
+    },
+    {
+      "from": "ASSET-01-FLD-TRACE",
+      "to": "ASSET-01-VIS-RUNTIME",
+      "relation": "CONTROL_RENDERED_IN_VISUAL"
+    },
+    {
+      "from": "ASSET-01-SEC-08",
+      "to": "ASSET-01-CMP-RUNTIME",
+      "relation": "SECTION_HAS_COMPONENT"
+    },
+    {
+      "from": "ASSET-01-CMP-RUNTIME",
+      "to": "ASSET-01-BTN-RETRY",
+      "relation": "COMPONENT_HAS_CONTROL"
+    },
+    {
+      "from": "ASSET-01-BTN-RETRY",
+      "to": "ASSET-01-ACT-TASK-RETRY",
+      "relation": "CONTROL_TRIGGERS_ACTION"
+    },
+    {
+      "from": "ASSET-01-BTN-RETRY",
+      "to": "ASSET-01-GATE-RETRY",
+      "relation": "CONTROL_REQUIRES_GATE"
+    },
+    {
+      "from": "ASSET-01-BTN-RETRY",
+      "to": "ASSET_EXECUTE",
+      "relation": "CONTROL_REQUIRES_PERMISSION"
+    },
+    {
+      "from": "ASSET-01-BTN-RETRY",
+      "to": "ASSET-01-VIS-RUNTIME",
+      "relation": "CONTROL_RENDERED_IN_VISUAL"
+    },
+    {
+      "from": "ASSET-01-SEC-08",
+      "to": "ASSET-01-CMP-RUNTIME",
+      "relation": "SECTION_HAS_COMPONENT"
+    },
+    {
+      "from": "ASSET-01-CMP-RUNTIME",
+      "to": "ASSET-01-BTN-RUNTIME-DETAIL",
+      "relation": "COMPONENT_HAS_CONTROL"
+    },
+    {
+      "from": "ASSET-01-BTN-RUNTIME-DETAIL",
+      "to": "ASSET-01-ACT-RUNTIME-VIEW",
+      "relation": "CONTROL_TRIGGERS_ACTION"
+    },
+    {
+      "from": "ASSET-01-BTN-RUNTIME-DETAIL",
+      "to": "ASSET-01-GATE-PAGE",
+      "relation": "CONTROL_REQUIRES_GATE"
+    },
+    {
+      "from": "ASSET-01-BTN-RUNTIME-DETAIL",
+      "to": "ASSET_USE",
+      "relation": "CONTROL_REQUIRES_PERMISSION"
+    },
+    {
+      "from": "ASSET-01-BTN-RUNTIME-DETAIL",
+      "to": "ASSET-01-VIS-RUNTIME",
+      "relation": "CONTROL_RENDERED_IN_VISUAL"
+    },
+    {
+      "from": "ASSET-01-SEC-09",
+      "to": "ASSET-01-CMP-SCORE",
+      "relation": "SECTION_HAS_COMPONENT"
+    },
+    {
+      "from": "ASSET-01-CMP-SCORE",
+      "to": "ASSET-01-FLD-CRITERIA",
+      "relation": "COMPONENT_HAS_CONTROL"
+    },
+    {
+      "from": "ASSET-01-FLD-CRITERIA",
+      "to": "ASSET-01-ACT-RESULT-VIEW",
+      "relation": "CONTROL_TRIGGERS_ACTION"
+    },
+    {
+      "from": "ASSET-01-FLD-CRITERIA",
+      "to": "ASSET-01-GATE-EVALUATION",
+      "relation": "CONTROL_REQUIRES_GATE"
+    },
+    {
+      "from": "ASSET-01-FLD-CRITERIA",
+      "to": "ASSET_USE",
+      "relation": "CONTROL_REQUIRES_PERMISSION"
+    },
+    {
+      "from": "ASSET-01-FLD-CRITERIA",
+      "to": "ASSET-01-VIS-DECISION",
+      "relation": "CONTROL_RENDERED_IN_VISUAL"
+    },
+    {
+      "from": "ASSET-01-SEC-09",
+      "to": "ASSET-01-CMP-SCORE",
+      "relation": "SECTION_HAS_COMPONENT"
+    },
+    {
+      "from": "ASSET-01-CMP-SCORE",
+      "to": "ASSET-01-FLD-DIMENSIONS",
+      "relation": "COMPONENT_HAS_CONTROL"
+    },
+    {
+      "from": "ASSET-01-FLD-DIMENSIONS",
+      "to": "ASSET-01-ACT-RESULT-VIEW",
+      "relation": "CONTROL_TRIGGERS_ACTION"
+    },
+    {
+      "from": "ASSET-01-FLD-DIMENSIONS",
+      "to": "ASSET-01-GATE-EVALUATION",
+      "relation": "CONTROL_REQUIRES_GATE"
+    },
+    {
+      "from": "ASSET-01-FLD-DIMENSIONS",
+      "to": "ASSET_USE",
+      "relation": "CONTROL_REQUIRES_PERMISSION"
+    },
+    {
+      "from": "ASSET-01-FLD-DIMENSIONS",
+      "to": "ASSET-01-VIS-DECISION",
+      "relation": "CONTROL_RENDERED_IN_VISUAL"
+    },
+    {
+      "from": "ASSET-01-SEC-09",
+      "to": "ASSET-01-CMP-SCORE",
+      "relation": "SECTION_HAS_COMPONENT"
+    },
+    {
+      "from": "ASSET-01-CMP-SCORE",
+      "to": "ASSET-01-FLD-OVERALL",
+      "relation": "COMPONENT_HAS_CONTROL"
+    },
+    {
+      "from": "ASSET-01-FLD-OVERALL",
+      "to": "ASSET-01-ACT-RESULT-VIEW",
+      "relation": "CONTROL_TRIGGERS_ACTION"
+    },
+    {
+      "from": "ASSET-01-FLD-OVERALL",
+      "to": "ASSET-01-GATE-EVALUATION",
+      "relation": "CONTROL_REQUIRES_GATE"
+    },
+    {
+      "from": "ASSET-01-FLD-OVERALL",
+      "to": "ASSET_USE",
+      "relation": "CONTROL_REQUIRES_PERMISSION"
+    },
+    {
+      "from": "ASSET-01-FLD-OVERALL",
+      "to": "ASSET-01-VIS-DECISION",
+      "relation": "CONTROL_RENDERED_IN_VISUAL"
+    },
+    {
+      "from": "ASSET-01-SEC-09",
+      "to": "ASSET-01-CMP-SCORE",
+      "relation": "SECTION_HAS_COMPONENT"
+    },
+    {
+      "from": "ASSET-01-CMP-SCORE",
+      "to": "ASSET-01-FLD-ISSUES",
+      "relation": "COMPONENT_HAS_CONTROL"
+    },
+    {
+      "from": "ASSET-01-FLD-ISSUES",
+      "to": "ASSET-01-ACT-RESULT-VIEW",
+      "relation": "CONTROL_TRIGGERS_ACTION"
+    },
+    {
+      "from": "ASSET-01-FLD-ISSUES",
+      "to": "ASSET-01-GATE-EVALUATION",
+      "relation": "CONTROL_REQUIRES_GATE"
+    },
+    {
+      "from": "ASSET-01-FLD-ISSUES",
+      "to": "ASSET_USE",
+      "relation": "CONTROL_REQUIRES_PERMISSION"
+    },
+    {
+      "from": "ASSET-01-FLD-ISSUES",
+      "to": "ASSET-01-VIS-DECISION",
+      "relation": "CONTROL_RENDERED_IN_VISUAL"
+    },
+    {
+      "from": "ASSET-01-SEC-09",
+      "to": "ASSET-01-CMP-SCORE",
+      "relation": "SECTION_HAS_COMPONENT"
+    },
+    {
+      "from": "ASSET-01-CMP-SCORE",
+      "to": "ASSET-01-BTN-EVALUATE",
+      "relation": "COMPONENT_HAS_CONTROL"
+    },
+    {
+      "from": "ASSET-01-BTN-EVALUATE",
+      "to": "ASSET-01-ACT-EVALUATE",
+      "relation": "CONTROL_TRIGGERS_ACTION"
+    },
+    {
+      "from": "ASSET-01-BTN-EVALUATE",
+      "to": "ASSET-01-GATE-EVALUATION",
+      "relation": "CONTROL_REQUIRES_GATE"
+    },
+    {
+      "from": "ASSET-01-BTN-EVALUATE",
+      "to": "ASSET_SCORE",
+      "relation": "CONTROL_REQUIRES_PERMISSION"
+    },
+    {
+      "from": "ASSET-01-BTN-EVALUATE",
+      "to": "ASSET-01-VIS-DECISION",
+      "relation": "CONTROL_RENDERED_IN_VISUAL"
+    },
+    {
+      "from": "ASSET-01-SEC-09",
+      "to": "ASSET-01-CMP-DECISION",
+      "relation": "SECTION_HAS_COMPONENT"
+    },
+    {
+      "from": "ASSET-01-CMP-DECISION",
+      "to": "ASSET-01-BTN-CONFIRM",
+      "relation": "COMPONENT_HAS_CONTROL"
+    },
+    {
+      "from": "ASSET-01-BTN-CONFIRM",
+      "to": "ASSET-01-ACT-CANDIDATE-CONFIRM",
+      "relation": "CONTROL_TRIGGERS_ACTION"
+    },
+    {
+      "from": "ASSET-01-BTN-CONFIRM",
+      "to": "ASSET-01-GATE-CONFIRM",
+      "relation": "CONTROL_REQUIRES_GATE"
+    },
+    {
+      "from": "ASSET-01-BTN-CONFIRM",
+      "to": "ASSET_DECIDE",
+      "relation": "CONTROL_REQUIRES_PERMISSION"
+    },
+    {
+      "from": "ASSET-01-BTN-CONFIRM",
+      "to": "ASSET-01-VIS-DECISION",
+      "relation": "CONTROL_RENDERED_IN_VISUAL"
+    },
+    {
+      "from": "ASSET-01-SEC-09",
+      "to": "ASSET-01-CMP-DECISION",
+      "relation": "SECTION_HAS_COMPONENT"
+    },
+    {
+      "from": "ASSET-01-CMP-DECISION",
+      "to": "ASSET-01-BTN-MODIFY",
+      "relation": "COMPONENT_HAS_CONTROL"
+    },
+    {
+      "from": "ASSET-01-BTN-MODIFY",
+      "to": "ASSET-01-ACT-CORRECTION-OPEN",
+      "relation": "CONTROL_TRIGGERS_ACTION"
+    },
+    {
+      "from": "ASSET-01-BTN-MODIFY",
+      "to": "ASSET-01-GATE-WAIT-CONFIRM",
+      "relation": "CONTROL_REQUIRES_GATE"
+    },
+    {
+      "from": "ASSET-01-BTN-MODIFY",
+      "to": "ASSET_CORRECT",
+      "relation": "CONTROL_REQUIRES_PERMISSION"
+    },
+    {
+      "from": "ASSET-01-BTN-MODIFY",
+      "to": "ASSET-01-VIS-DECISION",
+      "relation": "CONTROL_RENDERED_IN_VISUAL"
+    },
+    {
+      "from": "ASSET-01-SEC-09",
+      "to": "ASSET-01-CMP-VERSION",
+      "relation": "SECTION_HAS_COMPONENT"
+    },
+    {
+      "from": "ASSET-01-CMP-VERSION",
+      "to": "ASSET-01-BTN-VERSION-HISTORY",
+      "relation": "COMPONENT_HAS_CONTROL"
+    },
+    {
+      "from": "ASSET-01-BTN-VERSION-HISTORY",
+      "to": "ASSET-01-ACT-VERSION-HISTORY",
+      "relation": "CONTROL_TRIGGERS_ACTION"
+    },
+    {
+      "from": "ASSET-01-BTN-VERSION-HISTORY",
+      "to": "ASSET-01-GATE-CANDIDATE",
+      "relation": "CONTROL_REQUIRES_GATE"
+    },
+    {
+      "from": "ASSET-01-BTN-VERSION-HISTORY",
+      "to": "ASSET_USE",
+      "relation": "CONTROL_REQUIRES_PERMISSION"
+    },
+    {
+      "from": "ASSET-01-BTN-VERSION-HISTORY",
+      "to": "ASSET-01-VIS-DECISION",
+      "relation": "CONTROL_RENDERED_IN_VISUAL"
+    },
+    {
+      "from": "ASSET-01-SEC-09",
+      "to": "ASSET-01-CMP-VERSION",
+      "relation": "SECTION_HAS_COMPONENT"
+    },
+    {
+      "from": "ASSET-01-CMP-VERSION",
+      "to": "ASSET-01-BTN-RESTORE-AS-NEW",
+      "relation": "COMPONENT_HAS_CONTROL"
+    },
+    {
+      "from": "ASSET-01-BTN-RESTORE-AS-NEW",
+      "to": "ASSET-01-ACT-RESTORE-AS-NEW",
+      "relation": "CONTROL_TRIGGERS_ACTION"
+    },
+    {
+      "from": "ASSET-01-BTN-RESTORE-AS-NEW",
+      "to": "ASSET-01-GATE-CANDIDATE",
+      "relation": "CONTROL_REQUIRES_GATE"
+    },
+    {
+      "from": "ASSET-01-BTN-RESTORE-AS-NEW",
+      "to": "ASSET_DECIDE",
+      "relation": "CONTROL_REQUIRES_PERMISSION"
+    },
+    {
+      "from": "ASSET-01-BTN-RESTORE-AS-NEW",
+      "to": "ASSET-01-VIS-DECISION",
+      "relation": "CONTROL_RENDERED_IN_VISUAL"
+    },
+    {
+      "from": "ASSET-01-SEC-09",
+      "to": "ASSET-01-CMP-DECISION",
+      "relation": "SECTION_HAS_COMPONENT"
+    },
+    {
+      "from": "ASSET-01-CMP-DECISION",
+      "to": "ASSET-01-BTN-LOCK",
+      "relation": "COMPONENT_HAS_CONTROL"
+    },
+    {
+      "from": "ASSET-01-BTN-LOCK",
+      "to": "ASSET-01-ACT-VERSION-LOCK",
+      "relation": "CONTROL_TRIGGERS_ACTION"
+    },
+    {
+      "from": "ASSET-01-BTN-LOCK",
+      "to": "ASSET-01-GATE-LOCK",
+      "relation": "CONTROL_REQUIRES_GATE"
+    },
+    {
+      "from": "ASSET-01-BTN-LOCK",
+      "to": "ASSET_DECIDE",
+      "relation": "CONTROL_REQUIRES_PERMISSION"
+    },
+    {
+      "from": "ASSET-01-BTN-LOCK",
+      "to": "ASSET-01-VIS-DECISION",
+      "relation": "CONTROL_RENDERED_IN_VISUAL"
+    },
+    {
+      "from": "ASSET-01-SEC-10",
+      "to": "ASSET-01-CMP-HANDOFF",
+      "relation": "SECTION_HAS_COMPONENT"
+    },
+    {
+      "from": "ASSET-01-CMP-HANDOFF",
+      "to": "ASSET-01-FLD-HANDOFF-ASSET-VERSION",
+      "relation": "COMPONENT_HAS_CONTROL"
+    },
+    {
+      "from": "ASSET-01-FLD-HANDOFF-ASSET-VERSION",
+      "to": "ASSET-01-ACT-BINDING-VIEW",
+      "relation": "CONTROL_TRIGGERS_ACTION"
+    },
+    {
+      "from": "ASSET-01-FLD-HANDOFF-ASSET-VERSION",
+      "to": "ASSET-01-GATE-HANDOFF",
+      "relation": "CONTROL_REQUIRES_GATE"
+    },
+    {
+      "from": "ASSET-01-FLD-HANDOFF-ASSET-VERSION",
+      "to": "ASSET_USE",
+      "relation": "CONTROL_REQUIRES_PERMISSION"
+    },
+    {
+      "from": "ASSET-01-FLD-HANDOFF-ASSET-VERSION",
+      "to": "ASSET-01-VIS-HANDOFF",
+      "relation": "CONTROL_RENDERED_IN_VISUAL"
+    },
+    {
+      "from": "ASSET-01-SEC-10",
+      "to": "ASSET-01-CMP-HANDOFF",
+      "relation": "SECTION_HAS_COMPONENT"
+    },
+    {
+      "from": "ASSET-01-CMP-HANDOFF",
+      "to": "ASSET-01-FLD-HANDOFF-LAYER-COMPOSITE",
+      "relation": "COMPONENT_HAS_CONTROL"
+    },
+    {
+      "from": "ASSET-01-FLD-HANDOFF-LAYER-COMPOSITE",
+      "to": "ASSET-01-ACT-BINDING-VIEW",
+      "relation": "CONTROL_TRIGGERS_ACTION"
+    },
+    {
+      "from": "ASSET-01-FLD-HANDOFF-LAYER-COMPOSITE",
+      "to": "ASSET-01-GATE-HANDOFF",
+      "relation": "CONTROL_REQUIRES_GATE"
+    },
+    {
+      "from": "ASSET-01-FLD-HANDOFF-LAYER-COMPOSITE",
+      "to": "ASSET_USE",
+      "relation": "CONTROL_REQUIRES_PERMISSION"
+    },
+    {
+      "from": "ASSET-01-FLD-HANDOFF-LAYER-COMPOSITE",
+      "to": "ASSET-01-VIS-HANDOFF",
+      "relation": "CONTROL_RENDERED_IN_VISUAL"
+    },
+    {
+      "from": "ASSET-01-SEC-10",
+      "to": "ASSET-01-CMP-HANDOFF",
+      "relation": "SECTION_HAS_COMPONENT"
+    },
+    {
+      "from": "ASSET-01-CMP-HANDOFF",
+      "to": "ASSET-01-FLD-HANDOFF-BLUEPRINT",
+      "relation": "COMPONENT_HAS_CONTROL"
+    },
+    {
+      "from": "ASSET-01-FLD-HANDOFF-BLUEPRINT",
+      "to": "ASSET-01-ACT-BINDING-VIEW",
+      "relation": "CONTROL_TRIGGERS_ACTION"
+    },
+    {
+      "from": "ASSET-01-FLD-HANDOFF-BLUEPRINT",
+      "to": "ASSET-01-GATE-HANDOFF",
+      "relation": "CONTROL_REQUIRES_GATE"
+    },
+    {
+      "from": "ASSET-01-FLD-HANDOFF-BLUEPRINT",
+      "to": "ASSET_USE",
+      "relation": "CONTROL_REQUIRES_PERMISSION"
+    },
+    {
+      "from": "ASSET-01-FLD-HANDOFF-BLUEPRINT",
+      "to": "ASSET-01-VIS-HANDOFF",
+      "relation": "CONTROL_RENDERED_IN_VISUAL"
+    },
+    {
+      "from": "ASSET-01-SEC-10",
+      "to": "ASSET-01-CMP-HANDOFF",
+      "relation": "SECTION_HAS_COMPONENT"
+    },
+    {
+      "from": "ASSET-01-CMP-HANDOFF",
+      "to": "ASSET-01-FLD-HANDOFF-SCRIPT-HASH",
+      "relation": "COMPONENT_HAS_CONTROL"
+    },
+    {
+      "from": "ASSET-01-FLD-HANDOFF-SCRIPT-HASH",
+      "to": "ASSET-01-ACT-BINDING-VIEW",
+      "relation": "CONTROL_TRIGGERS_ACTION"
+    },
+    {
+      "from": "ASSET-01-FLD-HANDOFF-SCRIPT-HASH",
+      "to": "ASSET-01-GATE-HANDOFF",
+      "relation": "CONTROL_REQUIRES_GATE"
+    },
+    {
+      "from": "ASSET-01-FLD-HANDOFF-SCRIPT-HASH",
+      "to": "ASSET_USE",
+      "relation": "CONTROL_REQUIRES_PERMISSION"
+    },
+    {
+      "from": "ASSET-01-FLD-HANDOFF-SCRIPT-HASH",
+      "to": "ASSET-01-VIS-HANDOFF",
+      "relation": "CONTROL_RENDERED_IN_VISUAL"
+    },
+    {
+      "from": "ASSET-01-SEC-10",
+      "to": "ASSET-01-CMP-HANDOFF",
+      "relation": "SECTION_HAS_COMPONENT"
+    },
+    {
+      "from": "ASSET-01-CMP-HANDOFF",
+      "to": "ASSET-01-FLD-HANDOFF-DNA",
+      "relation": "COMPONENT_HAS_CONTROL"
+    },
+    {
+      "from": "ASSET-01-FLD-HANDOFF-DNA",
+      "to": "ASSET-01-ACT-BINDING-VIEW",
+      "relation": "CONTROL_TRIGGERS_ACTION"
+    },
+    {
+      "from": "ASSET-01-FLD-HANDOFF-DNA",
+      "to": "ASSET-01-GATE-HANDOFF",
+      "relation": "CONTROL_REQUIRES_GATE"
+    },
+    {
+      "from": "ASSET-01-FLD-HANDOFF-DNA",
+      "to": "ASSET_USE",
+      "relation": "CONTROL_REQUIRES_PERMISSION"
+    },
+    {
+      "from": "ASSET-01-FLD-HANDOFF-DNA",
+      "to": "ASSET-01-VIS-HANDOFF",
+      "relation": "CONTROL_RENDERED_IN_VISUAL"
+    },
+    {
+      "from": "ASSET-01-SEC-10",
+      "to": "ASSET-01-CMP-HANDOFF",
+      "relation": "SECTION_HAS_COMPONENT"
+    },
+    {
+      "from": "ASSET-01-CMP-HANDOFF",
+      "to": "ASSET-01-FLD-HANDOFF-MANIFEST-ITEMS",
+      "relation": "COMPONENT_HAS_CONTROL"
+    },
+    {
+      "from": "ASSET-01-FLD-HANDOFF-MANIFEST-ITEMS",
+      "to": "ASSET-01-ACT-BINDING-VIEW",
+      "relation": "CONTROL_TRIGGERS_ACTION"
+    },
+    {
+      "from": "ASSET-01-FLD-HANDOFF-MANIFEST-ITEMS",
+      "to": "ASSET-01-GATE-HANDOFF",
+      "relation": "CONTROL_REQUIRES_GATE"
+    },
+    {
+      "from": "ASSET-01-FLD-HANDOFF-MANIFEST-ITEMS",
+      "to": "ASSET_USE",
+      "relation": "CONTROL_REQUIRES_PERMISSION"
+    },
+    {
+      "from": "ASSET-01-FLD-HANDOFF-MANIFEST-ITEMS",
+      "to": "ASSET-01-VIS-HANDOFF",
+      "relation": "CONTROL_RENDERED_IN_VISUAL"
+    },
+    {
+      "from": "ASSET-01-SEC-10",
+      "to": "ASSET-01-CMP-HANDOFF",
+      "relation": "SECTION_HAS_COMPONENT"
+    },
+    {
+      "from": "ASSET-01-CMP-HANDOFF",
+      "to": "ASSET-01-FLD-HANDOFF-CANONICAL-FILENAME",
+      "relation": "COMPONENT_HAS_CONTROL"
+    },
+    {
+      "from": "ASSET-01-FLD-HANDOFF-CANONICAL-FILENAME",
+      "to": "ASSET-01-ACT-BINDING-VIEW",
+      "relation": "CONTROL_TRIGGERS_ACTION"
+    },
+    {
+      "from": "ASSET-01-FLD-HANDOFF-CANONICAL-FILENAME",
+      "to": "ASSET-01-GATE-HANDOFF",
+      "relation": "CONTROL_REQUIRES_GATE"
+    },
+    {
+      "from": "ASSET-01-FLD-HANDOFF-CANONICAL-FILENAME",
+      "to": "ASSET_USE",
+      "relation": "CONTROL_REQUIRES_PERMISSION"
+    },
+    {
+      "from": "ASSET-01-FLD-HANDOFF-CANONICAL-FILENAME",
+      "to": "ASSET-01-VIS-HANDOFF",
+      "relation": "CONTROL_RENDERED_IN_VISUAL"
+    },
+    {
+      "from": "ASSET-01-SEC-10",
+      "to": "ASSET-01-CMP-HANDOFF",
+      "relation": "SECTION_HAS_COMPONENT"
+    },
+    {
+      "from": "ASSET-01-CMP-HANDOFF",
+      "to": "ASSET-01-FLD-HANDOFF-CHECKSUM",
+      "relation": "COMPONENT_HAS_CONTROL"
+    },
+    {
+      "from": "ASSET-01-FLD-HANDOFF-CHECKSUM",
+      "to": "ASSET-01-ACT-BINDING-VIEW",
+      "relation": "CONTROL_TRIGGERS_ACTION"
+    },
+    {
+      "from": "ASSET-01-FLD-HANDOFF-CHECKSUM",
+      "to": "ASSET-01-GATE-HANDOFF",
+      "relation": "CONTROL_REQUIRES_GATE"
+    },
+    {
+      "from": "ASSET-01-FLD-HANDOFF-CHECKSUM",
+      "to": "ASSET_USE",
+      "relation": "CONTROL_REQUIRES_PERMISSION"
+    },
+    {
+      "from": "ASSET-01-FLD-HANDOFF-CHECKSUM",
+      "to": "ASSET-01-VIS-HANDOFF",
+      "relation": "CONTROL_RENDERED_IN_VISUAL"
+    },
+    {
+      "from": "ASSET-01-SEC-10",
+      "to": "ASSET-01-CMP-HANDOFF",
+      "relation": "SECTION_HAS_COMPONENT"
+    },
+    {
+      "from": "ASSET-01-CMP-HANDOFF",
+      "to": "ASSET-01-FLD-HANDOFF-SCORECARD",
+      "relation": "COMPONENT_HAS_CONTROL"
+    },
+    {
+      "from": "ASSET-01-FLD-HANDOFF-SCORECARD",
+      "to": "ASSET-01-ACT-BINDING-VIEW",
+      "relation": "CONTROL_TRIGGERS_ACTION"
+    },
+    {
+      "from": "ASSET-01-FLD-HANDOFF-SCORECARD",
+      "to": "ASSET-01-GATE-HANDOFF",
+      "relation": "CONTROL_REQUIRES_GATE"
+    },
+    {
+      "from": "ASSET-01-FLD-HANDOFF-SCORECARD",
+      "to": "ASSET_USE",
+      "relation": "CONTROL_REQUIRES_PERMISSION"
+    },
+    {
+      "from": "ASSET-01-FLD-HANDOFF-SCORECARD",
+      "to": "ASSET-01-VIS-HANDOFF",
+      "relation": "CONTROL_RENDERED_IN_VISUAL"
+    },
+    {
+      "from": "ASSET-01-SEC-10",
+      "to": "ASSET-01-CMP-HANDOFF",
+      "relation": "SECTION_HAS_COMPONENT"
+    },
+    {
+      "from": "ASSET-01-CMP-HANDOFF",
+      "to": "ASSET-01-FLD-HANDOFF-RIGHTS",
+      "relation": "COMPONENT_HAS_CONTROL"
+    },
+    {
+      "from": "ASSET-01-FLD-HANDOFF-RIGHTS",
+      "to": "ASSET-01-ACT-BINDING-VIEW",
+      "relation": "CONTROL_TRIGGERS_ACTION"
+    },
+    {
+      "from": "ASSET-01-FLD-HANDOFF-RIGHTS",
+      "to": "ASSET-01-GATE-HANDOFF",
+      "relation": "CONTROL_REQUIRES_GATE"
+    },
+    {
+      "from": "ASSET-01-FLD-HANDOFF-RIGHTS",
+      "to": "ASSET_USE",
+      "relation": "CONTROL_REQUIRES_PERMISSION"
+    },
+    {
+      "from": "ASSET-01-FLD-HANDOFF-RIGHTS",
+      "to": "ASSET-01-VIS-HANDOFF",
+      "relation": "CONTROL_RENDERED_IN_VISUAL"
+    },
+    {
+      "from": "ASSET-01-SEC-10",
+      "to": "ASSET-01-CMP-HANDOFF",
+      "relation": "SECTION_HAS_COMPONENT"
+    },
+    {
+      "from": "ASSET-01-CMP-HANDOFF",
+      "to": "ASSET-01-FLD-HANDOFF-CONTRACT-HASH",
+      "relation": "COMPONENT_HAS_CONTROL"
+    },
+    {
+      "from": "ASSET-01-FLD-HANDOFF-CONTRACT-HASH",
+      "to": "ASSET-01-ACT-BINDING-VIEW",
+      "relation": "CONTROL_TRIGGERS_ACTION"
+    },
+    {
+      "from": "ASSET-01-FLD-HANDOFF-CONTRACT-HASH",
+      "to": "ASSET-01-GATE-HANDOFF",
+      "relation": "CONTROL_REQUIRES_GATE"
+    },
+    {
+      "from": "ASSET-01-FLD-HANDOFF-CONTRACT-HASH",
+      "to": "ASSET_USE",
+      "relation": "CONTROL_REQUIRES_PERMISSION"
+    },
+    {
+      "from": "ASSET-01-FLD-HANDOFF-CONTRACT-HASH",
+      "to": "ASSET-01-VIS-HANDOFF",
+      "relation": "CONTROL_RENDERED_IN_VISUAL"
+    },
+    {
+      "from": "ASSET-01-SEC-10",
+      "to": "ASSET-01-CMP-HANDOFF",
+      "relation": "SECTION_HAS_COMPONENT"
+    },
+    {
+      "from": "ASSET-01-CMP-HANDOFF",
+      "to": "ASSET-01-BTN-HANDOFF",
+      "relation": "COMPONENT_HAS_CONTROL"
+    },
+    {
+      "from": "ASSET-01-BTN-HANDOFF",
+      "to": "ASSET-01-ACT-HANDOFF",
+      "relation": "CONTROL_TRIGGERS_ACTION"
+    },
+    {
+      "from": "ASSET-01-BTN-HANDOFF",
+      "to": "ASSET-01-GATE-HANDOFF",
+      "relation": "CONTROL_REQUIRES_GATE"
+    },
+    {
+      "from": "ASSET-01-BTN-HANDOFF",
+      "to": "ASSET_HANDOFF",
+      "relation": "CONTROL_REQUIRES_PERMISSION"
+    },
+    {
+      "from": "ASSET-01-BTN-HANDOFF",
+      "to": "ASSET-01-VIS-HANDOFF",
+      "relation": "CONTROL_RENDERED_IN_VISUAL"
+    }
+  ],
+  "status": "SOURCE_FACT_PROJECTION_REVIEW_ONLY_FOR_MISSING_CONTRACTS"
+}

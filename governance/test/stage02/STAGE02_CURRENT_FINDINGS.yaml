@@ -13,7 +13,7 @@ current_manifest_mandatory_stage_output_subset_count: 12
 attempt_uid: STAGE02-ASSET01-V2213-20260920-R2
 frozen_governance_uid: GOV-REV-20260919-ASSET-STAGE01-STAGE02-SHARED-CONTRACT-HARDENING
 source_head_sha: a5a149defca30e7ceb7cf651af88095acc81b8e7
-next_action: BUILD_FRESH_ASSET-01_DESIGN_CONTRACT_CANDIDATE_FROM_CURRENT_GAPS
+next_action: RUN_SAME_ATTEMPT_STAGE02_REVALIDATION_AFTER_EXACT_CLOSURE_MATERIALIZATION
 gap_classes:
   ARCHITECTURE_GAP: 84
   AUTHORITY_GAP: 4
@@ -36,3 +36,10 @@ source_artifact_id: 10591438974
 source_artifact_sha256: 38420254af0944f845e04ae5e614e83b0be9c610ca657fd662d74a6ff5728db9
 prior_stage2_results_used: false
 product_blocker_credit: 0
+review_only_design_contract_candidate_ref: 00_SOURCE_INTAKE/run_asset01_8133839f_stage02/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/DESIGN_CONTRACT_CANDIDATE.yaml
+exact_closure_materialization:
+  problem_uid: STAGE02-PROBLEM-AEB128237413
+  target_uid: ASSET-01-ACT-FINDING-CREATE
+  field: system_trigger
+  status: MATERIALIZED_PENDING_FRESH_REVALIDATION
+  product_blocker_credit: 0
