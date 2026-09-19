@@ -104,8 +104,8 @@ specification_mutation_safety:
   ordinary_mid_stage_specification_mutation: BLOCK
   stage_end_consolidated_promotion_requires_new_explicit_directive: true
   execution_context_lock_required: true
-status: ACTIVE_FRESH_REPLAY_HISTORY_CLEANUP_BOUNDARY_MAINTENANCE
-next_action: REBOOTSTRAP_THEN_REMOVE_GLOBAL_STAGE02_HISTORY_DELETE_AND_ADD_NEGATIVE_REGRESSION
+status: FRESH_REPLAY_HISTORY_CLEANUP_BOUNDARY_IMPLEMENTED_REVALIDATION_REQUIRED
+next_action: RUN_EXACT_HEAD_GATES_FOR_FRESH_REPLAY_HISTORY_RETENTION_FIX
 previous_closed_product_work_unit:
   work_unit_uid: WU-STAGE02-CORE01-STRUCTURAL-REMEDIATION-001
   canonical_name: CORE01_STRUCTURAL_CONTRACT_REMEDIATION
@@ -289,7 +289,7 @@ resume_control:
   current_owner: .github/governance-maintenance/run_fresh_stage_replay.py
   historical_stage2_results_are_current_state: false
   stage2_execution_requires_fresh_entry_resolution: true
-  exact_next_action: REBOOTSTRAP_THEN_REMOVE_GLOBAL_STAGE02_HISTORY_DELETE_AND_ADD_NEGATIVE_REGRESSION
+  exact_next_action: RUN_EXACT_HEAD_GATES_FOR_FRESH_REPLAY_HISTORY_RETENTION_FIX
   parent_work_unit_uid: WU-ASSET01-STAGE01-STAGE02-FRESH-REPLAY-8133839F
   parent_primary_task_layer: PRODUCT_STAGE_EXECUTION
   preserved_product_work_unit_uid: WU-ASSET01-STAGE01-STAGE02-FRESH-REPLAY-8133839F
@@ -2772,7 +2772,7 @@ active_work_unit:
   co_owners:
   - governance/test/SPECIFICATION_CHANGE_CANDIDATES.yaml
   - .github/workflows/fresh-stage-replay.yml
-  current_status: ACTIVE_BOOTSTRAP_REQUIRED_BEFORE_IMPLEMENTATION
+  current_status: IMPLEMENTED_EXACT_HEAD_REVALIDATION_REQUIRED
   authorization_uid: USR-DIRECTIVE-20260920-ASSET-FRESH-REPLAY-HISTORY-CLEANUP-R1
   current_governance_uid: GOV-REV-20260919-ASSET-STAGE01-STAGE02-SHARED-CONTRACT-HARDENING
   parent_product_work_unit_uid: WU-ASSET01-STAGE01-STAGE02-FRESH-REPLAY-8133839F

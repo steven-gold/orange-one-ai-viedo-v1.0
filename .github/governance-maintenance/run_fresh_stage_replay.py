@@ -293,23 +293,44 @@ def classify_nodes(raw_docs):
                 nodes.append((source_uid,path,resp,domain,val))
     return nodes
 
+def replay_cleanup_replaceable_roots(root:Path,new_root:Path):
+    return (
+      root/'governance/test/stage02',
+      root/'.github/stage02-test',
+      new_root,
+    )
+
+def cleanup_boundary_self_test()->None:
+    synthetic_root=Path('/repo')
+    synthetic_new=synthetic_root/'00_SOURCE_INTAKE/run_asset01_current'
+    targets={p.as_posix() for p in replay_cleanup_replaceable_roots(synthetic_root,synthetic_new)}
+    required={
+      (synthetic_root/'governance/test/stage02').as_posix(),
+      (synthetic_root/'.github/stage02-test').as_posix(),
+      synthetic_new.as_posix(),
+    }
+    forbidden=(synthetic_root/'governance/test/history/stage02').as_posix()
+    if targets!=required:
+        raise RuntimeError(f'REPLAY_CLEANUP_TARGET_DENOMINATOR_DRIFT:{sorted(targets)}')
+    if forbidden in targets:
+        raise RuntimeError('REPLAY_CLEANUP_HISTORY_RETENTION_VIOLATION')
+    print('PASS: fresh replay cleanup resets only replaceable Current evidence/run roots')
+    print('PASS: governance/test/history/stage02 is preserved as legal historical evidence')
+
 def cleanup_old():
     if not AUTH.is_file():
         raise RuntimeError('AUTHORIZATION_MISSING')
     if not OLD.is_dir():
         raise RuntimeError('OLD_RUN_ROOT_MISSING')
-    for p in [
-      ROOT/'governance/test/stage02',
-      ROOT/'governance/test/history/stage02',
-      ROOT/'.github/stage02-test',
-    ]:
+    current_stage02, current_stage02_test, new_root = replay_cleanup_replaceable_roots(ROOT,NEW)
+    for p in (current_stage02,current_stage02_test):
         if p.exists():
             shutil.rmtree(p)
     p=ROOT/'governance/test/STAGE02_EXECUTION_OPTIMIZATION_DEFECT_CONSOLIDATION.yaml'
     if p.exists(): p.unlink()
-    if NEW.exists():
-        shutil.rmtree(NEW)
-    NEW.mkdir(parents=True,exist_ok=True)
+    if new_root.exists():
+        shutil.rmtree(new_root)
+    new_root.mkdir(parents=True,exist_ok=True)
 
 def materialize_stage1(raw_bytes:dict[str,bytes], source_head:str):
     raw_root=NEW/'00_SOURCE_INTAKE/RAW_SOURCE'/PAGE
@@ -982,6 +1003,9 @@ def materialize_stage2_projection(final):
 def main():
     if '--identity-self-test' in sys.argv:
         identity_self_test()
+        return
+    if '--cleanup-boundary-self-test' in sys.argv:
+        cleanup_boundary_self_test()
         return
     ctx=resolve_execution_context()
     if '--print-context-json' in sys.argv:

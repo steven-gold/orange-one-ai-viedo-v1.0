@@ -737,8 +737,8 @@ findings:
   evidence: .github/governance-maintenance/run_fresh_stage_replay.py cleanup_old currently includes governance/test/history/stage02 in shutil.rmtree targets before a new replay.
   defect_owner: TEST_OR_VALIDATION_IMPLEMENTATION
   generalizability_scope: FRESH_REPLAY_CLEANUP_HISTORY_RETENTION_BOUNDARY
-  blocking_state: OPEN_BLOCKS_ASSET01_CLEAN_FRESH_REPLAY
-  disposition: IMPLEMENTATION_REMEDIATION_REQUIRED
+  blocking_state: IMPLEMENTED_REVALIDATION_REQUIRED
+  disposition: IMPLEMENTATION_REMEDIATED_PENDING_EXACT_HEAD_VALIDATION
   specification_change_required: false
   mother_change_required: false
   formal_specification_mutated_for_fix: false
