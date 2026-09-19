@@ -4,35 +4,33 @@ governance_uid: GOV-REV-20260919-SEMANTIC-BASELINE-CONSUMER-SINGLE-OWNER-HARDENI
 run_uid: FRESH-ASSET01-8133839F-STAGE02
 target_pages:
 - ASSET-01
-fresh_functional_gap_total: 106
-closure_blocker_total: 9
-fresh_closure_blocker_total: 9
-preserved_external_authority_union_count: 8
+fresh_functional_gap_total: 75
+closure_blocker_total: 7
+fresh_closure_blocker_total: 7
+preserved_external_authority_union_count: 7
 official_stage_output_denominator_count: 19
 current_manifest_mandatory_stage_output_subset_count: 12
 gap_classes:
-  ARCHITECTURE_GAP: 84
-  AUTHORITY_GAP: 4
+  ARCHITECTURE_GAP: 57
   INPUT_SOURCE_GAP: 18
 gap_categories:
   ACTION_WITHOUT_CONTROL_OR_TRIGGER: 1
   AUDIT_EVENT_NODE_MISSING: 9
   FAILURE_STATE_ERROR_BINDING_MISSING: 23
   PAYLOAD_INPUT_CONTRACT_MISSING: 18
-  POST_ACTION_VALIDATION_NODE_MISSING: 18
-  SHARED_OWNER_AUTHORITY_UNRESOLVED: 4
+  POST_ACTION_VALIDATION_NODE_MISSING: 3
   STAGE02_PLANNING_COMPLETENESS_CONTRACT_MISSING: 1
-  STATE_TRANSITION_LEDGER_FIELD_MISSING: 25
-  SUCCESS_NEXT_STATE_BINDING_MISSING: 7
+  STATE_TRANSITION_LEDGER_FIELD_MISSING: 20
 status: DESIGN_CONTRACT_REMEDIATION_REQUIRED
 result: BLOCKED
 attempt_uid: STAGE02-ASSET01-8133839F-REPLAY
 frozen_governance_uid: GOV-REV-20260919-SEMANTIC-BASELINE-CONSUMER-SINGLE-OWNER-HARDENING
-source_head_sha: 23dbdb041d2f95056838c2dd0b94e7bba5180856
-source_execution_sha: 23dbdb041d2f95056838c2dd0b94e7bba5180856
-source_workflow_run_id: 35425342223
-source_artifact_id: 10578232908
-source_artifact_sha256: 175738b0eedcac3eafd7dfa25e258f33bb92a84aa54b4b5a043f70dd97b267cd
-next_action: REVALIDATE_ASSET01_STAGE02_AFTER_EXACT_CLOSURE_MATERIALIZATION
+source_head_sha: ca2f3e06ec633b78e08009d9f1aaf0672af4e0f6
+source_execution_sha: ca2f3e06ec633b78e08009d9f1aaf0672af4e0f6
+source_workflow_run_id: 35435405975
+source_artifact_id: 10581363345
+source_artifact_sha256: a103e733a86be6f818e1f96411790b1bd75ba60f651ae6d2761d9ae1d83db342
+next_action: REVIEW_ASSET01_STAGE02_REMAINING_REVIEW_ONLY_DESIGN_CONTRACT_CANDIDATE
 prior_stage2_results_used: false
-product_blocker_credit: 0
+product_blocker_credit: 31
+validated_exact_closure_count: 31
