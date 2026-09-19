@@ -18,15 +18,15 @@ artifact_semantics:
   artifact_hash_rewrite_for_display_version_change: false
   current_governance_must_be_resolved_at_validation_runtime: true
 scope:
-  ASSET-01:
+  CORE-01:
     expected_result: PASS
     artifacts:
-    - artifact_ref: 00_SOURCE_INTAKE/run_asset01_8133839f_stage02/02_BASE_BLUEPRINT/ASSET-01/PAGE_BASE_BLUEPRINT.yaml
-      creation_governance_overlay: v2.2.13
-    - artifact_ref: 00_SOURCE_INTAKE/run_asset01_8133839f_stage02/02_BASE_BLUEPRINT/ASSET-01/VISUAL_BASE_BLUEPRINT.yaml
-      creation_governance_overlay: v2.2.13
-    - artifact_ref: 00_SOURCE_INTAKE/run_asset01_8133839f_stage02/03_BLUEPRINT_BINDING/ASSET-01/BLUEPRINT_BINDING_MANIFEST.yaml
-      creation_governance_overlay: v2.2.13
+    - artifact_ref: 00_SOURCE_INTAKE/run_core01_d81df9ac_stage02/02_BASE_BLUEPRINT/CORE-01/PAGE_BASE_BLUEPRINT.yaml
+      creation_governance_overlay: v2.2.9
+    - artifact_ref: 00_SOURCE_INTAKE/run_core01_d81df9ac_stage02/02_BASE_BLUEPRINT/CORE-01/VISUAL_BASE_BLUEPRINT.yaml
+      creation_governance_overlay: v2.2.9
+    - artifact_ref: 00_SOURCE_INTAKE/run_core01_d81df9ac_stage02/03_BLUEPRINT_BINDING/CORE-01/BLUEPRINT_BINDING_MANIFEST.yaml
+      creation_governance_overlay: v2.2.9
     profile_step_uid: STAGE-01
 binding_rules:
 - Profile step identities in this artifact are selected-profile-local historical evidence only.
@@ -35,10 +35,8 @@ binding_rules:
 - Historical artifact governance_overlay values are creation provenance only.
 - Historical artifact bytes and hashes MUST NOT be rewritten merely because Current Governance changes.
 current_scope_binding:
-  run_uid: FRESH-ASSET01-V2213-20260920-R1
-  page_scope:
-  - ASSET-01
-  excluded_page_scope:
-  - CORE-01
+  run_uid: null
+  page_scope: []
+  excluded_page_scope: []
   prior_product_artifact_reuse: false
-  binding_reason: FRESH_STAGE01_REPLAY_CURRENT_SCOPE
+  binding_reason: ASSET01_STAGE01_STAGE02_CLEAN_RESET_NO_CURRENT_PROFILE_ARTIFACT
