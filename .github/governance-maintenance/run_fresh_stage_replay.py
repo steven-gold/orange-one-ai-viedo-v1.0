@@ -866,6 +866,7 @@ def materialize_stage2_projection(final):
       'gap_classes':(page.get('functional_chain_fresh_scan') or {}).get('gap_classes'),
       'gap_categories':(page.get('functional_chain_fresh_scan') or {}).get('gap_categories'),
       'status':'DESIGN_CONTRACT_REMEDIATION_REQUIRED' if problems else 'PASS',
+      'result':'BLOCKED' if problems or int(final.get('closure_blocker_total') or 0) > 0 else 'PASS',
     })
     dump(s2root/'STAGE02_FRESH_DESIGN_REMEDIATION_INTAKE.yaml',{
       'schema_version':1,'artifact_type':'STAGE02_FRESH_DESIGN_REMEDIATION_INTAKE','governance_uid':CURRENT_UID,'run_uid':RUN_UID,

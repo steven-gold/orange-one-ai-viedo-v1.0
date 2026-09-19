@@ -252,6 +252,7 @@ def main():
     findings['official_stage_output_denominator_count']=attempt.get('official_stage_output_denominator_count')
     findings['current_manifest_mandatory_stage_output_subset_count']=attempt.get('current_manifest_mandatory_stage_output_subset_count')
     findings['next_action']=state.get('next_action')
+    findings['result']='BLOCKED' if s2.get('result') == 'TEST_EXECUTED_BLOCKED' else 'PASS'
     findings['prior_stage2_results_used']=False
     findings['product_blocker_credit']=0
     dump_yaml(FINDINGS,findings)
