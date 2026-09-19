@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 from pathlib import Path
 import json,re,yaml,sys,hashlib,copy
+import ast
 sys.dont_write_bytecode=True
 ROOT=Path(__file__).resolve().parents[2]
 SEMANTIC_BASELINE_CONTENT_HASH = '446007aa22777d490ba50f04cc764232872a5d9a6f497a4c7e681bdf02d5d0e8'
@@ -28,8 +29,25 @@ def section_uids(root):
         for s in doc.get('sections') or []: out.add(s.get('section_uid'))
     return out
 
+def semantic_hash_literal_owner_errors(root=ROOT):
+    errors=[]; owners=[]
+    test_root=root/'09_TESTS/governance'
+    for path in sorted(test_root.glob('*.py')):
+        try: tree=ast.parse(path.read_text(encoding='utf-8'),filename=str(path))
+        except SyntaxError as exc:
+            errors.append(f'semantic_hash_owner_python_parse_failed:{path.name}:{exc.lineno}'); continue
+        for node in tree.body:
+            targets=node.targets if isinstance(node,ast.Assign) else ([node.target] if isinstance(node,ast.AnnAssign) else [])
+            if not any(isinstance(t,ast.Name) and t.id=='SEMANTIC_BASELINE_CONTENT_HASH' for t in targets): continue
+            value=getattr(node,'value',None)
+            if isinstance(value,ast.Constant) and isinstance(value.value,str): owners.append((path.name,value.value))
+    if owners!=[('validate_reference_semantics.py',SEMANTIC_BASELINE_CONTENT_HASH)]:
+        errors.append('semantic_baseline_literal_owner_not_exactly_one_canonical:'+repr(owners))
+    return errors
+
 def validate(root=ROOT):
     failures=[]
+    failures += semantic_hash_literal_owner_errors(root)
     rp=root/'10_REGISTRY/REFERENCE_RULE_REGISTRY.yaml'; bp0=root/'10_REGISTRY/SEMANTIC_AUTHORITY_BASELINE.yaml'
     if not rp.exists(): return {'status':'FAIL','failures':['reference_rule_registry_missing']}
     if not bp0.exists(): return {'status':'FAIL','failures':['semantic_authority_baseline_missing']}

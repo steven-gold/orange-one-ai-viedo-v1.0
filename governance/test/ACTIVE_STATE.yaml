@@ -2,7 +2,7 @@ schema_version: 23
 artifact_type: ACTIVE_GOVERNANCE_TEST_STATE
 normative_authority: false
 specification_registry_ref: governance/specifications/REGISTRY.yaml
-specification_uid: GOV-REV-20260919-STRUCTURED-MUTATION-SELECTOR-HARDENING
+specification_uid: GOV-REV-20260919-SEMANTIC-BASELINE-CONSUMER-SINGLE-OWNER-HARDENING
 canonical_rule_registry_ref: governance/specifications/current/CANONICAL_RULE_REGISTRY.yaml
 canonical_rule_registry_uid: GOV-CANONICAL-RULE-REGISTRY-001
 selected_execution_profile_state:
@@ -55,7 +55,7 @@ execution:
 full_lifecycle_governance_system_test:
   round: SYSTEM_FULL_LINE_HIGH_PRESSURE_ROUND_1
   meaning: GOVERNANCE_SYSTEM_EXECUTION_HEALTH_ONLY
-  deterministic_source_bundle_sha256: 04d7e3fccf84d4d951408557fa74a807b54ad57163260ad20a6ebe98c9a69f69
+  deterministic_source_bundle_sha256: 3c57c2d781d5cf5bfe64dda97dd671b2a471232d2af6f09d118437ce78f5846d
   verified_source_file_count: 75
   github_source_materialization: PASS_EXACT_75_FILE_IDENTITY
   mandatory_regression_suite_count: 17
@@ -64,7 +64,7 @@ full_lifecycle_governance_system_test:
   skip_allowed: false
   timeout_may_be_treated_as_pass: false
   partial_suite_result_may_be_treated_as_full_line_pass: false
-  full_line_github_result: REVALIDATION_REQUIRED_AFTER_STRUCTURED_MUTATION_GOVERNANCE_PROMOTION
+  full_line_github_result: REVALIDATION_REQUIRED_AFTER_SEMANTIC_BASELINE_CONSUMER_SINGLE_OWNER_PROMOTION
   exact_denominators_verified: true
   source_runtime_residual_count: 0
   persisted_head_revalidation_required: true
@@ -79,7 +79,7 @@ stage_execution_loading:
 stage_execution_remediation_closure_protocol:
   specification_ref: governance/specifications/current/VALIDATION_REMEDIATION_CLOSURE_PROTOCOL.yaml
   canonical_execution_rule_set: true
-  frozen_specification_uid: GOV-REV-20260919-STRUCTURED-MUTATION-SELECTOR-HARDENING
+  frozen_specification_uid: GOV-REV-20260919-SEMANTIC-BASELINE-CONSUMER-SINGLE-OWNER-HARDENING
   audit_only_blocked_loop_may_count_as_progress: false
   remediation_must_materially_eliminate_remediable_gap: true
   full_line_high_pressure_required_before_every_fresh_execution_or_reexecution: true
@@ -95,7 +95,7 @@ stage_execution_remediation_closure_protocol:
   fatal_specification_contradiction_requires_stage_stop_and_new_explicit_authorization: true
   pilot_full_lifecycle_required_before_other_page_scale_out: true
   later_pages_must_use_same_active_governance_after_calibration: true
-  binding_status: CURRENT_V2_2_8_PRODUCT_REVERIFY_REQUIRED
+  binding_status: CURRENT_V2_2_9_PRODUCT_REVERIFY_REQUIRED
 specification_mutation_safety:
   change_control_ref: governance/specifications/current/SPECIFICATION_MUTATION_CONTROL.yaml
   finding_ledger_ref: governance/test/SPECIFICATION_CHANGE_CANDIDATES.yaml
@@ -104,8 +104,8 @@ specification_mutation_safety:
   ordinary_mid_stage_specification_mutation: BLOCK
   stage_end_consolidated_promotion_requires_new_explicit_directive: true
   execution_context_lock_required: true
-status: GOVERNANCE_SEMANTIC_BASELINE_CONSUMER_SINGLE_OWNER_REPAIR_ACTIVE
-next_action: PROMOTE_SEMANTIC_BASELINE_CONSUMER_SINGLE_OWNER_SUCCESSOR_THEN_FULL_LINE_REVERIFY
+status: GOVERNANCE_SEMANTIC_BASELINE_SINGLE_OWNER_PROMOTED_FULL_LINE_REVERIFY_REQUIRED
+next_action: EXACT_HEAD_FULL_LINE_REVERIFY_THEN_FRESH_CORE01_STAGE01_STAGE02
 previous_closed_product_work_unit:
   work_unit_uid: WU-STAGE02-CORE01-STRUCTURAL-REMEDIATION-001
   canonical_name: CORE01_STRUCTURAL_CONTRACT_REMEDIATION
@@ -284,15 +284,15 @@ previous_closed_work_unit:
     source_runtime_residual_count: 0
     product_stage_credit: 0
 resume_control:
-  current_resume_point: SEMANTIC_BASELINE_CONSUMER_SINGLE_OWNER_REPAIR
+  current_resume_point: POST_SEMANTIC_BASELINE_SINGLE_OWNER_PROMOTION_FULL_LINE_REVERIFY
   current_work_unit_uid: WU-GOV-SEMANTIC-BASELINE-CONSUMER-SINGLE-OWNER-001
   current_owner: .github/governance-source/active/source/09_TESTS/governance/validate_reference_semantics.py
   historical_stage2_results_are_current_state: false
   stage2_execution_requires_fresh_entry_resolution: true
-  exact_next_action: PROMOTE_SEMANTIC_BASELINE_CONSUMER_SINGLE_OWNER_SUCCESSOR_THEN_FULL_LINE_REVERIFY
+  exact_next_action: EXACT_HEAD_FULL_LINE_REVERIFY_THEN_FRESH_CORE01_STAGE01_STAGE02
 governance_revision_transition:
-  current_governance_uid: GOV-REV-20260919-STRUCTURED-MUTATION-SELECTOR-HARDENING
-  predecessor_governance_uid: GOV-REV-20260919-PROFILE-TOKEN-DECONTAMINATION-HARDENING
+  current_governance_uid: GOV-REV-20260919-SEMANTIC-BASELINE-CONSUMER-SINGLE-OWNER-HARDENING
+  predecessor_governance_uid: GOV-REV-20260919-STRUCTURED-MUTATION-SELECTOR-HARDENING
   predecessor_attempt_preserved_as_historical_evidence: true
   predecessor_attempt_history_ref: governance/test/history/stage02/design-remediation-routing-20260918/STAGE02_CORE01_DESIGN_REMEDIATION_TEST_EVIDENCE.json
   predecessor_attempt_may_close_under_current_governance: false
@@ -832,13 +832,12 @@ suspended_governance_work_unit_structured_mutation_selector_hardening:
   - CURRENT_GOVERNANCE_SUCCESSOR_ATOMIC_PROMOTION_PASS
   - EXACT_HEAD_SELECTED_PROFILE_AND_FULL_LINE_PASS
   - PRODUCT_STAGE_CREDIT_ZERO
-
 active_work_unit:
   work_unit_uid: WU-GOV-SEMANTIC-BASELINE-CONSUMER-SINGLE-OWNER-001
   canonical_name: SEMANTIC_BASELINE_CONSUMER_SINGLE_OWNER_AND_SOURCE_IDENTITY_REPAIR
   primary_task_layer: GOVERNANCE_MAINTENANCE
   canonical_owner: .github/governance-source/active/source/09_TESTS/governance/validate_reference_semantics.py
-  current_status: ACTIVE_IMPLEMENTATION
+  current_status: PROMOTED_EXACT_HEAD_REVALIDATION_REQUIRED
   product_stage_credit: 0
   predecessor_governance_uid: GOV-REV-20260919-STRUCTURED-MUTATION-SELECTOR-HARDENING
   source_defect_owner: .github/governance-source/active/source/09_TESTS/governance/program_artifact_instance_guard.py
@@ -867,6 +866,7 @@ active_work_unit:
   - SOURCE_IDENTITY_75_FILE_PASS
   - EXACT_HEAD_SELECTED_PROFILE_AND_FULL_LINE_PASS
   - PRODUCT_STAGE_CREDIT_ZERO
+  promoted_governance_uid: GOV-REV-20260919-SEMANTIC-BASELINE-CONSUMER-SINGLE-OWNER-HARDENING
 structured_mutation_selector_successor:
   authorization_uid: USR-DIRECTIVE-20260919-STRUCTURED-MUTATION-SELECTOR-HARDENING-R1
   predecessor_governance_uid: GOV-REV-20260919-PROFILE-TOKEN-DECONTAMINATION-HARDENING
@@ -876,7 +876,6 @@ structured_mutation_selector_successor:
   mother_execution_rule_uid: WEB-GOV-03-S070
   mother_audit_rule_uid: WEB-GOV-04-S084
   status: GOVERNANCE_PROMOTED_PRODUCT_REVERIFY_REQUIRED
-
 post_v228_active_consumer_cleanup:
   governance_uid: GOV-REV-20260919-STRUCTURED-MUTATION-SELECTOR-HARDENING
   product_stage_credit: 0
@@ -901,7 +900,6 @@ post_v228_active_consumer_cleanup:
   stage02_actual_test_workflow_pruned_to_current_reusable_jobs: true
   stale_versioned_stage02_job_branch_count_removed: 9
   historical_run_root_literal_fresh_run_003_remaining_in_stage02_actual_workflow: false
-
 semantic_baseline_consumer_single_owner_reentry:
   resolution_uid: WUR-GOV-SEMANTIC-BASELINE-CONSUMER-20260919-001
   result: PASS_SINGLE_LEGAL_SUCCESSOR
@@ -917,3 +915,13 @@ semantic_baseline_consumer_single_owner_reentry:
   legal_current_literal_owner: .github/governance-source/active/source/09_TESTS/governance/validate_reference_semantics.py
   stale_duplicate_literal_owner: .github/governance-source/active/source/09_TESTS/governance/program_artifact_instance_guard.py
   product_stage_credit: 0
+semantic_baseline_consumer_single_owner_successor:
+  authorization_uid: USR-DIRECTIVE-20260919-SEMANTIC-BASELINE-CONSUMER-SINGLE-OWNER-R2
+  predecessor_governance_uid: GOV-REV-20260919-STRUCTURED-MUTATION-SELECTOR-HARDENING
+  current_governance_uid: GOV-REV-20260919-SEMANTIC-BASELINE-CONSUMER-SINGLE-OWNER-HARDENING
+  semantic_hash: 446007aa22777d490ba50f04cc764232872a5d9a6f497a4c7e681bdf02d5d0e8
+  literal_owner_count: 1
+  canonical_literal_owner: .github/governance-source/active/source/09_TESTS/governance/validate_reference_semantics.py
+  program_artifact_guard_resolver: AST_BOUNDED_CANONICAL_OWNER_RESOLUTION
+  product_stage_credit: 0
+  status: PROMOTED_EXACT_HEAD_REVALIDATION_REQUIRED

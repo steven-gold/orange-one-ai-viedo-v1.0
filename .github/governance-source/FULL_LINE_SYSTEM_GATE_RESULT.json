@@ -1,8 +1,8 @@
 {
   "artifact_type": "NON_NORMATIVE_FULL_LINE_SYSTEM_GATE_EVIDENCE",
   "mode": "SYSTEM_ROUND_1_FULL_LINE_HIGH_PRESSURE",
-  "source_zip_sha256": "6f0f89cf17b53269b9eba6c45210a025ac84eb691748aedb0b93b8e26d8676a8",
-  "deterministic_source_bundle_sha256": "94125fcff9d0ea8773720686711a421c7f04f06f2b2dd50430d33836152c9d1f",
+  "source_zip_sha256": "fbc2050e1ddf1af7c0b5766b0aed01cacbd113a3699e8ed70743c5c70e976295",
+  "deterministic_source_bundle_sha256": "3c57c2d781d5cf5bfe64dda97dd671b2a471232d2af6f09d118437ce78f5846d",
   "lifecycle_stage_count": 11,
   "lifecycle_stage_uids": [
     "STAGE-01",
@@ -119,7 +119,7 @@
       {
         "check_id": "section_registry",
         "status": "PASS",
-        "section_count": 325,
+        "section_count": 330,
         "failures": [],
         "section_uids": [
           "WEB-GOV-01-S000",
@@ -185,7 +185,6 @@
           "WEB-GOV-01-S064-02",
           "WEB-GOV-01-S064-03",
           "WEB-GOV-01-S064-04",
-          "WEB-GOV-01-S064-05",
           "WEB-GOV-01-S065",
           "WEB-GOV-01-S065-01",
           "WEB-GOV-01-S065-02",
@@ -199,6 +198,7 @@
           "WEB-GOV-01-S072",
           "WEB-GOV-01-S073",
           "WEB-GOV-01-S074",
+          "WEB-GOV-01-S075",
           "WEB-GOV-02-S000",
           "WEB-GOV-02-S001",
           "WEB-GOV-02-S002",
@@ -280,6 +280,7 @@
           "WEB-GOV-02-S071",
           "WEB-GOV-02-S072",
           "WEB-GOV-02-S073",
+          "WEB-GOV-02-S074",
           "WEB-GOV-03-S000",
           "WEB-GOV-03-S001",
           "WEB-GOV-03-S001A",
@@ -355,6 +356,8 @@
           "WEB-GOV-03-S066",
           "WEB-GOV-03-S067",
           "WEB-GOV-03-S068",
+          "WEB-GOV-03-S069",
+          "WEB-GOV-03-S070",
           "WEB-GOV-04-S000",
           "WEB-GOV-04-S001",
           "WEB-GOV-04-S001A",
@@ -446,7 +449,9 @@
           "WEB-GOV-04-S079",
           "WEB-GOV-04-S080",
           "WEB-GOV-04-S081",
-          "WEB-GOV-04-S082"
+          "WEB-GOV-04-S082",
+          "WEB-GOV-04-S083",
+          "WEB-GOV-04-S084"
         ]
       },
       {
@@ -473,7 +478,7 @@
         "status": "PASS",
         "stage_count": 11,
         "delivery_steps": 54,
-        "operation_count": 102,
+        "operation_count": 104,
         "failures": []
       },
       {
@@ -491,7 +496,7 @@
         "validator_identities": 36,
         "audit_types": 13,
         "naming_items": 13,
-        "semantic_anchor_hash": "81f79f898fe4824e147bff63b8ec7696bf404ac461c6224731260c4cc632c02a"
+        "semantic_anchor_hash": "446007aa22777d490ba50f04cc764232872a5d9a6f497a4c7e681bdf02d5d0e8"
       },
       {
         "check_id": "program_artifact_instance_guard",
@@ -502,8 +507,8 @@
       {
         "check_id": "current_test_evidence_sync",
         "status": "PASS",
-        "current_revision": "v2.2.4",
-        "current_source_revision": "v2.2.4-design-remediation-routing-hardening",
+        "current_revision": "v2.2.8",
+        "current_source_revision": "v2.2.8-structured-mutation-selector-hardening",
         "fresh_revalidation_required": true,
         "mandatory_suite_count": 17,
         "failures": []
@@ -559,7 +564,7 @@
       {
         "check_id": "acceptance_blueprint_compiled_baseline",
         "status": "PASS",
-        "compiled_requirements": 665,
+        "compiled_requirements": 696,
         "audit_denominator": 13,
         "failures": []
       },

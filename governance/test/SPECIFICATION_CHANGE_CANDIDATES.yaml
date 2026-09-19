@@ -634,11 +634,8 @@ findings:
 - finding_uid: FIND-20260919-012
   class: STALE_COMPLETED_ONE_SHOT_ACTIVE_WORKFLOW_RESIDUAL
   title: Completed Stage-02 source-migration workflow remained active after its source run root was deleted
-  evidence: >-
-    Current active workflow .github/workflows/core01-stage02-source-migration.yml still required
-    fresh_run_005 and predecessor governance/work-unit identities although Current product run is
-    fresh_run_007 and fresh_run_005 has been deleted. Its sole maintenance script also hard-coded
-    the deleted fresh_run_005 source and functional-contract paths.
+  evidence: Current active workflow .github/workflows/core01-stage02-source-migration.yml still required fresh_run_005 and predecessor governance/work-unit identities although Current
+    product run is fresh_run_007 and fresh_run_005 has been deleted. Its sole maintenance script also hard-coded the deleted fresh_run_005 source and functional-contract paths.
   defect_owner: GOVERNANCE_RESIDUAL_CLEANUP
   generalizability_scope: COMPLETED_ONE_SHOT_WORKFLOW_AND_MATERIALIZER_LIFECYCLE
   blocking_state: RESOLVED_BY_ACTIVE_TREE_REMOVAL
@@ -652,11 +649,9 @@ findings:
 - finding_uid: FIND-20260919-013
   class: STALE_ONE_SHOT_BRANCHES_INSIDE_ACTIVE_STAGE_WORKFLOW
   title: Active Stage-02 workflow retained completed R1/R2/R5 remediation branches bound to deleted fresh_run_003
-  evidence: >-
-    stage02-actual-test.yml still contained push-triggered structural materialization,
-    structural reexecution, preflight calibration, remediability classification, design review,
-    approved design materialization, functional-remediation closure, and authority-request jobs
-    with fresh_run_003 and obsolete Work Unit bindings. Git history already preserves those runs.
+  evidence: stage02-actual-test.yml still contained push-triggered structural materialization, structural reexecution, preflight calibration, remediability classification, design review,
+    approved design materialization, functional-remediation closure, and authority-request jobs with fresh_run_003 and obsolete Work Unit bindings. Git history already preserves those
+    runs.
   defect_owner: ACTIVE_WORKFLOW_RESIDUAL_CLEANUP
   generalizability_scope: ACTIVE_STAGE_WORKFLOW_JOB_GRAPH
   blocking_state: RESOLVED_BY_CURRENT_WORKFLOW_PRUNING
@@ -664,26 +659,21 @@ findings:
   specification_change_required: false
   formal_specification_mutated_for_fix: false
   current_specification_may_be_modified_from_this_finding_alone: false
-  resolution: >-
-    Retain only reusable pre-execution boundary regression and actual-test jobs; resolve immutable
-    Stage-01 input root from CURRENT_EXECUTION_SCOPE_MANIFEST instead of a historical fresh_run literal.
+  resolution: Retain only reusable pre-execution boundary regression and actual-test jobs; resolve immutable Stage-01 input root from CURRENT_EXECUTION_SCOPE_MANIFEST instead of a historical
+    fresh_run literal.
   product_stage_credit: 0
   reopen_condition: Reopen if a completed versioned remediation branch or deleted run-root binding remains executable inside a Current reusable stage workflow.
 - finding_uid: FIND-20260919-014
   class: STALE_DUPLICATE_SEMANTIC_BASELINE_TRUST_CONSUMER
   title: Program artifact instance guard retained predecessor semantic baseline hash after v2.2.8 promotion
-  evidence: >-
-    Full-Line runs 35420067927 and 35420283783 reached the 75-file high-pressure gate and failed
-    program_artifact_instance_guard with semantic_authority_baseline_invalid_or_mutated.
-    A complete scan of all 37 Python files under the Current 75-file source found exactly two
-    SEMANTIC_BASELINE_CONTENT_HASH declarations: validate_reference_semantics.py owns the Current
-    446007aa... value while program_artifact_instance_guard.py retained predecessor 0c87e5c9....
-    Four downstream test consumers reference inst.SEMANTIC_BASELINE_CONTENT_HASH and do not own
-    independent literal hashes.
+  evidence: 'Full-Line runs 35420067927 and 35420283783 reached the 75-file high-pressure gate and failed program_artifact_instance_guard with semantic_authority_baseline_invalid_or_mutated.
+    A complete scan of all 37 Python files under the Current 75-file source found exactly two SEMANTIC_BASELINE_CONTENT_HASH declarations: validate_reference_semantics.py owns the Current
+    446007aa... value while program_artifact_instance_guard.py retained predecessor 0c87e5c9.... Four downstream test consumers reference inst.SEMANTIC_BASELINE_CONTENT_HASH and do not
+    own independent literal hashes.'
   defect_owner: GOVERNANCE_SOURCE_VALIDATION_IMPLEMENTATION
   generalizability_scope: SEMANTIC_BASELINE_TRUST_ROOT_CONSUMER_OWNERSHIP
-  blocking_state: REMEDIATION_IN_PROGRESS
-  disposition: IMPLEMENTATION_REMEDIATION_IN_PROGRESS
+  blocking_state: PROMOTED_EXACT_HEAD_REVALIDATION_REQUIRED
+  disposition: IMPLEMENTATION_REMEDIATED_PENDING_EXACT_HEAD_VALIDATION
   specification_change_required: false
   mother_change_required: false
   formal_specification_mutated_for_fix: false
@@ -695,7 +685,9 @@ findings:
   - SOURCE_IDENTITY_REFRESH_AFTER_IMPLEMENTATION_REPAIR
   - FULL_LINE_REVALIDATION
   product_stage_credit: 0
-  reopen_condition: Reopen if any verified-source validator independently copies the semantic baseline literal or if the program artifact guard can resolve zero/multiple semantic-hash owners.
+  reopen_condition: Reopen if any verified-source validator independently copies the semantic baseline literal or if the program artifact guard can resolve zero/multiple semantic-hash
+    owners.
+  resolving_governance_uid: GOV-REV-20260919-SEMANTIC-BASELINE-CONSUMER-SINGLE-OWNER-HARDENING
 historical_stage2_execution_findings:
   prior_CORE-01_STAGE02_BLOCKED: 7
   prior_ASSET-01_STAGE02_BLOCKED: 6
@@ -722,7 +714,7 @@ current_stage2_execution:
   - CORE-01
   remaining_pages: []
   stage_scope_complete: true
-  next_action: FRESH_REVERIFY_CORE01_STAGE01_STAGE02_UNDER_CURRENT_GOVERNANCE
+  next_action: FRESH_CORE01_STAGE01_STAGE02_REVERIFY_AFTER_EXACT_HEAD_GOVERNANCE_PASS
   attempt_uid: STAGE02-FRESH-20260919-CORE01-004
   frozen_governance_uid: GOV-REV-20260919-PROFILE-TOKEN-DECONTAMINATION-HARDENING
   raw_discovery_gap_count: 0
@@ -740,7 +732,7 @@ current_stage2_execution:
   planning_baseline_completeness: PASS
   core01_work_unit_status: CLOSED_VERIFIED_FRESH_RUN_007_ZERO_GAP_ZERO_BLOCKER
   fresh_revalidation_required_under_current_governance: true
-  current_governance_uid: GOV-REV-20260919-STRUCTURED-MUTATION-SELECTOR-HARDENING
+  current_governance_uid: GOV-REV-20260919-SEMANTIC-BASELINE-CONSUMER-SINGLE-OWNER-HARDENING
   closure_credit_under_current_governance: false
   execution_scope_manifest_ref: governance/test/CURRENT_EXECUTION_SCOPE_MANIFEST.yaml
   canonical_product_contract_owner_ref: 00_SOURCE_INTAKE/fresh_run_007/04_PAGE_FUNCTIONAL_CONTRACT/CORE-01/FUNCTIONAL_CHAIN_SPEC.yaml

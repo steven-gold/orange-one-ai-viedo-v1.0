@@ -1,9 +1,23 @@
 #!/usr/bin/env python3
 from pathlib import Path
 import json,re,yaml,hashlib,sys,copy
+import ast
 sys.dont_write_bytecode=True
 ROOT=Path(__file__).resolve().parents[2]
-SEMANTIC_BASELINE_CONTENT_HASH='0c87e5c9a8d81cf608c270ae7298dd4d80735376eef63039671c38dbe580a590'
+def _resolve_semantic_baseline_content_hash():
+    owner=Path(__file__).resolve().parent/'validate_reference_semantics.py'
+    tree=ast.parse(owner.read_text(encoding='utf-8'),filename=str(owner))
+    values=[]
+    for candidate in tree.body:
+        targets=candidate.targets if isinstance(candidate,ast.Assign) else ([candidate.target] if isinstance(candidate,ast.AnnAssign) else [])
+        if any(isinstance(t,ast.Name) and t.id=='SEMANTIC_BASELINE_CONTENT_HASH' for t in targets):
+            value=getattr(candidate,'value',None)
+            if isinstance(value,ast.Constant) and isinstance(value.value,str): values.append(value.value)
+    if len(values)!=1 or not re.fullmatch(r'[0-9a-f]{64}',values[0]):
+        raise RuntimeError(f'SEMANTIC_BASELINE_LITERAL_OWNER_INVALID:{len(values)}')
+    return values[0]
+
+SEMANTIC_BASELINE_CONTENT_HASH=_resolve_semantic_baseline_content_hash()
 IDENTITY_REGISTRY_UID='REG-PROGRAM-IDENTITY-AUTHORITY-001'
 
 def load(p): return yaml.safe_load(Path(p).read_text(encoding='utf-8')) or {}
