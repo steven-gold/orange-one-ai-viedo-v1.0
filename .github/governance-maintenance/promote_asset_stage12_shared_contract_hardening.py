@@ -45,8 +45,8 @@ def insert_before(path,anchor,marker,body):
 def mutate_mother():
     insert_before(SOURCE/'12_DOCS/mother-spec/01_BLUEPRINT_DESIGN_GOVERNANCE.md',
       '<!-- SECTION_UID: WEB-GOV-01-S072 -->',
-      'ACPOS_SHARED_STAGE12_CONTROL_VS_SYSTEM_TRIGGER_RESOLUTION',
-      '''ACPOS_SHARED_STAGE12_CONTROL_VS_SYSTEM_TRIGGER_RESOLUTION
+      'COMMON_STAGE12_CONTROL_VS_SYSTEM_TRIGGER_RESOLUTION',
+      '''COMMON_STAGE12_CONTROL_VS_SYSTEM_TRIGGER_RESOLUTION
 
 For any required Action with no visible Control, the functional-contract capability MUST execute CONTROL_VS_SYSTEM_TRIGGER_RESOLUTION before classifying the absence as an Authority Gap. The resolver MUST use structured Current evidence, not labels or similarity: existing user-intent/control bindings; runtime_binding decision/source semantics; exact Gate and Permission; exactly resolved Runtime/Port and registered Operation; current State/Event or success transition; Journey/Workbench intent; and whether adding a Control would create a user behavior not present in Current Authority.
 
@@ -56,8 +56,8 @@ Only when Current Authority materially supports two or more distinct viable init
 
     insert_before(SOURCE/'12_DOCS/mother-spec/02_IMPLEMENTATION_DELIVERY_STANDARD.md',
       '<!-- SECTION_UID: WEB-GOV-02-S070 -->',
-      'ACPOS_SHARED_STAGE12_PRODUCER_CONSUMER_SCHEMA_IDENTITY',
-      '''ACPOS_SHARED_STAGE12_PRODUCER_CONSUMER_SCHEMA_IDENTITY
+      'COMMON_STAGE12_PRODUCER_CONSUMER_SCHEMA_IDENTITY',
+      '''COMMON_STAGE12_PRODUCER_CONSUMER_SCHEMA_IDENTITY
 
 Every generated or materialized Stage output consumed by another registered operation MUST satisfy an exact Producer/Consumer Schema Identity contract before the consumer may mutate Current product state. The contract MUST bind artifact_type, schema_version, canonical field names, required/optional status, field types, producer owner, consumer owner, and accepted schema revision.
 
@@ -65,8 +65,8 @@ A consumer MUST_NOT silently accept a renamed, legacy, approximate, or alias fie
 
     insert_before(SOURCE/'12_DOCS/mother-spec/03_EXECUTION_CONTROL_STANDARD.md',
       '<!-- SECTION_UID: WEB-GOV-03-S063 -->',
-      'ACPOS_SHARED_STAGE12_ORDER_AND_NO_HISTORY_FALLBACK',
-      '''ACPOS_SHARED_STAGE12_ORDER_AND_NO_HISTORY_FALLBACK
+      'COMMON_STAGE12_ORDER_AND_NO_HISTORY_FALLBACK',
+      '''COMMON_STAGE12_ORDER_AND_NO_HISTORY_FALLBACK
 
 Effectful Product Stage execution MUST preserve the governed task-layer order: terminalize or legally suspend the current Work Unit -> persist Resume -> execute WORK_UNIT_RESOLUTION_GATE when the primary Work Unit changes -> activate the resolved Work Unit -> rerun SESSION_BOOTSTRAP_RESUME_GATE -> execute. A materializer, validator, workflow input, environment variable, retry path, or nearby Stage identity MUST_NOT bypass this order or force a product Work Unit into the foreground.
 
@@ -74,8 +74,8 @@ Historical commits, historical Stage outputs, superseded candidates, prior gener
 
     insert_before(SOURCE/'12_DOCS/mother-spec/04_AUDIT_PROGRESS_STANDARD.md',
       '<!-- SECTION_UID: WEB-GOV-04-S079 -->',
-      'ACPOS_SHARED_STAGE12_TRIGGER_SCHEMA_AUDIT',
-      '''ACPOS_SHARED_STAGE12_TRIGGER_SCHEMA_AUDIT
+      'COMMON_STAGE12_TRIGGER_SCHEMA_AUDIT',
+      '''COMMON_STAGE12_TRIGGER_SCHEMA_AUDIT
 
 Audit MUST verify CONTROL_VS_SYSTEM_TRIGGER_RESOLUTION occurred before any no-Control Action was escalated to Authority Gap, and MUST distinguish deterministic system-trigger binding gaps from genuinely ambiguous product choices. A deterministic system-only operation MUST have no invented visual Control and must reach the Current functional-contract owner through an explicit system_trigger materialization before receiving closure credit.
 
