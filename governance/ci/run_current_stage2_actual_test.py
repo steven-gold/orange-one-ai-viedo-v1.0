@@ -2,11 +2,13 @@
 from __future__ import annotations
 from collections import Counter, defaultdict
 from copy import deepcopy
+import hashlib
 import json
 import os
 import re
 import subprocess
 import sys
+import tempfile
 from pathlib import Path
 import yaml
 
@@ -18,6 +20,7 @@ RUN = ROOT / RUN_ROOT_ENV
 STATE = ROOT / 'governance/test/ACTIVE_STATE.yaml'
 STAGE_REGISTRY = ROOT / '.github/governance-source/active/source/10_REGISTRY/GOVERNANCE_LIFECYCLE_STAGE_REGISTRY.yaml'
 RESULT = ROOT / '.github/stage02-test/STAGE02_ACTUAL_TEST_RESULT.json'
+SCOPE_MANIFEST = ROOT / 'governance/test/CURRENT_EXECUTION_SCOPE_MANIFEST.yaml'
 OLD_STAGE2_ROOT = RUN / '04_PAGE_FUNCTIONAL_CONTRACT'
 
 def resolve_page(page_uid: str):
@@ -73,6 +76,133 @@ def has_transition(text: str):
 def add(gaps, page, klass, category, uid, detail, owner='PAGE_FUNCTIONAL_CONTRACT'):
     gaps.append({'page_uid': page, 'class': klass, 'category': category, 'uid': uid, 'detail': detail, 'gap_owner': owner})
 
+def _sha256_file(path: Path) -> str:
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+def _safe_repo_path(value: str, repo_root: Path) -> Path:
+    rel = Path(str(value))
+    if rel.is_absolute() or '..' in rel.parts or not rel.parts:
+        raise ValueError(f'INVALID_RELATIVE_PATH:{value}')
+    return repo_root / rel
+
+def _verify_external_authority_record(rec: dict, repo_root: Path = ROOT) -> str:
+    required = (
+        'authority_ref','authority_source_path','authority_content_sha256',
+        'authority_manifest_path','authority_manifest_sha256','canonical_authority_path',
+    )
+    if not isinstance(rec, dict) or any(not str(rec.get(k) or '').strip() for k in required):
+        raise ValueError('EXTERNAL_AUTHORITY_RESOLUTION_RECORD_INCOMPLETE')
+    authority_ref = str(rec['authority_ref']).strip()
+    source = _safe_repo_path(str(rec['authority_source_path']), repo_root)
+    manifest_path = _safe_repo_path(str(rec['authority_manifest_path']), repo_root)
+    if not source.is_file() or not manifest_path.is_file():
+        raise ValueError(f'EXTERNAL_AUTHORITY_SOURCE_OR_MANIFEST_MISSING:{authority_ref}')
+    if _sha256_file(source) != str(rec['authority_content_sha256']):
+        raise ValueError(f'EXTERNAL_AUTHORITY_CONTENT_SHA256_DRIFT:{authority_ref}')
+    if _sha256_file(manifest_path) != str(rec['authority_manifest_sha256']):
+        raise ValueError(f'EXTERNAL_AUTHORITY_MANIFEST_SHA256_DRIFT:{authority_ref}')
+    source_doc = yaml.safe_load(source.read_text(encoding='utf-8')) or {}
+    manifest = yaml.safe_load(manifest_path.read_text(encoding='utf-8')) or {}
+    if not isinstance(source_doc, dict) or not isinstance(manifest, dict):
+        raise ValueError(f'EXTERNAL_AUTHORITY_MAPPING_REQUIRED:{authority_ref}')
+    ids = {
+        str(source_doc.get('authority_id') or ''),
+        str(source_doc.get('artifact_uid') or ''),
+        str(source_doc.get('id') or ''),
+        str((source_doc.get('authority') or {}).get('id') or '') if isinstance(source_doc.get('authority'), dict) else '',
+    }
+    if authority_ref not in ids:
+        raise ValueError(f'EXTERNAL_AUTHORITY_IDENTITY_DRIFT:{authority_ref}')
+    current_set = manifest.get('current_authority_set') or {}
+    members = set()
+    if isinstance(current_set, dict):
+        for values in current_set.values():
+            if isinstance(values, list):
+                members.update(str(x) for x in values)
+    canonical = str(rec['canonical_authority_path']).strip()
+    if canonical not in members:
+        raise ValueError(f'EXTERNAL_AUTHORITY_NOT_IN_CURRENT_AUTHORITY_SET:{authority_ref}:{canonical}')
+    auth_meta = manifest.get('authority') or {}
+    if not isinstance(auth_meta, dict) or auth_meta.get('status') != 'FINAL_LOCKED' or auth_meta.get('current_only') is not True:
+        raise ValueError('CURRENT_AUTHORITY_MANIFEST_NOT_FINAL_LOCKED_CURRENT_ONLY')
+    return authority_ref
+
+def _resolve_external_authority_records(records, repo_root: Path = ROOT) -> list[str]:
+    if records in (None, []):
+        return []
+    if not isinstance(records, list):
+        die('RESOLVED_EXTERNAL_AUTHORITY_RECORDS_LIST_REQUIRED')
+    out = []
+    for rec in records:
+        try:
+            ref = _verify_external_authority_record(rec, repo_root)
+        except ValueError as exc:
+            die(str(exc))
+        if ref in out:
+            die(f'DUPLICATE_RESOLVED_EXTERNAL_AUTHORITY_REF:{ref}')
+        out.append(ref)
+    return sorted(out)
+
+def _validate_stage02_admission(state: dict, revalidation_mode: bool) -> dict:
+    execution = state.get('execution') or {}
+    stage1_state = execution.get('stage1') or {}
+    if not isinstance(stage1_state, dict) or not stage1_state or any(v != 'PASS' for v in stage1_state.values()):
+        die(f'STAGE02_ADMISSION_STAGE1_NOT_CLOSED:{stage1_state!r}')
+    if revalidation_mode:
+        if execution.get('current_stage') != 'STAGE-02-TESTED-BLOCKED':
+            die(f'STAGE02_REVALIDATION_CURRENT_STAGE:{execution.get("current_stage")!r}')
+        if (execution.get('stage2') or {}).get('result') != 'TEST_EXECUTED_BLOCKED':
+            die('STAGE02_REVALIDATION_REQUIRES_BLOCKED_CURRENT_ATTEMPT')
+        attempt = state.get('stage02_active_attempt') or {}
+        if not isinstance(attempt, dict) or not attempt.get('attempt_uid') or attempt.get('run_uid') != execution.get('run_uid'):
+            die('STAGE02_REVALIDATION_ACTIVE_ATTEMPT_IDENTITY_DRIFT')
+        return execution
+    if execution.get('current_stage') != 'STAGE-01-CLOSED':
+        die(f'STAGE02_ADMISSION_CURRENT_STAGE:{execution.get("current_stage")!r}')
+    if (execution.get('stage2') or {}).get('result') != 'NOT_EXECUTED':
+        die('STAGE02_ADMISSION_REQUIRES_NOT_EXECUTED')
+    return execution
+
+def _self_test_external_authority_and_revalidation():
+    with tempfile.TemporaryDirectory() as td:
+        root = Path(td)
+        source = root / 'authority/runtime/shared.yaml'
+        source.parent.mkdir(parents=True, exist_ok=True)
+        source.write_text('authority_id: SYNTH_SHARED_AUTH\n', encoding='utf-8')
+        manifest = root / 'authority/manifest.yaml'
+        manifest.parent.mkdir(parents=True, exist_ok=True)
+        manifest.write_text(
+            'authority:\n  id: SYNTH_MANIFEST\n  status: FINAL_LOCKED\n  current_only: true\n'
+            'current_authority_set:\n  runtime:\n  - authority/runtime/shared.yaml\n',
+            encoding='utf-8',
+        )
+        rec = {
+            'authority_ref':'SYNTH_SHARED_AUTH',
+            'authority_source_path':'authority/runtime/shared.yaml',
+            'authority_content_sha256':_sha256_file(source),
+            'authority_manifest_path':'authority/manifest.yaml',
+            'authority_manifest_sha256':_sha256_file(manifest),
+            'canonical_authority_path':'authority/runtime/shared.yaml',
+        }
+        assert _verify_external_authority_record(rec, root) == 'SYNTH_SHARED_AUTH'
+        bad = dict(rec); bad['authority_content_sha256'] = '0' * 64
+        try:
+            _verify_external_authority_record(bad, root)
+        except ValueError as exc:
+            assert 'CONTENT_SHA256_DRIFT' in str(exc)
+        else:
+            raise AssertionError('wrong external authority hash was admitted')
+    base = {'execution':{'run_uid':'SYNTH-RUN','current_stage':'STAGE-02-TESTED-BLOCKED','stage1':{'SYNTH-PAGE':'PASS'},'stage2':{'result':'TEST_EXECUTED_BLOCKED'}},'stage02_active_attempt':{'attempt_uid':'SYNTH-ATTEMPT','run_uid':'SYNTH-RUN'}}
+    _validate_stage02_admission(base, True)
+    bad = deepcopy(base); bad['execution']['stage2']['result'] = 'TEST_EXECUTED_PASS'
+    try:
+        _validate_stage02_admission(bad, True)
+    except SystemExit:
+        pass
+    else:
+        raise AssertionError('non-blocked attempt was admitted for blocked revalidation')
+    print('PASS: Stage-02 exact external-authority resolution and blocked-attempt revalidation self-test')
+
 def effective_page_contract(page: str, raw: dict):
     """Compose immutable Stage-01 source facts with an approved Stage-02 canonical successor.
 
@@ -99,6 +229,7 @@ def effective_page_contract(page: str, raw: dict):
     projection = spec.get('source_projection')
     if not isinstance(projection, dict):
         die(f'{page}:FUNCTIONAL_CHAIN_SOURCE_PROJECTION_MISSING')
+    resolved_external_authority_refs = _resolve_external_authority_records(meta.get('resolved_external_authority_refs') or [])
 
     merged = deepcopy(raw)
     reg = merged.setdefault('registries', {})
@@ -121,6 +252,7 @@ def effective_page_contract(page: str, raw: dict):
         'canonical_owner_ref': str(spec_path.relative_to(ROOT)),
         'approval_evidence_ref': approval_ref,
         'overlay_registry_keys': applied,
+        'resolved_external_authority_refs': resolved_external_authority_refs,
         'raw_source_mutated': False,
     }
 
@@ -507,15 +639,14 @@ def fresh_scan(page: str, raw: dict, unresolved_authority_by_ref: dict):
         'functional_completion': len(unique) == 0,
     }
 
+if '--self-test-revalidation-authority' in sys.argv:
+    _self_test_external_authority_and_revalidation()
+    raise SystemExit(0)
+
 state = load(STATE)
-execution = state.get('execution') or {}
-if execution.get('current_stage') != 'STAGE-01-CLOSED':
-    die(f'STAGE02_ADMISSION_CURRENT_STAGE:{execution.get("current_stage")!r}')
-if (execution.get('stage2') or {}).get('result') != 'NOT_EXECUTED':
-    die('STAGE02_ADMISSION_REQUIRES_NOT_EXECUTED')
+revalidation_mode = os.environ.get('STAGE02_REVALIDATION_MODE', '').strip() == '1'
+execution = _validate_stage02_admission(state, revalidation_mode)
 stage1_state = execution.get('stage1') or {}
-if not isinstance(stage1_state, dict) or not stage1_state or any(v != 'PASS' for v in stage1_state.values()):
-    die(f'STAGE02_ADMISSION_STAGE1_NOT_CLOSED:{stage1_state!r}')
 required_page_uids = list(stage1_state)
 
 registry = load(STAGE_REGISTRY)
@@ -554,9 +685,20 @@ else:
 target_pages = {page: resolve_page(page) for page in target_page_uids}
 remaining_page_uids = [page for page in required_page_uids if page not in target_page_uids]
 scope_complete = not remaining_page_uids
+if revalidation_mode:
+    attempt = state.get('stage02_active_attempt') or {}
+    if attempt.get('target_pages') != target_page_uids:
+        die(f'STAGE02_REVALIDATION_ATTEMPT_SCOPE_DRIFT:{attempt.get("target_pages")!r}:{target_page_uids!r}')
+    scope_doc = load(SCOPE_MANIFEST)
+    if scope_doc.get('included_units') != target_page_uids:
+        die(f'STAGE02_REVALIDATION_SCOPE_MANIFEST_DRIFT:{scope_doc.get("included_units")!r}:{target_page_uids!r}')
+    work = state.get('active_work_unit') or {}
+    if work.get('stage_uid') != 'STAGE-02' or work.get('scope') != target_page_uids:
+        die('STAGE02_REVALIDATION_ACTIVE_PRODUCT_WORK_UNIT_REQUIRED')
 
 pages = {}
 external = {}
+resolved_external = {}
 union_gap_uids = set()
 for page, paths in target_pages.items():
     blueprint = load(paths['blueprint'])
@@ -564,15 +706,21 @@ for page, paths in target_pages.items():
     if blueprint.get('page_uid') != page or blueprint.get('stage_uid') != 'STAGE-01':
         die(f'{page}:BLUEPRINT_IDENTITY_DRIFT')
     refs = blueprint.get('unresolved_external_authority_refs') or []
+    effective_raw, effective_contract = effective_page_contract(page, raw)
+    resolved_refs = set(effective_contract.get('resolved_external_authority_refs') or [])
+    unresolved_authority_by_ref = {}
     for ref in refs:
         gid = ref.get('gap_uid')
-        union_gap_uids.add(gid)
+        authority_ref = str(ref.get('authority_ref') or '')
         if ref.get('resolved') is not False or ref.get('satisfied') is not False or ref.get('auto_filled') is not False or ref.get('inferred') is not False:
-            die(f'{page}:EXTERNAL_AUTHORITY_FALSE_RESOLUTION:{gid}')
-        external.setdefault(gid, {'authority_ref': ref.get('authority_ref'), 'consumers': []})['consumers'].append(page)
-
-    unresolved_authority_by_ref = {str(x.get('authority_ref')): x.get('gap_uid') for x in refs if isinstance(x, dict) and x.get('authority_ref') and x.get('gap_uid')}
-    effective_raw, effective_contract = effective_page_contract(page, raw)
+            die(f'{page}:STAGE1_EXTERNAL_AUTHORITY_INPUT_MUTATED:{gid}')
+        if authority_ref in resolved_refs:
+            resolved_external.setdefault(gid, {'authority_ref': authority_ref, 'consumers': [], 'resolution_owner':'STAGE2_CANONICAL_SUCCESSOR'})['consumers'].append(page)
+            continue
+        union_gap_uids.add(gid)
+        external.setdefault(gid, {'authority_ref': authority_ref, 'consumers': []})['consumers'].append(page)
+        if authority_ref and gid:
+            unresolved_authority_by_ref[authority_ref] = gid
     scan = fresh_scan(page, effective_raw, unresolved_authority_by_ref)
     responsibilities = set(blueprint.get('required_responsibility_uids') or [])
     ai_profile_active = 'CONVERSATION_POLICY' in responsibilities
@@ -621,7 +769,7 @@ result = {
     'stage_uid': 'STAGE-02',
     'stage_name': 'PAGE_FUNCTIONAL_CONTRACT',
     'source_head_sha': head,
-    'test_mode': 'FRESH_FROM_STAGE1_IMMUTABLE_INPUTS_NO_PRIOR_STAGE2_RESULT_REUSE',
+    'test_mode': 'SAME_ATTEMPT_BOUNDED_REMEDIATION_REVALIDATION' if revalidation_mode else 'FRESH_FROM_STAGE1_IMMUTABLE_INPUTS_NO_PRIOR_STAGE2_RESULT_REUSE',
     'actual_product_stage_test_started': True,
     'actual_product_stage_test_completed': True,
     'stage_entry_gate': 'PASS',
@@ -640,6 +788,8 @@ result = {
     'closure_blocker_total': closure_total,
     'preserved_external_authorities': dict(sorted(external.items())),
     'preserved_external_authority_union_count': len(union_gap_uids),
+    'resolved_external_authorities': dict(sorted(resolved_external.items())),
+    'resolved_external_authority_count': len(resolved_external),
     'preserved_external_authority_union_gap_uids': sorted(union_gap_uids),
     'current_specification_mutated': False,
     'ai_autofill_used': False,
