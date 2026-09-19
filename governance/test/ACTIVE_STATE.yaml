@@ -104,8 +104,8 @@ specification_mutation_safety:
   ordinary_mid_stage_specification_mutation: BLOCK
   stage_end_consolidated_promotion_requires_new_explicit_directive: true
   execution_context_lock_required: true
-status: ACTIVE_ASSET01_FRESH_REPLAY_CONTEXT_READY
-next_action: REBOOTSTRAP_THEN_EXECUTE_ASSET01_FRESH_REPLAY
+status: ACTIVE_ASSET01_FRESH_REPLAY_EXECUTION_TRIGGERED
+next_action: EXECUTE_ASSET01_FRESH_REPLAY_TO_STAGE02
 previous_closed_product_work_unit:
   work_unit_uid: WU-STAGE02-CORE01-STRUCTURAL-REMEDIATION-001
   canonical_name: CORE01_STRUCTURAL_CONTRACT_REMEDIATION
@@ -284,12 +284,12 @@ previous_closed_work_unit:
     source_runtime_residual_count: 0
     product_stage_credit: 0
 resume_control:
-  current_resume_point: ASSET01_FRESH_REPLAY_CONTEXT_READY_REBOOTSTRAP_REQUIRED
+  current_resume_point: ASSET01_FRESH_REPLAY_EXECUTION_TRIGGERED
   current_work_unit_uid: WU-ASSET01-STAGE01-STAGE02-FRESH-REPLAY-8133839F
   current_owner: 00_SOURCE_INTAKE/immutable_inputs/asset01_9668e230/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
   historical_stage2_results_are_current_state: false
   stage2_execution_requires_fresh_entry_resolution: true
-  exact_next_action: REBOOTSTRAP_THEN_EXECUTE_ASSET01_FRESH_REPLAY
+  exact_next_action: EXECUTE_ASSET01_FRESH_REPLAY_TO_STAGE02
   requested_terminal_stage: STAGE-02
 governance_revision_transition:
   current_governance_uid: GOV-REV-20260919-SEMANTIC-BASELINE-CONSUMER-SINGLE-OWNER-HARDENING
@@ -1385,7 +1385,7 @@ active_work_unit:
   - ASSET-01
   canonical_owner: 00_SOURCE_INTAKE/immutable_inputs/asset01_9668e230/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
   execution_owner: .github/governance-maintenance/run_fresh_stage_replay.py
-  current_status: READY_AFTER_REQUIRED_REBOOTSTRAP
+  current_status: EXECUTION_TRIGGERED
   dependencies:
   - 00_SOURCE_INTAKE/immutable_inputs/asset01_9668e230/RAW_SOURCE_RECOVERY_RECEIPT.yaml
   - governance/test/CURRENT_EXECUTION_SCOPE_MANIFEST.yaml
@@ -1407,6 +1407,12 @@ active_work_unit:
   - STAGE02_RESULT_PERSISTED
   - EXACT_PERSISTED_HEAD_REVALIDATED
   product_stage_credit: 0
+  execution_trigger:
+    trigger_mode: GENERIC_PERSISTED_CONTEXT_PUSH_TRIGGER
+    predecessor_bootstrap_head: 6cf2a214018f560d700b1966d5cfd572f0300e27
+    run_uid: FRESH-ASSET01-8133839F-STAGE02
+    execution_context_status_at_trigger: READY_FOR_REPLAY
+    product_stage_credit_before_result: 0
 fresh_replay_execution_context:
   status: READY_FOR_REPLAY
   run_uid: FRESH-ASSET01-8133839F-STAGE02
