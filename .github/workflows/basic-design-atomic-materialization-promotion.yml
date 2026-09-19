@@ -20,4 +20,4 @@ jobs:
           python-version: '3.11'
       - run: pip install pyyaml pytest
       - name: Promote atomic Basic Design successor
-        run: python .github/governance-maintenance/promote_basic_design_atomic_materialization.py
+        run: python .github/governance-maintenance/run_basic_design_atomic_materialization_fixed.py
