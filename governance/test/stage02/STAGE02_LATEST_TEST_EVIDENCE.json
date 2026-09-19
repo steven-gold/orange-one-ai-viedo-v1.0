@@ -3,8 +3,7 @@
   "actual_product_stage_test_started": true,
   "ai_autofill_used": false,
   "artifact_type": "NON_NORMATIVE_STAGE02_ACTUAL_TEST_EVIDENCE",
-  "attempt_uid": "STAGE02-ASSET01-8133839F-REPLAY",
-  "closure_blocker_total": 7,
+  "closure_blocker_total": 9,
   "current_specification_mutated": false,
   "deployment_allowed": false,
   "execution_profile_mandatory_output_subset": [
@@ -21,8 +20,7 @@
     "RESOLUTION_LEDGER",
     "STAGE_EXECUTION_PREFLIGHT_RECEIPT"
   ],
-  "fresh_functional_gap_total": 75,
-  "frozen_governance_uid": "GOV-REV-20260919-SEMANTIC-BASELINE-CONSUMER-SINGLE-OWNER-HARDENING",
+  "fresh_functional_gap_total": 106,
   "inference_used": false,
   "normative_authority": false,
   "notes": [
@@ -55,49 +53,44 @@
   "pages": {
     "ASSET-01": {
       "ai_interaction_profile_active": false,
-      "automatic_completion_scope": "PRESENT",
-      "blueprint_uid": "BP-ASSET-01-PAGE-FRESH-ASSET01-8133839F-STAGE02",
-      "closure_blocker_count": 7,
+      "automatic_completion_scope": "REQUIRED_WHEN_GAP_ANALYSIS_EXISTS",
+      "blueprint_uid": "BP-ASSET-01-PAGE-FRESH-ASSET01-V2213-20260920-R1",
+      "closure_blocker_count": 9,
       "closure_blockers": [
+        "MISSING_AUTO_COMPLETION_SCOPE_LEDGER",
         "MISSING_BUSINESS_ENTITY_INVENTORY",
         "MISSING_BUSINESS_ENTITY_OPERATION_MATRIX",
         "MISSING_ENTITY_HIERARCHY_MATRIX",
         "MISSING_FUNCTIONAL_WORKBENCH_CONTRACT",
+        "MISSING_FUNCTION_ADMISSION_SCORECARD",
         "MISSING_FUNCTION_VISUAL_IMPACT_MATRIX",
         "MISSING_INTERACTION_TOPOLOGY_SPEC",
         "STAGE02_PLANNING_COMPLETENESS_CONTRACT_MISSING"
       ],
       "effective_contract_input": {
-        "applied": true,
-        "approval_evidence_ref": "00_SOURCE_INTAKE/run_asset01_8133839f_stage02/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/EXACT_CLOSURE_MATERIALIZATION_RECEIPT.yaml",
-        "canonical_owner_ref": "00_SOURCE_INTAKE/run_asset01_8133839f_stage02/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/FUNCTIONAL_CHAIN_SPEC.yaml",
-        "overlay_contract_keys": [],
-        "overlay_registry_keys": [
-          "actions",
-          "stage_transitions"
-        ],
-        "raw_source_mutated": false,
-        "resolved_external_authority_refs": [
-          "ACPOS_SHARED_RUNTIME_OPERATION_AUTHORITY"
-        ]
+        "applied": false,
+        "reason": "NO_STAGE2_CANONICAL_SUCCESSOR"
       },
-      "function_admission_scorecard": "PRESENT",
+      "function_admission_scorecard": "REQUIRED_WHEN_GAP_ANALYSIS_EXISTS",
       "functional_chain_fresh_scan": {
         "functional_completion": false,
         "gap_categories": {
-          "ACTION_WITHOUT_CONTROL_OR_TRIGGER": 1,
           "AUDIT_EVENT_NODE_MISSING": 9,
           "FAILURE_STATE_ERROR_BINDING_MISSING": 23,
           "PAYLOAD_INPUT_CONTRACT_MISSING": 18,
-          "POST_ACTION_VALIDATION_NODE_MISSING": 3,
+          "POST_ACTION_VALIDATION_NODE_MISSING": 18,
+          "SHARED_OWNER_AUTHORITY_UNRESOLVED": 4,
           "STAGE02_PLANNING_COMPLETENESS_CONTRACT_MISSING": 1,
-          "STATE_TRANSITION_LEDGER_FIELD_MISSING": 20
+          "STATE_TRANSITION_LEDGER_FIELD_MISSING": 25,
+          "SUCCESS_NEXT_STATE_BINDING_MISSING": 7,
+          "SYSTEM_TRIGGER_BINDING_MISSING": 1
         },
         "gap_classes": {
-          "ARCHITECTURE_GAP": 57,
+          "ARCHITECTURE_GAP": 84,
+          "AUTHORITY_GAP": 4,
           "INPUT_SOURCE_GAP": 18
         },
-        "gap_count": 75,
+        "gap_count": 106,
         "gaps": [
           {
             "category": "FAILURE_STATE_ERROR_BINDING_MISSING",
@@ -148,6 +141,14 @@
             "uid": "ASSET-01-ACT-CANDIDATE-CONFIRM"
           },
           {
+            "category": "POST_ACTION_VALIDATION_NODE_MISSING",
+            "class": "ARCHITECTURE_GAP",
+            "detail": "no explicit success/validation/evaluation contract",
+            "gap_owner": "PAGE_FUNCTIONAL_CONTRACT",
+            "page_uid": "ASSET-01",
+            "uid": "ASSET-01-ACT-CANDIDATE-CONFIRM"
+          },
+          {
             "category": "PAYLOAD_INPUT_CONTRACT_MISSING",
             "class": "INPUT_SOURCE_GAP",
             "detail": "no explicit payload/input contract or schema",
@@ -164,10 +165,26 @@
             "uid": "ASSET-01-ACT-CORRECTION-GENERATE"
           },
           {
+            "category": "SHARED_OWNER_AUTHORITY_UNRESOLVED",
+            "class": "AUTHORITY_GAP",
+            "detail": "GAP-EXT-3EB9693EFA4B: ACPOS_SHARED_RUNTIME_OPERATION_AUTHORITY",
+            "gap_owner": "EXTERNAL_AUTHORITY",
+            "page_uid": "ASSET-01",
+            "uid": "ASSET-01-ACT-CORRECTION-GENERATE"
+          },
+          {
             "category": "FAILURE_STATE_ERROR_BINDING_MISSING",
             "class": "ARCHITECTURE_GAP",
             "detail": "no exact action->error/recovery or transition recovery binding",
             "gap_owner": "PAGE_FUNCTIONAL_CONTRACT",
+            "page_uid": "ASSET-01",
+            "uid": "ASSET-01-ACT-CORRECTION-APPROVE"
+          },
+          {
+            "category": "SHARED_OWNER_AUTHORITY_UNRESOLVED",
+            "class": "AUTHORITY_GAP",
+            "detail": "GAP-EXT-3EB9693EFA4B: ACPOS_SHARED_RUNTIME_OPERATION_AUTHORITY",
+            "gap_owner": "EXTERNAL_AUTHORITY",
             "page_uid": "ASSET-01",
             "uid": "ASSET-01-ACT-CORRECTION-APPROVE"
           },
@@ -196,9 +213,17 @@
             "uid": "ASSET-01-ACT-FINDING-CREATE"
           },
           {
-            "category": "ACTION_WITHOUT_CONTROL_OR_TRIGGER",
+            "category": "SYSTEM_TRIGGER_BINDING_MISSING",
             "class": "ARCHITECTURE_GAP",
-            "detail": "no registered control or exact transition/system trigger",
+            "detail": "{\"gate_uid\": \"ASSET-01-GATE-EVALUATION\", \"registered_operation\": \"createFinding\", \"runtime_port_binding_field\": \"port_uid\", \"runtime_port_uid\": \"ASSET-01-PORT-FINDING\", \"source_decision\": \"SOURCE_DERIVED\", \"success_state_event\": \"IN_REVIEW→FINDING_OPEN | finding.created\", \"trigger_kind\": \"SYSTEM_DERIVED_GOVERNED_OPERATION\", \"user_control_required\": false}",
+            "gap_owner": "AUTO_REMEDIABLE_FUNCTIONAL_CLOSURE",
+            "page_uid": "ASSET-01",
+            "uid": "ASSET-01-ACT-FINDING-CREATE"
+          },
+          {
+            "category": "POST_ACTION_VALIDATION_NODE_MISSING",
+            "class": "ARCHITECTURE_GAP",
+            "detail": "no explicit success/validation/evaluation contract",
             "gap_owner": "PAGE_FUNCTIONAL_CONTRACT",
             "page_uid": "ASSET-01",
             "uid": "ASSET-01-ACT-FINDING-CREATE"
@@ -215,6 +240,14 @@
             "category": "FAILURE_STATE_ERROR_BINDING_MISSING",
             "class": "ARCHITECTURE_GAP",
             "detail": "no exact action->error/recovery or transition recovery binding",
+            "gap_owner": "PAGE_FUNCTIONAL_CONTRACT",
+            "page_uid": "ASSET-01",
+            "uid": "ASSET-01-ACT-TASK-RETRY"
+          },
+          {
+            "category": "POST_ACTION_VALIDATION_NODE_MISSING",
+            "class": "ARCHITECTURE_GAP",
+            "detail": "no explicit success/validation/evaluation contract",
             "gap_owner": "PAGE_FUNCTIONAL_CONTRACT",
             "page_uid": "ASSET-01",
             "uid": "ASSET-01-ACT-TASK-RETRY"
@@ -236,10 +269,26 @@
             "uid": "ASSET-01-ACT-RESTORE-AS-NEW"
           },
           {
+            "category": "SHARED_OWNER_AUTHORITY_UNRESOLVED",
+            "class": "AUTHORITY_GAP",
+            "detail": "GAP-EXT-3EB9693EFA4B: ACPOS_SHARED_RUNTIME_OPERATION_AUTHORITY",
+            "gap_owner": "EXTERNAL_AUTHORITY",
+            "page_uid": "ASSET-01",
+            "uid": "ASSET-01-ACT-RESTORE-AS-NEW"
+          },
+          {
             "category": "FAILURE_STATE_ERROR_BINDING_MISSING",
             "class": "ARCHITECTURE_GAP",
             "detail": "no exact action->error/recovery or transition recovery binding",
             "gap_owner": "PAGE_FUNCTIONAL_CONTRACT",
+            "page_uid": "ASSET-01",
+            "uid": "ASSET-01-ACT-VERSION-LOCK"
+          },
+          {
+            "category": "SHARED_OWNER_AUTHORITY_UNRESOLVED",
+            "class": "AUTHORITY_GAP",
+            "detail": "GAP-EXT-3EB9693EFA4B: ACPOS_SHARED_RUNTIME_OPERATION_AUTHORITY",
+            "gap_owner": "EXTERNAL_AUTHORITY",
             "page_uid": "ASSET-01",
             "uid": "ASSET-01-ACT-VERSION-LOCK"
           },
@@ -276,6 +325,14 @@
             "uid": "ASSET-01-ACT-LAYER-DOC-CREATE"
           },
           {
+            "category": "POST_ACTION_VALIDATION_NODE_MISSING",
+            "class": "ARCHITECTURE_GAP",
+            "detail": "no explicit success/validation/evaluation contract",
+            "gap_owner": "PAGE_FUNCTIONAL_CONTRACT",
+            "page_uid": "ASSET-01",
+            "uid": "ASSET-01-ACT-LAYER-DOC-CREATE"
+          },
+          {
             "category": "PAYLOAD_INPUT_CONTRACT_MISSING",
             "class": "INPUT_SOURCE_GAP",
             "detail": "no explicit payload/input contract or schema",
@@ -292,6 +349,14 @@
             "uid": "ASSET-01-ACT-LAYER-DOC-UPDATE"
           },
           {
+            "category": "POST_ACTION_VALIDATION_NODE_MISSING",
+            "class": "ARCHITECTURE_GAP",
+            "detail": "no explicit success/validation/evaluation contract",
+            "gap_owner": "PAGE_FUNCTIONAL_CONTRACT",
+            "page_uid": "ASSET-01",
+            "uid": "ASSET-01-ACT-LAYER-DOC-UPDATE"
+          },
+          {
             "category": "PAYLOAD_INPUT_CONTRACT_MISSING",
             "class": "INPUT_SOURCE_GAP",
             "detail": "no explicit payload/input contract or schema",
@@ -308,6 +373,14 @@
             "uid": "ASSET-01-ACT-LAYER-ADD"
           },
           {
+            "category": "POST_ACTION_VALIDATION_NODE_MISSING",
+            "class": "ARCHITECTURE_GAP",
+            "detail": "no explicit success/validation/evaluation contract",
+            "gap_owner": "PAGE_FUNCTIONAL_CONTRACT",
+            "page_uid": "ASSET-01",
+            "uid": "ASSET-01-ACT-LAYER-ADD"
+          },
+          {
             "category": "PAYLOAD_INPUT_CONTRACT_MISSING",
             "class": "INPUT_SOURCE_GAP",
             "detail": "no explicit payload/input contract or schema",
@@ -324,9 +397,25 @@
             "uid": "ASSET-01-ACT-LAYER-ADD"
           },
           {
+            "category": "SUCCESS_NEXT_STATE_BINDING_MISSING",
+            "class": "ARCHITECTURE_GAP",
+            "detail": "no state_effect, state transition, or port state_event transition",
+            "gap_owner": "PAGE_FUNCTIONAL_CONTRACT",
+            "page_uid": "ASSET-01",
+            "uid": "ASSET-01-ACT-LAYER-ADD"
+          },
+          {
             "category": "FAILURE_STATE_ERROR_BINDING_MISSING",
             "class": "ARCHITECTURE_GAP",
             "detail": "no exact action->error/recovery or transition recovery binding",
+            "gap_owner": "PAGE_FUNCTIONAL_CONTRACT",
+            "page_uid": "ASSET-01",
+            "uid": "ASSET-01-ACT-LAYER-DELETE"
+          },
+          {
+            "category": "POST_ACTION_VALIDATION_NODE_MISSING",
+            "class": "ARCHITECTURE_GAP",
+            "detail": "no explicit success/validation/evaluation contract",
             "gap_owner": "PAGE_FUNCTIONAL_CONTRACT",
             "page_uid": "ASSET-01",
             "uid": "ASSET-01-ACT-LAYER-DELETE"
@@ -348,9 +437,25 @@
             "uid": "ASSET-01-ACT-LAYER-DELETE"
           },
           {
+            "category": "SUCCESS_NEXT_STATE_BINDING_MISSING",
+            "class": "ARCHITECTURE_GAP",
+            "detail": "no state_effect, state transition, or port state_event transition",
+            "gap_owner": "PAGE_FUNCTIONAL_CONTRACT",
+            "page_uid": "ASSET-01",
+            "uid": "ASSET-01-ACT-LAYER-DELETE"
+          },
+          {
             "category": "FAILURE_STATE_ERROR_BINDING_MISSING",
             "class": "ARCHITECTURE_GAP",
             "detail": "no exact action->error/recovery or transition recovery binding",
+            "gap_owner": "PAGE_FUNCTIONAL_CONTRACT",
+            "page_uid": "ASSET-01",
+            "uid": "ASSET-01-ACT-LAYER-DUPLICATE"
+          },
+          {
+            "category": "POST_ACTION_VALIDATION_NODE_MISSING",
+            "class": "ARCHITECTURE_GAP",
+            "detail": "no explicit success/validation/evaluation contract",
             "gap_owner": "PAGE_FUNCTIONAL_CONTRACT",
             "page_uid": "ASSET-01",
             "uid": "ASSET-01-ACT-LAYER-DUPLICATE"
@@ -372,9 +477,25 @@
             "uid": "ASSET-01-ACT-LAYER-DUPLICATE"
           },
           {
+            "category": "SUCCESS_NEXT_STATE_BINDING_MISSING",
+            "class": "ARCHITECTURE_GAP",
+            "detail": "no state_effect, state transition, or port state_event transition",
+            "gap_owner": "PAGE_FUNCTIONAL_CONTRACT",
+            "page_uid": "ASSET-01",
+            "uid": "ASSET-01-ACT-LAYER-DUPLICATE"
+          },
+          {
             "category": "FAILURE_STATE_ERROR_BINDING_MISSING",
             "class": "ARCHITECTURE_GAP",
             "detail": "no exact action->error/recovery or transition recovery binding",
+            "gap_owner": "PAGE_FUNCTIONAL_CONTRACT",
+            "page_uid": "ASSET-01",
+            "uid": "ASSET-01-ACT-LAYER-REORDER"
+          },
+          {
+            "category": "POST_ACTION_VALIDATION_NODE_MISSING",
+            "class": "ARCHITECTURE_GAP",
+            "detail": "no explicit success/validation/evaluation contract",
             "gap_owner": "PAGE_FUNCTIONAL_CONTRACT",
             "page_uid": "ASSET-01",
             "uid": "ASSET-01-ACT-LAYER-REORDER"
@@ -396,9 +517,25 @@
             "uid": "ASSET-01-ACT-LAYER-REORDER"
           },
           {
+            "category": "SUCCESS_NEXT_STATE_BINDING_MISSING",
+            "class": "ARCHITECTURE_GAP",
+            "detail": "no state_effect, state transition, or port state_event transition",
+            "gap_owner": "PAGE_FUNCTIONAL_CONTRACT",
+            "page_uid": "ASSET-01",
+            "uid": "ASSET-01-ACT-LAYER-REORDER"
+          },
+          {
             "category": "FAILURE_STATE_ERROR_BINDING_MISSING",
             "class": "ARCHITECTURE_GAP",
             "detail": "no exact action->error/recovery or transition recovery binding",
+            "gap_owner": "PAGE_FUNCTIONAL_CONTRACT",
+            "page_uid": "ASSET-01",
+            "uid": "ASSET-01-ACT-LAYER-PROPERTIES"
+          },
+          {
+            "category": "POST_ACTION_VALIDATION_NODE_MISSING",
+            "class": "ARCHITECTURE_GAP",
+            "detail": "no explicit success/validation/evaluation contract",
             "gap_owner": "PAGE_FUNCTIONAL_CONTRACT",
             "page_uid": "ASSET-01",
             "uid": "ASSET-01-ACT-LAYER-PROPERTIES"
@@ -420,9 +557,25 @@
             "uid": "ASSET-01-ACT-LAYER-PROPERTIES"
           },
           {
+            "category": "SUCCESS_NEXT_STATE_BINDING_MISSING",
+            "class": "ARCHITECTURE_GAP",
+            "detail": "no state_effect, state transition, or port state_event transition",
+            "gap_owner": "PAGE_FUNCTIONAL_CONTRACT",
+            "page_uid": "ASSET-01",
+            "uid": "ASSET-01-ACT-LAYER-PROPERTIES"
+          },
+          {
             "category": "FAILURE_STATE_ERROR_BINDING_MISSING",
             "class": "ARCHITECTURE_GAP",
             "detail": "no exact action->error/recovery or transition recovery binding",
+            "gap_owner": "PAGE_FUNCTIONAL_CONTRACT",
+            "page_uid": "ASSET-01",
+            "uid": "ASSET-01-ACT-LAYER-MASK"
+          },
+          {
+            "category": "POST_ACTION_VALIDATION_NODE_MISSING",
+            "class": "ARCHITECTURE_GAP",
+            "detail": "no explicit success/validation/evaluation contract",
             "gap_owner": "PAGE_FUNCTIONAL_CONTRACT",
             "page_uid": "ASSET-01",
             "uid": "ASSET-01-ACT-LAYER-MASK"
@@ -439,6 +592,14 @@
             "category": "AUDIT_EVENT_NODE_MISSING",
             "class": "ARCHITECTURE_GAP",
             "detail": "registered port has no explicit audit/event UID in state_event",
+            "gap_owner": "PAGE_FUNCTIONAL_CONTRACT",
+            "page_uid": "ASSET-01",
+            "uid": "ASSET-01-ACT-LAYER-MASK"
+          },
+          {
+            "category": "SUCCESS_NEXT_STATE_BINDING_MISSING",
+            "class": "ARCHITECTURE_GAP",
+            "detail": "no state_effect, state transition, or port state_event transition",
             "gap_owner": "PAGE_FUNCTIONAL_CONTRACT",
             "page_uid": "ASSET-01",
             "uid": "ASSET-01-ACT-LAYER-MASK"
@@ -452,9 +613,25 @@
             "uid": "ASSET-01-ACT-PATCH-CREATE"
           },
           {
+            "category": "POST_ACTION_VALIDATION_NODE_MISSING",
+            "class": "ARCHITECTURE_GAP",
+            "detail": "no explicit success/validation/evaluation contract",
+            "gap_owner": "PAGE_FUNCTIONAL_CONTRACT",
+            "page_uid": "ASSET-01",
+            "uid": "ASSET-01-ACT-PATCH-CREATE"
+          },
+          {
             "category": "PAYLOAD_INPUT_CONTRACT_MISSING",
             "class": "INPUT_SOURCE_GAP",
             "detail": "no explicit payload/input contract or schema",
+            "gap_owner": "PAGE_FUNCTIONAL_CONTRACT",
+            "page_uid": "ASSET-01",
+            "uid": "ASSET-01-ACT-PATCH-CREATE"
+          },
+          {
+            "category": "SUCCESS_NEXT_STATE_BINDING_MISSING",
+            "class": "ARCHITECTURE_GAP",
+            "detail": "no state_effect, state transition, or port state_event transition",
             "gap_owner": "PAGE_FUNCTIONAL_CONTRACT",
             "page_uid": "ASSET-01",
             "uid": "ASSET-01-ACT-PATCH-CREATE"
@@ -468,6 +645,14 @@
             "uid": "ASSET-01-ACT-PATCH-PREVIEW"
           },
           {
+            "category": "POST_ACTION_VALIDATION_NODE_MISSING",
+            "class": "ARCHITECTURE_GAP",
+            "detail": "no explicit success/validation/evaluation contract",
+            "gap_owner": "PAGE_FUNCTIONAL_CONTRACT",
+            "page_uid": "ASSET-01",
+            "uid": "ASSET-01-ACT-PATCH-PREVIEW"
+          },
+          {
             "category": "PAYLOAD_INPUT_CONTRACT_MISSING",
             "class": "INPUT_SOURCE_GAP",
             "detail": "no explicit payload/input contract or schema",
@@ -492,6 +677,14 @@
             "uid": "ASSET-01-ACT-PATCH-ACCEPT"
           },
           {
+            "category": "POST_ACTION_VALIDATION_NODE_MISSING",
+            "class": "ARCHITECTURE_GAP",
+            "detail": "no explicit success/validation/evaluation contract",
+            "gap_owner": "PAGE_FUNCTIONAL_CONTRACT",
+            "page_uid": "ASSET-01",
+            "uid": "ASSET-01-ACT-PATCH-ACCEPT"
+          },
+          {
             "category": "PAYLOAD_INPUT_CONTRACT_MISSING",
             "class": "INPUT_SOURCE_GAP",
             "detail": "no explicit payload/input contract or schema",
@@ -516,6 +709,14 @@
             "uid": "ASSET-01-ACT-PATCH-REJECT"
           },
           {
+            "category": "POST_ACTION_VALIDATION_NODE_MISSING",
+            "class": "ARCHITECTURE_GAP",
+            "detail": "no explicit success/validation/evaluation contract",
+            "gap_owner": "PAGE_FUNCTIONAL_CONTRACT",
+            "page_uid": "ASSET-01",
+            "uid": "ASSET-01-ACT-PATCH-REJECT"
+          },
+          {
             "category": "PAYLOAD_INPUT_CONTRACT_MISSING",
             "class": "INPUT_SOURCE_GAP",
             "detail": "no explicit payload/input contract or schema",
@@ -566,6 +767,14 @@
           {
             "category": "STATE_TRANSITION_LEDGER_FIELD_MISSING",
             "class": "ARCHITECTURE_GAP",
+            "detail": "illegal_transition_tests",
+            "gap_owner": "PAGE_FUNCTIONAL_CONTRACT",
+            "page_uid": "ASSET-01",
+            "uid": "ASSET-01-STTR-01"
+          },
+          {
+            "category": "STATE_TRANSITION_LEDGER_FIELD_MISSING",
+            "class": "ARCHITECTURE_GAP",
             "detail": "mutation_owner",
             "gap_owner": "PAGE_FUNCTIONAL_CONTRACT",
             "page_uid": "ASSET-01",
@@ -598,6 +807,14 @@
           {
             "category": "STATE_TRANSITION_LEDGER_FIELD_MISSING",
             "class": "ARCHITECTURE_GAP",
+            "detail": "illegal_transition_tests",
+            "gap_owner": "PAGE_FUNCTIONAL_CONTRACT",
+            "page_uid": "ASSET-01",
+            "uid": "ASSET-01-STTR-02"
+          },
+          {
+            "category": "STATE_TRANSITION_LEDGER_FIELD_MISSING",
+            "class": "ARCHITECTURE_GAP",
             "detail": "mutation_owner",
             "gap_owner": "PAGE_FUNCTIONAL_CONTRACT",
             "page_uid": "ASSET-01",
@@ -630,6 +847,14 @@
           {
             "category": "STATE_TRANSITION_LEDGER_FIELD_MISSING",
             "class": "ARCHITECTURE_GAP",
+            "detail": "illegal_transition_tests",
+            "gap_owner": "PAGE_FUNCTIONAL_CONTRACT",
+            "page_uid": "ASSET-01",
+            "uid": "ASSET-01-STTR-03"
+          },
+          {
+            "category": "STATE_TRANSITION_LEDGER_FIELD_MISSING",
+            "class": "ARCHITECTURE_GAP",
             "detail": "mutation_owner",
             "gap_owner": "PAGE_FUNCTIONAL_CONTRACT",
             "page_uid": "ASSET-01",
@@ -655,6 +880,14 @@
             "category": "STATE_TRANSITION_LEDGER_FIELD_MISSING",
             "class": "ARCHITECTURE_GAP",
             "detail": "audit_event_uid",
+            "gap_owner": "PAGE_FUNCTIONAL_CONTRACT",
+            "page_uid": "ASSET-01",
+            "uid": "ASSET-01-STTR-04"
+          },
+          {
+            "category": "STATE_TRANSITION_LEDGER_FIELD_MISSING",
+            "class": "ARCHITECTURE_GAP",
+            "detail": "illegal_transition_tests",
             "gap_owner": "PAGE_FUNCTIONAL_CONTRACT",
             "page_uid": "ASSET-01",
             "uid": "ASSET-01-STTR-04"
@@ -687,6 +920,14 @@
             "category": "STATE_TRANSITION_LEDGER_FIELD_MISSING",
             "class": "ARCHITECTURE_GAP",
             "detail": "audit_event_uid",
+            "gap_owner": "PAGE_FUNCTIONAL_CONTRACT",
+            "page_uid": "ASSET-01",
+            "uid": "ASSET-01-STTR-05"
+          },
+          {
+            "category": "STATE_TRANSITION_LEDGER_FIELD_MISSING",
+            "class": "ARCHITECTURE_GAP",
+            "detail": "illegal_transition_tests",
             "gap_owner": "PAGE_FUNCTIONAL_CONTRACT",
             "page_uid": "ASSET-01",
             "uid": "ASSET-01-STTR-05"
@@ -718,11 +959,17 @@
       "unresolved_external_authority_ref_count": 8
     }
   },
-  "physical_stage2_product_artifact_root_present": true,
+  "physical_stage2_product_artifact_root_present": false,
   "planning_baseline_completeness": "BLOCKED",
   "preserved_external_authorities": {
     "GAP-EXT-3DD576F9FA3A": {
       "authority_ref": "GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY@V1.0",
+      "consumers": [
+        "ASSET-01"
+      ]
+    },
+    "GAP-EXT-3EB9693EFA4B": {
+      "authority_ref": "ACPOS_SHARED_RUNTIME_OPERATION_AUTHORITY",
       "consumers": [
         "ASSET-01"
       ]
@@ -764,9 +1011,10 @@
       ]
     }
   },
-  "preserved_external_authority_union_count": 7,
+  "preserved_external_authority_union_count": 8,
   "preserved_external_authority_union_gap_uids": [
     "GAP-EXT-3DD576F9FA3A",
+    "GAP-EXT-3EB9693EFA4B",
     "GAP-EXT-7AB7E9E8AEF0",
     "GAP-EXT-872B05A5389A",
     "GAP-EXT-8C12874DC1AE",
@@ -777,23 +1025,12 @@
   "prior_stage2_results_used": false,
   "remaining_pages": [],
   "requested_page_scope": "ASSET-01",
-  "resolved_external_authorities": {
-    "GAP-EXT-3EB9693EFA4B": {
-      "authority_ref": "ACPOS_SHARED_RUNTIME_OPERATION_AUTHORITY",
-      "consumers": [
-        "ASSET-01"
-      ],
-      "resolution_owner": "STAGE2_CANONICAL_SUCCESSOR"
-    }
-  },
-  "resolved_external_authority_count": 1,
+  "resolved_external_authorities": {},
+  "resolved_external_authority_count": 0,
   "result": "BLOCKED",
   "schema_version": 1,
   "scope_mode": "ALL_REQUIRED_PAGES",
-  "source_artifact_id": 10581363345,
-  "source_artifact_sha256": "a103e733a86be6f818e1f96411790b1bd75ba60f651ae6d2761d9ae1d83db342",
-  "source_head_sha": "ca2f3e06ec633b78e08009d9f1aaf0672af4e0f6",
-  "source_workflow_run_id": 35435405975,
+  "source_head_sha": "c1b47105f706be3505bdb8e6f7793df7ee2f7c75",
   "stage_entry_gate": "PASS",
   "stage_exit_allowed": false,
   "stage_name": "PAGE_FUNCTIONAL_CONTRACT",
@@ -802,6 +1039,6 @@
   "target_pages": [
     "ASSET-01"
   ],
-  "test_mode": "SAME_ATTEMPT_BOUNDED_REMEDIATION_REVALIDATION",
+  "test_mode": "FRESH_FROM_STAGE1_IMMUTABLE_INPUTS_NO_PRIOR_STAGE2_RESULT_REUSE",
   "website_construction_allowed": false
 }

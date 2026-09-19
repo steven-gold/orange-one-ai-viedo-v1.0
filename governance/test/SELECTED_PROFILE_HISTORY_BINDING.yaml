@@ -22,11 +22,11 @@ scope:
     expected_result: PASS
     artifacts:
     - artifact_ref: 00_SOURCE_INTAKE/run_asset01_8133839f_stage02/02_BASE_BLUEPRINT/ASSET-01/PAGE_BASE_BLUEPRINT.yaml
-      creation_governance_overlay: v2.2.9
+      creation_governance_overlay: v2.2.13
     - artifact_ref: 00_SOURCE_INTAKE/run_asset01_8133839f_stage02/02_BASE_BLUEPRINT/ASSET-01/VISUAL_BASE_BLUEPRINT.yaml
-      creation_governance_overlay: v2.2.9
+      creation_governance_overlay: v2.2.13
     - artifact_ref: 00_SOURCE_INTAKE/run_asset01_8133839f_stage02/03_BLUEPRINT_BINDING/ASSET-01/BLUEPRINT_BINDING_MANIFEST.yaml
-      creation_governance_overlay: v2.2.9
+      creation_governance_overlay: v2.2.13
     profile_step_uid: STAGE-01
 binding_rules:
 - Profile step identities in this artifact are selected-profile-local historical evidence only.
@@ -35,7 +35,7 @@ binding_rules:
 - Historical artifact governance_overlay values are creation provenance only.
 - Historical artifact bytes and hashes MUST NOT be rewritten merely because Current Governance changes.
 current_scope_binding:
-  run_uid: FRESH-ASSET01-8133839F-STAGE02
+  run_uid: FRESH-ASSET01-V2213-20260920-R1
   page_scope:
   - ASSET-01
   excluded_page_scope:

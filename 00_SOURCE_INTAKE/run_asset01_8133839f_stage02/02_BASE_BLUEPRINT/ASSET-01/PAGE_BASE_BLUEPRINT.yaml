@@ -1,7 +1,7 @@
-blueprint_uid: BP-ASSET-01-PAGE-FRESH-ASSET01-8133839F-STAGE02
+blueprint_uid: BP-ASSET-01-PAGE-FRESH-ASSET01-V2213-20260920-R1
 page_uid: ASSET-01
 stage_uid: STAGE-01
-governance_overlay: v2.2.9
+governance_overlay: v2.2.13
 blueprint_type: PAGE_BASE_BLUEPRINT
 planning_domain: PAGE_CONSTRUCTION
 target_path: 02_BASE_BLUEPRINT/ASSET-01/PAGE_BASE_BLUEPRINT.yaml
@@ -90,12 +90,12 @@ required_responsibility_uids:
 - CANONICAL_SCRIPT_SOURCE_BINDING
 shared_refs: []
 source_fact_refs:
-- artifact_uid: SF-CONTEXT-3051CC27EA97
-  content_hash: ef5f4d91c0c8302495ef10eb2a479d5a4ec26072487e826b42b570dd57bc3275
-- artifact_uid: SF-CONFLICT-3051CC27EA97
-  content_hash: cb017dbfcfddfc47c51947c66c3fceef53d8f4b6ea93b485d0c1c4e3b912b447
-- artifact_uid: SF-DEPENDENCY-3051CC27EA97
-  content_hash: a37dd072e58ddd8910a299facb213712b215fedd4549e6a7350d687616049846
+- artifact_uid: SF-CONTEXT-B1E2BAD9E8D2
+  content_hash: 3eedc5fbb23ca1d981bcbbfdd55024a17d31be731748469eb20a0566d2a0b7f1
+- artifact_uid: SF-CONFLICT-B1E2BAD9E8D2
+  content_hash: b33af98ba30a054fa588362bbdc8444f3865b67733031034386054691e547991
+- artifact_uid: SF-DEPENDENCY-B1E2BAD9E8D2
+  content_hash: 63188d673505f226af03bedb2ee93e8ef152ba5e273fd94dc696fd7d47b48fb0
 raw_source_inputs: []
 embedded_classification_payloads: []
 unresolved_external_authority_refs:
@@ -164,4 +164,4 @@ unresolved_external_authority_refs:
   auto_filled: false
   inferred: false
 status: CURRENT_BASE_BLUEPRINT
-blueprint_hash: 11ee9291a3f5f49a0e9ffa889bfbe95b0fe08c34ae4837e5801196265b615e04
+blueprint_hash: d8cb8526690d985619ac82331f11aa981ed3a6ba47eb512e7b67294a3e2450e5

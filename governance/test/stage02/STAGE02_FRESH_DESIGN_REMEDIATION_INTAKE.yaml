@@ -1,7 +1,7 @@
 schema_version: 1
 artifact_type: STAGE02_FRESH_DESIGN_REMEDIATION_INTAKE
-governance_uid: GOV-REV-20260919-SEMANTIC-BASELINE-CONSUMER-SINGLE-OWNER-HARDENING
-run_uid: FRESH-ASSET01-8133839F-STAGE02
+governance_uid: GOV-REV-20260919-ASSET-STAGE01-STAGE02-SHARED-CONTRACT-HARDENING
+run_uid: FRESH-ASSET01-V2213-20260920-R1
 page_uid: ASSET-01
 problem_count: 106
 problems:
@@ -140,13 +140,14 @@ problems:
   gap_owner: PAGE_FUNCTIONAL_CONTRACT
   status: OPEN_FRESH_CURRENT_RUN
   resolution_credit: 0
-- problem_uid: STAGE02-PROBLEM-D087F6C3CCB0
+- problem_uid: STAGE02-PROBLEM-AEB128237413
   page_uid: ASSET-01
   class: ARCHITECTURE_GAP
-  category: ACTION_WITHOUT_CONTROL_OR_TRIGGER
+  category: SYSTEM_TRIGGER_BINDING_MISSING
   target_uid: ASSET-01-ACT-FINDING-CREATE
-  detail: no registered control or exact transition/system trigger
-  gap_owner: PAGE_FUNCTIONAL_CONTRACT
+  detail: '{"gate_uid": "ASSET-01-GATE-EVALUATION", "registered_operation": "createFinding", "runtime_port_binding_field": "port_uid", "runtime_port_uid": "ASSET-01-PORT-FINDING", "source_decision":
+    "SOURCE_DERIVED", "success_state_event": "IN_REVIEW→FINDING_OPEN | finding.created", "trigger_kind": "SYSTEM_DERIVED_GOVERNED_OPERATION", "user_control_required": false}'
+  gap_owner: AUTO_REMEDIABLE_FUNCTIONAL_CLOSURE
   status: OPEN_FRESH_CURRENT_RUN
   resolution_credit: 0
 - problem_uid: STAGE02-PROBLEM-C8E61037C2C6

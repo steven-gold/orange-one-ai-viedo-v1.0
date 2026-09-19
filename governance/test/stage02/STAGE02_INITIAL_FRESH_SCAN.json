@@ -54,7 +54,7 @@
     "ASSET-01": {
       "ai_interaction_profile_active": false,
       "automatic_completion_scope": "REQUIRED_WHEN_GAP_ANALYSIS_EXISTS",
-      "blueprint_uid": "BP-ASSET-01-PAGE-FRESH-ASSET01-8133839F-STAGE02",
+      "blueprint_uid": "BP-ASSET-01-PAGE-FRESH-ASSET01-V2213-20260920-R1",
       "closure_blocker_count": 9,
       "closure_blockers": [
         "MISSING_AUTO_COMPLETION_SCOPE_LEDGER",
@@ -75,7 +75,6 @@
       "functional_chain_fresh_scan": {
         "functional_completion": false,
         "gap_categories": {
-          "ACTION_WITHOUT_CONTROL_OR_TRIGGER": 1,
           "AUDIT_EVENT_NODE_MISSING": 9,
           "FAILURE_STATE_ERROR_BINDING_MISSING": 23,
           "PAYLOAD_INPUT_CONTRACT_MISSING": 18,
@@ -83,7 +82,8 @@
           "SHARED_OWNER_AUTHORITY_UNRESOLVED": 4,
           "STAGE02_PLANNING_COMPLETENESS_CONTRACT_MISSING": 1,
           "STATE_TRANSITION_LEDGER_FIELD_MISSING": 25,
-          "SUCCESS_NEXT_STATE_BINDING_MISSING": 7
+          "SUCCESS_NEXT_STATE_BINDING_MISSING": 7,
+          "SYSTEM_TRIGGER_BINDING_MISSING": 1
         },
         "gap_classes": {
           "ARCHITECTURE_GAP": 84,
@@ -213,10 +213,10 @@
             "uid": "ASSET-01-ACT-FINDING-CREATE"
           },
           {
-            "category": "ACTION_WITHOUT_CONTROL_OR_TRIGGER",
+            "category": "SYSTEM_TRIGGER_BINDING_MISSING",
             "class": "ARCHITECTURE_GAP",
-            "detail": "no registered control or exact transition/system trigger",
-            "gap_owner": "PAGE_FUNCTIONAL_CONTRACT",
+            "detail": "{\"gate_uid\": \"ASSET-01-GATE-EVALUATION\", \"registered_operation\": \"createFinding\", \"runtime_port_binding_field\": \"port_uid\", \"runtime_port_uid\": \"ASSET-01-PORT-FINDING\", \"source_decision\": \"SOURCE_DERIVED\", \"success_state_event\": \"IN_REVIEW→FINDING_OPEN | finding.created\", \"trigger_kind\": \"SYSTEM_DERIVED_GOVERNED_OPERATION\", \"user_control_required\": false}",
+            "gap_owner": "AUTO_REMEDIABLE_FUNCTIONAL_CLOSURE",
             "page_uid": "ASSET-01",
             "uid": "ASSET-01-ACT-FINDING-CREATE"
           },
@@ -1025,10 +1025,12 @@
   "prior_stage2_results_used": false,
   "remaining_pages": [],
   "requested_page_scope": "ASSET-01",
+  "resolved_external_authorities": {},
+  "resolved_external_authority_count": 0,
   "result": "BLOCKED",
   "schema_version": 1,
   "scope_mode": "ALL_REQUIRED_PAGES",
-  "source_head_sha": "23dbdb041d2f95056838c2dd0b94e7bba5180856",
+  "source_head_sha": "c1b47105f706be3505bdb8e6f7793df7ee2f7c75",
   "stage_entry_gate": "PASS",
   "stage_exit_allowed": false,
   "stage_name": "PAGE_FUNCTIONAL_CONTRACT",
