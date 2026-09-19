@@ -8,7 +8,7 @@ auth_pat=re.compile(r'USR-DIRECTIVE-20260919-BLUEPRINT-CONSTRUCTION-TRACEABILITY
 found=sorted(set(auth_pat.findall(s)))
 if not found:
     raise SystemExit('PROMOTION_AUTH_UID_PATTERN_NOT_FOUND')
-s=auth_pat.sub('USR-DIRECTIVE-20260919-BLUEPRINT-CONSTRUCTION-TRACEABILITY-HARDENING-R11',s)
+s=auth_pat.sub('USR-DIRECTIVE-20260919-BLUEPRINT-CONSTRUCTION-TRACEABILITY-HARDENING-R12',s)
 
 tree=ast.parse(s)
 apply_fn=next((n for n in tree.body if isinstance(n,ast.FunctionDef) and n.name=='apply'),None)
@@ -51,6 +51,24 @@ insertions=[
         "    sem['content_hash']=hobj(sem)",
         "    dump(sp,sem)",
         "    semantic_hash=sem['content_hash']",
+        "    csp=SOURCE/'11_EVIDENCE/audit/GOVERNANCE_CANDIDATE_STATE.yaml'",
+        "    cs=load(csp)",
+        "    cs['candidate']='v2.2.10_BLUEPRINT_CONSTRUCTION_TRACEABILITY_HARDENING_CANDIDATE'",
+        "    cs['status']='CANDIDATE_UNDER_FRESH_SUCCESSOR_REVALIDATION'",
+        "    fresh=cs.setdefault('fresh_revalidation',{})",
+        "    fresh['required']=True",
+        "    fresh['current_source_revision']=NEW_SOURCE_REV",
+        "    fresh['current_closure_credit']=False",
+        "    fresh['predecessor_evidence_current_closure_credit']=False",
+        "    fresh['embedded_preformal_execution_role']='HISTORICAL_PREDECESSOR_EVIDENCE_ONLY'",
+        "    fresh['predecessor_wrapper_result_role']='HISTORICAL_PREDECESSOR_EVIDENCE_ONLY'",
+        "    fresh['persisted_head_full_line_required']=True",
+        "    fresh['historical_evidence_may_close_successor']=False",
+        "    dump(csp,cs)",
+        "    rvp=SOURCE/'10_REGISTRY/REVIEW_PROGRESS_LEDGER.yaml'",
+        "    rv=load(rvp)",
+        "    rv['governance_revision']=NEW_SOURCE_REV",
+        "    dump(rvp,rv)",
     ]),
     (cleanup_target.lineno-1,[
         "    for extra in [ROOT/'.github/governance-maintenance/patch_blueprint_type_identity.py', ROOT/'.github/governance-maintenance/promote_blueprint_traceability_governance.py.gz']:",
@@ -63,15 +81,13 @@ s='\n'.join(lines)+'\n'
 
 tree=ast.parse(s)
 class ReplaceHardener(ast.NodeTransformer):
-    def __init__(self):
-        self.count=0
+    def __init__(self): self.count=0
     def visit_Call(self,node):
         self.generic_visit(node)
         if isinstance(node.func,ast.Attribute) and node.func.attr=='replace' and isinstance(node.func.value,ast.Name) and node.func.value.id=='s':
             self.count+=1
             return ast.copy_location(ast.Call(func=ast.Name(id='replace_exact_once',ctx=ast.Load()),args=[node.func.value,*node.args[:2]],keywords=[]),node)
         return node
-
 hardener=ReplaceHardener()
 tree=hardener.visit(tree)
 ast.fix_missing_locations(tree)
@@ -92,4 +108,4 @@ ast.fix_missing_locations(tree)
 patched=ast.unparse(tree)+'\n'
 ast.parse(patched)
 PROMOTION.write_text(patched,encoding='utf-8')
-print(f'PASS: authorization rebound from {found} to R11; AST identity/cleanup inserted; raw replacements hardened={hardener.count}')
+print(f'PASS: auth {found}->R12; successor candidate/review identities synchronized; raw replacements hardened={hardener.count}')

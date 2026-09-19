@@ -1,0 +1,67 @@
+schema_version: 2
+artifact_type: SPECIFICATION_CHANGE_AUTHORIZATION_RECEIPT
+authorization_uid: USR-DIRECTIVE-20260919-BLUEPRINT-CONSTRUCTION-TRACEABILITY-HARDENING-R12
+normative_authority: false
+authority_source: EXPLICIT_USER_DIRECTIVE
+status: APPROVED_FOR_EXACT_SCOPE
+single_use: true
+ai_may_expand_scope: false
+ai_may_reuse_authorization: false
+current_governance_uid: GOV-REV-20260919-SEMANTIC-BASELINE-CONSUMER-SINGLE-OWNER-HARDENING
+baseline_commit_sha: e80230d15cf2c62ecf4b5ca72180281a1591dc5c
+baseline_tree_sha: 5d0c2fc3c3e9770ad91746047d99824686a17fb7
+governance_mutation_boundary: OUTSIDE_GOVERNED_EXECUTION_CYCLE
+predecessor_execution_cycle_terminal: true
+predecessor_execution_cycle_terminal_disposition: TERMINATED_WITHOUT_EXECUTION_BY_EXPLICIT_GOVERNANCE_MAINTENANCE_REENTRY_REQUIRED
+predecessor_execution_cycle_evidence_ref: governance/test/ACTIVE_STATE.yaml
+fatal_specification_contradiction_proven: false
+duplicate_and_residual_cleanup_required: true
+one_canonical_execution_closure_model_required: true
+pre_write_context_verification:
+  relevant_scope_read_complete: true
+  canonical_owner_resolution_complete: true
+  existing_semantics_comparison_complete: true
+  duplicate_search_complete: true
+  conflict_search_complete: true
+  second_system_search_complete: true
+  gap_proven_before_write: true
+  reviewed_authority_ref_count: 13
+  reviewed_existing_owner_ref_count: 14
+  write_disposition: MODIFY_EXISTING_CANONICAL_OWNER
+  comparison_result: NO_UNRESOLVED_DUPLICATE_CONFLICT_OR_SECOND_SYSTEM
+directive_summary: >-
+  Continue the requested Mother initial/basic-design hardening after fresh successor validation proved that
+  the candidate-state and review-ledger Current revision identities were not projected to the new source revision.
+  Preserve predecessor evidence as history, synchronize only successor Current identities, and rerun the same promotion.
+exact_scope:
+  allowed:
+  - SYNCHRONIZE_SUCCESSOR_GOVERNANCE_CANDIDATE_IDENTITY
+  - SYNCHRONIZE_SUCCESSOR_REVIEW_LEDGER_REVISION
+  - PRESERVE_PREDECESSOR_HIGH_PRESSURE_AND_REFERENCE_EVIDENCE_AS_HISTORY
+  - HARDEN_PROMOTION_RAW_TEXT_MUTATION_TO_EXACT_ONE_SELECTOR
+  - FIX_PROMOTION_AUTHORIZATION_TYPED_SELECTOR
+  - FIX_ONE_SHOT_HELPER_LIFECYCLE
+  - FIX_BLUEPRINT_TYPE_IDENTITY_ATOMIC_PROJECTION
+  - CONSTRUCTION_BLUEPRINT_PACKAGE_COMPLETENESS
+  - FUNCTION_VISUAL_BIDIRECTIONAL_TRACEABILITY
+  - MANDATORY_MULTI_STATE_VISUAL_EVIDENCE
+  - VISUAL_REFERENCE_ANNOTATION
+  - CONSTRUCTION_DELTA_EXISTING_CODE_GAP_CLASSIFICATION
+  - SCENARIO_TO_FUNCTION_VISUAL_COVERAGE
+  - QUANTITATIVE_DESIGN_FREEZE_COMPLETENESS
+  - BLUEPRINT_TO_IMPLEMENTATION_HANDOFF
+  - CURRENT_GOVERNANCE_SUCCESSOR_PROJECTION_AND_REVALIDATION
+  - FRESH_BLUEPRINT_REPLANNING_UNDER_SUCCESSOR
+  forbidden:
+  - REWRITE_PREDECESSOR_HISTORICAL_EVIDENCE
+  - PRODUCT_AUTHORITY_CHANGE
+  - ASSET01_PRODUCT_CONTRACT_CHANGE_DURING_GOVERNANCE_PROMOTION
+  - CORE01_PRODUCT_CONTRACT_CHANGE_DURING_GOVERNANCE_PROMOTION
+  - STAGE03_PRODUCT_EXECUTION
+  - WEBSITE_IMPLEMENTATION
+  - DEPLOYMENT
+  - PRODUCT_STAGE_CREDIT
+canonical_owner:
+  path: .github/governance-source/active/source/12_DOCS/mother-spec/01_BLUEPRINT_DESIGN_GOVERNANCE.md
+  owner_role: CURRENT_MOTHER_BLUEPRINT_DESIGN_GOVERNANCE
+product_stage_credit: 0
