@@ -259,7 +259,7 @@ def _self_test_shared_contract_hardening():
     exact=control_vs_system_trigger_resolution('ACT-1',action,controls,transitions,ports)
     assert exact.get('status')=='DETERMINISTIC_SYSTEM_TRIGGER_REQUIRED', exact
     assert exact['contract']['user_control_required'] is False
-    ambiguous=copy.deepcopy(action); ambiguous['runtime_binding'].pop('decision')
+    ambiguous={**action,'runtime_binding':dict(action['runtime_binding'])}; ambiguous['runtime_binding'].pop('decision')
     assert control_vs_system_trigger_resolution('ACT-2',ambiguous,controls,transitions,ports).get('status')=='UNRESOLVED'
     controls['ACT-3'].append('CTRL-1')
     assert control_vs_system_trigger_resolution('ACT-3',action,controls,transitions,ports).get('status')=='CONTROL_BOUND'
