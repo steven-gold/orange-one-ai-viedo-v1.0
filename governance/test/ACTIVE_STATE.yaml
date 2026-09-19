@@ -104,8 +104,8 @@ specification_mutation_safety:
   ordinary_mid_stage_specification_mutation: BLOCK
   stage_end_consolidated_promotion_requires_new_explicit_directive: true
   execution_context_lock_required: true
-status: FRESH_REPLAY_TRIGGER_MAINTENANCE_CLOSED
-next_action: WORK_UNIT_RESOLUTION_GATE_FOR_CORE01_FRESH_REPLAY
+status: ACTIVE_CORE01_FRESH_REPLAY_CONTEXT_READY
+next_action: EXECUTE_FRESH_REPLAY_TO_STAGE02
 previous_closed_product_work_unit:
   work_unit_uid: WU-STAGE02-CORE01-STRUCTURAL-REMEDIATION-001
   canonical_name: CORE01_STRUCTURAL_CONTRACT_REMEDIATION
@@ -284,15 +284,12 @@ previous_closed_work_unit:
     source_runtime_residual_count: 0
     product_stage_credit: 0
 resume_control:
-  current_resume_point: CORE01_FRESH_REPLAY_WUR_REQUIRED
-  current_work_unit_uid: null
-  current_owner: null
+  current_resume_point: CORE01_FRESH_REPLAY_CONTEXT_READY
+  current_work_unit_uid: WU-CORE01-STAGE01-STAGE02-FRESH-REPLAY-D81DF9AC
+  current_owner: 00_SOURCE_INTAKE/fresh_run_008/00_SOURCE_INTAKE/RAW_SOURCE/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml
   historical_stage2_results_are_current_state: false
   stage2_execution_requires_fresh_entry_resolution: true
-  exact_next_action: WORK_UNIT_RESOLUTION_GATE_FOR_CORE01_FRESH_REPLAY
-  requested_primary_task_layer: PRODUCT_STAGE_EXECUTION
-  requested_scope:
-  - CORE-01
+  exact_next_action: EXECUTE_FRESH_REPLAY_TO_STAGE02
   requested_terminal_stage: STAGE-02
 governance_revision_transition:
   current_governance_uid: GOV-REV-20260919-SEMANTIC-BASELINE-CONSUMER-SINGLE-OWNER-HARDENING
@@ -347,7 +344,7 @@ pending_governance_review:
   - STAGE03
   - WEBSITE_CONSTRUCTION
   - DEPLOYMENT
-current_primary_task_layer: TEST_OR_VALIDATION_MAINTENANCE
+current_primary_task_layer: PRODUCT_STAGE_EXECUTION
 current_primary_task_authorization_uid: USR-DIRECTIVE-20260919-EXECUTE-CORE01-THROUGH-STAGE02
 current_primary_task_product_stage_credit: 0
 earlier_closed_product_work_unit:
@@ -1226,6 +1223,93 @@ closed_test_validation_maintenance_work_unit_fresh_replay_trigger:
     mother_normative_change: false
     product_stage_credit: 0
     closure_persistence_revalidation_required: true
+work_unit_resolution_gate_core01_fresh_replay_current:
+  resolution_uid: WUR-CORE01-STAGE01-STAGE02-D81DF9AC
+  normative_authority: false
+  result: PASS_SINGLE_LEGAL_SUCCESSOR
+  requested_primary_task_layer: PRODUCT_STAGE_EXECUTION
+  resolved_work_unit_uid: WU-CORE01-STAGE01-STAGE02-FRESH-REPLAY-D81DF9AC
+  authorization_uid: USR-DIRECTIVE-20260919-EXECUTE-CORE01-THROUGH-STAGE02
+  current_governance_uid: GOV-REV-20260919-SEMANTIC-BASELINE-CONSUMER-SINGLE-OWNER-HARDENING
+  page_scope:
+  - CORE-01
+  excluded_page_scope:
+  - ASSET-01
+  predecessor_run_uid: FRESH-RUN-008
+  successor_run_uid: FRESH-CORE01-D81DF9AC-STAGE02
+  predecessor_run_root: 00_SOURCE_INTAKE/fresh_run_008
+  successor_run_root: 00_SOURCE_INTAKE/run_core01_d81df9ac_stage02
+  predecessor_maintenance_closure_head: d81df9ac58baa1c14077368e2390d20d3c6d5c43
+  predecessor_maintenance_dynamic_replay_run_id: 35423708457
+  predecessor_maintenance_selected_profile_run_id: 35423708517
+  predecessor_maintenance_full_line_run_id: 35423708462
+  predecessor_maintenance_branch_guard_run_id: 35423708401
+  result_target: EXECUTE_THROUGH_STAGE02_ONLY
+  product_stage_credit: 0
+active_work_unit:
+  work_unit_uid: WU-CORE01-STAGE01-STAGE02-FRESH-REPLAY-D81DF9AC
+  canonical_name: CORE01_STAGE01_STAGE02_FRESH_REPLAY
+  primary_task_layer: PRODUCT_STAGE_EXECUTION
+  semantic_capability: SOURCE_INTAKE_BASE_BLUEPRINT_THROUGH_FUNCTIONAL_CONTRACT
+  scope:
+  - CORE-01
+  canonical_owner: 00_SOURCE_INTAKE/fresh_run_008/00_SOURCE_INTAKE/RAW_SOURCE/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml
+  execution_owner: .github/governance-maintenance/run_fresh_stage_replay.py
+  current_status: READY_FOR_EXECUTION
+  dependencies:
+  - 00_SOURCE_INTAKE/fresh_run_008/00_SOURCE_INTAKE/RAW_SOURCE/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml
+  - 00_SOURCE_INTAKE/fresh_run_008/00_SOURCE_INTAKE/RAW_SOURCE/CORE-01/CORE_CURRENT_CANONICAL_VISUAL_FINAL_LOCKED_V1.0.yaml
+  - governance/test/CURRENT_EXECUTION_SCOPE_MANIFEST.yaml
+  - .github/workflows/fresh-stage-replay.yml
+  out_of_scope:
+  - ASSET-01
+  - STAGE-03
+  - WEBSITE_CONSTRUCTION
+  - DEPLOYMENT
+  - EXTERNAL_AUTHORITY_AUTOFILL
+  definition_of_done:
+  - FRESH_STAGE01_EXECUTION_FROM_REGISTERED_IMMUTABLE_INPUTS
+  - FRESH_STAGE02_ACTUAL_PRODUCT_TEST_EXECUTED
+  - PRIOR_STAGE01_STAGE02_GENERATED_OUTPUTS_NOT_REUSED
+  - ASSET01_EXCLUDED_FROM_CURRENT_REPLAY_SCOPE
+  - EXTERNAL_AUTHORITIES_PRESERVED_WITHOUT_AUTOFILL
+  - EXACT_WORKFLOW_AND_ARTIFACT_PROVENANCE_BOUND
+  - STAGE02_RESULT_PERSISTED
+  - EXACT_PERSISTED_HEAD_REVALIDATED
+  product_stage_credit: 0
+fresh_replay_execution_context:
+  status: READY_FOR_REPLAY
+  run_uid: FRESH-CORE01-D81DF9AC-STAGE02
+  run_root: 00_SOURCE_INTAKE/run_core01_d81df9ac_stage02
+  predecessor_run_uid: FRESH-RUN-008
+  predecessor_run_root: 00_SOURCE_INTAKE/fresh_run_008
+  branch: rebuild-v2.1.1
+  authorization_uid: USR-DIRECTIVE-20260919-EXECUTE-CORE01-THROUGH-STAGE02
+  authorization_ref: governance/test/spec_change_authorizations/USR-DIRECTIVE-20260919-EXECUTE-CORE01-THROUGH-STAGE02.yaml
+  attempt_uid: STAGE02-CORE01-D81DF9AC-REPLAY
+  stage1_work_unit_uid: WU-STAGE01-CORE01-D81DF9AC-REPLAY
+  stage2_work_unit_uid: WU-STAGE02-CORE01-D81DF9AC-REPLAY
+  stage2_resolution_uid: WUR-STAGE02-CORE01-D81DF9AC-REPLAY
+  stage2_canonical_name: CORE01_STAGE02_FRESH_REPLAY
+  page_scope:
+  - CORE-01
+  excluded_page_scope:
+  - ASSET-01
+  page_authority_source_file: CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml
+  raw_sources:
+  - filename: CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml
+    source_uid: SRC-CORE01-PAGE
+    source_role: MIXED_PAGE_VISUAL_SOURCE_INPUT
+    source_domain_scope: MIXED_PAGE_VISUAL
+  - filename: CORE_CURRENT_CANONICAL_VISUAL_FINAL_LOCKED_V1.0.yaml
+    source_uid: SRC-CORE01-VISUAL
+    source_role: VISUAL_SOURCE_INPUT
+    source_domain_scope: VISUAL_CONSTRUCTION
+  local_authority_prefixes:
+  - CORE_PAGE_VISUAL_AUTHORITY_FINAL
+  - CORE01_CURRENT_CANONICAL_VISUAL_OWNER
+  local_authority_path_prefixes:
+  - authority/pages/workspace/CORE-01
 last_work_unit_resolution_gate:
   resolution_uid: WUR-STAGE02-CORE01-COMPLETENESS-20260919-005
   normative_authority: false

@@ -2,7 +2,7 @@ schema_version: 1
 artifact_type: EXECUTION_SCOPE_MANIFEST
 normative_authority: false
 governance_uid: GOV-REV-20260919-SEMANTIC-BASELINE-CONSUMER-SINGLE-OWNER-HARDENING
-owning_capability: FUNCTIONAL_CONTRACT
+owning_capability: SOURCE_INTAKE_AND_BASE_BLUEPRINT
 scope_kind: EXACT_SINGLE_PAGE_FRESH_REPLAY
 included_units:
 - CORE-01
@@ -14,11 +14,10 @@ stage_required_units:
 scope_selection_authority: EXPLICIT_USER_DIRECTIVE_AND_FRESH_RAW_SOURCE_CAPTURE
 dependency_closure_refs:
 - governance/test/ACTIVE_STATE.yaml
-- 00_SOURCE_INTAKE/fresh_run_008/04_PAGE_FUNCTIONAL_CONTRACT/DEPENDENCY_MAP.yaml
+- 00_SOURCE_INTAKE/fresh_run_008/CURRENT_RUN_MANIFEST.yaml
 denominator_source_refs:
-- governance/test/stage02/STAGE02_LATEST_TEST_EVIDENCE.json
-- 00_SOURCE_INTAKE/fresh_run_008/04_PAGE_FUNCTIONAL_CONTRACT/CURRENT_PROBLEM_REGISTER.yaml
+- 00_SOURCE_INTAKE/fresh_run_008/CURRENT_RUN_MANIFEST.yaml
 partial_scope: false
-stage_exit_credit_allowed: true
-fresh_revalidation_required: false
-content_hash: e075a251de36ea1162f7fc884f8732ddd19dbca707e529fd3fe66a1957d572d2
+stage_exit_credit_allowed: false
+fresh_revalidation_required: true
+content_hash: 9d9ee65180a49091fb4330c7b89bd7f8057b2b942502303c7caf2775f85239b2
