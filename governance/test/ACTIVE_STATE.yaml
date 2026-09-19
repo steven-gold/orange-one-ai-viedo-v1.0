@@ -2,7 +2,7 @@ schema_version: 23
 artifact_type: ACTIVE_GOVERNANCE_TEST_STATE
 normative_authority: false
 specification_registry_ref: governance/specifications/REGISTRY.yaml
-specification_uid: GOV-REV-20260919-SEMANTIC-BASELINE-CONSUMER-SINGLE-OWNER-HARDENING
+specification_uid: GOV-REV-20260919-BLUEPRINT-CONSTRUCTION-TRACEABILITY-HARDENING
 canonical_rule_registry_ref: governance/specifications/current/CANONICAL_RULE_REGISTRY.yaml
 canonical_rule_registry_uid: GOV-CANONICAL-RULE-REGISTRY-001
 selected_execution_profile_state:
@@ -104,8 +104,8 @@ specification_mutation_safety:
   ordinary_mid_stage_specification_mutation: BLOCK
   stage_end_consolidated_promotion_requires_new_explicit_directive: true
   execution_context_lock_required: true
-status: ACTIVE_GOVERNANCE_BLUEPRINT_CONSTRUCTION_TRACEABILITY_HARDENING
-next_action: MATERIALIZE_PREEXISTING_SPEC_CHANGE_AUTHORIZATION_AND_PROMOTE_SUCCESSOR
+status: ACTIVE_GOVERNANCE_BLUEPRINT_CONSTRUCTION_TRACEABILITY_HARDENING_PROMOTED_REVALIDATION_REQUIRED
+next_action: RUN_SUCCESSOR_EXACT_HEAD_VALIDATION_THEN_EXECUTE_ONE_FRESH_BLUEPRINT_REPLANNING
 previous_closed_product_work_unit:
   work_unit_uid: WU-STAGE02-CORE01-STRUCTURAL-REMEDIATION-001
   canonical_name: CORE01_STRUCTURAL_CONTRACT_REMEDIATION
@@ -284,12 +284,12 @@ previous_closed_work_unit:
     source_runtime_residual_count: 0
     product_stage_credit: 0
 resume_control:
-  current_resume_point: GOVERNANCE_BLUEPRINT_CONSTRUCTION_TRACEABILITY_HARDENING_READY_FOR_AUTHORIZATION
+  current_resume_point: BLUEPRINT_TRACEABILITY_SUCCESSOR_PROMOTED_EXACT_HEAD_REVALIDATION_REQUIRED
   current_work_unit_uid: WU-GOV-BLUEPRINT-CONSTRUCTION-TRACEABILITY-HARDENING-001
   current_owner: .github/governance-source/active/source/12_DOCS/mother-spec/01_BLUEPRINT_DESIGN_GOVERNANCE.md
   historical_stage2_results_are_current_state: false
   stage2_execution_requires_fresh_entry_resolution: false
-  exact_next_action: MATERIALIZE_PREEXISTING_SPEC_CHANGE_AUTHORIZATION_AND_PROMOTE_SUCCESSOR
+  exact_next_action: RUN_SUCCESSOR_EXACT_HEAD_VALIDATION_THEN_EXECUTE_ONE_FRESH_BLUEPRINT_REPLANNING
   parent_work_unit_uid: WU-TEST-STAGE02-DESIGN-PROJECTOR-001
   parent_resume_point: STAGE02_DESIGN_CONTRACT_REVALIDATION_PROJECTOR_MAINTENANCE_READY
   parent_exact_next_action: HARDEN_STAGE02_DESIGN_CONTRACT_REVALIDATION_PROJECTOR
@@ -298,13 +298,13 @@ resume_control:
   preserved_product_resume_point: ASSET01_STAGE2_EXACT_CLOSURES_REVALIDATED_REVIEW_ONLY_PRODUCT_AUTHORITY_REQUIRED
   preserved_product_next_action: REVIEW_ASSET01_STAGE02_REMAINING_REVIEW_ONLY_DESIGN_CONTRACT_CANDIDATE
 governance_revision_transition:
-  current_governance_uid: GOV-REV-20260919-SEMANTIC-BASELINE-CONSUMER-SINGLE-OWNER-HARDENING
-  predecessor_governance_uid: GOV-REV-20260919-STRUCTURED-MUTATION-SELECTOR-HARDENING
+  current_governance_uid: GOV-REV-20260919-BLUEPRINT-CONSTRUCTION-TRACEABILITY-HARDENING
+  predecessor_governance_uid: GOV-REV-20260919-SEMANTIC-BASELINE-CONSUMER-SINGLE-OWNER-HARDENING
   predecessor_attempt_preserved_as_historical_evidence: true
   predecessor_attempt_history_ref: governance/test/history/stage02/design-remediation-routing-20260918/STAGE02_CORE01_DESIGN_REMEDIATION_TEST_EVIDENCE.json
   predecessor_attempt_may_close_under_current_governance: false
-  fresh_revalidation_required: false
-  fresh_revalidation_scope: CORE01_STAGE01_STAGE02_AND_AFFECTED_REUSABLE_CONSUMERS
+  fresh_revalidation_required: true
+  fresh_revalidation_scope: LATEST_BLUEPRINT_STANDARD_PILOT_REEXECUTION_AND_AFFECTED_DESIGN_CONSUMERS
   mother_machine_revalidation_complete: true
   mother_machine_revalidation_run_id: 35321233970
   mother_machine_revalidation_head: 736622cf32e1a19119317b4d9b56af51c036ce03
@@ -2236,288 +2236,288 @@ stage02_root_continuity_maintenance_closure:
   legal_next_transition: RESTORE_ASSET01_PRODUCT_STAGE_EXECUTION_LAYER_AFTER_ROOT_CONTINUITY_REPAIR
   closure_persistence_exact_head_revalidation_required: true
 suspended_product_work_unit_asset01_stage02_design_projector_maintenance:
-    work_unit_uid: WU-STAGE02-ASSET01-8133839F-REPLAY
-    canonical_name: ASSET01_STAGE02_FRESH_REPLAY
-    stage_uid: STAGE-02
-    semantic_capability: PAGE_FUNCTIONAL_CONTRACT
-    primary_task_layer: PRODUCT_STAGE_EXECUTION
-    scope:
+  work_unit_uid: WU-STAGE02-ASSET01-8133839F-REPLAY
+  canonical_name: ASSET01_STAGE02_FRESH_REPLAY
+  stage_uid: STAGE-02
+  semantic_capability: PAGE_FUNCTIONAL_CONTRACT
+  primary_task_layer: PRODUCT_STAGE_EXECUTION
+  scope:
+  - ASSET-01
+  canonical_owner: 00_SOURCE_INTAKE/run_asset01_8133839f_stage02/04_PAGE_FUNCTIONAL_CONTRACT/CURRENT_PROBLEM_REGISTER.yaml
+  current_status: SUSPENDED_FOR_STAGE02_DESIGN_CONTRACT_REVALIDATION_PROJECTOR_MAINTENANCE
+  source_attempt_uid: STAGE02-ASSET01-8133839F-REPLAY
+  source_problem_denominator: 75
+  source_closure_blocker_denominator: 7
+  dependencies:
+  - 00_SOURCE_INTAKE/run_asset01_8133839f_stage02/02_BASE_BLUEPRINT/ASSET-01/PAGE_BASE_BLUEPRINT.yaml
+  - 00_SOURCE_INTAKE/run_asset01_8133839f_stage02/03_BLUEPRINT_BINDING/ASSET-01/BLUEPRINT_BINDING_MANIFEST.yaml
+  required_outputs:
+  - FUNCTIONAL_CHAIN_SPEC
+  - DEPENDENCY_MAP
+  - PAGE_CONSTRUCTION_SPEC_PACKAGE
+  - ASYNC_PROVIDER_CONTRACT
+  - SHARED_OWNER_PORT_MAP
+  - FUNCTIONAL_WORKBENCH_CONTRACT
+  - INTERACTION_TOPOLOGY_SPEC
+  - REQUIRED_FIELD_MANIFEST
+  - FUNCTIONAL_CHAIN_MANIFEST
+  - EFFECTIVE_CONTRACT_OVERLAY
+  - DEPENDENCY_TOPOLOGY
+  - DENOMINATOR_SNAPSHOT
+  - CLASSIFICATION_RULESET
+  - CHANGE_IMPACT_MAP
+  - STAGE_EXECUTION_PREFLIGHT_RECEIPT
+  - CURRENT_PROBLEM_REGISTER
+  - RESOLUTION_LEDGER
+  - FUNCTION_ADMISSION_SCORECARD
+  - AUTO_COMPLETION_SCOPE_LEDGER
+  operation_bindings:
+    STAGE_EXECUTION_PREFLIGHT_COMPILE:
+      executor_owner: governance/ci/run_current_stage2_actual_test.py
+      result_owner: 00_SOURCE_INTAKE/run_asset01_8133839f_stage02/04_PAGE_FUNCTIONAL_CONTRACT/CURRENT_PROBLEM_REGISTER.yaml
+    EFFECTIVE_CONTRACT_OVERLAY_COMPILE:
+      executor_owner: governance/ci/run_current_stage2_actual_test.py
+      result_owner: 00_SOURCE_INTAKE/run_asset01_8133839f_stage02/04_PAGE_FUNCTIONAL_CONTRACT/CURRENT_PROBLEM_REGISTER.yaml
+    DEPENDENCY_TOPOLOGY_COMPILE:
+      executor_owner: governance/ci/run_current_stage2_actual_test.py
+      result_owner: 00_SOURCE_INTAKE/run_asset01_8133839f_stage02/04_PAGE_FUNCTIONAL_CONTRACT/CURRENT_PROBLEM_REGISTER.yaml
+    CHANGE_IMPACT_MAP_COMPILE:
+      executor_owner: governance/ci/run_current_stage2_actual_test.py
+      result_owner: 00_SOURCE_INTAKE/run_asset01_8133839f_stage02/04_PAGE_FUNCTIONAL_CONTRACT/CURRENT_PROBLEM_REGISTER.yaml
+    FUNCTIONAL_CHAIN_COMPILE:
+      executor_owner: governance/ci/run_current_stage2_actual_test.py
+      result_owner: 00_SOURCE_INTAKE/run_asset01_8133839f_stage02/04_PAGE_FUNCTIONAL_CONTRACT/CURRENT_PROBLEM_REGISTER.yaml
+    DEPENDENCY_MAP_COMPILE:
+      executor_owner: governance/ci/run_current_stage2_actual_test.py
+      result_owner: 00_SOURCE_INTAKE/run_asset01_8133839f_stage02/04_PAGE_FUNCTIONAL_CONTRACT/CURRENT_PROBLEM_REGISTER.yaml
+    PAGE_CONSTRUCTION_SPEC_COMPILE:
+      executor_owner: governance/ci/run_current_stage2_actual_test.py
+      result_owner: 00_SOURCE_INTAKE/run_asset01_8133839f_stage02/04_PAGE_FUNCTIONAL_CONTRACT/CURRENT_PROBLEM_REGISTER.yaml
+    ASYNC_PROVIDER_CONTRACT_COMPILE:
+      executor_owner: governance/ci/run_current_stage2_actual_test.py
+      result_owner: 00_SOURCE_INTAKE/run_asset01_8133839f_stage02/04_PAGE_FUNCTIONAL_CONTRACT/CURRENT_PROBLEM_REGISTER.yaml
+    SHARED_OWNER_PORT_RESOLVE:
+      executor_owner: governance/ci/run_current_stage2_actual_test.py
+      result_owner: 00_SOURCE_INTAKE/run_asset01_8133839f_stage02/04_PAGE_FUNCTIONAL_CONTRACT/CURRENT_PROBLEM_REGISTER.yaml
+    FUNCTIONAL_WORKBENCH_CONTRACT_COMPILE:
+      executor_owner: governance/ci/run_current_stage2_actual_test.py
+      result_owner: 00_SOURCE_INTAKE/run_asset01_8133839f_stage02/04_PAGE_FUNCTIONAL_CONTRACT/CURRENT_PROBLEM_REGISTER.yaml
+    INTERACTION_TOPOLOGY_COMPILE:
+      executor_owner: governance/ci/run_current_stage2_actual_test.py
+      result_owner: 00_SOURCE_INTAKE/run_asset01_8133839f_stage02/04_PAGE_FUNCTIONAL_CONTRACT/CURRENT_PROBLEM_REGISTER.yaml
+    FUNCTION_ADMISSION_SCORECARD_COMPILE:
+      executor_owner: governance/ci/run_current_stage2_actual_test.py
+      result_owner: 00_SOURCE_INTAKE/run_asset01_8133839f_stage02/04_PAGE_FUNCTIONAL_CONTRACT/CURRENT_PROBLEM_REGISTER.yaml
+    AUTO_COMPLETION_SCOPE_LEDGER_COMPILE:
+      executor_owner: governance/ci/run_current_stage2_actual_test.py
+      result_owner: 00_SOURCE_INTAKE/run_asset01_8133839f_stage02/04_PAGE_FUNCTIONAL_CONTRACT/CURRENT_PROBLEM_REGISTER.yaml
+  scanner_bindings:
+    ENTITY_OPERATION_DENOMINATOR:
+      scanner_owner: governance/ci/run_current_stage2_actual_test.py
+      result_owner: governance/test/stage02/STAGE02_LATEST_TEST_EVIDENCE.json
+    CONTROL_ACTION_RUNTIME_CHAIN:
+      scanner_owner: governance/ci/run_current_stage2_actual_test.py
+      result_owner: governance/test/stage02/STAGE02_LATEST_TEST_EVIDENCE.json
+    PAYLOAD_INPUT:
+      scanner_owner: governance/ci/run_current_stage2_actual_test.py
+      result_owner: governance/test/stage02/STAGE02_LATEST_TEST_EVIDENCE.json
+    STATE_TRANSITION:
+      scanner_owner: governance/ci/run_current_stage2_actual_test.py
+      result_owner: governance/test/stage02/STAGE02_LATEST_TEST_EVIDENCE.json
+    ERROR_RECOVERY:
+      scanner_owner: governance/ci/run_current_stage2_actual_test.py
+      result_owner: governance/test/stage02/STAGE02_LATEST_TEST_EVIDENCE.json
+    AUDIT_EVENT:
+      scanner_owner: governance/ci/run_current_stage2_actual_test.py
+      result_owner: governance/test/stage02/STAGE02_LATEST_TEST_EVIDENCE.json
+    WORKBENCH_COHESION:
+      scanner_owner: governance/ci/run_current_stage2_actual_test.py
+      result_owner: governance/test/stage02/STAGE02_LATEST_TEST_EVIDENCE.json
+    INTERACTION_CONTINUITY:
+      scanner_owner: governance/ci/run_current_stage2_actual_test.py
+      result_owner: governance/test/stage02/STAGE02_LATEST_TEST_EVIDENCE.json
+    AI_CONTEXT_CONTINUITY:
+      scanner_owner: governance/ci/run_current_stage2_actual_test.py
+      result_owner: governance/test/stage02/STAGE02_LATEST_TEST_EVIDENCE.json
+    VERSION_FINALIZATION:
+      scanner_owner: governance/ci/run_current_stage2_actual_test.py
+      result_owner: governance/test/stage02/STAGE02_LATEST_TEST_EVIDENCE.json
+  product_blocker_credit: 31
+  out_of_scope:
+  - CORE-01
+  - STAGE03
+  - WEBSITE_CONSTRUCTION
+  - DEPLOYMENT
+  suspension_reason: SHARED_STAGE02_SCANNER_MISSING_CURRENT_EXTERNAL_AUTHORITY_RESOLUTION_AND_BLOCKED_ATTEMPT_REVALIDATION
+  suspension_product_credit: 0
+  restoration_evidence:
+    maintenance_closure_commit_sha: 3a50e27e41f46b19107b04a7620c38ac4c1da728
+    maintenance_exact_head_fresh_replay_run_id: 35428976873
+    maintenance_exact_head_selected_profile_run_id: 35428976886
+    maintenance_exact_head_full_line_run_id: 35428976862
+    maintenance_exact_head_branch_guard_run_id: 35428976882
+    all_required_outer_runs_success: true
+    product_denominator_at_restore:
+      fresh_functional_gap_total: 106
+      fresh_closure_blocker_total: 9
+    product_blocker_credit_from_maintenance: 0
+    rebootstrap_required_before_product_mutation: true
+  bounded_remediation_package:
+    function_admission_scorecard_ref: 00_SOURCE_INTAKE/run_asset01_8133839f_stage02/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/FUNCTION_ADMISSION_SCORECARD.yaml
+    auto_completion_scope_ledger_ref: 00_SOURCE_INTAKE/run_asset01_8133839f_stage02/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/AUTO_COMPLETION_SCOPE_LEDGER.yaml
+    frozen_dependency_closure_ref: 00_SOURCE_INTAKE/run_asset01_8133839f_stage02/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/FROZEN_REMEDIATION_DEPENDENCY_CLOSURE.yaml
+    design_contract_candidate_ref: 00_SOURCE_INTAKE/run_asset01_8133839f_stage02/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/DESIGN_CONTRACT_CANDIDATE.yaml
+    semantic_review_ref: 00_SOURCE_INTAKE/run_asset01_8133839f_stage02/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/REMEDIATION_SEMANTIC_REVIEW.yaml
+    blocker_coverage_ref: 00_SOURCE_INTAKE/run_asset01_8133839f_stage02/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/REMEDIATION_BLOCKER_COVERAGE.yaml
+    exact_non_ambiguous_closure_count: 31
+    review_only_candidate_problem_count: 75
+    materialized_product_credit_before_revalidation: 0
+    current_raw_problem_denominator: 106
+    current_closure_blocker_denominator: 9
+    user_or_authority_selection_still_required_for:
+    - ASSET-01-ACT-FINDING-CREATE_TRIGGER_BEHAVIOR
+  exact_closure_materialization:
+    canonical_successor_ref: 00_SOURCE_INTAKE/run_asset01_8133839f_stage02/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/FUNCTIONAL_CHAIN_SPEC.yaml
+    receipt_ref: 00_SOURCE_INTAKE/run_asset01_8133839f_stage02/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/EXACT_CLOSURE_MATERIALIZATION_RECEIPT.yaml
+    materialized_closure_count: 31
+    exact_external_authority_binding_count: 4
+    exact_success_state_binding_count: 7
+    deterministic_negative_transition_test_count: 5
+    exact_post_action_validation_wrapper_count: 15
+    review_only_candidate_problem_count_unchanged: 75
+    raw_source_mutated: false
+    product_blocker_credit_before_fresh_revalidation: 0
+    revalidation_status: FRESH_REVALIDATED
+    fresh_revalidation_source_sha: ca2f3e06ec633b78e08009d9f1aaf0672af4e0f6
+    product_blocker_credit_after_fresh_revalidation: 31
+  restoration_after_revalidation_entry_maintenance:
+    maintenance_closure_commit_sha: 5097e222f34204ff560fd464589ec5cfc5f75649
+    maintenance_exact_head_stage02_workflow_run_id: 35429947885
+    maintenance_exact_head_selected_profile_run_id: 35429947817
+    maintenance_exact_head_full_line_run_id: 35429947844
+    maintenance_exact_head_fresh_replay_run_id: 35429947827
+    maintenance_exact_head_branch_guard_run_id: 35429947811
+    all_required_outer_runs_success: true
+    current_source_problem_denominator: 106
+    current_source_closure_blocker_denominator: 9
+    exact_materialized_closure_count_pending_revalidation: 31
+    product_blocker_credit_before_revalidation: 0
+    rebootstrap_required_before_revalidation_trigger: true
+  stage02_revalidation_trigger:
+    trigger_kind: PERSISTED_CURRENT_STATE_PUSH_REVALIDATION
+    trigger_marker: '[stage02-revalidate]'
+    trigger_parent_head_sha: 5632d077e05b555e134b4f1523249a78141ad320
+    run_uid: FRESH-ASSET01-8133839F-STAGE02
+    attempt_uid: STAGE02-ASSET01-8133839F-REPLAY
+    expected_page_scope:
     - ASSET-01
-    canonical_owner: 00_SOURCE_INTAKE/run_asset01_8133839f_stage02/04_PAGE_FUNCTIONAL_CONTRACT/CURRENT_PROBLEM_REGISTER.yaml
-    current_status: SUSPENDED_FOR_STAGE02_DESIGN_CONTRACT_REVALIDATION_PROJECTOR_MAINTENANCE
-    source_attempt_uid: STAGE02-ASSET01-8133839F-REPLAY
-    source_problem_denominator: 75
-    source_closure_blocker_denominator: 7
-    dependencies:
-    - 00_SOURCE_INTAKE/run_asset01_8133839f_stage02/02_BASE_BLUEPRINT/ASSET-01/PAGE_BASE_BLUEPRINT.yaml
-    - 00_SOURCE_INTAKE/run_asset01_8133839f_stage02/03_BLUEPRINT_BINDING/ASSET-01/BLUEPRINT_BINDING_MANIFEST.yaml
-    required_outputs:
-    - FUNCTIONAL_CHAIN_SPEC
-    - DEPENDENCY_MAP
-    - PAGE_CONSTRUCTION_SPEC_PACKAGE
-    - ASYNC_PROVIDER_CONTRACT
-    - SHARED_OWNER_PORT_MAP
-    - FUNCTIONAL_WORKBENCH_CONTRACT
-    - INTERACTION_TOPOLOGY_SPEC
-    - REQUIRED_FIELD_MANIFEST
-    - FUNCTIONAL_CHAIN_MANIFEST
-    - EFFECTIVE_CONTRACT_OVERLAY
-    - DEPENDENCY_TOPOLOGY
-    - DENOMINATOR_SNAPSHOT
-    - CLASSIFICATION_RULESET
-    - CHANGE_IMPACT_MAP
-    - STAGE_EXECUTION_PREFLIGHT_RECEIPT
-    - CURRENT_PROBLEM_REGISTER
-    - RESOLUTION_LEDGER
-    - FUNCTION_ADMISSION_SCORECARD
-    - AUTO_COMPLETION_SCOPE_LEDGER
-    operation_bindings:
-      STAGE_EXECUTION_PREFLIGHT_COMPILE:
-        executor_owner: governance/ci/run_current_stage2_actual_test.py
-        result_owner: 00_SOURCE_INTAKE/run_asset01_8133839f_stage02/04_PAGE_FUNCTIONAL_CONTRACT/CURRENT_PROBLEM_REGISTER.yaml
-      EFFECTIVE_CONTRACT_OVERLAY_COMPILE:
-        executor_owner: governance/ci/run_current_stage2_actual_test.py
-        result_owner: 00_SOURCE_INTAKE/run_asset01_8133839f_stage02/04_PAGE_FUNCTIONAL_CONTRACT/CURRENT_PROBLEM_REGISTER.yaml
-      DEPENDENCY_TOPOLOGY_COMPILE:
-        executor_owner: governance/ci/run_current_stage2_actual_test.py
-        result_owner: 00_SOURCE_INTAKE/run_asset01_8133839f_stage02/04_PAGE_FUNCTIONAL_CONTRACT/CURRENT_PROBLEM_REGISTER.yaml
-      CHANGE_IMPACT_MAP_COMPILE:
-        executor_owner: governance/ci/run_current_stage2_actual_test.py
-        result_owner: 00_SOURCE_INTAKE/run_asset01_8133839f_stage02/04_PAGE_FUNCTIONAL_CONTRACT/CURRENT_PROBLEM_REGISTER.yaml
-      FUNCTIONAL_CHAIN_COMPILE:
-        executor_owner: governance/ci/run_current_stage2_actual_test.py
-        result_owner: 00_SOURCE_INTAKE/run_asset01_8133839f_stage02/04_PAGE_FUNCTIONAL_CONTRACT/CURRENT_PROBLEM_REGISTER.yaml
-      DEPENDENCY_MAP_COMPILE:
-        executor_owner: governance/ci/run_current_stage2_actual_test.py
-        result_owner: 00_SOURCE_INTAKE/run_asset01_8133839f_stage02/04_PAGE_FUNCTIONAL_CONTRACT/CURRENT_PROBLEM_REGISTER.yaml
-      PAGE_CONSTRUCTION_SPEC_COMPILE:
-        executor_owner: governance/ci/run_current_stage2_actual_test.py
-        result_owner: 00_SOURCE_INTAKE/run_asset01_8133839f_stage02/04_PAGE_FUNCTIONAL_CONTRACT/CURRENT_PROBLEM_REGISTER.yaml
-      ASYNC_PROVIDER_CONTRACT_COMPILE:
-        executor_owner: governance/ci/run_current_stage2_actual_test.py
-        result_owner: 00_SOURCE_INTAKE/run_asset01_8133839f_stage02/04_PAGE_FUNCTIONAL_CONTRACT/CURRENT_PROBLEM_REGISTER.yaml
-      SHARED_OWNER_PORT_RESOLVE:
-        executor_owner: governance/ci/run_current_stage2_actual_test.py
-        result_owner: 00_SOURCE_INTAKE/run_asset01_8133839f_stage02/04_PAGE_FUNCTIONAL_CONTRACT/CURRENT_PROBLEM_REGISTER.yaml
-      FUNCTIONAL_WORKBENCH_CONTRACT_COMPILE:
-        executor_owner: governance/ci/run_current_stage2_actual_test.py
-        result_owner: 00_SOURCE_INTAKE/run_asset01_8133839f_stage02/04_PAGE_FUNCTIONAL_CONTRACT/CURRENT_PROBLEM_REGISTER.yaml
-      INTERACTION_TOPOLOGY_COMPILE:
-        executor_owner: governance/ci/run_current_stage2_actual_test.py
-        result_owner: 00_SOURCE_INTAKE/run_asset01_8133839f_stage02/04_PAGE_FUNCTIONAL_CONTRACT/CURRENT_PROBLEM_REGISTER.yaml
-      FUNCTION_ADMISSION_SCORECARD_COMPILE:
-        executor_owner: governance/ci/run_current_stage2_actual_test.py
-        result_owner: 00_SOURCE_INTAKE/run_asset01_8133839f_stage02/04_PAGE_FUNCTIONAL_CONTRACT/CURRENT_PROBLEM_REGISTER.yaml
-      AUTO_COMPLETION_SCOPE_LEDGER_COMPILE:
-        executor_owner: governance/ci/run_current_stage2_actual_test.py
-        result_owner: 00_SOURCE_INTAKE/run_asset01_8133839f_stage02/04_PAGE_FUNCTIONAL_CONTRACT/CURRENT_PROBLEM_REGISTER.yaml
-    scanner_bindings:
-      ENTITY_OPERATION_DENOMINATOR:
-        scanner_owner: governance/ci/run_current_stage2_actual_test.py
-        result_owner: governance/test/stage02/STAGE02_LATEST_TEST_EVIDENCE.json
-      CONTROL_ACTION_RUNTIME_CHAIN:
-        scanner_owner: governance/ci/run_current_stage2_actual_test.py
-        result_owner: governance/test/stage02/STAGE02_LATEST_TEST_EVIDENCE.json
-      PAYLOAD_INPUT:
-        scanner_owner: governance/ci/run_current_stage2_actual_test.py
-        result_owner: governance/test/stage02/STAGE02_LATEST_TEST_EVIDENCE.json
-      STATE_TRANSITION:
-        scanner_owner: governance/ci/run_current_stage2_actual_test.py
-        result_owner: governance/test/stage02/STAGE02_LATEST_TEST_EVIDENCE.json
-      ERROR_RECOVERY:
-        scanner_owner: governance/ci/run_current_stage2_actual_test.py
-        result_owner: governance/test/stage02/STAGE02_LATEST_TEST_EVIDENCE.json
-      AUDIT_EVENT:
-        scanner_owner: governance/ci/run_current_stage2_actual_test.py
-        result_owner: governance/test/stage02/STAGE02_LATEST_TEST_EVIDENCE.json
-      WORKBENCH_COHESION:
-        scanner_owner: governance/ci/run_current_stage2_actual_test.py
-        result_owner: governance/test/stage02/STAGE02_LATEST_TEST_EVIDENCE.json
-      INTERACTION_CONTINUITY:
-        scanner_owner: governance/ci/run_current_stage2_actual_test.py
-        result_owner: governance/test/stage02/STAGE02_LATEST_TEST_EVIDENCE.json
-      AI_CONTEXT_CONTINUITY:
-        scanner_owner: governance/ci/run_current_stage2_actual_test.py
-        result_owner: governance/test/stage02/STAGE02_LATEST_TEST_EVIDENCE.json
-      VERSION_FINALIZATION:
-        scanner_owner: governance/ci/run_current_stage2_actual_test.py
-        result_owner: governance/test/stage02/STAGE02_LATEST_TEST_EVIDENCE.json
-    product_blocker_credit: 31
-    out_of_scope:
-    - CORE-01
-    - STAGE03
-    - WEBSITE_CONSTRUCTION
-    - DEPLOYMENT
-    suspension_reason: SHARED_STAGE02_SCANNER_MISSING_CURRENT_EXTERNAL_AUTHORITY_RESOLUTION_AND_BLOCKED_ATTEMPT_REVALIDATION
-    suspension_product_credit: 0
-    restoration_evidence:
-      maintenance_closure_commit_sha: 3a50e27e41f46b19107b04a7620c38ac4c1da728
-      maintenance_exact_head_fresh_replay_run_id: 35428976873
-      maintenance_exact_head_selected_profile_run_id: 35428976886
-      maintenance_exact_head_full_line_run_id: 35428976862
-      maintenance_exact_head_branch_guard_run_id: 35428976882
-      all_required_outer_runs_success: true
-      product_denominator_at_restore:
-        fresh_functional_gap_total: 106
-        fresh_closure_blocker_total: 9
-      product_blocker_credit_from_maintenance: 0
-      rebootstrap_required_before_product_mutation: true
-    bounded_remediation_package:
-      function_admission_scorecard_ref: 00_SOURCE_INTAKE/run_asset01_8133839f_stage02/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/FUNCTION_ADMISSION_SCORECARD.yaml
-      auto_completion_scope_ledger_ref: 00_SOURCE_INTAKE/run_asset01_8133839f_stage02/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/AUTO_COMPLETION_SCOPE_LEDGER.yaml
-      frozen_dependency_closure_ref: 00_SOURCE_INTAKE/run_asset01_8133839f_stage02/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/FROZEN_REMEDIATION_DEPENDENCY_CLOSURE.yaml
-      design_contract_candidate_ref: 00_SOURCE_INTAKE/run_asset01_8133839f_stage02/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/DESIGN_CONTRACT_CANDIDATE.yaml
-      semantic_review_ref: 00_SOURCE_INTAKE/run_asset01_8133839f_stage02/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/REMEDIATION_SEMANTIC_REVIEW.yaml
-      blocker_coverage_ref: 00_SOURCE_INTAKE/run_asset01_8133839f_stage02/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/REMEDIATION_BLOCKER_COVERAGE.yaml
-      exact_non_ambiguous_closure_count: 31
-      review_only_candidate_problem_count: 75
-      materialized_product_credit_before_revalidation: 0
-      current_raw_problem_denominator: 106
-      current_closure_blocker_denominator: 9
-      user_or_authority_selection_still_required_for:
-      - ASSET-01-ACT-FINDING-CREATE_TRIGGER_BEHAVIOR
-    exact_closure_materialization:
-      canonical_successor_ref: 00_SOURCE_INTAKE/run_asset01_8133839f_stage02/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/FUNCTIONAL_CHAIN_SPEC.yaml
-      receipt_ref: 00_SOURCE_INTAKE/run_asset01_8133839f_stage02/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/EXACT_CLOSURE_MATERIALIZATION_RECEIPT.yaml
-      materialized_closure_count: 31
-      exact_external_authority_binding_count: 4
-      exact_success_state_binding_count: 7
-      deterministic_negative_transition_test_count: 5
-      exact_post_action_validation_wrapper_count: 15
-      review_only_candidate_problem_count_unchanged: 75
-      raw_source_mutated: false
-      product_blocker_credit_before_fresh_revalidation: 0
-      revalidation_status: FRESH_REVALIDATED
-      fresh_revalidation_source_sha: ca2f3e06ec633b78e08009d9f1aaf0672af4e0f6
-      product_blocker_credit_after_fresh_revalidation: 31
-    restoration_after_revalidation_entry_maintenance:
-      maintenance_closure_commit_sha: 5097e222f34204ff560fd464589ec5cfc5f75649
-      maintenance_exact_head_stage02_workflow_run_id: 35429947885
-      maintenance_exact_head_selected_profile_run_id: 35429947817
-      maintenance_exact_head_full_line_run_id: 35429947844
-      maintenance_exact_head_fresh_replay_run_id: 35429947827
-      maintenance_exact_head_branch_guard_run_id: 35429947811
-      all_required_outer_runs_success: true
-      current_source_problem_denominator: 106
-      current_source_closure_blocker_denominator: 9
-      exact_materialized_closure_count_pending_revalidation: 31
-      product_blocker_credit_before_revalidation: 0
-      rebootstrap_required_before_revalidation_trigger: true
-    stage02_revalidation_trigger:
-      trigger_kind: PERSISTED_CURRENT_STATE_PUSH_REVALIDATION
-      trigger_marker: '[stage02-revalidate]'
-      trigger_parent_head_sha: 5632d077e05b555e134b4f1523249a78141ad320
-      run_uid: FRESH-ASSET01-8133839F-STAGE02
-      attempt_uid: STAGE02-ASSET01-8133839F-REPLAY
-      expected_page_scope:
-      - ASSET-01
-      expected_revalidation_mode: SAME_ATTEMPT_BOUNDED_REMEDIATION_REVALIDATION
-      pre_revalidation_problem_denominator: 106
-      pre_revalidation_closure_blocker_denominator: 9
-      exact_materialized_closure_count_pending_credit: 31
-      product_blocker_credit_before_terminal_result: 0
-      current_specification_mutation: false
-      immutable_raw_source_mutation: false
-    suspension_evidence:
-      failed_stage02_revalidation_run_id: 35431701788
-      failed_stage02_revalidation_job_id: 105867361721
-      failure_signature: BLOCKED_PRODUCT_ROOT_EVIDENCE_MISMATCH
-      actual_stage02_scanner_executed: false
-      predecessor_evidence_root_present: false
-      current_materialized_product_root_present: true
-      product_denominator_changed: false
-      product_blocker_credit: 0
-    restoration_after_projector_persistence_maintenance:
-      maintenance_closure_commit_sha: cb66a8e371498487f7e333bf9bd94df4265becb6
-      maintenance_exact_head_fresh_replay_run_id: 35430479422
-      maintenance_exact_head_stage02_regression_run_id: 35430479427
-      maintenance_exact_head_selected_profile_run_id: 35430479450
-      maintenance_exact_head_full_line_run_id: 35430479426
-      maintenance_exact_head_branch_guard_run_id: 35430479431
-      all_required_outer_runs_success: true
-      projector_schema_repaired: true
-      stable_producer_schema_repaired: true
-      source_problem_denominator: 106
-      source_closure_blocker_denominator: 9
-      exact_materialized_closure_count_pending_revalidation: 31
-      product_blocker_credit_before_revalidation: 0
-      rebootstrap_required_before_revalidation_trigger: true
-    restoration_after_findings_result_maintenance:
-      maintenance_closure_commit_sha: 54d7d31224300bb6bf3944d3a49aa9eee5faf21c
-      maintenance_exact_head_stage02_workflow_run_id: 35431527868
-      maintenance_exact_head_selected_profile_run_id: 35431527784
-      maintenance_exact_head_full_line_run_id: 35431527774
-      maintenance_exact_head_branch_guard_run_id: 35431527857
-      maintenance_exact_head_fresh_replay_run_id: 35431527837
-      all_required_outer_runs_success: true
-      source_problem_denominator: 106
-      source_closure_blocker_denominator: 9
-      exact_materialized_closure_count_pending_revalidation: 31
-      product_blocker_credit: 0
-      rebootstrap_required_before_revalidation_trigger: true
-    stage02_revalidation_trigger_after_findings_result_repair:
-      trigger_kind: PERSISTED_CURRENT_STATE_PUSH_REVALIDATION
-      trigger_marker: '[stage02-revalidate]'
-      trigger_parent_head_sha: 861806132abd0ec581d3c9d4cdcfc33e37d7fd45
-      run_uid: FRESH-ASSET01-8133839F-STAGE02
-      attempt_uid: STAGE02-ASSET01-8133839F-REPLAY
-      expected_page_scope:
-      - ASSET-01
-      expected_revalidation_mode: SAME_ATTEMPT_BOUNDED_REMEDIATION_REVALIDATION
-      pre_revalidation_problem_denominator: 106
-      pre_revalidation_closure_blocker_denominator: 9
-      exact_materialized_closure_count_pending_credit: 31
-      product_blocker_credit_before_terminal_result: 0
-      findings_result_projector: BLOCKED
-      immutable_raw_source_mutation: false
-    stage02_revalidation_retry_after_next_action_alignment:
-      prior_failed_revalidation_run_id: 35431640363
-      prior_failed_revalidation_job_id: 105867195580
-      prior_failure_signature: STAGE2_CURRENT_PROJECTOR_NEXT_ACTION_DRIFT
-      corrected_next_action: REVALIDATE_ASSET01_STAGE02_AFTER_EXACT_CLOSURE_MATERIALIZATION
-      trigger_marker: '[stage02-revalidate]'
-      retry_parent_head_sha: 94e1f7f4afa07685c8c62d53f8b8279d9ca9af01
-      pre_revalidation_problem_denominator: 106
-      pre_revalidation_closure_blocker_denominator: 9
-      exact_materialized_closure_count_pending_credit: 31
-      product_blocker_credit_before_terminal_result: 0
-    restoration_after_root_continuity_maintenance:
-      maintenance_closure_commit_sha: b28209c60842c0c69925e77e2d86f97700058225
-      maintenance_exact_head_stage02_workflow_run_id: 35431928545
-      maintenance_exact_head_selected_profile_run_id: 35431928573
-      maintenance_exact_head_full_line_run_id: 35431928532
-      maintenance_exact_head_branch_guard_run_id: 35431928519
-      maintenance_exact_head_fresh_replay_run_id: 35431928671
-      all_required_outer_runs_success: true
-      source_problem_denominator: 106
-      source_closure_blocker_denominator: 9
-      exact_materialized_closure_count_pending_revalidation: 31
-      product_blocker_credit: 0
-      rebootstrap_required_before_revalidation_trigger: true
-    restoration_after_revalidation_persistence_maintenance:
-      validated_head_sha: 34b3c0d43aff121ed18974907898a275a9408632
-      full_line_run_id: 35434834131
-      selected_profile_run_id: 35434834116
-      branch_guard_run_id: 35434834123
-      stage02_regression_run_id: 35434834137
-      outer_terminal_conclusions:
-      - SUCCESS
-      - SUCCESS
-      - SUCCESS
-      - SUCCESS
-      maintenance_product_stage_credit: 0
-      current_specification_mutated: false
-      product_contract_content_mutated: false
-      legal_next_transition: REVALIDATE_ASSET01_STAGE02_AFTER_EXACT_CLOSURE_MATERIALIZATION
-    fresh_revalidation_evidence:
-      source_execution_sha: ca2f3e06ec633b78e08009d9f1aaf0672af4e0f6
-      source_workflow_run_id: 35435405975
-      source_artifact_id: 10581363345
-      source_artifact_sha256: a103e733a86be6f818e1f96411790b1bd75ba60f651ae6d2761d9ae1d83db342
-      pre_revalidation_problem_denominator: 106
-      fresh_problem_denominator: 75
-      fresh_closure_blocker_denominator: 7
-      exact_closure_product_credit: 31
+    expected_revalidation_mode: SAME_ATTEMPT_BOUNDED_REMEDIATION_REVALIDATION
+    pre_revalidation_problem_denominator: 106
+    pre_revalidation_closure_blocker_denominator: 9
+    exact_materialized_closure_count_pending_credit: 31
+    product_blocker_credit_before_terminal_result: 0
+    current_specification_mutation: false
+    immutable_raw_source_mutation: false
+  suspension_evidence:
+    failed_stage02_revalidation_run_id: 35431701788
+    failed_stage02_revalidation_job_id: 105867361721
+    failure_signature: BLOCKED_PRODUCT_ROOT_EVIDENCE_MISMATCH
+    actual_stage02_scanner_executed: false
+    predecessor_evidence_root_present: false
+    current_materialized_product_root_present: true
+    product_denominator_changed: false
+    product_blocker_credit: 0
+  restoration_after_projector_persistence_maintenance:
+    maintenance_closure_commit_sha: cb66a8e371498487f7e333bf9bd94df4265becb6
+    maintenance_exact_head_fresh_replay_run_id: 35430479422
+    maintenance_exact_head_stage02_regression_run_id: 35430479427
+    maintenance_exact_head_selected_profile_run_id: 35430479450
+    maintenance_exact_head_full_line_run_id: 35430479426
+    maintenance_exact_head_branch_guard_run_id: 35430479431
+    all_required_outer_runs_success: true
+    projector_schema_repaired: true
+    stable_producer_schema_repaired: true
+    source_problem_denominator: 106
+    source_closure_blocker_denominator: 9
+    exact_materialized_closure_count_pending_revalidation: 31
+    product_blocker_credit_before_revalidation: 0
+    rebootstrap_required_before_revalidation_trigger: true
+  restoration_after_findings_result_maintenance:
+    maintenance_closure_commit_sha: 54d7d31224300bb6bf3944d3a49aa9eee5faf21c
+    maintenance_exact_head_stage02_workflow_run_id: 35431527868
+    maintenance_exact_head_selected_profile_run_id: 35431527784
+    maintenance_exact_head_full_line_run_id: 35431527774
+    maintenance_exact_head_branch_guard_run_id: 35431527857
+    maintenance_exact_head_fresh_replay_run_id: 35431527837
+    all_required_outer_runs_success: true
+    source_problem_denominator: 106
+    source_closure_blocker_denominator: 9
+    exact_materialized_closure_count_pending_revalidation: 31
+    product_blocker_credit: 0
+    rebootstrap_required_before_revalidation_trigger: true
+  stage02_revalidation_trigger_after_findings_result_repair:
+    trigger_kind: PERSISTED_CURRENT_STATE_PUSH_REVALIDATION
+    trigger_marker: '[stage02-revalidate]'
+    trigger_parent_head_sha: 861806132abd0ec581d3c9d4cdcfc33e37d7fd45
+    run_uid: FRESH-ASSET01-8133839F-STAGE02
+    attempt_uid: STAGE02-ASSET01-8133839F-REPLAY
+    expected_page_scope:
+    - ASSET-01
+    expected_revalidation_mode: SAME_ATTEMPT_BOUNDED_REMEDIATION_REVALIDATION
+    pre_revalidation_problem_denominator: 106
+    pre_revalidation_closure_blocker_denominator: 9
+    exact_materialized_closure_count_pending_credit: 31
+    product_blocker_credit_before_terminal_result: 0
+    findings_result_projector: BLOCKED
+    immutable_raw_source_mutation: false
+  stage02_revalidation_retry_after_next_action_alignment:
+    prior_failed_revalidation_run_id: 35431640363
+    prior_failed_revalidation_job_id: 105867195580
+    prior_failure_signature: STAGE2_CURRENT_PROJECTOR_NEXT_ACTION_DRIFT
+    corrected_next_action: REVALIDATE_ASSET01_STAGE02_AFTER_EXACT_CLOSURE_MATERIALIZATION
+    trigger_marker: '[stage02-revalidate]'
+    retry_parent_head_sha: 94e1f7f4afa07685c8c62d53f8b8279d9ca9af01
+    pre_revalidation_problem_denominator: 106
+    pre_revalidation_closure_blocker_denominator: 9
+    exact_materialized_closure_count_pending_credit: 31
+    product_blocker_credit_before_terminal_result: 0
+  restoration_after_root_continuity_maintenance:
+    maintenance_closure_commit_sha: b28209c60842c0c69925e77e2d86f97700058225
+    maintenance_exact_head_stage02_workflow_run_id: 35431928545
+    maintenance_exact_head_selected_profile_run_id: 35431928573
+    maintenance_exact_head_full_line_run_id: 35431928532
+    maintenance_exact_head_branch_guard_run_id: 35431928519
+    maintenance_exact_head_fresh_replay_run_id: 35431928671
+    all_required_outer_runs_success: true
+    source_problem_denominator: 106
+    source_closure_blocker_denominator: 9
+    exact_materialized_closure_count_pending_revalidation: 31
+    product_blocker_credit: 0
+    rebootstrap_required_before_revalidation_trigger: true
+  restoration_after_revalidation_persistence_maintenance:
+    validated_head_sha: 34b3c0d43aff121ed18974907898a275a9408632
+    full_line_run_id: 35434834131
+    selected_profile_run_id: 35434834116
+    branch_guard_run_id: 35434834123
+    stage02_regression_run_id: 35434834137
+    outer_terminal_conclusions:
+    - SUCCESS
+    - SUCCESS
+    - SUCCESS
+    - SUCCESS
+    maintenance_product_stage_credit: 0
+    current_specification_mutated: false
+    product_contract_content_mutated: false
+    legal_next_transition: REVALIDATE_ASSET01_STAGE02_AFTER_EXACT_CLOSURE_MATERIALIZATION
+  fresh_revalidation_evidence:
+    source_execution_sha: ca2f3e06ec633b78e08009d9f1aaf0672af4e0f6
+    source_workflow_run_id: 35435405975
+    source_artifact_id: 10581363345
+    source_artifact_sha256: a103e733a86be6f818e1f96411790b1bd75ba60f651ae6d2761d9ae1d83db342
+    pre_revalidation_problem_denominator: 106
+    fresh_problem_denominator: 75
+    fresh_closure_blocker_denominator: 7
+    exact_closure_product_credit: 31
 interrupted_test_validation_work_unit_blueprint_traceability:
   work_unit_uid: WU-TEST-STAGE02-DESIGN-PROJECTOR-001
   canonical_name: STAGE02_APPROVED_DESIGN_CONTRACT_REVALIDATION_PROJECTOR_HARDENING
@@ -2565,7 +2565,7 @@ active_work_unit:
   canonical_name: INITIAL_BLUEPRINT_CONSTRUCTION_TRACEABILITY_HARDENING
   primary_task_layer: GOVERNANCE_MAINTENANCE
   canonical_owner: .github/governance-source/active/source/12_DOCS/mother-spec/01_BLUEPRINT_DESIGN_GOVERNANCE.md
-  current_status: READY_FOR_AUTHORIZATION_RECEIPT
+  current_status: PROMOTION_MATERIALIZED_EXACT_HEAD_REVALIDATION_REQUIRED
   authorization_uid: USR-DIRECTIVE-20260919-BLUEPRINT-CONSTRUCTION-TRACEABILITY-HARDENING-R1
   scope:
   - CONSTRUCTION_BLUEPRINT_PACKAGE_COMPLETENESS

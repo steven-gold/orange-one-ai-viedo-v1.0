@@ -76,3 +76,8 @@ The candidate package cannot self-prove integrity. The trust-root hash set is an
 - The reusable Mother Policy MUST remain product-neutral. Product-specific profile identity is legal only in an explicitly classified non-global execution-profile/provenance context.
 - Source bytes, Root Manifest, compiled baseline, checksum manifest, deterministic package identity, external trust projection, and Current governance source-lineage projection MUST advance atomically.
 
+## v2.2.10 blueprint construction traceability hardening rule
+- v2.2.9 remains immutable predecessor history.
+- A blueprint is not implementation-ready merely because controls/components exist or one overview visual was produced.
+- Applicable blueprint artifacts, function-to-visual and visual-to-function traces, multi-state visual evidence/annotations, construction-delta classification, quantitative freeze coverage, and implementation handoff are Required before Design Freeze/implementation where applicable.
+- Product-specific behavior remains governed by Product Authority; these common rules define completeness and traceability and MUST_NOT invent product semantics.

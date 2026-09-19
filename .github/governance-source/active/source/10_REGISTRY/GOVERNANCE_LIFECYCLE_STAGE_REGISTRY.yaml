@@ -4,7 +4,7 @@ artifact_type: EXECUTION_PROFILE_REGISTRY
 status: CURRENT_CANDIDATE
 canonical_path: 10_REGISTRY/GOVERNANCE_LIFECYCLE_STAGE_REGISTRY.yaml
 owner_uid: OWNER-GOVERNANCE-LIFECYCLE
-governance_revision: v2.2.8-structured-mutation-selector-hardening
+governance_revision: v2.2.10-blueprint-construction-traceability-hardening
 normative_section_uids:
 - WEB-GOV-02-S004
 - WEB-GOV-02-S067
@@ -287,6 +287,7 @@ stages:
   - WEB-GOV-01-S075
   - WEB-GOV-03-S069
   - WEB-GOV-04-S083
+  - WEB-GOV-01-S077
   pre_execution_gate: GOVERNANCE_LOAD_RECEIPT_PASS
   validator_names:
   - FUNCTIONAL_CONTRACT_GUARD
@@ -476,6 +477,10 @@ stages:
   - WEB-GOV-01-S075
   - WEB-GOV-03-S069
   - WEB-GOV-04-S083
+  - WEB-GOV-01-S077
+  - WEB-GOV-01-S078
+  - WEB-GOV-01-S079
+  - WEB-GOV-01-S081
   pre_execution_gate: GOVERNANCE_LOAD_RECEIPT_PASS
   validator_names:
   - VISUAL_DOMAIN_GUARD
@@ -590,6 +595,12 @@ stages:
   - WEB-GOV-01-S075
   - WEB-GOV-03-S069
   - WEB-GOV-04-S083
+  - WEB-GOV-01-S076
+  - WEB-GOV-01-S077
+  - WEB-GOV-01-S080
+  - WEB-GOV-01-S081
+  - WEB-GOV-01-S082
+  - WEB-GOV-01-S083
   pre_execution_gate: GOVERNANCE_LOAD_RECEIPT_PASS
   validator_names:
   - DESIGN_FREEZE_GUARD
@@ -721,6 +732,8 @@ stages:
   - WEB-GOV-01-S075
   - WEB-GOV-03-S069
   - WEB-GOV-04-S083
+  - WEB-GOV-01-S080
+  - WEB-GOV-01-S083
   pre_execution_gate: GOVERNANCE_LOAD_RECEIPT_PASS
   validator_names:
   - CONSTRUCTION_ARTIFACT_INDEX_GUARD
@@ -1789,6 +1802,14 @@ cross_stage_invariants:
     raw_ai_output_direct_authoritative_promotion: BLOCK
     revision_context_continuity_required_when_applicable: true
     branch_context_isolation_and_explicit_adoption_required_when_applicable: true
+    construction_blueprint_package_required_before_freeze_and_implementation: true
+    function_visual_bidirectional_traceability_required: true
+    mandatory_multi_state_visual_evidence_required_when_applicable: true
+    visual_reference_annotation_required: true
+    construction_delta_matrix_required_when_prior_implementation_exists: true
+    scenario_to_function_visual_coverage_required: true
+    quantitative_design_freeze_completeness_required: true
+    blueprint_to_implementation_handoff_required: true
   canonical_stage_execution_optimization:
     invariant_uid: GOV-INV-CANONICAL-STAGE-EXECUTION-OPTIMIZATION-001
     normative_section_uid: WEB-GOV-03-S062

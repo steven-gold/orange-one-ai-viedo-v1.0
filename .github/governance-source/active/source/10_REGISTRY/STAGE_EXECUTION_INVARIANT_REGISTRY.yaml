@@ -4,7 +4,7 @@ artifact_type: STAGE_EXECUTION_INVARIANT_REGISTRY
 status: CURRENT_CANDIDATE
 canonical_path: 10_REGISTRY/STAGE_EXECUTION_INVARIANT_REGISTRY.yaml
 owner_uid: OWNER-GOVERNANCE-STAGE-EXECUTION-INVARIANT
-governance_revision: v2.2.8-structured-mutation-selector-hardening
+governance_revision: v2.2.10-blueprint-construction-traceability-hardening
 scope:
   applies_to_stages:
   - STAGE-01
@@ -727,6 +727,186 @@ invariants:
     git_diff_quiet_alone_sufficient: false
     status_or_equivalent_untracked_aware_check_required: true
     exact_output_path_persistence_proof_required: true
+  CONSTRUCTION_BLUEPRINT_PACKAGE_COMPLETENESS:
+    required_artifact: CONSTRUCTION_BLUEPRINT_PACKAGE
+    package_is_non_owning_binding: true
+    separate_page_and_visual_authority_preserved: true
+    required_domain_bindings:
+    - CURRENT_TRUTH_SOURCE_MAP
+    - REQUIREMENT_PROBLEM_DEFINITION
+    - BUSINESS_ENTITY_INVENTORY
+    - BUSINESS_ENTITY_OPERATION_MATRIX
+    - ENTITY_HIERARCHY_MATRIX
+    - USER_JOURNEY_REGISTRY
+    - FUNCTIONAL_WORKBENCH_CONTRACT
+    - INTERACTION_TOPOLOGY_MATRIX
+    - FUNCTIONAL_CHAIN
+    - CROSS_PAGE_FLOW_WHEN_APPLICABLE
+    - PAGE_DESIGN
+    - SECTION_COMPONENT_REGISTRY
+    - CONTROL_FIELD_ACTION_GATE_PERMISSION_BINDING
+    - STATE_TRANSITION_ERROR_RECOVERY
+    - DATA_OBJECT_BINDING
+    - FUNCTION_VISUAL_IMPACT_MATRIX
+    - VISUAL_ANCHOR_REGISTRY
+    - VISUAL_GENERATION_MANIFEST
+    - VISUAL_CANDIDATES
+    - CONSTRUCTION_DELTA_MATRIX_WHEN_PRIOR_IMPLEMENTATION_EXISTS
+    - PRE_IMPLEMENTATION_GUARDS
+    - BLUEPRINT_IMPLEMENTATION_HANDOFF
+    - ACCEPTANCE_MATRIX
+    - AUDIT_BASELINE
+    - DEFINITION_OF_DONE
+    - RESUME_NEXT_STEP
+    missing_applicable_package_item: BLUEPRINT_PACKAGE_INCOMPLETE
+    implementation_before_complete_package: BLOCK
+  FUNCTION_VISUAL_BIDIRECTIONAL_TRACEABILITY:
+    required_forward_trace:
+    - BUSINESS_ENTITY
+    - OPERATION
+    - JOURNEY
+    - FUNCTIONAL_WORKBENCH
+    - SECTION
+    - COMPONENT
+    - CONTROL_OR_SYSTEM_TRIGGER
+    - FIELD_OR_INPUT
+    - STATE
+    - VISUAL_ANCHOR
+    - VISUAL_CANDIDATE
+    - IMPLEMENTATION_TARGET
+    - ACCEPTANCE_ITEM
+    reverse_trace_required_for_visible_interactive_or_state_bearing_elements: true
+    orphan_visual_element: BLOCK
+    required_user_observable_function_without_visual_binding: BLOCK
+    non_visual_system_function_requires_authority: true
+    arbitrary_visual_topology_change: BLOCK
+  MANDATORY_MULTI_STATE_VISUAL_EVIDENCE:
+    required_artifact: VISUAL_SCENARIO_EVIDENCE_SET
+    scenario_universe:
+    - CANONICAL_WORKSPACE_OVERVIEW
+    - INTERACTION_TOPOLOGY_DIAGRAM
+    - INITIAL_OR_EMPTY_STATE
+    - ACTIVE_WORKING_STATE
+    - COMPLEX_OR_CONDITIONAL_STATE
+    - FINALIZATION_OR_CONFIRMATION_STATE
+    - ERROR_BLOCKED_RECOVERY_STATE
+    - CROSS_PAGE_HANDOFF_DIAGRAM
+    applicability_required: true
+    moodboard_may_satisfy_actual_structure_preview: false
+    missing_required_scenario: BLOCK
+    same_layout_tokens_anchors_topology_required_unless_change_set: true
+  VISUAL_REFERENCE_ANNOTATION:
+    required_artifact: VISUAL_REFERENCE_ANNOTATION
+    required_fields:
+    - visual_uid
+    - page_or_scope_uid
+    - scenario_uid
+    - state_uid
+    - workbench_uid
+    - journey_uid
+    - parent_visual_uid
+    - design_version
+    - change_set_uid
+    - viewport
+    - language
+    - theme
+    - applicable_entity_operation
+    - visible_sections
+    - conditional_sections
+    - locked_regions
+    - editable_regions
+    - visual_anchor_uids
+    - primary_controls
+    - disabled_or_blocked_controls
+    - next_action_or_gate
+    - source_authority_refs
+    - authority_classification
+    - verification_purpose
+    unannotated_visual_may_pass_visual_review: false
+  CONSTRUCTION_DELTA_EXISTING_IMPLEMENTATION:
+    required_artifact: CONSTRUCTION_DELTA_MATRIX
+    activation: PRIOR_IMPLEMENTATION_EXISTS
+    existing_status_universe:
+    - EXISTS
+    - PARTIAL
+    - MISSING
+    - WRONG_BINDING
+    - OBSOLETE
+    - DUPLICATE
+    required_disposition_universe:
+    - KEEP
+    - MODIFY
+    - REMOVE
+    - MERGE
+    - REBIND
+    - ADD
+    required_fields:
+    - requirement_uid
+    - business_entity_operation
+    - current_program_artifact_or_code_owner
+    - current_path_or_identity
+    - existing_status
+    - required_disposition
+    - required_change
+    - authority_ref
+    - functional_impact
+    - visual_impact
+    - api_runtime_data_impact
+    - permission_impact
+    - state_impact
+    - cross_page_impact
+    - required_test_or_audit
+    - construction_owner
+    - blocking_state
+    - downstream_reverify_impact
+    already_auditable_gap_deferred_until_downstream_test: BLOCK
+    ambiguous_product_behavior_autofill: BLOCK
+  SCENARIO_TO_FUNCTION_VISUAL_COVERAGE:
+    denominator: APPROVED_REQUIRED_JOURNEY_STATE_BRANCH_SET
+    required_mapping:
+    - WORKBENCH
+    - FUNCTION_OR_OPERATION
+    - STATE
+    - CONTROLS
+    - VISUAL_ANCHORS
+    - ACCEPTANCE_ITEMS
+    required_coverage_percent: 100
+    visual_scenario_drift: BLOCK
+  DESIGN_FREEZE_QUANTITATIVE_COMPLETENESS:
+    required_percent_fields:
+      business_entity_operation_coverage: 100
+      functional_chain_coverage: 100
+      function_to_visual_binding_coverage: 100
+      visible_visual_to_function_binding_coverage: 100
+      required_state_scenario_visual_coverage: 100
+      cross_page_flow_coverage: 100
+      construction_delta_classification_when_applicable: 100
+      required_acceptance_item_definition: 100
+    required_zero_fields:
+    - orphan_visual_element_count
+    - unbound_control_count
+    - unbound_field_count
+    - undefined_next_step_count
+    - missing_required_recovery_path_count
+    - missing_required_visual_candidate_count
+    authority_gap_may_be_hidden_by_percentage: false
+    single_overview_visual_may_substitute_denominator: false
+  BLUEPRINT_TO_IMPLEMENTATION_HANDOFF:
+    required_artifact: BLUEPRINT_IMPLEMENTATION_HANDOFF
+    required_fields:
+    - frozen_artifact_uids_hashes
+    - construction_delta_rows
+    - program_artifact_or_construction_owner
+    - implementation_dependency_order
+    - visual_reference_uids
+    - functional_workbench_and_topology_refs
+    - state_gate_permission_behavior
+    - payload_input_contracts
+    - error_recovery_behavior
+    - acceptance_audit_refs
+    - reentry_rollback_conditions
+    implementation_outside_frozen_handoff: BLOCK_AND_REOPEN_OWNING_CAPABILITY
+    bidirectional_design_to_code_traceability_required: true
 stage02_observed_defect_mapping:
 - finding: PORT_EXPOSURE_WITHOUT_TRIGGER
   mapped_invariant: RELATION_SEMANTIC_SEPARATION

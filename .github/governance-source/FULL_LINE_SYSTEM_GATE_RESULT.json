@@ -1,8 +1,8 @@
 {
   "artifact_type": "NON_NORMATIVE_FULL_LINE_SYSTEM_GATE_EVIDENCE",
   "mode": "SYSTEM_ROUND_1_FULL_LINE_HIGH_PRESSURE",
-  "source_zip_sha256": "fbc2050e1ddf1af7c0b5766b0aed01cacbd113a3699e8ed70743c5c70e976295",
-  "deterministic_source_bundle_sha256": "3c57c2d781d5cf5bfe64dda97dd671b2a471232d2af6f09d118437ce78f5846d",
+  "source_zip_sha256": "622e73c6fa7c88c02b243fcfe3382e2560f04214d5ef7efa5f83a5ce1b0c883c",
+  "deterministic_source_bundle_sha256": "feb707cf8607fb67b8ddc8705699081950d8cd5a6ce43c9c8ab261b05daa3d87",
   "lifecycle_stage_count": 11,
   "lifecycle_stage_uids": [
     "STAGE-01",
@@ -119,7 +119,7 @@
       {
         "check_id": "section_registry",
         "status": "PASS",
-        "section_count": 330,
+        "section_count": 338,
         "failures": [],
         "section_uids": [
           "WEB-GOV-01-S000",
@@ -199,6 +199,14 @@
           "WEB-GOV-01-S073",
           "WEB-GOV-01-S074",
           "WEB-GOV-01-S075",
+          "WEB-GOV-01-S076",
+          "WEB-GOV-01-S077",
+          "WEB-GOV-01-S078",
+          "WEB-GOV-01-S079",
+          "WEB-GOV-01-S080",
+          "WEB-GOV-01-S081",
+          "WEB-GOV-01-S082",
+          "WEB-GOV-01-S083",
           "WEB-GOV-02-S000",
           "WEB-GOV-02-S001",
           "WEB-GOV-02-S002",
@@ -496,7 +504,7 @@
         "validator_identities": 36,
         "audit_types": 13,
         "naming_items": 13,
-        "semantic_anchor_hash": "446007aa22777d490ba50f04cc764232872a5d9a6f497a4c7e681bdf02d5d0e8"
+        "semantic_anchor_hash": "fe2e39e4deedbdc610b927ccd7c5aa48da3f037f00aa99615a0b2c7f3ea1785a"
       },
       {
         "check_id": "program_artifact_instance_guard",
@@ -507,8 +515,8 @@
       {
         "check_id": "current_test_evidence_sync",
         "status": "PASS",
-        "current_revision": "v2.2.8",
-        "current_source_revision": "v2.2.8-structured-mutation-selector-hardening",
+        "current_revision": "v2.2.10",
+        "current_source_revision": "v2.2.10-blueprint-construction-traceability-hardening",
         "fresh_revalidation_required": true,
         "mandatory_suite_count": 17,
         "failures": []
@@ -539,7 +547,7 @@
       {
         "check_id": "stage_execution_invariants",
         "status": "PASS",
-        "invariant_count": 41,
+        "invariant_count": 49,
         "stage_count": 11,
         "failures": []
       },
@@ -564,7 +572,7 @@
       {
         "check_id": "acceptance_blueprint_compiled_baseline",
         "status": "PASS",
-        "compiled_requirements": 696,
+        "compiled_requirements": 729,
         "audit_denominator": 13,
         "failures": []
       },

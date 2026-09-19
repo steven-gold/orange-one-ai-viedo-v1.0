@@ -1,4 +1,4 @@
-schema_version: 2
+schema_version: 3
 artifact_uid: GOV-COMP-INTERACTION-TOPOLOGY-AI-CONTINUITY
 artifact_type: GOVERNANCE_SPECIFICATION_COMPONENT
 normative_status: ACTIVE_CURRENT_GOVERNANCE_COMPONENT
@@ -34,6 +34,38 @@ common_invariants:
     raw_ai_output_direct_to_authoritative_version: BLOCK
     detached_revision_without_lineage: BLOCK
     silent_branch_merge: BLOCK
+  FUNCTION_VISUAL_BIDIRECTIONAL_TRACEABILITY:
+    forward_trace_required:
+    - BUSINESS_ENTITY
+    - OPERATION
+    - JOURNEY
+    - FUNCTIONAL_WORKBENCH
+    - SECTION
+    - COMPONENT
+    - CONTROL_OR_SYSTEM_TRIGGER
+    - FIELD_OR_INPUT
+    - STATE
+    - VISUAL_ANCHOR
+    - VISUAL_CANDIDATE
+    - IMPLEMENTATION_TARGET
+    - ACCEPTANCE_ITEM
+    reverse_trace_for_visible_elements_required: true
+    orphan_visual_element: BLOCK
+    missing_visual_binding: BLOCK
+    arbitrary_layout_topology_change: BLOCK
+  MANDATORY_MULTI_STATE_VISUAL_EVIDENCE:
+    required_contract: VISUAL_SCENARIO_EVIDENCE_SET
+    applicability_required: true
+    missing_required_scenario: BLOCK
+    single_overview_substitutes_required_states: false
+  VISUAL_REFERENCE_ANNOTATION:
+    required_contract: VISUAL_REFERENCE_ANNOTATION
+    verification_purpose_required: true
+    unannotated_visual_may_pass_review: false
+  SCENARIO_TO_FUNCTION_VISUAL_COVERAGE:
+    required_coverage_percent: 100
+    denominator: APPROVED_REQUIRED_JOURNEY_STATE_BRANCH_SET
+    visual_scenario_drift: BLOCK
 authority_boundaries:
   functional_contract_authority: DEFINE_FUNCTIONAL_TOPOLOGY
   visual_design_authority: PROJECT_APPROVED_VISUAL_PROJECTION

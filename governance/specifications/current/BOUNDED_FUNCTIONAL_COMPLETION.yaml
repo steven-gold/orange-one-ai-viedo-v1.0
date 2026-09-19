@@ -1,4 +1,4 @@
-schema_version: 3
+schema_version: 4
 artifact_uid: GOV-COMP-BOUNDED-FUNCTIONAL-COMPLETION
 artifact_type: GOVERNANCE_SPECIFICATION_COMPONENT
 normative_status: ACTIVE_CURRENT_GOVERNANCE_COMPONENT
@@ -52,3 +52,39 @@ rules:
     index_may_skip_required_impacted_validator: false
     checkpoint_full_sweep_required: true
     full_sweep_required_before_freeze: true
+  CONSTRUCTION_BLUEPRINT_PACKAGE_COMPLETENESS:
+    required_artifact: CONSTRUCTION_BLUEPRINT_PACKAGE
+    package_is_non_owning_binding: true
+    missing_applicable_item: BLUEPRINT_PACKAGE_INCOMPLETE
+    implementation_before_complete_package: BLOCK
+  CONSTRUCTION_DELTA_EXISTING_IMPLEMENTATION:
+    required_artifact: CONSTRUCTION_DELTA_MATRIX
+    activation: PRIOR_IMPLEMENTATION_EXISTS
+    allowed_existing_status:
+    - EXISTS
+    - PARTIAL
+    - MISSING
+    - WRONG_BINDING
+    - OBSOLETE
+    - DUPLICATE
+    allowed_disposition:
+    - KEEP
+    - MODIFY
+    - REMOVE
+    - MERGE
+    - REBIND
+    - ADD
+    unclassified_existing_gap: BLOCK
+  QUANTITATIVE_DESIGN_FREEZE_COMPLETENESS:
+    required_percent: 100
+    orphan_visual_zero: true
+    unbound_control_zero: true
+    unbound_field_zero: true
+    undefined_next_step_zero: true
+    missing_recovery_zero: true
+    missing_required_visual_zero: true
+    authority_gap_hidden_by_percentage: BLOCK
+  BLUEPRINT_TO_IMPLEMENTATION_HANDOFF:
+    required_artifact: BLUEPRINT_IMPLEMENTATION_HANDOFF
+    bidirectional_traceability_required: true
+    out_of_handoff_discovery: REOPEN_OWNING_CAPABILITY

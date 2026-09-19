@@ -5,10 +5,18 @@ blueprint_type: ACCEPTANCE_AUDIT_BLUEPRINT
 status: CURRENT_CANDIDATE
 canonical_path: 10_REGISTRY/GOVERNANCE_ACCEPTANCE_AUDIT_BLUEPRINT.yaml
 owner_uid: OWNER-GOVERNANCE-ACCEPTANCE
-governance_revision: v2.2.8-structured-mutation-selector-hardening
+governance_revision: v2.2.10-blueprint-construction-traceability-hardening
 normative_section_uids:
 - WEB-GOV-04-S071
 - WEB-GOV-04-S076
+- WEB-GOV-01-S076
+- WEB-GOV-01-S077
+- WEB-GOV-01-S078
+- WEB-GOV-01-S079
+- WEB-GOV-01-S080
+- WEB-GOV-01-S081
+- WEB-GOV-01-S082
+- WEB-GOV-01-S083
 audit_catalog_ref: REG-AUDIT-CATALOG-001
 audit_item_uids:
 - AUD-GOV-001
@@ -220,6 +228,21 @@ product_neutral_entity_lifecycle_contract:
   raw_ai_output_direct_authoritative_promotion: BLOCK
   revision_context_continuity_required_when_applicable: true
   branch_context_isolation_and_explicit_adoption_required_when_applicable: true
+  construction_blueprint_package_required: true
+  function_visual_bidirectional_traceability_required: true
+  mandatory_multi_state_visual_evidence_required: true
+  visual_reference_annotation_required: true
+  construction_delta_matrix_required_when_prior_implementation_exists: true
+  scenario_to_function_visual_coverage_required: true
+  quantitative_design_freeze_completeness_required: true
+  blueprint_to_implementation_handoff_required: true
+  orphan_visual_element_zero_required: true
+  unbound_control_zero_required: true
+  unbound_field_zero_required: true
+  undefined_next_step_zero_required: true
+  missing_recovery_path_zero_required: true
+  required_visual_candidate_missing_zero_required: true
+  arbitrary_visual_layout_without_topology_binding: BLOCK
 stage_execution_optimization_contract:
   required: true
   invariant_registry_uid: REG-STAGE-EXECUTION-INVARIANT-001

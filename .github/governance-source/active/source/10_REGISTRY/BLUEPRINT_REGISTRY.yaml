@@ -4,11 +4,19 @@ artifact_type: BLUEPRINT_REGISTRY
 status: CURRENT_CANDIDATE
 canonical_path: 10_REGISTRY/BLUEPRINT_REGISTRY.yaml
 owner_uid: OWNER-GOVERNANCE-BLUEPRINT
-governance_revision: v2.2.8-structured-mutation-selector-hardening
+governance_revision: v2.2.10-blueprint-construction-traceability-hardening
 normative_section_uids:
 - WEB-GOV-01-S039
 - WEB-GOV-01-S069
 - WEB-GOV-04-S071
+- WEB-GOV-01-S076
+- WEB-GOV-01-S077
+- WEB-GOV-01-S078
+- WEB-GOV-01-S079
+- WEB-GOV-01-S080
+- WEB-GOV-01-S081
+- WEB-GOV-01-S082
+- WEB-GOV-01-S083
 rules:
   one_current_per_scope_and_type: true
   page_visual_editable_owner_separation: true
@@ -46,6 +54,11 @@ blueprint_types:
   created_stage_uid: STAGE-04
   owner_mode: ACCEPTANCE
   blueprint_type_uid: BPTYPE-GOV-006
+- blueprint_type: CONSTRUCTION_BLUEPRINT_PACKAGE
+  planning_domain: NON_OWNING_BINDING
+  created_stage_uid: STAGE-04
+  owner_mode: BINDING_ONLY
+  blueprint_type_uid: BPTYPE-GOV-007
 current_governance_blueprints:
 - blueprint_uid: BP-GOVERNANCE-ACCEPTANCE-001
   blueprint_type: ACCEPTANCE_AUDIT_BLUEPRINT

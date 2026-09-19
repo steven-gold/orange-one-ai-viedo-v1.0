@@ -5,7 +5,7 @@ artifact_type: SECTION_NUMBER_REGISTRY
 status: CURRENT_CANDIDATE
 canonical_path: 10_REGISTRY/SECTION_NUMBER_REGISTRY.yaml
 owner_uid: OWNER-GOVERNANCE-SECTION-REGISTRY
-governance_revision: v2.2.8-structured-mutation-selector-hardening
+governance_revision: v2.2.10-blueprint-construction-traceability-hardening
 policy:
   unique_numeric_h2_per_document: true
   section_uid_is_canonical_reference: true
@@ -683,6 +683,62 @@ documents:
     heading: '## 75. Execution Scope Authority / Capability Ownership / Upstream Re-entry'
     path: 12_DOCS/mother-spec/01_BLUEPRINT_DESIGN_GOVERNANCE.md
     binding_sha256: e2f129b9303dfcd435c9317d4ce5c5675aaae082d393099989d97221fbe8566f
+  - section_uid: WEB-GOV-01-S076
+    level: 2
+    canonical_number: '76'
+    title: 施工藍圖包完整度 Gate / Construction Blueprint Package Completeness
+    heading: '## 76. 施工藍圖包完整度 Gate / Construction Blueprint Package Completeness'
+    path: 12_DOCS/mother-spec/01_BLUEPRINT_DESIGN_GOVERNANCE.md
+    binding_sha256: 7509adb546bf56f120a254d6faaf3eae43130fbbe3505e3f97420966388e28a2
+  - section_uid: WEB-GOV-01-S077
+    level: 2
+    canonical_number: '77'
+    title: 功能與視覺雙向追溯 Gate / Functional-Visual Bidirectional Traceability
+    heading: '## 77. 功能與視覺雙向追溯 Gate / Functional-Visual Bidirectional Traceability'
+    path: 12_DOCS/mother-spec/01_BLUEPRINT_DESIGN_GOVERNANCE.md
+    binding_sha256: 36e1774e8b25911f00f8cd5f5786761e928f3be447fa39aa6ac50c016f8f1d4e
+  - section_uid: WEB-GOV-01-S078
+    level: 2
+    canonical_number: '78'
+    title: 強制多情境視覺證據集 / Mandatory Multi-State Visual Evidence Set
+    heading: '## 78. 強制多情境視覺證據集 / Mandatory Multi-State Visual Evidence Set'
+    path: 12_DOCS/mother-spec/01_BLUEPRINT_DESIGN_GOVERNANCE.md
+    binding_sha256: 04bc0d355890ea71b07d6e92906e42a255e0fce223f2eeaa9e40cedd99f43f32
+  - section_uid: WEB-GOV-01-S079
+    level: 2
+    canonical_number: '79'
+    title: 視覺參考註解合約 / Visual Reference Annotation Contract
+    heading: '## 79. 視覺參考註解合約 / Visual Reference Annotation Contract'
+    path: 12_DOCS/mother-spec/01_BLUEPRINT_DESIGN_GOVERNANCE.md
+    binding_sha256: ef229943784c0bdaceda6926d1773bbeb6b739d0a2d5f76340576628d112a905
+  - section_uid: WEB-GOV-01-S080
+    level: 2
+    canonical_number: '80'
+    title: 施工差異與既有實作缺口 Gate / Construction Delta and Existing Implementation Gap
+    heading: '## 80. 施工差異與既有實作缺口 Gate / Construction Delta and Existing Implementation Gap'
+    path: 12_DOCS/mother-spec/01_BLUEPRINT_DESIGN_GOVERNANCE.md
+    binding_sha256: 196a62e80373438c8a2fc2f9741be76cc63625415f4aa8a4f5505d363b067896
+  - section_uid: WEB-GOV-01-S081
+    level: 2
+    canonical_number: '81'
+    title: 情境對功能視覺覆蓋 Gate / Scenario-to-Function Visual Coverage
+    heading: '## 81. 情境對功能視覺覆蓋 Gate / Scenario-to-Function Visual Coverage'
+    path: 12_DOCS/mother-spec/01_BLUEPRINT_DESIGN_GOVERNANCE.md
+    binding_sha256: a6138f1f1ceb1f674abb234fecace22346ddddbc6034cc4730272e4aa1691905
+  - section_uid: WEB-GOV-01-S082
+    level: 2
+    canonical_number: '82'
+    title: 量化 Design Freeze 完整度 Gate / Quantitative Design Freeze Completeness
+    heading: '## 82. 量化 Design Freeze 完整度 Gate / Quantitative Design Freeze Completeness'
+    path: 12_DOCS/mother-spec/01_BLUEPRINT_DESIGN_GOVERNANCE.md
+    binding_sha256: 709110557041add32588d1ab1cbd0f3527f8713107e5f34f343ec1928fd16a0a
+  - section_uid: WEB-GOV-01-S083
+    level: 2
+    canonical_number: '83'
+    title: 藍圖至施工交接合約 / Blueprint-to-Implementation Handoff Contract
+    heading: '## 83. 藍圖至施工交接合約 / Blueprint-to-Implementation Handoff Contract'
+    path: 12_DOCS/mother-spec/01_BLUEPRINT_DESIGN_GOVERNANCE.md
+    binding_sha256: af3c558830fd12b1148587556e0b7ee11e3d9c125154a27a6fa6a1be049dff0b
 - document_id: WEB-GOV-02
   path: 12_DOCS/mother-spec/02_IMPLEMENTATION_DELIVERY_STANDARD.md
   sections:

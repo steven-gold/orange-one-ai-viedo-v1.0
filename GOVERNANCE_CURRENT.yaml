@@ -1,8 +1,8 @@
 schema_version: 7
 artifact_uid: GOVERNANCE-CURRENT-ENTRYPOINT-001
 artifact_type: GOVERNANCE_CURRENT_ENTRYPOINT
-active_governance_uid: GOV-REV-20260919-SEMANTIC-BASELINE-CONSUMER-SINGLE-OWNER-HARDENING
-display_version: v2.2.9
+active_governance_uid: GOV-REV-20260919-BLUEPRINT-CONSTRUCTION-TRACEABILITY-HARDENING
+display_version: v2.2.10
 version_role: CURRENT_GOVERNANCE_DISPLAY_VERSION
 registry_ref: governance/specifications/REGISTRY.yaml
 specification_root: governance/specifications/current
@@ -24,12 +24,12 @@ historical_evidence_is_current_authority: false
 source_identity:
   version_role: VERIFIED_SOURCE_LINEAGE_HISTORY
   source_bytes_changed_by_current_successor: true
-  verified_package_sha256: fbc2050e1ddf1af7c0b5766b0aed01cacbd113a3699e8ed70743c5c70e976295
-  deterministic_source_bundle_sha256: 3c57c2d781d5cf5bfe64dda97dd671b2a471232d2af6f09d118437ce78f5846d
-  checksum_manifest_sha256: 6f507ce2e7a332109b2ecbbfbaf395f8edba0e90037226c72ddcd5cd27485317
-  semantic_authority_content_hash: 446007aa22777d490ba50f04cc764232872a5d9a6f497a4c7e681bdf02d5d0e8
+  verified_package_sha256: 622e73c6fa7c88c02b243fcfe3382e2560f04214d5ef7efa5f83a5ce1b0c883c
+  deterministic_source_bundle_sha256: feb707cf8607fb67b8ddc8705699081950d8cd5a6ce43c9c8ab261b05daa3d87
+  checksum_manifest_sha256: 1b2fd17a4aa152089977b07c659846adba4ea79aa71a0a6856b34e1d0f11d0fe
+  semantic_authority_content_hash: fe2e39e4deedbdc610b927ccd7c5aa48da3f037f00aa99615a0b2c7f3ea1785a
   may_override_active_governance_version: false
-  verified_source_revision: v2.2.8-structured-mutation-selector-hardening-consumer-single-owner-r2
+  verified_source_revision: v2.2.10-blueprint-construction-traceability-hardening
 current_primary_task_selection_contract:
   session_bootstrap_resume_gate_required: true
   task_layer_classification_required: true

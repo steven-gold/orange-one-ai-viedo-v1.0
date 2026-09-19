@@ -233,6 +233,33 @@ def validate(root=ROOT):
     for uid in ['WEB-GOV-01-S071','WEB-GOV-02-S071','WEB-GOV-03-S060','WEB-GOV-04-S076','WEB-GOV-01-S072','WEB-GOV-02-S072','WEB-GOV-03-S061','WEB-GOV-04-S077']:
         if not any(uid in (root/rel).read_text(encoding='utf-8') for rel in common_docs): failures.append('mother_spec_entity_product_neutral_section_missing:'+uid)
 
+
+    cb=inv.get('CONSTRUCTION_BLUEPRINT_PACKAGE_COMPLETENESS') or {}
+    if cb.get('required_artifact')!='CONSTRUCTION_BLUEPRINT_PACKAGE' or cb.get('package_is_non_owning_binding') is not True or cb.get('separate_page_and_visual_authority_preserved') is not True: failures.append('construction_blueprint_package_contract_missing')
+    if cb.get('missing_applicable_package_item')!='BLUEPRINT_PACKAGE_INCOMPLETE' or cb.get('implementation_before_complete_package')!='BLOCK': failures.append('construction_blueprint_package_fail_closed_invalid')
+    fv=inv.get('FUNCTION_VISUAL_BIDIRECTIONAL_TRACEABILITY') or {}
+    if fv.get('reverse_trace_required_for_visible_interactive_or_state_bearing_elements') is not True or fv.get('orphan_visual_element')!='BLOCK' or fv.get('required_user_observable_function_without_visual_binding')!='BLOCK' or fv.get('arbitrary_visual_topology_change')!='BLOCK': failures.append('function_visual_bidirectional_traceability_invalid')
+    mv=inv.get('MANDATORY_MULTI_STATE_VISUAL_EVIDENCE') or {}
+    required_scenarios={'CANONICAL_WORKSPACE_OVERVIEW','INTERACTION_TOPOLOGY_DIAGRAM','INITIAL_OR_EMPTY_STATE','ACTIVE_WORKING_STATE','COMPLEX_OR_CONDITIONAL_STATE','FINALIZATION_OR_CONFIRMATION_STATE','ERROR_BLOCKED_RECOVERY_STATE','CROSS_PAGE_HANDOFF_DIAGRAM'}
+    if mv.get('required_artifact')!='VISUAL_SCENARIO_EVIDENCE_SET' or set(mv.get('scenario_universe') or [])!=required_scenarios or mv.get('applicability_required') is not True or mv.get('missing_required_scenario')!='BLOCK': failures.append('multi_state_visual_evidence_contract_invalid')
+    va=inv.get('VISUAL_REFERENCE_ANNOTATION') or {}
+    if va.get('required_artifact')!='VISUAL_REFERENCE_ANNOTATION' or va.get('unannotated_visual_may_pass_visual_review') is not False or 'verification_purpose' not in (va.get('required_fields') or []): failures.append('visual_reference_annotation_contract_invalid')
+    cd=inv.get('CONSTRUCTION_DELTA_EXISTING_IMPLEMENTATION') or {}
+    if cd.get('required_artifact')!='CONSTRUCTION_DELTA_MATRIX' or cd.get('activation')!='PRIOR_IMPLEMENTATION_EXISTS' or cd.get('already_auditable_gap_deferred_until_downstream_test')!='BLOCK' or cd.get('ambiguous_product_behavior_autofill')!='BLOCK': failures.append('construction_delta_contract_invalid')
+    sv=inv.get('SCENARIO_TO_FUNCTION_VISUAL_COVERAGE') or {}
+    if sv.get('denominator')!='APPROVED_REQUIRED_JOURNEY_STATE_BRANCH_SET' or int(sv.get('required_coverage_percent',0))!=100 or sv.get('visual_scenario_drift')!='BLOCK': failures.append('scenario_visual_coverage_contract_invalid')
+    df=inv.get('DESIGN_FREEZE_QUANTITATIVE_COMPLETENESS') or {}
+    if any(int(v)!=100 for v in (df.get('required_percent_fields') or {}).values()) or len(df.get('required_zero_fields') or [])<6 or df.get('authority_gap_may_be_hidden_by_percentage') is not False or df.get('single_overview_visual_may_substitute_denominator') is not False: failures.append('quantitative_design_freeze_contract_invalid')
+    bh=inv.get('BLUEPRINT_TO_IMPLEMENTATION_HANDOFF') or {}
+    if bh.get('required_artifact')!='BLUEPRINT_IMPLEMENTATION_HANDOFF' or bh.get('implementation_outside_frozen_handoff')!='BLOCK_AND_REOPEN_OWNING_CAPABILITY' or bh.get('bidirectional_design_to_code_traceability_required') is not True: failures.append('blueprint_implementation_handoff_contract_invalid')
+    for k in ['construction_blueprint_package_required','function_visual_bidirectional_traceability_required','mandatory_multi_state_visual_evidence_required','visual_reference_annotation_required','construction_delta_matrix_required_when_prior_implementation_exists','scenario_to_function_visual_coverage_required','quantitative_design_freeze_completeness_required','blueprint_to_implementation_handoff_required','orphan_visual_element_zero_required','unbound_control_zero_required','unbound_field_zero_required','undefined_next_step_zero_required','missing_recovery_path_zero_required','required_visual_candidate_missing_zero_required']:
+        if c.get(k) is not True: failures.append('acceptance_blueprint_traceability_rule_missing:'+k)
+    if c.get('arbitrary_visual_layout_without_topology_binding')!='BLOCK': failures.append('acceptance_arbitrary_visual_layout_not_blocked')
+    for k in ['construction_blueprint_package_incomplete','function_visual_traceability_missing','orphan_visual_element','required_visual_scenario_missing','unannotated_visual_candidate','construction_delta_unclassified','design_freeze_quantitative_coverage_incomplete','blueprint_handoff_unbound','arbitrary_visual_layout_without_functional_topology_binding']:
+        if ur.get(k)!='BLOCK': failures.append('construction_blueprint_traceability_rule_not_block:'+k)
+    for uid in ['WEB-GOV-01-S076','WEB-GOV-01-S077','WEB-GOV-01-S078','WEB-GOV-01-S079','WEB-GOV-01-S080','WEB-GOV-01-S081','WEB-GOV-01-S082','WEB-GOV-01-S083']:
+        if uid not in (root/'12_DOCS/mother-spec/01_BLUEPRINT_DESIGN_GOVERNANCE.md').read_text(encoding='utf-8'): failures.append('mother_blueprint_traceability_section_missing:'+uid)
+
     return {'status':'PASS' if not failures else 'FAIL','operation_count':len(lc.get('operation_universe') or []),'function_admission_score_max':sum(int((v or {}).get('max',0)) for v in (fa.get('score_dimensions') or {}).values()),'product_binding_failures':len([x for x in failures if 'product_binding' in x or 'product_named' in x]),'failures':failures}
 
 if __name__=='__main__':
