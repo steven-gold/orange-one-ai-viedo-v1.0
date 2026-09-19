@@ -469,6 +469,7 @@ def finalize_stage02_revalidation_persistence():
     state['execution']=ex
     attempt=state.setdefault('stage02_active_attempt',{})
     attempt.update({
+      'frozen_governance_uid':current_uid,
       'source_execution_sha':source_sha,
       'source_workflow_run_id':int(run_id) if run_id.isdigit() else run_id,
       'source_artifact_id':int(artifact_id) if artifact_id.isdigit() else artifact_id,
