@@ -104,8 +104,8 @@ specification_mutation_safety:
   ordinary_mid_stage_specification_mutation: BLOCK
   stage_end_consolidated_promotion_requires_new_explicit_directive: true
   execution_context_lock_required: true
-status: ACTIVE_FRESH_REPLAY_PREEXECUTION_FULL_LINE_MAINTENANCE
-next_action: REBOOTSTRAP_THEN_WIRE_CANONICAL_FULL_LINE_BEFORE_FRESH_PRODUCT_EXECUTION
+status: FRESH_REPLAY_PREEXECUTION_FULL_LINE_IMPLEMENTED_REVALIDATION_REQUIRED
+next_action: RUN_EXACT_HEAD_GATES_FOR_FRESH_REPLAY_PREEXECUTION_FULL_LINE_FIX
 previous_closed_product_work_unit:
   work_unit_uid: WU-STAGE02-CORE01-STRUCTURAL-REMEDIATION-001
   canonical_name: CORE01_STRUCTURAL_CONTRACT_REMEDIATION
@@ -289,7 +289,7 @@ resume_control:
   current_owner: .github/workflows/fresh-stage-replay.yml
   historical_stage2_results_are_current_state: false
   stage2_execution_requires_fresh_entry_resolution: true
-  exact_next_action: REBOOTSTRAP_THEN_WIRE_CANONICAL_FULL_LINE_BEFORE_FRESH_PRODUCT_EXECUTION
+  exact_next_action: RUN_EXACT_HEAD_GATES_FOR_FRESH_REPLAY_PREEXECUTION_FULL_LINE_FIX
   parent_work_unit_uid: WU-ASSET01-STAGE01-STAGE02-FRESH-REPLAY-8133839F
   parent_primary_task_layer: PRODUCT_STAGE_EXECUTION
   preserved_product_work_unit_uid: WU-ASSET01-STAGE01-STAGE02-FRESH-REPLAY-8133839F
@@ -2820,7 +2820,7 @@ active_work_unit:
   co_owners:
   - .github/governance-source/RUN_FULL_LINE_SYSTEM_GATE.py
   - .github/governance-maintenance/run_fresh_stage_replay.py
-  current_status: ACTIVE_BOOTSTRAP_REQUIRED_BEFORE_IMPLEMENTATION
+  current_status: IMPLEMENTED_EXACT_HEAD_REVALIDATION_REQUIRED
   authorization_uid: USR-DIRECTIVE-20260920-FRESH-REPLAY-PREEXECUTION-FULL-LINE-R1
   current_governance_uid: GOV-REV-20260919-ASSET-STAGE01-STAGE02-SHARED-CONTRACT-HARDENING
   parent_product_work_unit_uid: WU-ASSET01-STAGE01-STAGE02-FRESH-REPLAY-8133839F
