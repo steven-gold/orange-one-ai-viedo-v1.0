@@ -104,8 +104,8 @@ specification_mutation_safety:
   ordinary_mid_stage_specification_mutation: BLOCK
   stage_end_consolidated_promotion_requires_new_explicit_directive: true
   execution_context_lock_required: true
-status: DYNAMIC_EXECUTION_IDENTITY_MAINTENANCE_CLOSED
-next_action: WORK_UNIT_RESOLUTION_GATE_FOR_STAGE03
+status: ACTIVE_FRESH_REPLAY_TRIGGER_MAINTENANCE
+next_action: ENABLE_PERSISTED_CONTEXT_PUSH_EXECUTION_TRIGGER
 previous_closed_product_work_unit:
   work_unit_uid: WU-STAGE02-CORE01-STRUCTURAL-REMEDIATION-001
   canonical_name: CORE01_STRUCTURAL_CONTRACT_REMEDIATION
@@ -284,16 +284,17 @@ previous_closed_work_unit:
     source_runtime_residual_count: 0
     product_stage_credit: 0
 resume_control:
-  current_resume_point: STAGE2_CORE01_CLOSED_STAGE3_WUR_REQUIRED
-  current_work_unit_uid: null
-  current_owner: null
+  current_resume_point: FRESH_REPLAY_TRIGGER_MAINTENANCE_READY
+  current_work_unit_uid: WU-TEST-FRESH-REPLAY-TRIGGER-001
+  current_owner: .github/workflows/fresh-core-stage-replay.yml
   historical_stage2_results_are_current_state: false
-  stage2_execution_requires_fresh_entry_resolution: false
-  exact_next_action: WORK_UNIT_RESOLUTION_GATE_FOR_STAGE03
-  closed_maintenance_work_unit_uid: WU-TEST-DYNAMIC-EXECUTION-IDENTITY-001
-  closed_maintenance_owner: .github/governance-maintenance/run_fresh_stage_replay.py
-  next_primary_task_layer: PRODUCT_STAGE_EXECUTION
-  product_stage3_execution_started: false
+  stage2_execution_requires_fresh_entry_resolution: true
+  exact_next_action: ENABLE_PERSISTED_CONTEXT_PUSH_EXECUTION_TRIGGER
+  parent_requested_primary_task_layer: PRODUCT_STAGE_EXECUTION
+  parent_requested_scope:
+  - CORE-01
+  parent_requested_terminal_stage: STAGE-02
+  parent_resume_after_maintenance: WORK_UNIT_RESOLUTION_GATE_FOR_CORE01_FRESH_REPLAY
 governance_revision_transition:
   current_governance_uid: GOV-REV-20260919-SEMANTIC-BASELINE-CONSUMER-SINGLE-OWNER-HARDENING
   predecessor_governance_uid: GOV-REV-20260919-STRUCTURED-MUTATION-SELECTOR-HARDENING
@@ -348,7 +349,7 @@ pending_governance_review:
   - WEBSITE_CONSTRUCTION
   - DEPLOYMENT
 current_primary_task_layer: TEST_OR_VALIDATION_MAINTENANCE
-current_primary_task_authorization_uid: USR-DIRECTIVE-20260919-OPTIMIZE-DYNAMIC-EXECUTION-IDENTITY-R1
+current_primary_task_authorization_uid: USR-DIRECTIVE-20260919-EXECUTE-CORE01-THROUGH-STAGE02
 current_primary_task_product_stage_credit: 0
 earlier_closed_product_work_unit:
   work_unit_uid: WU-STAGE02-CORE01-FRESH-TEST-001
@@ -1157,6 +1158,51 @@ closed_test_validation_maintenance_work_unit_dynamic_execution_identity:
     mother_normative_change: false
     product_stage_credit: 0
     closure_persistence_revalidation_required: true
+work_unit_resolution_gate_fresh_replay_trigger_maintenance:
+  resolution_uid: WUR-TEST-FRESH-REPLAY-TRIGGER-20260919-001
+  normative_authority: false
+  result: PASS_SINGLE_LEGAL_SUCCESSOR
+  requested_primary_task_layer: TEST_OR_VALIDATION_MAINTENANCE
+  parent_user_directive: EXECUTE_CORE01_THROUGH_STAGE02
+  resolved_work_unit_uid: WU-TEST-FRESH-REPLAY-TRIGGER-001
+  authorization_uid: USR-DIRECTIVE-20260919-EXECUTE-CORE01-THROUGH-STAGE02
+  basis:
+  - EXPLICIT_USER_PRODUCT_EXECUTION_DIRECTIVE
+  - CURRENT_STABLE_REPLAY_WORKFLOW_EXECUTE_PATH_REQUIRES_WORKFLOW_DISPATCH
+  - CURRENT_CONNECTED_EXECUTOR_HAS_NO_WORKFLOW_DISPATCH_ACTION
+  - COMMON_EXECUTION_ADAPTER_MUST_BE_REPAIRED_BEFORE_PRODUCT_REPLAY
+  - REPAIR_MUST_REMAIN_RUN_VERSION_AND_PRODUCT_IDENTITY_NEUTRAL
+  product_stage_credit: 0
+active_work_unit:
+  work_unit_uid: WU-TEST-FRESH-REPLAY-TRIGGER-001
+  canonical_name: STABLE_FRESH_REPLAY_PERSISTED_CONTEXT_PUSH_TRIGGER
+  primary_task_layer: TEST_OR_VALIDATION_MAINTENANCE
+  canonical_owner: .github/workflows/fresh-core-stage-replay.yml
+  current_status: READY_FOR_IMPLEMENTATION
+  scope:
+  - GENERIC_PERSISTED_CONTEXT_PUSH_TRIGGER
+  - ACTIVE_STATE_PATH_TRIGGER
+  - EXPLICIT_GENERIC_COMMIT_TRAILER_GATE
+  - REPLAY_CONTEXT_CONSUMPTION_AFTER_SUCCESS
+  out_of_scope:
+  - MOTHER_NORMATIVE_CHANGE
+  - CURRENT_GOVERNANCE_VERSION_CHANGE
+  - PRODUCT_STAGE_MATERIALIZATION
+  - CORE01_RUN_ID_HARDCODING
+  - NEW_R_NUMBERED_EXECUTABLE
+  definition_of_done:
+  - STABLE_WORKFLOW_REMAINS_SINGLE_CURRENT_EXECUTION_OWNER
+  - PUSH_EXECUTION_REQUIRES_EXPLICIT_GENERIC_TRAILER
+  - EXECUTION_CONTEXT_MUST_BE_READY_FOR_REPLAY
+  - SUCCESSFUL_FINALIZER_CONSUMES_EXECUTION_CONTEXT
+  - PUSH_FROM_RESULT_PERSISTENCE_CANNOT_REEXECUTE_CONSUMED_CONTEXT
+  - DYNAMIC_IDENTITY_SELF_TEST_PASS
+  - ACTIVE_CONSUMER_REFERENCE_INTEGRITY_PASS
+  - EXACT_HEAD_SELECTED_PROFILE_PASS
+  - EXACT_HEAD_FULL_LINE_PASS
+  - EXACT_HEAD_BRANCH_GUARD_PASS
+  - PRODUCT_STAGE_CREDIT_ZERO
+  product_stage_credit: 0
 last_work_unit_resolution_gate:
   resolution_uid: WUR-STAGE02-CORE01-COMPLETENESS-20260919-005
   normative_authority: false
