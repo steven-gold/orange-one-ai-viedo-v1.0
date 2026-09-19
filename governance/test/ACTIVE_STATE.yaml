@@ -109,8 +109,8 @@ specification_mutation_safety:
   ordinary_mid_stage_specification_mutation: BLOCK
   stage_end_consolidated_promotion_requires_new_explicit_directive: true
   execution_context_lock_required: true
-status: STAGE02_CLOSED_VERIFIED_FRESH_RUN_006
-next_action: WORK_UNIT_RESOLUTION_GATE_FOR_STAGE03_AFTER_STAGE02_CLOSURE
+status: GOVERNANCE_MAINTENANCE_COMMON_STAGE_ENGINE_ACTIVE
+next_action: IMPLEMENT_COMMON_STAGE_EXECUTION_ENGINE
 previous_closed_product_work_unit:
   work_unit_uid: WU-STAGE02-CORE01-STRUCTURAL-REMEDIATION-001
   canonical_name: CORE01_STRUCTURAL_CONTRACT_REMEDIATION
@@ -289,12 +289,12 @@ previous_closed_work_unit:
     source_runtime_residual_count: 0
     product_stage_credit: 0
 resume_control:
-  current_resume_point: STAGE2_CORE01_CLOSED_STAGE3_WUR_REQUIRED
-  current_work_unit_uid: null
-  current_owner: null
+  current_resume_point: GOVERNANCE_COMMON_STAGE_ENGINE_WU_RESOLVED
+  current_work_unit_uid: WU-GOV-COMMON-STAGE-EXECUTION-ENGINE-001
+  current_owner: governance/ci/stage_execution_engine.py
   historical_stage2_results_are_current_state: false
   stage2_execution_requires_fresh_entry_resolution: false
-  exact_next_action: WORK_UNIT_RESOLUTION_GATE_FOR_STAGE03_AFTER_STAGE02_CLOSURE
+  exact_next_action: IMPLEMENT_COMMON_STAGE_EXECUTION_ENGINE
 governance_revision_transition:
   current_governance_uid: GOV-REV-20260919-PROFILE-TOKEN-DECONTAMINATION-HARDENING
   predecessor_governance_uid: GOV-REV-20260919-SCOPE-STAGE-REENTRY-PORTABILITY-HARDENING
@@ -348,8 +348,8 @@ pending_governance_review:
   - STAGE03
   - WEBSITE_CONSTRUCTION
   - DEPLOYMENT
-current_primary_task_layer: PRODUCT_STAGE_EXECUTION
-current_primary_task_authorization_uid: USR-DIRECTIVE-20260919-CORE01-STAGE02-COMPLETENESS-R3
+current_primary_task_layer: GOVERNANCE_MAINTENANCE
+current_primary_task_authorization_uid: USR-DIRECTIVE-20260919-COMMON-STAGE-EXECUTION-ENGINE-R1
 current_primary_task_product_stage_credit: 0
 earlier_closed_product_work_unit:
   work_unit_uid: WU-STAGE02-CORE01-FRESH-TEST-001
@@ -692,3 +692,53 @@ stage02_terminal_closure_r3:
   stage03_execution_started: false
   legal_next_transition: WORK_UNIT_RESOLUTION_GATE_FOR_STAGE03_AFTER_STAGE02_CLOSURE
   closure_commit_exact_head_revalidation_required: true
+
+work_unit_resolution_gate_common_stage_engine:
+  resolution_uid: WUR-GOV-COMMON-STAGE-ENGINE-20260919-001
+  normative_authority: false
+  result: PASS_SINGLE_LEGAL_SUCCESSOR
+  requested_primary_task_layer: GOVERNANCE_MAINTENANCE
+  resolved_work_unit_uid: WU-GOV-COMMON-STAGE-EXECUTION-ENGINE-001
+  authorization_uid: USR-DIRECTIVE-20260919-COMMON-STAGE-EXECUTION-ENGINE-R1
+  basis:
+  - EXPLICIT_USER_DIRECTIVE_GENERALIZE_COMPLETE_STAGE_EXECUTION_MODE
+  - CURRENT_MOTHER_REQUIRES_STAGE_PROFILE_NEUTRAL_COMMON_POLICY
+  - CURRENT_MACHINE_PREFLIGHT_COMPILER_HARD_BINDS_STAGE02
+  - STAGE03_PRODUCT_EXECUTION_NOT_STARTED
+  product_stage_credit: 0
+active_work_unit:
+  work_unit_uid: WU-GOV-COMMON-STAGE-EXECUTION-ENGINE-001
+  canonical_name: COMMON_STAGE_EXECUTION_ENGINE_ALL_PROFILE_STAGES
+  primary_task_layer: GOVERNANCE_MAINTENANCE
+  scope:
+  - STAGE-01
+  - STAGE-02
+  - STAGE-03
+  - STAGE-04
+  - STAGE-05
+  - STAGE-06
+  - STAGE-07
+  - STAGE-08
+  - STAGE-09
+  - STAGE-10
+  - STAGE-11
+  canonical_owner: governance/ci/stage_execution_engine.py
+  semantic_adapter_owner: governance/ci/stage_execution_semantic_adapters.yaml
+  compatibility_owner: governance/ci/compile_stage_execution_preflight.py
+  current_status: ACTIVE_IMPLEMENTATION
+  product_stage_credit: 0
+  suspended_product_work_unit_uid: WU-STAGE03-CORE01-VISUAL-DESIGN-001
+  product_execution_started_before_maintenance: false
+  normative_mother_or_current_specification_mutation_allowed: false
+  definition_of_done:
+  - ONE_COMMON_26_PHASE_EXECUTION_SKELETON_FOR_ALL_11_SELECTED_PROFILE_STAGES
+  - EXACT_11_OF_11_SEMANTIC_ADAPTER_COVERAGE
+  - NO_COMMON_ENGINE_STAGE02_LITERAL_DENOMINATOR_OR_STAGE02_ONLY_REJECTION
+  - STAGE02_COMPATIBILITY_WRAPPER_DELEGATES_TO_COMMON_ENGINE
+  - ALL_STAGE_PROFILE_INPUT_ORIGIN_OPERATION_OUTPUT_PRODUCER_VALIDATION
+  - ALL_STAGE_SCOPE_ENTRY_EXIT_SUCCESSOR_EVIDENCE_AND_CLOSURE_CONTRACT_VALIDATION
+  - FAIL_CLOSED_WHEN_PRODUCT_EXECUTION_CONTEXT_OR_STAGE_EVIDENCE_IS_NOT_LEGALLY_AVAILABLE
+  - DEFINITION_AUDIT_DOES_NOT_FABRICATE_PRODUCT_COMPLETION_EVIDENCE
+  - NEGATIVE_REGRESSION_FOR_MISSING_ADAPTER_MISSING_PHASE_STAGE_MISMATCH_AND_PRODUCT_CREDIT_LEAK
+  - FULL_LINE_AND_SELECTED_PROFILE_EXACT_HEAD_SUCCESS
+  - PRODUCT_STAGE3_REMAINS_NOT_EXECUTED
