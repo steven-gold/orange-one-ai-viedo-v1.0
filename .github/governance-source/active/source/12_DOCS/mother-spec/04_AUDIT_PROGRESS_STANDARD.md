@@ -1504,3 +1504,14 @@ For missing required functional/contract behavior, Audit MUST require FUNCTION_A
 Audit MUST independently report candidate semantic result and temporary/formal package cleanliness. A TEMPORARY_LIFECYCLE_RESIDUAL may block Full-Line or formal closure, but MUST NOT be mislabeled as candidate semantic invalidity. Formal Freeze/Release/Deployment/Production closure requires zero unauthorized temporary residuals.
 
 Portability audit MUST substitute materially different product/profile scope identities and denominators without changing common Mother Policy. If reusable policy or reusable execution consumers require edits merely because page names, module count, blocker count, or profile-local execution scope changes, portability MUST FAIL.
+
+<!-- SECTION_UID: WEB-GOV-04-S084 -->
+## 84. Structured Mutation Selector / Write-Set Integrity Audit
+
+Audit MUST prove every structured mutation selected its write target through a bounded structural identity rather than an unscoped whole-document lexical assumption. If uniqueness was relied on, Audit MUST identify the schema, Registry, or structural scope that guarantees that uniqueness; a raw token occurring once in one observed file is not uniqueness Authority.
+
+Audit MUST verify successful parse before mutation and reparse after mutation; exact selected node identity and parent context; expected pre-write identity/hash when applicable; exact intended write-set; preservation of unrelated siblings and owners; and reverse-consumer revalidation for the changed structural identity. Zero-match and multi-match ambiguity MUST be shown to fail closed.
+
+For executable-source semantic mutation, Audit MUST require syntax-tree, concrete-syntax-tree, parser-backed, or equivalently bounded semantic selection and MUST reject raw source spelling as the sole semantic identity. Destructive regression MUST include at least one case where the same legitimate lexical token appears in multiple structural scopes and prove the bounded selector changes only the authorized target without false global-uniqueness failure or cross-scope mutation.
+
+A structured-mutation safety PASS is governance/test integrity evidence only and receives zero product completion or blocker-reduction credit unless independent fresh product-owner evidence changes the product denominator.

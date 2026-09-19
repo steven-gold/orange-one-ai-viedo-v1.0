@@ -2,7 +2,7 @@ schema_version: 23
 artifact_type: ACTIVE_GOVERNANCE_TEST_STATE
 normative_authority: false
 specification_registry_ref: governance/specifications/REGISTRY.yaml
-specification_uid: GOV-REV-20260919-PROFILE-TOKEN-DECONTAMINATION-HARDENING
+specification_uid: GOV-REV-20260919-STRUCTURED-MUTATION-SELECTOR-HARDENING
 canonical_rule_registry_ref: governance/specifications/current/CANONICAL_RULE_REGISTRY.yaml
 canonical_rule_registry_uid: GOV-CANONICAL-RULE-REGISTRY-001
 selected_execution_profile_state:
@@ -28,7 +28,7 @@ execution:
   stage2:
     result: TEST_EXECUTED_PASS
     stage_entry_gate: PASS
-    stage_exit_allowed: true
+    stage_exit_allowed: false
     prior_results_used_in_current_run: false
     artifact_root_present: true
     tested_page_uids:
@@ -37,7 +37,7 @@ execution:
     stage_scope_complete: true
     current_scope_manifest_ref: governance/test/CURRENT_EXECUTION_SCOPE_MANIFEST.yaml
     prior_results_authoritative_for_current_governance: false
-    revalidation_required_under_current_governance: false
+    revalidation_required_under_current_governance: true
   stage3:
     result: NOT_EXECUTED
     work_unit_uid: null
@@ -55,7 +55,7 @@ execution:
 full_lifecycle_governance_system_test:
   round: SYSTEM_FULL_LINE_HIGH_PRESSURE_ROUND_1
   meaning: GOVERNANCE_SYSTEM_EXECUTION_HEALTH_ONLY
-  deterministic_source_bundle_sha256: 6faa826cf048cc0ffbc79df94387a8d809bdf7b2c629cd4bbf0d437936049e80
+  deterministic_source_bundle_sha256: 04d7e3fccf84d4d951408557fa74a807b54ad57163260ad20a6ebe98c9a69f69
   verified_source_file_count: 75
   github_source_materialization: PASS_EXACT_75_FILE_IDENTITY
   mandatory_regression_suite_count: 17
@@ -64,13 +64,13 @@ full_lifecycle_governance_system_test:
   skip_allowed: false
   timeout_may_be_treated_as_pass: false
   partial_suite_result_may_be_treated_as_full_line_pass: false
-  full_line_github_result: REVALIDATION_REQUIRED_AFTER_PRODUCT_DATA_RESET_AND_FRESH_REPLAY
+  full_line_github_result: REVALIDATION_REQUIRED_AFTER_STRUCTURED_MUTATION_GOVERNANCE_PROMOTION
   exact_denominators_verified: true
   source_runtime_residual_count: 0
   persisted_head_revalidation_required: true
   full_line_verification_run_id: 35411781006
   full_line_verification_head_sha: 019470d82ba09c0ec48d9fd96f666be15c7d74cc
-  terminal_run_conclusion: success
+  terminal_run_conclusion: REVALIDATION_REQUIRED
   terminal_result_credit_allowed: false
 stage_execution_loading:
   full_line_round_reads_all_source_files_for_integrity_and_regression: true
@@ -79,7 +79,7 @@ stage_execution_loading:
 stage_execution_remediation_closure_protocol:
   specification_ref: governance/specifications/current/VALIDATION_REMEDIATION_CLOSURE_PROTOCOL.yaml
   canonical_execution_rule_set: true
-  frozen_specification_uid: GOV-REV-20260919-PROFILE-TOKEN-DECONTAMINATION-HARDENING
+  frozen_specification_uid: GOV-REV-20260919-STRUCTURED-MUTATION-SELECTOR-HARDENING
   audit_only_blocked_loop_may_count_as_progress: false
   remediation_must_materially_eliminate_remediable_gap: true
   full_line_high_pressure_required_before_every_fresh_execution_or_reexecution: true
@@ -95,7 +95,7 @@ stage_execution_remediation_closure_protocol:
   fatal_specification_contradiction_requires_stage_stop_and_new_explicit_authorization: true
   pilot_full_lifecycle_required_before_other_page_scale_out: true
   later_pages_must_use_same_active_governance_after_calibration: true
-  binding_status: CURRENT_V2_2_7_FRESH_REPLAY_STAGE1_CLOSED
+  binding_status: CURRENT_V2_2_8_PRODUCT_REVERIFY_REQUIRED
 specification_mutation_safety:
   change_control_ref: governance/specifications/current/SPECIFICATION_MUTATION_CONTROL.yaml
   finding_ledger_ref: governance/test/SPECIFICATION_CHANGE_CANDIDATES.yaml
@@ -104,8 +104,8 @@ specification_mutation_safety:
   ordinary_mid_stage_specification_mutation: BLOCK
   stage_end_consolidated_promotion_requires_new_explicit_directive: true
   execution_context_lock_required: true
-status: GOVERNANCE_MAINTENANCE_STRUCTURED_MUTATION_HARDENING_ACTIVE
-next_action: HARDEN_STRUCTURED_MUTATION_AND_ACTIVE_CONSUMER_GRAPH
+status: GOVERNANCE_PROMOTED_STRUCTURED_MUTATION_HARDENING_PRODUCT_REVERIFY_REQUIRED
+next_action: FRESH_REVERIFY_CORE01_STAGE01_STAGE02_UNDER_CURRENT_GOVERNANCE
 previous_closed_product_work_unit:
   work_unit_uid: WU-STAGE02-CORE01-STRUCTURAL-REMEDIATION-001
   canonical_name: CORE01_STRUCTURAL_CONTRACT_REMEDIATION
@@ -284,20 +284,20 @@ previous_closed_work_unit:
     source_runtime_residual_count: 0
     product_stage_credit: 0
 resume_control:
-  current_resume_point: GOVERNANCE_STRUCTURED_MUTATION_HARDENING_WU_RESOLVED
+  current_resume_point: POST_STRUCTURED_MUTATION_GOVERNANCE_PROMOTION_CORE01_REVERIFY_REQUIRED
   current_work_unit_uid: WU-GOV-STRUCTURED-MUTATION-SELECTOR-HARDENING-001
   current_owner: governance/ci/validate_structured_mutation_safety.py
   historical_stage2_results_are_current_state: false
-  stage2_execution_requires_fresh_entry_resolution: false
-  exact_next_action: HARDEN_STRUCTURED_MUTATION_AND_ACTIVE_CONSUMER_GRAPH
+  stage2_execution_requires_fresh_entry_resolution: true
+  exact_next_action: FRESH_REVERIFY_CORE01_STAGE01_STAGE02_UNDER_CURRENT_GOVERNANCE
 governance_revision_transition:
-  current_governance_uid: GOV-REV-20260919-PROFILE-TOKEN-DECONTAMINATION-HARDENING
-  predecessor_governance_uid: GOV-REV-20260919-SCOPE-STAGE-REENTRY-PORTABILITY-HARDENING
+  current_governance_uid: GOV-REV-20260919-STRUCTURED-MUTATION-SELECTOR-HARDENING
+  predecessor_governance_uid: GOV-REV-20260919-PROFILE-TOKEN-DECONTAMINATION-HARDENING
   predecessor_attempt_preserved_as_historical_evidence: true
   predecessor_attempt_history_ref: governance/test/history/stage02/design-remediation-routing-20260918/STAGE02_CORE01_DESIGN_REMEDIATION_TEST_EVIDENCE.json
   predecessor_attempt_may_close_under_current_governance: false
-  fresh_revalidation_required: false
-  fresh_revalidation_scope: CORE01_STAGE01_STAGE02_20260911_COMPLETENESS_AND_REUSABLE_CONSUMERS
+  fresh_revalidation_required: true
+  fresh_revalidation_scope: CORE01_STAGE01_STAGE02_AND_AFFECTED_REUSABLE_CONSUMERS
   mother_machine_revalidation_complete: true
   mother_machine_revalidation_run_id: 35321233970
   mother_machine_revalidation_head: 736622cf32e1a19119317b4d9b56af51c036ce03
@@ -739,8 +739,8 @@ stage02_active_attempt:
   prior_results_used: false
   active_evidence_present: true
   active_findings_present: true
-  fresh_revalidation_required: false
-  closure_credit_under_current_governance: true
+  fresh_revalidation_required: true
+  closure_credit_under_current_governance: false
   source_workflow_run_id: 35418115888
   source_artifact_id: 10576198733
   source_artifact_sha256: 8efba832db6a1db191c7d82ccd0585903d7b937718c333df7818deffba1c77b1
@@ -757,7 +757,6 @@ last_work_unit_resolution_gate:
   - ASSET-01
   source_problem_denominator: 0
   source_closure_blocker_denominator: 0
-
 stage02_terminal_closure_r4:
   status: CLOSED_VERIFIED
   work_unit_uid: WU-STAGE02-CORE01-COMPLETENESS-REPLAY-R4
@@ -794,7 +793,6 @@ stage02_terminal_closure_r4:
   stage03_execution_started: false
   legal_next_transition: WORK_UNIT_RESOLUTION_GATE_FOR_STAGE03_AFTER_STAGE02_CLOSURE
   closure_commit_exact_head_revalidation_required: true
-
 work_unit_resolution_gate_structured_mutation_hardening:
   resolution_uid: WUR-GOV-STRUCTURED-MUTATION-SELECTOR-20260919-001
   normative_authority: false
@@ -834,3 +832,12 @@ active_work_unit:
   - CURRENT_GOVERNANCE_SUCCESSOR_ATOMIC_PROMOTION_PASS
   - EXACT_HEAD_SELECTED_PROFILE_AND_FULL_LINE_PASS
   - PRODUCT_STAGE_CREDIT_ZERO
+structured_mutation_selector_successor:
+  authorization_uid: USR-DIRECTIVE-20260919-STRUCTURED-MUTATION-SELECTOR-HARDENING-R1
+  predecessor_governance_uid: GOV-REV-20260919-PROFILE-TOKEN-DECONTAMINATION-HARDENING
+  current_governance_uid: GOV-REV-20260919-STRUCTURED-MUTATION-SELECTOR-HARDENING
+  source_revision: v2.2.8-structured-mutation-selector-hardening
+  product_stage_credit: 0
+  mother_execution_rule_uid: WEB-GOV-03-S070
+  mother_audit_rule_uid: WEB-GOV-04-S084
+  status: GOVERNANCE_PROMOTED_PRODUCT_REVERIFY_REQUIRED

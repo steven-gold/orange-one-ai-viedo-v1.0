@@ -21,7 +21,7 @@
     {
       "document_id": "WEB-GOV-03",
       "path": "12_DOCS/mother-spec/03_EXECUTION_CONTROL_STANDARD.md",
-      "sha256": "301250551c33236caefc5d2e3052765106802c31ee1b4710ebbef67bc3e8223b",
+      "sha256": "cc6eedc2ac6bd1a8f12615c269e0831d9d1f4a09fac55683f1f45146edee34b0",
       "version": "2.2.3",
       "status": "normative",
       "permanent_inheritance": true
@@ -29,17 +29,17 @@
     {
       "document_id": "WEB-GOV-04",
       "path": "12_DOCS/mother-spec/04_AUDIT_PROGRESS_STANDARD.md",
-      "sha256": "71c61adf099292c759856feab25dc780b06ea29a3f7d2553f0c54ca0fae8ef55",
+      "sha256": "b7bc3c85e029d397771777910a3ce40da04719c40f2cefeb37471147a53cafdd",
       "version": "2.2.3",
       "status": "normative",
       "permanent_inheritance": true
     }
   ],
   "counts": {
-    "total": 687,
-    "must": 534,
-    "must_not": 153,
-    "auto": 391,
+    "total": 696,
+    "must": 541,
+    "must_not": 155,
+    "auto": 400,
     "manual_evidence": 296
   },
   "requirements": [
@@ -7730,6 +7730,90 @@
       "blocking": true
     },
     {
+      "requirement_id": "GOV03-MUST-125",
+      "source": "WEB-GOV-03",
+      "section": "70. Structured Mutation Selector / Bounded Write-Set Safety",
+      "line": 1188,
+      "modality": "MUST",
+      "clause_hash": "d357ece33b01cc2d6ba98a1f73047c1cd924e89f926ada843ddd6edbd60e9ca1",
+      "clause_excerpt": "Any mutation of a structured governance artifact, run-state artifact, registry, manifest, evidence record, structured Product/Project source, or executable source MUST resolve a bo",
+      "list_item_count": 0,
+      "list_hash": null,
+      "validator_id": "audit_binding_guard",
+      "automation": "AUTO",
+      "blocking": true
+    },
+    {
+      "requirement_id": "GOV03-MUST_NOT-045",
+      "source": "WEB-GOV-03",
+      "section": "70. Structured Mutation Selector / Bounded Write-Set Safety",
+      "line": 1190,
+      "modality": "MUST_NOT",
+      "clause_hash": "881989046d754e1ef6f3740949b47ede3c77fbea7aadafd7a16953574943c751",
+      "clause_excerpt": "Whole-document raw text search, replacement, occurrence count, regular-expression match, or lexical token equality MAY be used only as a secondary diagnostic or precondition. It MU",
+      "list_item_count": 0,
+      "list_hash": null,
+      "validator_id": "authority_manifest_guard",
+      "automation": "AUTO",
+      "blocking": true
+    },
+    {
+      "requirement_id": "GOV03-MUST-126",
+      "source": "WEB-GOV-03",
+      "section": "70. Structured Mutation Selector / Bounded Write-Set Safety",
+      "line": 1190,
+      "modality": "MUST",
+      "clause_hash": "881989046d754e1ef6f3740949b47ede3c77fbea7aadafd7a16953574943c751",
+      "clause_excerpt": "Whole-document raw text search, replacement, occurrence count, regular-expression match, or lexical token equality MAY be used only as a secondary diagnostic or precondition. It MU",
+      "list_item_count": 0,
+      "list_hash": null,
+      "validator_id": "authority_manifest_guard",
+      "automation": "AUTO",
+      "blocking": true
+    },
+    {
+      "requirement_id": "GOV03-MUST_NOT-046",
+      "source": "WEB-GOV-03",
+      "section": "70. Structured Mutation Selector / Bounded Write-Set Safety",
+      "line": 1192,
+      "modality": "MUST_NOT",
+      "clause_hash": "86f9ae308ac5162583d4ef6403f668ccf034bb5cba14887ba2b4385bcc98ec56",
+      "clause_excerpt": "Structured documents MUST be parsed successfully before mutation and reparsed after mutation. The executor MUST verify the selected node identity, required parent/sibling context, ",
+      "list_item_count": 0,
+      "list_hash": null,
+      "validator_id": "mapping_schema_guard",
+      "automation": "AUTO",
+      "blocking": true
+    },
+    {
+      "requirement_id": "GOV03-MUST-127",
+      "source": "WEB-GOV-03",
+      "section": "70. Structured Mutation Selector / Bounded Write-Set Safety",
+      "line": 1192,
+      "modality": "MUST",
+      "clause_hash": "86f9ae308ac5162583d4ef6403f668ccf034bb5cba14887ba2b4385bcc98ec56",
+      "clause_excerpt": "Structured documents MUST be parsed successfully before mutation and reparsed after mutation. The executor MUST verify the selected node identity, required parent/sibling context, ",
+      "list_item_count": 0,
+      "list_hash": null,
+      "validator_id": "mapping_schema_guard",
+      "automation": "AUTO",
+      "blocking": true
+    },
+    {
+      "requirement_id": "GOV03-MUST-128",
+      "source": "WEB-GOV-03",
+      "section": "70. Structured Mutation Selector / Bounded Write-Set Safety",
+      "line": 1194,
+      "modality": "MUST",
+      "clause_hash": "83482189aa01e1db5fc96e8f2a400eae8c417635106edcf891fcca8c5c08bafd",
+      "clause_excerpt": "After mutation, the executor MUST verify the exact intended structural delta, rerun affected reverse consumers, and prove that no unrelated Current owner, sibling node, denominator",
+      "list_item_count": 0,
+      "list_hash": null,
+      "validator_id": "authority_manifest_guard",
+      "automation": "AUTO",
+      "blocking": true
+    },
+    {
       "requirement_id": "GOV04-MUST-001",
       "source": "WEB-GOV-04",
       "section": "1. 稽核最高原則",
@@ -9658,6 +9742,48 @@
       "list_item_count": 0,
       "list_hash": null,
       "validator_id": "authority_manifest_guard",
+      "automation": "AUTO",
+      "blocking": true
+    },
+    {
+      "requirement_id": "GOV04-MUST-119",
+      "source": "WEB-GOV-04",
+      "section": "84. Structured Mutation Selector / Write-Set Integrity Audit",
+      "line": 1511,
+      "modality": "MUST",
+      "clause_hash": "7761555bf7dfc105d4b3f47022bfe2de19232780dcdfae0b9ec5ad25bf8b801c",
+      "clause_excerpt": "Audit MUST prove every structured mutation selected its write target through a bounded structural identity rather than an unscoped whole-document lexical assumption. If uniqueness ",
+      "list_item_count": 0,
+      "list_hash": null,
+      "validator_id": "authority_manifest_guard",
+      "automation": "AUTO",
+      "blocking": true
+    },
+    {
+      "requirement_id": "GOV04-MUST-120",
+      "source": "WEB-GOV-04",
+      "section": "84. Structured Mutation Selector / Write-Set Integrity Audit",
+      "line": 1513,
+      "modality": "MUST",
+      "clause_hash": "09e3264bf02cfaf9741bf67f0a6430aec5ac0b9d0224259206ee49bc23e012e0",
+      "clause_excerpt": "Audit MUST verify successful parse before mutation and reparse after mutation; exact selected node identity and parent context; expected pre-write identity/hash when applicable; ex",
+      "list_item_count": 0,
+      "list_hash": null,
+      "validator_id": "mapping_schema_guard",
+      "automation": "AUTO",
+      "blocking": true
+    },
+    {
+      "requirement_id": "GOV04-MUST-121",
+      "source": "WEB-GOV-04",
+      "section": "84. Structured Mutation Selector / Write-Set Integrity Audit",
+      "line": 1515,
+      "modality": "MUST",
+      "clause_hash": "65be495f4c769ebd9eafecd37400547aa7d5be08116ce8a16ed9b5b28c565949",
+      "clause_excerpt": "For executable-source semantic mutation, Audit MUST require syntax-tree, concrete-syntax-tree, parser-backed, or equivalently bounded semantic selection and MUST reject raw source ",
+      "list_item_count": 0,
+      "list_hash": null,
+      "validator_id": "parser_guard",
       "automation": "AUTO",
       "blocking": true
     }

@@ -1181,3 +1181,14 @@ The current denominator for an execution cycle MUST be computed from Current sco
 Temporary cycles MUST declare temporary roots and cleanup boundaries. Temporary residuals may block a formal cleanliness gate, but this classification is TEMPORARY_LIFECYCLE_RESIDUAL, not PRODUCT_SEMANTIC_FAILURE. Temporary output MUST be promoted only through the registered candidate/approval/materialization path and MUST be absent from formal package roots at formal closure unless explicitly retained as legal non-current evidence.
 
 Capability re-entry is owner-based, not stage-number-based Mother Policy. A selected Execution Profile MAY map source intake, functional contract, visual design, freeze, implementation, verification, build/release, staging, cutover, production acceptance, and operations/closure capabilities to concrete stage UIDs. Changing that profile mapping MUST NOT require Mother Policy changes.
+
+<!-- SECTION_UID: WEB-GOV-03-S070 -->
+## 70. Structured Mutation Selector / Bounded Write-Set Safety
+
+Any mutation of a structured governance artifact, run-state artifact, registry, manifest, evidence record, structured Product/Project source, or executable source MUST resolve a bounded structural target before writing. The primary selector MUST be a typed identity, registered path, schema field, parser node, syntax-tree node, or exact registered section boundary that belongs to the Current Work Unit and canonical owner.
+
+Whole-document raw text search, replacement, occurrence count, regular-expression match, or lexical token equality MAY be used only as a secondary diagnostic or precondition. It MUST_NOT be the primary write selector, and it MUST_NOT assert global uniqueness unless Current schema or Registry Authority explicitly guarantees uniqueness for that exact identity in that exact structural scope. Zero matches, ambiguous multiple candidates, cross-section matches, or selector drift MUST block before write; first-match, nearest-match, and silent fallback are forbidden.
+
+Structured documents MUST be parsed successfully before mutation and reparsed after mutation. The executor MUST verify the selected node identity, required parent/sibling context, schema or required-field constraints, expected pre-write hash when applicable, exact write-set, and preservation of unrelated structural siblings. Semantic mutation of executable source MUST use a syntax-tree, concrete-syntax-tree, parser-backed, or equivalently bounded semantic selector; raw source spelling alone MUST_NOT define semantic identity.
+
+After mutation, the executor MUST verify the exact intended structural delta, rerun affected reverse consumers, and prove that no unrelated Current owner, sibling node, denominator, reference, or execution state was changed. Selector ambiguity or parser failure is a mutation blocker, not permission to weaken the selector.

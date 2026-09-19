@@ -5,7 +5,7 @@ artifact_type: SECTION_NUMBER_REGISTRY
 status: CURRENT_CANDIDATE
 canonical_path: 10_REGISTRY/SECTION_NUMBER_REGISTRY.yaml
 owner_uid: OWNER-GOVERNANCE-SECTION-REGISTRY
-governance_revision: v2.2.6-profile-token-decontamination-hardening
+governance_revision: v2.2.8-structured-mutation-selector-hardening
 policy:
   unique_numeric_h2_per_document: true
   section_uid_is_canonical_reference: true
@@ -1795,6 +1795,13 @@ documents:
     heading: '## 69. Execution Scope Manifest / Dynamic Denominator / Capability Re-entry Control'
     path: 12_DOCS/mother-spec/03_EXECUTION_CONTROL_STANDARD.md
     binding_sha256: 184e96da788fc6172e9275f72198fd57b98cef55fef565987c96cf9fb0299d34
+  - section_uid: WEB-GOV-03-S070
+    level: 2
+    canonical_number: '70'
+    title: Structured Mutation Selector / Bounded Write-Set Safety
+    heading: '## 70. Structured Mutation Selector / Bounded Write-Set Safety'
+    path: 12_DOCS/mother-spec/03_EXECUTION_CONTROL_STANDARD.md
+    binding_sha256: 112b1bceafa63498a00381ddcf8384589fa6ca692748ed0ed8b95c4a6c4c25de
 - document_id: WEB-GOV-04
   path: 12_DOCS/mother-spec/04_AUDIT_PROGRESS_STANDARD.md
   sections:
@@ -2449,6 +2456,13 @@ documents:
     heading: '## 83. Dynamic Scope / Ownership / Re-entry / Consumer Portability Audit'
     path: 12_DOCS/mother-spec/04_AUDIT_PROGRESS_STANDARD.md
     binding_sha256: ffcc63ffd119ec050d7f2902bc05f4c750a322b4c41263cdf2ead52819a756c2
+  - section_uid: WEB-GOV-04-S084
+    level: 2
+    canonical_number: '84'
+    title: Structured Mutation Selector / Write-Set Integrity Audit
+    heading: '## 84. Structured Mutation Selector / Write-Set Integrity Audit'
+    path: 12_DOCS/mother-spec/04_AUDIT_PROGRESS_STANDARD.md
+    binding_sha256: 1c5a3bc3e992cb657690d9cea0c94dbb680c2caa11218be329038063674a1b92
 historical_duplicate_groups:
 - document_id: WEB-GOV-01
   duplicate_number: '63'

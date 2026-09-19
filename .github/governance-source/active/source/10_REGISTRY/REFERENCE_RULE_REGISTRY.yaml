@@ -4,7 +4,7 @@ artifact_type: REFERENCE_RULE_REGISTRY
 status: CURRENT_CANDIDATE
 canonical_path: 10_REGISTRY/REFERENCE_RULE_REGISTRY.yaml
 owner_uid: OWNER-GOVERNANCE-REFERENCE-SEMANTICS
-governance_revision: v2.2.6-profile-token-decontamination-hardening
+governance_revision: v2.2.8-structured-mutation-selector-hardening
 normative_section_uids:
 - WEB-GOV-01-S005
 - WEB-GOV-01-S006-03
@@ -298,6 +298,7 @@ common_bundle_reference_rules:
     - WEB-GOV-03-S060
     - WEB-GOV-02-S072
     - WEB-GOV-03-S061
+    - WEB-GOV-03-S070
   BUNDLE-GOV-AUDIT-BASE:
     rule_uid: REFRULE-BUNDLE-03
     exact_section_uids:
@@ -309,6 +310,7 @@ common_bundle_reference_rules:
     - WEB-GOV-04-S074
     - WEB-GOV-04-S076
     - WEB-GOV-04-S077
+    - WEB-GOV-04-S084
 validator_identities:
 - validator_uid: VAL-GOV-001
   canonical_name: ACCEPTANCE_BLUEPRINT_GUARD

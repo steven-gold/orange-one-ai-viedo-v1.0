@@ -4,7 +4,7 @@ artifact_type: IMMUTABLE_SEMANTIC_AUTHORITY_BASELINE
 status: CURRENT_CANDIDATE_IMMUTABLE
 canonical_path: 10_REGISTRY/SEMANTIC_AUTHORITY_BASELINE.yaml
 owner_uid: OWNER-GOVERNANCE-SEMANTIC-ANCHOR
-governance_revision: v2.2.6-profile-token-decontamination-hardening
+governance_revision: v2.2.8-structured-mutation-selector-hardening
 anchor_policy:
   official_refresh_must_not_mutate: true
   compiler_must_not_regenerate: true
@@ -287,6 +287,7 @@ semantic_snapshot:
       - WEB-GOV-03-S060
       - WEB-GOV-02-S072
       - WEB-GOV-03-S061
+      - WEB-GOV-03-S070
     BUNDLE-GOV-AUDIT-BASE:
       rule_uid: REFRULE-BUNDLE-03
       exact_section_uids:
@@ -298,6 +299,7 @@ semantic_snapshot:
       - WEB-GOV-04-S074
       - WEB-GOV-04-S076
       - WEB-GOV-04-S077
+      - WEB-GOV-04-S084
   validator_identities:
   - validator_uid: VAL-GOV-001
     canonical_name: ACCEPTANCE_BLUEPRINT_GUARD
@@ -815,7 +817,7 @@ package_integrity_assets:
 - 09_TESTS/governance/test_v2_1_14_test_feedback_spec_evolution.py
 - 09_TESTS/governance/validate_product_neutral_entity_lifecycle.py
 - 09_TESTS/governance/test_v2_1_14_product_neutral_entity_lifecycle.py
-content_hash: 0c87e5c9a8d81cf608c270ae7298dd4d80735376eef63039671c38dbe580a590
+content_hash: 446007aa22777d490ba50f04cc764232872a5d9a6f497a4c7e681bdf02d5d0e8
 protected_hash_paths:
 - 09_TESTS/governance/validate_test_feedback_spec_evolution.py
 - 09_TESTS/governance/test_v2_1_14_test_feedback_spec_evolution.py

@@ -1,7 +1,7 @@
 schema_version: 1
 artifact_type: EXECUTION_SCOPE_MANIFEST
 normative_authority: false
-governance_uid: GOV-REV-20260919-PROFILE-TOKEN-DECONTAMINATION-HARDENING
+governance_uid: GOV-REV-20260919-STRUCTURED-MUTATION-SELECTOR-HARDENING
 owning_capability: FUNCTIONAL_CONTRACT
 scope_kind: EXACT_SINGLE_PAGE_FRESH_REPLAY
 included_units:
@@ -19,6 +19,7 @@ denominator_source_refs:
 - governance/test/stage02/STAGE02_LATEST_TEST_EVIDENCE.json
 - 00_SOURCE_INTAKE/fresh_run_007/04_PAGE_FUNCTIONAL_CONTRACT/CURRENT_PROBLEM_REGISTER.yaml
 partial_scope: false
-stage_exit_credit_allowed: true
-fresh_revalidation_required: false
-content_hash: d1e6a8415575f87cbf096fad1fdf6c8ff6a6de85e8d5d04ec70ca17a4d936151
+stage_exit_credit_allowed: false
+fresh_revalidation_required: true
+content_hash: ce66d5bd4a727eafe0acc06e2fdd2da866824321d2867e465bf911901c123b79
+predecessor_governance_uid: GOV-REV-20260919-PROFILE-TOKEN-DECONTAMINATION-HARDENING
