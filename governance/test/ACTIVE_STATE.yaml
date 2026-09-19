@@ -104,8 +104,8 @@ specification_mutation_safety:
   ordinary_mid_stage_specification_mutation: BLOCK
   stage_end_consolidated_promotion_requires_new_explicit_directive: true
   execution_context_lock_required: true
-status: FRESH_REPLAY_HISTORY_CLEANUP_BOUNDARY_IMPLEMENTED_REVALIDATION_REQUIRED
-next_action: RUN_EXACT_HEAD_GATES_FOR_FRESH_REPLAY_HISTORY_RETENTION_FIX
+status: ACTIVE_ASSET01_CLEAN_FRESH_REPLAY_BOOTSTRAP_REQUIRED
+next_action: SESSION_BOOTSTRAP_RESUME_GATE_THEN_REBUILD_FRESH_REPLAY_CONTEXT_FROM_IMMUTABLE_ASSET01_INPUT
 previous_closed_product_work_unit:
   work_unit_uid: WU-STAGE02-CORE01-STRUCTURAL-REMEDIATION-001
   canonical_name: CORE01_STRUCTURAL_CONTRACT_REMEDIATION
@@ -284,18 +284,20 @@ previous_closed_work_unit:
     source_runtime_residual_count: 0
     product_stage_credit: 0
 resume_control:
-  current_resume_point: FRESH_REPLAY_HISTORY_CLEANUP_BOUNDARY_MAINTENANCE_ACTIVE
-  current_work_unit_uid: WU-TEST-FRESH-REPLAY-HISTORY-CLEANUP-BOUNDARY-001
+  current_resume_point: ASSET01_CLEAN_FRESH_REPLAY_PRODUCT_WU_ACTIVATED_BOOTSTRAP_REQUIRED
+  current_work_unit_uid: WU-ASSET01-STAGE01-STAGE02-FRESH-REPLAY-8133839F
   current_owner: .github/governance-maintenance/run_fresh_stage_replay.py
   historical_stage2_results_are_current_state: false
   stage2_execution_requires_fresh_entry_resolution: true
-  exact_next_action: RUN_EXACT_HEAD_GATES_FOR_FRESH_REPLAY_HISTORY_RETENTION_FIX
-  parent_work_unit_uid: WU-ASSET01-STAGE01-STAGE02-FRESH-REPLAY-8133839F
-  parent_primary_task_layer: PRODUCT_STAGE_EXECUTION
-  preserved_product_work_unit_uid: WU-ASSET01-STAGE01-STAGE02-FRESH-REPLAY-8133839F
-  preserved_product_resume_point: ASSET01_CLEAN_FRESH_REPLAY_PRODUCT_WU_ACTIVATED_BOOTSTRAP_REQUIRED
-  preserved_product_next_action: SESSION_BOOTSTRAP_RESUME_GATE_THEN_REBUILD_FRESH_REPLAY_CONTEXT_FROM_IMMUTABLE_ASSET01_INPUT
-  product_stage_credit_from_maintenance: 0
+  exact_next_action: SESSION_BOOTSTRAP_RESUME_GATE_THEN_REBUILD_FRESH_REPLAY_CONTEXT_FROM_IMMUTABLE_ASSET01_INPUT
+  parent_work_unit_uid: WU-GOV-ASSET-STAGE01-STAGE02-SHARED-CONTRACT-HARDENING-001
+  parent_primary_task_layer: GOVERNANCE_MAINTENANCE
+  predecessor_product_work_unit_uid: WU-STAGE02-ASSET01-8133839F-REPLAY
+  predecessor_product_attempt_uid: STAGE02-ASSET01-8133839F-REPLAY
+  predecessor_product_evidence_role: HISTORICAL_PREDECESSOR_EVIDENCE_ONLY
+  current_governance_product_credit: 0
+  closed_maintenance_work_unit_uid: WU-TEST-FRESH-REPLAY-HISTORY-CLEANUP-BOUNDARY-001
+  closed_maintenance_validated_head: e3e8d5cbe87bc7a05d8e9ef824bf50fd6025511f
 governance_revision_transition:
   current_governance_uid: GOV-REV-20260919-ASSET-STAGE01-STAGE02-SHARED-CONTRACT-HARDENING
   predecessor_governance_uid: GOV-REV-20260919-BASIC-DESIGN-ATOMIC-MATERIALIZATION-HARDENING
@@ -360,8 +362,8 @@ pending_governance_review:
   - STAGE03
   - WEBSITE_CONSTRUCTION
   - DEPLOYMENT
-current_primary_task_layer: TEST_OR_VALIDATION_MAINTENANCE
-current_primary_task_authorization_uid: USR-DIRECTIVE-20260920-ASSET-FRESH-REPLAY-HISTORY-CLEANUP-R1
+current_primary_task_layer: PRODUCT_STAGE_EXECUTION
+current_primary_task_authorization_uid: USR-DIRECTIVE-20260920-RERUN-ASSET01-STAGE01-STAGE02-AFTER-SHARED-HARDENING-R1
 current_primary_task_product_stage_credit: 0
 earlier_closed_product_work_unit:
   work_unit_uid: WU-STAGE02-CORE01-FRESH-TEST-001
@@ -2736,20 +2738,40 @@ work_unit_resolution_gate_asset01_clean_fresh_replay_after_shared_hardening:
   effectful_execution_allowed_before_rebootstrap: false
   next_gate: SESSION_BOOTSTRAP_RESUME_GATE
 
-suspended_product_work_unit_asset01_clean_fresh_replay_history_cleanup_boundary:
-  work_unit_uid: WU-ASSET01-STAGE01-STAGE02-FRESH-REPLAY-8133839F
-  canonical_name: ASSET01_STAGE01_STAGE02_CLEAN_FRESH_REPLAY
-  primary_task_layer: PRODUCT_STAGE_EXECUTION
+closed_test_validation_maintenance_work_unit_fresh_replay_history_cleanup_boundary:
+  work_unit_uid: WU-TEST-FRESH-REPLAY-HISTORY-CLEANUP-BOUNDARY-001
+  canonical_name: FRESH_REPLAY_HISTORY_RETENTION_CLEANUP_BOUNDARY_HARDENING
+  primary_task_layer: TEST_OR_VALIDATION_MAINTENANCE
   canonical_owner: .github/governance-maintenance/run_fresh_stage_replay.py
-  scope:
-  - ASSET-01
-  excluded_scope:
-  - CORE-01
-  current_status: SUSPENDED_FOR_SHARED_REPLAY_HISTORY_CLEANUP_BOUNDARY_MAINTENANCE
-  authorization_uid: USR-DIRECTIVE-20260920-RERUN-ASSET01-STAGE01-STAGE02-AFTER-SHARED-HARDENING-R1
+  terminal_disposition: CLOSED_VERIFIED_NO_PRODUCT_CREDIT
+  authorization_uid: USR-DIRECTIVE-20260920-ASSET-FRESH-REPLAY-HISTORY-CLEANUP-R1
   current_governance_uid: GOV-REV-20260919-ASSET-STAGE01-STAGE02-SHARED-CONTRACT-HARDENING
-  product_blocker_credit: 0
-  next_action_after_maintenance: SESSION_BOOTSTRAP_RESUME_GATE_THEN_REBUILD_FRESH_REPLAY_CONTEXT_FROM_IMMUTABLE_ASSET01_INPUT
+  implementation_head_sha: e3e8d5cbe87bc7a05d8e9ef824bf50fd6025511f
+  exact_head_validation:
+    full_line_run_id: 35461280512
+    selected_profile_run_id: 35461280482
+    branch_guard_run_id: 35461280613
+    stage02_boundary_run_id: 35461280492
+    fresh_replay_identity_run_id: 35461280524
+    history_retention_self_test: PASS
+    terminal_conclusions:
+    - SUCCESS
+    - SUCCESS
+    - SUCCESS
+    - SUCCESS
+    - SUCCESS
+  definition_of_done_verified:
+  - CLEANUP_OLD_DOES_NOT_DELETE_GOVERNANCE_TEST_HISTORY_STAGE02
+  - CURRENT_STAGE02_REPLACEABLE_EVIDENCE_ROOTS_STILL_RESET
+  - CURRENT_RUN_ROOT_STILL_REBUILT_CLEAN
+  - HISTORY_RETENTION_NEGATIVE_REGRESSION_PASS
+  - DYNAMIC_IDENTITY_INTEGRITY_PASS
+  - FULL_LINE_EXACT_HEAD_PASS
+  - SELECTED_PROFILE_EXACT_HEAD_PASS
+  - BRANCH_GUARD_EXACT_HEAD_PASS
+  - PRODUCT_STAGE_CREDIT_ZERO
+  product_stage_credit: 0
+  legal_next_transition: RESTORE_EXISTING_ASSET01_CLEAN_FRESH_REPLAY_WORK_UNIT
 
 work_unit_resolution_gate_fresh_replay_history_cleanup_boundary:
   resolution_uid: WUR-TEST-FRESH-REPLAY-HISTORY-CLEANUP-BOUNDARY-20260920-001
@@ -2762,45 +2784,52 @@ work_unit_resolution_gate_fresh_replay_history_cleanup_boundary:
   defect_uid: FIND-20260920-016
   defect_owner: TEST_OR_VALIDATION_IMPLEMENTATION
   product_stage_credit: 0
-  next_gate: SESSION_BOOTSTRAP_RESUME_GATE
+  terminal_disposition: CLOSED_VERIFIED_NO_PRODUCT_CREDIT
 
 active_work_unit:
-  work_unit_uid: WU-TEST-FRESH-REPLAY-HISTORY-CLEANUP-BOUNDARY-001
-  canonical_name: FRESH_REPLAY_HISTORY_RETENTION_CLEANUP_BOUNDARY_HARDENING
-  primary_task_layer: TEST_OR_VALIDATION_MAINTENANCE
+  work_unit_uid: WU-ASSET01-STAGE01-STAGE02-FRESH-REPLAY-8133839F
+  canonical_name: ASSET01_STAGE01_STAGE02_CLEAN_FRESH_REPLAY
+  primary_task_layer: PRODUCT_STAGE_EXECUTION
   canonical_owner: .github/governance-maintenance/run_fresh_stage_replay.py
-  co_owners:
-  - governance/test/SPECIFICATION_CHANGE_CANDIDATES.yaml
-  - .github/workflows/fresh-stage-replay.yml
-  current_status: IMPLEMENTED_EXACT_HEAD_REVALIDATION_REQUIRED
-  authorization_uid: USR-DIRECTIVE-20260920-ASSET-FRESH-REPLAY-HISTORY-CLEANUP-R1
-  current_governance_uid: GOV-REV-20260919-ASSET-STAGE01-STAGE02-SHARED-CONTRACT-HARDENING
-  parent_product_work_unit_uid: WU-ASSET01-STAGE01-STAGE02-FRESH-REPLAY-8133839F
+  state_owner: governance/test/ACTIVE_STATE.yaml
   scope:
-  - REMOVE_GLOBAL_GOVERNANCE_TEST_HISTORY_STAGE02_DELETE_FROM_FRESH_REPLAY_CLEANUP
-  - PRESERVE_CURRENT_STAGE02_REPLACEABLE_OUTPUT_CLEANUP
-  - PRESERVE_IMMUTABLE_INPUT_AND_LEGAL_HISTORICAL_EVIDENCE
-  - ADD_NEGATIVE_REGRESSION_FOR_HISTORY_RETENTION
-  out_of_scope:
-  - ASSET_PRODUCT_AUTHORITY_CHANGE
-  - PRODUCT_BLOCKER_CREDIT
-  - MOTHER_NORMATIVE_CHANGE
-  - STAGE01_OR_STAGE02_PRODUCT_EXECUTION
-  - STAGE03
-  - WEBSITE_IMPLEMENTATION
-  - DEPLOYMENT
+  - ASSET-01
+  excluded_scope:
+  - CORE-01
+  current_status: ACTIVATED_BOOTSTRAP_REQUIRED_BEFORE_EFFECTFUL_EXECUTION
+  authorization_uid: USR-DIRECTIVE-20260920-RERUN-ASSET01-STAGE01-STAGE02-AFTER-SHARED-HARDENING-R1
+  current_governance_uid: GOV-REV-20260919-ASSET-STAGE01-STAGE02-SHARED-CONTRACT-HARDENING
+  start_condition:
+  - V2_2_13_SHARED_GOVERNANCE_WU_CLOSED
+  - FRESH_REPLAY_HISTORY_CLEANUP_BOUNDARY_MAINTENANCE_CLOSED
+  - IMMUTABLE_ASSET01_INPUT_PRESENT
+  - CLEAN_REPLAY_CONTEXT_NOT_YET_READY
+  - FULL_SESSION_BOOTSTRAP_RESUME_GATE_REQUIRED_BEFORE_EFFECTFUL_EXECUTION
+  dependencies:
+  - 00_SOURCE_INTAKE/immutable_inputs/asset01_9668e230/RAW_SOURCE_RECOVERY_RECEIPT.yaml
+  - 00_SOURCE_INTAKE/immutable_inputs/asset01_9668e230/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+  - governance/test/CURRENT_EXECUTION_SCOPE_MANIFEST.yaml
+  - GOVERNANCE_CURRENT.yaml
   definition_of_done:
-  - CLEANUP_OLD_DOES_NOT_DELETE_GOVERNANCE_TEST_HISTORY_STAGE02
-  - CURRENT_STAGE02_REPLACEABLE_EVIDENCE_ROOTS_STILL_RESET
-  - CURRENT_RUN_ROOT_STILL_REBUILT_CLEAN
-  - HISTORY_RETENTION_NEGATIVE_REGRESSION_PASS
-  - DYNAMIC_IDENTITY_INTEGRITY_PASS
-  - FULL_LINE_EXACT_HEAD_PASS
-  - SELECTED_PROFILE_EXACT_HEAD_PASS
-  - BRANCH_GUARD_EXACT_HEAD_PASS
-  - PRODUCT_STAGE_CREDIT_ZERO
-  product_stage_credit: 0
-  next_action: REBOOTSTRAP_THEN_REMOVE_GLOBAL_STAGE02_HISTORY_DELETE_AND_ADD_NEGATIVE_REGRESSION
+  - REBUILD_READY_FOR_REPLAY_CONTEXT_FROM_CURRENT_GOVERNANCE_AND_IMMUTABLE_INPUT
+  - REMOVE_REPLACEABLE_ASSET_STAGE01_STAGE02_GENERATED_OUTPUT_ONLY
+  - PRESERVE_IMMUTABLE_RAW_SOURCE_AND_LEGAL_HISTORICAL_EVIDENCE
+  - FRESH_STAGE01_SOURCE_INTAKE_CLASSIFICATION_AUTHORITY_BINDING
+  - FRESH_STAGE02_FUNCTIONAL_CONTRACT_EXECUTION
+  - NO_HISTORICAL_PRODUCT_VALUE_FALLBACK
+  - NO_AI_PRODUCT_AUTHORITY_AUTOFILL
+  - REVIEW_ONLY_CANDIDATE_ZERO_PRODUCT_CREDIT
+  - APPROVED_CANONICAL_OWNER_ONLY_MATERIALIZATION
+  - FRESH_EXACT_HEAD_GATES_BEFORE_STAGE_EXIT
+  - STOP_AFTER_STAGE02
+  product_blocker_credit: 0
+  predecessor_product_evidence:
+    attempt_uid: STAGE02-ASSET01-8133839F-REPLAY
+    functional_gap_total: 75
+    closure_blocker_total: 7
+    product_credit: 31
+    role: HISTORICAL_PREDECESSOR_EVIDENCE_ONLY
+  next_action: SESSION_BOOTSTRAP_RESUME_GATE_THEN_REBUILD_FRESH_REPLAY_CONTEXT_FROM_IMMUTABLE_ASSET01_INPUT
 work_unit_resolution_gate_blueprint_traceability:
   resolution_uid: WUR-GOV-BLUEPRINT-TRACEABILITY-20260919-001
   normative_authority: false
