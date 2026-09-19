@@ -284,17 +284,17 @@ previous_closed_work_unit:
     source_runtime_residual_count: 0
     product_stage_credit: 0
 resume_control:
-  current_resume_point: BASIC_DESIGN_ATOMIC_MATERIALIZATION_SUCCESSOR_PROMOTED_EXACT_HEAD_REVALIDATION_REQUIRED
-  current_work_unit_uid: WU-GOV-BASIC-DESIGN-ATOMIC-MATERIALIZATION-001
+  current_resume_point: ASSET_STAGE01_STAGE02_SHARED_CONTRACT_HARDENING_WUR_RESOLVED_READY_FOR_GOVERNANCE_SUCCESSOR
+  current_work_unit_uid: WU-GOV-ASSET-STAGE01-STAGE02-SHARED-CONTRACT-HARDENING-001
   current_owner: .github/governance-source/active/source/12_DOCS/mother-spec/01_BLUEPRINT_DESIGN_GOVERNANCE.md
   historical_stage2_results_are_current_state: false
-  stage2_execution_requires_fresh_entry_resolution: false
-  exact_next_action: RUN_SUCCESSOR_EXACT_HEAD_VALIDATION_THEN_REEXECUTE_BASIC_DESIGN_WITH_ATOMIC_FULL_DENOMINATOR_DETAIL
-  parent_work_unit_uid: WU-GOV-BASIC-DESIGN-VISUAL-INTEGRATION-001
+  stage2_execution_requires_fresh_entry_resolution: true
+  exact_next_action: MATERIALIZE_V2_2_13_SHARED_STAGE02_CONTRACT_SUCCESSOR_THEN_EXACT_HEAD_REVALIDATE
+  parent_work_unit_uid: WU-GOV-BASIC-DESIGN-ATOMIC-MATERIALIZATION-001
   parent_primary_task_layer: GOVERNANCE_MAINTENANCE
   preserved_product_work_unit_uid: WU-STAGE02-ASSET01-8133839F-REPLAY
   preserved_product_resume_point: ASSET01_STAGE2_EXACT_CLOSURES_REVALIDATED_REVIEW_ONLY_PRODUCT_AUTHORITY_REQUIRED
-  preserved_product_next_action: REVIEW_ASSET01_STAGE02_REMAINING_REVIEW_ONLY_DESIGN_CONTRACT_CANDIDATE
+  preserved_product_next_action: CLEAN_ASSET01_STAGE01_STAGE02_GENERATED_OUTPUT_AND_FRESH_REPLAY_AFTER_SHARED_GOVERNANCE_SUCCESSOR
 
 governance_revision_transition:
   current_governance_uid: GOV-REV-20260919-BASIC-DESIGN-ATOMIC-MATERIALIZATION-HARDENING
@@ -304,12 +304,12 @@ governance_revision_transition:
   predecessor_attempt_may_close_under_current_governance: false
   fresh_revalidation_required: true
   fresh_revalidation_scope: BASIC_DESIGN_ATOMIC_MATERIALIZATION_AND_AFFECTED_DESIGN_CONSUMERS
-  mother_machine_revalidation_complete: false
-  mother_machine_revalidation_run_id: null
-  mother_machine_revalidation_head: null
-  mother_machine_revalidation_result: REVALIDATION_REQUIRED
+  mother_machine_revalidation_complete: true
+  mother_machine_revalidation_run_id: 35453114089
+  mother_machine_revalidation_head: 4b69f556d1c0da2ca71dca4d00ac49fd96dab730
+  mother_machine_revalidation_result: success
   selected_execution_profile_preserved: true
-  selected_execution_profile_run_id: null
+  selected_execution_profile_run_id: 35453114112
   branch_guard_run_id: 35321234031
   stage02_boundary_run_id: 35321234019
   canonical_rule_registry_required_for_fresh_revalidation: true
@@ -350,7 +350,7 @@ pending_governance_review:
   - WEBSITE_CONSTRUCTION
   - DEPLOYMENT
 current_primary_task_layer: GOVERNANCE_MAINTENANCE
-current_primary_task_authorization_uid: USR-DIRECTIVE-20260919-BASIC-DESIGN-ATOMIC-MATERIALIZATION-HARDENING-R2
+current_primary_task_authorization_uid: USR-DIRECTIVE-20260919-ASSET-STAGE01-STAGE02-SHARED-CONTRACT-HARDENING-R1
 current_primary_task_product_stage_credit: 0
 earlier_closed_product_work_unit:
   work_unit_uid: WU-STAGE02-CORE01-FRESH-TEST-001
@@ -2596,32 +2596,26 @@ superseded_governance_work_unit_blueprint_traceability:
   - ONE_FRESH_BLUEPRINT_REPLANNING_EXECUTION_UNDER_SUCCESSOR_AFTER_PROMOTION
   product_stage_credit: 0
   successor_work_unit_uid: WU-GOV-BASIC-DESIGN-VISUAL-INTEGRATION-001
-active_work_unit:
+closed_governance_maintenance_work_unit_basic_design_atomic_materialization:
   work_unit_uid: WU-GOV-BASIC-DESIGN-ATOMIC-MATERIALIZATION-001
   canonical_name: BASIC_DESIGN_ATOMIC_MATERIALIZATION_HARDENING
   primary_task_layer: GOVERNANCE_MAINTENANCE
   canonical_owner: .github/governance-source/active/source/12_DOCS/mother-spec/01_BLUEPRINT_DESIGN_GOVERNANCE.md
-  current_status: PROMOTION_MATERIALIZED_EXACT_HEAD_REVALIDATION_REQUIRED
-  authorization_uid: USR-DIRECTIVE-20260919-BASIC-DESIGN-ATOMIC-MATERIALIZATION-HARDENING-R2
-  scope:
-  - ATOMIC_BASIC_DESIGN_MATERIALIZATION
-  - COMPLETE_REQUIRED_DENOMINATOR_ENUMERATION
-  - NO_SUMMARY_SUBSTITUTION
-  - NO_REPRESENTATIVE_SAMPLE_CREDIT
-  - ROW_LEVEL_EXECUTION_DETAIL_BINDING
-  - BASIC_DESIGN_DENOMINATOR_SNAPSHOT
-  - HUMAN_MACHINE_DELIVERABLE_RECONCILIATION
-  - ZERO_SILENT_OMISSION
-  - ZERO_UNCLASSIFIED_APPLICABILITY
-  - BASIC_DESIGN_FREEZE_FAIL_CLOSED
-  out_of_scope:
-  - PRODUCT_AUTHORITY_CHANGE
-  - PRODUCT_SPECIFIC_BUSINESS_LOGIC
-  - IMPLEMENTATION_CONSTRUCTION
-  - RUNTIME_TEST
-  - DEPLOYMENT
-  - PRODUCT_STAGE_CREDIT
-  definition_of_done:
+  terminal_disposition: CLOSED_VERIFIED_NO_PRODUCT_CREDIT
+  governance_uid: GOV-REV-20260919-BASIC-DESIGN-ATOMIC-MATERIALIZATION-HARDENING
+  validated_head_sha: 4b69f556d1c0da2ca71dca4d00ac49fd96dab730
+  full_line_run_id: 35453114089
+  selected_profile_run_id: 35453114112
+  branch_guard_run_id: 35453114105
+  stage02_boundary_run_id: 35453114092
+  fresh_replay_integrity_run_id: 35453114079
+  terminal_conclusions:
+  - FULL_LINE_SUCCESS
+  - SELECTED_PROFILE_SUCCESS
+  - BRANCH_GUARD_SUCCESS
+  - STAGE02_BOUNDARY_REGRESSION_SUCCESS_PRODUCT_EXECUTION_SKIPPED
+  - FRESH_REPLAY_IDENTITY_SUCCESS_PRODUCT_EXECUTION_SKIPPED
+  definition_of_done_verified:
   - MOTHER01_SECTIONS_084_TO_086_CURRENT
   - ATOMIC_BASIC_DESIGN_MACHINE_INVARIANT_CURRENT
   - ACCEPTANCE_DENOMINATOR_MACHINE_GATED
@@ -2632,6 +2626,76 @@ active_work_unit:
   - EXACT_HEAD_FULL_LINE_SUCCESS
   - EXACT_HEAD_SELECTED_PROFILE_SUCCESS
   - EXACT_HEAD_BRANCH_GUARD_SUCCESS
+  product_stage_credit: 0
+  legal_next_transition: WORK_UNIT_RESOLUTION_GATE_FOR_ASSET_STAGE01_STAGE02_SHARED_CONTRACT_HARDENING
+
+work_unit_resolution_gate_asset_stage01_stage02_shared_contract_hardening:
+  resolution_uid: WUR-GOV-ASSET-STAGE01-STAGE02-SHARED-CONTRACT-HARDENING-20260919-001
+  normative_authority: false
+  result: PASS_SINGLE_LEGAL_SUCCESSOR
+  requested_primary_task_layer: GOVERNANCE_MAINTENANCE
+  resolved_work_unit_uid: WU-GOV-ASSET-STAGE01-STAGE02-SHARED-CONTRACT-HARDENING-001
+  authorization_uid: USR-DIRECTIVE-20260919-ASSET-STAGE01-STAGE02-SHARED-CONTRACT-HARDENING-R1
+  predecessor_work_unit_uid: WU-GOV-BASIC-DESIGN-ATOMIC-MATERIALIZATION-001
+  preserved_product_work_unit_uid: WU-STAGE02-ASSET01-8133839F-REPLAY
+  basis:
+  - EXPLICIT_USER_DIRECTIVE_RECHECK_FIX_AND_RERUN_ASSET_STAGE01_STAGE02
+  - FIND_20260919_015_CONTROL_VS_SYSTEM_TRIGGER_CLASSIFICATION_BUG
+  - PRODUCER_CONSUMER_AUDIT_EVENT_FIELD_SCHEMA_DRIFT_CONFIRMED
+  - ACTIVE_REUSABLE_STAGE02_MATERIALIZER_STILL_CONTAINS_FIXED_PRODUCT_AND_HISTORICAL_RUN_DEFAULTS
+  - SHARED_WORKFLOW_DISPATCH_STILL_CONTAINS_FIXED_CORE01_SCOPE_DEFAULT
+  - EXISTING_MOTHER_TASK_LAYER_ORDER_MUST_BE_ENFORCED_NOT_BYPASSED
+  product_stage_credit: 0
+
+active_work_unit:
+  work_unit_uid: WU-GOV-ASSET-STAGE01-STAGE02-SHARED-CONTRACT-HARDENING-001
+  canonical_name: ASSET_STAGE01_STAGE02_SHARED_CONTRACT_HARDENING
+  primary_task_layer: GOVERNANCE_MAINTENANCE
+  canonical_owner: .github/governance-source/active/source/12_DOCS/mother-spec/01_BLUEPRINT_DESIGN_GOVERNANCE.md
+  co_owners:
+  - .github/governance-source/active/source/12_DOCS/mother-spec/02_IMPLEMENTATION_DELIVERY_STANDARD.md
+  - .github/governance-source/active/source/12_DOCS/mother-spec/03_EXECUTION_CONTROL_STANDARD.md
+  - .github/governance-source/active/source/12_DOCS/mother-spec/04_AUDIT_PROGRESS_STANDARD.md
+  - .github/governance-source/active/source/10_REGISTRY/STAGE_EXECUTION_INVARIANT_REGISTRY.yaml
+  - .github/governance-source/active/source/10_REGISTRY/GOVERNANCE_ACCEPTANCE_AUDIT_BLUEPRINT.yaml
+  - governance/ci/run_current_stage2_actual_test.py
+  - governance/ci/materialize_current_stage2_closure_artifacts.py
+  - .github/workflows/stage02-actual-test.yml
+  current_status: WUR_RESOLVED_READY_FOR_GOVERNANCE_SUCCESSOR
+  authorization_uid: USR-DIRECTIVE-20260919-ASSET-STAGE01-STAGE02-SHARED-CONTRACT-HARDENING-R1
+  scope:
+  - CONTROL_VS_SYSTEM_TRIGGER_SEMANTIC_RESOLUTION
+  - PRODUCER_CONSUMER_SCHEMA_IDENTITY_GATE
+  - AUDIT_EVENT_UID_CANONICAL_FIELD_CONTRACT
+  - REUSABLE_STAGE02_PRODUCT_NEUTRALITY
+  - NO_HISTORY_PRODUCT_VALUE_FALLBACK
+  - IMMUTABLE_INPUT_PRESERVING_CLEAN_REPLAY_BOUNDARY
+  - EXISTING_TASK_LAYER_TRANSITION_ORDER_MACHINE_ENFORCEMENT
+  - TARGETED_NEGATIVE_REGRESSION
+  out_of_scope:
+  - PRODUCT_AUTHORITY_CHANGE
+  - ASSET01_NEW_BUSINESS_BEHAVIOR
+  - NEW_CREATE_FINDING_VISUAL_CONTROL
+  - STAGE03_PRODUCT_EXECUTION
+  - WEBSITE_IMPLEMENTATION
+  - DEPLOYMENT
+  - PRODUCT_STAGE_CREDIT
+  definition_of_done:
+  - PREEXISTING_SINGLE_USE_SPEC_CHANGE_AUTHORIZATION
+  - V2_2_13_IMMUTABLE_GOVERNANCE_SUCCESSOR
+  - CONTROL_VS_SYSTEM_TRIGGER_RESOLUTION_MOTHER_AND_MACHINE_RULE_CURRENT
+  - PRODUCER_CONSUMER_SCHEMA_IDENTITY_MOTHER_AND_MACHINE_RULE_CURRENT
+  - AUDIT_EVENT_UID_SINGLE_CANONICAL_FIELD_CONTRACT
+  - ACTIVE_SHARED_STAGE02_PATH_ZERO_FIXED_PRODUCT_UID_OR_HISTORICAL_RUN_DEFAULT
+  - TASK_LAYER_TRANSITION_CANNOT_BE_BYPASSED_BY_MATERIALIZER_ENVIRONMENT
+  - NO_GIT_HISTORY_PRODUCT_VALUE_FALLBACK_REGRESSION_PASS
+  - IMMUTABLE_RAW_SOURCE_DELETE_GUARD_REGRESSION_PASS
+  - TARGETED_NEGATIVE_REGRESSION_PASS
+  - ACTIVE_CONSUMER_REFERENCE_INTEGRITY_PASS
+  - EXACT_HEAD_FULL_LINE_SUCCESS
+  - EXACT_HEAD_SELECTED_PROFILE_SUCCESS
+  - EXACT_HEAD_BRANCH_GUARD_SUCCESS
+  - PRODUCT_STAGE_CREDIT_ZERO
   product_stage_credit: 0
 
 work_unit_resolution_gate_blueprint_traceability:
