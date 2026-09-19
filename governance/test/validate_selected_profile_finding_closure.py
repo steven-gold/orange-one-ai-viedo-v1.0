@@ -152,8 +152,35 @@ for node in ast.walk(raw_tree):
     if prior_false:
         break
 require(prior_false, "015_PRIOR_STAGE2_RESULTS_FALSE_GUARD_MISSING")
-for token in ("MATERIAL_VALIDATOR", "PENDING_REMEDIATION_PRODUCT_ROOT_INVALID"):
-    require(token in successor_text, f"015_SUCCESSOR_GUARD_MISSING:{token}")
+try:
+    successor_tree = ast.parse(successor_text, filename=str(SUCCESSOR))
+except SyntaxError as exc:
+    die(f"015_SUCCESSOR_PARSE_FAILED:{exc}")
+successor_functions = {
+    node.name for node in ast.walk(successor_tree)
+    if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef))
+}
+successor_strings = {
+    node.value for node in ast.walk(successor_tree)
+    if isinstance(node, ast.Constant) and isinstance(node.value, str)
+}
+require(
+    "resolve_current_stage2_product_root" in successor_functions,
+    "015_SUCCESSOR_DYNAMIC_CURRENT_ROOT_RESOLVER_MISSING",
+)
+require(
+    "fresh_run_003" not in successor_text,
+    "015_SUCCESSOR_STALE_FIXED_RUN_ROOT_PRESENT",
+)
+for token in (
+    "CURRENT_STAGE2_RUN_ROOT_AMBIGUOUS",
+    "CURRENT_STAGE2_EXACT_CLOSURE_OWNER_OR_RECEIPT_MISSING",
+    "MATERIAL_REMEDIATION_RECEIPT_DENOMINATOR_DRIFT",
+    "MATERIALIZED_PENDING_FRESH_REVALIDATION",
+    "MATERIALIZED_FRESH_REVALIDATED",
+    "FRESH_REVALIDATED_PRODUCT_CREDIT_DRIFT",
+):
+    require(token in successor_strings, f"015_SUCCESSOR_SEMANTIC_GUARD_MISSING:{token}")
 for token in (
     "raw_actions", "raw_controls", "raw_sections", "raw_components", "raw_ports",
     "OPERATION_MATRIX_ACTION_UID_DRIFT", "FUNCTIONAL_CHAIN_ACTION_DRIFT", "FUNCTIONAL_CHAIN_PORT_DRIFT",
