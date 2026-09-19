@@ -83,6 +83,32 @@ block_evidence('pass_nonzero_denominator',lambda x:x['denominator'].__setitem__(
 def make_blocked_without_phase(x):
     x['result']='BLOCKED'; x['stage_exit_allowed']=False
 block_evidence('blocked_without_blocked_phase',make_blocked_without_phase)
+plans=[eng.plan(uid) for uid in eng.stage_map(profile)]
+assert len(plans)==11
+assert all(len(x['phases'])==26 for x in plans)
+assert all([p['phases'][i]['phase_uid'] for i in range(26)]==eng.EXPECTED_PHASES for p in plans)
+
+wstage='STAGE-03'
+wst=eng.stage_map(profile)[wstage]
+wad=adapters['stages'][wstage]
+work={
+ 'work_unit_uid':'SYNTHETIC-WU','primary_task_layer':'PRODUCT_STAGE_EXECUTION','stage_uid':wstage,'current_status':'ACTIVE_PREEXECUTION',
+ 'required_outputs':list(wst['outputs']),
+ 'operation_bindings':{x:{'executor_owner':'synthetic.executor','result_owner':'synthetic.results'} for x in wst['operations']},
+ 'scanner_bindings':{x:{'scanner_owner':'synthetic.scanner','result_owner':'synthetic.scan.results'} for x in wad['scanner_dimensions']},
+}
+eng.validate_work_unit_bindings(wstage,deepcopy(work),eng.stage_map(profile),adapters)
+def block_work(label,mutator):
+    global cases
+    x=deepcopy(work); mutator(x)
+    try: eng.validate_work_unit_bindings(wstage,x,eng.stage_map(profile),adapters)
+    except eng.StageEngineError:
+        cases+=1; return
+    raise SystemExit('FAIL_EXPECTED_WORK_UNIT_BLOCK:'+label)
+block_work('missing_operation_binding',lambda x:x['operation_bindings'].pop(next(iter(x['operation_bindings']))))
+block_work('missing_scanner_binding',lambda x:x['scanner_bindings'].pop(next(iter(x['scanner_bindings']))))
+block_work('operation_executor_owner_missing',lambda x:x['operation_bindings'][next(iter(x['operation_bindings']))].pop('executor_owner'))
+block_work('scanner_owner_missing',lambda x:x['scanner_bindings'][next(iter(x['scanner_bindings']))].pop('scanner_owner'))
 wrapper=(ROOT/'governance/ci/compile_stage_execution_preflight.py').read_text(encoding='utf-8')
 assert 'compatibility_main' in wrapper
 assert 'UNSUPPORTED_STAGE_UNTIL_MATCHING_CURRENT_EVIDENCE_EXISTS' not in wrapper
@@ -101,5 +127,5 @@ for node in ast.walk(tree):
         for arg in node.args:
             if isinstance(arg,ast.Constant) and isinstance(arg.value,str) and arg.value.startswith('UNSUPPORTED_STAGE_UNTIL_MATCHING_CURRENT_EVIDENCE_EXISTS'):
                 raise AssertionError('COMMON_ENGINE_STAGE02_ONLY_REJECTION')
-print(f'PASS: common Stage Execution Engine negative regression {cases}/28')
+print(f'PASS: common Stage Execution Engine negative regression {cases}/32')
 print('PASS: Stage-02 entrypoint is compatibility-only; common engine has no Stage-02-only execution rejection')

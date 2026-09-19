@@ -160,20 +160,12 @@ def plan(stage_uid):
     contracts=(adapters.get('common_execution_skeleton') or {}).get('phase_contracts') or {}
     return {'artifact_type':'COMMON_STAGE_EXECUTION_PLAN','normative_authority':False,'governance_uid':gov,'selected_profile_uid':profile.get('profile_uid'),'stage_uid':stage_uid,'stage_name':st.get('name'),'scope_mode':st.get('scope_mode'),'entry_gate':st.get('entry_gate'),'exit_gate':st.get('exit_gate'),'next_stage_uid':st.get('next_stage_uid'),'semantic_dimensions':ad.get('semantic_dimensions'),'scanner_dimensions':ad.get('scanner_dimensions'),'denominator_kind':ad.get('denominator_kind'),'operations':st.get('operations'),'outputs':st.get('outputs'),'output_producers':st.get('output_producers'),'validators':st.get('validators'),'required_evidence_types':st.get('required_evidence'),'phases':[{'ordinal':i+1,'phase_uid':ph,'executor_owner':'COMMON_STAGE_EXECUTION_ENGINE','semantic_owner':'STAGE_SEMANTIC_ADAPTER' if ph in semantic_phases else 'COMMON_STAGE_EXECUTION_ENGINE','required_artifact':contracts[ph]['required_artifact'],'pass_condition':contracts[ph]['pass_condition'],'definition_status':'BOUND'} for i,ph in enumerate(EXPECTED_PHASES)],'definition_audit_product_completion_credit':0}
 
-def active_product(stage_uid):
-    entry,reg,gov,profile,adapters,stages=validate_definition()
-    state,scope=y(STATE),y(SCOPE)
-    if state.get('current_primary_task_layer')!='PRODUCT_STAGE_EXECUTION': fail('PRODUCT_EXECUTION_REQUIRES_PRODUCT_STAGE_PRIMARY_TASK')
-    work=state.get('active_work_unit')
+def validate_work_unit_bindings(stage_uid,work,stages,adapters):
+    if stage_uid not in stages: fail(f'UNKNOWN_STAGE:{stage_uid}')
     if not isinstance(work,dict): fail('ACTIVE_PRODUCT_WORK_UNIT_MISSING')
     if work.get('primary_task_layer')!='PRODUCT_STAGE_EXECUTION': fail('ACTIVE_WORK_UNIT_NOT_PRODUCT_STAGE_EXECUTION')
     if work.get('stage_uid')!=stage_uid: fail('ACTIVE_WORK_UNIT_STAGE_MISMATCH')
     if str(work.get('current_status') or '').startswith('CLOSED'): fail('ACTIVE_PRODUCT_WORK_UNIT_ALREADY_CLOSED')
-    if scope.get('governance_uid')!=gov or not scope.get('included_units'): fail('CURRENT_SCOPE_INVALID')
-    deps=work.get('dependencies') or []
-    if not isinstance(deps,list) or not deps: fail('ACTIVE_PRODUCT_WORK_UNIT_DEPENDENCY_CLOSURE_MISSING')
-    for rel in deps:
-        if isinstance(rel,str) and '/' in rel and not (ROOT/rel).exists(): fail(f'ACTIVE_PRODUCT_WORK_UNIT_DEPENDENCY_MISSING:{rel}')
     req=set(map(str,work.get('required_outputs') or [])); prof=set(map(str,stages[stage_uid].get('outputs') or []))
     if req and not prof.issubset(req): fail('ACTIVE_WORK_UNIT_OUTPUT_DENOMINATOR_INCOMPLETE')
     op_bindings=work.get('operation_bindings')
@@ -190,7 +182,21 @@ def active_product(stage_uid):
     for uid,binding in scan_bindings.items():
         if not isinstance(binding,dict) or not binding.get('scanner_owner') or not binding.get('result_owner'):
             fail(f'ACTIVE_WORK_UNIT_SCANNER_BINDING_INVALID:{uid}')
+    return True
+
+def active_product(stage_uid):
+    entry,reg,gov,profile,adapters,stages=validate_definition()
+    state,scope=y(STATE),y(SCOPE)
+    if state.get('current_primary_task_layer')!='PRODUCT_STAGE_EXECUTION': fail('PRODUCT_EXECUTION_REQUIRES_PRODUCT_STAGE_PRIMARY_TASK')
+    work=state.get('active_work_unit')
+    validate_work_unit_bindings(stage_uid,work,stages,adapters)
+    if scope.get('governance_uid')!=gov or not scope.get('included_units'): fail('CURRENT_SCOPE_INVALID')
+    deps=work.get('dependencies') or []
+    if not isinstance(deps,list) or not deps: fail('ACTIVE_PRODUCT_WORK_UNIT_DEPENDENCY_CLOSURE_MISSING')
+    for rel in deps:
+        if isinstance(rel,str) and '/' in rel and not (ROOT/rel).exists(): fail(f'ACTIVE_PRODUCT_WORK_UNIT_DEPENDENCY_MISSING:{rel}')
     return work
+
 def admission(stage_uid):
     work=active_product(stage_uid); pl=plan(stage_uid)
     print(f"PASS: common engine admission context resolved for {stage_uid} work_unit={work.get('work_unit_uid')}")
