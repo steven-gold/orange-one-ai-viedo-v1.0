@@ -1,0 +1,298 @@
+raw_sources:
+- source_uid: SRC-ASSET-01-PAGE-VISUAL-AUTHORITY
+  page_uid: ASSET-01
+  source_role: MIXED_PAGE_VISUAL_SOURCE_INPUT
+  source_domain_scope: MIXED_PAGE_VISUAL
+  current_owner: true
+source_segments:
+- segment_uid: SEG-SRC-ASSET-01-PAGE-VISUAL-AUTHORITY-001
+  source_uid: SRC-ASSET-01-PAGE-VISUAL-AUTHORITY
+  source_node_uid: SRC-ASSET-01-PAGE-VISUAL-AUTHORITY-NODE-001
+  page_uid: ASSET-01
+  planning_domain: PAGE_CONSTRUCTION
+  responsibility_uid: PAGE_AUTHORITY
+  required: true
+  disposition: CLASSIFIED
+  target_artifact_uids:
+  - CLS-ASSET-01-PAGE-AUTHORITY-001
+- segment_uid: SEG-SRC-ASSET-01-PAGE-VISUAL-AUTHORITY-002
+  source_uid: SRC-ASSET-01-PAGE-VISUAL-AUTHORITY
+  source_node_uid: SRC-ASSET-01-PAGE-VISUAL-AUTHORITY-NODE-002
+  page_uid: ASSET-01
+  planning_domain: PAGE_CONSTRUCTION
+  responsibility_uid: SYSTEM_FILENAME_GOVERNANCE
+  required: true
+  disposition: CLASSIFIED
+  target_artifact_uids:
+  - CLS-ASSET-01-SYSTEM-FILENAME-GOVERNANCE-002
+- segment_uid: SEG-SRC-ASSET-01-PAGE-VISUAL-AUTHORITY-003
+  source_uid: SRC-ASSET-01-PAGE-VISUAL-AUTHORITY
+  source_node_uid: SRC-ASSET-01-PAGE-VISUAL-AUTHORITY-NODE-003
+  page_uid: ASSET-01
+  planning_domain: VISUAL_CONSTRUCTION
+  responsibility_uid: LAYOUT_GEOMETRY
+  required: true
+  disposition: CLASSIFIED
+  target_artifact_uids:
+  - CLS-ASSET-01-LAYOUT-GEOMETRY-003
+- segment_uid: SEG-SRC-ASSET-01-PAGE-VISUAL-AUTHORITY-004
+  source_uid: SRC-ASSET-01-PAGE-VISUAL-AUTHORITY
+  source_node_uid: SRC-ASSET-01-PAGE-VISUAL-AUTHORITY-NODE-004
+  page_uid: ASSET-01
+  planning_domain: PAGE_CONSTRUCTION
+  responsibility_uid: AUTO_MANUAL
+  required: true
+  disposition: CLASSIFIED
+  target_artifact_uids:
+  - CLS-ASSET-01-AUTO-MANUAL-004
+- segment_uid: SEG-SRC-ASSET-01-PAGE-VISUAL-AUTHORITY-005
+  source_uid: SRC-ASSET-01-PAGE-VISUAL-AUTHORITY
+  source_node_uid: SRC-ASSET-01-PAGE-VISUAL-AUTHORITY-NODE-005
+  page_uid: ASSET-01
+  planning_domain: PAGE_CONSTRUCTION
+  responsibility_uid: ASSET_TYPES
+  required: true
+  disposition: CLASSIFIED
+  target_artifact_uids:
+  - CLS-ASSET-01-ASSET-TYPES-005
+- segment_uid: SEG-SRC-ASSET-01-PAGE-VISUAL-AUTHORITY-006
+  source_uid: SRC-ASSET-01-PAGE-VISUAL-AUTHORITY
+  source_node_uid: SRC-ASSET-01-PAGE-VISUAL-AUTHORITY-NODE-006
+  page_uid: ASSET-01
+  planning_domain: PAGE_CONSTRUCTION
+  responsibility_uid: LAYER_PATCH_CONTRACT
+  required: true
+  disposition: CLASSIFIED
+  target_artifact_uids:
+  - CLS-ASSET-01-LAYER-PATCH-CONTRACT-006
+- segment_uid: SEG-SRC-ASSET-01-PAGE-VISUAL-AUTHORITY-007
+  source_uid: SRC-ASSET-01-PAGE-VISUAL-AUTHORITY
+  source_node_uid: SRC-ASSET-01-PAGE-VISUAL-AUTHORITY-NODE-007
+  page_uid: ASSET-01
+  planning_domain: PAGE_CONSTRUCTION
+  responsibility_uid: SCORECARD
+  required: true
+  disposition: CLASSIFIED
+  target_artifact_uids:
+  - CLS-ASSET-01-SCORECARD-007
+- segment_uid: SEG-SRC-ASSET-01-PAGE-VISUAL-AUTHORITY-008
+  source_uid: SRC-ASSET-01-PAGE-VISUAL-AUTHORITY
+  source_node_uid: SRC-ASSET-01-PAGE-VISUAL-AUTHORITY-NODE-008
+  page_uid: ASSET-01
+  planning_domain: PAGE_CONSTRUCTION
+  responsibility_uid: REGISTRIES_SECTIONS
+  required: true
+  disposition: CLASSIFIED
+  target_artifact_uids:
+  - CLS-ASSET-01-REGISTRIES-SECTIONS-008
+- segment_uid: SEG-SRC-ASSET-01-PAGE-VISUAL-AUTHORITY-009
+  source_uid: SRC-ASSET-01-PAGE-VISUAL-AUTHORITY
+  source_node_uid: SRC-ASSET-01-PAGE-VISUAL-AUTHORITY-NODE-009
+  page_uid: ASSET-01
+  planning_domain: PAGE_CONSTRUCTION
+  responsibility_uid: REGISTRIES_COMPONENTS
+  required: true
+  disposition: CLASSIFIED
+  target_artifact_uids:
+  - CLS-ASSET-01-REGISTRIES-COMPONENTS-009
+- segment_uid: SEG-SRC-ASSET-01-PAGE-VISUAL-AUTHORITY-010
+  source_uid: SRC-ASSET-01-PAGE-VISUAL-AUTHORITY
+  source_node_uid: SRC-ASSET-01-PAGE-VISUAL-AUTHORITY-NODE-010
+  page_uid: ASSET-01
+  planning_domain: VISUAL_CONSTRUCTION
+  responsibility_uid: REGISTRIES_VISUALS
+  required: true
+  disposition: CLASSIFIED
+  target_artifact_uids:
+  - CLS-ASSET-01-REGISTRIES-VISUALS-010
+- segment_uid: SEG-SRC-ASSET-01-PAGE-VISUAL-AUTHORITY-011
+  source_uid: SRC-ASSET-01-PAGE-VISUAL-AUTHORITY
+  source_node_uid: SRC-ASSET-01-PAGE-VISUAL-AUTHORITY-NODE-011
+  page_uid: ASSET-01
+  planning_domain: PAGE_CONSTRUCTION
+  responsibility_uid: REGISTRIES_PERMISSIONS
+  required: true
+  disposition: CLASSIFIED
+  target_artifact_uids:
+  - CLS-ASSET-01-REGISTRIES-PERMISSIONS-011
+- segment_uid: SEG-SRC-ASSET-01-PAGE-VISUAL-AUTHORITY-012
+  source_uid: SRC-ASSET-01-PAGE-VISUAL-AUTHORITY
+  source_node_uid: SRC-ASSET-01-PAGE-VISUAL-AUTHORITY-NODE-012
+  page_uid: ASSET-01
+  planning_domain: PAGE_CONSTRUCTION
+  responsibility_uid: REGISTRIES_GATES
+  required: true
+  disposition: CLASSIFIED
+  target_artifact_uids:
+  - CLS-ASSET-01-REGISTRIES-GATES-012
+- segment_uid: SEG-SRC-ASSET-01-PAGE-VISUAL-AUTHORITY-013
+  source_uid: SRC-ASSET-01-PAGE-VISUAL-AUTHORITY
+  source_node_uid: SRC-ASSET-01-PAGE-VISUAL-AUTHORITY-NODE-013
+  page_uid: ASSET-01
+  planning_domain: PAGE_CONSTRUCTION
+  responsibility_uid: REGISTRIES_ACTIONS
+  required: true
+  disposition: CLASSIFIED
+  target_artifact_uids:
+  - CLS-ASSET-01-REGISTRIES-ACTIONS-013
+- segment_uid: SEG-SRC-ASSET-01-PAGE-VISUAL-AUTHORITY-014
+  source_uid: SRC-ASSET-01-PAGE-VISUAL-AUTHORITY
+  source_node_uid: SRC-ASSET-01-PAGE-VISUAL-AUTHORITY-NODE-014
+  page_uid: ASSET-01
+  planning_domain: PAGE_CONSTRUCTION
+  responsibility_uid: REGISTRIES_CONTROLS
+  required: true
+  disposition: CLASSIFIED
+  target_artifact_uids:
+  - CLS-ASSET-01-REGISTRIES-CONTROLS-014
+- segment_uid: SEG-SRC-ASSET-01-PAGE-VISUAL-AUTHORITY-015
+  source_uid: SRC-ASSET-01-PAGE-VISUAL-AUTHORITY
+  source_node_uid: SRC-ASSET-01-PAGE-VISUAL-AUTHORITY-NODE-015
+  page_uid: ASSET-01
+  planning_domain: PAGE_CONSTRUCTION
+  responsibility_uid: REGISTRIES_OBJECTS_REFS
+  required: true
+  disposition: CLASSIFIED
+  target_artifact_uids:
+  - CLS-ASSET-01-REGISTRIES-OBJECTS-REFS-015
+- segment_uid: SEG-SRC-ASSET-01-PAGE-VISUAL-AUTHORITY-016
+  source_uid: SRC-ASSET-01-PAGE-VISUAL-AUTHORITY
+  source_node_uid: SRC-ASSET-01-PAGE-VISUAL-AUTHORITY-NODE-016
+  page_uid: ASSET-01
+  planning_domain: PAGE_CONSTRUCTION
+  responsibility_uid: REGISTRIES_ERRORS
+  required: true
+  disposition: CLASSIFIED
+  target_artifact_uids:
+  - CLS-ASSET-01-REGISTRIES-ERRORS-016
+- segment_uid: SEG-SRC-ASSET-01-PAGE-VISUAL-AUTHORITY-017
+  source_uid: SRC-ASSET-01-PAGE-VISUAL-AUTHORITY
+  source_node_uid: SRC-ASSET-01-PAGE-VISUAL-AUTHORITY-NODE-017
+  page_uid: ASSET-01
+  planning_domain: PAGE_CONSTRUCTION
+  responsibility_uid: REGISTRIES_PAGE_STATES
+  required: true
+  disposition: CLASSIFIED
+  target_artifact_uids:
+  - CLS-ASSET-01-REGISTRIES-PAGE-STATES-017
+- segment_uid: SEG-SRC-ASSET-01-PAGE-VISUAL-AUTHORITY-018
+  source_uid: SRC-ASSET-01-PAGE-VISUAL-AUTHORITY
+  source_node_uid: SRC-ASSET-01-PAGE-VISUAL-AUTHORITY-NODE-018
+  page_uid: ASSET-01
+  planning_domain: PAGE_CONSTRUCTION
+  responsibility_uid: REGISTRIES_STAGES
+  required: true
+  disposition: CLASSIFIED
+  target_artifact_uids:
+  - CLS-ASSET-01-REGISTRIES-STAGES-018
+- segment_uid: SEG-SRC-ASSET-01-PAGE-VISUAL-AUTHORITY-019
+  source_uid: SRC-ASSET-01-PAGE-VISUAL-AUTHORITY
+  source_node_uid: SRC-ASSET-01-PAGE-VISUAL-AUTHORITY-NODE-019
+  page_uid: ASSET-01
+  planning_domain: PAGE_CONSTRUCTION
+  responsibility_uid: REGISTRIES_STAGE_TRANSITIONS
+  required: true
+  disposition: CLASSIFIED
+  target_artifact_uids:
+  - CLS-ASSET-01-REGISTRIES-STAGE-TRANSITIONS-019
+- segment_uid: SEG-SRC-ASSET-01-PAGE-VISUAL-AUTHORITY-020
+  source_uid: SRC-ASSET-01-PAGE-VISUAL-AUTHORITY
+  source_node_uid: SRC-ASSET-01-PAGE-VISUAL-AUTHORITY-NODE-020
+  page_uid: ASSET-01
+  planning_domain: PAGE_CONSTRUCTION
+  responsibility_uid: REGISTRIES_SCRIPT_ROLES
+  required: true
+  disposition: CLASSIFIED
+  target_artifact_uids:
+  - CLS-ASSET-01-REGISTRIES-SCRIPT-ROLES-020
+- segment_uid: SEG-SRC-ASSET-01-PAGE-VISUAL-AUTHORITY-021
+  source_uid: SRC-ASSET-01-PAGE-VISUAL-AUTHORITY
+  source_node_uid: SRC-ASSET-01-PAGE-VISUAL-AUTHORITY-NODE-021
+  page_uid: ASSET-01
+  planning_domain: PAGE_CONSTRUCTION
+  responsibility_uid: REGISTRIES_INTEGRATION_PORTS
+  required: true
+  disposition: CLASSIFIED
+  target_artifact_uids:
+  - CLS-ASSET-01-REGISTRIES-INTEGRATION-PORTS-021
+- segment_uid: SEG-SRC-ASSET-01-PAGE-VISUAL-AUTHORITY-022
+  source_uid: SRC-ASSET-01-PAGE-VISUAL-AUTHORITY
+  source_node_uid: SRC-ASSET-01-PAGE-VISUAL-AUTHORITY-NODE-022
+  page_uid: ASSET-01
+  planning_domain: PAGE_CONSTRUCTION
+  responsibility_uid: HARD_LOCKS
+  required: true
+  disposition: CLASSIFIED
+  target_artifact_uids:
+  - CLS-ASSET-01-HARD-LOCKS-022
+- segment_uid: SEG-SRC-ASSET-01-PAGE-VISUAL-AUTHORITY-023
+  source_uid: SRC-ASSET-01-PAGE-VISUAL-AUTHORITY
+  source_node_uid: SRC-ASSET-01-PAGE-VISUAL-AUTHORITY-NODE-023
+  page_uid: ASSET-01
+  planning_domain: PAGE_CONSTRUCTION
+  responsibility_uid: DERIVED_VALIDATION
+  required: true
+  disposition: CLASSIFIED
+  target_artifact_uids:
+  - CLS-ASSET-01-DERIVED-VALIDATION-023
+- segment_uid: SEG-SRC-ASSET-01-PAGE-VISUAL-AUTHORITY-024
+  source_uid: SRC-ASSET-01-PAGE-VISUAL-AUTHORITY
+  source_node_uid: SRC-ASSET-01-PAGE-VISUAL-AUTHORITY-NODE-024
+  page_uid: ASSET-01
+  planning_domain: PAGE_CONSTRUCTION
+  responsibility_uid: FINAL_GAP_CLOSURE
+  required: true
+  disposition: CLASSIFIED
+  target_artifact_uids:
+  - CLS-ASSET-01-FINAL-GAP-CLOSURE-024
+- segment_uid: SEG-SRC-ASSET-01-PAGE-VISUAL-AUTHORITY-025
+  source_uid: SRC-ASSET-01-PAGE-VISUAL-AUTHORITY
+  source_node_uid: SRC-ASSET-01-PAGE-VISUAL-AUTHORITY-NODE-025
+  page_uid: ASSET-01
+  planning_domain: PAGE_CONSTRUCTION
+  responsibility_uid: SCRIPT_CONTENT_AUTHORITY_REF
+  required: true
+  disposition: CLASSIFIED
+  target_artifact_uids:
+  - CLS-ASSET-01-SCRIPT-CONTENT-AUTHORITY-REF-025
+- segment_uid: SEG-SRC-ASSET-01-PAGE-VISUAL-AUTHORITY-026
+  source_uid: SRC-ASSET-01-PAGE-VISUAL-AUTHORITY
+  source_node_uid: SRC-ASSET-01-PAGE-VISUAL-AUTHORITY-NODE-026
+  page_uid: ASSET-01
+  planning_domain: PAGE_CONSTRUCTION
+  responsibility_uid: PRODUCTION_SCRIPT_CONTENT_CONTRACT
+  required: true
+  disposition: CLASSIFIED
+  target_artifact_uids:
+  - CLS-ASSET-01-PRODUCTION-SCRIPT-CONTENT-CONTRACT-026
+- segment_uid: SEG-SRC-ASSET-01-PAGE-VISUAL-AUTHORITY-027
+  source_uid: SRC-ASSET-01-PAGE-VISUAL-AUTHORITY
+  source_node_uid: SRC-ASSET-01-PAGE-VISUAL-AUTHORITY-NODE-027
+  page_uid: ASSET-01
+  planning_domain: PAGE_CONSTRUCTION
+  responsibility_uid: CORRECTION_SCRIPT_CONTENT_CONTRACT
+  required: true
+  disposition: CLASSIFIED
+  target_artifact_uids:
+  - CLS-ASSET-01-CORRECTION-SCRIPT-CONTENT-CONTRACT-027
+- segment_uid: SEG-SRC-ASSET-01-PAGE-VISUAL-AUTHORITY-028
+  source_uid: SRC-ASSET-01-PAGE-VISUAL-AUTHORITY
+  source_node_uid: SRC-ASSET-01-PAGE-VISUAL-AUTHORITY-NODE-028
+  page_uid: ASSET-01
+  planning_domain: PAGE_CONSTRUCTION
+  responsibility_uid: PROVIDER_ADAPTER_CONTRACT
+  required: true
+  disposition: CLASSIFIED
+  target_artifact_uids:
+  - CLS-ASSET-01-PROVIDER-ADAPTER-CONTRACT-028
+- segment_uid: SEG-SRC-ASSET-01-PAGE-VISUAL-AUTHORITY-029
+  source_uid: SRC-ASSET-01-PAGE-VISUAL-AUTHORITY
+  source_node_uid: SRC-ASSET-01-PAGE-VISUAL-AUTHORITY-NODE-029
+  page_uid: ASSET-01
+  planning_domain: PAGE_CONSTRUCTION
+  responsibility_uid: CANONICAL_SCRIPT_SOURCE_BINDING
+  required: true
+  disposition: CLASSIFIED
+  target_artifact_uids:
+  - CLS-ASSET-01-CANONICAL-SCRIPT-SOURCE-BINDING-029
+status: PASS

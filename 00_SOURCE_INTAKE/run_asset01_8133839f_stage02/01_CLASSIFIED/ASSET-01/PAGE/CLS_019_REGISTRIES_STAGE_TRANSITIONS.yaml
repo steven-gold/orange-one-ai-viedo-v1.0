@@ -1,0 +1,47 @@
+artifact_uid: CLS-ASSET-01-REGISTRIES-STAGE-TRANSITIONS-019
+page_uid: ASSET-01
+planning_domain: PAGE_CONSTRUCTION
+responsibility_uid: REGISTRIES_STAGE_TRANSITIONS
+responsibility_class: REGISTRIES_STAGE_TRANSITIONS
+responsibilities:
+- REGISTRIES_STAGE_TRANSITIONS
+canonical_owner_uid: OWNER-CLS-ASSET-01-REGISTRIES-STAGE-TRANSITIONS-019
+target_path: 01_CLASSIFIED/ASSET-01/PAGE/CLS_019_REGISTRIES_STAGE_TRANSITIONS.yaml
+lifecycle_uid: LC-REGISTRIES-STAGE-TRANSITIONS
+approval_scope_uid: AP-REGISTRIES-STAGE-TRANSITIONS
+version_scope_uid: VER-REGISTRIES-STAGE-TRANSITIONS
+test_scope_uid: TEST-REGISTRIES-STAGE-TRANSITIONS
+source_lineage:
+- source_uid: SRC-ASSET-01-PAGE-VISUAL-AUTHORITY
+  source_segment_uids:
+  - SEG-SRC-ASSET-01-PAGE-VISUAL-AUTHORITY-019
+facts:
+- source_ref: $.registries.stage_transitions
+  value:
+  - transition_uid: ASSET-01-STTR-01
+    from_stage: ASSET-01-STAGE-01-RESOLVE
+    to_stage: ASSET-01-STAGE-02-REUSE-GENERATE
+    trigger: ASSET-01-ACT-FLOW-START
+    gate: ASSET-01-GATE-EXECUTE
+  - transition_uid: ASSET-01-STTR-02
+    from_stage: ASSET-01-STAGE-02-REUSE-GENERATE
+    to_stage: ASSET-01-STAGE-03-LAYER-COMPOSITE
+    trigger: Verified Candidate/Reuse Resolution
+    gate: all required items resolved or valid candidate produced
+  - transition_uid: ASSET-01-STTR-03
+    from_stage: ASSET-01-STAGE-03-LAYER-COMPOSITE
+    to_stage: ASSET-01-STAGE-04-EVALUATE-DECIDE
+    trigger: ASSET-01-ACT-EVALUATE
+    gate: candidate/layer/composite provenance PASS
+  - transition_uid: ASSET-01-STTR-04
+    from_stage: ASSET-01-STAGE-04-EVALUATE-DECIDE
+    to_stage: ASSET-01-STAGE-02-REUSE-GENERATE
+    trigger: ASSET-01-ACT-CORRECTION-EXECUTE
+    gate: Modify path; approved correction only
+  - transition_uid: ASSET-01-STTR-05
+    from_stage: ASSET-01-STAGE-04-EVALUATE-DECIDE
+    to_stage: ASSET-01-STAGE-05-FINALIZE
+    trigger: ASSET-01-ACT-CANDIDATE-CONFIRM
+    gate: ASSET-01-GATE-CONFIRM
+status: CURRENT_CLASSIFICATION
+content_hash: 78baa3c833c37a655191a10ccbf9a8f1bc0d93ed65391618125444dd2619a526

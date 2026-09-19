@@ -739,7 +739,6 @@ findings:
     SYSTEM_TRIGGER_BINDING_MISSING: 1
     user_control_required: false
   terminalization_basis: FRESH_RUN_CONFIRMED_FALSE_CONTROL_VS_SYSTEM_TRIGGER_CHOICE_NO_LONGER_REPRODUCES
-  product_stage_credit: 0
 - finding_uid: FIND-20260920-016
   class: FRESH_REPLAY_HISTORY_RETENTION_CLEANUP_BUG
   title: Fresh replay cleanup deletes the entire Stage-02 historical evidence root
@@ -807,44 +806,43 @@ historical_stage2_execution_findings:
   evidence_ref: governance/test/history/stage02/attempt-8d5c69947cd8/STAGE02_ACTUAL_TEST_EVIDENCE.json
   findings_ref: governance/test/history/stage02/attempt-8d5c69947cd8/STAGE02_FINDINGS.yaml
 current_stage2_execution:
-  state: NOT_EXECUTED
-  current_functional_gap_count: null
-  current_closure_blocker_count: null
-  active_evidence_present: false
-  active_findings_present: false
+  state: TEST_EXECUTED_BLOCKED
+  current_functional_gap_count: 106
+  current_closure_blocker_count: 9
+  active_evidence_present: true
+  active_findings_present: true
   stage_exit_allowed: false
   website_construction_allowed: false
   deployment_allowed: false
   historical_counts_may_be_treated_as_current: false
-  source_execution_sha: null
-  reexecution_cycle: null
+  source_execution_sha: a5a149defca30e7ceb7cf651af88095acc81b8e7
+  reexecution_cycle: FRESH-ASSET01-V2213-20260920-R2
   target_pages:
   - ASSET-01
-  remaining_pages:
-  - ASSET-01
-  stage_scope_complete: false
-  next_action: WORK_UNIT_RESOLUTION_GATE_REQUIRED_FOR_FRESH_ASSET01_STAGE1
-  attempt_uid: null
+  remaining_pages: []
+  stage_scope_complete: true
+  next_action: BUILD_FRESH_ASSET-01_DESIGN_CONTRACT_CANDIDATE_FROM_CURRENT_GAPS
+  attempt_uid: STAGE02-ASSET01-V2213-20260920-R2
   frozen_governance_uid: GOV-REV-20260919-ASSET-STAGE01-STAGE02-SHARED-CONTRACT-HARDENING
-  raw_discovery_gap_count: null
+  raw_discovery_gap_count: 106
   product_materialization_elimination_count: 0
   external_authority_elimination_count: 0
   total_fresh_elimination_count: 0
-  preserved_external_authority_union_count: null
-  official_stage_output_denominator_count: null
-  current_manifest_mandatory_stage_output_subset_count: null
+  preserved_external_authority_union_count: 8
+  official_stage_output_denominator_count: 19
+  current_manifest_mandatory_stage_output_subset_count: 12
   prior_stage2_results_used: false
-  source_workflow_run_id: null
-  source_artifact_id: null
-  source_artifact_sha256: null
+  source_workflow_run_id: 35467769746
+  source_artifact_id: 10591438974
+  source_artifact_sha256: 38420254af0944f845e04ae5e614e83b0be9c610ca657fd662d74a6ff5728db9
   product_blocker_reduction_credit: 0
   validated_product_successor_signature_count: 0
-  effective_functional_gap_count: null
-  planning_baseline_completeness: NOT_EXECUTED
-  current_work_unit_status: NO_ACTIVE_PRODUCT_WORK_UNIT_AFTER_CLEAN_RESET
-  fresh_revalidation_required_under_current_governance: true
+  effective_functional_gap_count: 106
+  planning_baseline_completeness: BLOCKED
+  current_work_unit_status: DESIGN_CONTRACT_REMEDIATION_REQUIRED
+  fresh_revalidation_required_under_current_governance: false
   current_governance_uid: GOV-REV-20260919-ASSET-STAGE01-STAGE02-SHARED-CONTRACT-HARDENING
-  closure_credit_under_current_governance: false
+  closure_credit_under_current_governance: true
   execution_scope_manifest_ref: governance/test/CURRENT_EXECUTION_SCOPE_MANIFEST.yaml
-  canonical_product_contract_owner_ref: null
+  canonical_product_contract_owner_ref: 00_SOURCE_INTAKE/run_asset01_8133839f_stage02/04_PAGE_FUNCTIONAL_CONTRACT/ASSET-01/FUNCTIONAL_CHAIN_SPEC.yaml
 status: ACTIVE_NON_NORMATIVE_FINDING_LEDGER

@@ -1,0 +1,64 @@
+artifact_uid: CLS-ASSET-01-REGISTRIES-GATES-012
+page_uid: ASSET-01
+planning_domain: PAGE_CONSTRUCTION
+responsibility_uid: REGISTRIES_GATES
+responsibility_class: REGISTRIES_GATES
+responsibilities:
+- REGISTRIES_GATES
+canonical_owner_uid: OWNER-CLS-ASSET-01-REGISTRIES-GATES-012
+target_path: 01_CLASSIFIED/ASSET-01/PAGE/CLS_012_REGISTRIES_GATES.yaml
+lifecycle_uid: LC-REGISTRIES-GATES
+approval_scope_uid: AP-REGISTRIES-GATES
+version_scope_uid: VER-REGISTRIES-GATES
+test_scope_uid: TEST-REGISTRIES-GATES
+source_lineage:
+- source_uid: SRC-ASSET-01-PAGE-VISUAL-AUTHORITY
+  source_segment_uids:
+  - SEG-SRC-ASSET-01-PAGE-VISUAL-AUTHORITY-012
+facts:
+- source_ref: $.registries.gates
+  value:
+  - gate_uid: ASSET-01-GATE-PAGE
+    condition: page permission + scoped task read
+  - gate_uid: ASSET-01-GATE-CONTEXT
+    condition: Project/Topic/Task exact context resolved
+  - gate_uid: ASSET-01-GATE-CHILD-LOCK
+    condition: exact child lock + blueprint version/hash valid
+  - gate_uid: ASSET-01-GATE-SCRIPT
+    condition: ASSET Script View/Section/version/hash valid
+  - gate_uid: ASSET-01-GATE-MANIFEST
+    condition: Asset Manifest item refs + DNA refs + input fingerprint valid
+  - gate_uid: ASSET-01-GATE-NAMING
+    condition: ACPOS_SYSTEM canonical filename + output identity reservation available; page rename forbidden
+  - gate_uid: ASSET-01-GATE-ROUTE
+    condition: approved route/capability/rights/policy snapshot available
+  - gate_uid: ASSET-01-GATE-EXECUTE
+    condition: context+child lock+script+manifest+naming+route all PASS
+  - gate_uid: ASSET-01-GATE-CANDIDATE
+    condition: verified candidate output + provenance + checksum available
+  - gate_uid: ASSET-01-GATE-EVALUATION
+    condition: approved ASSET criteria version + candidate valid
+  - gate_uid: ASSET-01-GATE-WAIT-CONFIRM
+    condition: evaluation complete; page is WAIT_CONFIRMATION
+  - gate_uid: ASSET-01-GATE-CORRECTION
+    condition: finding/issue exists or human chose Modify; exact current context unchanged
+  - gate_uid: ASSET-01-GATE-LAYER-ELIGIBLE
+    condition: asset type supports versioned layer document; audio/non-layer assets false
+  - gate_uid: ASSET-01-GATE-LAYER-WRITE
+    condition: layer eligible + exact asset version + unlocked layer/document + permission
+  - gate_uid: ASSET-01-GATE-PATCH-PREVIEW
+    condition: asset patch draft valid + lineage/blueprint/DNA/preserve constraints PASS
+  - gate_uid: ASSET-01-GATE-PATCH-DECISION
+    condition: patch PREVIEW_READY + permission
+  - gate_uid: ASSET-01-GATE-CONFIRM
+    condition: evaluation PASS per bound criteria + no hard block + human confirm
+  - gate_uid: ASSET-01-GATE-LOCK
+    condition: confirmed exact asset version + all Required complete + no Missing + manifest valid
+  - gate_uid: ASSET-01-GATE-HANDOFF
+    condition: exact locked Asset Version + Exact Asset Handoff Manifest verified
+  - gate_uid: ASSET-01-GATE-RETRY
+    condition: task BLOCKED/FAILED + retry policy eligible + route snapshot still valid
+  - gate_uid: ASSET-01-GATE-COMPARE
+    condition: selected version count 1..3; no empty compare cell
+status: CURRENT_CLASSIFICATION
+content_hash: 876f99b73401e8bd6aabe373172e6516f77dc051ab8b7a721608d54f819ff322

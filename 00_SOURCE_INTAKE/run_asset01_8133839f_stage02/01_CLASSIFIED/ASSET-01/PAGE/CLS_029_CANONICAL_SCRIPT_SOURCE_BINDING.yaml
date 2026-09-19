@@ -1,0 +1,28 @@
+artifact_uid: CLS-ASSET-01-CANONICAL-SCRIPT-SOURCE-BINDING-029
+page_uid: ASSET-01
+planning_domain: PAGE_CONSTRUCTION
+responsibility_uid: CANONICAL_SCRIPT_SOURCE_BINDING
+responsibility_class: CANONICAL_SCRIPT_SOURCE_BINDING
+responsibilities:
+- CANONICAL_SCRIPT_SOURCE_BINDING
+canonical_owner_uid: OWNER-CLS-ASSET-01-CANONICAL-SCRIPT-SOURCE-BINDING-029
+target_path: 01_CLASSIFIED/ASSET-01/PAGE/CLS_029_CANONICAL_SCRIPT_SOURCE_BINDING.yaml
+lifecycle_uid: LC-CANONICAL-SCRIPT-SOURCE-BINDING
+approval_scope_uid: AP-CANONICAL-SCRIPT-SOURCE-BINDING
+version_scope_uid: VER-CANONICAL-SCRIPT-SOURCE-BINDING
+test_scope_uid: TEST-CANONICAL-SCRIPT-SOURCE-BINDING
+source_lineage:
+- source_uid: SRC-ASSET-01-PAGE-VISUAL-AUTHORITY
+  source_segment_uids:
+  - SEG-SRC-ASSET-01-PAGE-VISUAL-AUTHORITY-029
+facts:
+- source_ref: $.canonical_script_source_binding
+  value:
+    owner: CORE Script System
+    source_object_uid: CORE-01-REF-CANONICAL-SCRIPT
+    required_binding: Exact project_id + topic_id + canonical_script_version + canonical_script_hash
+    rule: The department specialized production script must consume the exact CORE CanonicalProductionScriptRef. It may add only department-specific production detail under its existing
+      content contract.
+    missing_or_mismatch: BLOCK + REPORT_AUTHORITY_GAP
+status: CURRENT_CLASSIFICATION
+content_hash: 72aea40ba43a1b93a0ceb2274d8dd533406e496b5abce5320449cc083b8bbbba

@@ -1,0 +1,60 @@
+artifact_uid: CLS-ASSET-01-LAYER-PATCH-CONTRACT-006
+page_uid: ASSET-01
+planning_domain: PAGE_CONSTRUCTION
+responsibility_uid: LAYER_PATCH_CONTRACT
+responsibility_class: LAYER_PATCH_CONTRACT
+responsibilities:
+- LAYER_PATCH_CONTRACT
+canonical_owner_uid: OWNER-CLS-ASSET-01-LAYER-PATCH-CONTRACT-006
+target_path: 01_CLASSIFIED/ASSET-01/PAGE/CLS_006_LAYER_PATCH_CONTRACT.yaml
+lifecycle_uid: LC-LAYER-PATCH-CONTRACT
+approval_scope_uid: AP-LAYER-PATCH-CONTRACT
+version_scope_uid: VER-LAYER-PATCH-CONTRACT
+test_scope_uid: TEST-LAYER-PATCH-CONTRACT
+source_lineage:
+- source_uid: SRC-ASSET-01-PAGE-VISUAL-AUTHORITY
+  source_segment_uids:
+  - SEG-SRC-ASSET-01-PAGE-VISUAL-AUTHORITY-006
+facts:
+- source_ref: $.layer_patch_contract
+  value:
+    eligibility: Only image-compatible asset types; Voice/Music/SFX do not render Layer/Patch controls.
+    system_position: ACPOS Versioned Layer Document / AssetPatch Runtime; Photoshop-like interaction model only.
+    external_integration: No Adobe Photoshop API, PSD import/export, or PSD compatibility is implied unless separately defined.
+    layer_types:
+    - BACKGROUND
+    - CHARACTER_BODY
+    - FACE
+    - EYES
+    - NOSE
+    - MOUTH
+    - HAIR
+    - COSTUME
+    - PROPS
+    - FOREGROUND
+    - EFFECTS
+    - TEXT_UI
+    - MASK
+    - ADJUSTMENT
+    blend_modes:
+    - NORMAL
+    - MULTIPLY
+    - SCREEN
+    - OVERLAY
+    - SOFT_LIGHT
+    - HARD_LIGHT
+    - COLOR_DODGE
+    - LINEAR_DODGE
+    - COLOR_BURN
+    - LINEAR_BURN
+    - DIFFERENCE
+    - EXCLUSION
+    mutation_rules:
+    - accepted document/layer mutation increments layer document version
+    - locked layers reject destructive mutation until explicitly unlocked
+    - opacity range 0.0..1.0
+    - parent layer belongs to same document
+    - z_index unique and compact
+    - accepted patch creates new ASSET_VERSION + new LAYER_DOCUMENT_VERSION; never overwrite source
+status: CURRENT_CLASSIFICATION
+content_hash: ddb2ca38666802c2a678424b58a04259936b55238a883433070764212ee1254c

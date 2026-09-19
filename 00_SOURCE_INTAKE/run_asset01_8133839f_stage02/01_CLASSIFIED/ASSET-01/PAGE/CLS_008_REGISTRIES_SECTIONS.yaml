@@ -1,0 +1,62 @@
+artifact_uid: CLS-ASSET-01-REGISTRIES-SECTIONS-008
+page_uid: ASSET-01
+planning_domain: PAGE_CONSTRUCTION
+responsibility_uid: REGISTRIES_SECTIONS
+responsibility_class: REGISTRIES_SECTIONS
+responsibilities:
+- REGISTRIES_SECTIONS
+canonical_owner_uid: OWNER-CLS-ASSET-01-REGISTRIES-SECTIONS-008
+target_path: 01_CLASSIFIED/ASSET-01/PAGE/CLS_008_REGISTRIES_SECTIONS.yaml
+lifecycle_uid: LC-REGISTRIES-SECTIONS
+approval_scope_uid: AP-REGISTRIES-SECTIONS
+version_scope_uid: VER-REGISTRIES-SECTIONS
+test_scope_uid: TEST-REGISTRIES-SECTIONS
+source_lineage:
+- source_uid: SRC-ASSET-01-PAGE-VISUAL-AUTHORITY
+  source_segment_uids:
+  - SEG-SRC-ASSET-01-PAGE-VISUAL-AUTHORITY-008
+facts:
+- source_ref: $.registries.sections
+  value:
+  - section_uid: ASSET-01-SEC-01
+    name: Context / Execution
+    responsibility: Project/Topic/Task、AUTO/MANUAL、Execute、Stage/Runtime 摘要
+    visual_uid: ASSET-01-VIS-CONTEXT
+  - section_uid: ASSET-01-SEC-02
+    name: Asset Manifest / List
+    responsibility: 目前 Task 的素材需求、Reuse/Missing 狀態、素材清單與搜尋；不建立自由素材 Picker
+    visual_uid: ASSET-01-VIS-LEFT
+  - section_uid: ASSET-01-SEC-03
+    name: Blueprint / Script / DNA Binding
+    responsibility: Locked Blueprint、ASSET Script Role/Section、DNA、Manifest Item、Canonical Filename、Checksum、Rights/Policy 唯讀綁定
+    visual_uid: ASSET-01-VIS-BINDING
+  - section_uid: ASSET-01-SEC-04
+    name: Preview / Compare
+    responsibility: Image/Audio 依素材類型預覽；Single/A-B/A-B-C 動態比較
+    visual_uid: ASSET-01-VIS-PREVIEW
+  - section_uid: ASSET-01-SEC-05
+    name: Reuse First / Generate Missing
+    responsibility: Required/Reuse/Missing/Deferred 解析與候選產出狀態
+    visual_uid: ASSET-01-VIS-REUSE
+  - section_uid: ASSET-01-SEC-06
+    name: Correction Conversation
+    responsibility: 僅 Modify 時允許繁中修正；系統自動帶入 exact context；使用共用 Translation/API Routing
+    visual_uid: ASSET-01-VIS-CORRECTION
+  - section_uid: ASSET-01-SEC-07
+    name: Layer / Patch
+    responsibility: 僅支援圖層的圖像素材；Versioned Layer Document / Asset Patch；不屬 Photoshop/PSD 外部整合
+    visual_uid: ASSET-01-VIS-LAYER
+  - section_uid: ASSET-01-SEC-08
+    name: Runtime / Provider
+    responsibility: Route/Provider/Model/Job/Attempt/Callback/Retry/Trace 唯讀；禁止任何頁面層 Provider/Model 指派控制
+    visual_uid: ASSET-01-VIS-RUNTIME
+  - section_uid: ASSET-01-SEC-09
+    name: Score / Version / Decision
+    responsibility: ASSET Approved Criteria、Version Compare、Confirm/Modify/Lock
+    visual_uid: ASSET-01-VIS-DECISION
+  - section_uid: ASSET-01-SEC-10
+    name: Exact Handoff Manifest
+    responsibility: 鎖定 Exact Asset Version/Layer/Composite/Blueprint/Script/DNA/Filename/Checksum/Score/Rights/Contract 後交付 VIDEO
+    visual_uid: ASSET-01-VIS-HANDOFF
+status: CURRENT_CLASSIFICATION
+content_hash: b02f11e8520d4e5c20604a7512ff3331c695796e8cae07f0e2485970d213be35

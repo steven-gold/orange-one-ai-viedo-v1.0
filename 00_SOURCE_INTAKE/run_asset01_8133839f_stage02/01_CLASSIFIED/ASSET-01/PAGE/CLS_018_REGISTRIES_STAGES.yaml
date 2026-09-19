@@ -1,0 +1,37 @@
+artifact_uid: CLS-ASSET-01-REGISTRIES-STAGES-018
+page_uid: ASSET-01
+planning_domain: PAGE_CONSTRUCTION
+responsibility_uid: REGISTRIES_STAGES
+responsibility_class: REGISTRIES_STAGES
+responsibilities:
+- REGISTRIES_STAGES
+canonical_owner_uid: OWNER-CLS-ASSET-01-REGISTRIES-STAGES-018
+target_path: 01_CLASSIFIED/ASSET-01/PAGE/CLS_018_REGISTRIES_STAGES.yaml
+lifecycle_uid: LC-REGISTRIES-STAGES
+approval_scope_uid: AP-REGISTRIES-STAGES
+version_scope_uid: VER-REGISTRIES-STAGES
+test_scope_uid: TEST-REGISTRIES-STAGES
+source_lineage:
+- source_uid: SRC-ASSET-01-PAGE-VISUAL-AUTHORITY
+  source_segment_uids:
+  - SEG-SRC-ASSET-01-PAGE-VISUAL-AUTHORITY-018
+facts:
+- source_ref: $.registries.stages
+  value:
+  - stage_uid: ASSET-01-STAGE-01-RESOLVE
+    name: Resolve Inputs
+    flow: Resolve exact Task→Blueprint→ASSET Script→DNA→Asset Manifest→ACPOS Naming→Instruction/Route; first production has no manual prompt.
+  - stage_uid: ASSET-01-STAGE-02-REUSE-GENERATE
+    name: Reuse First / Generate Missing
+    flow: Resolve each required manifest item; reuse exact eligible asset first; only generate Missing items.
+  - stage_uid: ASSET-01-STAGE-03-LAYER-COMPOSITE
+    name: Layer / Composite
+    flow: For image-compatible assets, optional Layer/Patch/Composite; audio assets skip LayerRuntime. No cross-department edit.
+  - stage_uid: ASSET-01-STAGE-04-EVALUATE-DECIDE
+    name: Evaluate / Confirm or Modify
+    flow: Run bound ASSET criteria → WAIT_CONFIRMATION; Confirm or enter Correction. AUTO advances only after Confirm.
+  - stage_uid: ASSET-01-STAGE-05-FINALIZE
+    name: Lock / Handoff
+    flow: Seal exact asset output manifest, lock exact version, handoff exact manifest to VIDEO.
+status: CURRENT_CLASSIFICATION
+content_hash: 5e55783a8a7cd647eb680008562714f15396fa8d82f5e6816ac11913443b9786

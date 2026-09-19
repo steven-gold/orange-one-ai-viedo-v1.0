@@ -1,0 +1,92 @@
+blueprint_uid: BP-ASSET-01-VISUAL-FRESH-ASSET01-V2213-20260920-R2
+page_uid: ASSET-01
+stage_uid: STAGE-01
+governance_overlay: v2.2.13
+blueprint_type: VISUAL_BASE_BLUEPRINT
+planning_domain: VISUAL_CONSTRUCTION
+target_path: 02_BASE_BLUEPRINT/ASSET-01/VISUAL_BASE_BLUEPRINT.yaml
+input_artifacts:
+- artifact_uid: CLS-ASSET-01-LAYOUT-GEOMETRY-003
+  content_hash: 0bd461f30ee295f286c863a7d4604ba1cc2ae91cebc5969f3cc7e0cb5d3b667d
+- artifact_uid: CLS-ASSET-01-REGISTRIES-VISUALS-010
+  content_hash: 131f28ae54ce4f9d47d69cac10d6da51720d586f6da50930571098f6caf9b93d
+required_responsibility_uids:
+- LAYOUT_GEOMETRY
+- REGISTRIES_VISUALS
+shared_refs: []
+source_fact_refs:
+- artifact_uid: SF-CONTEXT-EFE1920DA80C
+  content_hash: 83d29b653bdf9e317fa594f484a8ac63d1672a3daccd680767135f6164b922d1
+- artifact_uid: SF-CONFLICT-EFE1920DA80C
+  content_hash: c59d58479297e6b87ac17f5166b874805f2f0f269b9ea590a3d1902c8e1c3fc3
+- artifact_uid: SF-DEPENDENCY-EFE1920DA80C
+  content_hash: 90c2092b13b4914d4624cac2b98a08b42bae69b577d27a663645c01e2a73a4af
+raw_source_inputs: []
+embedded_classification_payloads: []
+unresolved_external_authority_refs:
+- gap_uid: GAP-EXT-E9D39973941C
+  authority_ref: ACPOS_CURRENT_NAVIGATION_PERMISSION_AUTHORITY@V1.0
+  disposition: UNRESOLVED_AUTHORITY_GAP
+  authority_evidence_ref: 00_SOURCE_INTAKE/evidence/SOURCE_FACT_MATERIALIZATION_EVIDENCE.yaml
+  resolved: false
+  satisfied: false
+  auto_filled: false
+  inferred: false
+- gap_uid: GAP-EXT-872B05A5389A
+  authority_ref: ACPOS_PRODUCTION_SCRIPT_CONTENT_AND_PROVIDER_ADAPTER_CONTRACT
+  disposition: UNRESOLVED_AUTHORITY_GAP
+  authority_evidence_ref: 00_SOURCE_INTAKE/evidence/SOURCE_FACT_MATERIALIZATION_EVIDENCE.yaml
+  resolved: false
+  satisfied: false
+  auto_filled: false
+  inferred: false
+- gap_uid: GAP-EXT-E33DB032BE2B
+  authority_ref: ACPOS_PRODUCTION_SCRIPT_CONTENT_AND_PROVIDER_ADAPTER_CONTRACT@V1.3
+  disposition: UNRESOLVED_AUTHORITY_GAP
+  authority_evidence_ref: 00_SOURCE_INTAKE/evidence/SOURCE_FACT_MATERIALIZATION_EVIDENCE.yaml
+  resolved: false
+  satisfied: false
+  auto_filled: false
+  inferred: false
+- gap_uid: GAP-EXT-3EB9693EFA4B
+  authority_ref: ACPOS_SHARED_RUNTIME_OPERATION_AUTHORITY
+  disposition: UNRESOLVED_AUTHORITY_GAP
+  authority_evidence_ref: 00_SOURCE_INTAKE/evidence/SOURCE_FACT_MATERIALIZATION_EVIDENCE.yaml
+  resolved: false
+  satisfied: false
+  auto_filled: false
+  inferred: false
+- gap_uid: GAP-EXT-7AB7E9E8AEF0
+  authority_ref: ACPOS_SYSTEM
+  disposition: UNRESOLVED_AUTHORITY_GAP
+  authority_evidence_ref: 00_SOURCE_INTAKE/evidence/SOURCE_FACT_MATERIALIZATION_EVIDENCE.yaml
+  resolved: false
+  satisfied: false
+  auto_filled: false
+  inferred: false
+- gap_uid: GAP-EXT-9E571F6943CF
+  authority_ref: ACPOS_SYSTEM_AUTHORITY@V1.0
+  disposition: UNRESOLVED_AUTHORITY_GAP
+  authority_evidence_ref: 00_SOURCE_INTAKE/evidence/SOURCE_FACT_MATERIALIZATION_EVIDENCE.yaml
+  resolved: false
+  satisfied: false
+  auto_filled: false
+  inferred: false
+- gap_uid: GAP-EXT-8C12874DC1AE
+  authority_ref: GLOBAL_HOME_SHELL_TEMPLATE_AUTHORITY@V1.9
+  disposition: UNRESOLVED_AUTHORITY_GAP
+  authority_evidence_ref: 00_SOURCE_INTAKE/evidence/SOURCE_FACT_MATERIALIZATION_EVIDENCE.yaml
+  resolved: false
+  satisfied: false
+  auto_filled: false
+  inferred: false
+- gap_uid: GAP-EXT-3DD576F9FA3A
+  authority_ref: GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY@V1.0
+  disposition: UNRESOLVED_AUTHORITY_GAP
+  authority_evidence_ref: 00_SOURCE_INTAKE/evidence/SOURCE_FACT_MATERIALIZATION_EVIDENCE.yaml
+  resolved: false
+  satisfied: false
+  auto_filled: false
+  inferred: false
+status: CURRENT_BASE_BLUEPRINT
+blueprint_hash: 8c3760b14711aa6e2465fd530d969c5d9cc3b47fecc55a72f48f3a68ad3435bf

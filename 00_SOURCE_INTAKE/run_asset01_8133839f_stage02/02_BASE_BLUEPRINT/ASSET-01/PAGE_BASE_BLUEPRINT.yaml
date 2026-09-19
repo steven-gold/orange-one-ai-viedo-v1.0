@@ -1,0 +1,167 @@
+blueprint_uid: BP-ASSET-01-PAGE-FRESH-ASSET01-V2213-20260920-R2
+page_uid: ASSET-01
+stage_uid: STAGE-01
+governance_overlay: v2.2.13
+blueprint_type: PAGE_BASE_BLUEPRINT
+planning_domain: PAGE_CONSTRUCTION
+target_path: 02_BASE_BLUEPRINT/ASSET-01/PAGE_BASE_BLUEPRINT.yaml
+input_artifacts:
+- artifact_uid: CLS-ASSET-01-PAGE-AUTHORITY-001
+  content_hash: f354dc68c5e16bd8fda40d50fe849a4744bc4d3a7912cf01035a73c8581e3d05
+- artifact_uid: CLS-ASSET-01-SYSTEM-FILENAME-GOVERNANCE-002
+  content_hash: 6d450f126fc7724e57719e9a72b1f66591f9c784cee3fe9a95a50f44a18747fe
+- artifact_uid: CLS-ASSET-01-AUTO-MANUAL-004
+  content_hash: 0a19de2efa02325c565b439c723d7b798ed593ae99305ef9af7e85a9623f8455
+- artifact_uid: CLS-ASSET-01-ASSET-TYPES-005
+  content_hash: e76dcf8477a71105a9cb3dd617ef8da617a5cf054b99c874213a53567799bf60
+- artifact_uid: CLS-ASSET-01-LAYER-PATCH-CONTRACT-006
+  content_hash: ddb2ca38666802c2a678424b58a04259936b55238a883433070764212ee1254c
+- artifact_uid: CLS-ASSET-01-SCORECARD-007
+  content_hash: b9c4fd98d4b37666e5557e790e481a06dd7ec9ac92e3d9d9dc0414007739a3cc
+- artifact_uid: CLS-ASSET-01-REGISTRIES-SECTIONS-008
+  content_hash: b02f11e8520d4e5c20604a7512ff3331c695796e8cae07f0e2485970d213be35
+- artifact_uid: CLS-ASSET-01-REGISTRIES-COMPONENTS-009
+  content_hash: ff14c6171f84303bf2da9960689206ab0f08e275a9ca858ba79913c7afaf8135
+- artifact_uid: CLS-ASSET-01-REGISTRIES-PERMISSIONS-011
+  content_hash: 57b911f44644907d71a6644f5935c22e64822324e0584497ae3f5f6aa142cdcb
+- artifact_uid: CLS-ASSET-01-REGISTRIES-GATES-012
+  content_hash: 876f99b73401e8bd6aabe373172e6516f77dc051ab8b7a721608d54f819ff322
+- artifact_uid: CLS-ASSET-01-REGISTRIES-ACTIONS-013
+  content_hash: a534dddc91eab95df03009da70268c02ee6b98f4400f7e17e5058e12fe2d152f
+- artifact_uid: CLS-ASSET-01-REGISTRIES-CONTROLS-014
+  content_hash: be58dbb1168674ab9088f40ddedebb6cd87d816d0e1b239f6cf09f5577b7a667
+- artifact_uid: CLS-ASSET-01-REGISTRIES-OBJECTS-REFS-015
+  content_hash: 5c4a899838a59af2711dc6f16161fb13af2adb6a3191fb03e9b6da218e6eca2c
+- artifact_uid: CLS-ASSET-01-REGISTRIES-ERRORS-016
+  content_hash: 9b98931f241a5bab13a62d0bf48d5a9fe45c712cce558c7dfa0dff556afd9a2e
+- artifact_uid: CLS-ASSET-01-REGISTRIES-PAGE-STATES-017
+  content_hash: 4161d52a0658a78576d49101bb5d9ffe11171c19d7c5601be5fae6b6864897bf
+- artifact_uid: CLS-ASSET-01-REGISTRIES-STAGES-018
+  content_hash: 5e55783a8a7cd647eb680008562714f15396fa8d82f5e6816ac11913443b9786
+- artifact_uid: CLS-ASSET-01-REGISTRIES-STAGE-TRANSITIONS-019
+  content_hash: 78baa3c833c37a655191a10ccbf9a8f1bc0d93ed65391618125444dd2619a526
+- artifact_uid: CLS-ASSET-01-REGISTRIES-SCRIPT-ROLES-020
+  content_hash: a2995858307b0d1585d7e2a83cfc68e734b182b0812207272fac835afdc33227
+- artifact_uid: CLS-ASSET-01-REGISTRIES-INTEGRATION-PORTS-021
+  content_hash: 0da1ab276add1f02210f2860bbb5917d16d57ce5e834ddc81f5e4c1f5151a932
+- artifact_uid: CLS-ASSET-01-HARD-LOCKS-022
+  content_hash: 368320418a17c5db039788d72e578d2cb5c291de2e468812452137b6dc77ea4e
+- artifact_uid: CLS-ASSET-01-DERIVED-VALIDATION-023
+  content_hash: a7e8ed9a2e439b0e32d67623135c6efbd05f8f1285d30a9798fe048767699441
+- artifact_uid: CLS-ASSET-01-FINAL-GAP-CLOSURE-024
+  content_hash: 45a36fc9c65cfbf5f778c968d3bef7f3d4c1a2155302cc27c79df9f1ddbcacf6
+- artifact_uid: CLS-ASSET-01-SCRIPT-CONTENT-AUTHORITY-REF-025
+  content_hash: 1f88a77e10405bbed84806fc6d1f0ca5221cce42aa2822d224a5a7bf75717b26
+- artifact_uid: CLS-ASSET-01-PRODUCTION-SCRIPT-CONTENT-CONTRACT-026
+  content_hash: 5b79ad5925d4369624d71e0533b08964a22911568a6989295b1b8f33f47774a3
+- artifact_uid: CLS-ASSET-01-CORRECTION-SCRIPT-CONTENT-CONTRACT-027
+  content_hash: 7503a7ed141a3f06d34de974c0bae2474103ce17a01a4f07542facfcd48dc1e1
+- artifact_uid: CLS-ASSET-01-PROVIDER-ADAPTER-CONTRACT-028
+  content_hash: 71b168ed731267983f37643ea4a6dcdadfc13dd575a80e43878f59d4ff17abce
+- artifact_uid: CLS-ASSET-01-CANONICAL-SCRIPT-SOURCE-BINDING-029
+  content_hash: 72aea40ba43a1b93a0ceb2274d8dd533406e496b5abce5320449cc083b8bbbba
+required_responsibility_uids:
+- PAGE_AUTHORITY
+- SYSTEM_FILENAME_GOVERNANCE
+- AUTO_MANUAL
+- ASSET_TYPES
+- LAYER_PATCH_CONTRACT
+- SCORECARD
+- REGISTRIES_SECTIONS
+- REGISTRIES_COMPONENTS
+- REGISTRIES_PERMISSIONS
+- REGISTRIES_GATES
+- REGISTRIES_ACTIONS
+- REGISTRIES_CONTROLS
+- REGISTRIES_OBJECTS_REFS
+- REGISTRIES_ERRORS
+- REGISTRIES_PAGE_STATES
+- REGISTRIES_STAGES
+- REGISTRIES_STAGE_TRANSITIONS
+- REGISTRIES_SCRIPT_ROLES
+- REGISTRIES_INTEGRATION_PORTS
+- HARD_LOCKS
+- DERIVED_VALIDATION
+- FINAL_GAP_CLOSURE
+- SCRIPT_CONTENT_AUTHORITY_REF
+- PRODUCTION_SCRIPT_CONTENT_CONTRACT
+- CORRECTION_SCRIPT_CONTENT_CONTRACT
+- PROVIDER_ADAPTER_CONTRACT
+- CANONICAL_SCRIPT_SOURCE_BINDING
+shared_refs: []
+source_fact_refs:
+- artifact_uid: SF-CONTEXT-EFE1920DA80C
+  content_hash: 83d29b653bdf9e317fa594f484a8ac63d1672a3daccd680767135f6164b922d1
+- artifact_uid: SF-CONFLICT-EFE1920DA80C
+  content_hash: c59d58479297e6b87ac17f5166b874805f2f0f269b9ea590a3d1902c8e1c3fc3
+- artifact_uid: SF-DEPENDENCY-EFE1920DA80C
+  content_hash: 90c2092b13b4914d4624cac2b98a08b42bae69b577d27a663645c01e2a73a4af
+raw_source_inputs: []
+embedded_classification_payloads: []
+unresolved_external_authority_refs:
+- gap_uid: GAP-EXT-E9D39973941C
+  authority_ref: ACPOS_CURRENT_NAVIGATION_PERMISSION_AUTHORITY@V1.0
+  disposition: UNRESOLVED_AUTHORITY_GAP
+  authority_evidence_ref: 00_SOURCE_INTAKE/evidence/SOURCE_FACT_MATERIALIZATION_EVIDENCE.yaml
+  resolved: false
+  satisfied: false
+  auto_filled: false
+  inferred: false
+- gap_uid: GAP-EXT-872B05A5389A
+  authority_ref: ACPOS_PRODUCTION_SCRIPT_CONTENT_AND_PROVIDER_ADAPTER_CONTRACT
+  disposition: UNRESOLVED_AUTHORITY_GAP
+  authority_evidence_ref: 00_SOURCE_INTAKE/evidence/SOURCE_FACT_MATERIALIZATION_EVIDENCE.yaml
+  resolved: false
+  satisfied: false
+  auto_filled: false
+  inferred: false
+- gap_uid: GAP-EXT-E33DB032BE2B
+  authority_ref: ACPOS_PRODUCTION_SCRIPT_CONTENT_AND_PROVIDER_ADAPTER_CONTRACT@V1.3
+  disposition: UNRESOLVED_AUTHORITY_GAP
+  authority_evidence_ref: 00_SOURCE_INTAKE/evidence/SOURCE_FACT_MATERIALIZATION_EVIDENCE.yaml
+  resolved: false
+  satisfied: false
+  auto_filled: false
+  inferred: false
+- gap_uid: GAP-EXT-3EB9693EFA4B
+  authority_ref: ACPOS_SHARED_RUNTIME_OPERATION_AUTHORITY
+  disposition: UNRESOLVED_AUTHORITY_GAP
+  authority_evidence_ref: 00_SOURCE_INTAKE/evidence/SOURCE_FACT_MATERIALIZATION_EVIDENCE.yaml
+  resolved: false
+  satisfied: false
+  auto_filled: false
+  inferred: false
+- gap_uid: GAP-EXT-7AB7E9E8AEF0
+  authority_ref: ACPOS_SYSTEM
+  disposition: UNRESOLVED_AUTHORITY_GAP
+  authority_evidence_ref: 00_SOURCE_INTAKE/evidence/SOURCE_FACT_MATERIALIZATION_EVIDENCE.yaml
+  resolved: false
+  satisfied: false
+  auto_filled: false
+  inferred: false
+- gap_uid: GAP-EXT-9E571F6943CF
+  authority_ref: ACPOS_SYSTEM_AUTHORITY@V1.0
+  disposition: UNRESOLVED_AUTHORITY_GAP
+  authority_evidence_ref: 00_SOURCE_INTAKE/evidence/SOURCE_FACT_MATERIALIZATION_EVIDENCE.yaml
+  resolved: false
+  satisfied: false
+  auto_filled: false
+  inferred: false
+- gap_uid: GAP-EXT-8C12874DC1AE
+  authority_ref: GLOBAL_HOME_SHELL_TEMPLATE_AUTHORITY@V1.9
+  disposition: UNRESOLVED_AUTHORITY_GAP
+  authority_evidence_ref: 00_SOURCE_INTAKE/evidence/SOURCE_FACT_MATERIALIZATION_EVIDENCE.yaml
+  resolved: false
+  satisfied: false
+  auto_filled: false
+  inferred: false
+- gap_uid: GAP-EXT-3DD576F9FA3A
+  authority_ref: GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY@V1.0
+  disposition: UNRESOLVED_AUTHORITY_GAP
+  authority_evidence_ref: 00_SOURCE_INTAKE/evidence/SOURCE_FACT_MATERIALIZATION_EVIDENCE.yaml
+  resolved: false
+  satisfied: false
+  auto_filled: false
+  inferred: false
+status: CURRENT_BASE_BLUEPRINT
+blueprint_hash: 5fa2588211d84d72595c0877426597e8cff433bce2250ead182c749921b8a27f
