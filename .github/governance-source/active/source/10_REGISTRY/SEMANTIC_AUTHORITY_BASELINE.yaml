@@ -4,7 +4,7 @@ artifact_type: IMMUTABLE_SEMANTIC_AUTHORITY_BASELINE
 status: CURRENT_CANDIDATE_IMMUTABLE
 canonical_path: 10_REGISTRY/SEMANTIC_AUTHORITY_BASELINE.yaml
 owner_uid: OWNER-GOVERNANCE-SEMANTIC-ANCHOR
-governance_revision: v2.2.11-basic-design-visual-integration-hardening
+governance_revision: v2.2.12-basic-design-atomic-materialization-hardening
 anchor_policy:
   official_refresh_must_not_mutate: true
   compiler_must_not_regenerate: true
@@ -111,6 +111,7 @@ semantic_snapshot:
       - WEB-GOV-03-S069
       - WEB-GOV-04-S083
       - WEB-GOV-01-S077
+      - WEB-GOV-01-S084
     STAGE-03:
       rule_uid: REFRULE-STAGE-03
       exact_required_normative_section_uids:
@@ -135,6 +136,7 @@ semantic_snapshot:
       - WEB-GOV-01-S078
       - WEB-GOV-01-S079
       - WEB-GOV-01-S081
+      - WEB-GOV-01-S084
     STAGE-04:
       rule_uid: REFRULE-STAGE-04
       exact_required_normative_section_uids:
@@ -156,6 +158,9 @@ semantic_snapshot:
       - WEB-GOV-01-S083
       - WEB-GOV-01-S078
       - WEB-GOV-01-S079
+      - WEB-GOV-01-S084
+      - WEB-GOV-01-S085
+      - WEB-GOV-01-S086
     STAGE-05:
       rule_uid: REFRULE-STAGE-05
       exact_required_normative_section_uids:
@@ -834,7 +839,7 @@ package_integrity_assets:
 - 09_TESTS/governance/test_v2_1_14_test_feedback_spec_evolution.py
 - 09_TESTS/governance/validate_product_neutral_entity_lifecycle.py
 - 09_TESTS/governance/test_v2_1_14_product_neutral_entity_lifecycle.py
-content_hash: 5b62fc6eaf15e56a63fca75d024e2068ed52b734697b377a8d8e2a8533321dbd
+content_hash: f2f01d002e20568b892607f45beb3f7538ae32e9864e6f63287e9cbb98672053
 protected_hash_paths:
 - 09_TESTS/governance/validate_test_feedback_spec_evolution.py
 - 09_TESTS/governance/test_v2_1_14_test_feedback_spec_evolution.py

@@ -1,8 +1,8 @@
 schema_version: 7
 artifact_uid: GOVERNANCE-CURRENT-ENTRYPOINT-001
 artifact_type: GOVERNANCE_CURRENT_ENTRYPOINT
-active_governance_uid: GOV-REV-20260919-BASIC-DESIGN-VISUAL-INTEGRATION-HARDENING
-display_version: v2.2.11
+active_governance_uid: GOV-REV-20260919-BASIC-DESIGN-ATOMIC-MATERIALIZATION-HARDENING
+display_version: v2.2.12
 version_role: CURRENT_GOVERNANCE_DISPLAY_VERSION
 registry_ref: governance/specifications/REGISTRY.yaml
 specification_root: governance/specifications/current
@@ -24,12 +24,12 @@ historical_evidence_is_current_authority: false
 source_identity:
   version_role: VERIFIED_SOURCE_LINEAGE_HISTORY
   source_bytes_changed_by_current_successor: true
-  verified_package_sha256: deb107a5bebfecc58b248ff50d79b73062f4fae1e1a64fc32abe9306dfa3f4ea
-  deterministic_source_bundle_sha256: d0fa6ceb45a350790627cb9cb821d5ce7923cf2e826c12069e3f35b23a0bb889
-  checksum_manifest_sha256: b92c80c0ce07c2f4485e218e87164a35e55a18789f3c8d4c0205e1714dcab13e
-  semantic_authority_content_hash: 5b62fc6eaf15e56a63fca75d024e2068ed52b734697b377a8d8e2a8533321dbd
+  verified_package_sha256: 2e373a3bccf3d4aced04996a2a201522026767ce19b17989647e156e219cd209
+  deterministic_source_bundle_sha256: 1afa040b22abd2c7c5e5d28841be06329762c7818c29a570317329f7ad03cfc6
+  checksum_manifest_sha256: d6a13e981211c4c8319263c17c15a3beb10264509c735b77320ed939ca832efa
+  semantic_authority_content_hash: f2f01d002e20568b892607f45beb3f7538ae32e9864e6f63287e9cbb98672053
   may_override_active_governance_version: false
-  verified_source_revision: v2.2.11-basic-design-visual-integration-hardening
+  verified_source_revision: v2.2.12-basic-design-atomic-materialization-hardening
 current_primary_task_selection_contract:
   session_bootstrap_resume_gate_required: true
   task_layer_classification_required: true

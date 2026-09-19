@@ -4,7 +4,7 @@ artifact_type: REFERENCE_RULE_REGISTRY
 status: CURRENT_CANDIDATE
 canonical_path: 10_REGISTRY/REFERENCE_RULE_REGISTRY.yaml
 owner_uid: OWNER-GOVERNANCE-REFERENCE-SEMANTICS
-governance_revision: v2.2.11-basic-design-visual-integration-hardening
+governance_revision: v2.2.12-basic-design-atomic-materialization-hardening
 normative_section_uids:
 - WEB-GOV-01-S005
 - WEB-GOV-01-S006-03
@@ -122,6 +122,7 @@ stage_reference_rules:
     - WEB-GOV-03-S069
     - WEB-GOV-04-S083
     - WEB-GOV-01-S077
+    - WEB-GOV-01-S084
   STAGE-03:
     rule_uid: REFRULE-STAGE-03
     exact_required_normative_section_uids:
@@ -146,6 +147,7 @@ stage_reference_rules:
     - WEB-GOV-01-S078
     - WEB-GOV-01-S079
     - WEB-GOV-01-S081
+    - WEB-GOV-01-S084
   STAGE-04:
     rule_uid: REFRULE-STAGE-04
     exact_required_normative_section_uids:
@@ -167,6 +169,9 @@ stage_reference_rules:
     - WEB-GOV-01-S083
     - WEB-GOV-01-S078
     - WEB-GOV-01-S079
+    - WEB-GOV-01-S084
+    - WEB-GOV-01-S085
+    - WEB-GOV-01-S086
   STAGE-05:
     rule_uid: REFRULE-STAGE-05
     exact_required_normative_section_uids:

@@ -1689,3 +1689,48 @@ The human-readable design deliverable MUST be self-contained enough for a review
 
 This contract governs Basic Design documentation only. It does not require or define source code, construction delta, implementation manifest, runtime verification, deployment, or production evidence.
 
+<!-- SECTION_UID: WEB-GOV-01-S084 -->
+## 84. 基本設計原子化實體化與禁止摘要替代 Gate / Atomic Basic Design Materialization and No-Summary Substitution
+
+Basic Design completeness is measured by executable-detail coverage of the complete applicable denominator, not by document page count, prose length, visual attractiveness, section count, or a high-level declaration that an area is covered.
+
+Every REQUIRED denominator item MUST be individually materialized as an identifiable row/record/object in the applicable design artifact. Representative examples, selected key controls, capability-group summaries, prose-only descriptions, or one aggregate statement MUST_NOT substitute for the complete denominator.
+
+At minimum, every applicable governed item MUST preserve exact identity and relationships sufficient to execute and review its design semantics. Depending on item class, the materialized row MUST include the applicable subset of: canonical UID/name/item type/owner; parent and dependency identities; Business Entity and Operation; Journey and Functional Workbench; preconditions and required inputs/source identities; output/result and mutation/read-only classification; Section/Component/Control or System Trigger/Field; Gate/Permission/Role; legal State/Transition and state effect; Visual Anchor/Visual Candidate/visible or non-visual classification; Next Step/downstream handoff; Error/blocked reason/Recovery Path; Acceptance/Design Review Item; Authority refs and version/hash where required.
+
+A field that is not applicable MUST be explicitly classified NOT_APPLICABLE with Authority/design evidence when the field belongs to the required schema. Blank, omitted, unknown-by-silence, or inferred values MUST_NOT receive completeness credit.
+
+The labels MAPPED, COVERED, COMPLETE, PASS, SUPPORTED, IMPLEMENTED, percentage-only claims, checklist ticks, section titles, screenshots without binding rows, or prose that says all items are included MUST_NOT receive denominator credit by themselves.
+
+Any missing applicable row, missing required row field, missing required binding, silent omission, representative-sample substitution, or aggregate-summary substitution is BASIC_DESIGN_ATOMIC_MATERIALIZATION_INCOMPLETE and MUST block Basic Design Freeze.
+
+<!-- SECTION_UID: WEB-GOV-01-S085 -->
+## 85. 基本設計分母完整性與交付物對帳 Gate / Basic Design Denominator Integrity and Deliverable Reconciliation
+
+Before Basic Design Freeze, the scope MUST materialize one BASIC_DESIGN_DENOMINATOR_SNAPSHOT and one BASIC_DESIGN_DELIVERABLE_RECONCILIATION.
+
+The denominator snapshot MUST enumerate the complete applicable set and exact count for every required design category, including at least: Requirements; Business Entities; Operations; Entity hierarchy relations; Journeys; Workbenches; Interaction topology relations; Sections; Components; Controls/System Triggers; Fields/Inputs; Gates; Permissions/Roles; States; Transitions; Errors; Recovery Paths; Data Objects; functional-chain nodes/edges; Cross-page relationships; Visual Anchors; required Visual Scenarios/Candidates; Visual Reference Annotations; Design Review/Acceptance Items; and any additional category required by Current Authority.
+
+The reconciliation MUST prove, category by category and UID by UID: denominator item exists in the machine-readable design source; required row-level bindings are complete; the human-readable Basic Design deliverable contains the same required design detail directly or in an embedded complete appendix/table; visual evidence and annotations reference the same identities; no required item is silently hidden behind a summary, collapsed count, representative sample, or external-only reference; duplicate rows do not inflate coverage; and NOT_APPLICABLE items have explicit evidence.
+
+Human-readable documents MAY use pagination, appendices, repeated table headers, or cross-references for readability, but MUST_NOT reduce the governed denominator. Machine-readable registries MAY supplement the human-readable document, but MUST_NOT be used as an excuse to omit required reviewable detail from the self-contained Basic Design deliverable.
+
+Required conditions before Freeze: machine denominator count equals classified applicable denominator count; human-deliverable represented denominator count equals machine required denominator count; missing required UID count=0; duplicate-credit count=0; summary-only-credit count=0; representative-sample-credit count=0; human/machine denominator mismatch count=0; unclassified applicability count=0.
+
+Any mismatch is BASIC_DESIGN_DENOMINATOR_RECONCILIATION_FAILED and MUST block Basic Design Freeze.
+
+<!-- SECTION_UID: WEB-GOV-01-S086 -->
+## 86. 基本設計執行細節完整度 Gate / Basic Design Execution-Detail Completeness
+
+Basic Design MUST define enough exact behavior that a later implementation owner can determine what must be built without inventing product semantics, guessing missing interaction logic, or selecting among multiple materially different behaviors.
+
+For every REQUIRED Business Entity Operation and every user-visible or user-observable utility operation, the design contract MUST resolve as applicable:
+Identity -> Owner -> Preconditions -> Inputs/Sources -> Operation/Action -> Output -> State Effect -> Gate -> Permission -> Workbench -> Section -> Component -> Control/Trigger -> Field -> Visual State/Anchor -> Next Step -> Error/Blocked Condition -> Recovery -> Cross-page/Handoff -> Acceptance.
+
+For state-bearing behavior, legal transitions and illegal/blocked transitions MUST both be explicit. For effectful behavior, mutation target and resulting identity/version semantics MUST be explicit. For read-only behavior, exact source/read model and stale/missing behavior MUST be explicit. For conditional behavior, branch condition and each legal branch outcome MUST be explicit. For asynchronous behavior, pending/processing/success/failure/retry/cancel-or-no-cancel semantics MUST be explicit when applicable. For permission-controlled behavior, enabled/disabled/hidden behavior and reason source MUST be explicit. For cross-page behavior, source exit state, exported identity, trigger, target entry state, failure/resume, and return/back semantics MUST be explicit when applicable.
+
+A design that names a control or function but leaves its input source, ownership, gate, state effect, next step, failure behavior, recovery, or acceptance undefined MUST be classified as a design gap rather than treated as complete.
+
+AI MUST_NOT fill a missing product decision merely to complete the matrix. If Current Authority does not uniquely determine the required detail, the row MUST remain AUTHORITY_GAP, DESIGN_DECISION_REQUIRED, or another governed fail-closed disposition and MUST block Freeze where the detail is REQUIRED.
+
+No downstream implementation, test, runtime, or deployment artifact may be used to retroactively claim that an incomplete Basic Design row was complete at Freeze time.

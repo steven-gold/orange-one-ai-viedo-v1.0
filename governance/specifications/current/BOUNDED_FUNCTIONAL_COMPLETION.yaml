@@ -1,4 +1,4 @@
-schema_version: 5
+schema_version: 6
 artifact_uid: GOV-COMP-BOUNDED-FUNCTIONAL-COMPLETION
 artifact_type: GOVERNANCE_SPECIFICATION_COMPONENT
 normative_status: ACTIVE_CURRENT_GOVERNANCE_COMPONENT
@@ -70,3 +70,28 @@ rules:
     missing_recovery_zero: true
     missing_required_visual_zero: true
     authority_gap_hidden_by_percentage: BLOCK
+  ATOMIC_BASIC_DESIGN_MATERIALIZATION:
+    required_artifact: BASIC_DESIGN_ATOMIC_MATERIALIZATION_LEDGER
+    complete_applicable_denominator_row_level_required: true
+    representative_sample_substitution: BLOCK
+    summary_only_substitution: BLOCK
+    status_label_only_credit: false
+    missing_applicable_row: BLOCK
+    missing_required_binding: BLOCK
+    not_applicable_requires_evidence: true
+  BASIC_DESIGN_DENOMINATOR_RECONCILIATION:
+    required_artifacts:
+    - BASIC_DESIGN_DENOMINATOR_SNAPSHOT
+    - BASIC_DESIGN_DELIVERABLE_RECONCILIATION
+    uid_level_human_machine_reconciliation_required: true
+    missing_required_uid_count: 0
+    duplicate_credit_count: 0
+    summary_only_credit_count: 0
+    representative_sample_credit_count: 0
+    human_machine_denominator_mismatch_count: 0
+    unclassified_applicability_count: 0
+  BASIC_DESIGN_EXECUTION_DETAIL_COMPLETENESS:
+    complete_operation_chain_required: true
+    undefined_required_detail_is_design_gap: true
+    ai_invention_of_missing_product_decision: BLOCK
+    downstream_evidence_retroactive_design_completion: BLOCK

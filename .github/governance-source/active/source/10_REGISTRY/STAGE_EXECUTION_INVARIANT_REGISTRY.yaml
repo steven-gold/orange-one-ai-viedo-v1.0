@@ -4,7 +4,7 @@ artifact_type: STAGE_EXECUTION_INVARIANT_REGISTRY
 status: CURRENT_CANDIDATE
 canonical_path: 10_REGISTRY/STAGE_EXECUTION_INVARIANT_REGISTRY.yaml
 owner_uid: OWNER-GOVERNANCE-STAGE-EXECUTION-INVARIANT
-governance_revision: v2.2.11-basic-design-visual-integration-hardening
+governance_revision: v2.2.12-basic-design-atomic-materialization-hardening
 scope:
   applies_to_stages:
   - STAGE-01
@@ -906,6 +906,84 @@ invariants:
     - key_review_notes
     self_contained_human_review_required: true
     implementation_artifacts_required: false
+  ATOMIC_BASIC_DESIGN_MATERIALIZATION:
+    required_artifact: BASIC_DESIGN_ATOMIC_MATERIALIZATION_LEDGER
+    complete_applicable_denominator_must_be_individually_materialized: true
+    representative_sample_may_satisfy_denominator: false
+    group_or_capability_summary_may_replace_rows: false
+    status_label_only_may_receive_coverage_credit: false
+    required_row_fields:
+    - canonical_identity
+    - owner
+    - entity_operation_or_utility
+    - preconditions
+    - inputs_or_sources
+    - output_or_result
+    - state_effect
+    - gate
+    - permission_or_role
+    - workbench
+    - section
+    - component
+    - control_or_trigger
+    - field_or_input
+    - visual_binding_or_non_visual_classification
+    - next_step
+    - error_or_blocked_condition
+    - recovery
+    - acceptance_or_design_review
+    - authority_refs
+    not_applicable_requires_evidence: true
+    blank_or_silent_omission_credit: false
+    missing_applicable_row: BLOCK
+    missing_required_row_field: BLOCK
+    missing_required_binding: BLOCK
+    summary_only_substitution: BLOCK
+    representative_sample_substitution: BLOCK
+  BASIC_DESIGN_DENOMINATOR_RECONCILIATION:
+    required_artifacts:
+    - BASIC_DESIGN_DENOMINATOR_SNAPSHOT
+    - BASIC_DESIGN_DELIVERABLE_RECONCILIATION
+    machine_and_human_denominator_identity_required: true
+    uid_level_reconciliation_required: true
+    machine_required_count_equals_human_represented_count: true
+    missing_required_uid_count: 0
+    duplicate_credit_count: 0
+    summary_only_credit_count: 0
+    representative_sample_credit_count: 0
+    human_machine_denominator_mismatch_count: 0
+    unclassified_applicability_count: 0
+    external_only_detail_may_substitute_human_review_detail: false
+    mismatch: BLOCK
+  BASIC_DESIGN_EXECUTION_DETAIL_COMPLETENESS:
+    required_chain:
+    - IDENTITY
+    - OWNER
+    - PRECONDITIONS
+    - INPUTS_OR_SOURCES
+    - OPERATION_OR_ACTION
+    - OUTPUT
+    - STATE_EFFECT
+    - GATE
+    - PERMISSION
+    - WORKBENCH
+    - SECTION
+    - COMPONENT
+    - CONTROL_OR_TRIGGER
+    - FIELD
+    - VISUAL_STATE_OR_ANCHOR
+    - NEXT_STEP
+    - ERROR_OR_BLOCKED_CONDITION
+    - RECOVERY
+    - CROSS_PAGE_OR_HANDOFF_WHEN_APPLICABLE
+    - ACCEPTANCE
+    legal_and_blocked_transitions_required_when_state_bearing: true
+    async_pending_success_failure_retry_semantics_required_when_applicable: true
+    permission_enabled_disabled_hidden_reason_semantics_required_when_applicable: true
+    cross_page_exit_identity_trigger_entry_failure_resume_back_required_when_applicable: true
+    undefined_required_detail_is_design_gap: true
+    ai_may_invent_missing_product_decision: false
+    downstream_evidence_may_retroactively_close_incomplete_basic_design: false
 stage02_observed_defect_mapping:
 - finding: PORT_EXPOSURE_WITHOUT_TRIGGER
   mapped_invariant: RELATION_SEMANTIC_SEPARATION

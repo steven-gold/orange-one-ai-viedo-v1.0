@@ -696,8 +696,10 @@ findings:
   - github-actions:35420738801
 - finding_uid: FIND-20260919-BLUEPRINT-CONSTRUCTION-TRACEABILITY-001
   class: GOVERNANCE_BLUEPRINT_COMPLETENESS_GAP
-  title: Initial blueprint standard does not hard-require construction-package depth, bidirectional function/visual traceability, multi-state visual evidence, existing-code delta classification, and quantitative freeze completeness
-  evidence: User-directed comparison against the 2026-09-11 construction blueprint package demonstrated that Current Mother principles can still be satisfied by a planning document without complete construction-level traceability and scenario visual binding.
+  title: Initial blueprint standard does not hard-require construction-package depth, bidirectional function/visual traceability, multi-state visual evidence, existing-code delta classification,
+    and quantitative freeze completeness
+  evidence: User-directed comparison against the 2026-09-11 construction blueprint package demonstrated that Current Mother principles can still be satisfied by a planning document without
+    complete construction-level traceability and scenario visual binding.
   disposition: AUTHORIZED_FOR_BOUNDED_GOVERNANCE_SUCCESSOR_REVIEW
   specification_change_required: true
   formal_specification_mutated_for_fix: false
@@ -709,7 +711,9 @@ findings:
 - finding_uid: FIND-20260919-015
   class: STAGE02_SEMANTIC_TRIGGER_CLASSIFICATION_BUG
   title: ASSET-01 system-owned Finding creation is repeatedly escalated as a false Control-vs-System-Trigger Authority choice
-  evidence: ASSET-01 Current product source binds AssetFinding owner to ASSET/EVALUATION, the Evaluation Finding port to createFinding, and the success event to IN_REVIEW→FINDING_OPEN | finding.created; no user Create Finding control is registered. Current Stage-02 scanner only accepts explicit trigger fields or direct transition bindings and therefore reports ACTION_WITHOUT_CONTROL_OR_TRIGGER for ASSET-01-ACT-FINDING-CREATE, causing the review candidate to manufacture a system-trigger-vs-user-control choice.
+  evidence: ASSET-01 Current product source binds AssetFinding owner to ASSET/EVALUATION, the Evaluation Finding port to createFinding, and the success event to IN_REVIEW→FINDING_OPEN
+    | finding.created; no user Create Finding control is registered. Current Stage-02 scanner only accepts explicit trigger fields or direct transition bindings and therefore reports
+    ACTION_WITHOUT_CONTROL_OR_TRIGGER for ASSET-01-ACT-FINDING-CREATE, causing the review candidate to manufacture a system-trigger-vs-user-control choice.
   disposition: OPEN_PENDING_STAGE02_POST_RUN_FIX
   specification_change_required: REVIEW_AFTER_ASSET01_STAGE02_COMPLETION
   formal_specification_mutated_for_fix: false
@@ -727,7 +731,6 @@ findings:
   - ADD_REGRESSION_COVERAGE_FOR_SYSTEM_OWNED_ACTION_WITHOUT_VISIBLE_CONTROL
   defer_fix_until: COMPLETE_CURRENT_ASSET01_STAGE02_RUN_AND_RESCAN_FOR_SAME_DEFECT_FAMILY
   reopen_condition: Keep open until the completed ASSET-01 Stage-02 run proves the false authority-choice signature is eliminated or fully enumerated.
-
 historical_stage2_execution_findings:
   prior_CORE-01_STAGE02_BLOCKED: 7
   prior_ASSET-01_STAGE02_BLOCKED: 6

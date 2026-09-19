@@ -4,7 +4,7 @@ artifact_type: EXECUTION_PROFILE_REGISTRY
 status: CURRENT_CANDIDATE
 canonical_path: 10_REGISTRY/GOVERNANCE_LIFECYCLE_STAGE_REGISTRY.yaml
 owner_uid: OWNER-GOVERNANCE-LIFECYCLE
-governance_revision: v2.2.11-basic-design-visual-integration-hardening
+governance_revision: v2.2.12-basic-design-atomic-materialization-hardening
 normative_section_uids:
 - WEB-GOV-02-S004
 - WEB-GOV-02-S067
@@ -288,6 +288,7 @@ stages:
   - WEB-GOV-03-S069
   - WEB-GOV-04-S083
   - WEB-GOV-01-S077
+  - WEB-GOV-01-S084
   pre_execution_gate: GOVERNANCE_LOAD_RECEIPT_PASS
   validator_names:
   - FUNCTIONAL_CONTRACT_GUARD
@@ -481,6 +482,7 @@ stages:
   - WEB-GOV-01-S078
   - WEB-GOV-01-S079
   - WEB-GOV-01-S081
+  - WEB-GOV-01-S084
   pre_execution_gate: GOVERNANCE_LOAD_RECEIPT_PASS
   validator_names:
   - VISUAL_DOMAIN_GUARD
@@ -606,6 +608,9 @@ stages:
   - WEB-GOV-01-S083
   - WEB-GOV-01-S078
   - WEB-GOV-01-S079
+  - WEB-GOV-01-S084
+  - WEB-GOV-01-S085
+  - WEB-GOV-01-S086
   pre_execution_gate: GOVERNANCE_LOAD_RECEIPT_PASS
   validator_names:
   - DESIGN_FREEZE_GUARD

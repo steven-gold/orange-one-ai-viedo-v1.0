@@ -87,3 +87,9 @@ The candidate package cannot self-prove integrity. The trust-root hash set is an
 - Basic Design MUST finish requirements, architecture, functional relationships, visual architecture, complete visual style, high-fidelity scenario visuals, document-embedded figures, design review, and freeze without requiring code/runtime/deployment evidence.
 - Existing project Visual Authority MUST be read and inherited first; if absent, Basic Design MUST define and approve a complete reusable visual style before final visual candidates.
 - Common Mother policy remains product-neutral and MUST NOT embed a product-specific palette, brand, shell geometry, page name, route, provider, or fixed implementation technology.
+
+## v2.2.12 basic design atomic materialization rule
+- v2.2.11 remains immutable predecessor history.
+- Normative content changed, therefore Current Governance UID and display version must change.
+- Required design denominators must be enumerated row-by-row; summary-only or representative-sample completion is forbidden.
+- Human and machine design deliverables must reconcile to the same exact required denominator before Basic Design Freeze.

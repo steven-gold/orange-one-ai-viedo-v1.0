@@ -2,7 +2,7 @@ schema_version: 23
 artifact_type: ACTIVE_GOVERNANCE_TEST_STATE
 normative_authority: false
 specification_registry_ref: governance/specifications/REGISTRY.yaml
-specification_uid: GOV-REV-20260919-BASIC-DESIGN-VISUAL-INTEGRATION-HARDENING
+specification_uid: GOV-REV-20260919-BASIC-DESIGN-ATOMIC-MATERIALIZATION-HARDENING
 canonical_rule_registry_ref: governance/specifications/current/CANONICAL_RULE_REGISTRY.yaml
 canonical_rule_registry_uid: GOV-CANONICAL-RULE-REGISTRY-001
 selected_execution_profile_state:
@@ -79,7 +79,7 @@ stage_execution_loading:
 stage_execution_remediation_closure_protocol:
   specification_ref: governance/specifications/current/VALIDATION_REMEDIATION_CLOSURE_PROTOCOL.yaml
   canonical_execution_rule_set: true
-  frozen_specification_uid: GOV-REV-20260919-BASIC-DESIGN-VISUAL-INTEGRATION-HARDENING
+  frozen_specification_uid: GOV-REV-20260919-BASIC-DESIGN-ATOMIC-MATERIALIZATION-HARDENING
   audit_only_blocked_loop_may_count_as_progress: false
   remediation_must_materially_eliminate_remediable_gap: true
   full_line_high_pressure_required_before_every_fresh_execution_or_reexecution: true
@@ -104,8 +104,8 @@ specification_mutation_safety:
   ordinary_mid_stage_specification_mutation: BLOCK
   stage_end_consolidated_promotion_requires_new_explicit_directive: true
   execution_context_lock_required: true
-status: ACTIVE_GOVERNANCE_BASIC_DESIGN_VISUAL_INTEGRATION_PROMOTED_REVALIDATION_REQUIRED
-next_action: RUN_SUCCESSOR_EXACT_HEAD_VALIDATION_THEN_REEXECUTE_BASIC_DESIGN_WITH_COMPLETE_VISUAL_DESIGN
+status: ACTIVE_GOVERNANCE_BASIC_DESIGN_ATOMIC_MATERIALIZATION_PROMOTED_REVALIDATION_REQUIRED
+next_action: RUN_SUCCESSOR_EXACT_HEAD_VALIDATION_THEN_REEXECUTE_BASIC_DESIGN_WITH_ATOMIC_FULL_DENOMINATOR_DETAIL
 previous_closed_product_work_unit:
   work_unit_uid: WU-STAGE02-CORE01-STRUCTURAL-REMEDIATION-001
   canonical_name: CORE01_STRUCTURAL_CONTRACT_REMEDIATION
@@ -296,8 +296,8 @@ resume_control:
   preserved_product_resume_point: ASSET01_STAGE2_EXACT_CLOSURES_REVALIDATED_REVIEW_ONLY_PRODUCT_AUTHORITY_REQUIRED
   preserved_product_next_action: REVIEW_ASSET01_STAGE02_REMAINING_REVIEW_ONLY_DESIGN_CONTRACT_CANDIDATE
 governance_revision_transition:
-  current_governance_uid: GOV-REV-20260919-BASIC-DESIGN-VISUAL-INTEGRATION-HARDENING
-  predecessor_governance_uid: GOV-REV-20260919-BLUEPRINT-CONSTRUCTION-TRACEABILITY-HARDENING
+  current_governance_uid: GOV-REV-20260919-BASIC-DESIGN-ATOMIC-MATERIALIZATION-HARDENING
+  predecessor_governance_uid: GOV-REV-20260919-BASIC-DESIGN-VISUAL-INTEGRATION-HARDENING
   predecessor_attempt_preserved_as_historical_evidence: true
   predecessor_attempt_history_ref: governance/test/history/stage02/design-remediation-routing-20260918/STAGE02_CORE01_DESIGN_REMEDIATION_TEST_EVIDENCE.json
   predecessor_attempt_may_close_under_current_governance: false

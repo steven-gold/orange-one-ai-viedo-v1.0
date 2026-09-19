@@ -58,3 +58,6 @@ This successor hardens the initial/basic design contract so a governed blueprint
 
 ## v2.2.11 basic design visual integration hardening
 This successor corrects the Basic Design boundary: Basic Design is complete independently of implementation/execution and includes full visual design, inherited/current visual-authority resolution, complete visual-style definition, high-fidelity multi-state visuals, and embedded figures inside human-readable design documents. Product-specific colors, shell geometry, brand values, and component numbers remain outside common Mother policy and are inherited through project/product Visual Authority.
+
+## v2.2.12 atomic basic design materialization
+Basic Design completeness requires full row-level denominator materialization, no summary/sample substitution, exact human/machine denominator reconciliation, and execution-detail completeness before Freeze. Page count is never a completeness metric.

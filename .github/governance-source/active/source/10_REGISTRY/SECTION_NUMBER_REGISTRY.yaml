@@ -5,7 +5,7 @@ artifact_type: SECTION_NUMBER_REGISTRY
 status: CURRENT_CANDIDATE
 canonical_path: 10_REGISTRY/SECTION_NUMBER_REGISTRY.yaml
 owner_uid: OWNER-GOVERNANCE-SECTION-REGISTRY
-governance_revision: v2.2.11-basic-design-visual-integration-hardening
+governance_revision: v2.2.12-basic-design-atomic-materialization-hardening
 policy:
   unique_numeric_h2_per_document: true
   section_uid_is_canonical_reference: true
@@ -739,6 +739,27 @@ documents:
     heading: '## 83. 設計文件圖面嵌入與自足性交付合約 / Design Document Embedded Visuals and Self-Contained Delivery Contract'
     path: 12_DOCS/mother-spec/01_BLUEPRINT_DESIGN_GOVERNANCE.md
     binding_sha256: 2dc546286241867a71180823e336b5d212daf938df2e634667279020083b8ba4
+  - section_uid: WEB-GOV-01-S084
+    level: 2
+    canonical_number: '84'
+    title: 基本設計原子化實體化與禁止摘要替代 Gate / Atomic Basic Design Materialization and No-Summary Substitution
+    heading: '## 84. 基本設計原子化實體化與禁止摘要替代 Gate / Atomic Basic Design Materialization and No-Summary Substitution'
+    path: 12_DOCS/mother-spec/01_BLUEPRINT_DESIGN_GOVERNANCE.md
+    binding_sha256: bb7e3995c713f130f169e57e1884ac719b277f1cc32f5472a98bbaf05fe7c5b7
+  - section_uid: WEB-GOV-01-S085
+    level: 2
+    canonical_number: '85'
+    title: 基本設計分母完整性與交付物對帳 Gate / Basic Design Denominator Integrity and Deliverable Reconciliation
+    heading: '## 85. 基本設計分母完整性與交付物對帳 Gate / Basic Design Denominator Integrity and Deliverable Reconciliation'
+    path: 12_DOCS/mother-spec/01_BLUEPRINT_DESIGN_GOVERNANCE.md
+    binding_sha256: e9c8fa45f4e1e17985d9997fb6af5d43ee1b5e354c16dca2a507d75839fd55bc
+  - section_uid: WEB-GOV-01-S086
+    level: 2
+    canonical_number: '86'
+    title: 基本設計執行細節完整度 Gate / Basic Design Execution-Detail Completeness
+    heading: '## 86. 基本設計執行細節完整度 Gate / Basic Design Execution-Detail Completeness'
+    path: 12_DOCS/mother-spec/01_BLUEPRINT_DESIGN_GOVERNANCE.md
+    binding_sha256: 56b216a6836f08273481f374afb1ed809e964c44219213dccd12db3a2e422277
 - document_id: WEB-GOV-02
   path: 12_DOCS/mother-spec/02_IMPLEMENTATION_DELIVERY_STANDARD.md
   sections:
