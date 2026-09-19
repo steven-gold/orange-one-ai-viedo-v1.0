@@ -176,7 +176,7 @@ jobs:
           git commit -m "test(governance): persist dynamic fresh replay execution"             -m "Execution-Authorization: ${{ steps.context.outputs.authorization_uid }}"             -m "Run-UID: ${{ steps.context.outputs.run_uid }}"
           git push origin HEAD:rebuild-v2.1.1
   # ASSET_STAGE12_SHARED_PROMOTION_JOB_BEGIN
-  # promotion_retry: 5
+  # promotion_retry: 6
   promote-asset-stage12-shared-contract:
     if: ${{ github.event_name == 'push' && contains(github.event.head_commit.message, '[asset-stage12-shared-promote]') }}
     needs: dynamic-identity-integrity
