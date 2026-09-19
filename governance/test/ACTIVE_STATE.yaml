@@ -104,8 +104,8 @@ specification_mutation_safety:
   ordinary_mid_stage_specification_mutation: BLOCK
   stage_end_consolidated_promotion_requires_new_explicit_directive: true
   execution_context_lock_required: true
-status: ACTIVE_STAGE02_APPLICABILITY_SUCCESSOR_PROJECTION_MAINTENANCE
-next_action: REPAIR_STAGE02_APPLICABILITY_AND_SUCCESSOR_CONTRACT_PROJECTION
+status: ACTIVE_STAGE02_APPLICABILITY_SUCCESSOR_PROJECTION_REVALIDATION_REQUIRED
+next_action: VALIDATE_STAGE02_APPLICABILITY_AND_SUCCESSOR_CONTRACT_PROJECTION
 previous_closed_product_work_unit:
   work_unit_uid: WU-STAGE02-CORE01-STRUCTURAL-REMEDIATION-001
   canonical_name: CORE01_STRUCTURAL_CONTRACT_REMEDIATION
@@ -284,12 +284,12 @@ previous_closed_work_unit:
     source_runtime_residual_count: 0
     product_stage_credit: 0
 resume_control:
-  current_resume_point: STAGE02_APPLICABILITY_SUCCESSOR_PROJECTION_MAINTENANCE_READY
+  current_resume_point: STAGE02_APPLICABILITY_SUCCESSOR_PROJECTION_IMPLEMENTED_REVALIDATION_REQUIRED
   current_work_unit_uid: WU-TEST-STAGE02-APPLICABILITY-PROJECTION-001
   current_owner: governance/ci/run_current_stage2_actual_test.py
   historical_stage2_results_are_current_state: false
   stage2_execution_requires_fresh_entry_resolution: false
-  exact_next_action: REPAIR_STAGE02_APPLICABILITY_AND_SUCCESSOR_CONTRACT_PROJECTION
+  exact_next_action: VALIDATE_STAGE02_APPLICABILITY_AND_SUCCESSOR_CONTRACT_PROJECTION
   parent_primary_task_layer: PRODUCT_STAGE_EXECUTION
   parent_work_unit_uid: WU-STAGE02-ASSET01-8133839F-REPLAY
   parent_resume_point: FRESH_ASSET-01_STAGE2_DESIGN_REMEDIATION_REQUIRED
@@ -1676,7 +1676,7 @@ active_work_unit:
   canonical_name: STAGE02_APPLICABILITY_AND_SUCCESSOR_CONTRACT_PROJECTION_HARDENING
   primary_task_layer: TEST_OR_VALIDATION_MAINTENANCE
   canonical_owner: governance/ci/run_current_stage2_actual_test.py
-  current_status: READY_FOR_IMPLEMENTATION
+  current_status: IMPLEMENTATION_REVALIDATION_REQUIRED
   parent_product_work_unit_uid: WU-STAGE02-ASSET01-8133839F-REPLAY
   scope:
   - STAGE02_REQUIRED_CONTRACT_APPLICABILITY_DRIVEN_VALIDATION
@@ -1699,6 +1699,16 @@ active_work_unit:
   - EXACT_HEAD_BRANCH_GUARD_PASS
   - PRODUCT_STAGE_CREDIT_ZERO
   product_stage_credit: 0
+  implementation_evidence:
+    required_contracts_drive_applicability: true
+    approved_successor_contract_projection_supported: true
+    immutable_raw_source_projection_only: true
+    unapproved_candidate_consumption_blocked: true
+    product_specific_contract_literals_added_to_common_denominator: false
+    mother_normative_change: false
+    current_specification_change: false
+    product_stage_credit: 0
+    exact_head_revalidation_required: true
 work_unit_resolution_gate_stage02_applicability_projection:
   resolution_uid: WUR-TEST-STAGE02-APPLICABILITY-PROJECTION-20260919-001
   normative_authority: false
