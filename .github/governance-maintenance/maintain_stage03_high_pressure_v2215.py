@@ -36,6 +36,9 @@ def commit_push(msg, paths):
 def enter():
     s=load(STATE)
     aw=s.get('active_work_unit') or {}
+    if s.get('current_primary_task_layer')=='TEST_OR_VALIDATION_MAINTENANCE' and aw.get('work_unit_uid')==TEST_WU:
+        print(json.dumps({'transition':'ALREADY_ENTERED','active_work_unit':TEST_WU,'product_stage_credit':0},indent=2))
+        return
     if s.get('specification_uid')!=GOV: raise RuntimeError('CURRENT_GOVERNANCE_DRIFT')
     if s.get('current_primary_task_layer')!='PRODUCT_STAGE_EXECUTION' or aw.get('work_unit_uid')!=PRODUCT_WU:
         raise RuntimeError('EXPECTED_BLOCKED_STAGE03_PRODUCT_WU')
@@ -163,9 +166,13 @@ def patch():
         raise RuntimeError('HARNESS_AST_SELECTOR_DRIFT:'+repr({'checks':seen,'negative':neg_seen}))
     src=ast.unparse(tree)+'\n'
     compile(src,str(HARNESS),'exec')
+    original=HARNESS.read_text(encoding='utf-8')
     HARNESS.write_text(src,encoding='utf-8')
-    cp=run(sys.executable,'-m','py_compile',str(HARNESS))
-    sha=commit_push('fix(test): align Stage-03 63-check harness to v2.2.15',['governance/ci/stress_test_stage03_core01.py'])
+    run(sys.executable,'-m','py_compile',str(HARNESS))
+    if src==original:
+        print(json.dumps({'harness':'ALREADY_PATCHED','patched_checks':seen,'negative_patch_count':neg_seen},indent=2))
+        return
+    sha=commit_push('fix(test): align Stage-03 dynamic-denominator harness to v2.2.15',['governance/ci/stress_test_stage03_core01.py'])
     print(json.dumps({'harness_commit':sha,'patched_checks':seen,'negative_patch_count':neg_seen},indent=2))
 
 def restore_and_dry_run():
@@ -181,6 +188,32 @@ def restore_and_dry_run():
     test['implementation_head_sha']=run('git','rev-parse','HEAD').stdout.strip()
     test['product_stage_credit']=0
     test['dry_run_required_before_restore']=True
+    test['historical_high_pressure_check_denominator']=63
+    test['current_dynamic_high_pressure_check_denominator']=75
+    test['denominator_change_reason']='CURRENT_STAGE03_REQUIRED_OUTPUTS_EXPANDED_FROM_6_TO_9; PER_OUTPUT_IDENTITY_SHA_AUTHORITY_SAFETY_COVERAGE_EXPANDS_WITH_CURRENT_PROFILE'
+    test['scope']=[
+      'ALIGN_EXISTING_STAGE03_HIGH_PRESSURE_HARNESS_TO_CURRENT_V2215_STATE',
+      'USE_CURRENT_DYNAMIC_CHECK_DENOMINATOR_DERIVED_FROM_NINE_REQUIRED_OUTPUTS',
+      'PRESERVE_ALL_EXISTING_CHECK_DIMENSIONS_AND_PER_OUTPUT_COVERAGE',
+      'EXPECT_COMPLETE_REQUIRED_CONTROL_UID_PREVIEW_COVERAGE',
+      'EXPECT_ATOMIC_CONVERSATION_ORDER_WITH_DECISION_DOCK_DOWNSTREAM',
+      'EXPECT_UNRESOLVED_VISUAL_AUTHORITY_TO_FAIL_CLOSED_AND_ENTER_DENOMINATOR',
+      'EXPECT_HUMAN_VISUAL_REVIEW_NOT_REACHED_WHILE_AUTHORITY_UNRESOLVED'
+    ]
+    test['definition_of_done']=[
+      'AST_BOUNDED_HARNESS_PATCH',
+      'CURRENT_DYNAMIC_HIGH_PRESSURE_DENOMINATOR_DERIVED_FROM_PROFILE',
+      'CURRENT_TWO_EXTERNAL_AUTHORITY_BLOCKERS_ARE_EXPECTED_FAIL_CLOSED_STATE_NOT_HARNESS_FAILURE',
+      'HIGH_PRESSURE_LOCAL_DRY_RUN_75_OF_75_PASS',
+      'PRODUCT_STAGE_CREDIT_ZERO',
+      'ORIGINAL_PRODUCT_WU_AND_RESUME_RESTORED'
+    ]
+    wur=s.get('work_unit_resolution_gate_stage03_high_pressure_harness_v2215') or {}
+    wur['historical_high_pressure_check_denominator']=63
+    wur['current_dynamic_high_pressure_check_denominator']=75
+    wur['denominator_resolution']='DERIVED_FROM_CURRENT_NINE_OUTPUT_PROFILE_NOT_HISTORICAL_FIXED_COUNT'
+    s['work_unit_resolution_gate_stage03_high_pressure_harness_v2215']=wur
+    s['last_work_unit_resolution_gate']=wur
     s['closed_test_validation_maintenance_work_unit_stage03_high_pressure_v2215']=test
     s['active_work_unit']=product
     s['current_primary_task_layer']='PRODUCT_STAGE_EXECUTION'
@@ -199,12 +232,12 @@ def restore_and_dry_run():
         raise SystemExit(cp.returncode)
     report=ROOT/'governance/test/stage03/STAGE03_HIGH_PRESSURE_REVIEW_REPORT.json'
     data=json.loads(report.read_text(encoding='utf-8'))
-    if data.get('check_total')!=63 or data.get('pass_total')!=63 or data.get('fail_total')!=0 or data.get('result')!='PASS':
-        raise RuntimeError('HIGH_PRESSURE_DRY_RUN_NOT_63_OF_63:'+json.dumps({k:data.get(k) for k in ('result','check_total','pass_total','fail_total')}))
+    if data.get('check_total')!=75 or data.get('pass_total')!=75 or data.get('fail_total')!=0 or data.get('result')!='PASS':
+        raise RuntimeError('HIGH_PRESSURE_DRY_RUN_NOT_CURRENT_75_OF_75:'+json.dumps({k:data.get(k) for k in ('result','check_total','pass_total','fail_total')}))
     if report.exists():
         report.unlink()
     sha=commit_push('chore(test): close Stage-03 high-pressure harness maintenance and restore product WU',['governance/test/ACTIVE_STATE.yaml'])
-    print(json.dumps({'restore_commit':sha,'dry_run':'63/63_PASS','restored_product_work_unit':PRODUCT_WU,'resume_point':resume.get('current_resume_point'),'product_stage_credit':0},indent=2))
+    print(json.dumps({'restore_commit':sha,'dry_run':'75/75_PASS','restored_product_work_unit':PRODUCT_WU,'resume_point':resume.get('current_resume_point'),'product_stage_credit':0},indent=2))
 
 def main():
     p=argparse.ArgumentParser(); p.add_argument('mode',choices=['enter','patch','restore-and-dry-run']); a=p.parse_args()
