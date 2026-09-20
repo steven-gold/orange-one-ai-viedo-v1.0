@@ -914,6 +914,30 @@ res.append(case('complete_materialized_consumer_ready_handoff_passes', handoff_r
     ast.parse(s)
     p.write_text(s,encoding='utf-8')
 
+def harden_full_line_suite_denominator_v2216():
+    import ast, pprint
+    p=ROOT/'.github/governance-source/RUN_FULL_LINE_SYSTEM_GATE.py'
+    text=p.read_text(encoding='utf-8')
+    tree=ast.parse(text)
+    nodes=[]
+    for node in tree.body:
+        if isinstance(node,ast.Assign) and any(isinstance(t,ast.Name) and t.id=='EXPECTED_SUITES' for t in node.targets):
+            nodes.append(node)
+    if len(nodes)!=1:
+        raise RuntimeError('EXPECTED_SUITES AST selector drift')
+    node=nodes[0]
+    value=ast.literal_eval(node.value)
+    key='test_v2_1_13_stage_execution_invariants.py'
+    if key not in value:
+        raise RuntimeError('stage invariant mandatory suite missing')
+    value[key]={'total':32,'passed_expectations':32}
+    rendered='EXPECTED_SUITES = '+pprint.pformat(value,width=140,sort_dicts=False)
+    lines=text.splitlines()
+    lines[node.lineno-1:node.end_lineno]=rendered.splitlines()
+    out='\n'.join(lines)+'\n'
+    ast.parse(out)
+    p.write_text(out,encoding='utf-8')
+
 def harden_root_stage_engine_v2216():
     p=ROOT/'governance/ci/stage_execution_engine.py'
     add_set_literal_member_ast(p,'EVIDENCE_FIELDS','cross_stage_handoff')
@@ -1214,6 +1238,7 @@ def apply_v2216():
     mutate_current_components_v2216()
     harden_source_validator_v2216()
     harden_source_regression_v2216()
+    harden_full_line_suite_denominator_v2216()
     harden_root_stage_engine_v2216()
     harden_root_stage_engine_test_v2216()
     record_governance_finding_v2216()
