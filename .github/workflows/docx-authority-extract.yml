@@ -1,0 +1,107 @@
+name: Temporary DOCX Authority Extraction
+
+on:
+  push:
+    branches:
+      - 0921acpos
+
+permissions:
+  contents: write
+
+jobs:
+  extract:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Extract DOCX text and tables
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import hashlib, json, re, zipfile
+          import xml.etree.ElementTree as ET
+
+          ROOT=Path('.')
+          OUT=ROOT/'__authority_extract__'
+          OUT.mkdir(exist_ok=True)
+          ns={'w':'http://schemas.openxmlformats.org/wordprocessingml/2006/main'}
+
+          def clean(s):
+              return re.sub(r'[ \t]+',' ',s).strip()
+
+          def node_text(node):
+              parts=[]
+              for x in node.iter():
+                  if x.tag.endswith('}t') and x.text:
+                      parts.append(x.text)
+                  elif x.tag.endswith('}tab'):
+                      parts.append('\t')
+                  elif x.tag.endswith('}br'):
+                      parts.append('\n')
+              return clean(''.join(parts))
+
+          manifest=[]
+          for p in sorted(ROOT.glob('*.docx')):
+              data=p.read_bytes()
+              sha256=hashlib.sha256(data).hexdigest()
+              lines=[]
+              with zipfile.ZipFile(p) as z:
+                  xml_names=[
+                      'word/document.xml',
+                      'word/footnotes.xml',
+                      'word/endnotes.xml',
+                  ]
+                  xml_names += sorted(n for n in z.namelist() if re.fullmatch(r'word/header\d+\.xml',n))
+                  xml_names += sorted(n for n in z.namelist() if re.fullmatch(r'word/footer\d+\.xml',n))
+                  for name in xml_names:
+                      if name not in z.namelist():
+                          continue
+                      try:
+                          root=ET.fromstring(z.read(name))
+                      except Exception:
+                          continue
+                      lines.append(f'### PART {name}')
+                      for elem in root.iter():
+                          tag=elem.tag.rsplit('}',1)[-1]
+                          if tag=='p':
+                              t=node_text(elem)
+                              if t:
+                                  lines.append('P\t'+t)
+                          elif tag=='tr':
+                              cells=[]
+                              for tc in elem.findall('./w:tc',ns):
+                                  ct=node_text(tc)
+                                  cells.append(ct)
+                              if any(cells):
+                                  lines.append('ROW\t'+'\t'.join(cells))
+              out=OUT/(p.name+'.txt')
+              out.write_text('\n'.join(lines)+'\n',encoding='utf-8')
+              manifest.append({
+                  'file':p.name,
+                  'sha256':sha256,
+                  'size':len(data),
+                  'extracted_lines':len(lines),
+                  'extract_file':str(out),
+              })
+
+          (OUT/'MANIFEST.json').write_text(
+              json.dumps(manifest,ensure_ascii=False,indent=2)+'\n',
+              encoding='utf-8'
+          )
+          PY
+
+      - name: Persist temporary authority extraction
+        shell: bash
+        run: |
+          git config user.name "acpos-authority-extractor"
+          git config user.email "actions@users.noreply.github.com"
+          git add __authority_extract__
+          if git diff --cached --quiet; then
+            echo "No extraction changes"
+            exit 0
+          fi
+          git commit -m "chore(temp): extract DOCX authority text for exact binding review"
+          git push
