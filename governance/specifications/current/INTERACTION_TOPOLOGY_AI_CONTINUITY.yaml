@@ -1,4 +1,4 @@
-schema_version: 6
+schema_version: 7
 artifact_uid: GOV-COMP-INTERACTION-TOPOLOGY-AI-CONTINUITY
 artifact_type: GOVERNANCE_SPECIFICATION_COMPONENT
 normative_status: ACTIVE_CURRENT_GOVERNANCE_COMPONENT
@@ -101,6 +101,17 @@ common_invariants:
     unresolved_visual_authority_is_authority_absent: false
     unresolved_visual_authority_must_remain_blocker: true
     profile_materialization_undercoverage: BLOCK
+  TYPOGRAPHY_COMPUTED_METRICS:
+    invariant_uid: GOV-INV-TYPOGRAPHY-COMPUTED-METRICS-001
+    target_denominator: EVERY_APPLICABLE_TEXT_BEARING_TARGET_FROM_CURRENT_DESIGN_AUTHORITY
+    expected_baseline_owner: VISUAL_DESIGN
+    runtime_capture_owner: VERIFICATION_AND_PRODUCTION_ACCEPTANCE
+    runtime_evidence_artifact_type: TYPOGRAPHY_COMPUTED_METRICS_EVIDENCE
+    representative_sample_completion: BLOCK
+    screenshot_only_completion: BLOCK
+    not_applicable_requires_authority_evidence: true
+    unexpected_clipping_or_overflow: BLOCK
+    numeric_tolerance_breach: BLOCK
 authority_boundaries:
   functional_contract_authority: DEFINE_FUNCTIONAL_TOPOLOGY
   visual_design_authority: PROJECT_APPROVED_VISUAL_PROJECTION

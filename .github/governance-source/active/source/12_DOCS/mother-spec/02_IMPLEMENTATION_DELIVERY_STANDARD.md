@@ -1231,3 +1231,14 @@ Reference-only, UID-only, path-only, existence-without-parse, parse-without-requ
 Before a Stage closes, its complete applicable successor-required input universe MUST be reconciled against predecessor outputs, Current Authority, shared owners, persisted foundation artifacts, and registered external evidence. Every REQUIRED row must be READY, or the Stage remains BLOCKED and the earliest owning capability must be re-entered.
 
 A producer hash, schema, required field, applicability, owner, or denominator change MUST mark impacted downstream consumers REVERIFY_REQUIRED until fresh consumer-readiness evidence is produced. Unaffected evidence may be preserved only through reverse-dependency proof.
+
+<!-- SECTION_UID: WEB-GOV-02-S076 -->
+## 76. Typography Computed Metrics Runtime Verification / 字體計算值執行驗證
+
+Verification and Production Browser Acceptance MUST capture actual computed typography for every REQUIRED text-bearing target in every Required Viewport and applicable language/theme state. Capture MUST come from Browser DOM measurement, getComputedStyle, or an equivalent runtime source that exposes the effective rendered values.
+
+For each target, runtime evidence MUST record at least: target_uid; typography_authority_ref; viewport_uid; language; theme; computed_font_family; computed_font_size_px; computed_font_weight; computed_line_height_px; computed_letter_spacing_px; actual_text_container_width_px; actual_text_container_height_px; scroll_width_px; scroll_height_px; rendered_line_count; wrap_state; truncation_state; clipping_state; overflow_state; expected metric references; tolerance; and reconciliation_result.
+
+Expected and actual values MUST be compared per target against the frozen typography baseline and tolerance. Missing targets, missing computed values, unexpected clipping/overflow/wrap/truncation, font-family or weight mismatch, or numeric metrics outside tolerance MUST FAIL. A successful screenshot, page render, build, or aggregate typography visual-diff score MUST_NOT substitute for target-level computed evidence.
+
+Localization verification MUST re-run the applicable typography target denominator for each Required language context whose rendered text can change geometry.

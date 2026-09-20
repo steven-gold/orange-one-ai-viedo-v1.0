@@ -2,7 +2,7 @@ schema_version: 23
 artifact_type: ACTIVE_GOVERNANCE_TEST_STATE
 normative_authority: false
 specification_registry_ref: governance/specifications/REGISTRY.yaml
-specification_uid: GOV-REV-20260920-CROSS-STAGE-MATERIALIZATION-CONSUMER-READINESS-HARDENING
+specification_uid: GOV-REV-20260921-TYPOGRAPHY-COMPUTED-METRICS-HARDENING
 canonical_rule_registry_ref: governance/specifications/current/CANONICAL_RULE_REGISTRY.yaml
 canonical_rule_registry_uid: GOV-CANONICAL-RULE-REGISTRY-001
 selected_execution_profile_state:
@@ -111,8 +111,8 @@ specification_mutation_safety:
   ordinary_mid_stage_specification_mutation: BLOCK
   stage_end_consolidated_promotion_requires_new_explicit_directive: true
   execution_context_lock_required: true
-status: ACTIVE_GOVERNANCE_CONTENT_INTEGRITY_TYPOGRAPHY_CONSUMER_HARDENING
-next_action: PROMOTE_TYPOGRAPHY_COMPUTED_METRICS_SUCCESSOR
+status: TYPOGRAPHY_COMPUTED_METRICS_SUCCESSOR_PROMOTED_EXACT_HEAD_REVALIDATION_REQUIRED
+next_action: RUN_EXACT_HEAD_SELECTED_PROFILE_FULL_LINE_AND_TYPOGRAPHY_REGRESSION
 previous_closed_product_work_unit:
   work_unit_uid: WU-STAGE02-CORE01-STRUCTURAL-REMEDIATION-001
   canonical_name: CORE01_STRUCTURAL_CONTRACT_REMEDIATION
@@ -291,10 +291,10 @@ previous_closed_work_unit:
     source_runtime_residual_count: 0
     product_stage_credit: 0
 resume_control:
-  current_resume_point: TYPOGRAPHY_COMPUTED_METRICS_SUCCESSOR_AUTHORIZED
+  current_resume_point: TYPOGRAPHY_COMPUTED_METRICS_SUCCESSOR_PROMOTED_EXACT_HEAD_REVALIDATION_REQUIRED
   current_work_unit_uid: WU-GOV-CONTENT-INTEGRITY-TYPOGRAPHY-CONSUMER-HARDENING-001
   current_owner: governance/specifications/current/SPECIFICATION_MUTATION_CONTROL.yaml
-  exact_next_action: PROMOTE_TYPOGRAPHY_COMPUTED_METRICS_SUCCESSOR
+  exact_next_action: RUN_EXACT_HEAD_SELECTED_PROFILE_FULL_LINE_AND_TYPOGRAPHY_REGRESSION
   product_resume_preserved: CORE01_STAGE01_STAGE03_CLEAN_BASELINE_READY_FRESH_STAGE01_WUR_REQUIRED
   interrupted_test_resume_preserved: CORE01_SOURCE_TEST_BUGFIX_AND_CONTENT_INTEGRITY_FULL_LIFECYCLE_R2_ACTIVE
   reentry_owner_capability: SOURCE_INTAKE_BASE_BLUEPRINT
@@ -315,12 +315,12 @@ last_completed_change_request_resume_history_sys01:
   prior_work_unit_restored: WU-TEST-STAGE03-BLOCKED-EVIDENCE-SCHEMA-001
   terminal_disposition: CLOSED_AFFECTED_SCOPE_VERIFIED_GLOBAL_BASELINE_BLOCKER_UNCHANGED
 governance_revision_transition:
-  current_governance_uid: GOV-REV-20260920-CROSS-STAGE-MATERIALIZATION-CONSUMER-READINESS-HARDENING
-  predecessor_governance_uid: GOV-REV-20260920-STAGE03-VISUAL-MATERIALIZATION-PROMOTION-CLOSURE
+  current_governance_uid: GOV-REV-20260921-TYPOGRAPHY-COMPUTED-METRICS-HARDENING
+  predecessor_governance_uid: GOV-REV-20260920-CROSS-STAGE-MATERIALIZATION-CONSUMER-READINESS-HARDENING
   predecessor_attempt_preserved_as_historical_evidence: true
   predecessor_attempt_history_ref: governance/test/history/stage02/design-remediation-routing-20260918/STAGE02_CORE01_DESIGN_REMEDIATION_TEST_EVIDENCE.json
   predecessor_attempt_may_close_under_current_governance: false
-  fresh_revalidation_required: false
+  fresh_revalidation_required: true
   mother_machine_revalidation_complete: true
   mother_machine_revalidation_run_id: 35483671654
   mother_machine_revalidation_head: f7dad5ac112337251f35678a95e9d8f3d99d9d4d
@@ -352,7 +352,7 @@ governance_revision_transition:
   current_governance_product_credit: 0
   current_product_attempt_uid: null
   current_product_attempt_run_uid: null
-  fresh_revalidation_scope: STAGE01_SOURCE_CAPTURE_THROUGH_STAGE03_VISUAL_READINESS_AND_ALL_11_STAGE_HANDOFF_DEFINITION
+  fresh_revalidation_scope: TYPOGRAPHY_COMPUTED_METRICS_POLICY_CONSUMERS_AND_INTERRUPTED_CORE01_CONTENT_INTEGRITY_TEST
   invalid_predecessor_promotion_commit: bf2c4de90fbc80003bfdcebc30732bcf25abd20d
   invalid_predecessor_promotion_workflow_run_id: 35483077720
   invalid_predecessor_promotion_guard_result: FAIL
@@ -468,18 +468,19 @@ v227_promotion_consumer_sync_repair:
   product_stage_credit: 0
   status: DERIVED_CONSUMER_SYNC_REPAIRED_FULL_LINE_REVERIFY_REQUIRED
 previous_work_unit_resolution_gate:
-  resolution_uid: WUR-STAGE02-CORE01-FRESH-20260919-002
+  resolution_uid: WUR-TEST-CORE01-CONTENT-INTEGRITY-FULL-LIFECYCLE-20260921-002
   normative_authority: false
   result: PASS_SINGLE_LEGAL_SUCCESSOR
-  requested_primary_task_layer: PRODUCT_STAGE_EXECUTION
-  resolved_work_unit_uid: WU-STAGE02-CORE01-FRESH-FUNCTIONAL-REMEDIATION-002
-  authorization_uid: USR-DIRECTIVE-20260919-RERUN-CORE01-STAGE01-STAGE02-R2
-  page_scope:
-  - CORE-01
-  excluded_page_scope:
-  - ASSET-01
-  source_problem_denominator: 45
-  source_closure_blocker_denominator: 0
+  requested_primary_task_layer: TEST_OR_VALIDATION_MAINTENANCE
+  resolved_work_unit_uid: WU-TEST-CORE01-CONTENT-INTEGRITY-FULL-LIFECYCLE-002
+  authorization_uid: USR-DIRECTIVE-20260921-CORE01-BUGFIX-CONTENT-INTEGRITY-R2
+  canonical_owner: governance/ci/run_core01_isolated_full_lifecycle_test.py
+  basis:
+  - EXPLICIT_USER_DIRECTIVE_FIX_BUG_AND_RERUN_COMPLETE_FLOW
+  - EXPLICIT_USER_DIRECTIVE_REQUIRE_DATA_CONTENT_COMPLETENESS_NOT_EXECUTION_ONLY
+  - PRIOR_TEST_WU_CLOSED_AND_PRODUCT_RESUME_RESTORED
+  - EXACT_SOURCE_PROVIDER_BUG_ROOT_CAUSE_RESOLVED_TO_TEST_PARSER_SCOPE
+  product_stage_credit: 0
 closed_governance_maintenance_work_unit_cycle_freeze_hardening:
   work_unit_uid: WU-GOV-MUTATION-GUARD-CYCLE-FREEZE-001
   canonical_name: GOVERNANCE_MUTATION_GUARD_CYCLE_FREEZE_HARDENING
@@ -2443,12 +2444,26 @@ closed_governance_maintenance_work_unit_cross_stage_materialization_continuity_h
   closure_state_exact_head_revalidation_required: false
   closure_state_validated_head_sha: 06976a2cce0947fa60227d480082eeb11ee7fdba
   closure_state_terminal_validation:
-    branch_guard: {run_id: 35504591796, result: success}
-    selected_profile: {run_id: 35504591856, result: success}
-    full_line: {run_id: 35504591837, result: success}
-    stage02_boundary: {run_id: 35504591803, result: success, product_execution: skipped}
-    fresh_replay: {run_id: 35504591841, result: success, product_execution: skipped}
-    stage03: {run_id: 35504591799, product_execution: skipped}
+    branch_guard:
+      run_id: 35504591796
+      result: success
+    selected_profile:
+      run_id: 35504591856
+      result: success
+    full_line:
+      run_id: 35504591837
+      result: success
+    stage02_boundary:
+      run_id: 35504591803
+      result: success
+      product_execution: skipped
+    fresh_replay:
+      run_id: 35504591841
+      result: success
+      product_execution: skipped
+    stage03:
+      run_id: 35504591799
+      product_execution: skipped
     full_line_75_file_high_pressure: success
     verified_source_byte_clean: success
 pre_cleanup_product_work_unit_stage03:
@@ -2562,7 +2577,9 @@ work_unit_resolution_gate_core_asset_content_purge_multidirectional_audit:
   authorization_uid: USR-DIRECTIVE-20260920-CORE-ASSET-CONTENT-PURGE-MULTIDIRECTIONAL-AUDIT-R1
   current_governance_uid: GOV-REV-20260920-CROSS-STAGE-MATERIALIZATION-CONSUMER-READINESS-HARDENING
   canonical_owner: governance/ci/validate_active_consumer_reference_integrity.py
-  scope: [CORE-01, ASSET-01]
+  scope:
+  - CORE-01
+  - ASSET-01
   basis:
   - EXPLICIT_USER_DIRECTIVE_PURGE_TEST_CONTENT_KEEP_PROCESS_METADATA_ONLY
   - CURRENT_PRODUCT_WORK_UNIT_IS_NULL_AT_LEGAL_WUR_BOUNDARY
@@ -2577,7 +2594,9 @@ closed_test_validation_maintenance_work_unit_multidirectional_audit:
   canonical_name: CORE_ASSET_PROCESS_ONLY_CONTENT_PURGE_AND_MULTIDIRECTIONAL_AUDIT
   primary_task_layer: TEST_OR_VALIDATION_MAINTENANCE
   semantic_capability: PROCESS_FLOW_AUDIT
-  scope: [CORE-01, ASSET-01]
+  scope:
+  - CORE-01
+  - ASSET-01
   canonical_owner: governance/ci/validate_active_consumer_reference_integrity.py
   co_owners:
   - .github/governance-maintenance/run_fresh_stage_replay.py
@@ -2641,7 +2660,7 @@ active_work_unit:
   work_unit_uid: WU-GOV-CONTENT-INTEGRITY-TYPOGRAPHY-CONSUMER-HARDENING-001
   canonical_name: PRODUCT_NEUTRAL_CONTENT_INTEGRITY_TYPOGRAPHY_AND_CONSUMER_HARDENING
   primary_task_layer: GOVERNANCE_MAINTENANCE
-  current_status: AUTHORIZED_NORMATIVE_SUCCESSOR_PROMOTION_PENDING
+  current_status: PROMOTION_MATERIALIZED_EXACT_HEAD_REVALIDATION_REQUIRED
   authorization_uid: USR-DIRECTIVE-20260921-CONTENT-INTEGRITY-TYPOGRAPHY-CONSUMER-HARDENING-R1
   canonical_owner: governance/specifications/current/SPECIFICATION_MUTATION_CONTROL.yaml
   resolved_implementation_findings:
@@ -2670,31 +2689,19 @@ active_work_unit:
   - PRODUCT_STAGE_CREDIT_ZERO
   product_stage_credit: 0
 last_work_unit_resolution_gate:
-  resolution_uid: WUR-GOV-CONTENT-INTEGRITY-TYPOGRAPHY-20260921-001
-  normative_authority: false
-  result: PASS_SINGLE_LEGAL_SUCCESSOR
-  requested_primary_task_layer: GOVERNANCE_MAINTENANCE
-  resolved_work_unit_uid: WU-GOV-CONTENT-INTEGRITY-TYPOGRAPHY-CONSUMER-HARDENING-001
-  authorization_uid: USR-DIRECTIVE-20260921-CONTENT-INTEGRITY-TYPOGRAPHY-CONSUMER-HARDENING-R1
-  canonical_owner: governance/specifications/current/SPECIFICATION_MUTATION_CONTROL.yaml
-  basis:
-  - EXPLICIT_USER_DIRECTIVE_VERIFY_AND_FILL_CONFIRMED_DEFECTS
-  - FIND_20260921_001_AND_002_IMPLEMENTATION_REMEDIATED_AND_EXACT_HEAD_VALIDATED
-  - FIND_20260921_003_REQUIRES_PRODUCT_NEUTRAL_NORMATIVE_SUCCESSOR
-  product_stage_credit: 0
-previous_work_unit_resolution_gate:
-  resolution_uid: WUR-TEST-CORE01-CONTENT-INTEGRITY-FULL-LIFECYCLE-20260921-002
+  resolution_uid: WUR-TEST-GENERIC-WEB-FLOW-HIGH-PRESSURE-20260920-001
   normative_authority: false
   result: PASS_SINGLE_LEGAL_SUCCESSOR
   requested_primary_task_layer: TEST_OR_VALIDATION_MAINTENANCE
-  resolved_work_unit_uid: WU-TEST-CORE01-CONTENT-INTEGRITY-FULL-LIFECYCLE-002
-  authorization_uid: USR-DIRECTIVE-20260921-CORE01-BUGFIX-CONTENT-INTEGRITY-R2
-  canonical_owner: governance/ci/run_core01_isolated_full_lifecycle_test.py
+  resolved_work_unit_uid: WU-TEST-GENERIC-WEB-FLOW-HIGH-PRESSURE-001
+  authorization_uid: USR-DIRECTIVE-20260920-GENERIC-WEB-FLOW-HIGH-PRESSURE-AUDIT-R1
+  canonical_owner: governance/ci/test_stage_execution_engine.py
   basis:
-  - EXPLICIT_USER_DIRECTIVE_FIX_BUG_AND_RERUN_COMPLETE_FLOW
-  - EXPLICIT_USER_DIRECTIVE_REQUIRE_DATA_CONTENT_COMPLETENESS_NOT_EXECUTION_ONLY
-  - PRIOR_TEST_WU_CLOSED_AND_PRODUCT_RESUME_RESTORED
-  - EXACT_SOURCE_PROVIDER_BUG_ROOT_CAUSE_RESOLVED_TO_TEST_PARSER_SCOPE
+  - EXPLICIT_USER_DIRECTIVE
+  - PREDECESSOR_MULTIDIRECTIONAL_PROCESS_AUDIT_CLOSED
+  - PRODUCT_RESUME_PRESERVED_AND_PRODUCT_EXECUTION_BLOCKED
+  - EXISTING_COMMON_STAGE_ENGINE_IS_SINGLE_REUSABLE_OWNER
+  - MOTHER_P1_THROUGH_P6_PAGE_COMPLEXITY_TAXONOMY
   product_stage_credit: 0
 previous_work_unit_resolution_gate_core01_isolated_r1:
   resolution_uid: WUR-TEST-CORE01-ISOLATED-FULL-LIFECYCLE-20260920-001
@@ -2779,22 +2786,6 @@ closed_test_validation_maintenance_work_unit_core01_isolated_full_lifecycle:
   mother_normative_change: false
   current_specification_change: false
   legal_next_transition: RESTORE_CLEAN_PRODUCT_RESUME_AND_REQUIRE_FRESH_STAGE01_WORK_UNIT_RESOLUTION
-last_work_unit_resolution_gate:
-  resolution_uid: WUR-TEST-CORE01-ISOLATED-FULL-LIFECYCLE-20260920-001
-  normative_authority: false
-  result: PASS_SINGLE_LEGAL_SUCCESSOR
-  requested_primary_task_layer: TEST_OR_VALIDATION_MAINTENANCE
-  resolved_work_unit_uid: WU-TEST-CORE01-ISOLATED-FULL-LIFECYCLE-001
-  authorization_uid: USR-DIRECTIVE-20260920-CORE01-ISOLATED-FULL-LIFECYCLE-HIGH-PRESSURE-R1
-  canonical_owner: governance/ci/run_core01_isolated_full_lifecycle_test.py
-  basis:
-  - EXPLICIT_USER_DIRECTIVE_USE_CORE_PAGE_FOR_ACTUAL_HIGH_PRESSURE_TEST
-  - EXPLICIT_USER_DIRECTIVE_TEST_COMPLETE_PROCESS_SPECIFICATION_COMPLETENESS
-  - EXPLICIT_USER_DIRECTIVE_ISOLATE_TEST_DATA_AND_DELETE_ENTIRE_TEST_FOLDER
-  - CURRENT_PRODUCT_RESUME_HAS_NO_ACTIVE_WORK_UNIT
-  - NEW_BRANCH_CONTAINS_LIVE_CORE01_AUTHORITY_AND_IMPLEMENTATION_TEST_FIXTURE
-  - HISTORICAL_PURGED_CORE01_CONTENT_REUSE_REMAINS_FORBIDDEN
-  product_stage_credit: 0
 previous_work_unit_resolution_gate_generic_web_flow:
   resolution_uid: WUR-TEST-GENERIC-WEB-FLOW-HIGH-PRESSURE-20260920-001
   normative_authority: false
@@ -2847,21 +2838,6 @@ closed_test_validation_maintenance_work_unit_generic_web_flow_high_pressure:
     stage03_run_id: 35507062872
     stage03_product_execution_result: skipped
   legal_next_transition: RESTORE_CLEAN_PRODUCT_RESUME_AND_REQUIRE_FRESH_STAGE01_WORK_UNIT_RESOLUTION
-last_work_unit_resolution_gate:
-  resolution_uid: WUR-TEST-GENERIC-WEB-FLOW-HIGH-PRESSURE-20260920-001
-  normative_authority: false
-  result: PASS_SINGLE_LEGAL_SUCCESSOR
-  requested_primary_task_layer: TEST_OR_VALIDATION_MAINTENANCE
-  resolved_work_unit_uid: WU-TEST-GENERIC-WEB-FLOW-HIGH-PRESSURE-001
-  authorization_uid: USR-DIRECTIVE-20260920-GENERIC-WEB-FLOW-HIGH-PRESSURE-AUDIT-R1
-  canonical_owner: governance/ci/test_stage_execution_engine.py
-  basis:
-  - EXPLICIT_USER_DIRECTIVE
-  - PREDECESSOR_MULTIDIRECTIONAL_PROCESS_AUDIT_CLOSED
-  - PRODUCT_RESUME_PRESERVED_AND_PRODUCT_EXECUTION_BLOCKED
-  - EXISTING_COMMON_STAGE_ENGINE_IS_SINGLE_REUSABLE_OWNER
-  - MOTHER_P1_THROUGH_P6_PAGE_COMPLEXITY_TAXONOMY
-  product_stage_credit: 0
 previous_work_unit_resolution_gate_before_generic_web_flow_audit: &id001
   resolution_uid: WUR-GOV-CROSS-STAGE-MATERIALIZATION-CONTINUITY-HARDENING-001
   normative_authority: false

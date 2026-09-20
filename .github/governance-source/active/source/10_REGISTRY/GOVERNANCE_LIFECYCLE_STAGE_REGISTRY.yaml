@@ -4,7 +4,7 @@ artifact_type: EXECUTION_PROFILE_REGISTRY
 status: CURRENT_CANDIDATE
 canonical_path: 10_REGISTRY/GOVERNANCE_LIFECYCLE_STAGE_REGISTRY.yaml
 owner_uid: OWNER-GOVERNANCE-LIFECYCLE
-governance_revision: v2.2.16-cross-stage-materialization-consumer-readiness-hardening
+governance_revision: v2.2.17-typography-computed-metrics-hardening
 normative_section_uids:
 - WEB-GOV-02-S004
 - WEB-GOV-02-S067
@@ -541,6 +541,7 @@ stages:
   - WEB-GOV-03-S071
   - WEB-GOV-04-S085
   - WEB-GOV-01-S088
+  - WEB-GOV-01-S089
   pre_execution_gate: GOVERNANCE_LOAD_RECEIPT_PASS
   validator_names:
   - VISUAL_DOMAIN_GUARD
@@ -655,6 +656,13 @@ stages:
     reference_only_completion_credit: 0
     successor_required_input_reconciliation_before_exit: true
     downstream_upstream_gap_disposition: REENTER_EARLIEST_OWNER_AND_MARK_DESCENDANTS_REVERIFY_REQUIRED
+  typography_computed_metrics_gate:
+    required: true
+    phase: EXPECTED_BASELINE
+    invariant_uid: GOV-INV-TYPOGRAPHY-COMPUTED-METRICS-001
+    carrier: VISUAL_GEOMETRY_CONTRACT
+    complete_text_target_denominator_required: true
+    runtime_capture_credit: 0
 - stage_uid: STAGE-04
   name: FOUNDATION_FREEZE
   scope_mode: ALL_REQUIRED_PAGES
@@ -715,6 +723,7 @@ stages:
   - WEB-GOV-03-S071
   - WEB-GOV-04-S085
   - WEB-GOV-01-S088
+  - WEB-GOV-01-S089
   pre_execution_gate: GOVERNANCE_LOAD_RECEIPT_PASS
   validator_names:
   - DESIGN_FREEZE_GUARD
@@ -787,6 +796,11 @@ stages:
     reference_only_completion_credit: 0
     successor_required_input_reconciliation_before_exit: true
     downstream_upstream_gap_disposition: REENTER_EARLIEST_OWNER_AND_MARK_DESCENDANTS_REVERIFY_REQUIRED
+  typography_computed_metrics_gate:
+    required: true
+    phase: FREEZE
+    invariant_uid: GOV-INV-TYPOGRAPHY-COMPUTED-METRICS-001
+    freeze_expected_baseline_required: true
 - stage_uid: STAGE-05
   name: IMPLEMENTATION
   scope_mode: SINGLE_PAGE_VERTICAL
@@ -1003,6 +1017,8 @@ stages:
   - WEB-GOV-02-S075
   - WEB-GOV-03-S071
   - WEB-GOV-04-S085
+  - WEB-GOV-02-S076
+  - WEB-GOV-04-S086
   pre_execution_gate: GOVERNANCE_LOAD_RECEIPT_PASS
   validator_names:
   - QA_ACCEPTANCE_GUARD
@@ -1079,6 +1095,13 @@ stages:
     reference_only_completion_credit: 0
     successor_required_input_reconciliation_before_exit: true
     downstream_upstream_gap_disposition: REENTER_EARLIEST_OWNER_AND_MARK_DESCENDANTS_REVERIFY_REQUIRED
+  typography_computed_metrics_gate:
+    required: true
+    phase: RUNTIME_VERIFICATION
+    invariant_uid: GOV-INV-TYPOGRAPHY-COMPUTED-METRICS-001
+    evidence_artifact_type: TYPOGRAPHY_COMPUTED_METRICS_EVIDENCE
+    capture_source: BROWSER_DOM_GETCOMPUTEDSTYLE_AND_LAYOUT_OR_EQUIVALENT
+    all_required_viewports_languages_themes: true
 - stage_uid: STAGE-07
   name: BUILD_RELEASE_CANDIDATE
   scope_mode: SAME_SELECTED_PAGE
@@ -1455,6 +1478,8 @@ stages:
   - WEB-GOV-02-S075
   - WEB-GOV-03-S071
   - WEB-GOV-04-S085
+  - WEB-GOV-02-S076
+  - WEB-GOV-04-S086
   pre_execution_gate: GOVERNANCE_LOAD_RECEIPT_PASS
   validator_names:
   - PRODUCTION_ACCEPTANCE_DIMENSION_GUARD
@@ -1530,6 +1555,12 @@ stages:
     reference_only_completion_credit: 0
     successor_required_input_reconciliation_before_exit: true
     downstream_upstream_gap_disposition: REENTER_EARLIEST_OWNER_AND_MARK_DESCENDANTS_REVERIFY_REQUIRED
+  typography_computed_metrics_gate:
+    required: true
+    phase: PRODUCTION_ACCEPTANCE
+    invariant_uid: GOV-INV-TYPOGRAPHY-COMPUTED-METRICS-001
+    evidence_artifact_type: TYPOGRAPHY_COMPUTED_METRICS_EVIDENCE
+    deployed_revision_binding_required: true
 - stage_uid: STAGE-11
   name: CLOSURE_OPERATIONS
   scope_mode: SAME_SELECTED_PAGE
@@ -2044,6 +2075,9 @@ cross_stage_invariants:
     physical_materialization_is_not_required_field_completeness: true
     required_field_completeness_is_not_consumer_readiness: true
     successor_input_reconciliation_before_stage_exit_required: true
+    typography_computed_metrics_required: true
+    typography_target_denominator_must_be_dynamic: true
+    typography_representative_sample_completion: BLOCK
   canonical_stage_execution_optimization:
     invariant_uid: GOV-INV-CANONICAL-STAGE-EXECUTION-OPTIMIZATION-001
     normative_section_uid: WEB-GOV-03-S062

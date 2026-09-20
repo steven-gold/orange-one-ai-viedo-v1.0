@@ -467,6 +467,8 @@ mandatory_common_normative_bundles:
     - WEB-GOV-01-S088
     - WEB-GOV-02-S075
     - WEB-GOV-03-S071
+    - WEB-GOV-01-S089
+    - WEB-GOV-02-S076
   BUNDLE-GOV-AUDIT-BASE:
     required_for: ALL_EXECUTION_WITH_COMPLETION_CLAIM
     section_uids:
@@ -480,6 +482,7 @@ mandatory_common_normative_bundles:
     - WEB-GOV-04-S077
     - WEB-GOV-04-S084
     - WEB-GOV-04-S085
+    - WEB-GOV-04-S086
 effective_normative_set_contract:
   formula: COMMON_BUNDLES + STAGE_REFS + PROFILE_REFS + ARTIFACT_SPECIFIC_REFS + DEPENDENCY_CLOSURE_REFS
   all_layers_required: true
@@ -575,7 +578,7 @@ write_target_lock_contract:
   governance_registry_write_during_construction: BLOCK
   unregistered_write_target: BLOCK
   prewrite_hash_mismatch: BLOCK
-governance_revision: v2.2.16-cross-stage-materialization-consumer-readiness-hardening
+governance_revision: v2.2.17-typography-computed-metrics-hardening
 reference_rule_registry_ref: REG-REFERENCE-RULE-001
 semantic_authority_baseline_ref: REG-SEMANTIC-AUTHORITY-BASELINE-001
 typed_identity_authority_registry_ref: REG-PROGRAM-IDENTITY-AUTHORITY-001

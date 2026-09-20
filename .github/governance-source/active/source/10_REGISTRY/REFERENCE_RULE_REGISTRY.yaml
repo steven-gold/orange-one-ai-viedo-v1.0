@@ -4,7 +4,7 @@ artifact_type: REFERENCE_RULE_REGISTRY
 status: CURRENT_CANDIDATE
 canonical_path: 10_REGISTRY/REFERENCE_RULE_REGISTRY.yaml
 owner_uid: OWNER-GOVERNANCE-REFERENCE-SEMANTICS
-governance_revision: v2.2.16-cross-stage-materialization-consumer-readiness-hardening
+governance_revision: v2.2.17-typography-computed-metrics-hardening
 normative_section_uids:
 - WEB-GOV-01-S005
 - WEB-GOV-01-S006-03
@@ -166,6 +166,7 @@ stage_reference_rules:
     - WEB-GOV-03-S071
     - WEB-GOV-04-S085
     - WEB-GOV-01-S088
+    - WEB-GOV-01-S089
   STAGE-04:
     rule_uid: REFRULE-STAGE-04
     exact_required_normative_section_uids:
@@ -194,6 +195,7 @@ stage_reference_rules:
     - WEB-GOV-03-S071
     - WEB-GOV-04-S085
     - WEB-GOV-01-S088
+    - WEB-GOV-01-S089
   STAGE-05:
     rule_uid: REFRULE-STAGE-05
     exact_required_normative_section_uids:
@@ -237,6 +239,8 @@ stage_reference_rules:
     - WEB-GOV-02-S075
     - WEB-GOV-03-S071
     - WEB-GOV-04-S085
+    - WEB-GOV-02-S076
+    - WEB-GOV-04-S086
   STAGE-07:
     rule_uid: REFRULE-STAGE-07
     exact_required_normative_section_uids:
@@ -302,6 +306,8 @@ stage_reference_rules:
     - WEB-GOV-02-S075
     - WEB-GOV-03-S071
     - WEB-GOV-04-S085
+    - WEB-GOV-02-S076
+    - WEB-GOV-04-S086
   STAGE-11:
     rule_uid: REFRULE-STAGE-11
     exact_required_normative_section_uids:
@@ -363,6 +369,8 @@ common_bundle_reference_rules:
     - WEB-GOV-01-S088
     - WEB-GOV-02-S075
     - WEB-GOV-03-S071
+    - WEB-GOV-01-S089
+    - WEB-GOV-02-S076
   BUNDLE-GOV-AUDIT-BASE:
     rule_uid: REFRULE-BUNDLE-03
     exact_section_uids:
@@ -376,6 +384,7 @@ common_bundle_reference_rules:
     - WEB-GOV-04-S077
     - WEB-GOV-04-S084
     - WEB-GOV-04-S085
+    - WEB-GOV-04-S086
 validator_identities:
 - validator_uid: VAL-GOV-001
   canonical_name: ACCEPTANCE_BLUEPRINT_GUARD

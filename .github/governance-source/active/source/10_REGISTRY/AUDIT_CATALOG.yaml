@@ -4,7 +4,7 @@ artifact_type: AUDIT_CATALOG
 status: CURRENT_CANDIDATE
 canonical_path: 10_REGISTRY/AUDIT_CATALOG.yaml
 owner_uid: OWNER-GOVERNANCE-AUDIT-CATALOG
-governance_revision: v2.2.16-cross-stage-materialization-consumer-readiness-hardening
+governance_revision: v2.2.17-typography-computed-metrics-hardening
 normative_section_uids:
 - WEB-GOV-04-S072
 - WEB-GOV-04-S073
@@ -17,6 +17,9 @@ normative_section_uids:
 - WEB-GOV-01-S081
 - WEB-GOV-01-S082
 - WEB-GOV-01-S083
+- WEB-GOV-01-S089
+- WEB-GOV-02-S076
+- WEB-GOV-04-S086
 denominator_policy: FIXED_BY_CURRENT_ACCEPTANCE_AUDIT_BLUEPRINT
 items:
 - audit_item_uid: AUD-GOV-001
@@ -187,6 +190,7 @@ items:
   - SCENARIO_TO_FUNCTION_VISUAL_COVERAGE
   - DESIGN_FREEZE_QUANTITATIVE_COMPLETENESS
   - BLUEPRINT_TO_IMPLEMENTATION_HANDOFF
+  - TYPOGRAPHY_COMPUTED_METRICS
 - audit_item_uid: AUD-GOV-014
   audit_type: CROSS_STAGE_MATERIALIZATION_AND_CONSUMER_READINESS
   stage_uid: PREFORMAL

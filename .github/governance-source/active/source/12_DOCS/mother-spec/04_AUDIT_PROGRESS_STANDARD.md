@@ -1536,3 +1536,14 @@ Audit regression MUST include destructive or mutation cases for at least: refere
 Stage closure requires zero unresolved REQUIRED handoff edges, zero denominator omissions, zero unproven consumer-ready edges, and zero incorrectly preserved downstream closure credit after an upstream defect. Any mismatch is CROSS_STAGE_HANDOFF_FALSE_COMPLETION and MUST block closure.
 
 Every governed denominator, regression expectation, and required-universe count MUST have exactly one canonical owner. Consumer-local hardcoded denominator copies, mirrored historical expected counts presented as Current, or multiple independently editable denominator authorities are forbidden. Historical evidence MUST bind an immutable predecessor denominator snapshot; Current execution MUST read the Current canonical denominator owner.
+
+<!-- SECTION_UID: WEB-GOV-04-S086 -->
+## 86. Typography Computed Metrics Evidence Audit / 字體計算值證據稽核
+
+Typography audit MUST reconcile the complete applicable text-bearing target denominator from frozen Design Authority to runtime evidence. The audit denominator is UID-based and MUST report required target total, baseline-complete total, runtime-captured total, tolerance-reconciled total, pass total, blocked total, NOT_APPLICABLE total with Authority evidence, and missing target total.
+
+Each evidence row MUST preserve the exact expected metrics, actual computed metrics, viewport/language/theme context, tolerance, capture source, and reconciliation result. Browser DOM getComputedStyle/layout measurement or an equivalent verifiable runtime capture is required; manually entered computed values, count-only summaries, screenshots without target rows, or self-declared zero-overflow claims MUST_NOT receive acceptance credit.
+
+Audit MUST fail for any REQUIRED target with missing baseline, missing runtime capture, missing computed metric, duplicate credit, unresolved typography Authority, font-family/weight mismatch, numeric tolerance breach, unexpected wrap/truncation, clipping, overflow, or text-container dimension violation. Representative samples MUST_NOT satisfy the complete denominator.
+
+Typography evidence MUST remain traceable to the same Current Canonical Visual/Geometry baseline and exact deployed/source revision used by the surrounding Visual Geometry and Production Acceptance evidence.

@@ -5,7 +5,7 @@ artifact_type: SECTION_NUMBER_REGISTRY
 status: CURRENT_CANDIDATE
 canonical_path: 10_REGISTRY/SECTION_NUMBER_REGISTRY.yaml
 owner_uid: OWNER-GOVERNANCE-SECTION-REGISTRY
-governance_revision: v2.2.16-cross-stage-materialization-consumer-readiness-hardening
+governance_revision: v2.2.17-typography-computed-metrics-hardening
 policy:
   unique_numeric_h2_per_document: true
   section_uid_is_canonical_reference: true
@@ -774,6 +774,13 @@ documents:
     heading: '## 88. 跨階段來源實體化與後繼可用性 Gate / Cross-Stage Source Materialization and Successor Readiness'
     path: 12_DOCS/mother-spec/01_BLUEPRINT_DESIGN_GOVERNANCE.md
     binding_sha256: 684ab64060f42dbb345237e700b114c7f6d9ceae4db5a67a53eb52271a4bbb5d
+  - section_uid: WEB-GOV-01-S089
+    level: 2
+    canonical_number: '89'
+    title: Typography Computed Metrics Baseline Gate / 字體計算值基準 Gate
+    heading: '## 89. Typography Computed Metrics Baseline Gate / 字體計算值基準 Gate'
+    path: 12_DOCS/mother-spec/01_BLUEPRINT_DESIGN_GOVERNANCE.md
+    binding_sha256: 566fd8e46f0262f47edbced6cca3d91616c82a54f5706b0073b982462e280ea5
 - document_id: WEB-GOV-02
   path: 12_DOCS/mother-spec/02_IMPLEMENTATION_DELIVERY_STANDARD.md
   sections:
@@ -1358,6 +1365,13 @@ documents:
     heading: '## 75. Producer/Consumer 實體交接與後繼輸入可用性 Gate / Producer-Consumer Materialized Handoff and Successor Input Readiness'
     path: 12_DOCS/mother-spec/02_IMPLEMENTATION_DELIVERY_STANDARD.md
     binding_sha256: 907e97632fa37c0a56bb10c8163ca673db29bcf0e67d9e3a5b26585f7321af3b
+  - section_uid: WEB-GOV-02-S076
+    level: 2
+    canonical_number: '76'
+    title: Typography Computed Metrics Runtime Verification / 字體計算值執行驗證
+    heading: '## 76. Typography Computed Metrics Runtime Verification / 字體計算值執行驗證'
+    path: 12_DOCS/mother-spec/02_IMPLEMENTATION_DELIVERY_STANDARD.md
+    binding_sha256: 42efd9ec42a657305591ae2ac65e1cbb829e7939975fa5b76ffcf59a660798fb
 - document_id: WEB-GOV-03
   path: 12_DOCS/mother-spec/03_EXECUTION_CONTROL_STANDARD.md
   sections:
@@ -2575,6 +2589,13 @@ documents:
     heading: '## 85. 跨階段實體化 / 後繼可用性 / 假完成稽核 / Cross-Stage Materialization, Successor Readiness and False-Completion Audit'
     path: 12_DOCS/mother-spec/04_AUDIT_PROGRESS_STANDARD.md
     binding_sha256: 2b983f8d9228cd96e8c5e51be3a3f00f4b1042d9555f8d11f0797f7becce8074
+  - section_uid: WEB-GOV-04-S086
+    level: 2
+    canonical_number: '86'
+    title: Typography Computed Metrics Evidence Audit / 字體計算值證據稽核
+    heading: '## 86. Typography Computed Metrics Evidence Audit / 字體計算值證據稽核'
+    path: 12_DOCS/mother-spec/04_AUDIT_PROGRESS_STANDARD.md
+    binding_sha256: 75397c849870f5c4c29ae4d2afb175991d0cee1c7ca54276a9cd65002d70309c
 historical_duplicate_groups:
 - document_id: WEB-GOV-01
   duplicate_number: '63'

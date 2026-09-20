@@ -70,3 +70,6 @@ This successor closes the Mother-to-Execution-Profile undercoverage that allowed
 
 ## v2.2.15 Stage-03 visual materialization promotion closure
 This successor preserves the v2.2.14 Stage-03 visual materialization semantics while repairing the promotion transaction boundary so Current Governance is backed by a valid pre-existing authorization, exact baseline identity, governance-maintenance Work Unit, and pre-push mutation guard. No product Authority or unresolved Global Visual/Shell Authority is invented.
+
+## v2.2.17 typography computed metrics hardening
+This successor requires complete per-target typography baselines and Browser/runtime computed-metric evidence across applicable viewports, languages, and themes. It remains product-neutral and denominator-dynamic.

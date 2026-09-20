@@ -111,3 +111,8 @@ The candidate package cannot self-prove integrity. The trust-root hash set is an
 - v2.2.14 is retained as invalid-promotion predecessor provenance and receives no Current closure credit.
 - v2.2.15 preserves the approved Stage-03 Mother/Profile materialization rules and reissues them through a valid atomic successor transaction.
 - Product Stage-03 must restart from preserved Stage-01/02 immutable inputs after exact-head governance closure.
+
+## v2.2.17 typography computed metrics hardening rule
+- Typography intent, overflow checks, and screenshots alone do not prove computed-style conformance.
+- Every applicable text-bearing target requires Authority-derived expected metrics and runtime computed evidence.
+- Representative samples, manually entered computed values, and missing-target denominators are blocking.

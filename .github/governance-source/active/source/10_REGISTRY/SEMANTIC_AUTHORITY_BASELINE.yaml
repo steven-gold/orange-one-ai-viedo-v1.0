@@ -4,7 +4,7 @@ artifact_type: IMMUTABLE_SEMANTIC_AUTHORITY_BASELINE
 status: CURRENT_CANDIDATE_IMMUTABLE
 canonical_path: 10_REGISTRY/SEMANTIC_AUTHORITY_BASELINE.yaml
 owner_uid: OWNER-GOVERNANCE-SEMANTIC-ANCHOR
-governance_revision: v2.2.16-cross-stage-materialization-consumer-readiness-hardening
+governance_revision: v2.2.17-typography-computed-metrics-hardening
 anchor_policy:
   official_refresh_must_not_mutate: true
   compiler_must_not_regenerate: true
@@ -151,6 +151,7 @@ semantic_snapshot:
       - WEB-GOV-03-S071
       - WEB-GOV-04-S085
       - WEB-GOV-01-S088
+      - WEB-GOV-01-S089
     STAGE-04:
       rule_uid: REFRULE-STAGE-04
       exact_required_normative_section_uids:
@@ -179,6 +180,7 @@ semantic_snapshot:
       - WEB-GOV-03-S071
       - WEB-GOV-04-S085
       - WEB-GOV-01-S088
+      - WEB-GOV-01-S089
     STAGE-05:
       rule_uid: REFRULE-STAGE-05
       exact_required_normative_section_uids:
@@ -222,6 +224,8 @@ semantic_snapshot:
       - WEB-GOV-02-S075
       - WEB-GOV-03-S071
       - WEB-GOV-04-S085
+      - WEB-GOV-02-S076
+      - WEB-GOV-04-S086
     STAGE-07:
       rule_uid: REFRULE-STAGE-07
       exact_required_normative_section_uids:
@@ -287,6 +291,8 @@ semantic_snapshot:
       - WEB-GOV-02-S075
       - WEB-GOV-03-S071
       - WEB-GOV-04-S085
+      - WEB-GOV-02-S076
+      - WEB-GOV-04-S086
     STAGE-11:
       rule_uid: REFRULE-STAGE-11
       exact_required_normative_section_uids:
@@ -348,6 +354,8 @@ semantic_snapshot:
       - WEB-GOV-01-S088
       - WEB-GOV-02-S075
       - WEB-GOV-03-S071
+      - WEB-GOV-01-S089
+      - WEB-GOV-02-S076
     BUNDLE-GOV-AUDIT-BASE:
       rule_uid: REFRULE-BUNDLE-03
       exact_section_uids:
@@ -361,6 +369,7 @@ semantic_snapshot:
       - WEB-GOV-04-S077
       - WEB-GOV-04-S084
       - WEB-GOV-04-S085
+      - WEB-GOV-04-S086
   validator_identities:
   - validator_uid: VAL-GOV-001
     canonical_name: ACCEPTANCE_BLUEPRINT_GUARD
@@ -888,7 +897,7 @@ package_integrity_assets:
 - 09_TESTS/governance/test_v2_1_14_test_feedback_spec_evolution.py
 - 09_TESTS/governance/validate_product_neutral_entity_lifecycle.py
 - 09_TESTS/governance/test_v2_1_14_product_neutral_entity_lifecycle.py
-content_hash: 04523a35dae624ff63e62a983979eeda7d9c4a2908b582773046d2a7bbb53f4c
+content_hash: c213b2ec8d2e1f82627a3ed50fa715e440515d1b3ed2e66facc8f5f36095e6c8
 protected_hash_paths:
 - 09_TESTS/governance/validate_test_feedback_spec_evolution.py
 - 09_TESTS/governance/test_v2_1_14_test_feedback_spec_evolution.py

@@ -1,4 +1,4 @@
-schema_version: 8
+schema_version: 9
 artifact_uid: GOV-COMP-BOUNDED-FUNCTIONAL-COMPLETION
 artifact_type: GOVERNANCE_SPECIFICATION_COMPONENT
 normative_status: ACTIVE_CURRENT_GOVERNANCE_COMPONENT
@@ -113,3 +113,10 @@ rules:
     denominator_inclusion_required: true
     successor_consumer_admission_required: true
     missing_required_input: BLOCK_AND_REENTER_EARLIEST_OWNER
+  TYPOGRAPHY_COMPUTED_METRICS_COMPLETENESS:
+    target_denominator: EVERY_APPLICABLE_TEXT_BEARING_TARGET
+    complete_expected_baseline_required_before_freeze: true
+    complete_runtime_capture_required_for_verification_and_production_acceptance: true
+    representative_sample_credit: BLOCK
+    not_applicable_requires_authority_evidence: true
+    missing_target_or_metric: BLOCK

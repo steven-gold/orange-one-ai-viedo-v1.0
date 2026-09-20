@@ -850,11 +850,13 @@ findings:
 - finding_uid: FIND-20260921-001
   class: TEST_HARNESS_OR_CONSUMER_PERSISTENCE_BUG
   title: Current new branch still uses lexical whole-manifest fixed-18 page authority parser
-  evidence: new@165c6440cb53b1b45ec96905241fb4d56dc3b867 tests/release/authority.test.mjs still matches every two-space authority/pages path and asserts 18, while validated ephemeral fix f25a79111bbf1da47fe55f4fc8967b2148558317 scopes parsing to current_authority_set.pages and passed Release Gate 35528804977.
+  evidence: new@165c6440cb53b1b45ec96905241fb4d56dc3b867 tests/release/authority.test.mjs still matches every two-space authority/pages path and asserts 18, while validated ephemeral
+    fix f25a79111bbf1da47fe55f4fc8967b2148558317 scopes parsing to current_authority_set.pages and passed Release Gate 35528804977.
   defect_owner: TEST_OR_VALIDATION_IMPLEMENTATION_AND_BRANCH_AUTHORITY_GUARD
   generalizability_scope: STRUCTURED_CURRENT_AUTHORITY_DENOMINATOR_CONSUMERS
   disposition: RESOLVED_IMPLEMENTATION_REMEDIATED_EXACT_HEAD_VERIFIED
-  resolution: Branch guard now pins new to verified fixed commit f25a79111bbf1da47fe55f4fc8967b2148558317; sandbox patch path removed; Selected Profile 35544354027 and Full-Line 35544354032 succeeded on e5c670c138e1efe3bf0b08372f1f89e34aba3251.
+  resolution: Branch guard now pins new to verified fixed commit f25a79111bbf1da47fe55f4fc8967b2148558317; sandbox patch path removed; Selected Profile 35544354027 and Full-Line 35544354032
+    succeeded on e5c670c138e1efe3bf0b08372f1f89e34aba3251.
   specification_change_required: false
   mother_change_required: false
   formal_specification_mutated_for_fix: false
@@ -862,11 +864,13 @@ findings:
 - finding_uid: FIND-20260921-002
   class: REUSABLE_VALIDATOR_IMPLEMENTATION_GAP
   title: Content-integrity verification exists only as CORE-01 adapter rather than reusable scope-parametric engine
-  evidence: Current tree contains governance/ci/validate_core01_source_content_integrity.py but no product-neutral content-integrity engine; common Stage Engine validates normalized execution evidence and dynamic scope but does not provide reusable required-field/reference/bidirectional/functional-chain content checks for arbitrary typed adapters.
+  evidence: Current tree contains governance/ci/validate_core01_source_content_integrity.py but no product-neutral content-integrity engine; common Stage Engine validates normalized
+    execution evidence and dynamic scope but does not provide reusable required-field/reference/bidirectional/functional-chain content checks for arbitrary typed adapters.
   defect_owner: TEST_OR_VALIDATION_IMPLEMENTATION
   generalizability_scope: ALL_PRODUCT_ADAPTER_CONTENT_INTEGRITY_VALIDATION
   disposition: RESOLVED_IMPLEMENTATION_REMEDIATED_EXACT_HEAD_VERIFIED
-  resolution: Added governance/ci/content_integrity_engine.py with scope-parametric typed contracts, negative regression across unrelated scopes/denominators, CORE adapter reuse, and portability enforcement; Selected Profile 35544354027 and Full-Line 35544354032 succeeded on e5c670c138e1efe3bf0b08372f1f89e34aba3251.
+  resolution: Added governance/ci/content_integrity_engine.py with scope-parametric typed contracts, negative regression across unrelated scopes/denominators, CORE adapter reuse, and
+    portability enforcement; Selected Profile 35544354027 and Full-Line 35544354032 succeeded on e5c670c138e1efe3bf0b08372f1f89e34aba3251.
   specification_change_required: false
   mother_change_required: false
   formal_specification_mutated_for_fix: false
@@ -874,13 +878,14 @@ findings:
 - finding_uid: FIND-20260921-003
   class: GOVERNANCE_VISUAL_TYPOGRAPHY_EVIDENCE_POLICY_GAP
   title: Typography intent and clipping rules exist but per-target computed typography evidence is not a mandatory machine-readable contract
-  evidence: Current Mother requires Typography Tokens, typography family/role/scale/weight/line-height intent, Geometry Baseline, Text Overflow and Text Clipping; it does not require per text-bearing target expected/computed font family, font size, font weight, line height, letter spacing, text-container geometry, rendered line count and tolerance evidence.
+  evidence: Current Mother requires Typography Tokens, typography family/role/scale/weight/line-height intent, Geometry Baseline, Text Overflow and Text Clipping; it does not require
+    per text-bearing target expected/computed font family, font size, font weight, line height, letter spacing, text-container geometry, rendered line count and tolerance evidence.
   defect_owner: REUSABLE_GOVERNANCE_POLICY_AND_VISUAL_VERIFICATION
   generalizability_scope: ALL_TEXT_BEARING_VISUAL_TARGETS_ALL_ADOPTING_SYSTEMS
-  disposition: EXPLICIT_USER_DIRECTIVE_AUTHORIZES_BOUNDED_SUCCESSOR_REMEDIATION
+  disposition: GOVERNANCE_PROMOTED_EXACT_HEAD_REVALIDATION_REQUIRED
   specification_change_required: true
   mother_change_required: true
-  formal_specification_mutated_for_fix: false
+  formal_specification_mutated_for_fix: true
   product_stage_credit: 0
   required_targets:
   - WEB-GOV-01-S040E
@@ -891,6 +896,7 @@ findings:
   - AUDIT_CATALOG
   - CURRENT_VISUAL_INVARIANT_COMPONENT
   new_explicit_authorization_required_before_normative_promotion: true
+  successor_governance_uid: GOV-REV-20260921-TYPOGRAPHY-COMPUTED-METRICS-HARDENING
 historical_stage2_execution_findings:
   prior_CORE-01_STAGE02_BLOCKED: 7
   prior_ASSET-01_STAGE02_BLOCKED: 6

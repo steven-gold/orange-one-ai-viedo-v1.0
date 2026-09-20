@@ -1,8 +1,8 @@
 {
   "artifact_type": "NON_NORMATIVE_FULL_LINE_SYSTEM_GATE_EVIDENCE",
   "mode": "SYSTEM_ROUND_1_FULL_LINE_HIGH_PRESSURE",
-  "source_zip_sha256": "17abcbe3bebb96695a746829585298806137b65612557fa90a75b4d54fed8671",
-  "deterministic_source_bundle_sha256": "56978101cf5b5711a23f0a37009447f68388506a8a73d1aad46969c85b783c8f",
+  "source_zip_sha256": "8d60815f6d06c6f46d93a17cf82b606011670dde5b72691dd482e27c91d97871",
+  "deterministic_source_bundle_sha256": "655519ff9e456739903a04bd049ade37b0a51148966f196eebb87770544a642b",
   "lifecycle_stage_count": 11,
   "lifecycle_stage_uids": [
     "STAGE-01",
@@ -119,7 +119,7 @@
       {
         "check_id": "section_registry",
         "status": "PASS",
-        "section_count": 346,
+        "section_count": 349,
         "failures": [],
         "section_uids": [
           "WEB-GOV-01-S000",
@@ -212,6 +212,7 @@
           "WEB-GOV-01-S086",
           "WEB-GOV-01-S087",
           "WEB-GOV-01-S088",
+          "WEB-GOV-01-S089",
           "WEB-GOV-02-S000",
           "WEB-GOV-02-S001",
           "WEB-GOV-02-S002",
@@ -295,6 +296,7 @@
           "WEB-GOV-02-S073",
           "WEB-GOV-02-S074",
           "WEB-GOV-02-S075",
+          "WEB-GOV-02-S076",
           "WEB-GOV-03-S000",
           "WEB-GOV-03-S001",
           "WEB-GOV-03-S001A",
@@ -467,7 +469,8 @@
           "WEB-GOV-04-S082",
           "WEB-GOV-04-S083",
           "WEB-GOV-04-S084",
-          "WEB-GOV-04-S085"
+          "WEB-GOV-04-S085",
+          "WEB-GOV-04-S086"
         ]
       },
       {
@@ -512,7 +515,7 @@
         "validator_identities": 36,
         "audit_types": 14,
         "naming_items": 13,
-        "semantic_anchor_hash": "04523a35dae624ff63e62a983979eeda7d9c4a2908b582773046d2a7bbb53f4c"
+        "semantic_anchor_hash": "c213b2ec8d2e1f82627a3ed50fa715e440515d1b3ed2e66facc8f5f36095e6c8"
       },
       {
         "check_id": "program_artifact_instance_guard",
@@ -523,8 +526,8 @@
       {
         "check_id": "current_test_evidence_sync",
         "status": "PASS",
-        "current_revision": "v2.2.16",
-        "current_source_revision": "v2.2.16-cross-stage-materialization-consumer-readiness-hardening",
+        "current_revision": "v2.2.17",
+        "current_source_revision": "v2.2.17-typography-computed-metrics-hardening",
         "fresh_revalidation_required": true,
         "current_mandatory_suite_count": 17,
         "historical_evidence_suite_count": 17,
@@ -556,7 +559,7 @@
       {
         "check_id": "stage_execution_invariants",
         "status": "PASS",
-        "invariant_count": 58,
+        "invariant_count": 59,
         "stage_count": 11,
         "failures": []
       },
@@ -581,7 +584,7 @@
       {
         "check_id": "acceptance_blueprint_compiled_baseline",
         "status": "PASS",
-        "compiled_requirements": 788,
+        "compiled_requirements": 803,
         "audit_denominator": 14,
         "failures": []
       },

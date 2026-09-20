@@ -4,7 +4,7 @@ artifact_type: STAGE_EXECUTION_INVARIANT_REGISTRY
 status: CURRENT_CANDIDATE
 canonical_path: 10_REGISTRY/STAGE_EXECUTION_INVARIANT_REGISTRY.yaml
 owner_uid: OWNER-GOVERNANCE-STAGE-EXECUTION-INVARIANT
-governance_revision: v2.2.16-cross-stage-materialization-consumer-readiness-hardening
+governance_revision: v2.2.17-typography-computed-metrics-hardening
 scope:
   applies_to_stages:
   - STAGE-01
@@ -1113,6 +1113,62 @@ invariants:
     downstream_discovered_upstream_gap: STOP_REENTER_EARLIEST_OWNER_MARK_DESCENDANTS_REVERIFY_REQUIRED
     unaffected_evidence_preservation_requires_reverse_dependency_proof: true
     product_stage_credit_from_governance_validation: 0
+  TYPOGRAPHY_COMPUTED_METRICS:
+    invariant_uid: GOV-INV-TYPOGRAPHY-COMPUTED-METRICS-001
+    target_denominator: EVERY_APPLICABLE_TEXT_BEARING_TARGET_FROM_CURRENT_DESIGN_AUTHORITY
+    baseline_owner: VISUAL_DESIGN
+    runtime_capture_owner: VERIFICATION_AND_PRODUCTION_ACCEPTANCE
+    baseline_carrier: VISUAL_GEOMETRY_CONTRACT
+    runtime_evidence_artifact_type: TYPOGRAPHY_COMPUTED_METRICS_EVIDENCE
+    required_context_fields:
+    - target_uid
+    - page_or_scope_uid
+    - viewport_uid
+    - language
+    - theme
+    - typography_authority_ref
+    required_expected_fields:
+    - font_family
+    - font_size_px
+    - font_weight
+    - line_height_px
+    - letter_spacing_px
+    - text_container_min_width_px
+    - text_container_max_width_px
+    - wrap_rule
+    - truncation_rule
+    - expected_line_count_rule_when_applicable
+    required_computed_fields:
+    - font_family
+    - font_size_px
+    - font_weight
+    - line_height_px
+    - letter_spacing_px
+    - text_container_width_px
+    - text_container_height_px
+    - scroll_width_px
+    - scroll_height_px
+    - rendered_line_count
+    - wrap_state
+    - truncation_state
+    - clipping
+    - overflow
+    required_tolerance_fields:
+    - font_size_px
+    - line_height_px
+    - letter_spacing_px
+    - container_width_px
+    runtime_capture_source: BROWSER_DOM_GETCOMPUTEDSTYLE_AND_LAYOUT_OR_EQUIVALENT_VERIFIABLE_RUNTIME_CAPTURE
+    representative_sample_may_satisfy_denominator: false
+    screenshot_only_may_satisfy_evidence: false
+    manual_computed_value_may_satisfy_evidence: false
+    not_applicable_requires_authority_evidence: true
+    missing_required_target: BLOCK
+    missing_required_metric: BLOCK
+    unexpected_clipping_or_overflow: BLOCK
+    unexpected_wrap_or_truncation: BLOCK
+    font_family_or_weight_mismatch: BLOCK
+    numeric_tolerance_breach: BLOCK
 stage02_observed_defect_mapping:
 - finding: PORT_EXPOSURE_WITHOUT_TRIGGER
   mapped_invariant: RELATION_SEMANTIC_SEPARATION

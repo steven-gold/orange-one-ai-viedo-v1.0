@@ -268,6 +268,19 @@ def validate(root=ROOT):
     for uid in ['WEB-GOV-01-S076','WEB-GOV-01-S077','WEB-GOV-01-S078','WEB-GOV-01-S079','WEB-GOV-01-S080','WEB-GOV-01-S081','WEB-GOV-01-S082','WEB-GOV-01-S083','WEB-GOV-01-S084','WEB-GOV-01-S085','WEB-GOV-01-S086']:
         if uid not in (root/'12_DOCS/mother-spec/01_BLUEPRINT_DESIGN_GOVERNANCE.md').read_text(encoding='utf-8'): failures.append('mother_basic_design_section_missing:'+uid)
 
+    tm=inv.get('TYPOGRAPHY_COMPUTED_METRICS') or {}
+    req_expected={'font_family','font_size_px','font_weight','line_height_px','letter_spacing_px','text_container_min_width_px','text_container_max_width_px','wrap_rule','truncation_rule','expected_line_count_rule_when_applicable'}
+    req_actual={'font_family','font_size_px','font_weight','line_height_px','letter_spacing_px','text_container_width_px','text_container_height_px','scroll_width_px','scroll_height_px','rendered_line_count','wrap_state','truncation_state','clipping','overflow'}
+    if tm.get('invariant_uid')!='GOV-INV-TYPOGRAPHY-COMPUTED-METRICS-001' or tm.get('target_denominator')!='EVERY_APPLICABLE_TEXT_BEARING_TARGET_FROM_CURRENT_DESIGN_AUTHORITY': failures.append('typography_computed_metrics_contract_invalid')
+    if set(tm.get('required_expected_fields') or [])!=req_expected or set(tm.get('required_computed_fields') or [])!=req_actual: failures.append('typography_metric_field_denominator_invalid')
+    if tm.get('representative_sample_may_satisfy_denominator') is not False or tm.get('screenshot_only_may_satisfy_evidence') is not False or tm.get('manual_computed_value_may_satisfy_evidence') is not False or tm.get('not_applicable_requires_authority_evidence') is not True: failures.append('typography_evidence_fail_closed_contract_invalid')
+    if c.get('typography_computed_metrics_required') is not True or c.get('typography_runtime_computed_capture_required') is not True or c.get('typography_representative_sample_credit')!='BLOCK' or c.get('typography_not_applicable_requires_authority') is not True: failures.append('acceptance_typography_computed_metrics_contract_missing')
+    for stage_uid in ['STAGE-03','STAGE-04','STAGE-06','STAGE-10']:
+        tg=(stage_map.get(stage_uid) or {}).get('typography_computed_metrics_gate') or {}
+        if tg.get('required') is not True or tg.get('invariant_uid')!='GOV-INV-TYPOGRAPHY-COMPUTED-METRICS-001': failures.append('stage_typography_gate_missing:'+stage_uid)
+    for uid in ['WEB-GOV-01-S089','WEB-GOV-02-S076','WEB-GOV-04-S086']:
+        if not any(uid in (root/rel).read_text(encoding='utf-8') for rel in common_docs): failures.append('mother_typography_section_missing:'+uid)
+
     return {'status':'PASS' if not failures else 'FAIL','operation_count':len(lc.get('operation_universe') or []),'function_admission_score_max':sum(int((v or {}).get('max',0)) for v in (fa.get('score_dimensions') or {}).values()),'product_binding_failures':len([x for x in failures if 'product_binding' in x or 'product_named' in x]),'failures':failures}
 
 if __name__=='__main__':

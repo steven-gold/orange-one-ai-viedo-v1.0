@@ -1772,3 +1772,14 @@ The source-intake / base-blueprint owning capability MUST distinguish SOURCE_REF
 A required dependency MAY be deferred only when Current Authority explicitly names a legal later owner, exact materialization boundary, and successor entry condition. Undefined deferral is forbidden. Historical bytes, an old commit, a stale generated output, or a previous successful test MUST NOT fill missing Current source data.
 
 For any downstream-required item, the predecessor may receive Stage exit credit only after the successor-required input universe is reconciled. Missing physical source, missing required fields, unresolved digest/schema, denominator omission, or unproven consumer readiness MUST block or reopen the earliest owning capability. AI MUST NOT invent missing product values, Visual Anchors, Visual Candidates, or Authority content merely to satisfy this Gate.
+
+<!-- SECTION_UID: WEB-GOV-01-S089 -->
+## 89. Typography Computed Metrics Baseline Gate / 字體計算值基準 Gate
+
+Every text-bearing target in the applicable Current Design denominator MUST have one machine-readable typography baseline row. The denominator is derived from Current Design/Visual Authority and the selected scope; a representative sample, screenshot count, page count, control count, or hand-picked subset MUST_NOT substitute for the complete text-target universe.
+
+Each baseline row MUST bind at least: target_uid; page_or_scope_uid; viewport_or_breakpoint_uid; language; theme when applicable; typography_authority_ref; font_family_token_or_value_ref; font_size_token_or_value_ref; font_weight_token_or_value_ref; line_height_token_or_value_ref; letter_spacing_token_or_value_ref; expected_font_family; expected_font_size_px; expected_font_weight; expected_line_height_px; expected_letter_spacing_px; expected_text_container_min_width_px; expected_text_container_max_width_px; wrap_rule; truncation_rule; expected_line_count_rule when applicable; and allowed_tolerance.
+
+A text-bearing target MAY be NOT_APPLICABLE only with exact Authority evidence proving that no rendered typography is present for that target/state. Missing baseline rows, missing required metric fields, duplicate target credit, representative-sample credit, or baseline values inferred from the current rendered result rather than Design Authority are blocking defects.
+
+The typography baseline is part of the Visual Geometry Contract and MUST be frozen with the approved design. Typography intent MUST NOT be reduced to a visual-diff-only assertion.
