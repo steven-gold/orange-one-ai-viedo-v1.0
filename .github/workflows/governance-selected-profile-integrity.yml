@@ -47,6 +47,8 @@ jobs:
         run: python governance/ci/test_stage_execution_engine.py
       - name: Regression test product-neutral content integrity engine
         run: python governance/ci/test_content_integrity_engine.py
+      - name: Regression test typography computed metrics evidence validator
+        run: python governance/ci/test_typography_metrics_evidence.py
       - name: Validate profile-local finding closure readiness
         run: python governance/test/validate_selected_profile_finding_closure.py
       - name: Upload profile-local finding closure readiness evidence
