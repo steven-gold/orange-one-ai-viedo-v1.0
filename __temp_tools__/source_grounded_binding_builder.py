@@ -114,6 +114,7 @@ def source_control_row(uid,c,actions,ports,local_ops,data,page):
     method=""
     owner=str(first(a,"owner","runtime_owner") or "")
     persistence=str(first(a,"persistence_owner") or "")
+    payload_schema=str(first(c,"form_schema","payload_schema","request_schema","schema") or first(a,"form_schema","payload_schema","request_schema","schema") or "")
     if port and port in ports:
         pr=ports[port]
         operation=operation or str(first(pr,"registered_operation","operation","operation_id") or "")
@@ -122,17 +123,20 @@ def source_control_row(uid,c,actions,ports,local_ops,data,page):
         owner=owner or str(first(pr,"runtime_owner","owner") or "")
         persistence=persistence or runtime_text(first(pr,"persistence_owner"))
         rt=rt or runtime_text(first(pr,"runtime_binding"))
+        payload_schema=payload_schema or str(first(pr,"form_schema","payload_schema","request_schema","schema") or "")
     if operation and operation in local_ops:
         o=local_ops[operation]
         method=method or exact_method(o)
         owner=owner or str(first(o,"runtime_owner","owner") or "")
         persistence=persistence or runtime_text(first(o,"persistence_owner"))
+        payload_schema=payload_schema or str(first(o,"form_schema","payload_schema","request_schema","schema") or "")
         if not perm: perm=str(first(o,"permission","permission_uid","registered_permission") or "")
     if operation and operation in OP:
         o=OP[operation]
         method=method or exact_method(o)
         owner=owner or str(first(o,"runtime_owner","owner") or "")
         persistence=persistence or runtime_text(first(o,"persistence_owner"))
+        payload_schema=payload_schema or str(first(o,"form_schema","payload_schema","request_schema","schema") or "")
         if not perm:
             perm=str(first(o,"authorization_resource_key") or "")
     if not operation and ("READ_ONLY" in effect.upper() or "READ_UI" in effect.upper()) and "getUiProjection" in local_ops:
@@ -178,7 +182,7 @@ def source_control_row(uid,c,actions,ports,local_ops,data,page):
       "page":page,"control_uid":uid,"label":label,"type":typ,"section":section,
       "action_uid":action,"gate_uid":gate,"permission":perm,"effect":effect,
       "port_uid":port,"operation":operation,"method_path":method,
-      "runtime_owner":owner,"persistence_owner":persistence,"runtime_binding":rt,
+      "runtime_owner":owner,"persistence_owner":persistence,"runtime_binding":rt,"payload_schema":payload_schema,
       "classification":cls,"source_path":" | ".join(c.get("__paths",[])) or c.get("__path","")
     }
 
@@ -192,7 +196,7 @@ def parse_wb(data):
           "gate_uid":"PAGE_READ","permission":s.get("permission",""),
           "effect":"READ_ONLY","port_uid":"","operation":s.get("operation_id",""),
           "method_path":s.get("method_path",""),"runtime_owner":"DASHBOARD_READ_MODEL",
-          "persistence_owner":s.get("data_binding",""),"runtime_binding":"",
+          "persistence_owner":s.get("data_binding",""),"runtime_binding":"","payload_schema":"N/A_READ_PROJECTION",
           "classification":"READ_EXACT","source_path":"canonical_sections"
         })
     return rows
@@ -225,7 +229,8 @@ def parse_kb(data):
           "permission":parts[7],"effect":a.get("effect","UI_CONTEXT" if parts[4]=="TAB" else ""),
           "port_uid":"","operation":a.get("operation",""),"method_path":a.get("method_path",""),
           "runtime_owner":a.get("owner","PAGE_UI_STATE" if parts[4]=="TAB" else ""),
-          "persistence_owner":"","runtime_binding":"","classification":
+          "persistence_owner":"","runtime_binding":"","payload_schema":a.get("schema",""),
+          "classification":
              ("UI_LOCAL_EXACT" if parts[4]=="TAB" or a.get("method_path")=="LOCAL LOCAL"
               else "READ_EXACT" if a.get("method_path","").startswith("GET ")
               else "EFFECTFUL_EXACT" if a else "UI_LOCAL_EXACT"),
@@ -245,7 +250,8 @@ def parse_sg(data):
           "gate_uid":c.get("gate_uid","SOURCE_PAGE_GATE"),"permission":c.get("permission") or c.get("permission_action",""),
           "effect":effect,"port_uid":str(o.get("port_uid","")),"operation":op,"method_path":method,
           "runtime_owner":str(o.get("runtime_owner","")),"persistence_owner":runtime_text(o.get("persistence_owner")),
-          "runtime_binding":"","classification":"READ_EXACT" if effect=="READ_ONLY" else "SPEC_EXACT_RUNTIME_NOT_EXECUTED",
+          "runtime_binding":"","payload_schema":str(c.get("form_schema") or o.get("form_schema") or ""),
+          "classification":"READ_EXACT" if effect=="READ_ONLY" else "SPEC_EXACT_RUNTIME_NOT_EXECUTED",
           "source_path":"controls"
         })
     return rows
@@ -278,6 +284,7 @@ def parse_aiapi(data):
           "effect":"READ" if cls=="READ_EXACT" else "EFFECTFUL","port_uid":str(o.get("port_uid","")),
           "operation":op,"method_path":method,"runtime_owner":str(o.get("runtime_owner","")),
           "persistence_owner":runtime_text(o.get("persistence_owner")),"runtime_binding":"",
+          "payload_schema":"AIAPI Page Operation-specific Form / Provider Profile Field Contract",
           "classification":cls,"source_path":"AIAPI Word Core Control Registry + 03_api/operation_registry.yaml"
         })
     return rows
@@ -308,6 +315,7 @@ def parse_admin_str(data):
           "effect":"READ" if method.startswith("GET ") else "EFFECTFUL","port_uid":str(o.get("port_uid","")),
           "operation":op,"method_path":method,"runtime_owner":str(o.get("runtime_owner","")),
           "persistence_owner":runtime_text(o.get("persistence_owner")),"runtime_binding":"",
+          "payload_schema":str(c.get("form_schema") or o.get("form_schema") or ""),
           "classification":cls,"source_path":"07_ui/interaction_registry.yaml + strategyAdminRuntimePort.ts"
         })
     return rows
