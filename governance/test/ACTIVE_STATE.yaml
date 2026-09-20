@@ -111,8 +111,8 @@ specification_mutation_safety:
   ordinary_mid_stage_specification_mutation: BLOCK
   stage_end_consolidated_promotion_requires_new_explicit_directive: true
   execution_context_lock_required: true
-status: GENERIC_WEB_FLOW_HIGH_PRESSURE_AUDIT_CLOSED_PRODUCT_RESUME_RESTORED
-next_action: WORK_UNIT_RESOLUTION_GATE_FOR_FRESH_STAGE01_SOURCE_INTAKE_REEXECUTION
+status: ACTIVE_CORE01_ISOLATED_FULL_LIFECYCLE_HIGH_PRESSURE_R1
+next_action: RUN_CORE01_ISOLATED_STAGE01_THROUGH_STAGE11_AND_CLEANUP
 previous_closed_product_work_unit:
   work_unit_uid: WU-STAGE02-CORE01-STRUCTURAL-REMEDIATION-001
   canonical_name: CORE01_STRUCTURAL_CONTRACT_REMEDIATION
@@ -291,10 +291,11 @@ previous_closed_work_unit:
     source_runtime_residual_count: 0
     product_stage_credit: 0
 resume_control:
-  current_resume_point: CORE01_STAGE01_STAGE03_CLEAN_BASELINE_READY_FRESH_STAGE01_WUR_REQUIRED
-  current_work_unit_uid: null
-  current_owner: .github/governance-source/active/source/10_REGISTRY/GOVERNANCE_LIFECYCLE_STAGE_REGISTRY.yaml
-  exact_next_action: WORK_UNIT_RESOLUTION_GATE_FOR_FRESH_STAGE01_SOURCE_INTAKE_REEXECUTION
+  current_resume_point: CORE01_ISOLATED_FULL_LIFECYCLE_HIGH_PRESSURE_R1_ACTIVE
+  current_work_unit_uid: WU-TEST-CORE01-ISOLATED-FULL-LIFECYCLE-001
+  current_owner: governance/ci/run_core01_isolated_full_lifecycle_test.py
+  exact_next_action: RUN_CORE01_ISOLATED_STAGE01_THROUGH_STAGE11_AND_CLEANUP
+  product_resume_preserved: CORE01_STAGE01_STAGE03_CLEAN_BASELINE_READY_FRESH_STAGE01_WUR_REQUIRED
   reentry_owner_capability: SOURCE_INTAKE_BASE_BLUEPRINT
   reentry_stage_uid: STAGE-01
   reentry_reason: CLEAN_BASELINE_PERSISTED_AFTER_MULTIDIRECTIONAL_PROCESS_AUDIT_CLOSURE
@@ -390,8 +391,8 @@ pending_governance_review:
   - STAGE03
   - WEBSITE_CONSTRUCTION
   - DEPLOYMENT
-current_primary_task_layer: PRODUCT_STAGE_EXECUTION
-current_primary_task_authorization_uid: USR-DIRECTIVE-20260920-CLEAR-STAGE01-STAGE03-CORE01-R1
+current_primary_task_layer: TEST_OR_VALIDATION_MAINTENANCE
+current_primary_task_authorization_uid: USR-DIRECTIVE-20260920-CORE01-ISOLATED-FULL-LIFECYCLE-HIGH-PRESSURE-R1
 current_primary_task_product_stage_credit: 0
 earlier_closed_product_work_unit:
   work_unit_uid: WU-STAGE02-CORE01-FRESH-TEST-001
@@ -2617,7 +2618,88 @@ closed_test_validation_maintenance_work_unit_multidirectional_audit:
     full_line_75_file_high_pressure_result: success
     verified_source_byte_clean_result: success
   legal_next_transition: RESTORE_CLEAN_PRODUCT_RESUME_AND_REQUIRE_FRESH_STAGE01_WORK_UNIT_RESOLUTION
-active_work_unit: null
+active_work_unit:
+  work_unit_uid: WU-TEST-CORE01-ISOLATED-FULL-LIFECYCLE-001
+  canonical_name: CORE01_ISOLATED_FULL_LIFECYCLE_IMPLEMENTATION_AND_LOGIC_HIGH_PRESSURE
+  primary_task_layer: TEST_OR_VALIDATION_MAINTENANCE
+  current_status: ACTIVE_EXECUTION
+  authorization_uid: USR-DIRECTIVE-20260920-CORE01-ISOLATED-FULL-LIFECYCLE-HIGH-PRESSURE-R1
+  canonical_owner: governance/ci/run_core01_isolated_full_lifecycle_test.py
+  workflow_owner: .github/workflows/core01-isolated-full-lifecycle-high-pressure.yml
+  source_provider:
+    repository: steven-gold/orange-one-ai-viedo-v1.0
+    branch: new
+    exact_head_sha: 165c6440cb53b1b45ec96905241fb4d56dc3b867
+    classification: TEST_ONLY_SOURCE_PROVIDER
+    may_become_current_product_authority: false
+  isolation:
+    runtime_root: RUNNER_TEMP_PER_WORKFLOW_RUN
+    repository_product_roots_mutated: false
+    entire_runtime_root_deleted_after_test: true
+    cleanup_absence_verification_required: true
+  scope:
+  - CORE-01
+  - STAGE-01_SOURCE_INTAKE
+  - STAGE-02_PAGE_FUNCTIONAL_CONTRACT
+  - STAGE-03_VISUAL_DESIGN
+  - STAGE-04_FOUNDATION_FREEZE
+  - STAGE-05_IMPLEMENTATION
+  - STAGE-06_VERIFICATION_QA
+  - STAGE-07_BUILD_RELEASE_CANDIDATE
+  - STAGE-08_STAGING
+  - STAGE-09_PRODUCTION_CUTOVER_FAIL_CLOSED_CONTRACT
+  - STAGE-10_PRODUCTION_ACCEPTANCE_FAIL_CLOSED_CONTRACT
+  - STAGE-11_CLOSURE_OPERATIONS_AND_SANDBOX_CLEANUP
+  out_of_scope:
+  - CURRENT_PRODUCT_DATA_MUTATION
+  - CURRENT_PRODUCT_AUTHORITY_PROMOTION
+  - MOTHER_NORMATIVE_MUTATION
+  - CURRENT_SPECIFICATION_MUTATION
+  - FORMAL_PRODUCTION_DEPLOYMENT
+  - FORMAL_PRODUCTION_DATABASE_MIGRATION
+  - FORMAL_PRODUCTION_ACCEPTANCE_CREDIT
+  product_stage_credit: 0
+  definition_of_done:
+  - ALL_11_STAGE_RECEIPTS_EMITTED_IN_ORDER
+  - EACH_STAGE_CONSUMES_PREDECESSOR_RECEIPT_HASH
+  - CORE01_AUTHORITY_SOURCE_EXACT_HEAD_LOCKED
+  - FUNCTIONAL_RELATION_AND_IDENTITY_INTEGRITY_PASS
+  - VISUAL_TOPOLOGY_AND_CONTROL_BINDING_PASS
+  - FROZEN_SOURCE_HASH_SET_UNCHANGED_AFTER_TESTS
+  - LINT_TYPECHECK_CORE_RUNTIME_TESTS_PASS
+  - RELEASE_TEST_SUITE_BROWSER_E2E_AND_CONTROL_ACCEPTANCE_PASS
+  - PRODUCTION_BUILD_AND_STANDALONE_DOCKER_BUILD_PASS
+  - ISOLATED_STAGING_HTTP_E2E_PASS
+  - CONTROLLED_TEST_MODE_CANNOT_CLAIM_PRODUCTION_READY
+  - FORMAL_PRODUCTION_ACCEPTANCE_WITHOUT_EVIDENCE_FAILS_CLOSED
+  - SANDBOX_GIT_TRACKED_SOURCE_REMAINS_CLEAN
+  - RUNNER_TEMP_SANDBOX_DELETED_AND_ABSENT
+  - NO_PRODUCT_STAGE_CREDIT
+last_work_unit_resolution_gate:
+  resolution_uid: WUR-TEST-CORE01-ISOLATED-FULL-LIFECYCLE-20260920-001
+  normative_authority: false
+  result: PASS_SINGLE_LEGAL_SUCCESSOR
+  requested_primary_task_layer: TEST_OR_VALIDATION_MAINTENANCE
+  resolved_work_unit_uid: WU-TEST-CORE01-ISOLATED-FULL-LIFECYCLE-001
+  authorization_uid: USR-DIRECTIVE-20260920-CORE01-ISOLATED-FULL-LIFECYCLE-HIGH-PRESSURE-R1
+  canonical_owner: governance/ci/run_core01_isolated_full_lifecycle_test.py
+  basis:
+  - EXPLICIT_USER_DIRECTIVE_USE_CORE_PAGE_FOR_ACTUAL_HIGH_PRESSURE_TEST
+  - EXPLICIT_USER_DIRECTIVE_TEST_COMPLETE_PROCESS_SPECIFICATION_COMPLETENESS
+  - EXPLICIT_USER_DIRECTIVE_ISOLATE_TEST_DATA_AND_DELETE_ENTIRE_TEST_FOLDER
+  - CURRENT_PRODUCT_RESUME_HAS_NO_ACTIVE_WORK_UNIT
+  - NEW_BRANCH_CONTAINS_LIVE_CORE01_AUTHORITY_AND_IMPLEMENTATION_TEST_FIXTURE
+  - HISTORICAL_PURGED_CORE01_CONTENT_REUSE_REMAINS_FORBIDDEN
+  product_stage_credit: 0
+previous_work_unit_resolution_gate_generic_web_flow:
+  resolution_uid: WUR-TEST-GENERIC-WEB-FLOW-HIGH-PRESSURE-20260920-001
+  normative_authority: false
+  result: PASS_SINGLE_LEGAL_SUCCESSOR
+  requested_primary_task_layer: TEST_OR_VALIDATION_MAINTENANCE
+  resolved_work_unit_uid: WU-TEST-GENERIC-WEB-FLOW-HIGH-PRESSURE-001
+  authorization_uid: USR-DIRECTIVE-20260920-GENERIC-WEB-FLOW-HIGH-PRESSURE-AUDIT-R1
+  canonical_owner: governance/ci/test_stage_execution_engine.py
+  product_stage_credit: 0
 closed_test_validation_maintenance_work_unit_generic_web_flow_high_pressure:
   work_unit_uid: WU-TEST-GENERIC-WEB-FLOW-HIGH-PRESSURE-001
   canonical_name: GENERIC_WEB_FLOW_HIGH_PRESSURE_PORTABILITY_AND_FAIL_CLOSED_AUDIT
