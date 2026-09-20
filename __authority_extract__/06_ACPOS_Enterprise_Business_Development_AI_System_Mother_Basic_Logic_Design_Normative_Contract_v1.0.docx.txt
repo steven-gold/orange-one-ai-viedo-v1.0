@@ -1,4 +1,6 @@
 ### PART word/document.xml
+P	[ACPOS-20260921-EXACT-BINDING-CLOSURE] Construction Authority Notice
+本文件已加入 2026-09-21 Exact Binding Closure。施工時 MUST 讀取文末 Closure Annex；文中較早的 REQUIRE_EXACT_BINDING 對已列入 Resolution Ledger 的項目視為已被本次 closure 精確綁定。外部 secret/provider/platform 的實際值只可由已註冊 Runtime Profile / Environment Binding 解析，缺值 = BLOCK，不得猜。
 P	ACPOS-AI-06
 P	Enterprise Business Development AI System
 P	Mother Basic Logic Design + Normative Logic Contract
@@ -2033,6 +2035,1747 @@ ROW	Next document	ACPOS-AI-07 Social Publishing AI System — only upon explicit
 P	Next document
 P	ACPOS-AI-07 Social Publishing AI System — only upon explicit continuation
 P	This document is a normative design contract. It constrains subsequent implementation; it does not replace Current Runtime Authority or fresh validation evidence.
+P	2026-09-21 Construction Exact Binding Closure / 施工精確綁定封板
+P	Closure UID: ACPOS-20260921-EXACT-BINDING-CLOSURE
+P	Scope: 將 01～09 母級邏輯與已上傳 Basic Design 的 Page / Control / Action / Gate / Permission / API / Runtime / DB-Provider / State / Error / Handoff 做可施工 materialization。Source-derived rows are copied from uploaded Word values; newly created exact identities/numeric policy are explicitly marked as closure authority.
+P	A. Shared Runtime Quantitative Policy / 共用 Runtime 定量政策
+P	Authority Status: CLOSURE_DECISION_NEW_AUTHORITY_PER_USER_DIRECTIVE_20260921_AFTER_FULL_SOURCE_AUDIT. 這些數值僅補足原文件明確標示的 numeric REQUIRE_EXACT_BINDING；Provider/Platform 自身限制仍由 registered profile/policy 解析，無 profile 值時 BLOCK。
+ROW	Policy UID	Exact Value	Semantics	Primary Owner
+P	Policy UID
+P	Exact Value
+P	Semantics
+P	Primary Owner
+ROW	HTTP_CONNECT_TIMEOUT_SECONDS	10	Shared outbound HTTP connect timeout	03
+P	HTTP_CONNECT_TIMEOUT_SECONDS
+P	10
+P	Shared outbound HTTP connect timeout
+P	03
+ROW	HTTP_SYNC_RESPONSE_TIMEOUT_SECONDS	60	Synchronous text/tool request upper bound	03
+P	HTTP_SYNC_RESPONSE_TIMEOUT_SECONDS
+P	60
+P	Synchronous text/tool request upper bound
+P	03
+ROW	RUNTIME_MAX_ATTEMPTS	3	1 initial + at most 2 automatic retries	01/03
+P	RUNTIME_MAX_ATTEMPTS
+P	3
+P	1 initial + at most 2 automatic retries
+P	01/03
+ROW	RUNTIME_BACKOFF_BASE_SECONDS	2	Exponential backoff base	01/03
+P	RUNTIME_BACKOFF_BASE_SECONDS
+P	2
+P	Exponential backoff base
+P	01/03
+ROW	RUNTIME_BACKOFF_FACTOR	2	Backoff factor	01/03
+P	RUNTIME_BACKOFF_FACTOR
+P	2
+P	Backoff factor
+P	01/03
+ROW	RUNTIME_BACKOFF_MAX_SECONDS	30	Backoff cap excluding Retry-After	01/03
+P	RUNTIME_BACKOFF_MAX_SECONDS
+P	30
+P	Backoff cap excluding Retry-After
+P	01/03
+ROW	RUNTIME_RETRY_AFTER_MAX_SECONDS	120	Maximum honored provider Retry-After before async reschedule	03
+P	RUNTIME_RETRY_AFTER_MAX_SECONDS
+P	120
+P	Maximum honored provider Retry-After before async reschedule
+P	03
+ROW	RUNTIME_JITTER	FULL_JITTER	random(0,min(cap,base*factor^(attempt-1)))	03
+P	RUNTIME_JITTER
+P	FULL_JITTER
+P	random(0,min(cap,base*factor^(attempt-1)))
+P	03
+ROW	CIRCUIT_FAILURE_THRESHOLD	5	Retryable failures	03
+P	CIRCUIT_FAILURE_THRESHOLD
+P	5
+P	Retryable failures
+P	03
+ROW	CIRCUIT_FAILURE_WINDOW_SECONDS	60	Window for threshold	03
+P	CIRCUIT_FAILURE_WINDOW_SECONDS
+P	60
+P	Window for threshold
+P	03
+ROW	CIRCUIT_OPEN_COOLDOWN_SECONDS	60	Open to half-open	03
+P	CIRCUIT_OPEN_COOLDOWN_SECONDS
+P	60
+P	Open to half-open
+P	03
+ROW	CIRCUIT_HALF_OPEN_PROBES	1	Concurrent half-open probe	03
+P	CIRCUIT_HALF_OPEN_PROBES
+P	1
+P	Concurrent half-open probe
+P	03
+ROW	CIRCUIT_CLOSE_SUCCESS_COUNT	2	Consecutive successful probes/executions to close	03
+P	CIRCUIT_CLOSE_SUCCESS_COUNT
+P	2
+P	Consecutive successful probes/executions to close
+P	03
+ROW	WORKER_HEARTBEAT_SECONDS	15	Worker lease heartbeat	03
+P	WORKER_HEARTBEAT_SECONDS
+P	15
+P	Worker lease heartbeat
+P	03
+ROW	WORKER_LEASE_GRACE_SECONDS	60	Missed heartbeat grace before stale lease handling	03
+P	WORKER_LEASE_GRACE_SECONDS
+P	60
+P	Missed heartbeat grace before stale lease handling
+P	03
+ROW	BUSINESS_EFFECT_IDEMPOTENCY_TTL_DAYS	30	External publish/delivery/handoff/mutation duplicate suppression	01/03/06/07/08/09
+P	BUSINESS_EFFECT_IDEMPOTENCY_TTL_DAYS
+P	30
+P	External publish/delivery/handoff/mutation duplicate suppression
+P	01/03/06/07/08/09
+ROW	OUTBOX_DELIVERED_RETENTION_DAYS	30	Delivered outbox audit retention when otherwise unreferenced	01/03
+P	OUTBOX_DELIVERED_RETENTION_DAYS
+P	30
+P	Delivered outbox audit retention when otherwise unreferenced
+P	01/03
+ROW	DEAD_LETTER_RETENTION_DAYS	90	DLQ/quarantine minimum retention	01/03/09
+P	DEAD_LETTER_RETENTION_DAYS
+P	90
+P	DLQ/quarantine minimum retention
+P	01/03/09
+P	B. Canonical Persistence / Provider Registry
+ROW	Binding	Exact Persistence / Provider Owner	Purpose	Document Owner
+P	Binding
+P	Exact Persistence / Provider Owner
+P	Purpose
+P	Document Owner
+ROW	ENTERPRISE_PROFILE	acpos_enterprise.discovery_profiles	Enterprise discovery profile	06
+P	ENTERPRISE_PROFILE
+P	acpos_enterprise.discovery_profiles
+P	Enterprise discovery profile
+P	06
+ROW	ENTERPRISE_SIGNAL	acpos_enterprise.market_signals	Market signal/evidence decision	06
+P	ENTERPRISE_SIGNAL
+P	acpos_enterprise.market_signals
+P	Market signal/evidence decision
+P	06
+ROW	ENTERPRISE_COMPANY	acpos_enterprise.companies	Resolved company identity	06
+P	ENTERPRISE_COMPANY
+P	acpos_enterprise.companies
+P	Resolved company identity
+P	06
+ROW	ENTERPRISE_OPPORTUNITY	acpos_enterprise.opportunities	Opportunity lifecycle	06
+P	ENTERPRISE_OPPORTUNITY
+P	acpos_enterprise.opportunities
+P	Opportunity lifecycle
+P	06
+ROW	ENTERPRISE_CAMPAIGN	acpos_enterprise.outreach_campaigns	Campaign and exact approved version	06
+P	ENTERPRISE_CAMPAIGN
+P	acpos_enterprise.outreach_campaigns
+P	Campaign and exact approved version
+P	06
+ROW	ENTERPRISE_DELIVERY	acpos_enterprise.delivery_attempts	Per-recipient delivery attempt/result	06
+P	ENTERPRISE_DELIVERY
+P	acpos_enterprise.delivery_attempts
+P	Per-recipient delivery attempt/result
+P	06
+ROW	ERP_CONNECTOR	acpos_erp.connectors	ERP connector and mapping refs	06
+P	ERP_CONNECTOR
+P	acpos_erp.connectors
+P	ERP connector and mapping refs
+P	06
+ROW	ERP_SYNC	acpos_erp.sync_jobs	ERP snapshot/sync lineage	06
+P	ERP_SYNC
+P	acpos_erp.sync_jobs
+P	ERP snapshot/sync lineage
+P	06
+ROW	AUDIT	acpos_audit.audit_events	Correlation/audit terminal truth	01-09
+P	AUDIT
+P	acpos_audit.audit_events
+P	Correlation/audit terminal truth
+P	01-09
+P	DB naming is normative for this design closure. All tables are PostgreSQL logical owners under the shown schema. RLS/permission checks remain server-enforced. Secret values are never stored in these Word files; only secret references are persisted.
+P	C. Shared Exact API / Permission Bindings
+ROW	Operation UID	Exact Method / Path	Persistence Owner	Permission
+P	Operation UID
+P	Exact Method / Path
+P	Persistence Owner
+P	Permission
+ROW	AUDIT_APPEND	POST /v1/audit-events	acpos_audit.audit_events	audit.append
+P	AUDIT_APPEND
+P	POST /v1/audit-events
+P	acpos_audit.audit_events
+P	audit.append
+P	D. Legacy REQUIRE_EXACT_BINDING Resolution Ledger
+ROW	Legacy Gap Class	2026-09-21 Status	Exact Resolution
+P	Legacy Gap Class
+P	2026-09-21 Status
+P	Exact Resolution
+ROW	API / Route identities	RESOLVED	Embedded Page/Port tables + Shared Exact API table; where an uploaded page exposed an operation without Control UID, this closure materializes a UID from that existing operation only.
+P	API / Route identities
+P	RESOLVED
+P	Embedded Page/Port tables + Shared Exact API table; where an uploaded page exposed an operation without Control UID, this closure materializes a UID from that existing operation only.
+ROW	DB / Persistence identities	RESOLVED	Canonical Persistence / Provider Registry in this annex.
+P	DB / Persistence identities
+P	RESOLVED
+P	Canonical Persistence / Provider Registry in this annex.
+ROW	Permission / Gate identities	RESOLVED_FOR_DOCUMENT_SCOPE	Embedded source Permission/Gate tables; server re-check mandatory. Environment/provider-specific grants resolve from registered IAM/Profile, missing = BLOCK.
+P	Permission / Gate identities
+P	RESOLVED_FOR_DOCUMENT_SCOPE
+P	Embedded source Permission/Gate tables; server re-check mandatory. Environment/provider-specific grants resolve from registered IAM/Profile, missing = BLOCK.
+ROW	Event transport / outbox	RESOLVED	PostgreSQL acpos_runtime.outbox_events + worker delivery; at-least-once + idempotent consumer.
+P	Event transport / outbox
+P	RESOLVED
+P	PostgreSQL acpos_runtime.outbox_events + worker delivery; at-least-once + idempotent consumer.
+ROW	Queue / Worker / DLQ	RESOLVED	Redis-backed shared runtime via REDIS_URL; dead-letter evidence in acpos_runtime.dead_letters.
+P	Queue / Worker / DLQ
+P	RESOLVED
+P	Redis-backed shared runtime via REDIS_URL; dead-letter evidence in acpos_runtime.dead_letters.
+ROW	Canonical digest	RESOLVED	RFC 8785 JSON Canonicalization Scheme + SHA-256 for semantic payload/context digests.
+P	Canonical digest
+P	RESOLVED
+P	RFC 8785 JSON Canonicalization Scheme + SHA-256 for semantic payload/context digests.
+ROW	Idempotency store / TTL	RESOLVED	acpos_runtime.idempotency_keys + exact TTL rows in Runtime Quantitative Policy.
+P	Idempotency store / TTL
+P	RESOLVED
+P	acpos_runtime.idempotency_keys + exact TTL rows in Runtime Quantitative Policy.
+ROW	Retry / Backoff / Circuit numeric values	RESOLVED	Exact values in Runtime Quantitative Policy.
+P	Retry / Backoff / Circuit numeric values
+P	RESOLVED
+P	Exact values in Runtime Quantitative Policy.
+ROW	Conversation display/context/summary numbers	RESOLVED_BY_AI02	AI-02 annex provides exact UI/history/context/compression values.
+P	Conversation display/context/summary numbers
+P	RESOLVED_BY_AI02
+P	AI-02 annex provides exact UI/history/context/compression values.
+ROW	Retention durations	RESOLVED	Artifact-class values in Runtime Quantitative Policy; references/legal/privacy holds extend retention and never shorten below legal/domain requirement.
+P	Retention durations
+P	RESOLVED
+P	Artifact-class values in Runtime Quantitative Policy; references/legal/privacy holds extend retention and never shorten below legal/domain requirement.
+ROW	Secret backend	RESOLVED	ACPOS_SECRET_BACKEND + secret reference only; plaintext never persisted in Word/UI/general DB.
+P	Secret backend
+P	RESOLVED
+P	ACPOS_SECRET_BACKEND + secret reference only; plaintext never persisted in Word/UI/general DB.
+ROW	Provider/model exact selection	RESOLVED_RUNTIME_PROFILE	Exact provider_model_profile_id and route decision from AIAPI-01 registered profile; no page-level picker.
+P	Provider/model exact selection
+P	RESOLVED_RUNTIME_PROFILE
+P	Exact provider_model_profile_id and route decision from AIAPI-01 registered profile; no page-level picker.
+ROW	External platform/provider rate limits	RESOLVED_PROFILE_REQUIRED	Exact value comes from registered provider/platform/target policy fields; no global guessed fallback; missing profile value blocks effectful execution.
+P	External platform/provider rate limits
+P	RESOLVED_PROFILE_REQUIRED
+P	Exact value comes from registered provider/platform/target policy fields; no global guessed fallback; missing profile value blocks effectful execution.
+ROW	Production deployment target	RESOLVED_ENV_BINDING	ACPOS_DEPLOYMENT_TARGET_ID + ACPOS_PRODUCTION_BASE_URL; values supplied by deployment environment, not hardcoded in design.
+P	Production deployment target
+P	RESOLVED_ENV_BINDING
+P	ACPOS_DEPLOYMENT_TARGET_ID + ACPOS_PRODUCTION_BASE_URL; values supplied by deployment environment, not hardcoded in design.
+P	Interpretation Rule: earlier REQUIRE_EXACT_BINDING text remains a generic anti-invention invariant for future unknowns. It MUST NOT be interpreted as an open gap for rows marked RESOLVED/RESOLVED_* in this ledger.
+P	F. Uploaded Basic Design Exact Binding Snapshots
+P	Source Authority Snapshot — admin:DEV-01
+P	Source File: ACPOS_DEV-01_企業自動開發系統_Mother_Basic_Design_OPTIMIZED.docx
+P	Source SHA-256: e73455c12d9bd9899a69b88bf1769abea4d1e112a691e76355df6f4c0e0438f7
+P	Included binding/data/state tables: 21. These rows are copied verbatim in text value from the uploaded Basic Design source; no UID/value renaming is performed.
+P	admin:DEV-01 · Source Table 1
+ROW	項目	設計規格
+P	項目
+P	設計規格
+ROW	Page UID	admin:DEV-01
+P	Page UID
+P	admin:DEV-01
+ROW	頁面名稱	企業自動開發系統 / Enterprise Automation
+P	頁面名稱
+P	企業自動開發系統 / Enterprise Automation
+ROW	Route	/admin/dev
+P	Route
+P	/admin/dev
+ROW	Surface	ADMIN
+P	Surface
+P	ADMIN
+ROW	Purpose	在同一頁面完成商機搜集、企業資料治理、開發信 Candidate、Campaign / Audience、Individual Delivery；不得建立平行 outreach 系統。
+P	Purpose
+P	在同一頁面完成商機搜集、企業資料治理、開發信 Candidate、Campaign / Audience、Individual Delivery；不得建立平行 outreach 系統。
+ROW	Primary User	具備企業開發、名單治理、Campaign 或 Delivery 權限的內部使用者。
+P	Primary User
+P	具備企業開發、名單治理、Campaign 或 Delivery 權限的內部使用者。
+ROW	Authorization	Account Permission Assignment + enterprise_development backend L1 + exact action permission。
+P	Authorization
+P	Account Permission Assignment + enterprise_development backend L1 + exact action permission。
+ROW	Interaction Model	5-stage same-page workflow；Stage 切換僅改 UI context，不切換成五個獨立頁。
+P	Interaction Model
+P	5-stage same-page workflow；Stage 切換僅改 UI context，不切換成五個獨立頁。
+ROW	Implementation Truth	文件定義產品與施工規格；Runtime、E2E、Deployment 仍需施工證據。
+P	Implementation Truth
+P	文件定義產品與施工規格；Runtime、E2E、Deployment 仍需施工證據。
+P	admin:DEV-01 · Source Table 2
+ROW	類別	內容
+P	類別
+P	內容
+ROW	Business Goal	從受治理的市場/企業搜尋條件持續取得可驗證商機，沉澱到 Company / Contact / Opportunity，再建立受審核的開發內容與發送批次。
+P	Business Goal
+P	從受治理的市場/企業搜尋條件持續取得可驗證商機，沉澱到 Company / Contact / Opportunity，再建立受審核的開發內容與發送批次。
+ROW	Functional Requirements	Discovery Profile、Single/Continuous Run、Allowed Source / Rights / Rate、Signal Review、Company Directory、Contact Evidence、Opportunity、Candidate Review、Recipient Preview、Campaign Approval、One-to-One Delivery、Suppression、Reply/Bounce、Audit。
+P	Functional Requirements
+P	Discovery Profile、Single/Continuous Run、Allowed Source / Rights / Rate、Signal Review、Company Directory、Contact Evidence、Opportunity、Candidate Review、Recipient Preview、Campaign Approval、One-to-One Delivery、Suppression、Reply/Bounce、Audit。
+ROW	Non-functional	權限 Fail-Closed、Exact Version、Idempotency、Audit、Rate/Policy、No Fake Data、1280+ desktop-first、A11y、i18n。
+P	Non-functional
+P	權限 Fail-Closed、Exact Version、Idempotency、Audit、Rate/Policy、No Fake Data、1280+ desktop-first、A11y、i18n。
+ROW	Out-of-Scope	第二 CRM、第二 Company DB、第二 Source Registry、第二 Candidate/Campaign/Delivery Engine、Page-local Provider/API Key、CC/BCC 群發模擬。
+P	Out-of-Scope
+P	第二 CRM、第二 Company DB、第二 Source Registry、第二 Candidate/Campaign/Delivery Engine、Page-local Provider/API Key、CC/BCC 群發模擬。
+ROW	No Duplicate Rule	現有 Discovery / Directory / Message / Batch / Delivery owner 優先 REUSE；新增能力只能是既有系統的必要補強。
+P	No Duplicate Rule
+P	現有 Discovery / Directory / Message / Batch / Delivery owner 優先 REUSE；新增能力只能是既有系統的必要補強。
+P	admin:DEV-01 · Source Table 3
+ROW	Entity	Purpose	Required Operations	Owner / Boundary
+P	Entity
+P	Purpose
+P	Required Operations
+P	Owner / Boundary
+ROW	Discovery Profile / Topic	描述要找的商機條件與來源範圍	Create / Update / Activate / Pause / Retire（施工時綁唯一 owner）	Discovery domain；不得複製 KB Source Registry
+P	Discovery Profile / Topic
+P	描述要找的商機條件與來源範圍
+P	Create / Update / Activate / Pause / Retire（施工時綁唯一 owner）
+P	Discovery domain；不得複製 KB Source Registry
+ROW	Discovery Job	單次/持續執行	Start / Pause / Resume / Stop / Refresh	OutreachDiscoveryService
+P	Discovery Job
+P	單次/持續執行
+P	Start / Pause / Resume / Stop / Refresh
+P	OutreachDiscoveryService
+ROW	Market Signal	搜尋結果中的可審查商機訊號	View / Qualify / Ignore	Discovery workflow object；必須保留 Evidence
+P	Market Signal
+P	搜尋結果中的可審查商機訊號
+P	View / Qualify / Ignore
+P	Discovery workflow object；必須保留 Evidence
+ROW	Company	企業主檔	Search / Identity Resolve / Merge Preview / Merge	OutreachDirectoryService
+P	Company
+P	企業主檔
+P	Search / Identity Resolve / Merge Preview / Merge
+P	OutreachDirectoryService
+ROW	Contact Point	Email / Phone / Address，多值並保留來源	View / Add-or-Update / Verify / Disable as secondary action	Company owner；不得覆蓋不同來源
+P	Contact Point
+P	Email / Phone / Address，多值並保留來源
+P	View / Add-or-Update / Verify / Disable as secondary action
+P	Company owner；不得覆蓋不同來源
+ROW	Opportunity	Company 上的企業商機狀態	Create / State transition / Next action	掛在現有 Company，不建立第二 CRM
+P	Opportunity
+P	Company 上的企業商機狀態
+P	Create / State transition / Next action
+P	掛在現有 Company，不建立第二 CRM
+ROW	Message Candidate	一對一開發內容	Create / Review / Decide / Change Request	OutreachMessageService；Candidate 不得直接發送
+P	Message Candidate
+P	一對一開發內容
+P	Create / Review / Decide / Change Request
+P	OutreachMessageService；Candidate 不得直接發送
+ROW	Campaign / Audience	受眾批次、審查、統計	Search Audience / Create / Preview / Approve	OutreachBatchService
+P	Campaign / Audience
+P	受眾批次、審查、統計
+P	Search Audience / Create / Preview / Approve
+P	OutreachBatchService
+ROW	Delivery	每位收件者一筆實際外寄	Dispatch / Refresh / Stop	OutreachDeliveryService；To=1, CC/BCC=0
+P	Delivery
+P	每位收件者一筆實際外寄
+P	Dispatch / Refresh / Stop
+P	OutreachDeliveryService；To=1, CC/BCC=0
+ROW	Suppression / Evidence / Audit	跨 Stage 強制治理	Check / View / Enforce	共享治理 owner；不可 page-local 複製
+P	Suppression / Evidence / Audit
+P	跨 Stage 強制治理
+P	Check / View / Enforce
+P	共享治理 owner；不可 page-local 複製
+P	admin:DEV-01 · Source Table 4
+ROW	關係	規則
+P	關係
+P	規則
+ROW	Signal → Company	企業名稱不可單獨作身份；需登記號/司法轄區或其他正式 identity evidence。
+P	Signal → Company
+P	企業名稱不可單獨作身份；需登記號/司法轄區或其他正式 identity evidence。
+ROW	Company → Contact	一對多；新來源不得覆寫不同 contact；每筆 contact 保留 source evidence / verification。
+P	Company → Contact
+P	一對多；新來源不得覆寫不同 contact；每筆 contact 保留 source evidence / verification。
+ROW	Company → Opportunity	商機掛在既有 Company 上；不建立第二 Company/Lead master。
+P	Company → Opportunity
+P	商機掛在既有 Company 上；不建立第二 Company/Lead master。
+ROW	Candidate → Campaign	Campaign 只能綁 exact approved Candidate / version；Candidate Review 與 Dispatch 分離。
+P	Candidate → Campaign
+P	Campaign 只能綁 exact approved Candidate / version；Candidate Review 與 Dispatch 分離。
+ROW	Campaign → Delivery	Campaign 可有多個 recipient records；外寄時逐 recipient 建 Individual Delivery。
+P	Campaign → Delivery
+P	Campaign 可有多個 recipient records；外寄時逐 recipient 建 Individual Delivery。
+ROW	Suppression	拒絕、退訂、Do Not Contact、Complaint 等在 Campaign/Delivery Gate 前阻擋。
+P	Suppression
+P	拒絕、退訂、Do Not Contact、Complaint 等在 Campaign/Delivery Gate 前阻擋。
+P	admin:DEV-01 · Source Table 5
+ROW	Stage	Display	Primary Purpose	Primary CTA	Secondary / Conditional
+P	Stage
+P	Display
+P	Primary Purpose
+P	Primary CTA
+P	Secondary / Conditional
+ROW	01	商機持續搜集	設定 Profile / Topic、來源治理、啟動 single/continuous discovery，檢視 Signal。	開始商機搜集	主題設定、管理來源、Pause / Resume / Stop、Qualify / Ignore
+P	01
+P	商機持續搜集
+P	設定 Profile / Topic、來源治理、啟動 single/continuous discovery，檢視 Signal。
+P	開始商機搜集
+P	主題設定、管理來源、Pause / Resume / Stop、Qualify / Ignore
+ROW	02	企業資料庫	公司 identity、聯絡點、Evidence、Opportunity、合併與 Suppression。	搜尋企業	Merge Preview / Confirm、Contact Update、Opportunity State、Export
+P	02
+P	企業資料庫
+P	公司 identity、聯絡點、Evidence、Opportunity、合併與 Suppression。
+P	搜尋企業
+P	Merge Preview / Confirm、Contact Update、Opportunity State、Export
+ROW	03	開發信內容	建立一對一 Message Candidate、personalization、policy、review/version。	建立 Candidate	審查 / 要求修改；無 Send 按鈕
+P	03
+P	開發信內容
+P	建立一對一 Message Candidate、personalization、policy、review/version。
+P	建立 Candidate
+P	審查 / 要求修改；無 Send 按鈕
+ROW	04	Campaign / 受眾批次	Audience filter、include/exclude、suppression、recipient preview、approval。	建立 Campaign	搜尋受眾、核准 Campaign
+P	04
+P	Campaign / 受眾批次
+P	Audience filter、include/exclude、suppression、recipient preview、approval。
+P	建立 Campaign
+P	搜尋受眾、核准 Campaign
+ROW	05	一對一發送控制	Schedule/Rate、Individual Queue、Bounce/Reply、Suppression、Stop。	開始一對一發送	Refresh、Kill Switch（僅合法狀態）
+P	05
+P	一對一發送控制
+P	Schedule/Rate、Individual Queue、Bounce/Reply、Suppression、Stop。
+P	開始一對一發送
+P	Refresh、Kill Switch（僅合法狀態）
+P	admin:DEV-01 · Source Table 6
+ROW	類別	Admission Rule	DEV-01 實例
+P	類別
+P	Admission Rule
+P	DEV-01 實例
+ROW	Persistent Primary	高頻、直接推進主流程、Gate 清楚	開始商機搜集、建立 Candidate、建立 Campaign、Dispatch
+P	Persistent Primary
+P	高頻、直接推進主流程、Gate 清楚
+P	開始商機搜集、建立 Candidate、建立 Campaign、Dispatch
+ROW	Conditional	只在特定 state / permission 出現	Pause/Resume/Stop、Merge Confirm、Campaign Approve、Kill Switch
+P	Conditional
+P	只在特定 state / permission 出現
+P	Pause/Resume/Stop、Merge Confirm、Campaign Approve、Kill Switch
+ROW	Row / Field Action	跟隨選取實體，不佔全頁 CTA	Qualify/Ignore、Contact 更新、Opportunity 狀態
+P	Row / Field Action
+P	跟隨選取實體，不佔全頁 CTA
+P	Qualify/Ignore、Contact 更新、Opportunity 狀態
+ROW	Drawer / Secondary	低頻 detail / evidence / history / connector / suppression	Evidence、Version History、Delivery History、Audit
+P	Drawer / Secondary
+P	低頻 detail / evidence / history / connector / suppression
+P	Evidence、Version History、Delivery History、Audit
+ROW	Forbidden	重複 owner、繞過治理、只為好看	第二 CRM、第二 Source Registry、Fake KPI、CC/BCC 群發
+P	Forbidden
+P	重複 owner、繞過治理、只為好看
+P	第二 CRM、第二 Source Registry、Fake KPI、CC/BCC 群發
+P	admin:DEV-01 · Source Table 7
+ROW	Region	Geometry	Responsibility
+P	Region
+P	Geometry
+P	Responsibility
+ROW	Page Context Bar	100% × 56px	Page title / current stage / authorized scope / real run-review-blocker status
+P	Page Context Bar
+P	100% × 56px
+P	Page title / current stage / authorized scope / real run-review-blocker status
+ROW	Workflow Stage Bar	100% × 52px	5 compact segmented stages；UI context only
+P	Workflow Stage Bar
+P	100% × 52px
+P	5 compact segmented stages；UI context only
+ROW	Primary Workspace	72%	只渲染 active stage 主要表單、table、review/workflow
+P	Primary Workspace
+P	72%
+P	只渲染 active stage 主要表單、table、review/workflow
+ROW	Governance Rail	28%	Permission / Policy / Suppression / Connector / Blocker / Approval status
+P	Governance Rail
+P	28%
+P	Permission / Policy / Suppression / Connector / Blocker / Approval status
+ROW	Detail Drawer	480–560px	Evidence / History / Audit / Version / Connector / Delivery detail
+P	Detail Drawer
+P	480–560px
+P	Evidence / History / Audit / Version / Connector / Delivery detail
+ROW	Stage Action Dock	56px	只顯示當下合法 actions；同時最多一個 Primary CTA
+P	Stage Action Dock
+P	56px
+P	只顯示當下合法 actions；同時最多一個 Primary CTA
+ROW	Below 1280	min-width=1280 + horizontal scroll	不建立另一套 mobile workflow
+P	Below 1280
+P	min-width=1280 + horizontal scroll
+P	不建立另一套 mobile workflow
+P	admin:DEV-01 · Source Table 8
+ROW	Section UID	Section	Priority	Key Components
+P	Section UID
+P	Section
+P	Priority
+P	Key Components
+ROW	DEV-01-SEC-01	Page Context / Status	CORE_REQUIRED	Context
+P	DEV-01-SEC-01
+P	Page Context / Status
+P	CORE_REQUIRED
+P	Context
+ROW	DEV-01-SEC-02	Five-Stage Navigator	CORE_REQUIRED	Stage Nav
+P	DEV-01-SEC-02
+P	Five-Stage Navigator
+P	CORE_REQUIRED
+P	Stage Nav
+ROW	DEV-01-SEC-03	Discovery Workspace	CORE_REQUIRED	Discovery Setup / Runtime / Actions
+P	DEV-01-SEC-03
+P	Discovery Workspace
+P	CORE_REQUIRED
+P	Discovery Setup / Runtime / Actions
+ROW	DEV-01-SEC-04	Company Directory	CORE_REQUIRED	Directory / Merge / Contact / Opportunity
+P	DEV-01-SEC-04
+P	Company Directory
+P	CORE_REQUIRED
+P	Directory / Merge / Contact / Opportunity
+ROW	DEV-01-SEC-05	Message Candidate	CORE_REQUIRED	Message / Review
+P	DEV-01-SEC-05
+P	Message Candidate
+P	CORE_REQUIRED
+P	Message / Review
+ROW	DEV-01-SEC-06	Campaign / Audience	CORE_REQUIRED	Campaign / Recipient Preview / Review
+P	DEV-01-SEC-06
+P	Campaign / Audience
+P	CORE_REQUIRED
+P	Campaign / Recipient Preview / Review
+ROW	DEV-01-SEC-07	Individual Delivery	CORE_REQUIRED	Delivery / Kill Switch
+P	DEV-01-SEC-07
+P	Individual Delivery
+P	CORE_REQUIRED
+P	Delivery / Kill Switch
+ROW	DEV-01-SEC-08	Governance Rail	PRIMARY_SUPPORT	Policy / Suppression / Health / Blocker
+P	DEV-01-SEC-08
+P	Governance Rail
+P	PRIMARY_SUPPORT
+P	Policy / Suppression / Health / Blocker
+ROW	DEV-01-SEC-09	Detail Drawer	SECONDARY	Evidence / Audit / Version / Error
+P	DEV-01-SEC-09
+P	Detail Drawer
+P	SECONDARY
+P	Evidence / Audit / Version / Error
+P	admin:DEV-01 · Source Table 9
+ROW	Control / Group	Label	Operation	Gate
+P	Control / Group
+P	Label
+P	Operation
+P	Gate
+ROW	DEV-01-BTN-STAGE-1..5	5 segmented stage buttons	UI context only	Page gate
+P	DEV-01-BTN-STAGE-1..5
+P	5 segmented stage buttons
+P	UI context only
+P	Page gate
+ROW	DEV-01-BTN-DISCOVERY-START	開始搜集	startCompanyDiscovery	Discovery Start gate
+P	DEV-01-BTN-DISCOVERY-START
+P	開始搜集
+P	startCompanyDiscovery
+P	Discovery Start gate
+ROW	DEV-01-BTN-DISCOVERY-PAUSE	暫停	pauseCompanyDiscovery	RUNNING
+P	DEV-01-BTN-DISCOVERY-PAUSE
+P	暫停
+P	pauseCompanyDiscovery
+P	RUNNING
+ROW	DEV-01-BTN-DISCOVERY-RESUME	繼續	resumeCompanyDiscovery	PAUSED
+P	DEV-01-BTN-DISCOVERY-RESUME
+P	繼續
+P	resumeCompanyDiscovery
+P	PAUSED
+ROW	DEV-01-BTN-DISCOVERY-STOP	停止	stopCompanyDiscovery	RUNNING
+P	DEV-01-BTN-DISCOVERY-STOP
+P	停止
+P	stopCompanyDiscovery
+P	RUNNING
+ROW	DEV-01-BTN-DIRECTORY-SEARCH	搜尋企業	searchProjection	Directory Read
+P	DEV-01-BTN-DIRECTORY-SEARCH
+P	搜尋企業
+P	searchProjection
+P	Directory Read
+ROW	DEV-01-BTN-MERGE-PREVIEW	預覽合併	previewCompanyMerge	Merge
+P	DEV-01-BTN-MERGE-PREVIEW
+P	預覽合併
+P	previewCompanyMerge
+P	Merge
+ROW	DEV-01-BTN-MERGE	確認合併	mergeCompanyCandidate	Merge Confirm
+P	DEV-01-BTN-MERGE
+P	確認合併
+P	mergeCompanyCandidate
+P	Merge Confirm
+ROW	DEV-01-BTN-EXPORT	匯出	exportProjection	Export
+P	DEV-01-BTN-EXPORT
+P	匯出
+P	exportProjection
+P	Export
+ROW	DEV-01-BTN-CANDIDATE-CREATE	建立 Candidate	createCandidate	Message Write
+P	DEV-01-BTN-CANDIDATE-CREATE
+P	建立 Candidate
+P	createCandidate
+P	Message Write
+ROW	DEV-01-BTN-CANDIDATE-DECIDE	審查 Candidate	decideCandidate	Message Review
+P	DEV-01-BTN-CANDIDATE-DECIDE
+P	審查 Candidate
+P	decideCandidate
+P	Message Review
+ROW	DEV-01-BTN-CR-CREATE	要求修改	createChangeRequest	Message Review
+P	DEV-01-BTN-CR-CREATE
+P	要求修改
+P	createChangeRequest
+P	Message Review
+ROW	DEV-01-BTN-CAMPAIGN-SEARCH	搜尋受眾	searchProjection	Campaign
+P	DEV-01-BTN-CAMPAIGN-SEARCH
+P	搜尋受眾
+P	searchProjection
+P	Campaign
+ROW	DEV-01-BTN-CAMPAIGN-CREATE	建立 Campaign	createOutreachCampaign	Campaign
+P	DEV-01-BTN-CAMPAIGN-CREATE
+P	建立 Campaign
+P	createOutreachCampaign
+P	Campaign
+ROW	DEV-01-BTN-CAMPAIGN-APPROVE	核准 Campaign	approveOutreachCampaign	Campaign Approval
+P	DEV-01-BTN-CAMPAIGN-APPROVE
+P	核准 Campaign
+P	approveOutreachCampaign
+P	Campaign Approval
+ROW	DEV-01-BTN-EMAIL-DISPATCH	開始一對一發送	dispatchOutreachCampaign	Dispatch
+P	DEV-01-BTN-EMAIL-DISPATCH
+P	開始一對一發送
+P	dispatchOutreachCampaign
+P	Dispatch
+ROW	DEV-01-BTN-REFRESH	重新整理	refreshProjection	Delivery Read
+P	DEV-01-BTN-REFRESH
+P	重新整理
+P	refreshProjection
+P	Delivery Read
+ROW	DEV-01-BTN-KILL-SWITCH	停止發送	setKillSwitch	High-risk
+P	DEV-01-BTN-KILL-SWITCH
+P	停止發送
+P	setKillSwitch
+P	High-risk
+P	admin:DEV-01 · Source Table 10
+ROW	Control	UI Form	Operation / Effect	Placement
+P	Control
+P	UI Form
+P	Operation / Effect
+P	Placement
+ROW	DEV-01-BTN-PROFILE-SAVE	Secondary	Save / Update Discovery Profile	Stage 01 Profile header / Drawer
+P	DEV-01-BTN-PROFILE-SAVE
+P	Secondary
+P	Save / Update Discovery Profile
+P	Stage 01 Profile header / Drawer
+ROW	DEV-01-BTN-SOURCE-MANAGE	Secondary	Navigate to governed KB Source management	Stage 01; no duplicated source editor
+P	DEV-01-BTN-SOURCE-MANAGE
+P	Secondary
+P	Navigate to governed KB Source management
+P	Stage 01; no duplicated source editor
+ROW	DEV-01-BTN-SIGNAL-QUALIFY	Row Action	Decide Signal = QUALIFY	Signal row
+P	DEV-01-BTN-SIGNAL-QUALIFY
+P	Row Action
+P	Decide Signal = QUALIFY
+P	Signal row
+ROW	DEV-01-BTN-SIGNAL-IGNORE	Row Action	Decide Signal = IGNORE	Signal row
+P	DEV-01-BTN-SIGNAL-IGNORE
+P	Row Action
+P	Decide Signal = IGNORE
+P	Signal row
+ROW	DEV-01-BTN-CONTACT-UPSERT	Row / Drawer Action	Add or update verified Company Contact	Stage 02 detail drawer
+P	DEV-01-BTN-CONTACT-UPSERT
+P	Row / Drawer Action
+P	Add or update verified Company Contact
+P	Stage 02 detail drawer
+ROW	DEV-01-CTL-OPPORTUNITY-STATE	Select / Row	Legal Opportunity transition	Stage 02 company/opportunity detail
+P	DEV-01-CTL-OPPORTUNITY-STATE
+P	Select / Row
+P	Legal Opportunity transition
+P	Stage 02 company/opportunity detail
+P	admin:DEV-01 · Source Table 11
+ROW	Area	Required Design
+P	Area
+P	Required Design
+ROW	Discovery Profile / Topic	商品/服務、產業/條件、地區、市場、語言、Keywords / Exclude、Priority、Single/Continuous、Source Scope。進階 crawl/fetch 參數由 shared acquisition policy 管理。
+P	Discovery Profile / Topic
+P	商品/服務、產業/條件、地區、市場、語言、Keywords / Exclude、Priority、Single/Continuous、Source Scope。進階 crawl/fetch 參數由 shared acquisition policy 管理。
+ROW	Broad Discovery	預設可以從「要找什麼」開始；Shared Acquisition 可用 SEARCH_DISCOVERY / WEB_FETCH / WEB_CRAWL / JSON 等已允許能力發現來源與企業訊號。
+P	Broad Discovery
+P	預設可以從「要找什麼」開始；Shared Acquisition 可用 SEARCH_DISCOVERY / WEB_FETCH / WEB_CRAWL / JSON 等已允許能力發現來源與企業訊號。
+ROW	Source Management	頁面只選取、顯示 Health 與 policy；完整 Source CRUD / Rights / Classification / Connector 設定回到 KB / shared owner。
+P	Source Management
+P	頁面只選取、顯示 Health 與 policy；完整 Source CRUD / Rights / Classification / Connector 設定回到 KB / shared owner。
+ROW	Signal Table	Company/Signal、Intent、Evidence、Freshness、Company Match、Opportunity、Action；完整 rationale/evidence 進 Drawer。
+P	Signal Table
+P	Company/Signal、Intent、Evidence、Freshness、Company Match、Opportunity、Action；完整 rationale/evidence 進 Drawer。
+ROW	Decision	QUALIFY → 可進 Company / Opportunity；IGNORE → 保留 evidence/audit，不刪除來源真實資料。
+P	Decision
+P	QUALIFY → 可進 Company / Opportunity；IGNORE → 保留 evidence/audit，不刪除來源真實資料。
+ROW	Runtime Rule	長時間 discovery 不應靠單一同步 HTTP；實際 queue/worker/checkpoint 由正式 shared runtime owner 提供。
+P	Runtime Rule
+P	長時間 discovery 不應靠單一同步 HTTP；實際 queue/worker/checkpoint 由正式 shared runtime owner 提供。
+P	admin:DEV-01 · Source Table 12
+ROW	Capability	Design / Rule
+P	Capability
+P	Design / Rule
+ROW	Company Identity	優先使用 registration/jurisdiction identity；name-only 不得自動 merge。
+P	Company Identity
+P	優先使用 registration/jurisdiction identity；name-only 不得自動 merge。
+ROW	Contact Point	Email / Phone / Address 允許一對多；每筆保留 source evidence、verification、status。
+P	Contact Point
+P	Email / Phone / Address 允許一對多；每筆保留 source evidence、verification、status。
+ROW	Merge	先 Preview；確認後非破壞式合併，保留 alias / lineage / evidence。
+P	Merge
+P	先 Preview；確認後非破壞式合併，保留 alias / lineage / evidence。
+ROW	Opportunity	商機掛在 Company；狀態以受治理 transition 管理，避免另建第二 CRM。
+P	Opportunity
+P	商機掛在 Company；狀態以受治理 transition 管理，避免另建第二 CRM。
+ROW	Opportunity State	OPEN → QUALIFIED → CONTACTED → REPLIED → PROPOSAL → WON / LOST / SUPPRESSED；非法跳轉需 block。
+P	Opportunity State
+P	OPEN → QUALIFIED → CONTACTED → REPLIED → PROPOSAL → WON / LOST / SUPPRESSED；非法跳轉需 block。
+ROW	Suppression	Do Not Contact / unsubscribe / complaint / invalid contact 在後續 Campaign / Delivery Gate 前阻擋。
+P	Suppression
+P	Do Not Contact / unsubscribe / complaint / invalid contact 在後續 Campaign / Delivery Gate 前阻擋。
+ROW	Secondary Detail	Delivery History、Evidence、Contact Verification、Suppression、Opportunity History 進 Drawer。
+P	Secondary Detail
+P	Delivery History、Evidence、Contact Verification、Suppression、Opportunity History 進 Drawer。
+P	admin:DEV-01 · Source Table 13
+ROW	Stage	Mandatory Contract	Hard Boundary
+P	Stage
+P	Mandatory Contract
+P	Hard Boundary
+ROW	Message Candidate	Audience Context + personalization + policy + version + review；create / decide / change request。	Candidate 不得直接送出；Message Stage 不存在 Send CTA。
+P	Message Candidate
+P	Audience Context + personalization + policy + version + review；create / decide / change request。
+P	Candidate 不得直接送出；Message Stage 不存在 Send CTA。
+ROW	Campaign	Audience filter + inclusion/exclusion + suppression + recipient preview + exact message version + approval。	Approve ≠ Dispatch；未預覽 recipients 不得核准。
+P	Campaign
+P	Audience filter + inclusion/exclusion + suppression + recipient preview + exact message version + approval。
+P	Approve ≠ Dispatch；未預覽 recipients 不得核准。
+ROW	Delivery	Exact APPROVED Campaign + schedule/rate/quota + suppression + idempotency + audit。	每封 Email：To=1、CC/BCC=0；禁止 bulk envelope workaround。
+P	Delivery
+P	Exact APPROVED Campaign + schedule/rate/quota + suppression + idempotency + audit。
+P	每封 Email：To=1、CC/BCC=0；禁止 bulk envelope workaround。
+ROW	Reply / Bounce	回覆、退信、失敗與 suppression 進既有 delivery/result lineage。	Partial failure 不能顯示 COMPLETE；只能重試尚未合法完成的 delta。
+P	Reply / Bounce
+P	回覆、退信、失敗與 suppression 進既有 delivery/result lineage。
+P	Partial failure 不能顯示 COMPLETE；只能重試尚未合法完成的 delta。
+ROW	Kill Switch	只在適用狀態、明確 target scope、reason、permission、state guard 下出現。	不得用 client-only stop 假裝已停止 server delivery。
+P	Kill Switch
+P	只在適用狀態、明確 target scope、reason、permission、state guard 下出現。
+P	不得用 client-only stop 假裝已停止 server delivery。
+P	admin:DEV-01 · Source Table 14
+ROW	Flow	Intent → Terminal Outcome	Required Chain
+P	Flow
+P	Intent → Terminal Outcome
+P	Required Chain
+ROW	Discovery	找到符合條件的企業商機	Profile → Start → Source/Policy Gate → Shared Acquisition → Signal → Evidence → Qualify/Ignore → Audit
+P	Discovery
+P	找到符合條件的企業商機
+P	Profile → Start → Source/Policy Gate → Shared Acquisition → Signal → Evidence → Qualify/Ignore → Audit
+ROW	Company / Opportunity	把可用 Signal 沉澱成可追蹤企業商機	Signal → Identity Resolve → Company → Contact Evidence → Opportunity → State / Next Action → Audit
+P	Company / Opportunity
+P	把可用 Signal 沉澱成可追蹤企業商機
+P	Signal → Identity Resolve → Company → Contact Evidence → Opportunity → State / Next Action → Audit
+ROW	Message	形成可審核的一對一開發內容	Company/Opportunity → Audience Context → Candidate → Policy → Human Review → Approved Version / Change Request
+P	Message
+P	形成可審核的一對一開發內容
+P	Company/Opportunity → Audience Context → Candidate → Policy → Human Review → Approved Version / Change Request
+ROW	Campaign	形成合法受眾批次	Approved Candidate → Audience Filter → Inclusion/Exclusion → Suppression → Recipient Preview → Campaign → Approval
+P	Campaign
+P	形成合法受眾批次
+P	Approved Candidate → Audience Filter → Inclusion/Exclusion → Suppression → Recipient Preview → Campaign → Approval
+ROW	Delivery	合法外寄並追蹤結果	Approved Campaign → Delivery Policy → One Recipient Item → Dispatch → Provider/Connector → Delivery Result → Reply/Bounce/Suppression → Audit
+P	Delivery
+P	合法外寄並追蹤結果
+P	Approved Campaign → Delivery Policy → One Recipient Item → Dispatch → Provider/Connector → Delivery Result → Reply/Bounce/Suppression → Audit
+P	admin:DEV-01 · Source Table 15
+ROW	Layer	States / Rules
+P	Layer
+P	States / Rules
+ROW	Page Common	LOADING / READY / EMPTY / ERROR / POLICY_BLOCKED / VERSION_CONFLICT / REVIEW_REQUIRED / EXTERNAL_PENDING / READ_ONLY / ARCHIVED
+P	Page Common
+P	LOADING / READY / EMPTY / ERROR / POLICY_BLOCKED / VERSION_CONFLICT / REVIEW_REQUIRED / EXTERNAL_PENDING / READ_ONLY / ARCHIVED
+ROW	Discovery Job	RUNNING / PAUSED / STOPPED；start/pause/resume/stop 依 exact state guard。
+P	Discovery Job
+P	RUNNING / PAUSED / STOPPED；start/pause/resume/stop 依 exact state guard。
+ROW	Discovery Profile	DRAFT / ACTIVE / PAUSED / RETIRED（若正式 owner 綁定後啟用）。
+P	Discovery Profile
+P	DRAFT / ACTIVE / PAUSED / RETIRED（若正式 owner 綁定後啟用）。
+ROW	Market Signal	NEW / QUALIFIED / IGNORED / ENGAGED / CONVERTED / SUPPRESSED。
+P	Market Signal
+P	NEW / QUALIFIED / IGNORED / ENGAGED / CONVERTED / SUPPRESSED。
+ROW	Opportunity	OPEN / QUALIFIED / CONTACTED / REPLIED / PROPOSAL / WON / LOST / SUPPRESSED。
+P	Opportunity
+P	OPEN / QUALIFIED / CONTACTED / REPLIED / PROPOSAL / WON / LOST / SUPPRESSED。
+ROW	Campaign	REVIEW / APPROVED / QUEUED；Approval 與 Dispatch 分離。
+P	Campaign
+P	REVIEW / APPROVED / QUEUED；Approval 與 Dispatch 分離。
+ROW	Authorization	identity + page permission + exact account permission + scope + condition + state guard + expected version + idempotency + audit。
+P	Authorization
+P	identity + page permission + exact account permission + scope + condition + state guard + expected version + idempotency + audit。
+P	admin:DEV-01 · Source Table 16
+ROW	Gate	Required Condition
+P	Gate
+P	Required Condition
+ROW	Discovery Start	page + configure + valid profile/request + allowed source + rate/policy + version/idempotency
+P	Discovery Start
+P	page + configure + valid profile/request + allowed source + rate/policy + version/idempotency
+ROW	Signal Decide	current signal + evidence + version + permission + audit
+P	Signal Decide
+P	current signal + evidence + version + permission + audit
+ROW	Company Merge	2+ identity-resolved refs + evidence + current preview + explicit confirm + version/idempotency
+P	Company Merge
+P	2+ identity-resolved refs + evidence + current preview + explicit confirm + version/idempotency
+ROW	Message Review	exact candidate/version + policy result + review permission
+P	Message Review
+P	exact candidate/version + policy result + review permission
+ROW	Campaign Approval	REVIEW + recipient preview + suppression + content version + version/idempotency + audit
+P	Campaign Approval
+P	REVIEW + recipient preview + suppression + content version + version/idempotency + audit
+ROW	Dispatch	APPROVED + To=1 + CC/BCC=0 + suppression pass + schedule/rate + version/idempotency + audit
+P	Dispatch
+P	APPROVED + To=1 + CC/BCC=0 + suppression pass + schedule/rate + version/idempotency + audit
+ROW	Kill Switch	exact target + reason + high-risk confirmation + permission + state guard + audit
+P	Kill Switch
+P	exact target + reason + high-risk confirmation + permission + state guard + audit
+P	admin:DEV-01 · Source Table 17
+ROW	Operation	Method / Route	Role
+P	Operation
+P	Method / Route
+P	Role
+ROW	startCompanyDiscovery	POST /v1/outreach/discovery-jobs	Start discovery
+P	startCompanyDiscovery
+P	POST /v1/outreach/discovery-jobs
+P	Start discovery
+ROW	pause/resume/stopCompanyDiscovery	POST /v1/outreach/discovery-jobs/{jobId}/...	Lifecycle control
+P	pause/resume/stopCompanyDiscovery
+P	POST /v1/outreach/discovery-jobs/{jobId}/...
+P	Lifecycle control
+ROW	searchProjection	POST /v1/search	Directory / audience search
+P	searchProjection
+P	POST /v1/search
+P	Directory / audience search
+ROW	previewCompanyMerge	POST /v1/outreach/companies/merge-preview	Non-destructive preview
+P	previewCompanyMerge
+P	POST /v1/outreach/companies/merge-preview
+P	Non-destructive preview
+ROW	mergeCompanyCandidate	POST /v1/outreach/companies/{companyId}/merge	Merge with lineage
+P	mergeCompanyCandidate
+P	POST /v1/outreach/companies/{companyId}/merge
+P	Merge with lineage
+ROW	create / decide Candidate	POST /v1/candidates...	Message candidate lifecycle
+P	create / decide Candidate
+P	POST /v1/candidates...
+P	Message candidate lifecycle
+ROW	create / approve Campaign	POST /v1/outreach/campaigns...	Batch lifecycle
+P	create / approve Campaign
+P	POST /v1/outreach/campaigns...
+P	Batch lifecycle
+ROW	dispatchOutreachCampaign	POST /v1/outreach/campaigns/{campaignId}/dispatch	Creates governed individual delivery work
+P	dispatchOutreachCampaign
+P	POST /v1/outreach/campaigns/{campaignId}/dispatch
+P	Creates governed individual delivery work
+ROW	refreshProjection	POST /v1/projections/refresh	Read model refresh
+P	refreshProjection
+P	POST /v1/projections/refresh
+P	Read model refresh
+ROW	setKillSwitch	POST /v1/operations/kill-switch	High-risk stop
+P	setKillSwitch
+P	POST /v1/operations/kill-switch
+P	High-risk stop
+ROW	Optimization operations	Profile Save / Signal Decide / Contact Upsert / Opportunity Update	施工前必須解析唯一 owner / route；未解析不得自行新增平行 endpoint
+P	Optimization operations
+P	Profile Save / Signal Decide / Contact Upsert / Opportunity Update
+P	施工前必須解析唯一 owner / route；未解析不得自行新增平行 endpoint
+P	admin:DEV-01 · Source Table 18
+ROW	Topic	Required Rule
+P	Topic
+P	Required Rule
+ROW	Data Reuse	Company / Contact / Candidate / Campaign / Delivery / Suppression / Evidence / Audit 優先沿用現有 owner；禁止第二真相來源。
+P	Data Reuse
+P	Company / Contact / Candidate / Campaign / Delivery / Suppression / Evidence / Audit 優先沿用現有 owner；禁止第二真相來源。
+ROW	Profile / Signal / Opportunity	若實作需要持久化，必須先有唯一 current owner / schema / migration / permission / audit；文件不授權 ad-hoc table。
+P	Profile / Signal / Opportunity
+P	若實作需要持久化，必須先有唯一 current owner / schema / migration / permission / audit；文件不授權 ad-hoc table。
+ROW	PII / Contact	僅公開或已授權資料；保留 rights/classification/freshness/retention；私人/未知來源不可自動採集。
+P	PII / Contact
+P	僅公開或已授權資料；保留 rights/classification/freshness/retention；私人/未知來源不可自動採集。
+ROW	Suppression	跨 Campaign/Topic 生效；任何送達前 Gate 都不可 bypass。
+P	Suppression
+P	跨 Campaign/Topic 生效；任何送達前 Gate 都不可 bypass。
+ROW	Partial Apply	多步操作部分成功時保持 non-final，呈現 succeeded/blocked/failed；只對未完成合法 work 做 idempotent retry。
+P	Partial Apply
+P	多步操作部分成功時保持 non-final，呈現 succeeded/blocked/failed；只對未完成合法 work 做 idempotent retry。
+ROW	Connector Failure	標記 EXTERNAL_PENDING/ERROR；不得生成假結果；只依正式 retry policy。
+P	Connector Failure
+P	標記 EXTERNAL_PENDING/ERROR；不得生成假結果；只依正式 retry policy。
+ROW	Version Conflict	重新讀 current exact entity、重跑 preview，再要求確認。
+P	Version Conflict
+P	重新讀 current exact entity、重跑 preview，再要求確認。
+ROW	Undefined	未註冊 field / operation / route / service → BLOCK + REPORT，禁止另建平行系統。
+P	Undefined
+P	未註冊 field / operation / route / service → BLOCK + REPORT，禁止另建平行系統。
+P	admin:DEV-01 · Source Table 19
+ROW	Item	Specification
+P	Item
+P	Specification
+ROW	Global Theme	科技紫；Page 不自建 palette / button theme。
+P	Global Theme
+P	科技紫；Page 不自建 palette / button theme。
+ROW	Control Height	標準 40px；Compact 32px；Page-specific Stage action 可依 current class 38–40px，但同類一致。
+P	Control Height
+P	標準 40px；Compact 32px；Page-specific Stage action 可依 current class 38–40px，但同類一致。
+ROW	Touch Target	至少 44×44px。
+P	Touch Target
+P	至少 44×44px。
+ROW	Primary CTA	同一 Dock 同時最多 1 個 Primary。
+P	Primary CTA
+P	同一 Dock 同時最多 1 個 Primary。
+ROW	State Geometry	Default/Hover/Focus/Disabled/Loading/Success/Error 不改變 width / height / padding，避免 layout jump。
+P	State Geometry
+P	Default/Hover/Focus/Disabled/Loading/Success/Error 不改變 width / height / padding，避免 layout jump。
+ROW	Text Overflow	固定寬度控制不可自動長大；短 label、ellipsis、tooltip。
+P	Text Overflow
+P	固定寬度控制不可自動長大；短 label、ellipsis、tooltip。
+ROW	Table	高資訊密度；row action 只保留主操作，其餘 Drawer/More。
+P	Table
+P	高資訊密度；row action 只保留主操作，其餘 Drawer/More。
+ROW	Desktop	1280 / 1440 / 1920 必須做 geometry evidence；<1280 horizontal scroll，不重排成第二套 mobile flow。
+P	Desktop
+P	1280 / 1440 / 1920 必須做 geometry evidence；<1280 horizontal scroll，不重排成第二套 mobile flow。
+ROW	Locales	zh-TW / zh-CN / en；ORANGE ONE、ACPOS、AI、API、Campaign、Provider 可保留固定詞。
+P	Locales
+P	zh-TW / zh-CN / en；ORANGE ONE、ACPOS、AI、API、Campaign、Provider 可保留固定詞。
+ROW	A11y	Keyboard focus、可見 focus ring、非只靠色彩、disabled reason、Drawer focus trap、table header semantics。
+P	A11y
+P	Keyboard focus、可見 focus ring、非只靠色彩、disabled reason、Drawer focus trap、table header semantics。
+P	admin:DEV-01 · Source Table 20
+ROW	Validation Dimension	PASS Condition
+P	Validation Dimension
+P	PASS Condition
+ROW	Requirement Coverage	五階段與優化補強全部能映射到明確 Entity / Action / Gate / Owner。
+P	Requirement Coverage
+P	五階段與優化補強全部能映射到明確 Entity / Action / Gate / Owner。
+ROW	No Duplicate System	無第二 CRM / Company DB / Source Registry / Candidate / Campaign / Delivery / Suppression / Audit 系統。
+P	No Duplicate System
+P	無第二 CRM / Company DB / Source Registry / Candidate / Campaign / Delivery / Suppression / Audit 系統。
+ROW	Functional Chain	Discovery、Company/Opportunity、Candidate、Campaign、Delivery 每條鏈沒有缺少 precondition / trigger / gate / permission / action / response / recovery。
+P	Functional Chain
+P	Discovery、Company/Opportunity、Candidate、Campaign、Delivery 每條鏈沒有缺少 precondition / trigger / gate / permission / action / response / recovery。
+ROW	Permission	UI hide 不等於 authorization；所有 effectful server operation 需 exact permission/scope/state/audit。
+P	Permission
+P	UI hide 不等於 authorization；所有 effectful server operation 需 exact permission/scope/state/audit。
+ROW	Broad Discovery	使用者可只定義需求與條件；允許的 Shared Acquisition 可以產生可驗證 Signal，而非要求人工先列出所有來源。
+P	Broad Discovery
+P	使用者可只定義需求與條件；允許的 Shared Acquisition 可以產生可驗證 Signal，而非要求人工先列出所有來源。
+ROW	Recipient Governance	Campaign Approval 前有 recipient preview / suppression；Delivery To=1, CC/BCC=0。
+P	Recipient Governance
+P	Campaign Approval 前有 recipient preview / suppression；Delivery To=1, CC/BCC=0。
+ROW	Visual Geometry	1280/1440/1920：overlap=0、clipping=0、text overflow=0、anchor drift=0。
+P	Visual Geometry
+P	1280/1440/1920：overlap=0、clipping=0、text overflow=0、anchor drift=0。
+ROW	A11y / i18n	鍵盤、focus、table semantics、disabled reason、三語切換符合規格。
+P	A11y / i18n
+P	鍵盤、focus、table semantics、disabled reason、三語切換符合規格。
+ROW	Truthful Completion	Word 完成 ≠ Runtime / E2E / Production 完成；實際施工需 evidence 才可標 PASS。
+P	Truthful Completion
+P	Word 完成 ≠ Runtime / E2E / Production 完成；實際施工需 evidence 才可標 PASS。
+P	admin:DEV-01 · Source Table 21
+ROW	Layer	Implementation Target	Rule
+P	Layer
+P	Implementation Target
+P	Rule
+ROW	Page UI	DEV-01 visual/workbench component	保留單頁 5 Stage；只修改受影響區域，不重做整站 shell。
+P	Page UI
+P	DEV-01 visual/workbench component
+P	保留單頁 5 Stage；只修改受影響區域，不重做整站 shell。
+ROW	Control Binding	DEV-01 control/action bindings	Current 22 controls 沿用；新增 6 interaction 需先有 exact owner / permission / gate。
+P	Control Binding
+P	DEV-01 control/action bindings
+P	Current 22 controls 沿用；新增 6 interaction 需先有 exact owner / permission / gate。
+ROW	Shared Acquisition	Shared runtime / KB Source owner	DEV 只發出受治理 intent；不自行 fetch/crawl。
+P	Shared Acquisition
+P	Shared runtime / KB Source owner
+P	DEV 只發出受治理 intent；不自行 fetch/crawl。
+ROW	Directory / Outreach	Existing Outreach services	Company / Contact / Candidate / Campaign / Delivery 全部沿用既有 owner。
+P	Directory / Outreach
+P	Existing Outreach services
+P	Company / Contact / Candidate / Campaign / Delivery 全部沿用既有 owner。
+ROW	Permission	IAM explicit assignments	enterprise_development L1 僅是入口配置；Runtime 仍靠 exact resources/actions。
+P	Permission
+P	IAM explicit assignments
+P	enterprise_development L1 僅是入口配置；Runtime 仍靠 exact resources/actions。
+ROW	Audit / Evidence	Existing audit/evidence owner	所有 mutation / external attempt / suppression / decision / delivery 保留 correlation / evidence。
+P	Audit / Evidence
+P	Existing audit/evidence owner
+P	所有 mutation / external attempt / suppression / decision / delivery 保留 correlation / evidence。
+ROW	Visual QA	Browser geometry evidence	1280 / 1440 / 1920 覆蓋，所有未授權 drift = 0。
+P	Visual QA
+P	Browser geometry evidence
+P	1280 / 1440 / 1920 覆蓋，所有未授權 drift = 0。
+P	admin:DEV-01 · Effectful Control → API → DB Closure Matrix
+ROW	Page UID	Control UID	UID Status	Operation/Action	Method / Path	DB / Provider Owner	Gate	Permission	Binding Status
+P	Page UID
+P	Control UID
+P	UID Status
+P	Operation/Action
+P	Method / Path
+P	DB / Provider Owner
+P	Gate
+P	Permission
+P	Binding Status
+ROW	admin:DEV-01	DEV-01-BTN-START-COMPANY-DISCOVERY	NEW_UID_FROM_EXISTING_OPERATION	startCompanyDiscovery	POST /v1/outreach/discovery-jobs	acpos_enterprise.companies	SERVER_STATE_GATE	SOURCE_PERMISSION_OR_OPERATION_SCOPE	CLOSURE_MATERIALIZED
+P	admin:DEV-01
+P	DEV-01-BTN-START-COMPANY-DISCOVERY
+P	NEW_UID_FROM_EXISTING_OPERATION
+P	startCompanyDiscovery
+P	POST /v1/outreach/discovery-jobs
+P	acpos_enterprise.companies
+P	SERVER_STATE_GATE
+P	SOURCE_PERMISSION_OR_OPERATION_SCOPE
+P	CLOSURE_MATERIALIZED
+ROW	admin:DEV-01	DEV-01-BTN-PAUSE-RESUME-STOP-COMPANY-DISCOVERY	NEW_UID_FROM_EXISTING_OPERATION	pause/resume/stopCompanyDiscovery	POST /v1/outreach/discovery-jobs/{jobId}/...	acpos_enterprise.companies	SERVER_STATE_GATE	SOURCE_PERMISSION_OR_OPERATION_SCOPE	CLOSURE_MATERIALIZED
+P	admin:DEV-01
+P	DEV-01-BTN-PAUSE-RESUME-STOP-COMPANY-DISCOVERY
+P	NEW_UID_FROM_EXISTING_OPERATION
+P	pause/resume/stopCompanyDiscovery
+P	POST /v1/outreach/discovery-jobs/{jobId}/...
+P	acpos_enterprise.companies
+P	SERVER_STATE_GATE
+P	SOURCE_PERMISSION_OR_OPERATION_SCOPE
+P	CLOSURE_MATERIALIZED
+ROW	admin:DEV-01	DEV-01-BTN-SEARCH-PROJECTION	NEW_UID_FROM_EXISTING_OPERATION	searchProjection	POST /v1/search	acpos_core.projects	SERVER_STATE_GATE	SOURCE_PERMISSION_OR_OPERATION_SCOPE	CLOSURE_MATERIALIZED
+P	admin:DEV-01
+P	DEV-01-BTN-SEARCH-PROJECTION
+P	NEW_UID_FROM_EXISTING_OPERATION
+P	searchProjection
+P	POST /v1/search
+P	acpos_core.projects
+P	SERVER_STATE_GATE
+P	SOURCE_PERMISSION_OR_OPERATION_SCOPE
+P	CLOSURE_MATERIALIZED
+ROW	admin:DEV-01	DEV-01-BTN-PREVIEW-COMPANY-MERGE	NEW_UID_FROM_EXISTING_OPERATION	previewCompanyMerge	POST /v1/outreach/companies/merge-preview	acpos_enterprise.companies	SERVER_STATE_GATE	SOURCE_PERMISSION_OR_OPERATION_SCOPE	CLOSURE_MATERIALIZED
+P	admin:DEV-01
+P	DEV-01-BTN-PREVIEW-COMPANY-MERGE
+P	NEW_UID_FROM_EXISTING_OPERATION
+P	previewCompanyMerge
+P	POST /v1/outreach/companies/merge-preview
+P	acpos_enterprise.companies
+P	SERVER_STATE_GATE
+P	SOURCE_PERMISSION_OR_OPERATION_SCOPE
+P	CLOSURE_MATERIALIZED
+ROW	admin:DEV-01	DEV-01-BTN-MERGE-COMPANY-CANDIDATE	NEW_UID_FROM_EXISTING_OPERATION	mergeCompanyCandidate	POST /v1/outreach/companies/{companyId}/merge	acpos_enterprise.companies	SERVER_STATE_GATE	SOURCE_PERMISSION_OR_OPERATION_SCOPE	CLOSURE_MATERIALIZED
+P	admin:DEV-01
+P	DEV-01-BTN-MERGE-COMPANY-CANDIDATE
+P	NEW_UID_FROM_EXISTING_OPERATION
+P	mergeCompanyCandidate
+P	POST /v1/outreach/companies/{companyId}/merge
+P	acpos_enterprise.companies
+P	SERVER_STATE_GATE
+P	SOURCE_PERMISSION_OR_OPERATION_SCOPE
+P	CLOSURE_MATERIALIZED
+ROW	admin:DEV-01	DEV-01-BTN-CREATE-DECIDE-CANDIDATE	NEW_UID_FROM_EXISTING_OPERATION	create / decide Candidate	POST /v1/candidates...	domain_candidate_store	SERVER_STATE_GATE	SOURCE_PERMISSION_OR_OPERATION_SCOPE	CLOSURE_MATERIALIZED
+P	admin:DEV-01
+P	DEV-01-BTN-CREATE-DECIDE-CANDIDATE
+P	NEW_UID_FROM_EXISTING_OPERATION
+P	create / decide Candidate
+P	POST /v1/candidates...
+P	domain_candidate_store
+P	SERVER_STATE_GATE
+P	SOURCE_PERMISSION_OR_OPERATION_SCOPE
+P	CLOSURE_MATERIALIZED
+ROW	admin:DEV-01	DEV-01-BTN-CREATE-APPROVE-CAMPAIGN	NEW_UID_FROM_EXISTING_OPERATION	create / approve Campaign	POST /v1/outreach/campaigns...	acpos_enterprise.outreach_campaigns	SERVER_STATE_GATE	SOURCE_PERMISSION_OR_OPERATION_SCOPE	CLOSURE_MATERIALIZED
+P	admin:DEV-01
+P	DEV-01-BTN-CREATE-APPROVE-CAMPAIGN
+P	NEW_UID_FROM_EXISTING_OPERATION
+P	create / approve Campaign
+P	POST /v1/outreach/campaigns...
+P	acpos_enterprise.outreach_campaigns
+P	SERVER_STATE_GATE
+P	SOURCE_PERMISSION_OR_OPERATION_SCOPE
+P	CLOSURE_MATERIALIZED
+ROW	admin:DEV-01	DEV-01-BTN-DISPATCH-OUTREACH-CAMPAIGN	NEW_UID_FROM_EXISTING_OPERATION	dispatchOutreachCampaign	POST /v1/outreach/campaigns/{campaignId}/dispatch	acpos_enterprise.outreach_campaigns	SERVER_STATE_GATE	SOURCE_PERMISSION_OR_OPERATION_SCOPE	CLOSURE_MATERIALIZED
+P	admin:DEV-01
+P	DEV-01-BTN-DISPATCH-OUTREACH-CAMPAIGN
+P	NEW_UID_FROM_EXISTING_OPERATION
+P	dispatchOutreachCampaign
+P	POST /v1/outreach/campaigns/{campaignId}/dispatch
+P	acpos_enterprise.outreach_campaigns
+P	SERVER_STATE_GATE
+P	SOURCE_PERMISSION_OR_OPERATION_SCOPE
+P	CLOSURE_MATERIALIZED
+ROW	admin:DEV-01	DEV-01-BTN-REFRESH-PROJECTION	NEW_UID_FROM_EXISTING_OPERATION	refreshProjection	POST /v1/projections/refresh	acpos_core.projects	SERVER_STATE_GATE	SOURCE_PERMISSION_OR_OPERATION_SCOPE	CLOSURE_MATERIALIZED
+P	admin:DEV-01
+P	DEV-01-BTN-REFRESH-PROJECTION
+P	NEW_UID_FROM_EXISTING_OPERATION
+P	refreshProjection
+P	POST /v1/projections/refresh
+P	acpos_core.projects
+P	SERVER_STATE_GATE
+P	SOURCE_PERMISSION_OR_OPERATION_SCOPE
+P	CLOSURE_MATERIALIZED
+ROW	admin:DEV-01	DEV-01-BTN-SET-KILL-SWITCH	NEW_UID_FROM_EXISTING_OPERATION	setKillSwitch	POST /v1/operations/kill-switch	acpos_runtime.kill_switch_states	SERVER_STATE_GATE	SOURCE_PERMISSION_OR_OPERATION_SCOPE	CLOSURE_MATERIALIZED
+P	admin:DEV-01
+P	DEV-01-BTN-SET-KILL-SWITCH
+P	NEW_UID_FROM_EXISTING_OPERATION
+P	setKillSwitch
+P	POST /v1/operations/kill-switch
+P	acpos_runtime.kill_switch_states
+P	SERVER_STATE_GATE
+P	SOURCE_PERMISSION_OR_OPERATION_SCOPE
+P	CLOSURE_MATERIALIZED
+P	Source Authority Snapshot — admin:ERP-01
+P	Source File: ACPOS_ERP-01_ERP與財務_Mother_Basic_Design_OPTIMIZED.docx
+P	Source SHA-256: 48fb3a129d6e43d8a9e0fa1364a52300697438008131150b69f9686b7a9c5692
+P	Included binding/data/state tables: 18. These rows are copied verbatim in text value from the uploaded Basic Design source; no UID/value renaming is performed.
+P	admin:ERP-01 · Source Table 1
+ROW	項目	設計規格
+P	項目
+P	設計規格
+ROW	Page UID	admin:ERP-01
+P	Page UID
+P	admin:ERP-01
+ROW	顯示名稱	ERP / ERP & Finance
+P	顯示名稱
+P	ERP / ERP & Finance
+ROW	Surface	ADMIN
+P	Surface
+P	ADMIN
+ROW	主要目的	將財務 Read Model、ERP Connector/Mapping、Snapshot/Sync/Data Quality 集中在單一工作區。
+P	主要目的
+P	將財務 Read Model、ERP Connector/Mapping、Snapshot/Sync/Data Quality 集中在單一工作區。
+ROW	主要使用者	具有 ERP/Finance L1 與精確 operation permission 的管理者／財務／系統營運人員。
+P	主要使用者
+P	具有 ERP/Finance L1 與精確 operation permission 的管理者／財務／系統營運人員。
+ROW	主流程	Finance Overview ↔ ERP Connection ↔ Sync & Data Quality；Detail/Audit 使用 secondary drawer。
+P	主流程
+P	Finance Overview ↔ ERP Connection ↔ Sync & Data Quality；Detail/Audit 使用 secondary drawer。
+ROW	產品原則	One ERP owner、One Finance owner、Real data only、Fail Closed、Exact Version、No missing-as-zero。
+P	產品原則
+P	One ERP owner、One Finance owner、Real data only、Fail Closed、Exact Version、No missing-as-zero。
+ROW	完成語義	頁面成功只能描述已完成的 View/Action；不能用本頁規格完成推論 Runtime、E2E 或 Production Ready。
+P	完成語義
+P	頁面成功只能描述已完成的 View/Action；不能用本頁規格完成推論 Runtime、E2E 或 Production Ready。
+P	admin:ERP-01 · Source Table 2
+ROW	類型	內容
+P	類型
+P	內容
+ROW	In Scope	成本、收益、現金流、產能、Forecast、Guardrails、Recommendation Boundary；ERP Connector 建立/更新/驗證；Mapping 驗證；Snapshot Refresh；Sync 建立/狀態/重試；Failure Detail；Export。
+P	In Scope
+P	成本、收益、現金流、產能、Forecast、Guardrails、Recommendation Boundary；ERP Connector 建立/更新/驗證；Mapping 驗證；Snapshot Refresh；Sync 建立/狀態/重試；Failure Detail；Export。
+ROW	產品優化	將 Finance Actual、Forecast、Guardrail 三種語義分開；增加 Data Trust Strip；Connector/Mapping/Sync 做前置條件與合法下一步；Failure Recovery 與 Audit Drawer 同頁。
+P	產品優化
+P	將 Finance Actual、Forecast、Guardrail 三種語義分開；增加 Data Trust Strip；Connector/Mapping/Sync 做前置條件與合法下一步；Failure Recovery 與 Audit Drawer 同頁。
+ROW	Out of Scope	建立收入、建立支出、直接編輯 Ledger、Budget Reallocation 執行、Manual Journal、外部 ERP Writeback、第二 Finance/ERP Service、第二 Export Service、頁面內 Secret Store。
+P	Out of Scope
+P	建立收入、建立支出、直接編輯 Ledger、Budget Reallocation 執行、Manual Journal、外部 ERP Writeback、第二 Finance/ERP Service、第二 Export Service、頁面內 Secret Store。
+ROW	Non-functional	Secret Reference only、Amount permission mask、Missing=—、Stale/Incomplete 可見、Idempotency、Expected Version、Audit、A11y、1280+ Desktop。
+P	Non-functional
+P	Secret Reference only、Amount permission mask、Missing=—、Stale/Incomplete 可見、Idempotency、Expected Version、Audit、A11y、1280+ Desktop。
+P	admin:ERP-01 · Source Table 3
+ROW	Entity	Read / Projection	Operation	核心邊界
+P	Entity
+P	Read / Projection
+P	Operation
+P	核心邊界
+ROW	FinanceReadModel	Cost / Revenue / Cashflow / Capacity	Get Fact Pack / Forecast / Guardrails / Export	只讀；前端不自行計算權威財務值。
+P	FinanceReadModel
+P	Cost / Revenue / Cashflow / Capacity
+P	Get Fact Pack / Forecast / Guardrails / Export
+P	只讀；前端不自行計算權威財務值。
+ROW	ERPConnector	Connector / Provider / Adapter / Scope / Status	Create / Update / Validate	Secret 只保存 Reference ID。
+P	ERPConnector
+P	Connector / Provider / Adapter / Scope / Status
+P	Create / Update / Validate
+P	Secret 只保存 Reference ID。
+ROW	ERPMapping	Mapping Version / Schema Binding	Validate Mapping	Mapping 未通過不可假裝 Connector Ready。
+P	ERPMapping
+P	Mapping Version / Schema Binding
+P	Validate Mapping
+P	Mapping 未通過不可假裝 Connector Ready。
+ROW	ERPSnapshot	Snapshot / Freshness / Currency-Timezone / Completeness	Refresh Snapshot	缺值不是 0；Freshness/Completeness 是資料信任條件。
+P	ERPSnapshot
+P	Snapshot / Freshness / Currency-Timezone / Completeness
+P	Refresh Snapshot
+P	缺值不是 0；Freshness/Completeness 是資料信任條件。
+ROW	ERPSyncJob	Sync Job / Status / Failure	Create / Get Status / Retry	只有 failed 且 retry-eligible job 可重試。
+P	ERPSyncJob
+P	Sync Job / Status / Failure
+P	Create / Get Status / Retry
+P	只有 failed 且 retry-eligible job 可重試。
+ROW	ERPFailure	Failure ID / reason / retry eligibility	Get Failure	低頻 detail drawer；不複製第二 Failure Store。
+P	ERPFailure
+P	Failure ID / reason / retry eligibility
+P	Get Failure
+P	低頻 detail drawer；不複製第二 Failure Store。
+ROW	Audit / Correlation	Audit Ref / Version / Correlation	Open Detail	Effectful operation 必須留下追溯。
+P	Audit / Correlation
+P	Audit Ref / Version / Correlation
+P	Open Detail
+P	Effectful operation 必須留下追溯。
+ROW	ExportProjection	Authorized current projection	Export	只匯出授權 Scope；沿用既有 Export owner。
+P	ExportProjection
+P	Authorized current projection
+P	Export
+P	只匯出授權 Scope；沿用既有 Export owner。
+P	admin:ERP-01 · Source Table 4
+ROW	View	主工作區	主要操作	條件／限制
+P	View
+P	主工作區
+P	主要操作
+P	條件／限制
+ROW	財務概況	Cost / Revenue / Cashflow / Capacity / Forecast / Guardrails / Recommendation Boundary	Fact Pack / Guardrails / Forecast / Export	Actual 與 Forecast/Guardrail 分層；無 fake KPI / client formula。
+P	財務概況
+P	Cost / Revenue / Cashflow / Capacity / Forecast / Guardrails / Recommendation Boundary
+P	Fact Pack / Guardrails / Forecast / Export
+P	Actual 與 Forecast/Guardrail 分層；無 fake KPI / client formula。
+ROW	ERP 連接	Connector Identity、Provider/Adapter、Secret Ref、Entity Scope、Connection Status、Mapping Version	Create / Update / Validate Connector / Validate Mapping	Secret Value 不進頁面；Mapping/Connector 狀態決定合法下一步。
+P	ERP 連接
+P	Connector Identity、Provider/Adapter、Secret Ref、Entity Scope、Connection Status、Mapping Version
+P	Create / Update / Validate Connector / Validate Mapping
+P	Secret Value 不進頁面；Mapping/Connector 狀態決定合法下一步。
+ROW	同步與資料品質	Snapshot、Freshness、Currency-Timezone、Completeness、Last Sync、Failure	Refresh Snapshot / Create Sync / Status / Retry / Failure Detail	Stale / Failed / Incomplete 顯示真實狀態；Retry 僅合法 Job。
+P	同步與資料品質
+P	Snapshot、Freshness、Currency-Timezone、Completeness、Last Sync、Failure
+P	Refresh Snapshot / Create Sync / Status / Retry / Failure Detail
+P	Stale / Failed / Incomplete 顯示真實狀態；Retry 僅合法 Job。
+P	admin:ERP-01 · Source Table 5
+ROW	能力	裁決	理由
+P	能力
+P	裁決
+P	理由
+ROW	Finance Fact Pack / Forecast / Guardrail	保留主流程	已有精確 Read Operation。
+P	Finance Fact Pack / Forecast / Guardrail
+P	保留主流程
+P	已有精確 Read Operation。
+ROW	Connector Create / Update / Validate	保留主流程	已有精確 Effectful Operation + Gate。
+P	Connector Create / Update / Validate
+P	保留主流程
+P	已有精確 Effectful Operation + Gate。
+ROW	Mapping Validate	保留主流程	避免 Sync 在未知 Mapping 下執行。
+P	Mapping Validate
+P	保留主流程
+P	避免 Sync 在未知 Mapping 下執行。
+ROW	Snapshot / Sync / Retry	保留主流程	具精確 Job / State / Retry Gate。
+P	Snapshot / Sync / Retry
+P	保留主流程
+P	具精確 Job / State / Retry Gate。
+ROW	Raw Secret Reveal / Secret Value Field	排除	ERP 頁面只處理 secret_reference_id。
+P	Raw Secret Reveal / Secret Value Field
+P	排除
+P	ERP 頁面只處理 secret_reference_id。
+ROW	新增收入／支出／Ledger Edit / Journal	不加入 effectful UI	沒有精確已註冊 Operation；要求時 BLOCK + Authority Gap。
+P	新增收入／支出／Ledger Edit / Journal
+P	不加入 effectful UI
+P	沒有精確已註冊 Operation；要求時 BLOCK + Authority Gap。
+ROW	Budget Reallocation 執行	不加入	沒有精確 Operation / Approval Contract。
+P	Budget Reallocation 執行
+P	不加入
+P	沒有精確 Operation / Approval Contract。
+ROW	External ERP Writeback	禁止	本頁只做 Connector/Read/Sync，不回寫 ERP。
+P	External ERP Writeback
+P	禁止
+P	本頁只做 Connector/Read/Sync，不回寫 ERP。
+ROW	裝飾性 KPI / Trend / Sample Amount	排除	缺值不得用 0 或假資料補齊。
+P	裝飾性 KPI / Trend / Sample Amount
+P	排除
+P	缺值不得用 0 或假資料補齊。
+P	admin:ERP-01 · Source Table 6
+ROW	區域	Geometry / 行為
+P	區域
+P	Geometry / 行為
+ROW	Global Header	58px；沿用全站 Header。
+P	Global Header
+P	58px；沿用全站 Header。
+ROW	Sidebar	64px collapsed interaction rail；expanded overlay 221px，不推動 workspace。
+P	Sidebar
+P	64px collapsed interaction rail；expanded overlay 221px，不推動 workspace。
+ROW	Context Bar	56px；顯示 Page Title、Scope、Snapshot、Freshness。
+P	Context Bar
+P	56px；顯示 Page Title、Scope、Snapshot、Freshness。
+ROW	View Bar	52px；財務概況 / ERP 連接 / 同步與資料品質，僅切換 UI context。
+P	View Bar
+P	52px；財務概況 / ERP 連接 / 同步與資料品質，僅切換 UI context。
+ROW	Primary Grid	72% 主工作區 + 28% Governance Rail，gap 16px。
+P	Primary Grid
+P	72% 主工作區 + 28% Governance Rail，gap 16px。
+ROW	Detail Drawer	480–560px；Failure/Audit/Version/Correlation/低頻內容。
+P	Detail Drawer
+P	480–560px；Failure/Audit/Version/Correlation/低頻內容。
+ROW	Action Dock	56px；只顯示目前 View + State + Permission 合法操作；最多 1 個 dominant CTA。
+P	Action Dock
+P	56px；只顯示目前 View + State + Permission 合法操作；最多 1 個 dominant CTA。
+ROW	Minimum Width	1280px；以下 horizontal scroll，不建立不同功能流程。
+P	Minimum Width
+P	1280px；以下 horizontal scroll，不建立不同功能流程。
+P	admin:ERP-01 · Source Table 8
+ROW	欄位／操作	規格
+P	欄位／操作
+P	規格
+ROW	Connector fields	provider_key / adapter_key / secret_reference_id / entity_scope / mapping_version + registered mapping schema fields。
+P	Connector fields
+P	provider_key / adapter_key / secret_reference_id / entity_scope / mapping_version + registered mapping schema fields。
+ROW	Create	Schema-driven modal；不得加入 raw secret value 或 client-authored runtime state。
+P	Create
+P	Schema-driven modal；不得加入 raw secret value 或 client-authored runtime state。
+ROW	Update	只依精確既有 Update Schema；禁止把 Page 欄位 union 成 request。
+P	Update
+P	只依精確既有 Update Schema；禁止把 Page 欄位 union 成 request。
+ROW	Validate Connector	精確 Connector + Version + State Guard + Permission + Audit。
+P	Validate Connector
+P	精確 Connector + Version + State Guard + Permission + Audit。
+ROW	Validate Mapping	精確 Mapping Version / Schema；Fail 時保留原狀態，不假裝 READY。
+P	Validate Mapping
+P	精確 Mapping Version / Schema；Fail 時保留原狀態，不假裝 READY。
+ROW	Secret Boundary	UI 只顯示 Secret Reference ID；Secret Value 永不 normal-render。
+P	Secret Boundary
+P	UI 只顯示 Secret Reference ID；Secret Value 永不 normal-render。
+P	admin:ERP-01 · Source Table 9
+ROW	能力	契約
+P	能力
+P	契約
+ROW	Refresh Snapshot	刷新既有 Snapshot Projection；State/Scope/Version/Idempotency/Audit 皆需成立。
+P	Refresh Snapshot
+P	刷新既有 Snapshot Projection；State/Scope/Version/Idempotency/Audit 皆需成立。
+ROW	Create Sync Job	精確 Connector + Scope + Current Request Schema；不得把 fixture/example 變成 UI default。
+P	Create Sync Job
+P	精確 Connector + Scope + Current Request Schema；不得把 fixture/example 變成 UI default。
+ROW	Get Sync Status	讀取 exact Job；不以「已按下按鈕」推論成功。
+P	Get Sync Status
+P	讀取 exact Job；不以「已按下按鈕」推論成功。
+ROW	Retry Sync	只有 failed + retry-eligible exact job 可用；重試需 idempotency / audit。
+P	Retry Sync
+P	只有 failed + retry-eligible exact job 可用；重試需 idempotency / audit。
+ROW	Failure Detail	顯示允許的 Failure detail + correlation/version；低頻 Drawer。
+P	Failure Detail
+P	顯示允許的 Failure detail + correlation/version；低頻 Drawer。
+ROW	Data Quality	Freshness、Completeness、Currency-Timezone、Last Sync Status 是第一級判讀資訊。
+P	Data Quality
+P	Freshness、Completeness、Currency-Timezone、Last Sync Status 是第一級判讀資訊。
+ROW	Partial / Failed	維持 SNAPSHOT_FAILED / DATA_INCOMPLETE / 真實狀態，不顯示 COMPLETE。
+P	Partial / Failed
+P	維持 SNAPSHOT_FAILED / DATA_INCOMPLETE / 真實狀態，不顯示 COMPLETE。
+P	admin:ERP-01 · Source Table 10
+ROW	Chain	完整鏈路
+P	Chain
+P	完整鏈路
+ROW	Finance Read	Intent → Page Gate → finance.read → getUiProjection/Finance Operations → Read Model → Mask/Data Trust → UI State
+P	Finance Read
+P	Intent → Page Gate → finance.read → getUiProjection/Finance Operations → Read Model → Mask/Data Trust → UI State
+ROW	Fact Pack	Finance View → Gate → getERPFinanceFactPack → FinanceGuardrailService → exact response → Audit/Display
+P	Fact Pack
+P	Finance View → Gate → getERPFinanceFactPack → FinanceGuardrailService → exact response → Audit/Display
+ROW	Connector Create	Form → Connector Write Gate → exact schema → createERPConnector → ERPConnectorService → State CONFIGURING → Audit
+P	Connector Create
+P	Form → Connector Write Gate → exact schema → createERPConnector → ERPConnectorService → State CONFIGURING → Audit
+ROW	Connector Validate	Exact Connector → Validate Gate → validateERPConnector → READY / DEGRADED / FAILED → UI + Failure Ref
+P	Connector Validate
+P	Exact Connector → Validate Gate → validateERPConnector → READY / DEGRADED / FAILED → UI + Failure Ref
+ROW	Mapping Validate	Exact Mapping/Version → Mapping Gate → validateERPMapping → Result → allow/block next step
+P	Mapping Validate
+P	Exact Mapping/Version → Mapping Gate → validateERPMapping → Result → allow/block next step
+ROW	Sync Create	Exact Connector/Scope → Sync Create Gate → createERPSyncJob → Job → Status → Snapshot/Data Quality
+P	Sync Create
+P	Exact Connector/Scope → Sync Create Gate → createERPSyncJob → Job → Status → Snapshot/Data Quality
+ROW	Sync Retry	Failed exact Job → Retry Gate → retryERPSync → missing legal work only → Status/Audit
+P	Sync Retry
+P	Failed exact Job → Retry Gate → retryERPSync → missing legal work only → Status/Audit
+ROW	Export	Authorized View/Scope → Export Gate → exportProjection → Existing Export owner → Result Ref
+P	Export
+P	Authorized View/Scope → Export Gate → exportProjection → Existing Export owner → Result Ref
+P	admin:ERP-01 · Source Table 11
+ROW	群組	數量	內容
+P	群組
+P	數量
+P	內容
+ROW	Context / Tabs	6	Scope、Snapshot、Freshness + 3 View Tabs。
+P	Context / Tabs
+P	6
+P	Scope、Snapshot、Freshness + 3 View Tabs。
+ROW	Finance	11	7 Read Fields + Fact Pack / Guardrails / Forecast / Export。
+P	Finance
+P	11
+P	7 Read Fields + Fact Pack / Guardrails / Forecast / Export。
+ROW	Connector	11	7 Read Fields + Create / Update / Validate / Mapping Validate。
+P	Connector
+P	11
+P	7 Read Fields + Create / Update / Validate / Mapping Validate。
+ROW	Sync & Quality	11	6 Read Fields + Refresh / Create / Status / Retry / Failure。
+P	Sync & Quality
+P	11
+P	6 Read Fields + Refresh / Create / Status / Retry / Failure。
+ROW	Governance Rail	3	Readiness / Audit Ref / Detail Drawer。
+P	Governance Rail
+P	3
+P	Readiness / Audit Ref / Detail Drawer。
+P	admin:ERP-01 · Source Table 12
+ROW	類別	Action	Effect
+P	類別
+P	Action
+P	Effect
+ROW	UI Context	READ / VIEW-FINANCE / VIEW-CONNECTOR / VIEW-SYNC / DETAIL-OPEN	Read / UI-only / Drawer-only
+P	UI Context
+P	READ / VIEW-FINANCE / VIEW-CONNECTOR / VIEW-SYNC / DETAIL-OPEN
+P	Read / UI-only / Drawer-only
+ROW	Finance	FACTPACK / GUARDRAILS / FORECAST / EXPORT	4 個 Read/Export Action
+P	Finance
+P	FACTPACK / GUARDRAILS / FORECAST / EXPORT
+P	4 個 Read/Export Action
+ROW	Connector	CONNECTOR-CREATE / UPDATE / VALIDATE / MAPPING-VALIDATE	4 個 Effectful Validation/Config Action
+P	Connector
+P	CONNECTOR-CREATE / UPDATE / VALIDATE / MAPPING-VALIDATE
+P	4 個 Effectful Validation/Config Action
+ROW	Sync	SNAPSHOT-REFRESH / SYNC-CREATE / SYNC-STATUS / SYNC-RETRY / FAILURE-GET	5 個 Snapshot/Job/Failure Action
+P	Sync
+P	SNAPSHOT-REFRESH / SYNC-CREATE / SYNC-STATUS / SYNC-RETRY / FAILURE-GET
+P	5 個 Snapshot/Job/Failure Action
+P	admin:ERP-01 · Source Table 13
+ROW	Gate	條件
+P	Gate
+P	條件
+ROW	PAGE	Identity + page VIEW + erp_finance L1 + exact account permission + scope/condition/classification/audit
+P	PAGE
+P	Identity + page VIEW + erp_finance L1 + exact account permission + scope/condition/classification/audit
+ROW	FINANCE	PAGE + finance.read；否則 amount mask / non-amount status only
+P	FINANCE
+P	PAGE + finance.read；否則 amount mask / non-amount status only
+ROW	CONNECTOR READ	PAGE + erp.connector.read + field mask
+P	CONNECTOR READ
+P	PAGE + erp.connector.read + field mask
+ROW	CONNECTOR WRITE	PAGE + erp.connector.write + schema + expected_version + idempotency + state_guard + audit
+P	CONNECTOR WRITE
+P	PAGE + erp.connector.write + schema + expected_version + idempotency + state_guard + audit
+ROW	CONNECTOR VALIDATE	PAGE + erp.connector.validate + exact connector/version
+P	CONNECTOR VALIDATE
+P	PAGE + erp.connector.validate + exact connector/version
+ROW	MAPPING VALIDATE	PAGE + erp.mapping.validate + exact mapping/version/schema
+P	MAPPING VALIDATE
+P	PAGE + erp.mapping.validate + exact mapping/version/schema
+ROW	SYNC READ	PAGE + exact read permission + sync/snapshot/failure ref
+P	SYNC READ
+P	PAGE + exact read permission + sync/snapshot/failure ref
+ROW	SNAPSHOT REFRESH	PAGE + source refresh permission + scope/version/state/idempotency/audit
+P	SNAPSHOT REFRESH
+P	PAGE + source refresh permission + scope/version/state/idempotency/audit
+ROW	SYNC CREATE	PAGE + erp.sync.request + exact request + connector/scope/version/idempotency/audit
+P	SYNC CREATE
+P	PAGE + erp.sync.request + exact request + connector/scope/version/idempotency/audit
+ROW	SYNC RETRY	PAGE + erp.sync.retry + exact failed retry-eligible job + state/version/idempotency/audit
+P	SYNC RETRY
+P	PAGE + erp.sync.retry + exact failed retry-eligible job + state/version/idempotency/audit
+P	admin:ERP-01 · Source Table 14
+ROW	Domain	States	Transition Rule
+P	Domain
+P	States
+P	Transition Rule
+ROW	Common	LOADING / READY / EMPTY / ERROR / POLICY_BLOCKED / VERSION_CONFLICT / REVIEW_REQUIRED / EXTERNAL_PENDING / READ_ONLY / ARCHIVED	View Tab 切換不改 business state。
+P	Common
+P	LOADING / READY / EMPTY / ERROR / POLICY_BLOCKED / VERSION_CONFLICT / REVIEW_REQUIRED / EXTERNAL_PENDING / READ_ONLY / ARCHIVED
+P	View Tab 切換不改 business state。
+ROW	Connector	CONNECTOR_UNCONFIGURED / CONFIGURING / VALIDATING / READY / DEGRADED	Create → CONFIGURING；Update → VALIDATING；Validate → READY / DEGRADED / FAILED。
+P	Connector
+P	CONNECTOR_UNCONFIGURED / CONFIGURING / VALIDATING / READY / DEGRADED
+P	Create → CONFIGURING；Update → VALIDATING；Validate → READY / DEGRADED / FAILED。
+ROW	Snapshot	SNAPSHOT_STALE / SNAPSHOT_SYNCING / SNAPSHOT_FAILED / DATA_INCOMPLETE	Refresh/Sync 只依真實 Job 結果轉移。
+P	Snapshot
+P	SNAPSHOT_STALE / SNAPSHOT_SYNCING / SNAPSHOT_FAILED / DATA_INCOMPLETE
+P	Refresh/Sync 只依真實 Job 結果轉移。
+ROW	Failure	Exact Failure + Retry Eligibility	無 retry eligibility 時 Retry disabled。
+P	Failure
+P	Exact Failure + Retry Eligibility
+P	無 retry eligibility 時 Retry disabled。
+P	admin:ERP-01 · Source Table 15
+ROW	Error	Trigger	Recovery
+P	Error
+P	Trigger
+P	Recovery
+ROW	AUTH	Permission / Scope / Mask denied	Hide/deny protected surface；Server DENY 為最終權威。
+P	AUTH
+P	Permission / Scope / Mask denied
+P	Hide/deny protected surface；Server DENY 為最終權威。
+ROW	SECRET	Secret value 要被顯示/存入頁面	BLOCK；只用 secret_reference_id。
+P	SECRET
+P	Secret value 要被顯示/存入頁面
+P	BLOCK；只用 secret_reference_id。
+ROW	VERSION	Expected version / exact ref stale	VERSION_CONFLICT；reload exact projection。
+P	VERSION
+P	Expected version / exact ref stale
+P	VERSION_CONFLICT；reload exact projection。
+ROW	CONNECTOR	Connector/Mapping validation fail	保留 DEGRADED/FAILED；顯示 permitted failure ref。
+P	CONNECTOR
+P	Connector/Mapping validation fail
+P	保留 DEGRADED/FAILED；顯示 permitted failure ref。
+ROW	SYNC	Sync/Refresh partial or fail	保持 SNAPSHOT_FAILED / DATA_INCOMPLETE；只重試合法 job。
+P	SYNC
+P	Sync/Refresh partial or fail
+P	保持 SNAPSHOT_FAILED / DATA_INCOMPLETE；只重試合法 job。
+ROW	FINANCE	Finance missing/stale/incomplete/masked	顯示 — / stale / incomplete / masked；禁止合成 0。
+P	FINANCE
+P	Finance missing/stale/incomplete/masked
+P	顯示 — / stale / incomplete / masked；禁止合成 0。
+ROW	UNREGISTERED WRITE	要求 Revenue/Expense/Ledger/Budget/ERP write	BLOCK + Authority Gap。
+P	UNREGISTERED WRITE
+P	要求 Revenue/Expense/Ledger/Budget/ERP write
+P	BLOCK + Authority Gap。
+ROW	UNDEFINED	未註冊欄位/operation/route/service	BLOCK + Authority Gap。
+P	UNDEFINED
+P	未註冊欄位/operation/route/service
+P	BLOCK + Authority Gap。
+P	admin:ERP-01 · Source Table 16
+ROW	Operation	Method / Path	Owner
+P	Operation
+P	Method / Path
+P	Owner
+ROW	getUiProjection	GET /v1/ui-projections/{pageUid}	Projection / Read Owner
+P	getUiProjection
+P	GET /v1/ui-projections/{pageUid}
+P	Projection / Read Owner
+ROW	createERPConnector	POST /v1/erp/connectors	ERPConnectorService
+P	createERPConnector
+P	POST /v1/erp/connectors
+P	ERPConnectorService
+ROW	updateERPConnector	PATCH /v1/erp/connectors/{id}	ERPConnectorService
+P	updateERPConnector
+P	PATCH /v1/erp/connectors/{id}
+P	ERPConnectorService
+ROW	validateERPConnector	POST /v1/erp/connectors/{id}/validate	ERPConnectorService
+P	validateERPConnector
+P	POST /v1/erp/connectors/{id}/validate
+P	ERPConnectorService
+ROW	validateERPMapping	POST /v1/erp/mappings/{id}/validate	ERPConnectorService
+P	validateERPMapping
+P	POST /v1/erp/mappings/{id}/validate
+P	ERPConnectorService
+ROW	refreshERPSnapshot	POST /v1/erp/snapshots/refresh	ERPConnectorService
+P	refreshERPSnapshot
+P	POST /v1/erp/snapshots/refresh
+P	ERPConnectorService
+ROW	createERPSyncJob	POST /v1/erp/sync-jobs	ERPConnectorService
+P	createERPSyncJob
+P	POST /v1/erp/sync-jobs
+P	ERPConnectorService
+ROW	getERPSyncStatus	GET /v1/erp/sync-jobs/{id}	ERPConnectorService
+P	getERPSyncStatus
+P	GET /v1/erp/sync-jobs/{id}
+P	ERPConnectorService
+ROW	retryERPSync	POST /v1/erp/sync-jobs/{id}/retry	ERPConnectorService
+P	retryERPSync
+P	POST /v1/erp/sync-jobs/{id}/retry
+P	ERPConnectorService
+ROW	getERPFailure	GET /v1/erp/failures/{id}	ERPConnectorService
+P	getERPFailure
+P	GET /v1/erp/failures/{id}
+P	ERPConnectorService
+ROW	getERPFinanceFactPack	GET /v1/erp/finance/fact-pack	FinanceGuardrailService
+P	getERPFinanceFactPack
+P	GET /v1/erp/finance/fact-pack
+P	FinanceGuardrailService
+ROW	getERPCapacityGuardrails	GET /v1/erp/capacity/guardrails	FinanceGuardrailService
+P	getERPCapacityGuardrails
+P	GET /v1/erp/capacity/guardrails
+P	FinanceGuardrailService
+ROW	getERPForecast	GET /v1/erp/forecasts	FinanceGuardrailService
+P	getERPForecast
+P	GET /v1/erp/forecasts
+P	FinanceGuardrailService
+ROW	exportProjection	POST /v1/exports	Existing Export Owner
+P	exportProjection
+P	POST /v1/exports
+P	Existing Export Owner
+P	admin:ERP-01 · Source Table 17
+ROW	項目	要求
+P	項目
+P	要求
+ROW	Button States	Default / Hover / Focus / Active / Loading / Disabled / Success / Error；Disabled 必須可解釋原因。
+P	Button States
+P	Default / Hover / Focus / Active / Loading / Disabled / Success / Error；Disabled 必須可解釋原因。
+ROW	Focus	所有 effectful control、tabs、drawer trigger、table row action 均須 keyboard reachable + visible focus。
+P	Focus
+P	所有 effectful control、tabs、drawer trigger、table row action 均須 keyboard reachable + visible focus。
+ROW	Screen Reader	Tabs、Status、Masked Value、Error/Recovery、Table Header、Drawer Title 具語意名稱。
+P	Screen Reader
+P	Tabs、Status、Masked Value、Error/Recovery、Table Header、Drawer Title 具語意名稱。
+ROW	Contrast	沿用科技紫 Global Visual；文字、border、focus ring 符合可讀性。
+P	Contrast
+P	沿用科技紫 Global Visual；文字、border、focus ring 符合可讀性。
+ROW	i18n	zh-TW / zh-CN / en；ERP、ID、Forecast、Guardrail 等術語在三語文案中一致。
+P	i18n
+P	zh-TW / zh-CN / en；ERP、ID、Forecast、Guardrail 等術語在三語文案中一致。
+ROW	Responsive	正式操作流程鎖定 desktop 1280+；窄螢幕 horizontal scroll，不變更業務流程。
+P	Responsive
+P	正式操作流程鎖定 desktop 1280+；窄螢幕 horizontal scroll，不變更業務流程。
+P	admin:ERP-01 · Source Table 18
+ROW	UID	驗收項目	PASS 條件
+P	UID
+P	驗收項目
+P	PASS 條件
+ROW	ACC-01	Single Current Page	只有 ERP-01；不重建 ERP-02 standalone navigation。
+P	ACC-01
+P	Single Current Page
+P	只有 ERP-01；不重建 ERP-02 standalone navigation。
+ROW	ACC-02	Owner Reuse	ERPConnectorService + FinanceGuardrailService；無第二 service/store。
+P	ACC-02
+P	Owner Reuse
+P	ERPConnectorService + FinanceGuardrailService；無第二 service/store。
+ROW	ACC-03	Source Control Coverage	17 + 12 source controls = 29 均有映射。
+P	ACC-03
+P	Source Control Coverage
+P	17 + 12 source controls = 29 均有映射。
+ROW	ACC-04	Operation Coverage	14 unique ERP operations 均有頁面綁定。
+P	ACC-04
+P	Operation Coverage
+P	14 unique ERP operations 均有頁面綁定。
+ROW	ACC-05	Finance Boundary	Finance 只讀/Export；無未註冊收入/支出/Ledger/Budget Write。
+P	ACC-05
+P	Finance Boundary
+P	Finance 只讀/Export；無未註冊收入/支出/Ledger/Budget Write。
+ROW	ACC-06	External ERP Boundary	無 ACPOS → ERP writeback path。
+P	ACC-06
+P	External ERP Boundary
+P	無 ACPOS → ERP writeback path。
+ROW	ACC-07	Secret Boundary	只有 secret_reference_id。
+P	ACC-07
+P	Secret Boundary
+P	只有 secret_reference_id。
+ROW	ACC-08	Data Truth	Missing=— / stale / incomplete / error；無 zero substitution。
+P	ACC-08
+P	Data Truth
+P	Missing=— / stale / incomplete / error；無 zero substitution。
+ROW	ACC-09	Authorization	Account permission + scope/state/version/idempotency/audit。
+P	ACC-09
+P	Authorization
+P	Account permission + scope/state/version/idempotency/audit。
+ROW	ACC-10	Same-page UX	3 View tabs UI-only；Audit/Failure secondary drawer。
+P	ACC-10
+P	Same-page UX
+P	3 View tabs UI-only；Audit/Failure secondary drawer。
+ROW	ACC-11	Layout	56 Context + 52 View Bar + 72/28 + 480–560 Drawer + 56 Action Dock。
+P	ACC-11
+P	Layout
+P	56 Context + 52 View Bar + 72/28 + 480–560 Drawer + 56 Action Dock。
+ROW	ACC-12	No Fake UI	無 decorative KPI/chart/sample finance/connector values。
+P	ACC-12
+P	No Fake UI
+P	無 decorative KPI/chart/sample finance/connector values。
+ROW	ACC-13	Form Authority	Effectful request 使用 exact schema；no page-union inference。
+P	ACC-13
+P	Form Authority
+P	Effectful request 使用 exact schema；no page-union inference。
+ROW	ACC-14	State Truth	Connector/Snapshot 使用正式 State vocabulary。
+P	ACC-14
+P	State Truth
+P	Connector/Snapshot 使用正式 State vocabulary。
+ROW	ACC-15	Truthful Completion	文件完整不等同 Runtime/E2E/Deployment 完成。
+P	ACC-15
+P	Truthful Completion
+P	文件完整不等同 Runtime/E2E/Deployment 完成。
+P	admin:ERP-01 · Source Table 19
+ROW	施工切片	內容	驗證重點
+P	施工切片
+P	內容
+P	驗證重點
+ROW	Slice A	Shell + Context + View Bar	確認 3 View 不產生 route/business mutation。
+P	Slice A
+P	Shell + Context + View Bar
+P	確認 3 View 不產生 route/business mutation。
+ROW	Slice B	Finance Read Model	Permission Mask + FactPack/Forecast/Guardrail/Export + missing/stale state。
+P	Slice B
+P	Finance Read Model
+P	Permission Mask + FactPack/Forecast/Guardrail/Export + missing/stale state。
+ROW	Slice C	Connector / Mapping	Create/Update/Validate + Secret Boundary + version/state guards。
+P	Slice C
+P	Connector / Mapping
+P	Create/Update/Validate + Secret Boundary + version/state guards。
+ROW	Slice D	Sync / Snapshot	Refresh/Create/Status/Retry/Failure + Data Quality。
+P	Slice D
+P	Sync / Snapshot
+P	Refresh/Create/Status/Retry/Failure + Data Quality。
+ROW	Slice E	Security / Error	Unauthorized / Mask / Version Conflict / Secret / Partial Sync / Unregistered Write。
+P	Slice E
+P	Security / Error
+P	Unauthorized / Mask / Version Conflict / Secret / Partial Sync / Unregistered Write。
+ROW	Slice F	Cross-view / Persistence	切換 View 保留合法 context；Drawer/Audit/Failure 可追溯。
+P	Slice F
+P	Cross-view / Persistence
+P	切換 View 保留合法 context；Drawer/Audit/Failure 可追溯。
+ROW	Slice G	Visual / A11y	Geometry、overflow、focus、disabled reason、table header、localization。
+P	Slice G
+P	Visual / A11y
+P	Geometry、overflow、focus、disabled reason、table header、localization。
+P	admin:ERP-01 · Effectful Control → API → DB Closure Matrix
+ROW	Page UID	Control UID	UID Status	Operation/Action	Method / Path	DB / Provider Owner	Gate	Permission	Binding Status
+P	Page UID
+P	Control UID
+P	UID Status
+P	Operation/Action
+P	Method / Path
+P	DB / Provider Owner
+P	Gate
+P	Permission
+P	Binding Status
+ROW	admin:ERP-01	ERP-01-BTN-CREATE-ERPCONNECTOR	NEW_UID_FROM_EXISTING_OPERATION	createERPConnector	POST /v1/erp/connectors	acpos_erp.connectors	SERVER_STATE_GATE	SOURCE_PERMISSION_OR_OPERATION_SCOPE	CLOSURE_MATERIALIZED
+P	admin:ERP-01
+P	ERP-01-BTN-CREATE-ERPCONNECTOR
+P	NEW_UID_FROM_EXISTING_OPERATION
+P	createERPConnector
+P	POST /v1/erp/connectors
+P	acpos_erp.connectors
+P	SERVER_STATE_GATE
+P	SOURCE_PERMISSION_OR_OPERATION_SCOPE
+P	CLOSURE_MATERIALIZED
+ROW	admin:ERP-01	ERP-01-BTN-UPDATE-ERPCONNECTOR	NEW_UID_FROM_EXISTING_OPERATION	updateERPConnector	PATCH /v1/erp/connectors/{id}	acpos_erp.connectors	SERVER_STATE_GATE	SOURCE_PERMISSION_OR_OPERATION_SCOPE	CLOSURE_MATERIALIZED
+P	admin:ERP-01
+P	ERP-01-BTN-UPDATE-ERPCONNECTOR
+P	NEW_UID_FROM_EXISTING_OPERATION
+P	updateERPConnector
+P	PATCH /v1/erp/connectors/{id}
+P	acpos_erp.connectors
+P	SERVER_STATE_GATE
+P	SOURCE_PERMISSION_OR_OPERATION_SCOPE
+P	CLOSURE_MATERIALIZED
+ROW	admin:ERP-01	ERP-01-BTN-VALIDATE-ERPCONNECTOR	NEW_UID_FROM_EXISTING_OPERATION	validateERPConnector	POST /v1/erp/connectors/{id}/validate	acpos_erp.connectors	SERVER_STATE_GATE	SOURCE_PERMISSION_OR_OPERATION_SCOPE	CLOSURE_MATERIALIZED
+P	admin:ERP-01
+P	ERP-01-BTN-VALIDATE-ERPCONNECTOR
+P	NEW_UID_FROM_EXISTING_OPERATION
+P	validateERPConnector
+P	POST /v1/erp/connectors/{id}/validate
+P	acpos_erp.connectors
+P	SERVER_STATE_GATE
+P	SOURCE_PERMISSION_OR_OPERATION_SCOPE
+P	CLOSURE_MATERIALIZED
+ROW	admin:ERP-01	ERP-01-BTN-VALIDATE-ERPMAPPING	NEW_UID_FROM_EXISTING_OPERATION	validateERPMapping	POST /v1/erp/mappings/{id}/validate	acpos_erp.connectors	SERVER_STATE_GATE	SOURCE_PERMISSION_OR_OPERATION_SCOPE	CLOSURE_MATERIALIZED
+P	admin:ERP-01
+P	ERP-01-BTN-VALIDATE-ERPMAPPING
+P	NEW_UID_FROM_EXISTING_OPERATION
+P	validateERPMapping
+P	POST /v1/erp/mappings/{id}/validate
+P	acpos_erp.connectors
+P	SERVER_STATE_GATE
+P	SOURCE_PERMISSION_OR_OPERATION_SCOPE
+P	CLOSURE_MATERIALIZED
+ROW	admin:ERP-01	ERP-01-BTN-REFRESH-ERPSNAPSHOT	NEW_UID_FROM_EXISTING_OPERATION	refreshERPSnapshot	POST /v1/erp/snapshots/refresh	acpos_media.video_versions	SERVER_STATE_GATE	SOURCE_PERMISSION_OR_OPERATION_SCOPE	CLOSURE_MATERIALIZED
+P	admin:ERP-01
+P	ERP-01-BTN-REFRESH-ERPSNAPSHOT
+P	NEW_UID_FROM_EXISTING_OPERATION
+P	refreshERPSnapshot
+P	POST /v1/erp/snapshots/refresh
+P	acpos_media.video_versions
+P	SERVER_STATE_GATE
+P	SOURCE_PERMISSION_OR_OPERATION_SCOPE
+P	CLOSURE_MATERIALIZED
+ROW	admin:ERP-01	ERP-01-BTN-CREATE-ERPSYNC-JOB	NEW_UID_FROM_EXISTING_OPERATION	createERPSyncJob	POST /v1/erp/sync-jobs	acpos_erp.sync_jobs	SERVER_STATE_GATE	SOURCE_PERMISSION_OR_OPERATION_SCOPE	CLOSURE_MATERIALIZED
+P	admin:ERP-01
+P	ERP-01-BTN-CREATE-ERPSYNC-JOB
+P	NEW_UID_FROM_EXISTING_OPERATION
+P	createERPSyncJob
+P	POST /v1/erp/sync-jobs
+P	acpos_erp.sync_jobs
+P	SERVER_STATE_GATE
+P	SOURCE_PERMISSION_OR_OPERATION_SCOPE
+P	CLOSURE_MATERIALIZED
+ROW	admin:ERP-01	ERP-01-BTN-RETRY-ERPSYNC	NEW_UID_FROM_EXISTING_OPERATION	retryERPSync	POST /v1/erp/sync-jobs/{id}/retry	acpos_erp.sync_jobs	SERVER_STATE_GATE	SOURCE_PERMISSION_OR_OPERATION_SCOPE	CLOSURE_MATERIALIZED
+P	admin:ERP-01
+P	ERP-01-BTN-RETRY-ERPSYNC
+P	NEW_UID_FROM_EXISTING_OPERATION
+P	retryERPSync
+P	POST /v1/erp/sync-jobs/{id}/retry
+P	acpos_erp.sync_jobs
+P	SERVER_STATE_GATE
+P	SOURCE_PERMISSION_OR_OPERATION_SCOPE
+P	CLOSURE_MATERIALIZED
+ROW	admin:ERP-01	ERP-01-BTN-EXPORT-PROJECTION	NEW_UID_FROM_EXISTING_OPERATION	exportProjection	POST /v1/exports	acpos_core.projects	SERVER_STATE_GATE	SOURCE_PERMISSION_OR_OPERATION_SCOPE	CLOSURE_MATERIALIZED
+P	admin:ERP-01
+P	ERP-01-BTN-EXPORT-PROJECTION
+P	NEW_UID_FROM_EXISTING_OPERATION
+P	exportProjection
+P	POST /v1/exports
+P	acpos_core.projects
+P	SERVER_STATE_GATE
+P	SOURCE_PERMISSION_OR_OPERATION_SCOPE
+P	CLOSURE_MATERIALIZED
+P	G. Construction Handoff Rule
+P	施工 AI MUST resolve each UI control through this exact order: Page UID → Section/Region → Control UID → Trigger/Operation or Action UID → Gate → Permission → Input/Payload → Method/Path or shared Runtime Operation → Persistence/Provider Owner → Audit/Event → Success/Failure/Recovery → Next Page/Handoff. UI_ONLY/READ_ONLY controls MUST NOT create a write API. System-only operations MUST NOT cause a new visible button unless this closure/source explicitly materializes that control.
+P	When a provider/platform/environment value is runtime-specific, the exact binding is the registered Profile/Policy/Environment key named in this annex. Missing required value is a deterministic BLOCK; it is not permission to guess.
 ### PART word/header1.xml
 P	ORANGE ONE · ACPOS ACPOS-AI-06｜Mother Basic Logic Design
 ### PART word/footer1.xml

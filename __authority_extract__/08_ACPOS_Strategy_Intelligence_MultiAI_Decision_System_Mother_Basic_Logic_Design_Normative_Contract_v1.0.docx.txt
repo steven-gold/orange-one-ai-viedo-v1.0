@@ -1,4 +1,6 @@
 ### PART word/document.xml
+P	[ACPOS-20260921-EXACT-BINDING-CLOSURE] Construction Authority Notice
+本文件已加入 2026-09-21 Exact Binding Closure。施工時 MUST 讀取文末 Closure Annex；文中較早的 REQUIRE_EXACT_BINDING 對已列入 Resolution Ledger 的項目視為已被本次 closure 精確綁定。外部 secret/provider/platform 的實際值只可由已註冊 Runtime Profile / Environment Binding 解析，缺值 = BLOCK，不得猜。
 P	ACPOS-AI-08
 P	Strategy Intelligence / Multi-AI Decision System
 P	策略智能／多 AI 決策系統
@@ -2184,6 +2186,2331 @@ ROW	Runtime / Production	NOT PROVEN BY DOCUMENT	需 fresh implementation/DB/API/
 P	Runtime / Production
 P	NOT PROVEN BY DOCUMENT
 P	需 fresh implementation/DB/API/browser/deployment evidence。
+P	2026-09-21 Construction Exact Binding Closure / 施工精確綁定封板
+P	Closure UID: ACPOS-20260921-EXACT-BINDING-CLOSURE
+P	Scope: 將 01～09 母級邏輯與已上傳 Basic Design 的 Page / Control / Action / Gate / Permission / API / Runtime / DB-Provider / State / Error / Handoff 做可施工 materialization。Source-derived rows are copied from uploaded Word values; newly created exact identities/numeric policy are explicitly marked as closure authority.
+P	A. Shared Runtime Quantitative Policy / 共用 Runtime 定量政策
+P	Authority Status: CLOSURE_DECISION_NEW_AUTHORITY_PER_USER_DIRECTIVE_20260921_AFTER_FULL_SOURCE_AUDIT. 這些數值僅補足原文件明確標示的 numeric REQUIRE_EXACT_BINDING；Provider/Platform 自身限制仍由 registered profile/policy 解析，無 profile 值時 BLOCK。
+ROW	Policy UID	Exact Value	Semantics	Primary Owner
+P	Policy UID
+P	Exact Value
+P	Semantics
+P	Primary Owner
+ROW	HTTP_CONNECT_TIMEOUT_SECONDS	10	Shared outbound HTTP connect timeout	03
+P	HTTP_CONNECT_TIMEOUT_SECONDS
+P	10
+P	Shared outbound HTTP connect timeout
+P	03
+ROW	HTTP_SYNC_RESPONSE_TIMEOUT_SECONDS	60	Synchronous text/tool request upper bound	03
+P	HTTP_SYNC_RESPONSE_TIMEOUT_SECONDS
+P	60
+P	Synchronous text/tool request upper bound
+P	03
+ROW	RUNTIME_MAX_ATTEMPTS	3	1 initial + at most 2 automatic retries	01/03
+P	RUNTIME_MAX_ATTEMPTS
+P	3
+P	1 initial + at most 2 automatic retries
+P	01/03
+ROW	RUNTIME_BACKOFF_BASE_SECONDS	2	Exponential backoff base	01/03
+P	RUNTIME_BACKOFF_BASE_SECONDS
+P	2
+P	Exponential backoff base
+P	01/03
+ROW	RUNTIME_BACKOFF_FACTOR	2	Backoff factor	01/03
+P	RUNTIME_BACKOFF_FACTOR
+P	2
+P	Backoff factor
+P	01/03
+ROW	RUNTIME_BACKOFF_MAX_SECONDS	30	Backoff cap excluding Retry-After	01/03
+P	RUNTIME_BACKOFF_MAX_SECONDS
+P	30
+P	Backoff cap excluding Retry-After
+P	01/03
+ROW	RUNTIME_RETRY_AFTER_MAX_SECONDS	120	Maximum honored provider Retry-After before async reschedule	03
+P	RUNTIME_RETRY_AFTER_MAX_SECONDS
+P	120
+P	Maximum honored provider Retry-After before async reschedule
+P	03
+ROW	RUNTIME_JITTER	FULL_JITTER	random(0,min(cap,base*factor^(attempt-1)))	03
+P	RUNTIME_JITTER
+P	FULL_JITTER
+P	random(0,min(cap,base*factor^(attempt-1)))
+P	03
+ROW	CIRCUIT_FAILURE_THRESHOLD	5	Retryable failures	03
+P	CIRCUIT_FAILURE_THRESHOLD
+P	5
+P	Retryable failures
+P	03
+ROW	CIRCUIT_FAILURE_WINDOW_SECONDS	60	Window for threshold	03
+P	CIRCUIT_FAILURE_WINDOW_SECONDS
+P	60
+P	Window for threshold
+P	03
+ROW	CIRCUIT_OPEN_COOLDOWN_SECONDS	60	Open to half-open	03
+P	CIRCUIT_OPEN_COOLDOWN_SECONDS
+P	60
+P	Open to half-open
+P	03
+ROW	CIRCUIT_HALF_OPEN_PROBES	1	Concurrent half-open probe	03
+P	CIRCUIT_HALF_OPEN_PROBES
+P	1
+P	Concurrent half-open probe
+P	03
+ROW	CIRCUIT_CLOSE_SUCCESS_COUNT	2	Consecutive successful probes/executions to close	03
+P	CIRCUIT_CLOSE_SUCCESS_COUNT
+P	2
+P	Consecutive successful probes/executions to close
+P	03
+ROW	WORKER_HEARTBEAT_SECONDS	15	Worker lease heartbeat	03
+P	WORKER_HEARTBEAT_SECONDS
+P	15
+P	Worker lease heartbeat
+P	03
+ROW	WORKER_LEASE_GRACE_SECONDS	60	Missed heartbeat grace before stale lease handling	03
+P	WORKER_LEASE_GRACE_SECONDS
+P	60
+P	Missed heartbeat grace before stale lease handling
+P	03
+ROW	BUSINESS_EFFECT_IDEMPOTENCY_TTL_DAYS	30	External publish/delivery/handoff/mutation duplicate suppression	01/03/06/07/08/09
+P	BUSINESS_EFFECT_IDEMPOTENCY_TTL_DAYS
+P	30
+P	External publish/delivery/handoff/mutation duplicate suppression
+P	01/03/06/07/08/09
+ROW	OUTBOX_DELIVERED_RETENTION_DAYS	30	Delivered outbox audit retention when otherwise unreferenced	01/03
+P	OUTBOX_DELIVERED_RETENTION_DAYS
+P	30
+P	Delivered outbox audit retention when otherwise unreferenced
+P	01/03
+ROW	DEAD_LETTER_RETENTION_DAYS	90	DLQ/quarantine minimum retention	01/03/09
+P	DEAD_LETTER_RETENTION_DAYS
+P	90
+P	DLQ/quarantine minimum retention
+P	01/03/09
+P	B. Canonical Persistence / Provider Registry
+ROW	Binding	Exact Persistence / Provider Owner	Purpose	Document Owner
+P	Binding
+P	Exact Persistence / Provider Owner
+P	Purpose
+P	Document Owner
+ROW	EXPERIENCE	acpos_knowledge.experience_records	Validated/failed learning records	01/08/09
+P	EXPERIENCE
+P	acpos_knowledge.experience_records
+P	Validated/failed learning records
+P	01/08/09
+ROW	STRATEGY_TOPIC	acpos_strategy.strategy_topics	Strategy topic/context	08
+P	STRATEGY_TOPIC
+P	acpos_strategy.strategy_topics
+P	Strategy topic/context
+P	08
+ROW	STRATEGY_CANDIDATE	acpos_strategy.strategy_candidates	Append-only strategy candidate versions	08
+P	STRATEGY_CANDIDATE
+P	acpos_strategy.strategy_candidates
+P	Append-only strategy candidate versions
+P	08
+ROW	STRATEGY_REVIEW	acpos_strategy.strategy_reviews	Human strategy review	08
+P	STRATEGY_REVIEW
+P	acpos_strategy.strategy_reviews
+P	Human strategy review
+P	08
+ROW	STRATEGY_DECISION	acpos_strategy.strategy_decisions	Decision ledger	08
+P	STRATEGY_DECISION
+P	acpos_strategy.strategy_decisions
+P	Decision ledger
+P	08
+ROW	STRATEGY_FEEDBACK	acpos_strategy.strategy_feedback	Expected/actual/KPI/learning feedback	08
+P	STRATEGY_FEEDBACK
+P	acpos_strategy.strategy_feedback
+P	Expected/actual/KPI/learning feedback
+P	08
+ROW	AUDIT	acpos_audit.audit_events	Correlation/audit terminal truth	01-09
+P	AUDIT
+P	acpos_audit.audit_events
+P	Correlation/audit terminal truth
+P	01-09
+P	DB naming is normative for this design closure. All tables are PostgreSQL logical owners under the shown schema. RLS/permission checks remain server-enforced. Secret values are never stored in these Word files; only secret references are persisted.
+P	C. Shared Exact API / Permission Bindings
+ROW	Operation UID	Exact Method / Path	Persistence Owner	Permission
+P	Operation UID
+P	Exact Method / Path
+P	Persistence Owner
+P	Permission
+ROW	CONVERSATION_CREATE	POST /v1/conversations	acpos_conversation.conversations	conversation.create
+P	CONVERSATION_CREATE
+P	POST /v1/conversations
+P	acpos_conversation.conversations
+P	conversation.create
+ROW	CONVERSATION_MESSAGE_SEND	POST /v1/conversations/{conversationId}/messages	acpos_conversation.messages	conversation.write
+P	CONVERSATION_MESSAGE_SEND
+P	POST /v1/conversations/{conversationId}/messages
+P	acpos_conversation.messages
+P	conversation.write
+ROW	CONVERSATION_GENERATION_STOP	POST /v1/conversations/{conversationId}/generation/stop	acpos_conversation.messages + acpos_runtime.execution_jobs	conversation.write
+P	CONVERSATION_GENERATION_STOP
+P	POST /v1/conversations/{conversationId}/generation/stop
+P	acpos_conversation.messages + acpos_runtime.execution_jobs
+P	conversation.write
+ROW	CONVERSATION_BRANCH_CREATE	POST /v1/conversations/{conversationId}/branches	acpos_conversation.threads	conversation.branch.create
+P	CONVERSATION_BRANCH_CREATE
+P	POST /v1/conversations/{conversationId}/branches
+P	acpos_conversation.threads
+P	conversation.branch.create
+ROW	CONVERSATION_SUMMARY_CREATE	POST /v1/conversations/{conversationId}/summaries	acpos_conversation.summaries	conversation.summary.create
+P	CONVERSATION_SUMMARY_CREATE
+P	POST /v1/conversations/{conversationId}/summaries
+P	acpos_conversation.summaries
+P	conversation.summary.create
+ROW	AUDIT_APPEND	POST /v1/audit-events	acpos_audit.audit_events	audit.append
+P	AUDIT_APPEND
+P	POST /v1/audit-events
+P	acpos_audit.audit_events
+P	audit.append
+P	D. Legacy REQUIRE_EXACT_BINDING Resolution Ledger
+ROW	Legacy Gap Class	2026-09-21 Status	Exact Resolution
+P	Legacy Gap Class
+P	2026-09-21 Status
+P	Exact Resolution
+ROW	API / Route identities	RESOLVED	Embedded Page/Port tables + Shared Exact API table; where an uploaded page exposed an operation without Control UID, this closure materializes a UID from that existing operation only.
+P	API / Route identities
+P	RESOLVED
+P	Embedded Page/Port tables + Shared Exact API table; where an uploaded page exposed an operation without Control UID, this closure materializes a UID from that existing operation only.
+ROW	DB / Persistence identities	RESOLVED	Canonical Persistence / Provider Registry in this annex.
+P	DB / Persistence identities
+P	RESOLVED
+P	Canonical Persistence / Provider Registry in this annex.
+ROW	Permission / Gate identities	RESOLVED_FOR_DOCUMENT_SCOPE	Embedded source Permission/Gate tables; server re-check mandatory. Environment/provider-specific grants resolve from registered IAM/Profile, missing = BLOCK.
+P	Permission / Gate identities
+P	RESOLVED_FOR_DOCUMENT_SCOPE
+P	Embedded source Permission/Gate tables; server re-check mandatory. Environment/provider-specific grants resolve from registered IAM/Profile, missing = BLOCK.
+ROW	Event transport / outbox	RESOLVED	PostgreSQL acpos_runtime.outbox_events + worker delivery; at-least-once + idempotent consumer.
+P	Event transport / outbox
+P	RESOLVED
+P	PostgreSQL acpos_runtime.outbox_events + worker delivery; at-least-once + idempotent consumer.
+ROW	Queue / Worker / DLQ	RESOLVED	Redis-backed shared runtime via REDIS_URL; dead-letter evidence in acpos_runtime.dead_letters.
+P	Queue / Worker / DLQ
+P	RESOLVED
+P	Redis-backed shared runtime via REDIS_URL; dead-letter evidence in acpos_runtime.dead_letters.
+ROW	Canonical digest	RESOLVED	RFC 8785 JSON Canonicalization Scheme + SHA-256 for semantic payload/context digests.
+P	Canonical digest
+P	RESOLVED
+P	RFC 8785 JSON Canonicalization Scheme + SHA-256 for semantic payload/context digests.
+ROW	Idempotency store / TTL	RESOLVED	acpos_runtime.idempotency_keys + exact TTL rows in Runtime Quantitative Policy.
+P	Idempotency store / TTL
+P	RESOLVED
+P	acpos_runtime.idempotency_keys + exact TTL rows in Runtime Quantitative Policy.
+ROW	Retry / Backoff / Circuit numeric values	RESOLVED	Exact values in Runtime Quantitative Policy.
+P	Retry / Backoff / Circuit numeric values
+P	RESOLVED
+P	Exact values in Runtime Quantitative Policy.
+ROW	Conversation display/context/summary numbers	RESOLVED_BY_AI02	AI-02 annex provides exact UI/history/context/compression values.
+P	Conversation display/context/summary numbers
+P	RESOLVED_BY_AI02
+P	AI-02 annex provides exact UI/history/context/compression values.
+ROW	Retention durations	RESOLVED	Artifact-class values in Runtime Quantitative Policy; references/legal/privacy holds extend retention and never shorten below legal/domain requirement.
+P	Retention durations
+P	RESOLVED
+P	Artifact-class values in Runtime Quantitative Policy; references/legal/privacy holds extend retention and never shorten below legal/domain requirement.
+ROW	Secret backend	RESOLVED	ACPOS_SECRET_BACKEND + secret reference only; plaintext never persisted in Word/UI/general DB.
+P	Secret backend
+P	RESOLVED
+P	ACPOS_SECRET_BACKEND + secret reference only; plaintext never persisted in Word/UI/general DB.
+ROW	Provider/model exact selection	RESOLVED_RUNTIME_PROFILE	Exact provider_model_profile_id and route decision from AIAPI-01 registered profile; no page-level picker.
+P	Provider/model exact selection
+P	RESOLVED_RUNTIME_PROFILE
+P	Exact provider_model_profile_id and route decision from AIAPI-01 registered profile; no page-level picker.
+ROW	External platform/provider rate limits	RESOLVED_PROFILE_REQUIRED	Exact value comes from registered provider/platform/target policy fields; no global guessed fallback; missing profile value blocks effectful execution.
+P	External platform/provider rate limits
+P	RESOLVED_PROFILE_REQUIRED
+P	Exact value comes from registered provider/platform/target policy fields; no global guessed fallback; missing profile value blocks effectful execution.
+ROW	Production deployment target	RESOLVED_ENV_BINDING	ACPOS_DEPLOYMENT_TARGET_ID + ACPOS_PRODUCTION_BASE_URL; values supplied by deployment environment, not hardcoded in design.
+P	Production deployment target
+P	RESOLVED_ENV_BINDING
+P	ACPOS_DEPLOYMENT_TARGET_ID + ACPOS_PRODUCTION_BASE_URL; values supplied by deployment environment, not hardcoded in design.
+P	Interpretation Rule: earlier REQUIRE_EXACT_BINDING text remains a generic anti-invention invariant for future unknowns. It MUST NOT be interpreted as an open gap for rows marked RESOLVED/RESOLVED_* in this ledger.
+P	F. Uploaded Basic Design Exact Binding Snapshots
+P	Source Authority Snapshot — workspace:STR-01
+P	Source File: ACPOS_STR-01_WORKSPACE_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx
+P	Source SHA-256: a17aab5a978e7b8a9a5a3a52c3ae293adf6cc7129078867af48e0725015c521e
+P	Included binding/data/state tables: 24. These rows are copied verbatim in text value from the uploaded Basic Design source; no UID/value renaming is performed.
+P	workspace:STR-01 · Source Table 1
+ROW	項目	Current
+P	項目
+P	Current
+ROW	Page UID	workspace:STR-01
+P	Page UID
+P	workspace:STR-01
+ROW	Canonical Name	戰略中心工作區 / Strategic Center Workspace
+P	Canonical Name
+P	戰略中心工作區 / Strategic Center Workspace
+ROW	Page Authority SHA	618e56f2f993bc818d943cb14db6ce455d68a1c5
+P	Page Authority SHA
+P	618e56f2f993bc818d943cb14db6ce455d68a1c5
+ROW	Manifest SHA	465329b6fb19b8e44c3083a9f280015ee95cc55c
+P	Manifest SHA
+P	465329b6fb19b8e44c3083a9f280015ee95cc55c
+ROW	Authority Status	FINAL_LOCKED / current_only
+P	Authority Status
+P	FINAL_LOCKED / current_only
+ROW	Design Status	VISUAL_CANDIDATE / PENDING HUMAN REVIEW
+P	Design Status
+P	VISUAL_CANDIDATE / PENDING HUMAN REVIEW
+ROW	Design Freeze	FALSE
+P	Design Freeze
+P	FALSE
+P	workspace:STR-01 · Source Table 2
+ROW	優先序	來源	作用
+P	優先序
+P	來源
+P	作用
+ROW	1	ACPOS_CURRENT_AUTHORITY_MANIFEST	Current authority set
+P	1
+P	ACPOS_CURRENT_AUTHORITY_MANIFEST
+P	Current authority set
+ROW	2	GLOBAL_HOME_SHELL_TEMPLATE_AUTHORITY V1.9	58px Header / 64px collapsed / 221px overlay
+P	2
+P	GLOBAL_HOME_SHELL_TEMPLATE_AUTHORITY V1.9
+P	58px Header / 64px collapsed / 221px overlay
+ROW	3	GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY V1.0	科技紫 tokens / component states
+P	3
+P	GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY V1.0
+P	科技紫 tokens / component states
+ROW	4	authority/pages/workspace/STR-01/ACPOS_STR-01_FINAL_LOCKED_ENCODING_PROVIDER_BOUND.yaml	STR-01 UX/business/registry
+P	4
+P	authority/pages/workspace/STR-01/ACPOS_STR-01_FINAL_LOCKED_ENCODING_PROVIDER_BOUND.yaml
+P	STR-01 UX/business/registry
+ROW	5	本 Word	UI candidate / construction reference
+P	5
+P	本 Word
+P	UI candidate / construction reference
+P	workspace:STR-01 · Source Table 3
+ROW	Artifact	Count
+P	Artifact
+P	Count
+ROW	Sections / Visuals	12 / 12
+P	Sections / Visuals
+P	12 / 12
+ROW	Components	16
+P	Components
+P	16
+ROW	Controls	57
+P	Controls
+P	57
+ROW	Actions	11
+P	Actions
+P	11
+ROW	Gates / Permissions	11 / 5
+P	Gates / Permissions
+P	11 / 5
+ROW	Objects / Errors / States	12 / 9 / 9
+P	Objects / Errors / States
+P	12 / 9 / 9
+ROW	Stages	6
+P	Stages
+P	6
+ROW	Integration Ports	6
+P	Integration Ports
+P	6
+P	workspace:STR-01 · Source Table 4
+ROW	Priority	Meaning
+P	Priority
+P	Meaning
+ROW	P0	Current Human Instruction
+P	P0
+P	Current Human Instruction
+ROW	P1	Confirmed Decision
+P	P1
+P	Confirmed Decision
+ROW	P2	Current Valid Internal Data
+P	P2
+P	Current Valid Internal Data
+ROW	P3	Historical Strategic Analysis / Baseline / Experience
+P	P3
+P	Historical Strategic Analysis / Baseline / Experience
+ROW	P4	External Intelligence
+P	P4
+P	External Intelligence
+P	workspace:STR-01 · Source Table 5
+ROW	Field	Rule
+P	Field
+P	Rule
+ROW	source_ref	REQUIRED / exact source metadata
+P	source_ref
+P	REQUIRED / exact source metadata
+ROW	source_type	REQUIRED / exact source metadata
+P	source_type
+P	REQUIRED / exact source metadata
+ROW	source_time_or_version	REQUIRED / exact source metadata
+P	source_time_or_version
+P	REQUIRED / exact source metadata
+ROW	scope	REQUIRED / exact source metadata
+P	scope
+P	REQUIRED / exact source metadata
+ROW	confidence_or_quality_state	REQUIRED / exact source metadata
+P	confidence_or_quality_state
+P	REQUIRED / exact source metadata
+P	workspace:STR-01 · Source Table 7
+ROW	Object UID	Entity	Required Content
+P	Object UID
+P	Entity
+P	Required Content
+ROW	STR-01-OBJ-TOPIC	StrategyTopicRef	strategy_topic_id + title + scope + objective + status + conversation/thread refs
+P	STR-01-OBJ-TOPIC
+P	StrategyTopicRef
+P	strategy_topic_id + title + scope + objective + status + conversation/thread refs
+ROW	STR-01-OBJ-CONTEXT	StrategicContextBundle	market/industry/competition/internal/resource/cost/risk/governance refs + priority + source_time/version + confidence
+P	STR-01-OBJ-CONTEXT
+P	StrategicContextBundle
+P	market/industry/competition/internal/resource/cost/risk/governance refs + priority + source_time/version + confidence
+ROW	STR-01-OBJ-CONVERSATION	StrategicConversationRef	conversation_id + topic ref + mode + message refs + context fingerprint + audit
+P	STR-01-OBJ-CONVERSATION
+P	StrategicConversationRef
+P	conversation_id + topic ref + mode + message refs + context fingerprint + audit
+ROW	STR-01-OBJ-ANALYSIS	StrategyAnalysisResult	basis + assumptions + opportunity + risk + uncertainty + pattern/baseline/forecast + evidence
+P	STR-01-OBJ-ANALYSIS
+P	StrategyAnalysisResult
+P	basis + assumptions + opportunity + risk + uncertainty + pattern/baseline/forecast + evidence
+ROW	STR-01-OBJ-CANDIDATE	StrategyCandidate	candidate_id/version + output type + proposal + analysis refs + risk + uncertainty + evidence + state
+P	STR-01-OBJ-CANDIDATE
+P	StrategyCandidate
+P	candidate_id/version + output type + proposal + analysis refs + risk + uncertainty + evidence + state
+ROW	STR-01-OBJ-RECOMMENDATION	StrategyRecommendation	summary + basis + recommended path + reason + risk + uncertainty + evidence
+P	STR-01-OBJ-RECOMMENDATION
+P	StrategyRecommendation
+P	summary + basis + recommended path + reason + risk + uncertainty + evidence
+ROW	STR-01-OBJ-ALERT	StrategyAlert	alert type + scope + reason + evidence + urgency/priority + recommended response
+P	STR-01-OBJ-ALERT
+P	StrategyAlert
+P	alert type + scope + reason + evidence + urgency/priority + recommended response
+ROW	STR-01-OBJ-RESOURCE	ResourceProposal	target + need + reason + expected effect + cost/capacity impact + risk + dependency
+P	STR-01-OBJ-RESOURCE
+P	ResourceProposal
+P	target + need + reason + expected effect + cost/capacity impact + risk + dependency
+ROW	STR-01-OBJ-BRIEF	DecisionBrief	issue + context + options + recommendation + alternatives + risks + unknowns + decision needed
+P	STR-01-OBJ-BRIEF
+P	DecisionBrief
+P	issue + context + options + recommendation + alternatives + risks + unknowns + decision needed
+ROW	STR-01-OBJ-LEDGER	StrategyDecisionLedgerEntry	decision_id + candidate + sources + risk + approval level + result + reason + actor/time + execution status/ref
+P	STR-01-OBJ-LEDGER
+P	StrategyDecisionLedgerEntry
+P	decision_id + candidate + sources + risk + approval level + result + reason + actor/time + execution status/ref
+ROW	STR-01-OBJ-MEMORY	StrategicExperienceRef	pattern/case/experiment/baseline/result/KPI/expected-vs-actual/learning + immutable history
+P	STR-01-OBJ-MEMORY
+P	StrategicExperienceRef
+P	pattern/case/experiment/baseline/result/KPI/expected-vs-actual/learning + immutable history
+ROW	STR-01-OBJ-FEEDBACK	StrategyExecutionFeedback	execution ref + actual result + KPI/revenue/cost/performance + expected-vs-actual + learning
+P	STR-01-OBJ-FEEDBACK
+P	StrategyExecutionFeedback
+P	execution ref + actual result + KPI/revenue/cost/performance + expected-vs-actual + learning
+P	workspace:STR-01 · Source Table 9
+ROW	Analysis Mandatory Field
+P	Analysis Mandatory Field
+ROW	analysis_basis
+P	analysis_basis
+ROW	assumptions
+P	assumptions
+ROW	opportunities
+P	opportunities
+ROW	risks
+P	risks
+ROW	uncertainties
+P	uncertainties
+ROW	option_comparison
+P	option_comparison
+ROW	recommendation_reason
+P	recommendation_reason
+ROW	evidence_refs
+P	evidence_refs
+P	workspace:STR-01 · Source Table 10
+ROW	Type	Meaning
+P	Type
+P	Meaning
+ROW	STRATEGY_RECOMMENDATION	Strategy Recommendation / 策略建議
+P	STRATEGY_RECOMMENDATION
+P	Strategy Recommendation / 策略建議
+ROW	STRATEGY_ALERT	Strategy Alert / 風險與機會提醒
+P	STRATEGY_ALERT
+P	Strategy Alert / 風險與機會提醒
+ROW	RESOURCE_PROPOSAL	Resource Proposal / 資源配置建議；approval belongs to owner module
+P	RESOURCE_PROPOSAL
+P	Resource Proposal / 資源配置建議；approval belongs to owner module
+ROW	DECISION_BRIEF	Decision Brief / 決策摘要
+P	DECISION_BRIEF
+P	Decision Brief / 決策摘要
+P	workspace:STR-01 · Source Table 11
+ROW	Section UID	Name	Responsibility	Visual
+P	Section UID
+P	Name
+P	Responsibility
+P	Visual
+ROW	STR-01-SEC-01	Strategy Context Bar	Strategy Topic, scope, horizon, mode, state, current decision status	STR-01-VIS-CONTEXT
+P	STR-01-SEC-01
+P	Strategy Context Bar
+P	Strategy Topic, scope, horizon, mode, state, current decision status
+P	STR-01-VIS-CONTEXT
+ROW	STR-01-SEC-02	Strategy Topics / History	Strategy topic list, search, current topic selection, previous discussions	STR-01-VIS-LEFT-TOPIC
+P	STR-01-SEC-02
+P	Strategy Topics / History
+P	Strategy topic list, search, current topic selection, previous discussions
+P	STR-01-VIS-LEFT-TOPIC
+ROW	STR-01-SEC-03	Strategic Context	Market/industry/competition/internal/resource/cost/risk/governance sources and confidence	STR-01-VIS-LEFT-CONTEXT
+P	STR-01-SEC-03
+P	Strategic Context
+P	Market/industry/competition/internal/resource/cost/risk/governance sources and confidence
+P	STR-01-VIS-LEFT-CONTEXT
+ROW	STR-01-SEC-04	Strategic Alerts / Open Questions	Relevant opportunity/risk alerts and missing-information questions	STR-01-VIS-LEFT-ALERT
+P	STR-01-SEC-04
+P	Strategic Alerts / Open Questions
+P	Relevant opportunity/risk alerts and missing-information questions
+P	STR-01-VIS-LEFT-ALERT
+ROW	STR-01-SEC-05	Strategic AI Conversation	Single/Multi AI conversation, attachment/image/reference, assistant summary	STR-01-VIS-CONVERSATION
+P	STR-01-SEC-05
+P	Strategic AI Conversation
+P	Single/Multi AI conversation, attachment/image/reference, assistant summary
+P	STR-01-VIS-CONVERSATION
+ROW	STR-01-SEC-06	Strategy Analysis	Basis, assumptions, opportunity, risk, uncertainty, pattern/baseline/forecast	STR-01-VIS-ANALYSIS
+P	STR-01-SEC-06
+P	Strategy Analysis
+P	Basis, assumptions, opportunity, risk, uncertainty, pattern/baseline/forecast
+P	STR-01-VIS-ANALYSIS
+ROW	STR-01-SEC-07	Option Comparison	Compare strategy candidates/options without deleting prior versions	STR-01-VIS-COMPARE
+P	STR-01-SEC-07
+P	Option Comparison
+P	Compare strategy candidates/options without deleting prior versions
+P	STR-01-VIS-COMPARE
+ROW	STR-01-SEC-08	Strategy Outputs	Recommendation, Alert, Resource Proposal, Decision Brief	STR-01-VIS-RIGHT-OUTPUT
+P	STR-01-SEC-08
+P	Strategy Outputs
+P	Recommendation, Alert, Resource Proposal, Decision Brief
+P	STR-01-VIS-RIGHT-OUTPUT
+ROW	STR-01-SEC-09	Human Review / Decision Ledger	Review status, candidate status, human decision record, execution status	STR-01-VIS-RIGHT-DECISION
+P	STR-01-SEC-09
+P	Human Review / Decision Ledger
+P	Review status, candidate status, human decision record, execution status
+P	STR-01-VIS-RIGHT-DECISION
+ROW	STR-01-SEC-10	Strategic Memory / Experience	Patterns, cases, experiments, baselines, KPI changes and learning	STR-01-VIS-MEMORY
+P	STR-01-SEC-10
+P	Strategic Memory / Experience
+P	Patterns, cases, experiments, baselines, KPI changes and learning
+P	STR-01-VIS-MEMORY
+ROW	STR-01-SEC-11	Feedback Loop	Expected vs Actual, difference, learning, owner execution feedback	STR-01-VIS-FEEDBACK
+P	STR-01-SEC-11
+P	Feedback Loop
+P	Expected vs Actual, difference, learning, owner execution feedback
+P	STR-01-VIS-FEEDBACK
+ROW	STR-01-SEC-12	Audit / Boundary	Source trace, provider brand, correlation, permission, owner handoff boundary	STR-01-VIS-STATUS
+P	STR-01-SEC-12
+P	Audit / Boundary
+P	Source trace, provider brand, correlation, permission, owner handoff boundary
+P	STR-01-VIS-STATUS
+P	workspace:STR-01 · Source Table 12
+ROW	Component UID	Section	Name
+P	Component UID
+P	Section
+P	Name
+ROW	STR-01-CMP-CONTEXT	STR-01-SEC-01	Strategic Context Bar
+P	STR-01-CMP-CONTEXT
+P	STR-01-SEC-01
+P	Strategic Context Bar
+ROW	STR-01-CMP-TOPICS	STR-01-SEC-02	Strategy Topic List / History
+P	STR-01-CMP-TOPICS
+P	STR-01-SEC-02
+P	Strategy Topic List / History
+ROW	STR-01-CMP-SOURCE-STACK	STR-01-SEC-03	Strategic Context Source Stack
+P	STR-01-CMP-SOURCE-STACK
+P	STR-01-SEC-03
+P	Strategic Context Source Stack
+ROW	STR-01-CMP-ALERTS	STR-01-SEC-04	Strategy Alerts / Open Questions
+P	STR-01-CMP-ALERTS
+P	STR-01-SEC-04
+P	Strategy Alerts / Open Questions
+ROW	STR-01-CMP-CONVERSATION	STR-01-SEC-05	AI Conversation Workspace
+P	STR-01-CMP-CONVERSATION
+P	STR-01-SEC-05
+P	AI Conversation Workspace
+ROW	STR-01-CMP-MODE	STR-01-SEC-05	Single / Multi AI Mode
+P	STR-01-CMP-MODE
+P	STR-01-SEC-05
+P	Single / Multi AI Mode
+ROW	STR-01-CMP-COMPOSER	STR-01-SEC-05	Conversation Composer
+P	STR-01-CMP-COMPOSER
+P	STR-01-SEC-05
+P	Conversation Composer
+ROW	STR-01-CMP-ASSISTANT	STR-01-SEC-05	Assistant Summary / Meeting Record
+P	STR-01-CMP-ASSISTANT
+P	STR-01-SEC-05
+P	Assistant Summary / Meeting Record
+ROW	STR-01-CMP-ANALYSIS	STR-01-SEC-06	Strategy Analysis Result
+P	STR-01-CMP-ANALYSIS
+P	STR-01-SEC-06
+P	Strategy Analysis Result
+ROW	STR-01-CMP-COMPARE	STR-01-SEC-07	Option Comparison
+P	STR-01-CMP-COMPARE
+P	STR-01-SEC-07
+P	Option Comparison
+ROW	STR-01-CMP-OUTPUTS	STR-01-SEC-08	Strategic Output Cards
+P	STR-01-CMP-OUTPUTS
+P	STR-01-SEC-08
+P	Strategic Output Cards
+ROW	STR-01-CMP-REVIEW	STR-01-SEC-09	Human Review
+P	STR-01-CMP-REVIEW
+P	STR-01-SEC-09
+P	Human Review
+ROW	STR-01-CMP-LEDGER	STR-01-SEC-09	Decision Ledger
+P	STR-01-CMP-LEDGER
+P	STR-01-SEC-09
+P	Decision Ledger
+ROW	STR-01-CMP-MEMORY	STR-01-SEC-10	Strategic Memory / Experience
+P	STR-01-CMP-MEMORY
+P	STR-01-SEC-10
+P	Strategic Memory / Experience
+ROW	STR-01-CMP-FEEDBACK	STR-01-SEC-11	Expected vs Actual / Learning
+P	STR-01-CMP-FEEDBACK
+P	STR-01-SEC-11
+P	Expected vs Actual / Learning
+ROW	STR-01-CMP-STATUS	STR-01-SEC-12	Audit / Boundary / Handoff Status
+P	STR-01-CMP-STATUS
+P	STR-01-SEC-12
+P	Audit / Boundary / Handoff Status
+P	workspace:STR-01 · Source Table 13
+ROW	Stage UID	Stage	Flow
+P	Stage UID
+P	Stage
+P	Flow
+ROW	STR-01-STAGE-01-CONTEXT	Resolve Strategic Context	Topic + sources + confirmed decisions + current internal data + historical experience + external intelligence
+P	STR-01-STAGE-01-CONTEXT
+P	Resolve Strategic Context
+P	Topic + sources + confirmed decisions + current internal data + historical experience + external intelligence
+ROW	STR-01-STAGE-02-CONVERSE	Strategic Conversation	Single/Multi AI same issue/context -> independent views -> Assistant record
+P	STR-01-STAGE-02-CONVERSE
+P	Strategic Conversation
+P	Single/Multi AI same issue/context -> independent views -> Assistant record
+ROW	STR-01-STAGE-03-ANALYZE	Analyze / Compare	Pattern/Baseline/Forecast -> Need/Opportunity/Risk/Priority -> Option comparison
+P	STR-01-STAGE-03-ANALYZE
+P	Analyze / Compare
+P	Pattern/Baseline/Forecast -> Need/Opportunity/Risk/Priority -> Option comparison
+ROW	STR-01-STAGE-04-OUTPUT	Strategic Outputs	Recommendation / Alert / Resource Proposal / Decision Brief candidate outputs
+P	STR-01-STAGE-04-OUTPUT
+P	Strategic Outputs
+P	Recommendation / Alert / Resource Proposal / Decision Brief candidate outputs
+ROW	STR-01-STAGE-05-HUMAN	Human Review / Decision	Submit strategy review -> human decision -> governed strategy context adoption when approved
+P	STR-01-STAGE-05-HUMAN
+P	Human Review / Decision
+P	Submit strategy review -> human decision -> governed strategy context adoption when approved
+ROW	STR-01-STAGE-06-FEEDBACK	Execution Feedback / Learning	Owner execution result -> Expected vs Actual -> Learning -> Strategic Experience
+P	STR-01-STAGE-06-FEEDBACK
+P	Execution Feedback / Learning
+P	Owner execution result -> Expected vs Actual -> Learning -> Strategic Experience
+P	workspace:STR-01 · Source Table 14
+ROW	Action UID	Label	Permission	Gate	Effect	Operation
+P	Action UID
+P	Label
+P	Permission
+P	Gate
+P	Effect
+P	Operation
+ROW	STR-01-ACT-NOOP	Read display	STR_VIEW	STR-01-GATE-PAGE	READ_ONLY	—
+P	STR-01-ACT-NOOP
+P	Read display
+P	STR_VIEW
+P	STR-01-GATE-PAGE
+P	READ_ONLY
+P	—
+ROW	STR-01-ACT-TOPIC-SELECT	Select Strategy Topic	STR_VIEW	STR-01-GATE-PAGE	CONTEXT_STATE	—
+P	STR-01-ACT-TOPIC-SELECT
+P	Select Strategy Topic
+P	STR_VIEW
+P	STR-01-GATE-PAGE
+P	CONTEXT_STATE
+P	—
+ROW	STR-01-ACT-FILTER	Filter current strategic projection	STR_VIEW	STR-01-GATE-PAGE	UI_ONLY	—
+P	STR-01-ACT-FILTER
+P	Filter current strategic projection
+P	STR_VIEW
+P	STR-01-GATE-PAGE
+P	UI_ONLY
+P	—
+ROW	STR-01-ACT-MODE	Single / Multi AI mode	STR_VIEW	STR-01-GATE-TOPIC	UI_ONLY	—
+P	STR-01-ACT-MODE
+P	Single / Multi AI mode
+P	STR_VIEW
+P	STR-01-GATE-TOPIC
+P	UI_ONLY
+P	—
+ROW	STR-01-ACT-SEND	Send Strategic Message	STR_CONVERSATION	STR-01-GATE-MESSAGE	CONVERSATION_WRITE	sendConversationMessage
+P	STR-01-ACT-SEND
+P	Send Strategic Message
+P	STR_CONVERSATION
+P	STR-01-GATE-MESSAGE
+P	CONVERSATION_WRITE
+P	sendConversationMessage
+ROW	STR-01-ACT-STOP	Stop Current Generation	STR_CONVERSATION	STR-01-GATE-MESSAGE	CONVERSATION_CONTROL	stopConversationGeneration
+P	STR-01-ACT-STOP
+P	Stop Current Generation
+P	STR_CONVERSATION
+P	STR-01-GATE-MESSAGE
+P	CONVERSATION_CONTROL
+P	stopConversationGeneration
+ROW	STR-01-ACT-COMPARE	Compare Strategy Candidates	STR_COMPARE	STR-01-GATE-COMPARE	READ_MODEL_QUERY	compareCandidates
+P	STR-01-ACT-COMPARE
+P	Compare Strategy Candidates
+P	STR_COMPARE
+P	STR-01-GATE-COMPARE
+P	READ_MODEL_QUERY
+P	compareCandidates
+ROW	STR-01-ACT-REVIEW	Submit Strategy Review	STR_REVIEW	STR-01-GATE-REVIEW	STRATEGY_REVIEW_REQUEST	submitStrategyReview
+P	STR-01-ACT-REVIEW
+P	Submit Strategy Review
+P	STR_REVIEW
+P	STR-01-GATE-REVIEW
+P	STRATEGY_REVIEW_REQUEST
+P	submitStrategyReview
+ROW	STR-01-ACT-ADOPT	Adopt Reviewed Strategy Context	STR_ADOPT	STR-01-GATE-ADOPT	STRATEGY_CONTEXT_ADOPTION	adoptAsContextCandidate
+P	STR-01-ACT-ADOPT
+P	Adopt Reviewed Strategy Context
+P	STR_ADOPT
+P	STR-01-GATE-ADOPT
+P	STRATEGY_CONTEXT_ADOPTION
+P	adoptAsContextCandidate
+ROW	STR-01-ACT-OPEN-OWNER	Open Execution Owner Module	STR_VIEW	STR-01-GATE-PAGE	UI_NAVIGATION	—
+P	STR-01-ACT-OPEN-OWNER
+P	Open Execution Owner Module
+P	STR_VIEW
+P	STR-01-GATE-PAGE
+P	UI_NAVIGATION
+P	—
+ROW	STR-01-ACT-AUDIT	Open Audit / Trace	STR_VIEW	STR-01-GATE-PAGE	UI_ONLY	—
+P	STR-01-ACT-AUDIT
+P	Open Audit / Trace
+P	STR_VIEW
+P	STR-01-GATE-PAGE
+P	UI_ONLY
+P	—
+P	workspace:STR-01 · Source Table 15
+ROW	Region	Geometry / Behavior
+P	Region
+P	Geometry / Behavior
+ROW	Global Header	58px fixed top, full width
+P	Global Header
+P	58px fixed top, full width
+ROW	Collapsed Sidebar	64px interaction rail; icons only; no visible panel
+P	Collapsed Sidebar
+P	64px interaction rail; icons only; no visible panel
+ROW	Expanded Sidebar	221px fixed overlay; no page reflow
+P	Expanded Sidebar
+P	221px fixed overlay; no page reflow
+ROW	Workspace Origin	x=78px / y=68px
+P	Workspace Origin
+P	x=78px / y=68px
+ROW	Context Bar	100% width; h=56px
+P	Context Bar
+P	100% width; h=56px
+ROW	Primary Grid	minmax(280px,1fr) / minmax(720px,3fr) / minmax(320px,1.12fr); ≈19/59/22; gap 16px
+P	Primary Grid
+P	minmax(280px,1fr) / minmax(720px,3fr) / minmax(320px,1.12fr); ≈19/59/22; gap 16px
+ROW	Conversation	center upper; dominant
+P	Conversation
+P	center upper; dominant
+ROW	Analysis	center lower; stacked/collapsible
+P	Analysis
+P	center lower; stacked/collapsible
+ROW	Option Compare	lower full-width
+P	Option Compare
+P	lower full-width
+ROW	Memory / Feedback	lower full-width / 2-column
+P	Memory / Feedback
+P	lower full-width / 2-column
+ROW	Controls	h40; radius10; missing data = —
+P	Controls
+P	h40; radius10; missing data = —
+ROW	Panels	radius12; global tech-purple only
+P	Panels
+P	radius12; global tech-purple only
+P	workspace:STR-01 · Source Table 16
+ROW	Control UID	Section	Type / Label	Action	Gate	Permission
+P	Control UID
+P	Section
+P	Type / Label
+P	Action
+P	Gate
+P	Permission
+ROW	STR-01-FLD-TOPIC	STR-01-SEC-01	READONLY / Strategy Topic	STR-01-ACT-NOOP	STR-01-GATE-PAGE	STR_VIEW
+P	STR-01-FLD-TOPIC
+P	STR-01-SEC-01
+P	READONLY / Strategy Topic
+P	STR-01-ACT-NOOP
+P	STR-01-GATE-PAGE
+P	STR_VIEW
+ROW	STR-01-FLD-SCOPE	STR-01-SEC-01	READONLY / Strategy Scope	STR-01-ACT-NOOP	STR-01-GATE-PAGE	STR_VIEW
+P	STR-01-FLD-SCOPE
+P	STR-01-SEC-01
+P	READONLY / Strategy Scope
+P	STR-01-ACT-NOOP
+P	STR-01-GATE-PAGE
+P	STR_VIEW
+ROW	STR-01-FLD-HORIZON	STR-01-SEC-01	READONLY / Time Horizon	STR-01-ACT-NOOP	STR-01-GATE-PAGE	STR_VIEW
+P	STR-01-FLD-HORIZON
+P	STR-01-SEC-01
+P	READONLY / Time Horizon
+P	STR-01-ACT-NOOP
+P	STR-01-GATE-PAGE
+P	STR_VIEW
+ROW	STR-01-FLD-STATE	STR-01-SEC-01	READONLY / Strategy State	STR-01-ACT-NOOP	STR-01-GATE-PAGE	STR_VIEW
+P	STR-01-FLD-STATE
+P	STR-01-SEC-01
+P	READONLY / Strategy State
+P	STR-01-ACT-NOOP
+P	STR-01-GATE-PAGE
+P	STR_VIEW
+ROW	STR-01-FLD-DECISION-STATE	STR-01-SEC-01	READONLY / Decision Status	STR-01-ACT-NOOP	STR-01-GATE-PAGE	STR_VIEW
+P	STR-01-FLD-DECISION-STATE
+P	STR-01-SEC-01
+P	READONLY / Decision Status
+P	STR-01-ACT-NOOP
+P	STR-01-GATE-PAGE
+P	STR_VIEW
+ROW	STR-01-TGL-MODE	STR-01-SEC-01	TOGGLE / Single AI / Multi AI	STR-01-ACT-MODE	STR-01-GATE-TOPIC	STR_VIEW
+P	STR-01-TGL-MODE
+P	STR-01-SEC-01
+P	TOGGLE / Single AI / Multi AI
+P	STR-01-ACT-MODE
+P	STR-01-GATE-TOPIC
+P	STR_VIEW
+ROW	STR-01-INP-TOPIC-SEARCH	STR-01-SEC-02	SEARCH / 搜尋策略議題	STR-01-ACT-FILTER	STR-01-GATE-PAGE	STR_VIEW
+P	STR-01-INP-TOPIC-SEARCH
+P	STR-01-SEC-02
+P	SEARCH / 搜尋策略議題
+P	STR-01-ACT-FILTER
+P	STR-01-GATE-PAGE
+P	STR_VIEW
+ROW	STR-01-LST-TOPICS	STR-01-SEC-02	LIST / Strategy Topics / History	STR-01-ACT-TOPIC-SELECT	STR-01-GATE-PAGE	STR_VIEW
+P	STR-01-LST-TOPICS
+P	STR-01-SEC-02
+P	LIST / Strategy Topics / History
+P	STR-01-ACT-TOPIC-SELECT
+P	STR-01-GATE-PAGE
+P	STR_VIEW
+ROW	STR-01-LST-CONTEXT	STR-01-SEC-03	LIST / Strategic Context Sources	STR-01-ACT-NOOP	STR-01-GATE-CONTEXT	STR_VIEW
+P	STR-01-LST-CONTEXT
+P	STR-01-SEC-03
+P	LIST / Strategic Context Sources
+P	STR-01-ACT-NOOP
+P	STR-01-GATE-CONTEXT
+P	STR_VIEW
+ROW	STR-01-FLD-CONTEXT-PRIORITY	STR-01-SEC-03	READONLY / Context Priority	STR-01-ACT-NOOP	STR-01-GATE-CONTEXT	STR_VIEW
+P	STR-01-FLD-CONTEXT-PRIORITY
+P	STR-01-SEC-03
+P	READONLY / Context Priority
+P	STR-01-ACT-NOOP
+P	STR-01-GATE-CONTEXT
+P	STR_VIEW
+ROW	STR-01-FLD-CONTEXT-SOURCE	STR-01-SEC-03	READONLY / Source / Ref	STR-01-ACT-NOOP	STR-01-GATE-CONTEXT	STR_VIEW
+P	STR-01-FLD-CONTEXT-SOURCE
+P	STR-01-SEC-03
+P	READONLY / Source / Ref
+P	STR-01-ACT-NOOP
+P	STR-01-GATE-CONTEXT
+P	STR_VIEW
+ROW	STR-01-FLD-CONTEXT-TIME	STR-01-SEC-03	READONLY / Source Time / Version	STR-01-ACT-NOOP	STR-01-GATE-CONTEXT	STR_VIEW
+P	STR-01-FLD-CONTEXT-TIME
+P	STR-01-SEC-03
+P	READONLY / Source Time / Version
+P	STR-01-ACT-NOOP
+P	STR-01-GATE-CONTEXT
+P	STR_VIEW
+ROW	STR-01-FLD-CONTEXT-CONFIDENCE	STR-01-SEC-03	READONLY / Confidence / Quality	STR-01-ACT-NOOP	STR-01-GATE-CONTEXT	STR_VIEW
+P	STR-01-FLD-CONTEXT-CONFIDENCE
+P	STR-01-SEC-03
+P	READONLY / Confidence / Quality
+P	STR-01-ACT-NOOP
+P	STR-01-GATE-CONTEXT
+P	STR_VIEW
+ROW	STR-01-LST-ALERTS	STR-01-SEC-04	LIST / Strategy Alerts / Open Questions	STR-01-ACT-NOOP	STR-01-GATE-PAGE	STR_VIEW
+P	STR-01-LST-ALERTS
+P	STR-01-SEC-04
+P	LIST / Strategy Alerts / Open Questions
+P	STR-01-ACT-NOOP
+P	STR-01-GATE-PAGE
+P	STR_VIEW
+ROW	STR-01-VIEW-CONVERSATION	STR-01-SEC-05	CONVERSATION / Strategic AI Conversation	STR-01-ACT-NOOP	STR-01-GATE-TOPIC	STR_VIEW
+P	STR-01-VIEW-CONVERSATION
+P	STR-01-SEC-05
+P	CONVERSATION / Strategic AI Conversation
+P	STR-01-ACT-NOOP
+P	STR-01-GATE-TOPIC
+P	STR_VIEW
+ROW	STR-01-BTN-ATTACH	STR-01-SEC-05	ATTACHMENT / 附件 / 圖片	STR-01-ACT-NOOP	STR-01-GATE-TOPIC	STR_VIEW
+P	STR-01-BTN-ATTACH
+P	STR-01-SEC-05
+P	ATTACHMENT / 附件 / 圖片
+P	STR-01-ACT-NOOP
+P	STR-01-GATE-TOPIC
+P	STR_VIEW
+ROW	STR-01-INP-MESSAGE	STR-01-SEC-05	TEXTAREA / 輸入策略議題、問題或分析要求	STR-01-ACT-SEND	STR-01-GATE-MESSAGE	STR_CONVERSATION
+P	STR-01-INP-MESSAGE
+P	STR-01-SEC-05
+P	TEXTAREA / 輸入策略議題、問題或分析要求
+P	STR-01-ACT-SEND
+P	STR-01-GATE-MESSAGE
+P	STR_CONVERSATION
+ROW	STR-01-BTN-SEND	STR-01-SEC-05	PRIMARY_BUTTON / 送出	STR-01-ACT-SEND	STR-01-GATE-MESSAGE	STR_CONVERSATION
+P	STR-01-BTN-SEND
+P	STR-01-SEC-05
+P	PRIMARY_BUTTON / 送出
+P	STR-01-ACT-SEND
+P	STR-01-GATE-MESSAGE
+P	STR_CONVERSATION
+ROW	STR-01-BTN-STOP	STR-01-SEC-05	BUTTON / 停止生成	STR-01-ACT-STOP	STR-01-GATE-MESSAGE	STR_CONVERSATION
+P	STR-01-BTN-STOP
+P	STR-01-SEC-05
+P	BUTTON / 停止生成
+P	STR-01-ACT-STOP
+P	STR-01-GATE-MESSAGE
+P	STR_CONVERSATION
+ROW	STR-01-FLD-ASSISTANT-SUMMARY	STR-01-SEC-05	READONLY / Assistant Summary	STR-01-ACT-NOOP	STR-01-GATE-ANALYSIS	STR_VIEW
+P	STR-01-FLD-ASSISTANT-SUMMARY
+P	STR-01-SEC-05
+P	READONLY / Assistant Summary
+P	STR-01-ACT-NOOP
+P	STR-01-GATE-ANALYSIS
+P	STR_VIEW
+ROW	STR-01-FLD-OPEN-QUESTIONS	STR-01-SEC-05	READONLY / Open Questions	STR-01-ACT-NOOP	STR-01-GATE-ANALYSIS	STR_VIEW
+P	STR-01-FLD-OPEN-QUESTIONS
+P	STR-01-SEC-05
+P	READONLY / Open Questions
+P	STR-01-ACT-NOOP
+P	STR-01-GATE-ANALYSIS
+P	STR_VIEW
+ROW	STR-01-FLD-MEETING-RECORD	STR-01-SEC-05	READONLY / Meeting / Discussion Record	STR-01-ACT-NOOP	STR-01-GATE-ANALYSIS	STR_VIEW
+P	STR-01-FLD-MEETING-RECORD
+P	STR-01-SEC-05
+P	READONLY / Meeting / Discussion Record
+P	STR-01-ACT-NOOP
+P	STR-01-GATE-ANALYSIS
+P	STR_VIEW
+ROW	STR-01-FLD-BASIS	STR-01-SEC-06	READONLY / 分析依據 / Basis	STR-01-ACT-NOOP	STR-01-GATE-ANALYSIS	STR_VIEW
+P	STR-01-FLD-BASIS
+P	STR-01-SEC-06
+P	READONLY / 分析依據 / Basis
+P	STR-01-ACT-NOOP
+P	STR-01-GATE-ANALYSIS
+P	STR_VIEW
+ROW	STR-01-FLD-ASSUMPTIONS	STR-01-SEC-06	READONLY / 假設 / Assumptions	STR-01-ACT-NOOP	STR-01-GATE-ANALYSIS	STR_VIEW
+P	STR-01-FLD-ASSUMPTIONS
+P	STR-01-SEC-06
+P	READONLY / 假設 / Assumptions
+P	STR-01-ACT-NOOP
+P	STR-01-GATE-ANALYSIS
+P	STR_VIEW
+ROW	STR-01-FLD-OPPORTUNITIES	STR-01-SEC-06	READONLY / 機會 / Opportunities	STR-01-ACT-NOOP	STR-01-GATE-ANALYSIS	STR_VIEW
+P	STR-01-FLD-OPPORTUNITIES
+P	STR-01-SEC-06
+P	READONLY / 機會 / Opportunities
+P	STR-01-ACT-NOOP
+P	STR-01-GATE-ANALYSIS
+P	STR_VIEW
+ROW	STR-01-FLD-RISKS	STR-01-SEC-06	READONLY / 風險 / Risks	STR-01-ACT-NOOP	STR-01-GATE-ANALYSIS	STR_VIEW
+P	STR-01-FLD-RISKS
+P	STR-01-SEC-06
+P	READONLY / 風險 / Risks
+P	STR-01-ACT-NOOP
+P	STR-01-GATE-ANALYSIS
+P	STR_VIEW
+ROW	STR-01-FLD-UNCERTAINTY	STR-01-SEC-06	READONLY / 不確定性 / Uncertainty	STR-01-ACT-NOOP	STR-01-GATE-ANALYSIS	STR_VIEW
+P	STR-01-FLD-UNCERTAINTY
+P	STR-01-SEC-06
+P	READONLY / 不確定性 / Uncertainty
+P	STR-01-ACT-NOOP
+P	STR-01-GATE-ANALYSIS
+P	STR_VIEW
+ROW	STR-01-FLD-PATTERN	STR-01-SEC-06	READONLY / Pattern / Baseline / Forecast	STR-01-ACT-NOOP	STR-01-GATE-ANALYSIS	STR_VIEW
+P	STR-01-FLD-PATTERN
+P	STR-01-SEC-06
+P	READONLY / Pattern / Baseline / Forecast
+P	STR-01-ACT-NOOP
+P	STR-01-GATE-ANALYSIS
+P	STR_VIEW
+ROW	STR-01-TBL-COMPARE	STR-01-SEC-07	TABLE / Strategy Option Comparison	STR-01-ACT-COMPARE	STR-01-GATE-COMPARE	STR_COMPARE
+P	STR-01-TBL-COMPARE
+P	STR-01-SEC-07
+P	TABLE / Strategy Option Comparison
+P	STR-01-ACT-COMPARE
+P	STR-01-GATE-COMPARE
+P	STR_COMPARE
+ROW	STR-01-BTN-COMPARE	STR-01-SEC-07	BUTTON / 比較方案	STR-01-ACT-COMPARE	STR-01-GATE-COMPARE	STR_COMPARE
+P	STR-01-BTN-COMPARE
+P	STR-01-SEC-07
+P	BUTTON / 比較方案
+P	STR-01-ACT-COMPARE
+P	STR-01-GATE-COMPARE
+P	STR_COMPARE
+ROW	STR-01-CARD-RECOMMENDATION	STR-01-SEC-08	READONLY_CARD / Strategy Recommendation	STR-01-ACT-NOOP	STR-01-GATE-ANALYSIS	STR_VIEW
+P	STR-01-CARD-RECOMMENDATION
+P	STR-01-SEC-08
+P	READONLY_CARD / Strategy Recommendation
+P	STR-01-ACT-NOOP
+P	STR-01-GATE-ANALYSIS
+P	STR_VIEW
+ROW	STR-01-CARD-ALERT	STR-01-SEC-08	READONLY_CARD / Strategy Alert	STR-01-ACT-NOOP	STR-01-GATE-ANALYSIS	STR_VIEW
+P	STR-01-CARD-ALERT
+P	STR-01-SEC-08
+P	READONLY_CARD / Strategy Alert
+P	STR-01-ACT-NOOP
+P	STR-01-GATE-ANALYSIS
+P	STR_VIEW
+ROW	STR-01-CARD-RESOURCE	STR-01-SEC-08	READONLY_CARD / Resource Proposal	STR-01-ACT-NOOP	STR-01-GATE-ANALYSIS	STR_VIEW
+P	STR-01-CARD-RESOURCE
+P	STR-01-SEC-08
+P	READONLY_CARD / Resource Proposal
+P	STR-01-ACT-NOOP
+P	STR-01-GATE-ANALYSIS
+P	STR_VIEW
+ROW	STR-01-CARD-BRIEF	STR-01-SEC-08	READONLY_CARD / Decision Brief	STR-01-ACT-NOOP	STR-01-GATE-ANALYSIS	STR_VIEW
+P	STR-01-CARD-BRIEF
+P	STR-01-SEC-08
+P	READONLY_CARD / Decision Brief
+P	STR-01-ACT-NOOP
+P	STR-01-GATE-ANALYSIS
+P	STR_VIEW
+ROW	STR-01-FLD-CANDIDATE-REF	STR-01-SEC-09	READONLY / Strategy Candidate	STR-01-ACT-NOOP	STR-01-GATE-PAGE	STR_VIEW
+P	STR-01-FLD-CANDIDATE-REF
+P	STR-01-SEC-09
+P	READONLY / Strategy Candidate
+P	STR-01-ACT-NOOP
+P	STR-01-GATE-PAGE
+P	STR_VIEW
+ROW	STR-01-FLD-REVIEW-STATE	STR-01-SEC-09	READONLY / Review State	STR-01-ACT-NOOP	STR-01-GATE-PAGE	STR_VIEW
+P	STR-01-FLD-REVIEW-STATE
+P	STR-01-SEC-09
+P	READONLY / Review State
+P	STR-01-ACT-NOOP
+P	STR-01-GATE-PAGE
+P	STR_VIEW
+ROW	STR-01-FLD-DECISION-ID	STR-01-SEC-09	READONLY / Decision ID	STR-01-ACT-NOOP	STR-01-GATE-PAGE	STR_VIEW
+P	STR-01-FLD-DECISION-ID
+P	STR-01-SEC-09
+P	READONLY / Decision ID
+P	STR-01-ACT-NOOP
+P	STR-01-GATE-PAGE
+P	STR_VIEW
+ROW	STR-01-FLD-DECISION-RESULT	STR-01-SEC-09	READONLY / Decision Result	STR-01-ACT-NOOP	STR-01-GATE-PAGE	STR_VIEW
+P	STR-01-FLD-DECISION-RESULT
+P	STR-01-SEC-09
+P	READONLY / Decision Result
+P	STR-01-ACT-NOOP
+P	STR-01-GATE-PAGE
+P	STR_VIEW
+ROW	STR-01-FLD-DECISION-REASON	STR-01-SEC-09	READONLY / Decision Reason	STR-01-ACT-NOOP	STR-01-GATE-PAGE	STR_VIEW
+P	STR-01-FLD-DECISION-REASON
+P	STR-01-SEC-09
+P	READONLY / Decision Reason
+P	STR-01-ACT-NOOP
+P	STR-01-GATE-PAGE
+P	STR_VIEW
+ROW	STR-01-FLD-EXECUTION-STATE	STR-01-SEC-09	READONLY / Execution Status / Ref	STR-01-ACT-NOOP	STR-01-GATE-PAGE	STR_VIEW
+P	STR-01-FLD-EXECUTION-STATE
+P	STR-01-SEC-09
+P	READONLY / Execution Status / Ref
+P	STR-01-ACT-NOOP
+P	STR-01-GATE-PAGE
+P	STR_VIEW
+ROW	STR-01-BTN-SUBMIT-REVIEW	STR-01-SEC-09	PRIMARY_BUTTON / 送出策略審查	STR-01-ACT-REVIEW	STR-01-GATE-REVIEW	STR_REVIEW
+P	STR-01-BTN-SUBMIT-REVIEW
+P	STR-01-SEC-09
+P	PRIMARY_BUTTON / 送出策略審查
+P	STR-01-ACT-REVIEW
+P	STR-01-GATE-REVIEW
+P	STR_REVIEW
+ROW	STR-01-BTN-ADOPT	STR-01-SEC-09	PRIMARY_BUTTON / 採用策略 Context	STR-01-ACT-ADOPT	STR-01-GATE-ADOPT	STR_ADOPT
+P	STR-01-BTN-ADOPT
+P	STR-01-SEC-09
+P	PRIMARY_BUTTON / 採用策略 Context
+P	STR-01-ACT-ADOPT
+P	STR-01-GATE-ADOPT
+P	STR_ADOPT
+ROW	STR-01-BTN-OPEN-OWNER	STR-01-SEC-09	BUTTON / 開啟執行責任模組	STR-01-ACT-OPEN-OWNER	STR-01-GATE-PAGE	STR_VIEW
+P	STR-01-BTN-OPEN-OWNER
+P	STR-01-SEC-09
+P	BUTTON / 開啟執行責任模組
+P	STR-01-ACT-OPEN-OWNER
+P	STR-01-GATE-PAGE
+P	STR_VIEW
+ROW	STR-01-LST-PATTERNS	STR-01-SEC-10	LIST / Strategy Pattern / Cases	STR-01-ACT-NOOP	STR-01-GATE-MEMORY	STR_VIEW
+P	STR-01-LST-PATTERNS
+P	STR-01-SEC-10
+P	LIST / Strategy Pattern / Cases
+P	STR-01-ACT-NOOP
+P	STR-01-GATE-MEMORY
+P	STR_VIEW
+ROW	STR-01-LST-EXPERIMENTS	STR-01-SEC-10	LIST / Experiment Records	STR-01-ACT-NOOP	STR-01-GATE-MEMORY	STR_VIEW
+P	STR-01-LST-EXPERIMENTS
+P	STR-01-SEC-10
+P	LIST / Experiment Records
+P	STR-01-ACT-NOOP
+P	STR-01-GATE-MEMORY
+P	STR_VIEW
+ROW	STR-01-LST-BASELINES	STR-01-SEC-10	LIST / Baseline History	STR-01-ACT-NOOP	STR-01-GATE-MEMORY	STR_VIEW
+P	STR-01-LST-BASELINES
+P	STR-01-SEC-10
+P	LIST / Baseline History
+P	STR-01-ACT-NOOP
+P	STR-01-GATE-MEMORY
+P	STR_VIEW
+ROW	STR-01-LST-LEARNING	STR-01-SEC-10	LIST / Learning Results	STR-01-ACT-NOOP	STR-01-GATE-MEMORY	STR_VIEW
+P	STR-01-LST-LEARNING
+P	STR-01-SEC-10
+P	LIST / Learning Results
+P	STR-01-ACT-NOOP
+P	STR-01-GATE-MEMORY
+P	STR_VIEW
+ROW	STR-01-FLD-EXPECTED	STR-01-SEC-11	READONLY / Expected	STR-01-ACT-NOOP	STR-01-GATE-FEEDBACK	STR_VIEW
+P	STR-01-FLD-EXPECTED
+P	STR-01-SEC-11
+P	READONLY / Expected
+P	STR-01-ACT-NOOP
+P	STR-01-GATE-FEEDBACK
+P	STR_VIEW
+ROW	STR-01-FLD-ACTUAL	STR-01-SEC-11	READONLY / Actual	STR-01-ACT-NOOP	STR-01-GATE-FEEDBACK	STR_VIEW
+P	STR-01-FLD-ACTUAL
+P	STR-01-SEC-11
+P	READONLY / Actual
+P	STR-01-ACT-NOOP
+P	STR-01-GATE-FEEDBACK
+P	STR_VIEW
+ROW	STR-01-FLD-DIFFERENCE	STR-01-SEC-11	READONLY / Difference Analysis	STR-01-ACT-NOOP	STR-01-GATE-FEEDBACK	STR_VIEW
+P	STR-01-FLD-DIFFERENCE
+P	STR-01-SEC-11
+P	READONLY / Difference Analysis
+P	STR-01-ACT-NOOP
+P	STR-01-GATE-FEEDBACK
+P	STR_VIEW
+ROW	STR-01-FLD-KPI	STR-01-SEC-11	READONLY / KPI / Performance Change	STR-01-ACT-NOOP	STR-01-GATE-FEEDBACK	STR_VIEW
+P	STR-01-FLD-KPI
+P	STR-01-SEC-11
+P	READONLY / KPI / Performance Change
+P	STR-01-ACT-NOOP
+P	STR-01-GATE-FEEDBACK
+P	STR_VIEW
+ROW	STR-01-FLD-LEARNING	STR-01-SEC-11	READONLY / Learning	STR-01-ACT-NOOP	STR-01-GATE-FEEDBACK	STR_VIEW
+P	STR-01-FLD-LEARNING
+P	STR-01-SEC-11
+P	READONLY / Learning
+P	STR-01-ACT-NOOP
+P	STR-01-GATE-FEEDBACK
+P	STR_VIEW
+ROW	STR-01-FLD-PROVIDER-BRAND	STR-01-SEC-12	READONLY / Provider Brand	STR-01-ACT-NOOP	STR-01-GATE-PAGE	STR_VIEW
+P	STR-01-FLD-PROVIDER-BRAND
+P	STR-01-SEC-12
+P	READONLY / Provider Brand
+P	STR-01-ACT-NOOP
+P	STR-01-GATE-PAGE
+P	STR_VIEW
+ROW	STR-01-FLD-CORRELATION	STR-01-SEC-12	READONLY / Correlation / Audit Ref	STR-01-ACT-NOOP	STR-01-GATE-PAGE	STR_VIEW
+P	STR-01-FLD-CORRELATION
+P	STR-01-SEC-12
+P	READONLY / Correlation / Audit Ref
+P	STR-01-ACT-NOOP
+P	STR-01-GATE-PAGE
+P	STR_VIEW
+ROW	STR-01-FLD-DISABLED	STR-01-SEC-12	READONLY / Disabled Reason	STR-01-ACT-NOOP	STR-01-GATE-PAGE	STR_VIEW
+P	STR-01-FLD-DISABLED
+P	STR-01-SEC-12
+P	READONLY / Disabled Reason
+P	STR-01-ACT-NOOP
+P	STR-01-GATE-PAGE
+P	STR_VIEW
+ROW	STR-01-FLD-OWNER-BOUNDARY	STR-01-SEC-12	READONLY / Execution Owner Boundary	STR-01-ACT-NOOP	STR-01-GATE-PAGE	STR_VIEW
+P	STR-01-FLD-OWNER-BOUNDARY
+P	STR-01-SEC-12
+P	READONLY / Execution Owner Boundary
+P	STR-01-ACT-NOOP
+P	STR-01-GATE-PAGE
+P	STR_VIEW
+ROW	STR-01-BTN-AUDIT	STR-01-SEC-12	BUTTON / 查看 Audit / Trace	STR-01-ACT-AUDIT	STR-01-GATE-PAGE	STR_VIEW
+P	STR-01-BTN-AUDIT
+P	STR-01-SEC-12
+P	BUTTON / 查看 Audit / Trace
+P	STR-01-ACT-AUDIT
+P	STR-01-GATE-PAGE
+P	STR_VIEW
+P	workspace:STR-01 · Source Table 17
+ROW	Gate UID	Condition
+P	Gate UID
+P	Condition
+ROW	STR-01-GATE-PAGE	explicit Account Permission Assignment + scope + condition + audit
+P	STR-01-GATE-PAGE
+P	explicit Account Permission Assignment + scope + condition + audit
+ROW	STR-01-GATE-TOPIC	exact Strategy Topic / discussion context is selected and active
+P	STR-01-GATE-TOPIC
+P	exact Strategy Topic / discussion context is selected and active
+ROW	STR-01-GATE-CONTEXT	Strategic Context sources have exact refs/version/time + authorization + confidence/quality state
+P	STR-01-GATE-CONTEXT
+P	Strategic Context sources have exact refs/version/time + authorization + confidence/quality state
+ROW	STR-01-GATE-MESSAGE	active conversation + strategy topic + context ready + non-empty message + conversation.write
+P	STR-01-GATE-MESSAGE
+P	active conversation + strategy topic + context ready + non-empty message + conversation.write
+ROW	STR-01-GATE-MULTI	mode=MULTI_AI + assigned AI route/group available from shared ACPOS Router; no manual Provider/Model picker
+P	STR-01-GATE-MULTI
+P	mode=MULTI_AI + assigned AI route/group available from shared ACPOS Router; no manual Provider/Model picker
+ROW	STR-01-GATE-ANALYSIS	AI response(s) + Assistant Summary + source/evidence refs available
+P	STR-01-GATE-ANALYSIS
+P	AI response(s) + Assistant Summary + source/evidence refs available
+ROW	STR-01-GATE-COMPARE	at least 2 exact strategy candidate refs/version refs available
+P	STR-01-GATE-COMPARE
+P	at least 2 exact strategy candidate refs/version refs available
+ROW	STR-01-GATE-REVIEW	exact Strategy Candidate state=CANDIDATE + analysis basis/risk/uncertainty/evidence + expected version + strategy.decision.propose
+P	STR-01-GATE-REVIEW
+P	exact Strategy Candidate state=CANDIDATE + analysis basis/risk/uncertainty/evidence + expected version + strategy.decision.propose
+ROW	STR-01-GATE-ADOPT	exact Strategy Candidate state=REVIEW_REQUIRED + human review decision/reason + evidence refs + strategy.decision.approve
+P	STR-01-GATE-ADOPT
+P	exact Strategy Candidate state=REVIEW_REQUIRED + human review decision/reason + evidence refs + strategy.decision.approve
+ROW	STR-01-GATE-MEMORY	authorized strategic memory/experience projection available
+P	STR-01-GATE-MEMORY
+P	authorized strategic memory/experience projection available
+ROW	STR-01-GATE-FEEDBACK	execution/performance result refs available; read-only in STR-01
+P	STR-01-GATE-FEEDBACK
+P	execution/performance result refs available; read-only in STR-01
+P	workspace:STR-01 · Source Table 18
+ROW	Permission UID	Backend Scope	Purpose
+P	Permission UID
+P	Backend Scope
+P	Purpose
+ROW	STR_VIEW	strategy.read	Read Strategic Center projection/context/output/decision/memory
+P	STR_VIEW
+P	strategy.read
+P	Read Strategic Center projection/context/output/decision/memory
+ROW	STR_CONVERSATION	conversation.write	Send Strategic Center conversation message
+P	STR_CONVERSATION
+P	conversation.write
+P	Send Strategic Center conversation message
+ROW	STR_COMPARE	candidate.read	Compare strategy candidates/options
+P	STR_COMPARE
+P	candidate.read
+P	Compare strategy candidates/options
+ROW	STR_REVIEW	strategy.decision.propose	Submit strategy candidate for human review
+P	STR_REVIEW
+P	strategy.decision.propose
+P	Submit strategy candidate for human review
+ROW	STR_ADOPT	strategy.decision.approve	Adopt reviewed strategy candidate as governed context
+P	STR_ADOPT
+P	strategy.decision.approve
+P	Adopt reviewed strategy candidate as governed context
+P	workspace:STR-01 · Source Table 19
+ROW	State UID	Display	Definition
+P	State UID
+P	Display
+P	Definition
+ROW	STR-01-ST-EMPTY	EMPTY	No Strategy Topic/discussion selected
+P	STR-01-ST-EMPTY
+P	EMPTY
+P	No Strategy Topic/discussion selected
+ROW	STR-01-ST-READY	READY	Strategy Topic + context ready
+P	STR-01-ST-READY
+P	READY
+P	Strategy Topic + context ready
+ROW	STR-01-ST-RESPONDING	RESPONDING	Single/Multi AI response active
+P	STR-01-ST-RESPONDING
+P	RESPONDING
+P	Single/Multi AI response active
+ROW	STR-01-ST-ANALYZING	ANALYZING	Assistant synthesis / strategy analysis active
+P	STR-01-ST-ANALYZING
+P	ANALYZING
+P	Assistant synthesis / strategy analysis active
+ROW	STR-01-ST-CANDIDATE	CANDIDATE_READY	Strategy candidate/output ready
+P	STR-01-ST-CANDIDATE
+P	CANDIDATE_READY
+P	Strategy candidate/output ready
+ROW	STR-01-ST-REVIEW	REVIEW_REQUIRED	Human strategy review required
+P	STR-01-ST-REVIEW
+P	REVIEW_REQUIRED
+P	Human strategy review required
+ROW	STR-01-ST-ADOPTED	ADOPTED_CONTEXT	Human-reviewed strategy context adopted; owner execution still separate
+P	STR-01-ST-ADOPTED
+P	ADOPTED_CONTEXT
+P	Human-reviewed strategy context adopted; owner execution still separate
+ROW	STR-01-ST-FEEDBACK	FEEDBACK_AVAILABLE	Execution/performance feedback available
+P	STR-01-ST-FEEDBACK
+P	FEEDBACK_AVAILABLE
+P	Execution/performance feedback available
+ROW	STR-01-ST-ERROR	ERROR/BLOCKED	Real permission/context/runtime/error blocker
+P	STR-01-ST-ERROR
+P	ERROR/BLOCKED
+P	Real permission/context/runtime/error blocker
+P	workspace:STR-01 · Source Table 20
+ROW	Error UID	Context	Recovery
+P	Error UID
+P	Context
+P	Recovery
+ROW	STR-01-ERR-CONTEXT-001	Strategic Context source/ref/time/version unavailable or stale	BLOCK dependent analysis; show exact missing source; do not AI-fill
+P	STR-01-ERR-CONTEXT-001
+P	Strategic Context source/ref/time/version unavailable or stale
+P	BLOCK dependent analysis; show exact missing source; do not AI-fill
+ROW	STR-01-ERR-CONVERSATION-001	Conversation/session/message/attachment/mode invalid	Preserve topic/context; show registered error/retry eligibility
+P	STR-01-ERR-CONVERSATION-001
+P	Conversation/session/message/attachment/mode invalid
+P	Preserve topic/context; show registered error/retry eligibility
+ROW	STR-01-ERR-CANDIDATE-001	Strategy candidate/version/evidence invalid or stale	BLOCK compare/review/adoption
+P	STR-01-ERR-CANDIDATE-001
+P	Strategy candidate/version/evidence invalid or stale
+P	BLOCK compare/review/adoption
+ROW	STR-01-ERR-REVIEW-001	Review prerequisites/permission/expected version invalid	BLOCK submit review; preserve candidate
+P	STR-01-ERR-REVIEW-001
+P	Review prerequisites/permission/expected version invalid
+P	BLOCK submit review; preserve candidate
+ROW	STR-01-ERR-ADOPT-001	Adoption prerequisites/human decision/evidence/version invalid	BLOCK adoption; no auto-approval
+P	STR-01-ERR-ADOPT-001
+P	Adoption prerequisites/human decision/evidence/version invalid
+P	BLOCK adoption; no auto-approval
+ROW	STR-01-ERR-MEMORY-001	Strategic Memory/Experience projection unavailable	Show unavailable state; do not substitute unvalidated conversation
+P	STR-01-ERR-MEMORY-001
+P	Strategic Memory/Experience projection unavailable
+P	Show unavailable state; do not substitute unvalidated conversation
+ROW	STR-01-ERR-FEEDBACK-001	Execution result / KPI / Expected-vs-Actual refs missing	Show pending/incomplete feedback; do not fabricate performance
+P	STR-01-ERR-FEEDBACK-001
+P	Execution result / KPI / Expected-vs-Actual refs missing
+P	Show pending/incomplete feedback; do not fabricate performance
+ROW	STR-01-ERR-PERM-001	Permission/scope denied	Hide/disable according to actual server result
+P	STR-01-ERR-PERM-001
+P	Permission/scope denied
+P	Hide/disable according to actual server result
+ROW	STR-01-ERR-UNDEFINED-001	Unlisted Section/Component/Control/Action/Gate/Permission/Port requested	BLOCK + REPORT_AUTHORITY_GAP
+P	STR-01-ERR-UNDEFINED-001
+P	Unlisted Section/Component/Control/Action/Gate/Permission/Port requested
+P	BLOCK + REPORT_AUTHORITY_GAP
+P	workspace:STR-01 · Source Table 21
+ROW	Port UID	Boundary	Operation	Method	Permission	Exposure
+P	Port UID
+P	Boundary
+P	Operation
+P	Method
+P	Permission
+P	Exposure
+ROW	STR-01-PORT-PROJECTION	Strategic Center Projection	getUiProjection	GET /v1/ui-projections/{pageUid}	page/strategy read	all read-only strategic page data
+P	STR-01-PORT-PROJECTION
+P	Strategic Center Projection
+P	getUiProjection
+P	GET /v1/ui-projections/{pageUid}
+P	page/strategy read
+P	all read-only strategic page data
+ROW	STR-01-PORT-CONVERSATION	Strategic Conversation	sendConversationMessage	POST /v1/conversations/{conversationId}/messages	conversation.write	Single/Multi AI through shared conversation core; provider routing system-owned
+P	STR-01-PORT-CONVERSATION
+P	Strategic Conversation
+P	sendConversationMessage
+P	POST /v1/conversations/{conversationId}/messages
+P	conversation.write
+P	Single/Multi AI through shared conversation core; provider routing system-owned
+ROW	STR-01-PORT-STOP	Conversation Control	stopConversationGeneration	POST /v1/conversations/{conversationId}/generation/stop	conversation.write	current conversation only
+P	STR-01-PORT-STOP
+P	Conversation Control
+P	stopConversationGeneration
+P	POST /v1/conversations/{conversationId}/generation/stop
+P	conversation.write
+P	current conversation only
+ROW	STR-01-PORT-COMPARE	Strategy Candidate Compare	compareCandidates	GET /v1/candidates/compare	candidate.read	exact candidate refs only
+P	STR-01-PORT-COMPARE
+P	Strategy Candidate Compare
+P	compareCandidates
+P	GET /v1/candidates/compare
+P	candidate.read
+P	exact candidate refs only
+ROW	STR-01-PORT-REVIEW	Strategy Review	submitStrategyReview	POST /v1/state-commands/strategycandidate/submitstrategyreview	strategy.decision.propose	human review request; no auto approval
+P	STR-01-PORT-REVIEW
+P	Strategy Review
+P	submitStrategyReview
+P	POST /v1/state-commands/strategycandidate/submitstrategyreview
+P	strategy.decision.propose
+P	human review request; no auto approval
+ROW	STR-01-PORT-ADOPT	Strategy Context Adoption	adoptAsContextCandidate	POST /v1/state-commands/strategycandidate/adoptascontextcandidate	strategy.decision.approve	governed context adoption only; owner module executes later
+P	STR-01-PORT-ADOPT
+P	Strategy Context Adoption
+P	adoptAsContextCandidate
+P	POST /v1/state-commands/strategycandidate/adoptascontextcandidate
+P	strategy.decision.approve
+P	governed context adoption only; owner module executes later
+P	workspace:STR-01 · Source Table 22
+ROW	Requirement	Rule
+P	Requirement
+P	Rule
+ROW	Candidate vs Decision	Strategy recommendation/candidate is not formal Decision Ledger result.
+P	Candidate vs Decision
+P	Strategy recommendation/candidate is not formal Decision Ledger result.
+ROW	Human Gate	Required before governed context adoption.
+P	Human Gate
+P	Required before governed context adoption.
+ROW	Budget reallocation	ERP & Finance owner
+P	Budget reallocation
+P	ERP & Finance owner
+ROW	Production priority / pause / resume / cancel	Workflow & Runtime owner
+P	Production priority / pause / resume / cancel
+P	Workflow & Runtime owner
+ROW	Account / channel governance	Governance / Project owner
+P	Account / channel governance
+P	Governance / Project owner
+ROW	Production execution	Core / Department Workflow owner
+P	Production execution
+P	Core / Department Workflow owner
+P	workspace:STR-01 · Source Table 23
+ROW	Function	Visual Region	Controls / Output
+P	Function
+P	Visual Region
+P	Controls / Output
+ROW	Context	STR-01-VIS-CONTEXT	Topic / Scope / Horizon / State / Decision / Single-Multi
+P	Context
+P	STR-01-VIS-CONTEXT
+P	Topic / Scope / Horizon / State / Decision / Single-Multi
+ROW	Topics	STR-01-VIS-LEFT-TOPIC	Search / History / Select
+P	Topics
+P	STR-01-VIS-LEFT-TOPIC
+P	Search / History / Select
+ROW	Strategic Context	STR-01-VIS-LEFT-CONTEXT	Priority / Source / Time-Version / Confidence
+P	Strategic Context
+P	STR-01-VIS-LEFT-CONTEXT
+P	Priority / Source / Time-Version / Confidence
+ROW	Alerts	STR-01-VIS-LEFT-ALERT	Opportunity/Risk Alerts / Open Questions
+P	Alerts
+P	STR-01-VIS-LEFT-ALERT
+P	Opportunity/Risk Alerts / Open Questions
+ROW	Conversation	STR-01-VIS-CONVERSATION	Conversation / Attach / Message / Send / Stop / Assistant
+P	Conversation
+P	STR-01-VIS-CONVERSATION
+P	Conversation / Attach / Message / Send / Stop / Assistant
+ROW	Analysis	STR-01-VIS-ANALYSIS	Basis / Assumptions / Opportunity / Risk / Uncertainty / Forecast
+P	Analysis
+P	STR-01-VIS-ANALYSIS
+P	Basis / Assumptions / Opportunity / Risk / Uncertainty / Forecast
+ROW	Compare	STR-01-VIS-COMPARE	Candidate comparison
+P	Compare
+P	STR-01-VIS-COMPARE
+P	Candidate comparison
+ROW	Outputs	STR-01-VIS-RIGHT-OUTPUT	Recommendation / Alert / Resource / Brief
+P	Outputs
+P	STR-01-VIS-RIGHT-OUTPUT
+P	Recommendation / Alert / Resource / Brief
+ROW	Decision	STR-01-VIS-RIGHT-DECISION	Candidate / Review / Decision Ledger / Owner link
+P	Decision
+P	STR-01-VIS-RIGHT-DECISION
+P	Candidate / Review / Decision Ledger / Owner link
+ROW	Memory	STR-01-VIS-MEMORY	Patterns / Experiments / Baselines / Learning
+P	Memory
+P	STR-01-VIS-MEMORY
+P	Patterns / Experiments / Baselines / Learning
+ROW	Feedback	STR-01-VIS-FEEDBACK	Expected / Actual / Difference / KPI / Learning
+P	Feedback
+P	STR-01-VIS-FEEDBACK
+P	Expected / Actual / Difference / KPI / Learning
+ROW	Audit	STR-01-VIS-STATUS	Provider Brand / Correlation / Disabled / Owner Boundary
+P	Audit
+P	STR-01-VIS-STATUS
+P	Provider Brand / Correlation / Disabled / Owner Boundary
+P	workspace:STR-01 · Source Table 25
+ROW	UID	Item	Condition
+P	UID
+P	Item
+P	Condition
+ROW	STR-01-ACC-01	Single Page / Global Visual	Only workspace:STR-01; Global Shell/Visual inherited
+P	STR-01-ACC-01
+P	Single Page / Global Visual
+P	Only workspace:STR-01; Global Shell/Visual inherited
+ROW	STR-01-ACC-02	Strategic Context	Exact ref/time/version/confidence; no AI fill
+P	STR-01-ACC-02
+P	Strategic Context
+P	Exact ref/time/version/confidence; no AI fill
+ROW	STR-01-ACC-03	Single / Multi AI	Same context; no provider picker; Assistant always exists
+P	STR-01-ACC-03
+P	Single / Multi AI
+P	Same context; no provider picker; Assistant always exists
+ROW	STR-01-ACC-04	Analysis Transparency	Basis/assumptions/opportunity/risk/uncertainty/evidence visible
+P	STR-01-ACC-04
+P	Analysis Transparency
+P	Basis/assumptions/opportunity/risk/uncertainty/evidence visible
+ROW	STR-01-ACC-05	Four Outputs	Recommendation / Alert / Resource / Decision Brief remain distinct
+P	STR-01-ACC-05
+P	Four Outputs
+P	Recommendation / Alert / Resource / Decision Brief remain distinct
+ROW	STR-01-ACC-06	Human Decision	AI result never formal decision; review then human adoption
+P	STR-01-ACC-06
+P	Human Decision
+P	AI result never formal decision; review then human adoption
+ROW	STR-01-ACC-07	Cross-module Boundary	Execution remains owner module
+P	STR-01-ACC-07
+P	Cross-module Boundary
+P	Execution remains owner module
+ROW	STR-01-ACC-08	Decision Ledger	Decision/candidate/source/risk/result/actor/execution/audit traceable
+P	STR-01-ACC-08
+P	Decision Ledger
+P	Decision/candidate/source/risk/result/actor/execution/audit traceable
+ROW	STR-01-ACC-09	Immutable History	Candidate/output/memory/history not overwritten
+P	STR-01-ACC-09
+P	Immutable History
+P	Candidate/output/memory/history not overwritten
+ROW	STR-01-ACC-10	Feedback Loop	Execution → Expected vs Actual → Learning → Strategic Experience
+P	STR-01-ACC-10
+P	Feedback Loop
+P	Execution → Expected vs Actual → Learning → Strategic Experience
+ROW	STR-01-ACC-11	Scrollable Page	height:auto + overflow-y:auto
+P	STR-01-ACC-11
+P	Scrollable Page
+P	height:auto + overflow-y:auto
+ROW	STR-01-ACC-12	Machine Binding	Every control resolves registry binding; unlisted=BLOCK
+P	STR-01-ACC-12
+P	Machine Binding
+P	Every control resolves registry binding; unlisted=BLOCK
+ROW	STR-01-ACC-13	Shared Provider Adapter	TEXT_CHAT through shared AIAPI-01 ProviderModelProfile / Adapter; no local picker/router/compiler
+P	STR-01-ACC-13
+P	Shared Provider Adapter
+P	TEXT_CHAT through shared AIAPI-01 ProviderModelProfile / Adapter; no local picker/router/compiler
+P	workspace:STR-01 · Source Table 26
+ROW	Evidence	Required
+P	Evidence
+P	Required
+ROW	Authority Identity	authority/pages/workspace/STR-01/ACPOS_STR-01_FINAL_LOCKED_ENCODING_PROVIDER_BOUND.yaml @ 618e56f2f993bc818d943cb14db6ce455d68a1c5
+P	Authority Identity
+P	authority/pages/workspace/STR-01/ACPOS_STR-01_FINAL_LOCKED_ENCODING_PROVIDER_BOUND.yaml @ 618e56f2f993bc818d943cb14db6ce455d68a1c5
+ROW	Branch / HEAD	new @ 165c6440cb53b1b45ec96905241fb4d56dc3b867
+P	Branch / HEAD
+P	new @ 165c6440cb53b1b45ec96905241fb4d56dc3b867
+ROW	Current Manifest	465329b6fb19b8e44c3083a9f280015ee95cc55c
+P	Current Manifest
+P	465329b6fb19b8e44c3083a9f280015ee95cc55c
+ROW	Registry denominator	12 sections / 16 components / 57 controls / 11 actions / 6 ports
+P	Registry denominator
+P	12 sections / 16 components / 57 controls / 11 actions / 6 ports
+ROW	UI evidence	5 candidate UI PNGs embedded
+P	UI evidence
+P	5 candidate UI PNGs embedded
+ROW	Real data policy	Missing business values = —; invented data forbidden
+P	Real data policy
+P	Missing business values = —; invented data forbidden
+ROW	Provider binding	Current construction basis = V1.3; source file V1.2 residual noted
+P	Provider binding
+P	Current construction basis = V1.3; source file V1.2 residual noted
+ROW	Boundary	Proposal/analysis only; owner module executes
+P	Boundary
+P	Proposal/analysis only; owner module executes
+P	workspace:STR-01 · Source Table 27
+ROW	Gate	Status
+P	Gate
+P	Status
+ROW	Current Authority resolved	PASS
+P	Current Authority resolved
+P	PASS
+ROW	Mother Basic Design artifacts present	PASS
+P	Mother Basic Design artifacts present
+P	PASS
+ROW	57 Control bindings enumerated	PASS
+P	57 Control bindings enumerated
+P	PASS
+ROW	11 Action / 11 Gate / 5 Permission enumerated	PASS
+P	11 Action / 11 Gate / 5 Permission enumerated
+P	PASS
+ROW	5 UI candidate states embedded	PASS
+P	5 UI candidate states embedded
+P	PASS
+ROW	No fake business data	PASS
+P	No fake business data
+P	PASS
+ROW	No cross-module execution controls introduced	PASS
+P	No cross-module execution controls introduced
+P	PASS
+ROW	Human visual / functional review	PENDING
+P	Human visual / functional review
+P	PENDING
+ROW	DESIGN_FROZEN	FALSE
+P	DESIGN_FROZEN
+P	FALSE
+P	workspace:STR-01 · Effectful Control → API → DB Closure Matrix
+ROW	Page UID	Control UID	UID Status	Operation/Action	Method / Path	DB / Provider Owner	Gate	Permission	Binding Status
+P	Page UID
+P	Control UID
+P	UID Status
+P	Operation/Action
+P	Method / Path
+P	DB / Provider Owner
+P	Gate
+P	Permission
+P	Binding Status
+ROW	workspace:STR-01	STR-01-BTN-SEND-CONVERSATION-MESSAGE	NEW_UID_FROM_EXISTING_OPERATION	sendConversationMessage	POST /v1/conversations/{conversationId}/messages	acpos_conversation.messages	SERVER_STATE_GATE	SOURCE_PERMISSION_OR_OPERATION_SCOPE	CLOSURE_MATERIALIZED
+P	workspace:STR-01
+P	STR-01-BTN-SEND-CONVERSATION-MESSAGE
+P	NEW_UID_FROM_EXISTING_OPERATION
+P	sendConversationMessage
+P	POST /v1/conversations/{conversationId}/messages
+P	acpos_conversation.messages
+P	SERVER_STATE_GATE
+P	SOURCE_PERMISSION_OR_OPERATION_SCOPE
+P	CLOSURE_MATERIALIZED
+ROW	workspace:STR-01	STR-01-BTN-STOP-CONVERSATION-GENERATION	NEW_UID_FROM_EXISTING_OPERATION	stopConversationGeneration	POST /v1/conversations/{conversationId}/generation/stop	acpos_strategy.strategy_candidates	SERVER_STATE_GATE	SOURCE_PERMISSION_OR_OPERATION_SCOPE	CLOSURE_MATERIALIZED
+P	workspace:STR-01
+P	STR-01-BTN-STOP-CONVERSATION-GENERATION
+P	NEW_UID_FROM_EXISTING_OPERATION
+P	stopConversationGeneration
+P	POST /v1/conversations/{conversationId}/generation/stop
+P	acpos_strategy.strategy_candidates
+P	SERVER_STATE_GATE
+P	SOURCE_PERMISSION_OR_OPERATION_SCOPE
+P	CLOSURE_MATERIALIZED
+ROW	workspace:STR-01	STR-01-BTN-SUBMIT-STRATEGY-REVIEW	NEW_UID_FROM_EXISTING_OPERATION	submitStrategyReview	POST /v1/state-commands/strategycandidate/submitstrategyreview	domain_candidate_store	SERVER_STATE_GATE	SOURCE_PERMISSION_OR_OPERATION_SCOPE	CLOSURE_MATERIALIZED
+P	workspace:STR-01
+P	STR-01-BTN-SUBMIT-STRATEGY-REVIEW
+P	NEW_UID_FROM_EXISTING_OPERATION
+P	submitStrategyReview
+P	POST /v1/state-commands/strategycandidate/submitstrategyreview
+P	domain_candidate_store
+P	SERVER_STATE_GATE
+P	SOURCE_PERMISSION_OR_OPERATION_SCOPE
+P	CLOSURE_MATERIALIZED
+ROW	workspace:STR-01	STR-01-BTN-ADOPT-AS-CONTEXT-CANDIDATE	NEW_UID_FROM_EXISTING_OPERATION	adoptAsContextCandidate	POST /v1/state-commands/strategycandidate/adoptascontextcandidate	domain_candidate_store	SERVER_STATE_GATE	SOURCE_PERMISSION_OR_OPERATION_SCOPE	CLOSURE_MATERIALIZED
+P	workspace:STR-01
+P	STR-01-BTN-ADOPT-AS-CONTEXT-CANDIDATE
+P	NEW_UID_FROM_EXISTING_OPERATION
+P	adoptAsContextCandidate
+P	POST /v1/state-commands/strategycandidate/adoptascontextcandidate
+P	domain_candidate_store
+P	SERVER_STATE_GATE
+P	SOURCE_PERMISSION_OR_OPERATION_SCOPE
+P	CLOSURE_MATERIALIZED
+P	Source Authority Snapshot — admin:STR-01
+P	Source File: ACPOS_admin_STR-01_戰略中心後台_Mother_Basic_Design_OPTIMIZED.docx
+P	Source SHA-256: 724c419d4ccfab3f004fc54bfa1efff7659aacfe1f1710aa710cc657a647153a
+P	Included binding/data/state tables: 20. These rows are copied verbatim in text value from the uploaded Basic Design source; no UID/value renaming is performed.
+P	admin:STR-01 · Source Table 1
+ROW	頁面定位｜後台單一 Strategy Administration 工作區。治理情報來源、Fact、Playbook、趨勢與機會候選、決策候選與受控 Handoff；不是前台 AI 對話工作區，也不是 Project / Budget / Publish 的直接執行頁。
+P	頁面定位｜後台單一 Strategy Administration 工作區。治理情報來源、Fact、Playbook、趨勢與機會候選、決策候選與受控 Handoff；不是前台 AI 對話工作區，也不是 Project / Budget / Publish 的直接執行頁。
+P	admin:STR-01 · Source Table 2
+ROW	頁面身份	定義
+P	頁面身份
+P	定義
+ROW	Page UID	admin:STR-01
+P	Page UID
+P	admin:STR-01
+ROW	頁面名稱	戰略中心後台 / Strategy Center Administration
+P	頁面名稱
+P	戰略中心後台 / Strategy Center Administration
+ROW	Surface	ADMIN
+P	Surface
+P	ADMIN
+ROW	Current UX	Single-page / 5 same-page views
+P	Current UX
+P	Single-page / 5 same-page views
+ROW	Owner Boundary	StrategyService + StrategyFactPackService；禁止 merge/rebuild 第二套服務
+P	Owner Boundary
+P	StrategyService + StrategyFactPackService；禁止 merge/rebuild 第二套服務
+ROW	Route	由 Current Navigation Authority 解譯；本頁禁止自行推導
+P	Route
+P	由 Current Navigation Authority 解譯；本頁禁止自行推導
+ROW	Data Truth	Real projection only；缺值 = —；Inference 不得冒充 Fact
+P	Data Truth
+P	Real projection only；缺值 = —；Inference 不得冒充 Fact
+ROW	Runtime Status	此設計只定義施工規格；Effectful runtime 需 exact operation/permission materialization 後才能啟用
+P	Runtime Status
+P	此設計只定義施工規格；Effectful runtime 需 exact operation/permission materialization 後才能啟用
+P	admin:STR-01 · Source Table 3
+ROW	面向	admin STR-01 戰略中心後台	workspace STR-01 戰略中心工作區
+P	面向
+P	admin STR-01 戰略中心後台
+P	workspace STR-01 戰略中心工作區
+ROW	主要角色	治理 Source / Fact / Playbook / Opportunity / Decision Candidate、審批與可追溯性	策略 AI 對話、分析、方案比較、Human Review 與決策輔助
+P	主要角色
+P	治理 Source / Fact / Playbook / Opportunity / Decision Candidate、審批與可追溯性
+P	策略 AI 對話、分析、方案比較、Human Review 與決策輔助
+ROW	AI Conversation	不作為主工作面；不得複製前台 Conversation Core	正式 Strategic AI Conversation 使用面
+P	AI Conversation
+P	不作為主工作面；不得複製前台 Conversation Core
+P	正式 Strategic AI Conversation 使用面
+ROW	資料管理	管理治理物件、品質、版本、Scope、Retention、Citation、Fact Registry	消費受治理的 Strategic Context
+P	資料管理
+P	管理治理物件、品質、版本、Scope、Retention、Citation、Fact Registry
+P	消費受治理的 Strategic Context
+ROW	決策	Decision Lab 比較候選、記錄理由、建立 governed handoff/context	人類審查策略建議並形成決策紀錄
+P	決策
+P	Decision Lab 比較候選、記錄理由、建立 governed handoff/context
+P	人類審查策略建議並形成決策紀錄
+ROW	禁止	直接寫 Canon Lock / Task / Budget / Publish、建立第二套 Strategy Service	取代 Finance / Workflow / Governance / Production owner 執行權
+P	禁止
+P	直接寫 Canon Lock / Task / Budget / Publish、建立第二套 Strategy Service
+P	取代 Finance / Workflow / Governance / Production owner 執行權
+P	admin:STR-01 · Source Table 4
+ROW	核心裁決｜前台負責「分析與決策輔助」，後台負責「策略資料與候選治理」。兩者可共享 StrategyService / StrategyFactPackService 與受治理資料，但不得互相複製 UI、Runtime 或 Authority。
+P	核心裁決｜前台負責「分析與決策輔助」，後台負責「策略資料與候選治理」。兩者可共享 StrategyService / StrategyFactPackService 與受治理資料，但不得互相複製 UI、Runtime 或 Authority。
+P	admin:STR-01 · Source Table 5
+ROW	Business Entity	責任	唯一 Owner 邊界
+P	Business Entity
+P	責任
+P	唯一 Owner 邊界
+ROW	StrategicSource	外部/內部情報來源、Scope、Quality、Retention、Health	StrategyFactPackService / shared acquisition
+P	StrategicSource
+P	外部/內部情報來源、Scope、Quality、Retention、Health
+P	StrategyFactPackService / shared acquisition
+ROW	StrategicFact	可追溯 Fact、Citation、Completeness、Confidence/Quality state	StrategyFactPackService
+P	StrategicFact
+P	可追溯 Fact、Citation、Completeness、Confidence/Quality state
+P	StrategyFactPackService
+ROW	Watchlist	受治理觀察範圍與追蹤項目	StrategyService / projection
+P	Watchlist
+P	受治理觀察範圍與追蹤項目
+P	StrategyService / projection
+ROW	PlatformPlaybook	平台 Profile、Account Scope、Playbook、Hypothesis、Evidence、Version	StrategyService
+P	PlatformPlaybook
+P	平台 Profile、Account Scope、Playbook、Hypothesis、Evidence、Version
+P	StrategyService
+ROW	OpportunityCandidate	Trend/Momentum/Forecast 產生的策略機會候選；非正式決策	StrategyService
+P	OpportunityCandidate
+P	Trend/Momentum/Forecast 產生的策略機會候選；非正式決策
+P	StrategyService
+ROW	StrategyCandidate	可比較/拒絕/採納為 Context 的決策候選	StrategyService
+P	StrategyCandidate
+P	可比較/拒絕/採納為 Context 的決策候選
+P	StrategyService
+ROW	DecisionContext	候選、Evidence、Risk/Cost/Capacity、Gate、Human Reason	StrategyService
+P	DecisionContext
+P	候選、Evidence、Risk/Cost/Capacity、Gate、Human Reason
+P	StrategyService
+ROW	ContextCandidate	受治理的跨模組 Context handoff；不是執行命令	StrategyService / downstream owner
+P	ContextCandidate
+P	受治理的跨模組 Context handoff；不是執行命令
+P	StrategyService / downstream owner
+ROW	AuditEvidence	Source/version/citation/correlation/approval/decision lineage	Audit / existing owners
+P	AuditEvidence
+P	Source/version/citation/correlation/approval/decision lineage
+P	Audit / existing owners
+P	admin:STR-01 · Source Table 6
+ROW	Entity	Discover/List	Open	Create/Edit	Approve/Decide	Search	Export	Version	Audit
+P	Entity
+P	Discover/List
+P	Open
+P	Create/Edit
+P	Approve/Decide
+P	Search
+P	Export
+P	Version
+P	Audit
+ROW	StrategicSource	R	R	Configure*	Approve*	Search	Export*	—	Audit
+P	StrategicSource
+P	R
+P	R
+P	Configure*
+P	Approve*
+P	Search
+P	Export*
+P	—
+P	Audit
+ROW	StrategicFact	R	R	Configure*	Approve*	Search	Export*	—	Audit
+P	StrategicFact
+P	R
+P	R
+P	Configure*
+P	Approve*
+P	Search
+P	Export*
+P	—
+P	Audit
+ROW	Watchlist	R	R	Configure*	Approve*	Search	—	—	Audit
+P	Watchlist
+P	R
+P	R
+P	Configure*
+P	Approve*
+P	Search
+P	—
+P	—
+P	Audit
+ROW	PlatformPlaybook	R	R	Draft Save*	Approve*	—	—	Version	Audit
+P	PlatformPlaybook
+P	R
+P	R
+P	Draft Save*
+P	Approve*
+P	—
+P	—
+P	Version
+P	Audit
+ROW	OpportunityCandidate	R	R	Create Candidate*	Approve*	—	—	Version	Audit
+P	OpportunityCandidate
+P	R
+P	R
+P	Create Candidate*
+P	Approve*
+P	—
+P	—
+P	Version
+P	Audit
+ROW	StrategyCandidate	R	R	—	Reject/Decide*	—	—	Version	Audit
+P	StrategyCandidate
+P	R
+P	R
+P	—
+P	Reject/Decide*
+P	—
+P	—
+P	Version
+P	Audit
+ROW	DecisionContext	R	R	Compare	Human reason	—	—	Version	Audit
+P	DecisionContext
+P	R
+P	R
+P	Compare
+P	Human reason
+P	—
+P	—
+P	Version
+P	Audit
+ROW	ContextCandidate	R	R	Adopt*	—	—	—	Immutable lineage	Audit
+P	ContextCandidate
+P	R
+P	R
+P	Adopt*
+P	—
+P	—
+P	—
+P	Immutable lineage
+P	Audit
+P	admin:STR-01 · Source Table 7
+ROW	上游	關係	下游	不可破壞規則
+P	上游
+P	關係
+P	下游
+P	不可破壞規則
+ROW	StrategicSource	evidence/source	StrategicFact	來源、版本、時間、Scope、Quality 必須可追溯；外部資料不得覆蓋 Current internal truth
+P	StrategicSource
+P	evidence/source
+P	StrategicFact
+P	來源、版本、時間、Scope、Quality 必須可追溯；外部資料不得覆蓋 Current internal truth
+ROW	StrategicFact	supports	Playbook / Opportunity / Strategy Candidate	Fact 與 inference 分離；Confidence 不得由前端生成
+P	StrategicFact
+P	supports
+P	Playbook / Opportunity / Strategy Candidate
+P	Fact 與 inference 分離；Confidence 不得由前端生成
+ROW	PlatformPlaybook	versioned hypothesis/evidence	OpportunityCandidate	Playbook 不是 Publish Command；版本 append-only
+P	PlatformPlaybook
+P	versioned hypothesis/evidence
+P	OpportunityCandidate
+P	Playbook 不是 Publish Command；版本 append-only
+ROW	OpportunityCandidate	reviewed candidate	StrategyCandidate / DecisionContext	Opportunity 不得自動改 Project / Budget
+P	OpportunityCandidate
+P	reviewed candidate
+P	StrategyCandidate / DecisionContext
+P	Opportunity 不得自動改 Project / Budget
+ROW	StrategyCandidate	compare / decide / adopt	ContextCandidate	候選 ≠ 正式下游執行；採納只產生受治理 Context
+P	StrategyCandidate
+P	compare / decide / adopt
+P	ContextCandidate
+P	候選 ≠ 正式下游執行；採納只產生受治理 Context
+ROW	ContextCandidate	handoff ref	Owner Module	Budget→ERP/Finance；Production→Workflow/Department；Publish→Publishing owner
+P	ContextCandidate
+P	handoff ref
+P	Owner Module
+P	Budget→ERP/Finance；Production→Workflow/Department；Publish→Publishing owner
+P	admin:STR-01 · Source Table 8
+ROW	Current View	主要責任	允許 Action	拓撲分類
+P	Current View
+P	主要責任
+P	允許 Action
+P	拓撲分類
+ROW	1 戰略總覽	Intelligence Summary、Source Health、Fact Quality、Watchlist、Risk Alert、Candidate Queue	Search / Refresh / Detail	READ/SEARCH/REFRESH
+P	1 戰略總覽
+P	Intelligence Summary、Source Health、Fact Quality、Watchlist、Risk Alert、Candidate Queue
+P	Search / Refresh / Detail
+P	READ/SEARCH/REFRESH
+ROW	2 情報與 Fact	Source Registry、Scope Policy、Quality、Retention、Fact Registry、Cohort、Market Map、Citation	Configure / Approve / Search / Export / Detail	GOVERNANCE + READ
+P	2 情報與 Fact
+P	Source Registry、Scope Policy、Quality、Retention、Fact Registry、Cohort、Market Map、Citation
+P	Configure / Approve / Search / Export / Detail
+P	GOVERNANCE + READ
+ROW	3 平台 Playbook	Platform Profile、Account Scope、Playbook、Hypothesis、Evidence、Version、Approval	Draft Save / Approve / Detail	DRAFT + APPROVAL
+P	3 平台 Playbook
+P	Platform Profile、Account Scope、Playbook、Hypothesis、Evidence、Version、Approval
+P	Draft Save / Approve / Detail
+P	DRAFT + APPROVAL
+ROW	4 趨勢與機會	Trend、Momentum、Forecast、Opportunity Queue、Confidence、Evidence、Review	Create Candidate / Approve / Detail	CANDIDATE
+P	4 趨勢與機會
+P	Trend、Momentum、Forecast、Opportunity Queue、Confidence、Evidence、Review
+P	Create Candidate / Approve / Detail
+P	CANDIDATE
+ROW	5 決策實驗室	Decision Context、Option Compare、Evidence、Risk/Cost/Capacity、Decision Gate、Handoff、Audit	Compare / Reject-Decide / Adopt Context / Detail	DECISION + HANDOFF
+P	5 決策實驗室
+P	Decision Context、Option Compare、Evidence、Risk/Cost/Capacity、Decision Gate、Handoff、Audit
+P	Compare / Reject-Decide / Adopt Context / Detail
+P	DECISION + HANDOFF
+P	admin:STR-01 · Source Table 9
+ROW	Interaction Topology｜五個 View 都是 SAME_SURFACE_CLUSTER；View switch 僅改 UI Context，不新增 route、不改 business state、不自動 submit。Selected scope / selected object / query / unsubmitted form state 必須持續保留。
+P	Interaction Topology｜五個 View 都是 SAME_SURFACE_CLUSTER；View switch 僅改 UI Context，不新增 route、不改 business state、不自動 submit。Selected scope / selected object / query / unsubmitted form state 必須持續保留。
+P	admin:STR-01 · Source Table 10
+ROW	Flow	Functional Chain
+P	Flow
+P	Functional Chain
+ROW	Overview Search	Authorized scope → query/scope → Search control → page/account/scope gate → searchProjection binding → projection owner → results → same-page table → Detail Drawer
+P	Overview Search
+P	Authorized scope → query/scope → Search control → page/account/scope gate → searchProjection binding → projection owner → results → same-page table → Detail Drawer
+ROW	Intelligence Configure	Selected exact governed resource → Config Modal → schema validation → configureGovernedResource → expected version/idempotency/audit → Strategy owner → updated projection → REVIEW/READY
+P	Intelligence Configure
+P	Selected exact governed resource → Config Modal → schema validation → configureGovernedResource → expected version/idempotency/audit → Strategy owner → updated projection → REVIEW/READY
+ROW	Fact Approval	Exact resource/version → rationale → approveGovernedResource → approval gate → immutable lineage → approved projection → downstream consumers may read
+P	Fact Approval
+P	Exact resource/version → rationale → approveGovernedResource → approval gate → immutable lineage → approved projection → downstream consumers may read
+ROW	Playbook Draft	Selected platform/account scope → content + refs → saveDraft → draft owner → new version → no auto publish → explicit later approval
+P	Playbook Draft
+P	Selected platform/account scope → content + refs → saveDraft → draft owner → new version → no auto publish → explicit later approval
+ROW	Opportunity Candidate	Trend/Forecast projection + evidence → Create Candidate → candidate owner → DRAFT/REVIEW → explicit approval only
+P	Opportunity Candidate
+P	Trend/Forecast projection + evidence → Create Candidate → candidate owner → DRAFT/REVIEW → explicit approval only
+ROW	Decision Compare	Selected Strategy candidates → compareCandidates READ → normalized comparison projection → Human review → no mutation
+P	Decision Compare
+P	Selected Strategy candidates → compareCandidates READ → normalized comparison projection → Human review → no mutation
+ROW	Decision Reject/Adopt	Exact candidate/version + reason/evidence → Reject or Adopt Context → operation/permission/state gate → audit → ContextCandidate or rejected state → governed downstream handoff
+P	Decision Reject/Adopt
+P	Exact candidate/version + reason/evidence → Reject or Adopt Context → operation/permission/state gate → audit → ContextCandidate or rejected state → governed downstream handoff
+P	admin:STR-01 · Source Table 11
+ROW	Operation	Method / Path	Owner	Effect	施工 Gate
+P	Operation
+P	Method / Path
+P	Owner
+P	Effect
+P	施工 Gate
+ROW	getUiProjection	GET /v1/ui-projections/{pageUid}	Read projection owner	READ	Page projection route must resolve
+P	getUiProjection
+P	GET /v1/ui-projections/{pageUid}
+P	Read projection owner
+P	READ
+P	Page projection route must resolve
+ROW	searchProjection	POST /v1/search	INFO_COMMAND_RUNTIME	SEARCH	admin STR-01 exact authorization context must resolve
+P	searchProjection
+P	POST /v1/search
+P	INFO_COMMAND_RUNTIME
+P	SEARCH
+P	admin STR-01 exact authorization context must resolve
+ROW	refreshProjection	POST /v1/projections/refresh	INFO_COMMAND_RUNTIME	REFRESH	Source registry currently INFO-owned; STR binding must be exact
+P	refreshProjection
+P	POST /v1/projections/refresh
+P	INFO_COMMAND_RUNTIME
+P	REFRESH
+P	Source registry currently INFO-owned; STR binding must be exact
+ROW	configureGovernedResource	PATCH /v1/governance/resources/{id}	IAM_RUNTIME / governance	CONFIGURE	Operation exists; admin STR-01 auth context must be materialized
+P	configureGovernedResource
+P	PATCH /v1/governance/resources/{id}
+P	IAM_RUNTIME / governance
+P	CONFIGURE
+P	Operation exists; admin STR-01 auth context must be materialized
+ROW	approveGovernedResource	POST /v1/governance/resources/{id}/approve	IAM_RUNTIME / governance	APPROVE	Operation exists; admin STR-01 auth context must be materialized
+P	approveGovernedResource
+P	POST /v1/governance/resources/{id}/approve
+P	IAM_RUNTIME / governance
+P	APPROVE
+P	Operation exists; admin STR-01 auth context must be materialized
+ROW	saveDraft	POST /v1/drafts	IAM_RUNTIME / draft owner	DRAFT	Reused source operation; exact STR source binding required
+P	saveDraft
+P	POST /v1/drafts
+P	IAM_RUNTIME / draft owner
+P	DRAFT
+P	Reused source operation; exact STR source binding required
+ROW	exportProjection	POST /v1/exports	INFO_COMMAND_RUNTIME	EXPORT	Registry reports canonical export persistence owner blocker
+P	exportProjection
+P	POST /v1/exports
+P	INFO_COMMAND_RUNTIME
+P	EXPORT
+P	Registry reports canonical export persistence owner blocker
+ROW	createCandidate	POST /v1/candidates	Strategy candidate owner	CREATE CANDIDATE	Payload registered; exact current Operation Registry binding unresolved → BLOCK
+P	createCandidate
+P	POST /v1/candidates
+P	Strategy candidate owner
+P	CREATE CANDIDATE
+P	Payload registered; exact current Operation Registry binding unresolved → BLOCK
+ROW	compareCandidates	GET /v1/candidates/compare	Strategy comparison owner	READ COMPARE	No-form read contract exists; exact current Operation Registry binding unresolved → BLOCK
+P	compareCandidates
+P	GET /v1/candidates/compare
+P	Strategy comparison owner
+P	READ COMPARE
+P	No-form read contract exists; exact current Operation Registry binding unresolved → BLOCK
+ROW	rejectStrategyCandidate	POST /v1/ai/strategy/candidates/{strategyCandidateId}/reject	Strategy candidate owner	DECIDE	Payload registered; exact current Operation Registry binding unresolved → BLOCK
+P	rejectStrategyCandidate
+P	POST /v1/ai/strategy/candidates/{strategyCandidateId}/reject
+P	Strategy candidate owner
+P	DECIDE
+P	Payload registered; exact current Operation Registry binding unresolved → BLOCK
+ROW	adoptAsContextCandidate	POST /v1/state-commands/strategycandidate/adoptascontextcandidate	Strategy context owner	ADOPT	Payload registered; exact current Operation Registry binding unresolved → BLOCK
+P	adoptAsContextCandidate
+P	POST /v1/state-commands/strategycandidate/adoptascontextcandidate
+P	Strategy context owner
+P	ADOPT
+P	Payload registered; exact current Operation Registry binding unresolved → BLOCK
+P	admin:STR-01 · Source Table 12
+ROW	Current Runtime Truth｜UI Spec 可完整施工，但 Effectful controls 不能因頁面 Authority 已列出 Action 就視為可執行。只要 exact Operation Registry / authorization context / persistence owner 尚未閉合，控制必須 Disabled，並回報 Authority Gap。
+P	Current Runtime Truth｜UI Spec 可完整施工，但 Effectful controls 不能因頁面 Authority 已列出 Action 就視為可執行。只要 exact Operation Registry / authorization context / persistence owner 尚未閉合，控制必須 Disabled，並回報 Authority Gap。
+P	admin:STR-01 · Source Table 13
+ROW	Contract	Business Fields	View	Rule
+P	Contract
+P	Business Fields
+P	View
+P	Rule
+ROW	SearchProjectionRequest	query*；scope_ref*；filters_json?	Overview / Intelligence	不得用前端自行衍生 unauthorized filter
+P	SearchProjectionRequest
+P	query*；scope_ref*；filters_json?
+P	Overview / Intelligence
+P	不得用前端自行衍生 unauthorized filter
+ROW	RefreshProjectionRequest	projection_type*；scope_ref*	Overview	只刷新 exact projection/scope
+P	RefreshProjectionRequest
+P	projection_type*；scope_ref*
+P	Overview
+P	只刷新 exact projection/scope
+ROW	ConfigureGovernedResourceRequest	resource_type*；resource_id*；config_patch_json*；reason*	Intelligence / Fact	禁止跨 domain union payload
+P	ConfigureGovernedResourceRequest
+P	resource_type*；resource_id*；config_patch_json*；reason*
+P	Intelligence / Fact
+P	禁止跨 domain union payload
+ROW	ApproveGovernedResourceRequest	resource_type*；resource_id*；rationale*；expected_resource_version?	Intelligence / Playbook / Opportunity	Approval 綁 exact resource/version
+P	ApproveGovernedResourceRequest
+P	resource_type*；resource_id*；rationale*；expected_resource_version?
+P	Intelligence / Playbook / Opportunity
+P	Approval 綁 exact resource/version
+ROW	SaveDraftRequest	resource_type*；target_ref*；content*；reference_ids?	Playbook	Draft 不等於 Approved / Published
+P	SaveDraftRequest
+P	resource_type*；target_ref*；content*；reference_ids?
+P	Playbook
+P	Draft 不等於 Approved / Published
+ROW	ExportProjectionRequest	projection_type*；scope_ref*；format*	Intelligence / Fact	Persistence owner 未閉合時不可假下載成功
+P	ExportProjectionRequest
+P	projection_type*；scope_ref*；format*
+P	Intelligence / Fact
+P	Persistence owner 未閉合時不可假下載成功
+ROW	CreateCandidateRequest	resource_type*；title?；source_ref?；content?；reference_ids?	Opportunity	Candidate ≠ Decision；需保留 evidence lineage
+P	CreateCandidateRequest
+P	resource_type*；title?；source_ref?；content?；reference_ids?
+P	Opportunity
+P	Candidate ≠ Decision；需保留 evidence lineage
+ROW	RejectStrategyCandidateRequest	path strategyCandidateId；decision_reason*；evidence_refs?	Decision	Body ID 若存在必須等於 path canonical ID
+P	RejectStrategyCandidateRequest
+P	path strategyCandidateId；decision_reason*；evidence_refs?
+P	Decision
+P	Body ID 若存在必須等於 path canonical ID
+ROW	AdoptAsContextCandidateRequest	strategy_candidate_id*；decision_reason*；evidence_refs?	Decision	只建立 Context Candidate，不執行 downstream owner action
+P	AdoptAsContextCandidateRequest
+P	strategy_candidate_id*；decision_reason*；evidence_refs?
+P	Decision
+P	只建立 Context Candidate，不執行 downstream owner action
+ROW	Compare Candidates	No-form GET；selected candidates supplied by registered query contract	Decision	READ_ONLY；不得改 candidate state
+P	Compare Candidates
+P	No-form GET；selected candidates supplied by registered query contract
+P	Decision
+P	READ_ONLY；不得改 candidate state
+P	admin:STR-01 · Source Table 14
+ROW	Gate	條件
+P	Gate
+P	條件
+ROW	Page Gate	Identity + exact account page permission + admin Strategy target + scope + condition + audit
+P	Page Gate
+P	Identity + exact account page permission + admin Strategy target + scope + condition + audit
+ROW	Read Gate	Page Gate + exact section/control/field read permission + classification/mask
+P	Read Gate
+P	Page Gate + exact section/control/field read permission + classification/mask
+ROW	Configure Gate	Read Gate + configure action permission + exact resource/version + state guard + idempotency + audit
+P	Configure Gate
+P	Read Gate + configure action permission + exact resource/version + state guard + idempotency + audit
+ROW	Approve Gate	Page Gate + approve permission + REVIEW/eligible state + exact version + rationale + audit
+P	Approve Gate
+P	Page Gate + approve permission + REVIEW/eligible state + exact version + rationale + audit
+ROW	Candidate Gate	Page Gate + candidate action permission + evidence/source scope + state/version + idempotency + audit
+P	Candidate Gate
+P	Page Gate + candidate action permission + evidence/source scope + state/version + idempotency + audit
+ROW	Decision Gate	Exact candidate + compare/decide/adopt permission + Human reason + evidence refs + state/version + audit
+P	Decision Gate
+P	Exact candidate + compare/decide/adopt permission + Human reason + evidence refs + state/version + audit
+ROW	Finance Guardrail	Risk/Cost/Capacity 僅在 authorized finance projection 下顯示；否則 MASK/DENY，不得用推估填值
+P	Finance Guardrail
+P	Risk/Cost/Capacity 僅在 authorized finance projection 下顯示；否則 MASK/DENY，不得用推估填值
+ROW	Acquisition Gate	Strategic intelligence acquisition 只能走 shared acquisition runtime；raw acquisition 不可直接成為 governed Fact
+P	Acquisition Gate
+P	Strategic intelligence acquisition 只能走 shared acquisition runtime；raw acquisition 不可直接成為 governed Fact
+P	admin:STR-01 · Source Table 15
+ROW	State	UI / Runtime semantics
+P	State
+P	UI / Runtime semantics
+ROW	LOADING	保留 geometry；effectful controls disabled
+P	LOADING
+P	保留 geometry；effectful controls disabled
+ROW	READY	依 permission/state 顯示與 enable
+P	READY
+P	依 permission/state 顯示與 enable
+ROW	EMPTY	顯示空狀態；不造 sample
+P	EMPTY
+P	顯示空狀態；不造 sample
+ROW	ERROR	顯示 actual error / permitted reason
+P	ERROR
+P	顯示 actual error / permitted reason
+ROW	POLICY_BLOCKED	Authorized 但政策阻擋 → disabled + reason
+P	POLICY_BLOCKED
+P	Authorized 但政策阻擋 → disabled + reason
+ROW	VERSION_CONFLICT	停止寫入；reload exact version；force overwrite 禁止
+P	VERSION_CONFLICT
+P	停止寫入；reload exact version；force overwrite 禁止
+ROW	REVIEW_REQUIRED	等待 Human/Governance review；不得自動 approve
+P	REVIEW_REQUIRED
+P	等待 Human/Governance review；不得自動 approve
+ROW	EXTERNAL_PENDING	外部情報或 acquisition pending；不得標示成功
+P	EXTERNAL_PENDING
+P	外部情報或 acquisition pending；不得標示成功
+ROW	READ_ONLY	只讀；Effectful controls 隱藏/disabled
+P	READ_ONLY
+P	只讀；Effectful controls 隱藏/disabled
+ROW	ARCHIVED	只讀歷史；不可覆寫 lineage
+P	ARCHIVED
+P	只讀歷史；不可覆寫 lineage
+P	admin:STR-01 · Source Table 16
+ROW	項目	規格
+P	項目
+P	規格
+ROW	Runtime	ACPOS_SHARED_EXTERNAL_DATA_ACQUISITION_RUNTIME；admin STR-01 不擁有第二套 crawler/search runtime
+P	Runtime
+P	ACPOS_SHARED_EXTERNAL_DATA_ACQUISITION_RUNTIME；admin STR-01 不擁有第二套 crawler/search runtime
+ROW	Mode	STRATEGIC_INTELLIGENCE_ACQUISITION
+P	Mode
+P	STRATEGIC_INTELLIGENCE_ACQUISITION
+ROW	Allowed	SEARCH_DISCOVERY / WEB_CRAWL / WEB_FETCH / SCHEDULED_RECRAWL
+P	Allowed
+P	SEARCH_DISCOVERY / WEB_CRAWL / WEB_FETCH / SCHEDULED_RECRAWL
+ROW	Raw Result	僅為 acquisition evidence；必須經 Fact quality / source / citation / governance 才能成為 governed Fact
+P	Raw Result
+P	僅為 acquisition evidence；必須經 Fact quality / source / citation / governance 才能成為 governed Fact
+ROW	Failure	保留 exact source/error/pending；不得用 AI 摘要偽裝成成功抓取
+P	Failure
+P	保留 exact source/error/pending；不得用 AI 摘要偽裝成成功抓取
+P	admin:STR-01 · Source Table 17
+ROW	Error	Recovery
+P	Error
+P	Recovery
+ROW	AUTH_DENIED	Hide/deny protected control/value；server 仍拒絕 direct call；不得以角色名或部門作 allow
+P	AUTH_DENIED
+P	Hide/deny protected control/value；server 仍拒絕 direct call；不得以角色名或部門作 allow
+ROW	SOURCE_STALE	標示 stale / actual timestamp；保留上一可驗證 projection；提供 registered refresh only
+P	SOURCE_STALE
+P	標示 stale / actual timestamp；保留上一可驗證 projection；提供 registered refresh only
+ROW	FACT_INCOMPLETE	顯示 missing / incomplete / confidence state；不得補 0、補假 Fact 或 AI 猜值
+P	FACT_INCOMPLETE
+P	顯示 missing / incomplete / confidence state；不得補 0、補假 Fact 或 AI 猜值
+ROW	VERSION_CONFLICT	阻止 effectful write；reload exact object/version；保留未提交表單供人工比較
+P	VERSION_CONFLICT
+P	阻止 effectful write；reload exact object/version；保留未提交表單供人工比較
+ROW	OPERATION_UNMATERIALIZED	Disabled + reason + REPORT_AUTHORITY_GAP；不得自行創 endpoint / permission / runtime
+P	OPERATION_UNMATERIALIZED
+P	Disabled + reason + REPORT_AUTHORITY_GAP；不得自行創 endpoint / permission / runtime
+ROW	EXPORT_BLOCKED	不顯示假下載；顯示 persistence owner 未閉合或 actual backend reason
+P	EXPORT_BLOCKED
+P	不顯示假下載；顯示 persistence owner 未閉合或 actual backend reason
+ROW	ACQUISITION_PARTIAL	保留已取得 evidence；缺失來源仍 pending/error；只重試合法缺失工作
+P	ACQUISITION_PARTIAL
+P	保留已取得 evidence；缺失來源仍 pending/error；只重試合法缺失工作
+ROW	DOWNSTREAM_OWNER_BLOCKED	保留 Context Candidate / handoff ref；由 owner module 處理；Strategy page 不越權執行
+P	DOWNSTREAM_OWNER_BLOCKED
+P	保留 Context Candidate / handoff ref；由 owner module 處理；Strategy page 不越權執行
+P	admin:STR-01 · Source Table 18
+ROW	項目	要求
+P	項目
+P	要求
+ROW	i18n	zh-TW / zh-CN / en；ORANGE ONE、ACPOS、AI、API、QA 等固定詞依 Global 規則處理
+P	i18n
+P	zh-TW / zh-CN / en；ORANGE ONE、ACPOS、AI、API、QA 等固定詞依 Global 規則處理
+ROW	Keyboard	Tabs / Table actions / Drawer / Modal 全可鍵盤到達；Focus visible，不可只靠色彩
+P	Keyboard
+P	Tabs / Table actions / Drawer / Modal 全可鍵盤到達；Focus visible，不可只靠色彩
+ROW	Drawer/Modal	Focus trap；Escape/Close；Effectful Modal 關閉前保留/提示未提交內容
+P	Drawer/Modal
+P	Focus trap；Escape/Close；Effectful Modal 關閉前保留/提示未提交內容
+ROW	Status	Success/Warning/Error/Processing 不只用顏色；必須有文字或 icon 語義
+P	Status
+P	Success/Warning/Error/Processing 不只用顏色；必須有文字或 icon 語義
+ROW	Responsive	Desktop-first，同頁 reflow；不得建立 mobile-only 第二頁；長表格允許受控 horizontal scroll
+P	Responsive
+P	Desktop-first，同頁 reflow；不得建立 mobile-only 第二頁；長表格允許受控 horizontal scroll
+ROW	Text capacity	長 title/source/citation 採 ellipsis + Detail Drawer；按鈕文字不得壓框/破框
+P	Text capacity
+P	長 title/source/citation 採 ellipsis + Detail Drawer；按鈕文字不得壓框/破框
+P	admin:STR-01 · Source Table 19
+ROW	ID	Acceptance	Pass Condition
+P	ID
+P	Acceptance
+P	Pass Condition
+ROW	STR-A-01	Single Current Page	只存在 admin:STR-01 Current Strategy admin page；不得重建舊多頁 Strategy admin
+P	STR-A-01
+P	Single Current Page
+P	只存在 admin:STR-01 Current Strategy admin page；不得重建舊多頁 Strategy admin
+ROW	STR-A-02	Five Views	總覽 / 情報與 Fact / Playbook / 趨勢與機會 / 決策實驗室皆為同頁 View
+P	STR-A-02
+P	Five Views
+P	總覽 / 情報與 Fact / Playbook / 趨勢與機會 / 決策實驗室皆為同頁 View
+ROW	STR-A-03	Owner Reuse	只使用 StrategyService + StrategyFactPackService + shared owners；無第二套服務
+P	STR-A-03
+P	Owner Reuse
+P	只使用 StrategyService + StrategyFactPackService + shared owners；無第二套服務
+ROW	STR-A-04	Action Isolation	每個 View 只使用其 registered action family；payload 不跨 source union
+P	STR-A-04
+P	Action Isolation
+P	每個 View 只使用其 registered action family；payload 不跨 source union
+ROW	STR-A-05	Fact Truth	Inference 不得標 Fact；Confidence/Health/Cost/Capacity 不得偽造
+P	STR-A-05
+P	Fact Truth
+P	Inference 不得標 Fact；Confidence/Health/Cost/Capacity 不得偽造
+ROW	STR-A-06	Version Lineage	Playbook/Opportunity/Candidate/Context 變更保留版本與 evidence lineage
+P	STR-A-06
+P	Version Lineage
+P	Playbook/Opportunity/Candidate/Context 變更保留版本與 evidence lineage
+ROW	STR-A-07	Decision Boundary	Decision Lab 不直接寫 Canon/Task/Budget/Publish；handoff 到 owner
+P	STR-A-07
+P	Decision Boundary
+P	Decision Lab 不直接寫 Canon/Task/Budget/Publish；handoff 到 owner
+ROW	STR-A-08	Acquisition Boundary	只走 shared acquisition runtime；raw result 不直接成 Fact
+P	STR-A-08
+P	Acquisition Boundary
+P	只走 shared acquisition runtime；raw result 不直接成 Fact
+ROW	STR-A-09	Permission	Account assignment + scope/condition/state/version/idempotency/audit server-side gate
+P	STR-A-09
+P	Permission
+P	Account assignment + scope/condition/state/version/idempotency/audit server-side gate
+ROW	STR-A-10	Runtime Honesty	未 materialized Operation/Permission/Persistence → Disabled/BLOCK；不得以文件宣告 runtime complete
+P	STR-A-10
+P	Runtime Honesty
+P	未 materialized Operation/Permission/Persistence → Disabled/BLOCK；不得以文件宣告 runtime complete
+ROW	STR-A-11	Visual Geometry	無壓邊/破框/重疊；Drawer/Modal/Tab/Table 遵守 Global geometry
+P	STR-A-11
+P	Visual Geometry
+P	無壓邊/破框/重疊；Drawer/Modal/Tab/Table 遵守 Global geometry
+ROW	STR-A-12	A11y / i18n	Keyboard/Focus/Status/i18n 三語施工條件完整
+P	STR-A-12
+P	A11y / i18n
+P	Keyboard/Focus/Status/i18n 三語施工條件完整
+P	admin:STR-01 · Source Table 20
+ROW	Phase	施工與驗收
+P	Phase
+P	施工與驗收
+ROW	1 Shell / Page Mount	掛載 admin:STR-01；只消費 Global navigation，不改 menu order
+P	1 Shell / Page Mount
+P	掛載 admin:STR-01；只消費 Global navigation，不改 menu order
+ROW	2 Five-view Context	建立同頁 tabs + preserve scope/object/query/form state；無 route split
+P	2 Five-view Context
+P	建立同頁 tabs + preserve scope/object/query/form state；無 route split
+ROW	3 Projection Layer	Overview / Fact / Playbook / Opportunity / Decision read projections；缺值與 masking 正確
+P	3 Projection Layer
+P	Overview / Fact / Playbook / Opportunity / Decision read projections；缺值與 masking 正確
+ROW	4 Drawer / Modal	Read Detail Drawer + schema-driven Effectful Modal；focus/a11y 完整
+P	4 Drawer / Modal
+P	Read Detail Drawer + schema-driven Effectful Modal；focus/a11y 完整
+ROW	5 Operation Binding	逐 Action 對 exact operation/schema/runtime/permission；未 materialized 控制維持 disabled
+P	5 Operation Binding
+P	逐 Action 對 exact operation/schema/runtime/permission；未 materialized 控制維持 disabled
+ROW	6 Data Lineage	Source → Fact → Evidence → Candidate → Context / Approval / Audit exact refs
+P	6 Data Lineage
+P	Source → Fact → Evidence → Candidate → Context / Approval / Audit exact refs
+ROW	7 Acquisition	接 shared strategic intelligence acquisition；raw→fact governance boundary
+P	7 Acquisition
+P	接 shared strategic intelligence acquisition；raw→fact governance boundary
+ROW	8 Decision Boundary	Compare / Reject / Adopt Context；確認無 downstream direct mutation
+P	8 Decision Boundary
+P	Compare / Reject / Adopt Context；確認無 downstream direct mutation
+ROW	9 Regression / E2E	五 View、所有可見控制、權限、state/version/idempotency、error/recovery、restart persistence
+P	9 Regression / E2E
+P	五 View、所有可見控制、權限、state/version/idempotency、error/recovery、restart persistence
+ROW	10 Production Acceptance	只有 exact deployed SHA + production evidence 成立後，才可把 Runtime status 改為完成
+P	10 Production Acceptance
+P	只有 exact deployed SHA + production evidence 成立後，才可把 Runtime status 改為完成
+P	admin:STR-01 · Effectful Control → API → DB Closure Matrix
+ROW	Page UID	Control UID	UID Status	Operation/Action	Method / Path	DB / Provider Owner	Gate	Permission	Binding Status
+P	Page UID
+P	Control UID
+P	UID Status
+P	Operation/Action
+P	Method / Path
+P	DB / Provider Owner
+P	Gate
+P	Permission
+P	Binding Status
+ROW	admin:STR-01	STR-01-BTN-SEARCH-PROJECTION	NEW_UID_FROM_EXISTING_OPERATION	searchProjection	POST /v1/search	acpos_core.projects	SERVER_STATE_GATE	SOURCE_PERMISSION_OR_OPERATION_SCOPE	CLOSURE_MATERIALIZED
+P	admin:STR-01
+P	STR-01-BTN-SEARCH-PROJECTION
+P	NEW_UID_FROM_EXISTING_OPERATION
+P	searchProjection
+P	POST /v1/search
+P	acpos_core.projects
+P	SERVER_STATE_GATE
+P	SOURCE_PERMISSION_OR_OPERATION_SCOPE
+P	CLOSURE_MATERIALIZED
+ROW	admin:STR-01	STR-01-BTN-REFRESH-PROJECTION	NEW_UID_FROM_EXISTING_OPERATION	refreshProjection	POST /v1/projections/refresh	acpos_core.projects	SERVER_STATE_GATE	SOURCE_PERMISSION_OR_OPERATION_SCOPE	CLOSURE_MATERIALIZED
+P	admin:STR-01
+P	STR-01-BTN-REFRESH-PROJECTION
+P	NEW_UID_FROM_EXISTING_OPERATION
+P	refreshProjection
+P	POST /v1/projections/refresh
+P	acpos_core.projects
+P	SERVER_STATE_GATE
+P	SOURCE_PERMISSION_OR_OPERATION_SCOPE
+P	CLOSURE_MATERIALIZED
+ROW	admin:STR-01	STR-01-BTN-CONFIGURE-GOVERNED-RESOURCE	NEW_UID_FROM_EXISTING_OPERATION	configureGovernedResource	PATCH /v1/governance/resources/{id}	acpos_strategy.strategy_candidates	SERVER_STATE_GATE	SOURCE_PERMISSION_OR_OPERATION_SCOPE	CLOSURE_MATERIALIZED
+P	admin:STR-01
+P	STR-01-BTN-CONFIGURE-GOVERNED-RESOURCE
+P	NEW_UID_FROM_EXISTING_OPERATION
+P	configureGovernedResource
+P	PATCH /v1/governance/resources/{id}
+P	acpos_strategy.strategy_candidates
+P	SERVER_STATE_GATE
+P	SOURCE_PERMISSION_OR_OPERATION_SCOPE
+P	CLOSURE_MATERIALIZED
+ROW	admin:STR-01	STR-01-BTN-APPROVE-GOVERNED-RESOURCE	NEW_UID_FROM_EXISTING_OPERATION	approveGovernedResource	POST /v1/governance/resources/{id}/approve	acpos_strategy.strategy_candidates	SERVER_STATE_GATE	SOURCE_PERMISSION_OR_OPERATION_SCOPE	CLOSURE_MATERIALIZED
+P	admin:STR-01
+P	STR-01-BTN-APPROVE-GOVERNED-RESOURCE
+P	NEW_UID_FROM_EXISTING_OPERATION
+P	approveGovernedResource
+P	POST /v1/governance/resources/{id}/approve
+P	acpos_strategy.strategy_candidates
+P	SERVER_STATE_GATE
+P	SOURCE_PERMISSION_OR_OPERATION_SCOPE
+P	CLOSURE_MATERIALIZED
+ROW	admin:STR-01	STR-01-BTN-SAVE-DRAFT	NEW_UID_FROM_EXISTING_OPERATION	saveDraft	POST /v1/drafts	domain_candidate_store	SERVER_STATE_GATE	SOURCE_PERMISSION_OR_OPERATION_SCOPE	CLOSURE_MATERIALIZED
+P	admin:STR-01
+P	STR-01-BTN-SAVE-DRAFT
+P	NEW_UID_FROM_EXISTING_OPERATION
+P	saveDraft
+P	POST /v1/drafts
+P	domain_candidate_store
+P	SERVER_STATE_GATE
+P	SOURCE_PERMISSION_OR_OPERATION_SCOPE
+P	CLOSURE_MATERIALIZED
+ROW	admin:STR-01	STR-01-BTN-EXPORT-PROJECTION	NEW_UID_FROM_EXISTING_OPERATION	exportProjection	POST /v1/exports	acpos_core.projects	SERVER_STATE_GATE	SOURCE_PERMISSION_OR_OPERATION_SCOPE	CLOSURE_MATERIALIZED
+P	admin:STR-01
+P	STR-01-BTN-EXPORT-PROJECTION
+P	NEW_UID_FROM_EXISTING_OPERATION
+P	exportProjection
+P	POST /v1/exports
+P	acpos_core.projects
+P	SERVER_STATE_GATE
+P	SOURCE_PERMISSION_OR_OPERATION_SCOPE
+P	CLOSURE_MATERIALIZED
+ROW	admin:STR-01	STR-01-BTN-CREATE-CANDIDATE	NEW_UID_FROM_EXISTING_OPERATION	createCandidate	POST /v1/candidates	domain_candidate_store	SERVER_STATE_GATE	SOURCE_PERMISSION_OR_OPERATION_SCOPE	CLOSURE_MATERIALIZED
+P	admin:STR-01
+P	STR-01-BTN-CREATE-CANDIDATE
+P	NEW_UID_FROM_EXISTING_OPERATION
+P	createCandidate
+P	POST /v1/candidates
+P	domain_candidate_store
+P	SERVER_STATE_GATE
+P	SOURCE_PERMISSION_OR_OPERATION_SCOPE
+P	CLOSURE_MATERIALIZED
+ROW	admin:STR-01	STR-01-BTN-REJECT-STRATEGY-CANDIDATE	NEW_UID_FROM_EXISTING_OPERATION	rejectStrategyCandidate	POST /v1/ai/strategy/candidates/{strategyCandidateId}/reject	domain_candidate_store	SERVER_STATE_GATE	SOURCE_PERMISSION_OR_OPERATION_SCOPE	CLOSURE_MATERIALIZED
+P	admin:STR-01
+P	STR-01-BTN-REJECT-STRATEGY-CANDIDATE
+P	NEW_UID_FROM_EXISTING_OPERATION
+P	rejectStrategyCandidate
+P	POST /v1/ai/strategy/candidates/{strategyCandidateId}/reject
+P	domain_candidate_store
+P	SERVER_STATE_GATE
+P	SOURCE_PERMISSION_OR_OPERATION_SCOPE
+P	CLOSURE_MATERIALIZED
+ROW	admin:STR-01	STR-01-BTN-ADOPT-AS-CONTEXT-CANDIDATE	NEW_UID_FROM_EXISTING_OPERATION	adoptAsContextCandidate	POST /v1/state-commands/strategycandidate/adoptascontextcandidate	domain_candidate_store	SERVER_STATE_GATE	SOURCE_PERMISSION_OR_OPERATION_SCOPE	CLOSURE_MATERIALIZED
+P	admin:STR-01
+P	STR-01-BTN-ADOPT-AS-CONTEXT-CANDIDATE
+P	NEW_UID_FROM_EXISTING_OPERATION
+P	adoptAsContextCandidate
+P	POST /v1/state-commands/strategycandidate/adoptascontextcandidate
+P	domain_candidate_store
+P	SERVER_STATE_GATE
+P	SOURCE_PERMISSION_OR_OPERATION_SCOPE
+P	CLOSURE_MATERIALIZED
+P	G. Construction Handoff Rule
+P	施工 AI MUST resolve each UI control through this exact order: Page UID → Section/Region → Control UID → Trigger/Operation or Action UID → Gate → Permission → Input/Payload → Method/Path or shared Runtime Operation → Persistence/Provider Owner → Audit/Event → Success/Failure/Recovery → Next Page/Handoff. UI_ONLY/READ_ONLY controls MUST NOT create a write API. System-only operations MUST NOT cause a new visible button unless this closure/source explicitly materializes that control.
+P	When a provider/platform/environment value is runtime-specific, the exact binding is the registered Profile/Policy/Environment key named in this annex. Missing required value is a deterministic BLOCK; it is not permission to guess.
 ### PART word/header1.xml
 P	ORANGE ONE · ACPOS-AI-08 · Strategy Intelligence / Multi-AI Decision System · Mother Basic Logic Design
 ### PART word/footer1.xml

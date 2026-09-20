@@ -1,4 +1,6 @@
 ### PART word/document.xml
+P	[ACPOS-20260921-EXACT-BINDING-CLOSURE] Construction Authority Notice
+本文件已加入 2026-09-21 Exact Binding Closure。施工時 MUST 讀取文末 Closure Annex；文中較早的 REQUIRE_EXACT_BINDING 對已列入 Resolution Ledger 的項目視為已被本次 closure 精確綁定。外部 secret/provider/platform 的實際值只可由已註冊 Runtime Profile / Environment Binding 解析，缺值 = BLOCK，不得猜。
 P	ORANGE ONE · ACPOS
 P	ACPOS-AI-03
 P	AI Execution / Script Compiler / Tool / AIAPI Runtime
@@ -2618,6 +2620,3480 @@ P	Provider adapter contract explicitly defines conversion through existing Instr
 P	Single Authority master supplies historical construction backbone for Execution Panel, execution jobs/steps/logs, runtime layer boundaries and AI API Router positioning; Current Governance remains higher authority for present-state claims.
 P	Tool Runtime mother rules in this document are intentionally abstract where exact Tool Registry/API/Permission identifiers are not present in the source materials used. Those bindings remain unresolved rather than fabricated.
 P	All concrete Provider/Model/Secret values are runtime data and are excluded from this design artifact.
+P	2026-09-21 Construction Exact Binding Closure / 施工精確綁定封板
+P	Closure UID: ACPOS-20260921-EXACT-BINDING-CLOSURE
+P	Scope: 將 01～09 母級邏輯與已上傳 Basic Design 的 Page / Control / Action / Gate / Permission / API / Runtime / DB-Provider / State / Error / Handoff 做可施工 materialization。Source-derived rows are copied from uploaded Word values; newly created exact identities/numeric policy are explicitly marked as closure authority.
+P	A. Shared Runtime Quantitative Policy / 共用 Runtime 定量政策
+P	Authority Status: CLOSURE_DECISION_NEW_AUTHORITY_PER_USER_DIRECTIVE_20260921_AFTER_FULL_SOURCE_AUDIT. 這些數值僅補足原文件明確標示的 numeric REQUIRE_EXACT_BINDING；Provider/Platform 自身限制仍由 registered profile/policy 解析，無 profile 值時 BLOCK。
+ROW	Policy UID	Exact Value	Semantics	Primary Owner
+P	Policy UID
+P	Exact Value
+P	Semantics
+P	Primary Owner
+ROW	CONV_UI_INITIAL_LOAD_MESSAGES	50	Initial visible history page	02
+P	CONV_UI_INITIAL_LOAD_MESSAGES
+P	50
+P	Initial visible history page
+P	02
+ROW	CONV_UI_LAZY_LOAD_MESSAGES	50	Each older-history fetch	02
+P	CONV_UI_LAZY_LOAD_MESSAGES
+P	50
+P	Each older-history fetch
+P	02
+ROW	CONV_UI_MAX_RENDERED_MESSAGES	200	Virtualize/unmount older DOM rows; never delete persistence	02
+P	CONV_UI_MAX_RENDERED_MESSAGES
+P	200
+P	Virtualize/unmount older DOM rows; never delete persistence
+P	02
+ROW	CONV_AI_RECENT_VERBATIM_MESSAGES	24	Newest durable messages kept verbatim when budget permits	02
+P	CONV_AI_RECENT_VERBATIM_MESSAGES
+P	24
+P	Newest durable messages kept verbatim when budget permits
+P	02
+ROW	CONV_SUMMARY_CHECKPOINT_MESSAGES	50	Create versioned summary at 50 durable messages or earlier pressure trigger	02
+P	CONV_SUMMARY_CHECKPOINT_MESSAGES
+P	50
+P	Create versioned summary at 50 durable messages or earlier pressure trigger
+P	02
+ROW	CONV_SUMMARY_TRIGGER_INPUT_RATIO	0.80	Summarize/dedupe P2-P7 before request when candidate input exceeds 80% of computed input budget	02
+P	CONV_SUMMARY_TRIGGER_INPUT_RATIO
+P	0.80
+P	Summarize/dedupe P2-P7 before request when candidate input exceeds 80% of computed input budget
+P	02
+ROW	CONV_CONTEXT_INPUT_RATIO	0.70	70% of provider max_context reserved for input; hard cap below	02
+P	CONV_CONTEXT_INPUT_RATIO
+P	0.70
+P	70% of provider max_context reserved for input; hard cap below
+P	02
+ROW	CONV_CONTEXT_OUTPUT_RESERVE_RATIO	0.20	20% of provider max_context reserved for model output	02
+P	CONV_CONTEXT_OUTPUT_RESERVE_RATIO
+P	0.20
+P	20% of provider max_context reserved for model output
+P	02
+ROW	CONV_CONTEXT_SAFETY_RESERVE_RATIO	0.10	10% reserved for tool/system expansion	02
+P	CONV_CONTEXT_SAFETY_RESERVE_RATIO
+P	0.10
+P	10% reserved for tool/system expansion
+P	02
+ROW	CONV_CONTEXT_INPUT_HARD_CAP_TOKENS	96000	Provider-neutral maximum input budget	02
+P	CONV_CONTEXT_INPUT_HARD_CAP_TOKENS
+P	96000
+P	Provider-neutral maximum input budget
+P	02
+ROW	CONV_OUTPUT_HARD_CAP_TOKENS	16000	Provider-neutral output reserve cap	02
+P	CONV_OUTPUT_HARD_CAP_TOKENS
+P	16000
+P	Provider-neutral output reserve cap
+P	02
+ROW	CONV_ACTIVE_GENERATION_PER_THREAD	1	No silent interleave	02
+P	CONV_ACTIVE_GENERATION_PER_THREAD
+P	1
+P	No silent interleave
+P	02
+ROW	CONV_PENDING_MESSAGE_QUEUE_DEPTH	8	9th concurrent submission returns CONVERSATION_BUSY	02
+P	CONV_PENDING_MESSAGE_QUEUE_DEPTH
+P	8
+P	9th concurrent submission returns CONVERSATION_BUSY
+P	02
+ROW	CONV_STREAM_HEARTBEAT_SECONDS	15	Streaming liveness heartbeat	02/03
+P	CONV_STREAM_HEARTBEAT_SECONDS
+P	15
+P	Streaming liveness heartbeat
+P	02/03
+ROW	CONV_STREAM_IDLE_TIMEOUT_SECONDS	60	No chunk/heartbeat beyond this = transient failure	02/03
+P	CONV_STREAM_IDLE_TIMEOUT_SECONDS
+P	60
+P	No chunk/heartbeat beyond this = transient failure
+P	02/03
+ROW	CONV_COMPOSER_DRAFT_TTL_HOURS	24	Transient composer state only	02
+P	CONV_COMPOSER_DRAFT_TTL_HOURS
+P	24
+P	Transient composer state only
+P	02
+ROW	CONV_SEND_IDEMPOTENCY_TTL_HOURS	24	Duplicate SEND_MESSAGE suppression window	02
+P	CONV_SEND_IDEMPOTENCY_TTL_HOURS
+P	24
+P	Duplicate SEND_MESSAGE suppression window
+P	02
+ROW	CONV_RETENTION_AFTER_PROJECT_CLOSE_DAYS	365	Conversation/message metadata/content if unreferenced; references extend retention	01/02
+P	CONV_RETENTION_AFTER_PROJECT_CLOSE_DAYS
+P	365
+P	Conversation/message metadata/content if unreferenced; references extend retention
+P	01/02
+ROW	CONV_ARCHIVE_HARD_DELETE_ELIGIBLE_DAYS	365	After archive and only when no decision/evidence/audit dependency remains	02
+P	CONV_ARCHIVE_HARD_DELETE_ELIGIBLE_DAYS
+P	365
+P	After archive and only when no decision/evidence/audit dependency remains
+P	02
+ROW	HTTP_CONNECT_TIMEOUT_SECONDS	10	Shared outbound HTTP connect timeout	03
+P	HTTP_CONNECT_TIMEOUT_SECONDS
+P	10
+P	Shared outbound HTTP connect timeout
+P	03
+ROW	HTTP_SYNC_RESPONSE_TIMEOUT_SECONDS	60	Synchronous text/tool request upper bound	03
+P	HTTP_SYNC_RESPONSE_TIMEOUT_SECONDS
+P	60
+P	Synchronous text/tool request upper bound
+P	03
+ROW	PROVIDER_SUBMIT_TIMEOUT_SECONDS	30	Async provider submit/ack request	03
+P	PROVIDER_SUBMIT_TIMEOUT_SECONDS
+P	30
+P	Async provider submit/ack request
+P	03
+ROW	JOB_TEXT_HARD_TIMEOUT_SECONDS	180	TEXT/TEXT_CHAT capability job	03
+P	JOB_TEXT_HARD_TIMEOUT_SECONDS
+P	180
+P	TEXT/TEXT_CHAT capability job
+P	03
+ROW	JOB_IMAGE_HARD_TIMEOUT_SECONDS	900	IMAGE capability job	03/05
+P	JOB_IMAGE_HARD_TIMEOUT_SECONDS
+P	900
+P	IMAGE capability job
+P	03/05
+ROW	JOB_AUDIO_HARD_TIMEOUT_SECONDS	1800	AUDIO/VOICE capability job	03/05
+P	JOB_AUDIO_HARD_TIMEOUT_SECONDS
+P	1800
+P	AUDIO/VOICE capability job
+P	03/05
+ROW	JOB_VIDEO_HARD_TIMEOUT_SECONDS	7200	VIDEO capability job	03/05
+P	JOB_VIDEO_HARD_TIMEOUT_SECONDS
+P	7200
+P	VIDEO capability job
+P	03/05
+ROW	RUNTIME_MAX_ATTEMPTS	3	1 initial + at most 2 automatic retries	01/03
+P	RUNTIME_MAX_ATTEMPTS
+P	3
+P	1 initial + at most 2 automatic retries
+P	01/03
+ROW	RUNTIME_BACKOFF_BASE_SECONDS	2	Exponential backoff base	01/03
+P	RUNTIME_BACKOFF_BASE_SECONDS
+P	2
+P	Exponential backoff base
+P	01/03
+ROW	RUNTIME_BACKOFF_FACTOR	2	Backoff factor	01/03
+P	RUNTIME_BACKOFF_FACTOR
+P	2
+P	Backoff factor
+P	01/03
+ROW	RUNTIME_BACKOFF_MAX_SECONDS	30	Backoff cap excluding Retry-After	01/03
+P	RUNTIME_BACKOFF_MAX_SECONDS
+P	30
+P	Backoff cap excluding Retry-After
+P	01/03
+ROW	RUNTIME_RETRY_AFTER_MAX_SECONDS	120	Maximum honored provider Retry-After before async reschedule	03
+P	RUNTIME_RETRY_AFTER_MAX_SECONDS
+P	120
+P	Maximum honored provider Retry-After before async reschedule
+P	03
+ROW	RUNTIME_JITTER	FULL_JITTER	random(0,min(cap,base*factor^(attempt-1)))	03
+P	RUNTIME_JITTER
+P	FULL_JITTER
+P	random(0,min(cap,base*factor^(attempt-1)))
+P	03
+ROW	CIRCUIT_FAILURE_THRESHOLD	5	Retryable failures	03
+P	CIRCUIT_FAILURE_THRESHOLD
+P	5
+P	Retryable failures
+P	03
+ROW	CIRCUIT_FAILURE_WINDOW_SECONDS	60	Window for threshold	03
+P	CIRCUIT_FAILURE_WINDOW_SECONDS
+P	60
+P	Window for threshold
+P	03
+ROW	CIRCUIT_OPEN_COOLDOWN_SECONDS	60	Open to half-open	03
+P	CIRCUIT_OPEN_COOLDOWN_SECONDS
+P	60
+P	Open to half-open
+P	03
+ROW	CIRCUIT_HALF_OPEN_PROBES	1	Concurrent half-open probe	03
+P	CIRCUIT_HALF_OPEN_PROBES
+P	1
+P	Concurrent half-open probe
+P	03
+ROW	CIRCUIT_CLOSE_SUCCESS_COUNT	2	Consecutive successful probes/executions to close	03
+P	CIRCUIT_CLOSE_SUCCESS_COUNT
+P	2
+P	Consecutive successful probes/executions to close
+P	03
+ROW	WORKER_HEARTBEAT_SECONDS	15	Worker lease heartbeat	03
+P	WORKER_HEARTBEAT_SECONDS
+P	15
+P	Worker lease heartbeat
+P	03
+ROW	WORKER_LEASE_GRACE_SECONDS	60	Missed heartbeat grace before stale lease handling	03
+P	WORKER_LEASE_GRACE_SECONDS
+P	60
+P	Missed heartbeat grace before stale lease handling
+P	03
+ROW	CALLBACK_DEDUPE_TTL_DAYS	7	Callback replay/dedupe evidence	03
+P	CALLBACK_DEDUPE_TTL_DAYS
+P	7
+P	Callback replay/dedupe evidence
+P	03
+ROW	EXECUTION_IDEMPOTENCY_TTL_DAYS	7	Execution job semantic duplicate suppression	03
+P	EXECUTION_IDEMPOTENCY_TTL_DAYS
+P	7
+P	Execution job semantic duplicate suppression
+P	03
+ROW	BUSINESS_EFFECT_IDEMPOTENCY_TTL_DAYS	30	External publish/delivery/handoff/mutation duplicate suppression	01/03/06/07/08/09
+P	BUSINESS_EFFECT_IDEMPOTENCY_TTL_DAYS
+P	30
+P	External publish/delivery/handoff/mutation duplicate suppression
+P	01/03/06/07/08/09
+ROW	OUTBOX_DELIVERED_RETENTION_DAYS	30	Delivered outbox audit retention when otherwise unreferenced	01/03
+P	OUTBOX_DELIVERED_RETENTION_DAYS
+P	30
+P	Delivered outbox audit retention when otherwise unreferenced
+P	01/03
+ROW	DEAD_LETTER_RETENTION_DAYS	90	DLQ/quarantine minimum retention	01/03/09
+P	DEAD_LETTER_RETENTION_DAYS
+P	90
+P	DLQ/quarantine minimum retention
+P	01/03/09
+ROW	CANDIDATE_UNREFERENCED_TTL_DAYS	30	Generic unadopted candidate cleanup	01
+P	CANDIDATE_UNREFERENCED_TTL_DAYS
+P	30
+P	Generic unadopted candidate cleanup
+P	01
+ROW	CONTEXT_SNAPSHOT_UNREFERENCED_TTL_DAYS	90	After last dependent lineage closes	01
+P	CONTEXT_SNAPSHOT_UNREFERENCED_TTL_DAYS
+P	90
+P	After last dependent lineage closes
+P	01
+ROW	RAW_SOURCE_UNREFERENCED_TTL_DAYS	180	Subject to rights/legal/privacy override	01
+P	RAW_SOURCE_UNREFERENCED_TTL_DAYS
+P	180
+P	Subject to rights/legal/privacy override
+P	01
+ROW	EVIDENCE_MIN_RETENTION_AFTER_CLOSE_DAYS	365	References/legal hold extend	01/09
+P	EVIDENCE_MIN_RETENTION_AFTER_CLOSE_DAYS
+P	365
+P	References/legal hold extend
+P	01/09
+ROW	EXPERIENCE_RETIRED_RETENTION_DAYS	365	Retired/unreferenced experience	01/08/09
+P	EXPERIENCE_RETIRED_RETENTION_DAYS
+P	365
+P	Retired/unreferenced experience
+P	01/08/09
+ROW	SEMANTIC_INDEX_REBUILD_TTL_DAYS	30	Derivative index; source retention separate	01
+P	SEMANTIC_INDEX_REBUILD_TTL_DAYS
+P	30
+P	Derivative index; source retention separate
+P	01
+ROW	RECRAWL_CRITICAL_MINUTES	15	Freshness class CRITICAL	01/06
+P	RECRAWL_CRITICAL_MINUTES
+P	15
+P	Freshness class CRITICAL
+P	01/06
+ROW	RECRAWL_HIGH_MINUTES	60	Freshness class HIGH	01/06
+P	RECRAWL_HIGH_MINUTES
+P	60
+P	Freshness class HIGH
+P	01/06
+ROW	RECRAWL_NORMAL_MINUTES	360	Freshness class NORMAL	01/06
+P	RECRAWL_NORMAL_MINUTES
+P	360
+P	Freshness class NORMAL
+P	01/06
+ROW	RECRAWL_LOW_MINUTES	1440	Freshness class LOW	01/06
+P	RECRAWL_LOW_MINUTES
+P	1440
+P	Freshness class LOW
+P	01/06
+ROW	EXPERIENCE_AUTO_USE_MIN_VALIDATED_RECORDS	3	Before repeated pattern may influence automated recommendation	01/08
+P	EXPERIENCE_AUTO_USE_MIN_VALIDATED_RECORDS
+P	3
+P	Before repeated pattern may influence automated recommendation
+P	01/08
+ROW	EXPERIENCE_AUTO_USE_MIN_INDEPENDENT_CONTEXTS	2	Avoid single-run overfit	01/08
+P	EXPERIENCE_AUTO_USE_MIN_INDEPENDENT_CONTEXTS
+P	2
+P	Avoid single-run overfit
+P	01/08
+P	B. Canonical Persistence / Provider Registry
+ROW	Binding	Exact Persistence / Provider Owner	Purpose	Document Owner
+P	Binding
+P	Exact Persistence / Provider Owner
+P	Purpose
+P	Document Owner
+ROW	GLOBAL_CONTEXT	acpos_knowledge.context_snapshots	ContextSnapshot immutable execution context	01/02/03
+P	GLOBAL_CONTEXT
+P	acpos_knowledge.context_snapshots
+P	ContextSnapshot immutable execution context
+P	01/02/03
+ROW	RAW_SOURCE	acpos_knowledge.raw_source_snapshots	Captured external/source evidence snapshot	01
+P	RAW_SOURCE
+P	acpos_knowledge.raw_source_snapshots
+P	Captured external/source evidence snapshot
+P	01
+ROW	EVIDENCE	acpos_knowledge.evidence_records	Evidence lineage and acceptance refs	01/09
+P	EVIDENCE
+P	acpos_knowledge.evidence_records
+P	Evidence lineage and acceptance refs
+P	01/09
+ROW	EXPERIENCE	acpos_knowledge.experience_records	Validated/failed learning records	01/08/09
+P	EXPERIENCE
+P	acpos_knowledge.experience_records
+P	Validated/failed learning records
+P	01/08/09
+ROW	CONVERSATION	acpos_conversation.conversations	Conversation canonical metadata	02
+P	CONVERSATION
+P	acpos_conversation.conversations
+P	Conversation canonical metadata
+P	02
+ROW	THREAD	acpos_conversation.threads	Thread/branch identity and state	02
+P	THREAD
+P	acpos_conversation.threads
+P	Thread/branch identity and state
+P	02
+ROW	MESSAGE	acpos_conversation.messages	Durable message sequence	02
+P	MESSAGE
+P	acpos_conversation.messages
+P	Durable message sequence
+P	02
+ROW	MESSAGE_RELATION	acpos_conversation.message_relations	reply/citation/branch/derived edges	02
+P	MESSAGE_RELATION
+P	acpos_conversation.message_relations
+P	reply/citation/branch/derived edges
+P	02
+ROW	ASSISTANT_RECORD	acpos_conversation.assistant_records	Assistant response/summary derived versions	02
+P	ASSISTANT_RECORD
+P	acpos_conversation.assistant_records
+P	Assistant response/summary derived versions
+P	02
+ROW	CONVERSATION_SUMMARY	acpos_conversation.summaries	Versioned summary checkpoints	02
+P	CONVERSATION_SUMMARY
+P	acpos_conversation.summaries
+P	Versioned summary checkpoints
+P	02
+ROW	EXECUTION_JOB	acpos_runtime.execution_jobs	Stable job identity	03
+P	EXECUTION_JOB
+P	acpos_runtime.execution_jobs
+P	Stable job identity
+P	03
+ROW	EXECUTION_ATTEMPT	acpos_runtime.execution_attempts	Immutable attempt lineage	03
+P	EXECUTION_ATTEMPT
+P	acpos_runtime.execution_attempts
+P	Immutable attempt lineage
+P	03
+ROW	PROVIDER_PROFILE	acpos_runtime.provider_model_profiles	Provider/model profile and timeout/context settings	03
+P	PROVIDER_PROFILE
+P	acpos_runtime.provider_model_profiles
+P	Provider/model profile and timeout/context settings
+P	03
+ROW	PROVIDER_ROUTE	acpos_runtime.provider_route_decisions	Exact route decision	03
+P	PROVIDER_ROUTE
+P	acpos_runtime.provider_route_decisions
+P	Exact route decision
+P	03
+ROW	PROVIDER_CANDIDATE_GROUP	acpos_runtime.provider_candidate_groups	Ordered provider/model candidate refs	03
+P	PROVIDER_CANDIDATE_GROUP
+P	acpos_runtime.provider_candidate_groups
+P	Ordered provider/model candidate refs
+P	03
+ROW	PROVIDER_CALLBACK	acpos_runtime.provider_callbacks	Verified callback receipts	03
+P	PROVIDER_CALLBACK
+P	acpos_runtime.provider_callbacks
+P	Verified callback receipts
+P	03
+ROW	PROVIDER_ARTIFACT	acpos_runtime.provider_artifacts	External/generated artifact refs	03/05
+P	PROVIDER_ARTIFACT
+P	acpos_runtime.provider_artifacts
+P	External/generated artifact refs
+P	03/05
+ROW	TOOL_REGISTRY	acpos_runtime.tool_registry	Canonical tool schema/capability/permission owner	03
+P	TOOL_REGISTRY
+P	acpos_runtime.tool_registry
+P	Canonical tool schema/capability/permission owner
+P	03
+ROW	IDEMPOTENCY	acpos_runtime.idempotency_keys	Semantic idempotency digest/result	01/02/03
+P	IDEMPOTENCY
+P	acpos_runtime.idempotency_keys
+P	Semantic idempotency digest/result
+P	01/02/03
+ROW	OUTBOX	acpos_runtime.outbox_events	Transactional event delivery	01/03
+P	OUTBOX
+P	acpos_runtime.outbox_events
+P	Transactional event delivery
+P	01/03
+ROW	DEAD_LETTER	acpos_runtime.dead_letters	Exhausted poison/nonretryable delivery evidence	01/03
+P	DEAD_LETTER
+P	acpos_runtime.dead_letters
+P	Exhausted poison/nonretryable delivery evidence
+P	01/03
+ROW	CORE_PROJECT	acpos_core.projects	Project canonical state	04
+P	CORE_PROJECT
+P	acpos_core.projects
+P	Project canonical state
+P	04
+ROW	CORE_TOPIC	acpos_core.topics	Topic canonical state	04
+P	CORE_TOPIC
+P	acpos_core.topics
+P	Topic canonical state
+P	04
+ROW	CORE_BLUEPRINT	acpos_core.blueprint_versions	Append-only Blueprint versions	04
+P	CORE_BLUEPRINT
+P	acpos_core.blueprint_versions
+P	Append-only Blueprint versions
+P	04
+ROW	CORE_SCRIPT	acpos_core.canonical_script_versions	Canonical Script versions	04
+P	CORE_SCRIPT
+P	acpos_core.canonical_script_versions
+P	Canonical Script versions
+P	04
+ROW	CORE_DNA	acpos_core.dna_versions	Role/object/scene DNA versions	04
+P	CORE_DNA
+P	acpos_core.dna_versions
+P	Role/object/scene DNA versions
+P	04
+ROW	DEPARTMENT_HANDOFF	acpos_core.department_handoffs	Exact cross-department package/handoff	04/05
+P	DEPARTMENT_HANDOFF
+P	acpos_core.department_handoffs
+P	Exact cross-department package/handoff
+P	04/05
+ROW	ASSET_VERSION	acpos_media.asset_versions	Asset candidate/locked versions	05
+P	ASSET_VERSION
+P	acpos_media.asset_versions
+P	Asset candidate/locked versions
+P	05
+ROW	LAYER_DOCUMENT	acpos_media.layer_documents	Layer/patch/composite document and layers	05
+P	LAYER_DOCUMENT
+P	acpos_media.layer_documents
+P	Layer/patch/composite document and layers
+P	05
+ROW	VIDEO_VERSION	acpos_media.video_versions	Video/scenes/shots/time-range versions	05
+P	VIDEO_VERSION
+P	acpos_media.video_versions
+P	Video/scenes/shots/time-range versions
+P	05
+ROW	EDIT_VERSION	acpos_media.edit_versions	Timeline/edit output versions	05
+P	EDIT_VERSION
+P	acpos_media.edit_versions
+P	Timeline/edit output versions
+P	05
+ROW	QA_RUN	acpos_qa.qa_runs	QA execution/evaluation result	05
+P	QA_RUN
+P	acpos_qa.qa_runs
+P	QA execution/evaluation result
+P	05
+ROW	QA_FINDING	acpos_qa.qa_findings	QA finding and remediation state	05/09
+P	QA_FINDING
+P	acpos_qa.qa_findings
+P	QA finding and remediation state
+P	05/09
+ROW	ENTERPRISE_PROFILE	acpos_enterprise.discovery_profiles	Enterprise discovery profile	06
+P	ENTERPRISE_PROFILE
+P	acpos_enterprise.discovery_profiles
+P	Enterprise discovery profile
+P	06
+ROW	ENTERPRISE_SIGNAL	acpos_enterprise.market_signals	Market signal/evidence decision	06
+P	ENTERPRISE_SIGNAL
+P	acpos_enterprise.market_signals
+P	Market signal/evidence decision
+P	06
+ROW	ENTERPRISE_COMPANY	acpos_enterprise.companies	Resolved company identity	06
+P	ENTERPRISE_COMPANY
+P	acpos_enterprise.companies
+P	Resolved company identity
+P	06
+ROW	ENTERPRISE_OPPORTUNITY	acpos_enterprise.opportunities	Opportunity lifecycle	06
+P	ENTERPRISE_OPPORTUNITY
+P	acpos_enterprise.opportunities
+P	Opportunity lifecycle
+P	06
+ROW	ENTERPRISE_CAMPAIGN	acpos_enterprise.outreach_campaigns	Campaign and exact approved version	06
+P	ENTERPRISE_CAMPAIGN
+P	acpos_enterprise.outreach_campaigns
+P	Campaign and exact approved version
+P	06
+ROW	ENTERPRISE_DELIVERY	acpos_enterprise.delivery_attempts	Per-recipient delivery attempt/result	06
+P	ENTERPRISE_DELIVERY
+P	acpos_enterprise.delivery_attempts
+P	Per-recipient delivery attempt/result
+P	06
+ROW	ERP_CONNECTOR	acpos_erp.connectors	ERP connector and mapping refs	06
+P	ERP_CONNECTOR
+P	acpos_erp.connectors
+P	ERP connector and mapping refs
+P	06
+ROW	ERP_SYNC	acpos_erp.sync_jobs	ERP snapshot/sync lineage	06
+P	ERP_SYNC
+P	acpos_erp.sync_jobs
+P	ERP snapshot/sync lineage
+P	06
+ROW	SOCIAL_ACCOUNT	acpos_social.account_bindings	Social account/credential references	07
+P	SOCIAL_ACCOUNT
+P	acpos_social.account_bindings
+P	Social account/credential references
+P	07
+ROW	SOCIAL_TARGET	acpos_social.market_targets	Target identity/state/policy	07
+P	SOCIAL_TARGET
+P	acpos_social.market_targets
+P	Target identity/state/policy
+P	07
+ROW	SOCIAL_DISCOVERY	acpos_social.target_discovery_jobs	Target discovery lineage	07
+P	SOCIAL_DISCOVERY
+P	acpos_social.target_discovery_jobs
+P	Target discovery lineage
+P	07
+ROW	SOCIAL_PUBLISH	acpos_social.publish_requests	Target-scoped publish request	07
+P	SOCIAL_PUBLISH
+P	acpos_social.publish_requests
+P	Target-scoped publish request
+P	07
+ROW	SOCIAL_ATTEMPT	acpos_social.publish_attempts	Provider/platform publish attempt	07
+P	SOCIAL_ATTEMPT
+P	acpos_social.publish_attempts
+P	Provider/platform publish attempt
+P	07
+ROW	SOCIAL_CALLBACK	acpos_social.platform_callbacks	External callback/result	07
+P	SOCIAL_CALLBACK
+P	acpos_social.platform_callbacks
+P	External callback/result
+P	07
+ROW	SOCIAL_METRIC	acpos_social.metrics_snapshots	Real analytics snapshot	07
+P	SOCIAL_METRIC
+P	acpos_social.metrics_snapshots
+P	Real analytics snapshot
+P	07
+ROW	STRATEGY_TOPIC	acpos_strategy.strategy_topics	Strategy topic/context	08
+P	STRATEGY_TOPIC
+P	acpos_strategy.strategy_topics
+P	Strategy topic/context
+P	08
+ROW	STRATEGY_CANDIDATE	acpos_strategy.strategy_candidates	Append-only strategy candidate versions	08
+P	STRATEGY_CANDIDATE
+P	acpos_strategy.strategy_candidates
+P	Append-only strategy candidate versions
+P	08
+ROW	STRATEGY_REVIEW	acpos_strategy.strategy_reviews	Human strategy review	08
+P	STRATEGY_REVIEW
+P	acpos_strategy.strategy_reviews
+P	Human strategy review
+P	08
+ROW	STRATEGY_DECISION	acpos_strategy.strategy_decisions	Decision ledger	08
+P	STRATEGY_DECISION
+P	acpos_strategy.strategy_decisions
+P	Decision ledger
+P	08
+ROW	STRATEGY_FEEDBACK	acpos_strategy.strategy_feedback	Expected/actual/KPI/learning feedback	08
+P	STRATEGY_FEEDBACK
+P	acpos_strategy.strategy_feedback
+P	Expected/actual/KPI/learning feedback
+P	08
+ROW	SYSTEM_CHANGE	acpos_system.system_changes	Governed system change	09
+P	SYSTEM_CHANGE
+P	acpos_system.system_changes
+P	Governed system change
+P	09
+ROW	SYSTEM_CANDIDATE	acpos_system.change_candidates	Change candidate versions	09
+P	SYSTEM_CANDIDATE
+P	acpos_system.change_candidates
+P	Change candidate versions
+P	09
+ROW	VALIDATION_RUN	acpos_system.validation_runs	Sandbox/test/regression evidence	09
+P	VALIDATION_RUN
+P	acpos_system.validation_runs
+P	Sandbox/test/regression evidence
+P	09
+ROW	SYSTEM_FINDING	acpos_system.findings	Inspection finding lifecycle	09
+P	SYSTEM_FINDING
+P	acpos_system.findings
+P	Inspection finding lifecycle
+P	09
+ROW	TRACE_EDGE	acpos_system.trace_edges	Forward/reverse functional trace graph	09
+P	TRACE_EDGE
+P	acpos_system.trace_edges
+P	Forward/reverse functional trace graph
+P	09
+ROW	INCIDENT	acpos_system.incidents	Incident/maintenance state	09
+P	INCIDENT
+P	acpos_system.incidents
+P	Incident/maintenance state
+P	09
+ROW	CHECKPOINT	acpos_system.checkpoints	Resume/checkpoint state	09
+P	CHECKPOINT
+P	acpos_system.checkpoints
+P	Resume/checkpoint state
+P	09
+ROW	IAM_ACCOUNT	acpos_iam.accounts	Account identity	09
+P	IAM_ACCOUNT
+P	acpos_iam.accounts
+P	Account identity
+P	09
+ROW	IAM_PERMISSION	acpos_iam.permission_assignments	Exact permission assignments	09
+P	IAM_PERMISSION
+P	acpos_iam.permission_assignments
+P	Exact permission assignments
+P	09
+ROW	IAM_GRANT	acpos_iam.resource_grants	Resource/scope/condition grants	09
+P	IAM_GRANT
+P	acpos_iam.resource_grants
+P	Resource/scope/condition grants
+P	09
+ROW	AUDIT	acpos_audit.audit_events	Correlation/audit terminal truth	01-09
+P	AUDIT
+P	acpos_audit.audit_events
+P	Correlation/audit terminal truth
+P	01-09
+P	DB naming is normative for this design closure. All tables are PostgreSQL logical owners under the shown schema. RLS/permission checks remain server-enforced. Secret values are never stored in these Word files; only secret references are persisted.
+P	C. Shared Exact API / Permission Bindings
+ROW	Operation UID	Exact Method / Path	Persistence Owner	Permission
+P	Operation UID
+P	Exact Method / Path
+P	Persistence Owner
+P	Permission
+ROW	CONVERSATION_CREATE	POST /v1/conversations	acpos_conversation.conversations	conversation.create
+P	CONVERSATION_CREATE
+P	POST /v1/conversations
+P	acpos_conversation.conversations
+P	conversation.create
+ROW	CONVERSATION_MESSAGE_SEND	POST /v1/conversations/{conversationId}/messages	acpos_conversation.messages	conversation.write
+P	CONVERSATION_MESSAGE_SEND
+P	POST /v1/conversations/{conversationId}/messages
+P	acpos_conversation.messages
+P	conversation.write
+ROW	CONVERSATION_GENERATION_STOP	POST /v1/conversations/{conversationId}/generation/stop	acpos_conversation.messages + acpos_runtime.execution_jobs	conversation.write
+P	CONVERSATION_GENERATION_STOP
+P	POST /v1/conversations/{conversationId}/generation/stop
+P	acpos_conversation.messages + acpos_runtime.execution_jobs
+P	conversation.write
+ROW	CONVERSATION_BRANCH_CREATE	POST /v1/conversations/{conversationId}/branches	acpos_conversation.threads	conversation.branch.create
+P	CONVERSATION_BRANCH_CREATE
+P	POST /v1/conversations/{conversationId}/branches
+P	acpos_conversation.threads
+P	conversation.branch.create
+ROW	CONVERSATION_SUMMARY_CREATE	POST /v1/conversations/{conversationId}/summaries	acpos_conversation.summaries	conversation.summary.create
+P	CONVERSATION_SUMMARY_CREATE
+P	POST /v1/conversations/{conversationId}/summaries
+P	acpos_conversation.summaries
+P	conversation.summary.create
+ROW	EXECUTION_JOB_CREATE	POST /v1/execution-jobs	acpos_runtime.execution_jobs	runtime.execute
+P	EXECUTION_JOB_CREATE
+P	POST /v1/execution-jobs
+P	acpos_runtime.execution_jobs
+P	runtime.execute
+ROW	EXECUTION_JOB_RETRY	POST /v1/execution-jobs/{jobId}/retry	acpos_runtime.execution_attempts	runtime.retry
+P	EXECUTION_JOB_RETRY
+P	POST /v1/execution-jobs/{jobId}/retry
+P	acpos_runtime.execution_attempts
+P	runtime.retry
+ROW	EXECUTION_JOB_CANCEL	POST /v1/execution-jobs/{jobId}/cancel	acpos_runtime.execution_jobs	runtime.cancel
+P	EXECUTION_JOB_CANCEL
+P	POST /v1/execution-jobs/{jobId}/cancel
+P	acpos_runtime.execution_jobs
+P	runtime.cancel
+ROW	PROVIDER_CALLBACK	POST /v1/provider-callbacks/{providerKey}	acpos_runtime.provider_callbacks	runtime.callback.accept
+P	PROVIDER_CALLBACK
+P	POST /v1/provider-callbacks/{providerKey}
+P	acpos_runtime.provider_callbacks
+P	runtime.callback.accept
+ROW	TOOL_EXECUTE	POST /v1/tools/{toolUid}/execute	acpos_runtime.execution_attempts	tool.execute
+P	TOOL_EXECUTE
+P	POST /v1/tools/{toolUid}/execute
+P	acpos_runtime.execution_attempts
+P	tool.execute
+ROW	CONTEXT_SNAPSHOT_CREATE	POST /v1/context-snapshots	acpos_knowledge.context_snapshots	context.snapshot.create
+P	CONTEXT_SNAPSHOT_CREATE
+P	POST /v1/context-snapshots
+P	acpos_knowledge.context_snapshots
+P	context.snapshot.create
+ROW	AUDIT_APPEND	POST /v1/audit-events	acpos_audit.audit_events	audit.append
+P	AUDIT_APPEND
+P	POST /v1/audit-events
+P	acpos_audit.audit_events
+P	audit.append
+ROW	SYSTEM_CHANGE_CREATE	POST /v1/system-changes	acpos_system.system_changes	system.change.create
+P	SYSTEM_CHANGE_CREATE
+P	POST /v1/system-changes
+P	acpos_system.system_changes
+P	system.change.create
+ROW	SYSTEM_CANDIDATE_CREATE	POST /v1/system-changes/{changeId}/candidates	acpos_system.change_candidates	system.change.propose
+P	SYSTEM_CANDIDATE_CREATE
+P	POST /v1/system-changes/{changeId}/candidates
+P	acpos_system.change_candidates
+P	system.change.propose
+ROW	VALIDATION_RUN_CREATE	POST /v1/validation-runs	acpos_system.validation_runs	system.test.execute
+P	VALIDATION_RUN_CREATE
+P	POST /v1/validation-runs
+P	acpos_system.validation_runs
+P	system.test.execute
+P	C.1 Environment / Secret / Deployment Bindings
+ROW	Binding Key	Meaning	Owner	Required
+P	Binding Key
+P	Meaning
+P	Owner
+P	Required
+ROW	DATABASE_URL	PostgreSQL connection for all acpos_* schemas	Secret manager / deployment environment	Required
+P	DATABASE_URL
+P	PostgreSQL connection for all acpos_* schemas
+P	Secret manager / deployment environment
+P	Required
+ROW	REDIS_URL	Queue/worker/DLQ runtime	Secret manager / deployment environment	Required for async execution
+P	REDIS_URL
+P	Queue/worker/DLQ runtime
+P	Secret manager / deployment environment
+P	Required for async execution
+ROW	OBJECT_STORAGE_URL	Artifact/media object store base	Deployment environment	Required for media artifacts
+P	OBJECT_STORAGE_URL
+P	Artifact/media object store base
+P	Deployment environment
+P	Required for media artifacts
+ROW	OBJECT_STORAGE_SIGNING_KEY_REF	Signed URI key reference, never plaintext in Word/UI	Secret manager	Required
+P	OBJECT_STORAGE_SIGNING_KEY_REF
+P	Signed URI key reference, never plaintext in Word/UI
+P	Secret manager
+P	Required
+ROW	ACPOS_SECRET_BACKEND	Credential resolver backend identity	Deployment environment	Required
+P	ACPOS_SECRET_BACKEND
+P	Credential resolver backend identity
+P	Deployment environment
+P	Required
+ROW	ACPOS_DEPLOYMENT_TARGET_ID	Production deployment target/project identity	Deployment environment	Required for release execution
+P	ACPOS_DEPLOYMENT_TARGET_ID
+P	Production deployment target/project identity
+P	Deployment environment
+P	Required for release execution
+ROW	ACPOS_PRODUCTION_BASE_URL	Production acceptance target	Deployment environment	Required for post-deploy acceptance
+P	ACPOS_PRODUCTION_BASE_URL
+P	Production acceptance target
+P	Deployment environment
+P	Required for post-deploy acceptance
+P	D. Legacy REQUIRE_EXACT_BINDING Resolution Ledger
+ROW	Legacy Gap Class	2026-09-21 Status	Exact Resolution
+P	Legacy Gap Class
+P	2026-09-21 Status
+P	Exact Resolution
+ROW	API / Route identities	RESOLVED	Embedded Page/Port tables + Shared Exact API table; where an uploaded page exposed an operation without Control UID, this closure materializes a UID from that existing operation only.
+P	API / Route identities
+P	RESOLVED
+P	Embedded Page/Port tables + Shared Exact API table; where an uploaded page exposed an operation without Control UID, this closure materializes a UID from that existing operation only.
+ROW	DB / Persistence identities	RESOLVED	Canonical Persistence / Provider Registry in this annex.
+P	DB / Persistence identities
+P	RESOLVED
+P	Canonical Persistence / Provider Registry in this annex.
+ROW	Permission / Gate identities	RESOLVED_FOR_DOCUMENT_SCOPE	Embedded source Permission/Gate tables; server re-check mandatory. Environment/provider-specific grants resolve from registered IAM/Profile, missing = BLOCK.
+P	Permission / Gate identities
+P	RESOLVED_FOR_DOCUMENT_SCOPE
+P	Embedded source Permission/Gate tables; server re-check mandatory. Environment/provider-specific grants resolve from registered IAM/Profile, missing = BLOCK.
+ROW	Event transport / outbox	RESOLVED	PostgreSQL acpos_runtime.outbox_events + worker delivery; at-least-once + idempotent consumer.
+P	Event transport / outbox
+P	RESOLVED
+P	PostgreSQL acpos_runtime.outbox_events + worker delivery; at-least-once + idempotent consumer.
+ROW	Queue / Worker / DLQ	RESOLVED	Redis-backed shared runtime via REDIS_URL; dead-letter evidence in acpos_runtime.dead_letters.
+P	Queue / Worker / DLQ
+P	RESOLVED
+P	Redis-backed shared runtime via REDIS_URL; dead-letter evidence in acpos_runtime.dead_letters.
+ROW	Canonical digest	RESOLVED	RFC 8785 JSON Canonicalization Scheme + SHA-256 for semantic payload/context digests.
+P	Canonical digest
+P	RESOLVED
+P	RFC 8785 JSON Canonicalization Scheme + SHA-256 for semantic payload/context digests.
+ROW	Idempotency store / TTL	RESOLVED	acpos_runtime.idempotency_keys + exact TTL rows in Runtime Quantitative Policy.
+P	Idempotency store / TTL
+P	RESOLVED
+P	acpos_runtime.idempotency_keys + exact TTL rows in Runtime Quantitative Policy.
+ROW	Retry / Backoff / Circuit numeric values	RESOLVED	Exact values in Runtime Quantitative Policy.
+P	Retry / Backoff / Circuit numeric values
+P	RESOLVED
+P	Exact values in Runtime Quantitative Policy.
+ROW	Conversation display/context/summary numbers	RESOLVED_BY_AI02	AI-02 annex provides exact UI/history/context/compression values.
+P	Conversation display/context/summary numbers
+P	RESOLVED_BY_AI02
+P	AI-02 annex provides exact UI/history/context/compression values.
+ROW	Retention durations	RESOLVED	Artifact-class values in Runtime Quantitative Policy; references/legal/privacy holds extend retention and never shorten below legal/domain requirement.
+P	Retention durations
+P	RESOLVED
+P	Artifact-class values in Runtime Quantitative Policy; references/legal/privacy holds extend retention and never shorten below legal/domain requirement.
+ROW	Secret backend	RESOLVED	ACPOS_SECRET_BACKEND + secret reference only; plaintext never persisted in Word/UI/general DB.
+P	Secret backend
+P	RESOLVED
+P	ACPOS_SECRET_BACKEND + secret reference only; plaintext never persisted in Word/UI/general DB.
+ROW	Provider/model exact selection	RESOLVED_RUNTIME_PROFILE	Exact provider_model_profile_id and route decision from AIAPI-01 registered profile; no page-level picker.
+P	Provider/model exact selection
+P	RESOLVED_RUNTIME_PROFILE
+P	Exact provider_model_profile_id and route decision from AIAPI-01 registered profile; no page-level picker.
+ROW	External platform/provider rate limits	RESOLVED_PROFILE_REQUIRED	Exact value comes from registered provider/platform/target policy fields; no global guessed fallback; missing profile value blocks effectful execution.
+P	External platform/provider rate limits
+P	RESOLVED_PROFILE_REQUIRED
+P	Exact value comes from registered provider/platform/target policy fields; no global guessed fallback; missing profile value blocks effectful execution.
+ROW	Production deployment target	RESOLVED_ENV_BINDING	ACPOS_DEPLOYMENT_TARGET_ID + ACPOS_PRODUCTION_BASE_URL; values supplied by deployment environment, not hardcoded in design.
+P	Production deployment target
+P	RESOLVED_ENV_BINDING
+P	ACPOS_DEPLOYMENT_TARGET_ID + ACPOS_PRODUCTION_BASE_URL; values supplied by deployment environment, not hardcoded in design.
+P	Interpretation Rule: earlier REQUIRE_EXACT_BINDING text remains a generic anti-invention invariant for future unknowns. It MUST NOT be interpreted as an open gap for rows marked RESOLVED/RESOLVED_* in this ledger.
+P	F. Uploaded Basic Design Exact Binding Snapshots
+P	Source Authority Snapshot — admin:AIAPI-01
+P	Source File: ACPOS_AIAPI-01_AI_API管理_Mother_Basic_Design_OPTIMIZED.docx
+P	Source SHA-256: 77ce86ef4edc70cb156b9c54cead377186d4fb626edcc6ccaf9442da0e140b61
+P	Included binding/data/state tables: 28. These rows are copied verbatim in text value from the uploaded Basic Design source; no UID/value renaming is performed.
+P	admin:AIAPI-01 · Source Table 1
+ROW	頁面定位｜單一 AI API 管理工作區。管理 Provider/Model Profile、Credential、Capability、Route/Test、Job/Cost/Incident；不建立第二套 Provider Registry、Secret Store、Router 或 AI Runtime。
+P	頁面定位｜單一 AI API 管理工作區。管理 Provider/Model Profile、Credential、Capability、Route/Test、Job/Cost/Incident；不建立第二套 Provider Registry、Secret Store、Router 或 AI Runtime。
+P	admin:AIAPI-01 · Source Table 2
+ROW	頁面設計身份	定義
+P	頁面設計身份
+P	定義
+ROW	Page UID	admin:AIAPI-01
+P	Page UID
+P	admin:AIAPI-01
+ROW	頁面名稱	AI API 管理 / AI API Management
+P	頁面名稱
+P	AI API 管理 / AI API Management
+ROW	Surface	ADMIN
+P	Surface
+P	ADMIN
+ROW	Workspace	Single-page · 4 practical views
+P	Workspace
+P	Single-page · 4 practical views
+ROW	Default View	Provider / API 設定
+P	Default View
+P	Provider / API 設定
+ROW	Global Pattern	繼承既有 Global Shell / Global Visual；本頁不另造視覺系統
+P	Global Pattern
+P	繼承既有 Global Shell / Global Visual；本頁不另造視覺系統
+ROW	Missing Value	—；不得用 0 / Healthy / Success 補值
+P	Missing Value
+P	—；不得用 0 / Healthy / Success 補值
+ROW	Runtime Boundary	前端管理面；既有 Provider / Compiler / Job / Secret owners 為唯一 backend owners
+P	Runtime Boundary
+P	前端管理面；既有 Provider / Compiler / Job / Secret owners 為唯一 backend owners
+P	admin:AIAPI-01 · Source Table 3
+ROW	範圍	內容
+P	範圍
+P	內容
+ROW	IN	Provider/Model Profile、Credential Status、Capability Governance、Professional Description、Candidate Group、Preflight、Compile Audit、Sandbox、Route Decision、Quarantine、Job/Attempt/Callback/Artifact、Cost/Budget/Incident、Kill Switch、Queue Diagnostic。
+P	IN
+P	Provider/Model Profile、Credential Status、Capability Governance、Professional Description、Candidate Group、Preflight、Compile Audit、Sandbox、Route Decision、Quarantine、Job/Attempt/Callback/Artifact、Cost/Budget/Incident、Kill Switch、Queue Diagnostic。
+ROW	OUT	部門工作頁的 Provider Picker、第二套 Provider Registry、第二套 Secret DB、第二套 Router、前端直接 SDK 呼叫、未註冊 API、明文 Secret、Client-side Job State Write、未驗證 Callback Success。
+P	OUT
+P	部門工作頁的 Provider Picker、第二套 Provider Registry、第二套 Secret DB、第二套 Router、前端直接 SDK 呼叫、未註冊 API、明文 Secret、Client-side Job State Write、未驗證 Callback Success。
+ROW	BOUNDARY	AIAPI-01 管 Provider 能力與執行基礎；CORE / ASSET / VIDEO / EDIT / STRATEGY 只提交 provider-neutral instruction 與 capability requirement。
+P	BOUNDARY
+P	AIAPI-01 管 Provider 能力與執行基礎；CORE / ASSET / VIDEO / EDIT / STRATEGY 只提交 provider-neutral instruction 與 capability requirement。
+P	admin:AIAPI-01 · Source Table 4
+ROW	Business Entity	責任	Owner Boundary
+P	Business Entity
+P	責任
+P	Owner Boundary
+ROW	ProviderModelProfile	Provider + Model + Adapter + Capability 的可執行設定版本	Profile owner / AI API runtime
+P	ProviderModelProfile
+P	Provider + Model + Adapter + Capability 的可執行設定版本
+P	Profile owner / AI API runtime
+ROW	CredentialReference	Profile 的 Secret Reference 與 Credential Status；不含明文	Existing secret owner
+P	CredentialReference
+P	Profile 的 Secret Reference 與 Credential Status；不含明文
+P	Existing secret owner
+ROW	GovernedCapabilityResource	Capability / Policy / Enable 狀態與審批	Governance owner
+P	GovernedCapabilityResource
+P	Capability / Policy / Enable 狀態與審批
+P	Governance owner
+ROW	ProviderCandidateGroup	可排序的候選 Profile 集合與 Route Limits	AI API route config owner
+P	ProviderCandidateGroup
+P	可排序的候選 Profile 集合與 Route Limits
+P	AI API route config owner
+ROW	RoutePreflight	一次 Route 可行性檢查結果	Route runtime
+P	RoutePreflight
+P	一次 Route 可行性檢查結果
+P	Route runtime
+ROW	SandboxTest	隔離的非 Production Provider 測試	AI API command runtime
+P	SandboxTest
+P	隔離的非 Production Provider 測試
+P	AI API command runtime
+ROW	RouteDecision	實際選擇 Profile、理由、constraint result	Route runtime
+P	RouteDecision
+P	實際選擇 Profile、理由、constraint result
+P	Route runtime
+ROW	QuarantineRecord	被隔離 Provider/Profile 與恢復原因	AI API runtime
+P	QuarantineRecord
+P	被隔離 Provider/Profile 與恢復原因
+P	AI API runtime
+ROW	ProviderJobAttempt	Job / Attempt / Callback / Artifact / Error lineage	Job/Queue runtime
+P	ProviderJobAttempt
+P	Job / Attempt / Callback / Artifact / Error lineage
+P	Job/Queue runtime
+ROW	CostBudgetIncident	估算/實際成本、Budget、Degradation、Incident、Fallback	Operations projection
+P	CostBudgetIncident
+P	估算/實際成本、Budget、Degradation、Incident、Fallback
+P	Operations projection
+ROW	InstructionCompileAudit	Canonical Instruction → profile/template/adapter compile lineage	Instruction compiler
+P	InstructionCompileAudit
+P	Canonical Instruction → profile/template/adapter compile lineage
+P	Instruction compiler
+P	admin:AIAPI-01 · Source Table 5
+ROW	Entity	List	Open	Create/Run	Edit/Action	Validate	Approve	Version	Audit	Retire/Delete	Recovery
+P	Entity
+P	List
+P	Open
+P	Create/Run
+P	Edit/Action
+P	Validate
+P	Approve
+P	Version
+P	Audit
+P	Retire/Delete
+P	Recovery
+ROW	ProviderModelProfile	R	R	R	R	R	R	R	R	Retire	R
+P	ProviderModelProfile
+P	R
+P	R
+P	R
+P	R
+P	R
+P	R
+P	R
+P	R
+P	Retire
+P	R
+ROW	CredentialReference	R	R	—	Set/Delete	—	R	—	R	Delete	R
+P	CredentialReference
+P	R
+P	R
+P	—
+P	Set/Delete
+P	—
+P	R
+P	—
+P	R
+P	Delete
+P	R
+ROW	GovernedCapabilityResource	R	R	—	Configure	R	Approve	R	R	Disable	R
+P	GovernedCapabilityResource
+P	R
+P	R
+P	—
+P	Configure
+P	R
+P	Approve
+P	R
+P	R
+P	Disable
+P	R
+ROW	ProviderCandidateGroup	R	R	Create	Bounded	R	—	R	R	—	R
+P	ProviderCandidateGroup
+P	R
+P	R
+P	Create
+P	Bounded
+P	R
+P	—
+P	R
+P	R
+P	—
+P	R
+ROW	RoutePreflight	R	R	—	—	R	—	R	R	—	R
+P	RoutePreflight
+P	R
+P	R
+P	—
+P	—
+P	R
+P	—
+P	R
+P	R
+P	—
+P	R
+ROW	SandboxTest	R	R	Run	—	R	—	R	R	—	R
+P	SandboxTest
+P	R
+P	R
+P	Run
+P	—
+P	R
+P	—
+P	R
+P	R
+P	—
+P	R
+ROW	RouteDecision	R	R	Execute	—	R	—	R	R	—	R
+P	RouteDecision
+P	R
+P	R
+P	Execute
+P	—
+P	R
+P	—
+P	R
+P	R
+P	—
+P	R
+ROW	QuarantineRecord	R	R	—	Restore	R	Confirm	R	R	—	R
+P	QuarantineRecord
+P	R
+P	R
+P	—
+P	Restore
+P	R
+P	Confirm
+P	R
+P	R
+P	—
+P	R
+ROW	ProviderJobAttempt	R	R	Runtime	Runtime	R	—	R	R	—	R
+P	ProviderJobAttempt
+P	R
+P	R
+P	Runtime
+P	Runtime
+P	R
+P	—
+P	R
+P	R
+P	—
+P	R
+ROW	CostBudgetIncident	R	R	Runtime	Governed	R	High-risk	R	R	—	R
+P	CostBudgetIncident
+P	R
+P	R
+P	Runtime
+P	Governed
+P	R
+P	High-risk
+P	R
+P	R
+P	—
+P	R
+ROW	InstructionCompileAudit	R	R	Runtime	Profile-only	R	—	R	R	—	R
+P	InstructionCompileAudit
+P	R
+P	R
+P	Runtime
+P	Profile-only
+P	R
+P	—
+P	R
+P	R
+P	—
+P	R
+P	admin:AIAPI-01 · Source Table 6
+ROW	上游	關聯	下游 / 規則
+P	上游
+P	關聯
+P	下游 / 規則
+ROW	ProviderModelProfile	1 → 0..1	CredentialReference；Secret 只以 Reference/Status 連結
+P	ProviderModelProfile
+P	1 → 0..1
+P	CredentialReference；Secret 只以 Reference/Status 連結
+ROW	ProviderModelProfile	N ↔ N	GovernedCapabilityResource；Route 需 exact capability match
+P	ProviderModelProfile
+P	N ↔ N
+P	GovernedCapabilityResource；Route 需 exact capability match
+ROW	ProviderCandidateGroup	1 → N	Ordered Profile refs；不可用 latest/default alias
+P	ProviderCandidateGroup
+P	1 → N
+P	Ordered Profile refs；不可用 latest/default alias
+ROW	Canonical Instruction	1 → N	CompileAudit；每個 target profile 必須重新 compile，禁止跨 Provider 重用 compiled prompt
+P	Canonical Instruction
+P	1 → N
+P	CompileAudit；每個 target profile 必須重新 compile，禁止跨 Provider 重用 compiled prompt
+ROW	RoutePreflight	1 → 0..1	RouteDecision；硬 Gate 未過不得 execute
+P	RoutePreflight
+P	1 → 0..1
+P	RouteDecision；硬 Gate 未過不得 execute
+ROW	RouteDecision	1 → N	ProviderJobAttempt；retry 形成獨立 Attempt
+P	RouteDecision
+P	1 → N
+P	ProviderJobAttempt；retry 形成獨立 Attempt
+ROW	ProviderJobAttempt	1 → 0..N	Callback / Artifact / Cost；Callback 未驗證不得成功
+P	ProviderJobAttempt
+P	1 → 0..N
+P	Callback / Artifact / Cost；Callback 未驗證不得成功
+ROW	QuarantineRecord	N → 1	Provider/Profile；Restore 需 reason + audit
+P	QuarantineRecord
+P	N → 1
+P	Provider/Profile；Restore 需 reason + audit
+P	admin:AIAPI-01 · Source Table 7
+ROW	候選功能	裁決	設計處理
+P	候選功能
+P	裁決
+P	設計處理
+ROW	Queue Readiness / Probe	ADMIT	既有 Queue Probe Operation 已存在；放在 Routing/Operations 的次要診斷，不成為新 Queue 管理系統。
+P	Queue Readiness / Probe
+P	ADMIT
+P	既有 Queue Probe Operation 已存在；放在 Routing/Operations 的次要診斷，不成為新 Queue 管理系統。
+ROW	Candidate Group post-create member CRUD	BLOCK UNTIL EXACT OP	Current UI 可在 Create payload 內設定 ordered members / limits；若無正式 update member operation，不放獨立 Edit/Delete member action。
+P	Candidate Group post-create member CRUD
+P	BLOCK UNTIL EXACT OP
+P	Current UI 可在 Create payload 內設定 ordered members / limits；若無正式 update member operation，不放獨立 Edit/Delete member action。
+ROW	Provider / Model Picker in department pages	REJECT	由 AIAPI Route Policy 自動解析；部門工作頁不得繞過。
+P	Provider / Model Picker in department pages
+P	REJECT
+P	由 AIAPI Route Policy 自動解析；部門工作頁不得繞過。
+ROW	API Key Reveal / Eye button	REJECT	Credential write-only；只顯示 SET / NOT_SET / ROTATION_DUE / ERROR。
+P	API Key Reveal / Eye button
+P	REJECT
+P	Credential write-only；只顯示 SET / NOT_SET / ROTATION_DUE / ERROR。
+ROW	Frontend Route Override	REJECT	Route Decision 為 Runtime owner；前端只顯示 constraint / reason。
+P	Frontend Route Override
+P	REJECT
+P	Route Decision 為 Runtime owner；前端只顯示 constraint / reason。
+ROW	Cost chart	CONDITIONAL	只有後端存在 governed projection 才顯示；表格永遠是 canonical。
+P	Cost chart
+P	CONDITIONAL
+P	只有後端存在 governed projection 才顯示；表格永遠是 canonical。
+ROW	Manual health green override	REJECT	Health 為真實投影，不接受 UI 假綠燈。
+P	Manual health green override
+P	REJECT
+P	Health 為真實投影，不接受 UI 假綠燈。
+P	admin:AIAPI-01 · Source Table 8
+ROW	Atomic Workbench｜Provider / API 設定採 68% Profile Table + 32% Professional Description；選取 Profile 後保持同一 Context。Edit/Test/Credential 使用 Modal/Drawer，不把主要工作流切碎。
+P	Atomic Workbench｜Provider / API 設定採 68% Profile Table + 32% Professional Description；選取 Profile 後保持同一 Context。Edit/Test/Credential 使用 Modal/Drawer，不把主要工作流切碎。
+P	admin:AIAPI-01 · Source Table 9
+ROW	工作序列	Topology	理由
+P	工作序列
+P	Topology
+P	理由
+ROW	Profile List → Select → Professional Description	ATOMIC_WORKBENCH	同一 Provider/Profile Context；不能跳頁失去 selection。
+P	Profile List → Select → Professional Description
+P	ATOMIC_WORKBENCH
+P	同一 Provider/Profile Context；不能跳頁失去 selection。
+ROW	Create/Edit Profile → Test → Credential Status	SAME_SURFACE_CLUSTER	Effectful Modal 結束後回到同一選取列。
+P	Create/Edit Profile → Test → Credential Status
+P	SAME_SURFACE_CLUSTER
+P	Effectful Modal 結束後回到同一選取列。
+ROW	Candidate Group → Preflight → Compile Audit → Sandbox → Route Decision	ATOMIC_WORKBENCH	同一 route basis；任何一步換 context 都可能造成錯誤 Provider 決策。
+P	Candidate Group → Preflight → Compile Audit → Sandbox → Route Decision
+P	ATOMIC_WORKBENCH
+P	同一 route basis；任何一步換 context 都可能造成錯誤 Provider 決策。
+ROW	Job/Attempt → Callback/Artifact/Cost	SAME_SURFACE_CLUSTER	操作監控需保留 exact job/attempt lineage。
+P	Job/Attempt → Callback/Artifact/Cost
+P	SAME_SURFACE_CLUSTER
+P	操作監控需保留 exact job/attempt lineage。
+ROW	Audit / full error / docs	INDEPENDENT_SUPPORT_PANEL	低頻細節放 Drawer，避免干擾主工作流。
+P	Audit / full error / docs
+P	INDEPENDENT_SUPPORT_PANEL
+P	低頻細節放 Drawer，避免干擾主工作流。
+P	admin:AIAPI-01 · Source Table 10
+ROW	View	主要內容	Primary CTA 規則
+P	View
+P	主要內容
+P	Primary CTA 規則
+ROW	總覽	Provider / Route / Capability / Job / Cost / Health / Incident 摘要	沒有假 KPI；若無 governed projection 就用狀態表。
+P	總覽
+P	Provider / Route / Capability / Job / Cost / Health / Incident 摘要
+P	沒有假 KPI；若無 governed projection 就用狀態表。
+ROW	Provider / API 設定	Profile table、Professional Description、Credential、Capability、Test	每一 Context 最多一個 Primary CTA；其他為 row action / secondary。
+P	Provider / API 設定
+P	Profile table、Professional Description、Credential、Capability、Test
+P	每一 Context 最多一個 Primary CTA；其他為 row action / secondary。
+ROW	路由 / 測試	Candidate Group、Preflight、Compile Audit、Sandbox、Route Simulation、Quarantine、Queue Probe	Route Execute 只有硬 Gate 全部 PASS 才可用。
+P	路由 / 測試
+P	Candidate Group、Preflight、Compile Audit、Sandbox、Route Simulation、Quarantine、Queue Probe
+P	Route Execute 只有硬 Gate 全部 PASS 才可用。
+ROW	作業 / 成本 / 事件	Job、Attempt、Callback、Artifact、Cost、Budget、Degradation、Incident、Fallback、Kill Switch	Kill Switch 永遠條件式高風險，不是常駐 Primary。
+P	作業 / 成本 / 事件
+P	Job、Attempt、Callback、Artifact、Cost、Budget、Degradation、Incident、Fallback、Kill Switch
+P	Kill Switch 永遠條件式高風險，不是常駐 Primary。
+P	admin:AIAPI-01 · Source Table 12
+ROW	Section UID	名稱	責任
+P	Section UID
+P	名稱
+P	責任
+ROW	AIAPI-01-SEC-01	Page Context	Page title / current view / selected provider-profile / current blockers
+P	AIAPI-01-SEC-01
+P	Page Context
+P	Page title / current view / selected provider-profile / current blockers
+ROW	AIAPI-01-SEC-02	View Navigator	4 same-page tabs; preserve selection/query/draft state
+P	AIAPI-01-SEC-02
+P	View Navigator
+P	4 same-page tabs; preserve selection/query/draft state
+ROW	AIAPI-01-SEC-03	Overview	Real summary only; no fake charts/counters
+P	AIAPI-01-SEC-03
+P	Overview
+P	Real summary only; no fake charts/counters
+ROW	AIAPI-01-SEC-04	Provider & Model Profiles	Search/table/profile CRUD/test/retire
+P	AIAPI-01-SEC-04
+P	Provider & Model Profiles
+P	Search/table/profile CRUD/test/retire
+ROW	AIAPI-01-SEC-05	Professional Description	Read-only decision support from registered metadata
+P	AIAPI-01-SEC-05
+P	Professional Description
+P	Read-only decision support from registered metadata
+ROW	AIAPI-01-SEC-06	Credential & Capability	Write-only credential + governed capability/config/approval
+P	AIAPI-01-SEC-06
+P	Credential & Capability
+P	Write-only credential + governed capability/config/approval
+ROW	AIAPI-01-SEC-07	Routing & Test	Candidate group/preflight/compile audit/sandbox/route/quarantine/queue probe
+P	AIAPI-01-SEC-07
+P	Routing & Test
+P	Candidate group/preflight/compile audit/sandbox/route/quarantine/queue probe
+ROW	AIAPI-01-SEC-08	Operations	Job/attempt/callback/artifact/cost/budget/degradation/incident/fallback
+P	AIAPI-01-SEC-08
+P	Operations
+P	Job/attempt/callback/artifact/cost/budget/degradation/incident/fallback
+ROW	AIAPI-01-SEC-09	Governance Rail / Detail Drawer	Blocker/readiness/audit/docs/error/version/correlation
+P	AIAPI-01-SEC-09
+P	Governance Rail / Detail Drawer
+P	Blocker/readiness/audit/docs/error/version/correlation
+ROW	AIAPI-01-SEC-10	Action Dock	Current-context legal actions only; max one dominant CTA
+P	AIAPI-01-SEC-10
+P	Action Dock
+P	Current-context legal actions only; max one dominant CTA
+P	admin:AIAPI-01 · Source Table 13
+ROW	Component	Key Fields / Content	Behavior
+P	Component
+P	Key Fields / Content
+P	Behavior
+ROW	Profile Search/Table	Provider, Model, Capability, Adapter, Endpoint, Enabled, Credential Status, Last Test	Sticky header; long values ellipsis + drawer; row actions explicit.
+P	Profile Search/Table
+P	Provider, Model, Capability, Adapter, Endpoint, Enabled, Credential Status, Last Test
+P	Sticky header; long values ellipsis + drawer; row actions explicit.
+ROW	Profile Form	Identity / Connection / Adapter / Capability / Data-Context / Status	Schema-driven Modal; prompt_template 必須保留 canonical instruction placeholder。
+P	Profile Form
+P	Identity / Connection / Adapter / Capability / Data-Context / Status
+P	Schema-driven Modal; prompt_template 必須保留 canonical instruction placeholder。
+ROW	Professional Description	Identity, Positioning, ACPOS Scope, Capabilities, I/O, Limits, Endpoint/Auth, Billing, Health/Test, Restrictions, Docs	Read-only；unknown = —；不能編輯說明文字改 runtime。
+P	Professional Description
+P	Identity, Positioning, ACPOS Scope, Capabilities, I/O, Limits, Endpoint/Auth, Billing, Health/Test, Restrictions, Docs
+P	Read-only；unknown = —；不能編輯說明文字改 runtime。
+ROW	Credential Modal	profile ref + credential input / delete reason	Write-only；never prefill / reveal.
+P	Credential Modal
+P	profile ref + credential input / delete reason
+P	Write-only；never prefill / reveal.
+ROW	Route Workbench	Candidate Group, use_case, required capabilities, context size, classification, rights, refs	Preserve same route basis; no frontend override.
+P	Route Workbench
+P	Candidate Group, use_case, required capabilities, context size, classification, rights, refs
+P	Preserve same route basis; no frontend override.
+ROW	Compile Audit	Instruction package, script ref, compiler version, route constraints, adapter diff, prompt template	Exact version lineage; provider-specific syntax不得改 canonical meaning。
+P	Compile Audit
+P	Instruction package, script ref, compiler version, route constraints, adapter diff, prompt template
+P	Exact version lineage; provider-specific syntax不得改 canonical meaning。
+ROW	Operations Table	Job, Attempt, Callback, Artifact, Cost, Error, Incident	Read projections; retry preserves independent attempt.
+P	Operations Table
+P	Job, Attempt, Callback, Artifact, Cost, Error, Incident
+P	Read projections; retry preserves independent attempt.
+P	admin:AIAPI-01 · Source Table 14
+ROW	Control	Operation	Gate / UX Rule
+P	Control
+P	Operation
+P	Gate / UX Rule
+ROW	新增 Provider	createProviderModelProfile	Effectful Modal；schema/gate/permission required
+P	新增 Provider
+P	createProviderModelProfile
+P	Effectful Modal；schema/gate/permission required
+ROW	編輯 Profile	updateProviderModelProfile	Expected version + audit
+P	編輯 Profile
+P	updateProviderModelProfile
+P	Expected version + audit
+ROW	查看 Profile	getProviderModelProfile	Drawer / read-only
+P	查看 Profile
+P	getProviderModelProfile
+P	Drawer / read-only
+ROW	連線測試	testProviderModelProfile	Secret ref + adapter required
+P	連線測試
+P	testProviderModelProfile
+P	Secret ref + adapter required
+ROW	退役 Profile	retireProviderModelProfile	State guarded; never hard delete runtime history
+P	退役 Profile
+P	retireProviderModelProfile
+P	State guarded; never hard delete runtime history
+ROW	設定 API 金鑰	setProviderModelCredential	Write-only; secret env/reference owner
+P	設定 API 金鑰
+P	setProviderModelCredential
+P	Write-only; secret env/reference owner
+ROW	刪除 API 金鑰	deleteProviderModelCredential	Reason/confirmation; no old value in response/log
+P	刪除 API 金鑰
+P	deleteProviderModelCredential
+P	Reason/confirmation; no old value in response/log
+ROW	設定 Capability/Policy	configureGovernedResource	Exact governed resource ref
+P	設定 Capability/Policy
+P	configureGovernedResource
+P	Exact governed resource ref
+ROW	核准 Capability/Policy	approveGovernedResource	Version + rationale + audit
+P	核准 Capability/Policy
+P	approveGovernedResource
+P	Version + rationale + audit
+ROW	建立 Candidate Group	createProviderCandidateGroup	Group + ordered member refs + limits only by exact schema
+P	建立 Candidate Group
+P	createProviderCandidateGroup
+P	Group + ordered member refs + limits only by exact schema
+ROW	Sandbox 測試	runSandboxTest	Production secret/output forbidden
+P	Sandbox 測試
+P	runSandboxTest
+P	Production secret/output forbidden
+ROW	執行 Route	executeProviderRoute	All hard gates + queue + approved capability/profile/secret
+P	執行 Route
+P	executeProviderRoute
+P	All hard gates + queue + approved capability/profile/secret
+ROW	查看 Route Decision	getProviderRouteDecision	Read-only exact decision
+P	查看 Route Decision
+P	getProviderRouteDecision
+P	Read-only exact decision
+ROW	查看 Quarantine	getProviderQuarantine	Read-only
+P	查看 Quarantine
+P	getProviderQuarantine
+P	Read-only
+ROW	Restore Quarantine	restoreProviderFromQuarantine	Reason + audit; bypass forbidden
+P	Restore Quarantine
+P	restoreProviderFromQuarantine
+P	Reason + audit; bypass forbidden
+ROW	Queue Probe	runProviderQueueProbe	Diagnostic only; no provider external call
+P	Queue Probe
+P	runProviderQueueProbe
+P	Diagnostic only; no provider external call
+ROW	Kill Switch	setKillSwitch	High-risk confirmation + reason + audit
+P	Kill Switch
+P	setKillSwitch
+P	High-risk confirmation + reason + audit
+P	admin:AIAPI-01 · Source Table 15
+ROW	Field Group	Fields	Validation / Constraint
+P	Field Group
+P	Fields
+P	Validation / Constraint
+ROW	Identity	provider_id, provider_name, model_id, model_name	Canonical profile identity；不得由 frontend 猜 alias。
+P	Identity
+P	provider_id, provider_name, model_id, model_name
+P	Canonical profile identity；不得由 frontend 猜 alias。
+ROW	Connection	base_url, endpoint_path, http_method, timeout_seconds	Endpoint guessing forbidden；method/path 依正式 profile。
+P	Connection
+P	base_url, endpoint_path, http_method, timeout_seconds
+P	Endpoint guessing forbidden；method/path 依正式 profile。
+ROW	Adapter	adapter_type, request_template, response_text_path, prompt_template	只允許已存在 adapter type；prompt_template 保留 canonical_instruction token。
+P	Adapter
+P	adapter_type, request_template, response_text_path, prompt_template
+P	只允許已存在 adapter type；prompt_template 保留 canonical_instruction token。
+ROW	Capability	capability_type, additional_capabilities, supports_references, rights_compatible	Route 需 exact capability match；silent downgrade forbidden。
+P	Capability
+P	capability_type, additional_capabilities, supports_references, rights_compatible
+P	Route 需 exact capability match；silent downgrade forbidden。
+ROW	Data / Context	data_classifications, preferred_language, max_context	Data classification hard gate；不得跨 domain 猜值。
+P	Data / Context
+P	data_classifications, preferred_language, max_context
+P	Data classification hard gate；不得跨 domain 猜值。
+ROW	Status	enabled, profile version, health/test evidence	Enable 受 capability/policy/server gate；Health 不可手動改綠。
+P	Status
+P	enabled, profile version, health/test evidence
+P	Enable 受 capability/policy/server gate；Health 不可手動改綠。
+P	admin:AIAPI-01 · Source Table 16
+ROW	Secret Boundary｜API Key / Token 只可在 Credential write action 的 input buffer 短暫存在；成功後 UI 只保留 credential status / reference / version，不可再顯示明文。
+P	Secret Boundary｜API Key / Token 只可在 Credential write action 的 input buffer 短暫存在；成功後 UI 只保留 credential status / reference / version，不可再顯示明文。
+P	admin:AIAPI-01 · Source Table 17
+ROW	禁止	必須
+P	禁止
+P	必須
+ROW	Eye / Reveal Button	只顯示 SET / NOT_SET / ROTATION_DUE / ERROR 等正式狀態
+P	Eye / Reveal Button
+P	只顯示 SET / NOT_SET / ROTATION_DUE / ERROR 等正式狀態
+ROW	Plaintext Export	Export projection 必須排除 credential plaintext
+P	Plaintext Export
+P	Export projection 必須排除 credential plaintext
+ROW	Plaintext Log / Audit	Error payload 必須 redacted；不得包含 header/body secret
+P	Plaintext Log / Audit
+P	Error payload 必須 redacted；不得包含 header/body secret
+ROW	Plaintext DB Persistence	只由既有 secret reference owner 保存 reference
+P	Plaintext DB Persistence
+P	只由既有 secret reference owner 保存 reference
+ROW	Production Secret in Sandbox	Sandbox 使用隔離 credential/context；Production secret use = FORBIDDEN
+P	Production Secret in Sandbox
+P	Sandbox 使用隔離 credential/context；Production secret use = FORBIDDEN
+P	admin:AIAPI-01 · Source Table 18
+ROW	順序	Gate	失敗行為
+P	順序
+P	Gate
+P	失敗行為
+ROW	1	Required capability exact match	BLOCK；不得以較弱 capability silent downgrade
+P	1
+P	Required capability exact match
+P	BLOCK；不得以較弱 capability silent downgrade
+ROW	2	Reference-media support when required	BLOCK 或移除不合法 profile；不改任務需求
+P	2
+P	Reference-media support when required
+P	BLOCK 或移除不合法 profile；不改任務需求
+ROW	3	Rights compatibility	BLOCK
+P	3
+P	Rights compatibility
+P	BLOCK
+ROW	4	Data classification compatibility	BLOCK
+P	4
+P	Data classification compatibility
+P	BLOCK
+ROW	5	Profile enabled	BLOCK
+P	5
+P	Profile enabled
+P	BLOCK
+ROW	6	Health / Test policy	BLOCK / Degraded route policy
+P	6
+P	Health / Test policy
+P	BLOCK / Degraded route policy
+ROW	7	Budget / Cost / policy gate	按正式 policy；不得為省成本改 Task Contract
+P	7
+P	Budget / Cost / policy gate
+P	按正式 policy；不得為省成本改 Task Contract
+ROW	8	Queue / runtime readiness	未 ready 不執行外部 Provider
+P	8
+P	Queue / runtime readiness
+P	未 ready 不執行外部 Provider
+P	admin:AIAPI-01 · Source Table 19
+ROW	階段	Input / Output	核心規則
+P	階段
+P	Input / Output
+P	核心規則
+ROW	Candidate Group	Eligible profile refs + ordered priority + registered limits	只包含已註冊 profile；post-create mutation 無 exact op 時不顯示。
+P	Candidate Group
+P	Eligible profile refs + ordered priority + registered limits
+P	只包含已註冊 profile；post-create mutation 無 exact op 時不顯示。
+ROW	Preflight	use_case / capability / context / data / rights / refs → eligibility result	只驗證可路由性；不得產生 Provider 成功假象。
+P	Preflight
+P	use_case / capability / context / data / rights / refs → eligibility result
+P	只驗證可路由性；不得產生 Provider 成功假象。
+ROW	Compile Audit	Canonical Instruction → Prompt Template / Adapter Request	保留 source hash / compiler / profile version / compiled hash。
+P	Compile Audit
+P	Canonical Instruction → Prompt Template / Adapter Request
+P	保留 source hash / compiler / profile version / compiled hash。
+ROW	Sandbox	Isolated payload → test result	Production secret use/output write forbidden。
+P	Sandbox
+P	Isolated payload → test result
+P	Production secret use/output write forbidden。
+ROW	Route Execute	Validated route request → Route Decision + Job lineage	Frontend route override forbidden。
+P	Route Execute
+P	Validated route request → Route Decision + Job lineage
+P	Frontend route override forbidden。
+ROW	Quarantine / Restore	Quarantine state → audited restore request	Restore requires reason；不繞過 health/policy gates。
+P	Quarantine / Restore
+P	Quarantine state → audited restore request
+P	Restore requires reason；不繞過 health/policy gates。
+P	admin:AIAPI-01 · Source Table 20
+ROW	Entity	必要欄位	Truth Rule
+P	Entity
+P	必要欄位
+P	Truth Rule
+ROW	Job	job_id, capability, profile, status, created, finished	Frontend 不可寫 status。
+P	Job
+P	job_id, capability, profile, status, created, finished
+P	Frontend 不可寫 status。
+ROW	Attempt	attempt_id, provider, model, external_ref, retry, error	每次 retry 是獨立 attempt，不覆蓋舊證據。
+P	Attempt
+P	attempt_id, provider, model, external_ref, retry, error
+P	每次 retry 是獨立 attempt，不覆蓋舊證據。
+ROW	Callback	callback_status, verification, received_at	未驗證 callback 不得標 SUCCESS。
+P	Callback
+P	callback_status, verification, received_at
+P	未驗證 callback 不得標 SUCCESS。
+ROW	Artifact	artifact_ref, version, provider_output_ref	不得 silent overwrite 既有 asset/version。
+P	Artifact
+P	artifact_ref, version, provider_output_ref
+P	不得 silent overwrite 既有 asset/version。
+ROW	Cost	estimated_cost, actual_cost, currency	Finance 未授權 → MASK / DENY；缺值不是 0。
+P	Cost
+P	estimated_cost, actual_cost, currency
+P	Finance 未授權 → MASK / DENY；缺值不是 0。
+ROW	Incident	severity, provider/model impact, status, correlation	必須可從 UI 追到 exact job/attempt/route context。
+P	Incident
+P	severity, provider/model impact, status, correlation
+P	必須可從 UI 追到 exact job/attempt/route context。
+P	admin:AIAPI-01 · Source Table 21
+ROW	Function	Complete Chain
+P	Function
+P	Complete Chain
+ROW	Create / Update Profile	Intent → Profile Form → Permission/Gate → Registered Operation → AI API Command Runtime → Profile persistence → Audit → Updated row + Professional Panel → Test next step → error/version recovery
+P	Create / Update Profile
+P	Intent → Profile Form → Permission/Gate → Registered Operation → AI API Command Runtime → Profile persistence → Audit → Updated row + Professional Panel → Test next step → error/version recovery
+ROW	Set Credential	Intent → Credential Modal → Permission → Write-only input → Secret owner → reference/status return → audit without plaintext → profile readiness update
+P	Set Credential
+P	Intent → Credential Modal → Permission → Write-only input → Secret owner → reference/status return → audit without plaintext → profile readiness update
+ROW	Test Provider	Selected exact profile → capability/secret/adapter gate → test operation → provider adapter → test evidence → health/readiness update → failure code/recovery
+P	Test Provider
+P	Selected exact profile → capability/secret/adapter gate → test operation → provider adapter → test evidence → health/readiness update → failure code/recovery
+ROW	Execute Route	Canonical instruction + scoped context → candidate group → hard preflight → compile audit → queue/runtime gate → execute route → route decision → provider attempt → callback/artifact/cost → UI result
+P	Execute Route
+P	Canonical instruction + scoped context → candidate group → hard preflight → compile audit → queue/runtime gate → execute route → route decision → provider attempt → callback/artifact/cost → UI result
+ROW	Restore Quarantine	Quarantine row → reason + confirmation → permission/state gate → restore op → audit → re-enter health/test gates; no direct eligible status assumption
+P	Restore Quarantine
+P	Quarantine row → reason + confirmation → permission/state gate → restore op → audit → re-enter health/test gates; no direct eligible status assumption
+ROW	Kill Switch	Target/scope → high-risk confirm + reason → permission/state/version/idempotency → setKillSwitch → audit → affected route/profile status refresh
+P	Kill Switch
+P	Target/scope → high-risk confirm + reason → permission/state/version/idempotency → setKillSwitch → audit → affected route/profile status refresh
+P	admin:AIAPI-01 · Source Table 22
+ROW	Layer	Contract
+P	Layer
+P	Contract
+ROW	Page Entry	Authenticated admin + exact page permission + account assignment + scope/condition. Frontend hide 不是 authorization。
+P	Page Entry
+P	Authenticated admin + exact page permission + account assignment + scope/condition. Frontend hide 不是 authorization。
+ROW	Effectful Control	Exact control/action resource mapping + server authorization + state guard + expected version + idempotency + audit。
+P	Effectful Control
+P	Exact control/action resource mapping + server authorization + state guard + expected version + idempotency + audit。
+ROW	Profile Persistence	Existing AI API provider profile owner only；不新增第二套 registry。
+P	Profile Persistence
+P	Existing AI API provider profile owner only；不新增第二套 registry。
+ROW	Secret Persistence	Existing secret reference owner only；raw credential forbidden。
+P	Secret Persistence
+P	Existing secret reference owner only；raw credential forbidden。
+ROW	Route Persistence	Preflight / Decision / Attempt 由既有 runtime stores；UI 不自行推導成功。
+P	Route Persistence
+P	Preflight / Decision / Attempt 由既有 runtime stores；UI 不自行推導成功。
+ROW	Queue	Existing provider execution queue；Queue Probe 只做可用性診斷且不呼叫外部 Provider。
+P	Queue
+P	Existing provider execution queue；Queue Probe 只做可用性診斷且不呼叫外部 Provider。
+ROW	Cost / Budget	Governed projection；無 finance permission 時 mask/deny。
+P	Cost / Budget
+P	Governed projection；無 finance permission 時 mask/deny。
+P	admin:AIAPI-01 · Source Table 23
+ROW	State / Error	UI	Recovery
+P	State / Error
+P	UI
+P	Recovery
+ROW	LOADING	Skeleton / preserve geometry	Effectful controls disabled
+P	LOADING
+P	Skeleton / preserve geometry
+P	Effectful controls disabled
+ROW	EMPTY	Show empty state	不得塞 sample Provider/Model
+P	EMPTY
+P	Show empty state
+P	不得塞 sample Provider/Model
+ROW	POLICY_BLOCKED	Disabled + registered reason	不得新增 Override
+P	POLICY_BLOCKED
+P	Disabled + registered reason
+P	不得新增 Override
+ROW	VERSION_CONFLICT	Block write	Reload exact profile/resource and retry from fresh state
+P	VERSION_CONFLICT
+P	Block write
+P	Reload exact profile/resource and retry from fresh state
+ROW	EXTERNAL_PENDING	Show pending	不得轉成 success
+P	EXTERNAL_PENDING
+P	Show pending
+P	不得轉成 success
+ROW	Credential Error	Masked error code/reason	不得回傳 secret/header/body
+P	Credential Error
+P	Masked error code/reason
+P	不得回傳 secret/header/body
+ROW	Capability mismatch	Exclude/block candidate	不得 silent downgrade
+P	Capability mismatch
+P	Exclude/block candidate
+P	不得 silent downgrade
+ROW	Quarantined	Not route eligible	Restore only by exact audited operation
+P	Quarantined
+P	Not route eligible
+P	Restore only by exact audited operation
+ROW	Queue unavailable	Block external route	保留 request context；retry 依正式 runtime
+P	Queue unavailable
+P	Block external route
+P	保留 request context；retry 依正式 runtime
+ROW	Unverified callback	Non-success	等待/重驗 callback
+P	Unverified callback
+P	Non-success
+P	等待/重驗 callback
+ROW	Partial composite failure	Show per-step result	只重試尚未合法完成的 operation；不得報 COMPLETE
+P	Partial composite failure
+P	Show per-step result
+P	只重試尚未合法完成的 operation；不得報 COMPLETE
+ROW	Undefined operation/field	BLOCK + REPORT_AUTHORITY_GAP	不得臨時自造 API
+P	Undefined operation/field
+P	BLOCK + REPORT_AUTHORITY_GAP
+P	不得臨時自造 API
+P	admin:AIAPI-01 · Source Table 24
+ROW	項目	規格
+P	項目
+P	規格
+ROW	Locales	zh-TW / zh-CN / en；Provider/Model/Endpoint 原名不翻譯；UI labels 本地化。
+P	Locales
+P	zh-TW / zh-CN / en；Provider/Model/Endpoint 原名不翻譯；UI labels 本地化。
+ROW	Focus	Modal/Drawer 開啟後 focus trap；關閉時回到來源 control。
+P	Focus
+P	Modal/Drawer 開啟後 focus trap；關閉時回到來源 control。
+ROW	Keyboard	Tab order = context → views → search/table → row action → right panel → action dock；Esc 關閉 drawer/modal。
+P	Keyboard
+P	Tab order = context → views → search/table → row action → right panel → action dock；Esc 關閉 drawer/modal。
+ROW	Status	顏色 + 文字雙重表示；不能只靠綠/黃/紅。
+P	Status
+P	顏色 + 文字雙重表示；不能只靠綠/黃/紅。
+ROW	Table	Header row 標記、sticky semantics、長值截斷但 full value 可由 authorized drawer 取得。
+P	Table
+P	Header row 標記、sticky semantics、長值截斷但 full value 可由 authorized drawer 取得。
+ROW	Secret	輸入欄不得被 screen/read-back 當成可回顯資料；完成後清空。
+P	Secret
+P	輸入欄不得被 screen/read-back 當成可回顯資料；完成後清空。
+ROW	Disabled Reason	State/policy blocked 可顯示原因；permission denied 依政策隱藏/deny。
+P	Disabled Reason
+P	State/policy blocked 可顯示原因；permission denied 依政策隱藏/deny。
+P	admin:AIAPI-01 · Source Table 25
+ROW	Region	Locked	可變內容
+P	Region
+P	Locked
+P	可變內容
+ROW	Global Shell	Header/Sidebar/Brand/visual tokens	僅 current page active state
+P	Global Shell
+P	Header/Sidebar/Brand/visual tokens
+P	僅 current page active state
+ROW	View Bar	4 views 順序與同頁切換	badge/real blockers 可動態
+P	View Bar
+P	4 views 順序與同頁切換
+P	badge/real blockers 可動態
+ROW	Provider Workspace	68/32 primary topology、Profile selection continuity	table rows / filter / selected profile / modal
+P	Provider Workspace
+P	68/32 primary topology、Profile selection continuity
+P	table rows / filter / selected profile / modal
+ROW	Professional Panel	欄位順序與 read-only 性質	registered metadata / projections
+P	Professional Panel
+P	欄位順序與 read-only 性質
+P	registered metadata / projections
+ROW	Route Workbench	Candidate→Preflight→Compile→Sandbox→Decision 邏輯順序	actual results / eligibility / reasons
+P	Route Workbench
+P	Candidate→Preflight→Compile→Sandbox→Decision 邏輯順序
+P	actual results / eligibility / reasons
+ROW	Operations Rail	Job/Cost/Incident canonical table-first	records / filters / detail drawer
+P	Operations Rail
+P	Job/Cost/Incident canonical table-first
+P	records / filters / detail drawer
+ROW	Action Dock	一個 dominant CTA 上限	依 state/permission 切換合法 actions
+P	Action Dock
+P	一個 dominant CTA 上限
+P	依 state/permission 切換合法 actions
+P	admin:AIAPI-01 · Source Table 26
+ROW	Pass	驗證
+P	Pass
+P	驗證
+ROW	1 Authority / Naming	Page/Section/Control/Entity/Operation UID 唯一，無平行 AI API Center。
+P	1 Authority / Naming
+P	Page/Section/Control/Entity/Operation UID 唯一，無平行 AI API Center。
+ROW	2 Functional Completeness	Entity × REQUIRED Operation、完整 functional chain、next state / recovery 無斷鏈。
+P	2 Functional Completeness
+P	Entity × REQUIRED Operation、完整 functional chain、next state / recovery 無斷鏈。
+ROW	3 Interaction Topology	Provider selection、Route basis、Job lineage 不因換 view/drawer 靜默遺失。
+P	3 Interaction Topology
+P	Provider selection、Route basis、Job lineage 不因換 view/drawer 靜默遺失。
+ROW	4 Security	Credential plaintext 0 leakage；permission/server gate、sandbox secret isolation、callback verification。
+P	4 Security
+P	Credential plaintext 0 leakage；permission/server gate、sandbox secret isolation、callback verification。
+ROW	5 Runtime Binding	所有 effectful control 對應 exact registered operation；Queue Probe/Route/Quarantine/Provider Profile 可追溯。
+P	5 Runtime Binding
+P	所有 effectful control 對應 exact registered operation；Queue Probe/Route/Quarantine/Provider Profile 可追溯。
+ROW	6 Visual / Responsive	1280+ desktop、68/32、drawer、overflow、text capacity、focus、no overlap/clipping。
+P	6 Visual / Responsive
+P	1280+ desktop、68/32、drawer、overflow、text capacity、focus、no overlap/clipping。
+ROW	7 Truth / Regression	No fake Provider/Model/Cost/Health；missing=—；legacy multi-page UI 不復活；external provider success only by real evidence。
+P	7 Truth / Regression
+P	No fake Provider/Model/Cost/Health；missing=—；legacy multi-page UI 不復活；external provider success only by real evidence。
+P	admin:AIAPI-01 · Source Table 27
+ROW	DoD	通過條件
+P	DoD
+P	通過條件
+ROW	Single Current Page	只有 admin:AIAPI-01；4 views 都在同一頁。
+P	Single Current Page
+P	只有 admin:AIAPI-01；4 views 都在同一頁。
+ROW	Provider Profile	Create / Update / Get / List / Test / Retire 只走正式 operations。
+P	Provider Profile
+P	Create / Update / Get / List / Test / Retire 只走正式 operations。
+ROW	Credential	Set / Delete；raw secret never returned/rendered/logged/exported。
+P	Credential
+P	Set / Delete；raw secret never returned/rendered/logged/exported。
+ROW	Professional Description	固定 decision-support panel；只讀 registered metadata/projections。
+P	Professional Description
+P	固定 decision-support panel；只讀 registered metadata/projections。
+ROW	Capability Governance	Configure / Approve / Enable 受 exact gate / version / audit。
+P	Capability Governance
+P	Configure / Approve / Enable 受 exact gate / version / audit。
+ROW	Route & Sandbox	Candidate / Preflight / Compile / Sandbox / Route Decision / Quarantine / Queue diagnostic 完整且無 frontend override。
+P	Route & Sandbox
+P	Candidate / Preflight / Compile / Sandbox / Route Decision / Quarantine / Queue diagnostic 完整且無 frontend override。
+ROW	Instruction Continuity	Canonical Instruction provider-neutral；fallback 重新 compile；adapter 不改語意。
+P	Instruction Continuity
+P	Canonical Instruction provider-neutral；fallback 重新 compile；adapter 不改語意。
+ROW	Job & Cost	Job/Attempt/Callback/Artifact/Cost/Budget/Incident 具 exact lineage；finance mask/deny。
+P	Job & Cost
+P	Job/Attempt/Callback/Artifact/Cost/Budget/Incident 具 exact lineage；finance mask/deny。
+ROW	Security	Secret / callback / sandbox / quarantine / kill-switch hard boundaries 成立。
+P	Security
+P	Secret / callback / sandbox / quarantine / kill-switch hard boundaries 成立。
+ROW	No Duplicate System	無第二套 Provider Registry / Secret DB / Router / Job store。
+P	No Duplicate System
+P	無第二套 Provider Registry / Secret DB / Router / Job store。
+ROW	UI Necessity	低頻 Audit/Docs/Error 放 Drawer；一個 context 最多一個 dominant CTA。
+P	UI Necessity
+P	低頻 Audit/Docs/Error 放 Drawer；一個 context 最多一個 dominant CTA。
+ROW	Truthful Runtime	文件是施工設計；Production / external provider success 必須由後續 runtime/evidence 驗證，不由 Word 宣稱。
+P	Truthful Runtime
+P	文件是施工設計；Production / external provider success 必須由後續 runtime/evidence 驗證，不由 Word 宣稱。
+P	admin:AIAPI-01 · Source Table 28
+ROW	施工層	必須落地
+P	施工層
+P	必須落地
+ROW	Frontend	4 same-page views、Profile table + professional panel、Route workbench、Operations table、drawer/modal、state/error presentation。
+P	Frontend
+P	4 same-page views、Profile table + professional panel、Route workbench、Operations table、drawer/modal、state/error presentation。
+ROW	Command Port	Profile/Credential/Governance/Route/Sandbox/Quarantine/Queue/Kill Switch exact typed binding。
+P	Command Port
+P	Profile/Credential/Governance/Route/Sandbox/Quarantine/Queue/Kill Switch exact typed binding。
+ROW	Server Runtime	Identity/page command authorization、provider command runtime、provider HTTP adapter、queue runtime。
+P	Server Runtime
+P	Identity/page command authorization、provider command runtime、provider HTTP adapter、queue runtime。
+ROW	Persistence	Provider profiles、tests、secret references、group/member refs、quarantine、route preflight/decision/attempt、job/artifact/cost/audit owners。
+P	Persistence
+P	Provider profiles、tests、secret references、group/member refs、quarantine、route preflight/decision/attempt、job/artifact/cost/audit owners。
+ROW	QA	Unit + permission + secret leak + sandbox isolation + route eligibility + callback verification + retry lineage + visual geometry + E2E。
+P	QA
+P	Unit + permission + secret leak + sandbox isolation + route eligibility + callback verification + retry lineage + visual geometry + E2E。
+ROW	Release	Exact-head gates + post-deploy smoke + external provider tests only with approved real profile/capability/secret configuration。
+P	Release
+P	Exact-head gates + post-deploy smoke + external provider tests only with approved real profile/capability/secret configuration。
+P	admin:AIAPI-01 · Source Table 29
+ROW	Freeze Rule｜本文件完成的是 AIAPI-01 的頁面／功能／互動／施工設計閉環。任何未註冊的 Provider capability、API path、credential behavior、pricing 或 runtime effect 不得因文件方便而自動新增。
+P	Freeze Rule｜本文件完成的是 AIAPI-01 的頁面／功能／互動／施工設計閉環。任何未註冊的 Provider capability、API path、credential behavior、pricing 或 runtime effect 不得因文件方便而自動新增。
+P	admin:AIAPI-01 · Effectful Control → API → DB Closure Matrix
+ROW	Page UID	Control UID	UID Status	Operation/Action	Method / Path	DB / Provider Owner	Gate	Permission	Binding Status
+P	Page UID
+P	Control UID
+P	UID Status
+P	Operation/Action
+P	Method / Path
+P	DB / Provider Owner
+P	Gate
+P	Permission
+P	Binding Status
+ROW	admin:AIAPI-01	新增 Provider	EXISTING_CONTROL_UID	createProviderModelProfile	SOURCE_ACTION_PORT_TABLE	acpos_runtime.provider_model_profiles		Effectful Modal；schema/gate/permission required	SOURCE_AUTHORITY
+P	admin:AIAPI-01
+P	新增 Provider
+P	EXISTING_CONTROL_UID
+P	createProviderModelProfile
+P	SOURCE_ACTION_PORT_TABLE
+P	acpos_runtime.provider_model_profiles
+P	Effectful Modal；schema/gate/permission required
+P	SOURCE_AUTHORITY
+ROW	admin:AIAPI-01	編輯 Profile	EXISTING_CONTROL_UID	updateProviderModelProfile	SOURCE_ACTION_PORT_TABLE	acpos_runtime.provider_model_profiles		Expected version + audit	SOURCE_AUTHORITY
+P	admin:AIAPI-01
+P	編輯 Profile
+P	EXISTING_CONTROL_UID
+P	updateProviderModelProfile
+P	SOURCE_ACTION_PORT_TABLE
+P	acpos_runtime.provider_model_profiles
+P	Expected version + audit
+P	SOURCE_AUTHORITY
+ROW	admin:AIAPI-01	查看 Profile	EXISTING_CONTROL_UID	getProviderModelProfile	SOURCE_ACTION_PORT_TABLE	acpos_runtime.provider_model_profiles		Drawer / read-only	SOURCE_AUTHORITY
+P	admin:AIAPI-01
+P	查看 Profile
+P	EXISTING_CONTROL_UID
+P	getProviderModelProfile
+P	SOURCE_ACTION_PORT_TABLE
+P	acpos_runtime.provider_model_profiles
+P	Drawer / read-only
+P	SOURCE_AUTHORITY
+ROW	admin:AIAPI-01	退役 Profile	EXISTING_CONTROL_UID	retireProviderModelProfile	SOURCE_ACTION_PORT_TABLE	acpos_runtime.provider_model_profiles		State guarded; never hard delete runtime history	SOURCE_AUTHORITY
+P	admin:AIAPI-01
+P	退役 Profile
+P	EXISTING_CONTROL_UID
+P	retireProviderModelProfile
+P	SOURCE_ACTION_PORT_TABLE
+P	acpos_runtime.provider_model_profiles
+P	State guarded; never hard delete runtime history
+P	SOURCE_AUTHORITY
+ROW	admin:AIAPI-01	設定 API 金鑰	EXISTING_CONTROL_UID	setProviderModelCredential	SOURCE_ACTION_PORT_TABLE	secret-manager://provider-credentials + acpos_runtime.provider_credential_refs		Write-only; secret env/reference owner	SOURCE_AUTHORITY
+P	admin:AIAPI-01
+P	設定 API 金鑰
+P	EXISTING_CONTROL_UID
+P	setProviderModelCredential
+P	SOURCE_ACTION_PORT_TABLE
+P	secret-manager://provider-credentials + acpos_runtime.provider_credential_refs
+P	Write-only; secret env/reference owner
+P	SOURCE_AUTHORITY
+ROW	admin:AIAPI-01	刪除 API 金鑰	EXISTING_CONTROL_UID	deleteProviderModelCredential	SOURCE_ACTION_PORT_TABLE	secret-manager://provider-credentials + acpos_runtime.provider_credential_refs		Reason/confirmation; no old value in response/log	SOURCE_AUTHORITY
+P	admin:AIAPI-01
+P	刪除 API 金鑰
+P	EXISTING_CONTROL_UID
+P	deleteProviderModelCredential
+P	SOURCE_ACTION_PORT_TABLE
+P	secret-manager://provider-credentials + acpos_runtime.provider_credential_refs
+P	Reason/confirmation; no old value in response/log
+P	SOURCE_AUTHORITY
+ROW	admin:AIAPI-01	設定 Capability/Policy	EXISTING_CONTROL_UID	configureGovernedResource	SOURCE_ACTION_PORT_TABLE	acpos_runtime.provider_model_profiles		Exact governed resource ref	SOURCE_AUTHORITY
+P	admin:AIAPI-01
+P	設定 Capability/Policy
+P	EXISTING_CONTROL_UID
+P	configureGovernedResource
+P	SOURCE_ACTION_PORT_TABLE
+P	acpos_runtime.provider_model_profiles
+P	Exact governed resource ref
+P	SOURCE_AUTHORITY
+ROW	admin:AIAPI-01	核准 Capability/Policy	EXISTING_CONTROL_UID	approveGovernedResource	SOURCE_ACTION_PORT_TABLE	acpos_runtime.provider_model_profiles		Version + rationale + audit	SOURCE_AUTHORITY
+P	admin:AIAPI-01
+P	核准 Capability/Policy
+P	EXISTING_CONTROL_UID
+P	approveGovernedResource
+P	SOURCE_ACTION_PORT_TABLE
+P	acpos_runtime.provider_model_profiles
+P	Version + rationale + audit
+P	SOURCE_AUTHORITY
+ROW	admin:AIAPI-01	建立 Candidate Group	EXISTING_CONTROL_UID	createProviderCandidateGroup	SOURCE_ACTION_PORT_TABLE	acpos_runtime.provider_candidate_groups		Group + ordered member refs + limits only by exact schema	SOURCE_AUTHORITY
+P	admin:AIAPI-01
+P	建立 Candidate Group
+P	EXISTING_CONTROL_UID
+P	createProviderCandidateGroup
+P	SOURCE_ACTION_PORT_TABLE
+P	acpos_runtime.provider_candidate_groups
+P	Group + ordered member refs + limits only by exact schema
+P	SOURCE_AUTHORITY
+ROW	admin:AIAPI-01	Sandbox 測試	EXISTING_CONTROL_UID	runSandboxTest	SOURCE_ACTION_PORT_TABLE	acpos_runtime.sandbox_runs		Production secret/output forbidden	SOURCE_AUTHORITY
+P	admin:AIAPI-01
+P	Sandbox 測試
+P	EXISTING_CONTROL_UID
+P	runSandboxTest
+P	SOURCE_ACTION_PORT_TABLE
+P	acpos_runtime.sandbox_runs
+P	Production secret/output forbidden
+P	SOURCE_AUTHORITY
+ROW	admin:AIAPI-01	執行 Route	EXISTING_CONTROL_UID	executeProviderRoute	SOURCE_ACTION_PORT_TABLE	acpos_runtime.provider_route_decisions + acpos_runtime.execution_jobs		All hard gates + queue + approved capability/profile/secret	SOURCE_AUTHORITY
+P	admin:AIAPI-01
+P	執行 Route
+P	EXISTING_CONTROL_UID
+P	executeProviderRoute
+P	SOURCE_ACTION_PORT_TABLE
+P	acpos_runtime.provider_route_decisions + acpos_runtime.execution_jobs
+P	All hard gates + queue + approved capability/profile/secret
+P	SOURCE_AUTHORITY
+ROW	admin:AIAPI-01	查看 Route Decision	EXISTING_CONTROL_UID	getProviderRouteDecision	SOURCE_ACTION_PORT_TABLE	acpos_runtime.provider_route_decisions + acpos_runtime.execution_jobs		Read-only exact decision	SOURCE_AUTHORITY
+P	admin:AIAPI-01
+P	查看 Route Decision
+P	EXISTING_CONTROL_UID
+P	getProviderRouteDecision
+P	SOURCE_ACTION_PORT_TABLE
+P	acpos_runtime.provider_route_decisions + acpos_runtime.execution_jobs
+P	Read-only exact decision
+P	SOURCE_AUTHORITY
+ROW	admin:AIAPI-01	查看 Quarantine	EXISTING_CONTROL_UID	getProviderQuarantine	SOURCE_ACTION_PORT_TABLE	acpos_runtime.provider_quarantine		Read-only	SOURCE_AUTHORITY
+P	admin:AIAPI-01
+P	查看 Quarantine
+P	EXISTING_CONTROL_UID
+P	getProviderQuarantine
+P	SOURCE_ACTION_PORT_TABLE
+P	acpos_runtime.provider_quarantine
+P	Read-only
+P	SOURCE_AUTHORITY
+ROW	admin:AIAPI-01	Restore Quarantine	EXISTING_CONTROL_UID	restoreProviderFromQuarantine	SOURCE_ACTION_PORT_TABLE	acpos_runtime.provider_quarantine		Reason + audit; bypass forbidden	SOURCE_AUTHORITY
+P	admin:AIAPI-01
+P	Restore Quarantine
+P	EXISTING_CONTROL_UID
+P	restoreProviderFromQuarantine
+P	SOURCE_ACTION_PORT_TABLE
+P	acpos_runtime.provider_quarantine
+P	Reason + audit; bypass forbidden
+P	SOURCE_AUTHORITY
+ROW	admin:AIAPI-01	Queue Probe	EXISTING_CONTROL_UID	runProviderQueueProbe	SOURCE_ACTION_PORT_TABLE	acpos_runtime.queue_probe_runs		Diagnostic only; no provider external call	SOURCE_AUTHORITY
+P	admin:AIAPI-01
+P	Queue Probe
+P	EXISTING_CONTROL_UID
+P	runProviderQueueProbe
+P	SOURCE_ACTION_PORT_TABLE
+P	acpos_runtime.queue_probe_runs
+P	Diagnostic only; no provider external call
+P	SOURCE_AUTHORITY
+ROW	admin:AIAPI-01	Kill Switch	EXISTING_CONTROL_UID	setKillSwitch	SOURCE_ACTION_PORT_TABLE	acpos_runtime.kill_switch_states		High-risk confirmation + reason + audit	SOURCE_AUTHORITY
+P	admin:AIAPI-01
+P	Kill Switch
+P	EXISTING_CONTROL_UID
+P	setKillSwitch
+P	SOURCE_ACTION_PORT_TABLE
+P	acpos_runtime.kill_switch_states
+P	High-risk confirmation + reason + audit
+P	SOURCE_AUTHORITY
+P	Source Authority Snapshot — SYSTEM
+P	Source File: ACPOS_SYSTEM_LOGIC_GLOBAL_INTEGRATION_Mother_Basic_Design_OPTIMIZED.docx
+P	Source SHA-256: 14603c6e06afca340378c88247a297f41b87db1f8dc3f1af6cca44f56558d652
+P	Included binding/data/state tables: 13. These rows are copied verbatim in text value from the uploaded Basic Design source; no UID/value renaming is performed.
+P	SYSTEM · Source Table 1
+ROW	系統定位 ACPOS 是全站中央協調大腦，不是第 19 個業務頁面。每個 Domain Page 保留自己的 Business Truth；System Logic 只負責 Context、Version、Handoff、Routing、Experience、Audit 與跨頁合法下一步。
+P	系統定位 ACPOS 是全站中央協調大腦，不是第 19 個業務頁面。每個 Domain Page 保留自己的 Business Truth；System Logic 只負責 Context、Version、Handoff、Routing、Experience、Audit 與跨頁合法下一步。
+P	SYSTEM · Source Table 2
+ROW	Surface	Page UID	名稱	系統角色
+P	Surface
+P	Page UID
+P	名稱
+P	系統角色
+ROW	Front	workspace:WB-01	儀表板	公司級 read projection / summary
+P	Front
+P	workspace:WB-01
+P	儀表板
+P	公司級 read projection / summary
+ROW	Front	CORE-01	專案 / 專題	Project/Topic Core、Blueprint、DNA、Canonical Script
+P	Front
+P	CORE-01
+P	專案 / 專題
+P	Project/Topic Core、Blueprint、DNA、Canonical Script
+ROW	Front	ASSET-01	素材	素材生成／版本／修正／handoff
+P	Front
+P	ASSET-01
+P	素材
+P	素材生成／版本／修正／handoff
+ROW	Front	VIDEO-01	影片	影片生成／版本／修正／handoff
+P	Front
+P	VIDEO-01
+P	影片
+P	影片生成／版本／修正／handoff
+ROW	Front	EDIT-01	剪輯配音	整合後製、配音、Render、Output
+P	Front
+P	EDIT-01
+P	剪輯配音
+P	整合後製、配音、Render、Output
+ROW	Front	QA-01	QA	Finished Output review / correction / recheck / pass
+P	Front
+P	QA-01
+P	QA
+P	Finished Output review / correction / recheck / pass
+ROW	Front	admin:DB-01	資料庫	資料模型、Trace、Read/Administration surface
+P	Front
+P	admin:DB-01
+P	資料庫
+P	資料模型、Trace、Read/Administration surface
+ROW	Front	workspace:STR-01	戰略中心	Strategic AI analysis / options / human decision support
+P	Front
+P	workspace:STR-01
+P	戰略中心
+P	Strategic AI analysis / options / human decision support
+ROW	Front	workspace:INFO-01	最新資訊	Research / Fact / Evidence / Context Candidate
+P	Front
+P	workspace:INFO-01
+P	最新資訊
+P	Research / Fact / Evidence / Context Candidate
+ROW	Admin	admin:SYS-01	系統維護	System truth / change / impact / validation AI
+P	Admin
+P	admin:SYS-01
+P	系統維護
+P	System truth / change / impact / validation AI
+ROW	Admin	admin:IAM-01	帳戶與權限	Account Permission Assignment
+P	Admin
+P	admin:IAM-01
+P	帳戶與權限
+P	Account Permission Assignment
+ROW	Admin	admin:DEV-01	企業自動開發	Company discovery / outreach workflow
+P	Admin
+P	admin:DEV-01
+P	企業自動開發
+P	Company discovery / outreach workflow
+ROW	Admin	admin:SOC-01	社群發布	Platform target / publish plan / result
+P	Admin
+P	admin:SOC-01
+P	社群發布
+P	Platform target / publish plan / result
+ROW	Admin	admin:ERP-01	ERP	Finance read / connector / sync quality
+P	Admin
+P	admin:ERP-01
+P	ERP
+P	Finance read / connector / sync quality
+ROW	Admin	admin:AIAPI-01	AI API	Provider / capability / route / test / operations
+P	Admin
+P	admin:AIAPI-01
+P	AI API
+P	Provider / capability / route / test / operations
+ROW	Admin	admin:SG-02	QA 評分項目	Criteria / Threshold / Gate Policy governance
+P	Admin
+P	admin:SG-02
+P	QA 評分項目
+P	Criteria / Threshold / Gate Policy governance
+ROW	Admin	admin:STR-01	戰略中心後台	Strategy intelligence / fact / playbook / opportunity / decision governance
+P	Admin
+P	admin:STR-01
+P	戰略中心後台
+P	Strategy intelligence / fact / playbook / opportunity / decision governance
+ROW	Admin	admin:KB-01	知識庫	Knowledge / Experience / Learning / Review
+P	Admin
+P	admin:KB-01
+P	知識庫
+P	Knowledge / Experience / Learning / Review
+P	SYSTEM · Source Table 3
+ROW	Layer	Owner Concept	責任
+P	Layer
+P	Owner Concept
+P	責任
+ROW	BRAIN-01	SYSTEM_STATE	全站 exact state/version/relationship projection；不替代 domain record
+P	BRAIN-01
+P	SYSTEM_STATE
+P	全站 exact state/version/relationship projection；不替代 domain record
+ROW	BRAIN-02	CONTEXT	依 page/operation/account/scope 選出 exact authorized context；建立 ContextPackage / Candidate
+P	BRAIN-02
+P	CONTEXT
+P	依 page/operation/account/scope 選出 exact authorized context；建立 ContextPackage / Candidate
+ROW	BRAIN-03	CONVERSATION	CORE / Strategy / System AI 共用 thread/branch/context continuity core
+P	BRAIN-03
+P	CONVERSATION
+P	CORE / Strategy / System AI 共用 thread/branch/context continuity core
+ROW	BRAIN-04	MEMORY	Conversation / Working / Decision / Version / Operational memory
+P	BRAIN-04
+P	MEMORY
+P	Conversation / Working / Decision / Version / Operational memory
+ROW	BRAIN-05	DECISION_GOVERNANCE	AI output 保持 candidate/analysis，直到 Human / Governance decision 完成
+P	BRAIN-05
+P	DECISION_GOVERNANCE
+P	AI output 保持 candidate/analysis，直到 Human / Governance decision 完成
+ROW	BRAIN-06	VERSION_LINEAGE	exact version/hash/checksum/provenance；禁止 silent overwrite
+P	BRAIN-06
+P	VERSION_LINEAGE
+P	exact version/hash/checksum/provenance；禁止 silent overwrite
+ROW	BRAIN-07	ORCHESTRATION	解析合法下一步、handoff、dependency，不越權執行 domain action
+P	BRAIN-07
+P	ORCHESTRATION
+P	解析合法下一步、handoff、dependency，不越權執行 domain action
+ROW	BRAIN-08	AI_EXECUTION	Provider-neutral instruction → capability → eligible profile → adapter → provider → normalized result
+P	BRAIN-08
+P	AI_EXECUTION
+P	Provider-neutral instruction → capability → eligible profile → adapter → provider → normalized result
+ROW	BRAIN-09	EXPERIENCE	從真實執行/結果/QA/成本/延遲形成 ExperienceRecord
+P	BRAIN-09
+P	EXPERIENCE
+P	從真實執行/結果/QA/成本/延遲形成 ExperienceRecord
+ROW	BRAIN-10	EVOLUTION	Experience → pattern → LearningCandidate → governed adoption
+P	BRAIN-10
+P	EVOLUTION
+P	Experience → pattern → LearningCandidate → governed adoption
+ROW	BRAIN-11	EXTERNAL_DATA_ACQUISITION	共用 crawl/search/fetch/ingest runtime；頁面只提交 domain intent
+P	BRAIN-11
+P	EXTERNAL_DATA_ACQUISITION
+P	共用 crawl/search/fetch/ingest runtime；頁面只提交 domain intent
+ROW	BRAIN-12	GOVERNANCE_OBSERVABILITY	Permission / Policy / Classification / Audit / Error / Health / Truthful State
+P	BRAIN-12
+P	GOVERNANCE_OBSERVABILITY
+P	Permission / Policy / Classification / Audit / Error / Health / Truthful State
+P	SYSTEM · Source Table 4
+ROW	Unknown = BLOCK 任何無 owner、無 exact version、無 permission、無 registered operation、無 required evidence 的跨頁行為，不得用 AI 推測補值；必須 BLOCK + REPORT_AUTHORITY_GAP。
+P	Unknown = BLOCK 任何無 owner、無 exact version、無 permission、無 registered operation、無 required evidence 的跨頁行為，不得用 AI 推測補值；必須 BLOCK + REPORT_AUTHORITY_GAP。
+P	SYSTEM · Source Table 5
+ROW	階段	Owner Page	輸入	輸出 / 下一步
+P	階段
+P	Owner Page
+P	輸入
+P	輸出 / 下一步
+ROW	CORE	CORE-01	Project / Topic / Context / Decisions	Blueprint / DNA / Canonical Production Script
+P	CORE
+P	CORE-01
+P	Project / Topic / Context / Decisions
+P	Blueprint / DNA / Canonical Production Script
+ROW	ASSET	ASSET-01	Exact Blueprint / DNA / Script refs	Asset Versions + evaluation + handoff
+P	ASSET
+P	ASSET-01
+P	Exact Blueprint / DNA / Script refs
+P	Asset Versions + evaluation + handoff
+ROW	VIDEO	VIDEO-01	Exact upstream refs + approved assets	Video Versions + evaluation + handoff
+P	VIDEO
+P	VIDEO-01
+P	Exact upstream refs + approved assets
+P	Video Versions + evaluation + handoff
+ROW	EDIT+VOICE	EDIT-01	Exact video/audio/script refs	Integrated Edit / Render / Output Version
+P	EDIT+VOICE
+P	EDIT-01
+P	Exact video/audio/script refs
+P	Integrated Edit / Render / Output Version
+ROW	QA	QA-01	Exact finished output + criteria_version_ref	Pass / Finding / Correction Request / Recheck
+P	QA
+P	QA-01
+P	Exact finished output + criteria_version_ref
+P	Pass / Finding / Correction Request / Recheck
+P	SYSTEM · Source Table 6
+ROW	步驟	系統行為
+P	步驟
+P	系統行為
+ROW	Context Resolution	Current user + page operation → authorized scope → exact object/version/decision/source refs → conflict check → fingerprint → ACPOSContextPackage
+P	Context Resolution
+P	Current user + page operation → authorized scope → exact object/version/decision/source refs → conflict check → fingerprint → ACPOSContextPackage
+ROW	Conversation	CORE / Strategy / System AI 共用 Conversation Core，但各 domain context 彼此隔離；mode switch 不得 silent reset
+P	Conversation
+P	CORE / Strategy / System AI 共用 Conversation Core，但各 domain context 彼此隔離；mode switch 不得 silent reset
+ROW	Instruction	Domain 產生 provider-neutral canonical instruction；Provider syntax 不得寫進 department script
+P	Instruction
+P	Domain 產生 provider-neutral canonical instruction；Provider syntax 不得寫進 department script
+ROW	Capability	依 operation 確定 required capability；硬性 permission/policy/rights/classification/health 先過 Gate
+P	Capability
+P	依 operation 確定 required capability；硬性 permission/policy/rights/classification/health 先過 Gate
+ROW	Route	AIAPI-01 Router 從 eligible ProviderModelProfiles 排序；前端不得 override
+P	Route
+P	AIAPI-01 Router 從 eligible ProviderModelProfiles 排序；前端不得 override
+ROW	Provider Adapter	將 canonical instruction 轉 Provider-specific request；credential 只用 Secret Reference
+P	Provider Adapter
+P	將 canonical instruction 轉 Provider-specific request；credential 只用 Secret Reference
+ROW	Result	Normalize / validate / persist route-job-attempt-result lineage；回到 domain owner 做 evaluation / version / decision
+P	Result
+P	Normalize / validate / persist route-job-attempt-result lineage；回到 domain owner 做 evaluation / version / decision
+P	SYSTEM · Source Table 7
+ROW	AI Authority Boundary Raw AI Output 永遠不是 Canonical Decision、Approved Knowledge 或 Production Truth。正式化需要對應 Domain 的 Review / Approve / Adopt Gate。
+P	AI Authority Boundary Raw AI Output 永遠不是 Canonical Decision、Approved Knowledge 或 Production Truth。正式化需要對應 Domain 的 Review / Approve / Adopt Gate。
+P	SYSTEM · Source Table 9
+ROW	Layer	Hard Rule
+P	Layer
+P	Hard Rule
+ROW	PostgreSQL + RLS	Canonical data owner per domain；RLS / permission 不可由前端取代
+P	PostgreSQL + RLS
+P	Canonical data owner per domain；RLS / permission 不可由前端取代
+ROW	Queue / Worker / DLQ	Async job 狀態與 retry/failure 由共用 runtime 管理；Frontend 不直接改 Job State
+P	Queue / Worker / DLQ
+P	Async job 狀態與 retry/failure 由共用 runtime 管理；Frontend 不直接改 Job State
+ROW	Version / Lineage	每次 revision 新增版本；Exact base/version/ref 必須保留；Asset/Output 不覆蓋原版本
+P	Version / Lineage
+P	每次 revision 新增版本；Exact base/version/ref 必須保留；Asset/Output 不覆蓋原版本
+ROW	Integration Event	只通知跨頁狀態；source domain object 仍是 truth owner
+P	Integration Event
+P	只通知跨頁狀態；source domain object 仍是 truth owner
+ROW	Audit	Effectful operation 必須 correlation + actor + action + target + result / error；不得記錄 raw secret
+P	Audit
+P	Effectful operation 必須 correlation + actor + action + target + result / error；不得記錄 raw secret
+ROW	Evidence	Test/Production Evidence 證明執行結果，不成為產品 Authority
+P	Evidence
+P	Test/Production Evidence 證明執行結果，不成為產品 Authority
+P	SYSTEM · Source Table 10
+ROW	Producer	Handoff Object	Consumer	Gate
+P	Producer
+P	Handoff Object
+P	Consumer
+P	Gate
+ROW	CORE-01	Blueprint / Script / DNA refs	ASSET-01	exact version + lock / approval state
+P	CORE-01
+P	Blueprint / Script / DNA refs
+P	ASSET-01
+P	exact version + lock / approval state
+ROW	ASSET-01	Asset Version / Handoff	VIDEO-01	accepted output + required lineage
+P	ASSET-01
+P	Asset Version / Handoff
+P	VIDEO-01
+P	accepted output + required lineage
+ROW	VIDEO-01	Video Version / Handoff	EDIT-01	accepted output + required lineage
+P	VIDEO-01
+P	Video Version / Handoff
+P	EDIT-01
+P	accepted output + required lineage
+ROW	EDIT-01	Final Output / QA Handoff	QA-01	render complete + exact output version
+P	EDIT-01
+P	Final Output / QA Handoff
+P	QA-01
+P	render complete + exact output version
+ROW	QA-01	Correction Request	Owning production page	target exact source version + finding evidence
+P	QA-01
+P	Correction Request
+P	Owning production page
+P	target exact source version + finding evidence
+ROW	INFO/KB/STR Admin	Context Candidate	Consumer Domain	consumer review / adoption owner
+P	INFO/KB/STR Admin
+P	Context Candidate
+P	Consumer Domain
+P	consumer review / adoption owner
+ROW	AIAPI-01	Route Decision / Provider Result	Owning Domain	capability/permission/route lineage + normalized result
+P	AIAPI-01
+P	Route Decision / Provider Result
+P	Owning Domain
+P	capability/permission/route lineage + normalized result
+P	SYSTEM · Source Table 11
+ROW	Failure Class	處置
+P	Failure Class
+P	處置
+ROW	IDENTITY / AUTH	Fail-closed；未授權內容/控制不顯示；不可 client bypass
+P	IDENTITY / AUTH
+P	Fail-closed；未授權內容/控制不顯示；不可 client bypass
+ROW	VERSION_CONFLICT	停止 effectful write → reload exact version → review diff → resubmit
+P	VERSION_CONFLICT
+P	停止 effectful write → reload exact version → review diff → resubmit
+ROW	MISSING AUTHORITY	BLOCK + REPORT_AUTHORITY_GAP；不得猜 operation / field / owner
+P	MISSING AUTHORITY
+P	BLOCK + REPORT_AUTHORITY_GAP；不得猜 operation / field / owner
+ROW	PROVIDER / EXTERNAL	保留 pending/failed/degraded 真實狀態；不可 fake success
+P	PROVIDER / EXTERNAL
+P	保留 pending/failed/degraded 真實狀態；不可 fake success
+ROW	QUEUE / ASYNC	依 registered retry policy；retry 建立/保留獨立 attempt lineage
+P	QUEUE / ASYNC
+P	依 registered retry policy；retry 建立/保留獨立 attempt lineage
+ROW	DATA INCOMPLETE	顯示 — / incomplete / stale / masked；不得以 0 或 sample 補值
+P	DATA INCOMPLETE
+P	顯示 — / incomplete / stale / masked；不得以 0 或 sample 補值
+ROW	CROSS-STAGE HANDOFF	缺 physical / schema-valid / required-field-complete input 時，阻擋 successor 並 re-enter owning predecessor
+P	CROSS-STAGE HANDOFF
+P	缺 physical / schema-valid / required-field-complete input 時，阻擋 successor 並 re-enter owning predecessor
+ROW	AUDIT / EVIDENCE	沒有 fresh evidence 不得宣告 runtime / deploy / production complete
+P	AUDIT / EVIDENCE
+P	沒有 fresh evidence 不得宣告 runtime / deploy / production complete
+P	SYSTEM · Source Table 12
+ROW	Acceptance UID	PASS 條件
+P	Acceptance UID
+P	PASS 條件
+ROW	SYS-ACC-01	18 個 Current Page 都有唯一 owner / route / permission / integration role。
+P	SYS-ACC-01
+P	18 個 Current Page 都有唯一 owner / route / permission / integration role。
+ROW	SYS-ACC-02	Front 9 + Admin 9；Global Shell adaptive reflow 不遮住 Workspace。
+P	SYS-ACC-02
+P	Front 9 + Admin 9；Global Shell adaptive reflow 不遮住 Workspace。
+ROW	SYS-ACC-03	Identity → Permission → Page Gate → Operation Gate 順序不可繞過。
+P	SYS-ACC-03
+P	Identity → Permission → Page Gate → Operation Gate 順序不可繞過。
+ROW	SYS-ACC-04	CORE→ASSET→VIDEO→EDIT→QA exact version handoff 完整。
+P	SYS-ACC-04
+P	CORE→ASSET→VIDEO→EDIT→QA exact version handoff 完整。
+ROW	SYS-ACC-05	Provider selection 只在 AIAPI-01 / shared router；department picker 不存在。
+P	SYS-ACC-05
+P	Provider selection 只在 AIAPI-01 / shared router；department picker 不存在。
+ROW	SYS-ACC-06	Context / Conversation / AI Output 不會自動變成 Canon / Approved Knowledge。
+P	SYS-ACC-06
+P	Context / Conversation / AI Output 不會自動變成 Canon / Approved Knowledge。
+ROW	SYS-ACC-07	Shared Acquisition 只有一套 runtime；KB/INFO/STR/DEV/SOC 不重複建 crawler。
+P	SYS-ACC-07
+P	Shared Acquisition 只有一套 runtime；KB/INFO/STR/DEV/SOC 不重複建 crawler。
+ROW	SYS-ACC-08	Async lifecycle / retry / failure / audit 保留完整 attempt lineage。
+P	SYS-ACC-08
+P	Async lifecycle / retry / failure / audit 保留完整 attempt lineage。
+ROW	SYS-ACC-09	No fake data / fake success / missing-as-zero / secret plaintext。
+P	SYS-ACC-09
+P	No fake data / fake success / missing-as-zero / secret plaintext。
+ROW	SYS-ACC-10	Word/Authority 完整 ≠ application/runtime/deployment complete；完成宣告必須另有 fresh evidence。
+P	SYS-ACC-10
+P	Word/Authority 完整 ≠ application/runtime/deployment complete；完成宣告必須另有 fresh evidence。
+P	SYSTEM · Source Table 13
+ROW	Layer	必須證明的事
+P	Layer
+P	必須證明的事
+ROW	DESIGN	頁面、Shell、Navigation、Interaction、State、Error、Recovery 與 acceptance 定義完整；僅代表可施工。
+P	DESIGN
+P	頁面、Shell、Navigation、Interaction、State、Error、Recovery 與 acceptance 定義完整；僅代表可施工。
+ROW	CLIENT	DOM / visual / keyboard / responsive / i18n / disabled reason 與 no-fake-data 行為符合設計。
+P	CLIENT
+P	DOM / visual / keyboard / responsive / i18n / disabled reason 與 no-fake-data 行為符合設計。
+ROW	SERVER	Identity、Permission、Scope、State Guard、Version、Idempotency、Audit 均由 Server 執行，不能只靠前端。
+P	SERVER
+P	Identity、Permission、Scope、State Guard、Version、Idempotency、Audit 均由 Server 執行，不能只靠前端。
+ROW	RUNTIME + DB	Canonical owner、migration、RLS、version lineage、transaction / persistence 可重現。
+P	RUNTIME + DB
+P	Canonical owner、migration、RLS、version lineage、transaction / persistence 可重現。
+ROW	ASYNC + PROVIDER	Queue / Worker / DLQ、Provider route / adapter / callback / retry 保留 exact attempt lineage。
+P	ASYNC + PROVIDER
+P	Queue / Worker / DLQ、Provider route / adapter / callback / retry 保留 exact attempt lineage。
+ROW	E2E	Browser 跨頁 handoff、negative paths、correction round-trip、shared runtime integration 實際通過。
+P	E2E
+P	Browser 跨頁 handoff、negative paths、correction round-trip、shared runtime integration 實際通過。
+ROW	PRODUCTION	Exact deployed SHA、remote acceptance、Production data/runtime readiness 與 external provider evidence 都存在。
+P	PRODUCTION
+P	Exact deployed SHA、remote acceptance、Production data/runtime readiness 與 external provider evidence 都存在。
+P	SYSTEM · Source Table 14
+ROW	Design Closure Boundary 這三份補齊文件只完成設計層閉環；GitHub 程式碼、Runtime、E2E 與 Production 狀態仍必須由後續 fresh execution evidence 個別證明。
+P	Design Closure Boundary 這三份補齊文件只完成設計層閉環；GitHub 程式碼、Runtime、E2E 與 Production 狀態仍必須由後續 fresh execution evidence 個別證明。
+P	Source Authority Snapshot — admin:DB-01
+P	Source File: ACPOS_DB-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx
+P	Source SHA-256: a1ca6bd1fed29bf362fe3d9a78641c2113dff8a21b8dc4197e318c09f680fb1d
+P	Included binding/data/state tables: 23. These rows are copied verbatim in text value from the uploaded Basic Design source; no UID/value renaming is performed.
+P	admin:DB-01 · Source Table 1
+ROW	項目	Current
+P	項目
+P	Current
+ROW	Page UID	admin:DB-01
+P	Page UID
+P	admin:DB-01
+ROW	Canonical Name	資料模型與追溯工作區 / Data Model & Traceability Workspace
+P	Canonical Name
+P	資料模型與追溯工作區 / Data Model & Traceability Workspace
+ROW	Page Authority SHA	8074187716f40d4a31704ed6212fe40ffd66fc0e
+P	Page Authority SHA
+P	8074187716f40d4a31704ed6212fe40ffd66fc0e
+ROW	Manifest SHA	465329b6fb19b8e44c3083a9f280015ee95cc55c
+P	Manifest SHA
+P	465329b6fb19b8e44c3083a9f280015ee95cc55c
+ROW	Authority Status	FINAL_LOCKED / current_only
+P	Authority Status
+P	FINAL_LOCKED / current_only
+ROW	Design Status	VISUAL_CANDIDATE / PENDING HUMAN REVIEW
+P	Design Status
+P	VISUAL_CANDIDATE / PENDING HUMAN REVIEW
+ROW	Design Freeze	FALSE
+P	Design Freeze
+P	FALSE
+P	admin:DB-01 · Source Table 2
+ROW	優先序	來源	作用範圍
+P	優先序
+P	來源
+P	作用範圍
+ROW	1	ACPOS_CURRENT_AUTHORITY_MANIFEST	決定 Current authority set
+P	1
+P	ACPOS_CURRENT_AUTHORITY_MANIFEST
+P	決定 Current authority set
+ROW	2	GLOBAL_HOME_SHELL_TEMPLATE_AUTHORITY V1.9	58px fixed Header、64px collapsed sidebar、221px overlay
+P	2
+P	GLOBAL_HOME_SHELL_TEMPLATE_AUTHORITY V1.9
+P	58px fixed Header、64px collapsed sidebar、221px overlay
+ROW	3	GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY V1.0	科技紫 token / control state / accessibility
+P	3
+P	GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY V1.0
+P	科技紫 token / control state / accessibility
+ROW	4	authority/pages/admin/DB-01/ACPOS_DB-01_FINAL_LOCKED_ENCODING.yaml	DB-01 page UX/business/registry authority
+P	4
+P	authority/pages/admin/DB-01/ACPOS_DB-01_FINAL_LOCKED_ENCODING.yaml
+P	DB-01 page UX/business/registry authority
+ROW	5	本 Word	UI candidate + Mother Basic Design construction reference
+P	5
+P	本 Word
+P	UI candidate + Mother Basic Design construction reference
+P	admin:DB-01 · Source Table 3
+ROW	Artifact	Count
+P	Artifact
+P	Count
+ROW	Sections	10
+P	Sections
+P	10
+ROW	Visual Regions	10
+P	Visual Regions
+P	10
+ROW	Components	12
+P	Components
+P	12
+ROW	Controls	49
+P	Controls
+P	49
+ROW	Actions	15
+P	Actions
+P	15
+ROW	Gates	9
+P	Gates
+P	9
+ROW	Permissions	5
+P	Permissions
+P	5
+ROW	Objects/Refs	8
+P	Objects/Refs
+P	8
+ROW	Errors	10
+P	Errors
+P	10
+ROW	Page States	8
+P	Page States
+P	8
+ROW	Stages / Transitions	5 / 4
+P	Stages / Transitions
+P	5 / 4
+ROW	Integration Ports	7
+P	Integration Ports
+P	7
+P	admin:DB-01 · Source Table 4
+ROW	Object UID	Entity	Required Content
+P	Object UID
+P	Entity
+P	Required Content
+ROW	DB-01-OBJ-ENTITY	DatabaseEntityRef	entity_id/name + owner_service + aggregate/table + classification + current schema ref
+P	DB-01-OBJ-ENTITY
+P	DatabaseEntityRef
+P	entity_id/name + owner_service + aggregate/table + classification + current schema ref
+ROW	DB-01-OBJ-SCHEMA	SchemaMetadata	table/aggregate + columns + PK/FK + constraints + indexes + version rules
+P	DB-01-OBJ-SCHEMA
+P	SchemaMetadata
+P	table/aggregate + columns + PK/FK + constraints + indexes + version rules
+ROW	DB-01-OBJ-RELATION	RelationRef	source entity/ref + relation type + exact target entity/ref + FK/typed ref metadata
+P	DB-01-OBJ-RELATION
+P	RelationRef
+P	source entity/ref + relation type + exact target entity/ref + FK/typed ref metadata
+ROW	DB-01-OBJ-VERSION	VersionLineageRef	version_id/status + source_version_ref + hash/checksum + actor/reason/review/audit
+P	DB-01-OBJ-VERSION
+P	VersionLineageRef
+P	version_id/status + source_version_ref + hash/checksum + actor/reason/review/audit
+ROW	DB-01-OBJ-TRACE	TraceabilityPath	Project/Mother/Topic/Child/Boundary/Bridge/source/task/job/output/QA/release exact refs
+P	DB-01-OBJ-TRACE
+P	TraceabilityPath
+P	Project/Mother/Topic/Child/Boundary/Bridge/source/task/job/output/QA/release exact refs
+ROW	DB-01-OBJ-MIGRATION	SchemaMigrationHistory	migration_id + checksum + approval_ref + dependency/bootstrap + applied_by/at + status
+P	DB-01-OBJ-MIGRATION
+P	SchemaMigrationHistory
+P	migration_id + checksum + approval_ref + dependency/bootstrap + applied_by/at + status
+ROW	DB-01-OBJ-INTEGRITY	DatabaseIntegrityFinding	check_id/type + affected exact refs + severity/status + reason + evidence + owner route
+P	DB-01-OBJ-INTEGRITY
+P	DatabaseIntegrityFinding
+P	check_id/type + affected exact refs + severity/status + reason + evidence + owner route
+ROW	DB-01-OBJ-AUDIT	AuditCorrelationTrace	actor + event + correlation/causation + entity/version + before/after ref + timestamp
+P	DB-01-OBJ-AUDIT
+P	AuditCorrelationTrace
+P	actor + event + correlation/causation + entity/version + before/after ref + timestamp
+P	admin:DB-01 · Source Table 5
+ROW	Group	Current Entities
+P	Group
+P	Current Entities
+ROW	CANON	Project; ProjectStructureVersion / Mother Structure Version; StoryCoreVersion; WorldBibleVersion; ChapterArchitectureVersion; DNAVersion
+P	CANON
+P	Project; ProjectStructureVersion / Mother Structure Version; StoryCoreVersion; WorldBibleVersion; ChapterArchitectureVersion; DNAVersion
+ROW	TOPIC_PRODUCTION	ProductionTopic; TopicBlueprintVersion / Child Blueprint Version; Boundary; ContinuityBridge; CanonicalScriptVersion
+P	TOPIC_PRODUCTION
+P	ProductionTopic; TopicBlueprintVersion / Child Blueprint Version; Boundary; ContinuityBridge; CanonicalScriptVersion
+ROW	RUNTIME	WorkPackage; DepartmentTask; ProviderJob; AssetOutputVersion; VideoOutputVersion; EditingOutputVersion; QAReviewRun
+P	RUNTIME
+P	WorkPackage; DepartmentTask; ProviderJob; AssetOutputVersion; VideoOutputVersion; EditingOutputVersion; QAReviewRun
+ROW	GOVERNANCE	DecisionAtom; Scorecard; Finding; CorrectionRequest; ManualReviewCase; QAGateDecision; ReleasePackage; AuditEvent
+P	GOVERNANCE
+P	DecisionAtom; Scorecard; Finding; CorrectionRequest; ManualReviewCase; QAGateDecision; ReleasePackage; AuditEvent
+ROW	SYSTEM	AccountPermissionAssignment; SchemaMigrationHistory; Outbox/Inbox; Experience / Strategic Context refs
+P	SYSTEM
+P	AccountPermissionAssignment; SchemaMigrationHistory; Outbox/Inbox; Experience / Strategic Context refs
+P	admin:DB-01 · Source Table 7
+ROW	Journey	User Intent	Required Gate / Boundary
+P	Journey
+P	User Intent
+P	Required Gate / Boundary
+ROW	Inspect Schema	選擇 registered Entity/Table，查看 metadata / columns / constraints / indexes	DB-01-GATE-ENTITY + DB-01-GATE-SCHEMA
+P	Inspect Schema
+P	選擇 registered Entity/Table，查看 metadata / columns / constraints / indexes
+P	DB-01-GATE-ENTITY + DB-01-GATE-SCHEMA
+ROW	Open Relation	從 exact relation graph/list 打開 typed target ref	DB-01-GATE-RELATION
+P	Open Relation
+P	從 exact relation graph/list 打開 typed target ref
+P	DB-01-GATE-RELATION
+ROW	Trace Lineage	以 source_type + exact source_id/version 追溯 canonical path	DB-01-GATE-TRACE
+P	Trace Lineage
+P	以 source_type + exact source_id/version 追溯 canonical path
+P	DB-01-GATE-TRACE
+ROW	Inspect Migration	查看 migration ID/checksum/approval/dependency/status	DB-01-GATE-MIGRATION
+P	Inspect Migration
+P	查看 migration ID/checksum/approval/dependency/status
+P	DB-01-GATE-MIGRATION
+ROW	Inspect Integrity	查看 FK/ref/orphan/version/scope/checksum finding	DB-01-GATE-INTEGRITY
+P	Inspect Integrity
+P	查看 FK/ref/orphan/version/scope/checksum finding
+P	DB-01-GATE-INTEGRITY
+ROW	Audit Trace	以 correlation/entity/version ref 讀取 actor/event/causation	DB-01-GATE-AUDIT
+P	Audit Trace
+P	以 correlation/entity/version ref 讀取 actor/event/causation
+P	DB-01-GATE-AUDIT
+ROW	Request Change	由 DB-01 導向 System Lifecycle / Change Management	UI navigation only; NO DB mutation
+P	Request Change
+P	由 DB-01 導向 System Lifecycle / Change Management
+P	UI navigation only; NO DB mutation
+P	admin:DB-01 · Source Table 8
+ROW	區域	責任	Hard Boundary
+P	區域
+P	責任
+P	Hard Boundary
+ROW	Context / Schema Head	Environment / schema head / migration head / scope / integrity	Read-only; exact authorized context
+P	Context / Schema Head
+P	Environment / schema head / migration head / scope / integrity
+P	Read-only; exact authorized context
+ROW	Entity Explorer	Search/filter/select registered domain/entity/table	No database-name guessing
+P	Entity Explorer
+P	Search/filter/select registered domain/entity/table
+P	No database-name guessing
+ROW	Schema Inspector	Metadata + columns + constraints + indexes	No Row Editor / no DDL
+P	Schema Inspector
+P	Metadata + columns + constraints + indexes
+P	No Row Editor / no DDL
+ROW	Relation Graph	Typed FK/ref relation nodes	No relation inference from naming
+P	Relation Graph
+P	Typed FK/ref relation nodes
+P	No relation inference from naming
+ROW	Traceability Path	Exact canonical lineage	No latest/current/default
+P	Traceability Path
+P	Exact canonical lineage
+P	No latest/current/default
+ROW	Integrity Status	Integrity summary	No silent repair
+P	Integrity Status
+P	Integrity summary
+P	No silent repair
+ROW	Migration History	Read migration history/checksum/dependency/status	No execute/rollback
+P	Migration History
+P	Read migration history/checksum/dependency/status
+P	No execute/rollback
+ROW	Findings	Broken/orphan/mismatch detail + repair owner route	No direct production repair
+P	Findings
+P	Broken/orphan/mismatch detail + repair owner route
+P	No direct production repair
+ROW	Audit	Actor/event/correlation/causation lineage	Read permitted trace only
+P	Audit
+P	Actor/event/correlation/causation lineage
+P	Read permitted trace only
+ROW	Status / Boundary	Disabled reason + System Lifecycle route	All mutations leave DB-01
+P	Status / Boundary
+P	Disabled reason + System Lifecycle route
+P	All mutations leave DB-01
+P	admin:DB-01 · Source Table 9
+ROW	Stage UID	Stage	Flow
+P	Stage UID
+P	Stage
+P	Flow
+ROW	DB-01-STAGE-01-CONTEXT	Resolve Context	Resolve environment/schema head/authorized scope
+P	DB-01-STAGE-01-CONTEXT
+P	Resolve Context
+P	Resolve environment/schema head/authorized scope
+ROW	DB-01-STAGE-02-INSPECT	Inspect Schema	Select registered entity -> schema/columns/constraints/indexes/relations
+P	DB-01-STAGE-02-INSPECT
+P	Inspect Schema
+P	Select registered entity -> schema/columns/constraints/indexes/relations
+ROW	DB-01-STAGE-03-TRACE	Trace Lineage	Exact source -> Mother/Topic/Child/Boundary/Bridge/Input/Output/QA/Audit path
+P	DB-01-STAGE-03-TRACE
+P	Trace Lineage
+P	Exact source -> Mother/Topic/Child/Boundary/Bridge/Input/Output/QA/Audit path
+ROW	DB-01-STAGE-04-INTEGRITY	Integrity / Migration	Read integrity finding + migration history/checksum/dependencies
+P	DB-01-STAGE-04-INTEGRITY
+P	Integrity / Migration
+P	Read integrity finding + migration history/checksum/dependencies
+ROW	DB-01-STAGE-05-AUDIT	Audit / Route Change	Read audit/correlation; mutation requests route to System Lifecycle / Change Management
+P	DB-01-STAGE-05-AUDIT
+P	Audit / Route Change
+P	Read audit/correlation; mutation requests route to System Lifecycle / Change Management
+P	admin:DB-01 · Source Table 10
+ROW	Transition	From	To	Trigger	Gate
+P	Transition
+P	From
+P	To
+P	Trigger
+P	Gate
+ROW	DB-01-STTR-01	DB-01-STAGE-01-CONTEXT	DB-01-STAGE-02-INSPECT	select registered entity	DB-01-GATE-ENTITY
+P	DB-01-STTR-01
+P	DB-01-STAGE-01-CONTEXT
+P	DB-01-STAGE-02-INSPECT
+P	select registered entity
+P	DB-01-GATE-ENTITY
+ROW	DB-01-STTR-02	DB-01-STAGE-02-INSPECT	DB-01-STAGE-03-TRACE	trace source selected	DB-01-GATE-TRACE
+P	DB-01-STTR-02
+P	DB-01-STAGE-02-INSPECT
+P	DB-01-STAGE-03-TRACE
+P	trace source selected
+P	DB-01-GATE-TRACE
+ROW	DB-01-STTR-03	DB-01-STAGE-03-TRACE	DB-01-STAGE-04-INTEGRITY	trace/integrity context resolved	DB-01-GATE-INTEGRITY
+P	DB-01-STTR-03
+P	DB-01-STAGE-03-TRACE
+P	DB-01-STAGE-04-INTEGRITY
+P	trace/integrity context resolved
+P	DB-01-GATE-INTEGRITY
+ROW	DB-01-STTR-04	DB-01-STAGE-04-INTEGRITY	DB-01-STAGE-05-AUDIT	audit/correlation ref selected	DB-01-GATE-AUDIT
+P	DB-01-STTR-04
+P	DB-01-STAGE-04-INTEGRITY
+P	DB-01-STAGE-05-AUDIT
+P	audit/correlation ref selected
+P	DB-01-GATE-AUDIT
+P	admin:DB-01 · Source Table 11
+ROW	Action UID	Label	Permission	Gate	Effect	Query / Route
+P	Action UID
+P	Label
+P	Permission
+P	Gate
+P	Effect
+P	Query / Route
+ROW	DB-01-ACT-NOOP	Read display	DB_READ	DB-01-GATE-PAGE	UI_ONLY	—
+P	DB-01-ACT-NOOP
+P	Read display
+P	DB_READ
+P	DB-01-GATE-PAGE
+P	UI_ONLY
+P	—
+ROW	DB-01-ACT-CONTEXT	Set DB context	DB_READ	DB-01-GATE-PAGE	CONTEXT_STATE	—
+P	DB-01-ACT-CONTEXT
+P	Set DB context
+P	DB_READ
+P	DB-01-GATE-PAGE
+P	CONTEXT_STATE
+P	—
+ROW	DB-01-ACT-SEARCH	Search entity/table	DB_READ	DB-01-GATE-PAGE	READ_MODEL_QUERY	DatabaseReadModel.list_entities
+P	DB-01-ACT-SEARCH
+P	Search entity/table
+P	DB_READ
+P	DB-01-GATE-PAGE
+P	READ_MODEL_QUERY
+P	DatabaseReadModel.list_entities
+ROW	DB-01-ACT-FILTER	Filter domain/type/state	DB_READ	DB-01-GATE-PAGE	UI_ONLY	—
+P	DB-01-ACT-FILTER
+P	Filter domain/type/state
+P	DB_READ
+P	DB-01-GATE-PAGE
+P	UI_ONLY
+P	—
+ROW	DB-01-ACT-ENTITY-SELECT	Open entity schema	DB_READ	DB-01-GATE-ENTITY	CONTEXT_STATE	—
+P	DB-01-ACT-ENTITY-SELECT
+P	Open entity schema
+P	DB_READ
+P	DB-01-GATE-ENTITY
+P	CONTEXT_STATE
+P	—
+ROW	DB-01-ACT-SCHEMA-REFRESH	Refresh schema metadata	DB_READ	DB-01-GATE-SCHEMA	READ_MODEL_QUERY	DatabaseReadModel.get_entity_schema
+P	DB-01-ACT-SCHEMA-REFRESH
+P	Refresh schema metadata
+P	DB_READ
+P	DB-01-GATE-SCHEMA
+P	READ_MODEL_QUERY
+P	DatabaseReadModel.get_entity_schema
+ROW	DB-01-ACT-RELATION-OPEN	Open exact relation	DB_TRACE	DB-01-GATE-RELATION	CONTEXT_STATE	—
+P	DB-01-ACT-RELATION-OPEN
+P	Open exact relation
+P	DB_TRACE
+P	DB-01-GATE-RELATION
+P	CONTEXT_STATE
+P	—
+ROW	DB-01-ACT-RELATION-MODE	Graph / List view	DB_READ	DB-01-GATE-SCHEMA	UI_ONLY	—
+P	DB-01-ACT-RELATION-MODE
+P	Graph / List view
+P	DB_READ
+P	DB-01-GATE-SCHEMA
+P	UI_ONLY
+P	—
+ROW	DB-01-ACT-TRACE	Trace exact lineage	DB_TRACE	DB-01-GATE-TRACE	READ_MODEL_QUERY	TraceabilityReadModel.trace_entity_lineage
+P	DB-01-ACT-TRACE
+P	Trace exact lineage
+P	DB_TRACE
+P	DB-01-GATE-TRACE
+P	READ_MODEL_QUERY
+P	TraceabilityReadModel.trace_entity_lineage
+ROW	DB-01-ACT-MIGRATION-SELECT	Open migration detail	DB_MIGRATION_READ	DB-01-GATE-MIGRATION	CONTEXT_STATE	—
+P	DB-01-ACT-MIGRATION-SELECT
+P	Open migration detail
+P	DB_MIGRATION_READ
+P	DB-01-GATE-MIGRATION
+P	CONTEXT_STATE
+P	—
+ROW	DB-01-ACT-MIGRATION-REFRESH	Refresh migration history	DB_MIGRATION_READ	DB-01-GATE-MIGRATION	READ_MODEL_QUERY	MigrationReadModel.list_history
+P	DB-01-ACT-MIGRATION-REFRESH
+P	Refresh migration history
+P	DB_MIGRATION_READ
+P	DB-01-GATE-MIGRATION
+P	READ_MODEL_QUERY
+P	MigrationReadModel.list_history
+ROW	DB-01-ACT-FINDING-SELECT	Open integrity finding	DB_INTEGRITY_READ	DB-01-GATE-INTEGRITY	CONTEXT_STATE	—
+P	DB-01-ACT-FINDING-SELECT
+P	Open integrity finding
+P	DB_INTEGRITY_READ
+P	DB-01-GATE-INTEGRITY
+P	CONTEXT_STATE
+P	—
+ROW	DB-01-ACT-INTEGRITY-REFRESH	Refresh integrity status	DB_INTEGRITY_READ	DB-01-GATE-INTEGRITY	READ_MODEL_QUERY	DatabaseIntegrityReadModel.list_findings
+P	DB-01-ACT-INTEGRITY-REFRESH
+P	Refresh integrity status
+P	DB_INTEGRITY_READ
+P	DB-01-GATE-INTEGRITY
+P	READ_MODEL_QUERY
+P	DatabaseIntegrityReadModel.list_findings
+ROW	DB-01-ACT-AUDIT-OPEN	Open audit/correlation trace	DB_AUDIT_READ	DB-01-GATE-AUDIT	READ_MODEL_QUERY	AuditReadModel.trace
+P	DB-01-ACT-AUDIT-OPEN
+P	Open audit/correlation trace
+P	DB_AUDIT_READ
+P	DB-01-GATE-AUDIT
+P	READ_MODEL_QUERY
+P	AuditReadModel.trace
+ROW	DB-01-ACT-SYSTEM-LIFECYCLE	Open System Lifecycle change route	DB_READ	DB-01-GATE-PAGE	UI_ONLY	UI_NAVIGATION_ONLY
+P	DB-01-ACT-SYSTEM-LIFECYCLE
+P	Open System Lifecycle change route
+P	DB_READ
+P	DB-01-GATE-PAGE
+P	UI_ONLY
+P	UI_NAVIGATION_ONLY
+P	admin:DB-01 · Source Table 12
+ROW	Section UID	Name	Responsibility	Visual
+P	Section UID
+P	Name
+P	Responsibility
+P	Visual
+ROW	DB-01-SEC-01	Context / Schema Head	Environment, schema/migration head, selected scope and data health	DB-01-VIS-CONTEXT
+P	DB-01-SEC-01
+P	Context / Schema Head
+P	Environment, schema/migration head, selected scope and data health
+P	DB-01-VIS-CONTEXT
+ROW	DB-01-SEC-02	Entity Explorer	Domain/Entity/Table search, filter and exact selection	DB-01-VIS-LEFT
+P	DB-01-SEC-02
+P	Entity Explorer
+P	Domain/Entity/Table search, filter and exact selection
+P	DB-01-VIS-LEFT
+ROW	DB-01-SEC-03	Schema Inspector	Entity/table/aggregate metadata, columns, constraints and indexes	DB-01-VIS-SCHEMA
+P	DB-01-SEC-03
+P	Schema Inspector
+P	Entity/table/aggregate metadata, columns, constraints and indexes
+P	DB-01-VIS-SCHEMA
+ROW	DB-01-SEC-04	Relation Graph	FK/typed refs, parent-child/version relations and exact clickable nodes	DB-01-VIS-RELATION
+P	DB-01-SEC-04
+P	Relation Graph
+P	FK/typed refs, parent-child/version relations and exact clickable nodes
+P	DB-01-VIS-RELATION
+ROW	DB-01-SEC-05	Traceability Path	Mother/Child/Topic/Boundary/Bridge/Source lineage from any registered object	DB-01-VIS-TRACE
+P	DB-01-SEC-05
+P	Traceability Path
+P	Mother/Child/Topic/Boundary/Bridge/Source lineage from any registered object
+P	DB-01-VIS-TRACE
+ROW	DB-01-SEC-06	Integrity Status	Reference/version/orphan/scope/checksum integrity summary	DB-01-VIS-RIGHT
+P	DB-01-SEC-06
+P	Integrity Status
+P	Reference/version/orphan/scope/checksum integrity summary
+P	DB-01-VIS-RIGHT
+ROW	DB-01-SEC-07	Migration History	Migration ID/checksum/approval/dependency/status; read-only	DB-01-VIS-MIGRATION
+P	DB-01-SEC-07
+P	Migration History
+P	Migration ID/checksum/approval/dependency/status; read-only
+P	DB-01-VIS-MIGRATION
+ROW	DB-01-SEC-08	Integrity Findings	Broken/orphan/mismatch findings and affected exact refs	DB-01-VIS-FINDING
+P	DB-01-SEC-08
+P	Integrity Findings
+P	Broken/orphan/mismatch findings and affected exact refs
+P	DB-01-VIS-FINDING
+ROW	DB-01-SEC-09	Audit / Correlation	Actor/event/correlation/causation/change lineage	DB-01-VIS-AUDIT
+P	DB-01-SEC-09
+P	Audit / Correlation
+P	Actor/event/correlation/causation/change lineage
+P	DB-01-VIS-AUDIT
+ROW	DB-01-SEC-10	Status / Boundary	Page state, disabled reason, source sync, System Lifecycle route	DB-01-VIS-STATUS
+P	DB-01-SEC-10
+P	Status / Boundary
+P	Page state, disabled reason, source sync, System Lifecycle route
+P	DB-01-VIS-STATUS
+P	admin:DB-01 · Source Table 13
+ROW	Component UID	Section	Name
+P	Component UID
+P	Section
+P	Name
+ROW	DB-01-CMP-CONTEXT	DB-01-SEC-01	Database Context / Schema Head
+P	DB-01-CMP-CONTEXT
+P	DB-01-SEC-01
+P	Database Context / Schema Head
+ROW	DB-01-CMP-EXPLORER	DB-01-SEC-02	Domain / Entity Explorer
+P	DB-01-CMP-EXPLORER
+P	DB-01-SEC-02
+P	Domain / Entity Explorer
+ROW	DB-01-CMP-SCHEMA	DB-01-SEC-03	Schema Metadata Inspector
+P	DB-01-CMP-SCHEMA
+P	DB-01-SEC-03
+P	Schema Metadata Inspector
+ROW	DB-01-CMP-COLUMNS	DB-01-SEC-03	Columns / Constraints / Indexes
+P	DB-01-CMP-COLUMNS
+P	DB-01-SEC-03
+P	Columns / Constraints / Indexes
+ROW	DB-01-CMP-RELATIONS	DB-01-SEC-04	Relations / Reference Graph
+P	DB-01-CMP-RELATIONS
+P	DB-01-SEC-04
+P	Relations / Reference Graph
+ROW	DB-01-CMP-TRACE-INPUT	DB-01-SEC-05	Trace Source Selector
+P	DB-01-CMP-TRACE-INPUT
+P	DB-01-SEC-05
+P	Trace Source Selector
+ROW	DB-01-CMP-TRACE-PATH	DB-01-SEC-05	Exact Lineage Path Viewer
+P	DB-01-CMP-TRACE-PATH
+P	DB-01-SEC-05
+P	Exact Lineage Path Viewer
+ROW	DB-01-CMP-INTEGRITY	DB-01-SEC-06	Integrity / Version Summary
+P	DB-01-CMP-INTEGRITY
+P	DB-01-SEC-06
+P	Integrity / Version Summary
+ROW	DB-01-CMP-MIGRATION	DB-01-SEC-07	Migration History
+P	DB-01-CMP-MIGRATION
+P	DB-01-SEC-07
+P	Migration History
+ROW	DB-01-CMP-FINDINGS	DB-01-SEC-08	Integrity Finding List / Detail
+P	DB-01-CMP-FINDINGS
+P	DB-01-SEC-08
+P	Integrity Finding List / Detail
+ROW	DB-01-CMP-AUDIT	DB-01-SEC-09	Audit / Correlation Trace
+P	DB-01-CMP-AUDIT
+P	DB-01-SEC-09
+P	Audit / Correlation Trace
+ROW	DB-01-CMP-STATUS	DB-01-SEC-10	Page Status / System Lifecycle Boundary
+P	DB-01-CMP-STATUS
+P	DB-01-SEC-10
+P	Page Status / System Lifecycle Boundary
+P	admin:DB-01 · Source Table 14
+ROW	Control UID	Sec/Cmp	Type / Label	Action	Gate	Permission
+P	Control UID
+P	Sec/Cmp
+P	Type / Label
+P	Action
+P	Gate
+P	Permission
+ROW	DB-01-FLD-ENV	SEC-01/CONTEXT	READONLY / Environment	DB-01-ACT-NOOP	DB-01-GATE-PAGE	DB_READ
+P	DB-01-FLD-ENV
+P	SEC-01/CONTEXT
+P	READONLY / Environment
+P	DB-01-ACT-NOOP
+P	DB-01-GATE-PAGE
+P	DB_READ
+ROW	DB-01-FLD-SCHEMA-HEAD	SEC-01/CONTEXT	READONLY / Schema Head	DB-01-ACT-NOOP	DB-01-GATE-PAGE	DB_READ
+P	DB-01-FLD-SCHEMA-HEAD
+P	SEC-01/CONTEXT
+P	READONLY / Schema Head
+P	DB-01-ACT-NOOP
+P	DB-01-GATE-PAGE
+P	DB_READ
+ROW	DB-01-FLD-MIGRATION-HEAD	SEC-01/CONTEXT	READONLY / Migration Head	DB-01-ACT-NOOP	DB-01-GATE-PAGE	DB_READ
+P	DB-01-FLD-MIGRATION-HEAD
+P	SEC-01/CONTEXT
+P	READONLY / Migration Head
+P	DB-01-ACT-NOOP
+P	DB-01-GATE-PAGE
+P	DB_READ
+ROW	DB-01-FLD-SCOPE	SEC-01/CONTEXT	READONLY / Authorized Scope	DB-01-ACT-NOOP	DB-01-GATE-PAGE	DB_READ
+P	DB-01-FLD-SCOPE
+P	SEC-01/CONTEXT
+P	READONLY / Authorized Scope
+P	DB-01-ACT-NOOP
+P	DB-01-GATE-PAGE
+P	DB_READ
+ROW	DB-01-FLD-HEALTH	SEC-01/CONTEXT	READONLY / Data Integrity	DB-01-ACT-NOOP	DB-01-GATE-PAGE	DB_READ
+P	DB-01-FLD-HEALTH
+P	SEC-01/CONTEXT
+P	READONLY / Data Integrity
+P	DB-01-ACT-NOOP
+P	DB-01-GATE-PAGE
+P	DB_READ
+ROW	DB-01-BTN-REFRESH	SEC-01/CONTEXT	BUTTON / 重新整理 / Refresh	DB-01-ACT-SCHEMA-REFRESH	DB-01-GATE-CONTEXT	DB_READ
+P	DB-01-BTN-REFRESH
+P	SEC-01/CONTEXT
+P	BUTTON / 重新整理 / Refresh
+P	DB-01-ACT-SCHEMA-REFRESH
+P	DB-01-GATE-CONTEXT
+P	DB_READ
+ROW	DB-01-INP-SEARCH	SEC-02/EXPLORER	SEARCH / 搜尋 Entity / Table	DB-01-ACT-SEARCH	DB-01-GATE-PAGE	DB_READ
+P	DB-01-INP-SEARCH
+P	SEC-02/EXPLORER
+P	SEARCH / 搜尋 Entity / Table
+P	DB-01-ACT-SEARCH
+P	DB-01-GATE-PAGE
+P	DB_READ
+ROW	DB-01-SEL-DOMAIN	SEC-02/EXPLORER	SELECT / Domain	DB-01-ACT-FILTER	DB-01-GATE-PAGE	DB_READ
+P	DB-01-SEL-DOMAIN
+P	SEC-02/EXPLORER
+P	SELECT / Domain
+P	DB-01-ACT-FILTER
+P	DB-01-GATE-PAGE
+P	DB_READ
+ROW	DB-01-SEL-ENTITY-TYPE	SEC-02/EXPLORER	SELECT / Entity Type	DB-01-ACT-FILTER	DB-01-GATE-PAGE	DB_READ
+P	DB-01-SEL-ENTITY-TYPE
+P	SEC-02/EXPLORER
+P	SELECT / Entity Type
+P	DB-01-ACT-FILTER
+P	DB-01-GATE-PAGE
+P	DB_READ
+ROW	DB-01-LIST-ENTITIES	SEC-02/EXPLORER	LIST / Entity / Table Explorer	DB-01-ACT-ENTITY-SELECT	DB-01-GATE-ENTITY	DB_READ
+P	DB-01-LIST-ENTITIES
+P	SEC-02/EXPLORER
+P	LIST / Entity / Table Explorer
+P	DB-01-ACT-ENTITY-SELECT
+P	DB-01-GATE-ENTITY
+P	DB_READ
+ROW	DB-01-FLD-ENTITY	SEC-03/SCHEMA	READONLY / Entity / Aggregate	DB-01-ACT-NOOP	DB-01-GATE-SCHEMA	DB_READ
+P	DB-01-FLD-ENTITY
+P	SEC-03/SCHEMA
+P	READONLY / Entity / Aggregate
+P	DB-01-ACT-NOOP
+P	DB-01-GATE-SCHEMA
+P	DB_READ
+ROW	DB-01-FLD-TABLE	SEC-03/SCHEMA	READONLY / Table	DB-01-ACT-NOOP	DB-01-GATE-SCHEMA	DB_READ
+P	DB-01-FLD-TABLE
+P	SEC-03/SCHEMA
+P	READONLY / Table
+P	DB-01-ACT-NOOP
+P	DB-01-GATE-SCHEMA
+P	DB_READ
+ROW	DB-01-FLD-OWNER	SEC-03/SCHEMA	READONLY / Owner Service	DB-01-ACT-NOOP	DB-01-GATE-SCHEMA	DB_READ
+P	DB-01-FLD-OWNER
+P	SEC-03/SCHEMA
+P	READONLY / Owner Service
+P	DB-01-ACT-NOOP
+P	DB-01-GATE-SCHEMA
+P	DB_READ
+ROW	DB-01-FLD-CLASSIFICATION	SEC-03/SCHEMA	READONLY / Data Classification	DB-01-ACT-NOOP	DB-01-GATE-SCHEMA	DB_READ
+P	DB-01-FLD-CLASSIFICATION
+P	SEC-03/SCHEMA
+P	READONLY / Data Classification
+P	DB-01-ACT-NOOP
+P	DB-01-GATE-SCHEMA
+P	DB_READ
+ROW	DB-01-FLD-PK	SEC-03/SCHEMA	READONLY / Primary Key	DB-01-ACT-NOOP	DB-01-GATE-SCHEMA	DB_READ
+P	DB-01-FLD-PK
+P	SEC-03/SCHEMA
+P	READONLY / Primary Key
+P	DB-01-ACT-NOOP
+P	DB-01-GATE-SCHEMA
+P	DB_READ
+ROW	DB-01-FLD-VERSION-RULE	SEC-03/SCHEMA	READONLY / Version Rule	DB-01-ACT-NOOP	DB-01-GATE-SCHEMA	DB_READ
+P	DB-01-FLD-VERSION-RULE
+P	SEC-03/SCHEMA
+P	READONLY / Version Rule
+P	DB-01-ACT-NOOP
+P	DB-01-GATE-SCHEMA
+P	DB_READ
+ROW	DB-01-TBL-COLUMNS	SEC-03/COLUMNS	TABLE / Columns / Type / Nullable / Default	DB-01-ACT-NOOP	DB-01-GATE-SCHEMA	DB_READ
+P	DB-01-TBL-COLUMNS
+P	SEC-03/COLUMNS
+P	TABLE / Columns / Type / Nullable / Default
+P	DB-01-ACT-NOOP
+P	DB-01-GATE-SCHEMA
+P	DB_READ
+ROW	DB-01-TBL-CONSTRAINTS	SEC-03/COLUMNS	TABLE / Constraints / Indexes	DB-01-ACT-NOOP	DB-01-GATE-SCHEMA	DB_READ
+P	DB-01-TBL-CONSTRAINTS
+P	SEC-03/COLUMNS
+P	TABLE / Constraints / Indexes
+P	DB-01-ACT-NOOP
+P	DB-01-GATE-SCHEMA
+P	DB_READ
+ROW	DB-01-BTN-SCHEMA-REFRESH	SEC-03/SCHEMA	BUTTON / 重新讀取 Schema	DB-01-ACT-SCHEMA-REFRESH	DB-01-GATE-SCHEMA	DB_READ
+P	DB-01-BTN-SCHEMA-REFRESH
+P	SEC-03/SCHEMA
+P	BUTTON / 重新讀取 Schema
+P	DB-01-ACT-SCHEMA-REFRESH
+P	DB-01-GATE-SCHEMA
+P	DB_READ
+ROW	DB-01-TOGGLE-RELATION-VIEW	SEC-04/RELATIONS	TOGGLE / Graph / List	DB-01-ACT-RELATION-MODE	DB-01-GATE-SCHEMA	DB_READ
+P	DB-01-TOGGLE-RELATION-VIEW
+P	SEC-04/RELATIONS
+P	TOGGLE / Graph / List
+P	DB-01-ACT-RELATION-MODE
+P	DB-01-GATE-SCHEMA
+P	DB_READ
+ROW	DB-01-GRAPH-RELATIONS	SEC-04/RELATIONS	GRAPH / Exact Relation Graph	DB-01-ACT-RELATION-OPEN	DB-01-GATE-RELATION	DB_TRACE
+P	DB-01-GRAPH-RELATIONS
+P	SEC-04/RELATIONS
+P	GRAPH / Exact Relation Graph
+P	DB-01-ACT-RELATION-OPEN
+P	DB-01-GATE-RELATION
+P	DB_TRACE
+ROW	DB-01-LIST-RELATIONS	SEC-04/RELATIONS	LIST / Relation List	DB-01-ACT-RELATION-OPEN	DB-01-GATE-RELATION	DB_TRACE
+P	DB-01-LIST-RELATIONS
+P	SEC-04/RELATIONS
+P	LIST / Relation List
+P	DB-01-ACT-RELATION-OPEN
+P	DB-01-GATE-RELATION
+P	DB_TRACE
+ROW	DB-01-SEL-TRACE-TYPE	SEC-05/TRACE	SELECT / Trace Source Type	DB-01-ACT-CONTEXT	DB-01-GATE-PAGE	DB_TRACE
+P	DB-01-SEL-TRACE-TYPE
+P	SEC-05/TRACE
+P	SELECT / Trace Source Type
+P	DB-01-ACT-CONTEXT
+P	DB-01-GATE-PAGE
+P	DB_TRACE
+ROW	DB-01-INP-TRACE-ID	SEC-05/TRACE	REFERENCE / Exact Source ID / Version	DB-01-ACT-CONTEXT	DB-01-GATE-PAGE	DB_TRACE
+P	DB-01-INP-TRACE-ID
+P	SEC-05/TRACE
+P	REFERENCE / Exact Source ID / Version
+P	DB-01-ACT-CONTEXT
+P	DB-01-GATE-PAGE
+P	DB_TRACE
+ROW	DB-01-BTN-TRACE	SEC-05/TRACE	PRIMARY_BUTTON / 追溯 / Trace	DB-01-ACT-TRACE	DB-01-GATE-TRACE	DB_TRACE
+P	DB-01-BTN-TRACE
+P	SEC-05/TRACE
+P	PRIMARY_BUTTON / 追溯 / Trace
+P	DB-01-ACT-TRACE
+P	DB-01-GATE-TRACE
+P	DB_TRACE
+ROW	DB-01-VIEW-TRACE-PATH	SEC-05/TRACE	TRACE_VIEW / Exact Lineage Path	DB-01-ACT-RELATION-OPEN	DB-01-GATE-TRACE	DB_TRACE
+P	DB-01-VIEW-TRACE-PATH
+P	SEC-05/TRACE
+P	TRACE_VIEW / Exact Lineage Path
+P	DB-01-ACT-RELATION-OPEN
+P	DB-01-GATE-TRACE
+P	DB_TRACE
+ROW	DB-01-FLD-REF-INTEGRITY	SEC-06/INTEGRITY	READONLY / Reference Integrity	DB-01-ACT-NOOP	DB-01-GATE-INTEGRITY	DB_INTEGRITY_READ
+P	DB-01-FLD-REF-INTEGRITY
+P	SEC-06/INTEGRITY
+P	READONLY / Reference Integrity
+P	DB-01-ACT-NOOP
+P	DB-01-GATE-INTEGRITY
+P	DB_INTEGRITY_READ
+ROW	DB-01-FLD-ORPHAN	SEC-06/INTEGRITY	READONLY / Orphan Status	DB-01-ACT-NOOP	DB-01-GATE-INTEGRITY	DB_INTEGRITY_READ
+P	DB-01-FLD-ORPHAN
+P	SEC-06/INTEGRITY
+P	READONLY / Orphan Status
+P	DB-01-ACT-NOOP
+P	DB-01-GATE-INTEGRITY
+P	DB_INTEGRITY_READ
+ROW	DB-01-FLD-IMMUTABLE	SEC-06/INTEGRITY	READONLY / Version Immutability	DB-01-ACT-NOOP	DB-01-GATE-INTEGRITY	DB_INTEGRITY_READ
+P	DB-01-FLD-IMMUTABLE
+P	SEC-06/INTEGRITY
+P	READONLY / Version Immutability
+P	DB-01-ACT-NOOP
+P	DB-01-GATE-INTEGRITY
+P	DB_INTEGRITY_READ
+ROW	DB-01-FLD-TRACE-COMPLETE	SEC-06/INTEGRITY	READONLY / Trace Completeness	DB-01-ACT-NOOP	DB-01-GATE-INTEGRITY	DB_INTEGRITY_READ
+P	DB-01-FLD-TRACE-COMPLETE
+P	SEC-06/INTEGRITY
+P	READONLY / Trace Completeness
+P	DB-01-ACT-NOOP
+P	DB-01-GATE-INTEGRITY
+P	DB_INTEGRITY_READ
+ROW	DB-01-FLD-MIGRATION-INTEGRITY	SEC-06/INTEGRITY	READONLY / Migration / Checksum	DB-01-ACT-NOOP	DB-01-GATE-INTEGRITY	DB_INTEGRITY_READ
+P	DB-01-FLD-MIGRATION-INTEGRITY
+P	SEC-06/INTEGRITY
+P	READONLY / Migration / Checksum
+P	DB-01-ACT-NOOP
+P	DB-01-GATE-INTEGRITY
+P	DB_INTEGRITY_READ
+ROW	DB-01-BTN-INTEGRITY-REFRESH	SEC-06/INTEGRITY	BUTTON / 重新整理完整性	DB-01-ACT-INTEGRITY-REFRESH	DB-01-GATE-INTEGRITY	DB_INTEGRITY_READ
+P	DB-01-BTN-INTEGRITY-REFRESH
+P	SEC-06/INTEGRITY
+P	BUTTON / 重新整理完整性
+P	DB-01-ACT-INTEGRITY-REFRESH
+P	DB-01-GATE-INTEGRITY
+P	DB_INTEGRITY_READ
+ROW	DB-01-INP-MIGRATION-SEARCH	SEC-07/MIGRATION	SEARCH / Migration ID	DB-01-ACT-MIGRATION-REFRESH	DB-01-GATE-MIGRATION	DB_MIGRATION_READ
+P	DB-01-INP-MIGRATION-SEARCH
+P	SEC-07/MIGRATION
+P	SEARCH / Migration ID
+P	DB-01-ACT-MIGRATION-REFRESH
+P	DB-01-GATE-MIGRATION
+P	DB_MIGRATION_READ
+ROW	DB-01-TBL-MIGRATIONS	SEC-07/MIGRATION	TABLE / Migration History	DB-01-ACT-MIGRATION-SELECT	DB-01-GATE-MIGRATION	DB_MIGRATION_READ
+P	DB-01-TBL-MIGRATIONS
+P	SEC-07/MIGRATION
+P	TABLE / Migration History
+P	DB-01-ACT-MIGRATION-SELECT
+P	DB-01-GATE-MIGRATION
+P	DB_MIGRATION_READ
+ROW	DB-01-BTN-MIGRATION-REFRESH	SEC-07/MIGRATION	BUTTON / 重新整理 Migration	DB-01-ACT-MIGRATION-REFRESH	DB-01-GATE-MIGRATION	DB_MIGRATION_READ
+P	DB-01-BTN-MIGRATION-REFRESH
+P	SEC-07/MIGRATION
+P	BUTTON / 重新整理 Migration
+P	DB-01-ACT-MIGRATION-REFRESH
+P	DB-01-GATE-MIGRATION
+P	DB_MIGRATION_READ
+ROW	DB-01-SEL-FINDING-TYPE	SEC-08/FINDINGS	SELECT / Integrity Finding Type	DB-01-ACT-FILTER	DB-01-GATE-INTEGRITY	DB_INTEGRITY_READ
+P	DB-01-SEL-FINDING-TYPE
+P	SEC-08/FINDINGS
+P	SELECT / Integrity Finding Type
+P	DB-01-ACT-FILTER
+P	DB-01-GATE-INTEGRITY
+P	DB_INTEGRITY_READ
+ROW	DB-01-LIST-FINDINGS	SEC-08/FINDINGS	LIST / Integrity Findings	DB-01-ACT-FINDING-SELECT	DB-01-GATE-INTEGRITY	DB_INTEGRITY_READ
+P	DB-01-LIST-FINDINGS
+P	SEC-08/FINDINGS
+P	LIST / Integrity Findings
+P	DB-01-ACT-FINDING-SELECT
+P	DB-01-GATE-INTEGRITY
+P	DB_INTEGRITY_READ
+ROW	DB-01-FLD-FINDING-REASON	SEC-08/FINDINGS	READONLY / Reason	DB-01-ACT-NOOP	DB-01-GATE-INTEGRITY	DB_INTEGRITY_READ
+P	DB-01-FLD-FINDING-REASON
+P	SEC-08/FINDINGS
+P	READONLY / Reason
+P	DB-01-ACT-NOOP
+P	DB-01-GATE-INTEGRITY
+P	DB_INTEGRITY_READ
+ROW	DB-01-FLD-FINDING-AFFECTED	SEC-08/FINDINGS	READONLY / Affected Exact Refs	DB-01-ACT-NOOP	DB-01-GATE-INTEGRITY	DB_INTEGRITY_READ
+P	DB-01-FLD-FINDING-AFFECTED
+P	SEC-08/FINDINGS
+P	READONLY / Affected Exact Refs
+P	DB-01-ACT-NOOP
+P	DB-01-GATE-INTEGRITY
+P	DB_INTEGRITY_READ
+ROW	DB-01-FLD-FINDING-EVIDENCE	SEC-08/FINDINGS	READONLY / Evidence	DB-01-ACT-NOOP	DB-01-GATE-INTEGRITY	DB_INTEGRITY_READ
+P	DB-01-FLD-FINDING-EVIDENCE
+P	SEC-08/FINDINGS
+P	READONLY / Evidence
+P	DB-01-ACT-NOOP
+P	DB-01-GATE-INTEGRITY
+P	DB_INTEGRITY_READ
+ROW	DB-01-FLD-FINDING-OWNER	SEC-08/FINDINGS	READONLY / Owner / Repair Route	DB-01-ACT-NOOP	DB-01-GATE-INTEGRITY	DB_INTEGRITY_READ
+P	DB-01-FLD-FINDING-OWNER
+P	SEC-08/FINDINGS
+P	READONLY / Owner / Repair Route
+P	DB-01-ACT-NOOP
+P	DB-01-GATE-INTEGRITY
+P	DB_INTEGRITY_READ
+ROW	DB-01-INP-AUDIT-ID	SEC-09/AUDIT	REFERENCE / Correlation / Entity / Version Ref	DB-01-ACT-CONTEXT	DB-01-GATE-AUDIT	DB_AUDIT_READ
+P	DB-01-INP-AUDIT-ID
+P	SEC-09/AUDIT
+P	REFERENCE / Correlation / Entity / Version Ref
+P	DB-01-ACT-CONTEXT
+P	DB-01-GATE-AUDIT
+P	DB_AUDIT_READ
+ROW	DB-01-BTN-AUDIT	SEC-09/AUDIT	BUTTON / 查看 Audit Trace	DB-01-ACT-AUDIT-OPEN	DB-01-GATE-AUDIT	DB_AUDIT_READ
+P	DB-01-BTN-AUDIT
+P	SEC-09/AUDIT
+P	BUTTON / 查看 Audit Trace
+P	DB-01-ACT-AUDIT-OPEN
+P	DB-01-GATE-AUDIT
+P	DB_AUDIT_READ
+ROW	DB-01-VIEW-AUDIT	SEC-09/AUDIT	TRACE_VIEW / Audit / Correlation	DB-01-ACT-NOOP	DB-01-GATE-AUDIT	DB_AUDIT_READ
+P	DB-01-VIEW-AUDIT
+P	SEC-09/AUDIT
+P	TRACE_VIEW / Audit / Correlation
+P	DB-01-ACT-NOOP
+P	DB-01-GATE-AUDIT
+P	DB_AUDIT_READ
+ROW	DB-01-FLD-PAGE-STATE	SEC-10/STATUS	READONLY / Page State	DB-01-ACT-NOOP	DB-01-GATE-PAGE	DB_READ
+P	DB-01-FLD-PAGE-STATE
+P	SEC-10/STATUS
+P	READONLY / Page State
+P	DB-01-ACT-NOOP
+P	DB-01-GATE-PAGE
+P	DB_READ
+ROW	DB-01-FLD-SOURCE-SYNC	SEC-10/STATUS	READONLY / Source / Last Sync	DB-01-ACT-NOOP	DB-01-GATE-PAGE	DB_READ
+P	DB-01-FLD-SOURCE-SYNC
+P	SEC-10/STATUS
+P	READONLY / Source / Last Sync
+P	DB-01-ACT-NOOP
+P	DB-01-GATE-PAGE
+P	DB_READ
+ROW	DB-01-FLD-DISABLED	SEC-10/STATUS	READONLY / Disabled Reason	DB-01-ACT-NOOP	DB-01-GATE-PAGE	DB_READ
+P	DB-01-FLD-DISABLED
+P	SEC-10/STATUS
+P	READONLY / Disabled Reason
+P	DB-01-ACT-NOOP
+P	DB-01-GATE-PAGE
+P	DB_READ
+ROW	DB-01-FLD-CHANGE-OWNER	SEC-10/STATUS	READONLY / Schema Change Owner	DB-01-ACT-NOOP	DB-01-GATE-PAGE	DB_READ
+P	DB-01-FLD-CHANGE-OWNER
+P	SEC-10/STATUS
+P	READONLY / Schema Change Owner
+P	DB-01-ACT-NOOP
+P	DB-01-GATE-PAGE
+P	DB_READ
+ROW	DB-01-BTN-SYSTEM-LIFECYCLE	SEC-10/STATUS	BUTTON / 開啟 System Lifecycle / Change Management	DB-01-ACT-SYSTEM-LIFECYCLE	DB-01-GATE-PAGE	DB_READ
+P	DB-01-BTN-SYSTEM-LIFECYCLE
+P	SEC-10/STATUS
+P	BUTTON / 開啟 System Lifecycle / Change Management
+P	DB-01-ACT-SYSTEM-LIFECYCLE
+P	DB-01-GATE-PAGE
+P	DB_READ
+P	admin:DB-01 · Source Table 15
+ROW	Gate UID	Condition
+P	Gate UID
+P	Condition
+ROW	DB-01-GATE-PAGE	explicit account page permission + scope + condition + audit
+P	DB-01-GATE-PAGE
+P	explicit account page permission + scope + condition + audit
+ROW	DB-01-GATE-CONTEXT	environment/schema head resolved + authorized scope; no implicit tenant/project fallback
+P	DB-01-GATE-CONTEXT
+P	environment/schema head resolved + authorized scope; no implicit tenant/project fallback
+ROW	DB-01-GATE-ENTITY	selected entity/table is registered and permitted for current scope
+P	DB-01-GATE-ENTITY
+P	selected entity/table is registered and permitted for current scope
+ROW	DB-01-GATE-SCHEMA	selected entity has authoritative schema/entity/column/relation metadata
+P	DB-01-GATE-SCHEMA
+P	selected entity has authoritative schema/entity/column/relation metadata
+ROW	DB-01-GATE-RELATION	selected exact entity/ref has registered typed relations; no inferred relation from naming
+P	DB-01-GATE-RELATION
+P	selected exact entity/ref has registered typed relations; no inferred relation from naming
+ROW	DB-01-GATE-TRACE	source_type + exact source_id/version are present and authorized
+P	DB-01-GATE-TRACE
+P	source_type + exact source_id/version are present and authorized
+ROW	DB-01-GATE-MIGRATION	migration history permission + registered migration/checksum manifest available
+P	DB-01-GATE-MIGRATION
+P	migration history permission + registered migration/checksum manifest available
+ROW	DB-01-GATE-INTEGRITY	integrity read source available for selected scope/entity/version
+P	DB-01-GATE-INTEGRITY
+P	integrity read source available for selected scope/entity/version
+ROW	DB-01-GATE-AUDIT	audit read permission + exact correlation/entity/version scope
+P	DB-01-GATE-AUDIT
+P	audit read permission + exact correlation/entity/version scope
+P	admin:DB-01 · Source Table 16
+ROW	Permission UID	Backend Scope	Purpose
+P	Permission UID
+P	Backend Scope
+P	Purpose
+ROW	DB_READ	database.metadata.read	Read database/entity/schema/relation/version metadata
+P	DB_READ
+P	database.metadata.read
+P	Read database/entity/schema/relation/version metadata
+ROW	DB_TRACE	database.trace.read	Resolve exact registered lineage and relation trace
+P	DB_TRACE
+P	database.trace.read
+P	Resolve exact registered lineage and relation trace
+ROW	DB_MIGRATION_READ	database.migration.read	Read migration/checksum/dependency/status history
+P	DB_MIGRATION_READ
+P	database.migration.read
+P	Read migration/checksum/dependency/status history
+ROW	DB_INTEGRITY_READ	database.integrity.read	Read integrity checks/findings
+P	DB_INTEGRITY_READ
+P	database.integrity.read
+P	Read integrity checks/findings
+ROW	DB_AUDIT_READ	audit.read	Read permitted audit/correlation trace
+P	DB_AUDIT_READ
+P	audit.read
+P	Read permitted audit/correlation trace
+P	admin:DB-01 · Source Table 17
+ROW	State UID	Display	Definition
+P	State UID
+P	Display
+P	Definition
+ROW	DB-01-ST-LOADING	LOADING	Loading authorized Database Read Model
+P	DB-01-ST-LOADING
+P	LOADING
+P	Loading authorized Database Read Model
+ROW	DB-01-ST-READY	READY	Database metadata/read model ready
+P	DB-01-ST-READY
+P	READY
+P	Database metadata/read model ready
+ROW	DB-01-ST-EMPTY	EMPTY	Authorized query has no registered result
+P	DB-01-ST-EMPTY
+P	EMPTY
+P	Authorized query has no registered result
+ROW	DB-01-ST-ERROR	ERROR	Real read/contract/integrity error
+P	DB-01-ST-ERROR
+P	ERROR
+P	Real read/contract/integrity error
+ROW	DB-01-ST-POLICY	POLICY_BLOCKED	Permission/data classification/scope blocks read
+P	DB-01-ST-POLICY
+P	POLICY_BLOCKED
+P	Permission/data classification/scope blocks read
+ROW	DB-01-ST-CONFLICT	VERSION_CONFLICT	Schema/version/source lineage mismatch
+P	DB-01-ST-CONFLICT
+P	VERSION_CONFLICT
+P	Schema/version/source lineage mismatch
+ROW	DB-01-ST-READONLY	READ_ONLY	Normal DB-01 operating mode; no production mutation
+P	DB-01-ST-READONLY
+P	READ_ONLY
+P	Normal DB-01 operating mode; no production mutation
+ROW	DB-01-ST-ARCHIVED	ARCHIVED	Historical schema/entity/migration/version context
+P	DB-01-ST-ARCHIVED
+P	ARCHIVED
+P	Historical schema/entity/migration/version context
+P	admin:DB-01 · Source Table 18
+ROW	Error UID	Context	Recovery
+P	Error UID
+P	Context
+P	Recovery
+ROW	DB-01-ERR-CONTEXT-001	Database context/environment/schema head unavailable or scope mismatch	BLOCK data panels; resolve authorized context
+P	DB-01-ERR-CONTEXT-001
+P	Database context/environment/schema head unavailable or scope mismatch
+P	BLOCK data panels; resolve authorized context
+ROW	DB-01-ERR-ENTITY-001	Entity/table not registered or outside allowed scope	BLOCK selection; no database-name guessing
+P	DB-01-ERR-ENTITY-001
+P	Entity/table not registered or outside allowed scope
+P	BLOCK selection; no database-name guessing
+ROW	DB-01-ERR-SCHEMA-001	Schema/column/relation metadata missing or inconsistent	Show explicit authority gap/integrity finding; do not synthesize schema
+P	DB-01-ERR-SCHEMA-001
+P	Schema/column/relation metadata missing or inconsistent
+P	Show explicit authority gap/integrity finding; do not synthesize schema
+ROW	DB-01-ERR-TRACE-001	Trace source ref missing/orphan/mismatched	Show broken path; do not silently repair or jump to latest
+P	DB-01-ERR-TRACE-001
+P	Trace source ref missing/orphan/mismatched
+P	Show broken path; do not silently repair or jump to latest
+ROW	DB-01-ERR-VERSION-001	Version/source snapshot immutable lineage conflict	BLOCK any governed downstream use and surface exact conflict
+P	DB-01-ERR-VERSION-001
+P	Version/source snapshot immutable lineage conflict
+P	BLOCK any governed downstream use and surface exact conflict
+ROW	DB-01-ERR-MIGRATION-001	Migration/checksum/dependency history invalid or incomplete	Show migration integrity blocker; route change to System Lifecycle
+P	DB-01-ERR-MIGRATION-001
+P	Migration/checksum/dependency history invalid or incomplete
+P	Show migration integrity blocker; route change to System Lifecycle
+ROW	DB-01-ERR-INTEGRITY-001	FK/reference/orphan/scope/checksum integrity failure	Show finding and affected exact refs; no direct production repair
+P	DB-01-ERR-INTEGRITY-001
+P	FK/reference/orphan/scope/checksum integrity failure
+P	Show finding and affected exact refs; no direct production repair
+ROW	DB-01-ERR-AUDIT-001	Audit/correlation trace unavailable or unauthorized	Show read restriction / missing audit evidence
+P	DB-01-ERR-AUDIT-001
+P	Audit/correlation trace unavailable or unauthorized
+P	Show read restriction / missing audit evidence
+ROW	DB-01-ERR-PERM-001	Permission/scope denied	Disable access/action and show actual reason
+P	DB-01-ERR-PERM-001
+P	Permission/scope denied
+P	Disable access/action and show actual reason
+ROW	DB-01-ERR-UNDEFINED-001	Unlisted control/action/relation/mutation requested	BLOCK + REPORT_AUTHORITY_GAP
+P	DB-01-ERR-UNDEFINED-001
+P	Unlisted control/action/relation/mutation requested
+P	BLOCK + REPORT_AUTHORITY_GAP
+P	admin:DB-01 · Source Table 19
+ROW	Port UID	Boundary	Operation	Method	Permission	Exposure
+P	Port UID
+P	Boundary
+P	Operation
+P	Method
+P	Permission
+P	Exposure
+ROW	DB-01-PORT-ENTITY-LIST	Database metadata read model	DatabaseReadModel.list_entities	READ_MODEL_QUERY	database.metadata.read	DB-01-ACT-SEARCH
+P	DB-01-PORT-ENTITY-LIST
+P	Database metadata read model
+P	DatabaseReadModel.list_entities
+P	READ_MODEL_QUERY
+P	database.metadata.read
+P	DB-01-ACT-SEARCH
+ROW	DB-01-PORT-SCHEMA	Entity schema projection	DatabaseReadModel.get_entity_schema	READ_MODEL_QUERY	database.metadata.read	DB-01-ACT-SCHEMA-REFRESH
+P	DB-01-PORT-SCHEMA
+P	Entity schema projection
+P	DatabaseReadModel.get_entity_schema
+P	READ_MODEL_QUERY
+P	database.metadata.read
+P	DB-01-ACT-SCHEMA-REFRESH
+ROW	DB-01-PORT-TRACE	Traceability read model	TraceabilityReadModel.trace_entity_lineage	READ_MODEL_QUERY	database.trace.read	DB-01-ACT-TRACE
+P	DB-01-PORT-TRACE
+P	Traceability read model
+P	TraceabilityReadModel.trace_entity_lineage
+P	READ_MODEL_QUERY
+P	database.trace.read
+P	DB-01-ACT-TRACE
+ROW	DB-01-PORT-MIGRATION	Migration history read model	MigrationReadModel.list_history	READ_MODEL_QUERY	database.migration.read	DB-01-ACT-MIGRATION-REFRESH / SELECT
+P	DB-01-PORT-MIGRATION
+P	Migration history read model
+P	MigrationReadModel.list_history
+P	READ_MODEL_QUERY
+P	database.migration.read
+P	DB-01-ACT-MIGRATION-REFRESH / SELECT
+ROW	DB-01-PORT-INTEGRITY	Database integrity read model	DatabaseIntegrityReadModel.list_findings	READ_MODEL_QUERY	database.integrity.read	DB-01-ACT-INTEGRITY-REFRESH / FINDING-SELECT
+P	DB-01-PORT-INTEGRITY
+P	Database integrity read model
+P	DatabaseIntegrityReadModel.list_findings
+P	READ_MODEL_QUERY
+P	database.integrity.read
+P	DB-01-ACT-INTEGRITY-REFRESH / FINDING-SELECT
+ROW	DB-01-PORT-AUDIT	Audit trace read model	AuditReadModel.trace	READ_MODEL_QUERY	audit.read	DB-01-ACT-AUDIT-OPEN
+P	DB-01-PORT-AUDIT
+P	Audit trace read model
+P	AuditReadModel.trace
+P	READ_MODEL_QUERY
+P	audit.read
+P	DB-01-ACT-AUDIT-OPEN
+ROW	DB-01-PORT-SYSTEM-LIFECYCLE	Schema mutation/change route	NAVIGATE_TO_SYSTEM_LIFECYCLE	UI_NAVIGATION_ONLY	database.metadata.read	DB-01-ACT-SYSTEM-LIFECYCLE
+P	DB-01-PORT-SYSTEM-LIFECYCLE
+P	Schema mutation/change route
+P	NAVIGATE_TO_SYSTEM_LIFECYCLE
+P	UI_NAVIGATION_ONLY
+P	database.metadata.read
+P	DB-01-ACT-SYSTEM-LIFECYCLE
+P	admin:DB-01 · Source Table 20
+ROW	Function	Visual Region	Primary Controls
+P	Function
+P	Visual Region
+P	Primary Controls
+ROW	Context	DB-01-VIS-CONTEXT	Environment / Schema Head / Migration Head / Scope / Integrity / Refresh
+P	Context
+P	DB-01-VIS-CONTEXT
+P	Environment / Schema Head / Migration Head / Scope / Integrity / Refresh
+ROW	Explore	DB-01-VIS-LEFT	Search / Domain / Entity Type / Entity list
+P	Explore
+P	DB-01-VIS-LEFT
+P	Search / Domain / Entity Type / Entity list
+ROW	Schema	DB-01-VIS-SCHEMA	Entity / Table / Owner / Classification / PK / Version Rule / Columns / Constraints
+P	Schema
+P	DB-01-VIS-SCHEMA
+P	Entity / Table / Owner / Classification / PK / Version Rule / Columns / Constraints
+ROW	Relations	DB-01-VIS-RELATION	Graph/List toggle + exact relation open
+P	Relations
+P	DB-01-VIS-RELATION
+P	Graph/List toggle + exact relation open
+ROW	Trace	DB-01-VIS-TRACE	Source Type / Exact ID-Version / Trace / Path
+P	Trace
+P	DB-01-VIS-TRACE
+P	Source Type / Exact ID-Version / Trace / Path
+ROW	Integrity	DB-01-VIS-RIGHT	Reference / Orphan / Immutable / Trace Complete / Migration Integrity
+P	Integrity
+P	DB-01-VIS-RIGHT
+P	Reference / Orphan / Immutable / Trace Complete / Migration Integrity
+ROW	Migration	DB-01-VIS-MIGRATION	Migration search/history/refresh
+P	Migration
+P	DB-01-VIS-MIGRATION
+P	Migration search/history/refresh
+ROW	Findings	DB-01-VIS-FINDING	Finding type/list/detail/owner route
+P	Findings
+P	DB-01-VIS-FINDING
+P	Finding type/list/detail/owner route
+ROW	Audit	DB-01-VIS-AUDIT	Correlation ref / Audit trace
+P	Audit
+P	DB-01-VIS-AUDIT
+P	Correlation ref / Audit trace
+ROW	Boundary	DB-01-VIS-STATUS	Page State / Source Sync / Disabled / Change Owner / System Lifecycle
+P	Boundary
+P	DB-01-VIS-STATUS
+P	Page State / Source Sync / Disabled / Change Owner / System Lifecycle
+P	admin:DB-01 · Source Table 21
+ROW	Anchor	Geometry / Behavior
+P	Anchor
+P	Geometry / Behavior
+ROW	Global Header	58px fixed top; full width; ORANGE ONE left; quick status/language/surface/account right
+P	Global Header
+P	58px fixed top; full width; ORANGE ONE left; quick status/language/surface/account right
+ROW	Collapsed Sidebar	64px invisible interaction rail; icons only; no panel/background/frame
+P	Collapsed Sidebar
+P	64px invisible interaction rail; icons only; no panel/background/frame
+ROW	Expanded Sidebar	221px fixed overlay under Header; no workspace reflow
+P	Expanded Sidebar
+P	221px fixed overlay under Header; no workspace reflow
+ROW	Workspace Origin	x=78px / y=68px; right inset 16px
+P	Workspace Origin
+P	x=78px / y=68px; right inset 16px
+ROW	Context Bar	100% width; h=56px
+P	Context Bar
+P	100% width; h=56px
+ROW	Primary Grid	minmax(280px,1fr) / minmax(760px,3fr) / minmax(300px,1fr); gap 16px
+P	Primary Grid
+P	minmax(280px,1fr) / minmax(760px,3fr) / minmax(300px,1fr); gap 16px
+ROW	Center	Schema Inspector upper + Relation Graph lower; highest priority
+P	Center
+P	Schema Inspector upper + Relation Graph lower; highest priority
+ROW	Lower Rows	Trace / Migration / Finding / Audit / Status full width; page vertical scroll
+P	Lower Rows
+P	Trace / Migration / Finding / Audit / Status full width; page vertical scroll
+ROW	Control	40px; radius 10px; missing business value = —
+P	Control
+P	40px; radius 10px; missing business value = —
+ROW	Panel	radius 12px; violet border; no page-local palette
+P	Panel
+P	radius 12px; violet border; no page-local palette
+P	admin:DB-01 · Source Table 23
+ROW	UID	Item	Condition
+P	UID
+P	Item
+P	Condition
+ROW	ACC-01	Single Page / Global Visual	Only admin:DB-01 current database page; inherits Global Shell/Visual
+P	ACC-01
+P	Single Page / Global Visual
+P	Only admin:DB-01 current database page; inherits Global Shell/Visual
+ROW	ACC-02	Read-only Data Model Viewer	No raw SQL, row editor, DDL or production mutation
+P	ACC-02
+P	Read-only Data Model Viewer
+P	No raw SQL, row editor, DDL or production mutation
+ROW	ACC-03	Exact Traceability	Task/Job/Asset/Review/Decision/Release trace exact canonical path
+P	ACC-03
+P	Exact Traceability
+P	Task/Job/Asset/Review/Decision/Release trace exact canonical path
+ROW	ACC-04	Clickable Versions	Exact selectable refs, not display-only aliases
+P	ACC-04
+P	Clickable Versions
+P	Exact selectable refs, not display-only aliases
+ROW	ACC-05	Immutable History	Prior locked/published snapshots not overwritten/deleted
+P	ACC-05
+P	Immutable History
+P	Prior locked/published snapshots not overwritten/deleted
+ROW	ACC-06	Integrity	Ref/orphan/version/trace/scope checks visible
+P	ACC-06
+P	Integrity
+P	Ref/orphan/version/trace/scope checks visible
+ROW	ACC-07	Migration	ID/checksum/approval/dependency/status inspectable; no execute/rollback
+P	ACC-07
+P	Migration
+P	ID/checksum/approval/dependency/status inspectable; no execute/rollback
+ROW	ACC-08	System Lifecycle Boundary	Mutations route to governed change workflow
+P	ACC-08
+P	System Lifecycle Boundary
+P	Mutations route to governed change workflow
+ROW	ACC-09	No Silent Repair	Broken refs explicit; no fallback latest
+P	ACC-09
+P	No Silent Repair
+P	Broken refs explicit; no fallback latest
+ROW	ACC-10	Permission / Classification	Explicit account permission/scope/classification
+P	ACC-10
+P	Permission / Classification
+P	Explicit account permission/scope/classification
+ROW	ACC-11	Scrollable Page	Main Workspace height:auto; independent of sidebar height
+P	ACC-11
+P	Scrollable Page
+P	Main Workspace height:auto; independent of sidebar height
+ROW	ACC-12	Machine Binding	Every control resolves registry bindings; unlisted=BLOCK
+P	ACC-12
+P	Machine Binding
+P	Every control resolves registry bindings; unlisted=BLOCK
+P	admin:DB-01 · Source Table 24
+ROW	Evidence	Required
+P	Evidence
+P	Required
+ROW	Authority Identity	authority/pages/admin/DB-01/ACPOS_DB-01_FINAL_LOCKED_ENCODING.yaml @ 8074187716f40d4a31704ed6212fe40ffd66fc0e
+P	Authority Identity
+P	authority/pages/admin/DB-01/ACPOS_DB-01_FINAL_LOCKED_ENCODING.yaml @ 8074187716f40d4a31704ed6212fe40ffd66fc0e
+ROW	Branch / HEAD	new @ 165c6440cb53b1b45ec96905241fb4d56dc3b867
+P	Branch / HEAD
+P	new @ 165c6440cb53b1b45ec96905241fb4d56dc3b867
+ROW	Current Manifest	465329b6fb19b8e44c3083a9f280015ee95cc55c
+P	Current Manifest
+P	465329b6fb19b8e44c3083a9f280015ee95cc55c
+ROW	Registry denominator	10 sections / 12 components / 49 controls / 15 actions / 7 ports
+P	Registry denominator
+P	10 sections / 12 components / 49 controls / 15 actions / 7 ports
+ROW	Visual evidence	5 candidate UI PNGs embedded in this Word
+P	Visual evidence
+P	5 candidate UI PNGs embedded in this Word
+ROW	Real data policy	Missing values = —; invented business values forbidden
+P	Real data policy
+P	Missing values = —; invented business values forbidden
+ROW	Boundary	Read-only; mutation route only to System Lifecycle
+P	Boundary
+P	Read-only; mutation route only to System Lifecycle
+P	admin:DB-01 · Source Table 25
+ROW	Gate	Current Status
+P	Gate
+P	Current Status
+ROW	Current Authority resolved	PASS
+P	Current Authority resolved
+P	PASS
+ROW	Mother Basic Design artifacts present	PASS
+P	Mother Basic Design artifacts present
+P	PASS
+ROW	Controls / Actions / Gates / Permissions enumerated	PASS
+P	Controls / Actions / Gates / Permissions enumerated
+P	PASS
+ROW	Five UI candidate states embedded	PASS
+P	Five UI candidate states embedded
+P	PASS
+ROW	No fake business data in UI candidate	PASS
+P	No fake business data in UI candidate
+P	PASS
+ROW	No CRUD/SQL/migration mutation introduced	PASS
+P	No CRUD/SQL/migration mutation introduced
+P	PASS
+ROW	Human visual / functional review	PENDING
+P	Human visual / functional review
+P	PENDING
+ROW	DESIGN_FROZEN	FALSE
+P	DESIGN_FROZEN
+P	FALSE
+P	G. Construction Handoff Rule
+P	施工 AI MUST resolve each UI control through this exact order: Page UID → Section/Region → Control UID → Trigger/Operation or Action UID → Gate → Permission → Input/Payload → Method/Path or shared Runtime Operation → Persistence/Provider Owner → Audit/Event → Success/Failure/Recovery → Next Page/Handoff. UI_ONLY/READ_ONLY controls MUST NOT create a write API. System-only operations MUST NOT cause a new visible button unless this closure/source explicitly materializes that control.
+P	When a provider/platform/environment value is runtime-specific, the exact binding is the registered Profile/Policy/Environment key named in this annex. Missing required value is a deterministic BLOCK; it is not permission to guess.
 ### PART word/header1.xml
 P	ORANGE ONE · ACPOS ACPOS-AI-03｜Mother Basic Logic Design
 ### PART word/footer1.xml
