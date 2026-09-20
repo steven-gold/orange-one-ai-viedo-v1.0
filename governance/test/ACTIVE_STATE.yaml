@@ -292,14 +292,26 @@ previous_closed_work_unit:
     source_runtime_residual_count: 0
     product_stage_credit: 0
 resume_control:
-  current_resume_point: STAGE03_BLOCKED_EVIDENCE_SCHEMA_MAINTENANCE
-  current_work_unit_uid: WU-TEST-STAGE03-BLOCKED-EVIDENCE-SCHEMA-001
-  current_owner: governance/ci/stage_execution_engine.py
-  exact_next_action: VALIDATE_COMMON_BLOCKED_EVIDENCE_AND_STAGE03_PROVENANCE
-  parent_resume_point: STAGE3_CORE01_WORK_UNIT_RESOLVED_PREEXECUTION
-  parent_work_unit_uid: WU-STAGE03-CORE01-VISUAL-DESIGN-001
-  parent_exact_next_action: RUN_CORE01_STAGE03_VISUAL_DESIGN_TO_HUMAN_REVIEW_BOUNDARY
+  current_resume_point: SYS01_CONSTRUCTION_ENCODER_ALIGNMENT_PREWRITE
+  current_work_unit_uid: WU-PRODUCT-SYS01-CONSTRUCTION-ENCODER-ALIGNMENT-001
+  current_owner: authority/pages/admin/SYS-01/ACPOS_SYS-01_SYSTEM_LIFECYCLE_AI_FINAL_DESIGN_ENCODING.yaml
+  exact_next_action: PATCH_EXISTING_SYS01_CANONICAL_ENCODER_FROM_CURRENT_AUTHORITY_AND_CLASSIFIED_CHANGE_INPUTS
+  parent_resume_point: STAGE03_BLOCKED_EVIDENCE_SCHEMA_MAINTENANCE
+  parent_work_unit_uid: WU-TEST-STAGE03-BLOCKED-EVIDENCE-SCHEMA-001
+  parent_exact_next_action: VALIDATE_COMMON_BLOCKED_EVIDENCE_AND_STAGE03_PROVENANCE
   historical_stage2_results_are_current_state: false
+suspended_resume_control_sys01_change_request:
+    current_resume_point: STAGE03_BLOCKED_EVIDENCE_SCHEMA_MAINTENANCE
+    current_work_unit_uid: WU-TEST-STAGE03-BLOCKED-EVIDENCE-SCHEMA-001
+    current_owner: governance/ci/stage_execution_engine.py
+    exact_next_action: VALIDATE_COMMON_BLOCKED_EVIDENCE_AND_STAGE03_PROVENANCE
+    parent_resume_point: STAGE3_CORE01_WORK_UNIT_RESOLVED_PREEXECUTION
+    parent_work_unit_uid: WU-STAGE03-CORE01-VISUAL-DESIGN-001
+    parent_exact_next_action: RUN_CORE01_STAGE03_VISUAL_DESIGN_TO_HUMAN_REVIEW_BOUNDARY
+    historical_stage2_results_are_current_state: false
+  suspension_reason: EXPLICIT_USER_CHANGE_REQUEST_SYS01_NEXT_PAGE_ENCODER_ALIGNMENT
+  suspension_preserves_prior_effectful_resume: true
+  suspension_does_not_close_parent_work_unit: true
 governance_revision_transition:
   current_governance_uid: GOV-REV-20260919-ASSET-STAGE01-STAGE02-SHARED-CONTRACT-HARDENING
   predecessor_governance_uid: GOV-REV-20260919-BASIC-DESIGN-ATOMIC-MATERIALIZATION-HARDENING
@@ -364,8 +376,8 @@ pending_governance_review:
   - STAGE03
   - WEBSITE_CONSTRUCTION
   - DEPLOYMENT
-current_primary_task_layer: TEST_OR_VALIDATION_MAINTENANCE
-current_primary_task_authorization_uid: USR-DIRECTIVE-20260920-CONTINUE-CORE01-STAGE03-R1
+current_primary_task_layer: PRODUCT_STAGE_EXECUTION
+current_primary_task_authorization_uid: USR-DIRECTIVE-20260920-SYS01-CONSTRUCTION-ENCODER-ALIGNMENT-R1
 current_primary_task_product_stage_credit: 0
 earlier_closed_product_work_unit:
   work_unit_uid: WU-STAGE02-CORE01-FRESH-TEST-001
@@ -2284,33 +2296,127 @@ closed_test_validation_maintenance_work_unit_stage02_revalidation_persistence:
     current_specification_mutated: false
     product_contract_content_mutated: false
     legal_next_transition: REVALIDATE_ASSET01_STAGE02_AFTER_EXACT_CLOSURE_MATERIALIZATION
+suspended_test_validation_maintenance_work_unit_sys01_change_request:
+    work_unit_uid: WU-TEST-STAGE03-BLOCKED-EVIDENCE-SCHEMA-001
+    canonical_name: COMMON_STAGE_BLOCKED_EVIDENCE_AND_STAGE03_PROVENANCE_HARDENING
+    stage_uid: STAGE-03
+    semantic_capability: SHARED_STAGE_EXECUTION_IMPLEMENTATION
+    primary_task_layer: TEST_OR_VALIDATION_MAINTENANCE
+    canonical_owner: governance/ci/stage_execution_engine.py
+    current_status: IN_PROGRESS_COMMON_ENGINE_INTERRUPT
+    parent_product_work_unit_uid: WU-STAGE03-CORE01-VISUAL-DESIGN-001
+    source_failed_workflow_run_id: 35478678744
+    source_failed_step: NORMALIZED_STAGE03_EVIDENCE_VALIDATION
+    product_stage_credit: 0
+    scope:
+    - BLOCKED_NEXT_STAGE_TRANSITION_SCHEMA
+    - NORMALIZED_OUTPUT_PRODUCER_BINDING
+    - SCANNER_RESULT_SCHEMA
+    - DENOMINATOR_SCHEMA
+    - REMEDIATION_REEXECUTION_SCHEMA
+    - STAGE03_ARTIFACT_PROVENANCE_BINDING
+    out_of_scope:
+    - MOTHER_GOVERNANCE_MUTATION
+    - CURRENT_SPECIFICATION_MUTATION
+    - VISUAL_PRODUCT_AUTHORITY_CHANGE
+    - VISUAL_APPROVAL
+    - STAGE04
+    - WEBSITE_CONSTRUCTION
+    - DEPLOYMENT
+  suspended_status: SUSPENDED_BY_EXPLICIT_USER_CHANGE_REQUEST
+  suspended_resume_point: STAGE03_BLOCKED_EVIDENCE_SCHEMA_MAINTENANCE
+  suspended_exact_next_action: VALIDATE_COMMON_BLOCKED_EVIDENCE_AND_STAGE03_PROVENANCE
+  suspension_closes_work_unit: false
+  suspension_preserves_product_credit: 0
+
+work_unit_resolution_gate_sys01_construction_encoder_alignment:
+  resolution_uid: WUR-SYS01-CONSTRUCTION-ENCODER-ALIGNMENT-20260920-001
+  normative_authority: false
+  result: PASS_SINGLE_LEGAL_SUCCESSOR
+  requested_primary_task_layer: PRODUCT_STAGE_EXECUTION
+  authorization_uid: USR-DIRECTIVE-20260920-SYS01-CONSTRUCTION-ENCODER-ALIGNMENT-R1
+  authorization_source: EXPLICIT_USER_CHANGE_REQUEST_CURRENT_SESSION
+  authorization_intent: CONTINUE_NEXT_PAGE_EXTRACT_NEW_CONSTRUCTION_ENCODER_COMPARE_UPLOADED_PACKAGES_AND_FILL_PROVEN_GAPS
+  current_governance_uid: GOV-REV-20260919-ASSET-STAGE01-STAGE02-SHARED-CONTRACT-HARDENING
+  governance_branch_at_resolution: rebuild-v2.1.1
+  governance_head_at_resolution: bd8d1cf5a34719186520c92b75bc1913b275d522
+  product_branch: new
+  product_head_at_resolution: 165c6440cb53b1b45ec96905241fb4d56dc3b867
+  page_scope:
+  - admin:SYS-01
+  candidate_successor_count: 1
+  duplicate_parallel_work_unit_found: false
+  existing_canonical_owner_reused: true
+  resolved_canonical_owner: authority/pages/admin/SYS-01/ACPOS_SYS-01_SYSTEM_LIFECYCLE_AI_FINAL_DESIGN_ENCODING.yaml
+  current_authority_manifest_ref: authority/ACPOS_CURRENT_AUTHORITY_MANIFEST_FINAL_LOCKED.yaml
+  source_change_inputs:
+  - name: ACPOS_FINAL_CURRENT_AUTHORITY_CLEAN.zip
+    sha256: 4f47e0db4f9001e1f4f8ee735abf5d6f37fe598ed977e1ef3950180825315297
+    role: REFERENCE_INPUT_NOT_CURRENT_AUTHORITY
+  - name: 企業開發與自動廣告.zip
+    sha256: defec739a45c8d8000a5d2dcb93b4023fea43ea8ecfac7e00d4869d9ab6a0196
+    role: REFERENCE_INPUT_NOT_CURRENT_AUTHORITY
+  - name: ai對話邏輯.zip
+    sha256: 8e4e67d2f4aa1962104dfaacb05a3e74b1f875dbebcb7ddc25e493cc899714f1
+    role: REFERENCE_INPUT_NOT_CURRENT_AUTHORITY
+  - name: word頁面規範.zip
+    sha256: d18a4083c81f60fe22a4549c4a4a1e1183bf048eae7531d91415cde6e85bbb2f
+    role: REFERENCE_INPUT_NOT_CURRENT_AUTHORITY
+  conflict_disposition:
+  - ACPOS_FINAL_CURRENT_AUTHORITY_CLEAN_ZIP_MANIFEST_V1_0_MUST_NOT_OVERRIDE_NEW_BRANCH_CURRENT_MANIFEST_V1_8
+  - LEGACY_SYS06_RELEASE_BINDING_MUST_NOT_BE_PROMOTED_WITHOUT_CURRENT_OPERATION_PERMISSION_OWNER
+  - UNREGISTERED_REFERENCE_QUOTE_CONTROL_MUST_NOT_CHANGE_CURRENT_12_CONTROL_DENOMINATOR
+  entry_disposition: ACTIVE_PREWRITE
+  resolved_work_unit_uid: WU-PRODUCT-SYS01-CONSTRUCTION-ENCODER-ALIGNMENT-001
+  resolved_resume_point: SYS01_CONSTRUCTION_ENCODER_ALIGNMENT_PREWRITE
+
 active_work_unit:
-  work_unit_uid: WU-TEST-STAGE03-BLOCKED-EVIDENCE-SCHEMA-001
-  canonical_name: COMMON_STAGE_BLOCKED_EVIDENCE_AND_STAGE03_PROVENANCE_HARDENING
-  stage_uid: STAGE-03
-  semantic_capability: SHARED_STAGE_EXECUTION_IMPLEMENTATION
-  primary_task_layer: TEST_OR_VALIDATION_MAINTENANCE
-  canonical_owner: governance/ci/stage_execution_engine.py
-  current_status: IN_PROGRESS_COMMON_ENGINE_INTERRUPT
-  parent_product_work_unit_uid: WU-STAGE03-CORE01-VISUAL-DESIGN-001
-  source_failed_workflow_run_id: 35478678744
-  source_failed_step: NORMALIZED_STAGE03_EVIDENCE_VALIDATION
-  product_stage_credit: 0
+  work_unit_uid: WU-PRODUCT-SYS01-CONSTRUCTION-ENCODER-ALIGNMENT-001
+  canonical_name: SYS01_CURRENT_CONSTRUCTION_ENCODER_AUTHORITY_ALIGNMENT
+  primary_task_layer: PRODUCT_STAGE_EXECUTION
+  semantic_capability: PRODUCT_AUTHORITY_CHANGE_REQUEST
+  page_uid: admin:SYS-01
+  canonical_owner: authority/pages/admin/SYS-01/ACPOS_SYS-01_SYSTEM_LIFECYCLE_AI_FINAL_DESIGN_ENCODING.yaml
+  current_status: ACTIVE_PREWRITE
   scope:
-  - BLOCKED_NEXT_STAGE_TRANSITION_SCHEMA
-  - NORMALIZED_OUTPUT_PRODUCER_BINDING
-  - SCANNER_RESULT_SCHEMA
-  - DENOMINATOR_SCHEMA
-  - REMEDIATION_REEXECUTION_SCHEMA
-  - STAGE03_ARTIFACT_PROVENANCE_BINDING
+  - REUSE_EXISTING_SYS01_CANONICAL_OWNER
+  - COMPARE_CURRENT_NEW_ENCODER_WITH_CLASSIFIED_UPLOADED_REFERENCE_INPUTS
+  - ADD_ONLY_CURRENT_AUTHORITY_COMPATIBLE_PROVEN_MISSING_DESIGN_CONTRACTS
+  - PRESERVE_UNRESOLVED_EXTERNAL_BINDINGS_AS_NON_ACTIVE_GAPS
   out_of_scope:
   - MOTHER_GOVERNANCE_MUTATION
-  - CURRENT_SPECIFICATION_MUTATION
-  - VISUAL_PRODUCT_AUTHORITY_CHANGE
-  - VISUAL_APPROVAL
-  - STAGE04
-  - WEBSITE_CONSTRUCTION
-  - DEPLOYMENT
+  - CURRENT_GOVERNANCE_SPECIFICATION_MUTATION
+  - NEW_PARALLEL_SYS01_AUTHORITY
+  - LEGACY_SYS06_REINTRODUCTION
+  - UNREGISTERED_CONTROL_OR_ACTION_ACTIVATION
+  - RUNTIME_IMPLEMENTATION
+  - WEBSITE_DEPLOYMENT
+  - PRODUCTION_DEPLOYMENT
+  dependencies:
+  - authority/ACPOS_CURRENT_AUTHORITY_MANIFEST_FINAL_LOCKED.yaml
+  - authority/global/ACPOS_SYSTEM_AUTHORITY_FINAL_LOCKED_CURRENT.yaml
+  - authority/global/ACPOS_PAGE_INTEGRATION_MATRIX_FINAL_LOCKED_CURRENT.yaml
+  - authority/global/ACPOS_CURRENT_NAVIGATION_PERMISSION_AUTHORITY_FINAL_LOCKED.yaml
+  start_condition: SESSION_BOOTSTRAP_RESUME_GATE_AND_WUR_PASS_AND_EXISTING_CANONICAL_OWNER_RESOLVED
+  definition_of_done:
+  - EXISTING_SYS01_CANONICAL_OWNER_PATCHED_NO_PARALLEL_OWNER
+  - SAFE_GAPS_MATERIALIZED_WITHOUT_IMPORTING_STALE_OR_CONFLICTING_BINDINGS
+  - CURRENT_CONTROL_DENOMINATOR_NOT_INCREASED_BY_UNREGISTERED_REFERENCE_INPUT
+  - LEGACY_SYS06_RELEASE_BINDING_REMAINS_NON_ACTIVE_UNRESOLVED
+  - AFFECTED_CURRENT_AUTHORITY_VALIDATION_PASS
+  - PRODUCT_BRANCH_EXACT_HEAD_EVIDENCE_PERSISTED
+  - PRIOR_STAGE03_MAINTENANCE_RESUME_RESTORED_AFTER_CLOSURE
+  required_evidence:
+  - CURRENT_GOVERNANCE_UID
+  - PRODUCT_BRANCH_HEAD_SHA
+  - SYS01_CANONICAL_OWNER_BLOB_SHA
+  - CHANGE_INPUT_SHA256_SET
+  - CURRENT_AUTHORITY_VALIDATION_RESULT
+  - FINAL_DIFF_AND_COMMIT_SHA
+  current_blocker: null
+  product_stage_credit: 0
+  resume_point: SYS01_CONSTRUCTION_ENCODER_ALIGNMENT_PREWRITE
+
 pending_product_resume_stage03:
   work_unit_uid: WU-STAGE03-CORE01-VISUAL-DESIGN-001
   page_uid: CORE-01
