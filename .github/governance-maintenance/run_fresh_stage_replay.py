@@ -100,10 +100,20 @@ def resolve_execution_context_docs(state:dict,scope:dict,registry:dict,current:d
         filename=str(rec.get('filename') or '')
         if not filename or '/' in filename or filename in bindings:
             raise RuntimeError('RAW_SOURCE_FILENAME_INVALID_OR_DUPLICATE')
-        for key in ('source_uid','source_role','source_domain_scope'):
+        for key in ('source_uid','source_role','source_domain_scope','source_path'):
             if not isinstance(rec.get(key),str) or not rec.get(key):
                 raise RuntimeError(f'RAW_SOURCE_BINDING_FIELD_MISSING:{filename}:{key}')
-        bindings[filename]=dict(rec)
+        normalized=dict(rec)
+        normalized['source_path']=_repo_rel(rec['source_path'],f'RAW_SOURCE_PATH:{filename}')
+        bindings[filename]=normalized
+    source_provider_root=_repo_rel(ctx.get('source_provider_root') or '','SOURCE_PROVIDER_ROOT')
+    forbidden_provider_roots=('00_SOURCE_INTAKE','governance/test','.github/stage02-test')
+    if any(source_provider_root==x or source_provider_root.startswith(x+'/') for x in forbidden_provider_roots):
+        raise RuntimeError('SOURCE_PROVIDER_ROOT_MUST_BE_ISOLATED_FROM_GENERATED_OR_TEST_DATA')
+    for filename,binding in bindings.items():
+        source_path=str(binding['source_path'])
+        if not (source_path==source_provider_root or source_path.startswith(source_provider_root+'/')):
+            raise RuntimeError(f'RAW_SOURCE_OUTSIDE_REGISTERED_PROVIDER_ROOT:{filename}:{source_path}')
     page_authority=str(ctx['page_authority_source_file'])
     if page_authority not in bindings:
         raise RuntimeError('PAGE_AUTHORITY_SOURCE_FILE_NOT_REGISTERED')
@@ -115,7 +125,7 @@ def resolve_execution_context_docs(state:dict,scope:dict,registry:dict,current:d
       'stage2_work_unit_uid':str(ctx['stage2_work_unit_uid']),'stage2_resolution_uid':str(ctx['stage2_resolution_uid']),
       'stage2_canonical_name':str(ctx['stage2_canonical_name']),'page_scope':list(page_scope),
       'excluded_page_scope':list(excluded),'raw_sources':list(raw_sources),
-      'raw_source_bindings':bindings,'page_authority_source_file':page_authority,
+      'raw_source_bindings':bindings,'source_provider_root':source_provider_root,'page_authority_source_file':page_authority,
       'local_authority_prefixes':list(ctx.get('local_authority_prefixes') or []),
       'local_authority_path_prefixes':list(ctx.get('local_authority_path_prefixes') or []),
       'governance_uid':governance_uid,'display_version':display_version,
@@ -157,8 +167,8 @@ def identity_self_test()->None:
              'attempt_uid':f'ATTEMPT-SYNTH-{n}','stage1_work_unit_uid':f'WU-S1-SYNTH-{n}',
              'stage2_work_unit_uid':f'WU-S2-SYNTH-{n}','stage2_resolution_uid':f'WUR-S2-SYNTH-{n}',
              'stage2_canonical_name':'SYNTHETIC_STAGE2_REPLAY','page_scope':['SYNTH-PAGE'],
-             'excluded_page_scope':['SYNTH-EXCLUDED'],'page_authority_source_file':'PAGE.yaml',
-             'raw_sources':[{'filename':'PAGE.yaml','source_uid':'SRC-PAGE','source_role':'PAGE_SOURCE_INPUT','source_domain_scope':'PAGE_CONSTRUCTION'}]}
+             'excluded_page_scope':['SYNTH-EXCLUDED'],'source_provider_root':'source-provider/synthetic','page_authority_source_file':'PAGE.yaml',
+             'raw_sources':[{'filename':'PAGE.yaml','source_uid':'SRC-PAGE','source_role':'PAGE_SOURCE_INPUT','source_domain_scope':'PAGE_CONSTRUCTION','source_path':'source-provider/synthetic/PAGE.yaml'}]}
         state={'specification_uid':gid,'current_primary_task_layer':'PRODUCT_STAGE_EXECUTION','current_primary_task_authorization_uid':auth,CONTEXT_KEY:ctx}
         scope={'governance_uid':gid,'included_units':['SYNTH-PAGE'],'excluded_units':['SYNTH-EXCLUDED']}
         registry={'active_specification':{'governance_uid':gid,'display_version':ver}}
@@ -262,6 +272,34 @@ def extract_external_refs(doc:dict)->list[str]:
         out.append(x)
     return out
 
+def extract_source_declared_local_dependencies(doc:dict)->list[dict]:
+    rows=[]
+    def walk(value,path='ROOT'):
+        if isinstance(value,dict):
+            package_path=value.get('package_path')
+            if isinstance(package_path,str) and package_path.strip():
+                uid=''
+                for k,v in value.items():
+                    if str(k).endswith('_uid') and isinstance(v,str) and v.strip():
+                        uid=v.strip()
+                        break
+                rows.append({
+                  'dependency_uid':uid or stable_uid('SOURCE-LOCAL-DEP',package_path.strip()),
+                  'declared_path':package_path.strip(),
+                  'source_ref':path,
+                })
+            for k,v in value.items():
+                walk(v,path+'.'+str(k))
+        elif isinstance(value,list):
+            for i,v in enumerate(value):
+                walk(v,path+f'[{i}]')
+    walk(doc)
+    out={}
+    for row in rows:
+        out[(row['dependency_uid'],row['declared_path'])]=row
+    return [out[k] for k in sorted(out)]
+
+
 def classify_nodes(raw_docs):
     nodes=[]
     for source_uid,doc in raw_docs.items():
@@ -320,8 +358,6 @@ def cleanup_boundary_self_test()->None:
 def cleanup_old():
     if not AUTH.is_file():
         raise RuntimeError('AUTHORIZATION_MISSING')
-    if not OLD.is_dir():
-        raise RuntimeError('OLD_RUN_ROOT_MISSING')
     current_stage02, current_stage02_test, new_root = replay_cleanup_replaceable_roots(ROOT,NEW)
     for p in (current_stage02,current_stage02_test):
         if p.exists():
@@ -351,7 +387,7 @@ def materialize_stage1(raw_bytes:dict[str,bytes], source_head:str):
           'page_uid':PAGE,
           'source_role':binding['source_role'],
           'source_domain_scope':binding['source_domain_scope'],
-          'source_path':f"git:{source_head}:{OLD.relative_to(ROOT).as_posix()}/00_SOURCE_INTAKE/RAW_SOURCE/{PAGE}/{name}",
+          'source_path':f"git:{source_head}:{binding['source_path']}",
           'target_path':p.relative_to(NEW).as_posix(),
           'source_git_blob_sha':git_blob_sha_bytes(b),
           'target_git_blob_sha':git_blob_sha_bytes(b),
@@ -468,8 +504,11 @@ def materialize_stage1(raw_bytes:dict[str,bytes], source_head:str):
     dump(NEW/'00_SOURCE_INTAKE/CONTENT_SUPERSESSION_CONFLICT_LEDGER.yaml',conflict)
 
     external=set()
-    for doc in raw_docs.values():
+    local_declared=[]
+    for source_uid,doc in raw_docs.items():
         external.update(extract_external_refs(doc))
+        for row in extract_source_declared_local_dependencies(doc):
+            local_declared.append({**row,'consumer_source_uid':source_uid})
     gaps=[]
     consumers=[r['source_uid'] for r in manifest_records]
     for ref in sorted(external):
@@ -480,10 +519,40 @@ def materialize_stage1(raw_bytes:dict[str,bytes], source_head:str):
           'authority_evidence_ref':'00_SOURCE_INTAKE/evidence/SOURCE_FACT_MATERIALIZATION_EVIDENCE.yaml',
           'resolved':False,'satisfied':False,'auto_filled':False,'inferred':False,
         })
+    local_materialized=[]
+    local_gaps=[]
+    for row in local_declared:
+        declared=str(row['declared_path'])
+        matches=[]
+        for name,binding in RAW_SOURCE_BINDINGS.items():
+            source_path=str(binding.get('source_path') or '')
+            if source_path==declared or source_path.endswith('/'+declared) or Path(source_path).name==Path(declared).name:
+                matches.append((name,binding))
+        if len(matches)==1:
+            name,binding=matches[0]
+            physical=NEW/'00_SOURCE_INTAKE/RAW_SOURCE'/PAGE/name
+            local_materialized.append({
+              'dependency_uid':row['dependency_uid'],'declared_path':declared,
+              'consumer_source_uid':row['consumer_source_uid'],'source_provider_path':binding['source_path'],
+              'current_physical_path':physical.relative_to(ROOT).as_posix(),
+              'content_sha256':sha_bytes(physical.read_bytes()),
+              'materialization_status':'MATERIALIZED_CURRENT','required_field_completeness':'PASS',
+            })
+        else:
+            local_gaps.append({
+              'gap_uid':stable_uid('GAP-SOURCE-CAPTURE',row['dependency_uid'],declared),
+              'dependency_uid':row['dependency_uid'],'declared_path':declared,
+              'consumer_source_uid':row['consumer_source_uid'],
+              'disposition':'SOURCE_CAPTURE_GAP','candidate_match_count':len(matches),
+              'resolved':False,'satisfied':False,'auto_filled':False,'inferred':False,
+            })
     dep={
       'artifact_uid':stable_uid('SF-DEPENDENCY',PAGE,RUN_UID),'artifact_type':'SOURCE_DEPENDENCY_MAP',
       'page_uid_or_scope_uid':PAGE,'page_uids':[PAGE],
-      'edges':[],'unresolved_authority_gaps':gaps,'invented_dependency_count':0,'status':'CURRENT_SOURCE_FACT',
+      'edges':[],'unresolved_authority_gaps':gaps,
+      'materialization_records':local_materialized,
+      'unresolved_source_capture_gaps':local_gaps,
+      'invented_dependency_count':0,'status':'CURRENT_SOURCE_FACT',
     }
     dep['content_hash']=content_hash(dep)
     dump(NEW/'00_SOURCE_INTAKE/SOURCE_DEPENDENCY_MAP.yaml',dep)
@@ -501,6 +570,8 @@ def materialize_stage1(raw_bytes:dict[str,bytes], source_head:str):
           'input_artifacts':[{'artifact_uid':a['artifact_uid'],'content_hash':a['content_hash']} for a in inputs],
           'required_responsibility_uids':[a['responsibility_uid'] for a in inputs],
           'shared_refs':[],'source_fact_refs':sfrefs,'raw_source_inputs':[],'embedded_classification_payloads':[],
+          'source_dependency_materialization_records':dep.get('materialization_records') or [],
+          'unresolved_source_capture_gaps':dep.get('unresolved_source_capture_gaps') or [],
           'unresolved_external_authority_refs':carry,'status':'CURRENT_BASE_BLUEPRINT',
         }
         d['blueprint_hash']=content_hash(d)
@@ -1028,9 +1099,10 @@ def main():
     source_head=git_head()
     raw_bytes={}
     for name in RAW_NAMES:
-        p=OLD/'00_SOURCE_INTAKE/RAW_SOURCE'/PAGE/name
+        source_rel=str(RAW_SOURCE_BINDINGS[name]['source_path'])
+        p=ROOT/source_rel
         if not p.is_file():
-            raise RuntimeError('RAW_SOURCE_MISSING:'+name)
+            raise RuntimeError('REGISTERED_SOURCE_INPUT_MISSING:'+source_rel)
         raw_bytes[name]=p.read_bytes()
 
     cleanup_old()
@@ -1047,8 +1119,32 @@ def main():
 
     run('python',str(SOURCE/'09_TESTS/governance/governance_stage1_pipeline_guard.py'),str(SOURCE),str(NEW))
     ev=load(NEW/'00_SOURCE_INTAKE/evidence/STAGE1_VALIDATION_EVIDENCE.yaml')
+    dep_state=load(NEW/'00_SOURCE_INTAKE/SOURCE_DEPENDENCY_MAP.yaml')
+    local_source_gaps=dep_state.get('unresolved_source_capture_gaps') or []
+    if local_source_gaps:
+        ev['status']='BLOCKED_SOURCE_CAPTURE_GAP'
+        ev['validated_by']='STAGE1_SOURCE_PIPELINE_GUARD_PLUS_SOURCE_CAPTURE_READINESS'
+        ev['source_capture_gap_count']=len(local_source_gaps)
+        ev['source_capture_gap_uids']=[str(x.get('gap_uid')) for x in local_source_gaps if isinstance(x,dict)]
+        dump(NEW/'00_SOURCE_INTAKE/evidence/STAGE1_VALIDATION_EVIDENCE.yaml',ev)
+        state=load(STATE)
+        work=state.get('active_work_unit') or {}
+        work['current_status']='BLOCKED_SOURCE_CAPTURE_GAP'
+        state['active_work_unit']=work
+        state['status']='ACTIVE_STAGE1_BLOCKED_SOURCE_CAPTURE_GAP'
+        state['next_action']='RESOLVE_REGISTERED_SOURCE_PROVIDER_DEPENDENCIES'
+        state['resume_control']={
+          'current_resume_point':f'FRESH_{safe_uid(PAGE)}_STAGE1_SOURCE_CAPTURE_GAP',
+          'current_work_unit_uid':work.get('work_unit_uid'),
+          'current_owner':work.get('canonical_owner'),
+          'exact_next_action':'RESOLVE_REGISTERED_SOURCE_PROVIDER_DEPENDENCIES',
+          'product_execution_allowed':False,
+        }
+        dump(STATE,state)
+        raise RuntimeError('STAGE1_SOURCE_CAPTURE_GAP:'+','.join(ev['source_capture_gap_uids']))
     ev['status']='PASS'
-    ev['validated_by']='STAGE1_SOURCE_PIPELINE_GUARD'
+    ev['validated_by']='STAGE1_SOURCE_PIPELINE_GUARD_PLUS_SOURCE_CAPTURE_READINESS'
+    ev['source_capture_gap_count']=0
     dump(NEW/'00_SOURCE_INTAKE/evidence/STAGE1_VALIDATION_EVIDENCE.yaml',ev)
     # Refresh manifest because validation evidence changed after first validation.
     files=sorted(p.relative_to(NEW).as_posix() for p in NEW.rglob('*') if p.is_file())
@@ -1092,7 +1188,8 @@ def main():
       'closure_blocker_total':final.get('closure_blocker_total'),
       'planning_baseline_completeness':final.get('planning_baseline_completeness'),
       'excluded_unit_generated_data_present':{uid:False for uid in EXCLUDED_UNITS},
-      'prior_run_root_present':OLD.exists(),
+      'predecessor_run_root_used_as_content_source':False,
+      'registered_source_provider_root':ctx['source_provider_root'],
       'prior_stage2_history_present':(ROOT/'governance/test/history/stage02').exists(),
       'prior_stage2_candidate_reused':False,
       'product_blocker_credit':0,

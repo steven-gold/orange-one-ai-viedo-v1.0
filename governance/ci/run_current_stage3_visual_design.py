@@ -87,6 +87,20 @@ def resolve_visual_anchor_registry(current_visual, work, run_root):
             dp=ROOT/str(dep)
             if dp.name==name and dp.is_file():
                 candidates.append(dp)
+    dep_map_path=run_root/'00_SOURCE_INTAKE/SOURCE_DEPENDENCY_MAP.yaml'
+    if dep_map_path.is_file():
+        dep_map=load(dep_map_path)
+        for rec in dep_map.get('materialization_records') or []:
+            if not isinstance(rec,dict):
+                continue
+            matches_uid=registry_uid and rec.get('dependency_uid')==registry_uid
+            matches_path=package_path and rec.get('declared_path')==package_path
+            if matches_uid or matches_path:
+                physical=str(rec.get('current_physical_path') or '')
+                if physical:
+                    p=ROOT/physical
+                    if p.is_file():
+                        candidates.append(p)
     unique={p.resolve() for p in candidates}
     if len(unique)>1 and len({sha(p) for p in unique})>1:
         raise RuntimeError('VISUAL_ANCHOR_REGISTRY_AMBIGUOUS_CURRENT_PHYSICAL_OWNER')
@@ -143,8 +157,9 @@ def resolve():
 
 def preview_svg(page_auth, workbench, impact, authority_ready=False, visual_system=None, home_shell=None):
     regs = page_auth.get('registries') or {}
-    visuals = [x for x in regs.get('visuals') or [] if isinstance(x, dict)]
-    controls = [x for x in regs.get('controls') or [] if isinstance(x, dict)]
+    visuals = [x for x in regs.get('visuals') or [] if isinstance(x, dict) and x.get('visual_uid')]
+    controls = [x for x in regs.get('controls') or [] if isinstance(x, dict) and x.get('control_uid')]
+    page_uid = str((page_auth.get('authority') or {}).get('page_uid') or page_auth.get('page_uid') or 'CURRENT-PAGE')
     tokens = (visual_system or {}).get('tokens') or {}
     bg = (tokens.get('background') or {}).get('page', '#050816')
     surface1 = (tokens.get('surface') or {}).get('l1', '#0C1026')
@@ -152,60 +167,41 @@ def preview_svg(page_auth, workbench, impact, authority_ready=False, visual_syst
     border = (tokens.get('border') or {}).get('normal', 'rgba(142,112,255,0.28)')
     text_primary = (tokens.get('text') or {}).get('primary', '#F3F5FF')
     text_secondary = (tokens.get('text') or {}).get('secondary', '#AEB7D9')
-    positions = {'CORE-01-VIS-CONTEXT': 92, 'CORE-01-VIS-LEFT': 188, 'CORE-01-VIS-CENTER-HEADER': 198, 'CORE-01-VIS-MESSAGES': 338, 'CORE-01-VIS-RUNTIME': 538, 'CORE-01-VIS-COMPOSER': 638, 'CORE-01-VIS-DECISION': 778, 'CORE-01-VIS-RIGHT-CORE': 198, 'CORE-01-VIS-RIGHT-TOPIC': 438, 'CORE-01-VIS-RIGHT-VERSION': 678}
-    height = max(1500, 1040 + 24 * len(controls))
-    boundary = 'GLOBAL VISUAL / SHELL AUTHORITY RESOLVED — HUMAN VISUAL REVIEW PENDING' if authority_ready else 'GLOBAL VISUAL / SHELL AUTHORITY UNRESOLVED — HUMAN VISUAL REVIEW NOT REACHED'
-    footer = 'Visual tokens and shell geometry are inherited from Current FINAL_LOCKED global Authorities. Human approval is still required.' if authority_ready else 'No global palette, typography, shell or component style is invented. Preview is blocked from Human Visual Review until unresolved external visual authorities are supplied.'
-    parts = [
-        f'<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="{height}" viewBox="0 0 1280 {height}" data-normative="false" aria-label="Stage-03 authority-bounded reviewability preview">',
-        f'<rect x="0" y="0" width="1280" height="{height}" fill="{bg}"/>',
-        f'<style>text{{fill:{text_primary};font-family:Inter,ui-sans-serif,system-ui,sans-serif;font-size:14px}}.small{{font-size:11px;fill:{text_secondary}}}.label{{font-size:12px;fill:{text_secondary}}}.panel{{fill:{surface1};stroke:{border};stroke-width:1.5}}.panel2{{fill:{surface2};stroke:{border};stroke-width:1.5}}</style>',
-        f'<rect x="0" y="0" width="1280" height="58" fill="{surface1}" stroke="{border}"/>',
-        '<text x="28" y="35" font-weight="700">ORANGE ONE · CORE-01</text>',
-        '<text x="780" y="35" class="label">Notification · To-do · Running · zh-TW · Frontend/Admin · Account</text>',
-        f'<rect x="0" y="58" width="64" height="{height-58}" fill="{bg}"/>'
+    cols=2
+    rows=max(1,(len(visuals)+cols-1)//cols)
+    visual_bottom=150+rows*112
+    height=max(900,visual_bottom+160+24*len(controls))
+    boundary = 'CURRENT VISUAL INPUTS RESOLVED — HUMAN VISUAL REVIEW PENDING' if authority_ready else 'CURRENT VISUAL INPUTS INCOMPLETE — HUMAN VISUAL REVIEW NOT REACHED'
+    footer = 'Preview is non-normative and derived only from Current registered visual/control identities.'
+    parts=[
+      f'<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="{height}" viewBox="0 0 1280 {height}" data-normative="false" aria-label="Stage-03 source-derived reviewability preview">',
+      f'<rect x="0" y="0" width="1280" height="{height}" fill="{bg}"/>',
+      f'<style>text{{fill:{text_primary};font-family:Inter,ui-sans-serif,system-ui,sans-serif;font-size:14px}}.small{{font-size:11px;fill:{text_secondary}}}.label{{font-size:12px;fill:{text_secondary}}}.panel{{fill:{surface1};stroke:{border};stroke-width:1.5}}.panel2{{fill:{surface2};stroke:{border};stroke-width:1.5}}</style>',
+      f'<rect x="0" y="0" width="1280" height="58" fill="{surface1}" stroke="{border}"/>',
+      f'<text x="28" y="35" font-weight="700">ORANGE ONE · {page_uid}</text>',
+      f'<text x="28" y="82" class="label">{boundary}</text>',
     ]
-    for i in range(9):
-        y0 = 82 + i * 58
-        parts.append(f'<circle cx="32" cy="{y0}" r="15" fill="{surface2}" stroke="{border}"/>')
-    parts.extend([
-        '<rect x="78" y="68" width="1186" height="56" rx="12" class="panel2"/>',
-        '<text x="98" y="102">Project / Topic Context · Current governed visual review candidate</text>',
-        '<rect x="78" y="140" width="250" height="680" rx="12" class="panel"/>',
-        '<text x="96" y="170" class="label">Project Core / Work Item</text>',
-        '<rect x="344" y="140" width="600" height="92" rx="12" class="panel"/>',
-        '<text x="364" y="172" class="label">Conversation Header</text>',
-        '<rect x="344" y="248" width="600" height="220" rx="12" class="panel2"/>',
-        '<text x="364" y="280" class="label">Messages</text>',
-        '<rect x="344" y="484" width="600" height="80" rx="12" class="panel"/>',
-        '<text x="364" y="516" class="label">Runtime Stage</text>',
-        '<rect x="344" y="580" width="600" height="100" rx="12" class="panel2"/>',
-        '<text x="364" y="612" class="label">Composer</text>',
-        '<rect x="344" y="696" width="600" height="124" rx="12" class="panel"/>',
-        '<text x="364" y="728" class="label">Decision Dock · downstream of conversation evidence</text>',
-        '<rect x="960" y="140" width="304" height="200" rx="12" class="panel"/>',
-        '<text x="980" y="172" class="label">Core Context</text>',
-        '<rect x="960" y="356" width="304" height="200" rx="12" class="panel2"/>',
-        '<text x="980" y="388" class="label">Topic Scope</text>',
-        '<rect x="960" y="572" width="304" height="248" rx="12" class="panel"/>',
-        '<text x="980" y="604" class="label">Version / Evidence</text>',
-        f'<text x="20" y="24">{boundary}</text>'
-    ])
-    for row in visuals:
-        uid = str(row.get('visual_uid') or '')
-        yy = positions.get(uid, 860)
-        parts.append(f'<text class="small" x="350" y="{yy}">{uid}</text>')
-    parts.append('<text x="20" y="900">Required Control / Field identities from Current page authority:</text>')
-    y = 930
+    for i,row in enumerate(visuals):
+        col=i%cols
+        rr=i//cols
+        x=72+col*588
+        y=112+rr*112
+        uid=str(row.get('visual_uid'))
+        label=str(row.get('label') or row.get('name') or row.get('role') or '')
+        parts.append(f'<rect x="{x}" y="{y}" width="552" height="88" rx="12" class="panel"/>')
+        parts.append(f'<text x="{x+18}" y="{y+32}" class="label">{uid}</text>')
+        if label:
+            parts.append(f'<text x="{x+18}" y="{y+58}" class="small">{label}</text>')
+    control_y=visual_bottom+36
+    parts.append(f'<text x="72" y="{control_y}">Registered controls from Current page source:</text>')
+    y=control_y+28
     for row in controls:
-        uid = str(row.get('control_uid') or '')
-        if not uid:
-            continue
-        section = str(row.get('section_uid') or '')
-        ctype = str(row.get('type') or '')
-        parts.append(f'<text class="small" x="24" y="{y}">{uid} · {section} · {ctype}</text>')
-        y += 22
-    parts.append(f'<text class="small" x="20" y="{height - 20}">{footer}</text>')
+        uid=str(row.get('control_uid'))
+        section=str(row.get('section_uid') or '')
+        ctype=str(row.get('type') or '')
+        parts.append(f'<text class="small" x="76" y="{y}">{uid} · {section} · {ctype}</text>')
+        y+=22
+    parts.append(f'<text class="small" x="20" y="{height-20}">{footer}</text>')
     parts.append('</svg>')
     return '\n'.join(parts)
 
@@ -364,9 +360,14 @@ def execute():
     for n, d in support.items():
         dump(root / n, d)
 
-    conv = next((x for x in workbench.get('atomic_workbenches') or [] if isinstance(x, dict) and x.get('workbench_uid') == 'CORE-01-WB-CONVERSATION'), {})
-    decision = next((x for x in workbench.get('atomic_workbenches') or [] if isinstance(x, dict) and x.get('workbench_uid') == 'CORE-01-WB-DECISION-DOCK'), {})
-    scanner_truth = {'VISUAL_DOMAIN': len(c['stage'].get('outputs') or []) == 9 and len(files) >= 10, 'GEOMETRY': geometry.get('layout') == design.get('layout') and geometry.get('visual_geometry_units') == design.get('visuals'), 'PREVIEW_IDENTITY': all(uid in svg for uid in all_control_uids), 'FUNCTION_TO_VISUAL_BINDING': topo.get('functional_visual_impact_rows') == (impact.get('rows') or []) and topo.get('field_bindings') == (impact.get('field_bindings') or []), 'ATOMIC_WORKBENCH_COHESION': conv.get('section_order') == ['CORE-01-SEC-03', 'CORE-01-SEC-04', 'CORE-01-SEC-06', 'CORE-01-SEC-07'] and decision.get('section_order') == ['CORE-01-SEC-05'], 'TOPOLOGY_EQUIVALENCE': topo.get('interaction_relations') == (topology.get('edges') or []), 'RESPONSIVE_ORDER': geometry.get('responsive_contract', {}).get('semantic_order_preserved') is True}
+    atomic = [x for x in workbench.get('atomic_workbenches') or [] if isinstance(x, dict)]
+    atomic_cohesion = bool(atomic) and all(
+        isinstance(x.get('section_order'), list)
+        and bool(x.get('section_order'))
+        and len(x.get('section_order')) == len(set(x.get('section_order')))
+        for x in atomic
+    )
+    scanner_truth = {'VISUAL_DOMAIN': len(c['stage'].get('outputs') or []) == 9 and len(files) >= 10, 'GEOMETRY': geometry.get('layout') == design.get('layout') and geometry.get('visual_geometry_units') == design.get('visuals'), 'PREVIEW_IDENTITY': all(uid in svg for uid in all_control_uids), 'FUNCTION_TO_VISUAL_BINDING': topo.get('functional_visual_impact_rows') == (impact.get('rows') or []) and topo.get('field_bindings') == (impact.get('field_bindings') or []), 'ATOMIC_WORKBENCH_COHESION': atomic_cohesion, 'TOPOLOGY_EQUIVALENCE': topo.get('interaction_relations') == (topology.get('edges') or []), 'RESPONSIVE_ORDER': geometry.get('responsive_contract', {}).get('semantic_order_preserved') is True}
     if set(scanner_truth) != set(c['adapter'].get('scanner_dimensions') or []):
         raise RuntimeError('STAGE03_SCANNER_DENOMINATOR_DRIFT')
     if not all(scanner_truth.values()):
@@ -496,11 +497,11 @@ def self_test():
     assert len(ad.get('scanner_dimensions') or []) == 7
     assert {'VISUAL_REFERENCE_ANNOTATION', 'VISUAL_INHERITANCE_MATRIX', 'VISUAL_SCENARIO_EVIDENCE_SET'}.issubset(set(st.get('outputs') or []))
     assert 'VISUAL_REVIEW_EVIDENCE' in (st.get('required_evidence') or [])
-    dummy = {'registries': {'visuals': [{'visual_uid': 'CORE-01-VIS-CENTER-HEADER'}, {'visual_uid': 'CORE-01-VIS-MESSAGES'}, {'visual_uid': 'CORE-01-VIS-RUNTIME'}, {'visual_uid': 'CORE-01-VIS-COMPOSER'}, {'visual_uid': 'CORE-01-VIS-DECISION'}], 'controls': [{'control_uid': 'CORE-01-BTN-SEND', 'section_uid': 'CORE-01-SEC-07', 'type': 'PRIMARY_BUTTON'}]}}
+    dummy = {'authority': {'page_uid':'SYNTH-PAGE'}, 'registries': {'visuals': [{'visual_uid': 'SYNTH-PAGE-VIS-A'}, {'visual_uid': 'SYNTH-PAGE-VIS-B'}], 'controls': [{'control_uid': 'SYNTH-PAGE-BTN-SEND', 'section_uid': 'SYNTH-PAGE-SEC-A', 'type': 'PRIMARY_BUTTON'}]}}
     svg = preview_svg(dummy, {'atomic_workbenches': []}, {'rows': [], 'field_bindings': []})
     assert 'STRUCTURAL PREVIEW ONLY' not in svg
-    assert 'CORE-01-BTN-SEND' in svg
-    assert svg.index('CORE-01-VIS-MESSAGES') < svg.index('CORE-01-VIS-RUNTIME') < svg.index('CORE-01-VIS-COMPOSER') < svg.index('CORE-01-VIS-DECISION')
+    assert 'SYNTH-PAGE-BTN-SEND' in svg
+    assert svg.index('SYNTH-PAGE-VIS-A') < svg.index('SYNTH-PAGE-VIS-B')
     print('PASS: Current Stage-03 visual producer self-test outputs=9 scanners=7 cross-stage-and-anchor-fail-closed=preserved')
 
 def main():
@@ -522,8 +523,5 @@ def main():
 if __name__ == '__main__':
     main()
 
-# stage03-execution-trigger: v2.2.15-clean-r1
 
-# stage03-execution-trigger: v2.2.15-clean-r2
 
-# stage03-execution-trigger: v2.2.15-authority-resolved-r3

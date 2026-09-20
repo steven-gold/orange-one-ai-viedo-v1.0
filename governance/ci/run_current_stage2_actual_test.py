@@ -166,6 +166,100 @@ def _validate_stage02_admission(state: dict, revalidation_mode: bool) -> dict:
         die('STAGE02_ADMISSION_REQUIRES_NOT_EXECUTED')
     return execution
 
+def _collect_declared_package_paths(value) -> set[str]:
+    out=set()
+    def walk(v):
+        if isinstance(v,dict):
+            p=v.get('package_path')
+            if isinstance(p,str) and p.strip():
+                out.add(p.strip())
+            for child in v.values():
+                walk(child)
+        elif isinstance(v,list):
+            for child in v:
+                walk(child)
+    walk(value)
+    return out
+
+def _stage3_successor_readiness(page_uid: str, page_dir: Path, ai_profile_active: bool) -> dict:
+    registry=load(STAGE_REGISTRY)
+    stage3_rows=[x for x in (registry.get('stages') or []) if isinstance(x,dict) and x.get('stage_uid')=='STAGE-03']
+    if len(stage3_rows)!=1:
+        die(f'STAGE03_REGISTRY_RECORD_DENOMINATOR:{len(stage3_rows)}')
+    stage3=stage3_rows[0]
+    required_inputs=list(stage3.get('inputs') or [])
+    if ai_profile_active:
+        required_inputs.append('AI_INTERACTION_CONTINUITY_CONTRACT')
+    rows=[]
+    blockers=[]
+    for input_uid in required_inputs:
+        if input_uid=='VISUAL_BASE_BLUEPRINT':
+            path=RUN/'02_BASE_BLUEPRINT'/page_uid/'VISUAL_BASE_BLUEPRINT.yaml'
+        else:
+            path=page_dir/f'{input_uid}.yaml'
+        exists=path.is_file()
+        parse_ok=False
+        nonempty=False
+        if exists:
+            try:
+                obj=load(path)
+                parse_ok=True
+                nonempty=bool(obj)
+            except SystemExit:
+                parse_ok=False
+        ready=exists and parse_ok and nonempty
+        rows.append({
+          'input_uid':input_uid,
+          'origin':(stage3.get('input_origins') or {}).get(input_uid,'STAGE-02_CONDITIONAL'),
+          'physical_ref':path.relative_to(ROOT).as_posix(),
+          'physical_materialization_status':'PASS' if exists else 'BLOCKED',
+          'parse_schema_status':'PASS' if parse_ok else 'BLOCKED',
+          'required_field_completeness':'PASS' if nonempty else 'BLOCKED',
+          'consumer_readiness_status':'PASS' if ready else 'BLOCKED',
+        })
+        if not ready:
+            blockers.append('STAGE03_SUCCESSOR_INPUT_NOT_READY:'+input_uid)
+
+    dep_path=RUN/'00_SOURCE_INTAKE/SOURCE_DEPENDENCY_MAP.yaml'
+    dep=load(dep_path) if dep_path.is_file() else {}
+    materialized={
+      str(x.get('declared_path'))
+      for x in (dep.get('materialization_records') or [])
+      if isinstance(x,dict) and x.get('materialization_status')=='MATERIALIZED_CURRENT'
+    }
+    explicit_gaps=[
+      x for x in (dep.get('unresolved_source_capture_gaps') or [])
+      if isinstance(x,dict)
+    ]
+    declared=set()
+    raw_root=RUN/'00_SOURCE_INTAKE/RAW_SOURCE'/page_uid
+    if raw_root.is_dir():
+        for p in sorted(raw_root.glob('*.yaml')):
+            try:
+                declared.update(_collect_declared_package_paths(load(p)))
+            except SystemExit:
+                blockers.append('STAGE03_SOURCE_DECLARED_DEPENDENCY_PARSE_FAILED:'+p.name)
+    unresolved_declared=sorted(x for x in declared if x not in materialized)
+    for row in explicit_gaps:
+        p=str(row.get('declared_path') or row.get('dependency_uid') or 'UNKNOWN')
+        if p not in unresolved_declared:
+            unresolved_declared.append(p)
+    for p in sorted(set(unresolved_declared)):
+        blockers.append('STAGE03_SOURCE_DECLARED_DEPENDENCY_NOT_READY:'+p)
+    return {
+      'successor_stage_uid':'STAGE-03',
+      'required_input_total':len(required_inputs),
+      'input_rows':rows,
+      'source_declared_dependency_total':len(declared),
+      'source_declared_materialized_total':len(declared & materialized),
+      'unresolved_source_declared_dependencies':sorted(set(unresolved_declared)),
+      'unresolved_required_dependency_total':len(set(blockers)),
+      'consumer_readiness_complete':len(set(blockers))==0,
+      'status':'PASS' if not blockers else 'BLOCKED',
+      'blockers':sorted(set(blockers)),
+    }
+
+
 def _self_test_external_authority_and_revalidation():
     with tempfile.TemporaryDirectory() as td:
         root = Path(td)
@@ -906,6 +1000,8 @@ for page, paths in target_pages.items():
     if ai_profile_active and not (page_dir / 'AI_INTERACTION_CONTINUITY_CONTRACT.yaml').is_file():
         closure.append('MISSING_AI_INTERACTION_CONTINUITY_CONTRACT')
     closure.extend(materialized_stage02_completeness_blockers(page_dir, effective_raw))
+    successor_readiness = _stage3_successor_readiness(page, page_dir, ai_profile_active)
+    closure.extend(successor_readiness.get('blockers') or [])
     if scan.get('gap_count', 0) > 0:
         if not (page_dir / 'FUNCTION_ADMISSION_SCORECARD.yaml').is_file():
             closure.append('MISSING_FUNCTION_ADMISSION_SCORECARD')
@@ -922,6 +1018,7 @@ for page, paths in target_pages.items():
         'closure_blocker_count': len(set(closure)),
         'function_admission_scorecard': 'PRESENT' if (page_dir / 'FUNCTION_ADMISSION_SCORECARD.yaml').is_file() else 'REQUIRED_WHEN_GAP_ANALYSIS_EXISTS',
         'automatic_completion_scope': 'PRESENT' if (page_dir / 'AUTO_COMPLETION_SCOPE_LEDGER.yaml').is_file() else 'REQUIRED_WHEN_GAP_ANALYSIS_EXISTS',
+        'stage3_successor_readiness': successor_readiness,
     }
 
 if any(not gid for gid in union_gap_uids):
@@ -930,7 +1027,8 @@ if any(not gid for gid in union_gap_uids):
 head = subprocess.run(['git', 'rev-parse', 'HEAD'], cwd=str(ROOT), text=True, capture_output=True, check=True).stdout.strip()
 functional_total = sum(x['functional_chain_fresh_scan']['gap_count'] for x in pages.values())
 closure_total = sum(x['closure_blocker_count'] for x in pages.values())
-stage_exit_allowed = scope_complete and functional_total == 0 and closure_total == 0
+successor_unresolved_total = sum(int((x.get('stage3_successor_readiness') or {}).get('unresolved_required_dependency_total') or 0) for x in pages.values())
+stage_exit_allowed = scope_complete and functional_total == 0 and closure_total == 0 and successor_unresolved_total == 0
 result = {
     'schema_version': 1,
     'artifact_type': 'NON_NORMATIVE_STAGE02_ACTUAL_TEST_EVIDENCE',
@@ -955,6 +1053,12 @@ result = {
     'pages': pages,
     'fresh_functional_gap_total': functional_total,
     'closure_blocker_total': closure_total,
+    'stage3_successor_readiness': {
+      'page_results': {page: rec.get('stage3_successor_readiness') for page,rec in sorted(pages.items())},
+      'unresolved_required_dependency_total': successor_unresolved_total,
+      'consumer_readiness_complete': successor_unresolved_total == 0,
+      'status': 'PASS' if successor_unresolved_total == 0 else 'BLOCKED',
+    },
     'preserved_external_authorities': dict(sorted(external.items())),
     'preserved_external_authority_union_count': len(union_gap_uids),
     'resolved_external_authorities': dict(sorted(resolved_external.items())),
@@ -972,6 +1076,7 @@ result = {
         'External authority references are preserved unresolved; they are neither dropped nor auto-resolved.',
         'No Current Specification file is modified by this test.',
         'A page-scoped test does not grant Stage-02 exit credit until every required page has fresh evidence.',
+        'Stage-02 exit additionally requires Stage-03 successor inputs and source-declared dependencies to be physically materialized, parseable and consumer-ready.',
     ],
 }
 RESULT.parent.mkdir(parents=True, exist_ok=True)
