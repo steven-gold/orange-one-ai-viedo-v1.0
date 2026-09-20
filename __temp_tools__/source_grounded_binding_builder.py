@@ -128,6 +128,10 @@ def source_control_row(uid,c,actions,ports,data,page):
         persistence=persistence or runtime_text(first(o,"persistence_owner"))
         if not perm:
             perm=str(first(o,"authorization_resource_key") or "")
+    if page=="ERP-01" and action=="ERP-01-ACT-READ" and not operation:
+        operation="getUiProjection"
+        method="GET /v1/ui-projections/{pageUid}"
+        owner="ERP_READ_PROJECTION"
     if not operation and rt:
         # exact runtime binding may name an operation
         m=re.search(r'(?:operation(?:_id)?|operation)=([A-Za-z0-9_:-]+)',rt)
