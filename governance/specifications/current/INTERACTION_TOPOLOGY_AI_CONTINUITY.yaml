@@ -1,4 +1,4 @@
-schema_version: 5
+schema_version: 6
 artifact_uid: GOV-COMP-INTERACTION-TOPOLOGY-AI-CONTINUITY
 artifact_type: GOVERNANCE_SPECIFICATION_COMPONENT
 normative_status: ACTIVE_CURRENT_GOVERNANCE_COMPONENT
@@ -60,14 +60,21 @@ common_invariants:
     actual_visual_design_required: true
     wireframe_only_is_complete_visual_design: false
     style_application_required: true
+    shared_visual_requires_simultaneous_unambiguous_state_annotation_proof: true
+    applicable_visual_anchor_uids_nonempty_required: true
+    declared_visual_candidate_physical_evidence_required: true
   VISUAL_REFERENCE_ANNOTATION:
     required_contract: VISUAL_REFERENCE_ANNOTATION
     verification_purpose_required: true
     unannotated_visual_may_pass_review: false
+    applicable_visual_anchor_uids_nonempty_required: true
+    declared_candidate_physical_ref_required: true
   SCENARIO_TO_FUNCTION_VISUAL_COVERAGE:
     required_coverage_percent: 100
     denominator: APPROVED_REQUIRED_JOURNEY_STATE_BRANCH_SET
     visual_scenario_drift: BLOCK
+    empty_visual_anchor_mapping: BLOCK
+    same_visual_multi_scenario_without_explicit_simultaneous_coverage_proof: BLOCK
   VISUAL_INHERITANCE_AND_STYLE_DEFINITION:
     required_contracts:
     - VISUAL_INHERITANCE_MATRIX

@@ -1198,3 +1198,23 @@ Whole-document raw text search, replacement, occurrence count, regular-expressio
 Structured documents MUST be parsed successfully before mutation and reparsed after mutation. The executor MUST verify the selected node identity, required parent/sibling context, schema or required-field constraints, expected pre-write hash when applicable, exact write-set, and preservation of unrelated structural siblings. Semantic mutation of executable source MUST use a syntax-tree, concrete-syntax-tree, parser-backed, or equivalently bounded semantic selector; raw source spelling alone MUST_NOT define semantic identity.
 
 After mutation, the executor MUST verify the exact intended structural delta, rerun affected reverse consumers, and prove that no unrelated Current owner, sibling node, denominator, reference, or execution state was changed. Selector ambiguity or parser failure is a mutation blocker, not permission to weaken the selector.
+
+<!-- SECTION_UID: WEB-GOV-03-S071 -->
+## 71. 跨階段實體交接 / Consumer Readiness / 回退控制 / Cross-Stage Materialized Handoff, Consumer Readiness and Re-entry Control
+
+Every governed Stage exit MUST execute the following order before the next Stage may be admitted:
+
+1. Enumerate the complete applicable successor-required input universe from the Current lifecycle/profile/Authority.
+2. Reconcile each required input to exactly one legal predecessor output, persisted foundation artifact, Current Authority/shared owner, or registered external evidence source.
+3. Prove the referenced owner/evidence is physically available in the Current execution context or is a valid external receipt.
+4. Parse and validate artifact type, schema/version, canonical identity, digest when registered, and every REQUIRED field.
+5. Reconcile each required edge into the current denominator; zero-gap claims MUST include required handoff edges rather than omit them.
+6. Run the successor consumer admission/readiness check using the same exact inputs that will be consumed downstream.
+7. Persist CROSS_STAGE_HANDOFF_READINESS_LEDGER and affected reverse-dependency dispositions.
+8. Only then evaluate Stage exit and next-Stage transition.
+
+The closed failure-class vocabulary includes REFERENCE_ONLY_UNMATERIALIZED, PHYSICAL_REQUIRED_INPUT_MISSING, SCHEMA_OR_VERSION_MISMATCH, REQUIRED_FIELD_INCOMPLETE, DENOMINATOR_OMISSION, CONSUMER_NOT_READY, and DOWNSTREAM_DISCOVERED_UPSTREAM_GAP. These are blocking states unless Current Authority explicitly proves non-applicability.
+
+If a downstream capability discovers an upstream-owned handoff defect, downstream mutation MUST stop. Execution MUST reopen the earliest owning capability, mark affected descendants REVERIFY_REQUIRED, preserve only reverse-dependency-proven unaffected evidence, and resume from the earliest impacted successor boundary. A downstream patch MUST NOT manufacture the missing upstream artifact or claim the predecessor was complete.
+
+This control applies to every registered lifecycle Stage. Stage-local success, functional-gap-zero, visual-review-ready, implementation-complete, test-pass, build-pass, staging-pass, deployment-pass, or production-pass MUST NOT bypass materialized handoff and consumer readiness.

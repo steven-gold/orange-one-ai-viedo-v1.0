@@ -4,7 +4,7 @@ artifact_type: AUDIT_CATALOG
 status: CURRENT_CANDIDATE
 canonical_path: 10_REGISTRY/AUDIT_CATALOG.yaml
 owner_uid: OWNER-GOVERNANCE-AUDIT-CATALOG
-governance_revision: v2.2.15-stage03-visual-materialization-promotion-closure
+governance_revision: v2.2.16-cross-stage-materialization-consumer-readiness-hardening
 normative_section_uids:
 - WEB-GOV-04-S072
 - WEB-GOV-04-S073
@@ -187,3 +187,22 @@ items:
   - SCENARIO_TO_FUNCTION_VISUAL_COVERAGE
   - DESIGN_FREEZE_QUANTITATIVE_COMPLETENESS
   - BLUEPRINT_TO_IMPLEMENTATION_HANDOFF
+- audit_item_uid: AUD-GOV-014
+  audit_type: CROSS_STAGE_MATERIALIZATION_AND_CONSUMER_READINESS
+  stage_uid: PREFORMAL
+  target_uid: GOVERNANCE_PACKAGE
+  requirement_type: BLOCKING
+  validator_uid: VAL-GOV-035
+  required_evidence:
+  - VALIDATOR_RESULT
+  denominator_eligible: true
+  status: REQUIRED
+  validator_name: STAGE_EXECUTION_INVARIANT_GUARD
+  audit_type_uid: AUDTYPE-GOV-014
+  coverage_extensions:
+  - REFERENCE_RESOLUTION
+  - PHYSICAL_MATERIALIZATION
+  - PARSE_SCHEMA_REQUIRED_FIELDS
+  - DENOMINATOR_INCLUSION
+  - SUCCESSOR_CONSUMER_READINESS
+  - UPSTREAM_REENTRY

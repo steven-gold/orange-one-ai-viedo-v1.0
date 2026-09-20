@@ -21,7 +21,7 @@ EXPECTED_PHASES=[
 'PERSIST_RESUME','NEXT_STAGE']
 REQUIRED_PREFLIGHT={'REQUIRED_FIELD_MANIFEST','FUNCTIONAL_CHAIN_MANIFEST','EFFECTIVE_CONTRACT_OVERLAY','DEPENDENCY_TOPOLOGY','DENOMINATOR_SNAPSHOT','CLASSIFICATION_RULESET','CHANGE_IMPACT_MAP','STAGE_EXECUTION_PREFLIGHT_RECEIPT'}
 ROUTE_KEYS={'GOVERNANCE_DEFECT','AUTHORITY_GAP','PRODUCT_CONTRACT_GAP','RUNTIME_IMPLEMENTATION_GAP','EVIDENCE_STATE_GAP','EXTERNAL_AUTHORITY_GAP'}
-EVIDENCE_FIELDS={'artifact_type','governance_uid','stage_uid','attempt_uid','scope_manifest_ref','actual_stage_execution_started','actual_stage_execution_completed','fresh_execution','prior_results_used','current_specification_mutated','denominator','gaps','closure_blockers','required_evidence','result','stage_exit_allowed','source_head_sha','phase_trace','operation_results','output_results','scanner_results','validator_results','remediation','hidden_defect_sweep','exact_head_gate_receipts','resume_persistence','next_stage_transition'}
+EVIDENCE_FIELDS={'actual_stage_execution_completed','actual_stage_execution_started','artifact_type','attempt_uid','closure_blockers','cross_stage_handoff','current_specification_mutated','denominator','exact_head_gate_receipts','fresh_execution','gaps','governance_uid','hidden_defect_sweep','next_stage_transition','operation_results','output_results','phase_trace','prior_results_used','remediation','required_evidence','result','resume_persistence','scanner_results','scope_manifest_ref','source_head_sha','stage_exit_allowed','stage_uid','validator_results'}
 PHASE_TERMINAL_STATUSES={'PASS','BLOCKED','NOT_APPLICABLE_WITH_PROOF','NOT_EXECUTED_AFTER_BLOCK'}
 RESULT_TERMINAL_STATUSES={'PASS','BLOCKED','NOT_APPLICABLE_WITH_PROOF'}
 
@@ -131,6 +131,15 @@ def validate_definition_data(profile,adapters):
         if ad.get('scanner_mode') not in {'NORMALIZED_COMMON_EVIDENCE_CONTRACT','SPECIALIZED_COMPATIBILITY_PLUS_NORMALIZED_COMMON'}: fail(f'ADAPTER_SCANNER_MODE_INVALID:{uid}')
         if ad.get('product_completion_credit_from_definition_audit')!=0: fail(f'DEFINITION_AUDIT_PRODUCT_CREDIT_LEAK:{uid}')
         if ad.get('business_entity_gate_required') is True and not isinstance(st.get('business_entity_completeness_gate'),dict): fail(f'BUSINESS_ENTITY_GATE_REQUIRED_BUT_MISSING:{uid}')
+    for _sid,_stage in stages.items():
+        _gate=_stage.get('cross_stage_materialization_gate') or {}
+        if _gate.get('required') is not True or _gate.get('invariant_uid')!='GOV-INV-CROSS-STAGE-MATERIALIZATION-CONSUMER-READINESS-001':
+            fail(f'CROSS_STAGE_GATE_INVALID:{_sid}')
+        for _k in ('reference_resolution_required','physical_materialization_required','parse_schema_required_field_completeness_required','denominator_inclusion_required','successor_consumer_readiness_required','successor_required_input_reconciliation_before_exit'):
+            if _gate.get(_k) is not True:
+                fail(f'CROSS_STAGE_GATE_FLAG_MISSING:{_sid}:{_k}')
+        if _gate.get('reference_only_completion_credit')!=0:
+            fail(f'CROSS_STAGE_REFERENCE_ONLY_CREDIT_LEAK:{_sid}')
     for uid,st in stages.items():
         nxt=str(st.get('next_stage_uid') or '')
         if nxt in stages:
@@ -287,6 +296,28 @@ def validate_evidence_data(stage_uid,e):
         if not isinstance(item,dict) or item.get('status')!='PASS' or not item.get('ref'): fail('REQUIRED_EVIDENCE_ITEM_INVALID')
         if not item.get('external_receipt') and not (ROOT/str(item['ref'])).is_file(): fail(f'REQUIRED_EVIDENCE_PHYSICAL_REF_MISSING:{item["ref"]}')
 
+    handoff=e.get('cross_stage_handoff')
+    if not isinstance(handoff,dict):
+        fail('CROSS_STAGE_HANDOFF_INVALID')
+    required_handoff_fields={'ledger_ref','external_receipt','successor_stage_uid','reference_resolution_complete','physical_materialization_complete','required_field_completeness_complete','denominator_reconciled','consumer_readiness_complete','unresolved_required_dependency_total','status'}
+    if not required_handoff_fields.issubset(handoff):
+        fail('CROSS_STAGE_HANDOFF_FIELD_MISSING')
+    if handoff.get('successor_stage_uid')!=st.get('next_stage_uid'):
+        fail('CROSS_STAGE_HANDOFF_SUCCESSOR_DRIFT')
+    if handoff.get('status') not in {'PASS','BLOCKED'}:
+        fail('CROSS_STAGE_HANDOFF_STATUS_INVALID')
+    if not isinstance(handoff.get('unresolved_required_dependency_total'),int) or handoff.get('unresolved_required_dependency_total')<0:
+        fail('CROSS_STAGE_HANDOFF_UNRESOLVED_COUNT_INVALID')
+    if not handoff.get('external_receipt'):
+        ref=str(handoff.get('ledger_ref') or '')
+        if not ref or not (ROOT/ref).is_file():
+            fail('CROSS_STAGE_HANDOFF_LEDGER_PHYSICAL_REF_MISSING')
+    if e.get('result')=='PASS':
+        for key in ('reference_resolution_complete','physical_materialization_complete','required_field_completeness_complete','denominator_reconciled','consumer_readiness_complete'):
+            if handoff.get(key) is not True:
+                fail('PASS_WITH_CROSS_STAGE_HANDOFF_NOT_READY:'+key)
+        if handoff.get('unresolved_required_dependency_total')!=0 or handoff.get('status')!='PASS':
+            fail('PASS_WITH_UNRESOLVED_CROSS_STAGE_HANDOFF')
     gates=e.get('exact_head_gate_receipts')
     if not isinstance(gates,list) or not gates: fail('EXACT_HEAD_GATE_RECEIPTS_MISSING')
     for gate in gates:

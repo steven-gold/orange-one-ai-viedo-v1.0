@@ -7,6 +7,8 @@ def load(root, rel):
     p = root / rel
     return yaml.safe_load(p.read_text(encoding='utf-8')) or {}
 
+HANDOFF_REQUIRED_FIELDS_FOR_VALIDATOR=['producer_stage_or_capability', 'producer_output_uid_or_type', 'producer_owner', 'producer_physical_ref_or_external_evidence', 'producer_hash_or_version_or_schema', 'consumer_stage_or_capability', 'consumer_input_uid_or_type', 'consumer_owner_or_schema', 'applicability', 'reference_resolution_status', 'physical_materialization_status', 'parse_schema_status', 'required_field_completeness', 'denominator_inclusion_status', 'consumer_readiness_status', 'unresolved_required_dependency_total', 'blocking_owner_or_reentry_target', 'current_evidence_ref']
+
 def validate(root=ROOT):
     failures = []
     rel = '10_REGISTRY/STAGE_EXECUTION_INVARIANT_REGISTRY.yaml'
@@ -155,6 +157,57 @@ def validate(root=ROOT):
     for k in ['port_exposure_as_trigger', 'state_event_as_trigger_without_explicit_binding', 'semantic_similarity_binding_creation', 'non_current_final_locked_authority_use', 'input_authority_architecture_gap_ai_autofill', 'required_evidence_ledger_claim_without_physical_artifact', 'validator_stale_schema_path_or_enum', 'stale_current_snapshot_after_successor_acceptance', 'receipt_reuse_after_denominator_change', 'unique_current_authority_evidence_skip', 'review_completion_as_stage_closure']:
         if ur.get(k) != 'BLOCK':
             failures.append('construction_universal_rule_not_block:' + k)
+    crossmat = inv.get('CROSS_STAGE_MATERIALIZATION_AND_CONSUMER_READINESS') or {}
+    if crossmat.get('invariant_uid') != 'GOV-INV-CROSS-STAGE-MATERIALIZATION-CONSUMER-READINESS-001':
+        failures.append('cross_stage_materialization_invariant_uid_missing')
+    if crossmat.get('required_artifact') != 'CROSS_STAGE_HANDOFF_READINESS_LEDGER' or crossmat.get('applies_to_all_registered_stages') is not True:
+        failures.append('cross_stage_materialization_contract_missing')
+    if crossmat.get('reference_presence_is_materialization') is not False or crossmat.get('physical_materialization_required') is not True:
+        failures.append('reference_vs_materialization_separation_missing')
+    for key in ('parse_required','schema_version_identity_required','required_field_completeness_required','denominator_inclusion_required','successor_consumer_readiness_required','successor_required_input_universe_reconciliation_before_stage_exit'):
+        if crossmat.get(key) is not True:
+            failures.append('cross_stage_readiness_flag_missing:' + key)
+    if set(crossmat.get('required_row_fields') or []) != set(HANDOFF_REQUIRED_FIELDS_FOR_VALIDATOR):
+        failures.append('cross_stage_handoff_row_schema_drift')
+    if crossmat.get('historical_or_reference_only_completion_credit') != 0:
+        failures.append('reference_only_completion_credit_leak')
+    if crossmat.get('downstream_discovered_upstream_gap') != 'STOP_REENTER_EARLIEST_OWNER_MARK_DESCENDANTS_REVERIFY_REQUIRED':
+        failures.append('upstream_reentry_disposition_missing')
+
+    bcross = bp.get('cross_stage_materialization_consumer_readiness_contract') or {}
+    if bcross.get('required') is not True or bcross.get('audit_item_uid') != 'AUD-GOV-014' or bcross.get('validator_uid') != 'VAL-GOV-035':
+        failures.append('acceptance_cross_stage_readiness_binding_missing')
+    catalog = load(root, '10_REGISTRY/AUDIT_CATALOG.yaml')
+    aud14 = next((x for x in catalog.get('items') or [] if x.get('audit_item_uid') == 'AUD-GOV-014'), None)
+    if not isinstance(aud14, dict) or aud14.get('audit_type') != 'CROSS_STAGE_MATERIALIZATION_AND_CONSUMER_READINESS' or aud14.get('validator_uid') != 'VAL-GOV-035':
+        failures.append('audit_catalog_cross_stage_item_missing')
+
+    for sid, stage in stage_map.items():
+        gate = stage.get('cross_stage_materialization_gate') or {}
+        if gate.get('required') is not True or gate.get('invariant_uid') != 'GOV-INV-CROSS-STAGE-MATERIALIZATION-CONSUMER-READINESS-001':
+            failures.append('cross_stage_gate_missing:' + str(sid))
+        for key in ('reference_resolution_required','physical_materialization_required','parse_schema_required_field_completeness_required','denominator_inclusion_required','successor_consumer_readiness_required','successor_required_input_reconciliation_before_exit'):
+            if gate.get(key) is not True:
+                failures.append('cross_stage_gate_flag_missing:' + str(sid) + ':' + key)
+        if gate.get('reference_only_completion_credit') != 0:
+            failures.append('cross_stage_reference_only_credit_leak:' + str(sid))
+
+    st1 = stage_map.get('STAGE-01') or {}
+    s1g = st1.get('source_capture_materialization_gate') or {}
+    if s1g.get('required') is not True or s1g.get('source_declared_registry_manifest_candidate_anchor_dependency_must_be_physical_or_gap') is not True or s1g.get('reference_only_source_dependency_may_receive_stage1_completion_credit') is not False or s1g.get('missing_required_physical_owner_disposition') != 'SOURCE_CAPTURE_GAP':
+        failures.append('stage01_source_capture_materialization_gate_incomplete')
+    st2x = stage_map.get('STAGE-02') or {}
+    s2g = st2x.get('successor_readiness_gate') or {}
+    if s2g.get('required') is not True or s2g.get('functional_gap_zero_substitutes_stage03_visual_dependency_readiness') is not False or s2g.get('stage03_required_visual_dependency_reconciliation_required') is not True:
+        failures.append('stage02_successor_readiness_gate_incomplete')
+    st3x = stage_map.get('STAGE-03') or {}
+    s3g = st3x.get('visual_materialization_gate') or {}
+    if s3g.get('applicable_visual_anchor_registry_must_be_nonempty') is not True or s3g.get('declared_visual_candidate_requires_physical_evidence') is not True or s3g.get('single_overview_may_substitute_required_scenarios') is not False or s3g.get('missing_required_anchor_or_candidate_blocks_human_visual_review') is not True:
+        failures.append('stage03_anchor_candidate_scenario_readiness_gate_incomplete')
+
+    for key in ('reference_only_required_dependency_completion','physical_required_input_missing','required_input_schema_or_version_mismatch','required_input_required_field_incomplete','successor_required_edge_denominator_omission','successor_consumer_readiness_unproven','applicable_visual_anchor_registry_empty','declared_visual_candidate_without_physical_evidence','multi_state_visual_single_overview_without_explicit_simultaneous_state_proof'):
+        if ur.get(key) != 'BLOCK':
+            failures.append('construction_universal_cross_stage_rule_not_block:' + key)
     return {'status': 'PASS' if not failures else 'FAIL', 'invariant_count': len(inv), 'stage_count': len(scope.get('applies_to_stages') or []), 'failures': failures}
 if __name__ == '__main__':
     out = validate()

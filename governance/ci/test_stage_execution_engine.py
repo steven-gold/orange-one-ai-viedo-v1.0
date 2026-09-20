@@ -25,6 +25,7 @@ block('scanner_dimensions_missing',lambda p,a:a['stages'][p['stages'][0]['stage_
 block('definition_credit_leak',lambda p,a:a['stages'][p['stages'][0]['stage_uid']].__setitem__('product_completion_credit_from_definition_audit',1))
 block('canonical_preflight_missing',lambda p,a:p['stages'][0]['canonical_execution_optimization_gate']['preflight_manifest_set'].pop())
 block('partial_stage_exit_allowed',lambda p,a:p['stages'][0].__setitem__('partial_work_unit_closure_may_grant_stage_exit',True))
+block('cross_stage_gate_missing',lambda p,a:p['stages'][0].pop('cross_stage_materialization_gate'))
 block('successor_gate_mismatch',lambda p,a:p['stages'][1].__setitem__('entry_gate','WRONG_PREDECESSOR_GATE'))
 block('missing_phase_contract',lambda p,a:a['common_execution_skeleton']['phase_contracts'].pop('CURRENT_SCOPE'))
 block('phase_contract_artifact_missing',lambda p,a:a['common_execution_skeleton']['phase_contracts']['CURRENT_SCOPE'].__setitem__('required_artifact',''))
@@ -58,6 +59,7 @@ sample={
  'next_stage_transition':{'next_stage_uid':st['next_stage_uid'],'status':'READY'},
  'result':'PASS','stage_exit_allowed':True
 }
+sample['cross_stage_handoff']={'ledger_ref':'synthetic://external','external_receipt':True,'successor_stage_uid':st['next_stage_uid'],'reference_resolution_complete':True,'physical_materialization_complete':True,'required_field_completeness_complete':True,'denominator_reconciled':True,'consumer_readiness_complete':True,'unresolved_required_dependency_total':0,'status':'PASS'}
 eng.validate_evidence_data(stage_uid,deepcopy(sample))
 blocked_sample=deepcopy(sample)
 blocked_sample['denominator']={'required_total':len(st['operations']),'open_gap_total':1,'closure_blocker_total':1,'remaining_scope_total':1}
@@ -93,6 +95,12 @@ block_evidence('pass_nonzero_denominator',lambda x:x['denominator'].__setitem__(
 def make_blocked_without_phase(x):
     x['result']='BLOCKED'; x['stage_exit_allowed']=False
 block_evidence('blocked_without_blocked_phase',make_blocked_without_phase)
+block_evidence('handoff_reference_resolution_false',lambda x:x['cross_stage_handoff'].__setitem__('reference_resolution_complete',False))
+block_evidence('handoff_physical_materialization_false',lambda x:x['cross_stage_handoff'].__setitem__('physical_materialization_complete',False))
+block_evidence('handoff_required_field_completeness_false',lambda x:x['cross_stage_handoff'].__setitem__('required_field_completeness_complete',False))
+block_evidence('handoff_denominator_not_reconciled',lambda x:x['cross_stage_handoff'].__setitem__('denominator_reconciled',False))
+block_evidence('handoff_consumer_not_ready',lambda x:x['cross_stage_handoff'].__setitem__('consumer_readiness_complete',False))
+block_evidence('handoff_unresolved_required_dependency',lambda x:x['cross_stage_handoff'].__setitem__('unresolved_required_dependency_total',1))
 plans=[eng.plan(uid) for uid in eng.stage_map(profile)]
 assert len(plans)==11
 assert all(len(x['phases'])==26 for x in plans)
@@ -137,5 +145,5 @@ for node in ast.walk(tree):
         for arg in node.args:
             if isinstance(arg,ast.Constant) and isinstance(arg.value,str) and arg.value.startswith('UNSUPPORTED_STAGE_UNTIL_MATCHING_CURRENT_EVIDENCE_EXISTS'):
                 raise AssertionError('COMMON_ENGINE_STAGE02_ONLY_REJECTION')
-print(f'PASS: common Stage Execution Engine negative regression {cases}/32')
+print(f'PASS: common Stage Execution Engine negative regression {cases}/39')
 print('PASS: Stage-02 entrypoint is compatibility-only; common engine has no Stage-02-only execution rejection')

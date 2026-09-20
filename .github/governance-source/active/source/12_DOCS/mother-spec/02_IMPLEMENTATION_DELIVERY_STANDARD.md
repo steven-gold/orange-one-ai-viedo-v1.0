@@ -1218,3 +1218,16 @@ Temporary analysis, mutation-test, destructive-test, candidate, harness, or inte
 A formal gate blocked solely because temporary residuals still exist is an execution-environment or lifecycle-hygiene block. It MUST NOT be reported as proof that the underlying Design/Contract Candidate is semantically invalid. Candidate semantic validation and formal package cleanliness are separate evidence dimensions and both must pass at their proper boundaries.
 
 No downstream delivery PASS may compensate for an unresolved upstream owning-capability gap. Conversely, a governance, validator, workflow, or temporary-artifact fix receives zero product completion credit until the product owner is freshly executed and the affected product denominator changes through Current evidence.
+
+<!-- SECTION_UID: WEB-GOV-02-S075 -->
+## 75. Producer/Consumer 實體交接與後繼輸入可用性 Gate / Producer-Consumer Materialized Handoff and Successor Input Readiness
+
+Every REQUIRED predecessor-output to successor-input edge MUST pass four distinct gates: (1) reference resolution, (2) physical materialization, (3) schema/version and required-field completeness, and (4) successor consumer readiness. Passing an earlier gate MUST NOT imply a later gate.
+
+Each governed Stage or capability boundary MUST materialize a CROSS_STAGE_HANDOFF_READINESS_LEDGER. Each REQUIRED edge row MUST contain at least: producer Stage/capability; producer output UID/type; producer owner/path/evidence ref; producer hash/version/schema; consumer Stage/capability; consumer input UID/type; consumer owner/schema; applicability; reference-resolution status; physical-materialization status; parse/schema status; required-field completeness; denominator-inclusion status; consumer-admission/readiness result; unresolved dependency count; blocking owner/re-entry target; and current evidence ref.
+
+Reference-only, UID-only, path-only, existence-without-parse, parse-without-required-fields, schema-compatible-but-denominator-omitted, or denominator-listed-but-consumer-unreadable states are incomplete and MUST NOT receive Stage exit credit.
+
+Before a Stage closes, its complete applicable successor-required input universe MUST be reconciled against predecessor outputs, Current Authority, shared owners, persisted foundation artifacts, and registered external evidence. Every REQUIRED row must be READY, or the Stage remains BLOCKED and the earliest owning capability must be re-entered.
+
+A producer hash, schema, required field, applicability, owner, or denominator change MUST mark impacted downstream consumers REVERIFY_REQUIRED until fresh consumer-readiness evidence is produced. Unaffected evidence may be preserved only through reverse-dependency proof.

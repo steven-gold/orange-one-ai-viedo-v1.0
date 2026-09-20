@@ -1,8 +1,8 @@
 {
   "artifact_type": "NON_NORMATIVE_FULL_LINE_SYSTEM_GATE_EVIDENCE",
   "mode": "SYSTEM_ROUND_1_FULL_LINE_HIGH_PRESSURE",
-  "source_zip_sha256": "34dfe145f453da03f5f7f4819302a19e4db8ccc3af3dd3e7817f372949178885",
-  "deterministic_source_bundle_sha256": "611fb7fd300480be93dcb115077052e91efb056917a68e29788b6f5057968867",
+  "source_zip_sha256": "17abcbe3bebb96695a746829585298806137b65612557fa90a75b4d54fed8671",
+  "deterministic_source_bundle_sha256": "56978101cf5b5711a23f0a37009447f68388506a8a73d1aad46969c85b783c8f",
   "lifecycle_stage_count": 11,
   "lifecycle_stage_uids": [
     "STAGE-01",
@@ -79,8 +79,8 @@
       "passed_expectations": 60
     },
     "test_v2_1_13_stage_execution_invariants.py": {
-      "total": 26,
-      "passed_expectations": 26
+      "total": 32,
+      "passed_expectations": 32
     },
     "test_v2_1_14_test_feedback_spec_evolution.py": {
       "total": 21,
@@ -119,7 +119,7 @@
       {
         "check_id": "section_registry",
         "status": "PASS",
-        "section_count": 342,
+        "section_count": 346,
         "failures": [],
         "section_uids": [
           "WEB-GOV-01-S000",
@@ -211,6 +211,7 @@
           "WEB-GOV-01-S085",
           "WEB-GOV-01-S086",
           "WEB-GOV-01-S087",
+          "WEB-GOV-01-S088",
           "WEB-GOV-02-S000",
           "WEB-GOV-02-S001",
           "WEB-GOV-02-S002",
@@ -293,6 +294,7 @@
           "WEB-GOV-02-S072",
           "WEB-GOV-02-S073",
           "WEB-GOV-02-S074",
+          "WEB-GOV-02-S075",
           "WEB-GOV-03-S000",
           "WEB-GOV-03-S001",
           "WEB-GOV-03-S001A",
@@ -370,6 +372,7 @@
           "WEB-GOV-03-S068",
           "WEB-GOV-03-S069",
           "WEB-GOV-03-S070",
+          "WEB-GOV-03-S071",
           "WEB-GOV-04-S000",
           "WEB-GOV-04-S001",
           "WEB-GOV-04-S001A",
@@ -463,7 +466,8 @@
           "WEB-GOV-04-S081",
           "WEB-GOV-04-S082",
           "WEB-GOV-04-S083",
-          "WEB-GOV-04-S084"
+          "WEB-GOV-04-S084",
+          "WEB-GOV-04-S085"
         ]
       },
       {
@@ -506,9 +510,9 @@
         "profiles": 9,
         "stages": 11,
         "validator_identities": 36,
-        "audit_types": 13,
+        "audit_types": 14,
         "naming_items": 13,
-        "semantic_anchor_hash": "5caa8e5151b642e385b5cff46960e1d94043db22530a6cdee2f8f247b1d60849"
+        "semantic_anchor_hash": "04523a35dae624ff63e62a983979eeda7d9c4a2908b582773046d2a7bbb53f4c"
       },
       {
         "check_id": "program_artifact_instance_guard",
@@ -519,10 +523,11 @@
       {
         "check_id": "current_test_evidence_sync",
         "status": "PASS",
-        "current_revision": "v2.2.15",
-        "current_source_revision": "v2.2.15-stage03-visual-materialization-promotion-closure",
+        "current_revision": "v2.2.16",
+        "current_source_revision": "v2.2.16-cross-stage-materialization-consumer-readiness-hardening",
         "fresh_revalidation_required": true,
-        "mandatory_suite_count": 17,
+        "current_mandatory_suite_count": 17,
+        "historical_evidence_suite_count": 17,
         "failures": []
       },
       {
@@ -551,7 +556,7 @@
       {
         "check_id": "stage_execution_invariants",
         "status": "PASS",
-        "invariant_count": 57,
+        "invariant_count": 58,
         "stage_count": 11,
         "failures": []
       },
@@ -576,8 +581,8 @@
       {
         "check_id": "acceptance_blueprint_compiled_baseline",
         "status": "PASS",
-        "compiled_requirements": 768,
-        "audit_denominator": 13,
+        "compiled_requirements": 788,
+        "audit_denominator": 14,
         "failures": []
       },
       {
@@ -777,8 +782,8 @@
             "suite": "test_v2_1_13_stage_execution_invariants.py",
             "returncode": 0,
             "ok": true,
-            "total": 26,
-            "passed_expectations": 26,
+            "total": 32,
+            "passed_expectations": 32,
             "semantic_cases_total": null,
             "semantic_passed_expectations": null,
             "fuzz_total": null,

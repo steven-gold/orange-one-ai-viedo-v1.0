@@ -4,7 +4,7 @@ artifact_type: EXECUTION_PROFILE_REGISTRY
 status: CURRENT_CANDIDATE
 canonical_path: 10_REGISTRY/GOVERNANCE_LIFECYCLE_STAGE_REGISTRY.yaml
 owner_uid: OWNER-GOVERNANCE-LIFECYCLE
-governance_revision: v2.2.15-stage03-visual-materialization-promotion-closure
+governance_revision: v2.2.16-cross-stage-materialization-consumer-readiness-hardening
 normative_section_uids:
 - WEB-GOV-02-S004
 - WEB-GOV-02-S067
@@ -100,6 +100,10 @@ stages:
   - WEB-GOV-01-S075
   - WEB-GOV-03-S069
   - WEB-GOV-04-S083
+  - WEB-GOV-02-S075
+  - WEB-GOV-03-S071
+  - WEB-GOV-04-S085
+  - WEB-GOV-01-S088
   pre_execution_gate: GOVERNANCE_LOAD_RECEIPT_PASS
   validator_names:
   - STAGE1_SOURCE_PIPELINE_GUARD
@@ -193,6 +197,24 @@ stages:
     - BASE_BLUEPRINT
     functional_contract_materialization: BLOCK
     stage2_gap_repair_by_stage1_replay_without_stage1_defect: BLOCK
+  cross_stage_materialization_gate:
+    required: true
+    invariant_uid: GOV-INV-CROSS-STAGE-MATERIALIZATION-CONSUMER-READINESS-001
+    reference_resolution_required: true
+    physical_materialization_required: true
+    parse_schema_required_field_completeness_required: true
+    denominator_inclusion_required: true
+    successor_consumer_readiness_required: true
+    reference_only_completion_credit: 0
+    successor_required_input_reconciliation_before_exit: true
+    downstream_upstream_gap_disposition: REENTER_EARLIEST_OWNER_AND_MARK_DESCENDANTS_REVERIFY_REQUIRED
+  source_capture_materialization_gate:
+    required: true
+    source_declared_registry_manifest_candidate_anchor_dependency_must_be_physical_or_gap: true
+    classification_or_blueprint_may_silently_drop_source_dependency: false
+    reference_only_source_dependency_may_receive_stage1_completion_credit: false
+    missing_required_physical_owner_disposition: SOURCE_CAPTURE_GAP
+    ai_may_invent_missing_source_content: false
 - stage_uid: STAGE-02
   name: PAGE_FUNCTIONAL_CONTRACT
   scope_mode: ALL_REQUIRED_PAGES
@@ -289,6 +311,10 @@ stages:
   - WEB-GOV-04-S083
   - WEB-GOV-01-S077
   - WEB-GOV-01-S084
+  - WEB-GOV-02-S075
+  - WEB-GOV-03-S071
+  - WEB-GOV-04-S085
+  - WEB-GOV-01-S088
   pre_execution_gate: GOVERNANCE_LOAD_RECEIPT_PASS
   validator_names:
   - FUNCTIONAL_CONTRACT_GUARD
@@ -418,6 +444,23 @@ stages:
   - DEPENDENCY_CHANGE_IMPACT
   - FUNCTION_VISUAL_IMPACT
   downstream_discovered_owned_gap_reentry: REOPEN_STAGE02_AND_MARK_IMPACTED_SUCCESSORS_REVERIFY_REQUIRED
+  cross_stage_materialization_gate:
+    required: true
+    invariant_uid: GOV-INV-CROSS-STAGE-MATERIALIZATION-CONSUMER-READINESS-001
+    reference_resolution_required: true
+    physical_materialization_required: true
+    parse_schema_required_field_completeness_required: true
+    denominator_inclusion_required: true
+    successor_consumer_readiness_required: true
+    reference_only_completion_credit: 0
+    successor_required_input_reconciliation_before_exit: true
+    downstream_upstream_gap_disposition: REENTER_EARLIEST_OWNER_AND_MARK_DESCENDANTS_REVERIFY_REQUIRED
+  successor_readiness_gate:
+    required: true
+    functional_gap_zero_substitutes_stage03_visual_dependency_readiness: false
+    stage03_required_visual_dependency_reconciliation_required: true
+    source_declared_anchor_candidate_manifest_readiness_required_when_applicable: true
+    missing_successor_required_input: BLOCK_AND_REENTER_OWNER
 - stage_uid: STAGE-03
   name: VISUAL_DESIGN
   scope_mode: ALL_REQUIRED_PAGES
@@ -494,6 +537,10 @@ stages:
   - WEB-GOV-01-S084
   - WEB-GOV-01-S080
   - WEB-GOV-01-S087
+  - WEB-GOV-02-S075
+  - WEB-GOV-03-S071
+  - WEB-GOV-04-S085
+  - WEB-GOV-01-S088
   pre_execution_gate: GOVERNANCE_LOAD_RECEIPT_PASS
   validator_names:
   - VISUAL_DOMAIN_GUARD
@@ -592,6 +639,22 @@ stages:
     unresolved_visual_authority_is_authority_absent: false
     unresolved_visual_authority_must_enter_current_problem_denominator: true
     profile_materialization_undercoverage: BLOCK
+    applicable_visual_anchor_registry_must_be_nonempty: true
+    declared_visual_candidate_requires_physical_evidence: true
+    single_overview_may_substitute_required_scenarios: false
+    shared_visual_requires_simultaneous_unambiguous_annotation_proof: true
+    missing_required_anchor_or_candidate_blocks_human_visual_review: true
+  cross_stage_materialization_gate:
+    required: true
+    invariant_uid: GOV-INV-CROSS-STAGE-MATERIALIZATION-CONSUMER-READINESS-001
+    reference_resolution_required: true
+    physical_materialization_required: true
+    parse_schema_required_field_completeness_required: true
+    denominator_inclusion_required: true
+    successor_consumer_readiness_required: true
+    reference_only_completion_credit: 0
+    successor_required_input_reconciliation_before_exit: true
+    downstream_upstream_gap_disposition: REENTER_EARLIEST_OWNER_AND_MARK_DESCENDANTS_REVERIFY_REQUIRED
 - stage_uid: STAGE-04
   name: FOUNDATION_FREEZE
   scope_mode: ALL_REQUIRED_PAGES
@@ -648,6 +711,10 @@ stages:
   - WEB-GOV-01-S084
   - WEB-GOV-01-S085
   - WEB-GOV-01-S086
+  - WEB-GOV-02-S075
+  - WEB-GOV-03-S071
+  - WEB-GOV-04-S085
+  - WEB-GOV-01-S088
   pre_execution_gate: GOVERNANCE_LOAD_RECEIPT_PASS
   validator_names:
   - DESIGN_FREEZE_GUARD
@@ -709,6 +776,17 @@ stages:
   stage_exit_scope_source: DECLARED_STAGE_REQUIRED_UNIVERSE_RECONCILIATION
   partial_work_unit_closure_may_grant_stage_exit: false
   upstream_contract_or_visual_change_after_freeze: INVALIDATE_IMPACTED_FREEZE_AND_REVERIFY
+  cross_stage_materialization_gate:
+    required: true
+    invariant_uid: GOV-INV-CROSS-STAGE-MATERIALIZATION-CONSUMER-READINESS-001
+    reference_resolution_required: true
+    physical_materialization_required: true
+    parse_schema_required_field_completeness_required: true
+    denominator_inclusion_required: true
+    successor_consumer_readiness_required: true
+    reference_only_completion_credit: 0
+    successor_required_input_reconciliation_before_exit: true
+    downstream_upstream_gap_disposition: REENTER_EARLIEST_OWNER_AND_MARK_DESCENDANTS_REVERIFY_REQUIRED
 - stage_uid: STAGE-05
   name: IMPLEMENTATION
   scope_mode: SINGLE_PAGE_VERTICAL
@@ -779,6 +857,9 @@ stages:
   - WEB-GOV-01-S075
   - WEB-GOV-03-S069
   - WEB-GOV-04-S083
+  - WEB-GOV-02-S075
+  - WEB-GOV-03-S071
+  - WEB-GOV-04-S085
   pre_execution_gate: GOVERNANCE_LOAD_RECEIPT_PASS
   validator_names:
   - CONSTRUCTION_ARTIFACT_INDEX_GUARD
@@ -845,6 +926,17 @@ stages:
   stage_exit_scope_source: DECLARED_STAGE_REQUIRED_UNIVERSE_RECONCILIATION
   partial_work_unit_closure_may_grant_stage_exit: false
   upstream_owned_gap_discovered: STOP_AND_REENTER_CAPABILITY_REENTRY_MAP
+  cross_stage_materialization_gate:
+    required: true
+    invariant_uid: GOV-INV-CROSS-STAGE-MATERIALIZATION-CONSUMER-READINESS-001
+    reference_resolution_required: true
+    physical_materialization_required: true
+    parse_schema_required_field_completeness_required: true
+    denominator_inclusion_required: true
+    successor_consumer_readiness_required: true
+    reference_only_completion_credit: 0
+    successor_required_input_reconciliation_before_exit: true
+    downstream_upstream_gap_disposition: REENTER_EARLIEST_OWNER_AND_MARK_DESCENDANTS_REVERIFY_REQUIRED
 - stage_uid: STAGE-06
   name: VERIFICATION_QA
   scope_mode: SAME_SELECTED_PAGE
@@ -908,6 +1000,9 @@ stages:
   - WEB-GOV-01-S075
   - WEB-GOV-03-S069
   - WEB-GOV-04-S083
+  - WEB-GOV-02-S075
+  - WEB-GOV-03-S071
+  - WEB-GOV-04-S085
   pre_execution_gate: GOVERNANCE_LOAD_RECEIPT_PASS
   validator_names:
   - QA_ACCEPTANCE_GUARD
@@ -973,6 +1068,17 @@ stages:
   stage_exit_scope_source: DECLARED_STAGE_REQUIRED_UNIVERSE_RECONCILIATION
   partial_work_unit_closure_may_grant_stage_exit: false
   upstream_owned_gap_discovered: STOP_AND_REENTER_CAPABILITY_REENTRY_MAP
+  cross_stage_materialization_gate:
+    required: true
+    invariant_uid: GOV-INV-CROSS-STAGE-MATERIALIZATION-CONSUMER-READINESS-001
+    reference_resolution_required: true
+    physical_materialization_required: true
+    parse_schema_required_field_completeness_required: true
+    denominator_inclusion_required: true
+    successor_consumer_readiness_required: true
+    reference_only_completion_credit: 0
+    successor_required_input_reconciliation_before_exit: true
+    downstream_upstream_gap_disposition: REENTER_EARLIEST_OWNER_AND_MARK_DESCENDANTS_REVERIFY_REQUIRED
 - stage_uid: STAGE-07
   name: BUILD_RELEASE_CANDIDATE
   scope_mode: SAME_SELECTED_PAGE
@@ -1014,6 +1120,9 @@ stages:
   - WEB-GOV-01-S075
   - WEB-GOV-03-S069
   - WEB-GOV-04-S083
+  - WEB-GOV-02-S075
+  - WEB-GOV-03-S071
+  - WEB-GOV-04-S085
   pre_execution_gate: GOVERNANCE_LOAD_RECEIPT_PASS
   validator_names:
   - RELEASE_CANDIDATE_GUARD
@@ -1070,6 +1179,17 @@ stages:
   stage_exit_scope_source: DECLARED_STAGE_REQUIRED_UNIVERSE_RECONCILIATION
   partial_work_unit_closure_may_grant_stage_exit: false
   upstream_owned_gap_discovered: STOP_AND_REENTER_CAPABILITY_REENTRY_MAP
+  cross_stage_materialization_gate:
+    required: true
+    invariant_uid: GOV-INV-CROSS-STAGE-MATERIALIZATION-CONSUMER-READINESS-001
+    reference_resolution_required: true
+    physical_materialization_required: true
+    parse_schema_required_field_completeness_required: true
+    denominator_inclusion_required: true
+    successor_consumer_readiness_required: true
+    reference_only_completion_credit: 0
+    successor_required_input_reconciliation_before_exit: true
+    downstream_upstream_gap_disposition: REENTER_EARLIEST_OWNER_AND_MARK_DESCENDANTS_REVERIFY_REQUIRED
 - stage_uid: STAGE-08
   name: STAGING
   scope_mode: SAME_SELECTED_PAGE
@@ -1102,6 +1222,9 @@ stages:
   - WEB-GOV-01-S075
   - WEB-GOV-03-S069
   - WEB-GOV-04-S083
+  - WEB-GOV-02-S075
+  - WEB-GOV-03-S071
+  - WEB-GOV-04-S085
   pre_execution_gate: GOVERNANCE_LOAD_RECEIPT_PASS
   validator_names:
   - STAGING_APPLICABILITY_GUARD
@@ -1157,6 +1280,17 @@ stages:
   stage_exit_scope_source: DECLARED_STAGE_REQUIRED_UNIVERSE_RECONCILIATION
   partial_work_unit_closure_may_grant_stage_exit: false
   upstream_owned_gap_discovered: STOP_AND_REENTER_CAPABILITY_REENTRY_MAP
+  cross_stage_materialization_gate:
+    required: true
+    invariant_uid: GOV-INV-CROSS-STAGE-MATERIALIZATION-CONSUMER-READINESS-001
+    reference_resolution_required: true
+    physical_materialization_required: true
+    parse_schema_required_field_completeness_required: true
+    denominator_inclusion_required: true
+    successor_consumer_readiness_required: true
+    reference_only_completion_credit: 0
+    successor_required_input_reconciliation_before_exit: true
+    downstream_upstream_gap_disposition: REENTER_EARLIEST_OWNER_AND_MARK_DESCENDANTS_REVERIFY_REQUIRED
 - stage_uid: STAGE-09
   name: PRODUCTION_CUTOVER
   scope_mode: SAME_SELECTED_PAGE
@@ -1194,6 +1328,9 @@ stages:
   - WEB-GOV-01-S075
   - WEB-GOV-03-S069
   - WEB-GOV-04-S083
+  - WEB-GOV-02-S075
+  - WEB-GOV-03-S071
+  - WEB-GOV-04-S085
   pre_execution_gate: GOVERNANCE_LOAD_RECEIPT_PASS
   validator_names:
   - PRODUCTION_CUTOVER_GUARD
@@ -1249,6 +1386,17 @@ stages:
   stage_exit_scope_source: DECLARED_STAGE_REQUIRED_UNIVERSE_RECONCILIATION
   partial_work_unit_closure_may_grant_stage_exit: false
   upstream_owned_gap_discovered: STOP_AND_REENTER_CAPABILITY_REENTRY_MAP
+  cross_stage_materialization_gate:
+    required: true
+    invariant_uid: GOV-INV-CROSS-STAGE-MATERIALIZATION-CONSUMER-READINESS-001
+    reference_resolution_required: true
+    physical_materialization_required: true
+    parse_schema_required_field_completeness_required: true
+    denominator_inclusion_required: true
+    successor_consumer_readiness_required: true
+    reference_only_completion_credit: 0
+    successor_required_input_reconciliation_before_exit: true
+    downstream_upstream_gap_disposition: REENTER_EARLIEST_OWNER_AND_MARK_DESCENDANTS_REVERIFY_REQUIRED
 - stage_uid: STAGE-10
   name: PRODUCTION_ACCEPTANCE
   scope_mode: SAME_SELECTED_PAGE
@@ -1304,6 +1452,9 @@ stages:
   - WEB-GOV-01-S075
   - WEB-GOV-03-S069
   - WEB-GOV-04-S083
+  - WEB-GOV-02-S075
+  - WEB-GOV-03-S071
+  - WEB-GOV-04-S085
   pre_execution_gate: GOVERNANCE_LOAD_RECEIPT_PASS
   validator_names:
   - PRODUCTION_ACCEPTANCE_DIMENSION_GUARD
@@ -1368,6 +1519,17 @@ stages:
   stage_exit_scope_source: DECLARED_STAGE_REQUIRED_UNIVERSE_RECONCILIATION
   partial_work_unit_closure_may_grant_stage_exit: false
   upstream_owned_gap_discovered: STOP_AND_REENTER_CAPABILITY_REENTRY_MAP
+  cross_stage_materialization_gate:
+    required: true
+    invariant_uid: GOV-INV-CROSS-STAGE-MATERIALIZATION-CONSUMER-READINESS-001
+    reference_resolution_required: true
+    physical_materialization_required: true
+    parse_schema_required_field_completeness_required: true
+    denominator_inclusion_required: true
+    successor_consumer_readiness_required: true
+    reference_only_completion_credit: 0
+    successor_required_input_reconciliation_before_exit: true
+    downstream_upstream_gap_disposition: REENTER_EARLIEST_OWNER_AND_MARK_DESCENDANTS_REVERIFY_REQUIRED
 - stage_uid: STAGE-11
   name: CLOSURE_OPERATIONS
   scope_mode: SAME_SELECTED_PAGE
@@ -1413,6 +1575,9 @@ stages:
   - WEB-GOV-01-S075
   - WEB-GOV-03-S069
   - WEB-GOV-04-S083
+  - WEB-GOV-02-S075
+  - WEB-GOV-03-S071
+  - WEB-GOV-04-S085
   pre_execution_gate: GOVERNANCE_LOAD_RECEIPT_PASS
   validator_names:
   - FINAL_PRODUCTION_ACCEPTANCE_GUARD
@@ -1468,6 +1633,17 @@ stages:
   stage_exit_scope_source: DECLARED_STAGE_REQUIRED_UNIVERSE_RECONCILIATION
   partial_work_unit_closure_may_grant_stage_exit: false
   upstream_owned_gap_discovered: STOP_AND_REENTER_CAPABILITY_REENTRY_MAP
+  cross_stage_materialization_gate:
+    required: true
+    invariant_uid: GOV-INV-CROSS-STAGE-MATERIALIZATION-CONSUMER-READINESS-001
+    reference_resolution_required: true
+    physical_materialization_required: true
+    parse_schema_required_field_completeness_required: true
+    denominator_inclusion_required: true
+    successor_consumer_readiness_required: true
+    reference_only_completion_credit: 0
+    successor_required_input_reconciliation_before_exit: true
+    downstream_upstream_gap_disposition: REENTER_EARLIEST_OWNER_AND_MARK_DESCENDANTS_REVERIFY_REQUIRED
 delivery_step_bindings:
 - step: 1
   operation_uid: OP-01-BLUEPRINT_INTAKE
@@ -1862,6 +2038,12 @@ cross_stage_invariants:
     stage03_visual_inheritance_matrix_output_required: true
     stage03_visual_scenario_evidence_set_output_required: true
     unresolved_visual_authority_not_equivalent_to_absent: true
+    cross_stage_materialization_consumer_readiness_required: true
+    cross_stage_materialization_invariant_uid: GOV-INV-CROSS-STAGE-MATERIALIZATION-CONSUMER-READINESS-001
+    reference_presence_is_not_materialization: true
+    physical_materialization_is_not_required_field_completeness: true
+    required_field_completeness_is_not_consumer_readiness: true
+    successor_input_reconciliation_before_stage_exit_required: true
   canonical_stage_execution_optimization:
     invariant_uid: GOV-INV-CANONICAL-STAGE-EXECUTION-OPTIMIZATION-001
     normative_section_uid: WEB-GOV-03-S062

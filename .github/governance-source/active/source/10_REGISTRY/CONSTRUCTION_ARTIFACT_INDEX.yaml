@@ -113,6 +113,16 @@ universal_rules:
   raw_ai_output_direct_authoritative_promotion: BLOCK
   revision_without_exact_base_context: BLOCK
   branch_silent_mainline_merge: BLOCK
+  reference_only_required_dependency_completion: BLOCK
+  physical_required_input_missing: BLOCK
+  required_input_schema_or_version_mismatch: BLOCK
+  required_input_required_field_incomplete: BLOCK
+  successor_required_edge_denominator_omission: BLOCK
+  successor_consumer_readiness_unproven: BLOCK
+  applicable_visual_anchor_registry_empty: BLOCK
+  declared_visual_candidate_without_physical_evidence: BLOCK
+  multi_state_visual_single_overview_without_explicit_simultaneous_state_proof: BLOCK
+  downstream_discovered_upstream_gap: REENTER_EARLIEST_OWNER_MARK_DESCENDANTS_REVERIFY_REQUIRED
 forbidden_filename_tokens:
 - new
 - final
@@ -454,6 +464,9 @@ mandatory_common_normative_bundles:
     - WEB-GOV-02-S072
     - WEB-GOV-03-S061
     - WEB-GOV-03-S070
+    - WEB-GOV-01-S088
+    - WEB-GOV-02-S075
+    - WEB-GOV-03-S071
   BUNDLE-GOV-AUDIT-BASE:
     required_for: ALL_EXECUTION_WITH_COMPLETION_CLAIM
     section_uids:
@@ -466,6 +479,7 @@ mandatory_common_normative_bundles:
     - WEB-GOV-04-S076
     - WEB-GOV-04-S077
     - WEB-GOV-04-S084
+    - WEB-GOV-04-S085
 effective_normative_set_contract:
   formula: COMMON_BUNDLES + STAGE_REFS + PROFILE_REFS + ARTIFACT_SPECIFIC_REFS + DEPENDENCY_CLOSURE_REFS
   all_layers_required: true
@@ -561,7 +575,7 @@ write_target_lock_contract:
   governance_registry_write_during_construction: BLOCK
   unregistered_write_target: BLOCK
   prewrite_hash_mismatch: BLOCK
-governance_revision: v2.2.15-stage03-visual-materialization-promotion-closure
+governance_revision: v2.2.16-cross-stage-materialization-consumer-readiness-hardening
 reference_rule_registry_ref: REG-REFERENCE-RULE-001
 semantic_authority_baseline_ref: REG-SEMANTIC-AUTHORITY-BASELINE-001
 typed_identity_authority_registry_ref: REG-PROGRAM-IDENTITY-AUTHORITY-001

@@ -1,5 +1,5 @@
 schema_version: 1
-candidate: v2.2.15_STAGE03_VISUAL_MATERIALIZATION_PROMOTION_CLOSURE_CANDIDATE
+candidate: v2.2.16_CROSS_STAGE_MATERIALIZATION_CONSUMER_READINESS_HARDENING_CANDIDATE
 status: CANDIDATE_UNDER_FRESH_SUCCESSOR_REVALIDATION
 baseline: v2.2.0_NEUTRAL_PORTABLE_GOVERNANCE_LOCAL_VERIFIED
 website_construction_allowed: false
@@ -114,6 +114,13 @@ current_repairs:
 - CANONICAL_SECTION_SEMANTIC_VALIDATION
 - PRODUCT_NEUTRAL_MOTHER_POLICY_RESIDUAL_REMOVAL
 - EXECUTION_PROFILE_PRODUCT_IDENTITY_LAYER_CLASSIFICATION
+- CROSS_STAGE_REFERENCE_VS_MATERIALIZATION_SEPARATION
+- CROSS_STAGE_REQUIRED_FIELD_COMPLETENESS
+- SUCCESSOR_CONSUMER_READINESS
+- STAGE01_SOURCE_CAPTURE_MATERIALIZATION
+- STAGE02_SUCCESSOR_VISUAL_DEPENDENCY_READINESS
+- STAGE03_ANCHOR_CANDIDATE_MULTI_STATE_READINESS
+- ALL_STAGE_HANDOFF_FALSE_COMPLETION_GUARD
 preformal_execution:
   preformal_definition_audit: BLOCKED_TOOL_TIMEOUT
   external_trust_root: PASS
@@ -189,7 +196,7 @@ current_optimization_revision: v2.1.15
 stage_execution_optimization_component: CANONICAL_PREFLIGHT_EFFECTIVE_OVERLAY_ROLE_SAFE_INCREMENTAL_RECONCILIATION
 fresh_revalidation:
   required: true
-  current_source_revision: v2.2.15-stage03-visual-materialization-promotion-closure
+  current_source_revision: v2.2.16-cross-stage-materialization-consumer-readiness-hardening
   current_closure_credit: false
   predecessor_evidence_current_closure_credit: false
   embedded_preformal_execution_role: HISTORICAL_PREDECESSOR_EVIDENCE_ONLY
@@ -200,3 +207,58 @@ fresh_revalidation:
     machine_review_target_revision: v2.1.15
   persisted_head_full_line_required: true
   historical_evidence_may_close_successor: false
+  predecessor_mandatory_regression_assets:
+  - path: 09_TESTS/governance/test_high_pressure_hardening.py
+    expected_total: 25
+    expected_passed: 25
+  - path: 09_TESTS/governance/test_reference_semantic_guard.py
+    expected_semantic_total: 28
+    expected_semantic_passed: 28
+    expected_fuzz_total: 46
+    expected_fuzz_blocked: 46
+    expected_escaped: 0
+  - path: 09_TESTS/governance/test_execution_load_guard.py
+    expected_total: 14
+    expected_passed: 14
+  - path: 09_TESTS/governance/test_prefomal_stress_repairs.py
+    expected_total: 21
+    expected_passed: 21
+  - path: 09_TESTS/governance/test_stage1_source_to_blueprint_minimal_control.py
+    expected_total: 33
+    expected_passed: 33
+  - path: 09_TESTS/governance/test_v2_1_0_regressions.py
+    expected_total: 12
+    expected_passed: 12
+  - path: 09_TESTS/governance/test_v2_1_0_post_v1_8_regressions.py
+    expected_total: 6
+    expected_passed: 6
+  - path: 09_TESTS/governance/test_bugfix_regressions.py
+    expected_total: 30
+    expected_passed: 30
+  - path: 09_TESTS/governance/test_v2_1_7_phase_authority_bugfix.py
+    expected_total: 25
+    expected_passed: 25
+  - path: 09_TESTS/governance/test_v2_1_8_successor_evidence_sync_bugfix.py
+    expected_total: 24
+    expected_passed: 24
+  - path: 09_TESTS/governance/test_v2_1_9_evidence_state_closure.py
+    expected_total: 24
+    expected_passed: 24
+  - path: 09_TESTS/governance/test_v2_1_10_closure_evidence_continuity.py
+    expected_total: 43
+    expected_passed: 43
+  - path: 09_TESTS/governance/test_v2_1_11_binding_authority_receipt_schema.py
+    expected_total: 54
+    expected_passed: 54
+  - path: 09_TESTS/governance/test_v2_1_12_successor_state_evidence_parse.py
+    expected_total: 60
+    expected_passed: 60
+  - path: 09_TESTS/governance/test_v2_1_13_stage_execution_invariants.py
+    expected_total: 26
+    expected_passed: 26
+  - path: 09_TESTS/governance/test_v2_1_14_test_feedback_spec_evolution.py
+    expected_total: 21
+    expected_passed: 21
+  - path: 09_TESTS/governance/test_v2_1_14_product_neutral_entity_lifecycle.py
+    expected_total: 68
+    expected_passed: 68

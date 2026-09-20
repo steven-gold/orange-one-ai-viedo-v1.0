@@ -73,8 +73,17 @@ res.append(case('historical_product_value_fallback_forbidden', history_fallback_
 res.append(case('task_layer_transition_requires_terminal_resume_wur_active_bootstrap', task_layer_transition_allowed(True,True,True,True,True) and not task_layer_transition_allowed(False,True,True,True,True)))
 
 # Static package contract must be intact, including physical-evidence and consumption rules.
+def handoff_ready(reference=True, physical=True, complete=True, denominator=True, consumer=True, unresolved=0):
+    return bool(reference and physical and complete and denominator and consumer and unresolved == 0)
+res.append(case('reference_only_handoff_is_not_ready', not handoff_ready(reference=True, physical=False)))
+res.append(case('physical_but_required_field_incomplete_handoff_is_not_ready', not handoff_ready(complete=False)))
+res.append(case('required_handoff_denominator_omission_is_not_ready', not handoff_ready(denominator=False)))
+res.append(case('successor_consumer_not_ready_blocks_handoff', not handoff_ready(consumer=False)))
+res.append(case('unresolved_required_dependency_blocks_handoff', not handoff_ready(unresolved=1)))
+res.append(case('complete_materialized_consumer_ready_handoff_passes', handoff_ready()))
+
 out=v213.validate(PKG)
 res.append(case('package_stage_execution_invariant_contract_valid', out['status']=='PASS',out))
 out={'suite':'v2.1.13 universal Stage execution invariant multidirection regression','total':len(res),'passed_expectations':sum(x['ok'] for x in res),'results':res}
 print(json.dumps(out,ensure_ascii=False,indent=2))
-raise SystemExit(0 if out['total']==26 and out['passed_expectations']==26 else 1)
+raise SystemExit(0 if out['total']==32 and out['passed_expectations']==32 else 1)

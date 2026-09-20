@@ -1,4 +1,4 @@
-schema_version: 7
+schema_version: 8
 artifact_uid: GOV-COMP-BOUNDED-FUNCTIONAL-COMPLETION
 artifact_type: GOVERNANCE_SPECIFICATION_COMPONENT
 normative_status: ACTIVE_CURRENT_GOVERNANCE_COMPONENT
@@ -103,3 +103,13 @@ rules:
     new_visual_control_for_system_only_operation: FORBIDDEN
     two_or_more_materially_distinct_viable_initiations: AUTHORITY_GAP
     missing_explicit_trigger_syntax_alone: NOT_AUTHORITY_GAP
+  CROSS_STAGE_SUCCESSOR_INPUT_READINESS:
+    required_artifact: CROSS_STAGE_HANDOFF_READINESS_LEDGER
+    stage_local_zero_gap_is_successor_ready: false
+    successor_required_input_universe_reconciliation_required: true
+    source_declared_required_dependency_reference_only_credit: 0
+    physical_materialization_required: true
+    required_field_completeness_required: true
+    denominator_inclusion_required: true
+    successor_consumer_admission_required: true
+    missing_required_input: BLOCK_AND_REENTER_EARLIEST_OWNER

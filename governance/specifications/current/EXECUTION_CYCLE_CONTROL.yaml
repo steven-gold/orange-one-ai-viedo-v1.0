@@ -1,4 +1,4 @@
-schema_version: 6
+schema_version: 7
 artifact_uid: GOV-COMP-EXECUTION-CYCLE-CONTROL
 artifact_type: GOVERNANCE_SPECIFICATION_COMPONENT
 normative_status: ACTIVE_CURRENT_GOVERNANCE_COMPONENT
@@ -324,3 +324,23 @@ mother_profile_materialization_reconciliation:
   profile_local_output_subset_may_weaken_mother_policy: false
   missing_required_profile_projection: PROFILE_MATERIALIZATION_UNDERCOVERAGE
   unresolved_authority_is_not_absent: true
+cross_stage_materialization_consumer_readiness:
+  required_for_every_registered_stage_boundary: true
+  required_artifact: CROSS_STAGE_HANDOFF_READINESS_LEDGER
+  reference_resolution_is_physical_materialization: false
+  physical_materialization_is_required_field_completeness: false
+  required_field_completeness_is_consumer_readiness: false
+  required_sequence:
+  - ENUMERATE_SUCCESSOR_REQUIRED_INPUT_UNIVERSE
+  - RESOLVE_LEGAL_PRODUCER_OR_CURRENT_OWNER
+  - VERIFY_CURRENT_PHYSICAL_OR_EXTERNAL_EVIDENCE
+  - PARSE_SCHEMA_VERSION_IDENTITY_AND_REQUIRED_FIELDS
+  - RECONCILE_DENOMINATOR
+  - RUN_SUCCESSOR_CONSUMER_ADMISSION
+  - PERSIST_HANDOFF_LEDGER_AND_REVERSE_IMPACT
+  - EVALUATE_STAGE_EXIT
+  reference_only_completion_credit: 0
+  unresolved_required_dependency: BLOCK_OR_REENTER_EARLIEST_OWNER
+  downstream_discovered_upstream_gap: STOP_AND_REENTER_EARLIEST_OWNER
+  impacted_descendants: REVERIFY_REQUIRED
+  historical_value_may_fill_missing_current_input: false

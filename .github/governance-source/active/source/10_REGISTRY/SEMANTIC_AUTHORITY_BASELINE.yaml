@@ -4,7 +4,7 @@ artifact_type: IMMUTABLE_SEMANTIC_AUTHORITY_BASELINE
 status: CURRENT_CANDIDATE_IMMUTABLE
 canonical_path: 10_REGISTRY/SEMANTIC_AUTHORITY_BASELINE.yaml
 owner_uid: OWNER-GOVERNANCE-SEMANTIC-ANCHOR
-governance_revision: v2.2.15-stage03-visual-materialization-promotion-closure
+governance_revision: v2.2.16-cross-stage-materialization-consumer-readiness-hardening
 anchor_policy:
   official_refresh_must_not_mutate: true
   compiler_must_not_regenerate: true
@@ -89,6 +89,10 @@ semantic_snapshot:
       - WEB-GOV-01-S075
       - WEB-GOV-03-S069
       - WEB-GOV-04-S083
+      - WEB-GOV-02-S075
+      - WEB-GOV-03-S071
+      - WEB-GOV-04-S085
+      - WEB-GOV-01-S088
     STAGE-02:
       rule_uid: REFRULE-STAGE-02
       exact_required_normative_section_uids:
@@ -112,6 +116,10 @@ semantic_snapshot:
       - WEB-GOV-04-S083
       - WEB-GOV-01-S077
       - WEB-GOV-01-S084
+      - WEB-GOV-02-S075
+      - WEB-GOV-03-S071
+      - WEB-GOV-04-S085
+      - WEB-GOV-01-S088
     STAGE-03:
       rule_uid: REFRULE-STAGE-03
       exact_required_normative_section_uids:
@@ -139,6 +147,10 @@ semantic_snapshot:
       - WEB-GOV-01-S084
       - WEB-GOV-01-S080
       - WEB-GOV-01-S087
+      - WEB-GOV-02-S075
+      - WEB-GOV-03-S071
+      - WEB-GOV-04-S085
+      - WEB-GOV-01-S088
     STAGE-04:
       rule_uid: REFRULE-STAGE-04
       exact_required_normative_section_uids:
@@ -163,6 +175,10 @@ semantic_snapshot:
       - WEB-GOV-01-S084
       - WEB-GOV-01-S085
       - WEB-GOV-01-S086
+      - WEB-GOV-02-S075
+      - WEB-GOV-03-S071
+      - WEB-GOV-04-S085
+      - WEB-GOV-01-S088
     STAGE-05:
       rule_uid: REFRULE-STAGE-05
       exact_required_normative_section_uids:
@@ -182,6 +198,9 @@ semantic_snapshot:
       - WEB-GOV-01-S075
       - WEB-GOV-03-S069
       - WEB-GOV-04-S083
+      - WEB-GOV-02-S075
+      - WEB-GOV-03-S071
+      - WEB-GOV-04-S085
     STAGE-06:
       rule_uid: REFRULE-STAGE-06
       exact_required_normative_section_uids:
@@ -200,6 +219,9 @@ semantic_snapshot:
       - WEB-GOV-01-S075
       - WEB-GOV-03-S069
       - WEB-GOV-04-S083
+      - WEB-GOV-02-S075
+      - WEB-GOV-03-S071
+      - WEB-GOV-04-S085
     STAGE-07:
       rule_uid: REFRULE-STAGE-07
       exact_required_normative_section_uids:
@@ -211,6 +233,9 @@ semantic_snapshot:
       - WEB-GOV-01-S075
       - WEB-GOV-03-S069
       - WEB-GOV-04-S083
+      - WEB-GOV-02-S075
+      - WEB-GOV-03-S071
+      - WEB-GOV-04-S085
     STAGE-08:
       rule_uid: REFRULE-STAGE-08
       exact_required_normative_section_uids:
@@ -219,6 +244,9 @@ semantic_snapshot:
       - WEB-GOV-01-S075
       - WEB-GOV-03-S069
       - WEB-GOV-04-S083
+      - WEB-GOV-02-S075
+      - WEB-GOV-03-S071
+      - WEB-GOV-04-S085
     STAGE-09:
       rule_uid: REFRULE-STAGE-09
       exact_required_normative_section_uids:
@@ -229,6 +257,9 @@ semantic_snapshot:
       - WEB-GOV-01-S075
       - WEB-GOV-03-S069
       - WEB-GOV-04-S083
+      - WEB-GOV-02-S075
+      - WEB-GOV-03-S071
+      - WEB-GOV-04-S085
     STAGE-10:
       rule_uid: REFRULE-STAGE-10
       exact_required_normative_section_uids:
@@ -253,6 +284,9 @@ semantic_snapshot:
       - WEB-GOV-01-S075
       - WEB-GOV-03-S069
       - WEB-GOV-04-S083
+      - WEB-GOV-02-S075
+      - WEB-GOV-03-S071
+      - WEB-GOV-04-S085
     STAGE-11:
       rule_uid: REFRULE-STAGE-11
       exact_required_normative_section_uids:
@@ -266,6 +300,9 @@ semantic_snapshot:
       - WEB-GOV-01-S075
       - WEB-GOV-03-S069
       - WEB-GOV-04-S083
+      - WEB-GOV-02-S075
+      - WEB-GOV-03-S071
+      - WEB-GOV-04-S085
   common_bundle_reference_rules:
     BUNDLE-GOV-COMMON-CORE:
       rule_uid: REFRULE-BUNDLE-01
@@ -308,6 +345,9 @@ semantic_snapshot:
       - WEB-GOV-02-S072
       - WEB-GOV-03-S061
       - WEB-GOV-03-S070
+      - WEB-GOV-01-S088
+      - WEB-GOV-02-S075
+      - WEB-GOV-03-S071
     BUNDLE-GOV-AUDIT-BASE:
       rule_uid: REFRULE-BUNDLE-03
       exact_section_uids:
@@ -320,6 +360,7 @@ semantic_snapshot:
       - WEB-GOV-04-S076
       - WEB-GOV-04-S077
       - WEB-GOV-04-S084
+      - WEB-GOV-04-S085
   validator_identities:
   - validator_uid: VAL-GOV-001
     canonical_name: ACCEPTANCE_BLUEPRINT_GUARD
@@ -538,6 +579,7 @@ semantic_snapshot:
     allowed_usage:
     - PREFORMAL_DEFINITION
     - LIFECYCLE_STAGE
+    - AUDIT_CATALOG
   - validator_uid: VAL-GOV-036
     canonical_name: TEST_FEEDBACK_SPEC_EVOLUTION_GUARD
     implementation_path: 09_TESTS/governance/validate_test_feedback_spec_evolution.py
@@ -616,6 +658,11 @@ semantic_snapshot:
     denominator_eligible: true
   - audit_type_uid: AUDTYPE-GOV-013
     canonical_name: PRODUCT_NEUTRAL_ENTITY_LIFECYCLE_COMPLETENESS
+    allowed_stage_uids:
+    - PREFORMAL
+    denominator_eligible: true
+  - audit_type_uid: AUDTYPE-GOV-014
+    canonical_name: CROSS_STAGE_MATERIALIZATION_AND_CONSUMER_READINESS
     allowed_stage_uids:
     - PREFORMAL
     denominator_eligible: true
@@ -827,8 +874,8 @@ mandatory_regression_assets:
   expected_total: 60
   expected_passed: 60
 - path: 09_TESTS/governance/test_v2_1_13_stage_execution_invariants.py
-  expected_total: 26
-  expected_passed: 26
+  expected_total: 32
+  expected_passed: 32
 - path: 09_TESTS/governance/test_v2_1_14_test_feedback_spec_evolution.py
   expected_total: 21
   expected_passed: 21
@@ -841,7 +888,7 @@ package_integrity_assets:
 - 09_TESTS/governance/test_v2_1_14_test_feedback_spec_evolution.py
 - 09_TESTS/governance/validate_product_neutral_entity_lifecycle.py
 - 09_TESTS/governance/test_v2_1_14_product_neutral_entity_lifecycle.py
-content_hash: 5caa8e5151b642e385b5cff46960e1d94043db22530a6cdee2f8f247b1d60849
+content_hash: 04523a35dae624ff63e62a983979eeda7d9c4a2908b582773046d2a7bbb53f4c
 protected_hash_paths:
 - 09_TESTS/governance/validate_test_feedback_spec_evolution.py
 - 09_TESTS/governance/test_v2_1_14_test_feedback_spec_evolution.py

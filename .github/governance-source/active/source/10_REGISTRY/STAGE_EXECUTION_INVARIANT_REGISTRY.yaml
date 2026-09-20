@@ -4,7 +4,7 @@ artifact_type: STAGE_EXECUTION_INVARIANT_REGISTRY
 status: CURRENT_CANDIDATE
 canonical_path: 10_REGISTRY/STAGE_EXECUTION_INVARIANT_REGISTRY.yaml
 owner_uid: OWNER-GOVERNANCE-STAGE-EXECUTION-INVARIANT
-governance_revision: v2.2.15-stage03-visual-materialization-promotion-closure
+governance_revision: v2.2.16-cross-stage-materialization-consumer-readiness-hardening
 scope:
   applies_to_stages:
   - STAGE-01
@@ -86,6 +86,9 @@ invariants:
     digest_verification_when_registered: true
     review_complete_implies_stage_closed: false
     missing_required_evidence: BLOCK
+    reference_only_claim_proves_physical_artifact: false
+    physical_artifact_without_parse_or_required_fields_is_complete: false
+    consumer_readiness_required_when_evidence_is_successor_input: true
   VALIDATOR_SCHEMA_SEMANTICS:
     authoritative_schema_path_required: true
     authoritative_enum_or_status_constant_required: true
@@ -158,6 +161,10 @@ invariants:
     current_ledgers_synchronized: true
     required_evidence_contract_registered: true
     entry_with_failed_precheck: BLOCK
+    reference_only_required_input_is_ready: false
+    required_input_parse_and_required_field_validation_required: true
+    required_input_denominator_inclusion_required: true
+    consumer_admission_on_exact_input_required: true
   IMPLEMENTATION_DEVIATION_FEEDBACK:
     deviation_record_required: true
     affected_consumers_status: REVERIFY_REQUIRED
@@ -766,6 +773,10 @@ invariants:
     applicability_required: true
     missing_required_scenario: BLOCK
     same_style_layout_tokens_anchors_topology_required_unless_design_change_set: true
+    single_overview_visual_may_substitute_required_scenarios: false
+    shared_visual_across_scenarios_requires_simultaneous_unambiguous_annotation_proof: true
+    applicable_visual_anchor_uids_nonempty_required: true
+    physical_candidate_evidence_required: true
   VISUAL_REFERENCE_ANNOTATION:
     required_artifact: VISUAL_REFERENCE_ANNOTATION
     required_fields:
@@ -795,6 +806,8 @@ invariants:
     - authority_classification
     - verification_purpose
     unannotated_visual_may_pass_visual_review: false
+    applicable_visual_anchor_uids_nonempty_required: true
+    candidate_physical_ref_required_when_candidate_is_declared: true
   SCENARIO_TO_FUNCTION_VISUAL_COVERAGE:
     denominator: APPROVED_REQUIRED_JOURNEY_STATE_BRANCH_SET
     required_mapping:
@@ -807,6 +820,8 @@ invariants:
     - DESIGN_REVIEW_ITEMS
     required_coverage_percent: 100
     visual_scenario_drift: BLOCK
+    empty_visual_anchor_mapping_for_applicable_visual_scenario: BLOCK
+    same_visual_for_multiple_required_scenarios_requires_explicit_state_coverage_proof: true
   BASIC_DESIGN_PACKAGE_COMPLETENESS:
     required_artifact: BASIC_DESIGN_PACKAGE
     design_domain_only: true
@@ -1013,6 +1028,10 @@ invariants:
     mismatch: PRODUCER_CONSUMER_SCHEMA_MISMATCH
     stage02_audit_event_canonical_field: audit_event_uid
     stage02_audit_event_legacy_alias_forbidden: event_uid
+    producer_output_physical_materialization_required: true
+    consumer_input_physical_resolution_required: true
+    required_field_completeness_required: true
+    denominator_reconciliation_required: true
   NO_HISTORY_PRODUCT_VALUE_FALLBACK:
     history_role:
     - PROVENANCE
@@ -1052,6 +1071,48 @@ invariants:
     unresolved_authority_is_authority_absent: false
     unresolved_applicable_visual_authority_in_denominator_required: true
     profile_materialization_undercoverage: BLOCK
+    declared_candidate_requires_physical_candidate_evidence: true
+    applicable_visual_anchor_registry_must_materialize_and_be_nonempty: true
+    human_visual_review_with_missing_required_anchor_or_candidate: BLOCK
+    multi_state_records_all_pointing_to_one_overview_without_explicit_proof: BLOCK
+  CROSS_STAGE_MATERIALIZATION_AND_CONSUMER_READINESS:
+    invariant_uid: GOV-INV-CROSS-STAGE-MATERIALIZATION-CONSUMER-READINESS-001
+    required_artifact: CROSS_STAGE_HANDOFF_READINESS_LEDGER
+    applies_to_all_registered_stages: true
+    required_row_fields:
+    - producer_stage_or_capability
+    - producer_output_uid_or_type
+    - producer_owner
+    - producer_physical_ref_or_external_evidence
+    - producer_hash_or_version_or_schema
+    - consumer_stage_or_capability
+    - consumer_input_uid_or_type
+    - consumer_owner_or_schema
+    - applicability
+    - reference_resolution_status
+    - physical_materialization_status
+    - parse_schema_status
+    - required_field_completeness
+    - denominator_inclusion_status
+    - consumer_readiness_status
+    - unresolved_required_dependency_total
+    - blocking_owner_or_reentry_target
+    - current_evidence_ref
+    reference_resolution_required: true
+    reference_presence_is_materialization: false
+    physical_materialization_required: true
+    parse_required: true
+    schema_version_identity_required: true
+    required_field_completeness_required: true
+    digest_verification_when_registered: true
+    denominator_inclusion_required: true
+    successor_consumer_readiness_required: true
+    successor_required_input_universe_reconciliation_before_stage_exit: true
+    historical_or_reference_only_completion_credit: 0
+    unresolved_required_dependency: BLOCK_OR_REENTER_EARLIEST_OWNER
+    downstream_discovered_upstream_gap: STOP_REENTER_EARLIEST_OWNER_MARK_DESCENDANTS_REVERIFY_REQUIRED
+    unaffected_evidence_preservation_requires_reverse_dependency_proof: true
+    product_stage_credit_from_governance_validation: 0
 stage02_observed_defect_mapping:
 - finding: PORT_EXPOSURE_WITHOUT_TRIGGER
   mapped_invariant: RELATION_SEMANTIC_SEPARATION

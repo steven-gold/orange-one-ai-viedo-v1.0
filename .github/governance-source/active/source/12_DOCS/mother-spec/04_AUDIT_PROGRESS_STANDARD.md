@@ -1521,3 +1521,18 @@ Audit MUST verify successful parse before mutation and reparse after mutation; e
 For executable-source semantic mutation, Audit MUST require syntax-tree, concrete-syntax-tree, parser-backed, or equivalently bounded semantic selection and MUST reject raw source spelling as the sole semantic identity. Destructive regression MUST include at least one case where the same legitimate lexical token appears in multiple structural scopes and prove the bounded selector changes only the authorized target without false global-uniqueness failure or cross-scope mutation.
 
 A structured-mutation safety PASS is governance/test integrity evidence only and receives zero product completion or blocker-reduction credit unless independent fresh product-owner evidence changes the product denominator.
+
+<!-- SECTION_UID: WEB-GOV-04-S085 -->
+## 85. 跨階段實體化 / 後繼可用性 / 假完成稽核 / Cross-Stage Materialization, Successor Readiness and False-Completion Audit
+
+Audit MUST independently reconstruct every REQUIRED predecessor-output to successor-input edge for the audited scope and verify the CROSS_STAGE_HANDOFF_READINESS_LEDGER against Current physical reality.
+
+The audit denominator MUST separately report: required edge total; reference-resolved total; physically materialized total; parse/schema-valid total; required-field-complete total; denominator-included total; consumer-ready total; unresolved required dependency total; re-entry-required total; and impacted REVERIFY_REQUIRED consumer total. Counts MUST be UID/edge based, not inferred from Stage PASS labels.
+
+Path presence, UID presence, Registry presence, ledger presence, historical evidence, a prior successful run, or a producer PASS MUST NOT substitute for physical parseable complete Current input and successful successor consumer admission. Missing or omitted REQUIRED edges are blockers even when the current Stage-local problem register says zero.
+
+Audit regression MUST include destructive or mutation cases for at least: reference-only dependency with missing bytes; physical artifact with missing required fields; schema/version drift; required edge omitted from denominator; successor consumer unable to parse/admit; downstream discovery of an upstream-owned defect; and multi-state visual evidence falsely represented by one shared overview without explicit simultaneous/unambiguous state proof.
+
+Stage closure requires zero unresolved REQUIRED handoff edges, zero denominator omissions, zero unproven consumer-ready edges, and zero incorrectly preserved downstream closure credit after an upstream defect. Any mismatch is CROSS_STAGE_HANDOFF_FALSE_COMPLETION and MUST block closure.
+
+Every governed denominator, regression expectation, and required-universe count MUST have exactly one canonical owner. Consumer-local hardcoded denominator copies, mirrored historical expected counts presented as Current, or multiple independently editable denominator authorities are forbidden. Historical evidence MUST bind an immutable predecessor denominator snapshot; Current execution MUST read the Current canonical denominator owner.

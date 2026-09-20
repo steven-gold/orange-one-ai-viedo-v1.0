@@ -798,7 +798,8 @@ findings:
 - finding_uid: FIND-20260920-018
   class: ACTIVE_PROJECTOR_APPLICABILITY_BUG
   title: Stage-02 Current projectors were incorrectly applied to later selected-profile steps
-  evidence: validate_active_consumer_reference_integrity.py derived all *_CURRENT_* projector crosschecks from current_step_state_key without respecting the STAGE02 owner encoded in projector kind; entering Stage-03 would require Stage-02 findings to match a Stage-03 attempt.
+  evidence: validate_active_consumer_reference_integrity.py derived all *_CURRENT_* projector crosschecks from current_step_state_key without respecting the STAGE02 owner encoded in
+    projector kind; entering Stage-03 would require Stage-02 findings to match a Stage-03 attempt.
   defect_owner: TEST_OR_VALIDATION_IMPLEMENTATION
   generalizability_scope: PROFILE_STEP_SCOPED_CURRENT_PROJECTOR_APPLICABILITY
   blocking_state: RESOLVED_PENDING_EXACT_HEAD_REVALIDATION
@@ -816,7 +817,9 @@ findings:
 - finding_uid: FIND-20260920-019
   class: COMMON_STAGE_EVIDENCE_SCHEMA_BUG
   title: Common stage normalized evidence could not represent a valid blocked next-stage transition
-  evidence: Stage-03 execution run 35478678744 passed preexecution Full-Line, common Stage-03 admission, and the product output producer, then normalized evidence validation exposed both missing producer/schema fields in the new Stage-03 adapter and a common-engine contradiction where BLOCKED evidence required stage_exit_allowed=false but next_stage_transition.status allowed only READY/PROJECT_COMPLETE/NEXT_PAGE_READY.
+  evidence: Stage-03 execution run 35478678744 passed preexecution Full-Line, common Stage-03 admission, and the product output producer, then normalized evidence validation exposed
+    both missing producer/schema fields in the new Stage-03 adapter and a common-engine contradiction where BLOCKED evidence required stage_exit_allowed=false but next_stage_transition.status
+    allowed only READY/PROJECT_COMPLETE/NEXT_PAGE_READY.
   defect_owner: TEST_OR_VALIDATION_IMPLEMENTATION
   generalizability_scope: COMMON_STAGE_NORMALIZED_EVIDENCE_AND_BLOCKED_TRANSITION_SEMANTICS
   blocking_state: RESOLVED_EXACT_HEAD_REVALIDATED
@@ -833,6 +836,17 @@ findings:
   - ALLOW_BLOCKED_NEXT_STAGE_TRANSITION_ONLY_WHEN_EVIDENCE_RESULT_IS_BLOCKED
   - BIND_STAGE_EXECUTION_ARTIFACT_PROVENANCE_AFTER_UPLOAD
   reopen_condition: Reopen if blocked stage evidence must misreport the next stage as ready, or Stage-03 provenance cannot be atomically bound after artifact upload.
+- finding_uid: FIND-20260920-CROSS-STAGE-MATERIALIZATION-001
+  class: GLOBAL_SHARED_GOVERNANCE_EXECUTION_DEFECT
+  title: Reference resolution could receive Stage completion without physical downstream materialization and consumer readiness
+  evidence: CORE-01 Stage-01 retained CHANGE-CORE-001 anchor/candidate references without physical owner materialization; Stage-02 denominator omitted Stage-03 visual dependency readiness;
+    Stage-03 then produced empty visual_anchor_uids while previous machine gates passed.
+  affected_scope: ALL_REGISTERED_STAGE_HANDOFFS
+  disposition: AUTHORIZED_SUCCESSOR_GOVERNANCE_HARDENING
+  authorization_uid: USR-DIRECTIVE-20260920-CROSS-STAGE-MATERIALIZATION-CONTINUITY-HARDENING-R1
+  specification_change_required: true
+  formal_specification_mutated_for_fix: true
+  product_stage_credit: 0
 historical_stage2_execution_findings:
   prior_CORE-01_STAGE02_BLOCKED: 7
   prior_ASSET-01_STAGE02_BLOCKED: 6

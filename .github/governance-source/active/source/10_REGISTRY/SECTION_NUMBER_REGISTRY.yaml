@@ -5,7 +5,7 @@ artifact_type: SECTION_NUMBER_REGISTRY
 status: CURRENT_CANDIDATE
 canonical_path: 10_REGISTRY/SECTION_NUMBER_REGISTRY.yaml
 owner_uid: OWNER-GOVERNANCE-SECTION-REGISTRY
-governance_revision: v2.2.15-stage03-visual-materialization-promotion-closure
+governance_revision: v2.2.16-cross-stage-materialization-consumer-readiness-hardening
 policy:
   unique_numeric_h2_per_document: true
   section_uid_is_canonical_reference: true
@@ -767,6 +767,13 @@ documents:
     heading: '## 87. 視覺設計 Profile 實體化與分母對帳 Gate / Visual Design Profile Materialization and Denominator Reconciliation'
     path: 12_DOCS/mother-spec/01_BLUEPRINT_DESIGN_GOVERNANCE.md
     binding_sha256: 9a44a832e3157aa1625ad70cd9435e0faf19f67ced4510d53152f7b1ee8f52b8
+  - section_uid: WEB-GOV-01-S088
+    level: 2
+    canonical_number: '88'
+    title: 跨階段來源實體化與後繼可用性 Gate / Cross-Stage Source Materialization and Successor Readiness
+    heading: '## 88. 跨階段來源實體化與後繼可用性 Gate / Cross-Stage Source Materialization and Successor Readiness'
+    path: 12_DOCS/mother-spec/01_BLUEPRINT_DESIGN_GOVERNANCE.md
+    binding_sha256: 684ab64060f42dbb345237e700b114c7f6d9ceae4db5a67a53eb52271a4bbb5d
 - document_id: WEB-GOV-02
   path: 12_DOCS/mother-spec/02_IMPLEMENTATION_DELIVERY_STANDARD.md
   sections:
@@ -1344,6 +1351,13 @@ documents:
     heading: '## 74. Scope-Bound Delivery / Re-entry / Temporary-to-Formal Boundary'
     path: 12_DOCS/mother-spec/02_IMPLEMENTATION_DELIVERY_STANDARD.md
     binding_sha256: 3768fafa624d5a50298cce4c075a2f5bffdfe1ee5216b75c11888e2cfe1600b9
+  - section_uid: WEB-GOV-02-S075
+    level: 2
+    canonical_number: '75'
+    title: Producer/Consumer 實體交接與後繼輸入可用性 Gate / Producer-Consumer Materialized Handoff and Successor Input Readiness
+    heading: '## 75. Producer/Consumer 實體交接與後繼輸入可用性 Gate / Producer-Consumer Materialized Handoff and Successor Input Readiness'
+    path: 12_DOCS/mother-spec/02_IMPLEMENTATION_DELIVERY_STANDARD.md
+    binding_sha256: 907e97632fa37c0a56bb10c8163ca673db29bcf0e67d9e3a5b26585f7321af3b
 - document_id: WEB-GOV-03
   path: 12_DOCS/mother-spec/03_EXECUTION_CONTROL_STANDARD.md
   sections:
@@ -1886,6 +1900,13 @@ documents:
     heading: '## 70. Structured Mutation Selector / Bounded Write-Set Safety'
     path: 12_DOCS/mother-spec/03_EXECUTION_CONTROL_STANDARD.md
     binding_sha256: 112b1bceafa63498a00381ddcf8384589fa6ca692748ed0ed8b95c4a6c4c25de
+  - section_uid: WEB-GOV-03-S071
+    level: 2
+    canonical_number: '71'
+    title: 跨階段實體交接 / Consumer Readiness / 回退控制 / Cross-Stage Materialized Handoff, Consumer Readiness and Re-entry Control
+    heading: '## 71. 跨階段實體交接 / Consumer Readiness / 回退控制 / Cross-Stage Materialized Handoff, Consumer Readiness and Re-entry Control'
+    path: 12_DOCS/mother-spec/03_EXECUTION_CONTROL_STANDARD.md
+    binding_sha256: 25a25c12c973efcd86025830a6fb889e4de24725b2bc849512bfeec0c1e32e8c
 - document_id: WEB-GOV-04
   path: 12_DOCS/mother-spec/04_AUDIT_PROGRESS_STANDARD.md
   sections:
@@ -2547,6 +2568,13 @@ documents:
     heading: '## 84. Structured Mutation Selector / Write-Set Integrity Audit'
     path: 12_DOCS/mother-spec/04_AUDIT_PROGRESS_STANDARD.md
     binding_sha256: 1c5a3bc3e992cb657690d9cea0c94dbb680c2caa11218be329038063674a1b92
+  - section_uid: WEB-GOV-04-S085
+    level: 2
+    canonical_number: '85'
+    title: 跨階段實體化 / 後繼可用性 / 假完成稽核 / Cross-Stage Materialization, Successor Readiness and False-Completion Audit
+    heading: '## 85. 跨階段實體化 / 後繼可用性 / 假完成稽核 / Cross-Stage Materialization, Successor Readiness and False-Completion Audit'
+    path: 12_DOCS/mother-spec/04_AUDIT_PROGRESS_STANDARD.md
+    binding_sha256: 2b983f8d9228cd96e8c5e51be3a3f00f4b1042d9555f8d11f0797f7becce8074
 historical_duplicate_groups:
 - document_id: WEB-GOV-01
   duplicate_number: '63'

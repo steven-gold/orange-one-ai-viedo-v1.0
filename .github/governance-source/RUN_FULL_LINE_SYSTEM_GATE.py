@@ -16,35 +16,37 @@ CHECKSUMS = SOURCE / 'CHECKSUMS.sha256'
 TRUST_ROOT = Path('/tmp/acpos-governance-external-trust-root.json')
 RESULT = ROOT / '.github' / 'governance-source' / 'FULL_LINE_SYSTEM_GATE_RESULT.json'
 
-EXPECTED_CHECKSUMS_SHA256 = '0b1fb3a1f868df128074130aad9302e9b925d9d62e9b798d8b0948ca506aeee1'
-EXPECTED_SEMANTIC_CONTENT_HASH = '5caa8e5151b642e385b5cff46960e1d94043db22530a6cdee2f8f247b1d60849'
-EXPECTED_SOURCE_ZIP_SHA256 = '34dfe145f453da03f5f7f4819302a19e4db8ccc3af3dd3e7817f372949178885'
-EXPECTED_BUNDLE_SHA256 = '611fb7fd300480be93dcb115077052e91efb056917a68e29788b6f5057968867'
+EXPECTED_CHECKSUMS_SHA256 = '046210a7682edd05d7808a4680a11cb02fac6d8d7b56891f69879efc58c4695d'
+EXPECTED_SEMANTIC_CONTENT_HASH = '04523a35dae624ff63e62a983979eeda7d9c4a2908b582773046d2a7bbb53f4c'
+EXPECTED_SOURCE_ZIP_SHA256 = '17abcbe3bebb96695a746829585298806137b65612557fa90a75b4d54fed8671'
+EXPECTED_BUNDLE_SHA256 = '56978101cf5b5711a23f0a37009447f68388506a8a73d1aad46969c85b783c8f'
 EXPECTED_SELECTED_PROFILE_STEP_UIDS = [f'STAGE-{i:02}' for i in range(1, 12)]
 EXPECTED_SELECTED_PROFILE_STEP_NAMES = [
     'SOURCE_INTAKE_AND_BASE_BLUEPRINT','PAGE_FUNCTIONAL_CONTRACT','VISUAL_DESIGN','FOUNDATION_FREEZE',
     'IMPLEMENTATION','VERIFICATION_QA','BUILD_RELEASE_CANDIDATE','STAGING','PRODUCTION_CUTOVER',
     'PRODUCTION_ACCEPTANCE','CLOSURE_OPERATIONS',
 ]
-EXPECTED_SUITES = {
-    'test_high_pressure_hardening.py': {'total': 25, 'passed_expectations': 25},
-    'test_reference_semantic_guard.py': {'semantic_cases_total': 28, 'semantic_passed_expectations': 28, 'fuzz_total': 46, 'fuzz_blocked': 46, 'escaped': 0},
-    'test_execution_load_guard.py': {'total': 14, 'passed_expectations': 14},
-    'test_prefomal_stress_repairs.py': {'total': 21, 'passed_expectations': 21},
-    'test_stage1_source_to_blueprint_minimal_control.py': {'total': 33, 'passed_expectations': 33},
-    'test_v2_1_0_regressions.py': {'total': 12, 'passed_expectations': 12},
-    'test_v2_1_0_post_v1_8_regressions.py': {'total': 6, 'passed_expectations': 6},
-    'test_bugfix_regressions.py': {'total': 30, 'passed_expectations': 30},
-    'test_v2_1_7_phase_authority_bugfix.py': {'total': 25, 'passed_expectations': 25},
-    'test_v2_1_8_successor_evidence_sync_bugfix.py': {'total': 24, 'passed_expectations': 24},
-    'test_v2_1_9_evidence_state_closure.py': {'total': 24, 'passed_expectations': 24},
-    'test_v2_1_10_closure_evidence_continuity.py': {'total': 43, 'passed_expectations': 43},
-    'test_v2_1_11_binding_authority_receipt_schema.py': {'total': 54, 'passed_expectations': 54},
-    'test_v2_1_12_successor_state_evidence_parse.py': {'total': 60, 'passed_expectations': 60},
-    'test_v2_1_13_stage_execution_invariants.py': {'total': 26, 'passed_expectations': 26},
-    'test_v2_1_14_test_feedback_spec_evolution.py': {'total': 21, 'passed_expectations': 21},
-    'test_v2_1_14_product_neutral_entity_lifecycle.py': {'total': 68, 'passed_expectations': 68},
-}
+EXPECTED_SUITES = {'test_high_pressure_hardening.py': {'total': 25, 'passed_expectations': 25},
+ 'test_reference_semantic_guard.py': {'semantic_cases_total': 28,
+                                      'semantic_passed_expectations': 28,
+                                      'fuzz_total': 46,
+                                      'fuzz_blocked': 46,
+                                      'escaped': 0},
+ 'test_execution_load_guard.py': {'total': 14, 'passed_expectations': 14},
+ 'test_prefomal_stress_repairs.py': {'total': 21, 'passed_expectations': 21},
+ 'test_stage1_source_to_blueprint_minimal_control.py': {'total': 33, 'passed_expectations': 33},
+ 'test_v2_1_0_regressions.py': {'total': 12, 'passed_expectations': 12},
+ 'test_v2_1_0_post_v1_8_regressions.py': {'total': 6, 'passed_expectations': 6},
+ 'test_bugfix_regressions.py': {'total': 30, 'passed_expectations': 30},
+ 'test_v2_1_7_phase_authority_bugfix.py': {'total': 25, 'passed_expectations': 25},
+ 'test_v2_1_8_successor_evidence_sync_bugfix.py': {'total': 24, 'passed_expectations': 24},
+ 'test_v2_1_9_evidence_state_closure.py': {'total': 24, 'passed_expectations': 24},
+ 'test_v2_1_10_closure_evidence_continuity.py': {'total': 43, 'passed_expectations': 43},
+ 'test_v2_1_11_binding_authority_receipt_schema.py': {'total': 54, 'passed_expectations': 54},
+ 'test_v2_1_12_successor_state_evidence_parse.py': {'total': 60, 'passed_expectations': 60},
+ 'test_v2_1_13_stage_execution_invariants.py': {'total': 32, 'passed_expectations': 32},
+ 'test_v2_1_14_test_feedback_spec_evolution.py': {'total': 21, 'passed_expectations': 21},
+ 'test_v2_1_14_product_neutral_entity_lifecycle.py': {'total': 68, 'passed_expectations': 68}}
 
 errors: list[str] = []
 

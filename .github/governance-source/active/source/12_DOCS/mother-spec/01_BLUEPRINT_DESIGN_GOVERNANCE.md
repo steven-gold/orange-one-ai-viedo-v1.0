@@ -1759,3 +1759,16 @@ For every ATOMIC_WORKBENCH, visual materialization MUST include an explicit atom
 The Stage/Capability Current Problem Register and Denominator Snapshot MUST include every unresolved applicable visual Authority gap and every missing required visual deliverable. Human review pending is an additional state and MUST_NOT replace or hide other open blockers.
 
 Any mismatch between Mother-required applicable deliverables and profile outputs/producers/denominators is PROFILE_MATERIALIZATION_UNDERCOVERAGE and MUST block Stage closure, Visual Approval, Design Freeze, and downstream transition.
+
+<!-- SECTION_UID: WEB-GOV-01-S088 -->
+## 88. 跨階段來源實體化與後繼可用性 Gate / Cross-Stage Source Materialization and Successor Readiness
+
+A reference is not a materialized artifact. A UID, path, Registry entry, manifest name, Candidate identity, Visual Anchor identity, Authority reference, FINAL/LOCKED label, historical owner record, or dependency edge proves identity or intent only. It MUST NOT receive materialization, completeness, readiness, review, freeze, or Stage-exit credit by itself.
+
+Every REQUIRED source-declared or Authority-declared dependency that can be consumed by the current or a later capability MUST be reconciled through one exact materialization record. This includes Authority owners, registries, manifests, Visual Candidates, Visual Anchors, assets, schemas, shared-owner contracts, external packages, generated artifacts, handoff records, and equivalent typed dependencies. The record MUST bind: dependency UID/ref; canonical owner; canonical/current physical path or explicit external evidence ref; version/schema; digest when registered; applicability; required successor capability or Stage; materialization status; required-field completeness; denominator inclusion; and consumer-readiness disposition.
+
+The source-intake / base-blueprint owning capability MUST distinguish SOURCE_REFERENCE_CAPTURED from SOURCE_ARTIFACT_MATERIALIZED. When Current source declares an Anchor Registry, Generation Manifest, Candidate UID set, required asset set, schema owner, external package member, or other required downstream dependency, that owning capability MUST either physically capture and validate the owner or create an explicit SOURCE_CAPTURE_GAP. Classification or Base Blueprint compilation MUST NOT silently discard the dependency and MUST NOT convert a reference-only record into completed materialization.
+
+A required dependency MAY be deferred only when Current Authority explicitly names a legal later owner, exact materialization boundary, and successor entry condition. Undefined deferral is forbidden. Historical bytes, an old commit, a stale generated output, or a previous successful test MUST NOT fill missing Current source data.
+
+For any downstream-required item, the predecessor may receive Stage exit credit only after the successor-required input universe is reconciled. Missing physical source, missing required fields, unresolved digest/schema, denominator omission, or unproven consumer readiness MUST block or reopen the earliest owning capability. AI MUST NOT invent missing product values, Visual Anchors, Visual Candidates, or Authority content merely to satisfy this Gate.

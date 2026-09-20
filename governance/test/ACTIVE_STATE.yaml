@@ -2,7 +2,7 @@ schema_version: 23
 artifact_type: ACTIVE_GOVERNANCE_TEST_STATE
 normative_authority: false
 specification_registry_ref: governance/specifications/REGISTRY.yaml
-specification_uid: GOV-REV-20260920-STAGE03-VISUAL-MATERIALIZATION-PROMOTION-CLOSURE
+specification_uid: GOV-REV-20260920-CROSS-STAGE-MATERIALIZATION-CONSUMER-READINESS-HARDENING
 canonical_rule_registry_ref: governance/specifications/current/CANONICAL_RULE_REGISTRY.yaml
 canonical_rule_registry_uid: GOV-CANONICAL-RULE-REGISTRY-001
 selected_execution_profile_state:
@@ -39,7 +39,7 @@ execution:
     prior_results_authoritative_for_current_governance: false
     revalidation_required_under_current_governance: false
   stage3:
-    result: TEST_EXECUTED_BLOCKED
+    result: PREDECESSOR_RESULT_REVERIFY_REQUIRED
     work_unit_uid: WU-STAGE03-CORE01-VISUAL-DESIGN-001
     work_unit_resolution: PASS_SINGLE_LEGAL_SUCCESSOR
     execution_started: true
@@ -56,8 +56,8 @@ execution:
     current_scope_manifest_ref: governance/test/CURRENT_EXECUTION_SCOPE_MANIFEST.yaml
     output_owner_materialized: true
     visual_review_required: true
-    human_visual_review_reached: true
-    human_visual_review_status: PENDING
+    human_visual_review_reached: false
+    human_visual_review_status: REVOKED_REVERIFY_REQUIRED
   website_construction_allowed: false
   deployment_allowed: false
 full_lifecycle_governance_system_test:
@@ -112,8 +112,8 @@ specification_mutation_safety:
   ordinary_mid_stage_specification_mutation: BLOCK
   stage_end_consolidated_promotion_requires_new_explicit_directive: true
   execution_context_lock_required: true
-status: ACTIVE_GOVERNANCE_CROSS_STAGE_MATERIALIZATION_CONTINUITY_HARDENING
-next_action: PROMOTE_V2_2_16_CROSS_STAGE_MATERIALIZATION_CONSUMER_READINESS_HARDENING
+status: ACTIVE_GOVERNANCE_CROSS_STAGE_MATERIALIZATION_HARDENING_PROMOTED_REVALIDATION_REQUIRED
+next_action: RUN_V2_2_16_EXACT_HEAD_FULL_LINE_SELECTED_PROFILE_AND_CROSS_STAGE_REGRESSION
 previous_closed_product_work_unit:
   work_unit_uid: WU-STAGE02-CORE01-STRUCTURAL-REMEDIATION-001
   canonical_name: CORE01_STRUCTURAL_CONTRACT_REMEDIATION
@@ -292,12 +292,12 @@ previous_closed_work_unit:
     source_runtime_residual_count: 0
     product_stage_credit: 0
 resume_control:
-  current_resume_point: GOV_CROSS_STAGE_MATERIALIZATION_HARDENING_AUTHORIZED
+  current_resume_point: V2_2_16_CROSS_STAGE_MATERIALIZATION_SUCCESSOR_PROMOTED_REVALIDATION_REQUIRED
   current_work_unit_uid: WU-GOV-CROSS-STAGE-MATERIALIZATION-CONTINUITY-HARDENING-001
   current_owner: governance/specifications/current/SPECIFICATION_MUTATION_CONTROL.yaml
-  exact_next_action: PROMOTE_V2_2_16_CROSS_STAGE_MATERIALIZATION_CONSUMER_READINESS_HARDENING
+  exact_next_action: RUN_V2_2_16_EXACT_HEAD_FULL_LINE_SELECTED_PROFILE_AND_CROSS_STAGE_REGRESSION
   suspended_product_work_unit_uid: WU-STAGE03-CORE01-VISUAL-DESIGN-001
-  suspended_product_resume_point: STAGE3_CORE01_VISUAL_REVIEW_PENDING
+  suspended_product_resume_point: REENTER_STAGE01_SOURCE_CAPTURE_MATERIALIZATION_CONTINUITY
 last_completed_change_request_resume_history_sys01:
   work_unit_uid: WU-PRODUCT-SYS01-CONSTRUCTION-ENCODER-ALIGNMENT-001
   authorization_uid: USR-DIRECTIVE-20260920-SYS01-CONSTRUCTION-ENCODER-ALIGNMENT-R1
@@ -306,12 +306,12 @@ last_completed_change_request_resume_history_sys01:
   prior_work_unit_restored: WU-TEST-STAGE03-BLOCKED-EVIDENCE-SCHEMA-001
   terminal_disposition: CLOSED_AFFECTED_SCOPE_VERIFIED_GLOBAL_BASELINE_BLOCKER_UNCHANGED
 governance_revision_transition:
-  current_governance_uid: GOV-REV-20260920-STAGE03-VISUAL-MATERIALIZATION-PROMOTION-CLOSURE
-  predecessor_governance_uid: GOV-REV-20260920-STAGE03-VISUAL-MATERIALIZATION-HARDENING
+  current_governance_uid: GOV-REV-20260920-CROSS-STAGE-MATERIALIZATION-CONSUMER-READINESS-HARDENING
+  predecessor_governance_uid: GOV-REV-20260920-STAGE03-VISUAL-MATERIALIZATION-PROMOTION-CLOSURE
   predecessor_attempt_preserved_as_historical_evidence: true
   predecessor_attempt_history_ref: governance/test/history/stage02/design-remediation-routing-20260918/STAGE02_CORE01_DESIGN_REMEDIATION_TEST_EVIDENCE.json
   predecessor_attempt_may_close_under_current_governance: false
-  fresh_revalidation_required: false
+  fresh_revalidation_required: true
   mother_machine_revalidation_complete: true
   mother_machine_revalidation_run_id: 35483671654
   mother_machine_revalidation_head: f7dad5ac112337251f35678a95e9d8f3d99d9d4d
@@ -343,13 +343,14 @@ governance_revision_transition:
   current_governance_product_credit: 0
   current_product_attempt_uid: STAGE03-CORE01-V2215-20260920-003
   current_product_attempt_run_uid: VISUAL-CORE01-V2215-STAGE03-R3
-  fresh_revalidation_scope: STAGE03_VISUAL_MATERIALIZATION_PROFILE_AND_AFFECTED_VISUAL_CONSUMERS
+  fresh_revalidation_scope: STAGE01_SOURCE_CAPTURE_THROUGH_STAGE03_VISUAL_READINESS_AND_ALL_11_STAGE_HANDOFF_DEFINITION
   invalid_predecessor_promotion_commit: bf2c4de90fbc80003bfdcebc30732bcf25abd20d
   invalid_predecessor_promotion_workflow_run_id: 35483077720
   invalid_predecessor_promotion_guard_result: FAIL
   current_product_attempt_workflow_run_id: 35486809384
   current_product_attempt_artifact_id: 10597616763
   current_product_attempt_artifact_sha256: a98461683440be86360ef30b5b0a3c0d8336bc548853540fa6387829d8b5ba0c
+  predecessor_stage03_evidence_role: HISTORICAL_PREDECESSOR_EVIDENCE_ONLY
 pending_governance_review:
   review_item_uid: REV-GOV-001
   review_type: PREFORMAL_GOVERNANCE_REVIEW
@@ -2392,7 +2393,7 @@ active_work_unit:
   primary_task_layer: GOVERNANCE_MAINTENANCE
   canonical_owner: governance/specifications/current/SPECIFICATION_MUTATION_CONTROL.yaml
   authorization_uid: USR-DIRECTIVE-20260920-CROSS-STAGE-MATERIALIZATION-CONTINUITY-HARDENING-R1
-  current_status: ACTIVE_AUTHORIZED_SUCCESSOR_PREPARATION
+  current_status: PROMOTION_MATERIALIZED_EXACT_HEAD_REVALIDATION_REQUIRED
   scope:
   - MOTHER_01_STAGE01_SOURCE_CAPTURE_AND_BLUEPRINT_MATERIALIZATION_COMPLETENESS
   - MOTHER_02_PRODUCER_CONSUMER_PHYSICAL_MATERIALIZATION_AND_SUCCESSOR_READINESS
@@ -2427,6 +2428,7 @@ active_work_unit:
   - FULL_LINE_AND_SELECTED_PROFILE_EXACT_HEAD_PASS
   - AFFECTED_PRODUCT_STAGE03_MARKED_REVERIFY_REQUIRED
   product_stage_credit: 0
+  promoted_governance_uid: GOV-REV-20260920-CROSS-STAGE-MATERIALIZATION-CONSUMER-READINESS-HARDENING
 last_work_unit_resolution_gate: &id001
   resolution_uid: WUR-GOV-CROSS-STAGE-MATERIALIZATION-CONTINUITY-HARDENING-001
   normative_authority: false
@@ -2953,18 +2955,19 @@ stage03_active_attempt:
   remaining_scope_total: 1
   active_evidence_present: true
   active_findings_present: true
-  next_action: HUMAN_VISUAL_REVIEW_CORE01_STAGE03
+  next_action: REENTER_STAGE01_SOURCE_CAPTURE_MATERIALIZATION_CONTINUITY
   product_blocker_credit: 0
   prior_results_used: false
-  fresh_revalidation_required: false
-  closure_credit_under_current_governance: true
+  fresh_revalidation_required: true
+  closure_credit_under_current_governance: false
   resolved_external_visual_authority_refs:
   - GLOBAL_HOME_SHELL_TEMPLATE_AUTHORITY@V1.9
   - GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY@V1.0
-  human_visual_review_status: PENDING
+  human_visual_review_status: REVOKED_REVERIFY_REQUIRED
   source_workflow_run_id: 35486809384
   source_artifact_id: 10597616763
   source_artifact_sha256: a98461683440be86360ef30b5b0a3c0d8336bc548853540fa6387829d8b5ba0c
+  evidence_role: PREDECESSOR_HISTORICAL_ONLY_AFTER_V2_2_16
 stage03_result_evidence:
   mode: RUNTIME_GENERATED_GITHUB_ACTION_ARTIFACT
   tracked_current_evidence_ref: governance/test/stage03/STAGE03_LATEST_TEST_EVIDENCE.json
@@ -3040,7 +3043,7 @@ suspended_product_work_unit_for_cross_stage_governance_hardening:
   canonical_policy_owner: .github/governance-source/active/source/10_REGISTRY/GOVERNANCE_LIFECYCLE_STAGE_REGISTRY.yaml
   state_owner: governance/test/ACTIVE_STATE.yaml
   scope_manifest_ref: governance/test/CURRENT_EXECUTION_SCOPE_MANIFEST.yaml
-  current_status: PENDING_HUMAN_VISUAL_REVIEW
+  current_status: REVERIFY_REQUIRED_UPSTREAM_SOURCE_CAPTURE_AND_SUCCESSOR_READINESS
   attempt_uid: STAGE03-CORE01-V2215-20260920-003
   run_uid: VISUAL-CORE01-V2215-STAGE03-R3
   canonical_owner: 00_SOURCE_INTAKE/run_core01_d81df9ac_stage02/05_VISUAL_DESIGN/CORE-01/VISUAL_DESIGN_SPEC_PACKAGE.yaml
@@ -3162,7 +3165,7 @@ suspended_product_work_unit_for_cross_stage_governance_hardening:
   - ASSET01_REMAINS_OUT_OF_SCOPE_AND_UNMATERIALIZED
   - NEXT_RESUME_PERSISTED_TO_STAGE04_WORK_UNIT_RESOLUTION_BOUNDARY
   human_review_boundary:
-    visual_review: PENDING
+    visual_review: NOT_REACHED_REVERIFY_REQUIRED
     visual_approval: false
     authority_update: false
     design_freeze: false
@@ -3172,6 +3175,9 @@ suspended_product_work_unit_for_cross_stage_governance_hardening:
   planned_output_owner: 00_SOURCE_INTAKE/run_core01_d81df9ac_stage02/05_VISUAL_DESIGN/CORE-01/VISUAL_DESIGN_SPEC_PACKAGE.yaml
   generated_output_root_present: true
   fresh_execution_evidence_ref: governance/test/stage03/STAGE03_LATEST_TEST_EVIDENCE.json
+  reentry_owner_capability: SOURCE_INTAKE_BASE_BLUEPRINT
+  reentry_stage_uid: STAGE-01
+  reentry_reason: SOURCE_DECLARED_VISUAL_ANCHOR_AND_CANDIDATE_REFERENCES_NOT_PHYSICALLY_MATERIALIZED_OR_CONSUMER_READY
 suspended_product_resume_for_cross_stage_governance_hardening:
   current_resume_point: STAGE3_CORE01_VISUAL_REVIEW_PENDING
   current_work_unit_uid: WU-STAGE03-CORE01-VISUAL-DESIGN-001
