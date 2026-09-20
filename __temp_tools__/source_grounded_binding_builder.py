@@ -120,7 +120,7 @@ def source_control_row(uid,c,actions,ports,local_ops,data,page):
     port=str(first(a,"port_uid","port","integration_port_uid") or first(c,"port_uid","port","integration_port_uid") or "")
     exposed_ports=list(a.get("__exposed_ports",[])) if isinstance(a.get("__exposed_ports"),list) else []
     if port and port not in exposed_ports: exposed_ports.insert(0,port)
-    operation=str(first(a,"registered_operation","operation","operation_id") or first(c,"registered_operation","operation","operation_id") or "")
+    operation=str(first(a,"registered_operation","operation","operation_id","service_operation") or first(c,"registered_operation","operation","operation_id","service_operation") or "")
     rt=runtime_text(first(c,"runtime_binding")) or runtime_text(first(a,"runtime_binding"))
     method=""
     owner=str(first(a,"owner","runtime_owner") or "")
@@ -195,14 +195,21 @@ def source_control_row(uid,c,actions,ports,local_ops,data,page):
             method="NO_PUBLIC_API_ID_IN_CURRENT_AUTHORITY"
             rt=(owner or "OWNER_SCOPED_ORCHESTRATION")
     if not operation and rt:
-        # exact runtime binding may name an operation
-        m=re.search(r'(?:operation(?:_id)?|operation)=([A-Za-z0-9_:-]+)',rt)
+        # exact runtime binding may name an operation.
+        m=re.search(r'(?:exact_operation_uid|service_operation|operation(?:_id)?|operation)=([A-Za-z0-9_:-]+)',rt)
         if m: operation=m.group(1)
         if operation in OP:
             o=OP[operation]; method=exact_method(o); owner=owner or str(first(o,"runtime_owner") or ""); persistence=persistence or runtime_text(first(o,"persistence_owner"))
     if not method and rt:
-        m=re.search(r'\b(GET|POST|PATCH|PUT|DELETE)\s+(/[^ ;,]+)',rt,re.I)
-        if m: method=f"{m.group(1).upper()} {m.group(2)}"
+        m=re.search(r'method_path=([A-Z]+\s+/[^;]+)',rt,re.I)
+        if m: method=m.group(1).strip()
+        else:
+            mm=re.search(r'method=([A-Z]+)',rt,re.I)
+            mp=re.search(r'path=([^;]+)',rt,re.I)
+            if mm and mp: method=f"{mm.group(1).upper()} {mp.group(1).strip()}"
+            else:
+                m=re.search(r'\b(GET|POST|PATCH|PUT|DELETE)\s+(/[^ ;,]+)',rt,re.I)
+                if m: method=f"{m.group(1).upper()} {m.group(2)}"
     label=str(first(c,"label","name","display_name","title") or "")
     typ=str(first(c,"type","control_type","ui_type") or "")
     section=str(first(c,"section_uid","section","sec","placement") or "")
