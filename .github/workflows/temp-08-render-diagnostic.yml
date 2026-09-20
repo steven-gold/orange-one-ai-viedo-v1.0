@@ -1,0 +1,30 @@
+name: Temp 08 Render Diagnostic
+
+on:
+  push:
+    branches: [0921acpos]
+
+permissions:
+  contents: read
+
+jobs:
+  render:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq libreoffice-writer poppler-utils fonts-noto-cjk
+          python -m pip install --quiet python-docx pillow
+      - run: python __temp/apply_nine_system_word_sync.py
+      - name: Render 08 diagnostic
+        run: |
+          mkdir -p diag
+          libreoffice --headless --convert-to pdf --outdir diag "08_ACPOS_Strategy_Intelligence_MultiAI_Decision_System_Mother_Basic_Logic_Design_Normative_Contract_v1.0.docx"
+          pdftoppm -png -r 120 "diag/08_ACPOS_Strategy_Intelligence_MultiAI_Decision_System_Mother_Basic_Logic_Design_Normative_Contract_v1.0.pdf" "diag/page"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: system08-render-diagnostic
+          path: diag
+          retention-days: 1
