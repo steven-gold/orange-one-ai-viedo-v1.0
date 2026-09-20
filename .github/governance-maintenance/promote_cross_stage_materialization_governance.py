@@ -634,6 +634,13 @@ def mutate_lifecycle_and_reference_v2216():
 def mutate_audit_and_index_v2216():
     ap=SOURCE/'10_REGISTRY/GOVERNANCE_ACCEPTANCE_AUDIT_BLUEPRINT.yaml'
     bp=load(ap); bp['governance_revision']=NEW_SOURCE_REV
+    ces=bp.setdefault('current_test_evidence_sync_contract',{})
+    ces.update({
+        'current_mandatory_denominator_source':'SEMANTIC_AUTHORITY_BASELINE.mandatory_regression_assets',
+        'predecessor_evidence_denominator_source':'GOVERNANCE_CANDIDATE_STATE.fresh_revalidation.predecessor_mandatory_regression_assets',
+        'hardcoded_historical_suite_denominator_in_consumer':'BLOCK',
+        'denominator_change_requires_snapshot_and_reverify':True
+    })
     unique_extend(bp.setdefault('normative_section_uids',[]),[
         'WEB-GOV-01-S088','WEB-GOV-02-S075','WEB-GOV-03-S071','WEB-GOV-04-S085'])
     unique_extend(bp.setdefault('audit_item_uids',[]),['AUD-GOV-014'])
