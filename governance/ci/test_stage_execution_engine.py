@@ -59,6 +59,16 @@ sample={
  'result':'PASS','stage_exit_allowed':True
 }
 eng.validate_evidence_data(stage_uid,deepcopy(sample))
+blocked_sample=deepcopy(sample)
+blocked_sample['denominator']={'required_total':len(st['operations']),'open_gap_total':1,'closure_blocker_total':1,'remaining_scope_total':1}
+blocked_sample['gaps']=[{'problem_uid':'SYNTHETIC-REVIEW-PENDING'}]
+blocked_sample['closure_blockers']=['SYNTHETIC-REVIEW-PENDING']
+blocked_sample['remediation']={'discovered_gap_total':1,'remediated_gap_total':0,'unresolved_gap_total':1,'reexecution_required':True,'reexecution_performed':True}
+blocked_sample['phase_trace']=[{'phase_uid':ph,'status':('BLOCKED' if ph=='TERMINAL_CLOSURE' else ('NOT_EXECUTED_AFTER_BLOCK' if ph=='NEXT_STAGE' else 'PASS'))} for ph in eng.EXPECTED_PHASES]
+blocked_sample['next_stage_transition']={'next_stage_uid':st['next_stage_uid'],'status':'BLOCKED'}
+blocked_sample['result']='BLOCKED'
+blocked_sample['stage_exit_allowed']=False
+eng.validate_evidence_data(stage_uid,blocked_sample)
 def block_evidence(label,mutator):
     global cases
     x=deepcopy(sample); mutator(x)

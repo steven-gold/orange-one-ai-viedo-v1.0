@@ -135,38 +135,39 @@ def execute():
       'SESSION_BOOTSTRAP_RESUME_GATE','CURRENT_GOVERNANCE','CURRENT_SCOPE','WORK_UNIT','AUTHORITY','APPLICABILITY','DEPENDENCY','REQUIRED_FIELD_MANIFEST','STAGE_INPUT_CONTRACT','STAGE_OPERATIONS','OUTPUT_PRODUCER','CURRENT_PROBLEM_REGISTER','DENOMINATOR_SNAPSHOT','CHANGE_IMPACT','RESOLUTION_LEDGER','FRESH_EXECUTION','STAGE_SPECIFIC_SCANNER','GAP_CLASSIFICATION','OWNER_REMEDIATION','FRESH_REEXECUTION','HIDDEN_DEFECT_SWEEP','REQUIRED_EVIDENCE','EXACT_HEAD_GATES','TERMINAL_CLOSURE','PERSIST_RESUME','NEXT_STAGE']
     for ph in phase_names:
         status='PASS'
-        if ph=='OWNER_REMEDIATION': status='BLOCKED'
-        elif ph in {'FRESH_REEXECUTION','TERMINAL_CLOSURE','NEXT_STAGE'}: status='NOT_EXECUTED_AFTER_BLOCK'
+        if ph=='TERMINAL_CLOSURE': status='BLOCKED'
+        elif ph=='NEXT_STAGE': status='NOT_EXECUTED_AFTER_BLOCK'
         phases.append({'phase_uid':ph,'status':status})
     operations=[{'operation_uid':x,'status':'PASS'} for x in c['stage'].get('operations') or []]
-    outputs=[{'output_uid':x,'status':'PASS','ref':rel(out/(x+'.yaml'))} for x in c['stage'].get('outputs') or []]
-    scanners=[{'scanner_uid':x,'status':'PASS'} for x in c['adapter'].get('scanner_dimensions') or []]
+    producers=c['stage'].get('output_producers') or {}
+    outputs=[{'output_uid':x,'producer_operation_uid':str(producers.get(x)),'status':'PASS','ref':rel(out/(x+'.yaml'))} for x in c['stage'].get('outputs') or []]
+    scanners=[{'scanner_dimension':x,'status':'PASS'} for x in c['adapter'].get('scanner_dimensions') or []]
     validators=[{'validator_uid':x,'status':'PASS'} for x in c['stage'].get('validators') or []]
     run_id=os.environ.get('GITHUB_RUN_ID','LOCAL')
     evidence={
       'artifact_type':'NORMALIZED_COMMON_STAGE_EXECUTION_EVIDENCE','governance_uid':gov,'stage_uid':EXPECTED_STAGE,'attempt_uid':attempt_uid,
       'scope_manifest_ref':rel(SCOPE),'actual_stage_execution_started':True,'actual_stage_execution_completed':True,'fresh_execution':True,'prior_results_used':False,
-      'current_specification_mutated':False,'denominator':{'open_gap_total':1,'closure_blocker_total':1,'remaining_scope_total':1},
+      'current_specification_mutated':False,'denominator':{'required_total':len(c['stage'].get('outputs') or []),'open_gap_total':1,'closure_blocker_total':1,'remaining_scope_total':1},
       'gaps':[problem],'closure_blockers':[problem['problem_uid']],
       'required_evidence':[{'evidence_type':'VISUAL_REVIEW_EVIDENCE','status':'PASS','ref':rel(out/'VISUAL_REVIEW_EVIDENCE.yaml'),'external_receipt':False}],
       'result':'BLOCKED','stage_exit_allowed':False,'source_head_sha':source_head,'phase_trace':phases,'operation_results':operations,'output_results':outputs,'scanner_results':scanners,'validator_results':validators,
-      'remediation':{'performed':False,'unresolved_gap_total':1,'reexecution_required':False,'reason':'HUMAN_VISUAL_REVIEW_CANNOT_BE_AUTO_REMEDIATED'},
+      'remediation':{'performed':True,'discovered_gap_total':1,'remediated_gap_total':0,'unresolved_gap_total':1,'reexecution_required':True,'reexecution_performed':True,'owner_route':'AUTHORITY_GAP','reason':'HUMAN_VISUAL_REVIEW_REMAINS_UNRESOLVED_AFTER_FRESH_RECHECK'},
       'hidden_defect_sweep':{'performed':True,'result':'PASS','discovered_defect_total':0},
       'exact_head_gate_receipts':[{'gate_uid':'PREEXECUTION_FULL_LINE_INLINE','head_sha':source_head,'run_id':int(run_id) if str(run_id).isdigit() else str(run_id),'conclusion':'success'}],
       'resume_persistence':{'performed':True,'resume_point':f'STAGE3_{page.replace("-","")}_VISUAL_REVIEW_PENDING'},
-      'next_stage_transition':{'next_stage_uid':'STAGE-04','status':'BLOCKED_PENDING_VISUAL_REVIEW'},
+      'next_stage_transition':{'next_stage_uid':'STAGE-04','status':'BLOCKED','reason':'PENDING_USER_OR_AUTHORIZED_VISUAL_REVIEWER'},
     }
     TEST_ROOT.mkdir(parents=True,exist_ok=True); jdump(TEST_ROOT/'STAGE03_LATEST_TEST_EVIDENCE.json',evidence)
     dump(TEST_ROOT/'STAGE03_CURRENT_FINDINGS.yaml',{**common,'artifact_type':'STAGE03_CURRENT_FINDINGS','attempt_uid':attempt_uid,'open_gap_total':1,'closure_blocker_total':1,'result':'BLOCKED','next_action':f'REVIEW_{page.replace("-","")}_STAGE03_VISUAL_PREVIEW','problems':[problem]})
     ex=state.setdefault('execution',{})
     ex['run_uid']=str(work.get('run_uid') or ex.get('run_uid') or '')
     ex['scope_mode']='EXACT_PAGE_SCOPE_ONLY'; ex['target_pages']=[page]; ex['current_stage']='STAGE-03-TESTED-BLOCKED'
-    ex['stage3']={'result':'TEST_EXECUTED_BLOCKED','work_unit_uid':work.get('work_unit_uid'),'work_unit_resolution':'PASS_SINGLE_LEGAL_SUCCESSOR','execution_started':True,'pre_execution_gate':'GOVERNANCE_LOAD_RECEIPT_PASS','pre_execution_gate_status':'PASS','stage_exit_allowed':False,'target_page_uids':[page],'remaining_page_uids':[page],'current_scope_manifest_ref':rel(SCOPE),'output_owner_materialized':True,'visual_review_required':True}
+    ex['stage3']={'result':'TEST_EXECUTED_BLOCKED','work_unit_uid':work.get('work_unit_uid'),'work_unit_resolution':'PASS_SINGLE_LEGAL_SUCCESSOR','execution_started':True,'pre_execution_gate':'GOVERNANCE_LOAD_RECEIPT_PASS','pre_execution_gate_status':'PASS','stage_exit_allowed':False,'artifact_root_present':True,'prior_results_authoritative_for_current_governance':False,'revalidation_required_under_current_governance':False,'target_page_uids':[page],'remaining_page_uids':[page],'current_scope_manifest_ref':rel(SCOPE),'output_owner_materialized':True,'visual_review_required':True}
     ex['website_construction_allowed']=False; ex['deployment_allowed']=False
     state['execution']=ex
     state.setdefault('selected_execution_profile_state',{})['current_step_state_key']='stage3'
     state['selected_execution_profile_state']['active_attempt_state_key']='stage03_active_attempt'
-    state['stage03_active_attempt']={'attempt_uid':attempt_uid,'run_uid':work.get('run_uid'),'frozen_governance_uid':gov,'source_execution_sha':source_head,'target_pages':[page],'open_gap_total':1,'closure_blocker_total':1,'remaining_scope_total':1,'active_evidence_present':True,'active_findings_present':True,'next_action':f'REVIEW_{page.replace("-","")}_STAGE03_VISUAL_PREVIEW','product_blocker_credit':0,'prior_results_used':False}
+    state['stage03_active_attempt']={'attempt_uid':attempt_uid,'run_uid':work.get('run_uid'),'frozen_governance_uid':gov,'source_execution_sha':source_head,'target_pages':[page],'open_gap_total':1,'closure_blocker_total':1,'remaining_scope_total':1,'active_evidence_present':True,'active_findings_present':True,'next_action':f'REVIEW_{page.replace("-","")}_STAGE03_VISUAL_PREVIEW','product_blocker_credit':0,'prior_results_used':False,'fresh_revalidation_required':False,'closure_credit_under_current_governance':True}
     work['current_status']='VISUAL_REVIEW_PENDING'
     work['canonical_owner']=rel(out/'VISUAL_DESIGN_SPEC_PACKAGE.yaml')
     work['product_blocker_credit']=0
@@ -179,6 +180,45 @@ def execute():
     dump(STATE,state)
     print(json.dumps({'result':'BLOCKED_PENDING_HUMAN_VISUAL_REVIEW','page_uid':page,'output_root':rel(out),'required_outputs_materialized':6,'open_gap_total':1,'closure_blocker_total':1,'next_action':state['next_action']},ensure_ascii=False,indent=2))
 
+def bind_provenance():
+    run_id=os.environ.get('STAGE03_WORKFLOW_RUN_ID')
+    source_sha=os.environ.get('STAGE03_SOURCE_SHA')
+    artifact_id=os.environ.get('STAGE03_ARTIFACT_ID')
+    digest=os.environ.get('STAGE03_ARTIFACT_DIGEST','')
+    digest=digest.split(':',1)[1] if digest.startswith('sha256:') else digest
+    if not run_id or not source_sha or not artifact_id or len(digest)!=64:
+        raise RuntimeError('STAGE03_PROVENANCE_ENV_INCOMPLETE')
+    state=load(STATE)
+    attempt=state.get('stage03_active_attempt') or {}
+    if attempt.get('source_execution_sha')!=source_sha:
+        raise RuntimeError('STAGE03_PROVENANCE_SOURCE_SHA_DRIFT')
+    attempt['source_workflow_run_id']=int(run_id) if run_id.isdigit() else run_id
+    attempt['source_artifact_id']=int(artifact_id) if artifact_id.isdigit() else artifact_id
+    attempt['source_artifact_sha256']=digest.lower()
+    attempt['fresh_revalidation_required']=False
+    attempt['closure_credit_under_current_governance']=True
+    state['stage03_active_attempt']=attempt
+    trans=state.setdefault('governance_revision_transition',{})
+    trans['fresh_revalidation_required']=False
+    trans['current_product_attempt_uid']=attempt.get('attempt_uid')
+    trans['current_product_attempt_run_uid']=attempt.get('run_uid')
+    trans['current_product_attempt_workflow_run_id']=attempt['source_workflow_run_id']
+    trans['current_product_attempt_artifact_id']=attempt['source_artifact_id']
+    trans['current_product_attempt_artifact_sha256']=attempt['source_artifact_sha256']
+    state['stage03_result_evidence']={
+      'mode':'RUNTIME_GENERATED_GITHUB_ACTION_ARTIFACT',
+      'tracked_current_evidence_ref':'governance/test/stage03/STAGE03_LATEST_TEST_EVIDENCE.json',
+      'artifact_provenance_recorded_in_active_attempt':True,
+    }
+    dump(STATE,state)
+    evidence_path=TEST_ROOT/'STAGE03_LATEST_TEST_EVIDENCE.json'
+    evidence=json.loads(evidence_path.read_text(encoding='utf-8'))
+    evidence['source_workflow_run_id']=attempt['source_workflow_run_id']
+    evidence['source_artifact_id']=attempt['source_artifact_id']
+    evidence['source_artifact_sha256']=attempt['source_artifact_sha256']
+    jdump(evidence_path,evidence)
+    print(json.dumps({'result':'PASS','workflow_run_id':attempt['source_workflow_run_id'],'artifact_id':attempt['source_artifact_id'],'artifact_sha256':attempt['source_artifact_sha256']},indent=2))
+
 def self_test():
     st,ad=stage_defs()
     assert st.get('stage_uid')==EXPECTED_STAGE
@@ -190,8 +230,9 @@ def self_test():
     print('PASS: product-neutral Stage-03 visual producer self-test')
 
 def main():
-    p=argparse.ArgumentParser(); p.add_argument('--self-test',action='store_true'); p.add_argument('--execute',action='store_true'); a=p.parse_args()
+    p=argparse.ArgumentParser(); p.add_argument('--self-test',action='store_true'); p.add_argument('--execute',action='store_true'); p.add_argument('--bind-provenance',action='store_true'); a=p.parse_args()
     if a.self_test: self_test(); return
     if a.execute: execute(); return
-    raise SystemExit('use --self-test or --execute')
+    if a.bind_provenance: bind_provenance(); return
+    raise SystemExit('use --self-test, --execute, or --bind-provenance')
 if __name__=='__main__': main()

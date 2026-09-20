@@ -48,8 +48,26 @@ jobs:
         run: python governance/ci/run_current_stage3_visual_design.py --execute
       - name: Validate normalized Stage-03 evidence
         run: python governance/ci/stage_execution_engine.py --validate-evidence --stage STAGE-03 --evidence governance/test/stage03/STAGE03_LATEST_TEST_EVIDENCE.json
+      - name: Upload Stage-03 execution evidence
+        id: evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: stage03-core01-visual-design-evidence
+          retention-days: 30
+          if-no-files-found: error
+          path: |
+            00_SOURCE_INTAKE/run_core01_d81df9ac_stage02/05_VISUAL_DESIGN
+            governance/test/stage03
+      - name: Bind exact Stage-03 workflow and artifact provenance
+        env:
+          STAGE03_WORKFLOW_RUN_ID: ${{ github.run_id }}
+          STAGE03_SOURCE_SHA: ${{ github.sha }}
+          STAGE03_ARTIFACT_ID: ${{ steps.evidence.outputs.artifact-id }}
+          STAGE03_ARTIFACT_DIGEST: ${{ steps.evidence.outputs.artifact-digest }}
+        run: python governance/ci/run_current_stage3_visual_design.py --bind-provenance
       - name: Validate shared projectors after Stage-03 execution
         run: |
+          python governance/ci/validate_validation_remediation_closure_protocol.py
           python governance/ci/validate_active_consumer_reference_integrity.py
           python governance/ci/validate_selected_execution_profile_integrity.py
       - name: Persist Stage-03 product execution atomically

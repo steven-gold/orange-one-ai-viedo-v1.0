@@ -296,10 +296,14 @@ def validate_evidence_data(stage_uid,e):
     if not isinstance(resume,dict) or resume.get('performed') is not True or not resume.get('resume_point'):
         fail('RESUME_PERSISTENCE_INVALID')
     nxt=e.get('next_stage_transition')
-    if not isinstance(nxt,dict) or nxt.get('next_stage_uid')!=st.get('next_stage_uid') or nxt.get('status') not in {'READY','PROJECT_COMPLETE','NEXT_PAGE_READY'}:
+    if not isinstance(nxt,dict) or nxt.get('next_stage_uid')!=st.get('next_stage_uid'):
         fail('NEXT_STAGE_TRANSITION_INVALID')
-
     if e.get('result') not in {'PASS','BLOCKED'}: fail('EVIDENCE_RESULT_INVALID')
+    if e.get('result')=='BLOCKED':
+        if nxt.get('status')!='BLOCKED': fail('BLOCKED_EVIDENCE_NEXT_STAGE_TRANSITION_NOT_BLOCKED')
+    elif nxt.get('status') not in {'READY','PROJECT_COMPLETE','NEXT_PAGE_READY'}:
+        fail('PASS_EVIDENCE_NEXT_STAGE_TRANSITION_INVALID')
+
     if e['result']=='PASS':
         if any(d[k]!=0 for k in ('open_gap_total','closure_blocker_total','remaining_scope_total')): fail('PASS_WITH_NONZERO_DENOMINATOR')
         if e.get('stage_exit_allowed') is not True: fail('PASS_WITH_STAGE_EXIT_BLOCKED')
