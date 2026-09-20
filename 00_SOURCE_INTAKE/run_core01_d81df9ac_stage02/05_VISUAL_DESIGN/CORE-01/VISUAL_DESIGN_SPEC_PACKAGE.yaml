@@ -1,0 +1,275 @@
+schema_version: 1
+normative_authority: false
+governance_uid: GOV-REV-20260919-ASSET-STAGE01-STAGE02-SHARED-CONTRACT-HARDENING
+stage_uid: STAGE-03
+page_uid: CORE-01
+source_execution_sha: 0631c0104db6f92ef4b413f45c32f75de687f93e
+source_refs:
+- 00_SOURCE_INTAKE/run_core01_d81df9ac_stage02/02_BASE_BLUEPRINT/CORE-01/VISUAL_BASE_BLUEPRINT.yaml
+- 00_SOURCE_INTAKE/run_core01_d81df9ac_stage02/04_PAGE_FUNCTIONAL_CONTRACT/CORE-01/PAGE_CONSTRUCTION_SPEC_PACKAGE.yaml
+- 00_SOURCE_INTAKE/run_core01_d81df9ac_stage02/04_PAGE_FUNCTIONAL_CONTRACT/CORE-01/FUNCTIONAL_WORKBENCH_CONTRACT.yaml
+- 00_SOURCE_INTAKE/run_core01_d81df9ac_stage02/04_PAGE_FUNCTIONAL_CONTRACT/CORE-01/INTERACTION_TOPOLOGY_SPEC.yaml
+- 00_SOURCE_INTAKE/run_core01_d81df9ac_stage02/04_PAGE_FUNCTIONAL_CONTRACT/CORE-01/FUNCTION_VISUAL_IMPACT_MATRIX.yaml
+- 00_SOURCE_INTAKE/run_core01_d81df9ac_stage02/00_SOURCE_INTAKE/RAW_SOURCE/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml
+- 00_SOURCE_INTAKE/run_core01_d81df9ac_stage02/00_SOURCE_INTAKE/RAW_SOURCE/CORE-01/CORE_CURRENT_CANONICAL_VISUAL_FINAL_LOCKED_V1.0.yaml
+- 00_SOURCE_INTAKE/run_core01_d81df9ac_stage02/04_PAGE_FUNCTIONAL_CONTRACT/CORE-01/AI_INTERACTION_CONTINUITY_CONTRACT.yaml
+ai_autofill_used: false
+inference_used: false
+artifact_type: VISUAL_DESIGN_SPEC_PACKAGE
+blueprint_type_uid: BPTYPE-GOV-004
+planning_domain: VISUAL_CONSTRUCTION
+current_canonical_visual:
+  visual_uid: CORE-01-VIS-CURRENT
+  page_uid: CORE-01
+  canonical_name: CORE-01 Current Canonical Visual
+  owner: authority/pages/workspace/CORE-01/CORE_CURRENT_CANONICAL_VISUAL_FINAL_LOCKED_V1.0.yaml
+  version: V1.0
+  status: CURRENT_CANONICAL_BASELINE
+  design_version: CORE-01@V2.0
+  visual_registry_refs:
+  - CORE-01-VIS-CONTEXT
+  - CORE-01-VIS-LEFT
+  - CORE-01-VIS-CENTER-HEADER
+  - CORE-01-VIS-MESSAGES
+  - CORE-01-VIS-DECISION
+  - CORE-01-VIS-RUNTIME
+  - CORE-01-VIS-COMPOSER
+  - CORE-01-VIS-RIGHT-CORE
+  - CORE-01-VIS-RIGHT-TOPIC
+  - CORE-01-VIS-RIGHT-VERSION
+  visual_registry_owner: authority/pages/workspace/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml
+  visual_registry_path: registries.visuals
+  anchor_registry_ref:
+    anchor_registry_uid: CHANGE-CORE-001-VISUAL-ANCHORS
+    package_path: 04_BLUEPRINT/13_VISUAL_ANCHOR_REGISTRY.yaml
+    relation: CHANGE_REVIEW_ANCHORS_REFERENCE_THIS_CURRENT_BASELINE
+  current_visual_assets: []
+  asset_binding_status: NOT_APPLICABLE_NO_PAGE_LEVEL_STATIC_VISUAL_ASSET
+  approval_status: EXISTING_BASELINE_AUTHORITY_LOCKED
+  candidate_approval_implied: false
+  design_freeze_for_change_implied: false
+layout:
+  desktop_min_width: 1280px
+  page_vertical: Main Workspace is NOT bound to Global Sidebar/Menu height; height:auto;
+    overflow-y:auto; sections extend downward
+  below_min_width: Keep min-width=1280px and allow horizontal scroll; do not invent
+    alternate page/drawer/mobile workflow
+  context_bar:
+    height: 56px
+    width: 100%
+  primary_grid:
+    columns: minmax(260px,1fr) minmax(720px,3fr) minmax(300px,1fr)
+    approx: 20% / 60% / 20%
+    gap: 16px
+    align: start
+  left_rail:
+    min_width: 260px
+    position: top-aligned
+    thread_list_internal_scroll: only when list content > 520px
+  center:
+    min_width: 720px
+    priority: conversation-first
+  right_rail:
+    min_width: 300px
+    position: top-aligned
+  tokens:
+    control_height: 40px
+    button_min_width: 88px
+    primary_button_min_width: 120px
+    button_radius: 10px
+    panel_radius: 12px
+    large_container_radius: 24px
+    section_gap: 16px
+    content_padding: 16px
+    field_min_width: 120px
+    textarea_min_height: 96px
+    status_badge_height: 28px
+    action_gap: 8px
+    touch_target_min: 44px × 44px
+    at_popup_width: 250px
+    at_popup_row_height: 36px
+  visual_override: FORBIDDEN; inherit Global Visual tokens only
+sections:
+- section_uid: CORE-01-SEC-01
+  name: Context Bar
+  responsibility: Project / Topic exact context; create/select; page mode derived;
+    naming authority read-only ref
+  visual_uid: CORE-01-VIS-CONTEXT
+- section_uid: CORE-01-SEC-02
+  name: Work Item / Thread Navigation
+  responsibility: Current mode work items, thread list, new thread; cross-work-item
+    mixing forbidden
+  visual_uid: CORE-01-VIS-LEFT
+- section_uid: CORE-01-SEC-03
+  name: Conversation Header
+  responsibility: Current work item, Single/Multi AI, Assigned AI Set read-only, Assistant
+    Record
+  visual_uid: CORE-01-VIS-CENTER-HEADER
+- section_uid: CORE-01-SEC-04
+  name: Message Workspace
+  responsibility: User/AI/System/Assistant messages; right-click message operation
+    menu
+  visual_uid: CORE-01-VIS-MESSAGES
+- section_uid: CORE-01-SEC-05
+  name: Evaluation / Human Decision
+  responsibility: Assistant Summary, approved CORE evaluation, human decision, structured
+    decision, candidate decision
+  visual_uid: CORE-01-VIS-DECISION
+- section_uid: CORE-01-SEC-06
+  name: Runtime Stage Strip
+  responsibility: Current conversational decision stage only; domain lock remains
+    right-rail governed
+  visual_uid: CORE-01-VIS-RUNTIME
+- section_uid: CORE-01-SEC-07
+  name: Input Composer
+  responsibility: Attachment/reference/message/@ parser/send; no page-level provider/model
+    picker
+  visual_uid: CORE-01-VIS-COMPOSER
+- section_uid: CORE-01-SEC-08
+  name: Project Core / Blueprint State Rail
+  responsibility: Read model + permitted Project/DNA/Blueprint review actions
+  visual_uid: CORE-01-VIS-RIGHT-CORE
+- section_uid: CORE-01-SEC-09
+  name: Topic Production Package / Downstream Readiness
+  responsibility: Topic scope, Canonical Script, naming authority ref, ASSET/VIDEO/EDIT
+    readiness read-only
+  visual_uid: CORE-01-VIS-RIGHT-TOPIC
+- section_uid: CORE-01-SEC-10
+  name: Version / Lock Review State Rail
+  responsibility: Candidate/version compare state, immutable version refs, project/topic
+    lock review status
+  visual_uid: CORE-01-VIS-RIGHT-VERSION
+components:
+- component_uid: CORE-01-CMP-CONTEXT
+  section_uid: CORE-01-SEC-01
+  name: Project/Topic Context Controls
+- component_uid: CORE-01-CMP-NAV
+  section_uid: CORE-01-SEC-02
+  name: Mode-aware Work Item Navigation
+- component_uid: CORE-01-CMP-THREADS
+  section_uid: CORE-01-SEC-02
+  name: Conversation Thread History
+- component_uid: CORE-01-CMP-CONV-HEADER
+  section_uid: CORE-01-SEC-03
+  name: Conversation Header / AI Mode
+- component_uid: CORE-01-CMP-MESSAGES
+  section_uid: CORE-01-SEC-04
+  name: Message Stream
+- component_uid: CORE-01-CMP-MESSAGE-MENU
+  section_uid: CORE-01-SEC-04
+  name: Right-click Message Operation Menu
+- component_uid: CORE-01-CMP-SUMMARY
+  section_uid: CORE-01-SEC-05
+  name: Assistant Summary
+- component_uid: CORE-01-CMP-EVALUATION
+  section_uid: CORE-01-SEC-05
+  name: CORE Evaluation
+- component_uid: CORE-01-CMP-HUMAN-DECISION
+  section_uid: CORE-01-SEC-05
+  name: Human Decision / Structured Decision
+- component_uid: CORE-01-CMP-RUNTIME
+  section_uid: CORE-01-SEC-06
+  name: Runtime Stage Strip
+- component_uid: CORE-01-CMP-COMPOSER
+  section_uid: CORE-01-SEC-07
+  name: Message Composer
+- component_uid: CORE-01-CMP-PROJECT-STATE
+  section_uid: CORE-01-SEC-08
+  name: Project Core State Card
+- component_uid: CORE-01-CMP-BLUEPRINT-STATE
+  section_uid: CORE-01-SEC-08
+  name: Blueprint State Card
+- component_uid: CORE-01-CMP-TOPIC-PACKAGE
+  section_uid: CORE-01-SEC-09
+  name: Topic Production Package Card
+- component_uid: CORE-01-CMP-DOWNSTREAM
+  section_uid: CORE-01-SEC-09
+  name: ASSET/VIDEO/EDIT Boundary Readiness
+- component_uid: CORE-01-CMP-VERSION
+  section_uid: CORE-01-SEC-10
+  name: Candidate / Version Compare Card
+- component_uid: CORE-01-CMP-LOCK-REVIEW
+  section_uid: CORE-01-SEC-10
+  name: Lock Review Status / Request Controls
+visuals:
+- visual_uid: CORE-01-VIS-CONTEXT
+  geometry: top full width; h=56px
+- visual_uid: CORE-01-VIS-LEFT
+  geometry: primary grid left ~20%; min 260px; content-height; thread list may internally
+    scroll >520px
+- visual_uid: CORE-01-VIS-CENTER-HEADER
+  geometry: primary grid center top; min 720px
+- visual_uid: CORE-01-VIS-MESSAGES
+  geometry: center main; min-height 420px; grows with content; message history may
+    internally scroll after configured max while page remains scrollable
+- visual_uid: CORE-01-VIS-DECISION
+  geometry: center below messages; full center width; content-height
+- visual_uid: CORE-01-VIS-RUNTIME
+  geometry: center below decision; h=40px; horizontal stage strip
+- visual_uid: CORE-01-VIS-COMPOSER
+  geometry: center below runtime; min-height 104px; content-height
+- visual_uid: CORE-01-VIS-RIGHT-CORE
+  geometry: primary grid right top ~20%; min 300px
+- visual_uid: CORE-01-VIS-RIGHT-TOPIC
+  geometry: right rail below Project Core/Blueprint; content-height
+- visual_uid: CORE-01-VIS-RIGHT-VERSION
+  geometry: right rail below Topic package; content-height
+unresolved_external_authority_refs:
+- gap_uid: GAP-EXT-E9D39973941C
+  authority_ref: ACPOS_CURRENT_NAVIGATION_PERMISSION_AUTHORITY@V1.0
+  disposition: UNRESOLVED_AUTHORITY_GAP
+  authority_evidence_ref: 00_SOURCE_INTAKE/evidence/SOURCE_FACT_MATERIALIZATION_EVIDENCE.yaml
+  resolved: false
+  satisfied: false
+  auto_filled: false
+  inferred: false
+- gap_uid: GAP-EXT-E33DB032BE2B
+  authority_ref: ACPOS_PRODUCTION_SCRIPT_CONTENT_AND_PROVIDER_ADAPTER_CONTRACT@V1.3
+  disposition: UNRESOLVED_AUTHORITY_GAP
+  authority_evidence_ref: 00_SOURCE_INTAKE/evidence/SOURCE_FACT_MATERIALIZATION_EVIDENCE.yaml
+  resolved: false
+  satisfied: false
+  auto_filled: false
+  inferred: false
+- gap_uid: GAP-EXT-3EB9693EFA4B
+  authority_ref: ACPOS_SHARED_RUNTIME_OPERATION_AUTHORITY
+  disposition: UNRESOLVED_AUTHORITY_GAP
+  authority_evidence_ref: 00_SOURCE_INTAKE/evidence/SOURCE_FACT_MATERIALIZATION_EVIDENCE.yaml
+  resolved: false
+  satisfied: false
+  auto_filled: false
+  inferred: false
+- gap_uid: GAP-EXT-7AB7E9E8AEF0
+  authority_ref: ACPOS_SYSTEM
+  disposition: UNRESOLVED_AUTHORITY_GAP
+  authority_evidence_ref: 00_SOURCE_INTAKE/evidence/SOURCE_FACT_MATERIALIZATION_EVIDENCE.yaml
+  resolved: false
+  satisfied: false
+  auto_filled: false
+  inferred: false
+- gap_uid: GAP-EXT-9E571F6943CF
+  authority_ref: ACPOS_SYSTEM_AUTHORITY@V1.0
+  disposition: UNRESOLVED_AUTHORITY_GAP
+  authority_evidence_ref: 00_SOURCE_INTAKE/evidence/SOURCE_FACT_MATERIALIZATION_EVIDENCE.yaml
+  resolved: false
+  satisfied: false
+  auto_filled: false
+  inferred: false
+- gap_uid: GAP-EXT-8C12874DC1AE
+  authority_ref: GLOBAL_HOME_SHELL_TEMPLATE_AUTHORITY@V1.9
+  disposition: UNRESOLVED_AUTHORITY_GAP
+  authority_evidence_ref: 00_SOURCE_INTAKE/evidence/SOURCE_FACT_MATERIALIZATION_EVIDENCE.yaml
+  resolved: false
+  satisfied: false
+  auto_filled: false
+  inferred: false
+- gap_uid: GAP-EXT-3DD576F9FA3A
+  authority_ref: GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY@V1.0
+  disposition: UNRESOLVED_AUTHORITY_GAP
+  authority_evidence_ref: 00_SOURCE_INTAKE/evidence/SOURCE_FACT_MATERIALIZATION_EVIDENCE.yaml
+  resolved: false
+  satisfied: false
+  auto_filled: false
+  inferred: false
+new_visual_pattern_introduced: false
+status: MATERIALIZED_PENDING_HUMAN_VISUAL_REVIEW

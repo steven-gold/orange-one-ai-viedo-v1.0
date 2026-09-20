@@ -1,7 +1,7 @@
 {
   "artifact_type": "NON_NORMATIVE_ACTIVE_CONSUMER_REFERENCE_INTEGRITY_REPORT",
-  "workflow_count": 8,
-  "direct_and_transitive_governance_python_target_count": 27,
+  "workflow_count": 9,
+  "direct_and_transitive_governance_python_target_count": 28,
   "missing_targets": {},
   "missing_reusable_workflows": [],
   "unsafe_preterminal_current_projection_workflows": [],
@@ -18,12 +18,16 @@
     "governance/test/ACTIVE_STATE.yaml#specification_uid": "GOV-REV-20260919-ASSET-STAGE01-STAGE02-SHARED-CONTRACT-HARDENING",
     "governance/test/ACTIVE_STATE.yaml#governance_revision_transition.current_governance_uid": "GOV-REV-20260919-ASSET-STAGE01-STAGE02-SHARED-CONTRACT-HARDENING",
     "governance/test/SPECIFICATION_CHANGE_CANDIDATES.yaml#current_stage2_execution": {
-      "attempt_uid": "STAGE02-ASSET01-V2213-20260920-R2",
-      "state": "TEST_EXECUTED_BLOCKED"
+      "applicability": "NOT_APPLICABLE_OUTSIDE_OWNING_PROFILE_STEP",
+      "owning_step_key": "stage2",
+      "current_step_key": "stage3",
+      "present": true
     },
     "governance/test/stage02/STAGE02_CURRENT_FINDINGS.yaml#ROOT": {
-      "attempt_uid": "STAGE02-ASSET01-V2213-20260920-R2",
-      "fresh_functional_gap_total": 106
+      "applicability": "NOT_APPLICABLE_OUTSIDE_OWNING_PROFILE_STEP",
+      "owning_step_key": "stage2",
+      "current_step_key": "stage3",
+      "present": false
     }
   },
   "projector_inventory_source": "governance/specifications/REGISTRY.yaml",
@@ -36,6 +40,12 @@
     "NEG-TERMINAL-002": true,
     "NEG-HISTORY-001": true,
     "NEG-RESIDUAL-001": true
+  },
+  "projector_profile_step_applicability_regression": {
+    "SECOND_PROFILE_FINDINGS_OWNS_SECOND_STEP": true,
+    "SECOND_PROFILE_EXECUTION_OWNS_SECOND_STEP": true,
+    "THIRD_PROFILE_SYNTHETIC_OWNS_THIRD_STEP": true,
+    "GOVERNANCE_UID_HAS_NO_PROFILE_STEP": true
   },
   "result": "PASS",
   "errors": []
