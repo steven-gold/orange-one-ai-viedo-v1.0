@@ -1443,8 +1443,21 @@ def apply_v2216():
     auth=ROOT/f'governance/test/spec_change_authorizations/{AUTH_UID}.yaml'
     if not auth.exists(): raise RuntimeError('preexisting authorization missing')
     a=load(auth)
-    if a.get('status')!='AUTHORIZED_EXACT_SCOPE' or a.get('current_governance_uid_at_authorization')!=OLD_UID:
-        raise RuntimeError('authorization receipt invalid or wrong predecessor')
+    auth_checks={
+        'authorization_uid':a.get('authorization_uid')==AUTH_UID,
+        'artifact_type':a.get('artifact_type')=='SPECIFICATION_CHANGE_AUTHORIZATION_RECEIPT',
+        'normative_authority':a.get('normative_authority') is False,
+        'authority_source':a.get('authority_source')=='EXPLICIT_USER_DIRECTIVE',
+        'single_use':a.get('single_use') is True,
+        'status':a.get('status')=='APPROVED_FOR_EXACT_SCOPE',
+        'ai_may_expand_scope':a.get('ai_may_expand_scope') is False,
+        'ai_may_reuse_authorization':a.get('ai_may_reuse_authorization') is False,
+        'current_governance_uid':a.get('current_governance_uid')==OLD_UID,
+        'requested_successor_governance_uid':a.get('requested_successor_governance_uid')==NEW_UID,
+    }
+    bad=[k for k,v in auth_checks.items() if not v]
+    if bad:
+        raise RuntimeError('authorization receipt invalid or wrong predecessor:'+','.join(bad))
 
     add_mother_sections_v2216()
     add_section_registry_v2216()
