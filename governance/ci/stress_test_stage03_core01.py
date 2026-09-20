@@ -166,3 +166,5 @@ for f in findings:
     print(f'FAIL:{f['check_uid']}:{f['category']}:{f['detail']}')
 if result != 'PASS':
     raise SystemExit(1)
+
+# stage03-high-pressure-trigger: v2.2.15-human-review-pending-r3
