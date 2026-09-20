@@ -18,7 +18,7 @@ jobs:
       - name: Install DOCX and render tooling
         run: |
           sudo apt-get update -qq
-          sudo apt-get install -y -qq libreoffice-writer poppler-utils
+          sudo apt-get install -y -qq libreoffice-writer poppler-utils fonts-noto-cjk
           python -m pip install --quiet python-docx pillow
 
       - name: Reconcile SG02 authority and acceptance status
@@ -138,12 +138,16 @@ jobs:
           git config user.name "acpos-content-reconcile"
           git config user.email "actions@users.noreply.github.com"
           git add '*.docx' __temp/reconcile_report.json
-          git commit -m "docs(acpos): reconcile concrete criteria with exact SG02 authority"
-          git push
+          if git diff --cached --quiet; then
+            echo "NO_RECONCILIATION_DIFF"
+          else
+            git commit -m "docs(acpos): reconcile concrete criteria with exact SG02 authority"
+            git push
+          fi
 
       - name: Upload final render evidence
         uses: actions/upload-artifact@v4
         with:
-          name: concrete-content-render-qa
+          name: concrete-content-render-qa-cjk
           path: __render_qa
           retention-days: 1
