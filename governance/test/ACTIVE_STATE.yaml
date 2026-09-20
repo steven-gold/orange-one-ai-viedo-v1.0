@@ -111,8 +111,8 @@ specification_mutation_safety:
   ordinary_mid_stage_specification_mutation: BLOCK
   stage_end_consolidated_promotion_requires_new_explicit_directive: true
   execution_context_lock_required: true
-status: ACTIVE_CORE01_ISOLATED_FULL_LIFECYCLE_HIGH_PRESSURE_R1
-next_action: RUN_CORE01_ISOLATED_STAGE01_THROUGH_STAGE11_AND_CLEANUP
+status: CORE01_ISOLATED_FULL_LIFECYCLE_AUDIT_CLOSED_BLOCKED_FINDING_PERSISTED_PRODUCT_RESUME_RESTORED
+next_action: WORK_UNIT_RESOLUTION_GATE_FOR_FRESH_STAGE01_SOURCE_INTAKE_REEXECUTION
 previous_closed_product_work_unit:
   work_unit_uid: WU-STAGE02-CORE01-STRUCTURAL-REMEDIATION-001
   canonical_name: CORE01_STRUCTURAL_CONTRACT_REMEDIATION
@@ -291,11 +291,10 @@ previous_closed_work_unit:
     source_runtime_residual_count: 0
     product_stage_credit: 0
 resume_control:
-  current_resume_point: CORE01_ISOLATED_FULL_LIFECYCLE_HIGH_PRESSURE_R1_ACTIVE
-  current_work_unit_uid: WU-TEST-CORE01-ISOLATED-FULL-LIFECYCLE-001
-  current_owner: governance/ci/run_core01_isolated_full_lifecycle_test.py
-  exact_next_action: RUN_CORE01_ISOLATED_STAGE01_THROUGH_STAGE11_AND_CLEANUP
-  product_resume_preserved: CORE01_STAGE01_STAGE03_CLEAN_BASELINE_READY_FRESH_STAGE01_WUR_REQUIRED
+  current_resume_point: CORE01_STAGE01_STAGE03_CLEAN_BASELINE_READY_FRESH_STAGE01_WUR_REQUIRED
+  current_work_unit_uid: null
+  current_owner: .github/governance-source/active/source/10_REGISTRY/GOVERNANCE_LIFECYCLE_STAGE_REGISTRY.yaml
+  exact_next_action: WORK_UNIT_RESOLUTION_GATE_FOR_FRESH_STAGE01_SOURCE_INTAKE_REEXECUTION
   reentry_owner_capability: SOURCE_INTAKE_BASE_BLUEPRINT
   reentry_stage_uid: STAGE-01
   reentry_reason: CLEAN_BASELINE_PERSISTED_AFTER_MULTIDIRECTIONAL_PROCESS_AUDIT_CLOSURE
@@ -391,8 +390,8 @@ pending_governance_review:
   - STAGE03
   - WEBSITE_CONSTRUCTION
   - DEPLOYMENT
-current_primary_task_layer: TEST_OR_VALIDATION_MAINTENANCE
-current_primary_task_authorization_uid: USR-DIRECTIVE-20260920-CORE01-ISOLATED-FULL-LIFECYCLE-HIGH-PRESSURE-R1
+current_primary_task_layer: PRODUCT_STAGE_EXECUTION
+current_primary_task_authorization_uid: USR-DIRECTIVE-20260920-CLEAR-STAGE01-STAGE03-CORE01-R1
 current_primary_task_product_stage_credit: 0
 earlier_closed_product_work_unit:
   work_unit_uid: WU-STAGE02-CORE01-FRESH-TEST-001
@@ -2618,63 +2617,81 @@ closed_test_validation_maintenance_work_unit_multidirectional_audit:
     full_line_75_file_high_pressure_result: success
     verified_source_byte_clean_result: success
   legal_next_transition: RESTORE_CLEAN_PRODUCT_RESUME_AND_REQUIRE_FRESH_STAGE01_WORK_UNIT_RESOLUTION
-active_work_unit:
+active_work_unit: null
+closed_test_validation_maintenance_work_unit_core01_isolated_full_lifecycle:
   work_unit_uid: WU-TEST-CORE01-ISOLATED-FULL-LIFECYCLE-001
   canonical_name: CORE01_ISOLATED_FULL_LIFECYCLE_IMPLEMENTATION_AND_LOGIC_HIGH_PRESSURE
   primary_task_layer: TEST_OR_VALIDATION_MAINTENANCE
-  current_status: ACTIVE_EXECUTION
+  current_status: CLOSED_VERIFIED_BLOCKED_FINDING_PERSISTED_NO_PRODUCT_CREDIT
   authorization_uid: USR-DIRECTIVE-20260920-CORE01-ISOLATED-FULL-LIFECYCLE-HIGH-PRESSURE-R1
   canonical_owner: governance/ci/run_core01_isolated_full_lifecycle_test.py
   workflow_owner: .github/workflows/core01-isolated-full-lifecycle-high-pressure.yml
   source_provider:
-    repository: steven-gold/orange-one-ai-viedo-v1.0
     branch: new
     exact_head_sha: 165c6440cb53b1b45ec96905241fb4d56dc3b867
     classification: TEST_ONLY_SOURCE_PROVIDER
-    may_become_current_product_authority: false
-  isolation:
-    runtime_root: RUNNER_TEMP_PER_WORKFLOW_RUN
-    repository_product_roots_mutated: false
-    entire_runtime_root_deleted_after_test: true
-    cleanup_absence_verification_required: true
-  scope:
-  - CORE-01
-  - STAGE-01_SOURCE_INTAKE
-  - STAGE-02_PAGE_FUNCTIONAL_CONTRACT
-  - STAGE-03_VISUAL_DESIGN
-  - STAGE-04_FOUNDATION_FREEZE
-  - STAGE-05_IMPLEMENTATION
-  - STAGE-06_VERIFICATION_QA
-  - STAGE-07_BUILD_RELEASE_CANDIDATE
-  - STAGE-08_STAGING
-  - STAGE-09_PRODUCTION_CUTOVER_FAIL_CLOSED_CONTRACT
-  - STAGE-10_PRODUCTION_ACCEPTANCE_FAIL_CLOSED_CONTRACT
-  - STAGE-11_CLOSURE_OPERATIONS_AND_SANDBOX_CLEANUP
-  out_of_scope:
-  - CURRENT_PRODUCT_DATA_MUTATION
-  - CURRENT_PRODUCT_AUTHORITY_PROMOTION
-  - MOTHER_NORMATIVE_MUTATION
-  - CURRENT_SPECIFICATION_MUTATION
-  - FORMAL_PRODUCTION_DEPLOYMENT
-  - FORMAL_PRODUCTION_DATABASE_MIGRATION
-  - FORMAL_PRODUCTION_ACCEPTANCE_CREDIT
+    product_authority_credit: 0
+  verified_stage_results:
+    STAGE-01: PASS
+    STAGE-02: PASS
+    STAGE-03: PASS
+    STAGE-04: PASS
+    STAGE-05: PASS
+    STAGE-06: BLOCKED_GLOBAL_AUTHORITY_DENOMINATOR_AND_CLASSIFICATION_DRIFT
+    STAGE-07: PASS_DIAGNOSTIC_ONLY
+    STAGE-08: PASS_DIAGNOSTIC_ONLY
+    STAGE-09: PASS_DIAGNOSTIC_ONLY_FAIL_CLOSED
+    STAGE-10: PASS_DIAGNOSTIC_ONLY_FAIL_CLOSED
+    STAGE-11: PASS_DIAGNOSTIC_ONLY
+  open_source_provider_finding:
+    finding_uid: CORE01-FLOW-001
+    category: GLOBAL_AUTHORITY_DENOMINATOR_AND_CLASSIFICATION_DRIFT
+    owner_branch: new
+    manifest: authority/ACPOS_CURRENT_AUTHORITY_MANIFEST_FINAL_LOCKED.yaml
+    test: tests/release/authority.test.mjs
+    actual_authority_page_path_lines: 19
+    declared_current_page_count: 18
+    stale_test_expected_page_count: 18
+    core_runtime_specific_failure: false
+    status: OPEN_SOURCE_PROVIDER_FINDING
+  remediated_test_harness_finding:
+    finding_uid: CORE01-FLOW-HARNESS-001
+    category: RECEIPT_CONSOLE_STATUS_MISREPORT
+    remediation: PRINT_RECEIPT_ROW_STATUS
+    revalidation_run_id: 35509444364
+    result: CLOSED_REMEDIATED
+  implementation_and_logic_evidence:
+    core_lint: PASS
+    core_typecheck: PASS
+    core_runtime_tests: PASS
+    browser_e2e_cases: 72
+    core01_visible_controls: 30
+    core01_enabled_controls: 1
+    core01_disabled_controls: 29
+    core01_control_denominator_stable_across_replays: true
+    production_build: PASS_DIAGNOSTIC_ONLY
+    standalone_docker_build: PASS_DIAGNOSTIC_ONLY
+    isolated_staging_http_e2e: PASS_DIAGNOSTIC_ONLY_READY_503_FAIL_CLOSED
+    controlled_production_mode: PASS_DIAGNOSTIC_ONLY_READY_503_CONTROLLED_BLOCK
+    formal_production_acceptance_without_credentials: BLOCKED_AS_REQUIRED
+  isolation_closure:
+    sandbox_files_removed: 17398
+    sandbox_absent_after_cleanup: true
+    repository_product_data_mutated: false
+    historical_purged_content_reused: false
+  terminal_test_run:
+    workflow_run_id: 35509444364
+    job_id: 106074680422
+    artifact_id: 10604189105
+    artifact_sha256: c27c863b130e6dff1a8cfdb4bfe7d1c59dc081f7e3c9c1a2a5e9ef6b614fbd46
+    result: BLOCKED_WITH_FULL_DIAGNOSTIC_CONTINUATION
+  formal_production_deployment_performed: false
+  formal_production_database_migration_performed: false
+  formal_production_acceptance_credit: 0
   product_stage_credit: 0
-  definition_of_done:
-  - ALL_11_STAGE_RECEIPTS_EMITTED_IN_ORDER
-  - EACH_STAGE_CONSUMES_PREDECESSOR_RECEIPT_HASH
-  - CORE01_AUTHORITY_SOURCE_EXACT_HEAD_LOCKED
-  - FUNCTIONAL_RELATION_AND_IDENTITY_INTEGRITY_PASS
-  - VISUAL_TOPOLOGY_AND_CONTROL_BINDING_PASS
-  - FROZEN_SOURCE_HASH_SET_UNCHANGED_AFTER_TESTS
-  - LINT_TYPECHECK_CORE_RUNTIME_TESTS_PASS
-  - RELEASE_TEST_SUITE_BROWSER_E2E_AND_CONTROL_ACCEPTANCE_PASS
-  - PRODUCTION_BUILD_AND_STANDALONE_DOCKER_BUILD_PASS
-  - ISOLATED_STAGING_HTTP_E2E_PASS
-  - CONTROLLED_TEST_MODE_CANNOT_CLAIM_PRODUCTION_READY
-  - FORMAL_PRODUCTION_ACCEPTANCE_WITHOUT_EVIDENCE_FAILS_CLOSED
-  - SANDBOX_GIT_TRACKED_SOURCE_REMAINS_CLEAN
-  - RUNNER_TEMP_SANDBOX_DELETED_AND_ABSENT
-  - NO_PRODUCT_STAGE_CREDIT
+  mother_normative_change: false
+  current_specification_change: false
+  legal_next_transition: RESTORE_CLEAN_PRODUCT_RESUME_AND_REQUIRE_FRESH_STAGE01_WORK_UNIT_RESOLUTION
 last_work_unit_resolution_gate:
   resolution_uid: WUR-TEST-CORE01-ISOLATED-FULL-LIFECYCLE-20260920-001
   normative_authority: false

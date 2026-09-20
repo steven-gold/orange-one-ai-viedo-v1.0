@@ -96,4 +96,74 @@ test_harness_finding:
   detail: Stage receipt stored BLOCKED/PASS_DIAGNOSTIC_ONLY correctly but console line printed PASS unconditionally.
   remediation: PRINT_RECEIPT_ROW_STATUS
   product_credit: 0
-current_status: ACTIVE_R3_STATUS_REPORTING_REVALIDATION_REQUIRED
+r3_execution:
+  workflow_run_id: 35509444364
+  job_id: 106074680422
+  result: BLOCKED_WITH_FULL_DIAGNOSTIC_CONTINUATION
+  lifecycle_blocked_at: STAGE-06
+  truthful_receipt_status_logging: PASS
+  stage_results:
+    STAGE-01: PASS
+    STAGE-02: PASS
+    STAGE-03: PASS
+    STAGE-04: PASS
+    STAGE-05: PASS
+    STAGE-06: BLOCKED
+    STAGE-07: PASS_DIAGNOSTIC_ONLY
+    STAGE-08: PASS_DIAGNOSTIC_ONLY
+    STAGE-09: PASS_DIAGNOSTIC_ONLY
+    STAGE-10: PASS_DIAGNOSTIC_ONLY
+    STAGE-11: PASS_DIAGNOSTIC_ONLY
+  browser_e2e:
+    result: PASS
+    cases: 72
+    interactive_controls: 459
+    governed_controls: 273
+  control_acceptance:
+    result: PASS
+    pages: 18
+    interactive: 371
+    enabled: 191
+    disabled: 180
+    governed: 371
+    core01_visible_controls: 30
+    core01_enabled: 1
+    core01_disabled: 29
+  source_provider_finding:
+    uid: CORE01-FLOW-001
+    status: OPEN_SOURCE_PROVIDER_FINDING
+    category: GLOBAL_AUTHORITY_DENOMINATOR_AND_CLASSIFICATION_DRIFT
+    actual_authority_page_path_lines: 19
+    declared_current_page_count: 18
+    stale_test_expected_page_count: 18
+  harness_finding:
+    uid: CORE01-FLOW-HARNESS-001
+    status: CLOSED_REMEDIATED
+    revalidation_result: PASS
+  production_build: PASS_DIAGNOSTIC_ONLY
+  standalone_docker_build: PASS_DIAGNOSTIC_ONLY
+  isolated_staging_http_e2e: PASS_DIAGNOSTIC_ONLY_READY_503_FAIL_CLOSED
+  controlled_production_mode_test: PASS_DIAGNOSTIC_ONLY_READY_503_CONTROLLED_BLOCK
+  formal_production_acceptance_without_credentials: BLOCKED_AS_REQUIRED
+  formal_production_deployment_performed: false
+  product_stage_credit: 0
+  sandbox_cleanup:
+    result: PASS
+    files_removed: 17398
+    residual_path_exists: false
+  evidence_artifact:
+    artifact_id: 10604189105
+    sha256: c27c863b130e6dff1a8cfdb4bfe7d1c59dc081f7e3c9c1a2a5e9ef6b614fbd46
+cross_run_observation:
+  uid: CORE01-FLOW-OBS-001
+  classification: NON_BLOCKING_GLOBAL_CONTROLLED_FIXTURE_NONDETERMINISM
+  detail: EDIT-01 controlled fixture state changed between diagnostic runs while CORE-01 control denominator remained stable.
+  core01_control_denominator_stable: true
+  product_credit: 0
+closure:
+  disposition: CLOSED_VERIFIED_BLOCKED_FINDING_PERSISTED_NO_PRODUCT_CREDIT
+  product_resume_restored: CORE01_STAGE01_STAGE03_CLEAN_BASELINE_READY_FRESH_STAGE01_WUR_REQUIRED
+  exact_head_governance_revalidation_required: true
+  formal_production_ready_claim_allowed: false
+  implementation_generator_portable_pass_claim_allowed: false
+current_status: CLOSED_VERIFIED_BLOCKED_FINDING_PERSISTED_NO_PRODUCT_CREDIT

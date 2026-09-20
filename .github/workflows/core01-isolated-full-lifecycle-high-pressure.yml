@@ -1,15 +1,6 @@
 name: CORE-01 Isolated Full Lifecycle High Pressure
 
 on:
-  push:
-    branches:
-      - rebuild-v2.1.1
-    paths:
-      - ".github/workflows/core01-isolated-full-lifecycle-high-pressure.yml"
-      - "governance/ci/run_core01_isolated_full_lifecycle_test.py"
-      - "governance/test/CORE01_ISOLATED_FULL_LIFECYCLE_HIGH_PRESSURE_R1.yaml"
-      - "governance/test/ACTIVE_STATE.yaml"
-      - "governance/test/spec_change_authorizations/USR-DIRECTIVE-20260920-CORE01-ISOLATED-FULL-LIFECYCLE-HIGH-PRESSURE-R1.yaml"
   workflow_dispatch:
 
 permissions:
