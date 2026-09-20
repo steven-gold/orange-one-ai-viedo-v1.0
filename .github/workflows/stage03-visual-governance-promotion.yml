@@ -1,0 +1,38 @@
+name: Stage-03 Visual Governance Successor Promotion
+
+"on":
+  push:
+    branches:
+      - rebuild-v2.1.1
+    paths:
+      - .github/governance-maintenance/promote_stage03_visual_materialization_governance.py
+      - .github/workflows/stage03-visual-governance-promotion.yml
+
+permissions:
+  contents: write
+  actions: read
+
+jobs:
+  promote:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    env:
+      PYTHONDONTWRITEBYTECODE: "1"
+      PYTHONPYCACHEPREFIX: /tmp/acpos-stage03-gov
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+      - name: Install governance dependency
+        run: python -m pip install --disable-pip-version-check 'PyYAML==6.0.2'
+      - name: Lock exact setup SHA
+        run: test "$(git rev-parse HEAD)" = "${GITHUB_SHA}"
+      - name: Persist governance task-layer transition
+        run: python .github/governance-maintenance/promote_stage03_visual_materialization_governance.py --prepare
+      - name: Verify persisted transition head
+        run: |
+          git fetch origin rebuild-v2.1.1
+          test "$(git rev-parse HEAD)" = "$(git rev-parse origin/rebuild-v2.1.1)"
+      - name: Promote v2.2.14 successor and validate
+        run: python .github/governance-maintenance/promote_stage03_visual_materialization_governance.py --promote
