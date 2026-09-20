@@ -78,9 +78,18 @@ def unique(rows, key):
     vals = [str(x.get(key)) for x in rows if isinstance(x, dict)]
     return len(vals) == len(set(vals)) and all(v not in ("", "None") for v in vals)
 
+AUTHORIZED_PATCH_REL = "tests/release/authority.test.mjs"
+AUTHORIZED_PATCH_BLOB = "a91ab5d3300d92799abaf8cef0a6790317127c09"
+
 def tracked_clean(root: Path):
     out = subprocess.check_output(["git", "status", "--porcelain", "--untracked-files=no"], cwd=root, text=True)
-    require(out.strip() == "", "TRACKED_SOURCE_MUTATED:" + out.replace("\n", "|"))
+    lines = [line for line in out.splitlines() if line.strip()]
+    unexpected = [line for line in lines if not line.endswith(" " + AUTHORIZED_PATCH_REL)]
+    require(not unexpected, "TRACKED_SOURCE_MUTATED:" + "|".join(unexpected))
+    if lines:
+        require(len(lines) == 1 and lines[0].endswith(" " + AUTHORIZED_PATCH_REL), "AUTHORIZED_PATCH_WRITESET_DRIFT:" + "|".join(lines))
+        actual = subprocess.check_output(["git", "hash-object", AUTHORIZED_PATCH_REL], cwd=root, text=True).strip()
+        require(actual == AUTHORIZED_PATCH_BLOB, "AUTHORIZED_PATCH_BLOB_DRIFT:" + actual)
 
 def main():
     ap = argparse.ArgumentParser()
@@ -190,7 +199,11 @@ def main():
             "source_head": head,
             "authority_sha256": sha256(authority_file),
             "visual_sha256": sha256(visual_file),
-            "source_classification": "TEST_ONLY_SOURCE_PROVIDER",
+            "source_classification": "TEST_ONLY_SOURCE_PROVIDER_WITH_AUTHORIZED_SANDBOX_TEST_PATCH",
+            "authorized_test_patch": {
+                "path": AUTHORIZED_PATCH_REL,
+                "postimage_blob_sha1": AUTHORIZED_PATCH_BLOB,
+            },
         }
 
     def s2():

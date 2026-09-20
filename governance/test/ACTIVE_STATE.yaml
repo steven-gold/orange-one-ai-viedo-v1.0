@@ -2628,9 +2628,15 @@ active_work_unit:
   source_provider:
     branch: new
     pre_fix_head_sha: 165c6440cb53b1b45ec96905241fb4d56dc3b867
-    fixed_head_sha: f25a79111bbf1da47fe55f4fc8967b2148558317
+    branch_authority_head_sha: 165c6440cb53b1b45ec96905241fb4d56dc3b867
+    verified_ephemeral_bugfix_commit_sha: f25a79111bbf1da47fe55f4fc8967b2148558317
     bugfix_release_gate_run_id: 35528804977
     bugfix_release_gate_result: success
+    branch_authority_guard_restored_new_branch: true
+    sandbox_patch_owner: governance/ci/apply_core01_source_provider_test_fix.py
+    sandbox_patch_target: tests/release/authority.test.mjs
+    sandbox_patch_preimage_blob_sha1: 8ee2ead8ff97d6a11ef6277d966a7d50ef25add7
+    sandbox_patch_postimage_blob_sha1: a91ab5d3300d92799abaf8cef0a6790317127c09
     allowed_write_path: tests/release/authority.test.mjs
     product_authority_mutation_allowed: false
     product_implementation_mutation_allowed: false

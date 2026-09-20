@@ -8,7 +8,15 @@ target_page_uid: CORE-01
 source_provider:
   branch: new
   pre_fix_head_sha: 165c6440cb53b1b45ec96905241fb4d56dc3b867
-  fixed_head_sha: f25a79111bbf1da47fe55f4fc8967b2148558317
+  branch_authority_head_sha: 165c6440cb53b1b45ec96905241fb4d56dc3b867
+  verified_ephemeral_bugfix_commit_sha: f25a79111bbf1da47fe55f4fc8967b2148558317
+  branch_authority_guard_restored_new_branch: true
+  sandbox_patch:
+    owner: governance/ci/apply_core01_source_provider_test_fix.py
+    target: tests/release/authority.test.mjs
+    preimage_blob_sha1: 8ee2ead8ff97d6a11ef6277d966a7d50ef25add7
+    postimage_blob_sha1: a91ab5d3300d92799abaf8cef0a6790317127c09
+    repository_source_branch_mutated_during_rerun: false
   bugfix:
     path: tests/release/authority.test.mjs
     root_cause: GLOBAL_REGEX_COUNTED_REGISTRIES_VISUAL_PATH_AS_PAGE_AUTHORITY
