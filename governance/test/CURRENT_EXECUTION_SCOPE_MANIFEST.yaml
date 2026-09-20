@@ -2,24 +2,35 @@ schema_version: 1
 artifact_type: EXECUTION_SCOPE_MANIFEST
 normative_authority: false
 governance_uid: GOV-REV-20260920-CROSS-STAGE-MATERIALIZATION-CONSUMER-READINESS-HARDENING
-owning_capability: SOURCE_INTAKE_BASE_BLUEPRINT
-scope_kind: PRODUCT_RESUME_PRESERVED_DURING_PROCESS_ONLY_AUDIT
-included_units: [CORE-01]
-excluded_units: [ASSET-01]
-remaining_units: [CORE-01]
-stage_required_units: [CORE-01]
-maintenance_scope_units: [CORE-01, ASSET-01]
-scope_selection_authority: EXPLICIT_USER_DIRECTIVE_PROCESS_ONLY_AUDIT_WITH_PRODUCT_RESUME_PRESERVED
+owning_capability: GOVERNANCE_MAINTENANCE
+scope_kind: GOVERNANCE_DEFECT_REMEDIATION_WUR_PENDING
+included_units:
+- FIND-20260921-001_FORMAL_CONSUMER_PARSER_PERSISTENCE
+- FIND-20260921-002_REUSABLE_CONTENT_INTEGRITY_ENGINE
+- FIND-20260921-003_TYPOGRAPHY_COMPUTED_METRICS_POLICY
+excluded_units:
+- PRODUCT_DATA_MUTATION
+- PRODUCT_AUTHORITY_MUTATION
+- FORMAL_PRODUCTION_DEPLOYMENT
+remaining_units:
+- FIND-20260921-001_FORMAL_CONSUMER_PARSER_PERSISTENCE
+- FIND-20260921-002_REUSABLE_CONTENT_INTEGRITY_ENGINE
+- FIND-20260921-003_TYPOGRAPHY_COMPUTED_METRICS_POLICY
+scope_selection_authority: EXPLICIT_USER_DIRECTIVE_VERIFY_CONFIRMED_DEFECTS_AND_FILL_MISSING_FIRST
 dependency_closure_refs:
-- governance/test/ACTIVE_STATE.yaml
-- .github/governance-source/active/source/10_REGISTRY/GOVERNANCE_LIFECYCLE_STAGE_REGISTRY.yaml
-- .github/governance-source/active/source/10_REGISTRY/STAGE_EXECUTION_INVARIANT_REGISTRY.yaml
+- governance/specifications/current/SPECIFICATION_MUTATION_CONTROL.yaml
+- governance/specifications/current/GOVERNANCE_LAYER_SEPARATION_AND_PORTABILITY.yaml
+- governance/test/SPECIFICATION_CHANGE_CANDIDATES.yaml
+- .github/workflows/repository-three-branch-recovery.yml
+- governance/ci/validate_governance_portability.py
+- governance/ci/validate_core01_source_content_integrity.py
 denominator_source_refs:
-- .github/governance-source/active/source/10_REGISTRY/AUDIT_CATALOG.yaml
-- governance/ci/validate_active_consumer_reference_integrity.py
-- governance/test/CORE_ASSET_MULTIDIRECTIONAL_PROCESS_AUDIT.yaml
+- governance/test/SPECIFICATION_CHANGE_CANDIDATES.yaml
+- .github/governance-source/active/source/12_DOCS/mother-spec/01_BLUEPRINT_DESIGN_GOVERNANCE.md
+- .github/governance-source/active/source/12_DOCS/mother-spec/02_IMPLEMENTATION_DELIVERY_STANDARD.md
+- .github/governance-source/active/source/12_DOCS/mother-spec/04_AUDIT_PROGRESS_STANDARD.md
 partial_scope: false
 stage_exit_credit_allowed: false
 fresh_revalidation_required: true
-closure_status: MULTIDIRECTIONAL_AUDIT_REMEDIATION_R2_ACTIVE_PRODUCT_DATA_PURGED
-next_action: COMPLETE_ALL_STAGE_PROCESS_AUDIT_AND_REMEDIATION_R2
+closure_status: WUR_REQUIRED_BEFORE_EFFECTFUL_GOVERNANCE_REMEDIATION
+next_action: WORK_UNIT_RESOLUTION_GATE_FOR_CONFIRMED_CONSUMER_CONTENT_INTEGRITY_TYPOGRAPHY_DEFECTS

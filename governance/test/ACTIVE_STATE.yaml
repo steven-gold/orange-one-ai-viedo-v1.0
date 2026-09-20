@@ -111,8 +111,8 @@ specification_mutation_safety:
   ordinary_mid_stage_specification_mutation: BLOCK
   stage_end_consolidated_promotion_requires_new_explicit_directive: true
   execution_context_lock_required: true
-status: ACTIVE_CORE01_SOURCE_TEST_BUGFIX_AND_CONTENT_INTEGRITY_FULL_LIFECYCLE_R2
-next_action: FIX_SOURCE_PROVIDER_DENOMINATOR_PARSER_THEN_RERUN_STAGE01_THROUGH_STAGE11_WITH_CONTENT_INTEGRITY
+status: GOVERNANCE_DEFECT_REMEDIATION_WUR_REQUIRED
+next_action: WORK_UNIT_RESOLUTION_GATE_FOR_CONFIRMED_CONSUMER_CONTENT_INTEGRITY_TYPOGRAPHY_DEFECTS
 previous_closed_product_work_unit:
   work_unit_uid: WU-STAGE02-CORE01-STRUCTURAL-REMEDIATION-001
   canonical_name: CORE01_STRUCTURAL_CONTRACT_REMEDIATION
@@ -291,11 +291,12 @@ previous_closed_work_unit:
     source_runtime_residual_count: 0
     product_stage_credit: 0
 resume_control:
-  current_resume_point: CORE01_SOURCE_TEST_BUGFIX_AND_CONTENT_INTEGRITY_FULL_LIFECYCLE_R2_ACTIVE
-  current_work_unit_uid: WU-TEST-CORE01-CONTENT-INTEGRITY-FULL-LIFECYCLE-002
-  current_owner: governance/ci/run_core01_isolated_full_lifecycle_test.py
-  exact_next_action: FIX_SOURCE_PROVIDER_DENOMINATOR_PARSER_THEN_RERUN_STAGE01_THROUGH_STAGE11_WITH_CONTENT_INTEGRITY
+  current_resume_point: GOVERNANCE_DEFECT_REMEDIATION_WUR_REQUIRED
+  current_work_unit_uid: null
+  current_owner: governance/specifications/current/SPECIFICATION_MUTATION_CONTROL.yaml
+  exact_next_action: WORK_UNIT_RESOLUTION_GATE_FOR_CONFIRMED_CONSUMER_CONTENT_INTEGRITY_TYPOGRAPHY_DEFECTS
   product_resume_preserved: CORE01_STAGE01_STAGE03_CLEAN_BASELINE_READY_FRESH_STAGE01_WUR_REQUIRED
+  interrupted_test_resume_preserved: CORE01_SOURCE_TEST_BUGFIX_AND_CONTENT_INTEGRITY_FULL_LIFECYCLE_R2_ACTIVE
   reentry_owner_capability: SOURCE_INTAKE_BASE_BLUEPRINT
   reentry_stage_uid: STAGE-01
   reentry_reason: CLEAN_BASELINE_PERSISTED_AFTER_MULTIDIRECTIONAL_PROCESS_AUDIT_CLOSURE
@@ -391,8 +392,8 @@ pending_governance_review:
   - STAGE03
   - WEBSITE_CONSTRUCTION
   - DEPLOYMENT
-current_primary_task_layer: TEST_OR_VALIDATION_MAINTENANCE
-current_primary_task_authorization_uid: USR-DIRECTIVE-20260921-CORE01-BUGFIX-CONTENT-INTEGRITY-R2
+current_primary_task_layer: GOVERNANCE_MAINTENANCE
+current_primary_task_authorization_uid: USER_DIRECTIVE_20260921_CONFIRMED_DEFECT_REMEDIATION_PENDING_RECEIPT
 current_primary_task_product_stage_credit: 0
 earlier_closed_product_work_unit:
   work_unit_uid: WU-STAGE02-CORE01-FRESH-TEST-001
@@ -2618,49 +2619,25 @@ closed_test_validation_maintenance_work_unit_multidirectional_audit:
     full_line_75_file_high_pressure_result: success
     verified_source_byte_clean_result: success
   legal_next_transition: RESTORE_CLEAN_PRODUCT_RESUME_AND_REQUIRE_FRESH_STAGE01_WORK_UNIT_RESOLUTION
-active_work_unit:
+terminated_test_validation_maintenance_work_unit_core01_content_integrity_r2:
   work_unit_uid: WU-TEST-CORE01-CONTENT-INTEGRITY-FULL-LIFECYCLE-002
   canonical_name: CORE01_SOURCE_TEST_BUGFIX_AND_FULL_CONTENT_INTEGRITY_LIFECYCLE_REVALIDATION
   primary_task_layer: TEST_OR_VALIDATION_MAINTENANCE
-  current_status: ACTIVE_FULL_LIFECYCLE_CONTENT_INTEGRITY_EXECUTION
-  authorization_uid: USR-DIRECTIVE-20260921-CORE01-BUGFIX-CONTENT-INTEGRITY-R2
-  canonical_owner: governance/ci/run_core01_isolated_full_lifecycle_test.py
-  source_provider:
-    branch: new
-    pre_fix_head_sha: 165c6440cb53b1b45ec96905241fb4d56dc3b867
-    branch_authority_head_sha: 165c6440cb53b1b45ec96905241fb4d56dc3b867
-    verified_ephemeral_bugfix_commit_sha: f25a79111bbf1da47fe55f4fc8967b2148558317
-    bugfix_release_gate_run_id: 35528804977
-    bugfix_release_gate_result: success
-    branch_authority_guard_restored_new_branch: true
-    sandbox_patch_owner: governance/ci/apply_core01_source_provider_test_fix.py
-    sandbox_patch_target: tests/release/authority.test.mjs
-    sandbox_patch_preimage_blob_sha1: 8ee2ead8ff97d6a11ef6277d966a7d50ef25add7
-    sandbox_patch_postimage_blob_sha1: a91ab5d3300d92799abaf8cef0a6790317127c09
-    allowed_write_path: tests/release/authority.test.mjs
-    product_authority_mutation_allowed: false
-    product_implementation_mutation_allowed: false
-  scope:
-  - FIX_CURRENT_AUTHORITY_PAGE_DENOMINATOR_TEST_PARSER
-  - VERIFY_PAGES_AND_REGISTRIES_ARE_CLASSIFICATION_SCOPED
-  - RERUN_CORE01_STAGE01_THROUGH_STAGE11_IN_ISOLATED_SANDBOX
-  - VALIDATE_CONTENT_COMPLETENESS_NOT_JUST_EXECUTION_SUCCESS
-  - VALIDATE_AUTHORITY_TO_IMPLEMENTATION_AND_IMPLEMENTATION_TO_AUTHORITY_SET_SYMMETRY
-  - VALIDATE_CONTROL_ACTION_GATE_PERMISSION_ERROR_RUNTIME_PORT_REFERENTIAL_INTEGRITY
-  - VALIDATE_INTEGRATION_PORT_ROUTE_METHOD_OPERATION_RUNTIME_DB_AUDIT_CORRELATION_CHAIN
-  - VALIDATE_SUCCESS_FAILURE_STATE_AND_RECOVERY_CONTENT
-  - VALIDATE_CROSS_STAGE_RECEIPT_CONTENT_AND_HASH_CONTINUITY
-  - DELETE_COMPLETE_TEST_SANDBOX_AND_VERIFY_ZERO_RESIDUAL
-  out_of_scope:
-  - MOTHER_NORMATIVE_MUTATION
-  - CURRENT_SPECIFICATION_MUTATION
-  - PRODUCT_AUTHORITY_CONTENT_CHANGE
-  - PRODUCT_BEHAVIOR_INVENTION
-  - FORMAL_PRODUCTION_DEPLOYMENT
-  - FORMAL_PRODUCTION_DATABASE_MIGRATION
-  - FORMAL_PRODUCTION_ACCEPTANCE_CREDIT
+  terminal_status: TERMINATED_FOR_CONFIRMED_GOVERNANCE_AND_CONSUMER_DEFECT_REMEDIATION
+  prior_authorization_uid: USR-DIRECTIVE-20260921-CORE01-BUGFIX-CONTENT-INTEGRITY-R2
+  confirmed_findings:
+  - FIND-20260921-001
+  - FIND-20260921-002
+  - FIND-20260921-003
+  parser_bugfix_validation:
+    verified_ephemeral_commit_sha: f25a79111bbf1da47fe55f4fc8967b2148558317
+    release_gate_run_id: 35528804977
+    release_gate_result: success
+    canonical_new_branch_still_contains_bug: true
+  product_resume_preserved: CORE01_STAGE01_STAGE03_CLEAN_BASELINE_READY_FRESH_STAGE01_WUR_REQUIRED
+  test_resume_after_governance_remediation: CORE01_SOURCE_TEST_BUGFIX_AND_CONTENT_INTEGRITY_FULL_LIFECYCLE_R2_ACTIVE
   product_stage_credit: 0
-  completion_rule: ZERO_UNRESOLVED_CONTENT_COMPLETENESS_BLOCKERS_REQUIRED_FOR_FULL_PASS
+active_work_unit: null
 last_work_unit_resolution_gate:
   resolution_uid: WUR-TEST-CORE01-CONTENT-INTEGRITY-FULL-LIFECYCLE-20260921-002
   normative_authority: false
