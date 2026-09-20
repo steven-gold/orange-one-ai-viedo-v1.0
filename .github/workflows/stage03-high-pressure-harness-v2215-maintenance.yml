@@ -1,0 +1,41 @@
+name: Stage-03 v2.2.15 High-Pressure Harness Maintenance
+
+"on":
+  push:
+    branches: [rebuild-v2.1.1]
+    paths:
+      - .github/governance-maintenance/maintain_stage03_high_pressure_v2215.py
+      - .github/workflows/stage03-high-pressure-harness-v2215-maintenance.yml
+
+permissions:
+  contents: write
+  actions: read
+
+jobs:
+  maintain:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    env:
+      PYTHONDONTWRITEBYTECODE: "1"
+      PYTHONPYCACHEPREFIX: /tmp/acpos-stage03-hp-v2215
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+      - name: Install dependency
+        run: python -m pip install --disable-pip-version-check 'PyYAML==6.0.2'
+      - name: Lock maintenance source SHA
+        run: test "$(git rev-parse HEAD)" = "${GITHUB_SHA}"
+      - name: Enter test-validation maintenance Work Unit
+        run: python .github/governance-maintenance/maintain_stage03_high_pressure_v2215.py enter
+      - name: Patch existing harness with AST-bounded selectors
+        run: python .github/governance-maintenance/maintain_stage03_high_pressure_v2215.py patch
+      - name: Restore product WU only after 63-of-63 dry-run PASS
+        run: python .github/governance-maintenance/maintain_stage03_high_pressure_v2215.py restore-and-dry-run
+      - name: Validate restored Current state
+        run: |
+          python governance/ci/validate_validation_remediation_closure_protocol.py
+          python governance/ci/validate_selected_execution_profile_integrity.py
+          python governance/ci/validate_active_consumer_reference_integrity.py
+          python governance/ci/stage_execution_engine.py --definition-audit-all
