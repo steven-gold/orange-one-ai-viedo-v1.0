@@ -882,7 +882,14 @@ findings:
     per text-bearing target expected/computed font family, font size, font weight, line height, letter spacing, text-container geometry, rendered line count and tolerance evidence.
   defect_owner: REUSABLE_GOVERNANCE_POLICY_AND_VISUAL_VERIFICATION
   generalizability_scope: ALL_TEXT_BEARING_VISUAL_TARGETS_ALL_ADOPTING_SYSTEMS
-  disposition: GOVERNANCE_PROMOTED_EXACT_HEAD_REVALIDATION_REQUIRED
+  disposition: CLOSED_GOVERNANCE_PROMOTED_EXACT_HEAD_VERIFIED
+  closure_evidence:
+    promotion_run_id: 35545355567
+    exact_head: f2140ddb1ee508b21982f3eee1cdde2ada1fb973
+    selected_profile_run_id: 35545647732
+    full_line_run_id: 35545647729
+    branch_guard_run_id: 35545647661
+    result: PASS
   specification_change_required: true
   mother_change_required: true
   formal_specification_mutated_for_fix: true
@@ -903,7 +910,12 @@ findings:
   evidence: Exact-head Selected Profile run 35545515817 blocked with NOT_EXECUTED_STAGE_WRONGLY_REQUIRES_REVALIDATION while execution.stage3.result is NOT_EXECUTED and revalidation_required_under_current_governance is false.
   defect_owner: GOVERNANCE_RUN_STATE_PROJECTOR
   generalizability_scope: GOVERNANCE_SUCCESSOR_TRANSITIONS_WHEN_SELECTED_PRODUCT_STAGE_IS_NOT_EXECUTED
-  disposition: IMPLEMENTATION_STATE_REMEDIATED_EXACT_HEAD_REVALIDATION_REQUIRED
+  disposition: CLOSED_IMPLEMENTATION_STATE_REMEDIATED_EXACT_HEAD_VERIFIED
+  closure_evidence:
+    exact_head: f2140ddb1ee508b21982f3eee1cdde2ada1fb973
+    selected_profile_run_id: 35545647732
+    full_line_run_id: 35545647729
+    result: PASS
   specification_change_required: false
   mother_change_required: false
   formal_specification_mutated_for_fix: false
@@ -912,6 +924,39 @@ findings:
     governance_policy_consumer_revalidation_required: true
     product_stage_revalidation_required: false
     product_stage_revalidation_credit: 0
+  product_stage_credit: 0
+- finding_uid: FIND-20260921-005
+  class: TEST_HARNESS_ADMISSION_AND_FAIL_CLOSED_REPORTING_BUG
+  title: Stage-03 high-pressure review executed outside its product Work Unit and missing source refs crashed with StopIteration
+  evidence: Run 35545339061 failed with StopIteration while Governance Maintenance was primary; the harness had no fail-closed missing-source-ref finding path and the workflow had no active-Work-Unit admission gate.
+  defect_owner: TEST_OR_VALIDATION_IMPLEMENTATION
+  generalizability_scope: PRODUCT_BOUND_HIGH_PRESSURE_HARNESSES
+  disposition: CLOSED_IMPLEMENTATION_REMEDIATED_VERIFIED
+  remediation:
+    fail_closed_missing_source_ref_reporting: governance/ci/stress_test_stage03_core01.py
+    active_work_unit_admission_gate: .github/workflows/stage03-high-pressure-review.yml
+    verification_run_id: 35545515841
+    verification_result: success
+  specification_change_required: false
+  mother_change_required: false
+  formal_specification_mutated_for_fix: false
+  product_stage_credit: 0
+- finding_uid: FIND-20260921-006
+  class: GOVERNANCE_PROMOTION_TOOL_ATOMICITY_AND_ORDERING_BUG
+  title: Typography successor promotion initially missed common-bundle owner synchronization and mutated source evidence after hashing
+  evidence: Promotion runs 35544742695 and 35545141668 failed closed on common_bundle_semantic_reference_mismatch, UNBOUNDED_RAW_TEXT_REPLACE, and source CHECKSUM_MISMATCH before successful promotion 35545355567.
+  defect_owner: GOVERNANCE_PROMOTION_IMPLEMENTATION
+  generalizability_scope: ATOMIC_GOVERNANCE_SUCCESSOR_PROMOTION
+  disposition: CLOSED_IMPLEMENTATION_REMEDIATED_VERIFIED
+  remediation:
+    common_bundle_owner_sync: CONSTRUCTION_ARTIFACT_INDEX_REFERENCE_RULE_REGISTRY_SEMANTIC_BASELINE
+    structured_mutation_guard_preserved: true
+    candidate_state_mutated_before_source_identity_hashing: true
+    successful_promotion_run_id: 35545355567
+    successful_successor_uid: GOV-REV-20260921-TYPOGRAPHY-COMPUTED-METRICS-HARDENING
+  specification_change_required: false
+  mother_change_required: false
+  formal_specification_mutated_for_fix: false
   product_stage_credit: 0
 historical_stage2_execution_findings:
   prior_CORE-01_STAGE02_BLOCKED: 7

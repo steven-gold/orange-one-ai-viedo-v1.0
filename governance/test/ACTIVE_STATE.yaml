@@ -111,8 +111,8 @@ specification_mutation_safety:
   ordinary_mid_stage_specification_mutation: BLOCK
   stage_end_consolidated_promotion_requires_new_explicit_directive: true
   execution_context_lock_required: true
-status: TYPOGRAPHY_COMPUTED_METRICS_SUCCESSOR_PROMOTED_EXACT_HEAD_REVALIDATION_REQUIRED
-next_action: RUN_EXACT_HEAD_SELECTED_PROFILE_FULL_LINE_AND_TYPOGRAPHY_REGRESSION
+status: TYPOGRAPHY_COMPUTED_METRICS_HARDENING_CLOSED_WORK_UNIT_RESOLUTION_REQUIRED
+next_action: WORK_UNIT_RESOLUTION_GATE_AFTER_TYPOGRAPHY_HARDENING_CLOSURE
 previous_closed_product_work_unit:
   work_unit_uid: WU-STAGE02-CORE01-STRUCTURAL-REMEDIATION-001
   canonical_name: CORE01_STRUCTURAL_CONTRACT_REMEDIATION
@@ -291,10 +291,10 @@ previous_closed_work_unit:
     source_runtime_residual_count: 0
     product_stage_credit: 0
 resume_control:
-  current_resume_point: TYPOGRAPHY_COMPUTED_METRICS_SUCCESSOR_PROMOTED_EXACT_HEAD_REVALIDATION_REQUIRED
-  current_work_unit_uid: WU-GOV-CONTENT-INTEGRITY-TYPOGRAPHY-CONSUMER-HARDENING-001
-  current_owner: governance/specifications/current/SPECIFICATION_MUTATION_CONTROL.yaml
-  exact_next_action: RUN_EXACT_HEAD_SELECTED_PROFILE_FULL_LINE_AND_TYPOGRAPHY_REGRESSION
+  current_resume_point: TYPOGRAPHY_COMPUTED_METRICS_HARDENING_CLOSED_WUR_REQUIRED
+  current_work_unit_uid: null
+  current_owner: governance/specifications/current/EXECUTION_CYCLE_CONTROL.yaml
+  exact_next_action: WORK_UNIT_RESOLUTION_GATE_AFTER_TYPOGRAPHY_HARDENING_CLOSURE
   product_resume_preserved: CORE01_STAGE01_STAGE03_CLEAN_BASELINE_READY_FRESH_STAGE01_WUR_REQUIRED
   interrupted_test_resume_preserved: CORE01_SOURCE_TEST_BUGFIX_AND_CONTENT_INTEGRITY_FULL_LIFECYCLE_R2_ACTIVE
   reentry_owner_capability: SOURCE_INTAKE_BASE_BLUEPRINT
@@ -2652,62 +2652,83 @@ terminated_test_validation_maintenance_work_unit_core01_content_integrity_r2:
     verified_ephemeral_commit_sha: f25a79111bbf1da47fe55f4fc8967b2148558317
     release_gate_run_id: 35528804977
     release_gate_result: success
-    canonical_new_branch_still_contains_bug: true
+    canonical_new_branch_still_contains_bug: false
   product_resume_preserved: CORE01_STAGE01_STAGE03_CLEAN_BASELINE_READY_FRESH_STAGE01_WUR_REQUIRED
   test_resume_after_governance_remediation: CORE01_SOURCE_TEST_BUGFIX_AND_CONTENT_INTEGRITY_FULL_LIFECYCLE_R2_ACTIVE
   product_stage_credit: 0
-active_work_unit:
+closed_governance_maintenance_work_unit_typography_computed_metrics_hardening:
   work_unit_uid: WU-GOV-CONTENT-INTEGRITY-TYPOGRAPHY-CONSUMER-HARDENING-001
   canonical_name: PRODUCT_NEUTRAL_CONTENT_INTEGRITY_TYPOGRAPHY_AND_CONSUMER_HARDENING
   primary_task_layer: GOVERNANCE_MAINTENANCE
-  current_status: PROMOTION_MATERIALIZED_EXACT_HEAD_REVALIDATION_REQUIRED
+  terminal_status: CLOSED_VERIFIED_NO_PRODUCT_CREDIT
   authorization_uid: USR-DIRECTIVE-20260921-CONTENT-INTEGRITY-TYPOGRAPHY-CONSUMER-HARDENING-R1
-  product_stage_revalidation_required: false
-  governance_policy_consumer_revalidation_required: true
-  projection_correction_finding_uid: FIND-20260921-004
-  promotion_run_id: 35545355567
-  predecessor_exact_head_selected_profile_failure_run_id: 35545515817
-  predecessor_exact_head_failure: NOT_EXECUTED_STAGE_WRONGLY_REQUIRES_REVALIDATION
-  canonical_owner: governance/specifications/current/SPECIFICATION_MUTATION_CONTROL.yaml
-  resolved_implementation_findings:
+  governance_uid: GOV-REV-20260921-TYPOGRAPHY-COMPUTED-METRICS-HARDENING
+  predecessor_governance_uid: GOV-REV-20260920-CROSS-STAGE-MATERIALIZATION-CONSUMER-READINESS-HARDENING
+  resolved_findings:
   - FIND-20260921-001
   - FIND-20260921-002
-  open_normative_findings:
   - FIND-20260921-003
-  implementation_validation:
-    validated_head: e5c670c138e1efe3bf0b08372f1f89e34aba3251
-    selected_profile_run_id: 35544354027
-    selected_profile_result: success
-    full_line_run_id: 35544354032
-    full_line_result: success
-    branch_guard_run_id: 35544354025
-    branch_guard_result: success
+  - FIND-20260921-004
+  - FIND-20260921-005
+  - FIND-20260921-006
+  normative_change:
+    typography_policy_successor_promoted: true
+    mother_sections:
+    - WEB-GOV-01-S089
+    - WEB-GOV-02-S076
+    - WEB-GOV-04-S086
+    product_neutral_computed_metrics_invariant: GOV-INV-TYPOGRAPHY-COMPUTED-METRICS-001
+  implementation_remediation:
     fixed_new_head: f25a79111bbf1da47fe55f4fc8967b2148558317
-  definition_of_done:
-  - TYPOGRAPHY_COMPUTED_METRICS_COMMON_POLICY_ADDED
-  - STAGE03_DESIGN_BASELINE_CONTRACT_SYNCHRONIZED
-  - STAGE06_RUNTIME_CAPTURE_CONTRACT_SYNCHRONIZED
-  - AUDIT_MACHINE_EVIDENCE_CONTRACT_SYNCHRONIZED
-  - GENERIC_TYPOGRAPHY_EVIDENCE_VALIDATOR_PASS
-  - PRODUCT_NEUTRAL_PORTABILITY_PASS
-  - NEW_IMMUTABLE_GOVERNANCE_UID_ACTIVE
-  - EXACT_HEAD_SELECTED_PROFILE_FULL_LINE_PASS
-  - PRODUCT_STAGE_CREDIT_ZERO
+    neutral_content_integrity_engine: governance/ci/content_integrity_engine.py
+    typography_metrics_validator: governance/ci/validate_typography_metrics_evidence.py
+    stage03_harness_fail_closed_source_ref_resolution: true
+    stage03_workflow_active_wu_admission_gate: true
+    governance_product_revalidation_credit_separated: true
+  terminal_evidence:
+    promotion_run_id: 35545355567
+    promotion_result: success
+    promoted_head: 7cd12a299a6a3e3e0e072a1f4e6957cbfc572a33
+    exact_head_validation_head: f2140ddb1ee508b21982f3eee1cdde2ada1fb973
+    selected_profile_run_id: 35545647732
+    selected_profile_result: success
+    full_line_run_id: 35545647729
+    full_line_result: success
+    branch_guard_run_id: 35545647661
+    branch_guard_result: success
+    stage02_boundary_run_id: 35545647694
+    stage02_boundary_result: success
+    stage02_product_execution_result: skipped
+    fresh_replay_run_id: 35545647835
+    fresh_replay_identity_result: success
+    fresh_replay_product_execution_result: skipped
+    stage03_product_run_id: 35545647790
+    stage03_product_execution_result: skipped
+    stage03_harness_admission_run_id: 35545515841
+    stage03_harness_admission_result: success
+    product_neutral_content_integrity_regression: pass
+    typography_computed_metrics_regression: pass
+    source_identity_75_file_gate: pass
   product_stage_credit: 0
+  formal_production_deployment_performed: false
+  product_data_or_authority_mutated_by_closure: false
+  product_resume_preserved: CORE01_STAGE01_STAGE03_CLEAN_BASELINE_READY_FRESH_STAGE01_WUR_REQUIRED
+  interrupted_test_resume_preserved: CORE01_SOURCE_TEST_BUGFIX_AND_CONTENT_INTEGRITY_FULL_LIFECYCLE_R2_ACTIVE
+  legal_next_transition: WORK_UNIT_RESOLUTION_GATE
+active_work_unit: null
 last_work_unit_resolution_gate:
-  resolution_uid: WUR-TEST-GENERIC-WEB-FLOW-HIGH-PRESSURE-20260920-001
+  resolution_uid: WUR-GOV-CONTENT-INTEGRITY-TYPOGRAPHY-20260921-001
   normative_authority: false
   result: PASS_SINGLE_LEGAL_SUCCESSOR
-  requested_primary_task_layer: TEST_OR_VALIDATION_MAINTENANCE
-  resolved_work_unit_uid: WU-TEST-GENERIC-WEB-FLOW-HIGH-PRESSURE-001
-  authorization_uid: USR-DIRECTIVE-20260920-GENERIC-WEB-FLOW-HIGH-PRESSURE-AUDIT-R1
-  canonical_owner: governance/ci/test_stage_execution_engine.py
+  requested_primary_task_layer: GOVERNANCE_MAINTENANCE
+  resolved_work_unit_uid: WU-GOV-CONTENT-INTEGRITY-TYPOGRAPHY-CONSUMER-HARDENING-001
+  authorization_uid: USR-DIRECTIVE-20260921-CONTENT-INTEGRITY-TYPOGRAPHY-CONSUMER-HARDENING-R1
+  canonical_owner: governance/specifications/current/SPECIFICATION_MUTATION_CONTROL.yaml
   basis:
-  - EXPLICIT_USER_DIRECTIVE
-  - PREDECESSOR_MULTIDIRECTIONAL_PROCESS_AUDIT_CLOSED
-  - PRODUCT_RESUME_PRESERVED_AND_PRODUCT_EXECUTION_BLOCKED
-  - EXISTING_COMMON_STAGE_ENGINE_IS_SINGLE_REUSABLE_OWNER
-  - MOTHER_P1_THROUGH_P6_PAGE_COMPLEXITY_TAXONOMY
+  - EXPLICIT_USER_DIRECTIVE_VERIFY_CONFIRMED_DEFECTS_AND_FILL_MISSING_FIRST
+  - PREDECESSOR_TEST_WORK_UNIT_TERMINATED_FOR_CONFIRMED_GOVERNANCE_DEFECT_REMEDIATION
+  - FIND_20260921_001_AND_002_IMPLEMENTATION_REMEDIATED
+  - FIND_20260921_003_REQUIRED_PRODUCT_NEUTRAL_NORMATIVE_SUCCESSOR
   product_stage_credit: 0
 previous_work_unit_resolution_gate_core01_isolated_r1:
   resolution_uid: WUR-TEST-CORE01-ISOLATED-FULL-LIFECYCLE-20260920-001

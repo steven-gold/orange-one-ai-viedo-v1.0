@@ -13,8 +13,7 @@ excluded_units:
 - PRODUCT_BEHAVIOR_INVENTION
 - FORMAL_PRODUCTION_DEPLOYMENT
 - FORMAL_PRODUCTION_DATABASE_MIGRATION
-remaining_units:
-- FIND-20260921-003_TYPOGRAPHY_COMPUTED_METRICS_POLICY
+remaining_units: []
 scope_selection_authority: USR-DIRECTIVE-20260921-CONTENT-INTEGRITY-TYPOGRAPHY-CONSUMER-HARDENING-R1
 dependency_closure_refs:
 - governance/specifications/current/SPECIFICATION_MUTATION_CONTROL.yaml
@@ -30,10 +29,21 @@ denominator_source_refs:
 - governance/specifications/current/INTERACTION_TOPOLOGY_AI_CONTINUITY.yaml
 partial_scope: false
 stage_exit_credit_allowed: false
-fresh_revalidation_required: true
-governance_policy_consumer_revalidation_required: true
+fresh_revalidation_required: false
+governance_policy_consumer_revalidation_required: false
 product_stage_revalidation_required: false
 product_stage_revalidation_credit: 0
 projection_correction_finding_uid: FIND-20260921-004
-closure_status: PROMOTION_MATERIALIZED_EXACT_HEAD_REVALIDATION_REQUIRED
-next_action: RUN_EXACT_HEAD_SELECTED_PROFILE_FULL_LINE_AND_TYPOGRAPHY_REGRESSION
+closure_status: CLOSED_VERIFIED_NO_PRODUCT_CREDIT
+closure_validation_head: f2140ddb1ee508b21982f3eee1cdde2ada1fb973
+closure_selected_profile_run_id: 35545647732
+closure_full_line_run_id: 35545647729
+closure_branch_guard_run_id: 35545647661
+closure_stage02_boundary_run_id: 35545647694
+closure_fresh_replay_run_id: 35545647835
+closure_stage03_product_run_id: 35545647790
+closure_discovered_validation_findings:
+- FIND-20260921-004
+- FIND-20260921-005
+- FIND-20260921-006
+next_action: WORK_UNIT_RESOLUTION_GATE_AFTER_TYPOGRAPHY_HARDENING_CLOSURE
