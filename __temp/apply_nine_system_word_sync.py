@@ -278,11 +278,21 @@ for k,fn in FILES.items():
         continue
     FUNCS[k](d)
     if k=="08":
-        # Remove parity-only blank page between the cover and body. Preserve all content;
-        # only convert odd/even section starts to a normal next-page start.
+        # Remove parity-only section starts if present.
         for sec in d.sections:
             if sec.start_type in (WD_SECTION_START.ODD_PAGE, WD_SECTION_START.EVEN_PAGE):
                 sec.start_type=WD_SECTION_START.NEW_PAGE
+        # The cover already transitions into a page-breaking first body heading.
+        # Remove only the first empty explicit page-break paragraph after the cover,
+        # which otherwise creates a fully blank page 2.
+        for para in list(d.paragraphs):
+            if para.text.strip():
+                continue
+            page_breaks=[br for br in para._p.iter() if br.tag==qn('w:br') and br.get(qn('w:type'))=='page']
+            if page_breaks:
+                parent=para._p.getparent()
+                parent.remove(para._p)
+                break
     d.save(p)
     Document(p)
     updated.append(fn)
