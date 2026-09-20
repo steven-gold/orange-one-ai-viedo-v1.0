@@ -2,23 +2,23 @@ schema_version: 1
 artifact_type: EXECUTION_SCOPE_MANIFEST
 normative_authority: false
 governance_uid: GOV-REV-20260919-ASSET-STAGE01-STAGE02-SHARED-CONTRACT-HARDENING
-owning_capability: FUNCTIONAL_CONTRACT
-scope_kind: EXACT_SINGLE_PAGE_FRESH_REPLAY
+owning_capability: SOURCE_INTAKE_BASE_BLUEPRINT
+scope_kind: EXACT_SINGLE_PAGE_CLEAN_RESET
 included_units:
 - ASSET-01
 excluded_units:
 - CORE-01
-remaining_units: []
+remaining_units:
+- ASSET-01
 stage_required_units:
 - ASSET-01
-scope_selection_authority: EXPLICIT_USER_DIRECTIVE_AND_FRESH_RAW_SOURCE_CAPTURE
+scope_selection_authority: EXPLICIT_USER_DIRECTIVE_CLEAN_RESET
 dependency_closure_refs:
 - governance/test/ACTIVE_STATE.yaml
-- 00_SOURCE_INTAKE/run_asset01_8133839f_stage02/04_PAGE_FUNCTIONAL_CONTRACT/DEPENDENCY_MAP.yaml
+- 00_SOURCE_INTAKE/immutable_inputs/asset01_9668e230
 denominator_source_refs:
-- governance/test/stage02/STAGE02_LATEST_TEST_EVIDENCE.json
-- 00_SOURCE_INTAKE/run_asset01_8133839f_stage02/04_PAGE_FUNCTIONAL_CONTRACT/CURRENT_PROBLEM_REGISTER.yaml
+- 00_SOURCE_INTAKE/immutable_inputs/asset01_9668e230/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
 partial_scope: false
 stage_exit_credit_allowed: false
 fresh_revalidation_required: false
-content_hash: b4f0edb41b6cefa59aafaf4843a6a27461d22c41a0f79c28e3edd102c010f065
+content_hash: d11cedb6a2686a8446ffb1e4a2349e4e99267f5018235ad5d344c4356d9ee64f
