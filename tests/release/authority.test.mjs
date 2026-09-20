@@ -32,11 +32,31 @@ const knowledgeRuntimePort = await readFile("src/domain/knowledge/knowledgeRunti
 const knowledgeVisual = await readFile("src/components/pages/KnowledgeAdminVisual.tsx", "utf8");
 const migrationAuthority = await readFile("authority/global/ACPOS_DATABASE_MIGRATION_AUTHORITY_FINAL_LOCKED_V1.0.yaml", "utf8");
 
-test("Current Authority contains exactly 18 unique page authorities", () => {
-  const pages = [...manifest.matchAll(/^  - (authority\/pages\/[^\n]+)$/gm)].map((match) => match[1]);
-  assert.equal(pages.length, 18);
-  assert.equal(new Set(pages).size, 18);
-  assert.match(manifest, /current_page_count:\s*18/);
+function currentAuthoritySetSection(name) {
+  const lines = manifest.split(/\r?\n/);
+  const start = lines.findIndex((line) => line === `  ${name}:`);
+  assert.notEqual(start, -1, `current_authority_set.${name} must exist`);
+  const values = [];
+  for (let index = start + 1; index < lines.length; index += 1) {
+    const line = lines[index];
+    if (/^  [A-Za-z0-9_]+:\s*$/.test(line)) break;
+    const match = line.match(/^  - (.+)$/);
+    if (match) values.push(match[1]);
+  }
+  return values;
+}
+
+test("Current Authority page denominator is scoped to current_authority_set.pages", () => {
+  const pages = currentAuthoritySetSection("pages");
+  const registries = currentAuthoritySetSection("registries");
+  const declared = Number(manifest.match(/^current_page_count:\s*(\d+)$/m)?.[1] ?? "NaN");
+  assert.ok(Number.isInteger(declared), "current_page_count must be an integer");
+  assert.equal(pages.length, declared);
+  assert.equal(new Set(pages).size, pages.length);
+  assert.equal(pages.filter((path) => path.includes("/CORE-01/CORE_CURRENT_CANONICAL_VISUAL_")).length, 0);
+  assert.deepEqual(registries, [
+    "authority/pages/workspace/CORE-01/CORE_CURRENT_CANONICAL_VISUAL_FINAL_LOCKED_V1.0.yaml",
+  ]);
 });
 
 test("Current Authority explicitly includes active Shared and EDIT+VOICE runtime contracts and excludes stale gap reports", () => {
