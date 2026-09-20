@@ -1,0 +1,23 @@
+schema_version: 1
+artifact_type: PROCESS_ONLY_SOURCE_CONTENT_PURGE_RECORD
+normative_authority: false
+governance_uid: GOV-REV-20260920-CROSS-STAGE-MATERIALIZATION-CONSUMER-READINESS-HARDENING
+authorization_uid: USR-DIRECTIVE-20260920-CORE-ASSET-CONTENT-PURGE-MULTIDIRECTIONAL-AUDIT-R1
+baseline_head_sha: 4d0f870e0ea19498094382068cad741294f1a5e9
+content_payload_retained: false
+future_product_source_mode: REGISTERED_CURRENT_SOURCE_PROVIDER_REQUIRED
+pages:
+- page_uid: CORE-01
+  purged_content_records:
+  - {original_path: 00_SOURCE_INTAKE/immutable_inputs/core01_961aa8c1/00_SOURCE_INTAKE/RAW_SOURCE/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml, original_git_blob_sha: 961aa8c1a9bff170099d10f9e6889f731b0ad437}
+  - {original_path: 00_SOURCE_INTAKE/immutable_inputs/core01_961aa8c1/00_SOURCE_INTAKE/RAW_SOURCE/CORE-01/CORE_CURRENT_CANONICAL_VISUAL_FINAL_LOCKED_V1.0.yaml, original_git_blob_sha: 09665c0a4a6b86db912f9b44160d336bfc611ae6}
+- page_uid: ASSET-01
+  purged_content_records:
+  - {original_path: 00_SOURCE_INTAKE/immutable_inputs/asset01_9668e230/00_SOURCE_INTAKE/RAW_SOURCE/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml, original_git_blob_sha: 9668e2307c722ea4cf64f93f07c92da1b3abcc28}
+process_receipts_folded_to_this_record:
+- 00_SOURCE_INTAKE/immutable_inputs/core01_961aa8c1/RAW_SOURCE_RECOVERY_RECEIPT.yaml
+- 00_SOURCE_INTAKE/immutable_inputs/asset01_9668e230/RAW_SOURCE_RECOVERY_RECEIPT.yaml
+content_values_copied_into_process_record: false
+historical_content_reuse_allowed: false
+product_credit: 0
+status: PURGE_COMMITTED_PENDING_EXACT_HEAD_VALIDATION

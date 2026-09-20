@@ -48,6 +48,22 @@ jobs:
         run: python governance/ci/run_current_stage3_visual_design.py --execute
       - name: Validate normalized Stage-03 evidence
         run: python governance/ci/stage_execution_engine.py --validate-evidence --stage STAGE-03 --evidence governance/test/stage03/STAGE03_LATEST_TEST_EVIDENCE.json
+      - name: Resolve Stage-03 output path from Current state
+        id: artifact_paths
+        shell: bash
+        run: |
+          python - <<'PY' >> "$GITHUB_OUTPUT"
+          from pathlib import Path
+          import yaml
+          state=yaml.safe_load(Path('governance/test/ACTIVE_STATE.yaml').read_text(encoding='utf-8')) or {}
+          owner=str((state.get('active_work_unit') or {}).get('canonical_owner') or '')
+          if not owner.endswith('/VISUAL_DESIGN_SPEC_PACKAGE.yaml'):
+              raise SystemExit('BLOCK: Current Stage-03 canonical output owner unresolved')
+          root=Path(owner).parent
+          if not root.is_dir():
+              raise SystemExit(f'BLOCK: Current Stage-03 output root missing: {root}')
+          print('visual_output_root='+root.as_posix())
+          PY
       - name: Upload Stage-03 execution evidence
         id: evidence
         uses: actions/upload-artifact@v4
@@ -56,7 +72,7 @@ jobs:
           retention-days: 30
           if-no-files-found: error
           path: |
-            00_SOURCE_INTAKE/run_core01_d81df9ac_stage02/05_VISUAL_DESIGN
+            ${{ steps.artifact_paths.outputs.visual_output_root }}
             governance/test/stage03
       - name: Bind exact Stage-03 workflow and artifact provenance
         env:

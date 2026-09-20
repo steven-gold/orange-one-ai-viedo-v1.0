@@ -111,8 +111,8 @@ specification_mutation_safety:
   ordinary_mid_stage_specification_mutation: BLOCK
   stage_end_consolidated_promotion_requires_new_explicit_directive: true
   execution_context_lock_required: true
-status: CORE01_STAGE01_STAGE03_CLEAN_BASELINE_READY_FRESH_STAGE01_WUR_REQUIRED
-next_action: WORK_UNIT_RESOLUTION_GATE_FOR_FRESH_STAGE01_SOURCE_INTAKE_REEXECUTION
+status: ACTIVE_CORE_ASSET_PROCESS_ONLY_CONTENT_PURGE_MULTIDIRECTIONAL_AUDIT
+next_action: EXECUTE_CONTENT_PURGE_AND_MULTIDIRECTIONAL_PROCESS_AUDIT
 previous_closed_product_work_unit:
   work_unit_uid: WU-STAGE02-CORE01-STRUCTURAL-REMEDIATION-001
   canonical_name: CORE01_STRUCTURAL_CONTRACT_REMEDIATION
@@ -291,17 +291,13 @@ previous_closed_work_unit:
     source_runtime_residual_count: 0
     product_stage_credit: 0
 resume_control:
-  current_resume_point: CORE01_STAGE01_STAGE03_CLEAN_BASELINE_READY_FRESH_STAGE01_WUR_REQUIRED
-  current_work_unit_uid: null
-  current_owner: .github/governance-source/active/source/10_REGISTRY/GOVERNANCE_LIFECYCLE_STAGE_REGISTRY.yaml
-  exact_next_action: WORK_UNIT_RESOLUTION_GATE_FOR_FRESH_STAGE01_SOURCE_INTAKE_REEXECUTION
-  reentry_owner_capability: SOURCE_INTAKE_BASE_BLUEPRINT
-  reentry_stage_uid: STAGE-01
-  reentry_reason: CLEAN_BASELINE_PERSISTED_AFTER_V2_2_16_UPSTREAM_MATERIALIZATION_REENTRY
+  current_resume_point: CORE_ASSET_PROCESS_ONLY_CONTENT_PURGE_MULTIDIRECTIONAL_AUDIT_ACTIVE
+  current_work_unit_uid: WU-TEST-CORE-ASSET-CONTENT-PURGE-MULTIDIRECTIONAL-AUDIT-001
+  current_owner: governance/ci/validate_active_consumer_reference_integrity.py
+  exact_next_action: EXECUTE_CONTENT_PURGE_AND_MULTIDIRECTIONAL_PROCESS_AUDIT
   predecessor_cleanup_work_unit_uid: WU-CORE01-STAGE01-STAGE03-CLEAN-RESET-R1
-  cleanup_authorization_uid: USR-DIRECTIVE-20260920-CLEAR-STAGE01-STAGE03-CORE01-R1
-  cleanup_receipt_ref: governance/test/history/cleanup/CORE01_STAGE01_STAGE03_CLEAN_RESET_R1.yaml
-  human_visual_review_allowed: false
+  product_resume_preserved: CORE01_STAGE01_STAGE03_CLEAN_BASELINE_READY_FRESH_STAGE01_WUR_REQUIRED
+  product_execution_allowed: false
   website_construction_allowed: false
   deployment_allowed: false
 last_completed_change_request_resume_history_sys01:
@@ -389,8 +385,8 @@ pending_governance_review:
   - STAGE03
   - WEBSITE_CONSTRUCTION
   - DEPLOYMENT
-current_primary_task_layer: PRODUCT_STAGE_EXECUTION
-current_primary_task_authorization_uid: USR-DIRECTIVE-20260920-CLEAR-STAGE01-STAGE03-CORE01-R1
+current_primary_task_layer: TEST_OR_VALIDATION_MAINTENANCE
+current_primary_task_authorization_uid: USR-DIRECTIVE-20260920-CORE-ASSET-CONTENT-PURGE-MULTIDIRECTIONAL-AUDIT-R1
 current_primary_task_product_stage_credit: 0
 earlier_closed_product_work_unit:
   work_unit_uid: WU-STAGE02-CORE01-FRESH-TEST-001
@@ -2538,7 +2534,67 @@ closed_product_work_unit_core01_stage01_stage03_clean_reset_r1:
     physical_old_run_residual_count: 0
     physical_current_stage03_test_residual_count: 0
     product_stage_credit: 0
-active_work_unit: null
+work_unit_resolution_gate_core_asset_content_purge_multidirectional_audit:
+  resolution_uid: WUR-TEST-CORE-ASSET-CONTENT-PURGE-MULTIDIRECTIONAL-AUDIT-20260920-001
+  normative_authority: false
+  result: PASS_SINGLE_LEGAL_SUCCESSOR
+  requested_primary_task_layer: TEST_OR_VALIDATION_MAINTENANCE
+  predecessor_work_unit_uid: null
+  predecessor_resume_point: CORE01_STAGE01_STAGE03_CLEAN_BASELINE_READY_FRESH_STAGE01_WUR_REQUIRED
+  resolved_work_unit_uid: WU-TEST-CORE-ASSET-CONTENT-PURGE-MULTIDIRECTIONAL-AUDIT-001
+  authorization_uid: USR-DIRECTIVE-20260920-CORE-ASSET-CONTENT-PURGE-MULTIDIRECTIONAL-AUDIT-R1
+  current_governance_uid: GOV-REV-20260920-CROSS-STAGE-MATERIALIZATION-CONSUMER-READINESS-HARDENING
+  canonical_owner: governance/ci/validate_active_consumer_reference_integrity.py
+  scope: [CORE-01, ASSET-01]
+  basis:
+  - EXPLICIT_USER_DIRECTIVE_PURGE_TEST_CONTENT_KEEP_PROCESS_METADATA_ONLY
+  - CURRENT_PRODUCT_WORK_UNIT_IS_NULL_AT_LEGAL_WUR_BOUNDARY
+  - FUTURE_PRODUCT_DATA_WILL_RESOLVE_FROM_SOURCE_PROVIDER_NOT_TEST_HISTORY
+  - MULTIDIRECTIONAL_REVERSE_AUDIT_REQUIRED_BEFORE_NEXT_PRODUCT_REPLAY
+  dependency_legality: PASS
+  applicability: PASS
+  duplicate_parallel_work_unit: NONE
+  product_stage_credit: 0
+active_work_unit:
+  work_unit_uid: WU-TEST-CORE-ASSET-CONTENT-PURGE-MULTIDIRECTIONAL-AUDIT-001
+  canonical_name: CORE_ASSET_PROCESS_ONLY_CONTENT_PURGE_AND_MULTIDIRECTIONAL_AUDIT
+  primary_task_layer: TEST_OR_VALIDATION_MAINTENANCE
+  semantic_capability: PROCESS_FLOW_AUDIT
+  scope: [CORE-01, ASSET-01]
+  canonical_owner: governance/ci/validate_active_consumer_reference_integrity.py
+  state_owner: governance/test/ACTIVE_STATE.yaml
+  current_governance_uid: GOV-REV-20260920-CROSS-STAGE-MATERIALIZATION-CONSUMER-READINESS-HARDENING
+  authorization_uid: USR-DIRECTIVE-20260920-CORE-ASSET-CONTENT-PURGE-MULTIDIRECTIONAL-AUDIT-R1
+  current_status: ACTIVE_CONTENT_PURGE_AND_REVERSE_AUDIT
+  product_execution_allowed: false
+  product_authority_change_allowed: false
+  mother_governance_change_allowed: false
+  current_specification_change_allowed: false
+  product_stage_credit: 0
+  audit_modes:
+  - FORWARD_LIFECYCLE_DEFINITION_AUDIT
+  - REVERSE_CONSUMER_TO_PRODUCER_AUDIT
+  - PRODUCER_CONSUMER_SCHEMA_SYMMETRY_AUDIT
+  - DENOMINATOR_AND_APPLICABILITY_AUDIT
+  - STATE_RESUME_PROJECTOR_AUDIT
+  - NEGATIVE_FAIL_CLOSED_AUDIT
+  - RESIDUAL_STALE_CONSUMER_AUDIT
+  - SOURCE_TRUTH_CONTAMINATION_AUDIT
+  - CROSS_STAGE_HANDOFF_AUDIT
+  definition_of_done:
+  - CORE_AND_ASSET_TEST_CONTENT_PAYLOAD_RESIDUAL_ZERO
+  - PROCESS_METADATA_AND_GIT_HISTORY_PRESERVED
+  - ACTIVE_OR_REACHABLE_STALE_PRODUCT_RUN_LITERAL_ZERO
+  - STAGE03_EMPTY_VISUAL_ANCHOR_FALSE_READINESS_REMOVED
+  - STAGE03_NORMALIZED_EVIDENCE_HAS_CROSS_STAGE_HANDOFF
+  - STAGE03_WORKFLOW_OUTPUT_PATH_RESOLVED_FROM_CURRENT_STATE
+  - COMPLETED_ONE_SHOT_STAGE03_WORKFLOWS_RETIRED_FROM_ACTIVE_TREE
+  - FUTURE_SOURCE_PROVIDER_DEPENDENCY_EXPLICITLY_BLOCKS_PRODUCT_REPLAY
+  - STAGE02_COMMON_ENGINE_NORMALIZED_EVIDENCE_GAP_RECORDED
+  - EXACT_HEAD_FULL_LINE_SUCCESS
+  - EXACT_HEAD_SELECTED_PROFILE_SUCCESS
+  - EXACT_HEAD_BRANCH_GUARD_SUCCESS
+  - PRODUCT_STAGE_CREDIT_ZERO
 last_work_unit_resolution_gate: &id001
   resolution_uid: WUR-GOV-CROSS-STAGE-MATERIALIZATION-CONTINUITY-HARDENING-001
   normative_authority: false
@@ -3299,3 +3355,14 @@ stage01_stage03_clean_reset_closure:
     stage03_effectful_execution: SKIPPED
   product_stage_credit: 0
   result: CLOSED_VERIFIED_CLEAN_BASELINE_NO_PRODUCT_CREDIT
+process_only_multidirectional_audit_current:
+  artifact_type: NON_NORMATIVE_PROCESS_ONLY_AUDIT_STATE
+  governance_uid: GOV-REV-20260920-CROSS-STAGE-MATERIALIZATION-CONSUMER-READINESS-HARDENING
+  work_unit_uid: WU-TEST-CORE-ASSET-CONTENT-PURGE-MULTIDIRECTIONAL-AUDIT-001
+  authorization_uid: USR-DIRECTIVE-20260920-CORE-ASSET-CONTENT-PURGE-MULTIDIRECTIONAL-AUDIT-R1
+  baseline_head_sha: 4d0f870e0ea19498094382068cad741294f1a5e9
+  content_payload_retention_policy: ZERO_CORE_ASSET_TEST_CONTENT_BYTES_IN_CURRENT_TREE
+  process_metadata_retention_policy: UID_PATH_HASH_RUN_GATE_RESULT_ONLY
+  product_stage_credit: 0
+  report_ref: governance/test/CORE_ASSET_MULTIDIRECTIONAL_PROCESS_AUDIT.yaml
+  status: ACTIVE

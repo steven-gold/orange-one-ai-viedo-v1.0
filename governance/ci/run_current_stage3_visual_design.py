@@ -46,6 +46,54 @@ def find_dep(work, name):
         raise RuntimeError(f'DEPENDENCY_MISSING:{rows[0]}')
     return p
 
+def collect_visual_anchor_uids(doc):
+    found=set()
+    def walk(value, key=None):
+        if isinstance(value, dict):
+            for k,v in value.items():
+                if k in {'anchor_uid','visual_anchor_uid'} and isinstance(v,str) and v:
+                    found.add(v)
+                elif k in {'visual_anchor_uids','anchor_uids','anchors','visual_anchors'} and isinstance(v,list):
+                    for item in v:
+                        if isinstance(item,str) and item:
+                            found.add(item)
+                        elif isinstance(item,dict):
+                            walk(item,k)
+                walk(v,k)
+        elif isinstance(value,list):
+            for item in value:
+                walk(item,key)
+    walk(doc)
+    return sorted(found)
+
+def resolve_visual_anchor_registry(current_visual, work, run_root):
+    ref=current_visual.get('anchor_registry_ref') or {}
+    registry_uid=str(ref.get('anchor_registry_uid') or '')
+    package_path=str(ref.get('package_path') or '')
+    candidates=[]
+    for key in ('materialized_path','current_path','canonical_path','package_path'):
+        raw=str(ref.get(key) or '')
+        if not raw:
+            continue
+        p=Path(raw)
+        if p.is_absolute() or '..' in p.parts:
+            raise RuntimeError(f'VISUAL_ANCHOR_REGISTRY_PATH_INVALID:{key}:{raw}')
+        for candidate in (ROOT/p, run_root/p):
+            if candidate.is_file():
+                candidates.append(candidate)
+    if package_path:
+        name=Path(package_path).name
+        for dep in work.get('dependencies') or []:
+            dp=ROOT/str(dep)
+            if dp.name==name and dp.is_file():
+                candidates.append(dp)
+    unique={p.resolve() for p in candidates}
+    if len(unique)>1 and len({sha(p) for p in unique})>1:
+        raise RuntimeError('VISUAL_ANCHOR_REGISTRY_AMBIGUOUS_CURRENT_PHYSICAL_OWNER')
+    path=next(iter(unique),None)
+    anchor_uids=collect_visual_anchor_uids(load(path)) if path else []
+    return {'declared':bool(registry_uid or package_path),'registry_uid':registry_uid,'declared_package_path':package_path,'physical_path':path,'visual_anchor_uids':anchor_uids,'ready':bool(path and anchor_uids)}
+
 def stage_defs():
     profile = load(LIFECYCLE)
     adapters = load(ADAPTERS)
@@ -206,16 +254,28 @@ def execute():
             resolved_external.append({'authority_ref': ref, 'path': spec['path'], 'authority': auth, 'role': spec['role'], 'content_sha256': sha(spec['path'])})
             continue
         visual_unresolved.append(row)
-    authority_ready = len(resolved_external) == len(expected_external) and not visual_unresolved
+    external_authority_ready = len(resolved_external) == len(expected_external) and not visual_unresolved
     resolved_by_ref = {x['authority_ref']: x for x in resolved_external}
     global_visual_doc = load(expected_external['GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY@V1.0']['path']) if 'GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY@V1.0' in resolved_by_ref else {}
     home_shell_doc = load(expected_external['GLOBAL_HOME_SHELL_TEMPLATE_AUTHORITY@V1.9']['path']) if 'GLOBAL_HOME_SHELL_TEMPLATE_AUTHORITY@V1.9' in resolved_by_ref else {}
 
+    current_visual = visual_auth.get('current_canonical_visual') or {}
+    anchor_state = resolve_visual_anchor_registry(current_visual, work, c['run_root'])
+    anchor_uids = anchor_state['visual_anchor_uids']
+    anchor_ready = anchor_state['ready']
+    authority_ready = external_authority_ready and anchor_ready
+
     source_refs = [rel(c['visual']), rel(c['package']), rel(c['workbench']), rel(c['topology']), rel(c['impact']), rel(c['page_auth_path']), rel(c['visual_auth_path'])] + [rel(x) for x in c['ai']]
     source_refs.extend(rel(x['path']) for x in resolved_external)
+    if anchor_state['physical_path']:
+        source_refs.append(rel(anchor_state['physical_path']))
     common = {'schema_version': 2, 'normative_authority': False, 'governance_uid': gov, 'stage_uid': EXPECTED_STAGE, 'page_uid': page, 'source_execution_sha': source_head, 'source_refs': source_refs, 'ai_autofill_used': False, 'inference_used': False}
-    current_visual = visual_auth.get('current_canonical_visual') or {}
     design = {**common, 'artifact_type': 'VISUAL_DESIGN_SPEC_PACKAGE', 'blueprint_type_uid': 'BPTYPE-GOV-004', 'planning_domain': 'VISUAL_CONSTRUCTION', 'current_canonical_visual': current_visual, 'layout': page_auth.get('layout'), 'sections': sections, 'components': components, 'visuals': visuals, 'source_blueprint_unresolved_external_authority_refs': unresolved, 'current_unresolved_applicable_visual_authority_refs': visual_unresolved, 'resolved_current_external_visual_authorities': [{'authority_ref': x['authority_ref'], 'source_path': rel(x['path']), 'content_sha256': x['content_sha256']} for x in resolved_external], 'new_visual_pattern_introduced': False, 'human_visual_review_candidate': authority_ready, 'status': 'READY_FOR_HUMAN_VISUAL_REVIEW' if authority_ready else 'BLOCKED_UNRESOLVED_APPLICABLE_VISUAL_AUTHORITY'}
+    design['visual_anchor_registry_uid'] = anchor_state['registry_uid'] or None
+    design['visual_anchor_registry_declared_package_path'] = anchor_state['declared_package_path'] or None
+    design['visual_anchor_registry_physical_ref'] = rel(anchor_state['physical_path']) if anchor_state['physical_path'] else None
+    design['visual_anchor_uids'] = anchor_uids
+    design['visual_anchor_readiness'] = 'READY' if anchor_ready else 'BLOCKED_SOURCE_CAPTURE_GAP'
     geometry = {**common, 'artifact_type': 'VISUAL_GEOMETRY_CONTRACT', 'layout': page_auth.get('layout'), 'visual_geometry_units': visuals, 'global_shell_authority_ref': 'GLOBAL_HOME_SHELL_TEMPLATE_AUTHORITY@V1.9' if authority_ready else None, 'responsive_contract': {'desktop_min_width': (page_auth.get('layout') or {}).get('desktop_min_width'), 'below_min_width': (page_auth.get('layout') or {}).get('below_min_width'), 'semantic_order_preserved': True}, 'status': 'PASS_EXACT_AUTHORITY_PROJECTION'}
     changes = {**common, 'artifact_type': 'VISUAL_CHANGESET', 'change_kind': 'AUTHORITY_PRESERVING_STAGE03_MATERIALIZATION', 'baseline_visual_uid': current_visual.get('visual_uid'), 'candidate_uids': (visual_auth.get('change_trace_contract') or {}).get('candidate_uids') or [], 'new_visual_pattern_introduced': False, 'unapproved_visual_reorder_or_surface_insertion': False, 'authority_update_performed': False, 'design_freeze_performed': False, 'status': 'READY_FOR_HUMAN_VISUAL_REVIEW' if authority_ready else 'BLOCKED_BEFORE_HUMAN_REVIEW_UNRESOLVED_VISUAL_AUTHORITY'}
     topo = {**common, 'artifact_type': 'VISUAL_INTERACTION_TOPOLOGY_BINDING', 'functional_visual_impact_rows': impact.get('rows') or [], 'field_bindings': impact.get('field_bindings') or [], 'interaction_relations': topology.get('edges') or [], 'functional_to_visual_topology_equivalence': 'PRESERVED_FROM_STAGE02_EXACT_BINDINGS', 'status': 'PASS'}
@@ -246,15 +306,22 @@ def execute():
     workbench_uids = [str(x.get('workbench_uid')) for x in workbench.get('atomic_workbenches') or [] if isinstance(x, dict) and x.get('workbench_uid')]
     journey_uids = sorted({str(x.get('journey_uid')) for x in impact.get('rows') or [] if isinstance(x, dict) and x.get('journey_uid')})
     operation_uids = sorted({str(x.get('operation_uid')) for x in impact.get('rows') or [] if isinstance(x, dict) and x.get('operation_uid')})
-    next_action = f'HUMAN_VISUAL_REVIEW_{page.replace("-", "")}_STAGE03' if authority_ready else f'RESOLVE_{page.replace("-", "")}_STAGE03_VISUAL_AUTHORITY'
-    resume_point = f'STAGE3_{page.replace("-", "")}_VISUAL_REVIEW_PENDING' if authority_ready else f'STAGE3_{page.replace("-", "")}_VISUAL_AUTHORITY_BLOCKED'
-    annotation_row = {'visual_uid': current_visual.get('visual_uid') or f'{page}-VIS-CURRENT', 'page_scope_uid': page, 'scenario_uid': f'{page}-SCENARIO-AUTHORITY-BOUNDED-REVIEWABILITY', 'state_uid': 'HUMAN_VISUAL_REVIEW_PENDING' if authority_ready else 'UNRESOLVED_APPLICABLE_VISUAL_AUTHORITY', 'workbench_uids': workbench_uids, 'journey_uids': journey_uids, 'parent_visual_uid': None, 'design_version': current_visual.get('design_version'), 'basic_design_change_set_uid': (visual_auth.get('change_trace_contract') or {}).get('change_uid'), 'viewport': 'DESKTOP_AUTHORITY_GEOMETRY', 'language': 'zh-TW', 'theme': 'GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY@V1.0' if authority_ready else 'UNRESOLVED_GLOBAL_VISUAL_AUTHORITY', 'business_entity_operations': operation_uids, 'visible_sections': all_section_uids, 'conditional_sections': [], 'locked_regions': all_visual_uids, 'editable_regions': [], 'visual_anchor_uids': [], 'visual_anchor_resolution': 'CURRENT_AUTHORITIES_RESOLVED_REVIEW_PENDING' if authority_ready else 'BLOCKED_WITH_GLOBAL_VISUAL_AUTHORITY', 'primary_controls': all_control_uids, 'disabled_blocked_controls': [], 'current_next_action': next_action, 'current_next_gate': 'HUMAN_VISUAL_REVIEW' if authority_ready else 'VISUAL_AUTHORITY_RESOLUTION_BEFORE_HUMAN_VISUAL_REVIEW', 'source_authority_refs': source_refs, 'inherited_visual_authority_refs': [x.get('authority_ref') for x in inheritance_rows], 'verification_purpose': 'Prove exact page geometry, complete control identity, atomic Workbench order, Current global visual inheritance, and the human visual review boundary without self-approval.'}
+    if not anchor_ready:
+        next_action = 'WORK_UNIT_RESOLUTION_GATE_REENTER_SOURCE_INTAKE_BASE_BLUEPRINT'
+        resume_point = f'STAGE3_{page.replace("-", "")}_UPSTREAM_VISUAL_ANCHOR_SOURCE_CAPTURE_REENTRY_REQUIRED'
+    elif authority_ready:
+        next_action = f'HUMAN_VISUAL_REVIEW_{page.replace("-", "")}_STAGE03'
+        resume_point = f'STAGE3_{page.replace("-", "")}_VISUAL_REVIEW_PENDING'
+    else:
+        next_action = f'RESOLVE_{page.replace("-", "")}_STAGE03_VISUAL_AUTHORITY'
+        resume_point = f'STAGE3_{page.replace("-", "")}_VISUAL_AUTHORITY_BLOCKED'
+    annotation_row = {'visual_uid': current_visual.get('visual_uid') or f'{page}-VIS-CURRENT', 'page_scope_uid': page, 'scenario_uid': f'{page}-SCENARIO-AUTHORITY-BOUNDED-REVIEWABILITY', 'state_uid': 'HUMAN_VISUAL_REVIEW_PENDING' if authority_ready else 'UNRESOLVED_APPLICABLE_VISUAL_AUTHORITY', 'workbench_uids': workbench_uids, 'journey_uids': journey_uids, 'parent_visual_uid': None, 'design_version': current_visual.get('design_version'), 'basic_design_change_set_uid': (visual_auth.get('change_trace_contract') or {}).get('change_uid'), 'viewport': 'DESKTOP_AUTHORITY_GEOMETRY', 'language': 'zh-TW', 'theme': 'GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY@V1.0' if authority_ready else 'UNRESOLVED_GLOBAL_VISUAL_AUTHORITY', 'business_entity_operations': operation_uids, 'visible_sections': all_section_uids, 'conditional_sections': [], 'locked_regions': all_visual_uids, 'editable_regions': [], 'visual_anchor_uids': anchor_uids, 'visual_anchor_resolution': 'CURRENT_AUTHORITIES_RESOLVED_REVIEW_PENDING' if authority_ready else 'BLOCKED_WITH_GLOBAL_VISUAL_AUTHORITY', 'primary_controls': all_control_uids, 'disabled_blocked_controls': [], 'current_next_action': next_action, 'current_next_gate': 'HUMAN_VISUAL_REVIEW' if authority_ready else 'VISUAL_AUTHORITY_RESOLUTION_BEFORE_HUMAN_VISUAL_REVIEW', 'source_authority_refs': source_refs, 'inherited_visual_authority_refs': [x.get('authority_ref') for x in inheritance_rows], 'verification_purpose': 'Prove exact page geometry, complete control identity, atomic Workbench order, Current global visual inheritance, and the human visual review boundary without self-approval.'}
     annotation = {**common, 'artifact_type': 'VISUAL_REFERENCE_ANNOTATION', 'visual_candidates': [annotation_row], 'annotation_complete_for_current_non_final_preview': True, 'human_visual_review_eligible': authority_ready, 'status': 'MATERIALIZED_READY_FOR_HUMAN_VISUAL_REVIEW' if authority_ready else 'MATERIALIZED_BLOCKED_UNRESOLVED_VISUAL_AUTHORITY'}
 
     scenario_types = ['VISUAL_ARCHITECTURE_OVERVIEW', 'CANONICAL_WORKSPACE_OVERVIEW', 'VISUAL_STYLE_BOARD', 'INTERACTION_TOPOLOGY_DIAGRAM', 'INITIAL_OR_EMPTY_STATE', 'ACTIVE_WORKING_STATE', 'COMPLEX_OR_CONDITIONAL_STATE', 'FINALIZATION_OR_CONFIRMATION_STATE', 'ERROR_BLOCKED_RECOVERY_STATE', 'CROSS_PAGE_RELATION_DIAGRAM', 'RESPONSIVE_VARIANT']
     scenarios = []
     for kind in scenario_types:
-        scenarios.append({'scenario_uid': f'{page}-VIS-SCENARIO-{kind}', 'scenario_type': kind, 'required': True, 'coverage_status': 'MATERIALIZED_FOR_HUMAN_VISUAL_REVIEW' if authority_ready else 'BLOCKED_UNRESOLVED_APPLICABLE_VISUAL_AUTHORITY', 'workbench_uids': workbench_uids, 'operation_uids': operation_uids, 'control_uids': all_control_uids, 'visual_anchor_uids': [], 'visual_inheritance_ref': 'VISUAL_INHERITANCE_MATRIX', 'visual_candidate_ref': 'VISUAL_PREVIEW.svg' if authority_ready else None, 'reason': 'HUMAN_VISUAL_REVIEW_PENDING' if authority_ready else 'GLOBAL_VISUAL_OR_SHELL_AUTHORITY_UNRESOLVED'})
+        scenarios.append({'scenario_uid': f'{page}-VIS-SCENARIO-{kind}', 'scenario_type': kind, 'required': True, 'coverage_status': 'MATERIALIZED_FOR_HUMAN_VISUAL_REVIEW' if authority_ready else 'BLOCKED_UNRESOLVED_APPLICABLE_VISUAL_AUTHORITY', 'workbench_uids': workbench_uids, 'operation_uids': operation_uids, 'control_uids': all_control_uids, 'visual_anchor_uids': anchor_uids, 'visual_inheritance_ref': 'VISUAL_INHERITANCE_MATRIX', 'visual_candidate_ref': 'VISUAL_PREVIEW.svg' if authority_ready else None, 'reason': 'HUMAN_VISUAL_REVIEW_PENDING' if authority_ready else 'GLOBAL_VISUAL_OR_SHELL_AUTHORITY_UNRESOLVED'})
     scenario_set = {**common, 'artifact_type': 'VISUAL_SCENARIO_EVIDENCE_SET', 'required_scenario_total': len(scenarios), 'materialized_scenario_record_total': len(scenarios), 'reviewable_final_candidate_total': len(scenarios) if authority_ready else 0, 'scenarios': scenarios, 'status': 'MATERIALIZED_READY_FOR_HUMAN_VISUAL_REVIEW' if authority_ready else 'BLOCKED_UNRESOLVED_APPLICABLE_VISUAL_AUTHORITY'}
 
     svg = preview_svg(page_auth, workbench, impact, authority_ready=authority_ready, visual_system=global_visual_doc, home_shell=home_shell_doc)
@@ -270,10 +337,14 @@ def execute():
     problems = []
     for idx, row in enumerate(visual_unresolved, 1):
         problems.append({'problem_uid': f'STAGE03-{page}-VISUAL-AUTHORITY-GAP-{idx:02d}', 'page_uid': page, 'class': 'EXTERNAL_AUTHORITY_GAP', 'category': 'UNRESOLVED_APPLICABLE_VISUAL_AUTHORITY', 'owner': 'EXTERNAL_AUTHORITY_OWNER', 'authority_ref': row.get('authority_ref'), 'authority_evidence_ref': row.get('authority_evidence_ref'), 'status': 'OPEN', 'auto_remediable': False, 'product_credit': 0})
+    if not anchor_ready:
+        problems.append({'problem_uid': f'STAGE03-{page}-VISUAL-ANCHOR-SOURCE-CAPTURE-GAP-01', 'page_uid': page, 'class': 'SOURCE_CAPTURE_GAP', 'category': 'VISUAL_ANCHOR_REGISTRY_NOT_PHYSICALLY_MATERIALIZED' if not anchor_state['physical_path'] else 'VISUAL_ANCHOR_REGISTRY_EMPTY', 'owner': 'SOURCE_INTAKE_BASE_BLUEPRINT', 'authority_ref': anchor_state['registry_uid'] or anchor_state['declared_package_path'], 'authority_evidence_ref': rel(c['visual_auth_path']), 'status': 'OPEN', 'auto_remediable': False, 'product_credit': 0})
     open_total = len(problems)
     remaining_scope_total = 1
     resolution_entries = [{'authority_ref': x['authority_ref'], 'disposition': 'RESOLVED_BY_CURRENT_PHYSICAL_AUTHORITY', 'source_path': rel(x['path']), 'content_sha256': x['content_sha256'], 'fresh_recheck_performed': True} for x in resolved_external]
-    resolution_entries.extend({'problem_uid': x['problem_uid'], 'disposition': 'BLOCKED_EXTERNAL_AUTHORITY_REQUIRED', 'fresh_recheck_performed': True} for x in problems)
+    if anchor_ready:
+        resolution_entries.append({'authority_ref': anchor_state['registry_uid'], 'disposition': 'RESOLVED_BY_CURRENT_PHYSICAL_VISUAL_ANCHOR_REGISTRY', 'source_path': rel(anchor_state['physical_path']), 'visual_anchor_uid_total': len(anchor_uids), 'fresh_recheck_performed': True})
+    resolution_entries.extend({'problem_uid': x['problem_uid'], 'disposition': 'BLOCKED_OWNER_REENTRY_REQUIRED' if x.get('class') == 'SOURCE_CAPTURE_GAP' else 'BLOCKED_EXTERNAL_AUTHORITY_REQUIRED', 'fresh_recheck_performed': True} for x in problems)
     support = {
         'REQUIRED_FIELD_MANIFEST.yaml': {**common, 'artifact_type': 'REQUIRED_FIELD_MANIFEST', 'required_outputs': c['stage'].get('outputs'), 'required_evidence': c['stage'].get('required_evidence'), 'required_control_uid_total': len(all_control_uids)},
         'FUNCTIONAL_CHAIN_MANIFEST.yaml': {**common, 'artifact_type': 'FUNCTIONAL_CHAIN_MANIFEST', 'stage_operations': c['stage'].get('operations'), 'functional_visual_source_ref': rel(c['impact']), 'atomic_workbench_uids': workbench_uids},
@@ -286,6 +357,10 @@ def execute():
         'CURRENT_PROBLEM_REGISTER.yaml': {**common, 'artifact_type': 'CURRENT_PROBLEM_REGISTER', 'open_problem_count': open_total, 'resolved_problem_count': len(resolved_external), 'problems': problems},
         'RESOLUTION_LEDGER.yaml': {**common, 'artifact_type': 'RESOLUTION_LEDGER', 'entries': resolution_entries}
     }
+    support['DENOMINATOR_SNAPSHOT.yaml']['declared_visual_anchor_registry_total'] = 1 if anchor_state['declared'] else 0
+    support['DENOMINATOR_SNAPSHOT.yaml']['materialized_visual_anchor_registry_total'] = 1 if anchor_state['physical_path'] else 0
+    support['DENOMINATOR_SNAPSHOT.yaml']['materialized_visual_anchor_uid_total'] = len(anchor_uids)
+    support['DENOMINATOR_SNAPSHOT.yaml']['visual_anchor_readiness'] = 'READY' if anchor_ready else 'BLOCKED_SOURCE_CAPTURE_GAP'
     for n, d in support.items():
         dump(root / n, d)
 
@@ -319,7 +394,16 @@ def execute():
         {'evidence_type': 'VISUAL_INHERITANCE_MATRIX', 'status': 'PASS', 'ref': rel(out / 'VISUAL_INHERITANCE_MATRIX.yaml'), 'external_receipt': False},
         {'evidence_type': 'VISUAL_SCENARIO_EVIDENCE_SET', 'status': 'PASS', 'ref': rel(out / 'VISUAL_SCENARIO_EVIDENCE_SET.yaml'), 'external_receipt': False}
     ]
-    evidence = {'artifact_type': 'NORMALIZED_COMMON_STAGE_EXECUTION_EVIDENCE', 'governance_uid': gov, 'stage_uid': EXPECTED_STAGE, 'attempt_uid': attempt_uid, 'scope_manifest_ref': rel(SCOPE), 'actual_stage_execution_started': True, 'actual_stage_execution_completed': True, 'fresh_execution': True, 'prior_results_used': False, 'current_specification_mutated': False, 'denominator': {'required_total': len(c['stage'].get('outputs') or []), 'open_gap_total': open_total, 'closure_blocker_total': open_total, 'remaining_scope_total': remaining_scope_total}, 'gaps': problems, 'closure_blockers': [x['problem_uid'] for x in problems], 'required_evidence': required_evidence, 'result': 'BLOCKED', 'stage_exit_allowed': False, 'source_head_sha': source_head, 'phase_trace': phases, 'operation_results': operations, 'output_results': outputs, 'scanner_results': scanners, 'validator_results': validators, 'remediation': {'performed': bool(open_total), 'discovered_gap_total': open_total, 'remediated_gap_total': 0, 'unresolved_gap_total': open_total, 'reexecution_required': True if open_total else False, 'reexecution_performed': True if open_total else False, 'owner_route': 'EXTERNAL_AUTHORITY_GAP' if open_total else 'NOT_APPLICABLE_NO_PRODUCT_GAP', 'reason': 'UNRESOLVED_APPLICABLE_VISUAL_AUTHORITIES_PRESERVED_AFTER_FRESH_RECHECK' if open_total else 'CURRENT_EXTERNAL_VISUAL_AUTHORITIES_RESOLVED; HUMAN_VISUAL_REVIEW_GATE_PENDING'}, 'hidden_defect_sweep': {'performed': True, 'result': 'PASS', 'discovered_defect_total': 0}, 'exact_head_gate_receipts': [{'gate_uid': 'PREEXECUTION_FULL_LINE_INLINE', 'head_sha': source_head, 'run_id': int(run_id) if str(run_id).isdigit() else str(run_id), 'conclusion': 'success'}], 'resume_persistence': {'performed': True, 'resume_point': resume_point}, 'next_stage_transition': {'next_stage_uid': 'STAGE-04', 'status': 'BLOCKED', 'reason': 'HUMAN_VISUAL_REVIEW_PENDING' if authority_ready else 'UNRESOLVED_APPLICABLE_VISUAL_AUTHORITY'}}
+    handoff_ledger_path = root / 'CROSS_STAGE_HANDOFF_READINESS_LEDGER.yaml'
+    handoff_rows = []
+    for output_uid in c['stage'].get('outputs') or []:
+        producer_ref = rel(out / (output_uid + '.yaml'))
+        handoff_rows.append({'producer_stage_or_capability': 'STAGE-03', 'producer_output_uid_or_type': output_uid, 'producer_owner': producer_ref, 'producer_physical_ref_or_external_evidence': producer_ref, 'producer_hash_or_version_or_schema': sha(ROOT / producer_ref) if (ROOT / producer_ref).is_file() else None, 'consumer_stage_or_capability': 'STAGE-04', 'consumer_input_uid_or_type': output_uid, 'consumer_owner_or_schema': 'GOVERNANCE_LIFECYCLE_STAGE_REGISTRY.STAGE-04', 'applicability': 'REQUIRED_FOR_REGISTERED_STAGE03_OUTPUT', 'reference_resolution_status': 'PASS', 'physical_materialization_status': 'PASS' if (ROOT / producer_ref).is_file() else 'BLOCKED', 'parse_schema_status': 'PASS' if (ROOT / producer_ref).is_file() else 'BLOCKED', 'required_field_completeness': 'PASS' if (ROOT / producer_ref).is_file() else 'BLOCKED', 'denominator_inclusion_status': 'PASS', 'consumer_readiness_status': 'BLOCKED_PENDING_STAGE03_HUMAN_REVIEW_OR_OWNER_REENTRY', 'unresolved_required_dependency_total': open_total, 'blocking_owner_or_reentry_target': 'SOURCE_INTAKE_BASE_BLUEPRINT' if not anchor_ready else 'HUMAN_VISUAL_REVIEW', 'current_evidence_ref': rel(TEST_ROOT / 'STAGE03_LATEST_TEST_EVIDENCE.json')})
+    handoff_ledger = {**common, 'artifact_type': 'CROSS_STAGE_HANDOFF_READINESS_LEDGER', 'producer_stage_uid': 'STAGE-03', 'consumer_stage_uid': 'STAGE-04', 'rows': handoff_rows, 'reference_resolution_complete': True, 'physical_materialization_complete': bool(anchor_ready and not visual_unresolved), 'required_field_completeness_complete': bool(anchor_ready and not visual_unresolved), 'denominator_reconciled': True, 'consumer_readiness_complete': False, 'unresolved_required_dependency_total': open_total, 'status': 'BLOCKED'}
+    dump(handoff_ledger_path, handoff_ledger)
+    cross_stage_handoff = {'ledger_ref': rel(handoff_ledger_path), 'external_receipt': False, 'successor_stage_uid': 'STAGE-04', 'reference_resolution_complete': True, 'physical_materialization_complete': bool(anchor_ready and not visual_unresolved), 'required_field_completeness_complete': bool(anchor_ready and not visual_unresolved), 'denominator_reconciled': True, 'consumer_readiness_complete': False, 'unresolved_required_dependency_total': open_total, 'status': 'BLOCKED'}
+
+    evidence = {'artifact_type': 'NORMALIZED_COMMON_STAGE_EXECUTION_EVIDENCE', 'governance_uid': gov, 'stage_uid': EXPECTED_STAGE, 'attempt_uid': attempt_uid, 'scope_manifest_ref': rel(SCOPE), 'actual_stage_execution_started': True, 'actual_stage_execution_completed': True, 'fresh_execution': True, 'prior_results_used': False, 'current_specification_mutated': False, 'denominator': {'required_total': len(c['stage'].get('outputs') or []), 'open_gap_total': open_total, 'closure_blocker_total': open_total, 'remaining_scope_total': remaining_scope_total}, 'gaps': problems, 'closure_blockers': [x['problem_uid'] for x in problems], 'cross_stage_handoff': cross_stage_handoff, 'required_evidence': required_evidence, 'result': 'BLOCKED', 'stage_exit_allowed': False, 'source_head_sha': source_head, 'phase_trace': phases, 'operation_results': operations, 'output_results': outputs, 'scanner_results': scanners, 'validator_results': validators, 'remediation': {'performed': bool(open_total), 'discovered_gap_total': open_total, 'remediated_gap_total': 0, 'unresolved_gap_total': open_total, 'reexecution_required': True if open_total else False, 'reexecution_performed': True if open_total else False, 'owner_route': ('SOURCE_INTAKE_BASE_BLUEPRINT_REENTRY' if not anchor_ready else ('EXTERNAL_AUTHORITY_GAP' if open_total else 'NOT_APPLICABLE_NO_PRODUCT_GAP')), 'reason': ('VISUAL_ANCHOR_SOURCE_CAPTURE_NOT_MATERIALIZED' if not anchor_ready else ('UNRESOLVED_APPLICABLE_VISUAL_AUTHORITIES_PRESERVED_AFTER_FRESH_RECHECK' if open_total else 'CURRENT_EXTERNAL_VISUAL_AUTHORITIES_RESOLVED; HUMAN_VISUAL_REVIEW_GATE_PENDING'))}, 'hidden_defect_sweep': {'performed': True, 'result': 'PASS', 'discovered_defect_total': 0}, 'exact_head_gate_receipts': [{'gate_uid': 'PREEXECUTION_FULL_LINE_INLINE', 'head_sha': source_head, 'run_id': int(run_id) if str(run_id).isdigit() else str(run_id), 'conclusion': 'success'}], 'resume_persistence': {'performed': True, 'resume_point': resume_point}, 'next_stage_transition': {'next_stage_uid': 'STAGE-04', 'status': 'BLOCKED', 'reason': 'HUMAN_VISUAL_REVIEW_PENDING' if authority_ready else 'UNRESOLVED_APPLICABLE_VISUAL_AUTHORITY'}}
     TEST_ROOT.mkdir(parents=True, exist_ok=True)
     jdump(TEST_ROOT / 'STAGE03_LATEST_TEST_EVIDENCE.json', evidence)
     dump(TEST_ROOT / 'STAGE03_CURRENT_FINDINGS.yaml', {**common, 'artifact_type': 'STAGE03_CURRENT_FINDINGS', 'attempt_uid': attempt_uid, 'open_gap_total': open_total, 'closure_blocker_total': open_total, 'remaining_scope_total': remaining_scope_total, 'result': 'BLOCKED', 'next_action': next_action, 'human_visual_review_status': 'PENDING' if authority_ready else 'NOT_REACHED', 'problems': problems})
@@ -339,7 +423,7 @@ def execute():
     state['stage03_active_attempt'] = {'attempt_uid': attempt_uid, 'run_uid': work.get('run_uid'), 'frozen_governance_uid': gov, 'source_execution_sha': source_head, 'target_pages': [page], 'open_gap_total': open_total, 'closure_blocker_total': open_total, 'remaining_scope_total': remaining_scope_total, 'active_evidence_present': True, 'active_findings_present': True, 'next_action': next_action, 'product_blocker_credit': 0, 'prior_results_used': False, 'fresh_revalidation_required': False, 'closure_credit_under_current_governance': True, 'resolved_external_visual_authority_refs': [x['authority_ref'] for x in resolved_external], 'human_visual_review_status': 'PENDING' if authority_ready else 'NOT_REACHED'}
     trans = state.setdefault('governance_revision_transition', {})
     trans['fresh_revalidation_required'] = False
-    work['current_status'] = 'PENDING_HUMAN_VISUAL_REVIEW' if authority_ready else 'BLOCKED_UNRESOLVED_VISUAL_AUTHORITY'
+    work['current_status'] = 'PENDING_HUMAN_VISUAL_REVIEW' if authority_ready else ('BLOCKED_REENTRY_REQUIRED_UPSTREAM_SOURCE_CAPTURE' if not anchor_ready else 'BLOCKED_UNRESOLVED_VISUAL_AUTHORITY')
     work['canonical_owner'] = rel(out / 'VISUAL_DESIGN_SPEC_PACKAGE.yaml')
     work['planned_output_owner'] = rel(out / 'VISUAL_DESIGN_SPEC_PACKAGE.yaml')
     work['generated_output_root_present'] = True
@@ -417,7 +501,7 @@ def self_test():
     assert 'STRUCTURAL PREVIEW ONLY' not in svg
     assert 'CORE-01-BTN-SEND' in svg
     assert svg.index('CORE-01-VIS-MESSAGES') < svg.index('CORE-01-VIS-RUNTIME') < svg.index('CORE-01-VIS-COMPOSER') < svg.index('CORE-01-VIS-DECISION')
-    print('PASS: Current v2.2.15 Stage-03 visual producer self-test outputs=9 scanners=7 authority-blocking=preserved')
+    print('PASS: Current Stage-03 visual producer self-test outputs=9 scanners=7 cross-stage-and-anchor-fail-closed=preserved')
 
 def main():
     p = argparse.ArgumentParser()

@@ -3,30 +3,23 @@ artifact_type: EXECUTION_SCOPE_MANIFEST
 normative_authority: false
 governance_uid: GOV-REV-20260920-CROSS-STAGE-MATERIALIZATION-CONSUMER-READINESS-HARDENING
 owning_capability: SOURCE_INTAKE_BASE_BLUEPRINT
-scope_kind: EXACT_SINGLE_PAGE_SOURCE_INTAKE_REENTRY_CLEAN_BASELINE
-included_units:
-- CORE-01
-excluded_units:
-- ASSET-01
-remaining_units:
-- CORE-01
-stage_required_units:
-- CORE-01
-scope_selection_authority: EXPLICIT_USER_DIRECTIVE_AND_CURRENT_V2216_UPSTREAM_REENTRY
+scope_kind: PRODUCT_RESUME_PRESERVED_DURING_PROCESS_ONLY_AUDIT
+included_units: [CORE-01]
+excluded_units: [ASSET-01]
+remaining_units: [CORE-01]
+stage_required_units: [CORE-01]
+maintenance_scope_units: [CORE-01, ASSET-01]
+scope_selection_authority: EXPLICIT_USER_DIRECTIVE_PROCESS_ONLY_AUDIT_WITH_PRODUCT_RESUME_PRESERVED
 dependency_closure_refs:
 - governance/test/ACTIVE_STATE.yaml
 - .github/governance-source/active/source/10_REGISTRY/GOVERNANCE_LIFECYCLE_STAGE_REGISTRY.yaml
-- 00_SOURCE_INTAKE/immutable_inputs/core01_961aa8c1/00_SOURCE_INTAKE/RAW_SOURCE/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml
-- 00_SOURCE_INTAKE/immutable_inputs/core01_961aa8c1/00_SOURCE_INTAKE/RAW_SOURCE/CORE-01/CORE_CURRENT_CANONICAL_VISUAL_FINAL_LOCKED_V1.0.yaml
-- authority/global/GLOBAL_HOME_SHELL_TEMPLATE_AUTHORITY_FINAL_LOCKED_V1.9.yaml
-- authority/global/GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY_FINAL_LOCKED.yaml
+- .github/governance-source/active/source/10_REGISTRY/STAGE_EXECUTION_INVARIANT_REGISTRY.yaml
 denominator_source_refs:
-- .github/governance-source/active/source/10_REGISTRY/GOVERNANCE_LIFECYCLE_STAGE_REGISTRY.yaml
-- governance/test/ACTIVE_STATE.yaml
-- 00_SOURCE_INTAKE/immutable_inputs/core01_961aa8c1/RAW_SOURCE_RECOVERY_RECEIPT.yaml
+- .github/governance-source/active/source/10_REGISTRY/AUDIT_CATALOG.yaml
+- governance/ci/validate_active_consumer_reference_integrity.py
+- governance/test/CORE_ASSET_MULTIDIRECTIONAL_PROCESS_AUDIT.yaml
 partial_scope: false
 stage_exit_credit_allowed: false
 fresh_revalidation_required: true
-closure_status: STAGE01_STAGE03_CLEAN_RESET_COMPLETE_FRESH_STAGE01_WUR_REQUIRED
-next_action: WORK_UNIT_RESOLUTION_GATE_FOR_FRESH_STAGE01_SOURCE_INTAKE_REEXECUTION
-content_hash: e4bfa895323cea03d9f8bd44fbb8ae6cf01760e3fcb1fa31653af65466f9b2d9
+closure_status: PROCESS_ONLY_AUDIT_ACTIVE_PRODUCT_DATA_PURGED
+next_action: EXECUTE_CONTENT_PURGE_AND_MULTIDIRECTIONAL_PROCESS_AUDIT

@@ -31,6 +31,7 @@ DYNAMIC_REPLAY_EXECUTABLES = (
     ".github/governance-maintenance/finalize_fresh_stage_replay.py",
     "governance/ci/run_current_stage2_actual_test.py",
 )
+STALE_PRODUCT_RUN_ROOT_LITERAL = re.compile(r"00_SOURCE_INTAKE/(?:fresh_run_\d+|run_[A-Za-z0-9_-]+)")
 FIXED_REPLAY_IDENTITY_PATTERNS = {
     "RUN_ROOT": re.compile(r"\bfresh_run_\d+\b"),
     "RUN_UID": re.compile(r"\bFRESH-RUN-\d+\b"),
@@ -141,6 +142,10 @@ def fixed_dynamic_replay_identities(path_rel: str, text: str) -> list[str]:
             if pattern.search(value):
                 findings.append(f"{kind}:{value}")
     return sorted(set(findings))
+
+
+def stale_product_run_root_literals(text: str) -> list[str]:
+    return sorted(set(STALE_PRODUCT_RUN_ROOT_LITERAL.findall(text)))
 
 
 def unsafe_preterminal_current_projection(text: str) -> bool:
@@ -382,6 +387,8 @@ def main() -> int:
             errors.append(f"PRETERMINAL_CURRENT_CLOSURE_PROJECTION_FORBIDDEN:{rel(workflow)}")
         for finding in fixed_dynamic_replay_identities(rel(workflow), text):
             errors.append(f"FIXED_EXECUTION_IDENTITY_IN_DYNAMIC_REPLAY:{rel(workflow)}:{finding}")
+        for literal in stale_product_run_root_literals(text):
+            errors.append(f"STALE_PRODUCT_RUN_ROOT_LITERAL_IN_ACTIVE_WORKFLOW:{rel(workflow)}:{literal}")
         for wf_ref in LOCAL_WORKFLOW_REF.findall(text):
             if not (ROOT / wf_ref).is_file():
                 missing_workflows.append(wf_ref)
@@ -404,6 +411,8 @@ def main() -> int:
             errors.append(f"SEMVER_LOCATOR_IN_ACTIVE_CONSUMER:{script_rel}")
         for finding in fixed_dynamic_replay_identities(script_rel, text):
             errors.append(f"FIXED_EXECUTION_IDENTITY_IN_DYNAMIC_REPLAY:{script_rel}:{finding}")
+        for literal in stale_product_run_root_literals(text):
+            errors.append(f"STALE_PRODUCT_RUN_ROOT_LITERAL_IN_ACTIVE_CONSUMER:{script_rel}:{literal}")
         for child in python_executable_refs(text):
             referenced_by[child].add(script_rel)
             if child not in visited:
@@ -448,6 +457,7 @@ def main() -> int:
         "unsafe_preterminal_current_projection_workflows": unsafe_workflows,
         "dynamic_replay_executable_set": list(DYNAMIC_REPLAY_EXECUTABLES),
         "dynamic_replay_fixed_identity_guard": "ENFORCED",
+        "stale_product_run_root_literal_guard": "ENFORCED_FOR_ACTIVE_AND_TRANSITIVE_CONSUMERS",
         "active_governance_projectors": projector_values,
         "projector_inventory_source": "governance/specifications/REGISTRY.yaml",
         "required_regression_gate_presence": gate_presence,
@@ -467,6 +477,7 @@ def main() -> int:
     print(f"PASS: active workflows scanned={workflow_count}")
     print(f"PASS: direct+transitive executable targets={len(referenced_by)} all exist")
     print("PASS: complete projector inventory resolved from Registry and profile-bound state keys")
+    print("PASS: no stale literal product run root remains in active or transitive executable consumers")
     print("PASS: no same-run preterminal Current closure PASS projection remains")
     print("PASS: terminal-result negative regressions blocked")
     print("PASS: ACTIVE_CONSUMER_REFERENCE_INTEGRITY")
