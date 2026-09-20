@@ -223,6 +223,7 @@ def add_page_doc(doc,page):
     add_special_notes(doc,page)
     doc.add_heading('Page Construction Invariant',level=2)
     doc.add_paragraph('The exact control denominator above is the only construction denominator for this page. Components/fields/visual IDs are not counted as additional controls. Existing source UIDs are preserved. A control classified UI_LOCAL_EXACT MUST NOT create a server write. A control classified SPEC_EXACT_RUNTIME_BLOCKED / NOT_EXECUTED MUST remain disabled or fail-closed until its runtime evidence exists.')
+    return True
 
 # Page docs.
 updated=[]
