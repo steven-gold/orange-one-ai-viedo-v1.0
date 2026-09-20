@@ -8,8 +8,8 @@ stable_entrypoint:
   test_state_root: governance/test
   active_test_state: governance/test/ACTIVE_STATE.yaml
 active_specification:
-  governance_uid: GOV-REV-20260920-STAGE03-VISUAL-MATERIALIZATION-HARDENING
-  display_version: v2.2.14
+  governance_uid: GOV-REV-20260920-STAGE03-VISUAL-MATERIALIZATION-PROMOTION-CLOSURE
+  display_version: v2.2.15
   version_role: CURRENT_GOVERNANCE_DISPLAY_VERSION
   aliases:
   - neutral-portable-governance
@@ -32,12 +32,13 @@ active_specification:
   - basic-design-atomic-materialization-hardening
   - asset-stage01-stage02-shared-contract-hardening
   - stage03-visual-materialization-hardening
+  - stage03-visual-materialization-promotion-closure
   status: ACTIVE_CURRENT_GOVERNANCE
 immediate_predecessor:
-  governance_uid: GOV-REV-20260919-ASSET-STAGE01-STAGE02-SHARED-CONTRACT-HARDENING
-  display_version: v2.2.13
+  governance_uid: GOV-REV-20260920-STAGE03-VISUAL-MATERIALIZATION-HARDENING
+  display_version: v2.2.14
   version_role: SUPERSEDED_CURRENT_GOVERNANCE_HISTORY
-  status: SUPERSEDED_HISTORY_ONLY_AFTER_STAGE03_VISUAL_MATERIALIZATION_HARDENING
+  status: SUPERSEDED_INVALID_PROMOTION_HISTORY_ONLY_AFTER_STAGE03_VISUAL_MATERIALIZATION_PROMOTION_CLOSURE
 version_role_contract:
   current_governance_display_version_owner: active_specification
   verified_source_package_version_role: VERIFIED_SOURCE_LINEAGE_HISTORY

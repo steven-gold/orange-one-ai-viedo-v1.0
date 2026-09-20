@@ -1,8 +1,8 @@
 schema_version: 7
 artifact_uid: GOVERNANCE-CURRENT-ENTRYPOINT-001
 artifact_type: GOVERNANCE_CURRENT_ENTRYPOINT
-active_governance_uid: GOV-REV-20260920-STAGE03-VISUAL-MATERIALIZATION-HARDENING
-display_version: v2.2.14
+active_governance_uid: GOV-REV-20260920-STAGE03-VISUAL-MATERIALIZATION-PROMOTION-CLOSURE
+display_version: v2.2.15
 version_role: CURRENT_GOVERNANCE_DISPLAY_VERSION
 registry_ref: governance/specifications/REGISTRY.yaml
 specification_root: governance/specifications/current
@@ -24,12 +24,12 @@ historical_evidence_is_current_authority: false
 source_identity:
   version_role: VERIFIED_SOURCE_LINEAGE_HISTORY
   source_bytes_changed_by_current_successor: true
-  verified_package_sha256: 12690008d6bef9c3245c1212248985b3fca38ff54dd9dcbc1550ba951eeedaed
-  deterministic_source_bundle_sha256: b6fc93a54cfdc3c4b1e6b62e1a10496c2d1576e4e7fa516393841b11c8d659f2
-  checksum_manifest_sha256: d573bd59e813982f43e0225490301cf77a15ec0e329003ff1eb5fd9bbf9f5c2b
-  semantic_authority_content_hash: 0321fc45a96b3ac286fcf5c3d5b52f60fe8bd30ea264c38c11248aae1059c0f3
+  verified_package_sha256: 34dfe145f453da03f5f7f4819302a19e4db8ccc3af3dd3e7817f372949178885
+  deterministic_source_bundle_sha256: 611fb7fd300480be93dcb115077052e91efb056917a68e29788b6f5057968867
+  checksum_manifest_sha256: 0b1fb3a1f868df128074130aad9302e9b925d9d62e9b798d8b0948ca506aeee1
+  semantic_authority_content_hash: 5caa8e5151b642e385b5cff46960e1d94043db22530a6cdee2f8f247b1d60849
   may_override_active_governance_version: false
-  verified_source_revision: v2.2.14-stage03-visual-materialization-hardening
+  verified_source_revision: v2.2.15-stage03-visual-materialization-promotion-closure
 current_primary_task_selection_contract:
   session_bootstrap_resume_gate_required: true
   task_layer_classification_required: true

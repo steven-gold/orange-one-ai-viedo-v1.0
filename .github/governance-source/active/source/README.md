@@ -67,3 +67,6 @@ This successor hardens product-neutral Stage-02 control-vs-system-trigger resolu
 
 ## v2.2.14 Stage-03 visual materialization hardening
 This successor closes the Mother-to-Execution-Profile undercoverage that allowed Stage-03 to report all declared outputs materialized while required Visual Reference Annotation, Visual Inheritance, multi-state evidence, reviewable controls/fields, atomic Workbench visual binding, and unresolved visual-Authority blockers were absent from the profile denominator. Product behavior and unresolved external visual Authority remain unchanged.
+
+## v2.2.15 Stage-03 visual materialization promotion closure
+This successor preserves the v2.2.14 Stage-03 visual materialization semantics while repairing the promotion transaction boundary so Current Governance is backed by a valid pre-existing authorization, exact baseline identity, governance-maintenance Work Unit, and pre-push mutation guard. No product Authority or unresolved Global Visual/Shell Authority is invented.

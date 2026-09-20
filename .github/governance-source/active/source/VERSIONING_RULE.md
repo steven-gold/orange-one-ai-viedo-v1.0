@@ -106,3 +106,8 @@ The candidate package cannot self-prove integrity. The trust-root hash set is an
 - A selected profile may specialize sequence and artifact names but may not omit applicable Mother-required deliverables.
 - Stage-03 Visual Review requires reviewable visual evidence, explicit annotation/inheritance/scenario artifacts, atomic Workbench projection, and a Current denominator that preserves unresolved visual Authority blockers.
 - UNRESOLVED visual Authority is not AUTHORITY_ABSENT and never authorizes AI style invention.
+
+## v2.2.15 Stage-03 visual materialization promotion closure rule
+- v2.2.14 is retained as invalid-promotion predecessor provenance and receives no Current closure credit.
+- v2.2.15 preserves the approved Stage-03 Mother/Profile materialization rules and reissues them through a valid atomic successor transaction.
+- Product Stage-03 must restart from preserved Stage-01/02 immutable inputs after exact-head governance closure.
