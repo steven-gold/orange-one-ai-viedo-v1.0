@@ -73,9 +73,16 @@ raw_page_ref = next((x for x in design.get('source_refs', []) if str(x).endswith
 raw_vis_ref = next((x for x in design.get('source_refs', []) if str(x).endswith('CORE_CURRENT_CANONICAL_VISUAL_FINAL_LOCKED_V1.0.yaml')), None)
 raw_page = y(ROOT / raw_page_ref) if raw_page_ref else {}
 raw_vis = y(ROOT / raw_vis_ref) if raw_vis_ref else {}
-stage2_wb = y(ROOT / next((x for x in design.get('source_refs', []) if str(x).endswith('FUNCTIONAL_WORKBENCH_CONTRACT.yaml'))))
-stage2_topo = y(ROOT / next((x for x in design.get('source_refs', []) if str(x).endswith('INTERACTION_TOPOLOGY_SPEC.yaml'))))
-impact = y(ROOT / next((x for x in design.get('source_refs', []) if str(x).endswith('FUNCTION_VISUAL_IMPACT_MATRIX.yaml'))))
+def required_source_doc(suffix, check_uid):
+    ref = next((x for x in design.get('source_refs', []) if str(x).endswith(suffix)), None)
+    path = ROOT / str(ref) if ref else None
+    ok = bool(ref) and path is not None and path.is_file()
+    check(check_uid, ok, 'REFERENCE_INTEGRITY', f"required_source_ref={suffix} resolved={ref} physical={bool(path and path.is_file())}")
+    return y(path) if ok else {}
+
+stage2_wb = required_source_doc('FUNCTIONAL_WORKBENCH_CONTRACT.yaml', 'HP-REF-WORKBENCH')
+stage2_topo = required_source_doc('INTERACTION_TOPOLOGY_SPEC.yaml', 'HP-REF-TOPOLOGY')
+impact = required_source_doc('FUNCTION_VISUAL_IMPACT_MATRIX.yaml', 'HP-REF-FUNCTION-VISUAL')
 raw_regs = raw_page.get('registries') or {}
 check('HP-020', design.get('layout') == raw_page.get('layout'), 'AUTHORITY_PROJECTION', 'Stage-03 layout must equal exact Raw Page Visual Authority layout')
 check('HP-021', design.get('sections') == raw_regs.get('sections'), 'AUTHORITY_PROJECTION', 'Stage-03 sections must equal exact Raw Page Visual Authority sections')
