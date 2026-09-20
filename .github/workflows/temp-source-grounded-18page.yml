@@ -1,0 +1,33 @@
+name: Temp Source Grounded 18 Page Closure
+
+on:
+  push:
+    branches: [0921acpos]
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: { fetch-depth: 0 }
+      - run: git fetch origin 165c6440cb53b1b45ec96905241fb4d56dc3b867 --depth=1
+      - run: python -m pip install --quiet pyyaml python-docx
+      - run: python __temp_tools__/source_grounded_binding_builder.py
+      - run: |
+          python - <<'PY'
+          import json
+          r=json.load(open('__temp_reports__/source_grounded_18page_closure.json'))
+          bad={p:(v['expected_control_denominator'],v['actual_unique_controls']) for p,v in r['pages'].items() if not v['denominator_pass']}
+          print('DENOMINATOR_MISMATCH',bad)
+          assert not bad,bad
+          PY
+      - run: |
+          git config user.name "acpos-source-grounded-builder"
+          git config user.email "actions@users.noreply.github.com"
+          git add __temp_reports__/source_grounded_18page_closure.json
+          git commit -m "chore(temp): build source-grounded 18-page closure"
+          git push
