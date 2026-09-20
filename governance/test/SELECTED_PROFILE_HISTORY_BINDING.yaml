@@ -35,8 +35,10 @@ binding_rules:
 - Historical artifact governance_overlay values are creation provenance only.
 - Historical artifact bytes and hashes MUST NOT be rewritten merely because Current Governance changes.
 current_scope_binding:
-  run_uid: null
-  page_scope: []
-  excluded_page_scope: []
+  run_uid: FRESH-CORE01-D81DF9AC-STAGE02
+  page_scope:
+  - CORE-01
+  excluded_page_scope:
+  - ASSET-01
   prior_product_artifact_reuse: false
-  binding_reason: ASSET01_STAGE01_STAGE02_CLEAN_RESET_NO_CURRENT_PROFILE_ARTIFACT
+  binding_reason: STAGE03_CORE01_VISUAL_DESIGN_CONSUMES_VERIFIED_STAGE1_VISUAL_BASE
