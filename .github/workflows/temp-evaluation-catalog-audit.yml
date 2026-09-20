@@ -1,0 +1,35 @@
+name: Temp Evaluation Catalog Audit
+
+on:
+  push:
+    branches: [0921acpos]
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: python -m pip install --quiet python-docx
+      - name: Print evaluation catalogs
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          from docx import Document
+          import json,re
+          skip={'ACPOS_GLOBAL_HOME_SHELL_NAVIGATION_Mother_Basic_Design_OPTIMIZED.docx','ACPOS_SYSTEM_LOGIC_GLOBAL_INTEGRATION_Mother_Basic_Design_OPTIMIZED.docx','ACPOS_LOGIN_IDENTITY_ENTRY_Mother_Basic_Design_OPTIMIZED.docx'}
+          for p in sorted(Path('.').glob('ACPOS_*.docx')):
+              if p.name in skip: continue
+              d=Document(p)
+              tables=[]
+              for i,t in enumerate(d.tables,1):
+                  rr=[[" ".join(c.text.split()) for c in r.cells] for r in t.rows]
+                  if not rr: continue
+                  blob=" | ".join(" | ".join(r) for r in rr[:14])
+                  if re.search(r'criteria|dimension|score|evaluation|quality|check|審查|評分|檢查|一致性|continuity|compliance',blob,re.I):
+                      tables.append({"table":i,"rows":len(rr)-1,"header":rr[0],"samples":rr[1:10]})
+              print("EVALCAT",p.name,json.dumps(tables,ensure_ascii=False))
+          PY
