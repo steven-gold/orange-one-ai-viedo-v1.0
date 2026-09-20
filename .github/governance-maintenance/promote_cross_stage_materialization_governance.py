@@ -620,6 +620,12 @@ def mutate_lifecycle_and_reference_v2216():
     snap['common_bundle_reference_rules']=copy.deepcopy(ref.get('common_bundle_reference_rules') or {})
     snap['validator_identities']=copy.deepcopy(ref.get('validator_identities') or [])
     snap['audit_type_identities']=copy.deepcopy(ref.get('audit_type_identities') or [])
+    assets=sem.get('mandatory_regression_assets') or []
+    target=next((x for x in assets if str(x.get('path') or '').endswith('test_v2_1_13_stage_execution_invariants.py')),None)
+    if not isinstance(target,dict):
+        raise RuntimeError('semantic baseline Stage invariant regression asset missing')
+    target['expected_total']=32
+    target['expected_passed']=32
     sem['governance_revision']=NEW_SOURCE_REV
     sem['content_hash']=hobj(sem)
     dump(sp,sem)
