@@ -4508,6 +4508,1375 @@ P	Design Closure Boundary 這三份補齊文件只完成設計層閉環；GitHub
 P	G. Construction Handoff Rule
 P	施工 AI MUST resolve each UI control through this exact order: Page UID → Section/Region → Control UID → Trigger/Operation or Action UID → Gate → Permission → Input/Payload → Method/Path or shared Runtime Operation → Persistence/Provider Owner → Audit/Event → Success/Failure/Recovery → Next Page/Handoff. UI_ONLY/READ_ONLY controls MUST NOT create a write API. System-only operations MUST NOT cause a new visible button unless this closure/source explicitly materializes that control.
 P	When a provider/platform/environment value is runtime-specific, the exact binding is the registered Profile/Policy/Environment key named in this annex. Missing required value is a deterministic BLOCK; it is not permission to guess.
+P	Unified Page / Control / Action / API / DB / Runtime Construction Matrix
+P	[ACPOS-20260921-UNIFIED-CONTROL-RUNTIME-MATRIX] This matrix is the direct construction lookup. Existing source identifiers are preserved. New Action/Gate/Control identities are created only when exhaustive uploaded-source scan found the semantic control/operation but no exact UID/path. Existing exact Method/Path always wins; otherwise effectful operations use POST /v1/commands/{actionUid} through the Shared Typed Command Runtime. UI/read-only controls explicitly bind to N/A or projection runtime and MUST NOT create writes.
+P	CORE-01 — Unified Construction Bindings
+ROW	Page UID	Region	Control UID	Control Type	Visible When	Enabled/Gate	Trigger	Operation	Action UID	Action UID Status	Permission	Required Payload	API Method/Path	API Basis	Runtime	DB/Provider Owner	Success State	Failure State	UI Feedback/Recovery	Next Page/Handoff	Evidence
+P	Page UID
+P	Region
+P	Control UID
+P	Control Type
+P	Visible When
+P	Enabled/Gate
+P	Trigger
+P	Operation
+P	Action UID
+P	Action UID Status
+P	Permission
+P	Required Payload
+P	API Method/Path
+P	API Basis
+P	Runtime
+P	DB/Provider Owner
+P	Success State
+P	Failure State
+P	UI Feedback/Recovery
+P	Next Page/Handoff
+P	Evidence
+ROW	CORE-01	SEC-03	CORE-01-BTN-ASSISTANT-RECORD	BUTTON	AUTHORIZED_PAGE_CONTEXT	CORE-01-GATE-PAGE	CLICK	UI_LOCAL_STATE	CORE-01-ACT-ASSISTANT-RECORD	EXISTING_ACTION_UID	CORE_USE	CORE-01-ACT-ASSISTANT-RECORD typed schema + source contract fields + actor/scope/target + correlation_id	N/A — UI/READ ONLY	NO_EFFECTFUL_API	UI_LOCAL / READ_ONLY	acpos_core.projects	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
+P	CORE-01
+P	SEC-03
+P	CORE-01-BTN-ASSISTANT-RECORD
+P	BUTTON
+P	AUTHORIZED_PAGE_CONTEXT
+P	CORE-01-GATE-PAGE
+P	CLICK
+P	UI_LOCAL_STATE
+P	CORE-01-ACT-ASSISTANT-RECORD
+P	EXISTING_ACTION_UID
+P	CORE_USE
+P	CORE-01-ACT-ASSISTANT-RECORD typed schema + source contract fields + actor/scope/target + correlation_id
+P	N/A — UI/READ ONLY
+P	NO_EFFECTFUL_API
+P	UI_LOCAL / READ_ONLY
+P	acpos_core.projects
+P	SOURCE_PAGE_STATE_REGISTRY / exact server result
+P	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable
+P	Registered success/error/disabled reason; no fabricated success
+P	SAME_PAGE_CONTEXT
+P	acpos_audit.audit_events + correlation_id + operation/result identity
+ROW	CORE-01	SEC-07	CORE-01-BTN-ATTACHMENT	ICON_BUTTON	AUTHORIZED_PAGE_CONTEXT	CORE-01-GATE-THREAD	CLICK	UI_LOCAL_STATE	CORE-01-ACT-ATTACHMENT	EXISTING_ACTION_UID	CORE_USE	CORE-01-ACT-ATTACHMENT typed schema + source contract fields + actor/scope/target + correlation_id	N/A — UI/READ ONLY	NO_EFFECTFUL_API	UI_LOCAL / READ_ONLY	acpos_core.projects	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
+P	CORE-01
+P	SEC-07
+P	CORE-01-BTN-ATTACHMENT
+P	ICON_BUTTON
+P	AUTHORIZED_PAGE_CONTEXT
+P	CORE-01-GATE-THREAD
+P	CLICK
+P	UI_LOCAL_STATE
+P	CORE-01-ACT-ATTACHMENT
+P	EXISTING_ACTION_UID
+P	CORE_USE
+P	CORE-01-ACT-ATTACHMENT typed schema + source contract fields + actor/scope/target + correlation_id
+P	N/A — UI/READ ONLY
+P	NO_EFFECTFUL_API
+P	UI_LOCAL / READ_ONLY
+P	acpos_core.projects
+P	SOURCE_PAGE_STATE_REGISTRY / exact server result
+P	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable
+P	Registered success/error/disabled reason; no fabricated success
+P	SAME_PAGE_CONTEXT
+P	acpos_audit.audit_events + correlation_id + operation/result identity
+ROW	CORE-01	SEC-08	CORE-01-BTN-BLUEPRINT-APPROVE	BUTTON	AUTHORIZED_PAGE_CONTEXT	CORE-01-GATE-BLUEPRINT-APPROVE	CLICK	approveBlueprint	CORE-01-ACT-BLUEPRINT-APPROVE	EXISTING_ACTION_UID	CORE_BLUEPRINT_APPROVE	CORE-01-ACT-BLUEPRINT-APPROVE typed schema + source contract fields + actor/scope/target + correlation_id + expected_version(if versioned) + idempotency_key	POST /v1/blueprints/{id}/approve	SOURCE:ACPOS_CORE-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx#T18	DOMAIN_COMMAND_RUNTIME	acpos_core.blueprint_versions	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
+P	CORE-01
+P	SEC-08
+P	CORE-01-BTN-BLUEPRINT-APPROVE
+P	BUTTON
+P	AUTHORIZED_PAGE_CONTEXT
+P	CORE-01-GATE-BLUEPRINT-APPROVE
+P	CLICK
+P	approveBlueprint
+P	CORE-01-ACT-BLUEPRINT-APPROVE
+P	EXISTING_ACTION_UID
+P	CORE_BLUEPRINT_APPROVE
+P	CORE-01-ACT-BLUEPRINT-APPROVE typed schema + source contract fields + actor/scope/target + correlation_id + expected_version(if versioned) + idempotency_key
+P	POST /v1/blueprints/{id}/approve
+P	SOURCE:ACPOS_CORE-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx#T18
+P	DOMAIN_COMMAND_RUNTIME
+P	acpos_core.blueprint_versions
+P	SOURCE_PAGE_STATE_REGISTRY / exact server result
+P	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable
+P	Registered success/error/disabled reason; no fabricated success
+P	SAME_PAGE_CONTEXT
+P	acpos_audit.audit_events + correlation_id + operation/result identity
+ROW	CORE-01	SEC-08	CORE-01-BTN-BLUEPRINT-CREATE	BUTTON	AUTHORIZED_PAGE_CONTEXT	CORE-01-GATE-BLUEPRINT-CREATE	CLICK	createBlueprint	CORE-01-ACT-BLUEPRINT-CREATE	EXISTING_ACTION_UID	CORE_BLUEPRINT_WRITE	CORE-01-ACT-BLUEPRINT-CREATE typed schema + source contract fields + actor/scope/target + correlation_id + expected_version(if versioned) + idempotency_key	POST /v1/topics/{id}/blueprints	SOURCE:ACPOS_CORE-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx#T18	DOMAIN_COMMAND_RUNTIME	acpos_core.blueprint_versions	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
+P	CORE-01
+P	SEC-08
+P	CORE-01-BTN-BLUEPRINT-CREATE
+P	BUTTON
+P	AUTHORIZED_PAGE_CONTEXT
+P	CORE-01-GATE-BLUEPRINT-CREATE
+P	CLICK
+P	createBlueprint
+P	CORE-01-ACT-BLUEPRINT-CREATE
+P	EXISTING_ACTION_UID
+P	CORE_BLUEPRINT_WRITE
+P	CORE-01-ACT-BLUEPRINT-CREATE typed schema + source contract fields + actor/scope/target + correlation_id + expected_version(if versioned) + idempotency_key
+P	POST /v1/topics/{id}/blueprints
+P	SOURCE:ACPOS_CORE-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx#T18
+P	DOMAIN_COMMAND_RUNTIME
+P	acpos_core.blueprint_versions
+P	SOURCE_PAGE_STATE_REGISTRY / exact server result
+P	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable
+P	Registered success/error/disabled reason; no fabricated success
+P	SAME_PAGE_CONTEXT
+P	acpos_audit.audit_events + correlation_id + operation/result identity
+ROW	CORE-01	SEC-08	CORE-01-BTN-BLUEPRINT-VALIDATE	BUTTON	AUTHORIZED_PAGE_CONTEXT	CORE-01-GATE-BLUEPRINT-VALIDATE	CLICK	validateBlueprint	CORE-01-ACT-BLUEPRINT-VALIDATE	EXISTING_ACTION_UID	CORE_BLUEPRINT_REVIEW	CORE-01-ACT-BLUEPRINT-VALIDATE typed schema + source contract fields + actor/scope/target + correlation_id + expected_version(if versioned) + idempotency_key	POST /v1/blueprints/{id}/validate	SOURCE:ACPOS_CORE-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx#T18	DOMAIN_COMMAND_RUNTIME	acpos_core.blueprint_versions	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
+P	CORE-01
+P	SEC-08
+P	CORE-01-BTN-BLUEPRINT-VALIDATE
+P	BUTTON
+P	AUTHORIZED_PAGE_CONTEXT
+P	CORE-01-GATE-BLUEPRINT-VALIDATE
+P	CLICK
+P	validateBlueprint
+P	CORE-01-ACT-BLUEPRINT-VALIDATE
+P	EXISTING_ACTION_UID
+P	CORE_BLUEPRINT_REVIEW
+P	CORE-01-ACT-BLUEPRINT-VALIDATE typed schema + source contract fields + actor/scope/target + correlation_id + expected_version(if versioned) + idempotency_key
+P	POST /v1/blueprints/{id}/validate
+P	SOURCE:ACPOS_CORE-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx#T18
+P	DOMAIN_COMMAND_RUNTIME
+P	acpos_core.blueprint_versions
+P	SOURCE_PAGE_STATE_REGISTRY / exact server result
+P	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable
+P	Registered success/error/disabled reason; no fabricated success
+P	SAME_PAGE_CONTEXT
+P	acpos_audit.audit_events + correlation_id + operation/result identity
+ROW	CORE-01	SEC-10	CORE-01-BTN-CANDIDATE-COMPARE	BUTTON	AUTHORIZED_PAGE_CONTEXT	CORE-01-GATE-CANDIDATE-DECIDE	CLICK	compareCandidates	CORE-01-ACT-CANDIDATE-COMPARE	EXISTING_ACTION_UID	CORE_USE	CORE-01-ACT-CANDIDATE-COMPARE typed schema + source contract fields + actor/scope/target + correlation_id	GET /v1/candidates/compare	SOURCE:ACPOS_CORE-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx#T18	READ_PROJECTION_RUNTIME	acpos_system.change_candidates	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
+P	CORE-01
+P	SEC-10
+P	CORE-01-BTN-CANDIDATE-COMPARE
+P	BUTTON
+P	AUTHORIZED_PAGE_CONTEXT
+P	CORE-01-GATE-CANDIDATE-DECIDE
+P	CLICK
+P	compareCandidates
+P	CORE-01-ACT-CANDIDATE-COMPARE
+P	EXISTING_ACTION_UID
+P	CORE_USE
+P	CORE-01-ACT-CANDIDATE-COMPARE typed schema + source contract fields + actor/scope/target + correlation_id
+P	GET /v1/candidates/compare
+P	SOURCE:ACPOS_CORE-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx#T18
+P	READ_PROJECTION_RUNTIME
+P	acpos_system.change_candidates
+P	SOURCE_PAGE_STATE_REGISTRY / exact server result
+P	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable
+P	Registered success/error/disabled reason; no fabricated success
+P	SAME_PAGE_CONTEXT
+P	acpos_audit.audit_events + correlation_id + operation/result identity
+ROW	CORE-01	SEC-05	CORE-01-BTN-CANDIDATE-CONFIRM	PRIMARY_BUTTON	AUTHORIZED_PAGE_CONTEXT	CORE-01-GATE-CANDIDATE-DECIDE	CLICK	decideCandidate	CORE-01-ACT-CANDIDATE-ACCEPT	EXISTING_ACTION_UID	CORE_CANDIDATE_DECIDE	CORE-01-ACT-CANDIDATE-ACCEPT typed schema + source contract fields + actor/scope/target + correlation_id + expected_version(if versioned) + idempotency_key	POST /v1/candidates/{id}/decision	SOURCE:ACPOS_CORE-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx#T18	DOMAIN_COMMAND_RUNTIME	acpos_system.change_candidates	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
+P	CORE-01
+P	SEC-05
+P	CORE-01-BTN-CANDIDATE-CONFIRM
+P	PRIMARY_BUTTON
+P	AUTHORIZED_PAGE_CONTEXT
+P	CORE-01-GATE-CANDIDATE-DECIDE
+P	CLICK
+P	decideCandidate
+P	CORE-01-ACT-CANDIDATE-ACCEPT
+P	EXISTING_ACTION_UID
+P	CORE_CANDIDATE_DECIDE
+P	CORE-01-ACT-CANDIDATE-ACCEPT typed schema + source contract fields + actor/scope/target + correlation_id + expected_version(if versioned) + idempotency_key
+P	POST /v1/candidates/{id}/decision
+P	SOURCE:ACPOS_CORE-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx#T18
+P	DOMAIN_COMMAND_RUNTIME
+P	acpos_system.change_candidates
+P	SOURCE_PAGE_STATE_REGISTRY / exact server result
+P	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable
+P	Registered success/error/disabled reason; no fabricated success
+P	SAME_PAGE_CONTEXT
+P	acpos_audit.audit_events + correlation_id + operation/result identity
+ROW	CORE-01	SEC-05	CORE-01-BTN-CANDIDATE-CREATE	PRIMARY_BUTTON	AUTHORIZED_PAGE_CONTEXT	CORE-01-GATE-CANDIDATE-CREATE	CLICK	createCandidate	CORE-01-ACT-CANDIDATE-CREATE	EXISTING_ACTION_UID	CORE_CANDIDATE_CREATE	CORE-01-ACT-CANDIDATE-CREATE typed schema + source contract fields + actor/scope/target + correlation_id + expected_version(if versioned) + idempotency_key	POST /v1/candidates	SOURCE:ACPOS_CORE-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx#T18	DOMAIN_COMMAND_RUNTIME	acpos_system.change_candidates	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
+P	CORE-01
+P	SEC-05
+P	CORE-01-BTN-CANDIDATE-CREATE
+P	PRIMARY_BUTTON
+P	AUTHORIZED_PAGE_CONTEXT
+P	CORE-01-GATE-CANDIDATE-CREATE
+P	CLICK
+P	createCandidate
+P	CORE-01-ACT-CANDIDATE-CREATE
+P	EXISTING_ACTION_UID
+P	CORE_CANDIDATE_CREATE
+P	CORE-01-ACT-CANDIDATE-CREATE typed schema + source contract fields + actor/scope/target + correlation_id + expected_version(if versioned) + idempotency_key
+P	POST /v1/candidates
+P	SOURCE:ACPOS_CORE-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx#T18
+P	DOMAIN_COMMAND_RUNTIME
+P	acpos_system.change_candidates
+P	SOURCE_PAGE_STATE_REGISTRY / exact server result
+P	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable
+P	Registered success/error/disabled reason; no fabricated success
+P	SAME_PAGE_CONTEXT
+P	acpos_audit.audit_events + correlation_id + operation/result identity
+ROW	CORE-01	SEC-09	CORE-01-BTN-CANONICAL-SCRIPT	BUTTON	AUTHORIZED_PAGE_CONTEXT	CORE-01-GATE-CANONICAL-SCRIPT	CLICK	getCanonicalScript	CORE-01-ACT-CANONICAL-SCRIPT-VIEW	EXISTING_ACTION_UID	CORE_SCRIPT_READ	CORE-01-ACT-CANONICAL-SCRIPT-VIEW typed schema + source contract fields + actor/scope/target + correlation_id	GET /v1/topics/{id}/scripts/canonical	SOURCE:ACPOS_CORE-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx#T18	READ_PROJECTION_RUNTIME	acpos_core.canonical_script_versions	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
+P	CORE-01
+P	SEC-09
+P	CORE-01-BTN-CANONICAL-SCRIPT
+P	BUTTON
+P	AUTHORIZED_PAGE_CONTEXT
+P	CORE-01-GATE-CANONICAL-SCRIPT
+P	CLICK
+P	getCanonicalScript
+P	CORE-01-ACT-CANONICAL-SCRIPT-VIEW
+P	EXISTING_ACTION_UID
+P	CORE_SCRIPT_READ
+P	CORE-01-ACT-CANONICAL-SCRIPT-VIEW typed schema + source contract fields + actor/scope/target + correlation_id
+P	GET /v1/topics/{id}/scripts/canonical
+P	SOURCE:ACPOS_CORE-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx#T18
+P	READ_PROJECTION_RUNTIME
+P	acpos_core.canonical_script_versions
+P	SOURCE_PAGE_STATE_REGISTRY / exact server result
+P	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable
+P	Registered success/error/disabled reason; no fabricated success
+P	SAME_PAGE_CONTEXT
+P	acpos_audit.audit_events + correlation_id + operation/result identity
+ROW	CORE-01	SEC-08	CORE-01-BTN-CHILD-LOCK	BUTTON	AUTHORIZED_PAGE_CONTEXT	CORE-01-GATE-CHILD-LOCK	CLICK	requestChildLock	CORE-01-ACT-CHILD-LOCK-REQUEST	EXISTING_ACTION_UID	CORE_LOCK_REQUEST	CORE-01-ACT-CHILD-LOCK-REQUEST typed schema + source contract fields + actor/scope/target + correlation_id + expected_version(if versioned) + idempotency_key	POST /v1/locks/child-requests	SOURCE:ACPOS_CORE-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx#T18	DOMAIN_COMMAND_RUNTIME	acpos_core.projects	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
+P	CORE-01
+P	SEC-08
+P	CORE-01-BTN-CHILD-LOCK
+P	BUTTON
+P	AUTHORIZED_PAGE_CONTEXT
+P	CORE-01-GATE-CHILD-LOCK
+P	CLICK
+P	requestChildLock
+P	CORE-01-ACT-CHILD-LOCK-REQUEST
+P	EXISTING_ACTION_UID
+P	CORE_LOCK_REQUEST
+P	CORE-01-ACT-CHILD-LOCK-REQUEST typed schema + source contract fields + actor/scope/target + correlation_id + expected_version(if versioned) + idempotency_key
+P	POST /v1/locks/child-requests
+P	SOURCE:ACPOS_CORE-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx#T18
+P	DOMAIN_COMMAND_RUNTIME
+P	acpos_core.projects
+P	SOURCE_PAGE_STATE_REGISTRY / exact server result
+P	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable
+P	Registered success/error/disabled reason; no fabricated success
+P	SAME_PAGE_CONTEXT
+P	acpos_audit.audit_events + correlation_id + operation/result identity
+ROW	CORE-01	SEC-08	CORE-01-BTN-CORE-REVIEW	BUTTON	AUTHORIZED_PAGE_CONTEXT	CORE-01-GATE-CORE-REVIEW	CLICK	submitCoreReview	CORE-01-ACT-CORE-REVIEW-SUBMIT	EXISTING_ACTION_UID	CORE_PROJECT_WRITE	CORE-01-ACT-CORE-REVIEW-SUBMIT typed schema + source contract fields + actor/scope/target + correlation_id + expected_version(if versioned) + idempotency_key	POST /v1/state-commands/projectversion/submitcorereview	SOURCE:ACPOS_CORE-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx#T18	DOMAIN_COMMAND_RUNTIME	acpos_core.projects	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
+P	CORE-01
+P	SEC-08
+P	CORE-01-BTN-CORE-REVIEW
+P	BUTTON
+P	AUTHORIZED_PAGE_CONTEXT
+P	CORE-01-GATE-CORE-REVIEW
+P	CLICK
+P	submitCoreReview
+P	CORE-01-ACT-CORE-REVIEW-SUBMIT
+P	EXISTING_ACTION_UID
+P	CORE_PROJECT_WRITE
+P	CORE-01-ACT-CORE-REVIEW-SUBMIT typed schema + source contract fields + actor/scope/target + correlation_id + expected_version(if versioned) + idempotency_key
+P	POST /v1/state-commands/projectversion/submitcorereview
+P	SOURCE:ACPOS_CORE-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx#T18
+P	DOMAIN_COMMAND_RUNTIME
+P	acpos_core.projects
+P	SOURCE_PAGE_STATE_REGISTRY / exact server result
+P	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable
+P	Registered success/error/disabled reason; no fabricated success
+P	SAME_PAGE_CONTEXT
+P	acpos_audit.audit_events + correlation_id + operation/result identity
+ROW	CORE-01	SEC-08	CORE-01-BTN-DNA-LOCK	BUTTON	AUTHORIZED_PAGE_CONTEXT	CORE-01-GATE-DNA-LOCK	CLICK	requestDNALock	CORE-01-ACT-DNA-LOCK-REQUEST	EXISTING_ACTION_UID	CORE_DNA_LOCK	CORE-01-ACT-DNA-LOCK-REQUEST typed schema + source contract fields + actor/scope/target + correlation_id + expected_version(if versioned) + idempotency_key	POST /v1/state-commands/dnaversion/requestdnalock	SOURCE:ACPOS_CORE-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx#T18	DOMAIN_COMMAND_RUNTIME	acpos_core.dna_versions	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
+P	CORE-01
+P	SEC-08
+P	CORE-01-BTN-DNA-LOCK
+P	BUTTON
+P	AUTHORIZED_PAGE_CONTEXT
+P	CORE-01-GATE-DNA-LOCK
+P	CLICK
+P	requestDNALock
+P	CORE-01-ACT-DNA-LOCK-REQUEST
+P	EXISTING_ACTION_UID
+P	CORE_DNA_LOCK
+P	CORE-01-ACT-DNA-LOCK-REQUEST typed schema + source contract fields + actor/scope/target + correlation_id + expected_version(if versioned) + idempotency_key
+P	POST /v1/state-commands/dnaversion/requestdnalock
+P	SOURCE:ACPOS_CORE-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx#T18
+P	DOMAIN_COMMAND_RUNTIME
+P	acpos_core.dna_versions
+P	SOURCE_PAGE_STATE_REGISTRY / exact server result
+P	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable
+P	Registered success/error/disabled reason; no fabricated success
+P	SAME_PAGE_CONTEXT
+P	acpos_audit.audit_events + correlation_id + operation/result identity
+ROW	CORE-01	SEC-03	CORE-01-BTN-MULTI-AI	SEGMENT_BUTTON	AUTHORIZED_PAGE_CONTEXT	CORE-01-GATE-MULTI-AI	CLICK	UI_LOCAL_STATE	CORE-01-ACT-AI-MODE-MULTI	EXISTING_ACTION_UID	CORE_USE	CORE-01-ACT-AI-MODE-MULTI typed schema + source contract fields + actor/scope/target + correlation_id	N/A — UI/READ ONLY	NO_EFFECTFUL_API	UI_LOCAL / READ_ONLY	acpos_core.projects	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
+P	CORE-01
+P	SEC-03
+P	CORE-01-BTN-MULTI-AI
+P	SEGMENT_BUTTON
+P	AUTHORIZED_PAGE_CONTEXT
+P	CORE-01-GATE-MULTI-AI
+P	CLICK
+P	UI_LOCAL_STATE
+P	CORE-01-ACT-AI-MODE-MULTI
+P	EXISTING_ACTION_UID
+P	CORE_USE
+P	CORE-01-ACT-AI-MODE-MULTI typed schema + source contract fields + actor/scope/target + correlation_id
+P	N/A — UI/READ ONLY
+P	NO_EFFECTFUL_API
+P	UI_LOCAL / READ_ONLY
+P	acpos_core.projects
+P	SOURCE_PAGE_STATE_REGISTRY / exact server result
+P	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable
+P	Registered success/error/disabled reason; no fabricated success
+P	SAME_PAGE_CONTEXT
+P	acpos_audit.audit_events + correlation_id + operation/result identity
+ROW	CORE-01	SEC-02	CORE-01-BTN-NEW-THREAD	BUTTON	AUTHORIZED_PAGE_CONTEXT	CORE-01-GATE-THREAD	CLICK	createConversationThread	CORE-01-ACT-THREAD-CREATE	EXISTING_ACTION_UID	CORE_CONVERSATION	CORE-01-ACT-THREAD-CREATE typed schema + source contract fields + actor/scope/target + correlation_id + expected_version(if versioned) + idempotency_key	POST /v1/projects/{projectId}/conversations	SOURCE:ACPOS_CORE-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx#T18	SHARED_CONVERSATION_CORE	acpos_conversation.messages	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
+P	CORE-01
+P	SEC-02
+P	CORE-01-BTN-NEW-THREAD
+P	BUTTON
+P	AUTHORIZED_PAGE_CONTEXT
+P	CORE-01-GATE-THREAD
+P	CLICK
+P	createConversationThread
+P	CORE-01-ACT-THREAD-CREATE
+P	EXISTING_ACTION_UID
+P	CORE_CONVERSATION
+P	CORE-01-ACT-THREAD-CREATE typed schema + source contract fields + actor/scope/target + correlation_id + expected_version(if versioned) + idempotency_key
+P	POST /v1/projects/{projectId}/conversations
+P	SOURCE:ACPOS_CORE-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx#T18
+P	SHARED_CONVERSATION_CORE
+P	acpos_conversation.messages
+P	SOURCE_PAGE_STATE_REGISTRY / exact server result
+P	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable
+P	Registered success/error/disabled reason; no fabricated success
+P	SAME_PAGE_CONTEXT
+P	acpos_audit.audit_events + correlation_id + operation/result identity
+ROW	CORE-01	SEC-08	CORE-01-BTN-PROJECT-CONFIRM	BUTTON	AUTHORIZED_PAGE_CONTEXT	CORE-01-GATE-PROJECT-CONFIRM	CLICK	confirmProjectDraft	CORE-01-ACT-PROJECT-CONFIRM	EXISTING_ACTION_UID	CORE_PROJECT_CONFIRM	CORE-01-ACT-PROJECT-CONFIRM typed schema + source contract fields + actor/scope/target + correlation_id + expected_version(if versioned) + idempotency_key	POST /v1/projects/drafts/{id}/confirm	SOURCE:ACPOS_CORE-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx#T18	DOMAIN_COMMAND_RUNTIME	acpos_core.projects	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
+P	CORE-01
+P	SEC-08
+P	CORE-01-BTN-PROJECT-CONFIRM
+P	BUTTON
+P	AUTHORIZED_PAGE_CONTEXT
+P	CORE-01-GATE-PROJECT-CONFIRM
+P	CLICK
+P	confirmProjectDraft
+P	CORE-01-ACT-PROJECT-CONFIRM
+P	EXISTING_ACTION_UID
+P	CORE_PROJECT_CONFIRM
+P	CORE-01-ACT-PROJECT-CONFIRM typed schema + source contract fields + actor/scope/target + correlation_id + expected_version(if versioned) + idempotency_key
+P	POST /v1/projects/drafts/{id}/confirm
+P	SOURCE:ACPOS_CORE-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx#T18
+P	DOMAIN_COMMAND_RUNTIME
+P	acpos_core.projects
+P	SOURCE_PAGE_STATE_REGISTRY / exact server result
+P	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable
+P	Registered success/error/disabled reason; no fabricated success
+P	SAME_PAGE_CONTEXT
+P	acpos_audit.audit_events + correlation_id + operation/result identity
+ROW	CORE-01	SEC-01	CORE-01-BTN-PROJECT-CREATE	PRIMARY_BUTTON	AUTHORIZED_PAGE_CONTEXT	CORE-01-GATE-PROJECT-DRAFT	CLICK	createProjectDraft	CORE-01-ACT-PROJECT-CREATE	EXISTING_ACTION_UID	CORE_PROJECT_WRITE	CORE-01-ACT-PROJECT-CREATE typed schema + source contract fields + actor/scope/target + correlation_id + expected_version(if versioned) + idempotency_key	POST /v1/projects/drafts	SOURCE:ACPOS_CORE-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx#T18	DOMAIN_COMMAND_RUNTIME	acpos_core.projects	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
+P	CORE-01
+P	SEC-01
+P	CORE-01-BTN-PROJECT-CREATE
+P	PRIMARY_BUTTON
+P	AUTHORIZED_PAGE_CONTEXT
+P	CORE-01-GATE-PROJECT-DRAFT
+P	CLICK
+P	createProjectDraft
+P	CORE-01-ACT-PROJECT-CREATE
+P	EXISTING_ACTION_UID
+P	CORE_PROJECT_WRITE
+P	CORE-01-ACT-PROJECT-CREATE typed schema + source contract fields + actor/scope/target + correlation_id + expected_version(if versioned) + idempotency_key
+P	POST /v1/projects/drafts
+P	SOURCE:ACPOS_CORE-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx#T18
+P	DOMAIN_COMMAND_RUNTIME
+P	acpos_core.projects
+P	SOURCE_PAGE_STATE_REGISTRY / exact server result
+P	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable
+P	Registered success/error/disabled reason; no fabricated success
+P	SAME_PAGE_CONTEXT
+P	acpos_audit.audit_events + correlation_id + operation/result identity
+ROW	CORE-01	SEC-08	CORE-01-BTN-PROJECT-LOCK	BUTTON	AUTHORIZED_PAGE_CONTEXT	CORE-01-GATE-PROJECT-LOCK-READY	CLICK	requestMotherLock	CORE-01-ACT-MOTHER-LOCK-REQUEST	EXISTING_ACTION_UID	CORE_LOCK_REQUEST	CORE-01-ACT-MOTHER-LOCK-REQUEST typed schema + source contract fields + actor/scope/target + correlation_id + expected_version(if versioned) + idempotency_key	POST /v1/locks/mother-requests	SOURCE:ACPOS_CORE-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx#T18	DOMAIN_COMMAND_RUNTIME	acpos_core.projects	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
+P	CORE-01
+P	SEC-08
+P	CORE-01-BTN-PROJECT-LOCK
+P	BUTTON
+P	AUTHORIZED_PAGE_CONTEXT
+P	CORE-01-GATE-PROJECT-LOCK-READY
+P	CLICK
+P	requestMotherLock
+P	CORE-01-ACT-MOTHER-LOCK-REQUEST
+P	EXISTING_ACTION_UID
+P	CORE_LOCK_REQUEST
+P	CORE-01-ACT-MOTHER-LOCK-REQUEST typed schema + source contract fields + actor/scope/target + correlation_id + expected_version(if versioned) + idempotency_key
+P	POST /v1/locks/mother-requests
+P	SOURCE:ACPOS_CORE-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx#T18
+P	DOMAIN_COMMAND_RUNTIME
+P	acpos_core.projects
+P	SOURCE_PAGE_STATE_REGISTRY / exact server result
+P	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable
+P	Registered success/error/disabled reason; no fabricated success
+P	SAME_PAGE_CONTEXT
+P	acpos_audit.audit_events + correlation_id + operation/result identity
+ROW	CORE-01	SEC-08	CORE-01-BTN-PROJECT-VALIDATE	BUTTON	AUTHORIZED_PAGE_CONTEXT	CORE-01-GATE-PROJECT-DRAFT	CLICK	validateProjectDraft	CORE-01-ACT-PROJECT-VALIDATE	EXISTING_ACTION_UID	CORE_PROJECT_WRITE	CORE-01-ACT-PROJECT-VALIDATE typed schema + source contract fields + actor/scope/target + correlation_id + expected_version(if versioned) + idempotency_key	POST /v1/projects/drafts/{projectVersionId}/validate	SOURCE:ACPOS_CORE-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx#T18	DOMAIN_COMMAND_RUNTIME	acpos_core.projects	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
+P	CORE-01
+P	SEC-08
+P	CORE-01-BTN-PROJECT-VALIDATE
+P	BUTTON
+P	AUTHORIZED_PAGE_CONTEXT
+P	CORE-01-GATE-PROJECT-DRAFT
+P	CLICK
+P	validateProjectDraft
+P	CORE-01-ACT-PROJECT-VALIDATE
+P	EXISTING_ACTION_UID
+P	CORE_PROJECT_WRITE
+P	CORE-01-ACT-PROJECT-VALIDATE typed schema + source contract fields + actor/scope/target + correlation_id + expected_version(if versioned) + idempotency_key
+P	POST /v1/projects/drafts/{projectVersionId}/validate
+P	SOURCE:ACPOS_CORE-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx#T18
+P	DOMAIN_COMMAND_RUNTIME
+P	acpos_core.projects
+P	SOURCE_PAGE_STATE_REGISTRY / exact server result
+P	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable
+P	Registered success/error/disabled reason; no fabricated success
+P	SAME_PAGE_CONTEXT
+P	acpos_audit.audit_events + correlation_id + operation/result identity
+ROW	CORE-01	SEC-07	CORE-01-BTN-REFERENCE	ICON_BUTTON	AUTHORIZED_PAGE_CONTEXT	CORE-01-GATE-THREAD	CLICK	UI_LOCAL_STATE	CORE-01-ACT-REFERENCE-ATTACH	EXISTING_ACTION_UID	CORE_USE	CORE-01-ACT-REFERENCE-ATTACH typed schema + source contract fields + actor/scope/target + correlation_id	N/A — UI/READ ONLY	NO_EFFECTFUL_API	UI_LOCAL / READ_ONLY	acpos_core.projects	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
+P	CORE-01
+P	SEC-07
+P	CORE-01-BTN-REFERENCE
+P	ICON_BUTTON
+P	AUTHORIZED_PAGE_CONTEXT
+P	CORE-01-GATE-THREAD
+P	CLICK
+P	UI_LOCAL_STATE
+P	CORE-01-ACT-REFERENCE-ATTACH
+P	EXISTING_ACTION_UID
+P	CORE_USE
+P	CORE-01-ACT-REFERENCE-ATTACH typed schema + source contract fields + actor/scope/target + correlation_id
+P	N/A — UI/READ ONLY
+P	NO_EFFECTFUL_API
+P	UI_LOCAL / READ_ONLY
+P	acpos_core.projects
+P	SOURCE_PAGE_STATE_REGISTRY / exact server result
+P	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable
+P	Registered success/error/disabled reason; no fabricated success
+P	SAME_PAGE_CONTEXT
+P	acpos_audit.audit_events + correlation_id + operation/result identity
+ROW	CORE-01	SEC-05	CORE-01-BTN-RETURN-MODIFY	SECONDARY_BUTTON	AUTHORIZED_PAGE_CONTEXT	CORE-01-GATE-CANDIDATE-DECIDE	CLICK	decideCandidate	CORE-01-ACT-CANDIDATE-RETURN	EXISTING_ACTION_UID	CORE_CANDIDATE_DECIDE	CORE-01-ACT-CANDIDATE-RETURN typed schema + source contract fields + actor/scope/target + correlation_id + expected_version(if versioned) + idempotency_key	POST /v1/candidates/{id}/decision	SOURCE:ACPOS_CORE-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx#T18	DOMAIN_COMMAND_RUNTIME	acpos_system.change_candidates	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
+P	CORE-01
+P	SEC-05
+P	CORE-01-BTN-RETURN-MODIFY
+P	SECONDARY_BUTTON
+P	AUTHORIZED_PAGE_CONTEXT
+P	CORE-01-GATE-CANDIDATE-DECIDE
+P	CLICK
+P	decideCandidate
+P	CORE-01-ACT-CANDIDATE-RETURN
+P	EXISTING_ACTION_UID
+P	CORE_CANDIDATE_DECIDE
+P	CORE-01-ACT-CANDIDATE-RETURN typed schema + source contract fields + actor/scope/target + correlation_id + expected_version(if versioned) + idempotency_key
+P	POST /v1/candidates/{id}/decision
+P	SOURCE:ACPOS_CORE-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx#T18
+P	DOMAIN_COMMAND_RUNTIME
+P	acpos_system.change_candidates
+P	SOURCE_PAGE_STATE_REGISTRY / exact server result
+P	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable
+P	Registered success/error/disabled reason; no fabricated success
+P	SAME_PAGE_CONTEXT
+P	acpos_audit.audit_events + correlation_id + operation/result identity
+ROW	CORE-01	SEC-07	CORE-01-BTN-SEND	PRIMARY_BUTTON	AUTHORIZED_PAGE_CONTEXT	CORE-01-GATE-MESSAGE	CLICK	sendConversationMessage	CORE-01-ACT-SEND	EXISTING_ACTION_UID	CORE_CONVERSATION	CORE-01-ACT-SEND typed schema + source contract fields + actor/scope/target + correlation_id + expected_version(if versioned) + idempotency_key	POST /v1/conversations/{conversationId}/messages	SOURCE:ACPOS_CORE-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx#T18	SHARED_CONVERSATION_CORE	acpos_conversation.messages	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
+P	CORE-01
+P	SEC-07
+P	CORE-01-BTN-SEND
+P	PRIMARY_BUTTON
+P	AUTHORIZED_PAGE_CONTEXT
+P	CORE-01-GATE-MESSAGE
+P	CLICK
+P	sendConversationMessage
+P	CORE-01-ACT-SEND
+P	EXISTING_ACTION_UID
+P	CORE_CONVERSATION
+P	CORE-01-ACT-SEND typed schema + source contract fields + actor/scope/target + correlation_id + expected_version(if versioned) + idempotency_key
+P	POST /v1/conversations/{conversationId}/messages
+P	SOURCE:ACPOS_CORE-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx#T18
+P	SHARED_CONVERSATION_CORE
+P	acpos_conversation.messages
+P	SOURCE_PAGE_STATE_REGISTRY / exact server result
+P	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable
+P	Registered success/error/disabled reason; no fabricated success
+P	SAME_PAGE_CONTEXT
+P	acpos_audit.audit_events + correlation_id + operation/result identity
+ROW	CORE-01	SEC-03	CORE-01-BTN-SINGLE-AI	SEGMENT_BUTTON	AUTHORIZED_PAGE_CONTEXT	CORE-01-GATE-WORK-ITEM	CLICK	UI_LOCAL_STATE	CORE-01-ACT-AI-MODE-SINGLE	EXISTING_ACTION_UID	CORE_USE	CORE-01-ACT-AI-MODE-SINGLE typed schema + source contract fields + actor/scope/target + correlation_id	N/A — UI/READ ONLY	NO_EFFECTFUL_API	UI_LOCAL / READ_ONLY	acpos_core.projects	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
+P	CORE-01
+P	SEC-03
+P	CORE-01-BTN-SINGLE-AI
+P	SEGMENT_BUTTON
+P	AUTHORIZED_PAGE_CONTEXT
+P	CORE-01-GATE-WORK-ITEM
+P	CLICK
+P	UI_LOCAL_STATE
+P	CORE-01-ACT-AI-MODE-SINGLE
+P	EXISTING_ACTION_UID
+P	CORE_USE
+P	CORE-01-ACT-AI-MODE-SINGLE typed schema + source contract fields + actor/scope/target + correlation_id
+P	N/A — UI/READ ONLY
+P	NO_EFFECTFUL_API
+P	UI_LOCAL / READ_ONLY
+P	acpos_core.projects
+P	SOURCE_PAGE_STATE_REGISTRY / exact server result
+P	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable
+P	Registered success/error/disabled reason; no fabricated success
+P	SAME_PAGE_CONTEXT
+P	acpos_audit.audit_events + correlation_id + operation/result identity
+ROW	CORE-01	SEC-08	CORE-01-BTN-STORY-CANDIDATE	BUTTON	AUTHORIZED_PAGE_CONTEXT	CORE-01-GATE-STORY	CLICK	createStoryCandidateSet	CORE-01-ACT-STORY-CANDIDATE	EXISTING_ACTION_UID	CORE_STORY_WRITE	CORE-01-ACT-STORY-CANDIDATE typed schema + source contract fields + actor/scope/target + correlation_id + expected_version(if versioned) + idempotency_key	POST /v1/projects/{projectId}/story-candidate-sets	SOURCE:ACPOS_CORE-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx#T18	DOMAIN_COMMAND_RUNTIME	acpos_system.change_candidates	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
+P	CORE-01
+P	SEC-08
+P	CORE-01-BTN-STORY-CANDIDATE
+P	BUTTON
+P	AUTHORIZED_PAGE_CONTEXT
+P	CORE-01-GATE-STORY
+P	CLICK
+P	createStoryCandidateSet
+P	CORE-01-ACT-STORY-CANDIDATE
+P	EXISTING_ACTION_UID
+P	CORE_STORY_WRITE
+P	CORE-01-ACT-STORY-CANDIDATE typed schema + source contract fields + actor/scope/target + correlation_id + expected_version(if versioned) + idempotency_key
+P	POST /v1/projects/{projectId}/story-candidate-sets
+P	SOURCE:ACPOS_CORE-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx#T18
+P	DOMAIN_COMMAND_RUNTIME
+P	acpos_system.change_candidates
+P	SOURCE_PAGE_STATE_REGISTRY / exact server result
+P	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable
+P	Registered success/error/disabled reason; no fabricated success
+P	SAME_PAGE_CONTEXT
+P	acpos_audit.audit_events + correlation_id + operation/result identity
+ROW	CORE-01	SEC-01	CORE-01-BTN-TOPIC-CREATE	PRIMARY_BUTTON	AUTHORIZED_PAGE_CONTEXT	CORE-01-GATE-TOPIC-CREATE	CLICK	createTopic	CORE-01-ACT-TOPIC-CREATE	EXISTING_ACTION_UID	CORE_TOPIC_WRITE	CORE-01-ACT-TOPIC-CREATE typed schema + source contract fields + actor/scope/target + correlation_id + expected_version(if versioned) + idempotency_key	POST /v1/projects/{projectId}/topics	SOURCE:ACPOS_CORE-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx#T18	DOMAIN_COMMAND_RUNTIME	acpos_core.projects	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
+P	CORE-01
+P	SEC-01
+P	CORE-01-BTN-TOPIC-CREATE
+P	PRIMARY_BUTTON
+P	AUTHORIZED_PAGE_CONTEXT
+P	CORE-01-GATE-TOPIC-CREATE
+P	CLICK
+P	createTopic
+P	CORE-01-ACT-TOPIC-CREATE
+P	EXISTING_ACTION_UID
+P	CORE_TOPIC_WRITE
+P	CORE-01-ACT-TOPIC-CREATE typed schema + source contract fields + actor/scope/target + correlation_id + expected_version(if versioned) + idempotency_key
+P	POST /v1/projects/{projectId}/topics
+P	SOURCE:ACPOS_CORE-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx#T18
+P	DOMAIN_COMMAND_RUNTIME
+P	acpos_core.projects
+P	SOURCE_PAGE_STATE_REGISTRY / exact server result
+P	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable
+P	Registered success/error/disabled reason; no fabricated success
+P	SAME_PAGE_CONTEXT
+P	acpos_audit.audit_events + correlation_id + operation/result identity
+ROW	CORE-01	SOURCE_REGION	CORE-01-CMP-BLUEPRINT-STATE	SOURCE_CONTROL	AUTHORIZED_PAGE_CONTEXT	CORE-01-GATE-PAGE	CLICK	UI_LOCAL_STATE	CORE-01-ACT-UI-LOCAL-STATE	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION	SOURCE_PAGE_PERMISSION / SERVER_RECHECK	CORE-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id	N/A — UI/READ ONLY	NO_EFFECTFUL_API	UI_LOCAL / READ_ONLY	acpos_core.projects	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
+P	CORE-01
+P	SOURCE_REGION
+P	CORE-01-CMP-BLUEPRINT-STATE
+P	SOURCE_CONTROL
+P	AUTHORIZED_PAGE_CONTEXT
+P	CORE-01-GATE-PAGE
+P	CLICK
+P	UI_LOCAL_STATE
+P	CORE-01-ACT-UI-LOCAL-STATE
+P	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION
+P	SOURCE_PAGE_PERMISSION / SERVER_RECHECK
+P	CORE-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id
+P	N/A — UI/READ ONLY
+P	NO_EFFECTFUL_API
+P	UI_LOCAL / READ_ONLY
+P	acpos_core.projects
+P	SOURCE_PAGE_STATE_REGISTRY / exact server result
+P	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable
+P	Registered success/error/disabled reason; no fabricated success
+P	SAME_PAGE_CONTEXT
+P	acpos_audit.audit_events + correlation_id + operation/result identity
+ROW	CORE-01	SOURCE_REGION	CORE-01-CMP-COMPOSER	SOURCE_CONTROL	AUTHORIZED_PAGE_CONTEXT	CORE-01-GATE-PAGE	CLICK	UI_LOCAL_STATE	CORE-01-ACT-UI-LOCAL-STATE	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION	SOURCE_PAGE_PERMISSION / SERVER_RECHECK	CORE-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id	N/A — UI/READ ONLY	NO_EFFECTFUL_API	UI_LOCAL / READ_ONLY	acpos_core.projects	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
+P	CORE-01
+P	SOURCE_REGION
+P	CORE-01-CMP-COMPOSER
+P	SOURCE_CONTROL
+P	AUTHORIZED_PAGE_CONTEXT
+P	CORE-01-GATE-PAGE
+P	CLICK
+P	UI_LOCAL_STATE
+P	CORE-01-ACT-UI-LOCAL-STATE
+P	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION
+P	SOURCE_PAGE_PERMISSION / SERVER_RECHECK
+P	CORE-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id
+P	N/A — UI/READ ONLY
+P	NO_EFFECTFUL_API
+P	UI_LOCAL / READ_ONLY
+P	acpos_core.projects
+P	SOURCE_PAGE_STATE_REGISTRY / exact server result
+P	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable
+P	Registered success/error/disabled reason; no fabricated success
+P	SAME_PAGE_CONTEXT
+P	acpos_audit.audit_events + correlation_id + operation/result identity
+ROW	CORE-01	SOURCE_REGION	CORE-01-CMP-CONTEXT	SOURCE_CONTROL	AUTHORIZED_PAGE_CONTEXT	CORE-01-GATE-PAGE	CLICK	UI_LOCAL_STATE	CORE-01-ACT-UI-LOCAL-STATE	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION	SOURCE_PAGE_PERMISSION / SERVER_RECHECK	CORE-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id	N/A — UI/READ ONLY	NO_EFFECTFUL_API	UI_LOCAL / READ_ONLY	acpos_core.projects	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
+P	CORE-01
+P	SOURCE_REGION
+P	CORE-01-CMP-CONTEXT
+P	SOURCE_CONTROL
+P	AUTHORIZED_PAGE_CONTEXT
+P	CORE-01-GATE-PAGE
+P	CLICK
+P	UI_LOCAL_STATE
+P	CORE-01-ACT-UI-LOCAL-STATE
+P	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION
+P	SOURCE_PAGE_PERMISSION / SERVER_RECHECK
+P	CORE-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id
+P	N/A — UI/READ ONLY
+P	NO_EFFECTFUL_API
+P	UI_LOCAL / READ_ONLY
+P	acpos_core.projects
+P	SOURCE_PAGE_STATE_REGISTRY / exact server result
+P	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable
+P	Registered success/error/disabled reason; no fabricated success
+P	SAME_PAGE_CONTEXT
+P	acpos_audit.audit_events + correlation_id + operation/result identity
+ROW	CORE-01	SOURCE_REGION	CORE-01-CMP-CONV-HEADER	SOURCE_CONTROL	AUTHORIZED_PAGE_CONTEXT	CORE-01-GATE-PAGE	CLICK	UI_LOCAL_STATE	CORE-01-ACT-UI-LOCAL-STATE	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION	SOURCE_PAGE_PERMISSION / SERVER_RECHECK	CORE-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id	N/A — UI/READ ONLY	NO_EFFECTFUL_API	UI_LOCAL / READ_ONLY	acpos_core.projects	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
+P	CORE-01
+P	SOURCE_REGION
+P	CORE-01-CMP-CONV-HEADER
+P	SOURCE_CONTROL
+P	AUTHORIZED_PAGE_CONTEXT
+P	CORE-01-GATE-PAGE
+P	CLICK
+P	UI_LOCAL_STATE
+P	CORE-01-ACT-UI-LOCAL-STATE
+P	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION
+P	SOURCE_PAGE_PERMISSION / SERVER_RECHECK
+P	CORE-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id
+P	N/A — UI/READ ONLY
+P	NO_EFFECTFUL_API
+P	UI_LOCAL / READ_ONLY
+P	acpos_core.projects
+P	SOURCE_PAGE_STATE_REGISTRY / exact server result
+P	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable
+P	Registered success/error/disabled reason; no fabricated success
+P	SAME_PAGE_CONTEXT
+P	acpos_audit.audit_events + correlation_id + operation/result identity
+ROW	CORE-01	SOURCE_REGION	CORE-01-CMP-DOWNSTREAM	SOURCE_CONTROL	AUTHORIZED_PAGE_CONTEXT	CORE-01-GATE-PAGE	CLICK	UI_LOCAL_STATE	CORE-01-ACT-UI-LOCAL-STATE	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION	SOURCE_PAGE_PERMISSION / SERVER_RECHECK	CORE-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id	N/A — UI/READ ONLY	NO_EFFECTFUL_API	UI_LOCAL / READ_ONLY	acpos_core.projects	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
+P	CORE-01
+P	SOURCE_REGION
+P	CORE-01-CMP-DOWNSTREAM
+P	SOURCE_CONTROL
+P	AUTHORIZED_PAGE_CONTEXT
+P	CORE-01-GATE-PAGE
+P	CLICK
+P	UI_LOCAL_STATE
+P	CORE-01-ACT-UI-LOCAL-STATE
+P	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION
+P	SOURCE_PAGE_PERMISSION / SERVER_RECHECK
+P	CORE-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id
+P	N/A — UI/READ ONLY
+P	NO_EFFECTFUL_API
+P	UI_LOCAL / READ_ONLY
+P	acpos_core.projects
+P	SOURCE_PAGE_STATE_REGISTRY / exact server result
+P	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable
+P	Registered success/error/disabled reason; no fabricated success
+P	SAME_PAGE_CONTEXT
+P	acpos_audit.audit_events + correlation_id + operation/result identity
+ROW	CORE-01	SOURCE_REGION	CORE-01-CMP-EVALUATION	SOURCE_CONTROL	AUTHORIZED_PAGE_CONTEXT	CORE-01-GATE-PAGE	CLICK	UI_LOCAL_STATE	CORE-01-ACT-UI-LOCAL-STATE	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION	SOURCE_PAGE_PERMISSION / SERVER_RECHECK	CORE-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id	N/A — UI/READ ONLY	NO_EFFECTFUL_API	UI_LOCAL / READ_ONLY	acpos_core.projects	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
+P	CORE-01
+P	SOURCE_REGION
+P	CORE-01-CMP-EVALUATION
+P	SOURCE_CONTROL
+P	AUTHORIZED_PAGE_CONTEXT
+P	CORE-01-GATE-PAGE
+P	CLICK
+P	UI_LOCAL_STATE
+P	CORE-01-ACT-UI-LOCAL-STATE
+P	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION
+P	SOURCE_PAGE_PERMISSION / SERVER_RECHECK
+P	CORE-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id
+P	N/A — UI/READ ONLY
+P	NO_EFFECTFUL_API
+P	UI_LOCAL / READ_ONLY
+P	acpos_core.projects
+P	SOURCE_PAGE_STATE_REGISTRY / exact server result
+P	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable
+P	Registered success/error/disabled reason; no fabricated success
+P	SAME_PAGE_CONTEXT
+P	acpos_audit.audit_events + correlation_id + operation/result identity
+ROW	CORE-01	SOURCE_REGION	CORE-01-CMP-HUMAN-DECISION	SOURCE_CONTROL	AUTHORIZED_PAGE_CONTEXT	CORE-01-GATE-PAGE	CLICK	UI_LOCAL_STATE	CORE-01-ACT-UI-LOCAL-STATE	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION	SOURCE_PAGE_PERMISSION / SERVER_RECHECK	CORE-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id	N/A — UI/READ ONLY	NO_EFFECTFUL_API	UI_LOCAL / READ_ONLY	acpos_core.projects	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
+P	CORE-01
+P	SOURCE_REGION
+P	CORE-01-CMP-HUMAN-DECISION
+P	SOURCE_CONTROL
+P	AUTHORIZED_PAGE_CONTEXT
+P	CORE-01-GATE-PAGE
+P	CLICK
+P	UI_LOCAL_STATE
+P	CORE-01-ACT-UI-LOCAL-STATE
+P	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION
+P	SOURCE_PAGE_PERMISSION / SERVER_RECHECK
+P	CORE-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id
+P	N/A — UI/READ ONLY
+P	NO_EFFECTFUL_API
+P	UI_LOCAL / READ_ONLY
+P	acpos_core.projects
+P	SOURCE_PAGE_STATE_REGISTRY / exact server result
+P	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable
+P	Registered success/error/disabled reason; no fabricated success
+P	SAME_PAGE_CONTEXT
+P	acpos_audit.audit_events + correlation_id + operation/result identity
+ROW	CORE-01	SOURCE_REGION	CORE-01-CMP-LOCK-REVIEW	SOURCE_CONTROL	AUTHORIZED_PAGE_CONTEXT	CORE-01-GATE-PAGE	CLICK	UI_LOCAL_STATE	CORE-01-ACT-UI-LOCAL-STATE	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION	SOURCE_PAGE_PERMISSION / SERVER_RECHECK	CORE-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id	N/A — UI/READ ONLY	NO_EFFECTFUL_API	UI_LOCAL / READ_ONLY	acpos_core.projects	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
+P	CORE-01
+P	SOURCE_REGION
+P	CORE-01-CMP-LOCK-REVIEW
+P	SOURCE_CONTROL
+P	AUTHORIZED_PAGE_CONTEXT
+P	CORE-01-GATE-PAGE
+P	CLICK
+P	UI_LOCAL_STATE
+P	CORE-01-ACT-UI-LOCAL-STATE
+P	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION
+P	SOURCE_PAGE_PERMISSION / SERVER_RECHECK
+P	CORE-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id
+P	N/A — UI/READ ONLY
+P	NO_EFFECTFUL_API
+P	UI_LOCAL / READ_ONLY
+P	acpos_core.projects
+P	SOURCE_PAGE_STATE_REGISTRY / exact server result
+P	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable
+P	Registered success/error/disabled reason; no fabricated success
+P	SAME_PAGE_CONTEXT
+P	acpos_audit.audit_events + correlation_id + operation/result identity
+ROW	CORE-01	SOURCE_REGION	CORE-01-CMP-MESSAGE-MENU	SOURCE_CONTROL	AUTHORIZED_PAGE_CONTEXT	CORE-01-GATE-PAGE	CLICK	UI_LOCAL_STATE	CORE-01-ACT-UI-LOCAL-STATE	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION	SOURCE_PAGE_PERMISSION / SERVER_RECHECK	CORE-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id	N/A — UI/READ ONLY	NO_EFFECTFUL_API	UI_LOCAL / READ_ONLY	acpos_core.projects	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
+P	CORE-01
+P	SOURCE_REGION
+P	CORE-01-CMP-MESSAGE-MENU
+P	SOURCE_CONTROL
+P	AUTHORIZED_PAGE_CONTEXT
+P	CORE-01-GATE-PAGE
+P	CLICK
+P	UI_LOCAL_STATE
+P	CORE-01-ACT-UI-LOCAL-STATE
+P	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION
+P	SOURCE_PAGE_PERMISSION / SERVER_RECHECK
+P	CORE-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id
+P	N/A — UI/READ ONLY
+P	NO_EFFECTFUL_API
+P	UI_LOCAL / READ_ONLY
+P	acpos_core.projects
+P	SOURCE_PAGE_STATE_REGISTRY / exact server result
+P	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable
+P	Registered success/error/disabled reason; no fabricated success
+P	SAME_PAGE_CONTEXT
+P	acpos_audit.audit_events + correlation_id + operation/result identity
+ROW	CORE-01	SOURCE_REGION	CORE-01-CMP-MESSAGES	SOURCE_CONTROL	AUTHORIZED_PAGE_CONTEXT	CORE-01-GATE-PAGE	CLICK	UI_LOCAL_STATE	CORE-01-ACT-UI-LOCAL-STATE	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION	SOURCE_PAGE_PERMISSION / SERVER_RECHECK	CORE-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id	N/A — UI/READ ONLY	NO_EFFECTFUL_API	UI_LOCAL / READ_ONLY	acpos_core.projects	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
+P	CORE-01
+P	SOURCE_REGION
+P	CORE-01-CMP-MESSAGES
+P	SOURCE_CONTROL
+P	AUTHORIZED_PAGE_CONTEXT
+P	CORE-01-GATE-PAGE
+P	CLICK
+P	UI_LOCAL_STATE
+P	CORE-01-ACT-UI-LOCAL-STATE
+P	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION
+P	SOURCE_PAGE_PERMISSION / SERVER_RECHECK
+P	CORE-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id
+P	N/A — UI/READ ONLY
+P	NO_EFFECTFUL_API
+P	UI_LOCAL / READ_ONLY
+P	acpos_core.projects
+P	SOURCE_PAGE_STATE_REGISTRY / exact server result
+P	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable
+P	Registered success/error/disabled reason; no fabricated success
+P	SAME_PAGE_CONTEXT
+P	acpos_audit.audit_events + correlation_id + operation/result identity
+ROW	CORE-01	SOURCE_REGION	CORE-01-CMP-NAV	SOURCE_CONTROL	AUTHORIZED_PAGE_CONTEXT	CORE-01-GATE-PAGE	CLICK	UI_LOCAL_STATE	CORE-01-ACT-UI-LOCAL-STATE	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION	SOURCE_PAGE_PERMISSION / SERVER_RECHECK	CORE-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id	N/A — UI/READ ONLY	NO_EFFECTFUL_API	UI_LOCAL / READ_ONLY	acpos_core.projects	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
+P	CORE-01
+P	SOURCE_REGION
+P	CORE-01-CMP-NAV
+P	SOURCE_CONTROL
+P	AUTHORIZED_PAGE_CONTEXT
+P	CORE-01-GATE-PAGE
+P	CLICK
+P	UI_LOCAL_STATE
+P	CORE-01-ACT-UI-LOCAL-STATE
+P	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION
+P	SOURCE_PAGE_PERMISSION / SERVER_RECHECK
+P	CORE-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id
+P	N/A — UI/READ ONLY
+P	NO_EFFECTFUL_API
+P	UI_LOCAL / READ_ONLY
+P	acpos_core.projects
+P	SOURCE_PAGE_STATE_REGISTRY / exact server result
+P	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable
+P	Registered success/error/disabled reason; no fabricated success
+P	SAME_PAGE_CONTEXT
+P	acpos_audit.audit_events + correlation_id + operation/result identity
+ROW	CORE-01	SOURCE_REGION	CORE-01-CMP-PROJECT-STATE	SOURCE_CONTROL	AUTHORIZED_PAGE_CONTEXT	CORE-01-GATE-PAGE	CLICK	UI_LOCAL_STATE	CORE-01-ACT-UI-LOCAL-STATE	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION	SOURCE_PAGE_PERMISSION / SERVER_RECHECK	CORE-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id	N/A — UI/READ ONLY	NO_EFFECTFUL_API	UI_LOCAL / READ_ONLY	acpos_core.projects	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
+P	CORE-01
+P	SOURCE_REGION
+P	CORE-01-CMP-PROJECT-STATE
+P	SOURCE_CONTROL
+P	AUTHORIZED_PAGE_CONTEXT
+P	CORE-01-GATE-PAGE
+P	CLICK
+P	UI_LOCAL_STATE
+P	CORE-01-ACT-UI-LOCAL-STATE
+P	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION
+P	SOURCE_PAGE_PERMISSION / SERVER_RECHECK
+P	CORE-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id
+P	N/A — UI/READ ONLY
+P	NO_EFFECTFUL_API
+P	UI_LOCAL / READ_ONLY
+P	acpos_core.projects
+P	SOURCE_PAGE_STATE_REGISTRY / exact server result
+P	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable
+P	Registered success/error/disabled reason; no fabricated success
+P	SAME_PAGE_CONTEXT
+P	acpos_audit.audit_events + correlation_id + operation/result identity
+ROW	CORE-01	SOURCE_REGION	CORE-01-CMP-RUNTIME	SOURCE_CONTROL	AUTHORIZED_PAGE_CONTEXT	CORE-01-GATE-PAGE	CLICK	UI_LOCAL_STATE	CORE-01-ACT-UI-LOCAL-STATE	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION	SOURCE_PAGE_PERMISSION / SERVER_RECHECK	CORE-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id	N/A — UI/READ ONLY	NO_EFFECTFUL_API	UI_LOCAL / READ_ONLY	acpos_core.projects	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
+P	CORE-01
+P	SOURCE_REGION
+P	CORE-01-CMP-RUNTIME
+P	SOURCE_CONTROL
+P	AUTHORIZED_PAGE_CONTEXT
+P	CORE-01-GATE-PAGE
+P	CLICK
+P	UI_LOCAL_STATE
+P	CORE-01-ACT-UI-LOCAL-STATE
+P	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION
+P	SOURCE_PAGE_PERMISSION / SERVER_RECHECK
+P	CORE-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id
+P	N/A — UI/READ ONLY
+P	NO_EFFECTFUL_API
+P	UI_LOCAL / READ_ONLY
+P	acpos_core.projects
+P	SOURCE_PAGE_STATE_REGISTRY / exact server result
+P	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable
+P	Registered success/error/disabled reason; no fabricated success
+P	SAME_PAGE_CONTEXT
+P	acpos_audit.audit_events + correlation_id + operation/result identity
+ROW	CORE-01	SOURCE_REGION	CORE-01-CMP-SUMMARY	SOURCE_CONTROL	AUTHORIZED_PAGE_CONTEXT	CORE-01-GATE-PAGE	CLICK	UI_LOCAL_STATE	CORE-01-ACT-UI-LOCAL-STATE	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION	SOURCE_PAGE_PERMISSION / SERVER_RECHECK	CORE-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id	N/A — UI/READ ONLY	NO_EFFECTFUL_API	UI_LOCAL / READ_ONLY	acpos_core.projects	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
+P	CORE-01
+P	SOURCE_REGION
+P	CORE-01-CMP-SUMMARY
+P	SOURCE_CONTROL
+P	AUTHORIZED_PAGE_CONTEXT
+P	CORE-01-GATE-PAGE
+P	CLICK
+P	UI_LOCAL_STATE
+P	CORE-01-ACT-UI-LOCAL-STATE
+P	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION
+P	SOURCE_PAGE_PERMISSION / SERVER_RECHECK
+P	CORE-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id
+P	N/A — UI/READ ONLY
+P	NO_EFFECTFUL_API
+P	UI_LOCAL / READ_ONLY
+P	acpos_core.projects
+P	SOURCE_PAGE_STATE_REGISTRY / exact server result
+P	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable
+P	Registered success/error/disabled reason; no fabricated success
+P	SAME_PAGE_CONTEXT
+P	acpos_audit.audit_events + correlation_id + operation/result identity
+ROW	CORE-01	SOURCE_REGION	CORE-01-CMP-THREADS	SOURCE_CONTROL	AUTHORIZED_PAGE_CONTEXT	CORE-01-GATE-PAGE	CLICK	UI_LOCAL_STATE	CORE-01-ACT-UI-LOCAL-STATE	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION	SOURCE_PAGE_PERMISSION / SERVER_RECHECK	CORE-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id	N/A — UI/READ ONLY	NO_EFFECTFUL_API	UI_LOCAL / READ_ONLY	acpos_core.projects	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
+P	CORE-01
+P	SOURCE_REGION
+P	CORE-01-CMP-THREADS
+P	SOURCE_CONTROL
+P	AUTHORIZED_PAGE_CONTEXT
+P	CORE-01-GATE-PAGE
+P	CLICK
+P	UI_LOCAL_STATE
+P	CORE-01-ACT-UI-LOCAL-STATE
+P	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION
+P	SOURCE_PAGE_PERMISSION / SERVER_RECHECK
+P	CORE-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id
+P	N/A — UI/READ ONLY
+P	NO_EFFECTFUL_API
+P	UI_LOCAL / READ_ONLY
+P	acpos_core.projects
+P	SOURCE_PAGE_STATE_REGISTRY / exact server result
+P	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable
+P	Registered success/error/disabled reason; no fabricated success
+P	SAME_PAGE_CONTEXT
+P	acpos_audit.audit_events + correlation_id + operation/result identity
+ROW	CORE-01	SOURCE_REGION	CORE-01-CMP-TOPIC-PACKAGE	SOURCE_CONTROL	AUTHORIZED_PAGE_CONTEXT	CORE-01-GATE-PAGE	CLICK	UI_LOCAL_STATE	CORE-01-ACT-UI-LOCAL-STATE	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION	SOURCE_PAGE_PERMISSION / SERVER_RECHECK	CORE-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id	N/A — UI/READ ONLY	NO_EFFECTFUL_API	UI_LOCAL / READ_ONLY	acpos_core.projects	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
+P	CORE-01
+P	SOURCE_REGION
+P	CORE-01-CMP-TOPIC-PACKAGE
+P	SOURCE_CONTROL
+P	AUTHORIZED_PAGE_CONTEXT
+P	CORE-01-GATE-PAGE
+P	CLICK
+P	UI_LOCAL_STATE
+P	CORE-01-ACT-UI-LOCAL-STATE
+P	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION
+P	SOURCE_PAGE_PERMISSION / SERVER_RECHECK
+P	CORE-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id
+P	N/A — UI/READ ONLY
+P	NO_EFFECTFUL_API
+P	UI_LOCAL / READ_ONLY
+P	acpos_core.projects
+P	SOURCE_PAGE_STATE_REGISTRY / exact server result
+P	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable
+P	Registered success/error/disabled reason; no fabricated success
+P	SAME_PAGE_CONTEXT
+P	acpos_audit.audit_events + correlation_id + operation/result identity
+ROW	CORE-01	SOURCE_REGION	CORE-01-CMP-VERSION	SOURCE_CONTROL	AUTHORIZED_PAGE_CONTEXT	CORE-01-GATE-PAGE	CLICK	UI_LOCAL_STATE	CORE-01-ACT-UI-LOCAL-STATE	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION	SOURCE_PAGE_PERMISSION / SERVER_RECHECK	CORE-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id	N/A — UI/READ ONLY	NO_EFFECTFUL_API	UI_LOCAL / READ_ONLY	acpos_core.projects	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
+P	CORE-01
+P	SOURCE_REGION
+P	CORE-01-CMP-VERSION
+P	SOURCE_CONTROL
+P	AUTHORIZED_PAGE_CONTEXT
+P	CORE-01-GATE-PAGE
+P	CLICK
+P	UI_LOCAL_STATE
+P	CORE-01-ACT-UI-LOCAL-STATE
+P	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION
+P	SOURCE_PAGE_PERMISSION / SERVER_RECHECK
+P	CORE-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id
+P	N/A — UI/READ ONLY
+P	NO_EFFECTFUL_API
+P	UI_LOCAL / READ_ONLY
+P	acpos_core.projects
+P	SOURCE_PAGE_STATE_REGISTRY / exact server result
+P	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable
+P	Registered success/error/disabled reason; no fabricated success
+P	SAME_PAGE_CONTEXT
+P	acpos_audit.audit_events + correlation_id + operation/result identity
+ROW	CORE-01	SEC-01	CORE-01-CTL-PROJECT	SELECT	AUTHORIZED_PAGE_CONTEXT	CORE-01-GATE-PAGE	CHANGE	UI_LOCAL_STATE	CORE-01-ACT-PROJECT-SELECT	EXISTING_ACTION_UID	CORE_USE	CORE-01-ACT-PROJECT-SELECT typed schema + source contract fields + actor/scope/target + correlation_id	N/A — UI/READ ONLY	NO_EFFECTFUL_API	UI_LOCAL / READ_ONLY	acpos_core.projects	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
+P	CORE-01
+P	SEC-01
+P	CORE-01-CTL-PROJECT
+P	SELECT
+P	AUTHORIZED_PAGE_CONTEXT
+P	CORE-01-GATE-PAGE
+P	CHANGE
+P	UI_LOCAL_STATE
+P	CORE-01-ACT-PROJECT-SELECT
+P	EXISTING_ACTION_UID
+P	CORE_USE
+P	CORE-01-ACT-PROJECT-SELECT typed schema + source contract fields + actor/scope/target + correlation_id
+P	N/A — UI/READ ONLY
+P	NO_EFFECTFUL_API
+P	UI_LOCAL / READ_ONLY
+P	acpos_core.projects
+P	SOURCE_PAGE_STATE_REGISTRY / exact server result
+P	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable
+P	Registered success/error/disabled reason; no fabricated success
+P	SAME_PAGE_CONTEXT
+P	acpos_audit.audit_events + correlation_id + operation/result identity
+ROW	CORE-01	SEC-01	CORE-01-CTL-TOPIC	SELECT	AUTHORIZED_PAGE_CONTEXT	CORE-01-GATE-TOPIC-CONTEXT	CHANGE	UI_LOCAL_STATE	CORE-01-ACT-TOPIC-SELECT	EXISTING_ACTION_UID	CORE_USE	CORE-01-ACT-TOPIC-SELECT typed schema + source contract fields + actor/scope/target + correlation_id	N/A — UI/READ ONLY	NO_EFFECTFUL_API	UI_LOCAL / READ_ONLY	acpos_core.projects	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
+P	CORE-01
+P	SEC-01
+P	CORE-01-CTL-TOPIC
+P	SELECT
+P	AUTHORIZED_PAGE_CONTEXT
+P	CORE-01-GATE-TOPIC-CONTEXT
+P	CHANGE
+P	UI_LOCAL_STATE
+P	CORE-01-ACT-TOPIC-SELECT
+P	EXISTING_ACTION_UID
+P	CORE_USE
+P	CORE-01-ACT-TOPIC-SELECT typed schema + source contract fields + actor/scope/target + correlation_id
+P	N/A — UI/READ ONLY
+P	NO_EFFECTFUL_API
+P	UI_LOCAL / READ_ONLY
+P	acpos_core.projects
+P	SOURCE_PAGE_STATE_REGISTRY / exact server result
+P	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable
+P	Registered success/error/disabled reason; no fabricated success
+P	SAME_PAGE_CONTEXT
+P	acpos_audit.audit_events + correlation_id + operation/result identity
+ROW	CORE-01	SEC-03	CORE-01-FLD-ASSIGNED-AI	READONLY	AUTHORIZED_PAGE_CONTEXT	CORE-01-GATE-PAGE	CLICK	getUiProjection	CORE-01-ACT-ASSISTANT-RECORD	EXISTING_ACTION_UID	CORE_USE	CORE-01-ACT-ASSISTANT-RECORD typed schema + source contract fields + actor/scope/target + correlation_id	GET /v1/ui-projections/{pageUid}	SOURCE:2026-09-21 shared closure#T0	READ_PROJECTION_RUNTIME	acpos_core.projects	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
+P	CORE-01
+P	SEC-03
+P	CORE-01-FLD-ASSIGNED-AI
+P	READONLY
+P	AUTHORIZED_PAGE_CONTEXT
+P	CORE-01-GATE-PAGE
+P	CLICK
+P	getUiProjection
+P	CORE-01-ACT-ASSISTANT-RECORD
+P	EXISTING_ACTION_UID
+P	CORE_USE
+P	CORE-01-ACT-ASSISTANT-RECORD typed schema + source contract fields + actor/scope/target + correlation_id
+P	GET /v1/ui-projections/{pageUid}
+P	SOURCE:2026-09-21 shared closure#T0
+P	READ_PROJECTION_RUNTIME
+P	acpos_core.projects
+P	SOURCE_PAGE_STATE_REGISTRY / exact server result
+P	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable
+P	Registered success/error/disabled reason; no fabricated success
+P	SAME_PAGE_CONTEXT
+P	acpos_audit.audit_events + correlation_id + operation/result identity
+ROW	CORE-01	SEC-05	CORE-01-FLD-ASSISTANT-SUMMARY	READONLY	AUTHORIZED_PAGE_CONTEXT	CORE-01-GATE-SUMMARY	CLICK	createCandidate	CORE-01-ACT-CANDIDATE-CREATE	EXISTING_ACTION_UID	CORE_USE	CORE-01-ACT-CANDIDATE-CREATE typed schema + source contract fields + actor/scope/target + correlation_id + expected_version(if versioned) + idempotency_key	POST /v1/candidates	SOURCE:ACPOS_CORE-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx#T18	DOMAIN_COMMAND_RUNTIME	acpos_system.change_candidates	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
+P	CORE-01
+P	SEC-05
+P	CORE-01-FLD-ASSISTANT-SUMMARY
+P	READONLY
+P	AUTHORIZED_PAGE_CONTEXT
+P	CORE-01-GATE-SUMMARY
+P	CLICK
+P	createCandidate
+P	CORE-01-ACT-CANDIDATE-CREATE
+P	EXISTING_ACTION_UID
+P	CORE_USE
+P	CORE-01-ACT-CANDIDATE-CREATE typed schema + source contract fields + actor/scope/target + correlation_id + expected_version(if versioned) + idempotency_key
+P	POST /v1/candidates
+P	SOURCE:ACPOS_CORE-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx#T18
+P	DOMAIN_COMMAND_RUNTIME
+P	acpos_system.change_candidates
+P	SOURCE_PAGE_STATE_REGISTRY / exact server result
+P	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable
+P	Registered success/error/disabled reason; no fabricated success
+P	SAME_PAGE_CONTEXT
+P	acpos_audit.audit_events + correlation_id + operation/result identity
+ROW	CORE-01	SEC-09	CORE-01-FLD-DOWNSTREAM-ASSET	READONLY	AUTHORIZED_PAGE_CONTEXT	CORE-01-GATE-TOPIC-CONTEXT	CLICK	getUiProjection	CORE-01-ACT-PROJECT-SELECT	EXISTING_ACTION_UID	CORE_USE	CORE-01-ACT-PROJECT-SELECT typed schema + source contract fields + actor/scope/target + correlation_id	GET /v1/ui-projections/{pageUid}	SOURCE:2026-09-21 shared closure#T0	READ_PROJECTION_RUNTIME	acpos_core.projects	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
+P	CORE-01
+P	SEC-09
+P	CORE-01-FLD-DOWNSTREAM-ASSET
+P	READONLY
+P	AUTHORIZED_PAGE_CONTEXT
+P	CORE-01-GATE-TOPIC-CONTEXT
+P	CLICK
+P	getUiProjection
+P	CORE-01-ACT-PROJECT-SELECT
+P	EXISTING_ACTION_UID
+P	CORE_USE
+P	CORE-01-ACT-PROJECT-SELECT typed schema + source contract fields + actor/scope/target + correlation_id
+P	GET /v1/ui-projections/{pageUid}
+P	SOURCE:2026-09-21 shared closure#T0
+P	READ_PROJECTION_RUNTIME
+P	acpos_core.projects
+P	SOURCE_PAGE_STATE_REGISTRY / exact server result
+P	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable
+P	Registered success/error/disabled reason; no fabricated success
+P	SAME_PAGE_CONTEXT
+P	acpos_audit.audit_events + correlation_id + operation/result identity
+ROW	CORE-01	SEC-09	CORE-01-FLD-DOWNSTREAM-EDIT	READONLY	AUTHORIZED_PAGE_CONTEXT	CORE-01-GATE-TOPIC-CONTEXT	CLICK	getUiProjection	CORE-01-ACT-PROJECT-SELECT	EXISTING_ACTION_UID	CORE_USE	CORE-01-ACT-PROJECT-SELECT typed schema + source contract fields + actor/scope/target + correlation_id	GET /v1/ui-projections/{pageUid}	SOURCE:2026-09-21 shared closure#T0	READ_PROJECTION_RUNTIME	acpos_core.projects	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
+P	CORE-01
+P	SEC-09
+P	CORE-01-FLD-DOWNSTREAM-EDIT
+P	READONLY
+P	AUTHORIZED_PAGE_CONTEXT
+P	CORE-01-GATE-TOPIC-CONTEXT
+P	CLICK
+P	getUiProjection
+P	CORE-01-ACT-PROJECT-SELECT
+P	EXISTING_ACTION_UID
+P	CORE_USE
+P	CORE-01-ACT-PROJECT-SELECT typed schema + source contract fields + actor/scope/target + correlation_id
+P	GET /v1/ui-projections/{pageUid}
+P	SOURCE:2026-09-21 shared closure#T0
+P	READ_PROJECTION_RUNTIME
+P	acpos_core.projects
+P	SOURCE_PAGE_STATE_REGISTRY / exact server result
+P	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable
+P	Registered success/error/disabled reason; no fabricated success
+P	SAME_PAGE_CONTEXT
+P	acpos_audit.audit_events + correlation_id + operation/result identity
+ROW	CORE-01	SEC-09	CORE-01-FLD-DOWNSTREAM-VIDEO	READONLY	AUTHORIZED_PAGE_CONTEXT	CORE-01-GATE-TOPIC-CONTEXT	CLICK	getUiProjection	CORE-01-ACT-PROJECT-SELECT	EXISTING_ACTION_UID	CORE_USE	CORE-01-ACT-PROJECT-SELECT typed schema + source contract fields + actor/scope/target + correlation_id	GET /v1/ui-projections/{pageUid}	SOURCE:2026-09-21 shared closure#T0	READ_PROJECTION_RUNTIME	acpos_core.projects	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
+P	CORE-01
+P	SEC-09
+P	CORE-01-FLD-DOWNSTREAM-VIDEO
+P	READONLY
+P	AUTHORIZED_PAGE_CONTEXT
+P	CORE-01-GATE-TOPIC-CONTEXT
+P	CLICK
+P	getUiProjection
+P	CORE-01-ACT-PROJECT-SELECT
+P	EXISTING_ACTION_UID
+P	CORE_USE
+P	CORE-01-ACT-PROJECT-SELECT typed schema + source contract fields + actor/scope/target + correlation_id
+P	GET /v1/ui-projections/{pageUid}
+P	SOURCE:2026-09-21 shared closure#T0
+P	READ_PROJECTION_RUNTIME
+P	acpos_core.projects
+P	SOURCE_PAGE_STATE_REGISTRY / exact server result
+P	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable
+P	Registered success/error/disabled reason; no fabricated success
+P	SAME_PAGE_CONTEXT
+P	acpos_audit.audit_events + correlation_id + operation/result identity
+ROW	CORE-01	SEC-05	CORE-01-FLD-EVALUATION	READONLY	AUTHORIZED_PAGE_CONTEXT	CORE-01-GATE-EVALUATION	CLICK	createCandidate	CORE-01-ACT-CANDIDATE-CREATE	EXISTING_ACTION_UID	CORE_USE	CORE-01-ACT-CANDIDATE-CREATE typed schema + source contract fields + actor/scope/target + correlation_id + expected_version(if versioned) + idempotency_key	POST /v1/candidates	SOURCE:ACPOS_CORE-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx#T18	DOMAIN_COMMAND_RUNTIME	acpos_system.change_candidates	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
+P	CORE-01
+P	SEC-05
+P	CORE-01-FLD-EVALUATION
+P	READONLY
+P	AUTHORIZED_PAGE_CONTEXT
+P	CORE-01-GATE-EVALUATION
+P	CLICK
+P	createCandidate
+P	CORE-01-ACT-CANDIDATE-CREATE
+P	EXISTING_ACTION_UID
+P	CORE_USE
+P	CORE-01-ACT-CANDIDATE-CREATE typed schema + source contract fields + actor/scope/target + correlation_id + expected_version(if versioned) + idempotency_key
+P	POST /v1/candidates
+P	SOURCE:ACPOS_CORE-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx#T18
+P	DOMAIN_COMMAND_RUNTIME
+P	acpos_system.change_candidates
+P	SOURCE_PAGE_STATE_REGISTRY / exact server result
+P	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable
+P	Registered success/error/disabled reason; no fabricated success
+P	SAME_PAGE_CONTEXT
+P	acpos_audit.audit_events + correlation_id + operation/result identity
+ROW	CORE-01	SEC-05	CORE-01-FLD-HUMAN-DECISION	TEXTAREA	AUTHORIZED_PAGE_CONTEXT	CORE-01-GATE-HUMAN-DECISION	INPUT_OR_SUBMIT	createCandidate	CORE-01-ACT-CANDIDATE-CREATE	EXISTING_ACTION_UID	CORE_CANDIDATE_CREATE	CORE-01-ACT-CANDIDATE-CREATE typed schema + source contract fields + actor/scope/target + correlation_id + expected_version(if versioned) + idempotency_key	POST /v1/candidates	SOURCE:ACPOS_CORE-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx#T18	DOMAIN_COMMAND_RUNTIME	acpos_system.change_candidates	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
+P	CORE-01
+P	SEC-05
+P	CORE-01-FLD-HUMAN-DECISION
+P	TEXTAREA
+P	AUTHORIZED_PAGE_CONTEXT
+P	CORE-01-GATE-HUMAN-DECISION
+P	INPUT_OR_SUBMIT
+P	createCandidate
+P	CORE-01-ACT-CANDIDATE-CREATE
+P	EXISTING_ACTION_UID
+P	CORE_CANDIDATE_CREATE
+P	CORE-01-ACT-CANDIDATE-CREATE typed schema + source contract fields + actor/scope/target + correlation_id + expected_version(if versioned) + idempotency_key
+P	POST /v1/candidates
+P	SOURCE:ACPOS_CORE-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx#T18
+P	DOMAIN_COMMAND_RUNTIME
+P	acpos_system.change_candidates
+P	SOURCE_PAGE_STATE_REGISTRY / exact server result
+P	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable
+P	Registered success/error/disabled reason; no fabricated success
+P	SAME_PAGE_CONTEXT
+P	acpos_audit.audit_events + correlation_id + operation/result identity
+ROW	CORE-01	SEC-10	CORE-01-FLD-LOCK-REVIEW	READONLY	AUTHORIZED_PAGE_CONTEXT	CORE-01-GATE-PAGE	CLICK	getUiProjection	CORE-01-ACT-PROJECT-SELECT	EXISTING_ACTION_UID	CORE_USE	CORE-01-ACT-PROJECT-SELECT typed schema + source contract fields + actor/scope/target + correlation_id	GET /v1/ui-projections/{pageUid}	SOURCE:2026-09-21 shared closure#T0	READ_PROJECTION_RUNTIME	acpos_core.projects	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
+P	CORE-01
+P	SEC-10
+P	CORE-01-FLD-LOCK-REVIEW
+P	READONLY
+P	AUTHORIZED_PAGE_CONTEXT
+P	CORE-01-GATE-PAGE
+P	CLICK
+P	getUiProjection
+P	CORE-01-ACT-PROJECT-SELECT
+P	EXISTING_ACTION_UID
+P	CORE_USE
+P	CORE-01-ACT-PROJECT-SELECT typed schema + source contract fields + actor/scope/target + correlation_id
+P	GET /v1/ui-projections/{pageUid}
+P	SOURCE:2026-09-21 shared closure#T0
+P	READ_PROJECTION_RUNTIME
+P	acpos_core.projects
+P	SOURCE_PAGE_STATE_REGISTRY / exact server result
+P	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable
+P	Registered success/error/disabled reason; no fabricated success
+P	SAME_PAGE_CONTEXT
+P	acpos_audit.audit_events + correlation_id + operation/result identity
+ROW	CORE-01	SEC-07	CORE-01-FLD-MESSAGE	MULTILINE_INPUT	AUTHORIZED_PAGE_CONTEXT	CORE-01-GATE-MESSAGE	INPUT_OR_SUBMIT	sendConversationMessage	CORE-01-ACT-SEND	EXISTING_ACTION_UID	CORE_CONVERSATION	CORE-01-ACT-SEND typed schema + source contract fields + actor/scope/target + correlation_id + expected_version(if versioned) + idempotency_key	POST /v1/conversations/{conversationId}/messages	SOURCE:ACPOS_CORE-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx#T18	SHARED_CONVERSATION_CORE	acpos_conversation.messages	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
+P	CORE-01
+P	SEC-07
+P	CORE-01-FLD-MESSAGE
+P	MULTILINE_INPUT
+P	AUTHORIZED_PAGE_CONTEXT
+P	CORE-01-GATE-MESSAGE
+P	INPUT_OR_SUBMIT
+P	sendConversationMessage
+P	CORE-01-ACT-SEND
+P	EXISTING_ACTION_UID
+P	CORE_CONVERSATION
+P	CORE-01-ACT-SEND typed schema + source contract fields + actor/scope/target + correlation_id + expected_version(if versioned) + idempotency_key
+P	POST /v1/conversations/{conversationId}/messages
+P	SOURCE:ACPOS_CORE-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx#T18
+P	SHARED_CONVERSATION_CORE
+P	acpos_conversation.messages
+P	SOURCE_PAGE_STATE_REGISTRY / exact server result
+P	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable
+P	Registered success/error/disabled reason; no fabricated success
+P	SAME_PAGE_CONTEXT
+P	acpos_audit.audit_events + correlation_id + operation/result identity
+ROW	CORE-01	SEC-01	CORE-01-FLD-NAMING-AUTHORITY	READONLY	AUTHORIZED_PAGE_CONTEXT	CORE-01-GATE-NAMING	CLICK	getUiProjection	CORE-01-ACT-PROJECT-SELECT	EXISTING_ACTION_UID	CORE_USE	CORE-01-ACT-PROJECT-SELECT typed schema + source contract fields + actor/scope/target + correlation_id	GET /v1/ui-projections/{pageUid}	SOURCE:2026-09-21 shared closure#T0	READ_PROJECTION_RUNTIME	acpos_core.projects	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
+P	CORE-01
+P	SEC-01
+P	CORE-01-FLD-NAMING-AUTHORITY
+P	READONLY
+P	AUTHORIZED_PAGE_CONTEXT
+P	CORE-01-GATE-NAMING
+P	CLICK
+P	getUiProjection
+P	CORE-01-ACT-PROJECT-SELECT
+P	EXISTING_ACTION_UID
+P	CORE_USE
+P	CORE-01-ACT-PROJECT-SELECT typed schema + source contract fields + actor/scope/target + correlation_id
+P	GET /v1/ui-projections/{pageUid}
+P	SOURCE:2026-09-21 shared closure#T0
+P	READ_PROJECTION_RUNTIME
+P	acpos_core.projects
+P	SOURCE_PAGE_STATE_REGISTRY / exact server result
+P	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable
+P	Registered success/error/disabled reason; no fabricated success
+P	SAME_PAGE_CONTEXT
+P	acpos_audit.audit_events + correlation_id + operation/result identity
+ROW	CORE-01	SEC-09	CORE-01-FLD-PACKAGE	READONLY	AUTHORIZED_PAGE_CONTEXT	CORE-01-GATE-TOPIC-CONTEXT	CLICK	getCanonicalScript	CORE-01-ACT-CANONICAL-SCRIPT-VIEW	EXISTING_ACTION_UID	CORE_USE	CORE-01-ACT-CANONICAL-SCRIPT-VIEW typed schema + source contract fields + actor/scope/target + correlation_id	GET /v1/topics/{id}/scripts/canonical	SOURCE:ACPOS_CORE-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx#T18	READ_PROJECTION_RUNTIME	acpos_core.canonical_script_versions	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
+P	CORE-01
+P	SEC-09
+P	CORE-01-FLD-PACKAGE
+P	READONLY
+P	AUTHORIZED_PAGE_CONTEXT
+P	CORE-01-GATE-TOPIC-CONTEXT
+P	CLICK
+P	getCanonicalScript
+P	CORE-01-ACT-CANONICAL-SCRIPT-VIEW
+P	EXISTING_ACTION_UID
+P	CORE_USE
+P	CORE-01-ACT-CANONICAL-SCRIPT-VIEW typed schema + source contract fields + actor/scope/target + correlation_id
+P	GET /v1/topics/{id}/scripts/canonical
+P	SOURCE:ACPOS_CORE-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx#T18
+P	READ_PROJECTION_RUNTIME
+P	acpos_core.canonical_script_versions
+P	SOURCE_PAGE_STATE_REGISTRY / exact server result
+P	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable
+P	Registered success/error/disabled reason; no fabricated success
+P	SAME_PAGE_CONTEXT
+P	acpos_audit.audit_events + correlation_id + operation/result identity
+ROW	CORE-01	SEC-01	CORE-01-FLD-PAGE-MODE	READONLY	AUTHORIZED_PAGE_CONTEXT	CORE-01-GATE-PAGE	CLICK	getUiProjection	CORE-01-ACT-PROJECT-SELECT	EXISTING_ACTION_UID	CORE_USE	CORE-01-ACT-PROJECT-SELECT typed schema + source contract fields + actor/scope/target + correlation_id	GET /v1/ui-projections/{pageUid}	SOURCE:2026-09-21 shared closure#T0	READ_PROJECTION_RUNTIME	acpos_core.projects	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
+P	CORE-01
+P	SEC-01
+P	CORE-01-FLD-PAGE-MODE
+P	READONLY
+P	AUTHORIZED_PAGE_CONTEXT
+P	CORE-01-GATE-PAGE
+P	CLICK
+P	getUiProjection
+P	CORE-01-ACT-PROJECT-SELECT
+P	EXISTING_ACTION_UID
+P	CORE_USE
+P	CORE-01-ACT-PROJECT-SELECT typed schema + source contract fields + actor/scope/target + correlation_id
+P	GET /v1/ui-projections/{pageUid}
+P	SOURCE:2026-09-21 shared closure#T0
+P	READ_PROJECTION_RUNTIME
+P	acpos_core.projects
+P	SOURCE_PAGE_STATE_REGISTRY / exact server result
+P	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable
+P	Registered success/error/disabled reason; no fabricated success
+P	SAME_PAGE_CONTEXT
+P	acpos_audit.audit_events + correlation_id + operation/result identity
+ROW	CORE-01	SEC-06	CORE-01-FLD-RUNTIME-STAGE	READONLY	AUTHORIZED_PAGE_CONTEXT	CORE-01-GATE-PAGE	CLICK	getUiProjection	CORE-01-ACT-PROJECT-SELECT	EXISTING_ACTION_UID	CORE_USE	CORE-01-ACT-PROJECT-SELECT typed schema + source contract fields + actor/scope/target + correlation_id	GET /v1/ui-projections/{pageUid}	SOURCE:2026-09-21 shared closure#T0	READ_PROJECTION_RUNTIME	acpos_core.projects	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
+P	CORE-01
+P	SEC-06
+P	CORE-01-FLD-RUNTIME-STAGE
+P	READONLY
+P	AUTHORIZED_PAGE_CONTEXT
+P	CORE-01-GATE-PAGE
+P	CLICK
+P	getUiProjection
+P	CORE-01-ACT-PROJECT-SELECT
+P	EXISTING_ACTION_UID
+P	CORE_USE
+P	CORE-01-ACT-PROJECT-SELECT typed schema + source contract fields + actor/scope/target + correlation_id
+P	GET /v1/ui-projections/{pageUid}
+P	SOURCE:2026-09-21 shared closure#T0
+P	READ_PROJECTION_RUNTIME
+P	acpos_core.projects
+P	SOURCE_PAGE_STATE_REGISTRY / exact server result
+P	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable
+P	Registered success/error/disabled reason; no fabricated success
+P	SAME_PAGE_CONTEXT
+P	acpos_audit.audit_events + correlation_id + operation/result identity
+ROW	CORE-01	SEC-05	CORE-01-FLD-STRUCTURED-DECISION	READONLY	AUTHORIZED_PAGE_CONTEXT	CORE-01-GATE-HUMAN-DECISION	CLICK	createCandidate	CORE-01-ACT-CANDIDATE-CREATE	EXISTING_ACTION_UID	CORE_USE	CORE-01-ACT-CANDIDATE-CREATE typed schema + source contract fields + actor/scope/target + correlation_id + expected_version(if versioned) + idempotency_key	POST /v1/candidates	SOURCE:ACPOS_CORE-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx#T18	DOMAIN_COMMAND_RUNTIME	acpos_system.change_candidates	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
+P	CORE-01
+P	SEC-05
+P	CORE-01-FLD-STRUCTURED-DECISION
+P	READONLY
+P	AUTHORIZED_PAGE_CONTEXT
+P	CORE-01-GATE-HUMAN-DECISION
+P	CLICK
+P	createCandidate
+P	CORE-01-ACT-CANDIDATE-CREATE
+P	EXISTING_ACTION_UID
+P	CORE_USE
+P	CORE-01-ACT-CANDIDATE-CREATE typed schema + source contract fields + actor/scope/target + correlation_id + expected_version(if versioned) + idempotency_key
+P	POST /v1/candidates
+P	SOURCE:ACPOS_CORE-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx#T18
+P	DOMAIN_COMMAND_RUNTIME
+P	acpos_system.change_candidates
+P	SOURCE_PAGE_STATE_REGISTRY / exact server result
+P	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable
+P	Registered success/error/disabled reason; no fabricated success
+P	SAME_PAGE_CONTEXT
+P	acpos_audit.audit_events + correlation_id + operation/result identity
+ROW	CORE-01	SEC-09	CORE-01-FLD-TOPIC-SCOPE	READONLY	AUTHORIZED_PAGE_CONTEXT	CORE-01-GATE-TOPIC-CONTEXT	CLICK	getUiProjection	CORE-01-ACT-TOPIC-SELECT	EXISTING_ACTION_UID	CORE_USE	CORE-01-ACT-TOPIC-SELECT typed schema + source contract fields + actor/scope/target + correlation_id	GET /v1/ui-projections/{pageUid}	SOURCE:2026-09-21 shared closure#T0	READ_PROJECTION_RUNTIME	acpos_core.projects	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
+P	CORE-01
+P	SEC-09
+P	CORE-01-FLD-TOPIC-SCOPE
+P	READONLY
+P	AUTHORIZED_PAGE_CONTEXT
+P	CORE-01-GATE-TOPIC-CONTEXT
+P	CLICK
+P	getUiProjection
+P	CORE-01-ACT-TOPIC-SELECT
+P	EXISTING_ACTION_UID
+P	CORE_USE
+P	CORE-01-ACT-TOPIC-SELECT typed schema + source contract fields + actor/scope/target + correlation_id
+P	GET /v1/ui-projections/{pageUid}
+P	SOURCE:2026-09-21 shared closure#T0
+P	READ_PROJECTION_RUNTIME
+P	acpos_core.projects
+P	SOURCE_PAGE_STATE_REGISTRY / exact server result
+P	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable
+P	Registered success/error/disabled reason; no fabricated success
+P	SAME_PAGE_CONTEXT
+P	acpos_audit.audit_events + correlation_id + operation/result identity
+ROW	CORE-01	SEC-10	CORE-01-FLD-VERSION-STATE	READONLY	AUTHORIZED_PAGE_CONTEXT	CORE-01-GATE-PAGE	CLICK	compareCandidates	CORE-01-ACT-CANDIDATE-COMPARE	EXISTING_ACTION_UID	CORE_USE	CORE-01-ACT-CANDIDATE-COMPARE typed schema + source contract fields + actor/scope/target + correlation_id	GET /v1/candidates/compare	SOURCE:ACPOS_CORE-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx#T18	READ_PROJECTION_RUNTIME	acpos_system.change_candidates	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
+P	CORE-01
+P	SEC-10
+P	CORE-01-FLD-VERSION-STATE
+P	READONLY
+P	AUTHORIZED_PAGE_CONTEXT
+P	CORE-01-GATE-PAGE
+P	CLICK
+P	compareCandidates
+P	CORE-01-ACT-CANDIDATE-COMPARE
+P	EXISTING_ACTION_UID
+P	CORE_USE
+P	CORE-01-ACT-CANDIDATE-COMPARE typed schema + source contract fields + actor/scope/target + correlation_id
+P	GET /v1/candidates/compare
+P	SOURCE:ACPOS_CORE-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx#T18
+P	READ_PROJECTION_RUNTIME
+P	acpos_system.change_candidates
+P	SOURCE_PAGE_STATE_REGISTRY / exact server result
+P	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable
+P	Registered success/error/disabled reason; no fabricated success
+P	SAME_PAGE_CONTEXT
+P	acpos_audit.audit_events + correlation_id + operation/result identity
+ROW	CORE-01	SEC-02	CORE-01-LST-THREADS	LIST	AUTHORIZED_PAGE_CONTEXT	CORE-01-GATE-THREAD	CLICK	getUiProjection	CORE-01-ACT-THREAD-SELECT	EXISTING_ACTION_UID	CORE_USE	CORE-01-ACT-THREAD-SELECT typed schema + source contract fields + actor/scope/target + correlation_id	GET /v1/ui-projections/{pageUid}	SOURCE:2026-09-21 shared closure#T0	READ_PROJECTION_RUNTIME	acpos_core.projects	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
+P	CORE-01
+P	SEC-02
+P	CORE-01-LST-THREADS
+P	LIST
+P	AUTHORIZED_PAGE_CONTEXT
+P	CORE-01-GATE-THREAD
+P	CLICK
+P	getUiProjection
+P	CORE-01-ACT-THREAD-SELECT
+P	EXISTING_ACTION_UID
+P	CORE_USE
+P	CORE-01-ACT-THREAD-SELECT typed schema + source contract fields + actor/scope/target + correlation_id
+P	GET /v1/ui-projections/{pageUid}
+P	SOURCE:2026-09-21 shared closure#T0
+P	READ_PROJECTION_RUNTIME
+P	acpos_core.projects
+P	SOURCE_PAGE_STATE_REGISTRY / exact server result
+P	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable
+P	Registered success/error/disabled reason; no fabricated success
+P	SAME_PAGE_CONTEXT
+P	acpos_audit.audit_events + correlation_id + operation/result identity
+ROW	CORE-01	SEC-02	CORE-01-LST-WORK-ITEMS	LIST	AUTHORIZED_PAGE_CONTEXT	CORE-01-GATE-WORK-ITEM	CLICK	getUiProjection	CORE-01-ACT-WORK-ITEM-SELECT	EXISTING_ACTION_UID	CORE_USE	CORE-01-ACT-WORK-ITEM-SELECT typed schema + source contract fields + actor/scope/target + correlation_id	GET /v1/ui-projections/{pageUid}	SOURCE:2026-09-21 shared closure#T0	READ_PROJECTION_RUNTIME	acpos_core.projects	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
+P	CORE-01
+P	SEC-02
+P	CORE-01-LST-WORK-ITEMS
+P	LIST
+P	AUTHORIZED_PAGE_CONTEXT
+P	CORE-01-GATE-WORK-ITEM
+P	CLICK
+P	getUiProjection
+P	CORE-01-ACT-WORK-ITEM-SELECT
+P	EXISTING_ACTION_UID
+P	CORE_USE
+P	CORE-01-ACT-WORK-ITEM-SELECT typed schema + source contract fields + actor/scope/target + correlation_id
+P	GET /v1/ui-projections/{pageUid}
+P	SOURCE:2026-09-21 shared closure#T0
+P	READ_PROJECTION_RUNTIME
+P	acpos_core.projects
+P	SOURCE_PAGE_STATE_REGISTRY / exact server result
+P	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable
+P	Registered success/error/disabled reason; no fabricated success
+P	SAME_PAGE_CONTEXT
+P	acpos_audit.audit_events + correlation_id + operation/result identity
+P	Construction Lookup Invariant
+P	施工 AI MUST resolve a UI action from exactly one row of this matrix. If a source control is UI_ONLY/READ_ONLY, API/DB write is explicitly N/A and creating a write endpoint is forbidden. If API Basis is NEW_AUTHORITY_AFTER_GLOBAL_SOURCE_EXHAUSTION, the only permitted implementation path is the Shared Typed Command Runtime endpoint shown in the row; page-local alternative endpoints are forbidden.
 ### PART word/header1.xml
 P	ORANGE ONE · ACPOS ACPOS-AI-04｜Mother Basic Logic Design
 ### PART word/footer1.xml

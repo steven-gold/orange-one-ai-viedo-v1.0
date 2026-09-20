@@ -3776,6 +3776,862 @@ P	CLOSURE_MATERIALIZED
 P	G. Construction Handoff Rule
 P	施工 AI MUST resolve each UI control through this exact order: Page UID → Section/Region → Control UID → Trigger/Operation or Action UID → Gate → Permission → Input/Payload → Method/Path or shared Runtime Operation → Persistence/Provider Owner → Audit/Event → Success/Failure/Recovery → Next Page/Handoff. UI_ONLY/READ_ONLY controls MUST NOT create a write API. System-only operations MUST NOT cause a new visible button unless this closure/source explicitly materializes that control.
 P	When a provider/platform/environment value is runtime-specific, the exact binding is the registered Profile/Policy/Environment key named in this annex. Missing required value is a deterministic BLOCK; it is not permission to guess.
+P	Unified Page / Control / Action / API / DB / Runtime Construction Matrix
+P	[ACPOS-20260921-UNIFIED-CONTROL-RUNTIME-MATRIX] This matrix is the direct construction lookup. Existing source identifiers are preserved. New Action/Gate/Control identities are created only when exhaustive uploaded-source scan found the semantic control/operation but no exact UID/path. Existing exact Method/Path always wins; otherwise effectful operations use POST /v1/commands/{actionUid} through the Shared Typed Command Runtime. UI/read-only controls explicitly bind to N/A or projection runtime and MUST NOT create writes.
+P	admin:DEV-01 — Unified Construction Bindings
+ROW	Page UID	Region	Control UID	Control Type	Visible When	Enabled/Gate	Trigger	Operation	Action UID	Action UID Status	Permission	Required Payload	API Method/Path	API Basis	Runtime	DB/Provider Owner	Success State	Failure State	UI Feedback/Recovery	Next Page/Handoff	Evidence
+P	Page UID
+P	Region
+P	Control UID
+P	Control Type
+P	Visible When
+P	Enabled/Gate
+P	Trigger
+P	Operation
+P	Action UID
+P	Action UID Status
+P	Permission
+P	Required Payload
+P	API Method/Path
+P	API Basis
+P	Runtime
+P	DB/Provider Owner
+P	Success State
+P	Failure State
+P	UI Feedback/Recovery
+P	Next Page/Handoff
+P	Evidence
+ROW	admin:DEV-01	SOURCE_REGION	DEV-01-BTN-CAMPAIGN-APPROVE	SOURCE_CONTROL	AUTHORIZED_PAGE_CONTEXT	DEV-01-GATE-PAGE	CLICK	approveOutreachCampaign	DEV-01-ACT-APPROVE-OUTREACH-CAMPAIGN	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION	SOURCE_PAGE_PERMISSION / SERVER_RECHECK	DEV-01-ACT-APPROVE-OUTREACH-CAMPAIGN typed schema + source contract fields + actor/scope/target + correlation_id + expected_version(if versioned) + idempotency_key	POST /v1/commands/DEV-01-ACT-APPROVE-OUTREACH-CAMPAIGN	NEW_AUTHORITY_AFTER_GLOBAL_SOURCE_EXHAUSTION	SHARED_TYPED_COMMAND_RUNTIME	acpos_enterprise.outreach_campaigns	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
+P	admin:DEV-01
+P	SOURCE_REGION
+P	DEV-01-BTN-CAMPAIGN-APPROVE
+P	SOURCE_CONTROL
+P	AUTHORIZED_PAGE_CONTEXT
+P	DEV-01-GATE-PAGE
+P	CLICK
+P	approveOutreachCampaign
+P	DEV-01-ACT-APPROVE-OUTREACH-CAMPAIGN
+P	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION
+P	SOURCE_PAGE_PERMISSION / SERVER_RECHECK
+P	DEV-01-ACT-APPROVE-OUTREACH-CAMPAIGN typed schema + source contract fields + actor/scope/target + correlation_id + expected_version(if versioned) + idempotency_key
+P	POST /v1/commands/DEV-01-ACT-APPROVE-OUTREACH-CAMPAIGN
+P	NEW_AUTHORITY_AFTER_GLOBAL_SOURCE_EXHAUSTION
+P	SHARED_TYPED_COMMAND_RUNTIME
+P	acpos_enterprise.outreach_campaigns
+P	SOURCE_PAGE_STATE_REGISTRY / exact server result
+P	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable
+P	Registered success/error/disabled reason; no fabricated success
+P	SAME_PAGE_CONTEXT
+P	acpos_audit.audit_events + correlation_id + operation/result identity
+ROW	admin:DEV-01	SOURCE_REGION	DEV-01-BTN-CAMPAIGN-CREATE	SOURCE_CONTROL	AUTHORIZED_PAGE_CONTEXT	DEV-01-GATE-PAGE	CLICK	createOutreachCampaign	DEV-01-ACT-CREATE-OUTREACH-CAMPAIGN	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION	SOURCE_PAGE_PERMISSION / SERVER_RECHECK	DEV-01-ACT-CREATE-OUTREACH-CAMPAIGN typed schema + source contract fields + actor/scope/target + correlation_id + expected_version(if versioned) + idempotency_key	POST /v1/commands/DEV-01-ACT-CREATE-OUTREACH-CAMPAIGN	NEW_AUTHORITY_AFTER_GLOBAL_SOURCE_EXHAUSTION	SHARED_TYPED_COMMAND_RUNTIME	acpos_enterprise.outreach_campaigns	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
+P	admin:DEV-01
+P	SOURCE_REGION
+P	DEV-01-BTN-CAMPAIGN-CREATE
+P	SOURCE_CONTROL
+P	AUTHORIZED_PAGE_CONTEXT
+P	DEV-01-GATE-PAGE
+P	CLICK
+P	createOutreachCampaign
+P	DEV-01-ACT-CREATE-OUTREACH-CAMPAIGN
+P	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION
+P	SOURCE_PAGE_PERMISSION / SERVER_RECHECK
+P	DEV-01-ACT-CREATE-OUTREACH-CAMPAIGN typed schema + source contract fields + actor/scope/target + correlation_id + expected_version(if versioned) + idempotency_key
+P	POST /v1/commands/DEV-01-ACT-CREATE-OUTREACH-CAMPAIGN
+P	NEW_AUTHORITY_AFTER_GLOBAL_SOURCE_EXHAUSTION
+P	SHARED_TYPED_COMMAND_RUNTIME
+P	acpos_enterprise.outreach_campaigns
+P	SOURCE_PAGE_STATE_REGISTRY / exact server result
+P	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable
+P	Registered success/error/disabled reason; no fabricated success
+P	SAME_PAGE_CONTEXT
+P	acpos_audit.audit_events + correlation_id + operation/result identity
+ROW	admin:DEV-01	SOURCE_REGION	DEV-01-BTN-CAMPAIGN-SEARCH	SOURCE_CONTROL	AUTHORIZED_PAGE_CONTEXT	DEV-01-GATE-PAGE	CLICK	searchProjection	DEV-01-ACT-SEARCH-PROJECTION	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION	SOURCE_PAGE_PERMISSION / SERVER_RECHECK	DEV-01-ACT-SEARCH-PROJECTION typed schema + source contract fields + actor/scope/target + correlation_id + expected_version(if versioned) + idempotency_key	POST /v1/search	SOURCE:ACPOS_DEV-01_企業自動開發系統_Mother_Basic_Design_OPTIMIZED.docx#T17	DOMAIN_COMMAND_RUNTIME	acpos_enterprise.opportunities	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
+P	admin:DEV-01
+P	SOURCE_REGION
+P	DEV-01-BTN-CAMPAIGN-SEARCH
+P	SOURCE_CONTROL
+P	AUTHORIZED_PAGE_CONTEXT
+P	DEV-01-GATE-PAGE
+P	CLICK
+P	searchProjection
+P	DEV-01-ACT-SEARCH-PROJECTION
+P	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION
+P	SOURCE_PAGE_PERMISSION / SERVER_RECHECK
+P	DEV-01-ACT-SEARCH-PROJECTION typed schema + source contract fields + actor/scope/target + correlation_id + expected_version(if versioned) + idempotency_key
+P	POST /v1/search
+P	SOURCE:ACPOS_DEV-01_企業自動開發系統_Mother_Basic_Design_OPTIMIZED.docx#T17
+P	DOMAIN_COMMAND_RUNTIME
+P	acpos_enterprise.opportunities
+P	SOURCE_PAGE_STATE_REGISTRY / exact server result
+P	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable
+P	Registered success/error/disabled reason; no fabricated success
+P	SAME_PAGE_CONTEXT
+P	acpos_audit.audit_events + correlation_id + operation/result identity
+ROW	admin:DEV-01	SOURCE_REGION	DEV-01-BTN-CANDIDATE-CREATE	SOURCE_CONTROL	AUTHORIZED_PAGE_CONTEXT	DEV-01-GATE-PAGE	CLICK	createCandidate	DEV-01-ACT-CREATE-CANDIDATE	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION	SOURCE_PAGE_PERMISSION / SERVER_RECHECK	DEV-01-ACT-CREATE-CANDIDATE typed schema + source contract fields + actor/scope/target + correlation_id + expected_version(if versioned) + idempotency_key	POST /v1/candidates	SOURCE:ACPOS_CORE-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx#T18	DOMAIN_COMMAND_RUNTIME	acpos_system.change_candidates	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
+P	admin:DEV-01
+P	SOURCE_REGION
+P	DEV-01-BTN-CANDIDATE-CREATE
+P	SOURCE_CONTROL
+P	AUTHORIZED_PAGE_CONTEXT
+P	DEV-01-GATE-PAGE
+P	CLICK
+P	createCandidate
+P	DEV-01-ACT-CREATE-CANDIDATE
+P	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION
+P	SOURCE_PAGE_PERMISSION / SERVER_RECHECK
+P	DEV-01-ACT-CREATE-CANDIDATE typed schema + source contract fields + actor/scope/target + correlation_id + expected_version(if versioned) + idempotency_key
+P	POST /v1/candidates
+P	SOURCE:ACPOS_CORE-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx#T18
+P	DOMAIN_COMMAND_RUNTIME
+P	acpos_system.change_candidates
+P	SOURCE_PAGE_STATE_REGISTRY / exact server result
+P	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable
+P	Registered success/error/disabled reason; no fabricated success
+P	SAME_PAGE_CONTEXT
+P	acpos_audit.audit_events + correlation_id + operation/result identity
+ROW	admin:DEV-01	SOURCE_REGION	DEV-01-BTN-CANDIDATE-DECIDE	SOURCE_CONTROL	AUTHORIZED_PAGE_CONTEXT	DEV-01-GATE-PAGE	CLICK	decideCandidate	DEV-01-ACT-DECIDE-CANDIDATE	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION	SOURCE_PAGE_PERMISSION / SERVER_RECHECK	DEV-01-ACT-DECIDE-CANDIDATE typed schema + source contract fields + actor/scope/target + correlation_id + expected_version(if versioned) + idempotency_key	POST /v1/candidates/{id}/decision	SOURCE:ACPOS_CORE-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx#T18	DOMAIN_COMMAND_RUNTIME	acpos_system.change_candidates	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
+P	admin:DEV-01
+P	SOURCE_REGION
+P	DEV-01-BTN-CANDIDATE-DECIDE
+P	SOURCE_CONTROL
+P	AUTHORIZED_PAGE_CONTEXT
+P	DEV-01-GATE-PAGE
+P	CLICK
+P	decideCandidate
+P	DEV-01-ACT-DECIDE-CANDIDATE
+P	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION
+P	SOURCE_PAGE_PERMISSION / SERVER_RECHECK
+P	DEV-01-ACT-DECIDE-CANDIDATE typed schema + source contract fields + actor/scope/target + correlation_id + expected_version(if versioned) + idempotency_key
+P	POST /v1/candidates/{id}/decision
+P	SOURCE:ACPOS_CORE-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx#T18
+P	DOMAIN_COMMAND_RUNTIME
+P	acpos_system.change_candidates
+P	SOURCE_PAGE_STATE_REGISTRY / exact server result
+P	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable
+P	Registered success/error/disabled reason; no fabricated success
+P	SAME_PAGE_CONTEXT
+P	acpos_audit.audit_events + correlation_id + operation/result identity
+ROW	admin:DEV-01	SOURCE_REGION	DEV-01-BTN-CONTACT-UPSERT	SOURCE_CONTROL	AUTHORIZED_PAGE_CONTEXT	DEV-01-GATE-PAGE	CLICK	UI_LOCAL_STATE	DEV-01-ACT-UI-LOCAL-STATE	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION	SOURCE_PAGE_PERMISSION / SERVER_RECHECK	DEV-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id	N/A — UI/READ ONLY	NO_EFFECTFUL_API	UI_LOCAL / READ_ONLY	acpos_enterprise.opportunities	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
+P	admin:DEV-01
+P	SOURCE_REGION
+P	DEV-01-BTN-CONTACT-UPSERT
+P	SOURCE_CONTROL
+P	AUTHORIZED_PAGE_CONTEXT
+P	DEV-01-GATE-PAGE
+P	CLICK
+P	UI_LOCAL_STATE
+P	DEV-01-ACT-UI-LOCAL-STATE
+P	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION
+P	SOURCE_PAGE_PERMISSION / SERVER_RECHECK
+P	DEV-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id
+P	N/A — UI/READ ONLY
+P	NO_EFFECTFUL_API
+P	UI_LOCAL / READ_ONLY
+P	acpos_enterprise.opportunities
+P	SOURCE_PAGE_STATE_REGISTRY / exact server result
+P	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable
+P	Registered success/error/disabled reason; no fabricated success
+P	SAME_PAGE_CONTEXT
+P	acpos_audit.audit_events + correlation_id + operation/result identity
+ROW	admin:DEV-01	SOURCE_REGION	DEV-01-BTN-CR-CREATE	SOURCE_CONTROL	AUTHORIZED_PAGE_CONTEXT	DEV-01-GATE-PAGE	CLICK	createChangeRequest	DEV-01-ACT-CREATE-CHANGE-REQUEST	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION	SOURCE_PAGE_PERMISSION / SERVER_RECHECK	DEV-01-ACT-CREATE-CHANGE-REQUEST typed schema + source contract fields + actor/scope/target + correlation_id + expected_version(if versioned) + idempotency_key	POST /v1/commands/DEV-01-ACT-CREATE-CHANGE-REQUEST	NEW_AUTHORITY_AFTER_GLOBAL_SOURCE_EXHAUSTION	SHARED_TYPED_COMMAND_RUNTIME	acpos_system.system_changes / change_candidates	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
+P	admin:DEV-01
+P	SOURCE_REGION
+P	DEV-01-BTN-CR-CREATE
+P	SOURCE_CONTROL
+P	AUTHORIZED_PAGE_CONTEXT
+P	DEV-01-GATE-PAGE
+P	CLICK
+P	createChangeRequest
+P	DEV-01-ACT-CREATE-CHANGE-REQUEST
+P	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION
+P	SOURCE_PAGE_PERMISSION / SERVER_RECHECK
+P	DEV-01-ACT-CREATE-CHANGE-REQUEST typed schema + source contract fields + actor/scope/target + correlation_id + expected_version(if versioned) + idempotency_key
+P	POST /v1/commands/DEV-01-ACT-CREATE-CHANGE-REQUEST
+P	NEW_AUTHORITY_AFTER_GLOBAL_SOURCE_EXHAUSTION
+P	SHARED_TYPED_COMMAND_RUNTIME
+P	acpos_system.system_changes / change_candidates
+P	SOURCE_PAGE_STATE_REGISTRY / exact server result
+P	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable
+P	Registered success/error/disabled reason; no fabricated success
+P	SAME_PAGE_CONTEXT
+P	acpos_audit.audit_events + correlation_id + operation/result identity
+ROW	admin:DEV-01	SOURCE_REGION	DEV-01-BTN-DIRECTORY-SEARCH	SOURCE_CONTROL	AUTHORIZED_PAGE_CONTEXT	DEV-01-GATE-PAGE	CLICK	searchProjection	DEV-01-ACT-SEARCH-PROJECTION	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION	SOURCE_PAGE_PERMISSION / SERVER_RECHECK	DEV-01-ACT-SEARCH-PROJECTION typed schema + source contract fields + actor/scope/target + correlation_id + expected_version(if versioned) + idempotency_key	POST /v1/search	SOURCE:ACPOS_DEV-01_企業自動開發系統_Mother_Basic_Design_OPTIMIZED.docx#T17	DOMAIN_COMMAND_RUNTIME	acpos_enterprise.opportunities	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
+P	admin:DEV-01
+P	SOURCE_REGION
+P	DEV-01-BTN-DIRECTORY-SEARCH
+P	SOURCE_CONTROL
+P	AUTHORIZED_PAGE_CONTEXT
+P	DEV-01-GATE-PAGE
+P	CLICK
+P	searchProjection
+P	DEV-01-ACT-SEARCH-PROJECTION
+P	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION
+P	SOURCE_PAGE_PERMISSION / SERVER_RECHECK
+P	DEV-01-ACT-SEARCH-PROJECTION typed schema + source contract fields + actor/scope/target + correlation_id + expected_version(if versioned) + idempotency_key
+P	POST /v1/search
+P	SOURCE:ACPOS_DEV-01_企業自動開發系統_Mother_Basic_Design_OPTIMIZED.docx#T17
+P	DOMAIN_COMMAND_RUNTIME
+P	acpos_enterprise.opportunities
+P	SOURCE_PAGE_STATE_REGISTRY / exact server result
+P	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable
+P	Registered success/error/disabled reason; no fabricated success
+P	SAME_PAGE_CONTEXT
+P	acpos_audit.audit_events + correlation_id + operation/result identity
+ROW	admin:DEV-01	SOURCE_REGION	DEV-01-BTN-DISCOVERY-PAUSE	SOURCE_CONTROL	AUTHORIZED_PAGE_CONTEXT	DEV-01-GATE-PAGE	CLICK	pauseCompanyDiscovery	DEV-01-ACT-PAUSE-COMPANY-DISCOVERY	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION	SOURCE_PAGE_PERMISSION / SERVER_RECHECK	DEV-01-ACT-PAUSE-COMPANY-DISCOVERY typed schema + source contract fields + actor/scope/target + correlation_id + expected_version(if versioned) + idempotency_key	POST /v1/commands/DEV-01-ACT-PAUSE-COMPANY-DISCOVERY	NEW_AUTHORITY_AFTER_GLOBAL_SOURCE_EXHAUSTION	SHARED_TYPED_COMMAND_RUNTIME	acpos_enterprise.companies	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
+P	admin:DEV-01
+P	SOURCE_REGION
+P	DEV-01-BTN-DISCOVERY-PAUSE
+P	SOURCE_CONTROL
+P	AUTHORIZED_PAGE_CONTEXT
+P	DEV-01-GATE-PAGE
+P	CLICK
+P	pauseCompanyDiscovery
+P	DEV-01-ACT-PAUSE-COMPANY-DISCOVERY
+P	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION
+P	SOURCE_PAGE_PERMISSION / SERVER_RECHECK
+P	DEV-01-ACT-PAUSE-COMPANY-DISCOVERY typed schema + source contract fields + actor/scope/target + correlation_id + expected_version(if versioned) + idempotency_key
+P	POST /v1/commands/DEV-01-ACT-PAUSE-COMPANY-DISCOVERY
+P	NEW_AUTHORITY_AFTER_GLOBAL_SOURCE_EXHAUSTION
+P	SHARED_TYPED_COMMAND_RUNTIME
+P	acpos_enterprise.companies
+P	SOURCE_PAGE_STATE_REGISTRY / exact server result
+P	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable
+P	Registered success/error/disabled reason; no fabricated success
+P	SAME_PAGE_CONTEXT
+P	acpos_audit.audit_events + correlation_id + operation/result identity
+ROW	admin:DEV-01	SOURCE_REGION	DEV-01-BTN-DISCOVERY-RESUME	SOURCE_CONTROL	AUTHORIZED_PAGE_CONTEXT	DEV-01-GATE-PAGE	CLICK	resumeCompanyDiscovery	DEV-01-ACT-RESUME-COMPANY-DISCOVERY	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION	SOURCE_PAGE_PERMISSION / SERVER_RECHECK	DEV-01-ACT-RESUME-COMPANY-DISCOVERY typed schema + source contract fields + actor/scope/target + correlation_id + expected_version(if versioned) + idempotency_key	POST /v1/commands/DEV-01-ACT-RESUME-COMPANY-DISCOVERY	NEW_AUTHORITY_AFTER_GLOBAL_SOURCE_EXHAUSTION	SHARED_TYPED_COMMAND_RUNTIME	acpos_enterprise.companies	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
+P	admin:DEV-01
+P	SOURCE_REGION
+P	DEV-01-BTN-DISCOVERY-RESUME
+P	SOURCE_CONTROL
+P	AUTHORIZED_PAGE_CONTEXT
+P	DEV-01-GATE-PAGE
+P	CLICK
+P	resumeCompanyDiscovery
+P	DEV-01-ACT-RESUME-COMPANY-DISCOVERY
+P	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION
+P	SOURCE_PAGE_PERMISSION / SERVER_RECHECK
+P	DEV-01-ACT-RESUME-COMPANY-DISCOVERY typed schema + source contract fields + actor/scope/target + correlation_id + expected_version(if versioned) + idempotency_key
+P	POST /v1/commands/DEV-01-ACT-RESUME-COMPANY-DISCOVERY
+P	NEW_AUTHORITY_AFTER_GLOBAL_SOURCE_EXHAUSTION
+P	SHARED_TYPED_COMMAND_RUNTIME
+P	acpos_enterprise.companies
+P	SOURCE_PAGE_STATE_REGISTRY / exact server result
+P	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable
+P	Registered success/error/disabled reason; no fabricated success
+P	SAME_PAGE_CONTEXT
+P	acpos_audit.audit_events + correlation_id + operation/result identity
+ROW	admin:DEV-01	SOURCE_REGION	DEV-01-BTN-DISCOVERY-START	SOURCE_CONTROL	AUTHORIZED_PAGE_CONTEXT	DEV-01-GATE-PAGE	CLICK	startCompanyDiscovery	DEV-01-ACT-START-COMPANY-DISCOVERY	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION	SOURCE_PAGE_PERMISSION / SERVER_RECHECK	DEV-01-ACT-START-COMPANY-DISCOVERY typed schema + source contract fields + actor/scope/target + correlation_id + expected_version(if versioned) + idempotency_key	POST /v1/outreach/discovery-jobs	SOURCE:ACPOS_DEV-01_企業自動開發系統_Mother_Basic_Design_OPTIMIZED.docx#T17	DOMAIN_COMMAND_RUNTIME	acpos_enterprise.companies	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
+P	admin:DEV-01
+P	SOURCE_REGION
+P	DEV-01-BTN-DISCOVERY-START
+P	SOURCE_CONTROL
+P	AUTHORIZED_PAGE_CONTEXT
+P	DEV-01-GATE-PAGE
+P	CLICK
+P	startCompanyDiscovery
+P	DEV-01-ACT-START-COMPANY-DISCOVERY
+P	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION
+P	SOURCE_PAGE_PERMISSION / SERVER_RECHECK
+P	DEV-01-ACT-START-COMPANY-DISCOVERY typed schema + source contract fields + actor/scope/target + correlation_id + expected_version(if versioned) + idempotency_key
+P	POST /v1/outreach/discovery-jobs
+P	SOURCE:ACPOS_DEV-01_企業自動開發系統_Mother_Basic_Design_OPTIMIZED.docx#T17
+P	DOMAIN_COMMAND_RUNTIME
+P	acpos_enterprise.companies
+P	SOURCE_PAGE_STATE_REGISTRY / exact server result
+P	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable
+P	Registered success/error/disabled reason; no fabricated success
+P	SAME_PAGE_CONTEXT
+P	acpos_audit.audit_events + correlation_id + operation/result identity
+ROW	admin:DEV-01	SOURCE_REGION	DEV-01-BTN-DISCOVERY-STOP	SOURCE_CONTROL	AUTHORIZED_PAGE_CONTEXT	DEV-01-GATE-PAGE	CLICK	stopCompanyDiscovery	DEV-01-ACT-STOP-COMPANY-DISCOVERY	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION	SOURCE_PAGE_PERMISSION / SERVER_RECHECK	DEV-01-ACT-STOP-COMPANY-DISCOVERY typed schema + source contract fields + actor/scope/target + correlation_id + expected_version(if versioned) + idempotency_key	POST /v1/commands/DEV-01-ACT-STOP-COMPANY-DISCOVERY	NEW_AUTHORITY_AFTER_GLOBAL_SOURCE_EXHAUSTION	SHARED_TYPED_COMMAND_RUNTIME	acpos_enterprise.companies	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
+P	admin:DEV-01
+P	SOURCE_REGION
+P	DEV-01-BTN-DISCOVERY-STOP
+P	SOURCE_CONTROL
+P	AUTHORIZED_PAGE_CONTEXT
+P	DEV-01-GATE-PAGE
+P	CLICK
+P	stopCompanyDiscovery
+P	DEV-01-ACT-STOP-COMPANY-DISCOVERY
+P	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION
+P	SOURCE_PAGE_PERMISSION / SERVER_RECHECK
+P	DEV-01-ACT-STOP-COMPANY-DISCOVERY typed schema + source contract fields + actor/scope/target + correlation_id + expected_version(if versioned) + idempotency_key
+P	POST /v1/commands/DEV-01-ACT-STOP-COMPANY-DISCOVERY
+P	NEW_AUTHORITY_AFTER_GLOBAL_SOURCE_EXHAUSTION
+P	SHARED_TYPED_COMMAND_RUNTIME
+P	acpos_enterprise.companies
+P	SOURCE_PAGE_STATE_REGISTRY / exact server result
+P	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable
+P	Registered success/error/disabled reason; no fabricated success
+P	SAME_PAGE_CONTEXT
+P	acpos_audit.audit_events + correlation_id + operation/result identity
+ROW	admin:DEV-01	SOURCE_REGION	DEV-01-BTN-EMAIL-DISPATCH	SOURCE_CONTROL	AUTHORIZED_PAGE_CONTEXT	DEV-01-GATE-PAGE	CLICK	dispatchOutreachCampaign	DEV-01-ACT-DISPATCH-OUTREACH-CAMPAIGN	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION	SOURCE_PAGE_PERMISSION / SERVER_RECHECK	DEV-01-ACT-DISPATCH-OUTREACH-CAMPAIGN typed schema + source contract fields + actor/scope/target + correlation_id + expected_version(if versioned) + idempotency_key	POST /v1/outreach/campaigns/{campaignId}/dispatch	SOURCE:ACPOS_DEV-01_企業自動開發系統_Mother_Basic_Design_OPTIMIZED.docx#T17	DOMAIN_COMMAND_RUNTIME	acpos_enterprise.outreach_campaigns	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
+P	admin:DEV-01
+P	SOURCE_REGION
+P	DEV-01-BTN-EMAIL-DISPATCH
+P	SOURCE_CONTROL
+P	AUTHORIZED_PAGE_CONTEXT
+P	DEV-01-GATE-PAGE
+P	CLICK
+P	dispatchOutreachCampaign
+P	DEV-01-ACT-DISPATCH-OUTREACH-CAMPAIGN
+P	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION
+P	SOURCE_PAGE_PERMISSION / SERVER_RECHECK
+P	DEV-01-ACT-DISPATCH-OUTREACH-CAMPAIGN typed schema + source contract fields + actor/scope/target + correlation_id + expected_version(if versioned) + idempotency_key
+P	POST /v1/outreach/campaigns/{campaignId}/dispatch
+P	SOURCE:ACPOS_DEV-01_企業自動開發系統_Mother_Basic_Design_OPTIMIZED.docx#T17
+P	DOMAIN_COMMAND_RUNTIME
+P	acpos_enterprise.outreach_campaigns
+P	SOURCE_PAGE_STATE_REGISTRY / exact server result
+P	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable
+P	Registered success/error/disabled reason; no fabricated success
+P	SAME_PAGE_CONTEXT
+P	acpos_audit.audit_events + correlation_id + operation/result identity
+ROW	admin:DEV-01	SOURCE_REGION	DEV-01-BTN-EXPORT	SOURCE_CONTROL	AUTHORIZED_PAGE_CONTEXT	DEV-01-GATE-PAGE	CLICK	exportProjection	DEV-01-ACT-EXPORT-PROJECTION	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION	SOURCE_PAGE_PERMISSION / SERVER_RECHECK	DEV-01-ACT-EXPORT-PROJECTION typed schema + source contract fields + actor/scope/target + correlation_id + expected_version(if versioned) + idempotency_key	POST /v1/exports	SOURCE:ACPOS_ERP-01_ERP與財務_Mother_Basic_Design_OPTIMIZED.docx#T16	DOMAIN_COMMAND_RUNTIME	acpos_enterprise.opportunities	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
+P	admin:DEV-01
+P	SOURCE_REGION
+P	DEV-01-BTN-EXPORT
+P	SOURCE_CONTROL
+P	AUTHORIZED_PAGE_CONTEXT
+P	DEV-01-GATE-PAGE
+P	CLICK
+P	exportProjection
+P	DEV-01-ACT-EXPORT-PROJECTION
+P	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION
+P	SOURCE_PAGE_PERMISSION / SERVER_RECHECK
+P	DEV-01-ACT-EXPORT-PROJECTION typed schema + source contract fields + actor/scope/target + correlation_id + expected_version(if versioned) + idempotency_key
+P	POST /v1/exports
+P	SOURCE:ACPOS_ERP-01_ERP與財務_Mother_Basic_Design_OPTIMIZED.docx#T16
+P	DOMAIN_COMMAND_RUNTIME
+P	acpos_enterprise.opportunities
+P	SOURCE_PAGE_STATE_REGISTRY / exact server result
+P	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable
+P	Registered success/error/disabled reason; no fabricated success
+P	SAME_PAGE_CONTEXT
+P	acpos_audit.audit_events + correlation_id + operation/result identity
+ROW	admin:DEV-01	SOURCE_REGION	DEV-01-BTN-KILL-SWITCH	SOURCE_CONTROL	AUTHORIZED_PAGE_CONTEXT	DEV-01-GATE-PAGE	CLICK	setKillSwitch	DEV-01-ACT-SET-KILL-SWITCH	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION	SOURCE_PAGE_PERMISSION / SERVER_RECHECK	DEV-01-ACT-SET-KILL-SWITCH typed schema + source contract fields + actor/scope/target + correlation_id + expected_version(if versioned) + idempotency_key	POST /v1/operations/kill-switch	SOURCE:ACPOS_DEV-01_企業自動開發系統_Mother_Basic_Design_OPTIMIZED.docx#T17	DOMAIN_COMMAND_RUNTIME	acpos_enterprise.opportunities	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
+P	admin:DEV-01
+P	SOURCE_REGION
+P	DEV-01-BTN-KILL-SWITCH
+P	SOURCE_CONTROL
+P	AUTHORIZED_PAGE_CONTEXT
+P	DEV-01-GATE-PAGE
+P	CLICK
+P	setKillSwitch
+P	DEV-01-ACT-SET-KILL-SWITCH
+P	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION
+P	SOURCE_PAGE_PERMISSION / SERVER_RECHECK
+P	DEV-01-ACT-SET-KILL-SWITCH typed schema + source contract fields + actor/scope/target + correlation_id + expected_version(if versioned) + idempotency_key
+P	POST /v1/operations/kill-switch
+P	SOURCE:ACPOS_DEV-01_企業自動開發系統_Mother_Basic_Design_OPTIMIZED.docx#T17
+P	DOMAIN_COMMAND_RUNTIME
+P	acpos_enterprise.opportunities
+P	SOURCE_PAGE_STATE_REGISTRY / exact server result
+P	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable
+P	Registered success/error/disabled reason; no fabricated success
+P	SAME_PAGE_CONTEXT
+P	acpos_audit.audit_events + correlation_id + operation/result identity
+ROW	admin:DEV-01	SOURCE_REGION	DEV-01-BTN-MERGE	SOURCE_CONTROL	AUTHORIZED_PAGE_CONTEXT	DEV-01-GATE-PAGE	CLICK	mergeCompanyCandidate	DEV-01-ACT-MERGE-COMPANY-CANDIDATE	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION	SOURCE_PAGE_PERMISSION / SERVER_RECHECK	DEV-01-ACT-MERGE-COMPANY-CANDIDATE typed schema + source contract fields + actor/scope/target + correlation_id + expected_version(if versioned) + idempotency_key	POST /v1/outreach/companies/{companyId}/merge	SOURCE:ACPOS_DEV-01_企業自動開發系統_Mother_Basic_Design_OPTIMIZED.docx#T17	DOMAIN_COMMAND_RUNTIME	acpos_enterprise.companies	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
+P	admin:DEV-01
+P	SOURCE_REGION
+P	DEV-01-BTN-MERGE
+P	SOURCE_CONTROL
+P	AUTHORIZED_PAGE_CONTEXT
+P	DEV-01-GATE-PAGE
+P	CLICK
+P	mergeCompanyCandidate
+P	DEV-01-ACT-MERGE-COMPANY-CANDIDATE
+P	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION
+P	SOURCE_PAGE_PERMISSION / SERVER_RECHECK
+P	DEV-01-ACT-MERGE-COMPANY-CANDIDATE typed schema + source contract fields + actor/scope/target + correlation_id + expected_version(if versioned) + idempotency_key
+P	POST /v1/outreach/companies/{companyId}/merge
+P	SOURCE:ACPOS_DEV-01_企業自動開發系統_Mother_Basic_Design_OPTIMIZED.docx#T17
+P	DOMAIN_COMMAND_RUNTIME
+P	acpos_enterprise.companies
+P	SOURCE_PAGE_STATE_REGISTRY / exact server result
+P	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable
+P	Registered success/error/disabled reason; no fabricated success
+P	SAME_PAGE_CONTEXT
+P	acpos_audit.audit_events + correlation_id + operation/result identity
+ROW	admin:DEV-01	SOURCE_REGION	DEV-01-BTN-MERGE-PREVIEW	SOURCE_CONTROL	AUTHORIZED_PAGE_CONTEXT	DEV-01-GATE-PAGE	CLICK	previewCompanyMerge	DEV-01-ACT-PREVIEW-COMPANY-MERGE	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION	SOURCE_PAGE_PERMISSION / SERVER_RECHECK	DEV-01-ACT-PREVIEW-COMPANY-MERGE typed schema + source contract fields + actor/scope/target + correlation_id + expected_version(if versioned) + idempotency_key	POST /v1/outreach/companies/merge-preview	SOURCE:ACPOS_DEV-01_企業自動開發系統_Mother_Basic_Design_OPTIMIZED.docx#T17	DOMAIN_COMMAND_RUNTIME	acpos_enterprise.companies	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
+P	admin:DEV-01
+P	SOURCE_REGION
+P	DEV-01-BTN-MERGE-PREVIEW
+P	SOURCE_CONTROL
+P	AUTHORIZED_PAGE_CONTEXT
+P	DEV-01-GATE-PAGE
+P	CLICK
+P	previewCompanyMerge
+P	DEV-01-ACT-PREVIEW-COMPANY-MERGE
+P	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION
+P	SOURCE_PAGE_PERMISSION / SERVER_RECHECK
+P	DEV-01-ACT-PREVIEW-COMPANY-MERGE typed schema + source contract fields + actor/scope/target + correlation_id + expected_version(if versioned) + idempotency_key
+P	POST /v1/outreach/companies/merge-preview
+P	SOURCE:ACPOS_DEV-01_企業自動開發系統_Mother_Basic_Design_OPTIMIZED.docx#T17
+P	DOMAIN_COMMAND_RUNTIME
+P	acpos_enterprise.companies
+P	SOURCE_PAGE_STATE_REGISTRY / exact server result
+P	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable
+P	Registered success/error/disabled reason; no fabricated success
+P	SAME_PAGE_CONTEXT
+P	acpos_audit.audit_events + correlation_id + operation/result identity
+ROW	admin:DEV-01	SOURCE_REGION	DEV-01-BTN-PROFILE-SAVE	SOURCE_CONTROL	AUTHORIZED_PAGE_CONTEXT	DEV-01-GATE-PAGE	CLICK	UI_LOCAL_STATE	DEV-01-ACT-UI-LOCAL-STATE	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION	SOURCE_PAGE_PERMISSION / SERVER_RECHECK	DEV-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id	N/A — UI/READ ONLY	NO_EFFECTFUL_API	UI_LOCAL / READ_ONLY	acpos_enterprise.opportunities	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
+P	admin:DEV-01
+P	SOURCE_REGION
+P	DEV-01-BTN-PROFILE-SAVE
+P	SOURCE_CONTROL
+P	AUTHORIZED_PAGE_CONTEXT
+P	DEV-01-GATE-PAGE
+P	CLICK
+P	UI_LOCAL_STATE
+P	DEV-01-ACT-UI-LOCAL-STATE
+P	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION
+P	SOURCE_PAGE_PERMISSION / SERVER_RECHECK
+P	DEV-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id
+P	N/A — UI/READ ONLY
+P	NO_EFFECTFUL_API
+P	UI_LOCAL / READ_ONLY
+P	acpos_enterprise.opportunities
+P	SOURCE_PAGE_STATE_REGISTRY / exact server result
+P	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable
+P	Registered success/error/disabled reason; no fabricated success
+P	SAME_PAGE_CONTEXT
+P	acpos_audit.audit_events + correlation_id + operation/result identity
+ROW	admin:DEV-01	SOURCE_REGION	DEV-01-BTN-REFRESH	SOURCE_CONTROL	AUTHORIZED_PAGE_CONTEXT	DEV-01-GATE-PAGE	CLICK	refreshProjection	DEV-01-ACT-REFRESH-PROJECTION	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION	SOURCE_PAGE_PERMISSION / SERVER_RECHECK	DEV-01-ACT-REFRESH-PROJECTION typed schema + source contract fields + actor/scope/target + correlation_id + expected_version(if versioned) + idempotency_key	POST /v1/projections/refresh	SOURCE:ACPOS_DEV-01_企業自動開發系統_Mother_Basic_Design_OPTIMIZED.docx#T17	DOMAIN_COMMAND_RUNTIME	acpos_enterprise.opportunities	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
+P	admin:DEV-01
+P	SOURCE_REGION
+P	DEV-01-BTN-REFRESH
+P	SOURCE_CONTROL
+P	AUTHORIZED_PAGE_CONTEXT
+P	DEV-01-GATE-PAGE
+P	CLICK
+P	refreshProjection
+P	DEV-01-ACT-REFRESH-PROJECTION
+P	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION
+P	SOURCE_PAGE_PERMISSION / SERVER_RECHECK
+P	DEV-01-ACT-REFRESH-PROJECTION typed schema + source contract fields + actor/scope/target + correlation_id + expected_version(if versioned) + idempotency_key
+P	POST /v1/projections/refresh
+P	SOURCE:ACPOS_DEV-01_企業自動開發系統_Mother_Basic_Design_OPTIMIZED.docx#T17
+P	DOMAIN_COMMAND_RUNTIME
+P	acpos_enterprise.opportunities
+P	SOURCE_PAGE_STATE_REGISTRY / exact server result
+P	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable
+P	Registered success/error/disabled reason; no fabricated success
+P	SAME_PAGE_CONTEXT
+P	acpos_audit.audit_events + correlation_id + operation/result identity
+ROW	admin:DEV-01	SOURCE_REGION	DEV-01-BTN-SIGNAL-IGNORE	SOURCE_CONTROL	AUTHORIZED_PAGE_CONTEXT	DEV-01-GATE-PAGE	CLICK	UI_LOCAL_STATE	DEV-01-ACT-UI-LOCAL-STATE	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION	SOURCE_PAGE_PERMISSION / SERVER_RECHECK	DEV-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id	N/A — UI/READ ONLY	NO_EFFECTFUL_API	UI_LOCAL / READ_ONLY	acpos_enterprise.opportunities	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
+P	admin:DEV-01
+P	SOURCE_REGION
+P	DEV-01-BTN-SIGNAL-IGNORE
+P	SOURCE_CONTROL
+P	AUTHORIZED_PAGE_CONTEXT
+P	DEV-01-GATE-PAGE
+P	CLICK
+P	UI_LOCAL_STATE
+P	DEV-01-ACT-UI-LOCAL-STATE
+P	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION
+P	SOURCE_PAGE_PERMISSION / SERVER_RECHECK
+P	DEV-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id
+P	N/A — UI/READ ONLY
+P	NO_EFFECTFUL_API
+P	UI_LOCAL / READ_ONLY
+P	acpos_enterprise.opportunities
+P	SOURCE_PAGE_STATE_REGISTRY / exact server result
+P	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable
+P	Registered success/error/disabled reason; no fabricated success
+P	SAME_PAGE_CONTEXT
+P	acpos_audit.audit_events + correlation_id + operation/result identity
+ROW	admin:DEV-01	SOURCE_REGION	DEV-01-BTN-SIGNAL-QUALIFY	SOURCE_CONTROL	AUTHORIZED_PAGE_CONTEXT	DEV-01-GATE-PAGE	CLICK	UI_LOCAL_STATE	DEV-01-ACT-UI-LOCAL-STATE	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION	SOURCE_PAGE_PERMISSION / SERVER_RECHECK	DEV-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id	N/A — UI/READ ONLY	NO_EFFECTFUL_API	UI_LOCAL / READ_ONLY	acpos_enterprise.opportunities	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
+P	admin:DEV-01
+P	SOURCE_REGION
+P	DEV-01-BTN-SIGNAL-QUALIFY
+P	SOURCE_CONTROL
+P	AUTHORIZED_PAGE_CONTEXT
+P	DEV-01-GATE-PAGE
+P	CLICK
+P	UI_LOCAL_STATE
+P	DEV-01-ACT-UI-LOCAL-STATE
+P	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION
+P	SOURCE_PAGE_PERMISSION / SERVER_RECHECK
+P	DEV-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id
+P	N/A — UI/READ ONLY
+P	NO_EFFECTFUL_API
+P	UI_LOCAL / READ_ONLY
+P	acpos_enterprise.opportunities
+P	SOURCE_PAGE_STATE_REGISTRY / exact server result
+P	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable
+P	Registered success/error/disabled reason; no fabricated success
+P	SAME_PAGE_CONTEXT
+P	acpos_audit.audit_events + correlation_id + operation/result identity
+ROW	admin:DEV-01	SOURCE_REGION	DEV-01-BTN-SOURCE-MANAGE	SOURCE_CONTROL	AUTHORIZED_PAGE_CONTEXT	DEV-01-GATE-PAGE	CLICK	UI_LOCAL_STATE	DEV-01-ACT-UI-LOCAL-STATE	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION	SOURCE_PAGE_PERMISSION / SERVER_RECHECK	DEV-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id	N/A — UI/READ ONLY	NO_EFFECTFUL_API	UI_LOCAL / READ_ONLY	acpos_enterprise.opportunities	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
+P	admin:DEV-01
+P	SOURCE_REGION
+P	DEV-01-BTN-SOURCE-MANAGE
+P	SOURCE_CONTROL
+P	AUTHORIZED_PAGE_CONTEXT
+P	DEV-01-GATE-PAGE
+P	CLICK
+P	UI_LOCAL_STATE
+P	DEV-01-ACT-UI-LOCAL-STATE
+P	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION
+P	SOURCE_PAGE_PERMISSION / SERVER_RECHECK
+P	DEV-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id
+P	N/A — UI/READ ONLY
+P	NO_EFFECTFUL_API
+P	UI_LOCAL / READ_ONLY
+P	acpos_enterprise.opportunities
+P	SOURCE_PAGE_STATE_REGISTRY / exact server result
+P	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable
+P	Registered success/error/disabled reason; no fabricated success
+P	SAME_PAGE_CONTEXT
+P	acpos_audit.audit_events + correlation_id + operation/result identity
+ROW	admin:DEV-01	SOURCE_REGION	DEV-01-BTN-STAGE-1	SOURCE_CONTROL	AUTHORIZED_PAGE_CONTEXT	DEV-01-GATE-PAGE	CLICK	UI_LOCAL_STATE	DEV-01-ACT-UI-LOCAL-STATE	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION	SOURCE_PAGE_PERMISSION / SERVER_RECHECK	DEV-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id	N/A — UI/READ ONLY	NO_EFFECTFUL_API	UI_LOCAL / READ_ONLY	acpos_enterprise.opportunities	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
+P	admin:DEV-01
+P	SOURCE_REGION
+P	DEV-01-BTN-STAGE-1
+P	SOURCE_CONTROL
+P	AUTHORIZED_PAGE_CONTEXT
+P	DEV-01-GATE-PAGE
+P	CLICK
+P	UI_LOCAL_STATE
+P	DEV-01-ACT-UI-LOCAL-STATE
+P	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION
+P	SOURCE_PAGE_PERMISSION / SERVER_RECHECK
+P	DEV-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id
+P	N/A — UI/READ ONLY
+P	NO_EFFECTFUL_API
+P	UI_LOCAL / READ_ONLY
+P	acpos_enterprise.opportunities
+P	SOURCE_PAGE_STATE_REGISTRY / exact server result
+P	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable
+P	Registered success/error/disabled reason; no fabricated success
+P	SAME_PAGE_CONTEXT
+P	acpos_audit.audit_events + correlation_id + operation/result identity
+ROW	admin:DEV-01	SOURCE_REGION	DEV-01-CTL-OPPORTUNITY-STATE	SOURCE_CONTROL	AUTHORIZED_PAGE_CONTEXT	DEV-01-GATE-PAGE	CLICK	UI_LOCAL_STATE	DEV-01-ACT-UI-LOCAL-STATE	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION	SOURCE_PAGE_PERMISSION / SERVER_RECHECK	DEV-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id	N/A — UI/READ ONLY	NO_EFFECTFUL_API	UI_LOCAL / READ_ONLY	acpos_enterprise.opportunities	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
+P	admin:DEV-01
+P	SOURCE_REGION
+P	DEV-01-CTL-OPPORTUNITY-STATE
+P	SOURCE_CONTROL
+P	AUTHORIZED_PAGE_CONTEXT
+P	DEV-01-GATE-PAGE
+P	CLICK
+P	UI_LOCAL_STATE
+P	DEV-01-ACT-UI-LOCAL-STATE
+P	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION
+P	SOURCE_PAGE_PERMISSION / SERVER_RECHECK
+P	DEV-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id
+P	N/A — UI/READ ONLY
+P	NO_EFFECTFUL_API
+P	UI_LOCAL / READ_ONLY
+P	acpos_enterprise.opportunities
+P	SOURCE_PAGE_STATE_REGISTRY / exact server result
+P	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable
+P	Registered success/error/disabled reason; no fabricated success
+P	SAME_PAGE_CONTEXT
+P	acpos_audit.audit_events + correlation_id + operation/result identity
+P	admin:ERP-01 — Unified Construction Bindings
+ROW	Page	Region	Control UID	Type	Visible	Enabled/Gate	Operation	Action UID	Action UID Status	API	API Basis	Runtime	DB/Provider	Payload	Success	Failure	UI Feedback	Next/Handoff	Evidence
+P	Page
+P	Region
+P	Control UID
+P	Type
+P	Visible
+P	Enabled/Gate
+P	Operation
+P	Action UID
+P	Action UID Status
+P	API
+P	API Basis
+P	Runtime
+P	DB/Provider
+P	Payload
+P	Success
+P	Failure
+P	UI Feedback
+P	Next/Handoff
+P	Evidence
+ROW	admin:ERP-01	SYSTEM_OR_CONTEXT_ACTION	ERP-01-BTN-GET-UI-PROJECTION	BUTTON_OR_SYSTEM_TRIGGER	SOURCE_GATE	SOURCE_GATE	getUiProjection	ERP-01-ACT-GET-UI-PROJECTION	NEW_UID_FROM_EXISTING_OPERATION	GET /v1/ui-projections/{pageUid}	SOURCE_EXACT	READ_PROJECTION_RUNTIME	acpos_erp.connectors	SOURCE_SCHEMA + common envelope	SOURCE_STATE_REGISTRY	SOURCE_ERROR_REGISTRY	Registered result/error	SOURCE_NEXT_OR_SAME_PAGE	Audit/correlation
+P	admin:ERP-01
+P	SYSTEM_OR_CONTEXT_ACTION
+P	ERP-01-BTN-GET-UI-PROJECTION
+P	BUTTON_OR_SYSTEM_TRIGGER
+P	SOURCE_GATE
+P	SOURCE_GATE
+P	getUiProjection
+P	ERP-01-ACT-GET-UI-PROJECTION
+P	NEW_UID_FROM_EXISTING_OPERATION
+P	GET /v1/ui-projections/{pageUid}
+P	SOURCE_EXACT
+P	READ_PROJECTION_RUNTIME
+P	acpos_erp.connectors
+P	SOURCE_SCHEMA + common envelope
+P	SOURCE_STATE_REGISTRY
+P	SOURCE_ERROR_REGISTRY
+P	Registered result/error
+P	SOURCE_NEXT_OR_SAME_PAGE
+P	Audit/correlation
+ROW	admin:ERP-01	SYSTEM_OR_CONTEXT_ACTION	ERP-01-BTN-CREATE-ERPCONNECTOR	BUTTON_OR_SYSTEM_TRIGGER	SOURCE_GATE	SOURCE_GATE	createERPConnector	ERP-01-ACT-CREATE-ERPCONNECTOR	NEW_UID_FROM_EXISTING_OPERATION	POST /v1/erp/connectors	SOURCE_EXACT	DOMAIN_COMMAND_RUNTIME	acpos_erp.connectors / sync_jobs	SOURCE_SCHEMA + common envelope	SOURCE_STATE_REGISTRY	SOURCE_ERROR_REGISTRY	Registered result/error	SOURCE_NEXT_OR_SAME_PAGE	Audit/correlation
+P	admin:ERP-01
+P	SYSTEM_OR_CONTEXT_ACTION
+P	ERP-01-BTN-CREATE-ERPCONNECTOR
+P	BUTTON_OR_SYSTEM_TRIGGER
+P	SOURCE_GATE
+P	SOURCE_GATE
+P	createERPConnector
+P	ERP-01-ACT-CREATE-ERPCONNECTOR
+P	NEW_UID_FROM_EXISTING_OPERATION
+P	POST /v1/erp/connectors
+P	SOURCE_EXACT
+P	DOMAIN_COMMAND_RUNTIME
+P	acpos_erp.connectors / sync_jobs
+P	SOURCE_SCHEMA + common envelope
+P	SOURCE_STATE_REGISTRY
+P	SOURCE_ERROR_REGISTRY
+P	Registered result/error
+P	SOURCE_NEXT_OR_SAME_PAGE
+P	Audit/correlation
+ROW	admin:ERP-01	SYSTEM_OR_CONTEXT_ACTION	ERP-01-BTN-UPDATE-ERPCONNECTOR	BUTTON_OR_SYSTEM_TRIGGER	SOURCE_GATE	SOURCE_GATE	updateERPConnector	ERP-01-ACT-UPDATE-ERPCONNECTOR	NEW_UID_FROM_EXISTING_OPERATION	PATCH /v1/erp/connectors/{id}	SOURCE_EXACT	DOMAIN_COMMAND_RUNTIME	acpos_erp.connectors / sync_jobs	SOURCE_SCHEMA + common envelope	SOURCE_STATE_REGISTRY	SOURCE_ERROR_REGISTRY	Registered result/error	SOURCE_NEXT_OR_SAME_PAGE	Audit/correlation
+P	admin:ERP-01
+P	SYSTEM_OR_CONTEXT_ACTION
+P	ERP-01-BTN-UPDATE-ERPCONNECTOR
+P	BUTTON_OR_SYSTEM_TRIGGER
+P	SOURCE_GATE
+P	SOURCE_GATE
+P	updateERPConnector
+P	ERP-01-ACT-UPDATE-ERPCONNECTOR
+P	NEW_UID_FROM_EXISTING_OPERATION
+P	PATCH /v1/erp/connectors/{id}
+P	SOURCE_EXACT
+P	DOMAIN_COMMAND_RUNTIME
+P	acpos_erp.connectors / sync_jobs
+P	SOURCE_SCHEMA + common envelope
+P	SOURCE_STATE_REGISTRY
+P	SOURCE_ERROR_REGISTRY
+P	Registered result/error
+P	SOURCE_NEXT_OR_SAME_PAGE
+P	Audit/correlation
+ROW	admin:ERP-01	SYSTEM_OR_CONTEXT_ACTION	ERP-01-BTN-VALIDATE-ERPCONNECTOR	BUTTON_OR_SYSTEM_TRIGGER	SOURCE_GATE	SOURCE_GATE	validateERPConnector	ERP-01-ACT-VALIDATE-ERPCONNECTOR	NEW_UID_FROM_EXISTING_OPERATION	POST /v1/erp/connectors/{id}/validate	SOURCE_EXACT	DOMAIN_COMMAND_RUNTIME	acpos_erp.connectors / sync_jobs	SOURCE_SCHEMA + common envelope	SOURCE_STATE_REGISTRY	SOURCE_ERROR_REGISTRY	Registered result/error	SOURCE_NEXT_OR_SAME_PAGE	Audit/correlation
+P	admin:ERP-01
+P	SYSTEM_OR_CONTEXT_ACTION
+P	ERP-01-BTN-VALIDATE-ERPCONNECTOR
+P	BUTTON_OR_SYSTEM_TRIGGER
+P	SOURCE_GATE
+P	SOURCE_GATE
+P	validateERPConnector
+P	ERP-01-ACT-VALIDATE-ERPCONNECTOR
+P	NEW_UID_FROM_EXISTING_OPERATION
+P	POST /v1/erp/connectors/{id}/validate
+P	SOURCE_EXACT
+P	DOMAIN_COMMAND_RUNTIME
+P	acpos_erp.connectors / sync_jobs
+P	SOURCE_SCHEMA + common envelope
+P	SOURCE_STATE_REGISTRY
+P	SOURCE_ERROR_REGISTRY
+P	Registered result/error
+P	SOURCE_NEXT_OR_SAME_PAGE
+P	Audit/correlation
+ROW	admin:ERP-01	SYSTEM_OR_CONTEXT_ACTION	ERP-01-BTN-VALIDATE-ERPMAPPING	BUTTON_OR_SYSTEM_TRIGGER	SOURCE_GATE	SOURCE_GATE	validateERPMapping	ERP-01-ACT-VALIDATE-ERPMAPPING	NEW_UID_FROM_EXISTING_OPERATION	POST /v1/erp/mappings/{id}/validate	SOURCE_EXACT	DOMAIN_COMMAND_RUNTIME	acpos_erp.connectors / sync_jobs	SOURCE_SCHEMA + common envelope	SOURCE_STATE_REGISTRY	SOURCE_ERROR_REGISTRY	Registered result/error	SOURCE_NEXT_OR_SAME_PAGE	Audit/correlation
+P	admin:ERP-01
+P	SYSTEM_OR_CONTEXT_ACTION
+P	ERP-01-BTN-VALIDATE-ERPMAPPING
+P	BUTTON_OR_SYSTEM_TRIGGER
+P	SOURCE_GATE
+P	SOURCE_GATE
+P	validateERPMapping
+P	ERP-01-ACT-VALIDATE-ERPMAPPING
+P	NEW_UID_FROM_EXISTING_OPERATION
+P	POST /v1/erp/mappings/{id}/validate
+P	SOURCE_EXACT
+P	DOMAIN_COMMAND_RUNTIME
+P	acpos_erp.connectors / sync_jobs
+P	SOURCE_SCHEMA + common envelope
+P	SOURCE_STATE_REGISTRY
+P	SOURCE_ERROR_REGISTRY
+P	Registered result/error
+P	SOURCE_NEXT_OR_SAME_PAGE
+P	Audit/correlation
+ROW	admin:ERP-01	SYSTEM_OR_CONTEXT_ACTION	ERP-01-BTN-REFRESH-ERPSNAPSHOT	BUTTON_OR_SYSTEM_TRIGGER	SOURCE_GATE	SOURCE_GATE	refreshERPSnapshot	ERP-01-ACT-REFRESH-ERPSNAPSHOT	NEW_UID_FROM_EXISTING_OPERATION	POST /v1/erp/snapshots/refresh	SOURCE_EXACT	DOMAIN_COMMAND_RUNTIME	acpos_erp.connectors / sync_jobs	SOURCE_SCHEMA + common envelope	SOURCE_STATE_REGISTRY	SOURCE_ERROR_REGISTRY	Registered result/error	SOURCE_NEXT_OR_SAME_PAGE	Audit/correlation
+P	admin:ERP-01
+P	SYSTEM_OR_CONTEXT_ACTION
+P	ERP-01-BTN-REFRESH-ERPSNAPSHOT
+P	BUTTON_OR_SYSTEM_TRIGGER
+P	SOURCE_GATE
+P	SOURCE_GATE
+P	refreshERPSnapshot
+P	ERP-01-ACT-REFRESH-ERPSNAPSHOT
+P	NEW_UID_FROM_EXISTING_OPERATION
+P	POST /v1/erp/snapshots/refresh
+P	SOURCE_EXACT
+P	DOMAIN_COMMAND_RUNTIME
+P	acpos_erp.connectors / sync_jobs
+P	SOURCE_SCHEMA + common envelope
+P	SOURCE_STATE_REGISTRY
+P	SOURCE_ERROR_REGISTRY
+P	Registered result/error
+P	SOURCE_NEXT_OR_SAME_PAGE
+P	Audit/correlation
+ROW	admin:ERP-01	SYSTEM_OR_CONTEXT_ACTION	ERP-01-BTN-CREATE-ERPSYNC-JOB	BUTTON_OR_SYSTEM_TRIGGER	SOURCE_GATE	SOURCE_GATE	createERPSyncJob	ERP-01-ACT-CREATE-ERPSYNC-JOB	NEW_UID_FROM_EXISTING_OPERATION	POST /v1/erp/sync-jobs	SOURCE_EXACT	DOMAIN_COMMAND_RUNTIME	acpos_erp.connectors / sync_jobs	SOURCE_SCHEMA + common envelope	SOURCE_STATE_REGISTRY	SOURCE_ERROR_REGISTRY	Registered result/error	SOURCE_NEXT_OR_SAME_PAGE	Audit/correlation
+P	admin:ERP-01
+P	SYSTEM_OR_CONTEXT_ACTION
+P	ERP-01-BTN-CREATE-ERPSYNC-JOB
+P	BUTTON_OR_SYSTEM_TRIGGER
+P	SOURCE_GATE
+P	SOURCE_GATE
+P	createERPSyncJob
+P	ERP-01-ACT-CREATE-ERPSYNC-JOB
+P	NEW_UID_FROM_EXISTING_OPERATION
+P	POST /v1/erp/sync-jobs
+P	SOURCE_EXACT
+P	DOMAIN_COMMAND_RUNTIME
+P	acpos_erp.connectors / sync_jobs
+P	SOURCE_SCHEMA + common envelope
+P	SOURCE_STATE_REGISTRY
+P	SOURCE_ERROR_REGISTRY
+P	Registered result/error
+P	SOURCE_NEXT_OR_SAME_PAGE
+P	Audit/correlation
+ROW	admin:ERP-01	SYSTEM_OR_CONTEXT_ACTION	ERP-01-BTN-GET-ERPSYNC-STATUS	BUTTON_OR_SYSTEM_TRIGGER	SOURCE_GATE	SOURCE_GATE	getERPSyncStatus	ERP-01-ACT-GET-ERPSYNC-STATUS	NEW_UID_FROM_EXISTING_OPERATION	GET /v1/erp/sync-jobs/{id}	SOURCE_EXACT	READ_PROJECTION_RUNTIME	acpos_erp.connectors / sync_jobs	SOURCE_SCHEMA + common envelope	SOURCE_STATE_REGISTRY	SOURCE_ERROR_REGISTRY	Registered result/error	SOURCE_NEXT_OR_SAME_PAGE	Audit/correlation
+P	admin:ERP-01
+P	SYSTEM_OR_CONTEXT_ACTION
+P	ERP-01-BTN-GET-ERPSYNC-STATUS
+P	BUTTON_OR_SYSTEM_TRIGGER
+P	SOURCE_GATE
+P	SOURCE_GATE
+P	getERPSyncStatus
+P	ERP-01-ACT-GET-ERPSYNC-STATUS
+P	NEW_UID_FROM_EXISTING_OPERATION
+P	GET /v1/erp/sync-jobs/{id}
+P	SOURCE_EXACT
+P	READ_PROJECTION_RUNTIME
+P	acpos_erp.connectors / sync_jobs
+P	SOURCE_SCHEMA + common envelope
+P	SOURCE_STATE_REGISTRY
+P	SOURCE_ERROR_REGISTRY
+P	Registered result/error
+P	SOURCE_NEXT_OR_SAME_PAGE
+P	Audit/correlation
+ROW	admin:ERP-01	SYSTEM_OR_CONTEXT_ACTION	ERP-01-BTN-RETRY-ERPSYNC	BUTTON_OR_SYSTEM_TRIGGER	SOURCE_GATE	SOURCE_GATE	retryERPSync	ERP-01-ACT-RETRY-ERPSYNC	NEW_UID_FROM_EXISTING_OPERATION	POST /v1/erp/sync-jobs/{id}/retry	SOURCE_EXACT	DOMAIN_COMMAND_RUNTIME	acpos_erp.connectors / sync_jobs	SOURCE_SCHEMA + common envelope	SOURCE_STATE_REGISTRY	SOURCE_ERROR_REGISTRY	Registered result/error	SOURCE_NEXT_OR_SAME_PAGE	Audit/correlation
+P	admin:ERP-01
+P	SYSTEM_OR_CONTEXT_ACTION
+P	ERP-01-BTN-RETRY-ERPSYNC
+P	BUTTON_OR_SYSTEM_TRIGGER
+P	SOURCE_GATE
+P	SOURCE_GATE
+P	retryERPSync
+P	ERP-01-ACT-RETRY-ERPSYNC
+P	NEW_UID_FROM_EXISTING_OPERATION
+P	POST /v1/erp/sync-jobs/{id}/retry
+P	SOURCE_EXACT
+P	DOMAIN_COMMAND_RUNTIME
+P	acpos_erp.connectors / sync_jobs
+P	SOURCE_SCHEMA + common envelope
+P	SOURCE_STATE_REGISTRY
+P	SOURCE_ERROR_REGISTRY
+P	Registered result/error
+P	SOURCE_NEXT_OR_SAME_PAGE
+P	Audit/correlation
+ROW	admin:ERP-01	SYSTEM_OR_CONTEXT_ACTION	ERP-01-BTN-GET-ERPFAILURE	BUTTON_OR_SYSTEM_TRIGGER	SOURCE_GATE	SOURCE_GATE	getERPFailure	ERP-01-ACT-GET-ERPFAILURE	NEW_UID_FROM_EXISTING_OPERATION	GET /v1/erp/failures/{id}	SOURCE_EXACT	READ_PROJECTION_RUNTIME	acpos_erp.connectors / sync_jobs	SOURCE_SCHEMA + common envelope	SOURCE_STATE_REGISTRY	SOURCE_ERROR_REGISTRY	Registered result/error	SOURCE_NEXT_OR_SAME_PAGE	Audit/correlation
+P	admin:ERP-01
+P	SYSTEM_OR_CONTEXT_ACTION
+P	ERP-01-BTN-GET-ERPFAILURE
+P	BUTTON_OR_SYSTEM_TRIGGER
+P	SOURCE_GATE
+P	SOURCE_GATE
+P	getERPFailure
+P	ERP-01-ACT-GET-ERPFAILURE
+P	NEW_UID_FROM_EXISTING_OPERATION
+P	GET /v1/erp/failures/{id}
+P	SOURCE_EXACT
+P	READ_PROJECTION_RUNTIME
+P	acpos_erp.connectors / sync_jobs
+P	SOURCE_SCHEMA + common envelope
+P	SOURCE_STATE_REGISTRY
+P	SOURCE_ERROR_REGISTRY
+P	Registered result/error
+P	SOURCE_NEXT_OR_SAME_PAGE
+P	Audit/correlation
+ROW	admin:ERP-01	SYSTEM_OR_CONTEXT_ACTION	ERP-01-BTN-GET-ERPFINANCE-FACT-PACK	BUTTON_OR_SYSTEM_TRIGGER	SOURCE_GATE	SOURCE_GATE	getERPFinanceFactPack	ERP-01-ACT-GET-ERPFINANCE-FACT-PACK	NEW_UID_FROM_EXISTING_OPERATION	GET /v1/erp/finance/fact-pack	SOURCE_EXACT	READ_PROJECTION_RUNTIME	acpos_erp.connectors / sync_jobs	SOURCE_SCHEMA + common envelope	SOURCE_STATE_REGISTRY	SOURCE_ERROR_REGISTRY	Registered result/error	SOURCE_NEXT_OR_SAME_PAGE	Audit/correlation
+P	admin:ERP-01
+P	SYSTEM_OR_CONTEXT_ACTION
+P	ERP-01-BTN-GET-ERPFINANCE-FACT-PACK
+P	BUTTON_OR_SYSTEM_TRIGGER
+P	SOURCE_GATE
+P	SOURCE_GATE
+P	getERPFinanceFactPack
+P	ERP-01-ACT-GET-ERPFINANCE-FACT-PACK
+P	NEW_UID_FROM_EXISTING_OPERATION
+P	GET /v1/erp/finance/fact-pack
+P	SOURCE_EXACT
+P	READ_PROJECTION_RUNTIME
+P	acpos_erp.connectors / sync_jobs
+P	SOURCE_SCHEMA + common envelope
+P	SOURCE_STATE_REGISTRY
+P	SOURCE_ERROR_REGISTRY
+P	Registered result/error
+P	SOURCE_NEXT_OR_SAME_PAGE
+P	Audit/correlation
+ROW	admin:ERP-01	SYSTEM_OR_CONTEXT_ACTION	ERP-01-BTN-GET-ERPCAPACITY-GUARDRAILS	BUTTON_OR_SYSTEM_TRIGGER	SOURCE_GATE	SOURCE_GATE	getERPCapacityGuardrails	ERP-01-ACT-GET-ERPCAPACITY-GUARDRAILS	NEW_UID_FROM_EXISTING_OPERATION	GET /v1/erp/capacity/guardrails	SOURCE_EXACT	READ_PROJECTION_RUNTIME	acpos_erp.connectors / sync_jobs	SOURCE_SCHEMA + common envelope	SOURCE_STATE_REGISTRY	SOURCE_ERROR_REGISTRY	Registered result/error	SOURCE_NEXT_OR_SAME_PAGE	Audit/correlation
+P	admin:ERP-01
+P	SYSTEM_OR_CONTEXT_ACTION
+P	ERP-01-BTN-GET-ERPCAPACITY-GUARDRAILS
+P	BUTTON_OR_SYSTEM_TRIGGER
+P	SOURCE_GATE
+P	SOURCE_GATE
+P	getERPCapacityGuardrails
+P	ERP-01-ACT-GET-ERPCAPACITY-GUARDRAILS
+P	NEW_UID_FROM_EXISTING_OPERATION
+P	GET /v1/erp/capacity/guardrails
+P	SOURCE_EXACT
+P	READ_PROJECTION_RUNTIME
+P	acpos_erp.connectors / sync_jobs
+P	SOURCE_SCHEMA + common envelope
+P	SOURCE_STATE_REGISTRY
+P	SOURCE_ERROR_REGISTRY
+P	Registered result/error
+P	SOURCE_NEXT_OR_SAME_PAGE
+P	Audit/correlation
+ROW	admin:ERP-01	SYSTEM_OR_CONTEXT_ACTION	ERP-01-BTN-GET-ERPFORECAST	BUTTON_OR_SYSTEM_TRIGGER	SOURCE_GATE	SOURCE_GATE	getERPForecast	ERP-01-ACT-GET-ERPFORECAST	NEW_UID_FROM_EXISTING_OPERATION	GET /v1/erp/forecasts	SOURCE_EXACT	READ_PROJECTION_RUNTIME	acpos_erp.connectors / sync_jobs	SOURCE_SCHEMA + common envelope	SOURCE_STATE_REGISTRY	SOURCE_ERROR_REGISTRY	Registered result/error	SOURCE_NEXT_OR_SAME_PAGE	Audit/correlation
+P	admin:ERP-01
+P	SYSTEM_OR_CONTEXT_ACTION
+P	ERP-01-BTN-GET-ERPFORECAST
+P	BUTTON_OR_SYSTEM_TRIGGER
+P	SOURCE_GATE
+P	SOURCE_GATE
+P	getERPForecast
+P	ERP-01-ACT-GET-ERPFORECAST
+P	NEW_UID_FROM_EXISTING_OPERATION
+P	GET /v1/erp/forecasts
+P	SOURCE_EXACT
+P	READ_PROJECTION_RUNTIME
+P	acpos_erp.connectors / sync_jobs
+P	SOURCE_SCHEMA + common envelope
+P	SOURCE_STATE_REGISTRY
+P	SOURCE_ERROR_REGISTRY
+P	Registered result/error
+P	SOURCE_NEXT_OR_SAME_PAGE
+P	Audit/correlation
+ROW	admin:ERP-01	SYSTEM_OR_CONTEXT_ACTION	ERP-01-BTN-EXPORT-PROJECTION	BUTTON_OR_SYSTEM_TRIGGER	SOURCE_GATE	SOURCE_GATE	exportProjection	ERP-01-ACT-EXPORT-PROJECTION	NEW_UID_FROM_EXISTING_OPERATION	POST /v1/exports	SOURCE_EXACT	DOMAIN_COMMAND_RUNTIME	acpos_erp.connectors	SOURCE_SCHEMA + common envelope	SOURCE_STATE_REGISTRY	SOURCE_ERROR_REGISTRY	Registered result/error	SOURCE_NEXT_OR_SAME_PAGE	Audit/correlation
+P	admin:ERP-01
+P	SYSTEM_OR_CONTEXT_ACTION
+P	ERP-01-BTN-EXPORT-PROJECTION
+P	BUTTON_OR_SYSTEM_TRIGGER
+P	SOURCE_GATE
+P	SOURCE_GATE
+P	exportProjection
+P	ERP-01-ACT-EXPORT-PROJECTION
+P	NEW_UID_FROM_EXISTING_OPERATION
+P	POST /v1/exports
+P	SOURCE_EXACT
+P	DOMAIN_COMMAND_RUNTIME
+P	acpos_erp.connectors
+P	SOURCE_SCHEMA + common envelope
+P	SOURCE_STATE_REGISTRY
+P	SOURCE_ERROR_REGISTRY
+P	Registered result/error
+P	SOURCE_NEXT_OR_SAME_PAGE
+P	Audit/correlation
+P	Construction Lookup Invariant
+P	施工 AI MUST resolve a UI action from exactly one row of this matrix. If a source control is UI_ONLY/READ_ONLY, API/DB write is explicitly N/A and creating a write endpoint is forbidden. If API Basis is NEW_AUTHORITY_AFTER_GLOBAL_SOURCE_EXHAUSTION, the only permitted implementation path is the Shared Typed Command Runtime endpoint shown in the row; page-local alternative endpoints are forbidden.
 ### PART word/header1.xml
 P	ORANGE ONE · ACPOS ACPOS-AI-06｜Mother Basic Logic Design
 ### PART word/footer1.xml

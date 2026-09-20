@@ -3006,6 +3006,331 @@ P	CLOSURE_MATERIALIZED
 P	G. Construction Handoff Rule
 P	施工 AI MUST resolve each UI control through this exact order: Page UID → Section/Region → Control UID → Trigger/Operation or Action UID → Gate → Permission → Input/Payload → Method/Path or shared Runtime Operation → Persistence/Provider Owner → Audit/Event → Success/Failure/Recovery → Next Page/Handoff. UI_ONLY/READ_ONLY controls MUST NOT create a write API. System-only operations MUST NOT cause a new visible button unless this closure/source explicitly materializes that control.
 P	When a provider/platform/environment value is runtime-specific, the exact binding is the registered Profile/Policy/Environment key named in this annex. Missing required value is a deterministic BLOCK; it is not permission to guess.
+P	Unified Page / Control / Action / API / DB / Runtime Construction Matrix
+P	[ACPOS-20260921-UNIFIED-CONTROL-RUNTIME-MATRIX] This matrix is the direct construction lookup. Existing source identifiers are preserved. New Action/Gate/Control identities are created only when exhaustive uploaded-source scan found the semantic control/operation but no exact UID/path. Existing exact Method/Path always wins; otherwise effectful operations use POST /v1/commands/{actionUid} through the Shared Typed Command Runtime. UI/read-only controls explicitly bind to N/A or projection runtime and MUST NOT create writes.
+P	admin:SOC-01 — Unified Construction Bindings
+ROW	Page	Region	Control UID	Type	Visible	Enabled/Gate	Operation	Action UID	Action UID Status	API	API Basis	Runtime	DB/Provider	Payload	Success	Failure	UI Feedback	Next/Handoff	Evidence
+P	Page
+P	Region
+P	Control UID
+P	Type
+P	Visible
+P	Enabled/Gate
+P	Operation
+P	Action UID
+P	Action UID Status
+P	API
+P	API Basis
+P	Runtime
+P	DB/Provider
+P	Payload
+P	Success
+P	Failure
+P	UI Feedback
+P	Next/Handoff
+P	Evidence
+ROW	admin:SOC-01	SYSTEM_OR_CONTEXT_ACTION	SOC-01-BTN-GET-UI-PROJECTION	BUTTON_OR_SYSTEM_TRIGGER	SOURCE_GATE	SOURCE_GATE	getUiProjection	SOC-01-ACT-GET-UI-PROJECTION	NEW_UID_FROM_EXISTING_OPERATION	GET /v1/ui-projections/{pageUid}	SOURCE_EXACT	READ_PROJECTION_RUNTIME	acpos_social.publish_requests	SOURCE_SCHEMA + common envelope	SOURCE_STATE_REGISTRY	SOURCE_ERROR_REGISTRY	Registered result/error	SOURCE_NEXT_OR_SAME_PAGE	Audit/correlation
+P	admin:SOC-01
+P	SYSTEM_OR_CONTEXT_ACTION
+P	SOC-01-BTN-GET-UI-PROJECTION
+P	BUTTON_OR_SYSTEM_TRIGGER
+P	SOURCE_GATE
+P	SOURCE_GATE
+P	getUiProjection
+P	SOC-01-ACT-GET-UI-PROJECTION
+P	NEW_UID_FROM_EXISTING_OPERATION
+P	GET /v1/ui-projections/{pageUid}
+P	SOURCE_EXACT
+P	READ_PROJECTION_RUNTIME
+P	acpos_social.publish_requests
+P	SOURCE_SCHEMA + common envelope
+P	SOURCE_STATE_REGISTRY
+P	SOURCE_ERROR_REGISTRY
+P	Registered result/error
+P	SOURCE_NEXT_OR_SAME_PAGE
+P	Audit/correlation
+ROW	admin:SOC-01	SYSTEM_OR_CONTEXT_ACTION	SOC-01-BTN-CONFIGURE-GOVERNED-RESOURCE	BUTTON_OR_SYSTEM_TRIGGER	SOURCE_GATE	SOURCE_GATE	configureGovernedResource	SOC-01-ACT-CONFIGURE-GOVERNED-RESOURCE	NEW_UID_FROM_EXISTING_OPERATION	PATCH /v1/governance/resources/{id}	SOURCE_EXACT	DOMAIN_COMMAND_RUNTIME	acpos_social.publish_requests	SOURCE_SCHEMA + common envelope	SOURCE_STATE_REGISTRY	SOURCE_ERROR_REGISTRY	Registered result/error	SOURCE_NEXT_OR_SAME_PAGE	Audit/correlation
+P	admin:SOC-01
+P	SYSTEM_OR_CONTEXT_ACTION
+P	SOC-01-BTN-CONFIGURE-GOVERNED-RESOURCE
+P	BUTTON_OR_SYSTEM_TRIGGER
+P	SOURCE_GATE
+P	SOURCE_GATE
+P	configureGovernedResource
+P	SOC-01-ACT-CONFIGURE-GOVERNED-RESOURCE
+P	NEW_UID_FROM_EXISTING_OPERATION
+P	PATCH /v1/governance/resources/{id}
+P	SOURCE_EXACT
+P	DOMAIN_COMMAND_RUNTIME
+P	acpos_social.publish_requests
+P	SOURCE_SCHEMA + common envelope
+P	SOURCE_STATE_REGISTRY
+P	SOURCE_ERROR_REGISTRY
+P	Registered result/error
+P	SOURCE_NEXT_OR_SAME_PAGE
+P	Audit/correlation
+ROW	admin:SOC-01	SYSTEM_OR_CONTEXT_ACTION	SOC-01-BTN-SET-KILL-SWITCH	BUTTON_OR_SYSTEM_TRIGGER	SOURCE_GATE	SOURCE_GATE	setKillSwitch	SOC-01-ACT-SET-KILL-SWITCH	NEW_UID_FROM_EXISTING_OPERATION	POST /v1/operations/kill-switch	SOURCE_EXACT	DOMAIN_COMMAND_RUNTIME	acpos_social.publish_requests	SOURCE_SCHEMA + common envelope	SOURCE_STATE_REGISTRY	SOURCE_ERROR_REGISTRY	Registered result/error	SOURCE_NEXT_OR_SAME_PAGE	Audit/correlation
+P	admin:SOC-01
+P	SYSTEM_OR_CONTEXT_ACTION
+P	SOC-01-BTN-SET-KILL-SWITCH
+P	BUTTON_OR_SYSTEM_TRIGGER
+P	SOURCE_GATE
+P	SOURCE_GATE
+P	setKillSwitch
+P	SOC-01-ACT-SET-KILL-SWITCH
+P	NEW_UID_FROM_EXISTING_OPERATION
+P	POST /v1/operations/kill-switch
+P	SOURCE_EXACT
+P	DOMAIN_COMMAND_RUNTIME
+P	acpos_social.publish_requests
+P	SOURCE_SCHEMA + common envelope
+P	SOURCE_STATE_REGISTRY
+P	SOURCE_ERROR_REGISTRY
+P	Registered result/error
+P	SOURCE_NEXT_OR_SAME_PAGE
+P	Audit/correlation
+ROW	admin:SOC-01	SYSTEM_OR_CONTEXT_ACTION	SOC-01-BTN-BIND-SOCIAL-ACCOUNT	BUTTON_OR_SYSTEM_TRIGGER	SOURCE_GATE	SOURCE_GATE	bindSocialAccount	SOC-01-ACT-BIND-SOCIAL-ACCOUNT	NEW_UID_FROM_EXISTING_OPERATION	PUT /v1/social/accounts/{accountId}/binding	SOURCE_EXACT	DOMAIN_COMMAND_RUNTIME	acpos_social.account_bindings / market_targets / publish_requests	SOURCE_SCHEMA + common envelope	SOURCE_STATE_REGISTRY	SOURCE_ERROR_REGISTRY	Registered result/error	SOURCE_NEXT_OR_SAME_PAGE	Audit/correlation
+P	admin:SOC-01
+P	SYSTEM_OR_CONTEXT_ACTION
+P	SOC-01-BTN-BIND-SOCIAL-ACCOUNT
+P	BUTTON_OR_SYSTEM_TRIGGER
+P	SOURCE_GATE
+P	SOURCE_GATE
+P	bindSocialAccount
+P	SOC-01-ACT-BIND-SOCIAL-ACCOUNT
+P	NEW_UID_FROM_EXISTING_OPERATION
+P	PUT /v1/social/accounts/{accountId}/binding
+P	SOURCE_EXACT
+P	DOMAIN_COMMAND_RUNTIME
+P	acpos_social.account_bindings / market_targets / publish_requests
+P	SOURCE_SCHEMA + common envelope
+P	SOURCE_STATE_REGISTRY
+P	SOURCE_ERROR_REGISTRY
+P	Registered result/error
+P	SOURCE_NEXT_OR_SAME_PAGE
+P	Audit/correlation
+ROW	admin:SOC-01	SYSTEM_OR_CONTEXT_ACTION	SOC-01-BTN-REVEAL-SOCIAL-CREDENTIAL	BUTTON_OR_SYSTEM_TRIGGER	SOURCE_GATE	SOURCE_GATE	revealSocialCredential	SOC-01-ACT-REVEAL-SOCIAL-CREDENTIAL	NEW_UID_FROM_EXISTING_OPERATION	POST /v1/social/accounts/{accountId}/credential/reveal	SOURCE_EXACT	DOMAIN_COMMAND_RUNTIME	secret-manager reference + acpos_runtime.provider_credential_refs	SOURCE_SCHEMA + common envelope	SOURCE_STATE_REGISTRY	SOURCE_ERROR_REGISTRY	Registered result/error	SOURCE_NEXT_OR_SAME_PAGE	Audit/correlation
+P	admin:SOC-01
+P	SYSTEM_OR_CONTEXT_ACTION
+P	SOC-01-BTN-REVEAL-SOCIAL-CREDENTIAL
+P	BUTTON_OR_SYSTEM_TRIGGER
+P	SOURCE_GATE
+P	SOURCE_GATE
+P	revealSocialCredential
+P	SOC-01-ACT-REVEAL-SOCIAL-CREDENTIAL
+P	NEW_UID_FROM_EXISTING_OPERATION
+P	POST /v1/social/accounts/{accountId}/credential/reveal
+P	SOURCE_EXACT
+P	DOMAIN_COMMAND_RUNTIME
+P	secret-manager reference + acpos_runtime.provider_credential_refs
+P	SOURCE_SCHEMA + common envelope
+P	SOURCE_STATE_REGISTRY
+P	SOURCE_ERROR_REGISTRY
+P	Registered result/error
+P	SOURCE_NEXT_OR_SAME_PAGE
+P	Audit/correlation
+ROW	admin:SOC-01	SYSTEM_OR_CONTEXT_ACTION	SOC-01-BTN-UNBIND-SOCIAL-ACCOUNT	BUTTON_OR_SYSTEM_TRIGGER	SOURCE_GATE	SOURCE_GATE	unbindSocialAccount	SOC-01-ACT-UNBIND-SOCIAL-ACCOUNT	NEW_UID_FROM_EXISTING_OPERATION	POST /v1/social/accounts/{accountId}/unbind	SOURCE_EXACT	DOMAIN_COMMAND_RUNTIME	acpos_social.account_bindings / market_targets / publish_requests	SOURCE_SCHEMA + common envelope	SOURCE_STATE_REGISTRY	SOURCE_ERROR_REGISTRY	Registered result/error	SOURCE_NEXT_OR_SAME_PAGE	Audit/correlation
+P	admin:SOC-01
+P	SYSTEM_OR_CONTEXT_ACTION
+P	SOC-01-BTN-UNBIND-SOCIAL-ACCOUNT
+P	BUTTON_OR_SYSTEM_TRIGGER
+P	SOURCE_GATE
+P	SOURCE_GATE
+P	unbindSocialAccount
+P	SOC-01-ACT-UNBIND-SOCIAL-ACCOUNT
+P	NEW_UID_FROM_EXISTING_OPERATION
+P	POST /v1/social/accounts/{accountId}/unbind
+P	SOURCE_EXACT
+P	DOMAIN_COMMAND_RUNTIME
+P	acpos_social.account_bindings / market_targets / publish_requests
+P	SOURCE_SCHEMA + common envelope
+P	SOURCE_STATE_REGISTRY
+P	SOURCE_ERROR_REGISTRY
+P	Registered result/error
+P	SOURCE_NEXT_OR_SAME_PAGE
+P	Audit/correlation
+ROW	admin:SOC-01	SYSTEM_OR_CONTEXT_ACTION	SOC-01-BTN-CREATE-SOCIAL-TARGET-DISCOVERY	BUTTON_OR_SYSTEM_TRIGGER	SOURCE_GATE	SOURCE_GATE	createSocialTargetDiscovery	SOC-01-ACT-CREATE-SOCIAL-TARGET-DISCOVERY	NEW_UID_FROM_EXISTING_OPERATION	POST /v1/social/target-discovery-jobs	SOURCE_EXACT	DOMAIN_COMMAND_RUNTIME	acpos_social.account_bindings / market_targets / publish_requests	SOURCE_SCHEMA + common envelope	SOURCE_STATE_REGISTRY	SOURCE_ERROR_REGISTRY	Registered result/error	SOURCE_NEXT_OR_SAME_PAGE	Audit/correlation
+P	admin:SOC-01
+P	SYSTEM_OR_CONTEXT_ACTION
+P	SOC-01-BTN-CREATE-SOCIAL-TARGET-DISCOVERY
+P	BUTTON_OR_SYSTEM_TRIGGER
+P	SOURCE_GATE
+P	SOURCE_GATE
+P	createSocialTargetDiscovery
+P	SOC-01-ACT-CREATE-SOCIAL-TARGET-DISCOVERY
+P	NEW_UID_FROM_EXISTING_OPERATION
+P	POST /v1/social/target-discovery-jobs
+P	SOURCE_EXACT
+P	DOMAIN_COMMAND_RUNTIME
+P	acpos_social.account_bindings / market_targets / publish_requests
+P	SOURCE_SCHEMA + common envelope
+P	SOURCE_STATE_REGISTRY
+P	SOURCE_ERROR_REGISTRY
+P	Registered result/error
+P	SOURCE_NEXT_OR_SAME_PAGE
+P	Audit/correlation
+ROW	admin:SOC-01	SYSTEM_OR_CONTEXT_ACTION	SOC-01-BTN-REQUEST-SOCIAL-TARGET-JOIN	BUTTON_OR_SYSTEM_TRIGGER	SOURCE_GATE	SOURCE_GATE	requestSocialTargetJoin	SOC-01-ACT-REQUEST-SOCIAL-TARGET-JOIN	NEW_UID_FROM_EXISTING_OPERATION	POST /v1/social/targets/{targetId}/join	SOURCE_EXACT	DOMAIN_COMMAND_RUNTIME	acpos_social.account_bindings / market_targets / publish_requests	SOURCE_SCHEMA + common envelope	SOURCE_STATE_REGISTRY	SOURCE_ERROR_REGISTRY	Registered result/error	SOURCE_NEXT_OR_SAME_PAGE	Audit/correlation
+P	admin:SOC-01
+P	SYSTEM_OR_CONTEXT_ACTION
+P	SOC-01-BTN-REQUEST-SOCIAL-TARGET-JOIN
+P	BUTTON_OR_SYSTEM_TRIGGER
+P	SOURCE_GATE
+P	SOURCE_GATE
+P	requestSocialTargetJoin
+P	SOC-01-ACT-REQUEST-SOCIAL-TARGET-JOIN
+P	NEW_UID_FROM_EXISTING_OPERATION
+P	POST /v1/social/targets/{targetId}/join
+P	SOURCE_EXACT
+P	DOMAIN_COMMAND_RUNTIME
+P	acpos_social.account_bindings / market_targets / publish_requests
+P	SOURCE_SCHEMA + common envelope
+P	SOURCE_STATE_REGISTRY
+P	SOURCE_ERROR_REGISTRY
+P	Registered result/error
+P	SOURCE_NEXT_OR_SAME_PAGE
+P	Audit/correlation
+ROW	admin:SOC-01	SYSTEM_OR_CONTEXT_ACTION	SOC-01-BTN-COMPLETE-SOCIAL-MANUAL-ACTION	BUTTON_OR_SYSTEM_TRIGGER	SOURCE_GATE	SOURCE_GATE	completeSocialManualAction	SOC-01-ACT-COMPLETE-SOCIAL-MANUAL-ACTION	NEW_UID_FROM_EXISTING_OPERATION	POST /v1/social/manual-actions/{actionId}/complete	SOURCE_EXACT	DOMAIN_COMMAND_RUNTIME	acpos_social.account_bindings / market_targets / publish_requests	SOURCE_SCHEMA + common envelope	SOURCE_STATE_REGISTRY	SOURCE_ERROR_REGISTRY	Registered result/error	SOURCE_NEXT_OR_SAME_PAGE	Audit/correlation
+P	admin:SOC-01
+P	SYSTEM_OR_CONTEXT_ACTION
+P	SOC-01-BTN-COMPLETE-SOCIAL-MANUAL-ACTION
+P	BUTTON_OR_SYSTEM_TRIGGER
+P	SOURCE_GATE
+P	SOURCE_GATE
+P	completeSocialManualAction
+P	SOC-01-ACT-COMPLETE-SOCIAL-MANUAL-ACTION
+P	NEW_UID_FROM_EXISTING_OPERATION
+P	POST /v1/social/manual-actions/{actionId}/complete
+P	SOURCE_EXACT
+P	DOMAIN_COMMAND_RUNTIME
+P	acpos_social.account_bindings / market_targets / publish_requests
+P	SOURCE_SCHEMA + common envelope
+P	SOURCE_STATE_REGISTRY
+P	SOURCE_ERROR_REGISTRY
+P	Registered result/error
+P	SOURCE_NEXT_OR_SAME_PAGE
+P	Audit/correlation
+ROW	admin:SOC-01	SYSTEM_OR_CONTEXT_ACTION	SOC-01-BTN-SEARCH-PROJECTION	BUTTON_OR_SYSTEM_TRIGGER	SOURCE_GATE	SOURCE_GATE	searchProjection	SOC-01-ACT-SEARCH-PROJECTION	NEW_UID_FROM_EXISTING_OPERATION	POST /v1/search	SOURCE_EXACT	DOMAIN_COMMAND_RUNTIME	acpos_social.publish_requests	SOURCE_SCHEMA + common envelope	SOURCE_STATE_REGISTRY	SOURCE_ERROR_REGISTRY	Registered result/error	SOURCE_NEXT_OR_SAME_PAGE	Audit/correlation
+P	admin:SOC-01
+P	SYSTEM_OR_CONTEXT_ACTION
+P	SOC-01-BTN-SEARCH-PROJECTION
+P	BUTTON_OR_SYSTEM_TRIGGER
+P	SOURCE_GATE
+P	SOURCE_GATE
+P	searchProjection
+P	SOC-01-ACT-SEARCH-PROJECTION
+P	NEW_UID_FROM_EXISTING_OPERATION
+P	POST /v1/search
+P	SOURCE_EXACT
+P	DOMAIN_COMMAND_RUNTIME
+P	acpos_social.publish_requests
+P	SOURCE_SCHEMA + common envelope
+P	SOURCE_STATE_REGISTRY
+P	SOURCE_ERROR_REGISTRY
+P	Registered result/error
+P	SOURCE_NEXT_OR_SAME_PAGE
+P	Audit/correlation
+ROW	admin:SOC-01	SYSTEM_OR_CONTEXT_ACTION	SOC-01-BTN-SAVE-DRAFT	BUTTON_OR_SYSTEM_TRIGGER	SOURCE_GATE	SOURCE_GATE	saveDraft	SOC-01-ACT-SAVE-DRAFT	NEW_UID_FROM_EXISTING_OPERATION	POST /v1/drafts	SOURCE_EXACT	DOMAIN_COMMAND_RUNTIME	acpos_social.publish_requests	SOURCE_SCHEMA + common envelope	SOURCE_STATE_REGISTRY	SOURCE_ERROR_REGISTRY	Registered result/error	SOURCE_NEXT_OR_SAME_PAGE	Audit/correlation
+P	admin:SOC-01
+P	SYSTEM_OR_CONTEXT_ACTION
+P	SOC-01-BTN-SAVE-DRAFT
+P	BUTTON_OR_SYSTEM_TRIGGER
+P	SOURCE_GATE
+P	SOURCE_GATE
+P	saveDraft
+P	SOC-01-ACT-SAVE-DRAFT
+P	NEW_UID_FROM_EXISTING_OPERATION
+P	POST /v1/drafts
+P	SOURCE_EXACT
+P	DOMAIN_COMMAND_RUNTIME
+P	acpos_social.publish_requests
+P	SOURCE_SCHEMA + common envelope
+P	SOURCE_STATE_REGISTRY
+P	SOURCE_ERROR_REGISTRY
+P	Registered result/error
+P	SOURCE_NEXT_OR_SAME_PAGE
+P	Audit/correlation
+ROW	admin:SOC-01	SYSTEM_OR_CONTEXT_ACTION	SOC-01-BTN-DECIDE-CANDIDATE	BUTTON_OR_SYSTEM_TRIGGER	SOURCE_GATE	SOURCE_GATE	decideCandidate	SOC-01-ACT-DECIDE-CANDIDATE	NEW_UID_FROM_EXISTING_OPERATION	POST /v1/candidates/{id}/decision	SOURCE_EXACT	DOMAIN_COMMAND_RUNTIME	acpos_system.change_candidates	SOURCE_SCHEMA + common envelope	SOURCE_STATE_REGISTRY	SOURCE_ERROR_REGISTRY	Registered result/error	SOURCE_NEXT_OR_SAME_PAGE	Audit/correlation
+P	admin:SOC-01
+P	SYSTEM_OR_CONTEXT_ACTION
+P	SOC-01-BTN-DECIDE-CANDIDATE
+P	BUTTON_OR_SYSTEM_TRIGGER
+P	SOURCE_GATE
+P	SOURCE_GATE
+P	decideCandidate
+P	SOC-01-ACT-DECIDE-CANDIDATE
+P	NEW_UID_FROM_EXISTING_OPERATION
+P	POST /v1/candidates/{id}/decision
+P	SOURCE_EXACT
+P	DOMAIN_COMMAND_RUNTIME
+P	acpos_system.change_candidates
+P	SOURCE_SCHEMA + common envelope
+P	SOURCE_STATE_REGISTRY
+P	SOURCE_ERROR_REGISTRY
+P	Registered result/error
+P	SOURCE_NEXT_OR_SAME_PAGE
+P	Audit/correlation
+ROW	admin:SOC-01	SYSTEM_OR_CONTEXT_ACTION	SOC-01-BTN-CONFIGURE-SOCIAL-TARGET-POLICY	BUTTON_OR_SYSTEM_TRIGGER	SOURCE_GATE	SOURCE_GATE	configureSocialTargetPolicy	SOC-01-ACT-CONFIGURE-SOCIAL-TARGET-POLICY	NEW_UID_FROM_EXISTING_OPERATION	PUT /v1/social/targets/{targetId}/posting-policy	SOURCE_EXACT	DOMAIN_COMMAND_RUNTIME	acpos_social.account_bindings / market_targets / publish_requests	SOURCE_SCHEMA + common envelope	SOURCE_STATE_REGISTRY	SOURCE_ERROR_REGISTRY	Registered result/error	SOURCE_NEXT_OR_SAME_PAGE	Audit/correlation
+P	admin:SOC-01
+P	SYSTEM_OR_CONTEXT_ACTION
+P	SOC-01-BTN-CONFIGURE-SOCIAL-TARGET-POLICY
+P	BUTTON_OR_SYSTEM_TRIGGER
+P	SOURCE_GATE
+P	SOURCE_GATE
+P	configureSocialTargetPolicy
+P	SOC-01-ACT-CONFIGURE-SOCIAL-TARGET-POLICY
+P	NEW_UID_FROM_EXISTING_OPERATION
+P	PUT /v1/social/targets/{targetId}/posting-policy
+P	SOURCE_EXACT
+P	DOMAIN_COMMAND_RUNTIME
+P	acpos_social.account_bindings / market_targets / publish_requests
+P	SOURCE_SCHEMA + common envelope
+P	SOURCE_STATE_REGISTRY
+P	SOURCE_ERROR_REGISTRY
+P	Registered result/error
+P	SOURCE_NEXT_OR_SAME_PAGE
+P	Audit/correlation
+ROW	admin:SOC-01	SYSTEM_OR_CONTEXT_ACTION	SOC-01-BTN-REQUEST-SOCIAL-TARGET-PUBLISH	BUTTON_OR_SYSTEM_TRIGGER	SOURCE_GATE	SOURCE_GATE	requestSocialTargetPublish	SOC-01-ACT-REQUEST-SOCIAL-TARGET-PUBLISH	NEW_UID_FROM_EXISTING_OPERATION	POST /v1/social/targets/{targetId}/publish	SOURCE_EXACT	DOMAIN_COMMAND_RUNTIME	acpos_social.account_bindings / market_targets / publish_requests	SOURCE_SCHEMA + common envelope	SOURCE_STATE_REGISTRY	SOURCE_ERROR_REGISTRY	Registered result/error	SOURCE_NEXT_OR_SAME_PAGE	Audit/correlation
+P	admin:SOC-01
+P	SYSTEM_OR_CONTEXT_ACTION
+P	SOC-01-BTN-REQUEST-SOCIAL-TARGET-PUBLISH
+P	BUTTON_OR_SYSTEM_TRIGGER
+P	SOURCE_GATE
+P	SOURCE_GATE
+P	requestSocialTargetPublish
+P	SOC-01-ACT-REQUEST-SOCIAL-TARGET-PUBLISH
+P	NEW_UID_FROM_EXISTING_OPERATION
+P	POST /v1/social/targets/{targetId}/publish
+P	SOURCE_EXACT
+P	DOMAIN_COMMAND_RUNTIME
+P	acpos_social.account_bindings / market_targets / publish_requests
+P	SOURCE_SCHEMA + common envelope
+P	SOURCE_STATE_REGISTRY
+P	SOURCE_ERROR_REGISTRY
+P	Registered result/error
+P	SOURCE_NEXT_OR_SAME_PAGE
+P	Audit/correlation
+ROW	admin:SOC-01	SYSTEM_OR_CONTEXT_ACTION	SOC-01-BTN-REFRESH-PROJECTION	BUTTON_OR_SYSTEM_TRIGGER	SOURCE_GATE	SOURCE_GATE	refreshProjection	SOC-01-ACT-REFRESH-PROJECTION	NEW_UID_FROM_EXISTING_OPERATION	POST /v1/projections/refresh	SOURCE_EXACT	DOMAIN_COMMAND_RUNTIME	acpos_social.publish_requests	SOURCE_SCHEMA + common envelope	SOURCE_STATE_REGISTRY	SOURCE_ERROR_REGISTRY	Registered result/error	SOURCE_NEXT_OR_SAME_PAGE	Audit/correlation
+P	admin:SOC-01
+P	SYSTEM_OR_CONTEXT_ACTION
+P	SOC-01-BTN-REFRESH-PROJECTION
+P	BUTTON_OR_SYSTEM_TRIGGER
+P	SOURCE_GATE
+P	SOURCE_GATE
+P	refreshProjection
+P	SOC-01-ACT-REFRESH-PROJECTION
+P	NEW_UID_FROM_EXISTING_OPERATION
+P	POST /v1/projections/refresh
+P	SOURCE_EXACT
+P	DOMAIN_COMMAND_RUNTIME
+P	acpos_social.publish_requests
+P	SOURCE_SCHEMA + common envelope
+P	SOURCE_STATE_REGISTRY
+P	SOURCE_ERROR_REGISTRY
+P	Registered result/error
+P	SOURCE_NEXT_OR_SAME_PAGE
+P	Audit/correlation
+P	Construction Lookup Invariant
+P	施工 AI MUST resolve a UI action from exactly one row of this matrix. If a source control is UI_ONLY/READ_ONLY, API/DB write is explicitly N/A and creating a write endpoint is forbidden. If API Basis is NEW_AUTHORITY_AFTER_GLOBAL_SOURCE_EXHAUSTION, the only permitted implementation path is the Shared Typed Command Runtime endpoint shown in the row; page-local alternative endpoints are forbidden.
 ### PART word/header1.xml
 P	ORANGE ONE · ACPOS ACPOS-AI-07｜Mother Basic Logic Design
 ### PART word/footer1.xml
