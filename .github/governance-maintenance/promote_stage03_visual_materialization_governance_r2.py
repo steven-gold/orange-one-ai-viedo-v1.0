@@ -15,7 +15,7 @@ NEW_UID='GOV-REV-20260920-STAGE03-VISUAL-MATERIALIZATION-PROMOTION-CLOSURE'
 OLD_DISPLAY='v2.2.14'
 NEW_DISPLAY='v2.2.15'
 NEW_SOURCE_REV='v2.2.15-stage03-visual-materialization-promotion-closure'
-AUTH_UID='USR-DIRECTIVE-20260920-STAGE03-VISUAL-MATERIALIZATION-HARDENING-R2'
+AUTH_UID='USR-DIRECTIVE-20260920-STAGE03-VISUAL-MATERIALIZATION-HARDENING-R3'
 WORK_UNIT='WU-GOV-STAGE03-VISUAL-MATERIALIZATION-HARDENING-001'
 NEW_PACKAGE='AI_WEB_GOVERNANCE_FULL_LIFECYCLE_v2.2.15_STAGE03_VISUAL_MATERIALIZATION_PROMOTION_CLOSURE_LOCAL_VERIFIED.zip'
 for k,v in {'OLD_UID':OLD_UID,'NEW_UID':NEW_UID,'OLD_DISPLAY':OLD_DISPLAY,'NEW_DISPLAY':NEW_DISPLAY,'NEW_SOURCE_REV':NEW_SOURCE_REV,'AUTH_UID':AUTH_UID,'WORK_UNIT':WORK_UNIT,'NEW_PACKAGE':NEW_PACKAGE}.items():
@@ -63,6 +63,26 @@ def promote():
     sem['content_hash']=base.hobj(sem)
     dump(SOURCE/'10_REGISTRY/SEMANTIC_AUTHORITY_BASELINE.yaml',sem)
     semantic_hash=sem['content_hash']
+
+    candidate_path=SOURCE/'11_EVIDENCE/audit/GOVERNANCE_CANDIDATE_STATE.yaml'
+    candidate=load(candidate_path)
+    candidate['candidate']='v2.2.15_STAGE03_VISUAL_MATERIALIZATION_PROMOTION_CLOSURE_CANDIDATE'
+    candidate['status']='CANDIDATE_UNDER_FRESH_SUCCESSOR_REVALIDATION'
+    fresh=candidate.setdefault('fresh_revalidation',{})
+    fresh['required']=True
+    fresh['current_source_revision']=NEW_SOURCE_REV
+    fresh['current_closure_credit']=False
+    fresh['predecessor_evidence_current_closure_credit']=False
+    fresh['embedded_preformal_execution_role']='HISTORICAL_PREDECESSOR_EVIDENCE_ONLY'
+    fresh['predecessor_wrapper_result_role']='HISTORICAL_PREDECESSOR_EVIDENCE_ONLY'
+    fresh['persisted_head_full_line_required']=True
+    fresh['historical_evidence_may_close_successor']=False
+    dump(candidate_path,candidate)
+
+    review_path=SOURCE/'10_REGISTRY/REVIEW_PROGRESS_LEDGER.yaml'
+    review=load(review_path)
+    review['governance_revision']=NEW_SOURCE_REV
+    dump(review_path,review)
 
     checks,bundle,zips=base.refresh_source(semantic_hash)
     base.update_current_projection(semantic_hash,bundle,zips,checks)
