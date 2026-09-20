@@ -819,7 +819,7 @@ findings:
   evidence: Stage-03 execution run 35478678744 passed preexecution Full-Line, common Stage-03 admission, and the product output producer, then normalized evidence validation exposed both missing producer/schema fields in the new Stage-03 adapter and a common-engine contradiction where BLOCKED evidence required stage_exit_allowed=false but next_stage_transition.status allowed only READY/PROJECT_COMPLETE/NEXT_PAGE_READY.
   defect_owner: TEST_OR_VALIDATION_IMPLEMENTATION
   generalizability_scope: COMMON_STAGE_NORMALIZED_EVIDENCE_AND_BLOCKED_TRANSITION_SEMANTICS
-  blocking_state: RESOLVED_PENDING_EXACT_HEAD_REVALIDATION
+  blocking_state: RESOLVED_EXACT_HEAD_REVALIDATED
   disposition: IMPLEMENTATION_REMEDIATED
   specification_change_required: false
   mother_change_required: false

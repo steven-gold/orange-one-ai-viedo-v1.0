@@ -112,8 +112,8 @@ specification_mutation_safety:
   ordinary_mid_stage_specification_mutation: BLOCK
   stage_end_consolidated_promotion_requires_new_explicit_directive: true
   execution_context_lock_required: true
-status: COMMON_ENGINE_INTERRUPT_STAGE03_BLOCKED_EVIDENCE_SCHEMA
-next_action: VALIDATE_COMMON_BLOCKED_EVIDENCE_AND_STAGE03_PROVENANCE
+status: ACTIVE_CORE01_STAGE03_PREEXECUTION_READY
+next_action: RUN_CORE01_STAGE03_VISUAL_DESIGN_TO_HUMAN_REVIEW_BOUNDARY
 previous_closed_product_work_unit:
   work_unit_uid: WU-STAGE02-CORE01-STRUCTURAL-REMEDIATION-001
   canonical_name: CORE01_STRUCTURAL_CONTRACT_REMEDIATION
@@ -292,14 +292,16 @@ previous_closed_work_unit:
     source_runtime_residual_count: 0
     product_stage_credit: 0
 resume_control:
-  current_resume_point: STAGE03_BLOCKED_EVIDENCE_SCHEMA_MAINTENANCE
-  current_work_unit_uid: WU-TEST-STAGE03-BLOCKED-EVIDENCE-SCHEMA-001
-  current_owner: governance/ci/stage_execution_engine.py
-  exact_next_action: VALIDATE_COMMON_BLOCKED_EVIDENCE_AND_STAGE03_PROVENANCE
-  parent_resume_point: STAGE3_CORE01_WORK_UNIT_RESOLVED_PREEXECUTION
-  parent_work_unit_uid: WU-STAGE03-CORE01-VISUAL-DESIGN-001
-  parent_exact_next_action: RUN_CORE01_STAGE03_VISUAL_DESIGN_TO_HUMAN_REVIEW_BOUNDARY
+  current_resume_point: STAGE3_CORE01_WORK_UNIT_RESOLVED_PREEXECUTION
+  current_work_unit_uid: WU-STAGE03-CORE01-VISUAL-DESIGN-001
+  current_owner: 00_SOURCE_INTAKE/run_core01_d81df9ac_stage02/02_BASE_BLUEPRINT/CORE-01/VISUAL_BASE_BLUEPRINT.yaml
   historical_stage2_results_are_current_state: false
+  stage2_execution_requires_fresh_entry_resolution: false
+  exact_next_action: RUN_CORE01_STAGE03_VISUAL_DESIGN_TO_HUMAN_REVIEW_BOUNDARY
+  last_closed_product_work_unit_uid: WU-STAGE02-CORE01-D81DF9AC-REPLAY
+  last_closed_product_validation_head: a840225a7f09333d2eee6924de835fbe13ed5976
+  last_closed_product_outer_run_id: 35423831950
+  last_closed_product_outer_result: success
 last_completed_change_request_resume_history_sys01:
   work_unit_uid: WU-PRODUCT-SYS01-CONSTRUCTION-ENCODER-ALIGNMENT-001
   authorization_uid: USR-DIRECTIVE-20260920-SYS01-CONSTRUCTION-ENCODER-ALIGNMENT-R1
@@ -371,8 +373,8 @@ pending_governance_review:
   - STAGE03
   - WEBSITE_CONSTRUCTION
   - DEPLOYMENT
-current_primary_task_layer: TEST_OR_VALIDATION_MAINTENANCE
-current_primary_task_authorization_uid: USR-DIRECTIVE-20260920-CONTINUE-CORE01-STAGE03-R1
+current_primary_task_layer: PRODUCT_STAGE_EXECUTION
+current_primary_task_authorization_uid: USR-DIRECTIVE-20260920-CONTINUE-CORE01-STAGE03-R2
 current_primary_task_product_stage_credit: 0
 earlier_closed_product_work_unit:
   work_unit_uid: WU-STAGE02-CORE01-FRESH-TEST-001
@@ -2331,7 +2333,6 @@ work_unit_resolution_gate_sys01_construction_encoder_alignment:
   entry_disposition: ACTIVE_PREWRITE
   resolved_work_unit_uid: WU-PRODUCT-SYS01-CONSTRUCTION-ENCODER-ALIGNMENT-001
   resolved_resume_point: SYS01_CONSTRUCTION_ENCODER_ALIGNMENT_PREWRITE
-
 closed_product_work_unit_sys01_construction_encoder_alignment:
   work_unit_uid: WU-PRODUCT-SYS01-CONSTRUCTION-ENCODER-ALIGNMENT-001
   canonical_name: SYS01_CURRENT_CONSTRUCTION_ENCODER_AUTHORITY_ALIGNMENT
@@ -2380,110 +2381,7 @@ closed_product_work_unit_sys01_construction_encoder_alignment:
   - SYS01_DIRECT_TESTS_PASS
   - GLOBAL_RELEASE_FAILURE_EXACTLY_MATCHES_PREEXISTING_BASELINE_SIGNATURE
   - PRIOR_MAINTENANCE_RESUME_RESTORED
-
-
 active_work_unit:
-  work_unit_uid: WU-TEST-STAGE03-BLOCKED-EVIDENCE-SCHEMA-001
-  canonical_name: COMMON_STAGE_BLOCKED_EVIDENCE_AND_STAGE03_PROVENANCE_HARDENING
-  stage_uid: STAGE-03
-  semantic_capability: SHARED_STAGE_EXECUTION_IMPLEMENTATION
-  primary_task_layer: TEST_OR_VALIDATION_MAINTENANCE
-  canonical_owner: governance/ci/stage_execution_engine.py
-  current_status: IN_PROGRESS_COMMON_ENGINE_INTERRUPT
-  parent_product_work_unit_uid: WU-STAGE03-CORE01-VISUAL-DESIGN-001
-  source_failed_workflow_run_id: 35478678744
-  source_failed_step: NORMALIZED_STAGE03_EVIDENCE_VALIDATION
-  product_stage_credit: 0
-  scope:
-  - BLOCKED_NEXT_STAGE_TRANSITION_SCHEMA
-  - NORMALIZED_OUTPUT_PRODUCER_BINDING
-  - SCANNER_RESULT_SCHEMA
-  - DENOMINATOR_SCHEMA
-  - REMEDIATION_REEXECUTION_SCHEMA
-  - STAGE03_ARTIFACT_PROVENANCE_BINDING
-  out_of_scope:
-  - MOTHER_GOVERNANCE_MUTATION
-  - CURRENT_SPECIFICATION_MUTATION
-  - VISUAL_PRODUCT_AUTHORITY_CHANGE
-  - VISUAL_APPROVAL
-  - STAGE04
-  - WEBSITE_CONSTRUCTION
-  - DEPLOYMENT
-
-
-pending_product_resume_stage03:
-  work_unit_uid: WU-STAGE03-CORE01-VISUAL-DESIGN-001
-  page_uid: CORE-01
-  stage_uid: STAGE-03
-  semantic_capability: VISUAL_DESIGN
-  prior_resolution_uid: WUR-STAGE03-CORE01-20260919-001
-  prior_execution_started: false
-  current_reentry_required: true
-  predecessor_core_stage02_run_root: 00_SOURCE_INTAKE/run_core01_d81df9ac_stage02
-  predecessor_terminal_closure_commit: a840225a7f09333d2eee6924de835fbe13ed5976
-  predecessor_run_root_tree_sha: 03277f1ab1b19cda72db03f61f8a1a4959b2affc
-  current_run_root_tree_sha: 03277f1ab1b19cda72db03f61f8a1a4959b2affc
-  predecessor_bytes_unchanged: true
-  product_stage_credit: 0
-last_work_unit_resolution_gate:
-  resolution_uid: WUR-STAGE03-CORE01-V2213-20260920-001
-  normative_authority: false
-  result: PASS_SINGLE_LEGAL_SUCCESSOR
-  requested_primary_task_layer: PRODUCT_STAGE_EXECUTION
-  authorization_uid: USR-DIRECTIVE-20260920-CONTINUE-CORE01-STAGE03-R1
-  authorization_basis:
-  - EXPLICIT_USER_DIRECTIVE_CONTINUE_CORE01_STAGE03
-  - VERIFIED_CURRENT_CORE01_STAGE02_RUN_ROOT_BYTE_IDENTICAL_TO_TERMINAL_CLOSURE
-  - STAGE02_ZERO_FUNCTIONAL_GAPS_ZERO_CLOSURE_BLOCKERS
-  - EXISTING_STAGE03_WORK_UNIT_UID_REUSED_NO_PARALLEL_WORK_UNIT
-  predecessor_work_unit_uid: WU-STAGE02-CORE01-D81DF9AC-REPLAY
-  predecessor_terminal_disposition: CLOSED_VERIFIED_FRESH_REPLAY_ZERO_GAPS
-  predecessor_terminal_closure_commit: a840225a7f09333d2eee6924de835fbe13ed5976
-  predecessor_run_root_tree_sha: 03277f1ab1b19cda72db03f61f8a1a4959b2affc
-  current_run_root_tree_sha: 03277f1ab1b19cda72db03f61f8a1a4959b2affc
-  persisted_resume_before: STAGE3_CORE01_WORK_UNIT_RESOLVED_PREEXECUTION
-  resolved_work_unit_uid: WU-STAGE03-CORE01-VISUAL-DESIGN-001
-  resolved_stage_uid: STAGE-03
-  resolved_capability: VISUAL_DESIGN
-  page_scope:
-  - CORE-01
-  excluded_page_scope:
-  - ASSET-01
-  candidate_successor_count: 1
-  duplicate_parallel_work_unit_found: false
-  existing_stage03_product_output_owner_found: false
-  output_owner_resolution:
-    registry_ref: .github/governance-source/active/source/10_REGISTRY/BLUEPRINT_REGISTRY.yaml
-    blueprint_type_uid: BPTYPE-GOV-004
-    canonical_name: VISUAL_DESIGN_SPEC_PACKAGE
-    owner_mode: VISUAL
-    resolved_write_root: 00_SOURCE_INTAKE/run_core01_d81df9ac_stage02/05_VISUAL_DESIGN/CORE-01
-    current_materialization_status: NOT_YET_MATERIALIZED
-  entry_disposition: ACTIVE_PREEXECUTION
-  resolved_resume_point: STAGE3_CORE01_WORK_UNIT_RESOLVED_PREEXECUTION
-closed_test_validation_maintenance_work_unit_stage03_visual_producer:
-  work_unit_uid: WU-TEST-STAGE03-VISUAL-DESIGN-PRODUCER-001
-  canonical_name: STAGE03_PRODUCT_NEUTRAL_VISUAL_PRODUCER_AND_PROJECTOR_APPLICABILITY_HARDENING
-  primary_task_layer: TEST_OR_VALIDATION_MAINTENANCE
-  current_status: CLOSED_VERIFIED_NO_PRODUCT_CREDIT
-  authorization_uid: USR-DIRECTIVE-20260920-CONTINUE-CORE01-STAGE03-R1
-  canonical_owner: governance/ci/run_current_stage3_visual_design.py
-  product_stage_credit: 0
-  terminal_evidence:
-    validated_head_sha: 4a0d1d3de196abfc849add2cf51c3b79f05b8320
-    full_line_run_id: 35478506236
-    selected_profile_run_id: 35478506292
-    branch_guard_run_id: 35478506241
-    fresh_replay_identity_run_id: 35478506261
-    outer_terminal_conclusions:
-    - SUCCESS
-    - SUCCESS
-    - SUCCESS
-    - SUCCESS
-  mother_normative_change: false
-  current_specification_change: false
-  legal_next_transition: RESTORE_EXISTING_CORE01_STAGE03_PRODUCT_WORK_UNIT
-suspended_product_work_unit_stage03_blocked_evidence_schema:
   work_unit_uid: WU-STAGE03-CORE01-VISUAL-DESIGN-001
   canonical_name: CORE01_VISUAL_DESIGN
   primary_task_layer: PRODUCT_STAGE_EXECUTION
@@ -2500,7 +2398,7 @@ suspended_product_work_unit_stage03_blocked_evidence_schema:
   canonical_policy_owner: .github/governance-source/active/source/10_REGISTRY/GOVERNANCE_LIFECYCLE_STAGE_REGISTRY.yaml
   state_owner: governance/test/ACTIVE_STATE.yaml
   scope_manifest_ref: governance/test/CURRENT_EXECUTION_SCOPE_MANIFEST.yaml
-  current_status: SUSPENDED_FOR_BLOCKED_EVIDENCE_SCHEMA_MAINTENANCE
+  current_status: ACTIVE_PREEXECUTION
   attempt_uid: STAGE03-CORE01-V2213-20260920-001
   run_uid: VISUAL-CORE01-D81DF9AC-STAGE03
   canonical_owner: 00_SOURCE_INTAKE/run_core01_d81df9ac_stage02/05_VISUAL_DESIGN/CORE-01/VISUAL_DESIGN_SPEC_PACKAGE.yaml
@@ -2607,3 +2505,102 @@ suspended_product_work_unit_stage03_blocked_evidence_schema:
     rule: DO_NOT_CROSS_VISUAL_APPROVAL_OR_DESIGN_FREEZE_WITHOUT_REQUIRED_REVIEW
   product_blocker_credit: 0
   legal_next_transition: STAGE03_CLOSED_TO_STAGE04_WORK_UNIT_RESOLUTION
+last_work_unit_resolution_gate:
+  resolution_uid: WUR-STAGE03-CORE01-V2213-20260920-001
+  normative_authority: false
+  result: PASS_SINGLE_LEGAL_SUCCESSOR
+  requested_primary_task_layer: PRODUCT_STAGE_EXECUTION
+  authorization_uid: USR-DIRECTIVE-20260920-CONTINUE-CORE01-STAGE03-R1
+  authorization_basis:
+  - EXPLICIT_USER_DIRECTIVE_CONTINUE_CORE01_STAGE03
+  - VERIFIED_CURRENT_CORE01_STAGE02_RUN_ROOT_BYTE_IDENTICAL_TO_TERMINAL_CLOSURE
+  - STAGE02_ZERO_FUNCTIONAL_GAPS_ZERO_CLOSURE_BLOCKERS
+  - EXISTING_STAGE03_WORK_UNIT_UID_REUSED_NO_PARALLEL_WORK_UNIT
+  predecessor_work_unit_uid: WU-STAGE02-CORE01-D81DF9AC-REPLAY
+  predecessor_terminal_disposition: CLOSED_VERIFIED_FRESH_REPLAY_ZERO_GAPS
+  predecessor_terminal_closure_commit: a840225a7f09333d2eee6924de835fbe13ed5976
+  predecessor_run_root_tree_sha: 03277f1ab1b19cda72db03f61f8a1a4959b2affc
+  current_run_root_tree_sha: 03277f1ab1b19cda72db03f61f8a1a4959b2affc
+  persisted_resume_before: STAGE3_CORE01_WORK_UNIT_RESOLVED_PREEXECUTION
+  resolved_work_unit_uid: WU-STAGE03-CORE01-VISUAL-DESIGN-001
+  resolved_stage_uid: STAGE-03
+  resolved_capability: VISUAL_DESIGN
+  page_scope:
+  - CORE-01
+  excluded_page_scope:
+  - ASSET-01
+  candidate_successor_count: 1
+  duplicate_parallel_work_unit_found: false
+  existing_stage03_product_output_owner_found: false
+  output_owner_resolution:
+    registry_ref: .github/governance-source/active/source/10_REGISTRY/BLUEPRINT_REGISTRY.yaml
+    blueprint_type_uid: BPTYPE-GOV-004
+    canonical_name: VISUAL_DESIGN_SPEC_PACKAGE
+    owner_mode: VISUAL
+    resolved_write_root: 00_SOURCE_INTAKE/run_core01_d81df9ac_stage02/05_VISUAL_DESIGN/CORE-01
+    current_materialization_status: NOT_YET_MATERIALIZED
+  entry_disposition: ACTIVE_PREEXECUTION
+  resolved_resume_point: STAGE3_CORE01_WORK_UNIT_RESOLVED_PREEXECUTION
+closed_test_validation_maintenance_work_unit_stage03_visual_producer:
+  work_unit_uid: WU-TEST-STAGE03-VISUAL-DESIGN-PRODUCER-001
+  canonical_name: STAGE03_PRODUCT_NEUTRAL_VISUAL_PRODUCER_AND_PROJECTOR_APPLICABILITY_HARDENING
+  primary_task_layer: TEST_OR_VALIDATION_MAINTENANCE
+  current_status: CLOSED_VERIFIED_NO_PRODUCT_CREDIT
+  authorization_uid: USR-DIRECTIVE-20260920-CONTINUE-CORE01-STAGE03-R1
+  canonical_owner: governance/ci/run_current_stage3_visual_design.py
+  product_stage_credit: 0
+  terminal_evidence:
+    validated_head_sha: 4a0d1d3de196abfc849add2cf51c3b79f05b8320
+    full_line_run_id: 35478506236
+    selected_profile_run_id: 35478506292
+    branch_guard_run_id: 35478506241
+    fresh_replay_identity_run_id: 35478506261
+    outer_terminal_conclusions:
+    - SUCCESS
+    - SUCCESS
+    - SUCCESS
+    - SUCCESS
+  mother_normative_change: false
+  current_specification_change: false
+  legal_next_transition: RESTORE_EXISTING_CORE01_STAGE03_PRODUCT_WORK_UNIT
+closed_test_validation_maintenance_work_unit_stage03_blocked_evidence_schema:
+  work_unit_uid: WU-TEST-STAGE03-BLOCKED-EVIDENCE-SCHEMA-001
+  canonical_name: COMMON_STAGE_BLOCKED_EVIDENCE_AND_STAGE03_PROVENANCE_HARDENING
+  primary_task_layer: TEST_OR_VALIDATION_MAINTENANCE
+  canonical_owner: governance/ci/stage_execution_engine.py
+  co_owners:
+  - governance/ci/run_current_stage3_visual_design.py
+  - governance/ci/test_stage_execution_engine.py
+  - .github/workflows/stage03-visual-design.yml
+  current_status: CLOSED_VERIFIED_NO_PRODUCT_CREDIT
+  parent_product_work_unit_uid: WU-STAGE03-CORE01-VISUAL-DESIGN-001
+  source_failed_workflow_run_id: 35478678744
+  source_failed_step: NORMALIZED_STAGE03_EVIDENCE_VALIDATION
+  source_failure: OUTPUT_PRODUCER_RESULT_DRIFT:VISUAL_DESIGN_SPEC_PACKAGE
+  product_stage_credit: 0
+  exact_scope:
+  - BLOCKED_NEXT_STAGE_TRANSITION_SCHEMA
+  - NORMALIZED_OUTPUT_PRODUCER_BINDING
+  - SCANNER_RESULT_SCHEMA
+  - DENOMINATOR_SCHEMA
+  - REMEDIATION_REEXECUTION_SCHEMA
+  - STAGE03_ARTIFACT_PROVENANCE_BINDING
+  implementation_commit: bd8d1cf5a34719186520c92b75bc1913b275d522
+  closure_validation_head: 5f0c4a04f0f25bf127d4a29a84e734ef89ff6f3e
+  closure_evidence:
+    full_line_run_id: 35479848535
+    full_line_result: success
+    selected_profile_run_id: 35479848503
+    selected_profile_result: success
+    branch_guard_run_id: 35479848520
+    branch_guard_result: success
+    stage02_boundary_run_id: 35479848498
+    stage02_boundary_result: success
+    fresh_replay_identity_run_id: 35479848505
+    fresh_replay_identity_result: success
+    mother_governance_mutation: false
+    current_specification_mutation: false
+    product_stage_credit: 0
+  restored_product_work_unit_uid: WU-STAGE03-CORE01-VISUAL-DESIGN-001
+  restored_resume_point: STAGE3_CORE01_WORK_UNIT_RESOLVED_PREEXECUTION
+  exact_next_action: RUN_CORE01_STAGE03_VISUAL_DESIGN_TO_HUMAN_REVIEW_BOUNDARY
