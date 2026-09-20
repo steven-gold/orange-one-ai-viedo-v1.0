@@ -13,7 +13,26 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - run: python -m pip install --quiet python-docx
-      - name: Audit concrete business content
+      - name: Audit evaluation catalogs
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          from docx import Document
+          import json,re
+          docs={p.name:p for p in Path('.').glob('ACPOS_*.docx') if 'GLOBAL_HOME' not in p.name and 'SYSTEM_LOGIC_GLOBAL' not in p.name and 'LOGIN_' not in p.name}
+          for fn,p in sorted(docs.items()):
+              d=Document(p)
+              tables=[]
+              for i,t in enumerate(d.tables,1):
+                  rr=[[" ".join(c.text.split()) for c in r.cells] for r in t.rows]
+                  if not rr: continue
+                  blob=" | ".join(" | ".join(r) for r in rr[:10])
+                  if re.search(r'criteria|dimension|score|evaluation|quality|check|審查|評分|檢查|一致性|continuity|compliance',blob,re.I):
+                      tables.append({"table":i,"rows":len(rr)-1,"header":rr[0],"samples":rr[1:8]})
+              print("EVALCAT",fn,json.dumps(tables,ensure_ascii=False))
+          PY
+\n      - name: Audit concrete business content
         shell: bash
         run: |
           python - <<'PY'
