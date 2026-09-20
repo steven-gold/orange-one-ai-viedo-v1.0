@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 from __future__ import annotations
-import argparse, importlib.util, json, os, subprocess, sys
+import argparse, ast, importlib.util, json, os, subprocess, sys
 from pathlib import Path
 import yaml
 
@@ -45,12 +45,24 @@ def commit_push(msg):
 
 def prepare():
     cur=load(ROOT/'GOVERNANCE_CURRENT.yaml')
-    if cur.get('active_governance_uid')!=OLD_UID: raise RuntimeError('PREPARE_CURRENT_GOVERNANCE_DRIFT')
+    sp=ROOT/'governance/test/ACTIVE_STATE.yaml'
+    state=load(sp)
+    active=state.get('active_work_unit') or {}
+    if (cur.get('active_governance_uid')==OLD_UID and
+        state.get('current_primary_task_layer')=='GOVERNANCE_MAINTENANCE' and
+        active.get('work_unit_uid')==WORK_UNIT and
+        active.get('current_status')=='WUR_RESOLVED_READY_FOR_GOVERNANCE_SUCCESSOR'):
+        print(json.dumps({'prepare':'ALREADY_PERSISTED','head':run('git','rev-parse','HEAD').stdout.strip(),'active_work_unit':WORK_UNIT},indent=2))
+        return
+    if cur.get('active_governance_uid')!=OLD_UID:
+        raise RuntimeError('PREPARE_CURRENT_GOVERNANCE_DRIFT')
     receipt=load(ROOT/f'governance/test/spec_change_authorizations/{AUTH_UID}.yaml')
-    if receipt.get('status')!='APPROVED_FOR_EXACT_SCOPE' or receipt.get('current_governance_uid')!=OLD_UID: raise RuntimeError('AUTHORIZATION_RECEIPT_INVALID')
-    sp=ROOT/'governance/test/ACTIVE_STATE.yaml'; s=load(sp); old=s.get('active_work_unit') or {}
-    if old.get('work_unit_uid')!=PRODUCT_WU: raise RuntimeError('EXPECTED_STAGE03_PRODUCT_WU')
-    s['preserved_stage03_product_work_unit']={
+    if receipt.get('status')!='APPROVED_FOR_EXACT_SCOPE' or receipt.get('current_governance_uid')!=OLD_UID:
+        raise RuntimeError('AUTHORIZATION_RECEIPT_INVALID')
+    old=active
+    if old.get('work_unit_uid')!=PRODUCT_WU:
+        raise RuntimeError('EXPECTED_STAGE03_PRODUCT_WU')
+    state['preserved_stage03_product_work_unit']={
       'work_unit_uid':old.get('work_unit_uid'),'canonical_name':old.get('canonical_name'),'primary_task_layer':old.get('primary_task_layer'),
       'stage_uid':old.get('stage_uid'),'semantic_capability':old.get('semantic_capability'),'canonical_owner':old.get('canonical_owner'),
       'output_root':old.get('output_root'),'current_status':'SUSPENDED_FOR_AUTHORIZED_GOVERNANCE_SUCCESSOR',
@@ -62,8 +74,9 @@ def prepare():
       'canonical_owner':'.github/governance-source/active/source/12_DOCS/mother-spec/01_BLUEPRINT_DESIGN_GOVERNANCE.md',
       'dependency_legality':'PASS','reverse_dependency_legality':'PASS','applicability':'PASS','duplicate_parallel_work_unit':'NONE',
       'result':'PASS_SINGLE_LEGAL_SUCCESSOR','product_stage_credit':0}
-    s['work_unit_resolution_gate_stage03_visual_materialization_hardening']=wur; s['last_work_unit_resolution_gate']=wur
-    s['active_work_unit']={'work_unit_uid':WORK_UNIT,'canonical_name':'STAGE03_VISUAL_MATERIALIZATION_GOVERNANCE_HARDENING',
+    state['work_unit_resolution_gate_stage03_visual_materialization_hardening']=wur
+    state['last_work_unit_resolution_gate']=wur
+    state['active_work_unit']={'work_unit_uid':WORK_UNIT,'canonical_name':'STAGE03_VISUAL_MATERIALIZATION_GOVERNANCE_HARDENING',
       'primary_task_layer':'GOVERNANCE_MAINTENANCE','semantic_capability':'GOVERNANCE_POLICY_AND_EXECUTION_PROFILE_HARDENING',
       'canonical_policy_owner':'governance/specifications/current/SPECIFICATION_MUTATION_CONTROL.yaml',
       'canonical_owner':'.github/governance-source/active/source/12_DOCS/mother-spec/01_BLUEPRINT_DESIGN_GOVERNANCE.md',
@@ -77,16 +90,31 @@ def prepare():
       'definition_of_done':['NEW_IMMUTABLE_GOVERNANCE_UID_PROMOTED','STAGE03_PROFILE_MATERIALIZES_ALL_APPLICABLE_MOTHER_VISUAL_OUTPUTS','SOURCE_IDENTITY_REBUILT',
         'CURRENT_PROJECTORS_ATOMICALLY_MIGRATED','FULL_LINE_SUCCESS_ON_SUCCESSOR','SELECTED_PROFILE_SUCCESS_ON_SUCCESSOR','PRODUCT_STAGE_CREDIT_ZERO'],
       'product_stage_credit':0,'legal_next_transition':'RESTORE_PRESERVED_STAGE03_PRODUCT_WORK_UNIT_FOR_CLEAN_FRESH_REPLAY'}
-    s['current_primary_task_layer']='GOVERNANCE_MAINTENANCE'; s['current_primary_task_authorization_uid']=AUTH_UID; s['current_primary_task_product_stage_credit']=0
-    s['status']='ACTIVE_GOVERNANCE_STAGE03_VISUAL_MATERIALIZATION_HARDENING_WUR_RESOLVED'; s['next_action']='PROMOTE_V2_2_14_STAGE03_VISUAL_MATERIALIZATION_HARDENING'
-    s['resume_control']={'current_resume_point':'STAGE03_VISUAL_MATERIALIZATION_HARDENING_WUR_RESOLVED_READY_FOR_SUCCESSOR','current_work_unit_uid':WORK_UNIT,
+    state['current_primary_task_layer']='GOVERNANCE_MAINTENANCE'
+    state['current_primary_task_authorization_uid']=AUTH_UID
+    state['current_primary_task_product_stage_credit']=0
+    state['status']='ACTIVE_GOVERNANCE_STAGE03_VISUAL_MATERIALIZATION_HARDENING_WUR_RESOLVED'
+    state['next_action']='PROMOTE_V2_2_14_STAGE03_VISUAL_MATERIALIZATION_HARDENING'
+    state['resume_control']={'current_resume_point':'STAGE03_VISUAL_MATERIALIZATION_HARDENING_WUR_RESOLVED_READY_FOR_SUCCESSOR','current_work_unit_uid':WORK_UNIT,
       'current_owner':'.github/governance-source/active/source/12_DOCS/mother-spec/01_BLUEPRINT_DESIGN_GOVERNANCE.md','historical_stage2_results_are_current_state':False,
       'stage2_execution_requires_fresh_entry_resolution':False,'exact_next_action':'PROMOTE_V2_2_14_STAGE03_VISUAL_MATERIALIZATION_HARDENING',
       'preserved_product_work_unit_uid':PRODUCT_WU,'preserved_product_resume_point':'STAGE3_CORE01_VISUAL_REVIEW_PENDING'}
-    att=s.get('stage03_active_attempt') or {}; att['fresh_revalidation_required']=True; att['closure_credit_under_current_governance']=False; att['next_action']='SUSPENDED_PENDING_GOVERNANCE_SUCCESSOR'; s['stage03_active_attempt']=att
-    ex=s.setdefault('execution',{}); st3=ex.setdefault('stage3',{}); st3['stage_exit_allowed']=False; st3['prior_results_authoritative_for_current_governance']=False; st3['revalidation_required_under_current_governance']=True
-    ex['stage3']=st3; ex['website_construction_allowed']=False; ex['deployment_allowed']=False; s['execution']=ex
-    dump(sp,s); print(json.dumps({'prepare_commit':commit_push('governance: enter Stage-03 visual materialization hardening')},indent=2))
+    att=state.get('stage03_active_attempt') or {}
+    att['fresh_revalidation_required']=True
+    att['closure_credit_under_current_governance']=False
+    att['next_action']='SUSPENDED_PENDING_GOVERNANCE_SUCCESSOR'
+    state['stage03_active_attempt']=att
+    ex=state.setdefault('execution',{})
+    st3=ex.setdefault('stage3',{})
+    st3['stage_exit_allowed']=False
+    st3['prior_results_authoritative_for_current_governance']=False
+    st3['revalidation_required_under_current_governance']=True
+    ex['stage3']=st3
+    ex['website_construction_allowed']=False
+    ex['deployment_allowed']=False
+    state['execution']=ex
+    dump(sp,state)
+    print(json.dumps({'prepare_commit':commit_push('governance: enter Stage-03 visual materialization hardening')},indent=2))
 
 def mutate_mother():
     p=SOURCE/'12_DOCS/mother-spec/01_BLUEPRINT_DESIGN_GOVERNANCE.md'; marker='<!-- SECTION_UID: WEB-GOV-01-S087 -->'
@@ -141,23 +169,63 @@ def mutate_invariant_and_audit():
     p=SOURCE/'10_REGISTRY/GOVERNANCE_ACCEPTANCE_AUDIT_BLUEPRINT.yaml'; d=load(p); unique_extend(d.setdefault('required_normative_section_uids',[]),['WEB-GOV-01-S087']); c=d.setdefault('stage_execution_invariant_contract',{})
     c.update({'visual_design_profile_materialization_completeness_required':True,'stage03_visual_reference_annotation_output_required':True,'stage03_visual_inheritance_matrix_output_required':True,'stage03_visual_scenario_evidence_set_output_required':True,'structural_only_visual_review_candidate_blocked':True,'unresolved_visual_authority_not_equivalent_to_absent':True}); dump(p,d)
 
+def _assigns_name(stmt, name):
+    if not isinstance(stmt, ast.Assign):
+        return False
+    return any(isinstance(t,ast.Name) and t.id==name for t in stmt.targets)
+
+def _parse_body(src):
+    return ast.parse(src).body
+
 def harden_validator():
-    p=SOURCE/'09_TESTS/governance/validate_stage_execution_invariants.py'; s=p.read_text(encoding='utf-8')
-    old="'TASK_LAYER_EFFECTFUL_TRANSITION_ORDER']"; new="'TASK_LAYER_EFFECTFUL_TRANSITION_ORDER','VISUAL_DESIGN_PROFILE_MATERIALIZATION_COMPLETENESS']"
-    if new not in s:
-        if s.count(old)!=1: raise RuntimeError('VALIDATOR_REQUIRED_LIST_DRIFT')
-        s=s.replace(old,new,1)
-    anchor="    rv=inv.get('REVIEW_VS_CLOSURE_SEPARATION') or {}\n"
-    extra="    vm=inv.get('VISUAL_DESIGN_PROFILE_MATERIALIZATION_COMPLETENESS') or {}\n    vm_req={'VISUAL_DESIGN_SPEC_PACKAGE','VISUAL_GEOMETRY_CONTRACT','VISUAL_PREVIEW_EVIDENCE','VISUAL_CHANGESET','VISUAL_INTERACTION_TOPOLOGY_BINDING','FUNCTIONAL_WORKBENCH_LAYOUT_CONTRACT','VISUAL_REFERENCE_ANNOTATION','VISUAL_INHERITANCE_MATRIX','VISUAL_SCENARIO_EVIDENCE_SET'}\n    if set(vm.get('required_stage03_outputs') or [])!=vm_req or vm.get('every_required_output_has_explicit_producer') is not True or vm.get('mother_required_output_may_be_omitted_by_profile') is not False or vm.get('structural_only_preview_may_satisfy_human_visual_review') is not False or vm.get('atomic_workbench_visual_binding_required') is not True or vm.get('unresolved_authority_is_authority_absent') is not False or vm.get('unresolved_applicable_visual_authority_in_denominator_required') is not True or vm.get('profile_materialization_undercoverage')!='BLOCK': failures.append('visual_design_profile_materialization_incomplete')\n"
-    if extra.strip() not in s:
-        if s.count(anchor)!=1: raise RuntimeError('VALIDATOR_INSERT_ANCHOR_DRIFT')
-        s=s.replace(anchor,extra+anchor,1)
-    anchor2="    st2=next((x for x in life.get('stages') or [] if x.get('stage_uid')=='STAGE-02'),{})\n"
-    extra2="    st3=next((x for x in life.get('stages') or [] if x.get('stage_uid')=='STAGE-03'),{})\n    stage3_required={'VISUAL_DESIGN_SPEC_PACKAGE','VISUAL_GEOMETRY_CONTRACT','VISUAL_PREVIEW_EVIDENCE','VISUAL_CHANGESET','VISUAL_INTERACTION_TOPOLOGY_BINDING','FUNCTIONAL_WORKBENCH_LAYOUT_CONTRACT','VISUAL_REFERENCE_ANNOTATION','VISUAL_INHERITANCE_MATRIX','VISUAL_SCENARIO_EVIDENCE_SET'}\n    if not stage3_required.issubset(set(st3.get('outputs') or [])): failures.append('stage03_mother_required_visual_outputs_missing')\n    st3prod=st3.get('output_producers') or {}\n    if any(not st3prod.get(x) for x in stage3_required): failures.append('stage03_required_output_producer_missing')\n    if not {'WEB-GOV-01-S080','WEB-GOV-01-S087'}.issubset(set(st3.get('required_normative_section_uids') or [])): failures.append('stage03_visual_materialization_normative_binding_missing')\n    va=st3.get('visual_materialization_gate') or {}\n    if va.get('required') is not True or va.get('structural_only_preview_may_reach_visual_review') is not False or va.get('explicit_atomic_workbench_visual_binding_required') is not True or va.get('unresolved_visual_authority_is_authority_absent') is not False or va.get('unresolved_visual_authority_must_enter_current_problem_denominator') is not True: failures.append('stage03_visual_materialization_gate_incomplete')\n"
-    if extra2.strip() not in s:
-        if s.count(anchor2)!=1: raise RuntimeError('VALIDATOR_STAGE3_ANCHOR_DRIFT')
-        s=s.replace(anchor2,extra2+anchor2,1)
-    p.write_text(s,encoding='utf-8')
+    p=SOURCE/'09_TESTS/governance/validate_stage_execution_invariants.py'
+    tree=ast.parse(p.read_text(encoding='utf-8'))
+    funcs=[n for n in tree.body if isinstance(n,ast.FunctionDef) and n.name=='validate']
+    if len(funcs)!=1:
+        raise RuntimeError('VALIDATOR_VALIDATE_FUNCTION_IDENTITY_DRIFT')
+    fn=funcs[0]
+
+    required_nodes=[n for n in fn.body if _assigns_name(n,'required')]
+    if len(required_nodes)!=1 or not isinstance(required_nodes[0].value,ast.List):
+        raise RuntimeError('VALIDATOR_REQUIRED_LIST_STRUCTURAL_IDENTITY_DRIFT')
+    req=required_nodes[0].value
+    existing={x.value for x in req.elts if isinstance(x,ast.Constant) and isinstance(x.value,str)}
+    marker='VISUAL_DESIGN_PROFILE_MATERIALIZATION_COMPLETENESS'
+    if marker not in existing:
+        req.elts.append(ast.Constant(value=marker))
+
+    if not any(_assigns_name(n,'vm') for n in fn.body):
+        rv_idx=next((i for i,n in enumerate(fn.body) if _assigns_name(n,'rv')),None)
+        if rv_idx is None:
+            raise RuntimeError('VALIDATOR_RV_STRUCTURAL_ANCHOR_MISSING')
+        vm_src="""vm=inv.get('VISUAL_DESIGN_PROFILE_MATERIALIZATION_COMPLETENESS') or {}
+vm_req={'VISUAL_DESIGN_SPEC_PACKAGE','VISUAL_GEOMETRY_CONTRACT','VISUAL_PREVIEW_EVIDENCE','VISUAL_CHANGESET','VISUAL_INTERACTION_TOPOLOGY_BINDING','FUNCTIONAL_WORKBENCH_LAYOUT_CONTRACT','VISUAL_REFERENCE_ANNOTATION','VISUAL_INHERITANCE_MATRIX','VISUAL_SCENARIO_EVIDENCE_SET'}
+if set(vm.get('required_stage03_outputs') or [])!=vm_req or vm.get('every_required_output_has_explicit_producer') is not True or vm.get('mother_required_output_may_be_omitted_by_profile') is not False or vm.get('structural_only_preview_may_satisfy_human_visual_review') is not False or vm.get('atomic_workbench_visual_binding_required') is not True or vm.get('unresolved_authority_is_authority_absent') is not False or vm.get('unresolved_applicable_visual_authority_in_denominator_required') is not True or vm.get('profile_materialization_undercoverage')!='BLOCK':
+    failures.append('visual_design_profile_materialization_incomplete')
+"""
+        fn.body[rv_idx:rv_idx]=_parse_body(vm_src)
+
+    if not any(_assigns_name(n,'st3') for n in fn.body):
+        st2_idx=next((i for i,n in enumerate(fn.body) if _assigns_name(n,'st2')),None)
+        if st2_idx is None:
+            raise RuntimeError('VALIDATOR_ST2_STRUCTURAL_ANCHOR_MISSING')
+        st3_src="""st3=next((x for x in life.get('stages') or [] if x.get('stage_uid')=='STAGE-03'),{})
+stage3_required={'VISUAL_DESIGN_SPEC_PACKAGE','VISUAL_GEOMETRY_CONTRACT','VISUAL_PREVIEW_EVIDENCE','VISUAL_CHANGESET','VISUAL_INTERACTION_TOPOLOGY_BINDING','FUNCTIONAL_WORKBENCH_LAYOUT_CONTRACT','VISUAL_REFERENCE_ANNOTATION','VISUAL_INHERITANCE_MATRIX','VISUAL_SCENARIO_EVIDENCE_SET'}
+if not stage3_required.issubset(set(st3.get('outputs') or [])):
+    failures.append('stage03_mother_required_visual_outputs_missing')
+st3prod=st3.get('output_producers') or {}
+if any(not st3prod.get(x) for x in stage3_required):
+    failures.append('stage03_required_output_producer_missing')
+if not {'WEB-GOV-01-S080','WEB-GOV-01-S087'}.issubset(set(st3.get('required_normative_section_uids') or [])):
+    failures.append('stage03_visual_materialization_normative_binding_missing')
+va=st3.get('visual_materialization_gate') or {}
+if va.get('required') is not True or va.get('structural_only_preview_may_reach_visual_review') is not False or va.get('explicit_atomic_workbench_visual_binding_required') is not True or va.get('unresolved_visual_authority_is_authority_absent') is not False or va.get('unresolved_visual_authority_must_enter_current_problem_denominator') is not True:
+    failures.append('stage03_visual_materialization_gate_incomplete')
+"""
+        fn.body[st2_idx:st2_idx]=_parse_body(st3_src)
+
+    ast.fix_missing_locations(tree)
+    p.write_text(ast.unparse(tree)+'\n',encoding='utf-8')
 
 def mutate_current_components():
     p=ROOT/'governance/specifications/current/INTERACTION_TOPOLOGY_AI_CONTINUITY.yaml'; d=load(p)
