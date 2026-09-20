@@ -55,4 +55,13 @@ source_validation_runs:
   stage02_boundary: {run_id: 35506961775, result: success, product_execution: skipped}
   full_line: {run_id: 35506961777, result: success}
   stage03_product_execution: {run_id: 35506961748, result: skipped}
-current_status: CLOSURE_PENDING_EXACT_HEAD_TERMINAL_VALIDATION
+closure_validation_head_sha: 507325ff5a62a0e30ac79c3c6ab33a8926a86ee3
+closure_validation_runs:
+  branch_guard: {run_id: 35507062906, result: success}
+  fresh_replay_identity: {run_id: 35507062931, result: success, product_execution: skipped}
+  selected_profile: {run_id: 35507063043, result: success}
+  stage02_boundary: {run_id: 35507062900, result: success, product_execution: skipped}
+  full_line: {run_id: 35507062827, result: success}
+  stage03_product_execution: {run_id: 35507062872, result: skipped}
+closure_state_final_exact_head_revalidation_required: true
+current_status: CLOSED_VERIFIED_NO_PRODUCT_CREDIT
