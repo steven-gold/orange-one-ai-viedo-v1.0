@@ -8,7 +8,7 @@ from docx.oxml.ns import qn
 
 ROOT=Path('.')
 REPORT=json.loads((ROOT/'__temp_reports__/source_grounded_18page_closure.json').read_text(encoding='utf-8'))
-MARK='ACPOS-20260921-SOURCE-GROUNDED-CONSTRUCTION-CLOSURE-V1'
+MARK='ACPOS-20260921-SOURCE-GROUNDED-CONSTRUCTION-CLOSURE-V2'
 OLD_MARKERS=[
  '2026-09-21 Construction Exact Binding Closure / 施工精確綁定封板',
  'Unified Page / Control / Action / API / DB / Runtime Construction Matrix',
@@ -78,6 +78,29 @@ def text_of(el):
 def remove_element(el):
     parent=el.getparent()
     if parent is not None: parent.remove(el)
+def strip_from_heading(doc,markers):
+    body=doc._element.body
+    children=list(body)
+    start_idx=None
+    for i,ch in enumerate(children):
+        txt=text_of(ch)
+        if any(m in txt for m in markers):
+            start_idx=i;break
+    if start_idx is not None:
+        if start_idx>0:
+            prev=children[start_idx-1]
+            if prev.tag==qn('w:p') and not text_of(prev).strip() and prev.find('.//'+qn('w:sectPr')) is not None:
+                remove_element(prev)
+        for ch in list(body)[start_idx:]:
+            if ch.tag!=qn('w:sectPr'): remove_element(ch)
+
+def strip_current_closure(doc):
+    strip_from_heading(doc,[
+      '2026-09-21 Machine Authority Construction Closure',
+      '2026-09-21 Source-Grounded Construction Closure / 來源實證施工封板',
+      '2026-09-21 Source-Grounded Construction Closure Index',
+    ])
+
 def strip_old_closure(doc):
     body=doc._element.body
     children=list(body)
@@ -200,6 +223,7 @@ def conv_relevant(x):
     keys=['conversation','message','thread','send','stop','single-ai','multi-ai','single ai','multi ai','council','attach','assistant','meeting']
     return any(k in blob for k in keys)
 def add_parent(doc,name,pages):
+    strip_current_closure(doc)
     strip_old_closure(doc)
     landscape(doc);add_title(doc,'2026-09-21 Source-Grounded Construction Closure / 來源實證施工封板')
     scope=name[:2]
@@ -216,8 +240,7 @@ def add_parent(doc,name,pages):
     doc.add_heading('Construction Resolution Rule',level=2)
     doc.add_paragraph('施工 AI MUST resolve UI behavior from this order: page machine authority → exact control row → action/gate/permission → payload/schema → operation/method/path → runtime/persistence owner → source runtime status. If a row is SPEC_EXACT_RUNTIME_BLOCKED or SPEC_EXACT_RUNTIME_NOT_EXECUTED, the UI definition is known but effectful enablement is forbidden until implementation evidence closes. If a quantitative value is SOURCE_NOT_DEFINED, do not choose a “reasonable” number.')
 def add_page_doc(doc,page):
-    # Remove any duplicate new marker only if rerun.
-    if any(MARK in p.text for p in doc.paragraphs): return False
+    strip_current_closure(doc)
     landscape(doc);add_title(doc,'2026-09-21 Machine Authority Construction Closure / 機器權威施工綁定封板')
     binding_table(doc,page,rows_for(page))
     add_special_notes(doc,page)
@@ -240,15 +263,15 @@ for file,pages in PARENTS.items():
 # Index summary.
 idx=ROOT/'00_INDEX_ACPOS_Mother_Compliant_Basic_Design_Master.docx'
 d=Document(idx)
-if not any(MARK in p.text for p in d.paragraphs):
-    landscape(d);add_title(d,'2026-09-21 Source-Grounded Construction Closure Index')
+strip_current_closure(d)
+landscape(d);add_title(d,'2026-09-21 Source-Grounded Construction Closure Index')
     add_table(d,['Page','Expected Controls','Exact Rows','Denominator','True Runtime / Governance Status'],[
       [page,v['expected_control_denominator'],v['actual_unique_controls'],'PASS' if v['denominator_pass'] else 'FAIL',
        '; '.join(b.get('type','') for b in v.get('blockers',[])) or 'NO_DEFINITION_GAP']
       for page,v in REPORT['pages'].items()
     ],6.5)
     d.add_paragraph('This index records construction definition status only. Human Visual Review / Design Freeze and Production runtime acceptance remain independent gates.')
-    d.save(idx);Document(idx);updated.append(idx.name)
+d.save(idx);Document(idx);updated.append(idx.name)
 
 out={'marker':MARK,'source_commit':REPORT['source_commit'],'updated_files':updated,'updated_count':len(updated),
      'page_denominators':{p:{'expected':v['expected_control_denominator'],'actual':v['actual_unique_controls'],'pass':v['denominator_pass']} for p,v in REPORT['pages'].items()},
