@@ -96,7 +96,7 @@ jobs:
           console.log('SG02_PROD_EFFECTFUL_CONTROLS',JSON.stringify({configure,approve}));
           const releaseSha=String(hb?.release_sha??'').trim();
           if(!releaseSha)throw new Error('SG02_PROD_RELEASE_SHA_MISSING');
-          require('fs').appendFileSync(process.env.GITHUB_ENV,'ACPOS_EXPECT_RELEASE_SHA='+releaseSha+'\n');
+          (await import('node:fs')).appendFileSync(process.env.GITHUB_ENV,'ACPOS_EXPECT_RELEASE_SHA='+releaseSha+'\n');
           NODE
 
       - name: Install browser acceptance dependency
