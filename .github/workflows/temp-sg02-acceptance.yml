@@ -1,0 +1,110 @@
+name: Temp SG02 Acceptance
+
+on:
+  push:
+    branches: [0921acpos]
+
+permissions:
+  contents: read
+
+jobs:
+  accept:
+    runs-on: ubuntu-latest
+    environment: Production
+    timeout-minutes: 20
+    env:
+      ACPOS_DEPLOYMENT_URL: https://orange-one-acpos-test.vercel.app
+      ACPOS_PRODUCTION_E2E_EMAIL: admin
+      ACPOS_PRODUCTION_E2E_PASSWORD: ${{ secrets.ADMIN }}
+      VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Inspect current Word QA detail visibility
+        shell: bash
+        run: |
+          python -m pip install --quiet python-docx
+          python - <<'PY'
+          from docx import Document
+          docs=[
+            'ACPOS_QA-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx',
+            'ACPOS_SG-02_QA審查項目名單_Mother_Basic_Design_OPTIMIZED.docx',
+          ]
+          terms=['人物一致性','角色一致性','字幕','構圖','嘴型','口型','音訊','音频','幀間','連續性','character consistency','subtitle','composition','lip','audio','frame continuity']
+          for fn in docs:
+              d=Document(fn)
+              text='\n'.join([p.text for p in d.paragraphs]+[c.text for t in d.tables for r in t.rows for c in r.cells])
+              found=[x for x in terms if x.lower() in text.lower()]
+              print('WORD_QA_DETAIL',fn,'FOUND',found)
+          PY
+
+      - uses: actions/checkout@v4
+        with:
+          ref: new
+          path: runtime
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: runtime/package-lock.json
+
+      - name: Install runtime dependencies
+        working-directory: runtime
+        run: npm ci
+
+      - name: SG02 source/runtime acceptance
+        working-directory: runtime
+        run: |
+          node --test             tests/release/sg02-quality-criteria-materialization.test.mjs             tests/release/sg02-lifecycle-gate-alignment.test.mjs             tests/release/gate25-sg02-readonly-acceptance.test.mjs             tests/release/gate25-sg02-nav-action-ledger-sync.test.mjs
+
+      - name: Inspect current Production SG02 projection
+        working-directory: runtime
+        shell: bash
+        run: |
+          node <<'NODE'
+          const base=process.env.ACPOS_DEPLOYMENT_URL.replace(/\/$/,'');
+          const headers={};
+          if(process.env.VERCEL_AUTOMATION_BYPASS_SECRET)headers['x-vercel-protection-bypass']=process.env.VERCEL_AUTOMATION_BYPASS_SECRET;
+          const health=await fetch(base+'/health',{headers});
+          const hb=await health.json().catch(()=>null);
+          if(health.status!==200)throw new Error('SG02_PROD_HEALTH_HTTP_'+health.status);
+          if(hb?.environment!=='production')throw new Error('SG02_PROD_ENV_NOT_PRODUCTION');
+          console.log('SG02_PROD_HEALTH',JSON.stringify(hb));
+          const login=await fetch(base+'/v1/identity/session',{
+            method:'POST',
+            headers:{...headers,'content-type':'application/json','x-correlation-id':crypto.randomUUID()},
+            body:JSON.stringify({email:process.env.ACPOS_PRODUCTION_E2E_EMAIL,password:process.env.ACPOS_PRODUCTION_E2E_PASSWORD})
+          });
+          const cookies=login.headers.getSetCookie?.()??[];
+          const lb=await login.json().catch(()=>null);
+          if(login.status!==200||lb?.ok!==true)throw new Error('SG02_PROD_LOGIN_FAILED_'+login.status);
+          const cookie=cookies.map(x=>x.split(';')[0]).join('; ');
+          const proj=await fetch(base+'/v1/ui-projections/admin%3ASG-02',{headers:{...headers,cookie,'x-correlation-id':crypto.randomUUID()}});
+          const pb=await proj.json().catch(()=>null);
+          if(proj.status!==200)throw new Error('SG02_PROD_PROJECTION_HTTP_'+proj.status);
+          console.log('SG02_PROD_PROJECTION',JSON.stringify({
+            page_state:pb?.page_state,
+            values:pb?.values,
+            control_enabled:pb?.control_enabled
+          }));
+          const vals=pb?.values??{};
+          const detailPresent=JSON.stringify(vals).match(/人物一致性|角色一致性|字幕|構圖|嘴型|口型|音訊|幀間|character consistency|subtitle|composition|lip|audio|frame continuity/i)!==null;
+          console.log('SG02_PROD_CONCRETE_QA_DETAIL_PRESENT='+detailPresent);
+          const configure=pb?.control_enabled?.['CTRL-ADMIN-SG-02-ACT-01-ACT-CONFIGURE']===true;
+          const approve=pb?.control_enabled?.['CTRL-ADMIN-SG-02-ACT-02-ACT-APPROVE']===true;
+          console.log('SG02_PROD_EFFECTFUL_CONTROLS',JSON.stringify({configure,approve}));
+          const releaseSha=String(hb?.release_sha??'').trim();
+          if(!releaseSha)throw new Error('SG02_PROD_RELEASE_SHA_MISSING');
+          require('fs').appendFileSync(process.env.GITHUB_ENV,'ACPOS_EXPECT_RELEASE_SHA='+releaseSha+'\n');
+          NODE
+
+      - name: Install browser acceptance dependency
+        working-directory: runtime
+        run: |
+          npm install --no-save --package-lock=false playwright@1.62.1
+          npx playwright install --with-deps chromium
+
+      - name: Run SG02 Production readonly browser acceptance
+        working-directory: runtime
+        run: node scripts/gate25-production-sg02-readonly-acceptance.mjs
