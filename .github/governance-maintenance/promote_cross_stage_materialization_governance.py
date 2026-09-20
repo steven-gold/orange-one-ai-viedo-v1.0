@@ -874,14 +874,16 @@ def harden_source_validator_v2216():
 def harden_source_regression_v2216():
     import ast
     p=SOURCE/'09_TESTS/governance/test_v2_1_13_stage_execution_invariants.py'
-    s=p.read_text(encoding='utf-8'); tree=ast.parse(s)
-    if 'reference_only_handoff_is_not_ready' not in s:
-        target=None
+    s=p.read_text(encoding='utf-8')
+    tree=ast.parse(s)
+    if not any(isinstance(x,ast.FunctionDef) and x.name=='handoff_ready' for x in tree.body):
+        targets=[]
         for node in tree.body:
             if isinstance(node,ast.Assign) and any(isinstance(t,ast.Name) and t.id=='out' for t in node.targets):
-                if isinstance(node.value,ast.Call):
-                    target=node; break
-        if target is None: raise RuntimeError('source regression package validation assignment missing')
+                if isinstance(node.value,ast.Call) and ast.get_source_segment(s,node.value) == 'v213.validate(PKG)':
+                    targets.append(node)
+        if len(targets)!=1:
+            raise RuntimeError('source regression package validation AST selector drift')
         add=r'''
 def handoff_ready(reference=True, physical=True, complete=True, denominator=True, consumer=True, unresolved=0):
     return bool(reference and physical and complete and denominator and consumer and unresolved == 0)
@@ -892,15 +894,22 @@ res.append(case('successor_consumer_not_ready_blocks_handoff', not handoff_ready
 res.append(case('unresolved_required_dependency_blocks_handoff', not handoff_ready(unresolved=1)))
 res.append(case('complete_materialized_consumer_ready_handoff_passes', handoff_ready()))
 '''.strip('\n').splitlines()
-        lines=s.splitlines(); lines[target.lineno-1:target.lineno-1]=add+['']
+        lines=s.splitlines()
+        lines[targets[0].lineno-1:targets[0].lineno-1]=add+['']
         s='\n'.join(lines)+'\n'
-    old="out['total']==26 and out['passed_expectations']==26"
-    if old in s:
-        if s.count(old)!=1: raise RuntimeError('source regression expected-count selector drift')
-        s=s.replace(old,"out['total']==32 and out['passed_expectations']==32")
-    elif "out['total']==32 and out['passed_expectations']==32" not in s:
-        raise RuntimeError('source regression terminal expectation not found')
-    ast.parse(s); p.write_text(s,encoding='utf-8')
+        tree=ast.parse(s)
+    raises=[x for x in tree.body if isinstance(x,ast.Raise)]
+    if len(raises)!=1:
+        raise RuntimeError('source regression terminal raise AST selector drift')
+    nums=[x.value for x in ast.walk(raises[0]) if isinstance(x,ast.Constant) and isinstance(x.value,int)]
+    if nums.count(26)==2:
+        lines=s.splitlines()
+        lines[raises[0].lineno-1:raises[0].end_lineno]=["raise SystemExit(0 if out['total']==32 and out['passed_expectations']==32 else 1)"]
+        s='\n'.join(lines)+'\n'
+    elif nums.count(32)!=2:
+        raise RuntimeError('source regression terminal expectation AST drift')
+    ast.parse(s)
+    p.write_text(s,encoding='utf-8')
 
 def harden_root_stage_engine_v2216():
     p=ROOT/'governance/ci/stage_execution_engine.py'
@@ -961,35 +970,77 @@ def harden_root_stage_engine_v2216():
 def harden_root_stage_engine_test_v2216():
     import ast
     p=ROOT/'governance/ci/test_stage_execution_engine.py'
-    s=p.read_text(encoding='utf-8'); tree=ast.parse(s)
-    if "'cross_stage_handoff'" not in s and '"cross_stage_handoff"' not in s:
-        # Add the synthetic handoff immediately after sample dict construction.
-        marker="eng.validate_evidence_data(stage_uid,deepcopy(sample))"
-        if s.count(marker)!=1: raise RuntimeError('root test sample selector drift')
-        payload="""sample['cross_stage_handoff']={'ledger_ref':'synthetic://external','external_receipt':True,'successor_stage_uid':st['next_stage_uid'],'reference_resolution_complete':True,'physical_materialization_complete':True,'required_field_completeness_complete':True,'denominator_reconciled':True,'consumer_readiness_complete':True,'unresolved_required_dependency_total':0,'status':'PASS'}\n"""
-        s=s.replace(marker,payload+marker)
-    if "cross_stage_gate_missing" not in s:
-        anchor="block('partial_stage_exit_allowed',lambda p,a:p['stages'][0].__setitem__('partial_work_unit_closure_may_grant_stage_exit',True))"
-        if s.count(anchor)!=1: raise RuntimeError('root test definition anchor drift')
-        s=s.replace(anchor,anchor+"\nblock('cross_stage_gate_missing',lambda p,a:p['stages'][0].pop('cross_stage_materialization_gate'))")
-    if "handoff_reference_resolution_false" not in s:
-        anchor="block_evidence('blocked_without_blocked_phase',make_blocked_without_phase)"
-        if s.count(anchor)!=1: raise RuntimeError('root test evidence anchor drift')
-        extra=r'''
-block_evidence('handoff_reference_resolution_false',lambda x:x['cross_stage_handoff'].__setitem__('reference_resolution_complete',False))
-block_evidence('handoff_physical_materialization_false',lambda x:x['cross_stage_handoff'].__setitem__('physical_materialization_complete',False))
-block_evidence('handoff_required_field_completeness_false',lambda x:x['cross_stage_handoff'].__setitem__('required_field_completeness_complete',False))
-block_evidence('handoff_denominator_not_reconciled',lambda x:x['cross_stage_handoff'].__setitem__('denominator_reconciled',False))
-block_evidence('handoff_consumer_not_ready',lambda x:x['cross_stage_handoff'].__setitem__('consumer_readiness_complete',False))
-block_evidence('handoff_unresolved_required_dependency',lambda x:x['cross_stage_handoff'].__setitem__('unresolved_required_dependency_total',1))
-'''.strip('\n')
-        s=s.replace(anchor,anchor+"\n"+extra)
-    old="negative regression {cases}/32"
-    if old in s:
-        s=s.replace(old,"negative regression {cases}/39")
-    elif "negative regression {cases}/39" not in s:
-        raise RuntimeError('root test expected count marker missing')
-    ast.parse(s); p.write_text(s,encoding='utf-8')
+
+    def read():
+        text=p.read_text(encoding='utf-8')
+        return text,ast.parse(text)
+
+    s,tree=read()
+    if 'cross_stage_handoff' not in s:
+        sample_nodes=[]
+        for node in tree.body:
+            if isinstance(node,ast.Assign) and any(isinstance(t,ast.Name) and t.id=='sample' for t in node.targets):
+                sample_nodes.append(node)
+        if len(sample_nodes)!=1:
+            raise RuntimeError('root test sample AST selector drift')
+        payload="sample['cross_stage_handoff']={'ledger_ref':'synthetic://external','external_receipt':True,'successor_stage_uid':st['next_stage_uid'],'reference_resolution_complete':True,'physical_materialization_complete':True,'required_field_completeness_complete':True,'denominator_reconciled':True,'consumer_readiness_complete':True,'unresolved_required_dependency_total':0,'status':'PASS'}"
+        lines=s.splitlines()
+        line=sample_nodes[0].end_lineno
+        lines[line:line]=[payload]
+        p.write_text('\n'.join(lines)+'\n',encoding='utf-8')
+
+    def call_expr(label,func_name):
+        text,mod=read()
+        found=[]
+        for node in mod.body:
+            if isinstance(node,ast.Expr) and isinstance(node.value,ast.Call) and isinstance(node.value.func,ast.Name) and node.value.func.id==func_name:
+                args=node.value.args
+                if args and isinstance(args[0],ast.Constant) and args[0].value==label:
+                    found.append(node)
+        if len(found)!=1:
+            raise RuntimeError('root test call AST selector drift:'+func_name+':'+label)
+        return text,found[0]
+
+    s,_=read()
+    if 'cross_stage_gate_missing' not in s:
+        text,node=call_expr('partial_stage_exit_allowed','block')
+        lines=text.splitlines()
+        lines[node.end_lineno:node.end_lineno]=["block('cross_stage_gate_missing',lambda p,a:p['stages'][0].pop('cross_stage_materialization_gate'))"]
+        p.write_text('\n'.join(lines)+'\n',encoding='utf-8')
+
+    s,_=read()
+    if 'handoff_reference_resolution_false' not in s:
+        text,node=call_expr('blocked_without_blocked_phase','block_evidence')
+        extra=[
+            "block_evidence('handoff_reference_resolution_false',lambda x:x['cross_stage_handoff'].__setitem__('reference_resolution_complete',False))",
+            "block_evidence('handoff_physical_materialization_false',lambda x:x['cross_stage_handoff'].__setitem__('physical_materialization_complete',False))",
+            "block_evidence('handoff_required_field_completeness_false',lambda x:x['cross_stage_handoff'].__setitem__('required_field_completeness_complete',False))",
+            "block_evidence('handoff_denominator_not_reconciled',lambda x:x['cross_stage_handoff'].__setitem__('denominator_reconciled',False))",
+            "block_evidence('handoff_consumer_not_ready',lambda x:x['cross_stage_handoff'].__setitem__('consumer_readiness_complete',False))",
+            "block_evidence('handoff_unresolved_required_dependency',lambda x:x['cross_stage_handoff'].__setitem__('unresolved_required_dependency_total',1))"
+        ]
+        lines=text.splitlines()
+        lines[node.end_lineno:node.end_lineno]=extra
+        p.write_text('\n'.join(lines)+'\n',encoding='utf-8')
+
+    text,mod=read()
+    prints=[]
+    for node in mod.body:
+        if isinstance(node,ast.Expr) and isinstance(node.value,ast.Call) and isinstance(node.value.func,ast.Name) and node.value.func.id=='print':
+            seg=ast.get_source_segment(text,node) or ''
+            if 'common Stage Execution Engine negative regression' in seg:
+                prints.append(node)
+    if len(prints)!=1:
+        raise RuntimeError('root test terminal print AST selector drift')
+    seg=ast.get_source_segment(text,prints[0]) or ''
+    if '/32' in seg:
+        lines=text.splitlines()
+        lines[prints[0].lineno-1:prints[0].end_lineno]=["print(f'PASS: common Stage Execution Engine negative regression {cases}/39')"]
+        text='\n'.join(lines)+'\n'
+    elif '/39' not in seg:
+        raise RuntimeError('root test expected denominator AST drift')
+    ast.parse(text)
+    p.write_text(text,encoding='utf-8')
 
 def record_governance_finding_v2216():
     p=ROOT/'governance/test/SPECIFICATION_CHANGE_CANDIDATES.yaml'
