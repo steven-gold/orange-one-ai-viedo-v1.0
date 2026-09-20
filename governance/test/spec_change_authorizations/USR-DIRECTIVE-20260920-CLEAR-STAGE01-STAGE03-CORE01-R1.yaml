@@ -1,0 +1,44 @@
+schema_version: 2
+artifact_type: PRODUCT_EXECUTION_RESET_AND_FRESH_REENTRY_AUTHORIZATION
+authorization_uid: USR-DIRECTIVE-20260920-CLEAR-STAGE01-STAGE03-CORE01-R1
+normative_authority: false
+authority_source: EXPLICIT_USER_DIRECTIVE
+status: APPROVED_FOR_EXACT_SCOPE
+single_use: true
+ai_may_expand_scope: false
+ai_may_reuse_authorization: false
+current_governance_uid: GOV-REV-20260920-CROSS-STAGE-MATERIALIZATION-CONSUMER-READINESS-HARDENING
+baseline_commit_sha: 06e9b1795666213697d8860ec6a8bd80a7767e4b
+baseline_tree_sha: 2842ecd327ce3d2742f5f3bce01ace0096209343
+user_directive: "定位好目前的進度，母規範bug補好了之後把stage01-03生產資料清除乾淨。"
+exact_scope:
+  page_scope:
+  - CORE-01
+  cleanup:
+  - CURRENT_CORE01_STAGE01_GENERATED_PRODUCT_DATA
+  - CURRENT_CORE01_STAGE02_GENERATED_PRODUCT_DATA
+  - CURRENT_CORE01_STAGE03_GENERATED_PRODUCT_DATA
+  - CURRENT_STAGE03_TEST_OUTPUT
+  preserve:
+  - CURRENT_MOTHER_GOVERNANCE
+  - CURRENT_SPECIFICATION
+  - CURRENT_CANONICAL_AUTHORITY
+  - CORE01_RAW_SOURCE_BYTES
+  - LEGAL_HISTORICAL_EVIDENCE
+  - GOVERNANCE_TEST_HISTORY_STAGE02
+  excluded:
+  - ASSET-01_PRODUCT_DATA
+  - STAGE04_OR_LATER_EXECUTION
+  - WEBSITE_CONSTRUCTION
+  - DEPLOYMENT
+  - PRODUCT_AUTHORITY_AUTOFILL
+  - MOTHER_OR_CURRENT_SPECIFICATION_MUTATION
+completion_requirements:
+  raw_source_byte_exact_preserved: true
+  current_core01_stage01_generated_product_data_absent: true
+  current_core01_stage02_generated_product_data_absent: true
+  current_core01_stage03_generated_product_data_absent: true
+  current_stage03_test_output_absent: true
+  profile_history_required_artifacts_preserved_as_history_only: true
+  exact_head_terminal_validation_required: true
+  product_stage_credit: 0

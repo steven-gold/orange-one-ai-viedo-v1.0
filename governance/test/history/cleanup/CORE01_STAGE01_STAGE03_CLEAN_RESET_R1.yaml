@@ -1,0 +1,50 @@
+schema_version: 1
+artifact_type: CORE01_STAGE01_STAGE03_PRODUCT_CLEAN_RESET_EVIDENCE
+normative_authority: false
+governance_uid: GOV-REV-20260920-CROSS-STAGE-MATERIALIZATION-CONSUMER-READINESS-HARDENING
+authorization_uid: USR-DIRECTIVE-20260920-CLEAR-STAGE01-STAGE03-CORE01-R1
+resolution_uid: WUR-CORE01-STAGE01-STAGE03-CLEAN-REENTRY-20260920-001
+work_unit_uid: WU-CORE01-STAGE01-STAGE03-CLEAN-RESET-R1
+baseline_commit_sha: 06e9b1795666213697d8860ec6a8bd80a7767e4b
+baseline_tree_sha: 2842ecd327ce3d2742f5f3bce01ace0096209343
+scope:
+- CORE-01
+excluded_scope:
+- ASSET-01
+deleted_roots:
+- 00_SOURCE_INTAKE/run_core01_d81df9ac_stage02
+- governance/test/stage03
+deleted_tracked_file_count: 114
+deleted_product_run_file_count: 112
+deleted_generated_product_file_count: 110
+deleted_raw_source_original_file_count: 2
+deleted_current_stage03_test_file_count: 2
+immutable_raw_source_preservation:
+  receipt_ref: 00_SOURCE_INTAKE/immutable_inputs/core01_961aa8c1/RAW_SOURCE_RECOVERY_RECEIPT.yaml
+  preserved_file_count: 2
+  byte_exact: true
+profile_history_preservation:
+  history_root: governance/test/history/stage01/core01-d81df9ac-preclean-20260920
+  preserved_file_count: 3
+  current_product_credit: 0
+preserved:
+- governance/test/history/stage02
+- CURRENT_MOTHER_GOVERNANCE
+- CURRENT_SPECIFICATION
+- CURRENT_CANONICAL_AUTHORITY
+- ASSET01_PRODUCT_DATA
+predecessor_stage03_attempt:
+  attempt_uid: STAGE03-CORE01-V2215-20260920-003
+  workflow_run_id: 35486809384
+  artifact_id: 10597616763
+  artifact_sha256: a98461683440be86360ef30b5b0a3c0d8336bc548853540fa6387829d8b5ba0c
+post_delete_current_reference_migration:
+  current_scope_manifest: UPDATED
+  selected_profile_history_binding: MIGRATED_TO_HISTORY_ONLY
+  active_product_owner_reference_to_deleted_root: REMOVED
+post_delete_validation:
+  exact_head_full_line: PENDING
+  exact_head_selected_profile: PENDING
+  exact_head_branch_guard: PENDING
+product_stage_credit: 0
+result: PHYSICAL_DELETE_COMMITTED_AWAITING_EXACT_HEAD_VALIDATION
