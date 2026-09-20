@@ -208,6 +208,13 @@ def source_checksums_and_archives():
     return sha(checks),hashlib.sha256(bundle).hexdigest(),hashlib.sha256(zbuf.getvalue()).hexdigest()
 
 def refresh_source():
+    gp=SOURCE/'11_EVIDENCE/audit/GOVERNANCE_CANDIDATE_STATE.yaml'
+    g=load(gp)
+    g['candidate']='v2.2.17_TYPOGRAPHY_COMPUTED_METRICS_HARDENING_CANDIDATE'
+    g['status']='CANDIDATE_UNDER_FRESH_SUCCESSOR_REVALIDATION'
+    fresh=g.setdefault('fresh_revalidation',{})
+    fresh.update({'required':True,'current_source_revision':NEW_REV,'current_closure_credit':False,'predecessor_evidence_current_closure_credit':False,'persisted_head_full_line_required':True,'historical_evidence_may_close_successor':False})
+    dump(gp,g)
     sem=load(SOURCE/'10_REGISTRY/SEMANTIC_AUTHORITY_BASELINE.yaml');semantic_hash=sem['content_hash']
     for rel in ['10_REGISTRY/SECTION_NUMBER_REGISTRY.yaml','10_REGISTRY/REFERENCE_RULE_REGISTRY.yaml','10_REGISTRY/CONSTRUCTION_ARTIFACT_INDEX.yaml','10_REGISTRY/BLUEPRINT_REGISTRY.yaml','10_REGISTRY/GOVERNANCE_ACCEPTANCE_AUDIT_BLUEPRINT.yaml','10_REGISTRY/GOVERNANCE_LIFECYCLE_STAGE_REGISTRY.yaml','10_REGISTRY/STAGE_EXECUTION_INVARIANT_REGISTRY.yaml','10_REGISTRY/AUDIT_CATALOG.yaml']:
         p=SOURCE/rel;d=load(p)
@@ -256,7 +263,6 @@ def update_current(semantic,checks,bundle,zips):
         if d.get('governance_uid')==OLD_UID:d['governance_uid']=NEW_UID
         if 'content_hash' in d:d['content_hash']=hobj(d)
         dump(sf,d)
-    gp=SOURCE/'11_EVIDENCE/audit/GOVERNANCE_CANDIDATE_STATE.yaml';g=load(gp);g['candidate']='v2.2.17_TYPOGRAPHY_COMPUTED_METRICS_HARDENING_CANDIDATE';g['status']='CANDIDATE_UNDER_FRESH_SUCCESSOR_REVALIDATION';fresh=g.setdefault('fresh_revalidation',{});fresh.update({'required':True,'current_source_revision':NEW_REV,'current_closure_credit':False,'predecessor_evidence_current_closure_credit':False,'persisted_head_full_line_required':True,'historical_evidence_may_close_successor':False});dump(gp,g)
 
 def validate_all():
     env=os.environ.copy();env['PYTHONDONTWRITEBYTECODE']='1';env['PYTHONPYCACHEPREFIX']='/tmp/acpos-typography-pycache'
