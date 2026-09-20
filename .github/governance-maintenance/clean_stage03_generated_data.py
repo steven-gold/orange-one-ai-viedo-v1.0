@@ -16,8 +16,8 @@ GOV='GOV-REV-20260920-STAGE03-VISUAL-MATERIALIZATION-PROMOTION-CLOSURE'
 WU='WU-STAGE03-CORE01-VISUAL-DESIGN-001'
 PRODUCER='governance/ci/run_current_stage3_visual_design.py'
 PLANNED_OWNER='00_SOURCE_INTAKE/run_core01_d81df9ac_stage02/05_VISUAL_DESIGN/CORE-01/VISUAL_DESIGN_SPEC_PACKAGE.yaml'
-NEXT_ATTEMPT='STAGE03-CORE01-V2215-20260920-002'
-NEXT_RUN='VISUAL-CORE01-V2215-STAGE03-R2'
+NEXT_ATTEMPT='STAGE03-CORE01-V2215-20260920-003'
+NEXT_RUN='VISUAL-CORE01-V2215-STAGE03-R3'
 
 EXPECTED_VISUAL={
 '00_SOURCE_INTAKE/run_core01_d81df9ac_stage02/05_VISUAL_DESIGN/CHANGE_IMPACT_MAP.yaml',
@@ -96,14 +96,14 @@ stage3=((state.get('execution') or {}).get('stage3') or {})
 attempt=state.get('stage03_active_attempt') or {}
 resume=(state.get('resume_control') or {}).get('current_resume_point')
 
-# Second clean replay is authorized only from the persisted first fresh attempt.
+# R3 clean replay is authorized only from the persisted R2 fresh attempt after exact external Authority materialization.
 if stage3.get('result')!='TEST_EXECUTED_BLOCKED' or work.get('current_status')!='BLOCKED_UNRESOLVED_VISUAL_AUTHORITY':
     raise SystemExit('BLOCK: rerun cleanup requires persisted blocked Stage-03 product attempt')
 if resume!='STAGE3_CORE01_VISUAL_AUTHORITY_BLOCKED':
     raise SystemExit('BLOCK: rerun cleanup resume boundary drift')
-if attempt.get('attempt_uid')!='STAGE03-CORE01-V2215-20260920-001':
+if attempt.get('attempt_uid')!='STAGE03-CORE01-V2215-20260920-002':
     raise SystemExit('BLOCK: unexpected predecessor Stage-03 attempt')
-if attempt.get('source_workflow_run_id')!=35484945017 or attempt.get('source_artifact_id')!=10597038682:
+if attempt.get('source_workflow_run_id')!=35485953228 or attempt.get('source_artifact_id')!=10597700289:
     raise SystemExit('BLOCK: predecessor Stage-03 provenance drift')
 if attempt.get('open_gap_total')!=2 or attempt.get('closure_blocker_total')!=2:
     raise SystemExit('BLOCK: predecessor blocker denominator drift')
@@ -123,10 +123,10 @@ snapshot=copy.deepcopy(attempt)
 snapshot['historical_role']='SUPERSEDED_BY_EXPLICIT_FRESH_RERUN_REQUEST'
 snapshot['current_closure_credit']=False
 snapshot['tracked_current_files_deleted_for_rerun']=True
-snapshot['preserved_execution_commit']='47bd0e2b7206feeba8063894e7aefdadd5d4b7d7'
-snapshot['preserved_high_pressure_review_head']='122d9cfc49c49d7120e0c01ab82252f1634e486e'
-snapshot['preserved_high_pressure_run_id']=35485261155
-snapshot['preserved_high_pressure_artifact_id']=10596879379
+snapshot['preserved_execution_commit']='3a7755ed21f65064a1440f86930a8b0723dea81c'
+snapshot['preserved_high_pressure_review_head']='0ab483b9d31640767d94011a2da45ef1b5e9b09a'
+snapshot['preserved_high_pressure_run_id']=35486012621
+snapshot['preserved_high_pressure_artifact_id']=10597485673
 snapshot['preserved_high_pressure_result']='75/75_PASS'
 if not any(isinstance(x,dict) and x.get('attempt_uid')==snapshot.get('attempt_uid') for x in history):
     history.append(snapshot)
@@ -159,7 +159,7 @@ state.pop('stage03_active_attempt',None)
 ps=state.setdefault('selected_execution_profile_state',{})
 ps.pop('active_attempt_state_key',None)
 
-work['current_status']='CLEAN_BASELINE_READY_FOR_FRESH_EXECUTION_R2'
+work['current_status']='CLEAN_BASELINE_READY_FOR_FRESH_EXECUTION_R3'
 work['attempt_uid']=NEXT_ATTEMPT
 work['run_uid']=NEXT_RUN
 work['canonical_owner']=PRODUCER
@@ -168,7 +168,7 @@ work['generated_output_root_present']=False
 work['fresh_execution_evidence_ref']=None
 work['product_blocker_credit']=0
 hb=work.setdefault('human_review_boundary',{})
-hb['visual_review']='NOT_REACHED_R2_NOT_EXECUTED'
+hb['visual_review']='NOT_REACHED_R3_NOT_EXECUTED'
 hb['visual_approval']=False
 hb['authority_update']=False
 hb['design_freeze']=False
@@ -176,7 +176,7 @@ state['active_work_unit']=work
 
 ex=state.setdefault('execution',{})
 ex['run_uid']=NEXT_RUN
-ex['current_stage']='STAGE-03-CLEAN-BASELINE-READY-R2'
+ex['current_stage']='STAGE-03-CLEAN-BASELINE-READY-R3'
 s3=ex.setdefault('stage3',{})
 s3['result']='NOT_EXECUTED'
 s3['execution_started']=False
@@ -203,15 +203,15 @@ trans.pop('current_product_attempt_workflow_run_id',None)
 trans.pop('current_product_attempt_artifact_id',None)
 trans.pop('current_product_attempt_artifact_sha256',None)
 
-state['status']='ACTIVE_CORE01_STAGE03_CLEAN_BASELINE_READY_R2'
-state['next_action']='RUN_FRESH_STAGE03_R2'
+state['status']='ACTIVE_CORE01_STAGE03_CLEAN_BASELINE_READY_R3'
+state['next_action']='PATCH_STAGE03_EXTERNAL_AUTHORITY_RESOLVER_AND_RUN_FRESH_STAGE03_R3'
 state['resume_control']={
-  'current_resume_point':'STAGE03_CORE01_CLEAN_BASELINE_READY_R2',
+  'current_resume_point':'STAGE03_CORE01_CLEAN_BASELINE_READY_R3',
   'current_work_unit_uid':WU,
   'current_owner':PRODUCER,
   'historical_stage2_results_are_current_state':False,
   'stage2_execution_requires_fresh_entry_resolution':False,
-  'exact_next_action':'RUN_FRESH_STAGE03_R2',
+  'exact_next_action':'PATCH_STAGE03_EXTERNAL_AUTHORITY_RESOLVER_AND_RUN_FRESH_STAGE03_R3',
   'governance_uid':GOV,
 }
 state['stage03_clean_baseline_receipt']={
@@ -219,14 +219,14 @@ state['stage03_clean_baseline_receipt']={
   'normative_authority':False,
   'governance_uid':GOV,
   'work_unit_uid':WU,
-  'cleanup_generation':'R2',
+  'cleanup_generation':'R3',
   'cleanup_source_head_sha':source_head,
   'cleanup_workflow_run_id':os.environ.get('GITHUB_RUN_ID','LOCAL'),
-  'predecessor_attempt_uid':'STAGE03-CORE01-V2215-20260920-001',
-  'predecessor_workflow_run_id':35484945017,
-  'predecessor_artifact_id':10597038682,
-  'predecessor_high_pressure_run_id':35485261155,
-  'predecessor_high_pressure_artifact_id':10596879379,
+  'predecessor_attempt_uid':'STAGE03-CORE01-V2215-20260920-002',
+  'predecessor_workflow_run_id':35485953228,
+  'predecessor_artifact_id':10597700289,
+  'predecessor_high_pressure_run_id':35486012621,
+  'predecessor_high_pressure_artifact_id':10597485673,
   'next_attempt_uid':NEXT_ATTEMPT,
   'next_run_uid':NEXT_RUN,
   'deleted_roots':[str(VISUAL_ROOT.relative_to(ROOT)),str(TEST_ROOT.relative_to(ROOT))],
@@ -241,8 +241,8 @@ state['stage03_clean_baseline_receipt']={
 dump(STATE,state)
 
 scope['remaining_units']=['CORE-01']
-scope['closure_status']='STAGE03_CLEAN_BASELINE_READY_R2'
-scope['next_action']='RUN_FRESH_STAGE03_R2'
+scope['closure_status']='STAGE03_CLEAN_BASELINE_READY_R3'
+scope['next_action']='PATCH_STAGE03_EXTERNAL_AUTHORITY_RESOLVER_AND_RUN_FRESH_STAGE03_R3'
 scope['fresh_revalidation_required']=False
 scope['stage_exit_credit_allowed']=False
 scope['content_hash']=hobj(scope)
@@ -250,9 +250,9 @@ dump(SCOPE,scope)
 
 protected_after={str(p.relative_to(ROOT)):digest_path(p) for p in PROTECTED}
 if protected_before!=protected_after:
-    raise SystemExit('BLOCK: Stage-01/02 protected input drift during R2 cleanup')
+    raise SystemExit('BLOCK: Stage-01/02 protected input drift during R3 cleanup')
 if VISUAL_ROOT.exists() or TEST_ROOT.exists():
-    raise SystemExit('BLOCK: Stage-03 generated roots still exist after R2 cleanup')
+    raise SystemExit('BLOCK: Stage-03 generated roots still exist after R3 cleanup')
 
 state=load(STATE)
 state['stage03_clean_baseline_receipt']['protected_subtree_sha256_after']=protected_after
@@ -260,12 +260,12 @@ state['stage03_clean_baseline_receipt']['result']='PASS_CLEAN_BASELINE_R2'
 dump(STATE,state)
 
 print(json.dumps({
-  'result':'PASS_CLEAN_BASELINE_R2',
+  'result':'PASS_CLEAN_BASELINE_R3',
   'deleted_file_count':len(visual)+len(tests),
   'deleted_visual_file_count':len(visual),
   'deleted_test_file_count':len(tests),
   'next_attempt_uid':NEXT_ATTEMPT,
   'next_run_uid':NEXT_RUN,
   'stage01_stage02_hashes_preserved':protected_before==protected_after,
-  'next_action':'RUN_FRESH_STAGE03_R2'
+  'next_action':'PATCH_STAGE03_EXTERNAL_AUTHORITY_RESOLVER_AND_RUN_FRESH_STAGE03_R3'
 },indent=2))
