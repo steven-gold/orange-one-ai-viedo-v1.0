@@ -48,4 +48,52 @@ r1_execution:
     manifest_current_page_count: 18
     stale_test_expected_page_count: 18
     core_runtime_specific_failure: false
-current_status: ACTIVE_DIAGNOSTIC_CONTINUATION_STAGE07_THROUGH_STAGE11_REQUIRED
+r2_execution:
+  workflow_run_id: 35509222282
+  result: BLOCKED_WITH_FULL_DIAGNOSTIC_CONTINUATION
+  lifecycle_blocked_at: STAGE-06
+  stage01_source_intake: PASS
+  stage02_page_functional_contract: PASS
+  stage03_visual_design: PASS
+  stage04_foundation_freeze: PASS
+  stage05_implementation: PASS
+  stage06_verification_qa: BLOCKED_GLOBAL_AUTHORITY_DENOMINATOR_DRIFT
+  stage07_build_release_candidate: PASS_DIAGNOSTIC_ONLY
+  stage08_staging: PASS_DIAGNOSTIC_ONLY
+  stage09_production_cutover_contract: PASS_DIAGNOSTIC_ONLY_FAIL_CLOSED
+  stage10_production_acceptance_contract: PASS_DIAGNOSTIC_ONLY_FAIL_CLOSED
+  stage11_closure_operations: PASS_DIAGNOSTIC_ONLY
+  browser_e2e:
+    result: PASS
+    cases: 72
+    interactive_controls: 461
+    governed_controls: 273
+  control_acceptance:
+    result: PASS
+    pages: 18
+    interactive: 370
+    enabled: 176
+    disabled: 194
+    governed: 370
+    core01_visible_controls: 30
+    core01_enabled: 1
+    core01_disabled: 29
+  production_build: PASS
+  standalone_docker_build: PASS
+  isolated_staging_http_e2e: PASS_READY_503_FAIL_CLOSED
+  controlled_production_mode_test: PASS_READY_503_CONTROLLED_BLOCK
+  formal_production_acceptance_without_credentials: BLOCKED_AS_REQUIRED
+  sandbox_cleanup:
+    result: PASS
+    files_removed: 17398
+    residual_path_exists: false
+  formal_production_deployment_performed: false
+  product_stage_credit: 0
+  finding_total: 1
+test_harness_finding:
+  uid: CORE01-FLOW-HARNESS-001
+  category: RECEIPT_CONSOLE_STATUS_MISREPORT
+  detail: Stage receipt stored BLOCKED/PASS_DIAGNOSTIC_ONLY correctly but console line printed PASS unconditionally.
+  remediation: PRINT_RECEIPT_ROW_STATUS
+  product_credit: 0
+current_status: ACTIVE_R3_STATUS_REPORTING_REVALIDATION_REQUIRED

@@ -161,7 +161,7 @@ def main():
         predecessor_hash = sha256(receipt)
         row["receipt_sha256"] = predecessor_hash
         write_json(report_path, report)
-        print("PASS", uid, name, "receipt_sha256=" + predecessor_hash, flush=True)
+        print(row["status"], uid, name, "receipt_sha256=" + predecessor_hash, flush=True)
 
     authority_file = product / "authority/pages/workspace/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml"
     visual_file = product / "authority/pages/workspace/CORE-01/CORE_CURRENT_CANONICAL_VISUAL_FINAL_LOCKED_V1.0.yaml"
