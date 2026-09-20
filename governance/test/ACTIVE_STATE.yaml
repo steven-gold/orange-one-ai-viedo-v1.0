@@ -111,8 +111,8 @@ specification_mutation_safety:
   ordinary_mid_stage_specification_mutation: BLOCK
   stage_end_consolidated_promotion_requires_new_explicit_directive: true
   execution_context_lock_required: true
-status: CORE01_ISOLATED_FULL_LIFECYCLE_AUDIT_CLOSED_BLOCKED_FINDING_PERSISTED_PRODUCT_RESUME_RESTORED
-next_action: WORK_UNIT_RESOLUTION_GATE_FOR_FRESH_STAGE01_SOURCE_INTAKE_REEXECUTION
+status: ACTIVE_CORE01_SOURCE_TEST_BUGFIX_AND_CONTENT_INTEGRITY_FULL_LIFECYCLE_R2
+next_action: FIX_SOURCE_PROVIDER_DENOMINATOR_PARSER_THEN_RERUN_STAGE01_THROUGH_STAGE11_WITH_CONTENT_INTEGRITY
 previous_closed_product_work_unit:
   work_unit_uid: WU-STAGE02-CORE01-STRUCTURAL-REMEDIATION-001
   canonical_name: CORE01_STRUCTURAL_CONTRACT_REMEDIATION
@@ -291,10 +291,11 @@ previous_closed_work_unit:
     source_runtime_residual_count: 0
     product_stage_credit: 0
 resume_control:
-  current_resume_point: CORE01_STAGE01_STAGE03_CLEAN_BASELINE_READY_FRESH_STAGE01_WUR_REQUIRED
-  current_work_unit_uid: null
-  current_owner: .github/governance-source/active/source/10_REGISTRY/GOVERNANCE_LIFECYCLE_STAGE_REGISTRY.yaml
-  exact_next_action: WORK_UNIT_RESOLUTION_GATE_FOR_FRESH_STAGE01_SOURCE_INTAKE_REEXECUTION
+  current_resume_point: CORE01_SOURCE_TEST_BUGFIX_AND_CONTENT_INTEGRITY_FULL_LIFECYCLE_R2_ACTIVE
+  current_work_unit_uid: WU-TEST-CORE01-CONTENT-INTEGRITY-FULL-LIFECYCLE-002
+  current_owner: governance/ci/run_core01_isolated_full_lifecycle_test.py
+  exact_next_action: FIX_SOURCE_PROVIDER_DENOMINATOR_PARSER_THEN_RERUN_STAGE01_THROUGH_STAGE11_WITH_CONTENT_INTEGRITY
+  product_resume_preserved: CORE01_STAGE01_STAGE03_CLEAN_BASELINE_READY_FRESH_STAGE01_WUR_REQUIRED
   reentry_owner_capability: SOURCE_INTAKE_BASE_BLUEPRINT
   reentry_stage_uid: STAGE-01
   reentry_reason: CLEAN_BASELINE_PERSISTED_AFTER_MULTIDIRECTIONAL_PROCESS_AUDIT_CLOSURE
@@ -390,8 +391,8 @@ pending_governance_review:
   - STAGE03
   - WEBSITE_CONSTRUCTION
   - DEPLOYMENT
-current_primary_task_layer: PRODUCT_STAGE_EXECUTION
-current_primary_task_authorization_uid: USR-DIRECTIVE-20260920-CLEAR-STAGE01-STAGE03-CORE01-R1
+current_primary_task_layer: TEST_OR_VALIDATION_MAINTENANCE
+current_primary_task_authorization_uid: USR-DIRECTIVE-20260921-CORE01-BUGFIX-CONTENT-INTEGRITY-R2
 current_primary_task_product_stage_credit: 0
 earlier_closed_product_work_unit:
   work_unit_uid: WU-STAGE02-CORE01-FRESH-TEST-001
@@ -2617,7 +2618,63 @@ closed_test_validation_maintenance_work_unit_multidirectional_audit:
     full_line_75_file_high_pressure_result: success
     verified_source_byte_clean_result: success
   legal_next_transition: RESTORE_CLEAN_PRODUCT_RESUME_AND_REQUIRE_FRESH_STAGE01_WORK_UNIT_RESOLUTION
-active_work_unit: null
+active_work_unit:
+  work_unit_uid: WU-TEST-CORE01-CONTENT-INTEGRITY-FULL-LIFECYCLE-002
+  canonical_name: CORE01_SOURCE_TEST_BUGFIX_AND_FULL_CONTENT_INTEGRITY_LIFECYCLE_REVALIDATION
+  primary_task_layer: TEST_OR_VALIDATION_MAINTENANCE
+  current_status: ACTIVE_PRE_SOURCE_PROVIDER_TEST_FIX
+  authorization_uid: USR-DIRECTIVE-20260921-CORE01-BUGFIX-CONTENT-INTEGRITY-R2
+  canonical_owner: governance/ci/run_core01_isolated_full_lifecycle_test.py
+  source_provider:
+    branch: new
+    pre_fix_head_sha: 165c6440cb53b1b45ec96905241fb4d56dc3b867
+    allowed_write_path: tests/release/authority.test.mjs
+    product_authority_mutation_allowed: false
+    product_implementation_mutation_allowed: false
+  scope:
+  - FIX_CURRENT_AUTHORITY_PAGE_DENOMINATOR_TEST_PARSER
+  - VERIFY_PAGES_AND_REGISTRIES_ARE_CLASSIFICATION_SCOPED
+  - RERUN_CORE01_STAGE01_THROUGH_STAGE11_IN_ISOLATED_SANDBOX
+  - VALIDATE_CONTENT_COMPLETENESS_NOT_JUST_EXECUTION_SUCCESS
+  - VALIDATE_AUTHORITY_TO_IMPLEMENTATION_AND_IMPLEMENTATION_TO_AUTHORITY_SET_SYMMETRY
+  - VALIDATE_CONTROL_ACTION_GATE_PERMISSION_ERROR_RUNTIME_PORT_REFERENTIAL_INTEGRITY
+  - VALIDATE_INTEGRATION_PORT_ROUTE_METHOD_OPERATION_RUNTIME_DB_AUDIT_CORRELATION_CHAIN
+  - VALIDATE_SUCCESS_FAILURE_STATE_AND_RECOVERY_CONTENT
+  - VALIDATE_CROSS_STAGE_RECEIPT_CONTENT_AND_HASH_CONTINUITY
+  - DELETE_COMPLETE_TEST_SANDBOX_AND_VERIFY_ZERO_RESIDUAL
+  out_of_scope:
+  - MOTHER_NORMATIVE_MUTATION
+  - CURRENT_SPECIFICATION_MUTATION
+  - PRODUCT_AUTHORITY_CONTENT_CHANGE
+  - PRODUCT_BEHAVIOR_INVENTION
+  - FORMAL_PRODUCTION_DEPLOYMENT
+  - FORMAL_PRODUCTION_DATABASE_MIGRATION
+  - FORMAL_PRODUCTION_ACCEPTANCE_CREDIT
+  product_stage_credit: 0
+  completion_rule: ZERO_UNRESOLVED_CONTENT_COMPLETENESS_BLOCKERS_REQUIRED_FOR_FULL_PASS
+last_work_unit_resolution_gate:
+  resolution_uid: WUR-TEST-CORE01-CONTENT-INTEGRITY-FULL-LIFECYCLE-20260921-002
+  normative_authority: false
+  result: PASS_SINGLE_LEGAL_SUCCESSOR
+  requested_primary_task_layer: TEST_OR_VALIDATION_MAINTENANCE
+  resolved_work_unit_uid: WU-TEST-CORE01-CONTENT-INTEGRITY-FULL-LIFECYCLE-002
+  authorization_uid: USR-DIRECTIVE-20260921-CORE01-BUGFIX-CONTENT-INTEGRITY-R2
+  canonical_owner: governance/ci/run_core01_isolated_full_lifecycle_test.py
+  basis:
+  - EXPLICIT_USER_DIRECTIVE_FIX_BUG_AND_RERUN_COMPLETE_FLOW
+  - EXPLICIT_USER_DIRECTIVE_REQUIRE_DATA_CONTENT_COMPLETENESS_NOT_EXECUTION_ONLY
+  - PRIOR_TEST_WU_CLOSED_AND_PRODUCT_RESUME_RESTORED
+  - EXACT_SOURCE_PROVIDER_BUG_ROOT_CAUSE_RESOLVED_TO_TEST_PARSER_SCOPE
+  product_stage_credit: 0
+previous_work_unit_resolution_gate_core01_isolated_r1:
+  resolution_uid: WUR-TEST-CORE01-ISOLATED-FULL-LIFECYCLE-20260920-001
+  normative_authority: false
+  result: PASS_SINGLE_LEGAL_SUCCESSOR
+  requested_primary_task_layer: TEST_OR_VALIDATION_MAINTENANCE
+  resolved_work_unit_uid: WU-TEST-CORE01-ISOLATED-FULL-LIFECYCLE-001
+  authorization_uid: USR-DIRECTIVE-20260920-CORE01-ISOLATED-FULL-LIFECYCLE-HIGH-PRESSURE-R1
+  canonical_owner: governance/ci/run_core01_isolated_full_lifecycle_test.py
+  product_stage_credit: 0
 closed_test_validation_maintenance_work_unit_core01_isolated_full_lifecycle:
   work_unit_uid: WU-TEST-CORE01-ISOLATED-FULL-LIFECYCLE-001
   canonical_name: CORE01_ISOLATED_FULL_LIFECYCLE_IMPLEMENTATION_AND_LOGIC_HIGH_PRESSURE
