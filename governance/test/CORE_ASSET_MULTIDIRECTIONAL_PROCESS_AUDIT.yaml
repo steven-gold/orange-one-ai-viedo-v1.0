@@ -25,5 +25,9 @@ findings:
 - {finding_uid: PROC-AUD-20260920-005, class: COMPLETED_ONE_SHOT_ACTIVE_WORKFLOW_RESIDUAL, evidence_ref: ACTIVE_WORKFLOW_GRAPH, disposition: REMEDIATED_BY_ACTIVE_TREE_RETIREMENT_PENDING_EXACT_HEAD_VALIDATION}
 - {finding_uid: PROC-AUD-20260920-006, class: STAGE02_COMMON_ENGINE_EVIDENCE_PATH_GAP, evidence_ref: .github/workflows/stage02-actual-test.yml, disposition: OPEN_PROCESS_REMEDIATION_REQUIRED_BEFORE_FUTURE_PRODUCT_REPLAY}
 - {finding_uid: PROC-AUD-20260920-007, class: STAGE01_SOURCE_DECLARED_LOCAL_DEPENDENCY_MATERIALIZATION_GAP, evidence_ref: .github/governance-maintenance/run_fresh_stage_replay.py, disposition: OPEN_SOURCE_PROVIDER_AND_STAGE01_REMEDIATION_REQUIRED}
+- finding_uid: PROC-AUD-20260920-008
+  class: STAGE02_ENTRY_RECEIPT_HISTORICAL_DENOMINATOR_COPY
+  evidence_ref: governance/ci/validate_stage02_entry_receipts.py
+  disposition: REMEDIATED_PENDING_EXACT_HEAD_VALIDATION
 product_stage_credit: 0
 current_status: REMEDIATION_AND_EXACT_HEAD_VALIDATION_REQUIRED

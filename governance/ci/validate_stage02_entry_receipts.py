@@ -16,13 +16,6 @@ REVIEW = ROOT / ".github/governance-source/active/source/10_REGISTRY/REVIEW_PROG
 ZERO = ROOT / "governance/ci/validate_stage02_zero_residual.py"
 SUCCESSOR = ROOT / "governance/ci/validate_stage02_successor_integrity.py"
 WORKFLOW = ROOT / ".github/workflows/stage02-actual-test.yml"
-EXPECTED_STAGE1_BLOBS = {
-    "00_SOURCE_INTAKE/fresh_run_003/ARTIFACT_PLAN.yaml": "c64ab04846b228c14978c07f88164a8d02a22f0d",
-    "00_SOURCE_INTAKE/fresh_run_003/EXECUTION_STATE.yaml": "4f2bf558f5807a03d081f848184334ba16901fb1",
-    "00_SOURCE_INTAKE/fresh_run_003/RUN_MANIFEST.yaml": "110e672114aa244279ad5af932c83d169fdebfe5",
-    "11_EVIDENCE/audit/GOVERNANCE_STAGE_LOCK.yaml": "96d9e64940f24154cf086fdd26ee0e6d4e0653ef",
-    "11_EVIDENCE/audit/SEALED_GOVERNANCE_TEST_BASELINE.yaml": "a75551629448349732c08e34d252fee8fb040e94",
-}
 
 
 def die(msg: str) -> None:
@@ -112,8 +105,8 @@ if not isinstance(attempt, str) or not re.fullmatch(r"STAGE02-FRESH-\d{8}-\d{3}"
 if baseline.get("attempt_uid") != attempt:
     die("ENTRY_RECEIPT_ATTEMPT_IDENTITY_MISMATCH")
 expected_scope = execution.get("target_pages") or []
-if expected_scope != ["CORE-01"]:
-    die(f"ACTIVE_STATE_CORE01_SCOPE_REQUIRED:{expected_scope!r}")
+if not isinstance(expected_scope, list) or not expected_scope or not all(isinstance(x, str) and x for x in expected_scope):
+    die(f"ACTIVE_STATE_STAGE02_SCOPE_INVALID:{expected_scope!r}")
 if freeze.get("target_pages") != expected_scope or baseline.get("target_pages") != expected_scope:
     die("ENTRY_RECEIPT_PAGE_SCOPE_DRIFT")
 
@@ -130,8 +123,17 @@ if baseline.get("stage_uid") != "STAGE-02": die("BASELINE_RECEIPT_IDENTITY")
 if baseline.get("baseline_parent_commit") != parent: die(f"BASELINE_PARENT_MISMATCH:expected={parent}:actual={baseline.get('baseline_parent_commit')}")
 if baseline.get("predecessor_state") != "STAGE1_VALIDATION_COMPLETED_CI_PASS": die("BASELINE_PREDECESSOR_STATE")
 if baseline.get("stage2_started_in_predecessor") is not False: die("BASELINE_STAGE2_ALREADY_STARTED")
-if baseline.get("expected_stage1_blobs") != EXPECTED_STAGE1_BLOBS: die("BASELINE_DECLARED_BLOBS_DRIFT")
-for path, expected in EXPECTED_STAGE1_BLOBS.items():
+expected_blobs = baseline.get("expected_stage1_blobs")
+if not isinstance(expected_blobs, dict) or not expected_blobs:
+    die("BASELINE_EXPECTED_STAGE1_BLOBS_MISSING")
+run_root = str(__import__("os").environ.get("ACPOS_RUN_ROOT") or "")
+if not run_root:
+    die("ACPOS_RUN_ROOT_MISSING")
+if not any(str(path).startswith(run_root + "/") for path in expected_blobs):
+    die("BASELINE_EXPECTED_BLOBS_DO_NOT_BIND_CURRENT_RUN_ROOT")
+for path, expected in expected_blobs.items():
+    if not isinstance(path, str) or not isinstance(expected, str) or not re.fullmatch(r"[0-9a-f]{40}", expected):
+        die(f"BASELINE_BLOB_RECORD_INVALID:{path}:{expected}")
     actual = git("rev-parse", f"HEAD:{path}")
     if actual != expected: die(f"BASELINE_BLOB_MISMATCH:{path}:expected={expected}:actual={actual}")
 
@@ -146,6 +148,6 @@ if cp.returncode != 0: die("ZERO_RESIDUAL_VALIDATION_FAILED")
 print(f"PASS: Stage-02 fresh entry receipts agree on attempt {attempt}")
 print(f"PASS: Stage-02 entry freeze receipt locks governance UID {uid}")
 print(f"PASS: Stage-02 clean predecessor receipt binds parent {parent}")
-print("PASS: five Stage-01 predecessor blobs are exact; no active attempt/evidence/findings are persisted before execution")
+print(f"PASS: Stage-01 predecessor blob denominator is receipt-owned and exact count={len(expected_blobs)}; no active attempt/evidence/findings are persisted before execution")
 print("PASS: REV-GOV-001 human/authorized preformal approval is persisted before Stage-02 entry")
 print("PASS: Stage-02 workflow ordering is entry review -> completion-path admission -> Full-Line -> actual execution")

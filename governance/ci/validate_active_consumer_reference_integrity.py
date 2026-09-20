@@ -31,7 +31,7 @@ DYNAMIC_REPLAY_EXECUTABLES = (
     ".github/governance-maintenance/finalize_fresh_stage_replay.py",
     "governance/ci/run_current_stage2_actual_test.py",
 )
-STALE_PRODUCT_RUN_ROOT_LITERAL = re.compile(r"00_SOURCE_INTAKE/(?:fresh_run_\d+|run_[A-Za-z0-9_-]+)")
+STALE_PRODUCT_RUN_ROOT_LITERAL = re.compile(r"00_SOURCE_INTAKE/(?:fresh_run_\d+|run_[A-Za-z0-9]+_[0-9a-f]{8,}(?:_[A-Za-z0-9-]+)?)")
 FIXED_REPLAY_IDENTITY_PATTERNS = {
     "RUN_ROOT": re.compile(r"\bfresh_run_\d+\b"),
     "RUN_UID": re.compile(r"\bFRESH-RUN-\d+\b"),
@@ -407,6 +407,11 @@ def main() -> int:
         if not script.is_file():
             continue
         text = script.read_text(encoding="utf-8")
+        try:
+            ast.parse(text)
+        except SyntaxError as exc:
+            errors.append(f"ACTIVE_CONSUMER_PYTHON_PARSE_ERROR:{script_rel}:{exc.lineno}:{exc.offset}")
+            continue
         if SEMVER_LOCATOR.search(text):
             errors.append(f"SEMVER_LOCATOR_IN_ACTIVE_CONSUMER:{script_rel}")
         for finding in fixed_dynamic_replay_identities(script_rel, text):
