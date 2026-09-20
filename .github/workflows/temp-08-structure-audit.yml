@@ -1,0 +1,45 @@
+name: Temp 08 Structure Audit
+
+on:
+  push:
+    branches: [0921acpos]
+
+permissions:
+  contents: read
+
+jobs:
+  inspect:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: python -m pip install --quiet python-docx
+      - run: python __temp/apply_nine_system_word_sync.py
+      - name: Inspect 08 XML structure
+        shell: bash
+        run: |
+          python - <<'PY'
+          from docx import Document
+          from docx.oxml.ns import qn
+          from lxml import etree
+          fn='08_ACPOS_Strategy_Intelligence_MultiAI_Decision_System_Mother_Basic_Logic_Design_Normative_Contract_v1.0.docx'
+          d=Document(fn)
+          print('SECTIONS',len(d.sections))
+          for i,s in enumerate(d.sections):
+              print('SECTION',i,'start_type',s.start_type,'top',s.top_margin,'bottom',s.bottom_margin)
+          body=d._element.body
+          for i,ch in enumerate(list(body)[:40]):
+              tag=ch.tag.split('}')[-1]
+              txt=''.join(t.text or '' for t in ch.iter() if t.tag==qn('w:t'))
+              br=[x.get(qn('w:type')) for x in ch.iter() if x.tag==qn('w:br')]
+              lastRendered=[True for x in ch.iter() if x.tag==qn('w:lastRenderedPageBreak')]
+              pbr=[]
+              for ppr in ch.iter():
+                  if ppr.tag==qn('w:pageBreakBefore'): pbr.append(True)
+              sect=[x for x in ch.iter() if x.tag==qn('w:sectPr')]
+              stypes=[]
+              for sp in sect:
+                  typ=sp.find(qn('w:type'))
+                  stypes.append(typ.get(qn('w:val')) if typ is not None else 'nextPage(default)')
+              print('BODY',i,tag,'TXT',repr(txt[:120]),'BR',br,'LAST',len(lastRendered),'PBB',len(pbr),'SECT',stypes)
+          PY
