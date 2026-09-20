@@ -1,0 +1,26 @@
+name: Temp Machine Authority Audit
+
+on:
+  push:
+    branches: [0921acpos]
+
+permissions:
+  contents: write
+
+jobs:
+  audit:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - run: git fetch origin 165c6440cb53b1b45ec96905241fb4d56dc3b867 --depth=1
+      - run: python -m pip install --quiet pyyaml
+      - run: python __temp_tools__/machine_authority_audit.py
+      - run: |
+          git config user.name "acpos-machine-authority-auditor"
+          git config user.email "actions@users.noreply.github.com"
+          git add __temp_reports__/machine_authority_audit.json
+          git commit -m "chore(temp): audit 18-page machine authority"
+          git push
