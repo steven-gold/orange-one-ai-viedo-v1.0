@@ -7,6 +7,7 @@ import re
 import sys
 from pathlib import Path
 import yaml
+from content_integrity_engine import ContentIntegrityEngine, nonempty, unique_rows, set_differences
 
 LOCAL_EFFECTS = {"UI_ONLY", "CONTEXT_STATE"}
 
@@ -15,19 +16,6 @@ def load_yaml(path: Path):
 
 def text(path: Path) -> str:
     return path.read_text(encoding="utf-8")
-
-def nonempty(value) -> bool:
-    if value is None:
-        return False
-    if isinstance(value, str):
-        return bool(value.strip())
-    if isinstance(value, (list, dict)):
-        return bool(value)
-    return True
-
-def unique_rows(rows, key):
-    vals = [str(row.get(key) or "") for row in rows if isinstance(row, dict)]
-    return len(vals) == len(rows) and len(vals) == len(set(vals)) and all(vals)
 
 def ts_string_array(source: str, name: str):
     match = re.search(rf"export\s+const\s+{re.escape(name)}\s*=\s*\[(.*?)\]\s*as\s+const", source, re.S)
@@ -76,24 +64,11 @@ def main():
 
     root = Path(args.product_root).resolve()
     report_path = Path(args.report).resolve()
-    findings = []
-    checks = []
+    common_engine = ContentIntegrityEngine("CORE-01")
+    findings = common_engine.findings
+    checks = common_engine.checks
     chain_rows = []
-
-    def record(uid, ok, category, detail, evidence=None, severity="BLOCKER"):
-        row = {
-            "check_uid": uid,
-            "category": category,
-            "result": "PASS" if ok else "FAIL",
-            "detail": detail,
-        }
-        if evidence is not None:
-            row["evidence"] = evidence
-        if not ok:
-            row["severity"] = severity
-            findings.append(row)
-        checks.append(row)
-        return ok
+    record = common_engine.record
 
     manifest_path = root / "authority/ACPOS_CURRENT_AUTHORITY_MANIFEST_FINAL_LOCKED.yaml"
     page_path = root / "authority/pages/workspace/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml"
@@ -507,13 +482,7 @@ def main():
             "functional_chains_complete": sum(1 for x in chain_rows if x["complete"]),
             "functional_chains_incomplete": len(incomplete_chains),
         },
-        "bidirectional_set_differences": {
-            kind: {
-                "missing_in_implementation": sorted(auth_sets[kind] - set(impl_sets.get(kind) or [])),
-                "extra_in_implementation": sorted(set(impl_sets.get(kind) or []) - auth_sets[kind]),
-            }
-            for kind in auth_sets
-        },
+        "bidirectional_set_differences": {kind: set_differences(auth_sets[kind], impl_sets.get(kind) or []) for kind in auth_sets},
         "functional_chains": chain_rows,
         "checks": checks,
         "findings": findings,
@@ -521,6 +490,7 @@ def main():
         "product_authority_mutated": False,
         "mother_mutated": False,
         "current_specification_mutated": False,
+        "common_content_integrity_engine": "governance/ci/content_integrity_engine.py",
     }
     report_path.parent.mkdir(parents=True, exist_ok=True)
     report_path.write_text(json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
