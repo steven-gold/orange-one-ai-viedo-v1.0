@@ -7,7 +7,7 @@ from docx.oxml import OxmlElement
 from docx.oxml.ns import qn
 
 ROOT=Path('.')
-MARK='ACPOS-20260921-UNIFIED-CONTROL-RUNTIME-MATRIX'
+MARK='ACPOS-20260921-UNIFIED-CONTROL-RUNTIME-MATRIX-V2'\nOLD_HEADING='Unified Page / Control / Action / API / DB / Runtime Construction Matrix'
 TARGETS={
 '01_ACPOS_Global_Intelligent_Brain_Information_Lifecycle_Mother_Basic_Logic_Design_Normative_Contract_v4.docx':[
  'ACPOS_WB-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx','ACPOS_INFO-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx','ACPOS_KB-01_知識庫_Mother_Basic_Design_OPTIMIZED.docx','ACPOS_DB-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx'],
@@ -106,14 +106,15 @@ def canonical_path(op, action_uid, effect=''):
         uniq=[]
         for v,src,ti in vals:
             if v not in [x[0] for x in uniq]: uniq.append((v,src,ti))
-        # deterministic: first exact source; duplicates typically same canonical route
         return uniq[0][0],f'SOURCE:{uniq[0][1]}#T{uniq[0][2]}'
     eff=(effect or '').upper()
-    if 'UI_ONLY' in eff or 'READ_ONLY' in eff or 'READONLY' in eff or 'CONTEXT_STATE' in eff or 'UI_NAVIGATION' in eff:
-        return 'N/A — UI/READ ONLY','NO_EFFECTFUL_API'
-    if UI_ONLY_HINT.search(op or ''):
-        return 'GET /v1/ui-projections/{pageUid}','CLOSURE_SHARED_PROJECTION'
-    return f'POST /v1/commands/{action_uid}', 'NEW_AUTHORITY_AFTER_GLOBAL_SOURCE_EXHAUSTION'
+    opv=(op or '')
+    if 'UI_ONLY' in eff or 'CONTEXT_STATE' in eff or 'UI_NAVIGATION' in eff:
+        return 'N/A — UI LOCAL ONLY','NO_EFFECTFUL_API'
+    readish=('READ' in eff or 'READONLY' in eff or bool(re.match(r'^(get|list|search|compare|preview|fetch|trace|inspect|view)',opv,re.I)))
+    if readish:
+        return f'GET /v1/queries/{action_uid}', 'NEW_QUERY_AUTHORITY_AFTER_GLOBAL_SOURCE_EXHAUSTION'
+    return f'POST /v1/commands/{action_uid}', 'NEW_COMMAND_AUTHORITY_AFTER_GLOBAL_SOURCE_EXHAUSTION'
 
 def db_owner(pu,op,effect=''):
     s=(op+' '+effect).lower()
@@ -260,7 +261,14 @@ def control_records(sp):
                 au=f'{pref}-ACT-{slug(rec["operation"])}'
             rec['action_uid']=au
             action_status='NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION'
-        else: action_status='EXISTING_ACTION_UID'
+        else:
+            action_status='EXISTING_ACTION_UID'
+        effu=(rec['effect'] or '').upper()
+        if rec['operation']=='UI_LOCAL_STATE':
+            if 'READ' in effu or 'READONLY' in effu:
+                rec['operation']='getUiProjection'
+            elif not any(x in effu for x in ['UI_ONLY','CONTEXT_STATE','UI_NAVIGATION']):
+                rec['operation']=au
         if exact_path:
             path=exact_path
         else:
@@ -297,14 +305,26 @@ def control_records(sp):
     return pu,out
 
 report={'marker':MARK,'pages':{},'targets':{}}
+def strip_old_matrix(doc):
+    body=doc._element.body
+    start=False
+    for child in list(body):
+        if child.tag==qn('w:p'):
+            txt=''.join(t.text or '' for t in child.iter() if t.tag==qn('w:t'))
+            if OLD_HEADING in txt:
+                start=True
+        if start and child.tag != qn('w:sectPr'):
+            body.remove(child)
+
 for target,sources in TARGETS.items():
     tp=ROOT/target; doc=Document(tp)
     alltxt='\n'.join(p.text for p in doc.paragraphs)
     if MARK in alltxt:
         report['targets'][target]={'status':'ALREADY_PRESENT'}
         continue
+    strip_old_matrix(doc)
     doc.add_page_break()
-    heading(doc,'Unified Page / Control / Action / API / DB / Runtime Construction Matrix',1)
+    heading(doc,OLD_HEADING,1)
     doc.add_paragraph(f'[{MARK}] This matrix is the direct construction lookup. Existing source identifiers are preserved. New Action/Gate/Control identities are created only when exhaustive uploaded-source scan found the semantic control/operation but no exact UID/path. Existing exact Method/Path always wins; otherwise effectful operations use POST /v1/commands/{{actionUid}} through the Shared Typed Command Runtime. UI/read-only controls explicitly bind to N/A or projection runtime and MUST NOT create writes.')
     target_rows=0
     for s in sources:
@@ -345,7 +365,7 @@ for target,sources in TARGETS.items():
         add_table(doc,['Page UID','Region','Control UID','Control Type','Visible When','Enabled/Gate','Trigger','Operation','Action UID','Action UID Status','Permission','Required Payload','API Method/Path','API Basis','Runtime','DB/Provider Owner','Success State','Failure State','UI Feedback/Recovery','Next Page/Handoff','Evidence'],data,5.1)
         target_rows+=len(data)
     heading(doc,'Construction Lookup Invariant',2)
-    doc.add_paragraph('施工 AI MUST resolve a UI action from exactly one row of this matrix. If a source control is UI_ONLY/READ_ONLY, API/DB write is explicitly N/A and creating a write endpoint is forbidden. If API Basis is NEW_AUTHORITY_AFTER_GLOBAL_SOURCE_EXHAUSTION, the only permitted implementation path is the Shared Typed Command Runtime endpoint shown in the row; page-local alternative endpoints are forbidden.')
+    doc.add_paragraph('施工 AI MUST resolve a UI action from exactly one row of this matrix. If a source control is UI_ONLY/READ_ONLY, API/DB write is explicitly N/A and creating a write endpoint is forbidden. If API Basis is NEW_QUERY_AUTHORITY_AFTER_GLOBAL_SOURCE_EXHAUSTION, use only the Shared Typed Query Runtime GET endpoint shown. If API Basis is NEW_COMMAND_AUTHORITY_AFTER_GLOBAL_SOURCE_EXHAUSTION, use only the Shared Typed Command Runtime POST endpoint shown. Page-local alternative endpoints are forbidden.')
     doc.save(tp)
     Document(tp)
     report['targets'][target]={'status':'UPDATED','sha256':sha(tp),'rows':target_rows}
