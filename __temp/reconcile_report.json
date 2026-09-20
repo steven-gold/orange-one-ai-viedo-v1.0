@@ -1,0 +1,24 @@
+{
+  "touched": [
+    "05_ACPOS_Creative_Production_AI_ASSET_VIDEO_EDIT_VOICE_QA_Mother_Basic_Logic_Design_Normative_Contract_v1.0.docx",
+    "09_ACPOS_AI_System_Engineer_Self_Inspection_Evolution_System_Mother_Basic_Logic_Design_Normative_Contract_v1.0.docx",
+    "ACPOS_SG-02_QA審查項目名單_Mother_Basic_Design_OPTIMIZED.docx",
+    "00_INDEX_ACPOS_Mother_Compliant_Basic_Design_Master.docx"
+  ],
+  "new_control": {
+    "Control UID": "CTRL-ADMIN-SG-02-ACT-04-ACT-SUBMIT-REVIEW",
+    "UID Status": "NEW_AUTHORITY_AFTER_COMPLETE_SOURCE_SCAN",
+    "Label": "送出審查 / Submit Review",
+    "Type": "SECONDARY_BUTTON",
+    "Action UID": "SG-02-ACT-SUBMIT-REVIEW",
+    "Gate": "SG-02-GATE-SUBMIT-REVIEW",
+    "Permission / Auth Resource": "quality.criteria.configure",
+    "Payload / Schema": "SubmitGovernedResourceReviewRequest",
+    "Operation": "submitGovernedResourceReview",
+    "Method / Path": "POST /v1/governance/resources/{id}/submit-review",
+    "Runtime Owner": "Quality Governance Runtime",
+    "Persistence Owner": "governed Criteria Draft / Review lifecycle",
+    "Runtime Status": "NEW_AUTHORITY_RUNTIME_IMPLEMENTATION_REQUIRED"
+  },
+  "runtime_status": "SOURCE_TESTS_6/6_PASS; PRODUCTION_READONLY_9/9_PASS; EFFECTFUL_PENDING_FORMAL_CRITERIA_MATERIALIZATION_AND_SUBMIT_REVIEW_RUNTIME"
+}
