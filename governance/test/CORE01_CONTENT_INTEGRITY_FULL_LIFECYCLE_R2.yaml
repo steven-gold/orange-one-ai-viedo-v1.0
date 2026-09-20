@@ -1,0 +1,51 @@
+schema_version: 1
+artifact_type: NON_NORMATIVE_CORE01_CONTENT_INTEGRITY_FULL_LIFECYCLE_AUDIT
+normative_authority: false
+governance_uid: GOV-REV-20260920-CROSS-STAGE-MATERIALIZATION-CONSUMER-READINESS-HARDENING
+authorization_uid: USR-DIRECTIVE-20260921-CORE01-BUGFIX-CONTENT-INTEGRITY-R2
+work_unit_uid: WU-TEST-CORE01-CONTENT-INTEGRITY-FULL-LIFECYCLE-002
+target_page_uid: CORE-01
+source_provider:
+  branch: new
+  pre_fix_head_sha: 165c6440cb53b1b45ec96905241fb4d56dc3b867
+  fixed_head_sha: f25a79111bbf1da47fe55f4fc8967b2148558317
+  bugfix:
+    path: tests/release/authority.test.mjs
+    root_cause: GLOBAL_REGEX_COUNTED_REGISTRIES_VISUAL_PATH_AS_PAGE_AUTHORITY
+    product_authority_files_changed: 0
+    product_implementation_files_changed: 0
+    release_gate_run_id: 35528804977
+    release_gate_result: success
+stage_denominator: 11
+completion_contract:
+  execution_success_alone_is_completion: false
+  content_complete_required: true
+  unresolved_content_blocker_required_for_pass: 0
+  authority_to_implementation_symmetry_required: true
+  implementation_to_authority_symmetry_required: true
+  physical_route_materialization_required: true
+  semantic_functional_chain_required: true
+  sandbox_cleanup_required: true
+content_integrity_denominators:
+  manifest_classification: REQUIRED
+  authority_required_fields: REQUIRED
+  authority_reference_resolution: REQUIRED
+  derived_denominator_recomputation: REQUIRED
+  canonical_visual_binding: REQUIRED
+  control_physical_materialization: REQUIRED
+  authority_to_implementation_sets: REQUIRED
+  implementation_to_authority_sets: REQUIRED
+  action_to_port_method_path_symmetry: REQUIRED
+  api_route_materialization: REQUIRED
+  permission_fail_closed: REQUIRED
+  rls_data_owner: REQUIRED
+  audit_correlation: REQUIRED
+  success_failure_recovery: REQUIRED
+  functional_chain_all_actions: REQUIRED
+  hardcoded_consumer_denominator_drift: FORBIDDEN
+stage_results: PENDING
+content_integrity_result: PENDING
+sandbox_cleanup_result: PENDING
+formal_production_deployment_performed: false
+product_stage_credit: 0
+current_status: ACTIVE_EXECUTION

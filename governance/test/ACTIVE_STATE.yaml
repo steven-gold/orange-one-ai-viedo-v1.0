@@ -2622,12 +2622,15 @@ active_work_unit:
   work_unit_uid: WU-TEST-CORE01-CONTENT-INTEGRITY-FULL-LIFECYCLE-002
   canonical_name: CORE01_SOURCE_TEST_BUGFIX_AND_FULL_CONTENT_INTEGRITY_LIFECYCLE_REVALIDATION
   primary_task_layer: TEST_OR_VALIDATION_MAINTENANCE
-  current_status: ACTIVE_PRE_SOURCE_PROVIDER_TEST_FIX
+  current_status: ACTIVE_FULL_LIFECYCLE_CONTENT_INTEGRITY_EXECUTION
   authorization_uid: USR-DIRECTIVE-20260921-CORE01-BUGFIX-CONTENT-INTEGRITY-R2
   canonical_owner: governance/ci/run_core01_isolated_full_lifecycle_test.py
   source_provider:
     branch: new
     pre_fix_head_sha: 165c6440cb53b1b45ec96905241fb4d56dc3b867
+    fixed_head_sha: f25a79111bbf1da47fe55f4fc8967b2148558317
+    bugfix_release_gate_run_id: 35528804977
+    bugfix_release_gate_result: success
     allowed_write_path: tests/release/authority.test.mjs
     product_authority_mutation_allowed: false
     product_implementation_mutation_allowed: false

@@ -88,11 +88,13 @@ def main():
     ap.add_argument("--product-root", required=True)
     ap.add_argument("--source-head", required=True)
     ap.add_argument("--report", required=True)
+    ap.add_argument("--content-report", required=True)
     args = ap.parse_args()
 
     sandbox = Path(args.sandbox_root).resolve()
     product = Path(args.product_root).resolve()
     report_path = Path(args.report).resolve()
+    content_report_path = Path(args.content_report).resolve()
     receipts = sandbox / "stage-receipts"
     receipts.mkdir(parents=True, exist_ok=True)
 
@@ -220,7 +222,15 @@ def main():
         text = authority_file.read_text(encoding="utf-8")
         for token in ("CORE_PROJECT_WRITE", "CORE_CONVERSATION", "CORE_LOCK_REQUEST", "CORE-01-GATE-MESSAGE", "CORE-01-ERR-PERM-001"):
             require(token in text, "FUNCTIONAL_AUTHORITY_TOKEN_MISSING:" + token)
-        return {
+        validator = Path(__file__).with_name("validate_core01_source_content_integrity.py")
+        content_rc, _ = run_capture(
+            [sys.executable, str(validator), "--product-root", str(product), "--report", str(content_report_path)],
+            product,
+            timeout=300,
+        )
+        require(content_report_path.is_file(), "CONTENT_INTEGRITY_REPORT_NOT_MATERIALIZED")
+        content_result = json.loads(content_report_path.read_text(encoding="utf-8"))
+        detail = {
             "sections": len(sections),
             "visuals": len(visuals),
             "components": len(components),
@@ -228,7 +238,20 @@ def main():
             "gates": len(gates),
             "errors": len(errors),
             "referential_integrity": "PASS",
+            "content_integrity": {
+                "result": content_result.get("result"),
+                "content_complete": content_result.get("content_complete"),
+                "check_total": content_result.get("check_total"),
+                "pass_total": content_result.get("pass_total"),
+                "blocker_total": content_result.get("blocker_total"),
+                "content_denominators": content_result.get("content_denominators"),
+                "bidirectional_set_differences": content_result.get("bidirectional_set_differences"),
+            },
+            "findings": content_result.get("findings") or [],
         }
+        if content_rc != 0 or content_result.get("content_complete") is not True:
+            detail["_stage_status"] = "BLOCKED"
+        return detail
 
     def s3():
         authority = yaml.safe_load(authority_file.read_text(encoding="utf-8")) or {}
@@ -254,12 +277,28 @@ def main():
     def s4():
         nonlocal freeze
         frozen_paths = [
-            authority_file, visual_file, core_visual, core_css, production_runtime, test_runtime, runtime_contract,
+            product / "authority/ACPOS_CURRENT_AUTHORITY_MANIFEST_FINAL_LOCKED.yaml",
+            authority_file, visual_file, core_visual, core_css,
+            product / "src/app/core/page.tsx",
+            product / "src/server/core/coreRouteFactory.ts",
+            product / "src/server/core/coreRuntime.ts",
+            production_runtime, test_runtime, runtime_contract,
+            product / "src/server/shared/identityPageCommandRuntime.ts",
+            product / "03_api/operation_registry.yaml",
+            product / "06_permission/account_permission_catalog.yaml",
             product / "database/migrations/0037_core_governed_runtime_permission_rls_closure.sql",
             product / "database/migrations/0038_core_conversation_thread_work_item_lineage.sql",
+            product / "database/migrations/0047_canonical_script_version_runtime.sql",
+            product / "tests/release/authority.test.mjs",
             product / "tests/release/core-governed-runtime-closure.test.mjs",
             product / "tests/release/core-lock-request-ui-runtime.test.mjs",
+            product / "tests/release/canonical-script-version-runtime.test.mjs",
+            product / "tests/release/lock-request-canonical-runtime.test.mjs",
         ]
+        for route in sorted((product / "src/app/v1").rglob("route.ts")):
+            source = route.read_text(encoding="utf-8")
+            if "CORE-01-PORT-" in source or "getUiProjection" in source:
+                frozen_paths.append(route)
         for p in frozen_paths:
             require(p.is_file(), "FOUNDATION_FREEZE_FILE_MISSING:" + str(p.relative_to(product)))
         freeze = {str(p.relative_to(product)): sha256(p) for p in frozen_paths}
@@ -278,52 +317,29 @@ def main():
     def s6():
         full_rc, full_out = run_capture(["npm", "test"], product, timeout=900)
         findings = []
-        manifest_path = product / "authority/ACPOS_CURRENT_AUTHORITY_MANIFEST_FINAL_LOCKED.yaml"
-        manifest_text = manifest_path.read_text(encoding="utf-8")
-        page_lines = [x for x in manifest_text.splitlines() if x.startswith("  - authority/pages/")]
-        declared_count = None
-        for line in manifest_text.splitlines():
-            if line.strip().startswith("current_page_count:"):
-                try:
-                    declared_count = int(line.split(":", 1)[1].strip())
-                except ValueError:
-                    declared_count = None
-                break
-        stale_test = (product / "tests/release/authority.test.mjs").read_text(encoding="utf-8")
-        known_denominator_drift = (
-            full_rc != 0
-            and len(page_lines) == 19
-            and declared_count == 18
-            and "exactly 18 unique page authorities" in stale_test
-            and "19 !== 18" in full_out
-        )
-        if full_rc != 0 and not known_denominator_drift:
-            raise RuntimeError("stage06_release_test_suite_UNEXPECTED_FAILURE")
-        if known_denominator_drift:
+        if full_rc != 0:
             findings.append({
-                "finding_uid": "CORE01-FLOW-001",
-                "category": "GLOBAL_AUTHORITY_DENOMINATOR_AND_CLASSIFICATION_DRIFT",
-                "owner_branch": "new",
-                "manifest": "authority/ACPOS_CURRENT_AUTHORITY_MANIFEST_FINAL_LOCKED.yaml",
-                "test": "tests/release/authority.test.mjs",
-                "actual_authority_page_path_lines": len(page_lines),
-                "declared_current_page_count": declared_count,
-                "detail": "CORE canonical visual authority is listed in the page-authority path denominator while manifest/test still declare exactly 18 pages.",
-                "core_runtime_specific_failure": False,
+                "finding_uid": "CORE01-R2-STAGE06-RELEASE-SUITE",
+                "category": "RELEASE_TEST_SUITE_FAILURE",
+                "detail": "npm test returned non-zero after the denominator parser fix; Stage-06 remains blocked.",
+                "return_code": full_rc,
+                "tail": full_out[-4000:],
             })
         run(["npm", "audit", "--audit-level=high"], product, label="stage06_npm_audit")
         env = {"NEXT_PUBLIC_ACPOS_RUNTIME_MODE": "CONTROLLED_TEST"}
         run(["npm", "run", "build"], product, env=env, label="stage06_controlled_build")
         run(["npm", "install", "--no-save", "--package-lock=false", "playwright@1.62.1"], product, label="stage06_playwright_package")
         run(["npx", "playwright", "install", "--with-deps", "chromium"], product, label="stage06_playwright_chromium")
-        run(["npm", "run", "test:browser"], product, env=env, label="stage06_browser_e2e")
-        run(["npm", "run", "test:controls"], product, env=env, label="stage06_control_acceptance")
+        browser_out = run(["npm", "run", "test:browser"], product, env=env, label="stage06_browser_e2e")
+        controls_out = run(["npm", "run", "test:controls"], product, env=env, label="stage06_control_acceptance")
         tracked_clean(product)
         detail = {
-            "release_tests": "PASS" if full_rc == 0 else "BLOCKED_GLOBAL_DENOMINATOR_DRIFT",
+            "release_tests": "PASS" if full_rc == 0 else "BLOCKED",
             "security_audit": "PASS",
             "browser_e2e": "PASS",
             "control_acceptance": "PASS",
+            "browser_summary": next((line for line in browser_out.splitlines() if "RELEASE_BROWSER_E2E_PASS" in line), None),
+            "control_summary": next((line for line in controls_out.splitlines() if "CONTROL_ACCEPTANCE_PASS" in line), None),
             "full_release_test_return_code": full_rc,
             "findings": findings,
         }
@@ -395,10 +411,16 @@ def main():
             require(sha256(p) == expected, "FROZEN_SOURCE_HASH_DRIFT:" + rel)
         tracked_clean(product)
         require((sandbox / "stage-receipts/STAGE-10.json").is_file(), "STAGE10_RECEIPT_MISSING")
+        require(content_report_path.is_file(), "CONTENT_INTEGRITY_REPORT_MISSING_AT_CLOSURE")
+        content_result = json.loads(content_report_path.read_text(encoding="utf-8"))
         return {
             "pre_cleanup_stage_receipts_present": 10,
             "frozen_source_hashes_unchanged": len(freeze),
             "tracked_source_clean": True,
+            "content_integrity_result": content_result.get("result"),
+            "content_complete": content_result.get("content_complete"),
+            "content_blocker_total": content_result.get("blocker_total"),
+            "content_denominators": content_result.get("content_denominators"),
             "cleanup_required_after_report": True,
             "formal_production_deployment_performed": False,
             "product_stage_credit": 0,
