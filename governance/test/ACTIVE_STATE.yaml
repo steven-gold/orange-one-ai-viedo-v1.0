@@ -320,7 +320,7 @@ governance_revision_transition:
   predecessor_attempt_preserved_as_historical_evidence: true
   predecessor_attempt_history_ref: governance/test/history/stage02/design-remediation-routing-20260918/STAGE02_CORE01_DESIGN_REMEDIATION_TEST_EVIDENCE.json
   predecessor_attempt_may_close_under_current_governance: false
-  fresh_revalidation_required: true
+  fresh_revalidation_required: false
   mother_machine_revalidation_complete: true
   mother_machine_revalidation_run_id: 35483671654
   mother_machine_revalidation_head: f7dad5ac112337251f35678a95e9d8f3d99d9d4d
@@ -352,7 +352,7 @@ governance_revision_transition:
   current_governance_product_credit: 0
   current_product_attempt_uid: null
   current_product_attempt_run_uid: null
-  fresh_revalidation_scope: TYPOGRAPHY_COMPUTED_METRICS_POLICY_CONSUMERS_AND_INTERRUPTED_CORE01_CONTENT_INTEGRITY_TEST
+  fresh_revalidation_scope: GOVERNANCE_POLICY_CONSUMERS_ONLY_NO_PRODUCT_STAGE_REVALIDATION_CREDIT
   invalid_predecessor_promotion_commit: bf2c4de90fbc80003bfdcebc30732bcf25abd20d
   invalid_predecessor_promotion_workflow_run_id: 35483077720
   invalid_predecessor_promotion_guard_result: FAIL
@@ -2662,6 +2662,12 @@ active_work_unit:
   primary_task_layer: GOVERNANCE_MAINTENANCE
   current_status: PROMOTION_MATERIALIZED_EXACT_HEAD_REVALIDATION_REQUIRED
   authorization_uid: USR-DIRECTIVE-20260921-CONTENT-INTEGRITY-TYPOGRAPHY-CONSUMER-HARDENING-R1
+  product_stage_revalidation_required: false
+  governance_policy_consumer_revalidation_required: true
+  projection_correction_finding_uid: FIND-20260921-004
+  promotion_run_id: 35545355567
+  predecessor_exact_head_selected_profile_failure_run_id: 35545515817
+  predecessor_exact_head_failure: NOT_EXECUTED_STAGE_WRONGLY_REQUIRES_REVALIDATION
   canonical_owner: governance/specifications/current/SPECIFICATION_MUTATION_CONTROL.yaml
   resolved_implementation_findings:
   - FIND-20260921-001

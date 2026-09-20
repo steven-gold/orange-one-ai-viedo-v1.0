@@ -897,6 +897,22 @@ findings:
   - CURRENT_VISUAL_INVARIANT_COMPONENT
   new_explicit_authorization_required_before_normative_promotion: true
   successor_governance_uid: GOV-REV-20260921-TYPOGRAPHY-COMPUTED-METRICS-HARDENING
+- finding_uid: FIND-20260921-004
+  class: CURRENT_STATE_PROJECTOR_SCOPE_CREDIT_BUG
+  title: Governance successor revalidation was incorrectly projected as fresh revalidation of a NOT_EXECUTED product stage
+  evidence: Exact-head Selected Profile run 35545515817 blocked with NOT_EXECUTED_STAGE_WRONGLY_REQUIRES_REVALIDATION while execution.stage3.result is NOT_EXECUTED and revalidation_required_under_current_governance is false.
+  defect_owner: GOVERNANCE_RUN_STATE_PROJECTOR
+  generalizability_scope: GOVERNANCE_SUCCESSOR_TRANSITIONS_WHEN_SELECTED_PRODUCT_STAGE_IS_NOT_EXECUTED
+  disposition: IMPLEMENTATION_STATE_REMEDIATED_EXACT_HEAD_REVALIDATION_REQUIRED
+  specification_change_required: false
+  mother_change_required: false
+  formal_specification_mutated_for_fix: false
+  remediation:
+    governance_revision_transition_fresh_revalidation_required: false
+    governance_policy_consumer_revalidation_required: true
+    product_stage_revalidation_required: false
+    product_stage_revalidation_credit: 0
+  product_stage_credit: 0
 historical_stage2_execution_findings:
   prior_CORE-01_STAGE02_BLOCKED: 7
   prior_ASSET-01_STAGE02_BLOCKED: 6
