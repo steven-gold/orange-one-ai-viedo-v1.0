@@ -15089,12 +15089,12 @@
           "permission": "ERP-01-PERM-READ",
           "effect": "READ_ONLY projection",
           "port_uid": "",
-          "operation": "",
-          "method_path": "",
-          "runtime_owner": "",
+          "operation": "getUiProjection",
+          "method_path": "GET /v1/ui-projections/{pageUid}",
+          "runtime_owner": "ERP_READ_PROJECTION",
           "persistence_owner": "",
           "runtime_binding": "",
-          "classification": "UI_LOCAL_OR_READ_SOURCE",
+          "classification": "READ_EXACT",
           "source_path": "registries/controls/40"
         },
         {
@@ -15374,12 +15374,12 @@
           "permission": "ERP-01-PERM-READ",
           "effect": "READ_ONLY projection",
           "port_uid": "",
-          "operation": "",
-          "method_path": "",
-          "runtime_owner": "",
+          "operation": "getUiProjection",
+          "method_path": "GET /v1/ui-projections/{pageUid}",
+          "runtime_owner": "ERP_READ_PROJECTION",
           "persistence_owner": "",
           "runtime_binding": "",
-          "classification": "UI_LOCAL_OR_READ_SOURCE",
+          "classification": "READ_EXACT",
           "source_path": "registries/controls/2"
         },
         {
@@ -15393,12 +15393,12 @@
           "permission": "ERP-01-PERM-READ",
           "effect": "READ_ONLY projection",
           "port_uid": "",
-          "operation": "",
-          "method_path": "",
-          "runtime_owner": "",
+          "operation": "getUiProjection",
+          "method_path": "GET /v1/ui-projections/{pageUid}",
+          "runtime_owner": "ERP_READ_PROJECTION",
           "persistence_owner": "",
           "runtime_binding": "",
-          "classification": "UNRESOLVED_EFFECTFUL",
+          "classification": "READ_EXACT",
           "source_path": "registries/controls/39"
         },
         {
@@ -15412,12 +15412,12 @@
           "permission": "ERP-01-PERM-READ",
           "effect": "READ_ONLY projection",
           "port_uid": "",
-          "operation": "",
-          "method_path": "",
-          "runtime_owner": "",
+          "operation": "getUiProjection",
+          "method_path": "GET /v1/ui-projections/{pageUid}",
+          "runtime_owner": "ERP_READ_PROJECTION",
           "persistence_owner": "",
           "runtime_binding": "",
-          "classification": "UI_LOCAL_OR_READ_SOURCE",
+          "classification": "READ_EXACT",
           "source_path": "registries/controls/0"
         },
         {
@@ -15431,12 +15431,12 @@
           "permission": "ERP-01-PERM-READ",
           "effect": "READ_ONLY projection",
           "port_uid": "",
-          "operation": "",
-          "method_path": "",
-          "runtime_owner": "",
+          "operation": "getUiProjection",
+          "method_path": "GET /v1/ui-projections/{pageUid}",
+          "runtime_owner": "ERP_READ_PROJECTION",
           "persistence_owner": "",
           "runtime_binding": "",
-          "classification": "UI_LOCAL_OR_READ_SOURCE",
+          "classification": "READ_EXACT",
           "source_path": "registries/controls/1"
         },
         {
@@ -15554,13 +15554,7 @@
           "source_path": "registries/controls/28"
         }
       ],
-      "blockers": [
-        {
-          "type": "CONTROL_RUNTIME_UNRESOLVED",
-          "control_uid": "ERP-01-FLD-READINESS",
-          "action_uid": "ERP-01-ACT-READ"
-        }
-      ]
+      "blockers": []
     },
     "AIAPI-01": {
       "authority_path": "authority/pages/admin/AIAPI-01/ACPOS_AIAPI-01_FINAL_LOCKED_ENCODING.yaml",
@@ -17121,12 +17115,6 @@
       "type": "STALE_DERIVED_VALIDATION_COUNT",
       "stale": "15 ports / 13 operations",
       "current": "22 ports / machine final_gap_closure 160/160 controls,124/124 actions"
-    },
-    {
-      "page": "ERP-01",
-      "type": "CONTROL_RUNTIME_UNRESOLVED",
-      "control_uid": "ERP-01-FLD-READINESS",
-      "action_uid": "ERP-01-ACT-READ"
     },
     {
       "page": "SG-02",
