@@ -90,6 +90,15 @@ def collect_standard(data):
         if d.get("port_uid"): merge(ports.setdefault(str(d["port_uid"]),{}),q)
         if d.get("operation_id"):
             merge(local_ops.setdefault(str(d["operation_id"]),{}),q)
+    # Reverse-bind EDIT action UIDs from integration-port exposure text without inventing routes.
+    for port_uid,pr in ports.items():
+        exposure=str(pr.get("edit01_binding_exposure") or "")
+        if not exposure: continue
+        for action_uid in actions:
+            if action_uid in exposure:
+                actions[action_uid].setdefault("__exposed_ports",[])
+                if port_uid not in actions[action_uid]["__exposed_ports"]:
+                    actions[action_uid]["__exposed_ports"].append(port_uid)
     return controls,actions,ports,local_ops
 
 def source_control_row(uid,c,actions,ports,local_ops,data,page):
@@ -109,13 +118,39 @@ def source_control_row(uid,c,actions,ports,local_ops,data,page):
     perm=str(first(c,"permission_uid","permission") or first(a,"permission_uid","permission") or "")
     effect=str(first(a,"effect_type","effect","effect_class") or first(c,"effect_type","effect","effect_class") or "")
     port=str(first(a,"port_uid","port","integration_port_uid") or first(c,"port_uid","port","integration_port_uid") or "")
+    exposed_ports=list(a.get("__exposed_ports",[])) if isinstance(a.get("__exposed_ports"),list) else []
+    if port and port not in exposed_ports: exposed_ports.insert(0,port)
     operation=str(first(a,"registered_operation","operation","operation_id") or first(c,"registered_operation","operation","operation_id") or "")
     rt=runtime_text(first(c,"runtime_binding")) or runtime_text(first(a,"runtime_binding"))
     method=""
     owner=str(first(a,"owner","runtime_owner") or "")
     persistence=str(first(a,"persistence_owner") or "")
     payload_schema=str(first(c,"form_schema","payload_schema","request_schema","schema") or first(a,"form_schema","payload_schema","request_schema","schema") or "")
-    if port and port in ports:
+    if exposed_ports:
+        exact_ports=[ports[x] for x in exposed_ports if x in ports]
+        ops=[];methods=[];perms=[];owners=[];pers=[];schemas=[]
+        for pr in exact_ports:
+            opv=str(first(pr,"registered_operation","operation","operation_id") or "")
+            mv=exact_method(pr)
+            pv=str(first(pr,"registered_permission","permission_uid","permission") or "")
+            ov=str(first(pr,"runtime_owner","owner") or "")
+            pev=runtime_text(first(pr,"persistence_owner"))
+            sv=str(first(pr,"form_schema","payload_schema","request_schema","schema") or "")
+            if opv and opv not in ops: ops.append(opv)
+            if mv and mv not in methods: methods.append(mv)
+            if pv and pv not in perms: perms.append(pv)
+            if ov and ov not in owners: owners.append(ov)
+            if pev and pev not in pers: pers.append(pev)
+            if sv and sv not in schemas: schemas.append(sv)
+            rt=rt or runtime_text(first(pr,"runtime_binding"))
+        port=" | ".join(exposed_ports)
+        operation=operation or " | ".join(ops)
+        method=" | ".join(methods)
+        perm=perm or " | ".join(perms)
+        owner=owner or " | ".join(owners)
+        persistence=persistence or " | ".join(pers)
+        payload_schema=payload_schema or " | ".join(schemas)
+    elif port and port in ports:
         pr=ports[port]
         operation=operation or str(first(pr,"registered_operation","operation","operation_id") or "")
         method=exact_method(pr)
@@ -148,6 +183,17 @@ def source_control_row(uid,c,actions,ports,local_ops,data,page):
         operation="getUiProjection"
         method="GET /v1/ui-projections/{pageUid}"
         owner="ERP_READ_PROJECTION"
+    if page=="EDIT-01" and not method and not operation and not rt:
+        eu=effect.upper()
+        if eu=="CONTEXT_STATE":
+            method="NO_PUBLIC_API_BY_AUTHORITY"
+            rt="LOCAL_WORKING_DRAFT_CONTEXT"
+        elif eu in ("DRAFT_MUTATION","EVALUATION_MUTATION","CANDIDATE_STATE"):
+            method="NO_PUBLIC_API_BY_AUTHORITY"
+            rt="LOCAL_WORKING_DRAFT_MUTATION"
+        elif eu in ("JOB_START","JOB_CANCEL","HANDOFF","STATE_TRANSITION","VERSION_CREATE","VERSION_LOCK","OUTPUT_CREATE","READ_OUTPUT"):
+            method="NO_PUBLIC_API_ID_IN_CURRENT_AUTHORITY"
+            rt=(owner or "OWNER_SCOPED_ORCHESTRATION")
     if not operation and rt:
         # exact runtime binding may name an operation
         m=re.search(r'(?:operation(?:_id)?|operation)=([A-Za-z0-9_:-]+)',rt)
@@ -169,6 +215,10 @@ def source_control_row(uid,c,actions,ports,local_ops,data,page):
         cls="UI_LOCAL_EXACT"
     elif method.startswith("GET ") or any(x==effu for x in read_tokens) or behu.startswith("READ_ONLY"):
         cls="READ_EXACT"
+    elif method=="NO_PUBLIC_API_BY_AUTHORITY":
+        cls="LOCAL_WORKING_DRAFT_EXACT"
+    elif method=="NO_PUBLIC_API_ID_IN_CURRENT_AUTHORITY":
+        cls="OWNER_ORCHESTRATED_RUNTIME_EXACT_NO_PUBLIC_ROUTE"
     elif method or operation or rt:
         cls="EFFECTFUL_EXACT"
     else:
@@ -349,11 +399,6 @@ for page,(path,expected) in PAGES.items():
     if page=="STR-01":
         for x in rows:
             if x["effect"]=="UI_NAVIGATION": x["classification"]="UI_LOCAL_EXACT"
-    if page=="EDIT-01":
-        # no runtime gap is inferred from a direct control -> port; authority says 160/160 via source binding matrices.
-        for x in rows:
-            if x["classification"]=="UNRESOLVED_EFFECTFUL":
-                x["classification"]="SOURCE_BINDING_MATRIX_REQUIRED"
     unique=len({x["control_uid"] for x in rows})
     denom_ok=(unique==expected)
     blockers=[]
