@@ -135,6 +135,15 @@ def mutate_policy():
     if 'BUNDLE-GOV-AUDIT-BASE' in cb:unique_extend(cb['BUNDLE-GOV-AUDIT-BASE']['exact_section_uids'],['WEB-GOV-04-S086'])
     sem['governance_revision']=NEW_REV;sem['content_hash']=hobj(sem);dump(sp,sem)
 
+    cip=SOURCE/'10_REGISTRY/CONSTRUCTION_ARTIFACT_INDEX.yaml';ci=load(cip)
+    bundles=ci.setdefault('mandatory_common_normative_bundles',{})
+    if 'BUNDLE-GOV-CONSTRUCTION-BASE' not in bundles or 'BUNDLE-GOV-AUDIT-BASE' not in bundles:
+        raise RuntimeError('mandatory common bundle owner missing')
+    unique_extend(bundles['BUNDLE-GOV-CONSTRUCTION-BASE'].setdefault('section_uids',[]),['WEB-GOV-01-S089','WEB-GOV-02-S076'])
+    unique_extend(bundles['BUNDLE-GOV-AUDIT-BASE'].setdefault('section_uids',[]),['WEB-GOV-04-S086'])
+    if 'governance_revision' in ci:ci['governance_revision']=NEW_REV
+    dump(cip,ci)
+
     ap=SOURCE/'10_REGISTRY/AUDIT_CATALOG.yaml';aud=load(ap)
     unique_extend(aud.setdefault('normative_section_uids',[]),['WEB-GOV-01-S089','WEB-GOV-02-S076','WEB-GOV-04-S086'])
     item=next(x for x in aud.get('items',[]) if x.get('audit_item_uid')=='AUD-GOV-013')
@@ -165,9 +174,11 @@ def mutate_policy():
         if not any(uid in (root/rel).read_text(encoding='utf-8') for rel in common_docs): failures.append('mother_typography_section_missing:'+uid)
 
 '''
-        if marker not in s:raise RuntimeError('product-neutral validator insertion marker missing')
-        s=s.replace(marker,insert+marker)
-        vp.write_text(s,encoding='utf-8')
+        lines=s.splitlines(keepends=True)
+        marker_indexes=[i for i,line in enumerate(lines) if marker in line]
+        if len(marker_indexes)!=1:raise RuntimeError('product-neutral validator insertion marker count='+str(len(marker_indexes)))
+        lines.insert(marker_indexes[0],insert)
+        vp.write_text(''.join(lines),encoding='utf-8')
 
 def mutate_current_components():
     p=ROOT/'governance/specifications/current/INTERACTION_TOPOLOGY_AI_CONTINUITY.yaml';d=load(p)
