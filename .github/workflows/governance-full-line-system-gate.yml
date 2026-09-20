@@ -65,6 +65,8 @@ jobs:
         run: python governance/ci/stage_execution_engine.py --definition-audit-all
       - name: Regression test common Stage Execution Engine
         run: python governance/ci/test_stage_execution_engine.py
+      - name: Regression test product-neutral content integrity engine
+        run: python governance/ci/test_content_integrity_engine.py
       - name: Validate profile-local finding closure readiness
         run: python governance/test/validate_selected_profile_finding_closure.py
       - name: Run complete 75-file full-lifecycle high-pressure system gate
