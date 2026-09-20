@@ -1,0 +1,85 @@
+schema_version: 2
+artifact_type: SPECIFICATION_CHANGE_AUTHORIZATION_RECEIPT
+authorization_uid: USR-DIRECTIVE-20260920-STAGE03-VISUAL-MATERIALIZATION-HARDENING-R1
+normative_authority: false
+authority_source: EXPLICIT_USER_DIRECTIVE
+status: APPROVED_FOR_EXACT_SCOPE
+single_use: true
+ai_may_expand_scope: false
+ai_may_reuse_authorization: false
+current_governance_uid: GOV-REV-20260919-ASSET-STAGE01-STAGE02-SHARED-CONTRACT-HARDENING
+baseline_commit_sha: a9fae0a84d89735efb297e9c1fef132fbd90961f
+baseline_tree_sha: 11ee39f81accf7f1fead4b36ada6521db95d0f0f
+governance_mutation_boundary: EXPLICIT_USER_AUTHORIZED_SUCCESSOR_BEFORE_FRESH_STAGE03_REPLAY
+predecessor_execution_cycle_terminal: false
+fatal_specification_contradiction_proven: true
+pre_write_context_verification:
+  relevant_scope_read_complete: true
+  canonical_owner_resolution_complete: true
+  existing_semantics_comparison_complete: true
+  duplicate_search_complete: true
+  conflict_search_complete: true
+  second_system_search_complete: true
+  gap_proven_before_write: true
+  reviewed_authority_ref_count: 4
+  reviewed_existing_owner_ref_count: 8
+  write_disposition: MODIFY_EXISTING_CANONICAL_OWNERS_AND_REGISTER_SUCCESSOR
+  comparison_result: STAGE03_PROFILE_WEAKENS_EXISTING_MOTHER_REQUIRED_VISUAL_MATERIALIZATION
+directive_summary: >-
+  Fix the Mother-governance Stage-03 visual materialization defect, then remove current Stage-03
+  generated product/test outputs and rerun CORE-01 Stage-03 from preserved immutable Stage-01/02
+  inputs. The correction must make required Visual Reference Annotation, Visual Inheritance,
+  multi-state/reviewable visual evidence, atomic Workbench continuity, current-scope projection,
+  and complete Current problem denominators machine-enforced. Existing unresolved Global
+  Visual/Shell Authority references must remain unresolved and must not be invented or autofilled.
+exact_scope:
+  allowed:
+  - MOTHER_STAGE03_VISUAL_REQUIRED_OUTPUT_MATERIALIZATION_CONTRACT
+  - STAGE03_PROFILE_REQUIRED_SECTION_OUTPUT_PRODUCER_AND_DENOMINATOR_RECONCILIATION
+  - VISUAL_REFERENCE_ANNOTATION_REQUIRED_OUTPUT
+  - VISUAL_INHERITANCE_MATRIX_REQUIRED_OUTPUT
+  - VISUAL_SCENARIO_EVIDENCE_SET_REQUIRED_OUTPUT
+  - ATOMIC_WORKBENCH_VISUAL_BINDING_ENFORCEMENT
+  - REVIEWABLE_VISUAL_PREVIEW_CONTROL_FIELD_STATE_BINDING
+  - CURRENT_SCOPE_PROJECTOR_SYNCHRONIZATION
+  - CURRENT_PROBLEM_REGISTER_AND_DENOMINATOR_RECOMPUTATION
+  - STAGE03_EXECUTOR_AND_VALIDATOR_ALIGNMENT_TO_SUCCESSOR_GOVERNANCE
+  - DELETE_ONLY_STAGE03_GENERATED_OUTPUTS_AFTER_SUCCESSOR_VALIDATION
+  - PRESERVE_STAGE01_STAGE02_IMMUTABLE_INPUTS
+  - FRESH_CORE01_STAGE03_REEXECUTION_AND_HIGH_PRESSURE_REVALIDATION
+  forbidden:
+  - PRODUCT_AUTHORITY_AUTOFILL
+  - GLOBAL_VISUAL_AUTHORITY_INVENTION
+  - GLOBAL_SHELL_AUTHORITY_INVENTION
+  - STAGE02_FUNCTIONAL_TOPOLOGY_REDEFINITION
+  - STAGE01_OR_STAGE02_IMMUTABLE_INPUT_MUTATION_OR_DELETION
+  - STAGE04_EXECUTION
+  - WEBSITE_IMPLEMENTATION
+  - DEPLOYMENT
+  - HUMAN_VISUAL_APPROVAL_AUTOMATION
+canonical_owners:
+- .github/governance-source/active/source/12_DOCS/mother-spec/01_BLUEPRINT_DESIGN_GOVERNANCE.md
+- .github/governance-source/active/source/12_DOCS/mother-spec/03_EXECUTION_CONTROL_STANDARD.md
+- .github/governance-source/active/source/12_DOCS/mother-spec/04_AUDIT_PROGRESS_STANDARD.md
+- .github/governance-source/active/source/10_REGISTRY/GOVERNANCE_LIFECYCLE_STAGE_REGISTRY.yaml
+- .github/governance-source/active/source/10_REGISTRY/REFERENCE_RULE_REGISTRY.yaml
+- .github/governance-source/active/source/10_REGISTRY/SEMANTIC_AUTHORITY_BASELINE.yaml
+- .github/governance-source/active/source/10_REGISTRY/STAGE_EXECUTION_INVARIANT_REGISTRY.yaml
+- .github/governance-source/active/source/10_REGISTRY/GOVERNANCE_ACCEPTANCE_AUDIT_BLUEPRINT.yaml
+- governance/specifications/current/INTERACTION_TOPOLOGY_AI_CONTINUITY.yaml
+- governance/specifications/current/EXECUTION_CYCLE_CONTROL.yaml
+- governance/ci/run_current_stage3_visual_design.py
+- governance/ci/stress_test_stage03_core01.py
+required_successor:
+  display_version: v2.2.14
+  governance_uid: GOV-REV-20260920-STAGE03-VISUAL-MATERIALIZATION-HARDENING
+  immutable_governance_uid_must_change: true
+  registry_manifest_atomic_update_required: true
+  semantic_baseline_sync_required: true
+  source_identity_rebuild_required: true
+  active_consumer_reconciliation_required: true
+  exact_head_full_line_required: true
+  selected_profile_required: true
+  stage03_fresh_replay_required: true
+  stage03_high_pressure_required: true
+product_stage_credit: 0
