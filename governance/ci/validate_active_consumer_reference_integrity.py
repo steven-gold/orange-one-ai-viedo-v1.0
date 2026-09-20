@@ -377,6 +377,26 @@ def main() -> int:
 
     workflows = sorted([*WORKFLOW_ROOT.glob("*.yml"), *WORKFLOW_ROOT.glob("*.yaml")])
     queue: deque[str] = deque()
+
+    # Declared semantic compatibility adapters are Current executable consumers even when
+    # no workflow invokes the module directly. Include them in the same transitive graph
+    # so stale run roots / product identities cannot hide behind adapter indirection.
+    adapter_registry = ROOT / "governance/ci/stage_execution_semantic_adapters.yaml"
+    if adapter_registry.is_file():
+        adapter_doc = load_yaml(adapter_registry)
+        for stage_uid, adapter in sorted((adapter_doc.get("stages") or {}).items()):
+            if not isinstance(adapter, dict):
+                continue
+            module = str(adapter.get("python_compatibility_module") or "").strip()
+            if not module:
+                continue
+            script_rel = "governance/ci/" + module.replace(".", "/") + ".py"
+            referenced_by[script_rel].add(rel(adapter_registry) + ":" + str(stage_uid))
+            queue.append(script_rel)
+    else:
+        errors.append("SEMANTIC_ADAPTER_REGISTRY_MISSING")
+
+
     for workflow in workflows:
         workflow_count += 1
         text = workflow.read_text(encoding="utf-8")

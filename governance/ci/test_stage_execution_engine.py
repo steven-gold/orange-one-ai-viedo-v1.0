@@ -279,12 +279,31 @@ for uid,st in stage_rows.items():
         audit_error('PRODUCER_CONSUMER_SCHEMA',f'OUTPUT_PRODUCER_OPERATION:{uid}:{sorted(unknown)}')
 
 # Mode 4: Denominator & Applicability.
+# Required artifacts may be either top-level lifecycle outputs or explicitly bound package members.
+# Package membership is implementation metadata owned by the existing semantic adapter; it is not a second Authority.
 for uid,st in stage_rows.items():
     all_outputs=set(st.get('outputs') or []) | set((st.get('conditional_outputs') or {}).keys())
+    ad=adapters['stages'][uid]
+    packaged_contract=ad.get('packaged_required_artifact_contract') or {}
+    packaged=dict(packaged_contract.get('artifacts') or {})
+    owner_output=packaged_contract.get('owner_output')
+    if packaged:
+        if owner_output not in all_outputs:
+            audit_error('DENOMINATOR_APPLICABILITY',f'PACKAGE_OWNER_OUTPUT_NOT_REGISTERED:{uid}:{owner_output}')
+        materializer=str(packaged_contract.get('materializer_owner') or '')
+        materializer_path=ROOT/materializer if materializer else None
+        if not materializer or not materializer_path.is_file():
+            audit_error('DENOMINATOR_APPLICABILITY',f'PACKAGE_MATERIALIZER_MISSING:{uid}:{materializer}')
+        else:
+            materializer_text=materializer_path.read_text(encoding='utf-8')
+            for artifact_uid,filename in sorted(packaged.items()):
+                if str(filename) not in materializer_text:
+                    audit_error('DENOMINATOR_APPLICABILITY',f'PACKAGED_ARTIFACT_NOT_MATERIALIZED:{uid}:{artifact_uid}:{filename}')
     for applicability_key,rows in (st.get('required_output_applicability') or {}).items():
-        missing=sorted(set(rows or [])-all_outputs)
-        if missing:
-            audit_error('DENOMINATOR_APPLICABILITY',f'OUTPUT_NOT_REGISTERED:{uid}:{applicability_key}:{missing}')
+        required=set(rows or [])
+        unbound=sorted(required-all_outputs-set(packaged))
+        if unbound:
+            audit_error('DENOMINATOR_APPLICABILITY',f'REQUIRED_ARTIFACT_HAS_NO_TOP_LEVEL_OR_PACKAGE_OWNER:{uid}:{applicability_key}:{unbound}')
 
 # Mode 5: State / Resume / Projector.
 active_state=eng.y(eng.STATE)

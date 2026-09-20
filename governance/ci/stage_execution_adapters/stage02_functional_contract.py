@@ -1,4 +1,5 @@
-# Semantic compatibility adapter only. Common orchestration is owned by stage_execution_engine.py.\n#!/usr/bin/env python3
+#!/usr/bin/env python3
+# Semantic compatibility adapter only. Common orchestration is owned by stage_execution_engine.py.
 from __future__ import annotations
 import argparse, hashlib, json, os, subprocess, sys
 from collections import Counter
@@ -8,7 +9,8 @@ import yaml
 
 ROOT=Path('.')
 STAGE='STAGE-02'
-BASE=ROOT/'00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT'
+RUN_ROOT_ENV=os.environ.get('ACPOS_RUN_ROOT','').strip()
+BASE=(ROOT/RUN_ROOT_ENV/'04_PAGE_FUNCTIONAL_CONTRACT') if RUN_ROOT_ENV else (ROOT/'governance/test/temporary/stage02-unbound/04_PAGE_FUNCTIONAL_CONTRACT')
 ENTRY=ROOT/'GOVERNANCE_CURRENT.yaml'
 REG=ROOT/'governance/specifications/REGISTRY.yaml'
 RULE=ROOT/'governance/specifications/current/CANONICAL_RULE_REGISTRY.yaml'
@@ -256,6 +258,8 @@ def normative_set_digest(read_set):
     return sha(json.dumps(normative,sort_keys=True,separators=(',',':')).encode())
 
 def build(identity_override=None):
+    if not RUN_ROOT_ENV:
+        die('ACPOS_RUN_ROOT_REQUIRED_FOR_STAGE02_COMPATIBILITY_MATERIALIZATION')
     entry,reg,rule,cycle,closure,life,inv,state,e,frozen,cal=y(ENTRY),y(REG),y(RULE),y(CYCLE),y(CLOSURE),y(LIFE),y(INV),y(STATE),j(EVID),y(FROZEN),y(CAL); st=stage(life); work=execution_context(state)
     gov=(reg.get('active_specification') or {}).get('governance_uid'); att=state.get('stage02_active_attempt') or {}
     if not gov or entry.get('active_governance_uid')!=gov or att.get('frozen_governance_uid')!=gov or e.get('frozen_governance_uid')!=gov or frozen.get('frozen_governance_uid')!=gov: die('CURRENT_GOVERNANCE_UID_DRIFT')
@@ -268,7 +272,7 @@ def build(identity_override=None):
     expected={'REQUIRED_FIELD_MANIFEST':'STAGE_EXECUTION_PREFLIGHT_COMPILE','FUNCTIONAL_CHAIN_MANIFEST':'STAGE_EXECUTION_PREFLIGHT_COMPILE','DENOMINATOR_SNAPSHOT':'STAGE_EXECUTION_PREFLIGHT_COMPILE','CLASSIFICATION_RULESET':'STAGE_EXECUTION_PREFLIGHT_COMPILE','STAGE_EXECUTION_PREFLIGHT_RECEIPT':'STAGE_EXECUTION_PREFLIGHT_COMPILE','CURRENT_PROBLEM_REGISTER':'STAGE_EXECUTION_PREFLIGHT_COMPILE','RESOLUTION_LEDGER':'STAGE_EXECUTION_PREFLIGHT_COMPILE','EFFECTIVE_CONTRACT_OVERLAY':'EFFECTIVE_CONTRACT_OVERLAY_COMPILE','DEPENDENCY_TOPOLOGY':'DEPENDENCY_TOPOLOGY_COMPILE','CHANGE_IMPACT_MAP':'CHANGE_IMPACT_MAP_COMPILE'}
     for n,p in expected.items():
         if n not in outputs or prod.get(n)!=p: die(f'LIFECYCLE_OUTPUT_PRODUCER_DRIFT:{n}')
-    if len(outputs)!=17 or len(set(outputs))!=17: die(f'OFFICIAL_STAGE_OUTPUT_DENOMINATOR_DRIFT:{len(outputs)}')
+    if len(outputs)!=19 or len(set(outputs))!=19: die(f'OFFICIAL_STAGE_OUTPUT_DENOMINATOR_DRIFT:{len(outputs)}')
     iv=inv.get('invariants') or {}; need=['CANONICAL_STAGE_EXECUTION_PREFLIGHT','DEPENDENCY_ORDERED_INCREMENTAL_RECONCILIATION','GAP_REMEDIATION_ADMISSIBILITY','ROLE_SAFE_FUNCTIONAL_CLOSURE','COMMON_ENGINE_DEFECT_INTERRUPT','GENERATED_OUTPUT_PERSISTENCE','FUNCTIONAL_CONTRACT_COMPLETENESS']
     for n in need:
         if not iv.get(n): die(f'INVARIANT_MISSING:{n}')

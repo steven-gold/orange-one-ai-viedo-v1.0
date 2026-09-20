@@ -129,6 +129,16 @@ stages:
     business_entity_gate_required: true
     scanner_mode: SPECIALIZED_COMPATIBILITY_PLUS_NORMALIZED_COMMON
     python_compatibility_module: stage_execution_adapters.stage02_functional_contract
+    packaged_required_artifact_contract:
+      owner_output: PAGE_CONSTRUCTION_SPEC_PACKAGE
+      materializer_owner: .github/governance-maintenance/run_fresh_stage_replay.py
+      package_manifest_field: included_artifacts
+      artifacts:
+        BUSINESS_ENTITY_INVENTORY: BUSINESS_ENTITY_INVENTORY.yaml
+        BUSINESS_ENTITY_OPERATION_MATRIX: BUSINESS_ENTITY_OPERATION_MATRIX.yaml
+        ENTITY_HIERARCHY_MATRIX: ENTITY_HIERARCHY_MATRIX.yaml
+        INTERACTION_TOPOLOGY_MATRIX: INTERACTION_TOPOLOGY_SPEC.yaml
+        FUNCTION_VISUAL_IMPACT_MATRIX: FUNCTION_VISUAL_IMPACT_MATRIX.yaml
     product_completion_credit_from_definition_audit: 0
   STAGE-03:
     profile_name: VISUAL_DESIGN

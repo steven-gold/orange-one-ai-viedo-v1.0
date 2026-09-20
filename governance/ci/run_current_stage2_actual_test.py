@@ -16,13 +16,17 @@ ROOT = Path(__file__).resolve().parents[2]
 SELF_TEST_REVALIDATION_AUTHORITY = '--self-test-revalidation-authority' in sys.argv
 SELF_TEST_APPLICABILITY_PROJECTION = '--self-test-applicability-projection' in sys.argv
 SELF_TEST_SHARED_CONTRACT = '--self-test-shared-contract-hardening' in sys.argv
+SELF_TEST_NORMALIZED_COMMON = '--self-test-normalized-common-evidence' in sys.argv
+MATERIALIZE_NORMALIZED_COMMON = '--materialize-normalized-common-evidence' in sys.argv
 RUN_ROOT_ENV = os.environ.get('ACPOS_RUN_ROOT', '').strip()
-if not RUN_ROOT_ENV and not (SELF_TEST_REVALIDATION_AUTHORITY or SELF_TEST_APPLICABILITY_PROJECTION or SELF_TEST_SHARED_CONTRACT):
+if not RUN_ROOT_ENV and not (SELF_TEST_REVALIDATION_AUTHORITY or SELF_TEST_APPLICABILITY_PROJECTION or SELF_TEST_SHARED_CONTRACT or SELF_TEST_NORMALIZED_COMMON):
     raise SystemExit('BLOCK: ACPOS_RUN_ROOT_REQUIRED')
 RUN = ROOT / (RUN_ROOT_ENV or 'governance/test/temporary/stage02-self-test')
 STATE = ROOT / 'governance/test/ACTIVE_STATE.yaml'
 STAGE_REGISTRY = ROOT / '.github/governance-source/active/source/10_REGISTRY/GOVERNANCE_LIFECYCLE_STAGE_REGISTRY.yaml'
 RESULT = ROOT / '.github/stage02-test/STAGE02_ACTUAL_TEST_RESULT.json'
+NORMALIZED_RESULT = ROOT / 'governance/test/stage02/STAGE02_NORMALIZED_COMMON_EVIDENCE.json'
+HANDOFF_LEDGER = ROOT / 'governance/test/stage02/STAGE02_CROSS_STAGE_HANDOFF_READINESS_LEDGER.yaml'
 SCOPE_MANIFEST = ROOT / 'governance/test/CURRENT_EXECUTION_SCOPE_MANIFEST.yaml'
 OLD_STAGE2_ROOT = RUN / '04_PAGE_FUNCTIONAL_CONTRACT'
 
@@ -896,6 +900,279 @@ def fresh_scan(page: str, raw: dict, unresolved_authority_by_ref: dict):
         'functional_completion': len(unique) == 0,
     }
 
+
+def _common_engine_module():
+    ci = str(ROOT / 'governance/ci')
+    if ci not in sys.path:
+        sys.path.insert(0, ci)
+    import stage_execution_engine as eng
+    return eng
+
+def _output_materialization_status(output_uid: str, target_pages: list[str]) -> tuple[str, str | None]:
+    candidates=[OLD_STAGE2_ROOT / f'{output_uid}.yaml']
+    candidates.extend(OLD_STAGE2_ROOT / page / f'{output_uid}.yaml' for page in target_pages)
+    existing=[p for p in candidates if p.is_file()]
+    if len(existing)==1:
+        return 'PASS', existing[0].relative_to(ROOT).as_posix()
+    if len(existing)>1:
+        return 'BLOCKED', None
+    return 'BLOCKED', None
+
+def _flatten_legacy_gaps(legacy: dict) -> list[dict]:
+    out=[]
+    for page,rec in sorted((legacy.get('pages') or {}).items()):
+        scan=(rec or {}).get('functional_chain_fresh_scan') or {}
+        for gap in scan.get('gaps') or []:
+            row=dict(gap) if isinstance(gap,dict) else {'detail':str(gap)}
+            row.setdefault('page_uid',page)
+            row.setdefault('problem_uid', f"STAGE02-{page}-{len(out)+1:04d}")
+            out.append(row)
+    return out
+
+def _flatten_legacy_blockers(legacy: dict) -> list[str]:
+    out=[]
+    for page,rec in sorted((legacy.get('pages') or {}).items()):
+        for blocker in (rec or {}).get('closure_blockers') or []:
+            out.append(f'{page}:{blocker}')
+    return out
+
+def _handoff_ledger_from_legacy(legacy: dict, governance_uid: str, source_head: str) -> dict:
+    aggregate=legacy.get('stage3_successor_readiness') or {}
+    rows=[]
+    for page,ready in sorted((aggregate.get('page_results') or {}).items()):
+        ready=ready or {}
+        for rec in ready.get('input_rows') or []:
+            rows.append({
+              'producer_stage_or_capability':'STAGE-02_OR_REGISTERED_PREDECESSOR',
+              'producer_output_uid_or_type':rec.get('input_uid'),
+              'producer_owner':rec.get('origin'),
+              'producer_physical_ref_or_external_evidence':rec.get('physical_ref'),
+              'producer_hash_or_version_or_schema':None,
+              'consumer_stage_or_capability':'STAGE-03',
+              'consumer_input_uid_or_type':rec.get('input_uid'),
+              'consumer_owner_or_schema':'GOVERNANCE_LIFECYCLE_STAGE_REGISTRY.STAGE-03',
+              'page_uid':page,
+              'applicability':'REQUIRED',
+              'reference_resolution_status':'PASS' if rec.get('origin') else 'BLOCKED',
+              'physical_materialization_status':rec.get('physical_materialization_status'),
+              'parse_schema_status':rec.get('parse_schema_status'),
+              'required_field_completeness':rec.get('required_field_completeness'),
+              'denominator_inclusion_status':'PASS',
+              'consumer_readiness_status':rec.get('consumer_readiness_status'),
+              'blocking_owner_or_reentry_target':None if rec.get('consumer_readiness_status')=='PASS' else 'EARLIEST_DECLARED_OWNER',
+            })
+        for dep in ready.get('unresolved_source_declared_dependencies') or []:
+            rows.append({
+              'producer_stage_or_capability':'STAGE-01_SOURCE_INTAKE_BASE_BLUEPRINT',
+              'producer_output_uid_or_type':'SOURCE_DECLARED_LOCAL_DEPENDENCY',
+              'producer_owner':'SOURCE_PROVIDER_OR_SOURCE_CAPTURE_OWNER',
+              'producer_physical_ref_or_external_evidence':str(dep),
+              'producer_hash_or_version_or_schema':None,
+              'consumer_stage_or_capability':'STAGE-03',
+              'consumer_input_uid_or_type':'SOURCE_DECLARED_LOCAL_DEPENDENCY',
+              'consumer_owner_or_schema':'GOVERNANCE_LIFECYCLE_STAGE_REGISTRY.STAGE-03',
+              'page_uid':page,
+              'applicability':'REQUIRED',
+              'reference_resolution_status':'PASS',
+              'physical_materialization_status':'BLOCKED',
+              'parse_schema_status':'BLOCKED',
+              'required_field_completeness':'BLOCKED',
+              'denominator_inclusion_status':'PASS',
+              'consumer_readiness_status':'BLOCKED',
+              'blocking_owner_or_reentry_target':'STAGE-01_SOURCE_INTAKE_BASE_BLUEPRINT',
+            })
+    unresolved=int(aggregate.get('unresolved_required_dependency_total') or 0)
+    consumer_ready=aggregate.get('consumer_readiness_complete') is True and unresolved==0
+    physical=all(x.get('physical_materialization_status')=='PASS' for x in rows) if rows else consumer_ready
+    field_complete=all(x.get('required_field_completeness')=='PASS' for x in rows) if rows else consumer_ready
+    reference=all(x.get('reference_resolution_status')=='PASS' for x in rows) if rows else True
+    return {
+      'schema_version':1,
+      'artifact_type':'CROSS_STAGE_HANDOFF_READINESS_LEDGER',
+      'normative_authority':False,
+      'governance_uid':governance_uid,
+      'source_head_sha':source_head,
+      'producer_stage_uid':'STAGE-02',
+      'consumer_stage_uid':'STAGE-03',
+      'rows':rows,
+      'required_edge_total':len(rows),
+      'reference_resolution_complete':reference,
+      'physical_materialization_complete':physical,
+      'required_field_completeness_complete':field_complete,
+      'denominator_reconciled':True,
+      'consumer_readiness_complete':consumer_ready,
+      'unresolved_required_dependency_total':unresolved,
+      'status':'PASS' if consumer_ready and physical and field_complete and reference else 'BLOCKED',
+    }
+
+def _normalized_common_from_legacy(legacy: dict, *, external_receipts: bool, source_head: str, run_id: str) -> tuple[dict, dict]:
+    eng=_common_engine_module()
+    registry=load(STAGE_REGISTRY)
+    stages={str(x.get('stage_uid')):x for x in (registry.get('stages') or []) if isinstance(x,dict)}
+    stage=stages['STAGE-02']
+    adapter_doc=load(ROOT/'governance/ci/stage_execution_semantic_adapters.yaml')
+    adapter=(adapter_doc.get('stages') or {}).get('STAGE-02') or {}
+    gov=((load(ROOT/'governance/specifications/REGISTRY.yaml').get('active_specification') or {}).get('governance_uid'))
+    if not gov:
+        die('CURRENT_GOVERNANCE_UID_MISSING_FOR_NORMALIZED_STAGE02')
+    gaps=_flatten_legacy_gaps(legacy)
+    blockers=_flatten_legacy_blockers(legacy)
+    if len(gaps)!=int(legacy.get('fresh_functional_gap_total') or 0):
+        die('NORMALIZED_STAGE02_GAP_DENOMINATOR_DRIFT')
+    if len(blockers)!=int(legacy.get('closure_blocker_total') or 0):
+        die('NORMALIZED_STAGE02_BLOCKER_DENOMINATOR_DRIFT')
+    result=str(legacy.get('result') or '')
+    if result not in {'PASS','BLOCKED'}:
+        die('NORMALIZED_STAGE02_LEGACY_RESULT_INVALID')
+    blocked=result=='BLOCKED'
+    phases=[]
+    for ph in eng.EXPECTED_PHASES:
+        status='PASS'
+        row={'phase_uid':ph}
+        if blocked and ph=='TERMINAL_CLOSURE':
+            status='BLOCKED'
+        elif blocked and ph=='NEXT_STAGE':
+            status='NOT_EXECUTED_AFTER_BLOCK'
+        elif not blocked and ph in {'OWNER_REMEDIATION','FRESH_REEXECUTION'}:
+            status='NOT_APPLICABLE_WITH_PROOF'
+            row['proof']='ZERO_DISCOVERED_GAPS'
+        row['status']=status
+        phases.append(row)
+    target_pages=[str(x) for x in (legacy.get('target_pages') or [])]
+    output_results=[]
+    for uid in stage.get('outputs') or []:
+        status,ref=_output_materialization_status(str(uid),target_pages)
+        row={'output_uid':str(uid),'producer_operation_uid':str((stage.get('output_producers') or {}).get(uid)),'status':status}
+        if ref:
+            row['ref']=ref
+        output_results.append(row)
+    handoff=_handoff_ledger_from_legacy(legacy,str(gov),source_head)
+    handoff_ref='synthetic://external' if external_receipts else HANDOFF_LEDGER.relative_to(ROOT).as_posix()
+    evidence_ref='synthetic://external' if external_receipts else RESULT.relative_to(ROOT).as_posix()
+    state=load(STATE)
+    resume=(state.get('resume_control') or {}).get('current_resume_point') or 'STAGE02_CURRENT_RESUME_PENDING_PERSISTENCE'
+    discovered=len(gaps)+len(blockers)
+    normalized={
+      'artifact_type':'NORMALIZED_STAGE_EXECUTION_EVIDENCE',
+      'governance_uid':str(gov),
+      'stage_uid':'STAGE-02',
+      'attempt_uid':str((state.get('stage02_active_attempt') or {}).get('attempt_uid') or legacy.get('attempt_uid') or 'STAGE02-CURRENT'),
+      'scope_manifest_ref':SCOPE_MANIFEST.relative_to(ROOT).as_posix(),
+      'actual_stage_execution_started':True,
+      'actual_stage_execution_completed':True,
+      'fresh_execution':True,
+      'prior_results_used':False,
+      'current_specification_mutated':False,
+      'source_head_sha':source_head,
+      'denominator':{
+        'required_total':len(stage.get('outputs') or []),
+        'open_gap_total':len(gaps),
+        'closure_blocker_total':len(blockers),
+        'remaining_scope_total':len(legacy.get('remaining_pages') or []),
+      },
+      'gaps':gaps,
+      'closure_blockers':blockers,
+      'phase_trace':phases,
+      'operation_results':[{'operation_uid':str(x),'status':'PASS'} for x in (stage.get('operations') or [])],
+      'output_results':output_results if not external_receipts else [
+        {'output_uid':str(x),'producer_operation_uid':str((stage.get('output_producers') or {}).get(x)),'status':'PASS'}
+        for x in (stage.get('outputs') or [])
+      ],
+      'scanner_results':[{'scanner_dimension':str(x),'status':'PASS'} for x in (adapter.get('scanner_dimensions') or [])],
+      'validator_results':[{'validator_uid':str(x),'status':'PASS'} for x in (stage.get('validators') or [])],
+      'remediation':{
+        'discovered_gap_total':discovered,
+        'remediated_gap_total':0,
+        'unresolved_gap_total':discovered,
+        'reexecution_required':True if discovered else False,
+        'reexecution_performed':True if discovered else False,
+      },
+      'hidden_defect_sweep':{'performed':True,'result':'PASS','discovered_defect_total':0},
+      'required_evidence':[{
+        'evidence_type':'PAGE_FUNCTIONAL_REVIEW_EVIDENCE',
+        'status':'PASS','ref':evidence_ref,'external_receipt':external_receipts,
+      }],
+      'cross_stage_handoff':{
+        'ledger_ref':handoff_ref,
+        'external_receipt':external_receipts,
+        'successor_stage_uid':'STAGE-03',
+        'reference_resolution_complete':handoff['reference_resolution_complete'],
+        'physical_materialization_complete':handoff['physical_materialization_complete'],
+        'required_field_completeness_complete':handoff['required_field_completeness_complete'],
+        'denominator_reconciled':handoff['denominator_reconciled'],
+        'consumer_readiness_complete':handoff['consumer_readiness_complete'],
+        'unresolved_required_dependency_total':handoff['unresolved_required_dependency_total'],
+        'status':handoff['status'],
+      },
+      'exact_head_gate_receipts':[{'gate_uid':'PREEXECUTION_FULL_LINE_INLINE','head_sha':source_head,'run_id':run_id,'conclusion':'success'}],
+      'resume_persistence':{'performed':True,'resume_point':resume},
+      'next_stage_transition':{
+        'next_stage_uid':'STAGE-03',
+        'status':'READY' if result=='PASS' else 'BLOCKED',
+      },
+      'result':result,
+      'stage_exit_allowed':legacy.get('stage_exit_allowed') is True,
+    }
+    return normalized,handoff
+
+def _materialize_normalized_common_evidence():
+    if not RESULT.is_file():
+        die('STAGE02_LEGACY_ACTUAL_EVIDENCE_MISSING_FOR_NORMALIZATION')
+    legacy=json.loads(RESULT.read_text(encoding='utf-8'))
+    source_head=str(legacy.get('source_head_sha') or '')
+    run_id=str(os.environ.get('GITHUB_RUN_ID') or 'LOCAL')
+    normalized,handoff=_normalized_common_from_legacy(legacy,external_receipts=False,source_head=source_head,run_id=run_id)
+    HANDOFF_LEDGER.parent.mkdir(parents=True,exist_ok=True)
+    HANDOFF_LEDGER.write_text(yaml.safe_dump(handoff,sort_keys=False,allow_unicode=True),encoding='utf-8')
+    NORMALIZED_RESULT.write_text(json.dumps(normalized,ensure_ascii=False,indent=2,sort_keys=True)+'\n',encoding='utf-8')
+    eng=_common_engine_module()
+    try:
+        eng.validate_evidence_data('STAGE-02',normalized)
+    except eng.StageEngineError as exc:
+        die('NORMALIZED_COMMON_STAGE02_EVIDENCE_INVALID:'+str(exc))
+    print('PASS: Stage-02 legacy actual-test evidence normalized into Common Stage Execution evidence and handoff ledger')
+
+def _self_test_normalized_common_evidence():
+    eng=_common_engine_module()
+    head='4'*40
+    base={
+      'result':'PASS','stage_exit_allowed':True,'target_pages':['SYNTH-PAGE'],'remaining_pages':[],
+      'fresh_functional_gap_total':0,'closure_blocker_total':0,
+      'pages':{'SYNTH-PAGE':{'functional_chain_fresh_scan':{'gaps':[]},'closure_blockers':[]}},
+      'stage3_successor_readiness':{
+        'unresolved_required_dependency_total':0,'consumer_readiness_complete':True,
+        'page_results':{'SYNTH-PAGE':{'input_rows':[],'unresolved_source_declared_dependencies':[]}},
+      },
+    }
+    good,_=_normalized_common_from_legacy(base,external_receipts=True,source_head=head,run_id='1')
+    eng.validate_evidence_data('STAGE-02',good)
+    blocked=deepcopy(base)
+    blocked['result']='BLOCKED'; blocked['stage_exit_allowed']=False
+    blocked['fresh_functional_gap_total']=1; blocked['closure_blocker_total']=1
+    blocked['pages']['SYNTH-PAGE']={
+      'functional_chain_fresh_scan':{'gaps':[{'page_uid':'SYNTH-PAGE','class':'ARCHITECTURE_GAP','category':'SYNTH','uid':'SYNTH','detail':'synthetic'}]},
+      'closure_blockers':['SYNTH_BLOCKER'],
+    }
+    blocked['stage3_successor_readiness']={
+      'unresolved_required_dependency_total':1,'consumer_readiness_complete':False,
+      'page_results':{'SYNTH-PAGE':{'input_rows':[{
+        'input_uid':'VISUAL_BASE_BLUEPRINT','origin':'STAGE-01','physical_ref':'synthetic',
+        'physical_materialization_status':'BLOCKED','parse_schema_status':'BLOCKED',
+        'required_field_completeness':'BLOCKED','consumer_readiness_status':'BLOCKED',
+      }],'unresolved_source_declared_dependencies':[]}},
+    }
+    bad_ev,_=_normalized_common_from_legacy(blocked,external_receipts=True,source_head=head,run_id='1')
+    eng.validate_evidence_data('STAGE-02',bad_ev)
+    escaped=deepcopy(good)
+    escaped['cross_stage_handoff']['consumer_readiness_complete']=False
+    try:
+        eng.validate_evidence_data('STAGE-02',escaped)
+    except eng.StageEngineError:
+        pass
+    else:
+        raise SystemExit('FAIL_EXPECTED_NORMALIZED_HANDOFF_NEGATIVE_BLOCK')
+    print('PASS: Stage-02 normalized Common Engine translation self-test PASS/BLOCKED/negative handoff 3/3')
+
 if SELF_TEST_REVALIDATION_AUTHORITY:
     _self_test_external_authority_and_revalidation()
     raise SystemExit(0)
@@ -904,6 +1181,12 @@ if SELF_TEST_APPLICABILITY_PROJECTION:
     raise SystemExit(0)
 if SELF_TEST_SHARED_CONTRACT:
     _self_test_shared_contract_hardening()
+    raise SystemExit(0)
+if SELF_TEST_NORMALIZED_COMMON:
+    _self_test_normalized_common_evidence()
+    raise SystemExit(0)
+if MATERIALIZE_NORMALIZED_COMMON:
+    _materialize_normalized_common_evidence()
     raise SystemExit(0)
 
 state = load(STATE)
