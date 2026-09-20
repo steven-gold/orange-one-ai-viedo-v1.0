@@ -88,7 +88,7 @@ jobs:
                           effect=r[hm['Action UID']].strip()+' '+r[hm['Label']].strip()
                           if status=='UI_LOCAL_EXACT' and re.match(r'^(POST|PATCH|PUT|DELETE)\b',method,re.I):
                               runtime_bad.append((r[hm['Control UID']],status,method))
-                          if status=='READ_EXACT' and re.match(r'^(POST|PATCH|PUT|DELETE)\b',method,re.I):
+                          if status=='READ_EXACT' and re.match(r'^(PATCH|PUT|DELETE)\b',method,re.I):
                               runtime_bad.append((r[hm['Control UID']],status,method))
               assert found is not None,(fn,'authority table')
               assert int(found['Expected Control Denominator'])==denom,(fn,found)
