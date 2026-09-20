@@ -853,7 +853,8 @@ findings:
   evidence: new@165c6440cb53b1b45ec96905241fb4d56dc3b867 tests/release/authority.test.mjs still matches every two-space authority/pages path and asserts 18, while validated ephemeral fix f25a79111bbf1da47fe55f4fc8967b2148558317 scopes parsing to current_authority_set.pages and passed Release Gate 35528804977.
   defect_owner: TEST_OR_VALIDATION_IMPLEMENTATION_AND_BRANCH_AUTHORITY_GUARD
   generalizability_scope: STRUCTURED_CURRENT_AUTHORITY_DENOMINATOR_CONSUMERS
-  disposition: CONFIRMED_REMEDIATION_REQUIRED
+  disposition: RESOLVED_IMPLEMENTATION_REMEDIATED_EXACT_HEAD_VERIFIED
+  resolution: Branch guard now pins new to verified fixed commit f25a79111bbf1da47fe55f4fc8967b2148558317; sandbox patch path removed; Selected Profile 35544354027 and Full-Line 35544354032 succeeded on e5c670c138e1efe3bf0b08372f1f89e34aba3251.
   specification_change_required: false
   mother_change_required: false
   formal_specification_mutated_for_fix: false
@@ -864,7 +865,8 @@ findings:
   evidence: Current tree contains governance/ci/validate_core01_source_content_integrity.py but no product-neutral content-integrity engine; common Stage Engine validates normalized execution evidence and dynamic scope but does not provide reusable required-field/reference/bidirectional/functional-chain content checks for arbitrary typed adapters.
   defect_owner: TEST_OR_VALIDATION_IMPLEMENTATION
   generalizability_scope: ALL_PRODUCT_ADAPTER_CONTENT_INTEGRITY_VALIDATION
-  disposition: CONFIRMED_REMEDIATION_REQUIRED
+  disposition: RESOLVED_IMPLEMENTATION_REMEDIATED_EXACT_HEAD_VERIFIED
+  resolution: Added governance/ci/content_integrity_engine.py with scope-parametric typed contracts, negative regression across unrelated scopes/denominators, CORE adapter reuse, and portability enforcement; Selected Profile 35544354027 and Full-Line 35544354032 succeeded on e5c670c138e1efe3bf0b08372f1f89e34aba3251.
   specification_change_required: false
   mother_change_required: false
   formal_specification_mutated_for_fix: false

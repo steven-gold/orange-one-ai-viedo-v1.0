@@ -111,8 +111,8 @@ specification_mutation_safety:
   ordinary_mid_stage_specification_mutation: BLOCK
   stage_end_consolidated_promotion_requires_new_explicit_directive: true
   execution_context_lock_required: true
-status: GOVERNANCE_DEFECT_REMEDIATION_WUR_REQUIRED
-next_action: WORK_UNIT_RESOLUTION_GATE_FOR_CONFIRMED_CONSUMER_CONTENT_INTEGRITY_TYPOGRAPHY_DEFECTS
+status: ACTIVE_GOVERNANCE_CONTENT_INTEGRITY_TYPOGRAPHY_CONSUMER_HARDENING
+next_action: PROMOTE_TYPOGRAPHY_COMPUTED_METRICS_SUCCESSOR
 previous_closed_product_work_unit:
   work_unit_uid: WU-STAGE02-CORE01-STRUCTURAL-REMEDIATION-001
   canonical_name: CORE01_STRUCTURAL_CONTRACT_REMEDIATION
@@ -291,10 +291,10 @@ previous_closed_work_unit:
     source_runtime_residual_count: 0
     product_stage_credit: 0
 resume_control:
-  current_resume_point: GOVERNANCE_DEFECT_REMEDIATION_WUR_REQUIRED
-  current_work_unit_uid: null
+  current_resume_point: TYPOGRAPHY_COMPUTED_METRICS_SUCCESSOR_AUTHORIZED
+  current_work_unit_uid: WU-GOV-CONTENT-INTEGRITY-TYPOGRAPHY-CONSUMER-HARDENING-001
   current_owner: governance/specifications/current/SPECIFICATION_MUTATION_CONTROL.yaml
-  exact_next_action: WORK_UNIT_RESOLUTION_GATE_FOR_CONFIRMED_CONSUMER_CONTENT_INTEGRITY_TYPOGRAPHY_DEFECTS
+  exact_next_action: PROMOTE_TYPOGRAPHY_COMPUTED_METRICS_SUCCESSOR
   product_resume_preserved: CORE01_STAGE01_STAGE03_CLEAN_BASELINE_READY_FRESH_STAGE01_WUR_REQUIRED
   interrupted_test_resume_preserved: CORE01_SOURCE_TEST_BUGFIX_AND_CONTENT_INTEGRITY_FULL_LIFECYCLE_R2_ACTIVE
   reentry_owner_capability: SOURCE_INTAKE_BASE_BLUEPRINT
@@ -393,7 +393,7 @@ pending_governance_review:
   - WEBSITE_CONSTRUCTION
   - DEPLOYMENT
 current_primary_task_layer: GOVERNANCE_MAINTENANCE
-current_primary_task_authorization_uid: USER_DIRECTIVE_20260921_CONFIRMED_DEFECT_REMEDIATION_PENDING_RECEIPT
+current_primary_task_authorization_uid: USR-DIRECTIVE-20260921-CONTENT-INTEGRITY-TYPOGRAPHY-CONSUMER-HARDENING-R1
 current_primary_task_product_stage_credit: 0
 earlier_closed_product_work_unit:
   work_unit_uid: WU-STAGE02-CORE01-FRESH-TEST-001
@@ -2637,8 +2637,52 @@ terminated_test_validation_maintenance_work_unit_core01_content_integrity_r2:
   product_resume_preserved: CORE01_STAGE01_STAGE03_CLEAN_BASELINE_READY_FRESH_STAGE01_WUR_REQUIRED
   test_resume_after_governance_remediation: CORE01_SOURCE_TEST_BUGFIX_AND_CONTENT_INTEGRITY_FULL_LIFECYCLE_R2_ACTIVE
   product_stage_credit: 0
-active_work_unit: null
+active_work_unit:
+  work_unit_uid: WU-GOV-CONTENT-INTEGRITY-TYPOGRAPHY-CONSUMER-HARDENING-001
+  canonical_name: PRODUCT_NEUTRAL_CONTENT_INTEGRITY_TYPOGRAPHY_AND_CONSUMER_HARDENING
+  primary_task_layer: GOVERNANCE_MAINTENANCE
+  current_status: AUTHORIZED_NORMATIVE_SUCCESSOR_PROMOTION_PENDING
+  authorization_uid: USR-DIRECTIVE-20260921-CONTENT-INTEGRITY-TYPOGRAPHY-CONSUMER-HARDENING-R1
+  canonical_owner: governance/specifications/current/SPECIFICATION_MUTATION_CONTROL.yaml
+  resolved_implementation_findings:
+  - FIND-20260921-001
+  - FIND-20260921-002
+  open_normative_findings:
+  - FIND-20260921-003
+  implementation_validation:
+    validated_head: e5c670c138e1efe3bf0b08372f1f89e34aba3251
+    selected_profile_run_id: 35544354027
+    selected_profile_result: success
+    full_line_run_id: 35544354032
+    full_line_result: success
+    branch_guard_run_id: 35544354025
+    branch_guard_result: success
+    fixed_new_head: f25a79111bbf1da47fe55f4fc8967b2148558317
+  definition_of_done:
+  - TYPOGRAPHY_COMPUTED_METRICS_COMMON_POLICY_ADDED
+  - STAGE03_DESIGN_BASELINE_CONTRACT_SYNCHRONIZED
+  - STAGE06_RUNTIME_CAPTURE_CONTRACT_SYNCHRONIZED
+  - AUDIT_MACHINE_EVIDENCE_CONTRACT_SYNCHRONIZED
+  - GENERIC_TYPOGRAPHY_EVIDENCE_VALIDATOR_PASS
+  - PRODUCT_NEUTRAL_PORTABILITY_PASS
+  - NEW_IMMUTABLE_GOVERNANCE_UID_ACTIVE
+  - EXACT_HEAD_SELECTED_PROFILE_FULL_LINE_PASS
+  - PRODUCT_STAGE_CREDIT_ZERO
+  product_stage_credit: 0
 last_work_unit_resolution_gate:
+  resolution_uid: WUR-GOV-CONTENT-INTEGRITY-TYPOGRAPHY-20260921-001
+  normative_authority: false
+  result: PASS_SINGLE_LEGAL_SUCCESSOR
+  requested_primary_task_layer: GOVERNANCE_MAINTENANCE
+  resolved_work_unit_uid: WU-GOV-CONTENT-INTEGRITY-TYPOGRAPHY-CONSUMER-HARDENING-001
+  authorization_uid: USR-DIRECTIVE-20260921-CONTENT-INTEGRITY-TYPOGRAPHY-CONSUMER-HARDENING-R1
+  canonical_owner: governance/specifications/current/SPECIFICATION_MUTATION_CONTROL.yaml
+  basis:
+  - EXPLICIT_USER_DIRECTIVE_VERIFY_AND_FILL_CONFIRMED_DEFECTS
+  - FIND_20260921_001_AND_002_IMPLEMENTATION_REMEDIATED_AND_EXACT_HEAD_VALIDATED
+  - FIND_20260921_003_REQUIRES_PRODUCT_NEUTRAL_NORMATIVE_SUCCESSOR
+  product_stage_credit: 0
+previous_work_unit_resolution_gate:
   resolution_uid: WUR-TEST-CORE01-CONTENT-INTEGRITY-FULL-LIFECYCLE-20260921-002
   normative_authority: false
   result: PASS_SINGLE_LEGAL_SUCCESSOR

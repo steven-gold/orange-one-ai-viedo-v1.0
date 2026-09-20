@@ -3,34 +3,33 @@ artifact_type: EXECUTION_SCOPE_MANIFEST
 normative_authority: false
 governance_uid: GOV-REV-20260920-CROSS-STAGE-MATERIALIZATION-CONSUMER-READINESS-HARDENING
 owning_capability: GOVERNANCE_MAINTENANCE
-scope_kind: GOVERNANCE_DEFECT_REMEDIATION_WUR_PENDING
+scope_kind: TYPOGRAPHY_COMPUTED_METRICS_NORMATIVE_SUCCESSOR
+work_unit_uid: WU-GOV-CONTENT-INTEGRITY-TYPOGRAPHY-CONSUMER-HARDENING-001
 included_units:
-- FIND-20260921-001_FORMAL_CONSUMER_PARSER_PERSISTENCE
-- FIND-20260921-002_REUSABLE_CONTENT_INTEGRITY_ENGINE
 - FIND-20260921-003_TYPOGRAPHY_COMPUTED_METRICS_POLICY
 excluded_units:
 - PRODUCT_DATA_MUTATION
 - PRODUCT_AUTHORITY_MUTATION
+- PRODUCT_BEHAVIOR_INVENTION
 - FORMAL_PRODUCTION_DEPLOYMENT
+- FORMAL_PRODUCTION_DATABASE_MIGRATION
 remaining_units:
-- FIND-20260921-001_FORMAL_CONSUMER_PARSER_PERSISTENCE
-- FIND-20260921-002_REUSABLE_CONTENT_INTEGRITY_ENGINE
 - FIND-20260921-003_TYPOGRAPHY_COMPUTED_METRICS_POLICY
-scope_selection_authority: EXPLICIT_USER_DIRECTIVE_VERIFY_CONFIRMED_DEFECTS_AND_FILL_MISSING_FIRST
+scope_selection_authority: USR-DIRECTIVE-20260921-CONTENT-INTEGRITY-TYPOGRAPHY-CONSUMER-HARDENING-R1
 dependency_closure_refs:
 - governance/specifications/current/SPECIFICATION_MUTATION_CONTROL.yaml
 - governance/specifications/current/GOVERNANCE_LAYER_SEPARATION_AND_PORTABILITY.yaml
-- governance/test/SPECIFICATION_CHANGE_CANDIDATES.yaml
-- .github/workflows/repository-three-branch-recovery.yml
-- governance/ci/validate_governance_portability.py
-- governance/ci/validate_core01_source_content_integrity.py
-denominator_source_refs:
-- governance/test/SPECIFICATION_CHANGE_CANDIDATES.yaml
 - .github/governance-source/active/source/12_DOCS/mother-spec/01_BLUEPRINT_DESIGN_GOVERNANCE.md
 - .github/governance-source/active/source/12_DOCS/mother-spec/02_IMPLEMENTATION_DELIVERY_STANDARD.md
 - .github/governance-source/active/source/12_DOCS/mother-spec/04_AUDIT_PROGRESS_STANDARD.md
+- .github/governance-source/active/source/10_REGISTRY/STAGE_EXECUTION_INVARIANT_REGISTRY.yaml
+- .github/governance-source/active/source/10_REGISTRY/GOVERNANCE_LIFECYCLE_STAGE_REGISTRY.yaml
+- .github/governance-source/active/source/10_REGISTRY/AUDIT_CATALOG.yaml
+denominator_source_refs:
+- governance/test/SPECIFICATION_CHANGE_CANDIDATES.yaml
+- governance/specifications/current/INTERACTION_TOPOLOGY_AI_CONTINUITY.yaml
 partial_scope: false
 stage_exit_credit_allowed: false
 fresh_revalidation_required: true
-closure_status: WUR_REQUIRED_BEFORE_EFFECTFUL_GOVERNANCE_REMEDIATION
-next_action: WORK_UNIT_RESOLUTION_GATE_FOR_CONFIRMED_CONSUMER_CONTENT_INTEGRITY_TYPOGRAPHY_DEFECTS
+closure_status: AUTHORIZED_NORMATIVE_SUCCESSOR_PROMOTION_PENDING
+next_action: PROMOTE_TYPOGRAPHY_COMPUTED_METRICS_SUCCESSOR
