@@ -153,7 +153,7 @@ if isinstance(prior_receipt,dict):
         receipt_history.append(copy.deepcopy(prior_receipt))
     state['stage03_clean_baseline_receipt_history']=receipt_history
 
-run('git','rm','-r','--',str(VISUAL_ROOT.relative_to(ROOT)),str(TEST_ROOT.relative_to(ROOT))
+run('git','rm','-r','--',str(VISUAL_ROOT.relative_to(ROOT)),str(TEST_ROOT.relative_to(ROOT)))
 
 state.pop('stage03_active_attempt',None)
 ps=state.setdefault('selected_execution_profile_state',{})
