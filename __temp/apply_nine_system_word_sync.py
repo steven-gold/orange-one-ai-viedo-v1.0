@@ -1,6 +1,6 @@
 from pathlib import Path
 from docx import Document
-from docx.enum.section import WD_SECTION, WD_ORIENT
+from docx.enum.section import WD_SECTION, WD_ORIENT, WD_SECTION_START
 from docx.shared import Inches, Pt
 from docx.oxml import OxmlElement
 from docx.oxml.ns import qn
@@ -277,6 +277,12 @@ for k,fn in FILES.items():
         print("ALREADY_SYNCED",fn)
         continue
     FUNCS[k](d)
+    if k=="08":
+        # Remove parity-only blank page between the cover and body. Preserve all content;
+        # only convert odd/even section starts to a normal next-page start.
+        for sec in d.sections:
+            if sec.start_type in (WD_SECTION_START.ODD_PAGE, WD_SECTION_START.EVEN_PAGE):
+                sec.start_type=WD_SECTION_START.NEW_PAGE
     d.save(p)
     Document(p)
     updated.append(fn)
