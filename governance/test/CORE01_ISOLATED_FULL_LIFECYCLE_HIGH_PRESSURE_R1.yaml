@@ -29,4 +29,23 @@ isolation:
   repository_product_data_mutation_allowed: false
   production_effectful_execution_allowed: false
 product_stage_credit: 0
-current_status: ACTIVE_PENDING_WORKFLOW_EXECUTION
+r1_execution:
+  workflow_run_id: 35509116177
+  result: BLOCKED_AT_STAGE06_WITH_SANDBOX_CLEANUP_PASS
+  stage01_source_intake: PASS
+  stage02_page_functional_contract: PASS
+  stage03_visual_design: PASS
+  stage04_foundation_freeze: PASS
+  stage05_implementation: PASS
+  stage06_verification_qa: BLOCKED
+  sandbox_cleanup: PASS
+  sandbox_residual: 0
+  finding:
+    uid: CORE01-FLOW-001
+    category: GLOBAL_AUTHORITY_DENOMINATOR_AND_CLASSIFICATION_DRIFT
+    source_branch: new
+    actual_authority_page_path_lines: 19
+    manifest_current_page_count: 18
+    stale_test_expected_page_count: 18
+    core_runtime_specific_failure: false
+current_status: ACTIVE_DIAGNOSTIC_CONTINUATION_STAGE07_THROUGH_STAGE11_REQUIRED

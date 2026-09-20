@@ -131,9 +131,20 @@ def main():
         }
         report["stages"].append(row)
         try:
+            diagnostic_only = report.get("lifecycle_blocked_at") is not None
             detail = fn() or {}
+            special_status = detail.pop("_stage_status", None) if isinstance(detail, dict) else None
             row["detail"] = detail
-            row["status"] = "PASS"
+            if special_status == "BLOCKED":
+                row["status"] = "BLOCKED"
+                report.setdefault("lifecycle_blocked_at", uid)
+                for finding in detail.get("findings", []) if isinstance(detail, dict) else []:
+                    report.setdefault("findings", []).append(finding)
+            elif diagnostic_only:
+                row["status"] = "PASS_DIAGNOSTIC_ONLY"
+                row["diagnostic_only_due_to_predecessor_block"] = True
+            else:
+                row["status"] = "PASS"
         except Exception as exc:
             row["status"] = "BLOCKED"
             row["error"] = str(exc)
@@ -265,7 +276,41 @@ def main():
         return {"lint": "PASS", "typecheck": "PASS", "core_runtime_tests": "PASS", "tracked_source_clean": True}
 
     def s6():
-        run(["npm", "test"], product, label="stage06_release_test_suite")
+        full_rc, full_out = run_capture(["npm", "test"], product, timeout=900)
+        findings = []
+        manifest_path = product / "authority/ACPOS_CURRENT_AUTHORITY_MANIFEST_FINAL_LOCKED.yaml"
+        manifest_text = manifest_path.read_text(encoding="utf-8")
+        page_lines = [x for x in manifest_text.splitlines() if x.startswith("  - authority/pages/")]
+        declared_count = None
+        for line in manifest_text.splitlines():
+            if line.strip().startswith("current_page_count:"):
+                try:
+                    declared_count = int(line.split(":", 1)[1].strip())
+                except ValueError:
+                    declared_count = None
+                break
+        stale_test = (product / "tests/release/authority.test.mjs").read_text(encoding="utf-8")
+        known_denominator_drift = (
+            full_rc != 0
+            and len(page_lines) == 19
+            and declared_count == 18
+            and "exactly 18 unique page authorities" in stale_test
+            and "19 !== 18" in full_out
+        )
+        if full_rc != 0 and not known_denominator_drift:
+            raise RuntimeError("stage06_release_test_suite_UNEXPECTED_FAILURE")
+        if known_denominator_drift:
+            findings.append({
+                "finding_uid": "CORE01-FLOW-001",
+                "category": "GLOBAL_AUTHORITY_DENOMINATOR_AND_CLASSIFICATION_DRIFT",
+                "owner_branch": "new",
+                "manifest": "authority/ACPOS_CURRENT_AUTHORITY_MANIFEST_FINAL_LOCKED.yaml",
+                "test": "tests/release/authority.test.mjs",
+                "actual_authority_page_path_lines": len(page_lines),
+                "declared_current_page_count": declared_count,
+                "detail": "CORE canonical visual authority is listed in the page-authority path denominator while manifest/test still declare exactly 18 pages.",
+                "core_runtime_specific_failure": False,
+            })
         run(["npm", "audit", "--audit-level=high"], product, label="stage06_npm_audit")
         env = {"NEXT_PUBLIC_ACPOS_RUNTIME_MODE": "CONTROLLED_TEST"}
         run(["npm", "run", "build"], product, env=env, label="stage06_controlled_build")
@@ -274,7 +319,17 @@ def main():
         run(["npm", "run", "test:browser"], product, env=env, label="stage06_browser_e2e")
         run(["npm", "run", "test:controls"], product, env=env, label="stage06_control_acceptance")
         tracked_clean(product)
-        return {"release_tests": "PASS", "security_audit": "PASS", "browser_e2e": "PASS", "control_acceptance": "PASS"}
+        detail = {
+            "release_tests": "PASS" if full_rc == 0 else "BLOCKED_GLOBAL_DENOMINATOR_DRIFT",
+            "security_audit": "PASS",
+            "browser_e2e": "PASS",
+            "control_acceptance": "PASS",
+            "full_release_test_return_code": full_rc,
+            "findings": findings,
+        }
+        if findings:
+            detail["_stage_status"] = "BLOCKED"
+        return detail
 
     def s7():
         shutil.rmtree(product / ".next", ignore_errors=True)
@@ -354,19 +409,27 @@ def main():
         for (uid, name), fn in zip(STAGES, funcs):
             stage(uid, name, fn)
         require(len(report["stages"]) == 11, "FINAL_STAGE_DENOMINATOR_DRIFT")
-        require(all(x.get("status") == "PASS" for x in report["stages"]), "FINAL_STAGE_NONPASS")
-        report["result"] = "PASS_PRE_CLEANUP"
         report["all_11_stage_receipts"] = True
         report["final_receipt_sha256"] = predecessor_hash
         report["product_stage_credit"] = 0
+        if report.get("lifecycle_blocked_at"):
+            report["result"] = "BLOCKED_WITH_FULL_DIAGNOSTIC_CONTINUATION"
+            report["all_stage_pass"] = False
+        else:
+            report["result"] = "PASS_PRE_CLEANUP"
+            report["all_stage_pass"] = True
         write_json(report_path, report)
         print(json.dumps({
             "result": report["result"],
             "stage_denominator": len(report["stages"]),
-            "all_stage_pass": True,
+            "all_stage_pass": report["all_stage_pass"],
+            "lifecycle_blocked_at": report.get("lifecycle_blocked_at"),
+            "finding_total": len(report.get("findings", [])),
             "formal_production_deployment_performed": False,
             "product_stage_credit": 0,
         }, indent=2), flush=True)
+        if report.get("lifecycle_blocked_at"):
+            raise SystemExit(2)
     except Exception:
         write_json(report_path, report)
         raise
