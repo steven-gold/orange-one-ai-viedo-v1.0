@@ -4,7 +4,7 @@ artifact_type: IMMUTABLE_SEMANTIC_AUTHORITY_BASELINE
 status: CURRENT_CANDIDATE_IMMUTABLE
 canonical_path: 10_REGISTRY/SEMANTIC_AUTHORITY_BASELINE.yaml
 owner_uid: OWNER-GOVERNANCE-SEMANTIC-ANCHOR
-governance_revision: v2.2.13-asset-stage01-stage02-shared-contract-hardening
+governance_revision: v2.2.14-stage03-visual-materialization-hardening
 anchor_policy:
   official_refresh_must_not_mutate: true
   compiler_must_not_regenerate: true
@@ -137,6 +137,8 @@ semantic_snapshot:
       - WEB-GOV-01-S079
       - WEB-GOV-01-S081
       - WEB-GOV-01-S084
+      - WEB-GOV-01-S080
+      - WEB-GOV-01-S087
     STAGE-04:
       rule_uid: REFRULE-STAGE-04
       exact_required_normative_section_uids:
@@ -839,7 +841,7 @@ package_integrity_assets:
 - 09_TESTS/governance/test_v2_1_14_test_feedback_spec_evolution.py
 - 09_TESTS/governance/validate_product_neutral_entity_lifecycle.py
 - 09_TESTS/governance/test_v2_1_14_product_neutral_entity_lifecycle.py
-content_hash: b13b80f94fbdfc687c6062f0b3d2bc72813ce8cda2a1c465e8b2c395688220ca
+content_hash: 0321fc45a96b3ac286fcf5c3d5b52f60fe8bd30ea264c38c11248aae1059c0f3
 protected_hash_paths:
 - 09_TESTS/governance/validate_test_feedback_spec_evolution.py
 - 09_TESTS/governance/test_v2_1_14_test_feedback_spec_evolution.py

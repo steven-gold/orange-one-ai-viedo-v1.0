@@ -64,3 +64,6 @@ Basic Design completeness requires full row-level denominator materialization, n
 
 ## v2.2.13 ASSET Stage-01/02 shared contract hardening
 This successor hardens product-neutral Stage-02 control-vs-system-trigger resolution, exact producer/consumer field-schema identity, no-history product-value fallback, legal task-layer transition order, and reusable Stage-02 consumer neutrality. It does not change ASSET product Authority.
+
+## v2.2.14 Stage-03 visual materialization hardening
+This successor closes the Mother-to-Execution-Profile undercoverage that allowed Stage-03 to report all declared outputs materialized while required Visual Reference Annotation, Visual Inheritance, multi-state evidence, reviewable controls/fields, atomic Workbench visual binding, and unresolved visual-Authority blockers were absent from the profile denominator. Product behavior and unresolved external visual Authority remain unchanged.

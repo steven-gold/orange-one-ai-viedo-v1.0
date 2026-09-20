@@ -4,7 +4,7 @@ artifact_type: STAGE_EXECUTION_INVARIANT_REGISTRY
 status: CURRENT_CANDIDATE
 canonical_path: 10_REGISTRY/STAGE_EXECUTION_INVARIANT_REGISTRY.yaml
 owner_uid: OWNER-GOVERNANCE-STAGE-EXECUTION-INVARIANT
-governance_revision: v2.2.13-asset-stage01-stage02-shared-contract-hardening
+governance_revision: v2.2.14-stage03-visual-materialization-hardening
 scope:
   applies_to_stages:
   - STAGE-01
@@ -1032,6 +1032,26 @@ invariants:
     materializer_or_environment_may_force_primary_task_layer: false
     nearby_stage_or_retry_may_skip_resolution: false
     violation: BLOCK
+  VISUAL_DESIGN_PROFILE_MATERIALIZATION_COMPLETENESS:
+    capability: VISUAL_DESIGN
+    mother_section_uid: WEB-GOV-01-S087
+    required_stage03_outputs:
+    - VISUAL_DESIGN_SPEC_PACKAGE
+    - VISUAL_GEOMETRY_CONTRACT
+    - VISUAL_PREVIEW_EVIDENCE
+    - VISUAL_CHANGESET
+    - VISUAL_INTERACTION_TOPOLOGY_BINDING
+    - FUNCTIONAL_WORKBENCH_LAYOUT_CONTRACT
+    - VISUAL_REFERENCE_ANNOTATION
+    - VISUAL_INHERITANCE_MATRIX
+    - VISUAL_SCENARIO_EVIDENCE_SET
+    every_required_output_has_explicit_producer: true
+    mother_required_output_may_be_omitted_by_profile: false
+    structural_only_preview_may_satisfy_human_visual_review: false
+    atomic_workbench_visual_binding_required: true
+    unresolved_authority_is_authority_absent: false
+    unresolved_applicable_visual_authority_in_denominator_required: true
+    profile_materialization_undercoverage: BLOCK
 stage02_observed_defect_mapping:
 - finding: PORT_EXPOSURE_WITHOUT_TRIGGER
   mapped_invariant: RELATION_SEMANTIC_SEPARATION

@@ -1,8 +1,8 @@
 {
   "artifact_type": "NON_NORMATIVE_FULL_LINE_SYSTEM_GATE_EVIDENCE",
   "mode": "SYSTEM_ROUND_1_FULL_LINE_HIGH_PRESSURE",
-  "source_zip_sha256": "c2754c623184c3ab071acb0cea77e793f3729dda4ef5fc8cd51cfb0eb908395a",
-  "deterministic_source_bundle_sha256": "9241298d14ec95502a1c6342fdaa5312401bcca365fd360b1202dadc9bf2a19c",
+  "source_zip_sha256": "12690008d6bef9c3245c1212248985b3fca38ff54dd9dcbc1550ba951eeedaed",
+  "deterministic_source_bundle_sha256": "b6fc93a54cfdc3c4b1e6b62e1a10496c2d1576e4e7fa516393841b11c8d659f2",
   "lifecycle_stage_count": 11,
   "lifecycle_stage_uids": [
     "STAGE-01",
@@ -119,7 +119,7 @@
       {
         "check_id": "section_registry",
         "status": "PASS",
-        "section_count": 341,
+        "section_count": 342,
         "failures": [],
         "section_uids": [
           "WEB-GOV-01-S000",
@@ -210,6 +210,7 @@
           "WEB-GOV-01-S084",
           "WEB-GOV-01-S085",
           "WEB-GOV-01-S086",
+          "WEB-GOV-01-S087",
           "WEB-GOV-02-S000",
           "WEB-GOV-02-S001",
           "WEB-GOV-02-S002",
@@ -489,7 +490,7 @@
         "status": "PASS",
         "stage_count": 11,
         "delivery_steps": 54,
-        "operation_count": 105,
+        "operation_count": 108,
         "failures": []
       },
       {
@@ -507,7 +508,7 @@
         "validator_identities": 36,
         "audit_types": 13,
         "naming_items": 13,
-        "semantic_anchor_hash": "b13b80f94fbdfc687c6062f0b3d2bc72813ce8cda2a1c465e8b2c395688220ca"
+        "semantic_anchor_hash": "0321fc45a96b3ac286fcf5c3d5b52f60fe8bd30ea264c38c11248aae1059c0f3"
       },
       {
         "check_id": "program_artifact_instance_guard",
@@ -518,8 +519,8 @@
       {
         "check_id": "current_test_evidence_sync",
         "status": "PASS",
-        "current_revision": "v2.2.13",
-        "current_source_revision": "v2.2.13-asset-stage01-stage02-shared-contract-hardening",
+        "current_revision": "v2.2.14",
+        "current_source_revision": "v2.2.14-stage03-visual-materialization-hardening",
         "fresh_revalidation_required": true,
         "mandatory_suite_count": 17,
         "failures": []
@@ -550,7 +551,7 @@
       {
         "check_id": "stage_execution_invariants",
         "status": "PASS",
-        "invariant_count": 56,
+        "invariant_count": 57,
         "stage_count": 11,
         "failures": []
       },
@@ -575,7 +576,7 @@
       {
         "check_id": "acceptance_blueprint_compiled_baseline",
         "status": "PASS",
-        "compiled_requirements": 756,
+        "compiled_requirements": 768,
         "audit_denominator": 13,
         "failures": []
       },

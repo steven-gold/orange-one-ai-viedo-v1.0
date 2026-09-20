@@ -100,3 +100,9 @@ The candidate package cannot self-prove integrity. The trust-root hash set is an
 - Producer/consumer field-schema drift fails before materialization; alias fallback cannot hide the defect.
 - Historical product values cannot fill Current missing contracts.
 - Reusable Stage consumers remain product-neutral and task-layer order is not bypassable.
+
+## v2.2.14 Stage-03 visual materialization hardening rule
+- v2.2.13 remains immutable predecessor history.
+- A selected profile may specialize sequence and artifact names but may not omit applicable Mother-required deliverables.
+- Stage-03 Visual Review requires reviewable visual evidence, explicit annotation/inheritance/scenario artifacts, atomic Workbench projection, and a Current denominator that preserves unresolved visual Authority blockers.
+- UNRESOLVED visual Authority is not AUTHORITY_ABSENT and never authorizes AI style invention.

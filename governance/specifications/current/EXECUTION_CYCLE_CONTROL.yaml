@@ -1,4 +1,4 @@
-schema_version: 5
+schema_version: 6
 artifact_uid: GOV-COMP-EXECUTION-CYCLE-CONTROL
 artifact_type: GOVERNANCE_SPECIFICATION_COMPONENT
 normative_status: ACTIVE_CURRENT_GOVERNANCE_COMPONENT
@@ -317,3 +317,10 @@ task_layer_effectful_transition_order:
   - EFFECTFUL_EXECUTION
   environment_override: false
   materializer_override: false
+mother_profile_materialization_reconciliation:
+  applicable_mother_required_output_must_be_profile_output: true
+  explicit_producer_binding_required: true
+  required_output_denominator_must_include_all_applicable_mother_outputs: true
+  profile_local_output_subset_may_weaken_mother_policy: false
+  missing_required_profile_projection: PROFILE_MATERIALIZATION_UNDERCOVERAGE
+  unresolved_authority_is_not_absent: true

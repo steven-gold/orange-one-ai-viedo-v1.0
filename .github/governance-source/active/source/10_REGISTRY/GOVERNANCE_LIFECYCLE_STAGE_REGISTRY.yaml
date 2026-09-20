@@ -4,7 +4,7 @@ artifact_type: EXECUTION_PROFILE_REGISTRY
 status: CURRENT_CANDIDATE
 canonical_path: 10_REGISTRY/GOVERNANCE_LIFECYCLE_STAGE_REGISTRY.yaml
 owner_uid: OWNER-GOVERNANCE-LIFECYCLE
-governance_revision: v2.2.13-asset-stage01-stage02-shared-contract-hardening
+governance_revision: v2.2.14-stage03-visual-materialization-hardening
 normative_section_uids:
 - WEB-GOV-02-S004
 - WEB-GOV-02-S067
@@ -439,6 +439,9 @@ stages:
   - VISUAL_CHANGESET_COMPILE
   - VISUAL_INTERACTION_TOPOLOGY_BIND
   - FUNCTIONAL_WORKBENCH_LAYOUT_BIND
+  - VISUAL_REFERENCE_ANNOTATION_COMPILE
+  - VISUAL_INHERITANCE_MATRIX_COMPILE
+  - VISUAL_SCENARIO_EVIDENCE_COMPILE
   outputs:
   - VISUAL_DESIGN_SPEC_PACKAGE
   - VISUAL_GEOMETRY_CONTRACT
@@ -446,6 +449,9 @@ stages:
   - VISUAL_CHANGESET
   - VISUAL_INTERACTION_TOPOLOGY_BINDING
   - FUNCTIONAL_WORKBENCH_LAYOUT_CONTRACT
+  - VISUAL_REFERENCE_ANNOTATION
+  - VISUAL_INHERITANCE_MATRIX
+  - VISUAL_SCENARIO_EVIDENCE_SET
   output_producers:
     VISUAL_DESIGN_SPEC_PACKAGE: VISUAL_SPEC_COMPILE
     VISUAL_GEOMETRY_CONTRACT: GEOMETRY_CONTRACT_COMPILE
@@ -453,6 +459,9 @@ stages:
     VISUAL_CHANGESET: VISUAL_CHANGESET_COMPILE
     VISUAL_INTERACTION_TOPOLOGY_BINDING: VISUAL_INTERACTION_TOPOLOGY_BIND
     FUNCTIONAL_WORKBENCH_LAYOUT_CONTRACT: FUNCTIONAL_WORKBENCH_LAYOUT_BIND
+    VISUAL_REFERENCE_ANNOTATION: VISUAL_REFERENCE_ANNOTATION_COMPILE
+    VISUAL_INHERITANCE_MATRIX: VISUAL_INHERITANCE_MATRIX_COMPILE
+    VISUAL_SCENARIO_EVIDENCE_SET: VISUAL_SCENARIO_EVIDENCE_COMPILE
   validators:
   - VAL-GOV-029
   - VAL-GOV-030
@@ -483,6 +492,8 @@ stages:
   - WEB-GOV-01-S079
   - WEB-GOV-01-S081
   - WEB-GOV-01-S084
+  - WEB-GOV-01-S080
+  - WEB-GOV-01-S087
   pre_execution_gate: GOVERNANCE_LOAD_RECEIPT_PASS
   validator_names:
   - VISUAL_DOMAIN_GUARD
@@ -517,6 +528,9 @@ stages:
     atomic_workbench_fragmentation: BLOCK
     unapproved_visual_reorder_or_surface_insertion: BLOCK
     responsive_reflow_semantic_order_preservation_required: true
+    visual_reference_annotation_required: true
+    visual_inheritance_matrix_required: true
+    visual_scenario_evidence_set_required: true
   conditional_inputs:
     AI_INTERACTION_CONTINUITY_CONTRACT:
       when_scope_kind_in: *id001
@@ -555,6 +569,29 @@ stages:
   stage_exit_scope_source: DECLARED_STAGE_REQUIRED_UNIVERSE_RECONCILIATION
   partial_work_unit_closure_may_grant_stage_exit: false
   functional_topology_redefinition: BLOCK_REOPEN_STAGE02
+  required_output_applicability:
+    always_for_target_scope:
+    - VISUAL_DESIGN_SPEC_PACKAGE
+    - VISUAL_GEOMETRY_CONTRACT
+    - VISUAL_PREVIEW_EVIDENCE
+    - VISUAL_CHANGESET
+    - VISUAL_INTERACTION_TOPOLOGY_BINDING
+    - FUNCTIONAL_WORKBENCH_LAYOUT_CONTRACT
+    - VISUAL_REFERENCE_ANNOTATION
+    - VISUAL_INHERITANCE_MATRIX
+    - VISUAL_SCENARIO_EVIDENCE_SET
+  visual_materialization_gate:
+    required: true
+    mother_section_uid: WEB-GOV-01-S087
+    required_outputs:
+    - VISUAL_REFERENCE_ANNOTATION
+    - VISUAL_INHERITANCE_MATRIX
+    - VISUAL_SCENARIO_EVIDENCE_SET
+    structural_only_preview_may_reach_visual_review: false
+    explicit_atomic_workbench_visual_binding_required: true
+    unresolved_visual_authority_is_authority_absent: false
+    unresolved_visual_authority_must_enter_current_problem_denominator: true
+    profile_materialization_undercoverage: BLOCK
 - stage_uid: STAGE-04
   name: FOUNDATION_FREEZE
   scope_mode: ALL_REQUIRED_PAGES
@@ -1820,6 +1857,11 @@ cross_stage_invariants:
     quantitative_basic_design_freeze_completeness_required: true
     human_readable_design_document_embedded_visuals_required: true
     basic_design_independent_of_implementation_execution_and_deployment: true
+    mother_required_visual_outputs_profile_materialized: true
+    stage03_visual_reference_annotation_output_required: true
+    stage03_visual_inheritance_matrix_output_required: true
+    stage03_visual_scenario_evidence_set_output_required: true
+    unresolved_visual_authority_not_equivalent_to_absent: true
   canonical_stage_execution_optimization:
     invariant_uid: GOV-INV-CANONICAL-STAGE-EXECUTION-OPTIMIZATION-001
     normative_section_uid: WEB-GOV-03-S062

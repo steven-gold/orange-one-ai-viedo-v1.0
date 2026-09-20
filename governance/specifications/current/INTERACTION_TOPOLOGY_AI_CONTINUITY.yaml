@@ -1,4 +1,4 @@
-schema_version: 4
+schema_version: 5
 artifact_uid: GOV-COMP-INTERACTION-TOPOLOGY-AI-CONTINUITY
 artifact_type: GOVERNANCE_SPECIFICATION_COMPONENT
 normative_status: ACTIVE_CURRENT_GOVERNANCE_COMPONENT
@@ -82,6 +82,18 @@ common_invariants:
     external_image_only_delivery: BLOCK
     self_contained_human_review_required: true
     implementation_artifacts_required: false
+  VISUAL_DESIGN_PROFILE_MATERIALIZATION_COMPLETENESS:
+    mother_section_uid: WEB-GOV-01-S087
+    required_stage_outputs:
+    - VISUAL_REFERENCE_ANNOTATION
+    - VISUAL_INHERITANCE_MATRIX
+    - VISUAL_SCENARIO_EVIDENCE_SET
+    explicit_output_producer_binding_required: true
+    structural_only_preview_may_reach_human_visual_review: false
+    atomic_workbench_visual_binding_required: true
+    unresolved_visual_authority_is_authority_absent: false
+    unresolved_visual_authority_must_remain_blocker: true
+    profile_materialization_undercoverage: BLOCK
 authority_boundaries:
   functional_contract_authority: DEFINE_FUNCTIONAL_TOPOLOGY
   visual_design_authority: PROJECT_APPROVED_VISUAL_PROJECTION

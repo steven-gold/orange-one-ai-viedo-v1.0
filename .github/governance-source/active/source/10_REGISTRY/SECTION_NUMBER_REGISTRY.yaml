@@ -5,7 +5,7 @@ artifact_type: SECTION_NUMBER_REGISTRY
 status: CURRENT_CANDIDATE
 canonical_path: 10_REGISTRY/SECTION_NUMBER_REGISTRY.yaml
 owner_uid: OWNER-GOVERNANCE-SECTION-REGISTRY
-governance_revision: v2.2.13-asset-stage01-stage02-shared-contract-hardening
+governance_revision: v2.2.14-stage03-visual-materialization-hardening
 policy:
   unique_numeric_h2_per_document: true
   section_uid_is_canonical_reference: true
@@ -760,6 +760,13 @@ documents:
     heading: '## 86. 基本設計執行細節完整度 Gate / Basic Design Execution-Detail Completeness'
     path: 12_DOCS/mother-spec/01_BLUEPRINT_DESIGN_GOVERNANCE.md
     binding_sha256: 56b216a6836f08273481f374afb1ed809e964c44219213dccd12db3a2e422277
+  - section_uid: WEB-GOV-01-S087
+    level: 2
+    canonical_number: '87'
+    title: 視覺設計 Profile 實體化與分母對帳 Gate / Visual Design Profile Materialization and Denominator Reconciliation
+    heading: '## 87. 視覺設計 Profile 實體化與分母對帳 Gate / Visual Design Profile Materialization and Denominator Reconciliation'
+    path: 12_DOCS/mother-spec/01_BLUEPRINT_DESIGN_GOVERNANCE.md
+    binding_sha256: 9a44a832e3157aa1625ad70cd9435e0faf19f67ced4510d53152f7b1ee8f52b8
 - document_id: WEB-GOV-02
   path: 12_DOCS/mother-spec/02_IMPLEMENTATION_DELIVERY_STANDARD.md
   sections:

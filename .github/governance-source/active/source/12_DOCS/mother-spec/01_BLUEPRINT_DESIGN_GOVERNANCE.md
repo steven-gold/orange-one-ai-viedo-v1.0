@@ -1742,3 +1742,20 @@ A design that names a control or function but leaves its input source, ownership
 AI MUST_NOT fill a missing product decision merely to complete the matrix. If Current Authority does not uniquely determine the required detail, the row MUST remain AUTHORITY_GAP, DESIGN_DECISION_REQUIRED, or another governed fail-closed disposition and MUST block Freeze where the detail is REQUIRED.
 
 No downstream implementation, test, runtime, or deployment artifact may be used to retroactively claim that an incomplete Basic Design row was complete at Freeze time.
+
+<!-- SECTION_UID: WEB-GOV-01-S087 -->
+## 87. 視覺設計 Profile 實體化與分母對帳 Gate / Visual Design Profile Materialization and Denominator Reconciliation
+
+Every selected Execution Profile that binds the VISUAL_DESIGN capability MUST project every applicable Mother-required visual deliverable into explicit profile outputs, producer bindings, applicability rules, Current denominator accounting, validation evidence, and fail-closed behavior. A profile-local output list MUST_NOT weaken or silently omit a reusable Mother requirement.
+
+For every applicable visual-design scope, the profile MUST materialize at least VISUAL_REFERENCE_ANNOTATION, VISUAL_INHERITANCE_MATRIX, and VISUAL_SCENARIO_EVIDENCE_SET in addition to the page/surface Visual Design Spec, Geometry, topology/workbench bindings, preview evidence, and Change Set. VISUAL_PREVIEW_EVIDENCE, a screenshot, a structural wireframe, or a high-level design package MUST_NOT substitute for those separate required artifacts.
+
+VISUAL_STYLE_DEFINITION remains conditionally required by WEB-GOV-01-S080 only when Current evidence proves that no applicable Current visual authority exists. An unresolved, external, missing-from-capture, or not-yet-resolved authority reference is UNRESOLVED_AUTHORITY, not AUTHORITY_ABSENT; it MUST remain a blocker and MUST_NOT authorize AI to invent a replacement global style, shell, palette, token set, component system, or visual semantics.
+
+Before a candidate can reach the human Visual Review boundary, reviewable visual evidence MUST expose the applicable required Controls/System Triggers, Fields/Inputs, States, Visual Anchors, Workbench boundaries, and legal semantic order at sufficient fidelity for review. A preview self-classified as structural-only, or one that omits the applicable required interaction denominator, is not a complete Visual Review candidate.
+
+For every ATOMIC_WORKBENCH, visual materialization MUST include an explicit atomic-workbench visual binding and prove required order, adjacency, same-surface/context continuity, interruption boundary, and permitted downstream docks/surfaces. A section-level binding summary alone MUST_NOT support functional-to-visual topology equivalence PASS.
+
+The Stage/Capability Current Problem Register and Denominator Snapshot MUST include every unresolved applicable visual Authority gap and every missing required visual deliverable. Human review pending is an additional state and MUST_NOT replace or hide other open blockers.
+
+Any mismatch between Mother-required applicable deliverables and profile outputs/producers/denominators is PROFILE_MATERIALIZATION_UNDERCOVERAGE and MUST block Stage closure, Visual Approval, Design Freeze, and downstream transition.
