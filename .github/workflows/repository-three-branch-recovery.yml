@@ -1,4 +1,4 @@
-name: Repository three-branch authority guard
+name: Repository authorized branch authority guard
 
 on:
   push:
@@ -55,7 +55,7 @@ jobs:
           : >/tmp/preserved.txt
           while IFS= read -r branch; do
             case "${branch}" in
-              main|new|rebuild-v2.1.1)
+              main|new|rebuild-v2.1.1|0921acpos)
                 echo "${branch} [PRIMARY_KEEP]" >>/tmp/preserved.txt
                 continue
                 ;;
@@ -101,4 +101,4 @@ jobs:
           new_now="$(api "https://api.github.com/repos/${REPO}/git/ref/heads/new" | jq -r '.object.sha')"
           test "${main_now}" = "${MAIN_TARGET}"
           test "${new_now}" = "${NEW_TARGET}"
-          echo "PRIMARY_REFS_OK main=${main_now} new=${new_now} rebuild-v2.1.1=${GITHUB_SHA}"
+          echo "AUTHORIZED_REFS_OK main=${main_now} new=${new_now} rebuild-v2.1.1=KEEP 0921acpos=USER_AUTHORIZED_INDEPENDENT_WORKLINE"
