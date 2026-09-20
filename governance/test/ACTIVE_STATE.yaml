@@ -301,14 +301,14 @@ resume_control:
   parent_exact_next_action: VALIDATE_COMMON_BLOCKED_EVIDENCE_AND_STAGE03_PROVENANCE
   historical_stage2_results_are_current_state: false
 suspended_resume_control_sys01_change_request:
-    current_resume_point: STAGE03_BLOCKED_EVIDENCE_SCHEMA_MAINTENANCE
-    current_work_unit_uid: WU-TEST-STAGE03-BLOCKED-EVIDENCE-SCHEMA-001
-    current_owner: governance/ci/stage_execution_engine.py
-    exact_next_action: VALIDATE_COMMON_BLOCKED_EVIDENCE_AND_STAGE03_PROVENANCE
-    parent_resume_point: STAGE3_CORE01_WORK_UNIT_RESOLVED_PREEXECUTION
-    parent_work_unit_uid: WU-STAGE03-CORE01-VISUAL-DESIGN-001
-    parent_exact_next_action: RUN_CORE01_STAGE03_VISUAL_DESIGN_TO_HUMAN_REVIEW_BOUNDARY
-    historical_stage2_results_are_current_state: false
+  current_resume_point: STAGE03_BLOCKED_EVIDENCE_SCHEMA_MAINTENANCE
+  current_work_unit_uid: WU-TEST-STAGE03-BLOCKED-EVIDENCE-SCHEMA-001
+  current_owner: governance/ci/stage_execution_engine.py
+  exact_next_action: VALIDATE_COMMON_BLOCKED_EVIDENCE_AND_STAGE03_PROVENANCE
+  parent_resume_point: STAGE3_CORE01_WORK_UNIT_RESOLVED_PREEXECUTION
+  parent_work_unit_uid: WU-STAGE03-CORE01-VISUAL-DESIGN-001
+  parent_exact_next_action: RUN_CORE01_STAGE03_VISUAL_DESIGN_TO_HUMAN_REVIEW_BOUNDARY
+  historical_stage2_results_are_current_state: false
   suspension_reason: EXPLICIT_USER_CHANGE_REQUEST_SYS01_NEXT_PAGE_ENCODER_ALIGNMENT
   suspension_preserves_prior_effectful_resume: true
   suspension_does_not_close_parent_work_unit: true
@@ -2297,32 +2297,32 @@ closed_test_validation_maintenance_work_unit_stage02_revalidation_persistence:
     product_contract_content_mutated: false
     legal_next_transition: REVALIDATE_ASSET01_STAGE02_AFTER_EXACT_CLOSURE_MATERIALIZATION
 suspended_test_validation_maintenance_work_unit_sys01_change_request:
-    work_unit_uid: WU-TEST-STAGE03-BLOCKED-EVIDENCE-SCHEMA-001
-    canonical_name: COMMON_STAGE_BLOCKED_EVIDENCE_AND_STAGE03_PROVENANCE_HARDENING
-    stage_uid: STAGE-03
-    semantic_capability: SHARED_STAGE_EXECUTION_IMPLEMENTATION
-    primary_task_layer: TEST_OR_VALIDATION_MAINTENANCE
-    canonical_owner: governance/ci/stage_execution_engine.py
-    current_status: IN_PROGRESS_COMMON_ENGINE_INTERRUPT
-    parent_product_work_unit_uid: WU-STAGE03-CORE01-VISUAL-DESIGN-001
-    source_failed_workflow_run_id: 35478678744
-    source_failed_step: NORMALIZED_STAGE03_EVIDENCE_VALIDATION
-    product_stage_credit: 0
-    scope:
-    - BLOCKED_NEXT_STAGE_TRANSITION_SCHEMA
-    - NORMALIZED_OUTPUT_PRODUCER_BINDING
-    - SCANNER_RESULT_SCHEMA
-    - DENOMINATOR_SCHEMA
-    - REMEDIATION_REEXECUTION_SCHEMA
-    - STAGE03_ARTIFACT_PROVENANCE_BINDING
-    out_of_scope:
-    - MOTHER_GOVERNANCE_MUTATION
-    - CURRENT_SPECIFICATION_MUTATION
-    - VISUAL_PRODUCT_AUTHORITY_CHANGE
-    - VISUAL_APPROVAL
-    - STAGE04
-    - WEBSITE_CONSTRUCTION
-    - DEPLOYMENT
+  work_unit_uid: WU-TEST-STAGE03-BLOCKED-EVIDENCE-SCHEMA-001
+  canonical_name: COMMON_STAGE_BLOCKED_EVIDENCE_AND_STAGE03_PROVENANCE_HARDENING
+  stage_uid: STAGE-03
+  semantic_capability: SHARED_STAGE_EXECUTION_IMPLEMENTATION
+  primary_task_layer: TEST_OR_VALIDATION_MAINTENANCE
+  canonical_owner: governance/ci/stage_execution_engine.py
+  current_status: IN_PROGRESS_COMMON_ENGINE_INTERRUPT
+  parent_product_work_unit_uid: WU-STAGE03-CORE01-VISUAL-DESIGN-001
+  source_failed_workflow_run_id: 35478678744
+  source_failed_step: NORMALIZED_STAGE03_EVIDENCE_VALIDATION
+  product_stage_credit: 0
+  scope:
+  - BLOCKED_NEXT_STAGE_TRANSITION_SCHEMA
+  - NORMALIZED_OUTPUT_PRODUCER_BINDING
+  - SCANNER_RESULT_SCHEMA
+  - DENOMINATOR_SCHEMA
+  - REMEDIATION_REEXECUTION_SCHEMA
+  - STAGE03_ARTIFACT_PROVENANCE_BINDING
+  out_of_scope:
+  - MOTHER_GOVERNANCE_MUTATION
+  - CURRENT_SPECIFICATION_MUTATION
+  - VISUAL_PRODUCT_AUTHORITY_CHANGE
+  - VISUAL_APPROVAL
+  - STAGE04
+  - WEBSITE_CONSTRUCTION
+  - DEPLOYMENT
   suspended_status: SUSPENDED_BY_EXPLICIT_USER_CHANGE_REQUEST
   suspended_resume_point: STAGE03_BLOCKED_EVIDENCE_SCHEMA_MAINTENANCE
   suspended_exact_next_action: VALIDATE_COMMON_BLOCKED_EVIDENCE_AND_STAGE03_PROVENANCE
