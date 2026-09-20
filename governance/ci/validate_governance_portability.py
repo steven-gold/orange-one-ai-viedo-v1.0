@@ -118,6 +118,7 @@ for surface in global_surfaces:
 # Reusable product-scope consumers must remain scope-parametric.
 scope_neutral_surfaces=[
     ROOT/'governance/ci/content_integrity_engine.py',
+    ROOT/'governance/ci/validate_typography_metrics_evidence.py',
     ROOT/'governance/ci/run_current_stage2_actual_test.py',
     ROOT/'governance/ci/validate_current_stage2_materialized_closure.py',
     ROOT/'governance/ci/validate_stage02_state_integrity.py',
