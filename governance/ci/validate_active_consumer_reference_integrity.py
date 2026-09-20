@@ -185,6 +185,13 @@ def resolve_profile_bound_state(active_state: dict, errors: list[str]) -> tuple[
     return attempt, step
 
 
+def projector_profile_step_key(kind: str) -> str | None:
+    match = re.match(r"^STAGE(\d{2})_", str(kind or ""))
+    if not match:
+        return None
+    return f"stage{int(match.group(1))}"
+
+
 def classify_projectors(registry: dict, current_uid: str, errors: list[str]) -> dict[str, object]:
     cfg = registry.get("active_consumer_reference_integrity") or {}
     inventory = cfg.get("projector_inventory")
@@ -194,6 +201,8 @@ def classify_projectors(registry: dict, current_uid: str, errors: list[str]) -> 
 
     active_state = load_yaml(ROOT / "governance/test/ACTIVE_STATE.yaml")
     active_attempt, current_step = resolve_profile_bound_state(active_state, errors)
+    profile_state = active_state.get("selected_execution_profile_state") or {}
+    current_step_key = str(profile_state.get("current_step_state_key") or "")
     projectors: dict[str, object] = {}
     seen = set()
 
@@ -211,6 +220,15 @@ def classify_projectors(registry: dict, current_uid: str, errors: list[str]) -> 
         seen.add(key)
         path = ROOT / owner
         label = f"{owner}#{yaml_path}"
+        owning_step_key = projector_profile_step_key(kind)
+        if owning_step_key and owning_step_key != current_step_key:
+            projectors[label] = {
+                "applicability": "NOT_APPLICABLE_OUTSIDE_OWNING_PROFILE_STEP",
+                "owning_step_key": owning_step_key,
+                "current_step_key": current_step_key,
+                "present": path.is_file(),
+            }
+            continue
         # Current findings are an executed-step projector. In the canonical NOT_EXECUTED
         # clean-reset state they must be absent; requiring them would contradict the
         # selected-profile zero-residual contract.
@@ -275,6 +293,19 @@ def classify_projectors(registry: dict, current_uid: str, errors: list[str]) -> 
             errors.append(f"PROJECTOR_KIND_UNKNOWN:{label}:{kind}")
 
     return projectors
+
+
+def validate_projector_step_applicability_regression(errors: list[str]) -> dict[str, bool]:
+    checks = {
+        "STAGE02_CURRENT_FINDINGS_OWNS_STAGE2": projector_profile_step_key("STAGE02_CURRENT_FINDINGS_CROSSCHECK") == "stage2",
+        "STAGE02_CURRENT_EXECUTION_OWNS_STAGE2": projector_profile_step_key("STAGE02_CURRENT_EXECUTION_CROSSCHECK") == "stage2",
+        "STAGE03_SYNTHETIC_OWNS_STAGE3": projector_profile_step_key("STAGE03_CURRENT_FINDINGS_CROSSCHECK") == "stage3",
+        "GOVERNANCE_UID_HAS_NO_PROFILE_STEP": projector_profile_step_key("GOVERNANCE_UID") is None,
+    }
+    for uid, caught in checks.items():
+        if not caught:
+            errors.append(f"PROJECTOR_PROFILE_STEP_APPLICABILITY_REGRESSION_ESCAPED:{uid}")
+    return checks
 
 
 def run_negative_regressions(errors: list[str]) -> dict[str, bool]:
@@ -399,6 +430,7 @@ def main() -> int:
             errors.append(f"REFERENCE_INTEGRITY_GATE_MISSING_FROM_REQUIRED_REGRESSION:{rel(workflow)}")
 
     negative = run_negative_regressions(errors)
+    projector_step_applicability = validate_projector_step_applicability_regression(errors)
 
     report = {
         "artifact_type": "NON_NORMATIVE_ACTIVE_CONSUMER_REFERENCE_INTEGRITY_REPORT",
@@ -413,6 +445,7 @@ def main() -> int:
         "projector_inventory_source": "governance/specifications/REGISTRY.yaml",
         "required_regression_gate_presence": gate_presence,
         "negative_regressions": negative,
+        "projector_profile_step_applicability_regression": projector_step_applicability,
         "result": "PASS" if not errors else "FAIL",
         "errors": errors,
     }

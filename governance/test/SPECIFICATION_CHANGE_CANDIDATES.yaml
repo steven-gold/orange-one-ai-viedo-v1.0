@@ -795,6 +795,24 @@ findings:
   - github-actions:35461744433
   - github-actions:35461744391
   - github-actions:35461744318
+- finding_uid: FIND-20260920-018
+  class: ACTIVE_PROJECTOR_APPLICABILITY_BUG
+  title: Stage-02 Current projectors were incorrectly applied to later selected-profile steps
+  evidence: validate_active_consumer_reference_integrity.py derived all *_CURRENT_* projector crosschecks from current_step_state_key without respecting the STAGE02 owner encoded in projector kind; entering Stage-03 would require Stage-02 findings to match a Stage-03 attempt.
+  defect_owner: TEST_OR_VALIDATION_IMPLEMENTATION
+  generalizability_scope: PROFILE_STEP_SCOPED_CURRENT_PROJECTOR_APPLICABILITY
+  blocking_state: RESOLVED_PENDING_EXACT_HEAD_REVALIDATION
+  disposition: IMPLEMENTATION_REMEDIATED
+  specification_change_required: false
+  mother_change_required: false
+  formal_specification_mutated_for_fix: false
+  product_stage_credit: 0
+  authorization_uid: USR-DIRECTIVE-20260920-CONTINUE-CORE01-STAGE03-R1
+  required_fix:
+  - DERIVE_PROJECTOR_OWNING_PROFILE_STEP_FROM_REGISTERED_KIND
+  - DO_NOT_CROSSCHECK_STAGE02_PROJECTORS_AGAINST_STAGE03_OR_LATER_ATTEMPTS
+  - KEEP_GOVERNANCE_UID_PROJECTORS_GLOBAL
+  reopen_condition: Reopen if a stage-owned Current projector can again be required or crosschecked against a different selected-profile step.
 historical_stage2_execution_findings:
   prior_CORE-01_STAGE02_BLOCKED: 7
   prior_ASSET-01_STAGE02_BLOCKED: 6
