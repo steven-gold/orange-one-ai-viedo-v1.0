@@ -256,7 +256,7 @@ if VISUAL_ROOT.exists() or TEST_ROOT.exists():
 
 state=load(STATE)
 state['stage03_clean_baseline_receipt']['protected_subtree_sha256_after']=protected_after
-state['stage03_clean_baseline_receipt']['result']='PASS_CLEAN_BASELINE_R2'
+state['stage03_clean_baseline_receipt']['result']='PASS_CLEAN_BASELINE_R3'
 dump(STATE,state)
 
 print(json.dumps({
