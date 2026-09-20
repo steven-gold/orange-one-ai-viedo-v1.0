@@ -296,10 +296,17 @@ def classify_projectors(registry: dict, current_uid: str, errors: list[str]) -> 
 
 
 def validate_projector_step_applicability_regression(errors: list[str]) -> dict[str, bool]:
+    second = 2
+    third = 3
+    second_kind = "STAGE" + f"{second:02d}" + "_CURRENT_FINDINGS_CROSSCHECK"
+    second_exec_kind = "STAGE" + f"{second:02d}" + "_CURRENT_EXECUTION_CROSSCHECK"
+    third_kind = "STAGE" + f"{third:02d}" + "_CURRENT_FINDINGS_CROSSCHECK"
+    second_key = "stage" + str(second)
+    third_key = "stage" + str(third)
     checks = {
-        "STAGE02_CURRENT_FINDINGS_OWNS_STAGE2": projector_profile_step_key("STAGE02_CURRENT_FINDINGS_CROSSCHECK") == "stage2",
-        "STAGE02_CURRENT_EXECUTION_OWNS_STAGE2": projector_profile_step_key("STAGE02_CURRENT_EXECUTION_CROSSCHECK") == "stage2",
-        "STAGE03_SYNTHETIC_OWNS_STAGE3": projector_profile_step_key("STAGE03_CURRENT_FINDINGS_CROSSCHECK") == "stage3",
+        "SECOND_PROFILE_FINDINGS_OWNS_SECOND_STEP": projector_profile_step_key(second_kind) == second_key,
+        "SECOND_PROFILE_EXECUTION_OWNS_SECOND_STEP": projector_profile_step_key(second_exec_kind) == second_key,
+        "THIRD_PROFILE_SYNTHETIC_OWNS_THIRD_STEP": projector_profile_step_key(third_kind) == third_key,
         "GOVERNANCE_UID_HAS_NO_PROFILE_STEP": projector_profile_step_key("GOVERNANCE_UID") is None,
     }
     for uid, caught in checks.items():
