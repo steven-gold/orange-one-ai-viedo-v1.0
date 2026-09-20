@@ -1,0 +1,59 @@
+name: Stage-03 Generated Data Clean Baseline
+
+"on":
+  push:
+    branches: [rebuild-v2.1.1]
+    paths:
+      - .github/workflows/stage03-clean-generated-data.yml
+      - .github/governance-maintenance/clean_stage03_generated_data.py
+
+permissions:
+  contents: write
+  actions: read
+
+jobs:
+  cleanup:
+    if: ${{ contains(github.event.head_commit.message, '[stage03-cleanup-execute]') }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    env:
+      PYTHONDONTWRITEBYTECODE: "1"
+      PYTHONPYCACHEPREFIX: /tmp/acpos-stage03-clean
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+      - name: Install dependency
+        run: python -m pip install --disable-pip-version-check 'PyYAML==6.0.2'
+      - name: Lock exact cleanup source SHA
+        run: test "$(git rev-parse HEAD)" = "${GITHUB_SHA}"
+      - name: Materialize Stage-03 clean baseline
+        run: python .github/governance-maintenance/clean_stage03_generated_data.py
+      - name: Validate Current state after clean reset
+        run: |
+          test ! -e 00_SOURCE_INTAKE/run_core01_d81df9ac_stage02/05_VISUAL_DESIGN
+          test ! -e governance/test/stage03
+          test -d 00_SOURCE_INTAKE/run_core01_d81df9ac_stage02/00_SOURCE_INTAKE
+          test -d 00_SOURCE_INTAKE/run_core01_d81df9ac_stage02/01_CLASSIFIED
+          test -d 00_SOURCE_INTAKE/run_core01_d81df9ac_stage02/02_BASE_BLUEPRINT
+          test -d 00_SOURCE_INTAKE/run_core01_d81df9ac_stage02/03_BLUEPRINT_BINDING
+          test -d 00_SOURCE_INTAKE/run_core01_d81df9ac_stage02/04_PAGE_FUNCTIONAL_CONTRACT
+          git diff --exit-code --             00_SOURCE_INTAKE/run_core01_d81df9ac_stage02/00_SOURCE_INTAKE             00_SOURCE_INTAKE/run_core01_d81df9ac_stage02/01_CLASSIFIED             00_SOURCE_INTAKE/run_core01_d81df9ac_stage02/02_BASE_BLUEPRINT             00_SOURCE_INTAKE/run_core01_d81df9ac_stage02/03_BLUEPRINT_BINDING             00_SOURCE_INTAKE/run_core01_d81df9ac_stage02/04_PAGE_FUNCTIONAL_CONTRACT             00_SOURCE_INTAKE/run_core01_d81df9ac_stage02/CURRENT_RUN_MANIFEST.yaml             00_SOURCE_INTAKE/run_core01_d81df9ac_stage02/EXECUTION_STATE.yaml             00_SOURCE_INTAKE/run_core01_d81df9ac_stage02/RUN_CONTEXT.yaml
+          python governance/ci/governance_resolver.py
+          python governance/ci/validate_selected_execution_profile_integrity.py
+          python governance/ci/validate_active_consumer_reference_integrity.py
+          python governance/ci/stage_execution_engine.py --definition-audit-all
+          python governance/ci/stage_execution_engine.py --admission-check --stage STAGE-03
+      - name: Persist clean baseline
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch origin "${GITHUB_REF_NAME}"
+          test "$(git rev-parse "origin/${GITHUB_REF_NAME}")" = "${GITHUB_SHA}"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          test -n "$(git diff --cached --name-only)"
+          git commit -m "test(stage03): persist clean generated-data baseline"
+          git push origin "HEAD:${GITHUB_REF_NAME}"
