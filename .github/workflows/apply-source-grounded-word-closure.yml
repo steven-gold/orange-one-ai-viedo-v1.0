@@ -27,7 +27,7 @@ jobs:
           from pathlib import Path
           import json
           from docx import Document
-          marker='ACPOS-20260921-SOURCE-GROUNDED-CONSTRUCTION-CLOSURE-V1'
+          marker='ACPOS-20260921-SOURCE-GROUNDED-CONSTRUCTION-CLOSURE-V2'
           report=json.load(open('__temp_reports__/word_patch_report.json'))
           assert report['updated_count']==28, report['updated_count']
           pages=sorted(Path('.').glob('ACPOS_*.docx'))
@@ -43,6 +43,7 @@ jobs:
               joined='\n'.join(x.text for x in d.paragraphs)
               assert 'ACPOS-20260921-EXACT-BINDING-CLOSURE' not in joined,p.name
               assert 'UNIFIED-CONTROL-RUNTIME-MATRIX-V3' not in joined,p.name
+              assert 'ACPOS-20260921-SOURCE-GROUNDED-CONSTRUCTION-CLOSURE-V1' not in joined,p.name
               # prior generic numeric policy identifiers must be absent
               for bad in ['CONV_UI_INITIAL_LOAD_MESSAGES','CONV_UI_LAZY_LOAD_MESSAGES','CONV_CONTEXT_INPUT_HARD_CAP_TOKENS','CONV_RETENTION_AFTER_PROJECT_CLOSE_DAYS']:
                   assert bad not in joined,(p.name,bad)
