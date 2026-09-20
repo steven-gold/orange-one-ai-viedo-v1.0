@@ -4,11 +4,14 @@ from pathlib import Path
 import yaml
 
 def replace_exact_once(text, old, new):
-    count = text.count(old)
-    if count != 1:
-        raise RuntimeError(f'BOUNDED_REPLACE_TARGET_COUNT expected=1 actual={count}')
-    idx = text.index(old)
+    idx = text.find(old)
+    if idx < 0:
+        raise RuntimeError('BOUNDED_REPLACE_TARGET_MISSING')
+    second = text.find(old, idx + len(old))
+    if second >= 0:
+        raise RuntimeError('BOUNDED_REPLACE_TARGET_NOT_UNIQUE')
     return text[:idx] + new + text[idx + len(old):]
+
 ROOT = Path(__file__).resolve().parents[2]
 SOURCE = ROOT / '.github/governance-source/active/source'
 OLD_UID = 'GOV-REV-20260920-STAGE03-VISUAL-MATERIALIZATION-PROMOTION-CLOSURE'
