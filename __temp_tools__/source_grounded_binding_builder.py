@@ -435,5 +435,6 @@ for page,(path,expected) in PAGES.items():
     }
     for b in blockers: report["true_blockers"].append({"page":page,**b})
 
+Path("__temp_reports__").mkdir(exist_ok=True)
 Path("__temp_reports__/source_grounded_18page_closure.json").write_text(json.dumps(report,ensure_ascii=False,indent=2),encoding="utf-8")
 print(json.dumps({p:{"expected":v["expected_control_denominator"],"actual":v["actual_unique_controls"],"pass":v["denominator_pass"],"blockers":len(v["blockers"])} for p,v in report["pages"].items()},ensure_ascii=False,indent=2))
