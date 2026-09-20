@@ -7,7 +7,7 @@ from docx.oxml import OxmlElement
 from docx.oxml.ns import qn
 
 ROOT=Path('.')
-MARK='ACPOS-20260921-UNIFIED-CONTROL-RUNTIME-MATRIX-V2'
+MARK='ACPOS-20260921-UNIFIED-CONTROL-RUNTIME-MATRIX-V3'
 OLD_HEADING='Unified Page / Control / Action / API / DB / Runtime Construction Matrix'
 TARGETS={
 '01_ACPOS_Global_Intelligent_Brain_Information_Lifecycle_Mother_Basic_Logic_Design_Normative_Contract_v4.docx':[
@@ -348,9 +348,22 @@ for target,sources in TARGETS.items():
                             op=r[i-1] if i>0 else ''
                             if op and (op,v) not in seen:
                                 seen.add((op,v)); au=f'{pfx(pu)}-ACT-{slug(op)}'
-                                ops.append([pu,'SYSTEM_OR_CONTEXT_ACTION',f'{pfx(pu)}-BTN-{slug(op)}','BUTTON_OR_SYSTEM_TRIGGER','SOURCE_GATE','SOURCE_GATE',op,au,'NEW_UID_FROM_EXISTING_OPERATION',v,'SOURCE_EXACT',runtime_class(v,op,''),db_owner(pu,op,''),'SOURCE_SCHEMA + common envelope','SOURCE_STATE_REGISTRY','SOURCE_ERROR_REGISTRY','Registered result/error','SOURCE_NEXT_OR_SAME_PAGE','Audit/correlation'])
+                                method=v.split(' ',1)[0].upper()
+                                trig='CLICK_OR_SYSTEM_TRIGGER'
+                                payload=f'{au} typed schema + source contract fields + actor/scope/target + correlation_id'
+                                if method in {'POST','PATCH','PUT','DELETE'}:
+                                    payload+=' + expected_version(if versioned) + idempotency_key'
+                                ops.append([
+                                  pu,'SYSTEM_OR_CONTEXT_ACTION',f'{pfx(pu)}-BTN-{slug(op)}','BUTTON_OR_SYSTEM_TRIGGER',
+                                  'AUTHORIZED_PAGE_CONTEXT','SOURCE_OPERATION_GATE',trig,op,au,'NEW_UID_FROM_EXISTING_OPERATION',
+                                  'SOURCE_OPERATION_PERMISSION / SERVER_RECHECK',payload,v,'SOURCE_EXACT',
+                                  runtime_class(v,op,''),db_owner(pu,op,''),'SOURCE_PAGE_STATE_REGISTRY / exact server result',
+                                  'SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable',
+                                  'Registered result/error/disabled reason','SOURCE_NEXT_OR_SAME_PAGE',
+                                  'acpos_audit.audit_events + correlation_id + operation/result identity'
+                                ])
             if ops:
-                add_table(doc,['Page','Region','Control UID','Type','Visible','Enabled/Gate','Operation','Action UID','Action UID Status','API','API Basis','Runtime','DB/Provider','Payload','Success','Failure','UI Feedback','Next/Handoff','Evidence'],ops,5.5)
+                add_table(doc,['Page UID','Region','Control UID','Control Type','Visible When','Enabled/Gate','Trigger','Operation','Action UID','Action UID Status','Permission','Required Payload','API Method/Path','API Basis','Runtime','DB/Provider Owner','Success State','Failure State','UI Feedback/Recovery','Next Page/Handoff','Evidence'],ops,5.1)
                 target_rows+=len(ops)
             else:
                 doc.add_paragraph('No user-visible/effectful control registry exists in this source page. Construction MUST treat it as system/read-only/support projection; do not invent a UI control. Existing source tables in the preceding closure remain authoritative.')
