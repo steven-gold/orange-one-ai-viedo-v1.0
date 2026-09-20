@@ -26,7 +26,7 @@ jobs:
           docs=sorted(Path('.').glob('0[1-9]_ACPOS_*.docx'))
           assert len(docs)==9
           v1='ACPOS-20260921-EXACT-BINDING-CLOSURE'
-          v2='ACPOS-20260921-UNIFIED-CONTROL-RUNTIME-MATRIX-V2'
+          v2='ACPOS-20260921-UNIFIED-CONTROL-RUNTIME-MATRIX-V3'
           old='ACPOS-20260921-UNIFIED-CONTROL-RUNTIME-MATRIX]'
           report={'docs':{},'total_unified_rows':0,'bad_rows':[]}
           all_text={}
