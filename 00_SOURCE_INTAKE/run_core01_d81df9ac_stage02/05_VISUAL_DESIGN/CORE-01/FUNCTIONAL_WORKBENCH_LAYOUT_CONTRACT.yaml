@@ -1,0 +1,175 @@
+schema_version: 2
+normative_authority: false
+governance_uid: GOV-REV-20260920-STAGE03-VISUAL-MATERIALIZATION-PROMOTION-CLOSURE
+stage_uid: STAGE-03
+page_uid: CORE-01
+source_execution_sha: 93f3cd5bdae99617be08b3402ac7eb5121b80fee
+source_refs:
+- 00_SOURCE_INTAKE/run_core01_d81df9ac_stage02/02_BASE_BLUEPRINT/CORE-01/VISUAL_BASE_BLUEPRINT.yaml
+- 00_SOURCE_INTAKE/run_core01_d81df9ac_stage02/04_PAGE_FUNCTIONAL_CONTRACT/CORE-01/PAGE_CONSTRUCTION_SPEC_PACKAGE.yaml
+- 00_SOURCE_INTAKE/run_core01_d81df9ac_stage02/04_PAGE_FUNCTIONAL_CONTRACT/CORE-01/FUNCTIONAL_WORKBENCH_CONTRACT.yaml
+- 00_SOURCE_INTAKE/run_core01_d81df9ac_stage02/04_PAGE_FUNCTIONAL_CONTRACT/CORE-01/INTERACTION_TOPOLOGY_SPEC.yaml
+- 00_SOURCE_INTAKE/run_core01_d81df9ac_stage02/04_PAGE_FUNCTIONAL_CONTRACT/CORE-01/FUNCTION_VISUAL_IMPACT_MATRIX.yaml
+- 00_SOURCE_INTAKE/run_core01_d81df9ac_stage02/00_SOURCE_INTAKE/RAW_SOURCE/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml
+- 00_SOURCE_INTAKE/run_core01_d81df9ac_stage02/00_SOURCE_INTAKE/RAW_SOURCE/CORE-01/CORE_CURRENT_CANONICAL_VISUAL_FINAL_LOCKED_V1.0.yaml
+- 00_SOURCE_INTAKE/run_core01_d81df9ac_stage02/04_PAGE_FUNCTIONAL_CONTRACT/CORE-01/AI_INTERACTION_CONTINUITY_CONTRACT.yaml
+ai_autofill_used: false
+inference_used: false
+artifact_type: FUNCTIONAL_WORKBENCH_LAYOUT_CONTRACT
+section_workbench_visual_bindings:
+- workbench_uid: CORE-01-WB-CORE-01-SEC-01
+  section_uid: CORE-01-SEC-01
+  visual_uid: CORE-01-VIS-CONTEXT
+  component_uids:
+  - CORE-01-CMP-CONTEXT
+  control_uids:
+  - CORE-01-BTN-PROJECT-CREATE
+  - CORE-01-BTN-TOPIC-CREATE
+  - CORE-01-CTL-PROJECT
+  - CORE-01-CTL-TOPIC
+  - CORE-01-FLD-NAMING-AUTHORITY
+  - CORE-01-FLD-PAGE-MODE
+- workbench_uid: CORE-01-WB-CORE-01-SEC-02
+  section_uid: CORE-01-SEC-02
+  visual_uid: CORE-01-VIS-LEFT
+  component_uids:
+  - CORE-01-CMP-NAV
+  - CORE-01-CMP-THREADS
+  control_uids:
+  - CORE-01-BTN-NEW-THREAD
+  - CORE-01-LST-THREADS
+  - CORE-01-LST-WORK-ITEMS
+- workbench_uid: CORE-01-WB-CORE-01-SEC-03
+  section_uid: CORE-01-SEC-03
+  visual_uid: CORE-01-VIS-CENTER-HEADER
+  component_uids:
+  - CORE-01-CMP-CONV-HEADER
+  control_uids:
+  - CORE-01-BTN-ASSISTANT-RECORD
+  - CORE-01-BTN-MULTI-AI
+  - CORE-01-BTN-SINGLE-AI
+  - CORE-01-FLD-ASSIGNED-AI
+- workbench_uid: CORE-01-WB-CORE-01-SEC-04
+  section_uid: CORE-01-SEC-04
+  visual_uid: CORE-01-VIS-MESSAGES
+  component_uids:
+  - CORE-01-CMP-MESSAGE-MENU
+  - CORE-01-CMP-MESSAGES
+  control_uids:
+  - CORE-01-MENU-ANALYZE
+  - CORE-01-MENU-BRANCH
+  - CORE-01-MENU-CONTINUE
+  - CORE-01-MENU-COPY
+  - CORE-01-MENU-DECISION
+  - CORE-01-MENU-QUOTE
+- workbench_uid: CORE-01-WB-CORE-01-SEC-05
+  section_uid: CORE-01-SEC-05
+  visual_uid: CORE-01-VIS-DECISION
+  component_uids:
+  - CORE-01-CMP-EVALUATION
+  - CORE-01-CMP-HUMAN-DECISION
+  - CORE-01-CMP-SUMMARY
+  control_uids:
+  - CORE-01-BTN-CANDIDATE-CONFIRM
+  - CORE-01-BTN-CANDIDATE-CREATE
+  - CORE-01-BTN-RETURN-MODIFY
+  - CORE-01-FLD-ASSISTANT-SUMMARY
+  - CORE-01-FLD-EVALUATION
+  - CORE-01-FLD-HUMAN-DECISION
+  - CORE-01-FLD-STRUCTURED-DECISION
+- workbench_uid: CORE-01-WB-CORE-01-SEC-06
+  section_uid: CORE-01-SEC-06
+  visual_uid: CORE-01-VIS-RUNTIME
+  component_uids:
+  - CORE-01-CMP-RUNTIME
+  control_uids:
+  - CORE-01-FLD-RUNTIME-STAGE
+- workbench_uid: CORE-01-WB-CORE-01-SEC-07
+  section_uid: CORE-01-SEC-07
+  visual_uid: CORE-01-VIS-COMPOSER
+  component_uids:
+  - CORE-01-CMP-COMPOSER
+  control_uids:
+  - CORE-01-BTN-ATTACHMENT
+  - CORE-01-BTN-REFERENCE
+  - CORE-01-BTN-SEND
+  - CORE-01-FLD-MESSAGE
+- workbench_uid: CORE-01-WB-CORE-01-SEC-08
+  section_uid: CORE-01-SEC-08
+  visual_uid: CORE-01-VIS-RIGHT-CORE
+  component_uids:
+  - CORE-01-CMP-BLUEPRINT-STATE
+  - CORE-01-CMP-PROJECT-STATE
+  control_uids:
+  - CORE-01-BTN-BLUEPRINT-APPROVE
+  - CORE-01-BTN-BLUEPRINT-CREATE
+  - CORE-01-BTN-BLUEPRINT-VALIDATE
+  - CORE-01-BTN-CHILD-LOCK
+  - CORE-01-BTN-CORE-REVIEW
+  - CORE-01-BTN-DNA-LOCK
+  - CORE-01-BTN-PROJECT-CONFIRM
+  - CORE-01-BTN-PROJECT-LOCK
+  - CORE-01-BTN-PROJECT-VALIDATE
+  - CORE-01-BTN-STORY-CANDIDATE
+- workbench_uid: CORE-01-WB-CORE-01-SEC-09
+  section_uid: CORE-01-SEC-09
+  visual_uid: CORE-01-VIS-RIGHT-TOPIC
+  component_uids:
+  - CORE-01-CMP-DOWNSTREAM
+  - CORE-01-CMP-TOPIC-PACKAGE
+  control_uids:
+  - CORE-01-BTN-CANONICAL-SCRIPT
+  - CORE-01-FLD-DOWNSTREAM-ASSET
+  - CORE-01-FLD-DOWNSTREAM-EDIT
+  - CORE-01-FLD-DOWNSTREAM-VIDEO
+  - CORE-01-FLD-PACKAGE
+  - CORE-01-FLD-TOPIC-SCOPE
+- workbench_uid: CORE-01-WB-CORE-01-SEC-10
+  section_uid: CORE-01-SEC-10
+  visual_uid: CORE-01-VIS-RIGHT-VERSION
+  component_uids:
+  - CORE-01-CMP-LOCK-REVIEW
+  - CORE-01-CMP-VERSION
+  control_uids:
+  - CORE-01-BTN-CANDIDATE-COMPARE
+  - CORE-01-FLD-LOCK-REVIEW
+  - CORE-01-FLD-VERSION-STATE
+atomic_workbench_visual_bindings:
+- workbench_uid: CORE-01-WB-CONVERSATION
+  workbench_type: ATOMIC_WORKBENCH
+  section_order:
+  - CORE-01-SEC-03
+  - CORE-01-SEC-04
+  - CORE-01-SEC-06
+  - CORE-01-SEC-07
+  visual_order:
+  - CORE-01-VIS-CENTER-HEADER
+  - CORE-01-VIS-MESSAGES
+  - CORE-01-VIS-RUNTIME
+  - CORE-01-VIS-COMPOSER
+  same_surface: REQUIRED
+  shared_context:
+  - Project
+  - Topic if applicable
+  - Work Item
+  - Thread
+  interruption_boundary: NONE_BETWEEN_HEADER_MESSAGES_RUNTIME_COMPOSER
+  split_into_independent_surfaces: FORBIDDEN
+  relation_to_conversation: null
+  status: PASS_EXACT_STAGE02_SEMANTIC_PROJECTION
+- workbench_uid: CORE-01-WB-DECISION-DOCK
+  workbench_type: DECISION_DOCK
+  section_order:
+  - CORE-01-SEC-05
+  visual_order:
+  - CORE-01-VIS-DECISION
+  same_surface: SEPARATE_DOWNSTREAM_DOCK
+  shared_context: []
+  interruption_boundary: null
+  split_into_independent_surfaces: null
+  relation_to_conversation: DOWNSTREAM_OF_CONVERSATION_EVIDENCE_NOT_PART_OF_MESSAGE_INPUT_LOOP
+  status: PASS_EXACT_STAGE02_SEMANTIC_PROJECTION
+atomic_workbench_fragmentation: false
+semantic_section_order_preserved: true
+decision_dock_relation: DOWNSTREAM_OF_CONVERSATION_EVIDENCE_NOT_PART_OF_MESSAGE_INPUT_LOOP
+status: PASS
