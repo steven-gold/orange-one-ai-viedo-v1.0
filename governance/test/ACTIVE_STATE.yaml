@@ -111,8 +111,8 @@ specification_mutation_safety:
   ordinary_mid_stage_specification_mutation: BLOCK
   stage_end_consolidated_promotion_requires_new_explicit_directive: true
   execution_context_lock_required: true
-status: ACTIVE_GENERIC_WEB_FLOW_HIGH_PRESSURE_AUDIT_R1
-next_action: RUN_GENERIC_WEB_FLOW_PORTABILITY_MATRIX_AND_EXACT_HEAD_GATES
+status: GENERIC_WEB_FLOW_HIGH_PRESSURE_AUDIT_CLOSED_PENDING_EXACT_HEAD_VALIDATION
+next_action: EXACT_HEAD_TERMINAL_VALIDATION_FOR_GENERIC_WEB_FLOW_AUDIT_R1
 previous_closed_product_work_unit:
   work_unit_uid: WU-STAGE02-CORE01-STRUCTURAL-REMEDIATION-001
   canonical_name: CORE01_STRUCTURAL_CONTRACT_REMEDIATION
@@ -294,7 +294,7 @@ resume_control:
   current_resume_point: GENERIC_WEB_FLOW_HIGH_PRESSURE_AUDIT_R1_ACTIVE
   current_work_unit_uid: WU-TEST-GENERIC-WEB-FLOW-HIGH-PRESSURE-001
   current_owner: governance/ci/test_stage_execution_engine.py
-  exact_next_action: RUN_GENERIC_WEB_FLOW_PORTABILITY_MATRIX_AND_EXACT_HEAD_GATES
+  exact_next_action: EXACT_HEAD_TERMINAL_VALIDATION_FOR_GENERIC_WEB_FLOW_AUDIT_R1
   product_resume_preserved: CORE01_STAGE01_STAGE03_CLEAN_BASELINE_READY_FRESH_STAGE01_WUR_REQUIRED
   reentry_owner_capability: SOURCE_INTAKE_BASE_BLUEPRINT
   reentry_stage_uid: STAGE-01
@@ -2622,7 +2622,7 @@ active_work_unit:
   work_unit_uid: WU-TEST-GENERIC-WEB-FLOW-HIGH-PRESSURE-001
   canonical_name: GENERIC_WEB_FLOW_HIGH_PRESSURE_PORTABILITY_AND_FAIL_CLOSED_AUDIT
   primary_task_layer: TEST_OR_VALIDATION_MAINTENANCE
-  current_status: ACTIVE_EXECUTION
+  current_status: CLOSURE_PENDING_EXACT_HEAD_VALIDATION
   authorization_uid: USR-DIRECTIVE-20260920-GENERIC-WEB-FLOW-HIGH-PRESSURE-AUDIT-R1
   canonical_owner: governance/ci/test_stage_execution_engine.py
   co_owners:
