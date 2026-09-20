@@ -1,18 +1,32 @@
-schema_version: 1
+schema_version: 2
+authorization_uid: USR-DIRECTIVE-20260920-CROSS-STAGE-MATERIALIZATION-CONTINUITY-HARDENING-R1
 artifact_uid: USR-DIRECTIVE-20260920-CROSS-STAGE-MATERIALIZATION-CONTINUITY-HARDENING-R1
-artifact_type: EXPLICIT_SPECIFICATION_CHANGE_AUTHORIZATION
+artifact_type: SPECIFICATION_CHANGE_AUTHORIZATION_RECEIPT
 normative_authority: false
+authority_source: EXPLICIT_USER_DIRECTIVE
 authorization_source: EXPLICIT_USER_DIRECTIVE
 authorized_at_date: 2026-09-20
-current_governance_uid_at_authorization: GOV-REV-20260920-STAGE03-VISUAL-MATERIALIZATION-PROMOTION-CLOSURE
+single_use: true
+status: APPROVED_FOR_EXACT_SCOPE
+ai_may_expand_scope: false
+ai_may_reuse_authorization: false
+authorization_reuse_for_unrelated_change: false
+ai_scope_expansion: FORBIDDEN
+
+baseline_commit_sha: f48c62bfba97ca341c6bca33a0962a5c31827d76
+baseline_tree_sha: 0dd27213608bdf22470c8c602f1348c6689ee146
+current_governance_uid: GOV-REV-20260920-STAGE03-VISUAL-MATERIALIZATION-PROMOTION-CLOSURE
 requested_successor_display_version: v2.2.16
 requested_successor_governance_uid: GOV-REV-20260920-CROSS-STAGE-MATERIALIZATION-CONSUMER-READINESS-HARDENING
+governance_mutation_boundary: OUTSIDE_GOVERNED_EXECUTION_CYCLE
+
 directive_summary: >
   Repair Mother Governance defects that allowed reference-only or incomplete upstream artifacts
   to receive Stage closure and later appear as missing materialized inputs. Perform a complete
   eleven-Stage continuity review and harden the full lifecycle so required predecessor outputs,
   source-captured registries/candidates/anchors, successor inputs, denominators, and consumer
   readiness remain physically and semantically continuous across every Stage.
+
 authorized_scope:
   - MOTHER_01_STAGE01_SOURCE_CAPTURE_AND_BLUEPRINT_MATERIALIZATION_COMPLETENESS
   - MOTHER_02_PRODUCER_CONSUMER_PHYSICAL_MATERIALIZATION_AND_SUCCESSOR_READINESS
@@ -27,6 +41,7 @@ authorized_scope:
   - STAGE01_REQUIRED_SOURCE_DEPENDENCY_PHYSICAL_CAPTURE_OR_EXPLICIT_BLOCK
   - STAGE02_SUCCESSOR_VISUAL_DEPENDENCY_READINESS_BEFORE_STAGE03_ADMISSION
   - STAGE03_VISUAL_ANCHOR_CANDIDATE_MULTI_STATE_PHYSICAL_EVIDENCE_READINESS
+
 required_invariants:
   reference_presence_is_not_materialization: true
   materialization_is_not_completeness: true
@@ -39,7 +54,9 @@ required_invariants:
   downstream_discovery_of_upstream_gap_reopens_earliest_owning_capability: true
   human_review_may_not_be_reached_with_missing_required_visual_anchor_or_candidate_evidence: true
   one_overview_visual_may_not_substitute_required_multi_state_visual_evidence: true
+  one_canonical_denominator_owner_per_required_universe: true
   product_stage_credit_for_governance_repair: 0
+
 forbidden_scope:
   - INVENT_NEW_PRODUCT_BEHAVIOR
   - INVENT_MISSING_VISUAL_ANCHORS_OR_CANDIDATES
@@ -49,6 +66,38 @@ forbidden_scope:
   - WEBSITE_CONSTRUCTION
   - DEPLOYMENT
   - MODIFY_STAGE01_OR_STAGE02_IMMUTABLE_PRODUCT_INPUTS_TO_HIDE_THE_DEFECT
-authorization_reuse_for_unrelated_change: false
-ai_scope_expansion: FORBIDDEN
-status: AUTHORIZED_EXACT_SCOPE
+
+pre_write_context_verification:
+  relevant_scope_read_complete: true
+  canonical_owner_resolution_complete: true
+  existing_semantics_comparison_complete: true
+  duplicate_search_complete: true
+  conflict_search_complete: true
+  second_system_search_complete: true
+  gap_proven_before_write: true
+  reviewed_authority_ref_count: 9
+  reviewed_existing_owner_ref_count: 8
+  write_disposition: MODIFY_EXISTING_CANONICAL_OWNER
+  comparison_result: NO_UNRESOLVED_DUPLICATE_CONFLICT_OR_SECOND_SYSTEM
+  reviewed_authority_refs:
+    - GOVERNANCE_CURRENT.yaml
+    - governance/specifications/REGISTRY.yaml
+    - .github/governance-source/active/source/12_DOCS/mother-spec/01_BLUEPRINT_DESIGN_GOVERNANCE.md
+    - .github/governance-source/active/source/12_DOCS/mother-spec/02_IMPLEMENTATION_DELIVERY_STANDARD.md
+    - .github/governance-source/active/source/12_DOCS/mother-spec/03_EXECUTION_CONTROL_STANDARD.md
+    - .github/governance-source/active/source/12_DOCS/mother-spec/04_AUDIT_PROGRESS_STANDARD.md
+    - .github/governance-source/active/source/10_REGISTRY/GOVERNANCE_LIFECYCLE_STAGE_REGISTRY.yaml
+    - .github/governance-source/active/source/10_REGISTRY/STAGE_EXECUTION_INVARIANT_REGISTRY.yaml
+    - .github/governance-source/active/source/10_REGISTRY/SEMANTIC_AUTHORITY_BASELINE.yaml
+  reviewed_existing_owner_refs:
+    - .github/governance-source/active/source/10_REGISTRY/REFERENCE_RULE_REGISTRY.yaml
+    - .github/governance-source/active/source/10_REGISTRY/GOVERNANCE_ACCEPTANCE_AUDIT_BLUEPRINT.yaml
+    - .github/governance-source/active/source/10_REGISTRY/AUDIT_CATALOG.yaml
+    - .github/governance-source/active/source/10_REGISTRY/CONSTRUCTION_ARTIFACT_INDEX.yaml
+    - governance/specifications/current/EXECUTION_CYCLE_CONTROL.yaml
+    - governance/specifications/current/BOUNDED_FUNCTIONAL_COMPLETION.yaml
+    - governance/specifications/current/INTERACTION_TOPOLOGY_AI_CONTINUITY.yaml
+    - governance/ci/stage_execution_engine.py
+
+duplicate_and_residual_cleanup_required: true
+product_stage_credit: 0
