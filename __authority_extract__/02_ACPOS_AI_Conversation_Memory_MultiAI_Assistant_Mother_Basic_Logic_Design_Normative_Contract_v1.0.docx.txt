@@ -17847,7 +17847,7 @@ P	G. Construction Handoff Rule
 P	施工 AI MUST resolve each UI control through this exact order: Page UID → Section/Region → Control UID → Trigger/Operation or Action UID → Gate → Permission → Input/Payload → Method/Path or shared Runtime Operation → Persistence/Provider Owner → Audit/Event → Success/Failure/Recovery → Next Page/Handoff. UI_ONLY/READ_ONLY controls MUST NOT create a write API. System-only operations MUST NOT cause a new visible button unless this closure/source explicitly materializes that control.
 P	When a provider/platform/environment value is runtime-specific, the exact binding is the registered Profile/Policy/Environment key named in this annex. Missing required value is a deterministic BLOCK; it is not permission to guess.
 P	Unified Page / Control / Action / API / DB / Runtime Construction Matrix
-P	[ACPOS-20260921-UNIFIED-CONTROL-RUNTIME-MATRIX-V2] This matrix is the direct construction lookup. Existing source identifiers are preserved. New Action/Gate/Control identities are created only when exhaustive uploaded-source scan found the semantic control/operation but no exact UID/path. Existing exact Method/Path always wins; otherwise effectful operations use POST /v1/commands/{actionUid} through the Shared Typed Command Runtime. UI/read-only controls explicitly bind to N/A or projection runtime and MUST NOT create writes.
+P	[ACPOS-20260921-UNIFIED-CONTROL-RUNTIME-MATRIX-V3] This matrix is the direct construction lookup. Existing source identifiers are preserved. New Action/Gate/Control identities are created only when exhaustive uploaded-source scan found the semantic control/operation but no exact UID/path. Existing exact Method/Path always wins; otherwise effectful operations use POST /v1/commands/{actionUid} through the Shared Typed Command Runtime. UI/read-only controls explicitly bind to N/A or projection runtime and MUST NOT create writes.
 P	CORE-01 — Unified Construction Bindings
 ROW	Page UID	Region	Control UID	Control Type	Visible When	Enabled/Gate	Trigger	Operation	Action UID	Action UID Status	Permission	Required Payload	API Method/Path	API Basis	Runtime	DB/Provider Owner	Success State	Failure State	UI Feedback/Recovery	Next Page/Handoff	Evidence
 P	Page UID
@@ -29011,326 +29011,358 @@ P	Registered success/error/disabled reason; no fabricated success
 P	SAME_PAGE_CONTEXT
 P	acpos_audit.audit_events + correlation_id + operation/result identity
 P	admin:SOC-01 — Unified Construction Bindings
-ROW	Page	Region	Control UID	Type	Visible	Enabled/Gate	Operation	Action UID	Action UID Status	API	API Basis	Runtime	DB/Provider	Payload	Success	Failure	UI Feedback	Next/Handoff	Evidence
-P	Page
+ROW	Page UID	Region	Control UID	Control Type	Visible When	Enabled/Gate	Trigger	Operation	Action UID	Action UID Status	Permission	Required Payload	API Method/Path	API Basis	Runtime	DB/Provider Owner	Success State	Failure State	UI Feedback/Recovery	Next Page/Handoff	Evidence
+P	Page UID
 P	Region
 P	Control UID
-P	Type
-P	Visible
+P	Control Type
+P	Visible When
 P	Enabled/Gate
+P	Trigger
 P	Operation
 P	Action UID
 P	Action UID Status
-P	API
+P	Permission
+P	Required Payload
+P	API Method/Path
 P	API Basis
 P	Runtime
-P	DB/Provider
-P	Payload
-P	Success
-P	Failure
-P	UI Feedback
-P	Next/Handoff
+P	DB/Provider Owner
+P	Success State
+P	Failure State
+P	UI Feedback/Recovery
+P	Next Page/Handoff
 P	Evidence
-ROW	admin:SOC-01	SYSTEM_OR_CONTEXT_ACTION	SOC-01-BTN-GET-UI-PROJECTION	BUTTON_OR_SYSTEM_TRIGGER	SOURCE_GATE	SOURCE_GATE	getUiProjection	SOC-01-ACT-GET-UI-PROJECTION	NEW_UID_FROM_EXISTING_OPERATION	GET /v1/ui-projections/{pageUid}	SOURCE_EXACT	READ_PROJECTION_RUNTIME	acpos_social.publish_requests	SOURCE_SCHEMA + common envelope	SOURCE_STATE_REGISTRY	SOURCE_ERROR_REGISTRY	Registered result/error	SOURCE_NEXT_OR_SAME_PAGE	Audit/correlation
+ROW	admin:SOC-01	SYSTEM_OR_CONTEXT_ACTION	SOC-01-BTN-GET-UI-PROJECTION	BUTTON_OR_SYSTEM_TRIGGER	AUTHORIZED_PAGE_CONTEXT	SOURCE_OPERATION_GATE	CLICK_OR_SYSTEM_TRIGGER	getUiProjection	SOC-01-ACT-GET-UI-PROJECTION	NEW_UID_FROM_EXISTING_OPERATION	SOURCE_OPERATION_PERMISSION / SERVER_RECHECK	SOC-01-ACT-GET-UI-PROJECTION typed schema + source contract fields + actor/scope/target + correlation_id	GET /v1/ui-projections/{pageUid}	SOURCE_EXACT	READ_PROJECTION_RUNTIME	acpos_social.publish_requests	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered result/error/disabled reason	SOURCE_NEXT_OR_SAME_PAGE	acpos_audit.audit_events + correlation_id + operation/result identity
 P	admin:SOC-01
 P	SYSTEM_OR_CONTEXT_ACTION
 P	SOC-01-BTN-GET-UI-PROJECTION
 P	BUTTON_OR_SYSTEM_TRIGGER
-P	SOURCE_GATE
-P	SOURCE_GATE
+P	AUTHORIZED_PAGE_CONTEXT
+P	SOURCE_OPERATION_GATE
+P	CLICK_OR_SYSTEM_TRIGGER
 P	getUiProjection
 P	SOC-01-ACT-GET-UI-PROJECTION
 P	NEW_UID_FROM_EXISTING_OPERATION
+P	SOURCE_OPERATION_PERMISSION / SERVER_RECHECK
+P	SOC-01-ACT-GET-UI-PROJECTION typed schema + source contract fields + actor/scope/target + correlation_id
 P	GET /v1/ui-projections/{pageUid}
 P	SOURCE_EXACT
 P	READ_PROJECTION_RUNTIME
 P	acpos_social.publish_requests
-P	SOURCE_SCHEMA + common envelope
-P	SOURCE_STATE_REGISTRY
-P	SOURCE_ERROR_REGISTRY
-P	Registered result/error
+P	SOURCE_PAGE_STATE_REGISTRY / exact server result
+P	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable
+P	Registered result/error/disabled reason
 P	SOURCE_NEXT_OR_SAME_PAGE
-P	Audit/correlation
-ROW	admin:SOC-01	SYSTEM_OR_CONTEXT_ACTION	SOC-01-BTN-CONFIGURE-GOVERNED-RESOURCE	BUTTON_OR_SYSTEM_TRIGGER	SOURCE_GATE	SOURCE_GATE	configureGovernedResource	SOC-01-ACT-CONFIGURE-GOVERNED-RESOURCE	NEW_UID_FROM_EXISTING_OPERATION	PATCH /v1/governance/resources/{id}	SOURCE_EXACT	DOMAIN_COMMAND_RUNTIME	acpos_social.publish_requests	SOURCE_SCHEMA + common envelope	SOURCE_STATE_REGISTRY	SOURCE_ERROR_REGISTRY	Registered result/error	SOURCE_NEXT_OR_SAME_PAGE	Audit/correlation
+P	acpos_audit.audit_events + correlation_id + operation/result identity
+ROW	admin:SOC-01	SYSTEM_OR_CONTEXT_ACTION	SOC-01-BTN-CONFIGURE-GOVERNED-RESOURCE	BUTTON_OR_SYSTEM_TRIGGER	AUTHORIZED_PAGE_CONTEXT	SOURCE_OPERATION_GATE	CLICK_OR_SYSTEM_TRIGGER	configureGovernedResource	SOC-01-ACT-CONFIGURE-GOVERNED-RESOURCE	NEW_UID_FROM_EXISTING_OPERATION	SOURCE_OPERATION_PERMISSION / SERVER_RECHECK	SOC-01-ACT-CONFIGURE-GOVERNED-RESOURCE typed schema + source contract fields + actor/scope/target + correlation_id + expected_version(if versioned) + idempotency_key	PATCH /v1/governance/resources/{id}	SOURCE_EXACT	DOMAIN_COMMAND_RUNTIME	acpos_social.publish_requests	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered result/error/disabled reason	SOURCE_NEXT_OR_SAME_PAGE	acpos_audit.audit_events + correlation_id + operation/result identity
 P	admin:SOC-01
 P	SYSTEM_OR_CONTEXT_ACTION
 P	SOC-01-BTN-CONFIGURE-GOVERNED-RESOURCE
 P	BUTTON_OR_SYSTEM_TRIGGER
-P	SOURCE_GATE
-P	SOURCE_GATE
+P	AUTHORIZED_PAGE_CONTEXT
+P	SOURCE_OPERATION_GATE
+P	CLICK_OR_SYSTEM_TRIGGER
 P	configureGovernedResource
 P	SOC-01-ACT-CONFIGURE-GOVERNED-RESOURCE
 P	NEW_UID_FROM_EXISTING_OPERATION
+P	SOURCE_OPERATION_PERMISSION / SERVER_RECHECK
+P	SOC-01-ACT-CONFIGURE-GOVERNED-RESOURCE typed schema + source contract fields + actor/scope/target + correlation_id + expected_version(if versioned) + idempotency_key
 P	PATCH /v1/governance/resources/{id}
 P	SOURCE_EXACT
 P	DOMAIN_COMMAND_RUNTIME
 P	acpos_social.publish_requests
-P	SOURCE_SCHEMA + common envelope
-P	SOURCE_STATE_REGISTRY
-P	SOURCE_ERROR_REGISTRY
-P	Registered result/error
+P	SOURCE_PAGE_STATE_REGISTRY / exact server result
+P	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable
+P	Registered result/error/disabled reason
 P	SOURCE_NEXT_OR_SAME_PAGE
-P	Audit/correlation
-ROW	admin:SOC-01	SYSTEM_OR_CONTEXT_ACTION	SOC-01-BTN-SET-KILL-SWITCH	BUTTON_OR_SYSTEM_TRIGGER	SOURCE_GATE	SOURCE_GATE	setKillSwitch	SOC-01-ACT-SET-KILL-SWITCH	NEW_UID_FROM_EXISTING_OPERATION	POST /v1/operations/kill-switch	SOURCE_EXACT	DOMAIN_COMMAND_RUNTIME	acpos_social.publish_requests	SOURCE_SCHEMA + common envelope	SOURCE_STATE_REGISTRY	SOURCE_ERROR_REGISTRY	Registered result/error	SOURCE_NEXT_OR_SAME_PAGE	Audit/correlation
+P	acpos_audit.audit_events + correlation_id + operation/result identity
+ROW	admin:SOC-01	SYSTEM_OR_CONTEXT_ACTION	SOC-01-BTN-SET-KILL-SWITCH	BUTTON_OR_SYSTEM_TRIGGER	AUTHORIZED_PAGE_CONTEXT	SOURCE_OPERATION_GATE	CLICK_OR_SYSTEM_TRIGGER	setKillSwitch	SOC-01-ACT-SET-KILL-SWITCH	NEW_UID_FROM_EXISTING_OPERATION	SOURCE_OPERATION_PERMISSION / SERVER_RECHECK	SOC-01-ACT-SET-KILL-SWITCH typed schema + source contract fields + actor/scope/target + correlation_id + expected_version(if versioned) + idempotency_key	POST /v1/operations/kill-switch	SOURCE_EXACT	DOMAIN_COMMAND_RUNTIME	acpos_social.publish_requests	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered result/error/disabled reason	SOURCE_NEXT_OR_SAME_PAGE	acpos_audit.audit_events + correlation_id + operation/result identity
 P	admin:SOC-01
 P	SYSTEM_OR_CONTEXT_ACTION
 P	SOC-01-BTN-SET-KILL-SWITCH
 P	BUTTON_OR_SYSTEM_TRIGGER
-P	SOURCE_GATE
-P	SOURCE_GATE
+P	AUTHORIZED_PAGE_CONTEXT
+P	SOURCE_OPERATION_GATE
+P	CLICK_OR_SYSTEM_TRIGGER
 P	setKillSwitch
 P	SOC-01-ACT-SET-KILL-SWITCH
 P	NEW_UID_FROM_EXISTING_OPERATION
+P	SOURCE_OPERATION_PERMISSION / SERVER_RECHECK
+P	SOC-01-ACT-SET-KILL-SWITCH typed schema + source contract fields + actor/scope/target + correlation_id + expected_version(if versioned) + idempotency_key
 P	POST /v1/operations/kill-switch
 P	SOURCE_EXACT
 P	DOMAIN_COMMAND_RUNTIME
 P	acpos_social.publish_requests
-P	SOURCE_SCHEMA + common envelope
-P	SOURCE_STATE_REGISTRY
-P	SOURCE_ERROR_REGISTRY
-P	Registered result/error
+P	SOURCE_PAGE_STATE_REGISTRY / exact server result
+P	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable
+P	Registered result/error/disabled reason
 P	SOURCE_NEXT_OR_SAME_PAGE
-P	Audit/correlation
-ROW	admin:SOC-01	SYSTEM_OR_CONTEXT_ACTION	SOC-01-BTN-BIND-SOCIAL-ACCOUNT	BUTTON_OR_SYSTEM_TRIGGER	SOURCE_GATE	SOURCE_GATE	bindSocialAccount	SOC-01-ACT-BIND-SOCIAL-ACCOUNT	NEW_UID_FROM_EXISTING_OPERATION	PUT /v1/social/accounts/{accountId}/binding	SOURCE_EXACT	DOMAIN_COMMAND_RUNTIME	acpos_social.account_bindings / market_targets / publish_requests	SOURCE_SCHEMA + common envelope	SOURCE_STATE_REGISTRY	SOURCE_ERROR_REGISTRY	Registered result/error	SOURCE_NEXT_OR_SAME_PAGE	Audit/correlation
+P	acpos_audit.audit_events + correlation_id + operation/result identity
+ROW	admin:SOC-01	SYSTEM_OR_CONTEXT_ACTION	SOC-01-BTN-BIND-SOCIAL-ACCOUNT	BUTTON_OR_SYSTEM_TRIGGER	AUTHORIZED_PAGE_CONTEXT	SOURCE_OPERATION_GATE	CLICK_OR_SYSTEM_TRIGGER	bindSocialAccount	SOC-01-ACT-BIND-SOCIAL-ACCOUNT	NEW_UID_FROM_EXISTING_OPERATION	SOURCE_OPERATION_PERMISSION / SERVER_RECHECK	SOC-01-ACT-BIND-SOCIAL-ACCOUNT typed schema + source contract fields + actor/scope/target + correlation_id + expected_version(if versioned) + idempotency_key	PUT /v1/social/accounts/{accountId}/binding	SOURCE_EXACT	DOMAIN_COMMAND_RUNTIME	acpos_social.account_bindings / market_targets / publish_requests	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered result/error/disabled reason	SOURCE_NEXT_OR_SAME_PAGE	acpos_audit.audit_events + correlation_id + operation/result identity
 P	admin:SOC-01
 P	SYSTEM_OR_CONTEXT_ACTION
 P	SOC-01-BTN-BIND-SOCIAL-ACCOUNT
 P	BUTTON_OR_SYSTEM_TRIGGER
-P	SOURCE_GATE
-P	SOURCE_GATE
+P	AUTHORIZED_PAGE_CONTEXT
+P	SOURCE_OPERATION_GATE
+P	CLICK_OR_SYSTEM_TRIGGER
 P	bindSocialAccount
 P	SOC-01-ACT-BIND-SOCIAL-ACCOUNT
 P	NEW_UID_FROM_EXISTING_OPERATION
+P	SOURCE_OPERATION_PERMISSION / SERVER_RECHECK
+P	SOC-01-ACT-BIND-SOCIAL-ACCOUNT typed schema + source contract fields + actor/scope/target + correlation_id + expected_version(if versioned) + idempotency_key
 P	PUT /v1/social/accounts/{accountId}/binding
 P	SOURCE_EXACT
 P	DOMAIN_COMMAND_RUNTIME
 P	acpos_social.account_bindings / market_targets / publish_requests
-P	SOURCE_SCHEMA + common envelope
-P	SOURCE_STATE_REGISTRY
-P	SOURCE_ERROR_REGISTRY
-P	Registered result/error
+P	SOURCE_PAGE_STATE_REGISTRY / exact server result
+P	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable
+P	Registered result/error/disabled reason
 P	SOURCE_NEXT_OR_SAME_PAGE
-P	Audit/correlation
-ROW	admin:SOC-01	SYSTEM_OR_CONTEXT_ACTION	SOC-01-BTN-REVEAL-SOCIAL-CREDENTIAL	BUTTON_OR_SYSTEM_TRIGGER	SOURCE_GATE	SOURCE_GATE	revealSocialCredential	SOC-01-ACT-REVEAL-SOCIAL-CREDENTIAL	NEW_UID_FROM_EXISTING_OPERATION	POST /v1/social/accounts/{accountId}/credential/reveal	SOURCE_EXACT	DOMAIN_COMMAND_RUNTIME	secret-manager reference + acpos_runtime.provider_credential_refs	SOURCE_SCHEMA + common envelope	SOURCE_STATE_REGISTRY	SOURCE_ERROR_REGISTRY	Registered result/error	SOURCE_NEXT_OR_SAME_PAGE	Audit/correlation
+P	acpos_audit.audit_events + correlation_id + operation/result identity
+ROW	admin:SOC-01	SYSTEM_OR_CONTEXT_ACTION	SOC-01-BTN-REVEAL-SOCIAL-CREDENTIAL	BUTTON_OR_SYSTEM_TRIGGER	AUTHORIZED_PAGE_CONTEXT	SOURCE_OPERATION_GATE	CLICK_OR_SYSTEM_TRIGGER	revealSocialCredential	SOC-01-ACT-REVEAL-SOCIAL-CREDENTIAL	NEW_UID_FROM_EXISTING_OPERATION	SOURCE_OPERATION_PERMISSION / SERVER_RECHECK	SOC-01-ACT-REVEAL-SOCIAL-CREDENTIAL typed schema + source contract fields + actor/scope/target + correlation_id + expected_version(if versioned) + idempotency_key	POST /v1/social/accounts/{accountId}/credential/reveal	SOURCE_EXACT	DOMAIN_COMMAND_RUNTIME	secret-manager reference + acpos_runtime.provider_credential_refs	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered result/error/disabled reason	SOURCE_NEXT_OR_SAME_PAGE	acpos_audit.audit_events + correlation_id + operation/result identity
 P	admin:SOC-01
 P	SYSTEM_OR_CONTEXT_ACTION
 P	SOC-01-BTN-REVEAL-SOCIAL-CREDENTIAL
 P	BUTTON_OR_SYSTEM_TRIGGER
-P	SOURCE_GATE
-P	SOURCE_GATE
+P	AUTHORIZED_PAGE_CONTEXT
+P	SOURCE_OPERATION_GATE
+P	CLICK_OR_SYSTEM_TRIGGER
 P	revealSocialCredential
 P	SOC-01-ACT-REVEAL-SOCIAL-CREDENTIAL
 P	NEW_UID_FROM_EXISTING_OPERATION
+P	SOURCE_OPERATION_PERMISSION / SERVER_RECHECK
+P	SOC-01-ACT-REVEAL-SOCIAL-CREDENTIAL typed schema + source contract fields + actor/scope/target + correlation_id + expected_version(if versioned) + idempotency_key
 P	POST /v1/social/accounts/{accountId}/credential/reveal
 P	SOURCE_EXACT
 P	DOMAIN_COMMAND_RUNTIME
 P	secret-manager reference + acpos_runtime.provider_credential_refs
-P	SOURCE_SCHEMA + common envelope
-P	SOURCE_STATE_REGISTRY
-P	SOURCE_ERROR_REGISTRY
-P	Registered result/error
+P	SOURCE_PAGE_STATE_REGISTRY / exact server result
+P	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable
+P	Registered result/error/disabled reason
 P	SOURCE_NEXT_OR_SAME_PAGE
-P	Audit/correlation
-ROW	admin:SOC-01	SYSTEM_OR_CONTEXT_ACTION	SOC-01-BTN-UNBIND-SOCIAL-ACCOUNT	BUTTON_OR_SYSTEM_TRIGGER	SOURCE_GATE	SOURCE_GATE	unbindSocialAccount	SOC-01-ACT-UNBIND-SOCIAL-ACCOUNT	NEW_UID_FROM_EXISTING_OPERATION	POST /v1/social/accounts/{accountId}/unbind	SOURCE_EXACT	DOMAIN_COMMAND_RUNTIME	acpos_social.account_bindings / market_targets / publish_requests	SOURCE_SCHEMA + common envelope	SOURCE_STATE_REGISTRY	SOURCE_ERROR_REGISTRY	Registered result/error	SOURCE_NEXT_OR_SAME_PAGE	Audit/correlation
+P	acpos_audit.audit_events + correlation_id + operation/result identity
+ROW	admin:SOC-01	SYSTEM_OR_CONTEXT_ACTION	SOC-01-BTN-UNBIND-SOCIAL-ACCOUNT	BUTTON_OR_SYSTEM_TRIGGER	AUTHORIZED_PAGE_CONTEXT	SOURCE_OPERATION_GATE	CLICK_OR_SYSTEM_TRIGGER	unbindSocialAccount	SOC-01-ACT-UNBIND-SOCIAL-ACCOUNT	NEW_UID_FROM_EXISTING_OPERATION	SOURCE_OPERATION_PERMISSION / SERVER_RECHECK	SOC-01-ACT-UNBIND-SOCIAL-ACCOUNT typed schema + source contract fields + actor/scope/target + correlation_id + expected_version(if versioned) + idempotency_key	POST /v1/social/accounts/{accountId}/unbind	SOURCE_EXACT	DOMAIN_COMMAND_RUNTIME	acpos_social.account_bindings / market_targets / publish_requests	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered result/error/disabled reason	SOURCE_NEXT_OR_SAME_PAGE	acpos_audit.audit_events + correlation_id + operation/result identity
 P	admin:SOC-01
 P	SYSTEM_OR_CONTEXT_ACTION
 P	SOC-01-BTN-UNBIND-SOCIAL-ACCOUNT
 P	BUTTON_OR_SYSTEM_TRIGGER
-P	SOURCE_GATE
-P	SOURCE_GATE
+P	AUTHORIZED_PAGE_CONTEXT
+P	SOURCE_OPERATION_GATE
+P	CLICK_OR_SYSTEM_TRIGGER
 P	unbindSocialAccount
 P	SOC-01-ACT-UNBIND-SOCIAL-ACCOUNT
 P	NEW_UID_FROM_EXISTING_OPERATION
+P	SOURCE_OPERATION_PERMISSION / SERVER_RECHECK
+P	SOC-01-ACT-UNBIND-SOCIAL-ACCOUNT typed schema + source contract fields + actor/scope/target + correlation_id + expected_version(if versioned) + idempotency_key
 P	POST /v1/social/accounts/{accountId}/unbind
 P	SOURCE_EXACT
 P	DOMAIN_COMMAND_RUNTIME
 P	acpos_social.account_bindings / market_targets / publish_requests
-P	SOURCE_SCHEMA + common envelope
-P	SOURCE_STATE_REGISTRY
-P	SOURCE_ERROR_REGISTRY
-P	Registered result/error
+P	SOURCE_PAGE_STATE_REGISTRY / exact server result
+P	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable
+P	Registered result/error/disabled reason
 P	SOURCE_NEXT_OR_SAME_PAGE
-P	Audit/correlation
-ROW	admin:SOC-01	SYSTEM_OR_CONTEXT_ACTION	SOC-01-BTN-CREATE-SOCIAL-TARGET-DISCOVERY	BUTTON_OR_SYSTEM_TRIGGER	SOURCE_GATE	SOURCE_GATE	createSocialTargetDiscovery	SOC-01-ACT-CREATE-SOCIAL-TARGET-DISCOVERY	NEW_UID_FROM_EXISTING_OPERATION	POST /v1/social/target-discovery-jobs	SOURCE_EXACT	DOMAIN_COMMAND_RUNTIME	acpos_social.account_bindings / market_targets / publish_requests	SOURCE_SCHEMA + common envelope	SOURCE_STATE_REGISTRY	SOURCE_ERROR_REGISTRY	Registered result/error	SOURCE_NEXT_OR_SAME_PAGE	Audit/correlation
+P	acpos_audit.audit_events + correlation_id + operation/result identity
+ROW	admin:SOC-01	SYSTEM_OR_CONTEXT_ACTION	SOC-01-BTN-CREATE-SOCIAL-TARGET-DISCOVERY	BUTTON_OR_SYSTEM_TRIGGER	AUTHORIZED_PAGE_CONTEXT	SOURCE_OPERATION_GATE	CLICK_OR_SYSTEM_TRIGGER	createSocialTargetDiscovery	SOC-01-ACT-CREATE-SOCIAL-TARGET-DISCOVERY	NEW_UID_FROM_EXISTING_OPERATION	SOURCE_OPERATION_PERMISSION / SERVER_RECHECK	SOC-01-ACT-CREATE-SOCIAL-TARGET-DISCOVERY typed schema + source contract fields + actor/scope/target + correlation_id + expected_version(if versioned) + idempotency_key	POST /v1/social/target-discovery-jobs	SOURCE_EXACT	DOMAIN_COMMAND_RUNTIME	acpos_social.account_bindings / market_targets / publish_requests	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered result/error/disabled reason	SOURCE_NEXT_OR_SAME_PAGE	acpos_audit.audit_events + correlation_id + operation/result identity
 P	admin:SOC-01
 P	SYSTEM_OR_CONTEXT_ACTION
 P	SOC-01-BTN-CREATE-SOCIAL-TARGET-DISCOVERY
 P	BUTTON_OR_SYSTEM_TRIGGER
-P	SOURCE_GATE
-P	SOURCE_GATE
+P	AUTHORIZED_PAGE_CONTEXT
+P	SOURCE_OPERATION_GATE
+P	CLICK_OR_SYSTEM_TRIGGER
 P	createSocialTargetDiscovery
 P	SOC-01-ACT-CREATE-SOCIAL-TARGET-DISCOVERY
 P	NEW_UID_FROM_EXISTING_OPERATION
+P	SOURCE_OPERATION_PERMISSION / SERVER_RECHECK
+P	SOC-01-ACT-CREATE-SOCIAL-TARGET-DISCOVERY typed schema + source contract fields + actor/scope/target + correlation_id + expected_version(if versioned) + idempotency_key
 P	POST /v1/social/target-discovery-jobs
 P	SOURCE_EXACT
 P	DOMAIN_COMMAND_RUNTIME
 P	acpos_social.account_bindings / market_targets / publish_requests
-P	SOURCE_SCHEMA + common envelope
-P	SOURCE_STATE_REGISTRY
-P	SOURCE_ERROR_REGISTRY
-P	Registered result/error
+P	SOURCE_PAGE_STATE_REGISTRY / exact server result
+P	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable
+P	Registered result/error/disabled reason
 P	SOURCE_NEXT_OR_SAME_PAGE
-P	Audit/correlation
-ROW	admin:SOC-01	SYSTEM_OR_CONTEXT_ACTION	SOC-01-BTN-REQUEST-SOCIAL-TARGET-JOIN	BUTTON_OR_SYSTEM_TRIGGER	SOURCE_GATE	SOURCE_GATE	requestSocialTargetJoin	SOC-01-ACT-REQUEST-SOCIAL-TARGET-JOIN	NEW_UID_FROM_EXISTING_OPERATION	POST /v1/social/targets/{targetId}/join	SOURCE_EXACT	DOMAIN_COMMAND_RUNTIME	acpos_social.account_bindings / market_targets / publish_requests	SOURCE_SCHEMA + common envelope	SOURCE_STATE_REGISTRY	SOURCE_ERROR_REGISTRY	Registered result/error	SOURCE_NEXT_OR_SAME_PAGE	Audit/correlation
+P	acpos_audit.audit_events + correlation_id + operation/result identity
+ROW	admin:SOC-01	SYSTEM_OR_CONTEXT_ACTION	SOC-01-BTN-REQUEST-SOCIAL-TARGET-JOIN	BUTTON_OR_SYSTEM_TRIGGER	AUTHORIZED_PAGE_CONTEXT	SOURCE_OPERATION_GATE	CLICK_OR_SYSTEM_TRIGGER	requestSocialTargetJoin	SOC-01-ACT-REQUEST-SOCIAL-TARGET-JOIN	NEW_UID_FROM_EXISTING_OPERATION	SOURCE_OPERATION_PERMISSION / SERVER_RECHECK	SOC-01-ACT-REQUEST-SOCIAL-TARGET-JOIN typed schema + source contract fields + actor/scope/target + correlation_id + expected_version(if versioned) + idempotency_key	POST /v1/social/targets/{targetId}/join	SOURCE_EXACT	DOMAIN_COMMAND_RUNTIME	acpos_social.account_bindings / market_targets / publish_requests	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered result/error/disabled reason	SOURCE_NEXT_OR_SAME_PAGE	acpos_audit.audit_events + correlation_id + operation/result identity
 P	admin:SOC-01
 P	SYSTEM_OR_CONTEXT_ACTION
 P	SOC-01-BTN-REQUEST-SOCIAL-TARGET-JOIN
 P	BUTTON_OR_SYSTEM_TRIGGER
-P	SOURCE_GATE
-P	SOURCE_GATE
+P	AUTHORIZED_PAGE_CONTEXT
+P	SOURCE_OPERATION_GATE
+P	CLICK_OR_SYSTEM_TRIGGER
 P	requestSocialTargetJoin
 P	SOC-01-ACT-REQUEST-SOCIAL-TARGET-JOIN
 P	NEW_UID_FROM_EXISTING_OPERATION
+P	SOURCE_OPERATION_PERMISSION / SERVER_RECHECK
+P	SOC-01-ACT-REQUEST-SOCIAL-TARGET-JOIN typed schema + source contract fields + actor/scope/target + correlation_id + expected_version(if versioned) + idempotency_key
 P	POST /v1/social/targets/{targetId}/join
 P	SOURCE_EXACT
 P	DOMAIN_COMMAND_RUNTIME
 P	acpos_social.account_bindings / market_targets / publish_requests
-P	SOURCE_SCHEMA + common envelope
-P	SOURCE_STATE_REGISTRY
-P	SOURCE_ERROR_REGISTRY
-P	Registered result/error
+P	SOURCE_PAGE_STATE_REGISTRY / exact server result
+P	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable
+P	Registered result/error/disabled reason
 P	SOURCE_NEXT_OR_SAME_PAGE
-P	Audit/correlation
-ROW	admin:SOC-01	SYSTEM_OR_CONTEXT_ACTION	SOC-01-BTN-COMPLETE-SOCIAL-MANUAL-ACTION	BUTTON_OR_SYSTEM_TRIGGER	SOURCE_GATE	SOURCE_GATE	completeSocialManualAction	SOC-01-ACT-COMPLETE-SOCIAL-MANUAL-ACTION	NEW_UID_FROM_EXISTING_OPERATION	POST /v1/social/manual-actions/{actionId}/complete	SOURCE_EXACT	DOMAIN_COMMAND_RUNTIME	acpos_social.account_bindings / market_targets / publish_requests	SOURCE_SCHEMA + common envelope	SOURCE_STATE_REGISTRY	SOURCE_ERROR_REGISTRY	Registered result/error	SOURCE_NEXT_OR_SAME_PAGE	Audit/correlation
+P	acpos_audit.audit_events + correlation_id + operation/result identity
+ROW	admin:SOC-01	SYSTEM_OR_CONTEXT_ACTION	SOC-01-BTN-COMPLETE-SOCIAL-MANUAL-ACTION	BUTTON_OR_SYSTEM_TRIGGER	AUTHORIZED_PAGE_CONTEXT	SOURCE_OPERATION_GATE	CLICK_OR_SYSTEM_TRIGGER	completeSocialManualAction	SOC-01-ACT-COMPLETE-SOCIAL-MANUAL-ACTION	NEW_UID_FROM_EXISTING_OPERATION	SOURCE_OPERATION_PERMISSION / SERVER_RECHECK	SOC-01-ACT-COMPLETE-SOCIAL-MANUAL-ACTION typed schema + source contract fields + actor/scope/target + correlation_id + expected_version(if versioned) + idempotency_key	POST /v1/social/manual-actions/{actionId}/complete	SOURCE_EXACT	DOMAIN_COMMAND_RUNTIME	acpos_social.account_bindings / market_targets / publish_requests	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered result/error/disabled reason	SOURCE_NEXT_OR_SAME_PAGE	acpos_audit.audit_events + correlation_id + operation/result identity
 P	admin:SOC-01
 P	SYSTEM_OR_CONTEXT_ACTION
 P	SOC-01-BTN-COMPLETE-SOCIAL-MANUAL-ACTION
 P	BUTTON_OR_SYSTEM_TRIGGER
-P	SOURCE_GATE
-P	SOURCE_GATE
+P	AUTHORIZED_PAGE_CONTEXT
+P	SOURCE_OPERATION_GATE
+P	CLICK_OR_SYSTEM_TRIGGER
 P	completeSocialManualAction
 P	SOC-01-ACT-COMPLETE-SOCIAL-MANUAL-ACTION
 P	NEW_UID_FROM_EXISTING_OPERATION
+P	SOURCE_OPERATION_PERMISSION / SERVER_RECHECK
+P	SOC-01-ACT-COMPLETE-SOCIAL-MANUAL-ACTION typed schema + source contract fields + actor/scope/target + correlation_id + expected_version(if versioned) + idempotency_key
 P	POST /v1/social/manual-actions/{actionId}/complete
 P	SOURCE_EXACT
 P	DOMAIN_COMMAND_RUNTIME
 P	acpos_social.account_bindings / market_targets / publish_requests
-P	SOURCE_SCHEMA + common envelope
-P	SOURCE_STATE_REGISTRY
-P	SOURCE_ERROR_REGISTRY
-P	Registered result/error
+P	SOURCE_PAGE_STATE_REGISTRY / exact server result
+P	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable
+P	Registered result/error/disabled reason
 P	SOURCE_NEXT_OR_SAME_PAGE
-P	Audit/correlation
-ROW	admin:SOC-01	SYSTEM_OR_CONTEXT_ACTION	SOC-01-BTN-SEARCH-PROJECTION	BUTTON_OR_SYSTEM_TRIGGER	SOURCE_GATE	SOURCE_GATE	searchProjection	SOC-01-ACT-SEARCH-PROJECTION	NEW_UID_FROM_EXISTING_OPERATION	POST /v1/search	SOURCE_EXACT	DOMAIN_COMMAND_RUNTIME	acpos_social.publish_requests	SOURCE_SCHEMA + common envelope	SOURCE_STATE_REGISTRY	SOURCE_ERROR_REGISTRY	Registered result/error	SOURCE_NEXT_OR_SAME_PAGE	Audit/correlation
+P	acpos_audit.audit_events + correlation_id + operation/result identity
+ROW	admin:SOC-01	SYSTEM_OR_CONTEXT_ACTION	SOC-01-BTN-SEARCH-PROJECTION	BUTTON_OR_SYSTEM_TRIGGER	AUTHORIZED_PAGE_CONTEXT	SOURCE_OPERATION_GATE	CLICK_OR_SYSTEM_TRIGGER	searchProjection	SOC-01-ACT-SEARCH-PROJECTION	NEW_UID_FROM_EXISTING_OPERATION	SOURCE_OPERATION_PERMISSION / SERVER_RECHECK	SOC-01-ACT-SEARCH-PROJECTION typed schema + source contract fields + actor/scope/target + correlation_id + expected_version(if versioned) + idempotency_key	POST /v1/search	SOURCE_EXACT	DOMAIN_COMMAND_RUNTIME	acpos_social.publish_requests	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered result/error/disabled reason	SOURCE_NEXT_OR_SAME_PAGE	acpos_audit.audit_events + correlation_id + operation/result identity
 P	admin:SOC-01
 P	SYSTEM_OR_CONTEXT_ACTION
 P	SOC-01-BTN-SEARCH-PROJECTION
 P	BUTTON_OR_SYSTEM_TRIGGER
-P	SOURCE_GATE
-P	SOURCE_GATE
+P	AUTHORIZED_PAGE_CONTEXT
+P	SOURCE_OPERATION_GATE
+P	CLICK_OR_SYSTEM_TRIGGER
 P	searchProjection
 P	SOC-01-ACT-SEARCH-PROJECTION
 P	NEW_UID_FROM_EXISTING_OPERATION
+P	SOURCE_OPERATION_PERMISSION / SERVER_RECHECK
+P	SOC-01-ACT-SEARCH-PROJECTION typed schema + source contract fields + actor/scope/target + correlation_id + expected_version(if versioned) + idempotency_key
 P	POST /v1/search
 P	SOURCE_EXACT
 P	DOMAIN_COMMAND_RUNTIME
 P	acpos_social.publish_requests
-P	SOURCE_SCHEMA + common envelope
-P	SOURCE_STATE_REGISTRY
-P	SOURCE_ERROR_REGISTRY
-P	Registered result/error
+P	SOURCE_PAGE_STATE_REGISTRY / exact server result
+P	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable
+P	Registered result/error/disabled reason
 P	SOURCE_NEXT_OR_SAME_PAGE
-P	Audit/correlation
-ROW	admin:SOC-01	SYSTEM_OR_CONTEXT_ACTION	SOC-01-BTN-SAVE-DRAFT	BUTTON_OR_SYSTEM_TRIGGER	SOURCE_GATE	SOURCE_GATE	saveDraft	SOC-01-ACT-SAVE-DRAFT	NEW_UID_FROM_EXISTING_OPERATION	POST /v1/drafts	SOURCE_EXACT	DOMAIN_COMMAND_RUNTIME	acpos_social.publish_requests	SOURCE_SCHEMA + common envelope	SOURCE_STATE_REGISTRY	SOURCE_ERROR_REGISTRY	Registered result/error	SOURCE_NEXT_OR_SAME_PAGE	Audit/correlation
+P	acpos_audit.audit_events + correlation_id + operation/result identity
+ROW	admin:SOC-01	SYSTEM_OR_CONTEXT_ACTION	SOC-01-BTN-SAVE-DRAFT	BUTTON_OR_SYSTEM_TRIGGER	AUTHORIZED_PAGE_CONTEXT	SOURCE_OPERATION_GATE	CLICK_OR_SYSTEM_TRIGGER	saveDraft	SOC-01-ACT-SAVE-DRAFT	NEW_UID_FROM_EXISTING_OPERATION	SOURCE_OPERATION_PERMISSION / SERVER_RECHECK	SOC-01-ACT-SAVE-DRAFT typed schema + source contract fields + actor/scope/target + correlation_id + expected_version(if versioned) + idempotency_key	POST /v1/drafts	SOURCE_EXACT	DOMAIN_COMMAND_RUNTIME	acpos_social.publish_requests	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered result/error/disabled reason	SOURCE_NEXT_OR_SAME_PAGE	acpos_audit.audit_events + correlation_id + operation/result identity
 P	admin:SOC-01
 P	SYSTEM_OR_CONTEXT_ACTION
 P	SOC-01-BTN-SAVE-DRAFT
 P	BUTTON_OR_SYSTEM_TRIGGER
-P	SOURCE_GATE
-P	SOURCE_GATE
+P	AUTHORIZED_PAGE_CONTEXT
+P	SOURCE_OPERATION_GATE
+P	CLICK_OR_SYSTEM_TRIGGER
 P	saveDraft
 P	SOC-01-ACT-SAVE-DRAFT
 P	NEW_UID_FROM_EXISTING_OPERATION
+P	SOURCE_OPERATION_PERMISSION / SERVER_RECHECK
+P	SOC-01-ACT-SAVE-DRAFT typed schema + source contract fields + actor/scope/target + correlation_id + expected_version(if versioned) + idempotency_key
 P	POST /v1/drafts
 P	SOURCE_EXACT
 P	DOMAIN_COMMAND_RUNTIME
 P	acpos_social.publish_requests
-P	SOURCE_SCHEMA + common envelope
-P	SOURCE_STATE_REGISTRY
-P	SOURCE_ERROR_REGISTRY
-P	Registered result/error
+P	SOURCE_PAGE_STATE_REGISTRY / exact server result
+P	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable
+P	Registered result/error/disabled reason
 P	SOURCE_NEXT_OR_SAME_PAGE
-P	Audit/correlation
-ROW	admin:SOC-01	SYSTEM_OR_CONTEXT_ACTION	SOC-01-BTN-DECIDE-CANDIDATE	BUTTON_OR_SYSTEM_TRIGGER	SOURCE_GATE	SOURCE_GATE	decideCandidate	SOC-01-ACT-DECIDE-CANDIDATE	NEW_UID_FROM_EXISTING_OPERATION	POST /v1/candidates/{id}/decision	SOURCE_EXACT	DOMAIN_COMMAND_RUNTIME	acpos_system.change_candidates	SOURCE_SCHEMA + common envelope	SOURCE_STATE_REGISTRY	SOURCE_ERROR_REGISTRY	Registered result/error	SOURCE_NEXT_OR_SAME_PAGE	Audit/correlation
+P	acpos_audit.audit_events + correlation_id + operation/result identity
+ROW	admin:SOC-01	SYSTEM_OR_CONTEXT_ACTION	SOC-01-BTN-DECIDE-CANDIDATE	BUTTON_OR_SYSTEM_TRIGGER	AUTHORIZED_PAGE_CONTEXT	SOURCE_OPERATION_GATE	CLICK_OR_SYSTEM_TRIGGER	decideCandidate	SOC-01-ACT-DECIDE-CANDIDATE	NEW_UID_FROM_EXISTING_OPERATION	SOURCE_OPERATION_PERMISSION / SERVER_RECHECK	SOC-01-ACT-DECIDE-CANDIDATE typed schema + source contract fields + actor/scope/target + correlation_id + expected_version(if versioned) + idempotency_key	POST /v1/candidates/{id}/decision	SOURCE_EXACT	DOMAIN_COMMAND_RUNTIME	acpos_system.change_candidates	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered result/error/disabled reason	SOURCE_NEXT_OR_SAME_PAGE	acpos_audit.audit_events + correlation_id + operation/result identity
 P	admin:SOC-01
 P	SYSTEM_OR_CONTEXT_ACTION
 P	SOC-01-BTN-DECIDE-CANDIDATE
 P	BUTTON_OR_SYSTEM_TRIGGER
-P	SOURCE_GATE
-P	SOURCE_GATE
+P	AUTHORIZED_PAGE_CONTEXT
+P	SOURCE_OPERATION_GATE
+P	CLICK_OR_SYSTEM_TRIGGER
 P	decideCandidate
 P	SOC-01-ACT-DECIDE-CANDIDATE
 P	NEW_UID_FROM_EXISTING_OPERATION
+P	SOURCE_OPERATION_PERMISSION / SERVER_RECHECK
+P	SOC-01-ACT-DECIDE-CANDIDATE typed schema + source contract fields + actor/scope/target + correlation_id + expected_version(if versioned) + idempotency_key
 P	POST /v1/candidates/{id}/decision
 P	SOURCE_EXACT
 P	DOMAIN_COMMAND_RUNTIME
 P	acpos_system.change_candidates
-P	SOURCE_SCHEMA + common envelope
-P	SOURCE_STATE_REGISTRY
-P	SOURCE_ERROR_REGISTRY
-P	Registered result/error
+P	SOURCE_PAGE_STATE_REGISTRY / exact server result
+P	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable
+P	Registered result/error/disabled reason
 P	SOURCE_NEXT_OR_SAME_PAGE
-P	Audit/correlation
-ROW	admin:SOC-01	SYSTEM_OR_CONTEXT_ACTION	SOC-01-BTN-CONFIGURE-SOCIAL-TARGET-POLICY	BUTTON_OR_SYSTEM_TRIGGER	SOURCE_GATE	SOURCE_GATE	configureSocialTargetPolicy	SOC-01-ACT-CONFIGURE-SOCIAL-TARGET-POLICY	NEW_UID_FROM_EXISTING_OPERATION	PUT /v1/social/targets/{targetId}/posting-policy	SOURCE_EXACT	DOMAIN_COMMAND_RUNTIME	acpos_social.account_bindings / market_targets / publish_requests	SOURCE_SCHEMA + common envelope	SOURCE_STATE_REGISTRY	SOURCE_ERROR_REGISTRY	Registered result/error	SOURCE_NEXT_OR_SAME_PAGE	Audit/correlation
+P	acpos_audit.audit_events + correlation_id + operation/result identity
+ROW	admin:SOC-01	SYSTEM_OR_CONTEXT_ACTION	SOC-01-BTN-CONFIGURE-SOCIAL-TARGET-POLICY	BUTTON_OR_SYSTEM_TRIGGER	AUTHORIZED_PAGE_CONTEXT	SOURCE_OPERATION_GATE	CLICK_OR_SYSTEM_TRIGGER	configureSocialTargetPolicy	SOC-01-ACT-CONFIGURE-SOCIAL-TARGET-POLICY	NEW_UID_FROM_EXISTING_OPERATION	SOURCE_OPERATION_PERMISSION / SERVER_RECHECK	SOC-01-ACT-CONFIGURE-SOCIAL-TARGET-POLICY typed schema + source contract fields + actor/scope/target + correlation_id + expected_version(if versioned) + idempotency_key	PUT /v1/social/targets/{targetId}/posting-policy	SOURCE_EXACT	DOMAIN_COMMAND_RUNTIME	acpos_social.account_bindings / market_targets / publish_requests	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered result/error/disabled reason	SOURCE_NEXT_OR_SAME_PAGE	acpos_audit.audit_events + correlation_id + operation/result identity
 P	admin:SOC-01
 P	SYSTEM_OR_CONTEXT_ACTION
 P	SOC-01-BTN-CONFIGURE-SOCIAL-TARGET-POLICY
 P	BUTTON_OR_SYSTEM_TRIGGER
-P	SOURCE_GATE
-P	SOURCE_GATE
+P	AUTHORIZED_PAGE_CONTEXT
+P	SOURCE_OPERATION_GATE
+P	CLICK_OR_SYSTEM_TRIGGER
 P	configureSocialTargetPolicy
 P	SOC-01-ACT-CONFIGURE-SOCIAL-TARGET-POLICY
 P	NEW_UID_FROM_EXISTING_OPERATION
+P	SOURCE_OPERATION_PERMISSION / SERVER_RECHECK
+P	SOC-01-ACT-CONFIGURE-SOCIAL-TARGET-POLICY typed schema + source contract fields + actor/scope/target + correlation_id + expected_version(if versioned) + idempotency_key
 P	PUT /v1/social/targets/{targetId}/posting-policy
 P	SOURCE_EXACT
 P	DOMAIN_COMMAND_RUNTIME
 P	acpos_social.account_bindings / market_targets / publish_requests
-P	SOURCE_SCHEMA + common envelope
-P	SOURCE_STATE_REGISTRY
-P	SOURCE_ERROR_REGISTRY
-P	Registered result/error
+P	SOURCE_PAGE_STATE_REGISTRY / exact server result
+P	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable
+P	Registered result/error/disabled reason
 P	SOURCE_NEXT_OR_SAME_PAGE
-P	Audit/correlation
-ROW	admin:SOC-01	SYSTEM_OR_CONTEXT_ACTION	SOC-01-BTN-REQUEST-SOCIAL-TARGET-PUBLISH	BUTTON_OR_SYSTEM_TRIGGER	SOURCE_GATE	SOURCE_GATE	requestSocialTargetPublish	SOC-01-ACT-REQUEST-SOCIAL-TARGET-PUBLISH	NEW_UID_FROM_EXISTING_OPERATION	POST /v1/social/targets/{targetId}/publish	SOURCE_EXACT	DOMAIN_COMMAND_RUNTIME	acpos_social.account_bindings / market_targets / publish_requests	SOURCE_SCHEMA + common envelope	SOURCE_STATE_REGISTRY	SOURCE_ERROR_REGISTRY	Registered result/error	SOURCE_NEXT_OR_SAME_PAGE	Audit/correlation
+P	acpos_audit.audit_events + correlation_id + operation/result identity
+ROW	admin:SOC-01	SYSTEM_OR_CONTEXT_ACTION	SOC-01-BTN-REQUEST-SOCIAL-TARGET-PUBLISH	BUTTON_OR_SYSTEM_TRIGGER	AUTHORIZED_PAGE_CONTEXT	SOURCE_OPERATION_GATE	CLICK_OR_SYSTEM_TRIGGER	requestSocialTargetPublish	SOC-01-ACT-REQUEST-SOCIAL-TARGET-PUBLISH	NEW_UID_FROM_EXISTING_OPERATION	SOURCE_OPERATION_PERMISSION / SERVER_RECHECK	SOC-01-ACT-REQUEST-SOCIAL-TARGET-PUBLISH typed schema + source contract fields + actor/scope/target + correlation_id + expected_version(if versioned) + idempotency_key	POST /v1/social/targets/{targetId}/publish	SOURCE_EXACT	DOMAIN_COMMAND_RUNTIME	acpos_social.account_bindings / market_targets / publish_requests	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered result/error/disabled reason	SOURCE_NEXT_OR_SAME_PAGE	acpos_audit.audit_events + correlation_id + operation/result identity
 P	admin:SOC-01
 P	SYSTEM_OR_CONTEXT_ACTION
 P	SOC-01-BTN-REQUEST-SOCIAL-TARGET-PUBLISH
 P	BUTTON_OR_SYSTEM_TRIGGER
-P	SOURCE_GATE
-P	SOURCE_GATE
+P	AUTHORIZED_PAGE_CONTEXT
+P	SOURCE_OPERATION_GATE
+P	CLICK_OR_SYSTEM_TRIGGER
 P	requestSocialTargetPublish
 P	SOC-01-ACT-REQUEST-SOCIAL-TARGET-PUBLISH
 P	NEW_UID_FROM_EXISTING_OPERATION
+P	SOURCE_OPERATION_PERMISSION / SERVER_RECHECK
+P	SOC-01-ACT-REQUEST-SOCIAL-TARGET-PUBLISH typed schema + source contract fields + actor/scope/target + correlation_id + expected_version(if versioned) + idempotency_key
 P	POST /v1/social/targets/{targetId}/publish
 P	SOURCE_EXACT
 P	DOMAIN_COMMAND_RUNTIME
 P	acpos_social.account_bindings / market_targets / publish_requests
-P	SOURCE_SCHEMA + common envelope
-P	SOURCE_STATE_REGISTRY
-P	SOURCE_ERROR_REGISTRY
-P	Registered result/error
+P	SOURCE_PAGE_STATE_REGISTRY / exact server result
+P	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable
+P	Registered result/error/disabled reason
 P	SOURCE_NEXT_OR_SAME_PAGE
-P	Audit/correlation
-ROW	admin:SOC-01	SYSTEM_OR_CONTEXT_ACTION	SOC-01-BTN-REFRESH-PROJECTION	BUTTON_OR_SYSTEM_TRIGGER	SOURCE_GATE	SOURCE_GATE	refreshProjection	SOC-01-ACT-REFRESH-PROJECTION	NEW_UID_FROM_EXISTING_OPERATION	POST /v1/projections/refresh	SOURCE_EXACT	DOMAIN_COMMAND_RUNTIME	acpos_social.publish_requests	SOURCE_SCHEMA + common envelope	SOURCE_STATE_REGISTRY	SOURCE_ERROR_REGISTRY	Registered result/error	SOURCE_NEXT_OR_SAME_PAGE	Audit/correlation
+P	acpos_audit.audit_events + correlation_id + operation/result identity
+ROW	admin:SOC-01	SYSTEM_OR_CONTEXT_ACTION	SOC-01-BTN-REFRESH-PROJECTION	BUTTON_OR_SYSTEM_TRIGGER	AUTHORIZED_PAGE_CONTEXT	SOURCE_OPERATION_GATE	CLICK_OR_SYSTEM_TRIGGER	refreshProjection	SOC-01-ACT-REFRESH-PROJECTION	NEW_UID_FROM_EXISTING_OPERATION	SOURCE_OPERATION_PERMISSION / SERVER_RECHECK	SOC-01-ACT-REFRESH-PROJECTION typed schema + source contract fields + actor/scope/target + correlation_id + expected_version(if versioned) + idempotency_key	POST /v1/projections/refresh	SOURCE_EXACT	DOMAIN_COMMAND_RUNTIME	acpos_social.publish_requests	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered result/error/disabled reason	SOURCE_NEXT_OR_SAME_PAGE	acpos_audit.audit_events + correlation_id + operation/result identity
 P	admin:SOC-01
 P	SYSTEM_OR_CONTEXT_ACTION
 P	SOC-01-BTN-REFRESH-PROJECTION
 P	BUTTON_OR_SYSTEM_TRIGGER
-P	SOURCE_GATE
-P	SOURCE_GATE
+P	AUTHORIZED_PAGE_CONTEXT
+P	SOURCE_OPERATION_GATE
+P	CLICK_OR_SYSTEM_TRIGGER
 P	refreshProjection
 P	SOC-01-ACT-REFRESH-PROJECTION
 P	NEW_UID_FROM_EXISTING_OPERATION
+P	SOURCE_OPERATION_PERMISSION / SERVER_RECHECK
+P	SOC-01-ACT-REFRESH-PROJECTION typed schema + source contract fields + actor/scope/target + correlation_id + expected_version(if versioned) + idempotency_key
 P	POST /v1/projections/refresh
 P	SOURCE_EXACT
 P	DOMAIN_COMMAND_RUNTIME
 P	acpos_social.publish_requests
-P	SOURCE_SCHEMA + common envelope
-P	SOURCE_STATE_REGISTRY
-P	SOURCE_ERROR_REGISTRY
-P	Registered result/error
+P	SOURCE_PAGE_STATE_REGISTRY / exact server result
+P	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable
+P	Registered result/error/disabled reason
 P	SOURCE_NEXT_OR_SAME_PAGE
-P	Audit/correlation
+P	acpos_audit.audit_events + correlation_id + operation/result identity
 P	admin:KB-01 — Unified Construction Bindings
 P	No user-visible/effectful control registry exists in this source page. Construction MUST treat it as system/read-only/support projection; do not invent a UI control. Existing source tables in the preceding closure remain authoritative.
 P	Construction Lookup Invariant
