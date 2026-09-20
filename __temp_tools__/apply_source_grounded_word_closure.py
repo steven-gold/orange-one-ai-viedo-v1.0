@@ -265,12 +265,12 @@ idx=ROOT/'00_INDEX_ACPOS_Mother_Compliant_Basic_Design_Master.docx'
 d=Document(idx)
 strip_current_closure(d)
 landscape(d);add_title(d,'2026-09-21 Source-Grounded Construction Closure Index')
-    add_table(d,['Page','Expected Controls','Exact Rows','Denominator','True Runtime / Governance Status'],[
-      [page,v['expected_control_denominator'],v['actual_unique_controls'],'PASS' if v['denominator_pass'] else 'FAIL',
-       '; '.join(b.get('type','') for b in v.get('blockers',[])) or 'NO_DEFINITION_GAP']
-      for page,v in REPORT['pages'].items()
-    ],6.5)
-    d.add_paragraph('This index records construction definition status only. Human Visual Review / Design Freeze and Production runtime acceptance remain independent gates.')
+add_table(d,['Page','Expected Controls','Exact Rows','Denominator','True Runtime / Governance Status'],[
+  [page,v['expected_control_denominator'],v['actual_unique_controls'],'PASS' if v['denominator_pass'] else 'FAIL',
+   '; '.join(b.get('type','') for b in v.get('blockers',[])) or 'NO_DEFINITION_GAP']
+  for page,v in REPORT['pages'].items()
+],6.5)
+d.add_paragraph('This index records construction definition status only. Human Visual Review / Design Freeze and Production runtime acceptance remain independent gates.')
 d.save(idx);Document(idx);updated.append(idx.name)
 
 out={'marker':MARK,'source_commit':REPORT['source_commit'],'updated_files':updated,'updated_count':len(updated),
