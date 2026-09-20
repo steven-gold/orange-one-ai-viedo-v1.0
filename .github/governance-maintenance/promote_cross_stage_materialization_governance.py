@@ -589,6 +589,18 @@ def mutate_lifecycle_and_reference_v2216():
                       ['WEB-GOV-01-S088','WEB-GOV-02-S075','WEB-GOV-03-S071'])
     if 'BUNDLE-GOV-AUDIT-BASE' in cb:
         unique_extend(cb['BUNDLE-GOV-AUDIT-BASE'].setdefault('exact_section_uids',[]),['WEB-GOV-04-S085'])
+    vals=ref.setdefault('validator_identities',[])
+    v35=next((x for x in vals if x.get('validator_uid')=='VAL-GOV-035'),None)
+    if not isinstance(v35,dict): raise RuntimeError('VAL-GOV-035 identity missing')
+    unique_extend(v35.setdefault('allowed_usage',[]),['AUDIT_CATALOG'])
+    ats=ref.setdefault('audit_type_identities',[])
+    if not any(x.get('audit_type_uid')=='AUDTYPE-GOV-014' for x in ats):
+        ats.append({
+            'audit_type_uid':'AUDTYPE-GOV-014',
+            'canonical_name':'CROSS_STAGE_MATERIALIZATION_AND_CONSUMER_READINESS',
+            'allowed_stage_uids':['PREFORMAL'],
+            'denominator_eligible':True
+        })
     if 'governance_revision' in ref: ref['governance_revision']=NEW_SOURCE_REV
     dump(rp,ref)
 
@@ -600,12 +612,11 @@ def mutate_lifecycle_and_reference_v2216():
         unique_extend(row.setdefault('exact_required_normative_section_uids',[]),ALL_STAGE_COMMON_SECTIONS)
         if sid in {'STAGE-01','STAGE-02','STAGE-03','STAGE-04'}:
             unique_extend(row['exact_required_normative_section_uids'],[EARLY_STAGE_SOURCE_SECTION])
-    cbr=snap.get('common_bundle_reference_rules') or {}
-    if 'BUNDLE-GOV-CONSTRUCTION-BASE' in cbr:
-        unique_extend(cbr['BUNDLE-GOV-CONSTRUCTION-BASE'].setdefault('exact_section_uids',[]),
-                      ['WEB-GOV-01-S088','WEB-GOV-02-S075','WEB-GOV-03-S071'])
-    if 'BUNDLE-GOV-AUDIT-BASE' in cbr:
-        unique_extend(cbr['BUNDLE-GOV-AUDIT-BASE'].setdefault('exact_section_uids',[]),['WEB-GOV-04-S085'])
+    # Semantic baseline is the immutable semantic mirror of the exact Reference Rule Registry.
+    snap['stage_reference_rules']=copy.deepcopy(ref.get('stage_reference_rules') or {})
+    snap['common_bundle_reference_rules']=copy.deepcopy(ref.get('common_bundle_reference_rules') or {})
+    snap['validator_identities']=copy.deepcopy(ref.get('validator_identities') or [])
+    snap['audit_type_identities']=copy.deepcopy(ref.get('audit_type_identities') or [])
     sem['governance_revision']=NEW_SOURCE_REV
     sem['content_hash']=hobj(sem)
     dump(sp,sem)
@@ -659,7 +670,14 @@ def mutate_audit_and_index_v2216():
     dump(cp,cat)
 
     ip=SOURCE/'10_REGISTRY/CONSTRUCTION_ARTIFACT_INDEX.yaml'
-    idx=load(ip); ur=idx.setdefault('universal_rules',{})
+    idx=load(ip)
+    bundles=idx.setdefault('mandatory_common_normative_bundles',{})
+    if 'BUNDLE-GOV-CONSTRUCTION-BASE' not in bundles or 'BUNDLE-GOV-AUDIT-BASE' not in bundles:
+        raise RuntimeError('mandatory common bundle registry missing')
+    unique_extend(bundles['BUNDLE-GOV-CONSTRUCTION-BASE'].setdefault('section_uids',[]),
+                  ['WEB-GOV-01-S088','WEB-GOV-02-S075','WEB-GOV-03-S071'])
+    unique_extend(bundles['BUNDLE-GOV-AUDIT-BASE'].setdefault('section_uids',[]),['WEB-GOV-04-S085'])
+    ur=idx.setdefault('universal_rules',{})
     for k in [
         'reference_only_required_dependency_completion',
         'physical_required_input_missing',
