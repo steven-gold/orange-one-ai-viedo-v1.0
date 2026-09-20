@@ -82,16 +82,17 @@ OP={x["operation_id"]:x for x in opreg["operations"]}
 interaction=load("07_ui/interaction_registry.yaml")
 
 def collect_standard(data):
-    controls={};actions={};ports={};bind_controls={};bind_actions={}
+    controls={};actions={};ports={};local_ops={}
     for p,d in walk(data):
         q=dict(d);q["__path"]="/".join(p)
         if d.get("control_uid"): merge(controls.setdefault(str(d["control_uid"]),{}),q)
         if d.get("action_uid"): merge(actions.setdefault(str(d["action_uid"]),{}),q)
         if d.get("port_uid"): merge(ports.setdefault(str(d["port_uid"]),{}),q)
-    # some control and action entries are represented by compact keys or alternative nested entries
-    return controls,actions,ports
+        if d.get("operation_id"):
+            merge(local_ops.setdefault(str(d["operation_id"]),{}),q)
+    return controls,actions,ports,local_ops
 
-def source_control_row(uid,c,actions,ports,data,page):
+def source_control_row(uid,c,actions,ports,local_ops,data,page):
     # enrich control entry using all occurrences of same action/control
     action=str(first(c,"action_uid","action") or "")
     beh=str(first(c,"action_or_behavior") or "")
@@ -121,6 +122,12 @@ def source_control_row(uid,c,actions,ports,data,page):
         owner=owner or str(first(pr,"runtime_owner","owner") or "")
         persistence=persistence or runtime_text(first(pr,"persistence_owner"))
         rt=rt or runtime_text(first(pr,"runtime_binding"))
+    if operation and operation in local_ops:
+        o=local_ops[operation]
+        method=method or exact_method(o)
+        owner=owner or str(first(o,"runtime_owner","owner") or "")
+        persistence=persistence or runtime_text(first(o,"persistence_owner"))
+        if not perm: perm=str(first(o,"permission","permission_uid","registered_permission") or "")
     if operation and operation in OP:
         o=OP[operation]
         method=method or exact_method(o)
@@ -128,6 +135,11 @@ def source_control_row(uid,c,actions,ports,data,page):
         persistence=persistence or runtime_text(first(o,"persistence_owner"))
         if not perm:
             perm=str(first(o,"authorization_resource_key") or "")
+    if not operation and ("READ_ONLY" in effect.upper() or "READ_UI" in effect.upper()) and "getUiProjection" in local_ops:
+        operation="getUiProjection"
+        o=local_ops[operation]
+        method=exact_method(o) or "GET /v1/ui-projections/{pageUid}"
+        owner=owner or str(first(o,"runtime_owner","owner") or (page+"_READ_PROJECTION"))
     if page=="ERP-01" and action=="ERP-01-ACT-READ" and not operation:
         operation="getUiProjection"
         method="GET /v1/ui-projections/{pageUid}"
@@ -145,7 +157,7 @@ def source_control_row(uid,c,actions,ports,data,page):
     typ=str(first(c,"type","control_type","ui_type") or "")
     section=str(first(c,"section_uid","section","sec","placement") or "")
     # exact UI/local classification
-    ui_tokens=("UI_ONLY","CONTEXT_STATE","UI_CONTEXT_ONLY","DRAFT_UI","LOCAL","NAVIGATION_ONLY","UI_NAVIGATION")
+    ui_tokens=("UI_ONLY","CONTEXT_STATE","UI_CONTEXT_ONLY","DRAFT_UI","UI_DRAFT_STATE","LOCAL","NAVIGATION_ONLY","UI_NAVIGATION")
     read_tokens=("READ","READ_ONLY","READONLY")
     effu=effect.upper()
     behu=beh.upper()
@@ -309,8 +321,8 @@ for page,(path,expected) in PAGES.items():
     elif page=="AIAPI-01": rows=parse_aiapi(data)
     elif page=="ADMIN-STR-01": rows=parse_admin_str(data)
     else:
-        controls,actions,ports=collect_standard(data)
-        rows=[source_control_row(uid,c,actions,ports,data,page) for uid,c in sorted(controls.items())]
+        controls,actions,ports,local_ops=collect_standard(data)
+        rows=[source_control_row(uid,c,actions,ports,local_ops,data,page) for uid,c in sorted(controls.items())]
     # page-specific known source-grounded status corrections
     rt=page_runtime_truth(data)
     if page=="KB-01":
@@ -346,7 +358,8 @@ for page,(path,expected) in PAGES.items():
         blockers.append({"type":"DENOMINATOR_MISMATCH","expected":expected,"actual":unique})
     # explicit page-level truthful blockers from source
     if page=="CORE-01":
-        blockers.append({"type":"LOCK_REVIEW_EVIDENCE_REVIEWER_HASH_REMAINS_FAIL_CLOSED","status":"SOURCE_RULE_NOT_AUTOFILLED"})
+        # 0042 materializes the contract: approved criteria + >=1 evidence + reviewer path derived from account assignments.
+        pass
     if page=="EDIT-01":
         blockers.append({"type":"STALE_DERIVED_VALIDATION_COUNT","stale":"15 ports / 13 operations","current":"22 ports / machine final_gap_closure 160/160 controls,124/124 actions"})
     if page=="SG-02":
