@@ -41,6 +41,7 @@ jobs:
           test -d 00_SOURCE_INTAKE/run_core01_d81df9ac_stage02/04_PAGE_FUNCTIONAL_CONTRACT
           git diff --exit-code --             00_SOURCE_INTAKE/run_core01_d81df9ac_stage02/00_SOURCE_INTAKE             00_SOURCE_INTAKE/run_core01_d81df9ac_stage02/01_CLASSIFIED             00_SOURCE_INTAKE/run_core01_d81df9ac_stage02/02_BASE_BLUEPRINT             00_SOURCE_INTAKE/run_core01_d81df9ac_stage02/03_BLUEPRINT_BINDING             00_SOURCE_INTAKE/run_core01_d81df9ac_stage02/04_PAGE_FUNCTIONAL_CONTRACT             00_SOURCE_INTAKE/run_core01_d81df9ac_stage02/CURRENT_RUN_MANIFEST.yaml             00_SOURCE_INTAKE/run_core01_d81df9ac_stage02/EXECUTION_STATE.yaml             00_SOURCE_INTAKE/run_core01_d81df9ac_stage02/RUN_CONTEXT.yaml
           python governance/ci/governance_resolver.py
+          python governance/ci/validate_validation_remediation_closure_protocol.py
           python governance/ci/validate_selected_execution_profile_integrity.py
           python governance/ci/validate_active_consumer_reference_integrity.py
           python governance/ci/stage_execution_engine.py --definition-audit-all
