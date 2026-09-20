@@ -338,3 +338,5 @@ def main():
     raise SystemExit('use --self-test, --execute, or --bind-provenance')
 if __name__ == '__main__':
     main()
+
+# stage03-execution-trigger: v2.2.15-clean-r1
