@@ -1,0 +1,950 @@
+### PART word/document.xml
+P	ACPOS · AIAPI-01
+P	AI API 管理｜Mother Basic Design
+P	Provider Governance · Credential Safety · Capability · Routing · Sandbox · Operations
+ROW	頁面定位｜單一 AI API 管理工作區。管理 Provider/Model Profile、Credential、Capability、Route/Test、Job/Cost/Incident；不建立第二套 Provider Registry、Secret Store、Router 或 AI Runtime。
+P	頁面定位｜單一 AI API 管理工作區。管理 Provider/Model Profile、Credential、Capability、Route/Test、Job/Cost/Incident；不建立第二套 Provider Registry、Secret Store、Router 或 AI Runtime。
+ROW	頁面設計身份	定義
+P	頁面設計身份
+P	定義
+ROW	Page UID	admin:AIAPI-01
+P	Page UID
+P	admin:AIAPI-01
+ROW	頁面名稱	AI API 管理 / AI API Management
+P	頁面名稱
+P	AI API 管理 / AI API Management
+ROW	Surface	ADMIN
+P	Surface
+P	ADMIN
+ROW	Workspace	Single-page · 4 practical views
+P	Workspace
+P	Single-page · 4 practical views
+ROW	Default View	Provider / API 設定
+P	Default View
+P	Provider / API 設定
+ROW	Global Pattern	繼承既有 Global Shell / Global Visual；本頁不另造視覺系統
+P	Global Pattern
+P	繼承既有 Global Shell / Global Visual；本頁不另造視覺系統
+ROW	Missing Value	—；不得用 0 / Healthy / Success 補值
+P	Missing Value
+P	—；不得用 0 / Healthy / Success 補值
+ROW	Runtime Boundary	前端管理面；既有 Provider / Compiler / Job / Secret owners 為唯一 backend owners
+P	Runtime Boundary
+P	前端管理面；既有 Provider / Compiler / Job / Secret owners 為唯一 backend owners
+P	1. 產品目標與設計原則
+P	把 Provider 設定、能力治理、路由測試、作業成本監控收斂在同一頁，避免操作人員在多個管理頁之間失去 Provider/Profile 上下文。
+P	任何 Effectful 動作必須綁定已註冊 Operation、Permission、Gate 與 Runtime Owner；未知能力、Endpoint、價格、限制或 Provider 資料一律顯示 — 或 BLOCK。
+P	Secret 僅允許寫入與狀態檢視，不提供明文回顯、匯出、日誌或 Audit Plaintext。
+P	路由由能力、Rights、Data Classification、Health/Test、Budget/Policy 等硬條件決定；前端不得 Override。
+P	所有 Provider-specific Prompt/Request 轉換只能改語法與欄位映射，不得改變 Canonical Instruction 的治理語意。
+P	2. Scope / Out-of-Scope
+ROW	範圍	內容
+P	範圍
+P	內容
+ROW	IN	Provider/Model Profile、Credential Status、Capability Governance、Professional Description、Candidate Group、Preflight、Compile Audit、Sandbox、Route Decision、Quarantine、Job/Attempt/Callback/Artifact、Cost/Budget/Incident、Kill Switch、Queue Diagnostic。
+P	IN
+P	Provider/Model Profile、Credential Status、Capability Governance、Professional Description、Candidate Group、Preflight、Compile Audit、Sandbox、Route Decision、Quarantine、Job/Attempt/Callback/Artifact、Cost/Budget/Incident、Kill Switch、Queue Diagnostic。
+ROW	OUT	部門工作頁的 Provider Picker、第二套 Provider Registry、第二套 Secret DB、第二套 Router、前端直接 SDK 呼叫、未註冊 API、明文 Secret、Client-side Job State Write、未驗證 Callback Success。
+P	OUT
+P	部門工作頁的 Provider Picker、第二套 Provider Registry、第二套 Secret DB、第二套 Router、前端直接 SDK 呼叫、未註冊 API、明文 Secret、Client-side Job State Write、未驗證 Callback Success。
+ROW	BOUNDARY	AIAPI-01 管 Provider 能力與執行基礎；CORE / ASSET / VIDEO / EDIT / STRATEGY 只提交 provider-neutral instruction 與 capability requirement。
+P	BOUNDARY
+P	AIAPI-01 管 Provider 能力與執行基礎；CORE / ASSET / VIDEO / EDIT / STRATEGY 只提交 provider-neutral instruction 與 capability requirement。
+P	3. Business Entity Inventory
+ROW	Business Entity	責任	Owner Boundary
+P	Business Entity
+P	責任
+P	Owner Boundary
+ROW	ProviderModelProfile	Provider + Model + Adapter + Capability 的可執行設定版本	Profile owner / AI API runtime
+P	ProviderModelProfile
+P	Provider + Model + Adapter + Capability 的可執行設定版本
+P	Profile owner / AI API runtime
+ROW	CredentialReference	Profile 的 Secret Reference 與 Credential Status；不含明文	Existing secret owner
+P	CredentialReference
+P	Profile 的 Secret Reference 與 Credential Status；不含明文
+P	Existing secret owner
+ROW	GovernedCapabilityResource	Capability / Policy / Enable 狀態與審批	Governance owner
+P	GovernedCapabilityResource
+P	Capability / Policy / Enable 狀態與審批
+P	Governance owner
+ROW	ProviderCandidateGroup	可排序的候選 Profile 集合與 Route Limits	AI API route config owner
+P	ProviderCandidateGroup
+P	可排序的候選 Profile 集合與 Route Limits
+P	AI API route config owner
+ROW	RoutePreflight	一次 Route 可行性檢查結果	Route runtime
+P	RoutePreflight
+P	一次 Route 可行性檢查結果
+P	Route runtime
+ROW	SandboxTest	隔離的非 Production Provider 測試	AI API command runtime
+P	SandboxTest
+P	隔離的非 Production Provider 測試
+P	AI API command runtime
+ROW	RouteDecision	實際選擇 Profile、理由、constraint result	Route runtime
+P	RouteDecision
+P	實際選擇 Profile、理由、constraint result
+P	Route runtime
+ROW	QuarantineRecord	被隔離 Provider/Profile 與恢復原因	AI API runtime
+P	QuarantineRecord
+P	被隔離 Provider/Profile 與恢復原因
+P	AI API runtime
+ROW	ProviderJobAttempt	Job / Attempt / Callback / Artifact / Error lineage	Job/Queue runtime
+P	ProviderJobAttempt
+P	Job / Attempt / Callback / Artifact / Error lineage
+P	Job/Queue runtime
+ROW	CostBudgetIncident	估算/實際成本、Budget、Degradation、Incident、Fallback	Operations projection
+P	CostBudgetIncident
+P	估算/實際成本、Budget、Degradation、Incident、Fallback
+P	Operations projection
+ROW	InstructionCompileAudit	Canonical Instruction → profile/template/adapter compile lineage	Instruction compiler
+P	InstructionCompileAudit
+P	Canonical Instruction → profile/template/adapter compile lineage
+P	Instruction compiler
+P	4. Business Entity × Applicable Operation Matrix
+ROW	Entity	List	Open	Create/Run	Edit/Action	Validate	Approve	Version	Audit	Retire/Delete	Recovery
+P	Entity
+P	List
+P	Open
+P	Create/Run
+P	Edit/Action
+P	Validate
+P	Approve
+P	Version
+P	Audit
+P	Retire/Delete
+P	Recovery
+ROW	ProviderModelProfile	R	R	R	R	R	R	R	R	Retire	R
+P	ProviderModelProfile
+P	R
+P	R
+P	R
+P	R
+P	R
+P	R
+P	R
+P	R
+P	Retire
+P	R
+ROW	CredentialReference	R	R	—	Set/Delete	—	R	—	R	Delete	R
+P	CredentialReference
+P	R
+P	R
+P	—
+P	Set/Delete
+P	—
+P	R
+P	—
+P	R
+P	Delete
+P	R
+ROW	GovernedCapabilityResource	R	R	—	Configure	R	Approve	R	R	Disable	R
+P	GovernedCapabilityResource
+P	R
+P	R
+P	—
+P	Configure
+P	R
+P	Approve
+P	R
+P	R
+P	Disable
+P	R
+ROW	ProviderCandidateGroup	R	R	Create	Bounded	R	—	R	R	—	R
+P	ProviderCandidateGroup
+P	R
+P	R
+P	Create
+P	Bounded
+P	R
+P	—
+P	R
+P	R
+P	—
+P	R
+ROW	RoutePreflight	R	R	—	—	R	—	R	R	—	R
+P	RoutePreflight
+P	R
+P	R
+P	—
+P	—
+P	R
+P	—
+P	R
+P	R
+P	—
+P	R
+ROW	SandboxTest	R	R	Run	—	R	—	R	R	—	R
+P	SandboxTest
+P	R
+P	R
+P	Run
+P	—
+P	R
+P	—
+P	R
+P	R
+P	—
+P	R
+ROW	RouteDecision	R	R	Execute	—	R	—	R	R	—	R
+P	RouteDecision
+P	R
+P	R
+P	Execute
+P	—
+P	R
+P	—
+P	R
+P	R
+P	—
+P	R
+ROW	QuarantineRecord	R	R	—	Restore	R	Confirm	R	R	—	R
+P	QuarantineRecord
+P	R
+P	R
+P	—
+P	Restore
+P	R
+P	Confirm
+P	R
+P	R
+P	—
+P	R
+ROW	ProviderJobAttempt	R	R	Runtime	Runtime	R	—	R	R	—	R
+P	ProviderJobAttempt
+P	R
+P	R
+P	Runtime
+P	Runtime
+P	R
+P	—
+P	R
+P	R
+P	—
+P	R
+ROW	CostBudgetIncident	R	R	Runtime	Governed	R	High-risk	R	R	—	R
+P	CostBudgetIncident
+P	R
+P	R
+P	Runtime
+P	Governed
+P	R
+P	High-risk
+P	R
+P	R
+P	—
+P	R
+ROW	InstructionCompileAudit	R	R	Runtime	Profile-only	R	—	R	R	—	R
+P	InstructionCompileAudit
+P	R
+P	R
+P	Runtime
+P	Profile-only
+P	R
+P	—
+P	R
+P	R
+P	—
+P	R
+P	註：R = REQUIRED。Bounded 表示只有在已存在 Operation/Payload 的範圍內完成；沒有註冊 Post-create member mutation 時，不因 UI 對稱性自造 API。
+P	5. Entity Hierarchy / Lineage
+ROW	上游	關聯	下游 / 規則
+P	上游
+P	關聯
+P	下游 / 規則
+ROW	ProviderModelProfile	1 → 0..1	CredentialReference；Secret 只以 Reference/Status 連結
+P	ProviderModelProfile
+P	1 → 0..1
+P	CredentialReference；Secret 只以 Reference/Status 連結
+ROW	ProviderModelProfile	N ↔ N	GovernedCapabilityResource；Route 需 exact capability match
+P	ProviderModelProfile
+P	N ↔ N
+P	GovernedCapabilityResource；Route 需 exact capability match
+ROW	ProviderCandidateGroup	1 → N	Ordered Profile refs；不可用 latest/default alias
+P	ProviderCandidateGroup
+P	1 → N
+P	Ordered Profile refs；不可用 latest/default alias
+ROW	Canonical Instruction	1 → N	CompileAudit；每個 target profile 必須重新 compile，禁止跨 Provider 重用 compiled prompt
+P	Canonical Instruction
+P	1 → N
+P	CompileAudit；每個 target profile 必須重新 compile，禁止跨 Provider 重用 compiled prompt
+ROW	RoutePreflight	1 → 0..1	RouteDecision；硬 Gate 未過不得 execute
+P	RoutePreflight
+P	1 → 0..1
+P	RouteDecision；硬 Gate 未過不得 execute
+ROW	RouteDecision	1 → N	ProviderJobAttempt；retry 形成獨立 Attempt
+P	RouteDecision
+P	1 → N
+P	ProviderJobAttempt；retry 形成獨立 Attempt
+ROW	ProviderJobAttempt	1 → 0..N	Callback / Artifact / Cost；Callback 未驗證不得成功
+P	ProviderJobAttempt
+P	1 → 0..N
+P	Callback / Artifact / Cost；Callback 未驗證不得成功
+ROW	QuarantineRecord	N → 1	Provider/Profile；Restore 需 reason + audit
+P	QuarantineRecord
+P	N → 1
+P	Provider/Profile；Restore 需 reason + audit
+P	6. Functional Admission & Bounded Completion
+ROW	候選功能	裁決	設計處理
+P	候選功能
+P	裁決
+P	設計處理
+ROW	Queue Readiness / Probe	ADMIT	既有 Queue Probe Operation 已存在；放在 Routing/Operations 的次要診斷，不成為新 Queue 管理系統。
+P	Queue Readiness / Probe
+P	ADMIT
+P	既有 Queue Probe Operation 已存在；放在 Routing/Operations 的次要診斷，不成為新 Queue 管理系統。
+ROW	Candidate Group post-create member CRUD	BLOCK UNTIL EXACT OP	Current UI 可在 Create payload 內設定 ordered members / limits；若無正式 update member operation，不放獨立 Edit/Delete member action。
+P	Candidate Group post-create member CRUD
+P	BLOCK UNTIL EXACT OP
+P	Current UI 可在 Create payload 內設定 ordered members / limits；若無正式 update member operation，不放獨立 Edit/Delete member action。
+ROW	Provider / Model Picker in department pages	REJECT	由 AIAPI Route Policy 自動解析；部門工作頁不得繞過。
+P	Provider / Model Picker in department pages
+P	REJECT
+P	由 AIAPI Route Policy 自動解析；部門工作頁不得繞過。
+ROW	API Key Reveal / Eye button	REJECT	Credential write-only；只顯示 SET / NOT_SET / ROTATION_DUE / ERROR。
+P	API Key Reveal / Eye button
+P	REJECT
+P	Credential write-only；只顯示 SET / NOT_SET / ROTATION_DUE / ERROR。
+ROW	Frontend Route Override	REJECT	Route Decision 為 Runtime owner；前端只顯示 constraint / reason。
+P	Frontend Route Override
+P	REJECT
+P	Route Decision 為 Runtime owner；前端只顯示 constraint / reason。
+ROW	Cost chart	CONDITIONAL	只有後端存在 governed projection 才顯示；表格永遠是 canonical。
+P	Cost chart
+P	CONDITIONAL
+P	只有後端存在 governed projection 才顯示；表格永遠是 canonical。
+ROW	Manual health green override	REJECT	Health 為真實投影，不接受 UI 假綠燈。
+P	Manual health green override
+P	REJECT
+P	Health 為真實投影，不接受 UI 假綠燈。
+P	7. Functional Workbench & Interaction Topology
+ROW	Atomic Workbench｜Provider / API 設定採 68% Profile Table + 32% Professional Description；選取 Profile 後保持同一 Context。Edit/Test/Credential 使用 Modal/Drawer，不把主要工作流切碎。
+P	Atomic Workbench｜Provider / API 設定採 68% Profile Table + 32% Professional Description；選取 Profile 後保持同一 Context。Edit/Test/Credential 使用 Modal/Drawer，不把主要工作流切碎。
+ROW	工作序列	Topology	理由
+P	工作序列
+P	Topology
+P	理由
+ROW	Profile List → Select → Professional Description	ATOMIC_WORKBENCH	同一 Provider/Profile Context；不能跳頁失去 selection。
+P	Profile List → Select → Professional Description
+P	ATOMIC_WORKBENCH
+P	同一 Provider/Profile Context；不能跳頁失去 selection。
+ROW	Create/Edit Profile → Test → Credential Status	SAME_SURFACE_CLUSTER	Effectful Modal 結束後回到同一選取列。
+P	Create/Edit Profile → Test → Credential Status
+P	SAME_SURFACE_CLUSTER
+P	Effectful Modal 結束後回到同一選取列。
+ROW	Candidate Group → Preflight → Compile Audit → Sandbox → Route Decision	ATOMIC_WORKBENCH	同一 route basis；任何一步換 context 都可能造成錯誤 Provider 決策。
+P	Candidate Group → Preflight → Compile Audit → Sandbox → Route Decision
+P	ATOMIC_WORKBENCH
+P	同一 route basis；任何一步換 context 都可能造成錯誤 Provider 決策。
+ROW	Job/Attempt → Callback/Artifact/Cost	SAME_SURFACE_CLUSTER	操作監控需保留 exact job/attempt lineage。
+P	Job/Attempt → Callback/Artifact/Cost
+P	SAME_SURFACE_CLUSTER
+P	操作監控需保留 exact job/attempt lineage。
+ROW	Audit / full error / docs	INDEPENDENT_SUPPORT_PANEL	低頻細節放 Drawer，避免干擾主工作流。
+P	Audit / full error / docs
+P	INDEPENDENT_SUPPORT_PANEL
+P	低頻細節放 Drawer，避免干擾主工作流。
+P	8. Four-View Information Architecture
+ROW	View	主要內容	Primary CTA 規則
+P	View
+P	主要內容
+P	Primary CTA 規則
+ROW	總覽	Provider / Route / Capability / Job / Cost / Health / Incident 摘要	沒有假 KPI；若無 governed projection 就用狀態表。
+P	總覽
+P	Provider / Route / Capability / Job / Cost / Health / Incident 摘要
+P	沒有假 KPI；若無 governed projection 就用狀態表。
+ROW	Provider / API 設定	Profile table、Professional Description、Credential、Capability、Test	每一 Context 最多一個 Primary CTA；其他為 row action / secondary。
+P	Provider / API 設定
+P	Profile table、Professional Description、Credential、Capability、Test
+P	每一 Context 最多一個 Primary CTA；其他為 row action / secondary。
+ROW	路由 / 測試	Candidate Group、Preflight、Compile Audit、Sandbox、Route Simulation、Quarantine、Queue Probe	Route Execute 只有硬 Gate 全部 PASS 才可用。
+P	路由 / 測試
+P	Candidate Group、Preflight、Compile Audit、Sandbox、Route Simulation、Quarantine、Queue Probe
+P	Route Execute 只有硬 Gate 全部 PASS 才可用。
+ROW	作業 / 成本 / 事件	Job、Attempt、Callback、Artifact、Cost、Budget、Degradation、Incident、Fallback、Kill Switch	Kill Switch 永遠條件式高風險，不是常駐 Primary。
+P	作業 / 成本 / 事件
+P	Job、Attempt、Callback、Artifact、Cost、Budget、Degradation、Incident、Fallback、Kill Switch
+P	Kill Switch 永遠條件式高風險，不是常駐 Primary。
+P	9. Page Geometry / Responsive Contract
+ROW	區域	Desktop Geometry	Responsive / Overflow
+P	區域
+P	Desktop Geometry
+P	Responsive / Overflow
+ROW	Global Header	全寬，約 58px	繼承 Global；本頁不重畫。
+P	Global Header
+P	全寬，約 58px
+P	繼承 Global；本頁不重畫。
+ROW	Collapsed Sidebar	約 64px icon rail	Expanded sidebar overlay；不得壓縮主 Workspace。
+P	Collapsed Sidebar
+P	約 64px icon rail
+P	Expanded sidebar overlay；不得壓縮主 Workspace。
+ROW	Page Context / Tabs	56px context + 52px secondary tab row	Tab 可橫向捲動但不另建 mobile page。
+P	Page Context / Tabs
+P	56px context + 52px secondary tab row
+P	Tab 可橫向捲動但不另建 mobile page。
+ROW	Provider View	Main 68% / Professional Panel 32%，gap 16px	窄寬時先保持 table 主體，右欄下沉為 drawer/stack。
+P	Provider View
+P	Main 68% / Professional Panel 32%，gap 16px
+P	窄寬時先保持 table 主體，右欄下沉為 drawer/stack。
+ROW	Routing / Operations	Main route workbench + 28~32% operations rail	低頻 detail 轉 drawer。
+P	Routing / Operations
+P	Main route workbench + 28~32% operations rail
+P	低頻 detail 轉 drawer。
+ROW	Detail Drawer	480–560px	不能遮住主要 CTA；Esc / Focus trap / Return focus 必須成立。
+P	Detail Drawer
+P	480–560px
+P	不能遮住主要 CTA；Esc / Focus trap / Return focus 必須成立。
+ROW	Control	40px，touch target ≥44px	不得為塞欄位縮到不可用。
+P	Control
+P	40px，touch target ≥44px
+P	不得為塞欄位縮到不可用。
+P	10. Canonical Section Specification
+ROW	Section UID	名稱	責任
+P	Section UID
+P	名稱
+P	責任
+ROW	AIAPI-01-SEC-01	Page Context	Page title / current view / selected provider-profile / current blockers
+P	AIAPI-01-SEC-01
+P	Page Context
+P	Page title / current view / selected provider-profile / current blockers
+ROW	AIAPI-01-SEC-02	View Navigator	4 same-page tabs; preserve selection/query/draft state
+P	AIAPI-01-SEC-02
+P	View Navigator
+P	4 same-page tabs; preserve selection/query/draft state
+ROW	AIAPI-01-SEC-03	Overview	Real summary only; no fake charts/counters
+P	AIAPI-01-SEC-03
+P	Overview
+P	Real summary only; no fake charts/counters
+ROW	AIAPI-01-SEC-04	Provider & Model Profiles	Search/table/profile CRUD/test/retire
+P	AIAPI-01-SEC-04
+P	Provider & Model Profiles
+P	Search/table/profile CRUD/test/retire
+ROW	AIAPI-01-SEC-05	Professional Description	Read-only decision support from registered metadata
+P	AIAPI-01-SEC-05
+P	Professional Description
+P	Read-only decision support from registered metadata
+ROW	AIAPI-01-SEC-06	Credential & Capability	Write-only credential + governed capability/config/approval
+P	AIAPI-01-SEC-06
+P	Credential & Capability
+P	Write-only credential + governed capability/config/approval
+ROW	AIAPI-01-SEC-07	Routing & Test	Candidate group/preflight/compile audit/sandbox/route/quarantine/queue probe
+P	AIAPI-01-SEC-07
+P	Routing & Test
+P	Candidate group/preflight/compile audit/sandbox/route/quarantine/queue probe
+ROW	AIAPI-01-SEC-08	Operations	Job/attempt/callback/artifact/cost/budget/degradation/incident/fallback
+P	AIAPI-01-SEC-08
+P	Operations
+P	Job/attempt/callback/artifact/cost/budget/degradation/incident/fallback
+ROW	AIAPI-01-SEC-09	Governance Rail / Detail Drawer	Blocker/readiness/audit/docs/error/version/correlation
+P	AIAPI-01-SEC-09
+P	Governance Rail / Detail Drawer
+P	Blocker/readiness/audit/docs/error/version/correlation
+ROW	AIAPI-01-SEC-10	Action Dock	Current-context legal actions only; max one dominant CTA
+P	AIAPI-01-SEC-10
+P	Action Dock
+P	Current-context legal actions only; max one dominant CTA
+P	11. Component / Field Registry
+ROW	Component	Key Fields / Content	Behavior
+P	Component
+P	Key Fields / Content
+P	Behavior
+ROW	Profile Search/Table	Provider, Model, Capability, Adapter, Endpoint, Enabled, Credential Status, Last Test	Sticky header; long values ellipsis + drawer; row actions explicit.
+P	Profile Search/Table
+P	Provider, Model, Capability, Adapter, Endpoint, Enabled, Credential Status, Last Test
+P	Sticky header; long values ellipsis + drawer; row actions explicit.
+ROW	Profile Form	Identity / Connection / Adapter / Capability / Data-Context / Status	Schema-driven Modal; prompt_template 必須保留 canonical instruction placeholder。
+P	Profile Form
+P	Identity / Connection / Adapter / Capability / Data-Context / Status
+P	Schema-driven Modal; prompt_template 必須保留 canonical instruction placeholder。
+ROW	Professional Description	Identity, Positioning, ACPOS Scope, Capabilities, I/O, Limits, Endpoint/Auth, Billing, Health/Test, Restrictions, Docs	Read-only；unknown = —；不能編輯說明文字改 runtime。
+P	Professional Description
+P	Identity, Positioning, ACPOS Scope, Capabilities, I/O, Limits, Endpoint/Auth, Billing, Health/Test, Restrictions, Docs
+P	Read-only；unknown = —；不能編輯說明文字改 runtime。
+ROW	Credential Modal	profile ref + credential input / delete reason	Write-only；never prefill / reveal.
+P	Credential Modal
+P	profile ref + credential input / delete reason
+P	Write-only；never prefill / reveal.
+ROW	Route Workbench	Candidate Group, use_case, required capabilities, context size, classification, rights, refs	Preserve same route basis; no frontend override.
+P	Route Workbench
+P	Candidate Group, use_case, required capabilities, context size, classification, rights, refs
+P	Preserve same route basis; no frontend override.
+ROW	Compile Audit	Instruction package, script ref, compiler version, route constraints, adapter diff, prompt template	Exact version lineage; provider-specific syntax不得改 canonical meaning。
+P	Compile Audit
+P	Instruction package, script ref, compiler version, route constraints, adapter diff, prompt template
+P	Exact version lineage; provider-specific syntax不得改 canonical meaning。
+ROW	Operations Table	Job, Attempt, Callback, Artifact, Cost, Error, Incident	Read projections; retry preserves independent attempt.
+P	Operations Table
+P	Job, Attempt, Callback, Artifact, Cost, Error, Incident
+P	Read projections; retry preserves independent attempt.
+P	12. Core Control Registry
+ROW	Control	Operation	Gate / UX Rule
+P	Control
+P	Operation
+P	Gate / UX Rule
+ROW	新增 Provider	createProviderModelProfile	Effectful Modal；schema/gate/permission required
+P	新增 Provider
+P	createProviderModelProfile
+P	Effectful Modal；schema/gate/permission required
+ROW	編輯 Profile	updateProviderModelProfile	Expected version + audit
+P	編輯 Profile
+P	updateProviderModelProfile
+P	Expected version + audit
+ROW	查看 Profile	getProviderModelProfile	Drawer / read-only
+P	查看 Profile
+P	getProviderModelProfile
+P	Drawer / read-only
+ROW	連線測試	testProviderModelProfile	Secret ref + adapter required
+P	連線測試
+P	testProviderModelProfile
+P	Secret ref + adapter required
+ROW	退役 Profile	retireProviderModelProfile	State guarded; never hard delete runtime history
+P	退役 Profile
+P	retireProviderModelProfile
+P	State guarded; never hard delete runtime history
+ROW	設定 API 金鑰	setProviderModelCredential	Write-only; secret env/reference owner
+P	設定 API 金鑰
+P	setProviderModelCredential
+P	Write-only; secret env/reference owner
+ROW	刪除 API 金鑰	deleteProviderModelCredential	Reason/confirmation; no old value in response/log
+P	刪除 API 金鑰
+P	deleteProviderModelCredential
+P	Reason/confirmation; no old value in response/log
+ROW	設定 Capability/Policy	configureGovernedResource	Exact governed resource ref
+P	設定 Capability/Policy
+P	configureGovernedResource
+P	Exact governed resource ref
+ROW	核准 Capability/Policy	approveGovernedResource	Version + rationale + audit
+P	核准 Capability/Policy
+P	approveGovernedResource
+P	Version + rationale + audit
+ROW	建立 Candidate Group	createProviderCandidateGroup	Group + ordered member refs + limits only by exact schema
+P	建立 Candidate Group
+P	createProviderCandidateGroup
+P	Group + ordered member refs + limits only by exact schema
+ROW	Sandbox 測試	runSandboxTest	Production secret/output forbidden
+P	Sandbox 測試
+P	runSandboxTest
+P	Production secret/output forbidden
+ROW	執行 Route	executeProviderRoute	All hard gates + queue + approved capability/profile/secret
+P	執行 Route
+P	executeProviderRoute
+P	All hard gates + queue + approved capability/profile/secret
+ROW	查看 Route Decision	getProviderRouteDecision	Read-only exact decision
+P	查看 Route Decision
+P	getProviderRouteDecision
+P	Read-only exact decision
+ROW	查看 Quarantine	getProviderQuarantine	Read-only
+P	查看 Quarantine
+P	getProviderQuarantine
+P	Read-only
+ROW	Restore Quarantine	restoreProviderFromQuarantine	Reason + audit; bypass forbidden
+P	Restore Quarantine
+P	restoreProviderFromQuarantine
+P	Reason + audit; bypass forbidden
+ROW	Queue Probe	runProviderQueueProbe	Diagnostic only; no provider external call
+P	Queue Probe
+P	runProviderQueueProbe
+P	Diagnostic only; no provider external call
+ROW	Kill Switch	setKillSwitch	High-risk confirmation + reason + audit
+P	Kill Switch
+P	setKillSwitch
+P	High-risk confirmation + reason + audit
+P	13. Provider Profile Field Contract
+ROW	Field Group	Fields	Validation / Constraint
+P	Field Group
+P	Fields
+P	Validation / Constraint
+ROW	Identity	provider_id, provider_name, model_id, model_name	Canonical profile identity；不得由 frontend 猜 alias。
+P	Identity
+P	provider_id, provider_name, model_id, model_name
+P	Canonical profile identity；不得由 frontend 猜 alias。
+ROW	Connection	base_url, endpoint_path, http_method, timeout_seconds	Endpoint guessing forbidden；method/path 依正式 profile。
+P	Connection
+P	base_url, endpoint_path, http_method, timeout_seconds
+P	Endpoint guessing forbidden；method/path 依正式 profile。
+ROW	Adapter	adapter_type, request_template, response_text_path, prompt_template	只允許已存在 adapter type；prompt_template 保留 canonical_instruction token。
+P	Adapter
+P	adapter_type, request_template, response_text_path, prompt_template
+P	只允許已存在 adapter type；prompt_template 保留 canonical_instruction token。
+ROW	Capability	capability_type, additional_capabilities, supports_references, rights_compatible	Route 需 exact capability match；silent downgrade forbidden。
+P	Capability
+P	capability_type, additional_capabilities, supports_references, rights_compatible
+P	Route 需 exact capability match；silent downgrade forbidden。
+ROW	Data / Context	data_classifications, preferred_language, max_context	Data classification hard gate；不得跨 domain 猜值。
+P	Data / Context
+P	data_classifications, preferred_language, max_context
+P	Data classification hard gate；不得跨 domain 猜值。
+ROW	Status	enabled, profile version, health/test evidence	Enable 受 capability/policy/server gate；Health 不可手動改綠。
+P	Status
+P	enabled, profile version, health/test evidence
+P	Enable 受 capability/policy/server gate；Health 不可手動改綠。
+P	14. Credential / Secret Security Contract
+ROW	Secret Boundary｜API Key / Token 只可在 Credential write action 的 input buffer 短暫存在；成功後 UI 只保留 credential status / reference / version，不可再顯示明文。
+P	Secret Boundary｜API Key / Token 只可在 Credential write action 的 input buffer 短暫存在；成功後 UI 只保留 credential status / reference / version，不可再顯示明文。
+ROW	禁止	必須
+P	禁止
+P	必須
+ROW	Eye / Reveal Button	只顯示 SET / NOT_SET / ROTATION_DUE / ERROR 等正式狀態
+P	Eye / Reveal Button
+P	只顯示 SET / NOT_SET / ROTATION_DUE / ERROR 等正式狀態
+ROW	Plaintext Export	Export projection 必須排除 credential plaintext
+P	Plaintext Export
+P	Export projection 必須排除 credential plaintext
+ROW	Plaintext Log / Audit	Error payload 必須 redacted；不得包含 header/body secret
+P	Plaintext Log / Audit
+P	Error payload 必須 redacted；不得包含 header/body secret
+ROW	Plaintext DB Persistence	只由既有 secret reference owner 保存 reference
+P	Plaintext DB Persistence
+P	只由既有 secret reference owner 保存 reference
+ROW	Production Secret in Sandbox	Sandbox 使用隔離 credential/context；Production secret use = FORBIDDEN
+P	Production Secret in Sandbox
+P	Sandbox 使用隔離 credential/context；Production secret use = FORBIDDEN
+P	15. Routing Gate & Canonical Instruction Continuity
+ROW	順序	Gate	失敗行為
+P	順序
+P	Gate
+P	失敗行為
+ROW	1	Required capability exact match	BLOCK；不得以較弱 capability silent downgrade
+P	1
+P	Required capability exact match
+P	BLOCK；不得以較弱 capability silent downgrade
+ROW	2	Reference-media support when required	BLOCK 或移除不合法 profile；不改任務需求
+P	2
+P	Reference-media support when required
+P	BLOCK 或移除不合法 profile；不改任務需求
+ROW	3	Rights compatibility	BLOCK
+P	3
+P	Rights compatibility
+P	BLOCK
+ROW	4	Data classification compatibility	BLOCK
+P	4
+P	Data classification compatibility
+P	BLOCK
+ROW	5	Profile enabled	BLOCK
+P	5
+P	Profile enabled
+P	BLOCK
+ROW	6	Health / Test policy	BLOCK / Degraded route policy
+P	6
+P	Health / Test policy
+P	BLOCK / Degraded route policy
+ROW	7	Budget / Cost / policy gate	按正式 policy；不得為省成本改 Task Contract
+P	7
+P	Budget / Cost / policy gate
+P	按正式 policy；不得為省成本改 Task Contract
+ROW	8	Queue / runtime readiness	未 ready 不執行外部 Provider
+P	8
+P	Queue / runtime readiness
+P	未 ready 不執行外部 Provider
+P	Fallback 必須使用同一份 Canonical Instruction 重新為目標 Provider/Profile compile；不得重用另一 Provider 的 compiled prompt。
+P	16. Route / Sandbox / Quarantine Flow
+ROW	階段	Input / Output	核心規則
+P	階段
+P	Input / Output
+P	核心規則
+ROW	Candidate Group	Eligible profile refs + ordered priority + registered limits	只包含已註冊 profile；post-create mutation 無 exact op 時不顯示。
+P	Candidate Group
+P	Eligible profile refs + ordered priority + registered limits
+P	只包含已註冊 profile；post-create mutation 無 exact op 時不顯示。
+ROW	Preflight	use_case / capability / context / data / rights / refs → eligibility result	只驗證可路由性；不得產生 Provider 成功假象。
+P	Preflight
+P	use_case / capability / context / data / rights / refs → eligibility result
+P	只驗證可路由性；不得產生 Provider 成功假象。
+ROW	Compile Audit	Canonical Instruction → Prompt Template / Adapter Request	保留 source hash / compiler / profile version / compiled hash。
+P	Compile Audit
+P	Canonical Instruction → Prompt Template / Adapter Request
+P	保留 source hash / compiler / profile version / compiled hash。
+ROW	Sandbox	Isolated payload → test result	Production secret use/output write forbidden。
+P	Sandbox
+P	Isolated payload → test result
+P	Production secret use/output write forbidden。
+ROW	Route Execute	Validated route request → Route Decision + Job lineage	Frontend route override forbidden。
+P	Route Execute
+P	Validated route request → Route Decision + Job lineage
+P	Frontend route override forbidden。
+ROW	Quarantine / Restore	Quarantine state → audited restore request	Restore requires reason；不繞過 health/policy gates。
+P	Quarantine / Restore
+P	Quarantine state → audited restore request
+P	Restore requires reason；不繞過 health/policy gates。
+P	17. Job / Attempt / Callback / Artifact / Cost
+ROW	Entity	必要欄位	Truth Rule
+P	Entity
+P	必要欄位
+P	Truth Rule
+ROW	Job	job_id, capability, profile, status, created, finished	Frontend 不可寫 status。
+P	Job
+P	job_id, capability, profile, status, created, finished
+P	Frontend 不可寫 status。
+ROW	Attempt	attempt_id, provider, model, external_ref, retry, error	每次 retry 是獨立 attempt，不覆蓋舊證據。
+P	Attempt
+P	attempt_id, provider, model, external_ref, retry, error
+P	每次 retry 是獨立 attempt，不覆蓋舊證據。
+ROW	Callback	callback_status, verification, received_at	未驗證 callback 不得標 SUCCESS。
+P	Callback
+P	callback_status, verification, received_at
+P	未驗證 callback 不得標 SUCCESS。
+ROW	Artifact	artifact_ref, version, provider_output_ref	不得 silent overwrite 既有 asset/version。
+P	Artifact
+P	artifact_ref, version, provider_output_ref
+P	不得 silent overwrite 既有 asset/version。
+ROW	Cost	estimated_cost, actual_cost, currency	Finance 未授權 → MASK / DENY；缺值不是 0。
+P	Cost
+P	estimated_cost, actual_cost, currency
+P	Finance 未授權 → MASK / DENY；缺值不是 0。
+ROW	Incident	severity, provider/model impact, status, correlation	必須可從 UI 追到 exact job/attempt/route context。
+P	Incident
+P	severity, provider/model impact, status, correlation
+P	必須可從 UI 追到 exact job/attempt/route context。
+P	18. Functional Chain Contracts
+ROW	Function	Complete Chain
+P	Function
+P	Complete Chain
+ROW	Create / Update Profile	Intent → Profile Form → Permission/Gate → Registered Operation → AI API Command Runtime → Profile persistence → Audit → Updated row + Professional Panel → Test next step → error/version recovery
+P	Create / Update Profile
+P	Intent → Profile Form → Permission/Gate → Registered Operation → AI API Command Runtime → Profile persistence → Audit → Updated row + Professional Panel → Test next step → error/version recovery
+ROW	Set Credential	Intent → Credential Modal → Permission → Write-only input → Secret owner → reference/status return → audit without plaintext → profile readiness update
+P	Set Credential
+P	Intent → Credential Modal → Permission → Write-only input → Secret owner → reference/status return → audit without plaintext → profile readiness update
+ROW	Test Provider	Selected exact profile → capability/secret/adapter gate → test operation → provider adapter → test evidence → health/readiness update → failure code/recovery
+P	Test Provider
+P	Selected exact profile → capability/secret/adapter gate → test operation → provider adapter → test evidence → health/readiness update → failure code/recovery
+ROW	Execute Route	Canonical instruction + scoped context → candidate group → hard preflight → compile audit → queue/runtime gate → execute route → route decision → provider attempt → callback/artifact/cost → UI result
+P	Execute Route
+P	Canonical instruction + scoped context → candidate group → hard preflight → compile audit → queue/runtime gate → execute route → route decision → provider attempt → callback/artifact/cost → UI result
+ROW	Restore Quarantine	Quarantine row → reason + confirmation → permission/state gate → restore op → audit → re-enter health/test gates; no direct eligible status assumption
+P	Restore Quarantine
+P	Quarantine row → reason + confirmation → permission/state gate → restore op → audit → re-enter health/test gates; no direct eligible status assumption
+ROW	Kill Switch	Target/scope → high-risk confirm + reason → permission/state/version/idempotency → setKillSwitch → audit → affected route/profile status refresh
+P	Kill Switch
+P	Target/scope → high-risk confirm + reason → permission/state/version/idempotency → setKillSwitch → audit → affected route/profile status refresh
+P	19. Permission / Runtime / Data Binding
+ROW	Layer	Contract
+P	Layer
+P	Contract
+ROW	Page Entry	Authenticated admin + exact page permission + account assignment + scope/condition. Frontend hide 不是 authorization。
+P	Page Entry
+P	Authenticated admin + exact page permission + account assignment + scope/condition. Frontend hide 不是 authorization。
+ROW	Effectful Control	Exact control/action resource mapping + server authorization + state guard + expected version + idempotency + audit。
+P	Effectful Control
+P	Exact control/action resource mapping + server authorization + state guard + expected version + idempotency + audit。
+ROW	Profile Persistence	Existing AI API provider profile owner only；不新增第二套 registry。
+P	Profile Persistence
+P	Existing AI API provider profile owner only；不新增第二套 registry。
+ROW	Secret Persistence	Existing secret reference owner only；raw credential forbidden。
+P	Secret Persistence
+P	Existing secret reference owner only；raw credential forbidden。
+ROW	Route Persistence	Preflight / Decision / Attempt 由既有 runtime stores；UI 不自行推導成功。
+P	Route Persistence
+P	Preflight / Decision / Attempt 由既有 runtime stores；UI 不自行推導成功。
+ROW	Queue	Existing provider execution queue；Queue Probe 只做可用性診斷且不呼叫外部 Provider。
+P	Queue
+P	Existing provider execution queue；Queue Probe 只做可用性診斷且不呼叫外部 Provider。
+ROW	Cost / Budget	Governed projection；無 finance permission 時 mask/deny。
+P	Cost / Budget
+P	Governed projection；無 finance permission 時 mask/deny。
+P	20. State / Error / Recovery Matrix
+ROW	State / Error	UI	Recovery
+P	State / Error
+P	UI
+P	Recovery
+ROW	LOADING	Skeleton / preserve geometry	Effectful controls disabled
+P	LOADING
+P	Skeleton / preserve geometry
+P	Effectful controls disabled
+ROW	EMPTY	Show empty state	不得塞 sample Provider/Model
+P	EMPTY
+P	Show empty state
+P	不得塞 sample Provider/Model
+ROW	POLICY_BLOCKED	Disabled + registered reason	不得新增 Override
+P	POLICY_BLOCKED
+P	Disabled + registered reason
+P	不得新增 Override
+ROW	VERSION_CONFLICT	Block write	Reload exact profile/resource and retry from fresh state
+P	VERSION_CONFLICT
+P	Block write
+P	Reload exact profile/resource and retry from fresh state
+ROW	EXTERNAL_PENDING	Show pending	不得轉成 success
+P	EXTERNAL_PENDING
+P	Show pending
+P	不得轉成 success
+ROW	Credential Error	Masked error code/reason	不得回傳 secret/header/body
+P	Credential Error
+P	Masked error code/reason
+P	不得回傳 secret/header/body
+ROW	Capability mismatch	Exclude/block candidate	不得 silent downgrade
+P	Capability mismatch
+P	Exclude/block candidate
+P	不得 silent downgrade
+ROW	Quarantined	Not route eligible	Restore only by exact audited operation
+P	Quarantined
+P	Not route eligible
+P	Restore only by exact audited operation
+ROW	Queue unavailable	Block external route	保留 request context；retry 依正式 runtime
+P	Queue unavailable
+P	Block external route
+P	保留 request context；retry 依正式 runtime
+ROW	Unverified callback	Non-success	等待/重驗 callback
+P	Unverified callback
+P	Non-success
+P	等待/重驗 callback
+ROW	Partial composite failure	Show per-step result	只重試尚未合法完成的 operation；不得報 COMPLETE
+P	Partial composite failure
+P	Show per-step result
+P	只重試尚未合法完成的 operation；不得報 COMPLETE
+ROW	Undefined operation/field	BLOCK + REPORT_AUTHORITY_GAP	不得臨時自造 API
+P	Undefined operation/field
+P	BLOCK + REPORT_AUTHORITY_GAP
+P	不得臨時自造 API
+P	21. Localization / Accessibility / Interaction States
+ROW	項目	規格
+P	項目
+P	規格
+ROW	Locales	zh-TW / zh-CN / en；Provider/Model/Endpoint 原名不翻譯；UI labels 本地化。
+P	Locales
+P	zh-TW / zh-CN / en；Provider/Model/Endpoint 原名不翻譯；UI labels 本地化。
+ROW	Focus	Modal/Drawer 開啟後 focus trap；關閉時回到來源 control。
+P	Focus
+P	Modal/Drawer 開啟後 focus trap；關閉時回到來源 control。
+ROW	Keyboard	Tab order = context → views → search/table → row action → right panel → action dock；Esc 關閉 drawer/modal。
+P	Keyboard
+P	Tab order = context → views → search/table → row action → right panel → action dock；Esc 關閉 drawer/modal。
+ROW	Status	顏色 + 文字雙重表示；不能只靠綠/黃/紅。
+P	Status
+P	顏色 + 文字雙重表示；不能只靠綠/黃/紅。
+ROW	Table	Header row 標記、sticky semantics、長值截斷但 full value 可由 authorized drawer 取得。
+P	Table
+P	Header row 標記、sticky semantics、長值截斷但 full value 可由 authorized drawer 取得。
+ROW	Secret	輸入欄不得被 screen/read-back 當成可回顯資料；完成後清空。
+P	Secret
+P	輸入欄不得被 screen/read-back 當成可回顯資料；完成後清空。
+ROW	Disabled Reason	State/policy blocked 可顯示原因；permission denied 依政策隱藏/deny。
+P	Disabled Reason
+P	State/policy blocked 可顯示原因；permission denied 依政策隱藏/deny。
+P	22. Visual Anchor / Locked & Editable Regions
+ROW	Region	Locked	可變內容
+P	Region
+P	Locked
+P	可變內容
+ROW	Global Shell	Header/Sidebar/Brand/visual tokens	僅 current page active state
+P	Global Shell
+P	Header/Sidebar/Brand/visual tokens
+P	僅 current page active state
+ROW	View Bar	4 views 順序與同頁切換	badge/real blockers 可動態
+P	View Bar
+P	4 views 順序與同頁切換
+P	badge/real blockers 可動態
+ROW	Provider Workspace	68/32 primary topology、Profile selection continuity	table rows / filter / selected profile / modal
+P	Provider Workspace
+P	68/32 primary topology、Profile selection continuity
+P	table rows / filter / selected profile / modal
+ROW	Professional Panel	欄位順序與 read-only 性質	registered metadata / projections
+P	Professional Panel
+P	欄位順序與 read-only 性質
+P	registered metadata / projections
+ROW	Route Workbench	Candidate→Preflight→Compile→Sandbox→Decision 邏輯順序	actual results / eligibility / reasons
+P	Route Workbench
+P	Candidate→Preflight→Compile→Sandbox→Decision 邏輯順序
+P	actual results / eligibility / reasons
+ROW	Operations Rail	Job/Cost/Incident canonical table-first	records / filters / detail drawer
+P	Operations Rail
+P	Job/Cost/Incident canonical table-first
+P	records / filters / detail drawer
+ROW	Action Dock	一個 dominant CTA 上限	依 state/permission 切換合法 actions
+P	Action Dock
+P	一個 dominant CTA 上限
+P	依 state/permission 切換合法 actions
+P	23. Visual Preview — Provider / API 設定
+P	設計意圖：選取 Profile 後不離開頁面；右側固定為 read-only 專業說明，Effectful CRUD/Test/Credential 走 Modal/Drawer。示意資料僅用於版面結構，不代表 Production Provider 狀態或價格。
+P	24. Visual Preview — Routing / Operations
+P	設計意圖：路由硬條件、Compile lineage、Sandbox 隔離、Quarantine/Queue/Incident 在同一 operational context 下可見；高風險 Restore / Kill Switch 維持條件式顯示。
+P	25. Validation Plan / 7-Pass Closure
+ROW	Pass	驗證
+P	Pass
+P	驗證
+ROW	1 Authority / Naming	Page/Section/Control/Entity/Operation UID 唯一，無平行 AI API Center。
+P	1 Authority / Naming
+P	Page/Section/Control/Entity/Operation UID 唯一，無平行 AI API Center。
+ROW	2 Functional Completeness	Entity × REQUIRED Operation、完整 functional chain、next state / recovery 無斷鏈。
+P	2 Functional Completeness
+P	Entity × REQUIRED Operation、完整 functional chain、next state / recovery 無斷鏈。
+ROW	3 Interaction Topology	Provider selection、Route basis、Job lineage 不因換 view/drawer 靜默遺失。
+P	3 Interaction Topology
+P	Provider selection、Route basis、Job lineage 不因換 view/drawer 靜默遺失。
+ROW	4 Security	Credential plaintext 0 leakage；permission/server gate、sandbox secret isolation、callback verification。
+P	4 Security
+P	Credential plaintext 0 leakage；permission/server gate、sandbox secret isolation、callback verification。
+ROW	5 Runtime Binding	所有 effectful control 對應 exact registered operation；Queue Probe/Route/Quarantine/Provider Profile 可追溯。
+P	5 Runtime Binding
+P	所有 effectful control 對應 exact registered operation；Queue Probe/Route/Quarantine/Provider Profile 可追溯。
+ROW	6 Visual / Responsive	1280+ desktop、68/32、drawer、overflow、text capacity、focus、no overlap/clipping。
+P	6 Visual / Responsive
+P	1280+ desktop、68/32、drawer、overflow、text capacity、focus、no overlap/clipping。
+ROW	7 Truth / Regression	No fake Provider/Model/Cost/Health；missing=—；legacy multi-page UI 不復活；external provider success only by real evidence。
+P	7 Truth / Regression
+P	No fake Provider/Model/Cost/Health；missing=—；legacy multi-page UI 不復活；external provider success only by real evidence。
+P	26. Acceptance / Design Definition of Done
+ROW	DoD	通過條件
+P	DoD
+P	通過條件
+ROW	Single Current Page	只有 admin:AIAPI-01；4 views 都在同一頁。
+P	Single Current Page
+P	只有 admin:AIAPI-01；4 views 都在同一頁。
+ROW	Provider Profile	Create / Update / Get / List / Test / Retire 只走正式 operations。
+P	Provider Profile
+P	Create / Update / Get / List / Test / Retire 只走正式 operations。
+ROW	Credential	Set / Delete；raw secret never returned/rendered/logged/exported。
+P	Credential
+P	Set / Delete；raw secret never returned/rendered/logged/exported。
+ROW	Professional Description	固定 decision-support panel；只讀 registered metadata/projections。
+P	Professional Description
+P	固定 decision-support panel；只讀 registered metadata/projections。
+ROW	Capability Governance	Configure / Approve / Enable 受 exact gate / version / audit。
+P	Capability Governance
+P	Configure / Approve / Enable 受 exact gate / version / audit。
+ROW	Route & Sandbox	Candidate / Preflight / Compile / Sandbox / Route Decision / Quarantine / Queue diagnostic 完整且無 frontend override。
+P	Route & Sandbox
+P	Candidate / Preflight / Compile / Sandbox / Route Decision / Quarantine / Queue diagnostic 完整且無 frontend override。
+ROW	Instruction Continuity	Canonical Instruction provider-neutral；fallback 重新 compile；adapter 不改語意。
+P	Instruction Continuity
+P	Canonical Instruction provider-neutral；fallback 重新 compile；adapter 不改語意。
+ROW	Job & Cost	Job/Attempt/Callback/Artifact/Cost/Budget/Incident 具 exact lineage；finance mask/deny。
+P	Job & Cost
+P	Job/Attempt/Callback/Artifact/Cost/Budget/Incident 具 exact lineage；finance mask/deny。
+ROW	Security	Secret / callback / sandbox / quarantine / kill-switch hard boundaries 成立。
+P	Security
+P	Secret / callback / sandbox / quarantine / kill-switch hard boundaries 成立。
+ROW	No Duplicate System	無第二套 Provider Registry / Secret DB / Router / Job store。
+P	No Duplicate System
+P	無第二套 Provider Registry / Secret DB / Router / Job store。
+ROW	UI Necessity	低頻 Audit/Docs/Error 放 Drawer；一個 context 最多一個 dominant CTA。
+P	UI Necessity
+P	低頻 Audit/Docs/Error 放 Drawer；一個 context 最多一個 dominant CTA。
+ROW	Truthful Runtime	文件是施工設計；Production / external provider success 必須由後續 runtime/evidence 驗證，不由 Word 宣稱。
+P	Truthful Runtime
+P	文件是施工設計；Production / external provider success 必須由後續 runtime/evidence 驗證，不由 Word 宣稱。
+P	27. Construction Mapping / Next Transition
+ROW	施工層	必須落地
+P	施工層
+P	必須落地
+ROW	Frontend	4 same-page views、Profile table + professional panel、Route workbench、Operations table、drawer/modal、state/error presentation。
+P	Frontend
+P	4 same-page views、Profile table + professional panel、Route workbench、Operations table、drawer/modal、state/error presentation。
+ROW	Command Port	Profile/Credential/Governance/Route/Sandbox/Quarantine/Queue/Kill Switch exact typed binding。
+P	Command Port
+P	Profile/Credential/Governance/Route/Sandbox/Quarantine/Queue/Kill Switch exact typed binding。
+ROW	Server Runtime	Identity/page command authorization、provider command runtime、provider HTTP adapter、queue runtime。
+P	Server Runtime
+P	Identity/page command authorization、provider command runtime、provider HTTP adapter、queue runtime。
+ROW	Persistence	Provider profiles、tests、secret references、group/member refs、quarantine、route preflight/decision/attempt、job/artifact/cost/audit owners。
+P	Persistence
+P	Provider profiles、tests、secret references、group/member refs、quarantine、route preflight/decision/attempt、job/artifact/cost/audit owners。
+ROW	QA	Unit + permission + secret leak + sandbox isolation + route eligibility + callback verification + retry lineage + visual geometry + E2E。
+P	QA
+P	Unit + permission + secret leak + sandbox isolation + route eligibility + callback verification + retry lineage + visual geometry + E2E。
+ROW	Release	Exact-head gates + post-deploy smoke + external provider tests only with approved real profile/capability/secret configuration。
+P	Release
+P	Exact-head gates + post-deploy smoke + external provider tests only with approved real profile/capability/secret configuration。
+ROW	Freeze Rule｜本文件完成的是 AIAPI-01 的頁面／功能／互動／施工設計閉環。任何未註冊的 Provider capability、API path、credential behavior、pricing 或 runtime effect 不得因文件方便而自動新增。
+P	Freeze Rule｜本文件完成的是 AIAPI-01 的頁面／功能／互動／施工設計閉環。任何未註冊的 Provider capability、API path、credential behavior、pricing 或 runtime effect 不得因文件方便而自動新增。
+### PART word/header1.xml
+P	ORANGE ONE · AIAPI-01 · Mother Basic Design
+### PART word/footer1.xml
+P	AIAPI-01 AI API 管理

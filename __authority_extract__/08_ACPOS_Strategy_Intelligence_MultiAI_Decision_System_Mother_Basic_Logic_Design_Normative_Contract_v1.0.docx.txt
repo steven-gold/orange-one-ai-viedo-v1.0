@@ -1,0 +1,2190 @@
+### PART word/document.xml
+P	ACPOS-AI-08
+P	Strategy Intelligence / Multi-AI Decision System
+P	策略智能／多 AI 決策系統
+P	Mother Basic Logic Design + Normative Logic Contract
+P	圖 1｜策略智能的受治理生命週期；分析、比較與多 AI 討論只形成決策候選，正式決策仍需 Human Review。
+ROW	Document Identity	Value
+P	Document Identity
+P	Value
+ROW	Document UID	ACPOS-AI-08
+P	Document UID
+P	ACPOS-AI-08
+ROW	Status	DESIGN_CONTENT_COMPLETE
+P	Status
+P	DESIGN_CONTENT_COMPLETE
+ROW	Approval	FORMAL_APPROVAL_NOT_SELF_GRANTED
+P	Approval
+P	FORMAL_APPROVAL_NOT_SELF_GRANTED
+ROW	Runtime Claim	RUNTIME_NOT_PROVEN_BY_DOCUMENT
+P	Runtime Claim
+P	RUNTIME_NOT_PROVEN_BY_DOCUMENT
+ROW	Current Governance Basis	GOV-REV-20260920-CROSS-STAGE-MATERIALIZATION-CONSUMER-READINESS-HARDENING / display v2.2.16
+P	Current Governance Basis
+P	GOV-REV-20260920-CROSS-STAGE-MATERIALIZATION-CONSUMER-READINESS-HARDENING / display v2.2.16
+ROW	Bootstrap Branch / HEAD	rebuild-v2.1.1 / 61648a2db043047f5907515442e7279d15b8033d
+P	Bootstrap Branch / HEAD
+P	rebuild-v2.1.1 / 61648a2db043047f5907515442e7279d15b8033d
+ROW	Design Date	2026-09-21
+P	Design Date
+P	2026-09-21
+ROW	Primary Product Anchor	workspace:STR-01 / Strategic Center Workspace
+P	Primary Product Anchor
+P	workspace:STR-01 / Strategic Center Workspace
+P	1. Design Identity / 設計定位
+P	核心定位
+P	• 本文件是 ACPOS Strategy Intelligence 的系統邏輯 Owner；它定義如何從受治理資料形成可追溯策略分析、選項比較、Multi-AI 討論、Decision Candidate 與 Decision Ledger。
+P	• 它不是 Conversation Core（AI-02）、不是 Provider Router（AI-03）、不是企業開發執行器（AI-06）、不是社群發布執行器（AI-07）、也不是系統自我修改器（AI-09）。
+P	• AI 的策略建議、共識、Alert 或 Resource Proposal 都不是正式公司決策；只有授權 Human Decision 才能形成 Decision Ledger 結果。
+P	• 策略中心可以顯示、建議與導航到 Owner Module；Finance / Workflow / Governance / Production 的 effectful action 必須留在原 Owner。
+ROW	Dimension	Normative Definition
+P	Dimension
+P	Normative Definition
+ROW	Business Goal	以真實 Fact/Evidence、內部狀態、資源/成本/風險、歷史 Experience 為基礎，產生可比較、可審查、可回饋的策略選項。
+P	Business Goal
+P	以真實 Fact/Evidence、內部狀態、資源/成本/風險、歷史 Experience 為基礎，產生可比較、可審查、可回饋的策略選項。
+ROW	Primary User	管理層、策略分析者、授權決策者。
+P	Primary User
+P	管理層、策略分析者、授權決策者。
+ROW	Primary Object	Strategy Topic / Strategic Question / Strategy Candidate / Decision Candidate。
+P	Primary Object
+P	Strategy Topic / Strategic Question / Strategy Candidate / Decision Candidate。
+ROW	Human Boundary	AI 分析與建議；人類作正式決策；Owner Module 作 effectful execution。
+P	Human Boundary
+P	AI 分析與建議；人類作正式決策；Owner Module 作 effectful execution。
+ROW	Version Boundary	Strategy Output / Candidate / Scenario / Decision Brief / Memory append-only；revision 產生新版本。
+P	Version Boundary
+P	Strategy Output / Candidate / Scenario / Decision Brief / Memory append-only；revision 產生新版本。
+ROW	Truth Boundary	Fact、Inference、Assumption、Risk/Opportunity、Recommendation、Decision 必須分層，不得互相偷升格。
+P	Truth Boundary
+P	Fact、Inference、Assumption、Risk/Opportunity、Recommendation、Decision 必須分層，不得互相偷升格。
+P	2. Scope / Out-of-Scope / Owner Boundary
+ROW	Type	Included / Excluded
+P	Type
+P	Included / Excluded
+ROW	IN SCOPE	Strategic Context、Fact Pack、Question/Constraint、Analysis、Forecast/Pattern、Risk/Opportunity、Option、Resource Impact、Scenario、Multi-AI Same-Baseline、Cross-Review、Consensus/Disagreement、Decision Candidate、Human Review、Decision Ledger、Expected-vs-Actual、Strategic Experience Candidate。
+P	IN SCOPE
+P	Strategic Context、Fact Pack、Question/Constraint、Analysis、Forecast/Pattern、Risk/Opportunity、Option、Resource Impact、Scenario、Multi-AI Same-Baseline、Cross-Review、Consensus/Disagreement、Decision Candidate、Human Review、Decision Ledger、Expected-vs-Actual、Strategic Experience Candidate。
+ROW	OUT OF SCOPE	Shared Conversation persistence、Provider routing、ERP booking/approval、Workflow command、Production action、Email/Social publish、Authority mutation、system deployment。
+P	OUT OF SCOPE
+P	Shared Conversation persistence、Provider routing、ERP booking/approval、Workflow command、Production action、Email/Social publish、Authority mutation、system deployment。
+ROW	REFERENCES	AI-01 Global Brain / Context；AI-02 Conversation & Multi-AI Core；AI-03 Execution Router；AI-06/07 business outcomes；AI-09 System Lifecycle。
+P	REFERENCES
+P	AI-01 Global Brain / Context；AI-02 Conversation & Multi-AI Core；AI-03 Execution Router；AI-06/07 business outcomes；AI-09 System Lifecycle。
+ROW	NO SECOND SYSTEM	不得建立 Strategy 專屬的第二套 Conversation Engine、Context Engine、Provider Router、Fact Store、Experience Engine、Workflow Engine 或 Approval Engine。
+P	NO SECOND SYSTEM
+P	不得建立 Strategy 專屬的第二套 Conversation Engine、Context Engine、Provider Router、Fact Store、Experience Engine、Workflow Engine 或 Approval Engine。
+P	3. System Architecture / 策略智能系統架構
+P	圖 2｜策略推理 Truth Separation；從 Fact 到 Decision 的每一層都有不同證據與治理門檻。
+ROW	Layer	Owner / Purpose	Must Not
+P	Layer
+P	Owner / Purpose
+P	Must Not
+ROW	Strategic Context Resolver	引用 AI-01 ContextSnapshot/Fingerprint，組裝市場、內部、資源、成本、風險、治理來源。	不得用聊天記憶或 latest alias 偷換 exact version。
+P	Strategic Context Resolver
+P	引用 AI-01 ContextSnapshot/Fingerprint，組裝市場、內部、資源、成本、風險、治理來源。
+P	不得用聊天記憶或 latest alias 偷換 exact version。
+ROW	Fact Pack	受治理 Fact/Evidence 的版本化集合。	不得混入未標示 Inference/Assumption。
+P	Fact Pack
+P	受治理 Fact/Evidence 的版本化集合。
+P	不得混入未標示 Inference/Assumption。
+ROW	Strategy Analysis	Pattern / Baseline / Forecast / Need / Opportunity / Risk / Priority。	不得隱藏 assumptions / uncertainty。
+P	Strategy Analysis
+P	Pattern / Baseline / Forecast / Need / Opportunity / Risk / Priority。
+P	不得隱藏 assumptions / uncertainty。
+ROW	Multi-AI Decision Analysis	同一 baseline 下的獨立觀點、cross-review、comparison、revision。	不得不同問題/不同資料版本後假裝可比較。
+P	Multi-AI Decision Analysis
+P	同一 baseline 下的獨立觀點、cross-review、comparison、revision。
+P	不得不同問題/不同資料版本後假裝可比較。
+ROW	Decision Support	Option Comparison、Recommendation、Alert、Resource Proposal、Decision Brief。	不得自動寫正式決策。
+P	Decision Support
+P	Option Comparison、Recommendation、Alert、Resource Proposal、Decision Brief。
+P	不得自動寫正式決策。
+ROW	Human Review / Decision Ledger	授權 reviewer 記錄決策、理由、風險、執行 owner、audit。	不得由 AI self-approve。
+P	Human Review / Decision Ledger
+P	授權 reviewer 記錄決策、理由、風險、執行 owner、audit。
+P	不得由 AI self-approve。
+ROW	Feedback / Experience	Expected vs Actual、KPI/Cost/Risk/Revenue outcome、Learning Candidate。	不得把一次結果直接升格永久規則。
+P	Feedback / Experience
+P	Expected vs Actual、KPI/Cost/Risk/Revenue outcome、Learning Candidate。
+P	不得把一次結果直接升格永久規則。
+ROW	Entity	Purpose
+P	Entity
+P	Purpose
+ROW	StrategyTopic	策略討論與決策範圍的根實體
+P	StrategyTopic
+P	策略討論與決策範圍的根實體
+ROW	StrategicQuestion	要被分析/決策的原始問題
+P	StrategicQuestion
+P	要被分析/決策的原始問題
+ROW	ConstraintSet	資源、時間、風險、治理、權限等約束集合
+P	ConstraintSet
+P	資源、時間、風險、治理、權限等約束集合
+ROW	StrategicContextSnapshot	本次策略分析 frozen context
+P	StrategicContextSnapshot
+P	本次策略分析 frozen context
+ROW	ContextFingerprint	Context identity hash / version identity
+P	ContextFingerprint
+P	Context identity hash / version identity
+ROW	SourceFact	具 exact evidence 的事實
+P	SourceFact
+P	具 exact evidence 的事實
+ROW	EvidenceRef	來源、時間/版本、範圍、品質/信心
+P	EvidenceRef
+P	來源、時間/版本、範圍、品質/信心
+ROW	FactPack	本輪可用的受治理 Fact/Evidence 集合
+P	FactPack
+P	本輪可用的受治理 Fact/Evidence 集合
+ROW	Inference	由 Fact 推導的可檢查解讀
+P	Inference
+P	由 Fact 推導的可檢查解讀
+ROW	Assumption	明示但尚未驗證的前提
+P	Assumption
+P	明示但尚未驗證的前提
+ROW	Baseline	比較或 forecast 的基準
+P	Baseline
+P	比較或 forecast 的基準
+ROW	PatternFinding	歷史/當前資料中的模式
+P	PatternFinding
+P	歷史/當前資料中的模式
+ROW	Forecast	具 horizon 與 uncertainty 的預測
+P	Forecast
+P	具 horizon 與 uncertainty 的預測
+ROW	Opportunity	可能正向結果與條件
+P	Opportunity
+P	可能正向結果與條件
+ROW	Risk	可能負向暴露與條件
+P	Risk
+P	可能負向暴露與條件
+ROW	Unknown	目前沒有足夠證據回答的缺口
+P	Unknown
+P	目前沒有足夠證據回答的缺口
+ROW	OpenQuestion	需要額外資訊/人類澄清的問題
+P	OpenQuestion
+P	需要額外資訊/人類澄清的問題
+ROW	StrategyOption	可被比較的策略方案
+P	StrategyOption
+P	可被比較的策略方案
+ROW	ResourceImpact	資源/容量/成本影響
+P	ResourceImpact
+P	資源/容量/成本影響
+ROW	ExpectedImpact	預期 KPI/時間/風險結果
+P	ExpectedImpact
+P	預期 KPI/時間/風險結果
+ROW	Scenario	假設/條件組合下的策略世界
+P	Scenario
+P	假設/條件組合下的策略世界
+ROW	ScenarioBranch	從 exact baseline/option 建立的 scenario 分支
+P	ScenarioBranch
+P	從 exact baseline/option 建立的 scenario 分支
+ROW	AIViewpoint	單一 AI 在 frozen baseline 下的完整觀點
+P	AIViewpoint
+P	單一 AI 在 frozen baseline 下的完整觀點
+ROW	CrossAIReview	針對 exact AI response refs 的評估
+P	CrossAIReview
+P	針對 exact AI response refs 的評估
+ROW	ConsensusRecord	證據化共識清單
+P	ConsensusRecord
+P	證據化共識清單
+ROW	DisagreementRecord	分歧、原因、證據缺口
+P	DisagreementRecord
+P	分歧、原因、證據缺口
+ROW	StrategyRecommendation	建議路徑與理由
+P	StrategyRecommendation
+P	建議路徑與理由
+ROW	StrategyAlert	機會/風險提醒
+P	StrategyAlert
+P	機會/風險提醒
+ROW	ResourceProposal	資源配置建議，不是批准
+P	ResourceProposal
+P	資源配置建議，不是批准
+ROW	DecisionBrief	供人類決策的摘要
+P	DecisionBrief
+P	供人類決策的摘要
+ROW	StrategyCandidate	受治理策略候選版本
+P	StrategyCandidate
+P	受治理策略候選版本
+ROW	DecisionCandidate	已具必要證據、選項、風險、unknowns 的審查候選
+P	DecisionCandidate
+P	已具必要證據、選項、風險、unknowns 的審查候選
+ROW	HumanReview	人類審查與理由
+P	HumanReview
+P	人類審查與理由
+ROW	DecisionLedgerEntry	正式決策結果
+P	DecisionLedgerEntry
+P	正式決策結果
+ROW	ExecutionHandoff	決策到 Owner Module 的交接 reference
+P	ExecutionHandoff
+P	決策到 Owner Module 的交接 reference
+ROW	ExecutionResultRef	Owner Module 執行結果引用
+P	ExecutionResultRef
+P	Owner Module 執行結果引用
+ROW	ExpectedActualRecord	預期 vs 實際比較
+P	ExpectedActualRecord
+P	預期 vs 實際比較
+ROW	StrategicExperienceCandidate	由結果整理出的學習候選
+P	StrategicExperienceCandidate
+P	由結果整理出的學習候選
+ROW	StrategicExperience	經治理採用的策略經驗
+P	StrategicExperience
+P	經治理採用的策略經驗
+P	4. Entity Hierarchy / Relationship / Impact Graph
+ROW	Parent / Source	Relationship	Child / Consumer	Rule
+P	Parent / Source
+P	Relationship
+P	Child / Consumer
+P	Rule
+ROW	StrategyTopic	contains	StrategicQuestion / ConstraintSet	問題與約束必須有 exact version。
+P	StrategyTopic
+P	contains
+P	StrategicQuestion / ConstraintSet
+P	問題與約束必須有 exact version。
+ROW	StrategicQuestion	freezes with	StrategicContextSnapshot / ContextFingerprint	比較與 Multi-AI 必須綁同一 fingerprint。
+P	StrategicQuestion
+P	freezes with
+P	StrategicContextSnapshot / ContextFingerprint
+P	比較與 Multi-AI 必須綁同一 fingerprint。
+ROW	FactPack	contains	SourceFact / EvidenceRef	Fact 必須可追 exact evidence。
+P	FactPack
+P	contains
+P	SourceFact / EvidenceRef
+P	Fact 必須可追 exact evidence。
+ROW	SourceFact	supports	Inference / Forecast / Risk / Opportunity	推理層不得反向覆寫 Fact。
+P	SourceFact
+P	supports
+P	Inference / Forecast / Risk / Opportunity
+P	推理層不得反向覆寫 Fact。
+ROW	StrategyOption	has	ResourceImpact / ExpectedImpact / Risk / Dependency	Option 缺任一必要維度則標示 incomplete。
+P	StrategyOption
+P	has
+P	ResourceImpact / ExpectedImpact / Risk / Dependency
+P	Option 缺任一必要維度則標示 incomplete。
+ROW	Scenario	branches from	Exact Baseline + Option + Assumption Set	分支不可 silent rebase。
+P	Scenario
+P	branches from
+P	Exact Baseline + Option + Assumption Set
+P	分支不可 silent rebase。
+ROW	AIViewpoint	compares/reviews	Exact AIViewpoint refs	AI output 不是 Source Fact。
+P	AIViewpoint
+P	compares/reviews
+P	Exact AIViewpoint refs
+P	AI output 不是 Source Fact。
+ROW	DecisionCandidate	summarizes	Options + Evidence + Risk + Unknowns	未達 Gate 不得進 Human Review。
+P	DecisionCandidate
+P	summarizes
+P	Options + Evidence + Risk + Unknowns
+P	未達 Gate 不得進 Human Review。
+ROW	HumanReview	creates	DecisionLedgerEntry	AI 不得替代 reviewer。
+P	HumanReview
+P	creates
+P	DecisionLedgerEntry
+P	AI 不得替代 reviewer。
+ROW	DecisionLedgerEntry	hands off	ExecutionHandoff	Effectful action 仍在 owner module。
+P	DecisionLedgerEntry
+P	hands off
+P	ExecutionHandoff
+P	Effectful action 仍在 owner module。
+ROW	ExecutionResultRef	feeds	ExpectedActualRecord	歷史結果不能被新結果覆寫。
+P	ExecutionResultRef
+P	feeds
+P	ExpectedActualRecord
+P	歷史結果不能被新結果覆寫。
+ROW	ExpectedActualRecord	proposes	StrategicExperienceCandidate	Learning 不能自我採用。
+P	ExpectedActualRecord
+P	proposes
+P	StrategicExperienceCandidate
+P	Learning 不能自我採用。
+P	5. Entity × Operation Matrix
+ROW	Entity	Operations	Normative Semantics
+P	Entity
+P	Operations
+P	Normative Semantics
+ROW	StrategyTopic	CREATE / SELECT / ARCHIVE	建立/選擇策略題目；不可隱性切換 current topic。
+P	StrategyTopic
+P	CREATE / SELECT / ARCHIVE
+P	建立/選擇策略題目；不可隱性切換 current topic。
+ROW	StrategicQuestion	DEFINE / REVISE / VERSION	保存 original question；revision append-only。
+P	StrategicQuestion
+P	DEFINE / REVISE / VERSION
+P	保存 original question；revision append-only。
+ROW	StrategicContextSnapshot	RESOLVE / FREEZE / VERIFY	執行前必須 frozen，並可重建 fingerprint。
+P	StrategicContextSnapshot
+P	RESOLVE / FREEZE / VERIFY
+P	執行前必須 frozen，並可重建 fingerprint。
+ROW	FactPack	COMPILE / VALIDATE / VERSION	來源不足則 incomplete；不可 AI-fill。
+P	FactPack
+P	COMPILE / VALIDATE / VERSION
+P	來源不足則 incomplete；不可 AI-fill。
+ROW	SourceFact	ADD / VERIFY / SUPERSEDE	需 evidence/time/version；不得被 inference 覆寫。
+P	SourceFact
+P	ADD / VERIFY / SUPERSEDE
+P	需 evidence/time/version；不得被 inference 覆寫。
+ROW	Inference	DERIVE / CHALLENGE / REVISE	必須列出 supporting fact refs。
+P	Inference
+P	DERIVE / CHALLENGE / REVISE
+P	必須列出 supporting fact refs。
+ROW	Assumption	DECLARE / TEST / RETIRE	未驗證前不得當 Fact。
+P	Assumption
+P	DECLARE / TEST / RETIRE
+P	未驗證前不得當 Fact。
+ROW	Forecast	GENERATE / CALIBRATE / COMPARE	必須有 horizon、baseline、uncertainty。
+P	Forecast
+P	GENERATE / CALIBRATE / COMPARE
+P	必須有 horizon、baseline、uncertainty。
+ROW	Risk/Opportunity	IDENTIFY / ASSESS / UPDATE	需條件、scope、evidence、uncertainty。
+P	Risk/Opportunity
+P	IDENTIFY / ASSESS / UPDATE
+P	需條件、scope、evidence、uncertainty。
+ROW	StrategyOption	GENERATE / COMPARE / REVISE	比較欄位完整、同 baseline。
+P	StrategyOption
+P	GENERATE / COMPARE / REVISE
+P	比較欄位完整、同 baseline。
+ROW	ScenarioBranch	CREATE / REBASE_EXPLICIT / COMPARE	silent rebase 禁止。
+P	ScenarioBranch
+P	CREATE / REBASE_EXPLICIT / COMPARE
+P	silent rebase 禁止。
+ROW	AIViewpoint	GENERATE / CROSS_REVIEW / REVISE	只針對 exact refs。
+P	AIViewpoint
+P	GENERATE / CROSS_REVIEW / REVISE
+P	只針對 exact refs。
+ROW	Consensus/Disagreement	SYNTHESIZE / VERIFY	共識不能升格 Fact。
+P	Consensus/Disagreement
+P	SYNTHESIZE / VERIFY
+P	共識不能升格 Fact。
+ROW	StrategyCandidate	SUBMIT / VERSION / WITHDRAW	候選 immutable；revision new version。
+P	StrategyCandidate
+P	SUBMIT / VERSION / WITHDRAW
+P	候選 immutable；revision new version。
+ROW	DecisionCandidate	ASSEMBLE / VALIDATE / SUBMIT_REVIEW	未滿足 evidence/risk/unknowns gate 即 BLOCK。
+P	DecisionCandidate
+P	ASSEMBLE / VALIDATE / SUBMIT_REVIEW
+P	未滿足 evidence/risk/unknowns gate 即 BLOCK。
+ROW	HumanReview	APPROVE / REJECT / REQUEST_REVISION	需要 actor/time/reason。
+P	HumanReview
+P	APPROVE / REJECT / REQUEST_REVISION
+P	需要 actor/time/reason。
+ROW	DecisionLedgerEntry	RECORD / SUPERSEDE / TRACE	正式決策 append-only audit trail。
+P	DecisionLedgerEntry
+P	RECORD / SUPERSEDE / TRACE
+P	正式決策 append-only audit trail。
+ROW	ExecutionHandoff	CREATE / ACK / TRACK	handoff 不等於 owner execution。
+P	ExecutionHandoff
+P	CREATE / ACK / TRACK
+P	handoff 不等於 owner execution。
+ROW	ExpectedActualRecord	COMPARE / EXPLAIN / CLOSE	使用 exact expected and actual refs。
+P	ExpectedActualRecord
+P	COMPARE / EXPLAIN / CLOSE
+P	使用 exact expected and actual refs。
+ROW	StrategicExperienceCandidate	PROPOSE / REVIEW / ADOPT	不可 self-adopt。
+P	StrategicExperienceCandidate
+P	PROPOSE / REVIEW / ADOPT
+P	不可 self-adopt。
+P	6. Normative Invariant Registry
+ROW	ID	Class	Normative Rule
+P	ID
+P	Class
+P	Normative Rule
+ROW	INV-001	CONTEXT	每次正式策略分析 MUST 綁定 exact StrategyTopic、StrategicQuestion version、ConstraintSet version。
+P	INV-001
+P	CONTEXT
+P	每次正式策略分析 MUST 綁定 exact StrategyTopic、StrategicQuestion version、ConstraintSet version。
+ROW	INV-002	CONTEXT	正式分析開始前 StrategicContextSnapshot MUST FROZEN。
+P	INV-002
+P	CONTEXT
+P	正式分析開始前 StrategicContextSnapshot MUST FROZEN。
+ROW	INV-003	CONTEXT	ContextFingerprint MUST 可由 exact refs/version/hash 重建。
+P	INV-003
+P	CONTEXT
+P	ContextFingerprint MUST 可由 exact refs/version/hash 重建。
+ROW	INV-004	CONTEXT	任何 missing source/resource/cost/risk/governance value MUST 保持 missing/incomplete，MUST_NOT AI-fill。
+P	INV-004
+P	CONTEXT
+P	任何 missing source/resource/cost/risk/governance value MUST 保持 missing/incomplete，MUST_NOT AI-fill。
+ROW	INV-005	CONTEXT	External Intelligence MUST_NOT 覆寫 confirmed decision 或 current governed internal truth。
+P	INV-005
+P	CONTEXT
+P	External Intelligence MUST_NOT 覆寫 confirmed decision 或 current governed internal truth。
+ROW	INV-006	CONTEXT	Formal trace MUST_NOT 使用 latest/current/default alias 代替 exact version。
+P	INV-006
+P	CONTEXT
+P	Formal trace MUST_NOT 使用 latest/current/default alias 代替 exact version。
+ROW	INV-007	CONTEXT	跨專案/跨 topic context silent fallback MUST BLOCK。
+P	INV-007
+P	CONTEXT
+P	跨專案/跨 topic context silent fallback MUST BLOCK。
+ROW	INV-008	CONTEXT	Stale Context MUST 顯示並要求 re-resolve/review，不得 silent rebase。
+P	INV-008
+P	CONTEXT
+P	Stale Context MUST 顯示並要求 re-resolve/review，不得 silent rebase。
+ROW	INV-009	CONTEXT	Context 與 FactPack MUST 有 scope/classification/permission provenance。
+P	INV-009
+P	CONTEXT
+P	Context 與 FactPack MUST 有 scope/classification/permission provenance。
+ROW	INV-010	CONTEXT	Human instruction 與 confirmed decision priority MUST 高於外部情報。
+P	INV-010
+P	CONTEXT
+P	Human instruction 與 confirmed decision priority MUST 高於外部情報。
+ROW	INV-011	TRUTH	SourceFact MUST 有 EvidenceRef、source_time_or_version、scope、quality/confidence。
+P	INV-011
+P	TRUTH
+P	SourceFact MUST 有 EvidenceRef、source_time_or_version、scope、quality/confidence。
+ROW	INV-012	TRUTH	Inference MUST 明示 supporting_fact_refs。
+P	INV-012
+P	TRUTH
+P	Inference MUST 明示 supporting_fact_refs。
+ROW	INV-013	TRUTH	Assumption MUST 明示 unverified 狀態。
+P	INV-013
+P	TRUTH
+P	Assumption MUST 明示 unverified 狀態。
+ROW	INV-014	TRUTH	Assumption MUST_NOT 因多 AI 同意而升格 Fact。
+P	INV-014
+P	TRUTH
+P	Assumption MUST_NOT 因多 AI 同意而升格 Fact。
+ROW	INV-015	TRUTH	Unknown MUST 保留為 Unknown；MUST_NOT 用語言流暢度掩蓋。
+P	INV-015
+P	TRUTH
+P	Unknown MUST 保留為 Unknown；MUST_NOT 用語言流暢度掩蓋。
+ROW	INV-016	TRUTH	Risk / Opportunity MUST 綁定 scenario/condition/time horizon。
+P	INV-016
+P	TRUTH
+P	Risk / Opportunity MUST 綁定 scenario/condition/time horizon。
+ROW	INV-017	TRUTH	Forecast MUST 有 baseline、horizon、uncertainty。
+P	INV-017
+P	TRUTH
+P	Forecast MUST 有 baseline、horizon、uncertainty。
+ROW	INV-018	TRUTH	Fact correction MUST 建立 supersession/lineage，不得原地抹掉歷史。
+P	INV-018
+P	TRUTH
+P	Fact correction MUST 建立 supersession/lineage，不得原地抹掉歷史。
+ROW	INV-019	TRUTH	Semantic Index result MUST_NOT 成為 SourceFact authority。
+P	INV-019
+P	TRUTH
+P	Semantic Index result MUST_NOT 成為 SourceFact authority。
+ROW	INV-020	TRUTH	Evidence conflict MUST 建立 ConflictRecord/Review，不得 silent choose。
+P	INV-020
+P	TRUTH
+P	Evidence conflict MUST 建立 ConflictRecord/Review，不得 silent choose。
+ROW	INV-021	MULTI_AI	Multi-AI 第一輪 MUST 使用 same Original Question。
+P	INV-021
+P	MULTI_AI
+P	Multi-AI 第一輪 MUST 使用 same Original Question。
+ROW	INV-022	MULTI_AI	Multi-AI 比較 MUST 使用 same ContextFingerprint。
+P	INV-022
+P	MULTI_AI
+P	Multi-AI 比較 MUST 使用 same ContextFingerprint。
+ROW	INV-023	MULTI_AI	Multi-AI 比較 MUST 使用 same FactPack version。
+P	INV-023
+P	MULTI_AI
+P	Multi-AI 比較 MUST 使用 same FactPack version。
+ROW	INV-024	MULTI_AI	Multi-AI 比較 MUST 使用 same ConstraintSet version。
+P	INV-024
+P	MULTI_AI
+P	Multi-AI 比較 MUST 使用 same ConstraintSet version。
+ROW	INV-025	MULTI_AI	不同 baseline 的 AI output MUST 標示 NOT_DIRECTLY_COMPARABLE。
+P	INV-025
+P	MULTI_AI
+P	不同 baseline 的 AI output MUST 標示 NOT_DIRECTLY_COMPARABLE。
+ROW	INV-026	MULTI_AI	AI participant MUST 產生獨立完整觀點，不得先看到其他 AI 回答後假裝 independent。
+P	INV-026
+P	MULTI_AI
+P	AI participant MUST 產生獨立完整觀點，不得先看到其他 AI 回答後假裝 independent。
+ROW	INV-027	MULTI_AI	Cross Review MUST 指向 exact target response refs。
+P	INV-027
+P	MULTI_AI
+P	Cross Review MUST 指向 exact target response refs。
+ROW	INV-028	MULTI_AI	Other AI output MUST remain AI statement，MUST_NOT become Source Fact。
+P	INV-028
+P	MULTI_AI
+P	Other AI output MUST remain AI statement，MUST_NOT become Source Fact。
+ROW	INV-029	MULTI_AI	Cross Review MUST 回到 Original Question + Shared Context + Fact/Evidence。
+P	INV-029
+P	MULTI_AI
+P	Cross Review MUST 回到 Original Question + Shared Context + Fact/Evidence。
+ROW	INV-030	MULTI_AI	Multi-AI consensus MUST_NOT 自動成為 Decision。
+P	INV-030
+P	MULTI_AI
+P	Multi-AI consensus MUST_NOT 自動成為 Decision。
+ROW	INV-031	MULTI_AI	Assistant synthesis MUST 列出 consensus、disagreement、unknowns、evidence gaps。
+P	INV-031
+P	MULTI_AI
+P	Assistant synthesis MUST 列出 consensus、disagreement、unknowns、evidence gaps。
+ROW	INV-032	MULTI_AI	Provider/model picker MUST_NOT 由 Strategy UI 手動選擇；routing 屬 AI-03。
+P	INV-032
+P	MULTI_AI
+P	Provider/model picker MUST_NOT 由 Strategy UI 手動選擇；routing 屬 AI-03。
+ROW	INV-033	OPTIONS	StrategyOption MUST 有 expected benefit/impact、resource/cost impact、risk、time horizon、dependency、evidence、uncertainty。
+P	INV-033
+P	OPTIONS
+P	StrategyOption MUST 有 expected benefit/impact、resource/cost impact、risk、time horizon、dependency、evidence、uncertainty。
+ROW	INV-034	OPTIONS	Option Comparison MUST 使用同一 comparison dimension set。
+P	INV-034
+P	OPTIONS
+P	Option Comparison MUST 使用同一 comparison dimension set。
+ROW	INV-035	OPTIONS	缺資料的 option MUST 顯示 incomplete，而非以 AI guessed value 補齊。
+P	INV-035
+P	OPTIONS
+P	缺資料的 option MUST 顯示 incomplete，而非以 AI guessed value 補齊。
+ROW	INV-036	OPTIONS	推薦 MUST 列出 less-preferred/rejected options 與理由。
+P	INV-036
+P	OPTIONS
+P	推薦 MUST 列出 less-preferred/rejected options 與理由。
+ROW	INV-037	OPTIONS	Recommendation MUST 顯示 assumptions、risks、uncertainties。
+P	INV-037
+P	OPTIONS
+P	Recommendation MUST 顯示 assumptions、risks、uncertainties。
+ROW	INV-038	OPTIONS	ResourceProposal MUST 僅是 proposal；MUST_NOT 寫 Finance approval。
+P	INV-038
+P	OPTIONS
+P	ResourceProposal MUST 僅是 proposal；MUST_NOT 寫 Finance approval。
+ROW	INV-039	OPTIONS	StrategyAlert MUST 區分 risk / opportunity / data gap。
+P	INV-039
+P	OPTIONS
+P	StrategyAlert MUST 區分 risk / opportunity / data gap。
+ROW	INV-040	OPTIONS	DecisionBrief MUST 包含 decision_needed 與 unknowns。
+P	INV-040
+P	OPTIONS
+P	DecisionBrief MUST 包含 decision_needed 與 unknowns。
+ROW	INV-041	OPTIONS	ScenarioBranch MUST 綁 exact baseline、option、assumption set、parent branch。
+P	INV-041
+P	OPTIONS
+P	ScenarioBranch MUST 綁 exact baseline、option、assumption set、parent branch。
+ROW	INV-042	OPTIONS	ScenarioBranch MUST_NOT silent merge 回主線。
+P	INV-042
+P	OPTIONS
+P	ScenarioBranch MUST_NOT silent merge 回主線。
+ROW	INV-043	OPTIONS	Scenario rebase MUST explicit 並產生新 version/fingerprint。
+P	INV-043
+P	OPTIONS
+P	Scenario rebase MUST explicit 並產生新 version/fingerprint。
+ROW	INV-044	OPTIONS	Compare MUST_NOT 省略不利 evidence 或 conflict。
+P	INV-044
+P	OPTIONS
+P	Compare MUST_NOT 省略不利 evidence 或 conflict。
+ROW	INV-045	DECISION	Raw AI response MUST_NOT 直接成為 StrategyCandidate。
+P	INV-045
+P	DECISION
+P	Raw AI response MUST_NOT 直接成為 StrategyCandidate。
+ROW	INV-046	DECISION	StrategyCandidate MUST append-only versioned。
+P	INV-046
+P	DECISION
+P	StrategyCandidate MUST append-only versioned。
+ROW	INV-047	DECISION	DecisionCandidate MUST 通過 evidence/risk/unknown/comparison completeness gate。
+P	INV-047
+P	DECISION
+P	DecisionCandidate MUST 通過 evidence/risk/unknown/comparison completeness gate。
+ROW	INV-048	DECISION	Human Review MUST 由具權限 actor 執行。
+P	INV-048
+P	DECISION
+P	Human Review MUST 由具權限 actor 執行。
+ROW	INV-049	DECISION	AI MUST_NOT self-approve DecisionCandidate。
+P	INV-049
+P	DECISION
+P	AI MUST_NOT self-approve DecisionCandidate。
+ROW	INV-050	DECISION	DecisionLedger result MUST 與 StrategyRecommendation separation。
+P	INV-050
+P	DECISION
+P	DecisionLedger result MUST 與 StrategyRecommendation separation。
+ROW	INV-051	DECISION	DecisionLedger MUST 記錄 actor、time、reason、candidate ref、risk、approval level、execution status。
+P	INV-051
+P	DECISION
+P	DecisionLedger MUST 記錄 actor、time、reason、candidate ref、risk、approval level、execution status。
+ROW	INV-052	DECISION	Rejected decision MUST 保留原因與 source refs。
+P	INV-052
+P	DECISION
+P	Rejected decision MUST 保留原因與 source refs。
+ROW	INV-053	DECISION	Superseded Decision MUST 保留 predecessor/successor lineage。
+P	INV-053
+P	DECISION
+P	Superseded Decision MUST 保留 predecessor/successor lineage。
+ROW	INV-054	DECISION	Adopt-as-context MUST 只是 governed context adoption，不等於 owner module execution。
+P	INV-054
+P	DECISION
+P	Adopt-as-context MUST 只是 governed context adoption，不等於 owner module execution。
+ROW	INV-055	DECISION	Budget/workflow/governance/production action MUST 留在 owning module。
+P	INV-055
+P	DECISION
+P	Budget/workflow/governance/production action MUST 留在 owning module。
+ROW	INV-056	DECISION	Decision status MUST_NOT 由 UI-only state 推斷。
+P	INV-056
+P	DECISION
+P	Decision status MUST_NOT 由 UI-only state 推斷。
+ROW	INV-057	FEEDBACK	Owner execution handoff MUST 指向 exact DecisionLedgerEntry。
+P	INV-057
+P	FEEDBACK
+P	Owner execution handoff MUST 指向 exact DecisionLedgerEntry。
+ROW	INV-058	FEEDBACK	Handoff ACK MUST_NOT 被當成 execution success。
+P	INV-058
+P	FEEDBACK
+P	Handoff ACK MUST_NOT 被當成 execution success。
+ROW	INV-059	FEEDBACK	ExecutionResultRef MUST 來自 owner module/evidence。
+P	INV-059
+P	FEEDBACK
+P	ExecutionResultRef MUST 來自 owner module/evidence。
+ROW	INV-060	FEEDBACK	Expected vs Actual MUST 使用 same metric definition/window/unit。
+P	INV-060
+P	FEEDBACK
+P	Expected vs Actual MUST 使用 same metric definition/window/unit。
+ROW	INV-061	FEEDBACK	Missing actual MUST_NOT 表示為 0。
+P	INV-061
+P	FEEDBACK
+P	Missing actual MUST_NOT 表示為 0。
+ROW	INV-062	FEEDBACK	Strategic Experience Candidate MUST 由 execution/performance feedback 支持。
+P	INV-062
+P	FEEDBACK
+P	Strategic Experience Candidate MUST 由 execution/performance feedback 支持。
+ROW	INV-063	FEEDBACK	Learning Candidate MUST_NOT self-adopt。
+P	INV-063
+P	FEEDBACK
+P	Learning Candidate MUST_NOT self-adopt。
+ROW	INV-064	FEEDBACK	Single outcome MUST_NOT 直接升格成 universal strategy rule。
+P	INV-064
+P	FEEDBACK
+P	Single outcome MUST_NOT 直接升格成 universal strategy rule。
+ROW	INV-065	FEEDBACK	Forecast accuracy MUST 綁定原 forecast version/horizon。
+P	INV-065
+P	FEEDBACK
+P	Forecast accuracy MUST 綁定原 forecast version/horizon。
+ROW	INV-066	FEEDBACK	Experience revision MUST append-only。
+P	INV-066
+P	FEEDBACK
+P	Experience revision MUST append-only。
+ROW	INV-067	CONCURRENCY	每個 effectful owner handoff MUST 有 idempotency key 或 owner-side equivalent。
+P	INV-067
+P	CONCURRENCY
+P	每個 effectful owner handoff MUST 有 idempotency key 或 owner-side equivalent。
+ROW	INV-068	CONCURRENCY	同一 DecisionCandidate + same request replay MUST return same logical result where effect semantics require idempotency。
+P	INV-068
+P	CONCURRENCY
+P	同一 DecisionCandidate + same request replay MUST return same logical result where effect semantics require idempotency。
+ROW	INV-069	CONCURRENCY	Same idempotency key + different payload MUST BLOCK。
+P	INV-069
+P	CONCURRENCY
+P	Same idempotency key + different payload MUST BLOCK。
+ROW	INV-070	CONCURRENCY	Concurrent review MUST 使用 expected_version / optimistic concurrency。
+P	INV-070
+P	CONCURRENCY
+P	Concurrent review MUST 使用 expected_version / optimistic concurrency。
+ROW	INV-071	CONCURRENCY	Stale reviewer write MUST BLOCK 並要求 refresh/compare。
+P	INV-071
+P	CONCURRENCY
+P	Stale reviewer write MUST BLOCK 並要求 refresh/compare。
+ROW	INV-072	CONCURRENCY	Late AI response MUST_NOT overwrite newer candidate state。
+P	INV-072
+P	CONCURRENCY
+P	Late AI response MUST_NOT overwrite newer candidate state。
+ROW	INV-073	CONCURRENCY	Cancelled analysis job late callback MUST quarantine。
+P	INV-073
+P	CONCURRENCY
+P	Cancelled analysis job late callback MUST quarantine。
+ROW	INV-074	CONCURRENCY	Retry MUST 建立新 attempt identity。
+P	INV-074
+P	CONCURRENCY
+P	Retry MUST 建立新 attempt identity。
+ROW	INV-075	CONCURRENCY	Non-retryable policy/permission/evidence failure MUST_NOT automatic retry。
+P	INV-075
+P	CONCURRENCY
+P	Non-retryable policy/permission/evidence failure MUST_NOT automatic retry。
+ROW	INV-076	CONCURRENCY	Unknown external/owner execution state MUST require reconcile before retry。
+P	INV-076
+P	CONCURRENCY
+P	Unknown external/owner execution state MUST require reconcile before retry。
+ROW	INV-077	GOVERNANCE	Permission MUST 檢查 read/analyze/review/adopt/handoff operation scope。
+P	INV-077
+P	GOVERNANCE
+P	Permission MUST 檢查 read/analyze/review/adopt/handoff operation scope。
+ROW	INV-078	GOVERNANCE	Classification MUST 限制哪些 AI/provider/tool 可接觸 context。
+P	INV-078
+P	GOVERNANCE
+P	Classification MUST 限制哪些 AI/provider/tool 可接觸 context。
+ROW	INV-079	GOVERNANCE	Sensitive internal cost/resource/risk data MUST_NOT 出現在不授權 transcript/export。
+P	INV-079
+P	GOVERNANCE
+P	Sensitive internal cost/resource/risk data MUST_NOT 出現在不授權 transcript/export。
+ROW	INV-080	GOVERNANCE	Provider brand 可顯示；technical model secret/runtime detail 歸 AI-03/API management。
+P	INV-080
+P	GOVERNANCE
+P	Provider brand 可顯示；technical model secret/runtime detail 歸 AI-03/API management。
+ROW	INV-081	GOVERNANCE	Audit MUST 記錄 correlation_id、actor、topic、question version、context fingerprint、candidate/decision refs。
+P	INV-081
+P	GOVERNANCE
+P	Audit MUST 記錄 correlation_id、actor、topic、question version、context fingerprint、candidate/decision refs。
+ROW	INV-082	GOVERNANCE	No evidence = NOT_VERIFIED；MUST_NOT 宣稱 data-backed recommendation。
+P	INV-082
+P	GOVERNANCE
+P	No evidence = NOT_VERIFIED；MUST_NOT 宣稱 data-backed recommendation。
+ROW	INV-083	GOVERNANCE	Simulation/Replay MUST 與 Production/owner execution 隔離。
+P	INV-083
+P	GOVERNANCE
+P	Simulation/Replay MUST 與 Production/owner execution 隔離。
+ROW	INV-084	GOVERNANCE	Strategy test success MUST_NOT 宣稱 business execution success。
+P	INV-084
+P	GOVERNANCE
+P	Strategy test success MUST_NOT 宣稱 business execution success。
+ROW	INV-085	GOVERNANCE	Design document MUST_NOT 宣稱 Runtime/API/DB/Production complete。
+P	INV-085
+P	GOVERNANCE
+P	Design document MUST_NOT 宣稱 Runtime/API/DB/Production complete。
+ROW	INV-086	GOVERNANCE	Undefined behavior MUST BLOCK + REQUIRE_EXACT_BINDING / REPORT_AUTHORITY_GAP。
+P	INV-086
+P	GOVERNANCE
+P	Undefined behavior MUST BLOCK + REQUIRE_EXACT_BINDING / REPORT_AUTHORITY_GAP。
+ROW	INV-087	OWNER	Conversation persistence/branch/message identity MUST 由 AI-02 owner。
+P	INV-087
+P	OWNER
+P	Conversation persistence/branch/message identity MUST 由 AI-02 owner。
+ROW	INV-088	OWNER	Context/Truth precedence MUST 由 AI-01 owner。
+P	INV-088
+P	OWNER
+P	Context/Truth precedence MUST 由 AI-01 owner。
+ROW	INV-089	OWNER	Provider routing/tool execution MUST 由 AI-03 owner。
+P	INV-089
+P	OWNER
+P	Provider routing/tool execution MUST 由 AI-03 owner。
+ROW	INV-090	OWNER	Enterprise email/CRM execution MUST 由 AI-06 owner。
+P	INV-090
+P	OWNER
+P	Enterprise email/CRM execution MUST 由 AI-06 owner。
+ROW	INV-091	OWNER	Social publish execution MUST 由 AI-07 owner。
+P	INV-091
+P	OWNER
+P	Social publish execution MUST 由 AI-07 owner。
+ROW	INV-092	OWNER	System change/authority mutation MUST 由 AI-09 owner。
+P	INV-092
+P	OWNER
+P	System change/authority mutation MUST 由 AI-09 owner。
+ROW	INV-093	OWNER	Strategy MUST reference shared owners; MUST_NOT duplicate engines。
+P	INV-093
+P	OWNER
+P	Strategy MUST reference shared owners; MUST_NOT duplicate engines。
+ROW	INV-094	OWNER	Exact API/DB/permission/runtime identity lacking current authority MUST be REQUIRE_EXACT_BINDING。
+P	INV-094
+P	OWNER
+P	Exact API/DB/permission/runtime identity lacking current authority MUST be REQUIRE_EXACT_BINDING。
+ROW	INV-095	OWNER	One concept MUST have one canonical owner; parallel strategy page/system FORBIDDEN。
+P	INV-095
+P	OWNER
+P	One concept MUST have one canonical owner; parallel strategy page/system FORBIDDEN。
+ROW	INV-096	OWNER	Search-before-create MUST precede later implementation binding。
+P	INV-096
+P	OWNER
+P	Search-before-create MUST precede later implementation binding。
+P	7. Fact / Inference / Assumption / Risk / Opportunity Contract
+P	圖 3｜策略 Truth/Reasoning 分層；Fact、推論、假設、風險/機會、建議、決策不可互相偷升格。
+ROW	Class	Required Fields	Admission / Promotion Rule
+P	Class
+P	Required Fields
+P	Admission / Promotion Rule
+ROW	FACT	claim, scope, evidence_refs, source_time_or_version, confidence/quality	只有 evidence-backed claim；conflict unresolved 時不可當唯一事實。
+P	FACT
+P	claim, scope, evidence_refs, source_time_or_version, confidence/quality
+P	只有 evidence-backed claim；conflict unresolved 時不可當唯一事實。
+ROW	INFERENCE	statement, supporting_fact_refs, method/reason, uncertainty	可被 challenge/revise；不得覆寫 Fact。
+P	INFERENCE
+P	statement, supporting_fact_refs, method/reason, uncertainty
+P	可被 challenge/revise；不得覆寫 Fact。
+ROW	ASSUMPTION	premise, owner, reason, testability, status	明示未驗證；必須能被測試/retire。
+P	ASSUMPTION
+P	premise, owner, reason, testability, status
+P	明示未驗證；必須能被測試/retire。
+ROW	RISK	condition, exposure, likelihood/range, impact, horizon, evidence	必須 scenario-aware；不可只給主觀形容詞。
+P	RISK
+P	condition, exposure, likelihood/range, impact, horizon, evidence
+P	必須 scenario-aware；不可只給主觀形容詞。
+ROW	OPPORTUNITY	condition, upside, constraints, horizon, evidence	必須同時列出 dependency/risk。
+P	OPPORTUNITY
+P	condition, upside, constraints, horizon, evidence
+P	必須同時列出 dependency/risk。
+ROW	RECOMMENDATION	option_ref, reason, tradeoff, evidence, risk, uncertainty	不是 Decision；需 human review。
+P	RECOMMENDATION
+P	option_ref, reason, tradeoff, evidence, risk, uncertainty
+P	不是 Decision；需 human review。
+ROW	DECISION	candidate_ref, result, reason, actor, time, approval level, audit	只能由 human-governed review 產生。
+P	DECISION
+P	candidate_ref, result, reason, actor, time, approval level, audit
+P	只能由 human-governed review 產生。
+P	8. Strategic Context / Fact Pack Contract
+ROW	Priority	Source Class	Required Metadata	Rule
+P	Priority
+P	Source Class
+P	Required Metadata
+P	Rule
+ROW	P0	Current Human Instruction	actor, time, scope, instruction version	本輪意圖最高優先，但不得越權改 fact/decision history。
+P	P0
+P	Current Human Instruction
+P	actor, time, scope, instruction version
+P	本輪意圖最高優先，但不得越權改 fact/decision history。
+ROW	P1	Confirmed Decision	decision_id, version, status, scope	不得被外部情報 silent overwrite。
+P	P1
+P	Confirmed Decision
+P	decision_id, version, status, scope
+P	不得被外部情報 silent overwrite。
+ROW	P2	Current Valid Internal Data	source_ref, version/time, scope, classification	成本/資源/KPI/風險若缺值不得 AI-fill。
+P	P2
+P	Current Valid Internal Data
+P	source_ref, version/time, scope, classification
+P	成本/資源/KPI/風險若缺值不得 AI-fill。
+ROW	P3	Historical Analysis / Baseline / Experience	version, outcome refs, validity window	只在適用範圍內作背景/先驗。
+P	P3
+P	Historical Analysis / Baseline / Experience
+P	version, outcome refs, validity window
+P	只在適用範圍內作背景/先驗。
+ROW	P4	External Intelligence	source, fetched_at, freshness, confidence, license/rights	不得取代 internal confirmed truth。
+P	P4
+P	External Intelligence
+P	source, fetched_at, freshness, confidence, license/rights
+P	不得取代 internal confirmed truth。
+P	FactPack 最小欄位
+P	• fact_pack_id / version / scope / created_at / source_fact_refs / evidence_refs / unresolved_conflicts / freshness_state / classification / permission_projection / context_fingerprint。
+P	• 任何 REQUIRED source 缺失時：保留 incomplete，建立 OpenQuestion / EvidenceGap；不得以模型常識補成正式 Fact。
+P	9. Multi-AI Same-Baseline Contract
+P	圖 4｜多 AI 合法比較需要同一 Original Question、Context Fingerprint、Fact Pack Version、Constraint Set。
+ROW	Round / Operation	Required Inputs	Output Contract	Invalid If
+P	Round / Operation
+P	Required Inputs
+P	Output Contract
+P	Invalid If
+ROW	INDEPENDENT_RESPONSE	same question + same context fingerprint + same fact pack + same constraints	完整獨立觀點、evidence refs、assumptions、risks、unknowns	參與者先看到其他 AI 回覆後才作第一輪。
+P	INDEPENDENT_RESPONSE
+P	same question + same context fingerprint + same fact pack + same constraints
+P	完整獨立觀點、evidence refs、assumptions、risks、unknowns
+P	參與者先看到其他 AI 回覆後才作第一輪。
+ROW	CROSS_REVIEW	target_response_refs + baseline identity	strengths, weaknesses, evidence issues, omissions, correction suggestions	只針對對方語氣，不回到 original question/evidence。
+P	CROSS_REVIEW
+P	target_response_refs + baseline identity
+P	strengths, weaknesses, evidence issues, omissions, correction suggestions
+P	只針對對方語氣，不回到 original question/evidence。
+ROW	CROSS_COMPARISON	>=2 exact response refs + same baseline	consensus, disagreement, blind spots, evidence gaps	不同 baseline 未標示。
+P	CROSS_COMPARISON
+P	>=2 exact response refs + same baseline
+P	consensus, disagreement, blind spots, evidence gaps
+P	不同 baseline 未標示。
+ROW	REVISION	own prior ref + critique refs + same baseline or explicit rebase	new immutable revision + change rationale	原地覆寫舊回覆。
+P	REVISION
+P	own prior ref + critique refs + same baseline or explicit rebase
+P	new immutable revision + change rationale
+P	原地覆寫舊回覆。
+ROW	EVIDENCE_CHECK	claim refs + exact Fact/Evidence	supported / unsupported / conflicted / unknown	把另一 AI 說法當 evidence。
+P	EVIDENCE_CHECK
+P	claim refs + exact Fact/Evidence
+P	supported / unsupported / conflicted / unknown
+P	把另一 AI 說法當 evidence。
+ROW	ASSISTANT_SYNTHESIS	all selected exact refs	meeting record, consensus, disagreement, open questions	助理自行發明新分析或決策。
+P	ASSISTANT_SYNTHESIS
+P	all selected exact refs
+P	meeting record, consensus, disagreement, open questions
+P	助理自行發明新分析或決策。
+P	10. Multi-AI Validity / Comparability Decision Matrix
+ROW	Condition	Direct Compare?	Required Disposition
+P	Condition
+P	Direct Compare?
+P	Required Disposition
+ROW	Question、Fingerprint、FactPack、ConstraintSet 全相同	YES	可計入 formal comparison。
+P	Question、Fingerprint、FactPack、ConstraintSet 全相同
+P	YES
+P	可計入 formal comparison。
+ROW	Question 相同，但 ContextFingerprint 不同	NO	標記 BASELINE_MISMATCH；需 re-run 或 explicit rebase。
+P	Question 相同，但 ContextFingerprint 不同
+P	NO
+P	標記 BASELINE_MISMATCH；需 re-run 或 explicit rebase。
+ROW	FactPack version 不同	NO	標記 EVIDENCE_VERSION_MISMATCH。
+P	FactPack version 不同
+P	NO
+P	標記 EVIDENCE_VERSION_MISMATCH。
+ROW	ConstraintSet 不同	NO	只能做 scenario comparison，不得當同題平行意見。
+P	ConstraintSet 不同
+P	NO
+P	只能做 scenario comparison，不得當同題平行意見。
+ROW	AI provider/model 不同，但 baseline 相同	YES	Provider 差異是觀點來源，不影響 baseline validity。
+P	AI provider/model 不同，但 baseline 相同
+P	YES
+P	Provider 差異是觀點來源，不影響 baseline validity。
+ROW	某 AI target refs 遺失	PARTIAL	只 BLOCK 該 cross-review request。
+P	某 AI target refs 遺失
+P	PARTIAL
+P	只 BLOCK 該 cross-review request。
+ROW	Evidence conflict unresolved	LIMITED	允許分析衝突，但不得產生 data-certain conclusion。
+P	Evidence conflict unresolved
+P	LIMITED
+P	允許分析衝突，但不得產生 data-certain conclusion。
+P	11. Scenario / Branch / What-if Contract
+ROW	Object	Required Identity	Rules
+P	Object
+P	Required Identity
+P	Rules
+ROW	Scenario	scenario_id + parent_question + baseline_ref + assumption_set + constraint_set	所有假設顯式；與 current baseline 分離。
+P	Scenario
+P	scenario_id + parent_question + baseline_ref + assumption_set + constraint_set
+P	所有假設顯式；與 current baseline 分離。
+ROW	ScenarioBranch	branch_id + parent_scenario/option + created_from_ref + fingerprint	主線後續變化不自動灌入。
+P	ScenarioBranch
+P	branch_id + parent_scenario/option + created_from_ref + fingerprint
+P	主線後續變化不自動灌入。
+ROW	Explicit Rebase	old_fingerprint + new_fingerprint + changed_refs + actor/reason	產生新 branch version；保留舊版。
+P	Explicit Rebase
+P	old_fingerprint + new_fingerprint + changed_refs + actor/reason
+P	產生新 branch version；保留舊版。
+ROW	Merge/Adopt	source branch + selected claims/options + human confirmation	不得自動合併；採用後仍走 DecisionCandidate/Human Review。
+P	Merge/Adopt
+P	source branch + selected claims/options + human confirmation
+P	不得自動合併；採用後仍走 DecisionCandidate/Human Review。
+ROW	Scenario Compare	same metric definitions + explicit differing assumptions	差異來源必須可解釋。
+P	Scenario Compare
+P	same metric definitions + explicit differing assumptions
+P	差異來源必須可解釋。
+P	12. Option Comparison / Decision Support Contract
+ROW	Field	Required Meaning	Missing Handling
+P	Field
+P	Required Meaning
+P	Missing Handling
+ROW	option_id / title	唯一 immutable option identity	BLOCK formal comparison if absent。
+P	option_id / title
+P	唯一 immutable option identity
+P	BLOCK formal comparison if absent。
+ROW	expected_benefit / expected_impact	明確 KPI/業務效果與 horizon	顯示 incomplete。
+P	expected_benefit / expected_impact
+P	明確 KPI/業務效果與 horizon
+P	顯示 incomplete。
+ROW	resource_need / cost_impact	容量、成本、人力/資源影響	不得 AI 猜數字。
+P	resource_need / cost_impact
+P	容量、成本、人力/資源影響
+P	不得 AI 猜數字。
+ROW	risk	主要風險與條件	至少 risk state required。
+P	risk
+P	主要風險與條件
+P	至少 risk state required。
+ROW	dependency	前置條件/owner module	缺 owner/dependency 則 review-required。
+P	dependency
+P	前置條件/owner module
+P	缺 owner/dependency 則 review-required。
+ROW	evidence	支持/反對 evidence refs	無 evidence = not verified。
+P	evidence
+P	支持/反對 evidence refs
+P	無 evidence = not verified。
+ROW	uncertainty	unknowns / confidence range	不得隱藏。
+P	uncertainty
+P	unknowns / confidence range
+P	不得隱藏。
+ROW	reversibility	是否可回復/退出成本	未知就 explicit unknown。
+P	reversibility
+P	是否可回復/退出成本
+P	未知就 explicit unknown。
+ROW	time_horizon	何時評估與 expected window	不同 horizon 不直接比較。
+P	time_horizon
+P	何時評估與 expected window
+P	不同 horizon 不直接比較。
+ROW	AI_recommendation_state	support / neutral / caution / insufficient evidence	不能直接變 human decision。
+P	AI_recommendation_state
+P	support / neutral / caution / insufficient evidence
+P	不能直接變 human decision。
+P	13. Four Formal Strategy Outputs
+ROW	Output	Required Fields	Boundary
+P	Output
+P	Required Fields
+P	Boundary
+ROW	STRATEGY_RECOMMENDATION	summary, basis, recommended_path, reason, risk, uncertainty, evidence_refs	建議；非正式決策。
+P	STRATEGY_RECOMMENDATION
+P	summary, basis, recommended_path, reason, risk, uncertainty, evidence_refs
+P	建議；非正式決策。
+ROW	STRATEGY_ALERT	alert_type, scope, reason, evidence_refs, urgency/priority_state, recommended_response	提醒；不可直接觸發 owner effect。
+P	STRATEGY_ALERT
+P	alert_type, scope, reason, evidence_refs, urgency/priority_state, recommended_response
+P	提醒；不可直接觸發 owner effect。
+ROW	RESOURCE_PROPOSAL	target, resource_need, reason, expected_effect, cost/capacity impact, risk, dependency	只提案；Finance/Workflow/Governance 批准。
+P	RESOURCE_PROPOSAL
+P	target, resource_need, reason, expected_effect, cost/capacity impact, risk, dependency
+P	只提案；Finance/Workflow/Governance 批准。
+ROW	DECISION_BRIEF	issue, context, candidate_options, recommended_option, less-preferred/rejected options, key_risks, unknowns, decision_needed	供 Human Review；不等於 Decision Ledger。
+P	DECISION_BRIEF
+P	issue, context, candidate_options, recommended_option, less-preferred/rejected options, key_risks, unknowns, decision_needed
+P	供 Human Review；不等於 Decision Ledger。
+P	輸出共通規則
+P	• 所有輸出 MUST 綁 exact StrategyTopic / Question / ContextFingerprint / FactPack / Candidate version。
+P	• 任何修訂 MUST 產生新版本並保存 predecessor。
+P	• 同一輸出不可同時兼任正式 Decision / Budget Approval / Workflow Command / Production Action。
+P	14. Decision Candidate / Human Review / Decision Ledger
+ROW	Stage	Required	Forbidden
+P	Stage
+P	Required
+P	Forbidden
+ROW	StrategyCandidate	analysis basis, options, evidence, risk, uncertainty, unknowns, version	raw AI output 直接升格。
+P	StrategyCandidate
+P	analysis basis, options, evidence, risk, uncertainty, unknowns, version
+P	raw AI output 直接升格。
+ROW	DecisionCandidate	candidate ref, decision question, option set, recommendation, rejected/less-preferred options, evidence gaps, review scope	缺風險/unknowns/compare 就 submit。
+P	DecisionCandidate
+P	candidate ref, decision question, option set, recommendation, rejected/less-preferred options, evidence gaps, review scope
+P	缺風險/unknowns/compare 就 submit。
+ROW	HumanReview	reviewer identity/permission, decision result, reason, evidence refs, expected_version	AI self-approval、stale write。
+P	HumanReview
+P	reviewer identity/permission, decision result, reason, evidence refs, expected_version
+P	AI self-approval、stale write。
+ROW	DecisionLedgerEntry	decision_id, topic, candidate_ref, proposal_summary, source_refs, risk, approval_level, result, reason, actor/time, execution_status/ref, audit_ref	用 Strategy Recommendation 取代正式 ledger。
+P	DecisionLedgerEntry
+P	decision_id, topic, candidate_ref, proposal_summary, source_refs, risk, approval_level, result, reason, actor/time, execution_status/ref, audit_ref
+P	用 Strategy Recommendation 取代正式 ledger。
+P	15. State Machine / Lifecycle
+ROW	State	Meaning
+P	State
+P	Meaning
+ROW	TOPIC_OPEN	策略題目可分析
+P	TOPIC_OPEN
+P	策略題目可分析
+ROW	CONTEXT_RESOLVING	組裝來源/權限/版本
+P	CONTEXT_RESOLVING
+P	組裝來源/權限/版本
+ROW	CONTEXT_FROZEN	ContextSnapshot/Fingerprint frozen
+P	CONTEXT_FROZEN
+P	ContextSnapshot/Fingerprint frozen
+ROW	FACTPACK_INCOMPLETE	必要 fact/evidence 缺失
+P	FACTPACK_INCOMPLETE
+P	必要 fact/evidence 缺失
+ROW	FACTPACK_READY	FactPack 可供分析
+P	FACTPACK_READY
+P	FactPack 可供分析
+ROW	ANALYSIS_RUNNING	單/多 AI 分析中
+P	ANALYSIS_RUNNING
+P	單/多 AI 分析中
+ROW	ANALYSIS_PARTIAL	部分 AI/工具失敗，但可保留證據化結果
+P	ANALYSIS_PARTIAL
+P	部分 AI/工具失敗，但可保留證據化結果
+ROW	ANALYSIS_READY	分析輸出可審查
+P	ANALYSIS_READY
+P	分析輸出可審查
+ROW	OPTIONS_READY	>=1 option；formal compare 視 denominator
+P	OPTIONS_READY
+P	>=1 option；formal compare 視 denominator
+ROW	COMPARISON_READY	合法同 baseline option comparison
+P	COMPARISON_READY
+P	合法同 baseline option comparison
+ROW	CANDIDATE_DRAFT	策略候選草稿
+P	CANDIDATE_DRAFT
+P	策略候選草稿
+ROW	CANDIDATE_READY	候選內容完整
+P	CANDIDATE_READY
+P	候選內容完整
+ROW	REVIEW_REQUIRED	等待 human review
+P	REVIEW_REQUIRED
+P	等待 human review
+ROW	REVISION_REQUIRED	review 要求修訂
+P	REVISION_REQUIRED
+P	review 要求修訂
+ROW	ADOPTED_AS_CONTEXT	已採用為 governed strategy context
+P	ADOPTED_AS_CONTEXT
+P	已採用為 governed strategy context
+ROW	DECISION_REJECTED	正式拒絕
+P	DECISION_REJECTED
+P	正式拒絕
+ROW	DECISION_APPROVED	正式 Decision Ledger approved/result
+P	DECISION_APPROVED
+P	正式 Decision Ledger approved/result
+ROW	HANDOFF_PENDING	等待 owner module ack
+P	HANDOFF_PENDING
+P	等待 owner module ack
+ROW	HANDOFF_ACKED	owner 接收，不等於執行完成
+P	HANDOFF_ACKED
+P	owner 接收，不等於執行完成
+ROW	EXECUTION_PENDING	owner 執行中/未回報
+P	EXECUTION_PENDING
+P	owner 執行中/未回報
+ROW	OUTCOME_PARTIAL	只有部分結果
+P	OUTCOME_PARTIAL
+P	只有部分結果
+ROW	OUTCOME_VERIFIED	actual result 具 evidence
+P	OUTCOME_VERIFIED
+P	actual result 具 evidence
+ROW	EXPERIENCE_CANDIDATE	learning candidate
+P	EXPERIENCE_CANDIDATE
+P	learning candidate
+ROW	CLOSED	本次策略 cycle 關閉；history immutable
+P	CLOSED
+P	本次策略 cycle 關閉；history immutable
+P	16. State Transition Guard Matrix
+ROW	Transition	Actor/Trigger	Preconditions	Side Effect / Audit	Failure / Recovery
+P	Transition
+P	Actor/Trigger
+P	Preconditions
+P	Side Effect / Audit
+P	Failure / Recovery
+ROW	TOPIC_OPEN→CONTEXT_RESOLVING	user/system select topic	topic/question/permission	resolve refs	BLOCK on unresolved scope
+P	TOPIC_OPEN→CONTEXT_RESOLVING
+P	user/system select topic
+P	topic/question/permission
+P	resolve refs
+P	BLOCK on unresolved scope
+ROW	CONTEXT_RESOLVING→CONTEXT_FROZEN	context ready	exact refs/version/classification	freeze snapshot/fingerprint	BLOCK on missing required identity
+P	CONTEXT_RESOLVING→CONTEXT_FROZEN
+P	context ready
+P	exact refs/version/classification
+P	freeze snapshot/fingerprint
+P	BLOCK on missing required identity
+ROW	CONTEXT_FROZEN→FACTPACK_READY	facts compiled	required evidence + no unresolved blocking conflict	persist factpack version	FACTPACK_INCOMPLETE otherwise
+P	CONTEXT_FROZEN→FACTPACK_READY
+P	facts compiled
+P	required evidence + no unresolved blocking conflict
+P	persist factpack version
+P	FACTPACK_INCOMPLETE otherwise
+ROW	FACTPACK_READY→ANALYSIS_RUNNING	analyze	question + constraints + context + permissions	create analysis run	idempotent run identity
+P	FACTPACK_READY→ANALYSIS_RUNNING
+P	analyze
+P	question + constraints + context + permissions
+P	create analysis run
+P	idempotent run identity
+ROW	ANALYSIS_RUNNING→ANALYSIS_READY	all required participant outputs terminal	same baseline identities + response refs	persist immutable outputs	PARTIAL if denominator incomplete
+P	ANALYSIS_RUNNING→ANALYSIS_READY
+P	all required participant outputs terminal
+P	same baseline identities + response refs
+P	persist immutable outputs
+P	PARTIAL if denominator incomplete
+ROW	ANALYSIS_READY→COMPARISON_READY	compare	>=2 comparable options/viewpoints	compile comparison	BLOCK baseline mismatch
+P	ANALYSIS_READY→COMPARISON_READY
+P	compare
+P	>=2 comparable options/viewpoints
+P	compile comparison
+P	BLOCK baseline mismatch
+ROW	ANALYSIS_READY→CANDIDATE_READY	draft candidate	basis/risk/unknowns/evidence complete	new candidate version	incomplete stays draft
+P	ANALYSIS_READY→CANDIDATE_READY
+P	draft candidate
+P	basis/risk/unknowns/evidence complete
+P	new candidate version
+P	incomplete stays draft
+ROW	CANDIDATE_READY→REVIEW_REQUIRED	submit review	expected_version + STR_REVIEW-like permission + evidence	review request	stale/missing = BLOCK
+P	CANDIDATE_READY→REVIEW_REQUIRED
+P	submit review
+P	expected_version + STR_REVIEW-like permission + evidence
+P	review request
+P	stale/missing = BLOCK
+ROW	REVIEW_REQUIRED→REVISION_REQUIRED	human request revision	reviewer/reason	append review record	candidate preserved
+P	REVIEW_REQUIRED→REVISION_REQUIRED
+P	human request revision
+P	reviewer/reason
+P	append review record
+P	candidate preserved
+ROW	REVIEW_REQUIRED→DECISION_REJECTED	human reject	reviewer/reason	ledger result reject	no owner execution
+P	REVIEW_REQUIRED→DECISION_REJECTED
+P	human reject
+P	reviewer/reason
+P	ledger result reject
+P	no owner execution
+ROW	REVIEW_REQUIRED→DECISION_APPROVED	human approve	reviewer/reason/approval level	ledger result approve	AI cannot trigger
+P	REVIEW_REQUIRED→DECISION_APPROVED
+P	human approve
+P	reviewer/reason/approval level
+P	ledger result approve
+P	AI cannot trigger
+ROW	DECISION_APPROVED→HANDOFF_PENDING	handoff to owner	exact decision ref + owner mapping	create handoff	missing owner = BLOCK
+P	DECISION_APPROVED→HANDOFF_PENDING
+P	handoff to owner
+P	exact decision ref + owner mapping
+P	create handoff
+P	missing owner = BLOCK
+ROW	HANDOFF_PENDING→HANDOFF_ACKED	owner ack	handoff id + owner actor	ack event	not execution success
+P	HANDOFF_PENDING→HANDOFF_ACKED
+P	owner ack
+P	handoff id + owner actor
+P	ack event
+P	not execution success
+ROW	HANDOFF_ACKED→OUTCOME_VERIFIED	owner result	exact execution/result refs + evidence	expected-vs-actual	PARTIAL if incomplete
+P	HANDOFF_ACKED→OUTCOME_VERIFIED
+P	owner result
+P	exact execution/result refs + evidence
+P	expected-vs-actual
+P	PARTIAL if incomplete
+ROW	OUTCOME_VERIFIED→EXPERIENCE_CANDIDATE	learning compile	decision+expected+actual+differences	new learning candidate	no self-adopt
+P	OUTCOME_VERIFIED→EXPERIENCE_CANDIDATE
+P	learning compile
+P	decision+expected+actual+differences
+P	new learning candidate
+P	no self-adopt
+ROW	EXPERIENCE_CANDIDATE→CLOSED	review/terminalize	learning disposition + audit	close cycle	history immutable
+P	EXPERIENCE_CANDIDATE→CLOSED
+P	review/terminalize
+P	learning disposition + audit
+P	close cycle
+P	history immutable
+P	17. Concurrency / Version / Idempotency
+ROW	Scenario	Required Rule
+P	Scenario
+P	Required Rule
+ROW	Two reviewers submit simultaneously	使用 expected_version；第一個成功後第二個 stale write BLOCK。
+P	Two reviewers submit simultaneously
+P	使用 expected_version；第一個成功後第二個 stale write BLOCK。
+ROW	AI late response after candidate revision	只保存 response attempt；不得覆寫 current candidate。
+P	AI late response after candidate revision
+P	只保存 response attempt；不得覆寫 current candidate。
+ROW	Same analysis request replay	same idempotency scope -> return same logical run / dedupe。
+P	Same analysis request replay
+P	same idempotency scope -> return same logical run / dedupe。
+ROW	Same key different payload	BLOCK + audit anomaly。
+P	Same key different payload
+P	BLOCK + audit anomaly。
+ROW	Scenario branch rebase while compare open	舊 compare 標記 REVERIFY_REQUIRED；不得 silent update。
+P	Scenario branch rebase while compare open
+P	舊 compare 標記 REVERIFY_REQUIRED；不得 silent update。
+ROW	FactPack superseded while analysis running	分析輸出綁原 FactPack；新 current 不反向重寫舊輸出。
+P	FactPack superseded while analysis running
+P	分析輸出綁原 FactPack；新 current 不反向重寫舊輸出。
+ROW	Decision superseded	新 DecisionLedgerEntry + predecessor link；舊 decision 永久可追。
+P	Decision superseded
+P	新 DecisionLedgerEntry + predecessor link；舊 decision 永久可追。
+ROW	Owner execution result arrives twice	consumer dedupe by event/idempotency key；actual record 不重複計算。
+P	Owner execution result arrives twice
+P	consumer dedupe by event/idempotency key；actual record 不重複計算。
+P	18. Event / Consumer Contract
+ROW	Event	Producer	Consumer	Required Payload
+P	Event
+P	Producer
+P	Consumer
+P	Required Payload
+ROW	strategy.topic.opened	Strategy Workspace	Conversation/Context extension	topic_ref, question_ref, actor
+P	strategy.topic.opened
+P	Strategy Workspace
+P	Conversation/Context extension
+P	topic_ref, question_ref, actor
+ROW	strategy.context.frozen	Context Resolver	Strategy Analysis	snapshot_ref, fingerprint, source_refs
+P	strategy.context.frozen
+P	Context Resolver
+P	Strategy Analysis
+P	snapshot_ref, fingerprint, source_refs
+ROW	strategy.factpack.ready	FactPack Compiler	Analysis/Multi-AI	fact_pack_ref, version, conflicts
+P	strategy.factpack.ready
+P	FactPack Compiler
+P	Analysis/Multi-AI
+P	fact_pack_ref, version, conflicts
+ROW	strategy.analysis.started	Strategy Analysis	Audit/Conversation	run_id, baseline identities
+P	strategy.analysis.started
+P	Strategy Analysis
+P	Audit/Conversation
+P	run_id, baseline identities
+ROW	strategy.ai_viewpoint.completed	AI-03 runtime callback	Strategy Analysis	response_ref, participant_alias, baseline refs
+P	strategy.ai_viewpoint.completed
+P	AI-03 runtime callback
+P	Strategy Analysis
+P	response_ref, participant_alias, baseline refs
+ROW	strategy.multi_ai.round.completed	Multi-AI Orchestrator	Assistant/Comparison	round, response refs, denominator
+P	strategy.multi_ai.round.completed
+P	Multi-AI Orchestrator
+P	Assistant/Comparison
+P	round, response refs, denominator
+ROW	strategy.comparison.ready	Comparison Engine	Decision Support	option/view refs, comparison version
+P	strategy.comparison.ready
+P	Comparison Engine
+P	Decision Support
+P	option/view refs, comparison version
+ROW	strategy.candidate.created	Decision Support	Review UI/Audit	candidate_ref, predecessor
+P	strategy.candidate.created
+P	Decision Support
+P	Review UI/Audit
+P	candidate_ref, predecessor
+ROW	strategy.review.submitted	Strategy Workspace	Human Review owner	candidate_ref, expected_version
+P	strategy.review.submitted
+P	Strategy Workspace
+P	Human Review owner
+P	candidate_ref, expected_version
+ROW	strategy.review.revision_required	Human Review	Strategy Workspace	review_ref, reason
+P	strategy.review.revision_required
+P	Human Review
+P	Strategy Workspace
+P	review_ref, reason
+ROW	strategy.decision.rejected	Human Review	Ledger/Feedback	decision_id, reason
+P	strategy.decision.rejected
+P	Human Review
+P	Ledger/Feedback
+P	decision_id, reason
+ROW	strategy.decision.approved	Human Review	Ledger/Handoff	decision_id, approval level
+P	strategy.decision.approved
+P	Human Review
+P	Ledger/Handoff
+P	decision_id, approval level
+ROW	strategy.context_adopted	Human Review	AI-01 Context owner	candidate/decision refs
+P	strategy.context_adopted
+P	Human Review
+P	AI-01 Context owner
+P	candidate/decision refs
+ROW	strategy.handoff.created	Strategy Workspace	Owner module	decision_ref, owner_ref
+P	strategy.handoff.created
+P	Strategy Workspace
+P	Owner module
+P	decision_ref, owner_ref
+ROW	strategy.handoff.acked	Owner module	Strategy Ledger	handoff_ref, actor
+P	strategy.handoff.acked
+P	Owner module
+P	Strategy Ledger
+P	handoff_ref, actor
+ROW	strategy.execution.result_linked	Owner module	Feedback	execution_ref, result_ref
+P	strategy.execution.result_linked
+P	Owner module
+P	Feedback
+P	execution_ref, result_ref
+ROW	strategy.expected_actual.ready	Feedback	Experience Candidate	expected/actual/difference refs
+P	strategy.expected_actual.ready
+P	Feedback
+P	Experience Candidate
+P	expected/actual/difference refs
+ROW	strategy.experience.candidate.created	Feedback	Experience Review	candidate_ref, evidence refs
+P	strategy.experience.candidate.created
+P	Feedback
+P	Experience Review
+P	candidate_ref, evidence refs
+ROW	strategy.experience.adopted	Governed Experience owner	Future Strategy Context	experience_ref, review evidence
+P	strategy.experience.adopted
+P	Governed Experience owner
+P	Future Strategy Context
+P	experience_ref, review evidence
+ROW	strategy.conflict.detected	Any strategy consumer	Human Review/Audit	conflict_ref, affected refs
+P	strategy.conflict.detected
+P	Any strategy consumer
+P	Human Review/Audit
+P	conflict_ref, affected refs
+ROW	strategy.reverify.required	Impact Graph	Affected consumers	changed_ref, descendant refs
+P	strategy.reverify.required
+P	Impact Graph
+P	Affected consumers
+P	changed_ref, descendant refs
+ROW	strategy.cycle.closed	Strategy Workspace	Audit/History	terminal status, unresolved items
+P	strategy.cycle.closed
+P	Strategy Workspace
+P	Audit/History
+P	terminal status, unresolved items
+P	ACPOSIntegrationEvent 共通欄位
+P	• event_type / event_id / source_domain / source_object_ref / exact_version_ref / correlation_id / actor_ref / scope / timestamp / consumer / delivery_state / idempotency_key / retry_count / causation_ref / audit_ref。
+P	• Duplicate delivery MUST idempotently dedupe；same event_id + different payload MUST BLOCK。
+P	19. Feedback / Expected-vs-Actual / Strategic Experience
+P	圖 5｜策略決策之後由 Owner Module 執行，實際結果回流 Expected-vs-Actual，再形成 Strategic Experience Candidate。
+ROW	Phase	Required Inputs	Output	Boundary
+P	Phase
+P	Required Inputs
+P	Output
+P	Boundary
+ROW	Expected	decision_ref, option_ref, expected KPI/cost/risk/horizon	ExpectedImpact version	預期值不可在結果出來後回填竄改。
+P	Expected
+P	decision_ref, option_ref, expected KPI/cost/risk/horizon
+P	ExpectedImpact version
+P	預期值不可在結果出來後回填竄改。
+ROW	Actual	owner execution result refs, KPI/cost/revenue/risk evidence	ActualResult set	缺值 ≠ 0。
+P	Actual
+P	owner execution result refs, KPI/cost/revenue/risk evidence
+P	ActualResult set
+P	缺值 ≠ 0。
+ROW	Difference	same metric definition/window/unit	variance + explanation candidate	不同口徑不可直接相減。
+P	Difference
+P	same metric definition/window/unit
+P	variance + explanation candidate
+P	不同口徑不可直接相減。
+ROW	Learning	decision + expected + actual + context + confounders	StrategicExperienceCandidate	單一 outcome 不得泛化。
+P	Learning
+P	decision + expected + actual + context + confounders
+P	StrategicExperienceCandidate
+P	單一 outcome 不得泛化。
+ROW	Adoption	authorized review	StrategicExperience version	不可 AI self-adopt。
+P	Adoption
+P	authorized review
+P	StrategicExperience version
+P	不可 AI self-adopt。
+P	20. Impact Graph / Reverification
+ROW	Changed Object	Impacted Descendants	Mandatory Disposition
+P	Changed Object
+P	Impacted Descendants
+P	Mandatory Disposition
+ROW	SourceFact / Evidence version	Inference, Forecast, Risk, Opportunity, Options, AI viewpoints, Candidate	REVERIFY_REQUIRED based on dependency closure。
+P	SourceFact / Evidence version
+P	Inference, Forecast, Risk, Opportunity, Options, AI viewpoints, Candidate
+P	REVERIFY_REQUIRED based on dependency closure。
+ROW	ConstraintSet	Options, Scenario branches, comparisons, candidates	old outputs remain historical; current formal compare invalidated。
+P	ConstraintSet
+P	Options, Scenario branches, comparisons, candidates
+P	old outputs remain historical; current formal compare invalidated。
+ROW	Decision	Handoff, expected impact, feedback cycle	new decision lineage；owner execution mapping recheck。
+P	Decision
+P	Handoff, expected impact, feedback cycle
+P	new decision lineage；owner execution mapping recheck。
+ROW	Actual KPI definition/window	Expected-vs-Actual, Learning Candidate	recompute or mark incomparable。
+P	Actual KPI definition/window
+P	Expected-vs-Actual, Learning Candidate
+P	recompute or mark incomparable。
+ROW	Strategic Experience adoption	future context retrieval/ranking only	不得改寫歷史 decision。
+P	Strategic Experience adoption
+P	future context retrieval/ranking only
+P	不得改寫歷史 decision。
+P	21. Error / Recovery / Retry / Fallback
+ROW	Error Class	Condition	Recovery
+P	Error Class
+P	Condition
+P	Recovery
+ROW	CONTEXT_MISSING	required context identity unavailable	BLOCK analysis; show missing refs; resolve then retry
+P	CONTEXT_MISSING
+P	required context identity unavailable
+P	BLOCK analysis; show missing refs; resolve then retry
+ROW	FACT_EVIDENCE_MISSING	fact lacks evidence/time/version	mark incomplete; open evidence gap
+P	FACT_EVIDENCE_MISSING
+P	fact lacks evidence/time/version
+P	mark incomplete; open evidence gap
+ROW	FACT_CONFLICT	sources conflict	create conflict; human/evidence review; no silent choose
+P	FACT_CONFLICT
+P	sources conflict
+P	create conflict; human/evidence review; no silent choose
+ROW	BASELINE_MISMATCH	multi-AI fingerprints differ	NOT_DIRECTLY_COMPARABLE; re-run/rebase
+P	BASELINE_MISMATCH
+P	multi-AI fingerprints differ
+P	NOT_DIRECTLY_COMPARABLE; re-run/rebase
+ROW	AI_PARTIAL_FAILURE	one participant terminal fail	preserve other outputs; comparison denominator incomplete
+P	AI_PARTIAL_FAILURE
+P	one participant terminal fail
+P	preserve other outputs; comparison denominator incomplete
+ROW	TARGET_REF_MISSING	cross-review target absent	block only request; preserve conversation
+P	TARGET_REF_MISSING
+P	cross-review target absent
+P	block only request; preserve conversation
+ROW	OPTION_INCOMPLETE	missing cost/risk/dependency/etc	candidate cannot enter formal review
+P	OPTION_INCOMPLETE
+P	missing cost/risk/dependency/etc
+P	candidate cannot enter formal review
+ROW	STALE_REVIEW_WRITE	expected_version mismatch	refresh/compare; do not overwrite
+P	STALE_REVIEW_WRITE
+P	expected_version mismatch
+P	refresh/compare; do not overwrite
+ROW	PERMISSION_DENIED	operation permission missing	BLOCK; audit; no fallback identity
+P	PERMISSION_DENIED
+P	operation permission missing
+P	BLOCK; audit; no fallback identity
+ROW	OWNER_MAPPING_MISSING	decision cannot resolve execution owner	BLOCK handoff; REQUIRE_EXACT_BINDING
+P	OWNER_MAPPING_MISSING
+P	decision cannot resolve execution owner
+P	BLOCK handoff; REQUIRE_EXACT_BINDING
+ROW	EXECUTION_STATE_UNKNOWN	owner result ambiguous	reconcile before retry/learning
+P	EXECUTION_STATE_UNKNOWN
+P	owner result ambiguous
+P	reconcile before retry/learning
+ROW	METRIC_INCOMPARABLE	definition/window/unit mismatch	mark incomparable; no false variance
+P	METRIC_INCOMPARABLE
+P	definition/window/unit mismatch
+P	mark incomparable; no false variance
+ROW	EXPERIENCE_EVIDENCE_INSUFFICIENT	learning lacks outcome support	candidate remains incomplete
+P	EXPERIENCE_EVIDENCE_INSUFFICIENT
+P	learning lacks outcome support
+P	candidate remains incomplete
+ROW	RETRYABLE_PROVIDER_FAILURE	AI analysis provider transient failure	AI-03 retry/fallback from canonical request/baseline
+P	RETRYABLE_PROVIDER_FAILURE
+P	AI analysis provider transient failure
+P	AI-03 retry/fallback from canonical request/baseline
+ROW	NON_RETRYABLE_POLICY_FAILURE	classification/policy/evidence gate fails	no automatic retry
+P	NON_RETRYABLE_POLICY_FAILURE
+P	classification/policy/evidence gate fails
+P	no automatic retry
+ROW	CANCELLED_JOB_LATE_CALLBACK	callback after cancel	quarantine; no state mutation
+P	CANCELLED_JOB_LATE_CALLBACK
+P	callback after cancel
+P	quarantine; no state mutation
+P	22. Security / Classification / Audit / NFR
+ROW	Area	Normative Requirement
+P	Area
+P	Normative Requirement
+ROW	Least Privilege	strategy.read / conversation.write / compare / review / adopt 等 operation scope 必須分開。
+P	Least Privilege
+P	strategy.read / conversation.write / compare / review / adopt 等 operation scope 必須分開。
+ROW	Classification	FactPack/Context/Attachment 根據 classification 決定可用 AI/provider/tool。
+P	Classification
+P	FactPack/Context/Attachment 根據 classification 決定可用 AI/provider/tool。
+ROW	Secret Handling	Strategy output/log 不保存 provider secret；technical details 由 AI-03/API management owner。
+P	Secret Handling
+P	Strategy output/log 不保存 provider secret；technical details 由 AI-03/API management owner。
+ROW	Evidence Integrity	source refs/version/hash/time 不得被 UI summary 替代。
+P	Evidence Integrity
+P	source refs/version/hash/time 不得被 UI summary 替代。
+ROW	Auditability	每個 candidate/review/decision/handoff/outcome 具 correlation/audit refs。
+P	Auditability
+P	每個 candidate/review/decision/handoff/outcome 具 correlation/audit refs。
+ROW	Explainability	Recommendation 必須顯示 basis/assumption/risk/uncertainty/evidence。
+P	Explainability
+P	Recommendation 必須顯示 basis/assumption/risk/uncertainty/evidence。
+ROW	Determinism	同一 frozen baseline 的 comparison identity 可重播/驗證。
+P	Determinism
+P	同一 frozen baseline 的 comparison identity 可重播/驗證。
+ROW	Availability	部分 AI 失敗允許 PARTIAL，但不得冒充完整 multi-AI denominator。
+P	Availability
+P	部分 AI 失敗允許 PARTIAL，但不得冒充完整 multi-AI denominator。
+ROW	Performance	長分析用 job orchestration；UI request timeout 不代表取消 backend job。
+P	Performance
+P	長分析用 job orchestration；UI request timeout 不代表取消 backend job。
+ROW	Cost Intelligence	分析成本由 AI-03 runtime 記錄；Strategy 不自行估算真實 provider cost。
+P	Cost Intelligence
+P	分析成本由 AI-03 runtime 記錄；Strategy 不自行估算真實 provider cost。
+ROW	Retention	Decision/Audit/FactPack/ContextSnapshot/AIViewpoint/Scenario/Experience 各自依 owner retention；不得用同一 TTL 粗暴刪除。
+P	Retention
+P	Decision/Audit/FactPack/ContextSnapshot/AIViewpoint/Scenario/Experience 各自依 owner retention；不得用同一 TTL 粗暴刪除。
+ROW	Observability	至少記錄 latency、run status、baseline identity、participant denominator、review status、handoff status。
+P	Observability
+P	至少記錄 latency、run status、baseline identity、participant denominator、review status、handoff status。
+P	23. Exact Binding Ledger / Construction Binding Plan
+ROW	Binding Item	Status	Construction Rule
+P	Binding Item
+P	Status
+P	Construction Rule
+ROW	Strategy Topic persistence	REQUIRE_CURRENT_BINDING	若 current repo 已有 owner，修改/綁定既有 owner；禁止新建 parallel table/service。
+P	Strategy Topic persistence
+P	REQUIRE_CURRENT_BINDING
+P	若 current repo 已有 owner，修改/綁定既有 owner；禁止新建 parallel table/service。
+ROW	FactPack schema/store	REQUIRE_EXACT_BINDING	引用 AI-01/INFO owner；不得在 Strategy 私建第二 Fact Store。
+P	FactPack schema/store
+P	REQUIRE_EXACT_BINDING
+P	引用 AI-01/INFO owner；不得在 Strategy 私建第二 Fact Store。
+ROW	ContextSnapshot/Fingerprint service	OWNER_AI01_REFERENCE	Strategy 只 consume exact ref。
+P	ContextSnapshot/Fingerprint service
+P	OWNER_AI01_REFERENCE
+P	Strategy 只 consume exact ref。
+ROW	Conversation/Thread/Branch	OWNER_AI02_REFERENCE	Strategy extension only。
+P	Conversation/Thread/Branch
+P	OWNER_AI02_REFERENCE
+P	Strategy extension only。
+ROW	Multi-AI participant/session runtime	OWNER_AI02_AI03_REFERENCE	aliases/relations via AI-02；routing via AI-03。
+P	Multi-AI participant/session runtime
+P	OWNER_AI02_AI03_REFERENCE
+P	aliases/relations via AI-02；routing via AI-03。
+ROW	Strategy Analysis service/API	REQUIRE_EXACT_BINDING	Search-before-create。
+P	Strategy Analysis service/API
+P	REQUIRE_EXACT_BINDING
+P	Search-before-create。
+ROW	Option Comparison API	REQUIRE_EXACT_BINDING	需要 exact current owner。
+P	Option Comparison API
+P	REQUIRE_EXACT_BINDING
+P	需要 exact current owner。
+ROW	Strategy Candidate persistence	REQUIRE_EXACT_BINDING	append-only/version semantics mandatory。
+P	Strategy Candidate persistence
+P	REQUIRE_EXACT_BINDING
+P	append-only/version semantics mandatory。
+ROW	Human Review action/permission	SOURCE_ANCHOR_STR_REVIEW / REQUIRE_CURRENT_BINDING	以 current registry/permission owner 為準。
+P	Human Review action/permission
+P	SOURCE_ANCHOR_STR_REVIEW / REQUIRE_CURRENT_BINDING
+P	以 current registry/permission owner 為準。
+ROW	Adopt Context action/permission	SOURCE_ANCHOR_STR_ADOPT / REQUIRE_CURRENT_BINDING	只採用 context，不執行 owner action。
+P	Adopt Context action/permission
+P	SOURCE_ANCHOR_STR_ADOPT / REQUIRE_CURRENT_BINDING
+P	只採用 context，不執行 owner action。
+ROW	Decision Ledger store/API	REQUIRE_EXACT_BINDING	不可用 UI state 代替。
+P	Decision Ledger store/API
+P	REQUIRE_EXACT_BINDING
+P	不可用 UI state 代替。
+ROW	Owner Handoff event/transport	REQUIRE_EXACT_BINDING	event bus/queue/topic 不在文件中猜。
+P	Owner Handoff event/transport
+P	REQUIRE_EXACT_BINDING
+P	event bus/queue/topic 不在文件中猜。
+ROW	ERP cost/resource read binding	OWNER_ERP_REFERENCE	read-only context，approval 仍 ERP/Finance。
+P	ERP cost/resource read binding
+P	OWNER_ERP_REFERENCE
+P	read-only context，approval 仍 ERP/Finance。
+ROW	Workflow execution binding	OWNER_WORKFLOW_REFERENCE	Strategy 不重做。
+P	Workflow execution binding
+P	OWNER_WORKFLOW_REFERENCE
+P	Strategy 不重做。
+ROW	Production/Department handoff	OWNER_DOMAIN_REFERENCE	decision ref -> owner action。
+P	Production/Department handoff
+P	OWNER_DOMAIN_REFERENCE
+P	decision ref -> owner action。
+ROW	Expected/Actual KPI binding	REQUIRE_EXACT_BINDING	metric registry/window/unit owner required。
+P	Expected/Actual KPI binding
+P	REQUIRE_EXACT_BINDING
+P	metric registry/window/unit owner required。
+ROW	Strategic Experience store/adoption	OWNER_AI01_EXPERIENCE_REFERENCE	learning candidate 經治理採用。
+P	Strategic Experience store/adoption
+P	OWNER_AI01_EXPERIENCE_REFERENCE
+P	learning candidate 經治理採用。
+ROW	Idempotency store/TTL	REQUIRE_EXACT_BINDING	不在 design 文檔假造數值。
+P	Idempotency store/TTL
+P	REQUIRE_EXACT_BINDING
+P	不在 design 文檔假造數值。
+ROW	Event bus/delivery retry	REQUIRE_EXACT_BINDING	delivery semantics需 current runtime authority。
+P	Event bus/delivery retry
+P	REQUIRE_EXACT_BINDING
+P	delivery semantics需 current runtime authority。
+ROW	Retention/Archive policy	REQUIRE_EXACT_BINDING	按 artifact class 綁 owner。
+P	Retention/Archive policy
+P	REQUIRE_EXACT_BINDING
+P	按 artifact class 綁 owner。
+P	24. Function Admission / Auto-completion Scope
+ROW	Candidate Function	Admission	Reason
+P	Candidate Function
+P	Admission
+P	Reason
+ROW	Same-Baseline Multi-AI Compare	REQUIRED	既有 strategy authority 明確存在。
+P	Same-Baseline Multi-AI Compare
+P	REQUIRED
+P	既有 strategy authority 明確存在。
+ROW	Scenario Branch / What-if	REQUIRED_SYSTEM_LOGIC	屬 Strategy Decision System owner，本文件正式化其語義。
+P	Scenario Branch / What-if
+P	REQUIRED_SYSTEM_LOGIC
+P	屬 Strategy Decision System owner，本文件正式化其語義。
+ROW	Human Review / Decision Ledger	REQUIRED	AI result 不可直接成正式決策。
+P	Human Review / Decision Ledger
+P	REQUIRED
+P	AI result 不可直接成正式決策。
+ROW	Automatic Budget Reallocation	NO_AUTO_COMPLETION	Owner=Finance；Strategy 只能提案。
+P	Automatic Budget Reallocation
+P	NO_AUTO_COMPLETION
+P	Owner=Finance；Strategy 只能提案。
+ROW	Automatic Workflow Priority Change	NO_AUTO_COMPLETION	Owner=Workflow/Runtime。
+P	Automatic Workflow Priority Change
+P	NO_AUTO_COMPLETION
+P	Owner=Workflow/Runtime。
+ROW	Automatic Social/Email execution	NO_AUTO_COMPLETION	Owner=AI-06/07。
+P	Automatic Social/Email execution
+P	NO_AUTO_COMPLETION
+P	Owner=AI-06/07。
+ROW	Strategy self-approval	FORBIDDEN	違反 human gate。
+P	Strategy self-approval
+P	FORBIDDEN
+P	違反 human gate。
+ROW	Manual Provider Picker	FORBIDDEN	Owner=AI-03 Router。
+P	Manual Provider Picker
+P	FORBIDDEN
+P	Owner=AI-03 Router。
+ROW	Second Fact Store / Conversation Engine	FORBIDDEN	違反 one-owner。
+P	Second Fact Store / Conversation Engine
+P	FORBIDDEN
+P	違反 one-owner。
+ROW	Exact API/DB identity not in current authority	REQUIRE_EXACT_BINDING	不得 AI invention。
+P	Exact API/DB identity not in current authority
+P	REQUIRE_EXACT_BINDING
+P	不得 AI invention。
+P	25. Acceptance Matrix
+ROW	ID	Acceptance Item	Pass Condition
+P	ID
+P	Acceptance Item
+P	Pass Condition
+ROW	ACC-01	Single Strategy Owner	只有一套 Strategy Intelligence owner；無 parallel Strategic Center system。
+P	ACC-01
+P	Single Strategy Owner
+P	只有一套 Strategy Intelligence owner；無 parallel Strategic Center system。
+ROW	ACC-02	Strategic Context	所有來源可追 exact ref/time/version/scope/confidence。
+P	ACC-02
+P	Strategic Context
+P	所有來源可追 exact ref/time/version/scope/confidence。
+ROW	ACC-03	Fact Separation	Fact/Inference/Assumption/Recommendation/Decision 可機器區分。
+P	ACC-03
+P	Fact Separation
+P	Fact/Inference/Assumption/Recommendation/Decision 可機器區分。
+ROW	ACC-04	No AI Fill	缺 source/cost/resource/risk/KPI 保持 incomplete。
+P	ACC-04
+P	No AI Fill
+P	缺 source/cost/resource/risk/KPI 保持 incomplete。
+ROW	ACC-05	Same Question	Multi-AI 第一輪 original question identity 一致。
+P	ACC-05
+P	Same Question
+P	Multi-AI 第一輪 original question identity 一致。
+ROW	ACC-06	Same Fingerprint	Multi-AI ContextFingerprint 一致。
+P	ACC-06
+P	Same Fingerprint
+P	Multi-AI ContextFingerprint 一致。
+ROW	ACC-07	Same FactPack	Multi-AI FactPack version 一致。
+P	ACC-07
+P	Same FactPack
+P	Multi-AI FactPack version 一致。
+ROW	ACC-08	Same Constraints	Multi-AI ConstraintSet version 一致。
+P	ACC-08
+P	Same Constraints
+P	Multi-AI ConstraintSet version 一致。
+ROW	ACC-09	Independent First Round	第一輪不受其他 AI 回答污染。
+P	ACC-09
+P	Independent First Round
+P	第一輪不受其他 AI 回答污染。
+ROW	ACC-10	Cross Review	target refs、round、relation 可追。
+P	ACC-10
+P	Cross Review
+P	target refs、round、relation 可追。
+ROW	ACC-11	Consensus Boundary	Consensus 不會自動升格 Fact/Decision。
+P	ACC-11
+P	Consensus Boundary
+P	Consensus 不會自動升格 Fact/Decision。
+ROW	ACC-12	Assistant Boundary	Assistant 只彙整/紀錄，不自行作 strategy decision。
+P	ACC-12
+P	Assistant Boundary
+P	Assistant 只彙整/紀錄，不自行作 strategy decision。
+ROW	ACC-13	Option Completeness	每個 option 包含 impact/cost/resource/risk/horizon/dependency/evidence/uncertainty。
+P	ACC-13
+P	Option Completeness
+P	每個 option 包含 impact/cost/resource/risk/horizon/dependency/evidence/uncertainty。
+ROW	ACC-14	Four Outputs	Recommendation/Alert/Resource Proposal/Decision Brief 分離。
+P	ACC-14
+P	Four Outputs
+P	Recommendation/Alert/Resource Proposal/Decision Brief 分離。
+ROW	ACC-15	Recommendation Transparency	basis/assumption/risk/uncertainty/evidence visible。
+P	ACC-15
+P	Recommendation Transparency
+P	basis/assumption/risk/uncertainty/evidence visible。
+ROW	ACC-16	Resource Proposal Boundary	不直接寫 Finance approval。
+P	ACC-16
+P	Resource Proposal Boundary
+P	不直接寫 Finance approval。
+ROW	ACC-17	Decision Candidate Gate	缺 evidence/risk/unknowns/comparison 不得 submit。
+P	ACC-17
+P	Decision Candidate Gate
+P	缺 evidence/risk/unknowns/comparison 不得 submit。
+ROW	ACC-18	Human Review	approve/reject/revision 有 actor/time/reason。
+P	ACC-18
+P	Human Review
+P	approve/reject/revision 有 actor/time/reason。
+ROW	ACC-19	Decision Ledger	candidate/source/risk/approval/result/reason/actor/time/execution/audit 可追。
+P	ACC-19
+P	Decision Ledger
+P	candidate/source/risk/approval/result/reason/actor/time/execution/audit 可追。
+ROW	ACC-20	Immutable History	candidate/output/scenario/decision/memory append-only。
+P	ACC-20
+P	Immutable History
+P	candidate/output/scenario/decision/memory append-only。
+ROW	ACC-21	Scenario Branch	parent/baseline/assumption/fingerprint 可追；無 silent rebase。
+P	ACC-21
+P	Scenario Branch
+P	parent/baseline/assumption/fingerprint 可追；無 silent rebase。
+ROW	ACC-22	Concurrency	expected_version/stale write fail-closed。
+P	ACC-22
+P	Concurrency
+P	expected_version/stale write fail-closed。
+ROW	ACC-23	Idempotency	same key same payload dedupe；same key different payload block。
+P	ACC-23
+P	Idempotency
+P	same key same payload dedupe；same key different payload block。
+ROW	ACC-24	Event Trace	events 有 version/correlation/idempotency/audit refs。
+P	ACC-24
+P	Event Trace
+P	events 有 version/correlation/idempotency/audit refs。
+ROW	ACC-25	Owner Handoff	decision→owner module exact handoff，不假裝執行成功。
+P	ACC-25
+P	Owner Handoff
+P	decision→owner module exact handoff，不假裝執行成功。
+ROW	ACC-26	ERP/Workflow Boundary	effectful approval/execution 留原 owner。
+P	ACC-26
+P	ERP/Workflow Boundary
+P	effectful approval/execution 留原 owner。
+ROW	ACC-27	Expected vs Actual	same metric/window/unit。
+P	ACC-27
+P	Expected vs Actual
+P	same metric/window/unit。
+ROW	ACC-28	Missing Actual	不得當 0。
+P	ACC-28
+P	Missing Actual
+P	不得當 0。
+ROW	ACC-29	Experience Candidate	execution evidence-backed。
+P	ACC-29
+P	Experience Candidate
+P	execution evidence-backed。
+ROW	ACC-30	No Self Adoption	Experience learning 不自我採用。
+P	ACC-30
+P	No Self Adoption
+P	Experience learning 不自我採用。
+ROW	ACC-31	Impact Graph	上游變更會標示 impacted descendants REVERIFY_REQUIRED。
+P	ACC-31
+P	Impact Graph
+P	上游變更會標示 impacted descendants REVERIFY_REQUIRED。
+ROW	ACC-32	Classification	敏感 context 受 classification/provider/tool gate。
+P	ACC-32
+P	Classification
+P	敏感 context 受 classification/provider/tool gate。
+ROW	ACC-33	No Manual Provider	Strategy UI 無 provider/model picker。
+P	ACC-33
+P	No Manual Provider
+P	Strategy UI 無 provider/model picker。
+ROW	ACC-34	No Second Conversation	共享 AI-02 core。
+P	ACC-34
+P	No Second Conversation
+P	共享 AI-02 core。
+ROW	ACC-35	No Second Context Engine	共享 AI-01 context/truth。
+P	ACC-35
+P	No Second Context Engine
+P	共享 AI-01 context/truth。
+ROW	ACC-36	No Second Router	共享 AI-03 runtime。
+P	ACC-36
+P	No Second Router
+P	共享 AI-03 runtime。
+ROW	ACC-37	Exact Binding	未有 authority 的 API/DB/transport 保持 REQUIRE_EXACT_BINDING。
+P	ACC-37
+P	Exact Binding
+P	未有 authority 的 API/DB/transport 保持 REQUIRE_EXACT_BINDING。
+ROW	ACC-38	Negative Regression	所有 MUST_NOT/Block scenario 具反向測試。
+P	ACC-38
+P	Negative Regression
+P	所有 MUST_NOT/Block scenario 具反向測試。
+ROW	ACC-39	Construction Handoff	工程能依 owner/binding/gate/state/event contract施工。
+P	ACC-39
+P	Construction Handoff
+P	工程能依 owner/binding/gate/state/event contract施工。
+ROW	ACC-40	Document Truth	Word 完成不宣稱 Runtime/Production 完成。
+P	ACC-40
+P	Document Truth
+P	Word 完成不宣稱 Runtime/Production 完成。
+P	26. Negative Regression Matrix
+ROW	ID	Mutation / Failure Case	Expected Result
+P	ID
+P	Mutation / Failure Case
+P	Expected Result
+ROW	NEG-01	Multi-AI 同題但 ContextFingerprint 不同	BLOCK direct comparison / BASELINE_MISMATCH
+P	NEG-01
+P	Multi-AI 同題但 ContextFingerprint 不同
+P	BLOCK direct comparison / BASELINE_MISMATCH
+ROW	NEG-02	FactPack 版本不同卻合併排名	BLOCK / evidence version mismatch
+P	NEG-02
+P	FactPack 版本不同卻合併排名
+P	BLOCK / evidence version mismatch
+ROW	NEG-03	ConstraintSet 不同卻當 parallel answer	BLOCK direct compare; scenario-only
+P	NEG-03
+P	ConstraintSet 不同卻當 parallel answer
+P	BLOCK direct compare; scenario-only
+ROW	NEG-04	AI-B 第一輪先看到 AI-A	Independent-first-round violation
+P	NEG-04
+P	AI-B 第一輪先看到 AI-A
+P	Independent-first-round violation
+ROW	NEG-05	Consensus 無 evidence 被標 Fact	BLOCK promotion
+P	NEG-05
+P	Consensus 無 evidence 被標 Fact
+P	BLOCK promotion
+ROW	NEG-06	AI output 直接寫 Decision Ledger	BLOCK
+P	NEG-06
+P	AI output 直接寫 Decision Ledger
+P	BLOCK
+ROW	NEG-07	Recommendation 隱藏 assumption	BLOCK candidate completeness
+P	NEG-07
+P	Recommendation 隱藏 assumption
+P	BLOCK candidate completeness
+ROW	NEG-08	Recommendation 隱藏 risk/uncertainty	BLOCK
+P	NEG-08
+P	Recommendation 隱藏 risk/uncertainty
+P	BLOCK
+ROW	NEG-09	Resource Proposal 直接調整預算	BLOCK owner boundary
+P	NEG-09
+P	Resource Proposal 直接調整預算
+P	BLOCK owner boundary
+ROW	NEG-10	Strategy Alert 直接 pause workflow	BLOCK owner boundary
+P	NEG-10
+P	Strategy Alert 直接 pause workflow
+P	BLOCK owner boundary
+ROW	NEG-11	Scenario branch 自動合回主線	BLOCK
+P	NEG-11
+P	Scenario branch 自動合回主線
+P	BLOCK
+ROW	NEG-12	Scenario silent rebase	BLOCK; explicit new version required
+P	NEG-12
+P	Scenario silent rebase
+P	BLOCK; explicit new version required
+ROW	NEG-13	Fact conflict 系統任選一邊	BLOCK; conflict review
+P	NEG-13
+P	Fact conflict 系統任選一邊
+P	BLOCK; conflict review
+ROW	NEG-14	External intelligence 覆寫 confirmed decision	BLOCK
+P	NEG-14
+P	External intelligence 覆寫 confirmed decision
+P	BLOCK
+ROW	NEG-15	Missing KPI 被填 0	BLOCK / incomplete
+P	NEG-15
+P	Missing KPI 被填 0
+P	BLOCK / incomplete
+ROW	NEG-16	Missing cost 由 AI 猜值	BLOCK
+P	NEG-16
+P	Missing cost 由 AI 猜值
+P	BLOCK
+ROW	NEG-17	Option 不含 dependency/evidence	BLOCK formal review
+P	NEG-17
+P	Option 不含 dependency/evidence
+P	BLOCK formal review
+ROW	NEG-18	不同 time horizon 直接比較	BLOCK/incomparable
+P	NEG-18
+P	不同 time horizon 直接比較
+P	BLOCK/incomparable
+ROW	NEG-19	DecisionCandidate 缺 unknowns	BLOCK submit review
+P	NEG-19
+P	DecisionCandidate 缺 unknowns
+P	BLOCK submit review
+ROW	NEG-20	AI self-approve candidate	BLOCK
+P	NEG-20
+P	AI self-approve candidate
+P	BLOCK
+ROW	NEG-21	Stale reviewer version overwrite新結果	BLOCK optimistic concurrency
+P	NEG-21
+P	Stale reviewer version overwrite新結果
+P	BLOCK optimistic concurrency
+ROW	NEG-22	同 idempotency key 不同 payload	BLOCK
+P	NEG-22
+P	同 idempotency key 不同 payload
+P	BLOCK
+ROW	NEG-23	取消後 late callback 更新 candidate	QUARANTINE
+P	NEG-23
+P	取消後 late callback 更新 candidate
+P	QUARANTINE
+ROW	NEG-24	Cross-review target ref 不存在	block request only
+P	NEG-24
+P	Cross-review target ref 不存在
+P	block request only
+ROW	NEG-25	Other AI output 被當 Source Fact	BLOCK
+P	NEG-25
+P	Other AI output 被當 Source Fact
+P	BLOCK
+ROW	NEG-26	Manual provider picker 出現在 Strategy UI	FAIL owner boundary
+P	NEG-26
+P	Manual provider picker 出現在 Strategy UI
+P	FAIL owner boundary
+ROW	NEG-27	Strategy 新建 second conversation store	FAIL duplicate system
+P	NEG-27
+P	Strategy 新建 second conversation store
+P	FAIL duplicate system
+ROW	NEG-28	Strategy 新建 second fact store	FAIL duplicate owner
+P	NEG-28
+P	Strategy 新建 second fact store
+P	FAIL duplicate owner
+ROW	NEG-29	Handoff ACK 當 execution success	FAIL status semantics
+P	NEG-29
+P	Handoff ACK 當 execution success
+P	FAIL status semantics
+ROW	NEG-30	Owner result unknown 就重送 effect	BLOCK reconcile first
+P	NEG-30
+P	Owner result unknown 就重送 effect
+P	BLOCK reconcile first
+ROW	NEG-31	Expected/Actual 指標口徑不同直接相減	BLOCK/incomparable
+P	NEG-31
+P	Expected/Actual 指標口徑不同直接相減
+P	BLOCK/incomparable
+ROW	NEG-32	單一成功案例自動成永久經驗	BLOCK self-adoption/generalization
+P	NEG-32
+P	單一成功案例自動成永久經驗
+P	BLOCK self-adoption/generalization
+ROW	NEG-33	Learning candidate 改寫歷史 decision	BLOCK immutability
+P	NEG-33
+P	Learning candidate 改寫歷史 decision
+P	BLOCK immutability
+ROW	NEG-34	舊 Fact 變更但 descendant 不 reverify	FAIL impact graph
+P	NEG-34
+P	舊 Fact 變更但 descendant 不 reverify
+P	FAIL impact graph
+ROW	NEG-35	敏感 cost context 送未授權 provider	BLOCK classification
+P	NEG-35
+P	敏感 cost context 送未授權 provider
+P	BLOCK classification
+ROW	NEG-36	設計文件宣稱 Production ready	FAIL evidence governance
+P	NEG-36
+P	設計文件宣稱 Production ready
+P	FAIL evidence governance
+P	27. Given / When / Then Acceptance Scenarios
+ROW	ID	Given	When	Then
+P	ID
+P	Given
+P	When
+P	Then
+ROW	GWT-01	同一 Question/Fingerprint/FactPack/Constraints	啟動 A/B/C Parallel	三者獨立回答且可 formal compare
+P	GWT-01
+P	同一 Question/Fingerprint/FactPack/Constraints
+P	啟動 A/B/C Parallel
+P	三者獨立回答且可 formal compare
+ROW	GWT-02	Question 相同但 fingerprint 不同	要求 compare	標記 baseline mismatch 並 BLOCK direct compare
+P	GWT-02
+P	Question 相同但 fingerprint 不同
+P	要求 compare
+P	標記 baseline mismatch 並 BLOCK direct compare
+ROW	GWT-03	AI-B review #AI-A	target refs 存在	產生 CrossAIReview，仍以 Fact/Evidence 為依據
+P	GWT-03
+P	AI-B review #AI-A
+P	target refs 存在
+P	產生 CrossAIReview，仍以 Fact/Evidence 為依據
+ROW	GWT-04	AI-A/B/C 全同意無 evidence claim	Assistant synthesis	只標 consensus，不升格 Fact
+P	GWT-04
+P	AI-A/B/C 全同意無 evidence claim
+P	Assistant synthesis
+P	只標 consensus，不升格 Fact
+ROW	GWT-05	FactPack 缺成本資料	建立 Resource Proposal	成本欄 incomplete，不 AI-fill
+P	GWT-05
+P	FactPack 缺成本資料
+P	建立 Resource Proposal
+P	成本欄 incomplete，不 AI-fill
+ROW	GWT-06	SourceFact 衝突	策略分析	建立 conflict/uncertainty，禁止 data-certain conclusion
+P	GWT-06
+P	SourceFact 衝突
+P	策略分析
+P	建立 conflict/uncertainty，禁止 data-certain conclusion
+ROW	GWT-07	外部情報與 confirmed decision 衝突	resolve context	confirmed decision 保持 current；外部作 evidence/conflict
+P	GWT-07
+P	外部情報與 confirmed decision 衝突
+P	resolve context
+P	confirmed decision 保持 current；外部作 evidence/conflict
+ROW	GWT-08	Option 缺 risk	submit review	BLOCK
+P	GWT-08
+P	Option 缺 risk
+P	submit review
+P	BLOCK
+ROW	GWT-09	Option 有完整 fields	compare	使用一致欄位與 horizon
+P	GWT-09
+P	Option 有完整 fields
+P	compare
+P	使用一致欄位與 horizon
+ROW	GWT-10	Resource Proposal 完成	使用者核准策略	只形成 decision/handoff，不直接改 Finance
+P	GWT-10
+P	Resource Proposal 完成
+P	使用者核准策略
+P	只形成 decision/handoff，不直接改 Finance
+ROW	GWT-11	Strategy Alert 高風險	使用者選擇執行	導航/交接 owner module，不直接 pause workflow
+P	GWT-11
+P	Strategy Alert 高風險
+P	使用者選擇執行
+P	導航/交接 owner module，不直接 pause workflow
+ROW	GWT-12	DecisionCandidate ready	reviewer approve	建立 DecisionLedgerEntry
+P	GWT-12
+P	DecisionCandidate ready
+P	reviewer approve
+P	建立 DecisionLedgerEntry
+ROW	GWT-13	DecisionCandidate ready	AI 嘗試 approve	BLOCK
+P	GWT-13
+P	DecisionCandidate ready
+P	AI 嘗試 approve
+P	BLOCK
+ROW	GWT-14	Reviewer 用舊 expected_version	提交決策	BLOCK stale write
+P	GWT-14
+P	Reviewer 用舊 expected_version
+P	提交決策
+P	BLOCK stale write
+ROW	GWT-15	Scenario branch 建立後主線變更	再次開 branch	舊 branch 不 silent update
+P	GWT-15
+P	Scenario branch 建立後主線變更
+P	再次開 branch
+P	舊 branch 不 silent update
+ROW	GWT-16	Scenario explicit rebase	使用者確認	建立新 branch version / fingerprint
+P	GWT-16
+P	Scenario explicit rebase
+P	使用者確認
+P	建立新 branch version / fingerprint
+ROW	GWT-17	同一 analysis request 重送	same idempotency key/payload	dedupe/reuse logical run
+P	GWT-17
+P	同一 analysis request 重送
+P	same idempotency key/payload
+P	dedupe/reuse logical run
+ROW	GWT-18	same key different payload	提交	BLOCK + audit
+P	GWT-18
+P	same key different payload
+P	提交
+P	BLOCK + audit
+ROW	GWT-19	部分 AI provider fail	multi-AI run terminal	保存其他 views，denominator=partial，不宣稱完整
+P	GWT-19
+P	部分 AI provider fail
+P	multi-AI run terminal
+P	保存其他 views，denominator=partial，不宣稱完整
+ROW	GWT-20	target response missing	cross review	只 BLOCK 該 request
+P	GWT-20
+P	target response missing
+P	cross review
+P	只 BLOCK 該 request
+ROW	GWT-21	Owner module ACK handoff	strategy status	HANDOFF_ACKED，不等於 execution success
+P	GWT-21
+P	Owner module ACK handoff
+P	strategy status
+P	HANDOFF_ACKED，不等於 execution success
+ROW	GWT-22	Owner result verified	feedback compile	建立 ExpectedActualRecord
+P	GWT-22
+P	Owner result verified
+P	feedback compile
+P	建立 ExpectedActualRecord
+ROW	GWT-23	Actual KPI 缺失	feedback compile	顯示 incomplete，不當 0
+P	GWT-23
+P	Actual KPI 缺失
+P	feedback compile
+P	顯示 incomplete，不當 0
+ROW	GWT-24	Expected/Actual unit 不同	difference analysis	BLOCK direct variance
+P	GWT-24
+P	Expected/Actual unit 不同
+P	difference analysis
+P	BLOCK direct variance
+ROW	GWT-25	Learning 有一筆成功案例	建立 experience candidate	候選成立但不可 auto-adopt
+P	GWT-25
+P	Learning 有一筆成功案例
+P	建立 experience candidate
+P	候選成立但不可 auto-adopt
+ROW	GWT-26	Experience reviewer 採用	future strategy retrieval	可作 governed experience；不改歷史 decision
+P	GWT-26
+P	Experience reviewer 採用
+P	future strategy retrieval
+P	可作 governed experience；不改歷史 decision
+ROW	GWT-27	Fact correction supersedes old fact	impact scan	相關 inference/options/candidate 標 REVERIFY_REQUIRED
+P	GWT-27
+P	Fact correction supersedes old fact
+P	impact scan
+P	相關 inference/options/candidate 標 REVERIFY_REQUIRED
+ROW	GWT-28	敏感 Context 未授權 provider	analysis route	BLOCK before provider call
+P	GWT-28
+P	敏感 Context 未授權 provider
+P	analysis route
+P	BLOCK before provider call
+ROW	GWT-29	Manual provider picker request	Strategy UI	不存在/禁止；由 AI-03 Router 決定
+P	GWT-29
+P	Manual provider picker request
+P	Strategy UI
+P	不存在/禁止；由 AI-03 Router 決定
+ROW	GWT-30	未知 API/DB identity	construction binding	標 REQUIRE_EXACT_BINDING，不 invent
+P	GWT-30
+P	未知 API/DB identity
+P	construction binding
+P	標 REQUIRE_EXACT_BINDING，不 invent
+ROW	GWT-31	Word QA 完成	查詢 Runtime 狀態	仍為 RUNTIME_NOT_PROVEN；文件不證明 Runtime
+P	GWT-31
+P	Word QA 完成
+P	查詢 Runtime 狀態
+P	仍為 RUNTIME_NOT_PROVEN；文件不證明 Runtime
+ROW	GWT-32	Decision rejected	history review	拒絕原因與 source refs 可追
+P	GWT-32
+P	Decision rejected
+P	history review
+P	拒絕原因與 source refs 可追
+P	28. Construction Handoff / 工程移交
+P	施工順序（Search-before-create）
+P	• 1. 先解析 Current Governance / Registry / existing Strategy owner / permissions / actions / data/runtime owner。
+P	• 2. 以本文件 Entity/Operation/State/Event/Acceptance 分母建立 binding manifest。
+P	• 3. 先綁 AI-01 Context/Truth、AI-02 Conversation/Multi-AI、AI-03 Router/Job，再施工 Strategy domain-specific analysis/candidate/ledger。
+P	• 4. 對 `REQUIRE_EXACT_BINDING` 項目執行 UID/name/alias/deprecated/registry/owner/code/route/data object 全搜尋；找到 owner 就修改/綁定，不建第二套。
+P	• 5. 建立 automated tests：same-baseline、truth separation、human gate、stale version、idempotency、owner boundary、impact/reverify、negative regressions。
+P	• 6. Runtime/DB/API/Browser/Production 驗證必須另取得 fresh evidence；本 Word 不替代 Implementation/Production acceptance。
+ROW	Handoff Artifact	Minimum Content
+P	Handoff Artifact
+P	Minimum Content
+ROW	Entity Registry Binding	entity uid/name/owner/path/schema/version/status
+P	Entity Registry Binding
+P	entity uid/name/owner/path/schema/version/status
+ROW	Operation Binding	operation → action/gate/permission/payload/API/runtime/state/audit/feedback
+P	Operation Binding
+P	operation → action/gate/permission/payload/API/runtime/state/audit/feedback
+ROW	Same-Baseline Manifest	question ref/context fingerprint/factpack/constraints/participant denominator
+P	Same-Baseline Manifest
+P	question ref/context fingerprint/factpack/constraints/participant denominator
+ROW	Decision Contract	candidate/review/ledger/handoff identities and transitions
+P	Decision Contract
+P	candidate/review/ledger/handoff identities and transitions
+ROW	Impact Graph	source→derived→candidate→decision→handoff→feedback dependency closure
+P	Impact Graph
+P	source→derived→candidate→decision→handoff→feedback dependency closure
+ROW	Test Matrix	Acceptance + Negative Regression + GWT mapped to executable tests
+P	Test Matrix
+P	Acceptance + Negative Regression + GWT mapped to executable tests
+ROW	Evidence Plan	unit/integration/e2e/audit/production evidence owners
+P	Evidence Plan
+P	unit/integration/e2e/audit/production evidence owners
+ROW	Resume/Closure	exact current state + unresolved bindings + legal next work unit
+P	Resume/Closure
+P	exact current state + unresolved bindings + legal next work unit
+P	29. Closure Status / 文件封閉條件
+ROW	Dimension	Status	Meaning
+P	Dimension
+P	Status
+P	Meaning
+ROW	Design Content	COMPLETE	Strategy Intelligence system logic、boundaries、entities、states、events、acceptance 已完整定義。
+P	Design Content
+P	COMPLETE
+P	Strategy Intelligence system logic、boundaries、entities、states、events、acceptance 已完整定義。
+ROW	Normative Logic	COMPLETE	MUST/MUST_NOT/BLOCK/REQUIRED、transition、concurrency、retry、negative regressions 已定義。
+P	Normative Logic
+P	COMPLETE
+P	MUST/MUST_NOT/BLOCK/REQUIRED、transition、concurrency、retry、negative regressions 已定義。
+ROW	Exact Runtime Binding	PARTIAL / REQUIRE_EXACT_BINDING	未由 Current Authority 證明的 API/DB/transport/TTL 不假造。
+P	Exact Runtime Binding
+P	PARTIAL / REQUIRE_EXACT_BINDING
+P	未由 Current Authority 證明的 API/DB/transport/TTL 不假造。
+ROW	Formal Governance Approval	NOT SELF-GRANTED	AI 不自我批准設計。
+P	Formal Governance Approval
+P	NOT SELF-GRANTED
+P	AI 不自我批准設計。
+ROW	Runtime / Production	NOT PROVEN BY DOCUMENT	需 fresh implementation/DB/API/browser/deployment evidence。
+P	Runtime / Production
+P	NOT PROVEN BY DOCUMENT
+P	需 fresh implementation/DB/API/browser/deployment evidence。
+### PART word/header1.xml
+P	ORANGE ONE · ACPOS-AI-08 · Strategy Intelligence / Multi-AI Decision System · Mother Basic Logic Design
+### PART word/footer1.xml
+P	ACPOS-AI-08 · DESIGN CONTENT COMPLETE · FORMAL APPROVAL NOT SELF-GRANTED · 2026-09-21

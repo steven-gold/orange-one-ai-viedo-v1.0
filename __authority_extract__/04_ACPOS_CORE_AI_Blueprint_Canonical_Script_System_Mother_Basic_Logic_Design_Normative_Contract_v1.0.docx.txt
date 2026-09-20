@@ -1,0 +1,2318 @@
+### PART word/document.xml
+P	ORANGE ONE · ACPOS
+P	ACPOS-AI-04
+P	CORE AI / Blueprint / Canonical Script System
+P	核心 AI／藍圖／Canonical Script 系統
+P	Mother Basic Logic Design / Normative Logic Contract
+母級基礎邏輯設計／規範性邏輯契約
+ROW	文件狀態 DESIGN_CONTENT_COMPLETE CANDIDATE；FORMAL_APPROVAL_NOT_SELF_GRANTED；RUNTIME_NOT_PROVEN_BY_DOCUMENT。
+P	文件狀態 DESIGN_CONTENT_COMPLETE CANDIDATE；FORMAL_APPROVAL_NOT_SELF_GRANTED；RUNTIME_NOT_PROVEN_BY_DOCUMENT。
+P	Authoring context: Current branch rebuild-v2.1.1 · live HEAD 084720a5122bed2d313e0b5486721ad03f6f6f92 · Current Governance GOV-REV-20260920-CROSS-STAGE-MATERIALIZATION-CONSUMER-READINESS-HARDENING (display v2.2.16).
+P	0. 文件使用方式與不可誤解原則
+P	本文件定義 ACPOS CORE AI 的母級產品邏輯：Project Core 長期 Canon、Story/Chapter/World/DNA、Project Blueprint、Topic Production Scope、Canonical Production Script、Machine Structured Script、Candidate/Version/Lock、Production Package 與下游 Handoff。
+P	ACPOS-AI-01 是 Truth/Context Owner；ACPOS-AI-02 是 Conversation Owner；ACPOS-AI-03 是 Compiler/Tool/Provider Runtime Owner；本文件只能引用，禁止建立第二套。
+P	所有 Raw AI output 都不是正式 Authority；正式內容必須經 Working Draft → Human Decision → Immutable Candidate/Version → Review/Lock。
+P	沒有 Current Authority 的 exact API/DB/Permission/Lock reviewer/threshold 不得猜；一律 REQUIRE_EXACT_BINDING。
+P	本文件完成不代表 CORE Runtime、API、DB、Lock Service 或 Production 已完成。
+ROW	核心一句話 CORE 的責任是把「作品長期 Canon」與「本次 Topic 生產契約」分層固定，讓下游只消費 exact refs，而不是每次重理解作品。
+P	核心一句話 CORE 的責任是把「作品長期 Canon」與「本次 Topic 生產契約」分層固定，讓下游只消費 exact refs，而不是每次重理解作品。
+P	1. Design Identity / 設計身份、目的與邊界
+P	CORE 是內容與生產契約的上游權威，不是 Provider Runtime、不是 ASSET/VIDEO/EDIT/QA 的執行器。
+P	2. Authority / Source Basis / 來源與裁決順序
+ROW	Source	採用內容	不得誤用
+P	Source
+P	採用內容
+P	不得誤用
+ROW	Current Governance v2.2.16	Single Authority / Current Truth / fail-closed / evidence discipline	不得以舊 Freeze 取代 Current Governance
+P	Current Governance v2.2.16
+P	Single Authority / Current Truth / fail-closed / evidence discipline
+P	不得以舊 Freeze 取代 Current Governance
+ROW	CORE 核心 AI 工作區 FINAL_LOCKED	CORE-01 current-only boundary、Story/Chapter/World/DNA contracts、Candidate/Lock/Package refs	頁面 Authority 不等於所有 runtime 已實作
+P	CORE 核心 AI 工作區 FINAL_LOCKED
+P	CORE-01 current-only boundary、Story/Chapter/World/DNA contracts、Candidate/Lock/Package refs
+P	頁面 Authority 不等於所有 runtime 已實作
+ROW	ACPOS 工作區 FINAL FREEZE 2026-08-11	雙 Lock、Production Topic/Horizon、Boundary/Continuity、10 DNA 類別、Project Structure + Topic Blueprint 分層	若與 Current Authority 衝突，以 Current 為準
+P	ACPOS 工作區 FINAL FREEZE 2026-08-11
+P	雙 Lock、Production Topic/Horizon、Boundary/Continuity、10 DNA 類別、Project Structure + Topic Blueprint 分層
+P	若與 Current Authority 衝突，以 Current 為準
+ROW	ACPOS CORE-01 重新規劃稿	Raw AI→Working Draft→Candidate、Workbench、Cross-page handoff、error recovery	設計候選不能自動升格 Current Authority
+P	ACPOS CORE-01 重新規劃稿
+P	Raw AI→Working Draft→Candidate、Workbench、Cross-page handoff、error recovery
+P	設計候選不能自動升格 Current Authority
+ROW	ACPOS-AI-01/02/03	Context、Conversation、Execution Runtime 共用契約	REFERENCE, DO NOT COPY
+P	ACPOS-AI-01/02/03
+P	Context、Conversation、Execution Runtime 共用契約
+P	REFERENCE, DO NOT COPY
+ROW	Source rule 歷史 FINAL/FREEZE 僅作產品語義與設計輸入；Current Governance／Current Canonical Authority 才能支撐「目前已完成／目前已綁定」宣告。
+P	Source rule 歷史 FINAL/FREEZE 僅作產品語義與設計輸入；Current Governance／Current Canonical Authority 才能支撐「目前已完成／目前已綁定」宣告。
+P	3. Core System Architecture / 核心系統架構
+P	圖 1｜Mother Lock 與 Child Lock 雙層 Canon／Production Contract。
+P	PROJECT_CORE 層：Story、Chapter、World、Base DNA、Narrative rules、long-range structure。
+P	TOPIC_PRODUCTION 層：Production Horizon、Boundary、Detailed Canonical Script、Script-derived DNA、Topic Blueprint、Asset/Production requirements、Continuity Bridge。
+P	下游只消費 Topic Production Package 與 exact refs；不得回頭改寫上游已鎖 Canon。
+P	4. Owner Boundary / 單一 Owner 與禁止第二套
+ROW	Concept	Canonical Owner	CORE consumes/produces	Forbidden
+P	Concept
+P	Canonical Owner
+P	CORE consumes/produces
+P	Forbidden
+ROW	Truth / Context	ACPOS-AI-01	exact Context / evidence refs	CORE 自建 Context truth
+P	Truth / Context
+P	ACPOS-AI-01
+P	exact Context / evidence refs
+P	CORE 自建 Context truth
+ROW	Conversation	ACPOS-AI-02	threads/messages/branch decisions	CORE 自建 message history
+P	Conversation
+P	ACPOS-AI-02
+P	threads/messages/branch decisions
+P	CORE 自建 message history
+ROW	Provider execution	ACPOS-AI-03	provider-neutral canonical script / structured instruction source	CORE 選 Provider/Model 或保存 Provider prompt
+P	Provider execution
+P	ACPOS-AI-03
+P	provider-neutral canonical script / structured instruction source
+P	CORE 選 Provider/Model 或保存 Provider prompt
+ROW	Project Canon	ACPOS-AI-04	Story/Chapter/World/Base DNA/Project Structure Version	downstream silent overwrite
+P	Project Canon
+P	ACPOS-AI-04
+P	Story/Chapter/World/Base DNA/Project Structure Version
+P	downstream silent overwrite
+ROW	Topic Production Contract	ACPOS-AI-04	Topic Scope/Script/DNA enrichment/Blueprint/Package	ASSET 重選 scope/source
+P	Topic Production Contract
+P	ACPOS-AI-04
+P	Topic Scope/Script/DNA enrichment/Blueprint/Package
+P	ASSET 重選 scope/source
+ROW	Naming	ACPOS_SYSTEM	read-only Naming Authority ref	CORE local filename formula
+P	Naming
+P	ACPOS_SYSTEM
+P	read-only Naming Authority ref
+P	CORE local filename formula
+ROW	Lock review	VersionLockService boundary	request + status/evidence refs	AI auto-approval / fabricated reviewer
+P	Lock review
+P	VersionLockService boundary
+P	request + status/evidence refs
+P	AI auto-approval / fabricated reviewer
+P	5. Core Entity Inventory / 核心實體清單
+ROW	Entity	Purpose
+P	Entity
+P	Purpose
+ROW	Project	作品長期 identity / lifecycle root
+P	Project
+P	作品長期 identity / lifecycle root
+ROW	ProjectDraftVersion	Project 建立/修訂的可編輯版本
+P	ProjectDraftVersion
+P	Project 建立/修訂的可編輯版本
+ROW	ProjectStructureVersion	Mother-locked long-range canon snapshot
+P	ProjectStructureVersion
+P	Mother-locked long-range canon snapshot
+ROW	StoryCoreContract	14 Story canonical dimensions + lineage
+P	StoryCoreContract
+P	14 Story canonical dimensions + lineage
+ROW	StoryCandidateSet	immutable alternatives for human decision
+P	StoryCandidateSet
+P	immutable alternatives for human decision
+ROW	StoryVersion	adopted/merged confirmed Story version
+P	StoryVersion
+P	adopted/merged confirmed Story version
+ROW	ChapterArchitectureVersion	append-only chapter architecture
+P	ChapterArchitectureVersion
+P	append-only chapter architecture
+ROW	WorldBibleVersion	append-only World canon / rules
+P	WorldBibleVersion
+P	append-only World canon / rules
+ROW	DNABaseVersion	Project-level base DNA
+P	DNABaseVersion
+P	Project-level base DNA
+ROW	DNACandidate	candidate enrichment / resolution input
+P	DNACandidate
+P	candidate enrichment / resolution input
+ROW	DNAResolution	resolved exact DNA refs + evidence
+P	DNAResolution
+P	resolved exact DNA refs + evidence
+ROW	DNALockedVersion	locked DNA projection / topic-scoped where applicable
+P	DNALockedVersion
+P	locked DNA projection / topic-scoped where applicable
+ROW	ContinuityLedger	adopted story/chapter/canon/continuity entries
+P	ContinuityLedger
+P	adopted story/chapter/canon/continuity entries
+ROW	ProjectBlueprintPackage	Project Structure layer refs/package
+P	ProjectBlueprintPackage
+P	Project Structure layer refs/package
+ROW	Topic	production-scoped work identity
+P	Topic
+P	production-scoped work identity
+ROW	TopicProductionScope	approved scope / horizon / boundary
+P	TopicProductionScope
+P	approved scope / horizon / boundary
+ROW	BoundaryCandidate	candidate cut/start/end + rationale
+P	BoundaryCandidate
+P	candidate cut/start/end + rationale
+ROW	ContinuityBridgePackage	exact next-start state and unresolved/payoff refs
+P	ContinuityBridgePackage
+P	exact next-start state and unresolved/payoff refs
+ROW	HumanCanonicalScriptVersion	human-readable canonical production meaning
+P	HumanCanonicalScriptVersion
+P	human-readable canonical production meaning
+ROW	ProductionScriptVersion	topic-scoped production semantic version
+P	ProductionScriptVersion
+P	topic-scoped production semantic version
+ROW	MachineStructuredScriptVersion	typed projection of exact canonical script
+P	MachineStructuredScriptVersion
+P	typed projection of exact canonical script
+ROW	ScriptViewSet	Asset/Comic/Video/Editing or equivalent governed views
+P	ScriptViewSet
+P	Asset/Comic/Video/Editing or equivalent governed views
+ROW	TopicBlueprintCandidate	integrated production contract candidate
+P	TopicBlueprintCandidate
+P	integrated production contract candidate
+ROW	TopicBlueprintVersion	confirmed/locked topic blueprint version
+P	TopicBlueprintVersion
+P	confirmed/locked topic blueprint version
+ROW	TopicProductionPackage	exact handoff bundle + readiness
+P	TopicProductionPackage
+P	exact handoff bundle + readiness
+ROW	CandidateVersion	generic immutable candidate lineage
+P	CandidateVersion
+P	generic immutable candidate lineage
+ROW	LockReviewRef	Mother/Child/DNA lock review status/evidence
+P	LockReviewRef
+P	Mother/Child/DNA lock review status/evidence
+ROW	ChangeRequest	authorized change intent
+P	ChangeRequest
+P	authorized change intent
+ROW	ChangeImpactSet	affected versions/dependencies/descendants
+P	ChangeImpactSet
+P	affected versions/dependencies/descendants
+ROW	DownstreamReadiness	read-only ASSET/VIDEO/EDIT/QA boundary status
+P	DownstreamReadiness
+P	read-only ASSET/VIDEO/EDIT/QA boundary status
+ROW	ProductionRequirementSet	topic-scoped production constraints/asset need
+P	ProductionRequirementSet
+P	topic-scoped production constraints/asset need
+ROW	AssetManifestRef	reuse/new asset requirement refs
+P	AssetManifestRef
+P	reuse/new asset requirement refs
+ROW	QualityCriteriaRef	QA/criteria version references
+P	QualityCriteriaRef
+P	QA/criteria version references
+ROW	RightsPolicyRef	rights/licensing/compliance refs
+P	RightsPolicyRef
+P	rights/licensing/compliance refs
+P	6. Entity × Operation Contract
+ROW	Entity	Operations	Normative meaning
+P	Entity
+P	Operations
+P	Normative meaning
+ROW	Project	createDraft / validate / confirm / revise	Project lifecycle
+P	Project
+P	createDraft / validate / confirm / revise
+P	Project lifecycle
+ROW	Story	createCandidateSet / compare / adoptOrMerge / requestRevision	human decision
+P	Story
+P	createCandidateSet / compare / adoptOrMerge / requestRevision
+P	human decision
+ROW	Chapter	createChapterArchitectureVersion	append-only
+P	Chapter
+P	createChapterArchitectureVersion
+P	append-only
+ROW	World	createWorldBibleVersion	append-only
+P	World
+P	createWorldBibleVersion
+P	append-only
+ROW	DNA	createCandidate / resolve / requestLock	separated candidate→resolve→lock
+P	DNA
+P	createCandidate / resolve / requestLock
+P	separated candidate→resolve→lock
+ROW	Project Blueprint	createCandidate / validate / approve / submitCoreReview	Project Core route only
+P	Project Blueprint
+P	createCandidate / validate / approve / submitCoreReview
+P	Project Core route only
+ROW	Mother Lock	request / review / approve-or-return	no hidden approval
+P	Mother Lock
+P	request / review / approve-or-return
+P	no hidden approval
+ROW	Topic	createDraft / validate / confirm / version	requires valid Project lineage
+P	Topic
+P	createDraft / validate / confirm / version
+P	requires valid Project lineage
+ROW	Boundary	proposeCandidates / compare / select	narrative + continuity + production-aware
+P	Boundary
+P	proposeCandidates / compare / select
+P	narrative + continuity + production-aware
+ROW	Canonical Script	createVersion / get / compare / revise	provider-neutral
+P	Canonical Script
+P	createVersion / get / compare / revise
+P	provider-neutral
+ROW	Production Script	derive / validate / version	same canonical meaning
+P	Production Script
+P	derive / validate / version
+P	same canonical meaning
+ROW	Machine Structured Script	materialize / validate / hash / reproject	projection only
+P	Machine Structured Script
+P	materialize / validate / hash / reproject
+P	projection only
+ROW	DNA Enrichment	deriveCandidate / resolve / lock topic-scoped details	no silent Base DNA mutation
+P	DNA Enrichment
+P	deriveCandidate / resolve / lock topic-scoped details
+P	no silent Base DNA mutation
+ROW	Topic Blueprint	buildCandidate / crossReview / compare / confirm / childLock	immutable version lineage
+P	Topic Blueprint
+P	buildCandidate / crossReview / compare / confirm / childLock
+P	immutable version lineage
+ROW	Production Package	build / validate / markReady / exportRefs	exact handoff only
+P	Production Package
+P	build / validate / markReady / exportRefs
+P	exact handoff only
+ROW	Change Request	open / impactScan / authorize / materializeNewVersion	no in-place overwrite
+P	Change Request
+P	open / impactScan / authorize / materializeNewVersion
+P	no in-place overwrite
+ROW	Handoff	verifyReadiness / navigate / persistContext	no downstream execution
+P	Handoff
+P	verifyReadiness / navigate / persistContext
+P	no downstream execution
+P	7. Formalization Chain / 對話到正式 Authority
+P	圖 2｜Raw AI 或討論內容必須經人工決策與 immutable candidate/version 才能正式化。
+ROW	Layer	Editable?	Authority?	Rule
+P	Layer
+P	Editable?
+P	Authority?
+P	Rule
+ROW	Conversation / AI response	Yes	No	may propose, analyze, compare; never direct write canonical owner
+P	Conversation / AI response
+P	Yes
+P	No
+P	may propose, analyze, compare; never direct write canonical owner
+ROW	Working Draft	Yes	No	same-context working state; resumable
+P	Working Draft
+P	Yes
+P	No
+P	same-context working state; resumable
+ROW	Human Decision	recorded	Decision evidence	explicit adopt/merge/revise/reject intent
+P	Human Decision
+P	recorded
+P	Decision evidence
+P	explicit adopt/merge/revise/reject intent
+ROW	Candidate	No	Candidate only	immutable source refs + lineage
+P	Candidate
+P	No
+P	Candidate only
+P	immutable source refs + lineage
+ROW	Compare/Review	No	Evaluation evidence	criteria/diff/risk; cannot auto-lock
+P	Compare/Review
+P	No
+P	Evaluation evidence
+P	criteria/diff/risk; cannot auto-lock
+ROW	Confirmed Version	No	Yes within entity scope	new version, no overwrite
+P	Confirmed Version
+P	No
+P	Yes within entity scope
+P	new version, no overwrite
+ROW	Lock Review	No	Gate boundary	reviewer/evidence/hash required
+P	Lock Review
+P	No
+P	Gate boundary
+P	reviewer/evidence/hash required
+ROW	Locked Version	No	Canonical	may be superseded only by authorized new version
+P	Locked Version
+P	No
+P	Canonical
+P	may be superseded only by authorized new version
+P	8. Normative Invariant Registry / 硬不變式
+ROW	UID	Rule
+P	UID
+P	Rule
+ROW	CORE-INV-001	ONE Project Canon authority; downstream copies are references only.
+P	CORE-INV-001
+P	ONE Project Canon authority; downstream copies are references only.
+ROW	CORE-INV-002	Mother Lock and Child Lock are distinct identities and MUST NOT be conflated.
+P	CORE-INV-002
+P	Mother Lock and Child Lock are distinct identities and MUST NOT be conflated.
+ROW	CORE-INV-003	Mother Lock fixes long-range canon; Child Lock fixes production-scoped contract.
+P	CORE-INV-003
+P	Mother Lock fixes long-range canon; Child Lock fixes production-scoped contract.
+ROW	CORE-INV-004	Normal production corrections SHOULD create Child Version Update before escalating Mother Change.
+P	CORE-INV-004
+P	Normal production corrections SHOULD create Child Version Update before escalating Mother Change.
+ROW	CORE-INV-005	Existing Topic MUST preserve based-on Mother Structure Version; later Mother versions MUST NOT silently rewrite history.
+P	CORE-INV-005
+P	Existing Topic MUST preserve based-on Mother Structure Version; later Mother versions MUST NOT silently rewrite history.
+ROW	CORE-INV-006	Raw AI output MUST NOT write Story/Chapter/World/DNA/Blueprint/Script authority directly.
+P	CORE-INV-006
+P	Raw AI output MUST NOT write Story/Chapter/World/DNA/Blueprint/Script authority directly.
+ROW	CORE-INV-007	Human decision evidence is REQUIRED before canonical candidate adoption/merge/confirm.
+P	CORE-INV-007
+P	Human decision evidence is REQUIRED before canonical candidate adoption/merge/confirm.
+ROW	CORE-INV-008	Candidate versions are immutable; revision creates a new candidate/version.
+P	CORE-INV-008
+P	Candidate versions are immutable; revision creates a new candidate/version.
+ROW	CORE-INV-009	Confirmed/locked versions MUST NOT be overwritten in place.
+P	CORE-INV-009
+P	Confirmed/locked versions MUST NOT be overwritten in place.
+ROW	CORE-INV-010	Story candidate comparison MUST preserve all candidates and decision rationale.
+P	CORE-INV-010
+P	Story candidate comparison MUST preserve all candidates and decision rationale.
+ROW	CORE-INV-011	Score/AI consensus MUST NOT auto-adopt or auto-lock.
+P	CORE-INV-011
+P	Score/AI consensus MUST NOT auto-adopt or auto-lock.
+ROW	CORE-INV-012	Story canonical dimensions MUST NOT be auto-filled when authority requires human confirmation.
+P	CORE-INV-012
+P	Story canonical dimensions MUST NOT be auto-filled when authority requires human confirmation.
+ROW	CORE-INV-013	Chapter Architecture versions are append-only.
+P	CORE-INV-013
+P	Chapter Architecture versions are append-only.
+ROW	CORE-INV-014	World Bible versions are append-only.
+P	CORE-INV-014
+P	World Bible versions are append-only.
+ROW	CORE-INV-015	DNA candidate, resolve, and lock review are separate operations.
+P	CORE-INV-015
+P	DNA candidate, resolve, and lock review are separate operations.
+ROW	CORE-INV-016	DNA lock request MUST NOT imply approval.
+P	CORE-INV-016
+P	DNA lock request MUST NOT imply approval.
+ROW	CORE-INV-017	Base DNA and Script-derived DNA Enrichment MUST remain traceably separated.
+P	CORE-INV-017
+P	Base DNA and Script-derived DNA Enrichment MUST remain traceably separated.
+ROW	CORE-INV-018	Topic-scoped DNA enrichment MUST NOT silently mutate Mother-locked Base DNA.
+P	CORE-INV-018
+P	Topic-scoped DNA enrichment MUST NOT silently mutate Mother-locked Base DNA.
+ROW	CORE-INV-019	All DNA refs MUST include exact subject/category/version/hash or equivalent Current identity.
+P	CORE-INV-019
+P	All DNA refs MUST include exact subject/category/version/hash or equivalent Current identity.
+ROW	CORE-INV-020	Project Blueprint belongs to Project Core route; no parallel Blueprint service/page may become second authority.
+P	CORE-INV-020
+P	Project Blueprint belongs to Project Core route; no parallel Blueprint service/page may become second authority.
+ROW	CORE-INV-021	Topic must reference valid confirmed/locked Project lineage.
+P	CORE-INV-021
+P	Topic must reference valid confirmed/locked Project lineage.
+ROW	CORE-INV-022	Topic MUST NOT recreate Story/Chapter/World/Base DNA/Project Blueprint.
+P	CORE-INV-022
+P	Topic MUST NOT recreate Story/Chapter/World/Base DNA/Project Blueprint.
+ROW	CORE-INV-023	Production Horizon defines high-cost production scope; planning may extend beyond it without forcing production.
+P	CORE-INV-023
+P	Production Horizon defines high-cost production scope; planning may extend beyond it without forcing production.
+ROW	CORE-INV-024	Boundary Engine may propose 2–3 candidates but human/authorized decision selects the production scope.
+P	CORE-INV-024
+P	Boundary Engine may propose 2–3 candidates but human/authorized decision selects the production scope.
+ROW	CORE-INV-025	Boundary candidate MUST preserve narrative integrity, continuity state, asset cohesion, production efficiency and strategic flexibility without sacrificing canon.
+P	CORE-INV-025
+P	Boundary candidate MUST preserve narrative integrity, continuity state, asset cohesion, production efficiency and strategic flexibility without sacrificing canon.
+ROW	CORE-INV-026	Intentional hook MUST be distinguishable from accidental interruption.
+P	CORE-INV-026
+P	Intentional hook MUST be distinguishable from accidental interruption.
+ROW	CORE-INV-027	Every unresolved question / foreshadow / payoff obligation crossing a boundary MUST be traceable in Continuity Bridge.
+P	CORE-INV-027
+P	Every unresolved question / foreshadow / payoff obligation crossing a boundary MUST be traceable in Continuity Bridge.
+ROW	CORE-INV-028	Canonical Script is provider-neutral and MUST NOT persist provider-specific prompt syntax.
+P	CORE-INV-028
+P	Canonical Script is provider-neutral and MUST NOT persist provider-specific prompt syntax.
+ROW	CORE-INV-029	Provider prompt compilation belongs to ACPOS-AI-03, not CORE.
+P	CORE-INV-029
+P	Provider prompt compilation belongs to ACPOS-AI-03, not CORE.
+ROW	CORE-INV-030	Human Canonical Script, Production Script, and Machine Structured Script MUST share one canonical meaning lineage.
+P	CORE-INV-030
+P	Human Canonical Script, Production Script, and Machine Structured Script MUST share one canonical meaning lineage.
+ROW	CORE-INV-031	Machine Structured Script is a typed projection, not a second script authority.
+P	CORE-INV-031
+P	Machine Structured Script is a typed projection, not a second script authority.
+ROW	CORE-INV-032	Machine Structured Script MUST bind exact canonical script version/hash and schema version.
+P	CORE-INV-032
+P	Machine Structured Script MUST bind exact canonical script version/hash and schema version.
+ROW	CORE-INV-033	Machine projection MUST NOT add/remove/reinterpret canonical meaning.
+P	CORE-INV-033
+P	Machine projection MUST NOT add/remove/reinterpret canonical meaning.
+ROW	CORE-INV-034	Four/media views MUST derive from the same canonical script meaning and preserve canon.
+P	CORE-INV-034
+P	Four/media views MUST derive from the same canonical script meaning and preserve canon.
+ROW	CORE-INV-035	A view may change representation, not canon semantics.
+P	CORE-INV-035
+P	A view may change representation, not canon semantics.
+ROW	CORE-INV-036	Canonical Script version creation MUST NOT be interpreted as AI auto-approval.
+P	CORE-INV-036
+P	Canonical Script version creation MUST NOT be interpreted as AI auto-approval.
+ROW	CORE-INV-037	Script revision creates new immutable version and preserves predecessor lineage.
+P	CORE-INV-037
+P	Script revision creates new immutable version and preserves predecessor lineage.
+ROW	CORE-INV-038	Project Structure Package MUST bind Canon/DNA/Chapter/Rights/Quality/Dependency/Long-range refs as applicable.
+P	CORE-INV-038
+P	Project Structure Package MUST bind Canon/DNA/Chapter/Rights/Quality/Dependency/Long-range refs as applicable.
+ROW	CORE-INV-039	Topic Blueprint Candidate MUST integrate Topic Scope, Script, enriched DNA, Boundary, Continuity, Rights, QA and production requirements.
+P	CORE-INV-039
+P	Topic Blueprint Candidate MUST integrate Topic Scope, Script, enriched DNA, Boundary, Continuity, Rights, QA and production requirements.
+ROW	CORE-INV-040	Topic Blueprint confirmation MUST fail closed if any REQUIRED upstream exact ref is missing/stale.
+P	CORE-INV-040
+P	Topic Blueprint confirmation MUST fail closed if any REQUIRED upstream exact ref is missing/stale.
+ROW	CORE-INV-041	Child Lock MUST bind exact Topic Blueprint Version/hash and required review evidence.
+P	CORE-INV-041
+P	Child Lock MUST bind exact Topic Blueprint Version/hash and required review evidence.
+ROW	CORE-INV-042	Production Package MUST bind exact Project Structure, Topic Blueprint, DNA, Canonical Script and Naming Authority refs.
+P	CORE-INV-042
+P	Production Package MUST bind exact Project Structure, Topic Blueprint, DNA, Canonical Script and Naming Authority refs.
+ROW	CORE-INV-043	Production Package MUST include Continuity Bridge when boundary continuity is applicable.
+P	CORE-INV-043
+P	Production Package MUST include Continuity Bridge when boundary continuity is applicable.
+ROW	CORE-INV-044	Downstream readiness is read-only projection; readiness display MUST NOT create missing refs.
+P	CORE-INV-044
+P	Downstream readiness is read-only projection; readiness display MUST NOT create missing refs.
+ROW	CORE-INV-045	ASSET/VIDEO/EDIT/QA MUST consume exact upstream refs; first production MUST NOT freely reselect governed source identity.
+P	CORE-INV-045
+P	ASSET/VIDEO/EDIT/QA MUST consume exact upstream refs; first production MUST NOT freely reselect governed source identity.
+ROW	CORE-INV-046	CORE MUST NOT create ASSET generation queue/provider controls/video job/timeline/voice/QA internals.
+P	CORE-INV-046
+P	CORE MUST NOT create ASSET generation queue/provider controls/video job/timeline/voice/QA internals.
+ROW	CORE-INV-047	Handoff navigation MUST preserve Project/Topic/Package context.
+P	CORE-INV-047
+P	Handoff navigation MUST preserve Project/Topic/Package context.
+ROW	CORE-INV-048	If package readiness fails, navigation may be shown disabled with exact blocker; no bypass.
+P	CORE-INV-048
+P	If package readiness fails, navigation may be shown disabled with exact blocker; no bypass.
+ROW	CORE-INV-049	Naming authority remains ACPOS_SYSTEM; CORE MUST NOT parse filename as business identity.
+P	CORE-INV-049
+P	Naming authority remains ACPOS_SYSTEM; CORE MUST NOT parse filename as business identity.
+ROW	CORE-INV-050	All business identity routing uses exact IDs/refs/versions, not filenames.
+P	CORE-INV-050
+P	All business identity routing uses exact IDs/refs/versions, not filenames.
+ROW	CORE-INV-051	Change Request MUST precede material Canon mutation of a locked structure.
+P	CORE-INV-051
+P	Change Request MUST precede material Canon mutation of a locked structure.
+ROW	CORE-INV-052	Mother Change requires dependency scan + impact analysis + new Project Structure Version.
+P	CORE-INV-052
+P	Mother Change requires dependency scan + impact analysis + new Project Structure Version.
+ROW	CORE-INV-053	Child Version Update requires impacted downstream descendants to become REVERIFY_REQUIRED.
+P	CORE-INV-053
+P	Child Version Update requires impacted downstream descendants to become REVERIFY_REQUIRED.
+ROW	CORE-INV-054	A Mother Change MUST identify all child Topics whose based-on structure or canonical assumptions are impacted.
+P	CORE-INV-054
+P	A Mother Change MUST identify all child Topics whose based-on structure or canonical assumptions are impacted.
+ROW	CORE-INV-055	Unaffected historical Topics remain bound to their original canonical versions unless explicitly migrated through authorized change.
+P	CORE-INV-055
+P	Unaffected historical Topics remain bound to their original canonical versions unless explicitly migrated through authorized change.
+ROW	CORE-INV-056	Impact propagation MUST be version/edge based, not page-name heuristics.
+P	CORE-INV-056
+P	Impact propagation MUST be version/edge based, not page-name heuristics.
+ROW	CORE-INV-057	No hidden latest/default fallback may replace missing exact Story/World/DNA/Blueprint/Script refs.
+P	CORE-INV-057
+P	No hidden latest/default fallback may replace missing exact Story/World/DNA/Blueprint/Script refs.
+ROW	CORE-INV-058	Missing exact required ref = BLOCK; AI invention = MUST_NOT.
+P	CORE-INV-058
+P	Missing exact required ref = BLOCK; AI invention = MUST_NOT.
+ROW	CORE-INV-059	No unauthorized second Blueprint, Canonical Script, DNA, Lock or Package owner may be created.
+P	CORE-INV-059
+P	No unauthorized second Blueprint, Canonical Script, DNA, Lock or Package owner may be created.
+ROW	CORE-INV-060	Project/Topic/Script/DNA/Blueprint status MUST be derived from canonical owner, not UI local state.
+P	CORE-INV-060
+P	Project/Topic/Script/DNA/Blueprint status MUST be derived from canonical owner, not UI local state.
+ROW	CORE-INV-061	Lock reviewer/evidence/hash unresolved = BLOCK; fabricated IDs/reviewer = MUST_NOT.
+P	CORE-INV-061
+P	Lock reviewer/evidence/hash unresolved = BLOCK; fabricated IDs/reviewer = MUST_NOT.
+ROW	CORE-INV-062	Continuity ledger MUST preserve adopted story/chapter/canon version identities.
+P	CORE-INV-062
+P	Continuity ledger MUST preserve adopted story/chapter/canon version identities.
+ROW	CORE-INV-063	Downstream correction MUST target exact source version/scope and preserve unaffected content.
+P	CORE-INV-063
+P	Downstream correction MUST target exact source version/scope and preserve unaffected content.
+ROW	CORE-INV-064	QA may request correction but MUST NOT directly rewrite upstream canonical owner.
+P	CORE-INV-064
+P	QA may request correction but MUST NOT directly rewrite upstream canonical owner.
+ROW	CORE-INV-065	Canonical package export MUST be versioned and auditable.
+P	CORE-INV-065
+P	Canonical package export MUST be versioned and auditable.
+ROW	CORE-INV-066	Any generated content used for handoff MUST have provenance back to exact canonical input.
+P	CORE-INV-066
+P	Any generated content used for handoff MUST have provenance back to exact canonical input.
+ROW	CORE-INV-067	Production package readiness requires all REQUIRED cross-stage edges consumer-ready, not merely present by path.
+P	CORE-INV-067
+P	Production package readiness requires all REQUIRED cross-stage edges consumer-ready, not merely present by path.
+ROW	CORE-INV-068	Historical evidence MUST NOT substitute current package readiness.
+P	CORE-INV-068
+P	Historical evidence MUST NOT substitute current package readiness.
+ROW	CORE-INV-069	A previous successful Topic run MUST NOT prove a new revision ready.
+P	CORE-INV-069
+P	A previous successful Topic run MUST NOT prove a new revision ready.
+ROW	CORE-INV-070	CORE criteria/evaluation missing or unapproved MUST block formal evaluation; no generic fallback scoring schema.
+P	CORE-INV-070
+P	CORE criteria/evaluation missing or unapproved MUST block formal evaluation; no generic fallback scoring schema.
+ROW	CORE-INV-071	Permission denial MUST be server-enforced; disabled button is not security.
+P	CORE-INV-071
+P	Permission denial MUST be server-enforced; disabled button is not security.
+ROW	CORE-INV-072	Every effectful operation MUST be auditable with actor/context/version/correlation identity.
+P	CORE-INV-072
+P	Every effectful operation MUST be auditable with actor/context/version/correlation identity.
+ROW	CORE-INV-073	Concurrent stale writes MUST fail with version conflict; no last-write-wins overwrite of canonical versions.
+P	CORE-INV-073
+P	Concurrent stale writes MUST fail with version conflict; no last-write-wins overwrite of canonical versions.
+ROW	CORE-INV-074	Idempotent create/request operations MUST prevent duplicate canonical version or duplicate lock request side effect.
+P	CORE-INV-074
+P	Idempotent create/request operations MUST prevent duplicate canonical version or duplicate lock request side effect.
+ROW	CORE-INV-075	Same idempotency key with different semantic payload = BLOCK.
+P	CORE-INV-075
+P	Same idempotency key with different semantic payload = BLOCK.
+ROW	CORE-INV-076	Correction to a locked artifact produces new version; prior approved version remains historical evidence.
+P	CORE-INV-076
+P	Correction to a locked artifact produces new version; prior approved version remains historical evidence.
+ROW	CORE-INV-077	Formal lock/approval cannot be inferred from status label alone; evidence/reviewer path must resolve.
+P	CORE-INV-077
+P	Formal lock/approval cannot be inferred from status label alone; evidence/reviewer path must resolve.
+ROW	CORE-INV-078	Design document MUST NOT claim runtime/API/DB/lock deployment as complete without fresh evidence.
+P	CORE-INV-078
+P	Design document MUST NOT claim runtime/API/DB/lock deployment as complete without fresh evidence.
+ROW	CORE-INV-079	Unknown exact API/DB/permission/runtime bindings remain REQUIRE_EXACT_BINDING.
+P	CORE-INV-079
+P	Unknown exact API/DB/permission/runtime bindings remain REQUIRE_EXACT_BINDING.
+ROW	CORE-INV-080	CORE AI MUST NOT self-approve its own Product Authority, Lock, or governance change.
+P	CORE-INV-080
+P	CORE AI MUST NOT self-approve its own Product Authority, Lock, or governance change.
+ROW	CORE-INV-081	Any semantic ambiguity affecting canon must route to human/reviewer rather than silent auto-completion.
+P	CORE-INV-081
+P	Any semantic ambiguity affecting canon must route to human/reviewer rather than silent auto-completion.
+P	9. Story Core Structured Contract
+ROW	Field	Authority rule
+P	Field
+P	Authority rule
+ROW	core_premise	Project Core canonical Story dimension; no auto-fill; change creates candidate/version lineage
+P	core_premise
+P	Project Core canonical Story dimension; no auto-fill; change creates candidate/version lineage
+ROW	logline	Project Core canonical Story dimension; no auto-fill; change creates candidate/version lineage
+P	logline
+P	Project Core canonical Story dimension; no auto-fill; change creates candidate/version lineage
+ROW	genre	Project Core canonical Story dimension; no auto-fill; change creates candidate/version lineage
+P	genre
+P	Project Core canonical Story dimension; no auto-fill; change creates candidate/version lineage
+ROW	tone	Project Core canonical Story dimension; no auto-fill; change creates candidate/version lineage
+P	tone
+P	Project Core canonical Story dimension; no auto-fill; change creates candidate/version lineage
+ROW	theme	Project Core canonical Story dimension; no auto-fill; change creates candidate/version lineage
+P	theme
+P	Project Core canonical Story dimension; no auto-fill; change creates candidate/version lineage
+ROW	emotional_promise	Project Core canonical Story dimension; no auto-fill; change creates candidate/version lineage
+P	emotional_promise
+P	Project Core canonical Story dimension; no auto-fill; change creates candidate/version lineage
+ROW	core_conflict	Project Core canonical Story dimension; no auto-fill; change creates candidate/version lineage
+P	core_conflict
+P	Project Core canonical Story dimension; no auto-fill; change creates candidate/version lineage
+ROW	central_story_question	Project Core canonical Story dimension; no auto-fill; change creates candidate/version lineage
+P	central_story_question
+P	Project Core canonical Story dimension; no auto-fill; change creates candidate/version lineage
+ROW	stakes	Project Core canonical Story dimension; no auto-fill; change creates candidate/version lineage
+P	stakes
+P	Project Core canonical Story dimension; no auto-fill; change creates candidate/version lineage
+ROW	narrative_promise	Project Core canonical Story dimension; no auto-fill; change creates candidate/version lineage
+P	narrative_promise
+P	Project Core canonical Story dimension; no auto-fill; change creates candidate/version lineage
+ROW	audience_experience	Project Core canonical Story dimension; no auto-fill; change creates candidate/version lineage
+P	audience_experience
+P	Project Core canonical Story dimension; no auto-fill; change creates candidate/version lineage
+ROW	story_boundary	Project Core canonical Story dimension; no auto-fill; change creates candidate/version lineage
+P	story_boundary
+P	Project Core canonical Story dimension; no auto-fill; change creates candidate/version lineage
+ROW	forbidden_changes	Project Core canonical Story dimension; no auto-fill; change creates candidate/version lineage
+P	forbidden_changes
+P	Project Core canonical Story dimension; no auto-fill; change creates candidate/version lineage
+ROW	series_expansion_logic	Project Core canonical Story dimension; no auto-fill; change creates candidate/version lineage
+P	series_expansion_logic
+P	Project Core canonical Story dimension; no auto-fill; change creates candidate/version lineage
+ROW	Story Candidate flow createStoryCandidateSet → compareStoryCandidates → Human ADOPT / MERGE / REQUEST_REVISION / REJECT → adoptOrMergeStory / requestStoryRevision；任何決策都不得覆寫既有候選。
+P	Story Candidate flow createStoryCandidateSet → compareStoryCandidates → Human ADOPT / MERGE / REQUEST_REVISION / REJECT → adoptOrMergeStory / requestStoryRevision；任何決策都不得覆寫既有候選。
+P	10. Chapter Architecture Contract
+ROW	Field	Type	Required
+P	Field
+P	Type
+P	Required
+ROW	chapter_number	integer	YES
+P	chapter_number
+P	integer
+P	YES
+ROW	title	text	YES
+P	title
+P	text
+P	YES
+ROW	chapter_goal	text	YES
+P	chapter_goal
+P	text
+P	YES
+ROW	opening_hook	text	NO
+P	opening_hook
+P	text
+P	NO
+ROW	main_conflict	text	YES
+P	main_conflict
+P	text
+P	YES
+ROW	character_progress	text	NO
+P	character_progress
+P	text
+P	NO
+ROW	world_reveal	text	NO
+P	world_reveal
+P	text
+P	NO
+ROW	turning_point	text	NO
+P	turning_point
+P	text
+P	NO
+ROW	climax	text	NO
+P	climax
+P	text
+P	NO
+ROW	resolution	text	NO
+P	resolution
+P	text
+P	NO
+ROW	ending_hook	text	NO
+P	ending_hook
+P	text
+P	NO
+ROW	foreshadowing	json	NO
+P	foreshadowing
+P	json
+P	NO
+ROW	payoff_refs	reference_list	NO
+P	payoff_refs
+P	reference_list
+P	NO
+ROW	production_complexity	string	YES
+P	production_complexity
+P	string
+P	YES
+P	Chapter Architecture Version MUST bind exact Project ref/version + human-confirmed content + provenance and is append-only.
+P	11. World Bible / World DNA Contract
+ROW	Semantic dimension	Rule
+P	Semantic dimension
+P	Rule
+ROW	time_era	Canonical Project World content; contradiction with locked canon = BLOCK/Change Request
+P	time_era
+P	Canonical Project World content; contradiction with locked canon = BLOCK/Change Request
+ROW	geography	Canonical Project World content; contradiction with locked canon = BLOCK/Change Request
+P	geography
+P	Canonical Project World content; contradiction with locked canon = BLOCK/Change Request
+ROW	locations	Canonical Project World content; contradiction with locked canon = BLOCK/Change Request
+P	locations
+P	Canonical Project World content; contradiction with locked canon = BLOCK/Change Request
+ROW	society	Canonical Project World content; contradiction with locked canon = BLOCK/Change Request
+P	society
+P	Canonical Project World content; contradiction with locked canon = BLOCK/Change Request
+ROW	culture	Canonical Project World content; contradiction with locked canon = BLOCK/Change Request
+P	culture
+P	Canonical Project World content; contradiction with locked canon = BLOCK/Change Request
+ROW	factions	Canonical Project World content; contradiction with locked canon = BLOCK/Change Request
+P	factions
+P	Canonical Project World content; contradiction with locked canon = BLOCK/Change Request
+ROW	economy	Canonical Project World content; contradiction with locked canon = BLOCK/Change Request
+P	economy
+P	Canonical Project World content; contradiction with locked canon = BLOCK/Change Request
+ROW	technology	Canonical Project World content; contradiction with locked canon = BLOCK/Change Request
+P	technology
+P	Canonical Project World content; contradiction with locked canon = BLOCK/Change Request
+ROW	magic_ability_rules	Canonical Project World content; contradiction with locked canon = BLOCK/Change Request
+P	magic_ability_rules
+P	Canonical Project World content; contradiction with locked canon = BLOCK/Change Request
+ROW	religion_belief	Canonical Project World content; contradiction with locked canon = BLOCK/Change Request
+P	religion_belief
+P	Canonical Project World content; contradiction with locked canon = BLOCK/Change Request
+ROW	law_taboo	Canonical Project World content; contradiction with locked canon = BLOCK/Change Request
+P	law_taboo
+P	Canonical Project World content; contradiction with locked canon = BLOCK/Change Request
+ROW	historical_events	Canonical Project World content; contradiction with locked canon = BLOCK/Change Request
+P	historical_events
+P	Canonical Project World content; contradiction with locked canon = BLOCK/Change Request
+ROW	timeline	Canonical Project World content; contradiction with locked canon = BLOCK/Change Request
+P	timeline
+P	Canonical Project World content; contradiction with locked canon = BLOCK/Change Request
+ROW	causal_rules	Canonical Project World content; contradiction with locked canon = BLOCK/Change Request
+P	causal_rules
+P	Canonical Project World content; contradiction with locked canon = BLOCK/Change Request
+ROW	world_constraints	Canonical Project World content; contradiction with locked canon = BLOCK/Change Request
+P	world_constraints
+P	Canonical Project World content; contradiction with locked canon = BLOCK/Change Request
+ROW	forbidden_contradictions	Canonical Project World content; contradiction with locked canon = BLOCK/Change Request
+P	forbidden_contradictions
+P	Canonical Project World content; contradiction with locked canon = BLOCK/Change Request
+ROW	createWorldBibleVersion field	Type	Required
+P	createWorldBibleVersion field
+P	Type
+P	Required
+ROW	world_name	string	YES
+P	world_name
+P	string
+P	YES
+ROW	era	string	NO
+P	era
+P	string
+P	NO
+ROW	geography	json	NO
+P	geography
+P	json
+P	NO
+ROW	society	json	NO
+P	society
+P	json
+P	NO
+ROW	culture	json	NO
+P	culture
+P	json
+P	NO
+ROW	technology	json	NO
+P	technology
+P	json
+P	NO
+ROW	economy	json	NO
+P	economy
+P	json
+P	NO
+ROW	politics	json	NO
+P	politics
+P	json
+P	NO
+ROW	world_rules	json	YES
+P	world_rules
+P	json
+P	YES
+ROW	supernatural_rules	json	NO
+P	supernatural_rules
+P	json
+P	NO
+ROW	visual_language	json	NO
+P	visual_language
+P	json
+P	NO
+ROW	timeline	json	NO
+P	timeline
+P	json
+P	NO
+ROW	historical_events	json	NO
+P	historical_events
+P	json
+P	NO
+ROW	world_conflicts	json	NO
+P	world_conflicts
+P	json
+P	NO
+ROW	hard_canon	json	NO
+P	hard_canon
+P	json
+P	NO
+ROW	soft_canon	json	NO
+P	soft_canon
+P	json
+P	NO
+ROW	reference_ids	reference_list	NO
+P	reference_ids
+P	reference_list
+P	NO
+P	12. Core DNA Schema / Base → Enrichment → Topic Locked Version
+ROW	DNA class	Canonical dimensions
+P	DNA class
+P	Canonical dimensions
+ROW	Story DNA	Premise, Logline, Genre, Tone, Theme, Emotional Promise, Conflict, Story Question, Stakes, Narrative Promise, Audience Experience, Boundary, Forbidden Changes, Series Expansion
+P	Story DNA
+P	Premise, Logline, Genre, Tone, Theme, Emotional Promise, Conflict, Story Question, Stakes, Narrative Promise, Audience Experience, Boundary, Forbidden Changes, Series Expansion
+ROW	World DNA	Time/Era, Geography, Locations, Society, Culture, Factions, Economy, Technology, Ability Rules, Belief, Law/Taboo, History, Timeline, Causal Rules, Constraints, Forbidden Contradictions
+P	World DNA
+P	Time/Era, Geography, Locations, Society, Culture, Factions, Economy, Technology, Ability Rules, Belief, Law/Taboo, History, Timeline, Causal Rules, Constraints, Forbidden Contradictions
+ROW	Character DNA	ID, role, goals, need, motivation, fear, weakness, values, moral boundary, personality, behavior/decision/speech patterns, relationship map, state/arc, immutable/changeable traits, appearance/equipment/ability limits
+P	Character DNA
+P	ID, role, goals, need, motivation, fear, weakness, values, moral boundary, personality, behavior/decision/speech patterns, relationship map, state/arc, immutable/changeable traits, appearance/equipment/ability limits
+ROW	Narrative DNA	POV, narrative distance, story/arc structure, chapter/episode rhythm, hook, escalation, reveal, suspense, cliffhanger, emotional curve, information order, foreshadow/payoff, ending pattern
+P	Narrative DNA
+P	POV, narrative distance, story/arc structure, chapter/episode rhythm, hook, escalation, reveal, suspense, cliffhanger, emotional curve, information order, foreshadow/payoff, ending pattern
+ROW	Visual DNA	art direction, character/environment rules, composition/camera language, lighting, texture, color, motion, motif/symbol, subtitle/UI compatibility, forbidden patterns, reference boundary
+P	Visual DNA
+P	art direction, character/environment rules, composition/camera language, lighting, texture, color, motion, motif/symbol, subtitle/UI compatibility, forbidden patterns, reference boundary
+ROW	Audio DNA	voice identity/age/texture/speed/emotion/pronunciation/accent, music identity/motif, atmosphere, SFX language, silence rules, intensity curve, forbidden audio pattern
+P	Audio DNA
+P	voice identity/age/texture/speed/emotion/pronunciation/accent, music identity/motif, atmosphere, SFX language, silence rules, intensity curve, forbidden audio pattern
+ROW	Strategy DNA	strategy direction, objectives, KPI, content role, market opportunity, strategic need, revenue/growth/IP role, success pattern, risk, priority, evidence/confidence
+P	Strategy DNA
+P	strategy direction, objectives, KPI, content role, market opportunity, strategic need, revenue/growth/IP role, success pattern, risk, priority, evidence/confidence
+ROW	Platform DNA	platform, region, language, format, target duration, discovery/search/relationship/revenue role, CTA strategy, release variant
+P	Platform DNA
+P	platform, region, language, format, target duration, discovery/search/relationship/revenue role, CTA strategy, release variant
+ROW	Account DNA	account id, stage, audience, current need, content territory, channel role, baseline, traffic relationship, cross-channel role, risk
+P	Account DNA
+P	account id, stage, audience, current need, content territory, channel role, baseline, traffic relationship, cross-channel role, risk
+ROW	Production DNA	quality profile, output format, aspect ratio, resolution, asset/anchor requirement, provider constraint, rendering/continuity/cost/reproducibility/QA requirements
+P	Production DNA
+P	quality profile, output format, aspect ratio, resolution, asset/anchor requirement, provider constraint, rendering/continuity/cost/reproducibility/QA requirements
+ROW	DNA boundary Base DNA 可在 Mother Lock 前形成；只有目前 Topic 真正需要的生產細節才在 Script-derived Enrichment 補全。Topic Enrichment 不能反向無聲改寫 Base DNA。
+P	DNA boundary Base DNA 可在 Mother Lock 前形成；只有目前 Topic 真正需要的生產細節才在 Script-derived Enrichment 補全。Topic Enrichment 不能反向無聲改寫 Base DNA。
+P	13. Mother Lock / Project Structure Lock Contract
+ROW	Layer	Locked content
+P	Layer
+P	Locked content
+ROW	Creative Canon	Premise, Theme, Tone, target audience experience, forbidden constraints
+P	Creative Canon
+P	Premise, Theme, Tone, target audience experience, forbidden constraints
+ROW	Story Architecture	chapter/episode architecture, major arcs/events, foreshadow/payoff, long-range direction
+P	Story Architecture
+P	chapter/episode architecture, major arcs/events, foreshadow/payoff, long-range direction
+ROW	World Canon	core rules, timeline, factions, abilities, taboos, contradictions
+P	World Canon
+P	core rules, timeline, factions, abilities, taboos, contradictions
+ROW	Base Character DNA	identity, motivation, personality, relationship, immutable traits
+P	Base Character DNA
+P	identity, motivation, personality, relationship, immutable traits
+ROW	Narrative Rules	POV, reveal order, rhythm, hook/suspense/payoff rules
+P	Narrative Rules
+P	POV, reveal order, rhythm, hook/suspense/payoff rules
+ROW	Long-range Plan	future arc/season direction without forcing early high-cost production
+P	Long-range Plan
+P	future arc/season direction without forcing early high-cost production
+ROW	Version & Audit	Structure Version, approver/reviewer evidence, lock time, CR/impact refs
+P	Version & Audit
+P	Structure Version, approver/reviewer evidence, lock time, CR/impact refs
+P	Mother Lock normally remains stable during production.
+P	Only Canon-level changes that cannot be solved in Child scope may escalate to Mother Change.
+P	Mother Change = Change Request → Dependency Scan → Impact Analysis → new Project Structure Version.
+P	Historical Topics keep based-on Mother Structure Version; migration is explicit, never silent.
+P	14. Production Topic / Production Horizon Contract
+P	Production Topic 是「這次真正投入人工審查與生產成本的完整區段」，不是固定一話、一集或整個 IP。Planning may be early; high-cost production is Just-in-Time.
+ROW	Dimension	Required decision
+P	Dimension
+P	Required decision
+ROW	Narrative completeness	what event/arc segment is included
+P	Narrative completeness
+P	what event/arc segment is included
+ROW	Start boundary	exact starting state/ref
+P	Start boundary
+P	exact starting state/ref
+ROW	End boundary	exact end/cut state
+P	End boundary
+P	exact end/cut state
+ROW	Next recommended start	continuity-safe next entry
+P	Next recommended start
+P	continuity-safe next entry
+ROW	Production horizon	approved scope for high-cost work
+P	Production horizon
+P	approved scope for high-cost work
+ROW	Asset cohesion	reuse/new asset grouping
+P	Asset cohesion
+P	reuse/new asset grouping
+ROW	Capacity/cost	admissible planning constraint; cannot break canon
+P	Capacity/cost
+P	admissible planning constraint; cannot break canon
+ROW	Strategic flexibility	ability to expand, pause, reduce or stop later
+P	Strategic flexibility
+P	ability to expand, pause, reduce or stop later
+ROW	Based-on structure	exact Mother Structure Version
+P	Based-on structure
+P	exact Mother Structure Version
+P	15. Boundary / Narrative Tension / Continuity Contract
+ROW	Dimension	Decision rule
+P	Dimension
+P	Decision rule
+ROW	Narrative Integrity	reasonable segment; event completion or intentional hook
+P	Narrative Integrity
+P	reasonable segment; event completion or intentional hook
+ROW	Character State	position/emotion/injury/equipment/relationship/decision handoff explicit
+P	Character State
+P	position/emotion/injury/equipment/relationship/decision handoff explicit
+ROW	Conflict State	complete/turn/escalate/pre-climax vs non-cuttable action
+P	Conflict State
+P	complete/turn/escalate/pre-climax vs non-cuttable action
+ROW	Continuity Safety	next Topic can resume from exact state
+P	Continuity Safety
+P	next Topic can resume from exact state
+ROW	Asset Cohesion	characters/scenes/costumes/props form coherent batch
+P	Asset Cohesion
+P	characters/scenes/costumes/props form coherent batch
+ROW	Production Efficiency	capacity/schedule/cost/API/GPU/human constraints
+P	Production Efficiency
+P	capacity/schedule/cost/API/GPU/human constraints
+ROW	Strategic Flexibility	preserve add/reduce/pause/stop options
+P	Strategic Flexibility
+P	preserve add/reduce/pause/stop options
+ROW	Hook Quality	intentional open loop with clear next-content pull
+P	Hook Quality
+P	intentional open loop with clear next-content pull
+ROW	Payoff Governance	unresolved question/foreshadow/payoff debt tracked
+P	Payoff Governance
+P	unresolved question/foreshadow/payoff debt tracked
+ROW	Script-level boundary field	Meaning
+P	Script-level boundary field
+P	Meaning
+ROW	Tension State	REQUIRED when applicable; exact structured field in canonical script/boundary evidence
+P	Tension State
+P	REQUIRED when applicable; exact structured field in canonical script/boundary evidence
+ROW	Hook Intent	REQUIRED when applicable; exact structured field in canonical script/boundary evidence
+P	Hook Intent
+P	REQUIRED when applicable; exact structured field in canonical script/boundary evidence
+ROW	Curiosity Gap	REQUIRED when applicable; exact structured field in canonical script/boundary evidence
+P	Curiosity Gap
+P	REQUIRED when applicable; exact structured field in canonical script/boundary evidence
+ROW	Cut Setup	REQUIRED when applicable; exact structured field in canonical script/boundary evidence
+P	Cut Setup
+P	REQUIRED when applicable; exact structured field in canonical script/boundary evidence
+ROW	Visual Build-up	REQUIRED when applicable; exact structured field in canonical script/boundary evidence
+P	Visual Build-up
+P	REQUIRED when applicable; exact structured field in canonical script/boundary evidence
+ROW	Audio Build-up	REQUIRED when applicable; exact structured field in canonical script/boundary evidence
+P	Audio Build-up
+P	REQUIRED when applicable; exact structured field in canonical script/boundary evidence
+ROW	Reveal Withheld	REQUIRED when applicable; exact structured field in canonical script/boundary evidence
+P	Reveal Withheld
+P	REQUIRED when applicable; exact structured field in canonical script/boundary evidence
+ROW	Open Loop	REQUIRED when applicable; exact structured field in canonical script/boundary evidence
+P	Open Loop
+P	REQUIRED when applicable; exact structured field in canonical script/boundary evidence
+ROW	Expected Audience Effect	REQUIRED when applicable; exact structured field in canonical script/boundary evidence
+P	Expected Audience Effect
+P	REQUIRED when applicable; exact structured field in canonical script/boundary evidence
+ROW	Next-content Pull	REQUIRED when applicable; exact structured field in canonical script/boundary evidence
+P	Next-content Pull
+P	REQUIRED when applicable; exact structured field in canonical script/boundary evidence
+ROW	Next Start State	REQUIRED when applicable; exact structured field in canonical script/boundary evidence
+P	Next Start State
+P	REQUIRED when applicable; exact structured field in canonical script/boundary evidence
+ROW	Payoff Target	REQUIRED when applicable; exact structured field in canonical script/boundary evidence
+P	Payoff Target
+P	REQUIRED when applicable; exact structured field in canonical script/boundary evidence
+P	16. Script Authority Separation / 腳本權威分層
+P	圖 3｜Human Canonical Script、Production Script、Machine Structured Script 共享同一 canonical meaning。
+ROW	Layer	Owner / role	Hard rule
+P	Layer
+P	Owner / role
+P	Hard rule
+ROW	Human Canonical Script	CORE Script System; human-readable canonical production meaning	human decision confirmed; immutable version
+P	Human Canonical Script
+P	CORE Script System; human-readable canonical production meaning
+P	human decision confirmed; immutable version
+ROW	Production Script	CORE Topic production semantics	provider-neutral; topic-scoped; derived from exact canonical version
+P	Production Script
+P	CORE Topic production semantics
+P	provider-neutral; topic-scoped; derived from exact canonical version
+ROW	Machine Structured Script	CORE typed projection for downstream/AI03	exact schema/version/hash; no semantic invention
+P	Machine Structured Script
+P	CORE typed projection for downstream/AI03
+P	exact schema/version/hash; no semantic invention
+ROW	Provider Prompt/Payload	ACPOS-AI-03	compiled per target profile; not persisted as CORE canonical script
+P	Provider Prompt/Payload
+P	ACPOS-AI-03
+P	compiled per target profile; not persisted as CORE canonical script
+ROW	Media Views	CORE governed projections	same canon; representation-specific only
+P	Media Views
+P	CORE governed projections
+P	same canon; representation-specific only
+P	17. Canonical Script Version Contract
+ROW	Field class	Required content	Rule
+P	Field class
+P	Required content
+P	Rule
+ROW	Identity	script_version_id, project_id, topic_id, blueprint_version_id	exact lineage
+P	Identity
+P	script_version_id, project_id, topic_id, blueprint_version_id
+P	exact lineage
+ROW	Content	provider-neutral canonical script	no provider syntax
+P	Content
+P	provider-neutral canonical script
+P	no provider syntax
+ROW	Source	source_script_ref / prior version / change_summary when applicable	immutable lineage
+P	Source
+P	source_script_ref / prior version / change_summary when applicable
+P	immutable lineage
+ROW	Structure	scenes/beats/dialogue/action/narration/boundary semantics as applicable	typed but domain-owned
+P	Structure
+P	scenes/beats/dialogue/action/narration/boundary semantics as applicable
+P	typed but domain-owned
+ROW	DNA refs	exact relevant base/enriched DNA refs	no latest fallback
+P	DNA refs
+P	exact relevant base/enriched DNA refs
+P	no latest fallback
+ROW	Continuity	starting state / ending state / unresolved/payoff refs	bridge-safe
+P	Continuity
+P	starting state / ending state / unresolved/payoff refs
+P	bridge-safe
+ROW	Views	Asset/Comic/Video/Editing projections or equivalent	same meaning
+P	Views
+P	Asset/Comic/Video/Editing projections or equivalent
+P	same meaning
+ROW	Production constraints	preserve/forbidden/rights/quality refs	cannot be weakened by AI03
+P	Production constraints
+P	preserve/forbidden/rights/quality refs
+P	cannot be weakened by AI03
+ROW	Audit	human decision / candidate / reviewer refs	create version ≠ auto-approval
+P	Audit
+P	human decision / candidate / reviewer refs
+P	create version ≠ auto-approval
+P	18. Machine Structured Script Contract
+P	Machine Structured Script MUST be deterministically reproducible from exact canonical script version + schema/versioned transformer.
+P	It MUST carry canonical_script_version_ref, input hash/fingerprint, schema version, generated timestamp, producer identity and output hash.
+P	It MUST preserve ordering, references, constraints, boundary fields and source attribution required by downstream.
+P	If canonical meaning cannot be represented losslessly, materialization MUST BLOCK and produce a schema/coverage gap; it MUST NOT drop fields silently.
+P	A machine projection may be regenerated under a new schema, but historical projection/version remains immutable evidence.
+P	19. Project Structure Blueprint Package
+ROW	Capability group	Project Structure Layer	Topic Production Layer
+P	Capability group
+P	Project Structure Layer
+P	Topic Production Layer
+ROW	Metadata & Governance	Project/IP/Structure Version/Owner/Status	Topic ID/Blueprint Version/Based-on Structure/Lock/Audit
+P	Metadata & Governance
+P	Project/IP/Structure Version/Owner/Status
+P	Topic ID/Blueprint Version/Based-on Structure/Lock/Audit
+ROW	Canon	Story/Chapter/World/Base DNA/Narrative rules	only exact refs + topic-specific allowed enrichment
+P	Canon
+P	Story/Chapter/World/Base DNA/Narrative rules
+P	only exact refs + topic-specific allowed enrichment
+ROW	Planning	long-range arcs/seasons/direction	approved Production Horizon / Boundary
+P	Planning
+P	long-range arcs/seasons/direction
+P	approved Production Horizon / Boundary
+ROW	Script	high-level direction / canon rules	Detailed Canonical Script + views
+P	Script
+P	high-level direction / canon rules
+P	Detailed Canonical Script + views
+ROW	DNA	Base DNA	Script-derived enriched DNA
+P	DNA
+P	Base DNA
+P	Script-derived enriched DNA
+ROW	Assets	future strategy/reference boundaries	reuse/new Asset Manifest / requirements
+P	Assets
+P	future strategy/reference boundaries
+P	reuse/new Asset Manifest / requirements
+ROW	Continuity	long-range continuity rules	exact start/end bridge + unresolved/payoff
+P	Continuity
+P	long-range continuity rules
+P	exact start/end bridge + unresolved/payoff
+ROW	Rights	project-level rights/policy refs	topic-specific rights evidence
+P	Rights
+P	project-level rights/policy refs
+P	topic-specific rights evidence
+ROW	Quality	quality profile / criteria source	topic applicable QA criteria
+P	Quality
+P	quality profile / criteria source
+P	topic applicable QA criteria
+ROW	Dependencies	canonical dependency graph	topic exact dependency closure
+P	Dependencies
+P	canonical dependency graph
+P	topic exact dependency closure
+ROW	Handoff	not high-cost production	production package + downstream readiness
+P	Handoff
+P	not high-cost production
+P	production package + downstream readiness
+P	20. Topic Blueprint Candidate & Child Lock
+ROW	Required component	Contract
+P	Required component
+P	Contract
+ROW	Topic Scope	approved production horizon + start/end boundary + based-on structure
+P	Topic Scope
+P	approved production horizon + start/end boundary + based-on structure
+ROW	Canonical Script	exact immutable version/hash + views
+P	Canonical Script
+P	exact immutable version/hash + views
+ROW	DNA	base refs + script-derived enriched refs + lock states
+P	DNA
+P	base refs + script-derived enriched refs + lock states
+ROW	Continuity Bridge	next-start state + open loops + payoff obligations
+P	Continuity Bridge
+P	next-start state + open loops + payoff obligations
+ROW	Asset Manifest	reuse/new requirement refs and anchors
+P	Asset Manifest
+P	reuse/new requirement refs and anchors
+ROW	Production Rules	quality/output/format/rights/cost/capacity constraints as applicable
+P	Production Rules
+P	quality/output/format/rights/cost/capacity constraints as applicable
+ROW	QA Criteria	exact applicable criteria/version
+P	QA Criteria
+P	exact applicable criteria/version
+ROW	Dependency Closure	required upstream/downstream refs and consumer readiness
+P	Dependency Closure
+P	required upstream/downstream refs and consumer readiness
+ROW	Review Evidence	cross review/human decision/lock reviewer path
+P	Review Evidence
+P	cross review/human decision/lock reviewer path
+ROW	Child Lock rule Child Lock 只在所有 REQUIRED exact refs、schema、lineage、review evidence 與 handoff readiness 都成立時可進；缺一項就是 BLOCK，不得由 AI 補假值。
+P	Child Lock rule Child Lock 只在所有 REQUIRED exact refs、schema、lineage、review evidence 與 handoff readiness 都成立時可進；缺一項就是 BLOCK，不得由 AI 補假值。
+P	21. Topic Production Package / 下游交接契約
+P	圖 4｜Production Package 是 exact refs 的正式交接契約，不是鬆散資料夾。
+ROW	Package section	Required exact refs
+P	Package section
+P	Required exact refs
+ROW	Project	project id + based-on Project Structure Version/hash/lock state
+P	Project
+P	project id + based-on Project Structure Version/hash/lock state
+ROW	Topic	topic id + Topic Production Scope/version
+P	Topic
+P	topic id + Topic Production Scope/version
+ROW	Blueprint	Topic Blueprint Version/hash/Child Lock state
+P	Blueprint
+P	Topic Blueprint Version/hash/Child Lock state
+ROW	DNA	all applicable enriched/base locked refs/version/hash
+P	DNA
+P	all applicable enriched/base locked refs/version/hash
+ROW	Script	Human Canonical/Production/Machine Structured exact version refs
+P	Script
+P	Human Canonical/Production/Machine Structured exact version refs
+ROW	Views	applicable Asset/Comic/Video/Editing view refs
+P	Views
+P	applicable Asset/Comic/Video/Editing view refs
+ROW	Continuity	Bridge + open loop/payoff + next-start state
+P	Continuity
+P	Bridge + open loop/payoff + next-start state
+ROW	Requirements	Asset Manifest / production requirements / anchors
+P	Requirements
+P	Asset Manifest / production requirements / anchors
+ROW	Policy	Naming Authority / rights / quality / permission refs as applicable
+P	Policy
+P	Naming Authority / rights / quality / permission refs as applicable
+ROW	Readiness	ASSET/VIDEO/EDIT/QA consumer readiness + missing blocker list
+P	Readiness
+P	ASSET/VIDEO/EDIT/QA consumer readiness + missing blocker list
+ROW	Audit	candidate/decision/lock/change lineage
+P	Audit
+P	candidate/decision/lock/change lineage
+P	22. Downstream Handoff Contract
+ROW	Boundary	CORE supplies	Downstream MUST NOT
+P	Boundary
+P	CORE supplies
+P	Downstream MUST NOT
+ROW	CORE→ASSET	Production Package + exact Blueprint/DNA/Script/Asset Requirement refs	reselect project/topic/source identity; invent DNA
+P	CORE→ASSET
+P	Production Package + exact Blueprint/DNA/Script/Asset Requirement refs
+P	reselect project/topic/source identity; invent DNA
+ROW	CORE→VIDEO	same canonical package lineage + exact assets when available	bypass ASSET dependency where required or rewrite script canon
+P	CORE→VIDEO
+P	same canonical package lineage + exact assets when available
+P	bypass ASSET dependency where required or rewrite script canon
+ROW	CORE→EDIT	exact video/script/editing view/continuity refs when applicable	change upstream canon to fit timeline convenience
+P	CORE→EDIT
+P	exact video/script/editing view/continuity refs when applicable
+P	change upstream canon to fit timeline convenience
+ROW	CORE→QA	exact release candidate source refs + criteria/rights lineage	edit upstream output directly instead of return/correction request
+P	CORE→QA
+P	exact release candidate source refs + criteria/rights lineage
+P	edit upstream output directly instead of return/correction request
+P	23. Core Lifecycle State Model
+ROW	State	Meaning
+P	State
+P	Meaning
+ROW	IDEA	project concept not formalized
+P	IDEA
+P	project concept not formalized
+ROW	PROJECT_DRAFT	editable project draft
+P	PROJECT_DRAFT
+P	editable project draft
+ROW	PROJECT_VALIDATING	validation in progress
+P	PROJECT_VALIDATING
+P	validation in progress
+ROW	CORE_MODELING	Story/Chapter/World/DNA/Blueprint modeling
+P	CORE_MODELING
+P	Story/Chapter/World/DNA/Blueprint modeling
+ROW	PROJECT_REVIEW_PENDING	core review submitted
+P	PROJECT_REVIEW_PENDING
+P	core review submitted
+ROW	MOTHER_LOCK_REVIEW	Project Structure lock review
+P	MOTHER_LOCK_REVIEW
+P	Project Structure lock review
+ROW	PROJECT_LOCKED	Project Structure Version locked
+P	PROJECT_LOCKED
+P	Project Structure Version locked
+ROW	TOPIC_DRAFT	topic production scope drafting
+P	TOPIC_DRAFT
+P	topic production scope drafting
+ROW	BOUNDARY_DECISION	boundary/horizon candidate decision
+P	BOUNDARY_DECISION
+P	boundary/horizon candidate decision
+ROW	SCRIPT_DRAFT	canonical script drafting
+P	SCRIPT_DRAFT
+P	canonical script drafting
+ROW	SCRIPT_CANDIDATE	immutable script candidate/version candidate
+P	SCRIPT_CANDIDATE
+P	immutable script candidate/version candidate
+ROW	TOPIC_BLUEPRINT_CANDIDATE	integrated production contract candidate
+P	TOPIC_BLUEPRINT_CANDIDATE
+P	integrated production contract candidate
+ROW	CROSS_REVIEW	cross review/criteria check
+P	CROSS_REVIEW
+P	cross review/criteria check
+ROW	CHILD_LOCK_REVIEW	Topic Blueprint lock review
+P	CHILD_LOCK_REVIEW
+P	Topic Blueprint lock review
+ROW	TOPIC_LOCKED	Topic Production Version locked
+P	TOPIC_LOCKED
+P	Topic Production Version locked
+ROW	PACKAGE_BUILDING	production package materialization
+P	PACKAGE_BUILDING
+P	production package materialization
+ROW	PACKAGE_READY	required refs consumer-ready
+P	PACKAGE_READY
+P	required refs consumer-ready
+ROW	HANDED_OFF	downstream transition persisted
+P	HANDED_OFF
+P	downstream transition persisted
+ROW	REVISION_REQUIRED	human/reviewer return for revision
+P	REVISION_REQUIRED
+P	human/reviewer return for revision
+ROW	CHANGE_REQUESTED	locked artifact change requested
+P	CHANGE_REQUESTED
+P	locked artifact change requested
+ROW	SUPERSEDED	historical immutable predecessor
+P	SUPERSEDED
+P	historical immutable predecessor
+P	24. State Transition Guard Matrix
+ROW	Transition	Trigger	Preconditions	Side effect	Success	Failure
+P	Transition
+P	Trigger
+P	Preconditions
+P	Side effect
+P	Success
+P	Failure
+ROW	IDEA→PROJECT_DRAFT	create project	required project draft fields + permission	persist draft	PROJECT_DRAFT	BLOCK
+P	IDEA→PROJECT_DRAFT
+P	create project
+P	required project draft fields + permission
+P	persist draft
+P	PROJECT_DRAFT
+P	BLOCK
+ROW	PROJECT_DRAFT→CORE_MODELING	confirm project draft	validate PASS + human confirmation	create confirmed project version	CORE_MODELING	PROJECT_DRAFT
+P	PROJECT_DRAFT→CORE_MODELING
+P	confirm project draft
+P	validate PASS + human confirmation
+P	create confirmed project version
+P	CORE_MODELING
+P	PROJECT_DRAFT
+ROW	CORE_MODELING→PROJECT_REVIEW_PENDING	submit core review	Story/Chapter/World/Base DNA/Blueprint required set complete	persist review request	PROJECT_REVIEW_PENDING	CORE_MODELING
+P	CORE_MODELING→PROJECT_REVIEW_PENDING
+P	submit core review
+P	Story/Chapter/World/Base DNA/Blueprint required set complete
+P	persist review request
+P	PROJECT_REVIEW_PENDING
+P	CORE_MODELING
+ROW	PROJECT_REVIEW_PENDING→MOTHER_LOCK_REVIEW	request Mother Lock	review preconditions + exact hash/evidence path	lock request	MOTHER_LOCK_REVIEW	REVISION_REQUIRED
+P	PROJECT_REVIEW_PENDING→MOTHER_LOCK_REVIEW
+P	request Mother Lock
+P	review preconditions + exact hash/evidence path
+P	lock request
+P	MOTHER_LOCK_REVIEW
+P	REVISION_REQUIRED
+ROW	MOTHER_LOCK_REVIEW→PROJECT_LOCKED	authorized approval	reviewer/evidence/hash valid	create Project Structure Version	PROJECT_LOCKED	REVISION_REQUIRED
+P	MOTHER_LOCK_REVIEW→PROJECT_LOCKED
+P	authorized approval
+P	reviewer/evidence/hash valid
+P	create Project Structure Version
+P	PROJECT_LOCKED
+P	REVISION_REQUIRED
+ROW	PROJECT_LOCKED→TOPIC_DRAFT	create Topic	exact Project lock lineage	persist topic draft	TOPIC_DRAFT	BLOCK
+P	PROJECT_LOCKED→TOPIC_DRAFT
+P	create Topic
+P	exact Project lock lineage
+P	persist topic draft
+P	TOPIC_DRAFT
+P	BLOCK
+ROW	TOPIC_DRAFT→BOUNDARY_DECISION	propose boundary	scope context + continuity inputs	candidate set	BOUNDARY_DECISION	TOPIC_DRAFT
+P	TOPIC_DRAFT→BOUNDARY_DECISION
+P	propose boundary
+P	scope context + continuity inputs
+P	candidate set
+P	BOUNDARY_DECISION
+P	TOPIC_DRAFT
+ROW	BOUNDARY_DECISION→SCRIPT_DRAFT	human select scope	selected boundary + horizon + based-on structure	persist production scope	SCRIPT_DRAFT	REVISION_REQUIRED
+P	BOUNDARY_DECISION→SCRIPT_DRAFT
+P	human select scope
+P	selected boundary + horizon + based-on structure
+P	persist production scope
+P	SCRIPT_DRAFT
+P	REVISION_REQUIRED
+ROW	SCRIPT_DRAFT→SCRIPT_CANDIDATE	create canonical version candidate	human-confirmed provider-neutral content + exact refs	immutable version	SCRIPT_CANDIDATE	SCRIPT_DRAFT
+P	SCRIPT_DRAFT→SCRIPT_CANDIDATE
+P	create canonical version candidate
+P	human-confirmed provider-neutral content + exact refs
+P	immutable version
+P	SCRIPT_CANDIDATE
+P	SCRIPT_DRAFT
+ROW	SCRIPT_CANDIDATE→TOPIC_BLUEPRINT_CANDIDATE	build blueprint candidate	script + DNA enrichment + continuity + requirements	candidate package	TOPIC_BLUEPRINT_CANDIDATE	REVISION_REQUIRED
+P	SCRIPT_CANDIDATE→TOPIC_BLUEPRINT_CANDIDATE
+P	build blueprint candidate
+P	script + DNA enrichment + continuity + requirements
+P	candidate package
+P	TOPIC_BLUEPRINT_CANDIDATE
+P	REVISION_REQUIRED
+ROW	TOPIC_BLUEPRINT_CANDIDATE→CROSS_REVIEW	submit review	all required refs/schema complete	review evidence	CROSS_REVIEW	REVISION_REQUIRED
+P	TOPIC_BLUEPRINT_CANDIDATE→CROSS_REVIEW
+P	submit review
+P	all required refs/schema complete
+P	review evidence
+P	CROSS_REVIEW
+P	REVISION_REQUIRED
+ROW	CROSS_REVIEW→CHILD_LOCK_REVIEW	request child lock	criteria PASS + human decision + exact hash	lock request	CHILD_LOCK_REVIEW	REVISION_REQUIRED
+P	CROSS_REVIEW→CHILD_LOCK_REVIEW
+P	request child lock
+P	criteria PASS + human decision + exact hash
+P	lock request
+P	CHILD_LOCK_REVIEW
+P	REVISION_REQUIRED
+ROW	CHILD_LOCK_REVIEW→TOPIC_LOCKED	authorized approval	reviewer/evidence/hash valid	new Topic Blueprint Version	TOPIC_LOCKED	REVISION_REQUIRED
+P	CHILD_LOCK_REVIEW→TOPIC_LOCKED
+P	authorized approval
+P	reviewer/evidence/hash valid
+P	new Topic Blueprint Version
+P	TOPIC_LOCKED
+P	REVISION_REQUIRED
+ROW	TOPIC_LOCKED→PACKAGE_BUILDING	build package	exact locked refs resolved	materialize package	PACKAGE_BUILDING	BLOCK
+P	TOPIC_LOCKED→PACKAGE_BUILDING
+P	build package
+P	exact locked refs resolved
+P	materialize package
+P	PACKAGE_BUILDING
+P	BLOCK
+ROW	PACKAGE_BUILDING→PACKAGE_READY	validate readiness	all required consumer edges ready	persist readiness	PACKAGE_READY	REVISION_REQUIRED
+P	PACKAGE_BUILDING→PACKAGE_READY
+P	validate readiness
+P	all required consumer edges ready
+P	persist readiness
+P	PACKAGE_READY
+P	REVISION_REQUIRED
+ROW	PACKAGE_READY→HANDED_OFF	navigate/handoff	target permission + exact context preservation	handoff receipt	HANDED_OFF	PACKAGE_READY
+P	PACKAGE_READY→HANDED_OFF
+P	navigate/handoff
+P	target permission + exact context preservation
+P	handoff receipt
+P	HANDED_OFF
+P	PACKAGE_READY
+ROW	*LOCKED→CHANGE_REQUESTED	change required	authorized CR + reason	impact scan	CHANGE_REQUESTED	LOCKED
+P	*LOCKED→CHANGE_REQUESTED
+P	change required
+P	authorized CR + reason
+P	impact scan
+P	CHANGE_REQUESTED
+P	LOCKED
+ROW	CHANGE_REQUESTED→new version flow	impact approved	owner/dependency/applicability resolved	new candidate/version only	appropriate draft/review	BLOCK
+P	CHANGE_REQUESTED→new version flow
+P	impact approved
+P	owner/dependency/applicability resolved
+P	new candidate/version only
+P	appropriate draft/review
+P	BLOCK
+P	25. Concurrency / Version Conflict Contract
+ROW	Scenario	Required behavior
+P	Scenario
+P	Required behavior
+ROW	Two editors update same Working Draft	draft merge may be supported only with explicit merge semantics; otherwise expected_version conflict
+P	Two editors update same Working Draft
+P	draft merge may be supported only with explicit merge semantics; otherwise expected_version conflict
+ROW	Two users create candidate from same parent	both candidates MAY exist; identity/source hashes distinct
+P	Two users create candidate from same parent
+P	both candidates MAY exist; identity/source hashes distinct
+ROW	Adopt candidate after parent changed	stale decision = BLOCK / recompare
+P	Adopt candidate after parent changed
+P	stale decision = BLOCK / recompare
+ROW	Lock request after candidate changed	expected hash mismatch = BLOCK
+P	Lock request after candidate changed
+P	expected hash mismatch = BLOCK
+ROW	Mother change while Topic in production	impact scan marks affected descendants REVERIFY_REQUIRED; existing locked topic remains bound until explicit migration
+P	Mother change while Topic in production
+P	impact scan marks affected descendants REVERIFY_REQUIRED; existing locked topic remains bound until explicit migration
+ROW	Child change while downstream jobs active	pause/block new handoff; impacted downstream exact refs must revalidate
+P	Child change while downstream jobs active
+P	pause/block new handoff; impacted downstream exact refs must revalidate
+ROW	Duplicate confirm/lock request	idempotent operation returns/reuses same request or blocks semantic conflict
+P	Duplicate confirm/lock request
+P	idempotent operation returns/reuses same request or blocks semantic conflict
+P	26. Idempotency Contract
+ROW	Operation	Rule
+P	Operation
+P	Rule
+ROW	Create Project Draft	same key+same payload may return existing draft identity
+P	Create Project Draft
+P	same key+same payload may return existing draft identity
+ROW	Confirm Project Draft	must not create duplicate confirmed project version
+P	Confirm Project Draft
+P	must not create duplicate confirmed project version
+ROW	Create Story Candidate Set	duplicate request must not duplicate candidate set
+P	Create Story Candidate Set
+P	duplicate request must not duplicate candidate set
+ROW	Adopt/Merge Story	same decision must not create duplicate adopted version
+P	Adopt/Merge Story
+P	same decision must not create duplicate adopted version
+ROW	Create Chapter Version	effectful version creation idempotent per semantic request
+P	Create Chapter Version
+P	effectful version creation idempotent per semantic request
+ROW	Create World Version	same
+P	Create World Version
+P	same
+ROW	Create DNA Candidate/Resolve	dedupe exact semantic request; different payload conflict
+P	Create DNA Candidate/Resolve
+P	dedupe exact semantic request; different payload conflict
+ROW	Create Canonical Script Version	same key+same content returns same version identity where policy allows
+P	Create Canonical Script Version
+P	same key+same content returns same version identity where policy allows
+ROW	Mother/Child/DNA Lock Request	must not create duplicate active review request
+P	Mother/Child/DNA Lock Request
+P	must not create duplicate active review request
+ROW	Build Production Package	same input fingerprint/hash may reuse exact immutable package build
+P	Build Production Package
+P	same input fingerprint/hash may reuse exact immutable package build
+ROW	Handoff receipt	duplicate navigation/handoff must not duplicate downstream task creation
+P	Handoff receipt
+P	duplicate navigation/handoff must not duplicate downstream task creation
+P	27. Change Request / Impact Propagation
+ROW	Change class	Owner	Minimum impact handling
+P	Change class
+P	Owner
+P	Minimum impact handling
+ROW	Story/World/Base DNA Canon change	Mother / Project Structure	new Structure Version; all dependent Topics evaluated
+P	Story/World/Base DNA Canon change
+P	Mother / Project Structure
+P	new Structure Version; all dependent Topics evaluated
+ROW	Chapter architecture change	Mother when canonical long-range structure affected	recompute related boundary/script/topic impacts
+P	Chapter architecture change
+P	Mother when canonical long-range structure affected
+P	recompute related boundary/script/topic impacts
+ROW	Topic scope/boundary change	Child / Topic	new Topic Blueprint version; downstream descendants REVERIFY_REQUIRED
+P	Topic scope/boundary change
+P	Child / Topic
+P	new Topic Blueprint version; downstream descendants REVERIFY_REQUIRED
+ROW	Canonical Script semantic change	Child / Topic	new script version; revalidate DNA enrichment/Blueprint/Package/downstream
+P	Canonical Script semantic change
+P	Child / Topic
+P	new script version; revalidate DNA enrichment/Blueprint/Package/downstream
+ROW	Machine schema-only change	projection owner	regenerate projection; canonical meaning unchanged; downstream schema consumers reverify
+P	Machine schema-only change
+P	projection owner
+P	regenerate projection; canonical meaning unchanged; downstream schema consumers reverify
+ROW	DNA enrichment change	Child / Topic	new DNA version/ref; impacted asset/video/edit outputs reverify
+P	DNA enrichment change
+P	Child / Topic
+P	new DNA version/ref; impacted asset/video/edit outputs reverify
+ROW	Rights/QA policy change	policy owner	affected Package/Blueprint readiness re-evaluated
+P	Rights/QA policy change
+P	policy owner
+P	affected Package/Blueprint readiness re-evaluated
+ROW	Naming change	ACPOS_SYSTEM	migrate references atomically; filename never identity
+P	Naming change
+P	ACPOS_SYSTEM
+P	migrate references atomically; filename never identity
+P	28. Error / Blocker / Recovery Contract
+ROW	Code	Condition	Recovery
+P	Code
+P	Condition
+P	Recovery
+ROW	CORE_CONTEXT_INVALID	Project/Topic/context mismatch	preserve draft; reselect exact context
+P	CORE_CONTEXT_INVALID
+P	Project/Topic/context mismatch
+P	preserve draft; reselect exact context
+ROW	CORE_STORY_CONTRACT_INCOMPLETE	required Story dimensions missing	return to Story work item; no autofill
+P	CORE_STORY_CONTRACT_INCOMPLETE
+P	required Story dimensions missing
+P	return to Story work item; no autofill
+ROW	CORE_CHAPTER_CONTRACT_INVALID	required chapter fields/lineage invalid	preserve last valid version
+P	CORE_CHAPTER_CONTRACT_INVALID
+P	required chapter fields/lineage invalid
+P	preserve last valid version
+ROW	CORE_WORLD_CONTRACT_INVALID	world rules/canon inconsistent	block version/review; resolve contradiction
+P	CORE_WORLD_CONTRACT_INVALID
+P	world rules/canon inconsistent
+P	block version/review; resolve contradiction
+ROW	CORE_DNA_CONTRACT_INVALID	DNA type/category/ref invalid	block candidate/resolve/lock; no latest fallback
+P	CORE_DNA_CONTRACT_INVALID
+P	DNA type/category/ref invalid
+P	block candidate/resolve/lock; no latest fallback
+ROW	CORE_BLUEPRINT_INCOMPLETE	Project/Topic blueprint required refs missing	block review/lock
+P	CORE_BLUEPRINT_INCOMPLETE
+P	Project/Topic blueprint required refs missing
+P	block review/lock
+ROW	CORE_SCRIPT_INVALID	script exact refs/provider-neutral content invalid	block version/readiness
+P	CORE_SCRIPT_INVALID
+P	script exact refs/provider-neutral content invalid
+P	block version/readiness
+ROW	CORE_MACHINE_PROJECTION_LOSSY	machine schema cannot represent canonical meaning	block projection; open schema gap
+P	CORE_MACHINE_PROJECTION_LOSSY
+P	machine schema cannot represent canonical meaning
+P	block projection; open schema gap
+ROW	CORE_DECISION_MISSING	human decision missing/stale	return to decision; no candidate adoption
+P	CORE_DECISION_MISSING
+P	human decision missing/stale
+P	return to decision; no candidate adoption
+ROW	CORE_VERSION_CONFLICT	expected version/hash mismatch	reload/compare/reapply as new candidate
+P	CORE_VERSION_CONFLICT
+P	expected version/hash mismatch
+P	reload/compare/reapply as new candidate
+ROW	CORE_LOCK_EVIDENCE_MISSING	reviewer/evidence/hash unresolved	block lock; never fabricate
+P	CORE_LOCK_EVIDENCE_MISSING
+P	reviewer/evidence/hash unresolved
+P	block lock; never fabricate
+ROW	CORE_NAMING_AUTHORITY_MISSING	naming authority ref unresolved	block package readiness
+P	CORE_NAMING_AUTHORITY_MISSING
+P	naming authority ref unresolved
+P	block package readiness
+ROW	CORE_PACKAGE_NOT_READY	one or more required handoff edges not consumer-ready	show exact blockers; no navigation bypass
+P	CORE_PACKAGE_NOT_READY
+P	one or more required handoff edges not consumer-ready
+P	show exact blockers; no navigation bypass
+ROW	CORE_PERMISSION_DENIED	permission/scope denied	server deny + visible reason
+P	CORE_PERMISSION_DENIED
+P	permission/scope denied
+P	server deny + visible reason
+ROW	CORE_UNDEFINED_AUTHORITY_GAP	unlisted required behavior/ref	BLOCK + report authority gap
+P	CORE_UNDEFINED_AUTHORITY_GAP
+P	unlisted required behavior/ref
+P	BLOCK + report authority gap
+P	29. Event / Consumer Contract
+ROW	Event	Producer owner	Consumer obligation
+P	Event
+P	Producer owner
+P	Consumer obligation
+ROW	project.created	Project lifecycle	Project/Context/Conversation projections
+P	project.created
+P	Project lifecycle
+P	Project/Context/Conversation projections
+ROW	story.candidate_set.created	Story	Candidate compare UI / audit
+P	story.candidate_set.created
+P	Story
+P	Candidate compare UI / audit
+ROW	story.candidates.compared	Story	Human decision surface / audit
+P	story.candidates.compared
+P	Story
+P	Human decision surface / audit
+ROW	story.core.adopted	Story	Continuity / Project Blueprint / impact
+P	story.core.adopted
+P	Story
+P	Continuity / Project Blueprint / impact
+ROW	story.revision.requested	Story	Working Draft/Conversation resume
+P	story.revision.requested
+P	Story
+P	Working Draft/Conversation resume
+ROW	chapter.architecture.version.created	Chapter	Continuity / Blueprint / impact
+P	chapter.architecture.version.created
+P	Chapter
+P	Continuity / Blueprint / impact
+ROW	world_bible.version.created	World	DNA/Blueprint/impact
+P	world_bible.version.created
+P	World
+P	DNA/Blueprint/impact
+ROW	dna.candidate_created	DNA	resolve/review
+P	dna.candidate_created
+P	DNA
+P	resolve/review
+ROW	dna.resolved	DNA	Blueprint/script/package readiness
+P	dna.resolved
+P	DNA
+P	Blueprint/script/package readiness
+ROW	dna.lock.requested	DNA	LockReview
+P	dna.lock.requested
+P	DNA
+P	LockReview
+ROW	script.version_created	Script	Machine projection / Blueprint / package
+P	script.version_created
+P	Script
+P	Machine projection / Blueprint / package
+ROW	topic.scope.confirmed	Topic	Script/Blueprint candidate
+P	topic.scope.confirmed
+P	Topic
+P	Script/Blueprint candidate
+ROW	topic.blueprint.candidate.created	Blueprint	Cross review
+P	topic.blueprint.candidate.created
+P	Blueprint
+P	Cross review
+ROW	topic.child_lock.requested	Blueprint	LockReview
+P	topic.child_lock.requested
+P	Blueprint
+P	LockReview
+ROW	topic.blueprint.locked	Blueprint	Package builder
+P	topic.blueprint.locked
+P	Blueprint
+P	Package builder
+ROW	production.package.ready	Package	Downstream readiness/navigation
+P	production.package.ready
+P	Package
+P	Downstream readiness/navigation
+ROW	core.change.requested	Change	Impact scanner
+P	core.change.requested
+P	Change
+P	Impact scanner
+ROW	core.version.superseded	Versioning	Historical projection / descendants reverify
+P	core.version.superseded
+P	Versioning
+P	Historical projection / descendants reverify
+P	Event payload MUST include exact entity/version/ref/correlation identity required by consumer.
+P	At-least-once delivery requires consumer idempotency.
+P	Consumer MUST reject stale/wrong-project/wrong-version payload; alias fallback that hides schema drift = BLOCK.
+P	30. Permission / Security / Review Separation
+ROW	Operation class	Required security semantics
+P	Operation class
+P	Required security semantics
+ROW	Read canonical refs	authorized project/topic scope + read permission
+P	Read canonical refs
+P	authorized project/topic scope + read permission
+ROW	Create/modify draft	write permission + expected version where applicable
+P	Create/modify draft
+P	write permission + expected version where applicable
+ROW	Candidate creation	candidate.create + exact source refs
+P	Candidate creation
+P	candidate.create + exact source refs
+ROW	Candidate decision	candidate.decide + human actor evidence
+P	Candidate decision
+P	candidate.decide + human actor evidence
+ROW	Project confirm/review	core.project permission + state guard
+P	Project confirm/review
+P	core.project permission + state guard
+ROW	DNA resolve/lock request	DNA-specific permission + exact candidate/version
+P	DNA resolve/lock request
+P	DNA-specific permission + exact candidate/version
+ROW	Blueprint validate/approve	separate review/approval permission where authority defines
+P	Blueprint validate/approve
+P	separate review/approval permission where authority defines
+ROW	Mother/Child lock	lock request permission; approval performed by authorized reviewer service/path, not AI
+P	Mother/Child lock
+P	lock request permission; approval performed by authorized reviewer service/path, not AI
+ROW	Script create	core.script.write or Current equivalent + exact Topic/Blueprint refs
+P	Script create
+P	core.script.write or Current equivalent + exact Topic/Blueprint refs
+ROW	Package export/handoff	readiness + target scope + permission
+P	Package export/handoff
+P	readiness + target scope + permission
+ROW	Audit history	permission-filtered; secrets/provider internals not exposed
+P	Audit history
+P	permission-filtered; secrets/provider internals not exposed
+P	31. Version / Retention / Archive Rules
+ROW	Artifact	Retention rule
+P	Artifact
+P	Retention rule
+ROW	Confirmed/Locked Canonical Versions	immutable historical record; never delete merely because superseded
+P	Confirmed/Locked Canonical Versions
+P	immutable historical record; never delete merely because superseded
+ROW	Candidates	preserve when referenced by decision/audit/lineage; retention policy exact-bound
+P	Candidates
+P	preserve when referenced by decision/audit/lineage; retention policy exact-bound
+ROW	Working Drafts	may have separate operational retention; cannot become hidden authority
+P	Working Drafts
+P	may have separate operational retention; cannot become hidden authority
+ROW	Conversation	owned by AI02 retention policy; CORE stores refs only
+P	Conversation
+P	owned by AI02 retention policy; CORE stores refs only
+ROW	Project/Topic Change Impact Evidence	retain with affected version lineage
+P	Project/Topic Change Impact Evidence
+P	retain with affected version lineage
+ROW	Lock review evidence	retain with lock/version lineage
+P	Lock review evidence
+P	retain with lock/version lineage
+ROW	Production Packages	immutable by version/hash; downstream references exact package
+P	Production Packages
+P	immutable by version/hash; downstream references exact package
+ROW	Machine projections	retain exact schema/version/hash when used by downstream evidence
+P	Machine projections
+P	retain exact schema/version/hash when used by downstream evidence
+ROW	Temporary generated previews	must not become authority; cleanup per lifecycle policy
+P	Temporary generated previews
+P	must not become authority; cleanup per lifecycle policy
+P	32. Audit / Observability / Evidence Contract
+ROW	Evidence	Minimum fields
+P	Evidence
+P	Minimum fields
+ROW	Candidate creation	actor, source refs/hashes, parent version, context fingerprint, candidate id
+P	Candidate creation
+P	actor, source refs/hashes, parent version, context fingerprint, candidate id
+ROW	Human decision	actor, decision type, compared candidates, rationale/evidence refs
+P	Human decision
+P	actor, decision type, compared candidates, rationale/evidence refs
+ROW	Version creation	new id/version/hash, parent refs, change summary, timestamp
+P	Version creation
+P	new id/version/hash, parent refs, change summary, timestamp
+ROW	Review/Lock	request id, target exact hash, reviewer path, status, evidence ref
+P	Review/Lock
+P	request id, target exact hash, reviewer path, status, evidence ref
+ROW	Change impact	changed owner, dependency graph edges, impacted descendants, REVERIFY_REQUIRED set
+P	Change impact
+P	changed owner, dependency graph edges, impacted descendants, REVERIFY_REQUIRED set
+ROW	Package readiness	required edge denominator, resolved/materialized/schema/consumer-ready status
+P	Package readiness
+P	required edge denominator, resolved/materialized/schema/consumer-ready status
+ROW	Handoff	source package/version, target workspace/scope, preserved context, receipt
+P	Handoff
+P	source package/version, target workspace/scope, preserved context, receipt
+ROW	Error/recovery	canonical error code, owner, state preserved, retry/resume disposition
+P	Error/recovery
+P	canonical error code, owner, state preserved, retry/resume disposition
+P	33. Exact Binding Ledger / 未授權不得猜
+ROW	Binding item	Status	Rule
+P	Binding item
+P	Status
+P	Rule
+ROW	Project/Story/Chapter/World/DNA API paths	PARTIALLY SOURCED / REQUIRE_CURRENT_BINDING	historical authority includes operation names/paths; current runtime must re-resolve
+P	Project/Story/Chapter/World/DNA API paths
+P	PARTIALLY SOURCED / REQUIRE_CURRENT_BINDING
+P	historical authority includes operation names/paths; current runtime must re-resolve
+ROW	Blueprint candidate/version API	REQUIRE_EXACT_BINDING	do not invent
+P	Blueprint candidate/version API
+P	REQUIRE_EXACT_BINDING
+P	do not invent
+ROW	Topic create/confirm/version API	REQUIRE_EXACT_BINDING	do not infer from page UI
+P	Topic create/confirm/version API
+P	REQUIRE_EXACT_BINDING
+P	do not infer from page UI
+ROW	Canonical Script API	PARTIALLY SOURCED / REQUIRE_CURRENT_BINDING	source shows createCanonicalScriptVersion path; current binding must verify
+P	Canonical Script API
+P	PARTIALLY SOURCED / REQUIRE_CURRENT_BINDING
+P	source shows createCanonicalScriptVersion path; current binding must verify
+ROW	Machine Structured Script schema/service	REQUIRE_EXACT_BINDING	this document defines semantics, not implementation id
+P	Machine Structured Script schema/service
+P	REQUIRE_EXACT_BINDING
+P	this document defines semantics, not implementation id
+ROW	Mother/Child/DNA Lock review service/permission	REQUIRE_EXACT_BINDING	reviewer/evidence path cannot be fabricated
+P	Mother/Child/DNA Lock review service/permission
+P	REQUIRE_EXACT_BINDING
+P	reviewer/evidence path cannot be fabricated
+ROW	Project/Topic/Script/DNA persistence tables	REQUIRE_EXACT_BINDING	historical names not current truth unless revalidated
+P	Project/Topic/Script/DNA persistence tables
+P	REQUIRE_EXACT_BINDING
+P	historical names not current truth unless revalidated
+ROW	Event transport/topic names	REQUIRE_EXACT_BINDING	event semantic names are contract, transport not fixed
+P	Event transport/topic names
+P	REQUIRE_EXACT_BINDING
+P	event semantic names are contract, transport not fixed
+ROW	Idempotency storage/TTL	REQUIRE_EXACT_BINDING	policy/runtime owner
+P	Idempotency storage/TTL
+P	REQUIRE_EXACT_BINDING
+P	policy/runtime owner
+ROW	Criteria/QA versions	REQUIRE_EXACT_BINDING	consume exact approved criteria
+P	Criteria/QA versions
+P	REQUIRE_EXACT_BINDING
+P	consume exact approved criteria
+ROW	Rights policy IDs	REQUIRE_EXACT_BINDING	consume exact current authority
+P	Rights policy IDs
+P	REQUIRE_EXACT_BINDING
+P	consume exact current authority
+ROW	Downstream ASSET/VIDEO/EDIT/QA route/workspace IDs	REQUIRE_EXACT_BINDING	handoff semantic contract only
+P	Downstream ASSET/VIDEO/EDIT/QA route/workspace IDs
+P	REQUIRE_EXACT_BINDING
+P	handoff semantic contract only
+P	34. Acceptance Matrix / 設計驗收分母
+ROW	UID	Requirement
+P	UID
+P	Requirement
+ROW	ACC-01	One Project Canon owner; no parallel authority
+P	ACC-01
+P	One Project Canon owner; no parallel authority
+ROW	ACC-02	Mother vs Child Lock separated
+P	ACC-02
+P	Mother vs Child Lock separated
+ROW	ACC-03	Raw AI cannot write canonical owner
+P	ACC-03
+P	Raw AI cannot write canonical owner
+ROW	ACC-04	Human decision before candidate adoption/confirm
+P	ACC-04
+P	Human decision before candidate adoption/confirm
+ROW	ACC-05	Immutable candidate/version lineage
+P	ACC-05
+P	Immutable candidate/version lineage
+ROW	ACC-06	14 Story dimensions covered
+P	ACC-06
+P	14 Story dimensions covered
+ROW	ACC-07	Chapter required fields/version rule covered
+P	ACC-07
+P	Chapter required fields/version rule covered
+ROW	ACC-08	World semantic dimensions/version rule covered
+P	ACC-08
+P	World semantic dimensions/version rule covered
+ROW	ACC-09	10 DNA classes covered
+P	ACC-09
+P	10 DNA classes covered
+ROW	ACC-10	Base DNA→Enrichment→Topic Locked rule covered
+P	ACC-10
+P	Base DNA→Enrichment→Topic Locked rule covered
+ROW	ACC-11	Project Structure Lock contents defined
+P	ACC-11
+P	Project Structure Lock contents defined
+ROW	ACC-12	Mother Change escalation/impact defined
+P	ACC-12
+P	Mother Change escalation/impact defined
+ROW	ACC-13	Production Topic/Horizon semantics defined
+P	ACC-13
+P	Production Topic/Horizon semantics defined
+ROW	ACC-14	Boundary + tension + continuity criteria defined
+P	ACC-14
+P	Boundary + tension + continuity criteria defined
+ROW	ACC-15	Payoff/Open Loop governance defined
+P	ACC-15
+P	Payoff/Open Loop governance defined
+ROW	ACC-16	Human Canonical Script defined
+P	ACC-16
+P	Human Canonical Script defined
+ROW	ACC-17	Production Script defined
+P	ACC-17
+P	Production Script defined
+ROW	ACC-18	Machine Structured Script projection rule defined
+P	ACC-18
+P	Machine Structured Script projection rule defined
+ROW	ACC-19	Provider-neutral boundary to AI03 defined
+P	ACC-19
+P	Provider-neutral boundary to AI03 defined
+ROW	ACC-20	Project Structure Blueprint split defined
+P	ACC-20
+P	Project Structure Blueprint split defined
+ROW	ACC-21	Topic Blueprint Candidate/Child Lock defined
+P	ACC-21
+P	Topic Blueprint Candidate/Child Lock defined
+ROW	ACC-22	Production Package exact refs defined
+P	ACC-22
+P	Production Package exact refs defined
+ROW	ACC-23	Downstream Handoff rules defined
+P	ACC-23
+P	Downstream Handoff rules defined
+ROW	ACC-24	Lifecycle state model defined
+P	ACC-24
+P	Lifecycle state model defined
+ROW	ACC-25	Transition guards defined
+P	ACC-25
+P	Transition guards defined
+ROW	ACC-26	Concurrency/version conflict defined
+P	ACC-26
+P	Concurrency/version conflict defined
+ROW	ACC-27	Idempotency defined
+P	ACC-27
+P	Idempotency defined
+ROW	ACC-28	Change impact propagation defined
+P	ACC-28
+P	Change impact propagation defined
+ROW	ACC-29	Canonical error/recovery defined
+P	ACC-29
+P	Canonical error/recovery defined
+ROW	ACC-30	Event/consumer contract defined
+P	ACC-30
+P	Event/consumer contract defined
+ROW	ACC-31	Permission/reviewer separation defined
+P	ACC-31
+P	Permission/reviewer separation defined
+ROW	ACC-32	Audit/evidence contract defined
+P	ACC-32
+P	Audit/evidence contract defined
+ROW	ACC-33	Exact binding ledger present
+P	ACC-33
+P	Exact binding ledger present
+ROW	ACC-34	No unsupported API/DB/runtime invention
+P	ACC-34
+P	No unsupported API/DB/runtime invention
+ROW	ACC-35	Negative regression cases pass
+P	ACC-35
+P	Negative regression cases pass
+ROW	ACC-36	Given/When/Then scenarios complete
+P	ACC-36
+P	Given/When/Then scenarios complete
+ROW	ACC-37	DOCX render QA pass
+P	ACC-37
+P	DOCX render QA pass
+ROW	ACC-38	A11y High/Medium/Low = 0
+P	ACC-38
+P	A11y High/Medium/Low = 0
+ROW	ACC-39	DOCX integrity PASS
+P	ACC-39
+P	DOCX integrity PASS
+ROW	ACC-40	Formal approval not self-granted
+P	ACC-40
+P	Formal approval not self-granted
+P	35. Negative Regression Matrix
+ROW	Case	Mutation	Expected
+P	Case
+P	Mutation
+P	Expected
+ROW	NEG-01	AI response written directly to Story canon	BLOCK
+P	NEG-01
+P	AI response written directly to Story canon
+P	BLOCK
+ROW	NEG-02	Candidate overwritten in place	BLOCK
+P	NEG-02
+P	Candidate overwritten in place
+P	BLOCK
+ROW	NEG-03	Score auto-locks Story/Blueprint	BLOCK
+P	NEG-03
+P	Score auto-locks Story/Blueprint
+P	BLOCK
+ROW	NEG-04	Story missing canonical dimension but system autofills	BLOCK
+P	NEG-04
+P	Story missing canonical dimension but system autofills
+P	BLOCK
+ROW	NEG-05	Chapter required field missing yet version created	BLOCK
+P	NEG-05
+P	Chapter required field missing yet version created
+P	BLOCK
+ROW	NEG-06	World rules conflict with locked canon	BLOCK
+P	NEG-06
+P	World rules conflict with locked canon
+P	BLOCK
+ROW	NEG-07	DNA resolve uses implicit latest version	BLOCK
+P	NEG-07
+P	DNA resolve uses implicit latest version
+P	BLOCK
+ROW	NEG-08	Topic enrichment silently mutates Base DNA	BLOCK
+P	NEG-08
+P	Topic enrichment silently mutates Base DNA
+P	BLOCK
+ROW	NEG-09	Topic created without valid Project/Mother lineage	BLOCK
+P	NEG-09
+P	Topic created without valid Project/Mother lineage
+P	BLOCK
+ROW	NEG-10	Topic recreates Project Story/World/DNA	BLOCK
+P	NEG-10
+P	Topic recreates Project Story/World/DNA
+P	BLOCK
+ROW	NEG-11	Boundary cut lacks explicit continuity state	BLOCK
+P	NEG-11
+P	Boundary cut lacks explicit continuity state
+P	BLOCK
+ROW	NEG-12	Intentional hook has no payoff/open-loop tracking	BLOCK
+P	NEG-12
+P	Intentional hook has no payoff/open-loop tracking
+P	BLOCK
+ROW	NEG-13	Provider-specific prompt stored as Canonical Script	BLOCK
+P	NEG-13
+P	Provider-specific prompt stored as Canonical Script
+P	BLOCK
+ROW	NEG-14	Machine script adds missing business instruction	BLOCK
+P	NEG-14
+P	Machine script adds missing business instruction
+P	BLOCK
+ROW	NEG-15	Machine projection drops canonical field silently	BLOCK
+P	NEG-15
+P	Machine projection drops canonical field silently
+P	BLOCK
+ROW	NEG-16	Media view changes canon semantics	BLOCK
+P	NEG-16
+P	Media view changes canon semantics
+P	BLOCK
+ROW	NEG-17	Canonical script create treated as AI approval	BLOCK
+P	NEG-17
+P	Canonical script create treated as AI approval
+P	BLOCK
+ROW	NEG-18	Topic Blueprint lacks exact DNA/script/boundary refs	BLOCK
+P	NEG-18
+P	Topic Blueprint lacks exact DNA/script/boundary refs
+P	BLOCK
+ROW	NEG-19	Child Lock reviewer/evidence/hash unresolved	BLOCK
+P	NEG-19
+P	Child Lock reviewer/evidence/hash unresolved
+P	BLOCK
+ROW	NEG-20	Production Package uses filename parsing as identity	BLOCK
+P	NEG-20
+P	Production Package uses filename parsing as identity
+P	BLOCK
+ROW	NEG-21	Production Package path exists but consumer cannot parse	BLOCK
+P	NEG-21
+P	Production Package path exists but consumer cannot parse
+P	BLOCK
+ROW	NEG-22	ASSET reselects source version on first production	BLOCK
+P	NEG-22
+P	ASSET reselects source version on first production
+P	BLOCK
+ROW	NEG-23	CORE starts ASSET provider/generation job	BLOCK BOUNDARY
+P	NEG-23
+P	CORE starts ASSET provider/generation job
+P	BLOCK BOUNDARY
+ROW	NEG-24	Later Mother version silently rewrites old Topic	BLOCK
+P	NEG-24
+P	Later Mother version silently rewrites old Topic
+P	BLOCK
+ROW	NEG-25	Mother change has no descendant impact set	BLOCK
+P	NEG-25
+P	Mother change has no descendant impact set
+P	BLOCK
+ROW	NEG-26	Child change preserves stale downstream PASS	FAIL REVERIFY
+P	NEG-26
+P	Child change preserves stale downstream PASS
+P	FAIL REVERIFY
+ROW	NEG-27	QA directly edits upstream canonical version	BLOCK
+P	NEG-27
+P	QA directly edits upstream canonical version
+P	BLOCK
+ROW	NEG-28	Duplicate lock request creates two active reviews	FAIL IDEMPOTENCY
+P	NEG-28
+P	Duplicate lock request creates two active reviews
+P	FAIL IDEMPOTENCY
+ROW	NEG-29	Same idempotency key different payload accepted	BLOCK
+P	NEG-29
+P	Same idempotency key different payload accepted
+P	BLOCK
+ROW	NEG-30	Stale expected_version overwrites newer canonical version	BLOCK
+P	NEG-30
+P	Stale expected_version overwrites newer canonical version
+P	BLOCK
+ROW	NEG-31	UI disabled but backend permission missing enforcement	FAIL SECURITY
+P	NEG-31
+P	UI disabled but backend permission missing enforcement
+P	FAIL SECURITY
+ROW	NEG-32	Historical package PASS used as Current readiness	FAIL CURRENT TRUTH
+P	NEG-32
+P	Historical package PASS used as Current readiness
+P	FAIL CURRENT TRUTH
+ROW	NEG-33	Missing criteria replaced by generic scoring schema	BLOCK
+P	NEG-33
+P	Missing criteria replaced by generic scoring schema
+P	BLOCK
+ROW	NEG-34	Missing exact binding invented in Word	FAIL DESIGN
+P	NEG-34
+P	Missing exact binding invented in Word
+P	FAIL DESIGN
+ROW	NEG-35	Design complete claimed as runtime/deployment complete	FAIL EVIDENCE
+P	NEG-35
+P	Design complete claimed as runtime/deployment complete
+P	FAIL EVIDENCE
+P	36. Logic-level Given / When / Then Scenarios
+ROW	#	Given	When	Then
+P	#
+P	Given
+P	When
+P	Then
+ROW	01	Given Project draft valid	When human confirms	Then enter CORE_MODELING with new confirmed version
+P	01
+P	Given Project draft valid
+P	When human confirms
+P	Then enter CORE_MODELING with new confirmed version
+ROW	02	Given missing Story dimension	When submit core review	Then block and return missing dimensions
+P	02
+P	Given missing Story dimension
+P	When submit core review
+P	Then block and return missing dimensions
+ROW	03	Given two Story candidates	When compare	Then preserve both + diff/rationale
+P	03
+P	Given two Story candidates
+P	When compare
+P	Then preserve both + diff/rationale
+ROW	04	Given human selects MERGE	When adoptOrMerge	Then create new immutable Story version
+P	04
+P	Given human selects MERGE
+P	When adoptOrMerge
+P	Then create new immutable Story version
+ROW	05	Given Chapter required field missing	When create version	Then block
+P	05
+P	Given Chapter required field missing
+P	When create version
+P	Then block
+ROW	06	Given World contradiction with locked canon	When create version	Then block/CR
+P	06
+P	Given World contradiction with locked canon
+P	When create version
+P	Then block/CR
+ROW	07	Given DNA candidate exact refs	When resolve	Then create DNAResolution preserving candidate
+P	07
+P	Given DNA candidate exact refs
+P	When resolve
+P	Then create DNAResolution preserving candidate
+ROW	08	Given DNA lock requested	When no reviewer/evidence	Then remain blocked
+P	08
+P	Given DNA lock requested
+P	When no reviewer/evidence
+P	Then remain blocked
+ROW	09	Given Project Core complete	When request Mother Lock	Then create review request, not auto-lock
+P	09
+P	Given Project Core complete
+P	When request Mother Lock
+P	Then create review request, not auto-lock
+ROW	10	Given approved Mother Lock	When create Topic	Then bind exact Project Structure Version
+P	10
+P	Given approved Mother Lock
+P	When create Topic
+P	Then bind exact Project Structure Version
+ROW	11	Given boundary candidates	When human selects	Then persist Production Scope/Horizon
+P	11
+P	Given boundary candidates
+P	When human selects
+P	Then persist Production Scope/Horizon
+ROW	12	Given cliffhanger boundary	When continuity state incomplete	Then block Topic Blueprint
+P	12
+P	Given cliffhanger boundary
+P	When continuity state incomplete
+P	Then block Topic Blueprint
+ROW	13	Given open loop	When lock blueprint	Then required payoff/open-loop ref remains tracked
+P	13
+P	Given open loop
+P	When lock blueprint
+P	Then required payoff/open-loop ref remains tracked
+ROW	14	Given canonical script draft	When human confirms	Then create provider-neutral immutable version
+P	14
+P	Given canonical script draft
+P	When human confirms
+P	Then create provider-neutral immutable version
+ROW	15	Given canonical script version	When machine projection	Then exact schema/version/hash and no semantic change
+P	15
+P	Given canonical script version
+P	When machine projection
+P	Then exact schema/version/hash and no semantic change
+ROW	16	Given machine schema cannot represent field	When project	Then block with schema gap
+P	16
+P	Given machine schema cannot represent field
+P	When project
+P	Then block with schema gap
+ROW	17	Given Topic Blueprint candidate	When DNA ref stale	Then block cross review/lock
+P	17
+P	Given Topic Blueprint candidate
+P	When DNA ref stale
+P	Then block cross review/lock
+ROW	18	Given all refs valid	When child lock approved	Then create immutable Topic Blueprint Version
+P	18
+P	Given all refs valid
+P	When child lock approved
+P	Then create immutable Topic Blueprint Version
+ROW	19	Given Topic locked	When build package	Then bind exact structure/blueprint/DNA/script refs
+P	19
+P	Given Topic locked
+P	When build package
+P	Then bind exact structure/blueprint/DNA/script refs
+ROW	20	Given package has missing consumer-ready edge	When validate readiness	Then PACKAGE_READY denied
+P	20
+P	Given package has missing consumer-ready edge
+P	When validate readiness
+P	Then PACKAGE_READY denied
+ROW	21	Given package ready	When navigate ASSET	Then preserve Project/Topic/Package context
+P	21
+P	Given package ready
+P	When navigate ASSET
+P	Then preserve Project/Topic/Package context
+ROW	22	Given ASSET tries source reselection	When handoff consumer validates	Then block
+P	22
+P	Given ASSET tries source reselection
+P	When handoff consumer validates
+P	Then block
+ROW	23	Given child script change	When new version approved	Then downstream affected descendants REVERIFY_REQUIRED
+P	23
+P	Given child script change
+P	When new version approved
+P	Then downstream affected descendants REVERIFY_REQUIRED
+ROW	24	Given Mother canon change	When impact scan	Then identify all affected Topics before new lock
+P	24
+P	Given Mother canon change
+P	When impact scan
+P	Then identify all affected Topics before new lock
+ROW	25	Given old Topic based on old Mother version	When new Mother version exists	Then old Topic remains historically bound
+P	25
+P	Given old Topic based on old Mother version
+P	When new Mother version exists
+P	Then old Topic remains historically bound
+ROW	26	Given stale lock request hash	When reviewer acts	Then block/version conflict
+P	26
+P	Given stale lock request hash
+P	When reviewer acts
+P	Then block/version conflict
+ROW	27	Given duplicate confirm request same payload	When repeated	Then no duplicate canonical version
+P	27
+P	Given duplicate confirm request same payload
+P	When repeated
+P	Then no duplicate canonical version
+ROW	28	Given same idempotency key different payload	When repeated	Then conflict BLOCK
+P	28
+P	Given same idempotency key different payload
+P	When repeated
+P	Then conflict BLOCK
+ROW	29	Given permission denied	When effectful action called directly	Then server DENY
+P	29
+P	Given permission denied
+P	When effectful action called directly
+P	Then server DENY
+ROW	30	Given historical PASS evidence	When current revision differs	Then set NOT_VERIFIED; affected items REVERIFY_REQUIRED
+P	30
+P	Given historical PASS evidence
+P	When current revision differs
+P	Then set NOT_VERIFIED; affected items REVERIFY_REQUIRED
+ROW	31	Given QA correction request	When upstream owner processes	Then new version; QA does not edit directly
+P	31
+P	Given QA correction request
+P	When upstream owner processes
+P	Then new version; QA does not edit directly
+ROW	32	Given missing current API binding	When construction handoff	Then REQUIRE_EXACT_BINDING, not invented
+P	32
+P	Given missing current API binding
+P	When construction handoff
+P	Then REQUIRE_EXACT_BINDING, not invented
+P	37. Construction Handoff / 後續施工契約
+ROW	Area	Must implement/prove	This Word does not prove
+P	Area
+P	Must implement/prove
+P	This Word does not prove
+ROW	Project/Story/Chapter/World/DNA services	exact API + persistence + permissions + state guards	current runtime paths/tables
+P	Project/Story/Chapter/World/DNA services
+P	exact API + persistence + permissions + state guards
+P	current runtime paths/tables
+ROW	Blueprint service	candidate/version/review/lock operations + exact refs	implementation existence
+P	Blueprint service
+P	candidate/version/review/lock operations + exact refs
+P	implementation existence
+ROW	Script system	canonical versioning + machine projection + view derivation	compiler/runtime deployment
+P	Script system
+P	canonical versioning + machine projection + view derivation
+P	compiler/runtime deployment
+ROW	Lock service	reviewer/evidence/hash/idempotency + Mother/Child/DNA separation	reviewer identities
+P	Lock service
+P	reviewer/evidence/hash/idempotency + Mother/Child/DNA separation
+P	reviewer identities
+ROW	Package builder	exact refs + dependency/readiness ledger + immutable package version	storage/runtime binding
+P	Package builder
+P	exact refs + dependency/readiness ledger + immutable package version
+P	storage/runtime binding
+ROW	Impact engine	dependency graph + affected descendants + REVERIFY_REQUIRED propagation	current DB/schema
+P	Impact engine
+P	dependency graph + affected descendants + REVERIFY_REQUIRED propagation
+P	current DB/schema
+ROW	Handoff	context-preserving transition + target permission + receipt	downstream job runtime
+P	Handoff
+P	context-preserving transition + target permission + receipt
+P	downstream job runtime
+ROW	Evidence	fresh current-head tests for success/failure/concurrency/idempotency	historical screenshot/PASS
+P	Evidence
+P	fresh current-head tests for success/failure/concurrency/idempotency
+P	historical screenshot/PASS
+ROW	Construction completion rule 只有 exact implementation + DB/API/permission binding + lock/reviewer enforcement + version/idempotency/concurrency + package consumer readiness + fresh current-head evidence 全部成立，才可宣告 Runtime 完成。
+P	Construction completion rule 只有 exact implementation + DB/API/permission binding + lock/reviewer enforcement + version/idempotency/concurrency + package consumer readiness + fresh current-head evidence 全部成立，才可宣告 Runtime 完成。
+P	38. Logic Denominator / 本文件完成分母
+ROW	Denominator	Count
+P	Denominator
+P	Count
+ROW	Core entities	34
+P	Core entities
+P	34
+ROW	Entity operation groups	17
+P	Entity operation groups
+P	17
+ROW	Normative invariants	81
+P	Normative invariants
+P	81
+ROW	Story canonical dimensions	14
+P	Story canonical dimensions
+P	14
+ROW	Chapter fields	14
+P	Chapter fields
+P	14
+ROW	World semantic dimensions	16
+P	World semantic dimensions
+P	16
+ROW	DNA classes	10
+P	DNA classes
+P	10
+ROW	Lifecycle states	21
+P	Lifecycle states
+P	21
+ROW	Transition guards	18
+P	Transition guards
+P	18
+ROW	Idempotency rules	11
+P	Idempotency rules
+P	11
+ROW	Error/recovery codes	15
+P	Error/recovery codes
+P	15
+ROW	Events	18
+P	Events
+P	18
+ROW	Exact binding items	12
+P	Exact binding items
+P	12
+ROW	Acceptance items	40
+P	Acceptance items
+P	40
+ROW	Negative regression cases	35
+P	Negative regression cases
+P	35
+ROW	Given/When/Then scenarios	32
+P	Given/When/Then scenarios
+P	32
+P	39. Document Closure / 文件完成與禁止誤報
+P	本文件可在內容、格式、A11y、render QA、integrity 全部通過後標記 DESIGN_CONTENT_COMPLETE。
+P	正式治理批准不得由 AI 自行宣告；approval evidence 必須另有授權 Reviewer。
+P	本文件不得用來宣告 CORE Runtime、API、DB、Lock、ASSET Handoff 或 Production Deployment 已完成。
+P	所有未從 Current Authority 精確綁定的 implementation identity 保持 REQUIRE_EXACT_BINDING。
+P	第 05 份 Creative Production AI 必須消費本文件的 exact Production Package/Blueprint/DNA/Script refs，不得建立第二個 CORE Canon。
+ROW	Closure status DESIGN_CONTENT_COMPLETE · FORMAL_APPROVAL_NOT_SELF_GRANTED · RUNTIME_NOT_PROVEN_BY_DOCUMENT
+P	Closure status DESIGN_CONTENT_COMPLETE · FORMAL_APPROVAL_NOT_SELF_GRANTED · RUNTIME_NOT_PROVEN_BY_DOCUMENT
+P	Appendix A. Source Interpretation Notes
+P	CORE FINAL_LOCKED 明確規定 Project Core + Topic Production、Story/Chapter/World/DNA structured contracts、Candidate/Lock/Package refs、Canonical Script provider-neutral、ASSET/VIDEO/EDIT readiness read-only。
+P	Workspace FINAL FREEZE 提供雙 Lock、Production Horizon、Boundary/Tension/Continuity、10 DNA 類別、Project Structure / Topic Blueprint 分層與 Just-in-Time Production 原則。
+P	CORE-01 重新規劃稿提供 Raw AI→Working Draft→Human Decision→Candidate→Version/Lock 的 UX/functional closure；本文件將其提升為 Mother logic contract。
+P	任何歷史 API/path/table 名稱若未重新由 Current Authority 綁定，只能當設計線索，不能被本文件宣告為目前 Runtime Truth。
+### PART word/header1.xml
+P	ORANGE ONE · ACPOS ACPOS-AI-04｜Mother Basic Logic Design
+### PART word/footer1.xml
+P	DESIGN ARTIFACT · NOT RUNTIME AUTHORITY · Current Governance v2.2.16 · 2026-09-20

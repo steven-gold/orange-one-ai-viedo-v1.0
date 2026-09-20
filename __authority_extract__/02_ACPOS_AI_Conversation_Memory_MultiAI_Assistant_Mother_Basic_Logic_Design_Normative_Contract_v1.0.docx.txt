@@ -1,0 +1,2517 @@
+### PART word/document.xml
+P	ORANGE ONE · ACPOS
+P	ACPOS-AI-02
+P	AI Conversation / Memory / Multi-AI / Assistant System
+P	AI 對話／記憶／多 AI／助理系統
+P	Mother Basic Logic Design / Normative Logic Contract
+母級基礎邏輯設計／規範性邏輯契約
+ROW	欄位	值
+P	欄位
+P	值
+ROW	Document UID	ACPOS-AI-02-MBLD-NLC
+P	Document UID
+P	ACPOS-AI-02-MBLD-NLC
+ROW	Artifact Revision	v1.0 / 2026-09-20
+P	Artifact Revision
+P	v1.0 / 2026-09-20
+ROW	Document Status	DESIGN_CONTENT_COMPLETE · FORMAL_APPROVAL_NOT_SELF_GRANTED
+P	Document Status
+P	DESIGN_CONTENT_COMPLETE · FORMAL_APPROVAL_NOT_SELF_GRANTED
+ROW	System Logic Owner	AI Conversation / Memory / Multi-AI / Assistant
+P	System Logic Owner
+P	AI Conversation / Memory / Multi-AI / Assistant
+ROW	Referenced Upstream Owner	ACPOS-AI-01 Global Intelligent Brain & Information Lifecycle
+P	Referenced Upstream Owner
+P	ACPOS-AI-01 Global Intelligent Brain & Information Lifecycle
+ROW	Referenced Downstream Runtime Owner	ACPOS-AI-03 AI Execution / Script Compiler / Tool / AIAPI Runtime
+P	Referenced Downstream Runtime Owner
+P	ACPOS-AI-03 AI Execution / Script Compiler / Tool / AIAPI Runtime
+ROW	Current Governance UID	GOV-REV-20260920-CROSS-STAGE-MATERIALIZATION-CONSUMER-READINESS-HARDENING
+P	Current Governance UID
+P	GOV-REV-20260920-CROSS-STAGE-MATERIALIZATION-CONSUMER-READINESS-HARDENING
+ROW	Current Governance Display Version	v2.2.16
+P	Current Governance Display Version
+P	v2.2.16
+ROW	Verified Repository Branch	rebuild-v2.1.1
+P	Verified Repository Branch
+P	rebuild-v2.1.1
+ROW	Verified HEAD SHA	5a6b72864dd8957118d0232f00358c49d0eb36c4
+P	Verified HEAD SHA
+P	5a6b72864dd8957118d0232f00358c49d0eb36c4
+ROW	Product Runtime Claim	NONE — this Word is design authority candidate, not proof of implementation
+P	Product Runtime Claim
+P	NONE — this Word is design authority candidate, not proof of implementation
+ROW	封板邊界｜本文件只封閉 ACPOS-AI-02 的「系統邏輯設計內容分母」。正式 Governance promotion、API/DB/Permission exact binding、Runtime implementation、Provider execution、Production acceptance 不得由本文件或 AI 自行宣告。
+P	封板邊界｜本文件只封閉 ACPOS-AI-02 的「系統邏輯設計內容分母」。正式 Governance promotion、API/DB/Permission exact binding、Runtime implementation、Provider execution、Production acceptance 不得由本文件或 AI 自行宣告。
+P	0. 文件使用方式與不可誤解原則
+P	本文件定義 ACPOS 全站唯一 Shared Conversation Core 的母級邏輯。任何有 AI 對話的頁面或工作台 MUST 使用這一套 Conversation / Thread / Branch / Message / Reference / Resume / Assistant / Memory Projection 契約；Domain Extension 只能新增 Domain-specific context、permission、action、read-model 與 presentation，MUST_NOT 建立第二套聊天核心。
+ROW	關鍵字	中文語義	執行效果
+P	關鍵字
+P	中文語義
+P	執行效果
+ROW	MUST	必須	缺失即不符合本文件。
+P	MUST
+P	必須
+P	缺失即不符合本文件。
+ROW	MUST_NOT	禁止	任何實作不得違反。
+P	MUST_NOT
+P	禁止
+P	任何實作不得違反。
+ROW	REQUIRED	驗收必要	缺失不得 PASS。
+P	REQUIRED
+P	驗收必要
+P	缺失不得 PASS。
+ROW	BLOCK	阻擋	不得以 fallback、猜測或 UI workaround 繞過。
+P	BLOCK
+P	阻擋
+P	不得以 fallback、猜測或 UI workaround 繞過。
+ROW	REVERIFY_REQUIRED	需要重驗	上游 Context/Decision/Version 改變後，相關對話產物不得沿用舊通過狀態。
+P	REVERIFY_REQUIRED
+P	需要重驗
+P	上游 Context/Decision/Version 改變後，相關對話產物不得沿用舊通過狀態。
+ROW	REQUIRE_EXACT_BINDING	等待精確綁定	本設計需要正式 UID/Schema/Runtime owner，但 Current Authority 尚未在本文件中合法解析；不得猜。
+P	REQUIRE_EXACT_BINDING
+P	等待精確綁定
+P	本設計需要正式 UID/Schema/Runtime owner，但 Current Authority 尚未在本文件中合法解析；不得猜。
+ROW	REFERENCE_ONLY	只引用	本文件依賴另一 System Logic Owner；不得複製成第二 Authority。
+P	REFERENCE_ONLY
+P	只引用
+P	本文件依賴另一 System Logic Owner；不得複製成第二 Authority。
+ROW	最高原則｜ONE SHARED CONVERSATION CORE / ONE MESSAGE IDENTITY / ONE REFERENCE GRAPH / ONE RESUME SEMANTICS / ONE ASSISTANT ROLE。Domain 頁面可以不同，但 Conversation Core 不得分叉。
+P	最高原則｜ONE SHARED CONVERSATION CORE / ONE MESSAGE IDENTITY / ONE REFERENCE GRAPH / ONE RESUME SEMANTICS / ONE ASSISTANT ROLE。Domain 頁面可以不同，但 Conversation Core 不得分叉。
+P	1. Design Identity / 設計身份、目的與邊界
+ROW	項目	規範
+P	項目
+P	規範
+ROW	Primary Purpose	建立全站共用、可追溯、可分支、可恢復、可索引、可多 AI 討論、可由 Assistant 紀錄的 Conversation substrate，使對話不是孤立文字，而是可綁 Project/Topic/Task/Decision/Version/Context 的工作狀態。
+P	Primary Purpose
+P	建立全站共用、可追溯、可分支、可恢復、可索引、可多 AI 討論、可由 Assistant 紀錄的 Conversation substrate，使對話不是孤立文字，而是可綁 Project/Topic/Task/Decision/Version/Context 的工作狀態。
+ROW	System Role	Conversation Core 管理 conversation identity、message lineage、reference graph、branch/resume、participant aliases、assistant records、conversation-local memory projection；不取代 Domain Authority、Global Context Truth 或 AI Runtime Router。
+P	System Role
+P	Conversation Core 管理 conversation identity、message lineage、reference graph、branch/resume、participant aliases、assistant records、conversation-local memory projection；不取代 Domain Authority、Global Context Truth 或 AI Runtime Router。
+ROW	Included	Conversation、Thread、Branch、Message、AI Response Ref、Assistant Record、Multi-AI Session、Cross-AI Relation、Context Snapshot Ref、Context Fingerprint、Resume Pointer、Conversation Memory Projection、Attachment Ref、Parser、Events、Audit、Errors。
+P	Included
+P	Conversation、Thread、Branch、Message、AI Response Ref、Assistant Record、Multi-AI Session、Cross-AI Relation、Context Snapshot Ref、Context Fingerprint、Resume Pointer、Conversation Memory Projection、Attachment Ref、Parser、Events、Audit、Errors。
+ROW	Excluded	Provider/model route selection、Tool execution、Script compilation、Domain business decisions、Project/Topic Canon mutation、Experience global admission、external data retrieval engine、runtime queue/DLQ、Production deploy。
+P	Excluded
+P	Provider/model route selection、Tool execution、Script compilation、Domain business decisions、Project/Topic Canon mutation、Experience global admission、external data retrieval engine、runtime queue/DLQ、Production deploy。
+ROW	User Experience Principle	Conversation-first：對話與其控制必須同一工作區；不可把 AI 輸入欄與對話歷史拆成兩個互不連續的頁面/流程。
+P	User Experience Principle
+P	Conversation-first：對話與其控制必須同一工作區；不可把 AI 輸入欄與對話歷史拆成兩個互不連續的頁面/流程。
+ROW	Core Inheritance	ACPOS-AI-01 owns truth/context/impact/experience governance；ACPOS-AI-03 owns provider/runtime execution；ACPOS-AI-02 references both and owns conversation semantics only.
+P	Core Inheritance
+P	ACPOS-AI-01 owns truth/context/impact/experience governance；ACPOS-AI-03 owns provider/runtime execution；ACPOS-AI-02 references both and owns conversation semantics only.
+P	2. Authority / Source Basis / 權威與來源使用規則
+ROW	來源層	本文件採用內容	禁止誤用
+P	來源層
+P	本文件採用內容
+P	禁止誤用
+ROW	Current Governance v2.2.16	ONE AUTHORITY、search-before-create、Current vs Evidence 分離、Work Unit/Resume、跨階段 consumer readiness、禁止假完成。	不得把 Stage-local state 當 Conversation business authority。
+P	Current Governance v2.2.16
+P	ONE AUTHORITY、search-before-create、Current vs Evidence 分離、Work Unit/Resume、跨階段 consumer readiness、禁止假完成。
+P	不得把 Stage-local state 當 Conversation business authority。
+ROW	ACPOS-AI-01 v4	T0–T7、Context Package、Context Snapshot/Fingerprint、Truth/Conflict、Retention owner、Experience/Learning owner。	本文件只引用，不重新建立第二套 Context/Truth/Experience 規則。
+P	ACPOS-AI-01 v4
+P	T0–T7、Context Package、Context Snapshot/Fingerprint、Truth/Conflict、Retention owner、Experience/Learning owner。
+P	本文件只引用，不重新建立第二套 Context/Truth/Experience 規則。
+ROW	AI Conversation Intelligence Architecture Update	唯一 AI Conversation Core、Assistant=紀錄整理引擎、Conversation Continuity、Decision Memory、Context Resolver 邊界、Extension 模式。	不得把舊設計敘述當成 Runtime 已存在證據。
+P	AI Conversation Intelligence Architecture Update
+P	唯一 AI Conversation Core、Assistant=紀錄整理引擎、Conversation Continuity、Decision Memory、Context Resolver 邊界、Extension 模式。
+P	不得把舊設計敘述當成 Runtime 已存在證據。
+ROW	STR Conversation-First FINAL LOCKED design	#AI/#AST/#CONV/#BR、Single/Multi 索引、Cross-AI、Assistant secretary、Branch、@/# parser、chronology、message relations。	STR-specific layout/market functions不升格為全站 shared business authority。
+P	STR Conversation-First FINAL LOCKED design
+P	#AI/#AST/#CONV/#BR、Single/Multi 索引、Cross-AI、Assistant secretary、Branch、@/# parser、chronology、message relations。
+P	STR-specific layout/market functions不升格為全站 shared business authority。
+ROW	Current construction master / historical domain specs	conversation_id/thread_id、branch operation、shared conversation usages、legacy exact names作為搜尋與 reconcile 線索。	舊 R9/歷史 master 不可壓過 Current Governance；exact binding 仍需 Current-admissible owner。
+P	Current construction master / historical domain specs
+P	conversation_id/thread_id、branch operation、shared conversation usages、legacy exact names作為搜尋與 reconcile 線索。
+P	舊 R9/歷史 master 不可壓過 Current Governance；exact binding 仍需 Current-admissible owner。
+P	若任何來源互相衝突，MUST 先依 Current Governance、Current Canonical Owner 與 ACPOS-AI-01 Truth/Context precedence 解決；不得由本文件用「最新看起來合理」自行覆蓋。
+P	3. Shared Conversation Core Architecture / 共用對話核心架構
+P	Shared Conversation Core MUST 是所有對話型工作區的唯一底座。Domain Extension 只提供 context sources、domain commands、permission projection、render extension 與 business handoff；Conversation identity、message storage semantics、reference grammar、branch/resume、assistant record 與 Multi-AI relation model MUST 共用。
+ROW	Layer	Owner / Responsibility	Hard Boundary
+P	Layer
+P	Owner / Responsibility
+P	Hard Boundary
+ROW	L1 Surface Integration	Domain page/workspace renders the shared conversation surface.	MUST_NOT fork core message/reference/branch logic.
+P	L1 Surface Integration
+P	Domain page/workspace renders the shared conversation surface.
+P	MUST_NOT fork core message/reference/branch logic.
+ROW	L2 Conversation Identity	Conversation/Thread/Branch lifecycle, lineage and scope.	Identity is ACPOS-owned, not Provider-owned.
+P	L2 Conversation Identity
+P	Conversation/Thread/Branch lifecycle, lineage and scope.
+P	Identity is ACPOS-owned, not Provider-owned.
+ROW	L3 Message Graph	Immutable message identity, sequence, reply/reference/review edges.	Timeline and relation graph are separate projections.
+P	L3 Message Graph
+P	Immutable message identity, sequence, reply/reference/review edges.
+P	Timeline and relation graph are separate projections.
+ROW	L4 Coordination	Single AI, Multi-AI session aliases, Cross-AI relation metadata.	Aliases ≠ provider/model/role authority.
+P	L4 Coordination
+P	Single AI, Multi-AI session aliases, Cross-AI relation metadata.
+P	Aliases ≠ provider/model/role authority.
+ROW	L5 Assistant	Meeting secretary/record engine.	MUST_NOT act as independent analyst or third AI mode.
+P	L5 Assistant
+P	Meeting secretary/record engine.
+P	MUST_NOT act as independent analyst or third AI mode.
+ROW	L6 Continuity	Context snapshot ref/fingerprint, resume pointer, stale detection.	Actual Context truth owned by ACPOS-AI-01.
+P	L6 Continuity
+P	Context snapshot ref/fingerprint, resume pointer, stale detection.
+P	Actual Context truth owned by ACPOS-AI-01.
+ROW	L7 Runtime Bridge	Dispatch intent, execution job ref, provider brand result.	Execution/routing owned by ACPOS-AI-03.
+P	L7 Runtime Bridge
+P	Dispatch intent, execution job ref, provider brand result.
+P	Execution/routing owned by ACPOS-AI-03.
+P	4. Owner Boundary & Extension Model / Owner 邊界與 Extension 模式
+ROW	概念	唯一 Owner	ACPOS-AI-02 角色
+P	概念
+P	唯一 Owner
+P	ACPOS-AI-02 角色
+ROW	Truth / Context / Impact / Experience	ACPOS-AI-01	REFERENCE_ONLY；只保存 exact refs/fingerprints needed for continuity.
+P	Truth / Context / Impact / Experience
+P	ACPOS-AI-01
+P	REFERENCE_ONLY；只保存 exact refs/fingerprints needed for continuity.
+ROW	Conversation / Thread / Branch / Message / Reference Graph	ACPOS-AI-02	CANONICAL OWNER。
+P	Conversation / Thread / Branch / Message / Reference Graph
+P	ACPOS-AI-02
+P	CANONICAL OWNER。
+ROW	Single/Multi AI conversation semantics	ACPOS-AI-02	CANONICAL OWNER。
+P	Single/Multi AI conversation semantics
+P	ACPOS-AI-02
+P	CANONICAL OWNER。
+ROW	AI Assistant meeting secretary	ACPOS-AI-02	CANONICAL OWNER。
+P	AI Assistant meeting secretary
+P	ACPOS-AI-02
+P	CANONICAL OWNER。
+ROW	Provider Router / Tool / Job / Retry engine	ACPOS-AI-03	REFERENCE_ONLY；只接 execution/job/result refs。
+P	Provider Router / Tool / Job / Retry engine
+P	ACPOS-AI-03
+P	REFERENCE_ONLY；只接 execution/job/result refs。
+ROW	Project/Topic/Blueprint/DNA/Canonical Script	ACPOS-AI-04	Conversation 只引用。
+P	Project/Topic/Blueprint/DNA/Canonical Script
+P	ACPOS-AI-04
+P	Conversation 只引用。
+ROW	ASSET/VIDEO/EDIT/VOICE/QA business operations	ACPOS-AI-05	Conversation 只提供 shared interaction substrate。
+P	ASSET/VIDEO/EDIT/VOICE/QA business operations
+P	ACPOS-AI-05
+P	Conversation 只提供 shared interaction substrate。
+ROW	Enterprise/Social/Strategy/System Engineer domain logic	ACPOS-AI-06/07/08/09	各自 Extension；不得建立第二套 Conversation Core。
+P	Enterprise/Social/Strategy/System Engineer domain logic
+P	ACPOS-AI-06/07/08/09
+P	各自 Extension；不得建立第二套 Conversation Core。
+ROW	Extension Contract｜同一 conversation entity model + 同一 @/# parser + 同一 #AI/#AST/#CONV/#BR semantics + 同一 resume/stale rules。Extension MAY 增加 Domain Context、commands、drawers、read models；MUST_NOT 改變核心 identity semantics。
+P	Extension Contract｜同一 conversation entity model + 同一 @/# parser + 同一 #AI/#AST/#CONV/#BR semantics + 同一 resume/stale rules。Extension MAY 增加 Domain Context、commands、drawers、read models；MUST_NOT 改變核心 identity semantics。
+P	5. Core Entity Inventory / 核心實體與唯一責任
+ROW	Entity	Responsibility
+P	Entity
+P	Responsibility
+ROW	Conversation	對話根容器；保存 scope、title、created/closed status、active thread/branch refs，不等於 Project。
+P	Conversation
+P	對話根容器；保存 scope、title、created/closed status、active thread/branch refs，不等於 Project。
+ROW	ConversationThread	主線或分支內的有序訊息容器；擁有 thread_id。
+P	ConversationThread
+P	主線或分支內的有序訊息容器；擁有 thread_id。
+ROW	ConversationBranch	由 exact source message 建立；保存 parent thread/message 與 branch context snapshot。
+P	ConversationBranch
+P	由 exact source message 建立；保存 parent thread/message 與 branch context snapshot。
+ROW	ConversationMessage	User/AI/Assistant/System record 的不可混淆訊息實體。
+P	ConversationMessage
+P	User/AI/Assistant/System record 的不可混淆訊息實體。
+ROW	AIResponseIdentity	每則 AI 回覆的 canonical #AI reference 與 response metadata。
+P	AIResponseIdentity
+P	每則 AI 回覆的 canonical #AI reference 與 response metadata。
+ROW	AssistantRecord	每則 Assistant 紀錄/摘要的 canonical #AST reference。
+P	AssistantRecord
+P	每則 Assistant 紀錄/摘要的 canonical #AST reference。
+ROW	ConversationReference	解析 #AI/#AST/#CONV/#BR/attachment/domain refs 的 typed reference。
+P	ConversationReference
+P	解析 #AI/#AST/#CONV/#BR/attachment/domain refs 的 typed reference。
+ROW	MessageRelationEdge	reply_to / references / review_target / derived_from / branch_origin 等關係。
+P	MessageRelationEdge
+P	reply_to / references / review_target / derived_from / branch_origin 等關係。
+ROW	ConversationAttachmentRef	附件的 conversation binding；內容處理結果另由其 owner 提供。
+P	ConversationAttachmentRef
+P	附件的 conversation binding；內容處理結果另由其 owner 提供。
+ROW	ConversationContextBinding	message request 綁定 exact ContextSnapshotRef/Fingerprint。
+P	ConversationContextBinding
+P	message request 綁定 exact ContextSnapshotRef/Fingerprint。
+ROW	ResumePointer	使用者/工作區恢復時的 exact conversation/thread/branch/sequence/context identity。
+P	ResumePointer
+P	使用者/工作區恢復時的 exact conversation/thread/branch/sequence/context identity。
+ROW	MultiAISession	Multi-AI 一次參與者集合與共用 original question/context。
+P	MultiAISession
+P	Multi-AI 一次參與者集合與共用 original question/context。
+ROW	MultiAIParticipantAlias	A/B/C 等 session-local alias；不等於 provider/model/job role。
+P	MultiAIParticipantAlias
+P	A/B/C 等 session-local alias；不等於 provider/model/job role。
+ROW	CrossAIRound	Cross review/compare/revision/evidence check 的 round identity。
+P	CrossAIRound
+P	Cross review/compare/revision/evidence check 的 round identity。
+ROW	CrossAIRelation	reviewer/target refs/relation type/round。
+P	CrossAIRelation
+P	reviewer/target refs/relation type/round。
+ROW	AssistantMeetingRecord	Conversation-level structured meeting record。
+P	AssistantMeetingRecord
+P	Conversation-level structured meeting record。
+ROW	ConversationMemoryProjection	對話可恢復所需的結構化摘要/節點/開放問題/decision refs；不是 Global Experience。
+P	ConversationMemoryProjection
+P	對話可恢復所需的結構化摘要/節點/開放問題/decision refs；不是 Global Experience。
+ROW	DecisionMemoryLink	對話中已確認 Decision 的 reference；Decision 本體 Authority 在上游 owner。
+P	DecisionMemoryLink
+P	對話中已確認 Decision 的 reference；Decision 本體 Authority 在上游 owner。
+ROW	ConversationExtensionBinding	Domain page/module 與 Shared Conversation Core 的合法 binding。
+P	ConversationExtensionBinding
+P	Domain page/module 與 Shared Conversation Core 的合法 binding。
+ROW	ConversationAuditEnvelope	actor/time/correlation/idempotency/context fingerprint/transition/evidence refs。
+P	ConversationAuditEnvelope
+P	actor/time/correlation/idempotency/context fingerprint/transition/evidence refs。
+P	5.1 Entity Hierarchy / Relationship Matrix
+ROW	Parent	Cardinality	Child	Rule
+P	Parent
+P	Cardinality
+P	Child
+P	Rule
+ROW	Conversation	1..n	ConversationThread	Conversation owns thread membership; Thread cannot belong to multiple Conversations.
+P	Conversation
+P	1..n
+P	ConversationThread
+P	Conversation owns thread membership; Thread cannot belong to multiple Conversations.
+ROW	ConversationThread	0..n	ConversationBranch	Branch is a specialized lineage fork with separate thread identity.
+P	ConversationThread
+P	0..n
+P	ConversationBranch
+P	Branch is a specialized lineage fork with separate thread identity.
+ROW	ConversationThread	1..n	ConversationMessage	Messages are ordered by immutable server_sequence within conversation timeline.
+P	ConversationThread
+P	1..n
+P	ConversationMessage
+P	Messages are ordered by immutable server_sequence within conversation timeline.
+ROW	ConversationMessage	0..1	AIResponseIdentity	Required when sender_type=AI.
+P	ConversationMessage
+P	0..1
+P	AIResponseIdentity
+P	Required when sender_type=AI.
+ROW	ConversationMessage	0..1	AssistantRecord	Required when sender_type=ASSISTANT.
+P	ConversationMessage
+P	0..1
+P	AssistantRecord
+P	Required when sender_type=ASSISTANT.
+ROW	ConversationMessage	0..n	MessageRelationEdge	Edges never rewrite chronology.
+P	ConversationMessage
+P	0..n
+P	MessageRelationEdge
+P	Edges never rewrite chronology.
+ROW	ConversationMessage	1	ConversationContextBinding	Every effectful AI request/response chain needs exact context binding.
+P	ConversationMessage
+P	1
+P	ConversationContextBinding
+P	Every effectful AI request/response chain needs exact context binding.
+ROW	MultiAISession	1..n	MultiAIParticipantAlias	Aliases are session-local and immutable for that session.
+P	MultiAISession
+P	1..n
+P	MultiAIParticipantAlias
+P	Aliases are session-local and immutable for that session.
+ROW	CrossAIRound	1..n	CrossAIRelation	Each relation targets exact response refs.
+P	CrossAIRound
+P	1..n
+P	CrossAIRelation
+P	Each relation targets exact response refs.
+ROW	Conversation	0..n	ConversationExtensionBinding	Multiple domain surfaces may reference same core only when scope permission allows.
+P	Conversation
+P	0..n
+P	ConversationExtensionBinding
+P	Multiple domain surfaces may reference same core only when scope permission allows.
+ROW	Conversation	0..n	AssistantMeetingRecord	Records append versions; do not silently overwrite prior record.
+P	Conversation
+P	0..n
+P	AssistantMeetingRecord
+P	Records append versions; do not silently overwrite prior record.
+ROW	Conversation	0..n	ConversationMemoryProjection	Projection versions append and point to exact source refs.
+P	Conversation
+P	0..n
+P	ConversationMemoryProjection
+P	Projection versions append and point to exact source refs.
+P	6. Business Entity × Operation Matrix / 實體 × 操作
+ROW	Entity	Operation	Normative Meaning
+P	Entity
+P	Operation
+P	Normative Meaning
+ROW	Conversation	CREATE_CONVERSATION	Create new logical conversation with scope + extension binding.
+P	Conversation
+P	CREATE_CONVERSATION
+P	Create new logical conversation with scope + extension binding.
+ROW	Conversation	OPEN_CONVERSATION	Load exact history, active thread/branch, reference graph and resume state.
+P	Conversation
+P	OPEN_CONVERSATION
+P	Load exact history, active thread/branch, reference graph and resume state.
+ROW	Conversation	RENAME_CONVERSATION	Rename display title only; identity stays unchanged.
+P	Conversation
+P	RENAME_CONVERSATION
+P	Rename display title only; identity stays unchanged.
+ROW	Conversation	PIN_UNPIN	User-facing organization only; no authority effect.
+P	Conversation
+P	PIN_UNPIN
+P	User-facing organization only; no authority effect.
+ROW	Conversation	CLOSE_ARCHIVE	Close/archive per retention policy; does not erase immutable dependencies.
+P	Conversation
+P	CLOSE_ARCHIVE
+P	Close/archive per retention policy; does not erase immutable dependencies.
+ROW	ConversationThread	SEND_MESSAGE	Append user message and initiate governed response intent.
+P	ConversationThread
+P	SEND_MESSAGE
+P	Append user message and initiate governed response intent.
+ROW	ConversationThread	STOP_RESPONSE	Request cancellation/stop for active response; actual job semantics owned by AI-03.
+P	ConversationThread
+P	STOP_RESPONSE
+P	Request cancellation/stop for active response; actual job semantics owned by AI-03.
+ROW	ConversationBranch	CREATE_BRANCH	Fork from exact source message + context snapshot.
+P	ConversationBranch
+P	CREATE_BRANCH
+P	Fork from exact source message + context snapshot.
+ROW	ConversationBranch	ADOPT_BRANCH_SUMMARY	Explicitly adopt approved branch summary/reference into parent context; no silent merge.
+P	ConversationBranch
+P	ADOPT_BRANCH_SUMMARY
+P	Explicitly adopt approved branch summary/reference into parent context; no silent merge.
+ROW	ConversationReference	RESOLVE_REFERENCE	Resolve typed canonical ref; ambiguity or scope violation blocks.
+P	ConversationReference
+P	RESOLVE_REFERENCE
+P	Resolve typed canonical ref; ambiguity or scope violation blocks.
+ROW	ConversationMessage	REFERENCE_MESSAGE	Insert exact ref into composer/context request.
+P	ConversationMessage
+P	REFERENCE_MESSAGE
+P	Insert exact ref into composer/context request.
+ROW	ConversationMessage	CONTINUE_FROM_MESSAGE	Extend from exact message with required ancestry only.
+P	ConversationMessage
+P	CONTINUE_FROM_MESSAGE
+P	Extend from exact message with required ancestry only.
+ROW	MultiAISession	START_MULTI_AI	Resolve participant set and shared original question/context.
+P	MultiAISession
+P	START_MULTI_AI
+P	Resolve participant set and shared original question/context.
+ROW	MultiAISession	TARGET_PARTICIPANTS	Apply @A/@B/@C/@全部AI to session aliases.
+P	MultiAISession
+P	TARGET_PARTICIPANTS
+P	Apply @A/@B/@C/@全部AI to session aliases.
+ROW	CrossAIRound	CROSS_REVIEW	One/more AI critique exact target responses.
+P	CrossAIRound
+P	CROSS_REVIEW
+P	One/more AI critique exact target responses.
+ROW	CrossAIRound	CROSS_COMPARE	One AI compares multiple exact response refs.
+P	CrossAIRound
+P	CROSS_COMPARE
+P	One AI compares multiple exact response refs.
+ROW	CrossAIRound	REVISION	AI revises its prior response using exact critique refs.
+P	CrossAIRound
+P	REVISION
+P	AI revises its prior response using exact critique refs.
+ROW	CrossAIRound	EVIDENCE_CHECK	AI evaluates claims against exact source/evidence refs.
+P	CrossAIRound
+P	EVIDENCE_CHECK
+P	AI evaluates claims against exact source/evidence refs.
+ROW	AssistantRecord	RECORD	Record exact message/branch/conversation scope.
+P	AssistantRecord
+P	RECORD
+P	Record exact message/branch/conversation scope.
+ROW	AssistantRecord	SUMMARIZE	Summarize exact scope while preserving consensus/disagreement/open issues.
+P	AssistantRecord
+P	SUMMARIZE
+P	Summarize exact scope while preserving consensus/disagreement/open issues.
+ROW	AssistantRecord	PREPARE_BRANCH_SUMMARY	Prepare candidate summary for human adoption; no auto-merge.
+P	AssistantRecord
+P	PREPARE_BRANCH_SUMMARY
+P	Prepare candidate summary for human adoption; no auto-merge.
+ROW	ConversationMemoryProjection	REFRESH_PROJECTION	Regenerate from exact source refs; prior projection remains traceable.
+P	ConversationMemoryProjection
+P	REFRESH_PROJECTION
+P	Regenerate from exact source refs; prior projection remains traceable.
+P	7. Conversation Identity & Scope Contract / 對話身份與 Scope
+ROW	Field	Required Rule
+P	Field
+P	Required Rule
+ROW	conversation_id	MUST be globally unique within ACPOS Current data authority.
+P	conversation_id
+P	MUST be globally unique within ACPOS Current data authority.
+ROW	conversation_ref	#CONV-xxxx display/reference form; canonical stored ref MUST be unambiguous.
+P	conversation_ref
+P	#CONV-xxxx display/reference form; canonical stored ref MUST be unambiguous.
+ROW	scope_type	MUST identify standalone/domain/project/topic/task/work-item scope class.
+P	scope_type
+P	MUST identify standalone/domain/project/topic/task/work-item scope class.
+ROW	scope_owner_ref	MUST resolve Current Canonical Owner or be explicit standalone scope.
+P	scope_owner_ref
+P	MUST resolve Current Canonical Owner or be explicit standalone scope.
+ROW	extension_uid	MUST identify the domain extension integrating Shared Conversation Core.
+P	extension_uid
+P	MUST identify the domain extension integrating Shared Conversation Core.
+ROW	active_thread_id	MUST resolve one Current active thread when conversation is open.
+P	active_thread_id
+P	MUST resolve one Current active thread when conversation is open.
+ROW	active_branch_id_optional	MUST be explicit; null means main lineage.
+P	active_branch_id_optional
+P	MUST be explicit; null means main lineage.
+ROW	context_binding_policy	MUST reference ACPOS-AI-01 context contract; no page-local context authority.
+P	context_binding_policy
+P	MUST reference ACPOS-AI-01 context contract; no page-local context authority.
+ROW	created_by / created_at	MUST be server-traceable.
+P	created_by / created_at
+P	MUST be server-traceable.
+ROW	status	OPEN / CLOSED / ARCHIVED or exact Current binding; no implicit status by UI visibility.
+P	status
+P	OPEN / CLOSED / ARCHIVED or exact Current binding; no implicit status by UI visibility.
+P	Conversation identity MUST_NOT be derived from browser tab, URL alone, provider chat ID, model session ID, UI component instance, or chat title. External/provider identifiers MAY be stored as transport metadata only.
+P	8. Normative Invariant Registry / 規範性不變式
+ROW	Invariant UID	Rule
+P	Invariant UID
+P	Rule
+ROW	CONV-INV-001	全站只允許一套 Shared Conversation Core。
+P	CONV-INV-001
+P	全站只允許一套 Shared Conversation Core。
+ROW	CONV-INV-002	Domain Extension MUST reference the core; MUST_NOT clone core identity/state logic.
+P	CONV-INV-002
+P	Domain Extension MUST reference the core; MUST_NOT clone core identity/state logic.
+ROW	CONV-INV-003	Conversation ID is ACPOS-owned, not provider-owned.
+P	CONV-INV-003
+P	Conversation ID is ACPOS-owned, not provider-owned.
+ROW	CONV-INV-004	Thread/Branch IDs are immutable identities.
+P	CONV-INV-004
+P	Thread/Branch IDs are immutable identities.
+ROW	CONV-INV-005	Message ID and server_sequence are immutable after persistence.
+P	CONV-INV-005
+P	Message ID and server_sequence are immutable after persistence.
+ROW	CONV-INV-006	Every AI response MUST have an exact canonical #AI reference.
+P	CONV-INV-006
+P	Every AI response MUST have an exact canonical #AI reference.
+ROW	CONV-INV-007	Every Assistant record MUST have an exact canonical #AST reference.
+P	CONV-INV-007
+P	Every Assistant record MUST have an exact canonical #AST reference.
+ROW	CONV-INV-008	#149 shorthand MAY resolve only when unique in current conversation scope.
+P	CONV-INV-008
+P	#149 shorthand MAY resolve only when unique in current conversation scope.
+ROW	CONV-INV-009	Stored references MUST use canonical typed identity, not ambiguous shorthand.
+P	CONV-INV-009
+P	Stored references MUST use canonical typed identity, not ambiguous shorthand.
+ROW	CONV-INV-010	Clicking a ref MUST return exact historical object, not semantic search substitute.
+P	CONV-INV-010
+P	Clicking a ref MUST return exact historical object, not semantic search substitute.
+ROW	CONV-INV-011	Timeline ordering uses immutable server chronology; relation edges do not reorder history.
+P	CONV-INV-011
+P	Timeline ordering uses immutable server chronology; relation edges do not reorder history.
+ROW	CONV-INV-012	Reply/reference/review relations MUST be stored separately from chronology.
+P	CONV-INV-012
+P	Reply/reference/review relations MUST be stored separately from chronology.
+ROW	CONV-INV-013	Branch MUST be created from an exact source message/reference.
+P	CONV-INV-013
+P	Branch MUST be created from an exact source message/reference.
+ROW	CONV-INV-014	Branch MUST inherit the source Context Snapshot identity at fork time.
+P	CONV-INV-014
+P	Branch MUST inherit the source Context Snapshot identity at fork time.
+ROW	CONV-INV-015	Later parent-thread messages MUST_NOT silently enter an existing branch.
+P	CONV-INV-015
+P	Later parent-thread messages MUST_NOT silently enter an existing branch.
+ROW	CONV-INV-016	Branch MUST_NOT silently merge to parent.
+P	CONV-INV-016
+P	Branch MUST_NOT silently merge to parent.
+ROW	CONV-INV-017	Parent adoption from branch requires explicit user/human action and traceable summary/ref.
+P	CONV-INV-017
+P	Parent adoption from branch requires explicit user/human action and traceable summary/ref.
+ROW	CONV-INV-018	Single AI and Multi AI use the same Conversation/Message identity model.
+P	CONV-INV-018
+P	Single AI and Multi AI use the same Conversation/Message identity model.
+ROW	CONV-INV-019	Multi AI participants MUST receive the same original question and same resolved shared Context baseline for the same round.
+P	CONV-INV-019
+P	Multi AI participants MUST receive the same original question and same resolved shared Context baseline for the same round.
+ROW	CONV-INV-020	Each Multi-AI response MUST be stored separately with own #AI ref/time/participant alias.
+P	CONV-INV-020
+P	Each Multi-AI response MUST be stored separately with own #AI ref/time/participant alias.
+ROW	CONV-INV-021	A/B/C are session-local aliases, not fixed providers, models, job titles, or permanent roles.
+P	CONV-INV-021
+P	A/B/C are session-local aliases, not fixed providers, models, job titles, or permanent roles.
+ROW	CONV-INV-022	No manual Provider/Model picker belongs to Shared Conversation Core.
+P	CONV-INV-022
+P	No manual Provider/Model picker belongs to Shared Conversation Core.
+ROW	CONV-INV-023	Provider routing belongs to ACPOS-AI-03.
+P	CONV-INV-023
+P	Provider routing belongs to ACPOS-AI-03.
+ROW	CONV-INV-024	Other AI output remains an AI statement; it does not become Source Fact by repetition or consensus.
+P	CONV-INV-024
+P	Other AI output remains an AI statement; it does not become Source Fact by repetition or consensus.
+ROW	CONV-INV-025	Cross-AI review MUST include exact target response refs.
+P	CONV-INV-025
+P	Cross-AI review MUST include exact target response refs.
+ROW	CONV-INV-026	Cross-AI request MUST preserve ORIGINAL_USER_QUESTION.
+P	CONV-INV-026
+P	Cross-AI request MUST preserve ORIGINAL_USER_QUESTION.
+ROW	CONV-INV-027	Cross-AI request MUST preserve SHARED_CONTEXT identity/fingerprint.
+P	CONV-INV-027
+P	Cross-AI request MUST preserve SHARED_CONTEXT identity/fingerprint.
+ROW	CONV-INV-028	Cross-AI payload MUST include only required ancestry, not unrelated full history by default.
+P	CONV-INV-028
+P	Cross-AI payload MUST include only required ancestry, not unrelated full history by default.
+ROW	CONV-INV-029	Assistant is a meeting secretary/record engine, not an independent analyst.
+P	CONV-INV-029
+P	Assistant is a meeting secretary/record engine, not an independent analyst.
+ROW	CONV-INV-030	Assistant MUST_NOT become a third Single/Multi mode.
+P	CONV-INV-030
+P	Assistant MUST_NOT become a third Single/Multi mode.
+ROW	CONV-INV-031	Assistant MUST_NOT invent consensus or rewrite disagreement as agreement.
+P	CONV-INV-031
+P	Assistant MUST_NOT invent consensus or rewrite disagreement as agreement.
+ROW	CONV-INV-032	Assistant MUST_NOT auto-confirm Decision.
+P	CONV-INV-032
+P	Assistant MUST_NOT auto-confirm Decision.
+ROW	CONV-INV-033	Assistant MUST_NOT auto-activate Global Experience.
+P	CONV-INV-033
+P	Assistant MUST_NOT auto-activate Global Experience.
+ROW	CONV-INV-034	Assistant MUST_NOT auto-merge Branch.
+P	CONV-INV-034
+P	Assistant MUST_NOT auto-merge Branch.
+ROW	CONV-INV-035	Conversation Memory Projection is derived and versioned; it is not Domain Truth.
+P	CONV-INV-035
+P	Conversation Memory Projection is derived and versioned; it is not Domain Truth.
+ROW	CONV-INV-036	Decision Memory Link references confirmed upstream Decision; Conversation does not own the Decision body.
+P	CONV-INV-036
+P	Decision Memory Link references confirmed upstream Decision; Conversation does not own the Decision body.
+ROW	CONV-INV-037	Every effectful AI request MUST bind exact ContextSnapshotRef + ContextFingerprint.
+P	CONV-INV-037
+P	Every effectful AI request MUST bind exact ContextSnapshotRef + ContextFingerprint.
+ROW	CONV-INV-038	AI response MUST bind the same request context identity actually sent to execution.
+P	CONV-INV-038
+P	AI response MUST bind the same request context identity actually sent to execution.
+ROW	CONV-INV-039	Stale Context MUST be detectable; stale content MUST_NOT silently masquerade as Current.
+P	CONV-INV-039
+P	Stale Context MUST be detectable; stale content MUST_NOT silently masquerade as Current.
+ROW	CONV-INV-040	Resume MUST resolve exact conversation/thread/branch/sequence/context identity.
+P	CONV-INV-040
+P	Resume MUST resolve exact conversation/thread/branch/sequence/context identity.
+ROW	CONV-INV-041	Chat memory or UI state alone MUST_NOT reconstruct Current Context.
+P	CONV-INV-041
+P	Chat memory or UI state alone MUST_NOT reconstruct Current Context.
+ROW	CONV-INV-042	Cross-project or cross-scope references MUST fail closed unless explicitly permitted.
+P	CONV-INV-042
+P	Cross-project or cross-scope references MUST fail closed unless explicitly permitted.
+ROW	CONV-INV-043	Attachment refs MUST be typed and permission checked before inclusion in context.
+P	CONV-INV-043
+P	Attachment refs MUST be typed and permission checked before inclusion in context.
+ROW	CONV-INV-044	Deleting/hiding UI text MUST_NOT erase dependency-bearing records without retention decision.
+P	CONV-INV-044
+P	Deleting/hiding UI text MUST_NOT erase dependency-bearing records without retention decision.
+ROW	CONV-INV-045	Referenced messages required by Decision/Evidence/Audit MUST remain addressable or tombstoned with stable identity.
+P	CONV-INV-045
+P	Referenced messages required by Decision/Evidence/Audit MUST remain addressable or tombstoned with stable identity.
+ROW	CONV-INV-046	Message retry MUST preserve idempotency identity; duplicate submit MUST_NOT create duplicate logical message.
+P	CONV-INV-046
+P	Message retry MUST preserve idempotency identity; duplicate submit MUST_NOT create duplicate logical message.
+ROW	CONV-INV-047	Stop/cancel is a request; UI MUST_NOT fabricate terminal cancellation before runtime confirmation.
+P	CONV-INV-047
+P	Stop/cancel is a request; UI MUST_NOT fabricate terminal cancellation before runtime confirmation.
+ROW	CONV-INV-048	Partial Multi-AI completion MUST preserve completed responses and explicit missing/failed participants.
+P	CONV-INV-048
+P	Partial Multi-AI completion MUST preserve completed responses and explicit missing/failed participants.
+ROW	CONV-INV-049	Conversation surface MUST expose actual unavailable/error states rather than invent response content.
+P	CONV-INV-049
+P	Conversation surface MUST expose actual unavailable/error states rather than invent response content.
+ROW	CONV-INV-050	Conversation Extension MUST declare allowed domain commands and context sources.
+P	CONV-INV-050
+P	Conversation Extension MUST declare allowed domain commands and context sources.
+ROW	CONV-INV-051	Unlisted domain command MUST be BLOCK / REQUIRE_EXACT_BINDING, not free-form execution.
+P	CONV-INV-051
+P	Unlisted domain command MUST be BLOCK / REQUIRE_EXACT_BINDING, not free-form execution.
+ROW	CONV-INV-052	Conversation output MUST_NOT directly mutate Project/Topic/Blueprint/Production/Publish authority without owner gate.
+P	CONV-INV-052
+P	Conversation output MUST_NOT directly mutate Project/Topic/Blueprint/Production/Publish authority without owner gate.
+ROW	CONV-INV-053	Reference parser MUST be deterministic and typed.
+P	CONV-INV-053
+P	Reference parser MUST be deterministic and typed.
+ROW	CONV-INV-054	Ambiguous short ref MUST_NOT auto-select the nearest-looking object.
+P	CONV-INV-054
+P	Ambiguous short ref MUST_NOT auto-select the nearest-looking object.
+ROW	CONV-INV-055	Message edits, if supported by Current Authority, MUST create traceable revision semantics; silent overwrite is forbidden.
+P	CONV-INV-055
+P	Message edits, if supported by Current Authority, MUST create traceable revision semantics; silent overwrite is forbidden.
+ROW	CONV-INV-056	Conversation summaries MUST cite source refs sufficient to reconstruct included scope.
+P	CONV-INV-056
+P	Conversation summaries MUST cite source refs sufficient to reconstruct included scope.
+ROW	CONV-INV-057	Assistant records MUST preserve disagreement/open questions where present.
+P	CONV-INV-057
+P	Assistant records MUST preserve disagreement/open questions where present.
+ROW	CONV-INV-058	Conversation-local memory MUST NOT silently outrank Current Context/Decision Authority.
+P	CONV-INV-058
+P	Conversation-local memory MUST NOT silently outrank Current Context/Decision Authority.
+ROW	CONV-INV-059	Provider brand display MAY be shown; secret/model routing details remain outside conversation UI authority.
+P	CONV-INV-059
+P	Provider brand display MAY be shown; secret/model routing details remain outside conversation UI authority.
+ROW	CONV-INV-060	Same logical operation MUST have one canonical event/transition meaning across all extensions.
+P	CONV-INV-060
+P	Same logical operation MUST have one canonical event/transition meaning across all extensions.
+ROW	CONV-INV-061	Current Conversation state MUST be reconstructable from persisted identities/events, not browser memory.
+P	CONV-INV-061
+P	Current Conversation state MUST be reconstructable from persisted identities/events, not browser memory.
+ROW	CONV-INV-062	Formal completion requires acceptance, negative regression and exact binding ledger; prose alone is insufficient.
+P	CONV-INV-062
+P	Formal completion requires acceptance, negative regression and exact binding ledger; prose alone is insufficient.
+P	9. Conversation / Thread / Branch State Machine
+ROW	State	Meaning
+P	State
+P	Meaning
+ROW	CONVERSATION_NEW	Identity created; no persisted user message yet.
+P	CONVERSATION_NEW
+P	Identity created; no persisted user message yet.
+ROW	CONVERSATION_READY	Scope/context binding valid for interaction.
+P	CONVERSATION_READY
+P	Scope/context binding valid for interaction.
+ROW	THREAD_ACTIVE	Main or branch thread can accept messages.
+P	THREAD_ACTIVE
+P	Main or branch thread can accept messages.
+ROW	MESSAGE_ACCEPTED	User/system message persisted and idempotency resolved.
+P	MESSAGE_ACCEPTED
+P	User/system message persisted and idempotency resolved.
+ROW	RESPONSE_REQUESTED	Governed execution intent created.
+P	RESPONSE_REQUESTED
+P	Governed execution intent created.
+ROW	RESPONSE_STREAMING	Partial tokens/chunks may be visible; terminal result not reached.
+P	RESPONSE_STREAMING
+P	Partial tokens/chunks may be visible; terminal result not reached.
+ROW	RESPONSE_COMPLETED	Canonical AI response persisted with #AI ref.
+P	RESPONSE_COMPLETED
+P	Canonical AI response persisted with #AI ref.
+ROW	RESPONSE_STOP_REQUESTED	Stop requested; terminal runtime outcome pending.
+P	RESPONSE_STOP_REQUESTED
+P	Stop requested; terminal runtime outcome pending.
+ROW	RESPONSE_FAILED	Terminal failure recorded; no fabricated answer.
+P	RESPONSE_FAILED
+P	Terminal failure recorded; no fabricated answer.
+ROW	MULTI_AI_ACTIVE	Participant set + shared original question/context fixed for round.
+P	MULTI_AI_ACTIVE
+P	Participant set + shared original question/context fixed for round.
+ROW	ASSISTANT_RECORDING	Secretary operation active.
+P	ASSISTANT_RECORDING
+P	Secretary operation active.
+ROW	BRANCH_ACTIVE	Branch thread exists with fork context identity.
+P	BRANCH_ACTIVE
+P	Branch thread exists with fork context identity.
+ROW	STALE_CONTEXT	Current Context differs materially from bound snapshot for operation requiring Current.
+P	STALE_CONTEXT
+P	Current Context differs materially from bound snapshot for operation requiring Current.
+ROW	REVIEW_REQUIRED	Adoption/Decision/merge-like action requires human/domain owner review.
+P	REVIEW_REQUIRED
+P	Adoption/Decision/merge-like action requires human/domain owner review.
+ROW	CONVERSATION_CLOSED	No new message accepted except legal reopen/branch policy.
+P	CONVERSATION_CLOSED
+P	No new message accepted except legal reopen/branch policy.
+ROW	CONVERSATION_ARCHIVED	Read/search policy only; retention owner governs restore/delete.
+P	CONVERSATION_ARCHIVED
+P	Read/search policy only; retention owner governs restore/delete.
+P	10. State Transition Guard Matrix / 狀態轉移守衛
+ROW	Transition	Actor	Preconditions	Write	Success State	Audit/Event	Failure Rule
+P	Transition
+P	Actor
+P	Preconditions
+P	Write
+P	Success State
+P	Audit/Event
+P	Failure Rule
+ROW	CREATE_CONVERSATION	authorized user/system	extension + scope valid	Conversation	Conversation CREATED	audit created event	BLOCK if owner/scope unresolved
+P	CREATE_CONVERSATION
+P	authorized user/system
+P	extension + scope valid
+P	Conversation
+P	Conversation CREATED
+P	audit created event
+P	BLOCK if owner/scope unresolved
+ROW	SEND_MESSAGE	authorized user	thread active + non-empty input + permission + context binding policy	Message	MESSAGE_ACCEPTED	message.submitted	No response request if gate fails
+P	SEND_MESSAGE
+P	authorized user
+P	thread active + non-empty input + permission + context binding policy
+P	Message
+P	MESSAGE_ACCEPTED
+P	message.submitted
+P	No response request if gate fails
+ROW	REQUEST_RESPONSE	system	message accepted + exact context snapshot/fingerprint + extension action allowed	Execution intent ref	RESPONSE_REQUESTED	response.requested	BLOCK on stale/permission/binding as applicable
+P	REQUEST_RESPONSE
+P	system
+P	message accepted + exact context snapshot/fingerprint + extension action allowed
+P	Execution intent ref
+P	RESPONSE_REQUESTED
+P	response.requested
+P	BLOCK on stale/permission/binding as applicable
+ROW	START_STREAM	runtime callback	intent identity matches	stream projection	RESPONSE_STREAMING	response.started	Ignore/quarantine unknown job/ref
+P	START_STREAM
+P	runtime callback
+P	intent identity matches
+P	stream projection
+P	RESPONSE_STREAMING
+P	response.started
+P	Ignore/quarantine unknown job/ref
+ROW	COMPLETE_RESPONSE	runtime callback	same request context + valid response envelope	AI message + #AI ref	RESPONSE_COMPLETED	response.completed	BLOCK persistence if identity mismatch
+P	COMPLETE_RESPONSE
+P	runtime callback
+P	same request context + valid response envelope
+P	AI message + #AI ref
+P	RESPONSE_COMPLETED
+P	response.completed
+P	BLOCK persistence if identity mismatch
+ROW	STOP_RESPONSE	user/system	active request	stop request	RESPONSE_STOP_REQUESTED	response.stop_requested	Do not mark cancelled until terminal ack
+P	STOP_RESPONSE
+P	user/system
+P	active request
+P	stop request
+P	RESPONSE_STOP_REQUESTED
+P	response.stop_requested
+P	Do not mark cancelled until terminal ack
+ROW	FAIL_RESPONSE	runtime	terminal failure known	failure record	RESPONSE_FAILED	response.failed	Show recovery eligibility
+P	FAIL_RESPONSE
+P	runtime
+P	terminal failure known
+P	failure record
+P	RESPONSE_FAILED
+P	response.failed
+P	Show recovery eligibility
+ROW	CREATE_BRANCH	user/assistant-on-request	exact source message + context snapshot + permission	Branch + Thread	BRANCH_ACTIVE	branch.created	BLOCK if source ref ambiguous/stale unavailable
+P	CREATE_BRANCH
+P	user/assistant-on-request
+P	exact source message + context snapshot + permission
+P	Branch + Thread
+P	BRANCH_ACTIVE
+P	branch.created
+P	BLOCK if source ref ambiguous/stale unavailable
+ROW	ADOPT_BRANCH_SUMMARY	authorized user/domain owner	branch summary exact refs + target context valid	adoption ref	parent context candidate	branch.summary_adopted	No silent merge
+P	ADOPT_BRANCH_SUMMARY
+P	authorized user/domain owner
+P	branch summary exact refs + target context valid
+P	adoption ref
+P	parent context candidate
+P	branch.summary_adopted
+P	No silent merge
+ROW	START_MULTI_AI	authorized user	participant set + original question + shared context resolved	MultiAISession	MULTI_AI_ACTIVE	multi_ai.started	BLOCK if participant/route policy unresolved
+P	START_MULTI_AI
+P	authorized user
+P	participant set + original question + shared context resolved
+P	MultiAISession
+P	MULTI_AI_ACTIVE
+P	multi_ai.started
+P	BLOCK if participant/route policy unresolved
+ROW	CROSS_REVIEW	user/system	target #AI refs resolve + same permitted scope	CrossAIRound	round active	cross_ai.review_requested	BLOCK target-specific request
+P	CROSS_REVIEW
+P	user/system
+P	target #AI refs resolve + same permitted scope
+P	CrossAIRound
+P	round active
+P	cross_ai.review_requested
+P	BLOCK target-specific request
+ROW	ASSISTANT_RECORD	user/automatic policy	exact scope refs + assistant action allowed	AssistantRecord	#AST persisted	assistant.recorded	No analyst output
+P	ASSISTANT_RECORD
+P	user/automatic policy
+P	exact scope refs + assistant action allowed
+P	AssistantRecord
+P	#AST persisted
+P	assistant.recorded
+P	No analyst output
+ROW	RESUME_CONVERSATION	user/system	conversation/thread/branch exists + permission + resume pointer valid	projection	READY or STALE_CONTEXT	conversation.resumed	Require stale resolution when necessary
+P	RESUME_CONVERSATION
+P	user/system
+P	conversation/thread/branch exists + permission + resume pointer valid
+P	projection
+P	READY or STALE_CONTEXT
+P	conversation.resumed
+P	Require stale resolution when necessary
+ROW	REFRESH_MEMORY_PROJECTION	assistant/system	source refs exact + current projection version known	new projection version	projection current	memory_projection.refreshed	No overwrite of prior version
+P	REFRESH_MEMORY_PROJECTION
+P	assistant/system
+P	source refs exact + current projection version known
+P	new projection version
+P	projection current
+P	memory_projection.refreshed
+P	No overwrite of prior version
+ROW	CLOSE_CONVERSATION	authorized user/policy	no prohibited active operation or closure policy resolved	status	CLOSED	conversation.closed	Preserve dependencies
+P	CLOSE_CONVERSATION
+P	authorized user/policy
+P	no prohibited active operation or closure policy resolved
+P	status
+P	CLOSED
+P	conversation.closed
+P	Preserve dependencies
+ROW	ARCHIVE_CONVERSATION	retention owner	retention condition + dependency check	archive state	ARCHIVED	conversation.archived	No destructive delete by UI shortcut
+P	ARCHIVE_CONVERSATION
+P	retention owner
+P	retention condition + dependency check
+P	archive state
+P	ARCHIVED
+P	conversation.archived
+P	No destructive delete by UI shortcut
+P	11. Message Identity, Indexing & Canonical Reference Contract
+ROW	Object	Display Form	Storage / Resolution Rule
+P	Object
+P	Display Form
+P	Storage / Resolution Rule
+ROW	AI response	#AI-000149	Every AI response gets one canonical ref; short forms normalize to canonical.
+P	AI response
+P	#AI-000149
+P	Every AI response gets one canonical ref; short forms normalize to canonical.
+ROW	Assistant record	#AST-000031	Every assistant record gets one canonical ref.
+P	Assistant record
+P	#AST-000031
+P	Every assistant record gets one canonical ref.
+ROW	Conversation	#CONV-0023	Resolves one conversation scope.
+P	Conversation
+P	#CONV-0023
+P	Resolves one conversation scope.
+ROW	Branch	#BR-0012	Resolves one branch + thread lineage.
+P	Branch
+P	#BR-0012
+P	Resolves one branch + thread lineage.
+ROW	Message internal ID	opaque ID	Never derived from text content or display sequence.
+P	Message internal ID
+P	opaque ID
+P	Never derived from text content or display sequence.
+ROW	Short #149	#149	May resolve only when unique in current conversation; store canonical typed ref.
+P	Short #149
+P	#149
+P	May resolve only when unique in current conversation; store canonical typed ref.
+ROW	Attachment ref	typed attachment ref	Must resolve exact attachment object/version and permission.
+P	Attachment ref
+P	typed attachment ref
+P	Must resolve exact attachment object/version and permission.
+ROW	Domain ref	typed external canonical ref	Must preserve owner UID/path/version semantics from domain authority.
+P	Domain ref
+P	typed external canonical ref
+P	Must preserve owner UID/path/version semantics from domain authority.
+P	Reference resolution MUST return object type, canonical identity, current visibility/permission, source conversation/thread/branch, and resolution status. A failed or ambiguous resolution MUST NOT be replaced by fuzzy search.
+P	12. Timeline vs Relationship Graph / 時間線與關係圖
+ROW	Dimension	Canonical Rule
+P	Dimension
+P	Canonical Rule
+ROW	Chronology	Sort by immutable server_sequence; created_at is display/audit time and MUST include timezone.
+P	Chronology
+P	Sort by immutable server_sequence; created_at is display/audit time and MUST include timezone.
+ROW	Reply	reply_to_message_id targets one exact message.
+P	Reply
+P	reply_to_message_id targets one exact message.
+ROW	References	referenced_message_ids is an ordered set/list of exact refs used as context.
+P	References
+P	referenced_message_ids is an ordered set/list of exact refs used as context.
+ROW	Review Targets	review_target_message_ids identifies exact AI statements being reviewed.
+P	Review Targets
+P	review_target_message_ids identifies exact AI statements being reviewed.
+ROW	Derived From	Summary/revision/assistant record links exact source refs.
+P	Derived From
+P	Summary/revision/assistant record links exact source refs.
+ROW	Branch Origin	Branch stores parent_thread_id + source_message_id + inherited_context_snapshot_ref.
+P	Branch Origin
+P	Branch stores parent_thread_id + source_message_id + inherited_context_snapshot_ref.
+ROW	Round Relation	Cross-AI response stores round_id, relation_type, reviewer alias and target refs.
+P	Round Relation
+P	Cross-AI response stores round_id, relation_type, reviewer alias and target refs.
+ROW	Projection Rule	UI may render relation chips/graph, but MUST_NOT change underlying chronology.
+P	Projection Rule
+P	UI may render relation chips/graph, but MUST_NOT change underlying chronology.
+ROW	Dimension	Rule
+P	Dimension
+P	Rule
+ROW	Chronology	server_sequence answers “what happened first”.
+P	Chronology
+P	server_sequence answers “what happened first”.
+ROW	Reply Edge	answers “who replied to whom”.
+P	Reply Edge
+P	answers “who replied to whom”.
+ROW	Reference Edge	answers “which exact prior statements were used”.
+P	Reference Edge
+P	answers “which exact prior statements were used”.
+ROW	Review Edge	answers “which exact AI outputs were criticized/compared”.
+P	Review Edge
+P	answers “which exact AI outputs were criticized/compared”.
+ROW	Branch Edge	answers “where this branch forked from”.
+P	Branch Edge
+P	answers “where this branch forked from”.
+ROW	Summary Edge	answers “which sources this Assistant record summarizes”.
+P	Summary Edge
+P	answers “which sources this Assistant record summarizes”.
+ROW	Decision Link	answers “which confirmed upstream Decision is referenced”.
+P	Decision Link
+P	answers “which confirmed upstream Decision is referenced”.
+P	13. @ / # Composer Parser Contract
+ROW	Syntax	Semantic Type	Rule
+P	Syntax
+P	Semantic Type
+P	Rule
+ROW	@A / @B / @C	TARGET_PARTICIPANT	Resolve session-local participant alias; invalid outside matching MultiAISession.
+P	@A / @B / @C
+P	TARGET_PARTICIPANT
+P	Resolve session-local participant alias; invalid outside matching MultiAISession.
+ROW	@全部AI	TARGET_ALL_PARTICIPANTS	All selected participants receive same original question/shared context.
+P	@全部AI
+P	TARGET_ALL_PARTICIPANTS
+P	All selected participants receive same original question/shared context.
+ROW	@助理	TARGET_ASSISTANT	Only Assistant secretary actions; MUST_NOT route to analytical AI role.
+P	@助理
+P	TARGET_ASSISTANT
+P	Only Assistant secretary actions; MUST_NOT route to analytical AI role.
+ROW	#149 / #AI-149	MESSAGE_REF	Resolve unique current-conversation AI response and normalize canonical.
+P	#149 / #AI-149
+P	MESSAGE_REF
+P	Resolve unique current-conversation AI response and normalize canonical.
+ROW	#AI-000149	MESSAGE_REF	Exact canonical AI response.
+P	#AI-000149
+P	MESSAGE_REF
+P	Exact canonical AI response.
+ROW	#AST-xxxx	ASSISTANT_REF	Exact Assistant record.
+P	#AST-xxxx
+P	ASSISTANT_REF
+P	Exact Assistant record.
+ROW	#CONV-xxxx	CONVERSATION_REF	Exact conversation scope.
+P	#CONV-xxxx
+P	CONVERSATION_REF
+P	Exact conversation scope.
+ROW	#BR-xxxx	BRANCH_REF	Exact branch scope.
+P	#BR-xxxx
+P	BRANCH_REF
+P	Exact branch scope.
+ROW	multiple refs	REF_SET	Preserve explicit order and type; no semantic de-dup that changes user instruction.
+P	multiple refs
+P	REF_SET
+P	Preserve explicit order and type; no semantic de-dup that changes user instruction.
+ROW	invalid ref	PARSER_ERROR	Mark exact token invalid; dependent action blocks.
+P	invalid ref
+P	PARSER_ERROR
+P	Mark exact token invalid; dependent action blocks.
+ROW	ambiguous short ref	AMBIGUOUS_REF	Require disambiguation; MUST_NOT auto-pick nearest.
+P	ambiguous short ref
+P	AMBIGUOUS_REF
+P	Require disambiguation; MUST_NOT auto-pick nearest.
+ROW	plain text @/#	ESCAPED_LITERAL	Parser must support explicit literal/escape policy when exact binding is established.
+P	plain text @/#
+P	ESCAPED_LITERAL
+P	Parser must support explicit literal/escape policy when exact binding is established.
+ROW	Parser 與 Message Context Menu MUST 使用同一底層 Reference/Action resolver。右鍵/⋯ 只是 UI projection，不得建立第二套 action semantics。
+P	Parser 與 Message Context Menu MUST 使用同一底層 Reference/Action resolver。右鍵/⋯ 只是 UI projection，不得建立第二套 action semantics。
+P	14. Context Binding / Fingerprint Contract
+P	Conversation Core does not own Global Context truth. It MUST bind ACPOS-AI-01 outputs exactly and preserve the identity used for each request/response. A response without reconstructable context identity is not a valid Current conversation artifact for governed downstream use.
+ROW	Field	Requirement
+P	Field
+P	Requirement
+ROW	context_snapshot_ref	REQUIRED for governed AI requests.
+P	context_snapshot_ref
+P	REQUIRED for governed AI requests.
+ROW	context_fingerprint	REQUIRED deterministic digest/identity returned by context owner.
+P	context_fingerprint
+P	REQUIRED deterministic digest/identity returned by context owner.
+ROW	context_owner_uid	REQUIRED reference to ACPOS-AI-01 owner contract.
+P	context_owner_uid
+P	REQUIRED reference to ACPOS-AI-01 owner contract.
+ROW	scope_refs	REQUIRED exact Project/Topic/Task/Decision/Version refs when applicable.
+P	scope_refs
+P	REQUIRED exact Project/Topic/Task/Decision/Version refs when applicable.
+ROW	source/evidence refs	Preserve exact refs included by resolver.
+P	source/evidence refs
+P	Preserve exact refs included by resolver.
+ROW	retrieval_time / version	Preserve when returned by context owner; Conversation MUST_NOT fabricate.
+P	retrieval_time / version
+P	Preserve when returned by context owner; Conversation MUST_NOT fabricate.
+ROW	stale_status	Explicit CURRENT / STALE / UNVERIFIED / BLOCKED semantics.
+P	stale_status
+P	Explicit CURRENT / STALE / UNVERIFIED / BLOCKED semantics.
+ROW	request_binding_ref	Message→request→response chain MUST bind same effective context identity.
+P	request_binding_ref
+P	Message→request→response chain MUST bind same effective context identity.
+ROW	Binding Rule	Normative Effect
+P	Binding Rule
+P	Normative Effect
+ROW	Same question, same Multi-AI round	Participants MUST use same baseline context snapshot/fingerprint.
+P	Same question, same Multi-AI round
+P	Participants MUST use same baseline context snapshot/fingerprint.
+ROW	Cross-AI later round	May add exact target responses and current user instruction; global shared context identity remains explicit.
+P	Cross-AI later round
+P	May add exact target responses and current user instruction; global shared context identity remains explicit.
+ROW	Resume after upstream change	System MUST detect fingerprint/version drift and mark stale or refresh according to operation policy.
+P	Resume after upstream change
+P	System MUST detect fingerprint/version drift and mark stale or refresh according to operation policy.
+ROW	Branch creation	Branch starts from source message context snapshot; later parent updates do not auto-flow.
+P	Branch creation
+P	Branch starts from source message context snapshot; later parent updates do not auto-flow.
+ROW	Assistant summary	Must record source context/reference set used; not silently “currentify” old content.
+P	Assistant summary
+P	Must record source context/reference set used; not silently “currentify” old content.
+P	15. Stale Context & Resume Resolution / 過期 Context 與續作
+ROW	Scenario	Required Outcome
+P	Scenario
+P	Required Outcome
+ROW	Conversation reopened and upstream Project/Decision unchanged	Resume exact thread/branch and context identity; no unnecessary reset.
+P	Conversation reopened and upstream Project/Decision unchanged
+P	Resume exact thread/branch and context identity; no unnecessary reset.
+ROW	Upstream authoritative Decision/version changed	Mark dependent conversation state STALE_CONTEXT / REVERIFY_REQUIRED for operations needing Current.
+P	Upstream authoritative Decision/version changed
+P	Mark dependent conversation state STALE_CONTEXT / REVERIFY_REQUIRED for operations needing Current.
+ROW	User only wants historical reading	May display historical conversation with its original context identity; MUST label historical/stale status.
+P	User only wants historical reading
+P	May display historical conversation with its original context identity; MUST label historical/stale status.
+ROW	User asks to continue historically	Create explicit continuation policy: historical-context continuation or refreshed-current continuation; MUST NOT mix silently.
+P	User asks to continue historically
+P	Create explicit continuation policy: historical-context continuation or refreshed-current continuation; MUST NOT mix silently.
+ROW	Resume pointer missing	Do not guess last state from UI order; reconstruct from persisted identities/events or block.
+P	Resume pointer missing
+P	Do not guess last state from UI order; reconstruct from persisted identities/events or block.
+ROW	Chat summary conflicts with persisted state	Persisted Current identity wins; summary becomes non-authoritative.
+P	Chat summary conflicts with persisted state
+P	Persisted Current identity wins; summary becomes non-authoritative.
+ROW	Branch reopened	Resume exact branch thread + inherited/currently adopted branch context, not parent latest by default.
+P	Branch reopened
+P	Resume exact branch thread + inherited/currently adopted branch context, not parent latest by default.
+ROW	ResumePointer Field	Required
+P	ResumePointer Field
+P	Required
+ROW	conversation_id	YES
+P	conversation_id
+P	YES
+ROW	thread_id	YES
+P	thread_id
+P	YES
+ROW	branch_id_optional	YES
+P	branch_id_optional
+P	YES
+ROW	last_visible_server_sequence	YES
+P	last_visible_server_sequence
+P	YES
+ROW	context_snapshot_ref	YES
+P	context_snapshot_ref
+P	YES
+ROW	context_fingerprint	YES
+P	context_fingerprint
+P	YES
+ROW	extension_uid	YES
+P	extension_uid
+P	YES
+ROW	scope_owner_ref	YES
+P	scope_owner_ref
+P	YES
+ROW	resume_reason	YES
+P	resume_reason
+P	YES
+ROW	stale_resolution_status	YES
+P	stale_resolution_status
+P	YES
+P	16. Single AI Contract / 單 AI 對話契約
+ROW	Requirement	Rule
+P	Requirement
+P	Rule
+ROW	Indexing	Every completed AI response MUST have #AI ref + provider brand (when permitted) + visible response time.
+P	Indexing
+P	Every completed AI response MUST have #AI ref + provider brand (when permitted) + visible response time.
+ROW	Continuation	#ref continuation must include exact target and required ancestry, not fuzzy similar text.
+P	Continuation
+P	#ref continuation must include exact target and required ancestry, not fuzzy similar text.
+ROW	Branching	Any eligible exact AI response may be branch origin.
+P	Branching
+P	Any eligible exact AI response may be branch origin.
+ROW	Assistant	Assistant may record/summarize Single AI responses using same #AI refs.
+P	Assistant
+P	Assistant may record/summarize Single AI responses using same #AI refs.
+ROW	History	Single AI responses remain addressable after switching modes or reopening conversation.
+P	History
+P	Single AI responses remain addressable after switching modes or reopening conversation.
+ROW	Provider neutrality	User selects AI interaction mode/capability, not raw provider/model in shared core.
+P	Provider neutrality
+P	User selects AI interaction mode/capability, not raw provider/model in shared core.
+ROW	Stop	Stop semantics must reflect runtime terminal state; partial response identity must be handled explicitly by exact binding.
+P	Stop
+P	Stop semantics must reflect runtime terminal state; partial response identity must be handled explicitly by exact binding.
+ROW	Failure	Failure produces no fabricated answer; user sees deterministic retry/refresh path when allowed.
+P	Failure
+P	Failure produces no fabricated answer; user sees deterministic retry/refresh path when allowed.
+P	17. Multi-AI Session Contract / 多 AI Session
+ROW	Field	Required Rule
+P	Field
+P	Required Rule
+ROW	multi_ai_session_id	Unique session identity within conversation.
+P	multi_ai_session_id
+P	Unique session identity within conversation.
+ROW	original_user_question_ref	Exact user message/instruction identity.
+P	original_user_question_ref
+P	Exact user message/instruction identity.
+ROW	shared_context_snapshot_ref	Same baseline for initial independent answers.
+P	shared_context_snapshot_ref
+P	Same baseline for initial independent answers.
+ROW	shared_context_fingerprint	Same fingerprint baseline.
+P	shared_context_fingerprint
+P	Same fingerprint baseline.
+ROW	participant_set	Resolved by allowed capability/routing policy; stored as ACPOS participant refs.
+P	participant_set
+P	Resolved by allowed capability/routing policy; stored as ACPOS participant refs.
+ROW	participant_aliases	A/B/C etc assigned session-locally and immutable for that session.
+P	participant_aliases
+P	A/B/C etc assigned session-locally and immutable for that session.
+ROW	mode_view	PARALLEL or DISCUSSION is presentation/interaction view, not separate conversation system.
+P	mode_view
+P	PARALLEL or DISCUSSION is presentation/interaction view, not separate conversation system.
+ROW	round_counter	Monotonic within session.
+P	round_counter
+P	Monotonic within session.
+ROW	terminal_condition	User stop / explicit transition / session policy; MUST_NOT infer consensus as auto-stop.
+P	terminal_condition
+P	User stop / explicit transition / session policy; MUST_NOT infer consensus as auto-stop.
+ROW	Multi-AI Behavior	Rule
+P	Multi-AI Behavior
+P	Rule
+ROW	Independent First Round	Each participant independently answers same original question/context; responses remain separate.
+P	Independent First Round
+P	Each participant independently answers same original question/context; responses remain separate.
+ROW	Parallel View	Separate panes MAY be used for first-round compare; each response independently scrollable/addressable.
+P	Parallel View
+P	Separate panes MAY be used for first-round compare; each response independently scrollable/addressable.
+ROW	Discussion View	Unified chronological timeline with relation metadata for iterative cross-review.
+P	Discussion View
+P	Unified chronological timeline with relation metadata for iterative cross-review.
+ROW	Targeted @	Only targeted participants answer unless @全部AI or explicit session rule.
+P	Targeted @
+P	Only targeted participants answer unless @全部AI or explicit session rule.
+ROW	Return to Single	Conversation history and refs remain; mode switch MUST_NOT discard Multi-AI relations.
+P	Return to Single
+P	Conversation history and refs remain; mode switch MUST_NOT discard Multi-AI relations.
+ROW	Partial Failure	Successful participants persist; failed/missing participants explicit; no synthetic consensus.
+P	Partial Failure
+P	Successful participants persist; failed/missing participants explicit; no synthetic consensus.
+P	18. Cross-AI Relation Contract / 交叉討論契約
+ROW	Relation Type	Meaning
+P	Relation Type
+P	Meaning
+ROW	INDEPENDENT_RESPONSE	Answer original question independently.
+P	INDEPENDENT_RESPONSE
+P	Answer original question independently.
+ROW	CROSS_REVIEW	Critique one/more exact target response refs.
+P	CROSS_REVIEW
+P	Critique one/more exact target response refs.
+ROW	CROSS_COMPARISON	Compare multiple exact response refs.
+P	CROSS_COMPARISON
+P	Compare multiple exact response refs.
+ROW	REVISION	Revise own prior response using exact critique refs.
+P	REVISION
+P	Revise own prior response using exact critique refs.
+ROW	EVIDENCE_CHECK	Evaluate claims against exact Source Fact/Evidence refs.
+P	EVIDENCE_CHECK
+P	Evaluate claims against exact Source Fact/Evidence refs.
+ROW	CLARIFICATION	Clarify a targeted response without treating it as fact.
+P	CLARIFICATION
+P	Clarify a targeted response without treating it as fact.
+ROW	COUNTERARGUMENT	Provide explicit counterargument with target refs.
+P	COUNTERARGUMENT
+P	Provide explicit counterargument with target refs.
+ROW	Required Payload Element	Why
+P	Required Payload Element
+P	Why
+ROW	ORIGINAL_USER_QUESTION	Prevents drift toward only prior AI wording.
+P	ORIGINAL_USER_QUESTION
+P	Prevents drift toward only prior AI wording.
+ROW	SHARED_CONTEXT identity	Keeps common baseline explicit.
+P	SHARED_CONTEXT identity
+P	Keeps common baseline explicit.
+ROW	EXACT_SOURCE_FACTS_AND_EVIDENCE refs	Allows fact check without elevating AI statements.
+P	EXACT_SOURCE_FACTS_AND_EVIDENCE refs
+P	Allows fact check without elevating AI statements.
+ROW	TARGET_RESPONSE_REFS	Defines exactly what is being reviewed/compared.
+P	TARGET_RESPONSE_REFS
+P	Defines exactly what is being reviewed/compared.
+ROW	REQUIRED_ANCESTRY_ONLY	Controls context bloat and contamination.
+P	REQUIRED_ANCESTRY_ONLY
+P	Controls context bloat and contamination.
+ROW	CURRENT_USER_INSTRUCTION	Defines review/compare/revision/evidence-check intent.
+P	CURRENT_USER_INSTRUCTION
+P	Defines review/compare/revision/evidence-check intent.
+ROW	reviewer_alias + round + relation_type	Reconstructs conversation graph.
+P	reviewer_alias + round + relation_type
+P	Reconstructs conversation graph.
+P	Cross-AI loops MAY continue A→B→C→A repeatedly. No number of AI agreements upgrades unsupported content into Source Fact; evidence admission stays with ACPOS-AI-01 and relevant Domain Authority.
+P	19. AI Assistant Role Contract / AI 助理角色契約
+ROW	Assistant Operation	Allowed Meaning
+P	Assistant Operation
+P	Allowed Meaning
+ROW	MEETING_RECORD	Maintain structured meeting record.
+P	MEETING_RECORD
+P	Maintain structured meeting record.
+ROW	MESSAGE_RECORD	Record exact referenced message with pointer/time/relation.
+P	MESSAGE_RECORD
+P	Record exact referenced message with pointer/time/relation.
+ROW	SCOPE_SUMMARY	Summarize exact message/branch/conversation scope.
+P	SCOPE_SUMMARY
+P	Summarize exact message/branch/conversation scope.
+ROW	DISCUSSION_NODE	Identify topics/nodes without inventing authority.
+P	DISCUSSION_NODE
+P	Identify topics/nodes without inventing authority.
+ROW	BRANCH_CREATE_ON_REQUEST	Create branch from exact ref when authorized.
+P	BRANCH_CREATE_ON_REQUEST
+P	Create branch from exact ref when authorized.
+ROW	BRANCH_SUMMARY	Prepare branch summary candidate.
+P	BRANCH_SUMMARY
+P	Prepare branch summary candidate.
+ROW	CONSENSUS_LIST	List apparent consensus with supporting refs + evidence status.
+P	CONSENSUS_LIST
+P	List apparent consensus with supporting refs + evidence status.
+ROW	DISAGREEMENT_LIST	List conflicting positions with exact refs.
+P	DISAGREEMENT_LIST
+P	List conflicting positions with exact refs.
+ROW	OPEN_QUESTIONS	List unresolved questions/gaps.
+P	OPEN_QUESTIONS
+P	List unresolved questions/gaps.
+ROW	FOLLOW_UPS	List todo/research items as non-authoritative follow-ups.
+P	FOLLOW_UPS
+P	List todo/research items as non-authoritative follow-ups.
+ROW	SOURCE_INDEX	List exact source/evidence refs used.
+P	SOURCE_INDEX
+P	List exact source/evidence refs used.
+ROW	IMPORTANT_REF_INDEX	Maintain important #AI/#AST/#BR/#CONV refs.
+P	IMPORTANT_REF_INDEX
+P	Maintain important #AI/#AST/#BR/#CONV refs.
+ROW	MEETING_SUMMARY	Create end/periodic meeting summary.
+P	MEETING_SUMMARY
+P	Create end/periodic meeting summary.
+ROW	CONFIRMED_CONCLUSION_RECORD	Record confirmed upstream decision/conclusion ref; does not create it.
+P	CONFIRMED_CONCLUSION_RECORD
+P	Record confirmed upstream decision/conclusion ref; does not create it.
+ROW	MEMORY_PROJECTION_REFRESH	Refresh conversation-local structured memory from exact sources.
+P	MEMORY_PROJECTION_REFRESH
+P	Refresh conversation-local structured memory from exact sources.
+ROW	CROSS_AI_COORDINATION	Configure sequence/targets; assistant coordinates only, does not become analyst.
+P	CROSS_AI_COORDINATION
+P	Configure sequence/targets; assistant coordinates only, does not become analyst.
+ROW	Assistant MUST_NOT：independent answer、invent consensus、silently alter AI statements、auto-confirm conclusion、auto-activate Experience、auto-merge branch、directly execute Domain action、select provider/model。
+P	Assistant MUST_NOT：independent answer、invent consensus、silently alter AI statements、auto-confirm conclusion、auto-activate Experience、auto-merge branch、directly execute Domain action、select provider/model。
+P	20. Assistant Record / Meeting Summary Data Contract
+ROW	Meeting Record Field	Required
+P	Meeting Record Field
+P	Required
+ROW	conversation_ref	YES
+P	conversation_ref
+P	YES
+ROW	start/end time	YES
+P	start/end time
+P	YES
+ROW	active thread/branch refs	YES
+P	active thread/branch refs
+P	YES
+ROW	AI participants / aliases	YES
+P	AI participants / aliases
+P	YES
+ROW	source/evidence refs	YES
+P	source/evidence refs
+P	YES
+ROW	important response refs	YES
+P	important response refs
+P	YES
+ROW	branch refs	YES
+P	branch refs
+P	YES
+ROW	consensus with support refs	YES
+P	consensus with support refs
+P	YES
+ROW	disagreement with support refs	YES
+P	disagreement with support refs
+P	YES
+ROW	open questions	YES
+P	open questions
+P	YES
+ROW	confirmed conclusion/decision refs	YES
+P	confirmed conclusion/decision refs
+P	YES
+ROW	follow-up items	YES
+P	follow-up items
+P	YES
+ROW	assistant summary refs	YES
+P	assistant summary refs
+P	YES
+ROW	context fingerprint/snapshot refs	YES
+P	context fingerprint/snapshot refs
+P	YES
+ROW	record version + source set hash	YES
+P	record version + source set hash
+P	YES
+P	Assistant summary MUST be a derived artifact. Any later source message/Decision change that affects its source set MUST mark the summary stale or create a new version; silent rewrite of an earlier summary is forbidden.
+P	21. Conversation Memory Taxonomy / 對話記憶分類
+ROW	Class	Content	Canonical Owner	Persisted	Rule
+P	Class
+P	Content
+P	Canonical Owner
+P	Persisted
+P	Rule
+ROW	M0_TRANSIENT_INPUT	Current unsent composer/editor state.	UI/runtime ephemeral	NO	Must not be treated as persisted memory.
+P	M0_TRANSIENT_INPUT
+P	Current unsent composer/editor state.
+P	UI/runtime ephemeral
+P	NO
+P	Must not be treated as persisted memory.
+ROW	M1_MESSAGE_HISTORY	Persisted user/AI/assistant messages + relations.	ACPOS-AI-02	YES	Immutable identity; revision/tombstone semantics if applicable.
+P	M1_MESSAGE_HISTORY
+P	Persisted user/AI/assistant messages + relations.
+P	ACPOS-AI-02
+P	YES
+P	Immutable identity; revision/tombstone semantics if applicable.
+ROW	M2_THREAD_STATE	Active topic/node/open-question state for a thread/branch.	ACPOS-AI-02	YES	Derived from exact refs.
+P	M2_THREAD_STATE
+P	Active topic/node/open-question state for a thread/branch.
+P	ACPOS-AI-02
+P	YES
+P	Derived from exact refs.
+ROW	M3_ASSISTANT_RECORD	Structured summaries/meeting records.	ACPOS-AI-02	YES	Derived; versioned; stale-detectable.
+P	M3_ASSISTANT_RECORD
+P	Structured summaries/meeting records.
+P	ACPOS-AI-02
+P	YES
+P	Derived; versioned; stale-detectable.
+ROW	M4_DECISION_LINK	Reference to confirmed Domain Decision.	Domain Owner	REFERENCE	Conversation stores link only.
+P	M4_DECISION_LINK
+P	Reference to confirmed Domain Decision.
+P	Domain Owner
+P	REFERENCE
+P	Conversation stores link only.
+ROW	M5_PROJECT_CONTEXT_LINK	Reference to Project/Topic/Task/Version context.	Domain + AI-01	REFERENCE	No local copy as authority.
+P	M5_PROJECT_CONTEXT_LINK
+P	Reference to Project/Topic/Task/Version context.
+P	Domain + AI-01
+P	REFERENCE
+P	No local copy as authority.
+ROW	M6_GLOBAL_KNOWLEDGE_EXPERIENCE	Knowledge/Experience candidates and admitted records.	ACPOS-AI-01	REFERENCE	AI-02 may surface candidate readiness but cannot admit/activate.
+P	M6_GLOBAL_KNOWLEDGE_EXPERIENCE
+P	Knowledge/Experience candidates and admitted records.
+P	ACPOS-AI-01
+P	REFERENCE
+P	AI-02 may surface candidate readiness but cannot admit/activate.
+ROW	M7_PROVIDER_SESSION_MEMORY	Provider-side hidden/session state if any.	Transport owner	NON_AUTHORITY	Must not be the sole ACPOS resume mechanism.
+P	M7_PROVIDER_SESSION_MEMORY
+P	Provider-side hidden/session state if any.
+P	Transport owner
+P	NON_AUTHORITY
+P	Must not be the sole ACPOS resume mechanism.
+P	Conversation “memory” MUST therefore mean a typed memory class. Unqualified “remember this” MUST NOT silently write Global Experience or Domain Canon; the system must resolve the requested memory class and permission first.
+P	22. Idea / Candidate / Decision Memory Boundary
+ROW	Class	Meaning	Conversation Behavior
+P	Class
+P	Meaning
+P	Conversation Behavior
+ROW	Idea	Unconfirmed thought or suggestion.	May be discussed/indexed/summarized; MUST NOT be treated as formal decision.
+P	Idea
+P	Unconfirmed thought or suggestion.
+P	May be discussed/indexed/summarized; MUST NOT be treated as formal decision.
+ROW	Candidate	Structured option awaiting review.	May be compared/revised; remains candidate.
+P	Candidate
+P	Structured option awaiting review.
+P	May be compared/revised; remains candidate.
+ROW	Decision	Human/authorized owner confirmed decision in Domain Authority.	Conversation stores exact Decision ref and may use it according to ACPOS-AI-01 truth/context rules.
+P	Decision
+P	Human/authorized owner confirmed decision in Domain Authority.
+P	Conversation stores exact Decision ref and may use it according to ACPOS-AI-01 truth/context rules.
+ROW	Superseded Decision	Previously valid but no longer Current.	Historical conversations retain old ref; new Current continuation must detect stale context where relevant.
+P	Superseded Decision
+P	Previously valid but no longer Current.
+P	Historical conversations retain old ref; new Current continuation must detect stale context where relevant.
+ROW	Decision Memory ≠ “AI said it before”. Only an authorized Decision object/ref from its owner can become formal Decision context. Assistant may record the ref but cannot create the Decision authority.
+P	Decision Memory ≠ “AI said it before”. Only an authorized Decision object/ref from its owner can become formal Decision context. Assistant may record the ref but cannot create the Decision authority.
+P	23. Branch / Fork / Adopt / Sync Contract
+ROW	Operation	Required Semantics
+P	Operation
+P	Required Semantics
+ROW	Fork	Create a new branch/thread from one exact source message; inherit source context snapshot.
+P	Fork
+P	Create a new branch/thread from one exact source message; inherit source context snapshot.
+ROW	Continue Branch	Use branch history + branch-adopted context + explicit Current refresh if requested.
+P	Continue Branch
+P	Use branch history + branch-adopted context + explicit Current refresh if requested.
+ROW	Parent Advances	Does not silently inject new parent messages into branch.
+P	Parent Advances
+P	Does not silently inject new parent messages into branch.
+ROW	Branch Summary	Assistant may summarize exact branch refs; summary is candidate derived artifact.
+P	Branch Summary
+P	Assistant may summarize exact branch refs; summary is candidate derived artifact.
+ROW	Adopt to Parent	Requires explicit authorized action; stores adopted summary/ref and impact/stale consequences.
+P	Adopt to Parent
+P	Requires explicit authorized action; stores adopted summary/ref and impact/stale consequences.
+ROW	Sync Current Context	Explicitly refresh branch against Current Context; MUST mark changed assumptions/decision refs.
+P	Sync Current Context
+P	Explicitly refresh branch against Current Context; MUST mark changed assumptions/decision refs.
+ROW	Merge Content	If future Authority defines true merge, exact merge contract REQUIRED; until then REQUIRE_EXACT_BINDING and no silent merge.
+P	Merge Content
+P	If future Authority defines true merge, exact merge contract REQUIRED; until then REQUIRE_EXACT_BINDING and no silent merge.
+ROW	Delete Branch	Retention/dependency policy applies; exact identity must remain auditable when referenced.
+P	Delete Branch
+P	Retention/dependency policy applies; exact identity must remain auditable when referenced.
+P	24. Conversation Continuity & Resume Algorithm
+P	1. Resolve exact Conversation ID from Current allowed scope; do not infer from title alone.
+P	2. Resolve active Thread/Branch identity and persisted ResumePointer.
+P	3. Verify permission against conversation scope and extension binding.
+P	4. Load immutable message chronology up to required sequence; load relation graph separately.
+P	5. Resolve bound ContextSnapshotRef/Fingerprint and compare with Current context owner state when operation requires Current.
+P	6. Mark CURRENT / HISTORICAL / STALE / UNVERIFIED / BLOCKED explicitly.
+P	7. Load conversation-local memory projection only as derived helper; never as higher authority than Decision/Context.
+P	8. Restore Multi-AI session aliases/round relations when resuming within that session.
+P	9. Restore Assistant record links and open questions without inventing completion.
+P	10. Persist a new resume event only after successful resolution; browser state does not become authority.
+P	25. Attachment / Source Reference Contract
+ROW	Field	Rule
+P	Field
+P	Rule
+ROW	attachment_ref	Canonical typed reference; required after persistence.
+P	attachment_ref
+P	Canonical typed reference; required after persistence.
+ROW	source_filename/display_name	Display only; MUST_NOT be identity.
+P	source_filename/display_name
+P	Display only; MUST_NOT be identity.
+ROW	content_version/hash	Use exact owner-provided identity when available; otherwise REQUIRE_EXACT_BINDING.
+P	content_version/hash
+P	Use exact owner-provided identity when available; otherwise REQUIRE_EXACT_BINDING.
+ROW	permission/classification	Must be checked before context inclusion.
+P	permission/classification
+P	Must be checked before context inclusion.
+ROW	processing_status	UPLOADED / PROCESSING / READY / FAILED / QUARANTINED or exact binding.
+P	processing_status
+P	UPLOADED / PROCESSING / READY / FAILED / QUARANTINED or exact binding.
+ROW	extracted_text/embedding	Owned by relevant ingestion/retrieval system; Conversation references result, does not become ingestion authority.
+P	extracted_text/embedding
+P	Owned by relevant ingestion/retrieval system; Conversation references result, does not become ingestion authority.
+ROW	message_binding	Exact message(s) that introduced/referenced attachment.
+P	message_binding
+P	Exact message(s) that introduced/referenced attachment.
+ROW	retention_binding	Must follow owner/AI-01 retention contract.
+P	retention_binding
+P	Must follow owner/AI-01 retention contract.
+P	An attachment shown in the composer is not automatically trusted Context. Inclusion into AI request requires successful reference resolution, permission/classification, and the applicable ACPOS-AI-01 retrieval/context decision.
+P	26. Domain Conversation Extension Contract
+ROW	Extension Field	Requirement
+P	Extension Field
+P	Requirement
+ROW	extension_uid	Unique registered extension identity.
+P	extension_uid
+P	Unique registered extension identity.
+ROW	domain_owner_uid	Canonical business owner.
+P	domain_owner_uid
+P	Canonical business owner.
+ROW	allowed_scope_types	Project/Topic/Task/Standalone/etc as applicable.
+P	allowed_scope_types
+P	Project/Topic/Task/Standalone/etc as applicable.
+ROW	context_source_refs	References to allowed Context owners/sources.
+P	context_source_refs
+P	References to allowed Context owners/sources.
+ROW	allowed_commands	Domain operations Conversation may request; undefined=BLOCK.
+P	allowed_commands
+P	Domain operations Conversation may request; undefined=BLOCK.
+ROW	permission_projection	Required permissions for read/write/assistant/multi-ai/domain command.
+P	permission_projection
+P	Required permissions for read/write/assistant/multi-ai/domain command.
+ROW	assistant_extensions	Additional record templates only; cannot change assistant core role.
+P	assistant_extensions
+P	Additional record templates only; cannot change assistant core role.
+ROW	render_extensions	Optional domain panels/drawers/cards.
+P	render_extensions
+P	Optional domain panels/drawers/cards.
+ROW	handoff_rules	How conversation output becomes candidate/request for domain owner.
+P	handoff_rules
+P	How conversation output becomes candidate/request for domain owner.
+ROW	forbidden_direct_actions	Explicit list of authority mutations not allowed from raw AI response.
+P	forbidden_direct_actions
+P	Explicit list of authority mutations not allowed from raw AI response.
+ROW	Shared Core MUST remain identical	Domain MAY vary
+P	Shared Core MUST remain identical
+P	Domain MAY vary
+ROW	Conversation/Thread/Branch IDs	Context sources
+P	Conversation/Thread/Branch IDs
+P	Context sources
+ROW	Message identity and # refs	Domain command vocabulary
+P	Message identity and # refs
+P	Domain command vocabulary
+ROW	Reference parser semantics	Read-model cards/panels
+P	Reference parser semantics
+P	Read-model cards/panels
+ROW	Branch/resume/stale rules	Permission requirements
+P	Branch/resume/stale rules
+P	Permission requirements
+ROW	Multi-AI relation model	Domain-specific participant capability policy
+P	Multi-AI relation model
+P	Domain-specific participant capability policy
+ROW	Assistant secretary boundaries	Meeting record extension fields
+P	Assistant secretary boundaries
+P	Meeting record extension fields
+ROW	Audit/event core semantics	Business handoff destination
+P	Audit/event core semantics
+P	Business handoff destination
+P	27. Permission / Security / Scope Isolation
+ROW	Security Rule	Normative Effect
+P	Security Rule
+P	Normative Effect
+ROW	READ_CONVERSATION	Permission required for history/message/reference visibility.
+P	READ_CONVERSATION
+P	Permission required for history/message/reference visibility.
+ROW	WRITE_MESSAGE	Required for sending messages.
+P	WRITE_MESSAGE
+P	Required for sending messages.
+ROW	CREATE_BRANCH	Required separately when policy demands.
+P	CREATE_BRANCH
+P	Required separately when policy demands.
+ROW	MULTI_AI_USE	Required to start/target Multi-AI.
+P	MULTI_AI_USE
+P	Required to start/target Multi-AI.
+ROW	ASSISTANT_USE	Required for assistant actions.
+P	ASSISTANT_USE
+P	Required for assistant actions.
+ROW	ATTACHMENT_USE	Classification/permission before inclusion.
+P	ATTACHMENT_USE
+P	Classification/permission before inclusion.
+ROW	DOMAIN_COMMAND	Domain owner permission required; Conversation permission alone insufficient.
+P	DOMAIN_COMMAND
+P	Domain owner permission required; Conversation permission alone insufficient.
+ROW	CROSS_SCOPE_REF	Default deny unless explicit cross-scope permission/binding.
+P	CROSS_SCOPE_REF
+P	Default deny unless explicit cross-scope permission/binding.
+ROW	PROJECT_ISOLATION	A ref from another Project/tenant MUST_NOT resolve into context merely because user knows the ID.
+P	PROJECT_ISOLATION
+P	A ref from another Project/tenant MUST_NOT resolve into context merely because user knows the ID.
+ROW	SERVER_AUTHORITY	Client visibility/disabled state does not replace server authorization.
+P	SERVER_AUTHORITY
+P	Client visibility/disabled state does not replace server authorization.
+ROW	SECRET_POLICY	Secrets/API keys MUST_NOT appear in message history/assistant summary unless explicit secure secret-reference contract allows it.
+P	SECRET_POLICY
+P	Secrets/API keys MUST_NOT appear in message history/assistant summary unless explicit secure secret-reference contract allows it.
+ROW	PROMPT_INJECTION_BOUNDARY	Untrusted message/attachment content MUST NOT redefine system authority/permission/context precedence.
+P	PROMPT_INJECTION_BOUNDARY
+P	Untrusted message/attachment content MUST NOT redefine system authority/permission/context precedence.
+ROW	AUDIT_ACTOR	Every effectful action records actor/service identity.
+P	AUDIT_ACTOR
+P	Every effectful action records actor/service identity.
+ROW	EXACT_BINDING	Specific permission UIDs/scopes remain REQUIRE_EXACT_BINDING until Current Authority resolves them.
+P	EXACT_BINDING
+P	Specific permission UIDs/scopes remain REQUIRE_EXACT_BINDING until Current Authority resolves them.
+P	28. Conversation Event / Consumer Contract
+ROW	Event	Producer	Consumers	Minimum Payload
+P	Event
+P	Producer
+P	Consumers
+P	Minimum Payload
+ROW	conversation.created	Conversation	Conversation projections / audit	conversation_id, scope, extension
+P	conversation.created
+P	Conversation
+P	Conversation projections / audit
+P	conversation_id, scope, extension
+ROW	conversation.resumed	Resume resolver	UI/read model/audit	resume pointer, stale status
+P	conversation.resumed
+P	Resume resolver
+P	UI/read model/audit
+P	resume pointer, stale status
+ROW	message.submitted	Message service	runtime bridge, audit	message_id, sequence, context binding
+P	message.submitted
+P	Message service
+P	runtime bridge, audit
+P	message_id, sequence, context binding
+ROW	response.requested	Conversation core	AI-03 runtime bridge	request ref, message ref, context snapshot/fingerprint
+P	response.requested
+P	Conversation core
+P	AI-03 runtime bridge
+P	request ref, message ref, context snapshot/fingerprint
+ROW	response.started	AI-03 runtime	conversation projection	job/request ref
+P	response.started
+P	AI-03 runtime
+P	conversation projection
+P	job/request ref
+ROW	response.completed	AI-03 runtime	message store, projection, assistant optional	AI response envelope, #AI identity
+P	response.completed
+P	AI-03 runtime
+P	message store, projection, assistant optional
+P	AI response envelope, #AI identity
+ROW	response.failed	AI-03 runtime	projection/audit	failure class, retry eligibility
+P	response.failed
+P	AI-03 runtime
+P	projection/audit
+P	failure class, retry eligibility
+ROW	response.stop_requested	Conversation core	AI-03 runtime	request/job ref, actor
+P	response.stop_requested
+P	Conversation core
+P	AI-03 runtime
+P	request/job ref, actor
+ROW	branch.created	Branch service	projection/resume/audit	source message, parent thread, context snapshot
+P	branch.created
+P	Branch service
+P	projection/resume/audit
+P	source message, parent thread, context snapshot
+ROW	branch.summary_prepared	Assistant	projection	branch refs, summary ref
+P	branch.summary_prepared
+P	Assistant
+P	projection
+P	branch refs, summary ref
+ROW	branch.summary_adopted	authorized owner	context projection/impact	summary ref, target parent context
+P	branch.summary_adopted
+P	authorized owner
+P	context projection/impact
+P	summary ref, target parent context
+ROW	multi_ai.started	Conversation core	AI-03/runtime projection	session, participants, original question, shared context
+P	multi_ai.started
+P	Conversation core
+P	AI-03/runtime projection
+P	session, participants, original question, shared context
+ROW	cross_ai.round_created	Conversation core	runtime/audit	round, relation, targets
+P	cross_ai.round_created
+P	Conversation core
+P	runtime/audit
+P	round, relation, targets
+ROW	assistant.recorded	Assistant service	projection/memory	assistant ref, source refs
+P	assistant.recorded
+P	Assistant service
+P	projection/memory
+P	assistant ref, source refs
+ROW	assistant.summary_created	Assistant service	projection/memory	summary version, source set
+P	assistant.summary_created
+P	Assistant service
+P	projection/memory
+P	summary version, source set
+ROW	memory_projection.refreshed	Conversation memory	read model/audit	projection version + source refs
+P	memory_projection.refreshed
+P	Conversation memory
+P	read model/audit
+P	projection version + source refs
+ROW	conversation.closed	Conversation service	projection/retention	closure reason
+P	conversation.closed
+P	Conversation service
+P	projection/retention
+P	closure reason
+ROW	conversation.archived	Retention owner	archive/search/audit	archive disposition
+P	conversation.archived
+P	Retention owner
+P	archive/search/audit
+P	archive disposition
+P	Delivery transport, queue name, retry count, event schema UID and exact consumer implementation are REQUIRE_EXACT_BINDING unless resolved from Current Authority. Event semantics in this Word do not authorize a new bus/runtime.
+P	29. Concurrency / Version Conflict Contract
+ROW	Scenario	Required Resolution
+P	Scenario
+P	Required Resolution
+ROW	Two users send at same time	Both messages receive unique immutable sequence; neither overwrites the other.
+P	Two users send at same time
+P	Both messages receive unique immutable sequence; neither overwrites the other.
+ROW	User sends while AI streaming	New message policy must resolve whether same thread accepts concurrent request or queues/branches; exact runtime policy REQUIRE_EXACT_BINDING, never silently interleave as one response.
+P	User sends while AI streaming
+P	New message policy must resolve whether same thread accepts concurrent request or queues/branches; exact runtime policy REQUIRE_EXACT_BINDING, never silently interleave as one response.
+ROW	Two branch creations from same message	Both may exist with distinct branch IDs if permitted; same idempotency key collapses duplicate request.
+P	Two branch creations from same message
+P	Both may exist with distinct branch IDs if permitted; same idempotency key collapses duplicate request.
+ROW	Assistant summary generated while new messages arrive	Summary binds exact source_sequence_end/source refs; later messages make it non-current, not retroactively included.
+P	Assistant summary generated while new messages arrive
+P	Summary binds exact source_sequence_end/source refs; later messages make it non-current, not retroactively included.
+ROW	Multi-AI participants finish out of order	Persist actual completion order and each own identity; display relation/round independent of arrival order.
+P	Multi-AI participants finish out of order
+P	Persist actual completion order and each own identity; display relation/round independent of arrival order.
+ROW	Stop and complete race	Terminal state resolved by canonical runtime result/version; UI request timestamp alone not authority.
+P	Stop and complete race
+P	Terminal state resolved by canonical runtime result/version; UI request timestamp alone not authority.
+ROW	Resume on two devices	Persisted current state uses optimistic/version-aware semantics; client-local last-view state cannot overwrite conversation authority.
+P	Resume on two devices
+P	Persisted current state uses optimistic/version-aware semantics; client-local last-view state cannot overwrite conversation authority.
+ROW	Branch adoption races with upstream Decision change	Expected context/version required; stale adoption blocks/requires review.
+P	Branch adoption races with upstream Decision change
+P	Expected context/version required; stale adoption blocks/requires review.
+ROW	Memory projection refresh races	Create/version-check derived projection; no lost update silent overwrite.
+P	Memory projection refresh races
+P	Create/version-check derived projection; no lost update silent overwrite.
+ROW	Rename/pin races	Cosmetic metadata can use expected version or last-write policy only if exact Current contract defines it; core identity unaffected.
+P	Rename/pin races
+P	Cosmetic metadata can use expected version or last-write policy only if exact Current contract defines it; core identity unaffected.
+P	30. Idempotency Contract / 冪等契約
+ROW	Operation	Rule
+P	Operation
+P	Rule
+ROW	SEND_MESSAGE	Same idempotency key + same normalized payload/scope -> return same logical message identity.
+P	SEND_MESSAGE
+P	Same idempotency key + same normalized payload/scope -> return same logical message identity.
+ROW	SEND_MESSAGE_CONFLICT	Same key + different payload -> REJECT_IDEMPOTENCY_PAYLOAD_MISMATCH.
+P	SEND_MESSAGE_CONFLICT
+P	Same key + different payload -> REJECT_IDEMPOTENCY_PAYLOAD_MISMATCH.
+ROW	CREATE_BRANCH	Same key/source/parameters -> same branch identity/result.
+P	CREATE_BRANCH
+P	Same key/source/parameters -> same branch identity/result.
+ROW	ASSISTANT_RECORD	Repeat same command with same key must not duplicate record.
+P	ASSISTANT_RECORD
+P	Repeat same command with same key must not duplicate record.
+ROW	START_MULTI_AI	Same logical request key must not create duplicate session/round.
+P	START_MULTI_AI
+P	Same logical request key must not create duplicate session/round.
+ROW	CROSS_AI_REQUEST	Round/target/instruction identity included in idempotency scope.
+P	CROSS_AI_REQUEST
+P	Round/target/instruction identity included in idempotency scope.
+ROW	STOP_RESPONSE	Repeated stop request is safe; terminal outcome still from runtime.
+P	STOP_RESPONSE
+P	Repeated stop request is safe; terminal outcome still from runtime.
+ROW	RESUME	Resume read operation is safe; writing resume telemetry must de-duplicate by operation key as applicable.
+P	RESUME
+P	Resume read operation is safe; writing resume telemetry must de-duplicate by operation key as applicable.
+ROW	CLIENT_RETRY	Network retry MUST reuse idempotency key; generating a new key creates a new logical operation.
+P	CLIENT_RETRY
+P	Network retry MUST reuse idempotency key; generating a new key creates a new logical operation.
+ROW	EXPIRY	Exact retention/expiry window REQUIRE_EXACT_BINDING; expiration MUST NOT let a late duplicate silently create a second effectful business action.
+P	EXPIRY
+P	Exact retention/expiry window REQUIRE_EXACT_BINDING; expiration MUST NOT let a late duplicate silently create a second effectful business action.
+ROW	CROSS_EXTENSION	Idempotency scope includes extension/scope identity to prevent cross-domain collision.
+P	CROSS_EXTENSION
+P	Idempotency scope includes extension/scope identity to prevent cross-domain collision.
+P	31. Error / Retry / Stop / Recovery Contract
+ROW	Error Class	Disposition	Recovery
+P	Error Class
+P	Disposition
+P	Recovery
+ROW	REFERENCE_INVALID	NON_RETRYABLE until user fixes ref	Show exact token/ref error; no fuzzy fallback.
+P	REFERENCE_INVALID
+P	NON_RETRYABLE until user fixes ref
+P	Show exact token/ref error; no fuzzy fallback.
+ROW	REFERENCE_AMBIGUOUS	REVIEW_REQUIRED	Request disambiguation.
+P	REFERENCE_AMBIGUOUS
+P	REVIEW_REQUIRED
+P	Request disambiguation.
+ROW	PERMISSION_DENIED	NON_RETRYABLE	Do not reveal unauthorized content.
+P	PERMISSION_DENIED
+P	NON_RETRYABLE
+P	Do not reveal unauthorized content.
+ROW	CONTEXT_STALE	REVIEW_REQUIRED or REFRESH	Offer explicit historical vs refreshed-current continuation where allowed.
+P	CONTEXT_STALE
+P	REVIEW_REQUIRED or REFRESH
+P	Offer explicit historical vs refreshed-current continuation where allowed.
+ROW	CONTEXT_UNAVAILABLE	RETRYABLE or BLOCK based owner	Do not fabricate context.
+P	CONTEXT_UNAVAILABLE
+P	RETRYABLE or BLOCK based owner
+P	Do not fabricate context.
+ROW	RUNTIME_TRANSIENT	RETRYABLE if AI-03 says allowed	Preserve idempotency and exact request context.
+P	RUNTIME_TRANSIENT
+P	RETRYABLE if AI-03 says allowed
+P	Preserve idempotency and exact request context.
+ROW	RUNTIME_NONRETRYABLE	NON_RETRYABLE	Persist failure; no synthetic answer.
+P	RUNTIME_NONRETRYABLE
+P	NON_RETRYABLE
+P	Persist failure; no synthetic answer.
+ROW	PARTIAL_MULTI_AI	PARTIAL / REVIEW	Preserve successes; show failed participant(s).
+P	PARTIAL_MULTI_AI
+P	PARTIAL / REVIEW
+P	Preserve successes; show failed participant(s).
+ROW	STOP_REQUESTED	PENDING_TERMINAL	Do not label cancelled until canonical terminal result.
+P	STOP_REQUESTED
+P	PENDING_TERMINAL
+P	Do not label cancelled until canonical terminal result.
+ROW	ASSISTANT_SOURCE_STALE	REGENERATE/REVIEW	Create new version; retain old summary.
+P	ASSISTANT_SOURCE_STALE
+P	REGENERATE/REVIEW
+P	Create new version; retain old summary.
+ROW	BRANCH_PARENT_STALE	REVIEW_REQUIRED	Explicit sync/adopt decision.
+P	BRANCH_PARENT_STALE
+P	REVIEW_REQUIRED
+P	Explicit sync/adopt decision.
+ROW	EXTENSION_COMMAND_UNBOUND	BLOCK	REQUIRE_EXACT_BINDING; do not invent API/action.
+P	EXTENSION_COMMAND_UNBOUND
+P	BLOCK
+P	REQUIRE_EXACT_BINDING; do not invent API/action.
+P	Retry/backoff/circuit algorithms for Provider execution belong to ACPOS-AI-03. ACPOS-AI-02 owns only the conversation-visible retry identity, idempotency preservation, status projection and user recovery semantics.
+P	32. Retention / Archive / Delete Contract
+ROW	Artifact Class	Retention Rule	Delete Boundary
+P	Artifact Class
+P	Retention Rule
+P	Delete Boundary
+ROW	Conversation metadata	Retain per policy; exact duration REQUIRE_EXACT_BINDING.	Archive before destructive delete when dependencies exist.
+P	Conversation metadata
+P	Retain per policy; exact duration REQUIRE_EXACT_BINDING.
+P	Archive before destructive delete when dependencies exist.
+ROW	Messages	#AI/#AST identity and dependency-bearing content preserved while referenced.	Hard delete forbidden if active Decision/Evidence/Audit dependency exists unless owner-approved tombstone semantics preserves identity.
+P	Messages
+P	#AI/#AST identity and dependency-bearing content preserved while referenced.
+P	Hard delete forbidden if active Decision/Evidence/Audit dependency exists unless owner-approved tombstone semantics preserves identity.
+ROW	Branches	Same dependency rule as messages.	Archive may hide from default UI but refs remain resolvable per policy.
+P	Branches
+P	Same dependency rule as messages.
+P	Archive may hide from default UI but refs remain resolvable per policy.
+ROW	Assistant summaries	Versioned derived artifact.	Old versions retained according to source/audit dependency.
+P	Assistant summaries
+P	Versioned derived artifact.
+P	Old versions retained according to source/audit dependency.
+ROW	Context bindings	Must retain enough identity to prove what context produced governed AI response.	Do not erase fingerprint/snapshot ref while response is auditable.
+P	Context bindings
+P	Must retain enough identity to prove what context produced governed AI response.
+P	Do not erase fingerprint/snapshot ref while response is auditable.
+ROW	Attachments	Retention governed by attachment/data owner + classification.	Conversation deletion MUST_NOT silently delete owner asset.
+P	Attachments
+P	Retention governed by attachment/data owner + classification.
+P	Conversation deletion MUST_NOT silently delete owner asset.
+ROW	Multi-AI relations	Retain relation metadata with response refs.	No collapsing multiple responses into one summary-only record.
+P	Multi-AI relations
+P	Retain relation metadata with response refs.
+P	No collapsing multiple responses into one summary-only record.
+ROW	Audit events	Retention owned by audit/governance policy.	Conversation UI cannot purge.
+P	Audit events
+P	Retention owned by audit/governance policy.
+P	Conversation UI cannot purge.
+ROW	Transient composer state	May expire quickly; exact TTL binding required if persisted.	Must not be mistaken for durable memory.
+P	Transient composer state
+P	May expire quickly; exact TTL binding required if persisted.
+P	Must not be mistaken for durable memory.
+P	33. Observability / Audit / NFR Contract
+ROW	NFR / Audit Dimension	Requirement
+P	NFR / Audit Dimension
+P	Requirement
+ROW	TRACEABILITY	Every response reconstructs conversation/thread/message/request/context identity.
+P	TRACEABILITY
+P	Every response reconstructs conversation/thread/message/request/context identity.
+ROW	REFERENCE_RESOLUTION	Measure invalid/ambiguous/cross-scope resolution failures.
+P	REFERENCE_RESOLUTION
+P	Measure invalid/ambiguous/cross-scope resolution failures.
+ROW	STALE_CONTEXT	Record stale detections and resolution disposition.
+P	STALE_CONTEXT
+P	Record stale detections and resolution disposition.
+ROW	MULTI_AI_COMPLETENESS	Track requested participants vs completed/failed/stopped.
+P	MULTI_AI_COMPLETENESS
+P	Track requested participants vs completed/failed/stopped.
+ROW	ASSISTANT_DERIVATION	Record source set for every assistant summary/record version.
+P	ASSISTANT_DERIVATION
+P	Record source set for every assistant summary/record version.
+ROW	BRANCH_LINEAGE	Every branch resolves parent thread/source message/context snapshot.
+P	BRANCH_LINEAGE
+P	Every branch resolves parent thread/source message/context snapshot.
+ROW	RESUME_REPRODUCIBILITY	Resume from persisted state must reproduce same scope/lineage independent of browser.
+P	RESUME_REPRODUCIBILITY
+P	Resume from persisted state must reproduce same scope/lineage independent of browser.
+ROW	LATENCY	Capture user submit→accepted, request→first response, request→terminal; exact SLO REQUIRE_EXACT_BINDING.
+P	LATENCY
+P	Capture user submit→accepted, request→first response, request→terminal; exact SLO REQUIRE_EXACT_BINDING.
+ROW	FAILURE_CLASSIFICATION	Terminal failure must map to known class/disposition.
+P	FAILURE_CLASSIFICATION
+P	Terminal failure must map to known class/disposition.
+ROW	IDEMPOTENCY	Duplicate suppression and mismatch metrics.
+P	IDEMPOTENCY
+P	Duplicate suppression and mismatch metrics.
+ROW	SECURITY	Cross-scope/permission denial audit without leaking content.
+P	SECURITY
+P	Cross-scope/permission denial audit without leaking content.
+ROW	DATA_MINIMIZATION	Context assembly follows ACPOS-AI-01 budget/classification rules; Conversation does not inject full history by default.
+P	DATA_MINIMIZATION
+P	Context assembly follows ACPOS-AI-01 budget/classification rules; Conversation does not inject full history by default.
+P	34. Exact Binding Ledger / 正式施工精確綁定清單
+ROW	Binding Item	Status	Rule
+P	Binding Item
+P	Status
+P	Rule
+ROW	Conversation DB/table owner	REQUIRE_EXACT_BINDING	Do not infer from historical migrations.
+P	Conversation DB/table owner
+P	REQUIRE_EXACT_BINDING
+P	Do not infer from historical migrations.
+ROW	Thread/Branch persistence schema	REQUIRE_EXACT_BINDING	Must match entity/state contract.
+P	Thread/Branch persistence schema
+P	REQUIRE_EXACT_BINDING
+P	Must match entity/state contract.
+ROW	Message persistence schema	REQUIRE_EXACT_BINDING	Must include exact identity/sequence/relation/context fields.
+P	Message persistence schema
+P	REQUIRE_EXACT_BINDING
+P	Must include exact identity/sequence/relation/context fields.
+ROW	Permission UIDs/scopes	REQUIRE_EXACT_BINDING	No guessed names.
+P	Permission UIDs/scopes
+P	REQUIRE_EXACT_BINDING
+P	No guessed names.
+ROW	API operation UIDs/routes	REQUIRE_EXACT_BINDING	Search Current owner before creation.
+P	API operation UIDs/routes
+P	REQUIRE_EXACT_BINDING
+P	Search Current owner before creation.
+ROW	Event schema UIDs/bus topics	REQUIRE_EXACT_BINDING	Semantic events above do not create runtime bus.
+P	Event schema UIDs/bus topics
+P	REQUIRE_EXACT_BINDING
+P	Semantic events above do not create runtime bus.
+ROW	Idempotency store/window	REQUIRE_EXACT_BINDING	Must be compatible with business effect lifetime.
+P	Idempotency store/window
+P	REQUIRE_EXACT_BINDING
+P	Must be compatible with business effect lifetime.
+ROW	Provider execution job fields	REFERENCE ACPOS-AI-03	Exact current binding required.
+P	Provider execution job fields
+P	REFERENCE ACPOS-AI-03
+P	Exact current binding required.
+ROW	Context Snapshot/Fingerprint schema	REFERENCE ACPOS-AI-01	Must use AI-01 exact owner; no duplicate schema.
+P	Context Snapshot/Fingerprint schema
+P	REFERENCE ACPOS-AI-01
+P	Must use AI-01 exact owner; no duplicate schema.
+ROW	Attachment ingestion schema	REQUIRE_EXACT_BINDING	Conversation only stores reference/binding.
+P	Attachment ingestion schema
+P	REQUIRE_EXACT_BINDING
+P	Conversation only stores reference/binding.
+ROW	Retention TTLs	REQUIRE_EXACT_BINDING	No arbitrary days/months in design.
+P	Retention TTLs
+P	REQUIRE_EXACT_BINDING
+P	No arbitrary days/months in design.
+ROW	Assistant summary persistence owner	REQUIRE_EXACT_BINDING	Must remain derived/versioned.
+P	Assistant summary persistence owner
+P	REQUIRE_EXACT_BINDING
+P	Must remain derived/versioned.
+ROW	Multi-AI participant capability resolver	REFERENCE ACPOS-AI-03	No provider picker.
+P	Multi-AI participant capability resolver
+P	REFERENCE ACPOS-AI-03
+P	No provider picker.
+ROW	Cross-scope authorization rule	REQUIRE_EXACT_BINDING	Default deny until exact rule resolved.
+P	Cross-scope authorization rule
+P	REQUIRE_EXACT_BINDING
+P	Default deny until exact rule resolved.
+ROW	Streaming transport	REFERENCE ACPOS-AI-03	SSE/WebSocket/etc not chosen by this Word.
+P	Streaming transport
+P	REFERENCE ACPOS-AI-03
+P	SSE/WebSocket/etc not chosen by this Word.
+ROW	UI component/control UIDs	REQUIRE_EXACT_BINDING	Domain pages map to shared core after current design registry resolution.
+P	UI component/control UIDs
+P	REQUIRE_EXACT_BINDING
+P	Domain pages map to shared core after current design registry resolution.
+P	35. Acceptance Matrix / 邏輯驗收矩陣
+ROW	Acceptance UID	Item	PASS Condition
+P	Acceptance UID
+P	Item
+P	PASS Condition
+ROW	AI02-ACC-01	Single Shared Core	All conversation-bearing pages resolve same core identity semantics; no second core.
+P	AI02-ACC-01
+P	Single Shared Core
+P	All conversation-bearing pages resolve same core identity semantics; no second core.
+ROW	AI02-ACC-02	Conversation Identity	conversation/thread/branch/message identities are stable and reconstructable.
+P	AI02-ACC-02
+P	Conversation Identity
+P	conversation/thread/branch/message identities are stable and reconstructable.
+ROW	AI02-ACC-03	Single AI Index	Every completed Single-AI response has exact #AI ref + time.
+P	AI02-ACC-03
+P	Single AI Index
+P	Every completed Single-AI response has exact #AI ref + time.
+ROW	AI02-ACC-04	Multi AI Index	Every participant response has own #AI ref/time/alias.
+P	AI02-ACC-04
+P	Multi AI Index
+P	Every participant response has own #AI ref/time/alias.
+ROW	AI02-ACC-05	Shared Round Context	Initial Multi-AI round uses same original question/context fingerprint.
+P	AI02-ACC-05
+P	Shared Round Context
+P	Initial Multi-AI round uses same original question/context fingerprint.
+ROW	AI02-ACC-06	Cross AI Targets	Review/compare/revision uses exact target refs.
+P	AI02-ACC-06
+P	Cross AI Targets
+P	Review/compare/revision uses exact target refs.
+ROW	AI02-ACC-07	No AI-as-Fact	AI consensus never upgrades unsupported claim to Source Fact.
+P	AI02-ACC-07
+P	No AI-as-Fact
+P	AI consensus never upgrades unsupported claim to Source Fact.
+ROW	AI02-ACC-08	Assistant Secretary	Assistant records/summarizes/indexes only; not third analyst mode.
+P	AI02-ACC-08
+P	Assistant Secretary
+P	Assistant records/summarizes/indexes only; not third analyst mode.
+ROW	AI02-ACC-09	Assistant Source Trace	Every summary/record binds exact source refs.
+P	AI02-ACC-09
+P	Assistant Source Trace
+P	Every summary/record binds exact source refs.
+ROW	AI02-ACC-10	Branch Fork	Branch begins from exact source message/context snapshot.
+P	AI02-ACC-10
+P	Branch Fork
+P	Branch begins from exact source message/context snapshot.
+ROW	AI02-ACC-11	No Silent Branch Sync	Parent later messages do not auto-enter branch.
+P	AI02-ACC-11
+P	No Silent Branch Sync
+P	Parent later messages do not auto-enter branch.
+ROW	AI02-ACC-12	No Silent Merge	Branch adoption requires explicit action.
+P	AI02-ACC-12
+P	No Silent Merge
+P	Branch adoption requires explicit action.
+ROW	AI02-ACC-13	Reference Parser	@/# deterministic typed resolution; invalid/ambiguous refs block dependent action.
+P	AI02-ACC-13
+P	Reference Parser
+P	@/# deterministic typed resolution; invalid/ambiguous refs block dependent action.
+ROW	AI02-ACC-14	Short Ref Normalization	#149 only resolves if unique and stores canonical #AI ref.
+P	AI02-ACC-14
+P	Short Ref Normalization
+P	#149 only resolves if unique and stores canonical #AI ref.
+ROW	AI02-ACC-15	Chronology	server_sequence immutable; relation graph separate.
+P	AI02-ACC-15
+P	Chronology
+P	server_sequence immutable; relation graph separate.
+ROW	AI02-ACC-16	Context Binding	Every governed response binds exact request context snapshot/fingerprint.
+P	AI02-ACC-16
+P	Context Binding
+P	Every governed response binds exact request context snapshot/fingerprint.
+ROW	AI02-ACC-17	Stale Detection	Resume detects authoritative context/version drift where applicable.
+P	AI02-ACC-17
+P	Stale Detection
+P	Resume detects authoritative context/version drift where applicable.
+ROW	AI02-ACC-18	Historical Read	Historical conversation remains viewable with historical/stale labeling.
+P	AI02-ACC-18
+P	Historical Read
+P	Historical conversation remains viewable with historical/stale labeling.
+ROW	AI02-ACC-19	Resume	Persisted ResumePointer reconstructs exact scope without chat-memory guessing.
+P	AI02-ACC-19
+P	Resume
+P	Persisted ResumePointer reconstructs exact scope without chat-memory guessing.
+ROW	AI02-ACC-20	Decision Link	Only authorized Domain Decision refs count as Decision memory.
+P	AI02-ACC-20
+P	Decision Link
+P	Only authorized Domain Decision refs count as Decision memory.
+ROW	AI02-ACC-21	Memory Typing	Conversation-local memory is distinguished from Global Experience/Domain Truth.
+P	AI02-ACC-21
+P	Memory Typing
+P	Conversation-local memory is distinguished from Global Experience/Domain Truth.
+ROW	AI02-ACC-22	Attachment Gate	Attachment not injected until ref/permission/classification/context admission succeeds.
+P	AI02-ACC-22
+P	Attachment Gate
+P	Attachment not injected until ref/permission/classification/context admission succeeds.
+ROW	AI02-ACC-23	No Provider Picker	Shared core contains no manual provider/model authority.
+P	AI02-ACC-23
+P	No Provider Picker
+P	Shared core contains no manual provider/model authority.
+ROW	AI02-ACC-24	Extension Boundary	Domain extensions add context/commands/UI only, not duplicate core.
+P	AI02-ACC-24
+P	Extension Boundary
+P	Domain extensions add context/commands/UI only, not duplicate core.
+ROW	AI02-ACC-25	Permission Isolation	Cross-scope refs denied by default unless exact authorization.
+P	AI02-ACC-25
+P	Permission Isolation
+P	Cross-scope refs denied by default unless exact authorization.
+ROW	AI02-ACC-26	Idempotent Send	Network retries do not duplicate logical message.
+P	AI02-ACC-26
+P	Idempotent Send
+P	Network retries do not duplicate logical message.
+ROW	AI02-ACC-27	Stop Truth	Stop request does not fabricate terminal cancelled status.
+P	AI02-ACC-27
+P	Stop Truth
+P	Stop request does not fabricate terminal cancelled status.
+ROW	AI02-ACC-28	Partial Multi AI	Completed responses preserved; failed participants explicit.
+P	AI02-ACC-28
+P	Partial Multi AI
+P	Completed responses preserved; failed participants explicit.
+ROW	AI02-ACC-29	Retention	Referenced dependency-bearing records remain addressable/tombstoned according to policy.
+P	AI02-ACC-29
+P	Retention
+P	Referenced dependency-bearing records remain addressable/tombstoned according to policy.
+ROW	AI02-ACC-30	Audit Reconstruction	Message→request→response→context→relations fully reconstructable.
+P	AI02-ACC-30
+P	Audit Reconstruction
+P	Message→request→response→context→relations fully reconstructable.
+ROW	AI02-ACC-31	Exact Binding	Unresolved API/DB/Permission/transport items remain REQUIRE_EXACT_BINDING.
+P	AI02-ACC-31
+P	Exact Binding
+P	Unresolved API/DB/Permission/transport items remain REQUIRE_EXACT_BINDING.
+ROW	AI02-ACC-32	No Runtime Overclaim	Word completion never reported as Runtime/Production completion.
+P	AI02-ACC-32
+P	No Runtime Overclaim
+P	Word completion never reported as Runtime/Production completion.
+P	36. Required Negative Regression / 必測破壞性案例
+ROW	Case	Mutation	Expected
+P	Case
+P	Mutation
+P	Expected
+ROW	NR-01	A second domain creates its own conversation_id/message schema	MUST FAIL second-system guard.
+P	NR-01
+P	A second domain creates its own conversation_id/message schema
+P	MUST FAIL second-system guard.
+ROW	NR-02	AI response lacks #AI ref	MUST FAIL message identity acceptance.
+P	NR-02
+P	AI response lacks #AI ref
+P	MUST FAIL message identity acceptance.
+ROW	NR-03	#149 matches two objects	MUST BLOCK ambiguous resolution.
+P	NR-03
+P	#149 matches two objects
+P	MUST BLOCK ambiguous resolution.
+ROW	NR-04	Invalid #AI silently maps to similar message	MUST FAIL.
+P	NR-04
+P	Invalid #AI silently maps to similar message
+P	MUST FAIL.
+ROW	NR-05	Branch created without source message	MUST BLOCK.
+P	NR-05
+P	Branch created without source message
+P	MUST BLOCK.
+ROW	NR-06	Parent new messages silently appear in old branch	MUST FAIL branch isolation.
+P	NR-06
+P	Parent new messages silently appear in old branch
+P	MUST FAIL branch isolation.
+ROW	NR-07	Branch summary auto-merges to parent	MUST FAIL.
+P	NR-07
+P	Branch summary auto-merges to parent
+P	MUST FAIL.
+ROW	NR-08	A/B aliases hard-coded to providers	MUST FAIL participant alias contract.
+P	NR-08
+P	A/B aliases hard-coded to providers
+P	MUST FAIL participant alias contract.
+ROW	NR-09	Multi-AI initial responses use different context fingerprints	MUST FAIL shared-round equivalence.
+P	NR-09
+P	Multi-AI initial responses use different context fingerprints
+P	MUST FAIL shared-round equivalence.
+ROW	NR-10	Cross review sees target AI text but not original user question	MUST FAIL drift guard.
+P	NR-10
+P	Cross review sees target AI text but not original user question
+P	MUST FAIL drift guard.
+ROW	NR-11	Consensus among 3 AI promoted to Source Fact	MUST FAIL truth boundary.
+P	NR-11
+P	Consensus among 3 AI promoted to Source Fact
+P	MUST FAIL truth boundary.
+ROW	NR-12	Assistant gives independent strategy answer	MUST FAIL assistant role.
+P	NR-12
+P	Assistant gives independent strategy answer
+P	MUST FAIL assistant role.
+ROW	NR-13	Assistant erases disagreement in summary	MUST FAIL derivation integrity.
+P	NR-13
+P	Assistant erases disagreement in summary
+P	MUST FAIL derivation integrity.
+ROW	NR-14	Resume uses browser-local active thread after persisted branch changed	MUST FAIL resume truth.
+P	NR-14
+P	Resume uses browser-local active thread after persisted branch changed
+P	MUST FAIL resume truth.
+ROW	NR-15	Historical context silently refreshed and old response reinterpreted as current	MUST FAIL stale labeling.
+P	NR-15
+P	Historical context silently refreshed and old response reinterpreted as current
+P	MUST FAIL stale labeling.
+ROW	NR-16	Conversation memory overrides a newer authorized Decision	MUST FAIL authority precedence.
+P	NR-16
+P	Conversation memory overrides a newer authorized Decision
+P	MUST FAIL authority precedence.
+ROW	NR-17	Cross-project ref resolves because user knows ID	MUST FAIL scope isolation.
+P	NR-17
+P	Cross-project ref resolves because user knows ID
+P	MUST FAIL scope isolation.
+ROW	NR-18	Attachment filename alone used as identity	MUST FAIL attachment identity.
+P	NR-18
+P	Attachment filename alone used as identity
+P	MUST FAIL attachment identity.
+ROW	NR-19	Duplicate send retry creates two logical messages	MUST FAIL idempotency.
+P	NR-19
+P	Duplicate send retry creates two logical messages
+P	MUST FAIL idempotency.
+ROW	NR-20	Same idempotency key different payload accepted	MUST FAIL mismatch guard.
+P	NR-20
+P	Same idempotency key different payload accepted
+P	MUST FAIL mismatch guard.
+ROW	NR-21	Stop click instantly marks terminal cancelled without runtime ack	MUST FAIL terminal truth.
+P	NR-21
+P	Stop click instantly marks terminal cancelled without runtime ack
+P	MUST FAIL terminal truth.
+ROW	NR-22	One Multi-AI failure deletes successful participant responses	MUST FAIL partial preservation.
+P	NR-22
+P	One Multi-AI failure deletes successful participant responses
+P	MUST FAIL partial preservation.
+ROW	NR-23	Deleting conversation erases message referenced by Decision evidence	MUST FAIL retention dependency.
+P	NR-23
+P	Deleting conversation erases message referenced by Decision evidence
+P	MUST FAIL retention dependency.
+ROW	NR-24	Domain raw AI answer directly executes business mutation without owner gate	MUST FAIL handoff firewall.
+P	NR-24
+P	Domain raw AI answer directly executes business mutation without owner gate
+P	MUST FAIL handoff firewall.
+P	37. Logic-level Given / When / Then Scenarios
+ROW	Scenario	Given	When	Then
+P	Scenario
+P	Given
+P	When
+P	Then
+ROW	GWT-01	Given a valid extension/scope	When user creates conversation	Then one Conversation identity is persisted and no provider session ID becomes canonical.
+P	GWT-01
+P	Given a valid extension/scope
+P	When user creates conversation
+P	Then one Conversation identity is persisted and no provider session ID becomes canonical.
+ROW	GWT-02	Given active thread + valid context	When user sends message	Then message is persisted before response intent and gets immutable sequence.
+P	GWT-02
+P	Given active thread + valid context
+P	When user sends message
+P	Then message is persisted before response intent and gets immutable sequence.
+ROW	GWT-03	Given completed Single-AI response	When persisted	Then exact #AI ref/time/context binding exist.
+P	GWT-03
+P	Given completed Single-AI response
+P	When persisted
+P	Then exact #AI ref/time/context binding exist.
+ROW	GWT-04	Given #149 uniquely resolves	When used	Then canonical #AI ref is stored.
+P	GWT-04
+P	Given #149 uniquely resolves
+P	When used
+P	Then canonical #AI ref is stored.
+ROW	GWT-05	Given #149 ambiguous	When used	Then dependent action blocks and asks disambiguation.
+P	GWT-05
+P	Given #149 ambiguous
+P	When used
+P	Then dependent action blocks and asks disambiguation.
+ROW	GWT-06	Given exact AI message	When user creates branch	Then branch inherits source context snapshot and parent ref.
+P	GWT-06
+P	Given exact AI message
+P	When user creates branch
+P	Then branch inherits source context snapshot and parent ref.
+ROW	GWT-07	Given parent thread advances	When branch reopens	Then parent new messages are not silently included.
+P	GWT-07
+P	Given parent thread advances
+P	When branch reopens
+P	Then parent new messages are not silently included.
+ROW	GWT-08	Given branch summary	When user adopts it	Then explicit adoption ref is recorded; no branch auto-merge occurs.
+P	GWT-08
+P	Given branch summary
+P	When user adopts it
+P	Then explicit adoption ref is recorded; no branch auto-merge occurs.
+ROW	GWT-09	Given Multi-AI start	When A/B/C first round runs	Then same original question/context baseline is bound to all requests.
+P	GWT-09
+P	Given Multi-AI start
+P	When A/B/C first round runs
+P	Then same original question/context baseline is bound to all requests.
+ROW	GWT-10	Given A response #149	When @B reviews #149	Then B response relation=CrossReview target=#149 and original question is retained.
+P	GWT-10
+P	Given A response #149
+P	When @B reviews #149
+P	Then B response relation=CrossReview target=#149 and original question is retained.
+ROW	GWT-11	Given B and C critiques	When @A revises	Then revision binds own prior response + critique refs.
+P	GWT-11
+P	Given B and C critiques
+P	When @A revises
+P	Then revision binds own prior response + critique refs.
+ROW	GWT-12	Given all AI agree without evidence	When summary is produced	Then result remains AI consensus, not Source Fact.
+P	GWT-12
+P	Given all AI agree without evidence
+P	When summary is produced
+P	Then result remains AI consensus, not Source Fact.
+ROW	GWT-13	Given @助理 紀錄 #149	When processed	Then #AST record points exactly to #149 and no new analysis is invented.
+P	GWT-13
+P	Given @助理 紀錄 #149
+P	When processed
+P	Then #AST record points exactly to #149 and no new analysis is invented.
+ROW	GWT-14	Given disagreement	When assistant summarizes	Then disagreement refs remain visible.
+P	GWT-14
+P	Given disagreement
+P	When assistant summarizes
+P	Then disagreement refs remain visible.
+ROW	GWT-15	Given summary source messages changed/superseded	When reopened	Then prior summary is stale/versioned, not silently rewritten.
+P	GWT-15
+P	Given summary source messages changed/superseded
+P	When reopened
+P	Then prior summary is stale/versioned, not silently rewritten.
+ROW	GWT-16	Given confirmed Domain Decision ref	When conversation uses Decision Memory	Then only the ref is stored/used; conversation does not own Decision body.
+P	GWT-16
+P	Given confirmed Domain Decision ref
+P	When conversation uses Decision Memory
+P	Then only the ref is stored/used; conversation does not own Decision body.
+ROW	GWT-17	Given newer Decision changes context	When old conversation resumes for Current work	Then stale detection triggers refresh/review policy.
+P	GWT-17
+P	Given newer Decision changes context
+P	When old conversation resumes for Current work
+P	Then stale detection triggers refresh/review policy.
+ROW	GWT-18	Given user chooses historical reading	When stale conversation opens	Then original historical context remains inspectable with status label.
+P	GWT-18
+P	Given user chooses historical reading
+P	When stale conversation opens
+P	Then original historical context remains inspectable with status label.
+ROW	GWT-19	Given missing ResumePointer	When session restores	Then system reconstructs from persisted identities/events or blocks; no guessing.
+P	GWT-19
+P	Given missing ResumePointer
+P	When session restores
+P	Then system reconstructs from persisted identities/events or blocks; no guessing.
+ROW	GWT-20	Given attachment not yet permission-cleared	When user references it	Then it is not inserted into model context.
+P	GWT-20
+P	Given attachment not yet permission-cleared
+P	When user references it
+P	Then it is not inserted into model context.
+ROW	GWT-21	Given cross-project #AI ref	When unauthorized	Then resolution fails without leaking message content.
+P	GWT-21
+P	Given cross-project #AI ref
+P	When unauthorized
+P	Then resolution fails without leaking message content.
+ROW	GWT-22	Given duplicate send retry same key/payload	When received	Then same logical message identity is returned.
+P	GWT-22
+P	Given duplicate send retry same key/payload
+P	When received
+P	Then same logical message identity is returned.
+ROW	GWT-23	Given same key different payload	When received	Then request is rejected.
+P	GWT-23
+P	Given same key different payload
+P	When received
+P	Then request is rejected.
+ROW	GWT-24	Given response streaming	When user presses stop	Then stop request persists and UI waits for terminal runtime result.
+P	GWT-24
+P	Given response streaming
+P	When user presses stop
+P	Then stop request persists and UI waits for terminal runtime result.
+ROW	GWT-25	Given Multi-AI A/B succeed C fails	When round ends	Then A/B persist and C shows failure; no fake three-way consensus.
+P	GWT-25
+P	Given Multi-AI A/B succeed C fails
+P	When round ends
+P	Then A/B persist and C shows failure; no fake three-way consensus.
+ROW	GWT-26	Given domain extension asks unregistered command	When parsed	Then BLOCK + REQUIRE_EXACT_BINDING.
+P	GWT-26
+P	Given domain extension asks unregistered command
+P	When parsed
+P	Then BLOCK + REQUIRE_EXACT_BINDING.
+ROW	GWT-27	Given raw AI output proposes business mutation	When user wants execute	Then handoff to Domain Owner gate; raw output does not mutate authority.
+P	GWT-27
+P	Given raw AI output proposes business mutation
+P	When user wants execute
+P	Then handoff to Domain Owner gate; raw output does not mutate authority.
+ROW	GWT-28	Given conversation record is referenced by audit/decision	When delete requested	Then retention dependency blocks destructive erasure or uses approved tombstone semantics.
+P	GWT-28
+P	Given conversation record is referenced by audit/decision
+P	When delete requested
+P	Then retention dependency blocks destructive erasure or uses approved tombstone semantics.
+ROW	GWT-29	Given provider/model info	When shown in conversation UI	Then only allowed brand/status projection appears; route authority remains AI-03.
+P	GWT-29
+P	Given provider/model info
+P	When shown in conversation UI
+P	Then only allowed brand/status projection appears; route authority remains AI-03.
+ROW	GWT-30	Given Word design passes QA	When document is delivered	Then status is design-content complete only, not runtime complete.
+P	GWT-30
+P	Given Word design passes QA
+P	When document is delivered
+P	Then status is design-content complete only, not runtime complete.
+P	38. Construction Handoff / 後續施工契約
+ROW	Construction Layer	Must Receive From This Word	Must NOT Infer
+P	Construction Layer
+P	Must Receive From This Word
+P	Must NOT Infer
+ROW	Data Model	Entities, identity semantics, relation edges, version/retention requirements.	Exact table/column names unless bound.
+P	Data Model
+P	Entities, identity semantics, relation edges, version/retention requirements.
+P	Exact table/column names unless bound.
+ROW	API Contract	Operation semantics, preconditions, state/error/idempotency rules.	Routes/operation UIDs not in Current Authority.
+P	API Contract
+P	Operation semantics, preconditions, state/error/idempotency rules.
+P	Routes/operation UIDs not in Current Authority.
+ROW	Runtime Integration	Request/response/context/ref/event semantics.	Provider/queue/stream transport choices.
+P	Runtime Integration
+P	Request/response/context/ref/event semantics.
+P	Provider/queue/stream transport choices.
+ROW	UI/UX	Conversation-first behavior, parser/reference/branch/multi-ai/assistant states.	New buttons/actions absent from action registry.
+P	UI/UX
+P	Conversation-first behavior, parser/reference/branch/multi-ai/assistant states.
+P	New buttons/actions absent from action registry.
+ROW	Permissions	Required permission dimensions/scope isolation.	Permission UID strings.
+P	Permissions
+P	Required permission dimensions/scope isolation.
+P	Permission UID strings.
+ROW	Tests	Acceptance matrix + negative regressions + GWT scenarios.	Reduced denominator for convenience.
+P	Tests
+P	Acceptance matrix + negative regressions + GWT scenarios.
+P	Reduced denominator for convenience.
+ROW	Migration	Preserve existing valid IDs/history/refs; one core only.	Create second parallel chat schema to avoid migration.
+P	Migration
+P	Preserve existing valid IDs/history/refs; one core only.
+P	Create second parallel chat schema to avoid migration.
+ROW	施工者若遇到本文件已定義「語義」但 exact implementation identity 尚未綁定，MUST 先搜尋 Current Authority；找不到時標示 REQUIRE_EXACT_BINDING。不得由 AI/工程師自己發明 API、Table、Permission、Event UID 或第二套 Conversation Runtime。
+P	施工者若遇到本文件已定義「語義」但 exact implementation identity 尚未綁定，MUST 先搜尋 Current Authority；找不到時標示 REQUIRE_EXACT_BINDING。不得由 AI/工程師自己發明 API、Table、Permission、Event UID 或第二套 Conversation Runtime。
+P	39. Logic Denominator / 本文件完成分母
+ROW	Denominator	Count
+P	Denominator
+P	Count
+ROW	Core System Entities	20
+P	Core System Entities
+P	20
+ROW	Entity Operations	22
+P	Entity Operations
+P	22
+ROW	Normative Invariants	62
+P	Normative Invariants
+P	62
+ROW	Conversation/Runtime-visible States	16
+P	Conversation/Runtime-visible States
+P	16
+ROW	State Transition Guards	16
+P	State Transition Guards
+P	16
+ROW	@/# Parser Tokens/Classes	12
+P	@/# Parser Tokens/Classes
+P	12
+ROW	Cross-AI Relation Types	7
+P	Cross-AI Relation Types
+P	7
+ROW	Assistant Operations	16
+P	Assistant Operations
+P	16
+ROW	Conversation Memory Classes	8
+P	Conversation Memory Classes
+P	8
+ROW	Conversation Events	18
+P	Conversation Events
+P	18
+ROW	Concurrency Scenarios	10
+P	Concurrency Scenarios
+P	10
+ROW	Idempotency Rules	11
+P	Idempotency Rules
+P	11
+ROW	Error/Recovery Classes	12
+P	Error/Recovery Classes
+P	12
+ROW	Retention Artifact Classes	9
+P	Retention Artifact Classes
+P	9
+ROW	Observability/NFR Rules	12
+P	Observability/NFR Rules
+P	12
+ROW	Exact Binding Items	16
+P	Exact Binding Items
+P	16
+ROW	Acceptance Items	32
+P	Acceptance Items
+P	32
+ROW	Negative Regression Cases	24
+P	Negative Regression Cases
+P	24
+ROW	Given/When/Then Scenarios	30
+P	Given/When/Then Scenarios
+P	30
+P	Formal design-content closure requires all denominators above present, no known contradictory duplicate core, no unresolved internal ambiguity, document QA PASS, and unresolved implementation identities explicitly retained in Exact Binding Ledger rather than fabricated.
+P	40. Document Closure / 文件完成與禁止誤報
+ROW	Status	Meaning
+P	Status
+P	Meaning
+ROW	DESIGN_CONTENT_COMPLETE	This Word contains the intended ACPOS-AI-02 mother logic denominator and normative contracts.
+P	DESIGN_CONTENT_COMPLETE
+P	This Word contains the intended ACPOS-AI-02 mother logic denominator and normative contracts.
+ROW	FORMAL_APPROVAL_NOT_SELF_GRANTED	AI did not and cannot self-approve governance promotion.
+P	FORMAL_APPROVAL_NOT_SELF_GRANTED
+P	AI did not and cannot self-approve governance promotion.
+ROW	RUNTIME_NOT_PROVEN_BY_DOCUMENT	This Word is not evidence that API/DB/Event/Runtime/Provider/Production implementation exists.
+P	RUNTIME_NOT_PROVEN_BY_DOCUMENT
+P	This Word is not evidence that API/DB/Event/Runtime/Provider/Production implementation exists.
+ROW	EXACT_BINDING_REQUIRED	Unresolved concrete implementation identities remain listed in Section 34.
+P	EXACT_BINDING_REQUIRED
+P	Unresolved concrete implementation identities remain listed in Section 34.
+ROW	NEXT DOCUMENT	ACPOS-AI-03 MUST NOT start automatically unless user explicitly instructs execution.
+P	NEXT DOCUMENT
+P	ACPOS-AI-03 MUST NOT start automatically unless user explicitly instructs execution.
+ROW	結論｜ACPOS-AI-02 的目標不是「聊天功能很多」，而是讓全站所有 AI 對話都共享同一套可追溯身份、Context 綁定、Reference Graph、Branch/Resume、Multi-AI 與 Assistant Secretary 規則；任何 Domain 擴充都不能破壞這個單一核心。
+P	結論｜ACPOS-AI-02 的目標不是「聊天功能很多」，而是讓全站所有 AI 對話都共享同一套可追溯身份、Context 綁定、Reference Graph、Branch/Resume、Multi-AI 與 Assistant Secretary 規則；任何 Domain 擴充都不能破壞這個單一核心。
+P	Appendix A. Error / Block Code Baseline
+ROW	Code	Meaning
+P	Code
+P	Meaning
+ROW	CONV_REFERENCE_INVALID	Reference token cannot resolve exact object.
+P	CONV_REFERENCE_INVALID
+P	Reference token cannot resolve exact object.
+ROW	CONV_REFERENCE_AMBIGUOUS	Short/untyped ref resolves multiple objects.
+P	CONV_REFERENCE_AMBIGUOUS
+P	Short/untyped ref resolves multiple objects.
+ROW	CONV_SCOPE_VIOLATION	Reference or action crosses unauthorized scope.
+P	CONV_SCOPE_VIOLATION
+P	Reference or action crosses unauthorized scope.
+ROW	CONV_CONTEXT_STALE	Operation requires Current context but bound context is stale.
+P	CONV_CONTEXT_STALE
+P	Operation requires Current context but bound context is stale.
+ROW	CONV_CONTEXT_UNAVAILABLE	Required context owner unavailable/unresolved.
+P	CONV_CONTEXT_UNAVAILABLE
+P	Required context owner unavailable/unresolved.
+ROW	CONV_RESUME_UNRESOLVED	Persisted resume identity cannot be reconstructed.
+P	CONV_RESUME_UNRESOLVED
+P	Persisted resume identity cannot be reconstructed.
+ROW	CONV_BRANCH_SOURCE_INVALID	Branch source message/context invalid.
+P	CONV_BRANCH_SOURCE_INVALID
+P	Branch source message/context invalid.
+ROW	CONV_BRANCH_MERGE_UNAUTHORIZED	Attempted silent/unauthorized parent adoption.
+P	CONV_BRANCH_MERGE_UNAUTHORIZED
+P	Attempted silent/unauthorized parent adoption.
+ROW	CONV_MULTI_AI_CONTEXT_MISMATCH	Participants do not share required round baseline.
+P	CONV_MULTI_AI_CONTEXT_MISMATCH
+P	Participants do not share required round baseline.
+ROW	CONV_MULTI_AI_PARTICIPANT_UNRESOLVED	Participant alias/capability binding unresolved.
+P	CONV_MULTI_AI_PARTICIPANT_UNRESOLVED
+P	Participant alias/capability binding unresolved.
+ROW	CONV_ASSISTANT_ROLE_VIOLATION	Assistant attempted prohibited analyst/authority action.
+P	CONV_ASSISTANT_ROLE_VIOLATION
+P	Assistant attempted prohibited analyst/authority action.
+ROW	CONV_IDEMPOTENCY_PAYLOAD_MISMATCH	Same key different payload.
+P	CONV_IDEMPOTENCY_PAYLOAD_MISMATCH
+P	Same key different payload.
+ROW	CONV_RUNTIME_IDENTITY_MISMATCH	Runtime callback does not match request/message/context chain.
+P	CONV_RUNTIME_IDENTITY_MISMATCH
+P	Runtime callback does not match request/message/context chain.
+ROW	CONV_ATTACHMENT_NOT_ADMISSIBLE	Attachment not ready/authorized/classified for context.
+P	CONV_ATTACHMENT_NOT_ADMISSIBLE
+P	Attachment not ready/authorized/classified for context.
+ROW	CONV_EXTENSION_COMMAND_UNBOUND	Domain command missing exact owner/binding.
+P	CONV_EXTENSION_COMMAND_UNBOUND
+P	Domain command missing exact owner/binding.
+ROW	CONV_RETENTION_DEPENDENCY_BLOCK	Destructive delete blocked by active dependency.
+P	CONV_RETENTION_DEPENDENCY_BLOCK
+P	Destructive delete blocked by active dependency.
+P	Appendix B. Source & Interpretation Notes
+P	This document uses Current Governance v2.2.16 / HEAD 5a6b72864dd8957118d0232f00358c49d0eb36c4 only as governance/process context; it does not mutate governance.
+P	ACPOS-AI-01 Global Intelligent Brain & Information Lifecycle is referenced for Context/Truth/Experience/Retention semantics; those rules are not copied as a second authority.
+P	AI Conversation Intelligence Architecture Update provides the confirmed single-core, Assistant-secretary, continuity and Decision Memory design direction.
+P	STR Conversation-First FINAL LOCKED design supplies tested/shared interaction semantics such as #AI/#AST refs, Multi-AI, Branch, @/# parser and Assistant behaviors; STR-specific strategic business/UI authority is not generalized beyond the shared conversation concepts.
+P	Historical construction master identifiers are search/reconciliation hints only; exact API/DB/Permission/Event bindings require Current-admissible authority before implementation.
+P	When future ACPOS-AI-03 or domain Words define referenced owners, this document should be linked by UID/version rather than copied into them.
+### PART word/header1.xml
+P	ORANGE ONE · ACPOS ACPOS-AI-02｜Mother Basic Logic Design
+### PART word/footer1.xml
+P	DESIGN ARTIFACT · NOT RUNTIME AUTHORITY · Current Governance v2.2.16 · 2026-09-20

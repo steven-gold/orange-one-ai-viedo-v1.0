@@ -1,0 +1,2464 @@
+### PART word/document.xml
+P	ACPOS-AI-09
+P	AI System Engineer / Self-Inspection / Evolution System
+P	AI 系統工程師／自我檢查／演化系統
+P	Mother Basic Logic Design + Normative Logic Contract
+P	圖 1｜AI System Engineer 受治理生命週期；自我檢查可自動化，但 Authority 採用與 effectful execution 不得自我批准。
+P	Design Status: DESIGN_CONTENT_COMPLETE · FORMAL_APPROVAL_NOT_SELF_GRANTED · RUNTIME_NOT_PROVEN_BY_DOCUMENT
+P	Current design basis: rebuild-v2.1.1 · HEAD 9b25fe3ab4e304103d9b6980123d25bb2d2fadb3 · Governance GOV-REV-20260920-CROSS-STAGE-MATERIALIZATION-CONSUMER-READINESS-HARDENING (display v2.2.16)
+P	1. Design Identity / 設計定位
+P	核心定位
+P	• 本文件是 ACPOS 全站 AI System Engineer、Self-Inspection、Self-Repair Proposal 與 Governed Evolution 的唯一系統邏輯 Owner。
+P	• 它負責重新解析 Current Truth、追蹤完整功能鏈、建立 Finding、分析 Root Cause、解析 Canonical Owner、計算 Change Impact、產生 Change Candidate、Simulation/Validation、準備 Authorized Execution、Deployment Verification、Rollback、Resume 與 Incident Learning。
+P	• 它不是 Current Authority 本身；AI 的 Finding、Root Cause、Patch Proposal、Simulation Result 或 Test PASS 都只是 Evidence/Candidate，不能自動升格為 Authority。
+P	• AI MAY inspect / classify / propose / simulate / verify；AI MUST_NOT self-approve、self-promote Current Governance、self-bypass Gate、self-claim Production PASS。
+P	2. Purpose / Scope / Out-of-Scope / Owner Boundary
+ROW	分類	本文件負責	本文件不負責
+P	分類
+P	本文件負責
+P	本文件不負責
+ROW	Current Truth	Session Bootstrap / Registry / Governance / Authority / WU / Resume / Evidence resolution	替代 Mother Governance 或把 chat memory 當 Current Truth
+P	Current Truth
+P	Session Bootstrap / Registry / Governance / Authority / WU / Resume / Evidence resolution
+P	替代 Mother Governance 或把 chat memory 當 Current Truth
+ROW	Inspection	System/Functional/Data/Permission/Runtime/Dependency/Consumer trace	自行發明未存在的產品需求
+P	Inspection
+P	System/Functional/Data/Permission/Runtime/Dependency/Consumer trace
+P	自行發明未存在的產品需求
+ROW	Finding	Finding lifecycle、evidence、severity、reproduction、owner candidate	直接把 Finding 當產品 Authority
+P	Finding
+P	Finding lifecycle、evidence、severity、reproduction、owner candidate
+P	直接把 Finding 當產品 Authority
+ROW	Root Cause	因果鏈、owner resolution、shared-vs-local classification	用症狀位置代替真正 Owner
+P	Root Cause
+P	因果鏈、owner resolution、shared-vs-local classification
+P	用症狀位置代替真正 Owner
+ROW	Change	Change Candidate / Set / exact write-set / impact / rollback plan	未授權就直接修改 Current Authority 或 Production
+P	Change
+P	Change Candidate / Set / exact write-set / impact / rollback plan
+P	未授權就直接修改 Current Authority 或 Production
+ROW	Validation	Simulation / Replay / targeted / full-line / hidden-defect sweep	把 inner test success 當 outer terminal / Production success
+P	Validation
+P	Simulation / Replay / targeted / full-line / hidden-defect sweep
+P	把 inner test success 當 outer terminal / Production success
+ROW	Execution	只在 pre-existing authorization + exact binding + gate PASS 後執行	自我核准、跨 Owner 寫入、繞過 permission/gate
+P	Execution
+P	只在 pre-existing authorization + exact binding + gate PASS 後執行
+P	自我核准、跨 Owner 寫入、繞過 permission/gate
+ROW	Evolution	Incident/Experience Candidate → governed adoption	AI 自行改寫自己的 policy / validator / governance
+P	Evolution
+P	Incident/Experience Candidate → governed adoption
+P	AI 自行改寫自己的 policy / validator / governance
+P	3. Canonical Owner Boundary / Cross-System References
+ROW	共享概念	Canonical Owner	AI-09 規則
+P	共享概念
+P	Canonical Owner
+P	AI-09 規則
+ROW	Global Truth / Context	ACPOS-AI-01	引用 Truth tier / ContextSnapshot / exact version；不複製 Context Engine。
+P	Global Truth / Context
+P	ACPOS-AI-01
+P	引用 Truth tier / ContextSnapshot / exact version；不複製 Context Engine。
+ROW	Conversation / Memory	ACPOS-AI-02	使用 Shared Conversation Core；Finding discussion 不建立第二套 Thread/Memory。
+P	Conversation / Memory
+P	ACPOS-AI-02
+P	使用 Shared Conversation Core；Finding discussion 不建立第二套 Thread/Memory。
+ROW	Execution / Tool / Provider	ACPOS-AI-03	AI-09 的 effectful tool/provider invocation 必須走共享 Router/Runtime。
+P	Execution / Tool / Provider
+P	ACPOS-AI-03
+P	AI-09 的 effectful tool/provider invocation 必須走共享 Router/Runtime。
+ROW	CORE / Blueprint / Canonical Script	ACPOS-AI-04	只檢查/追蹤/提出 Change Candidate；Canon 修改仍回 CORE Owner。
+P	CORE / Blueprint / Canonical Script
+P	ACPOS-AI-04
+P	只檢查/追蹤/提出 Change Candidate；Canon 修改仍回 CORE Owner。
+ROW	Creative Production	ACPOS-AI-05	Finding 可指向 ASSET/VIDEO/EDIT/VOICE/QA owner；不直接修改生產物。
+P	Creative Production
+P	ACPOS-AI-05
+P	Finding 可指向 ASSET/VIDEO/EDIT/VOICE/QA owner；不直接修改生產物。
+ROW	Enterprise BD	ACPOS-AI-06	檢查 CRM/Delivery/Compliance chain；不直接發信或更改 suppression。
+P	Enterprise BD
+P	ACPOS-AI-06
+P	檢查 CRM/Delivery/Compliance chain；不直接發信或更改 suppression。
+ROW	Social Publishing	ACPOS-AI-07	檢查 Publish chain；不直接發文或繞過 platform policy。
+P	Social Publishing
+P	ACPOS-AI-07
+P	檢查 Publish chain；不直接發文或繞過 platform policy。
+ROW	Strategy	ACPOS-AI-08	可提供 system risk/option evidence；策略正式決策仍由 AI-08 + Human Decision。
+P	Strategy
+P	ACPOS-AI-08
+P	可提供 system risk/option evidence；策略正式決策仍由 AI-08 + Human Decision。
+ROW	Governance / Authority	Mother Governance + Current Registry	AI-09 只能讀取、驗證、提出 candidate；不得自我成為 Authority。
+P	Governance / Authority
+P	Mother Governance + Current Registry
+P	AI-09 只能讀取、驗證、提出 candidate；不得自我成為 Authority。
+P	4. System Architecture / 系統架構
+P	圖 2｜AI System Engineer 必須沿完整 Functional Chain 追蹤，而不是只看 UI 或單一 API。
+ROW	Layer	責任	輸入	輸出
+P	Layer
+P	責任
+P	輸入
+P	輸出
+ROW	Bootstrap Resolver	解析 Current repository/branch/HEAD/Governance/Authority/WU/Resume/Evidence	live source + registries	CurrentTruthSnapshot
+P	Bootstrap Resolver
+P	解析 Current repository/branch/HEAD/Governance/Authority/WU/Resume/Evidence
+P	live source + registries
+P	CurrentTruthSnapshot
+ROW	Scope Resolver	解析 exact scope / included / excluded / dependency / denominator	Authority + Work Unit	InspectionScope
+P	Scope Resolver
+P	解析 exact scope / included / excluded / dependency / denominator
+P	Authority + Work Unit
+P	InspectionScope
+ROW	Trace Engine	建構 forward/reverse functional/dependency graph	registries + code/contracts/evidence	FunctionalTraceGraph
+P	Trace Engine
+P	建構 forward/reverse functional/dependency graph
+P	registries + code/contracts/evidence
+P	FunctionalTraceGraph
+ROW	Inspection Engine	執行 static/dynamic/semantic/runtime/evidence checks	scope + trace + current state	InspectionObservation
+P	Inspection Engine
+P	執行 static/dynamic/semantic/runtime/evidence checks
+P	scope + trace + current state
+P	InspectionObservation
+ROW	Finding Engine	正規化 Finding、dedupe、severity、reproduction	observations	Finding
+P	Finding Engine
+P	正規化 Finding、dedupe、severity、reproduction
+P	observations
+P	Finding
+ROW	Root Cause Engine	定位因果鏈與 Canonical Owner	Finding + trace	RootCauseAnalysis
+P	Root Cause Engine
+P	定位因果鏈與 Canonical Owner
+P	Finding + trace
+P	RootCauseAnalysis
+ROW	Impact Engine	計算 reverse dependency / REVERIFY_REQUIRED	change target + graph	ImpactSet
+P	Impact Engine
+P	計算 reverse dependency / REVERIFY_REQUIRED
+P	change target + graph
+P	ImpactSet
+ROW	Change Planner	產生 bounded Change Candidate / Set	root cause + owner + impact	ChangeCandidate
+P	Change Planner
+P	產生 bounded Change Candidate / Set
+P	root cause + owner + impact
+P	ChangeCandidate
+ROW	Simulation/Validation	在隔離環境測試、回放、驗證	candidate + fixtures	ValidationEvidence
+P	Simulation/Validation
+P	在隔離環境測試、回放、驗證
+P	candidate + fixtures
+P	ValidationEvidence
+ROW	Authorization Boundary	驗證 pre-existing approval / permission / gate	candidate + validation	AuthorizedChangeReceipt
+P	Authorization Boundary
+P	驗證 pre-existing approval / permission / gate
+P	candidate + validation
+P	AuthorizedChangeReceipt
+ROW	Execution/Verify	effectful execution + deployment/production verification	authorized receipt	ExecutionEvidence
+P	Execution/Verify
+P	effectful execution + deployment/production verification
+P	authorized receipt
+P	ExecutionEvidence
+ROW	Rollback/Resume/Learning	失敗復原、checkpoint、incident experience candidate	execution/evidence	ResumePoint + LearningCandidate
+P	Rollback/Resume/Learning
+P	失敗復原、checkpoint、incident experience candidate
+P	execution/evidence
+P	ResumePoint + LearningCandidate
+P	5. Current Truth Bootstrap Contract
+P	任何 System Inspection、Change Planning、Validation、Execution 或「完成」宣告之前 MUST 先完成 Current Truth Bootstrap。
+ROW	順序	MUST resolve	Fail-closed 條件
+P	順序
+P	MUST resolve
+P	Fail-closed 條件
+ROW	1	Repository + target branch + live HEAD/tree	無法確認 live identity → BLOCK_CURRENT_TRUTH_UNRESOLVED
+P	1
+P	Repository + target branch + live HEAD/tree
+P	無法確認 live identity → BLOCK_CURRENT_TRUTH_UNRESOLVED
+ROW	2	Current Registry / Governance Entry	僅有聊天摘要或歷史版本 → BLOCK
+P	2
+P	Current Registry / Governance Entry
+P	僅有聊天摘要或歷史版本 → BLOCK
+ROW	3	Mother Governance 01 → 02 → 03 → 04	順序不完整或來源不 Current → BLOCK
+P	3
+P	Mother Governance 01 → 02 → 03 → 04
+P	順序不完整或來源不 Current → BLOCK
+ROW	4	Current Canonical Authority / owner registries	owner/UID/path 無法 resolve → BLOCK
+P	4
+P	Current Canonical Authority / owner registries
+P	owner/UID/path 無法 resolve → BLOCK
+ROW	5	Current Primary Task Layer + Active Work Unit	無 WU 必須進 WORK_UNIT_RESOLUTION_GATE，不得猜下一步
+P	5
+P	Current Primary Task Layer + Active Work Unit
+P	無 WU 必須進 WORK_UNIT_RESOLUTION_GATE，不得猜下一步
+ROW	6	Canonical Owner Mapping / candidate owner when WUR	多 owner 衝突或無證據 → REVIEW_REQUIRED/BLOCK
+P	6
+P	Canonical Owner Mapping / candidate owner when WUR
+P	多 owner 衝突或無證據 → REVIEW_REQUIRED/BLOCK
+ROW	7	Persisted Resume Point / exact next transition	resume 不可由模型記憶推測
+P	7
+P	Persisted Resume Point / exact next transition
+P	resume 不可由模型記憶推測
+ROW	8	Current Audit / Evidence identity	舊 revision evidence 不得自動沿用
+P	8
+P	Current Audit / Evidence identity
+P	舊 revision evidence 不得自動沿用
+ROW	9	Selected Execution Profile + applicability	profile 不得改寫 global policy
+P	9
+P	Selected Execution Profile + applicability
+P	profile 不得改寫 global policy
+ROW	10	Start conditions / dependencies / DoD / gates	任一 REQUIRED dependency 缺失 → BLOCK
+P	10
+P	Start conditions / dependencies / DoD / gates
+P	任一 REQUIRED dependency 缺失 → BLOCK
+ROW	11	Search-before-create existing UID/name/alias/owner/runtime/test/evidence	第一次搜尋無結果不得直接建立新 owner
+P	11
+P	Search-before-create existing UID/name/alias/owner/runtime/test/evidence
+P	第一次搜尋無結果不得直接建立新 owner
+ROW	12	Pre-write exact identity/hash recheck	live HEAD 或 owner 已變 → STALE_CONTEXT / restart
+P	12
+P	Pre-write exact identity/hash recheck
+P	live HEAD 或 owner 已變 → STALE_CONTEXT / restart
+P	6. Functional Chain Trace Contract
+P	每一個受治理操作的最小可追蹤鏈：
+P	Page → Control → System Trigger → Action → Gate → Permission → Validation → Payload → API → Runtime → DB/Provider → Audit → Response → UI Feedback
+ROW	Edge	Required proof	禁止
+P	Edge
+P	Required proof
+P	禁止
+ROW	Page→Control	Control identity/visibility/owner	不存在 visual control 的 system-only operation 不得硬造按鈕
+P	Page→Control
+P	Control identity/visibility/owner
+P	不存在 visual control 的 system-only operation 不得硬造按鈕
+ROW	Control/System Trigger→Action	deterministic trigger binding	UI absence 不得直接誤判 Authority Gap
+P	Control/System Trigger→Action
+P	deterministic trigger binding
+P	UI absence 不得直接誤判 Authority Gap
+ROW	Action→Gate/Permission	gate + permission refs	隱藏按鈕不得當 security
+P	Action→Gate/Permission
+P	gate + permission refs
+P	隱藏按鈕不得當 security
+ROW	Validation→Payload	schema/version/required fields	alias fallback 隱藏 schema drift
+P	Validation→Payload
+P	schema/version/required fields
+P	alias fallback 隱藏 schema drift
+ROW	Payload→API→Runtime	exact binding + owner + version	以舊 route 或 mock runtime 冒充 Current
+P	Payload→API→Runtime
+P	exact binding + owner + version
+P	以舊 route 或 mock runtime 冒充 Current
+ROW	Runtime→DB/Provider	effect boundary + idempotency + audit	無 evidence 的外部 effect 不得宣稱成功
+P	Runtime→DB/Provider
+P	effect boundary + idempotency + audit
+P	無 evidence 的外部 effect 不得宣稱成功
+ROW	Audit→Response→UI Feedback	correlation + status/error mapping	inner success 不得投影成 terminal success
+P	Audit→Response→UI Feedback
+P	correlation + status/error mapping
+P	inner success 不得投影成 terminal success
+P	7. Inspection Scope / Modes / Denominator
+ROW	Mode	用途	典型輸入	輸出
+P	Mode
+P	用途
+P	典型輸入
+P	輸出
+ROW	CURRENT_TRUTH_AUDIT	檢查 Current identity 與引用	Registry/Governance/HEAD	truth findings
+P	CURRENT_TRUTH_AUDIT
+P	檢查 Current identity 與引用
+P	Registry/Governance/HEAD
+P	truth findings
+ROW	FUNCTIONAL_CHAIN_AUDIT	端到端 operation trace	Page/Action/API/Runtime/DB	missing/broken edges
+P	FUNCTIONAL_CHAIN_AUDIT
+P	端到端 operation trace
+P	Page/Action/API/Runtime/DB
+P	missing/broken edges
+ROW	AUTHORITY_OWNER_AUDIT	owner/UID/duplicate/parallel system	registries/paths	ownership findings
+P	AUTHORITY_OWNER_AUDIT
+P	owner/UID/duplicate/parallel system
+P	registries/paths
+P	ownership findings
+ROW	SCHEMA_CONTRACT_AUDIT	producer-consumer schema exactness	payload/event/contracts	schema drift findings
+P	SCHEMA_CONTRACT_AUDIT
+P	producer-consumer schema exactness
+P	payload/event/contracts
+P	schema drift findings
+ROW	PERMISSION_SECURITY_AUDIT	gate/permission/RLS/classification	permission refs/runtime	security findings
+P	PERMISSION_SECURITY_AUDIT
+P	gate/permission/RLS/classification
+P	permission refs/runtime
+P	security findings
+ROW	STATE_LIFECYCLE_AUDIT	state/transition/guard closure	state machines/evidence	illegal transitions
+P	STATE_LIFECYCLE_AUDIT
+P	state/transition/guard closure
+P	state machines/evidence
+P	illegal transitions
+ROW	CROSS_STAGE_HANDOFF_AUDIT	producer output → successor input readiness	handoff ledger/physical artifacts	false-completion findings
+P	CROSS_STAGE_HANDOFF_AUDIT
+P	producer output → successor input readiness
+P	handoff ledger/physical artifacts
+P	false-completion findings
+ROW	RUNTIME_EFFECT_AUDIT	effectful execution + idempotency + provider result	runtime/evidence	effect findings
+P	RUNTIME_EFFECT_AUDIT
+P	effectful execution + idempotency + provider result
+P	runtime/evidence
+P	effect findings
+ROW	DEPLOYMENT_PRODUCTION_AUDIT	exact deployed SHA + remote acceptance	deploy/runtime evidence	production findings
+P	DEPLOYMENT_PRODUCTION_AUDIT
+P	exact deployed SHA + remote acceptance
+P	deploy/runtime evidence
+P	production findings
+ROW	RESIDUAL_CLEANUP_AUDIT	dead/stale/duplicate/temp reference	consumer graph/history	cleanup findings
+P	RESIDUAL_CLEANUP_AUDIT
+P	dead/stale/duplicate/temp reference
+P	consumer graph/history
+P	cleanup findings
+ROW	PORTABILITY_AUDIT	common policy not product/profile coupled	synthetic profiles	portability findings
+P	PORTABILITY_AUDIT
+P	common policy not product/profile coupled
+P	synthetic profiles
+P	portability findings
+ROW	HIDDEN_DEFECT_SWEEP	known fix 後找鄰近/反向缺陷	fresh current scope	latent findings
+P	HIDDEN_DEFECT_SWEEP
+P	known fix 後找鄰近/反向缺陷
+P	fresh current scope
+P	latent findings
+P	• Denominator MUST come from Current Authority / applicable REQUIRED universe，MUST_NOT 由舊報告、歷史數字或 executor local 常數決定。
+P	• Partial-scope PASS 只能關閉該 Work Unit；有 remaining required scope 時 Stage-exit credit MUST be 0。
+P	8. Entity Inventory / Hierarchy
+ROW	Entity	Role
+P	Entity
+P	Role
+ROW	CurrentTruthSnapshot	本輪 Current identity 的凍結快照
+P	CurrentTruthSnapshot
+P	本輪 Current identity 的凍結快照
+ROW	InspectionScope	included/excluded/remaining/dependency/denominator
+P	InspectionScope
+P	included/excluded/remaining/dependency/denominator
+ROW	FunctionalTraceGraph	功能鏈 + dependency graph
+P	FunctionalTraceGraph
+P	功能鏈 + dependency graph
+ROW	TraceEdge	exact producer→consumer / trigger→action edge
+P	TraceEdge
+P	exact producer→consumer / trigger→action edge
+ROW	InspectionRun	一次可重現檢查
+P	InspectionRun
+P	一次可重現檢查
+ROW	InspectionObservation	原始觀察，不等同 Finding
+P	InspectionObservation
+P	原始觀察，不等同 Finding
+ROW	Finding	可治理問題實體
+P	Finding
+P	可治理問題實體
+ROW	FindingSignature	dedupe/reproduction signature
+P	FindingSignature
+P	dedupe/reproduction signature
+ROW	EvidenceRef	支援 observation/finding 的 evidence
+P	EvidenceRef
+P	支援 observation/finding 的 evidence
+ROW	ReproductionCase	可重現缺陷條件
+P	ReproductionCase
+P	可重現缺陷條件
+ROW	Severity	影響/風險分類
+P	Severity
+P	影響/風險分類
+ROW	RootCauseAnalysis	因果鏈
+P	RootCauseAnalysis
+P	因果鏈
+ROW	CanonicalOwnerResolution	真正 owner/UID/path/revision
+P	CanonicalOwnerResolution
+P	真正 owner/UID/path/revision
+ROW	ImpactSet	受影響 reverse dependency 集合
+P	ImpactSet
+P	受影響 reverse dependency 集合
+ROW	ReverifySet	必須重新驗證的 descendants
+P	ReverifySet
+P	必須重新驗證的 descendants
+ROW	ChangeCandidate	非權威修正候選
+P	ChangeCandidate
+P	非權威修正候選
+ROW	ChangeSet	bounded exact write-set
+P	ChangeSet
+P	bounded exact write-set
+ROW	WriteTarget	exact owner/path/node/hash
+P	WriteTarget
+P	exact owner/path/node/hash
+ROW	RollbackPlan	逆向復原計畫
+P	RollbackPlan
+P	逆向復原計畫
+ROW	SimulationPlan	隔離測試規劃
+P	SimulationPlan
+P	隔離測試規劃
+ROW	SimulationRun	隔離執行
+P	SimulationRun
+P	隔離執行
+ROW	ValidationPlan	驗證分母與 gate
+P	ValidationPlan
+P	驗證分母與 gate
+ROW	ValidationRun	fresh validation
+P	ValidationRun
+P	fresh validation
+ROW	ValidationEvidence	exact result/evidence
+P	ValidationEvidence
+P	exact result/evidence
+ROW	AuthorizationRequest	人工/治理授權請求
+P	AuthorizationRequest
+P	人工/治理授權請求
+ROW	AuthorizationReceipt	pre-existing authorization proof
+P	AuthorizationReceipt
+P	pre-existing authorization proof
+ROW	ExecutionPlan	effectful steps + stop conditions
+P	ExecutionPlan
+P	effectful steps + stop conditions
+ROW	ExecutionRun	授權後實際施工/變更
+P	ExecutionRun
+P	授權後實際施工/變更
+ROW	ExecutionEvidence	實際 effect evidence
+P	ExecutionEvidence
+P	實際 effect evidence
+ROW	DeploymentCandidate	待部署內容
+P	DeploymentCandidate
+P	待部署內容
+ROW	DeploymentEvidence	部署 identity/result
+P	DeploymentEvidence
+P	部署 identity/result
+ROW	ProductionAcceptance	remote/current Production evidence
+P	ProductionAcceptance
+P	remote/current Production evidence
+ROW	RollbackRun	回滾執行
+P	RollbackRun
+P	回滾執行
+ROW	ResumePoint	可恢復斷點
+P	ResumePoint
+P	可恢復斷點
+ROW	Checkpoint	可重入 execution checkpoint
+P	Checkpoint
+P	可重入 execution checkpoint
+ROW	Incident	實際事故/異常
+P	Incident
+P	實際事故/異常
+ROW	ContainmentAction	限制 blast radius
+P	ContainmentAction
+P	限制 blast radius
+ROW	LearningCandidate	事件經驗候選
+P	LearningCandidate
+P	事件經驗候選
+ROW	EvolutionCandidate	改善規則/檢查/流程的候選
+P	EvolutionCandidate
+P	改善規則/檢查/流程的候選
+ROW	GovernedAdoption	經批准後的採用紀錄
+P	GovernedAdoption
+P	經批准後的採用紀錄
+ROW	AuditEvent	不可變稽核事件
+P	AuditEvent
+P	不可變稽核事件
+ROW	SystemHealthSignal	runtime/workflow health signal
+P	SystemHealthSignal
+P	runtime/workflow health signal
+ROW	ProblemRegister	Current single problem truth
+P	ProblemRegister
+P	Current single problem truth
+ROW	ResolutionLedger	finding→resolution terminal disposition
+P	ResolutionLedger
+P	finding→resolution terminal disposition
+P	9. Entity × Operation Matrix
+ROW	Entity	Allowed operations
+P	Entity
+P	Allowed operations
+ROW	CurrentTruthSnapshot	RESOLVE / FREEZE / INVALIDATE_ON_HEAD_CHANGE
+P	CurrentTruthSnapshot
+P	RESOLVE / FREEZE / INVALIDATE_ON_HEAD_CHANGE
+ROW	InspectionScope	DERIVE / EXPAND_DEPENDENCY / PERSIST_REMAINING
+P	InspectionScope
+P	DERIVE / EXPAND_DEPENDENCY / PERSIST_REMAINING
+ROW	FunctionalTraceGraph	BUILD / REVERSE / VERIFY_EDGE
+P	FunctionalTraceGraph
+P	BUILD / REVERSE / VERIFY_EDGE
+ROW	InspectionRun	PLAN / EXECUTE / REEXECUTE / TERMINALIZE
+P	InspectionRun
+P	PLAN / EXECUTE / REEXECUTE / TERMINALIZE
+ROW	Finding	CREATE / DEDUPE / CLASSIFY / REPRODUCE / TERMINALIZE
+P	Finding
+P	CREATE / DEDUPE / CLASSIFY / REPRODUCE / TERMINALIZE
+ROW	RootCauseAnalysis	BUILD_CAUSAL_CHAIN / VALIDATE_OWNER
+P	RootCauseAnalysis
+P	BUILD_CAUSAL_CHAIN / VALIDATE_OWNER
+ROW	CanonicalOwnerResolution	SEARCH / RESOLVE / BLOCK_ON_AMBIGUITY
+P	CanonicalOwnerResolution
+P	SEARCH / RESOLVE / BLOCK_ON_AMBIGUITY
+ROW	ImpactSet	COMPUTE / PROPAGATE / MARK_REVERIFY
+P	ImpactSet
+P	COMPUTE / PROPAGATE / MARK_REVERIFY
+ROW	ChangeCandidate	DRAFT / COMPARE / REVISE / REQUEST_APPROVAL
+P	ChangeCandidate
+P	DRAFT / COMPARE / REVISE / REQUEST_APPROVAL
+ROW	ChangeSet	BOUND / HASH / VERIFY_WRITESET
+P	ChangeSet
+P	BOUND / HASH / VERIFY_WRITESET
+ROW	SimulationRun	START / STEP / REPLAY / FAIL_CLOSED
+P	SimulationRun
+P	START / STEP / REPLAY / FAIL_CLOSED
+ROW	ValidationRun	TARGETED / FULL_LINE / HIDDEN_SWEEP / TERMINAL
+P	ValidationRun
+P	TARGETED / FULL_LINE / HIDDEN_SWEEP / TERMINAL
+ROW	AuthorizationRequest	SUBMIT / APPROVE / REJECT / EXPIRE
+P	AuthorizationRequest
+P	SUBMIT / APPROVE / REJECT / EXPIRE
+ROW	ExecutionRun	PREFLIGHT / EXECUTE / STOP / RESUME / ABORT
+P	ExecutionRun
+P	PREFLIGHT / EXECUTE / STOP / RESUME / ABORT
+ROW	DeploymentEvidence	CAPTURE / VERIFY_EXACT_SHA / REMOTE_ACCEPTANCE
+P	DeploymentEvidence
+P	CAPTURE / VERIFY_EXACT_SHA / REMOTE_ACCEPTANCE
+ROW	RollbackRun	TRIGGER / EXECUTE / VERIFY
+P	RollbackRun
+P	TRIGGER / EXECUTE / VERIFY
+ROW	ResumePoint	PERSIST / RECONCILE / ADVANCE
+P	ResumePoint
+P	PERSIST / RECONCILE / ADVANCE
+ROW	Incident	OPEN / CONTAIN / RCA / CLOSE
+P	Incident
+P	OPEN / CONTAIN / RCA / CLOSE
+ROW	LearningCandidate	DRAFT / REVIEW / ADOPT / REJECT
+P	LearningCandidate
+P	DRAFT / REVIEW / ADOPT / REJECT
+ROW	EvolutionCandidate	PROPOSE / SIMULATE / GOVERN / ADOPT
+P	EvolutionCandidate
+P	PROPOSE / SIMULATE / GOVERN / ADOPT
+P	10. Normative Invariant Registry
+ROW	#	Domain	Normative rule
+P	#
+P	Domain
+P	Normative rule
+ROW	1	Current Truth	任何 effectful inspection/remediation 前 MUST resolve live repository/branch/HEAD。
+P	1
+P	Current Truth
+P	任何 effectful inspection/remediation 前 MUST resolve live repository/branch/HEAD。
+ROW	2	Current Truth	Chat memory / summary MUST_NOT 成為 Current Truth。
+P	2
+P	Current Truth
+P	Chat memory / summary MUST_NOT 成為 Current Truth。
+ROW	3	Current Truth	Current Governance MUST 由 stable registry/entrypoint 解析。
+P	3
+P	Current Truth
+P	Current Governance MUST 由 stable registry/entrypoint 解析。
+ROW	4	Current Truth	Mother 01→04 MUST 依正式順序讀取。
+P	4
+P	Current Truth
+P	Mother 01→04 MUST 依正式順序讀取。
+ROW	5	Current Truth	Historical evidence MUST_NOT 自動證明 Current revision。
+P	5
+P	Current Truth
+P	Historical evidence MUST_NOT 自動證明 Current revision。
+ROW	6	Current Truth	HEAD/tree 變更後既有 CurrentTruthSnapshot MUST invalidated。
+P	6
+P	Current Truth
+P	HEAD/tree 變更後既有 CurrentTruthSnapshot MUST invalidated。
+ROW	7	Current Truth	Current Primary Task Layer MUST 在 Work Unit 前解析。
+P	7
+P	Current Truth
+P	Current Primary Task Layer MUST 在 Work Unit 前解析。
+ROW	8	Current Truth	No Active WU 時 MUST 執行 WORK_UNIT_RESOLUTION_GATE。
+P	8
+P	Current Truth
+P	No Active WU 時 MUST 執行 WORK_UNIT_RESOLUTION_GATE。
+ROW	9	Current Truth	Resume Point MUST 由 persisted state 解析，不得猜。
+P	9
+P	Current Truth
+P	Resume Point MUST 由 persisted state 解析，不得猜。
+ROW	10	Current Truth	Pre-write identity/hash MUST 在寫入前再次核對。
+P	10
+P	Current Truth
+P	Pre-write identity/hash MUST 在寫入前再次核對。
+ROW	11	Current Truth	Selected profile MAY bind local steps but MUST_NOT weaken common policy。
+P	11
+P	Current Truth
+P	Selected profile MAY bind local steps but MUST_NOT weaken common policy。
+ROW	12	Current Truth	Current Test State MUST_NOT 成為 normative Authority。
+P	12
+P	Current Truth
+P	Current Test State MUST_NOT 成為 normative Authority。
+ROW	13	Ownership / Duplicate Guard	任何 Finding 修正前 MUST resolve Canonical Owner。
+P	13
+P	Ownership / Duplicate Guard
+P	任何 Finding 修正前 MUST resolve Canonical Owner。
+ROW	14	Ownership / Duplicate Guard	既有 owner 存在時 MUST modify owner，MUST_NOT 建 parallel copy。
+P	14
+P	Ownership / Duplicate Guard
+P	既有 owner 存在時 MUST modify owner，MUST_NOT 建 parallel copy。
+ROW	15	Ownership / Duplicate Guard	同一概念 MUST NOT 有兩個 Current owner。
+P	15
+P	Ownership / Duplicate Guard
+P	同一概念 MUST NOT 有兩個 Current owner。
+ROW	16	Ownership / Duplicate Guard	第一次搜尋無結果 MUST_NOT 直接 create 新 owner。
+P	16
+P	Ownership / Duplicate Guard
+P	第一次搜尋無結果 MUST_NOT 直接 create 新 owner。
+ROW	17	Ownership / Duplicate Guard	Alias/Deprecated name 只能搜尋，不得成第二 authority。
+P	17
+P	Ownership / Duplicate Guard
+P	Alias/Deprecated name 只能搜尋，不得成第二 authority。
+ROW	18	Ownership / Duplicate Guard	Product/local defect MUST remain at owning layer。
+P	18
+P	Ownership / Duplicate Guard
+P	Product/local defect MUST remain at owning layer。
+ROW	19	Ownership / Duplicate Guard	Shared defect only MAY route shared owner with evidence of generalizability。
+P	19
+P	Ownership / Duplicate Guard
+P	Shared defect only MAY route shared owner with evidence of generalizability。
+ROW	20	Ownership / Duplicate Guard	System Engineer MUST_NOT 以症狀發生頁當 root owner。
+P	20
+P	Ownership / Duplicate Guard
+P	System Engineer MUST_NOT 以症狀發生頁當 root owner。
+ROW	21	Ownership / Duplicate Guard	Unresolved owner ambiguity MUST BLOCK effectful remediation。
+P	21
+P	Ownership / Duplicate Guard
+P	Unresolved owner ambiguity MUST BLOCK effectful remediation。
+ROW	22	Ownership / Duplicate Guard	Registry/index MUST reference full owner, not duplicate full payload。
+P	22
+P	Ownership / Duplicate Guard
+P	Registry/index MUST reference full owner, not duplicate full payload。
+ROW	23	Ownership / Duplicate Guard	Duplicate runtime/API/permission/data truth MUST be treated as governance defect。
+P	23
+P	Ownership / Duplicate Guard
+P	Duplicate runtime/API/permission/data truth MUST be treated as governance defect。
+ROW	24	Ownership / Duplicate Guard	Cleanup MUST NOT delete owner merely because filename looks old。
+P	24
+P	Ownership / Duplicate Guard
+P	Cleanup MUST NOT delete owner merely because filename looks old。
+ROW	25	Inspection / Finding	Observation MUST NOT automatically become Finding without normalization/evidence。
+P	25
+P	Inspection / Finding
+P	Observation MUST NOT automatically become Finding without normalization/evidence。
+ROW	26	Inspection / Finding	Finding MUST include exact scope, signature, evidence, owner state and reproducibility。
+P	26
+P	Inspection / Finding
+P	Finding MUST include exact scope, signature, evidence, owner state and reproducibility。
+ROW	27	Inspection / Finding	Same signature + same Current scope SHOULD dedupe, not multiply problem denominator。
+P	27
+P	Inspection / Finding
+P	Same signature + same Current scope SHOULD dedupe, not multiply problem denominator。
+ROW	28	Inspection / Finding	Finding classification MUST separate product gap, governance defect, test defect, evidence defect, external blocker。
+P	28
+P	Inspection / Finding
+P	Finding classification MUST separate product gap, governance defect, test defect, evidence defect, external blocker。
+ROW	29	Inspection / Finding	Known issue remediation MUST be followed by hidden-defect sweep。
+P	29
+P	Inspection / Finding
+P	Known issue remediation MUST be followed by hidden-defect sweep。
+ROW	30	Inspection / Finding	Successful audit with reproducible remediable gap MUST NOT be called closure。
+P	30
+P	Inspection / Finding
+P	Successful audit with reproducible remediable gap MUST NOT be called closure。
+ROW	31	Inspection / Finding	No evidence = NOT_VERIFIED, not PASS。
+P	31
+P	Inspection / Finding
+P	No evidence = NOT_VERIFIED, not PASS。
+ROW	32	Inspection / Finding	Partial validator PASS MUST NOT be terminal run PASS。
+P	32
+P	Inspection / Finding
+P	Partial validator PASS MUST NOT be terminal run PASS。
+ROW	33	Inspection / Finding	Timeout/cancelled/skipped/ambiguous MUST NOT become PASS。
+P	33
+P	Inspection / Finding
+P	Timeout/cancelled/skipped/ambiguous MUST NOT become PASS。
+ROW	34	Inspection / Finding	Finding terminalization MUST record fixed/rejected/duplicate/not-applicable/blocked with evidence。
+P	34
+P	Inspection / Finding
+P	Finding terminalization MUST record fixed/rejected/duplicate/not-applicable/blocked with evidence。
+ROW	35	Inspection / Finding	NOT_APPLICABLE MUST require explicit applicability proof。
+P	35
+P	Inspection / Finding
+P	NOT_APPLICABLE MUST require explicit applicability proof。
+ROW	36	Inspection / Finding	Finding MUST bind current governance/revision/scope identity。
+P	36
+P	Inspection / Finding
+P	Finding MUST bind current governance/revision/scope identity。
+ROW	37	Functional Chain / Schema	Every REQUIRED operation MUST have complete trigger→action→gate→permission→validation→payload→runtime→audit→feedback coverage。
+P	37
+P	Functional Chain / Schema
+P	Every REQUIRED operation MUST have complete trigger→action→gate→permission→validation→payload→runtime→audit→feedback coverage。
+ROW	38	Functional Chain / Schema	System-only operation MUST use System Trigger and MUST_NOT invent visual Control。
+P	38
+P	Functional Chain / Schema
+P	System-only operation MUST use System Trigger and MUST_NOT invent visual Control。
+ROW	39	Functional Chain / Schema	Missing deterministic binding MUST be materialized at its owner before closure credit。
+P	39
+P	Functional Chain / Schema
+P	Missing deterministic binding MUST be materialized at its owner before closure credit。
+ROW	40	Functional Chain / Schema	Producer/Consumer schema field name/type/version MUST match exactly。
+P	40
+P	Functional Chain / Schema
+P	Producer/Consumer schema field name/type/version MUST match exactly。
+ROW	41	Functional Chain / Schema	Alias fallback MUST_NOT hide schema drift。
+P	41
+P	Functional Chain / Schema
+P	Alias fallback MUST_NOT hide schema drift。
+ROW	42	Functional Chain / Schema	Required handoff edge MUST prove physical materialization + parse + required-field completeness + consumer readiness。
+P	42
+P	Functional Chain / Schema
+P	Required handoff edge MUST prove physical materialization + parse + required-field completeness + consumer readiness。
+ROW	43	Functional Chain / Schema	Reference presence alone MUST_NOT satisfy physical input readiness。
+P	43
+P	Functional Chain / Schema
+P	Reference presence alone MUST_NOT satisfy physical input readiness。
+ROW	44	Functional Chain / Schema	Prior producer PASS MUST_NOT substitute successor consumer admission。
+P	44
+P	Functional Chain / Schema
+P	Prior producer PASS MUST_NOT substitute successor consumer admission。
+ROW	45	Functional Chain / Schema	Required edge omitted from denominator MUST be CROSS_STAGE_HANDOFF_FALSE_COMPLETION。
+P	45
+P	Functional Chain / Schema
+P	Required edge omitted from denominator MUST be CROSS_STAGE_HANDOFF_FALSE_COMPLETION。
+ROW	46	Functional Chain / Schema	Upstream defect discovery MUST invalidate impacted downstream closure credit。
+P	46
+P	Functional Chain / Schema
+P	Upstream defect discovery MUST invalidate impacted downstream closure credit。
+ROW	47	Functional Chain / Schema	Functional topology must preserve semantic operation order across visual/implementation layers。
+P	47
+P	Functional Chain / Schema
+P	Functional topology must preserve semantic operation order across visual/implementation layers。
+ROW	48	Functional Chain / Schema	Response/UI feedback MUST bind actual terminal state, not optimistic inner-step status。
+P	48
+P	Functional Chain / Schema
+P	Response/UI feedback MUST bind actual terminal state, not optimistic inner-step status。
+ROW	49	Change / Mutation	Change Candidate MUST be non-authoritative until approved and promoted by proper owner。
+P	49
+P	Change / Mutation
+P	Change Candidate MUST be non-authoritative until approved and promoted by proper owner。
+ROW	50	Change / Mutation	AI MUST_NOT modify Current Authority without explicit pre-existing authorization。
+P	50
+P	Change / Mutation
+P	AI MUST_NOT modify Current Authority without explicit pre-existing authorization。
+ROW	51	Change / Mutation	ChangeSet MUST declare exact target UID/path/node/pre-write hash/write-set。
+P	51
+P	Change / Mutation
+P	ChangeSet MUST declare exact target UID/path/node/pre-write hash/write-set。
+ROW	52	Change / Mutation	Zero-match or multi-match mutation target MUST fail closed。
+P	52
+P	Change / Mutation
+P	Zero-match or multi-match mutation target MUST fail closed。
+ROW	53	Change / Mutation	Structured mutation MUST use bounded structural identity, not raw lexical global uniqueness。
+P	53
+P	Change / Mutation
+P	Structured mutation MUST use bounded structural identity, not raw lexical global uniqueness。
+ROW	54	Change / Mutation	Unrelated sibling owners MUST remain byte/semantic preserved unless in ImpactSet。
+P	54
+P	Change / Mutation
+P	Unrelated sibling owners MUST remain byte/semantic preserved unless in ImpactSet。
+ROW	55	Change / Mutation	Change must compute reverse dependency impact before write。
+P	55
+P	Change / Mutation
+P	Change must compute reverse dependency impact before write。
+ROW	56	Change / Mutation	Affected prior PASS items MUST become REVERIFY_REQUIRED after material change。
+P	56
+P	Change / Mutation
+P	Affected prior PASS items MUST become REVERIFY_REQUIRED after material change。
+ROW	57	Change / Mutation	Mid-stage normative mutation MUST follow current mutation-control policy and MUST NOT be silently promoted。
+P	57
+P	Change / Mutation
+P	Mid-stage normative mutation MUST follow current mutation-control policy and MUST NOT be silently promoted。
+ROW	58	Change / Mutation	Temporary test output MUST_NOT become Authority。
+P	58
+P	Change / Mutation
+P	Temporary test output MUST_NOT become Authority。
+ROW	59	Change / Mutation	Generated candidate MUST NOT become Current merely because it is newest。
+P	59
+P	Change / Mutation
+P	Generated candidate MUST NOT become Current merely because it is newest。
+ROW	60	Change / Mutation	Change Set MUST include rollback basis before effectful execution。
+P	60
+P	Change / Mutation
+P	Change Set MUST include rollback basis before effectful execution。
+ROW	61	Simulation / Validation	Simulation MUST run in isolated/non-production effect boundary unless explicit test authority allows otherwise。
+P	61
+P	Simulation / Validation
+P	Simulation MUST run in isolated/non-production effect boundary unless explicit test authority allows otherwise。
+ROW	62	Simulation / Validation	Simulation PASS MUST NOT equal approval。
+P	62
+P	Simulation / Validation
+P	Simulation PASS MUST NOT equal approval。
+ROW	63	Simulation / Validation	Validation MUST use fresh Current inputs after material remediation。
+P	63
+P	Simulation / Validation
+P	Validation MUST use fresh Current inputs after material remediation。
+ROW	64	Simulation / Validation	Targeted regression MUST cover known signatures and affected reverse consumers。
+P	64
+P	Simulation / Validation
+P	Targeted regression MUST cover known signatures and affected reverse consumers。
+ROW	65	Simulation / Validation	Full-line gate MUST preserve registered denominator; batching for timeout MUST NOT shrink denominator。
+P	65
+P	Simulation / Validation
+P	Full-line gate MUST preserve registered denominator; batching for timeout MUST NOT shrink denominator。
+ROW	66	Simulation / Validation	Hidden-defect sweep MUST run after known defect fix before closure。
+P	66
+P	Simulation / Validation
+P	Hidden-defect sweep MUST run after known defect fix before closure。
+ROW	67	Simulation / Validation	Validation Evidence MUST bind exact tested commit/tree/revision/run/result。
+P	67
+P	Simulation / Validation
+P	Validation Evidence MUST bind exact tested commit/tree/revision/run/result。
+ROW	68	Simulation / Validation	Inner test PASS MUST NOT become outer terminal PASS。
+P	68
+P	Simulation / Validation
+P	Inner test PASS MUST NOT become outer terminal PASS。
+ROW	69	Simulation / Validation	Old run evidence MUST NOT be reused as fresh current evidence。
+P	69
+P	Simulation / Validation
+P	Old run evidence MUST NOT be reused as fresh current evidence。
+ROW	70	Simulation / Validation	Negative regression MUST include expected-fail cases for safety guards。
+P	70
+P	Simulation / Validation
+P	Negative regression MUST include expected-fail cases for safety guards。
+ROW	71	Simulation / Validation	Mutation test counts only when intended semantic guard detects the target violation。
+P	71
+P	Simulation / Validation
+P	Mutation test counts only when intended semantic guard detects the target violation。
+ROW	72	Simulation / Validation	Closure requires persisted post-write reconciliation and exact-head revalidation when policy requires it。
+P	72
+P	Simulation / Validation
+P	Closure requires persisted post-write reconciliation and exact-head revalidation when policy requires it。
+ROW	73	Authorization / Execution	AI MUST NOT self-approve AuthorizationRequest。
+P	73
+P	Authorization / Execution
+P	AI MUST NOT self-approve AuthorizationRequest。
+ROW	74	Authorization / Execution	AuthorizationReceipt MUST preexist protected effectful mutation when required。
+P	74
+P	Authorization / Execution
+P	AuthorizationReceipt MUST preexist protected effectful mutation when required。
+ROW	75	Authorization / Execution	Permission/Gate MUST be evaluated at effect time。
+P	75
+P	Authorization / Execution
+P	Permission/Gate MUST be evaluated at effect time。
+ROW	76	Authorization / Execution	Execution MUST stop if live identity diverges from approved target。
+P	76
+P	Authorization / Execution
+P	Execution MUST stop if live identity diverges from approved target。
+ROW	77	Authorization / Execution	ExecutionPlan MUST define stop/abort/rollback conditions。
+P	77
+P	Authorization / Execution
+P	ExecutionPlan MUST define stop/abort/rollback conditions。
+ROW	78	Authorization / Execution	Effectful retries MUST be idempotent or create distinct attempt identities。
+P	78
+P	Authorization / Execution
+P	Effectful retries MUST be idempotent or create distinct attempt identities。
+ROW	79	Authorization / Execution	Successful tool call MUST NOT equal business/production success without downstream evidence。
+P	79
+P	Authorization / Execution
+P	Successful tool call MUST NOT equal business/production success without downstream evidence。
+ROW	80	Authorization / Execution	System Engineer MUST NOT bypass domain owner to write DB/provider directly。
+P	80
+P	Authorization / Execution
+P	System Engineer MUST NOT bypass domain owner to write DB/provider directly。
+ROW	81	Authorization / Execution	Kill/stop/circuit conditions MUST prevent further effectful operations。
+P	81
+P	Authorization / Execution
+P	Kill/stop/circuit conditions MUST prevent further effectful operations。
+ROW	82	Authorization / Execution	Execution evidence MUST capture actual side effect / result identity。
+P	82
+P	Authorization / Execution
+P	Execution evidence MUST capture actual side effect / result identity。
+ROW	83	Authorization / Execution	Product blocker credit MUST change only with fresh product-owner evidence。
+P	83
+P	Authorization / Execution
+P	Product blocker credit MUST change only with fresh product-owner evidence。
+ROW	84	Authorization / Execution	Governance/test/harness fixes MUST NOT be reported as product completion。
+P	84
+P	Authorization / Execution
+P	Governance/test/harness fixes MUST NOT be reported as product completion。
+ROW	85	Deploy / Rollback / Resume / Learning	Deployed artifact MUST bind exact source SHA/build identity。
+P	85
+P	Deploy / Rollback / Resume / Learning
+P	Deployed artifact MUST bind exact source SHA/build identity。
+ROW	86	Deploy / Rollback / Resume / Learning	Deployment success MUST NOT equal Production acceptance。
+P	86
+P	Deploy / Rollback / Resume / Learning
+P	Deployment success MUST NOT equal Production acceptance。
+ROW	87	Deploy / Rollback / Resume / Learning	Production claim requires fresh remote/runtime evidence。
+P	87
+P	Deploy / Rollback / Resume / Learning
+P	Production claim requires fresh remote/runtime evidence。
+ROW	88	Deploy / Rollback / Resume / Learning	Rollback MUST restore an explicitly known good state and verify it。
+P	88
+P	Deploy / Rollback / Resume / Learning
+P	Rollback MUST restore an explicitly known good state and verify it。
+ROW	89	Deploy / Rollback / Resume / Learning	Unknown external state MUST block blind retry where duplicate effect is possible。
+P	89
+P	Deploy / Rollback / Resume / Learning
+P	Unknown external state MUST block blind retry where duplicate effect is possible。
+ROW	90	Deploy / Rollback / Resume / Learning	Resume MUST reconcile Current Governance/HEAD/WU/evidence before continuation。
+P	90
+P	Deploy / Rollback / Resume / Learning
+P	Resume MUST reconcile Current Governance/HEAD/WU/evidence before continuation。
+ROW	91	Deploy / Rollback / Resume / Learning	Checkpoint MUST capture completed effects and pending effects to prevent duplicate execution。
+P	91
+P	Deploy / Rollback / Resume / Learning
+P	Checkpoint MUST capture completed effects and pending effects to prevent duplicate execution。
+ROW	92	Deploy / Rollback / Resume / Learning	Incident closure MUST include containment, root cause, correction, verification and residual risk。
+P	92
+P	Deploy / Rollback / Resume / Learning
+P	Incident closure MUST include containment, root cause, correction, verification and residual risk。
+ROW	93	Deploy / Rollback / Resume / Learning	Incident LearningCandidate MUST NOT auto-adopt into policy。
+P	93
+P	Deploy / Rollback / Resume / Learning
+P	Incident LearningCandidate MUST NOT auto-adopt into policy。
+ROW	94	Deploy / Rollback / Resume / Learning	EvolutionCandidate MUST be reviewed under same authority/change controls as other changes。
+P	94
+P	Deploy / Rollback / Resume / Learning
+P	EvolutionCandidate MUST be reviewed under same authority/change controls as other changes。
+ROW	95	Deploy / Rollback / Resume / Learning	AI MUST NOT modify its own validator/policy merely to make failing evidence pass。
+P	95
+P	Deploy / Rollback / Resume / Learning
+P	AI MUST NOT modify its own validator/policy merely to make failing evidence pass。
+ROW	96	Deploy / Rollback / Resume / Learning	Governed Adoption MUST preserve provenance, approval, version, impact and revalidation evidence。
+P	96
+P	Deploy / Rollback / Resume / Learning
+P	Governed Adoption MUST preserve provenance, approval, version, impact and revalidation evidence。
+P	11. Finding Contract / Taxonomy / Evidence
+ROW	Finding class	Definition	Required evidence	Default disposition
+P	Finding class
+P	Definition
+P	Required evidence
+P	Default disposition
+ROW	PRODUCT_FUNCTIONAL_GAP	產品必要功能/契約實際缺失	current authority + exact reproduction	route product owner
+P	PRODUCT_FUNCTIONAL_GAP
+P	產品必要功能/契約實際缺失
+P	current authority + exact reproduction
+P	route product owner
+ROW	GOVERNANCE_DEFECT	共用治理規則/引用/不變式缺陷	mother/registry/current consumer evidence	route governance owner
+P	GOVERNANCE_DEFECT
+P	共用治理規則/引用/不變式缺陷
+P	mother/registry/current consumer evidence
+P	route governance owner
+ROW	TEST_HARNESS_DEFECT	測試/validator 本身錯誤	expected semantics + harness failure	fix harness, 0 product credit
+P	TEST_HARNESS_DEFECT
+P	測試/validator 本身錯誤
+P	expected semantics + harness failure
+P	fix harness, 0 product credit
+ROW	EVIDENCE_STATE_DEFECT	evidence projection/state 不一致	run/evidence/state reconciliation	repair evidence/state owner
+P	EVIDENCE_STATE_DEFECT
+P	evidence projection/state 不一致
+P	run/evidence/state reconciliation
+P	repair evidence/state owner
+ROW	SCHEMA_DRIFT	producer/consumer schema mismatch	exact schema/version diff	route contract owner
+P	SCHEMA_DRIFT
+P	producer/consumer schema mismatch
+P	exact schema/version diff
+P	route contract owner
+ROW	AUTHORITY_GAP	必要產品決策無合法 authority	search receipts + unresolved owner/decision	human/product authority required
+P	AUTHORITY_GAP
+P	必要產品決策無合法 authority
+P	search receipts + unresolved owner/decision
+P	human/product authority required
+ROW	EXTERNAL_BLOCKER	provider/account/rights/external service blocker	external/current status evidence	blocked; no internal fake fix
+P	EXTERNAL_BLOCKER
+P	provider/account/rights/external service blocker
+P	external/current status evidence
+P	blocked; no internal fake fix
+ROW	SECURITY_DEFECT	permission/classification/secret/RLS/gate failure	security reproduction + scope	security owner + immediate containment
+P	SECURITY_DEFECT
+P	permission/classification/secret/RLS/gate failure
+P	security reproduction + scope
+P	security owner + immediate containment
+ROW	CROSS_STAGE_FALSE_COMPLETION	predecessor required output not consumer-ready	handoff edge ledger + physical evidence	re-enter owning capability
+P	CROSS_STAGE_FALSE_COMPLETION
+P	predecessor required output not consumer-ready
+P	handoff edge ledger + physical evidence
+P	re-enter owning capability
+ROW	RESIDUAL_REFERENCE_DEFECT	stale/dead/duplicate/parallel current reference	forward/reverse consumer graph	cleanup with preservation proof
+P	RESIDUAL_REFERENCE_DEFECT
+P	stale/dead/duplicate/parallel current reference
+P	forward/reverse consumer graph
+P	cleanup with preservation proof
+P	• Finding MUST carry: finding_id, signature, current_governance_uid, scope, affected_uid/path, evidence_refs, reproduction, classification, severity, owner_resolution_state, blocking_state, created_at, terminal_disposition。
+P	12. Root Cause / Canonical Owner Resolution
+ROW	Step	MUST do	Failure rule
+P	Step
+P	MUST do
+P	Failure rule
+ROW	Symptom isolate	區分 observation / causal factor / root cause	不可把 UI error 文案當 root cause
+P	Symptom isolate
+P	區分 observation / causal factor / root cause
+P	不可把 UI error 文案當 root cause
+ROW	Causal chain	沿 forward + reverse dependency 建因果鏈	鏈中缺 evidence → INCOMPLETE_RCA
+P	Causal chain
+P	沿 forward + reverse dependency 建因果鏈
+P	鏈中缺 evidence → INCOMPLETE_RCA
+ROW	Search owner	UID → canonical name → alias/deprecated → registry → owner path → code/runtime/data refs	未完成 search-before-create → BLOCK
+P	Search owner
+P	UID → canonical name → alias/deprecated → registry → owner path → code/runtime/data refs
+P	未完成 search-before-create → BLOCK
+ROW	Layer classify	product / shared policy / runtime / test / evidence / external	錯層 remediation → NO_CREDIT / BLOCK
+P	Layer classify
+P	product / shared policy / runtime / test / evidence / external
+P	錯層 remediation → NO_CREDIT / BLOCK
+ROW	Owner validate	owner lifecycle/approval/version/test scope 必須吻合	duplicate/ambiguous owner → REVIEW_REQUIRED
+P	Owner validate
+P	owner lifecycle/approval/version/test scope 必須吻合
+P	duplicate/ambiguous owner → REVIEW_REQUIRED
+ROW	Root signature	建立可回歸的 root signature	只有 symptom signature 不足以 closure
+P	Root signature
+P	建立可回歸的 root signature
+P	只有 symptom signature 不足以 closure
+ROW	Remediation route	把修正送到真正 owner capability	downstream workaround 不得算 upstream fix
+P	Remediation route
+P	把修正送到真正 owner capability
+P	downstream workaround 不得算 upstream fix
+P	13. Impact Analysis / Reverse Dependency / REVERIFY_REQUIRED
+ROW	Impact dimension	Required analysis
+P	Impact dimension
+P	Required analysis
+ROW	Authority	哪些 Canonical Authority / owner revision 改變
+P	Authority
+P	哪些 Canonical Authority / owner revision 改變
+ROW	Contract	API/payload/event/schema/state contract 受影響
+P	Contract
+P	API/payload/event/schema/state contract 受影響
+ROW	Runtime	哪些 executor/worker/provider adapter/consumer 受影響
+P	Runtime
+P	哪些 executor/worker/provider adapter/consumer 受影響
+ROW	Data	DB/table/index/materialized state / migrations 受影響
+P	Data
+P	DB/table/index/materialized state / migrations 受影響
+ROW	Permission	gate/permission/RLS/classification 受影響
+P	Permission
+P	gate/permission/RLS/classification 受影響
+ROW	Visual	control/workbench/topology/feedback 受影響
+P	Visual
+P	control/workbench/topology/feedback 受影響
+ROW	Test	targeted/full-line/negative regression denominator 受影響
+P	Test
+P	targeted/full-line/negative regression denominator 受影響
+ROW	Evidence	哪些舊 PASS 必須 invalidate → REVERIFY_REQUIRED
+P	Evidence
+P	哪些舊 PASS 必須 invalidate → REVERIFY_REQUIRED
+ROW	Cross-stage	哪些 successor inputs / downstream closure credit 受影響
+P	Cross-stage
+P	哪些 successor inputs / downstream closure credit 受影響
+ROW	Deployment	是否要求 redeploy / remote acceptance / rollback readiness
+P	Deployment
+P	是否要求 redeploy / remote acceptance / rollback readiness
+P	• ImpactSet MUST be persisted before material write；若 reverse graph 不完整，effectful change MUST BLOCK。
+P	14. Automatic Update Proposal / Change Candidate Contract
+P	圖 3｜Automatic Update Proposal 只能走 Candidate → Simulation → Validation → Human/Governance Approval → Authorized Execution，不得自我批准。
+ROW	Candidate field	Required meaning
+P	Candidate field
+P	Required meaning
+ROW	candidate_id/version	append-only identity
+P	candidate_id/version
+P	append-only identity
+ROW	problem_refs	要解決的 exact Finding/signature
+P	problem_refs
+P	要解決的 exact Finding/signature
+ROW	canonical_owner_ref	唯一 owner
+P	canonical_owner_ref
+P	唯一 owner
+ROW	authority_basis	允許提出此變更的 current rule/source
+P	authority_basis
+P	允許提出此變更的 current rule/source
+ROW	exact_write_targets	UID/path/node/pre-write hash
+P	exact_write_targets
+P	UID/path/node/pre-write hash
+ROW	requested_delta	只描述所需差異
+P	requested_delta
+P	只描述所需差異
+ROW	preserve_constraints	不得修改的 siblings/owners/contracts
+P	preserve_constraints
+P	不得修改的 siblings/owners/contracts
+ROW	impact_set_ref	reverse dependency result
+P	impact_set_ref
+P	reverse dependency result
+ROW	validation_plan_ref	如何證明修復而未破壞其他部分
+P	validation_plan_ref
+P	如何證明修復而未破壞其他部分
+ROW	rollback_plan_ref	如何回復 known-good
+P	rollback_plan_ref
+P	如何回復 known-good
+ROW	approval_state	DRAFT/REVIEW/APPROVED/REJECTED/EXPIRED
+P	approval_state
+P	DRAFT/REVIEW/APPROVED/REJECTED/EXPIRED
+ROW	promotion_state	NOT_PROMOTED/PROMOTED_BY_OWNER
+P	promotion_state
+P	NOT_PROMOTED/PROMOTED_BY_OWNER
+P	15. Change Set / Exact Write-Set / Structured Mutation
+ROW	Requirement	Normative contract
+P	Requirement
+P	Normative contract
+ROW	Exact selector	以 schema/AST/CST/registry structural identity 定位，不以裸字串唯一性作 Authority。
+P	Exact selector
+P	以 schema/AST/CST/registry structural identity 定位，不以裸字串唯一性作 Authority。
+ROW	Pre-write identity	target UID/path/owner/revision/hash MUST match approved basis。
+P	Pre-write identity
+P	target UID/path/owner/revision/hash MUST match approved basis。
+ROW	Bounded write-set	只允許 ChangeSet 明列的 structural nodes / files / rows。
+P	Bounded write-set
+P	只允許 ChangeSet 明列的 structural nodes / files / rows。
+ROW	Zero-match	BLOCK_NO_TARGET。
+P	Zero-match
+P	BLOCK_NO_TARGET。
+ROW	Multi-match	BLOCK_AMBIGUOUS_TARGET。
+P	Multi-match
+P	BLOCK_AMBIGUOUS_TARGET。
+ROW	Preservation	未列入 ChangeSet 的 sibling/owner MUST preserve。
+P	Preservation
+P	未列入 ChangeSet 的 sibling/owner MUST preserve。
+ROW	Reparse	修改後 MUST syntax/schema reparse。
+P	Reparse
+P	修改後 MUST syntax/schema reparse。
+ROW	Reverse consumers	修改後 MUST revalidate affected consumers。
+P	Reverse consumers
+P	修改後 MUST revalidate affected consumers。
+ROW	Current references	superseded owner promotion 必須做到 stale current refs = 0。
+P	Current references
+P	superseded owner promotion 必須做到 stale current refs = 0。
+ROW	Residuals	temporary/duplicate/obsolete current residual = 0 before formal closure。
+P	Residuals
+P	temporary/duplicate/obsolete current residual = 0 before formal closure。
+P	16. Simulation / Replay / Dry-Run Contract
+ROW	Simulation type	Purpose	Isolation rule	Pass does NOT mean
+P	Simulation type
+P	Purpose
+P	Isolation rule
+P	Pass does NOT mean
+ROW	STATIC_SIMULATION	schema/graph/write-set/permission dry analysis	no effect	approval
+P	STATIC_SIMULATION
+P	schema/graph/write-set/permission dry analysis
+P	no effect
+P	approval
+ROW	STATE_REPLAY	用 historical/current event/state 回放 transition	isolated state store	Current production result
+P	STATE_REPLAY
+P	用 historical/current event/state 回放 transition
+P	isolated state store
+P	Current production result
+ROW	MUTATION_SIMULATION	在 candidate copy 套用 structured mutation	non-current workspace	authority promotion
+P	MUTATION_SIMULATION
+P	在 candidate copy 套用 structured mutation
+P	non-current workspace
+P	authority promotion
+ROW	WORKFLOW_SIMULATION	模擬 gates/dependencies/retries	sandbox/stub external effect	external provider success
+P	WORKFLOW_SIMULATION
+P	模擬 gates/dependencies/retries
+P	sandbox/stub external effect
+P	external provider success
+ROW	ROLLBACK_REHEARSAL	驗證 rollback 可重現 known-good	isolated branch/env	real rollback already done
+P	ROLLBACK_REHEARSAL
+P	驗證 rollback 可重現 known-good
+P	isolated branch/env
+P	real rollback already done
+ROW	PORTABILITY_SIMULATION	替換 product/profile identity/denominator	synthetic profiles	specific product completion
+P	PORTABILITY_SIMULATION
+P	替換 product/profile identity/denominator
+P	synthetic profiles
+P	specific product completion
+P	17. Validation / Verification Contract
+ROW	Layer	Required result	Evidence rule
+P	Layer
+P	Required result
+P	Evidence rule
+ROW	Syntax/Schema	parse + required fields + version	fresh candidate bytes
+P	Syntax/Schema
+P	parse + required fields + version
+P	fresh candidate bytes
+ROW	Targeted Regression	known/root signatures 0 escaped	exact affected scope
+P	Targeted Regression
+P	known/root signatures 0 escaped
+P	exact affected scope
+ROW	Reverse Consumer	all impacted consumers admit	ImpactSet-bound
+P	Reverse Consumer
+P	all impacted consumers admit
+P	ImpactSet-bound
+ROW	Negative Regression	safety violations fail closed	expected-fail matrix
+P	Negative Regression
+P	safety violations fail closed
+P	expected-fail matrix
+ROW	Hidden Defect Sweep	鄰近/反向缺陷無新 blocker	fresh current scope
+P	Hidden Defect Sweep
+P	鄰近/反向缺陷無新 blocker
+P	fresh current scope
+ROW	Full-Line	registered mandatory suite/denominator	outer terminal conclusion
+P	Full-Line
+P	registered mandatory suite/denominator
+P	outer terminal conclusion
+ROW	Selected Profile	profile structure + applicable steps	profile cannot weaken common policy
+P	Selected Profile
+P	profile structure + applicable steps
+P	profile cannot weaken common policy
+ROW	Exact-Head	persisted head/tree matches tested identity	post-write reconciliation
+P	Exact-Head
+P	persisted head/tree matches tested identity
+P	post-write reconciliation
+ROW	Deployment Verify	deployed exact SHA/build	deployment evidence
+P	Deployment Verify
+P	deployed exact SHA/build
+P	deployment evidence
+ROW	Production Acceptance	remote/current runtime/business effect	fresh production evidence
+P	Production Acceptance
+P	remote/current runtime/business effect
+P	fresh production evidence
+P	18. Authorization / Effectful Execution Boundary
+ROW	Gate	MUST be true before effectful execution
+P	Gate
+P	MUST be true before effectful execution
+ROW	AUTH-01	CurrentTruthSnapshot still matches live HEAD/tree
+P	AUTH-01
+P	CurrentTruthSnapshot still matches live HEAD/tree
+ROW	AUTH-02	ChangeCandidate approved by authorized human/governance owner
+P	AUTH-02
+P	ChangeCandidate approved by authorized human/governance owner
+ROW	AUTH-03	AuthorizationReceipt exists before protected mutation
+P	AUTH-03
+P	AuthorizationReceipt exists before protected mutation
+ROW	AUTH-04	ExactWriteTargets match pre-write identities/hashes
+P	AUTH-04
+P	ExactWriteTargets match pre-write identities/hashes
+ROW	AUTH-05	ImpactSet + ReverifySet complete
+P	AUTH-05
+P	ImpactSet + ReverifySet complete
+ROW	AUTH-06	Simulation/Validation prerequisites satisfied
+P	AUTH-06
+P	Simulation/Validation prerequisites satisfied
+ROW	AUTH-07	Permission/security/classification gates PASS at effect time
+P	AUTH-07
+P	Permission/security/classification gates PASS at effect time
+ROW	AUTH-08	RollbackPlan + stop conditions available
+P	AUTH-08
+P	RollbackPlan + stop conditions available
+ROW	AUTH-09	Idempotency/checkpoint state reconciled
+P	AUTH-09
+P	Idempotency/checkpoint state reconciled
+ROW	AUTH-10	No fatal contradiction / unresolved authority ambiguity
+P	AUTH-10
+P	No fatal contradiction / unresolved authority ambiguity
+P	• System Engineer AI MUST_NOT be the approving identity for its own ChangeCandidate。
+P	19. Deployment Verification / Production Truth
+ROW	Claim	Minimum proof
+P	Claim
+P	Minimum proof
+ROW	BUILT	build artifact exists + source identity
+P	BUILT
+P	build artifact exists + source identity
+ROW	DEPLOYED	platform deployment completed + exact source/build identity
+P	DEPLOYED
+P	platform deployment completed + exact source/build identity
+ROW	RUNTIME_HEALTHY	current environment health/readiness evidence
+P	RUNTIME_HEALTHY
+P	current environment health/readiness evidence
+ROW	PRODUCTION_UI_PRESENT	remote browser/current DOM evidence when applicable
+P	PRODUCTION_UI_PRESENT
+P	remote browser/current DOM evidence when applicable
+ROW	PRODUCTION_API_EFFECTIVE	remote/current API evidence
+P	PRODUCTION_API_EFFECTIVE
+P	remote/current API evidence
+ROW	PRODUCTION_DB_EFFECTIVE	current production data/schema/effect evidence
+P	PRODUCTION_DB_EFFECTIVE
+P	current production data/schema/effect evidence
+ROW	EXTERNAL_PROVIDER_EFFECTIVE	provider E2E evidence + external result identity
+P	EXTERNAL_PROVIDER_EFFECTIVE
+P	provider E2E evidence + external result identity
+ROW	PRODUCTION_COMPLETE	all applicable acceptance items terminal PASS; blockers=0
+P	PRODUCTION_COMPLETE
+P	all applicable acceptance items terminal PASS; blockers=0
+P	• Design/Test/Preview/Local/Sandbox/Deployment success MUST_NOT be promoted to Production Complete without required remote evidence。
+P	20. Rollback Contract
+ROW	Phase	Required behavior
+P	Phase
+P	Required behavior
+ROW	Trigger	fatal regression / security incident / deployment failure / incorrect effect / operator decision
+P	Trigger
+P	fatal regression / security incident / deployment failure / incorrect effect / operator decision
+ROW	Freeze	stop further effectful operations, preserve evidence
+P	Freeze
+P	stop further effectful operations, preserve evidence
+ROW	Known-good resolve	exact prior authority/source/build/state identity
+P	Known-good resolve
+P	exact prior authority/source/build/state identity
+ROW	Compatibility check	schema/data/event compatibility before reversal
+P	Compatibility check
+P	schema/data/event compatibility before reversal
+ROW	Execute	authorized rollback with idempotency/checkpoint
+P	Execute
+P	authorized rollback with idempotency/checkpoint
+ROW	Verify	health + functional + data + audit + remote acceptance
+P	Verify
+P	health + functional + data + audit + remote acceptance
+ROW	Reconcile	Current state/ledger/resume updated to actual rolled-back truth
+P	Reconcile
+P	Current state/ledger/resume updated to actual rolled-back truth
+ROW	Follow-up	open Incident + Root Cause + LearningCandidate
+P	Follow-up
+P	open Incident + Root Cause + LearningCandidate
+P	21. Resume / Checkpoint / Re-entry Contract
+ROW	Artifact	Required fields / behavior
+P	Artifact
+P	Required fields / behavior
+ROW	Checkpoint	run_uid, work_unit_uid, completed_effects, pending_effects, idempotency keys, exact head, evidence refs
+P	Checkpoint
+P	run_uid, work_unit_uid, completed_effects, pending_effects, idempotency keys, exact head, evidence refs
+ROW	ResumePoint	current governance, branch/head, WU, owner, exact next action, blockers, required gates
+P	ResumePoint
+P	current governance, branch/head, WU, owner, exact next action, blockers, required gates
+ROW	Resume reconciliation	新 session 必須重新 bootstrap，對齊 live HEAD/Governance/WU/Evidence
+P	Resume reconciliation
+P	新 session 必須重新 bootstrap，對齊 live HEAD/Governance/WU/Evidence
+ROW	Divergence	任何 identity mismatch → NOT_VERIFIED / WUR / restart affected gate
+P	Divergence
+P	任何 identity mismatch → NOT_VERIFIED / WUR / restart affected gate
+ROW	Re-entry	下游發現上游 owner defect → downstream stop → owner re-entry → ReverifySet → fresh successor verification
+P	Re-entry
+P	下游發現上游 owner defect → downstream stop → owner re-entry → ReverifySet → fresh successor verification
+ROW	No duplicate effect	已完成 effect 由 checkpoint/idempotency 證明後不得重送
+P	No duplicate effect
+P	已完成 effect 由 checkpoint/idempotency 證明後不得重送
+P	22. Incident Learning / Governed Evolution
+P	圖 4｜Incident Learning 只形成受治理的 Learning/Evolution Candidate；AI 不得靜默改寫自己的政策。
+ROW	Stage	Output	Authority status
+P	Stage
+P	Output
+P	Authority status
+ROW	Incident observation	Incident + evidence	T3/T5 evidence, not policy
+P	Incident observation
+P	Incident + evidence
+P	T3/T5 evidence, not policy
+ROW	Containment	ContainmentAction	operational action with audit
+P	Containment
+P	ContainmentAction
+P	operational action with audit
+ROW	Root cause	RootCauseAnalysis	analysis evidence
+P	Root cause
+P	RootCauseAnalysis
+P	analysis evidence
+ROW	Corrective change	ChangeCandidate/approved change	candidate until approved/promoted
+P	Corrective change
+P	ChangeCandidate/approved change
+P	candidate until approved/promoted
+ROW	Verification	Validation/Production evidence	evidence
+P	Verification
+P	Validation/Production evidence
+P	evidence
+ROW	Learning synthesis	LearningCandidate	candidate only
+P	Learning synthesis
+P	LearningCandidate
+P	candidate only
+ROW	Evolution proposal	EvolutionCandidate	candidate only
+P	Evolution proposal
+P	EvolutionCandidate
+P	candidate only
+ROW	Governed adoption	GovernedAdoption	becomes applicable only via authorized owner/version
+P	Governed adoption
+P	GovernedAdoption
+P	becomes applicable only via authorized owner/version
+ROW	Future inspection	updated approved checks/rules	Current only after promotion
+P	Future inspection
+P	updated approved checks/rules
+P	Current only after promotion
+P	23. Self-Inspection Trigger / Cadence / Condition Watch
+ROW	Trigger	Inspection action	Noise control
+P	Trigger
+P	Inspection action
+P	Noise control
+ROW	New deployment	exact-sha post-deploy acceptance	只檢 affected + required global gates
+P	New deployment
+P	exact-sha post-deploy acceptance
+P	只檢 affected + required global gates
+ROW	Governance promotion	reference/consumer/denominator integrity	不把 governance pass 算 product credit
+P	Governance promotion
+P	reference/consumer/denominator integrity
+P	不把 governance pass 算 product credit
+ROW	Schema migration	producer-consumer/data compatibility	需要 rollback readiness
+P	Schema migration
+P	producer-consumer/data compatibility
+P	需要 rollback readiness
+ROW	Provider/API change	capability/permission/callback/normalization chain	external E2E only if authorized/available
+P	Provider/API change
+P	capability/permission/callback/normalization chain
+P	external E2E only if authorized/available
+ROW	Incident	targeted RCA + hidden defect sweep	preserve evidence before cleanup
+P	Incident
+P	targeted RCA + hidden defect sweep
+P	preserve evidence before cleanup
+ROW	Drift signal	owner/reference/runtime/schema drift audit	dedupe same signature
+P	Drift signal
+P	owner/reference/runtime/schema drift audit
+P	dedupe same signature
+ROW	Scheduled health audit	selected current high-value invariants	不得用 stale cached current truth
+P	Scheduled health audit
+P	selected current high-value invariants
+P	不得用 stale cached current truth
+ROW	User directive	exact requested scope + dependency closure	不可擴張成未授權產品變更
+P	User directive
+P	exact requested scope + dependency closure
+P	不可擴張成未授權產品變更
+P	24. Self-Evolution Admission / Rejection Matrix
+ROW	Candidate condition	Disposition
+P	Candidate condition
+P	Disposition
+ROW	Rule improves generic safety and applies across products/profiles	MAY propose shared EvolutionCandidate; requires explicit governance authorization
+P	Rule improves generic safety and applies across products/profiles
+P	MAY propose shared EvolutionCandidate; requires explicit governance authorization
+ROW	Only one product/page needs behavior change	Route product owner; MUST_NOT mutate common policy
+P	Only one product/page needs behavior change
+P	Route product owner; MUST_NOT mutate common policy
+ROW	Validator is wrong vs current normative rule	Fix validator/test owner; 0 product credit
+P	Validator is wrong vs current normative rule
+P	Fix validator/test owner; 0 product credit
+ROW	Product contract is missing but deterministic from existing Authority	Materialize product owner contract; no new product invention
+P	Product contract is missing but deterministic from existing Authority
+P	Materialize product owner contract; no new product invention
+ROW	Product behavior ambiguous / absent authority	BLOCK + Human/Product Authority Request
+P	Product behavior ambiguous / absent authority
+P	BLOCK + Human/Product Authority Request
+ROW	Candidate merely makes current failing test pass without semantic basis	REJECT / SPEC-GAMING
+P	Candidate merely makes current failing test pass without semantic basis
+P	REJECT / SPEC-GAMING
+ROW	Candidate weakens gate/permission/denominator	REJECT
+P	Candidate weakens gate/permission/denominator
+P	REJECT
+ROW	Candidate requires second owner/runtime/registry for same concept	REJECT_DUPLICATE_SYSTEM
+P	Candidate requires second owner/runtime/registry for same concept
+P	REJECT_DUPLICATE_SYSTEM
+ROW	Candidate verified but not approved	REMAIN_CANDIDATE
+P	Candidate verified but not approved
+P	REMAIN_CANDIDATE
+ROW	Approved + promoted + all consumers migrated + fresh validation PASS	ADOPTED_CURRENT via canonical owner
+P	Approved + promoted + all consumers migrated + fresh validation PASS
+P	ADOPTED_CURRENT via canonical owner
+P	25. State Machine / Lifecycle
+ROW	State	Meaning
+P	State
+P	Meaning
+ROW	UNRESOLVED	尚未解析 Current Truth
+P	UNRESOLVED
+P	尚未解析 Current Truth
+ROW	BOOTSTRAPPING	正在 Session Bootstrap
+P	BOOTSTRAPPING
+P	正在 Session Bootstrap
+ROW	CURRENT_TRUTH_FROZEN	已凍結本輪 current identity
+P	CURRENT_TRUTH_FROZEN
+P	已凍結本輪 current identity
+ROW	INSPECTION_PLANNED	scope/denominator/trace plan ready
+P	INSPECTION_PLANNED
+P	scope/denominator/trace plan ready
+ROW	INSPECTING	執行檢查
+P	INSPECTING
+P	執行檢查
+ROW	FINDING_OPEN	存在可治理 finding
+P	FINDING_OPEN
+P	存在可治理 finding
+ROW	RCA_IN_PROGRESS	分析 root cause
+P	RCA_IN_PROGRESS
+P	分析 root cause
+ROW	OWNER_RESOLVED	Canonical Owner 已解析
+P	OWNER_RESOLVED
+P	Canonical Owner 已解析
+ROW	IMPACT_ANALYZED	Impact/ReverifySet 已完成
+P	IMPACT_ANALYZED
+P	Impact/ReverifySet 已完成
+ROW	CHANGE_CANDIDATE_DRAFT	非權威修正候選
+P	CHANGE_CANDIDATE_DRAFT
+P	非權威修正候選
+ROW	SIMULATION_RUNNING	隔離模擬
+P	SIMULATION_RUNNING
+P	隔離模擬
+ROW	VALIDATION_RUNNING	fresh validation
+P	VALIDATION_RUNNING
+P	fresh validation
+ROW	AWAITING_AUTHORIZATION	等待人工/治理授權
+P	AWAITING_AUTHORIZATION
+P	等待人工/治理授權
+ROW	AUTHORIZED	已有有效 AuthorizationReceipt
+P	AUTHORIZED
+P	已有有效 AuthorizationReceipt
+ROW	EXECUTING	執行 effectful change
+P	EXECUTING
+P	執行 effectful change
+ROW	VERIFYING	驗證 effect
+P	VERIFYING
+P	驗證 effect
+ROW	DEPLOYED_UNVERIFIED	已部署但尚未 Production acceptance
+P	DEPLOYED_UNVERIFIED
+P	已部署但尚未 Production acceptance
+ROW	PRODUCTION_VERIFYING	遠端/production 驗證
+P	PRODUCTION_VERIFYING
+P	遠端/production 驗證
+ROW	CLOSED_VERIFIED	terminal closure with evidence
+P	CLOSED_VERIFIED
+P	terminal closure with evidence
+ROW	BLOCKED	缺 authority/dependency/external condition
+P	BLOCKED
+P	缺 authority/dependency/external condition
+ROW	ROLLBACK_REQUIRED	需回滾
+P	ROLLBACK_REQUIRED
+P	需回滾
+ROW	ROLLING_BACK	執行回滾
+P	ROLLING_BACK
+P	執行回滾
+ROW	RESUME_REQUIRED	需重新 bootstrap/reconcile
+P	RESUME_REQUIRED
+P	需重新 bootstrap/reconcile
+ROW	INCIDENT_LEARNING	事故學習中
+P	INCIDENT_LEARNING
+P	事故學習中
+ROW	EVOLUTION_CANDIDATE	改善規則/流程候選
+P	EVOLUTION_CANDIDATE
+P	改善規則/流程候選
+ROW	REJECTED	finding/change/evolution candidate 被拒絕
+P	REJECTED
+P	finding/change/evolution candidate 被拒絕
+P	26. State Transition Guard Matrix
+ROW	Transition	Trigger	Required	Guard	Side effect/Audit	Failure/Recovery
+P	Transition
+P	Trigger
+P	Required
+P	Guard
+P	Side effect/Audit
+P	Failure/Recovery
+ROW	UNRESOLVED→BOOTSTRAPPING	session start	repo access	actor authorized to inspect	audit bootstrap start	BLOCK if no repo/branch
+P	UNRESOLVED→BOOTSTRAPPING
+P	session start
+P	repo access
+P	actor authorized to inspect
+P	audit bootstrap start
+P	BLOCK if no repo/branch
+ROW	BOOTSTRAPPING→CURRENT_TRUTH_FROZEN	all bootstrap items resolved	HEAD/Gov/Authority/WU/Resume	exact identity frozen	CurrentTruthSnapshot	BLOCK on ambiguity
+P	BOOTSTRAPPING→CURRENT_TRUTH_FROZEN
+P	all bootstrap items resolved
+P	HEAD/Gov/Authority/WU/Resume
+P	exact identity frozen
+P	CurrentTruthSnapshot
+P	BLOCK on ambiguity
+ROW	CURRENT_TRUTH_FROZEN→INSPECTION_PLANNED	scope request	scope/applicability/dependencies	denominator resolved	InspectionScope	BLOCK if denominator stale
+P	CURRENT_TRUTH_FROZEN→INSPECTION_PLANNED
+P	scope request
+P	scope/applicability/dependencies
+P	denominator resolved
+P	InspectionScope
+P	BLOCK if denominator stale
+ROW	INSPECTION_PLANNED→INSPECTING	preflight PASS	trace plan + tools	read-only/authorized probes	InspectionRun	BLOCK on forbidden effect
+P	INSPECTION_PLANNED→INSPECTING
+P	preflight PASS
+P	trace plan + tools
+P	read-only/authorized probes
+P	InspectionRun
+P	BLOCK on forbidden effect
+ROW	INSPECTING→FINDING_OPEN	violation observed	evidence + signature	finding normalization	Finding	NOT_VERIFIED if evidence missing
+P	INSPECTING→FINDING_OPEN
+P	violation observed
+P	evidence + signature
+P	finding normalization
+P	Finding
+P	NOT_VERIFIED if evidence missing
+ROW	FINDING_OPEN→RCA_IN_PROGRESS	reproducible finding	reproduction + graph	RCA start	RootCauseAnalysis	BLOCK if non-reproducible without external evidence path
+P	FINDING_OPEN→RCA_IN_PROGRESS
+P	reproducible finding
+P	reproduction + graph
+P	RCA start
+P	RootCauseAnalysis
+P	BLOCK if non-reproducible without external evidence path
+ROW	RCA_IN_PROGRESS→OWNER_RESOLVED	causal chain sufficient	search-before-create complete	owner exact/unique	OwnerResolution	REVIEW_REQUIRED if ambiguous
+P	RCA_IN_PROGRESS→OWNER_RESOLVED
+P	causal chain sufficient
+P	search-before-create complete
+P	owner exact/unique
+P	OwnerResolution
+P	REVIEW_REQUIRED if ambiguous
+ROW	OWNER_RESOLVED→IMPACT_ANALYZED	change needed	reverse graph available	impact computed	ImpactSet/ReverifySet	BLOCK if graph incomplete
+P	OWNER_RESOLVED→IMPACT_ANALYZED
+P	change needed
+P	reverse graph available
+P	impact computed
+P	ImpactSet/ReverifySet
+P	BLOCK if graph incomplete
+ROW	IMPACT_ANALYZED→CHANGE_CANDIDATE_DRAFT	remediable + authority basis	owner + exact target	bounded proposal	ChangeCandidate	BLOCK if product authority absent/ambiguous
+P	IMPACT_ANALYZED→CHANGE_CANDIDATE_DRAFT
+P	remediable + authority basis
+P	owner + exact target
+P	bounded proposal
+P	ChangeCandidate
+P	BLOCK if product authority absent/ambiguous
+ROW	CHANGE_CANDIDATE_DRAFT→SIMULATION_RUNNING	simulation plan valid	isolated environment	no prod effect	SimulationRun	BLOCK if isolation impossible
+P	CHANGE_CANDIDATE_DRAFT→SIMULATION_RUNNING
+P	simulation plan valid
+P	isolated environment
+P	no prod effect
+P	SimulationRun
+P	BLOCK if isolation impossible
+ROW	SIMULATION_RUNNING→VALIDATION_RUNNING	simulation expected result	candidate bytes + validation plan	fresh validation	ValidationRun	REJECT if simulation semantic fail
+P	SIMULATION_RUNNING→VALIDATION_RUNNING
+P	simulation expected result
+P	candidate bytes + validation plan
+P	fresh validation
+P	ValidationRun
+P	REJECT if simulation semantic fail
+ROW	VALIDATION_RUNNING→AWAITING_AUTHORIZATION	required validation PASS	terminal evidence	candidate not promoted	AuthorizationRequest	stay BLOCKED if any blocker
+P	VALIDATION_RUNNING→AWAITING_AUTHORIZATION
+P	required validation PASS
+P	terminal evidence
+P	candidate not promoted
+P	AuthorizationRequest
+P	stay BLOCKED if any blocker
+ROW	AWAITING_AUTHORIZATION→AUTHORIZED	human/governance approval	AuthorizationReceipt	AI not approver	approval audit	REJECT/EXPIRE otherwise
+P	AWAITING_AUTHORIZATION→AUTHORIZED
+P	human/governance approval
+P	AuthorizationReceipt
+P	AI not approver
+P	approval audit
+P	REJECT/EXPIRE otherwise
+ROW	AUTHORIZED→EXECUTING	effect preflight PASS	receipt + exact write target + permissions	effectful write	ExecutionRun	BLOCK on stale head/hash
+P	AUTHORIZED→EXECUTING
+P	effect preflight PASS
+P	receipt + exact write target + permissions
+P	effectful write
+P	ExecutionRun
+P	BLOCK on stale head/hash
+ROW	EXECUTING→VERIFYING	effects complete	ExecutionEvidence	verification	ValidationEvidence	ROLLBACK_REQUIRED on fatal failure
+P	EXECUTING→VERIFYING
+P	effects complete
+P	ExecutionEvidence
+P	verification
+P	ValidationEvidence
+P	ROLLBACK_REQUIRED on fatal failure
+ROW	VERIFYING→DEPLOYED_UNVERIFIED	deployment done	exact SHA/build	deploy evidence	DeploymentEvidence	remain VERIFYING if not deployed
+P	VERIFYING→DEPLOYED_UNVERIFIED
+P	deployment done
+P	exact SHA/build
+P	deploy evidence
+P	DeploymentEvidence
+P	remain VERIFYING if not deployed
+ROW	DEPLOYED_UNVERIFIED→PRODUCTION_VERIFYING	remote acceptance started	deployment identity	current remote probes	ProductionAcceptance	BLOCK if environment unavailable
+P	DEPLOYED_UNVERIFIED→PRODUCTION_VERIFYING
+P	remote acceptance started
+P	deployment identity
+P	current remote probes
+P	ProductionAcceptance
+P	BLOCK if environment unavailable
+ROW	PRODUCTION_VERIFYING→CLOSED_VERIFIED	all applicable items PASS	fresh production evidence	persist closure/resume	ResolutionLedger	BLOCK if unresolved
+P	PRODUCTION_VERIFYING→CLOSED_VERIFIED
+P	all applicable items PASS
+P	fresh production evidence
+P	persist closure/resume
+P	ResolutionLedger
+P	BLOCK if unresolved
+ROW	ANY→ROLLBACK_REQUIRED	fatal regression/security/operator decision	rollback plan	freeze effects	Incident/Audit	BLOCK if no known-good
+P	ANY→ROLLBACK_REQUIRED
+P	fatal regression/security/operator decision
+P	rollback plan
+P	freeze effects
+P	Incident/Audit
+P	BLOCK if no known-good
+ROW	ROLLBACK_REQUIRED→ROLLING_BACK	rollback authorized	known-good exact identity	rollback effect	RollbackRun	stop if compatibility unsafe
+P	ROLLBACK_REQUIRED→ROLLING_BACK
+P	rollback authorized
+P	known-good exact identity
+P	rollback effect
+P	RollbackRun
+P	stop if compatibility unsafe
+ROW	ROLLING_BACK→RESUME_REQUIRED	rollback verified	current state reconciled	persist resume	ResumePoint	INCIDENT if incomplete
+P	ROLLING_BACK→RESUME_REQUIRED
+P	rollback verified
+P	current state reconciled
+P	persist resume
+P	ResumePoint
+P	INCIDENT if incomplete
+ROW	ANY→RESUME_REQUIRED	session/head/governance divergence	persisted state	re-bootstrap required	ResumePoint	MUST NOT continue from memory
+P	ANY→RESUME_REQUIRED
+P	session/head/governance divergence
+P	persisted state
+P	re-bootstrap required
+P	ResumePoint
+P	MUST NOT continue from memory
+ROW	CLOSED_VERIFIED→INCIDENT_LEARNING	incident/postmortem trigger	closure + outcome evidence	learning only	LearningCandidate	no auto policy change
+P	CLOSED_VERIFIED→INCIDENT_LEARNING
+P	incident/postmortem trigger
+P	closure + outcome evidence
+P	learning only
+P	LearningCandidate
+P	no auto policy change
+ROW	INCIDENT_LEARNING→EVOLUTION_CANDIDATE	generalizable lesson	evidence + applicability	proposal only	EvolutionCandidate	route local-only lesson to local owner
+P	INCIDENT_LEARNING→EVOLUTION_CANDIDATE
+P	generalizable lesson
+P	evidence + applicability
+P	proposal only
+P	EvolutionCandidate
+P	route local-only lesson to local owner
+P	27. Concurrency / Version / Idempotency
+ROW	Scenario	Rule
+P	Scenario
+P	Rule
+ROW	Concurrent inspection	可並行 read-only inspection，但 Finding dedupe 必須以 current scope/signature 合併。
+P	Concurrent inspection
+P	可並行 read-only inspection，但 Finding dedupe 必須以 current scope/signature 合併。
+ROW	Concurrent mutation	同一 owner/write target 必須 serialize/optimistic lock；expected hash mismatch → STALE_WRITE。
+P	Concurrent mutation
+P	同一 owner/write target 必須 serialize/optimistic lock；expected hash mismatch → STALE_WRITE。
+ROW	Governance changes mid-run	CurrentTruthSnapshot invalid；停止 effectful step，進 RESUME_REQUIRED。
+P	Governance changes mid-run
+P	CurrentTruthSnapshot invalid；停止 effectful step，進 RESUME_REQUIRED。
+ROW	Owner revision changes	ChangeCandidate 必須 rebase/revalidate；不得 silent apply。
+P	Owner revision changes
+P	ChangeCandidate 必須 rebase/revalidate；不得 silent apply。
+ROW	Duplicate execution request	idempotency key 返回既有 ExecutionRun/Attempt，不重做 effect。
+P	Duplicate execution request
+P	idempotency key 返回既有 ExecutionRun/Attempt，不重做 effect。
+ROW	Same key different payload	BLOCK_IDEMPOTENCY_CONFLICT。
+P	Same key different payload
+P	BLOCK_IDEMPOTENCY_CONFLICT。
+ROW	Retry after unknown effect	先 reconcile actual external/current state；不得 blind retry。
+P	Retry after unknown effect
+P	先 reconcile actual external/current state；不得 blind retry。
+ROW	Late callback/result	只能寫入 matching run/attempt/version；stale result quarantine。
+P	Late callback/result
+P	只能寫入 matching run/attempt/version；stale result quarantine。
+ROW	Rollback concurrent with new deploy	deployment/mutation gate MUST serialize，避免兩個 Current。
+P	Rollback concurrent with new deploy
+P	deployment/mutation gate MUST serialize，避免兩個 Current。
+ROW	Resume after crash	用 checkpoint + audit 判定 completed vs pending effects。
+P	Resume after crash
+P	用 checkpoint + audit 判定 completed vs pending effects。
+P	28. Event / Consumer Contract
+ROW	event_type	Producer	Consumer
+P	event_type
+P	Producer
+P	Consumer
+ROW	CURRENT_TRUTH_FROZEN	BootstrapResolver	InspectionPlanner
+P	CURRENT_TRUTH_FROZEN
+P	BootstrapResolver
+P	InspectionPlanner
+ROW	INSPECTION_STARTED	InspectionEngine	Audit/Observer
+P	INSPECTION_STARTED
+P	InspectionEngine
+P	Audit/Observer
+ROW	OBSERVATION_RECORDED	InspectionEngine	FindingEngine
+P	OBSERVATION_RECORDED
+P	InspectionEngine
+P	FindingEngine
+ROW	FINDING_OPENED	FindingEngine	RCA/ProblemRegister
+P	FINDING_OPENED
+P	FindingEngine
+P	RCA/ProblemRegister
+ROW	FINDING_DEDUPED	FindingEngine	ProblemRegister
+P	FINDING_DEDUPED
+P	FindingEngine
+P	ProblemRegister
+ROW	RCA_COMPLETED	RootCauseEngine	OwnerResolver
+P	RCA_COMPLETED
+P	RootCauseEngine
+P	OwnerResolver
+ROW	OWNER_RESOLVED	OwnerResolver	ImpactEngine
+P	OWNER_RESOLVED
+P	OwnerResolver
+P	ImpactEngine
+ROW	IMPACT_SET_COMPILED	ImpactEngine	ChangePlanner/Reverify projector
+P	IMPACT_SET_COMPILED
+P	ImpactEngine
+P	ChangePlanner/Reverify projector
+ROW	CHANGE_CANDIDATE_CREATED	ChangePlanner	Simulation/Review
+P	CHANGE_CANDIDATE_CREATED
+P	ChangePlanner
+P	Simulation/Review
+ROW	SIMULATION_COMPLETED	SimulationEngine	ValidationPlanner
+P	SIMULATION_COMPLETED
+P	SimulationEngine
+P	ValidationPlanner
+ROW	VALIDATION_COMPLETED	ValidationEngine	AuthorizationBoundary
+P	VALIDATION_COMPLETED
+P	ValidationEngine
+P	AuthorizationBoundary
+ROW	AUTHORIZATION_REQUESTED	SystemEngineer	Human/Governance Reviewer
+P	AUTHORIZATION_REQUESTED
+P	SystemEngineer
+P	Human/Governance Reviewer
+ROW	AUTHORIZATION_GRANTED	Reviewer	ExecutionPlanner
+P	AUTHORIZATION_GRANTED
+P	Reviewer
+P	ExecutionPlanner
+ROW	AUTHORIZATION_REJECTED	Reviewer	ResolutionLedger
+P	AUTHORIZATION_REJECTED
+P	Reviewer
+P	ResolutionLedger
+ROW	EXECUTION_STARTED	ExecutionEngine	Audit/Checkpoint
+P	EXECUTION_STARTED
+P	ExecutionEngine
+P	Audit/Checkpoint
+ROW	EXECUTION_EFFECT_RECORDED	ExecutionEngine	VerificationEngine
+P	EXECUTION_EFFECT_RECORDED
+P	ExecutionEngine
+P	VerificationEngine
+ROW	DEPLOYMENT_COMPLETED	DeploymentOwner	ProductionVerifier
+P	DEPLOYMENT_COMPLETED
+P	DeploymentOwner
+P	ProductionVerifier
+ROW	PRODUCTION_ACCEPTANCE_COMPLETED	ProductionVerifier	ResolutionLedger
+P	PRODUCTION_ACCEPTANCE_COMPLETED
+P	ProductionVerifier
+P	ResolutionLedger
+ROW	ROLLBACK_REQUIRED	Verification/Incident	RollbackOwner
+P	ROLLBACK_REQUIRED
+P	Verification/Incident
+P	RollbackOwner
+ROW	ROLLBACK_COMPLETED	RollbackOwner	Resume/Incident
+P	ROLLBACK_COMPLETED
+P	RollbackOwner
+P	Resume/Incident
+ROW	RESUME_POINT_PERSISTED	ExecutionControl	Next session/bootstrap
+P	RESUME_POINT_PERSISTED
+P	ExecutionControl
+P	Next session/bootstrap
+ROW	INCIDENT_OPENED	Runtime/Audit/Human	Containment/RCA
+P	INCIDENT_OPENED
+P	Runtime/Audit/Human
+P	Containment/RCA
+ROW	LEARNING_CANDIDATE_CREATED	IncidentLearning	Governance Review
+P	LEARNING_CANDIDATE_CREATED
+P	IncidentLearning
+P	Governance Review
+ROW	EVOLUTION_CANDIDATE_CREATED	EvolutionEngine	Governance Review
+P	EVOLUTION_CANDIDATE_CREATED
+P	EvolutionEngine
+P	Governance Review
+P	• Every event MUST include event_id, correlation_id, causation_id, current_governance_uid, source_owner_ref, scope_ref, exact_version/head, timestamp, payload_schema_version, idempotency key when effectful, audit ref。
+P	29. Retry / Backoff / Circuit / Failure Classes
+ROW	Failure class	Retry?	Rule
+P	Failure class
+P	Retry?
+P	Rule
+ROW	RETRYABLE_TRANSIENT	YES bounded	network/temporary runner error; exponential backoff + max attempts
+P	RETRYABLE_TRANSIENT
+P	YES bounded
+P	network/temporary runner error; exponential backoff + max attempts
+ROW	NON_RETRYABLE_CONTRACT	NO	schema/authority/permission/owner mismatch; must remediate
+P	NON_RETRYABLE_CONTRACT
+P	NO
+P	schema/authority/permission/owner mismatch; must remediate
+ROW	STALE_CONTEXT	NO direct retry	re-bootstrap/rebase then new run
+P	STALE_CONTEXT
+P	NO direct retry
+P	re-bootstrap/rebase then new run
+ROW	REVIEW_REQUIRED	NO	human/product/governance decision needed
+P	REVIEW_REQUIRED
+P	NO
+P	human/product/governance decision needed
+ROW	FALLBACK_ALLOWED	conditional	only if same canonical semantics + authorized alternate runtime
+P	FALLBACK_ALLOWED
+P	conditional
+P	only if same canonical semantics + authorized alternate runtime
+ROW	UNKNOWN_EXTERNAL_EFFECT	NO blind retry	reconcile external truth first
+P	UNKNOWN_EXTERNAL_EFFECT
+P	NO blind retry
+P	reconcile external truth first
+ROW	SECURITY_FATAL	NO	contain + incident + revoke/stop
+P	SECURITY_FATAL
+P	NO
+P	contain + incident + revoke/stop
+ROW	VALIDATION_REGRESSION	NO	rollback or remediate then fresh validation
+P	VALIDATION_REGRESSION
+P	NO
+P	rollback or remediate then fresh validation
+ROW	TOOL_TIMEOUT	conditional	if read-only retry; if effectful require idempotency/reconciliation
+P	TOOL_TIMEOUT
+P	conditional
+P	if read-only retry; if effectful require idempotency/reconciliation
+ROW	QUOTA/PROVIDER_DOWN	bounded/fallback	respect budget/policy/capability; no silent downgrade
+P	QUOTA/PROVIDER_DOWN
+P	bounded/fallback
+P	respect budget/policy/capability; no silent downgrade
+P	30. Security / Classification / Secrets
+P	• System inspection MUST honor actor/project/object classification and permission scope；診斷便利性不得繞過資料隔離。
+P	• AI-09 MUST NOT emit raw secrets/tokens/credentials into prompt, log, finding, evidence, error, export or Word。
+P	• Secret handling MUST use reference/secret manager identity；lack of exact secret binding = REQUIRE_EXACT_BINDING。
+P	• Production write, deployment, permission/RLS/security change MUST require stronger authorization than read-only inspection。
+P	• Security Finding SHOULD trigger containment before ordinary remediation planning when active risk exists。
+P	• Inspection evidence containing sensitive data MUST carry classification/retention/redaction requirements。
+P	• Cross-project fallback or cross-tenant evidence reuse without authority MUST be BLOCK。
+P	• AI MUST NOT weaken gate/permission/classification to make validation pass。
+P	31. Audit / Evidence / Observability / NFR
+ROW	NFR / Audit	Requirement
+P	NFR / Audit
+P	Requirement
+ROW	Traceability	Finding→RCA→Owner→Impact→Candidate→Approval→Execution→Validation→Deployment→Production→Closure 全鏈可追。
+P	Traceability
+P	Finding→RCA→Owner→Impact→Candidate→Approval→Execution→Validation→Deployment→Production→Closure 全鏈可追。
+ROW	Determinism	相同 Current Truth + scope + inputs 應產生相同 denominator/owner resolution；非確定性需明示。
+P	Determinism
+P	相同 Current Truth + scope + inputs 應產生相同 denominator/owner resolution；非確定性需明示。
+ROW	Idempotency	effectful orchestration 必須 crash-safe / retry-safe。
+P	Idempotency
+P	effectful orchestration 必須 crash-safe / retry-safe。
+ROW	Recoverability	每個 long-running work unit 必須有 checkpoint/resume/rollback。
+P	Recoverability
+P	每個 long-running work unit 必須有 checkpoint/resume/rollback。
+ROW	Audit immutability	歷史 evidence/approval/run 結果 append-only；不得覆寫成新結果。
+P	Audit immutability
+P	歷史 evidence/approval/run 結果 append-only；不得覆寫成新結果。
+ROW	Observability	run/step/status/duration/error/correlation/current head/gov UID 可查。
+P	Observability
+P	run/step/status/duration/error/correlation/current head/gov UID 可查。
+ROW	Performance	normal stage 只載入必要 stage files/shared dependencies；full-line 才掃 full source set。
+P	Performance
+P	normal stage 只載入必要 stage files/shared dependencies；full-line 才掃 full source set。
+ROW	Portability	shared System Engineer policy 不得硬綁 page/module/profile count。
+P	Portability
+P	shared System Engineer policy 不得硬綁 page/module/profile count。
+ROW	Fail-closed	Authority/Owner/Permission/Version/Schema/Consumer readiness 不確定 → BLOCK/NOT_VERIFIED。
+P	Fail-closed
+P	Authority/Owner/Permission/Version/Schema/Consumer readiness 不確定 → BLOCK/NOT_VERIFIED。
+ROW	No false completion	任何局部/內層/歷史 PASS 不得投影成 full closure。
+P	No false completion
+P	任何局部/內層/歷史 PASS 不得投影成 full closure。
+P	32. Operator Workbench / Visual Impact
+ROW	Workbench region	Required information	Effect boundary
+P	Workbench region
+P	Required information
+P	Effect boundary
+ROW	Current Truth Banner	branch/HEAD/Governance/WU/Resume/scope snapshot	read-only
+P	Current Truth Banner
+P	branch/HEAD/Governance/WU/Resume/scope snapshot
+P	read-only
+ROW	Functional Trace View	Page→...→UI Feedback graph + missing edge	read-only/navigation
+P	Functional Trace View
+P	Page→...→UI Feedback graph + missing edge
+P	read-only/navigation
+ROW	Finding Queue	class/severity/evidence/reproduction/owner/blocking	triage only
+P	Finding Queue
+P	class/severity/evidence/reproduction/owner/blocking
+P	triage only
+ROW	RCA Panel	causal chain + owner resolution + confidence/evidence	analysis
+P	RCA Panel
+P	causal chain + owner resolution + confidence/evidence
+P	analysis
+ROW	Impact Graph	affected/reverify/downstream/stale closure credit	analysis
+P	Impact Graph
+P	affected/reverify/downstream/stale closure credit
+P	analysis
+ROW	Change Candidate Diff	exact write-set/preserve/rollback/validation	candidate only
+P	Change Candidate Diff
+P	exact write-set/preserve/rollback/validation
+P	candidate only
+ROW	Simulation/Validation	run steps/results/negative tests/denominators	test only
+P	Simulation/Validation
+P	run steps/results/negative tests/denominators
+P	test only
+ROW	Authorization Panel	approver/state/evidence/expiry	human/governance action
+P	Authorization Panel
+P	approver/state/evidence/expiry
+P	human/governance action
+ROW	Execution Monitor	effect steps/checkpoints/idempotency/stop	authorized effect only
+P	Execution Monitor
+P	effect steps/checkpoints/idempotency/stop
+P	authorized effect only
+ROW	Production / Rollback	deploy identity/remote acceptance/rollback readiness	owner-specific actions
+P	Production / Rollback
+P	deploy identity/remote acceptance/rollback readiness
+P	owner-specific actions
+ROW	Resume / Incident	exact next action + incident/learning candidate	state persistence
+P	Resume / Incident
+P	exact next action + incident/learning candidate
+P	state persistence
+P	33. Exact Binding Ledger
+ROW	Implementation identity	Status
+P	Implementation identity
+P	Status
+ROW	System Engineer Page/Route UID	REQUIRE_EXACT_BINDING
+P	System Engineer Page/Route UID
+P	REQUIRE_EXACT_BINDING
+ROW	Inspection API endpoints	REQUIRE_EXACT_BINDING
+P	Inspection API endpoints
+P	REQUIRE_EXACT_BINDING
+ROW	Finding persistence store/table	REQUIRE_EXACT_BINDING
+P	Finding persistence store/table
+P	REQUIRE_EXACT_BINDING
+ROW	Functional Trace graph store/index	REQUIRE_EXACT_BINDING
+P	Functional Trace graph store/index
+P	REQUIRE_EXACT_BINDING
+ROW	ProblemRegister physical owner	REQUIRE_CURRENT_BINDING
+P	ProblemRegister physical owner
+P	REQUIRE_CURRENT_BINDING
+ROW	ResolutionLedger physical owner	REQUIRE_CURRENT_BINDING
+P	ResolutionLedger physical owner
+P	REQUIRE_CURRENT_BINDING
+ROW	ChangeCandidate persistence owner	REQUIRE_EXACT_BINDING
+P	ChangeCandidate persistence owner
+P	REQUIRE_EXACT_BINDING
+ROW	Authorization service/permission UID	REQUIRE_EXACT_BINDING
+P	Authorization service/permission UID
+P	REQUIRE_EXACT_BINDING
+ROW	Mutation executor runtime identity	REQUIRE_CURRENT_BINDING
+P	Mutation executor runtime identity
+P	REQUIRE_CURRENT_BINDING
+ROW	Simulation sandbox runtime	REQUIRE_EXACT_BINDING
+P	Simulation sandbox runtime
+P	REQUIRE_EXACT_BINDING
+ROW	Validation workflow IDs	REQUIRE_CURRENT_BINDING
+P	Validation workflow IDs
+P	REQUIRE_CURRENT_BINDING
+ROW	Deployment provider/project identity	REQUIRE_EXACT_BINDING
+P	Deployment provider/project identity
+P	REQUIRE_EXACT_BINDING
+ROW	Production acceptance endpoint/browser target	REQUIRE_EXACT_BINDING
+P	Production acceptance endpoint/browser target
+P	REQUIRE_EXACT_BINDING
+ROW	Rollback runtime/permission UID	REQUIRE_EXACT_BINDING
+P	Rollback runtime/permission UID
+P	REQUIRE_EXACT_BINDING
+ROW	Resume/checkpoint store	REQUIRE_EXACT_BINDING
+P	Resume/checkpoint store
+P	REQUIRE_EXACT_BINDING
+ROW	Incident store/notification channel	REQUIRE_EXACT_BINDING
+P	Incident store/notification channel
+P	REQUIRE_EXACT_BINDING
+ROW	Event bus/topics	REQUIRE_EXACT_BINDING
+P	Event bus/topics
+P	REQUIRE_EXACT_BINDING
+ROW	Idempotency store + TTL	REQUIRE_EXACT_BINDING
+P	Idempotency store + TTL
+P	REQUIRE_EXACT_BINDING
+ROW	Secret manager binding	REQUIRE_EXACT_BINDING
+P	Secret manager binding
+P	REQUIRE_EXACT_BINDING
+ROW	Retention/archive/delete schedules	REQUIRE_EXACT_BINDING
+P	Retention/archive/delete schedules
+P	REQUIRE_EXACT_BINDING
+P	• 任何 Exact Binding 未在 Current Authority/Implementation 中存在時，施工者 MUST 保留 REQUIRE_EXACT_BINDING；MUST_NOT 為了讓文件看起來完整而編造 route/table/permission/runtime ID。
+P	34. Acceptance Matrix
+ROW	ID	Acceptance condition
+P	ID
+P	Acceptance condition
+ROW	ACC-01	Bootstrap resolves live repo/branch/HEAD
+P	ACC-01
+P	Bootstrap resolves live repo/branch/HEAD
+ROW	ACC-02	Registry/Current Governance resolved
+P	ACC-02
+P	Registry/Current Governance resolved
+ROW	ACC-03	Mother 01→04 read in order
+P	ACC-03
+P	Mother 01→04 read in order
+ROW	ACC-04	Canonical Authority/owner resolved
+P	ACC-04
+P	Canonical Authority/owner resolved
+ROW	ACC-05	WU or WUR resolved
+P	ACC-05
+P	WU or WUR resolved
+ROW	ACC-06	Resume/evidence reconciled
+P	ACC-06
+P	Resume/evidence reconciled
+ROW	ACC-07	InspectionScope exact denominator
+P	ACC-07
+P	InspectionScope exact denominator
+ROW	ACC-08	Functional chain all applicable required edges traced
+P	ACC-08
+P	Functional chain all applicable required edges traced
+ROW	ACC-09	System-only trigger handled without fake control
+P	ACC-09
+P	System-only trigger handled without fake control
+ROW	ACC-10	Producer/consumer schemas exact
+P	ACC-10
+P	Producer/consumer schemas exact
+ROW	ACC-11	Finding includes evidence/reproduction/signature
+P	ACC-11
+P	Finding includes evidence/reproduction/signature
+ROW	ACC-12	Finding dedupe stable
+P	ACC-12
+P	Finding dedupe stable
+ROW	ACC-13	Root cause causal chain supported
+P	ACC-13
+P	Root cause causal chain supported
+ROW	ACC-14	Canonical owner unique
+P	ACC-14
+P	Canonical owner unique
+ROW	ACC-15	ImpactSet complete
+P	ACC-15
+P	ImpactSet complete
+ROW	ACC-16	ReverifySet marks affected pass items
+P	ACC-16
+P	ReverifySet marks affected pass items
+ROW	ACC-17	ChangeCandidate non-authoritative
+P	ACC-17
+P	ChangeCandidate non-authoritative
+ROW	ACC-18	Exact write-set bounded
+P	ACC-18
+P	Exact write-set bounded
+ROW	ACC-19	Zero/multi-match fail closed
+P	ACC-19
+P	Zero/multi-match fail closed
+ROW	ACC-20	Simulation isolated
+P	ACC-20
+P	Simulation isolated
+ROW	ACC-21	Simulation pass not approval
+P	ACC-21
+P	Simulation pass not approval
+ROW	ACC-22	Fresh targeted regression
+P	ACC-22
+P	Fresh targeted regression
+ROW	ACC-23	Reverse consumer validation
+P	ACC-23
+P	Reverse consumer validation
+ROW	ACC-24	Negative regression expected-fail guards
+P	ACC-24
+P	Negative regression expected-fail guards
+ROW	ACC-25	Hidden defect sweep
+P	ACC-25
+P	Hidden defect sweep
+ROW	ACC-26	Full-line terminal denominator preserved
+P	ACC-26
+P	Full-line terminal denominator preserved
+ROW	ACC-27	Exact-head post-write reconciliation
+P	ACC-27
+P	Exact-head post-write reconciliation
+ROW	ACC-28	AI cannot self-approve
+P	ACC-28
+P	AI cannot self-approve
+ROW	ACC-29	Authorization preexists protected effect
+P	ACC-29
+P	Authorization preexists protected effect
+ROW	ACC-30	Effect-time permission/gate checks
+P	ACC-30
+P	Effect-time permission/gate checks
+ROW	ACC-31	Idempotent/crash-safe execution
+P	ACC-31
+P	Idempotent/crash-safe execution
+ROW	ACC-32	Deployment exact SHA/build verified
+P	ACC-32
+P	Deployment exact SHA/build verified
+ROW	ACC-33	Production claim requires remote evidence
+P	ACC-33
+P	Production claim requires remote evidence
+ROW	ACC-34	Rollback restores known-good and verifies
+P	ACC-34
+P	Rollback restores known-good and verifies
+ROW	ACC-35	Resume re-bootstrap after divergence
+P	ACC-35
+P	Resume re-bootstrap after divergence
+ROW	ACC-36	No duplicate effect after resume
+P	ACC-36
+P	No duplicate effect after resume
+ROW	ACC-37	Incident lifecycle complete
+P	ACC-37
+P	Incident lifecycle complete
+ROW	ACC-38	Learning candidate not auto-adopt
+P	ACC-38
+P	Learning candidate not auto-adopt
+ROW	ACC-39	Evolution candidate governed
+P	ACC-39
+P	Evolution candidate governed
+ROW	ACC-40	No policy/validator self-gaming
+P	ACC-40
+P	No policy/validator self-gaming
+ROW	ACC-41	Governance/test repair yields 0 product credit unless product evidence
+P	ACC-41
+P	Governance/test repair yields 0 product credit unless product evidence
+ROW	ACC-42	Cross-stage consumer readiness prevents false completion
+P	ACC-42
+P	Cross-stage consumer readiness prevents false completion
+ROW	ACC-43	Security/classification/secret constraints enforced
+P	ACC-43
+P	Security/classification/secret constraints enforced
+ROW	ACC-44	Audit chain fully traceable
+P	ACC-44
+P	Audit chain fully traceable
+P	35. Negative Regression Matrix
+ROW	ID	Fault injection	Expected
+P	ID
+P	Fault injection
+P	Expected
+ROW	NEG-01	Use chat summary instead of live HEAD	MUST BLOCK/NOT_VERIFIED
+P	NEG-01
+P	Use chat summary instead of live HEAD
+P	MUST BLOCK/NOT_VERIFIED
+ROW	NEG-02	Skip Mother read order	MUST BLOCK
+P	NEG-02
+P	Skip Mother read order
+P	MUST BLOCK
+ROW	NEG-03	No active WU and AI guesses next task	MUST BLOCK + WUR
+P	NEG-03
+P	No active WU and AI guesses next task
+P	MUST BLOCK + WUR
+ROW	NEG-04	Old PASS reused after revision change	MUST REVERIFY
+P	NEG-04
+P	Old PASS reused after revision change
+P	MUST REVERIFY
+ROW	NEG-05	Create new owner after one failed search	MUST BLOCK
+P	NEG-05
+P	Create new owner after one failed search
+P	MUST BLOCK
+ROW	NEG-06	Fix symptom file while canonical owner elsewhere	NO CLOSURE CREDIT
+P	NEG-06
+P	Fix symptom file while canonical owner elsewhere
+P	NO CLOSURE CREDIT
+ROW	NEG-07	Duplicate current owner created	MUST FAIL
+P	NEG-07
+P	Duplicate current owner created
+P	MUST FAIL
+ROW	NEG-08	Visual control invented for system-only trigger	MUST FAIL
+P	NEG-08
+P	Visual control invented for system-only trigger
+P	MUST FAIL
+ROW	NEG-09	Schema alias hides field drift	MUST FAIL
+P	NEG-09
+P	Schema alias hides field drift
+P	MUST FAIL
+ROW	NEG-10	Reference exists but physical handoff bytes missing	MUST BLOCK
+P	NEG-10
+P	Reference exists but physical handoff bytes missing
+P	MUST BLOCK
+ROW	NEG-11	Producer PASS but successor cannot parse	MUST BLOCK
+P	NEG-11
+P	Producer PASS but successor cannot parse
+P	MUST BLOCK
+ROW	NEG-12	Required edge omitted from denominator	FALSE_COMPLETION FAIL
+P	NEG-12
+P	Required edge omitted from denominator
+P	FALSE_COMPLETION FAIL
+ROW	NEG-13	Finding without evidence promoted to blocker	MUST NOT
+P	NEG-13
+P	Finding without evidence promoted to blocker
+P	MUST NOT
+ROW	NEG-14	Duplicate finding inflates denominator	MUST DEDUPE
+P	NEG-14
+P	Duplicate finding inflates denominator
+P	MUST DEDUPE
+ROW	NEG-15	RCA chooses page of symptom as owner	MUST REJECT
+P	NEG-15
+P	RCA chooses page of symptom as owner
+P	MUST REJECT
+ROW	NEG-16	Impact graph incomplete but mutation proceeds	MUST BLOCK
+P	NEG-16
+P	Impact graph incomplete but mutation proceeds
+P	MUST BLOCK
+ROW	NEG-17	Raw string mutation changes multiple scopes	MUST FAIL
+P	NEG-17
+P	Raw string mutation changes multiple scopes
+P	MUST FAIL
+ROW	NEG-18	Zero-match mutation silently succeeds	MUST FAIL
+P	NEG-18
+P	Zero-match mutation silently succeeds
+P	MUST FAIL
+ROW	NEG-19	Multi-match mutation picks first match	MUST FAIL
+P	NEG-19
+P	Multi-match mutation picks first match
+P	MUST FAIL
+ROW	NEG-20	Simulation touches production secret/output	MUST FAIL
+P	NEG-20
+P	Simulation touches production secret/output
+P	MUST FAIL
+ROW	NEG-21	Simulation PASS self-approves change	MUST FAIL
+P	NEG-21
+P	Simulation PASS self-approves change
+P	MUST FAIL
+ROW	NEG-22	Targeted test passes but hidden defect sweep skipped	NO CLOSURE
+P	NEG-22
+P	Targeted test passes but hidden defect sweep skipped
+P	NO CLOSURE
+ROW	NEG-23	Inner step PASS projected as workflow PASS	MUST FAIL
+P	NEG-23
+P	Inner step PASS projected as workflow PASS
+P	MUST FAIL
+ROW	NEG-24	Timeout treated as PASS	MUST FAIL
+P	NEG-24
+P	Timeout treated as PASS
+P	MUST FAIL
+ROW	NEG-25	Old evidence attached to new HEAD	MUST FAIL
+P	NEG-25
+P	Old evidence attached to new HEAD
+P	MUST FAIL
+ROW	NEG-26	AI is approver for own candidate	MUST FAIL
+P	NEG-26
+P	AI is approver for own candidate
+P	MUST FAIL
+ROW	NEG-27	Protected mutation without prior authorization	MUST FAIL
+P	NEG-27
+P	Protected mutation without prior authorization
+P	MUST FAIL
+ROW	NEG-28	Permission/gate checked only at planning time	MUST FAIL
+P	NEG-28
+P	Permission/gate checked only at planning time
+P	MUST FAIL
+ROW	NEG-29	Retry effectful operation without idempotency/reconcile	MUST BLOCK
+P	NEG-29
+P	Retry effectful operation without idempotency/reconcile
+P	MUST BLOCK
+ROW	NEG-30	Governance test fix reported as product gap reduction	MUST FAIL
+P	NEG-30
+P	Governance test fix reported as product gap reduction
+P	MUST FAIL
+ROW	NEG-31	Deployment success reported as Production complete	MUST FAIL
+P	NEG-31
+P	Deployment success reported as Production complete
+P	MUST FAIL
+ROW	NEG-32	Rollback to unknown/unverified state	MUST BLOCK
+P	NEG-32
+P	Rollback to unknown/unverified state
+P	MUST BLOCK
+ROW	NEG-33	Resume continues from memory after HEAD changed	MUST FAIL
+P	NEG-33
+P	Resume continues from memory after HEAD changed
+P	MUST FAIL
+ROW	NEG-34	Incident learning silently rewrites policy	MUST FAIL
+P	NEG-34
+P	Incident learning silently rewrites policy
+P	MUST FAIL
+ROW	NEG-35	AI weakens validator to pass current failure	MUST FAIL
+P	NEG-35
+P	AI weakens validator to pass current failure
+P	MUST FAIL
+ROW	NEG-36	Evolution candidate auto-promoted because newest	MUST FAIL
+P	NEG-36
+P	Evolution candidate auto-promoted because newest
+P	MUST FAIL
+ROW	NEG-37	Secret copied into Finding evidence	MUST FAIL
+P	NEG-37
+P	Secret copied into Finding evidence
+P	MUST FAIL
+ROW	NEG-38	Cross-project evidence silently reused	MUST FAIL
+P	NEG-38
+P	Cross-project evidence silently reused
+P	MUST FAIL
+ROW	NEG-39	Cleanup deletes file based only on old-looking name	MUST FAIL
+P	NEG-39
+P	Cleanup deletes file based only on old-looking name
+P	MUST FAIL
+ROW	NEG-40	Parallel mutation/rollback creates two Current states	MUST FAIL
+P	NEG-40
+P	Parallel mutation/rollback creates two Current states
+P	MUST FAIL
+P	36. Given / When / Then Logic Acceptance
+ROW	ID	Scenario
+P	ID
+P	Scenario
+ROW	GWT-01	Given new session; When inspection starts; Then live repo/branch/HEAD and Current Governance are resolved before analysis.
+P	GWT-01
+P	Given new session; When inspection starts; Then live repo/branch/HEAD and Current Governance are resolved before analysis.
+ROW	GWT-02	Given chat summary conflicts with live source; When bootstrap runs; Then live source wins and summary is non-authoritative.
+P	GWT-02
+P	Given chat summary conflicts with live source; When bootstrap runs; Then live source wins and summary is non-authoritative.
+ROW	GWT-03	Given no Active WU; When execution is requested; Then WORK_UNIT_RESOLUTION_GATE resolves one legal successor or blocks.
+P	GWT-03
+P	Given no Active WU; When execution is requested; Then WORK_UNIT_RESOLUTION_GATE resolves one legal successor or blocks.
+ROW	GWT-04	Given HEAD changes after snapshot; When effectful step begins; Then current snapshot invalidates and run enters RESUME_REQUIRED.
+P	GWT-04
+P	Given HEAD changes after snapshot; When effectful step begins; Then current snapshot invalidates and run enters RESUME_REQUIRED.
+ROW	GWT-05	Given a system-only operation has no UI control; When traced; Then bind System Trigger rather than inventing a button.
+P	GWT-05
+P	Given a system-only operation has no UI control; When traced; Then bind System Trigger rather than inventing a button.
+ROW	GWT-06	Given required payload field missing; When consumer admission runs; Then schema gap is BLOCK and alias fallback cannot hide it.
+P	GWT-06
+P	Given required payload field missing; When consumer admission runs; Then schema gap is BLOCK and alias fallback cannot hide it.
+ROW	GWT-07	Given upstream artifact path exists but bytes are missing; When cross-stage audit runs; Then handoff is not consumer-ready.
+P	GWT-07
+P	Given upstream artifact path exists but bytes are missing; When cross-stage audit runs; Then handoff is not consumer-ready.
+ROW	GWT-08	Given successor cannot parse predecessor output; When producer previously passed; Then downstream closure credit is invalidated.
+P	GWT-08
+P	Given successor cannot parse predecessor output; When producer previously passed; Then downstream closure credit is invalidated.
+ROW	GWT-09	Given repeated same finding signature/scope; When detected again; Then dedupe to same Finding lineage.
+P	GWT-09
+P	Given repeated same finding signature/scope; When detected again; Then dedupe to same Finding lineage.
+ROW	GWT-10	Given symptom on PAGE-X but root owner is shared runtime; When RCA resolves owner; Then remediation routes shared runtime.
+P	GWT-10
+P	Given symptom on PAGE-X but root owner is shared runtime; When RCA resolves owner; Then remediation routes shared runtime.
+ROW	GWT-11	Given owner ambiguous after full search; When change planning occurs; Then effectful remediation blocks for review.
+P	GWT-11
+P	Given owner ambiguous after full search; When change planning occurs; Then effectful remediation blocks for review.
+ROW	GWT-12	Given product authority is absent and behavior ambiguous; When AI proposes fix; Then candidate is blocked and human authority is required.
+P	GWT-12
+P	Given product authority is absent and behavior ambiguous; When AI proposes fix; Then candidate is blocked and human authority is required.
+ROW	GWT-13	Given exact write selector matches zero nodes; When mutation preflight runs; Then BLOCK_NO_TARGET.
+P	GWT-13
+P	Given exact write selector matches zero nodes; When mutation preflight runs; Then BLOCK_NO_TARGET.
+ROW	GWT-14	Given exact selector matches multiple nodes; When mutation preflight runs; Then BLOCK_AMBIGUOUS_TARGET.
+P	GWT-14
+P	Given exact selector matches multiple nodes; When mutation preflight runs; Then BLOCK_AMBIGUOUS_TARGET.
+ROW	GWT-15	Given bounded selector updates one node; When mutation completes; Then unrelated siblings remain preserved.
+P	GWT-15
+P	Given bounded selector updates one node; When mutation completes; Then unrelated siblings remain preserved.
+ROW	GWT-16	Given candidate simulation passes; When approval state is DRAFT; Then no Current Authority or production mutation occurs.
+P	GWT-16
+P	Given candidate simulation passes; When approval state is DRAFT; Then no Current Authority or production mutation occurs.
+ROW	GWT-17	Given known defect fix passes targeted test; When closure evaluated; Then hidden-defect sweep still runs.
+P	GWT-17
+P	Given known defect fix passes targeted test; When closure evaluated; Then hidden-defect sweep still runs.
+ROW	GWT-18	Given validator inner steps pass but outer workflow fails; When status projects; Then terminal result is FAIL/NOT_VERIFIED.
+P	GWT-18
+P	Given validator inner steps pass but outer workflow fails; When status projects; Then terminal result is FAIL/NOT_VERIFIED.
+ROW	GWT-19	Given stale run evidence from prior SHA; When current closure is evaluated; Then evidence is rejected for Current credit.
+P	GWT-19
+P	Given stale run evidence from prior SHA; When current closure is evaluated; Then evidence is rejected for Current credit.
+ROW	GWT-20	Given AI created ChangeCandidate; When authorization requested; Then AI identity cannot approve its own request.
+P	GWT-20
+P	Given AI created ChangeCandidate; When authorization requested; Then AI identity cannot approve its own request.
+ROW	GWT-21	Given authorized candidate but target hash changed; When execution preflight runs; Then stale write blocks and candidate must rebase.
+P	GWT-21
+P	Given authorized candidate but target hash changed; When execution preflight runs; Then stale write blocks and candidate must rebase.
+ROW	GWT-22	Given effectful attempt times out with unknown external state; When retry considered; Then reconcile real state before retry.
+P	GWT-22
+P	Given effectful attempt times out with unknown external state; When retry considered; Then reconcile real state before retry.
+ROW	GWT-23	Given same idempotency key and same payload; When request replays; Then existing result is returned/no duplicate effect.
+P	GWT-23
+P	Given same idempotency key and same payload; When request replays; Then existing result is returned/no duplicate effect.
+ROW	GWT-24	Given same idempotency key with different payload; When request arrives; Then BLOCK_IDEMPOTENCY_CONFLICT.
+P	GWT-24
+P	Given same idempotency key with different payload; When request arrives; Then BLOCK_IDEMPOTENCY_CONFLICT.
+ROW	GWT-25	Given code deployed successfully; When Production claim requested; Then remote/current acceptance evidence remains required.
+P	GWT-25
+P	Given code deployed successfully; When Production claim requested; Then remote/current acceptance evidence remains required.
+ROW	GWT-26	Given Production regression after deploy; When rollback trigger fires; Then further effects freeze and known-good rollback path executes.
+P	GWT-26
+P	Given Production regression after deploy; When rollback trigger fires; Then further effects freeze and known-good rollback path executes.
+ROW	GWT-27	Given rollback completes; When run resumes; Then Current truth/state/ledger are reconciled before next action.
+P	GWT-27
+P	Given rollback completes; When run resumes; Then Current truth/state/ledger are reconciled before next action.
+ROW	GWT-28	Given session crashes after some effects; When resumed; Then checkpoint prevents re-executing completed effects.
+P	GWT-28
+P	Given session crashes after some effects; When resumed; Then checkpoint prevents re-executing completed effects.
+ROW	GWT-29	Given incident closed; When learning synthesized; Then LearningCandidate remains non-authoritative until governed adoption.
+P	GWT-29
+P	Given incident closed; When learning synthesized; Then LearningCandidate remains non-authoritative until governed adoption.
+ROW	GWT-30	Given generic lesson applies across products; When evolution proposed; Then common-policy candidate still requires explicit governance authorization.
+P	GWT-30
+P	Given generic lesson applies across products; When evolution proposed; Then common-policy candidate still requires explicit governance authorization.
+ROW	GWT-31	Given defect is product-local; When evolution analysis runs; Then common policy is not mutated; route product owner.
+P	GWT-31
+P	Given defect is product-local; When evolution analysis runs; Then common policy is not mutated; route product owner.
+ROW	GWT-32	Given test fails current policy; When easiest fix would weaken validator; Then proposal is rejected as spec-gaming.
+P	GWT-32
+P	Given test fails current policy; When easiest fix would weaken validator; Then proposal is rejected as spec-gaming.
+ROW	GWT-33	Given secret appears in raw error; When Finding evidence materializes; Then secret is redacted and reference retained.
+P	GWT-33
+P	Given secret appears in raw error; When Finding evidence materializes; Then secret is redacted and reference retained.
+ROW	GWT-34	Given cleanup candidate has no direct refs but unknown transitive consumer; When cleanup evaluates; Then deletion blocks.
+P	GWT-34
+P	Given cleanup candidate has no direct refs but unknown transitive consumer; When cleanup evaluates; Then deletion blocks.
+ROW	GWT-35	Given governance maintenance closes successfully; When product progress reports; Then product blocker denominator is unchanged absent fresh product evidence.
+P	GWT-35
+P	Given governance maintenance closes successfully; When product progress reports; Then product blocker denominator is unchanged absent fresh product evidence.
+ROW	GWT-36	Given all applicable findings terminal, exact-head gates pass, and production acceptance exists where required; When closure persists; Then ResolutionLedger and ResumePoint advance legally.
+P	GWT-36
+P	Given all applicable findings terminal, exact-head gates pass, and production acceptance exists where required; When closure persists; Then ResolutionLedger and ResumePoint advance legally.
+P	37. Construction Handoff / Closure Contract
+P	Implementation handoff MUST preserve the following non-negotiable semantics:
+P	• One Current Truth Bootstrap path；不得由每個 inspector 自己解讀 current version。
+P	• One Finding / Problem Register truth；scanner/validator/remediator 不得各自維護不同 denominator。
+P	• One Canonical Owner resolution model；修正 owner，不建立平行副本。
+P	• Functional Chain 必須可從 Page/Trigger 追到 Runtime/Data/Provider，再回 Audit/Response/UI Feedback。
+P	• Change Candidate 與 Current Authority 必須物理/語義分離；candidate 不可自動成 Current。
+P	• AI-09 不得擁有自己的自批權；Authorization 必須由外部授權 identity 完成。
+P	• Simulation/Test/Deploy/Production 四層證據不得互相替代。
+P	• Rollback/Resume/Checkpoint 必須與 effectful execution 一起施工，不是事後補文件。
+P	• Incident Learning 與 EvolutionCandidate 只能透過 Governed Adoption 改善未來規則。
+P	• 所有缺失 exact API/DB/permission/route/runtime identity 必須維持 REQUIRE_EXACT_BINDING，直到 Current Authority 實際存在。
+ROW	Closure item	Required terminal condition
+P	Closure item
+P	Required terminal condition
+ROW	Design Content	本文件所有 owner boundary / invariant / state / event / acceptance 已定義
+P	Design Content
+P	本文件所有 owner boundary / invariant / state / event / acceptance 已定義
+ROW	A11y	High 0 / Medium 0 / Low 0
+P	A11y
+P	High 0 / Medium 0 / Low 0
+ROW	DOCX Integrity	ZIP structure / relationships / images valid
+P	DOCX Integrity
+P	ZIP structure / relationships / images valid
+ROW	Visual QA	all rendered pages manually inspected
+P	Visual QA
+P	all rendered pages manually inspected
+ROW	Formal Approval	NOT SELF-GRANTED；由使用者/授權治理角色決定
+P	Formal Approval
+P	NOT SELF-GRANTED；由使用者/授權治理角色決定
+ROW	Runtime Binding	NOT PROVEN BY DOCUMENT；需實際 Implementation evidence
+P	Runtime Binding
+P	NOT PROVEN BY DOCUMENT；需實際 Implementation evidence
+ROW	Deployment/Production	NOT PROVEN BY DOCUMENT；需 fresh deployment/production evidence
+P	Deployment/Production
+P	NOT PROVEN BY DOCUMENT；需 fresh deployment/production evidence
+P	ACPOS-AI-09 Mother Basic Logic Design：DESIGN_CONTENT_COMPLETE
+P	Formal approval is intentionally not self-granted. Runtime / Deployment / Production remain evidence-bound.
+### PART word/header1.xml
+P	ORANGE ONE · ACPOS-AI-09 · AI System Engineer / Self-Inspection / Evolution System · Mother Basic Logic Design
+### PART word/footer1.xml
+P	ACPOS-AI-09 · DESIGN CONTENT COMPLETE · FORMAL APPROVAL NOT SELF-GRANTED · 2026-09-21

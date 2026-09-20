@@ -1,0 +1,1907 @@
+### PART word/document.xml
+P	ACPOS · Mother Basic Design
+P	QA-01 QA 審查工作區
+P	科技紫 UI 重製 · Current Authority Bound · Visual Candidate
+P	用途：可施工 Basic Design + 真實 QA 工作區視覺參考；不是 GitHub 已施工畫面，也不是已核准 Canonical Visual。
+ROW	Current Truth	Bound Value
+P	Current Truth
+P	Bound Value
+ROW	Repository / Branch	steven-gold/orange-one-ai-viedo-v1.0 / new
+P	Repository / Branch
+P	steven-gold/orange-one-ai-viedo-v1.0 / new
+ROW	Live HEAD	165c6440cb53b1b45ec96905241fb4d56dc3b867
+P	Live HEAD
+P	165c6440cb53b1b45ec96905241fb4d56dc3b867
+ROW	Current Authority	authority/pages/workspace/QA-01/ACPOS_QA-01_FINAL_LOCKED_ENCODING_DEDUP_CLEAN.yaml
+P	Current Authority
+P	authority/pages/workspace/QA-01/ACPOS_QA-01_FINAL_LOCKED_ENCODING_DEDUP_CLEAN.yaml
+ROW	Authority SHA	101d7af019ada27c7bbf2af8f19423c951294e23
+P	Authority SHA
+P	101d7af019ada27c7bbf2af8f19423c951294e23
+ROW	Authority Status	FINAL_LOCKED / CURRENT ONLY
+P	Authority Status
+P	FINAL_LOCKED / CURRENT ONLY
+ROW	Global Shell	GLOBAL_HOME_SHELL_TEMPLATE_AUTHORITY@V1.9
+P	Global Shell
+P	GLOBAL_HOME_SHELL_TEMPLATE_AUTHORITY@V1.9
+ROW	Global Visual	GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY@V1.0
+P	Global Visual
+P	GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY@V1.0
+ROW	Document Design State	VISUAL_CANDIDATE / PENDING HUMAN REVIEW
+P	Document Design State
+P	VISUAL_CANDIDATE / PENDING HUMAN REVIEW
+ROW	DESIGN_FROZEN	FALSE
+P	DESIGN_FROZEN
+P	FALSE
+P	文件版號 v1.0 僅代表本次 Word revision，不等於 Governance / Page Authority revision。
+P	1. Current Truth / Basic Design Boundary
+P	QA-01 是唯一 Current executable QA workspace。QA 的責任是 exact-output validation、System/AI scorecard、evidence/finding/manual-review projection、correction request、recheck、QA gate decision 與 Release Candidate 建立；QA 不修改 Script / Asset / Video / Editing output，也不直接 Publish。
+ROW	Dimension	Current Contract
+P	Dimension
+P	Current Contract
+ROW	Page model	Single Page QA Review Workspace
+P	Page model
+P	Single Page QA Review Workspace
+ROW	Data truth	Real data only; missing = —
+P	Data truth
+P	Real data only; missing = —
+ROW	Top Context	Read-only chips; Project/Topic/QATask/TargetOutput/State 不可編輯
+P	Top Context
+P	Read-only chips; Project/Topic/QATask/TargetOutput/State 不可編輯
+ROW	Review modes	AUTO / MANUAL；模式只改排程方式，不改 exact context/result
+P	Review modes
+P	AUTO / MANUAL；模式只改排程方式，不改 exact context/result
+ROW	Primary grid	20% Queue / 60% Exact Viewer / 20% Scorecard
+P	Primary grid
+P	20% Queue / 60% Exact Viewer / 20% Scorecard
+ROW	Manual scoring	FORBIDDEN
+P	Manual scoring
+P	FORBIDDEN
+ROW	Score origin	SYSTEM_AI_GENERATED_FROM_BOUND_CRITERIA
+P	Score origin
+P	SYSTEM_AI_GENERATED_FROM_BOUND_CRITERIA
+ROW	Manual Review	Only when governed ManualReviewCase is required/open; exactly Modify / Pass
+P	Manual Review
+P	Only when governed ManualReviewCase is required/open; exactly Modify / Pass
+ROW	Release boundary	QA creates Release Candidate only; ReleaseService continues; no Publish
+P	Release boundary
+P	QA creates Release Candidate only; ReleaseService continues; no Publish
+P	2. Mother Basic Design Artifact Chain
+P	01. Current Truth / Authority Binding
+P	02. Requirement & Scope
+P	03. Entity / Operation / State
+P	04. Hierarchy / Journey / Workbench
+P	05. Interaction Topology
+P	06. Functional Chain / Cross-page Boundary
+P	07. Page / Section / Component
+P	08. Control / Field / Action / Gate / Permission
+P	09. State / Error / Recovery
+P	10. Data / Evidence / Policy Binding
+P	11. Function ↔ Visual Binding
+P	12. Visual Anchor / Manifest / Candidate
+P	13. Acceptance / Audit / DoD
+P	14. Human Review / Design Freeze / Resume
+P	本文件的 UI 圖是上述 Basic Design 的視覺 materialization；不能以示意資訊取代 Current Authority，也不能因視覺方便新增 QA 控制。
+P	2.1 Functional Workbench
+ROW	Workbench Layer	Responsibility
+P	Workbench Layer
+P	Responsibility
+ROW	Context	Read-only Project / Topic / QA Task / Exact Output / Review State
+P	Context
+P	Read-only Project / Topic / QA Task / Exact Output / Review State
+ROW	Queue	AUTO/MANUAL + current authorized QA queue; no task creation
+P	Queue
+P	AUTO/MANUAL + current authorized QA queue; no task creation
+ROW	Viewer	Read-only exact output + localization/evidence capture
+P	Viewer
+P	Read-only exact output + localization/evidence capture
+ROW	Script / Criteria	Exact QAValidationScriptView + approved CriteriaVersion / Gate Policy
+P	Script / Criteria
+P	Exact QAValidationScriptView + approved CriteriaVersion / Gate Policy
+ROW	Score / Gate	System/AI generated only; no human scoring controls
+P	Score / Gate
+P	System/AI generated only; no human scoring controls
+ROW	Finding / Manual Review	Finding creation; conditional governed Manual Review
+P	Finding / Manual Review
+P	Finding creation; conditional governed Manual Review
+ROW	Correction / Recheck	Request original owner correction; verified NEW output required
+P	Correction / Recheck
+P	Request original owner correction; verified NEW output required
+ROW	Release Candidate	Create candidate only when all gates pass
+P	Release Candidate
+P	Create candidate only when all gates pass
+ROW	Status / Audit	Error/disabled/correlation/trace
+P	Status / Audit
+P	Error/disabled/correlation/trace
+P	3. Entity / Object Model · 16/16
+ROW	Object UID	Entity	Owner	Required Content
+P	Object UID
+P	Entity
+P	Owner
+P	Required Content
+ROW	QA-01-REF-HANDOFF	QAHandoffRef	Upstream boundary	exact handoff/task/output/script/score/evidence refs + hashes
+P	QA-01-REF-HANDOFF
+P	QAHandoffRef
+P	Upstream boundary
+P	exact handoff/task/output/script/score/evidence refs + hashes
+ROW	QA-01-REF-TASK	QATaskRef	QA Orchestration	workspace/project/topic/task + exact scope/state
+P	QA-01-REF-TASK
+P	QATaskRef
+P	QA Orchestration
+P	workspace/project/topic/task + exact scope/state
+ROW	QA-01-REF-OUTPUT	ExactOutputVersionRef	Upstream output owner	output_version_id + artifact refs + checksum + provenance + output contract hash
+P	QA-01-REF-OUTPUT
+P	ExactOutputVersionRef
+P	Upstream output owner
+P	output_version_id + artifact refs + checksum + provenance + output contract hash
+ROW	QA-01-REF-SCRIPT	QAValidationScriptViewRef	InstructionCompiler	script_view_id + canonical version + included/excluded refs + constraints + view_hash
+P	QA-01-REF-SCRIPT
+P	QAValidationScriptViewRef
+P	InstructionCompiler
+P	script_view_id + canonical version + included/excluded refs + constraints + view_hash
+ROW	QA-01-REF-CRITERIA	QACriteriaVersionRef	ScoringService	approved criteria_version_id + quality_gate_policy_version + dimensions/hard gates
+P	QA-01-REF-CRITERIA
+P	QACriteriaVersionRef
+P	ScoringService
+P	approved criteria_version_id + quality_gate_policy_version + dimensions/hard gates
+ROW	QA-01-REF-RIGHTS	RightsPolicyRef	Rights/Policy	exact rights policy version + gate state
+P	QA-01-REF-RIGHTS
+P	RightsPolicyRef
+P	Rights/Policy
+P	exact rights policy version + gate state
+ROW	QA-01-REF-CHANNEL	ChannelPolicyRef	Release/Channel Policy	exact policy/account scope ref when applicable
+P	QA-01-REF-CHANNEL
+P	ChannelPolicyRef
+P	Release/Channel Policy
+P	exact policy/account scope ref when applicable
+ROW	QA-01-OBJ-REVIEW	QAReviewRun	QAService	target output + contract/goal/hash + script/criteria/policy/score/finding/evidence/reviewer + gate_status
+P	QA-01-OBJ-REVIEW
+P	QAReviewRun
+P	QAService
+P	target output + contract/goal/hash + script/criteria/policy/score/finding/evidence/reviewer + gate_status
+ROW	QA-01-OBJ-SCORECARD	QAScorecard	ScoringService	exact target + criteria + dimensions + evidence + total + hard gate + scorer
+P	QA-01-OBJ-SCORECARD
+P	QAScorecard
+P	ScoringService
+P	exact target + criteria + dimensions + evidence + total + hard gate + scorer
+ROW	QA-01-OBJ-FINDING	Finding	ManualReviewService	source + severity + category + affected_scope + evidence + detected_by + status
+P	QA-01-OBJ-FINDING
+P	Finding
+P	ManualReviewService
+P	source + severity + category + affected_scope + evidence + detected_by + status
+ROW	QA-01-OBJ-MANUAL	ManualReviewCase	ManualReviewService	case ref + owner + reason + blocker + governed decision/status/history
+P	QA-01-OBJ-MANUAL
+P	ManualReviewCase
+P	ManualReviewService
+P	case ref + owner + reason + blocker + governed decision/status/history
+ROW	QA-01-OBJ-CORRECTION	CorrectionRequest	ManualReviewService	finding/score/source instruction/failed version/affected_scope/root cause/target department/revalidation
+P	QA-01-OBJ-CORRECTION
+P	CorrectionRequest
+P	ManualReviewService
+P	finding/score/source instruction/failed version/affected_scope/root cause/target department/revalidation
+ROW	QA-01-OBJ-RECHECK	QARecheckContext	QAService	qa_review_id + correction refs + failed output ref + verified new exact output ref
+P	QA-01-OBJ-RECHECK
+P	QARecheckContext
+P	QAService
+P	qa_review_id + correction refs + failed output ref + verified new exact output ref
+ROW	QA-01-OBJ-GATE	QAGateDecision	QAService	qa_review_id + PASS/FAIL/BLOCK state + reason/evidence + actor + version
+P	QA-01-OBJ-GATE
+P	QAGateDecision
+P	QAService
+P	qa_review_id + PASS/FAIL/BLOCK state + reason/evidence + actor + version
+ROW	QA-01-OBJ-RELEASE	ReleasePackageCandidate	ReleaseService	exact output refs + qa_gate_ref + rights_gate_ref + evidence + channel optional + immutable lineage
+P	QA-01-OBJ-RELEASE
+P	ReleasePackageCandidate
+P	ReleaseService
+P	exact output refs + qa_gate_ref + rights_gate_ref + evidence + channel optional + immutable lineage
+ROW	QA-01-REF-AUDIT	AuditTraceRef	Governance	correlation_id + causation/idempotency refs + audit events + version trace
+P	QA-01-REF-AUDIT
+P	AuditTraceRef
+P	Governance
+P	correlation_id + causation/idempotency refs + audit events + version trace
+P	4. Stage / Journey / Transition
+ROW	Stage UID	Stage	Flow
+P	Stage UID
+P	Stage
+P	Flow
+ROW	QA-01-STAGE-01-RESOLVE	Resolve / Start Review	Validate QAHandoff/QATask/exact output/script/criteria/rights/policy -> startQaReview
+P	QA-01-STAGE-01-RESOLVE
+P	Resolve / Start Review
+P	Validate QAHandoff/QATask/exact output/script/criteria/rights/policy -> startQaReview
+ROW	QA-01-STAGE-02-VALIDATE	Score / Evidence	Review exact output -> required checks -> evidence -> QA scorecard
+P	QA-01-STAGE-02-VALIDATE
+P	Score / Evidence
+P	Review exact output -> required checks -> evidence -> QA scorecard
+ROW	QA-01-STAGE-03-FINDING	Finding / Manual Review	Create findings; surface ManualReviewCase when required; QA does not edit upstream
+P	QA-01-STAGE-03-FINDING
+P	Finding / Manual Review
+P	Create findings; surface ManualReviewCase when required; QA does not edit upstream
+ROW	QA-01-STAGE-04-RECHECK	Correction / Recheck	CreateCorrectionRequest -> original owner creates NEW output -> startRecheck -> re-score
+P	QA-01-STAGE-04-RECHECK
+P	Correction / Recheck
+P	CreateCorrectionRequest -> original owner creates NEW output -> startRecheck -> re-score
+ROW	QA-01-STAGE-05-GATE	QA Gate / Release Candidate	decide PASS/FAIL; if eligible createReleasePackage candidate -> ReleaseService
+P	QA-01-STAGE-05-GATE
+P	QA Gate / Release Candidate
+P	decide PASS/FAIL; if eligible createReleasePackage candidate -> ReleaseService
+P	4.1 Legal Stage Transitions · 6/6
+ROW	Transition	From	To	Trigger	Gate
+P	Transition
+P	From
+P	To
+P	Trigger
+P	Gate
+ROW	QA-01-STTR-01	STAGE-01	STAGE-02	Start Review	QA-01-GATE-START
+P	QA-01-STTR-01
+P	STAGE-01
+P	STAGE-02
+P	Start Review
+P	QA-01-GATE-START
+ROW	QA-01-STTR-02	STAGE-02	STAGE-03	Finding/manual review needed	QA-01-GATE-FINDING
+P	QA-01-STTR-02
+P	STAGE-02
+P	STAGE-03
+P	Finding/manual review needed
+P	QA-01-GATE-FINDING
+ROW	QA-01-STTR-03	STAGE-03	STAGE-04	Correction Request + verified new output	QA-01-GATE-RECHECK
+P	QA-01-STTR-03
+P	STAGE-03
+P	STAGE-04
+P	Correction Request + verified new output
+P	QA-01-GATE-RECHECK
+ROW	QA-01-STTR-04	STAGE-04	STAGE-05	Recheck score/evidence completed	QA-01-GATE-SCORE
+P	QA-01-STTR-04
+P	STAGE-04
+P	STAGE-05
+P	Recheck score/evidence completed
+P	QA-01-GATE-SCORE
+ROW	QA-01-STTR-05	STAGE-02	STAGE-05	No correction/manual blocker and scoring complete	QA-01-GATE-PASS
+P	QA-01-STTR-05
+P	STAGE-02
+P	STAGE-05
+P	No correction/manual blocker and scoring complete
+P	QA-01-GATE-PASS
+ROW	QA-01-STTR-06	STAGE-05	STAGE-05	PASS -> Create Release Candidate	QA-01-GATE-RELEASE
+P	QA-01-STTR-06
+P	STAGE-05
+P	STAGE-05
+P	PASS -> Create Release Candidate
+P	QA-01-GATE-RELEASE
+P	AUTO 僅按照目前 Topic 既有 QA tasks 的 canonical order 逐一處理，max_active_task=1；禁止 AI reorder/create/skip。MANUAL 每次由 Human 選一筆。
+P	5. Section / Component Architecture
+P	5.1 Sections · 10/10
+ROW	Section UID	Name	Responsibility	Visual
+P	Section UID
+P	Name
+P	Responsibility
+P	Visual
+ROW	QA-01-SEC-01	Context / Review Start	Project/Topic/QATask/Target Output/Review State/Start Review	QA-01-VIS-CONTEXT
+P	QA-01-SEC-01
+P	Context / Review Start
+P	Project/Topic/QATask/Target Output/Review State/Start Review
+P	QA-01-VIS-CONTEXT
+ROW	QA-01-SEC-02	QA Review Queue	AUTO/MANUAL mode; Topic-scoped sequential auto review or manual queue selection; search/filter; no task creation	QA-01-VIS-LEFT
+P	QA-01-SEC-02
+P	QA Review Queue
+P	AUTO/MANUAL mode; Topic-scoped sequential auto review or manual queue selection; search/filter; no task creation
+P	QA-01-VIS-LEFT
+ROW	QA-01-SEC-03	Exact Output Viewer	Read-only exact target output, frame/time/range localization, evidence binding, conditional recheck compare	QA-01-VIS-VIEWER
+P	QA-01-SEC-03
+P	Exact Output Viewer
+P	Read-only exact target output, frame/time/range localization, evidence binding, conditional recheck compare
+P	QA-01-VIS-VIEWER
+ROW	QA-01-SEC-04	QA Script / Criteria	QAValidationScriptView + approved CriteriaVersion + policy refs	QA-01-VIS-SCRIPT
+P	QA-01-SEC-04
+P	QA Script / Criteria
+P	QAValidationScriptView + approved CriteriaVersion + policy refs
+P	QA-01-VIS-SCRIPT
+ROW	QA-01-SEC-05	Evidence / Required Checks	Evidence, checksum, provenance, rights/policy and required checks	QA-01-VIS-EVIDENCE
+P	QA-01-SEC-05
+P	Evidence / Required Checks
+P	Evidence, checksum, provenance, rights/policy and required checks
+P	QA-01-VIS-EVIDENCE
+ROW	QA-01-SEC-06	Scorecard / QA Gate	System-generated task-bound QA scorecard, hard blocks, QA gate result, release readiness; no human decision control in Scorecard	QA-01-VIS-RIGHT
+P	QA-01-SEC-06
+P	Scorecard / QA Gate
+P	System-generated task-bound QA scorecard, hard blocks, QA gate result, release readiness; no human decision control in Scorecard
+P	QA-01-VIS-RIGHT
+ROW	QA-01-SEC-07	Finding / Manual Review	Finding detail, severity/category/scope/evidence, manual-review projection	QA-01-VIS-FINDING
+P	QA-01-SEC-07
+P	Finding / Manual Review
+P	Finding detail, severity/category/scope/evidence, manual-review projection
+P	QA-01-VIS-FINDING
+ROW	QA-01-SEC-08	Correction / Recheck	CorrectionRequest to original owner; verified new output; recheck	QA-01-VIS-RECHECK
+P	QA-01-SEC-08
+P	Correction / Recheck
+P	CorrectionRequest to original owner; verified new output; recheck
+P	QA-01-VIS-RECHECK
+ROW	QA-01-SEC-09	Release Candidate	QA pass + rights/policy/manual review readiness -> ReleasePackage candidate	QA-01-VIS-RELEASE
+P	QA-01-SEC-09
+P	Release Candidate
+P	QA pass + rights/policy/manual review readiness -> ReleasePackage candidate
+P	QA-01-VIS-RELEASE
+ROW	QA-01-SEC-10	Status / Audit	Current state, errors, disabled reason, audit/correlation/trace	QA-01-VIS-STATUS
+P	QA-01-SEC-10
+P	Status / Audit
+P	Current state, errors, disabled reason, audit/correlation/trace
+P	QA-01-VIS-STATUS
+P	5.2 Components · 21/21
+ROW	Component UID	Section	Component
+P	Component UID
+P	Section
+P	Component
+ROW	QA-01-CMP-CONTEXT	SEC-01	QA Context / Start Review
+P	QA-01-CMP-CONTEXT
+P	SEC-01
+P	QA Context / Start Review
+ROW	QA-01-CMP-QUEUE	SEC-02	QA Review Queue
+P	QA-01-CMP-QUEUE
+P	SEC-02
+P	QA Review Queue
+ROW	QA-01-CMP-VIEWER	SEC-03	Exact Output Viewer
+P	QA-01-CMP-VIEWER
+P	SEC-03
+P	Exact Output Viewer
+ROW	QA-01-CMP-COMPARE	SEC-03	Conditional Before / After Compare
+P	QA-01-CMP-COMPARE
+P	SEC-03
+P	Conditional Before / After Compare
+ROW	QA-01-CMP-SCRIPT	SEC-04	QA Validation Script
+P	QA-01-CMP-SCRIPT
+P	SEC-04
+P	QA Validation Script
+ROW	QA-01-CMP-CRITERIA	SEC-04	Approved QA Criteria / Gate Policy
+P	QA-01-CMP-CRITERIA
+P	SEC-04
+P	Approved QA Criteria / Gate Policy
+ROW	QA-01-CMP-EVIDENCE	SEC-05	Evidence / Required Checks
+P	QA-01-CMP-EVIDENCE
+P	SEC-05
+P	Evidence / Required Checks
+ROW	QA-01-CMP-SCORE	SEC-06	QA Scorecard
+P	QA-01-CMP-SCORE
+P	SEC-06
+P	QA Scorecard
+ROW	QA-01-CMP-GATE	SEC-06	QA Gate Decision
+P	QA-01-CMP-GATE
+P	SEC-06
+P	QA Gate Decision
+ROW	QA-01-CMP-FINDING-LIST	SEC-07	Finding List / Filter
+P	QA-01-CMP-FINDING-LIST
+P	SEC-07
+P	Finding List / Filter
+ROW	QA-01-CMP-FINDING-FORM	SEC-07	Finding Create / Detail
+P	QA-01-CMP-FINDING-FORM
+P	SEC-07
+P	Finding Create / Detail
+ROW	QA-01-CMP-MANUAL	SEC-07	Manual Review Projection
+P	QA-01-CMP-MANUAL
+P	SEC-07
+P	Manual Review Projection
+ROW	QA-01-CMP-CORRECTION	SEC-08	Correction Request
+P	QA-01-CMP-CORRECTION
+P	SEC-08
+P	Correction Request
+ROW	QA-01-CMP-RECHECK	SEC-08	Verified New Version / Recheck
+P	QA-01-CMP-RECHECK
+P	SEC-08
+P	Verified New Version / Recheck
+ROW	QA-01-CMP-RELEASE-READY	SEC-09	Release Eligibility
+P	QA-01-CMP-RELEASE-READY
+P	SEC-09
+P	Release Eligibility
+ROW	QA-01-CMP-RELEASE	SEC-09	Release Candidate / Package
+P	QA-01-CMP-RELEASE
+P	SEC-09
+P	Release Candidate / Package
+ROW	QA-01-CMP-STATUS	SEC-10	Status / Error / Audit
+P	QA-01-CMP-STATUS
+P	SEC-10
+P	Status / Error / Audit
+ROW	QA-01-CMP-REVIEW-MODE	SEC-02	AUTO / MANUAL QA Review Mode
+P	QA-01-CMP-REVIEW-MODE
+P	SEC-02
+P	AUTO / MANUAL QA Review Mode
+ROW	QA-01-CMP-AUTO-PROGRESS	SEC-02	AUTO Topic Review Progress / Warning State
+P	QA-01-CMP-AUTO-PROGRESS
+P	SEC-02
+P	AUTO Topic Review Progress / Warning State
+ROW	QA-01-CMP-EVIDENCE-CAPTURE	SEC-03	Viewer QA Localization / Evidence Capture
+P	QA-01-CMP-EVIDENCE-CAPTURE
+P	SEC-03
+P	Viewer QA Localization / Evidence Capture
+ROW	QA-01-CMP-MANUAL-DECISION	SEC-07	Manual Review Modify / Pass Decision
+P	QA-01-CMP-MANUAL-DECISION
+P	SEC-07
+P	Manual Review Modify / Pass Decision
+P	6.1 UI Visual Candidate · A · AUTO Topic Review
+P	A · AUTO Topic Review
+P	AUTO 主畫面：左側只負責 Topic-scoped queue 與 AUTO progress；中央維持 exact output viewer；右側只顯示 System/AI scorecard。Top Context 全部 read-only。
+P	6.2 UI Visual Candidate · B · MANUAL Single Review
+P	B · MANUAL Single Review
+P	MANUAL 模式：Human 一次選一個 QA task；Start Review 只在 NOT_STARTED + QA-01-GATE-START PASS 時可用；Scorecard 仍禁止人工打分。
+P	6.3 UI Visual Candidate · C · Finding + Governed Manual Review
+P	C · Finding + Governed Manual Review
+P	Finding + Manual Review：Finding 可以建立；Manual Review 只在 governed ManualReviewCase required/open 時顯示，而且只有「修改 / 通過」兩個 function，不能變成空白人工評分表。
+P	6.4 UI Visual Candidate · D · Recheck Before / After
+P	D · Recheck Before / After
+P	Recheck：只有原 failed exact version + verified NEW exact version 都存在時才 50/50；否則不渲染空 B pane。QA 不直接修改 upstream output。
+P	6.5 UI Visual Candidate · E · QA Gate / Release Candidate
+P	E · QA Gate / Release Candidate
+P	Release Candidate：需 QA PASS、Finding closed、Manual Review closed、Rights/Policy/Channel scope 全部正確；QA 只建立 ReleasePackage Candidate，不包含 approveRelease / Publish。
+P	7. Atomic Control Matrix · 87/87
+P	87 Controls 全部來自 Current QA-01 Authority。Top Context 為 READONLY；Scorecard 沒有 Human scoring/decision control；Manual Review Modify/Pass 為條件式控制。
+ROW	Control UID	Sec	Component	Type	Label	Action	Gate	Permission
+P	Control UID
+P	Sec
+P	Component
+P	Type
+P	Label
+P	Action
+P	Gate
+P	Permission
+ROW	QA-01-FLD-PROJECT	QA-01-SEC-01	QA-01-CMP-CONTEXT	READONLY	Project	QA-01-ACT-NOOP-VIEW	QA-01-GATE-PAGE	QA_USE
+P	QA-01-FLD-PROJECT
+P	QA-01-SEC-01
+P	QA-01-CMP-CONTEXT
+P	READONLY
+P	Project
+P	QA-01-ACT-NOOP-VIEW
+P	QA-01-GATE-PAGE
+P	QA_USE
+ROW	QA-01-FLD-TOPIC	QA-01-SEC-01	QA-01-CMP-CONTEXT	READONLY	Topic	QA-01-ACT-NOOP-VIEW	QA-01-GATE-PAGE	QA_USE
+P	QA-01-FLD-TOPIC
+P	QA-01-SEC-01
+P	QA-01-CMP-CONTEXT
+P	READONLY
+P	Topic
+P	QA-01-ACT-NOOP-VIEW
+P	QA-01-GATE-PAGE
+P	QA_USE
+ROW	QA-01-FLD-QA-TASK	QA-01-SEC-01	QA-01-CMP-CONTEXT	READONLY	QA Task	QA-01-ACT-NOOP-VIEW	QA-01-GATE-PAGE	QA_USE
+P	QA-01-FLD-QA-TASK
+P	QA-01-SEC-01
+P	QA-01-CMP-CONTEXT
+P	READONLY
+P	QA Task
+P	QA-01-ACT-NOOP-VIEW
+P	QA-01-GATE-PAGE
+P	QA_USE
+ROW	QA-01-FLD-TARGET-OUTPUT	QA-01-SEC-01	QA-01-CMP-CONTEXT	READONLY	Target Output Version	QA-01-ACT-NOOP-VIEW	QA-01-GATE-PAGE	QA_USE
+P	QA-01-FLD-TARGET-OUTPUT
+P	QA-01-SEC-01
+P	QA-01-CMP-CONTEXT
+P	READONLY
+P	Target Output Version
+P	QA-01-ACT-NOOP-VIEW
+P	QA-01-GATE-PAGE
+P	QA_USE
+ROW	QA-01-FLD-REVIEW-STATE	QA-01-SEC-01	QA-01-CMP-CONTEXT	READONLY	QA Review State	QA-01-ACT-NOOP-VIEW	QA-01-GATE-PAGE	QA_USE
+P	QA-01-FLD-REVIEW-STATE
+P	QA-01-SEC-01
+P	QA-01-CMP-CONTEXT
+P	READONLY
+P	QA Review State
+P	QA-01-ACT-NOOP-VIEW
+P	QA-01-GATE-PAGE
+P	QA_USE
+ROW	QA-01-BTN-START-REVIEW	QA-01-SEC-01	QA-01-CMP-CONTEXT	BUTTON	開始審查 / Start Review	QA-01-ACT-START-REVIEW	QA-01-GATE-START	QA_USE
+P	QA-01-BTN-START-REVIEW
+P	QA-01-SEC-01
+P	QA-01-CMP-CONTEXT
+P	BUTTON
+P	開始審查 / Start Review
+P	QA-01-ACT-START-REVIEW
+P	QA-01-GATE-START
+P	QA_USE
+ROW	QA-01-INP-QUEUE-SEARCH	QA-01-SEC-02	QA-01-CMP-QUEUE	SEARCH	搜尋 QA Task / Output / Finding	QA-01-ACT-QUEUE-SEARCH	QA-01-GATE-PAGE	QA_USE
+P	QA-01-INP-QUEUE-SEARCH
+P	QA-01-SEC-02
+P	QA-01-CMP-QUEUE
+P	SEARCH
+P	搜尋 QA Task / Output / Finding
+P	QA-01-ACT-QUEUE-SEARCH
+P	QA-01-GATE-PAGE
+P	QA_USE
+ROW	QA-01-SEL-QUEUE-STATE	QA-01-SEC-02	QA-01-CMP-QUEUE	SELECT	狀態篩選	QA-01-ACT-QUEUE-FILTER	QA-01-GATE-PAGE	QA_USE
+P	QA-01-SEL-QUEUE-STATE
+P	QA-01-SEC-02
+P	QA-01-CMP-QUEUE
+P	SELECT
+P	狀態篩選
+P	QA-01-ACT-QUEUE-FILTER
+P	QA-01-GATE-PAGE
+P	QA_USE
+ROW	QA-01-SEL-QUEUE-SEVERITY	QA-01-SEC-02	QA-01-CMP-QUEUE	SELECT	Severity	QA-01-ACT-QUEUE-FILTER	QA-01-GATE-PAGE	QA_USE
+P	QA-01-SEL-QUEUE-SEVERITY
+P	QA-01-SEC-02
+P	QA-01-CMP-QUEUE
+P	SELECT
+P	Severity
+P	QA-01-ACT-QUEUE-FILTER
+P	QA-01-GATE-PAGE
+P	QA_USE
+ROW	QA-01-LIST-REVIEWS	QA-01-SEC-02	QA-01-CMP-QUEUE	LIST	QA Review Queue	QA-01-ACT-REVIEW-SELECT	QA-01-GATE-PAGE	QA_USE
+P	QA-01-LIST-REVIEWS
+P	QA-01-SEC-02
+P	QA-01-CMP-QUEUE
+P	LIST
+P	QA Review Queue
+P	QA-01-ACT-REVIEW-SELECT
+P	QA-01-GATE-PAGE
+P	QA_USE
+ROW	QA-01-VIEW-OUTPUT	QA-01-SEC-03	QA-01-CMP-VIEWER	VIEWER	Exact Output Viewer	QA-01-ACT-NOOP-VIEW	QA-01-GATE-VIEWER	QA_USE
+P	QA-01-VIEW-OUTPUT
+P	QA-01-SEC-03
+P	QA-01-CMP-VIEWER
+P	VIEWER
+P	Exact Output Viewer
+P	QA-01-ACT-NOOP-VIEW
+P	QA-01-GATE-VIEWER
+P	QA_USE
+ROW	QA-01-BTN-PLAY	QA-01-SEC-03	QA-01-CMP-VIEWER	BUTTON	Play / Pause	QA-01-ACT-VIEWER-PLAY	QA-01-GATE-VIEWER	QA_USE
+P	QA-01-BTN-PLAY
+P	QA-01-SEC-03
+P	QA-01-CMP-VIEWER
+P	BUTTON
+P	Play / Pause
+P	QA-01-ACT-VIEWER-PLAY
+P	QA-01-GATE-VIEWER
+P	QA_USE
+ROW	QA-01-CTL-SEEK	QA-01-SEC-03	QA-01-CMP-VIEWER	RANGE	Seek / Timecode	QA-01-ACT-VIEWER-SEEK	QA-01-GATE-VIEWER	QA_USE
+P	QA-01-CTL-SEEK
+P	QA-01-SEC-03
+P	QA-01-CMP-VIEWER
+P	RANGE
+P	Seek / Timecode
+P	QA-01-ACT-VIEWER-SEEK
+P	QA-01-GATE-VIEWER
+P	QA_USE
+ROW	QA-01-BTN-VOLUME	QA-01-SEC-03	QA-01-CMP-VIEWER	BUTTON	Volume / Mute	QA-01-ACT-VIEWER-VOLUME	QA-01-GATE-VIEWER	QA_USE
+P	QA-01-BTN-VOLUME
+P	QA-01-SEC-03
+P	QA-01-CMP-VIEWER
+P	BUTTON
+P	Volume / Mute
+P	QA-01-ACT-VIEWER-VOLUME
+P	QA-01-GATE-VIEWER
+P	QA_USE
+ROW	QA-01-BTN-FULLSCREEN	QA-01-SEC-03	QA-01-CMP-VIEWER	BUTTON	Fullscreen	QA-01-ACT-VIEWER-FULLSCREEN	QA-01-GATE-VIEWER	QA_USE
+P	QA-01-BTN-FULLSCREEN
+P	QA-01-SEC-03
+P	QA-01-CMP-VIEWER
+P	BUTTON
+P	Fullscreen
+P	QA-01-ACT-VIEWER-FULLSCREEN
+P	QA-01-GATE-VIEWER
+P	QA_USE
+ROW	QA-01-BTN-COMPARE	QA-01-SEC-03	QA-01-CMP-COMPARE	BUTTON	Before / After Compare	QA-01-ACT-COMPARE-TOGGLE	QA-01-GATE-COMPARE	QA_USE
+P	QA-01-BTN-COMPARE
+P	QA-01-SEC-03
+P	QA-01-CMP-COMPARE
+P	BUTTON
+P	Before / After Compare
+P	QA-01-ACT-COMPARE-TOGGLE
+P	QA-01-GATE-COMPARE
+P	QA_USE
+ROW	QA-01-FLD-QA-SCRIPT	QA-01-SEC-04	QA-01-CMP-SCRIPT	READONLY	QA Validation Script View	QA-01-ACT-NOOP-VIEW	QA-01-GATE-SCRIPT	QA_USE
+P	QA-01-FLD-QA-SCRIPT
+P	QA-01-SEC-04
+P	QA-01-CMP-SCRIPT
+P	READONLY
+P	QA Validation Script View
+P	QA-01-ACT-NOOP-VIEW
+P	QA-01-GATE-SCRIPT
+P	QA_USE
+ROW	QA-01-FLD-SCRIPT-HASH	QA-01-SEC-04	QA-01-CMP-SCRIPT	READONLY	Script View Hash	QA-01-ACT-NOOP-VIEW	QA-01-GATE-SCRIPT	QA_USE
+P	QA-01-FLD-SCRIPT-HASH
+P	QA-01-SEC-04
+P	QA-01-CMP-SCRIPT
+P	READONLY
+P	Script View Hash
+P	QA-01-ACT-NOOP-VIEW
+P	QA-01-GATE-SCRIPT
+P	QA_USE
+ROW	QA-01-FLD-CRITERIA-VERSION	QA-01-SEC-04	QA-01-CMP-CRITERIA	READONLY	Criteria Version	QA-01-ACT-NOOP-VIEW	QA-01-GATE-CRITERIA	QA_USE
+P	QA-01-FLD-CRITERIA-VERSION
+P	QA-01-SEC-04
+P	QA-01-CMP-CRITERIA
+P	READONLY
+P	Criteria Version
+P	QA-01-ACT-NOOP-VIEW
+P	QA-01-GATE-CRITERIA
+P	QA_USE
+ROW	QA-01-FLD-GATE-POLICY	QA-01-SEC-04	QA-01-CMP-CRITERIA	READONLY	Quality Gate Policy Version	QA-01-ACT-NOOP-VIEW	QA-01-GATE-CRITERIA	QA_USE
+P	QA-01-FLD-GATE-POLICY
+P	QA-01-SEC-04
+P	QA-01-CMP-CRITERIA
+P	READONLY
+P	Quality Gate Policy Version
+P	QA-01-ACT-NOOP-VIEW
+P	QA-01-GATE-CRITERIA
+P	QA_USE
+ROW	QA-01-BTN-SCRIPT-VIEW	QA-01-SEC-04	QA-01-CMP-SCRIPT	BUTTON	查看 QA 驗證腳本	QA-01-ACT-SCRIPT-VIEW	QA-01-GATE-SCRIPT	QA_USE
+P	QA-01-BTN-SCRIPT-VIEW
+P	QA-01-SEC-04
+P	QA-01-CMP-SCRIPT
+P	BUTTON
+P	查看 QA 驗證腳本
+P	QA-01-ACT-SCRIPT-VIEW
+P	QA-01-GATE-SCRIPT
+P	QA_USE
+ROW	QA-01-FLD-EVIDENCE	QA-01-SEC-05	QA-01-CMP-EVIDENCE	READONLY	Evidence Refs	QA-01-ACT-NOOP-VIEW	QA-01-GATE-EVIDENCE	QA_USE
+P	QA-01-FLD-EVIDENCE
+P	QA-01-SEC-05
+P	QA-01-CMP-EVIDENCE
+P	READONLY
+P	Evidence Refs
+P	QA-01-ACT-NOOP-VIEW
+P	QA-01-GATE-EVIDENCE
+P	QA_USE
+ROW	QA-01-FLD-CHECKSUM	QA-01-SEC-05	QA-01-CMP-EVIDENCE	READONLY	Artifact Checksum	QA-01-ACT-NOOP-VIEW	QA-01-GATE-EVIDENCE	QA_USE
+P	QA-01-FLD-CHECKSUM
+P	QA-01-SEC-05
+P	QA-01-CMP-EVIDENCE
+P	READONLY
+P	Artifact Checksum
+P	QA-01-ACT-NOOP-VIEW
+P	QA-01-GATE-EVIDENCE
+P	QA_USE
+ROW	QA-01-FLD-PROVENANCE	QA-01-SEC-05	QA-01-CMP-EVIDENCE	READONLY	Provenance	QA-01-ACT-NOOP-VIEW	QA-01-GATE-EVIDENCE	QA_USE
+P	QA-01-FLD-PROVENANCE
+P	QA-01-SEC-05
+P	QA-01-CMP-EVIDENCE
+P	READONLY
+P	Provenance
+P	QA-01-ACT-NOOP-VIEW
+P	QA-01-GATE-EVIDENCE
+P	QA_USE
+ROW	QA-01-FLD-REQUIRED-CHECKS	QA-01-SEC-05	QA-01-CMP-EVIDENCE	READONLY	Required Checks	QA-01-ACT-NOOP-VIEW	QA-01-GATE-EVIDENCE	QA_USE
+P	QA-01-FLD-REQUIRED-CHECKS
+P	QA-01-SEC-05
+P	QA-01-CMP-EVIDENCE
+P	READONLY
+P	Required Checks
+P	QA-01-ACT-NOOP-VIEW
+P	QA-01-GATE-EVIDENCE
+P	QA_USE
+ROW	QA-01-FLD-RIGHTS	QA-01-SEC-05	QA-01-CMP-EVIDENCE	READONLY	Rights Gate	QA-01-ACT-NOOP-VIEW	QA-01-GATE-EVIDENCE	QA_USE
+P	QA-01-FLD-RIGHTS
+P	QA-01-SEC-05
+P	QA-01-CMP-EVIDENCE
+P	READONLY
+P	Rights Gate
+P	QA-01-ACT-NOOP-VIEW
+P	QA-01-GATE-EVIDENCE
+P	QA_USE
+ROW	QA-01-FLD-POLICY	QA-01-SEC-05	QA-01-CMP-EVIDENCE	READONLY	Policy Gate	QA-01-ACT-NOOP-VIEW	QA-01-GATE-EVIDENCE	QA_USE
+P	QA-01-FLD-POLICY
+P	QA-01-SEC-05
+P	QA-01-CMP-EVIDENCE
+P	READONLY
+P	Policy Gate
+P	QA-01-ACT-NOOP-VIEW
+P	QA-01-GATE-EVIDENCE
+P	QA_USE
+ROW	QA-01-BTN-EVIDENCE	QA-01-SEC-05	QA-01-CMP-EVIDENCE	BUTTON	查看 Evidence / Checks	QA-01-ACT-EVIDENCE-VIEW	QA-01-GATE-EVIDENCE	QA_USE
+P	QA-01-BTN-EVIDENCE
+P	QA-01-SEC-05
+P	QA-01-CMP-EVIDENCE
+P	BUTTON
+P	查看 Evidence / Checks
+P	QA-01-ACT-EVIDENCE-VIEW
+P	QA-01-GATE-EVIDENCE
+P	QA_USE
+ROW	QA-01-FLD-TOTAL-SCORE	QA-01-SEC-06	QA-01-CMP-SCORE	READONLY	Total Score	QA-01-ACT-NOOP-VIEW	QA-01-GATE-PAGE	QA_USE
+P	QA-01-FLD-TOTAL-SCORE
+P	QA-01-SEC-06
+P	QA-01-CMP-SCORE
+P	READONLY
+P	Total Score
+P	QA-01-ACT-NOOP-VIEW
+P	QA-01-GATE-PAGE
+P	QA_USE
+ROW	QA-01-FLD-HARD-BLOCK	QA-01-SEC-06	QA-01-CMP-SCORE	READONLY	Hard Block	QA-01-ACT-NOOP-VIEW	QA-01-GATE-PAGE	QA_USE
+P	QA-01-FLD-HARD-BLOCK
+P	QA-01-SEC-06
+P	QA-01-CMP-SCORE
+P	READONLY
+P	Hard Block
+P	QA-01-ACT-NOOP-VIEW
+P	QA-01-GATE-PAGE
+P	QA_USE
+ROW	QA-01-FLD-GATE-STATUS	QA-01-SEC-06	QA-01-CMP-GATE	READONLY	QA Gate Result	QA-01-ACT-NOOP-VIEW	QA-01-GATE-PAGE	QA_USE
+P	QA-01-FLD-GATE-STATUS
+P	QA-01-SEC-06
+P	QA-01-CMP-GATE
+P	READONLY
+P	QA Gate Result
+P	QA-01-ACT-NOOP-VIEW
+P	QA-01-GATE-PAGE
+P	QA_USE
+ROW	QA-01-FLD-OPEN-FINDINGS	QA-01-SEC-06	QA-01-CMP-GATE	READONLY	Open Blocking Findings	QA-01-ACT-NOOP-VIEW	QA-01-GATE-PAGE	QA_USE
+P	QA-01-FLD-OPEN-FINDINGS
+P	QA-01-SEC-06
+P	QA-01-CMP-GATE
+P	READONLY
+P	Open Blocking Findings
+P	QA-01-ACT-NOOP-VIEW
+P	QA-01-GATE-PAGE
+P	QA_USE
+ROW	QA-01-FLD-MANUAL-STATE	QA-01-SEC-06	QA-01-CMP-GATE	READONLY	Manual Review	QA-01-ACT-NOOP-VIEW	QA-01-GATE-PAGE	QA_USE
+P	QA-01-FLD-MANUAL-STATE
+P	QA-01-SEC-06
+P	QA-01-CMP-GATE
+P	READONLY
+P	Manual Review
+P	QA-01-ACT-NOOP-VIEW
+P	QA-01-GATE-PAGE
+P	QA_USE
+ROW	QA-01-LIST-FINDINGS	QA-01-SEC-07	QA-01-CMP-FINDING-LIST	LIST	Finding List	QA-01-ACT-FINDING-SELECT	QA-01-GATE-PAGE	QA_USE
+P	QA-01-LIST-FINDINGS
+P	QA-01-SEC-07
+P	QA-01-CMP-FINDING-LIST
+P	LIST
+P	Finding List
+P	QA-01-ACT-FINDING-SELECT
+P	QA-01-GATE-PAGE
+P	QA_USE
+ROW	QA-01-INP-FINDING-SEVERITY	QA-01-SEC-07	QA-01-CMP-FINDING-FORM	SELECT	Severity（registered enum）	QA-01-ACT-NOOP-VIEW	QA-01-GATE-FINDING	QA_FINDING
+P	QA-01-INP-FINDING-SEVERITY
+P	QA-01-SEC-07
+P	QA-01-CMP-FINDING-FORM
+P	SELECT
+P	Severity（registered enum）
+P	QA-01-ACT-NOOP-VIEW
+P	QA-01-GATE-FINDING
+P	QA_FINDING
+ROW	QA-01-INP-FINDING-CATEGORY	QA-01-SEC-07	QA-01-CMP-FINDING-FORM	SELECT	Category（registered QA issue category）	QA-01-ACT-NOOP-VIEW	QA-01-GATE-FINDING	QA_FINDING
+P	QA-01-INP-FINDING-CATEGORY
+P	QA-01-SEC-07
+P	QA-01-CMP-FINDING-FORM
+P	SELECT
+P	Category（registered QA issue category）
+P	QA-01-ACT-NOOP-VIEW
+P	QA-01-GATE-FINDING
+P	QA_FINDING
+ROW	QA-01-INP-FINDING-SCOPE	QA-01-SEC-07	QA-01-CMP-FINDING-FORM	PREFILLED_SCOPE_INPUT	Affected Scope	QA-01-ACT-NOOP-VIEW	QA-01-GATE-FINDING	QA_FINDING
+P	QA-01-INP-FINDING-SCOPE
+P	QA-01-SEC-07
+P	QA-01-CMP-FINDING-FORM
+P	PREFILLED_SCOPE_INPUT
+P	Affected Scope
+P	QA-01-ACT-NOOP-VIEW
+P	QA-01-GATE-FINDING
+P	QA_FINDING
+ROW	QA-01-INP-FINDING-EVIDENCE	QA-01-SEC-07	QA-01-CMP-FINDING-FORM	READONLY	Evidence Refs（auto-bound）	QA-01-ACT-NOOP-VIEW	QA-01-GATE-FINDING	QA_FINDING
+P	QA-01-INP-FINDING-EVIDENCE
+P	QA-01-SEC-07
+P	QA-01-CMP-FINDING-FORM
+P	READONLY
+P	Evidence Refs（auto-bound）
+P	QA-01-ACT-NOOP-VIEW
+P	QA-01-GATE-FINDING
+P	QA_FINDING
+ROW	QA-01-BTN-FINDING-CREATE	QA-01-SEC-07	QA-01-CMP-FINDING-FORM	PRIMARY_BUTTON	建立 Finding	QA-01-ACT-FINDING-CREATE	QA-01-GATE-FINDING	QA_FINDING
+P	QA-01-BTN-FINDING-CREATE
+P	QA-01-SEC-07
+P	QA-01-CMP-FINDING-FORM
+P	PRIMARY_BUTTON
+P	建立 Finding
+P	QA-01-ACT-FINDING-CREATE
+P	QA-01-GATE-FINDING
+P	QA_FINDING
+ROW	QA-01-FLD-MANUAL-CASE	QA-01-SEC-07	QA-01-CMP-MANUAL	READONLY	Manual Review Case	QA-01-ACT-NOOP-VIEW	QA-01-GATE-MANUAL	QA_USE
+P	QA-01-FLD-MANUAL-CASE
+P	QA-01-SEC-07
+P	QA-01-CMP-MANUAL
+P	READONLY
+P	Manual Review Case
+P	QA-01-ACT-NOOP-VIEW
+P	QA-01-GATE-MANUAL
+P	QA_USE
+ROW	QA-01-FLD-MANUAL-OWNER	QA-01-SEC-07	QA-01-CMP-MANUAL	READONLY	Owner	QA-01-ACT-NOOP-VIEW	QA-01-GATE-MANUAL	QA_USE
+P	QA-01-FLD-MANUAL-OWNER
+P	QA-01-SEC-07
+P	QA-01-CMP-MANUAL
+P	READONLY
+P	Owner
+P	QA-01-ACT-NOOP-VIEW
+P	QA-01-GATE-MANUAL
+P	QA_USE
+ROW	QA-01-FLD-MANUAL-BLOCKER	QA-01-SEC-07	QA-01-CMP-MANUAL	READONLY	Blocking Reason	QA-01-ACT-NOOP-VIEW	QA-01-GATE-MANUAL	QA_USE
+P	QA-01-FLD-MANUAL-BLOCKER
+P	QA-01-SEC-07
+P	QA-01-CMP-MANUAL
+P	READONLY
+P	Blocking Reason
+P	QA-01-ACT-NOOP-VIEW
+P	QA-01-GATE-MANUAL
+P	QA_USE
+ROW	QA-01-FLD-MANUAL-DECISION	QA-01-SEC-07	QA-01-CMP-MANUAL	READONLY	Decision / History	QA-01-ACT-NOOP-VIEW	QA-01-GATE-MANUAL	QA_USE
+P	QA-01-FLD-MANUAL-DECISION
+P	QA-01-SEC-07
+P	QA-01-CMP-MANUAL
+P	READONLY
+P	Decision / History
+P	QA-01-ACT-NOOP-VIEW
+P	QA-01-GATE-MANUAL
+P	QA_USE
+ROW	QA-01-BTN-MANUAL-VIEW	QA-01-SEC-07	QA-01-CMP-MANUAL	BUTTON	查看人工審查 / View Manual Review	QA-01-ACT-MANUAL-VIEW	QA-01-GATE-MANUAL	QA_USE
+P	QA-01-BTN-MANUAL-VIEW
+P	QA-01-SEC-07
+P	QA-01-CMP-MANUAL
+P	BUTTON
+P	查看人工審查 / View Manual Review
+P	QA-01-ACT-MANUAL-VIEW
+P	QA-01-GATE-MANUAL
+P	QA_USE
+ROW	QA-01-INP-CORR-FINDINGS	QA-01-SEC-08	QA-01-CMP-CORRECTION	READONLY	Finding IDs	QA-01-ACT-NOOP-VIEW	QA-01-GATE-CORRECTION	QA_CORRECTION
+P	QA-01-INP-CORR-FINDINGS
+P	QA-01-SEC-08
+P	QA-01-CMP-CORRECTION
+P	READONLY
+P	Finding IDs
+P	QA-01-ACT-NOOP-VIEW
+P	QA-01-GATE-CORRECTION
+P	QA_CORRECTION
+ROW	QA-01-INP-CORR-SCORECARDS	QA-01-SEC-08	QA-01-CMP-CORRECTION	READONLY	Source Scorecard IDs	QA-01-ACT-NOOP-VIEW	QA-01-GATE-CORRECTION	QA_CORRECTION
+P	QA-01-INP-CORR-SCORECARDS
+P	QA-01-SEC-08
+P	QA-01-CMP-CORRECTION
+P	READONLY
+P	Source Scorecard IDs
+P	QA-01-ACT-NOOP-VIEW
+P	QA-01-GATE-CORRECTION
+P	QA_CORRECTION
+ROW	QA-01-INP-CORR-INSTRUCTION	QA-01-SEC-08	QA-01-CMP-CORRECTION	READONLY	Source Instruction Package	QA-01-ACT-NOOP-VIEW	QA-01-GATE-CORRECTION	QA_CORRECTION
+P	QA-01-INP-CORR-INSTRUCTION
+P	QA-01-SEC-08
+P	QA-01-CMP-CORRECTION
+P	READONLY
+P	Source Instruction Package
+P	QA-01-ACT-NOOP-VIEW
+P	QA-01-GATE-CORRECTION
+P	QA_CORRECTION
+ROW	QA-01-INP-CORR-SCOPE	QA-01-SEC-08	QA-01-CMP-CORRECTION	PREFILLED_SCOPE_INPUT	Affected Scope	QA-01-ACT-NOOP-VIEW	QA-01-GATE-CORRECTION	QA_CORRECTION
+P	QA-01-INP-CORR-SCOPE
+P	QA-01-SEC-08
+P	QA-01-CMP-CORRECTION
+P	PREFILLED_SCOPE_INPUT
+P	Affected Scope
+P	QA-01-ACT-NOOP-VIEW
+P	QA-01-GATE-CORRECTION
+P	QA_CORRECTION
+ROW	QA-01-INP-CORR-ROOT	QA-01-SEC-08	QA-01-CMP-CORRECTION	SELECT	Root Cause（canonical enum）	QA-01-ACT-NOOP-VIEW	QA-01-GATE-CORRECTION	QA_CORRECTION
+P	QA-01-INP-CORR-ROOT
+P	QA-01-SEC-08
+P	QA-01-CMP-CORRECTION
+P	SELECT
+P	Root Cause（canonical enum）
+P	QA-01-ACT-NOOP-VIEW
+P	QA-01-GATE-CORRECTION
+P	QA_CORRECTION
+ROW	QA-01-INP-CORR-ACTION	QA-01-SEC-08	QA-01-CMP-CORRECTION	TEXTAREA	Required Action	QA-01-ACT-NOOP-VIEW	QA-01-GATE-CORRECTION	QA_CORRECTION
+P	QA-01-INP-CORR-ACTION
+P	QA-01-SEC-08
+P	QA-01-CMP-CORRECTION
+P	TEXTAREA
+P	Required Action
+P	QA-01-ACT-NOOP-VIEW
+P	QA-01-GATE-CORRECTION
+P	QA_CORRECTION
+ROW	QA-01-INP-CORR-TARGET	QA-01-SEC-08	QA-01-CMP-CORRECTION	READONLY	Target Department / Original Owner	QA-01-ACT-NOOP-VIEW	QA-01-GATE-CORRECTION	QA_CORRECTION
+P	QA-01-INP-CORR-TARGET
+P	QA-01-SEC-08
+P	QA-01-CMP-CORRECTION
+P	READONLY
+P	Target Department / Original Owner
+P	QA-01-ACT-NOOP-VIEW
+P	QA-01-GATE-CORRECTION
+P	QA_CORRECTION
+ROW	QA-01-INP-CORR-REVALIDATE	QA-01-SEC-08	QA-01-CMP-CORRECTION	MULTISELECT	Revalidation Requirements	QA-01-ACT-NOOP-VIEW	QA-01-GATE-CORRECTION	QA_CORRECTION
+P	QA-01-INP-CORR-REVALIDATE
+P	QA-01-SEC-08
+P	QA-01-CMP-CORRECTION
+P	MULTISELECT
+P	Revalidation Requirements
+P	QA-01-ACT-NOOP-VIEW
+P	QA-01-GATE-CORRECTION
+P	QA_CORRECTION
+ROW	QA-01-BTN-CORRECTION	QA-01-SEC-08	QA-01-CMP-CORRECTION	PRIMARY_BUTTON	要求修正 / Request Correction	QA-01-ACT-CORRECTION-REQUEST	QA-01-GATE-CORRECTION	QA_CORRECTION
+P	QA-01-BTN-CORRECTION
+P	QA-01-SEC-08
+P	QA-01-CMP-CORRECTION
+P	PRIMARY_BUTTON
+P	要求修正 / Request Correction
+P	QA-01-ACT-CORRECTION-REQUEST
+P	QA-01-GATE-CORRECTION
+P	QA_CORRECTION
+ROW	QA-01-FLD-FAILED-VERSION	QA-01-SEC-08	QA-01-CMP-RECHECK	READONLY	Failed Output Version	QA-01-ACT-NOOP-VIEW	QA-01-GATE-RECHECK	QA_USE
+P	QA-01-FLD-FAILED-VERSION
+P	QA-01-SEC-08
+P	QA-01-CMP-RECHECK
+P	READONLY
+P	Failed Output Version
+P	QA-01-ACT-NOOP-VIEW
+P	QA-01-GATE-RECHECK
+P	QA_USE
+ROW	QA-01-FLD-NEW-VERSION	QA-01-SEC-08	QA-01-CMP-RECHECK	READONLY	Verified New Output Version	QA-01-ACT-NOOP-VIEW	QA-01-GATE-RECHECK	QA_USE
+P	QA-01-FLD-NEW-VERSION
+P	QA-01-SEC-08
+P	QA-01-CMP-RECHECK
+P	READONLY
+P	Verified New Output Version
+P	QA-01-ACT-NOOP-VIEW
+P	QA-01-GATE-RECHECK
+P	QA_USE
+ROW	QA-01-FLD-RECHECK-STATUS	QA-01-SEC-08	QA-01-CMP-RECHECK	READONLY	Recheck Status	QA-01-ACT-NOOP-VIEW	QA-01-GATE-RECHECK	QA_USE
+P	QA-01-FLD-RECHECK-STATUS
+P	QA-01-SEC-08
+P	QA-01-CMP-RECHECK
+P	READONLY
+P	Recheck Status
+P	QA-01-ACT-NOOP-VIEW
+P	QA-01-GATE-RECHECK
+P	QA_USE
+ROW	QA-01-BTN-RECHECK	QA-01-SEC-08	QA-01-CMP-RECHECK	PRIMARY_BUTTON	開始 Recheck	QA-01-ACT-RECHECK-START	QA-01-GATE-RECHECK	QA_GATE
+P	QA-01-BTN-RECHECK
+P	QA-01-SEC-08
+P	QA-01-CMP-RECHECK
+P	PRIMARY_BUTTON
+P	開始 Recheck
+P	QA-01-ACT-RECHECK-START
+P	QA-01-GATE-RECHECK
+P	QA_GATE
+ROW	QA-01-FLD-REL-QA-PASS	QA-01-SEC-09	QA-01-CMP-RELEASE-READY	READONLY	QA PASS	QA-01-ACT-NOOP-VIEW	QA-01-GATE-PAGE	QA_USE
+P	QA-01-FLD-REL-QA-PASS
+P	QA-01-SEC-09
+P	QA-01-CMP-RELEASE-READY
+P	READONLY
+P	QA PASS
+P	QA-01-ACT-NOOP-VIEW
+P	QA-01-GATE-PAGE
+P	QA_USE
+ROW	QA-01-FLD-REL-FINDINGS	QA-01-SEC-09	QA-01-CMP-RELEASE-READY	READONLY	All Findings Closed	QA-01-ACT-NOOP-VIEW	QA-01-GATE-PAGE	QA_USE
+P	QA-01-FLD-REL-FINDINGS
+P	QA-01-SEC-09
+P	QA-01-CMP-RELEASE-READY
+P	READONLY
+P	All Findings Closed
+P	QA-01-ACT-NOOP-VIEW
+P	QA-01-GATE-PAGE
+P	QA_USE
+ROW	QA-01-FLD-REL-MANUAL	QA-01-SEC-09	QA-01-CMP-RELEASE-READY	READONLY	Manual Review Closed	QA-01-ACT-NOOP-VIEW	QA-01-GATE-PAGE	QA_USE
+P	QA-01-FLD-REL-MANUAL
+P	QA-01-SEC-09
+P	QA-01-CMP-RELEASE-READY
+P	READONLY
+P	Manual Review Closed
+P	QA-01-ACT-NOOP-VIEW
+P	QA-01-GATE-PAGE
+P	QA_USE
+ROW	QA-01-FLD-REL-RIGHTS	QA-01-SEC-09	QA-01-CMP-RELEASE-READY	READONLY	Rights Valid	QA-01-ACT-NOOP-VIEW	QA-01-GATE-PAGE	QA_USE
+P	QA-01-FLD-REL-RIGHTS
+P	QA-01-SEC-09
+P	QA-01-CMP-RELEASE-READY
+P	READONLY
+P	Rights Valid
+P	QA-01-ACT-NOOP-VIEW
+P	QA-01-GATE-PAGE
+P	QA_USE
+ROW	QA-01-FLD-REL-POLICY	QA-01-SEC-09	QA-01-CMP-RELEASE-READY	READONLY	Policy Valid	QA-01-ACT-NOOP-VIEW	QA-01-GATE-PAGE	QA_USE
+P	QA-01-FLD-REL-POLICY
+P	QA-01-SEC-09
+P	QA-01-CMP-RELEASE-READY
+P	READONLY
+P	Policy Valid
+P	QA-01-ACT-NOOP-VIEW
+P	QA-01-GATE-PAGE
+P	QA_USE
+ROW	QA-01-FLD-REL-CHANNEL	QA-01-SEC-09	QA-01-CMP-RELEASE-READY	READONLY	Channel / Account Scope	QA-01-ACT-NOOP-VIEW	QA-01-GATE-PAGE	QA_USE
+P	QA-01-FLD-REL-CHANNEL
+P	QA-01-SEC-09
+P	QA-01-CMP-RELEASE-READY
+P	READONLY
+P	Channel / Account Scope
+P	QA-01-ACT-NOOP-VIEW
+P	QA-01-GATE-PAGE
+P	QA_USE
+ROW	QA-01-FLD-REL-PACKAGE	QA-01-SEC-09	QA-01-CMP-RELEASE	READONLY	Release Package Candidate	QA-01-ACT-NOOP-VIEW	QA-01-GATE-RELEASE	QA_USE
+P	QA-01-FLD-REL-PACKAGE
+P	QA-01-SEC-09
+P	QA-01-CMP-RELEASE
+P	READONLY
+P	Release Package Candidate
+P	QA-01-ACT-NOOP-VIEW
+P	QA-01-GATE-RELEASE
+P	QA_USE
+ROW	QA-01-FLD-REL-OUTPUTS	QA-01-SEC-09	QA-01-CMP-RELEASE	READONLY	Exact Output Version IDs	QA-01-ACT-NOOP-VIEW	QA-01-GATE-RELEASE	QA_USE
+P	QA-01-FLD-REL-OUTPUTS
+P	QA-01-SEC-09
+P	QA-01-CMP-RELEASE
+P	READONLY
+P	Exact Output Version IDs
+P	QA-01-ACT-NOOP-VIEW
+P	QA-01-GATE-RELEASE
+P	QA_USE
+ROW	QA-01-FLD-REL-QA-GATE	QA-01-SEC-09	QA-01-CMP-RELEASE	READONLY	QA Gate Ref	QA-01-ACT-NOOP-VIEW	QA-01-GATE-RELEASE	QA_USE
+P	QA-01-FLD-REL-QA-GATE
+P	QA-01-SEC-09
+P	QA-01-CMP-RELEASE
+P	READONLY
+P	QA Gate Ref
+P	QA-01-ACT-NOOP-VIEW
+P	QA-01-GATE-RELEASE
+P	QA_USE
+ROW	QA-01-FLD-REL-RIGHTS-GATE	QA-01-SEC-09	QA-01-CMP-RELEASE	READONLY	Rights Gate Ref	QA-01-ACT-NOOP-VIEW	QA-01-GATE-RELEASE	QA_USE
+P	QA-01-FLD-REL-RIGHTS-GATE
+P	QA-01-SEC-09
+P	QA-01-CMP-RELEASE
+P	READONLY
+P	Rights Gate Ref
+P	QA-01-ACT-NOOP-VIEW
+P	QA-01-GATE-RELEASE
+P	QA_USE
+ROW	QA-01-BTN-RELEASE-CREATE	QA-01-SEC-09	QA-01-CMP-RELEASE	PRIMARY_BUTTON	建立 Release Candidate	QA-01-ACT-RELEASE-CREATE	QA-01-GATE-RELEASE	QA_RELEASE
+P	QA-01-BTN-RELEASE-CREATE
+P	QA-01-SEC-09
+P	QA-01-CMP-RELEASE
+P	PRIMARY_BUTTON
+P	建立 Release Candidate
+P	QA-01-ACT-RELEASE-CREATE
+P	QA-01-GATE-RELEASE
+P	QA_RELEASE
+ROW	QA-01-FLD-PAGE-STATE	QA-01-SEC-10	QA-01-CMP-STATUS	READONLY	Page / QA State	QA-01-ACT-NOOP-VIEW	QA-01-GATE-PAGE	QA_USE
+P	QA-01-FLD-PAGE-STATE
+P	QA-01-SEC-10
+P	QA-01-CMP-STATUS
+P	READONLY
+P	Page / QA State
+P	QA-01-ACT-NOOP-VIEW
+P	QA-01-GATE-PAGE
+P	QA_USE
+ROW	QA-01-FLD-ERROR	QA-01-SEC-10	QA-01-CMP-STATUS	READONLY	Error UID / Reason	QA-01-ACT-NOOP-VIEW	QA-01-GATE-PAGE	QA_USE
+P	QA-01-FLD-ERROR
+P	QA-01-SEC-10
+P	QA-01-CMP-STATUS
+P	READONLY
+P	Error UID / Reason
+P	QA-01-ACT-NOOP-VIEW
+P	QA-01-GATE-PAGE
+P	QA_USE
+ROW	QA-01-FLD-DISABLED	QA-01-SEC-10	QA-01-CMP-STATUS	READONLY	Disabled Reason	QA-01-ACT-NOOP-VIEW	QA-01-GATE-PAGE	QA_USE
+P	QA-01-FLD-DISABLED
+P	QA-01-SEC-10
+P	QA-01-CMP-STATUS
+P	READONLY
+P	Disabled Reason
+P	QA-01-ACT-NOOP-VIEW
+P	QA-01-GATE-PAGE
+P	QA_USE
+ROW	QA-01-FLD-CORRELATION	QA-01-SEC-10	QA-01-CMP-STATUS	READONLY	Correlation / Idempotency	QA-01-ACT-NOOP-VIEW	QA-01-GATE-PAGE	QA_USE
+P	QA-01-FLD-CORRELATION
+P	QA-01-SEC-10
+P	QA-01-CMP-STATUS
+P	READONLY
+P	Correlation / Idempotency
+P	QA-01-ACT-NOOP-VIEW
+P	QA-01-GATE-PAGE
+P	QA_USE
+ROW	QA-01-FLD-AUDIT	QA-01-SEC-10	QA-01-CMP-STATUS	READONLY	Audit / Trace	QA-01-ACT-NOOP-VIEW	QA-01-GATE-PAGE	QA_USE
+P	QA-01-FLD-AUDIT
+P	QA-01-SEC-10
+P	QA-01-CMP-STATUS
+P	READONLY
+P	Audit / Trace
+P	QA-01-ACT-NOOP-VIEW
+P	QA-01-GATE-PAGE
+P	QA_USE
+ROW	QA-01-BTN-AUDIT	QA-01-SEC-10	QA-01-CMP-STATUS	BUTTON	查看 Audit / Trace	QA-01-ACT-AUDIT-VIEW	QA-01-GATE-PAGE	QA_USE
+P	QA-01-BTN-AUDIT
+P	QA-01-SEC-10
+P	QA-01-CMP-STATUS
+P	BUTTON
+P	查看 Audit / Trace
+P	QA-01-ACT-AUDIT-VIEW
+P	QA-01-GATE-PAGE
+P	QA_USE
+ROW	QA-01-SEG-REVIEW-MODE	QA-01-SEC-02	QA-01-CMP-REVIEW-MODE	SEGMENTED_CONTROL	審查模式 / Review Mode	QA-01-ACT-REVIEW-MODE-SET	QA-01-GATE-PAGE	QA_USE
+P	QA-01-SEG-REVIEW-MODE
+P	QA-01-SEC-02
+P	QA-01-CMP-REVIEW-MODE
+P	SEGMENTED_CONTROL
+P	審查模式 / Review Mode
+P	QA-01-ACT-REVIEW-MODE-SET
+P	QA-01-GATE-PAGE
+P	QA_USE
+ROW	QA-01-BTN-AUTO-START	QA-01-SEC-02	QA-01-CMP-REVIEW-MODE	PRIMARY_BUTTON	開始自動審查 / Start AUTO Review	QA-01-ACT-AUTO-START	QA-01-GATE-AUTO	QA_AUTO
+P	QA-01-BTN-AUTO-START
+P	QA-01-SEC-02
+P	QA-01-CMP-REVIEW-MODE
+P	PRIMARY_BUTTON
+P	開始自動審查 / Start AUTO Review
+P	QA-01-ACT-AUTO-START
+P	QA-01-GATE-AUTO
+P	QA_AUTO
+ROW	QA-01-FLD-AUTO-PROGRESS	QA-01-SEC-02	QA-01-CMP-AUTO-PROGRESS	READONLY	AUTO Progress	QA-01-ACT-NOOP-VIEW	QA-01-GATE-PAGE	QA_USE
+P	QA-01-FLD-AUTO-PROGRESS
+P	QA-01-SEC-02
+P	QA-01-CMP-AUTO-PROGRESS
+P	READONLY
+P	AUTO Progress
+P	QA-01-ACT-NOOP-VIEW
+P	QA-01-GATE-PAGE
+P	QA_USE
+ROW	QA-01-SEL-QUEUE-SOURCE-DEPT	QA-01-SEC-02	QA-01-CMP-QUEUE	SELECT	來源部門 / Source Department	QA-01-ACT-QUEUE-FILTER	QA-01-GATE-PAGE	QA_USE
+P	QA-01-SEL-QUEUE-SOURCE-DEPT
+P	QA-01-SEC-02
+P	QA-01-CMP-QUEUE
+P	SELECT
+P	來源部門 / Source Department
+P	QA-01-ACT-QUEUE-FILTER
+P	QA-01-GATE-PAGE
+P	QA_USE
+ROW	QA-01-BTN-PREV-FRAME	QA-01-SEC-03	QA-01-CMP-EVIDENCE-CAPTURE	BUTTON	上一幀 / Previous Frame	QA-01-ACT-VIEWER-PREV-FRAME	QA-01-GATE-VIEWER	QA_USE
+P	QA-01-BTN-PREV-FRAME
+P	QA-01-SEC-03
+P	QA-01-CMP-EVIDENCE-CAPTURE
+P	BUTTON
+P	上一幀 / Previous Frame
+P	QA-01-ACT-VIEWER-PREV-FRAME
+P	QA-01-GATE-VIEWER
+P	QA_USE
+ROW	QA-01-BTN-NEXT-FRAME	QA-01-SEC-03	QA-01-CMP-EVIDENCE-CAPTURE	BUTTON	下一幀 / Next Frame	QA-01-ACT-VIEWER-NEXT-FRAME	QA-01-GATE-VIEWER	QA_USE
+P	QA-01-BTN-NEXT-FRAME
+P	QA-01-SEC-03
+P	QA-01-CMP-EVIDENCE-CAPTURE
+P	BUTTON
+P	下一幀 / Next Frame
+P	QA-01-ACT-VIEWER-NEXT-FRAME
+P	QA-01-GATE-VIEWER
+P	QA_USE
+ROW	QA-01-FLD-CURRENT-TIMECODE	QA-01-SEC-03	QA-01-CMP-EVIDENCE-CAPTURE	READONLY	Current Timecode	QA-01-ACT-NOOP-VIEW	QA-01-GATE-VIEWER	QA_USE
+P	QA-01-FLD-CURRENT-TIMECODE
+P	QA-01-SEC-03
+P	QA-01-CMP-EVIDENCE-CAPTURE
+P	READONLY
+P	Current Timecode
+P	QA-01-ACT-NOOP-VIEW
+P	QA-01-GATE-VIEWER
+P	QA_USE
+ROW	QA-01-BTN-FINDING-POINT	QA-01-SEC-03	QA-01-CMP-EVIDENCE-CAPTURE	BUTTON	標記 Finding 位置 / Set Finding Point	QA-01-ACT-EVIDENCE-POINT	QA-01-GATE-EVIDENCE-CAPTURE	QA_FINDING
+P	QA-01-BTN-FINDING-POINT
+P	QA-01-SEC-03
+P	QA-01-CMP-EVIDENCE-CAPTURE
+P	BUTTON
+P	標記 Finding 位置 / Set Finding Point
+P	QA-01-ACT-EVIDENCE-POINT
+P	QA-01-GATE-EVIDENCE-CAPTURE
+P	QA_FINDING
+ROW	QA-01-BTN-EVIDENCE-IN	QA-01-SEC-03	QA-01-CMP-EVIDENCE-CAPTURE	BUTTON	Evidence In	QA-01-ACT-EVIDENCE-RANGE-IN	QA-01-GATE-EVIDENCE-CAPTURE	QA_FINDING
+P	QA-01-BTN-EVIDENCE-IN
+P	QA-01-SEC-03
+P	QA-01-CMP-EVIDENCE-CAPTURE
+P	BUTTON
+P	Evidence In
+P	QA-01-ACT-EVIDENCE-RANGE-IN
+P	QA-01-GATE-EVIDENCE-CAPTURE
+P	QA_FINDING
+ROW	QA-01-BTN-EVIDENCE-OUT	QA-01-SEC-03	QA-01-CMP-EVIDENCE-CAPTURE	BUTTON	Evidence Out	QA-01-ACT-EVIDENCE-RANGE-OUT	QA-01-GATE-EVIDENCE-CAPTURE	QA_FINDING
+P	QA-01-BTN-EVIDENCE-OUT
+P	QA-01-SEC-03
+P	QA-01-CMP-EVIDENCE-CAPTURE
+P	BUTTON
+P	Evidence Out
+P	QA-01-ACT-EVIDENCE-RANGE-OUT
+P	QA-01-GATE-EVIDENCE-CAPTURE
+P	QA_FINDING
+ROW	QA-01-LIST-SCORE-DIMENSIONS	QA-01-SEC-06	QA-01-CMP-SCORE	GENERATED_SCORECARD_TABLE	Generated Criteria Dimensions	QA-01-ACT-NOOP-VIEW	QA-01-GATE-SCORE	QA_USE
+P	QA-01-LIST-SCORE-DIMENSIONS
+P	QA-01-SEC-06
+P	QA-01-CMP-SCORE
+P	GENERATED_SCORECARD_TABLE
+P	Generated Criteria Dimensions
+P	QA-01-ACT-NOOP-VIEW
+P	QA-01-GATE-SCORE
+P	QA_USE
+ROW	QA-01-BTN-MANUAL-MODIFY	QA-01-SEC-07	QA-01-CMP-MANUAL-DECISION	BUTTON	修改 / Modify	QA-01-ACT-MANUAL-MODIFY	QA-01-GATE-MANUAL-DECISION	QA_USE
+P	QA-01-BTN-MANUAL-MODIFY
+P	QA-01-SEC-07
+P	QA-01-CMP-MANUAL-DECISION
+P	BUTTON
+P	修改 / Modify
+P	QA-01-ACT-MANUAL-MODIFY
+P	QA-01-GATE-MANUAL-DECISION
+P	QA_USE
+ROW	QA-01-BTN-MANUAL-PASS	QA-01-SEC-07	QA-01-CMP-MANUAL-DECISION	PRIMARY_BUTTON	通過 / Pass	QA-01-ACT-MANUAL-PASS	QA-01-GATE-MANUAL-DECISION	QA_USE
+P	QA-01-BTN-MANUAL-PASS
+P	QA-01-SEC-07
+P	QA-01-CMP-MANUAL-DECISION
+P	PRIMARY_BUTTON
+P	通過 / Pass
+P	QA-01-ACT-MANUAL-PASS
+P	QA-01-GATE-MANUAL-DECISION
+P	QA_USE
+P	8. Action / Gate / Permission Matrix · 32/32
+ROW	Action UID	Permission	Gate	Effect Type
+P	Action UID
+P	Permission
+P	Gate
+P	Effect Type
+ROW	QA-01-ACT-NOOP-VIEW	QA_USE	QA-01-GATE-PAGE	UI_ONLY
+P	QA-01-ACT-NOOP-VIEW
+P	QA_USE
+P	QA-01-GATE-PAGE
+P	UI_ONLY
+ROW	QA-01-ACT-CONTEXT-SET	QA_USE	QA-01-GATE-PAGE	CONTEXT_STATE
+P	QA-01-ACT-CONTEXT-SET
+P	QA_USE
+P	QA-01-GATE-PAGE
+P	CONTEXT_STATE
+ROW	QA-01-ACT-START-REVIEW	QA_USE	QA-01-GATE-START	QA_REVIEW_START
+P	QA-01-ACT-START-REVIEW
+P	QA_USE
+P	QA-01-GATE-START
+P	QA_REVIEW_START
+ROW	QA-01-ACT-QUEUE-SEARCH	QA_USE	QA-01-GATE-PAGE	UI_ONLY
+P	QA-01-ACT-QUEUE-SEARCH
+P	QA_USE
+P	QA-01-GATE-PAGE
+P	UI_ONLY
+ROW	QA-01-ACT-QUEUE-FILTER	QA_USE	QA-01-GATE-PAGE	UI_ONLY
+P	QA-01-ACT-QUEUE-FILTER
+P	QA_USE
+P	QA-01-GATE-PAGE
+P	UI_ONLY
+ROW	QA-01-ACT-REVIEW-SELECT	QA_USE	QA-01-GATE-PAGE	CONTEXT_STATE
+P	QA-01-ACT-REVIEW-SELECT
+P	QA_USE
+P	QA-01-GATE-PAGE
+P	CONTEXT_STATE
+ROW	QA-01-ACT-VIEWER-PLAY	QA_USE	QA-01-GATE-VIEWER	UI_ONLY
+P	QA-01-ACT-VIEWER-PLAY
+P	QA_USE
+P	QA-01-GATE-VIEWER
+P	UI_ONLY
+ROW	QA-01-ACT-VIEWER-SEEK	QA_USE	QA-01-GATE-VIEWER	UI_ONLY
+P	QA-01-ACT-VIEWER-SEEK
+P	QA_USE
+P	QA-01-GATE-VIEWER
+P	UI_ONLY
+ROW	QA-01-ACT-VIEWER-VOLUME	QA_USE	QA-01-GATE-VIEWER	UI_ONLY
+P	QA-01-ACT-VIEWER-VOLUME
+P	QA_USE
+P	QA-01-GATE-VIEWER
+P	UI_ONLY
+ROW	QA-01-ACT-VIEWER-FULLSCREEN	QA_USE	QA-01-GATE-VIEWER	UI_ONLY
+P	QA-01-ACT-VIEWER-FULLSCREEN
+P	QA_USE
+P	QA-01-GATE-VIEWER
+P	UI_ONLY
+ROW	QA-01-ACT-COMPARE-TOGGLE	QA_USE	QA-01-GATE-COMPARE	UI_ONLY
+P	QA-01-ACT-COMPARE-TOGGLE
+P	QA_USE
+P	QA-01-GATE-COMPARE
+P	UI_ONLY
+ROW	QA-01-ACT-SCRIPT-VIEW	QA_USE	QA-01-GATE-SCRIPT	UI_ONLY
+P	QA-01-ACT-SCRIPT-VIEW
+P	QA_USE
+P	QA-01-GATE-SCRIPT
+P	UI_ONLY
+ROW	QA-01-ACT-EVIDENCE-VIEW	QA_USE	QA-01-GATE-EVIDENCE	UI_ONLY
+P	QA-01-ACT-EVIDENCE-VIEW
+P	QA_USE
+P	QA-01-GATE-EVIDENCE
+P	UI_ONLY
+ROW	QA-01-ACT-SCORECARD-SUBMIT	QA_SCORE	QA-01-GATE-SCORE	SCORE_MUTATION
+P	QA-01-ACT-SCORECARD-SUBMIT
+P	QA_SCORE
+P	QA-01-GATE-SCORE
+P	SCORE_MUTATION
+ROW	QA-01-ACT-FINDING-CREATE	QA_FINDING	QA-01-GATE-FINDING	FINDING_CREATE
+P	QA-01-ACT-FINDING-CREATE
+P	QA_FINDING
+P	QA-01-GATE-FINDING
+P	FINDING_CREATE
+ROW	QA-01-ACT-FINDING-SELECT	QA_USE	QA-01-GATE-PAGE	CONTEXT_STATE
+P	QA-01-ACT-FINDING-SELECT
+P	QA_USE
+P	QA-01-GATE-PAGE
+P	CONTEXT_STATE
+ROW	QA-01-ACT-MANUAL-VIEW	QA_USE	QA-01-GATE-MANUAL	UI_ONLY
+P	QA-01-ACT-MANUAL-VIEW
+P	QA_USE
+P	QA-01-GATE-MANUAL
+P	UI_ONLY
+ROW	QA-01-ACT-CORRECTION-REQUEST	QA_CORRECTION	QA-01-GATE-CORRECTION	CORRECTION_CREATE
+P	QA-01-ACT-CORRECTION-REQUEST
+P	QA_CORRECTION
+P	QA-01-GATE-CORRECTION
+P	CORRECTION_CREATE
+ROW	QA-01-ACT-RECHECK-START	QA_GATE	QA-01-GATE-RECHECK	QA_RECHECK_START
+P	QA-01-ACT-RECHECK-START
+P	QA_GATE
+P	QA-01-GATE-RECHECK
+P	QA_RECHECK_START
+ROW	QA-01-ACT-GATE-PASS	QA_GATE	QA-01-GATE-PASS	QA_GATE_DECISION
+P	QA-01-ACT-GATE-PASS
+P	QA_GATE
+P	QA-01-GATE-PASS
+P	QA_GATE_DECISION
+ROW	QA-01-ACT-GATE-FAIL	QA_GATE	QA-01-GATE-FAIL	QA_GATE_DECISION
+P	QA-01-ACT-GATE-FAIL
+P	QA_GATE
+P	QA-01-GATE-FAIL
+P	QA_GATE_DECISION
+ROW	QA-01-ACT-RELEASE-CREATE	QA_RELEASE	QA-01-GATE-RELEASE	RELEASE_CANDIDATE_CREATE
+P	QA-01-ACT-RELEASE-CREATE
+P	QA_RELEASE
+P	QA-01-GATE-RELEASE
+P	RELEASE_CANDIDATE_CREATE
+ROW	QA-01-ACT-AUDIT-VIEW	QA_USE	QA-01-GATE-PAGE	UI_ONLY
+P	QA-01-ACT-AUDIT-VIEW
+P	QA_USE
+P	QA-01-GATE-PAGE
+P	UI_ONLY
+ROW	QA-01-ACT-REVIEW-MODE-SET	QA_USE	QA-01-GATE-PAGE	UI_ONLY
+P	QA-01-ACT-REVIEW-MODE-SET
+P	QA_USE
+P	QA-01-GATE-PAGE
+P	UI_ONLY
+ROW	QA-01-ACT-AUTO-START	QA_AUTO	QA-01-GATE-AUTO	AUTO_QA_ORCHESTRATION
+P	QA-01-ACT-AUTO-START
+P	QA_AUTO
+P	QA-01-GATE-AUTO
+P	AUTO_QA_ORCHESTRATION
+ROW	QA-01-ACT-VIEWER-PREV-FRAME	QA_USE	QA-01-GATE-VIEWER	UI_ONLY
+P	QA-01-ACT-VIEWER-PREV-FRAME
+P	QA_USE
+P	QA-01-GATE-VIEWER
+P	UI_ONLY
+ROW	QA-01-ACT-VIEWER-NEXT-FRAME	QA_USE	QA-01-GATE-VIEWER	UI_ONLY
+P	QA-01-ACT-VIEWER-NEXT-FRAME
+P	QA_USE
+P	QA-01-GATE-VIEWER
+P	UI_ONLY
+ROW	QA-01-ACT-EVIDENCE-POINT	QA_FINDING	QA-01-GATE-EVIDENCE-CAPTURE	EVIDENCE_CONTEXT
+P	QA-01-ACT-EVIDENCE-POINT
+P	QA_FINDING
+P	QA-01-GATE-EVIDENCE-CAPTURE
+P	EVIDENCE_CONTEXT
+ROW	QA-01-ACT-EVIDENCE-RANGE-IN	QA_FINDING	QA-01-GATE-EVIDENCE-CAPTURE	EVIDENCE_CONTEXT
+P	QA-01-ACT-EVIDENCE-RANGE-IN
+P	QA_FINDING
+P	QA-01-GATE-EVIDENCE-CAPTURE
+P	EVIDENCE_CONTEXT
+ROW	QA-01-ACT-EVIDENCE-RANGE-OUT	QA_FINDING	QA-01-GATE-EVIDENCE-CAPTURE	EVIDENCE_CONTEXT
+P	QA-01-ACT-EVIDENCE-RANGE-OUT
+P	QA_FINDING
+P	QA-01-GATE-EVIDENCE-CAPTURE
+P	EVIDENCE_CONTEXT
+ROW	QA-01-ACT-MANUAL-MODIFY	QA_USE	QA-01-GATE-MANUAL-DECISION	MANUAL_REVIEW_MUTATION
+P	QA-01-ACT-MANUAL-MODIFY
+P	QA_USE
+P	QA-01-GATE-MANUAL-DECISION
+P	MANUAL_REVIEW_MUTATION
+ROW	QA-01-ACT-MANUAL-PASS	QA_USE	QA-01-GATE-MANUAL-DECISION	MANUAL_REVIEW_MUTATION
+P	QA-01-ACT-MANUAL-PASS
+P	QA_USE
+P	QA-01-GATE-MANUAL-DECISION
+P	MANUAL_REVIEW_MUTATION
+P	8.1 Permissions · 7/7
+ROW	Permission	Backend Scope	Purpose
+P	Permission
+P	Backend Scope
+P	Purpose
+ROW	QA_USE	qa.task.read	Enter/read QA page, task/review/output/script/evidence projections
+P	QA_USE
+P	qa.task.read
+P	Enter/read QA page, task/review/output/script/evidence projections
+ROW	QA_SCORE	qa.score.write	Persist QA scorecard
+P	QA_SCORE
+P	qa.score.write
+P	Persist QA scorecard
+ROW	QA_GATE	qa.gate.decide	Start recheck / decide governed QA PASS or FAIL
+P	QA_GATE
+P	qa.gate.decide
+P	Start recheck / decide governed QA PASS or FAIL
+ROW	QA_FINDING	finding.write	Create QA finding
+P	QA_FINDING
+P	finding.write
+P	Create QA finding
+ROW	QA_CORRECTION	correction.create	Create correction request to original owner
+P	QA_CORRECTION
+P	correction.create
+P	Create correction request to original owner
+ROW	QA_RELEASE	release.create	Create release candidate/package only
+P	QA_RELEASE
+P	release.create
+P	Create release candidate/package only
+ROW	QA_AUTO	qa.auto.review	Start Topic-scoped sequential AUTO QA; no publish/release-approval authority
+P	QA_AUTO
+P	qa.auto.review
+P	Start Topic-scoped sequential AUTO QA; no publish/release-approval authority
+P	9. Gate Contract · 19/19
+ROW	Gate UID	Condition
+P	Gate UID
+P	Condition
+ROW	QA-01-GATE-PAGE	authorized QA page/task scope + exact account permission
+P	QA-01-GATE-PAGE
+P	authorized QA page/task scope + exact account permission
+ROW	QA-01-GATE-CONTEXT	exact Project + Topic + QATask + TargetOutputVersion resolved; no latest/default alias
+P	QA-01-GATE-CONTEXT
+P	exact Project + Topic + QATask + TargetOutputVersion resolved; no latest/default alias
+ROW	QA-01-GATE-START	context PASS + output_version_ids explicit + qa_profile_id resolved + not superseded
+P	QA-01-GATE-START
+P	context PASS + output_version_ids explicit + qa_profile_id resolved + not superseded
+ROW	QA-01-GATE-VIEWER	exact output artifact/checksum/provenance resolvable for current QA review
+P	QA-01-GATE-VIEWER
+P	exact output artifact/checksum/provenance resolvable for current QA review
+ROW	QA-01-GATE-COMPARE	state=RECHECK + original failed exact version + verified new exact version both resolvable
+P	QA-01-GATE-COMPARE
+P	state=RECHECK + original failed exact version + verified new exact version both resolvable
+ROW	QA-01-GATE-SCRIPT	QAValidationScriptView exact id/version/hash + department=QA
+P	QA-01-GATE-SCRIPT
+P	QAValidationScriptView exact id/version/hash + department=QA
+ROW	QA-01-GATE-CRITERIA	approved QA CriteriaVersion + QualityGatePolicyVersion for exact target output
+P	QA-01-GATE-CRITERIA
+P	approved QA CriteriaVersion + QualityGatePolicyVersion for exact target output
+ROW	QA-01-GATE-EVIDENCE	evidence refs, checksum, provenance, required checks, rights/policy refs resolved
+P	QA-01-GATE-EVIDENCE
+P	evidence refs, checksum, provenance, required checks, rights/policy refs resolved
+ROW	QA-01-GATE-SCORE	IN_REVIEW or RECHECK + target version explicit + criteria + evidence + required checks
+P	QA-01-GATE-SCORE
+P	IN_REVIEW or RECHECK + target version explicit + criteria + evidence + required checks
+ROW	QA-01-GATE-FINDING	active QA review + exact source/output/evidence + severity/category/affected_scope valid
+P	QA-01-GATE-FINDING
+P	active QA review + exact source/output/evidence + severity/category/affected_scope valid
+ROW	QA-01-GATE-CORRECTION	finding/scorecard + failed version + affected_scope + original owner + source instruction package + revalidation requirements
+P	QA-01-GATE-CORRECTION
+P	finding/scorecard + failed version + affected_scope + original owner + source instruction package + revalidation requirements
+ROW	QA-01-GATE-RECHECK	CORRECTION_REQUIRED + verified NEW exact output version exists + correction request linkage valid
+P	QA-01-GATE-RECHECK
+P	CORRECTION_REQUIRED + verified NEW exact output version exists + correction request linkage valid
+ROW	QA-01-GATE-PASS	bound criteria/policy PASS + no hard block + blocking findings closed + required manual review closed + rights/policy valid
+P	QA-01-GATE-PASS
+P	bound criteria/policy PASS + no hard block + blocking findings closed + required manual review closed + rights/policy valid
+ROW	QA-01-GATE-FAIL	active review/recheck + sufficient evidence for governed FAIL decision
+P	QA-01-GATE-FAIL
+P	active review/recheck + sufficient evidence for governed FAIL decision
+ROW	QA-01-GATE-RELEASE	QA PASS + all findings closed + manual review closed + rights/policy valid + exact output versions + release.create permission
+P	QA-01-GATE-RELEASE
+P	QA PASS + all findings closed + manual review closed + rights/policy valid + exact output versions + release.create permission
+ROW	QA-01-GATE-MANUAL	manual review required or existing ManualReviewCase ref
+P	QA-01-GATE-MANUAL
+P	manual review required or existing ManualReviewCase ref
+ROW	QA-01-GATE-AUTO	mode=AUTO + exact Project/Topic + authorized Topic QA queue + QA_AUTO; each task resolves exact output/script/criteria/evidence
+P	QA-01-GATE-AUTO
+P	mode=AUTO + exact Project/Topic + authorized Topic QA queue + QA_AUTO; each task resolves exact output/script/criteria/evidence
+ROW	QA-01-GATE-EVIDENCE-CAPTURE	active QA review + exact output/version/checksum/provenance + supported viewer point/range context
+P	QA-01-GATE-EVIDENCE-CAPTURE
+P	active QA review + exact output/version/checksum/provenance + supported viewer point/range context
+ROW	QA-01-GATE-MANUAL-DECISION	governed ManualReviewCase required/open + exact review/output/scorecard + separate Manual Review mutation authority
+P	QA-01-GATE-MANUAL-DECISION
+P	governed ManualReviewCase required/open + exact review/output/scorecard + separate Manual Review mutation authority
+P	Hard Gate precedence：Evidence / Rights / Policy / Checksum / Provenance / Required Check failure 都能覆蓋 numeric score；UI 不得使用本地 threshold 代替 bound CriteriaVersion / QualityGatePolicy。
+P	10. Integration Ports · 10/10
+ROW	Port UID	Boundary	Operation	Method / Path	Permission
+P	Port UID
+P	Boundary
+P	Operation
+P	Method / Path
+P	Permission
+ROW	QA-01-PORT-PROJECTION	Read page projection	getUiProjection	GET /v1/ui-projections/{pageUid}	page/control authorization + qa.task.read
+P	QA-01-PORT-PROJECTION
+P	Read page projection
+P	getUiProjection
+P	GET /v1/ui-projections/{pageUid}
+P	page/control authorization + qa.task.read
+ROW	QA-01-PORT-START	Start QA Review	startQaReview	POST /v1/qa/reviews	api:startQaReview + account authorization
+P	QA-01-PORT-START
+P	Start QA Review
+P	startQaReview
+P	POST /v1/qa/reviews
+P	api:startQaReview + account authorization
+ROW	QA-01-PORT-SCORECARD	QA Scorecard	submitScorecard	POST /v1/scorecards	qa.score.write
+P	QA-01-PORT-SCORECARD
+P	QA Scorecard
+P	submitScorecard
+P	POST /v1/scorecards
+P	qa.score.write
+ROW	QA-01-PORT-FINDING	Finding	createFinding	POST /v1/findings	finding.write
+P	QA-01-PORT-FINDING
+P	Finding
+P	createFinding
+P	POST /v1/findings
+P	finding.write
+ROW	QA-01-PORT-CORRECTION	Correction Request	createCorrectionRequest	POST /v1/correction-requests	correction.create
+P	QA-01-PORT-CORRECTION
+P	Correction Request
+P	createCorrectionRequest
+P	POST /v1/correction-requests
+P	correction.create
+ROW	QA-01-PORT-RECHECK	Recheck	startRecheck	POST /v1/state-commands/qareview/startrecheck	api:startRecheck + qa.gate.decide
+P	QA-01-PORT-RECHECK
+P	Recheck
+P	startRecheck
+P	POST /v1/state-commands/qareview/startrecheck
+P	api:startRecheck + qa.gate.decide
+ROW	QA-01-PORT-PASS	QA PASS	decidePass	POST /v1/state-commands/qareview/decidepass	qa.gate.decide
+P	QA-01-PORT-PASS
+P	QA PASS
+P	decidePass
+P	POST /v1/state-commands/qareview/decidepass
+P	qa.gate.decide
+ROW	QA-01-PORT-FAIL	QA FAIL	decideFail	POST /v1/state-commands/qareview/decidefail	qa.gate.decide
+P	QA-01-PORT-FAIL
+P	QA FAIL
+P	decideFail
+P	POST /v1/state-commands/qareview/decidefail
+P	qa.gate.decide
+ROW	QA-01-PORT-RELEASE	Release Candidate	createReleasePackage	POST /v1/release-packages	release.create
+P	QA-01-PORT-RELEASE
+P	Release Candidate
+P	createReleasePackage
+P	POST /v1/release-packages
+P	release.create
+ROW	QA-01-PORT-AUTO-TOPIC	AUTO Topic QA Orchestration	startAutoTopicQaReview	SYSTEM_OPERATION_REGISTRY_REQUIRED	qa.auto.review + exact topic scope
+P	QA-01-PORT-AUTO-TOPIC
+P	AUTO Topic QA Orchestration
+P	startAutoTopicQaReview
+P	SYSTEM_OPERATION_REGISTRY_REQUIRED
+P	qa.auto.review + exact topic scope
+P	AUTO Topic QA 的 method_path 明確是 SYSTEM_OPERATION_REGISTRY_REQUIRED；frontend MUST NOT invent URL。PASS/FAIL ports 是 governed internal dispatch，不是可見直接 PASS/FAIL buttons。
+P	11. Error / Recovery Contract · 17/17
+ROW	Error UID	Context	Recovery
+P	Error UID
+P	Context
+P	Recovery
+ROW	QA-01-ERR-CONTEXT-001	Project/Topic/QATask/TargetOutputVersion missing, stale or mismatched	BLOCK review; resolve exact context; no implicit latest/default
+P	QA-01-ERR-CONTEXT-001
+P	Project/Topic/QATask/TargetOutputVersion missing, stale or mismatched
+P	BLOCK review; resolve exact context; no implicit latest/default
+ROW	QA-01-ERR-OUTPUT-001	Output artifact/version/checksum/provenance invalid	BLOCK viewer/score/gate; preserve review context
+P	QA-01-ERR-OUTPUT-001
+P	Output artifact/version/checksum/provenance invalid
+P	BLOCK viewer/score/gate; preserve review context
+ROW	QA-01-ERR-SCRIPT-001	QAValidationScriptView missing/hash/department mismatch	BLOCK scoring; no generic QA script fallback
+P	QA-01-ERR-SCRIPT-001
+P	QAValidationScriptView missing/hash/department mismatch
+P	BLOCK scoring; no generic QA script fallback
+ROW	QA-01-ERR-CRITERIA-001	QA CriteriaVersion/QualityGatePolicy missing or unapproved	BLOCK scoring/gate; no local default threshold
+P	QA-01-ERR-CRITERIA-001
+P	QA CriteriaVersion/QualityGatePolicy missing or unapproved
+P	BLOCK scoring/gate; no local default threshold
+ROW	QA-01-ERR-EVIDENCE-001	Required evidence/checksum/provenance/check missing	BLOCK gate/release; show exact missing evidence
+P	QA-01-ERR-EVIDENCE-001
+P	Required evidence/checksum/provenance/check missing
+P	BLOCK gate/release; show exact missing evidence
+ROW	QA-01-ERR-RIGHTS-001	Rights/Policy invalid or unavailable	HARD BLOCK; numeric score cannot override
+P	QA-01-ERR-RIGHTS-001
+P	Rights/Policy invalid or unavailable
+P	HARD BLOCK; numeric score cannot override
+ROW	QA-01-ERR-FINDING-001	Finding payload/source/scope/evidence invalid	BLOCK finding create; preserve current review
+P	QA-01-ERR-FINDING-001
+P	Finding payload/source/scope/evidence invalid
+P	BLOCK finding create; preserve current review
+ROW	QA-01-ERR-CORRECTION-001	Correction request lacks failed version/original owner/source instruction/revalidation scope	BLOCK request; QA never executes upstream edit
+P	QA-01-ERR-CORRECTION-001
+P	Correction request lacks failed version/original owner/source instruction/revalidation scope
+P	BLOCK request; QA never executes upstream edit
+ROW	QA-01-ERR-RECHECK-001	New output absent, same as failed version, or correction linkage invalid	BLOCK recheck; wait verified new exact version
+P	QA-01-ERR-RECHECK-001
+P	New output absent, same as failed version, or correction linkage invalid
+P	BLOCK recheck; wait verified new exact version
+ROW	QA-01-ERR-GATE-001	PASS/FAIL decision prerequisites invalid or stale	BLOCK decision; refresh exact review state
+P	QA-01-ERR-GATE-001
+P	PASS/FAIL decision prerequisites invalid or stale
+P	BLOCK decision; refresh exact review state
+ROW	QA-01-ERR-MANUAL-001	Required ManualReviewCase unresolved/open	BLOCK PASS/Release; show manual review blocker
+P	QA-01-ERR-MANUAL-001
+P	Required ManualReviewCase unresolved/open
+P	BLOCK PASS/Release; show manual review blocker
+ROW	QA-01-ERR-RELEASE-001	Release candidate eligibility refs invalid	BLOCK package creation; no publish fallback
+P	QA-01-ERR-RELEASE-001
+P	Release candidate eligibility refs invalid
+P	BLOCK package creation; no publish fallback
+ROW	QA-01-ERR-PERM-001	Permission/scope denied	Disable action + show actual reason
+P	QA-01-ERR-PERM-001
+P	Permission/scope denied
+P	Disable action + show actual reason
+ROW	QA-01-ERR-UNDEFINED-001	Unlisted Section/Component/Control/Action/Gate/Permission/Port requested	BLOCK + REPORT_AUTHORITY_GAP
+P	QA-01-ERR-UNDEFINED-001
+P	Unlisted Section/Component/Control/Action/Gate/Permission/Port requested
+P	BLOCK + REPORT_AUTHORITY_GAP
+ROW	QA-01-ERR-AUTO-001	AUTO cannot resolve Topic QA queue / exact next-task context	BLOCK current item; preserve queue; no reorder/create/skip
+P	QA-01-ERR-AUTO-001
+P	AUTO cannot resolve Topic QA queue / exact next-task context
+P	BLOCK current item; preserve queue; no reorder/create/skip
+ROW	QA-01-ERR-EVIDENCE-CAPTURE-001	Evidence capture lacks exact output/version/checksum/provenance or valid point/range	BLOCK capture only; no manual Evidence ID fallback
+P	QA-01-ERR-EVIDENCE-CAPTURE-001
+P	Evidence capture lacks exact output/version/checksum/provenance or valid point/range
+P	BLOCK capture only; no manual Evidence ID fallback
+ROW	QA-01-ERR-MANUAL-ACTION-001	Manual Review Modify/Pass requested but governed ManualReviewCase or mutation authority missing/stale	BLOCK Manual Review action; do not invent API/permission
+P	QA-01-ERR-MANUAL-ACTION-001
+P	Manual Review Modify/Pass requested but governed ManualReviewCase or mutation authority missing/stale
+P	BLOCK Manual Review action; do not invent API/permission
+P	12. Scorecard / Manual Review Contract
+ROW	Rule	Required Behavior
+P	Rule
+P	Required Behavior
+ROW	Score Source	Task-bound approved CriteriaVersion + QualityGatePolicyVersion
+P	Score Source
+P	Task-bound approved CriteriaVersion + QualityGatePolicyVersion
+ROW	Score Origin	SYSTEM_AI_GENERATED_FROM_BOUND_CRITERIA
+P	Score Origin
+P	SYSTEM_AI_GENERATED_FROM_BOUND_CRITERIA
+ROW	Manual Scoring	FORBIDDEN
+P	Manual Scoring
+P	FORBIDDEN
+ROW	Human Scorecard Action	NONE
+P	Human Scorecard Action
+P	NONE
+ROW	Hard Gate	Evidence/Rights/Policy/Checksum/Provenance/Required Check failure overrides numeric score
+P	Hard Gate
+P	Evidence/Rights/Policy/Checksum/Provenance/Required Check failure overrides numeric score
+ROW	Generic Post-score Confirm/Modify	NONE
+P	Generic Post-score Confirm/Modify
+P	NONE
+ROW	Manual Review Trigger	Only when governed ManualReviewCase required/open
+P	Manual Review Trigger
+P	Only when governed ManualReviewCase required/open
+ROW	Allowed Human Functions	Exactly MODIFY / PASS
+P	Allowed Human Functions
+P	Exactly MODIFY / PASS
+ROW	Manual Review PASS	Pass/close Manual Review requirement, then re-evaluate normal QA Gate; not direct QA PASS
+P	Manual Review PASS
+P	Pass/close Manual Review requirement, then re-evaluate normal QA Gate; not direct QA PASS
+ROW	Manual Review MODIFY	Enter governed modification flow; never blank score form
+P	Manual Review MODIFY
+P	Enter governed modification flow; never blank score form
+P	13. Evidence / Finding / Correction / Recheck
+ROW	Area	Current Design
+P	Area
+P	Current Design
+ROW	Evidence Capture	Video/Edit: ±1 frame, exact timecode, Finding point, Evidence In/Out; no upstream mutation
+P	Evidence Capture
+P	Video/Edit: ±1 frame, exact timecode, Finding point, Evidence In/Out; no upstream mutation
+ROW	Finding Severity	Registered enum only; no free-text severity
+P	Finding Severity
+P	Registered enum only; no free-text severity
+ROW	Finding Category	Registered QA issue category only; missing registry => BLOCK
+P	Finding Category
+P	Registered QA issue category only; missing registry => BLOCK
+ROW	Affected Scope	Prefilled from viewer current context/range; Human may narrow without changing exact output identity
+P	Affected Scope
+P	Prefilled from viewer current context/range; Human may narrow without changing exact output identity
+ROW	Evidence IDs	Auto-bound; manual Evidence ID typing forbidden
+P	Evidence IDs
+P	Auto-bound; manual Evidence ID typing forbidden
+ROW	Correction IDs / Owner	Finding/Scorecard/InstructionPackage/OriginalOwner refs auto-bound
+P	Correction IDs / Owner
+P	Finding/Scorecard/InstructionPackage/OriginalOwner refs auto-bound
+ROW	Root Cause	Canonical enum only: CANON/SCRIPT_VIEW/INSTRUCTION_PACKAGE/INPUT_ASSET/PROVIDER_ROUTE/OUTPUT_ARTIFACT/RIGHTS_POLICY/QUALITY_CRITERIA/EDITING/UNKNOWN
+P	Root Cause
+P	Canonical enum only: CANON/SCRIPT_VIEW/INSTRUCTION_PACKAGE/INPUT_ASSET/PROVIDER_ROUTE/OUTPUT_ARTIFACT/RIGHTS_POLICY/QUALITY_CRITERIA/EDITING/UNKNOWN
+ROW	Closure	QA never directly closes failed finding after upstream edit; verified NEW exact version + RECHECK + re-evaluation required
+P	Closure
+P	QA never directly closes failed finding after upstream edit; verified NEW exact version + RECHECK + re-evaluation required
+P	14. Release Policy / Candidate Contract
+ROW	Preflight	Required
+P	Preflight
+P	Required
+ROW	Exact Review	QAReviewRun status=PASS and exact output_version_id match
+P	Exact Review
+P	QAReviewRun status=PASS and exact output_version_id match
+ROW	QA Gate Ref	Exact PASS Scorecard ref matches review/output/criteria
+P	QA Gate Ref
+P	Exact PASS Scorecard ref matches review/output/criteria
+ROW	Findings / Manual	No open Finding; no undecided required ManualReviewCase
+P	Findings / Manual
+P	No open Finding; no undecided required ManualReviewCase
+ROW	Policy Binding	Exactly one active APPROVED release_policy_binding per exact output version
+P	Policy Binding
+P	Exactly one active APPROVED release_policy_binding per exact output version
+ROW	Rights	rights_gate_ref equals bound rights_policy_version_id and status/gate PASS
+P	Rights
+P	rights_gate_ref equals bound rights_policy_version_id and status/gate PASS
+ROW	Channel	If channel_required=true, channel_policy_ref exact match + approved account scope
+P	Channel
+P	If channel_required=true, channel_policy_ref exact match + approved account scope
+ROW	Idempotency	One QA review creates at most one canonical ReleasePackage; repeat returns same candidate
+P	Idempotency
+P	One QA review creates at most one canonical ReleasePackage; repeat returns same candidate
+ROW	Side Effects	Candidate creation does not approve release and does not publish
+P	Side Effects
+P	Candidate creation does not approve release and does not publish
+P	15. Function ↔ Visual Binding
+ROW	Visual	Functions	Why it exists	Forbidden
+P	Visual
+P	Functions
+P	Why it exists
+P	Forbidden
+ROW	A AUTO	Queue orchestration + exact viewer + generated scorecard	Topic sequential QA with max active=1	reorder/create/skip; auto publish
+P	A AUTO
+P	Queue orchestration + exact viewer + generated scorecard
+P	Topic sequential QA with max active=1
+P	reorder/create/skip; auto publish
+ROW	B MANUAL	Single selected QA task + Start Review	Human controls task scheduling only	human score input
+P	B MANUAL
+P	Single selected QA task + Start Review
+P	Human controls task scheduling only
+P	human score input
+ROW	C Finding / Manual	Evidence-bound Finding + conditional ManualReviewCase	Governed issue/manual-review workflow	blank score form; direct QA PASS
+P	C Finding / Manual
+P	Evidence-bound Finding + conditional ManualReviewCase
+P	Governed issue/manual-review workflow
+P	blank score form; direct QA PASS
+ROW	D Recheck	Before/After exact versions + Correction/Recheck	Verified NEW version validation	empty B pane; direct upstream edit
+P	D Recheck
+P	Before/After exact versions + Correction/Recheck
+P	Verified NEW version validation
+P	empty B pane; direct upstream edit
+ROW	E Release	Readiness + ReleasePackage candidate	QA terminal visible action	approveRelease; Publish; external dispatch
+P	E Release
+P	Readiness + ReleasePackage candidate
+P	QA terminal visible action
+P	approveRelease; Publish; external dispatch
+P	16. Cross-page / Department Boundary
+ROW	Direction	Exact Ref / Payload	Boundary
+P	Direction
+P	Exact Ref / Payload
+P	Boundary
+ROW	Upstream → QA	QAHandoff + QATask + ExactOutputVersion + QAValidationScriptView + Criteria + Evidence + Rights/Policy	QA consumes exact refs only; no latest/default alias
+P	Upstream → QA
+P	QAHandoff + QATask + ExactOutputVersion + QAValidationScriptView + Criteria + Evidence + Rights/Policy
+P	QA consumes exact refs only; no latest/default alias
+ROW	QA → Original Owner	CorrectionRequest + Finding/Scorecard/InstructionPackage + affected scope + root cause + revalidation	QA requests correction; does not execute Script/Asset/Video/Edit mutation
+P	QA → Original Owner
+P	CorrectionRequest + Finding/Scorecard/InstructionPackage + affected scope + root cause + revalidation
+P	QA requests correction; does not execute Script/Asset/Video/Edit mutation
+ROW	Owner → QA Recheck	Verified NEW exact output + correction linkage	Before/After only after exact new version exists
+P	Owner → QA Recheck
+P	Verified NEW exact output + correction linkage
+P	Before/After only after exact new version exists
+ROW	QA → ReleaseService	ReleasePackage Candidate with exact output + qa_gate_ref + rights/channel policy version refs	QA stops at candidate; ReleaseService owns approval/release; PublishingService owns publish
+P	QA → ReleaseService
+P	ReleasePackage Candidate with exact output + qa_gate_ref + rights/channel policy version refs
+P	QA stops at candidate; ReleaseService owns approval/release; PublishingService owns publish
+P	17. Acceptance / Hard Locks / DoD
+ROW	Denominator	Current
+P	Denominator
+P	Current
+ROW	Sections	10/10
+P	Sections
+P	10/10
+ROW	Visuals	10/10
+P	Visuals
+P	10/10
+ROW	Components	21/21
+P	Components
+P	21/21
+ROW	Controls	87/87
+P	Controls
+P	87/87
+ROW	Actions	32/32
+P	Actions
+P	32/32
+ROW	Objects / Refs	16/16
+P	Objects / Refs
+P	16/16
+ROW	Gates	19/19
+P	Gates
+P	19/19
+ROW	Permissions	7/7
+P	Permissions
+P	7/7
+ROW	Errors	17/17
+P	Errors
+P	17/17
+ROW	Page States	10/10
+P	Page States
+P	10/10
+ROW	Stages / Transitions	5 / 6
+P	Stages / Transitions
+P	5 / 6
+ROW	Integration Ports	10/10
+P	Integration Ports
+P	10/10
+ROW	Direct QA upstream mutation controls	0
+P	Direct QA upstream mutation controls
+P	0
+ROW	Direct Publish controls	0
+P	Direct Publish controls
+P	0
+ROW	Approve Release controls	0
+P	Approve Release controls
+P	0
+ROW	Direct PASS/FAIL visible controls	0
+P	Direct PASS/FAIL visible controls
+P	0
+ROW	Blank Manual Score controls	0
+P	Blank Manual Score controls
+P	0
+ROW	Conditional Manual Review buttons	2 exactly
+P	Conditional Manual Review buttons
+P	2 exactly
+P	17.1 Hard Locks
+P	Only QA-01 is current executable QA workspace; do not recreate QA-02/03/04 as pages.
+P	QA is judge, not editor: no Script/Asset/Video/Edit mutation.
+P	Top Context is read-only; no input/select controls for Project/Topic/QATask/TargetOutput/State.
+P	System/AI performs scoring; Scorecard area has no human action.
+P	Manual Review Modify/Pass only when governed ManualReviewCase is required/open.
+P	No direct Close Finding without verified NEW exact output + Recheck.
+P	No generic/default scorecard or local numeric threshold.
+P	Hard blocks override numeric score.
+P	QA PASS != Publish; last visible release action is Create Release Candidate.
+P	No fake score/evidence/version/runtime/checksum/rights/policy values; missing = —.
+P	AUTO max active=1; no reorder/create/skip; low-score warning only follows bound policy threshold.
+P	Unlisted Section/Component/Control/Action/State/Gate/Permission/Port = BLOCK.
+P	17.2 Design Freeze
+ROW	Item	Status
+P	Item
+P	Status
+ROW	Mother Basic Design structure	COMPLETE
+P	Mother Basic Design structure
+P	COMPLETE
+ROW	Exact Current denominator binding	COMPLETE
+P	Exact Current denominator binding
+P	COMPLETE
+ROW	Technology-purple UI materialization	5 Visual Candidates
+P	Technology-purple UI materialization
+P	5 Visual Candidates
+ROW	Fake business data	0 by design
+P	Fake business data
+P	0 by design
+ROW	Human visual/function review	PENDING
+P	Human visual/function review
+P	PENDING
+ROW	Selected approved candidate	NOT YET
+P	Selected approved candidate
+P	NOT YET
+ROW	Authority update	BLOCKED pending approval
+P	Authority update
+P	BLOCKED pending approval
+ROW	DESIGN_FROZEN	FALSE
+P	DESIGN_FROZEN
+P	FALSE
+ROW	Implementation claim	NONE
+P	Implementation claim
+P	NONE
+ROW	Production claim	NONE
+P	Production claim
+P	NONE
+P	18. Resume / Next Transition
+P	合法下一步是 Human Reviewer 檢視 QA-01 的功能對位、AUTO/MANUAL queue、exact viewer/evidence capture、System/AI scorecard、conditional Manual Review、Correction/Recheck 與 Release Candidate 邊界；若需修改先更新 Visual Candidate。只有 Selected Approved Candidate 形成後，才可進 Authority Update / Design Freeze / Implementation Handoff。
+ROW	Resume field	Value
+P	Resume field
+P	Value
+ROW	Branch / HEAD	new / 165c6440cb53b1b45ec96905241fb4d56dc3b867
+P	Branch / HEAD
+P	new / 165c6440cb53b1b45ec96905241fb4d56dc3b867
+ROW	Page	QA-01
+P	Page
+P	QA-01
+ROW	Authority SHA	101d7af019ada27c7bbf2af8f19423c951294e23
+P	Authority SHA
+P	101d7af019ada27c7bbf2af8f19423c951294e23
+ROW	Document Work Unit	QA-01 Mother Basic Design Visual Rebuild
+P	Document Work Unit
+P	QA-01 Mother Basic Design Visual Rebuild
+ROW	Authority denominator	10 Sec / 21 Comp / 87 Ctrl / 32 Act / 19 Gate / 10 Port
+P	Authority denominator
+P	10 Sec / 21 Comp / 87 Ctrl / 32 Act / 19 Gate / 10 Port
+ROW	Visual candidate status	PENDING HUMAN REVIEW
+P	Visual candidate status
+P	PENDING HUMAN REVIEW
+ROW	Design freeze	FALSE
+P	Design freeze
+P	FALSE
+ROW	Implementation claim	NONE
+P	Implementation claim
+P	NONE
+ROW	Production claim	NONE
+P	Production claim
+P	NONE
+P	文件版號 v1.0 僅代表本次 Basic Design 文件 revision，不等於 Current Governance / Page Authority version。

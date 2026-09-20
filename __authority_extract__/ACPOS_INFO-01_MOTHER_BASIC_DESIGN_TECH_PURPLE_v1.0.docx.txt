@@ -1,0 +1,1551 @@
+### PART word/document.xml
+P	ACPOS · INFO-01
+P	最新資訊工作區
+Mother-Compliant Basic Design · Tech Purple
+P	Current Authority 基準：GitHub new · 165c6440cb53…
+UI Candidate，不代表 Current Canonical Visual 已更新
+ROW	項目	Current
+P	項目
+P	Current
+ROW	Page UID	workspace:INFO-01
+P	Page UID
+P	workspace:INFO-01
+ROW	Canonical Name	最新資訊工作區 / Latest Information Workspace
+P	Canonical Name
+P	最新資訊工作區 / Latest Information Workspace
+ROW	Page Authority SHA	749d152aef9bc4365374f9265081d3382e1bdc5a
+P	Page Authority SHA
+P	749d152aef9bc4365374f9265081d3382e1bdc5a
+ROW	Manifest SHA	465329b6fb19b8e44c3083a9f280015ee95cc55c
+P	Manifest SHA
+P	465329b6fb19b8e44c3083a9f280015ee95cc55c
+ROW	Authority Status	FINAL_LOCKED / current_only
+P	Authority Status
+P	FINAL_LOCKED / current_only
+ROW	Design Status	VISUAL_CANDIDATE / PENDING HUMAN REVIEW
+P	Design Status
+P	VISUAL_CANDIDATE / PENDING HUMAN REVIEW
+ROW	Design Freeze	FALSE
+P	Design Freeze
+P	FALSE
+P	0. Current Truth / Authority Basis
+P	本文件只作 INFO-01 Basic Design / Construction Blueprint。Current Authority、Global Shell、Global Visual 為上位來源；本 Word 不反向修改 Authority。
+ROW	優先序	來源	作用
+P	優先序
+P	來源
+P	作用
+ROW	1	ACPOS_CURRENT_AUTHORITY_MANIFEST	Current authority set
+P	1
+P	ACPOS_CURRENT_AUTHORITY_MANIFEST
+P	Current authority set
+ROW	2	GLOBAL_HOME_SHELL_TEMPLATE_AUTHORITY V1.9	58px Header / 64px collapsed / 221px overlay
+P	2
+P	GLOBAL_HOME_SHELL_TEMPLATE_AUTHORITY V1.9
+P	58px Header / 64px collapsed / 221px overlay
+ROW	3	GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY V1.0	科技紫 tokens / component states
+P	3
+P	GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY V1.0
+P	科技紫 tokens / component states
+ROW	4	authority/pages/workspace/INFO-01/ACPOS_INFO-01_FINAL_LOCKED_ENCODING.yaml	INFO-01 UX/business/registry
+P	4
+P	authority/pages/workspace/INFO-01/ACPOS_INFO-01_FINAL_LOCKED_ENCODING.yaml
+P	INFO-01 UX/business/registry
+ROW	5	本 Word	UI candidate / construction reference
+P	5
+P	本 Word
+P	UI candidate / construction reference
+P	Current Registry Denominator
+ROW	Artifact	Count
+P	Artifact
+P	Count
+ROW	Sections / Visuals	12 / 12
+P	Sections / Visuals
+P	12 / 12
+ROW	Components	20
+P	Components
+P	20
+ROW	Controls	66
+P	Controls
+P	66
+ROW	Actions	17
+P	Actions
+P	17
+ROW	Gates / Permissions	10 / 7
+P	Gates / Permissions
+P	10 / 7
+ROW	Objects / Errors / States	10 / 12 / 8
+P	Objects / Errors / States
+P	10 / 12 / 8
+ROW	Knowledge Firewall Workflow States	9
+P	Knowledge Firewall Workflow States
+P	9
+ROW	Integration Ports	6
+P	Integration Ports
+P	6
+P	1. Purpose / Hard Boundary
+P	INFO-01 顯示 authorized source health、freshness、alerts、research runs、fact packs、evidence、Fact/Inference separation、source metadata、completeness、confidence、citations 與 governed Context Candidate review。
+P	Owner boundary = FactPackService + KnowledgeExperienceService through registered operations only.
+P	FACT / INFERENCE / RECOMMENDATION may create Context / Alert / Candidate / Review Request only.
+P	INFO-01 must never directly modify Canon, Lock, Priority, Budget, Task, Release or Publish.
+P	All business values are real-data-only; missing = —.
+P	2. Information / Knowledge Firewall Contract
+P	2.1 Fact Minimum Contract
+ROW	Required field
+P	Required field
+ROW	source
+P	source
+ROW	source_time
+P	source_time
+ROW	scope
+P	scope
+ROW	completeness
+P	completeness
+ROW	confidence
+P	confidence
+ROW	classification
+P	classification
+P	2.2 Fact / Inference Rules
+P	FACT and INFERENCE must be visibly separated.
+P	Inference/recommendation never renders as FACT.
+P	Validated Fact requires traceable source/evidence + source time.
+P	STALE stays visibly STALE; never relabeled current.
+P	Missing/incomplete source data remains incomplete; AI does not fabricate.
+P	No page-local numeric freshness/confidence/completeness thresholds.
+P	2.3 Research Boundary
+P	Research Queue / Research Run is read-model status only.
+P	No Start Research / Cancel Research action without registered operation.
+P	Research result enters evidence/fact/context-candidate governance path before adoption.
+P	3. Object Inventory · 10/10
+ROW	Object UID	Entity	Owner	Required Content
+P	Object UID
+P	Entity
+P	Owner
+P	Required Content
+ROW	INFO-01-OBJ-SOURCE-HEALTH	SourceHealthProjection	FactPackService	authorized source ref + health/readiness/status + audit/version binding
+P	INFO-01-OBJ-SOURCE-HEALTH
+P	SourceHealthProjection
+P	FactPackService
+P	authorized source ref + health/readiness/status + audit/version binding
+ROW	INFO-01-OBJ-ALERT	InformationAlert	FactPackService	alert exact ref + target/scope + source/evidence + status when present
+P	INFO-01-OBJ-ALERT
+P	InformationAlert
+P	FactPackService
+P	alert exact ref + target/scope + source/evidence + status when present
+ROW	INFO-01-OBJ-RESEARCH	ResearchRunProjection	FactPackService	research run exact ref + state/status + source/result refs when present
+P	INFO-01-OBJ-RESEARCH
+P	ResearchRunProjection
+P	FactPackService
+P	research run exact ref + state/status + source/result refs when present
+ROW	INFO-01-OBJ-FACTPACK	FactPack	FactPackService	exact ref/version + facts/inferences + evidence + source metadata + freshness/completeness/confidence
+P	INFO-01-OBJ-FACTPACK
+P	FactPack
+P	FactPackService
+P	exact ref/version + facts/inferences + evidence + source metadata + freshness/completeness/confidence
+ROW	INFO-01-OBJ-FACT	Fact	FactPackService	source + source_time + scope + completeness + confidence + classification + evidence refs
+P	INFO-01-OBJ-FACT
+P	Fact
+P	FactPackService
+P	source + source_time + scope + completeness + confidence + classification + evidence refs
+ROW	INFO-01-OBJ-INFERENCE	Inference / Recommendation	FactPackService	explicit non-FACT classification + supporting fact/evidence refs + scope
+P	INFO-01-OBJ-INFERENCE
+P	Inference / Recommendation
+P	FactPackService
+P	explicit non-FACT classification + supporting fact/evidence refs + scope
+ROW	INFO-01-OBJ-EVIDENCE	EvidenceRef	Source / FactPack authority	exact evidence/source ref + metadata/time/classification/citation when available
+P	INFO-01-OBJ-EVIDENCE
+P	EvidenceRef
+P	Source / FactPack authority
+P	exact evidence/source ref + metadata/time/classification/citation when available
+ROW	INFO-01-OBJ-CITATION	CitationRef	FactPackService	exact source/evidence binding; never fabricated
+P	INFO-01-OBJ-CITATION
+P	CitationRef
+P	FactPackService
+P	exact source/evidence binding; never fabricated
+ROW	INFO-01-OBJ-CONTEXT-CANDIDATE	ContextCandidate	KnowledgeExperienceService	context_candidate_id + target scope + facts + citations + adoption-review projection + exact evidence
+P	INFO-01-OBJ-CONTEXT-CANDIDATE
+P	ContextCandidate
+P	KnowledgeExperienceService
+P	context_candidate_id + target scope + facts + citations + adoption-review projection + exact evidence
+ROW	INFO-01-OBJ-AUDIT	Audit/Correlation	Governance	actor + operation/event + correlation/idempotency + scope + timestamp/result
+P	INFO-01-OBJ-AUDIT
+P	Audit/Correlation
+P	Governance
+P	actor + operation/event + correlation/idempotency + scope + timestamp/result
+P	4. Page / Section / Component Registry
+P	4.1 Sections · 12/12
+ROW	Section UID	Name	Responsibility	Visual
+P	Section UID
+P	Name
+P	Responsibility
+P	Visual
+ROW	INFO-01-SEC-01	Context / Projection Control	Authorized scope, projection version, page status, refresh/search	INFO-01-VIS-CONTEXT
+P	INFO-01-SEC-01
+P	Context / Projection Control
+P	Authorized scope, projection version, page status, refresh/search
+P	INFO-01-VIS-CONTEXT
+ROW	INFO-01-SEC-02	Scope / Source Health	Scope filter, authorized sources, source-health projection	INFO-01-VIS-LEFT-SOURCE
+P	INFO-01-SEC-02
+P	Scope / Source Health
+P	Scope filter, authorized sources, source-health projection
+P	INFO-01-VIS-LEFT-SOURCE
+ROW	INFO-01-SEC-03	Alert Feed	Authorized alert feed and exact alert selection	INFO-01-VIS-LEFT-ALERT
+P	INFO-01-SEC-03
+P	Alert Feed
+P	Authorized alert feed and exact alert selection
+P	INFO-01-VIS-LEFT-ALERT
+ROW	INFO-01-SEC-04	Fact Pack Explorer	Recent Fact Packs and exact in-page selection	INFO-01-VIS-FACTPACK
+P	INFO-01-SEC-04
+P	Fact Pack Explorer
+P	Recent Fact Packs and exact in-page selection
+P	INFO-01-VIS-FACTPACK
+ROW	INFO-01-SEC-05	Fact / Inference Detail	Explicit FACT versus INFERENCE / Recommendation separation	INFO-01-VIS-FACT
+P	INFO-01-SEC-05
+P	Fact / Inference Detail
+P	Explicit FACT versus INFERENCE / Recommendation separation
+P	INFO-01-VIS-FACT
+ROW	INFO-01-SEC-06	Evidence / Source Metadata	Evidence refs, source metadata, source time, scope/classification	INFO-01-VIS-EVIDENCE
+P	INFO-01-SEC-06
+P	Evidence / Source Metadata
+P	Evidence refs, source metadata, source time, scope/classification
+P	INFO-01-VIS-EVIDENCE
+ROW	INFO-01-SEC-07	Freshness / Completeness / Confidence	Governed read-model quality/freshness indicators; no local threshold	INFO-01-VIS-RIGHT-QUALITY
+P	INFO-01-SEC-07
+P	Freshness / Completeness / Confidence
+P	Governed read-model quality/freshness indicators; no local threshold
+P	INFO-01-VIS-RIGHT-QUALITY
+ROW	INFO-01-SEC-08	Research Queue / Runs	Read-only research queue/run status	INFO-01-VIS-RIGHT-RESEARCH
+P	INFO-01-SEC-08
+P	Research Queue / Runs
+P	Read-only research queue/run status
+P	INFO-01-VIS-RIGHT-RESEARCH
+ROW	INFO-01-SEC-09	Context Candidate Review	Context scope, fact selection, citation check, preview, adoption review	INFO-01-VIS-CANDIDATE
+P	INFO-01-SEC-09
+P	Context Candidate Review
+P	Context scope, fact selection, citation check, preview, adoption review
+P	INFO-01-VIS-CANDIDATE
+ROW	INFO-01-SEC-10	Citation Drawer	Exact citation/evidence/source references	INFO-01-VIS-CITATION
+P	INFO-01-SEC-10
+P	Citation Drawer
+P	Exact citation/evidence/source references
+P	INFO-01-VIS-CITATION
+ROW	INFO-01-SEC-11	Action Dock	Export, Adopt Context, Candidate Decision; only registered operations	INFO-01-VIS-ACTION
+P	INFO-01-SEC-11
+P	Action Dock
+P	Export, Adopt Context, Candidate Decision; only registered operations
+P	INFO-01-VIS-ACTION
+ROW	INFO-01-SEC-12	Audit / Status	Correlation, source sync, errors, disabled reason, firewall status	INFO-01-VIS-STATUS
+P	INFO-01-SEC-12
+P	Audit / Status
+P	Correlation, source sync, errors, disabled reason, firewall status
+P	INFO-01-VIS-STATUS
+P	4.2 Components · 20/20
+ROW	Component UID	Section	Name
+P	Component UID
+P	Section
+P	Name
+ROW	INFO-01-CMP-CONTEXT	INFO-01-SEC-01	Projection Context Bar
+P	INFO-01-CMP-CONTEXT
+P	INFO-01-SEC-01
+P	Projection Context Bar
+ROW	INFO-01-CMP-SCOPE	INFO-01-SEC-02	Scope Filter
+P	INFO-01-CMP-SCOPE
+P	INFO-01-SEC-02
+P	Scope Filter
+ROW	INFO-01-CMP-SOURCE-HEALTH	INFO-01-SEC-02	Source Health List / Detail
+P	INFO-01-CMP-SOURCE-HEALTH
+P	INFO-01-SEC-02
+P	Source Health List / Detail
+ROW	INFO-01-CMP-ALERT	INFO-01-SEC-03	Alert Feed / Detail
+P	INFO-01-CMP-ALERT
+P	INFO-01-SEC-03
+P	Alert Feed / Detail
+ROW	INFO-01-CMP-FACTPACK-LIST	INFO-01-SEC-04	Recent Fact Pack List
+P	INFO-01-CMP-FACTPACK-LIST
+P	INFO-01-SEC-04
+P	Recent Fact Pack List
+ROW	INFO-01-CMP-FACTPACK-HEADER	INFO-01-SEC-04	Selected Fact Pack Header
+P	INFO-01-CMP-FACTPACK-HEADER
+P	INFO-01-SEC-04
+P	Selected Fact Pack Header
+ROW	INFO-01-CMP-FACT	INFO-01-SEC-05	FACT List / Detail
+P	INFO-01-CMP-FACT
+P	INFO-01-SEC-05
+P	FACT List / Detail
+ROW	INFO-01-CMP-INFERENCE	INFO-01-SEC-05	INFERENCE / Recommendation List / Detail
+P	INFO-01-CMP-INFERENCE
+P	INFO-01-SEC-05
+P	INFERENCE / Recommendation List / Detail
+ROW	INFO-01-CMP-EVIDENCE	INFO-01-SEC-06	Evidence List
+P	INFO-01-CMP-EVIDENCE
+P	INFO-01-SEC-06
+P	Evidence List
+ROW	INFO-01-CMP-SOURCE-META	INFO-01-SEC-06	Source Metadata
+P	INFO-01-CMP-SOURCE-META
+P	INFO-01-SEC-06
+P	Source Metadata
+ROW	INFO-01-CMP-QUALITY	INFO-01-SEC-07	Freshness / Completeness / Confidence
+P	INFO-01-CMP-QUALITY
+P	INFO-01-SEC-07
+P	Freshness / Completeness / Confidence
+ROW	INFO-01-CMP-RESEARCH	INFO-01-SEC-08	Research Queue / Runs
+P	INFO-01-CMP-RESEARCH
+P	INFO-01-SEC-08
+P	Research Queue / Runs
+ROW	INFO-01-CMP-CANDIDATE-SCOPE	INFO-01-SEC-09	Context Scope
+P	INFO-01-CMP-CANDIDATE-SCOPE
+P	INFO-01-SEC-09
+P	Context Scope
+ROW	INFO-01-CMP-CANDIDATE-FACTS	INFO-01-SEC-09	Fact Selection
+P	INFO-01-CMP-CANDIDATE-FACTS
+P	INFO-01-SEC-09
+P	Fact Selection
+ROW	INFO-01-CMP-CANDIDATE-CITATION	INFO-01-SEC-09	Citation Check
+P	INFO-01-CMP-CANDIDATE-CITATION
+P	INFO-01-SEC-09
+P	Citation Check
+ROW	INFO-01-CMP-CANDIDATE-PREVIEW	INFO-01-SEC-09	Context Candidate Preview
+P	INFO-01-CMP-CANDIDATE-PREVIEW
+P	INFO-01-SEC-09
+P	Context Candidate Preview
+ROW	INFO-01-CMP-ADOPTION-REVIEW	INFO-01-SEC-09	Adoption Review
+P	INFO-01-CMP-ADOPTION-REVIEW
+P	INFO-01-SEC-09
+P	Adoption Review
+ROW	INFO-01-CMP-CITATION	INFO-01-SEC-10	Citation Drawer
+P	INFO-01-CMP-CITATION
+P	INFO-01-SEC-10
+P	Citation Drawer
+ROW	INFO-01-CMP-ACTIONS	INFO-01-SEC-11	Latest Information Action Dock
+P	INFO-01-CMP-ACTIONS
+P	INFO-01-SEC-11
+P	Latest Information Action Dock
+ROW	INFO-01-CMP-STATUS	INFO-01-SEC-12	Audit / Status / Firewall
+P	INFO-01-CMP-STATUS
+P	INFO-01-SEC-12
+P	Audit / Status / Firewall
+P	5. Functional Workbench / Interaction Topology
+P	Primary Grid ≈ 20% / 60% / 20%。Left = Scope / Source Health / Alert；Center = Fact Pack / Fact-Inference / Evidence；Right = Quality / Research；lower rows = Candidate / Citation / Action / Audit。
+ROW	Zone	Primary Function	Mutation Boundary
+P	Zone
+P	Primary Function
+P	Mutation Boundary
+ROW	Top Context	Scope / Projection Version / Page State / Refresh / Search	Only registered refresh/search commands
+P	Top Context
+P	Scope / Projection Version / Page State / Refresh / Search
+P	Only registered refresh/search commands
+ROW	Left Rail	Scope / Source Health / Alert Feed	Selection/filter only
+P	Left Rail
+P	Scope / Source Health / Alert Feed
+P	Selection/filter only
+ROW	Center	Fact Pack + FACT/INFERENCE + Evidence / Source Metadata	Read/context selection only
+P	Center
+P	Fact Pack + FACT/INFERENCE + Evidence / Source Metadata
+P	Read/context selection only
+ROW	Right Rail	Freshness / Completeness / Confidence / Research Queue	Read-only; no research execution
+P	Right Rail
+P	Freshness / Completeness / Confidence / Research Queue
+P	Read-only; no research execution
+ROW	Lower Candidate	Context Candidate review / citation / preview	Candidate actions only when server gates allow
+P	Lower Candidate
+P	Context Candidate review / citation / preview
+P	Candidate actions only when server gates allow
+ROW	Action Dock	Export / Adopt Context / Candidate Decision	Only registered operations
+P	Action Dock
+P	Export / Adopt Context / Candidate Decision
+P	Only registered operations
+ROW	Audit	Correlation / Source Sync / Firewall / Disabled Reason	Read-only trace
+P	Audit
+P	Correlation / Source Sync / Firewall / Disabled Reason
+P	Read-only trace
+P	6. Knowledge Firewall State Flow
+ROW	Workflow State	Owner
+P	Workflow State
+P	Owner
+ROW	SOURCE_REGISTERED	WF-KNOW-01 / server authority
+P	SOURCE_REGISTERED
+P	WF-KNOW-01 / server authority
+ROW	INGESTION_PENDING	WF-KNOW-01 / server authority
+P	INGESTION_PENDING
+P	WF-KNOW-01 / server authority
+ROW	NORMALIZED	WF-KNOW-01 / server authority
+P	NORMALIZED
+P	WF-KNOW-01 / server authority
+ROW	FACT_PACK	WF-KNOW-01 / server authority
+P	FACT_PACK
+P	WF-KNOW-01 / server authority
+ROW	CONTEXT_CANDIDATE	WF-KNOW-01 / server authority
+P	CONTEXT_CANDIDATE
+P	WF-KNOW-01 / server authority
+ROW	REVIEW_REQUIRED	WF-KNOW-01 / server authority
+P	REVIEW_REQUIRED
+P	WF-KNOW-01 / server authority
+ROW	ADOPTED	WF-KNOW-01 / server authority
+P	ADOPTED
+P	WF-KNOW-01 / server authority
+ROW	REJECTED	WF-KNOW-01 / server authority
+P	REJECTED
+P	WF-KNOW-01 / server authority
+ROW	RETIRED	WF-KNOW-01 / server authority
+P	RETIRED
+P	WF-KNOW-01 / server authority
+P	WF-KNOW-01 state machine is server-authority-owned. INFO-01 renders/acts only through the registered page contracts and must not merge or invent server transitions.
+P	7. Visual Architecture / Tech Purple UI Candidate
+P	7.1 Visual A — Main Fact Pack Workspace
+P	20/60/20 main workbench：Source/Alert → Fact Pack/Fact-Inference/Evidence → Quality/Research；所有未取得的 business values = —。
+P	7.2 Visual B — FACT / INFERENCE + Citation
+P	FACT 與 INFERENCE / RECOMMENDATION 明確分離；Citation Drawer 只顯示 exact source/evidence refs，不製造引用。
+P	8. Visual State Set
+P	8.1 Visual C — STALE / INCOMPLETE + Research Queue
+P	Reference state demonstrates governed STALE/INCOMPLETE semantics；Research Queue remains read-only and has no Start/Cancel/Retry button。
+P	8.2 Visual D — Context Candidate Review
+P	Context scope / selected facts / citation check / candidate preview / adoption review + separate Adopt and Decide actions。
+P	9. Knowledge Firewall / Audit Visual
+P	9.1 Visual E — Knowledge Firewall / Action Dock / Audit
+P	221px Sidebar Overlay + allowed candidate/review outputs versus forbidden direct Canon/Lock/Priority/Budget/Task/Release/Publish mutations。
+P	10. Geometry / Design Tokens
+ROW	Region	Geometry / Rule
+P	Region
+P	Geometry / Rule
+ROW	Global Header	58px fixed full width
+P	Global Header
+P	58px fixed full width
+ROW	Collapsed Sidebar	64px icon-only transparent interaction rail
+P	Collapsed Sidebar
+P	64px icon-only transparent interaction rail
+ROW	Expanded Sidebar	221px overlay; no workspace reflow
+P	Expanded Sidebar
+P	221px overlay; no workspace reflow
+ROW	Workspace Origin	x=78px / y=68px
+P	Workspace Origin
+P	x=78px / y=68px
+ROW	Context Bar	100% width; h=56px
+P	Context Bar
+P	100% width; h=56px
+ROW	Primary Grid	minmax(280px,1fr) / minmax(720px,3fr) / minmax(300px,1fr); ≈20/60/20
+P	Primary Grid
+P	minmax(280px,1fr) / minmax(720px,3fr) / minmax(300px,1fr); ≈20/60/20
+ROW	Left Rail	min 280px
+P	Left Rail
+P	min 280px
+ROW	Center	min 720px; highest priority
+P	Center
+P	min 720px; highest priority
+ROW	Right Rail	min 300px
+P	Right Rail
+P	min 300px
+ROW	Controls	40px; radius 10
+P	Controls
+P	40px; radius 10
+ROW	Panels	radius 12; large container radius 24
+P	Panels
+P	radius 12; large container radius 24
+ROW	Missing values	—
+P	Missing values
+P	—
+ROW	Palette	Global Tech Purple only; page visual override forbidden
+P	Palette
+P	Global Tech Purple only; page visual override forbidden
+P	11. Action / Operation Contract · 17/17
+ROW	Action UID	Label	Permission	Gate	Effect	Operation
+P	Action UID
+P	Label
+P	Permission
+P	Gate
+P	Effect
+P	Operation
+ROW	INFO-01-ACT-NOOP	Read display	INFO_READ	INFO-01-GATE-READ	READ_ONLY	—
+P	INFO-01-ACT-NOOP
+P	Read display
+P	INFO_READ
+P	INFO-01-GATE-READ
+P	READ_ONLY
+P	—
+ROW	INFO-01-ACT-FILTER	Filter current projection	INFO_READ	INFO-01-GATE-READ	UI_ONLY	—
+P	INFO-01-ACT-FILTER
+P	Filter current projection
+P	INFO_READ
+P	INFO-01-GATE-READ
+P	UI_ONLY
+P	—
+ROW	INFO-01-ACT-SOURCE-SELECT	Select source	INFO_READ	INFO-01-GATE-READ	CONTEXT_STATE	—
+P	INFO-01-ACT-SOURCE-SELECT
+P	Select source
+P	INFO_READ
+P	INFO-01-GATE-READ
+P	CONTEXT_STATE
+P	—
+ROW	INFO-01-ACT-ALERT-SELECT	Select alert	INFO_READ	INFO-01-GATE-READ	CONTEXT_STATE	—
+P	INFO-01-ACT-ALERT-SELECT
+P	Select alert
+P	INFO_READ
+P	INFO-01-GATE-READ
+P	CONTEXT_STATE
+P	—
+ROW	INFO-01-ACT-FACTPACK-SELECT	Select Fact Pack	INFO_READ	INFO-01-GATE-FACTPACK	CONTEXT_STATE	—
+P	INFO-01-ACT-FACTPACK-SELECT
+P	Select Fact Pack
+P	INFO_READ
+P	INFO-01-GATE-FACTPACK
+P	CONTEXT_STATE
+P	—
+ROW	INFO-01-ACT-FACT-TYPE	FACT / INFERENCE view	INFO_READ	INFO-01-GATE-FACTPACK	UI_ONLY	—
+P	INFO-01-ACT-FACT-TYPE
+P	FACT / INFERENCE view
+P	INFO_READ
+P	INFO-01-GATE-FACTPACK
+P	UI_ONLY
+P	—
+ROW	INFO-01-ACT-EVIDENCE-SELECT	Open evidence	INFO_READ	INFO-01-GATE-EVIDENCE	CONTEXT_STATE	—
+P	INFO-01-ACT-EVIDENCE-SELECT
+P	Open evidence
+P	INFO_READ
+P	INFO-01-GATE-EVIDENCE
+P	CONTEXT_STATE
+P	—
+ROW	INFO-01-ACT-RESEARCH-SELECT	Open research run	INFO_READ	INFO-01-GATE-READ	CONTEXT_STATE	—
+P	INFO-01-ACT-RESEARCH-SELECT
+P	Open research run
+P	INFO_READ
+P	INFO-01-GATE-READ
+P	CONTEXT_STATE
+P	—
+ROW	INFO-01-ACT-CANDIDATE-SELECT	Open Context Candidate	INFO_READ	INFO-01-GATE-CANDIDATE	CONTEXT_STATE	—
+P	INFO-01-ACT-CANDIDATE-SELECT
+P	Open Context Candidate
+P	INFO_READ
+P	INFO-01-GATE-CANDIDATE
+P	CONTEXT_STATE
+P	—
+ROW	INFO-01-ACT-CITATION-OPEN	Open Citation	INFO_READ	INFO-01-GATE-EVIDENCE	UI_ONLY	—
+P	INFO-01-ACT-CITATION-OPEN
+P	Open Citation
+P	INFO_READ
+P	INFO-01-GATE-EVIDENCE
+P	UI_ONLY
+P	—
+ROW	INFO-01-ACT-REFRESH	重新整理 / Refresh	INFO_REFRESH	INFO-01-GATE-REFRESH	REGISTERED_COMMAND	refreshProjection
+P	INFO-01-ACT-REFRESH
+P	重新整理 / Refresh
+P	INFO_REFRESH
+P	INFO-01-GATE-REFRESH
+P	REGISTERED_COMMAND
+P	refreshProjection
+ROW	INFO-01-ACT-SEARCH	搜尋資訊 / Search	INFO_SEARCH	INFO-01-GATE-SEARCH	REGISTERED_COMMAND	searchProjection
+P	INFO-01-ACT-SEARCH
+P	搜尋資訊 / Search
+P	INFO_SEARCH
+P	INFO-01-GATE-SEARCH
+P	REGISTERED_COMMAND
+P	searchProjection
+ROW	INFO-01-ACT-PROJECTION-READ	Read UI projection	INFO_PAGE_VIEW	INFO-01-GATE-PAGE	READ_MODEL_QUERY	getUiProjection
+P	INFO-01-ACT-PROJECTION-READ
+P	Read UI projection
+P	INFO_PAGE_VIEW
+P	INFO-01-GATE-PAGE
+P	READ_MODEL_QUERY
+P	getUiProjection
+ROW	INFO-01-ACT-EXPORT	匯出 Fact Pack / Projection	INFO_EXPORT	INFO-01-GATE-EXPORT	REGISTERED_COMMAND	exportProjection
+P	INFO-01-ACT-EXPORT
+P	匯出 Fact Pack / Projection
+P	INFO_EXPORT
+P	INFO-01-GATE-EXPORT
+P	REGISTERED_COMMAND
+P	exportProjection
+ROW	INFO-01-ACT-ADOPT-CONTEXT	採用 Context	INFO_CONTEXT_ADOPT	INFO-01-GATE-ADOPT	CANDIDATE_ADOPTION	adoptContextCandidate
+P	INFO-01-ACT-ADOPT-CONTEXT
+P	採用 Context
+P	INFO_CONTEXT_ADOPT
+P	INFO-01-GATE-ADOPT
+P	CANDIDATE_ADOPTION
+P	adoptContextCandidate
+ROW	INFO-01-ACT-CANDIDATE-DECIDE	候選決策 / Candidate Decision	INFO_CANDIDATE_DECIDE	INFO-01-GATE-DECIDE	CANDIDATE_DECISION	decideCandidate
+P	INFO-01-ACT-CANDIDATE-DECIDE
+P	候選決策 / Candidate Decision
+P	INFO_CANDIDATE_DECIDE
+P	INFO-01-GATE-DECIDE
+P	CANDIDATE_DECISION
+P	decideCandidate
+ROW	INFO-01-ACT-AUDIT-OPEN	查看 Audit / Correlation	INFO_PAGE_VIEW	INFO-01-GATE-PAGE	UI_ONLY	—
+P	INFO-01-ACT-AUDIT-OPEN
+P	查看 Audit / Correlation
+P	INFO_PAGE_VIEW
+P	INFO-01-GATE-PAGE
+P	UI_ONLY
+P	—
+P	Effectful Registered Operations
+ROW	Operation	Method / Boundary
+P	Operation
+P	Method / Boundary
+ROW	refreshProjection	POST /v1/projections/refresh
+P	refreshProjection
+P	POST /v1/projections/refresh
+ROW	searchProjection	POST /v1/search
+P	searchProjection
+P	POST /v1/search
+ROW	exportProjection	POST /v1/exports
+P	exportProjection
+P	POST /v1/exports
+ROW	adoptContextCandidate	POST /v1/context-candidates/{id}/adopt
+P	adoptContextCandidate
+P	POST /v1/context-candidates/{id}/adopt
+ROW	decideCandidate	POST /v1/candidates/{id}/decision
+P	decideCandidate
+P	POST /v1/candidates/{id}/decision
+P	adoptContextCandidate 與 decideCandidate 為分離 operation；INFO-01 不自行合併 state machine，server/state gates 決定可用性。
+P	12. Control / Field / Action / Gate / Permission Binding · 66/66
+ROW	Control UID	Section	Type / Label	Action	Gate	Permission
+P	Control UID
+P	Section
+P	Type / Label
+P	Action
+P	Gate
+P	Permission
+ROW	INFO-01-FLD-SCOPE	INFO-01-SEC-01	READONLY / Authorized Scope	INFO-01-ACT-NOOP	INFO-01-GATE-READ	INFO_READ
+P	INFO-01-FLD-SCOPE
+P	INFO-01-SEC-01
+P	READONLY / Authorized Scope
+P	INFO-01-ACT-NOOP
+P	INFO-01-GATE-READ
+P	INFO_READ
+ROW	INFO-01-FLD-PROJECTION-VERSION	INFO-01-SEC-01	READONLY / Projection Version	INFO-01-ACT-NOOP	INFO-01-GATE-READ	INFO_READ
+P	INFO-01-FLD-PROJECTION-VERSION
+P	INFO-01-SEC-01
+P	READONLY / Projection Version
+P	INFO-01-ACT-NOOP
+P	INFO-01-GATE-READ
+P	INFO_READ
+ROW	INFO-01-FLD-PAGE-STATE	INFO-01-SEC-01	READONLY / Page State	INFO-01-ACT-NOOP	INFO-01-GATE-READ	INFO_READ
+P	INFO-01-FLD-PAGE-STATE
+P	INFO-01-SEC-01
+P	READONLY / Page State
+P	INFO-01-ACT-NOOP
+P	INFO-01-GATE-READ
+P	INFO_READ
+ROW	INFO-01-FLD-LAST-REFRESH	INFO-01-SEC-01	READONLY / Last Refresh	INFO-01-ACT-NOOP	INFO-01-GATE-READ	INFO_READ
+P	INFO-01-FLD-LAST-REFRESH
+P	INFO-01-SEC-01
+P	READONLY / Last Refresh
+P	INFO-01-ACT-NOOP
+P	INFO-01-GATE-READ
+P	INFO_READ
+ROW	INFO-01-BTN-REFRESH	INFO-01-SEC-01	PRIMARY_BUTTON / 重新整理 / Refresh	INFO-01-ACT-REFRESH	INFO-01-GATE-REFRESH	INFO_REFRESH
+P	INFO-01-BTN-REFRESH
+P	INFO-01-SEC-01
+P	PRIMARY_BUTTON / 重新整理 / Refresh
+P	INFO-01-ACT-REFRESH
+P	INFO-01-GATE-REFRESH
+P	INFO_REFRESH
+ROW	INFO-01-BTN-SEARCH	INFO-01-SEC-01	BUTTON / 搜尋資訊 / Search	INFO-01-ACT-SEARCH	INFO-01-GATE-SEARCH	INFO_SEARCH
+P	INFO-01-BTN-SEARCH
+P	INFO-01-SEC-01
+P	BUTTON / 搜尋資訊 / Search
+P	INFO-01-ACT-SEARCH
+P	INFO-01-GATE-SEARCH
+P	INFO_SEARCH
+ROW	INFO-01-SEL-SCOPE	INFO-01-SEC-02	FILTER / 範圍篩選 / Scope Filter	INFO-01-ACT-FILTER	INFO-01-GATE-READ	INFO_READ
+P	INFO-01-SEL-SCOPE
+P	INFO-01-SEC-02
+P	FILTER / 範圍篩選 / Scope Filter
+P	INFO-01-ACT-FILTER
+P	INFO-01-GATE-READ
+P	INFO_READ
+ROW	INFO-01-LST-SOURCES	INFO-01-SEC-02	LIST / 來源健康狀態 / Source Health	INFO-01-ACT-SOURCE-SELECT	INFO-01-GATE-READ	INFO_READ
+P	INFO-01-LST-SOURCES
+P	INFO-01-SEC-02
+P	LIST / 來源健康狀態 / Source Health
+P	INFO-01-ACT-SOURCE-SELECT
+P	INFO-01-GATE-READ
+P	INFO_READ
+ROW	INFO-01-FLD-SOURCE-REF	INFO-01-SEC-02	READONLY / Source Ref	INFO-01-ACT-NOOP	INFO-01-GATE-READ	INFO_READ
+P	INFO-01-FLD-SOURCE-REF
+P	INFO-01-SEC-02
+P	READONLY / Source Ref
+P	INFO-01-ACT-NOOP
+P	INFO-01-GATE-READ
+P	INFO_READ
+ROW	INFO-01-FLD-SOURCE-HEALTH	INFO-01-SEC-02	READONLY / Health	INFO-01-ACT-NOOP	INFO-01-GATE-READ	INFO_READ
+P	INFO-01-FLD-SOURCE-HEALTH
+P	INFO-01-SEC-02
+P	READONLY / Health
+P	INFO-01-ACT-NOOP
+P	INFO-01-GATE-READ
+P	INFO_READ
+ROW	INFO-01-FLD-SOURCE-TIME	INFO-01-SEC-02	READONLY / Source Time	INFO-01-ACT-NOOP	INFO-01-GATE-READ	INFO_READ
+P	INFO-01-FLD-SOURCE-TIME
+P	INFO-01-SEC-02
+P	READONLY / Source Time
+P	INFO-01-ACT-NOOP
+P	INFO-01-GATE-READ
+P	INFO_READ
+ROW	INFO-01-FLD-SOURCE-CLASS	INFO-01-SEC-02	READONLY / Classification	INFO-01-ACT-NOOP	INFO-01-GATE-READ	INFO_READ
+P	INFO-01-FLD-SOURCE-CLASS
+P	INFO-01-SEC-02
+P	READONLY / Classification
+P	INFO-01-ACT-NOOP
+P	INFO-01-GATE-READ
+P	INFO_READ
+ROW	INFO-01-LST-ALERTS	INFO-01-SEC-03	LIST / 警示資訊流 / Alert Feed	INFO-01-ACT-ALERT-SELECT	INFO-01-GATE-READ	INFO_READ
+P	INFO-01-LST-ALERTS
+P	INFO-01-SEC-03
+P	LIST / 警示資訊流 / Alert Feed
+P	INFO-01-ACT-ALERT-SELECT
+P	INFO-01-GATE-READ
+P	INFO_READ
+ROW	INFO-01-FLD-ALERT-REF	INFO-01-SEC-03	READONLY / Alert Ref	INFO-01-ACT-NOOP	INFO-01-GATE-READ	INFO_READ
+P	INFO-01-FLD-ALERT-REF
+P	INFO-01-SEC-03
+P	READONLY / Alert Ref
+P	INFO-01-ACT-NOOP
+P	INFO-01-GATE-READ
+P	INFO_READ
+ROW	INFO-01-FLD-ALERT-SCOPE	INFO-01-SEC-03	READONLY / Target Scope	INFO-01-ACT-NOOP	INFO-01-GATE-READ	INFO_READ
+P	INFO-01-FLD-ALERT-SCOPE
+P	INFO-01-SEC-03
+P	READONLY / Target Scope
+P	INFO-01-ACT-NOOP
+P	INFO-01-GATE-READ
+P	INFO_READ
+ROW	INFO-01-FLD-ALERT-SOURCE	INFO-01-SEC-03	READONLY / Source / Evidence	INFO-01-ACT-NOOP	INFO-01-GATE-READ	INFO_READ
+P	INFO-01-FLD-ALERT-SOURCE
+P	INFO-01-SEC-03
+P	READONLY / Source / Evidence
+P	INFO-01-ACT-NOOP
+P	INFO-01-GATE-READ
+P	INFO_READ
+ROW	INFO-01-FLD-ALERT-STATUS	INFO-01-SEC-03	READONLY / Status	INFO-01-ACT-NOOP	INFO-01-GATE-READ	INFO_READ
+P	INFO-01-FLD-ALERT-STATUS
+P	INFO-01-SEC-03
+P	READONLY / Status
+P	INFO-01-ACT-NOOP
+P	INFO-01-GATE-READ
+P	INFO_READ
+ROW	INFO-01-LST-FACTPACKS	INFO-01-SEC-04	LIST / 最近 Fact Packs	INFO-01-ACT-FACTPACK-SELECT	INFO-01-GATE-FACTPACK	INFO_READ
+P	INFO-01-LST-FACTPACKS
+P	INFO-01-SEC-04
+P	LIST / 最近 Fact Packs
+P	INFO-01-ACT-FACTPACK-SELECT
+P	INFO-01-GATE-FACTPACK
+P	INFO_READ
+ROW	INFO-01-FLD-FACTPACK-REF	INFO-01-SEC-04	READONLY / Fact Pack Ref / Version	INFO-01-ACT-NOOP	INFO-01-GATE-FACTPACK	INFO_READ
+P	INFO-01-FLD-FACTPACK-REF
+P	INFO-01-SEC-04
+P	READONLY / Fact Pack Ref / Version
+P	INFO-01-ACT-NOOP
+P	INFO-01-GATE-FACTPACK
+P	INFO_READ
+ROW	INFO-01-FLD-FACTPACK-SCOPE	INFO-01-SEC-04	READONLY / Scope	INFO-01-ACT-NOOP	INFO-01-GATE-FACTPACK	INFO_READ
+P	INFO-01-FLD-FACTPACK-SCOPE
+P	INFO-01-SEC-04
+P	READONLY / Scope
+P	INFO-01-ACT-NOOP
+P	INFO-01-GATE-FACTPACK
+P	INFO_READ
+ROW	INFO-01-FLD-FACTPACK-STATE	INFO-01-SEC-04	READONLY / State	INFO-01-ACT-NOOP	INFO-01-GATE-FACTPACK	INFO_READ
+P	INFO-01-FLD-FACTPACK-STATE
+P	INFO-01-SEC-04
+P	READONLY / State
+P	INFO-01-ACT-NOOP
+P	INFO-01-GATE-FACTPACK
+P	INFO_READ
+ROW	INFO-01-FLD-FACTPACK-SOURCE-COUNT	INFO-01-SEC-04	READONLY / Source Coverage	INFO-01-ACT-NOOP	INFO-01-GATE-FACTPACK	INFO_READ
+P	INFO-01-FLD-FACTPACK-SOURCE-COUNT
+P	INFO-01-SEC-04
+P	READONLY / Source Coverage
+P	INFO-01-ACT-NOOP
+P	INFO-01-GATE-FACTPACK
+P	INFO_READ
+ROW	INFO-01-TAB-FACT	INFO-01-SEC-05	TAB / FACT	INFO-01-ACT-FACT-TYPE	INFO-01-GATE-FACTPACK	INFO_READ
+P	INFO-01-TAB-FACT
+P	INFO-01-SEC-05
+P	TAB / FACT
+P	INFO-01-ACT-FACT-TYPE
+P	INFO-01-GATE-FACTPACK
+P	INFO_READ
+ROW	INFO-01-TAB-INFERENCE	INFO-01-SEC-05	TAB / INFERENCE / RECOMMENDATION	INFO-01-ACT-FACT-TYPE	INFO-01-GATE-FACTPACK	INFO_READ
+P	INFO-01-TAB-INFERENCE
+P	INFO-01-SEC-05
+P	TAB / INFERENCE / RECOMMENDATION
+P	INFO-01-ACT-FACT-TYPE
+P	INFO-01-GATE-FACTPACK
+P	INFO_READ
+ROW	INFO-01-LST-FACTS	INFO-01-SEC-05	LIST / Facts	INFO-01-ACT-EVIDENCE-SELECT	INFO-01-GATE-EVIDENCE	INFO_READ
+P	INFO-01-LST-FACTS
+P	INFO-01-SEC-05
+P	LIST / Facts
+P	INFO-01-ACT-EVIDENCE-SELECT
+P	INFO-01-GATE-EVIDENCE
+P	INFO_READ
+ROW	INFO-01-LST-INFERENCES	INFO-01-SEC-05	LIST / Inferences / Recommendations	INFO-01-ACT-EVIDENCE-SELECT	INFO-01-GATE-EVIDENCE	INFO_READ
+P	INFO-01-LST-INFERENCES
+P	INFO-01-SEC-05
+P	LIST / Inferences / Recommendations
+P	INFO-01-ACT-EVIDENCE-SELECT
+P	INFO-01-GATE-EVIDENCE
+P	INFO_READ
+ROW	INFO-01-FLD-ITEM-CLASS	INFO-01-SEC-05	READONLY / Classification	INFO-01-ACT-NOOP	INFO-01-GATE-FACTPACK	INFO_READ
+P	INFO-01-FLD-ITEM-CLASS
+P	INFO-01-SEC-05
+P	READONLY / Classification
+P	INFO-01-ACT-NOOP
+P	INFO-01-GATE-FACTPACK
+P	INFO_READ
+ROW	INFO-01-FLD-ITEM-SCOPE	INFO-01-SEC-05	READONLY / Scope	INFO-01-ACT-NOOP	INFO-01-GATE-FACTPACK	INFO_READ
+P	INFO-01-FLD-ITEM-SCOPE
+P	INFO-01-SEC-05
+P	READONLY / Scope
+P	INFO-01-ACT-NOOP
+P	INFO-01-GATE-FACTPACK
+P	INFO_READ
+ROW	INFO-01-FLD-ITEM-SOURCE-TIME	INFO-01-SEC-05	READONLY / Source Time	INFO-01-ACT-NOOP	INFO-01-GATE-FACTPACK	INFO_READ
+P	INFO-01-FLD-ITEM-SOURCE-TIME
+P	INFO-01-SEC-05
+P	READONLY / Source Time
+P	INFO-01-ACT-NOOP
+P	INFO-01-GATE-FACTPACK
+P	INFO_READ
+ROW	INFO-01-FLD-ITEM-EVIDENCE	INFO-01-SEC-05	READONLY / Evidence Refs	INFO-01-ACT-NOOP	INFO-01-GATE-FACTPACK	INFO_READ
+P	INFO-01-FLD-ITEM-EVIDENCE
+P	INFO-01-SEC-05
+P	READONLY / Evidence Refs
+P	INFO-01-ACT-NOOP
+P	INFO-01-GATE-FACTPACK
+P	INFO_READ
+ROW	INFO-01-LST-EVIDENCE	INFO-01-SEC-06	LIST / Evidence List	INFO-01-ACT-EVIDENCE-SELECT	INFO-01-GATE-EVIDENCE	INFO_READ
+P	INFO-01-LST-EVIDENCE
+P	INFO-01-SEC-06
+P	LIST / Evidence List
+P	INFO-01-ACT-EVIDENCE-SELECT
+P	INFO-01-GATE-EVIDENCE
+P	INFO_READ
+ROW	INFO-01-FLD-EVIDENCE-REF	INFO-01-SEC-06	READONLY / Evidence Ref	INFO-01-ACT-NOOP	INFO-01-GATE-EVIDENCE	INFO_READ
+P	INFO-01-FLD-EVIDENCE-REF
+P	INFO-01-SEC-06
+P	READONLY / Evidence Ref
+P	INFO-01-ACT-NOOP
+P	INFO-01-GATE-EVIDENCE
+P	INFO_READ
+ROW	INFO-01-FLD-EVIDENCE-SOURCE	INFO-01-SEC-06	READONLY / Source	INFO-01-ACT-NOOP	INFO-01-GATE-EVIDENCE	INFO_READ
+P	INFO-01-FLD-EVIDENCE-SOURCE
+P	INFO-01-SEC-06
+P	READONLY / Source
+P	INFO-01-ACT-NOOP
+P	INFO-01-GATE-EVIDENCE
+P	INFO_READ
+ROW	INFO-01-FLD-EVIDENCE-TIME	INFO-01-SEC-06	READONLY / Source / Collected Time	INFO-01-ACT-NOOP	INFO-01-GATE-EVIDENCE	INFO_READ
+P	INFO-01-FLD-EVIDENCE-TIME
+P	INFO-01-SEC-06
+P	READONLY / Source / Collected Time
+P	INFO-01-ACT-NOOP
+P	INFO-01-GATE-EVIDENCE
+P	INFO_READ
+ROW	INFO-01-FLD-EVIDENCE-SCOPE	INFO-01-SEC-06	READONLY / Scope	INFO-01-ACT-NOOP	INFO-01-GATE-EVIDENCE	INFO_READ
+P	INFO-01-FLD-EVIDENCE-SCOPE
+P	INFO-01-SEC-06
+P	READONLY / Scope
+P	INFO-01-ACT-NOOP
+P	INFO-01-GATE-EVIDENCE
+P	INFO_READ
+ROW	INFO-01-FLD-EVIDENCE-CLASS	INFO-01-SEC-06	READONLY / Classification	INFO-01-ACT-NOOP	INFO-01-GATE-EVIDENCE	INFO_READ
+P	INFO-01-FLD-EVIDENCE-CLASS
+P	INFO-01-SEC-06
+P	READONLY / Classification
+P	INFO-01-ACT-NOOP
+P	INFO-01-GATE-EVIDENCE
+P	INFO_READ
+ROW	INFO-01-BTN-CITATION	INFO-01-SEC-06	BUTTON / 查看 Citation	INFO-01-ACT-CITATION-OPEN	INFO-01-GATE-EVIDENCE	INFO_READ
+P	INFO-01-BTN-CITATION
+P	INFO-01-SEC-06
+P	BUTTON / 查看 Citation
+P	INFO-01-ACT-CITATION-OPEN
+P	INFO-01-GATE-EVIDENCE
+P	INFO_READ
+ROW	INFO-01-FLD-FRESHNESS	INFO-01-SEC-07	READONLY / Freshness	INFO-01-ACT-NOOP	INFO-01-GATE-READ	INFO_READ
+P	INFO-01-FLD-FRESHNESS
+P	INFO-01-SEC-07
+P	READONLY / Freshness
+P	INFO-01-ACT-NOOP
+P	INFO-01-GATE-READ
+P	INFO_READ
+ROW	INFO-01-FLD-COMPLETENESS	INFO-01-SEC-07	READONLY / Completeness	INFO-01-ACT-NOOP	INFO-01-GATE-READ	INFO_READ
+P	INFO-01-FLD-COMPLETENESS
+P	INFO-01-SEC-07
+P	READONLY / Completeness
+P	INFO-01-ACT-NOOP
+P	INFO-01-GATE-READ
+P	INFO_READ
+ROW	INFO-01-FLD-CONFIDENCE	INFO-01-SEC-07	READONLY / Confidence	INFO-01-ACT-NOOP	INFO-01-GATE-READ	INFO_READ
+P	INFO-01-FLD-CONFIDENCE
+P	INFO-01-SEC-07
+P	READONLY / Confidence
+P	INFO-01-ACT-NOOP
+P	INFO-01-GATE-READ
+P	INFO_READ
+ROW	INFO-01-FLD-VERIFICATION-TIME	INFO-01-SEC-07	READONLY / Last Verified	INFO-01-ACT-NOOP	INFO-01-GATE-READ	INFO_READ
+P	INFO-01-FLD-VERIFICATION-TIME
+P	INFO-01-SEC-07
+P	READONLY / Last Verified
+P	INFO-01-ACT-NOOP
+P	INFO-01-GATE-READ
+P	INFO_READ
+ROW	INFO-01-LST-RESEARCH	INFO-01-SEC-08	LIST / 研究佇列 / Research Queue	INFO-01-ACT-RESEARCH-SELECT	INFO-01-GATE-READ	INFO_READ
+P	INFO-01-LST-RESEARCH
+P	INFO-01-SEC-08
+P	LIST / 研究佇列 / Research Queue
+P	INFO-01-ACT-RESEARCH-SELECT
+P	INFO-01-GATE-READ
+P	INFO_READ
+ROW	INFO-01-FLD-RESEARCH-REF	INFO-01-SEC-08	READONLY / Research Run Ref	INFO-01-ACT-NOOP	INFO-01-GATE-READ	INFO_READ
+P	INFO-01-FLD-RESEARCH-REF
+P	INFO-01-SEC-08
+P	READONLY / Research Run Ref
+P	INFO-01-ACT-NOOP
+P	INFO-01-GATE-READ
+P	INFO_READ
+ROW	INFO-01-FLD-RESEARCH-STATE	INFO-01-SEC-08	READONLY / State	INFO-01-ACT-NOOP	INFO-01-GATE-READ	INFO_READ
+P	INFO-01-FLD-RESEARCH-STATE
+P	INFO-01-SEC-08
+P	READONLY / State
+P	INFO-01-ACT-NOOP
+P	INFO-01-GATE-READ
+P	INFO_READ
+ROW	INFO-01-FLD-RESEARCH-SCOPE	INFO-01-SEC-08	READONLY / Scope	INFO-01-ACT-NOOP	INFO-01-GATE-READ	INFO_READ
+P	INFO-01-FLD-RESEARCH-SCOPE
+P	INFO-01-SEC-08
+P	READONLY / Scope
+P	INFO-01-ACT-NOOP
+P	INFO-01-GATE-READ
+P	INFO_READ
+ROW	INFO-01-FLD-RESEARCH-RESULT	INFO-01-SEC-08	READONLY / Result / Fact Pack Ref	INFO-01-ACT-NOOP	INFO-01-GATE-READ	INFO_READ
+P	INFO-01-FLD-RESEARCH-RESULT
+P	INFO-01-SEC-08
+P	READONLY / Result / Fact Pack Ref
+P	INFO-01-ACT-NOOP
+P	INFO-01-GATE-READ
+P	INFO_READ
+ROW	INFO-01-FLD-CANDIDATE-ID	INFO-01-SEC-09	READONLY / Context Candidate ID	INFO-01-ACT-NOOP	INFO-01-GATE-CANDIDATE	INFO_READ
+P	INFO-01-FLD-CANDIDATE-ID
+P	INFO-01-SEC-09
+P	READONLY / Context Candidate ID
+P	INFO-01-ACT-NOOP
+P	INFO-01-GATE-CANDIDATE
+P	INFO_READ
+ROW	INFO-01-FLD-CANDIDATE-SCOPE	INFO-01-SEC-09	READONLY / Context Scope	INFO-01-ACT-NOOP	INFO-01-GATE-CANDIDATE	INFO_READ
+P	INFO-01-FLD-CANDIDATE-SCOPE
+P	INFO-01-SEC-09
+P	READONLY / Context Scope
+P	INFO-01-ACT-NOOP
+P	INFO-01-GATE-CANDIDATE
+P	INFO_READ
+ROW	INFO-01-FLD-CANDIDATE-FACTS	INFO-01-SEC-09	READONLY / Selected Facts	INFO-01-ACT-NOOP	INFO-01-GATE-CANDIDATE	INFO_READ
+P	INFO-01-FLD-CANDIDATE-FACTS
+P	INFO-01-SEC-09
+P	READONLY / Selected Facts
+P	INFO-01-ACT-NOOP
+P	INFO-01-GATE-CANDIDATE
+P	INFO_READ
+ROW	INFO-01-FLD-CANDIDATE-CITATIONS	INFO-01-SEC-09	READONLY / Citation Check	INFO-01-ACT-NOOP	INFO-01-GATE-CANDIDATE	INFO_READ
+P	INFO-01-FLD-CANDIDATE-CITATIONS
+P	INFO-01-SEC-09
+P	READONLY / Citation Check
+P	INFO-01-ACT-NOOP
+P	INFO-01-GATE-CANDIDATE
+P	INFO_READ
+ROW	INFO-01-FLD-CANDIDATE-PREVIEW	INFO-01-SEC-09	READONLY / Candidate Preview	INFO-01-ACT-NOOP	INFO-01-GATE-CANDIDATE	INFO_READ
+P	INFO-01-FLD-CANDIDATE-PREVIEW
+P	INFO-01-SEC-09
+P	READONLY / Candidate Preview
+P	INFO-01-ACT-NOOP
+P	INFO-01-GATE-CANDIDATE
+P	INFO_READ
+ROW	INFO-01-FLD-ADOPTION-REVIEW	INFO-01-SEC-09	READONLY / Adoption Review	INFO-01-ACT-NOOP	INFO-01-GATE-CANDIDATE	INFO_READ
+P	INFO-01-FLD-ADOPTION-REVIEW
+P	INFO-01-SEC-09
+P	READONLY / Adoption Review
+P	INFO-01-ACT-NOOP
+P	INFO-01-GATE-CANDIDATE
+P	INFO_READ
+ROW	INFO-01-FLD-CANDIDATE-STATE	INFO-01-SEC-09	READONLY / Candidate State	INFO-01-ACT-NOOP	INFO-01-GATE-CANDIDATE	INFO_READ
+P	INFO-01-FLD-CANDIDATE-STATE
+P	INFO-01-SEC-09
+P	READONLY / Candidate State
+P	INFO-01-ACT-NOOP
+P	INFO-01-GATE-CANDIDATE
+P	INFO_READ
+ROW	INFO-01-LST-CANDIDATES	INFO-01-SEC-09	LIST / Context Candidates	INFO-01-ACT-CANDIDATE-SELECT	INFO-01-GATE-CANDIDATE	INFO_READ
+P	INFO-01-LST-CANDIDATES
+P	INFO-01-SEC-09
+P	LIST / Context Candidates
+P	INFO-01-ACT-CANDIDATE-SELECT
+P	INFO-01-GATE-CANDIDATE
+P	INFO_READ
+ROW	INFO-01-FLD-CITATION-REF	INFO-01-SEC-10	READONLY / Citation Ref	INFO-01-ACT-NOOP	INFO-01-GATE-EVIDENCE	INFO_READ
+P	INFO-01-FLD-CITATION-REF
+P	INFO-01-SEC-10
+P	READONLY / Citation Ref
+P	INFO-01-ACT-NOOP
+P	INFO-01-GATE-EVIDENCE
+P	INFO_READ
+ROW	INFO-01-FLD-CITATION-SOURCE	INFO-01-SEC-10	READONLY / Source Ref	INFO-01-ACT-NOOP	INFO-01-GATE-EVIDENCE	INFO_READ
+P	INFO-01-FLD-CITATION-SOURCE
+P	INFO-01-SEC-10
+P	READONLY / Source Ref
+P	INFO-01-ACT-NOOP
+P	INFO-01-GATE-EVIDENCE
+P	INFO_READ
+ROW	INFO-01-FLD-CITATION-EVIDENCE	INFO-01-SEC-10	READONLY / Evidence Ref	INFO-01-ACT-NOOP	INFO-01-GATE-EVIDENCE	INFO_READ
+P	INFO-01-FLD-CITATION-EVIDENCE
+P	INFO-01-SEC-10
+P	READONLY / Evidence Ref
+P	INFO-01-ACT-NOOP
+P	INFO-01-GATE-EVIDENCE
+P	INFO_READ
+ROW	INFO-01-FLD-CITATION-TIME	INFO-01-SEC-10	READONLY / Source Time	INFO-01-ACT-NOOP	INFO-01-GATE-EVIDENCE	INFO_READ
+P	INFO-01-FLD-CITATION-TIME
+P	INFO-01-SEC-10
+P	READONLY / Source Time
+P	INFO-01-ACT-NOOP
+P	INFO-01-GATE-EVIDENCE
+P	INFO_READ
+ROW	INFO-01-BTN-EXPORT	INFO-01-SEC-11	BUTTON / 匯出 Fact Pack / Projection	INFO-01-ACT-EXPORT	INFO-01-GATE-EXPORT	INFO_EXPORT
+P	INFO-01-BTN-EXPORT
+P	INFO-01-SEC-11
+P	BUTTON / 匯出 Fact Pack / Projection
+P	INFO-01-ACT-EXPORT
+P	INFO-01-GATE-EXPORT
+P	INFO_EXPORT
+ROW	INFO-01-BTN-ADOPT-CONTEXT	INFO-01-SEC-11	PRIMARY_BUTTON / 採用 Context	INFO-01-ACT-ADOPT-CONTEXT	INFO-01-GATE-ADOPT	INFO_CONTEXT_ADOPT
+P	INFO-01-BTN-ADOPT-CONTEXT
+P	INFO-01-SEC-11
+P	PRIMARY_BUTTON / 採用 Context
+P	INFO-01-ACT-ADOPT-CONTEXT
+P	INFO-01-GATE-ADOPT
+P	INFO_CONTEXT_ADOPT
+ROW	INFO-01-BTN-CANDIDATE-DECIDE	INFO-01-SEC-11	BUTTON / 候選決策 / Candidate Decision	INFO-01-ACT-CANDIDATE-DECIDE	INFO-01-GATE-DECIDE	INFO_CANDIDATE_DECIDE
+P	INFO-01-BTN-CANDIDATE-DECIDE
+P	INFO-01-SEC-11
+P	BUTTON / 候選決策 / Candidate Decision
+P	INFO-01-ACT-CANDIDATE-DECIDE
+P	INFO-01-GATE-DECIDE
+P	INFO_CANDIDATE_DECIDE
+ROW	INFO-01-FLD-SOURCE-SYNC	INFO-01-SEC-12	READONLY / Source / Last Sync	INFO-01-ACT-NOOP	INFO-01-GATE-READ	INFO_READ
+P	INFO-01-FLD-SOURCE-SYNC
+P	INFO-01-SEC-12
+P	READONLY / Source / Last Sync
+P	INFO-01-ACT-NOOP
+P	INFO-01-GATE-READ
+P	INFO_READ
+ROW	INFO-01-FLD-DISABLED	INFO-01-SEC-12	READONLY / Disabled Reason	INFO-01-ACT-NOOP	INFO-01-GATE-READ	INFO_READ
+P	INFO-01-FLD-DISABLED
+P	INFO-01-SEC-12
+P	READONLY / Disabled Reason
+P	INFO-01-ACT-NOOP
+P	INFO-01-GATE-READ
+P	INFO_READ
+ROW	INFO-01-FLD-CORRELATION	INFO-01-SEC-12	READONLY / Correlation / Result Ref	INFO-01-ACT-NOOP	INFO-01-GATE-READ	INFO_READ
+P	INFO-01-FLD-CORRELATION
+P	INFO-01-SEC-12
+P	READONLY / Correlation / Result Ref
+P	INFO-01-ACT-NOOP
+P	INFO-01-GATE-READ
+P	INFO_READ
+ROW	INFO-01-FLD-FIREWALL	INFO-01-SEC-12	READONLY / Knowledge Firewall	INFO-01-ACT-NOOP	INFO-01-GATE-READ	INFO_READ
+P	INFO-01-FLD-FIREWALL
+P	INFO-01-SEC-12
+P	READONLY / Knowledge Firewall
+P	INFO-01-ACT-NOOP
+P	INFO-01-GATE-READ
+P	INFO_READ
+ROW	INFO-01-BTN-AUDIT	INFO-01-SEC-12	BUTTON / 查看 Audit / Correlation	INFO-01-ACT-AUDIT-OPEN	INFO-01-GATE-PAGE	INFO_PAGE_VIEW
+P	INFO-01-BTN-AUDIT
+P	INFO-01-SEC-12
+P	BUTTON / 查看 Audit / Correlation
+P	INFO-01-ACT-AUDIT-OPEN
+P	INFO-01-GATE-PAGE
+P	INFO_PAGE_VIEW
+P	13. Gate / Permission Contract
+P	13.1 Gates · 10/10
+ROW	Gate UID	Condition
+P	Gate UID
+P	Condition
+ROW	INFO-01-GATE-PAGE	explicit account page permission + scope + condition + classification mask + audit
+P	INFO-01-GATE-PAGE
+P	explicit account page permission + scope + condition + classification mask + audit
+ROW	INFO-01-GATE-READ	authorized scope + information.read + read_model_version available
+P	INFO-01-GATE-READ
+P	authorized scope + information.read + read_model_version available
+ROW	INFO-01-GATE-FACTPACK	selected exact Fact Pack exists in authorized projection
+P	INFO-01-GATE-FACTPACK
+P	selected exact Fact Pack exists in authorized projection
+ROW	INFO-01-GATE-EVIDENCE	selected exact Fact/Evidence/Citation ref exists and is authorized
+P	INFO-01-GATE-EVIDENCE
+P	selected exact Fact/Evidence/Citation ref exists and is authorized
+ROW	INFO-01-GATE-REFRESH	projection.refresh permission + registered RefreshProjectionRequest + server state/idempotency/audit gates
+P	INFO-01-GATE-REFRESH
+P	projection.refresh permission + registered RefreshProjectionRequest + server state/idempotency/audit gates
+ROW	INFO-01-GATE-SEARCH	projection.search permission + registered SearchProjectionRequest + server state/idempotency/audit gates
+P	INFO-01-GATE-SEARCH
+P	projection.search permission + registered SearchProjectionRequest + server state/idempotency/audit gates
+ROW	INFO-01-GATE-EXPORT	projection.export permission + exact scope/projection + ExportProjectionRequest + server gates
+P	INFO-01-GATE-EXPORT
+P	projection.export permission + exact scope/projection + ExportProjectionRequest + server gates
+ROW	INFO-01-GATE-CANDIDATE	exact evidence-backed Context Candidate + authorized target scope + citation/adoption-review projection
+P	INFO-01-GATE-CANDIDATE
+P	exact evidence-backed Context Candidate + authorized target scope + citation/adoption-review projection
+ROW	INFO-01-GATE-ADOPT	knowledge.candidate.create + exact context_candidate_id + decision_reason + server state/version/idempotency/audit gates
+P	INFO-01-GATE-ADOPT
+P	knowledge.candidate.create + exact context_candidate_id + decision_reason + server state/version/idempotency/audit gates
+ROW	INFO-01-GATE-DECIDE	candidate.decide + exact candidate_id + registered decision + server state/version/idempotency/audit gates
+P	INFO-01-GATE-DECIDE
+P	candidate.decide + exact candidate_id + registered decision + server state/version/idempotency/audit gates
+P	13.2 Permissions · 7/7
+ROW	Permission UID	Backend Scope	Purpose
+P	Permission UID
+P	Backend Scope
+P	Purpose
+ROW	INFO_PAGE_VIEW	page.view	View authorized latest-information page/sections
+P	INFO_PAGE_VIEW
+P	page.view
+P	View authorized latest-information page/sections
+ROW	INFO_READ	information.read	Read authorized source/fact/evidence/research projection
+P	INFO_READ
+P	information.read
+P	Read authorized source/fact/evidence/research projection
+ROW	INFO_REFRESH	projection.refresh	Refresh registered projection
+P	INFO_REFRESH
+P	projection.refresh
+P	Refresh registered projection
+ROW	INFO_SEARCH	projection.search	Search registered projection
+P	INFO_SEARCH
+P	projection.search
+P	Search registered projection
+ROW	INFO_EXPORT	projection.export	Export authorized projection
+P	INFO_EXPORT
+P	projection.export
+P	Export authorized projection
+ROW	INFO_CONTEXT_ADOPT	knowledge.candidate.create	Adopt governed Context Candidate
+P	INFO_CONTEXT_ADOPT
+P	knowledge.candidate.create
+P	Adopt governed Context Candidate
+ROW	INFO_CANDIDATE_DECIDE	candidate.decide	Decide registered Candidate
+P	INFO_CANDIDATE_DECIDE
+P	candidate.decide
+P	Decide registered Candidate
+P	14. State / Error / Recovery
+P	14.1 Page States · 8/8
+ROW	State UID	Display	Definition
+P	State UID
+P	Display
+P	Definition
+ROW	INFO-01-ST-LOADING	LOADING	Loading authorized projection
+P	INFO-01-ST-LOADING
+P	LOADING
+P	Loading authorized projection
+ROW	INFO-01-ST-READY	READY	Authorized information projection ready
+P	INFO-01-ST-READY
+P	READY
+P	Authorized information projection ready
+ROW	INFO-01-ST-EMPTY	EMPTY	Authorized projection has no result
+P	INFO-01-ST-EMPTY
+P	EMPTY
+P	Authorized projection has no result
+ROW	INFO-01-ST-STALE	STALE	Source/fact projection is stale according to governed freshness data
+P	INFO-01-ST-STALE
+P	STALE
+P	Source/fact projection is stale according to governed freshness data
+ROW	INFO-01-ST-INCOMPLETE	INCOMPLETE	Required source/evidence/completeness data is missing
+P	INFO-01-ST-INCOMPLETE
+P	INCOMPLETE
+P	Required source/evidence/completeness data is missing
+ROW	INFO-01-ST-ERROR	ERROR	Registered read/action error
+P	INFO-01-ST-ERROR
+P	ERROR
+P	Registered read/action error
+ROW	INFO-01-ST-POLICY	POLICY_BLOCKED	Permission/classification/scope policy blocks access/action
+P	INFO-01-ST-POLICY
+P	POLICY_BLOCKED
+P	Permission/classification/scope policy blocks access/action
+ROW	INFO-01-ST-CANDIDATE	CONTEXT_CANDIDATE	Evidence-backed Context Candidate available for governed review
+P	INFO-01-ST-CANDIDATE
+P	CONTEXT_CANDIDATE
+P	Evidence-backed Context Candidate available for governed review
+P	14.2 Errors · 12/12
+ROW	Error UID	Context	Recovery
+P	Error UID
+P	Context
+P	Recovery
+ROW	INFO-01-ERR-CONTEXT-001	Authorized scope/read model unavailable or version mismatch	BLOCK dependent panels; show actual server reason
+P	INFO-01-ERR-CONTEXT-001
+P	Authorized scope/read model unavailable or version mismatch
+P	BLOCK dependent panels; show actual server reason
+ROW	INFO-01-ERR-SOURCE-001	Source health/source metadata unavailable or unauthorized	Show unavailable/masked state; never fabricate source
+P	INFO-01-ERR-SOURCE-001
+P	Source health/source metadata unavailable or unauthorized
+P	Show unavailable/masked state; never fabricate source
+ROW	INFO-01-ERR-FRESHNESS-001	Freshness/source_time missing, stale or inconsistent	Show STALE/INCOMPLETE as returned; never relabel current
+P	INFO-01-ERR-FRESHNESS-001
+P	Freshness/source_time missing, stale or inconsistent
+P	Show STALE/INCOMPLETE as returned; never relabel current
+ROW	INFO-01-ERR-FACTPACK-001	Fact Pack missing, inaccessible or invalid exact ref	BLOCK detail; preserve list/context
+P	INFO-01-ERR-FACTPACK-001
+P	Fact Pack missing, inaccessible or invalid exact ref
+P	BLOCK detail; preserve list/context
+ROW	INFO-01-ERR-FACT-001	FACT lacks required source/source_time/scope/completeness/confidence/classification	Do not present as validated FACT; surface missing contract
+P	INFO-01-ERR-FACT-001
+P	FACT lacks required source/source_time/scope/completeness/confidence/classification
+P	Do not present as validated FACT; surface missing contract
+ROW	INFO-01-ERR-EVIDENCE-001	Evidence/citation ref missing or invalid	Show broken evidence state; block evidence-dependent adoption
+P	INFO-01-ERR-EVIDENCE-001
+P	Evidence/citation ref missing or invalid
+P	Show broken evidence state; block evidence-dependent adoption
+ROW	INFO-01-ERR-RESEARCH-001	Research run/queue projection missing or failed	Show actual status/error; do not create local retry/start action
+P	INFO-01-ERR-RESEARCH-001
+P	Research run/queue projection missing or failed
+P	Show actual status/error; do not create local retry/start action
+ROW	INFO-01-ERR-SEARCH-001	Search request invalid/denied/stale	Show registered error + retry eligibility
+P	INFO-01-ERR-SEARCH-001
+P	Search request invalid/denied/stale
+P	Show registered error + retry eligibility
+ROW	INFO-01-ERR-EXPORT-001	Export request invalid/denied/stale	Show registered error; no local file fabrication
+P	INFO-01-ERR-EXPORT-001
+P	Export request invalid/denied/stale
+P	Show registered error; no local file fabrication
+ROW	INFO-01-ERR-CANDIDATE-001	Context Candidate scope/evidence/citation/adoption-review invalid	BLOCK candidate action; preserve candidate projection
+P	INFO-01-ERR-CANDIDATE-001
+P	Context Candidate scope/evidence/citation/adoption-review invalid
+P	BLOCK candidate action; preserve candidate projection
+ROW	INFO-01-ERR-PERM-001	Permission/scope/classification denied	Hide/disable/mask according to registered permission result
+P	INFO-01-ERR-PERM-001
+P	Permission/scope/classification denied
+P	Hide/disable/mask according to registered permission result
+ROW	INFO-01-ERR-UNDEFINED-001	Unlisted Section/Component/Control/Action/Gate/Permission/Port requested	BLOCK + REPORT_AUTHORITY_GAP
+P	INFO-01-ERR-UNDEFINED-001
+P	Unlisted Section/Component/Control/Action/Gate/Permission/Port requested
+P	BLOCK + REPORT_AUTHORITY_GAP
+P	15. Integration Ports · 6/6
+ROW	Port UID	Boundary	Operation	Method	Permission	Exposure
+P	Port UID
+P	Boundary
+P	Operation
+P	Method
+P	Permission
+P	Exposure
+ROW	INFO-01-PORT-PROJECTION	Latest Information UI Projection	getUiProjection	GET /v1/ui-projections/{pageUid}	page.view	INFO-01-ACT-PROJECTION-READ
+P	INFO-01-PORT-PROJECTION
+P	Latest Information UI Projection
+P	getUiProjection
+P	GET /v1/ui-projections/{pageUid}
+P	page.view
+P	INFO-01-ACT-PROJECTION-READ
+ROW	INFO-01-PORT-REFRESH	Projection Refresh	refreshProjection	POST /v1/projections/refresh	projection.refresh	INFO-01-ACT-REFRESH
+P	INFO-01-PORT-REFRESH
+P	Projection Refresh
+P	refreshProjection
+P	POST /v1/projections/refresh
+P	projection.refresh
+P	INFO-01-ACT-REFRESH
+ROW	INFO-01-PORT-SEARCH	Projection Search	searchProjection	POST /v1/search	projection.search	INFO-01-ACT-SEARCH
+P	INFO-01-PORT-SEARCH
+P	Projection Search
+P	searchProjection
+P	POST /v1/search
+P	projection.search
+P	INFO-01-ACT-SEARCH
+ROW	INFO-01-PORT-EXPORT	Fact Pack / Projection Export	exportProjection	POST /v1/exports	projection.export	INFO-01-ACT-EXPORT
+P	INFO-01-PORT-EXPORT
+P	Fact Pack / Projection Export
+P	exportProjection
+P	POST /v1/exports
+P	projection.export
+P	INFO-01-ACT-EXPORT
+ROW	INFO-01-PORT-CONTEXT-ADOPT	Context Candidate Adoption	adoptContextCandidate	POST /v1/context-candidates/{id}/adopt	knowledge.candidate.create	INFO-01-ACT-ADOPT-CONTEXT
+P	INFO-01-PORT-CONTEXT-ADOPT
+P	Context Candidate Adoption
+P	adoptContextCandidate
+P	POST /v1/context-candidates/{id}/adopt
+P	knowledge.candidate.create
+P	INFO-01-ACT-ADOPT-CONTEXT
+ROW	INFO-01-PORT-CANDIDATE-DECIDE	Candidate Decision	decideCandidate	POST /v1/candidates/{id}/decision	candidate.decide	INFO-01-ACT-CANDIDATE-DECIDE
+P	INFO-01-PORT-CANDIDATE-DECIDE
+P	Candidate Decision
+P	decideCandidate
+P	POST /v1/candidates/{id}/decision
+P	candidate.decide
+P	INFO-01-ACT-CANDIDATE-DECIDE
+P	Shared Acquisition Boundary
+P	Raw crawl/research runtime is NOT owned by INFO-01.
+P	INFO-01 consumes governed source/fact/evidence projections.
+P	Research and fact acquisition use shared external-data acquisition runtime only when registered.
+P	No provider secrets or unregistered owner database reads are rendered.
+P	16. Data Binding / Fact Pack Contract
+ROW	Block	Required
+P	Block
+P	Required
+ROW	Fact Pack identity	exact ref/version
+P	Fact Pack identity
+P	exact ref/version
+ROW	FACT list	source + source_time + scope + completeness + confidence + classification + evidence refs
+P	FACT list
+P	source + source_time + scope + completeness + confidence + classification + evidence refs
+ROW	INFERENCE / Recommendation	explicit non-FACT classification + supporting facts/evidence
+P	INFERENCE / Recommendation
+P	explicit non-FACT classification + supporting facts/evidence
+ROW	Evidence	exact source/evidence refs + metadata/time/classification
+P	Evidence
+P	exact source/evidence refs + metadata/time/classification
+ROW	Quality	governed Freshness / Completeness / Confidence values; no local threshold
+P	Quality
+P	governed Freshness / Completeness / Confidence values; no local threshold
+ROW	Citation	exact source/evidence binding; never fabricated
+P	Citation
+P	exact source/evidence binding; never fabricated
+ROW	Research	read-model status only
+P	Research
+P	read-model status only
+ROW	Selection	in-page exact selection; no second Fact Pack page
+P	Selection
+P	in-page exact selection; no second Fact Pack page
+P	17. Context Candidate / Adoption Contract
+ROW	Block	Rule
+P	Block
+P	Rule
+ROW	Context Scope	exact authorized target scope
+P	Context Scope
+P	exact authorized target scope
+ROW	Fact Selection	evidence-backed FACT refs only
+P	Fact Selection
+P	evidence-backed FACT refs only
+ROW	Citation Check	exact citation/evidence/source refs
+P	Citation Check
+P	exact citation/evidence/source refs
+ROW	Candidate Preview	governed read model
+P	Candidate Preview
+P	governed read model
+ROW	Adoption Review	server-owned governed review state
+P	Adoption Review
+P	server-owned governed review state
+ROW	Adopt Context	records governed Context adoption only
+P	Adopt Context
+P	records governed Context adoption only
+ROW	Candidate Decision	separate registered decideCandidate operation
+P	Candidate Decision
+P	separate registered decideCandidate operation
+ROW	Forbidden	no direct Canon / Lock / Priority / Budget / Task / Release / Publish mutation
+P	Forbidden
+P	no direct Canon / Lock / Priority / Budget / Task / Release / Publish mutation
+P	18. Function ↔ Visual Traceability
+ROW	Function	Visual Region	Controls / Output
+P	Function
+P	Visual Region
+P	Controls / Output
+ROW	Projection Control	INFO-01-VIS-CONTEXT	Scope / version / state / refresh / search
+P	Projection Control
+P	INFO-01-VIS-CONTEXT
+P	Scope / version / state / refresh / search
+ROW	Source Health	INFO-01-VIS-LEFT-SOURCE	Scope filter / source health / metadata
+P	Source Health
+P	INFO-01-VIS-LEFT-SOURCE
+P	Scope filter / source health / metadata
+ROW	Alerts	INFO-01-VIS-LEFT-ALERT	Alert feed / exact alert detail
+P	Alerts
+P	INFO-01-VIS-LEFT-ALERT
+P	Alert feed / exact alert detail
+ROW	Fact Pack	INFO-01-VIS-FACTPACK	Recent packs / exact ref / scope / state
+P	Fact Pack
+P	INFO-01-VIS-FACTPACK
+P	Recent packs / exact ref / scope / state
+ROW	Fact-Inference	INFO-01-VIS-FACT	FACT tab / INFERENCE tab / item metadata
+P	Fact-Inference
+P	INFO-01-VIS-FACT
+P	FACT tab / INFERENCE tab / item metadata
+ROW	Evidence	INFO-01-VIS-EVIDENCE	Evidence list / source / time / class / citation
+P	Evidence
+P	INFO-01-VIS-EVIDENCE
+P	Evidence list / source / time / class / citation
+ROW	Quality	INFO-01-VIS-RIGHT-QUALITY	Freshness / Completeness / Confidence / Verified
+P	Quality
+P	INFO-01-VIS-RIGHT-QUALITY
+P	Freshness / Completeness / Confidence / Verified
+ROW	Research	INFO-01-VIS-RIGHT-RESEARCH	Queue/run status only
+P	Research
+P	INFO-01-VIS-RIGHT-RESEARCH
+P	Queue/run status only
+ROW	Candidate	INFO-01-VIS-CANDIDATE	Scope / facts / citations / preview / review
+P	Candidate
+P	INFO-01-VIS-CANDIDATE
+P	Scope / facts / citations / preview / review
+ROW	Citation	INFO-01-VIS-CITATION	Exact citation detail
+P	Citation
+P	INFO-01-VIS-CITATION
+P	Exact citation detail
+ROW	Action	INFO-01-VIS-ACTION	Export / Adopt / Decide
+P	Action
+P	INFO-01-VIS-ACTION
+P	Export / Adopt / Decide
+ROW	Audit	INFO-01-VIS-STATUS	Sync / disabled / correlation / firewall / audit
+P	Audit
+P	INFO-01-VIS-STATUS
+P	Sync / disabled / correlation / firewall / audit
+P	19. Visual Generation Manifest
+ROW	Visual	Purpose	Status
+P	Visual
+P	Purpose
+P	Status
+ROW	A	Main Fact Pack workbench	CANDIDATE
+P	A
+P	Main Fact Pack workbench
+P	CANDIDATE
+ROW	B	FACT vs INFERENCE + Citation Drawer	CANDIDATE
+P	B
+P	FACT vs INFERENCE + Citation Drawer
+P	CANDIDATE
+ROW	C	STALE / INCOMPLETE + Research read-only	CANDIDATE
+P	C
+P	STALE / INCOMPLETE + Research read-only
+P	CANDIDATE
+ROW	D	Context Candidate Review / Action Dock	CANDIDATE
+P	D
+P	Context Candidate Review / Action Dock
+P	CANDIDATE
+ROW	E	Knowledge Firewall / Audit / Sidebar Overlay	CANDIDATE
+P	E
+P	Knowledge Firewall / Audit / Sidebar Overlay
+P	CANDIDATE
+P	20. Hard Locks / Pre-Implementation Guards
+P	Only workspace:INFO-01 is the Current latest-information workspace.
+P	Global Header/Sidebar/Visual inherited; no page-local global visual system.
+P	Real business data only; missing = —; no fake source, alert, fact, score, confidence, freshness, research state, candidate or citation.
+P	FACT and INFERENCE / RECOMMENDATION remain visibly distinct.
+P	Validated Fact requires source + source_time + scope + completeness + confidence + classification.
+P	No page-local numeric quality/freshness thresholds.
+P	Research Queue / Run is read-only; no unregistered Start/Cancel/Retry.
+P	Knowledge Firewall prevents direct Canon/Lock/Priority/Budget/Task/Release/Publish mutation.
+P	Adopt Context is governed context adoption, not Canon adoption or production execution.
+P	Refresh/Search/Export/Adopt/Decide use registered request schema + exact scope/version/correlation/idempotency + permission/audit gates.
+P	No unlisted Section/Component/Control/Action/State/Gate/Permission/Port/business sample data.
+P	21. Acceptance Matrix
+ROW	UID	Item	Condition
+P	UID
+P	Item
+P	Condition
+ROW	INFO-01-ACC-01	Single Page / Global Visual	Only workspace:INFO-01; inherit Global Shell/Visual
+P	INFO-01-ACC-01
+P	Single Page / Global Visual
+P	Only workspace:INFO-01; inherit Global Shell/Visual
+ROW	INFO-01-ACC-02	Real Data	Missing = —; no fabricated source/fact/quality/research/candidate data
+P	INFO-01-ACC-02
+P	Real Data
+P	Missing = —; no fabricated source/fact/quality/research/candidate data
+ROW	INFO-01-ACC-03	FACT / INFERENCE	Visibly separated; no inference rendered as fact
+P	INFO-01-ACC-03
+P	FACT / INFERENCE
+P	Visibly separated; no inference rendered as fact
+ROW	INFO-01-ACC-04	Fact Minimum Contract	source/source_time/scope/completeness/confidence/classification required
+P	INFO-01-ACC-04
+P	Fact Minimum Contract
+P	source/source_time/scope/completeness/confidence/classification required
+ROW	INFO-01-ACC-05	Evidence / Citation	Exact evidence/source/citation refs; broken refs remain explicit
+P	INFO-01-ACC-05
+P	Evidence / Citation
+P	Exact evidence/source/citation refs; broken refs remain explicit
+ROW	INFO-01-ACC-06	Research Boundary	Research Queue/Run read-only; no Start/Cancel action
+P	INFO-01-ACC-06
+P	Research Boundary
+P	Research Queue/Run read-only; no Start/Cancel action
+ROW	INFO-01-ACC-07	Knowledge Firewall	No direct Canon/Lock/Priority/Budget/Task/Release/Publish mutation
+P	INFO-01-ACC-07
+P	Knowledge Firewall
+P	No direct Canon/Lock/Priority/Budget/Task/Release/Publish mutation
+ROW	INFO-01-ACC-08	Context Candidate	Scope/facts/citations/review visible; Adopt Context = context adoption only
+P	INFO-01-ACC-08
+P	Context Candidate
+P	Scope/facts/citations/review visible; Adopt Context = context adoption only
+ROW	INFO-01-ACC-09	Registered Actions	Refresh/Search/Export/Adopt/Decide bind only canonical operations/schemas/gates
+P	INFO-01-ACC-09
+P	Registered Actions
+P	Refresh/Search/Export/Adopt/Decide bind only canonical operations/schemas/gates
+ROW	INFO-01-ACC-10	Authorization	Account Permission + scope + condition + classification + audit
+P	INFO-01-ACC-10
+P	Authorization
+P	Account Permission + scope + condition + classification + audit
+ROW	INFO-01-ACC-11	Scrollable Page	height:auto + overflow-y:auto
+P	INFO-01-ACC-11
+P	Scrollable Page
+P	height:auto + overflow-y:auto
+ROW	INFO-01-ACC-12	Machine Binding	Every visible control resolves Section/Component/Visual/Action/Gate/Permission; unlisted=BLOCK
+P	INFO-01-ACC-12
+P	Machine Binding
+P	Every visible control resolves Section/Component/Visual/Action/Gate/Permission; unlisted=BLOCK
+P	22. Audit Baseline / Evidence Contract
+ROW	Evidence	Required
+P	Evidence
+P	Required
+ROW	Authority Identity	authority/pages/workspace/INFO-01/ACPOS_INFO-01_FINAL_LOCKED_ENCODING.yaml @ 749d152aef9bc4365374f9265081d3382e1bdc5a
+P	Authority Identity
+P	authority/pages/workspace/INFO-01/ACPOS_INFO-01_FINAL_LOCKED_ENCODING.yaml @ 749d152aef9bc4365374f9265081d3382e1bdc5a
+ROW	Branch / HEAD	new @ 165c6440cb53b1b45ec96905241fb4d56dc3b867
+P	Branch / HEAD
+P	new @ 165c6440cb53b1b45ec96905241fb4d56dc3b867
+ROW	Current Manifest	465329b6fb19b8e44c3083a9f280015ee95cc55c
+P	Current Manifest
+P	465329b6fb19b8e44c3083a9f280015ee95cc55c
+ROW	Registry denominator	12 sections / 20 components / 66 controls / 17 actions / 6 ports
+P	Registry denominator
+P	12 sections / 20 components / 66 controls / 17 actions / 6 ports
+ROW	UI evidence	5 candidate UI PNGs embedded
+P	UI evidence
+P	5 candidate UI PNGs embedded
+ROW	Real data policy	Missing values = —; invented values forbidden
+P	Real data policy
+P	Missing values = —; invented values forbidden
+ROW	Fact firewall	FACT ≠ INFERENCE; Research read-only; direct owner mutation forbidden
+P	Fact firewall
+P	FACT ≠ INFERENCE; Research read-only; direct owner mutation forbidden
+ROW	Action boundary	Registered Refresh/Search/Export/Adopt/Decide only
+P	Action boundary
+P	Registered Refresh/Search/Export/Adopt/Decide only
+P	23. Definition of Done / Design Freeze Gate
+ROW	Gate	Status
+P	Gate
+P	Status
+ROW	Current Authority resolved	PASS
+P	Current Authority resolved
+P	PASS
+ROW	Mother Basic Design artifacts present	PASS
+P	Mother Basic Design artifacts present
+P	PASS
+ROW	66 Control bindings enumerated	PASS
+P	66 Control bindings enumerated
+P	PASS
+ROW	17 Action / 10 Gate / 7 Permission enumerated	PASS
+P	17 Action / 10 Gate / 7 Permission enumerated
+P	PASS
+ROW	5 UI candidate states embedded	PASS
+P	5 UI candidate states embedded
+P	PASS
+ROW	FACT / INFERENCE visual separation	PASS
+P	FACT / INFERENCE visual separation
+P	PASS
+ROW	Research execution controls absent	PASS
+P	Research execution controls absent
+P	PASS
+ROW	No fake business data	PASS
+P	No fake business data
+P	PASS
+ROW	Knowledge Firewall boundary explicit	PASS
+P	Knowledge Firewall boundary explicit
+P	PASS
+ROW	Human visual / functional review	PENDING
+P	Human visual / functional review
+P	PENDING
+ROW	DESIGN_FROZEN	FALSE
+P	DESIGN_FROZEN
+P	FALSE
+P	24. Resume / Next Step
+P	Human review INFO-01 proportions, information density, FACT/INFERENCE separation and Context Candidate action boundary.
+P	If approved, complete governed Design Freeze before construction.
+P	If rejected, revise this Word/UI candidate only; Current Authority changes require governed change request.
+P	Construction must not introduce research execution or direct Canon/Task/Release/Publish mutations.
+### PART word/header1.xml
+P	ACPOS · INFO-01 · MOTHER-COMPLIANT BASIC DESIGN · TECH PURPLE
+### PART word/footer1.xml
+P	workspace:INFO-01 · VISUAL CANDIDATE · PENDING HUMAN REVIEW · DESIGN_FROZEN=FALSE

@@ -1,0 +1,671 @@
+### PART word/document.xml
+P	ACPOS · SG-02
+P	QA 審查項目名單｜Mother Basic Design
+P	Quality Criteria · Gate Policy · Versioning · Impact · Approval
+P	頁面定位｜後台 QA Review Standard 治理面。管理 Criteria Version、Dimension、Threshold、Department Applicability、Required Check、Gate Policy、Impact 與 Approval；它不是 workspace:QA-01 的待審工作台，也不執行實際 QA 審查。
+ROW	設計身份	定義
+P	設計身份
+P	定義
+ROW	Page UID	admin:SG-02
+P	Page UID
+P	admin:SG-02
+ROW	Canonical Name	QA 審查項目名單 / Quality Criteria / Gate Policy
+P	Canonical Name
+P	QA 審查項目名單 / Quality Criteria / Gate Policy
+ROW	Owner	QualityGovernance
+P	Owner
+P	QualityGovernance
+ROW	Surface	ADMIN · Single Page
+P	Surface
+P	ADMIN · Single Page
+ROW	Primary Data	criteria_versions / dimensions / policies / mappings / approvals
+P	Primary Data
+P	criteria_versions / dimensions / policies / mappings / approvals
+ROW	Lifecycle	DRAFT → REVIEW → APPROVED → ACTIVE → SUPERSEDED → RETIRED
+P	Lifecycle
+P	DRAFT → REVIEW → APPROVED → ACTIVE → SUPERSEDED → RETIRED
+ROW	Current Actions	Configure / Approve / Drawer Open
+P	Current Actions
+P	Configure / Approve / Drawer Open
+ROW	Truth Rule	真實投影 only；缺值 = —；樣本 Criteria / Threshold 禁止
+P	Truth Rule
+P	真實投影 only；缺值 = —；樣本 Criteria / Threshold 禁止
+P	1. 產品目標與治理邊界
+P	把 QA 評分標準的版本、維度、門檻、必檢項目、部門適用性、Gate Policy、Impact 與 Approval 放在單一治理頁中，避免標準散落在各 QA 工作區。
+P	ACTIVE Criteria Version 不可原地修改；任何實質變更先形成新版本／新草稿，再進 Impact、Review 與 Approval，歷史審查結果永久保留原 criteria_version。
+P	SG-02 只治理「審查標準」；專案、任務、影片、素材的實際 QA 執行仍由 QA Runtime / QA-01 負責。
+P	Threshold 不得硬編碼在 UI、前端常數或 QA 執行頁；QA Runtime 必須讀取被正式綁定的 Criteria Version / Gate Policy。
+P	未註冊 Search / Filter / Export / Clone / Delete / Activate 等操作不得因便利性自行加入。
+P	2. Scope / Out-of-Scope
+ROW	範圍	設計結論
+P	範圍
+P	設計結論
+ROW	IN	Criteria Version、Dimension Library、Threshold、Required Check、Department Mapping、Gate Policy、Impact、Approval、歷史版本重現。
+P	IN
+P	Criteria Version、Dimension Library、Threshold、Required Check、Department Mapping、Gate Policy、Impact、Approval、歷史版本重現。
+ROW	OUT	Pending QA Queue、單一任務評分、Finding / Correction Request、素材或影片重新生成、未註冊 Criteria CRUD、任意 Search / Filter / Export。
+P	OUT
+P	Pending QA Queue、單一任務評分、Finding / Correction Request、素材或影片重新生成、未註冊 Criteria CRUD、任意 Search / Filter / Export。
+ROW	INTERFACE	QA-01 只消費已生效且被任務／工作類型綁定的 Criteria Version；SG-02 不介入單一 Review Session 的操作。
+P	INTERFACE
+P	QA-01 只消費已生效且被任務／工作類型綁定的 Criteria Version；SG-02 不介入單一 Review Session 的操作。
+ROW	FAIL-CLOSED	任何缺少 Owner / Operation / Version / Impact / Permission / Approval 的變更，均 BLOCK + REPORT_AUTHORITY_GAP。
+P	FAIL-CLOSED
+P	任何缺少 Owner / Operation / Version / Impact / Permission / Approval 的變更，均 BLOCK + REPORT_AUTHORITY_GAP。
+P	3. Business Entity Inventory
+ROW	Business Entity	責任	生命週期／約束
+P	Business Entity
+P	責任
+P	生命週期／約束
+ROW	quality_criteria_version	完整評分標準版本；承載 dimensions / thresholds / checks / gate bindings	Versioned · immutable when ACTIVE
+P	quality_criteria_version
+P	完整評分標準版本；承載 dimensions / thresholds / checks / gate bindings
+P	Versioned · immutable when ACTIVE
+ROW	dimension_library	評分類別與量測語義	Reusable governed library
+P	dimension_library
+P	評分類別與量測語義
+P	Reusable governed library
+ROW	threshold	某版本／維度的門檻與失敗語義	Version-bound
+P	threshold
+P	某版本／維度的門檻與失敗語義
+P	Version-bound
+ROW	required_check	必檢項目與 blocking semantics	Version / scope bound
+P	required_check
+P	必檢項目與 blocking semantics
+P	Version / scope bound
+ROW	department_mapping	標準適用部門／工作類型對應	Applicability owner
+P	department_mapping
+P	標準適用部門／工作類型對應
+P	Applicability owner
+ROW	quality_gate_policy	通過、阻擋、人工覆核等 Gate 規則	Versioned policy
+P	quality_gate_policy
+P	通過、阻擋、人工覆核等 Gate 規則
+P	Versioned policy
+ROW	impact_record	變更對任務、部門、歷史／未完成 Review 的影響	Required before approval
+P	impact_record
+P	變更對任務、部門、歷史／未完成 Review 的影響
+P	Required before approval
+ROW	approval_record	核准者、理由、版本、時間與證據	Append-only decision
+P	approval_record
+P	核准者、理由、版本、時間與證據
+P	Append-only decision
+ROW	review_result_binding	既有 Review Result 所綁的原 Criteria Version	Historical reproducibility
+P	review_result_binding
+P	既有 Review Result 所綁的原 Criteria Version
+P	Historical reproducibility
+P	4. Business Entity × Operation Matrix
+ROW	Entity	Discover	Create	Edit	Review	Approve	Version	Retire	Impact	Audit
+P	Entity
+P	Discover
+P	Create
+P	Edit
+P	Review
+P	Approve
+P	Version
+P	Retire
+P	Impact
+P	Audit
+ROW	Criteria Version	R	—	Configure→new draft	Review	Approve	Versioned	Supersede / Retire	Impact required	R
+P	Criteria Version
+P	R
+P	—
+P	Configure→new draft
+P	Review
+P	Approve
+P	Versioned
+P	Supersede / Retire
+P	Impact required
+P	R
+ROW	Dimension Library	R	—	Configure	—	Governed	Versioned	Retire only if legal	Impact if referenced	R
+P	Dimension Library
+P	R
+P	—
+P	Configure
+P	—
+P	Governed
+P	Versioned
+P	Retire only if legal
+P	Impact if referenced
+P	R
+ROW	Threshold	R	—	Configure	—	Via criteria approval	Version-bound	No direct delete	Impact required	R
+P	Threshold
+P	R
+P	—
+P	Configure
+P	—
+P	Via criteria approval
+P	Version-bound
+P	No direct delete
+P	Impact required
+P	R
+ROW	Required Check	R	—	Configure	—	Via criteria approval	Version-bound	No direct delete	Impact required	R
+P	Required Check
+P	R
+P	—
+P	Configure
+P	—
+P	Via criteria approval
+P	Version-bound
+P	No direct delete
+P	Impact required
+P	R
+ROW	Department Mapping	R	—	Configure	—	Via criteria approval	Version-bound	No direct delete	Impact required	R
+P	Department Mapping
+P	R
+P	—
+P	Configure
+P	—
+P	Via criteria approval
+P	Version-bound
+P	No direct delete
+P	Impact required
+P	R
+ROW	Gate Policy	R	—	Configure	Review	Approve	Versioned	Supersede / Retire	Impact required	R
+P	Gate Policy
+P	R
+P	—
+P	Configure
+P	Review
+P	Approve
+P	Versioned
+P	Supersede / Retire
+P	Impact required
+P	R
+ROW	Impact Record	R	System/Create via governed change	Append	—	Required evidence	Append-only	—	Self	R
+P	Impact Record
+P	R
+P	System/Create via governed change
+P	Append
+P	—
+P	Required evidence
+P	Append-only
+P	—
+P	Self
+P	R
+ROW	Approval Record	R	System after approval	—	—	Approve operation	Append-only	—	—	R
+P	Approval Record
+P	R
+P	System after approval
+P	—
+P	—
+P	Approve operation
+P	Append-only
+P	—
+P	—
+P	R
+P	5. Entity Hierarchy & Version Semantics
+P	QualityCriteriaVersion 是版本根；Dimension / Threshold / Required Check / Department Mapping / Gate Policy 的正式狀態必須可追溯回該版本。
+P	ACTIVE 版本為 immutable。修改需求先建立新的 Draft/Working Version，不允許把 ACTIVE row 直接改寫。
+P	Review Result 必須保存 criteria_version_ref；後續 Criteria 更新不能回填或重算歷史結果，除非建立正式 Revalidation 結果且保留原結果。
+P	同一時點可存在歷史版本與待核准版本，但執行端只使用被 Current Mapping 明確指定的版本；不得用 latest/current 字串猜測。
+P	SUPERSEDED 代表不再作為新工作的預設版本，但仍可被歷史 Review Result 引用；RETIRED 仍保留 Audit/Lineage。
+P	6. Lifecycle / State Model
+ROW	State	可做事項	禁止事項	下一步
+P	State
+P	可做事項
+P	禁止事項
+P	下一步
+ROW	DRAFT	配置內容、Impact 初判	作為 Production QA Gate	提交 REVIEW
+P	DRAFT
+P	配置內容、Impact 初判
+P	作為 Production QA Gate
+P	提交 REVIEW
+ROW	REVIEW	凍結待審版本內容；核對 Impact / Mapping	直接改內容、直接 ACTIVE	Approve 或 Return-to-Draft
+P	REVIEW
+P	凍結待審版本內容；核對 Impact / Mapping
+P	直接改內容、直接 ACTIVE
+P	Approve 或 Return-to-Draft
+ROW	APPROVED	完成正式核准；等待啟用條件／Mapping	原地修改	依治理條件 ACTIVE
+P	APPROVED
+P	完成正式核准；等待啟用條件／Mapping
+P	原地修改
+P	依治理條件 ACTIVE
+ROW	ACTIVE	供新工作綁定；read-only	原地改 Threshold / Check / Policy	新版本取代後 SUPERSEDED
+P	ACTIVE
+P	供新工作綁定；read-only
+P	原地改 Threshold / Check / Policy
+P	新版本取代後 SUPERSEDED
+ROW	SUPERSEDED	歷史可重現、不可作新預設	刪除歷史資料	保留或 RETIRED
+P	SUPERSEDED
+P	歷史可重現、不可作新預設
+P	刪除歷史資料
+P	保留或 RETIRED
+ROW	RETIRED	歷史讀取 / Audit	任何 Effectful 修改	Terminal
+P	RETIRED
+P	歷史讀取 / Audit
+P	任何 Effectful 修改
+P	Terminal
+P	圖 1｜SG-02 Criteria Governance Workbench：版本名單為主，Dimension / Threshold / Required Checks 透過 Drawer 查看，Action Dock 僅保留合法 Configure / Approve。
+P	7. Functional Workbench / Interaction Topology
+ROW	Surface	分類	責任	互動規則
+P	Surface
+P	分類
+P	責任
+P	互動規則
+ROW	Criteria Version Table	ATOMIC_WORKBENCH	版本名單、狀態、適用範圍、Approval/Impact 摘要	主工作面；不得把每個欄位拆成卡片
+P	Criteria Version Table
+P	ATOMIC_WORKBENCH
+P	版本名單、狀態、適用範圍、Approval/Impact 摘要
+P	主工作面；不得把每個欄位拆成卡片
+ROW	Dimension / Threshold / Required Check	SAME_SURFACE_CLUSTER	低頻細節與版本內容	SECTION_OPEN → Drawer；不建立新 route
+P	Dimension / Threshold / Required Check
+P	SAME_SURFACE_CLUSTER
+P	低頻細節與版本內容
+P	SECTION_OPEN → Drawer；不建立新 route
+ROW	Department Mapping / Gate Policy	SAME_SURFACE_CLUSTER	適用性與 Gate 規則	Drawer read；配置走 Configure Modal
+P	Department Mapping / Gate Policy
+P	SAME_SURFACE_CLUSTER
+P	適用性與 Gate 規則
+P	Drawer read；配置走 Configure Modal
+ROW	Approval / Impact	SAME_SURFACE_CLUSTER	核准與變更影響	Impact 先於 Approval；effectful 動作用 Modal
+P	Approval / Impact
+P	SAME_SURFACE_CLUSTER
+P	核准與變更影響
+P	Impact 先於 Approval；effectful 動作用 Modal
+ROW	QA-01 Execution	CROSS_SURFACE_FLOW	消費正式 Criteria Version 執行 QA	只帶 exact criteria_version_ref；不共享未核准草稿
+P	QA-01 Execution
+P	CROSS_SURFACE_FLOW
+P	消費正式 Criteria Version 執行 QA
+P	只帶 exact criteria_version_ref；不共享未核准草稿
+ROW	Audit / Historical Detail	INDEPENDENT_SUPPORT_PANEL	版本、理由、事件、歷史引用	Drawer；read-only
+P	Audit / Historical Detail
+P	INDEPENDENT_SUPPORT_PANEL
+P	版本、理由、事件、歷史引用
+P	Drawer；read-only
+P	8. Layout / Visual Geometry
+ROW	Region	Geometry	Rules
+P	Region
+P	Geometry
+P	Rules
+ROW	Page Context	100% × 56px	Page name、Current Criteria Version、Lifecycle、Scope / Blocker；缺值 = —
+P	Page Context
+P	100% × 56px
+P	Page name、Current Criteria Version、Lifecycle、Scope / Blocker；缺值 = —
+ROW	Main Criteria Table	Primary workspace	固定表頭；Version/State/Applicability/Approval/Impact；行內只保留必要摘要
+P	Main Criteria Table
+P	Primary workspace
+P	固定表頭；Version/State/Applicability/Approval/Impact；行內只保留必要摘要
+ROW	Governance Rail	約 28%	Version Integrity / Approval / Impact / Revalidation / History readiness；真實狀態 only
+P	Governance Rail
+P	約 28%
+P	Version Integrity / Approval / Impact / Revalidation / History readiness；真實狀態 only
+ROW	Detail Drawer	480–560px	Dimension、Threshold、Required Check、Mapping、Policy、Impact、Audit；可滾動
+P	Detail Drawer
+P	480–560px
+P	Dimension、Threshold、Required Check、Mapping、Policy、Impact、Audit；可滾動
+ROW	Configure / Approve Modal	效應操作專用	Focus trap、Esc/cancel、Validation Summary、Reason/Rationale 必填
+P	Configure / Approve Modal
+P	效應操作專用
+P	Focus trap、Esc/cancel、Validation Summary、Reason/Rationale 必填
+ROW	Action Dock	56px	只顯示目前合法操作；最多一個 Primary CTA
+P	Action Dock
+P	56px
+P	只顯示目前合法操作；最多一個 Primary CTA
+P	後續 Word Geometry 基準｜本頁起所有表格固定儲存格內距；短欄位與表頭水平＋垂直置中；長文字左對齊但保留安全距；表格採固定欄寬避免 Render 時被自動壓縮。
+P	9. Section Registry
+ROW	Section	Priority	Responsibility	Surface
+P	Section
+P	Priority
+P	Responsibility
+P	Surface
+ROW	SEC-01 Criteria Table	CORE	Current versions + summary	Main
+P	SEC-01 Criteria Table
+P	CORE
+P	Current versions + summary
+P	Main
+ROW	SEC-02 Dimension Library	SUPPORT	Dimension definitions	Drawer
+P	SEC-02 Dimension Library
+P	SUPPORT
+P	Dimension definitions
+P	Drawer
+ROW	SEC-03 Thresholds	SUPPORT	Threshold semantics	Drawer
+P	SEC-03 Thresholds
+P	SUPPORT
+P	Threshold semantics
+P	Drawer
+ROW	SEC-04 Department Mapping	SUPPORT	Applicability	Drawer
+P	SEC-04 Department Mapping
+P	SUPPORT
+P	Applicability
+P	Drawer
+ROW	SEC-05 Required Checks	SUPPORT	Blocking required checks	Drawer
+P	SEC-05 Required Checks
+P	SUPPORT
+P	Blocking required checks
+P	Drawer
+ROW	SEC-06 Gate Policy	SUPPORT	Pass/block/review policy	Drawer
+P	SEC-06 Gate Policy
+P	SUPPORT
+P	Pass/block/review policy
+P	Drawer
+ROW	SEC-07 Approval	GOVERNANCE	Approval status/evidence	Drawer
+P	SEC-07 Approval
+P	GOVERNANCE
+P	Approval status/evidence
+P	Drawer
+ROW	SEC-08 Impact	GOVERNANCE	Affected scope/revalidation	Drawer
+P	SEC-08 Impact
+P	GOVERNANCE
+P	Affected scope/revalidation
+P	Drawer
+ROW	SEC-09 Action Dock	ACTION	Configure / Approve / Detail	Dock
+P	SEC-09 Action Dock
+P	ACTION
+P	Configure / Approve / Detail
+P	Dock
+P	10. Control Registry / 11 Current Controls
+ROW	Control	Type	Operation / Effect	Interaction
+P	Control
+P	Type
+P	Operation / Effect
+P	Interaction
+ROW	Criteria Table Open	SECTION_OPEN	READ_ONLY	Drawer / projection
+P	Criteria Table Open
+P	SECTION_OPEN
+P	READ_ONLY
+P	Drawer / projection
+ROW	Dimension Library Open	SECTION_OPEN	READ_ONLY	Drawer
+P	Dimension Library Open
+P	SECTION_OPEN
+P	READ_ONLY
+P	Drawer
+ROW	Thresholds Open	SECTION_OPEN	READ_ONLY	Drawer
+P	Thresholds Open
+P	SECTION_OPEN
+P	READ_ONLY
+P	Drawer
+ROW	Department Mapping Open	SECTION_OPEN	READ_ONLY	Drawer
+P	Department Mapping Open
+P	SECTION_OPEN
+P	READ_ONLY
+P	Drawer
+ROW	Required Checks Open	SECTION_OPEN	READ_ONLY	Drawer
+P	Required Checks Open
+P	SECTION_OPEN
+P	READ_ONLY
+P	Drawer
+ROW	Gate Policy Open	SECTION_OPEN	READ_ONLY	Drawer
+P	Gate Policy Open
+P	SECTION_OPEN
+P	READ_ONLY
+P	Drawer
+ROW	Approval Open	SECTION_OPEN	READ_ONLY	Drawer
+P	Approval Open
+P	SECTION_OPEN
+P	READ_ONLY
+P	Drawer
+ROW	Impact Open	SECTION_OPEN	READ_ONLY	Drawer
+P	Impact Open
+P	SECTION_OPEN
+P	READ_ONLY
+P	Drawer
+ROW	Configure	BUSINESS_ACTION	configureGovernedResource	Form Modal
+P	Configure
+P	BUSINESS_ACTION
+P	configureGovernedResource
+P	Form Modal
+ROW	Approve	BUSINESS_ACTION	approveGovernedResource	Form Modal
+P	Approve
+P	BUSINESS_ACTION
+P	approveGovernedResource
+P	Form Modal
+ROW	Nav / Detail Open	BUSINESS_ACTION	getUiProjection	Drawer
+P	Nav / Detail Open
+P	BUSINESS_ACTION
+P	getUiProjection
+P	Drawer
+P	11. Configure Contract
+ROW	Field	Type	Required	Design Rule
+P	Field
+P	Type
+P	Required
+P	Design Rule
+ROW	resource_type	string	YES	必須能 resolve 至 QualityGovernance 的合法資源類型
+P	resource_type
+P	string
+P	YES
+P	必須能 resolve 至 QualityGovernance 的合法資源類型
+ROW	resource_id	reference	YES	Exact governed resource；禁止 latest/current alias
+P	resource_id
+P	reference
+P	YES
+P	Exact governed resource；禁止 latest/current alias
+ROW	config_patch_json	json	YES	只含該資源已註冊 schema 欄位；禁止 page-union inference
+P	config_patch_json
+P	json
+P	YES
+P	只含該資源已註冊 schema 欄位；禁止 page-union inference
+ROW	reason	text	YES	變更理由，寫入 Audit / Version lineage
+P	reason
+P	text
+P	YES
+P	變更理由，寫入 Audit / Version lineage
+P	Configure 只修改 DRAFT/允許狀態的 governed resource；若選中 ACTIVE Criteria，UI 應導向「建立新版本／新草稿」的治理流程，而不是直接改 ACTIVE。
+P	Read-model 欄位由 projection 自動帶入，禁止要求使用者重新輸入 criteria_versions / dimensions / policies / mappings / approvals。
+P	config_patch_json 必須在提交前提供結構化 Diff 預覽：Before / After / Affected Entity / Impact Required。
+P	12. Approve Contract
+ROW	Field	Required	Design Rule
+P	Field
+P	Required
+P	Design Rule
+ROW	resource_type	YES	與待核准資源類型一致
+P	resource_type
+P	YES
+P	與待核准資源類型一致
+ROW	resource_id	YES	Exact review resource
+P	resource_id
+P	YES
+P	Exact review resource
+ROW	rationale	YES	核准／退回的治理理由
+P	rationale
+P	YES
+P	核准／退回的治理理由
+ROW	expected_resource_version	CONDITIONAL	存在版本控制時必須送出；不允許 force overwrite
+P	expected_resource_version
+P	CONDITIONAL
+P	存在版本控制時必須送出；不允許 force overwrite
+P	核准不是啟用捷徑｜Approval 必須驗證 State、Version、Permission、Impact 與 Audit。核准 Criteria Version 不代表可修改舊 ACTIVE；也不允許把歷史 Review Result 換綁到新版本。
+P	圖 2｜SG-02 Approval / Impact：Configure 與 Approval 使用 Effectful Modal；Impact / Revalidation 與歷史版本可重現性必須在核准前被確認。
+P	13. Core Functional Chains
+ROW	Chain	Required Closure
+P	Chain
+P	Required Closure
+ROW	Configure Criteria	Intent → Select exact governed resource → Read current version → Configure Gate → Modal validation → config_patch_json + reason → configureGovernedResource → QualityGovernance owner → new/updated draft version → governance.configured → Projection refresh → Impact required / next review
+P	Configure Criteria
+P	Intent → Select exact governed resource → Read current version → Configure Gate → Modal validation → config_patch_json + reason → configureGovernedResource → QualityGovernance owner → new/updated draft version → governance.configured → Projection refresh → Impact required / next review
+ROW	Approve Criteria	Intent → exact REVIEW resource/version → Impact / mapping checks → Approval Gate → rationale + expected version → approveGovernedResource → QualityGovernance owner → governance.approved → APPROVED → activation/mapping according to governance → Audit
+P	Approve Criteria
+P	Intent → exact REVIEW resource/version → Impact / mapping checks → Approval Gate → rationale + expected version → approveGovernedResource → QualityGovernance owner → governance.approved → APPROVED → activation/mapping according to governance → Audit
+ROW	Consume in QA	QA task created → exact applicable mapping → resolve exact ACTIVE criteria_version → Review Session persists criteria_version_ref → score/check/gate evaluate against that version → Review Result stores exact version → future Criteria change does not mutate result
+P	Consume in QA
+P	QA task created → exact applicable mapping → resolve exact ACTIVE criteria_version → Review Session persists criteria_version_ref → score/check/gate evaluate against that version → Review Result stores exact version → future Criteria change does not mutate result
+ROW	Revalidation	New version Impact → identify affected not-yet-terminal tasks / results → classify revalidation requirement → create explicit revalidation work/evidence via registered owner when available → preserve original result/version → new result links prior evidence; no silent recomputation
+P	Revalidation
+P	New version Impact → identify affected not-yet-terminal tasks / results → classify revalidation requirement → create explicit revalidation work/evidence via registered owner when available → preserve original result/version → new result links prior evidence; no silent recomputation
+P	14. Permission / Gate Model
+ROW	Gate	Requirement	Failure
+P	Gate
+P	Requirement
+P	Failure
+ROW	Page View	identity + page:admin:SG-02 VIEW + exact account permission + scope/condition	HIDE/DENY；server remains authoritative
+P	Page View
+P	identity + page:admin:SG-02 VIEW + exact account permission + scope/condition
+P	HIDE/DENY；server remains authoritative
+ROW	Read Section	section VIEW + authorized scope	No direct owner DB read
+P	Read Section
+P	section VIEW + authorized scope
+P	No direct owner DB read
+ROW	Configure	governance.configure + legal resource/state + exact schema + version/idempotency/audit	BLOCK / VERSION_CONFLICT / POLICY_BLOCKED
+P	Configure
+P	governance.configure + legal resource/state + exact schema + version/idempotency/audit
+P	BLOCK / VERSION_CONFLICT / POLICY_BLOCKED
+ROW	Approve	governance.approve + REVIEW state + impact evidence + expected version + audit	BLOCK / REVIEW_REQUIRED / VERSION_CONFLICT
+P	Approve
+P	governance.approve + REVIEW state + impact evidence + expected version + audit
+P	BLOCK / REVIEW_REQUIRED / VERSION_CONFLICT
+ROW	Historical Read	authorized read + exact criteria_version_ref	Do not substitute latest version
+P	Historical Read
+P	authorized read + exact criteria_version_ref
+P	Do not substitute latest version
+P	授權模型是 Account Permission Assignment Only；角色名稱與部門身分不得直接構成 allow。
+P	Permission denied 與 Policy blocked 必須區分：前者依規則隱藏／拒絕，後者可顯示 Disabled Reason。
+P	前端 Visible/Disabled 只是 UX；真正 Effectful 操作必須在 server 重新驗證 identity、account_permission、scope、condition、state、version、idempotency、audit。
+P	15. Impact / Applicability / Revalidation
+ROW	Impact Area	Required Analysis	Decision
+P	Impact Area
+P	Required Analysis
+P	Decision
+ROW	Department Mapping	哪些部門／工作類型使用舊版本？	新增/變更 mapping 必須版本化
+P	Department Mapping
+P	哪些部門／工作類型使用舊版本？
+P	新增/變更 mapping 必須版本化
+ROW	Open QA Tasks	尚未完成的 Review Session 是否需保持舊版或重新開始？	不得 silent switch
+P	Open QA Tasks
+P	尚未完成的 Review Session 是否需保持舊版或重新開始？
+P	不得 silent switch
+ROW	Historical Results	既有結果是否保留原 Criteria？	Always preserve original binding
+P	Historical Results
+P	既有結果是否保留原 Criteria？
+P	Always preserve original binding
+ROW	Threshold Change	是否改變 PASS/FAIL / Gate 結果？	High impact；requires explicit review
+P	Threshold Change
+P	是否改變 PASS/FAIL / Gate 結果？
+P	High impact；requires explicit review
+ROW	Required Check Change	是否新增/取消 blocking check？	High impact；requires explicit review
+P	Required Check Change
+P	是否新增/取消 blocking check？
+P	High impact；requires explicit review
+ROW	Gate Policy Change	是否改變 QA → Handoff / Block / Correction 流程？	High impact；cross-owner validation
+P	Gate Policy Change
+P	是否改變 QA → Handoff / Block / Correction 流程？
+P	High impact；cross-owner validation
+ROW	Dimension Semantics	名稱相同但量測定義是否改變？	Semantic version change; do not masquerade as text edit
+P	Dimension Semantics
+P	名稱相同但量測定義是否改變？
+P	Semantic version change; do not masquerade as text edit
+P	16. QA-01 Integration Boundary
+P	QA-01 的 Review Session / Scorecard 必須讀取 exact criteria_version_ref 與其 Dimension / Threshold / Required Check / Gate Policy；不得自行 hardcode 門檻。
+P	SG-02 不顯示待審專案名單，也不執行 Approve Output / Finding / Correction / Handoff 等 QA 工作動作。
+P	Criteria 版本升級不得自動替換進行中的 Review Session。是否重啟／revalidate 必須由 Impact + Runtime Contract 明確決定。
+P	如果下游工作類型找不到可用 Criteria Mapping，QA Runtime 應 fail closed，顯示「未綁定 QA 標準」而非選一個最新版本。
+P	17. Error / Recovery
+ROW	Error	Meaning	Recovery
+P	Error
+P	Meaning
+P	Recovery
+ROW	AUTH_DENIED	Page/section/action permission 不足	Hide/deny protected control; preserve safe context
+P	AUTH_DENIED
+P	Page/section/action permission 不足
+P	Hide/deny protected control; preserve safe context
+ROW	VERSION_CONFLICT	Criteria / Policy 已被其他版本更新	Reload exact projection; discard stale modal or rebase explicitly
+P	VERSION_CONFLICT
+P	Criteria / Policy 已被其他版本更新
+P	Reload exact projection; discard stale modal or rebase explicitly
+ROW	INVALID_STATE	ACTIVE/RETIRED 等狀態不允許修改	Disable with reason; create legal new version instead
+P	INVALID_STATE
+P	ACTIVE/RETIRED 等狀態不允許修改
+P	Disable with reason; create legal new version instead
+ROW	IMPACT_INCOMPLETE	Impact / affected scope 尚未確認	Block approval; open Impact drawer
+P	IMPACT_INCOMPLETE
+P	Impact / affected scope 尚未確認
+P	Block approval; open Impact drawer
+ROW	APPROVAL_REQUIRED	變更尚未正式核准	Keep REVIEW; no ACTIVE binding
+P	APPROVAL_REQUIRED
+P	變更尚未正式核准
+P	Keep REVIEW; no ACTIVE binding
+ROW	MAPPING_GAP	部門／工作類型沒有 Criteria binding	Block downstream QA start; report gap
+P	MAPPING_GAP
+P	部門／工作類型沒有 Criteria binding
+P	Block downstream QA start; report gap
+ROW	HISTORY_MISMATCH	歷史 result 對不到原 criteria_version	Block reinterpretation; restore exact historical reference
+P	HISTORY_MISMATCH
+P	歷史 result 對不到原 criteria_version
+P	Block reinterpretation; restore exact historical reference
+ROW	UNDEFINED	未註冊 CRUD / Search / Filter / Export / API	BLOCK + REPORT_AUTHORITY_GAP
+P	UNDEFINED
+P	未註冊 CRUD / Search / Filter / Export / API
+P	BLOCK + REPORT_AUTHORITY_GAP
+P	18. Responsive / i18n / Accessibility
+ROW	Area	Requirement
+P	Area
+P	Requirement
+ROW	Responsive	Desktop-first；同頁 reflow。不得為 mobile 建第二個 SG-02 page。
+P	Responsive
+P	Desktop-first；同頁 reflow。不得為 mobile 建第二個 SG-02 page。
+ROW	Drawer	480–560px；可捲動；開啟後 focus trap；Esc 關閉；返回原觸發 control。
+P	Drawer
+P	480–560px；可捲動；開啟後 focus trap；Esc 關閉；返回原觸發 control。
+ROW	Modal	Effectful form only；首個錯誤欄位可聚焦；提交中保持幾何；取消不修改 Draft。
+P	Modal
+P	Effectful form only；首個錯誤欄位可聚焦；提交中保持幾何；取消不修改 Draft。
+ROW	Table	固定欄寬、固定內距、表頭重複；短欄置中，長文字左對齊；不得文字壓框。
+P	Table
+P	固定欄寬、固定內距、表頭重複；短欄置中，長文字左對齊；不得文字壓框。
+ROW	Keyboard	所有 SECTION_OPEN / Configure / Approve 可由鍵盤觸發，Focus Visible。
+P	Keyboard
+P	所有 SECTION_OPEN / Configure / Approve 可由鍵盤觸發，Focus Visible。
+ROW	States	Loading 保留幾何；Empty / Error / Policy Blocked / Version Conflict 不得假造 business value。
+P	States
+P	Loading 保留幾何；Empty / Error / Policy Blocked / Version Conflict 不得假造 business value。
+ROW	i18n	zh-TW / zh-CN / en；QA / Gate / Criteria / Dimension 可依固定系統術語保留英文。
+P	i18n
+P	zh-TW / zh-CN / en；QA / Gate / Criteria / Dimension 可依固定系統術語保留英文。
+P	19. Validation / Acceptance
+ROW	ID	Acceptance Condition
+P	ID
+P	Acceptance Condition
+ROW	ACC-01	單一 Current Admin Page；不重建舊多頁 QA Criteria UI
+P	ACC-01
+P	單一 Current Admin Page；不重建舊多頁 QA Criteria UI
+ROW	ACC-02	頁面明確不是 Pending QA Queue / runtime QA workspace
+P	ACC-02
+P	頁面明確不是 Pending QA Queue / runtime QA workspace
+ROW	ACC-03	Criteria Version / Dimension / Threshold / Required Check / Mapping / Gate Policy / Approval / Impact 均可被治理與追溯
+P	ACC-03
+P	Criteria Version / Dimension / Threshold / Required Check / Mapping / Gate Policy / Approval / Impact 均可被治理與追溯
+ROW	ACC-04	11 個 Current Controls 全部保留且無自行新增 Search / Filter / Export
+P	ACC-04
+P	11 個 Current Controls 全部保留且無自行新增 Search / Filter / Export
+ROW	ACC-05	ACTIVE criteria immutable；變更必須新版本 + Impact + Approval
+P	ACC-05
+P	ACTIVE criteria immutable；變更必須新版本 + Impact + Approval
+ROW	ACC-06	歷史 Review Result 永久保留 original criteria_version_ref
+P	ACC-06
+P	歷史 Review Result 永久保留 original criteria_version_ref
+ROW	ACC-07	Configure / Approve 只使用已註冊 Governance operations
+P	ACC-07
+P	Configure / Approve 只使用已註冊 Governance operations
+ROW	ACC-08	Threshold / Gate Policy 不 hardcode 於前端或 QA Runtime
+P	ACC-08
+P	Threshold / Gate Policy 不 hardcode 於前端或 QA Runtime
+ROW	ACC-09	Read-model data auto project；禁止 manual retype
+P	ACC-09
+P	Read-model data auto project；禁止 manual retype
+ROW	ACC-10	Role / department 不作直接 authorization
+P	ACC-10
+P	Role / department 不作直接 authorization
+ROW	ACC-11	Impact 不完整時 Approval fail closed
+P	ACC-11
+P	Impact 不完整時 Approval fail closed
+ROW	ACC-12	QA-01 找不到 mapping 時不猜 latest version
+P	ACC-12
+P	QA-01 找不到 mapping 時不猜 latest version
+ROW	ACC-13	缺值 = —；無 sample/mock criteria / score / threshold
+P	ACC-13
+P	缺值 = —；無 sample/mock criteria / score / threshold
+ROW	ACC-14	Drawer / Modal / Table Geometry 與 A11y 合格
+P	ACC-14
+P	Drawer / Modal / Table Geometry 與 A11y 合格
+ROW	ACC-15	設計文件完成不等於 Runtime / E2E / Production 完成
+P	ACC-15
+P	設計文件完成不等於 Runtime / E2E / Production 完成
+P	20. Definition of Done / Construction Handoff
+P	Static Design：Page / Section / Control / Field / Layout / State / Error / Permission / Action / Gate / Interaction / Visual Geometry 已可施工。
+P	Functional Closure：Configure / Approve / Criteria Consumption / Historical Reproducibility / Impact / Revalidation 均有前後關聯，不留下「先做畫面、後補邏輯」的空洞。
+P	Runtime Enablement：仍須由施工階段核對 Governance operation runtime、QA runtime mapping、DB persistence、permission assignment、audit、tests 與 deployment evidence；本 Word 不宣稱 Production Ready。
+P	任何實際施工發現未註冊功能（例如 Clone / Search / Export / Activate / Retire command），不得從本文件猜 API；必須回到 Current Authority 走正式補權威流程。
+P	施工交付結論｜SG-02 的設計目標不是「做一張 QA 標準表」，而是把 Criteria 的版本治理、Impact、Approval、歷史可重現性與 QA Runtime 綁定做成完整閉環；UI 保持單頁、低頻細節 Drawer 化、效應操作 Modal 化。
+### PART word/header1.xml
+P	ORANGE ONE · SG-02 · Quality Criteria / Gate Policy
+### PART word/footer1.xml
+P	SG-02 · QA 審查項目名單 · Mother Basic Design

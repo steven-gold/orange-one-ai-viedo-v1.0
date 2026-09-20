@@ -1,0 +1,2147 @@
+### PART word/document.xml
+P	ACPOS ASSET-01
+P	素材生產工作區
+Mother Basic Design｜科技紫重製版
+P	從 exact Blueprint / Canonical Script / DNA / Asset Manifest 到 Reuse First、Generate Missing、Layer/Patch、Evaluate/Decision、Exact Handoff 的可施工 Basic Design。
+ROW	Current Truth	Value
+P	Current Truth
+P	Value
+ROW	Repository / Branch	steven-gold/orange-one-ai-viedo-v1.0 / new
+P	Repository / Branch
+P	steven-gold/orange-one-ai-viedo-v1.0 / new
+ROW	Live HEAD	165c6440cb53b1b45ec96905241fb4d56dc3b867
+P	Live HEAD
+P	165c6440cb53b1b45ec96905241fb4d56dc3b867
+ROW	Current Authority Manifest SHA	465329b6fb19b8e44c3083a9f280015ee95cc55c
+P	Current Authority Manifest SHA
+P	465329b6fb19b8e44c3083a9f280015ee95cc55c
+ROW	ASSET-01 Authority SHA	9668e2307c722ea4cf64f93f07c92da1b3abcc28
+P	ASSET-01 Authority SHA
+P	9668e2307c722ea4cf64f93f07c92da1b3abcc28
+ROW	Page UID	ASSET-01
+P	Page UID
+P	ASSET-01
+ROW	Authority	ASSET_PAGE_VISUAL_AUTHORITY_FINAL · FINAL_LOCKED · Current-only
+P	Authority
+P	ASSET_PAGE_VISUAL_AUTHORITY_FINAL · FINAL_LOCKED · Current-only
+ROW	Visual System	GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY · dark purple enterprise AI production workstation
+P	Visual System
+P	GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY · dark purple enterprise AI production workstation
+ROW	Global Shell	V1.9 · 58px full-width header · 64px collapsed / 221px overlay sidebar
+P	Global Shell
+P	V1.9 · 58px full-width header · 64px collapsed / 221px overlay sidebar
+ROW	Document status	BASIC DESIGN / VISUAL CANDIDATE
+P	Document status
+P	BASIC DESIGN / VISUAL CANDIDATE
+ROW	Design freeze	FALSE · Pending Human Review
+P	Design freeze
+P	FALSE · Pending Human Review
+P	本文件不是「圖庫示意」：視覺稿內只使用 Current Authority 正式 Section / Control / Gate / State 與 exact-ref placeholder；沒有假專案、假素材數量、假 Provider、假版本、假評分。
+P	1. Current Truth / Source Precedence
+P	Current Truth 以 GitHub new live HEAD 與 Current Authority Manifest 為準；聊天內容只作搜尋線索。
+P	頁面 Authority：authority/pages/workspace/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml。
+P	視覺：GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY；科技紫 Primary #8B5CFF / Secondary #6E35FF。
+P	Shell：頂部 58px 全寬；左側預設 64px icon-only，hover/focus 才出現 221px Overlay；workspace 不 reflow。
+P	Naming：ACPOS_SYSTEM 唯一治理 Canonical Filename / Artifact Identity / Version / Checksum；ASSET 不可手動命名或 Rename。
+P	Unknown / unregistered behavior：BLOCK + REPORT_AUTHORITY_GAP。
+P	1.1 Mother Basic Design 產物鏈
+ROW	Artifact Layer	ASSET-01 落地內容	狀態
+P	Artifact Layer
+P	ASSET-01 落地內容
+P	狀態
+ROW	Current Truth / Requirement	Current-only Authority + ASSET-only boundary + real-data-only	BOUND
+P	Current Truth / Requirement
+P	Current-only Authority + ASSET-only boundary + real-data-only
+P	BOUND
+ROW	Entity / Operation	18 Objects + 44 Actions + 19 Ports	BOUND
+P	Entity / Operation
+P	18 Objects + 44 Actions + 19 Ports
+P	BOUND
+ROW	Hierarchy / Journey	5 Stage + 5 Transition；AUTO/MANUAL	BOUND
+P	Hierarchy / Journey
+P	5 Stage + 5 Transition；AUTO/MANUAL
+P	BOUND
+ROW	Workbench / Interaction Topology	20/60/20 preview-first；lower rows extend full width	BOUND
+P	Workbench / Interaction Topology
+P	20/60/20 preview-first；lower rows extend full width
+P	BOUND
+ROW	Page / Section / Component	10 Sections + 16 Components + 10 Visuals	BOUND
+P	Page / Section / Component
+P	10 Sections + 16 Components + 10 Visuals
+P	BOUND
+ROW	Control / Gate / Permission	85 Controls + 21 Gates + 8 Permissions	BOUND
+P	Control / Gate / Permission
+P	85 Controls + 21 Gates + 8 Permissions
+P	BOUND
+ROW	State / Recovery	10 Page States + 17 Error/Recovery	BOUND
+P	State / Recovery
+P	10 Page States + 17 Error/Recovery
+P	BOUND
+ROW	Data Binding	Blueprint / Script / DNA / Manifest / Naming / Instruction / Route exact refs	BOUND
+P	Data Binding
+P	Blueprint / Script / DNA / Manifest / Naming / Instruction / Route exact refs
+P	BOUND
+ROW	Function ↔ Visual	每個視覺狀態對應 Section / Controls / Gates	MATERIALIZED
+P	Function ↔ Visual
+P	每個視覺狀態對應 Section / Controls / Gates
+P	MATERIALIZED
+ROW	Visual Anchor / Manifest	本文件 5 個 Candidate Visual	CANDIDATE
+P	Visual Anchor / Manifest
+P	本文件 5 個 Candidate Visual
+P	CANDIDATE
+ROW	Design Review / Freeze	需 Human Review 才可升級 Current Canonical Visual	PENDING / FALSE
+P	Design Review / Freeze
+P	需 Human Review 才可升級 Current Canonical Visual
+P	PENDING / FALSE
+P	2. Requirement / Scope / Hard Boundary
+P	頁面目的：在單一 ASSET-01 工作區，讀取已鎖定的 Project/Topic/Task 上游來源，優先 Reuse exact eligible assets，只對 Missing 項目執行生成，完成候選、ASSET criteria 評估、人工 Confirm/Modify、可選 Layer/Patch、Lock exact version，最後產生 Exact Handoff Manifest 交付 VIDEO。
+ROW	Allowed	Forbidden
+P	Allowed
+P	Forbidden
+ROW	ASSET-only production / evaluation / correction / layer / handoff	VIDEO / EDIT / VOICE / QA 內部控制或 Runtime
+P	ASSET-only production / evaluation / correction / layer / handoff
+P	VIDEO / EDIT / VOICE / QA 內部控制或 Runtime
+ROW	AUTO / MANUAL 共享 exact input resolution	第一次生產手動輸入 provider prompt / script
+P	AUTO / MANUAL 共享 exact input resolution
+P	第一次生產手動輸入 provider prompt / script
+ROW	Read-only Provider/Model runtime projection	頁面層 Provider / Model selector
+P	Read-only Provider/Model runtime projection
+P	頁面層 Provider / Model selector
+ROW	ACPOS_SYSTEM canonical filename read-only	手動 Rename / local filename formula / path guessing
+P	ACPOS_SYSTEM canonical filename read-only
+P	手動 Rename / local filename formula / path guessing
+ROW	Versioned Layer Document / AssetPatch for image-compatible assets	Photoshop API / PSD compatibility inference
+P	Versioned Layer Document / AssetPatch for image-compatible assets
+P	Photoshop API / PSD compatibility inference
+ROW	Correction creates new candidate/version	覆寫已存在版本
+P	Correction creates new candidate/version
+P	覆寫已存在版本
+ROW	Exact Handoff Manifest	只靠 filename 推論 downstream identity
+P	Exact Handoff Manifest
+P	只靠 filename 推論 downstream identity
+P	2.1 Asset Types
+ROW	UID	Type	Output	Preview
+P	UID
+P	Type
+P	Output
+P	Preview
+ROW	ASSET-01-TYPE-CHARACTER	Character	IMAGE	IMAGE
+P	ASSET-01-TYPE-CHARACTER
+P	Character
+P	IMAGE
+P	IMAGE
+ROW	ASSET-01-TYPE-SCENE	Scene / Environment	IMAGE	IMAGE
+P	ASSET-01-TYPE-SCENE
+P	Scene / Environment
+P	IMAGE
+P	IMAGE
+ROW	ASSET-01-TYPE-OBJECT	Object / Prop	IMAGE	IMAGE
+P	ASSET-01-TYPE-OBJECT
+P	Object / Prop
+P	IMAGE
+P	IMAGE
+ROW	ASSET-01-TYPE-VFX	VFX / Effect	IMAGE_OR_SEQUENCE	IMAGE
+P	ASSET-01-TYPE-VFX
+P	VFX / Effect
+P	IMAGE_OR_SEQUENCE
+P	IMAGE
+ROW	ASSET-01-TYPE-TEXTURE	Texture / Material	IMAGE	IMAGE
+P	ASSET-01-TYPE-TEXTURE
+P	Texture / Material
+P	IMAGE
+P	IMAGE
+ROW	ASSET-01-TYPE-VOICE	Voice	AUDIO	AUDIO_WAVEFORM
+P	ASSET-01-TYPE-VOICE
+P	Voice
+P	AUDIO
+P	AUDIO_WAVEFORM
+ROW	ASSET-01-TYPE-MUSIC	Music	AUDIO	AUDIO_WAVEFORM
+P	ASSET-01-TYPE-MUSIC
+P	Music
+P	AUDIO
+P	AUDIO_WAVEFORM
+ROW	ASSET-01-TYPE-SFX	SFX	AUDIO	AUDIO_WAVEFORM
+P	ASSET-01-TYPE-SFX
+P	SFX
+P	AUDIO
+P	AUDIO_WAVEFORM
+ROW	ASSET-01-TYPE-TEXT	Text / Title Card	IMAGE	IMAGE
+P	ASSET-01-TYPE-TEXT
+P	Text / Title Card
+P	IMAGE
+P	IMAGE
+ROW	ASSET-01-TYPE-REFERENCE	Anchor / Reference	REFERENCE	IMAGE_OR_METADATA
+P	ASSET-01-TYPE-REFERENCE
+P	Anchor / Reference
+P	REFERENCE
+P	IMAGE_OR_METADATA
+P	3. Business Entity × Operation / Ownership
+ROW	Object UID	Entity	Owner	Required Content
+P	Object UID
+P	Entity
+P	Owner
+P	Required Content
+ROW	ASSET-01-REF-BLUEPRINT	LockedBlueprintRef	CORE/BLUEPRINT	immutable exact child lock/blueprint version/hash
+P	ASSET-01-REF-BLUEPRINT
+P	LockedBlueprintRef
+P	CORE/BLUEPRINT
+P	immutable exact child lock/blueprint version/hash
+ROW	ASSET-01-REF-SCRIPT	AssetProductionScriptViewRef	CORE/SCRIPT	provider-neutral ASSET Script View/Section/version/hash
+P	ASSET-01-REF-SCRIPT
+P	AssetProductionScriptViewRef
+P	CORE/SCRIPT
+P	provider-neutral ASSET Script View/Section/version/hash
+ROW	ASSET-01-REF-DNA	DNABindingRef	CORE/BLUEPRINT	DNA/identity/continuity exact refs
+P	ASSET-01-REF-DNA
+P	DNABindingRef
+P	CORE/BLUEPRINT
+P	DNA/identity/continuity exact refs
+ROW	ASSET-01-REF-MANIFEST	AssetManifestRef	CORE/BLUEPRINT	required asset items/type/purpose/reuse policy
+P	ASSET-01-REF-MANIFEST
+P	AssetManifestRef
+P	CORE/BLUEPRINT
+P	required asset items/type/purpose/reuse policy
+ROW	ASSET-01-REF-NAMING	SystemOutputNamingRef	ACPOS_SYSTEM	canonical filename/output artifact identity/version/checksum policy; page read-only
+P	ASSET-01-REF-NAMING
+P	SystemOutputNamingRef
+P	ACPOS_SYSTEM
+P	canonical filename/output artifact identity/version/checksum policy; page read-only
+ROW	ASSET-01-REF-INSTRUCTION	InstructionPackageRef	InstructionCompiler	approved provider-neutral instruction package
+P	ASSET-01-REF-INSTRUCTION
+P	InstructionPackageRef
+P	InstructionCompiler
+P	approved provider-neutral instruction package
+ROW	ASSET-01-REF-ROUTE	ProviderRouteSnapshotRef	ACPOS AI API Router	approved route/provider/model/capability snapshot; page read-only
+P	ASSET-01-REF-ROUTE
+P	ProviderRouteSnapshotRef
+P	ACPOS AI API Router
+P	approved route/provider/model/capability snapshot; page read-only
+ROW	ASSET-01-OBJ-INPUT-MANIFEST	AssetExecutionInputManifest	ASSET/ORCH	task+blueprint+script+DNA+manifest+naming+instruction+route+input fingerprint
+P	ASSET-01-OBJ-INPUT-MANIFEST
+P	AssetExecutionInputManifest
+P	ASSET/ORCH
+P	task+blueprint+script+DNA+manifest+naming+instruction+route+input fingerprint
+ROW	ASSET-01-OBJ-CANDIDATE	AssetCandidateOutput	ASSET	candidate artifact exact version/uri/canonical filename/checksum/provenance
+P	ASSET-01-OBJ-CANDIDATE
+P	AssetCandidateOutput
+P	ASSET
+P	candidate artifact exact version/uri/canonical filename/checksum/provenance
+ROW	ASSET-01-OBJ-EVALUATION	AssetEvaluation	ASSET/EVALUATION	criteria version/dimension scores/hard blocks/evidence/result
+P	ASSET-01-OBJ-EVALUATION
+P	AssetEvaluation
+P	ASSET/EVALUATION
+P	criteria version/dimension scores/hard blocks/evidence/result
+ROW	ASSET-01-OBJ-FINDING	AssetFinding	ASSET/EVALUATION	issue type/asset/layer/region/evidence
+P	ASSET-01-OBJ-FINDING
+P	AssetFinding
+P	ASSET/EVALUATION
+P	issue type/asset/layer/region/evidence
+ROW	ASSET-01-OBJ-CORRECTION	AssetCorrectionContext	ASSET/AI	current exact refs + issue + zh-TW request + candidate
+P	ASSET-01-OBJ-CORRECTION
+P	AssetCorrectionContext
+P	ASSET/AI
+P	current exact refs + issue + zh-TW request + candidate
+ROW	ASSET-01-OBJ-CORRECTION-SCRIPT	CorrectionScriptCandidate	ACPOS Script System	provider-neutral delta; human approved before translation
+P	ASSET-01-OBJ-CORRECTION-SCRIPT
+P	CorrectionScriptCandidate
+P	ACPOS Script System
+P	provider-neutral delta; human approved before translation
+ROW	ASSET-01-OBJ-LAYER-DOC	VersionedLayerDocument	AssetCatalogService	immutable versions of image-compatible layer document
+P	ASSET-01-OBJ-LAYER-DOC
+P	VersionedLayerDocument
+P	AssetCatalogService
+P	immutable versions of image-compatible layer document
+ROW	ASSET-01-OBJ-ASSET-PATCH	AssetPatch	AssetCatalogService	source asset/layer/region/blueprint/DNA/preserve constraints/preview/decision
+P	ASSET-01-OBJ-ASSET-PATCH
+P	AssetPatch
+P	AssetCatalogService
+P	source asset/layer/region/blueprint/DNA/preserve constraints/preview/decision
+ROW	ASSET-01-OBJ-ASSET-VERSION	AssetOutputVersion	AssetCatalogService	immutable exact artifact version + canonical filename/checksum
+P	ASSET-01-OBJ-ASSET-VERSION
+P	AssetOutputVersion
+P	AssetCatalogService
+P	immutable exact artifact version + canonical filename/checksum
+ROW	ASSET-01-OBJ-SCORECARD	AssetScorecard	ASSET/EVALUATION	target output + criteria version + scores/issues/evidence
+P	ASSET-01-OBJ-SCORECARD
+P	AssetScorecard
+P	ASSET/EVALUATION
+P	target output + criteria version + scores/issues/evidence
+ROW	ASSET-01-OBJ-HANDOFF	AssetHandoffManifest	ASSET boundary	exact locked output + layer/composite refs + blueprint/script/DNA/manifest/naming/score/rights/contract hash
+P	ASSET-01-OBJ-HANDOFF
+P	AssetHandoffManifest
+P	ASSET boundary
+P	exact locked output + layer/composite refs + blueprint/script/DNA/manifest/naming/score/rights/contract hash
+P	4. Stage / Journey / Interaction Topology
+ROW	Stage UID	Stage	Flow
+P	Stage UID
+P	Stage
+P	Flow
+ROW	ASSET-01-STAGE-01-RESOLVE	Resolve Inputs	Resolve exact Task→Blueprint→ASSET Script→DNA→Asset Manifest→ACPOS Naming→Instruction/Route; first production has no manual prompt.
+P	ASSET-01-STAGE-01-RESOLVE
+P	Resolve Inputs
+P	Resolve exact Task→Blueprint→ASSET Script→DNA→Asset Manifest→ACPOS Naming→Instruction/Route; first production has no manual prompt.
+ROW	ASSET-01-STAGE-02-REUSE-GENERATE	Reuse First / Generate Missing	Resolve each required manifest item; reuse exact eligible asset first; only generate Missing items.
+P	ASSET-01-STAGE-02-REUSE-GENERATE
+P	Reuse First / Generate Missing
+P	Resolve each required manifest item; reuse exact eligible asset first; only generate Missing items.
+ROW	ASSET-01-STAGE-03-LAYER-COMPOSITE	Layer / Composite	For image-compatible assets, optional Layer/Patch/Composite; audio assets skip LayerRuntime. No cross-department edit.
+P	ASSET-01-STAGE-03-LAYER-COMPOSITE
+P	Layer / Composite
+P	For image-compatible assets, optional Layer/Patch/Composite; audio assets skip LayerRuntime. No cross-department edit.
+ROW	ASSET-01-STAGE-04-EVALUATE-DECIDE	Evaluate / Confirm or Modify	Run bound ASSET criteria → WAIT_CONFIRMATION; Confirm or enter Correction. AUTO advances only after Confirm.
+P	ASSET-01-STAGE-04-EVALUATE-DECIDE
+P	Evaluate / Confirm or Modify
+P	Run bound ASSET criteria → WAIT_CONFIRMATION; Confirm or enter Correction. AUTO advances only after Confirm.
+ROW	ASSET-01-STAGE-05-FINALIZE	Lock / Handoff	Seal exact asset output manifest, lock exact version, handoff exact manifest to VIDEO.
+P	ASSET-01-STAGE-05-FINALIZE
+P	Lock / Handoff
+P	Seal exact asset output manifest, lock exact version, handoff exact manifest to VIDEO.
+P	4.1 AUTO vs MANUAL
+ROW	Mode	Same exact inputs	After Confirm
+P	Mode
+P	Same exact inputs
+P	After Confirm
+ROW	AUTO	Blueprint / Script / DNA / Manifest / Naming / Instruction / Route 都由系統自動解析	自動前進下一個 scheduled task
+P	AUTO
+P	Blueprint / Script / DNA / Manifest / Naming / Instruction / Route 都由系統自動解析
+P	自動前進下一個 scheduled task
+ROW	MANUAL	完全相同；不得變成人工 prompt 模式	使用者手動開始下一個 task
+P	MANUAL
+P	完全相同；不得變成人工 prompt 模式
+P	使用者手動開始下一個 task
+ROW	Error	Queue/task 停在失敗 item；禁止 AI skip/reorder/create	修復後 Retry / Resume current stage
+P	Error
+P	Queue/task 停在失敗 item；禁止 AI skip/reorder/create
+P	修復後 Retry / Resume current stage
+P	4.2 Functional Chain
+P	CORE exact handoff → Resolve Inputs → Reuse First / Generate Missing → image-compatible Layer / Composite (audio skips) → ASSET Evaluation → WAIT_CONFIRMATION → Confirm 或 Modify → Lock Exact Version → Exact Handoff Manifest → VIDEO boundary。
+P	5. Page / Section / Component / Visual Architecture
+ROW	Section UID	Name	Responsibility	Visual UID
+P	Section UID
+P	Name
+P	Responsibility
+P	Visual UID
+ROW	ASSET-01-SEC-01	Context / Execution	Project/Topic/Task、AUTO/MANUAL、Execute、Stage/Runtime 摘要	ASSET-01-VIS-CONTEXT
+P	ASSET-01-SEC-01
+P	Context / Execution
+P	Project/Topic/Task、AUTO/MANUAL、Execute、Stage/Runtime 摘要
+P	ASSET-01-VIS-CONTEXT
+ROW	ASSET-01-SEC-02	Asset Manifest / List	目前 Task 的素材需求、Reuse/Missing 狀態、素材清單與搜尋；不建立自由素材 Picker	ASSET-01-VIS-LEFT
+P	ASSET-01-SEC-02
+P	Asset Manifest / List
+P	目前 Task 的素材需求、Reuse/Missing 狀態、素材清單與搜尋；不建立自由素材 Picker
+P	ASSET-01-VIS-LEFT
+ROW	ASSET-01-SEC-03	Blueprint / Script / DNA Binding	Locked Blueprint、ASSET Script Role/Section、DNA、Manifest Item、Canonical Filename、Checksum、Rights/Policy 唯讀綁定	ASSET-01-VIS-BINDING
+P	ASSET-01-SEC-03
+P	Blueprint / Script / DNA Binding
+P	Locked Blueprint、ASSET Script Role/Section、DNA、Manifest Item、Canonical Filename、Checksum、Rights/Policy 唯讀綁定
+P	ASSET-01-VIS-BINDING
+ROW	ASSET-01-SEC-04	Preview / Compare	Image/Audio 依素材類型預覽；Single/A-B/A-B-C 動態比較	ASSET-01-VIS-PREVIEW
+P	ASSET-01-SEC-04
+P	Preview / Compare
+P	Image/Audio 依素材類型預覽；Single/A-B/A-B-C 動態比較
+P	ASSET-01-VIS-PREVIEW
+ROW	ASSET-01-SEC-05	Reuse First / Generate Missing	Required/Reuse/Missing/Deferred 解析與候選產出狀態	ASSET-01-VIS-REUSE
+P	ASSET-01-SEC-05
+P	Reuse First / Generate Missing
+P	Required/Reuse/Missing/Deferred 解析與候選產出狀態
+P	ASSET-01-VIS-REUSE
+ROW	ASSET-01-SEC-06	Correction Conversation	僅 Modify 時允許繁中修正；系統自動帶入 exact context；使用共用 Translation/API Routing	ASSET-01-VIS-CORRECTION
+P	ASSET-01-SEC-06
+P	Correction Conversation
+P	僅 Modify 時允許繁中修正；系統自動帶入 exact context；使用共用 Translation/API Routing
+P	ASSET-01-VIS-CORRECTION
+ROW	ASSET-01-SEC-07	Layer / Patch	僅支援圖層的圖像素材；Versioned Layer Document / Asset Patch；不屬 Photoshop/PSD 外部整合	ASSET-01-VIS-LAYER
+P	ASSET-01-SEC-07
+P	Layer / Patch
+P	僅支援圖層的圖像素材；Versioned Layer Document / Asset Patch；不屬 Photoshop/PSD 外部整合
+P	ASSET-01-VIS-LAYER
+ROW	ASSET-01-SEC-08	Runtime / Provider	Route/Provider/Model/Job/Attempt/Callback/Retry/Trace 唯讀；禁止任何頁面層 Provider/Model 指派控制	ASSET-01-VIS-RUNTIME
+P	ASSET-01-SEC-08
+P	Runtime / Provider
+P	Route/Provider/Model/Job/Attempt/Callback/Retry/Trace 唯讀；禁止任何頁面層 Provider/Model 指派控制
+P	ASSET-01-VIS-RUNTIME
+ROW	ASSET-01-SEC-09	Score / Version / Decision	ASSET Approved Criteria、Version Compare、Confirm/Modify/Lock	ASSET-01-VIS-DECISION
+P	ASSET-01-SEC-09
+P	Score / Version / Decision
+P	ASSET Approved Criteria、Version Compare、Confirm/Modify/Lock
+P	ASSET-01-VIS-DECISION
+ROW	ASSET-01-SEC-10	Exact Handoff Manifest	鎖定 Exact Asset Version/Layer/Composite/Blueprint/Script/DNA/Filename/Checksum/Score/Rights/Contract 後交付 VIDEO	ASSET-01-VIS-HANDOFF
+P	ASSET-01-SEC-10
+P	Exact Handoff Manifest
+P	鎖定 Exact Asset Version/Layer/Composite/Blueprint/Script/DNA/Filename/Checksum/Score/Rights/Contract 後交付 VIDEO
+P	ASSET-01-VIS-HANDOFF
+P	5.1 Components
+ROW	Component UID	Section	Name
+P	Component UID
+P	Section
+P	Name
+ROW	ASSET-01-CMP-CONTEXT	ASSET-01-SEC-01	Context/Execution Bar
+P	ASSET-01-CMP-CONTEXT
+P	ASSET-01-SEC-01
+P	Context/Execution Bar
+ROW	ASSET-01-CMP-ASSET-LIST	ASSET-01-SEC-02	Asset Manifest/List
+P	ASSET-01-CMP-ASSET-LIST
+P	ASSET-01-SEC-02
+P	Asset Manifest/List
+ROW	ASSET-01-CMP-BINDING	ASSET-01-SEC-03	Blueprint/Script/DNA/Manifest Binding
+P	ASSET-01-CMP-BINDING
+P	ASSET-01-SEC-03
+P	Blueprint/Script/DNA/Manifest Binding
+ROW	ASSET-01-CMP-PREVIEW	ASSET-01-SEC-04	Preview Surface
+P	ASSET-01-CMP-PREVIEW
+P	ASSET-01-SEC-04
+P	Preview Surface
+ROW	ASSET-01-CMP-COMPARE	ASSET-01-SEC-04	Compare Toolbar
+P	ASSET-01-CMP-COMPARE
+P	ASSET-01-SEC-04
+P	Compare Toolbar
+ROW	ASSET-01-CMP-REUSE	ASSET-01-SEC-05	Reuse/Generate Status
+P	ASSET-01-CMP-REUSE
+P	ASSET-01-SEC-05
+P	Reuse/Generate Status
+ROW	ASSET-01-CMP-SCRIPT	ASSET-01-SEC-03	ASSET Script View
+P	ASSET-01-CMP-SCRIPT
+P	ASSET-01-SEC-03
+P	ASSET Script View
+ROW	ASSET-01-CMP-CORRECTION	ASSET-01-SEC-06	Correction Conversation
+P	ASSET-01-CMP-CORRECTION
+P	ASSET-01-SEC-06
+P	Correction Conversation
+ROW	ASSET-01-CMP-LAYER-STACK	ASSET-01-SEC-07	Layer Stack
+P	ASSET-01-CMP-LAYER-STACK
+P	ASSET-01-SEC-07
+P	Layer Stack
+ROW	ASSET-01-CMP-LAYER-INSPECTOR	ASSET-01-SEC-07	Layer Properties/Mask
+P	ASSET-01-CMP-LAYER-INSPECTOR
+P	ASSET-01-SEC-07
+P	Layer Properties/Mask
+ROW	ASSET-01-CMP-PATCH	ASSET-01-SEC-07	Asset Patch Decision
+P	ASSET-01-CMP-PATCH
+P	ASSET-01-SEC-07
+P	Asset Patch Decision
+ROW	ASSET-01-CMP-RUNTIME	ASSET-01-SEC-08	Runtime/Provider Read Model
+P	ASSET-01-CMP-RUNTIME
+P	ASSET-01-SEC-08
+P	Runtime/Provider Read Model
+ROW	ASSET-01-CMP-SCORE	ASSET-01-SEC-09	ASSET Scorecard
+P	ASSET-01-CMP-SCORE
+P	ASSET-01-SEC-09
+P	ASSET Scorecard
+ROW	ASSET-01-CMP-VERSION	ASSET-01-SEC-09	Version/Compare
+P	ASSET-01-CMP-VERSION
+P	ASSET-01-SEC-09
+P	Version/Compare
+ROW	ASSET-01-CMP-DECISION	ASSET-01-SEC-09	Decision Dock
+P	ASSET-01-CMP-DECISION
+P	ASSET-01-SEC-09
+P	Decision Dock
+ROW	ASSET-01-CMP-HANDOFF	ASSET-01-SEC-10	Exact Handoff Manifest
+P	ASSET-01-CMP-HANDOFF
+P	ASSET-01-SEC-10
+P	Exact Handoff Manifest
+P	5.2 Geometry
+ROW	Area	Geometry / Rule
+P	Area
+P	Geometry / Rule
+ROW	Desktop	min-width 1280px；Main workspace independent vertical scroll
+P	Desktop
+P	min-width 1280px；Main workspace independent vertical scroll
+ROW	Primary Grid	Left 20% min 260px / Center 60% preview-first / Right 20% min 280px
+P	Primary Grid
+P	Left 20% min 260px / Center 60% preview-first / Right 20% min 280px
+ROW	Lower Rows	Layer / Correction / Runtime / Handoff 可向下延伸 full width
+P	Lower Rows
+P	Layer / Correction / Runtime / Handoff 可向下延伸 full width
+ROW	Top Shell	58px fixed full-width Header
+P	Top Shell
+P	58px fixed full-width Header
+ROW	Sidebar	64px collapsed icon-only；221px expanded overlay；no reflow
+P	Sidebar
+P	64px collapsed icon-only；221px expanded overlay；no reflow
+ROW	Visual Tokens	dark purple enterprise AI production workstation；page-local palette forbidden
+P	Visual Tokens
+P	dark purple enterprise AI production workstation；page-local palette forbidden
+P	6.1 UI Visual Candidate · A｜Main Production / WAIT_CONFIRMATION
+P	A｜Main Production / WAIT_CONFIRMATION
+P	主畫面對應：SEC-01 Context / Execution、SEC-02 Manifest / List、SEC-03 Binding、SEC-04 Preview / Compare、SEC-05 Reuse First、SEC-09 Score / Version / Decision、SEC-08 Runtime。
+P	6.2 UI Visual Candidate · B｜Correction Conversation
+P	B｜Correction Conversation
+P	Correction 僅在 Modify/Finding 路徑顯示；繁中修改要求 → Correction Script Candidate → Human Approve → Shared Translation / Routing → Execute approved correction。
+P	6.3 UI Visual Candidate · C｜Layer / Patch + Expanded Sidebar
+P	C｜Layer / Patch + Expanded Sidebar
+P	Layer/Patch 僅 image-compatible asset type 顯示；畫面同時展示 221px 展開 Sidebar Overlay。接受 Patch 產生新 ASSET_VERSION + 新 LAYER_DOCUMENT_VERSION，永不覆寫 source。
+P	6.4 UI Visual Candidate · D｜Audio Asset / No Layer Controls
+P	D｜Audio Asset / No Layer Controls
+P	Voice / Music / SFX 使用 Audio Waveform Preview；Layer / Patch 不 render，明確顯示 Not Applicable，不用 disabled 假控制。
+P	6.5 UI Visual Candidate · E｜Finalize / Exact Handoff
+P	E｜Finalize / Exact Handoff
+P	Finalize 只在 Confirm + Required complete + Missing=0 + exact version locked + handoff manifest verified 後可 Handoff → VIDEO；VIDEO 內部功能不出現在本頁。
+P	7. Atomic Control Matrix · 85/85
+P	以下 85 Controls 皆直接取自 Current ASSET-01 Authority；不得新增未列控制。表格跨頁時重複 Header。
+ROW	Control UID	Sec	Component	Type	Label	Action	Gate	Permission
+P	Control UID
+P	Sec
+P	Component
+P	Type
+P	Label
+P	Action
+P	Gate
+P	Permission
+ROW	ASSET-01-CTL-PROJECT	SEC-01	Context	SELECT	Project	ASSET-01-ACT-PROJECT-SELECT	ASSET-01-GATE-PAGE	ASSET_USE
+P	ASSET-01-CTL-PROJECT
+P	SEC-01
+P	Context
+P	SELECT
+P	Project
+P	ASSET-01-ACT-PROJECT-SELECT
+P	ASSET-01-GATE-PAGE
+P	ASSET_USE
+ROW	ASSET-01-CTL-TOPIC	SEC-01	Context	SELECT	Topic	ASSET-01-ACT-TOPIC-SELECT	ASSET-01-GATE-PAGE	ASSET_USE
+P	ASSET-01-CTL-TOPIC
+P	SEC-01
+P	Context
+P	SELECT
+P	Topic
+P	ASSET-01-ACT-TOPIC-SELECT
+P	ASSET-01-GATE-PAGE
+P	ASSET_USE
+ROW	ASSET-01-FLD-TASK	SEC-01	Context	READONLY	Production Task	ASSET-01-ACT-BINDING-VIEW	ASSET-01-GATE-CONTEXT	ASSET_USE
+P	ASSET-01-FLD-TASK
+P	SEC-01
+P	Context
+P	READONLY
+P	Production Task
+P	ASSET-01-ACT-BINDING-VIEW
+P	ASSET-01-GATE-CONTEXT
+P	ASSET_USE
+ROW	ASSET-01-FLD-TASK-STATUS	SEC-01	Context	STATUS	Task Status	ASSET-01-ACT-BINDING-VIEW	ASSET-01-GATE-CONTEXT	ASSET_USE
+P	ASSET-01-FLD-TASK-STATUS
+P	SEC-01
+P	Context
+P	STATUS
+P	Task Status
+P	ASSET-01-ACT-BINDING-VIEW
+P	ASSET-01-GATE-CONTEXT
+P	ASSET_USE
+ROW	ASSET-01-CTL-MODE	SEC-01	Context	SEGMENTED	AUTO / MANUAL	ASSET-01-ACT-MODE-SET	ASSET-01-GATE-CONTEXT	ASSET_USE
+P	ASSET-01-CTL-MODE
+P	SEC-01
+P	Context
+P	SEGMENTED
+P	AUTO / MANUAL
+P	ASSET-01-ACT-MODE-SET
+P	ASSET-01-GATE-CONTEXT
+P	ASSET_USE
+ROW	ASSET-01-BTN-EXECUTE	SEC-01	Context	PRIMARY_BUTTON	執行	ASSET-01-ACT-FLOW-START	ASSET-01-GATE-EXECUTE	ASSET_EXECUTE
+P	ASSET-01-BTN-EXECUTE
+P	SEC-01
+P	Context
+P	PRIMARY_BUTTON
+P	執行
+P	ASSET-01-ACT-FLOW-START
+P	ASSET-01-GATE-EXECUTE
+P	ASSET_EXECUTE
+ROW	ASSET-01-FLD-STAGE	SEC-01	Context	READONLY	Current Stage	ASSET-01-ACT-BINDING-VIEW	ASSET-01-GATE-CONTEXT	ASSET_USE
+P	ASSET-01-FLD-STAGE
+P	SEC-01
+P	Context
+P	READONLY
+P	Current Stage
+P	ASSET-01-ACT-BINDING-VIEW
+P	ASSET-01-GATE-CONTEXT
+P	ASSET_USE
+ROW	ASSET-01-FLD-SEARCH	SEC-02	Asset List	SEARCH	搜尋素材	ASSET-01-ACT-ASSET-SEARCH	ASSET-01-GATE-CONTEXT	ASSET_USE
+P	ASSET-01-FLD-SEARCH
+P	SEC-02
+P	Asset List
+P	SEARCH
+P	搜尋素材
+P	ASSET-01-ACT-ASSET-SEARCH
+P	ASSET-01-GATE-CONTEXT
+P	ASSET_USE
+ROW	ASSET-01-CTL-FILTER	SEC-02	Asset List	FILTER	Filter	ASSET-01-ACT-ASSET-FILTER	ASSET-01-GATE-CONTEXT	ASSET_USE
+P	ASSET-01-CTL-FILTER
+P	SEC-02
+P	Asset List
+P	FILTER
+P	Filter
+P	ASSET-01-ACT-ASSET-FILTER
+P	ASSET-01-GATE-CONTEXT
+P	ASSET_USE
+ROW	ASSET-01-LST-ASSET	SEC-02	Asset List	LIST	Asset Items	ASSET-01-ACT-ASSET-SELECT	ASSET-01-GATE-CONTEXT	ASSET_USE
+P	ASSET-01-LST-ASSET
+P	SEC-02
+P	Asset List
+P	LIST
+P	Asset Items
+P	ASSET-01-ACT-ASSET-SELECT
+P	ASSET-01-GATE-CONTEXT
+P	ASSET_USE
+ROW	ASSET-01-FLD-MANIFEST-REQUIRED	SEC-02	Reuse	READONLY	Required	ASSET-01-ACT-BINDING-VIEW	ASSET-01-GATE-MANIFEST	ASSET_USE
+P	ASSET-01-FLD-MANIFEST-REQUIRED
+P	SEC-02
+P	Reuse
+P	READONLY
+P	Required
+P	ASSET-01-ACT-BINDING-VIEW
+P	ASSET-01-GATE-MANIFEST
+P	ASSET_USE
+ROW	ASSET-01-FLD-MANIFEST-REUSE	SEC-02	Reuse	READONLY	Reuse	ASSET-01-ACT-BINDING-VIEW	ASSET-01-GATE-MANIFEST	ASSET_USE
+P	ASSET-01-FLD-MANIFEST-REUSE
+P	SEC-02
+P	Reuse
+P	READONLY
+P	Reuse
+P	ASSET-01-ACT-BINDING-VIEW
+P	ASSET-01-GATE-MANIFEST
+P	ASSET_USE
+ROW	ASSET-01-FLD-MANIFEST-MISSING	SEC-02	Reuse	READONLY	Missing	ASSET-01-ACT-BINDING-VIEW	ASSET-01-GATE-MANIFEST	ASSET_USE
+P	ASSET-01-FLD-MANIFEST-MISSING
+P	SEC-02
+P	Reuse
+P	READONLY
+P	Missing
+P	ASSET-01-ACT-BINDING-VIEW
+P	ASSET-01-GATE-MANIFEST
+P	ASSET_USE
+ROW	ASSET-01-FLD-MANIFEST-DEFERRED	SEC-02	Reuse	READONLY	Deferred	ASSET-01-ACT-BINDING-VIEW	ASSET-01-GATE-MANIFEST	ASSET_USE
+P	ASSET-01-FLD-MANIFEST-DEFERRED
+P	SEC-02
+P	Reuse
+P	READONLY
+P	Deferred
+P	ASSET-01-ACT-BINDING-VIEW
+P	ASSET-01-GATE-MANIFEST
+P	ASSET_USE
+ROW	ASSET-01-FLD-BLUEPRINT	SEC-03	Binding	READONLY	Locked Blueprint / Child Lock	ASSET-01-ACT-BINDING-VIEW	ASSET-01-GATE-CHILD-LOCK	ASSET_USE
+P	ASSET-01-FLD-BLUEPRINT
+P	SEC-03
+P	Binding
+P	READONLY
+P	Locked Blueprint / Child Lock
+P	ASSET-01-ACT-BINDING-VIEW
+P	ASSET-01-GATE-CHILD-LOCK
+P	ASSET_USE
+ROW	ASSET-01-FLD-SCRIPT	SEC-03	Binding	READONLY	ASSET Script Role / Section / Hash	ASSET-01-ACT-BINDING-VIEW	ASSET-01-GATE-SCRIPT	ASSET_USE
+P	ASSET-01-FLD-SCRIPT
+P	SEC-03
+P	Binding
+P	READONLY
+P	ASSET Script Role / Section / Hash
+P	ASSET-01-ACT-BINDING-VIEW
+P	ASSET-01-GATE-SCRIPT
+P	ASSET_USE
+ROW	ASSET-01-FLD-DNA	SEC-03	Binding	READONLY	DNA / Identity / Continuity Refs	ASSET-01-ACT-BINDING-VIEW	ASSET-01-GATE-MANIFEST	ASSET_USE
+P	ASSET-01-FLD-DNA
+P	SEC-03
+P	Binding
+P	READONLY
+P	DNA / Identity / Continuity Refs
+P	ASSET-01-ACT-BINDING-VIEW
+P	ASSET-01-GATE-MANIFEST
+P	ASSET_USE
+ROW	ASSET-01-FLD-MANIFEST	SEC-03	Binding	READONLY	Asset Manifest Item ID / Purpose	ASSET-01-ACT-BINDING-VIEW	ASSET-01-GATE-MANIFEST	ASSET_USE
+P	ASSET-01-FLD-MANIFEST
+P	SEC-03
+P	Binding
+P	READONLY
+P	Asset Manifest Item ID / Purpose
+P	ASSET-01-ACT-BINDING-VIEW
+P	ASSET-01-GATE-MANIFEST
+P	ASSET_USE
+ROW	ASSET-01-FLD-INPUT-FINGERPRINT	SEC-03	Binding	READONLY	Input Fingerprint	ASSET-01-ACT-BINDING-VIEW	ASSET-01-GATE-MANIFEST	ASSET_USE
+P	ASSET-01-FLD-INPUT-FINGERPRINT
+P	SEC-03
+P	Binding
+P	READONLY
+P	Input Fingerprint
+P	ASSET-01-ACT-BINDING-VIEW
+P	ASSET-01-GATE-MANIFEST
+P	ASSET_USE
+ROW	ASSET-01-FLD-NAMING-AUTHORITY	SEC-03	Binding	READONLY	Filename Authority = ACPOS_SYSTEM	ASSET-01-ACT-BINDING-VIEW	ASSET-01-GATE-NAMING	ASSET_USE
+P	ASSET-01-FLD-NAMING-AUTHORITY
+P	SEC-03
+P	Binding
+P	READONLY
+P	Filename Authority = ACPOS_SYSTEM
+P	ASSET-01-ACT-BINDING-VIEW
+P	ASSET-01-GATE-NAMING
+P	ASSET_USE
+ROW	ASSET-01-FLD-CANONICAL-FILENAME	SEC-03	Binding	READONLY	Canonical Filename	ASSET-01-ACT-BINDING-VIEW	ASSET-01-GATE-NAMING	ASSET_USE
+P	ASSET-01-FLD-CANONICAL-FILENAME
+P	SEC-03
+P	Binding
+P	READONLY
+P	Canonical Filename
+P	ASSET-01-ACT-BINDING-VIEW
+P	ASSET-01-GATE-NAMING
+P	ASSET_USE
+ROW	ASSET-01-FLD-OUTPUT-ID	SEC-03	Binding	READONLY	Output Artifact ID / Exact Version	ASSET-01-ACT-BINDING-VIEW	ASSET-01-GATE-NAMING	ASSET_USE
+P	ASSET-01-FLD-OUTPUT-ID
+P	SEC-03
+P	Binding
+P	READONLY
+P	Output Artifact ID / Exact Version
+P	ASSET-01-ACT-BINDING-VIEW
+P	ASSET-01-GATE-NAMING
+P	ASSET_USE
+ROW	ASSET-01-FLD-CHECKSUM	SEC-03	Binding	READONLY	Checksum	ASSET-01-ACT-BINDING-VIEW	ASSET-01-GATE-NAMING	ASSET_USE
+P	ASSET-01-FLD-CHECKSUM
+P	SEC-03
+P	Binding
+P	READONLY
+P	Checksum
+P	ASSET-01-ACT-BINDING-VIEW
+P	ASSET-01-GATE-NAMING
+P	ASSET_USE
+ROW	ASSET-01-FLD-RIGHTS	SEC-03	Binding	READONLY	Rights / Policy	ASSET-01-ACT-BINDING-VIEW	ASSET-01-GATE-MANIFEST	ASSET_USE
+P	ASSET-01-FLD-RIGHTS
+P	SEC-03
+P	Binding
+P	READONLY
+P	Rights / Policy
+P	ASSET-01-ACT-BINDING-VIEW
+P	ASSET-01-GATE-MANIFEST
+P	ASSET_USE
+ROW	ASSET-01-FLD-INSTRUCTION	SEC-03	Binding	READONLY	Approved Instruction Package	ASSET-01-ACT-BINDING-VIEW	ASSET-01-GATE-ROUTE	ASSET_USE
+P	ASSET-01-FLD-INSTRUCTION
+P	SEC-03
+P	Binding
+P	READONLY
+P	Approved Instruction Package
+P	ASSET-01-ACT-BINDING-VIEW
+P	ASSET-01-GATE-ROUTE
+P	ASSET_USE
+ROW	ASSET-01-BTN-BLUEPRINT	SEC-03	Binding	SECONDARY_BUTTON	查看 Blueprint	ASSET-01-ACT-BLUEPRINT-VIEW	ASSET-01-GATE-CHILD-LOCK	ASSET_USE
+P	ASSET-01-BTN-BLUEPRINT
+P	SEC-03
+P	Binding
+P	SECONDARY_BUTTON
+P	查看 Blueprint
+P	ASSET-01-ACT-BLUEPRINT-VIEW
+P	ASSET-01-GATE-CHILD-LOCK
+P	ASSET_USE
+ROW	ASSET-01-BTN-SCRIPT	SEC-03	Script	SECONDARY_BUTTON	查看 ASSET Script	ASSET-01-ACT-SCRIPT-VIEW	ASSET-01-GATE-SCRIPT	ASSET_USE
+P	ASSET-01-BTN-SCRIPT
+P	SEC-03
+P	Script
+P	SECONDARY_BUTTON
+P	查看 ASSET Script
+P	ASSET-01-ACT-SCRIPT-VIEW
+P	ASSET-01-GATE-SCRIPT
+P	ASSET_USE
+ROW	ASSET-01-BTN-SINGLE	SEC-04	Compare	CONTROL	Single	ASSET-01-ACT-COMPARE-SINGLE	ASSET-01-GATE-COMPARE	ASSET_USE
+P	ASSET-01-BTN-SINGLE
+P	SEC-04
+P	Compare
+P	CONTROL
+P	Single
+P	ASSET-01-ACT-COMPARE-SINGLE
+P	ASSET-01-GATE-COMPARE
+P	ASSET_USE
+ROW	ASSET-01-BTN-AB	SEC-04	Compare	CONTROL	A/B	ASSET-01-ACT-COMPARE-AB	ASSET-01-GATE-COMPARE	ASSET_USE
+P	ASSET-01-BTN-AB
+P	SEC-04
+P	Compare
+P	CONTROL
+P	A/B
+P	ASSET-01-ACT-COMPARE-AB
+P	ASSET-01-GATE-COMPARE
+P	ASSET_USE
+ROW	ASSET-01-BTN-ABC	SEC-04	Compare	CONTROL	A/B/C	ASSET-01-ACT-COMPARE-ABC	ASSET-01-GATE-COMPARE	ASSET_USE
+P	ASSET-01-BTN-ABC
+P	SEC-04
+P	Compare
+P	CONTROL
+P	A/B/C
+P	ASSET-01-ACT-COMPARE-ABC
+P	ASSET-01-GATE-COMPARE
+P	ASSET_USE
+ROW	ASSET-01-BTN-ZOOM-OUT	SEC-04	Compare	CONTROL	−	ASSET-01-ACT-ZOOM-OUT	ASSET-01-GATE-CANDIDATE	ASSET_USE
+P	ASSET-01-BTN-ZOOM-OUT
+P	SEC-04
+P	Compare
+P	CONTROL
+P	−
+P	ASSET-01-ACT-ZOOM-OUT
+P	ASSET-01-GATE-CANDIDATE
+P	ASSET_USE
+ROW	ASSET-01-BTN-ZOOM-IN	SEC-04	Compare	CONTROL	+	ASSET-01-ACT-ZOOM-IN	ASSET-01-GATE-CANDIDATE	ASSET_USE
+P	ASSET-01-BTN-ZOOM-IN
+P	SEC-04
+P	Compare
+P	CONTROL
+P	+
+P	ASSET-01-ACT-ZOOM-IN
+P	ASSET-01-GATE-CANDIDATE
+P	ASSET_USE
+ROW	ASSET-01-BTN-FIT	SEC-04	Compare	CONTROL	Fit	ASSET-01-ACT-FIT	ASSET-01-GATE-CANDIDATE	ASSET_USE
+P	ASSET-01-BTN-FIT
+P	SEC-04
+P	Compare
+P	CONTROL
+P	Fit
+P	ASSET-01-ACT-FIT
+P	ASSET-01-GATE-CANDIDATE
+P	ASSET_USE
+ROW	ASSET-01-BTN-REFERENCE	SEC-04	Compare	CONTROL	Reference	ASSET-01-ACT-REFERENCE-TOGGLE	ASSET-01-GATE-CANDIDATE	ASSET_USE
+P	ASSET-01-BTN-REFERENCE
+P	SEC-04
+P	Compare
+P	CONTROL
+P	Reference
+P	ASSET-01-ACT-REFERENCE-TOGGLE
+P	ASSET-01-GATE-CANDIDATE
+P	ASSET_USE
+ROW	ASSET-01-LST-COMPARE-VERSIONS	SEC-04	Preview	LIST	Selected Versions	ASSET-01-ACT-COMPARE-SINGLE	ASSET-01-GATE-COMPARE	ASSET_USE
+P	ASSET-01-LST-COMPARE-VERSIONS
+P	SEC-04
+P	Preview
+P	LIST
+P	Selected Versions
+P	ASSET-01-ACT-COMPARE-SINGLE
+P	ASSET-01-GATE-COMPARE
+P	ASSET_USE
+ROW	ASSET-01-BTN-RESULT-DETAIL	SEC-04	Preview	SECONDARY_BUTTON	查看結果詳情	ASSET-01-ACT-RESULT-VIEW	ASSET-01-GATE-EVALUATION	ASSET_USE
+P	ASSET-01-BTN-RESULT-DETAIL
+P	SEC-04
+P	Preview
+P	SECONDARY_BUTTON
+P	查看結果詳情
+P	ASSET-01-ACT-RESULT-VIEW
+P	ASSET-01-GATE-EVALUATION
+P	ASSET_USE
+ROW	ASSET-01-BTN-CORRECTION-OPEN	SEC-06	Correction	CONTROL	開始修正	ASSET-01-ACT-CORRECTION-OPEN	ASSET-01-GATE-CORRECTION	ASSET_CORRECT
+P	ASSET-01-BTN-CORRECTION-OPEN
+P	SEC-06
+P	Correction
+P	CONTROL
+P	開始修正
+P	ASSET-01-ACT-CORRECTION-OPEN
+P	ASSET-01-GATE-CORRECTION
+P	ASSET_CORRECT
+ROW	ASSET-01-TXT-CORRECTION-REQUEST	SEC-06	Correction	CONTROL	繁中修改要求	ASSET-01-ACT-CORRECTION-GENERATE	ASSET-01-GATE-CORRECTION	ASSET_CORRECT
+P	ASSET-01-TXT-CORRECTION-REQUEST
+P	SEC-06
+P	Correction
+P	CONTROL
+P	繁中修改要求
+P	ASSET-01-ACT-CORRECTION-GENERATE
+P	ASSET-01-GATE-CORRECTION
+P	ASSET_CORRECT
+ROW	ASSET-01-BTN-CORRECTION-GENERATE	SEC-06	Correction	CONTROL	產生修正腳本候選	ASSET-01-ACT-CORRECTION-GENERATE	ASSET-01-GATE-CORRECTION	ASSET_CORRECT
+P	ASSET-01-BTN-CORRECTION-GENERATE
+P	SEC-06
+P	Correction
+P	CONTROL
+P	產生修正腳本候選
+P	ASSET-01-ACT-CORRECTION-GENERATE
+P	ASSET-01-GATE-CORRECTION
+P	ASSET_CORRECT
+ROW	ASSET-01-BTN-CORRECTION-APPROVE	SEC-06	Correction	CONTROL	核准候選	ASSET-01-ACT-CORRECTION-APPROVE	ASSET-01-GATE-CORRECTION	ASSET_CORRECT
+P	ASSET-01-BTN-CORRECTION-APPROVE
+P	SEC-06
+P	Correction
+P	CONTROL
+P	核准候選
+P	ASSET-01-ACT-CORRECTION-APPROVE
+P	ASSET-01-GATE-CORRECTION
+P	ASSET_CORRECT
+ROW	ASSET-01-BTN-CORRECTION-EXECUTE	SEC-06	Correction	CONTROL	執行修正	ASSET-01-ACT-CORRECTION-EXECUTE	ASSET-01-GATE-CORRECTION	ASSET_EXECUTE
+P	ASSET-01-BTN-CORRECTION-EXECUTE
+P	SEC-06
+P	Correction
+P	CONTROL
+P	執行修正
+P	ASSET-01-ACT-CORRECTION-EXECUTE
+P	ASSET-01-GATE-CORRECTION
+P	ASSET_EXECUTE
+ROW	ASSET-01-BTN-LAYER-DOC-CREATE	SEC-07	Layer	CONTROL	建立 Layer Document	ASSET-01-ACT-LAYER-DOC-CREATE	ASSET-01-GATE-LAYER-WRITE	ASSET_LAYER_WRITE
+P	ASSET-01-BTN-LAYER-DOC-CREATE
+P	SEC-07
+P	Layer
+P	CONTROL
+P	建立 Layer Document
+P	ASSET-01-ACT-LAYER-DOC-CREATE
+P	ASSET-01-GATE-LAYER-WRITE
+P	ASSET_LAYER_WRITE
+ROW	ASSET-01-BTN-LAYER-DOC-UPDATE	SEC-07	Layer	CONTROL	更新 Layer Document	ASSET-01-ACT-LAYER-DOC-UPDATE	ASSET-01-GATE-LAYER-WRITE	ASSET_LAYER_WRITE
+P	ASSET-01-BTN-LAYER-DOC-UPDATE
+P	SEC-07
+P	Layer
+P	CONTROL
+P	更新 Layer Document
+P	ASSET-01-ACT-LAYER-DOC-UPDATE
+P	ASSET-01-GATE-LAYER-WRITE
+P	ASSET_LAYER_WRITE
+ROW	ASSET-01-BTN-LAYER-ADD	SEC-07	Layer	CONTROL	新增 Layer	ASSET-01-ACT-LAYER-ADD	ASSET-01-GATE-LAYER-WRITE	ASSET_LAYER_WRITE
+P	ASSET-01-BTN-LAYER-ADD
+P	SEC-07
+P	Layer
+P	CONTROL
+P	新增 Layer
+P	ASSET-01-ACT-LAYER-ADD
+P	ASSET-01-GATE-LAYER-WRITE
+P	ASSET_LAYER_WRITE
+ROW	ASSET-01-BTN-LAYER-DELETE	SEC-07	Layer	CONTROL	刪除 Layer	ASSET-01-ACT-LAYER-DELETE	ASSET-01-GATE-LAYER-WRITE	ASSET_LAYER_WRITE
+P	ASSET-01-BTN-LAYER-DELETE
+P	SEC-07
+P	Layer
+P	CONTROL
+P	刪除 Layer
+P	ASSET-01-ACT-LAYER-DELETE
+P	ASSET-01-GATE-LAYER-WRITE
+P	ASSET_LAYER_WRITE
+ROW	ASSET-01-BTN-LAYER-DUPLICATE	SEC-07	Layer	CONTROL	複製 Layer	ASSET-01-ACT-LAYER-DUPLICATE	ASSET-01-GATE-LAYER-WRITE	ASSET_LAYER_WRITE
+P	ASSET-01-BTN-LAYER-DUPLICATE
+P	SEC-07
+P	Layer
+P	CONTROL
+P	複製 Layer
+P	ASSET-01-ACT-LAYER-DUPLICATE
+P	ASSET-01-GATE-LAYER-WRITE
+P	ASSET_LAYER_WRITE
+ROW	ASSET-01-BTN-LAYER-REORDER	SEC-07	Layer	CONTROL	排序 Layer	ASSET-01-ACT-LAYER-REORDER	ASSET-01-GATE-LAYER-WRITE	ASSET_LAYER_WRITE
+P	ASSET-01-BTN-LAYER-REORDER
+P	SEC-07
+P	Layer
+P	CONTROL
+P	排序 Layer
+P	ASSET-01-ACT-LAYER-REORDER
+P	ASSET-01-GATE-LAYER-WRITE
+P	ASSET_LAYER_WRITE
+ROW	ASSET-01-CTL-LAYER-PROPERTIES	SEC-07	Layer	CONTROL	Opacity / Blend / Transform	ASSET-01-ACT-LAYER-PROPERTIES	ASSET-01-GATE-LAYER-WRITE	ASSET_LAYER_WRITE
+P	ASSET-01-CTL-LAYER-PROPERTIES
+P	SEC-07
+P	Layer
+P	CONTROL
+P	Opacity / Blend / Transform
+P	ASSET-01-ACT-LAYER-PROPERTIES
+P	ASSET-01-GATE-LAYER-WRITE
+P	ASSET_LAYER_WRITE
+ROW	ASSET-01-CTL-LAYER-MASK	SEC-07	Layer	CONTROL	Mask / Semantic Region	ASSET-01-ACT-LAYER-MASK	ASSET-01-GATE-LAYER-WRITE	ASSET_LAYER_WRITE
+P	ASSET-01-CTL-LAYER-MASK
+P	SEC-07
+P	Layer
+P	CONTROL
+P	Mask / Semantic Region
+P	ASSET-01-ACT-LAYER-MASK
+P	ASSET-01-GATE-LAYER-WRITE
+P	ASSET_LAYER_WRITE
+ROW	ASSET-01-BTN-PATCH-CREATE	SEC-07	Patch	CONTROL	建立 Patch	ASSET-01-ACT-PATCH-CREATE	ASSET-01-GATE-LAYER-WRITE	ASSET_LAYER_WRITE
+P	ASSET-01-BTN-PATCH-CREATE
+P	SEC-07
+P	Patch
+P	CONTROL
+P	建立 Patch
+P	ASSET-01-ACT-PATCH-CREATE
+P	ASSET-01-GATE-LAYER-WRITE
+P	ASSET_LAYER_WRITE
+ROW	ASSET-01-BTN-PATCH-PREVIEW	SEC-07	Patch	CONTROL	預覽 Patch	ASSET-01-ACT-PATCH-PREVIEW	ASSET-01-GATE-PATCH-PREVIEW	ASSET_LAYER_WRITE
+P	ASSET-01-BTN-PATCH-PREVIEW
+P	SEC-07
+P	Patch
+P	CONTROL
+P	預覽 Patch
+P	ASSET-01-ACT-PATCH-PREVIEW
+P	ASSET-01-GATE-PATCH-PREVIEW
+P	ASSET_LAYER_WRITE
+ROW	ASSET-01-BTN-PATCH-ACCEPT	SEC-07	Patch	CONTROL	接受 Patch	ASSET-01-ACT-PATCH-ACCEPT	ASSET-01-GATE-PATCH-DECISION	ASSET_PATCH_DECIDE
+P	ASSET-01-BTN-PATCH-ACCEPT
+P	SEC-07
+P	Patch
+P	CONTROL
+P	接受 Patch
+P	ASSET-01-ACT-PATCH-ACCEPT
+P	ASSET-01-GATE-PATCH-DECISION
+P	ASSET_PATCH_DECIDE
+ROW	ASSET-01-BTN-PATCH-REJECT	SEC-07	Patch	CONTROL	拒絕 Patch	ASSET-01-ACT-PATCH-REJECT	ASSET-01-GATE-PATCH-DECISION	ASSET_PATCH_DECIDE
+P	ASSET-01-BTN-PATCH-REJECT
+P	SEC-07
+P	Patch
+P	CONTROL
+P	拒絕 Patch
+P	ASSET-01-ACT-PATCH-REJECT
+P	ASSET-01-GATE-PATCH-DECISION
+P	ASSET_PATCH_DECIDE
+ROW	ASSET-01-BTN-PATCH-REVISE	SEC-07	Patch	CONTROL	要求修改 Patch	ASSET-01-ACT-PATCH-REVISE	ASSET-01-GATE-PATCH-DECISION	ASSET_PATCH_DECIDE
+P	ASSET-01-BTN-PATCH-REVISE
+P	SEC-07
+P	Patch
+P	CONTROL
+P	要求修改 Patch
+P	ASSET-01-ACT-PATCH-REVISE
+P	ASSET-01-GATE-PATCH-DECISION
+P	ASSET_PATCH_DECIDE
+ROW	ASSET-01-FLD-ROUTE	SEC-08	Runtime	READONLY	Route State	ASSET-01-ACT-RUNTIME-VIEW	ASSET-01-GATE-PAGE	ASSET_USE
+P	ASSET-01-FLD-ROUTE
+P	SEC-08
+P	Runtime
+P	READONLY
+P	Route State
+P	ASSET-01-ACT-RUNTIME-VIEW
+P	ASSET-01-GATE-PAGE
+P	ASSET_USE
+ROW	ASSET-01-FLD-PROVIDER	SEC-08	Runtime	READONLY	Provider / Model	ASSET-01-ACT-RUNTIME-VIEW	ASSET-01-GATE-PAGE	ASSET_USE
+P	ASSET-01-FLD-PROVIDER
+P	SEC-08
+P	Runtime
+P	READONLY
+P	Provider / Model
+P	ASSET-01-ACT-RUNTIME-VIEW
+P	ASSET-01-GATE-PAGE
+P	ASSET_USE
+ROW	ASSET-01-FLD-JOB	SEC-08	Runtime	READONLY	Provider Job State	ASSET-01-ACT-RUNTIME-VIEW	ASSET-01-GATE-PAGE	ASSET_USE
+P	ASSET-01-FLD-JOB
+P	SEC-08
+P	Runtime
+P	READONLY
+P	Provider Job State
+P	ASSET-01-ACT-RUNTIME-VIEW
+P	ASSET-01-GATE-PAGE
+P	ASSET_USE
+ROW	ASSET-01-FLD-ATTEMPT	SEC-08	Runtime	READONLY	Attempt	ASSET-01-ACT-RUNTIME-VIEW	ASSET-01-GATE-PAGE	ASSET_USE
+P	ASSET-01-FLD-ATTEMPT
+P	SEC-08
+P	Runtime
+P	READONLY
+P	Attempt
+P	ASSET-01-ACT-RUNTIME-VIEW
+P	ASSET-01-GATE-PAGE
+P	ASSET_USE
+ROW	ASSET-01-FLD-CALLBACK	SEC-08	Runtime	READONLY	Callback	ASSET-01-ACT-RUNTIME-VIEW	ASSET-01-GATE-PAGE	ASSET_USE
+P	ASSET-01-FLD-CALLBACK
+P	SEC-08
+P	Runtime
+P	READONLY
+P	Callback
+P	ASSET-01-ACT-RUNTIME-VIEW
+P	ASSET-01-GATE-PAGE
+P	ASSET_USE
+ROW	ASSET-01-FLD-RETRY-ELIGIBILITY	SEC-08	Runtime	READONLY	Retry Eligibility	ASSET-01-ACT-RUNTIME-VIEW	ASSET-01-GATE-PAGE	ASSET_USE
+P	ASSET-01-FLD-RETRY-ELIGIBILITY
+P	SEC-08
+P	Runtime
+P	READONLY
+P	Retry Eligibility
+P	ASSET-01-ACT-RUNTIME-VIEW
+P	ASSET-01-GATE-PAGE
+P	ASSET_USE
+ROW	ASSET-01-FLD-TRACE	SEC-08	Runtime	READONLY	Correlation / Trace	ASSET-01-ACT-RUNTIME-VIEW	ASSET-01-GATE-PAGE	ASSET_USE
+P	ASSET-01-FLD-TRACE
+P	SEC-08
+P	Runtime
+P	READONLY
+P	Correlation / Trace
+P	ASSET-01-ACT-RUNTIME-VIEW
+P	ASSET-01-GATE-PAGE
+P	ASSET_USE
+ROW	ASSET-01-BTN-RETRY	SEC-08	Runtime	SECONDARY_BUTTON	Retry	ASSET-01-ACT-TASK-RETRY	ASSET-01-GATE-RETRY	ASSET_EXECUTE
+P	ASSET-01-BTN-RETRY
+P	SEC-08
+P	Runtime
+P	SECONDARY_BUTTON
+P	Retry
+P	ASSET-01-ACT-TASK-RETRY
+P	ASSET-01-GATE-RETRY
+P	ASSET_EXECUTE
+ROW	ASSET-01-BTN-RUNTIME-DETAIL	SEC-08	Runtime	SECONDARY_BUTTON	查看 Runtime 詳情	ASSET-01-ACT-RUNTIME-VIEW	ASSET-01-GATE-PAGE	ASSET_USE
+P	ASSET-01-BTN-RUNTIME-DETAIL
+P	SEC-08
+P	Runtime
+P	SECONDARY_BUTTON
+P	查看 Runtime 詳情
+P	ASSET-01-ACT-RUNTIME-VIEW
+P	ASSET-01-GATE-PAGE
+P	ASSET_USE
+ROW	ASSET-01-FLD-CRITERIA	SEC-09	Score	READONLY	ASSET Criteria Version	ASSET-01-ACT-RESULT-VIEW	ASSET-01-GATE-EVALUATION	ASSET_USE
+P	ASSET-01-FLD-CRITERIA
+P	SEC-09
+P	Score
+P	READONLY
+P	ASSET Criteria Version
+P	ASSET-01-ACT-RESULT-VIEW
+P	ASSET-01-GATE-EVALUATION
+P	ASSET_USE
+ROW	ASSET-01-FLD-DIMENSIONS	SEC-09	Score	READONLY	Dimension UID / Label / Weight / Score / Hard Block	ASSET-01-ACT-RESULT-VIEW	ASSET-01-GATE-EVALUATION	ASSET_USE
+P	ASSET-01-FLD-DIMENSIONS
+P	SEC-09
+P	Score
+P	READONLY
+P	Dimension UID / Label / Weight / Score / Hard Block
+P	ASSET-01-ACT-RESULT-VIEW
+P	ASSET-01-GATE-EVALUATION
+P	ASSET_USE
+ROW	ASSET-01-FLD-OVERALL	SEC-09	Score	READONLY	Overall Score	ASSET-01-ACT-RESULT-VIEW	ASSET-01-GATE-EVALUATION	ASSET_USE
+P	ASSET-01-FLD-OVERALL
+P	SEC-09
+P	Score
+P	READONLY
+P	Overall Score
+P	ASSET-01-ACT-RESULT-VIEW
+P	ASSET-01-GATE-EVALUATION
+P	ASSET_USE
+ROW	ASSET-01-FLD-ISSUES	SEC-09	Score	READONLY	Issue Summary	ASSET-01-ACT-RESULT-VIEW	ASSET-01-GATE-EVALUATION	ASSET_USE
+P	ASSET-01-FLD-ISSUES
+P	SEC-09
+P	Score
+P	READONLY
+P	Issue Summary
+P	ASSET-01-ACT-RESULT-VIEW
+P	ASSET-01-GATE-EVALUATION
+P	ASSET_USE
+ROW	ASSET-01-BTN-EVALUATE	SEC-09	Score	SECONDARY_BUTTON	重新評估	ASSET-01-ACT-EVALUATE	ASSET-01-GATE-EVALUATION	ASSET_SCORE
+P	ASSET-01-BTN-EVALUATE
+P	SEC-09
+P	Score
+P	SECONDARY_BUTTON
+P	重新評估
+P	ASSET-01-ACT-EVALUATE
+P	ASSET-01-GATE-EVALUATION
+P	ASSET_SCORE
+ROW	ASSET-01-BTN-CONFIRM	SEC-09	Decision	PRIMARY_BUTTON	確認版本	ASSET-01-ACT-CANDIDATE-CONFIRM	ASSET-01-GATE-CONFIRM	ASSET_DECIDE
+P	ASSET-01-BTN-CONFIRM
+P	SEC-09
+P	Decision
+P	PRIMARY_BUTTON
+P	確認版本
+P	ASSET-01-ACT-CANDIDATE-CONFIRM
+P	ASSET-01-GATE-CONFIRM
+P	ASSET_DECIDE
+ROW	ASSET-01-BTN-MODIFY	SEC-09	Decision	SECONDARY_BUTTON	修改版本	ASSET-01-ACT-CORRECTION-OPEN	ASSET-01-GATE-WAIT-CONFIRM	ASSET_CORRECT
+P	ASSET-01-BTN-MODIFY
+P	SEC-09
+P	Decision
+P	SECONDARY_BUTTON
+P	修改版本
+P	ASSET-01-ACT-CORRECTION-OPEN
+P	ASSET-01-GATE-WAIT-CONFIRM
+P	ASSET_CORRECT
+ROW	ASSET-01-BTN-VERSION-HISTORY	SEC-09	Version	SECONDARY_BUTTON	版本歷史	ASSET-01-ACT-VERSION-HISTORY	ASSET-01-GATE-CANDIDATE	ASSET_USE
+P	ASSET-01-BTN-VERSION-HISTORY
+P	SEC-09
+P	Version
+P	SECONDARY_BUTTON
+P	版本歷史
+P	ASSET-01-ACT-VERSION-HISTORY
+P	ASSET-01-GATE-CANDIDATE
+P	ASSET_USE
+ROW	ASSET-01-BTN-RESTORE-AS-NEW	SEC-09	Version	SECONDARY_BUTTON	Restore as New Version	ASSET-01-ACT-RESTORE-AS-NEW	ASSET-01-GATE-CANDIDATE	ASSET_DECIDE
+P	ASSET-01-BTN-RESTORE-AS-NEW
+P	SEC-09
+P	Version
+P	SECONDARY_BUTTON
+P	Restore as New Version
+P	ASSET-01-ACT-RESTORE-AS-NEW
+P	ASSET-01-GATE-CANDIDATE
+P	ASSET_DECIDE
+ROW	ASSET-01-BTN-LOCK	SEC-09	Decision	SECONDARY_BUTTON	Lock Exact Version	ASSET-01-ACT-VERSION-LOCK	ASSET-01-GATE-LOCK	ASSET_DECIDE
+P	ASSET-01-BTN-LOCK
+P	SEC-09
+P	Decision
+P	SECONDARY_BUTTON
+P	Lock Exact Version
+P	ASSET-01-ACT-VERSION-LOCK
+P	ASSET-01-GATE-LOCK
+P	ASSET_DECIDE
+ROW	ASSET-01-FLD-HANDOFF-ASSET-VERSION	SEC-10	Handoff	READONLY	ASSET VERSION	ASSET-01-ACT-BINDING-VIEW	ASSET-01-GATE-HANDOFF	ASSET_USE
+P	ASSET-01-FLD-HANDOFF-ASSET-VERSION
+P	SEC-10
+P	Handoff
+P	READONLY
+P	ASSET VERSION
+P	ASSET-01-ACT-BINDING-VIEW
+P	ASSET-01-GATE-HANDOFF
+P	ASSET_USE
+ROW	ASSET-01-FLD-HANDOFF-LAYER-COMPOSITE	SEC-10	Handoff	READONLY	LAYER COMPOSITE	ASSET-01-ACT-BINDING-VIEW	ASSET-01-GATE-HANDOFF	ASSET_USE
+P	ASSET-01-FLD-HANDOFF-LAYER-COMPOSITE
+P	SEC-10
+P	Handoff
+P	READONLY
+P	LAYER COMPOSITE
+P	ASSET-01-ACT-BINDING-VIEW
+P	ASSET-01-GATE-HANDOFF
+P	ASSET_USE
+ROW	ASSET-01-FLD-HANDOFF-BLUEPRINT	SEC-10	Handoff	READONLY	BLUEPRINT	ASSET-01-ACT-BINDING-VIEW	ASSET-01-GATE-HANDOFF	ASSET_USE
+P	ASSET-01-FLD-HANDOFF-BLUEPRINT
+P	SEC-10
+P	Handoff
+P	READONLY
+P	BLUEPRINT
+P	ASSET-01-ACT-BINDING-VIEW
+P	ASSET-01-GATE-HANDOFF
+P	ASSET_USE
+ROW	ASSET-01-FLD-HANDOFF-SCRIPT-HASH	SEC-10	Handoff	READONLY	SCRIPT HASH	ASSET-01-ACT-BINDING-VIEW	ASSET-01-GATE-HANDOFF	ASSET_USE
+P	ASSET-01-FLD-HANDOFF-SCRIPT-HASH
+P	SEC-10
+P	Handoff
+P	READONLY
+P	SCRIPT HASH
+P	ASSET-01-ACT-BINDING-VIEW
+P	ASSET-01-GATE-HANDOFF
+P	ASSET_USE
+ROW	ASSET-01-FLD-HANDOFF-DNA	SEC-10	Handoff	READONLY	DNA	ASSET-01-ACT-BINDING-VIEW	ASSET-01-GATE-HANDOFF	ASSET_USE
+P	ASSET-01-FLD-HANDOFF-DNA
+P	SEC-10
+P	Handoff
+P	READONLY
+P	DNA
+P	ASSET-01-ACT-BINDING-VIEW
+P	ASSET-01-GATE-HANDOFF
+P	ASSET_USE
+ROW	ASSET-01-FLD-HANDOFF-MANIFEST-ITEMS	SEC-10	Handoff	READONLY	MANIFEST ITEMS	ASSET-01-ACT-BINDING-VIEW	ASSET-01-GATE-HANDOFF	ASSET_USE
+P	ASSET-01-FLD-HANDOFF-MANIFEST-ITEMS
+P	SEC-10
+P	Handoff
+P	READONLY
+P	MANIFEST ITEMS
+P	ASSET-01-ACT-BINDING-VIEW
+P	ASSET-01-GATE-HANDOFF
+P	ASSET_USE
+ROW	ASSET-01-FLD-HANDOFF-CANONICAL-FILENAME	SEC-10	Handoff	READONLY	CANONICAL FILENAME	ASSET-01-ACT-BINDING-VIEW	ASSET-01-GATE-HANDOFF	ASSET_USE
+P	ASSET-01-FLD-HANDOFF-CANONICAL-FILENAME
+P	SEC-10
+P	Handoff
+P	READONLY
+P	CANONICAL FILENAME
+P	ASSET-01-ACT-BINDING-VIEW
+P	ASSET-01-GATE-HANDOFF
+P	ASSET_USE
+ROW	ASSET-01-FLD-HANDOFF-CHECKSUM	SEC-10	Handoff	READONLY	CHECKSUM	ASSET-01-ACT-BINDING-VIEW	ASSET-01-GATE-HANDOFF	ASSET_USE
+P	ASSET-01-FLD-HANDOFF-CHECKSUM
+P	SEC-10
+P	Handoff
+P	READONLY
+P	CHECKSUM
+P	ASSET-01-ACT-BINDING-VIEW
+P	ASSET-01-GATE-HANDOFF
+P	ASSET_USE
+ROW	ASSET-01-FLD-HANDOFF-SCORECARD	SEC-10	Handoff	READONLY	SCORECARD	ASSET-01-ACT-BINDING-VIEW	ASSET-01-GATE-HANDOFF	ASSET_USE
+P	ASSET-01-FLD-HANDOFF-SCORECARD
+P	SEC-10
+P	Handoff
+P	READONLY
+P	SCORECARD
+P	ASSET-01-ACT-BINDING-VIEW
+P	ASSET-01-GATE-HANDOFF
+P	ASSET_USE
+ROW	ASSET-01-FLD-HANDOFF-RIGHTS	SEC-10	Handoff	READONLY	RIGHTS	ASSET-01-ACT-BINDING-VIEW	ASSET-01-GATE-HANDOFF	ASSET_USE
+P	ASSET-01-FLD-HANDOFF-RIGHTS
+P	SEC-10
+P	Handoff
+P	READONLY
+P	RIGHTS
+P	ASSET-01-ACT-BINDING-VIEW
+P	ASSET-01-GATE-HANDOFF
+P	ASSET_USE
+ROW	ASSET-01-FLD-HANDOFF-CONTRACT-HASH	SEC-10	Handoff	READONLY	CONTRACT HASH	ASSET-01-ACT-BINDING-VIEW	ASSET-01-GATE-HANDOFF	ASSET_USE
+P	ASSET-01-FLD-HANDOFF-CONTRACT-HASH
+P	SEC-10
+P	Handoff
+P	READONLY
+P	CONTRACT HASH
+P	ASSET-01-ACT-BINDING-VIEW
+P	ASSET-01-GATE-HANDOFF
+P	ASSET_USE
+ROW	ASSET-01-BTN-HANDOFF	SEC-10	Handoff	PRIMARY_BUTTON	Handoff → VIDEO	ASSET-01-ACT-HANDOFF	ASSET-01-GATE-HANDOFF	ASSET_HANDOFF
+P	ASSET-01-BTN-HANDOFF
+P	SEC-10
+P	Handoff
+P	PRIMARY_BUTTON
+P	Handoff → VIDEO
+P	ASSET-01-ACT-HANDOFF
+P	ASSET-01-GATE-HANDOFF
+P	ASSET_HANDOFF
+P	8. Action / Gate / Permission / Runtime Matrix · 44/44
+ROW	Action UID	Label	Permission	Gate	Effect	Port / Owner
+P	Action UID
+P	Label
+P	Permission
+P	Gate
+P	Effect
+P	Port / Owner
+ROW	ASSET-01-ACT-PROJECT-SELECT	Select Project	ASSET_USE	ASSET-01-GATE-PAGE	CONTEXT_STATE	—
+P	ASSET-01-ACT-PROJECT-SELECT
+P	Select Project
+P	ASSET_USE
+P	ASSET-01-GATE-PAGE
+P	CONTEXT_STATE
+P	—
+ROW	ASSET-01-ACT-TOPIC-SELECT	Select Topic	ASSET_USE	ASSET-01-GATE-PAGE	CONTEXT_STATE	—
+P	ASSET-01-ACT-TOPIC-SELECT
+P	Select Topic
+P	ASSET_USE
+P	ASSET-01-GATE-PAGE
+P	CONTEXT_STATE
+P	—
+ROW	ASSET-01-ACT-MODE-SET	Set AUTO/MANUAL	ASSET_USE	ASSET-01-GATE-CONTEXT	CONTEXT_STATE	—
+P	ASSET-01-ACT-MODE-SET
+P	Set AUTO/MANUAL
+P	ASSET_USE
+P	ASSET-01-GATE-CONTEXT
+P	CONTEXT_STATE
+P	—
+ROW	ASSET-01-ACT-FLOW-START	Execute / Resume Current Stage	ASSET_EXECUTE	ASSET-01-GATE-EXECUTE	JOB_START	ASSET-01-PORT-EXECUTE
+P	ASSET-01-ACT-FLOW-START
+P	Execute / Resume Current Stage
+P	ASSET_EXECUTE
+P	ASSET-01-GATE-EXECUTE
+P	JOB_START
+P	ASSET-01-PORT-EXECUTE
+ROW	ASSET-01-ACT-ASSET-SEARCH	Search Asset Manifest	ASSET_USE	ASSET-01-GATE-CONTEXT	UI_ONLY	—
+P	ASSET-01-ACT-ASSET-SEARCH
+P	Search Asset Manifest
+P	ASSET_USE
+P	ASSET-01-GATE-CONTEXT
+P	UI_ONLY
+P	—
+ROW	ASSET-01-ACT-ASSET-FILTER	Filter Asset Manifest	ASSET_USE	ASSET-01-GATE-CONTEXT	UI_ONLY	—
+P	ASSET-01-ACT-ASSET-FILTER
+P	Filter Asset Manifest
+P	ASSET_USE
+P	ASSET-01-GATE-CONTEXT
+P	UI_ONLY
+P	—
+ROW	ASSET-01-ACT-ASSET-SELECT	Select Asset Context	ASSET_USE	ASSET-01-GATE-CONTEXT	CONTEXT_STATE	—
+P	ASSET-01-ACT-ASSET-SELECT
+P	Select Asset Context
+P	ASSET_USE
+P	ASSET-01-GATE-CONTEXT
+P	CONTEXT_STATE
+P	—
+ROW	ASSET-01-ACT-BLUEPRINT-VIEW	View Locked Blueprint	ASSET_USE	ASSET-01-GATE-CHILD-LOCK	UI_ONLY	—
+P	ASSET-01-ACT-BLUEPRINT-VIEW
+P	View Locked Blueprint
+P	ASSET_USE
+P	ASSET-01-GATE-CHILD-LOCK
+P	UI_ONLY
+P	—
+ROW	ASSET-01-ACT-SCRIPT-VIEW	View ASSET Script	ASSET_USE	ASSET-01-GATE-SCRIPT	UI_ONLY	—
+P	ASSET-01-ACT-SCRIPT-VIEW
+P	View ASSET Script
+P	ASSET_USE
+P	ASSET-01-GATE-SCRIPT
+P	UI_ONLY
+P	—
+ROW	ASSET-01-ACT-BINDING-VIEW	View Binding Manifest	ASSET_USE	ASSET-01-GATE-MANIFEST	UI_ONLY	—
+P	ASSET-01-ACT-BINDING-VIEW
+P	View Binding Manifest
+P	ASSET_USE
+P	ASSET-01-GATE-MANIFEST
+P	UI_ONLY
+P	—
+ROW	ASSET-01-ACT-COMPARE-SINGLE	Single Compare	ASSET_USE	ASSET-01-GATE-COMPARE	UI_ONLY	—
+P	ASSET-01-ACT-COMPARE-SINGLE
+P	Single Compare
+P	ASSET_USE
+P	ASSET-01-GATE-COMPARE
+P	UI_ONLY
+P	—
+ROW	ASSET-01-ACT-COMPARE-AB	A/B Compare	ASSET_USE	ASSET-01-GATE-COMPARE	UI_ONLY	—
+P	ASSET-01-ACT-COMPARE-AB
+P	A/B Compare
+P	ASSET_USE
+P	ASSET-01-GATE-COMPARE
+P	UI_ONLY
+P	—
+ROW	ASSET-01-ACT-COMPARE-ABC	A/B/C Compare	ASSET_USE	ASSET-01-GATE-COMPARE	UI_ONLY	—
+P	ASSET-01-ACT-COMPARE-ABC
+P	A/B/C Compare
+P	ASSET_USE
+P	ASSET-01-GATE-COMPARE
+P	UI_ONLY
+P	—
+ROW	ASSET-01-ACT-ZOOM-IN	Zoom In	ASSET_USE	ASSET-01-GATE-CANDIDATE	UI_ONLY	—
+P	ASSET-01-ACT-ZOOM-IN
+P	Zoom In
+P	ASSET_USE
+P	ASSET-01-GATE-CANDIDATE
+P	UI_ONLY
+P	—
+ROW	ASSET-01-ACT-ZOOM-OUT	Zoom Out	ASSET_USE	ASSET-01-GATE-CANDIDATE	UI_ONLY	—
+P	ASSET-01-ACT-ZOOM-OUT
+P	Zoom Out
+P	ASSET_USE
+P	ASSET-01-GATE-CANDIDATE
+P	UI_ONLY
+P	—
+ROW	ASSET-01-ACT-FIT	Fit Preview	ASSET_USE	ASSET-01-GATE-CANDIDATE	UI_ONLY	—
+P	ASSET-01-ACT-FIT
+P	Fit Preview
+P	ASSET_USE
+P	ASSET-01-GATE-CANDIDATE
+P	UI_ONLY
+P	—
+ROW	ASSET-01-ACT-REFERENCE-TOGGLE	Reference Overlay	ASSET_USE	ASSET-01-GATE-CANDIDATE	UI_ONLY	—
+P	ASSET-01-ACT-REFERENCE-TOGGLE
+P	Reference Overlay
+P	ASSET_USE
+P	ASSET-01-GATE-CANDIDATE
+P	UI_ONLY
+P	—
+ROW	ASSET-01-ACT-RESULT-VIEW	View Evaluation/Issues	ASSET_USE	ASSET-01-GATE-EVALUATION	UI_ONLY	—
+P	ASSET-01-ACT-RESULT-VIEW
+P	View Evaluation/Issues
+P	ASSET_USE
+P	ASSET-01-GATE-EVALUATION
+P	UI_ONLY
+P	—
+ROW	ASSET-01-ACT-EVALUATE	Run/Refresh ASSET Evaluation	ASSET_SCORE	ASSET-01-GATE-EVALUATION	SCORE_MUTATION	ASSET-01-PORT-SCORECARD
+P	ASSET-01-ACT-EVALUATE
+P	Run/Refresh ASSET Evaluation
+P	ASSET_SCORE
+P	ASSET-01-GATE-EVALUATION
+P	SCORE_MUTATION
+P	ASSET-01-PORT-SCORECARD
+ROW	ASSET-01-ACT-CANDIDATE-CONFIRM	Confirm Exact Candidate	ASSET_DECIDE	ASSET-01-GATE-CONFIRM	DECISION_MUTATION	ASSET-01-PORT-DECISION
+P	ASSET-01-ACT-CANDIDATE-CONFIRM
+P	Confirm Exact Candidate
+P	ASSET_DECIDE
+P	ASSET-01-GATE-CONFIRM
+P	DECISION_MUTATION
+P	ASSET-01-PORT-DECISION
+ROW	ASSET-01-ACT-CORRECTION-OPEN	Open Correction	ASSET_CORRECT	ASSET-01-GATE-CORRECTION	CONTEXT_STATE	—
+P	ASSET-01-ACT-CORRECTION-OPEN
+P	Open Correction
+P	ASSET_CORRECT
+P	ASSET-01-GATE-CORRECTION
+P	CONTEXT_STATE
+P	—
+ROW	ASSET-01-ACT-CORRECTION-GENERATE	Generate Correction Script Candidate	ASSET_CORRECT	ASSET-01-GATE-CORRECTION	CANDIDATE_CREATE	Shared Script System
+P	ASSET-01-ACT-CORRECTION-GENERATE
+P	Generate Correction Script Candidate
+P	ASSET_CORRECT
+P	ASSET-01-GATE-CORRECTION
+P	CANDIDATE_CREATE
+P	Shared Script System
+ROW	ASSET-01-ACT-CORRECTION-APPROVE	Approve Correction Candidate	ASSET_CORRECT	ASSET-01-GATE-CORRECTION	DECISION_MUTATION	Shared Script System
+P	ASSET-01-ACT-CORRECTION-APPROVE
+P	Approve Correction Candidate
+P	ASSET_CORRECT
+P	ASSET-01-GATE-CORRECTION
+P	DECISION_MUTATION
+P	Shared Script System
+ROW	ASSET-01-ACT-CORRECTION-EXECUTE	Execute Approved Correction	ASSET_EXECUTE	ASSET-01-GATE-CORRECTION	JOB_START	ASSET-01-PORT-EXECUTE
+P	ASSET-01-ACT-CORRECTION-EXECUTE
+P	Execute Approved Correction
+P	ASSET_EXECUTE
+P	ASSET-01-GATE-CORRECTION
+P	JOB_START
+P	ASSET-01-PORT-EXECUTE
+ROW	ASSET-01-ACT-FINDING-CREATE	Create Finding	ASSET_CORRECT	ASSET-01-GATE-EVALUATION	FINDING_CREATE	ASSET-01-PORT-FINDING
+P	ASSET-01-ACT-FINDING-CREATE
+P	Create Finding
+P	ASSET_CORRECT
+P	ASSET-01-GATE-EVALUATION
+P	FINDING_CREATE
+P	ASSET-01-PORT-FINDING
+ROW	ASSET-01-ACT-TASK-RETRY	Retry Task	ASSET_EXECUTE	ASSET-01-GATE-RETRY	JOB_START	ASSET-01-PORT-RETRY
+P	ASSET-01-ACT-TASK-RETRY
+P	Retry Task
+P	ASSET_EXECUTE
+P	ASSET-01-GATE-RETRY
+P	JOB_START
+P	ASSET-01-PORT-RETRY
+ROW	ASSET-01-ACT-RUNTIME-VIEW	View Runtime Detail	ASSET_USE	ASSET-01-GATE-PAGE	UI_ONLY	—
+P	ASSET-01-ACT-RUNTIME-VIEW
+P	View Runtime Detail
+P	ASSET_USE
+P	ASSET-01-GATE-PAGE
+P	UI_ONLY
+P	—
+ROW	ASSET-01-ACT-VERSION-HISTORY	View Version History	ASSET_USE	ASSET-01-GATE-CANDIDATE	UI_ONLY	—
+P	ASSET-01-ACT-VERSION-HISTORY
+P	View Version History
+P	ASSET_USE
+P	ASSET-01-GATE-CANDIDATE
+P	UI_ONLY
+P	—
+ROW	ASSET-01-ACT-RESTORE-AS-NEW	Restore as New Version Draft	ASSET_DECIDE	ASSET-01-GATE-CANDIDATE	VERSION_CREATE	—
+P	ASSET-01-ACT-RESTORE-AS-NEW
+P	Restore as New Version Draft
+P	ASSET_DECIDE
+P	ASSET-01-GATE-CANDIDATE
+P	VERSION_CREATE
+P	—
+ROW	ASSET-01-ACT-VERSION-LOCK	Lock Exact Asset Version	ASSET_DECIDE	ASSET-01-GATE-LOCK	VERSION_LOCK	—
+P	ASSET-01-ACT-VERSION-LOCK
+P	Lock Exact Asset Version
+P	ASSET_DECIDE
+P	ASSET-01-GATE-LOCK
+P	VERSION_LOCK
+P	—
+ROW	ASSET-01-ACT-HANDOFF	Handoff to VIDEO	ASSET_HANDOFF	ASSET-01-GATE-HANDOFF	HANDOFF_CREATE	ASSET-01-PORT-OUT-VIDEO
+P	ASSET-01-ACT-HANDOFF
+P	Handoff to VIDEO
+P	ASSET_HANDOFF
+P	ASSET-01-GATE-HANDOFF
+P	HANDOFF_CREATE
+P	ASSET-01-PORT-OUT-VIDEO
+ROW	ASSET-01-ACT-LAYER-DOC-CREATE	Create Versioned Layer Document	ASSET_LAYER_WRITE	ASSET-01-GATE-LAYER-WRITE	VERSION_CREATE	ASSET-01-PORT-LAYER-DOC-CREATE
+P	ASSET-01-ACT-LAYER-DOC-CREATE
+P	Create Versioned Layer Document
+P	ASSET_LAYER_WRITE
+P	ASSET-01-GATE-LAYER-WRITE
+P	VERSION_CREATE
+P	ASSET-01-PORT-LAYER-DOC-CREATE
+ROW	ASSET-01-ACT-LAYER-DOC-UPDATE	Update Layer Document	ASSET_LAYER_WRITE	ASSET-01-GATE-LAYER-WRITE	DRAFT_MUTATION	ASSET-01-PORT-LAYER-DOC-UPDATE
+P	ASSET-01-ACT-LAYER-DOC-UPDATE
+P	Update Layer Document
+P	ASSET_LAYER_WRITE
+P	ASSET-01-GATE-LAYER-WRITE
+P	DRAFT_MUTATION
+P	ASSET-01-PORT-LAYER-DOC-UPDATE
+ROW	ASSET-01-ACT-LAYER-ADD	Add Layer	ASSET_LAYER_WRITE	ASSET-01-GATE-LAYER-WRITE	DRAFT_MUTATION	ASSET-01-PORT-LAYER-ADD
+P	ASSET-01-ACT-LAYER-ADD
+P	Add Layer
+P	ASSET_LAYER_WRITE
+P	ASSET-01-GATE-LAYER-WRITE
+P	DRAFT_MUTATION
+P	ASSET-01-PORT-LAYER-ADD
+ROW	ASSET-01-ACT-LAYER-DELETE	Delete Layer	ASSET_LAYER_WRITE	ASSET-01-GATE-LAYER-WRITE	DRAFT_MUTATION	ASSET-01-PORT-LAYER-DELETE
+P	ASSET-01-ACT-LAYER-DELETE
+P	Delete Layer
+P	ASSET_LAYER_WRITE
+P	ASSET-01-GATE-LAYER-WRITE
+P	DRAFT_MUTATION
+P	ASSET-01-PORT-LAYER-DELETE
+ROW	ASSET-01-ACT-LAYER-DUPLICATE	Duplicate Layer	ASSET_LAYER_WRITE	ASSET-01-GATE-LAYER-WRITE	DRAFT_MUTATION	ASSET-01-PORT-LAYER-DUP
+P	ASSET-01-ACT-LAYER-DUPLICATE
+P	Duplicate Layer
+P	ASSET_LAYER_WRITE
+P	ASSET-01-GATE-LAYER-WRITE
+P	DRAFT_MUTATION
+P	ASSET-01-PORT-LAYER-DUP
+ROW	ASSET-01-ACT-LAYER-REORDER	Reorder Layer	ASSET_LAYER_WRITE	ASSET-01-GATE-LAYER-WRITE	DRAFT_MUTATION	ASSET-01-PORT-LAYER-REORDER
+P	ASSET-01-ACT-LAYER-REORDER
+P	Reorder Layer
+P	ASSET_LAYER_WRITE
+P	ASSET-01-GATE-LAYER-WRITE
+P	DRAFT_MUTATION
+P	ASSET-01-PORT-LAYER-REORDER
+ROW	ASSET-01-ACT-LAYER-PROPERTIES	Update Layer Properties	ASSET_LAYER_WRITE	ASSET-01-GATE-LAYER-WRITE	DRAFT_MUTATION	ASSET-01-PORT-LAYER-PROPS
+P	ASSET-01-ACT-LAYER-PROPERTIES
+P	Update Layer Properties
+P	ASSET_LAYER_WRITE
+P	ASSET-01-GATE-LAYER-WRITE
+P	DRAFT_MUTATION
+P	ASSET-01-PORT-LAYER-PROPS
+ROW	ASSET-01-ACT-LAYER-MASK	Update Layer Mask	ASSET_LAYER_WRITE	ASSET-01-GATE-LAYER-WRITE	DRAFT_MUTATION	ASSET-01-PORT-LAYER-MASK
+P	ASSET-01-ACT-LAYER-MASK
+P	Update Layer Mask
+P	ASSET_LAYER_WRITE
+P	ASSET-01-GATE-LAYER-WRITE
+P	DRAFT_MUTATION
+P	ASSET-01-PORT-LAYER-MASK
+ROW	ASSET-01-ACT-PATCH-CREATE	Create Asset Patch	ASSET_LAYER_WRITE	ASSET-01-GATE-LAYER-WRITE	CANDIDATE_CREATE	ASSET-01-PORT-PATCH-CREATE
+P	ASSET-01-ACT-PATCH-CREATE
+P	Create Asset Patch
+P	ASSET_LAYER_WRITE
+P	ASSET-01-GATE-LAYER-WRITE
+P	CANDIDATE_CREATE
+P	ASSET-01-PORT-PATCH-CREATE
+ROW	ASSET-01-ACT-PATCH-PREVIEW	Preview Asset Patch	ASSET_LAYER_WRITE	ASSET-01-GATE-PATCH-PREVIEW	JOB_START	ASSET-01-PORT-PATCH-PREVIEW
+P	ASSET-01-ACT-PATCH-PREVIEW
+P	Preview Asset Patch
+P	ASSET_LAYER_WRITE
+P	ASSET-01-GATE-PATCH-PREVIEW
+P	JOB_START
+P	ASSET-01-PORT-PATCH-PREVIEW
+ROW	ASSET-01-ACT-PATCH-ACCEPT	Accept Asset Patch	ASSET_PATCH_DECIDE	ASSET-01-GATE-PATCH-DECISION	VERSION_CREATE	ASSET-01-PORT-PATCH-DECIDE
+P	ASSET-01-ACT-PATCH-ACCEPT
+P	Accept Asset Patch
+P	ASSET_PATCH_DECIDE
+P	ASSET-01-GATE-PATCH-DECISION
+P	VERSION_CREATE
+P	ASSET-01-PORT-PATCH-DECIDE
+ROW	ASSET-01-ACT-PATCH-REJECT	Reject Asset Patch	ASSET_PATCH_DECIDE	ASSET-01-GATE-PATCH-DECISION	DECISION_MUTATION	ASSET-01-PORT-PATCH-DECIDE
+P	ASSET-01-ACT-PATCH-REJECT
+P	Reject Asset Patch
+P	ASSET_PATCH_DECIDE
+P	ASSET-01-GATE-PATCH-DECISION
+P	DECISION_MUTATION
+P	ASSET-01-PORT-PATCH-DECIDE
+ROW	ASSET-01-ACT-PATCH-REVISE	Revise Asset Patch	ASSET_PATCH_DECIDE	ASSET-01-GATE-PATCH-DECISION	CONTEXT_STATE	—
+P	ASSET-01-ACT-PATCH-REVISE
+P	Revise Asset Patch
+P	ASSET_PATCH_DECIDE
+P	ASSET-01-GATE-PATCH-DECISION
+P	CONTEXT_STATE
+P	—
+P	9. Gate / Permission Contract
+P	9.1 Permissions · 8/8
+ROW	Permission	Backend code(s)	Purpose
+P	Permission
+P	Backend code(s)
+P	Purpose
+ROW	ASSET_USE	asset.task.read	Read page/task/asset/binding/runtime
+P	ASSET_USE
+P	asset.task.read
+P	Read page/task/asset/binding/runtime
+ROW	ASSET_EXECUTE	asset.task.execute + department.task.execute	Execute/retry ASSET task
+P	ASSET_EXECUTE
+P	asset.task.execute + department.task.execute
+P	Execute/retry ASSET task
+ROW	ASSET_CORRECT	finding.write + correction.create	Finding/correction lifecycle
+P	ASSET_CORRECT
+P	finding.write + correction.create
+P	Finding/correction lifecycle
+ROW	ASSET_SCORE	asset.score.write + department.score.write	ASSET scorecard/evaluation persist
+P	ASSET_SCORE
+P	asset.score.write + department.score.write
+P	ASSET scorecard/evaluation persist
+ROW	ASSET_DECIDE	department.output.decide	Candidate decision / exact version confirm
+P	ASSET_DECIDE
+P	department.output.decide
+P	Candidate decision / exact version confirm
+ROW	ASSET_HANDOFF	asset.handoff.create + department.handoff.create	ASSET→VIDEO exact handoff
+P	ASSET_HANDOFF
+P	asset.handoff.create + department.handoff.create
+P	ASSET→VIDEO exact handoff
+ROW	ASSET_LAYER_WRITE	asset.layer.write	Layer document mutation
+P	ASSET_LAYER_WRITE
+P	asset.layer.write
+P	Layer document mutation
+ROW	ASSET_PATCH_DECIDE	asset.patch.decide	Asset patch decision
+P	ASSET_PATCH_DECIDE
+P	asset.patch.decide
+P	Asset patch decision
+P	9.2 Gates · 21/21
+ROW	Gate UID	Condition
+P	Gate UID
+P	Condition
+ROW	ASSET-01-GATE-PAGE	page permission + scoped task read
+P	ASSET-01-GATE-PAGE
+P	page permission + scoped task read
+ROW	ASSET-01-GATE-CONTEXT	Project/Topic/Task exact context resolved
+P	ASSET-01-GATE-CONTEXT
+P	Project/Topic/Task exact context resolved
+ROW	ASSET-01-GATE-CHILD-LOCK	exact child lock + blueprint version/hash valid
+P	ASSET-01-GATE-CHILD-LOCK
+P	exact child lock + blueprint version/hash valid
+ROW	ASSET-01-GATE-SCRIPT	ASSET Script View/Section/version/hash valid
+P	ASSET-01-GATE-SCRIPT
+P	ASSET Script View/Section/version/hash valid
+ROW	ASSET-01-GATE-MANIFEST	Asset Manifest item refs + DNA refs + input fingerprint valid
+P	ASSET-01-GATE-MANIFEST
+P	Asset Manifest item refs + DNA refs + input fingerprint valid
+ROW	ASSET-01-GATE-NAMING	ACPOS_SYSTEM canonical filename + output identity reservation available; page rename forbidden
+P	ASSET-01-GATE-NAMING
+P	ACPOS_SYSTEM canonical filename + output identity reservation available; page rename forbidden
+ROW	ASSET-01-GATE-ROUTE	approved route/capability/rights/policy snapshot available
+P	ASSET-01-GATE-ROUTE
+P	approved route/capability/rights/policy snapshot available
+ROW	ASSET-01-GATE-EXECUTE	context+child lock+script+manifest+naming+route all PASS
+P	ASSET-01-GATE-EXECUTE
+P	context+child lock+script+manifest+naming+route all PASS
+ROW	ASSET-01-GATE-CANDIDATE	verified candidate output + provenance + checksum available
+P	ASSET-01-GATE-CANDIDATE
+P	verified candidate output + provenance + checksum available
+ROW	ASSET-01-GATE-EVALUATION	approved ASSET criteria version + candidate valid
+P	ASSET-01-GATE-EVALUATION
+P	approved ASSET criteria version + candidate valid
+ROW	ASSET-01-GATE-WAIT-CONFIRM	evaluation complete; page is WAIT_CONFIRMATION
+P	ASSET-01-GATE-WAIT-CONFIRM
+P	evaluation complete; page is WAIT_CONFIRMATION
+ROW	ASSET-01-GATE-CORRECTION	finding/issue exists or human chose Modify; exact current context unchanged
+P	ASSET-01-GATE-CORRECTION
+P	finding/issue exists or human chose Modify; exact current context unchanged
+ROW	ASSET-01-GATE-LAYER-ELIGIBLE	asset type supports versioned layer document; audio/non-layer assets false
+P	ASSET-01-GATE-LAYER-ELIGIBLE
+P	asset type supports versioned layer document; audio/non-layer assets false
+ROW	ASSET-01-GATE-LAYER-WRITE	layer eligible + exact asset version + unlocked layer/document + permission
+P	ASSET-01-GATE-LAYER-WRITE
+P	layer eligible + exact asset version + unlocked layer/document + permission
+ROW	ASSET-01-GATE-PATCH-PREVIEW	asset patch draft valid + lineage/blueprint/DNA/preserve constraints PASS
+P	ASSET-01-GATE-PATCH-PREVIEW
+P	asset patch draft valid + lineage/blueprint/DNA/preserve constraints PASS
+ROW	ASSET-01-GATE-PATCH-DECISION	patch PREVIEW_READY + permission
+P	ASSET-01-GATE-PATCH-DECISION
+P	patch PREVIEW_READY + permission
+ROW	ASSET-01-GATE-CONFIRM	evaluation PASS per bound criteria + no hard block + human confirm
+P	ASSET-01-GATE-CONFIRM
+P	evaluation PASS per bound criteria + no hard block + human confirm
+ROW	ASSET-01-GATE-LOCK	confirmed exact asset version + all Required complete + no Missing + manifest valid
+P	ASSET-01-GATE-LOCK
+P	confirmed exact asset version + all Required complete + no Missing + manifest valid
+ROW	ASSET-01-GATE-HANDOFF	exact locked Asset Version + Exact Asset Handoff Manifest verified
+P	ASSET-01-GATE-HANDOFF
+P	exact locked Asset Version + Exact Asset Handoff Manifest verified
+ROW	ASSET-01-GATE-RETRY	task BLOCKED/FAILED + retry policy eligible + route snapshot still valid
+P	ASSET-01-GATE-RETRY
+P	task BLOCKED/FAILED + retry policy eligible + route snapshot still valid
+ROW	ASSET-01-GATE-COMPARE	selected version count 1..3; no empty compare cell
+P	ASSET-01-GATE-COMPARE
+P	selected version count 1..3; no empty compare cell
+P	10. Integration Ports · 19/19
+ROW	Port UID	Boundary	Operation	Method / Path	Permission
+P	Port UID
+P	Boundary
+P	Operation
+P	Method / Path
+P	Permission
+ROW	ASSET-01-PORT-IN-CORE-HANDOFF	Inbound / Task Ready	createDepartmentHandoff	POST /v1/handoffs	department.handoff.create
+P	ASSET-01-PORT-IN-CORE-HANDOFF
+P	Inbound / Task Ready
+P	createDepartmentHandoff
+P	POST /v1/handoffs
+P	department.handoff.create
+ROW	ASSET-01-PORT-EXECUTE	Execute Task	requestTaskExecution	POST /v1/tasks/{taskId}/execute	department.task.execute
+P	ASSET-01-PORT-EXECUTE
+P	Execute Task
+P	requestTaskExecution
+P	POST /v1/tasks/{taskId}/execute
+P	department.task.execute
+ROW	ASSET-01-PORT-RETRY	Retry Task	retryTaskExecution	POST /v1/tasks/{taskId}/retry	department.task.execute
+P	ASSET-01-PORT-RETRY
+P	Retry Task
+P	retryTaskExecution
+P	POST /v1/tasks/{taskId}/retry
+P	department.task.execute
+ROW	ASSET-01-PORT-FINDING	Evaluation Finding	createFinding	POST /v1/findings	finding.write
+P	ASSET-01-PORT-FINDING
+P	Evaluation Finding
+P	createFinding
+P	POST /v1/findings
+P	finding.write
+ROW	ASSET-01-PORT-CORRECTION	Correction Request	createCorrectionRequest	POST /v1/correction-requests	correction.create
+P	ASSET-01-PORT-CORRECTION
+P	Correction Request
+P	createCorrectionRequest
+P	POST /v1/correction-requests
+P	correction.create
+ROW	ASSET-01-PORT-DECISION	Candidate Confirm	decideOutputCandidate	POST /v1/tasks/{taskId}/outputs/{outputVersionId}/decision	department.output.decide
+P	ASSET-01-PORT-DECISION
+P	Candidate Confirm
+P	decideOutputCandidate
+P	POST /v1/tasks/{taskId}/outputs/{outputVersionId}/decision
+P	department.output.decide
+ROW	ASSET-01-PORT-SCORECARD	Score Persist	submitScorecard	POST /v1/scorecards	department.score.write
+P	ASSET-01-PORT-SCORECARD
+P	Score Persist
+P	submitScorecard
+P	POST /v1/scorecards
+P	department.score.write
+ROW	ASSET-01-PORT-OUT-VIDEO	Outbound to VIDEO	createDepartmentHandoff	POST /v1/handoffs	department.handoff.create
+P	ASSET-01-PORT-OUT-VIDEO
+P	Outbound to VIDEO
+P	createDepartmentHandoff
+P	POST /v1/handoffs
+P	department.handoff.create
+ROW	ASSET-01-PORT-LAYER-DOC-CREATE	Layer Runtime	createLayerDocument	POST /v1/layer-documents	asset.layer.write
+P	ASSET-01-PORT-LAYER-DOC-CREATE
+P	Layer Runtime
+P	createLayerDocument
+P	POST /v1/layer-documents
+P	asset.layer.write
+ROW	ASSET-01-PORT-LAYER-DOC-UPDATE	Layer Runtime	updateLayerDocument	PATCH /v1/layer-documents/{layerDocumentId}	asset.layer.write
+P	ASSET-01-PORT-LAYER-DOC-UPDATE
+P	Layer Runtime
+P	updateLayerDocument
+P	PATCH /v1/layer-documents/{layerDocumentId}
+P	asset.layer.write
+ROW	ASSET-01-PORT-LAYER-ADD	Layer Runtime	addLayer	POST /v1/layer-documents/{layerDocumentId}/layers	asset.layer.write
+P	ASSET-01-PORT-LAYER-ADD
+P	Layer Runtime
+P	addLayer
+P	POST /v1/layer-documents/{layerDocumentId}/layers
+P	asset.layer.write
+ROW	ASSET-01-PORT-LAYER-DELETE	Layer Runtime	deleteLayer	DELETE /v1/layer-documents/{layerDocumentId}/layers/{layerId}	asset.layer.write
+P	ASSET-01-PORT-LAYER-DELETE
+P	Layer Runtime
+P	deleteLayer
+P	DELETE /v1/layer-documents/{layerDocumentId}/layers/{layerId}
+P	asset.layer.write
+ROW	ASSET-01-PORT-LAYER-DUP	Layer Runtime	duplicateLayer	POST /v1/layer-documents/{layerDocumentId}/layers/{layerId}/duplicate	asset.layer.write
+P	ASSET-01-PORT-LAYER-DUP
+P	Layer Runtime
+P	duplicateLayer
+P	POST /v1/layer-documents/{layerDocumentId}/layers/{layerId}/duplicate
+P	asset.layer.write
+ROW	ASSET-01-PORT-LAYER-REORDER	Layer Runtime	reorderLayer	POST /v1/layer-documents/{layerDocumentId}/layers/{layerId}/reorder	asset.layer.write
+P	ASSET-01-PORT-LAYER-REORDER
+P	Layer Runtime
+P	reorderLayer
+P	POST /v1/layer-documents/{layerDocumentId}/layers/{layerId}/reorder
+P	asset.layer.write
+ROW	ASSET-01-PORT-LAYER-PROPS	Layer Runtime	updateLayerProperties	PATCH /v1/layer-documents/{layerDocumentId}/layers/{layerId}	asset.layer.write
+P	ASSET-01-PORT-LAYER-PROPS
+P	Layer Runtime
+P	updateLayerProperties
+P	PATCH /v1/layer-documents/{layerDocumentId}/layers/{layerId}
+P	asset.layer.write
+ROW	ASSET-01-PORT-LAYER-MASK	Layer Runtime	updateLayerMask	PATCH /v1/layer-documents/{layerDocumentId}/layers/{layerId}/mask	asset.layer.write
+P	ASSET-01-PORT-LAYER-MASK
+P	Layer Runtime
+P	updateLayerMask
+P	PATCH /v1/layer-documents/{layerDocumentId}/layers/{layerId}/mask
+P	asset.layer.write
+ROW	ASSET-01-PORT-PATCH-CREATE	Asset Patch	createAssetPatch	POST /v1/asset-patches	asset.layer.write
+P	ASSET-01-PORT-PATCH-CREATE
+P	Asset Patch
+P	createAssetPatch
+P	POST /v1/asset-patches
+P	asset.layer.write
+ROW	ASSET-01-PORT-PATCH-PREVIEW	Asset Patch	previewAssetPatch	POST /v1/asset-patches/{patchId}/preview	asset.layer.write
+P	ASSET-01-PORT-PATCH-PREVIEW
+P	Asset Patch
+P	previewAssetPatch
+P	POST /v1/asset-patches/{patchId}/preview
+P	asset.layer.write
+ROW	ASSET-01-PORT-PATCH-DECIDE	Asset Patch	decideAssetPatch	POST /v1/asset-patches/{patchId}/decision	asset.patch.decide
+P	ASSET-01-PORT-PATCH-DECIDE
+P	Asset Patch
+P	decideAssetPatch
+P	POST /v1/asset-patches/{patchId}/decision
+P	asset.patch.decide
+P	Page code 不得自行發明 endpoint；所有 effectful runtime 只能綁定上列 Current Integration Port 或明確 shared system operation。
+P	11. State / Recovery / Error Contract
+P	11.1 Page States · 10/10
+ROW	State UID	Display
+P	State UID
+P	Display
+ROW	ASSET-01-ST-PAGE-LOADING	LOADING
+P	ASSET-01-ST-PAGE-LOADING
+P	LOADING
+ROW	ASSET-01-ST-PAGE-READY	READY
+P	ASSET-01-ST-PAGE-READY
+P	READY
+ROW	ASSET-01-ST-PAGE-EXECUTING	EXECUTING
+P	ASSET-01-ST-PAGE-EXECUTING
+P	EXECUTING
+ROW	ASSET-01-ST-PAGE-CANDIDATE	CANDIDATE_OUTPUT
+P	ASSET-01-ST-PAGE-CANDIDATE
+P	CANDIDATE_OUTPUT
+ROW	ASSET-01-ST-PAGE-WAIT-CONFIRM	WAIT_CONFIRMATION
+P	ASSET-01-ST-PAGE-WAIT-CONFIRM
+P	WAIT_CONFIRMATION
+ROW	ASSET-01-ST-PAGE-CORRECTION	CORRECTION_REQUIRED
+P	ASSET-01-ST-PAGE-CORRECTION
+P	CORRECTION_REQUIRED
+ROW	ASSET-01-ST-PAGE-CONFIRMED	CONFIRMED
+P	ASSET-01-ST-PAGE-CONFIRMED
+P	CONFIRMED
+ROW	ASSET-01-ST-PAGE-LOCKED	LOCKED
+P	ASSET-01-ST-PAGE-LOCKED
+P	LOCKED
+ROW	ASSET-01-ST-PAGE-HANDOFF	HANDOFF
+P	ASSET-01-ST-PAGE-HANDOFF
+P	HANDOFF
+ROW	ASSET-01-ST-PAGE-ERROR	ERROR
+P	ASSET-01-ST-PAGE-ERROR
+P	ERROR
+P	11.2 Error / Recovery · 17/17
+ROW	Error UID	Context	Recovery
+P	Error UID
+P	Context
+P	Recovery
+ROW	ASSET-01-ERR-CONTEXT-001	Project/Topic/Task context missing/stale	BLOCK; re-resolve exact task
+P	ASSET-01-ERR-CONTEXT-001
+P	Project/Topic/Task context missing/stale
+P	BLOCK; re-resolve exact task
+ROW	ASSET-01-ERR-BLUEPRINT-001	Child lock/Blueprint missing/hash mismatch	BLOCK; return Core/Blueprint owner
+P	ASSET-01-ERR-BLUEPRINT-001
+P	Child lock/Blueprint missing/hash mismatch
+P	BLOCK; return Core/Blueprint owner
+ROW	ASSET-01-ERR-SCRIPT-001	ASSET Script View/Section missing/hash mismatch	BLOCK; no local script guess
+P	ASSET-01-ERR-SCRIPT-001
+P	ASSET Script View/Section missing/hash mismatch
+P	BLOCK; no local script guess
+ROW	ASSET-01-ERR-DNA-001	DNA/continuity ref missing or mismatch	BLOCK; no substitute
+P	ASSET-01-ERR-DNA-001
+P	DNA/continuity ref missing or mismatch
+P	BLOCK; no substitute
+ROW	ASSET-01-ERR-MANIFEST-001	Asset Manifest item/type/purpose/reuse status invalid	BLOCK; re-resolve upstream manifest
+P	ASSET-01-ERR-MANIFEST-001
+P	Asset Manifest item/type/purpose/reuse status invalid
+P	BLOCK; re-resolve upstream manifest
+ROW	ASSET-01-ERR-NAMING-001	Canonical filename/output identity unavailable or mismatched	BLOCK; wait ACPOS naming resolution; page cannot rename
+P	ASSET-01-ERR-NAMING-001
+P	Canonical filename/output identity unavailable or mismatched
+P	BLOCK; wait ACPOS naming resolution; page cannot rename
+ROW	ASSET-01-ERR-ROUTE-001	Approved Provider Route unavailable	BLOCK; wait ACPOS Core/API Router
+P	ASSET-01-ERR-ROUTE-001
+P	Approved Provider Route unavailable
+P	BLOCK; wait ACPOS Core/API Router
+ROW	ASSET-01-ERR-PROVIDER-001	Provider job/callback failed	Preserve task/candidate; show retry eligibility
+P	ASSET-01-ERR-PROVIDER-001
+P	Provider job/callback failed
+P	Preserve task/candidate; show retry eligibility
+ROW	ASSET-01-ERR-CANDIDATE-001	Candidate provenance/checksum invalid	BLOCK evaluation/decision
+P	ASSET-01-ERR-CANDIDATE-001
+P	Candidate provenance/checksum invalid
+P	BLOCK evaluation/decision
+ROW	ASSET-01-ERR-CRITERIA-001	ASSET criteria version missing/wrong department	BLOCK evaluation; no generic default
+P	ASSET-01-ERR-CRITERIA-001
+P	ASSET criteria version missing/wrong department
+P	BLOCK evaluation; no generic default
+ROW	ASSET-01-ERR-CORRECTION-001	Correction context stale/candidate unapproved	Return correction discussion; no execute
+P	ASSET-01-ERR-CORRECTION-001
+P	Correction context stale/candidate unapproved
+P	Return correction discussion; no execute
+ROW	ASSET-01-ERR-TRANSLATION-001	Shared Translation/Compiler failed	BLOCK provider execution; preserve Chinese candidate
+P	ASSET-01-ERR-TRANSLATION-001
+P	Shared Translation/Compiler failed
+P	BLOCK provider execution; preserve Chinese candidate
+ROW	ASSET-01-ERR-LAYER-001	Layer operation invalid/locked/cross-document	BLOCK mutation
+P	ASSET-01-ERR-LAYER-001
+P	Layer operation invalid/locked/cross-document
+P	BLOCK mutation
+ROW	ASSET-01-ERR-PATCH-001	Patch lineage/preserve/preview invalid	BLOCK patch decision
+P	ASSET-01-ERR-PATCH-001
+P	Patch lineage/preserve/preview invalid
+P	BLOCK patch decision
+ROW	ASSET-01-ERR-VERSION-001	Overwrite/non-exact version attempt	BLOCK; create new version only
+P	ASSET-01-ERR-VERSION-001
+P	Overwrite/non-exact version attempt
+P	BLOCK; create new version only
+ROW	ASSET-01-ERR-HANDOFF-001	Exact handoff manifest/contract/hash incomplete	BLOCK handoff; preserve locked version
+P	ASSET-01-ERR-HANDOFF-001
+P	Exact handoff manifest/contract/hash incomplete
+P	BLOCK handoff; preserve locked version
+ROW	ASSET-01-ERR-PERM-001	Permission/scope denied	Disable action + show real reason
+P	ASSET-01-ERR-PERM-001
+P	Permission/scope denied
+P	Disable action + show real reason
+P	12. Data Binding / Script / Naming Contract
+ROW	Binding	Owner	ASSET Rule
+P	Binding
+P	Owner
+P	ASSET Rule
+ROW	Locked Blueprint / Child Lock	CORE / BLUEPRINT	exact version/hash；mismatch = BLOCK
+P	Locked Blueprint / Child Lock
+P	CORE / BLUEPRINT
+P	exact version/hash；mismatch = BLOCK
+ROW	Canonical Production Script	CORE Script System	department specialized ASSET script consumes exact canonical script version/hash
+P	Canonical Production Script
+P	CORE Script System
+P	department specialized ASSET script consumes exact canonical script version/hash
+ROW	ASSET Production Script View	CORE / SCRIPT	provider-neutral；8 sections；first production read-only
+P	ASSET Production Script View
+P	CORE / SCRIPT
+P	provider-neutral；8 sections；first production read-only
+ROW	DNA Binding	CORE / BLUEPRINT	identity/continuity exact refs
+P	DNA Binding
+P	CORE / BLUEPRINT
+P	identity/continuity exact refs
+ROW	Asset Manifest	CORE / BLUEPRINT	required item/type/purpose/reuse policy
+P	Asset Manifest
+P	CORE / BLUEPRINT
+P	required item/type/purpose/reuse policy
+ROW	Instruction Package	InstructionCompiler	approved provider-neutral instruction package
+P	Instruction Package
+P	InstructionCompiler
+P	approved provider-neutral instruction package
+ROW	Provider Route Snapshot	ACPOS AI API Router	page read-only；no provider/model selector
+P	Provider Route Snapshot
+P	ACPOS AI API Router
+P	page read-only；no provider/model selector
+ROW	Canonical Filename / Output Identity	ACPOS_SYSTEM	page read-only；manual rename forbidden
+P	Canonical Filename / Output Identity
+P	ACPOS_SYSTEM
+P	page read-only；manual rename forbidden
+ROW	Scorecard	ASSET/EVALUATION	task-bound Approved ASSET Criteria Version；no second scoring scheme
+P	Scorecard
+P	ASSET/EVALUATION
+P	task-bound Approved ASSET Criteria Version；no second scoring scheme
+P	12.1 Production Script Sections
+P	ASSET Script 使用現有 8-section content contract：Requirement / Identity-DNA / Character / Scene / Object-Text / Style-Light-VFX / Audio / Output。ASSET 頁不建立平行 Script Authority。
+P	13. Layer / Patch Functional Design
+P	Layer/Patch 是 ACPOS Versioned Layer Document / AssetPatch Runtime 的 UI 實體化；只有 image-compatible asset types 可用。Voice/Music/SFX 不 render Layer/Patch controls。
+ROW	Rule	Design consequence
+P	Rule
+P	Design consequence
+ROW	Accepted layer mutation increments Layer Document Version	任何新增/刪除/排序/Mask/Properties 都保留版本線
+P	Accepted layer mutation increments Layer Document Version
+P	任何新增/刪除/排序/Mask/Properties 都保留版本線
+ROW	Locked layer rejects destructive mutation	刪除/修改按鈕依 gate/permission 真實 disable reason
+P	Locked layer rejects destructive mutation
+P	刪除/修改按鈕依 gate/permission 真實 disable reason
+ROW	Opacity 0.0..1.0	Inspector 使用 bounded field，不接受自由文字
+P	Opacity 0.0..1.0
+P	Inspector 使用 bounded field，不接受自由文字
+ROW	Parent layer same document	跨 document move = BLOCK
+P	Parent layer same document
+P	跨 document move = BLOCK
+ROW	z_index unique + compact	Reorder 由 runtime 驗證
+P	z_index unique + compact
+P	Reorder 由 runtime 驗證
+ROW	Accepted Patch	create NEW ASSET_VERSION + NEW LAYER_DOCUMENT_VERSION；source immutable
+P	Accepted Patch
+P	create NEW ASSET_VERSION + NEW LAYER_DOCUMENT_VERSION；source immutable
+ROW	Photoshop/PSD	NOT IMPLIED；不得顯示 PSD import/export 或 Adobe API
+P	Photoshop/PSD
+P	NOT IMPLIED；不得顯示 PSD import/export 或 Adobe API
+P	13.1 Layer Types
+P	BACKGROUND / CHARACTER_BODY / FACE / EYES / NOSE / MOUTH / HAIR / COSTUME / PROPS / FOREGROUND / EFFECTS / TEXT_UI / MASK / ADJUSTMENT。
+P	13.2 Blend Modes
+P	NORMAL / MULTIPLY / SCREEN / OVERLAY / SOFT_LIGHT / HARD_LIGHT / COLOR_DODGE / LINEAR_DODGE / COLOR_BURN / LINEAR_BURN / DIFFERENCE / EXCLUSION。
+P	14. Function ↔ Visual Binding
+ROW	Visual	Primary Sections	Why it exists	Not allowed
+P	Visual
+P	Primary Sections
+P	Why it exists
+P	Not allowed
+ROW	A Main Production	01/02/03/04/05/08/09	日常 Reuse/Generate + Preview + Decision	自由素材 picker、假 KPI、Provider selector
+P	A Main Production
+P	01/02/03/04/05/08/09
+P	日常 Reuse/Generate + Preview + Decision
+P	自由素材 picker、假 KPI、Provider selector
+ROW	B Correction	06 + current context + preview	Modify/Finding 後精準修正	無 finding/context 時常駐修正框
+P	B Correction
+P	06 + current context + preview
+P	Modify/Finding 後精準修正
+P	無 finding/context 時常駐修正框
+ROW	C Layer/Patch	07 + image preview + runtime	局部圖層/patch 版本化	Audio layer controls、PSD/Photoshop inference
+P	C Layer/Patch
+P	07 + image preview + runtime
+P	局部圖層/patch 版本化
+P	Audio layer controls、PSD/Photoshop inference
+ROW	D Audio	04/05/08/09	Voice/Music/SFX waveform production	Layer/Patch controls
+P	D Audio
+P	04/05/08/09
+P	Voice/Music/SFX waveform production
+P	Layer/Patch controls
+ROW	E Handoff	10 + 08	exact locked manifest transfer to VIDEO	VIDEO internal UI / timeline / generation controls
+P	E Handoff
+P	10 + 08
+P	exact locked manifest transfer to VIDEO
+P	VIDEO internal UI / timeline / generation controls
+P	15. Cross-page Flow / Handoff Boundary
+P	Inbound：CORE/Blueprint 已完成 Project/Topic/Task + Child Lock + Canonical Script + DNA + Asset Manifest 等 exact refs，透過 Department Handoff 讓 ASSET Task READY。
+P	Outbound：ASSET 只交付 Exact Asset Handoff Manifest；VIDEO 消費 exact locked asset version/ref，不得從 filename 推論 business identity。
+ROW	Direction	Payload / Ref	Boundary rule
+P	Direction
+P	Payload / Ref
+P	Boundary rule
+ROW	CORE → ASSET	Project / Topic / Task / Blueprint / Canonical Script / DNA / Asset Manifest / Naming / Instruction / Route refs	ASSET validates only；不得修改 upstream Authority
+P	CORE → ASSET
+P	Project / Topic / Task / Blueprint / Canonical Script / DNA / Asset Manifest / Naming / Instruction / Route refs
+P	ASSET validates only；不得修改 upstream Authority
+ROW	ASSET → VIDEO	Exact Asset Version / Layer Composite / Blueprint / Script Hash / DNA / Manifest Items / Canonical Filename / Checksum / Scorecard / Rights / Contract Hash	VIDEO internal controls not copied into ASSET
+P	ASSET → VIDEO
+P	Exact Asset Version / Layer Composite / Blueprint / Script Hash / DNA / Manifest Items / Canonical Filename / Checksum / Scorecard / Rights / Contract Hash
+P	VIDEO internal controls not copied into ASSET
+P	16. Acceptance / Hard Locks / DoD
+ROW	Denominator	Current
+P	Denominator
+P	Current
+ROW	Sections	10/10
+P	Sections
+P	10/10
+ROW	Components	16/16
+P	Components
+P	16/16
+ROW	Visuals	10/10 authority visuals; 5 materialized design candidates in this Word
+P	Visuals
+P	10/10 authority visuals; 5 materialized design candidates in this Word
+ROW	Permissions	8/8
+P	Permissions
+P	8/8
+ROW	Gates	21/21
+P	Gates
+P	21/21
+ROW	Actions	44/44
+P	Actions
+P	44/44
+ROW	Controls	85/85
+P	Controls
+P	85/85
+ROW	Objects	18/18
+P	Objects
+P	18/18
+ROW	Errors	17/17
+P	Errors
+P	17/17
+ROW	Stages / Transitions	5 / 5
+P	Stages / Transitions
+P	5 / 5
+ROW	Integration Ports	19/19
+P	Integration Ports
+P	19/19
+ROW	Script Roles	2
+P	Script Roles
+P	2
+ROW	Asset Types	10
+P	Asset Types
+P	10
+ROW	Unresolved control-action refs	0 (Authority derived validation)
+P	Unresolved control-action refs
+P	0 (Authority derived validation)
+ROW	Unbound actions	0 (Authority derived validation)
+P	Unbound actions
+P	0 (Authority derived validation)
+P	16.1 Hard Locks
+P	Only ASSET-01 is current executable ASSET workspace page；不得建立 split/parallel ASSET page。
+P	Provider/Model 只由 shared AI API Routing 決定；頁面不得配置 provider/model。
+P	Canonical filename / output identity 由 ACPOS_SYSTEM；不得手動 rename。
+P	All versions immutable；correction/patch creates new version。
+P	Exact Handoff Manifest required before VIDEO receives output。
+P	ASSET-only LayerDocument / AssetPatch；跨部門 patch/output mutation forbidden。
+P	No unlisted Section / Component / Control / Action / State / Gate / Permission / API / Business Sample Data。
+P	16.2 DoD / Freeze
+ROW	Item	Status
+P	Item
+P	Status
+ROW	Mother Basic Design structure	COMPLETE
+P	Mother Basic Design structure
+P	COMPLETE
+ROW	Exact Current denominator binding	COMPLETE
+P	Exact Current denominator binding
+P	COMPLETE
+ROW	Technology-purple UI materialization	5 Visual Candidates
+P	Technology-purple UI materialization
+P	5 Visual Candidates
+ROW	Fake business data	0 by design
+P	Fake business data
+P	0 by design
+ROW	Human visual/function review	PENDING
+P	Human visual/function review
+P	PENDING
+ROW	Selected approved candidate	NOT YET
+P	Selected approved candidate
+P	NOT YET
+ROW	Authority update	BLOCKED pending approval
+P	Authority update
+P	BLOCKED pending approval
+ROW	DESIGN_FROZEN	FALSE
+P	DESIGN_FROZEN
+P	FALSE
+P	17. Resume / Next Transition
+P	這份 Word 的合法下一步不是直接施工。依 Mother Basic Design / Visual governance，先由 Human Reviewer 檢視 ASSET-01 的工作區比例、科技紫風格、5 種狀態與功能對位；若需要調整，修改 Visual Candidate；只有 Selected Approved Candidate 形成後，才可進 Authority Update / Design Freeze / Implementation Handoff。
+ROW	Resume field	Value
+P	Resume field
+P	Value
+ROW	Current Governance Manifest	ACPOS_CURRENT_AUTHORITY_MANIFEST_FINAL_LOCKED
+P	Current Governance Manifest
+P	ACPOS_CURRENT_AUTHORITY_MANIFEST_FINAL_LOCKED
+ROW	Branch / HEAD	new / 165c6440cb53b1b45ec96905241fb4d56dc3b867
+P	Branch / HEAD
+P	new / 165c6440cb53b1b45ec96905241fb4d56dc3b867
+ROW	Page	ASSET-01
+P	Page
+P	ASSET-01
+ROW	Document Work Unit	ASSET-01 Mother Basic Design Visual Rebuild
+P	Document Work Unit
+P	ASSET-01 Mother Basic Design Visual Rebuild
+ROW	Authority denominator	10 Sec / 16 Comp / 85 Ctrl / 44 Act / 21 Gate / 19 Port
+P	Authority denominator
+P	10 Sec / 16 Comp / 85 Ctrl / 44 Act / 21 Gate / 19 Port
+ROW	Visual candidate status	PENDING HUMAN REVIEW
+P	Visual candidate status
+P	PENDING HUMAN REVIEW
+ROW	Design freeze	FALSE
+P	Design freeze
+P	FALSE
+ROW	Implementation claim	NONE
+P	Implementation claim
+P	NONE
+ROW	Production claim	NONE
+P	Production claim
+P	NONE
+P	文件版號 v1.0 僅代表本次 Basic Design 文件 revision，不等於 Current Governance / Page Authority version。
+### PART word/header1.xml
+P	ACPOS · ASSET-01 · Mother Basic Design · TECH PURPLE
+### PART word/footer1.xml
+P	VISUAL CANDIDATE · PENDING HUMAN REVIEW · DESIGN_FROZEN = FALSE

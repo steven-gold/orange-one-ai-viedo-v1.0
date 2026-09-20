@@ -1,0 +1,217 @@
+### PART word/document.xml
+P	ORANGE ONE
+P	IDENTITY-LOGIN
+P	登入／身分入口
+P	Login / Identity Entry
+P	登入頁、Session、錯誤、安全與登入後導向施工基準
+ROW	頁面定位
+Login 是未登入入口，不使用登入後 Global Shell 的 Header／Sidebar。成功登入後建立內部 Cookie Session，並導向 `/` 儀表板；不得在登入頁引入 IAM 管理、Provider、專案或其他業務功能。
+P	頁面定位
+Login 是未登入入口，不使用登入後 Global Shell 的 Header／Sidebar。成功登入後建立內部 Cookie Session，並導向 `/` 儀表板；不得在登入頁引入 IAM 管理、Provider、專案或其他業務功能。
+P	1. Page Identity / Route
+ROW	項目	規格
+P	項目
+P	規格
+ROW	Page UID	identity:login
+P	Page UID
+P	identity:login
+ROW	Route	GET /login
+P	Route
+P	GET /login
+ROW	Form submit	POST /identity/login
+P	Form submit
+P	POST /identity/login
+ROW	Session read/write/end	GET / POST / DELETE /v1/identity/session
+P	Session read/write/end
+P	GET / POST / DELETE /v1/identity/session
+ROW	Success redirect	HTTP 303 → /
+P	Success redirect
+P	HTTP 303 → /
+ROW	Identity transport	Internal Cookie Session
+P	Identity transport
+P	Internal Cookie Session
+ROW	Cookie	acpos_session；HttpOnly；SameSite=Lax；Path=/；Max-Age 43200s
+P	Cookie
+P	acpos_session；HttpOnly；SameSite=Lax；Path=/；Max-Age 43200s
+ROW	Authorization catalog	登入 Session 本身不屬 Account Permission Catalog；進站後各 Page 再做 page/action permission gate
+P	Authorization catalog
+P	登入 Session 本身不屬 Account Permission Catalog；進站後各 Page 再做 page/action permission gate
+P	2. Visual Architecture / 登入畫面
+P	圖 1　登入頁採 Hero + Access 雙欄；窄螢幕只保留 Access，不建立另一套登入流程。
+ROW	Breakpoint	Layout	規格
+P	Breakpoint
+P	Layout
+P	規格
+ROW	Desktop >980px	Left Hero + Right Access	Grid 約 1.08fr / minmax(420px,0.92fr)；Hero 可展示 ACPOS 品牌與 CORE→ASSET→VIDEO→EDIT→QA 生產鏈
+P	Desktop >980px
+P	Left Hero + Right Access
+P	Grid 約 1.08fr / minmax(420px,0.92fr)；Hero 可展示 ACPOS 品牌與 CORE→ASSET→VIDEO→EDIT→QA 生產鏈
+ROW	<=980px	Single Access	Hero 隱藏；登入流程與欄位完全相同
+P	<=980px
+P	Single Access
+P	Hero 隱藏；登入流程與欄位完全相同
+ROW	<=560px	Compact Access	左右 padding 降至 16px；Card padding 26×22；不得壓縮 Input / Button 到不可操作
+P	<=560px
+P	Compact Access
+P	左右 padding 降至 16px；Card padding 26×22；不得壓縮 Input / Button 到不可操作
+P	3. Component / Field Registry
+ROW	UID	類型	名稱 / 欄位	規則
+P	UID
+P	類型
+P	名稱 / 欄位
+P	規則
+ROW	LOGIN-CMP-01	Section	Hero / Brand	純展示；aria-hidden；不得承載登入必填資訊
+P	LOGIN-CMP-01
+P	Section
+P	Hero / Brand
+P	純展示；aria-hidden；不得承載登入必填資訊
+ROW	LOGIN-CMP-02	Control	Language Switch	zh-TW / zh-CN / en；不改 Business State
+P	LOGIN-CMP-02
+P	Control
+P	Language Switch
+P	zh-TW / zh-CN / en；不改 Business State
+ROW	LOGIN-FLD-01	Field	email	required；autocomplete=username；Trim；送出後由 Runtime 驗證
+P	LOGIN-FLD-01
+P	Field
+P	email
+P	required；autocomplete=username；Trim；送出後由 Runtime 驗證
+ROW	LOGIN-FLD-02	Field	password	required；type=password；autocomplete=current-password；禁止回顯
+P	LOGIN-FLD-02
+P	Field
+P	password
+P	required；type=password；autocomplete=current-password；禁止回顯
+ROW	LOGIN-CMP-03	Message	Error Banner	只顯示合法 reason / 友善映射；role=alert
+P	LOGIN-CMP-03
+P	Message
+P	Error Banner
+P	只顯示合法 reason / 友善映射；role=alert
+ROW	LOGIN-CTL-01	Button	登入	唯一 Effectful 控制；Submit 到 /identity/login
+P	LOGIN-CTL-01
+P	Button
+P	登入
+P	唯一 Effectful 控制；Submit 到 /identity/login
+ROW	禁止擴充
+目前沒有註冊忘記密碼、註冊帳號、SSO、Social Login、Remember Me、Password Reveal 等正式功能；不得為了「完整」自行新增。
+P	禁止擴充
+目前沒有註冊忘記密碼、註冊帳號、SSO、Social Login、Remember Me、Password Reveal 等正式功能；不得為了「完整」自行新增。
+P	4. Login Functional Chain
+P	1. 使用者開啟 `/login`。
+P	2. Locale Provider 載入目前語言；登入頁不需要 Page Permission。
+P	3. 使用者輸入 email + password，送出 `POST /identity/login`。
+P	4. Server 以 email 尋找 READY runtime account；密碼使用 scrypt 驗證。
+P	5. 建立 32-byte random session token；資料庫只保存 SHA-256 token hash。
+P	6. 以 session 對 runtime account → app_users 做 email join；app_users 必須 `disabled_at IS NULL`。
+P	7. 成功：建立 `acpos_session` HttpOnly Cookie，303 Redirect `/`。
+P	8. 失敗：回 `/login?error=<reason_code>`；頁面顯示實際錯誤狀態，不建立 Session。
+P	5. Identity / Account Boundary
+ROW	Owner / Object	責任
+P	Owner / Object
+P	責任
+ROW	acpos_runtime.accounts	登入憑證與 READY runtime account 狀態
+P	acpos_runtime.accounts
+P	登入憑證與 READY runtime account 狀態
+ROW	acpos_runtime.sessions	Session token hash + account_id + expiry
+P	acpos_runtime.sessions
+P	Session token hash + account_id + expiry
+ROW	app_users	Canonical human actor；user_id / email / display_name / disabled_at
+P	app_users
+P	Canonical human actor；user_id / email / display_name / disabled_at
+ROW	Identity Runtime	Credential verify、session create/read/delete、account→app_users resolve
+P	Identity Runtime
+P	Credential verify、session create/read/delete、account→app_users resolve
+ROW	IAM-01	登入後帳戶與權限管理；不得搬進 Login 頁
+P	IAM-01
+P	登入後帳戶與權限管理；不得搬進 Login 頁
+P	6. Security Contract
+P	Cookie 必須 HttpOnly；Production / HTTPS 時 Secure；SameSite=Lax。
+P	Database 永遠只保存 session token 的 SHA-256 hash，不保存 raw token。
+P	Password 使用 scrypt N=16384 / r=8 / p=1 / keylen=32；失敗路徑使用 dummy hash 降低帳號枚舉 timing 差異。
+P	登入失敗不得回傳 password、password hash、session token、header plaintext 或 secret。
+P	不得把 x-correlation-id、Authorization Bearer、第三方 IdP Header 猜成 Current Identity。
+P	Runtime account 必須 READY，且可映射至 non-disabled app_users；否則 fail-closed。
+P	7. State / Error / Recovery
+ROW	State / Code	顯示	Recovery
+P	State / Code
+P	顯示
+P	Recovery
+ROW	READY	Email / Password 可輸入；登入可送出	正常操作
+P	READY
+P	Email / Password 可輸入；登入可送出
+P	正常操作
+ROW	SUBMITTING	固定 Card Geometry；登入按鈕 loading / disabled	等待單次結果；避免重複提交
+P	SUBMITTING
+P	固定 Card Geometry；登入按鈕 loading / disabled
+P	等待單次結果；避免重複提交
+ROW	IDENTITY_CREDENTIALS_REJECTED	登入資訊不正確	保留 email、清空 password、允許重新輸入
+P	IDENTITY_CREDENTIALS_REJECTED
+P	登入資訊不正確
+P	保留 email、清空 password、允許重新輸入
+ROW	DATABASE_RUNTIME_NOT_BOUND	系統登入服務暫不可用	顯示服務不可用；不得假登入
+P	DATABASE_RUNTIME_NOT_BOUND
+P	系統登入服務暫不可用
+P	顯示服務不可用；不得假登入
+ROW	APP_USERS_EMAIL_JOIN_NOT_FOUND	帳戶尚未綁定可用使用者	顯示治理型錯誤；需 IAM / Identity owner 修復
+P	APP_USERS_EMAIL_JOIN_NOT_FOUND
+P	帳戶尚未綁定可用使用者
+P	顯示治理型錯誤；需 IAM / Identity owner 修復
+ROW	IDENTITY_SESSION_CREATE_FAILED	Session 建立失敗	不設 Cookie；允許重新嘗試
+P	IDENTITY_SESSION_CREATE_FAILED
+P	Session 建立失敗
+P	不設 Cookie；允許重新嘗試
+ROW	SESSION_ESTABLISHED	不留在登入頁	303 → /
+P	SESSION_ESTABLISHED
+P	不留在登入頁
+P	303 → /
+ROW	錯誤文案
+前端可將 reason_code 映射為 zh-TW / zh-CN / en 的可讀文字，但不得改變其語義，也不得把 503/401 類型錯誤統一偽裝成成功。
+P	錯誤文案
+前端可將 reason_code 映射為 zh-TW / zh-CN / en 的可讀文字，但不得改變其語義，也不得把 503/401 類型錯誤統一偽裝成成功。
+P	8. Accessibility / Localization
+P	Email / Password 使用正式 `<label>`；錯誤區 `role=alert`。
+P	Language Switch 使用 button + aria-pressed；目前語言可明確辨識。
+P	Focus Ring 必須可見，不能只依紫色差異；Tab order：語言 → email → password → login。
+P	Hero 為純裝飾時使用 aria-hidden，不影響 Screen Reader 登入主流程。
+P	支援 zh-TW / zh-CN / en；品牌 ORANGE ONE / ACPOS 不翻譯。
+P	9. Acceptance Matrix
+ROW	Acceptance UID	PASS 條件
+P	Acceptance UID
+P	PASS 條件
+ROW	LOGIN-ACC-01	`/login` 可獨立顯示，不載入登入後 Header/Sidebar。
+P	LOGIN-ACC-01
+P	`/login` 可獨立顯示，不載入登入後 Header/Sidebar。
+ROW	LOGIN-ACC-02	只有 email / password / locale / login + error，無未註冊控制。
+P	LOGIN-ACC-02
+P	只有 email / password / locale / login + error，無未註冊控制。
+ROW	LOGIN-ACC-03	成功建立 HttpOnly `acpos_session` 並 303 → `/`。
+P	LOGIN-ACC-03
+P	成功建立 HttpOnly `acpos_session` 並 303 → `/`。
+ROW	LOGIN-ACC-04	失敗不建立 Session，顯示實際 reason_code 映射。
+P	LOGIN-ACC-04
+P	失敗不建立 Session，顯示實際 reason_code 映射。
+ROW	LOGIN-ACC-05	READY account + non-disabled app_users mapping 才能成為登入 actor。
+P	LOGIN-ACC-05
+P	READY account + non-disabled app_users mapping 才能成為登入 actor。
+ROW	LOGIN-ACC-06	Raw password / token / secret 不進 UI、log、audit 或 DB plaintext。
+P	LOGIN-ACC-06
+P	Raw password / token / secret 不進 UI、log、audit 或 DB plaintext。
+ROW	LOGIN-ACC-07	980px 以下 Hero 隱藏但 Login Flow 不變。
+P	LOGIN-ACC-07
+P	980px 以下 Hero 隱藏但 Login Flow 不變。
+ROW	LOGIN-ACC-08	三語、Keyboard、Focus、Error Alert 均可操作。
+P	LOGIN-ACC-08
+P	三語、Keyboard、Focus、Error Alert 均可操作。
+ROW	LOGIN-ACC-09	登入完成只建立 Identity；Page Permission 仍由進站後各頁 Gate 判定。
+P	LOGIN-ACC-09
+P	登入完成只建立 Identity；Page Permission 仍由進站後各頁 Gate 判定。
+ROW	LOGIN-ACC-10	Login Design 完成不等於 Production Identity Runtime 已重新施工／驗收。
+P	LOGIN-ACC-10
+P	Login Design 完成不等於 Production Identity Runtime 已重新施工／驗收。
+P	10. Construction Mapping
+P	1. 保留現有 split layout 與三語 selector；按本文件 Geometry 做視覺精修。
+P	2. 維持 POST /identity/login → create session → Cookie → 303 / 的單一路徑。
+P	3. 加入明確 submitting / error focus 管理，但不得改變 Identity Runtime contract。
+P	4. 對 401 / 400 / 503 / app-user mapping failure 做 browser regression。
+P	5. 檢查 Cookie flags、session expiry、logout delete、invalid/expired token fail-closed。
+P	6. 完成登入後導向 WB-01，再由 Global Shell 載入 visible_page_uids。
+### PART word/footer1.xml
+P	ORANGE ONE · ACPOS · Mother Basic Design

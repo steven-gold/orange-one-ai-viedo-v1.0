@@ -1,0 +1,758 @@
+### PART word/document.xml
+P	ACPOS · KB-01
+P	知識庫｜Mother Basic Design
+P	Knowledge & Experience · Source / Acquisition / Citation / Context / Replay / Learning / Review
+ROW	頁面定位｜單一後台 Knowledge & Experience Governance 工作區。管理 Knowledge Source、Acquisition、Search/Citation、Context Candidate、Experience Replay、Learning Candidate 與 Knowledge Review；不複製 INFO、Strategy、Provider、QA 或 Canon/Blueprint 的責任。
+P	頁面定位｜單一後台 Knowledge & Experience Governance 工作區。管理 Knowledge Source、Acquisition、Search/Citation、Context Candidate、Experience Replay、Learning Candidate 與 Knowledge Review；不複製 INFO、Strategy、Provider、QA 或 Canon/Blueprint 的責任。
+ROW	頁面身份	施工定義
+P	頁面身份
+P	施工定義
+ROW	Page UID	admin:KB-01
+P	Page UID
+P	admin:KB-01
+ROW	Current Route	/admin/knowledge
+P	Current Route
+P	/admin/knowledge
+ROW	Surface / Model	ADMIN / Single-page 5-view
+P	Surface / Model
+P	ADMIN / Single-page 5-view
+ROW	Primary Owners	FactPackService + KnowledgeExperienceService；共享 ACPOS Context / Experience / Evolution engines
+P	Primary Owners
+P	FactPackService + KnowledgeExperienceService；共享 ACPOS Context / Experience / Evolution engines
+ROW	Runtime Boundary	蒐集使用既有 ACPOS Shared External Data Acquisition Runtime；頁面不建立第二套 crawler
+P	Runtime Boundary
+P	蒐集使用既有 ACPOS Shared External Data Acquisition Runtime；頁面不建立第二套 crawler
+ROW	Data Truth	Real data only；缺值 = —；Conversation 不等於 Approved Knowledge
+P	Data Truth
+P	Real data only；缺值 = —；Conversation 不等於 Approved Knowledge
+ROW	Current Runtime Truth	設計規格可施工；Application / API / DB / crawler / E2E / deploy 必須由後續實測證據成立
+P	Current Runtime Truth
+P	設計規格可施工；Application / API / DB / crawler / E2E / deploy 必須由後續實測證據成立
+P	1. Product Scope / 產品責任與硬邊界
+P	KB-01 是「知識與經驗治理」頁，不是一般檔案櫃、聊天歷史、搜尋入口或第二套 INFO 頁。
+P	Source → Acquisition → Normalize → Evidence/Citation → Context Candidate 與 Execution → Experience → Replay → Learning → Knowledge Draft → Human Review → Approved Version 形成兩條可追溯主鏈。
+P	Approved Knowledge 可作為後續 AI / Strategy / Production 的 Context Input，但仍受 Scope、Permission、Current Truth 與版本條件限制。
+P	Conversation 訊息、AI 回覆、未驗證搜索結果、未完成 Outcome 不可直接標成 Approved Knowledge。
+ROW	不可跨越的責任｜KB-01 不寫 Canon/Blueprint、不做正式 Strategy Decision、不提供 Provider Picker、不做 Media QA、不建立第二套 Context / Experience / Learning Event / Crawler。未知功能一律 BLOCK + REPORT_AUTHORITY_GAP。
+P	不可跨越的責任｜KB-01 不寫 Canon/Blueprint、不做正式 Strategy Decision、不提供 Provider Picker、不做 Media QA、不建立第二套 Context / Experience / Learning Event / Crawler。未知功能一律 BLOCK + REPORT_AUTHORITY_GAP。
+P	2. Business Entity Inventory / 核心業務實體
+ROW	實體	責任	Canonical Owner
+P	實體
+P	責任
+P	Canonical Owner
+ROW	KnowledgeSource	來源身份、Scope、Rights、Classification、Collection、Freshness、Retention、Status	KnowledgeExperienceService
+P	KnowledgeSource
+P	來源身份、Scope、Rights、Classification、Collection、Freshness、Retention、Status
+P	KnowledgeExperienceService
+ROW	KnowledgeAcquisitionIntent / Run	蒐集意圖、Job/Attempt、Progress、Normalize、Failure/Retry	Shared Acquisition Runtime
+P	KnowledgeAcquisitionIntent / Run
+P	蒐集意圖、Job/Attempt、Progress、Normalize、Failure/Retry
+P	Shared Acquisition Runtime
+ROW	KnowledgeSearchResult	Approved/traceable Knowledge、Fact、Evidence 的授權搜尋投影	FactPack + KnowledgeExperience
+P	KnowledgeSearchResult
+P	Approved/traceable Knowledge、Fact、Evidence 的授權搜尋投影
+P	FactPack + KnowledgeExperience
+ROW	KnowledgeCitation	Source/Location/Time/Version/Checksum/Classification/Evidence	FactPack + KnowledgeExperience
+P	KnowledgeCitation
+P	Source/Location/Time/Version/Checksum/Classification/Evidence
+P	FactPack + KnowledgeExperience
+ROW	ACPOSContextCandidate	從選取的 Knowledge/Fact/Evidence 建立受治理 Context Candidate	ACPOSContextEngine
+P	ACPOSContextCandidate
+P	從選取的 Knowledge/Fact/Evidence 建立受治理 Context Candidate
+P	ACPOSContextEngine
+ROW	ACPOSExperienceRecord / Replay	真實執行 Input→Route→Output→Evaluation→Correction→Outcome 可重播鏈	ACPOSExperienceEngine
+P	ACPOSExperienceRecord / Replay
+P	真實執行 Input→Route→Output→Evaluation→Correction→Outcome 可重播鏈
+P	ACPOSExperienceEngine
+ROW	ACPOSLearningCandidate	基於完整 Outcome / Root Cause / Pattern 的治理候選	ACPOSEvolutionEngine
+P	ACPOSLearningCandidate
+P	基於完整 Outcome / Root Cause / Pattern 的治理候選
+P	ACPOSEvolutionEngine
+ROW	KnowledgeVersion / Review	Draft、Version Diff、Mandatory Check、Approve/Return/Reject、Supersession	KnowledgeExperienceService
+P	KnowledgeVersion / Review
+P	Draft、Version Diff、Mandatory Check、Approve/Return/Reject、Supersession
+P	KnowledgeExperienceService
+P	3. Business Entity × Operation Matrix
+ROW	Entity	Discover/Open	Create	Edit	Lifecycle	Archive/Retire	Evidence	Applicability
+P	Entity
+P	Discover/Open
+P	Create
+P	Edit
+P	Lifecycle
+P	Archive/Retire
+P	Evidence
+P	Applicability
+ROW	KnowledgeSource	List/Open	CREATE	EDIT/SAVE	PAUSE/RESUME	RETIRE	AUDIT	REQUIRED
+P	KnowledgeSource
+P	List/Open
+P	CREATE
+P	EDIT/SAVE
+P	PAUSE/RESUME
+P	RETIRE
+P	AUDIT
+P	REQUIRED
+ROW	Acquisition Run	List/Open	START	N/A	RETRY eligible only	N/A	AUDIT	REQUIRED
+P	Acquisition Run
+P	List/Open
+P	START
+P	N/A
+P	RETRY eligible only
+P	N/A
+P	AUDIT
+P	REQUIRED
+ROW	Search Result / Citation	DISCOVER/OPEN	N/A	N/A	N/A	N/A	TRACE	REQUIRED
+P	Search Result / Citation
+P	DISCOVER/OPEN
+P	N/A
+P	N/A
+P	N/A
+P	N/A
+P	TRACE
+P	REQUIRED
+ROW	Context Candidate	Basket/View	CREATE	Local draft add/remove	Consumer-domain adopt	RETIRE by owner	AUDIT	REQUIRED
+P	Context Candidate
+P	Basket/View
+P	CREATE
+P	Local draft add/remove
+P	Consumer-domain adopt
+P	RETIRE by owner
+P	AUDIT
+P	REQUIRED
+ROW	Experience / Replay	DISCOVER/OPEN	System capture only	COMPARE	N/A	N/A	TRACE	REQUIRED
+P	Experience / Replay
+P	DISCOVER/OPEN
+P	System capture only
+P	COMPARE
+P	N/A
+P	N/A
+P	TRACE
+P	REQUIRED
+ROW	Learning Candidate	OPEN	CREATE	Draft by registered schema	Governance adoption outside KB	SUPERSEDE by owner	AUDIT	REQUIRED
+P	Learning Candidate
+P	OPEN
+P	CREATE
+P	Draft by registered schema
+P	Governance adoption outside KB
+P	SUPERSEDE by owner
+P	AUDIT
+P	REQUIRED
+ROW	KnowledgeVersion	Queue/Open	From Experience	SAVE DRAFT	APPROVE/RETURN/REJECT	SUPERSEDE/RETIRE	AUDIT	REQUIRED
+P	KnowledgeVersion
+P	Queue/Open
+P	From Experience
+P	SAVE DRAFT
+P	APPROVE/RETURN/REJECT
+P	SUPERSEDE/RETIRE
+P	AUDIT
+P	REQUIRED
+ROW	Bounded Completion｜只補足上述可由 Current Intent + Owner + State + Evidence 推導出的最小閉環；不因畫面對稱而增加 Generic CRUD、批次 Publish、人工 Experience 建立、Provider 選擇或自動 Knowledge Approval。
+P	Bounded Completion｜只補足上述可由 Current Intent + Owner + State + Evidence 推導出的最小閉環；不因畫面對稱而增加 Generic CRUD、批次 Publish、人工 Experience 建立、Provider 選擇或自動 Knowledge Approval。
+P	4. Entity Hierarchy / Lineage
+ROW	父層 / Source	子層 / Derived Object	強制關係
+P	父層 / Source
+P	子層 / Derived Object
+P	強制關係
+ROW	KnowledgeSource	Acquisition Intent / Run	Exact source_ref + scope + rights/classification + version
+P	KnowledgeSource
+P	Acquisition Intent / Run
+P	Exact source_ref + scope + rights/classification + version
+ROW	Acquisition Run	Snapshot / Normalized Refs / Citation	Immutable snapshot；canonical URL + content hash dedupe；Evidence 可追溯
+P	Acquisition Run
+P	Snapshot / Normalized Refs / Citation
+P	Immutable snapshot；canonical URL + content hash dedupe；Evidence 可追溯
+ROW	Knowledge / Fact / Evidence	ACPOSContextCandidate	selected_refs + evidence_refs + context_fingerprint；建立後交由 Consumer Domain 採用
+P	Knowledge / Fact / Evidence
+P	ACPOSContextCandidate
+P	selected_refs + evidence_refs + context_fingerprint；建立後交由 Consumer Domain 採用
+ROW	Real Execution	ACPOSExperienceRecord	只來自真實執行；含 route/attempt/evaluation/QA/correction/outcome lineage
+P	Real Execution
+P	ACPOSExperienceRecord
+P	只來自真實執行；含 route/attempt/evaluation/QA/correction/outcome lineage
+ROW	Experience Record	Replay / Learning Candidate	Outcome 完整 + lineage 可解析才可建立 Learning Candidate
+P	Experience Record
+P	Replay / Learning Candidate
+P	Outcome 完整 + lineage 可解析才可建立 Learning Candidate
+ROW	Learning / Experience	Knowledge Draft	Draft 綁定 exact experience/evidence refs；不覆蓋既有 Approved Version
+P	Learning / Experience
+P	Knowledge Draft
+P	Draft 綁定 exact experience/evidence refs；不覆蓋既有 Approved Version
+ROW	Knowledge Draft	Approved Knowledge Version	Human Review + mandatory checks + citation/outcome + conflict resolution + expected_version
+P	Knowledge Draft
+P	Approved Knowledge Version
+P	Human Review + mandatory checks + citation/outcome + conflict resolution + expected_version
+P	5. Five-View Functional Workbench
+ROW	View	Sections	工作責任
+P	View
+P	Sections
+P	工作責任
+ROW	Knowledge Overview	S02 + S16	治理摘要、Warnings、5 類真實 KPI/狀態投影；只搜尋，不做隱含 mutation
+P	Knowledge Overview
+P	S02 + S16
+P	治理摘要、Warnings、5 類真實 KPI/狀態投影；只搜尋，不做隱含 mutation
+ROW	來源與蒐集	S03–S05 + S16	Source Directory / Source Governance / Acquisition Intent / Ingestion Queue；24/50/26
+P	來源與蒐集
+P	S03–S05 + S16
+P	Source Directory / Source Governance / Acquisition Intent / Ingestion Queue；24/50/26
+ROW	搜尋 / Citation / Context	S06–S08 + S16	Search Result → Citation/Evidence → Context Basket → Context Candidate；34/44/22
+P	搜尋 / Citation / Context
+P	S06–S08 + S16
+P	Search Result → Citation/Evidence → Context Basket → Context Candidate；34/44/22
+ROW	Experience / Replay	S09–S11 + S16	Experience Directory → Replay → Root Cause / Learning；24/54/22
+P	Experience / Replay
+P	S09–S11 + S16
+P	Experience Directory → Replay → Root Cause / Learning；24/54/22
+ROW	Knowledge Review	S12–S15 + S16	Review Queue → Draft/Evidence → Version Diff → Decision Rail；23/55/22
+P	Knowledge Review
+P	S12–S15 + S16
+P	Review Queue → Draft/Evidence → Version Diff → Decision Rail；23/55/22
+ROW	Interaction Topology｜五個 View 全部在 admin:KB-01 同一頁內切換；View switch 僅改 UI Context，不重置已選 Source / Draft / Experience 或未提交表單，也不得另開平行 Knowledge 子頁。
+P	Interaction Topology｜五個 View 全部在 admin:KB-01 同一頁內切換；View switch 僅改 UI Context，不重置已選 Source / Draft / Experience 或未提交表單，也不得另開平行 Knowledge 子頁。
+P	6. Visual / Geometry Contract
+ROW	項目	施工值 / 規則
+P	項目
+P	施工值 / 規則
+ROW	Desktop minimum	1280px；低於最小寬度保留同一頁語義，不建立第二套 mobile workflow
+P	Desktop minimum
+P	1280px；低於最小寬度保留同一頁語義，不建立第二套 mobile workflow
+ROW	Context Bar	56px
+P	Context Bar
+P	56px
+ROW	View Tabs	52px
+P	View Tabs
+P	52px
+ROW	Section Gap / Padding	16px / 16px
+P	Section Gap / Padding
+P	16px / 16px
+ROW	Control Height	40px；Touch Target ≥ 44×44px
+P	Control Height
+P	40px；Touch Target ≥ 44×44px
+ROW	Panel Radius	12px
+P	Panel Radius
+P	12px
+ROW	Detail Drawer	500–560px；read detail 用 Drawer，effectful action 用 Modal
+P	Detail Drawer
+P	500–560px；read detail 用 Drawer，effectful action 用 Modal
+ROW	Data table	Sticky/fixed header；Long value = Ellipsis + Drawer；禁止 hidden row click action
+P	Data table
+P	Sticky/fixed header；Long value = Ellipsis + Drawer；禁止 hidden row click action
+ROW	Visual style	Global dark tech-purple；頁面不得自建第二套 palette/button theme
+P	Visual style
+P	Global dark tech-purple；頁面不得自建第二套 palette/button theme
+ROW	Missing / Loading	— / 保留 geometry skeleton；不得產生假 KPI 或 sample knowledge data
+P	Missing / Loading
+P	— / 保留 geometry skeleton；不得產生假 KPI 或 sample knowledge data
+P	圖 1｜來源與蒐集工作面：Source Governance、Acquisition Intent、Ingestion Queue 與共享 Runtime 邊界。
+P	7. Functional Admission / Auto-Completion Scope
+ROW	候選功能	Admission	理由 / Owner	施工處置
+P	候選功能
+P	Admission
+P	理由 / Owner
+P	施工處置
+ROW	Source create/update/pause/resume/retire	ADMIT	有明確 owner / schema / permission / state machine	正式控制 + Gate
+P	Source create/update/pause/resume/retire
+P	ADMIT
+P	有明確 owner / schema / permission / state machine
+P	正式控制 + Gate
+ROW	Ingestion start/retry	ADMIT	Shared Acquisition Runtime owns fetch/retry/evidence	正式控制；頁面只提交 intent
+P	Ingestion start/retry
+P	ADMIT
+P	Shared Acquisition Runtime owns fetch/retry/evidence
+P	正式控制；頁面只提交 intent
+ROW	Context Candidate adopt	DO NOT AUTO-COMPLETE	Consumer-domain governance owns adoption	KB 只建立 READY_FOR_CONSUMER_REVIEW
+P	Context Candidate adopt
+P	DO NOT AUTO-COMPLETE
+P	Consumer-domain governance owns adoption
+P	KB 只建立 READY_FOR_CONSUMER_REVIEW
+ROW	Experience manual create/edit	REJECT	Experience 必須來自 real execution	禁止人工造 Experience
+P	Experience manual create/edit
+P	REJECT
+P	Experience 必須來自 real execution
+P	禁止人工造 Experience
+ROW	Learning Candidate auto-apply to Canon/Criteria/Policy	REJECT	Governance owners 不同	只建立 Candidate
+P	Learning Candidate auto-apply to Canon/Criteria/Policy
+P	REJECT
+P	Governance owners 不同
+P	只建立 Candidate
+ROW	Knowledge auto-approve from AI/chat	REJECT	Human Review + Evidence mandatory	必須進 Review
+P	Knowledge auto-approve from AI/chat
+P	REJECT
+P	Human Review + Evidence mandatory
+P	必須進 Review
+ROW	Raw secret field	REJECT	Secret boundary	只允許 secret_reference_id / connector binding
+P	Raw secret field
+P	REJECT
+P	Secret boundary
+P	只允許 secret_reference_id / connector binding
+ROW	Parallel crawler / INFO search database	REJECT	Second-system / duplication	重用 shared runtime / existing projections
+P	Parallel crawler / INFO search database
+P	REJECT
+P	Second-system / duplication
+P	重用 shared runtime / existing projections
+P	8. Functional Chain / 端到端主流程
+P	8.1 Source → Approved Knowledge
+P	Intent → Authorized Scope → Create/Select KnowledgeSource → Rights/Classification/Freshness/Retention Validation → Acquisition Intent → Shared Runtime Job → Immutable Snapshot → Normalize → Evidence/Citation → Search/Review → Knowledge Draft → Version Diff → Mandatory Checks → Human Decision → Approved Version → Eligible Context Input。
+P	8.2 Search → Context Candidate
+P	Query + Scope → Authorized Search Results → Select exact refs → Open Citation/Evidence → Local Basket add/remove → Purpose + Scope → Conflict / Version / Classification Gate → Create ACPOSContextCandidate → READY_FOR_CONSUMER_REVIEW → Consumer-domain adoption。
+P	8.3 Real Execution → Learning
+P	Real Execution → ACPOSExperienceRecord → Outcome Completeness → Replay exact lineage → Compare Attempt/Version → Root Cause / Pattern → Create Learning Candidate → Governed review outside KB or create Knowledge Draft → Human Knowledge Review。
+ROW	Truthful State｜Request accepted ≠ Knowledge approved；Acquisition completed ≠ Evidence valid；Experience captured ≠ Outcome complete；Learning Candidate created ≠ Canon/Criteria/Policy changed。
+P	Truthful State｜Request accepted ≠ Knowledge approved；Acquisition completed ≠ Evidence valid；Experience captured ≠ Outcome complete；Learning Candidate created ≠ Canon/Criteria/Policy changed。
+P	9. Action / Operation Contract
+ROW	Action Group	Operations	Effect	Owner
+P	Action Group
+P	Operations
+P	Effect
+P	Owner
+ROW	Search / Citation	searchKnowledge; getCitation	READ	FactPack + KnowledgeExperience
+P	Search / Citation
+P	searchKnowledge; getCitation
+P	READ
+P	FactPack + KnowledgeExperience
+ROW	Source	create / update / pause / resume / retire KnowledgeSource	CREATE/UPDATE/STATE	KnowledgeExperienceService
+P	Source
+P	create / update / pause / resume / retire KnowledgeSource
+P	CREATE/UPDATE/STATE
+P	KnowledgeExperienceService
+ROW	Acquisition	createAcquisitionJob; retryAcquisitionJob	CREATE_JOB/RETRY	Shared Acquisition Runtime
+P	Acquisition
+P	createAcquisitionJob; retryAcquisitionJob
+P	CREATE_JOB/RETRY
+P	Shared Acquisition Runtime
+ROW	Context	add/remove local draft item; createContextCandidate	LOCAL + CREATE	Page UI State + ACPOSContextEngine
+P	Context
+P	add/remove local draft item; createContextCandidate
+P	LOCAL + CREATE
+P	Page UI State + ACPOSContextEngine
+ROW	Experience	getExperienceReplay; compareExperienceReplay	READ / READ_COMPARE	ACPOSExperienceEngine
+P	Experience
+P	getExperienceReplay; compareExperienceReplay
+P	READ / READ_COMPARE
+P	ACPOSExperienceEngine
+ROW	Learning	createLearningCandidate	CREATE	ACPOSEvolutionEngine
+P	Learning
+P	createLearningCandidate
+P	CREATE
+P	ACPOSEvolutionEngine
+ROW	Knowledge Draft	create from experience; save draft; compare versions	CREATE/UPDATE/COMPARE	KnowledgeExperienceService
+P	Knowledge Draft
+P	create from experience; save draft; compare versions
+P	CREATE/UPDATE/COMPARE
+P	KnowledgeExperienceService
+ROW	Review	approve / return / reject Knowledge Draft	APPROVE/REVIEW_DECISION	KnowledgeExperienceService
+P	Review
+P	approve / return / reject Knowledge Draft
+P	APPROVE/REVIEW_DECISION
+P	KnowledgeExperienceService
+ROW	Runtime Gate｜文件定義正式 Operation Contract，但 Application/API/DB/Crawler/E2E/Deploy 目前不得由設計文件推定完成。施工若找不到 exact operation + authorization + persistence/runtime binding，該控制必須 Disabled/BLOCK，不得假成功。
+P	Runtime Gate｜文件定義正式 Operation Contract，但 Application/API/DB/Crawler/E2E/Deploy 目前不得由設計文件推定完成。施工若找不到 exact operation + authorization + persistence/runtime binding，該控制必須 Disabled/BLOCK，不得假成功。
+P	10. Form / Input Contract
+ROW	Schema	Required	Optional / System	Forbidden / Block
+P	Schema
+P	Required
+P	Optional / System
+P	Forbidden / Block
+ROW	CreateKnowledgeSourceRequest	name, source_type, scope, rights, classification, collection_method, freshness_policy, retention_policy, correlation_id, idempotency_key	collection_config, secret_reference_id	raw_secret / credential_plaintext
+P	CreateKnowledgeSourceRequest
+P	name, source_type, scope, rights, classification, collection_method, freshness_policy, retention_policy, correlation_id, idempotency_key
+P	collection_config, secret_reference_id
+P	raw_secret / credential_plaintext
+ROW	UpdateKnowledgeSourceRequest	source_id, expected_version, correlation_id, idempotency_key	同上可 patch 欄位	status direct write / raw secret
+P	UpdateKnowledgeSourceRequest
+P	source_id, expected_version, correlation_id, idempotency_key
+P	同上可 patch 欄位
+P	status direct write / raw secret
+ROW	SourceStateChangeRequest	source_id, expected_version, reason, correlation_id, idempotency_key	—	隱式 state write
+P	SourceStateChangeRequest
+P	source_id, expected_version, reason, correlation_id, idempotency_key
+P	—
+P	隱式 state write
+ROW	CreateKnowledgeAcquisitionIntentRequest	source_ref, scope, acquisition_mode, correlation_id, idempotency_key	seed/domain/path/depth/pages/sitemap/js/content/language/schedule/recrawl/rate profile	robots/rights/credential/retry/snapshot/dedupe 由 Runtime 擁有
+P	CreateKnowledgeAcquisitionIntentRequest
+P	source_ref, scope, acquisition_mode, correlation_id, idempotency_key
+P	seed/domain/path/depth/pages/sitemap/js/content/language/schedule/recrawl/rate profile
+P	robots/rights/credential/retry/snapshot/dedupe 由 Runtime 擁有
+ROW	KBSearchRequest	query, scope	classification, freshness, type, review state, source, date, cursor/page_size	越權 scope
+P	KBSearchRequest
+P	query, scope
+P	classification, freshness, type, review state, source, date, cursor/page_size
+P	越權 scope
+ROW	CreateACPOSContextCandidateRequest	purpose, scope, selected_refs, evidence_refs, correlation_id, idempotency_key	system binds account_scope/page_uid/context_fingerprint	缺 Citation / unresolved conflict
+P	CreateACPOSContextCandidateRequest
+P	purpose, scope, selected_refs, evidence_refs, correlation_id, idempotency_key
+P	system binds account_scope/page_uid/context_fingerprint
+P	缺 Citation / unresolved conflict
+ROW	CreateACPOSLearningCandidateRequest	experience_refs, scope, pattern, proposed_improvement, evidence_refs, limitations, correlation/idempotency	—	Outcome pending
+P	CreateACPOSLearningCandidateRequest
+P	experience_refs, scope, pattern, proposed_improvement, evidence_refs, limitations, correlation/idempotency
+P	—
+P	Outcome pending
+ROW	SaveKnowledgeDraftRequest	knowledge_id, expected_version, title, type, scope, classification, correlation/idempotency	summary, content, citations, outcomes, experiences	覆寫 approved version
+P	SaveKnowledgeDraftRequest
+P	knowledge_id, expected_version, title, type, scope, classification, correlation/idempotency
+P	summary, content, citations, outcomes, experiences
+P	覆寫 approved version
+ROW	ReviewKnowledgeDraftRequest	knowledge_id, expected_version, review_rationale, decision, mandatory_check_results, correlation/idempotency	decision = APPROVE/RETURN/REJECT	無 rationale / checks / evidence
+P	ReviewKnowledgeDraftRequest
+P	knowledge_id, expected_version, review_rationale, decision, mandatory_check_results, correlation/idempotency
+P	decision = APPROVE/RETURN/REJECT
+P	無 rationale / checks / evidence
+P	11. Control Registry / 顯示與操作分母
+P	正式控制分母為 27：5 個 View Tab、2 個 Search 入口、Source 5 個狀態/編輯控制、Acquisition 2、Citation 1、Context 3、Replay 2、Learning/Draft 2、Knowledge Draft/Version 2、Review 3。所有 Effectful Control 必須同時具備 Action + Gate + Permission + State 條件。
+ROW	類別	Control Count	主要顯示規則
+P	類別
+P	Control Count
+P	主要顯示規則
+ROW	View / Read	8	Authorized 才可見；View switch 不改 Business State
+P	View / Read
+P	8
+P	Authorized 才可見；View switch 不改 Business State
+ROW	Source / Acquisition	7	Source selected/status/rights/version 決定 enabled；Denied 隱藏，State blocked 顯示 disabled reason
+P	Source / Acquisition
+P	7
+P	Source selected/status/rights/version 決定 enabled；Denied 隱藏，State blocked 顯示 disabled reason
+ROW	Context	3	Result selected + traceable evidence；Local basket 不產生 Authority
+P	Context
+P	3
+P	Result selected + traceable evidence；Local basket 不產生 Authority
+ROW	Experience / Learning	4	Outcome / comparable refs / lineage 決定可用性
+P	Experience / Learning
+P	4
+P	Outcome / comparable refs / lineage 決定可用性
+ROW	Knowledge Review	5	Draft editable / Review state / previous version / mandatory checks 決定操作
+P	Knowledge Review
+P	5
+P	Draft editable / Review state / previous version / mandatory checks 決定操作
+P	12. Gate / Permission / Security Boundary
+P	Permission Model：Account Permission Assignment Only。Role name、department membership、前端隱藏狀態都不得作為 Allow。Server Gate 順序至少包含 identity → account_permission → scope → condition/classification → state_guard → expected_version（versioned write）→ idempotency（side effect）→ audit。
+ROW	Permission	用途
+P	Permission
+P	用途
+ROW	knowledge.read	頁面/搜尋/知識讀取
+P	knowledge.read
+P	頁面/搜尋/知識讀取
+ROW	knowledge.source.read	來源讀取
+P	knowledge.source.read
+P	來源讀取
+ROW	knowledge.source.configure	來源設定與生命週期
+P	knowledge.source.configure
+P	來源設定與生命週期
+ROW	knowledge.ingestion.read	蒐集 Run 讀取
+P	knowledge.ingestion.read
+P	蒐集 Run 讀取
+ROW	knowledge.ingestion.execute	啟動/重試蒐集
+P	knowledge.ingestion.execute
+P	啟動/重試蒐集
+ROW	knowledge.context.create	Context Basket / Candidate
+P	knowledge.context.create
+P	Context Basket / Candidate
+ROW	knowledge.experience.read	Experience / Replay
+P	knowledge.experience.read
+P	Experience / Replay
+ROW	knowledge.learning.create	Learning Candidate
+P	knowledge.learning.create
+P	Learning Candidate
+ROW	knowledge.draft.write	Knowledge Draft
+P	knowledge.draft.write
+P	Knowledge Draft
+ROW	knowledge.review.approve	Review Decision
+P	knowledge.review.approve
+P	Review Decision
+P	12.1 Gate Summary
+ROW	Gate	Minimum Condition
+P	Gate
+P	Minimum Condition
+ROW	READ	knowledge.read + authorized scope + classification mask
+P	READ
+P	knowledge.read + authorized scope + classification mask
+ROW	SOURCE SAVE	source draft + rights/classification + expected_version
+P	SOURCE SAVE
+P	source draft + rights/classification + expected_version
+ROW	PAUSE/RESUME/RETIRE	exact source state + expected_version + active-run constraints
+P	PAUSE/RESUME/RETIRE
+P	exact source state + expected_version + active-run constraints
+ROW	INGEST START	ACTIVE source + rights/config + no prohibited duplicate run + connector available
+P	INGEST START
+P	ACTIVE source + rights/config + no prohibited duplicate run + connector available
+ROW	INGEST RETRY	FAILED + retry_eligible + policy allows
+P	INGEST RETRY
+P	FAILED + retry_eligible + policy allows
+ROW	CONTEXT CREATE	selected refs + purpose + scope + traceable factual evidence + no version conflict
+P	CONTEXT CREATE
+P	selected refs + purpose + scope + traceable factual evidence + no version conflict
+ROW	LEARNING CREATE	OUTCOME_COMPLETE + root cause/pattern evidence
+P	LEARNING CREATE
+P	OUTCOME_COMPLETE + root cause/pattern evidence
+ROW	DRAFT SAVE	required fields + expected_version + valid classification
+P	DRAFT SAVE
+P	required fields + expected_version + valid classification
+ROW	KNOWLEDGE REVIEW	REVIEW + rationale
+P	KNOWLEDGE REVIEW
+P	REVIEW + rationale
+ROW	KNOWLEDGE APPROVE	mandatory checks + fact citation/outcome + conflict resolved + prior version preserved + expected_version
+P	KNOWLEDGE APPROVE
+P	mandatory checks + fact citation/outcome + conflict resolved + prior version preserved + expected_version
+P	13. State Model / Lifecycle
+ROW	Object	Lifecycle	Hard Rule
+P	Object
+P	Lifecycle
+P	Hard Rule
+ROW	KnowledgeSource	DRAFT → ACTIVE ↔ PAUSED → RETIRED	Retired 不得被隱式復活；state change 需 exact version
+P	KnowledgeSource
+P	DRAFT → ACTIVE ↔ PAUSED → RETIRED
+P	Retired 不得被隱式復活；state change 需 exact version
+ROW	IngestionRun	PENDING → RUNNING → NORMALIZING → COMPLETED / FAILED → RETRY_ELIGIBLE → PENDING	Retry 只針對 policy 允許的 failure
+P	IngestionRun
+P	PENDING → RUNNING → NORMALIZING → COMPLETED / FAILED → RETRY_ELIGIBLE → PENDING
+P	Retry 只針對 policy 允許的 failure
+ROW	ContextCandidate	DRAFT → READY_FOR_CONSUMER_REVIEW → ADOPTED / REJECTED / RETIRED	ADOPT/REJECT 屬 Consumer Domain Governance
+P	ContextCandidate
+P	DRAFT → READY_FOR_CONSUMER_REVIEW → ADOPTED / REJECTED / RETIRED
+P	ADOPT/REJECT 屬 Consumer Domain Governance
+ROW	ExperienceRecord	CAPTURED → OUTCOME_PENDING → OUTCOME_COMPLETE → REPLAY_READY	沒有真實 outcome 不建立 learning
+P	ExperienceRecord
+P	CAPTURED → OUTCOME_PENDING → OUTCOME_COMPLETE → REPLAY_READY
+P	沒有真實 outcome 不建立 learning
+ROW	LearningCandidate	DRAFT → REVIEW → ADOPTED / REJECTED / SUPERSEDED	不得自動修改 Canon/Criteria/Permission/RoutePolicy
+P	LearningCandidate
+P	DRAFT → REVIEW → ADOPTED / REJECTED / SUPERSEDED
+P	不得自動修改 Canon/Criteria/Permission/RoutePolicy
+ROW	KnowledgeVersion	DRAFT → REVIEW → APPROVED / RETURNED / REJECTED → SUPERSEDED / RETIRED	Approved version immutable；新版本 supersede exact prior
+P	KnowledgeVersion
+P	DRAFT → REVIEW → APPROVED / RETURNED / REJECTED → SUPERSEDED / RETIRED
+P	Approved version immutable；新版本 supersede exact prior
+P	圖 2｜Experience / Replay 與 Knowledge Review：真實 Outcome、Exact Lineage、Learning Candidate、Evidence Review 與人工決策。
+P	14. Error / Recovery Contract
+ROW	Error	Recovery
+P	Error
+P	Recovery
+ROW	KB_PERMISSION_DENIED	隱藏受保護內容/操作；Server 仍拒絕直接呼叫
+P	KB_PERMISSION_DENIED
+P	隱藏受保護內容/操作；Server 仍拒絕直接呼叫
+ROW	KB_SCOPE_INVALID	修正 Scope；不得自動擴權
+P	KB_SCOPE_INVALID
+P	修正 Scope；不得自動擴權
+ROW	KB_VERSION_CONFLICT	重新載入 exact version + review diff；禁止 force overwrite
+P	KB_VERSION_CONFLICT
+P	重新載入 exact version + review diff；禁止 force overwrite
+ROW	KB_SOURCE_RIGHTS_INVALID	修正 Rights / Classification / Source Governance
+P	KB_SOURCE_RIGHTS_INVALID
+P	修正 Rights / Classification / Source Governance
+ROW	KB_DUPLICATE_ACTIVE_RUN	開啟既有 Run；不得建立第二個衝突 Job
+P	KB_DUPLICATE_ACTIVE_RUN
+P	開啟既有 Run；不得建立第二個衝突 Job
+ROW	KB_INGESTION_NOT_RETRYABLE	開啟 Failure Detail，先處理根因
+P	KB_INGESTION_NOT_RETRYABLE
+P	開啟 Failure Detail，先處理根因
+ROW	KB_CITATION_REQUIRED	加入有效 Citation 或把 Fact 重分類
+P	KB_CITATION_REQUIRED
+P	加入有效 Citation 或把 Fact 重分類
+ROW	KB_CONTEXT_CONFLICT	先解版本/來源衝突再 Create
+P	KB_CONTEXT_CONFLICT
+P	先解版本/來源衝突再 Create
+ROW	KB_OUTCOME_PENDING	等待真實 Outcome，不可補假結果
+P	KB_OUTCOME_PENDING
+P	等待真實 Outcome，不可補假結果
+ROW	KB_LINEAGE_INCOMPLETE	補齊 Source/Route/Attempt/Eval/Outcome exact lineage
+P	KB_LINEAGE_INCOMPLETE
+P	補齊 Source/Route/Attempt/Eval/Outcome exact lineage
+ROW	KB_REVIEW_CHECK_INCOMPLETE	完成 Mandatory Checklist
+P	KB_REVIEW_CHECK_INCOMPLETE
+P	完成 Mandatory Checklist
+ROW	KB_AUTHORITY_CONFLICT	與 Current Truth/Authority 衝突時停止並人工處理
+P	KB_AUTHORITY_CONFLICT
+P	與 Current Truth/Authority 衝突時停止並人工處理
+ROW	KB_RAW_SECRET_FORBIDDEN	改用 Secret Reference / registered connector
+P	KB_RAW_SECRET_FORBIDDEN
+P	改用 Secret Reference / registered connector
+ROW	KB_UNSUPPORTED_OPERATION	BLOCK + REPORT_AUTHORITY_GAP
+P	KB_UNSUPPORTED_OPERATION
+P	BLOCK + REPORT_AUTHORITY_GAP
+P	15. Data Truth / Citation / Knowledge Formalization
+ROW	階段	允許的資料語義	不可誤認
+P	階段
+P	允許的資料語義
+P	不可誤認
+ROW	Raw Acquisition	外部/內部原始資料與 immutable snapshot	不是 Fact、不是 Approved Knowledge
+P	Raw Acquisition
+P	外部/內部原始資料與 immutable snapshot
+P	不是 Fact、不是 Approved Knowledge
+ROW	Normalized Evidence	已正規化且有 Source/Time/Version/Checksum	不是自動批准的 Knowledge
+P	Normalized Evidence
+P	已正規化且有 Source/Time/Version/Checksum
+P	不是自動批准的 Knowledge
+ROW	Search Result	授權投影，可為 Knowledge / Fact / Evidence	搜尋命中 ≠ Current Truth
+P	Search Result
+P	授權投影，可為 Knowledge / Fact / Evidence
+P	搜尋命中 ≠ Current Truth
+ROW	Context Candidate	受治理 Context 組合，等待 Consumer Review	Candidate ≠ Adopted Context
+P	Context Candidate
+P	受治理 Context 組合，等待 Consumer Review
+P	Candidate ≠ Adopted Context
+ROW	Experience	真實執行紀錄 + Outcome	對話紀錄 ≠ Experience
+P	Experience
+P	真實執行紀錄 + Outcome
+P	對話紀錄 ≠ Experience
+ROW	Learning Candidate	從 Outcome / Root Cause 推導的治理候選	Candidate ≠ Canon/Policy Change
+P	Learning Candidate
+P	從 Outcome / Root Cause 推導的治理候選
+P	Candidate ≠ Canon/Policy Change
+ROW	Knowledge Draft	可編輯、待審核版本	Draft ≠ Approved
+P	Knowledge Draft
+P	可編輯、待審核版本
+P	Draft ≠ Approved
+ROW	Approved Knowledge	Human-reviewed immutable version	仍受 Scope / Permission / Current Truth 限制
+P	Approved Knowledge
+P	Human-reviewed immutable version
+P	仍受 Scope / Permission / Current Truth 限制
+ROW	Formalization Lock｜任何 factual claim 進入 Approved Knowledge 前必須具有可追溯 Citation/Source 或 validated governed outcome；Inference 必須標明為 inference，不得因 AI 生成或多人討論而自動升格。
+P	Formalization Lock｜任何 factual claim 進入 Approved Knowledge 前必須具有可追溯 Citation/Source 或 validated governed outcome；Inference 必須標明為 inference，不得因 AI 生成或多人討論而自動升格。
+P	16. Acquisition Runtime Boundary
+P	KB-01 只擁有 KnowledgeAcquisitionIntent；Fetch/Render/Retry/Robots/Rights/Rate Limit/Immutable Snapshot/Canonical URL/Hash Dedupe/Normalize/Evidence/Audit 由共享 Acquisition Runtime 擁有。
+ROW	Allowed Mode	用途
+P	Allowed Mode
+P	用途
+ROW	WEB_CRAWL	受控網站爬取
+P	WEB_CRAWL
+P	受控網站爬取
+ROW	WEB_FETCH	單頁/資源抓取
+P	WEB_FETCH
+P	單頁/資源抓取
+ROW	SEARCH_DISCOVERY	搜尋發現
+P	SEARCH_DISCOVERY
+P	搜尋發現
+ROW	SITEMAP_DISCOVERY	Sitemap discovery
+P	SITEMAP_DISCOVERY
+P	Sitemap discovery
+ROW	RSS_ATOM_INGEST	Feed ingestion
+P	RSS_ATOM_INGEST
+P	Feed ingestion
+ROW	STRUCTURED_HTTP_JSON_FETCH	結構化 JSON fetch
+P	STRUCTURED_HTTP_JSON_FETCH
+P	結構化 JSON fetch
+ROW	DOCUMENT_FETCH	文件取得
+P	DOCUMENT_FETCH
+P	文件取得
+ROW	OPTIONAL_JS_RENDER_WHEN_REGISTERED	註冊後才允許 JS render
+P	OPTIONAL_JS_RENDER_WHEN_REGISTERED
+P	註冊後才允許 JS render
+ROW	SCHEDULED_RECRAWL	治理後定期重抓
+P	SCHEDULED_RECRAWL
+P	治理後定期重抓
+P	17. i18n / Accessibility / Responsive
+ROW	面向	規格
+P	面向
+P	規格
+ROW	Locales	zh-TW / zh-CN / en；ACPOS / AI / API / QA / Provider / Experience / Citation 可保留固定英文術語
+P	Locales
+P	zh-TW / zh-CN / en；ACPOS / AI / API / QA / Provider / Experience / Citation 可保留固定英文術語
+ROW	Keyboard	所有 Tabs / Table actions / Drawer / Modal 可鍵盤操作；Focus visible 且不只依顏色
+P	Keyboard
+P	所有 Tabs / Table actions / Drawer / Modal 可鍵盤操作；Focus visible 且不只依顏色
+ROW	Disabled Reason	Authorized but state-blocked 控制須提供可讀原因；permission denied 則不渲染
+P	Disabled Reason
+P	Authorized but state-blocked 控制須提供可讀原因；permission denied 則不渲染
+ROW	Drawer / Modal	Focus trap + Escape/close 行為一致；effectful form only when registered
+P	Drawer / Modal
+P	Focus trap + Escape/close 行為一致；effectful form only when registered
+ROW	Responsive	Desktop-first；同一頁 reflow，不建立 mobile-only 第二頁
+P	Responsive
+P	Desktop-first；同一頁 reflow，不建立 mobile-only 第二頁
+ROW	Tables	固定欄寬、Cell margin、表頭置中、短欄位水平+垂直置中、Row 禁止跨頁拆列
+P	Tables
+P	固定欄寬、Cell margin、表頭置中、短欄位水平+垂直置中、Row 禁止跨頁拆列
+ROW	Text capacity	Long value ellipsis + detail drawer；不得讓 UID/hash/URL 壓破容器
+P	Text capacity
+P	Long value ellipsis + detail drawer；不得讓 UID/hash/URL 壓破容器
+P	18. Acceptance Matrix / Design DoD
+ROW	Acceptance	Pass Condition
+P	Acceptance
+P	Pass Condition
+ROW	Single Current Page	只有 admin:KB-01 作為 Knowledge & Experience 後台入口；route /admin/knowledge。
+P	Single Current Page
+P	只有 admin:KB-01 作為 Knowledge & Experience 後台入口；route /admin/knowledge。
+ROW	Count Integrity	16 Sections / 22 Components / 127 Field Definitions / 27 Controls / 21 Actions / 17 Gates / 14 Errors 保持可追溯。
+P	Count Integrity
+P	16 Sections / 22 Components / 127 Field Definitions / 27 Controls / 21 Actions / 17 Gates / 14 Errors 保持可追溯。
+ROW	Effectful Control Binding	每個 Effectful Control 都具備 exact Action + Gate + Permission + schema/state。
+P	Effectful Control Binding
+P	每個 Effectful Control 都具備 exact Action + Gate + Permission + schema/state。
+ROW	Fact Evidence	Fact Approval 必須可追溯 Citation/Source 或 validated governed outcome。
+P	Fact Evidence
+P	Fact Approval 必須可追溯 Citation/Source 或 validated governed outcome。
+ROW	Approved Immutability	Approved Knowledge 不可就地覆蓋；新版本只能 supersede exact prior。
+P	Approved Immutability
+P	Approved Knowledge 不可就地覆蓋；新版本只能 supersede exact prior。
+ROW	No Parallel System	不建立第二套 Context/Experience/Learning/Event/Crawler/INFO/Provider 系統。
+P	No Parallel System
+P	不建立第二套 Context/Experience/Learning/Event/Crawler/INFO/Provider 系統。
+ROW	Truthful State	不把 pending/candidate/draft 變成 success/adopted/approved。
+P	Truthful State
+P	不把 pending/candidate/draft 變成 success/adopted/approved。
+ROW	Security	Raw Secret 禁止；Account Permission + Scope + Classification + Version + Idempotency + Audit server-side。
+P	Security
+P	Raw Secret 禁止；Account Permission + Scope + Classification + Version + Idempotency + Audit server-side。
+ROW	Runtime Truth	設計完成不等於 runtime/E2E/deploy 完成；缺 exact binding 必須 fail closed。
+P	Runtime Truth
+P	設計完成不等於 runtime/E2E/deploy 完成；缺 exact binding 必須 fail closed。
+ROW	Visual Integrity	無假 KPI/樣本 business data；所有缺值顯示 —。
+P	Visual Integrity
+P	無假 KPI/樣本 business data；所有缺值顯示 —。
+ROW	Recovery	Version/rights/citation/outcome/lineage/conflict 錯誤都有明確 Recovery，不使用 silent fallback。
+P	Recovery
+P	Version/rights/citation/outcome/lineage/conflict 錯誤都有明確 Recovery，不使用 silent fallback。
+ROW	Accessibility	Heading hierarchy、table headers、image alt、keyboard focus、disabled reason 全部通過。
+P	Accessibility
+P	Heading hierarchy、table headers、image alt、keyboard focus、disabled reason 全部通過。
+P	19. Hard Locks / 施工不可破壞規則
+P	不得將 Conversation / AI Response / Search Result 直接寫成 Approved Knowledge。
+P	不得在 KB-01 建立第二套 crawler、Context Engine、Experience Engine、Learning Engine、INFO Search DB 或 Provider Picker。
+P	不得讓 Context Candidate 在 KB-01 直接變成 Consumer Domain 的 Adopted Context。
+P	不得人工建立假的 Experience / Outcome / Cost / Provider / QA Result。
+P	不得將 Learning Candidate 自動改寫 Canon、Criteria、Permission 或 RoutePolicy。
+P	不得顯示或保存 raw secret；只使用 Secret Reference / registered connector。
+P	不得以 latest/current/default alias 做 effectful versioned write；必須綁 exact ID/version。
+P	不得因 UI 已畫出控制就宣稱 API/DB/Runtime/E2E/Deploy 已完成。
+P	未知 operation/field/route/permission/service 一律 BLOCK + REPORT_AUTHORITY_GAP。
+P	20. Construction Mapping / 實作順序
+ROW	Phase	施工內容	Gate
+P	Phase
+P	施工內容
+P	Gate
+ROW	1	Mount admin:KB-01 + /admin/knowledge + account permission / scope projection	Page READ gate
+P	1
+P	Mount admin:KB-01 + /admin/knowledge + account permission / scope projection
+P	Page READ gate
+ROW	2	完成 5 View shell、16 Section、22 Component 與 27 Control 的 deterministic rendering	Control denominator exact
+P	2
+P	完成 5 View shell、16 Section、22 Component 與 27 Control 的 deterministic rendering
+P	Control denominator exact
+ROW	3	Source / Acquisition：schemas、state machine、Shared Runtime intent binding、failure drawer	Rights + version + duplicate-run gate
+P	3
+P	Source / Acquisition：schemas、state machine、Shared Runtime intent binding、failure drawer
+P	Rights + version + duplicate-run gate
+ROW	4	Search / Citation / Context：traceable result、Citation、local basket、Context Candidate	Evidence + conflict + classification gate
+P	4
+P	Search / Citation / Context：traceable result、Citation、local basket、Context Candidate
+P	Evidence + conflict + classification gate
+ROW	5	Experience / Replay / Learning：exact lineage、Outcome completeness、compare、Learning Candidate	Outcome + lineage gate
+P	5
+P	Experience / Replay / Learning：exact lineage、Outcome completeness、compare、Learning Candidate
+P	Outcome + lineage gate
+ROW	6	Knowledge Review：Draft save、Version diff、mandatory check、Approve/Return/Reject	Human review + expected_version gate
+P	6
+P	Knowledge Review：Draft save、Version diff、mandatory check、Approve/Return/Reject
+P	Human review + expected_version gate
+ROW	7	Audit / Error / i18n / a11y / regression / sandbox / E2E	All acceptance conditions
+P	7
+P	Audit / Error / i18n / a11y / regression / sandbox / E2E
+P	All acceptance conditions
+ROW	8	Production enablement	只有 exact operation/runtime/DB/permission/deploy evidence 都成立才可啟用 effectful controls
+P	8
+P	Production enablement
+P	只有 exact operation/runtime/DB/permission/deploy evidence 都成立才可啟用 effectful controls
+ROW	最後施工原則｜先把 Read Projection、Permission、State、Evidence、Version 與 Owner Binding 做對，再打開 effectful controls。任何正式 Operation 若尚未 materialize，按鈕必須保持 disabled / blocked，不用 workaround 補假後端。
+P	最後施工原則｜先把 Read Projection、Permission、State、Evidence、Version 與 Owner Binding 做對，再打開 effectful controls。任何正式 Operation 若尚未 materialize，按鈕必須保持 disabled / blocked，不用 workaround 補假後端。
+### PART word/header1.xml
+P	ORANGE ONE · KB-01 · Mother Basic Design
+### PART word/footer1.xml
+P	KB-01 知識庫 / Knowledge & Experience

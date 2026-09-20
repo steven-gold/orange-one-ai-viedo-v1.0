@@ -1,0 +1,2152 @@
+### PART word/document.xml
+P	ACPOS-AI-05
+P	Creative Production AI
+ASSET / VIDEO / EDIT / VOICE / QA
+P	Mother Basic Logic Design + Normative Logic Contract
+P	全創作生產鏈、Layered Composition、局部修正、版本、品質與正式交接母規範
+ROW	Document status
+DESIGN_CONTENT_COMPLETE_TARGET · FORMAL_APPROVAL_NOT_SELF_GRANTED · RUNTIME_NOT_PROVEN_BY_DOCUMENT
+P	Document status
+DESIGN_CONTENT_COMPLETE_TARGET · FORMAL_APPROVAL_NOT_SELF_GRANTED · RUNTIME_NOT_PROVEN_BY_DOCUMENT
+ROW	Binding	Current basis
+P	Binding
+P	Current basis
+ROW	Current Governance UID	GOV-REV-20260920-CROSS-STAGE-MATERIALIZATION-CONSUMER-READINESS-HARDENING
+P	Current Governance UID
+P	GOV-REV-20260920-CROSS-STAGE-MATERIALIZATION-CONSUMER-READINESS-HARDENING
+ROW	Display Version	v2.2.16
+P	Display Version
+P	v2.2.16
+ROW	Repository / Branch	steven-gold/orange-one-ai-viedo-v1.0 / rebuild-v2.1.1
+P	Repository / Branch
+P	steven-gold/orange-one-ai-viedo-v1.0 / rebuild-v2.1.1
+ROW	Live HEAD at start	acf45619afa5a32a4f9564a7b97c68d3e822405e
+P	Live HEAD at start
+P	acf45619afa5a32a4f9564a7b97c68d3e822405e
+ROW	Primary Product Chain	CORE → ASSET → VIDEO → EDIT+VOICE → QA
+P	Primary Product Chain
+P	CORE → ASSET → VIDEO → EDIT+VOICE → QA
+ROW	Authority rule	ONE CONCEPT / ONE OWNER / REFERENCE, DO NOT COPY
+P	Authority rule
+P	ONE CONCEPT / ONE OWNER / REFERENCE, DO NOT COPY
+P	0. 文件身份與使用方式
+P	本文件定義 ACPOS Creative Production AI 的系統級母設計：ASSET、VIDEO、EDIT、VOICE 與 QA 如何消費 CORE Production Package、如何建立可追溯產物版本、如何做局部修改、如何評估與重查、以及如何向下一階段交接。
+ROW	Normative status
+本文件是設計契約，不是 Runtime 實證。凡 exact API / DB / Permission / Queue / Provider / Secret / Route / TTL / Threshold 未由 Current Authority 精確綁定者，MUST 留為 REQUIRE_EXACT_BINDING，不得自行發明。
+P	Normative status
+本文件是設計契約，不是 Runtime 實證。凡 exact API / DB / Permission / Queue / Provider / Secret / Route / TTL / Threshold 未由 Current Authority 精確綁定者，MUST 留為 REQUIRE_EXACT_BINDING，不得自行發明。
+ROW	Keyword	Meaning
+P	Keyword
+P	Meaning
+ROW	MUST / REQUIRED	強制，不符合即不可宣告完成
+P	MUST / REQUIRED
+P	強制，不符合即不可宣告完成
+ROW	MUST_NOT	禁止；違反即 BLOCK
+P	MUST_NOT
+P	禁止；違反即 BLOCK
+ROW	SHOULD	原則要求；例外須有正式理由與 Evidence
+P	SHOULD
+P	原則要求；例外須有正式理由與 Evidence
+ROW	MAY	可選，不得被解讀為必要
+P	MAY
+P	可選，不得被解讀為必要
+ROW	BLOCK	停止該 effectful transition
+P	BLOCK
+P	停止該 effectful transition
+ROW	REVERIFY_REQUIRED	上游版本或契約改變後，既有 PASS 失效，需 fresh 驗證
+P	REVERIFY_REQUIRED
+P	上游版本或契約改變後，既有 PASS 失效，需 fresh 驗證
+P	1. Purpose / Scope / Out-of-Scope
+ROW	Area	IN SCOPE	OUT OF SCOPE
+P	Area
+P	IN SCOPE
+P	OUT OF SCOPE
+ROW	ASSET	asset production/reuse/correction/evaluation/version/handoff	redefine Project Canon; free provider choice
+P	ASSET
+P	asset production/reuse/correction/evaluation/version/handoff
+P	redefine Project Canon; free provider choice
+ROW	VIDEO	scene/shot production, local correction, evaluation, handoff	reselect upstream canonical refs; rewrite Blueprint
+P	VIDEO
+P	scene/shot production, local correction, evaluation, handoff
+P	reselect upstream canonical refs; rewrite Blueprint
+ROW	EDIT	timeline/track/clip/overlay/integration/finalize	change Project Canon or Topic scope silently
+P	EDIT
+P	timeline/track/clip/overlay/integration/finalize
+P	change Project Canon or Topic scope silently
+ROW	VOICE	voice generation/voice correction/pronunciation/alignment/version	replace Voice identity without governed change
+P	VOICE
+P	voice generation/voice correction/pronunciation/alignment/version
+P	replace Voice identity without governed change
+ROW	QA	scorecard/finding/correction request/recheck/gate/release candidate	edit upstream output directly; publish directly
+P	QA
+P	scorecard/finding/correction request/recheck/gate/release candidate
+P	edit upstream output directly; publish directly
+ROW	Shared	Layered Composition, exact version lineage, provenance, rights/policy, correction loop	own AI03 routing/compiler; own AI01 Context; own AI02 Conversation; own AI04 Canon
+P	Shared
+P	Layered Composition, exact version lineage, provenance, rights/policy, correction loop
+P	own AI03 routing/compiler; own AI01 Context; own AI02 Conversation; own AI04 Canon
+P	2. Authority Inheritance / Owner Boundary
+ROW	Concern	Canonical Owner	AI05 rule
+P	Concern
+P	Canonical Owner
+P	AI05 rule
+ROW	Context / Truth / Experience	ACPOS-AI-01	consume exact context; do not create second truth engine
+P	Context / Truth / Experience
+P	ACPOS-AI-01
+P	consume exact context; do not create second truth engine
+ROW	Conversation / Memory	ACPOS-AI-02	reuse shared Conversation Core; department UI is extension only
+P	Conversation / Memory
+P	ACPOS-AI-02
+P	reuse shared Conversation Core; department UI is extension only
+ROW	Compiler / Provider / Tool Runtime	ACPOS-AI-03	request capability; no provider picker in production workspace
+P	Compiler / Provider / Tool Runtime
+P	ACPOS-AI-03
+P	request capability; no provider picker in production workspace
+ROW	Project / Topic / Blueprint / Script / DNA	ACPOS-AI-04	read exact canonical refs; production cannot silently rewrite them
+P	Project / Topic / Blueprint / Script / DNA
+P	ACPOS-AI-04
+P	read exact canonical refs; production cannot silently rewrite them
+ROW	Creative production output	ACPOS-AI-05	owns versioned ASSET/VIDEO/EDIT/VOICE outputs and QA production review lifecycle
+P	Creative production output
+P	ACPOS-AI-05
+P	owns versioned ASSET/VIDEO/EDIT/VOICE outputs and QA production review lifecycle
+ROW	Release/Publish	separate release/publishing owner	QA may create candidate only; no direct publish
+P	Release/Publish
+P	separate release/publishing owner
+P	QA may create candidate only; no direct publish
+ROW	Five-department invariant
+Consume exact upstream refs; AUTO/MANUAL changes orchestration only, never canonical source truth. Confirmed work creates a new version. Correction targets exact source version/scope and preserves unaffected content. QA requests correction but does not directly edit upstream output.
+P	Five-department invariant
+Consume exact upstream refs; AUTO/MANUAL changes orchestration only, never canonical source truth. Confirmed work creates a new version. Correction targets exact source version/scope and preserves unaffected content. QA requests correction but does not directly edit upstream output.
+P	圖 1｜Creative Production Chain：CORE → ASSET → VIDEO → EDIT+VOICE → QA。
+P	3. System Architecture / Functional Workbench Topology
+ROW	Layer	Responsibility
+P	Layer
+P	Responsibility
+ROW	Admission	validate exact Project/Topic/Task/ProductionPackage + rights/policy + readiness
+P	Admission
+P	validate exact Project/Topic/Task/ProductionPackage + rights/policy + readiness
+ROW	Planning	derive department work items from exact package without semantic invention
+P	Planning
+P	derive department work items from exact package without semantic invention
+ROW	Composition	materialize layers/shots/tracks/clips/segments and bindings
+P	Composition
+P	materialize layers/shots/tracks/clips/segments and bindings
+ROW	Execution	AI03 capability/tool calls or deterministic edit operations
+P	Execution
+P	AI03 capability/tool calls or deterministic edit operations
+ROW	Evaluation	score/evidence/finding against exact criteria/version
+P	Evaluation
+P	score/evidence/finding against exact criteria/version
+ROW	Correction	bounded delta + preserve constraints + new attempt/version
+P	Correction
+P	bounded delta + preserve constraints + new attempt/version
+ROW	Confirmation	human/system gate confirms working output; never overwrites history
+P	Confirmation
+P	human/system gate confirms working output; never overwrites history
+ROW	Handoff	exact version/checksum/provenance/rights/criteria readiness to successor
+P	Handoff
+P	exact version/checksum/provenance/rights/criteria readiness to successor
+ROW	QA	review exact finished output; correction request or pass
+P	QA
+P	review exact finished output; correction request or pass
+ROW	Feedback	experience signals to AI01; no direct rule self-adoption
+P	Feedback
+P	experience signals to AI01; no direct rule self-adoption
+P	4. Core Entity Registry
+ROW	Entity	Canonical role
+P	Entity
+P	Canonical role
+ROW	ProductionWorkItem	department-scoped work derived from exact CORE package
+P	ProductionWorkItem
+P	department-scoped work derived from exact CORE package
+ROW	SourceBinding	exact upstream UID/version/hash/provenance
+P	SourceBinding
+P	exact upstream UID/version/hash/provenance
+ROW	ProductionInputSet	resolved immutable inputs for one work attempt
+P	ProductionInputSet
+P	resolved immutable inputs for one work attempt
+ROW	AssetVersion	versioned still/image/audio/reference asset output
+P	AssetVersion
+P	versioned still/image/audio/reference asset output
+ROW	LayerVersion	versioned visual/audio composition layer
+P	LayerVersion
+P	versioned visual/audio composition layer
+ROW	PatchVersion	bounded delta result against exact source
+P	PatchVersion
+P	bounded delta result against exact source
+ROW	SceneSpec	scene-level governed production spec
+P	SceneSpec
+P	scene-level governed production spec
+ROW	ShotSpec	shot-level camera/action/continuity spec
+P	ShotSpec
+P	shot-level camera/action/continuity spec
+ROW	VideoOutputVersion	versioned generated/edited video output
+P	VideoOutputVersion
+P	versioned generated/edited video output
+ROW	CompositionDocument	logical composition tree for visual/audio/timeline content
+P	CompositionDocument
+P	logical composition tree for visual/audio/timeline content
+ROW	CompositionVersion	immutable snapshot of composition graph
+P	CompositionVersion
+P	immutable snapshot of composition graph
+ROW	LayerNode	visual/object/effect layer identity
+P	LayerNode
+P	visual/object/effect layer identity
+ROW	Track	timeline track identity
+P	Track
+P	timeline track identity
+ROW	Clip	timeline clip bound to exact media version
+P	Clip
+P	timeline clip bound to exact media version
+ROW	TimeRange	bounded temporal scope
+P	TimeRange
+P	bounded temporal scope
+ROW	SpatialRegion	bounded spatial region / mask / bbox
+P	SpatialRegion
+P	bounded spatial region / mask / bbox
+ROW	VoiceIdentityRef	governed speaker/voice identity reference
+P	VoiceIdentityRef
+P	governed speaker/voice identity reference
+ROW	VoiceSegmentVersion	versioned generated/edited spoken audio segment
+P	VoiceSegmentVersion
+P	versioned generated/edited spoken audio segment
+ROW	MusicCueVersion	music segment/version binding
+P	MusicCueVersion
+P	music segment/version binding
+ROW	SFXCueVersion	sound effect segment/version binding
+P	SFXCueVersion
+P	sound effect segment/version binding
+ROW	SubtitleCueVersion	subtitle text/timing/version binding
+P	SubtitleCueVersion
+P	subtitle text/timing/version binding
+ROW	LipSyncBinding	voice-to-visual alignment version
+P	LipSyncBinding
+P	voice-to-visual alignment version
+ROW	RenderManifest	exact composition inputs + output settings
+P	RenderManifest
+P	exact composition inputs + output settings
+ROW	EvaluationResult	machine/human evaluation against criteria
+P	EvaluationResult
+P	machine/human evaluation against criteria
+ROW	QAScorecard	criterion-level QA result
+P	QAScorecard
+P	criterion-level QA result
+ROW	Finding	specific defect with evidence/owner/severity
+P	Finding
+P	specific defect with evidence/owner/severity
+ROW	CorrectionRequest	request to original owner with exact source + required delta
+P	CorrectionRequest
+P	request to original owner with exact source + required delta
+ROW	DeltaRequest	requested semantic/visual/audio change
+P	DeltaRequest
+P	requested semantic/visual/audio change
+ROW	PreserveConstraintSet	unaffected content that MUST remain equivalent
+P	PreserveConstraintSet
+P	unaffected content that MUST remain equivalent
+ROW	ChangeSet	authorized bounded mutation set
+P	ChangeSet
+P	authorized bounded mutation set
+ROW	HandoffManifest	exact successor-consumable package
+P	HandoffManifest
+P	exact successor-consumable package
+ROW	ProvenanceRecord	input→attempt→output lineage
+P	ProvenanceRecord
+P	input→attempt→output lineage
+ROW	RightsBinding	rights/license/usage restriction binding
+P	RightsBinding
+P	rights/license/usage restriction binding
+ROW	PolicyBinding	content/safety/platform/quality policy binding
+P	PolicyBinding
+P	content/safety/platform/quality policy binding
+ROW	ReleaseCandidate	QA-passed candidate; not published truth
+P	ReleaseCandidate
+P	QA-passed candidate; not published truth
+P	5. Entity × Operation Matrix
+ROW	Entity	Allowed operations
+P	Entity
+P	Allowed operations
+ROW	ProductionWorkItem	CREATE / ADMIT / START / BLOCK / COMPLETE / CANCEL
+P	ProductionWorkItem
+P	CREATE / ADMIT / START / BLOCK / COMPLETE / CANCEL
+ROW	SourceBinding	RESOLVE / VERIFY_HASH / INVALIDATE
+P	SourceBinding
+P	RESOLVE / VERIFY_HASH / INVALIDATE
+ROW	AssetVersion	GENERATE / REUSE / COMPARE / SELECT / CORRECT / CONFIRM / HANDOFF
+P	AssetVersion
+P	GENERATE / REUSE / COMPARE / SELECT / CORRECT / CONFIRM / HANDOFF
+ROW	LayerVersion	CREATE / REPLACE / MASK / PATCH / MERGE / FREEZE
+P	LayerVersion
+P	CREATE / REPLACE / MASK / PATCH / MERGE / FREEZE
+ROW	ShotSpec	RESOLVE / GENERATE / CORRECT / RECHECK / CONFIRM
+P	ShotSpec
+P	RESOLVE / GENERATE / CORRECT / RECHECK / CONFIRM
+ROW	VideoOutputVersion	GENERATE / SELECT / CORRECT / CONFIRM / HANDOFF
+P	VideoOutputVersion
+P	GENERATE / SELECT / CORRECT / CONFIRM / HANDOFF
+ROW	CompositionVersion	CREATE / PATCH / RENDER / COMPARE / CONFIRM
+P	CompositionVersion
+P	CREATE / PATCH / RENDER / COMPARE / CONFIRM
+ROW	Track / Clip	ADD / MOVE / TRIM / SPLIT / REORDER / MUTE / GAIN / REMOVE
+P	Track / Clip
+P	ADD / MOVE / TRIM / SPLIT / REORDER / MUTE / GAIN / REMOVE
+ROW	VoiceSegmentVersion	GENERATE / REGENERATE / PRONUNCIATION_FIX / ALIGN / CONFIRM
+P	VoiceSegmentVersion
+P	GENERATE / REGENERATE / PRONUNCIATION_FIX / ALIGN / CONFIRM
+ROW	SubtitleCueVersion	CREATE / RETIME / CORRECT / CONFIRM
+P	SubtitleCueVersion
+P	CREATE / RETIME / CORRECT / CONFIRM
+ROW	LipSyncBinding	GENERATE / RECHECK / CORRECT / CONFIRM
+P	LipSyncBinding
+P	GENERATE / RECHECK / CORRECT / CONFIRM
+ROW	EvaluationResult	GENERATE / ATTACH_EVIDENCE / ACCEPT / REJECT
+P	EvaluationResult
+P	GENERATE / ATTACH_EVIDENCE / ACCEPT / REJECT
+ROW	Finding	OPEN / ROUTE / ACK / CORRECTED / RECHECK / CLOSE
+P	Finding
+P	OPEN / ROUTE / ACK / CORRECTED / RECHECK / CLOSE
+ROW	CorrectionRequest	CREATE / ROUTE / ACCEPT / REJECT / SUPERSEDE / CLOSE
+P	CorrectionRequest
+P	CREATE / ROUTE / ACCEPT / REJECT / SUPERSEDE / CLOSE
+ROW	QAScorecard	COMPILE / REVIEW / FINALIZE
+P	QAScorecard
+P	COMPILE / REVIEW / FINALIZE
+ROW	ReleaseCandidate	CREATE_FROM_PASS / INVALIDATE_ON_UPSTREAM_CHANGE
+P	ReleaseCandidate
+P	CREATE_FROM_PASS / INVALIDATE_ON_UPSTREAM_CHANGE
+P	6. Normative Invariant Registry
+ROW	UID	Rule
+P	UID
+P	Rule
+ROW	CP-INV-001	All effectful production MUST bind exact Project / Topic / Task identity.
+P	CP-INV-001
+P	All effectful production MUST bind exact Project / Topic / Task identity.
+ROW	CP-INV-002	All project-task production MUST bind exact CORE Production Package version.
+P	CP-INV-002
+P	All project-task production MUST bind exact CORE Production Package version.
+ROW	CP-INV-003	Production workspaces MUST NOT freely reselect Blueprint, DNA, Script, Asset, Video or upstream source identity.
+P	CP-INV-003
+P	Production workspaces MUST NOT freely reselect Blueprint, DNA, Script, Asset, Video or upstream source identity.
+ROW	CP-INV-004	AUTO/MANUAL changes orchestration behavior only; canonical source truth remains unchanged.
+P	CP-INV-004
+P	AUTO/MANUAL changes orchestration behavior only; canonical source truth remains unchanged.
+ROW	CP-INV-005	First project production from free prompt is FORBIDDEN.
+P	CP-INV-005
+P	First project production from free prompt is FORBIDDEN.
+ROW	CP-INV-006	Provider picker inside ASSET/VIDEO/EDIT/VOICE production workspace is FORBIDDEN; routing belongs to AI03.
+P	CP-INV-006
+P	Provider picker inside ASSET/VIDEO/EDIT/VOICE production workspace is FORBIDDEN; routing belongs to AI03.
+ROW	CP-INV-007	Every produced artifact MUST have version_id, source_version_ref, checksum/hash, actor, reason and provenance.
+P	CP-INV-007
+P	Every produced artifact MUST have version_id, source_version_ref, checksum/hash, actor, reason and provenance.
+ROW	CP-INV-008	Confirmed or locked production output MUST be immutable.
+P	CP-INV-008
+P	Confirmed or locked production output MUST be immutable.
+ROW	CP-INV-009	Correction MUST create a new version or patch version; confirmed source MUST NOT be overwritten.
+P	CP-INV-009
+P	Correction MUST create a new version or patch version; confirmed source MUST NOT be overwritten.
+ROW	CP-INV-010	Every correction MUST bind exact_source_version.
+P	CP-INV-010
+P	Every correction MUST bind exact_source_version.
+ROW	CP-INV-011	Every correction MUST declare target_scope.
+P	CP-INV-011
+P	Every correction MUST declare target_scope.
+ROW	CP-INV-012	Every correction MUST declare preserve_constraints.
+P	CP-INV-012
+P	Every correction MUST declare preserve_constraints.
+ROW	CP-INV-013	Every correction MUST declare requested_delta.
+P	CP-INV-013
+P	Every correction MUST declare requested_delta.
+ROW	CP-INV-014	Every correction MUST declare acceptance_checks before execution.
+P	CP-INV-014
+P	Every correction MUST declare acceptance_checks before execution.
+ROW	CP-INV-015	Unspecified content is PRESERVE_BY_DEFAULT.
+P	CP-INV-015
+P	Unspecified content is PRESERVE_BY_DEFAULT.
+ROW	CP-INV-016	If bounded edit capability cannot honor preserve constraints, execution MUST BLOCK or escalate scope; no silent whole-output regeneration.
+P	CP-INV-016
+P	If bounded edit capability cannot honor preserve constraints, execution MUST BLOCK or escalate scope; no silent whole-output regeneration.
+ROW	CP-INV-017	Whole-output regeneration requires explicit authorized ChangeSet whose scope permits whole-output change.
+P	CP-INV-017
+P	Whole-output regeneration requires explicit authorized ChangeSet whose scope permits whole-output change.
+ROW	CP-INV-018	Patch application MUST fail on source hash/version mismatch.
+P	CP-INV-018
+P	Patch application MUST fail on source hash/version mismatch.
+ROW	CP-INV-019	Same PatchVersion MUST NOT be applied twice to the same target state.
+P	CP-INV-019
+P	Same PatchVersion MUST NOT be applied twice to the same target state.
+ROW	CP-INV-020	Layer identity MUST remain stable across local edits unless an authorized structural change explicitly replaces it.
+P	CP-INV-020
+P	Layer identity MUST remain stable across local edits unless an authorized structural change explicitly replaces it.
+ROW	CP-INV-021	Timeline clip edit MUST NOT implicitly replace source media version.
+P	CP-INV-021
+P	Timeline clip edit MUST NOT implicitly replace source media version.
+ROW	CP-INV-022	Track reorder MUST preserve clip identity and source bindings.
+P	CP-INV-022
+P	Track reorder MUST preserve clip identity and source bindings.
+ROW	CP-INV-023	Trim/split operations MUST preserve provenance to original exact clip/media version.
+P	CP-INV-023
+P	Trim/split operations MUST preserve provenance to original exact clip/media version.
+ROW	CP-INV-024	Visual local edit outside target SpatialRegion MUST be hash/equivalence-preserved unless explicitly authorized.
+P	CP-INV-024
+P	Visual local edit outside target SpatialRegion MUST be hash/equivalence-preserved unless explicitly authorized.
+ROW	CP-INV-025	Temporal local edit outside target TimeRange MUST be semantically/byte-equivalent where deterministically possible or otherwise evaluation-equivalent under defined tolerance.
+P	CP-INV-025
+P	Temporal local edit outside target TimeRange MUST be semantically/byte-equivalent where deterministically possible or otherwise evaluation-equivalent under defined tolerance.
+ROW	CP-INV-026	Asset reuse MUST bind the exact approved AssetVersion; project asset picker cannot silently pick "latest".
+P	CP-INV-026
+P	Asset reuse MUST bind the exact approved AssetVersion; project asset picker cannot silently pick "latest".
+ROW	CP-INV-027	ASSET MUST NOT modify upstream Blueprint/DNA/Canonical Script.
+P	CP-INV-027
+P	ASSET MUST NOT modify upstream Blueprint/DNA/Canonical Script.
+ROW	CP-INV-028	ASSET → VIDEO handoff MUST contain exact AssetVersion identity/version/checksum/rights/output contract.
+P	CP-INV-028
+P	ASSET → VIDEO handoff MUST contain exact AssetVersion identity/version/checksum/rights/output contract.
+ROW	CP-INV-029	VIDEO MUST consume exact approved AssetVersion refs from handoff.
+P	CP-INV-029
+P	VIDEO MUST consume exact approved AssetVersion refs from handoff.
+ROW	CP-INV-030	VIDEO corrections MUST target exact Scene/Shot/TimeRange/Layer as applicable.
+P	CP-INV-030
+P	VIDEO corrections MUST target exact Scene/Shot/TimeRange/Layer as applicable.
+ROW	CP-INV-031	VIDEO MUST preserve identity and continuity constraints from CORE/ASSET unless an authorized correction explicitly changes them.
+P	CP-INV-031
+P	VIDEO MUST preserve identity and continuity constraints from CORE/ASSET unless an authorized correction explicitly changes them.
+ROW	CP-INV-032	VIDEO → EDIT handoff MUST include exact VideoOutputVersion + Scene/Shot lineage + bound refs.
+P	CP-INV-032
+P	VIDEO → EDIT handoff MUST include exact VideoOutputVersion + Scene/Shot lineage + bound refs.
+ROW	CP-INV-033	EDIT project-task mode MUST bind exact VIDEO handoff; standalone upload is a distinct explicit intake mode.
+P	CP-INV-033
+P	EDIT project-task mode MUST bind exact VIDEO handoff; standalone upload is a distinct explicit intake mode.
+ROW	CP-INV-034	Standalone upload MUST NOT be confused with Project Task production or inherit project canon implicitly.
+P	CP-INV-034
+P	Standalone upload MUST NOT be confused with Project Task production or inherit project canon implicitly.
+ROW	CP-INV-035	EDIT deterministic runtime operations MUST be distinguished from external AI capability calls.
+P	CP-INV-035
+P	EDIT deterministic runtime operations MUST be distinguished from external AI capability calls.
+ROW	CP-INV-036	EDIT manual changes may alter working output only; they MUST NOT rewrite Project/Topic Canon.
+P	CP-INV-036
+P	EDIT manual changes may alter working output only; they MUST NOT rewrite Project/Topic Canon.
+ROW	CP-INV-037	Voice generation MUST bind exact VoiceIdentityRef where the project requires fixed voice identity.
+P	CP-INV-037
+P	Voice generation MUST bind exact VoiceIdentityRef where the project requires fixed voice identity.
+ROW	CP-INV-038	Changing a governed VoiceIdentityRef requires an authorized identity/version change; a pronunciation fix is not an identity replacement.
+P	CP-INV-038
+P	Changing a governed VoiceIdentityRef requires an authorized identity/version change; a pronunciation fix is not an identity replacement.
+ROW	CP-INV-039	Voice segment correction MUST preserve unaffected segments and timing unless the ChangeSet expands scope.
+P	CP-INV-039
+P	Voice segment correction MUST preserve unaffected segments and timing unless the ChangeSet expands scope.
+ROW	CP-INV-040	Subtitle text change and subtitle timing change are distinct deltas and MUST be separately represented when both occur.
+P	CP-INV-040
+P	Subtitle text change and subtitle timing change are distinct deltas and MUST be separately represented when both occur.
+ROW	CP-INV-041	LipSync correction MUST bind exact voice segment + exact visual target version.
+P	CP-INV-041
+P	LipSync correction MUST bind exact voice segment + exact visual target version.
+ROW	CP-INV-042	Music/SFX changes MUST target exact cue/time range/track and preserve unaffected mix.
+P	CP-INV-042
+P	Music/SFX changes MUST target exact cue/time range/track and preserve unaffected mix.
+ROW	CP-INV-043	Finalization MUST bind exact timeline/composition/voice/subtitle/lipsync versions.
+P	CP-INV-043
+P	Finalization MUST bind exact timeline/composition/voice/subtitle/lipsync versions.
+ROW	CP-INV-044	QA MUST consume exact finished OutputVersion, CriteriaVersion/QualityGatePolicy, evidence, rights/policy and checksum/provenance.
+P	CP-INV-044
+P	QA MUST consume exact finished OutputVersion, CriteriaVersion/QualityGatePolicy, evidence, rights/policy and checksum/provenance.
+ROW	CP-INV-045	QA MUST NOT author Production Script.
+P	CP-INV-045
+P	QA MUST NOT author Production Script.
+ROW	CP-INV-046	QA MUST NOT directly edit upstream ASSET/VIDEO/EDIT/VOICE output.
+P	CP-INV-046
+P	QA MUST NOT directly edit upstream ASSET/VIDEO/EDIT/VOICE output.
+ROW	CP-INV-047	QA MUST NOT publish directly.
+P	CP-INV-047
+P	QA MUST NOT publish directly.
+ROW	CP-INV-048	QA Finding MUST identify owning domain, exact source version, evidence and severity.
+P	CP-INV-048
+P	QA Finding MUST identify owning domain, exact source version, evidence and severity.
+ROW	CP-INV-049	CorrectionRequest MUST route to the original canonical owner of the defect.
+P	CP-INV-049
+P	CorrectionRequest MUST route to the original canonical owner of the defect.
+ROW	CP-INV-050	Finding requiring correction closes only after a new exact version is produced and rechecked.
+P	CP-INV-050
+P	Finding requiring correction closes only after a new exact version is produced and rechecked.
+ROW	CP-INV-051	Historical PASS MUST NOT close a finding against a newer output revision.
+P	CP-INV-051
+P	Historical PASS MUST NOT close a finding against a newer output revision.
+ROW	CP-INV-052	QAScorecard MUST preserve criterion-level results; aggregate score alone is insufficient.
+P	CP-INV-052
+P	QAScorecard MUST preserve criterion-level results; aggregate score alone is insufficient.
+ROW	CP-INV-053	Missing REQUIRED QA criterion/evidence is BLOCK, not implicit PASS.
+P	CP-INV-053
+P	Missing REQUIRED QA criterion/evidence is BLOCK, not implicit PASS.
+ROW	CP-INV-054	Manual review requirement MUST NOT be bypassed by machine score.
+P	CP-INV-054
+P	Manual review requirement MUST NOT be bypassed by machine score.
+ROW	CP-INV-055	PASS may create ReleaseCandidate only; it does not imply published/released-to-channel state.
+P	CP-INV-055
+P	PASS may create ReleaseCandidate only; it does not imply published/released-to-channel state.
+ROW	CP-INV-056	Any upstream material change invalidates dependent downstream PASS and sets affected items REVERIFY_REQUIRED.
+P	CP-INV-056
+P	Any upstream material change invalidates dependent downstream PASS and sets affected items REVERIFY_REQUIRED.
+ROW	CP-INV-057	Dependency invalidation MUST be bounded by exact reverse dependency graph; unrelated outputs remain valid when proven unaffected.
+P	CP-INV-057
+P	Dependency invalidation MUST be bounded by exact reverse dependency graph; unrelated outputs remain valid when proven unaffected.
+ROW	CP-INV-058	Cross-stage handoff readiness requires physical, parseable, schema-valid, required-field-complete, consumer-ready inputs.
+P	CP-INV-058
+P	Cross-stage handoff readiness requires physical, parseable, schema-valid, required-field-complete, consumer-ready inputs.
+ROW	CP-INV-059	Path existence, UID existence or previous successful run MUST NOT substitute consumer readiness.
+P	CP-INV-059
+P	Path existence, UID existence or previous successful run MUST NOT substitute consumer readiness.
+ROW	CP-INV-060	Every required handoff edge MUST have one canonical owner and one denominator owner.
+P	CP-INV-060
+P	Every required handoff edge MUST have one canonical owner and one denominator owner.
+ROW	CP-INV-061	Handoff manifest MUST contain source UID/version/hash and successor-required contract metadata.
+P	CP-INV-061
+P	Handoff manifest MUST contain source UID/version/hash and successor-required contract metadata.
+ROW	CP-INV-062	Rights/Policy binding MUST travel with all externalizable outputs.
+P	CP-INV-062
+P	Rights/Policy binding MUST travel with all externalizable outputs.
+ROW	CP-INV-063	An output with unresolved rights restriction MUST NOT advance to release candidate.
+P	CP-INV-063
+P	An output with unresolved rights restriction MUST NOT advance to release candidate.
+ROW	CP-INV-064	Provider result without verified job/result lineage MUST remain NOT_VERIFIED.
+P	CP-INV-064
+P	Provider result without verified job/result lineage MUST remain NOT_VERIFIED.
+ROW	CP-INV-065	Provider callback/result cannot directly mutate confirmed domain output; it enters evaluation/candidate state first.
+P	CP-INV-065
+P	Provider callback/result cannot directly mutate confirmed domain output; it enters evaluation/candidate state first.
+ROW	CP-INV-066	Failed provider/tool attempt MUST NOT mutate confirmed output.
+P	CP-INV-066
+P	Failed provider/tool attempt MUST NOT mutate confirmed output.
+ROW	CP-INV-067	Retry creates a new attempt; it MUST NOT reuse a terminal attempt identity.
+P	CP-INV-067
+P	Retry creates a new attempt; it MUST NOT reuse a terminal attempt identity.
+ROW	CP-INV-068	Same idempotency key + same semantic payload MUST return/reconcile the same effectful result.
+P	CP-INV-068
+P	Same idempotency key + same semantic payload MUST return/reconcile the same effectful result.
+ROW	CP-INV-069	Same idempotency key + different semantic payload MUST BLOCK.
+P	CP-INV-069
+P	Same idempotency key + different semantic payload MUST BLOCK.
+ROW	CP-INV-070	Concurrent stale write to an output/composition version MUST fail; last-write-wins is FORBIDDEN.
+P	CP-INV-070
+P	Concurrent stale write to an output/composition version MUST fail; last-write-wins is FORBIDDEN.
+ROW	CP-INV-071	Confirmation/lock gate MUST verify expected predecessor version/hash before write.
+P	CP-INV-071
+P	Confirmation/lock gate MUST verify expected predecessor version/hash before write.
+ROW	CP-INV-072	Output selection MUST reference a concrete version; "latest" is not valid for formal handoff.
+P	CP-INV-072
+P	Output selection MUST reference a concrete version; "latest" is not valid for formal handoff.
+ROW	CP-INV-073	Comparison UI may compare candidates but MUST NOT silently alter selection/confirmed state.
+P	CP-INV-073
+P	Comparison UI may compare candidates but MUST NOT silently alter selection/confirmed state.
+ROW	CP-INV-074	AI evaluation or score MUST NOT auto-confirm/lock production output unless explicit current Authority defines that gate.
+P	CP-INV-074
+P	AI evaluation or score MUST NOT auto-confirm/lock production output unless explicit current Authority defines that gate.
+ROW	CP-INV-075	AI05 MUST NOT self-approve QA policy, rights override, or governance change.
+P	CP-INV-075
+P	AI05 MUST NOT self-approve QA policy, rights override, or governance change.
+ROW	CP-INV-076	Experience signals may be emitted to AI01 but MUST NOT self-modify current rules or thresholds.
+P	CP-INV-076
+P	Experience signals may be emitted to AI01 but MUST NOT self-modify current rules or thresholds.
+ROW	CP-INV-077	Production workspace MUST reuse AI02 Conversation Core rather than own a second chat/memory system.
+P	CP-INV-077
+P	Production workspace MUST reuse AI02 Conversation Core rather than own a second chat/memory system.
+ROW	CP-INV-078	Production workspace MUST use AI03 execution runtime rather than own provider credentials/router logic.
+P	CP-INV-078
+P	Production workspace MUST use AI03 execution runtime rather than own provider credentials/router logic.
+ROW	CP-INV-079	Production workspace MUST treat AI04 Project/Topic/Script/DNA as upstream Authority, not editable local copies.
+P	CP-INV-079
+P	Production workspace MUST treat AI04 Project/Topic/Script/DNA as upstream Authority, not editable local copies.
+ROW	CP-INV-080	Exact binding gaps for API/DB/permission/event/queue/runtime MUST be marked REQUIRE_EXACT_BINDING.
+P	CP-INV-080
+P	Exact binding gaps for API/DB/permission/event/queue/runtime MUST be marked REQUIRE_EXACT_BINDING.
+ROW	CP-INV-081	Design completeness MUST NOT be reported as Runtime/Production completion.
+P	CP-INV-081
+P	Design completeness MUST NOT be reported as Runtime/Production completion.
+ROW	CP-INV-082	Secret values MUST NOT appear in production artifact metadata, logs, error payloads or Word design files.
+P	CP-INV-082
+P	Secret values MUST NOT appear in production artifact metadata, logs, error payloads or Word design files.
+ROW	CP-INV-083	Audit evidence MUST bind actor/context/version/correlation identity for every effectful mutation.
+P	CP-INV-083
+P	Audit evidence MUST bind actor/context/version/correlation identity for every effectful mutation.
+ROW	CP-INV-084	Cancellation MUST preserve completed immutable outputs/evidence and stop only cancellable active attempts.
+P	CP-INV-084
+P	Cancellation MUST preserve completed immutable outputs/evidence and stop only cancellable active attempts.
+ROW	CP-INV-085	Partial stage completion MUST NOT be promoted to whole-chain completion.
+P	CP-INV-085
+P	Partial stage completion MUST NOT be promoted to whole-chain completion.
+ROW	CP-INV-086	Production package/handoff schema version mismatch MUST BLOCK successor admission.
+P	CP-INV-086
+P	Production package/handoff schema version mismatch MUST BLOCK successor admission.
+ROW	CP-INV-087	Output checksum mismatch MUST BLOCK selection, handoff, QA and release candidate formation.
+P	CP-INV-087
+P	Output checksum mismatch MUST BLOCK selection, handoff, QA and release candidate formation.
+ROW	CP-INV-088	Any silent semantic drift outside requested delta is a CORRECTION_DRIFT_FAIL.
+P	CP-INV-088
+P	Any silent semantic drift outside requested delta is a CORRECTION_DRIFT_FAIL.
+ROW	CP-INV-089	Any visual drift outside authorized region/layer/range is a PRESERVE_CONSTRAINT_FAIL.
+P	CP-INV-089
+P	Any visual drift outside authorized region/layer/range is a PRESERVE_CONSTRAINT_FAIL.
+ROW	CP-INV-090	Any audio drift outside authorized segment/track/range is a PRESERVE_CONSTRAINT_FAIL.
+P	CP-INV-090
+P	Any audio drift outside authorized segment/track/range is a PRESERVE_CONSTRAINT_FAIL.
+ROW	CP-INV-091	Any downstream artifact based on invalidated upstream version becomes REVERIFY_REQUIRED and cannot retain closure credit.
+P	CP-INV-091
+P	Any downstream artifact based on invalidated upstream version becomes REVERIFY_REQUIRED and cannot retain closure credit.
+ROW	CP-INV-092	QA release candidate MUST preserve full provenance chain back to CORE Production Package.
+P	CP-INV-092
+P	QA release candidate MUST preserve full provenance chain back to CORE Production Package.
+P	7. Production Package Intake / Admission Gate
+ROW	Required input	Admission rule
+P	Required input
+P	Admission rule
+ROW	Project / Topic / Task	exact identity, current permission, not inferred from UI selection alone
+P	Project / Topic / Task
+P	exact identity, current permission, not inferred from UI selection alone
+ROW	Production Package	exact version/hash, physical Current bytes/records, schema-valid
+P	Production Package
+P	exact version/hash, physical Current bytes/records, schema-valid
+ROW	Blueprint / DNA / Script	exact refs required by department profile
+P	Blueprint / DNA / Script
+P	exact refs required by department profile
+ROW	Continuity / Boundary	required when scene/shot/character continuity applies
+P	Continuity / Boundary
+P	required when scene/shot/character continuity applies
+ROW	Rights / Policy	resolved and admissible for intended production/output use
+P	Rights / Policy
+P	resolved and admissible for intended production/output use
+ROW	Output Contract	format/aspect/resolution/duration/language/quality target
+P	Output Contract
+P	format/aspect/resolution/duration/language/quality target
+ROW	AI03 Capability / Route	resolved by AI03; workspace does not select provider directly
+P	AI03 Capability / Route
+P	resolved by AI03; workspace does not select provider directly
+ROW	Budget / Cost Guard	admissible when effectful external provider use applies
+P	Budget / Cost Guard
+P	admissible when effectful external provider use applies
+ROW	Dependency readiness	all REQUIRED predecessor outputs consumer-ready
+P	Dependency readiness
+P	all REQUIRED predecessor outputs consumer-ready
+ROW	Admission failure
+任一 REQUIRED 輸入缺失、版本不符、checksum 不符、rights 未解、schema mismatch、consumer admission 失敗，都 MUST BLOCK；不得以歷史輸出、舊 PASS 或「看起來有檔案」繼續。
+P	Admission failure
+任一 REQUIRED 輸入缺失、版本不符、checksum 不符、rights 未解、schema mismatch、consumer admission 失敗，都 MUST BLOCK；不得以歷史輸出、舊 PASS 或「看起來有檔案」繼續。
+P	8. ACPOS Layered Composition Model
+P	圖 2｜Layered Composition Model：局部修改必須精確綁定來源、範圍、保留條件與 delta。
+ROW	Composition scope	Examples	Required identity
+P	Composition scope
+P	Examples
+P	Required identity
+ROW	Whole Output	entire image/video/edit master	CompositionVersion / OutputVersion
+P	Whole Output
+P	entire image/video/edit master
+P	CompositionVersion / OutputVersion
+ROW	Scene	one narrative scene	SceneSpec + scene_uid
+P	Scene
+P	one narrative scene
+P	SceneSpec + scene_uid
+ROW	Shot	one camera shot	ShotSpec + shot_uid
+P	Shot
+P	one camera shot
+P	ShotSpec + shot_uid
+ROW	Visual Layer	character/object/background/FX/overlay	layer_uid + layer_version
+P	Visual Layer
+P	character/object/background/FX/overlay
+P	layer_uid + layer_version
+ROW	Spatial Region	mask/bbox/semantic region	region spec + anchor/ref
+P	Spatial Region
+P	mask/bbox/semantic region
+P	region spec + anchor/ref
+ROW	Timeline Track	video/voice/music/sfx/subtitle/overlay	track_uid + track version
+P	Timeline Track
+P	video/voice/music/sfx/subtitle/overlay
+P	track_uid + track version
+ROW	Clip	one media clip	clip_uid + source_media_version
+P	Clip
+P	one media clip
+P	clip_uid + source_media_version
+ROW	Time Range	bounded temporal edit	start/end + frame/timebase
+P	Time Range
+P	bounded temporal edit
+P	start/end + frame/timebase
+ROW	Voice Segment	one spoken segment	speaker/voice identity + segment version
+P	Voice Segment
+P	one spoken segment
+P	speaker/voice identity + segment version
+ROW	Subtitle Cue	text/timing cue	cue_uid + text/timing version
+P	Subtitle Cue
+P	text/timing cue
+P	cue_uid + text/timing version
+ROW	DeltaRequest field	Required behavior
+P	DeltaRequest field
+P	Required behavior
+ROW	exact_source_version	MUST match current target source
+P	exact_source_version
+P	MUST match current target source
+ROW	target_scope	MUST resolve to one or more bounded structural identities
+P	target_scope
+P	MUST resolve to one or more bounded structural identities
+ROW	requested_delta	semantic/visual/audio/time change requested
+P	requested_delta
+P	semantic/visual/audio/time change requested
+ROW	preserve_constraints	all unaffected identities/properties MUST remain equivalent
+P	preserve_constraints
+P	all unaffected identities/properties MUST remain equivalent
+ROW	allowed_side_effects	explicitly bounded; empty means no extra change
+P	allowed_side_effects
+P	explicitly bounded; empty means no extra change
+ROW	acceptance_checks	what proves requested change succeeded and preservation held
+P	acceptance_checks
+P	what proves requested change succeeded and preservation held
+ROW	fallback_policy	BLOCK / REQUIRE_SCOPE_EXPANSION / ALTERNATE_CAPABILITY; never silent full regeneration
+P	fallback_policy
+P	BLOCK / REQUIRE_SCOPE_EXPANSION / ALTERNATE_CAPABILITY; never silent full regeneration
+ROW	reason / actor	audit trail
+P	reason / actor
+P	audit trail
+ROW	expected_output_kind	PatchVersion / LayerVersion / CompositionVersion / OutputVersion
+P	expected_output_kind
+P	PatchVersion / LayerVersion / CompositionVersion / OutputVersion
+P	9. ChangeSet / Patch / Preserve Semantics
+ROW	Change level	Default preservation	Allowed result
+P	Change level
+P	Default preservation
+P	Allowed result
+ROW	CONTENT	layout/composition/timing preserved	new text/audio/image content version
+P	CONTENT
+P	layout/composition/timing preserved
+P	new text/audio/image content version
+ROW	REGION	outside region preserved	PatchVersion / LayerVersion
+P	REGION
+P	outside region preserved
+P	PatchVersion / LayerVersion
+ROW	LAYER	other layers preserved	LayerVersion / CompositionVersion
+P	LAYER
+P	other layers preserved
+P	LayerVersion / CompositionVersion
+ROW	SHOT	other shots/scenes preserved	VideoOutputVersion with changed shot lineage
+P	SHOT
+P	other shots/scenes preserved
+P	VideoOutputVersion with changed shot lineage
+ROW	TIME_RANGE	outside time range preserved	CompositionVersion / EditingOutputVersion
+P	TIME_RANGE
+P	outside time range preserved
+P	CompositionVersion / EditingOutputVersion
+ROW	TRACK	other tracks preserved	track/clip delta + new composition
+P	TRACK
+P	other tracks preserved
+P	track/clip delta + new composition
+ROW	WHOLE_OUTPUT	no preserve-by-default beyond declared constraints	new full OutputVersion; requires explicit scope
+P	WHOLE_OUTPUT
+P	no preserve-by-default beyond declared constraints
+P	new full OutputVersion; requires explicit scope
+P	Preserve check MUST run after execution, not merely before.
+P	If deterministic byte equality is impossible (e.g., generative re-render), evaluation must prove unaffected semantic/visual/audio identities under the declared tolerance contract.
+P	A provider limitation cannot silently expand the target scope. Scope expansion requires a new authorized ChangeSet.
+P	10. ASSET Production Contract
+ROW	Phase	Rule / Output
+P	Phase
+P	Rule / Output
+ROW	Intake	CORE Production Package + ASSET Script View/Sections + DNA/Continuity + Asset Manifest + rights/policy
+P	Intake
+P	CORE Production Package + ASSET Script View/Sections + DNA/Continuity + Asset Manifest + rights/policy
+ROW	Resolve	classify reuse vs generate vs edit vs reference-only
+P	Resolve
+P	classify reuse vs generate vs edit vs reference-only
+ROW	Execute	TEXT_TO_IMAGE / IMAGE_EDIT / TEXT_TO_VOICE / VOICE_TO_VOICE / registered capability through AI03
+P	Execute
+P	TEXT_TO_IMAGE / IMAGE_EDIT / TEXT_TO_VOICE / VOICE_TO_VOICE / registered capability through AI03
+ROW	Evaluate	asset score + criteria/evidence + finding as applicable
+P	Evaluate
+P	asset score + criteria/evidence + finding as applicable
+ROW	Correct	bounded Layer/Patch/Region delta; preserve unaffected content
+P	Correct
+P	bounded Layer/Patch/Region delta; preserve unaffected content
+ROW	Confirm	selected output becomes new immutable AssetVersion
+P	Confirm
+P	selected output becomes new immutable AssetVersion
+ROW	Handoff	exact AssetVersion + identity/version/checksum + score/rights/output contract to VIDEO
+P	Handoff
+P	exact AssetVersion + identity/version/checksum + score/rights/output contract to VIDEO
+ROW	ASSET-specific hard rule	Disposition
+P	ASSET-specific hard rule
+P	Disposition
+ROW	Free prompt for first project production	FORBIDDEN
+P	Free prompt for first project production
+P	FORBIDDEN
+ROW	Provider picker	FORBIDDEN
+P	Provider picker
+P	FORBIDDEN
+ROW	Replace locked source in-place	FORBIDDEN
+P	Replace locked source in-place
+P	FORBIDDEN
+ROW	Reuse unapproved/unknown asset version	BLOCK
+P	Reuse unapproved/unknown asset version
+P	BLOCK
+ROW	Missing rights/usage binding	BLOCK
+P	Missing rights/usage binding
+P	BLOCK
+ROW	AI-created asset changes upstream Project Canon	FORBIDDEN
+P	AI-created asset changes upstream Project Canon
+P	FORBIDDEN
+ROW	Reference-only task invokes provider	FORBIDDEN unless capability explicitly requires execution
+P	Reference-only task invokes provider
+P	FORBIDDEN unless capability explicitly requires execution
+P	11. VIDEO Production Contract
+ROW	Phase	Rule / Output
+P	Phase
+P	Rule / Output
+ROW	Intake	exact ASSET→VIDEO handoff + Blueprint/VIDEO Script/DNA/Continuity + approved AssetVersion refs
+P	Intake
+P	exact ASSET→VIDEO handoff + Blueprint/VIDEO Script/DNA/Continuity + approved AssetVersion refs
+ROW	Shot planning	resolve exact Scene/Shot identity and expected visual/action/continuity state
+P	Shot planning
+P	resolve exact Scene/Shot identity and expected visual/action/continuity state
+ROW	Execute	TEXT_TO_VIDEO / VIDEO_EDIT / registered capability through AI03
+P	Execute
+P	TEXT_TO_VIDEO / VIDEO_EDIT / registered capability through AI03
+ROW	Evaluate	shot/scene score, identity/continuity evidence, findings
+P	Evaluate
+P	shot/scene score, identity/continuity evidence, findings
+ROW	Correct	target shot/layer/range; preserve other shots and continuity
+P	Correct
+P	target shot/layer/range; preserve other shots and continuity
+ROW	Confirm	new immutable VideoOutputVersion
+P	Confirm
+P	new immutable VideoOutputVersion
+ROW	Handoff	exact VideoOutputVersion + Scene/Shot lineage + bound refs to EDIT
+P	Handoff
+P	exact VideoOutputVersion + Scene/Shot lineage + bound refs to EDIT
+ROW	VIDEO failure signature	Required response
+P	VIDEO failure signature
+P	Required response
+ROW	character identity drift	finding + bounded correction; no silent acceptance
+P	character identity drift
+P	finding + bounded correction; no silent acceptance
+ROW	continuity mismatch	block handoff until corrected/reviewed
+P	continuity mismatch
+P	block handoff until corrected/reviewed
+ROW	wrong shot order	timeline/shot structure correction under exact scope
+P	wrong shot order
+P	timeline/shot structure correction under exact scope
+ROW	unexpected global visual change	PRESERVE_CONSTRAINT_FAIL
+P	unexpected global visual change
+P	PRESERVE_CONSTRAINT_FAIL
+ROW	asset binding mismatch	BLOCK and re-resolve exact AssetVersion
+P	asset binding mismatch
+P	BLOCK and re-resolve exact AssetVersion
+ROW	unsupported local video edit	BLOCK or require authorized scope expansion
+P	unsupported local video edit
+P	BLOCK or require authorized scope expansion
+P	12. EDIT + VOICE Integrated Post-Production Contract
+ROW	Subsystem	Owned production semantics
+P	Subsystem
+P	Owned production semantics
+ROW	Timeline	track/clip order, move, trim, split, range, marker, transitions where registered
+P	Timeline
+P	track/clip order, move, trim, split, range, marker, transitions where registered
+ROW	Video/Overlay	exact clip/layer placement, crop/transform/effect changes under ChangeSet
+P	Video/Overlay
+P	exact clip/layer placement, crop/transform/effect changes under ChangeSet
+ROW	Voice	speaker/voice identity, text/pronunciation/emotion/speed/accent constraints, segment versions
+P	Voice
+P	speaker/voice identity, text/pronunciation/emotion/speed/accent constraints, segment versions
+ROW	Music	music identity/motif/cue placement/gain/fade/version
+P	Music
+P	music identity/motif/cue placement/gain/fade/version
+ROW	SFX	effect cue identity/timing/gain/version
+P	SFX
+P	effect cue identity/timing/gain/version
+ROW	Subtitle	text/timing/style binding/version
+P	Subtitle
+P	text/timing/style binding/version
+ROW	LipSync	voice segment ↔ exact visual version/time range alignment
+P	LipSync
+P	voice segment ↔ exact visual version/time range alignment
+ROW	Mix	track gain/pan/mute/ducking/manual adjustments where registered
+P	Mix
+P	track gain/pan/mute/ducking/manual adjustments where registered
+ROW	Finalize	exact composition → EditingOutputVersion + provenance + QA handoff
+P	Finalize
+P	exact composition → EditingOutputVersion + provenance + QA handoff
+ROW	Mode	Rule
+P	Mode
+P	Rule
+ROW	PROJECT_TASK	MUST bind exact VIDEO handoff + CORE package refs; free first-production prompt forbidden
+P	PROJECT_TASK
+P	MUST bind exact VIDEO handoff + CORE package refs; free first-production prompt forbidden
+ROW	STANDALONE_UPLOAD	explicit standalone session; MUST NOT imply project canon or project handoff identities
+P	STANDALONE_UPLOAD
+P	explicit standalone session; MUST NOT imply project canon or project handoff identities
+ROW	DETERMINISTIC_EDIT	timeline/mix/manual registered operations without external generative provider
+P	DETERMINISTIC_EDIT
+P	timeline/mix/manual registered operations without external generative provider
+ROW	AI_CORRECTION	external capability through AI03; candidate/result still must pass evaluation and version gate
+P	AI_CORRECTION
+P	external capability through AI03; candidate/result still must pass evaluation and version gate
+P	13. Voice / Audio / Subtitle / LipSync Detailed Rules
+ROW	Object	Required fields / constraints
+P	Object
+P	Required fields / constraints
+ROW	VoiceIdentityRef	speaker_uid, identity version, language, age/texture/speed/accent/pronunciation rules, allowed changes
+P	VoiceIdentityRef
+P	speaker_uid, identity version, language, age/texture/speed/accent/pronunciation rules, allowed changes
+ROW	VoiceSegment	text/script ref, source identity, voice ref, emotion, pace, pronunciation exceptions, start/end, output hash
+P	VoiceSegment
+P	text/script ref, source identity, voice ref, emotion, pace, pronunciation exceptions, start/end, output hash
+ROW	MusicCue	track/source version, start/end, gain/fade, motif/role, rights
+P	MusicCue
+P	track/source version, start/end, gain/fade, motif/role, rights
+ROW	SFXCue	source/version, event ref, start/end, gain, rights
+P	SFXCue
+P	source/version, event ref, start/end, gain, rights
+ROW	SubtitleCue	text version, language, start/end, style ref, line constraints
+P	SubtitleCue
+P	text version, language, start/end, style ref, line constraints
+ROW	LipSyncBinding	visual version, voice segment version, time range, alignment evidence
+P	LipSyncBinding
+P	visual version, voice segment version, time range, alignment evidence
+P	Pronunciation correction MUST NOT replace speaker identity.
+P	Subtitle wording correction MUST NOT silently retime other cues.
+P	Voice timing change that affects lip-sync MUST invalidate affected LipSyncBinding to REVERIFY_REQUIRED.
+P	Audio source or rights change invalidates affected mix/finalize evidence.
+P	14. QA Review / Finding / Recheck / Gate Contract
+P	圖 3｜QA 只審查與要求修正，不直接編輯上游輸出。
+ROW	QA step	Required contract
+P	QA step
+P	Required contract
+ROW	Admission	ExactOutputVersion + QAValidationScriptView + approved CriteriaVersion / QualityGatePolicy + Evidence + Rights/Policy + checksum/provenance
+P	Admission
+P	ExactOutputVersion + QAValidationScriptView + approved CriteriaVersion / QualityGatePolicy + Evidence + Rights/Policy + checksum/provenance
+ROW	Scoring	criterion-level pass/fail/score/threshold + evidence ref
+P	Scoring
+P	criterion-level pass/fail/score/threshold + evidence ref
+ROW	Finding	category, severity, source version, owner, evidence, expected correction
+P	Finding
+P	category, severity, source version, owner, evidence, expected correction
+ROW	Manual Review	required when policy says; cannot be replaced by machine score
+P	Manual Review
+P	required when policy says; cannot be replaced by machine score
+ROW	Correction Request	route to exact original owner and bind target version/scope
+P	Correction Request
+P	route to exact original owner and bind target version/scope
+ROW	Recheck	only against new exact corrected version
+P	Recheck
+P	only against new exact corrected version
+ROW	Gate Decision	PASS / BLOCK / REVIEW_REQUIRED with evidence
+P	Gate Decision
+P	PASS / BLOCK / REVIEW_REQUIRED with evidence
+ROW	Release Candidate	created only from valid PASS; not direct publish
+P	Release Candidate
+P	created only from valid PASS; not direct publish
+P	15. End-to-End Production Lifecycle State Model
+ROW	State	Meaning
+P	State
+P	Meaning
+ROW	INTAKE_PENDING	inputs not resolved
+P	INTAKE_PENDING
+P	inputs not resolved
+ROW	ADMISSION_BLOCKED	required input/gate missing
+P	ADMISSION_BLOCKED
+P	required input/gate missing
+ROW	ADMITTED	exact inputs resolved
+P	ADMITTED
+P	exact inputs resolved
+ROW	READY_TO_EXECUTE	effectful preflight passed
+P	READY_TO_EXECUTE
+P	effectful preflight passed
+ROW	EXECUTING	attempt active
+P	EXECUTING
+P	attempt active
+ROW	ATTEMPT_FAILED	attempt terminal failure; confirmed source unchanged
+P	ATTEMPT_FAILED
+P	attempt terminal failure; confirmed source unchanged
+ROW	CANDIDATE_READY	provider/tool/deterministic result available for evaluation
+P	CANDIDATE_READY
+P	provider/tool/deterministic result available for evaluation
+ROW	EVALUATION_PENDING	quality/preservation review pending
+P	EVALUATION_PENDING
+P	quality/preservation review pending
+ROW	CORRECTION_REQUIRED	result not acceptable
+P	CORRECTION_REQUIRED
+P	result not acceptable
+ROW	CORRECTING	bounded delta execution
+P	CORRECTING
+P	bounded delta execution
+ROW	RECHECK_PENDING	new version requires fresh evaluation
+P	RECHECK_PENDING
+P	new version requires fresh evaluation
+ROW	CONFIRMATION_PENDING	candidate acceptable; confirmation/lock gate pending
+P	CONFIRMATION_PENDING
+P	candidate acceptable; confirmation/lock gate pending
+ROW	CONFIRMED	immutable current output version selected
+P	CONFIRMED
+P	immutable current output version selected
+ROW	HANDOFF_READY	successor contract complete and consumer-ready
+P	HANDOFF_READY
+P	successor contract complete and consumer-ready
+ROW	HANDOFF_BLOCKED	handoff missing/mismatch
+P	HANDOFF_BLOCKED
+P	handoff missing/mismatch
+ROW	QA_REVIEW	QA evaluating exact finished output
+P	QA_REVIEW
+P	QA evaluating exact finished output
+ROW	QA_CORRECTION_REQUIRED	QA finding requires owner correction
+P	QA_CORRECTION_REQUIRED
+P	QA finding requires owner correction
+ROW	QA_RECHECK	new corrected exact version under QA recheck
+P	QA_RECHECK
+P	new corrected exact version under QA recheck
+ROW	QA_PASS	all required QA gates satisfied
+P	QA_PASS
+P	all required QA gates satisfied
+ROW	QA_BLOCKED	QA gate not satisfied
+P	QA_BLOCKED
+P	QA gate not satisfied
+ROW	RELEASE_CANDIDATE	QA-passed package candidate
+P	RELEASE_CANDIDATE
+P	QA-passed package candidate
+ROW	INVALIDATED_REVERIFY_REQUIRED	upstream change invalidated prior closure
+P	INVALIDATED_REVERIFY_REQUIRED
+P	upstream change invalidated prior closure
+ROW	CANCELLED	work stopped without overwriting confirmed outputs
+P	CANCELLED
+P	work stopped without overwriting confirmed outputs
+P	16. State Transition Guard Matrix
+ROW	Transition	Actor	Trigger	Preconditions	Required output	Side effect / audit
+P	Transition
+P	Actor
+P	Trigger
+P	Preconditions
+P	Required output
+P	Side effect / audit
+ROW	INTAKE_PENDING→ADMITTED	system	resolve exact package	all required refs/hash/schema/rights/permission valid	ProductionInputSet	audit admission
+P	INTAKE_PENDING→ADMITTED
+P	system
+P	resolve exact package
+P	all required refs/hash/schema/rights/permission valid
+P	ProductionInputSet
+P	audit admission
+ROW	INTAKE_PENDING→ADMISSION_BLOCKED	system	admission failure	missing/mismatch/rights/permission/consumer readiness fail	BlockReason	no effectful execution
+P	INTAKE_PENDING→ADMISSION_BLOCKED
+P	system
+P	admission failure
+P	missing/mismatch/rights/permission/consumer readiness fail
+P	BlockReason
+P	no effectful execution
+ROW	ADMITTED→READY_TO_EXECUTE	owner/system	preflight	AI03 route or deterministic operation admissible; budget/policy gates pass	ExecutionPlan	preflight receipt
+P	ADMITTED→READY_TO_EXECUTE
+P	owner/system
+P	preflight
+P	AI03 route or deterministic operation admissible; budget/policy gates pass
+P	ExecutionPlan
+P	preflight receipt
+ROW	READY_TO_EXECUTE→EXECUTING	authorized actor	start	idempotency + expected version + capability ready	Attempt	job audit
+P	READY_TO_EXECUTE→EXECUTING
+P	authorized actor
+P	start
+P	idempotency + expected version + capability ready
+P	Attempt
+P	job audit
+ROW	EXECUTING→ATTEMPT_FAILED	runtime	terminal failure	failure evidence persisted	FailureRecord	confirmed source unchanged
+P	EXECUTING→ATTEMPT_FAILED
+P	runtime
+P	terminal failure
+P	failure evidence persisted
+P	FailureRecord
+P	confirmed source unchanged
+ROW	EXECUTING→CANDIDATE_READY	runtime	result	result normalized + provenance captured	Candidate Output	evaluation required
+P	EXECUTING→CANDIDATE_READY
+P	runtime
+P	result
+P	result normalized + provenance captured
+P	Candidate Output
+P	evaluation required
+ROW	CANDIDATE_READY→EVALUATION_PENDING	system	evaluate	criteria + preserve checks available	EvaluationRun	no auto-confirm
+P	CANDIDATE_READY→EVALUATION_PENDING
+P	system
+P	evaluate
+P	criteria + preserve checks available
+P	EvaluationRun
+P	no auto-confirm
+ROW	EVALUATION_PENDING→CORRECTION_REQUIRED	reviewer/system	fail	finding + owner + delta basis	Finding	route correction
+P	EVALUATION_PENDING→CORRECTION_REQUIRED
+P	reviewer/system
+P	fail
+P	finding + owner + delta basis
+P	Finding
+P	route correction
+ROW	CORRECTION_REQUIRED→CORRECTING	owner	accept correction	exact source + target + preserve + delta + acceptance	ChangeSet	new attempt
+P	CORRECTION_REQUIRED→CORRECTING
+P	owner
+P	accept correction
+P	exact source + target + preserve + delta + acceptance
+P	ChangeSet
+P	new attempt
+ROW	CORRECTING→RECHECK_PENDING	runtime	new result	new version/patch persisted	CorrectedVersion	fresh evaluation
+P	CORRECTING→RECHECK_PENDING
+P	runtime
+P	new result
+P	new version/patch persisted
+P	CorrectedVersion
+P	fresh evaluation
+ROW	EVALUATION_PENDING→CONFIRMATION_PENDING	reviewer/system	pass candidate	all required checks pass	EvaluationResult	confirmation gate
+P	EVALUATION_PENDING→CONFIRMATION_PENDING
+P	reviewer/system
+P	pass candidate
+P	all required checks pass
+P	EvaluationResult
+P	confirmation gate
+ROW	CONFIRMATION_PENDING→CONFIRMED	authorized confirmer	confirm	expected predecessor version/hash + permission	Confirmed OutputVersion	immutable
+P	CONFIRMATION_PENDING→CONFIRMED
+P	authorized confirmer
+P	confirm
+P	expected predecessor version/hash + permission
+P	Confirmed OutputVersion
+P	immutable
+ROW	CONFIRMED→HANDOFF_READY	system	build handoff	all successor-required fields consumer-ready	HandoffManifest	successor admission
+P	CONFIRMED→HANDOFF_READY
+P	system
+P	build handoff
+P	all successor-required fields consumer-ready
+P	HandoffManifest
+P	successor admission
+ROW	CONFIRMED→HANDOFF_BLOCKED	system	handoff failure	schema/required field/rights/consumer mismatch	HandoffBlock	no stage credit
+P	CONFIRMED→HANDOFF_BLOCKED
+P	system
+P	handoff failure
+P	schema/required field/rights/consumer mismatch
+P	HandoffBlock
+P	no stage credit
+ROW	HANDOFF_READY→QA_REVIEW	QA	admit output	exact finished output + criteria/evidence valid	QA Case	review begins
+P	HANDOFF_READY→QA_REVIEW
+P	QA
+P	admit output
+P	exact finished output + criteria/evidence valid
+P	QA Case
+P	review begins
+ROW	QA_REVIEW→QA_CORRECTION_REQUIRED	QA	finding	required criterion fail / review defect	CorrectionRequest	route original owner
+P	QA_REVIEW→QA_CORRECTION_REQUIRED
+P	QA
+P	finding
+P	required criterion fail / review defect
+P	CorrectionRequest
+P	route original owner
+ROW	QA_CORRECTION_REQUIRED→QA_RECHECK	QA/system	corrected version arrives	new exact version + provenance	Recheck Case	old PASS invalid
+P	QA_CORRECTION_REQUIRED→QA_RECHECK
+P	QA/system
+P	corrected version arrives
+P	new exact version + provenance
+P	Recheck Case
+P	old PASS invalid
+ROW	QA_RECHECK→QA_PASS	QA	pass	all required criteria/gates/evidence pass	QAGateDecision	release candidate eligible
+P	QA_RECHECK→QA_PASS
+P	QA
+P	pass
+P	all required criteria/gates/evidence pass
+P	QAGateDecision
+P	release candidate eligible
+ROW	QA_REVIEW→QA_BLOCKED	QA	block	unresolved required finding/policy/rights/evidence	QAGateDecision	no release candidate
+P	QA_REVIEW→QA_BLOCKED
+P	QA
+P	block
+P	unresolved required finding/policy/rights/evidence
+P	QAGateDecision
+P	no release candidate
+ROW	QA_PASS→RELEASE_CANDIDATE	system/authorized actor	package candidate	pass version/checksum/provenance intact	ReleaseCandidate	not publish
+P	QA_PASS→RELEASE_CANDIDATE
+P	system/authorized actor
+P	package candidate
+P	pass version/checksum/provenance intact
+P	ReleaseCandidate
+P	not publish
+ROW	*→INVALIDATED_REVERIFY_REQUIRED	system	upstream material change	reverse dependency impact proven	ImpactSet	affected PASS removed
+P	*→INVALIDATED_REVERIFY_REQUIRED
+P	system
+P	upstream material change
+P	reverse dependency impact proven
+P	ImpactSet
+P	affected PASS removed
+ROW	*→CANCELLED	authorized actor	cancel	cancellable active work only	CancelReceipt	confirmed history preserved
+P	*→CANCELLED
+P	authorized actor
+P	cancel
+P	cancellable active work only
+P	CancelReceipt
+P	confirmed history preserved
+P	17. Cross-Stage Handoff Contract
+ROW	Edge	Required payload
+P	Edge
+P	Required payload
+ROW	CORE→ASSET	Production Package + exact Blueprint/DNA/Canonical Script/Topic scope/boundary/rights/output requirements
+P	CORE→ASSET
+P	Production Package + exact Blueprint/DNA/Canonical Script/Topic scope/boundary/rights/output requirements
+ROW	ASSET→VIDEO	AssetVersion UIDs/versions/checksums + layer/patch refs + score/evaluation + rights + continuity + output contract
+P	ASSET→VIDEO
+P	AssetVersion UIDs/versions/checksums + layer/patch refs + score/evaluation + rights + continuity + output contract
+ROW	VIDEO→EDIT	VideoOutputVersion + Scene/Shot lineage + exact Asset/Script/DNA refs + continuity + rights/policy
+P	VIDEO→EDIT
+P	VideoOutputVersion + Scene/Shot lineage + exact Asset/Script/DNA refs + continuity + rights/policy
+ROW	EDIT/VOICE→QA	EditingOutputVersion + timeline/composition + voice/music/SFX/subtitle/lipsync exact refs + provenance/checksum/rights
+P	EDIT/VOICE→QA
+P	EditingOutputVersion + timeline/composition + voice/music/SFX/subtitle/lipsync exact refs + provenance/checksum/rights
+ROW	QA→Release	QAGateDecision PASS + exact OutputVersion + Scorecard/Evidence + provenance + rights/policy + release candidate metadata
+P	QA→Release
+P	QAGateDecision PASS + exact OutputVersion + Scorecard/Evidence + provenance + rights/policy + release candidate metadata
+ROW	Readiness denominator	Closure condition
+P	Readiness denominator
+P	Closure condition
+ROW	required_edge_total	all applicable required edges enumerated
+P	required_edge_total
+P	all applicable required edges enumerated
+ROW	reference_resolved_total	= required_edge_total
+P	reference_resolved_total
+P	= required_edge_total
+ROW	physically_materialized_total	= required_edge_total
+P	physically_materialized_total
+P	= required_edge_total
+ROW	parse_schema_valid_total	= required_edge_total
+P	parse_schema_valid_total
+P	= required_edge_total
+ROW	required_field_complete_total	= required_edge_total
+P	required_field_complete_total
+P	= required_edge_total
+ROW	consumer_ready_total	= required_edge_total
+P	consumer_ready_total
+P	= required_edge_total
+ROW	unresolved_required_dependency_total	= 0
+P	unresolved_required_dependency_total
+P	= 0
+ROW	reentry_required_total	= 0 before stage closure
+P	reentry_required_total
+P	= 0 before stage closure
+P	18. Correction / Evaluation / Recheck Closed Loop
+P	圖 4｜Correction Loop：Exact source → bounded delta → evaluate → confirm → new version。
+ROW	Evaluation class	Examples	Required response
+P	Evaluation class
+P	Examples
+P	Required response
+ROW	IDENTITY	character/object/voice identity drift	block handoff or correction
+P	IDENTITY
+P	character/object/voice identity drift
+P	block handoff or correction
+ROW	CONTINUITY	state/costume/position/action mismatch	correction or authorized exception
+P	CONTINUITY
+P	state/costume/position/action mismatch
+P	correction or authorized exception
+ROW	COMPOSITION	wrong layer/placement/timeline	bounded patch/edit
+P	COMPOSITION
+P	wrong layer/placement/timeline
+P	bounded patch/edit
+ROW	QUALITY	artifact/noise/readability/technical defect	correction + recheck
+P	QUALITY
+P	artifact/noise/readability/technical defect
+P	correction + recheck
+ROW	SEMANTIC	output deviates from Script/Blueprint intent	owner correction; may require upstream re-entry if source contract wrong
+P	SEMANTIC
+P	output deviates from Script/Blueprint intent
+P	owner correction; may require upstream re-entry if source contract wrong
+ROW	RIGHTS_POLICY	license/policy disallowed	BLOCK; cannot be solved by score override
+P	RIGHTS_POLICY
+P	license/policy disallowed
+P	BLOCK; cannot be solved by score override
+ROW	PRESERVATION	unrequested drift outside target	PRESERVE_CONSTRAINT_FAIL
+P	PRESERVATION
+P	unrequested drift outside target
+P	PRESERVE_CONSTRAINT_FAIL
+ROW	TECHNICAL	format/duration/resolution/container mismatch	deterministic or bounded correction
+P	TECHNICAL
+P	format/duration/resolution/container mismatch
+P	deterministic or bounded correction
+P	19. Version / Concurrency / Idempotency Contract
+ROW	Scenario	Required behavior
+P	Scenario
+P	Required behavior
+ROW	Two edits from same source version	both may create candidates; only compatible merge/explicit selection can confirm; no silent overwrite
+P	Two edits from same source version
+P	both may create candidates; only compatible merge/explicit selection can confirm; no silent overwrite
+ROW	Stale expected_version	reject mutation and require refresh/rebase/new ChangeSet
+P	Stale expected_version
+P	reject mutation and require refresh/rebase/new ChangeSet
+ROW	Duplicate generate request same key+payload	return/reconcile existing job/result; no duplicate charge/output side effect where idempotency is supported
+P	Duplicate generate request same key+payload
+P	return/reconcile existing job/result; no duplicate charge/output side effect where idempotency is supported
+ROW	Same key different payload	BLOCK / IDEMPOTENCY_CONFLICT
+P	Same key different payload
+P	BLOCK / IDEMPOTENCY_CONFLICT
+ROW	Retry after provider timeout	new Attempt under same logical request; do not mutate confirmed output
+P	Retry after provider timeout
+P	new Attempt under same logical request; do not mutate confirmed output
+ROW	Late callback from superseded attempt	record evidence but MUST NOT overwrite newer confirmed/selected version
+P	Late callback from superseded attempt
+P	record evidence but MUST NOT overwrite newer confirmed/selected version
+ROW	Patch on wrong source hash	BLOCK
+P	Patch on wrong source hash
+P	BLOCK
+ROW	Concurrent QA correction versions	recheck exact selected corrected version; findings remain bound to source lineage
+P	Concurrent QA correction versions
+P	recheck exact selected corrected version; findings remain bound to source lineage
+ROW	Upstream version invalidated during downstream execution	downstream result cannot close stage; mark REVERIFY_REQUIRED/aborted as policy dictates
+P	Upstream version invalidated during downstream execution
+P	downstream result cannot close stage; mark REVERIFY_REQUIRED/aborted as policy dictates
+P	20. Rights / Policy / Provenance / Cost Contract
+ROW	Concern	Hard requirement
+P	Concern
+P	Hard requirement
+ROW	Rights	every externalizable media/version carries rights binding or explicit unresolved block
+P	Rights
+P	every externalizable media/version carries rights binding or explicit unresolved block
+ROW	Policy	content/safety/platform/quality policies bind exact policy version
+P	Policy
+P	content/safety/platform/quality policies bind exact policy version
+ROW	Provenance	CORE package → source refs → attempt → output version → correction → handoff → QA must be traceable
+P	Provenance
+P	CORE package → source refs → attempt → output version → correction → handoff → QA must be traceable
+ROW	Checksum	selection/handoff/QA/release candidate require checksum integrity
+P	Checksum
+P	selection/handoff/QA/release candidate require checksum integrity
+ROW	Cost	provider/model/attempt/cost captured when external AI used; missing cost ≠ zero
+P	Cost
+P	provider/model/attempt/cost captured when external AI used; missing cost ≠ zero
+ROW	Latency	attempt latency captured for experience/operational analysis
+P	Latency
+P	attempt latency captured for experience/operational analysis
+ROW	Secrets	reference only; never embedded in artifact/log/error/doc
+P	Secrets
+P	reference only; never embedded in artifact/log/error/doc
+ROW	Retention	confirmed outputs/evidence and superseded versions follow owner retention; temp attempts may have separate retention but must not become Authority
+P	Retention
+P	confirmed outputs/evidence and superseded versions follow owner retention; temp attempts may have separate retention but must not become Authority
+P	21. Event / Consumer Contract
+ROW	Event	Producer	Consumer	Minimum payload
+P	Event
+P	Producer
+P	Consumer
+P	Minimum payload
+ROW	ProductionWorkAdmitted	Producer: domain admission	Consumer: execution/orchestration	exact work/input refs
+P	ProductionWorkAdmitted
+P	Producer: domain admission
+P	Consumer: execution/orchestration
+P	exact work/input refs
+ROW	ProductionAttemptStarted	execution	observability/cost	attempt + idempotency + source
+P	ProductionAttemptStarted
+P	execution
+P	observability/cost
+P	attempt + idempotency + source
+ROW	ProductionAttemptFailed	execution	owner/retry/incident	failure class + evidence
+P	ProductionAttemptFailed
+P	execution
+P	owner/retry/incident
+P	failure class + evidence
+ROW	CandidateOutputCreated	execution	evaluation	candidate ref + provenance
+P	CandidateOutputCreated
+P	execution
+P	evaluation
+P	candidate ref + provenance
+ROW	EvaluationCompleted	evaluation	owner/confirmation	criteria results + findings
+P	EvaluationCompleted
+P	evaluation
+P	owner/confirmation
+P	criteria results + findings
+ROW	CorrectionRequested	QA/evaluation	original owner	source version + delta + evidence
+P	CorrectionRequested
+P	QA/evaluation
+P	original owner
+P	source version + delta + evidence
+ROW	CorrectionStarted	owner	audit/QA	change set + attempt
+P	CorrectionStarted
+P	owner
+P	audit/QA
+P	change set + attempt
+ROW	CorrectedVersionCreated	owner	recheck/QA	new version + predecessor
+P	CorrectedVersionCreated
+P	owner
+P	recheck/QA
+P	new version + predecessor
+ROW	OutputConfirmed	owner	handoff builder	confirmed exact version
+P	OutputConfirmed
+P	owner
+P	handoff builder
+P	confirmed exact version
+ROW	HandoffReady	handoff builder	successor admission	manifest + schema/version
+P	HandoffReady
+P	handoff builder
+P	successor admission
+P	manifest + schema/version
+ROW	HandoffBlocked	handoff builder	owner/system	missing/mismatch detail
+P	HandoffBlocked
+P	handoff builder
+P	owner/system
+P	missing/mismatch detail
+ROW	QAReviewStarted	QA	audit	exact output + criteria version
+P	QAReviewStarted
+P	QA
+P	audit
+P	exact output + criteria version
+ROW	QAFindingOpened	QA	owner	finding + evidence + severity
+P	QAFindingOpened
+P	QA
+P	owner
+P	finding + evidence + severity
+ROW	QARecheckStarted	QA	audit	corrected exact version
+P	QARecheckStarted
+P	QA
+P	audit
+P	corrected exact version
+ROW	QAGatePassed	QA	release candidate builder	scorecard/evidence/output refs
+P	QAGatePassed
+P	QA
+P	release candidate builder
+P	scorecard/evidence/output refs
+ROW	QAGateBlocked	QA	owner/system	blocking finding/policy
+P	QAGateBlocked
+P	QA
+P	owner/system
+P	blocking finding/policy
+ROW	ReleaseCandidateCreated	release candidate builder	downstream release owner	candidate refs; no publish
+P	ReleaseCandidateCreated
+P	release candidate builder
+P	downstream release owner
+P	candidate refs; no publish
+ROW	ProductionOutputInvalidated	impact engine	dependent consumers	source change + REVERIFY_REQUIRED set
+P	ProductionOutputInvalidated
+P	impact engine
+P	dependent consumers
+P	source change + REVERIFY_REQUIRED set
+ROW	RightsStatusChanged	rights owner	all dependent consumers	affected output/version set
+P	RightsStatusChanged
+P	rights owner
+P	all dependent consumers
+P	affected output/version set
+ROW	ExperienceSignalRecorded	domain	AI01 Experience	route/attempt/cost/score/correction/downstream finding signals
+P	ExperienceSignalRecorded
+P	domain
+P	AI01 Experience
+P	route/attempt/cost/score/correction/downstream finding signals
+P	22. Error / Retry / Recovery Classification
+ROW	Class	Disposition	Recovery
+P	Class
+P	Disposition
+P	Recovery
+ROW	INPUT_MISSING	NON_RETRYABLE	BLOCK; resolve exact input
+P	INPUT_MISSING
+P	NON_RETRYABLE
+P	BLOCK; resolve exact input
+ROW	VERSION_MISMATCH	NON_RETRYABLE	refresh/rebase; no write
+P	VERSION_MISMATCH
+P	NON_RETRYABLE
+P	refresh/rebase; no write
+ROW	HASH_MISMATCH	NON_RETRYABLE	BLOCK integrity incident
+P	HASH_MISMATCH
+P	NON_RETRYABLE
+P	BLOCK integrity incident
+ROW	SCHEMA_MISMATCH	NON_RETRYABLE	resolve producer/consumer contract
+P	SCHEMA_MISMATCH
+P	NON_RETRYABLE
+P	resolve producer/consumer contract
+ROW	RIGHTS_UNRESOLVED	REVIEW_REQUIRED/BLOCK	human/rights resolution
+P	RIGHTS_UNRESOLVED
+P	REVIEW_REQUIRED/BLOCK
+P	human/rights resolution
+ROW	POLICY_BLOCK	NON_RETRYABLE	do not bypass
+P	POLICY_BLOCK
+P	NON_RETRYABLE
+P	do not bypass
+ROW	PROVIDER_TRANSIENT	RETRYABLE	AI03 retry/backoff policy
+P	PROVIDER_TRANSIENT
+P	RETRYABLE
+P	AI03 retry/backoff policy
+ROW	PROVIDER_TERMINAL	FALLBACK_ALLOWED if current route policy permits	recompile/re-execute under AI03
+P	PROVIDER_TERMINAL
+P	FALLBACK_ALLOWED if current route policy permits
+P	recompile/re-execute under AI03
+ROW	TOOL_RUNTIME_ERROR	RETRYABLE or NON_RETRYABLE by classifier	new attempt; preserve confirmed source
+P	TOOL_RUNTIME_ERROR
+P	RETRYABLE or NON_RETRYABLE by classifier
+P	new attempt; preserve confirmed source
+ROW	PRESERVE_CONSTRAINT_FAIL	NON_RETRYABLE until new delta/scope	reject candidate
+P	PRESERVE_CONSTRAINT_FAIL
+P	NON_RETRYABLE until new delta/scope
+P	reject candidate
+ROW	QUALITY_FAIL	CORRECTION_REQUIRED	bounded correction + recheck
+P	QUALITY_FAIL
+P	CORRECTION_REQUIRED
+P	bounded correction + recheck
+ROW	CONCURRENCY_CONFLICT	NON_RETRYABLE automatic overwrite	refresh/rebase/new candidate
+P	CONCURRENCY_CONFLICT
+P	NON_RETRYABLE automatic overwrite
+P	refresh/rebase/new candidate
+ROW	IDEMPOTENCY_CONFLICT	BLOCK	investigate mismatched payload
+P	IDEMPOTENCY_CONFLICT
+P	BLOCK
+P	investigate mismatched payload
+ROW	QA_EVIDENCE_MISSING	BLOCK	collect required evidence
+P	QA_EVIDENCE_MISSING
+P	BLOCK
+P	collect required evidence
+ROW	CALLBACK_UNVERIFIED	BLOCK	no success projection
+P	CALLBACK_UNVERIFIED
+P	BLOCK
+P	no success projection
+ROW	SUCCESSOR_NOT_CONSUMER_READY	BLOCK	owner re-entry / handoff remediation
+P	SUCCESSOR_NOT_CONSUMER_READY
+P	BLOCK
+P	owner re-entry / handoff remediation
+P	23. Security / Audit / Observability / NFR
+ROW	Area	Required controls
+P	Area
+P	Required controls
+ROW	Permission	server-side authorization per effectful operation; UI disabled is not security
+P	Permission
+P	server-side authorization per effectful operation; UI disabled is not security
+ROW	Data classification	provider/tool input must respect classification and route policy
+P	Data classification
+P	provider/tool input must respect classification and route policy
+ROW	Secret handling	secret-ref only; no raw secret in client, artifact, log, evidence
+P	Secret handling
+P	secret-ref only; no raw secret in client, artifact, log, evidence
+ROW	Audit	actor, role/service identity, work unit, source versions, request/correlation/idempotency IDs, result, reason
+P	Audit
+P	actor, role/service identity, work unit, source versions, request/correlation/idempotency IDs, result, reason
+ROW	Observability	job/attempt state, latency, cost, errors, retries, handoff latency, correction count, QA findings
+P	Observability
+P	job/attempt state, latency, cost, errors, retries, handoff latency, correction count, QA findings
+ROW	Reproducibility	canonical input refs + version/hash + route/profile + normalized instruction lineage where applicable
+P	Reproducibility
+P	canonical input refs + version/hash + route/profile + normalized instruction lineage where applicable
+ROW	Determinism	deterministic editing operations must be replayable from exact input state
+P	Determinism
+P	deterministic editing operations must be replayable from exact input state
+ROW	Performance	long-running jobs async; UI must not assume request lifecycle equals job lifecycle
+P	Performance
+P	long-running jobs async; UI must not assume request lifecycle equals job lifecycle
+ROW	Reliability	retry/fallback cannot cause duplicate confirmed versions or duplicate side effects
+P	Reliability
+P	retry/fallback cannot cause duplicate confirmed versions or duplicate side effects
+ROW	Accessibility	production workbenches must expose state/error/selection/controls without relying on color only
+P	Accessibility
+P	production workbenches must expose state/error/selection/controls without relying on color only
+ROW	Localization	labels/help may localize; canonical UIDs/state enums remain stable
+P	Localization
+P	labels/help may localize; canonical UIDs/state enums remain stable
+ROW	Retention	temporary, candidate, confirmed, audit/evidence classes have separate retention owners
+P	Retention
+P	temporary, candidate, confirmed, audit/evidence classes have separate retention owners
+P	24. Exact Binding Ledger
+ROW	Binding item	Status/Owner	Rule
+P	Binding item
+P	Status/Owner
+P	Rule
+ROW	ASSET production APIs	REQUIRE_CURRENT_BINDING	do not invent endpoint/UID
+P	ASSET production APIs
+P	REQUIRE_CURRENT_BINDING
+P	do not invent endpoint/UID
+ROW	VIDEO production APIs	REQUIRE_CURRENT_BINDING	do not invent endpoint/UID
+P	VIDEO production APIs
+P	REQUIRE_CURRENT_BINDING
+P	do not invent endpoint/UID
+ROW	EDIT deterministic runtime APIs	REQUIRE_CURRENT_BINDING	bind existing canonical runtime owner
+P	EDIT deterministic runtime APIs
+P	REQUIRE_CURRENT_BINDING
+P	bind existing canonical runtime owner
+ROW	VOICE generation APIs	REQUIRE_CURRENT_BINDING	through AI03 where external capability applies
+P	VOICE generation APIs
+P	REQUIRE_CURRENT_BINDING
+P	through AI03 where external capability applies
+ROW	QA scorecard/finding/gate APIs	REQUIRE_CURRENT_BINDING	bind current QA owner
+P	QA scorecard/finding/gate APIs
+P	REQUIRE_CURRENT_BINDING
+P	bind current QA owner
+ROW	DB tables / columns / RLS	REQUIRE_EXACT_BINDING	no schema invention
+P	DB tables / columns / RLS
+P	REQUIRE_EXACT_BINDING
+P	no schema invention
+ROW	Permission resource UIDs	REQUIRE_EXACT_BINDING	server-enforced
+P	Permission resource UIDs
+P	REQUIRE_EXACT_BINDING
+P	server-enforced
+ROW	Event bus topics / schemas	REQUIRE_EXACT_BINDING	event names here are logical contract until bound
+P	Event bus topics / schemas
+P	REQUIRE_EXACT_BINDING
+P	event names here are logical contract until bound
+ROW	Queue / Worker / DLQ	AI03 / runtime owner	no parallel queue
+P	Queue / Worker / DLQ
+P	AI03 / runtime owner
+P	no parallel queue
+ROW	ProviderModelProfile / RoutePolicy	ACPOS-AI-03	reference exact Current owner
+P	ProviderModelProfile / RoutePolicy
+P	ACPOS-AI-03
+P	reference exact Current owner
+ROW	Rights policy identity	REQUIRE_EXACT_BINDING	must travel with output
+P	Rights policy identity
+P	REQUIRE_EXACT_BINDING
+P	must travel with output
+ROW	QA CriteriaVersion / QualityGatePolicy	current QA governance owner	exact version required
+P	QA CriteriaVersion / QualityGatePolicy
+P	current QA governance owner
+P	exact version required
+ROW	Storage / object URI owner	REQUIRE_EXACT_BINDING	checksum + retention required
+P	Storage / object URI owner
+P	REQUIRE_EXACT_BINDING
+P	checksum + retention required
+ROW	Idempotency store / TTL	REQUIRE_EXACT_BINDING	semantic rule fixed; numeric TTL not invented
+P	Idempotency store / TTL
+P	REQUIRE_EXACT_BINDING
+P	semantic rule fixed; numeric TTL not invented
+ROW	Retry/backoff/circuit numeric thresholds	ACPOS-AI-03 exact binding	AI05 only consumes disposition
+P	Retry/backoff/circuit numeric thresholds
+P	ACPOS-AI-03 exact binding
+P	AI05 only consumes disposition
+ROW	Render codec / container profiles	REQUIRE_EXACT_BINDING	product profile / output contract
+P	Render codec / container profiles
+P	REQUIRE_EXACT_BINDING
+P	product profile / output contract
+ROW	Tolerance metrics for preservation	REQUIRE_EXACT_BINDING	must be explicit per media class
+P	Tolerance metrics for preservation
+P	REQUIRE_EXACT_BINDING
+P	must be explicit per media class
+ROW	Release candidate destination owner	separate release governance	QA does not publish
+P	Release candidate destination owner
+P	separate release governance
+P	QA does not publish
+P	25. Acceptance Matrix
+ROW	ID	Acceptance requirement	Class
+P	ID
+P	Acceptance requirement
+P	Class
+ROW	A05-001	Exact CORE Production Package required for project-task production	REQUIRED
+P	A05-001
+P	Exact CORE Production Package required for project-task production
+P	REQUIRED
+ROW	A05-002	ASSET free first-production prompt rejected	REQUIRED
+P	A05-002
+P	ASSET free first-production prompt rejected
+P	REQUIRED
+ROW	A05-003	Provider picker absent/ineffective in production workspaces	REQUIRED
+P	A05-003
+P	Provider picker absent/ineffective in production workspaces
+P	REQUIRED
+ROW	A05-004	Confirmed AssetVersion cannot be overwritten	REQUIRED
+P	A05-004
+P	Confirmed AssetVersion cannot be overwritten
+P	REQUIRED
+ROW	A05-005	ASSET→VIDEO handoff exact version/hash/rights consumer-ready	REQUIRED
+P	A05-005
+P	ASSET→VIDEO handoff exact version/hash/rights consumer-ready
+P	REQUIRED
+ROW	A05-006	VIDEO consumes exact approved AssetVersion refs	REQUIRED
+P	A05-006
+P	VIDEO consumes exact approved AssetVersion refs
+P	REQUIRED
+ROW	A05-007	VIDEO local correction preserves unrelated shots/layers	REQUIRED
+P	A05-007
+P	VIDEO local correction preserves unrelated shots/layers
+P	REQUIRED
+ROW	A05-008	VIDEO→EDIT exact handoff consumer-ready	REQUIRED
+P	A05-008
+P	VIDEO→EDIT exact handoff consumer-ready
+P	REQUIRED
+ROW	A05-009	PROJECT_TASK vs STANDALONE_UPLOAD explicitly separated	REQUIRED
+P	A05-009
+P	PROJECT_TASK vs STANDALONE_UPLOAD explicitly separated
+P	REQUIRED
+ROW	A05-010	Timeline move/trim/split/reorder preserves provenance	REQUIRED
+P	A05-010
+P	Timeline move/trim/split/reorder preserves provenance
+P	REQUIRED
+ROW	A05-011	Voice identity change cannot hide inside pronunciation correction	REQUIRED
+P	A05-011
+P	Voice identity change cannot hide inside pronunciation correction
+P	REQUIRED
+ROW	A05-012	Subtitle text vs timing deltas represented distinctly	REQUIRED
+P	A05-012
+P	Subtitle text vs timing deltas represented distinctly
+P	REQUIRED
+ROW	A05-013	LipSync binds exact voice + visual versions	REQUIRED
+P	A05-013
+P	LipSync binds exact voice + visual versions
+P	REQUIRED
+ROW	A05-014	Layered edit requires source/scope/preserve/delta/acceptance	REQUIRED
+P	A05-014
+P	Layered edit requires source/scope/preserve/delta/acceptance
+P	REQUIRED
+ROW	A05-015	Unsupported bounded edit cannot silently full-regenerate	REQUIRED
+P	A05-015
+P	Unsupported bounded edit cannot silently full-regenerate
+P	REQUIRED
+ROW	A05-016	Patch wrong source hash rejected	REQUIRED
+P	A05-016
+P	Patch wrong source hash rejected
+P	REQUIRED
+ROW	A05-017	Same patch cannot double-apply	REQUIRED
+P	A05-017
+P	Same patch cannot double-apply
+P	REQUIRED
+ROW	A05-018	Concurrent stale write rejected	REQUIRED
+P	A05-018
+P	Concurrent stale write rejected
+P	REQUIRED
+ROW	A05-019	Duplicate idempotent request does not duplicate side effect	REQUIRED
+P	A05-019
+P	Duplicate idempotent request does not duplicate side effect
+P	REQUIRED
+ROW	A05-020	Provider/tool failed attempt leaves confirmed source unchanged	REQUIRED
+P	A05-020
+P	Provider/tool failed attempt leaves confirmed source unchanged
+P	REQUIRED
+ROW	A05-021	QA cannot edit upstream output	REQUIRED
+P	A05-021
+P	QA cannot edit upstream output
+P	REQUIRED
+ROW	A05-022	QA cannot publish directly	REQUIRED
+P	A05-022
+P	QA cannot publish directly
+P	REQUIRED
+ROW	A05-023	QA finding carries owner/source/evidence/severity	REQUIRED
+P	A05-023
+P	QA finding carries owner/source/evidence/severity
+P	REQUIRED
+ROW	A05-024	Finding closes only after new exact version + recheck	REQUIRED
+P	A05-024
+P	Finding closes only after new exact version + recheck
+P	REQUIRED
+ROW	A05-025	Missing required QA evidence blocks pass	REQUIRED
+P	A05-025
+P	Missing required QA evidence blocks pass
+P	REQUIRED
+ROW	A05-026	Manual review cannot be bypassed by machine score	REQUIRED
+P	A05-026
+P	Manual review cannot be bypassed by machine score
+P	REQUIRED
+ROW	A05-027	QA PASS creates ReleaseCandidate only	REQUIRED
+P	A05-027
+P	QA PASS creates ReleaseCandidate only
+P	REQUIRED
+ROW	A05-028	Upstream material change invalidates affected downstream PASS	REQUIRED
+P	A05-028
+P	Upstream material change invalidates affected downstream PASS
+P	REQUIRED
+ROW	A05-029	Unrelated outputs preserved when reverse dependency proves unaffected	REQUIRED
+P	A05-029
+P	Unrelated outputs preserved when reverse dependency proves unaffected
+P	REQUIRED
+ROW	A05-030	All required handoff edges consumer-ready before stage closure	REQUIRED
+P	A05-030
+P	All required handoff edges consumer-ready before stage closure
+P	REQUIRED
+ROW	A05-031	Checksum mismatch blocks selection/handoff/QA	REQUIRED
+P	A05-031
+P	Checksum mismatch blocks selection/handoff/QA
+P	REQUIRED
+ROW	A05-032	Rights unresolved blocks release candidate	REQUIRED
+P	A05-032
+P	Rights unresolved blocks release candidate
+P	REQUIRED
+ROW	A05-033	Full provenance from CORE package to ReleaseCandidate retained	REQUIRED
+P	A05-033
+P	Full provenance from CORE package to ReleaseCandidate retained
+P	REQUIRED
+ROW	A05-034	Experience signal does not self-modify rule/threshold	REQUIRED
+P	A05-034
+P	Experience signal does not self-modify rule/threshold
+P	REQUIRED
+ROW	A05-035	Shared AI02 Conversation Core reused	REQUIRED
+P	A05-035
+P	Shared AI02 Conversation Core reused
+P	REQUIRED
+ROW	A05-036	Shared AI03 Runtime reused; no parallel provider runtime	REQUIRED
+P	A05-036
+P	Shared AI03 Runtime reused; no parallel provider runtime
+P	REQUIRED
+ROW	A05-037	AI04 Canon refs are read-only upstream authority inside AI05	REQUIRED
+P	A05-037
+P	AI04 Canon refs are read-only upstream authority inside AI05
+P	REQUIRED
+ROW	A05-038	All exact implementation identity gaps explicitly flagged	REQUIRED
+P	A05-038
+P	All exact implementation identity gaps explicitly flagged
+P	REQUIRED
+ROW	A05-039	Design doc makes no runtime/deployment completion claim	REQUIRED
+P	A05-039
+P	Design doc makes no runtime/deployment completion claim
+P	REQUIRED
+ROW	A05-040	A11y/render/integrity document QA passes before delivery	REQUIRED
+P	A05-040
+P	A11y/render/integrity document QA passes before delivery
+P	REQUIRED
+P	26. Negative Regression Matrix
+ROW	Case	Mutation / defect	Expected
+P	Case
+P	Mutation / defect
+P	Expected
+ROW	N05-001	project task without exact package	BLOCK
+P	N05-001
+P	project task without exact package
+P	BLOCK
+ROW	N05-002	ASSET free prompt creates first project asset	BLOCK
+P	N05-002
+P	ASSET free prompt creates first project asset
+P	BLOCK
+ROW	N05-003	workspace directly chooses provider	BLOCK
+P	N05-003
+P	workspace directly chooses provider
+P	BLOCK
+ROW	N05-004	correction overwrites confirmed source	BLOCK
+P	N05-004
+P	correction overwrites confirmed source
+P	BLOCK
+ROW	N05-005	delta missing preserve_constraints	BLOCK
+P	N05-005
+P	delta missing preserve_constraints
+P	BLOCK
+ROW	N05-006	bounded local edit silently full-regenerates	BLOCK
+P	N05-006
+P	bounded local edit silently full-regenerates
+P	BLOCK
+ROW	N05-007	patch applied to wrong hash	BLOCK
+P	N05-007
+P	patch applied to wrong hash
+P	BLOCK
+ROW	N05-008	patch applied twice	BLOCK
+P	N05-008
+P	patch applied twice
+P	BLOCK
+ROW	N05-009	unrequested layer/region drift	FAIL
+P	N05-009
+P	unrequested layer/region drift
+P	FAIL
+ROW	N05-010	VIDEO uses latest asset instead of handoff version	BLOCK
+P	N05-010
+P	VIDEO uses latest asset instead of handoff version
+P	BLOCK
+ROW	N05-011	VIDEO changes unrelated shot on local correction	FAIL
+P	N05-011
+P	VIDEO changes unrelated shot on local correction
+P	FAIL
+ROW	N05-012	EDIT project mode starts from standalone media without explicit mode switch	BLOCK
+P	N05-012
+P	EDIT project mode starts from standalone media without explicit mode switch
+P	BLOCK
+ROW	N05-013	pronunciation fix swaps voice identity	FAIL
+P	N05-013
+P	pronunciation fix swaps voice identity
+P	FAIL
+ROW	N05-014	subtitle edit retimes unrelated cues	FAIL
+P	N05-014
+P	subtitle edit retimes unrelated cues
+P	FAIL
+ROW	N05-015	lip-sync uses wrong voice/visual version pair	BLOCK
+P	N05-015
+P	lip-sync uses wrong voice/visual version pair
+P	BLOCK
+ROW	N05-016	QA directly patches video/edit output	BLOCK
+P	N05-016
+P	QA directly patches video/edit output
+P	BLOCK
+ROW	N05-017	QA publishes after PASS	BLOCK
+P	N05-017
+P	QA publishes after PASS
+P	BLOCK
+ROW	N05-018	finding closed using old PASS evidence	BLOCK
+P	N05-018
+P	finding closed using old PASS evidence
+P	BLOCK
+ROW	N05-019	machine score bypasses manual review requirement	BLOCK
+P	N05-019
+P	machine score bypasses manual review requirement
+P	BLOCK
+ROW	N05-020	missing criterion silently ignored	BLOCK
+P	N05-020
+P	missing criterion silently ignored
+P	BLOCK
+ROW	N05-021	checksum mismatch accepted	BLOCK
+P	N05-021
+P	checksum mismatch accepted
+P	BLOCK
+ROW	N05-022	rights unresolved but release candidate created	BLOCK
+P	N05-022
+P	rights unresolved but release candidate created
+P	BLOCK
+ROW	N05-023	upstream changed but downstream PASS retained	FAIL
+P	N05-023
+P	upstream changed but downstream PASS retained
+P	FAIL
+ROW	N05-024	handoff path exists but consumer cannot parse	BLOCK
+P	N05-024
+P	handoff path exists but consumer cannot parse
+P	BLOCK
+ROW	N05-025	handoff schema version drift hidden by alias fallback	BLOCK
+P	N05-025
+P	handoff schema version drift hidden by alias fallback
+P	BLOCK
+ROW	N05-026	duplicate idempotency key with different payload accepted	BLOCK
+P	N05-026
+P	duplicate idempotency key with different payload accepted
+P	BLOCK
+ROW	N05-027	late callback overwrites newer confirmed output	BLOCK
+P	N05-027
+P	late callback overwrites newer confirmed output
+P	BLOCK
+ROW	N05-028	provider failure mutates confirmed version	FAIL
+P	N05-028
+P	provider failure mutates confirmed version
+P	FAIL
+ROW	N05-029	runtime secret appears in log/artifact	SECURITY_FAIL
+P	N05-029
+P	runtime secret appears in log/artifact
+P	SECURITY_FAIL
+ROW	N05-030	standalone upload inherits project canon implicitly	BLOCK
+P	N05-030
+P	standalone upload inherits project canon implicitly
+P	BLOCK
+ROW	N05-031	AI score auto-locks output without authority	BLOCK
+P	N05-031
+P	AI score auto-locks output without authority
+P	BLOCK
+ROW	N05-032	experience signal auto-changes QA threshold	BLOCK
+P	N05-032
+P	experience signal auto-changes QA threshold
+P	BLOCK
+ROW	N05-033	AI05 creates second conversation memory store	BLOCK
+P	N05-033
+P	AI05 creates second conversation memory store
+P	BLOCK
+ROW	N05-034	AI05 creates second provider router/runtime	BLOCK
+P	N05-034
+P	AI05 creates second provider router/runtime
+P	BLOCK
+ROW	N05-035	local page copies and edits Blueprint as authority	BLOCK
+P	N05-035
+P	local page copies and edits Blueprint as authority
+P	BLOCK
+ROW	N05-036	historical PASS used as current handoff readiness	BLOCK
+P	N05-036
+P	historical PASS used as current handoff readiness
+P	BLOCK
+P	27. Given / When / Then Logic Acceptance
+ROW	ID	Given	When	Then
+P	ID
+P	Given
+P	When
+P	Then
+ROW	G05-001	Given exact CORE package and admissible ASSET task	When first asset production starts	Then inputs are frozen into ProductionInputSet and AI03 capability executes without provider picker
+P	G05-001
+P	Given exact CORE package and admissible ASSET task
+P	When first asset production starts
+P	Then inputs are frozen into ProductionInputSet and AI03 capability executes without provider picker
+ROW	G05-002	Given a confirmed AssetVersion	When user requests background-only change	Then target layer/region changes and all unaffected layers remain preserved
+P	G05-002
+P	Given a confirmed AssetVersion
+P	When user requests background-only change
+P	Then target layer/region changes and all unaffected layers remain preserved
+ROW	G05-003	Given local edit capability cannot preserve unaffected region	When correction is requested	Then execution blocks or requests scope expansion; no silent full regeneration
+P	G05-003
+P	Given local edit capability cannot preserve unaffected region
+P	When correction is requested
+P	Then execution blocks or requests scope expansion; no silent full regeneration
+ROW	G05-004	Given wrong source hash	When PatchVersion is applied	Then patch is rejected and source remains unchanged
+P	G05-004
+P	Given wrong source hash
+P	When PatchVersion is applied
+P	Then patch is rejected and source remains unchanged
+ROW	G05-005	Given ASSET handoff exact version	When VIDEO admits task	Then it consumes that exact version, not latest
+P	G05-005
+P	Given ASSET handoff exact version
+P	When VIDEO admits task
+P	Then it consumes that exact version, not latest
+ROW	G05-006	Given one-shot continuity constraints	When VIDEO correction changes motion only	Then character identity/costume/scene continuity remain preserved
+P	G05-006
+P	Given one-shot continuity constraints
+P	When VIDEO correction changes motion only
+P	Then character identity/costume/scene continuity remain preserved
+ROW	G05-007	Given confirmed video output	When local shot correction passes	Then new VideoOutputVersion links predecessor and unchanged shot lineage
+P	G05-007
+P	Given confirmed video output
+P	When local shot correction passes
+P	Then new VideoOutputVersion links predecessor and unchanged shot lineage
+ROW	G05-008	Given project-task EDIT intake	When exact VIDEO handoff is missing	Then admission blocks
+P	G05-008
+P	Given project-task EDIT intake
+P	When exact VIDEO handoff is missing
+P	Then admission blocks
+ROW	G05-009	Given explicit standalone upload mode	When edit begins	Then no Project Canon or CORE package is inferred automatically
+P	G05-009
+P	Given explicit standalone upload mode
+P	When edit begins
+P	Then no Project Canon or CORE package is inferred automatically
+ROW	G05-010	Given a VoiceIdentityRef	When pronunciation is corrected	Then voice identity remains unchanged and only affected segment version changes
+P	G05-010
+P	Given a VoiceIdentityRef
+P	When pronunciation is corrected
+P	Then voice identity remains unchanged and only affected segment version changes
+ROW	G05-011	Given subtitle cue wording edit	When timing is not in ChangeSet	Then cue timing remains unchanged
+P	G05-011
+P	Given subtitle cue wording edit
+P	When timing is not in ChangeSet
+P	Then cue timing remains unchanged
+ROW	G05-012	Given voice timing correction affects lipsync	When new segment confirms	Then affected LipSyncBinding becomes REVERIFY_REQUIRED
+P	G05-012
+P	Given voice timing correction affects lipsync
+P	When new segment confirms
+P	Then affected LipSyncBinding becomes REVERIFY_REQUIRED
+ROW	G05-013	Given music cue range change	When correction executes	Then unaffected tracks/ranges remain preserved
+P	G05-013
+P	Given music cue range change
+P	When correction executes
+P	Then unaffected tracks/ranges remain preserved
+ROW	G05-014	Given finalized edit	When QA admits output	Then exact version/checksum/provenance/rights and CriteriaVersion are all verified
+P	G05-014
+P	Given finalized edit
+P	When QA admits output
+P	Then exact version/checksum/provenance/rights and CriteriaVersion are all verified
+ROW	G05-015	Given QA finding	When correction is required	Then CorrectionRequest routes to original production owner; QA does not edit
+P	G05-015
+P	Given QA finding
+P	When correction is required
+P	Then CorrectionRequest routes to original production owner; QA does not edit
+ROW	G05-016	Given corrected exact version	When QA rechecks and all required criteria pass	Then finding may close and QAGateDecision PASS may be issued
+P	G05-016
+P	Given corrected exact version
+P	When QA rechecks and all required criteria pass
+P	Then finding may close and QAGateDecision PASS may be issued
+ROW	G05-017	Given machine score PASS but manual review required	When reviewer has not approved	Then QA remains REVIEW_REQUIRED/BLOCKED
+P	G05-017
+P	Given machine score PASS but manual review required
+P	When reviewer has not approved
+P	Then QA remains REVIEW_REQUIRED/BLOCKED
+ROW	G05-018	Given QA PASS	When release candidate is built	Then candidate references exact passed output; no publish occurs
+P	G05-018
+P	Given QA PASS
+P	When release candidate is built
+P	Then candidate references exact passed output; no publish occurs
+ROW	G05-019	Given upstream AssetVersion invalidated	When dependent Video/Edit/QA artifacts exist	Then only impacted reverse-dependency set becomes REVERIFY_REQUIRED
+P	G05-019
+P	Given upstream AssetVersion invalidated
+P	When dependent Video/Edit/QA artifacts exist
+P	Then only impacted reverse-dependency set becomes REVERIFY_REQUIRED
+ROW	G05-020	Given unrelated output proven independent	When another source changes	Then unrelated output remains valid
+P	G05-020
+P	Given unrelated output proven independent
+P	When another source changes
+P	Then unrelated output remains valid
+ROW	G05-021	Given duplicate request same idempotency key/payload	When retried	Then existing logical effect is reconciled rather than duplicated
+P	G05-021
+P	Given duplicate request same idempotency key/payload
+P	When retried
+P	Then existing logical effect is reconciled rather than duplicated
+ROW	G05-022	Given same key different payload	When submitted	Then request is blocked
+P	G05-022
+P	Given same key different payload
+P	When submitted
+P	Then request is blocked
+ROW	G05-023	Given stale expected_version	When confirm writes	Then write fails; no last-write-wins
+P	G05-023
+P	Given stale expected_version
+P	When confirm writes
+P	Then write fails; no last-write-wins
+ROW	G05-024	Given provider timeout	When retry policy permits	Then new Attempt is created and confirmed source stays unchanged
+P	G05-024
+P	Given provider timeout
+P	When retry policy permits
+P	Then new Attempt is created and confirmed source stays unchanged
+ROW	G05-025	Given late superseded callback	When it arrives after newer output	Then it is recorded but cannot overwrite selected/confirmed version
+P	G05-025
+P	Given late superseded callback
+P	When it arrives after newer output
+P	Then it is recorded but cannot overwrite selected/confirmed version
+ROW	G05-026	Given handoff manifest exists but required field missing	When successor admits	Then consumer readiness fails and stage cannot close
+P	G05-026
+P	Given handoff manifest exists but required field missing
+P	When successor admits
+P	Then consumer readiness fails and stage cannot close
+ROW	G05-027	Given checksum mismatch	When output is selected/handoff/QA	Then operation blocks
+P	G05-027
+P	Given checksum mismatch
+P	When output is selected/handoff/QA
+P	Then operation blocks
+ROW	G05-028	Given rights unresolved	When release candidate formation is requested	Then operation blocks
+P	G05-028
+P	Given rights unresolved
+P	When release candidate formation is requested
+P	Then operation blocks
+ROW	G05-029	Given QA finding attributable to ASSET	When experience signal is recorded	Then AI01 receives evidence-linked signal without self-changing ASSET rule
+P	G05-029
+P	Given QA finding attributable to ASSET
+P	When experience signal is recorded
+P	Then AI01 receives evidence-linked signal without self-changing ASSET rule
+ROW	G05-030	Given production workspace conversation	When user switches ASSET→VIDEO	Then AI02 continuity may carry authorized context while domain output authority remains separate
+P	G05-030
+P	Given production workspace conversation
+P	When user switches ASSET→VIDEO
+P	Then AI02 continuity may carry authorized context while domain output authority remains separate
+ROW	G05-031	Given provider model change	When execution route changes	Then AI03 recompile/route handles provider syntax; AI05 domain meaning remains unchanged
+P	G05-031
+P	Given provider model change
+P	When execution route changes
+P	Then AI03 recompile/route handles provider syntax; AI05 domain meaning remains unchanged
+ROW	G05-032	Given exact implementation UID not known	When design is finalized	Then binding ledger remains REQUIRE_EXACT_BINDING rather than inventing identity
+P	G05-032
+P	Given exact implementation UID not known
+P	When design is finalized
+P	Then binding ledger remains REQUIRE_EXACT_BINDING rather than inventing identity
+P	28. Construction Handoff Package
+ROW	Deliverable	Required content
+P	Deliverable
+P	Required content
+ROW	Entity Registry	all AI05 entities + canonical owners + version semantics
+P	Entity Registry
+P	all AI05 entities + canonical owners + version semantics
+ROW	Operation Matrix	entity operations + permission/gate/effect classification
+P	Operation Matrix
+P	entity operations + permission/gate/effect classification
+ROW	Layered Composition Contract	source/scope/preserve/delta/acceptance/fallback schema
+P	Layered Composition Contract
+P	source/scope/preserve/delta/acceptance/fallback schema
+ROW	State Machine	domain states + guards + failure/recovery
+P	State Machine
+P	domain states + guards + failure/recovery
+ROW	Handoff Schemas	CORE→ASSET→VIDEO→EDIT/VOICE→QA→Release candidate
+P	Handoff Schemas
+P	CORE→ASSET→VIDEO→EDIT/VOICE→QA→Release candidate
+ROW	Event Contract	producer/consumer/payload/version/idempotency
+P	Event Contract
+P	producer/consumer/payload/version/idempotency
+ROW	Version & Concurrency	expected_version/hash/idempotency/late-result rules
+P	Version & Concurrency
+P	expected_version/hash/idempotency/late-result rules
+ROW	QA Contract	criteria/scorecard/finding/correction/recheck/gate
+P	QA Contract
+P	criteria/scorecard/finding/correction/recheck/gate
+ROW	Rights/Policy/Provenance	exact bindings and propagation
+P	Rights/Policy/Provenance
+P	exact bindings and propagation
+ROW	Exact Binding Ledger	all unresolved API/DB/permission/runtime identities
+P	Exact Binding Ledger
+P	all unresolved API/DB/permission/runtime identities
+ROW	Acceptance/Regression	positive + destructive test matrix
+P	Acceptance/Regression
+P	positive + destructive test matrix
+ROW	Traceability	rule → entity/operation → implementation owner → test/evidence mapping when construction begins
+P	Traceability
+P	rule → entity/operation → implementation owner → test/evidence mapping when construction begins
+ROW	Construction rule
+後續工程若遇到文件未綁定的 exact implementation identity，只能回到 Exact Binding Ledger / Current Authority 補綁，不得在程式或頁面內自行發明第二套 UID、API、Table、Permission、Queue、Provider 或狀態。
+P	Construction rule
+後續工程若遇到文件未綁定的 exact implementation identity，只能回到 Exact Binding Ledger / Current Authority 補綁，不得在程式或頁面內自行發明第二套 UID、API、Table、Permission、Queue、Provider 或狀態。
+P	29. Document Closure / DoD
+P	All AI05 owner boundaries are explicit and do not duplicate AI01–AI04 ownership.
+P	ASSET / VIDEO / EDIT / VOICE / QA full chain is defined from admission to handoff/release candidate.
+P	Layered Composition bounded-change model is normative and testable.
+P	Confirmed history is immutable; correction and retry semantics are versioned.
+P	QA role is review/request/recheck/gate, never upstream editor or publisher.
+P	Cross-stage consumer readiness and invalidation are explicit.
+P	All unknown exact implementation bindings are flagged instead of invented.
+P	Acceptance, negative regression and Given/When/Then matrices cover normal, conflict, failure and destructive cases.
+P	DOCX render/a11y/integrity QA must pass before delivery.
+P	Formal governance approval is not self-granted by this document.
+ROW	Final document status
+DESIGN_CONTENT_COMPLETE · FORMAL_APPROVAL_NOT_SELF_GRANTED · RUNTIME_NOT_PROVEN_BY_DOCUMENT
+P	Final document status
+DESIGN_CONTENT_COMPLETE · FORMAL_APPROVAL_NOT_SELF_GRANTED · RUNTIME_NOT_PROVEN_BY_DOCUMENT
+### PART word/header1.xml
+P	ORANGE ONE · ACPOS ACPOS-AI-05｜Mother Basic Logic Design
+### PART word/footer1.xml
+P	DESIGN ARTIFACT · NOT RUNTIME AUTHORITY · Current Governance v2.2.16 · 2026-09-20

@@ -1,0 +1,2039 @@
+### PART word/document.xml
+P	ACPOS-AI-06
+P	Enterprise Business Development AI System
+P	Mother Basic Logic Design + Normative Logic Contract
+P	企業商機搜集、公司身份、聯絡證據、個人化開發、合規、Campaign、個別寄送、回覆與營收閉環母規範
+ROW	Field	Current Design Status	Rule
+P	Field
+P	Current Design Status
+P	Rule
+ROW	Document State	DESIGN_CONTENT_COMPLETE	FORMAL_APPROVAL_NOT_SELF_GRANTED · RUNTIME_NOT_PROVEN_BY_DOCUMENT
+P	Document State
+P	DESIGN_CONTENT_COMPLETE
+P	FORMAL_APPROVAL_NOT_SELF_GRANTED · RUNTIME_NOT_PROVEN_BY_DOCUMENT
+P	Authority Context
+P	Current Governance: GOV-REV-20260920-CROSS-STAGE-MATERIALIZATION-CONSUMER-READINESS-HARDENING · display v2.2.16 · Branch: rebuild-v2.1.1 · design artifact only.
+P	0. 文件身份與使用方式
+P	本文件定義 ACPOS 企業自動開發 AI 系統的系統級母設計。它不是單一 DEV-01 頁面說明，也不是 Email 供應商操作手冊；它規定企業商機如何被發現、驗證、去重、評估、個人化、合規審查、形成 Campaign、拆成每位收件者的獨立 Delivery，並將 Reply / Outcome / Revenue / Experience 回寫成可追溯閉環。
+ROW	項目	規範
+P	項目
+P	規範
+ROW	Owner	ACPOS-AI-06 Enterprise Business Development AI System
+P	Owner
+P	ACPOS-AI-06 Enterprise Business Development AI System
+ROW	Primary responsibility	Enterprise discovery, company identity, contact evidence, qualification, personalization, outreach campaign, individual delivery, reply/follow-up, CRM outcome, revenue attribution.
+P	Primary responsibility
+P	Enterprise discovery, company identity, contact evidence, qualification, personalization, outreach campaign, individual delivery, reply/follow-up, CRM outcome, revenue attribution.
+ROW	Shared dependencies	AI-01 Context/Evidence; AI-02 Conversation; AI-03 execution/provider/tool; existing Shared Acquisition/Knowledge source owners; IAM/Compliance/ERP exact owners via binding.
+P	Shared dependencies
+P	AI-01 Context/Evidence; AI-02 Conversation; AI-03 execution/provider/tool; existing Shared Acquisition/Knowledge source owners; IAM/Compliance/ERP exact owners via binding.
+ROW	Hard boundary	Social Publishing is AI-07. AI-06 may create a governed handoff/request but MUST_NOT recreate social account, target, publishing, metrics or platform runtime.
+P	Hard boundary
+P	Social Publishing is AI-07. AI-06 may create a governed handoff/request but MUST_NOT recreate social account, target, publishing, metrics or platform runtime.
+ROW	Runtime claim	Word completion MUST_NOT be reported as email connector, DNS authentication, webhook, bounce, complaint, unsubscribe, Production E2E or deployment completion.
+P	Runtime claim
+P	Word completion MUST_NOT be reported as email connector, DNS authentication, webhook, bounce, complaint, unsubscribe, Production E2E or deployment completion.
+P	1. Purpose / Scope / Out-of-Scope
+P	1.1 Purpose
+P	把公開市場訊號轉成可驗證的企業商機，而不是把網路文字直接當成 Lead Truth。
+P	建立唯一 Company Master 與可追溯 Contact Evidence，避免同一公司、同一聯絡點、同一 Campaign 形成第二套資料。
+P	讓 AI 個人化內容只使用 Evidence-supported fact；推論必須顯式標示為 inference。
+P	把合規、Suppression、Unsubscribe、寄送政策、Rate、Schedule、Approval 變成 effectful delivery 前的硬 Gate。
+P	允許 Campaign-level 大量操作，但每個外寄 Email envelope 永遠保持 exactly one To，CC/BCC empty。
+P	建立 Reply → Human Owner → Meeting → Proposal → Negotiation → Won/Lost → Revenue Attribution → Experience 的閉環。
+P	1.2 In Scope / Out-of-Scope
+ROW	In Scope	Out of Scope / Other Owner
+P	In Scope
+P	Out of Scope / Other Owner
+ROW	Discovery Topic/Profile, public business signals, company candidates	Generic crawling/search engine implementation: shared acquisition/knowledge owner; provider execution: AI-03
+P	Discovery Topic/Profile, public business signals, company candidates
+P	Generic crawling/search engine implementation: shared acquisition/knowledge owner; provider execution: AI-03
+ROW	Company identity resolution, alias/domain/registration matching, merge preview	Global context/evidence truth engine: AI-01
+P	Company identity resolution, alias/domain/registration matching, merge preview
+P	Global context/evidence truth engine: AI-01
+ROW	Contact evidence, verification, eligibility, suppression	Generic IAM/security policy engine and legal advice are not redefined here
+P	Contact evidence, verification, eligibility, suppression
+P	Generic IAM/security policy engine and legal advice are not redefined here
+ROW	Enterprise Development Profile, fit/intent/timing, message personalization	Conversation memory/UI shared core: AI-02
+P	Enterprise Development Profile, fit/intent/timing, message personalization
+P	Conversation memory/UI shared core: AI-02
+ROW	Outreach Campaign, recipient preview, approval, schedule, dispatch	Social platform publishing/account/target runtime: AI-07
+P	Outreach Campaign, recipient preview, approval, schedule, dispatch
+P	Social platform publishing/account/target runtime: AI-07
+ROW	Individual email delivery semantics, reply/follow-up/outcome	Raw provider adapter/gateway implementation: AI-03
+P	Individual email delivery semantics, reply/follow-up/outcome
+P	Raw provider adapter/gateway implementation: AI-03
+ROW	CRM opportunity stages, revenue attribution handoff	ERP accounting truth remains ERP owner; AI-06 only binds attribution refs
+P	CRM opportunity stages, revenue attribution handoff
+P	ERP accounting truth remains ERP owner; AI-06 only binds attribution refs
+P	2. Authority Inheritance / Owner Boundary
+P	AI-06 MUST follow ONE CONCEPT / ONE OWNER / REFERENCE, DO NOT COPY. Existing Company Master, Contact, Campaign, Delivery, Suppression, Evidence, shared acquisition and audit owners MUST be reused. A missing UI or missing binding is not permission to create another Company DB, Audience DB, BulkSend service, crawler, Evidence store or Suppression engine.
+ROW	Concept	Canonical Owner Rule	AI-06 behavior
+P	Concept
+P	Canonical Owner Rule
+P	AI-06 behavior
+ROW	Context / factual truth	AI-01 / current evidence owner	Reference exact evidence/context; MUST_NOT copy into a second truth store.
+P	Context / factual truth
+P	AI-01 / current evidence owner
+P	Reference exact evidence/context; MUST_NOT copy into a second truth store.
+ROW	Conversation / review dialogue	AI-02	Use shared Conversation Core when conversation is needed.
+P	Conversation / review dialogue
+P	AI-02
+P	Use shared Conversation Core when conversation is needed.
+ROW	Provider / tool execution	AI-03	Request governed capability; MUST_NOT call provider directly from domain logic.
+P	Provider / tool execution
+P	AI-03
+P	Request governed capability; MUST_NOT call provider directly from domain logic.
+ROW	Company Master	Existing enterprise development owner	Search, resolve, merge; MUST_NOT create duplicate master.
+P	Company Master
+P	Existing enterprise development owner
+P	Search, resolve, merge; MUST_NOT create duplicate master.
+ROW	Contact Point	Existing contact owner	Add/verify with source evidence; never guess.
+P	Contact Point
+P	Existing contact owner
+P	Add/verify with source evidence; never guess.
+ROW	Campaign / Delivery	Existing outreach owner	Campaign holds recipient_refs; runtime fans out individual deliveries.
+P	Campaign / Delivery
+P	Existing outreach owner
+P	Campaign holds recipient_refs; runtime fans out individual deliveries.
+ROW	Suppression	Existing global suppression owner	Cross-campaign hard gate; no local override.
+P	Suppression
+P	Existing global suppression owner
+P	Cross-campaign hard gate; no local override.
+ROW	Social publishing	AI-07	Only handoff; no duplicate platform publishing system.
+P	Social publishing
+P	AI-07
+P	Only handoff; no duplicate platform publishing system.
+P	圖 1｜Enterprise Business Development Lifecycle。
+P	3. System Architecture / Functional Workbench Topology
+ROW	Layer	Responsibility	Required Output
+P	Layer
+P	Responsibility
+P	Required Output
+ROW	Intent Layer	Define Product/Service, target market, industry, region, company type/size, priority, allowed sources, intent threshold.	DiscoveryProfile / scope
+P	Intent Layer
+P	Define Product/Service, target market, industry, region, company type/size, priority, allowed sources, intent threshold.
+P	DiscoveryProfile / scope
+ROW	Acquisition Interface	Request allowed public acquisition through existing shared source runtime.	Evidence-backed MarketSignal
+P	Acquisition Interface
+P	Request allowed public acquisition through existing shared source runtime.
+P	Evidence-backed MarketSignal
+ROW	Signal & Qualification	Normalize, deduplicate, freshness, classify fit/intent/timing.	OpportunityQualification
+P	Signal & Qualification
+P	Normalize, deduplicate, freshness, classify fit/intent/timing.
+P	OpportunityQualification
+ROW	Identity Layer	Resolve company via registration/jurisdiction/domain/alias and merge preview.	Canonical Company Master ref
+P	Identity Layer
+P	Resolve company via registration/jurisdiction/domain/alias and merge preview.
+P	Canonical Company Master ref
+ROW	Contact Layer	Discover public business contacts; verify source and status.	Verified ContactPoint + evidence
+P	Contact Layer
+P	Discover public business contacts; verify source and status.
+P	Verified ContactPoint + evidence
+ROW	Personalization Layer	Assemble Company Fit + Contact Role + Objective + Product/IP + locale.	MessageCandidate
+P	Personalization Layer
+P	Assemble Company Fit + Contact Role + Objective + Product/IP + locale.
+P	MessageCandidate
+ROW	Compliance Layer	Country/company/contact/source/campaign policy, suppression, DNC, unsubscribe, sender health.	EligibilityDecision PASS/REVIEW/BLOCK
+P	Compliance Layer
+P	Country/company/contact/source/campaign policy, suppression, DNC, unsubscribe, sender health.
+P	EligibilityDecision PASS/REVIEW/BLOCK
+ROW	Campaign Layer	Exact recipient_refs + exact message version + sender + schedule + approval.	Approved Campaign
+P	Campaign Layer
+P	Exact recipient_refs + exact message version + sender + schedule + approval.
+P	Approved Campaign
+ROW	Delivery Layer	Fan-out one recipient per email; retry/idempotency/rate/audit.	IndividualDelivery records
+P	Delivery Layer
+P	Fan-out one recipient per email; retry/idempotency/rate/audit.
+P	IndividualDelivery records
+ROW	Response Layer	Reply/bounce/complaint/unsubscribe and sequence stop rules.	ResponseEvent / FollowUp state
+P	Response Layer
+P	Reply/bounce/complaint/unsubscribe and sequence stop rules.
+P	ResponseEvent / FollowUp state
+ROW	CRM/Outcome	Human owner, meeting, proposal, negotiation, won/lost, attribution.	OpportunityOutcome + revenue refs
+P	CRM/Outcome
+P	Human owner, meeting, proposal, negotiation, won/lost, attribution.
+P	OpportunityOutcome + revenue refs
+ROW	Experience	Approved lessons from outcomes, not automatic self-adoption.	ExperienceCandidate / learning refs
+P	Experience
+P	Approved lessons from outcomes, not automatic self-adoption.
+P	ExperienceCandidate / learning refs
+P	4. Core Entity Registry
+ROW	Entity	Purpose
+P	Entity
+P	Purpose
+ROW	MarketIntent	What product/service/opportunity is being sought.
+P	MarketIntent
+P	What product/service/opportunity is being sought.
+ROW	DiscoveryProfile	Reusable governed search/qualification configuration.
+P	DiscoveryProfile
+P	Reusable governed search/qualification configuration.
+ROW	DiscoveryJob	Single execution of discovery profile.
+P	DiscoveryJob
+P	Single execution of discovery profile.
+ROW	SourceRef	Allowed source identity governed elsewhere.
+P	SourceRef
+P	Allowed source identity governed elsewhere.
+ROW	MarketSignal	Normalized public signal with source, time, freshness.
+P	MarketSignal
+P	Normalized public signal with source, time, freshness.
+ROW	SignalEvidence	Exact evidence fragment/url/date supporting a claim.
+P	SignalEvidence
+P	Exact evidence fragment/url/date supporting a claim.
+ROW	CompanyCandidate	Unresolved company candidate from signals.
+P	CompanyCandidate
+P	Unresolved company candidate from signals.
+ROW	CompanyIdentity	Registration/jurisdiction/domain/alias identity set.
+P	CompanyIdentity
+P	Registration/jurisdiction/domain/alias identity set.
+ROW	CompanyMaster	Single canonical enterprise record.
+P	CompanyMaster
+P	Single canonical enterprise record.
+ROW	CompanyAlias	Historical/brand/alternate name mapping.
+P	CompanyAlias
+P	Historical/brand/alternate name mapping.
+ROW	CompanyMergeCandidate	Potential duplicate identity pair/set.
+P	CompanyMergeCandidate
+P	Potential duplicate identity pair/set.
+ROW	CompanyMergeDecision	Preview/confirm/reject merge with evidence.
+P	CompanyMergeDecision
+P	Preview/confirm/reject merge with evidence.
+ROW	ContactPoint	Business email/contact endpoint.
+P	ContactPoint
+P	Business email/contact endpoint.
+ROW	ContactEvidence	Source proof for contact point.
+P	ContactEvidence
+P	Source proof for contact point.
+ROW	ContactVerification	verification_status, verified_at, method, reason.
+P	ContactVerification
+P	verification_status, verified_at, method, reason.
+ROW	EnterpriseDevelopmentProfile	Industry, region, size, positioning, products, target customers, recent activity, potential needs, suitable offer, role, fit, evidence.
+P	EnterpriseDevelopmentProfile
+P	Industry, region, size, positioning, products, target customers, recent activity, potential needs, suitable offer, role, fit, evidence.
+ROW	OpportunityQualification	fit/intent/timing/status with reasons.
+P	OpportunityQualification
+P	fit/intent/timing/status with reasons.
+ROW	ComplianceProfile	Recipient/campaign jurisdiction and policy inputs.
+P	ComplianceProfile
+P	Recipient/campaign jurisdiction and policy inputs.
+ROW	EligibilityDecision	PASS/REVIEW/BLOCK with reasons.
+P	EligibilityDecision
+P	PASS/REVIEW/BLOCK with reasons.
+ROW	SuppressionEntry	Cross-campaign no-contact record.
+P	SuppressionEntry
+P	Cross-campaign no-contact record.
+ROW	MessageCandidate	AI-generated but not yet approved outreach content.
+P	MessageCandidate
+P	AI-generated but not yet approved outreach content.
+ROW	MessageVersion	Immutable reviewed content version.
+P	MessageVersion
+P	Immutable reviewed content version.
+ROW	PersonalizationContext	Exact evidence/context used for one recipient.
+P	PersonalizationContext
+P	Exact evidence/context used for one recipient.
+ROW	Campaign	Batch container for exact recipient_refs and message/sender/schedule refs.
+P	Campaign
+P	Batch container for exact recipient_refs and message/sender/schedule refs.
+ROW	RecipientPreview	Pre-approval/pre-dispatch resolved recipient denominator.
+P	RecipientPreview
+P	Pre-approval/pre-dispatch resolved recipient denominator.
+ROW	CampaignApproval	Human/governed approval distinct from send.
+P	CampaignApproval
+P	Human/governed approval distinct from send.
+ROW	IndividualDelivery	One recipient, one envelope, one delivery lifecycle.
+P	IndividualDelivery
+P	One recipient, one envelope, one delivery lifecycle.
+ROW	DeliveryAttempt	One provider attempt under one delivery.
+P	DeliveryAttempt
+P	One provider attempt under one delivery.
+ROW	SenderAccount	Governed authorized sender identity.
+P	SenderAccount
+P	Governed authorized sender identity.
+ROW	SendPolicy	timezone/window/rate/cap/cooldown/follow-up constraints.
+P	SendPolicy
+P	timezone/window/rate/cap/cooldown/follow-up constraints.
+ROW	ReplyEvent	Inbound response bound to exact delivery/contact/company.
+P	ReplyEvent
+P	Inbound response bound to exact delivery/contact/company.
+ROW	BounceEvent	Delivery failure classification.
+P	BounceEvent
+P	Delivery failure classification.
+ROW	ComplaintEvent	Complaint/abuse signal.
+P	ComplaintEvent
+P	Complaint/abuse signal.
+ROW	UnsubscribeEvent	Immediate opt-out event.
+P	UnsubscribeEvent
+P	Immediate opt-out event.
+ROW	FollowUpPlan	Finite governed next-contact plan.
+P	FollowUpPlan
+P	Finite governed next-contact plan.
+ROW	Opportunity	CRM business opportunity.
+P	Opportunity
+P	CRM business opportunity.
+ROW	HumanOwnerAssignment	Human accountable owner after positive reply or escalation.
+P	HumanOwnerAssignment
+P	Human accountable owner after positive reply or escalation.
+ROW	MeetingRecord	Meeting milestone reference.
+P	MeetingRecord
+P	Meeting milestone reference.
+ROW	ProposalRecord	Proposal milestone reference.
+P	ProposalRecord
+P	Proposal milestone reference.
+ROW	NegotiationRecord	Negotiation milestone reference.
+P	NegotiationRecord
+P	Negotiation milestone reference.
+ROW	OpportunityOutcome	Won/Lost/other terminal outcome.
+P	OpportunityOutcome
+P	Won/Lost/other terminal outcome.
+ROW	RevenueAttribution	ERP/finance ref connecting outcome to revenue/cost/ROI.
+P	RevenueAttribution
+P	ERP/finance ref connecting outcome to revenue/cost/ROI.
+ROW	AuditEvent	Immutable effectful/action trace.
+P	AuditEvent
+P	Immutable effectful/action trace.
+ROW	ExperienceCandidate	Outcome-derived candidate lesson pending admission.
+P	ExperienceCandidate
+P	Outcome-derived candidate lesson pending admission.
+P	5. Entity × Operation Matrix
+ROW	Entity	Operations	Critical Guard
+P	Entity
+P	Operations
+P	Critical Guard
+ROW	DiscoveryProfile	CREATE / UPDATE / ACTIVATE / PAUSE / RESUME / RETIRE	No second discovery engine; allowed sources required.
+P	DiscoveryProfile
+P	CREATE / UPDATE / ACTIVATE / PAUSE / RESUME / RETIRE
+P	No second discovery engine; allowed sources required.
+ROW	DiscoveryJob	START / PAUSE / RESUME / STOP / REPLAY	State guard + audit; replay cannot duplicate admitted entities.
+P	DiscoveryJob
+P	START / PAUSE / RESUME / STOP / REPLAY
+P	State guard + audit; replay cannot duplicate admitted entities.
+ROW	MarketSignal	INGEST / NORMALIZE / DEDUPE / QUALIFY	Source/evidence/freshness required.
+P	MarketSignal
+P	INGEST / NORMALIZE / DEDUPE / QUALIFY
+P	Source/evidence/freshness required.
+ROW	CompanyCandidate	RESOLVE_IDENTITY / LINK_EXISTING / CREATE_MASTER	Name-only identity is insufficient.
+P	CompanyCandidate
+P	RESOLVE_IDENTITY / LINK_EXISTING / CREATE_MASTER
+P	Name-only identity is insufficient.
+ROW	CompanyMaster	SEARCH / READ / UPDATE_ALLOWED_FIELDS / MERGE_PREVIEW / MERGE	Merge is non-destructive and evidence-backed.
+P	CompanyMaster
+P	SEARCH / READ / UPDATE_ALLOWED_FIELDS / MERGE_PREVIEW / MERGE
+P	Merge is non-destructive and evidence-backed.
+ROW	ContactPoint	ADD / VERIFY / DISABLE / VIEW_EVIDENCE	Guessed email forbidden.
+P	ContactPoint
+P	ADD / VERIFY / DISABLE / VIEW_EVIDENCE
+P	Guessed email forbidden.
+ROW	EnterpriseDevelopmentProfile	BUILD / REFRESH / SCORE / REVIEW	Facts vs inference labels mandatory.
+P	EnterpriseDevelopmentProfile
+P	BUILD / REFRESH / SCORE / REVIEW
+P	Facts vs inference labels mandatory.
+ROW	MessageCandidate	CREATE / REVIEW / RETURN / REJECT / APPROVE_VERSION	Approval creates immutable MessageVersion.
+P	MessageCandidate
+P	CREATE / REVIEW / RETURN / REJECT / APPROVE_VERSION
+P	Approval creates immutable MessageVersion.
+ROW	Campaign	CREATE / PREVIEW / APPROVE / DISPATCH / PAUSE / STOP	Approval != send; recipient preview rechecked.
+P	Campaign
+P	CREATE / PREVIEW / APPROVE / DISPATCH / PAUSE / STOP
+P	Approval != send; recipient preview rechecked.
+ROW	SuppressionEntry	ADD / ENFORCE / RELEASE_IF_AUTHORIZED	Global cross-campaign hard gate.
+P	SuppressionEntry
+P	ADD / ENFORCE / RELEASE_IF_AUTHORIZED
+P	Global cross-campaign hard gate.
+ROW	IndividualDelivery	CREATE / QUEUE / SEND / CANCEL / RETRY	Exactly one To; CC/BCC empty.
+P	IndividualDelivery
+P	CREATE / QUEUE / SEND / CANCEL / RETRY
+P	Exactly one To; CC/BCC empty.
+ROW	ReplyEvent	INGEST / CLASSIFY / STOP_SEQUENCE / ESCALATE	Any reply can stop automated sequence per policy.
+P	ReplyEvent
+P	INGEST / CLASSIFY / STOP_SEQUENCE / ESCALATE
+P	Any reply can stop automated sequence per policy.
+ROW	FollowUpPlan	CREATE / ADVANCE / STOP / EXPIRE	Finite; interval/count not hardcoded in Mother.
+P	FollowUpPlan
+P	CREATE / ADVANCE / STOP / EXPIRE
+P	Finite; interval/count not hardcoded in Mother.
+ROW	Opportunity	CREATE / ASSIGN_OWNER / ADVANCE / CLOSE	Human ownership required for governed sales milestones.
+P	Opportunity
+P	CREATE / ASSIGN_OWNER / ADVANCE / CLOSE
+P	Human ownership required for governed sales milestones.
+ROW	RevenueAttribution	LINK_COST / LINK_REVENUE / COMPUTE_REF	ERP remains financial truth owner.
+P	RevenueAttribution
+P	LINK_COST / LINK_REVENUE / COMPUTE_REF
+P	ERP remains financial truth owner.
+ROW	ExperienceCandidate	CREATE / REVIEW / ADMIT / REJECT	No self-adoption.
+P	ExperienceCandidate
+P	CREATE / REVIEW / ADMIT / REJECT
+P	No self-adoption.
+P	6. Normative Invariant Registry
+ROW	UID / Rule
+P	UID / Rule
+ROW	AI06-INV-001 ONE Company Master authority; duplicate enterprise stores are forbidden.
+P	AI06-INV-001 ONE Company Master authority; duplicate enterprise stores are forbidden.
+ROW	AI06-INV-002 Discovery MUST reuse the registered shared acquisition/source mechanism; no DEV-specific crawler fork.
+P	AI06-INV-002 Discovery MUST reuse the registered shared acquisition/source mechanism; no DEV-specific crawler fork.
+ROW	AI06-INV-003 Every factual company claim used for qualification or personalization MUST bind Evidence + Source + Verified/Freshness time.
+P	AI06-INV-003 Every factual company claim used for qualification or personalization MUST bind Evidence + Source + Verified/Freshness time.
+ROW	AI06-INV-004 AI MUST_NOT invent recent activity, partnership history, revenue, need, customer, contact identity or email address.
+P	AI06-INV-004 AI MUST_NOT invent recent activity, partnership history, revenue, need, customer, contact identity or email address.
+ROW	AI06-INV-005 Potential Need is inference unless supported by explicit evidence; inference MUST be labeled and MUST_NOT be presented as fact.
+P	AI06-INV-005 Potential Need is inference unless supported by explicit evidence; inference MUST be labeled and MUST_NOT be presented as fact.
+ROW	AI06-INV-006 Company identity MUST NOT be resolved by display name alone.
+P	AI06-INV-006 Company identity MUST NOT be resolved by display name alone.
+ROW	AI06-INV-007 Registration/jurisdiction identifiers are preferred identity anchors when available.
+P	AI06-INV-007 Registration/jurisdiction identifiers are preferred identity anchors when available.
+ROW	AI06-INV-008 Domain, official website, aliases and evidence may support identity resolution but MUST preserve confidence/reason.
+P	AI06-INV-008 Domain, official website, aliases and evidence may support identity resolution but MUST preserve confidence/reason.
+ROW	AI06-INV-009 Merge MUST require preview before effectful confirm.
+P	AI06-INV-009 Merge MUST require preview before effectful confirm.
+ROW	AI06-INV-010 Merge MUST preserve aliases, source evidence, contacts, history and lineage; destructive duplicate delete is forbidden.
+P	AI06-INV-010 Merge MUST preserve aliases, source evidence, contacts, history and lineage; destructive duplicate delete is forbidden.
+ROW	AI06-INV-011 Existing Company Master MUST be enriched rather than recreated when identity matches.
+P	AI06-INV-011 Existing Company Master MUST be enriched rather than recreated when identity matches.
+ROW	AI06-INV-012 ContactPoint MUST have source evidence and verification state before eligibility.
+P	AI06-INV-012 ContactPoint MUST have source evidence and verification state before eligibility.
+ROW	AI06-INV-013 Guessed email patterns are forbidden.
+P	AI06-INV-013 Guessed email patterns are forbidden.
+ROW	AI06-INV-014 Publicly listed business email, official API/source or legally authorized service is preferred contact evidence.
+P	AI06-INV-014 Publicly listed business email, official API/source or legally authorized service is preferred contact evidence.
+ROW	AI06-INV-015 Contact disable/invalid status MUST prevent new outbound work until reverified.
+P	AI06-INV-015 Contact disable/invalid status MUST prevent new outbound work until reverified.
+ROW	AI06-INV-016 Contact Evidence must remain inspectable after delivery.
+P	AI06-INV-016 Contact Evidence must remain inspectable after delivery.
+ROW	AI06-INV-017 Qualification MUST expose fit, intent and timing reasons; opaque score-only decisions are insufficient.
+P	AI06-INV-017 Qualification MUST expose fit, intent and timing reasons; opaque score-only decisions are insufficient.
+ROW	AI06-INV-018 Fit Score does not replace Evidence or eligibility.
+P	AI06-INV-018 Fit Score does not replace Evidence or eligibility.
+ROW	AI06-INV-019 Ignored/blocked signals MUST retain disposition reason when governance requires auditability.
+P	AI06-INV-019 Ignored/blocked signals MUST retain disposition reason when governance requires auditability.
+ROW	AI06-INV-020 Personalization context MUST bind exact company/contact/campaign objective/product-or-IP/country-language inputs.
+P	AI06-INV-020 Personalization context MUST bind exact company/contact/campaign objective/product-or-IP/country-language inputs.
+ROW	AI06-INV-021 Message Candidate is not approved content.
+P	AI06-INV-021 Message Candidate is not approved content.
+ROW	AI06-INV-022 Approved MessageVersion MUST be immutable; edits create a new version.
+P	AI06-INV-022 Approved MessageVersion MUST be immutable; edits create a new version.
+ROW	AI06-INV-023 Sent content MUST bind exact Approved MessageVersion; never resolve "latest" at send time.
+P	AI06-INV-023 Sent content MUST bind exact Approved MessageVersion; never resolve "latest" at send time.
+ROW	AI06-INV-024 Human edit history and approved/sent version lineage MUST be preserved.
+P	AI06-INV-024 Human edit history and approved/sent version lineage MUST be preserved.
+ROW	AI06-INV-025 Compliance status is recipient/campaign-contextual and MUST be recomputed when material inputs change.
+P	AI06-INV-025 Compliance status is recipient/campaign-contextual and MUST be recomputed when material inputs change.
+ROW	AI06-INV-026 Compliance decision vocabulary is PASS / REVIEW / BLOCK unless Current Authority says otherwise.
+P	AI06-INV-026 Compliance decision vocabulary is PASS / REVIEW / BLOCK unless Current Authority says otherwise.
+ROW	AI06-INV-027 REVIEW cannot silently become PASS.
+P	AI06-INV-027 REVIEW cannot silently become PASS.
+ROW	AI06-INV-028 BLOCK cannot be bypassed by UI, batch approval, high fit score or retry.
+P	AI06-INV-028 BLOCK cannot be bypassed by UI, batch approval, high fit score or retry.
+ROW	AI06-INV-029 Global Suppression applies across Campaigns.
+P	AI06-INV-029 Global Suppression applies across Campaigns.
+ROW	AI06-INV-030 Unsubscribe is an immediate hard stop for future prohibited outreach.
+P	AI06-INV-030 Unsubscribe is an immediate hard stop for future prohibited outreach.
+ROW	AI06-INV-031 Suppression MUST be checked during selection, before Campaign approval and immediately before dispatch.
+P	AI06-INV-031 Suppression MUST be checked during selection, before Campaign approval and immediately before dispatch.
+ROW	AI06-INV-032 Recipient selection MUST resolve to exact authorized recipient_refs; filter/query text is not a recipient list.
+P	AI06-INV-032 Recipient selection MUST resolve to exact authorized recipient_refs; filter/query text is not a recipient list.
+ROW	AI06-INV-033 Duplicate recipient_ref inside one Campaign MUST collapse to one logical recipient.
+P	AI06-INV-033 Duplicate recipient_ref inside one Campaign MUST collapse to one logical recipient.
+ROW	AI06-INV-034 Campaign is the formal batch container; no Audience DB or BulkSend DB may be introduced.
+P	AI06-INV-034 Campaign is the formal batch container; no Audience DB or BulkSend DB may be introduced.
+ROW	AI06-INV-035 Campaign approval is distinct from dispatch.
+P	AI06-INV-035 Campaign approval is distinct from dispatch.
+ROW	AI06-INV-036 Campaign Preview MUST show exact eligible/blocked/suppressed/no-valid-contact/duplicate counts.
+P	AI06-INV-036 Campaign Preview MUST show exact eligible/blocked/suppressed/no-valid-contact/duplicate counts.
+ROW	AI06-INV-037 Recipient Preview MUST be refreshed when message/sender/schedule/policy/suppression/version changes.
+P	AI06-INV-037 Recipient Preview MUST be refreshed when message/sender/schedule/policy/suppression/version changes.
+ROW	AI06-INV-038 Dispatch MUST fail closed if recipient denominator cannot be resolved exactly.
+P	AI06-INV-038 Dispatch MUST fail closed if recipient denominator cannot be resolved exactly.
+ROW	AI06-INV-039 One Campaign MAY contain many recipient_refs.
+P	AI06-INV-039 One Campaign MAY contain many recipient_refs.
+ROW	AI06-INV-040 Every actual outbound email MUST have exactly one To recipient.
+P	AI06-INV-040 Every actual outbound email MUST have exactly one To recipient.
+ROW	AI06-INV-041 Outbound outreach email CC and BCC MUST be empty.
+P	AI06-INV-041 Outbound outreach email CC and BCC MUST be empty.
+ROW	AI06-INV-042 Campaign-level bulk dispatch MUST fan out into IndividualDelivery units.
+P	AI06-INV-042 Campaign-level bulk dispatch MUST fan out into IndividualDelivery units.
+ROW	AI06-INV-043 One Campaign/recipient pair permits at most ONE_ACTIVE_DELIVERY unless explicit governed resend exists.
+P	AI06-INV-043 One Campaign/recipient pair permits at most ONE_ACTIVE_DELIVERY unless explicit governed resend exists.
+ROW	AI06-INV-044 Partial campaign success MUST never be reported as COMPLETE.
+P	AI06-INV-044 Partial campaign success MUST never be reported as COMPLETE.
+ROW	AI06-INV-045 Aggregate campaign result MUST preserve per-recipient succeeded/blocked/failed detail.
+P	AI06-INV-045 Aggregate campaign result MUST preserve per-recipient succeeded/blocked/failed detail.
+ROW	AI06-INV-046 Dispatch MUST enforce sender authorization.
+P	AI06-INV-046 Dispatch MUST enforce sender authorization.
+ROW	AI06-INV-047 Dispatch MUST enforce schedule/timezone/send-window policy.
+P	AI06-INV-047 Dispatch MUST enforce schedule/timezone/send-window policy.
+ROW	AI06-INV-048 Dispatch MUST enforce current rate/cap/cooldown policy.
+P	AI06-INV-048 Dispatch MUST enforce current rate/cap/cooldown policy.
+ROW	AI06-INV-049 Dispatch MUST enforce suppression and compliance again at effect time.
+P	AI06-INV-049 Dispatch MUST enforce suppression and compliance again at effect time.
+ROW	AI06-INV-050 Dispatch MUST use idempotency to prevent duplicate side effects.
+P	AI06-INV-050 Dispatch MUST use idempotency to prevent duplicate side effects.
+ROW	AI06-INV-051 expected_version or equivalent concurrency control is required for mutable effectful state.
+P	AI06-INV-051 expected_version or equivalent concurrency control is required for mutable effectful state.
+ROW	AI06-INV-052 Kill Switch MUST stop legal target scope and MUST be audited with reason/actor/time.
+P	AI06-INV-052 Kill Switch MUST stop legal target scope and MUST be audited with reason/actor/time.
+ROW	AI06-INV-053 Kill Switch MUST_NOT retroactively alter already completed deliveries.
+P	AI06-INV-053 Kill Switch MUST_NOT retroactively alter already completed deliveries.
+ROW	AI06-INV-054 Retry is only permitted for retry-eligible failure classes.
+P	AI06-INV-054 Retry is only permitted for retry-eligible failure classes.
+ROW	AI06-INV-055 Retry MUST create or bind a new DeliveryAttempt, not erase previous attempt evidence.
+P	AI06-INV-055 Retry MUST create or bind a new DeliveryAttempt, not erase previous attempt evidence.
+ROW	AI06-INV-056 Same idempotency key with materially different payload MUST be rejected.
+P	AI06-INV-056 Same idempotency key with materially different payload MUST be rejected.
+ROW	AI06-INV-057 Provider success without verified local persistence/audit is not terminal success.
+P	AI06-INV-057 Provider success without verified local persistence/audit is not terminal success.
+ROW	AI06-INV-058 Provider failure MUST_NOT mutate Campaign approval or message version.
+P	AI06-INV-058 Provider failure MUST_NOT mutate Campaign approval or message version.
+ROW	AI06-INV-059 Bounce MUST update contact/delivery health according to governed classification.
+P	AI06-INV-059 Bounce MUST update contact/delivery health according to governed classification.
+ROW	AI06-INV-060 Complaint MUST trigger policy/sender/contact protection workflow as applicable.
+P	AI06-INV-060 Complaint MUST trigger policy/sender/contact protection workflow as applicable.
+ROW	AI06-INV-061 Reply MUST bind exact prior delivery/contact/company/campaign.
+P	AI06-INV-061 Reply MUST bind exact prior delivery/contact/company/campaign.
+ROW	AI06-INV-062 Received reply MUST stop or reevaluate remaining automated follow-up according to policy.
+P	AI06-INV-062 Received reply MUST stop or reevaluate remaining automated follow-up according to policy.
+ROW	AI06-INV-063 Positive reply MUST be eligible for Human Owner assignment.
+P	AI06-INV-063 Positive reply MUST be eligible for Human Owner assignment.
+ROW	AI06-INV-064 Follow-up count and interval are configuration/policy values; Mother MUST_NOT hardcode arbitrary numbers.
+P	AI06-INV-064 Follow-up count and interval are configuration/policy values; Mother MUST_NOT hardcode arbitrary numbers.
+ROW	AI06-INV-065 Follow-up is finite; infinite automated sequences are forbidden.
+P	AI06-INV-065 Follow-up is finite; infinite automated sequences are forbidden.
+ROW	AI06-INV-066 Unsubscribe, suppression, complaint block and invalid contact supersede pending follow-up.
+P	AI06-INV-066 Unsubscribe, suppression, complaint block and invalid contact supersede pending follow-up.
+ROW	AI06-INV-067 Human Owner assignment does not rewrite source evidence or Company identity.
+P	AI06-INV-067 Human Owner assignment does not rewrite source evidence or Company identity.
+ROW	AI06-INV-068 Meeting/Proposal/Negotiation/Won/Lost are business milestones, not email delivery states.
+P	AI06-INV-068 Meeting/Proposal/Negotiation/Won/Lost are business milestones, not email delivery states.
+ROW	AI06-INV-069 Opportunity outcome MUST remain traceable to originating Company, Contact, Campaign and evidence lineage.
+P	AI06-INV-069 Opportunity outcome MUST remain traceable to originating Company, Contact, Campaign and evidence lineage.
+ROW	AI06-INV-070 Revenue Attribution MUST reference ERP/finance truth; AI06 MUST_NOT invent revenue amounts.
+P	AI06-INV-070 Revenue Attribution MUST reference ERP/finance truth; AI06 MUST_NOT invent revenue amounts.
+ROW	AI06-INV-071 Campaign Cost and Deal Revenue must remain separate facts before ROI derivation.
+P	AI06-INV-071 Campaign Cost and Deal Revenue must remain separate facts before ROI derivation.
+ROW	AI06-INV-072 Experience/Learning MUST use outcome evidence and MUST NOT self-adopt without admission rules.
+P	AI06-INV-072 Experience/Learning MUST use outcome evidence and MUST NOT self-adopt without admission rules.
+ROW	AI06-INV-073 External facts with stale evidence MUST be refreshed or marked stale before use in new personalization.
+P	AI06-INV-073 External facts with stale evidence MUST be refreshed or marked stale before use in new personalization.
+ROW	AI06-INV-074 Deleted/retired source does not erase historical evidence needed for sent-message audit.
+P	AI06-INV-074 Deleted/retired source does not erase historical evidence needed for sent-message audit.
+ROW	AI06-INV-075 Evidence retention and contact privacy/retention are distinct policies and MUST be separately governed.
+P	AI06-INV-075 Evidence retention and contact privacy/retention are distinct policies and MUST be separately governed.
+ROW	AI06-INV-076 PII/secret data MUST follow classification and least-access rules.
+P	AI06-INV-076 PII/secret data MUST follow classification and least-access rules.
+ROW	AI06-INV-077 Raw provider credentials MUST never enter MessageCandidate, logs, audit payloads or exported lead data.
+P	AI06-INV-077 Raw provider credentials MUST never enter MessageCandidate, logs, audit payloads or exported lead data.
+ROW	AI06-INV-078 Export MUST respect permission/classification and must not bypass suppression/privacy rules.
+P	AI06-INV-078 Export MUST respect permission/classification and must not bypass suppression/privacy rules.
+ROW	AI06-INV-079 UI-hidden action is not a backend security control.
+P	AI06-INV-079 UI-hidden action is not a backend security control.
+ROW	AI06-INV-080 Every effectful operation MUST have identity, permission, scope, condition/state guard, audit and correlation.
+P	AI06-INV-080 Every effectful operation MUST have identity, permission, scope, condition/state guard, audit and correlation.
+ROW	AI06-INV-081 Every effectful side effect MUST be idempotent or explicitly non-repeatable with safe recovery.
+P	AI06-INV-081 Every effectful side effect MUST be idempotent or explicitly non-repeatable with safe recovery.
+ROW	AI06-INV-082 Audit MUST distinguish Candidate, Approved Version and Sent Version.
+P	AI06-INV-082 Audit MUST distinguish Candidate, Approved Version and Sent Version.
+ROW	AI06-INV-083 Audit MUST retain AI provider/model/template version where content generation used AI, subject to exact owner binding.
+P	AI06-INV-083 Audit MUST retain AI provider/model/template version where content generation used AI, subject to exact owner binding.
+ROW	AI06-INV-084 Audit MUST retain Human Edits separately from AI draft.
+P	AI06-INV-084 Audit MUST retain Human Edits separately from AI draft.
+ROW	AI06-INV-085 Production connector absence MUST be represented as NOT_PROVEN/BLOCKED, never simulated success.
+P	AI06-INV-085 Production connector absence MUST be represented as NOT_PROVEN/BLOCKED, never simulated success.
+ROW	AI06-INV-086 SPF/DKIM/DMARC or equivalent sender-domain readiness is a precondition when Current delivery policy requires it.
+P	AI06-INV-086 SPF/DKIM/DMARC or equivalent sender-domain readiness is a precondition when Current delivery policy requires it.
+ROW	AI06-INV-087 New sender warm-up/rate limits MUST be driven by governed sender policy, not AI guesswork.
+P	AI06-INV-087 New sender warm-up/rate limits MUST be driven by governed sender policy, not AI guesswork.
+ROW	AI06-INV-088 Social outreach/publishing MUST hand off to AI07; AI06 MUST_NOT directly create a second social publisher.
+P	AI06-INV-088 Social outreach/publishing MUST hand off to AI07; AI06 MUST_NOT directly create a second social publisher.
+ROW	AI06-INV-089 Direct Message to external platforms MUST_NOT be assumed available without official API/capability/policy authority.
+P	AI06-INV-089 Direct Message to external platforms MUST_NOT be assumed available without official API/capability/policy authority.
+ROW	AI06-INV-090 Mention/tag of a specific target company MUST require human/governed approval when AI07 policy says so.
+P	AI06-INV-090 Mention/tag of a specific target company MUST require human/governed approval when AI07 policy says so.
+ROW	AI06-INV-091 Shared external acquisition MUST not be duplicated inside DEV runtime.
+P	AI06-INV-091 Shared external acquisition MUST not be duplicated inside DEV runtime.
+ROW	AI06-INV-092 A historical UI/page layout is not current backend authority.
+P	AI06-INV-092 A historical UI/page layout is not current backend authority.
+ROW	AI06-INV-093 FILE_SPEC_COMPLETE does not imply Application/Runtime/Email E2E/Deploy complete.
+P	AI06-INV-093 FILE_SPEC_COMPLETE does not imply Application/Runtime/Email E2E/Deploy complete.
+ROW	AI06-INV-094 Current Authority exact bindings MUST supersede historical names/paths when they differ.
+P	AI06-INV-094 Current Authority exact bindings MUST supersede historical names/paths when they differ.
+ROW	AI06-INV-095 Missing exact binding MUST be recorded REQUIRE_EXACT_BINDING, not invented.
+P	AI06-INV-095 Missing exact binding MUST be recorded REQUIRE_EXACT_BINDING, not invented.
+ROW	AI06-INV-096 Completion requires all applicable acceptance cases and negative regression cases, not only happy path.
+P	AI06-INV-096 Completion requires all applicable acceptance cases and negative regression cases, not only happy path.
+P	7. Discovery Topic / Profile Contract
+ROW	Field Group	Required Meaning	Rule
+P	Field Group
+P	Required Meaning
+P	Rule
+ROW	Offer Context	Product/Service or ACPOS IP/Product being developed	Must be explicit before intent classification.
+P	Offer Context
+P	Product/Service or ACPOS IP/Product being developed
+P	Must be explicit before intent classification.
+ROW	Target Scope	Industry, company type/size, region/market, language	May be partial only if profile explicitly allows broad discovery.
+P	Target Scope
+P	Industry, company type/size, region/market, language
+P	May be partial only if profile explicitly allows broad discovery.
+ROW	Keyword Logic	Include/Exclude keywords, trigger events	Exclusion MUST be applied before qualification credit.
+P	Keyword Logic
+P	Include/Exclude keywords, trigger events
+P	Exclusion MUST be applied before qualification credit.
+ROW	Sources	Allowed Source refs + source health	Only ACTIVE/rights-valid sources may be used when source registry enforces these states.
+P	Sources
+P	Allowed Source refs + source health
+P	Only ACTIVE/rights-valid sources may be used when source registry enforces these states.
+ROW	Intent	Intent threshold + signal classes	Threshold cannot be silently changed during a run.
+P	Intent
+P	Intent threshold + signal classes
+P	Threshold cannot be silently changed during a run.
+ROW	Mode	Single/continuous, interval, priority	Lifecycle must use shared start/pause/resume/stop semantics.
+P	Mode
+P	Single/continuous, interval, priority
+P	Lifecycle must use shared start/pause/resume/stop semantics.
+ROW	Limits	Result/rate limits	Use Current policy; Mother does not invent numeric limits.
+P	Limits
+P	Result/rate limits
+P	Use Current policy; Mother does not invent numeric limits.
+P	8. Market Signal / Opportunity Qualification
+P	MarketSignal is evidence-bearing, not a free-form AI impression. Qualification must separately preserve observed facts, inferred intent, scoring rationale, freshness and disposition.
+ROW	Signal Class	Example Meaning	Qualification Rule
+P	Signal Class
+P	Example Meaning
+P	Qualification Rule
+ROW	DIRECT_NEED	Explicit request for product/service/vendor/quote	Strong intent if source and freshness valid.
+P	DIRECT_NEED
+P	Explicit request for product/service/vendor/quote
+P	Strong intent if source and freshness valid.
+ROW	COMPARISON	Comparing vendors/solutions	High/nurture based on fit and timing.
+P	COMPARISON
+P	Comparing vendors/solutions
+P	High/nurture based on fit and timing.
+ROW	COMPETITOR_PAIN	Complaint/problem with existing solution	Inference about need MUST remain labeled.
+P	COMPETITOR_PAIN
+P	Complaint/problem with existing solution
+P	Inference about need MUST remain labeled.
+ROW	EXPANSION_EVENT	Hiring, expansion, launch, procurement	Event is fact if sourced; need is separate inference.
+P	EXPANSION_EVENT
+P	Hiring, expansion, launch, procurement
+P	Event is fact if sourced; need is separate inference.
+ROW	PARTNERSHIP_SIGNAL	Public partnership/licensing/distribution interest	Must not fabricate relationship history.
+P	PARTNERSHIP_SIGNAL
+P	Public partnership/licensing/distribution interest
+P	Must not fabricate relationship history.
+ROW	LOW_CONFIDENCE	Weak/general mention	Observe/Nurture; MUST NOT promote only by score manipulation.
+P	LOW_CONFIDENCE
+P	Weak/general mention
+P	Observe/Nurture; MUST NOT promote only by score manipulation.
+P	9. Company Identity Resolution / Dedup / Merge
+P	圖 2｜Company Identity Resolution & Evidence。
+ROW	Decision	MUST	MUST_NOT
+P	Decision
+P	MUST
+P	MUST_NOT
+ROW	Resolve existing	Compare registration/jurisdiction, official domain/site, aliases, source evidence.	Use name-only exact string as final identity proof.
+P	Resolve existing
+P	Compare registration/jurisdiction, official domain/site, aliases, source evidence.
+P	Use name-only exact string as final identity proof.
+ROW	Create master	Only when no canonical company match exists under Current identity rules.	Create a second master because a new source uses a different display name.
+P	Create master
+P	Only when no canonical company match exists under Current identity rules.
+P	Create a second master because a new source uses a different display name.
+ROW	Merge preview	Show survivor, merged refs, contacts, evidence, aliases, delivery/suppression history and conflicts.	Hide information loss or silently merge.
+P	Merge preview
+P	Show survivor, merged refs, contacts, evidence, aliases, delivery/suppression history and conflicts.
+P	Hide information loss or silently merge.
+ROW	Merge confirm	Preserve lineage and redirect references to canonical identity.	Delete historical evidence or overwrite source provenance.
+P	Merge confirm
+P	Preserve lineage and redirect references to canonical identity.
+P	Delete historical evidence or overwrite source provenance.
+P	10. Contact Discovery / Evidence / Verification
+ROW	Field	Requirement
+P	Field
+P	Requirement
+ROW	contact_type	Business email / role contact / other governed type.
+P	contact_type
+P	Business email / role contact / other governed type.
+ROW	value	Exact contact endpoint; normalized.
+P	value
+P	Exact contact endpoint; normalized.
+ROW	source_ref	Official/public/authorized source reference.
+P	source_ref
+P	Official/public/authorized source reference.
+ROW	source_url_or_locator	Exact source locator when applicable.
+P	source_url_or_locator
+P	Exact source locator when applicable.
+ROW	publicly_listed	Whether source openly published this business contact.
+P	publicly_listed
+P	Whether source openly published this business contact.
+ROW	discovered_at	Acquisition time.
+P	discovered_at
+P	Acquisition time.
+ROW	verified_at	Verification time; null until verified.
+P	verified_at
+P	Verification time; null until verified.
+ROW	verification_status	UNVERIFIED / VERIFIED / INVALID / DISABLED or Current authority vocabulary.
+P	verification_status
+P	UNVERIFIED / VERIFIED / INVALID / DISABLED or Current authority vocabulary.
+ROW	jurisdiction	Where required for compliance.
+P	jurisdiction
+P	Where required for compliance.
+ROW	do_not_contact	Explicit block signal.
+P	do_not_contact
+P	Explicit block signal.
+ROW	evidence_ref	Exact supporting evidence object.
+P	evidence_ref
+P	Exact supporting evidence object.
+ROW	Contact Rule	Normative Behavior
+P	Contact Rule
+P	Normative Behavior
+ROW	Guessing	firstname.lastname@company.com style guessing is MUST_NOT.
+P	Guessing
+P	firstname.lastname@company.com style guessing is MUST_NOT.
+ROW	Invalid contact	Disable from new selection; preserve history.
+P	Invalid contact
+P	Disable from new selection; preserve history.
+ROW	Verification	Verification status must be explicit and auditable.
+P	Verification
+P	Verification status must be explicit and auditable.
+ROW	Evidence	Every outbound-eligible contact must resolve to inspectable evidence.
+P	Evidence
+P	Every outbound-eligible contact must resolve to inspectable evidence.
+ROW	One-to-many	Company can have multiple contacts; each contact preserves distinct evidence/status.
+P	One-to-many
+P	Company can have multiple contacts; each contact preserves distinct evidence/status.
+P	11. Enterprise Development Profile / Personalization
+ROW	Profile Field	Rule
+P	Profile Field
+P	Rule
+ROW	Industry	Required when applicable; facts require evidence; inferred values must be labeled and cannot be silently promoted to fact.
+P	Industry
+P	Required when applicable; facts require evidence; inferred values must be labeled and cannot be silently promoted to fact.
+ROW	Country / Region	Required when applicable; facts require evidence; inferred values must be labeled and cannot be silently promoted to fact.
+P	Country / Region
+P	Required when applicable; facts require evidence; inferred values must be labeled and cannot be silently promoted to fact.
+ROW	Size	Required when applicable; facts require evidence; inferred values must be labeled and cannot be silently promoted to fact.
+P	Size
+P	Required when applicable; facts require evidence; inferred values must be labeled and cannot be silently promoted to fact.
+ROW	Brand Positioning	Required when applicable; facts require evidence; inferred values must be labeled and cannot be silently promoted to fact.
+P	Brand Positioning
+P	Required when applicable; facts require evidence; inferred values must be labeled and cannot be silently promoted to fact.
+ROW	Products / Services	Required when applicable; facts require evidence; inferred values must be labeled and cannot be silently promoted to fact.
+P	Products / Services
+P	Required when applicable; facts require evidence; inferred values must be labeled and cannot be silently promoted to fact.
+ROW	Target Customers	Required when applicable; facts require evidence; inferred values must be labeled and cannot be silently promoted to fact.
+P	Target Customers
+P	Required when applicable; facts require evidence; inferred values must be labeled and cannot be silently promoted to fact.
+ROW	Public Recent Activity + evidence	Required when applicable; facts require evidence; inferred values must be labeled and cannot be silently promoted to fact.
+P	Public Recent Activity + evidence
+P	Required when applicable; facts require evidence; inferred values must be labeled and cannot be silently promoted to fact.
+ROW	Potential Needs + inference label	Required when applicable; facts require evidence; inferred values must be labeled and cannot be silently promoted to fact.
+P	Potential Needs + inference label
+P	Required when applicable; facts require evidence; inferred values must be labeled and cannot be silently promoted to fact.
+ROW	Suitable ACPOS IP / Product	Required when applicable; facts require evidence; inferred values must be labeled and cannot be silently promoted to fact.
+P	Suitable ACPOS IP / Product
+P	Required when applicable; facts require evidence; inferred values must be labeled and cannot be silently promoted to fact.
+ROW	Decision Role	Required when applicable; facts require evidence; inferred values must be labeled and cannot be silently promoted to fact.
+P	Decision Role
+P	Required when applicable; facts require evidence; inferred values must be labeled and cannot be silently promoted to fact.
+ROW	Fit Score 0–100	Required when applicable; facts require evidence; inferred values must be labeled and cannot be silently promoted to fact.
+P	Fit Score 0–100
+P	Required when applicable; facts require evidence; inferred values must be labeled and cannot be silently promoted to fact.
+ROW	Fit Reason	Required when applicable; facts require evidence; inferred values must be labeled and cannot be silently promoted to fact.
+P	Fit Reason
+P	Required when applicable; facts require evidence; inferred values must be labeled and cannot be silently promoted to fact.
+ROW	Intent	Required when applicable; facts require evidence; inferred values must be labeled and cannot be silently promoted to fact.
+P	Intent
+P	Required when applicable; facts require evidence; inferred values must be labeled and cannot be silently promoted to fact.
+ROW	Timing	Required when applicable; facts require evidence; inferred values must be labeled and cannot be silently promoted to fact.
+P	Timing
+P	Required when applicable; facts require evidence; inferred values must be labeled and cannot be silently promoted to fact.
+ROW	Evidence Set	Required when applicable; facts require evidence; inferred values must be labeled and cannot be silently promoted to fact.
+P	Evidence Set
+P	Required when applicable; facts require evidence; inferred values must be labeled and cannot be silently promoted to fact.
+ROW	Last Verified / Freshness	Required when applicable; facts require evidence; inferred values must be labeled and cannot be silently promoted to fact.
+P	Last Verified / Freshness
+P	Required when applicable; facts require evidence; inferred values must be labeled and cannot be silently promoted to fact.
+P	Personalization input contract: Company Fit + Contact Role + Campaign Objective + Product/IP + Country/Language + exact Evidence Set. Industry/role-specific tone may vary, but factual claims may not exceed the evidence set.
+P	12. Message Candidate / Review / Version Contract
+ROW	Stage	State	Rule
+P	Stage
+P	State
+P	Rule
+ROW	Generate	CANDIDATE	AI draft only; binds exact PersonalizationContext and generation metadata.
+P	Generate
+P	CANDIDATE
+P	AI draft only; binds exact PersonalizationContext and generation metadata.
+ROW	Human/Governed Review	REVIEW_REQUIRED	Reviewer may edit, return, reject or approve; edits remain attributable.
+P	Human/Governed Review
+P	REVIEW_REQUIRED
+P	Reviewer may edit, return, reject or approve; edits remain attributable.
+ROW	Approve	APPROVED_VERSION	Creates immutable MessageVersion; approval != dispatch.
+P	Approve
+P	APPROVED_VERSION
+P	Creates immutable MessageVersion; approval != dispatch.
+ROW	Change	NEW_CANDIDATE	Material edit after approval creates a new candidate/version and invalidates dependent approval as required.
+P	Change
+P	NEW_CANDIDATE
+P	Material edit after approval creates a new candidate/version and invalidates dependent approval as required.
+ROW	Send	SENT_VERSION	Delivery binds exact approved content actually sent.
+P	Send
+P	SENT_VERSION
+P	Delivery binds exact approved content actually sent.
+P	13. Compliance / Eligibility / Suppression
+ROW	Gate	Inputs	Result / Effect
+P	Gate
+P	Inputs
+P	Result / Effect
+ROW	Compliance	Recipient Country, Company Type, Contact Type, Source, Campaign, current policy	PASS / REVIEW / BLOCK
+P	Compliance
+P	Recipient Country, Company Type, Contact Type, Source, Campaign, current policy
+P	PASS / REVIEW / BLOCK
+ROW	Contact validity	verification status, evidence freshness, invalid/disabled state	Eligible / review / block
+P	Contact validity
+P	verification status, evidence freshness, invalid/disabled state
+P	Eligible / review / block
+ROW	Suppression	global suppression + campaign/local exclusions	Suppressed recipient cannot be dispatched
+P	Suppression
+P	global suppression + campaign/local exclusions
+P	Suppressed recipient cannot be dispatched
+ROW	Unsubscribe	reply/event bound to recipient	Immediate future prohibited outreach stop
+P	Unsubscribe
+P	reply/event bound to recipient
+P	Immediate future prohibited outreach stop
+ROW	Sender readiness	authorized sender, domain/auth/health where required	Dispatch allowed or blocked
+P	Sender readiness
+P	authorized sender, domain/auth/health where required
+P	Dispatch allowed or blocked
+ROW	Schedule/rate	timezone/window, daily/per-domain cap, cooldown	Queue or block until legal
+P	Schedule/rate
+P	timezone/window, daily/per-domain cap, cooldown
+P	Queue or block until legal
+P	14. Recipient Selection / Campaign Contract
+P	The user may select many companies/contacts and create one Campaign. Selection UI may span pagination, but before persistence it MUST resolve to exact authorized recipient_refs. Filter/search text is never itself the audience.
+ROW	Campaign Field	Required Rule
+P	Campaign Field
+P	Required Rule
+ROW	campaign_name	Required human/system label.
+P	campaign_name
+P	Required human/system label.
+ROW	message_version_id	Exact APPROVED MessageVersion; never "latest".
+P	message_version_id
+P	Exact APPROVED MessageVersion; never "latest".
+ROW	recipient_refs	Exact deduplicated authorized reference_list; at least one eligible recipient.
+P	recipient_refs
+P	Exact deduplicated authorized reference_list; at least one eligible recipient.
+ROW	sender_account_id	Exact authorized SenderAccount.
+P	sender_account_id
+P	Exact authorized SenderAccount.
+ROW	schedule_policy	Optional only if schema/policy permits; exact version/binding.
+P	schedule_policy
+P	Optional only if schema/policy permits; exact version/binding.
+ROW	approval_ref	Required before dispatch when approval policy requires it.
+P	approval_ref
+P	Required before dispatch when approval policy requires it.
+ROW	recipient_preview_ref	Must represent current denominator at approval/dispatch boundary.
+P	recipient_preview_ref
+P	Must represent current denominator at approval/dispatch boundary.
+P	圖 3｜Campaign-level Dispatch → Individual Delivery。
+P	15. Campaign Approval / Dispatch / Individual Delivery
+ROW	Level	Allowed Behavior	Hard Lock
+P	Level
+P	Allowed Behavior
+P	Hard Lock
+ROW	UI	One action may dispatch an approved Campaign.	Cannot send directly from unapproved MessageCandidate.
+P	UI
+P	One action may dispatch an approved Campaign.
+P	Cannot send directly from unapproved MessageCandidate.
+ROW	Campaign Runtime	dispatch(campaign_id, governed window/policy)	Approval + suppression + compliance + sender + schedule + rate + idempotency + audit.
+P	Campaign Runtime
+P	dispatch(campaign_id, governed window/policy)
+P	Approval + suppression + compliance + sender + schedule + rate + idempotency + audit.
+ROW	Fan-out	Create/queue one IndividualDelivery per eligible recipient_ref.	No multi-recipient email envelope.
+P	Fan-out
+P	Create/queue one IndividualDelivery per eligible recipient_ref.
+P	No multi-recipient email envelope.
+ROW	Email Envelope	Exactly 1 To.	CC/BCC empty.
+P	Email Envelope
+P	Exactly 1 To.
+P	CC/BCC empty.
+ROW	Result	Aggregate plus exact per-delivery states.	Partial failure never renders COMPLETE.
+P	Result
+P	Aggregate plus exact per-delivery states.
+P	Partial failure never renders COMPLETE.
+ROW	Kill Switch	Stop pending/in-flight legal target scope.	Reason + actor + audit required.
+P	Kill Switch
+P	Stop pending/in-flight legal target scope.
+P	Reason + actor + audit required.
+P	16. Delivery Lifecycle / Retry / Provider Boundary
+ROW	State	Meaning
+P	State
+P	Meaning
+ROW	DRAFT	Delivery prepared, no provider side effect.
+P	DRAFT
+P	Delivery prepared, no provider side effect.
+ROW	QUEUED	Admitted to send queue.
+P	QUEUED
+P	Admitted to send queue.
+ROW	RATE_HELD	Waiting on rate/cap policy.
+P	RATE_HELD
+P	Waiting on rate/cap policy.
+ROW	SCHEDULE_HELD	Waiting on allowed time window.
+P	SCHEDULE_HELD
+P	Waiting on allowed time window.
+ROW	SENDING	Effectful provider call in progress.
+P	SENDING
+P	Effectful provider call in progress.
+ROW	SENT	Provider accepted according to connector semantics.
+P	SENT
+P	Provider accepted according to connector semantics.
+ROW	DELIVERED_OR_ACCEPTED	Delivery evidence if provider supports it.
+P	DELIVERED_OR_ACCEPTED
+P	Delivery evidence if provider supports it.
+ROW	BOUNCED	Bounce received/classified.
+P	BOUNCED
+P	Bounce received/classified.
+ROW	COMPLAINT	Complaint/abuse event received.
+P	COMPLAINT
+P	Complaint/abuse event received.
+ROW	REPLIED	Inbound reply bound.
+P	REPLIED
+P	Inbound reply bound.
+ROW	UNSUBSCRIBED	Recipient opted out.
+P	UNSUBSCRIBED
+P	Recipient opted out.
+ROW	CANCELLED	Cancelled before legal completion.
+P	CANCELLED
+P	Cancelled before legal completion.
+ROW	FAILED_RETRYABLE	Failure class permits governed retry.
+P	FAILED_RETRYABLE
+P	Failure class permits governed retry.
+ROW	FAILED_FINAL	No automatic retry.
+P	FAILED_FINAL
+P	No automatic retry.
+ROW	SUPPRESSED	Blocked by suppression.
+P	SUPPRESSED
+P	Blocked by suppression.
+ROW	BLOCKED_COMPLIANCE	Blocked by compliance/eligibility.
+P	BLOCKED_COMPLIANCE
+P	Blocked by compliance/eligibility.
+P	17. Reply / Follow-up / Stop Rules
+ROW	Trigger	Required Behavior
+P	Trigger
+P	Required Behavior
+ROW	Any inbound reply	Bind exact delivery/contact/company/campaign; reevaluate or stop automated sequence per policy.
+P	Any inbound reply
+P	Bind exact delivery/contact/company/campaign; reevaluate or stop automated sequence per policy.
+ROW	Positive reply	Create/escalate Opportunity and HumanOwnerAssignment when applicable.
+P	Positive reply
+P	Create/escalate Opportunity and HumanOwnerAssignment when applicable.
+ROW	Negative/no-interest	Stop or disposition according to policy; preserve outcome.
+P	Negative/no-interest
+P	Stop or disposition according to policy; preserve outcome.
+ROW	Unsubscribe	Immediate suppression/no-contact effect; cancel pending prohibited follow-ups.
+P	Unsubscribe
+P	Immediate suppression/no-contact effect; cancel pending prohibited follow-ups.
+ROW	Complaint	Stop affected outreach and invoke policy/sender protection.
+P	Complaint
+P	Stop affected outreach and invoke policy/sender protection.
+ROW	Bounce invalid	Mark contact/delivery health; do not blindly retry invalid endpoint.
+P	Bounce invalid
+P	Mark contact/delivery health; do not blindly retry invalid endpoint.
+ROW	No reply	Only finite governed follow-up; count/interval from policy, not hardcoded.
+P	No reply
+P	Only finite governed follow-up; count/interval from policy, not hardcoded.
+P	18. CRM Funnel / Opportunity / Revenue Attribution
+P	圖 4｜Reply-to-Revenue Closed Loop。
+ROW	Milestone	Owner / Rule
+P	Milestone
+P	Owner / Rule
+ROW	Positive Reply	AI06 classifies with evidence; human escalation when required.
+P	Positive Reply
+P	AI06 classifies with evidence; human escalation when required.
+ROW	Human Owner	Accountable person; assignment does not change source truth.
+P	Human Owner
+P	Accountable person; assignment does not change source truth.
+ROW	Meeting	Business milestone; not email state.
+P	Meeting
+P	Business milestone; not email state.
+ROW	Proposal	Versioned business artifact/reference; exact owner binding required.
+P	Proposal
+P	Versioned business artifact/reference; exact owner binding required.
+ROW	Negotiation	Business stage with human governance.
+P	Negotiation
+P	Business stage with human governance.
+ROW	Won / Lost	Terminal opportunity outcome with reason/evidence.
+P	Won / Lost
+P	Terminal opportunity outcome with reason/evidence.
+ROW	Revenue Attribution	References ERP/Finance revenue/cost truth; AI06 does not create accounting facts.
+P	Revenue Attribution
+P	References ERP/Finance revenue/cost truth; AI06 does not create accounting facts.
+ROW	ROI	Derived from governed cost/revenue refs; calculation owner exact binding required.
+P	ROI
+P	Derived from governed cost/revenue refs; calculation owner exact binding required.
+ROW	Experience	Outcome-derived candidate insight; admission governed by AI01/experience rules.
+P	Experience
+P	Outcome-derived candidate insight; admission governed by AI01/experience rules.
+P	19. State Transition Guard Matrix
+ROW	Transition	Actor	Trigger	Precondition	Guard	Side Effect	Failure / Recovery
+P	Transition
+P	Actor
+P	Trigger
+P	Precondition
+P	Guard
+P	Side Effect
+P	Failure / Recovery
+ROW	DISCOVERY_PROFILE_DRAFT→ACTIVE	Authorized user/system	Activate	required scope + allowed sources	permission + version	emit profile event	invalid config → BLOCK
+P	DISCOVERY_PROFILE_DRAFT→ACTIVE
+P	Authorized user/system
+P	Activate
+P	required scope + allowed sources
+P	permission + version
+P	emit profile event
+P	invalid config → BLOCK
+ROW	DISCOVERY_JOB_CREATED→RUNNING	Authorized actor	Start	profile ACTIVE	state + idempotency	acquisition request	connector unavailable → BLOCK/RETRY
+P	DISCOVERY_JOB_CREATED→RUNNING
+P	Authorized actor
+P	Start
+P	profile ACTIVE
+P	state + idempotency
+P	acquisition request
+P	connector unavailable → BLOCK/RETRY
+ROW	RUNNING→PAUSED	Authorized actor	Pause	job RUNNING	expected_version	pause execution	stale state → VERSION_CONFLICT
+P	RUNNING→PAUSED
+P	Authorized actor
+P	Pause
+P	job RUNNING
+P	expected_version
+P	pause execution
+P	stale state → VERSION_CONFLICT
+ROW	PAUSED→RUNNING	Authorized actor	Resume	job PAUSED	expected_version	resume execution	stale state → VERSION_CONFLICT
+P	PAUSED→RUNNING
+P	Authorized actor
+P	Resume
+P	job PAUSED
+P	expected_version
+P	resume execution
+P	stale state → VERSION_CONFLICT
+ROW	RUNNING/PAUSED→STOPPED	Authorized actor	Stop	job current	scope + audit	stop future acquisition	preserve completed evidence
+P	RUNNING/PAUSED→STOPPED
+P	Authorized actor
+P	Stop
+P	job current
+P	scope + audit
+P	stop future acquisition
+P	preserve completed evidence
+ROW	COMPANY_CANDIDATE→RESOLVED_EXISTING	Identity resolver/reviewer	Identity match	evidence + canonical match	identity policy	link existing master	ambiguous → REVIEW_REQUIRED
+P	COMPANY_CANDIDATE→RESOLVED_EXISTING
+P	Identity resolver/reviewer
+P	Identity match
+P	evidence + canonical match
+P	identity policy
+P	link existing master
+P	ambiguous → REVIEW_REQUIRED
+ROW	COMPANY_CANDIDATE→NEW_MASTER	Authorized resolver	Create master	no existing match	identity proof	create canonical company	insufficient proof → BLOCK
+P	COMPANY_CANDIDATE→NEW_MASTER
+P	Authorized resolver
+P	Create master
+P	no existing match
+P	identity proof
+P	create canonical company
+P	insufficient proof → BLOCK
+ROW	MERGE_CANDIDATE→MERGED	Authorized reviewer	Confirm merge	preview + no unresolved blocking conflicts	permission + version	redirect refs/preserve lineage	conflict → REVIEW
+P	MERGE_CANDIDATE→MERGED
+P	Authorized reviewer
+P	Confirm merge
+P	preview + no unresolved blocking conflicts
+P	permission + version
+P	redirect refs/preserve lineage
+P	conflict → REVIEW
+ROW	CONTACT_UNVERIFIED→VERIFIED	Verifier	Verify	evidence + method	contact policy	set verified_at/status	failed → INVALID/REVIEW
+P	CONTACT_UNVERIFIED→VERIFIED
+P	Verifier
+P	Verify
+P	evidence + method
+P	contact policy
+P	set verified_at/status
+P	failed → INVALID/REVIEW
+ROW	MESSAGE_CANDIDATE→APPROVED_VERSION	Reviewer	Approve	evidence/personalization/compliance reviewable	review permission	materialize immutable version	material edit → new candidate
+P	MESSAGE_CANDIDATE→APPROVED_VERSION
+P	Reviewer
+P	Approve
+P	evidence/personalization/compliance reviewable
+P	review permission
+P	materialize immutable version
+P	material edit → new candidate
+ROW	CAMPAIGN_DRAFT→PREVIEW_READY	System	Resolve recipients	exact recipient_refs	auth + suppression	recipient preview	unresolved denominator → BLOCK
+P	CAMPAIGN_DRAFT→PREVIEW_READY
+P	System
+P	Resolve recipients
+P	exact recipient_refs
+P	auth + suppression
+P	recipient preview
+P	unresolved denominator → BLOCK
+ROW	PREVIEW_READY→APPROVED	Reviewer	Approve campaign	preview current + message version + sender/policy	approval permission	approval event	stale preview → REVIEW_REQUIRED
+P	PREVIEW_READY→APPROVED
+P	Reviewer
+P	Approve campaign
+P	preview current + message version + sender/policy
+P	approval permission
+P	approval event
+P	stale preview → REVIEW_REQUIRED
+ROW	APPROVED→DISPATCHING	Authorized actor	Dispatch	all gates current	idempotency + state	fan-out deliveries	any hard gate → block affected/all per policy
+P	APPROVED→DISPATCHING
+P	Authorized actor
+P	Dispatch
+P	all gates current
+P	idempotency + state
+P	fan-out deliveries
+P	any hard gate → block affected/all per policy
+ROW	DELIVERY_QUEUED→SENDING	Worker	Send due item	eligible + window/rate	idempotency + attempt	provider effect	policy changes → HOLD/BLOCK
+P	DELIVERY_QUEUED→SENDING
+P	Worker
+P	Send due item
+P	eligible + window/rate
+P	idempotency + attempt
+P	provider effect
+P	policy changes → HOLD/BLOCK
+ROW	SENDING→SENT	Provider callback/result	Accepted	correlated attempt	callback authenticity	persist result	unknown correlation → QUARANTINE
+P	SENDING→SENT
+P	Provider callback/result
+P	Accepted
+P	correlated attempt
+P	callback authenticity
+P	persist result
+P	unknown correlation → QUARANTINE
+ROW	SENT→REPLIED	Inbound handler	Reply	correlated inbound	source authenticity	stop/reevaluate sequence	ambiguous → REVIEW
+P	SENT→REPLIED
+P	Inbound handler
+P	Reply
+P	correlated inbound
+P	source authenticity
+P	stop/reevaluate sequence
+P	ambiguous → REVIEW
+ROW	SENT/QUEUED→UNSUBSCRIBED	Inbound/policy	Unsubscribe	recipient identity	suppression permission	suppress/cancel future	must not continue send
+P	SENT/QUEUED→UNSUBSCRIBED
+P	Inbound/policy
+P	Unsubscribe
+P	recipient identity
+P	suppression permission
+P	suppress/cancel future
+P	must not continue send
+ROW	REPLIED_POSITIVE→OWNER_ASSIGNED	Authorized workflow	Escalate	positive classification	assignment rules	create owner assignment	no owner → queue review
+P	REPLIED_POSITIVE→OWNER_ASSIGNED
+P	Authorized workflow
+P	Escalate
+P	positive classification
+P	assignment rules
+P	create owner assignment
+P	no owner → queue review
+ROW	OPPORTUNITY→WON/LOST	Authorized human/workflow	Close	required outcome evidence	permission + version	terminal outcome event	cannot auto-infer terminal result
+P	OPPORTUNITY→WON/LOST
+P	Authorized human/workflow
+P	Close
+P	required outcome evidence
+P	permission + version
+P	terminal outcome event
+P	cannot auto-infer terminal result
+P	20. Event / Consumer Contract
+ROW	Event	Producer	Consumer	Minimum Contract
+P	Event
+P	Producer
+P	Consumer
+P	Minimum Contract
+ROW	DiscoveryProfileActivated	Profile owner	Discovery scheduler	profile_ref/version, actor, correlation
+P	DiscoveryProfileActivated
+P	Profile owner
+P	Discovery scheduler
+P	profile_ref/version, actor, correlation
+ROW	DiscoveryJobStarted	Discovery runtime	Acquisition interface	job_ref/profile_ref/scope
+P	DiscoveryJobStarted
+P	Discovery runtime
+P	Acquisition interface
+P	job_ref/profile_ref/scope
+ROW	MarketSignalIngested	Acquisition interface	Qualification	signal_ref/evidence_ref/freshness
+P	MarketSignalIngested
+P	Acquisition interface
+P	Qualification
+P	signal_ref/evidence_ref/freshness
+ROW	CompanyIdentityResolved	Identity resolver	Company master/profile builder	candidate_ref/company_ref/evidence
+P	CompanyIdentityResolved
+P	Identity resolver
+P	Company master/profile builder
+P	candidate_ref/company_ref/evidence
+ROW	CompanyMergeConfirmed	Company master	Contact/Campaign/Audit consumers	survivor_ref/merged_refs/lineage
+P	CompanyMergeConfirmed
+P	Company master
+P	Contact/Campaign/Audit consumers
+P	survivor_ref/merged_refs/lineage
+ROW	ContactVerified	Contact owner	Eligibility/selection	contact_ref/status/evidence/version
+P	ContactVerified
+P	Contact owner
+P	Eligibility/selection
+P	contact_ref/status/evidence/version
+ROW	ContactDisabled	Contact owner	Eligibility/campaign	contact_ref/reason
+P	ContactDisabled
+P	Contact owner
+P	Eligibility/campaign
+P	contact_ref/reason
+ROW	QualificationUpdated	Qualification	Personalization/CRM	company_ref/fit/intent/timing/reasons
+P	QualificationUpdated
+P	Qualification
+P	Personalization/CRM
+P	company_ref/fit/intent/timing/reasons
+ROW	MessageCandidateCreated	Personalization	Review	candidate_ref/context_fingerprint
+P	MessageCandidateCreated
+P	Personalization
+P	Review
+P	candidate_ref/context_fingerprint
+ROW	MessageVersionApproved	Review owner	Campaign	message_version_ref/approval_ref
+P	MessageVersionApproved
+P	Review owner
+P	Campaign
+P	message_version_ref/approval_ref
+ROW	SuppressionChanged	Suppression owner	Selection/Dispatch/Follow-up	recipient_ref/status/reason/version
+P	SuppressionChanged
+P	Suppression owner
+P	Selection/Dispatch/Follow-up
+P	recipient_ref/status/reason/version
+ROW	CampaignPreviewResolved	Campaign runtime	Approval	campaign_ref/denominator counts/preview_ref
+P	CampaignPreviewResolved
+P	Campaign runtime
+P	Approval
+P	campaign_ref/denominator counts/preview_ref
+ROW	CampaignApproved	Approval owner	Dispatch	campaign_ref/approval_ref/version
+P	CampaignApproved
+P	Approval owner
+P	Dispatch
+P	campaign_ref/approval_ref/version
+ROW	CampaignDispatchStarted	Campaign runtime	Delivery fan-out	campaign_ref/idempotency/correlation
+P	CampaignDispatchStarted
+P	Campaign runtime
+P	Delivery fan-out
+P	campaign_ref/idempotency/correlation
+ROW	IndividualDeliveryCreated	Delivery runtime	Queue/Audit	delivery_ref/recipient_ref/message_version/sender
+P	IndividualDeliveryCreated
+P	Delivery runtime
+P	Queue/Audit
+P	delivery_ref/recipient_ref/message_version/sender
+ROW	DeliveryAttemptResult	Provider gateway	Delivery state/Audit	attempt_ref/status/provider_result
+P	DeliveryAttemptResult
+P	Provider gateway
+P	Delivery state/Audit
+P	attempt_ref/status/provider_result
+ROW	ReplyReceived	Inbound connector	Follow-up/CRM	reply_ref/delivery_ref/contact_ref
+P	ReplyReceived
+P	Inbound connector
+P	Follow-up/CRM
+P	reply_ref/delivery_ref/contact_ref
+ROW	BounceReceived	Inbound connector	Contact/Delivery policy	delivery_ref/bounce_class
+P	BounceReceived
+P	Inbound connector
+P	Contact/Delivery policy
+P	delivery_ref/bounce_class
+ROW	ComplaintReceived	Inbound connector	Suppression/Sender protection	delivery_ref/recipient_ref
+P	ComplaintReceived
+P	Inbound connector
+P	Suppression/Sender protection
+P	delivery_ref/recipient_ref
+ROW	UnsubscribeReceived	Inbound connector	Suppression/Follow-up	recipient_ref/source event
+P	UnsubscribeReceived
+P	Inbound connector
+P	Suppression/Follow-up
+P	recipient_ref/source event
+ROW	OpportunityOwnerAssigned	CRM	Human workflow	opportunity_ref/owner_ref
+P	OpportunityOwnerAssigned
+P	CRM
+P	Human workflow
+P	opportunity_ref/owner_ref
+ROW	OpportunityClosed	CRM	ERP/Experience	outcome/revenue attribution refs
+P	OpportunityClosed
+P	CRM
+P	ERP/Experience
+P	outcome/revenue attribution refs
+P	Event transport, topic names, retention and delivery semantics are REQUIRE_EXACT_BINDING. Event names here are semantic contract names, not invented broker topics.
+P	21. Concurrency / Idempotency / Retry
+ROW	Scenario	Required Rule
+P	Scenario
+P	Required Rule
+ROW	Two reviewers edit same MessageCandidate	Optimistic concurrency; stale writer gets VERSION_CONFLICT.
+P	Two reviewers edit same MessageCandidate
+P	Optimistic concurrency; stale writer gets VERSION_CONFLICT.
+ROW	Suppression changes after approval	Recipient preview/dispatch must re-evaluate; approval alone cannot bypass new suppression.
+P	Suppression changes after approval
+P	Recipient preview/dispatch must re-evaluate; approval alone cannot bypass new suppression.
+ROW	Campaign dispatch retried	Same idempotency key + same payload returns/reuses same logical dispatch; no duplicate delivery.
+P	Campaign dispatch retried
+P	Same idempotency key + same payload returns/reuses same logical dispatch; no duplicate delivery.
+ROW	Same idempotency key + different payload	Reject; never silently treat as retry.
+P	Same idempotency key + different payload
+P	Reject; never silently treat as retry.
+ROW	Late provider callback	Must bind exact DeliveryAttempt; cannot overwrite newer terminal state without legal transition.
+P	Late provider callback
+P	Must bind exact DeliveryAttempt; cannot overwrite newer terminal state without legal transition.
+ROW	Duplicate reply webhook	Deduplicate by provider/event identity + correlation; no duplicate CRM milestone.
+P	Duplicate reply webhook
+P	Deduplicate by provider/event identity + correlation; no duplicate CRM milestone.
+ROW	Company merge races with campaign creation	Campaign must resolve current canonical company/contact refs before persistence/effect.
+P	Company merge races with campaign creation
+P	Campaign must resolve current canonical company/contact refs before persistence/effect.
+ROW	Contact disabled while queued	Effect-time gate blocks pending send.
+P	Contact disabled while queued
+P	Effect-time gate blocks pending send.
+ROW	Kill switch concurrent with send	Stop not-yet-legally-completed work; exact race disposition must be auditable.
+P	Kill switch concurrent with send
+P	Stop not-yet-legally-completed work; exact race disposition must be auditable.
+P	22. Error / Recovery Contract
+ROW	Error	Trigger	Recovery
+P	Error
+P	Trigger
+P	Recovery
+ROW	SUPPRESSION_BLOCK	Recipient suppressed/unsubscribed	Block outbound; preserve evidence; cancel illegal pending follow-up.
+P	SUPPRESSION_BLOCK
+P	Recipient suppressed/unsubscribed
+P	Block outbound; preserve evidence; cancel illegal pending follow-up.
+ROW	CONTACT_INVALID	No valid/verified outbound contact	Remove from eligible denominator; request evidence/verification.
+P	CONTACT_INVALID
+P	No valid/verified outbound contact
+P	Remove from eligible denominator; request evidence/verification.
+ROW	IDENTITY_AMBIGUOUS	Company identity cannot resolve uniquely	REVIEW_REQUIRED; no duplicate master creation.
+P	IDENTITY_AMBIGUOUS
+P	Company identity cannot resolve uniquely
+P	REVIEW_REQUIRED; no duplicate master creation.
+ROW	EVIDENCE_MISSING	Fact/contact/claim lacks required evidence	BLOCK fact use or downgrade to explicit inference if permitted.
+P	EVIDENCE_MISSING
+P	Fact/contact/claim lacks required evidence
+P	BLOCK fact use or downgrade to explicit inference if permitted.
+ROW	STALE_EVIDENCE	Evidence outside freshness rule	Refresh or mark stale; cannot present as current fact.
+P	STALE_EVIDENCE
+P	Evidence outside freshness rule
+P	Refresh or mark stale; cannot present as current fact.
+ROW	RECIPIENT_RESOLUTION_FAIL	Filter/selection cannot resolve exact authorized refs	BLOCK + REPORT_AUTHORITY_GAP; never send query text.
+P	RECIPIENT_RESOLUTION_FAIL
+P	Filter/selection cannot resolve exact authorized refs
+P	BLOCK + REPORT_AUTHORITY_GAP; never send query text.
+ROW	CAMPAIGN_STALE	message/sender/schedule/policy/recipient preview stale	REVIEW_REQUIRED / VERSION_CONFLICT.
+P	CAMPAIGN_STALE
+P	message/sender/schedule/policy/recipient preview stale
+P	REVIEW_REQUIRED / VERSION_CONFLICT.
+ROW	DELIVERY_ENVELOPE_ILLEGAL	To count !=1 or CC/BCC nonempty	Block individual delivery.
+P	DELIVERY_ENVELOPE_ILLEGAL
+P	To count !=1 or CC/BCC nonempty
+P	Block individual delivery.
+ROW	DUPLICATE_ACTIVE_DELIVERY	Same campaign/recipient already active	Reuse existing logical work or block; no duplicate send.
+P	DUPLICATE_ACTIVE_DELIVERY
+P	Same campaign/recipient already active
+P	Reuse existing logical work or block; no duplicate send.
+ROW	RATE_OR_WINDOW_BLOCK	Rate cap/time window prevents send	Hold until legal; no fake failure.
+P	RATE_OR_WINDOW_BLOCK
+P	Rate cap/time window prevents send
+P	Hold until legal; no fake failure.
+ROW	PROVIDER_RETRYABLE	Transient provider/transport failure	New attempt under same delivery; governed backoff.
+P	PROVIDER_RETRYABLE
+P	Transient provider/transport failure
+P	New attempt under same delivery; governed backoff.
+ROW	PROVIDER_FINAL	Non-retryable provider failure	FAILED_FINAL; human/system review if needed.
+P	PROVIDER_FINAL
+P	Non-retryable provider failure
+P	FAILED_FINAL; human/system review if needed.
+ROW	PARTIAL_CAMPAIGN	Some deliveries succeed, others block/fail	Never COMPLETE; report exact aggregate and item states.
+P	PARTIAL_CAMPAIGN
+P	Some deliveries succeed, others block/fail
+P	Never COMPLETE; report exact aggregate and item states.
+ROW	UNDEFINED_BINDING	Unregistered API/table/permission/service requested	BLOCK + REQUIRE_EXACT_BINDING; never invent parallel runtime.
+P	UNDEFINED_BINDING
+P	Unregistered API/table/permission/service requested
+P	BLOCK + REQUIRE_EXACT_BINDING; never invent parallel runtime.
+P	23. Security / Privacy / Audit
+ROW	Control	Normative Requirement
+P	Control
+P	Normative Requirement
+ROW	Least privilege	Company/contact/export/campaign/dispatch/reveal actions require exact permission/scope/condition gates.
+P	Least privilege
+P	Company/contact/export/campaign/dispatch/reveal actions require exact permission/scope/condition gates.
+ROW	Secret handling	Sender/provider credentials only via secret_ref/secret manager; never plaintext in lead or message data.
+P	Secret handling
+P	Sender/provider credentials only via secret_ref/secret manager; never plaintext in lead or message data.
+ROW	Contact privacy	Contact fields classified; access/export logged and scoped.
+P	Contact privacy
+P	Contact fields classified; access/export logged and scoped.
+ROW	Source rights	Only legally allowed/authorized sources may feed discovery when source policy requires it.
+P	Source rights
+P	Only legally allowed/authorized sources may feed discovery when source policy requires it.
+ROW	Audit chain	Lead Evidence → AI generation metadata → AI draft → Human edits → Approved Version → Sent Version → Delivery → Reply/Bounce/Complaint/Unsubscribe → Outcome.
+P	Audit chain
+P	Lead Evidence → AI generation metadata → AI draft → Human edits → Approved Version → Sent Version → Delivery → Reply/Bounce/Complaint/Unsubscribe → Outcome.
+ROW	Data minimization	Do not collect unrelated personal data merely because a source exposes it.
+P	Data minimization
+P	Do not collect unrelated personal data merely because a source exposes it.
+ROW	Retention	Lead/contact/evidence/audit/delivery/CRM records may have different retention owners; no one-size-fits-all deletion.
+P	Retention
+P	Lead/contact/evidence/audit/delivery/CRM records may have different retention owners; no one-size-fits-all deletion.
+ROW	Deletion	Deletion/retirement cannot break required audit/provenance; legal retention exact binding required.
+P	Deletion
+P	Deletion/retirement cannot break required audit/provenance; legal retention exact binding required.
+P	24. Exact Binding Ledger
+ROW	Binding Item	Owner Source	Design Status
+P	Binding Item
+P	Owner Source
+P	Design Status
+ROW	Discovery API/operation IDs	Current Authority	REQUIRE_CURRENT_BINDING
+P	Discovery API/operation IDs
+P	Current Authority
+P	REQUIRE_CURRENT_BINDING
+ROW	Company Master tables/owner	Current DB/Authority	REQUIRE_CURRENT_BINDING
+P	Company Master tables/owner
+P	Current DB/Authority
+P	REQUIRE_CURRENT_BINDING
+ROW	Contact tables/verification vocabulary	Current DB/Authority	REQUIRE_CURRENT_BINDING
+P	Contact tables/verification vocabulary
+P	Current DB/Authority
+P	REQUIRE_CURRENT_BINDING
+ROW	Campaign API/schema	Current Outreach Authority	REQUIRE_CURRENT_BINDING
+P	Campaign API/schema
+P	Current Outreach Authority
+P	REQUIRE_CURRENT_BINDING
+ROW	Delivery API/worker/queue	Current Runtime	REQUIRE_EXACT_BINDING
+P	Delivery API/worker/queue
+P	Current Runtime
+P	REQUIRE_EXACT_BINDING
+ROW	Suppression owner/table/API	Current compliance/outreach owner	REQUIRE_CURRENT_BINDING
+P	Suppression owner/table/API
+P	Current compliance/outreach owner
+P	REQUIRE_CURRENT_BINDING
+ROW	Compliance engine/ruleset version	Current policy owner	REQUIRE_EXACT_BINDING
+P	Compliance engine/ruleset version
+P	Current policy owner
+P	REQUIRE_EXACT_BINDING
+ROW	Sender account/credential owner	Current provider/email owner	REQUIRE_EXACT_BINDING
+P	Sender account/credential owner
+P	Current provider/email owner
+P	REQUIRE_EXACT_BINDING
+ROW	Email connector/provider adapter	AI03/current provider authority	REQUIRE_EXACT_BINDING
+P	Email connector/provider adapter
+P	AI03/current provider authority
+P	REQUIRE_EXACT_BINDING
+ROW	Webhook/callback verification	Current connector authority	REQUIRE_EXACT_BINDING
+P	Webhook/callback verification
+P	Current connector authority
+P	REQUIRE_EXACT_BINDING
+ROW	Retry/backoff numeric policy	Current runtime policy	REQUIRE_EXACT_BINDING
+P	Retry/backoff numeric policy
+P	Current runtime policy
+P	REQUIRE_EXACT_BINDING
+ROW	Daily/per-domain caps	Current sender/campaign policy	REQUIRE_EXACT_BINDING
+P	Daily/per-domain caps
+P	Current sender/campaign policy
+P	REQUIRE_EXACT_BINDING
+ROW	SPF/DKIM/DMARC readiness evidence owner	Current deployment/email authority	REQUIRE_EXACT_BINDING
+P	SPF/DKIM/DMARC readiness evidence owner
+P	Current deployment/email authority
+P	REQUIRE_EXACT_BINDING
+ROW	Event bus/topics/delivery semantics	Current event/runtime authority	REQUIRE_EXACT_BINDING
+P	Event bus/topics/delivery semantics
+P	Current event/runtime authority
+P	REQUIRE_EXACT_BINDING
+ROW	ERP revenue/cost/ROI refs	ERP/Finance owner	REQUIRE_CURRENT_BINDING
+P	ERP revenue/cost/ROI refs
+P	ERP/Finance owner
+P	REQUIRE_CURRENT_BINDING
+ROW	CRM opportunity owner/stages if different	Current business owner	REQUIRE_CURRENT_BINDING
+P	CRM opportunity owner/stages if different
+P	Current business owner
+P	REQUIRE_CURRENT_BINDING
+ROW	Retention/erasure periods	Privacy/Compliance owner	REQUIRE_EXACT_BINDING
+P	Retention/erasure periods
+P	Privacy/Compliance owner
+P	REQUIRE_EXACT_BINDING
+ROW	Production E2E evidence	Current validation/evidence owner	REQUIRE_FRESH_EVIDENCE
+P	Production E2E evidence
+P	Current validation/evidence owner
+P	REQUIRE_FRESH_EVIDENCE
+P	25. Acceptance Matrix
+ROW	UID	Item	PASS Condition
+P	UID
+P	Item
+P	PASS Condition
+ROW	AI06-ACC-01	One Company Master	No duplicate enterprise master created for same canonical identity.
+P	AI06-ACC-01
+P	One Company Master
+P	No duplicate enterprise master created for same canonical identity.
+ROW	AI06-ACC-02	Shared Acquisition Reuse	No second DEV crawler/search/evidence runtime.
+P	AI06-ACC-02
+P	Shared Acquisition Reuse
+P	No second DEV crawler/search/evidence runtime.
+ROW	AI06-ACC-03	Evidence-backed facts	Every factual personalization claim resolves evidence/source/date.
+P	AI06-ACC-03
+P	Evidence-backed facts
+P	Every factual personalization claim resolves evidence/source/date.
+ROW	AI06-ACC-04	Inference labeling	Potential needs/intent inference never presented as sourced fact.
+P	AI06-ACC-04
+P	Inference labeling
+P	Potential needs/intent inference never presented as sourced fact.
+ROW	AI06-ACC-05	No guessed email	Generated email-pattern contact cannot become outbound eligible.
+P	AI06-ACC-05
+P	No guessed email
+P	Generated email-pattern contact cannot become outbound eligible.
+ROW	AI06-ACC-06	Identity resolution	Name-only match cannot auto-create/merge canonical identity.
+P	AI06-ACC-06
+P	Identity resolution
+P	Name-only match cannot auto-create/merge canonical identity.
+ROW	AI06-ACC-07	Merge preview	Effectful merge requires preview and preserves lineage.
+P	AI06-ACC-07
+P	Merge preview
+P	Effectful merge requires preview and preserves lineage.
+ROW	AI06-ACC-08	Contact evidence	Every outbound contact has inspectable source evidence.
+P	AI06-ACC-08
+P	Contact evidence
+P	Every outbound contact has inspectable source evidence.
+ROW	AI06-ACC-09	Contact status	Invalid/disabled contact blocked.
+P	AI06-ACC-09
+P	Contact status
+P	Invalid/disabled contact blocked.
+ROW	AI06-ACC-10	Qualification explainability	Fit/intent/timing reasons visible/auditable.
+P	AI06-ACC-10
+P	Qualification explainability
+P	Fit/intent/timing reasons visible/auditable.
+ROW	AI06-ACC-11	Candidate boundary	AI draft never equals approved version.
+P	AI06-ACC-11
+P	Candidate boundary
+P	AI draft never equals approved version.
+ROW	AI06-ACC-12	Immutable version	Approved message edit creates new version.
+P	AI06-ACC-12
+P	Immutable version
+P	Approved message edit creates new version.
+ROW	AI06-ACC-13	Exact sent version	Sent delivery binds exact approved message version.
+P	AI06-ACC-13
+P	Exact sent version
+P	Sent delivery binds exact approved message version.
+ROW	AI06-ACC-14	Human edit lineage	AI draft/human edits/approved/sent versions distinguishable.
+P	AI06-ACC-14
+P	Human edit lineage
+P	AI draft/human edits/approved/sent versions distinguishable.
+ROW	AI06-ACC-15	Compliance tri-state	PASS/REVIEW/BLOCK semantics enforced.
+P	AI06-ACC-15
+P	Compliance tri-state
+P	PASS/REVIEW/BLOCK semantics enforced.
+ROW	AI06-ACC-16	Suppression global	Suppressed recipient blocked across campaigns.
+P	AI06-ACC-16
+P	Suppression global
+P	Suppressed recipient blocked across campaigns.
+ROW	AI06-ACC-17	Unsubscribe hard stop	Unsubscribe cancels future prohibited outreach.
+P	AI06-ACC-17
+P	Unsubscribe hard stop
+P	Unsubscribe cancels future prohibited outreach.
+ROW	AI06-ACC-18	Exact selection	Campaign recipient list consists of exact authorized refs.
+P	AI06-ACC-18
+P	Exact selection
+P	Campaign recipient list consists of exact authorized refs.
+ROW	AI06-ACC-19	No filter-as-recipient	Query/filter text cannot be dispatched.
+P	AI06-ACC-19
+P	No filter-as-recipient
+P	Query/filter text cannot be dispatched.
+ROW	AI06-ACC-20	Recipient dedupe	Same recipient appears once per campaign denominator.
+P	AI06-ACC-20
+P	Recipient dedupe
+P	Same recipient appears once per campaign denominator.
+ROW	AI06-ACC-21	No Audience DB	Selection does not materialize a second audience master.
+P	AI06-ACC-21
+P	No Audience DB
+P	Selection does not materialize a second audience master.
+ROW	AI06-ACC-22	Preview before approval	Current recipient preview exists before approval.
+P	AI06-ACC-22
+P	Preview before approval
+P	Current recipient preview exists before approval.
+ROW	AI06-ACC-23	Recheck before dispatch	Suppression/compliance/sender/schedule/rate rechecked at effect time.
+P	AI06-ACC-23
+P	Recheck before dispatch
+P	Suppression/compliance/sender/schedule/rate rechecked at effect time.
+ROW	AI06-ACC-24	Approval != Send	Campaign approval cannot itself cause external email side effect.
+P	AI06-ACC-24
+P	Approval != Send
+P	Campaign approval cannot itself cause external email side effect.
+ROW	AI06-ACC-25	Batch fan-out	One campaign dispatch creates individual deliveries.
+P	AI06-ACC-25
+P	Batch fan-out
+P	One campaign dispatch creates individual deliveries.
+ROW	AI06-ACC-26	Exactly one To	Every outbound email envelope has exactly one To.
+P	AI06-ACC-26
+P	Exactly one To
+P	Every outbound email envelope has exactly one To.
+ROW	AI06-ACC-27	Empty CC/BCC	Every outreach envelope has no CC/BCC.
+P	AI06-ACC-27
+P	Empty CC/BCC
+P	Every outreach envelope has no CC/BCC.
+ROW	AI06-ACC-28	No duplicate delivery	Idempotent retry does not create second active campaign-recipient send.
+P	AI06-ACC-28
+P	No duplicate delivery
+P	Idempotent retry does not create second active campaign-recipient send.
+ROW	AI06-ACC-29	Partial truth	Partial campaign failure not labeled COMPLETE.
+P	AI06-ACC-29
+P	Partial truth
+P	Partial campaign failure not labeled COMPLETE.
+ROW	AI06-ACC-30	Kill switch	Authorized kill switch stops eligible pending work and is audited.
+P	AI06-ACC-30
+P	Kill switch
+P	Authorized kill switch stops eligible pending work and is audited.
+ROW	AI06-ACC-31	Reply correlation	Reply binds original delivery/contact/company/campaign.
+P	AI06-ACC-31
+P	Reply correlation
+P	Reply binds original delivery/contact/company/campaign.
+ROW	AI06-ACC-32	Reply stop rule	Reply reevaluates/stops automated follow-up.
+P	AI06-ACC-32
+P	Reply stop rule
+P	Reply reevaluates/stops automated follow-up.
+ROW	AI06-ACC-33	Finite follow-up	No infinite automated sequence.
+P	AI06-ACC-33
+P	Finite follow-up
+P	No infinite automated sequence.
+ROW	AI06-ACC-34	Bounce handling	Invalid bounce prevents blind retry.
+P	AI06-ACC-34
+P	Bounce handling
+P	Invalid bounce prevents blind retry.
+ROW	AI06-ACC-35	Complaint protection	Complaint activates governed sender/recipient protection.
+P	AI06-ACC-35
+P	Complaint protection
+P	Complaint activates governed sender/recipient protection.
+ROW	AI06-ACC-36	Human owner	Positive reply can transition to accountable human owner.
+P	AI06-ACC-36
+P	Human owner
+P	Positive reply can transition to accountable human owner.
+ROW	AI06-ACC-37	CRM separation	Meeting/proposal/negotiation/won-lost are not confused with delivery states.
+P	AI06-ACC-37
+P	CRM separation
+P	Meeting/proposal/negotiation/won-lost are not confused with delivery states.
+ROW	AI06-ACC-38	Outcome lineage	Won/Lost remains traceable to source campaign/evidence.
+P	AI06-ACC-38
+P	Outcome lineage
+P	Won/Lost remains traceable to source campaign/evidence.
+ROW	AI06-ACC-39	ERP truth	Revenue attribution references ERP facts, does not invent amounts.
+P	AI06-ACC-39
+P	ERP truth
+P	Revenue attribution references ERP facts, does not invent amounts.
+ROW	AI06-ACC-40	ROI lineage	ROI derives from governed cost/revenue refs.
+P	AI06-ACC-40
+P	ROI lineage
+P	ROI derives from governed cost/revenue refs.
+ROW	AI06-ACC-41	Experience admission	Outcome lesson not self-adopted.
+P	AI06-ACC-41
+P	Experience admission
+P	Outcome lesson not self-adopted.
+ROW	AI06-ACC-42	Secret safety	No plaintext sender/provider secret in records/log/audit.
+P	AI06-ACC-42
+P	Secret safety
+P	No plaintext sender/provider secret in records/log/audit.
+ROW	AI06-ACC-43	Export governance	Export cannot bypass privacy/permission.
+P	AI06-ACC-43
+P	Export governance
+P	Export cannot bypass privacy/permission.
+ROW	AI06-ACC-44	AI07 boundary	Social publishing handoff does not create duplicate publisher.
+P	AI06-ACC-44
+P	AI07 boundary
+P	Social publishing handoff does not create duplicate publisher.
+ROW	AI06-ACC-45	Runtime truth	FILE_SPEC_COMPLETE never reported as email Production E2E.
+P	AI06-ACC-45
+P	Runtime truth
+P	FILE_SPEC_COMPLETE never reported as email Production E2E.
+P	26. Negative Regression Matrix
+ROW	Case	Mutation / Fault	Expected
+P	Case
+P	Mutation / Fault
+P	Expected
+ROW	NEG-01	Same company appears under alias	Must link/merge; duplicate Company Master creation blocked.
+P	NEG-01
+P	Same company appears under alias
+P	Must link/merge; duplicate Company Master creation blocked.
+ROW	NEG-02	Name matches but jurisdiction conflicts	Auto-merge blocked; review required.
+P	NEG-02
+P	Name matches but jurisdiction conflicts
+P	Auto-merge blocked; review required.
+ROW	NEG-03	AI guesses likely email	Contact cannot enter eligible set.
+P	NEG-03
+P	AI guesses likely email
+P	Contact cannot enter eligible set.
+ROW	NEG-04	Contact source removed from UI	Historical sent audit still retains legal evidence reference.
+P	NEG-04
+P	Contact source removed from UI
+P	Historical sent audit still retains legal evidence reference.
+ROW	NEG-05	Recent activity has no source	Cannot be phrased as factual personalization.
+P	NEG-05
+P	Recent activity has no source
+P	Cannot be phrased as factual personalization.
+ROW	NEG-06	Potential need inferred	Must remain inference-labeled.
+P	NEG-06
+P	Potential need inferred
+P	Must remain inference-labeled.
+ROW	NEG-07	High fit but compliance BLOCK	Dispatch blocked.
+P	NEG-07
+P	High fit but compliance BLOCK
+P	Dispatch blocked.
+ROW	NEG-08	Campaign approved then recipient suppressed	Dispatch recheck blocks recipient.
+P	NEG-08
+P	Campaign approved then recipient suppressed
+P	Dispatch recheck blocks recipient.
+ROW	NEG-09	Filter string passed as recipient list	Dispatch blocked.
+P	NEG-09
+P	Filter string passed as recipient list
+P	Dispatch blocked.
+ROW	NEG-10	Duplicate recipient selected twice	Campaign denominator contains one logical recipient.
+P	NEG-10
+P	Duplicate recipient selected twice
+P	Campaign denominator contains one logical recipient.
+ROW	NEG-11	Bulk UI sends multi-To envelope	Regression fail.
+P	NEG-11
+P	Bulk UI sends multi-To envelope
+P	Regression fail.
+ROW	NEG-12	CC added for convenience	Regression fail.
+P	NEG-12
+P	CC added for convenience
+P	Regression fail.
+ROW	NEG-13	BCC used for tracking	Regression fail.
+P	NEG-13
+P	BCC used for tracking
+P	Regression fail.
+ROW	NEG-14	Candidate sent before approval	Blocked.
+P	NEG-14
+P	Candidate sent before approval
+P	Blocked.
+ROW	NEG-15	Approved message edited in place	Regression fail; new version required.
+P	NEG-15
+P	Approved message edited in place
+P	Regression fail; new version required.
+ROW	NEG-16	Send resolves latest message at runtime	Regression fail; exact version required.
+P	NEG-16
+P	Send resolves latest message at runtime
+P	Regression fail; exact version required.
+ROW	NEG-17	Same dispatch retried after timeout	No duplicate external side effect.
+P	NEG-17
+P	Same dispatch retried after timeout
+P	No duplicate external side effect.
+ROW	NEG-18	Same idempotency key different payload	Rejected.
+P	NEG-18
+P	Same idempotency key different payload
+P	Rejected.
+ROW	NEG-19	Late success callback after final failure	Cannot silently overwrite without legal transition.
+P	NEG-19
+P	Late success callback after final failure
+P	Cannot silently overwrite without legal transition.
+ROW	NEG-20	Provider says accepted but local audit write fails	Not terminal complete; recovery required.
+P	NEG-20
+P	Provider says accepted but local audit write fails
+P	Not terminal complete; recovery required.
+ROW	NEG-21	Partial campaign succeeds 90%	Overall must show partial, not complete.
+P	NEG-21
+P	Partial campaign succeeds 90%
+P	Overall must show partial, not complete.
+ROW	NEG-22	Kill switch during queue	Pending legal scope stops, completed sends remain historical.
+P	NEG-22
+P	Kill switch during queue
+P	Pending legal scope stops, completed sends remain historical.
+ROW	NEG-23	Reply arrives while follow-up queued	Queued follow-up reevaluated/stopped per policy.
+P	NEG-23
+P	Reply arrives while follow-up queued
+P	Queued follow-up reevaluated/stopped per policy.
+ROW	NEG-24	Unsubscribe arrives after approval before send	Recipient blocked at effect time.
+P	NEG-24
+P	Unsubscribe arrives after approval before send
+P	Recipient blocked at effect time.
+ROW	NEG-25	Complaint arrives	Future automated send protected/blocked per policy.
+P	NEG-25
+P	Complaint arrives
+P	Future automated send protected/blocked per policy.
+ROW	NEG-26	Hard bounce classified invalid	Blind retry blocked.
+P	NEG-26
+P	Hard bounce classified invalid
+P	Blind retry blocked.
+ROW	NEG-27	No reply forever	Infinite sequence impossible.
+P	NEG-27
+P	No reply forever
+P	Infinite sequence impossible.
+ROW	NEG-28	Positive reply auto-marked Won by AI	Blocked; terminal business outcome needs authority/human governance.
+P	NEG-28
+P	Positive reply auto-marked Won by AI
+P	Blocked; terminal business outcome needs authority/human governance.
+ROW	NEG-29	AI invents deal revenue	Blocked; ERP ref required.
+P	NEG-29
+P	AI invents deal revenue
+P	Blocked; ERP ref required.
+ROW	NEG-30	Old evidence reused as current without freshness check	Must mark stale/refresh.
+P	NEG-30
+P	Old evidence reused as current without freshness check
+P	Must mark stale/refresh.
+ROW	NEG-31	Export all contacts without permission	Blocked/audited.
+P	NEG-31
+P	Export all contacts without permission
+P	Blocked/audited.
+ROW	NEG-32	Second Suppression List added in UI module	Regression fail.
+P	NEG-32
+P	Second Suppression List added in UI module
+P	Regression fail.
+ROW	NEG-33	DEV-specific crawler added	Regression fail.
+P	NEG-33
+P	DEV-specific crawler added
+P	Regression fail.
+ROW	NEG-34	Social DM assumed available	Blocked without AI07 official capability/policy binding.
+P	NEG-34
+P	Social DM assumed available
+P	Blocked without AI07 official capability/policy binding.
+ROW	NEG-35	Word completion called Production-ready email	Regression fail.
+P	NEG-35
+P	Word completion called Production-ready email
+P	Regression fail.
+ROW	NEG-36	Historical DEV page path treated as current API authority	Regression fail; exact current binding required.
+P	NEG-36
+P	Historical DEV page path treated as current API authority
+P	Regression fail; exact current binding required.
+ROW	NEG-37	Company merge loses delivery history	Regression fail.
+P	NEG-37
+P	Company merge loses delivery history
+P	Regression fail.
+ROW	NEG-38	Company merge loses suppression lineage	Regression fail.
+P	NEG-38
+P	Company merge loses suppression lineage
+P	Regression fail.
+ROW	NEG-39	Contact verification overwritten without history	Regression fail.
+P	NEG-39
+P	Contact verification overwritten without history
+P	Regression fail.
+ROW	NEG-40	Review result changed without expected version	VERSION_CONFLICT / fail closed.
+P	NEG-40
+P	Review result changed without expected version
+P	VERSION_CONFLICT / fail closed.
+P	27. Given / When / Then Acceptance Scenarios
+ROW	ID	Given	When	Then
+P	ID
+P	Given
+P	When
+P	Then
+ROW	GWT-01	Given a new public company signal with valid evidence	When identity matches an existing Company Master	Then enrich/link existing company; do not create duplicate.
+P	GWT-01
+P	Given a new public company signal with valid evidence
+P	When identity matches an existing Company Master
+P	Then enrich/link existing company; do not create duplicate.
+ROW	GWT-02	Given same display name but conflicting registration region	When identity resolution runs	Then require review; do not auto-merge.
+P	GWT-02
+P	Given same display name but conflicting registration region
+P	When identity resolution runs
+P	Then require review; do not auto-merge.
+ROW	GWT-03	Given no public business email	When AI proposes a guessed pattern	Then contact eligibility is blocked.
+P	GWT-03
+P	Given no public business email
+P	When AI proposes a guessed pattern
+P	Then contact eligibility is blocked.
+ROW	GWT-04	Given verified public email + evidence	When eligibility evaluates PASS	Then contact may enter recipient selection.
+P	GWT-04
+P	Given verified public email + evidence
+P	When eligibility evaluates PASS
+P	Then contact may enter recipient selection.
+ROW	GWT-05	Given recent-activity statement without source	When MessageCandidate is generated	Then factual statement is rejected/removed or explicitly non-factual.
+P	GWT-05
+P	Given recent-activity statement without source
+P	When MessageCandidate is generated
+P	Then factual statement is rejected/removed or explicitly non-factual.
+ROW	GWT-06	Given inferred need	When personalization renders it	Then it is labeled inference and not asserted as fact.
+P	GWT-06
+P	Given inferred need
+P	When personalization renders it
+P	Then it is labeled inference and not asserted as fact.
+ROW	GWT-07	Given 100 fit score but compliance BLOCK	When campaign preview runs	Then recipient remains blocked.
+P	GWT-07
+P	Given 100 fit score but compliance BLOCK
+P	When campaign preview runs
+P	Then recipient remains blocked.
+ROW	GWT-08	Given recipient selected across multiple pages	When Campaign is created	Then exact authorized recipient_ref is stored once.
+P	GWT-08
+P	Given recipient selected across multiple pages
+P	When Campaign is created
+P	Then exact authorized recipient_ref is stored once.
+ROW	GWT-09	Given only filter query but no resolved refs	When Create Campaign is requested	Then BLOCK + authority/error report.
+P	GWT-09
+P	Given only filter query but no resolved refs
+P	When Create Campaign is requested
+P	Then BLOCK + authority/error report.
+ROW	GWT-10	Given draft message	When reviewer approves	Then immutable MessageVersion is created.
+P	GWT-10
+P	Given draft message
+P	When reviewer approves
+P	Then immutable MessageVersion is created.
+ROW	GWT-11	Given approved MessageVersion	When editor changes content	Then new candidate/version is required.
+P	GWT-11
+P	Given approved MessageVersion
+P	When editor changes content
+P	Then new candidate/version is required.
+ROW	GWT-12	Given approved Campaign	When Dispatch is pressed	Then approval alone does not bypass effect-time gates.
+P	GWT-12
+P	Given approved Campaign
+P	When Dispatch is pressed
+P	Then approval alone does not bypass effect-time gates.
+ROW	GWT-13	Given one Campaign with 500 eligible recipients	When dispatch begins	Then runtime fans out 500 logical individual deliveries, subject to current policy.
+P	GWT-13
+P	Given one Campaign with 500 eligible recipients
+P	When dispatch begins
+P	Then runtime fans out 500 logical individual deliveries, subject to current policy.
+ROW	GWT-14	Given an IndividualDelivery	When envelope is built	Then To count = 1 and CC/BCC are empty.
+P	GWT-14
+P	Given an IndividualDelivery
+P	When envelope is built
+P	Then To count = 1 and CC/BCC are empty.
+ROW	GWT-15	Given one recipient was suppressed after approval	When send worker evaluates it	Then that delivery is blocked while other legal items may proceed per policy.
+P	GWT-15
+P	Given one recipient was suppressed after approval
+P	When send worker evaluates it
+P	Then that delivery is blocked while other legal items may proceed per policy.
+ROW	GWT-16	Given same dispatch request is retried	When idempotency key/payload are identical	Then no duplicate logical delivery is created.
+P	GWT-16
+P	Given same dispatch request is retried
+P	When idempotency key/payload are identical
+P	Then no duplicate logical delivery is created.
+ROW	GWT-17	Given same idempotency key with changed recipients	When request is submitted	Then reject as idempotency conflict.
+P	GWT-17
+P	Given same idempotency key with changed recipients
+P	When request is submitted
+P	Then reject as idempotency conflict.
+ROW	GWT-18	Given sender daily cap reached	When a queued delivery becomes due	Then hold until policy allows; do not falsify sent/failed state.
+P	GWT-18
+P	Given sender daily cap reached
+P	When a queued delivery becomes due
+P	Then hold until policy allows; do not falsify sent/failed state.
+ROW	GWT-19	Given Kill Switch authorized	When activated	Then pending/in-flight legal scope stops and audit records actor/reason.
+P	GWT-19
+P	Given Kill Switch authorized
+P	When activated
+P	Then pending/in-flight legal scope stops and audit records actor/reason.
+ROW	GWT-20	Given provider timeout retryable	When retry occurs	Then create new DeliveryAttempt under same logical delivery.
+P	GWT-20
+P	Given provider timeout retryable
+P	When retry occurs
+P	Then create new DeliveryAttempt under same logical delivery.
+ROW	GWT-21	Given hard bounce invalid contact	When retry planner runs	Then blind resend is not allowed.
+P	GWT-21
+P	Given hard bounce invalid contact
+P	When retry planner runs
+P	Then blind resend is not allowed.
+ROW	GWT-22	Given inbound reply	When correlated	Then planned follow-up is stopped/reevaluated.
+P	GWT-22
+P	Given inbound reply
+P	When correlated
+P	Then planned follow-up is stopped/reevaluated.
+ROW	GWT-23	Given unsubscribe	When event is validated	Then suppression hard gate applies to future prohibited campaigns.
+P	GWT-23
+P	Given unsubscribe
+P	When event is validated
+P	Then suppression hard gate applies to future prohibited campaigns.
+ROW	GWT-24	Given complaint	When event is validated	Then recipient/sender protection workflow activates.
+P	GWT-24
+P	Given complaint
+P	When event is validated
+P	Then recipient/sender protection workflow activates.
+ROW	GWT-25	Given positive reply	When business escalation is allowed	Then Opportunity/HumanOwner may be created without changing evidence truth.
+P	GWT-25
+P	Given positive reply
+P	When business escalation is allowed
+P	Then Opportunity/HumanOwner may be created without changing evidence truth.
+ROW	GWT-26	Given meeting completed	When CRM advances	Then email delivery state remains unchanged; business milestone advances separately.
+P	GWT-26
+P	Given meeting completed
+P	When CRM advances
+P	Then email delivery state remains unchanged; business milestone advances separately.
+ROW	GWT-27	Given opportunity marked Won	When revenue attribution is requested	Then use ERP/Finance revenue ref, not AI-estimated amount.
+P	GWT-27
+P	Given opportunity marked Won
+P	When revenue attribution is requested
+P	Then use ERP/Finance revenue ref, not AI-estimated amount.
+ROW	GWT-28	Given Won outcome and actual cost/revenue refs	When ROI is calculated	Then result remains traceable to both refs.
+P	GWT-28
+P	Given Won outcome and actual cost/revenue refs
+P	When ROI is calculated
+P	Then result remains traceable to both refs.
+ROW	GWT-29	Given outcome-derived lesson	When ExperienceCandidate is created	Then it is not automatically adopted.
+P	GWT-29
+P	Given outcome-derived lesson
+P	When ExperienceCandidate is created
+P	Then it is not automatically adopted.
+ROW	GWT-30	Given evidence becomes stale	When new campaign personalization runs	Then refresh or mark stale before factual use.
+P	GWT-30
+P	Given evidence becomes stale
+P	When new campaign personalization runs
+P	Then refresh or mark stale before factual use.
+ROW	GWT-31	Given company merge	When references are rewritten	Then contacts, campaigns, delivery, suppression and audit lineage remain reachable.
+P	GWT-31
+P	Given company merge
+P	When references are rewritten
+P	Then contacts, campaigns, delivery, suppression and audit lineage remain reachable.
+ROW	GWT-32	Given user exports contacts	When permission/classification fails	Then export is blocked and audited.
+P	GWT-32
+P	Given user exports contacts
+P	When permission/classification fails
+P	Then export is blocked and audited.
+ROW	GWT-33	Given social publishing request	When AI06 reaches channel handoff	Then route to AI07; no internal duplicate social publisher is created.
+P	GWT-33
+P	Given social publishing request
+P	When AI06 reaches channel handoff
+P	Then route to AI07; no internal duplicate social publisher is created.
+ROW	GWT-34	Given official social DM capability absent	When outreach logic considers DM	Then capability is unavailable/blocked, not assumed.
+P	GWT-34
+P	Given official social DM capability absent
+P	When outreach logic considers DM
+P	Then capability is unavailable/blocked, not assumed.
+ROW	GWT-35	Given Word passes QA	When status is reported	Then only design content completion is claimed.
+P	GWT-35
+P	Given Word passes QA
+P	When status is reported
+P	Then only design content completion is claimed.
+ROW	GWT-36	Given Production email connector has no fresh E2E evidence	When go-live status is queried	Then status remains NOT_PROVEN/BLOCKED.
+P	GWT-36
+P	Given Production email connector has no fresh E2E evidence
+P	When go-live status is queried
+P	Then status remains NOT_PROVEN/BLOCKED.
+P	28. Construction Handoff / Definition of Done
+P	Implementation MUST resolve every REQUIRE_EXACT_BINDING item from Current Authority before effectful Production execution.
+P	Frontend MUST reuse existing Company Master/Campaign/Delivery/Suppression/Evidence owners rather than materialize parallel stores.
+P	Backend MUST enforce the same hard gates as UI and must remain safe if controls are invoked outside UI.
+P	Email provider connector, sender domain readiness, webhook verification, bounce/complaint/unsubscribe ingestion and Production E2E require independent fresh evidence.
+P	Acceptance denominator includes normal path + destructive negative regressions + concurrency/idempotency + partial failure + suppression/unsubscribe + evidence freshness.
+P	Social publishing begins only through AI07 handoff; this document does not approve or implement external platform publishing.
+P	Closure of this Word means DESIGN_CONTENT_COMPLETE only; formal approval and runtime proof remain separate governance events.
+P	29. Source Basis / Traceability Notes
+ROW	Source	Used For	Authority Caution
+P	Source
+P	Used For
+P	Authority Caution
+ROW	DEV-01 企業自動開發系統｜FINAL_LOCKED	Single-page workflow, Campaign recipient_refs, bulk dispatch with individual deliveries, one To / empty CC/BCC, no second systems.	Document itself states implementation not executed.
+P	DEV-01 企業自動開發系統｜FINAL_LOCKED
+P	Single-page workflow, Campaign recipient_refs, bulk dispatch with individual deliveries, one To / empty CC/BCC, no second systems.
+P	Document itself states implementation not executed.
+ROW	ACPOS 主動商機施工更新｜2026-09-06	Active-first discovery, shared acquisition reuse, company/contact/evidence/intent/qualification controls, current-gap semantics.	Historical GitHub snapshot is design/source evidence, not present Current runtime proof.
+P	ACPOS 主動商機施工更新｜2026-09-06
+P	Active-first discovery, shared acquisition reuse, company/contact/evidence/intent/qualification controls, current-gap semantics.
+P	Historical GitHub snapshot is design/source evidence, not present Current runtime proof.
+ROW	工作區 FINAL FREEZE 後至企業開發中心更新紀錄	End-to-end enterprise outreach, contact-source rules, approval defaults, compliance/suppression, audit chain, CRM/ROI/profile semantics.	Delta appendix; does not by itself prove Production implementation.
+P	工作區 FINAL FREEZE 後至企業開發中心更新紀錄
+P	End-to-end enterprise outreach, contact-source rules, approval defaults, compliance/suppression, audit chain, CRM/ROI/profile semantics.
+P	Delta appendix; does not by itself prove Production implementation.
+ROW	Current ACPOS Governance v2.2.16	One authority/owner, verify-before-claim, evidence-before-claim, exact binding and no parallel system principles.	Current governance controls execution claims; this Word remains design artifact.
+P	Current ACPOS Governance v2.2.16
+P	One authority/owner, verify-before-claim, evidence-before-claim, exact binding and no parallel system principles.
+P	Current governance controls execution claims; this Word remains design artifact.
+P	30. Closure Declaration
+ROW	Field	Value
+P	Field
+P	Value
+ROW	Design content	COMPLETE
+P	Design content
+P	COMPLETE
+ROW	Formal approval	NOT SELF-GRANTED
+P	Formal approval
+P	NOT SELF-GRANTED
+ROW	Runtime implementation	NOT PROVEN BY DOCUMENT
+P	Runtime implementation
+P	NOT PROVEN BY DOCUMENT
+ROW	External Email E2E	REQUIRES FRESH PRODUCTION EVIDENCE
+P	External Email E2E
+P	REQUIRES FRESH PRODUCTION EVIDENCE
+ROW	Social Publishing	OUT OF SCOPE → AI-07
+P	Social Publishing
+P	OUT OF SCOPE → AI-07
+ROW	Next document	ACPOS-AI-07 Social Publishing AI System — only upon explicit continuation
+P	Next document
+P	ACPOS-AI-07 Social Publishing AI System — only upon explicit continuation
+P	This document is a normative design contract. It constrains subsequent implementation; it does not replace Current Runtime Authority or fresh validation evidence.
+### PART word/header1.xml
+P	ORANGE ONE · ACPOS ACPOS-AI-06｜Mother Basic Logic Design
+### PART word/footer1.xml
+P	DESIGN ARTIFACT · NOT RUNTIME AUTHORITY · Current Governance v2.2.16 · 2026-09-20

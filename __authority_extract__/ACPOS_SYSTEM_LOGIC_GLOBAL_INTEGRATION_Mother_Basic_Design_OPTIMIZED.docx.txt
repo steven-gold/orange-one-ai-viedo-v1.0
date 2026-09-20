@@ -1,0 +1,434 @@
+### PART word/document.xml
+P	ORANGE ONE
+P	SYSTEM-LOGIC
+P	全站系統邏輯／Global Integration
+P	System Logic / Global Integration
+P	18 頁、中央大腦、Identity／Permission／Data／AI／Queue／Audit 的單一整合契約
+ROW	系統定位
+ACPOS 是全站中央協調大腦，不是第 19 個業務頁面。每個 Domain Page 保留自己的 Business Truth；System Logic 只負責 Context、Version、Handoff、Routing、Experience、Audit 與跨頁合法下一步。
+P	系統定位
+ACPOS 是全站中央協調大腦，不是第 19 個業務頁面。每個 Domain Page 保留自己的 Business Truth；System Logic 只負責 Context、Version、Handoff、Routing、Experience、Audit 與跨頁合法下一步。
+P	1. Whole-site Architecture
+P	圖 1　18 個 Current Page 圍繞 ACPOS Central Brain；共享 Runtime 位於底層，Domain Owner 不被取代。
+P	2. Current Page Universe / 18 頁
+ROW	Surface	Page UID	名稱	系統角色
+P	Surface
+P	Page UID
+P	名稱
+P	系統角色
+ROW	Front	workspace:WB-01	儀表板	公司級 read projection / summary
+P	Front
+P	workspace:WB-01
+P	儀表板
+P	公司級 read projection / summary
+ROW	Front	CORE-01	專案 / 專題	Project/Topic Core、Blueprint、DNA、Canonical Script
+P	Front
+P	CORE-01
+P	專案 / 專題
+P	Project/Topic Core、Blueprint、DNA、Canonical Script
+ROW	Front	ASSET-01	素材	素材生成／版本／修正／handoff
+P	Front
+P	ASSET-01
+P	素材
+P	素材生成／版本／修正／handoff
+ROW	Front	VIDEO-01	影片	影片生成／版本／修正／handoff
+P	Front
+P	VIDEO-01
+P	影片
+P	影片生成／版本／修正／handoff
+ROW	Front	EDIT-01	剪輯配音	整合後製、配音、Render、Output
+P	Front
+P	EDIT-01
+P	剪輯配音
+P	整合後製、配音、Render、Output
+ROW	Front	QA-01	QA	Finished Output review / correction / recheck / pass
+P	Front
+P	QA-01
+P	QA
+P	Finished Output review / correction / recheck / pass
+ROW	Front	admin:DB-01	資料庫	資料模型、Trace、Read/Administration surface
+P	Front
+P	admin:DB-01
+P	資料庫
+P	資料模型、Trace、Read/Administration surface
+ROW	Front	workspace:STR-01	戰略中心	Strategic AI analysis / options / human decision support
+P	Front
+P	workspace:STR-01
+P	戰略中心
+P	Strategic AI analysis / options / human decision support
+ROW	Front	workspace:INFO-01	最新資訊	Research / Fact / Evidence / Context Candidate
+P	Front
+P	workspace:INFO-01
+P	最新資訊
+P	Research / Fact / Evidence / Context Candidate
+ROW	Admin	admin:SYS-01	系統維護	System truth / change / impact / validation AI
+P	Admin
+P	admin:SYS-01
+P	系統維護
+P	System truth / change / impact / validation AI
+ROW	Admin	admin:IAM-01	帳戶與權限	Account Permission Assignment
+P	Admin
+P	admin:IAM-01
+P	帳戶與權限
+P	Account Permission Assignment
+ROW	Admin	admin:DEV-01	企業自動開發	Company discovery / outreach workflow
+P	Admin
+P	admin:DEV-01
+P	企業自動開發
+P	Company discovery / outreach workflow
+ROW	Admin	admin:SOC-01	社群發布	Platform target / publish plan / result
+P	Admin
+P	admin:SOC-01
+P	社群發布
+P	Platform target / publish plan / result
+ROW	Admin	admin:ERP-01	ERP	Finance read / connector / sync quality
+P	Admin
+P	admin:ERP-01
+P	ERP
+P	Finance read / connector / sync quality
+ROW	Admin	admin:AIAPI-01	AI API	Provider / capability / route / test / operations
+P	Admin
+P	admin:AIAPI-01
+P	AI API
+P	Provider / capability / route / test / operations
+ROW	Admin	admin:SG-02	QA 評分項目	Criteria / Threshold / Gate Policy governance
+P	Admin
+P	admin:SG-02
+P	QA 評分項目
+P	Criteria / Threshold / Gate Policy governance
+ROW	Admin	admin:STR-01	戰略中心後台	Strategy intelligence / fact / playbook / opportunity / decision governance
+P	Admin
+P	admin:STR-01
+P	戰略中心後台
+P	Strategy intelligence / fact / playbook / opportunity / decision governance
+ROW	Admin	admin:KB-01	知識庫	Knowledge / Experience / Learning / Review
+P	Admin
+P	admin:KB-01
+P	知識庫
+P	Knowledge / Experience / Learning / Review
+P	3. ACPOS Brain Layers
+ROW	Layer	Owner Concept	責任
+P	Layer
+P	Owner Concept
+P	責任
+ROW	BRAIN-01	SYSTEM_STATE	全站 exact state/version/relationship projection；不替代 domain record
+P	BRAIN-01
+P	SYSTEM_STATE
+P	全站 exact state/version/relationship projection；不替代 domain record
+ROW	BRAIN-02	CONTEXT	依 page/operation/account/scope 選出 exact authorized context；建立 ContextPackage / Candidate
+P	BRAIN-02
+P	CONTEXT
+P	依 page/operation/account/scope 選出 exact authorized context；建立 ContextPackage / Candidate
+ROW	BRAIN-03	CONVERSATION	CORE / Strategy / System AI 共用 thread/branch/context continuity core
+P	BRAIN-03
+P	CONVERSATION
+P	CORE / Strategy / System AI 共用 thread/branch/context continuity core
+ROW	BRAIN-04	MEMORY	Conversation / Working / Decision / Version / Operational memory
+P	BRAIN-04
+P	MEMORY
+P	Conversation / Working / Decision / Version / Operational memory
+ROW	BRAIN-05	DECISION_GOVERNANCE	AI output 保持 candidate/analysis，直到 Human / Governance decision 完成
+P	BRAIN-05
+P	DECISION_GOVERNANCE
+P	AI output 保持 candidate/analysis，直到 Human / Governance decision 完成
+ROW	BRAIN-06	VERSION_LINEAGE	exact version/hash/checksum/provenance；禁止 silent overwrite
+P	BRAIN-06
+P	VERSION_LINEAGE
+P	exact version/hash/checksum/provenance；禁止 silent overwrite
+ROW	BRAIN-07	ORCHESTRATION	解析合法下一步、handoff、dependency，不越權執行 domain action
+P	BRAIN-07
+P	ORCHESTRATION
+P	解析合法下一步、handoff、dependency，不越權執行 domain action
+ROW	BRAIN-08	AI_EXECUTION	Provider-neutral instruction → capability → eligible profile → adapter → provider → normalized result
+P	BRAIN-08
+P	AI_EXECUTION
+P	Provider-neutral instruction → capability → eligible profile → adapter → provider → normalized result
+ROW	BRAIN-09	EXPERIENCE	從真實執行/結果/QA/成本/延遲形成 ExperienceRecord
+P	BRAIN-09
+P	EXPERIENCE
+P	從真實執行/結果/QA/成本/延遲形成 ExperienceRecord
+ROW	BRAIN-10	EVOLUTION	Experience → pattern → LearningCandidate → governed adoption
+P	BRAIN-10
+P	EVOLUTION
+P	Experience → pattern → LearningCandidate → governed adoption
+ROW	BRAIN-11	EXTERNAL_DATA_ACQUISITION	共用 crawl/search/fetch/ingest runtime；頁面只提交 domain intent
+P	BRAIN-11
+P	EXTERNAL_DATA_ACQUISITION
+P	共用 crawl/search/fetch/ingest runtime；頁面只提交 domain intent
+ROW	BRAIN-12	GOVERNANCE_OBSERVABILITY	Permission / Policy / Classification / Audit / Error / Health / Truthful State
+P	BRAIN-12
+P	GOVERNANCE_OBSERVABILITY
+P	Permission / Policy / Classification / Audit / Error / Health / Truthful State
+P	4. System Truth Precedence
+P	1. Current Page Authority：決定各頁 Business / UI 行為。
+P	2. Global Shell / Navigation / Visual：決定全站外框、路由目標、視覺 Token。
+P	3. System Authority：決定跨頁 Context、Orchestration、AI、Experience、Integration。
+P	4. Runtime Contracts：決定 Identity、DB、Queue 等實際技術邊界。
+P	5. Implementation / Test / Deployment Evidence：只能證明是否已施工，不反向改寫 Authority。
+ROW	Unknown = BLOCK
+任何無 owner、無 exact version、無 permission、無 registered operation、無 required evidence 的跨頁行為，不得用 AI 推測補值；必須 BLOCK + REPORT_AUTHORITY_GAP。
+P	Unknown = BLOCK
+任何無 owner、無 exact version、無 permission、無 registered operation、無 required evidence 的跨頁行為，不得用 AI 推測補值；必須 BLOCK + REPORT_AUTHORITY_GAP。
+P	5. Core Production Flow / 五大生產鏈
+ROW	階段	Owner Page	輸入	輸出 / 下一步
+P	階段
+P	Owner Page
+P	輸入
+P	輸出 / 下一步
+ROW	CORE	CORE-01	Project / Topic / Context / Decisions	Blueprint / DNA / Canonical Production Script
+P	CORE
+P	CORE-01
+P	Project / Topic / Context / Decisions
+P	Blueprint / DNA / Canonical Production Script
+ROW	ASSET	ASSET-01	Exact Blueprint / DNA / Script refs	Asset Versions + evaluation + handoff
+P	ASSET
+P	ASSET-01
+P	Exact Blueprint / DNA / Script refs
+P	Asset Versions + evaluation + handoff
+ROW	VIDEO	VIDEO-01	Exact upstream refs + approved assets	Video Versions + evaluation + handoff
+P	VIDEO
+P	VIDEO-01
+P	Exact upstream refs + approved assets
+P	Video Versions + evaluation + handoff
+ROW	EDIT+VOICE	EDIT-01	Exact video/audio/script refs	Integrated Edit / Render / Output Version
+P	EDIT+VOICE
+P	EDIT-01
+P	Exact video/audio/script refs
+P	Integrated Edit / Render / Output Version
+ROW	QA	QA-01	Exact finished output + criteria_version_ref	Pass / Finding / Correction Request / Recheck
+P	QA
+P	QA-01
+P	Exact finished output + criteria_version_ref
+P	Pass / Finding / Correction Request / Recheck
+P	每階段必須消費 exact upstream refs，不用 latest/current/default alias。
+P	AUTO / MANUAL 只改 progression behavior，不改 Source Truth。
+P	任何修改建立新 version，禁止 silent overwrite。
+P	QA 不自己生成替代媒體；Correction 回到真正的 production owner。
+P	6. Identity → Permission → Page Gate
+P	1. 瀏覽器攜帶 `acpos_session` HttpOnly Cookie。
+P	2. Identity Runtime 解析 runtime session → READY account → non-disabled app_users actor。
+P	3. Shell 取得 `visible_page_uids`，只顯示授權 Front/Admin L1。
+P	4. 進入 Page 時再執行 exact page / section / action / control / API / field permission + scope + state gate。
+P	5. Effectful write 額外要求 expected_version、idempotency、correlation、audit。
+P	6. Permission denied = HIDDEN；authorized but state blocked = DISABLED + reason。
+P	7. Context / AI / Provider Routing
+ROW	步驟	系統行為
+P	步驟
+P	系統行為
+ROW	Context Resolution	Current user + page operation → authorized scope → exact object/version/decision/source refs → conflict check → fingerprint → ACPOSContextPackage
+P	Context Resolution
+P	Current user + page operation → authorized scope → exact object/version/decision/source refs → conflict check → fingerprint → ACPOSContextPackage
+ROW	Conversation	CORE / Strategy / System AI 共用 Conversation Core，但各 domain context 彼此隔離；mode switch 不得 silent reset
+P	Conversation
+P	CORE / Strategy / System AI 共用 Conversation Core，但各 domain context 彼此隔離；mode switch 不得 silent reset
+ROW	Instruction	Domain 產生 provider-neutral canonical instruction；Provider syntax 不得寫進 department script
+P	Instruction
+P	Domain 產生 provider-neutral canonical instruction；Provider syntax 不得寫進 department script
+ROW	Capability	依 operation 確定 required capability；硬性 permission/policy/rights/classification/health 先過 Gate
+P	Capability
+P	依 operation 確定 required capability；硬性 permission/policy/rights/classification/health 先過 Gate
+ROW	Route	AIAPI-01 Router 從 eligible ProviderModelProfiles 排序；前端不得 override
+P	Route
+P	AIAPI-01 Router 從 eligible ProviderModelProfiles 排序；前端不得 override
+ROW	Provider Adapter	將 canonical instruction 轉 Provider-specific request；credential 只用 Secret Reference
+P	Provider Adapter
+P	將 canonical instruction 轉 Provider-specific request；credential 只用 Secret Reference
+ROW	Result	Normalize / validate / persist route-job-attempt-result lineage；回到 domain owner 做 evaluation / version / decision
+P	Result
+P	Normalize / validate / persist route-job-attempt-result lineage；回到 domain owner 做 evaluation / version / decision
+ROW	AI Authority Boundary
+Raw AI Output 永遠不是 Canonical Decision、Approved Knowledge 或 Production Truth。正式化需要對應 Domain 的 Review / Approve / Adopt Gate。
+P	AI Authority Boundary
+Raw AI Output 永遠不是 Canonical Decision、Approved Knowledge 或 Production Truth。正式化需要對應 Domain 的 Review / Approve / Adopt Gate。
+P	8. Shared External Data Acquisition
+ROW	Consumer	允許模式	Output Target
+P	Consumer
+P	允許模式
+P	Output Target
+ROW	KB-01	WEB_CRAWL / WEB_FETCH / SEARCH / RSS / DOCUMENT / RECRAWL	Knowledge evidence / citation pipeline
+P	KB-01
+P	WEB_CRAWL / WEB_FETCH / SEARCH / RSS / DOCUMENT / RECRAWL
+P	Knowledge evidence / citation pipeline
+ROW	INFO-01	SEARCH / WEB_FETCH / WEB_CRAWL	Fact / Evidence / Context Candidate
+P	INFO-01
+P	SEARCH / WEB_FETCH / WEB_CRAWL
+P	Fact / Evidence / Context Candidate
+ROW	admin STR-01	SEARCH / WEB_CRAWL / WEB_FETCH / RECRAWL	Strategy source / watchlist / fact / trend
+P	admin STR-01
+P	SEARCH / WEB_CRAWL / WEB_FETCH / RECRAWL
+P	Strategy source / watchlist / fact / trend
+ROW	DEV-01	SEARCH / CRAWL / FETCH / JSON / CONTINUOUS	Company discovery evidence → directory
+P	DEV-01
+P	SEARCH / CRAWL / FETCH / JSON / CONTINUOUS
+P	Company discovery evidence → directory
+ROW	SOC-01	SEARCH / FETCH / JSON	Social target discovery evidence
+P	SOC-01
+P	SEARCH / FETCH / JSON
+P	Social target discovery evidence
+P	Shared Acquisition Runtime 統一負責 robots/rights/domain/rate/retry/snapshot/dedupe/normalize/evidence/audit。
+P	Page 不可建立第二套 crawler，亦不可把 raw crawl result 直接寫成 Canon / Knowledge / Strategy Truth。
+P	9. Data / Queue / Version / Audit
+ROW	Layer	Hard Rule
+P	Layer
+P	Hard Rule
+ROW	PostgreSQL + RLS	Canonical data owner per domain；RLS / permission 不可由前端取代
+P	PostgreSQL + RLS
+P	Canonical data owner per domain；RLS / permission 不可由前端取代
+ROW	Queue / Worker / DLQ	Async job 狀態與 retry/failure 由共用 runtime 管理；Frontend 不直接改 Job State
+P	Queue / Worker / DLQ
+P	Async job 狀態與 retry/failure 由共用 runtime 管理；Frontend 不直接改 Job State
+ROW	Version / Lineage	每次 revision 新增版本；Exact base/version/ref 必須保留；Asset/Output 不覆蓋原版本
+P	Version / Lineage
+P	每次 revision 新增版本；Exact base/version/ref 必須保留；Asset/Output 不覆蓋原版本
+ROW	Integration Event	只通知跨頁狀態；source domain object 仍是 truth owner
+P	Integration Event
+P	只通知跨頁狀態；source domain object 仍是 truth owner
+ROW	Audit	Effectful operation 必須 correlation + actor + action + target + result / error；不得記錄 raw secret
+P	Audit
+P	Effectful operation 必須 correlation + actor + action + target + result / error；不得記錄 raw secret
+ROW	Evidence	Test/Production Evidence 證明執行結果，不成為產品 Authority
+P	Evidence
+P	Test/Production Evidence 證明執行結果，不成為產品 Authority
+P	10. Cross-page Handoff Contract
+ROW	Producer	Handoff Object	Consumer	Gate
+P	Producer
+P	Handoff Object
+P	Consumer
+P	Gate
+ROW	CORE-01	Blueprint / Script / DNA refs	ASSET-01	exact version + lock / approval state
+P	CORE-01
+P	Blueprint / Script / DNA refs
+P	ASSET-01
+P	exact version + lock / approval state
+ROW	ASSET-01	Asset Version / Handoff	VIDEO-01	accepted output + required lineage
+P	ASSET-01
+P	Asset Version / Handoff
+P	VIDEO-01
+P	accepted output + required lineage
+ROW	VIDEO-01	Video Version / Handoff	EDIT-01	accepted output + required lineage
+P	VIDEO-01
+P	Video Version / Handoff
+P	EDIT-01
+P	accepted output + required lineage
+ROW	EDIT-01	Final Output / QA Handoff	QA-01	render complete + exact output version
+P	EDIT-01
+P	Final Output / QA Handoff
+P	QA-01
+P	render complete + exact output version
+ROW	QA-01	Correction Request	Owning production page	target exact source version + finding evidence
+P	QA-01
+P	Correction Request
+P	Owning production page
+P	target exact source version + finding evidence
+ROW	INFO/KB/STR Admin	Context Candidate	Consumer Domain	consumer review / adoption owner
+P	INFO/KB/STR Admin
+P	Context Candidate
+P	Consumer Domain
+P	consumer review / adoption owner
+ROW	AIAPI-01	Route Decision / Provider Result	Owning Domain	capability/permission/route lineage + normalized result
+P	AIAPI-01
+P	Route Decision / Provider Result
+P	Owning Domain
+P	capability/permission/route lineage + normalized result
+P	11. Failure / Recovery Model
+ROW	Failure Class	處置
+P	Failure Class
+P	處置
+ROW	IDENTITY / AUTH	Fail-closed；未授權內容/控制不顯示；不可 client bypass
+P	IDENTITY / AUTH
+P	Fail-closed；未授權內容/控制不顯示；不可 client bypass
+ROW	VERSION_CONFLICT	停止 effectful write → reload exact version → review diff → resubmit
+P	VERSION_CONFLICT
+P	停止 effectful write → reload exact version → review diff → resubmit
+ROW	MISSING AUTHORITY	BLOCK + REPORT_AUTHORITY_GAP；不得猜 operation / field / owner
+P	MISSING AUTHORITY
+P	BLOCK + REPORT_AUTHORITY_GAP；不得猜 operation / field / owner
+ROW	PROVIDER / EXTERNAL	保留 pending/failed/degraded 真實狀態；不可 fake success
+P	PROVIDER / EXTERNAL
+P	保留 pending/failed/degraded 真實狀態；不可 fake success
+ROW	QUEUE / ASYNC	依 registered retry policy；retry 建立/保留獨立 attempt lineage
+P	QUEUE / ASYNC
+P	依 registered retry policy；retry 建立/保留獨立 attempt lineage
+ROW	DATA INCOMPLETE	顯示 — / incomplete / stale / masked；不得以 0 或 sample 補值
+P	DATA INCOMPLETE
+P	顯示 — / incomplete / stale / masked；不得以 0 或 sample 補值
+ROW	CROSS-STAGE HANDOFF	缺 physical / schema-valid / required-field-complete input 時，阻擋 successor 並 re-enter owning predecessor
+P	CROSS-STAGE HANDOFF
+P	缺 physical / schema-valid / required-field-complete input 時，阻擋 successor 並 re-enter owning predecessor
+ROW	AUDIT / EVIDENCE	沒有 fresh evidence 不得宣告 runtime / deploy / production complete
+P	AUDIT / EVIDENCE
+P	沒有 fresh evidence 不得宣告 runtime / deploy / production complete
+P	12. Global Acceptance Matrix
+ROW	Acceptance UID	PASS 條件
+P	Acceptance UID
+P	PASS 條件
+ROW	SYS-ACC-01	18 個 Current Page 都有唯一 owner / route / permission / integration role。
+P	SYS-ACC-01
+P	18 個 Current Page 都有唯一 owner / route / permission / integration role。
+ROW	SYS-ACC-02	Front 9 + Admin 9；Global Shell adaptive reflow 不遮住 Workspace。
+P	SYS-ACC-02
+P	Front 9 + Admin 9；Global Shell adaptive reflow 不遮住 Workspace。
+ROW	SYS-ACC-03	Identity → Permission → Page Gate → Operation Gate 順序不可繞過。
+P	SYS-ACC-03
+P	Identity → Permission → Page Gate → Operation Gate 順序不可繞過。
+ROW	SYS-ACC-04	CORE→ASSET→VIDEO→EDIT→QA exact version handoff 完整。
+P	SYS-ACC-04
+P	CORE→ASSET→VIDEO→EDIT→QA exact version handoff 完整。
+ROW	SYS-ACC-05	Provider selection 只在 AIAPI-01 / shared router；department picker 不存在。
+P	SYS-ACC-05
+P	Provider selection 只在 AIAPI-01 / shared router；department picker 不存在。
+ROW	SYS-ACC-06	Context / Conversation / AI Output 不會自動變成 Canon / Approved Knowledge。
+P	SYS-ACC-06
+P	Context / Conversation / AI Output 不會自動變成 Canon / Approved Knowledge。
+ROW	SYS-ACC-07	Shared Acquisition 只有一套 runtime；KB/INFO/STR/DEV/SOC 不重複建 crawler。
+P	SYS-ACC-07
+P	Shared Acquisition 只有一套 runtime；KB/INFO/STR/DEV/SOC 不重複建 crawler。
+ROW	SYS-ACC-08	Async lifecycle / retry / failure / audit 保留完整 attempt lineage。
+P	SYS-ACC-08
+P	Async lifecycle / retry / failure / audit 保留完整 attempt lineage。
+ROW	SYS-ACC-09	No fake data / fake success / missing-as-zero / secret plaintext。
+P	SYS-ACC-09
+P	No fake data / fake success / missing-as-zero / secret plaintext。
+ROW	SYS-ACC-10	Word/Authority 完整 ≠ application/runtime/deployment complete；完成宣告必須另有 fresh evidence。
+P	SYS-ACC-10
+P	Word/Authority 完整 ≠ application/runtime/deployment complete；完成宣告必須另有 fresh evidence。
+P	13. Construction / Verification Order
+P	1. 先施工／驗證 Global Shell adaptive reflow，讓所有頁面共享同一穩定 mount geometry。
+P	2. 驗證 Login / Identity session 與登入後可見 Navigation。
+P	3. 逐頁對接 Page Authority → Control → Action → Permission → API → Runtime → DB / Provider。
+P	4. 驗證五大生產鏈 exact-version handoff 與 correction round-trip。
+P	5. 驗證 AIAPI router / queue / provider adapter / normalized result lineage。
+P	6. 驗證 KB / INFO / Strategy / DEV / SOC 對 shared acquisition 的 domain-specific binding。
+P	7. 跑全站 permission-denied / version-conflict / missing-authority / provider-failure / queue-failure / stale-data negative tests。
+P	8. 最後才做 Production deployment / remote browser / external provider E2E；不得由文件或本機測試推定。
+P	14. Verification Evidence Layers
+ROW	Layer	必須證明的事
+P	Layer
+P	必須證明的事
+ROW	DESIGN	頁面、Shell、Navigation、Interaction、State、Error、Recovery 與 acceptance 定義完整；僅代表可施工。
+P	DESIGN
+P	頁面、Shell、Navigation、Interaction、State、Error、Recovery 與 acceptance 定義完整；僅代表可施工。
+ROW	CLIENT	DOM / visual / keyboard / responsive / i18n / disabled reason 與 no-fake-data 行為符合設計。
+P	CLIENT
+P	DOM / visual / keyboard / responsive / i18n / disabled reason 與 no-fake-data 行為符合設計。
+ROW	SERVER	Identity、Permission、Scope、State Guard、Version、Idempotency、Audit 均由 Server 執行，不能只靠前端。
+P	SERVER
+P	Identity、Permission、Scope、State Guard、Version、Idempotency、Audit 均由 Server 執行，不能只靠前端。
+ROW	RUNTIME + DB	Canonical owner、migration、RLS、version lineage、transaction / persistence 可重現。
+P	RUNTIME + DB
+P	Canonical owner、migration、RLS、version lineage、transaction / persistence 可重現。
+ROW	ASYNC + PROVIDER	Queue / Worker / DLQ、Provider route / adapter / callback / retry 保留 exact attempt lineage。
+P	ASYNC + PROVIDER
+P	Queue / Worker / DLQ、Provider route / adapter / callback / retry 保留 exact attempt lineage。
+ROW	E2E	Browser 跨頁 handoff、negative paths、correction round-trip、shared runtime integration 實際通過。
+P	E2E
+P	Browser 跨頁 handoff、negative paths、correction round-trip、shared runtime integration 實際通過。
+ROW	PRODUCTION	Exact deployed SHA、remote acceptance、Production data/runtime readiness 與 external provider evidence 都存在。
+P	PRODUCTION
+P	Exact deployed SHA、remote acceptance、Production data/runtime readiness 與 external provider evidence 都存在。
+ROW	Design Closure Boundary
+這三份補齊文件只完成設計層閉環；GitHub 程式碼、Runtime、E2E 與 Production 狀態仍必須由後續 fresh execution evidence 個別證明。
+P	Design Closure Boundary
+這三份補齊文件只完成設計層閉環；GitHub 程式碼、Runtime、E2E 與 Production 狀態仍必須由後續 fresh execution evidence 個別證明。
+### PART word/footer1.xml
+P	ORANGE ONE · ACPOS · Mother Basic Design

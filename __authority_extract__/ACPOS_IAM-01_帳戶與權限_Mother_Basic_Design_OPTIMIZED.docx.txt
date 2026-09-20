@@ -1,0 +1,1240 @@
+### PART word/document.xml
+ROW	IAM-01 帳戶與權限Mother Basic Design · Functional Completion · Permission Governance · Visual ConsistencyORANGE ONE · admin:IAM-01
+P	IAM-01 帳戶與權限
+P	Mother Basic Design · Functional Completion · Permission Governance · Visual Consistency
+P	ORANGE ONE · admin:IAM-01
+P	本版沿用既有 IAM-01 單頁帳戶與權限規劃，補齊母規範要求的完整產品設計、Business Entity × Operation、功能鏈、權限實體化、Identity/Permission Security、跨頁導航刷新、Partial Apply Recovery、Visual Geometry、A11y 與驗收規格。
+P	核心原則：帳號管理者只設定前台 9 L1 與後台 9 L1；L1 是設定體驗，不是 Runtime inheritance。套用前必須展開成精確 Resource / Action Assignment、做影響預覽、人工確認，再明確 Assign / Revoke。
+P	圖 1｜IAM-01 優化後主工作區：帳號目錄與同頁 3-Step 新增／編輯流程。
+P	1. Page Identity / 頁面定位與產品目標
+ROW	項目	設計規格
+P	項目
+P	設計規格
+ROW	Page UID	admin:IAM-01
+P	Page UID
+P	admin:IAM-01
+ROW	頁面名稱	帳戶與權限 / Accounts & Permissions
+P	頁面名稱
+P	帳戶與權限 / Accounts & Permissions
+ROW	Route	/admin/accounts
+P	Route
+P	/admin/accounts
+ROW	Surface	ADMIN
+P	Surface
+P	ADMIN
+ROW	Purpose	統一承接帳號目錄、新增／編輯、L1 權限配置、權限影響預覽、Audit / Access Review；不得建立第二套 IAM / RBAC。
+P	Purpose
+P	統一承接帳號目錄、新增／編輯、L1 權限配置、權限影響預覽、Audit / Access Review；不得建立第二套 IAM / RBAC。
+ROW	Primary User	具備帳號或權限管理資格的管理者。
+P	Primary User
+P	具備帳號或權限管理資格的管理者。
+ROW	Authorization Model	ACCOUNT_PERMISSION_ASSIGNMENT_ONLY
+P	Authorization Model
+P	ACCOUNT_PERMISSION_ASSIGNMENT_ONLY
+ROW	Visual Status	Optimized Design for Review
+P	Visual Status
+P	Optimized Design for Review
+ROW	Implementation Status	由正式施工、Runtime、Test、E2E 與 Production Evidence 判定；本文件不代替執行證據。
+P	Implementation Status
+P	由正式施工、Runtime、Test、E2E 與 Production Evidence 判定；本文件不代替執行證據。
+P	2. Scope / 角色、需求、Out-of-Scope 與非功能要求
+ROW	類別	內容
+P	類別
+P	內容
+ROW	Business Goal	用最少的管理複雜度完成帳號與權限配置，同時保持精確授權、可預覽、可追溯、可回復。
+P	Business Goal
+P	用最少的管理複雜度完成帳號與權限配置，同時保持精確授權、可預覽、可追溯、可回復。
+ROW	Target User	IAM 管理者、帳號維護者、Access Reviewer；一般帳號使用者不在此頁配置自己權限。
+P	Target User
+P	IAM 管理者、帳號維護者、Access Reviewer；一般帳號使用者不在此頁配置自己權限。
+ROW	Functional Scope	Account Directory、Add/Edit 3-Step、Department Preset 建議、前台 9 L1、後台 9 L1、Impact Preview、Explicit Apply、Audit/Access Review。
+P	Functional Scope
+P	Account Directory、Add/Edit 3-Step、Department Preset 建議、前台 9 L1、後台 9 L1、Impact Preview、Explicit Apply、Audit/Access Review。
+ROW	Out of Scope	第二套 IAM/RBAC、Role-based hidden grants、Department automatic grants、Wildcard/SUPER_ADMIN shortcut、頁面內第二層權限樹、平行 Permission Service/Registry。
+P	Out of Scope
+P	第二套 IAM/RBAC、Role-based hidden grants、Department automatic grants、Wildcard/SUPER_ADMIN shortcut、頁面內第二層權限樹、平行 Permission Service/Registry。
+ROW	Security	身份、頁面權限、Action resource、scope/condition、expected_version、idempotency、state guard、audit 全部為 effectful apply 的必要 Gate。
+P	Security
+P	身份、頁面權限、Action resource、scope/condition、expected_version、idempotency、state guard、audit 全部為 effectful apply 的必要 Gate。
+ROW	Reliability	Partial Apply 不得顯示 COMPLETE；保留 Draft / correlation，僅重試缺失 delta。
+P	Reliability
+P	Partial Apply 不得顯示 COMPLETE；保留 Draft / correlation，僅重試缺失 delta。
+ROW	Usability	同頁完成 Create/Edit；低頻 Governance 進 Detail/Drawer；主畫面只保留必要控制。
+P	Usability
+P	同頁完成 Create/Edit；低頻 Governance 進 Detail/Drawer；主畫面只保留必要控制。
+ROW	Accessibility	Keyboard、Focus、表單標籤、Disabled reason、狀態不只靠顏色；Touch target ≥44×44px。
+P	Accessibility
+P	Keyboard、Focus、表單標籤、Disabled reason、狀態不只靠顏色；Touch target ≥44×44px。
+P	3. Business Entity Inventory / 業務實體清單
+ROW	Entity	Canonical Name	用途	管理內容	Owner Boundary
+P	Entity
+P	Canonical Name
+P	用途
+P	管理內容
+P	Owner Boundary
+ROW	ACCOUNT	Account	帳號主體	帳號生命週期與 Identity 連結	Identity / Account owners
+P	ACCOUNT
+P	Account
+P	帳號主體
+P	帳號生命週期與 Identity 連結
+P	Identity / Account owners
+ROW	IDENTITY-ACTOR	Identity Actor	已驗證身份	Session → actor → account mapping	Identity runtime
+P	IDENTITY-ACTOR
+P	Identity Actor
+P	已驗證身份
+P	Session → actor → account mapping
+P	Identity runtime
+ROW	PERMISSION-DRAFT	Permission Draft	配置草稿	Basic Data + L1 selection + validation state	IAM draft owner
+P	PERMISSION-DRAFT
+P	Permission Draft
+P	配置草稿
+P	Basic Data + L1 selection + validation state
+P	IAM draft owner
+ROW	L1-BUNDLE	L1 Permission Choice	管理者設定粒度	前台 9 + 後台 9 L1	IAM-01 UX / Navigation
+P	L1-BUNDLE
+P	L1 Permission Choice
+P	管理者設定粒度
+P	前台 9 + 後台 9 L1
+P	IAM-01 UX / Navigation
+ROW	PERM-ASSIGNMENT	Account Permission Assignment	正式授權資料	resource/action/scope/condition explicit assignment	Policy / IAM runtime
+P	PERM-ASSIGNMENT
+P	Account Permission Assignment
+P	正式授權資料
+P	resource/action/scope/condition explicit assignment
+P	Policy / IAM runtime
+ROW	AUTH-IMPACT	Authorization Impact Preview	套用前差異	added/removed/unchanged/blocked	IAM runtime
+P	AUTH-IMPACT
+P	Authorization Impact Preview
+P	套用前差異
+P	added/removed/unchanged/blocked
+P	IAM runtime
+ROW	ACCESS-REVIEW	Access Review / Audit	治理投影	effective permission / audit / history / risk	Access Review / Audit owners
+P	ACCESS-REVIEW
+P	Access Review / Audit
+P	治理投影
+P	effective permission / audit / history / risk
+P	Access Review / Audit owners
+P	4. Entity Hierarchy / Owner 與資料責任邊界
+ROW	Parent	Child / Relation	責任邊界
+P	Parent
+P	Child / Relation
+P	責任邊界
+ROW	Account	Identity Actor	Identity 負責「誰是誰」；Account 負責帳號管理狀態。
+P	Account
+P	Identity Actor
+P	Identity 負責「誰是誰」；Account 負責帳號管理狀態。
+ROW	Account	Permission Draft	Draft 只保存候選配置，不等於有效授權。
+P	Account
+P	Permission Draft
+P	Draft 只保存候選配置，不等於有效授權。
+ROW	Permission Draft	L1 Permission Choices	9+9 是管理 UI；不是 runtime inheritance。
+P	Permission Draft
+P	L1 Permission Choices
+P	9+9 是管理 UI；不是 runtime inheritance。
+ROW	L1 Permission Choice	Explicit Permission Assignments	套用時解析當下正式 resource/action 並物化為顯式 Assignment。
+P	L1 Permission Choice
+P	Explicit Permission Assignments
+P	套用時解析當下正式 resource/action 並物化為顯式 Assignment。
+ROW	Account	Authorization Impact Preview	Preview 對比 current vs proposed；無 apply effect。
+P	Account
+P	Authorization Impact Preview
+P	Preview 對比 current vs proposed；無 apply effect。
+ROW	Account	Access Review / Audit	Read-only governance projection；effectful break-glass 若無正式 operation 則不可發明。
+P	Account
+P	Access Review / Audit
+P	Read-only governance projection；effectful break-glass 若無正式 operation 則不可發明。
+P	5. Business Entity × Applicable Operation Matrix
+ROW	Operation	Account	Draft	L1 Choice	Assignment	Impact Preview	Access Review
+P	Operation
+P	Account
+P	Draft
+P	L1 Choice
+P	Assignment
+P	Impact Preview
+P	Access Review
+ROW	Discover/List	R	R	R	R	R	R
+P	Discover/List
+P	R
+P	R
+P	R
+P	R
+P	R
+P	R
+ROW	Select/Open	R	R	R	R	R	R
+P	Select/Open
+P	R
+P	R
+P	R
+P	R
+P	R
+P	R
+ROW	Create	R	R	N	R	R	N
+P	Create
+P	R
+P	R
+P	N
+P	R
+P	R
+P	N
+ROW	Draft	O	R	R	N	N	N
+P	Draft
+P	O
+P	R
+P	R
+P	N
+P	N
+P	N
+ROW	Edit	R	R	R	R	N	N
+P	Edit
+P	R
+P	R
+P	R
+P	R
+P	N
+P	N
+ROW	Save	R	R	R	R	N	N
+P	Save
+P	R
+P	R
+P	R
+P	R
+P	N
+P	N
+ROW	Validate	R	R	R	R	R	N
+P	Validate
+P	R
+P	R
+P	R
+P	R
+P	R
+P	N
+ROW	Preview	R	R	R	R	R	N
+P	Preview
+P	R
+P	R
+P	R
+P	R
+P	R
+P	N
+ROW	Operation	Account	Draft	L1 Choice	Assignment	Impact Preview	Access Review
+P	Operation
+P	Account
+P	Draft
+P	L1 Choice
+P	Assignment
+P	Impact Preview
+P	Access Review
+ROW	Confirm/Approve	R	R	R	R	R	N
+P	Confirm/Approve
+P	R
+P	R
+P	R
+P	R
+P	R
+P	N
+ROW	Assign/Revoke	R	N	N	R	N	N
+P	Assign/Revoke
+P	R
+P	N
+P	N
+P	R
+P	N
+P	N
+ROW	Version Check	R	R	R	R	R	R
+P	Version Check
+P	R
+P	R
+P	R
+P	R
+P	R
+P	R
+ROW	Resume/Retry	R	R	R	R	R	R
+P	Resume/Retry
+P	R
+P	R
+P	R
+P	R
+P	R
+P	R
+ROW	Audit	R	R	R	R	R	R
+P	Audit
+P	R
+P	R
+P	R
+P	R
+P	R
+P	R
+ROW	Error Recovery	R	R	R	R	R	R
+P	Error Recovery
+P	R
+P	R
+P	R
+P	R
+P	R
+P	R
+ROW	Archive/Delete	O	O	N	R	N	N
+P	Archive/Delete
+P	O
+P	O
+P	N
+P	R
+P	N
+P	N
+ROW	Restore	O	O	N	R	N	N
+P	Restore
+P	O
+P	O
+P	N
+P	R
+P	N
+P	N
+P	Legend：R = REQUIRED、O = OPTIONAL、N = NOT_APPLICABLE。任何新增正式 Entity、Operation 或 effectful control 都必須先證明現有 Owner / Runtime 無法合法承接，才可進入新增評估。
+P	6. Functional Admission / 單一 IAM 與功能必要性規則
+ROW	功能	必要性	主畫面策略	理由
+P	功能
+P	必要性
+P	主畫面策略
+P	理由
+ROW	Account Directory	CORE_REQUIRED	常駐	主要入口；沒有帳號目錄無法選定管理對象。
+P	Account Directory
+P	CORE_REQUIRED
+P	常駐
+P	主要入口；沒有帳號目錄無法選定管理對象。
+ROW	Add/Edit 3-Step	CORE_REQUIRED	右側常駐工作區	同頁完成，不建立第二 IAM 頁面。
+P	Add/Edit 3-Step
+P	CORE_REQUIRED
+P	右側常駐工作區
+P	同頁完成，不建立第二 IAM 頁面。
+ROW	Department Preset	PRIMARY_SUPPORT	Step 2 內顯示	只是 Draft 建議值，不是授權來源。
+P	Department Preset
+P	PRIMARY_SUPPORT
+P	Step 2 內顯示
+P	只是 Draft 建議值，不是授權來源。
+ROW	Impact Preview	CORE_REQUIRED	Step 3 主區	effectful apply 前必須可見差異與 blocker。
+P	Impact Preview
+P	CORE_REQUIRED
+P	Step 3 主區
+P	effectful apply 前必須可見差異與 blocker。
+ROW	Account Detail / Governance	PRIMARY_SUPPORT	列表下方 / Drawer	Status/MFA/Risk/Session/History 不應搶占主工作區。
+P	Account Detail / Governance
+P	PRIMARY_SUPPORT
+P	列表下方 / Drawer
+P	Status/MFA/Risk/Session/History 不應搶占主工作區。
+ROW	Audit / Access Review	SECONDARY	Drawer / Detail	低頻治理，不做永久大型卡片。
+P	Audit / Access Review
+P	SECONDARY
+P	Drawer / Detail
+P	低頻治理，不做永久大型卡片。
+ROW	Break-glass effectful actions	CONDITIONAL	只有正式 operation 存在才渲染	不得自行發明 emergency privilege mutation。
+P	Break-glass effectful actions
+P	CONDITIONAL
+P	只有正式 operation 存在才渲染
+P	不得自行發明 emergency privilege mutation。
+P	7. Primary User Journey / 新增與編輯的連續流程
+ROW	Step	主要工作	完成條件	Fail-Closed 行為
+P	Step
+P	主要工作
+P	完成條件
+P	Fail-Closed 行為
+ROW	1｜Basic Data	依註冊 Identity / Organization schema 輸入或調整基本資料；Open UI 不建立帳號。	Schema valid；Draft 可保存。	Schema 無法解析 → 阻擋該表單區，不發明欄位。
+P	1｜Basic Data
+P	依註冊 Identity / Organization schema 輸入或調整基本資料；Open UI 不建立帳號。
+P	Schema valid；Draft 可保存。
+P	Schema 無法解析 → 阻擋該表單區，不發明欄位。
+ROW	2｜L1 Permission	Preset 可先預填；管理者調整前台 9 L1、後台 9 L1。	Draft selection 明確；無 Role/Department 隱含授權。	L1 mapping 無法解析 → 阻擋該 L1 Preview/Apply。
+P	2｜L1 Permission
+P	Preset 可先預填；管理者調整前台 9 L1、後台 9 L1。
+P	Draft selection 明確；無 Role/Department 隱含授權。
+P	L1 mapping 無法解析 → 阻擋該 L1 Preview/Apply。
+ROW	3｜Preview / Complete	L1 → exact resource/action → delta preview → explicit confirm → apply。	所有 required operations、version、idempotency、approval、audit 成功。	任何部分失敗 → Non-final + 真實 partial delta + correlation retry。
+P	3｜Preview / Complete
+P	L1 → exact resource/action → delta preview → explicit confirm → apply。
+P	所有 required operations、version、idempotency、approval、audit 成功。
+P	任何部分失敗 → Non-final + 真實 partial delta + correlation retry。
+P	8. Layout System / Grid、Geometry 與資訊密度
+ROW	Region	Geometry	Behavior / Priority
+P	Region
+P	Geometry
+P	Behavior / Priority
+ROW	Global Header	58px fixed top	由全站 Shell 管理；Page 不建立第二 Header。
+P	Global Header
+P	58px fixed top
+P	由全站 Shell 管理；Page 不建立第二 Header。
+ROW	Collapsed Sidebar	64px transparent interaction rail	Admin L1 icon only；IAM-01 active；展開為 221px overlay，不 reflow workspace。
+P	Collapsed Sidebar
+P	64px transparent interaction rail
+P	Admin L1 icon only；IAM-01 active；展開為 221px overlay，不 reflow workspace。
+ROW	Workspace Origin	x=78px, y=68px; right/bottom inset 16px	Global Shell 固定。
+P	Workspace Origin
+P	x=78px, y=68px; right/bottom inset 16px
+P	Global Shell 固定。
+ROW	Page Context Bar	100% × 56px	頁名、真實 authorized account count（若有）、新增帳號 CTA。
+P	Page Context Bar
+P	100% × 56px
+P	頁名、真實 authorized account count（若有）、新增帳號 CTA。
+ROW	Primary Grid	minmax(720px,2fr) + minmax(480px,1fr); gap 16px	約 64% Account Directory / 36% Add/Edit Flow。
+P	Primary Grid
+P	minmax(720px,2fr) + minmax(480px,1fr); gap 16px
+P	約 64% Account Directory / 36% Add/Edit Flow。
+ROW	Account Detail	List 下方或 Drawer	低頻治理資訊，不做 oversized card。
+P	Account Detail
+P	List 下方或 Drawer
+P	低頻治理資訊，不做 oversized card。
+ROW	Viewport	desktop-first; min-width 1280px	<1280px horizontal scroll；不另做不同業務流程。
+P	Viewport
+P	desktop-first; min-width 1280px
+P	<1280px horizontal scroll；不另做不同業務流程。
+ROW	Control Tokens	40px control; 44×44 touch; radius 10/12px	沿用科技紫 Global Visual。
+P	Control Tokens
+P	40px control; 44×44 touch; radius 10/12px
+P	沿用科技紫 Global Visual。
+P	9. Section Registry
+ROW	Section UID	Name	Priority	Grid / Dimension	Purpose
+P	Section UID
+P	Name
+P	Priority
+P	Grid / Dimension
+P	Purpose
+ROW	IAM-01-SEC-01	Page Context / Actions	CORE_REQUIRED	100% × 56px	Title / status / Add
+P	IAM-01-SEC-01
+P	Page Context / Actions
+P	CORE_REQUIRED
+P	100% × 56px
+P	Title / status / Add
+ROW	IAM-01-SEC-02	Account Directory	CORE_REQUIRED	Left 64%	Search / filter / list
+P	IAM-01-SEC-02
+P	Account Directory
+P	CORE_REQUIRED
+P	Left 64%
+P	Search / filter / list
+ROW	IAM-01-SEC-03	Account Detail / Governance	PRIMARY_SUPPORT	Below list / Drawer	Read-only detail
+P	IAM-01-SEC-03
+P	Account Detail / Governance
+P	PRIMARY_SUPPORT
+P	Below list / Drawer
+P	Read-only detail
+ROW	IAM-01-SEC-04	Add / Edit Account Flow	CORE_REQUIRED	Right 36%	3-Step
+P	IAM-01-SEC-04
+P	Add / Edit Account Flow
+P	CORE_REQUIRED
+P	Right 36%
+P	3-Step
+ROW	IAM-01-SEC-05	Permission / Impact Preview	CORE_REQUIRED	Step 3	Delta + blockers + confirm
+P	IAM-01-SEC-05
+P	Permission / Impact Preview
+P	CORE_REQUIRED
+P	Step 3
+P	Delta + blockers + confirm
+ROW	IAM-01-SEC-06	Audit / Access Review	SECONDARY	Drawer / Detail	Governance projection
+P	IAM-01-SEC-06
+P	Audit / Access Review
+P	SECONDARY
+P	Drawer / Detail
+P	Governance projection
+P	10. Component Registry
+ROW	Component UID	Section	Responsibility
+P	Component UID
+P	Section
+P	Responsibility
+ROW	IAM-01-CMP-CONTEXT	SEC-01	Title + Add + current operation state
+P	IAM-01-CMP-CONTEXT
+P	SEC-01
+P	Title + Add + current operation state
+ROW	IAM-01-CMP-ACCOUNT-LIST	SEC-02	Search/filter/table
+P	IAM-01-CMP-ACCOUNT-LIST
+P	SEC-02
+P	Search/filter/table
+ROW	IAM-01-CMP-ACCOUNT-DETAIL	SEC-03	Identity/status/MFA/risk/session/history/effective permission
+P	IAM-01-CMP-ACCOUNT-DETAIL
+P	SEC-03
+P	Identity/status/MFA/risk/session/history/effective permission
+ROW	IAM-01-CMP-STEPPER	SEC-04	Same-page 3-step create/edit
+P	IAM-01-CMP-STEPPER
+P	SEC-04
+P	Same-page 3-step create/edit
+ROW	IAM-01-CMP-BASIC-DATA	SEC-04	Schema-driven Identity / Organization fields
+P	IAM-01-CMP-BASIC-DATA
+P	SEC-04
+P	Schema-driven Identity / Organization fields
+ROW	IAM-01-CMP-PERMISSION-PRESET	SEC-04	Department preset suggestion
+P	IAM-01-CMP-PERMISSION-PRESET
+P	SEC-04
+P	Department preset suggestion
+ROW	IAM-01-CMP-FRONT-L1	SEC-04	9 frontend L1 choices
+P	IAM-01-CMP-FRONT-L1
+P	SEC-04
+P	9 frontend L1 choices
+ROW	IAM-01-CMP-BACK-L1	SEC-04	9 backend L1 choices
+P	IAM-01-CMP-BACK-L1
+P	SEC-04
+P	9 backend L1 choices
+ROW	IAM-01-CMP-PREVIEW	SEC-05	Authorization impact / effective permission preview
+P	IAM-01-CMP-PREVIEW
+P	SEC-05
+P	Authorization impact / effective permission preview
+ROW	IAM-01-CMP-AUDIT	SEC-06	Audit + Access Review projection
+P	IAM-01-CMP-AUDIT
+P	SEC-06
+P	Audit + Access Review projection
+P	11. Control Registry / 14 個 Current Controls
+ROW	Control UID	Label	Type	Placement	Action	Gate	Permission
+P	Control UID
+P	Label
+P	Type
+P	Placement
+P	Action
+P	Gate
+P	Permission
+ROW	IAM-01-CTL-SEARCH	搜尋帳號	SEARCH	Account Directory	IAM-01-ACT-SEARCH	IAM-01-GATE-PAGE	projection.search
+P	IAM-01-CTL-SEARCH
+P	搜尋帳號
+P	SEARCH
+P	Account Directory
+P	IAM-01-ACT-SEARCH
+P	IAM-01-GATE-PAGE
+P	projection.search
+ROW	IAM-01-BTN-ADD	新增帳號	PRIMARY_BUTTON	Context Bar	IAM-01-ACT-OPEN-CREATE	IAM-01-GATE-MANAGE	iam.user.create
+P	IAM-01-BTN-ADD
+P	新增帳號
+P	PRIMARY_BUTTON
+P	Context Bar
+P	IAM-01-ACT-OPEN-CREATE
+P	IAM-01-GATE-MANAGE
+P	iam.user.create
+ROW	IAM-01-BTN-EDIT	編輯	ROW_ACTION	Account row	IAM-01-ACT-OPEN-EDIT	IAM-01-GATE-MANAGE	iam.user.configure
+P	IAM-01-BTN-EDIT
+P	編輯
+P	ROW_ACTION
+P	Account row
+P	IAM-01-ACT-OPEN-EDIT
+P	IAM-01-GATE-MANAGE
+P	iam.user.configure
+ROW	IAM-01-CTL-BASIC-DATA	基本資料	SCHEMA_FORM	Step 1	IAM-01-ACT-BASIC-DATA-EDIT	IAM-01-GATE-DRAFT	iam.user.create/configure
+P	IAM-01-CTL-BASIC-DATA
+P	基本資料
+P	SCHEMA_FORM
+P	Step 1
+P	IAM-01-ACT-BASIC-DATA-EDIT
+P	IAM-01-GATE-DRAFT
+P	iam.user.create/configure
+ROW	IAM-01-SEL-DEPT-PRESET	預設部門權限	SELECT	Step 2	IAM-01-ACT-PRESET-APPLY-TO-DRAFT	IAM-01-GATE-DRAFT	iam.permission.configure
+P	IAM-01-SEL-DEPT-PRESET
+P	預設部門權限
+P	SELECT
+P	Step 2
+P	IAM-01-ACT-PRESET-APPLY-TO-DRAFT
+P	IAM-01-GATE-DRAFT
+P	iam.permission.configure
+ROW	IAM-01-CHK-FRONT-ALL	前台全部	CHECKBOX	Step 2	IAM-01-ACT-FRONT-ALL-DRAFT	IAM-01-GATE-DRAFT	iam.permission.configure
+P	IAM-01-CHK-FRONT-ALL
+P	前台全部
+P	CHECKBOX
+P	Step 2
+P	IAM-01-ACT-FRONT-ALL-DRAFT
+P	IAM-01-GATE-DRAFT
+P	iam.permission.configure
+ROW	IAM-01-GRP-FRONT-L1	前台 9 L1	CHECKBOX_GROUP	Step 2	IAM-01-ACT-L1-DRAFT-SET	IAM-01-GATE-DRAFT	iam.permission.configure
+P	IAM-01-GRP-FRONT-L1
+P	前台 9 L1
+P	CHECKBOX_GROUP
+P	Step 2
+P	IAM-01-ACT-L1-DRAFT-SET
+P	IAM-01-GATE-DRAFT
+P	iam.permission.configure
+ROW	IAM-01-CHK-BACK-ALL	後台總權限	CHECKBOX	Step 2	IAM-01-ACT-BACK-ALL-DRAFT	IAM-01-GATE-DRAFT	iam.permission.configure
+P	IAM-01-CHK-BACK-ALL
+P	後台總權限
+P	CHECKBOX
+P	Step 2
+P	IAM-01-ACT-BACK-ALL-DRAFT
+P	IAM-01-GATE-DRAFT
+P	iam.permission.configure
+ROW	IAM-01-GRP-BACK-L1	後台 9 L1	CHECKBOX_GROUP	Step 2	IAM-01-ACT-L1-DRAFT-SET	IAM-01-GATE-DRAFT	iam.permission.configure
+P	IAM-01-GRP-BACK-L1
+P	後台 9 L1
+P	CHECKBOX_GROUP
+P	Step 2
+P	IAM-01-ACT-L1-DRAFT-SET
+P	IAM-01-GATE-DRAFT
+P	iam.permission.configure
+ROW	IAM-01-BTN-SAVE-DRAFT	儲存草稿	SECONDARY_BUTTON	Flow footer	IAM-01-ACT-SAVE-DRAFT	IAM-01-GATE-DRAFT	entity.write
+P	IAM-01-BTN-SAVE-DRAFT
+P	儲存草稿
+P	SECONDARY_BUTTON
+P	Flow footer
+P	IAM-01-ACT-SAVE-DRAFT
+P	IAM-01-GATE-DRAFT
+P	entity.write
+ROW	IAM-01-BTN-VALIDATE	驗證	SECONDARY_BUTTON	Flow footer	IAM-01-ACT-VALIDATE-DRAFT	IAM-01-GATE-DRAFT	entity.read
+P	IAM-01-BTN-VALIDATE
+P	驗證
+P	SECONDARY_BUTTON
+P	Flow footer
+P	IAM-01-ACT-VALIDATE-DRAFT
+P	IAM-01-GATE-DRAFT
+P	entity.read
+ROW	IAM-01-BTN-PREVIEW	權限預覽	SECONDARY_BUTTON	Step 2/3	IAM-01-ACT-PREVIEW	IAM-01-GATE-PREVIEW	iam.permission.configure
+P	IAM-01-BTN-PREVIEW
+P	權限預覽
+P	SECONDARY_BUTTON
+P	Step 2/3
+P	IAM-01-ACT-PREVIEW
+P	IAM-01-GATE-PREVIEW
+P	iam.permission.configure
+ROW	IAM-01-BTN-COMPLETE	完成建立 / 儲存變更	PRIMARY_BUTTON	Step 3	IAM-01-ACT-COMPLETE	IAM-01-GATE-COMPLETE	user manage + permission configure
+P	IAM-01-BTN-COMPLETE
+P	完成建立 / 儲存變更
+P	PRIMARY_BUTTON
+P	Step 3
+P	IAM-01-ACT-COMPLETE
+P	IAM-01-GATE-COMPLETE
+P	user manage + permission configure
+ROW	IAM-01-BTN-AUDIT	Audit / Access Review	COMPACT_BUTTON	Detail/Drawer	IAM-01-ACT-AUDIT-OPEN	IAM-01-GATE-PAGE	page.view
+P	IAM-01-BTN-AUDIT
+P	Audit / Access Review
+P	COMPACT_BUTTON
+P	Detail/Drawer
+P	IAM-01-ACT-AUDIT-OPEN
+P	IAM-01-GATE-PAGE
+P	page.view
+P	所有 Effectful Control 必須具有 Default / Hover / Focus / Loading / Disabled(reason) / Success / Error 狀態；Disabled 不可只有降透明度而沒有可讀原因。
+P	12. Field & Form Contract / Schema 驅動欄位
+ROW	Field Group	Type	Required / Validation	Read-only / Disabled	Localization / Placeholder
+P	Field Group
+P	Type
+P	Required / Validation
+P	Read-only / Disabled
+P	Localization / Placeholder
+ROW	Basic Data Schema Region	DYNAMIC_SCHEMA_FORM	由已註冊 schema 決定 Required、Length、Format、Range；未知 schema = BLOCK。	依 permission / account state	依 schema label key；不得自行命名帳號欄位。
+P	Basic Data Schema Region
+P	DYNAMIC_SCHEMA_FORM
+P	由已註冊 schema 決定 Required、Length、Format、Range；未知 schema = BLOCK。
+P	依 permission / account state
+P	依 schema label key；不得自行命名帳號欄位。
+ROW	Department Permission Preset	SELECT	Optional；值來自 governed config。	未配置時顯示「無預設 / 手動設定」	zh-TW / zh-CN / en
+P	Department Permission Preset
+P	SELECT
+P	Optional；值來自 governed config。
+P	未配置時顯示「無預設 / 手動設定」
+P	zh-TW / zh-CN / en
+ROW	Frontend L1 Group	CHECKBOX_GROUP	9 fixed current choices；至少一個 Intentional selection state 才可進 Preview。	依 iam.permission.configure	固定 9 L1 labels
+P	Frontend L1 Group
+P	CHECKBOX_GROUP
+P	9 fixed current choices；至少一個 Intentional selection state 才可進 Preview。
+P	依 iam.permission.configure
+P	固定 9 L1 labels
+ROW	Backend L1 Group	CHECKBOX_GROUP	9 fixed current choices。	依 iam.permission.configure	固定 9 L1 labels
+P	Backend L1 Group
+P	CHECKBOX_GROUP
+P	9 fixed current choices。
+P	依 iam.permission.configure
+P	固定 9 L1 labels
+ROW	Preview Confirmation	CONFIRMATION	Preview fresh + no blocker + expected_version。	APPLYING 時 disabled	明確顯示新增 / 移除 / 保留 / 阻擋語意
+P	Preview Confirmation
+P	CONFIRMATION
+P	Preview fresh + no blocker + expected_version。
+P	APPLYING 時 disabled
+P	明確顯示新增 / 移除 / 保留 / 阻擋語意
+P	13. Permission Model / 前台 9 L1 與後台 9 L1
+ROW	#	前台 L1	Page UID
+P	#
+P	前台 L1
+P	Page UID
+ROW	1	儀表板	workspace:WB-01
+P	1
+P	儀表板
+P	workspace:WB-01
+ROW	2	專案 / 專題	CORE-01
+P	2
+P	專案 / 專題
+P	CORE-01
+ROW	3	素材	ASSET-01
+P	3
+P	素材
+P	ASSET-01
+ROW	4	影片	VIDEO-01
+P	4
+P	影片
+P	VIDEO-01
+ROW	5	剪輯配音	EDIT-01
+P	5
+P	剪輯配音
+P	EDIT-01
+ROW	6	QA	QA-01
+P	6
+P	QA
+P	QA-01
+ROW	7	資料庫	admin:DB-01
+P	7
+P	資料庫
+P	admin:DB-01
+ROW	8	戰略中心	workspace:STR-01
+P	8
+P	戰略中心
+P	workspace:STR-01
+ROW	9	最新資訊	workspace:INFO-01
+P	9
+P	最新資訊
+P	workspace:INFO-01
+ROW	#	後台 L1	Page UID
+P	#
+P	後台 L1
+P	Page UID
+ROW	1	系統維護	admin:SYS-01
+P	1
+P	系統維護
+P	admin:SYS-01
+ROW	2	帳戶與權限	admin:IAM-01
+P	2
+P	帳戶與權限
+P	admin:IAM-01
+ROW	3	企業自動開發系統	admin:DEV-01
+P	3
+P	企業自動開發系統
+P	admin:DEV-01
+ROW	4	社群發布	admin:SOC-01
+P	4
+P	社群發布
+P	admin:SOC-01
+ROW	5	ERP	admin:ERP-01
+P	5
+P	ERP
+P	admin:ERP-01
+ROW	6	AI API	admin:AIAPI-01
+P	6
+P	AI API
+P	admin:AIAPI-01
+ROW	7	QA 評分項目	admin:SG-02
+P	7
+P	QA 評分項目
+P	admin:SG-02
+ROW	8	戰略中心	admin:STR-01
+P	8
+P	戰略中心
+P	admin:STR-01
+ROW	9	知識庫	admin:KB-01
+P	9
+P	知識庫
+P	admin:KB-01
+P	「前台全部」與「後台總權限」都只是一鍵選取 Draft；不是 SUPER_ADMIN、不是 wildcard、不能繞過 MFA / approval / state / policy / audit。
+P	14. Department Preset / Scope 與授權分離
+ROW	項目	規則
+P	項目
+P	規則
+ROW	Department / Organization Scope	屬帳號 metadata / scope；本身不授權。
+P	Department / Organization Scope
+P	屬帳號 metadata / scope；本身不授權。
+ROW	Preset Purpose	只預填前台／後台 L1 Draft 建議值。
+P	Preset Purpose
+P	只預填前台／後台 L1 Draft 建議值。
+ROW	Editable	管理者可在 Preview 前人工增減任何 L1。
+P	Editable
+P	管理者可在 Preview 前人工增減任何 L1。
+ROW	No Preset	顯示「無預設 / 手動設定」；不得由 AI 猜。
+P	No Preset
+P	顯示「無預設 / 手動設定」；不得由 AI 猜。
+ROW	Preset Change	不得 retroactive auto-grant / auto-revoke 既有帳號。
+P	Preset Change
+P	不得 retroactive auto-grant / auto-revoke 既有帳號。
+ROW	Department Change	不得偷偷改有效權限。
+P	Department Change
+P	不得偷偷改有效權限。
+ROW	Storage Owner	重用既有 governed policy configuration；不建立第二套 preset engine。
+P	Storage Owner
+P	重用既有 governed policy configuration；不建立第二套 preset engine。
+P	15. Permission Materialization / L1 → Explicit Assignments
+P	1. 讀取 Draft 中選定的前台／後台 L1。
+P	2. 對每個 L1 解析其當下正式註冊的 resource / action / scope / condition 集合。
+P	3. 展開成 Account Permission Assignment candidate rows；禁止 runtime parent/child inheritance。
+P	4. 與目標帳號 current explicit assignments 做 diff。
+P	5. 產生 Authorization Impact Preview：Added / Removed / Unchanged / Blocked。
+P	6. 要求 explicit confirmation。
+P	7. Additions 使用 assign；Removals 使用 revoke；帶 expected_version / correlation / idempotency / audit。
+P	8. 全部 required operations 成功後才允許 COMPLETE。
+P	9. Grant / Revoke 後刷新 Effective Permission 與 Navigation projection。
+P	Silent Future Grant 禁止：某 L1 日後新增 resource/action，不會自動授權既有帳號。必須重新編輯、Preview、明確 Apply。
+P	16. Runtime / API Integration Ports
+ROW	Port UID	Operation	Method / Path	Effect
+P	Port UID
+P	Operation
+P	Method / Path
+P	Effect
+ROW	IAM-01-PORT-PROJECTION	getUiProjection	GET /v1/ui-projections/{pageUid}	READ projection
+P	IAM-01-PORT-PROJECTION
+P	getUiProjection
+P	GET /v1/ui-projections/{pageUid}
+P	READ projection
+ROW	IAM-01-PORT-SEARCH	searchProjection	POST /v1/search	READ
+P	IAM-01-PORT-SEARCH
+P	searchProjection
+P	POST /v1/search
+P	READ
+ROW	IAM-01-PORT-DRAFT-SAVE	saveDraft	POST /v1/drafts	REGISTERED COMMAND
+P	IAM-01-PORT-DRAFT-SAVE
+P	saveDraft
+P	POST /v1/drafts
+P	REGISTERED COMMAND
+ROW	IAM-01-PORT-DRAFT-VALIDATE	validateDraft	POST /v1/drafts/{id}/validate	REGISTERED COMMAND
+P	IAM-01-PORT-DRAFT-VALIDATE
+P	validateDraft
+P	POST /v1/drafts/{id}/validate
+P	REGISTERED COMMAND
+ROW	IAM-01-PORT-CONFIGURE	configureGovernedResource	PATCH /v1/governance/resources/{id}	EFFECTFUL
+P	IAM-01-PORT-CONFIGURE
+P	configureGovernedResource
+P	PATCH /v1/governance/resources/{id}
+P	EFFECTFUL
+ROW	IAM-01-PORT-AUTH-PREVIEW	previewAuthorizationImpact	POST /v1/iam/accounts/{accountId}/authorization-impact	NO APPLY
+P	IAM-01-PORT-AUTH-PREVIEW
+P	previewAuthorizationImpact
+P	POST /v1/iam/accounts/{accountId}/authorization-impact
+P	NO APPLY
+ROW	IAM-01-PORT-PERM-ASSIGN	assignAccountPermission	POST /v1/iam/accounts/{accountId}/permissions	EFFECTFUL
+P	IAM-01-PORT-PERM-ASSIGN
+P	assignAccountPermission
+P	POST /v1/iam/accounts/{accountId}/permissions
+P	EFFECTFUL
+ROW	IAM-01-PORT-PERM-REVOKE	revokeAccountPermission	DELETE /v1/iam/accounts/{accountId}/permissions	EFFECTFUL
+P	IAM-01-PORT-PERM-REVOKE
+P	revokeAccountPermission
+P	DELETE /v1/iam/accounts/{accountId}/permissions
+P	EFFECTFUL
+ROW	IAM-01-PORT-APPROVE	approveGovernedResource	POST /v1/governance/resources/{id}/approve	EFFECTFUL
+P	IAM-01-PORT-APPROVE
+P	approveGovernedResource
+P	POST /v1/governance/resources/{id}/approve
+P	EFFECTFUL
+P	17. Runtime Authorization Binding / Effectful Operation Gate
+ROW	Operation	Exact Runtime Authorization Resource	Required Behavior
+P	Operation
+P	Exact Runtime Authorization Resource
+P	Required Behavior
+ROW	searchProjection	action:admin:IAM-01:ACT-SEARCH / INVOKE	Page context + identity required。
+P	searchProjection
+P	action:admin:IAM-01:ACT-SEARCH / INVOKE
+P	Page context + identity required。
+ROW	saveDraft	action:admin:IAM-02:ACT-DRAFT-SAVE / INVOKE	沿用既有 operation；IAM-01 不建立新 endpoint。
+P	saveDraft
+P	action:admin:IAM-02:ACT-DRAFT-SAVE / INVOKE
+P	沿用既有 operation；IAM-01 不建立新 endpoint。
+ROW	validateDraft	action:admin:IAM-02:ACT-DRAFT-VALIDATE / INVOKE	Draft / schema / state validation。
+P	validateDraft
+P	action:admin:IAM-02:ACT-DRAFT-VALIDATE / INVOKE
+P	Draft / schema / state validation。
+ROW	previewAuthorizationImpact	action:admin:IAM-02:ACT-ACCOUNT-PERMISSION-PREVIEW / INVOKE	只預覽，不 apply。
+P	previewAuthorizationImpact
+P	action:admin:IAM-02:ACT-ACCOUNT-PERMISSION-PREVIEW / INVOKE
+P	只預覽，不 apply。
+ROW	assignAccountPermission	action:admin:IAM-05:ACT-CONFIGURE / INVOKE	Explicit assignment addition。
+P	assignAccountPermission
+P	action:admin:IAM-05:ACT-CONFIGURE / INVOKE
+P	Explicit assignment addition。
+ROW	revokeAccountPermission	action:admin:IAM-05:ACT-CONFIGURE / INVOKE	Explicit assignment removal。
+P	revokeAccountPermission
+P	action:admin:IAM-05:ACT-CONFIGURE / INVOKE
+P	Explicit assignment removal。
+ROW	configureGovernedResource	action:admin:IAM-05:ACT-CONFIGURE / INVOKE	Page context required。
+P	configureGovernedResource
+P	action:admin:IAM-05:ACT-CONFIGURE / INVOKE
+P	Page context required。
+ROW	approveGovernedResource	action:admin:IAM-05:ACT-APPROVE / INVOKE	Approval required where lifecycle demands。
+P	approveGovernedResource
+P	action:admin:IAM-05:ACT-APPROVE / INVOKE
+P	Approval required where lifecycle demands。
+P	18. Functional Chain / 主要功能逐鏈
+ROW	Capability	Intent → Trigger → Gate → Action → Runtime → Feedback / Terminal
+P	Capability
+P	Intent → Trigger → Gate → Action → Runtime → Feedback / Terminal
+ROW	Account Search	Intent → Identity/Page Gate → Search input → Search action → /v1/search → Projection → Result list → empty/error feedback。
+P	Account Search
+P	Intent → Identity/Page Gate → Search input → Search action → /v1/search → Projection → Result list → empty/error feedback。
+ROW	Open Create/Edit	Intent → Manage Gate → Create or exact account_id select → same-page Stepper → Draft context → Basic Data schema。
+P	Open Create/Edit
+P	Intent → Manage Gate → Create or exact account_id select → same-page Stepper → Draft context → Basic Data schema。
+ROW	Save/Validate Draft	Draft → Permission Gate → saveDraft → validateDraft → validation result → Step transition or error recovery。
+P	Save/Validate Draft
+P	Draft → Permission Gate → saveDraft → validateDraft → validation result → Step transition or error recovery。
+ROW	Permission Preview	Validated Draft → resolve 9+9 L1 → exact resource/action expansion → diff current assignment → previewAuthorizationImpact → Added/Removed/Unchanged/Blocked。
+P	Permission Preview
+P	Validated Draft → resolve 9+9 L1 → exact resource/action expansion → diff current assignment → previewAuthorizationImpact → Added/Removed/Unchanged/Blocked。
+ROW	Complete Apply	Fresh Preview → explicit confirmation → expected_version/idempotency/state guard → assign/revoke/configure/approve → audit → COMPLETE or PARTIAL/ERROR。
+P	Complete Apply
+P	Fresh Preview → explicit confirmation → expected_version/idempotency/state guard → assign/revoke/configure/approve → audit → COMPLETE or PARTIAL/ERROR。
+ROW	Navigation Refresh	Successful backend L1 mutation → refresh effective permission → recompute Admin navigation → unauthorized L1 hidden → deep link still backend-authorized。
+P	Navigation Refresh
+P	Successful backend L1 mutation → refresh effective permission → recompute Admin navigation → unauthorized L1 hidden → deep link still backend-authorized。
+P	19. State Machine / 狀態、Transition 與 Resume
+ROW	State	Meaning	Allowed Next
+P	State
+P	Meaning
+P	Allowed Next
+ROW	LIST	帳號目錄；未選帳號時 detail 使用 neutral empty state。	CREATE_BASIC / EDIT_BASIC
+P	LIST
+P	帳號目錄；未選帳號時 detail 使用 neutral empty state。
+P	CREATE_BASIC / EDIT_BASIC
+ROW	CREATE_BASIC / EDIT_BASIC	Schema-driven basic data draft。	*_PERMISSION / BLOCKED / ERROR
+P	CREATE_BASIC / EDIT_BASIC
+P	Schema-driven basic data draft。
+P	*_PERMISSION / BLOCKED / ERROR
+ROW	CREATE_PERMISSION / EDIT_PERMISSION	L1 Draft + Preset。	*_PREVIEW / BLOCKED
+P	CREATE_PERMISSION / EDIT_PERMISSION
+P	L1 Draft + Preset。
+P	*_PREVIEW / BLOCKED
+ROW	CREATE_PREVIEW / EDIT_PREVIEW	Fresh authorization impact preview。	APPLYING / previous step
+P	CREATE_PREVIEW / EDIT_PREVIEW
+P	Fresh authorization impact preview。
+P	APPLYING / previous step
+ROW	APPLYING	Effectful mutation in progress；禁止 double submit。	COMPLETE / BLOCKED / ERROR
+P	APPLYING
+P	Effectful mutation in progress；禁止 double submit。
+P	COMPLETE / BLOCKED / ERROR
+ROW	COMPLETE	全部 required operations + audit 成功。	LIST / new edit
+P	COMPLETE
+P	全部 required operations + audit 成功。
+P	LIST / new edit
+ROW	BLOCKED	Authority/permission/mapping/state/policy gap；保留 draft/context。	Resume after gap resolved
+P	BLOCKED
+P	Authority/permission/mapping/state/policy gap；保留 draft/context。
+P	Resume after gap resolved
+ROW	ERROR	Registered runtime failure；保留 last lawful state + correlation。	Idempotent retry / reload / return
+P	ERROR
+P	Registered runtime failure；保留 last lawful state + correlation。
+P	Idempotent retry / reload / return
+P	20. Gate Registry
+ROW	Gate UID	Condition	Failure Behavior
+P	Gate UID
+P	Condition
+P	Failure Behavior
+ROW	IAM-01-GATE-PAGE	Identity + page VIEW + scope + condition + audit。	Hide/deny page mutation; no bypass。
+P	IAM-01-GATE-PAGE
+P	Identity + page VIEW + scope + condition + audit。
+P	Hide/deny page mutation; no bypass。
+ROW	IAM-01-GATE-MANAGE	Page gate + explicit account management permission。	Add/Edit disabled/hidden with reason。
+P	IAM-01-GATE-MANAGE
+P	Page gate + explicit account management permission。
+P	Add/Edit disabled/hidden with reason。
+ROW	IAM-01-GATE-DRAFT	Manage gate + valid account/draft + exact registered schema。	Preserve draft; block unresolved schema.
+P	IAM-01-GATE-DRAFT
+P	Manage gate + valid account/draft + exact registered schema。
+P	Preserve draft; block unresolved schema.
+ROW	IAM-01-GATE-PREVIEW	Draft valid + intentional L1 state + exact expansion resolvable + preview permission。	Block only affected preview/apply path。
+P	IAM-01-GATE-PREVIEW
+P	Draft valid + intentional L1 state + exact expansion resolvable + preview permission。
+P	Block only affected preview/apply path。
+ROW	IAM-01-GATE-COMPLETE	Preview current + no blocker + expected_version + idempotency + state guard + all permissions + explicit confirm + audit。	No COMPLETE claim; preserve correlation and partial truth.
+P	IAM-01-GATE-COMPLETE
+P	Preview current + no blocker + expected_version + idempotency + state guard + all permissions + explicit confirm + audit。
+P	No COMPLETE claim; preserve correlation and partial truth.
+P	21. Error / Recovery Contract
+ROW	Error UID	Trigger	Recovery
+P	Error UID
+P	Trigger
+P	Recovery
+ROW	IAM-01-ERR-IDENTITY-SCHEMA	Basic-data schema unresolved	BLOCK form section；不發明 username/email 等欄位。
+P	IAM-01-ERR-IDENTITY-SCHEMA
+P	Basic-data schema unresolved
+P	BLOCK form section；不發明 username/email 等欄位。
+ROW	IAM-01-ERR-PRESET	Preset missing/unresolvable	「無預設 / 手動設定」；不推論部門權限。
+P	IAM-01-ERR-PRESET
+P	Preset missing/unresolvable
+P	「無預設 / 手動設定」；不推論部門權限。
+ROW	IAM-01-ERR-L1-EXPANSION	L1 無法解析 exact resources	Block 該 L1 preview/apply；禁止 wildcard。
+P	IAM-01-ERR-L1-EXPANSION
+P	L1 無法解析 exact resources
+P	Block 該 L1 preview/apply；禁止 wildcard。
+ROW	IAM-01-ERR-AUTH-DENIED	Permission/scope/condition denied	不執行 mutation；顯示允許揭露的真實原因。
+P	IAM-01-ERR-AUTH-DENIED
+P	Permission/scope/condition denied
+P	不執行 mutation；顯示允許揭露的真實原因。
+ROW	IAM-01-ERR-VERSION	Expected version conflict	Reload current state；要求重新 Preview。
+P	IAM-01-ERR-VERSION
+P	Expected version conflict
+P	Reload current state；要求重新 Preview。
+ROW	IAM-01-ERR-PARTIAL-APPLY	部分 assignment 成功、部分失敗	Non-final；顯示成功/失敗 delta；只重試缺失 delta。
+P	IAM-01-ERR-PARTIAL-APPLY
+P	部分 assignment 成功、部分失敗
+P	Non-final；顯示成功/失敗 delta；只重試缺失 delta。
+ROW	IAM-01-ERR-UNDEFINED	Unregistered route/control/field/operation	BLOCK + report gap；不自行新增。
+P	IAM-01-ERR-UNDEFINED
+P	Unregistered route/control/field/operation
+P	BLOCK + report gap；不自行新增。
+P	22. Identity / Security / Data Boundary
+ROW	Boundary	規格
+P	Boundary
+P	規格
+ROW	Identity Transport	使用正式 Session → Runtime Account → Canonical Actor mapping；頁面不得自行推測 identity。
+P	Identity Transport
+P	使用正式 Session → Runtime Account → Canonical Actor mapping；頁面不得自行推測 identity。
+ROW	Actor Status	只有有效、未 disabled 的 actor 可通過 Human Page Gate。
+P	Actor Status
+P	只有有效、未 disabled 的 actor 可通過 Human Page Gate。
+ROW	Authorization	Page permission + exact action resource + scope/condition + lifecycle Gate。
+P	Authorization
+P	Page permission + exact action resource + scope/condition + lifecycle Gate。
+ROW	Role / Department	不作 allow source；Role Name / Job Title / Department Membership 不能偷偷授權。
+P	Role / Department
+P	不作 allow source；Role Name / Job Title / Department Membership 不能偷偷授權。
+ROW	Wildcard	禁止 admin:*、SUPER_ADMIN shortcut 或前端-only allow。
+P	Wildcard
+P	禁止 admin:*、SUPER_ADMIN shortcut 或前端-only allow。
+ROW	Data Truth	Account / Assignment / Audit 由各自正式 Owner 持有；IAM-01 只協調。
+P	Data Truth
+P	Account / Assignment / Audit 由各自正式 Owner 持有；IAM-01 只協調。
+ROW	Audit	Effectful operation 必須保存 correlation / actor / target / delta / result / failure。
+P	Audit
+P	Effectful operation 必須保存 correlation / actor / target / delta / result / failure。
+ROW	Fake Data	禁止假帳號、假 MFA、假 Risk、假 Session、假 Audit / Access Review。
+P	Fake Data
+P	禁止假帳號、假 MFA、假 Risk、假 Session、假 Audit / Access Review。
+P	23. Cross-page / System Slice & Interaction Topology
+ROW	Slice	Continuity / Contract
+P	Slice
+P	Continuity / Contract
+ROW	IAM-01 → Global Shell Navigation	Backend L1 assignment 成功後刷新 effective permission；未授權 Admin L1 label/icon/link/hit-area 不 Render。
+P	IAM-01 → Global Shell Navigation
+P	Backend L1 assignment 成功後刷新 effective permission；未授權 Admin L1 label/icon/link/hit-area 不 Render。
+ROW	Direct URL / Deep Link	即使 menu hidden，Backend Authorization 仍獨立驗證；無有效 permission = DENY。
+P	Direct URL / Deep Link
+P	即使 menu hidden，Backend Authorization 仍獨立驗證；無有效 permission = DENY。
+ROW	IAM-01 → Identity Runtime	Session identity 僅用於 actor resolution；不得把 correlation header 當 identity。
+P	IAM-01 → Identity Runtime
+P	Session identity 僅用於 actor resolution；不得把 correlation header 當 identity。
+ROW	IAM-01 → Policy / Permission Runtime	L1 Draft 需物化 explicit assignment；不在 Runtime 做 parent/child inheritance。
+P	IAM-01 → Policy / Permission Runtime
+P	L1 Draft 需物化 explicit assignment；不在 Runtime 做 parent/child inheritance。
+ROW	IAM-01 → Access Review / Audit	Detail/Drawer 使用 read-only projection；effectful emergency mutation 只有在正式 operation 存在時才顯示。
+P	IAM-01 → Access Review / Audit
+P	Detail/Drawer 使用 read-only projection；effectful emergency mutation 只有在正式 operation 存在時才顯示。
+P	AI Continuity：IAM-01 不是 AI Conversation page，因此 Multi-AI / Conversation Thread Continuity = NOT_APPLICABLE。若未來加入 AI 輔助，只能作建議，不得成為授權來源或繞過 Preview / Confirm / Apply Gate。
+P	24. Page Visual Design / 主工作區實際畫面
+P	圖 2｜IAM-01 主工作區：左側帳號目錄、右側同頁 3-Step；底部清楚呈現 L1 → Explicit Assignment 的套用鏈。
+P	設計重點：主畫面不塞滿 MFA、Risk、Session、Audit 卡片；這些屬 Detail / Drawer。真正高頻的 Account Directory、3-Step、Preview/Complete 保持在同一視線範圍。
+P	25. Permission Preview / Apply 實際畫面
+P	圖 3｜Step 3 權限預覽：Added / Removed / Unchanged / Blocked、Version、Idempotency、Audit 與 Partial Apply Recovery 在同一確認面板。
+P	26. Visual Anchors / Locked & Editable Regions
+ROW	Anchor / Region	Lock Rule	Editable Rule
+P	Anchor / Region
+P	Lock Rule
+P	Editable Rule
+ROW	Global Header / Sidebar	LOCKED by Global Shell	IAM-01 不改尺寸、色系、L1 結構。
+P	Global Header / Sidebar
+P	LOCKED by Global Shell
+P	IAM-01 不改尺寸、色系、L1 結構。
+ROW	Page Context Bar	位置 / 56px 高度 LOCKED	真實帳號數與 Operation state 可更新。
+P	Page Context Bar
+P	位置 / 56px 高度 LOCKED
+P	真實帳號數與 Operation state 可更新。
+ROW	Primary 64/36 Grid	LOCKED	內容可隨 state 改變但不可造成 layout drift。
+P	Primary 64/36 Grid
+P	LOCKED
+P	內容可隨 state 改變但不可造成 layout drift。
+ROW	Account Directory	欄位結構與列選擇行為 LOCKED	真實 row data / filter state 可變。
+P	Account Directory
+P	欄位結構與列選擇行為 LOCKED
+P	真實 row data / filter state 可變。
+ROW	3-Step Stepper	步驟順序 LOCKED	Create/Edit mode、schema fields、L1 selection、preview data 可變。
+P	3-Step Stepper
+P	步驟順序 LOCKED
+P	Create/Edit mode、schema fields、L1 selection、preview data 可變。
+ROW	Permission L1 Labels	9+9 order LOCKED	selected state 可變。
+P	Permission L1 Labels
+P	9+9 order LOCKED
+P	selected state 可變。
+ROW	Preview Categories	Added/Removed/Unchanged/Blocked LOCKED	實際 delta 與 blocker 可變。
+P	Preview Categories
+P	Added/Removed/Unchanged/Blocked LOCKED
+P	實際 delta 與 blocker 可變。
+P	27. Responsive / Localization / Accessibility
+ROW	Area	Requirement
+P	Area
+P	Requirement
+ROW	Responsive	desktop-first；min-width 1280px；以下 horizontal scroll，不切換不同功能流程。
+P	Responsive
+P	desktop-first；min-width 1280px；以下 horizontal scroll，不切換不同功能流程。
+ROW	Typography	沿用全站 token；資訊表格 7–9pt 文件規格，產品 UI 以 12–16px 為主。
+P	Typography
+P	沿用全站 token；資訊表格 7–9pt 文件規格，產品 UI 以 12–16px 為主。
+ROW	Locales	zh-TW / zh-CN / en；ORANGE ONE、AI、API 等固定詞可保留英文。
+P	Locales
+P	zh-TW / zh-CN / en；ORANGE ONE、AI、API 等固定詞可保留英文。
+ROW	Focus	所有可互動 Control 有 visible focus ring；Tab order 跟工作流程一致。
+P	Focus
+P	所有可互動 Control 有 visible focus ring；Tab order 跟工作流程一致。
+ROW	Disabled	必須有可讀原因；不可只有透明度。
+P	Disabled
+P	必須有可讀原因；不可只有透明度。
+ROW	Error	錯誤需能定位到 Step / Field Group / L1 / Operation，並保留 Draft。
+P	Error
+P	錯誤需能定位到 Step / Field Group / L1 / Operation，並保留 Draft。
+ROW	Table / Grid	Account Directory 支援 keyboard row selection；column headers 可讀。
+P	Table / Grid
+P	Account Directory 支援 keyboard row selection；column headers 可讀。
+ROW	Color	Permission / state 不只靠顏色，需 label/icon/text semantics。
+P	Color
+P	Permission / state 不只靠顏色，需 label/icon/text semantics。
+P	28. Visual Generation Manifest / 視覺生成與變更控制
+ROW	項目	設定
+P	項目
+P	設定
+ROW	Generation UID	IAM-01-VIS-GEN-OPT-001
+P	Generation UID
+P	IAM-01-VIS-GEN-OPT-001
+ROW	Page UID	admin:IAM-01
+P	Page UID
+P	admin:IAM-01
+ROW	Theme	Global Dark Technology Purple
+P	Theme
+P	Global Dark Technology Purple
+ROW	Viewport	Desktop ≥1280px
+P	Viewport
+P	Desktop ≥1280px
+ROW	Language	zh-TW
+P	Language
+P	zh-TW
+ROW	Change Level	LEVEL_3_SECTION / LEVEL_4_PAGE only when explicitly approved
+P	Change Level
+P	LEVEL_3_SECTION / LEVEL_4_PAGE only when explicitly approved
+ROW	Locked Areas	Global Header、Sidebar、9+9 L1 order、3-Step order、permission model、effectful gates
+P	Locked Areas
+P	Global Header、Sidebar、9+9 L1 order、3-Step order、permission model、effectful gates
+ROW	Editable Areas	Spacing、information density、detail placement、microcopy、component arrangement inside approved grid
+P	Editable Areas
+P	Spacing、information density、detail placement、microcopy、component arrangement inside approved grid
+ROW	Visual Review Gate	需確認 clipping=0、overflow=0、unexpected wrap=0、anchor drift=0、unrelated content=0。
+P	Visual Review Gate
+P	需確認 clipping=0、overflow=0、unexpected wrap=0、anchor drift=0、unrelated content=0。
+P	29. Validation & Audit Baseline
+ROW	Audit Domain	PASS Baseline
+P	Audit Domain
+P	PASS Baseline
+ROW	Design	6 Sections / 10 Components / 14 Controls / 13 Unique Actions / 5 Gates / 7 Errors / 9 Ports。
+P	Design
+P	6 Sections / 10 Components / 14 Controls / 13 Unique Actions / 5 Gates / 7 Errors / 9 Ports。
+ROW	Permission	Front L1=9、Admin L1=9；order exact；No wildcard；No Role/Department implicit grant。
+P	Permission
+P	Front L1=9、Admin L1=9；order exact；No wildcard；No Role/Department implicit grant。
+ROW	Functional Chain	Search、Create/Edit、Save/Validate、Preview、Apply、Navigation Refresh 逐鏈可追溯。
+P	Functional Chain
+P	Search、Create/Edit、Save/Validate、Preview、Apply、Navigation Refresh 逐鏈可追溯。
+ROW	Security	Unauthorized / wrong scope / wrong version / double submit / deep link / partial apply cases 都需驗。
+P	Security
+P	Unauthorized / wrong scope / wrong version / double submit / deep link / partial apply cases 都需驗。
+ROW	Runtime	Effectful operations 必須命中 exact action authorization + IAM runtime。
+P	Runtime
+P	Effectful operations 必須命中 exact action authorization + IAM runtime。
+ROW	Visual Geometry	Required viewport overlap/clipping/overflow/text overflow/anchor drift = 0。
+P	Visual Geometry
+P	Required viewport overlap/clipping/overflow/text overflow/anchor drift = 0。
+ROW	A11y	Keyboard、focus、disabled reason、table headers、image alt、contrast semantics。
+P	A11y
+P	Keyboard、focus、disabled reason、table headers、image alt、contrast semantics。
+ROW	Truthful State	Source/File Design Complete 不等於 Runtime/Production Complete。
+P	Truthful State
+P	Source/File Design Complete 不等於 Runtime/Production Complete。
+P	30. Acceptance Matrix / Definition of Done
+ROW	UID	Item	Acceptance Condition
+P	UID
+P	Item
+P	Acceptance Condition
+ROW	IAM-01-ACC-01	Single Page	IAM-01 是唯一 Current Accounts & Permissions UI；不重建 IAM-02..06 導航。
+P	IAM-01-ACC-01
+P	Single Page
+P	IAM-01 是唯一 Current Accounts & Permissions UI；不重建 IAM-02..06 導航。
+ROW	IAM-01-ACC-02	Reuse	既有 Identity / Policy / Access Review / IAM operations 重用；無平行 IAM/RBAC。
+P	IAM-01-ACC-02
+P	Reuse
+P	既有 Identity / Policy / Access Review / IAM operations 重用；無平行 IAM/RBAC。
+ROW	IAM-01-ACC-03	Account Directory	Search/list/status/identity/MFA/risk/audit projection 可用，無假資料。
+P	IAM-01-ACC-03
+P	Account Directory
+P	Search/list/status/identity/MFA/risk/audit projection 可用，無假資料。
+ROW	IAM-01-ACC-04	Create/Edit Flow	Basic → L1 Permission → Preview/Complete 同頁完成。
+P	IAM-01-ACC-04
+P	Create/Edit Flow
+P	Basic → L1 Permission → Preview/Complete 同頁完成。
+ROW	IAM-01-ACC-05	Frontend L1	Exactly 9 current frontend choices in exact order。
+P	IAM-01-ACC-05
+P	Frontend L1
+P	Exactly 9 current frontend choices in exact order。
+ROW	IAM-01-ACC-06	Backend L1	Exactly 9 current backend choices in exact order。
+P	IAM-01-ACC-06
+P	Backend L1
+P	Exactly 9 current backend choices in exact order。
+ROW	IAM-01-ACC-07	Department Preset	只預填 Draft；Department 不直接授權。
+P	IAM-01-ACC-07
+P	Department Preset
+P	只預填 Draft；Department 不直接授權。
+ROW	IAM-01-ACC-08	Backend All	只 Select All Draft；不是 super-admin。
+P	IAM-01-ACC-08
+P	Backend All
+P	只 Select All Draft；不是 super-admin。
+ROW	IAM-01-ACC-09	Explicit Materialization	L1 selection 物化 explicit Account Permission Assignments。
+P	IAM-01-ACC-09
+P	Explicit Materialization
+P	L1 selection 物化 explicit Account Permission Assignments。
+ROW	IAM-01-ACC-10	Preview First	Apply 前必須 Fresh Impact Preview。
+P	IAM-01-ACC-10
+P	Preview First
+P	Apply 前必須 Fresh Impact Preview。
+ROW	IAM-01-ACC-11	No Silent Future Grant	新 resource 不會自動授權既有帳號。
+P	IAM-01-ACC-11
+P	No Silent Future Grant
+P	新 resource 不會自動授權既有帳號。
+ROW	IAM-01-ACC-12	Security / Audit	Identity、permission、scope、condition、version/idempotency、audit gates 全部有效。
+P	IAM-01-ACC-12
+P	Security / Audit
+P	Identity、permission、scope、condition、version/idempotency、audit gates 全部有效。
+ROW	IAM-01-ACC-13	Truthful Partial	Partial failure 絕不顯示 COMPLETE。
+P	IAM-01-ACC-13
+P	Truthful Partial
+P	Partial failure 絕不顯示 COMPLETE。
+ROW	IAM-01-ACC-14	No Guess	未知 field/mapping/operation 一律 fail-closed。
+P	IAM-01-ACC-14
+P	No Guess
+P	未知 field/mapping/operation 一律 fail-closed。
+ROW	IAM-01-ACC-15	Visual Consistency	沿用 Global Shell / Visual；無第二視覺系統。
+P	IAM-01-ACC-15
+P	Visual Consistency
+P	沿用 Global Shell / Visual；無第二視覺系統。
+P	Definition of Done：Design / Contract / Frontend / Runtime / Data / Permission / Required Tests / Browser E2E / Production Evidence 依施工階段全部達到 Required PASS，且 Critical Gap、Unauthorized Path、Duplicate IAM、Silent Grant = 0，才可宣稱可上線。
+P	31. Construction Mapping / 施工對接清單
+ROW	Layer	Implementation Target	Key Requirement
+P	Layer
+P	Implementation Target
+P	Key Requirement
+ROW	Frontend	/admin/accounts page	6 sections / 10 components / 14 controls；same-page 3-Step。
+P	Frontend
+P	/admin/accounts page
+P	6 sections / 10 components / 14 controls；same-page 3-Step。
+ROW	State	IAM page local + governed draft state	Draft / Step / Preview freshness / applying lock / error correlation。
+P	State
+P	IAM page local + governed draft state
+P	Draft / Step / Preview freshness / applying lock / error correlation。
+ROW	Identity	Session → canonical actor	Fail-closed；disabled actor 不可通過 page gate。
+P	Identity
+P	Session → canonical actor
+P	Fail-closed；disabled actor 不可通過 page gate。
+ROW	Runtime	IAM runtime operations	save/validate/preview/assign/revoke/configure/approve；不建新 endpoint。
+P	Runtime
+P	IAM runtime operations
+P	save/validate/preview/assign/revoke/configure/approve；不建新 endpoint。
+ROW	Permission	Exact action resources + explicit assignments	No role/department/wildcard/inheritance。
+P	Permission
+P	Exact action resources + explicit assignments
+P	No role/department/wildcard/inheritance。
+ROW	Navigation	Effective Backend L1 projection	Grant/Revoke 後刷新；DENY L1 不 Render。
+P	Navigation
+P	Effective Backend L1 projection
+P	Grant/Revoke 後刷新；DENY L1 不 Render。
+ROW	Audit	Correlation + actor + target + delta + outcome	Partial failure 也要完整記錄。
+P	Audit
+P	Correlation + actor + target + delta + outcome
+P	Partial failure 也要完整記錄。
+ROW	Test	Unit / Integration / Permission / Browser / E2E / Production	不同層 Evidence 不互相替代。
+P	Test
+P	Unit / Integration / Permission / Browser / E2E / Production
+P	不同層 Evidence 不互相替代。
+### PART word/header1.xml
+P	ORANGE ONE · IAM-01 · Mother Basic Design
+### PART word/footer1.xml
+P	IAM-01 帳戶與權限

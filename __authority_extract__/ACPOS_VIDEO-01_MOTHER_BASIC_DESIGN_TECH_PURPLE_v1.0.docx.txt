@@ -1,0 +1,1866 @@
+### PART word/document.xml
+P	ACPOS VIDEO-01
+P	影片生產工作區 · Mother Basic Design
+P	Technology Purple UI Rebuild · v1.0
+P	本文件以 GitHub new Current Authority 為唯一頁面基準，依 Mother Basic Design 產物鏈重建 VIDEO-01。視覺稿是待人工審查的 Design Candidate，不代表 Authority 已更新或程式已施工。
+ROW	Current Truth	Value
+P	Current Truth
+P	Value
+ROW	Branch	new
+P	Branch
+P	new
+ROW	Live HEAD	165c6440cb53b1b45ec96905241fb4d56dc3b867
+P	Live HEAD
+P	165c6440cb53b1b45ec96905241fb4d56dc3b867
+ROW	Current Authority	VIDEO_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+P	Current Authority
+P	VIDEO_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+ROW	Authority SHA	cac1b53e513c4e8c5f13a9014ae87aa08b6f9774
+P	Authority SHA
+P	cac1b53e513c4e8c5f13a9014ae87aa08b6f9774
+ROW	Current Governance Manifest SHA	465329b6fb19b8e44c3083a9f280015ee95cc55c
+P	Current Governance Manifest SHA
+P	465329b6fb19b8e44c3083a9f280015ee95cc55c
+ROW	Page UID	VIDEO-01
+P	Page UID
+P	VIDEO-01
+ROW	Status	FINAL_LOCKED Current Authority / Visual Candidate Pending Human Review
+P	Status
+P	FINAL_LOCKED Current Authority / Visual Candidate Pending Human Review
+ROW	DESIGN_FROZEN	FALSE
+P	DESIGN_FROZEN
+P	FALSE
+P	1. Mother Basic Design Compliance Chain
+ROW	Artifact / Layer	VIDEO-01 materialization
+P	Artifact / Layer
+P	VIDEO-01 materialization
+ROW	Current Truth / Authority	Branch, HEAD, Current Manifest, Page Authority exact ref
+P	Current Truth / Authority
+P	Branch, HEAD, Current Manifest, Page Authority exact ref
+ROW	Requirement / Scope	Single-page VIDEO production workspace; no EDIT/ASSET/QA internals
+P	Requirement / Scope
+P	Single-page VIDEO production workspace; no EDIT/ASSET/QA internals
+ROW	Entity / Object	17 exact Objects/Refs
+P	Entity / Object
+P	17 exact Objects/Refs
+ROW	Stage / Journey	5 Stages + 5 legal transitions
+P	Stage / Journey
+P	5 Stages + 5 legal transitions
+ROW	Workbench / Topology	20/60/20 VIDEO production grid + lower correction/runtime/evaluation/manifest rows
+P	Workbench / Topology
+P	20/60/20 VIDEO production grid + lower correction/runtime/evaluation/manifest rows
+ROW	Section / Component	10 Sections + 17 Components
+P	Section / Component
+P	10 Sections + 17 Components
+ROW	Atomic Control / Action	85 Controls + 34 Actions
+P	Atomic Control / Action
+P	85 Controls + 34 Actions
+ROW	Gate / Permission	16 Gates + 6 Permissions
+P	Gate / Permission
+P	16 Gates + 6 Permissions
+ROW	Error / Recovery	17 exact Error contracts
+P	Error / Recovery
+P	17 exact Error contracts
+ROW	Integration	8 exact Integration Ports
+P	Integration
+P	8 exact Integration Ports
+ROW	Function ↔ Visual	5 UI candidates mapped to current functions
+P	Function ↔ Visual
+P	5 UI candidates mapped to current functions
+ROW	Visual Review / Freeze	PENDING HUMAN REVIEW / DESIGN_FROZEN=FALSE
+P	Visual Review / Freeze
+P	PENDING HUMAN REVIEW / DESIGN_FROZEN=FALSE
+P	2. Current Scope / Boundary
+P	VIDEO-01 是唯一 Current VIDEO workspace；禁止建立 split/parallel VIDEO pages。
+P	首次生產自動解析 Blueprint / VIDEO Script / DNA / Approved Assets / Instruction / Route；自由 Prompt = FORBIDDEN。
+P	Project Asset Picker = FORBIDDEN；只能消費 ASSET handoff exact refs。
+P	Provider/Model Picker = FORBIDDEN；Provider route 只讀，由 shared AI API Routing 決定。
+P	Preview 為 16:9；沒有 Candidate 時只顯示單一播放器；Compare 僅 Current+Candidate 同時存在且使用者開啟時 50/50。
+P	Correction 只允許 Scene / Shot / Time / Object / Layer semantic scope；不是 EDIT Timeline。
+P	VIDEO 最終只可 Handoff → EDIT；禁止 VIDEO→QA / Release。
+P	2.1 System Geometry
+ROW	Region	Exact rule
+P	Region
+P	Exact rule
+ROW	Global Header	58px fixed full-width
+P	Global Header
+P	58px fixed full-width
+ROW	Sidebar	64px collapsed icon-only; 221px expanded overlay; no workspace reflow
+P	Sidebar
+P	64px collapsed icon-only; 221px expanded overlay; no workspace reflow
+ROW	Primary Left	20% min 260px · Scene/Shot + exact bound input
+P	Primary Left
+P	20% min 260px · Scene/Shot + exact bound input
+ROW	Primary Center	60% · 16:9 preview-first
+P	Primary Center
+P	60% · 16:9 preview-first
+ROW	Primary Right	20% min 280px · Version/Score/Decision
+P	Primary Right
+P	20% min 280px · Version/Score/Decision
+ROW	Lower Rows	Correction / Runtime / Evaluation / Manifest normal page flow
+P	Lower Rows
+P	Correction / Runtime / Evaluation / Manifest normal page flow
+ROW	Min desktop	1280px; no invented mobile workflow
+P	Min desktop
+P	1280px; no invented mobile workflow
+P	3. Entity / Object Model · 17/17
+ROW	Object UID	Entity	Owner	Required Content
+P	Object UID
+P	Entity
+P	Owner
+P	Required Content
+ROW	VIDEO-01-REF-BLUEPRINT	LockedBlueprintRef	CORE/BLUEPRINT	project/topic/task + child_blueprint_version_id + hash + lock_state
+P	VIDEO-01-REF-BLUEPRINT
+P	LockedBlueprintRef
+P	CORE/BLUEPRINT
+P	project/topic/task + child_blueprint_version_id + hash + lock_state
+ROW	VIDEO-01-REF-VIDEO-SCRIPT	VisualGenerationScriptViewRef	CORE/SCRIPT	package/script view/section/version/hash; provider-neutral
+P	VIDEO-01-REF-VIDEO-SCRIPT
+P	VisualGenerationScriptViewRef
+P	CORE/SCRIPT
+P	package/script view/section/version/hash; provider-neutral
+ROW	VIDEO-01-REF-INSTRUCTION	InstructionPackageRef	InstructionCompiler	same task/manifest; APPROVED_FOR_EXECUTION
+P	VIDEO-01-REF-INSTRUCTION
+P	InstructionPackageRef
+P	InstructionCompiler
+P	same task/manifest; APPROVED_FOR_EXECUTION
+ROW	VIDEO-01-REF-DNA	DNABindingRef	CORE/BLUEPRINT	character/scene/object/continuity IDs/versions/hashes
+P	VIDEO-01-REF-DNA
+P	DNABindingRef
+P	CORE/BLUEPRINT
+P	character/scene/object/continuity IDs/versions/hashes
+ROW	VIDEO-01-REF-ASSET-HANDOFF	ApprovedAssetHandoffRef	ASSET boundary	exact asset IDs/versions/filename/checksum/purpose/rights
+P	VIDEO-01-REF-ASSET-HANDOFF
+P	ApprovedAssetHandoffRef
+P	ASSET boundary
+P	exact asset IDs/versions/filename/checksum/purpose/rights
+ROW	VIDEO-01-OBJ-INPUT-MANIFEST	VideoExecutionInputManifest	VIDEO/ORCH	task + blueprint + script + asset + instruction + route refs + fingerprint
+P	VIDEO-01-OBJ-INPUT-MANIFEST
+P	VideoExecutionInputManifest
+P	VIDEO/ORCH
+P	task + blueprint + script + asset + instruction + route refs + fingerprint
+ROW	VIDEO-01-OBJ-PROVIDER-JOB	ProviderJobRef	MediaExecutionService	route/provider/model/job/attempt/callback/correlation/status
+P	VIDEO-01-OBJ-PROVIDER-JOB
+P	ProviderJobRef
+P	MediaExecutionService
+P	route/provider/model/job/attempt/callback/correlation/status
+ROW	VIDEO-01-OBJ-VIDEO-CANDIDATE	VideoCandidateOutput	VIDEO	task/shot refs + output URI + checksum + provenance + version
+P	VIDEO-01-OBJ-VIDEO-CANDIDATE
+P	VideoCandidateOutput
+P	VIDEO
+P	task/shot refs + output URI + checksum + provenance + version
+ROW	VIDEO-01-OBJ-EVALUATION	VideoStageEvaluation	VIDEO/EVALUATION	criteria version + dimension scores + overall + hard blocks + evidence
+P	VIDEO-01-OBJ-EVALUATION
+P	VideoStageEvaluation
+P	VIDEO/EVALUATION
+P	criteria version + dimension scores + overall + hard blocks + evidence
+ROW	VIDEO-01-OBJ-FINDING	VideoFinding	VIDEO/EVALUATION	issue type + shot/time/object/layer + evidence refs
+P	VIDEO-01-OBJ-FINDING
+P	VideoFinding
+P	VIDEO/EVALUATION
+P	issue type + shot/time/object/layer + evidence refs
+ROW	VIDEO-01-OBJ-CORRECTION-CONTEXT	VideoCorrectionContext	VIDEO/AI	current exact refs + affected_scope + finding/evidence + zh-TW requirement
+P	VIDEO-01-OBJ-CORRECTION-CONTEXT
+P	VideoCorrectionContext
+P	VIDEO/AI
+P	current exact refs + affected_scope + finding/evidence + zh-TW requirement
+ROW	VIDEO-01-OBJ-CORRECTION-SCRIPT	CorrectionScriptCandidate	VIDEO/AI	source script ref/hash + target scope + Chinese delta + candidate hash + approval state
+P	VIDEO-01-OBJ-CORRECTION-SCRIPT
+P	CorrectionScriptCandidate
+P	VIDEO/AI
+P	source script ref/hash + target scope + Chinese delta + candidate hash + approval state
+ROW	VIDEO-01-OBJ-CORRECTION-TRANSLATION	CorrectionTranslationRef	Shared Instruction/Provider layer	approved candidate + instruction/compiler/adapter refs + translated payload hash
+P	VIDEO-01-OBJ-CORRECTION-TRANSLATION
+P	CorrectionTranslationRef
+P	Shared Instruction/Provider layer
+P	approved candidate + instruction/compiler/adapter refs + translated payload hash
+ROW	VIDEO-01-OBJ-VIDEO-VERSION	ExactVideoVersion	VIDEO	candidate/confirmed state + output ref + lineage
+P	VIDEO-01-OBJ-VIDEO-VERSION
+P	ExactVideoVersion
+P	VIDEO
+P	candidate/confirmed state + output ref + lineage
+ROW	VIDEO-01-OBJ-OUTPUT-MANIFEST	VideoOutputManifest	VIDEO boundary	exact Video/Shot/Layer versions + script hash + asset fingerprint + URI/checksum + score/evidence/rights
+P	VIDEO-01-OBJ-OUTPUT-MANIFEST
+P	VideoOutputManifest
+P	VIDEO boundary
+P	exact Video/Shot/Layer versions + script hash + asset fingerprint + URI/checksum + score/evidence/rights
+ROW	VIDEO-01-OBJ-VERSION-LOCK	VideoVersionLock	VIDEO	exact video_version_id + manifest hash + lock actor/time
+P	VIDEO-01-OBJ-VERSION-LOCK
+P	VideoVersionLock
+P	VIDEO
+P	exact video_version_id + manifest hash + lock actor/time
+ROW	VIDEO-01-OBJ-HANDOFF	VideoEditingHandoff	VIDEO boundary	locked exact output + manifest/checksum + scorecard + contract hash + target EDIT
+P	VIDEO-01-OBJ-HANDOFF
+P	VideoEditingHandoff
+P	VIDEO boundary
+P	locked exact output + manifest/checksum + scorecard + contract hash + target EDIT
+P	4. Stage / Journey / Transition
+ROW	Stage UID	Stage	Flow
+P	Stage UID
+P	Stage
+P	Flow
+ROW	VIDEO-01-STAGE-01-RESOLVE	Resolve Inputs	Resolve exact Blueprint→VIDEO Script→DNA/Asset→Instruction Package→Core Route; no manual prompt.
+P	VIDEO-01-STAGE-01-RESOLVE
+P	Resolve Inputs
+P	Resolve exact Blueprint→VIDEO Script→DNA/Asset→Instruction Package→Core Route; no manual prompt.
+ROW	VIDEO-01-STAGE-02-GENERATE	Generate / Regenerate	requestTaskExecution or approved correction/retry path; Provider routing/backend materializes candidate.
+P	VIDEO-01-STAGE-02-GENERATE
+P	Generate / Regenerate
+P	requestTaskExecution or approved correction/retry path; Provider routing/backend materializes candidate.
+ROW	VIDEO-01-STAGE-03-EVALUATE	VIDEO Evaluation	Run VIDEO criteria, findings/evidence, overall score; enter WAIT_CONFIRMATION.
+P	VIDEO-01-STAGE-03-EVALUATE
+P	VIDEO Evaluation
+P	Run VIDEO criteria, findings/evidence, overall score; enter WAIT_CONFIRMATION.
+ROW	VIDEO-01-STAGE-04-DECIDE	Confirm / Modify	Confirm candidate or open correction loop. AUTO only advances after Confirm.
+P	VIDEO-01-STAGE-04-DECIDE
+P	Confirm / Modify
+P	Confirm candidate or open correction loop. AUTO only advances after Confirm.
+ROW	VIDEO-01-STAGE-05-FINALIZE	Lock / Handoff	Seal exact output manifest, lock exact Video Version, handoff to EDIT.
+P	VIDEO-01-STAGE-05-FINALIZE
+P	Lock / Handoff
+P	Seal exact output manifest, lock exact Video Version, handoff to EDIT.
+P	4.1 Legal Stage Transitions
+ROW	Transition	From	To	Trigger	Gate
+P	Transition
+P	From
+P	To
+P	Trigger
+P	Gate
+ROW	VIDEO-01-STTR-01	STAGE-01 Resolve Inputs	STAGE-02 Generate	VIDEO-01-ACT-FLOW-START	All input/route gates PASS
+P	VIDEO-01-STTR-01
+P	STAGE-01 Resolve Inputs
+P	STAGE-02 Generate
+P	VIDEO-01-ACT-FLOW-START
+P	All input/route gates PASS
+ROW	VIDEO-01-STTR-02	STAGE-02 Generate	STAGE-03 Evaluate	Verified Candidate Output	Candidate provenance/checksum PASS
+P	VIDEO-01-STTR-02
+P	STAGE-02 Generate
+P	STAGE-03 Evaluate
+P	Verified Candidate Output
+P	Candidate provenance/checksum PASS
+ROW	VIDEO-01-STTR-03	STAGE-03 Evaluate	STAGE-04 Decide	VIDEO-01-ACT-EVALUATE	Criteria/evidence completed
+P	VIDEO-01-STTR-03
+P	STAGE-03 Evaluate
+P	STAGE-04 Decide
+P	VIDEO-01-ACT-EVALUATE
+P	Criteria/evidence completed
+ROW	VIDEO-01-STTR-04	STAGE-04 Decide	STAGE-02 Generate	VIDEO-01-ACT-CORRECTION-EXECUTE	Modify path; new candidate only
+P	VIDEO-01-STTR-04
+P	STAGE-04 Decide
+P	STAGE-02 Generate
+P	VIDEO-01-ACT-CORRECTION-EXECUTE
+P	Modify path; new candidate only
+ROW	VIDEO-01-STTR-05	STAGE-04 Decide	STAGE-05 Finalize	VIDEO-01-ACT-CANDIDATE-CONFIRM	Score≥95 + no hard block + human confirm
+P	VIDEO-01-STTR-05
+P	STAGE-04 Decide
+P	STAGE-05 Finalize
+P	VIDEO-01-ACT-CANDIDATE-CONFIRM
+P	Score≥95 + no hard block + human confirm
+P	AUTO 與 MANUAL 使用相同 exact data source；差別只在 Confirm 後是否自動開始下一個已排程 Task。任何 Failure/Block 都停在 current task，不允許 AI skip/reorder/create。
+P	5. Section / Component Architecture
+P	5.1 Sections · 10/10
+ROW	Section UID	Name	Responsibility	Position
+P	Section UID
+P	Name
+P	Responsibility
+P	Position
+ROW	VIDEO-01-SEC-01	Context / Execution	Project / Topic / Task / Status / AUTO-MANUAL / Execute	Top 100%
+P	VIDEO-01-SEC-01
+P	Context / Execution
+P	Project / Topic / Task / Status / AUTO-MANUAL / Execute
+P	Top 100%
+ROW	VIDEO-01-SEC-02	Production List & Bound Input	Scene/Shot list + Blueprint/Script/DNA/Asset exact refs read-only	Primary left 20%
+P	VIDEO-01-SEC-02
+P	Production List & Bound Input
+P	Scene/Shot list + Blueprint/Script/DNA/Asset exact refs read-only
+P	Primary left 20%
+ROW	VIDEO-01-SEC-03	Main Preview / Compare	Single 16:9 primary preview; conditional A/B compare	Primary center 60%
+P	VIDEO-01-SEC-03
+P	Main Preview / Compare
+P	Single 16:9 primary preview; conditional A/B compare
+P	Primary center 60%
+ROW	VIDEO-01-SEC-04	Version / Score / Decision	Current/Candidate version, VIDEO criteria score, Confirm/Modify	Primary right 20%
+P	VIDEO-01-SEC-04
+P	Version / Score / Decision
+P	Current/Candidate version, VIDEO criteria score, Confirm/Modify
+P	Primary right 20%
+ROW	VIDEO-01-SEC-05	Correction Scope	Scene/Shot/Start-End Time/Object/Layer local correction target	Below primary full width
+P	VIDEO-01-SEC-05
+P	Correction Scope
+P	Scene/Shot/Start-End Time/Object/Layer local correction target
+P	Below primary full width
+ROW	VIDEO-01-SEC-06	AI Semantic Correction	Traditional Chinese correction request + candidate script lifecycle	Below correction left/center
+P	VIDEO-01-SEC-06
+P	AI Semantic Correction
+P	Traditional Chinese correction request + candidate script lifecycle
+P	Below correction left/center
+ROW	VIDEO-01-SEC-07	Provider Runtime	Approved Route read-only + provider job/retry status	Below correction right
+P	VIDEO-01-SEC-07
+P	Provider Runtime
+P	Approved Route read-only + provider job/retry status
+P	Below correction right
+ROW	VIDEO-01-SEC-08	Stage Evaluation / Issue	VIDEO-specific multidimensional evaluation, Finding/Evidence/Recheck	Lower full width
+P	VIDEO-01-SEC-08
+P	Stage Evaluation / Issue
+P	VIDEO-specific multidimensional evaluation, Finding/Evidence/Recheck
+P	Lower full width
+ROW	VIDEO-01-SEC-09	Exact Output Manifest / Lock / Handoff	Exact version lineage + lock + VIDEO→EDIT handoff	Bottom full width
+P	VIDEO-01-SEC-09
+P	Exact Output Manifest / Lock / Handoff
+P	Exact version lineage + lock + VIDEO→EDIT handoff
+P	Bottom full width
+ROW	VIDEO-01-SEC-10	State / Error / Audit	Runtime state, blocking reason, correlation/audit trace	Background/read projection
+P	VIDEO-01-SEC-10
+P	State / Error / Audit
+P	Runtime state, blocking reason, correlation/audit trace
+P	Background/read projection
+P	5.2 Components · 17/17
+ROW	Component UID	Section	Component	Responsibility
+P	Component UID
+P	Section
+P	Component
+P	Responsibility
+ROW	VIDEO-01-CMP-CONTEXT	SEC-01	ContextExecutionBar	Project/Topic/Task/Status/Mode/Execute
+P	VIDEO-01-CMP-CONTEXT
+P	SEC-01
+P	ContextExecutionBar
+P	Project/Topic/Task/Status/Mode/Execute
+ROW	VIDEO-01-CMP-PRODUCTION-LIST	SEC-02	SceneShotList	Scene/Shot task navigation and filter
+P	VIDEO-01-CMP-PRODUCTION-LIST
+P	SEC-02
+P	SceneShotList
+P	Scene/Shot task navigation and filter
+ROW	VIDEO-01-CMP-BLUEPRINT-BIND	SEC-02	BlueprintBindingCard	Exact Locked Blueprint/ChildLock/InputFingerprint read-only
+P	VIDEO-01-CMP-BLUEPRINT-BIND
+P	SEC-02
+P	BlueprintBindingCard
+P	Exact Locked Blueprint/ChildLock/InputFingerprint read-only
+ROW	VIDEO-01-CMP-SCRIPT-BIND	SEC-02	VideoScriptRoleCard	Canonical VIDEO Script View/Section read-only
+P	VIDEO-01-CMP-SCRIPT-BIND
+P	SEC-02
+P	VideoScriptRoleCard
+P	Canonical VIDEO Script View/Section read-only
+ROW	VIDEO-01-CMP-DNA-BIND	SEC-02	DNABindingCard	Exact Character/Scene/Object/Continuity refs read-only
+P	VIDEO-01-CMP-DNA-BIND
+P	SEC-02
+P	DNABindingCard
+P	Exact Character/Scene/Object/Continuity refs read-only
+ROW	VIDEO-01-CMP-ASSET-BIND	SEC-02	ApprovedAssetBindingCard	Approved Asset Handoff exact ID/version/filename/checksum/purpose
+P	VIDEO-01-CMP-ASSET-BIND
+P	SEC-02
+P	ApprovedAssetBindingCard
+P	Approved Asset Handoff exact ID/version/filename/checksum/purpose
+ROW	VIDEO-01-CMP-PREVIEW	SEC-03	MainVideoPreview	16:9 current video viewer and transport
+P	VIDEO-01-CMP-PREVIEW
+P	SEC-03
+P	MainVideoPreview
+P	16:9 current video viewer and transport
+ROW	VIDEO-01-CMP-COMPARE	SEC-03	ConditionalCompare	A/B only when Candidate exists and Compare enabled
+P	VIDEO-01-CMP-COMPARE
+P	SEC-03
+P	ConditionalCompare
+P	A/B only when Candidate exists and Compare enabled
+ROW	VIDEO-01-CMP-VERSION	SEC-04	VideoVersionCard	Current/Candidate exact video version info
+P	VIDEO-01-CMP-VERSION
+P	SEC-04
+P	VideoVersionCard
+P	Current/Candidate exact video version info
+ROW	VIDEO-01-CMP-SCORE	SEC-04	VideoScoreCard	VIDEO-specific score dimensions and hard blocks
+P	VIDEO-01-CMP-SCORE
+P	SEC-04
+P	VideoScoreCard
+P	VIDEO-specific score dimensions and hard blocks
+ROW	VIDEO-01-CMP-DECISION	SEC-04	DecisionPanel	Confirm/Modify/Lock/Handoff state-based controls
+P	VIDEO-01-CMP-DECISION
+P	SEC-04
+P	DecisionPanel
+P	Confirm/Modify/Lock/Handoff state-based controls
+ROW	VIDEO-01-CMP-CORRECTION-SCOPE	SEC-05	VideoCorrectionScope	Scene/Shot/time/object/layer correction scope
+P	VIDEO-01-CMP-CORRECTION-SCOPE
+P	SEC-05
+P	VideoCorrectionScope
+P	Scene/Shot/time/object/layer correction scope
+ROW	VIDEO-01-CMP-AI-REVISION	SEC-06	VideoCorrectionConversation	Correction-only zh-TW semantic revision
+P	VIDEO-01-CMP-AI-REVISION
+P	SEC-06
+P	VideoCorrectionConversation
+P	Correction-only zh-TW semantic revision
+ROW	VIDEO-01-CMP-PROVIDER-RUNTIME	SEC-07	ProviderRuntimeCard	Approved route/provider/model/job status read-only
+P	VIDEO-01-CMP-PROVIDER-RUNTIME
+P	SEC-07
+P	ProviderRuntimeCard
+P	Approved route/provider/model/job status read-only
+ROW	VIDEO-01-CMP-EVALUATION	SEC-08	VideoStageEvaluation	VIDEO dimensions, score, evidence, finding/recheck
+P	VIDEO-01-CMP-EVALUATION
+P	SEC-08
+P	VideoStageEvaluation
+P	VIDEO dimensions, score, evidence, finding/recheck
+ROW	VIDEO-01-CMP-MANIFEST	SEC-09	ExactOutputManifest	Exact lineage/checksum/score/evidence/handoff payload
+P	VIDEO-01-CMP-MANIFEST
+P	SEC-09
+P	ExactOutputManifest
+P	Exact lineage/checksum/score/evidence/handoff payload
+ROW	VIDEO-01-CMP-STATUS	SEC-10	RuntimeStatusErrorAudit	State, error, trace, disabled reason
+P	VIDEO-01-CMP-STATUS
+P	SEC-10
+P	RuntimeStatusErrorAudit
+P	State, error, trace, disabled reason
+P	6.1 UI Visual Candidate · A｜Main Production / Candidate Output
+P	A｜Main Production / Candidate Output
+P	主生產畫面對應 SEC-01/02/03/04/07；左側 Scene/Shot + exact bindings、中間 16:9 Preview、右側 Version/Score/Decision。首次生產沒有自由 Prompt、Asset Picker、Provider Picker。
+P	6.2 UI Visual Candidate · B｜Conditional A/B Compare
+P	B｜Conditional A/B Compare
+P	Compare 是條件式視圖：Current only 時 B viewer 完全不存在；只有 Current+Candidate 且 user enables Compare 才 50/50。
+P	6.3 UI Visual Candidate · C｜VIDEO-only Correction + Expanded Sidebar
+P	C｜VIDEO-only Correction + Expanded Sidebar
+P	Correction 僅 VIDEO scope：Scene/Shot/time/object/layer。繁中修改要求 → Correction Script Candidate → Human Approve → Shared Translation/Adapter → Execute；畫面同時展示 221px Sidebar Overlay。
+P	6.4 UI Visual Candidate · D｜VIDEO Stage Evaluation / Issue
+P	D｜VIDEO Stage Evaluation / Issue
+P	Evaluation 只使用 Approved VIDEO Criteria 的 9 個 dimensions；Rights/Policy 是 hard block；不得用 generic/default score schema。
+P	6.5 UI Visual Candidate · E｜Finalize / Exact Handoff → EDIT
+P	E｜Finalize / Exact Handoff → EDIT
+P	Finalize 必須 Confirmed exact Video Version + Scorecard + Manifest + Lock；唯一合法 outbound = Handoff → EDIT。
+P	7. Atomic Control Matrix · 85/85
+P	85 Controls 全部來自 Current VIDEO-01 Authority；未列控制 = BLOCK。
+ROW	Control UID	Sec	Component	Type	Label	Action	Gate	Permission
+P	Control UID
+P	Sec
+P	Component
+P	Type
+P	Label
+P	Action
+P	Gate
+P	Permission
+ROW	VIDEO-01-FLD-PROJECT	VIDEO-01-SEC-01	VIDEO-01-CMP-CONTEXT	SELECT	Project	VIDEO-01-ACT-PROJECT-SET	VIDEO-01-GATE-PAGE	VIDEO_USE
+P	VIDEO-01-FLD-PROJECT
+P	VIDEO-01-SEC-01
+P	VIDEO-01-CMP-CONTEXT
+P	SELECT
+P	Project
+P	VIDEO-01-ACT-PROJECT-SET
+P	VIDEO-01-GATE-PAGE
+P	VIDEO_USE
+ROW	VIDEO-01-FLD-TOPIC	VIDEO-01-SEC-01	VIDEO-01-CMP-CONTEXT	SELECT	Topic	VIDEO-01-ACT-TOPIC-SET	VIDEO-01-GATE-PAGE	VIDEO_USE
+P	VIDEO-01-FLD-TOPIC
+P	VIDEO-01-SEC-01
+P	VIDEO-01-CMP-CONTEXT
+P	SELECT
+P	Topic
+P	VIDEO-01-ACT-TOPIC-SET
+P	VIDEO-01-GATE-PAGE
+P	VIDEO_USE
+ROW	VIDEO-01-FLD-TASK	VIDEO-01-SEC-01	VIDEO-01-CMP-CONTEXT	SELECT	Production Task	VIDEO-01-ACT-TASK-SET	VIDEO-01-GATE-PAGE	VIDEO_USE
+P	VIDEO-01-FLD-TASK
+P	VIDEO-01-SEC-01
+P	VIDEO-01-CMP-CONTEXT
+P	SELECT
+P	Production Task
+P	VIDEO-01-ACT-TASK-SET
+P	VIDEO-01-GATE-PAGE
+P	VIDEO_USE
+ROW	VIDEO-01-FLD-STATUS	VIDEO-01-SEC-01	VIDEO-01-CMP-CONTEXT	STATUS	Task Status	VIDEO-01-ACT-NOOP-VIEW	VIDEO-01-GATE-PAGE	VIDEO_USE
+P	VIDEO-01-FLD-STATUS
+P	VIDEO-01-SEC-01
+P	VIDEO-01-CMP-CONTEXT
+P	STATUS
+P	Task Status
+P	VIDEO-01-ACT-NOOP-VIEW
+P	VIDEO-01-GATE-PAGE
+P	VIDEO_USE
+ROW	VIDEO-01-CTL-MODE	VIDEO-01-SEC-01	VIDEO-01-CMP-CONTEXT	SEGMENTED	AUTO / MANUAL	VIDEO-01-ACT-MODE-SET	VIDEO-01-GATE-TASK-READY	VIDEO_USE
+P	VIDEO-01-CTL-MODE
+P	VIDEO-01-SEC-01
+P	VIDEO-01-CMP-CONTEXT
+P	SEGMENTED
+P	AUTO / MANUAL
+P	VIDEO-01-ACT-MODE-SET
+P	VIDEO-01-GATE-TASK-READY
+P	VIDEO_USE
+ROW	VIDEO-01-BTN-EXECUTE	VIDEO-01-SEC-01	VIDEO-01-CMP-CONTEXT	BUTTON	執行 / Execute	VIDEO-01-ACT-FLOW-START	VIDEO-01-GATE-EXECUTE	VIDEO_EXECUTE
+P	VIDEO-01-BTN-EXECUTE
+P	VIDEO-01-SEC-01
+P	VIDEO-01-CMP-CONTEXT
+P	BUTTON
+P	執行 / Execute
+P	VIDEO-01-ACT-FLOW-START
+P	VIDEO-01-GATE-EXECUTE
+P	VIDEO_EXECUTE
+ROW	VIDEO-01-BTN-BLUEPRINT	VIDEO-01-SEC-01	VIDEO-01-CMP-CONTEXT	BUTTON	查看 Blueprint	VIDEO-01-ACT-BLUEPRINT-VIEW	VIDEO-01-GATE-CHILD-LOCK	VIDEO_USE
+P	VIDEO-01-BTN-BLUEPRINT
+P	VIDEO-01-SEC-01
+P	VIDEO-01-CMP-CONTEXT
+P	BUTTON
+P	查看 Blueprint
+P	VIDEO-01-ACT-BLUEPRINT-VIEW
+P	VIDEO-01-GATE-CHILD-LOCK
+P	VIDEO_USE
+ROW	VIDEO-01-BTN-PACKAGE	VIDEO-01-SEC-01	VIDEO-01-CMP-CONTEXT	BUTTON	查看 VIDEO Script / Instruction	VIDEO-01-ACT-SCRIPT-VIEW	VIDEO-01-GATE-SCRIPT	VIDEO_USE
+P	VIDEO-01-BTN-PACKAGE
+P	VIDEO-01-SEC-01
+P	VIDEO-01-CMP-CONTEXT
+P	BUTTON
+P	查看 VIDEO Script / Instruction
+P	VIDEO-01-ACT-SCRIPT-VIEW
+P	VIDEO-01-GATE-SCRIPT
+P	VIDEO_USE
+ROW	VIDEO-01-FLD-SEARCH	VIDEO-01-SEC-02	VIDEO-01-CMP-PRODUCTION-LIST	CONTROL	搜尋 Scene / Shot	VIDEO-01-ACT-LIST-SEARCH	VIDEO-01-GATE-PAGE	VIDEO_USE
+P	VIDEO-01-FLD-SEARCH
+P	VIDEO-01-SEC-02
+P	VIDEO-01-CMP-PRODUCTION-LIST
+P	CONTROL
+P	搜尋 Scene / Shot
+P	VIDEO-01-ACT-LIST-SEARCH
+P	VIDEO-01-GATE-PAGE
+P	VIDEO_USE
+ROW	VIDEO-01-CTL-FILTER	VIDEO-01-SEC-02	VIDEO-01-CMP-PRODUCTION-LIST	CONTROL	Filter	VIDEO-01-ACT-LIST-FILTER	VIDEO-01-GATE-PAGE	VIDEO_USE
+P	VIDEO-01-CTL-FILTER
+P	VIDEO-01-SEC-02
+P	VIDEO-01-CMP-PRODUCTION-LIST
+P	CONTROL
+P	Filter
+P	VIDEO-01-ACT-LIST-FILTER
+P	VIDEO-01-GATE-PAGE
+P	VIDEO_USE
+ROW	VIDEO-01-CTL-SHOT-SELECT	VIDEO-01-SEC-02	VIDEO-01-CMP-PRODUCTION-LIST	CONTROL	Scene / Shot Item	VIDEO-01-ACT-SHOT-SELECT	VIDEO-01-GATE-PAGE	VIDEO_USE
+P	VIDEO-01-CTL-SHOT-SELECT
+P	VIDEO-01-SEC-02
+P	VIDEO-01-CMP-PRODUCTION-LIST
+P	CONTROL
+P	Scene / Shot Item
+P	VIDEO-01-ACT-SHOT-SELECT
+P	VIDEO-01-GATE-PAGE
+P	VIDEO_USE
+ROW	VIDEO-01-FLD-BLUEPRINT-REF	VIDEO-01-SEC-02	VIDEO-01-CMP-ASSET-BIND	READONLY	Blueprint / ChildLock Ref	VIDEO-01-ACT-NOOP-VIEW	VIDEO-01-GATE-PAGE	VIDEO_USE
+P	VIDEO-01-FLD-BLUEPRINT-REF
+P	VIDEO-01-SEC-02
+P	VIDEO-01-CMP-ASSET-BIND
+P	READONLY
+P	Blueprint / ChildLock Ref
+P	VIDEO-01-ACT-NOOP-VIEW
+P	VIDEO-01-GATE-PAGE
+P	VIDEO_USE
+ROW	VIDEO-01-FLD-INPUT-FINGERPRINT	VIDEO-01-SEC-02	VIDEO-01-CMP-ASSET-BIND	READONLY	Input Fingerprint	VIDEO-01-ACT-NOOP-VIEW	VIDEO-01-GATE-PAGE	VIDEO_USE
+P	VIDEO-01-FLD-INPUT-FINGERPRINT
+P	VIDEO-01-SEC-02
+P	VIDEO-01-CMP-ASSET-BIND
+P	READONLY
+P	Input Fingerprint
+P	VIDEO-01-ACT-NOOP-VIEW
+P	VIDEO-01-GATE-PAGE
+P	VIDEO_USE
+ROW	VIDEO-01-FLD-SCRIPT-SECTION	VIDEO-01-SEC-02	VIDEO-01-CMP-ASSET-BIND	READONLY	VIDEO Script Role / Section / Hash	VIDEO-01-ACT-NOOP-VIEW	VIDEO-01-GATE-PAGE	VIDEO_USE
+P	VIDEO-01-FLD-SCRIPT-SECTION
+P	VIDEO-01-SEC-02
+P	VIDEO-01-CMP-ASSET-BIND
+P	READONLY
+P	VIDEO Script Role / Section / Hash
+P	VIDEO-01-ACT-NOOP-VIEW
+P	VIDEO-01-GATE-PAGE
+P	VIDEO_USE
+ROW	VIDEO-01-FLD-DNA-REFS	VIDEO-01-SEC-02	VIDEO-01-CMP-ASSET-BIND	READONLY	DNA / Continuity Refs	VIDEO-01-ACT-NOOP-VIEW	VIDEO-01-GATE-PAGE	VIDEO_USE
+P	VIDEO-01-FLD-DNA-REFS
+P	VIDEO-01-SEC-02
+P	VIDEO-01-CMP-ASSET-BIND
+P	READONLY
+P	DNA / Continuity Refs
+P	VIDEO-01-ACT-NOOP-VIEW
+P	VIDEO-01-GATE-PAGE
+P	VIDEO_USE
+ROW	VIDEO-01-FLD-ASSET-REFS	VIDEO-01-SEC-02	VIDEO-01-CMP-ASSET-BIND	READONLY	Approved Asset IDs / Versions	VIDEO-01-ACT-NOOP-VIEW	VIDEO-01-GATE-ASSET-BIND	VIDEO_USE
+P	VIDEO-01-FLD-ASSET-REFS
+P	VIDEO-01-SEC-02
+P	VIDEO-01-CMP-ASSET-BIND
+P	READONLY
+P	Approved Asset IDs / Versions
+P	VIDEO-01-ACT-NOOP-VIEW
+P	VIDEO-01-GATE-ASSET-BIND
+P	VIDEO_USE
+ROW	VIDEO-01-FLD-FILENAME-CHECKSUM	VIDEO-01-SEC-02	VIDEO-01-CMP-ASSET-BIND	READONLY	Filename / Checksum / Purpose Binding	VIDEO-01-ACT-NOOP-VIEW	VIDEO-01-GATE-ASSET-BIND	VIDEO_USE
+P	VIDEO-01-FLD-FILENAME-CHECKSUM
+P	VIDEO-01-SEC-02
+P	VIDEO-01-CMP-ASSET-BIND
+P	READONLY
+P	Filename / Checksum / Purpose Binding
+P	VIDEO-01-ACT-NOOP-VIEW
+P	VIDEO-01-GATE-ASSET-BIND
+P	VIDEO_USE
+ROW	VIDEO-01-FLD-RIGHTS	VIDEO-01-SEC-02	VIDEO-01-CMP-ASSET-BIND	READONLY	Rights / Policy	VIDEO-01-ACT-NOOP-VIEW	VIDEO-01-GATE-PAGE	VIDEO_USE
+P	VIDEO-01-FLD-RIGHTS
+P	VIDEO-01-SEC-02
+P	VIDEO-01-CMP-ASSET-BIND
+P	READONLY
+P	Rights / Policy
+P	VIDEO-01-ACT-NOOP-VIEW
+P	VIDEO-01-GATE-PAGE
+P	VIDEO_USE
+ROW	VIDEO-01-FLD-INSTRUCTION	VIDEO-01-SEC-02	VIDEO-01-CMP-ASSET-BIND	READONLY	Approved Instruction Package	VIDEO-01-ACT-NOOP-VIEW	VIDEO-01-GATE-PAGE	VIDEO_USE
+P	VIDEO-01-FLD-INSTRUCTION
+P	VIDEO-01-SEC-02
+P	VIDEO-01-CMP-ASSET-BIND
+P	READONLY
+P	Approved Instruction Package
+P	VIDEO-01-ACT-NOOP-VIEW
+P	VIDEO-01-GATE-PAGE
+P	VIDEO_USE
+ROW	VIDEO-01-BTN-PLAY	VIDEO-01-SEC-03	VIDEO-01-CMP-PREVIEW	CONTROL	Play/Pause	VIDEO-01-ACT-PREVIEW-PLAY	VIDEO-01-GATE-PAGE	VIDEO_USE
+P	VIDEO-01-BTN-PLAY
+P	VIDEO-01-SEC-03
+P	VIDEO-01-CMP-PREVIEW
+P	CONTROL
+P	Play/Pause
+P	VIDEO-01-ACT-PREVIEW-PLAY
+P	VIDEO-01-GATE-PAGE
+P	VIDEO_USE
+ROW	VIDEO-01-CTL-SEEK	VIDEO-01-SEC-03	VIDEO-01-CMP-PREVIEW	CONTROL	Seek	VIDEO-01-ACT-PREVIEW-SEEK	VIDEO-01-GATE-PAGE	VIDEO_USE
+P	VIDEO-01-CTL-SEEK
+P	VIDEO-01-SEC-03
+P	VIDEO-01-CMP-PREVIEW
+P	CONTROL
+P	Seek
+P	VIDEO-01-ACT-PREVIEW-SEEK
+P	VIDEO-01-GATE-PAGE
+P	VIDEO_USE
+ROW	VIDEO-01-FLD-TIMECODE	VIDEO-01-SEC-03	VIDEO-01-CMP-PREVIEW	CONTROL	Timecode	VIDEO-01-ACT-PREVIEW-SEEK	VIDEO-01-GATE-PAGE	VIDEO_USE
+P	VIDEO-01-FLD-TIMECODE
+P	VIDEO-01-SEC-03
+P	VIDEO-01-CMP-PREVIEW
+P	CONTROL
+P	Timecode
+P	VIDEO-01-ACT-PREVIEW-SEEK
+P	VIDEO-01-GATE-PAGE
+P	VIDEO_USE
+ROW	VIDEO-01-BTN-VOLUME	VIDEO-01-SEC-03	VIDEO-01-CMP-PREVIEW	CONTROL	Volume/Mute	VIDEO-01-ACT-PREVIEW-VOLUME	VIDEO-01-GATE-PAGE	VIDEO_USE
+P	VIDEO-01-BTN-VOLUME
+P	VIDEO-01-SEC-03
+P	VIDEO-01-CMP-PREVIEW
+P	CONTROL
+P	Volume/Mute
+P	VIDEO-01-ACT-PREVIEW-VOLUME
+P	VIDEO-01-GATE-PAGE
+P	VIDEO_USE
+ROW	VIDEO-01-BTN-FULLSCREEN	VIDEO-01-SEC-03	VIDEO-01-CMP-PREVIEW	CONTROL	Fullscreen	VIDEO-01-ACT-PREVIEW-FULLSCREEN	VIDEO-01-GATE-PAGE	VIDEO_USE
+P	VIDEO-01-BTN-FULLSCREEN
+P	VIDEO-01-SEC-03
+P	VIDEO-01-CMP-PREVIEW
+P	CONTROL
+P	Fullscreen
+P	VIDEO-01-ACT-PREVIEW-FULLSCREEN
+P	VIDEO-01-GATE-PAGE
+P	VIDEO_USE
+ROW	VIDEO-01-CTL-COMPARE	VIDEO-01-SEC-03	VIDEO-01-CMP-COMPARE	CONTROL	Compare	VIDEO-01-ACT-COMPARE-TOGGLE	VIDEO-01-GATE-PAGE	VIDEO_USE
+P	VIDEO-01-CTL-COMPARE
+P	VIDEO-01-SEC-03
+P	VIDEO-01-CMP-COMPARE
+P	CONTROL
+P	Compare
+P	VIDEO-01-ACT-COMPARE-TOGGLE
+P	VIDEO-01-GATE-PAGE
+P	VIDEO_USE
+ROW	VIDEO-01-CTL-VERSION-A	VIDEO-01-SEC-03	VIDEO-01-CMP-COMPARE	CONTROL	Version A / Current	VIDEO-01-ACT-COMPARE-A	VIDEO-01-GATE-PAGE	VIDEO_USE
+P	VIDEO-01-CTL-VERSION-A
+P	VIDEO-01-SEC-03
+P	VIDEO-01-CMP-COMPARE
+P	CONTROL
+P	Version A / Current
+P	VIDEO-01-ACT-COMPARE-A
+P	VIDEO-01-GATE-PAGE
+P	VIDEO_USE
+ROW	VIDEO-01-CTL-VERSION-B	VIDEO-01-SEC-03	VIDEO-01-CMP-COMPARE	CONTROL	Version B / Candidate	VIDEO-01-ACT-COMPARE-B	VIDEO-01-GATE-CANDIDATE	VIDEO_USE
+P	VIDEO-01-CTL-VERSION-B
+P	VIDEO-01-SEC-03
+P	VIDEO-01-CMP-COMPARE
+P	CONTROL
+P	Version B / Candidate
+P	VIDEO-01-ACT-COMPARE-B
+P	VIDEO-01-GATE-CANDIDATE
+P	VIDEO_USE
+ROW	VIDEO-01-FLD-CURRENT-VERSION	VIDEO-01-SEC-04	VIDEO-01-CMP-VERSION	READONLY	Current Exact Video Version	VIDEO-01-ACT-NOOP-VIEW	VIDEO-01-GATE-PAGE	VIDEO_USE
+P	VIDEO-01-FLD-CURRENT-VERSION
+P	VIDEO-01-SEC-04
+P	VIDEO-01-CMP-VERSION
+P	READONLY
+P	Current Exact Video Version
+P	VIDEO-01-ACT-NOOP-VIEW
+P	VIDEO-01-GATE-PAGE
+P	VIDEO_USE
+ROW	VIDEO-01-FLD-CANDIDATE-VERSION	VIDEO-01-SEC-04	VIDEO-01-CMP-VERSION	READONLY	Candidate Version	VIDEO-01-ACT-NOOP-VIEW	VIDEO-01-GATE-PAGE	VIDEO_USE
+P	VIDEO-01-FLD-CANDIDATE-VERSION
+P	VIDEO-01-SEC-04
+P	VIDEO-01-CMP-VERSION
+P	READONLY
+P	Candidate Version
+P	VIDEO-01-ACT-NOOP-VIEW
+P	VIDEO-01-GATE-PAGE
+P	VIDEO_USE
+ROW	VIDEO-01-FLD-OVERALL-SCORE	VIDEO-01-SEC-04	VIDEO-01-CMP-SCORE	READONLY	Overall Score	VIDEO-01-ACT-NOOP-VIEW	VIDEO-01-GATE-PAGE	VIDEO_USE
+P	VIDEO-01-FLD-OVERALL-SCORE
+P	VIDEO-01-SEC-04
+P	VIDEO-01-CMP-SCORE
+P	READONLY
+P	Overall Score
+P	VIDEO-01-ACT-NOOP-VIEW
+P	VIDEO-01-GATE-PAGE
+P	VIDEO_USE
+ROW	VIDEO-01-FLD-ISSUE-SUMMARY	VIDEO-01-SEC-04	VIDEO-01-CMP-SCORE	READONLY	Issue Summary	VIDEO-01-ACT-NOOP-VIEW	VIDEO-01-GATE-PAGE	VIDEO_USE
+P	VIDEO-01-FLD-ISSUE-SUMMARY
+P	VIDEO-01-SEC-04
+P	VIDEO-01-CMP-SCORE
+P	READONLY
+P	Issue Summary
+P	VIDEO-01-ACT-NOOP-VIEW
+P	VIDEO-01-GATE-PAGE
+P	VIDEO_USE
+ROW	VIDEO-01-FLD-CRITERIA-VERSION	VIDEO-01-SEC-04	VIDEO-01-CMP-VERSION	READONLY	VIDEO Criteria Version	VIDEO-01-ACT-NOOP-VIEW	VIDEO-01-GATE-PAGE	VIDEO_USE
+P	VIDEO-01-FLD-CRITERIA-VERSION
+P	VIDEO-01-SEC-04
+P	VIDEO-01-CMP-VERSION
+P	READONLY
+P	VIDEO Criteria Version
+P	VIDEO-01-ACT-NOOP-VIEW
+P	VIDEO-01-GATE-PAGE
+P	VIDEO_USE
+ROW	VIDEO-01-BTN-SCORE-DETAIL	VIDEO-01-SEC-04	VIDEO-01-CMP-DECISION	BUTTON	查看 VIDEO 評分	VIDEO-01-ACT-EVALUATION-VIEW	VIDEO-01-GATE-EVALUATION	VIDEO_USE
+P	VIDEO-01-BTN-SCORE-DETAIL
+P	VIDEO-01-SEC-04
+P	VIDEO-01-CMP-DECISION
+P	BUTTON
+P	查看 VIDEO 評分
+P	VIDEO-01-ACT-EVALUATION-VIEW
+P	VIDEO-01-GATE-EVALUATION
+P	VIDEO_USE
+ROW	VIDEO-01-BTN-CONFIRM	VIDEO-01-SEC-04	VIDEO-01-CMP-DECISION	BUTTON	確認版本	VIDEO-01-ACT-CANDIDATE-CONFIRM	VIDEO-01-GATE-CONFIRM	VIDEO_DECIDE
+P	VIDEO-01-BTN-CONFIRM
+P	VIDEO-01-SEC-04
+P	VIDEO-01-CMP-DECISION
+P	BUTTON
+P	確認版本
+P	VIDEO-01-ACT-CANDIDATE-CONFIRM
+P	VIDEO-01-GATE-CONFIRM
+P	VIDEO_DECIDE
+ROW	VIDEO-01-BTN-MODIFY	VIDEO-01-SEC-04	VIDEO-01-CMP-DECISION	BUTTON	修改	VIDEO-01-ACT-CORRECTION-OPEN	VIDEO-01-GATE-CORRECTION	VIDEO_CORRECT
+P	VIDEO-01-BTN-MODIFY
+P	VIDEO-01-SEC-04
+P	VIDEO-01-CMP-DECISION
+P	BUTTON
+P	修改
+P	VIDEO-01-ACT-CORRECTION-OPEN
+P	VIDEO-01-GATE-CORRECTION
+P	VIDEO_CORRECT
+ROW	VIDEO-01-BTN-LOCK	VIDEO-01-SEC-04	VIDEO-01-CMP-DECISION	BUTTON	Lock	VIDEO-01-ACT-VERSION-LOCK	VIDEO-01-GATE-LOCK	VIDEO_DECIDE
+P	VIDEO-01-BTN-LOCK
+P	VIDEO-01-SEC-04
+P	VIDEO-01-CMP-DECISION
+P	BUTTON
+P	Lock
+P	VIDEO-01-ACT-VERSION-LOCK
+P	VIDEO-01-GATE-LOCK
+P	VIDEO_DECIDE
+ROW	VIDEO-01-BTN-HANDOFF	VIDEO-01-SEC-04	VIDEO-01-CMP-DECISION	BUTTON	Handoff → EDIT	VIDEO-01-ACT-HANDOFF	VIDEO-01-GATE-HANDOFF	VIDEO_HANDOFF
+P	VIDEO-01-BTN-HANDOFF
+P	VIDEO-01-SEC-04
+P	VIDEO-01-CMP-DECISION
+P	BUTTON
+P	Handoff → EDIT
+P	VIDEO-01-ACT-HANDOFF
+P	VIDEO-01-GATE-HANDOFF
+P	VIDEO_HANDOFF
+ROW	VIDEO-01-FLD-SCENE	VIDEO-01-SEC-05	VIDEO-01-CMP-CORRECTION-SCOPE	FIELD	Scene	VIDEO-01-ACT-CORRECTION-SCOPE-SET	VIDEO-01-GATE-CORRECTION	VIDEO_CORRECT
+P	VIDEO-01-FLD-SCENE
+P	VIDEO-01-SEC-05
+P	VIDEO-01-CMP-CORRECTION-SCOPE
+P	FIELD
+P	Scene
+P	VIDEO-01-ACT-CORRECTION-SCOPE-SET
+P	VIDEO-01-GATE-CORRECTION
+P	VIDEO_CORRECT
+ROW	VIDEO-01-FLD-SHOT	VIDEO-01-SEC-05	VIDEO-01-CMP-CORRECTION-SCOPE	FIELD	Shot	VIDEO-01-ACT-CORRECTION-SCOPE-SET	VIDEO-01-GATE-CORRECTION	VIDEO_CORRECT
+P	VIDEO-01-FLD-SHOT
+P	VIDEO-01-SEC-05
+P	VIDEO-01-CMP-CORRECTION-SCOPE
+P	FIELD
+P	Shot
+P	VIDEO-01-ACT-CORRECTION-SCOPE-SET
+P	VIDEO-01-GATE-CORRECTION
+P	VIDEO_CORRECT
+ROW	VIDEO-01-FLD-START-TC	VIDEO-01-SEC-05	VIDEO-01-CMP-CORRECTION-SCOPE	FIELD	Start Timecode	VIDEO-01-ACT-CORRECTION-SCOPE-SET	VIDEO-01-GATE-CORRECTION	VIDEO_CORRECT
+P	VIDEO-01-FLD-START-TC
+P	VIDEO-01-SEC-05
+P	VIDEO-01-CMP-CORRECTION-SCOPE
+P	FIELD
+P	Start Timecode
+P	VIDEO-01-ACT-CORRECTION-SCOPE-SET
+P	VIDEO-01-GATE-CORRECTION
+P	VIDEO_CORRECT
+ROW	VIDEO-01-FLD-END-TC	VIDEO-01-SEC-05	VIDEO-01-CMP-CORRECTION-SCOPE	FIELD	End Timecode	VIDEO-01-ACT-CORRECTION-SCOPE-SET	VIDEO-01-GATE-CORRECTION	VIDEO_CORRECT
+P	VIDEO-01-FLD-END-TC
+P	VIDEO-01-SEC-05
+P	VIDEO-01-CMP-CORRECTION-SCOPE
+P	FIELD
+P	End Timecode
+P	VIDEO-01-ACT-CORRECTION-SCOPE-SET
+P	VIDEO-01-GATE-CORRECTION
+P	VIDEO_CORRECT
+ROW	VIDEO-01-FLD-TARGET-OBJECT	VIDEO-01-SEC-05	VIDEO-01-CMP-CORRECTION-SCOPE	FIELD	Target Object	VIDEO-01-ACT-CORRECTION-SCOPE-SET	VIDEO-01-GATE-CORRECTION	VIDEO_CORRECT
+P	VIDEO-01-FLD-TARGET-OBJECT
+P	VIDEO-01-SEC-05
+P	VIDEO-01-CMP-CORRECTION-SCOPE
+P	FIELD
+P	Target Object
+P	VIDEO-01-ACT-CORRECTION-SCOPE-SET
+P	VIDEO-01-GATE-CORRECTION
+P	VIDEO_CORRECT
+ROW	VIDEO-01-FLD-TARGET-LAYER	VIDEO-01-SEC-05	VIDEO-01-CMP-CORRECTION-SCOPE	FIELD	Target Layer	VIDEO-01-ACT-CORRECTION-SCOPE-SET	VIDEO-01-GATE-CORRECTION	VIDEO_CORRECT
+P	VIDEO-01-FLD-TARGET-LAYER
+P	VIDEO-01-SEC-05
+P	VIDEO-01-CMP-CORRECTION-SCOPE
+P	FIELD
+P	Target Layer
+P	VIDEO-01-ACT-CORRECTION-SCOPE-SET
+P	VIDEO-01-GATE-CORRECTION
+P	VIDEO_CORRECT
+ROW	VIDEO-01-FLD-ISSUE-REF	VIDEO-01-SEC-05	VIDEO-01-CMP-CORRECTION-SCOPE	FIELD	Issue / Finding / Evidence	VIDEO-01-ACT-CORRECTION-SCOPE-SET	VIDEO-01-GATE-CORRECTION	VIDEO_CORRECT
+P	VIDEO-01-FLD-ISSUE-REF
+P	VIDEO-01-SEC-05
+P	VIDEO-01-CMP-CORRECTION-SCOPE
+P	FIELD
+P	Issue / Finding / Evidence
+P	VIDEO-01-ACT-CORRECTION-SCOPE-SET
+P	VIDEO-01-GATE-CORRECTION
+P	VIDEO_CORRECT
+ROW	VIDEO-01-BTN-CONTEXT-BUILD	VIDEO-01-SEC-05	VIDEO-01-CMP-CORRECTION-SCOPE	BUTTON	建立修正 Context	VIDEO-01-ACT-CORRECTION-CONTEXT	VIDEO-01-GATE-CORRECTION	VIDEO_CORRECT
+P	VIDEO-01-BTN-CONTEXT-BUILD
+P	VIDEO-01-SEC-05
+P	VIDEO-01-CMP-CORRECTION-SCOPE
+P	BUTTON
+P	建立修正 Context
+P	VIDEO-01-ACT-CORRECTION-CONTEXT
+P	VIDEO-01-GATE-CORRECTION
+P	VIDEO_CORRECT
+ROW	VIDEO-01-TXT-CORRECTION	VIDEO-01-SEC-06	VIDEO-01-CMP-AI-REVISION	TEXTAREA	繁中修改要求	VIDEO-01-ACT-CORRECTION-REQUEST-SET	VIDEO-01-GATE-CORRECTION	VIDEO_CORRECT
+P	VIDEO-01-TXT-CORRECTION
+P	VIDEO-01-SEC-06
+P	VIDEO-01-CMP-AI-REVISION
+P	TEXTAREA
+P	繁中修改要求
+P	VIDEO-01-ACT-CORRECTION-REQUEST-SET
+P	VIDEO-01-GATE-CORRECTION
+P	VIDEO_CORRECT
+ROW	VIDEO-01-BTN-GEN-CORRECTION	VIDEO-01-SEC-06	VIDEO-01-CMP-AI-REVISION	BUTTON	產生修正腳本	VIDEO-01-ACT-CORRECTION-GENERATE	VIDEO-01-GATE-CORRECTION	VIDEO_CORRECT
+P	VIDEO-01-BTN-GEN-CORRECTION
+P	VIDEO-01-SEC-06
+P	VIDEO-01-CMP-AI-REVISION
+P	BUTTON
+P	產生修正腳本
+P	VIDEO-01-ACT-CORRECTION-GENERATE
+P	VIDEO-01-GATE-CORRECTION
+P	VIDEO_CORRECT
+ROW	VIDEO-01-BTN-APPROVE-CORRECTION	VIDEO-01-SEC-06	VIDEO-01-CMP-AI-REVISION	BUTTON	核准修正腳本	VIDEO-01-ACT-CORRECTION-APPROVE	VIDEO-01-GATE-CORRECTION	VIDEO_CORRECT
+P	VIDEO-01-BTN-APPROVE-CORRECTION
+P	VIDEO-01-SEC-06
+P	VIDEO-01-CMP-AI-REVISION
+P	BUTTON
+P	核准修正腳本
+P	VIDEO-01-ACT-CORRECTION-APPROVE
+P	VIDEO-01-GATE-CORRECTION
+P	VIDEO_CORRECT
+ROW	VIDEO-01-BTN-EXEC-CORRECTION	VIDEO-01-SEC-06	VIDEO-01-CMP-AI-REVISION	BUTTON	執行修正	VIDEO-01-ACT-CORRECTION-EXECUTE	VIDEO-01-GATE-CORRECTION	VIDEO_CORRECT
+P	VIDEO-01-BTN-EXEC-CORRECTION
+P	VIDEO-01-SEC-06
+P	VIDEO-01-CMP-AI-REVISION
+P	BUTTON
+P	執行修正
+P	VIDEO-01-ACT-CORRECTION-EXECUTE
+P	VIDEO-01-GATE-CORRECTION
+P	VIDEO_CORRECT
+ROW	VIDEO-01-BTN-COMPARE-CORRECTION	VIDEO-01-SEC-06	VIDEO-01-CMP-AI-REVISION	BUTTON	比較結果	VIDEO-01-ACT-COMPARE-TOGGLE	VIDEO-01-GATE-CORRECTION	VIDEO_CORRECT
+P	VIDEO-01-BTN-COMPARE-CORRECTION
+P	VIDEO-01-SEC-06
+P	VIDEO-01-CMP-AI-REVISION
+P	BUTTON
+P	比較結果
+P	VIDEO-01-ACT-COMPARE-TOGGLE
+P	VIDEO-01-GATE-CORRECTION
+P	VIDEO_CORRECT
+ROW	VIDEO-01-FLD-ROUTE	VIDEO-01-SEC-07	VIDEO-01-CMP-PROVIDER-RUNTIME	READONLY	Approved Route / Capability	VIDEO-01-ACT-NOOP-VIEW	VIDEO-01-GATE-PAGE	VIDEO_USE
+P	VIDEO-01-FLD-ROUTE
+P	VIDEO-01-SEC-07
+P	VIDEO-01-CMP-PROVIDER-RUNTIME
+P	READONLY
+P	Approved Route / Capability
+P	VIDEO-01-ACT-NOOP-VIEW
+P	VIDEO-01-GATE-PAGE
+P	VIDEO_USE
+ROW	VIDEO-01-FLD-PROVIDER	VIDEO-01-SEC-07	VIDEO-01-CMP-PROVIDER-RUNTIME	READONLY	Provider Brand / Model	VIDEO-01-ACT-NOOP-VIEW	VIDEO-01-GATE-PAGE	VIDEO_USE
+P	VIDEO-01-FLD-PROVIDER
+P	VIDEO-01-SEC-07
+P	VIDEO-01-CMP-PROVIDER-RUNTIME
+P	READONLY
+P	Provider Brand / Model
+P	VIDEO-01-ACT-NOOP-VIEW
+P	VIDEO-01-GATE-PAGE
+P	VIDEO_USE
+ROW	VIDEO-01-FLD-JOB-STATE	VIDEO-01-SEC-07	VIDEO-01-CMP-PROVIDER-RUNTIME	READONLY	Provider Job State	VIDEO-01-ACT-NOOP-VIEW	VIDEO-01-GATE-PAGE	VIDEO_USE
+P	VIDEO-01-FLD-JOB-STATE
+P	VIDEO-01-SEC-07
+P	VIDEO-01-CMP-PROVIDER-RUNTIME
+P	READONLY
+P	Provider Job State
+P	VIDEO-01-ACT-NOOP-VIEW
+P	VIDEO-01-GATE-PAGE
+P	VIDEO_USE
+ROW	VIDEO-01-FLD-ATTEMPT	VIDEO-01-SEC-07	VIDEO-01-CMP-PROVIDER-RUNTIME	READONLY	Attempt / Callback	VIDEO-01-ACT-NOOP-VIEW	VIDEO-01-GATE-PAGE	VIDEO_USE
+P	VIDEO-01-FLD-ATTEMPT
+P	VIDEO-01-SEC-07
+P	VIDEO-01-CMP-PROVIDER-RUNTIME
+P	READONLY
+P	Attempt / Callback
+P	VIDEO-01-ACT-NOOP-VIEW
+P	VIDEO-01-GATE-PAGE
+P	VIDEO_USE
+ROW	VIDEO-01-FLD-RETRY	VIDEO-01-SEC-07	VIDEO-01-CMP-PROVIDER-RUNTIME	READONLY	Retry Eligibility	VIDEO-01-ACT-NOOP-VIEW	VIDEO-01-GATE-PAGE	VIDEO_USE
+P	VIDEO-01-FLD-RETRY
+P	VIDEO-01-SEC-07
+P	VIDEO-01-CMP-PROVIDER-RUNTIME
+P	READONLY
+P	Retry Eligibility
+P	VIDEO-01-ACT-NOOP-VIEW
+P	VIDEO-01-GATE-PAGE
+P	VIDEO_USE
+ROW	VIDEO-01-FLD-CORRELATION	VIDEO-01-SEC-07	VIDEO-01-CMP-PROVIDER-RUNTIME	READONLY	Correlation / Trace	VIDEO-01-ACT-NOOP-VIEW	VIDEO-01-GATE-PAGE	VIDEO_USE
+P	VIDEO-01-FLD-CORRELATION
+P	VIDEO-01-SEC-07
+P	VIDEO-01-CMP-PROVIDER-RUNTIME
+P	READONLY
+P	Correlation / Trace
+P	VIDEO-01-ACT-NOOP-VIEW
+P	VIDEO-01-GATE-PAGE
+P	VIDEO_USE
+ROW	VIDEO-01-BTN-RETRY	VIDEO-01-SEC-07	VIDEO-01-CMP-PROVIDER-RUNTIME	BUTTON	Retry	VIDEO-01-ACT-TASK-RETRY	VIDEO-01-GATE-RETRY	VIDEO_EXECUTE
+P	VIDEO-01-BTN-RETRY
+P	VIDEO-01-SEC-07
+P	VIDEO-01-CMP-PROVIDER-RUNTIME
+P	BUTTON
+P	Retry
+P	VIDEO-01-ACT-TASK-RETRY
+P	VIDEO-01-GATE-RETRY
+P	VIDEO_EXECUTE
+ROW	VIDEO-01-BTN-RUNTIME-DETAIL	VIDEO-01-SEC-07	VIDEO-01-CMP-PROVIDER-RUNTIME	BUTTON	查看 Runtime 詳情	VIDEO-01-ACT-RUNTIME-VIEW	VIDEO-01-GATE-PAGE	VIDEO_USE
+P	VIDEO-01-BTN-RUNTIME-DETAIL
+P	VIDEO-01-SEC-07
+P	VIDEO-01-CMP-PROVIDER-RUNTIME
+P	BUTTON
+P	查看 Runtime 詳情
+P	VIDEO-01-ACT-RUNTIME-VIEW
+P	VIDEO-01-GATE-PAGE
+P	VIDEO_USE
+ROW	VIDEO-01-FLD-SCORE-SCRIPT	VIDEO-01-SEC-08	VIDEO-01-CMP-EVALUATION	READONLY	VIDEO-01-SCORE-SCRIPT	VIDEO-01-ACT-NOOP-VIEW	VIDEO-01-GATE-EVALUATION	VIDEO_USE
+P	VIDEO-01-FLD-SCORE-SCRIPT
+P	VIDEO-01-SEC-08
+P	VIDEO-01-CMP-EVALUATION
+P	READONLY
+P	VIDEO-01-SCORE-SCRIPT
+P	VIDEO-01-ACT-NOOP-VIEW
+P	VIDEO-01-GATE-EVALUATION
+P	VIDEO_USE
+ROW	VIDEO-01-FLD-SCORE-IDENTITY	VIDEO-01-SEC-08	VIDEO-01-CMP-EVALUATION	READONLY	VIDEO-01-SCORE-IDENTITY	VIDEO-01-ACT-NOOP-VIEW	VIDEO-01-GATE-EVALUATION	VIDEO_USE
+P	VIDEO-01-FLD-SCORE-IDENTITY
+P	VIDEO-01-SEC-08
+P	VIDEO-01-CMP-EVALUATION
+P	READONLY
+P	VIDEO-01-SCORE-IDENTITY
+P	VIDEO-01-ACT-NOOP-VIEW
+P	VIDEO-01-GATE-EVALUATION
+P	VIDEO_USE
+ROW	VIDEO-01-FLD-SCORE-MOTION	VIDEO-01-SEC-08	VIDEO-01-CMP-EVALUATION	READONLY	VIDEO-01-SCORE-MOTION	VIDEO-01-ACT-NOOP-VIEW	VIDEO-01-GATE-EVALUATION	VIDEO_USE
+P	VIDEO-01-FLD-SCORE-MOTION
+P	VIDEO-01-SEC-08
+P	VIDEO-01-CMP-EVALUATION
+P	READONLY
+P	VIDEO-01-SCORE-MOTION
+P	VIDEO-01-ACT-NOOP-VIEW
+P	VIDEO-01-GATE-EVALUATION
+P	VIDEO_USE
+ROW	VIDEO-01-FLD-SCORE-CAMERA	VIDEO-01-SEC-08	VIDEO-01-CMP-EVALUATION	READONLY	VIDEO-01-SCORE-CAMERA	VIDEO-01-ACT-NOOP-VIEW	VIDEO-01-GATE-EVALUATION	VIDEO_USE
+P	VIDEO-01-FLD-SCORE-CAMERA
+P	VIDEO-01-SEC-08
+P	VIDEO-01-CMP-EVALUATION
+P	READONLY
+P	VIDEO-01-SCORE-CAMERA
+P	VIDEO-01-ACT-NOOP-VIEW
+P	VIDEO-01-GATE-EVALUATION
+P	VIDEO_USE
+ROW	VIDEO-01-FLD-SCORE-SCENE	VIDEO-01-SEC-08	VIDEO-01-CMP-EVALUATION	READONLY	VIDEO-01-SCORE-SCENE	VIDEO-01-ACT-NOOP-VIEW	VIDEO-01-GATE-EVALUATION	VIDEO_USE
+P	VIDEO-01-FLD-SCORE-SCENE
+P	VIDEO-01-SEC-08
+P	VIDEO-01-CMP-EVALUATION
+P	READONLY
+P	VIDEO-01-SCORE-SCENE
+P	VIDEO-01-ACT-NOOP-VIEW
+P	VIDEO-01-GATE-EVALUATION
+P	VIDEO_USE
+ROW	VIDEO-01-FLD-SCORE-TIMING	VIDEO-01-SEC-08	VIDEO-01-CMP-EVALUATION	READONLY	VIDEO-01-SCORE-TIMING	VIDEO-01-ACT-NOOP-VIEW	VIDEO-01-GATE-EVALUATION	VIDEO_USE
+P	VIDEO-01-FLD-SCORE-TIMING
+P	VIDEO-01-SEC-08
+P	VIDEO-01-CMP-EVALUATION
+P	READONLY
+P	VIDEO-01-SCORE-TIMING
+P	VIDEO-01-ACT-NOOP-VIEW
+P	VIDEO-01-GATE-EVALUATION
+P	VIDEO_USE
+ROW	VIDEO-01-FLD-SCORE-TECH	VIDEO-01-SEC-08	VIDEO-01-CMP-EVALUATION	READONLY	VIDEO-01-SCORE-TECH	VIDEO-01-ACT-NOOP-VIEW	VIDEO-01-GATE-EVALUATION	VIDEO_USE
+P	VIDEO-01-FLD-SCORE-TECH
+P	VIDEO-01-SEC-08
+P	VIDEO-01-CMP-EVALUATION
+P	READONLY
+P	VIDEO-01-SCORE-TECH
+P	VIDEO-01-ACT-NOOP-VIEW
+P	VIDEO-01-GATE-EVALUATION
+P	VIDEO_USE
+ROW	VIDEO-01-FLD-SCORE-ASSET	VIDEO-01-SEC-08	VIDEO-01-CMP-EVALUATION	READONLY	VIDEO-01-SCORE-ASSET	VIDEO-01-ACT-NOOP-VIEW	VIDEO-01-GATE-EVALUATION	VIDEO_USE
+P	VIDEO-01-FLD-SCORE-ASSET
+P	VIDEO-01-SEC-08
+P	VIDEO-01-CMP-EVALUATION
+P	READONLY
+P	VIDEO-01-SCORE-ASSET
+P	VIDEO-01-ACT-NOOP-VIEW
+P	VIDEO-01-GATE-EVALUATION
+P	VIDEO_USE
+ROW	VIDEO-01-FLD-SCORE-RIGHTS	VIDEO-01-SEC-08	VIDEO-01-CMP-EVALUATION	READONLY	VIDEO-01-SCORE-RIGHTS	VIDEO-01-ACT-NOOP-VIEW	VIDEO-01-GATE-EVALUATION	VIDEO_USE
+P	VIDEO-01-FLD-SCORE-RIGHTS
+P	VIDEO-01-SEC-08
+P	VIDEO-01-CMP-EVALUATION
+P	READONLY
+P	VIDEO-01-SCORE-RIGHTS
+P	VIDEO-01-ACT-NOOP-VIEW
+P	VIDEO-01-GATE-EVALUATION
+P	VIDEO_USE
+ROW	VIDEO-01-BTN-EVALUATE	VIDEO-01-SEC-08	VIDEO-01-CMP-EVALUATION	BUTTON	重新評分	VIDEO-01-ACT-EVALUATE	VIDEO-01-GATE-EVALUATION	VIDEO_SCORE
+P	VIDEO-01-BTN-EVALUATE
+P	VIDEO-01-SEC-08
+P	VIDEO-01-CMP-EVALUATION
+P	BUTTON
+P	重新評分
+P	VIDEO-01-ACT-EVALUATE
+P	VIDEO-01-GATE-EVALUATION
+P	VIDEO_SCORE
+ROW	VIDEO-01-BTN-FINDING	VIDEO-01-SEC-08	VIDEO-01-CMP-EVALUATION	BUTTON	建立 Finding	VIDEO-01-ACT-FINDING-CREATE	VIDEO-01-GATE-EVALUATION	VIDEO_CORRECT
+P	VIDEO-01-BTN-FINDING
+P	VIDEO-01-SEC-08
+P	VIDEO-01-CMP-EVALUATION
+P	BUTTON
+P	建立 Finding
+P	VIDEO-01-ACT-FINDING-CREATE
+P	VIDEO-01-GATE-EVALUATION
+P	VIDEO_CORRECT
+ROW	VIDEO-01-BTN-ISSUE-OPEN	VIDEO-01-SEC-08	VIDEO-01-CMP-EVALUATION	BUTTON	開啟 Issue	VIDEO-01-ACT-ISSUE-OPEN	VIDEO-01-GATE-EVALUATION	VIDEO_USE
+P	VIDEO-01-BTN-ISSUE-OPEN
+P	VIDEO-01-SEC-08
+P	VIDEO-01-CMP-EVALUATION
+P	BUTTON
+P	開啟 Issue
+P	VIDEO-01-ACT-ISSUE-OPEN
+P	VIDEO-01-GATE-EVALUATION
+P	VIDEO_USE
+ROW	VIDEO-01-FLD-VIDEO-VERSION	VIDEO-01-SEC-09	VIDEO-01-CMP-MANIFEST	READONLY	Exact Video Version ID	VIDEO-01-ACT-NOOP-VIEW	VIDEO-01-GATE-LOCK	VIDEO_USE
+P	VIDEO-01-FLD-VIDEO-VERSION
+P	VIDEO-01-SEC-09
+P	VIDEO-01-CMP-MANIFEST
+P	READONLY
+P	Exact Video Version ID
+P	VIDEO-01-ACT-NOOP-VIEW
+P	VIDEO-01-GATE-LOCK
+P	VIDEO_USE
+ROW	VIDEO-01-FLD-SHOT-VERSIONS	VIDEO-01-SEC-09	VIDEO-01-CMP-MANIFEST	READONLY	Shot Version refs	VIDEO-01-ACT-NOOP-VIEW	VIDEO-01-GATE-LOCK	VIDEO_USE
+P	VIDEO-01-FLD-SHOT-VERSIONS
+P	VIDEO-01-SEC-09
+P	VIDEO-01-CMP-MANIFEST
+P	READONLY
+P	Shot Version refs
+P	VIDEO-01-ACT-NOOP-VIEW
+P	VIDEO-01-GATE-LOCK
+P	VIDEO_USE
+ROW	VIDEO-01-FLD-LAYER-VERSIONS	VIDEO-01-SEC-09	VIDEO-01-CMP-MANIFEST	READONLY	Layer Version refs	VIDEO-01-ACT-NOOP-VIEW	VIDEO-01-GATE-LOCK	VIDEO_USE
+P	VIDEO-01-FLD-LAYER-VERSIONS
+P	VIDEO-01-SEC-09
+P	VIDEO-01-CMP-MANIFEST
+P	READONLY
+P	Layer Version refs
+P	VIDEO-01-ACT-NOOP-VIEW
+P	VIDEO-01-GATE-LOCK
+P	VIDEO_USE
+ROW	VIDEO-01-FLD-SCRIPT-HASH	VIDEO-01-SEC-09	VIDEO-01-CMP-MANIFEST	READONLY	Script Section Hash	VIDEO-01-ACT-NOOP-VIEW	VIDEO-01-GATE-LOCK	VIDEO_USE
+P	VIDEO-01-FLD-SCRIPT-HASH
+P	VIDEO-01-SEC-09
+P	VIDEO-01-CMP-MANIFEST
+P	READONLY
+P	Script Section Hash
+P	VIDEO-01-ACT-NOOP-VIEW
+P	VIDEO-01-GATE-LOCK
+P	VIDEO_USE
+ROW	VIDEO-01-FLD-ASSET-FINGERPRINT	VIDEO-01-SEC-09	VIDEO-01-CMP-MANIFEST	READONLY	Asset Dependency Fingerprint	VIDEO-01-ACT-NOOP-VIEW	VIDEO-01-GATE-LOCK	VIDEO_USE
+P	VIDEO-01-FLD-ASSET-FINGERPRINT
+P	VIDEO-01-SEC-09
+P	VIDEO-01-CMP-MANIFEST
+P	READONLY
+P	Asset Dependency Fingerprint
+P	VIDEO-01-ACT-NOOP-VIEW
+P	VIDEO-01-GATE-LOCK
+P	VIDEO_USE
+ROW	VIDEO-01-FLD-OUTPUT-URI	VIDEO-01-SEC-09	VIDEO-01-CMP-MANIFEST	READONLY	Output URI / Composite Ref	VIDEO-01-ACT-NOOP-VIEW	VIDEO-01-GATE-LOCK	VIDEO_USE
+P	VIDEO-01-FLD-OUTPUT-URI
+P	VIDEO-01-SEC-09
+P	VIDEO-01-CMP-MANIFEST
+P	READONLY
+P	Output URI / Composite Ref
+P	VIDEO-01-ACT-NOOP-VIEW
+P	VIDEO-01-GATE-LOCK
+P	VIDEO_USE
+ROW	VIDEO-01-FLD-CHECKSUM	VIDEO-01-SEC-09	VIDEO-01-CMP-MANIFEST	READONLY	Checksum	VIDEO-01-ACT-NOOP-VIEW	VIDEO-01-GATE-LOCK	VIDEO_USE
+P	VIDEO-01-FLD-CHECKSUM
+P	VIDEO-01-SEC-09
+P	VIDEO-01-CMP-MANIFEST
+P	READONLY
+P	Checksum
+P	VIDEO-01-ACT-NOOP-VIEW
+P	VIDEO-01-GATE-LOCK
+P	VIDEO_USE
+ROW	VIDEO-01-FLD-SCORECARD	VIDEO-01-SEC-09	VIDEO-01-CMP-MANIFEST	READONLY	Scorecard / Criteria Ref	VIDEO-01-ACT-NOOP-VIEW	VIDEO-01-GATE-LOCK	VIDEO_USE
+P	VIDEO-01-FLD-SCORECARD
+P	VIDEO-01-SEC-09
+P	VIDEO-01-CMP-MANIFEST
+P	READONLY
+P	Scorecard / Criteria Ref
+P	VIDEO-01-ACT-NOOP-VIEW
+P	VIDEO-01-GATE-LOCK
+P	VIDEO_USE
+ROW	VIDEO-01-FLD-EVIDENCE	VIDEO-01-SEC-09	VIDEO-01-CMP-MANIFEST	READONLY	Evidence refs	VIDEO-01-ACT-NOOP-VIEW	VIDEO-01-GATE-LOCK	VIDEO_USE
+P	VIDEO-01-FLD-EVIDENCE
+P	VIDEO-01-SEC-09
+P	VIDEO-01-CMP-MANIFEST
+P	READONLY
+P	Evidence refs
+P	VIDEO-01-ACT-NOOP-VIEW
+P	VIDEO-01-GATE-LOCK
+P	VIDEO_USE
+ROW	VIDEO-01-FLD-HANDOFF-CONTRACT	VIDEO-01-SEC-09	VIDEO-01-CMP-MANIFEST	READONLY	Handoff Contract Hash	VIDEO-01-ACT-NOOP-VIEW	VIDEO-01-GATE-LOCK	VIDEO_USE
+P	VIDEO-01-FLD-HANDOFF-CONTRACT
+P	VIDEO-01-SEC-09
+P	VIDEO-01-CMP-MANIFEST
+P	READONLY
+P	Handoff Contract Hash
+P	VIDEO-01-ACT-NOOP-VIEW
+P	VIDEO-01-GATE-LOCK
+P	VIDEO_USE
+ROW	VIDEO-01-FLD-PAGE-STATE	VIDEO-01-SEC-10	VIDEO-01-CMP-STATUS	READONLY	Page State	VIDEO-01-ACT-NOOP-VIEW	VIDEO-01-GATE-PAGE	VIDEO_USE
+P	VIDEO-01-FLD-PAGE-STATE
+P	VIDEO-01-SEC-10
+P	VIDEO-01-CMP-STATUS
+P	READONLY
+P	Page State
+P	VIDEO-01-ACT-NOOP-VIEW
+P	VIDEO-01-GATE-PAGE
+P	VIDEO_USE
+ROW	VIDEO-01-FLD-TASK-STATE	VIDEO-01-SEC-10	VIDEO-01-CMP-STATUS	READONLY	DepartmentTask State	VIDEO-01-ACT-NOOP-VIEW	VIDEO-01-GATE-PAGE	VIDEO_USE
+P	VIDEO-01-FLD-TASK-STATE
+P	VIDEO-01-SEC-10
+P	VIDEO-01-CMP-STATUS
+P	READONLY
+P	DepartmentTask State
+P	VIDEO-01-ACT-NOOP-VIEW
+P	VIDEO-01-GATE-PAGE
+P	VIDEO_USE
+ROW	VIDEO-01-FLD-ERROR	VIDEO-01-SEC-10	VIDEO-01-CMP-STATUS	READONLY	Error UID / Reason	VIDEO-01-ACT-NOOP-VIEW	VIDEO-01-GATE-PAGE	VIDEO_USE
+P	VIDEO-01-FLD-ERROR
+P	VIDEO-01-SEC-10
+P	VIDEO-01-CMP-STATUS
+P	READONLY
+P	Error UID / Reason
+P	VIDEO-01-ACT-NOOP-VIEW
+P	VIDEO-01-GATE-PAGE
+P	VIDEO_USE
+ROW	VIDEO-01-FLD-DISABLED-REASON	VIDEO-01-SEC-10	VIDEO-01-CMP-STATUS	READONLY	Disabled Reason	VIDEO-01-ACT-NOOP-VIEW	VIDEO-01-GATE-PAGE	VIDEO_USE
+P	VIDEO-01-FLD-DISABLED-REASON
+P	VIDEO-01-SEC-10
+P	VIDEO-01-CMP-STATUS
+P	READONLY
+P	Disabled Reason
+P	VIDEO-01-ACT-NOOP-VIEW
+P	VIDEO-01-GATE-PAGE
+P	VIDEO_USE
+ROW	VIDEO-01-FLD-AUDIT	VIDEO-01-SEC-10	VIDEO-01-CMP-STATUS	READONLY	Audit / Trace	VIDEO-01-ACT-NOOP-VIEW	VIDEO-01-GATE-PAGE	VIDEO_USE
+P	VIDEO-01-FLD-AUDIT
+P	VIDEO-01-SEC-10
+P	VIDEO-01-CMP-STATUS
+P	READONLY
+P	Audit / Trace
+P	VIDEO-01-ACT-NOOP-VIEW
+P	VIDEO-01-GATE-PAGE
+P	VIDEO_USE
+P	8. Action / Gate / Permission Matrix · 34/34
+ROW	Action UID	Permission	Gate	Effect Type
+P	Action UID
+P	Permission
+P	Gate
+P	Effect Type
+ROW	VIDEO-01-ACT-NOOP-VIEW	VIDEO_USE	VIDEO-01-GATE-PAGE	UI_ONLY
+P	VIDEO-01-ACT-NOOP-VIEW
+P	VIDEO_USE
+P	VIDEO-01-GATE-PAGE
+P	UI_ONLY
+ROW	VIDEO-01-ACT-PROJECT-SET	VIDEO_USE	VIDEO-01-GATE-PAGE	CONTEXT_STATE
+P	VIDEO-01-ACT-PROJECT-SET
+P	VIDEO_USE
+P	VIDEO-01-GATE-PAGE
+P	CONTEXT_STATE
+ROW	VIDEO-01-ACT-TOPIC-SET	VIDEO_USE	VIDEO-01-GATE-PAGE	CONTEXT_STATE
+P	VIDEO-01-ACT-TOPIC-SET
+P	VIDEO_USE
+P	VIDEO-01-GATE-PAGE
+P	CONTEXT_STATE
+ROW	VIDEO-01-ACT-TASK-SET	VIDEO_USE	VIDEO-01-GATE-PAGE	CONTEXT_STATE
+P	VIDEO-01-ACT-TASK-SET
+P	VIDEO_USE
+P	VIDEO-01-GATE-PAGE
+P	CONTEXT_STATE
+ROW	VIDEO-01-ACT-MODE-SET	VIDEO_USE	VIDEO-01-GATE-TASK-READY	CONTEXT_STATE
+P	VIDEO-01-ACT-MODE-SET
+P	VIDEO_USE
+P	VIDEO-01-GATE-TASK-READY
+P	CONTEXT_STATE
+ROW	VIDEO-01-ACT-FLOW-START	VIDEO_EXECUTE	VIDEO-01-GATE-EXECUTE	JOB_START
+P	VIDEO-01-ACT-FLOW-START
+P	VIDEO_EXECUTE
+P	VIDEO-01-GATE-EXECUTE
+P	JOB_START
+ROW	VIDEO-01-ACT-BLUEPRINT-VIEW	VIDEO_USE	VIDEO-01-GATE-CHILD-LOCK	UI_ONLY
+P	VIDEO-01-ACT-BLUEPRINT-VIEW
+P	VIDEO_USE
+P	VIDEO-01-GATE-CHILD-LOCK
+P	UI_ONLY
+ROW	VIDEO-01-ACT-SCRIPT-VIEW	VIDEO_USE	VIDEO-01-GATE-SCRIPT	UI_ONLY
+P	VIDEO-01-ACT-SCRIPT-VIEW
+P	VIDEO_USE
+P	VIDEO-01-GATE-SCRIPT
+P	UI_ONLY
+ROW	VIDEO-01-ACT-LIST-SEARCH	VIDEO_USE	VIDEO-01-GATE-PAGE	UI_ONLY
+P	VIDEO-01-ACT-LIST-SEARCH
+P	VIDEO_USE
+P	VIDEO-01-GATE-PAGE
+P	UI_ONLY
+ROW	VIDEO-01-ACT-LIST-FILTER	VIDEO_USE	VIDEO-01-GATE-PAGE	UI_ONLY
+P	VIDEO-01-ACT-LIST-FILTER
+P	VIDEO_USE
+P	VIDEO-01-GATE-PAGE
+P	UI_ONLY
+ROW	VIDEO-01-ACT-SHOT-SELECT	VIDEO_USE	VIDEO-01-GATE-PAGE	UI_ONLY
+P	VIDEO-01-ACT-SHOT-SELECT
+P	VIDEO_USE
+P	VIDEO-01-GATE-PAGE
+P	UI_ONLY
+ROW	VIDEO-01-ACT-PREVIEW-PLAY	VIDEO_USE	VIDEO-01-GATE-CANDIDATE	UI_ONLY
+P	VIDEO-01-ACT-PREVIEW-PLAY
+P	VIDEO_USE
+P	VIDEO-01-GATE-CANDIDATE
+P	UI_ONLY
+ROW	VIDEO-01-ACT-PREVIEW-SEEK	VIDEO_USE	VIDEO-01-GATE-CANDIDATE	UI_ONLY
+P	VIDEO-01-ACT-PREVIEW-SEEK
+P	VIDEO_USE
+P	VIDEO-01-GATE-CANDIDATE
+P	UI_ONLY
+ROW	VIDEO-01-ACT-PREVIEW-VOLUME	VIDEO_USE	VIDEO-01-GATE-CANDIDATE	UI_ONLY
+P	VIDEO-01-ACT-PREVIEW-VOLUME
+P	VIDEO_USE
+P	VIDEO-01-GATE-CANDIDATE
+P	UI_ONLY
+ROW	VIDEO-01-ACT-PREVIEW-FULLSCREEN	VIDEO_USE	VIDEO-01-GATE-CANDIDATE	UI_ONLY
+P	VIDEO-01-ACT-PREVIEW-FULLSCREEN
+P	VIDEO_USE
+P	VIDEO-01-GATE-CANDIDATE
+P	UI_ONLY
+ROW	VIDEO-01-ACT-COMPARE-TOGGLE	VIDEO_USE	VIDEO-01-GATE-COMPARE	UI_ONLY
+P	VIDEO-01-ACT-COMPARE-TOGGLE
+P	VIDEO_USE
+P	VIDEO-01-GATE-COMPARE
+P	UI_ONLY
+ROW	VIDEO-01-ACT-COMPARE-A	VIDEO_USE	VIDEO-01-GATE-COMPARE	UI_ONLY
+P	VIDEO-01-ACT-COMPARE-A
+P	VIDEO_USE
+P	VIDEO-01-GATE-COMPARE
+P	UI_ONLY
+ROW	VIDEO-01-ACT-COMPARE-B	VIDEO_USE	VIDEO-01-GATE-COMPARE	UI_ONLY
+P	VIDEO-01-ACT-COMPARE-B
+P	VIDEO_USE
+P	VIDEO-01-GATE-COMPARE
+P	UI_ONLY
+ROW	VIDEO-01-ACT-EVALUATION-VIEW	VIDEO_USE	VIDEO-01-GATE-EVALUATION	UI_ONLY
+P	VIDEO-01-ACT-EVALUATION-VIEW
+P	VIDEO_USE
+P	VIDEO-01-GATE-EVALUATION
+P	UI_ONLY
+ROW	VIDEO-01-ACT-EVALUATE	VIDEO_SCORE	VIDEO-01-GATE-EVALUATION	SCORE_MUTATION
+P	VIDEO-01-ACT-EVALUATE
+P	VIDEO_SCORE
+P	VIDEO-01-GATE-EVALUATION
+P	SCORE_MUTATION
+ROW	VIDEO-01-ACT-CANDIDATE-CONFIRM	VIDEO_DECIDE	VIDEO-01-GATE-CONFIRM	DECISION_MUTATION
+P	VIDEO-01-ACT-CANDIDATE-CONFIRM
+P	VIDEO_DECIDE
+P	VIDEO-01-GATE-CONFIRM
+P	DECISION_MUTATION
+ROW	VIDEO-01-ACT-CORRECTION-OPEN	VIDEO_CORRECT	VIDEO-01-GATE-CORRECTION	CONTEXT_STATE
+P	VIDEO-01-ACT-CORRECTION-OPEN
+P	VIDEO_CORRECT
+P	VIDEO-01-GATE-CORRECTION
+P	CONTEXT_STATE
+ROW	VIDEO-01-ACT-CORRECTION-SCOPE-SET	VIDEO_CORRECT	VIDEO-01-GATE-CORRECTION	CONTEXT_STATE
+P	VIDEO-01-ACT-CORRECTION-SCOPE-SET
+P	VIDEO_CORRECT
+P	VIDEO-01-GATE-CORRECTION
+P	CONTEXT_STATE
+ROW	VIDEO-01-ACT-CORRECTION-CONTEXT	VIDEO_CORRECT	VIDEO-01-GATE-CORRECTION	CONTEXT_STATE
+P	VIDEO-01-ACT-CORRECTION-CONTEXT
+P	VIDEO_CORRECT
+P	VIDEO-01-GATE-CORRECTION
+P	CONTEXT_STATE
+ROW	VIDEO-01-ACT-CORRECTION-REQUEST-SET	VIDEO_CORRECT	VIDEO-01-GATE-CORRECTION	CONTEXT_STATE
+P	VIDEO-01-ACT-CORRECTION-REQUEST-SET
+P	VIDEO_CORRECT
+P	VIDEO-01-GATE-CORRECTION
+P	CONTEXT_STATE
+ROW	VIDEO-01-ACT-CORRECTION-GENERATE	VIDEO_CORRECT	VIDEO-01-GATE-CORRECTION	CANDIDATE_CREATE
+P	VIDEO-01-ACT-CORRECTION-GENERATE
+P	VIDEO_CORRECT
+P	VIDEO-01-GATE-CORRECTION
+P	CANDIDATE_CREATE
+ROW	VIDEO-01-ACT-CORRECTION-APPROVE	VIDEO_CORRECT	VIDEO-01-GATE-CORRECTION	DECISION_MUTATION
+P	VIDEO-01-ACT-CORRECTION-APPROVE
+P	VIDEO_CORRECT
+P	VIDEO-01-GATE-CORRECTION
+P	DECISION_MUTATION
+ROW	VIDEO-01-ACT-CORRECTION-EXECUTE	VIDEO_EXECUTE	VIDEO-01-GATE-CORRECTION	JOB_START
+P	VIDEO-01-ACT-CORRECTION-EXECUTE
+P	VIDEO_EXECUTE
+P	VIDEO-01-GATE-CORRECTION
+P	JOB_START
+ROW	VIDEO-01-ACT-TASK-RETRY	VIDEO_EXECUTE	VIDEO-01-GATE-RETRY	JOB_START
+P	VIDEO-01-ACT-TASK-RETRY
+P	VIDEO_EXECUTE
+P	VIDEO-01-GATE-RETRY
+P	JOB_START
+ROW	VIDEO-01-ACT-RUNTIME-VIEW	VIDEO_USE	VIDEO-01-GATE-PAGE	UI_ONLY
+P	VIDEO-01-ACT-RUNTIME-VIEW
+P	VIDEO_USE
+P	VIDEO-01-GATE-PAGE
+P	UI_ONLY
+ROW	VIDEO-01-ACT-FINDING-CREATE	VIDEO_CORRECT	VIDEO-01-GATE-EVALUATION	FINDING_CREATE
+P	VIDEO-01-ACT-FINDING-CREATE
+P	VIDEO_CORRECT
+P	VIDEO-01-GATE-EVALUATION
+P	FINDING_CREATE
+ROW	VIDEO-01-ACT-ISSUE-OPEN	VIDEO_USE	VIDEO-01-GATE-EVALUATION	UI_ONLY
+P	VIDEO-01-ACT-ISSUE-OPEN
+P	VIDEO_USE
+P	VIDEO-01-GATE-EVALUATION
+P	UI_ONLY
+ROW	VIDEO-01-ACT-VERSION-LOCK	VIDEO_DECIDE	VIDEO-01-GATE-LOCK	VERSION_LOCK
+P	VIDEO-01-ACT-VERSION-LOCK
+P	VIDEO_DECIDE
+P	VIDEO-01-GATE-LOCK
+P	VERSION_LOCK
+ROW	VIDEO-01-ACT-HANDOFF	VIDEO_HANDOFF	VIDEO-01-GATE-HANDOFF	HANDOFF_CREATE
+P	VIDEO-01-ACT-HANDOFF
+P	VIDEO_HANDOFF
+P	VIDEO-01-GATE-HANDOFF
+P	HANDOFF_CREATE
+P	9. Gate / Permission Contract
+P	9.1 Permissions · 6/6
+ROW	Permission	Registered Scope	Purpose
+P	Permission
+P	Registered Scope
+P	Purpose
+ROW	VIDEO_USE	video.task.read	Enter page / basic projection
+P	VIDEO_USE
+P	video.task.read
+P	Enter page / basic projection
+ROW	VIDEO_EXECUTE	video.task.execute + department.task.execute	Execute/retry assigned VIDEO task
+P	VIDEO_EXECUTE
+P	video.task.execute + department.task.execute
+P	Execute/retry assigned VIDEO task
+ROW	VIDEO_DECIDE	department.output.decide	Confirm/modify candidate
+P	VIDEO_DECIDE
+P	department.output.decide
+P	Confirm/modify candidate
+ROW	VIDEO_SCORE	video.score.write + department.score.write	Persist VIDEO scorecard
+P	VIDEO_SCORE
+P	video.score.write + department.score.write
+P	Persist VIDEO scorecard
+ROW	VIDEO_CORRECT	finding.write + correction.create	Create finding/correction
+P	VIDEO_CORRECT
+P	finding.write + correction.create
+P	Create finding/correction
+ROW	VIDEO_HANDOFF	video.handoff.create + department.handoff.create	Create VIDEO→EDIT handoff
+P	VIDEO_HANDOFF
+P	video.handoff.create + department.handoff.create
+P	Create VIDEO→EDIT handoff
+P	9.2 Gates · 16/16
+ROW	Gate UID	Condition
+P	Gate UID
+P	Condition
+ROW	VIDEO-01-GATE-PAGE	Authorized page + project/task scope
+P	VIDEO-01-GATE-PAGE
+P	Authorized page + project/task scope
+ROW	VIDEO-01-GATE-TASK-READY	Assigned VIDEO task READY and dependency Handoff complete
+P	VIDEO-01-GATE-TASK-READY
+P	Assigned VIDEO task READY and dependency Handoff complete
+ROW	VIDEO-01-GATE-CHILD-LOCK	Exact ChildLock/Blueprint version+hash valid
+P	VIDEO-01-GATE-CHILD-LOCK
+P	Exact ChildLock/Blueprint version+hash valid
+ROW	VIDEO-01-GATE-SCRIPT	Exact VIDEO Script View/Section + hash resolved
+P	VIDEO-01-GATE-SCRIPT
+P	Exact VIDEO Script View/Section + hash resolved
+ROW	VIDEO-01-GATE-ASSET-BIND	Approved asset refs exact ID/version/filename/checksum/purpose match
+P	VIDEO-01-GATE-ASSET-BIND
+P	Approved asset refs exact ID/version/filename/checksum/purpose match
+ROW	VIDEO-01-GATE-INSTRUCTION	Approved Instruction Package resolvable for same task/manifest
+P	VIDEO-01-GATE-INSTRUCTION
+P	Approved Instruction Package resolvable for same task/manifest
+ROW	VIDEO-01-GATE-ROUTE	Core-approved Provider Candidate Group/Capability/rights/budget policy PASS
+P	VIDEO-01-GATE-ROUTE
+P	Core-approved Provider Candidate Group/Capability/rights/budget policy PASS
+ROW	VIDEO-01-GATE-EXECUTE	TASK_READY + CHILD_LOCK + SCRIPT + ASSET_BIND + INSTRUCTION + ROUTE
+P	VIDEO-01-GATE-EXECUTE
+P	TASK_READY + CHILD_LOCK + SCRIPT + ASSET_BIND + INSTRUCTION + ROUTE
+ROW	VIDEO-01-GATE-CANDIDATE	Verified provider result materialized as Candidate with provenance/checksum
+P	VIDEO-01-GATE-CANDIDATE
+P	Verified provider result materialized as Candidate with provenance/checksum
+ROW	VIDEO-01-GATE-EVALUATION	Approved VIDEO criteria version + all required dimensions/evidence
+P	VIDEO-01-GATE-EVALUATION
+P	Approved VIDEO criteria version + all required dimensions/evidence
+ROW	VIDEO-01-GATE-CONFIRM	VIDEO score ≥95 + no hard block + human selection
+P	VIDEO-01-GATE-CONFIRM
+P	VIDEO score ≥95 + no hard block + human selection
+ROW	VIDEO-01-GATE-CORRECTION	Finding + affected_scope + current exact refs + correction reason
+P	VIDEO-01-GATE-CORRECTION
+P	Finding + affected_scope + current exact refs + correction reason
+ROW	VIDEO-01-GATE-RETRY	Runtime BLOCKED/FAILED + retry policy eligible
+P	VIDEO-01-GATE-RETRY
+P	Runtime BLOCKED/FAILED + retry policy eligible
+ROW	VIDEO-01-GATE-LOCK	Confirmed exact Video Version + scorecard + exact output manifest complete
+P	VIDEO-01-GATE-LOCK
+P	Confirmed exact Video Version + scorecard + exact output manifest complete
+ROW	VIDEO-01-GATE-HANDOFF	Locked exact Video Version + handoff manifest/contract hash PASS
+P	VIDEO-01-GATE-HANDOFF
+P	Locked exact Video Version + handoff manifest/contract hash PASS
+ROW	VIDEO-01-GATE-COMPARE	Candidate exists + Current exists + user enables Compare
+P	VIDEO-01-GATE-COMPARE
+P	Candidate exists + Current exists + user enables Compare
+P	10. Integration Ports · 8/8
+ROW	Port UID	Boundary	Operation	Method / Path	Permission
+P	Port UID
+P	Boundary
+P	Operation
+P	Method / Path
+P	Permission
+ROW	VIDEO-01-PORT-IN-ASSET-HANDOFF	Inbound / Dependency Ready	createDepartmentHandoff	POST /v1/handoffs	department.handoff.create
+P	VIDEO-01-PORT-IN-ASSET-HANDOFF
+P	Inbound / Dependency Ready
+P	createDepartmentHandoff
+P	POST /v1/handoffs
+P	department.handoff.create
+ROW	VIDEO-01-PORT-EXECUTE	Generate	requestTaskExecution	POST /v1/tasks/{taskId}/execute	department.task.execute
+P	VIDEO-01-PORT-EXECUTE
+P	Generate
+P	requestTaskExecution
+P	POST /v1/tasks/{taskId}/execute
+P	department.task.execute
+ROW	VIDEO-01-PORT-RETRY	Retry	retryTaskExecution	POST /v1/tasks/{taskId}/retry	department.task.execute
+P	VIDEO-01-PORT-RETRY
+P	Retry
+P	retryTaskExecution
+P	POST /v1/tasks/{taskId}/retry
+P	department.task.execute
+ROW	VIDEO-01-PORT-FINDING	Evaluation Finding	createFinding	POST /v1/findings	finding.write
+P	VIDEO-01-PORT-FINDING
+P	Evaluation Finding
+P	createFinding
+P	POST /v1/findings
+P	finding.write
+ROW	VIDEO-01-PORT-CORRECTION	Correction Request	createCorrectionRequest	POST /v1/correction-requests	correction.create
+P	VIDEO-01-PORT-CORRECTION
+P	Correction Request
+P	createCorrectionRequest
+P	POST /v1/correction-requests
+P	correction.create
+ROW	VIDEO-01-PORT-DECISION	Candidate Confirm	decideOutputCandidate	POST /v1/tasks/{taskId}/outputs/{outputVersionId}/decision	department.output.decide
+P	VIDEO-01-PORT-DECISION
+P	Candidate Confirm
+P	decideOutputCandidate
+P	POST /v1/tasks/{taskId}/outputs/{outputVersionId}/decision
+P	department.output.decide
+ROW	VIDEO-01-PORT-SCORECARD	Score Persist	submitScorecard	POST /v1/scorecards	department.score.write
+P	VIDEO-01-PORT-SCORECARD
+P	Score Persist
+P	submitScorecard
+P	POST /v1/scorecards
+P	department.score.write
+ROW	VIDEO-01-PORT-OUT-EDIT	Outbound to EDIT	createDepartmentHandoff	POST /v1/handoffs	department.handoff.create
+P	VIDEO-01-PORT-OUT-EDIT
+P	Outbound to EDIT
+P	createDepartmentHandoff
+P	POST /v1/handoffs
+P	department.handoff.create
+P	Page code 不得自行發明 endpoint；Correction translation/provider syntax 由 shared compiler/adapter/router 處理，不在 VIDEO 頁建立第二套 runtime。
+P	11. Error / Recovery Contract · 17/17
+ROW	Error UID	Context	Recovery
+P	Error UID
+P	Context
+P	Recovery
+ROW	VIDEO-01-ERR-CONTEXT-001	Project/Topic/Task context missing or stale	Reset context and resolve current task
+P	VIDEO-01-ERR-CONTEXT-001
+P	Project/Topic/Task context missing or stale
+P	Reset context and resolve current task
+ROW	VIDEO-01-ERR-BLUEPRINT-001	Locked Blueprint/ChildLock missing/mismatch	BLOCK; return Core/Blueprint owner
+P	VIDEO-01-ERR-BLUEPRINT-001
+P	Locked Blueprint/ChildLock missing/mismatch
+P	BLOCK; return Core/Blueprint owner
+ROW	VIDEO-01-ERR-SCRIPT-001	VIDEO Script Role/Section missing/hash mismatch	BLOCK; do not generate prompt locally
+P	VIDEO-01-ERR-SCRIPT-001
+P	VIDEO Script Role/Section missing/hash mismatch
+P	BLOCK; do not generate prompt locally
+ROW	VIDEO-01-ERR-ASSET-001	Approved Asset binding ID/version/filename/checksum/purpose mismatch	BLOCK; return Blueprint→Asset regeneration/update path
+P	VIDEO-01-ERR-ASSET-001
+P	Approved Asset binding ID/version/filename/checksum/purpose mismatch
+P	BLOCK; return Blueprint→Asset regeneration/update path
+ROW	VIDEO-01-ERR-INSTRUCTION-001	Approved Instruction Package unavailable	BLOCK; INSTRUCTION_PACKAGE_REQUIRED
+P	VIDEO-01-ERR-INSTRUCTION-001
+P	Approved Instruction Package unavailable
+P	BLOCK; INSTRUCTION_PACKAGE_REQUIRED
+ROW	VIDEO-01-ERR-ROUTE-001	Provider capability/rights/budget route unavailable	BLOCK; wait Core/API routing resolution
+P	VIDEO-01-ERR-ROUTE-001
+P	Provider capability/rights/budget route unavailable
+P	BLOCK; wait Core/API routing resolution
+ROW	VIDEO-01-ERR-PROVIDER-001	Provider job failed/callback invalid	Preserve task/current output; show retry eligibility
+P	VIDEO-01-ERR-PROVIDER-001
+P	Provider job failed/callback invalid
+P	Preserve task/current output; show retry eligibility
+ROW	VIDEO-01-ERR-CALLBACK-001	Callback pending/invalid/duplicate/hash mismatch	No domain mutation for invalid result; audit
+P	VIDEO-01-ERR-CALLBACK-001
+P	Callback pending/invalid/duplicate/hash mismatch
+P	No domain mutation for invalid result; audit
+ROW	VIDEO-01-ERR-CANDIDATE-001	Candidate output/provenance/checksum invalid	BLOCK decision/score
+P	VIDEO-01-ERR-CANDIDATE-001
+P	Candidate output/provenance/checksum invalid
+P	BLOCK decision/score
+ROW	VIDEO-01-ERR-CRITERIA-001	VIDEO criteria version missing/not approved/wrong department	BLOCK evaluation; no generic default criteria
+P	VIDEO-01-ERR-CRITERIA-001
+P	VIDEO criteria version missing/not approved/wrong department
+P	BLOCK evaluation; no generic default criteria
+ROW	VIDEO-01-ERR-SCOPE-001	Correction scope missing or outside current Shot/object/layer/time range	BLOCK correction
+P	VIDEO-01-ERR-SCOPE-001
+P	Correction scope missing or outside current Shot/object/layer/time range
+P	BLOCK correction
+ROW	VIDEO-01-ERR-CORRECTION-001	Correction candidate not approved or source context stale	Return correction discussion; no execute
+P	VIDEO-01-ERR-CORRECTION-001
+P	Correction candidate not approved or source context stale
+P	Return correction discussion; no execute
+ROW	VIDEO-01-ERR-TRANSLATION-001	Shared translation/compiler failed or mismatched candidate	BLOCK provider execution; preserve Chinese candidate
+P	VIDEO-01-ERR-TRANSLATION-001
+P	Shared translation/compiler failed or mismatched candidate
+P	BLOCK provider execution; preserve Chinese candidate
+ROW	VIDEO-01-ERR-VERSION-001	Attempt to overwrite or use non-exact version	BLOCK; create new immutable version only
+P	VIDEO-01-ERR-VERSION-001
+P	Attempt to overwrite or use non-exact version
+P	BLOCK; create new immutable version only
+ROW	VIDEO-01-ERR-MANIFEST-001	Output manifest/checksum/lineage incomplete	BLOCK Lock/Handoff
+P	VIDEO-01-ERR-MANIFEST-001
+P	Output manifest/checksum/lineage incomplete
+P	BLOCK Lock/Handoff
+ROW	VIDEO-01-ERR-PERM-001	Permission/scope denied	Disable action + show real reason
+P	VIDEO-01-ERR-PERM-001
+P	Permission/scope denied
+P	Disable action + show real reason
+ROW	VIDEO-01-ERR-HANDOFF-001	Handoff dependency/contract/hash invalid	BLOCK Handoff; preserve locked version
+P	VIDEO-01-ERR-HANDOFF-001
+P	Handoff dependency/contract/hash invalid
+P	BLOCK Handoff; preserve locked version
+P	12. VIDEO Evaluation Contract · 9 Dimensions
+ROW	Score UID	Dimension	Definition
+P	Score UID
+P	Dimension
+P	Definition
+ROW	VIDEO-01-SCORE-SCRIPT	Script Compliance	Matches Blueprint/VIDEO Script intent and required shot beats
+P	VIDEO-01-SCORE-SCRIPT
+P	Script Compliance
+P	Matches Blueprint/VIDEO Script intent and required shot beats
+ROW	VIDEO-01-SCORE-IDENTITY	Character / Identity Stability	Character face/body/clothing/DNA consistency
+P	VIDEO-01-SCORE-IDENTITY
+P	Character / Identity Stability
+P	Character face/body/clothing/DNA consistency
+ROW	VIDEO-01-SCORE-MOTION	Motion / Body Continuity	Movement continuity and physical plausibility
+P	VIDEO-01-SCORE-MOTION
+P	Motion / Body Continuity
+P	Movement continuity and physical plausibility
+ROW	VIDEO-01-SCORE-CAMERA	Camera / Gaze	Camera instruction, framing, gaze/action direction
+P	VIDEO-01-SCORE-CAMERA
+P	Camera / Gaze
+P	Camera instruction, framing, gaze/action direction
+ROW	VIDEO-01-SCORE-SCENE	Scene / Continuity	Scene/world continuity, bridge/setting consistency
+P	VIDEO-01-SCORE-SCENE
+P	Scene / Continuity
+P	Scene/world continuity, bridge/setting consistency
+ROW	VIDEO-01-SCORE-TIMING	Timing / Duration	Shot duration, beats, temporal progression
+P	VIDEO-01-SCORE-TIMING
+P	Timing / Duration
+P	Shot duration, beats, temporal progression
+ROW	VIDEO-01-SCORE-TECH	Technical Quality	Resolution, flicker/artifacts, anatomy/physics, visual defects
+P	VIDEO-01-SCORE-TECH
+P	Technical Quality
+P	Resolution, flicker/artifacts, anatomy/physics, visual defects
+ROW	VIDEO-01-SCORE-ASSET	Asset / DNA Fidelity	Exact bound assets/DNA visually respected
+P	VIDEO-01-SCORE-ASSET
+P	Asset / DNA Fidelity
+P	Exact bound assets/DNA visually respected
+ROW	VIDEO-01-SCORE-RIGHTS	Rights / Policy	Hard block; PASS required regardless of numeric score
+P	VIDEO-01-SCORE-RIGHTS
+P	Rights / Policy
+P	Hard block; PASS required regardless of numeric score
+P	Confirm Gate 依 Current Authority：VIDEO score ≥95 + no hard block + human selection。Rights / Policy 必須 PASS；不得只看 numeric score 自動確認。
+P	13. Data Binding / Script / Provider Contract
+ROW	Binding	Owner	VIDEO Rule
+P	Binding
+P	Owner
+P	VIDEO Rule
+ROW	Locked Blueprint / ChildLock	CORE / BLUEPRINT	exact version/hash; mismatch = BLOCK
+P	Locked Blueprint / ChildLock
+P	CORE / BLUEPRINT
+P	exact version/hash; mismatch = BLOCK
+ROW	CORE Canonical Production Script	CORE Script System	VIDEO specialized script consumes exact project/topic/canonical_script_version/hash
+P	CORE Canonical Production Script
+P	CORE Script System
+P	VIDEO specialized script consumes exact project/topic/canonical_script_version/hash
+ROW	VIDEO Script View	CORE / SCRIPT	provider-neutral 8-section VisualGenerationScriptView; first production read-only
+P	VIDEO Script View
+P	CORE / SCRIPT
+P	provider-neutral 8-section VisualGenerationScriptView; first production read-only
+ROW	DNA / Continuity	CORE / BLUEPRINT	exact character/scene/object/continuity refs
+P	DNA / Continuity
+P	CORE / BLUEPRINT
+P	exact character/scene/object/continuity refs
+ROW	Approved Asset Handoff	ASSET boundary	exact ID/version/filename/checksum/purpose/rights; no picker
+P	Approved Asset Handoff
+P	ASSET boundary
+P	exact ID/version/filename/checksum/purpose/rights; no picker
+ROW	Instruction Package	InstructionCompiler	same task/manifest; APPROVED_FOR_EXECUTION
+P	Instruction Package
+P	InstructionCompiler
+P	same task/manifest; APPROVED_FOR_EXECUTION
+ROW	Provider Route	Shared AI API Router	read-only on page; no provider/model selection
+P	Provider Route
+P	Shared AI API Router
+P	read-only on page; no provider/model selection
+ROW	Output Version	VIDEO	append-only exact candidate/confirmed version; overwrite forbidden
+P	Output Version
+P	VIDEO
+P	append-only exact candidate/confirmed version; overwrite forbidden
+P	13.1 VIDEO Production Script Sections
+P	Shot Intent / Input Binding / Composition / Action-Motion / Camera / Timing / Environment / Output Constraints。Provider-neutral；不得把 Kling 或其他 Provider syntax 寫成核心 Script。
+P	14. Correction Functional Design
+ROW	Step	Required behavior
+P	Step
+P	Required behavior
+ROW	1. Scope	Resolve exact Scene / Shot / Start-End Time / Object / Layer + Finding/Evidence
+P	1. Scope
+P	Resolve exact Scene / Shot / Start-End Time / Object / Layer + Finding/Evidence
+ROW	2. Context	Build VideoCorrectionContext with current exact refs; stale/mismatched context = BLOCK
+P	2. Context
+P	Build VideoCorrectionContext with current exact refs; stale/mismatched context = BLOCK
+ROW	3. Human request	Traditional Chinese semantic request only
+P	3. Human request
+P	Traditional Chinese semantic request only
+ROW	4. Candidate	Generate CorrectionScriptCandidate from current VIDEO Script + issue; source remains immutable
+P	4. Candidate
+P	Generate CorrectionScriptCandidate from current VIDEO Script + issue; source remains immutable
+ROW	5. Human approval	Candidate must be approved before shared translation/compiler
+P	5. Human approval
+P	Candidate must be approved before shared translation/compiler
+ROW	6. Execute	Shared adapter/router executes approved correction; new Candidate/Version only
+P	6. Execute
+P	Shared adapter/router executes approved correction; new Candidate/Version only
+ROW	7. Compare	Conditional A/B compare after new candidate exists
+P	7. Compare
+P	Conditional A/B compare after new candidate exists
+P	禁止：EDIT Timeline/Clip/Subtitle/Audio Mixing；禁止 ASSET Layer Editor/AssetPatch；若 Blueprint/DNA/Asset binding 要變更，必須退回 upstream owner。
+P	15. Function ↔ Visual Binding
+ROW	Visual	Functions	Why it exists	Forbidden
+P	Visual
+P	Functions
+P	Why it exists
+P	Forbidden
+ROW	A Main Production	Context / Scene-Shot / Binding / Preview / Decision / Runtime	日常 Generate/Review 工作台	free prompt, asset picker, provider picker
+P	A Main Production
+P	Context / Scene-Shot / Binding / Preview / Decision / Runtime
+P	日常 Generate/Review 工作台
+P	free prompt, asset picker, provider picker
+ROW	B A/B Compare	Current + Candidate conditional viewer	Human decision / visual comparison	permanent double player
+P	B A/B Compare
+P	Current + Candidate conditional viewer
+P	Human decision / visual comparison
+P	permanent double player
+ROW	C Correction	Correction Scope + zh-TW semantic correction + runtime	Modify/Finding loop	EDIT timeline / ASSET patch
+P	C Correction
+P	Correction Scope + zh-TW semantic correction + runtime
+P	Modify/Finding loop
+P	EDIT timeline / ASSET patch
+ROW	D Evaluation	9 VIDEO dimensions + Finding/Issue	VIDEO-specific quality decision	generic/default score
+P	D Evaluation
+P	9 VIDEO dimensions + Finding/Issue
+P	VIDEO-specific quality decision
+P	generic/default score
+ROW	E Handoff	Exact Output Manifest + Lock + EDIT handoff	append-only finalization	VIDEO→QA/Release
+P	E Handoff
+P	Exact Output Manifest + Lock + EDIT handoff
+P	append-only finalization
+P	VIDEO→QA/Release
+P	16. Cross-page Flow / Boundary
+ROW	Direction	Exact payload / ref	Boundary rule
+P	Direction
+P	Exact payload / ref
+P	Boundary rule
+ROW	ASSET → VIDEO	Task + Locked Blueprint + VIDEO Script + DNA + Approved Asset refs + Instruction + Route	VIDEO validates/consumes exact refs; no manual asset picking
+P	ASSET → VIDEO
+P	Task + Locked Blueprint + VIDEO Script + DNA + Approved Asset refs + Instruction + Route
+P	VIDEO validates/consumes exact refs; no manual asset picking
+ROW	VIDEO → EDIT	Locked Exact Video Version + Shot/Layer refs + Script Hash + Asset Fingerprint + URI/Checksum + Scorecard/Evidence + Contract Hash	EDIT internals not rendered in VIDEO; exact handoff only
+P	VIDEO → EDIT
+P	Locked Exact Video Version + Shot/Layer refs + Script Hash + Asset Fingerprint + URI/Checksum + Scorecard/Evidence + Contract Hash
+P	EDIT internals not rendered in VIDEO; exact handoff only
+P	Canonical chain = ASSET → VIDEO → EDIT+VOICE → QA。VIDEO 不可跳過 EDIT 直接進 QA/Release。
+P	17. Acceptance / Hard Locks / DoD
+ROW	Denominator	Current
+P	Denominator
+P	Current
+ROW	Sections	10/10
+P	Sections
+P	10/10
+ROW	Components	17/17
+P	Components
+P	17/17
+ROW	Authority Visual Regions	9/9
+P	Authority Visual Regions
+P	9/9
+ROW	Controls	85/85
+P	Controls
+P	85/85
+ROW	Actions	34/34
+P	Actions
+P	34/34
+ROW	Objects / Refs	17/17
+P	Objects / Refs
+P	17/17
+ROW	Gates	16/16
+P	Gates
+P	16/16
+ROW	Permissions	6/6
+P	Permissions
+P	6/6
+ROW	Errors	17/17
+P	Errors
+P	17/17
+ROW	Stages / Transitions	5 / 5
+P	Stages / Transitions
+P	5 / 5
+ROW	Score Dimensions	9/9
+P	Score Dimensions
+P	9/9
+ROW	Integration Ports	8/8
+P	Integration Ports
+P	8/8
+ROW	Unresolved control-action refs	0 per Current derived validation
+P	Unresolved control-action refs
+P	0 per Current derived validation
+ROW	Unbound actions	0 per Current derived validation
+P	Unbound actions
+P	0 per Current derived validation
+P	17.1 Hard Locks
+P	Only VIDEO-01 is current executable VIDEO workspace.
+P	First production: free Prompt/manual script input = FORBIDDEN.
+P	Project Asset / DNA / Provider / Model picker = FORBIDDEN.
+P	No permanent dual player; Compare B exists only conditionally.
+P	No EDIT Timeline/Clip/Subtitle/Audio Mixing/Final Render in VIDEO.
+P	No ASSET Layer Editor/AssetPatch operations in VIDEO.
+P	No generic/default scoring; only Approved VIDEO criteria.
+P	Video Version immutable; correction/retry creates new version.
+P	No direct VIDEO→QA/Release; target = EDIT.
+P	No fake Provider/Score/Version/Duration/Runtime; missing = —.
+P	Unlisted Section/Component/Control/Action/State/Gate/Error/Port = BLOCK.
+P	17.2 Design Freeze
+ROW	Item	Status
+P	Item
+P	Status
+ROW	Mother Basic Design structure	COMPLETE
+P	Mother Basic Design structure
+P	COMPLETE
+ROW	Exact Current denominator binding	COMPLETE
+P	Exact Current denominator binding
+P	COMPLETE
+ROW	Technology-purple UI materialization	5 Visual Candidates
+P	Technology-purple UI materialization
+P	5 Visual Candidates
+ROW	Fake business data	0 by design
+P	Fake business data
+P	0 by design
+ROW	Human visual/function review	PENDING
+P	Human visual/function review
+P	PENDING
+ROW	Selected approved candidate	NOT YET
+P	Selected approved candidate
+P	NOT YET
+ROW	Authority update	BLOCKED pending approval
+P	Authority update
+P	BLOCKED pending approval
+ROW	DESIGN_FROZEN	FALSE
+P	DESIGN_FROZEN
+P	FALSE
+ROW	Implementation claim	NONE
+P	Implementation claim
+P	NONE
+ROW	Production claim	NONE
+P	Production claim
+P	NONE
+P	18. Resume / Next Transition
+P	合法下一步是 Human Reviewer 檢視 VIDEO-01 的功能對位、16:9 viewer、conditional compare、correction scope、evaluation、manifest/handoff 與科技紫視覺；若需修改先更新 Visual Candidate。只有 Selected Approved Candidate 形成後，才可進 Authority Update / Design Freeze / Implementation Handoff。
+ROW	Resume field	Value
+P	Resume field
+P	Value
+ROW	Branch / HEAD	new / 165c6440cb53b1b45ec96905241fb4d56dc3b867
+P	Branch / HEAD
+P	new / 165c6440cb53b1b45ec96905241fb4d56dc3b867
+ROW	Page	VIDEO-01
+P	Page
+P	VIDEO-01
+ROW	Authority SHA	cac1b53e513c4e8c5f13a9014ae87aa08b6f9774
+P	Authority SHA
+P	cac1b53e513c4e8c5f13a9014ae87aa08b6f9774
+ROW	Document Work Unit	VIDEO-01 Mother Basic Design Visual Rebuild
+P	Document Work Unit
+P	VIDEO-01 Mother Basic Design Visual Rebuild
+ROW	Authority denominator	10 Sec / 17 Comp / 85 Ctrl / 34 Act / 16 Gate / 8 Port / 9 Score
+P	Authority denominator
+P	10 Sec / 17 Comp / 85 Ctrl / 34 Act / 16 Gate / 8 Port / 9 Score
+ROW	Visual candidate status	PENDING HUMAN REVIEW
+P	Visual candidate status
+P	PENDING HUMAN REVIEW
+ROW	Design freeze	FALSE
+P	Design freeze
+P	FALSE
+ROW	Implementation claim	NONE
+P	Implementation claim
+P	NONE
+ROW	Production claim	NONE
+P	Production claim
+P	NONE
+P	文件版號 v1.0 僅代表本次 Basic Design 文件 revision，不等於 Current Governance / Page Authority version。
+### PART word/header1.xml
+P	ACPOS · VIDEO-01 · Mother Basic Design · Technology Purple
+### PART word/footer1.xml
+P	Current-only planning artifact · DESIGN_FROZEN = FALSE · PENDING HUMAN REVIEW

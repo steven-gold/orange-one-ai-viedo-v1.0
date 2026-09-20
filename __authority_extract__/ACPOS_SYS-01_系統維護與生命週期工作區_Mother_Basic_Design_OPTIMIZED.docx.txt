@@ -1,0 +1,1521 @@
+### PART word/document.xml
+ROW	SYS-01 系統維護／系統生命週期 AI 工作區Mother Basic Design · Content Optimization · Functional Completion · Visual ConsistencyORANGE ONE · admin:SYS-01
+P	SYS-01 系統維護／系統生命週期 AI 工作區
+P	Mother Basic Design · Content Optimization · Functional Completion · Visual Consistency
+P	ORANGE ONE · admin:SYS-01
+P	本版沿用既有 SYS-01 功能規劃，依 Mother 規範補齊缺失的功能完整性、Business Entity × Operation、功能鏈、互動拓撲、AI 對話連續性、視覺幾何、欄位／控制／狀態／錯誤／驗收規格；不重建第二套系統，也不把非必要功能塞進主畫面。
+P	設計原則：單一 System Change、單一 Conversation Core、Existing System First、必要功能才進主工作區、同一 Context 最多一個 Primary CTA、所有連續操作保持同一工作台與上下文。
+P	圖 1｜SYS-01 優化後主工作區：Context、Conversation、Decision/Validation 與 Unified Lifecycle 在同一工作台中完成。
+P	1. Page Identity / 頁面定位與產品目標
+ROW	項目	規格
+P	項目
+P	規格
+ROW	Page UID	admin:SYS-01
+P	Page UID
+P	admin:SYS-01
+ROW	Display Name	系統維護／系統生命週期 AI 工作區
+P	Display Name
+P	系統維護／系統生命週期 AI 工作區
+ROW	Route	/admin/system
+P	Route
+P	/admin/system
+ROW	Purpose	統一承接新功能、既有功能調整、Incident、Provider/API 更新、變更候選、Sandbox 驗證、人工發布準備與健康收尾。
+P	Purpose
+P	統一承接新功能、既有功能調整、Incident、Provider/API 更新、變更候選、Sandbox 驗證、人工發布準備與健康收尾。
+ROW	Primary User	具備系統維護、變更、測試或審查權限的管理者／工程角色。
+P	Primary User
+P	具備系統維護、變更、測試或審查權限的管理者／工程角色。
+ROW	Design Owner	SYS-01 Page Design
+P	Design Owner
+P	SYS-01 Page Design
+ROW	Implementation Owner	沿用既有 SystemChange / Conversation / Execution / Provider / Release owners；頁面不得另建平行 owner。
+P	Implementation Owner
+P	沿用既有 SystemChange / Conversation / Execution / Provider / Release owners；頁面不得另建平行 owner。
+ROW	Visual Status	Optimized Design for Review
+P	Visual Status
+P	Optimized Design for Review
+ROW	Implementation Status	由正式施工流程與驗收 Evidence 決定；本文件只定義設計與施工契約。
+P	Implementation Status
+P	由正式施工流程與驗收 Evidence 決定；本文件只定義設計與施工契約。
+P	頁面定位不是「聊天 + 幾個維護按鈕」，而是把需求收斂、系統理解、AI 協作、變更候選、驗證與人工發布邊界整合成一個可連續工作的生命週期工作台。
+P	2. Scope / 功能範圍、Out-of-Scope 與非功能要求
+ROW	類別	內容
+P	類別
+P	內容
+ROW	In Scope	System Context / Maintenance Inbox / Design Conversation / Multi-AI / Decision Ledger / Candidate / Change Request / Impact Preview / Source & Evidence / Sandbox Test / Validation / Release Readiness / Health & Closure projection。
+P	In Scope
+P	System Context / Maintenance Inbox / Design Conversation / Multi-AI / Decision Ledger / Candidate / Change Request / Impact Preview / Source & Evidence / Sandbox Test / Validation / Release Readiness / Health & Closure projection。
+ROW	Out of Scope	第二套 AI backend、頁面級 Provider Picker、直接編輯 Provider Secret、直接 Production Mutation、平行 Release/Deploy runtime、平行 Change aggregate/database。
+P	Out of Scope
+P	第二套 AI backend、頁面級 Provider Picker、直接編輯 Provider Secret、直接 Production Mutation、平行 Release/Deploy runtime、平行 Change aggregate/database。
+ROW	Security	所有 Effectful operation 必須經帳戶權限、資源權限、狀態 Gate、Runtime 驗證；禁止前端繞過。
+P	Security
+P	所有 Effectful operation 必須經帳戶權限、資源權限、狀態 Gate、Runtime 驗證；禁止前端繞過。
+ROW	Reliability	重要 Context、Decision、Change、Validation 狀態必須可恢復；BLOCKED 不清空 draft / conversation / checkpoint。
+P	Reliability
+P	重要 Context、Decision、Change、Validation 狀態必須可恢復；BLOCKED 不清空 draft / conversation / checkpoint。
+ROW	Traceability	每個變更、候選、決策、測試、證據與結果要可回溯到同一 System Change。
+P	Traceability
+P	每個變更、候選、決策、測試、證據與結果要可回溯到同一 System Change。
+ROW	Performance	主工作區優先即時讀取 Context projection；長時測試／外部操作不得阻塞 UI，需顯示 processing/queued/running state。
+P	Performance
+P	主工作區優先即時讀取 Context projection；長時測試／外部操作不得阻塞 UI，需顯示 processing/queued/running state。
+ROW	Accessibility	鍵盤可操作、Focus 可見、Disabled 有原因、狀態不只靠顏色、表單與訊息具可讀標籤。
+P	Accessibility
+P	鍵盤可操作、Focus 可見、Disabled 有原因、狀態不只靠顏色、表單與訊息具可讀標籤。
+P	3. Business Entity Inventory / 業務實體清單
+ROW	Entity UID	Canonical Name	用途	管理內容	Owner Boundary
+P	Entity UID
+P	Canonical Name
+P	用途
+P	管理內容
+P	Owner Boundary
+ROW	SYS-CHANGE	System Change	主變更上下文	目標、範圍、狀態、影響與 closure 的主關聯鍵	SystemChange owner
+P	SYS-CHANGE
+P	System Change
+P	主變更上下文
+P	目標、範圍、狀態、影響與 closure 的主關聯鍵
+P	SystemChange owner
+ROW	CHANGE-CANDIDATE	Change Candidate	變更候選	設計／修正方案在正式採用前的候選版本	SystemChange owner
+P	CHANGE-CANDIDATE
+P	Change Candidate
+P	變更候選
+P	設計／修正方案在正式採用前的候選版本
+P	SystemChange owner
+ROW	AI-CONVERSATION	Conversation / Thread	AI 討論	訊息、Thread、Branch、Context、Decision Link	Shared Conversation Core
+P	AI-CONVERSATION
+P	Conversation / Thread
+P	AI 討論
+P	訊息、Thread、Branch、Context、Decision Link
+P	Shared Conversation Core
+ROW	DECISION	Decision Record	人工決策	CONFIRMED / REJECTED / OPEN P0/P1 / SUPERSEDED	Decision governance owner
+P	DECISION
+P	Decision Record
+P	人工決策
+P	CONFIRMED / REJECTED / OPEN P0/P1 / SUPERSEDED
+P	Decision governance owner
+ROW	VALIDATION-RUN	Sandbox / Validation Run	驗證執行	Sandbox/Test/Regression/Evidence	Execution/Test owner
+P	VALIDATION-RUN
+P	Sandbox / Validation Run
+P	驗證執行
+P	Sandbox/Test/Regression/Evidence
+P	Execution/Test owner
+ROW	MAINT-ALERT	Maintenance Alert	維護事件	Incident / Provider Update / Runtime Health 等維護入口	Existing monitoring/provider owner
+P	MAINT-ALERT
+P	Maintenance Alert
+P	維護事件
+P	Incident / Provider Update / Runtime Health 等維護入口
+P	Existing monitoring/provider owner
+ROW	EVIDENCE-REF	Evidence / Reference	證據引用	版本、測試、依賴、變更檔案、健康結果等可追溯引用	Shared evidence owners
+P	EVIDENCE-REF
+P	Evidence / Reference
+P	證據引用
+P	版本、測試、依賴、變更檔案、健康結果等可追溯引用
+P	Shared evidence owners
+P	4. Business Entity × Applicable Operation Matrix
+ROW	Operation	System Change	Candidate	Conversation	Decision	Validation Run	Maintenance Alert
+P	Operation
+P	System Change
+P	Candidate
+P	Conversation
+P	Decision
+P	Validation Run
+P	Maintenance Alert
+ROW	Discover / List	R	R	R	R	R	R
+P	Discover / List
+P	R
+P	R
+P	R
+P	R
+P	R
+P	R
+ROW	Select / Open	R	R	R	R	R	R
+P	Select / Open
+P	R
+P	R
+P	R
+P	R
+P	R
+P	R
+ROW	Create	R	R	R	R	R	R
+P	Create
+P	R
+P	R
+P	R
+P	R
+P	R
+P	R
+ROW	Creation Mode	N	N	R	N	R	R
+P	Creation Mode
+P	N
+P	N
+P	R
+P	N
+P	R
+P	R
+ROW	Parent Bind	N	R	R	R	R	N
+P	Parent Bind
+P	N
+P	R
+P	R
+P	R
+P	R
+P	N
+ROW	Category / Group Bind	N	N	N	N	N	R
+P	Category / Group Bind
+P	N
+P	N
+P	N
+P	N
+P	N
+P	R
+ROW	Draft	R	R	R	R	N	R
+P	Draft
+P	R
+P	R
+P	R
+P	R
+P	N
+P	R
+ROW	Resume	R	R	R	R	R	R
+P	Resume
+P	R
+P	R
+P	R
+P	R
+P	R
+P	R
+ROW	Operation	System Change	Candidate	Conversation	Decision	Validation Run	Maintenance Alert
+P	Operation
+P	System Change
+P	Candidate
+P	Conversation
+P	Decision
+P	Validation Run
+P	Maintenance Alert
+ROW	Edit	R	R	R	R	N	R
+P	Edit
+P	R
+P	R
+P	R
+P	R
+P	N
+P	R
+ROW	Save	R	R	R	R	R	R
+P	Save
+P	R
+P	R
+P	R
+P	R
+P	R
+P	R
+ROW	Validate	R	R	R	R	R	R
+P	Validate
+P	R
+P	R
+P	R
+P	R
+P	R
+P	R
+ROW	Confirm / Approve	R	R	O	R	R	O
+P	Confirm / Approve
+P	R
+P	R
+P	O
+P	R
+P	R
+P	O
+ROW	Version	R	R	R	R	R	R
+P	Version
+P	R
+P	R
+P	R
+P	R
+P	R
+P	R
+ROW	Revise	R	R	R	R	R	R
+P	Revise
+P	R
+P	R
+P	R
+P	R
+P	R
+P	R
+ROW	Lock / Unlock	N	R	N	R	N	N
+P	Lock / Unlock
+P	N
+P	R
+P	N
+P	R
+P	N
+P	N
+ROW	Reorder	N	N	R	N	N	R
+P	Reorder
+P	N
+P	N
+P	R
+P	N
+P	N
+P	R
+ROW	Operation	System Change	Candidate	Conversation	Decision	Validation Run	Maintenance Alert
+P	Operation
+P	System Change
+P	Candidate
+P	Conversation
+P	Decision
+P	Validation Run
+P	Maintenance Alert
+ROW	Move / Reparent	N	N	N	N	N	N
+P	Move / Reparent
+P	N
+P	N
+P	N
+P	N
+P	N
+P	N
+ROW	Archive / Delete	O	R	O	O	O	R
+P	Archive / Delete
+P	O
+P	R
+P	O
+P	O
+P	O
+P	R
+ROW	Restore	O	O	O	O	O	R
+P	Restore
+P	O
+P	O
+P	O
+P	O
+P	O
+P	R
+ROW	Dependency Impact	R	R	R	R	R	R
+P	Dependency Impact
+P	R
+P	R
+P	R
+P	R
+P	R
+P	R
+ROW	Audit	R	R	R	R	R	R
+P	Audit
+P	R
+P	R
+P	R
+P	R
+P	R
+P	R
+ROW	Error Recovery	R	R	R	R	R	R
+P	Error Recovery
+P	R
+P	R
+P	R
+P	R
+P	R
+P	R
+ROW	Next Step	R	R	R	R	R	R
+P	Next Step
+P	R
+P	R
+P	R
+P	R
+P	R
+P	R
+P	Legend：R = REQUIRED、O = OPTIONAL、N = NOT_APPLICABLE。N/A 僅代表該 Entity 不具該生命週期語義；例如 System Change 不以 Category/Group 管理、Validation Run 不允許任意 Edit。任何新 Entity 或 Required Operation 都必須先通過必要性與既有能力重用檢查。
+P	5. Entity Hierarchy / 關聯與版本依賴
+ROW	Parent	Child	Cardinality	Creation / Bind	Impact & Revalidation
+P	Parent
+P	Child
+P	Cardinality
+P	Creation / Bind
+P	Impact & Revalidation
+ROW	System Change	Change Candidate	1:N	Candidate 建立時綁定 Change、目標與 affected scope。	Change scope/decision 改變 → Candidate REVERIFY。
+P	System Change
+P	Change Candidate
+P	1:N
+P	Candidate 建立時綁定 Change、目標與 affected scope。
+P	Change scope/decision 改變 → Candidate REVERIFY。
+ROW	System Change	Conversation / Thread	1:N	同一 Change 可有主 Thread 與受治理 Branch；切換 AI Mode 不另建 Change。	Branch 採用前保持隔離；採用後回寫決策／候選。
+P	System Change
+P	Conversation / Thread
+P	1:N
+P	同一 Change 可有主 Thread 與受治理 Branch；切換 AI Mode 不另建 Change。
+P	Branch 採用前保持隔離；採用後回寫決策／候選。
+ROW	System Change	Decision Record	1:N	P0/P1、人工確認或 supersede 時建立。	Confirmed decision 改變 → Design/Candidate/Validation 受影響項目重驗。
+P	System Change
+P	Decision Record
+P	1:N
+P	P0/P1、人工確認或 supersede 時建立。
+P	Confirmed decision 改變 → Design/Candidate/Validation 受影響項目重驗。
+ROW	System Change	Validation Run	1:N	Sandbox/Test 由 Change/Candidate 觸發。	Candidate version 改變 → 舊 Validation 不可代表新版本 PASS。
+P	System Change
+P	Validation Run
+P	1:N
+P	Sandbox/Test 由 Change/Candidate 觸發。
+P	Candidate version 改變 → 舊 Validation 不可代表新版本 PASS。
+ROW	Maintenance Alert	System Change	0..1	事件可附著現有 Change；必要時建立新 Change。	相同 fingerprint 去重，不重複產生平行變更。
+P	Maintenance Alert
+P	System Change
+P	0..1
+P	事件可附著現有 Change；必要時建立新 Change。
+P	相同 fingerprint 去重，不重複產生平行變更。
+ROW	Evidence / Reference	All entities	N:M read link	以 exact ref 綁定。	Source/version 失效 → 對應項目 REVERIFY。
+P	Evidence / Reference
+P	All entities
+P	N:M read link
+P	以 exact ref 綁定。
+P	Source/version 失效 → 對應項目 REVERIFY。
+P	6. Functional Admission & Optimization Decisions / 功能補齊與精簡
+P	Mother 規範要求「補缺」不能等於「把所有可能功能都加回來」。以下針對既有 AI 對話細項做必要性與主工作區負擔檢查，採最小完整閉環。
+ROW	候選能力	必要性判定	採用方式	UI 位置／結果
+P	候選能力
+P	必要性判定
+P	採用方式
+P	UI 位置／結果
+ROW	#Message 引用／回溯	Required for long conversation continuity	Admit by reuse	訊息內 inline reference + Source/Reference secondary view；不增加常駐大型按鈕。
+P	#Message 引用／回溯
+P	Required for long conversation continuity
+P	Admit by reuse
+P	訊息內 inline reference + Source/Reference secondary view；不增加常駐大型按鈕。
+ROW	Branch discussion	Required when alternate path must be isolated	Conditional admit	Message secondary action / thread control；只在分支能力可用時出現，不打斷主 composer。
+P	Branch discussion
+P	Required when alternate path must be isolated
+P	Conditional admit
+P	Message secondary action / thread control；只在分支能力可用時出現，不打斷主 composer。
+ROW	Conversation summary / Notebook	Useful but not primary action	Auto / secondary	由 assistant/Decision Ledger 自動整理；需要檢視時進 secondary view。
+P	Conversation summary / Notebook
+P	Useful but not primary action
+P	Auto / secondary
+P	由 assistant/Decision Ledger 自動整理；需要檢視時進 secondary view。
+ROW	Create Candidate	Required	Existing primary action	沿用「建立變更候選」。
+P	Create Candidate
+P	Required
+P	Existing primary action
+P	沿用「建立變更候選」。
+ROW	Submit Decision	Required as lifecycle step	Contextual action	只在 P0/P1 / Design Confirm 狀態顯示於 Decision panel；不常駐。
+P	Submit Decision
+P	Required as lifecycle step
+P	Contextual action
+P	只在 P0/P1 / Design Confirm 狀態顯示於 Decision panel；不常駐。
+ROW	Design Freeze / Lock	Required state transition	Human-gated state action	只有收斂條件全部成立時顯示；不是全時段大按鈕。
+P	Design Freeze / Lock
+P	Required state transition
+P	Human-gated state action
+P	只有收斂條件全部成立時顯示；不是全時段大按鈕。
+ROW	Provider Picker	Not admitted	Forbidden	SYS-01 不顯示；由系統路由。
+P	Provider Picker
+P	Not admitted
+P	Forbidden
+P	SYS-01 不顯示；由系統路由。
+ROW	Direct Production Deploy	Not admitted in main page	Human release boundary	SYS-01 顯示 readiness / handoff，不提供繞過 release owner 的 direct deploy。
+P	Direct Production Deploy
+P	Not admitted in main page
+P	Human release boundary
+P	SYS-01 顯示 readiness / handoff，不提供繞過 release owner 的 direct deploy。
+P	7. Functional Workbench Contract / 互動工作台拓撲
+ROW	Functional Cluster	Class	Required Sequence	Adjacency / Separation Rule
+P	Functional Cluster
+P	Class
+P	Required Sequence
+P	Adjacency / Separation Rule
+ROW	Context → Conversation	ATOMIC_WORKBENCH	Resolve Context → show active change → ask/discuss → preserve draft	System Context 與 Conversation 必須同頁可見；不得隔一個無關 Dashboard。
+P	Context → Conversation
+P	ATOMIC_WORKBENCH
+P	Resolve Context → show active change → ask/discuss → preserve draft
+P	System Context 與 Conversation 必須同頁可見；不得隔一個無關 Dashboard。
+ROW	Conversation → Decision	SAME_SURFACE_CLUSTER	AI output → P0/P1/Decision review → confirmed decision	Decision panel 必須與對話同屏或單步 drawer；不得失去 conversation/change context。
+P	Conversation → Decision
+P	SAME_SURFACE_CLUSTER
+P	AI output → P0/P1/Decision review → confirmed decision
+P	Decision panel 必須與對話同屏或單步 drawer；不得失去 conversation/change context。
+ROW	Decision → Candidate	SAME_SURFACE_CLUSTER	Confirmed design → Candidate Create	Candidate CTA 僅在條件成立時成為 Primary。
+P	Decision → Candidate
+P	SAME_SURFACE_CLUSTER
+P	Confirmed design → Candidate Create
+P	Candidate CTA 僅在條件成立時成為 Primary。
+ROW	Candidate → Sandbox	SAME_SURFACE_CLUSTER	Candidate → Impact → Sandbox Test → Evidence	Validation 應緊鄰 Change Workspace；長細節可進 drawer。
+P	Candidate → Sandbox
+P	SAME_SURFACE_CLUSTER
+P	Candidate → Impact → Sandbox Test → Evidence
+P	Validation 應緊鄰 Change Workspace；長細節可進 drawer。
+ROW	Ready → Release	CROSS_SURFACE_FLOW	Validation PASS → Human Approval → Release handoff	SYS-01 保留 Change/Version/Approval identity，交給既有發布 owner。
+P	Ready → Release
+P	CROSS_SURFACE_FLOW
+P	Validation PASS → Human Approval → Release handoff
+P	SYS-01 保留 Change/Version/Approval identity，交給既有發布 owner。
+ROW	History / Raw Logs	INDEPENDENT_SUPPORT_PANEL	Open when needed	只用 drawer/secondary view，不切斷主要工作鏈。
+P	History / Raw Logs
+P	INDEPENDENT_SUPPORT_PANEL
+P	Open when needed
+P	只用 drawer/secondary view，不切斷主要工作鏈。
+P	8. Unified User / System Journey & Lifecycle State Machine
+P	Lifecycle：Requirement / Change / Incident / Provider Update → Resolve System Context → Existing-System Resolution → AI Discussion → P0/P1 Decision → Design → Freeze → Implement → Validate → Human Approval → Release Handoff → Health / Closure。
+ROW	State	Entry Condition	Primary Work	Exit / Next
+P	State
+P	Entry Condition
+P	Primary Work
+P	Exit / Next
+ROW	IDLE	無 active change	顯示 System Context / Maintenance Inbox	新需求或事件 → DISCOVERY
+P	IDLE
+P	無 active change
+P	顯示 System Context / Maintenance Inbox
+P	新需求或事件 → DISCOVERY
+ROW	DISCOVERY	新需求／事件進入	解析既有 owner、依賴、影響與可重用能力	資訊可判定 → QUESTIONING / DESIGNING
+P	DISCOVERY
+P	新需求／事件進入
+P	解析既有 owner、依賴、影響與可重用能力
+P	資訊可判定 → QUESTIONING / DESIGNING
+ROW	QUESTIONING	存在 P0/P1	小批次 3–5 題收斂真正決策	全數解決 → CONVERGED
+P	QUESTIONING
+P	存在 P0/P1
+P	小批次 3–5 題收斂真正決策
+P	全數解決 → CONVERGED
+ROW	DESIGNING / CROSS_REVIEW	設計與多 AI 審查	功能／UI／API／Data／Permission／Runtime 交叉檢查	需人工裁決 → DECISION_PENDING
+P	DESIGNING / CROSS_REVIEW
+P	設計與多 AI 審查
+P	功能／UI／API／Data／Permission／Runtime 交叉檢查
+P	需人工裁決 → DECISION_PENDING
+ROW	DECISION_PENDING	存在人工決策	Decision Ledger 明確呈現選項、影響與原因	確認 → CONVERGED
+P	DECISION_PENDING
+P	存在人工決策
+P	Decision Ledger 明確呈現選項、影響與原因
+P	確認 → CONVERGED
+ROW	CONVERGED	P0/P1=0 且無衝突	確認完整設計與 Change Package	Human Confirm → DESIGN_FREEZE
+P	CONVERGED
+P	P0/P1=0 且無衝突
+P	確認完整設計與 Change Package
+P	Human Confirm → DESIGN_FREEZE
+ROW	DESIGN_FREEZE	設計封板	建立完整 Implementation Package	準備完成 → IMPLEMENTING
+P	DESIGN_FREEZE
+P	設計封板
+P	建立完整 Implementation Package
+P	準備完成 → IMPLEMENTING
+ROW	IMPLEMENTING	施工開始	連續施工與安全自修	輸出待驗 → VALIDATING
+P	IMPLEMENTING
+P	施工開始
+P	連續施工與安全自修
+P	輸出待驗 → VALIDATING
+ROW	VALIDATING	候選可驗證	Sandbox / Test / Regression / E2E	全 PASS → APPROVAL_PENDING
+P	VALIDATING
+P	候選可驗證
+P	Sandbox / Test / Regression / E2E
+P	全 PASS → APPROVAL_PENDING
+ROW	APPROVAL_PENDING	驗證完成	人工批准	批准 → READY_FOR_RELEASE
+P	APPROVAL_PENDING
+P	驗證完成
+P	人工批准
+P	批准 → READY_FOR_RELEASE
+ROW	READY_FOR_RELEASE	批准完成	發布 handoff	既有 release owner 執行 → RELEASED
+P	READY_FOR_RELEASE
+P	批准完成
+P	發布 handoff
+P	既有 release owner 執行 → RELEASED
+ROW	RELEASED → OBSERVING → CLOSED	發布完成	Health / Audit / Closure	健康與稽核完成 → CLOSED
+P	RELEASED → OBSERVING → CLOSED
+P	發布完成
+P	Health / Audit / Closure
+P	健康與稽核完成 → CLOSED
+ROW	BLOCKED	任何真 hard block	保存上一合法 state / checkpoint / draft / evidence	解除 blocker → 返回原流程
+P	BLOCKED
+P	任何真 hard block
+P	保存上一合法 state / checkpoint / draft / evidence
+P	解除 blocker → 返回原流程
+P	9. Layout / Grid / Responsive Geometry
+ROW	Viewport	Grid / Container	Left Context	Center Workspace	Right Review	Responsive Rule
+P	Viewport
+P	Grid / Container
+P	Left Context
+P	Center Workspace
+P	Right Review
+P	Responsive Rule
+ROW	VP-1440+	12 cols / gap 16 / outer 16	248px	min 680px / flexible	304px	三欄同屏；Action Dock 64–72px。
+P	VP-1440+
+P	12 cols / gap 16 / outer 16
+P	248px
+P	min 680px / flexible
+P	304px
+P	三欄同屏；Action Dock 64–72px。
+ROW	VP-1280	12 cols / gap 14	220px	min 600px / flexible	280px	次要 metadata 收進 drawer；主流程不重排。
+P	VP-1280
+P	12 cols / gap 14
+P	220px
+P	min 600px / flexible
+P	280px
+P	次要 metadata 收進 drawer；主流程不重排。
+ROW	VP-1024	8 cols / gap 12	context drawer	dominant center	300px drawer	Context / Review 以 overlay drawer 輪替；Conversation 不被切碎。
+P	VP-1024
+P	8 cols / gap 12
+P	context drawer
+P	dominant center
+P	300px drawer
+P	Context / Review 以 overlay drawer 輪替；Conversation 不被切碎。
+ROW	<1024	single focus + drawers	drawer	full width main	drawer	Admin 仍可讀寫核心流程；不允許 horizontal overflow；segmented control 可兩列 wrap。
+P	<1024
+P	single focus + drawers
+P	drawer
+P	full width main
+P	drawer
+P	Admin 仍可讀寫核心流程；不允許 horizontal overflow；segmented control 可兩列 wrap。
+P	Geometry Guard：任何 viewport 必須保持 overlap=0、clipping=0、horizontal overflow=0、text overflow=0；Global Sidebar 展開只能 overlay，不得擠壓 SYS-01 workspace。
+P	10. Canonical Section Specification / 8 個正式 Section
+ROW	Section UID	Key	Purpose	Grid Position	Padding	Overflow	Responsive
+P	Section UID
+P	Key
+P	Purpose
+P	Grid Position
+P	Padding
+P	Overflow
+P	Responsive
+ROW	SEC-ADMIN-SYS-01-SYSTEM-CONTEXT	system_context	Change/System context	Left / top strip	16px	Auto-y / no x overflow	drawer under 1280
+P	SEC-ADMIN-SYS-01-SYSTEM-CONTEXT
+P	system_context
+P	Change/System context
+P	Left / top strip
+P	16px
+P	Auto-y / no x overflow
+P	drawer under 1280
+ROW	SEC-ADMIN-SYS-01-CONVERSATION	conversation	AI discussion + composer	Center dominant	16px	internal y scroll	always primary
+P	SEC-ADMIN-SYS-01-CONVERSATION
+P	conversation
+P	AI discussion + composer
+P	Center dominant
+P	16px
+P	internal y scroll
+P	always primary
+ROW	SEC-ADMIN-SYS-01-CANDIDATE-CHANGE	candidate_change	Candidate work	Center lower / contextual	16px	content wrap	collapse when no candidate
+P	SEC-ADMIN-SYS-01-CANDIDATE-CHANGE
+P	candidate_change
+P	Candidate work
+P	Center lower / contextual
+P	16px
+P	content wrap
+P	collapse when no candidate
+ROW	SEC-ADMIN-SYS-01-SOURCE-REFS	source_refs	Refs/evidence navigation	Left/secondary	12px	ellipsis + tooltip	drawer on compact
+P	SEC-ADMIN-SYS-01-SOURCE-REFS
+P	source_refs
+P	Refs/evidence navigation
+P	Left/secondary
+P	12px
+P	ellipsis + tooltip
+P	drawer on compact
+ROW	SEC-ADMIN-SYS-01-IMPACT-PREVIEW	impact_preview	Impact / P0-P1 review	Right	16px	vertical scroll	drawer on compact
+P	SEC-ADMIN-SYS-01-IMPACT-PREVIEW
+P	impact_preview
+P	Impact / P0-P1 review
+P	Right
+P	16px
+P	vertical scroll
+P	drawer on compact
+ROW	SEC-ADMIN-SYS-01-AUDIT	audit	Validation/evidence/readiness	Right/secondary	16px	vertical scroll	drawer on compact
+P	SEC-ADMIN-SYS-01-AUDIT
+P	audit
+P	Validation/evidence/readiness
+P	Right/secondary
+P	16px
+P	vertical scroll
+P	drawer on compact
+ROW	SEC-ADMIN-SYS-01-ACTION-DOCK	action_dock	Contextual effectful actions	Center bottom	12px	horizontal wrap only by rule	one Primary CTA
+P	SEC-ADMIN-SYS-01-ACTION-DOCK
+P	action_dock
+P	Contextual effectful actions
+P	Center bottom
+P	12px
+P	horizontal wrap only by rule
+P	one Primary CTA
+ROW	SEC-ADMIN-SYS-01-EXECUTION-PANEL	execution_panel	Sandbox/test status	Right / center contextual	16px	status list scroll	visible when validation active
+P	SEC-ADMIN-SYS-01-EXECUTION-PANEL
+P	execution_panel
+P	Sandbox/test status
+P	Right / center contextual
+P	16px
+P	status list scroll
+P	visible when validation active
+P	11. Component Registry / 元件規格
+ROW	Component	Section	Purpose	Variant / State	Dimension Rule
+P	Component
+P	Section
+P	Purpose
+P	Variant / State
+P	Dimension Rule
+ROW	System Context Panel	system_context	Change/System/Maintenance summary	default / selected / blocked	220–260px wide desktop; drawer compact
+P	System Context Panel
+P	system_context
+P	Change/System/Maintenance summary
+P	default / selected / blocked
+P	220–260px wide desktop; drawer compact
+ROW	Design Conversation Header	conversation	AI mode / council mode	Single / Multi / Discussion / Parallel	40px control row; wraps only <1024
+P	Design Conversation Header
+P	conversation
+P	AI mode / council mode
+P	Single / Multi / Discussion / Parallel
+P	40px control row; wraps only <1024
+ROW	Conversation Timeline	conversation	messages + context continuity	user / AI / multi-AI / system status	min body height 360px
+P	Conversation Timeline
+P	conversation
+P	messages + context continuity
+P	user / AI / multi-AI / system status
+P	min body height 360px
+ROW	Conversation Composer	conversation	draft + attach + send + stop	idle / typing / generating / blocked	textarea min 82px; composer min 96px
+P	Conversation Composer
+P	conversation
+P	draft + attach + send + stop
+P	idle / typing / generating / blocked
+P	textarea min 82px; composer min 96px
+ROW	Candidate Change Panel	candidate_change	candidate + change detail	empty / draft / ready / blocked	content-driven; no oversized card
+P	Candidate Change Panel
+P	candidate_change
+P	candidate + change detail
+P	empty / draft / ready / blocked
+P	content-driven; no oversized card
+ROW	Source / Evidence List	source_refs	exact ref navigation	default / stale / missing	row 36–44px; long IDs wrap/ellipsis
+P	Source / Evidence List
+P	source_refs
+P	exact ref navigation
+P	default / stale / missing
+P	row 36–44px; long IDs wrap/ellipsis
+ROW	Decision / Validation Panel	impact_preview + audit	P0/P1, impact, validation, readiness	open / pass / fail / blocked	280–320px desktop; drawer compact
+P	Decision / Validation Panel
+P	impact_preview + audit
+P	P0/P1, impact, validation, readiness
+P	open / pass / fail / blocked
+P	280–320px desktop; drawer compact
+ROW	Action Dock	action_dock	contextual actions	primary / secondary / disabled	40px controls; 12px gap
+P	Action Dock
+P	action_dock
+P	contextual actions
+P	primary / secondary / disabled
+P	40px controls; 12px gap
+ROW	Execution Panel	execution_panel	Sandbox/test progress & evidence	idle / queued / running / pass / fail	status rows 40–48px
+P	Execution Panel
+P	execution_panel
+P	Sandbox/test progress & evidence
+P	idle / queued / running / pass / fail
+P	status rows 40–48px
+P	12. Field Registry / 欄位規格
+ROW	Field UID / Role	Type	Required	Validation	State / Permission	Localization
+P	Field UID / Role
+P	Type
+P	Required
+P	Validation
+P	State / Permission
+P	Localization
+ROW	SYS-01-INP-MESSAGE / message draft	Multiline Textarea	Yes for Send	trimmed non-empty; max length由 Conversation Core contract	editable when system.ai.use + conversation context; preserve draft on blocked	sys01.msg.placeholder
+P	SYS-01-INP-MESSAGE / message draft
+P	Multiline Textarea
+P	Yes for Send
+P	trimmed non-empty; max length由 Conversation Core contract
+P	editable when system.ai.use + conversation context; preserve draft on blocked
+P	sys01.msg.placeholder
+ROW	Read-only Context Projections	Projection / Label	Required when available	exact identity/version/state; missing→— or blocked reason	not editable in SYS-01	sys01.ctx.*
+P	Read-only Context Projections
+P	Projection / Label
+P	Required when available
+P	exact identity/version/state; missing→— or blocked reason
+P	not editable in SYS-01
+P	sys01.ctx.*
+ROW	Decision Inputs	Contextual Choice / Confirm	Conditional	must bind active P0/P1 or design confirm	human permission + active decision state	sys01.decision.*
+P	Decision Inputs
+P	Contextual Choice / Confirm
+P	Conditional
+P	must bind active P0/P1 or design confirm
+P	human permission + active decision state
+P	sys01.decision.*
+P	主頁不為了「欄位完整」額外塞入 Change Goal、Scope、Provider、Runtime 等常駐輸入框；這些資料以既有 Entity／Change Package owner 為準，必要時在 contextual drawer / owned form 中編輯。
+P	13. Control Registry / 12 個核心互動控制
+ROW	Control UID	Type / Label	Visible When	Permission	Dimensions
+P	Control UID
+P	Type / Label
+P	Visible When
+P	Permission
+P	Dimensions
+ROW	SYS-01-BTN-SINGLE-AI	Segment · Single AI	always	system.ai.use	36×96
+P	SYS-01-BTN-SINGLE-AI
+P	Segment · Single AI
+P	always
+P	system.ai.use
+P	36×96
+ROW	SYS-01-BTN-MULTI-AI	Segment · Multi AI	always	system.ai.use	36×96
+P	SYS-01-BTN-MULTI-AI
+P	Segment · Multi AI
+P	always
+P	system.ai.use
+P	36×96
+ROW	SYS-01-BTN-COUNCIL-DISCUSSION	Segment · Discussion	Multi only	system.ai.use	36×104
+P	SYS-01-BTN-COUNCIL-DISCUSSION
+P	Segment · Discussion
+P	Multi only
+P	system.ai.use
+P	36×104
+ROW	SYS-01-BTN-COUNCIL-PARALLEL	Segment · Parallel	Multi only	system.ai.use	36×96
+P	SYS-01-BTN-COUNCIL-PARALLEL
+P	Segment · Parallel
+P	Multi only
+P	system.ai.use
+P	36×96
+ROW	SYS-01-INP-MESSAGE	Textarea · 訊息輸入	conversation ready	system.ai.use	min 82h
+P	SYS-01-INP-MESSAGE
+P	Textarea · 訊息輸入
+P	conversation ready
+P	system.ai.use
+P	min 82h
+ROW	SYS-01-BTN-ATTACH	Compact · 附件 / 引用	conversation ready	system.ai.use	40×104
+P	SYS-01-BTN-ATTACH
+P	Compact · 附件 / 引用
+P	conversation ready
+P	system.ai.use
+P	40×104
+ROW	SYS-01-BTN-SEND	Primary · 送出	non-empty + ready	system.ai.use	40×88
+P	SYS-01-BTN-SEND
+P	Primary · 送出
+P	non-empty + ready
+P	system.ai.use
+P	40×88
+ROW	SYS-01-BTN-STOP	Secondary · 停止	generation running	system.ai.use	40×88
+P	SYS-01-BTN-STOP
+P	Secondary · 停止
+P	generation running
+P	system.ai.use
+P	40×88
+ROW	SYS-01-BTN-CANDIDATE-CREATE	Button · 建立變更候選	candidate allowed	system.change.propose	40×140
+P	SYS-01-BTN-CANDIDATE-CREATE
+P	Button · 建立變更候選
+P	candidate allowed
+P	system.change.propose
+P	40×140
+ROW	SYS-01-BTN-CR-CREATE	Button · 建立變更請求	change request allowed	core.change.create	40×140
+P	SYS-01-BTN-CR-CREATE
+P	Button · 建立變更請求
+P	change request allowed
+P	core.change.create
+P	40×140
+ROW	SYS-01-BTN-NAV-OPEN	Button · 開啟引用項目	ref selected	ops.read	40×132
+P	SYS-01-BTN-NAV-OPEN
+P	Button · 開啟引用項目
+P	ref selected
+P	ops.read
+P	40×132
+ROW	SYS-01-BTN-SANDBOX-TEST	Button · Sandbox 測試	candidate + permission ready	system.test.execute	40×128
+P	SYS-01-BTN-SANDBOX-TEST
+P	Button · Sandbox 測試
+P	candidate + permission ready
+P	system.test.execute
+P	40×128
+ROW	Control UID	Action / Effect	Visual State Rule	Invariant / Recovery
+P	Control UID
+P	Action / Effect
+P	Visual State Rule
+P	Invariant / Recovery
+ROW	SYS-01-BTN-SINGLE-AI	AI mode = SINGLE	Selected violet; no API	Preserve change / thread / draft
+P	SYS-01-BTN-SINGLE-AI
+P	AI mode = SINGLE
+P	Selected violet; no API
+P	Preserve change / thread / draft
+ROW	SYS-01-BTN-MULTI-AI	AI mode = MULTI	Selected violet; Multi route required	Preserve same baseline context
+P	SYS-01-BTN-MULTI-AI
+P	AI mode = MULTI
+P	Selected violet; Multi route required
+P	Preserve same baseline context
+ROW	SYS-01-BTN-COUNCIL-DISCUSSION	Council = DISCUSSION	Visible in Multi	Iterative cross-review
+P	SYS-01-BTN-COUNCIL-DISCUSSION
+P	Council = DISCUSSION
+P	Visible in Multi
+P	Iterative cross-review
+ROW	SYS-01-BTN-COUNCIL-PARALLEL	Council = PARALLEL	Visible in Multi	Independent first round + synthesis
+P	SYS-01-BTN-COUNCIL-PARALLEL
+P	Council = PARALLEL
+P	Visible in Multi
+P	Independent first round + synthesis
+ROW	SYS-01-INP-MESSAGE	Draft only	Focus border + vertical resize	Typing never sends
+P	SYS-01-INP-MESSAGE
+P	Draft only
+P	Focus border + vertical resize
+P	Typing never sends
+ROW	SYS-01-BTN-ATTACH	Conversation attachment / reference	Disable with reason if unavailable	Reuse shared conversation mechanism
+P	SYS-01-BTN-ATTACH
+P	Conversation attachment / reference
+P	Disable with reason if unavailable
+P	Reuse shared conversation mechanism
+ROW	SYS-01-BTN-SEND	Send Message	Loading while submit	Keep draft on failed submit
+P	SYS-01-BTN-SEND
+P	Send Message
+P	Loading while submit
+P	Keep draft on failed submit
+ROW	SYS-01-BTN-STOP	Stop Generation	Visible while running	Cancel job only; keep context
+P	SYS-01-BTN-STOP
+P	Stop Generation
+P	Visible while running
+P	Cancel job only; keep context
+ROW	SYS-01-BTN-CANDIDATE-CREATE	Create Candidate	Primary only when it is next step	Completeness / permission gate
+P	SYS-01-BTN-CANDIDATE-CREATE
+P	Create Candidate
+P	Primary only when it is next step
+P	Completeness / permission gate
+ROW	SYS-01-BTN-CR-CREATE	Create Change Request	Secondary	Scope / permission gate
+P	SYS-01-BTN-CR-CREATE
+P	Create Change Request
+P	Secondary
+P	Scope / permission gate
+ROW	SYS-01-BTN-NAV-OPEN	Open exact reference	Disable when target unresolved	Read/navigation only
+P	SYS-01-BTN-NAV-OPEN
+P	Open exact reference
+P	Disable when target unresolved
+P	Read/navigation only
+ROW	SYS-01-BTN-SANDBOX-TEST	Run Sandbox Test	Queued / Running / Pass / Fail	Candidate version + permission gate
+P	SYS-01-BTN-SANDBOX-TEST
+P	Run Sandbox Test
+P	Queued / Running / Pass / Fail
+P	Candidate version + permission gate
+P	共同互動狀態：Default / Hover / Focus / Active / Loading / Disabled / Success / Error。Effectful control 的 Disabled 必須顯示原因；Focus 不得只靠顏色；任何按鈕不得縮到低於 44×44px 可觸控範圍。
+P	14. AI Interaction Continuity Matrix / AI 對話連續性
+ROW	Transition	Identity Rule	Context Rule	Output Rule	Adoption Rule
+P	Transition
+P	Identity Rule
+P	Context Rule
+P	Output Rule
+P	Adoption Rule
+ROW	Single → Multi	preserve conversation_id / thread_id	same context snapshot	multi-AI 只增加比較視角	不自動改 Decision/Candidate
+P	Single → Multi
+P	preserve conversation_id / thread_id
+P	same context snapshot
+P	multi-AI 只增加比較視角
+P	不自動改 Decision/Candidate
+ROW	Multi → Single	preserve same mainline	retain selected synthesis + evidence	participant outputs remain traceable	mainline adopts only explicit chosen/synthesized result
+P	Multi → Single
+P	preserve same mainline
+P	retain selected synthesis + evidence
+P	participant outputs remain traceable
+P	mainline adopts only explicit chosen/synthesized result
+ROW	Discussion ↔ Parallel	same original request / change	same exact relevant context baseline	Discussion 可互評；Parallel 首輪獨立	比較結果須再經 synthesis / decision
+P	Discussion ↔ Parallel
+P	same original request / change
+P	same exact relevant context baseline
+P	Discussion 可互評；Parallel 首輪獨立
+P	比較結果須再經 synthesis / decision
+ROW	Main Thread → Branch	new branch_id, same source message ref	fork from exact context snapshot	branch isolated	explicit Adopt / Merge step 才回 mainline
+P	Main Thread → Branch
+P	new branch_id, same source message ref
+P	fork from exact context snapshot
+P	branch isolated
+P	explicit Adopt / Merge step 才回 mainline
+ROW	AI Output → Candidate	same change + evidence refs	raw output not authoritative	RAW_AI_OUTPUT → WORKING_EVIDENCE → CANDIDATE	人工決策後才可成 governed result
+P	AI Output → Candidate
+P	same change + evidence refs
+P	raw output not authoritative
+P	RAW_AI_OUTPUT → WORKING_EVIDENCE → CANDIDATE
+P	人工決策後才可成 governed result
+ROW	Blocked / Resume	preserve conversation/thread/draft	preserve checkpoint + context hash	no silent reset	解除 blocker 後回原 state
+P	Blocked / Resume
+P	preserve conversation/thread/draft
+P	preserve checkpoint + context hash
+P	no silent reset
+P	解除 blocker 後回原 state
+P	15. Conversation / Multi-AI Interaction Detail
+P	圖 2｜Multi-AI 對話細節：同一 Change Context 下保留獨立視角、Decision/Impact/Validation 與單一 Composer。
+P	16. Requirement Convergence & Decision Ledger
+ROW	Priority / State	Meaning	Behavior
+P	Priority / State
+P	Meaning
+P	Behavior
+ROW	P0	缺失會阻擋安全／合法／架構	必須問；Design Freeze blocked。
+P	P0
+P	缺失會阻擋安全／合法／架構
+P	必須問；Design Freeze blocked。
+ROW	P1	會改變主流程／Data／Permission／Runtime／Deploy	必須問；一次 3–5 個相關問題。
+P	P1
+P	會改變主流程／Data／Permission／Runtime／Deploy
+P	必須問；一次 3–5 個相關問題。
+ROW	P2	可由既有系統／規格唯一解析	AI 直接解析，不重問使用者。
+P	P2
+P	可由既有系統／規格唯一解析
+P	AI 直接解析，不重問使用者。
+ROW	P3	安全標準／預設	可套用，但記錄 assumptions。
+P	P3
+P	安全標準／預設
+P	可套用，但記錄 assumptions。
+ROW	CONFIRMED	人工確認	後續設計／施工必須遵守。
+P	CONFIRMED
+P	人工確認
+P	後續設計／施工必須遵守。
+ROW	REJECTED	明確否決	除非 reopen，不得改名重提。
+P	REJECTED
+P	明確否決
+P	除非 reopen，不得改名重提。
+ROW	SUPERSEDED	被新版決策取代	保留歷史與 supersedes link。
+P	SUPERSEDED
+P	被新版決策取代
+P	保留歷史與 supersedes link。
+P	提問前檢查維度：Purpose、Current Behavior、Role、Entry/Exit、Happy Path、State、Error/Edge、Data、API/Runtime、Permission、Provider、Dependency、Migration、UI Impact、Acceptance、Deploy/Rollback。
+P	17. Functional Chain Contracts / 關鍵功能完整鏈
+ROW	Function	Intent	Precondition	Trigger	Gate / Validation
+P	Function
+P	Intent
+P	Precondition
+P	Trigger
+P	Gate / Validation
+ROW	AI Send	Ask / refine design	Context ready + permission	Message input → Send	non-empty + context + route
+P	AI Send
+P	Ask / refine design
+P	Context ready + permission
+P	Message input → Send
+P	non-empty + context + route
+ROW	AI Stop	Stop current generation	generation running	Stop	permission + generation state
+P	AI Stop
+P	Stop current generation
+P	generation running
+P	Stop
+P	permission + generation state
+ROW	AI Mode Switch	Change analysis mode	conversation exists	Single/Multi segments	multi route available
+P	AI Mode Switch
+P	Change analysis mode
+P	conversation exists
+P	Single/Multi segments
+P	multi route available
+ROW	Candidate Create	Formalize proposal	design/decision ready	建立變更候選	proposal permission + completeness
+P	Candidate Create
+P	Formalize proposal
+P	design/decision ready
+P	建立變更候選
+P	proposal permission + completeness
+ROW	Change Request	Track governed change	active change/scope	建立變更請求	change permission
+P	Change Request
+P	Track governed change
+P	active change/scope
+P	建立變更請求
+P	change permission
+ROW	Sandbox Test	Validate candidate	candidate + test permission	Sandbox 測試	runtime ready
+P	Sandbox Test
+P	Validate candidate
+P	candidate + test permission
+P	Sandbox 測試
+P	runtime ready
+ROW	Provider Watch	Detect maintenance need	watch policy active	system event	dedupe + impact
+P	Provider Watch
+P	Detect maintenance need
+P	watch policy active
+P	system event
+P	dedupe + impact
+ROW	Release Handoff	Move validated change to release	validation PASS + human approval	contextual handoff	release owner ready
+P	Release Handoff
+P	Move validated change to release
+P	validation PASS + human approval
+P	contextual handoff
+P	release owner ready
+ROW	Function	API / Runtime	Data / Audit	Feedback	Next / Terminal
+P	Function
+P	API / Runtime
+P	Data / Audit
+P	Feedback
+P	Next / Terminal
+ROW	AI Send	Send Message / Conversation Core	persist message + response lineage	AI response / error	remain conversation / next decision
+P	AI Send
+P	Send Message / Conversation Core
+P	persist message + response lineage
+P	AI response / error
+P	remain conversation / next decision
+ROW	AI Stop	Stop Generation / Conversation Core	cancel current job only	Stopped status	preserve draft/context
+P	AI Stop
+P	Stop Generation / Conversation Core
+P	cancel current job only
+P	Stopped status
+P	preserve draft/context
+ROW	AI Mode Switch	UI context state	no business mutation	mode changed	same thread/change
+P	AI Mode Switch
+P	UI context state
+P	no business mutation
+P	mode changed
+P	same thread/change
+ROW	Candidate Create	Create Candidate / SystemChange	candidate version	candidate / error	Impact → Sandbox
+P	Candidate Create
+P	Create Candidate / SystemChange
+P	candidate version
+P	candidate / error
+P	Impact → Sandbox
+ROW	Change Request	Create Change Request	change request record	CR / error	planning / implementation
+P	Change Request
+P	Create Change Request
+P	change request record
+P	CR / error
+P	planning / implementation
+ROW	Sandbox Test	Run Sandbox Test / Execution	run + evidence	queued/running/pass/fail	repair or approval
+P	Sandbox Test
+P	Run Sandbox Test / Execution
+P	run + evidence
+P	queued/running/pass/fail
+P	repair or approval
+ROW	Provider Watch	existing provider/monitoring owner	alert / candidate refs	maintenance alert	attach/create Change
+P	Provider Watch
+P	existing provider/monitoring owner
+P	alert / candidate refs
+P	maintenance alert
+P	attach/create Change
+ROW	Release Handoff	existing Release owner	release/health refs	released / rollback-needed	Observe → Close
+P	Release Handoff
+P	existing Release owner
+P	release/health refs
+P	released / rollback-needed
+P	Observe → Close
+P	功能鏈不得在 Control 或 API 就結束；每一條都必須有 Feedback、Success/Failure、Recovery 與 Next/Terminal Outcome。若缺的是 shared owner，沿用既有 owner；若存在多種合理產品行為，停止自動補齊並回到決策 Gate。
+P	18. API / Runtime / Data / Audit Contract
+ROW	Operation	Entry / Trigger	Payload Minimum	Validation / Idempotency
+P	Operation
+P	Entry / Trigger
+P	Payload Minimum
+P	Validation / Idempotency
+ROW	Send Message	Conversation Message API	conversation/thread/context + message + refs	non-empty + authorized context + duplicate-submit guard
+P	Send Message
+P	Conversation Message API
+P	conversation/thread/context + message + refs
+P	non-empty + authorized context + duplicate-submit guard
+ROW	Stop Generation	Conversation Stop API	conversation + active generation	generation running; repeated stop safe
+P	Stop Generation
+P	Conversation Stop API
+P	conversation + active generation
+P	generation running; repeated stop safe
+ROW	Create Candidate	System Candidate API	change + design/decision refs + affected scope	completeness + duplicate/reuse checks
+P	Create Candidate
+P	System Candidate API
+P	change + design/decision refs + affected scope
+P	completeness + duplicate/reuse checks
+ROW	Create Change Request	System Change Request API	reason + impact + risk + validation refs	scope + permission + state
+P	Create Change Request
+P	System Change Request API
+P	reason + impact + risk + validation refs
+P	scope + permission + state
+ROW	Run Sandbox Test	System Sandbox API	candidate/version + test scope	permission + runtime readiness + exact version
+P	Run Sandbox Test
+P	System Sandbox API
+P	candidate/version + test scope
+P	permission + runtime readiness + exact version
+ROW	Provider Watch	Existing event/schedule owner	provider/model/API fingerprint + diff	dedupe + policy + impact
+P	Provider Watch
+P	Existing event/schedule owner
+P	provider/model/API fingerprint + diff
+P	dedupe + policy + impact
+ROW	Release Handoff	Existing governed release entry	candidate/version + approval + evidence	human approval + release permission + revision match
+P	Release Handoff
+P	Existing governed release entry
+P	candidate/version + approval + evidence
+P	human approval + release permission + revision match
+ROW	Operation	Owner / Persistence	Audit / Feedback / Next
+P	Operation
+P	Owner / Persistence
+P	Audit / Feedback / Next
+ROW	Send Message	Conversation Core / message lineage	Message Sent → AI response / error
+P	Send Message
+P	Conversation Core / message lineage
+P	Message Sent → AI response / error
+ROW	Stop Generation	Conversation Core / generation job	Stop Requested → stopped state
+P	Stop Generation
+P	Conversation Core / generation job
+P	Stop Requested → stopped state
+ROW	Create Candidate	SystemChange owner / candidate version	Candidate Created → Impact / Sandbox
+P	Create Candidate
+P	SystemChange owner / candidate version
+P	Candidate Created → Impact / Sandbox
+ROW	Create Change Request	SystemChange owner / change request	CR Created → planning / implementation
+P	Create Change Request
+P	SystemChange owner / change request
+P	CR Created → planning / implementation
+ROW	Run Sandbox Test	Execution/Test owner / run + evidence	Sandbox Started/Completed → repair/approval
+P	Run Sandbox Test
+P	Execution/Test owner / run + evidence
+P	Sandbox Started/Completed → repair/approval
+ROW	Provider Watch	Provider/Monitoring owner / alert	Provider Change Detected → maintenance path
+P	Provider Watch
+P	Provider/Monitoring owner / alert
+P	Provider Change Detected → maintenance path
+ROW	Release Handoff	Existing release owner	Release Requested/Executed → observe/close
+P	Release Handoff
+P	Existing release owner
+P	Release Requested/Executed → observe/close
+P	19. Permission & Gate Model
+ROW	Permission / Gate	Applies To	Denied Behavior	Security Rule
+P	Permission / Gate
+P	Applies To
+P	Denied Behavior
+P	Security Rule
+ROW	ADMIN-L1-SYSTEM	Page navigation	SYS-01 hidden	account assignment only; no implicit role shortcut
+P	ADMIN-L1-SYSTEM
+P	Page navigation
+P	SYS-01 hidden
+P	account assignment only; no implicit role shortcut
+ROW	system.ai.use	AI mode / composer / send / stop / attach	controls hidden/disabled based on page policy; draft preserved	trusted runtime rechecks authorization
+P	system.ai.use
+P	AI mode / composer / send / stop / attach
+P	controls hidden/disabled based on page policy; draft preserved
+P	trusted runtime rechecks authorization
+ROW	system.change.propose	Candidate create	disabled + reason	runtime checks affected scope and state
+P	system.change.propose
+P	Candidate create
+P	disabled + reason
+P	runtime checks affected scope and state
+ROW	core.change.create	Change Request	disabled + reason	cannot infer permission from page access
+P	core.change.create
+P	Change Request
+P	disabled + reason
+P	cannot infer permission from page access
+ROW	system.test.execute	Sandbox Test	disabled + reason	runtime checks candidate/version + test scope
+P	system.test.execute
+P	Sandbox Test
+P	disabled + reason
+P	runtime checks candidate/version + test scope
+ROW	ops.read	Reference open	do not reveal unauthorized target	target-level permission required
+P	ops.read
+P	Reference open
+P	do not reveal unauthorized target
+P	target-level permission required
+ROW	Human Design / Release Gate	Freeze / Approval / Release Handoff	remain pending/ready state	AI cannot self-approve or bypass release owner
+P	Human Design / Release Gate
+P	Freeze / Approval / Release Handoff
+P	remain pending/ready state
+P	AI cannot self-approve or bypass release owner
+P	20. Error / Edge / Recovery Matrix
+ROW	Condition	UI State	Recovery	Preserve
+P	Condition
+P	UI State
+P	Recovery
+P	Preserve
+ROW	Context unresolved	BLOCKED + exact missing item	resolve exact context / ask only true missing decision	draft, thread, change, decisions
+P	Context unresolved
+P	BLOCKED + exact missing item
+P	resolve exact context / ask only true missing decision
+P	draft, thread, change, decisions
+ROW	Multi-AI route unavailable	fallback Single AI + reason	retry after route/capability recovers	same conversation/change
+P	Multi-AI route unavailable
+P	fallback Single AI + reason
+P	retry after route/capability recovers
+P	same conversation/change
+ROW	Invalid Council Mode	reject transition	return valid mode	context/draft
+P	Invalid Council Mode
+P	reject transition
+P	return valid mode
+P	context/draft
+ROW	Duplicate system detected	show existing owner/reuse path	REUSE / EXTEND / MODIFY instead of CREATE_NEW	change discussion
+P	Duplicate system detected
+P	show existing owner/reuse path
+P	REUSE / EXTEND / MODIFY instead of CREATE_NEW
+P	change discussion
+ROW	Validation failed	FAIL + failed evidence	safe self-repair → rerun; else hard block	candidate/version/evidence
+P	Validation failed
+P	FAIL + failed evidence
+P	safe self-repair → rerun; else hard block
+P	candidate/version/evidence
+ROW	Provider breaking change	maintenance alert	impact → candidate → sandbox → approval	provider fingerprint/evidence
+P	Provider breaking change
+P	maintenance alert
+P	impact → candidate → sandbox → approval
+P	provider fingerprint/evidence
+ROW	Permission denied	disabled/hidden as policy requires	request authorized path; never client override	non-sensitive local draft if allowed
+P	Permission denied
+P	disabled/hidden as policy requires
+P	request authorized path; never client override
+P	non-sensitive local draft if allowed
+ROW	Post-release health fail	warning / rollback-ready	handoff to existing rollback/recovery owner	release/health/audit refs
+P	Post-release health fail
+P	warning / rollback-ready
+P	handoff to existing rollback/recovery owner
+P	release/health/audit refs
+P	21. Provider / API Update Watch
+P	Watch 同時支援 Periodic 與 Event-driven；時程與外部 fetch 由既有系統設定／監控 owner 管理，SYS-01 不硬編第二套 scheduler。
+ROW	Detect	Diff	Impact	Action	Production Boundary
+P	Detect
+P	Diff
+P	Impact
+P	Action
+P	Production Boundary
+ROW	Provider / model / API version / endpoint / schema / auth / capability / rate / deprecation / SDK / policy	以 fingerprint 去重並比較前後差異	影響 page / runtime / adapter / data / permission / migration / regression	Maintenance Alert → attach/create Change → Candidate → Sandbox → Test	AI 可 detect/diff/impact/draft；不得 silent mutate production/provider profile。
+P	Provider / model / API version / endpoint / schema / auth / capability / rate / deprecation / SDK / policy
+P	以 fingerprint 去重並比較前後差異
+P	影響 page / runtime / adapter / data / permission / migration / regression
+P	Maintenance Alert → attach/create Change → Candidate → Sandbox → Test
+P	AI 可 detect/diff/impact/draft；不得 silent mutate production/provider profile。
+P	22. Asset / Icon / Visual Binding
+ROW	Asset Class	Usage	Binding Rule	Modification Rule
+P	Asset Class
+P	Usage
+P	Binding Rule
+P	Modification Rule
+ROW	ORANGE ONE Brand	Global header only	inherit Global Shell brand asset	不可重畫／拉伸；只依核准對比規則顯示。
+P	ORANGE ONE Brand
+P	Global header only
+P	inherit Global Shell brand asset
+P	不可重畫／拉伸；只依核准對比規則顯示。
+ROW	Navigation Icons	Admin sidebar	inherit global navigation icon set	不在 SYS-01 自建第二套 icon theme。
+P	Navigation Icons
+P	Admin sidebar
+P	inherit global navigation icon set
+P	不在 SYS-01 自建第二套 icon theme。
+ROW	Status Icons	Pass / Warning / Error / Processing	use design-system semantic icon + text	狀態不可只靠顏色。
+P	Status Icons
+P	Pass / Warning / Error / Processing
+P	use design-system semantic icon + text
+P	狀態不可只靠顏色。
+ROW	Page-specific Content Image	None required	SYS-01 主工作區以 data / controls / conversation 為主	不加入與功能無關的裝飾圖、Moodboard、背景插畫。
+P	Page-specific Content Image
+P	None required
+P	SYS-01 主工作區以 data / controls / conversation 為主
+P	不加入與功能無關的裝飾圖、Moodboard、背景插畫。
+P	本文件中的 UI 圖是「頁面設計預覽」，不是網站 runtime asset。正式頁面不因文件排版而新增任何不必要的圖片元件。
+P	23. Localization / 語系與文字容量
+ROW	UI Area	zh-TW	zh-CN	en / Key Plan	Text Capacity Rule
+P	UI Area
+P	zh-TW
+P	zh-CN
+P	en / Key Plan
+P	Text Capacity Rule
+ROW	Page title	系統維護／系統生命週期 AI 工作區	系统维护／系统生命周期 AI 工作区	System Maintenance / Lifecycle AI · sys01.page.title	單行；超長以 page title 區域 wrap，不壓 header quick cluster
+P	Page title
+P	系統維護／系統生命週期 AI 工作區
+P	系统维护／系统生命周期 AI 工作区
+P	System Maintenance / Lifecycle AI · sys01.page.title
+P	單行；超長以 page title 區域 wrap，不壓 header quick cluster
+ROW	AI Mode	Single AI / Multi AI	Single AI / Multi AI	sys01.ai.mode.*	segment min 96px; English allowed fixed term
+P	AI Mode
+P	Single AI / Multi AI
+P	Single AI / Multi AI
+P	sys01.ai.mode.*
+P	segment min 96px; English allowed fixed term
+ROW	Council	Discussion / Parallel	Discussion / Parallel	sys01.ai.council.*	compact segment; 2-row wrap only compact viewport
+P	Council
+P	Discussion / Parallel
+P	Discussion / Parallel
+P	sys01.ai.council.*
+P	compact segment; 2-row wrap only compact viewport
+ROW	Composer	訊息輸入／附件／引用／送出／停止	消息输入／附件／引用／发送／停止	sys01.conversation.*	button label no ellipsis; textarea wraps
+P	Composer
+P	訊息輸入／附件／引用／送出／停止
+P	消息输入／附件／引用／发送／停止
+P	sys01.conversation.*
+P	button label no ellipsis; textarea wraps
+ROW	Actions	建立變更候選／建立變更請求／開啟引用項目／Sandbox 測試	建立变更候选／建立变更请求／打开引用项目／Sandbox 测试	sys01.action.*	desktop single line; compact wrap by action dock rules
+P	Actions
+P	建立變更候選／建立變更請求／開啟引用項目／Sandbox 測試
+P	建立变更候选／建立变更请求／打开引用项目／Sandbox 测试
+P	sys01.action.*
+P	desktop single line; compact wrap by action dock rules
+P	24. Accessibility / 可及性規格
+P	所有 segmented controls 使用可辨識的 selected state + aria-pressed / aria-selected 語義；不能只靠紫色判斷。
+P	Composer 必須有可程式辨識 label；Send / Stop / Attach 有明確 accessible name。
+P	鍵盤順序：Page Context → AI Mode → Conversation → Composer → Contextual Actions → Decision/Validation；Drawer 開啟時 focus trap，關閉後回原 trigger。
+P	Disabled effectful controls 必須提供 reason text / tooltip / aria-describedby。
+P	錯誤訊息與 validation status 必須可由 screen reader 感知；loading / processing 使用 live region 或等效狀態。
+P	最小互動命中 44×44px；文字對比遵循 design system；不使用只有顏色的 pass/fail。
+P	25. Visual Anchor / Locked & Editable Regions
+ROW	Anchor / Region	Locked Rule	Editable Rule	Tolerance / Overflow
+P	Anchor / Region
+P	Locked Rule
+P	Editable Rule
+P	Tolerance / Overflow
+ROW	Global Header 58px	品牌、quick cluster、surface switch order locked	only actual data labels/counts	no second row / no collision
+P	Global Header 58px
+P	品牌、quick cluster、surface switch order locked
+P	only actual data labels/counts
+P	no second row / no collision
+ROW	Workspace Origin x=78 / y=68	Shell origin locked	page content inside slot	±2px visual tolerance
+P	Workspace Origin x=78 / y=68
+P	Shell origin locked
+P	page content inside slot
+P	±2px visual tolerance
+ROW	Conversation Dominant Center	must remain largest workspace	message density / panel height may grow	no horizontal overflow; internal y scroll
+P	Conversation Dominant Center
+P	must remain largest workspace
+P	message density / panel height may grow
+P	no horizontal overflow; internal y scroll
+ROW	AI/Council Header	must stay attached to conversation	controls may wrap compact only	no separation by unrelated panel
+P	AI/Council Header
+P	must stay attached to conversation
+P	controls may wrap compact only
+P	no separation by unrelated panel
+ROW	Composer	must stay attached below conversation	vertical resize allowed	min 82px textarea
+P	Composer
+P	must stay attached below conversation
+P	vertical resize allowed
+P	min 82px textarea
+ROW	Decision / Validation	must remain context-adjacent	content / status rows change with lifecycle	drawer on compact; no page reflow collision
+P	Decision / Validation
+P	must remain context-adjacent
+P	content / status rows change with lifecycle
+P	drawer on compact; no page reflow collision
+ROW	Action Dock	max one primary CTA / context	secondary actions reorder only by lifecycle priority	controls >=40h / 44 hit target
+P	Action Dock
+P	max one primary CTA / context
+P	secondary actions reorder only by lifecycle priority
+P	controls >=40h / 44 hit target
+P	26. Visual Preview / 實際頁面設計
+P	圖 3｜桌面主視圖：三欄工作台 + Context Strip + Unified Lifecycle；所有內容皆直接服務 SYS-01 的變更生命週期。
+P	視覺基準：深色科技紫、全站一致的 40px control / 10–12px radius / 16px section gap；紫色只用於 active / selected / primary / focus。不存在業務資料時顯示「—」，不產生 fake KPI、fake progress 或無資料圖表。
+P	27. Validation Plan / 7-Pass Closure & Geometry QA
+ROW	Pass	Coverage	Pass Condition
+P	Pass
+P	Coverage
+P	Pass Condition
+ROW	1 Authority / Requirement	scope / decisions / business entity ops / no duplicate owner	所有 Required requirement 可追到功能／實體／操作。
+P	1 Authority / Requirement
+P	scope / decisions / business entity ops / no duplicate owner
+P	所有 Required requirement 可追到功能／實體／操作。
+ROW	2 Logic / State / Runtime	happy path / fail / retry / cancel / side effect	每條關鍵功能鏈有 terminal outcome。
+P	2 Logic / State / Runtime
+P	happy path / fail / retry / cancel / side effect
+P	每條關鍵功能鏈有 terminal outcome。
+ROW	3 Dependency / Duplicate	upstream/downstream/cross-system / reuse	沒有第二套 change/conversation/provider/release。
+P	3 Dependency / Duplicate
+P	upstream/downstream/cross-system / reuse
+P	沒有第二套 change/conversation/provider/release。
+ROW	4 UI Necessity / Topology	one primary CTA / workbench cohesion / visual impact	必要功能存在且不切碎連續流程。
+P	4 UI Necessity / Topology
+P	one primary CTA / workbench cohesion / visual impact
+P	必要功能存在且不切碎連續流程。
+ROW	5 Error / Permission / Provider	empty / timeout / stale / denied / provider down	每個 failure 有 recovery / preserve rule。
+P	5 Error / Permission / Provider
+P	empty / timeout / stale / denied / provider down
+P	每個 failure 有 recovery / preserve rule。
+ROW	6 Schema / Program	UID / schema / API / type / migration / build when implementation exists	machine validation PASS。
+P	6 Schema / Program
+P	UID / schema / API / type / migration / build when implementation exists
+P	machine validation PASS。
+ROW	7 Reverse E2E / Full Rescan	final result → evidence → candidate → decision → requirement	修正後完整重掃；無未關閉 required gap。
+P	7 Reverse E2E / Full Rescan
+P	final result → evidence → candidate → decision → requirement
+P	修正後完整重掃；無未關閉 required gap。
+ROW	Geometry QA	overlap / clipping / overflow / wrap / anchor drift	所有 Required viewport overflow_count=0、text_overflow_count=0。
+P	Geometry QA
+P	overlap / clipping / overflow / wrap / anchor drift
+P	所有 Required viewport overflow_count=0、text_overflow_count=0。
+P	28. Acceptance Matrix / Design Definition of Done
+ROW	DoD UID	Acceptance Condition	Requirement
+P	DoD UID
+P	Acceptance Condition
+P	Requirement
+ROW	SYS-01-DOD-01	Page Purpose / Scope / User / Out-of-Scope 完整	REQUIRED
+P	SYS-01-DOD-01
+P	Page Purpose / Scope / User / Out-of-Scope 完整
+P	REQUIRED
+ROW	SYS-01-DOD-02	Business Entity Inventory + Operation Matrix + Hierarchy 完整	REQUIRED
+P	SYS-01-DOD-02
+P	Business Entity Inventory + Operation Matrix + Hierarchy 完整
+P	REQUIRED
+ROW	SYS-01-DOD-03	Functional Workbench / Interaction Topology 保持連續性	REQUIRED
+P	SYS-01-DOD-03
+P	Functional Workbench / Interaction Topology 保持連續性
+P	REQUIRED
+ROW	SYS-01-DOD-04	AI Conversation continuity / Branch / Candidate adoption 邊界完整	REQUIRED
+P	SYS-01-DOD-04
+P	AI Conversation continuity / Branch / Candidate adoption 邊界完整
+P	REQUIRED
+ROW	SYS-01-DOD-05	8 Sections / Component / Field / 12 Core Controls 規格完整	REQUIRED
+P	SYS-01-DOD-05
+P	8 Sections / Component / Field / 12 Core Controls 規格完整
+P	REQUIRED
+ROW	SYS-01-DOD-06	Function chains 含 Gate/Permission/Action/Runtime/Audit/Feedback/Recovery/Terminal	REQUIRED
+P	SYS-01-DOD-06
+P	Function chains 含 Gate/Permission/Action/Runtime/Audit/Feedback/Recovery/Terminal
+P	REQUIRED
+ROW	SYS-01-DOD-07	Layout / Responsive / Geometry / Anchor / Overflow 規格完整	REQUIRED
+P	SYS-01-DOD-07
+P	Layout / Responsive / Geometry / Anchor / Overflow 規格完整
+P	REQUIRED
+ROW	SYS-01-DOD-08	Asset / Localization / Accessibility 規格完整	REQUIRED
+P	SYS-01-DOD-08
+P	Asset / Localization / Accessibility 規格完整
+P	REQUIRED
+ROW	SYS-01-DOD-09	P0/P1 / Decision / Freeze / Candidate / Validation / Release boundary 完整	REQUIRED
+P	SYS-01-DOD-09
+P	P0/P1 / Decision / Freeze / Candidate / Validation / Release boundary 完整
+P	REQUIRED
+ROW	SYS-01-DOD-10	7-pass validation + geometry QA 定義完成	REQUIRED
+P	SYS-01-DOD-10
+P	7-pass validation + geometry QA 定義完成
+P	REQUIRED
+ROW	SYS-01-DOD-11	UI preview 只包含 SYS-01 實際功能，不含無關參考圖	REQUIRED
+P	SYS-01-DOD-11
+P	UI preview 只包含 SYS-01 實際功能，不含無關參考圖
+P	REQUIRED
+ROW	SYS-01-DOD-12	文件無文字溢出、表格越界、孤立標題、版面漂移	REQUIRED
+P	SYS-01-DOD-12
+P	文件無文字溢出、表格越界、孤立標題、版面漂移
+P	REQUIRED
+P	29. Design Review / Freeze Criteria & Next Transition
+ROW	Gate	Pass Condition
+P	Gate
+P	Pass Condition
+ROW	Requirement Gate	P0/P1=0；Scope/Out-of-Scope/Acceptance clear。
+P	Requirement Gate
+P	P0/P1=0；Scope/Out-of-Scope/Acceptance clear。
+ROW	Entity / Functional Gate	Required Entity × Operation、Functional Chain、Hierarchy、WorkBench Contract 無未關閉缺口。
+P	Entity / Functional Gate
+P	Required Entity × Operation、Functional Chain、Hierarchy、WorkBench Contract 無未關閉缺口。
+ROW	Architecture Gate	Existing owner/reuse path 明確；無 duplicate system / second runtime。
+P	Architecture Gate
+P	Existing owner/reuse path 明確；無 duplicate system / second runtime。
+ROW	Page Design Gate	Sections/Components/Controls/Fields/States/Responsive/i18n/a11y 完整。
+P	Page Design Gate
+P	Sections/Components/Controls/Fields/States/Responsive/i18n/a11y 完整。
+ROW	Visual Gate	Main workbench / conversation topology / geometry accepted；overflow/clipping=0。
+P	Visual Gate
+P	Main workbench / conversation topology / geometry accepted；overflow/clipping=0。
+ROW	Audit Baseline Gate	Validation / Acceptance / DoD 已在施工前固定。
+P	Audit Baseline Gate
+P	Validation / Acceptance / DoD 已在施工前固定。
+ROW	Freeze	以上全部 PASS + 授權者確認後才 DESIGN_FROZEN。
+P	Freeze
+P	以上全部 PASS + 授權者確認後才 DESIGN_FROZEN。
+ROW	Next Transition	Design Freeze 後建立完整 Implementation Package，再進入正式施工；普通子步驟不得反覆停在「下一步」。
+P	Next Transition
+P	Design Freeze 後建立完整 Implementation Package，再進入正式施工；普通子步驟不得反覆停在「下一步」。
+P	本版的「優化」定義：保留既有功能與 owner，補齊 Mother 規範要求的缺失契約；只加入能關閉 Required gap 的最小必要功能，其他功能降為條件顯示、次要操作、共用 owner 或不採用。
+P	30. Mother Completeness Index / 文件完整度檢查
+ROW	Dimension	Status
+P	Dimension
+P	Status
+ROW	Page Registry / Purpose / Route / Owner	PASS
+P	Page Registry / Purpose / Route / Owner
+P	PASS
+ROW	Scope / Target User / NFR / Out-of-Scope	PASS
+P	Scope / Target User / NFR / Out-of-Scope
+P	PASS
+ROW	Business Entity Inventory + Operation Matrix	PASS
+P	Business Entity Inventory + Operation Matrix
+P	PASS
+ROW	Entity Hierarchy + Functional Admission	PASS
+P	Entity Hierarchy + Functional Admission
+P	PASS
+ROW	Functional Workbench + Interaction Topology	PASS
+P	Functional Workbench + Interaction Topology
+P	PASS
+ROW	AI Interaction Continuity	PASS
+P	AI Interaction Continuity
+P	PASS
+ROW	User Journey / State Machine	PASS
+P	User Journey / State Machine
+P	PASS
+ROW	Layout / Grid / Responsive / Geometry	PASS
+P	Layout / Grid / Responsive / Geometry
+P	PASS
+ROW	8 Section Specs	PASS
+P	8 Section Specs
+P	PASS
+ROW	Component / Field / 12 Core Control Specs	PASS
+P	Component / Field / 12 Core Control Specs
+P	PASS
+ROW	Permission / API / Runtime / Data / Audit	PASS
+P	Permission / API / Runtime / Data / Audit
+P	PASS
+ROW	Functional Chain Contracts	PASS
+P	Functional Chain Contracts
+P	PASS
+ROW	Error / Recovery + Provider Watch	PASS
+P	Error / Recovery + Provider Watch
+P	PASS
+ROW	Assets / Visual Binding + Localization / A11y	PASS
+P	Assets / Visual Binding + Localization / A11y
+P	PASS
+ROW	Visual Anchors + Visual Preview	PASS
+P	Visual Anchors + Visual Preview
+P	PASS
+ROW	Validation / Acceptance / DoD	PASS
+P	Validation / Acceptance / DoD
+P	PASS
+### PART word/header1.xml
+P	ORANGE ONE · SYS-01 · Mother Basic Design
+### PART word/footer1.xml
+P	SYS-01 系統維護／系統生命週期 AI 工作區

@@ -1,0 +1,386 @@
+### PART word/document.xml
+P	ORANGE ONE
+P	GLOBAL-SHELL
+P	首頁外框／上欄／自適應伸縮菜單
+P	Global Home / Shell / Adaptive Navigation
+P	全站共用 Layout、Header、Front/Admin Navigation 與 Workspace Mount 施工基準
+ROW	最新 Layout 裁決
+左側菜單與工作區屬同一個 Shell Layout。菜單展開時，工作區同步右移並縮窄；菜單收合時，工作區同步左移並放大。禁止 Sidebar 以 Overlay 方式遮住 Workspace。
+P	最新 Layout 裁決
+左側菜單與工作區屬同一個 Shell Layout。菜單展開時，工作區同步右移並縮窄；菜單收合時，工作區同步左移並放大。禁止 Sidebar 以 Overlay 方式遮住 Workspace。
+P	1. Shell Identity / 設計目標
+ROW	項目	規格
+P	項目
+P	規格
+ROW	Layout UID	GHS-LAYOUT-ADAPTIVE-COUPLED-SHELL
+P	Layout UID
+P	GHS-LAYOUT-ADAPTIVE-COUPLED-SHELL
+ROW	用途	所有登入後 Front / Admin 頁面的固定外框與 Workspace Mount
+P	用途
+P	所有登入後 Front / Admin 頁面的固定外框與 Workspace Mount
+ROW	Header	固定頂部 58px；全寬
+P	Header
+P	固定頂部 58px；全寬
+ROW	Sidebar	收合 64px；展開 221px；與 Workspace 共同參與 Layout 計算
+P	Sidebar
+P	收合 64px；展開 221px；與 Workspace 共同參與 Layout 計算
+ROW	Workspace	依 Sidebar 寬度自適應；不得被 Sidebar 遮住
+P	Workspace
+P	依 Sidebar 寬度自適應；不得被 Sidebar 遮住
+ROW	視覺	Dark Tech Purple；沿用全站 Violet Token
+P	視覺
+P	Dark Tech Purple；沿用全站 Violet Token
+ROW	真實資料	通知／待辦／執行中／帳戶只能顯示實際 Projection；缺值不得造假
+P	真實資料
+P	通知／待辦／執行中／帳戶只能顯示實際 Projection；缺值不得造假
+P	2. Coupled Reflow Geometry / 選單與工作區連動
+P	圖 1　Sidebar 收合與展開時，Workspace 必須同步調整位置與可用寬度。
+ROW	狀態	Sidebar	Workspace Left	Workspace Width	行為
+P	狀態
+P	Sidebar
+P	Workspace Left
+P	Workspace Width
+P	行為
+ROW	COLLAPSED	64px	78px = 64 + 14	100vw - 64 - 14 - 16	工作區最大化；僅顯示 9 個 Icon
+P	COLLAPSED
+P	64px
+P	78px = 64 + 14
+P	100vw - 64 - 14 - 16
+P	工作區最大化；僅顯示 9 個 Icon
+ROW	EXPANDED	221px	235px = 221 + 14	100vw - 221 - 14 - 16	工作區同步縮窄／右移；菜單完整顯示 Label
+P	EXPANDED
+P	221px
+P	235px = 221 + 14
+P	100vw - 221 - 14 - 16
+P	工作區同步縮窄／右移；菜單完整顯示 Label
+ROW	TRANSITION	64 ↔ 221px	78 ↔ 235px	連續插值	Sidebar 與 Workspace 使用同一 transition duration；不得先蓋住再跳位
+P	TRANSITION
+P	64 ↔ 221px
+P	78 ↔ 235px
+P	連續插值
+P	Sidebar 與 Workspace 使用同一 transition duration；不得先蓋住再跳位
+ROW	Implementation Geometry
+建議由 Shell 根節點以 CSS Grid 或單一共享 `--sidebar-width` 變數驅動：Header 跨全欄；Sidebar 與 Workspace 為同一 Layout 的相鄰 Column。禁止維持 `workspace left=78px` 同時把 Sidebar 展開至 221px。
+P	Implementation Geometry
+建議由 Shell 根節點以 CSS Grid 或單一共享 `--sidebar-width` 變數驅動：Header 跨全欄；Sidebar 與 Workspace 為同一 Layout 的相鄰 Column。禁止維持 `workspace left=78px` 同時把 Sidebar 展開至 221px。
+P	3. Header Contract / 上方固定欄
+ROW	區域	尺寸／順序	功能與邊界
+P	區域
+P	尺寸／順序
+P	功能與邊界
+ROW	Brand	左側 x≈30px；Header h58	使用 ORANGE ONE Canonical Logo；不可拉伸、裁切或自行重畫
+P	Brand
+P	左側 x≈30px；Header h58
+P	使用 ORANGE ONE Canonical Logo；不可拉伸、裁切或自行重畫
+ROW	Quick Status	Notification → To-do → Running	只讀真實狀態；無 Runtime 時顯示受控 Disabled，不可假數據
+P	Quick Status
+P	Notification → To-do → Running
+P	只讀真實狀態；無 Runtime 時顯示受控 Disabled，不可假數據
+ROW	Language	72px 基準	zh-TW / zh-CN / en；切換不改變 Business State
+P	Language
+P	72px 基準
+P	zh-TW / zh-CN / en；切換不改變 Business State
+ROW	Surface Switch	Frontend / Admin	切換到各 Surface 的合法首個目標；不新增第三 Surface
+P	Surface Switch
+P	Frontend / Admin
+P	切換到各 Surface 的合法首個目標；不新增第三 Surface
+ROW	Account	132–220px	登入顯示帳戶資訊；未登入顯示 Login；名稱溢出 Ellipsis
+P	Account
+P	132–220px
+P	登入顯示帳戶資訊；未登入顯示 Login；名稱溢出 Ellipsis
+P	Header 永遠固定於 viewport top；工作區 top = 68px，保留 10px vertical gutter。
+P	Header 不顯示 Permission Chip；權限屬 Account-bound Authorization。
+P	Page Title 由各 Page Authority 管理；Global Header 中央不再放頁名，避免與右側 Account Cluster 衝突。
+P	Popover / Language Menu 使用高於 Workspace 的 z-index，但不得改變 Sidebar/Workspace Geometry。
+P	4. Front Navigation / 前台 9 個 L1
+ROW	序	顯示名稱	Page UID	Route
+P	序
+P	顯示名稱
+P	Page UID
+P	Route
+ROW	01	儀表板	workspace:WB-01	/
+P	01
+P	儀表板
+P	workspace:WB-01
+P	/
+ROW	02	專案 / 專題	CORE-01	/core
+P	02
+P	專案 / 專題
+P	CORE-01
+P	/core
+ROW	03	素材	ASSET-01	/assets
+P	03
+P	素材
+P	ASSET-01
+P	/assets
+ROW	04	影片	VIDEO-01	/video
+P	04
+P	影片
+P	VIDEO-01
+P	/video
+ROW	05	剪輯配音	EDIT-01	/edit
+P	05
+P	剪輯配音
+P	EDIT-01
+P	/edit
+ROW	06	QA	QA-01	/qa
+P	06
+P	QA
+P	QA-01
+P	/qa
+ROW	07	資料庫	admin:DB-01	/database
+P	07
+P	資料庫
+P	admin:DB-01
+P	/database
+ROW	08	戰略中心	workspace:STR-01	/strategy
+P	08
+P	戰略中心
+P	workspace:STR-01
+P	/strategy
+ROW	09	最新資訊	workspace:INFO-01	/info
+P	09
+P	最新資訊
+P	workspace:INFO-01
+P	/info
+ROW	Flat L1
+Front 9 項全部為直接 L1 Leaf；禁止子選單、第二行 subtitle、chevron 與 page-local global menu。
+P	Flat L1
+Front 9 項全部為直接 L1 Leaf；禁止子選單、第二行 subtitle、chevron 與 page-local global menu。
+P	5. Admin Navigation / 後台 9 個 L1
+ROW	序	顯示名稱	Page UID	Route
+P	序
+P	顯示名稱
+P	Page UID
+P	Route
+ROW	01	系統維護	admin:SYS-01	/admin/system
+P	01
+P	系統維護
+P	admin:SYS-01
+P	/admin/system
+ROW	02	帳戶與權限	admin:IAM-01	/admin/accounts
+P	02
+P	帳戶與權限
+P	admin:IAM-01
+P	/admin/accounts
+ROW	03	企業自動開發系統	admin:DEV-01	/admin/dev
+P	03
+P	企業自動開發系統
+P	admin:DEV-01
+P	/admin/dev
+ROW	04	社群發布	admin:SOC-01	/admin/social
+P	04
+P	社群發布
+P	admin:SOC-01
+P	/admin/social
+ROW	05	ERP	admin:ERP-01	/admin/erp
+P	05
+P	ERP
+P	admin:ERP-01
+P	/admin/erp
+ROW	06	AI API	admin:AIAPI-01	/admin/aiapi
+P	06
+P	AI API
+P	admin:AIAPI-01
+P	/admin/aiapi
+ROW	07	QA 評分項目	admin:SG-02	/admin/qa-criteria
+P	07
+P	QA 評分項目
+P	admin:SG-02
+P	/admin/qa-criteria
+ROW	08	戰略中心	admin:STR-01	/admin/strategy
+P	08
+P	戰略中心
+P	admin:STR-01
+P	/admin/strategy
+ROW	09	知識庫	admin:KB-01	/admin/knowledge
+P	09
+P	知識庫
+P	admin:KB-01
+P	/admin/knowledge
+P	6. Sidebar Interaction State Machine
+ROW	事件	前狀態	後狀態	Workspace 同步
+P	事件
+P	前狀態
+P	後狀態
+P	Workspace 同步
+ROW	pointerenter / focusin	COLLAPSED	EXPANDING → EXPANDED	left 78→235；width 同步縮窄
+P	pointerenter / focusin
+P	COLLAPSED
+P	EXPANDING → EXPANDED
+P	left 78→235；width 同步縮窄
+ROW	pointerleave + no focus	EXPANDED	COLLAPSING → COLLAPSED	180ms delay 後 left 235→78；width 同步放大
+P	pointerleave + no focus
+P	EXPANDED
+P	COLLAPSING → COLLAPSED
+P	180ms delay 後 left 235→78；width 同步放大
+ROW	Route completed	EXPANDED	COLLAPSED	導航後立即收合並恢復最大 Workspace
+P	Route completed
+P	EXPANDED
+P	COLLAPSED
+P	導航後立即收合並恢復最大 Workspace
+ROW	Escape	EXPANDED	COLLAPSED	若 Focus 不需保留，立即同步收合
+P	Escape
+P	EXPANDED
+P	COLLAPSED
+P	若 Focus 不需保留，立即同步收合
+ROW	Keyboard Tab 進入 Sidebar	COLLAPSED	EXPANDED	Label 顯示；Workspace 同步 reflow，不遮住 Focus target
+P	Keyboard Tab 進入 Sidebar
+P	COLLAPSED
+P	EXPANDED
+P	Label 顯示；Workspace 同步 reflow，不遮住 Focus target
+P	建議共享 transition 160–200ms；`prefers-reduced-motion` 時近乎即時。
+P	Expanded Sidebar 仍固定 top=58px / bottom=0，但不是浮在 Workspace 上方；它是 Shell Grid 的第一欄。
+P	Workspace 自己的 horizontal overflow 只能處理 Page 內部 min-width；不得用 Sidebar Overlay 造成額外 occlusion。
+P	所有 Page 必須能在兩種 Shell 寬度下維持 control 可操作、無遮蓋、無 off-screen primary action。
+P	7. Workspace Mount / Page Integration Contract
+ROW	項目	規格
+P	項目
+P	規格
+ROW	Top	68px
+P	Top
+P	68px
+ROW	Right inset	16px
+P	Right inset
+P	16px
+ROW	Bottom inset	16px
+P	Bottom inset
+P	16px
+ROW	Sidebar gap	14px
+P	Sidebar gap
+P	14px
+ROW	Collapsed available width	calc(100vw - 94px)
+P	Collapsed available width
+P	calc(100vw - 94px)
+ROW	Expanded available width	calc(100vw - 251px)
+P	Expanded available width
+P	calc(100vw - 251px)
+ROW	Overflow	Page 自己的內容若仍低於其 min-width，僅允許 Workspace 內 horizontal scroll
+P	Overflow
+P	Page 自己的內容若仍低於其 min-width，僅允許 Workspace 內 horizontal scroll
+ROW	Mount ownership	Global Shell 只提供 slot，不得包第二層 global outer card
+P	Mount ownership
+P	Global Shell 只提供 slot，不得包第二層 global outer card
+P	8. Page Responsive Compatibility
+ROW	Viewport 情境	Shell 行為	Page 行為
+P	Viewport 情境
+P	Shell 行為
+P	Page 行為
+ROW	>=1531px	Expanded 仍可提供 >=1280px Workspace	大型工作區可維持 1280px 以上內容
+P	>=1531px
+P	Expanded 仍可提供 >=1280px Workspace
+P	大型工作區可維持 1280px 以上內容
+ROW	1440–1530px	Expanded Workspace <1280px	頁面先使用其已定義 responsive reflow；若 Authority 明確 min-width=1280，則在 Workspace 內 scroll
+P	1440–1530px
+P	Expanded Workspace <1280px
+P	頁面先使用其已定義 responsive reflow；若 Authority 明確 min-width=1280，則在 Workspace 內 scroll
+ROW	1024–1439px	Sidebar 仍可收合/展開	不得改回 Overlay；可依 Page Authority 縮排、換列或 Workspace scroll
+P	1024–1439px
+P	Sidebar 仍可收合/展開
+P	不得改回 Overlay；可依 Page Authority 縮排、換列或 Workspace scroll
+ROW	低於產品最小寬度	維持 fail-safe layout	不得新增另一套 Mobile-only workflow，除非 Page Authority 明確允許
+P	低於產品最小寬度
+P	維持 fail-safe layout
+P	不得新增另一套 Mobile-only workflow，除非 Page Authority 明確允許
+P	9. Permission / Visibility / Active State
+P	Navigation 顯示只依 Account Permission Assignment 與 Canonical Navigation Authority。
+P	Permission denied：整個 Nav Item `HIDDEN`，剩餘項目維持原相對順序。
+P	Authorized but state blocked：既有 Control 可 `DISABLED` 並提供可讀原因。
+P	Active Front Item 由 canonical page ancestry 決定；Active Admin Item 由 exact admin page UID 決定；禁止用 URL 字串猜測。
+P	Surface Switch 只顯示使用者有權限進入的合法目標；沒有合法目標時 fail-closed。
+P	10. Controls / A11y / i18n
+ROW	Control	最低尺寸	A11y / 行為
+P	Control
+P	最低尺寸
+P	A11y / 行為
+ROW	Nav hit target	44×44	Icon 20px；Keyboard focus 可見；Label 展開後可讀
+P	Nav hit target
+P	44×44
+P	Icon 20px；Keyboard focus 可見；Label 展開後可讀
+ROW	Header quick button	h36 / min52	Disabled reason 必須可被輔助技術讀取
+P	Header quick button
+P	h36 / min52
+P	Disabled reason 必須可被輔助技術讀取
+ROW	Language	h36 / 72	aria-haspopup/listbox；選中值有 aria-selected
+P	Language
+P	h36 / 72
+P	aria-haspopup/listbox；選中值有 aria-selected
+ROW	Surface switch	h36	aria-current=page；切換不 mutation business data
+P	Surface switch
+P	h36
+P	aria-current=page；切換不 mutation business data
+ROW	Account	h36 / min132	Ellipsis；popover focus/escape 可控
+P	Account
+P	h36 / min132
+P	Ellipsis；popover focus/escape 可控
+P	支援 zh-TW / zh-CN / en；ORANGE ONE、ACPOS、AI、API、QA 等固定術語依全域規則處理。
+P	Focus 不得只靠顏色；Selected/Active 同時使用背景／邊框／狀態屬性。
+P	收合 Sidebar 時 Nav Label 可視上隱藏，但 Icon 必須具有完整 aria-label。
+P	11. Error / Recovery
+ROW	情境	UI 行為	禁止
+P	情境
+P	UI 行為
+P	禁止
+ROW	Identity 未綁定	顯示 Login / 導向登入；Page projection fail-closed	假姓名、假帳戶
+P	Identity 未綁定
+P	顯示 Login / 導向登入；Page projection fail-closed
+P	假姓名、假帳戶
+ROW	Navigation target 不可解析	停用該跳轉並回報 Authority Gap	猜 route
+P	Navigation target 不可解析
+P	停用該跳轉並回報 Authority Gap
+P	猜 route
+ROW	Permission denied	隱藏對應 Item	顯示後再前端擋
+P	Permission denied
+P	隱藏對應 Item
+P	顯示後再前端擋
+ROW	Quick status unavailable	保留幾何、Disabled + reason	顯示假 0 當成功值
+P	Quick status unavailable
+P	保留幾何、Disabled + reason
+P	顯示假 0 當成功值
+ROW	Shell transition error	強制落到穩定 collapsed 或 expanded state	半展開覆蓋 Workspace
+P	Shell transition error
+P	強制落到穩定 collapsed 或 expanded state
+P	半展開覆蓋 Workspace
+P	12. Acceptance Matrix
+ROW	Acceptance UID	PASS 條件
+P	Acceptance UID
+P	PASS 條件
+ROW	SHELL-ACC-01	Sidebar 展開時 Workspace 不被覆蓋；兩者同一 Layout reflow。
+P	SHELL-ACC-01
+P	Sidebar 展開時 Workspace 不被覆蓋；兩者同一 Layout reflow。
+ROW	SHELL-ACC-02	Collapsed 64px / Expanded 221px；Workspace left 分別 78px / 235px。
+P	SHELL-ACC-02
+P	Collapsed 64px / Expanded 221px；Workspace left 分別 78px / 235px。
+ROW	SHELL-ACC-03	Header 58px 固定；Workspace top 68px；右 16、下 16。
+P	SHELL-ACC-03
+P	Header 58px 固定；Workspace top 68px；右 16、下 16。
+ROW	SHELL-ACC-04	Front 9、Admin 9 的 UID / route / order 正確。
+P	SHELL-ACC-04
+P	Front 9、Admin 9 的 UID / route / order 正確。
+ROW	SHELL-ACC-05	Permission denied item hidden；active item 唯一且可追溯。
+P	SHELL-ACC-05
+P	Permission denied item hidden；active item 唯一且可追溯。
+ROW	SHELL-ACC-06	Sidebar keyboard focus 展開時，內容同步縮放，不遮住焦點控制。
+P	SHELL-ACC-06
+P	Sidebar keyboard focus 展開時，內容同步縮放，不遮住焦點控制。
+ROW	SHELL-ACC-07	所有頁在 collapsed / expanded 兩種殼層狀態均無遮蓋、控制可操作。
+P	SHELL-ACC-07
+P	所有頁在 collapsed / expanded 兩種殼層狀態均無遮蓋、控制可操作。
+ROW	SHELL-ACC-08	No fake quick-status / account / permission data。
+P	SHELL-ACC-08
+P	No fake quick-status / account / permission data。
+ROW	SHELL-ACC-09	三語與 Focus / Reduced Motion / Popover 行為可驗證。
+P	SHELL-ACC-09
+P	三語與 Focus / Reduced Motion / Popover 行為可驗證。
+ROW	SHELL-ACC-10	Shell 只提供共用框架，不建立第二套 Page Header / Page Runtime。
+P	SHELL-ACC-10
+P	Shell 只提供共用框架，不建立第二套 Page Header / Page Runtime。
+P	13. Construction Mapping / 後續施工切片
+P	1. 把 Sidebar width 變成 Shell 單一狀態來源，移除 overlay-only workspace 固定 left 規則。
+P	2. 讓 Workspace left / width 或 grid column 與 Sidebar width 同步 transition。
+P	3. 以 1024 / 1280 / 1440 / 1536 / 1920 驗證 collapsed + expanded 共 10 組 viewport/state。
+P	4. 逐頁檢查最左側 Primary Action、Table header、Input、Conversation composer 不被遮住。
+P	5. 重跑 Navigation visibility、Keyboard、Reduced Motion、Header overflow、Frontend/Admin switch。
+P	6. 完成 Visual Review 後再進實際 Runtime/Business Logic；Word 本身不等於程式已施工。
+### PART word/footer1.xml
+P	ORANGE ONE · ACPOS · Mother Basic Design
