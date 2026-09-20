@@ -368,3 +368,213 @@ if audit_errors:
         print('BLOCK: MULTIDIRECTIONAL_AUDIT:'+error)
     raise SystemExit(f'FAIL_MULTIDIRECTIONAL_AUDIT:{len(audit_errors)}')
 print('PASS: multidirectional governance audit modes 9/9 applied to Mother, Current execution profile, state, consumers and cross-stage handoffs')
+
+
+# GENERIC WEB FLOW HIGH-PRESSURE PORTABILITY MATRIX
+# Non-normative synthetic fixtures only. The canonical web-page complexity taxonomy comes from Mother 01.
+import itertools as _itertools
+import json as _json
+import re as _re
+
+_complexity_profiles = (
+    'P1_READ_ONLY','P2_INTERACTIVE','P3_EFFECTFUL',
+    'P4_CROSS_PAGE','P5_ASYNC_EXTERNAL','P6_SECURITY_SENSITIVE',
+)
+for _token in _complexity_profiles:
+    if _token not in mother1:
+        raise SystemExit('FAIL_MOTHER_PAGE_COMPLEXITY_PROFILE_MISSING:'+_token)
+
+_identity_variants = (
+    ('CATALOG','/catalog','ITEM'),
+    ('BILLING','/billing','RECORD'),
+    ('OPERATIONS','/operations','WORK_ITEM'),
+    ('KNOWLEDGE','/knowledge','ENTRY'),
+)
+_required_fixture_key = {
+    'P1_READ_ONLY':'read_only_surface',
+    'P2_INTERACTIVE':'interactive_surface',
+    'P3_EFFECTFUL':'effectful_chain',
+    'P4_CROSS_PAGE':'cross_page_flow',
+    'P5_ASYNC_EXTERNAL':'async_external_contract',
+    'P6_SECURITY_SENSITIVE':'security_contract',
+}
+_cross_page_required = {
+    'source_page','exit_state','exported_identity','transition_trigger','navigation_contract',
+    'target_page','target_entry_state','required_permission','shared_dependency',
+    'failure_resume','back_cancel','audit_evidence',
+}
+_forbidden_product_literal = _re.compile(r'\\b(?:CORE|ASSET|VIDEO|EDIT|VOICE|QA|IAM|ERP|AIAPI)-\\d+\\b')
+
+def _web_flow_fixture(combo, identity):
+    namespace, route_root, entity = identity
+    profiles=set(combo)
+    page_count=2 if 'P4_CROSS_PAGE' in profiles else 1
+    pages=[f'{namespace}-PAGE-{i+1}' for i in range(page_count)]
+    f={
+      'flow_uid':f'{namespace}-FLOW-'+'-'.join(x.split('_',1)[0] for x in combo),
+      'scope_uid':f'{namespace}-SCOPE-'+'-'.join(x.split('_',1)[0] for x in combo),
+      'route_root':route_root,'entity_kind':entity,'profiles':sorted(profiles),'pages':pages,
+    }
+    if 'P1_READ_ONLY' in profiles:
+        f['read_only_surface']={'list_or_detail':True,'mutation_required':False}
+    if 'P2_INTERACTIVE' in profiles:
+        f['interactive_surface']={'input':True,'filter_or_dialog':True,'local_state':True}
+    if 'P3_EFFECTFUL' in profiles:
+        f['effectful_chain']={'action':'MUTATE','validation':'REQUIRED','payload':'REQUIRED','audit':'REQUIRED','recovery':'REQUIRED'}
+    if 'P4_CROSS_PAGE' in profiles:
+        f['cross_page_flow']={
+          'source_page':pages[0],'exit_state':'READY_FOR_HANDOFF','exported_identity':f'{namespace}-ENTITY-001',
+          'transition_trigger':'CONTINUE','navigation_contract':route_root+'/next','target_page':pages[1],
+          'target_entry_state':'HANDOFF_RECEIVED','required_permission':'FLOW_READ',
+          'shared_dependency':f'{namespace}-SHARED-STATE','failure_resume':'RESUME_SOURCE',
+          'back_cancel':'RETURN_SOURCE','audit_evidence':'FLOW_HANDOFF_RECEIPT',
+        }
+    if 'P5_ASYNC_EXTERNAL' in profiles:
+        f['async_external_contract']={'queue_or_provider':'REGISTERED_OWNER','job_identity':'REQUIRED','status_poll_or_webhook':'REQUIRED','recovery':'REQUIRED'}
+    if 'P6_SECURITY_SENSITIVE' in profiles:
+        f['security_contract']={'permission':'REQUIRED','sensitive_data_classification':'REQUIRED','row_or_scope_policy':'REQUIRED','audit':'REQUIRED'}
+    return f
+
+_flow_fixtures=[]
+for _r in range(1,len(_complexity_profiles)+1):
+    for _combo in _itertools.combinations(_complexity_profiles,_r):
+        for _identity in _identity_variants:
+            _f=_web_flow_fixture(_combo,_identity)
+            for _p in _combo:
+                if _required_fixture_key[_p] not in _f:
+                    raise SystemExit(f'FAIL_WEB_FLOW_PROFILE_FIXTURE_MISSING:{_p}:{_f["flow_uid"]}')
+            if 'P4_CROSS_PAGE' in _combo:
+                if len(_f['pages']) < 2 or set(_f['cross_page_flow']) != _cross_page_required:
+                    raise SystemExit('FAIL_CROSS_PAGE_FIXTURE_CONTRACT:'+_f['flow_uid'])
+            if _forbidden_product_literal.search(_json.dumps(_f,sort_keys=True)):
+                raise SystemExit('FAIL_SYNTHETIC_FLOW_PRODUCT_IDENTITY_CONTAMINATION:'+_f['flow_uid'])
+            _flow_fixtures.append(_f)
+
+if len(_flow_fixtures) != 252:
+    raise SystemExit(f'FAIL_GENERIC_WEB_FLOW_FIXTURE_DENOMINATOR:{len(_flow_fixtures)}/252')
+
+# Every synthetic web-flow fixture must traverse every selected-profile Stage binding.
+_flow_stage_binding_checks=0
+for _f in _flow_fixtures:
+    for _uid in expected_stage_uids:
+        _st=stage_rows[_uid]
+        if not (_st.get('operations') and _st.get('outputs') and _st.get('validators') and _st.get('required_evidence')):
+            raise SystemExit(f'FAIL_GENERIC_FLOW_STAGE_BINDING_INCOMPLETE:{_f["flow_uid"]}:{_uid}')
+        _flow_stage_binding_checks += 1
+if _flow_stage_binding_checks != 2772:
+    raise SystemExit(f'FAIL_GENERIC_FLOW_STAGE_BINDING_DENOMINATOR:{_flow_stage_binding_checks}/2772')
+
+# Cache the already validated definition so the high-volume evidence mutations test evidence semantics,
+# not YAML parser throughput.
+_original_validate_definition = eng.validate_definition
+_cached_definition = _original_validate_definition()
+eng.validate_definition = lambda: _cached_definition
+
+_generic_evidence_cases=0
+for _f in _flow_fixtures:
+    for _uid in expected_stage_uids:
+        for _result in ('PASS','BLOCKED'):
+            _ev=synthetic_evidence(_uid,_result)
+            _ev['attempt_uid']=f'{_f["flow_uid"]}-{_uid}-{_result}'
+            _ev['synthetic_web_flow_context']=deepcopy(_f)
+            eng.validate_evidence_data(_uid,_ev)
+            _generic_evidence_cases += 1
+
+def _expect_generic_block(label, stage_uid, evidence):
+    global _generic_negative_cases
+    try:
+        eng.validate_evidence_data(stage_uid,evidence)
+    except eng.StageEngineError:
+        _generic_negative_cases += 1
+        return
+    raise SystemExit('FAIL_EXPECTED_GENERIC_WEB_FLOW_BLOCK:'+label)
+
+_generic_negative_cases=0
+_phase_block_cases=0
+_phase_na_proof_cases=0
+_element_negative_cases=0
+for _uid in expected_stage_uids:
+    _base=synthetic_evidence(_uid,'PASS')
+    # Every one of the 26 common execution phases is independently fail-closed.
+    for _idx,_phase in enumerate(eng.EXPECTED_PHASES):
+        _bad=deepcopy(_base)
+        _bad['phase_trace'][_idx]['status']='BLOCKED'
+        _expect_generic_block(f'phase_block:{_uid}:{_phase}',_uid,_bad)
+        _phase_block_cases += 1
+
+        _bad=deepcopy(_base)
+        _bad['phase_trace'][_idx]['status']='NOT_APPLICABLE_WITH_PROOF'
+        _bad['phase_trace'][_idx].pop('proof',None)
+        _expect_generic_block(f'phase_na_without_proof:{_uid}:{_phase}',_uid,_bad)
+        _phase_na_proof_cases += 1
+
+    # Element-wise denominator integrity across operations, outputs, scanners and validators.
+    for _label,_key,_rows in (
+        ('operation','operation_results',_base['operation_results']),
+        ('output','output_results',_base['output_results']),
+        ('scanner','scanner_results',_base['scanner_results']),
+        ('validator','validator_results',_base['validator_results']),
+    ):
+        for _idx in range(len(_rows)):
+            _bad=deepcopy(_base)
+            _bad[_key][_idx]['status']='BLOCKED'
+            _expect_generic_block(f'{_label}_blocked:{_uid}:{_idx}',_uid,_bad)
+            _element_negative_cases += 1
+
+    # Cross-stage materialization/consumer-readiness fields must each independently block PASS.
+    for _key in (
+        'reference_resolution_complete','physical_materialization_complete',
+        'required_field_completeness_complete','denominator_reconciled','consumer_readiness_complete',
+    ):
+        _bad=deepcopy(_base)
+        _bad['cross_stage_handoff'][_key]=False
+        _expect_generic_block(f'handoff_not_ready:{_uid}:{_key}',_uid,_bad)
+        _element_negative_cases += 1
+    _bad=deepcopy(_base)
+    _bad['cross_stage_handoff']['unresolved_required_dependency_total']=1
+    _expect_generic_block(f'handoff_unresolved:{_uid}',_uid,_bad)
+    _element_negative_cases += 1
+
+    # Every closure denominator independently blocks a false PASS.
+    for _key in ('open_gap_total','closure_blocker_total','remaining_scope_total'):
+        _bad=deepcopy(_base)
+        _bad['denominator'][_key]=1
+        if _key=='open_gap_total':
+            _bad['gaps']=[{'problem_uid':'SYNTH-DENOMINATOR-GAP'}]
+        elif _key=='closure_blocker_total':
+            _bad['closure_blockers']=['SYNTH-DENOMINATOR-BLOCKER']
+        _expect_generic_block(f'denominator_nonzero:{_uid}:{_key}',_uid,_bad)
+        _element_negative_cases += 1
+
+    # Missing each required-evidence type must fail.
+    for _idx in range(len(_base['required_evidence'])):
+        _bad=deepcopy(_base)
+        _bad['required_evidence'].pop(_idx)
+        _expect_generic_block(f'required_evidence_missing:{_uid}:{_idx}',_uid,_bad)
+        _element_negative_cases += 1
+
+    _bad=deepcopy(_base)
+    _bad['next_stage_transition']['next_stage_uid']='SYNTH-WRONG-NEXT'
+    _expect_generic_block(f'next_stage_drift:{_uid}',_uid,_bad)
+    _element_negative_cases += 1
+
+eng.validate_definition = _original_validate_definition
+
+if _phase_block_cases != 286 or _phase_na_proof_cases != 286:
+    raise SystemExit(f'FAIL_COMMON_PHASE_NEGATIVE_DENOMINATOR:{_phase_block_cases}/286:{_phase_na_proof_cases}/286')
+
+# Plans and reusable engine surfaces must not leak concrete ACPOS page identities.
+for _uid in expected_stage_uids:
+    _plan_blob=_json.dumps(eng.plan(_uid),ensure_ascii=False,sort_keys=True)
+    if _forbidden_product_literal.search(_plan_blob):
+        raise SystemExit('FAIL_COMMON_PLAN_PRODUCT_IDENTITY_LEAK:'+_uid)
+
+print('PASS: Mother page-complexity taxonomy P1-P6 verified and all 63 non-empty combinations exercised')
+print(f'PASS: generic web-flow synthetic fixtures {len(_flow_fixtures)}/252 across four unrelated identity/route namespaces')
+print(f'PASS: generic web-flow -> selected-profile stage binding checks {_flow_stage_binding_checks}/2772')
+print(f'PASS: generic web-flow normalized evidence PASS+BLOCKED cases {_generic_evidence_cases}/5544')
+print(f'PASS: every common execution phase fail-closed BLOCK cases {_phase_block_cases}/286')
+print(f'PASS: every common execution phase NOT_APPLICABLE proof enforcement cases {_phase_na_proof_cases}/286')
+print(f'PASS: operation/output/scanner/validator/handoff/denominator/evidence element-wise negative cases {_element_negative_cases}')
+print(f'PASS: total generic high-pressure negative cases {_generic_negative_cases}')
+print('PASS: common Stage Execution Engine remains product-identity neutral across P1-P6 web-flow taxonomy; product execution credit=0')

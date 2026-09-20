@@ -1,0 +1,33 @@
+schema_version: 1
+artifact_type: NON_NORMATIVE_GENERIC_WEB_FLOW_HIGH_PRESSURE_AUDIT
+normative_authority: false
+governance_uid: GOV-REV-20260920-CROSS-STAGE-MATERIALIZATION-CONSUMER-READINESS-HARDENING
+work_unit_uid: WU-TEST-GENERIC-WEB-FLOW-HIGH-PRESSURE-001
+authorization_uid: USR-DIRECTIVE-20260920-GENERIC-WEB-FLOW-HIGH-PRESSURE-AUDIT-R1
+baseline_head_sha: b3dd5f72663c28aaa514fd9cebd1a896605e1044
+canonical_owner: governance/ci/test_stage_execution_engine.py
+purpose: PROVE_COMMON_GOVERNANCE_AND_STAGE_ENGINE_PORTABILITY_ACROSS_DECLARED_WEB_PAGE_COMPLEXITY_TAXONOMY
+mother_complexity_profiles:
+- P1_READ_ONLY
+- P2_INTERACTIVE
+- P3_EFFECTFUL
+- P4_CROSS_PAGE
+- P5_ASYNC_EXTERNAL
+- P6_SECURITY_SENSITIVE
+test_matrix:
+  nonempty_profile_combinations: 63
+  identity_route_namespaces: 4
+  synthetic_flow_fixtures: 252
+  selected_profile_stages: 11
+  common_execution_phases: 26
+  expected_flow_stage_binding_checks: 2772
+  expected_normalized_pass_blocked_evidence_cases: 5544
+  expected_phase_block_negative_cases: 286
+  expected_phase_not_applicable_proof_negative_cases: 286
+  multidirectional_audit_modes: 9
+product_execution: false
+product_content_recreated: false
+product_stage_credit: 0
+mother_normative_mutation: false
+current_specification_mutation: false
+current_status: ACTIVE_PENDING_EXACT_HEAD_EXECUTION

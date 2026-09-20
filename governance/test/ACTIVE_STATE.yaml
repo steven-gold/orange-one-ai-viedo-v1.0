@@ -111,8 +111,8 @@ specification_mutation_safety:
   ordinary_mid_stage_specification_mutation: BLOCK
   stage_end_consolidated_promotion_requires_new_explicit_directive: true
   execution_context_lock_required: true
-status: CORE_ASSET_MULTIDIRECTIONAL_PROCESS_AUDIT_CLOSED_PRODUCT_RESUME_RESTORED
-next_action: WORK_UNIT_RESOLUTION_GATE_FOR_FRESH_STAGE01_SOURCE_INTAKE_REEXECUTION
+status: ACTIVE_GENERIC_WEB_FLOW_HIGH_PRESSURE_AUDIT_R1
+next_action: RUN_GENERIC_WEB_FLOW_PORTABILITY_MATRIX_AND_EXACT_HEAD_GATES
 previous_closed_product_work_unit:
   work_unit_uid: WU-STAGE02-CORE01-STRUCTURAL-REMEDIATION-001
   canonical_name: CORE01_STRUCTURAL_CONTRACT_REMEDIATION
@@ -291,10 +291,11 @@ previous_closed_work_unit:
     source_runtime_residual_count: 0
     product_stage_credit: 0
 resume_control:
-  current_resume_point: CORE01_STAGE01_STAGE03_CLEAN_BASELINE_READY_FRESH_STAGE01_WUR_REQUIRED
-  current_work_unit_uid: null
-  current_owner: .github/governance-source/active/source/10_REGISTRY/GOVERNANCE_LIFECYCLE_STAGE_REGISTRY.yaml
-  exact_next_action: WORK_UNIT_RESOLUTION_GATE_FOR_FRESH_STAGE01_SOURCE_INTAKE_REEXECUTION
+  current_resume_point: GENERIC_WEB_FLOW_HIGH_PRESSURE_AUDIT_R1_ACTIVE
+  current_work_unit_uid: WU-TEST-GENERIC-WEB-FLOW-HIGH-PRESSURE-001
+  current_owner: governance/ci/test_stage_execution_engine.py
+  exact_next_action: RUN_GENERIC_WEB_FLOW_PORTABILITY_MATRIX_AND_EXACT_HEAD_GATES
+  product_resume_preserved: CORE01_STAGE01_STAGE03_CLEAN_BASELINE_READY_FRESH_STAGE01_WUR_REQUIRED
   reentry_owner_capability: SOURCE_INTAKE_BASE_BLUEPRINT
   reentry_stage_uid: STAGE-01
   reentry_reason: CLEAN_BASELINE_PERSISTED_AFTER_MULTIDIRECTIONAL_PROCESS_AUDIT_CLOSURE
@@ -390,8 +391,8 @@ pending_governance_review:
   - STAGE03
   - WEBSITE_CONSTRUCTION
   - DEPLOYMENT
-current_primary_task_layer: PRODUCT_STAGE_EXECUTION
-current_primary_task_authorization_uid: USR-DIRECTIVE-20260920-CLEAR-STAGE01-STAGE03-CORE01-R1
+current_primary_task_layer: TEST_OR_VALIDATION_MAINTENANCE
+current_primary_task_authorization_uid: USR-DIRECTIVE-20260920-GENERIC-WEB-FLOW-HIGH-PRESSURE-AUDIT-R1
 current_primary_task_product_stage_credit: 0
 earlier_closed_product_work_unit:
   work_unit_uid: WU-STAGE02-CORE01-FRESH-TEST-001
@@ -2617,8 +2618,60 @@ closed_test_validation_maintenance_work_unit_multidirectional_audit:
     full_line_75_file_high_pressure_result: success
     verified_source_byte_clean_result: success
   legal_next_transition: RESTORE_CLEAN_PRODUCT_RESUME_AND_REQUIRE_FRESH_STAGE01_WORK_UNIT_RESOLUTION
-active_work_unit: null
-last_work_unit_resolution_gate: &id001
+active_work_unit:
+  work_unit_uid: WU-TEST-GENERIC-WEB-FLOW-HIGH-PRESSURE-001
+  canonical_name: GENERIC_WEB_FLOW_HIGH_PRESSURE_PORTABILITY_AND_FAIL_CLOSED_AUDIT
+  primary_task_layer: TEST_OR_VALIDATION_MAINTENANCE
+  current_status: ACTIVE_EXECUTION
+  authorization_uid: USR-DIRECTIVE-20260920-GENERIC-WEB-FLOW-HIGH-PRESSURE-AUDIT-R1
+  canonical_owner: governance/ci/test_stage_execution_engine.py
+  co_owners:
+  - governance/ci/stage_execution_engine.py
+  - governance/ci/validate_governance_portability.py
+  scope:
+  - MOTHER_PAGE_COMPLEXITY_P1_THROUGH_P6
+  - ALL_63_NONEMPTY_PAGE_COMPLEXITY_PROFILE_COMBINATIONS
+  - ALL_SELECTED_PROFILE_STAGES
+  - ALL_COMMON_EXECUTION_PHASES
+  - POSITIVE_AND_FAIL_CLOSED_NEGATIVE_EVIDENCE
+  - PRODUCT_IDENTITY_ROUTE_SCOPE_SUBSTITUTION
+  - ACTIVE_TRANSITIVE_CONSUMER_PORTABILITY
+  out_of_scope:
+  - PRODUCT_CONTENT_CREATION
+  - PRODUCT_EXECUTION
+  - PRODUCT_AUTHORITY_CHANGE
+  - MOTHER_NORMATIVE_CHANGE
+  - CURRENT_SPECIFICATION_CHANGE
+  - WEBSITE_IMPLEMENTATION
+  - DEPLOYMENT
+  product_stage_credit: 0
+  definition_of_done:
+  - P1_P6_CANONICAL_TAXONOMY_RECONFIRMED_FROM_MOTHER
+  - ALL_63_NONEMPTY_PROFILE_COMBINATIONS_MATERIALIZED_AS_SYNTHETIC_TEST_FIXTURES
+  - EVERY_PROFILE_COMBINATION_TRAVERSES_ALL_11_STAGE_BINDINGS
+  - NORMALIZED_PASS_AND_BLOCKED_EVIDENCE_VALIDATES_FOR_GENERIC_FLOW_FIXTURES
+  - EVERY_COMMON_EXECUTION_PHASE_HAS_FAIL_CLOSED_NEGATIVE_CASE
+  - OPERATION_OUTPUT_SCANNER_VALIDATOR_DENOMINATORS_HAVE_ELEMENT_WISE_NEGATIVE_CASES
+  - CROSS_STAGE_HANDOFF_AND_DENOMINATOR_NEGATIVES_BLOCK
+  - PRODUCT_IDENTITY_ROUTE_SCOPE_SUBSTITUTION_HAS_ZERO_HARDCODED_ACPOS_LEAK
+  - NINE_MULTIDIRECTIONAL_AUDIT_MODES_REMAIN_PASS
+  - EXACT_HEAD_SELECTED_PROFILE_FULL_LINE_BRANCH_GUARD_SUCCESS
+last_work_unit_resolution_gate:
+  resolution_uid: WUR-TEST-GENERIC-WEB-FLOW-HIGH-PRESSURE-20260920-001
+  normative_authority: false
+  result: PASS_SINGLE_LEGAL_SUCCESSOR
+  requested_primary_task_layer: TEST_OR_VALIDATION_MAINTENANCE
+  resolved_work_unit_uid: WU-TEST-GENERIC-WEB-FLOW-HIGH-PRESSURE-001
+  authorization_uid: USR-DIRECTIVE-20260920-GENERIC-WEB-FLOW-HIGH-PRESSURE-AUDIT-R1
+  canonical_owner: governance/ci/test_stage_execution_engine.py
+  basis:
+  - EXPLICIT_USER_DIRECTIVE
+  - PREDECESSOR_MULTIDIRECTIONAL_PROCESS_AUDIT_CLOSED
+  - PRODUCT_RESUME_PRESERVED_AND_PRODUCT_EXECUTION_BLOCKED
+  - EXISTING_COMMON_STAGE_ENGINE_IS_SINGLE_REUSABLE_OWNER
+  - MOTHER_P1_THROUGH_P6_PAGE_COMPLEXITY_TAXONOMY
+  product_stage_credit: 0
+previous_work_unit_resolution_gate_before_generic_web_flow_audit:
   resolution_uid: WUR-GOV-CROSS-STAGE-MATERIALIZATION-CONTINUITY-HARDENING-001
   normative_authority: false
   result: PASS_SINGLE_LEGAL_SUCCESSOR
