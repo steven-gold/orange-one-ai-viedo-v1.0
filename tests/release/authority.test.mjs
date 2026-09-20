@@ -39,7 +39,7 @@ function currentAuthoritySetSection(name) {
   const values = [];
   for (let index = start + 1; index < lines.length; index += 1) {
     const line = lines[index];
-    if (/^  [A-Za-z0-9_]+:\s*$/.test(line)) break;
+    if (/^[A-Za-z0-9_]+:\s*$/.test(line) || /^  [A-Za-z0-9_]+:\s*$/.test(line)) break;
     const match = line.match(/^  - (.+)$/);
     if (match) values.push(match[1]);
   }
