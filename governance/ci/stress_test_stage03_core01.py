@@ -99,7 +99,7 @@ for row in stage2_wb.get('section_workbenches') or []:
 check('HP-032', wbl.get('section_workbench_visual_bindings') == expected_wb, 'WORKBENCH', 'Section workbench visual bindings must exactly preserve Stage-02 membership')
 atomic = stage2_wb.get('atomic_workbenches') or []
 explicit_atomic = wbl.get('atomic_workbench_visual_bindings') or wbl.get('atomic_workbenches')
-check('HP-033', bool(atomic) and bool(explicit_atomic), 'ATOMIC_WORKBENCH', f'stage2_atomic={len(atomic)} stage3_explicit_atomic={('present' if explicit_atomic else 'missing')}')
+check('HP-033', bool(atomic) and bool(explicit_atomic), 'ATOMIC_WORKBENCH', f"stage2_atomic={len(atomic)} stage3_explicit_atomic={('present' if explicit_atomic else 'missing')}")
 svg = preview_svg.read_text(encoding='utf-8') if preview_svg.is_file() else ''
 positions = {}
 for m in re.finditer('<text[^>]*\\by="([0-9.]+)"[^>]*>(CORE-01-VIS-[A-Z0-9-]+)', svg):
@@ -163,7 +163,7 @@ REPORT.parent.mkdir(parents=True, exist_ok=True)
 REPORT.write_text(json.dumps(report, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
 print(json.dumps({k: report[k] for k in ('result', 'check_total', 'pass_total', 'fail_total', 'review_head')}, ensure_ascii=False, indent=2))
 for f in findings:
-    print(f'FAIL:{f['check_uid']}:{f['category']}:{f['detail']}')
+    print(f"FAIL:{f['check_uid']}:{f['category']}:{f['detail']}")
 if result != 'PASS':
     raise SystemExit(1)
 
