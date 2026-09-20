@@ -55,7 +55,12 @@ jobs:
 
       - name: Run Stage-01 through Stage-11 actual isolated high-pressure flow
         run: |
-          python governance/ci/run_core01_isolated_full_lifecycle_test.py             --sandbox-root "$CORE01_SANDBOX"             --product-root "$CORE01_PRODUCT"             --source-head "$CORE01_SOURCE_HEAD"             --report "$CORE01_REPORT"
+          python governance/ci/run_core01_isolated_full_lifecycle_test.py \
+            --sandbox-root "$CORE01_SANDBOX" \
+            --product-root "$CORE01_PRODUCT" \
+            --source-head "$CORE01_SOURCE_HEAD" \
+            --report "$CORE01_REPORT" \
+            --content-report "$CORE01_CONTENT_REPORT"
 
       - name: Delete complete isolated test folder
         if: always()
