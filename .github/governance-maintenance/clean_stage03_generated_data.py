@@ -66,6 +66,60 @@ def hobj(d):
     return hashlib.sha256(yaml.safe_dump(x,allow_unicode=True,sort_keys=True,width=180).encode()).hexdigest()
 
 reg=load(REG); state=load(STATE); scope=load(SCOPE)
+already_clean = (not VISUAL_ROOT.exists()) and (not TEST_ROOT.exists())
+if already_clean:
+    receipt=state.get('stage03_clean_baseline_receipt') or {}
+    if receipt.get('result')!='PASS_CLEAN_BASELINE' or receipt.get('deleted_file_count')!=20:
+        raise SystemExit('BLOCK: generated roots absent without valid clean-baseline receipt')
+    if (reg.get('active_specification') or {}).get('governance_uid')!=GOV or state.get('specification_uid')!=GOV or scope.get('governance_uid')!=GOV:
+        raise SystemExit('BLOCK: clean-baseline repair governance drift')
+    work=state.get('active_work_unit') or {}
+    if work.get('work_unit_uid')!=WU or state.get('current_primary_task_layer')!='PRODUCT_STAGE_EXECUTION':
+        raise SystemExit('BLOCK: clean-baseline repair product WU drift')
+    protected_before={str(p.relative_to(ROOT)):digest_path(p) for p in PROTECTED}
+    ps=state.setdefault('selected_execution_profile_state',{})
+    ps.pop('active_attempt_state_key',None)
+    trans=state.setdefault('governance_revision_transition',{})
+    trans['fresh_revalidation_required']=False
+    ex=state.setdefault('execution',{})
+    s3=ex.setdefault('stage3',{})
+    s3['result']='NOT_EXECUTED'
+    s3['execution_started']=False
+    s3['artifact_root_present']=False
+    s3['output_owner_materialized']=False
+    s3['prior_results_authoritative_for_current_governance']=False
+    s3['revalidation_required_under_current_governance']=False
+    ex['stage3']=s3
+    ex['website_construction_allowed']=False
+    ex['deployment_allowed']=False
+    state['execution']=ex
+    receipt['state_projection_finalized']=True
+    receipt['state_projection_repair_source_head_sha']=run('git','rev-parse','HEAD').stdout.strip()
+    receipt['result']='PASS_CLEAN_BASELINE_CURRENT_STATE_FINALIZED'
+    state['stage03_clean_baseline_receipt']=receipt
+    state['status']='ACTIVE_CORE01_STAGE03_CLEAN_BASELINE_READY'
+    state['next_action']='PATCH_STAGE03_PRODUCER_FOR_V2215_AND_RUN_FRESH_STAGE03'
+    state['resume_control']={
+      'current_resume_point':'STAGE03_CORE01_CLEAN_BASELINE_READY',
+      'current_work_unit_uid':WU,
+      'current_owner':PRODUCER,
+      'historical_stage2_results_are_current_state':False,
+      'stage2_execution_requires_fresh_entry_resolution':False,
+      'exact_next_action':'PATCH_STAGE03_PRODUCER_FOR_V2215_AND_RUN_FRESH_STAGE03',
+      'governance_uid':GOV
+    }
+    dump(STATE,state)
+    scope['closure_status']='STAGE03_CLEAN_BASELINE_READY'
+    scope['next_action']='PATCH_STAGE03_PRODUCER_FOR_V2215_AND_RUN_FRESH_STAGE03'
+    scope['fresh_revalidation_required']=False
+    scope['stage_exit_credit_allowed']=False
+    scope['content_hash']=hobj(scope)
+    dump(SCOPE,scope)
+    protected_after={str(p.relative_to(ROOT)):digest_path(p) for p in PROTECTED}
+    if protected_before!=protected_after:
+        raise SystemExit('BLOCK: protected Stage-01/02 drift during clean-state finalization')
+    print(json.dumps({'result':'PASS_CLEAN_BASELINE_CURRENT_STATE_FINALIZED','deleted_file_count':20,'next_action':state['next_action']},indent=2))
+    raise SystemExit(0)
 if (reg.get('active_specification') or {}).get('governance_uid')!=GOV: raise SystemExit('BLOCK: governance drift')
 if state.get('specification_uid')!=GOV or scope.get('governance_uid')!=GOV: raise SystemExit('BLOCK: projector governance drift')
 work=state.get('active_work_unit') or {}
