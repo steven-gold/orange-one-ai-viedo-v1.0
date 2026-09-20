@@ -1,28 +1,35 @@
 name: Stage-03 Visual Design Product Execution
-on:
+
+"on":
   push:
-    branches: [rebuild-v2.1.1]
+    branches:
+      - rebuild-v2.1.1
     paths:
-      - 'governance/test/ACTIVE_STATE.yaml'
-      - 'governance/test/CURRENT_EXECUTION_SCOPE_MANIFEST.yaml'
-      - 'governance/ci/run_current_stage3_visual_design.py'
-      - 'governance/ci/validate_active_consumer_reference_integrity.py'
-      - '.github/workflows/stage03-visual-design.yml'
-  workflow_dispatch:
+      - governance/test/ACTIVE_STATE.yaml
+      - governance/test/CURRENT_EXECUTION_SCOPE_MANIFEST.yaml
+      - governance/ci/run_current_stage3_visual_design.py
+      - governance/ci/validate_active_consumer_reference_integrity.py
+      - .github/workflows/stage03-visual-design.yml
+  workflow_dispatch: {}
+
 permissions:
   contents: write
   actions: read
+
 jobs:
   stage03-actual-execution:
-    if: ${{ github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, '[stage03-execute]') }}
+    if: >-
+      ${{ github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, '[stage03-execute]') }}
     runs-on: ubuntu-24.04
     timeout-minutes: 45
     env:
-      PYTHONDONTWRITEBYTECODE: '1'
+      PYTHONDONTWRITEBYTECODE: "1"
       PYTHONPYCACHEPREFIX: /tmp/acpos-stage03-pycache
     steps:
       - uses: actions/checkout@v4
-        with: {ref: ${{ github.sha }}, fetch-depth: 0}
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
       - name: Install verifier dependency
         run: python -m pip install --disable-pip-version-check 'PyYAML==6.0.2'
       - name: Lock exact execution SHA
