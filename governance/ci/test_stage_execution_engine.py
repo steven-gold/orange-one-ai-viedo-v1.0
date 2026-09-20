@@ -316,9 +316,15 @@ if registry_sep.get('test_state_may_be_normative_authority') is not False:
 if registry_sep.get('temporary_test_artifact_may_be_normative_authority') is not False:
     audit_error('SOURCE_TRUTH_CONTAMINATION','TEMP_TEST_NORMATIVE_AUTHORITY_NOT_BLOCKED')
 mother1=(ROOT/'.github/governance-source/active/source/12_DOCS/mother-spec/01_BLUEPRINT_DESIGN_GOVERNANCE.md').read_text(encoding='utf-8')
-for required_token in ('Generated Content','SOURCE_CAPTURE_GAP','CROSS_STAGE_HANDOFF_READINESS_LEDGER'):
+for required_token in ('Generated Content','SOURCE_CAPTURE_GAP','跨階段來源實體化與後繼可用性 Gate'):
     if required_token not in mother1:
         audit_error('SOURCE_TRUTH_CONTAMINATION',f'MOTHER01_REQUIRED_POLICY_TOKEN_MISSING:{required_token}')
+mother3=(ROOT/'.github/governance-source/active/source/12_DOCS/mother-spec/03_EXECUTION_CONTROL_STANDARD.md').read_text(encoding='utf-8')
+mother4=(ROOT/'.github/governance-source/active/source/12_DOCS/mother-spec/04_AUDIT_PROGRESS_STANDARD.md').read_text(encoding='utf-8')
+if 'CROSS_STAGE_HANDOFF_READINESS_LEDGER' not in mother3:
+    audit_error('SOURCE_TRUTH_CONTAMINATION','MOTHER03_CROSS_STAGE_HANDOFF_LEDGER_OWNER_MISSING')
+if 'CROSS_STAGE_HANDOFF_READINESS_LEDGER' not in mother4:
+    audit_error('SOURCE_TRUTH_CONTAMINATION','MOTHER04_CROSS_STAGE_HANDOFF_AUDIT_OWNER_MISSING')
 
 # Mode 9: Cross-Stage Handoff.
 for uid in expected_stage_uids:
