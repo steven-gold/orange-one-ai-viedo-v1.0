@@ -7,7 +7,8 @@ from docx.oxml import OxmlElement
 from docx.oxml.ns import qn
 
 ROOT=Path('.')
-MARK='ACPOS-20260921-UNIFIED-CONTROL-RUNTIME-MATRIX-V2'\nOLD_HEADING='Unified Page / Control / Action / API / DB / Runtime Construction Matrix'
+MARK='ACPOS-20260921-UNIFIED-CONTROL-RUNTIME-MATRIX-V2'
+OLD_HEADING='Unified Page / Control / Action / API / DB / Runtime Construction Matrix'
 TARGETS={
 '01_ACPOS_Global_Intelligent_Brain_Information_Lifecycle_Mother_Basic_Logic_Design_Normative_Contract_v4.docx':[
  'ACPOS_WB-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx','ACPOS_INFO-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx','ACPOS_KB-01_知識庫_Mother_Basic_Design_OPTIMIZED.docx','ACPOS_DB-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx'],
