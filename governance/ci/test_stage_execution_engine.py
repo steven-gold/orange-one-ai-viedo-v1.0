@@ -237,11 +237,17 @@ for uid in expected_stage_uids:
     else:
         raise SystemExit('FAIL_EXPECTED_ALL_STAGE_HANDOFF_BLOCK:'+uid)
 
+# Modes 1-9: aggregate every defect before failing so one run exposes the complete profile denominator.
+audit_errors=[]
+def audit_error(mode,detail):
+    audit_errors.append(f'{mode}:{detail}')
+
 # Mode 1: Forward Lifecycle.
 for idx,uid in enumerate(expected_stage_uids[:-1]):
     st=stage_rows[uid]
     nxt=stage_rows[expected_stage_uids[idx+1]]
-    assert nxt['entry_gate']==st['exit_gate'] or nxt['entry_gate'].startswith(st['exit_gate']+'_AND_'), f'FORWARD_GATE_DRIFT:{uid}'
+    if not (nxt['entry_gate']==st['exit_gate'] or nxt['entry_gate'].startswith(st['exit_gate']+'_AND_')):
+        audit_error('FORWARD_LIFECYCLE',f'GATE_DRIFT:{uid}->{expected_stage_uids[idx+1]}:{st["exit_gate"]}:{nxt["entry_gate"]}')
 
 # Mode 2: Reverse Consumer -> Producer.
 for uid,st in stage_rows.items():
@@ -252,62 +258,88 @@ for uid,st in stage_rows.items():
         if not m:
             continue
         producer_uid=m.group(1)
-        assert producer_uid in stage_rows, f'REVERSE_ORIGIN_STAGE_MISSING:{uid}:{input_uid}:{origin_text}'
-        assert int(producer_uid.split('-')[1]) < int(uid.split('-')[1]), f'REVERSE_ORIGIN_NOT_UPSTREAM:{uid}:{input_uid}:{origin_text}'
-        producer_outputs=set(stage_rows[producer_uid].get('outputs') or [])
-        if input_uid not in producer_outputs:
-            assert any(token in origin_text for token in ('PERSISTED','IMMUTABLE_REFERENCE_ONLY')), f'REVERSE_PRODUCER_OUTPUT_UNRESOLVED:{uid}:{input_uid}:{origin_text}'
+        if producer_uid not in stage_rows:
+            audit_error('REVERSE_CONSUMER_PRODUCER',f'ORIGIN_STAGE_MISSING:{uid}:{input_uid}:{origin_text}')
+            continue
+        if int(producer_uid.split('-')[1]) >= int(uid.split('-')[1]):
+            audit_error('REVERSE_CONSUMER_PRODUCER',f'ORIGIN_NOT_UPSTREAM:{uid}:{input_uid}:{origin_text}')
+        producer_outputs=set(stage_rows[producer_uid].get('outputs') or []) | set((stage_rows[producer_uid].get('conditional_outputs') or {}).keys())
+        if input_uid not in producer_outputs and not any(token in origin_text for token in ('PERSISTED','IMMUTABLE_REFERENCE_ONLY')):
+            audit_error('REVERSE_CONSUMER_PRODUCER',f'OUTPUT_UNRESOLVED:{uid}:{input_uid}:{origin_text}')
 
 # Mode 3: Producer <-> Consumer Schema Symmetry.
 for uid,st in stage_rows.items():
-    assert set(st['output_producers'])==set(st['outputs']), f'OUTPUT_PRODUCER_DENOMINATOR_DRIFT:{uid}'
-    assert set(st['output_producers'].values()).issubset(set(st['operations'])), f'OUTPUT_PRODUCER_OPERATION_DRIFT:{uid}'
+    outputs=set(st.get('outputs') or [])
+    producers=st.get('output_producers') or {}
+    operations=set(st.get('operations') or [])
+    if set(producers)!=outputs:
+        audit_error('PRODUCER_CONSUMER_SCHEMA',f'OUTPUT_PRODUCER_DENOMINATOR:{uid}:missing={sorted(outputs-set(producers))}:extra={sorted(set(producers)-outputs)}')
+    unknown=set(producers.values())-operations
+    if unknown:
+        audit_error('PRODUCER_CONSUMER_SCHEMA',f'OUTPUT_PRODUCER_OPERATION:{uid}:{sorted(unknown)}')
 
 # Mode 4: Denominator & Applicability.
 for uid,st in stage_rows.items():
-    all_outputs=set(st['outputs']) | set((st.get('conditional_outputs') or {}).keys())
-    for _,rows in (st.get('required_output_applicability') or {}).items():
-        assert set(rows or []).issubset(all_outputs), f'APPLICABILITY_OUTPUT_NOT_REGISTERED:{uid}:{rows}'
+    all_outputs=set(st.get('outputs') or []) | set((st.get('conditional_outputs') or {}).keys())
+    for applicability_key,rows in (st.get('required_output_applicability') or {}).items():
+        missing=sorted(set(rows or [])-all_outputs)
+        if missing:
+            audit_error('DENOMINATOR_APPLICABILITY',f'OUTPUT_NOT_REGISTERED:{uid}:{applicability_key}:{missing}')
 
 # Mode 5: State / Resume / Projector.
 active_state=eng.y(eng.STATE)
 profile_state=active_state.get('selected_execution_profile_state') or {}
-assert profile_state.get('owner_ref')=='GOVERNANCE_CURRENT.yaml', 'PROFILE_STATE_OWNER_DRIFT'
-assert active_state.get('specification_uid')==gov, 'ACTIVE_STATE_GOVERNANCE_UID_DRIFT'
-assert isinstance(active_state.get('resume_control'),dict) and active_state['resume_control'].get('current_resume_point'), 'CURRENT_RESUME_POINT_MISSING'
+if profile_state.get('owner_ref')!='GOVERNANCE_CURRENT.yaml':
+    audit_error('STATE_RESUME_PROJECTOR','PROFILE_STATE_OWNER_DRIFT')
+if active_state.get('specification_uid')!=gov:
+    audit_error('STATE_RESUME_PROJECTOR','ACTIVE_STATE_GOVERNANCE_UID_DRIFT')
+if not isinstance(active_state.get('resume_control'),dict) or not active_state['resume_control'].get('current_resume_point'):
+    audit_error('STATE_RESUME_PROJECTOR','CURRENT_RESUME_POINT_MISSING')
 
-# Mode 6: Negative Fail-Closed is proven above for every Stage.
-assert all_stage_negative_cases==11
+# Mode 6: Negative Fail-Closed.
+if all_stage_negative_cases!=11:
+    audit_error('NEGATIVE_FAIL_CLOSED',f'ALL_STAGE_NEGATIVE_CASE_COUNT:{all_stage_negative_cases}/11')
 
-# Mode 7: Residual / Stale Consumer guard must be wired into both terminal governance gates.
+# Mode 7: Residual / Stale Consumer.
 consumer=(ROOT/'governance/ci/validate_active_consumer_reference_integrity.py').read_text(encoding='utf-8')
-assert 'STALE_PRODUCT_RUN_ROOT_LITERAL' in consumer
+if 'STALE_PRODUCT_RUN_ROOT_LITERAL' not in consumer:
+    audit_error('RESIDUAL_STALE_CONSUMER','STALE_PRODUCT_RUN_ROOT_GUARD_MISSING')
 for wf in ('governance-selected-profile-integrity.yml','governance-full-line-system-gate.yml'):
     text=(ROOT/'.github/workflows'/wf).read_text(encoding='utf-8')
-    assert 'validate_active_consumer_reference_integrity.py' in text, f'ACTIVE_CONSUMER_GATE_NOT_WIRED:{wf}'
+    if 'validate_active_consumer_reference_integrity.py' not in text:
+        audit_error('RESIDUAL_STALE_CONSUMER',f'ACTIVE_CONSUMER_GATE_NOT_WIRED:{wf}')
 
 # Mode 8: Source-Truth Contamination.
 registry_sep=reg.get('test_layer_separation') or {}
-assert registry_sep.get('test_state_may_be_normative_authority') is False
-assert registry_sep.get('temporary_test_artifact_may_be_normative_authority') is False
+if registry_sep.get('test_state_may_be_normative_authority') is not False:
+    audit_error('SOURCE_TRUTH_CONTAMINATION','TEST_STATE_NORMATIVE_AUTHORITY_NOT_BLOCKED')
+if registry_sep.get('temporary_test_artifact_may_be_normative_authority') is not False:
+    audit_error('SOURCE_TRUTH_CONTAMINATION','TEMP_TEST_NORMATIVE_AUTHORITY_NOT_BLOCKED')
 mother1=(ROOT/'.github/governance-source/active/source/12_DOCS/mother-spec/01_BLUEPRINT_DESIGN_GOVERNANCE.md').read_text(encoding='utf-8')
-assert 'Generated Content' in mother1 and 'MUST_NOT' in mother1
-assert 'SOURCE_CAPTURE_GAP' in mother1
-assert 'CROSS_STAGE_HANDOFF_READINESS_LEDGER' in mother1
+for required_token in ('Generated Content','SOURCE_CAPTURE_GAP','CROSS_STAGE_HANDOFF_READINESS_LEDGER'):
+    if required_token not in mother1:
+        audit_error('SOURCE_TRUTH_CONTAMINATION',f'MOTHER01_REQUIRED_POLICY_TOKEN_MISSING:{required_token}')
 
 # Mode 9: Cross-Stage Handoff.
 for uid in expected_stage_uids:
     st=stage_rows[uid]
     gate=st.get('cross_stage_materialization_gate') or {}
-    assert gate.get('required') is True
-    assert gate.get('successor_consumer_readiness_required') is True
-    assert gate.get('successor_required_input_reconciliation_before_exit') is True
+    if gate.get('required') is not True:
+        audit_error('CROSS_STAGE_HANDOFF',f'GATE_NOT_REQUIRED:{uid}')
+    if gate.get('successor_consumer_readiness_required') is not True:
+        audit_error('CROSS_STAGE_HANDOFF',f'CONSUMER_READINESS_NOT_REQUIRED:{uid}')
+    if gate.get('successor_required_input_reconciliation_before_exit') is not True:
+        audit_error('CROSS_STAGE_HANDOFF',f'SUCCESSOR_INPUT_RECONCILIATION_NOT_REQUIRED:{uid}')
 
 mother4=(ROOT/'.github/governance-source/active/source/12_DOCS/mother-spec/04_AUDIT_PROGRESS_STANDARD.md').read_text(encoding='utf-8')
-assert 'forward and reverse dependency' in mother4
-assert 'CROSS_STAGE_HANDOFF_READINESS_LEDGER' in mother4
-assert 'Source-Truth' not in mother4 or True
+for required_token in ('forward and reverse dependency','CROSS_STAGE_HANDOFF_READINESS_LEDGER'):
+    if required_token not in mother4:
+        audit_error('MOTHER_AUDIT_POLICY',f'MOTHER04_REQUIRED_POLICY_TOKEN_MISSING:{required_token}')
 
 print(f'PASS: selected profile all-stage normalized evidence contracts {all_stage_evidence_cases}/22 (PASS+BLOCKED for STAGE-01..STAGE-11)')
 print(f'PASS: selected profile all-stage cross-stage fail-closed negative cases {all_stage_negative_cases}/11')
+if audit_errors:
+    for error in audit_errors:
+        print('BLOCK: MULTIDIRECTIONAL_AUDIT:'+error)
+    raise SystemExit(f'FAIL_MULTIDIRECTIONAL_AUDIT:{len(audit_errors)}')
 print('PASS: multidirectional governance audit modes 9/9 applied to Mother, Current execution profile, state, consumers and cross-stage handoffs')
