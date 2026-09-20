@@ -1,0 +1,23 @@
+name: Typography Computed Metrics Governance Promotion
+on:
+  push:
+    branches:
+      - rebuild-v2.1.1
+    paths:
+      - "governance/test/spec_change_authorizations/USR-DIRECTIVE-20260921-CONTENT-INTEGRITY-TYPOGRAPHY-CONSUMER-HARDENING-R1.yaml"
+permissions:
+  contents: write
+jobs:
+  promote:
+    runs-on: ubuntu-latest
+    timeout-minutes: 55
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: python -m pip install --disable-pip-version-check PyYAML==6.0.2
+      - name: Promote product-neutral typography computed metrics successor
+        run: python .github/governance-maintenance/promote_typography_computed_metrics_governance.py --mode promote
