@@ -1,0 +1,149 @@
+name: Final Concrete Content Reconcile QA
+
+on:
+  push:
+    branches: [0921acpos]
+
+permissions:
+  contents: write
+
+jobs:
+  qa:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install DOCX and render tooling
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq libreoffice-writer poppler-utils
+          python -m pip install --quiet python-docx pillow
+
+      - name: Reconcile SG02 authority and acceptance status
+        run: python __temp/reconcile_concrete_content.py
+
+      - name: Semantic content QA
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          from docx import Document
+          import re,json
+          marker='ACPOS-20260921-CONCRETE-BUSINESS-CONTENT-CLOSURE-V1'
+          files={
+            'GLOBAL':'01_ACPOS_Global_Intelligent_Brain_Information_Lifecycle_Mother_Basic_Logic_Design_Normative_Contract_v4.docx',
+            'CORE':'ACPOS_CORE-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx',
+            'ASSET':'ACPOS_ASSET-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx',
+            'VIDEO':'ACPOS_VIDEO-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx',
+            'EDIT':'ACPOS_EDIT-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx',
+            'QA':'ACPOS_QA-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx',
+            'SG02':'ACPOS_SG-02_QA審查項目名單_Mother_Basic_Design_OPTIMIZED.docx',
+          }
+          def alltext(fn):
+              d=Document(fn);return '\n'.join([p.text for p in d.paragraphs]+[c.text for t in d.tables for r in t.rows for c in r.cells])
+          for k,fn in files.items():
+              assert marker in alltext(fn),(k,'marker missing')
+          qa=alltext(files['QA'])
+          for x in ['人物／角色一致性','幀間連續性','嘴型／口型同步','音訊技術品質','BGM／音效平衡與時間','字幕內容正確','字幕時間／可讀性／安全區','構圖／取景','音畫同步']:
+              assert x in qa,x
+          for k,needle in [('CORE','QCP-CORE-BASELINE-V1'),('ASSET','QCP-ASSET-IMAGE-V1'),('ASSET','QCP-ASSET-AUDIO-V1'),('VIDEO','QCP-VIDEO-BASELINE-V1'),('EDIT','QCP-EDIT-FINAL-V1')]:
+              assert needle in alltext(files[k]),(k,needle)
+          sg=Document(files['SG02'])
+          st=alltext(files['SG02'])
+          for x in ['QCP-QA-FINAL-OUTPUT-V1','QA-CHK-OUTPUT-IDENTITY','QA-ISSUE-LIPSYNC','CTRL-ADMIN-SG-02-ACT-04-ACT-SUBMIT-REVIEW','submitGovernedResourceReview','SG-02 Current Control Denominator = 12']:
+              assert x in st,x
+          # six profile tables must each total 100
+          sums=[]
+          for t in sg.tables:
+              hdr=[c.text.strip() for c in t.rows[0].cells]
+              if hdr==['Order','Dimension UID','審查項目','English','Weight','Hard Block','Definition']:
+                  vals=[int(r.cells[4].text.strip()) for r in t.rows[1:] if r.cells[4].text.strip().isdigit()]
+                  if vals:sums.append(sum(vals))
+          assert len(sums)>=6,sums
+          assert all(x==100 for x in sums),sums
+          # SG02 exact binding matrix = 12 and includes submit-review.
+          binding_counts=[]
+          for fn in Path('.').glob('*.docx'):
+              d=Document(fn)
+              for t in d.tables:
+                  hdr=[c.text.strip() for c in t.rows[0].cells]
+                  if 'Control UID' in hdr and 'Runtime Status' in hdr:
+                      ci=hdr.index('Control UID')
+                      ids=[r.cells[ci].text.strip() for r in t.rows[1:] if r.cells[ci].text.strip().startswith('CTRL-ADMIN-SG-02-')]
+                      if ids:
+                          assert 'CTRL-ADMIN-SG-02-ACT-04-ACT-SUBMIT-REVIEW' in ids,(fn.name,ids)
+                          assert len(set(ids))==12,(fn.name,len(set(ids)),ids)
+                          binding_counts.append((fn.name,12))
+          assert binding_counts,binding_counts
+          # Old SG02 denominator/status cannot remain as current truth.
+          assert 'RUNTIME_BINDING_VALIDATION | NOT_EXECUTED' not in st
+          assert 'CONTENT_INCOMPLETE' in alltext(files['GLOBAL'])
+          print(json.dumps({'profiles_weight_sum':sums,'sg02_binding_matrices':binding_counts},ensure_ascii=False))
+          print('PASS: CONCRETE CONTENT SEMANTIC QA')
+          PY
+
+      - name: LibreOffice render QA
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import subprocess,json
+          from PIL import Image,ImageChops
+          docs=[
+          '00_INDEX_ACPOS_Mother_Compliant_Basic_Design_Master.docx',
+          '01_ACPOS_Global_Intelligent_Brain_Information_Lifecycle_Mother_Basic_Logic_Design_Normative_Contract_v4.docx',
+          '04_ACPOS_CORE_AI_Blueprint_Canonical_Script_System_Mother_Basic_Logic_Design_Normative_Contract_v1.0.docx',
+          '05_ACPOS_Creative_Production_AI_ASSET_VIDEO_EDIT_VOICE_QA_Mother_Basic_Logic_Design_Normative_Contract_v1.0.docx',
+          '09_ACPOS_AI_System_Engineer_Self_Inspection_Evolution_System_Mother_Basic_Logic_Design_Normative_Contract_v1.0.docx',
+          'ACPOS_CORE-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx',
+          'ACPOS_ASSET-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx',
+          'ACPOS_VIDEO-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx',
+          'ACPOS_EDIT-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx',
+          'ACPOS_QA-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx',
+          'ACPOS_SG-02_QA審查項目名單_Mother_Basic_Design_OPTIMIZED.docx']
+          qa=Path('__render_qa');pdf=qa/'pdf';png=qa/'png';pdf.mkdir(parents=True,exist_ok=True);png.mkdir(parents=True,exist_ok=True)
+          report={'docs':{},'total_pages':0,'blank':[],'edge':[]}
+          for fn in docs:
+              subprocess.run(['libreoffice','--headless','--convert-to','pdf','--outdir',str(pdf),fn],check=True,stdout=subprocess.DEVNULL)
+              pf=pdf/(Path(fn).stem+'.pdf')
+              info=subprocess.check_output(['pdfinfo',str(pf)],text=True,errors='replace')
+              pages=int(next(x.split(':',1)[1].strip() for x in info.splitlines() if x.startswith('Pages:')))
+              od=png/Path(fn).stem;od.mkdir(parents=True,exist_ok=True)
+              subprocess.run(['pdftoppm','-png','-r','96',str(pf),str(od/'page')],check=True,stdout=subprocess.DEVNULL)
+              imgs=sorted(od.glob('page-*.png'));assert len(imgs)==pages
+              blank=[];edge=[]
+              for i,img in enumerate(imgs,1):
+                  im=Image.open(img).convert('RGB');diff=ImageChops.difference(im,Image.new('RGB',im.size,'white'));bb=diff.getbbox()
+                  if bb is None: blank.append(i);continue
+                  l,t,r,b=bb
+                  if l<=2 or t<=2 or r>=im.width-2 or b>=im.height-2: edge.append(i)
+              # locate marker page from pdftotext and write range for visual inspection
+              txt=subprocess.check_output(['pdftotext','-layout',str(pf),'-'],text=True,errors='replace')
+              pp=txt.split('\f');marker='ACPOS-20260921-CONCRETE-BUSINESS-CONTENT-CLOSURE-V1'
+              marker_pages=[i+1 for i,x in enumerate(pp) if marker in x]
+              report['docs'][fn]={'pages':pages,'marker_pages':marker_pages,'blank':blank,'edge':edge}
+              report['total_pages']+=pages; report['blank'] += [(fn,x) for x in blank]; report['edge'] += [(fn,x) for x in edge]
+          assert not report['blank'],report['blank']
+          assert not report['edge'],report['edge']
+          (qa/'render_report.json').write_text(json.dumps(report,ensure_ascii=False,indent=2),encoding='utf-8')
+          print(json.dumps({'documents':len(docs),'total_pages':report['total_pages'],'blank':0,'edge':0,'marker_pages':{k:v['marker_pages'] for k,v in report['docs'].items()}},ensure_ascii=False))
+          print('PASS: CONCRETE CONTENT LIBREOFFICE RENDER QA')
+          PY
+
+      - name: Commit reconciliation
+        shell: bash
+        run: |
+          git config user.name "acpos-content-reconcile"
+          git config user.email "actions@users.noreply.github.com"
+          git add '*.docx' __temp/reconcile_report.json
+          git commit -m "docs(acpos): reconcile concrete criteria with exact SG02 authority"
+          git push
+
+      - name: Upload final render evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: concrete-content-render-qa
+          path: __render_qa
+          retention-days: 1
