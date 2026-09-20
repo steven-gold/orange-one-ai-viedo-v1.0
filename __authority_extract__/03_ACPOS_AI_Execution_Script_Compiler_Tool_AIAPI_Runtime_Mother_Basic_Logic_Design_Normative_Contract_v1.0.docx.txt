@@ -6095,7 +6095,7 @@ P	G. Construction Handoff Rule
 P	施工 AI MUST resolve each UI control through this exact order: Page UID → Section/Region → Control UID → Trigger/Operation or Action UID → Gate → Permission → Input/Payload → Method/Path or shared Runtime Operation → Persistence/Provider Owner → Audit/Event → Success/Failure/Recovery → Next Page/Handoff. UI_ONLY/READ_ONLY controls MUST NOT create a write API. System-only operations MUST NOT cause a new visible button unless this closure/source explicitly materializes that control.
 P	When a provider/platform/environment value is runtime-specific, the exact binding is the registered Profile/Policy/Environment key named in this annex. Missing required value is a deterministic BLOCK; it is not permission to guess.
 P	Unified Page / Control / Action / API / DB / Runtime Construction Matrix
-P	[ACPOS-20260921-UNIFIED-CONTROL-RUNTIME-MATRIX] This matrix is the direct construction lookup. Existing source identifiers are preserved. New Action/Gate/Control identities are created only when exhaustive uploaded-source scan found the semantic control/operation but no exact UID/path. Existing exact Method/Path always wins; otherwise effectful operations use POST /v1/commands/{actionUid} through the Shared Typed Command Runtime. UI/read-only controls explicitly bind to N/A or projection runtime and MUST NOT create writes.
+P	[ACPOS-20260921-UNIFIED-CONTROL-RUNTIME-MATRIX-V2] This matrix is the direct construction lookup. Existing source identifiers are preserved. New Action/Gate/Control identities are created only when exhaustive uploaded-source scan found the semantic control/operation but no exact UID/path. Existing exact Method/Path always wins; otherwise effectful operations use POST /v1/commands/{actionUid} through the Shared Typed Command Runtime. UI/read-only controls explicitly bind to N/A or projection runtime and MUST NOT create writes.
 P	admin:AIAPI-01 — Unified Construction Bindings
 ROW	Page UID	Region	Control UID	Control Type	Visible When	Enabled/Gate	Trigger	Operation	Action UID	Action UID Status	Permission	Required Payload	API Method/Path	API Basis	Runtime	DB/Provider Owner	Success State	Failure State	UI Feedback/Recovery	Next Page/Handoff	Evidence
 P	Page UID
@@ -6163,7 +6163,7 @@ P	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable
 P	Exact governed resource ref
 P	SAME_PAGE_CONTEXT
 P	acpos_audit.audit_events + correlation_id + operation/result identity
-ROW	admin:AIAPI-01	SOURCE_REGISTERED_ACTION_DOCK_OR_ROW	AIAPI-01-BTN-CREATE-PROVIDER-CANDIDATE-GROUP	BUTTON_OR_ROW_ACTION	SOURCE_GATE	AIAPI-01-GATE-PAGE	CLICK	createProviderCandidateGroup	AIAPI-01-ACT-CREATE-PROVIDER-CANDIDATE-GROUP	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION	SOURCE_PAGE_PERMISSION / SERVER_RECHECK	AIAPI-01-ACT-CREATE-PROVIDER-CANDIDATE-GROUP typed schema + source contract fields + actor/scope/target + correlation_id + expected_version(if versioned) + idempotency_key	POST /v1/commands/AIAPI-01-ACT-CREATE-PROVIDER-CANDIDATE-GROUP	NEW_AUTHORITY_AFTER_GLOBAL_SOURCE_EXHAUSTION	SHARED_AI_EXECUTION_RUNTIME	acpos_runtime.provider_model_profiles / execution lineage	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Group + ordered member refs + limits only by exact schema	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
+ROW	admin:AIAPI-01	SOURCE_REGISTERED_ACTION_DOCK_OR_ROW	AIAPI-01-BTN-CREATE-PROVIDER-CANDIDATE-GROUP	BUTTON_OR_ROW_ACTION	SOURCE_GATE	AIAPI-01-GATE-PAGE	CLICK	createProviderCandidateGroup	AIAPI-01-ACT-CREATE-PROVIDER-CANDIDATE-GROUP	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION	SOURCE_PAGE_PERMISSION / SERVER_RECHECK	AIAPI-01-ACT-CREATE-PROVIDER-CANDIDATE-GROUP typed schema + source contract fields + actor/scope/target + correlation_id + expected_version(if versioned) + idempotency_key	POST /v1/commands/AIAPI-01-ACT-CREATE-PROVIDER-CANDIDATE-GROUP	NEW_COMMAND_AUTHORITY_AFTER_GLOBAL_SOURCE_EXHAUSTION	SHARED_AI_EXECUTION_RUNTIME	acpos_runtime.provider_model_profiles / execution lineage	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Group + ordered member refs + limits only by exact schema	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
 P	admin:AIAPI-01
 P	SOURCE_REGISTERED_ACTION_DOCK_OR_ROW
 P	AIAPI-01-BTN-CREATE-PROVIDER-CANDIDATE-GROUP
@@ -6177,7 +6177,7 @@ P	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION
 P	SOURCE_PAGE_PERMISSION / SERVER_RECHECK
 P	AIAPI-01-ACT-CREATE-PROVIDER-CANDIDATE-GROUP typed schema + source contract fields + actor/scope/target + correlation_id + expected_version(if versioned) + idempotency_key
 P	POST /v1/commands/AIAPI-01-ACT-CREATE-PROVIDER-CANDIDATE-GROUP
-P	NEW_AUTHORITY_AFTER_GLOBAL_SOURCE_EXHAUSTION
+P	NEW_COMMAND_AUTHORITY_AFTER_GLOBAL_SOURCE_EXHAUSTION
 P	SHARED_AI_EXECUTION_RUNTIME
 P	acpos_runtime.provider_model_profiles / execution lineage
 P	SOURCE_PAGE_STATE_REGISTRY / exact server result
@@ -6185,7 +6185,7 @@ P	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable
 P	Group + ordered member refs + limits only by exact schema
 P	SAME_PAGE_CONTEXT
 P	acpos_audit.audit_events + correlation_id + operation/result identity
-ROW	admin:AIAPI-01	SOURCE_REGISTERED_ACTION_DOCK_OR_ROW	AIAPI-01-BTN-CREATE-PROVIDER-MODEL-PROFILE	BUTTON_OR_ROW_ACTION	SOURCE_GATE	AIAPI-01-GATE-PAGE	CLICK	createProviderModelProfile	AIAPI-01-ACT-CREATE-PROVIDER-MODEL-PROFILE	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION	SOURCE_PAGE_PERMISSION / SERVER_RECHECK	AIAPI-01-ACT-CREATE-PROVIDER-MODEL-PROFILE typed schema + source contract fields + actor/scope/target + correlation_id	GET /v1/ui-projections/{pageUid}	CLOSURE_SHARED_PROJECTION	SHARED_AI_EXECUTION_RUNTIME	acpos_runtime.provider_model_profiles / execution lineage	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Effectful Modal；schema/gate/permission required	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
+ROW	admin:AIAPI-01	SOURCE_REGISTERED_ACTION_DOCK_OR_ROW	AIAPI-01-BTN-CREATE-PROVIDER-MODEL-PROFILE	BUTTON_OR_ROW_ACTION	SOURCE_GATE	AIAPI-01-GATE-PAGE	CLICK	createProviderModelProfile	AIAPI-01-ACT-CREATE-PROVIDER-MODEL-PROFILE	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION	SOURCE_PAGE_PERMISSION / SERVER_RECHECK	AIAPI-01-ACT-CREATE-PROVIDER-MODEL-PROFILE typed schema + source contract fields + actor/scope/target + correlation_id + expected_version(if versioned) + idempotency_key	POST /v1/commands/AIAPI-01-ACT-CREATE-PROVIDER-MODEL-PROFILE	NEW_COMMAND_AUTHORITY_AFTER_GLOBAL_SOURCE_EXHAUSTION	SHARED_AI_EXECUTION_RUNTIME	acpos_runtime.provider_model_profiles / execution lineage	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Effectful Modal；schema/gate/permission required	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
 P	admin:AIAPI-01
 P	SOURCE_REGISTERED_ACTION_DOCK_OR_ROW
 P	AIAPI-01-BTN-CREATE-PROVIDER-MODEL-PROFILE
@@ -6197,9 +6197,9 @@ P	createProviderModelProfile
 P	AIAPI-01-ACT-CREATE-PROVIDER-MODEL-PROFILE
 P	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION
 P	SOURCE_PAGE_PERMISSION / SERVER_RECHECK
-P	AIAPI-01-ACT-CREATE-PROVIDER-MODEL-PROFILE typed schema + source contract fields + actor/scope/target + correlation_id
-P	GET /v1/ui-projections/{pageUid}
-P	CLOSURE_SHARED_PROJECTION
+P	AIAPI-01-ACT-CREATE-PROVIDER-MODEL-PROFILE typed schema + source contract fields + actor/scope/target + correlation_id + expected_version(if versioned) + idempotency_key
+P	POST /v1/commands/AIAPI-01-ACT-CREATE-PROVIDER-MODEL-PROFILE
+P	NEW_COMMAND_AUTHORITY_AFTER_GLOBAL_SOURCE_EXHAUSTION
 P	SHARED_AI_EXECUTION_RUNTIME
 P	acpos_runtime.provider_model_profiles / execution lineage
 P	SOURCE_PAGE_STATE_REGISTRY / exact server result
@@ -6207,7 +6207,7 @@ P	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable
 P	Effectful Modal；schema/gate/permission required
 P	SAME_PAGE_CONTEXT
 P	acpos_audit.audit_events + correlation_id + operation/result identity
-ROW	admin:AIAPI-01	SOURCE_REGISTERED_ACTION_DOCK_OR_ROW	AIAPI-01-BTN-DELETE-PROVIDER-MODEL-CREDENTIAL	BUTTON_OR_ROW_ACTION	SOURCE_GATE	AIAPI-01-GATE-PAGE	CLICK	deleteProviderModelCredential	AIAPI-01-ACT-DELETE-PROVIDER-MODEL-CREDENTIAL	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION	SOURCE_PAGE_PERMISSION / SERVER_RECHECK	AIAPI-01-ACT-DELETE-PROVIDER-MODEL-CREDENTIAL typed schema + source contract fields + actor/scope/target + correlation_id	GET /v1/ui-projections/{pageUid}	CLOSURE_SHARED_PROJECTION	SHARED_AI_EXECUTION_RUNTIME	acpos_runtime.provider_model_profiles / execution lineage	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Reason/confirmation; no old value in response/log	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
+ROW	admin:AIAPI-01	SOURCE_REGISTERED_ACTION_DOCK_OR_ROW	AIAPI-01-BTN-DELETE-PROVIDER-MODEL-CREDENTIAL	BUTTON_OR_ROW_ACTION	SOURCE_GATE	AIAPI-01-GATE-PAGE	CLICK	deleteProviderModelCredential	AIAPI-01-ACT-DELETE-PROVIDER-MODEL-CREDENTIAL	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION	SOURCE_PAGE_PERMISSION / SERVER_RECHECK	AIAPI-01-ACT-DELETE-PROVIDER-MODEL-CREDENTIAL typed schema + source contract fields + actor/scope/target + correlation_id + expected_version(if versioned) + idempotency_key	POST /v1/commands/AIAPI-01-ACT-DELETE-PROVIDER-MODEL-CREDENTIAL	NEW_COMMAND_AUTHORITY_AFTER_GLOBAL_SOURCE_EXHAUSTION	SHARED_AI_EXECUTION_RUNTIME	acpos_runtime.provider_model_profiles / execution lineage	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Reason/confirmation; no old value in response/log	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
 P	admin:AIAPI-01
 P	SOURCE_REGISTERED_ACTION_DOCK_OR_ROW
 P	AIAPI-01-BTN-DELETE-PROVIDER-MODEL-CREDENTIAL
@@ -6219,9 +6219,9 @@ P	deleteProviderModelCredential
 P	AIAPI-01-ACT-DELETE-PROVIDER-MODEL-CREDENTIAL
 P	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION
 P	SOURCE_PAGE_PERMISSION / SERVER_RECHECK
-P	AIAPI-01-ACT-DELETE-PROVIDER-MODEL-CREDENTIAL typed schema + source contract fields + actor/scope/target + correlation_id
-P	GET /v1/ui-projections/{pageUid}
-P	CLOSURE_SHARED_PROJECTION
+P	AIAPI-01-ACT-DELETE-PROVIDER-MODEL-CREDENTIAL typed schema + source contract fields + actor/scope/target + correlation_id + expected_version(if versioned) + idempotency_key
+P	POST /v1/commands/AIAPI-01-ACT-DELETE-PROVIDER-MODEL-CREDENTIAL
+P	NEW_COMMAND_AUTHORITY_AFTER_GLOBAL_SOURCE_EXHAUSTION
 P	SHARED_AI_EXECUTION_RUNTIME
 P	acpos_runtime.provider_model_profiles / execution lineage
 P	SOURCE_PAGE_STATE_REGISTRY / exact server result
@@ -6229,7 +6229,7 @@ P	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable
 P	Reason/confirmation; no old value in response/log
 P	SAME_PAGE_CONTEXT
 P	acpos_audit.audit_events + correlation_id + operation/result identity
-ROW	admin:AIAPI-01	SOURCE_REGISTERED_ACTION_DOCK_OR_ROW	AIAPI-01-BTN-EXECUTE-PROVIDER-ROUTE	BUTTON_OR_ROW_ACTION	SOURCE_GATE	AIAPI-01-GATE-PAGE	CLICK	executeProviderRoute	AIAPI-01-ACT-EXECUTE-PROVIDER-ROUTE	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION	SOURCE_PAGE_PERMISSION / SERVER_RECHECK	AIAPI-01-ACT-EXECUTE-PROVIDER-ROUTE typed schema + source contract fields + actor/scope/target + correlation_id + expected_version(if versioned) + idempotency_key	POST /v1/commands/AIAPI-01-ACT-EXECUTE-PROVIDER-ROUTE	NEW_AUTHORITY_AFTER_GLOBAL_SOURCE_EXHAUSTION	SHARED_AI_EXECUTION_RUNTIME	acpos_runtime.provider_model_profiles / execution lineage	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	All hard gates + queue + approved capability/profile/secret	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
+ROW	admin:AIAPI-01	SOURCE_REGISTERED_ACTION_DOCK_OR_ROW	AIAPI-01-BTN-EXECUTE-PROVIDER-ROUTE	BUTTON_OR_ROW_ACTION	SOURCE_GATE	AIAPI-01-GATE-PAGE	CLICK	executeProviderRoute	AIAPI-01-ACT-EXECUTE-PROVIDER-ROUTE	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION	SOURCE_PAGE_PERMISSION / SERVER_RECHECK	AIAPI-01-ACT-EXECUTE-PROVIDER-ROUTE typed schema + source contract fields + actor/scope/target + correlation_id + expected_version(if versioned) + idempotency_key	POST /v1/commands/AIAPI-01-ACT-EXECUTE-PROVIDER-ROUTE	NEW_COMMAND_AUTHORITY_AFTER_GLOBAL_SOURCE_EXHAUSTION	SHARED_AI_EXECUTION_RUNTIME	acpos_runtime.provider_model_profiles / execution lineage	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	All hard gates + queue + approved capability/profile/secret	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
 P	admin:AIAPI-01
 P	SOURCE_REGISTERED_ACTION_DOCK_OR_ROW
 P	AIAPI-01-BTN-EXECUTE-PROVIDER-ROUTE
@@ -6243,7 +6243,7 @@ P	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION
 P	SOURCE_PAGE_PERMISSION / SERVER_RECHECK
 P	AIAPI-01-ACT-EXECUTE-PROVIDER-ROUTE typed schema + source contract fields + actor/scope/target + correlation_id + expected_version(if versioned) + idempotency_key
 P	POST /v1/commands/AIAPI-01-ACT-EXECUTE-PROVIDER-ROUTE
-P	NEW_AUTHORITY_AFTER_GLOBAL_SOURCE_EXHAUSTION
+P	NEW_COMMAND_AUTHORITY_AFTER_GLOBAL_SOURCE_EXHAUSTION
 P	SHARED_AI_EXECUTION_RUNTIME
 P	acpos_runtime.provider_model_profiles / execution lineage
 P	SOURCE_PAGE_STATE_REGISTRY / exact server result
@@ -6251,7 +6251,7 @@ P	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable
 P	All hard gates + queue + approved capability/profile/secret
 P	SAME_PAGE_CONTEXT
 P	acpos_audit.audit_events + correlation_id + operation/result identity
-ROW	admin:AIAPI-01	SOURCE_REGISTERED_ACTION_DOCK_OR_ROW	AIAPI-01-BTN-GET-PROVIDER-MODEL-PROFILE	BUTTON_OR_ROW_ACTION	SOURCE_GATE	AIAPI-01-GATE-PAGE	CLICK	getProviderModelProfile	AIAPI-01-ACT-GET-PROVIDER-MODEL-PROFILE	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION	SOURCE_PAGE_PERMISSION / SERVER_RECHECK	AIAPI-01-ACT-GET-PROVIDER-MODEL-PROFILE typed schema + source contract fields + actor/scope/target + correlation_id	GET /v1/ui-projections/{pageUid}	CLOSURE_SHARED_PROJECTION	SHARED_AI_EXECUTION_RUNTIME	acpos_runtime.provider_model_profiles / execution lineage	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Drawer / read-only	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
+ROW	admin:AIAPI-01	SOURCE_REGISTERED_ACTION_DOCK_OR_ROW	AIAPI-01-BTN-GET-PROVIDER-MODEL-PROFILE	BUTTON_OR_ROW_ACTION	SOURCE_GATE	AIAPI-01-GATE-PAGE	CLICK	getProviderModelProfile	AIAPI-01-ACT-GET-PROVIDER-MODEL-PROFILE	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION	SOURCE_PAGE_PERMISSION / SERVER_RECHECK	AIAPI-01-ACT-GET-PROVIDER-MODEL-PROFILE typed schema + source contract fields + actor/scope/target + correlation_id	GET /v1/queries/AIAPI-01-ACT-GET-PROVIDER-MODEL-PROFILE	NEW_QUERY_AUTHORITY_AFTER_GLOBAL_SOURCE_EXHAUSTION	SHARED_AI_EXECUTION_RUNTIME	acpos_runtime.provider_model_profiles / execution lineage	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Drawer / read-only	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
 P	admin:AIAPI-01
 P	SOURCE_REGISTERED_ACTION_DOCK_OR_ROW
 P	AIAPI-01-BTN-GET-PROVIDER-MODEL-PROFILE
@@ -6264,8 +6264,8 @@ P	AIAPI-01-ACT-GET-PROVIDER-MODEL-PROFILE
 P	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION
 P	SOURCE_PAGE_PERMISSION / SERVER_RECHECK
 P	AIAPI-01-ACT-GET-PROVIDER-MODEL-PROFILE typed schema + source contract fields + actor/scope/target + correlation_id
-P	GET /v1/ui-projections/{pageUid}
-P	CLOSURE_SHARED_PROJECTION
+P	GET /v1/queries/AIAPI-01-ACT-GET-PROVIDER-MODEL-PROFILE
+P	NEW_QUERY_AUTHORITY_AFTER_GLOBAL_SOURCE_EXHAUSTION
 P	SHARED_AI_EXECUTION_RUNTIME
 P	acpos_runtime.provider_model_profiles / execution lineage
 P	SOURCE_PAGE_STATE_REGISTRY / exact server result
@@ -6273,7 +6273,7 @@ P	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable
 P	Drawer / read-only
 P	SAME_PAGE_CONTEXT
 P	acpos_audit.audit_events + correlation_id + operation/result identity
-ROW	admin:AIAPI-01	SOURCE_REGISTERED_ACTION_DOCK_OR_ROW	AIAPI-01-BTN-GET-PROVIDER-QUARANTINE	BUTTON_OR_ROW_ACTION	SOURCE_GATE	AIAPI-01-GATE-PAGE	CLICK	getProviderQuarantine	AIAPI-01-ACT-GET-PROVIDER-QUARANTINE	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION	SOURCE_PAGE_PERMISSION / SERVER_RECHECK	AIAPI-01-ACT-GET-PROVIDER-QUARANTINE typed schema + source contract fields + actor/scope/target + correlation_id + expected_version(if versioned) + idempotency_key	POST /v1/commands/AIAPI-01-ACT-GET-PROVIDER-QUARANTINE	NEW_AUTHORITY_AFTER_GLOBAL_SOURCE_EXHAUSTION	SHARED_AI_EXECUTION_RUNTIME	acpos_runtime.provider_model_profiles / execution lineage	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Read-only	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
+ROW	admin:AIAPI-01	SOURCE_REGISTERED_ACTION_DOCK_OR_ROW	AIAPI-01-BTN-GET-PROVIDER-QUARANTINE	BUTTON_OR_ROW_ACTION	SOURCE_GATE	AIAPI-01-GATE-PAGE	CLICK	getProviderQuarantine	AIAPI-01-ACT-GET-PROVIDER-QUARANTINE	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION	SOURCE_PAGE_PERMISSION / SERVER_RECHECK	AIAPI-01-ACT-GET-PROVIDER-QUARANTINE typed schema + source contract fields + actor/scope/target + correlation_id	GET /v1/queries/AIAPI-01-ACT-GET-PROVIDER-QUARANTINE	NEW_QUERY_AUTHORITY_AFTER_GLOBAL_SOURCE_EXHAUSTION	SHARED_AI_EXECUTION_RUNTIME	acpos_runtime.provider_model_profiles / execution lineage	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Read-only	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
 P	admin:AIAPI-01
 P	SOURCE_REGISTERED_ACTION_DOCK_OR_ROW
 P	AIAPI-01-BTN-GET-PROVIDER-QUARANTINE
@@ -6285,9 +6285,9 @@ P	getProviderQuarantine
 P	AIAPI-01-ACT-GET-PROVIDER-QUARANTINE
 P	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION
 P	SOURCE_PAGE_PERMISSION / SERVER_RECHECK
-P	AIAPI-01-ACT-GET-PROVIDER-QUARANTINE typed schema + source contract fields + actor/scope/target + correlation_id + expected_version(if versioned) + idempotency_key
-P	POST /v1/commands/AIAPI-01-ACT-GET-PROVIDER-QUARANTINE
-P	NEW_AUTHORITY_AFTER_GLOBAL_SOURCE_EXHAUSTION
+P	AIAPI-01-ACT-GET-PROVIDER-QUARANTINE typed schema + source contract fields + actor/scope/target + correlation_id
+P	GET /v1/queries/AIAPI-01-ACT-GET-PROVIDER-QUARANTINE
+P	NEW_QUERY_AUTHORITY_AFTER_GLOBAL_SOURCE_EXHAUSTION
 P	SHARED_AI_EXECUTION_RUNTIME
 P	acpos_runtime.provider_model_profiles / execution lineage
 P	SOURCE_PAGE_STATE_REGISTRY / exact server result
@@ -6295,7 +6295,7 @@ P	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable
 P	Read-only
 P	SAME_PAGE_CONTEXT
 P	acpos_audit.audit_events + correlation_id + operation/result identity
-ROW	admin:AIAPI-01	SOURCE_REGISTERED_ACTION_DOCK_OR_ROW	AIAPI-01-BTN-GET-PROVIDER-ROUTE-DECISION	BUTTON_OR_ROW_ACTION	SOURCE_GATE	AIAPI-01-GATE-PAGE	CLICK	getProviderRouteDecision	AIAPI-01-ACT-GET-PROVIDER-ROUTE-DECISION	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION	SOURCE_PAGE_PERMISSION / SERVER_RECHECK	AIAPI-01-ACT-GET-PROVIDER-ROUTE-DECISION typed schema + source contract fields + actor/scope/target + correlation_id + expected_version(if versioned) + idempotency_key	POST /v1/commands/AIAPI-01-ACT-GET-PROVIDER-ROUTE-DECISION	NEW_AUTHORITY_AFTER_GLOBAL_SOURCE_EXHAUSTION	SHARED_AI_EXECUTION_RUNTIME	acpos_runtime.provider_model_profiles / execution lineage	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Read-only exact decision	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
+ROW	admin:AIAPI-01	SOURCE_REGISTERED_ACTION_DOCK_OR_ROW	AIAPI-01-BTN-GET-PROVIDER-ROUTE-DECISION	BUTTON_OR_ROW_ACTION	SOURCE_GATE	AIAPI-01-GATE-PAGE	CLICK	getProviderRouteDecision	AIAPI-01-ACT-GET-PROVIDER-ROUTE-DECISION	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION	SOURCE_PAGE_PERMISSION / SERVER_RECHECK	AIAPI-01-ACT-GET-PROVIDER-ROUTE-DECISION typed schema + source contract fields + actor/scope/target + correlation_id	GET /v1/queries/AIAPI-01-ACT-GET-PROVIDER-ROUTE-DECISION	NEW_QUERY_AUTHORITY_AFTER_GLOBAL_SOURCE_EXHAUSTION	SHARED_AI_EXECUTION_RUNTIME	acpos_runtime.provider_model_profiles / execution lineage	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Read-only exact decision	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
 P	admin:AIAPI-01
 P	SOURCE_REGISTERED_ACTION_DOCK_OR_ROW
 P	AIAPI-01-BTN-GET-PROVIDER-ROUTE-DECISION
@@ -6307,9 +6307,9 @@ P	getProviderRouteDecision
 P	AIAPI-01-ACT-GET-PROVIDER-ROUTE-DECISION
 P	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION
 P	SOURCE_PAGE_PERMISSION / SERVER_RECHECK
-P	AIAPI-01-ACT-GET-PROVIDER-ROUTE-DECISION typed schema + source contract fields + actor/scope/target + correlation_id + expected_version(if versioned) + idempotency_key
-P	POST /v1/commands/AIAPI-01-ACT-GET-PROVIDER-ROUTE-DECISION
-P	NEW_AUTHORITY_AFTER_GLOBAL_SOURCE_EXHAUSTION
+P	AIAPI-01-ACT-GET-PROVIDER-ROUTE-DECISION typed schema + source contract fields + actor/scope/target + correlation_id
+P	GET /v1/queries/AIAPI-01-ACT-GET-PROVIDER-ROUTE-DECISION
+P	NEW_QUERY_AUTHORITY_AFTER_GLOBAL_SOURCE_EXHAUSTION
 P	SHARED_AI_EXECUTION_RUNTIME
 P	acpos_runtime.provider_model_profiles / execution lineage
 P	SOURCE_PAGE_STATE_REGISTRY / exact server result
@@ -6317,7 +6317,7 @@ P	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable
 P	Read-only exact decision
 P	SAME_PAGE_CONTEXT
 P	acpos_audit.audit_events + correlation_id + operation/result identity
-ROW	admin:AIAPI-01	SOURCE_REGISTERED_ACTION_DOCK_OR_ROW	AIAPI-01-BTN-RESTORE-PROVIDER-FROM-QUARANTINE	BUTTON_OR_ROW_ACTION	SOURCE_GATE	AIAPI-01-GATE-PAGE	CLICK	restoreProviderFromQuarantine	AIAPI-01-ACT-RESTORE-PROVIDER-FROM-QUARANTINE	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION	SOURCE_PAGE_PERMISSION / SERVER_RECHECK	AIAPI-01-ACT-RESTORE-PROVIDER-FROM-QUARANTINE typed schema + source contract fields + actor/scope/target + correlation_id + expected_version(if versioned) + idempotency_key	POST /v1/commands/AIAPI-01-ACT-RESTORE-PROVIDER-FROM-QUARANTINE	NEW_AUTHORITY_AFTER_GLOBAL_SOURCE_EXHAUSTION	SHARED_AI_EXECUTION_RUNTIME	acpos_runtime.provider_model_profiles / execution lineage	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Reason + audit; bypass forbidden	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
+ROW	admin:AIAPI-01	SOURCE_REGISTERED_ACTION_DOCK_OR_ROW	AIAPI-01-BTN-RESTORE-PROVIDER-FROM-QUARANTINE	BUTTON_OR_ROW_ACTION	SOURCE_GATE	AIAPI-01-GATE-PAGE	CLICK	restoreProviderFromQuarantine	AIAPI-01-ACT-RESTORE-PROVIDER-FROM-QUARANTINE	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION	SOURCE_PAGE_PERMISSION / SERVER_RECHECK	AIAPI-01-ACT-RESTORE-PROVIDER-FROM-QUARANTINE typed schema + source contract fields + actor/scope/target + correlation_id + expected_version(if versioned) + idempotency_key	POST /v1/commands/AIAPI-01-ACT-RESTORE-PROVIDER-FROM-QUARANTINE	NEW_COMMAND_AUTHORITY_AFTER_GLOBAL_SOURCE_EXHAUSTION	SHARED_AI_EXECUTION_RUNTIME	acpos_runtime.provider_model_profiles / execution lineage	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Reason + audit; bypass forbidden	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
 P	admin:AIAPI-01
 P	SOURCE_REGISTERED_ACTION_DOCK_OR_ROW
 P	AIAPI-01-BTN-RESTORE-PROVIDER-FROM-QUARANTINE
@@ -6331,7 +6331,7 @@ P	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION
 P	SOURCE_PAGE_PERMISSION / SERVER_RECHECK
 P	AIAPI-01-ACT-RESTORE-PROVIDER-FROM-QUARANTINE typed schema + source contract fields + actor/scope/target + correlation_id + expected_version(if versioned) + idempotency_key
 P	POST /v1/commands/AIAPI-01-ACT-RESTORE-PROVIDER-FROM-QUARANTINE
-P	NEW_AUTHORITY_AFTER_GLOBAL_SOURCE_EXHAUSTION
+P	NEW_COMMAND_AUTHORITY_AFTER_GLOBAL_SOURCE_EXHAUSTION
 P	SHARED_AI_EXECUTION_RUNTIME
 P	acpos_runtime.provider_model_profiles / execution lineage
 P	SOURCE_PAGE_STATE_REGISTRY / exact server result
@@ -6339,7 +6339,7 @@ P	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable
 P	Reason + audit; bypass forbidden
 P	SAME_PAGE_CONTEXT
 P	acpos_audit.audit_events + correlation_id + operation/result identity
-ROW	admin:AIAPI-01	SOURCE_REGISTERED_ACTION_DOCK_OR_ROW	AIAPI-01-BTN-RETIRE-PROVIDER-MODEL-PROFILE	BUTTON_OR_ROW_ACTION	SOURCE_GATE	AIAPI-01-GATE-PAGE	CLICK	retireProviderModelProfile	AIAPI-01-ACT-RETIRE-PROVIDER-MODEL-PROFILE	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION	SOURCE_PAGE_PERMISSION / SERVER_RECHECK	AIAPI-01-ACT-RETIRE-PROVIDER-MODEL-PROFILE typed schema + source contract fields + actor/scope/target + correlation_id	GET /v1/ui-projections/{pageUid}	CLOSURE_SHARED_PROJECTION	SHARED_AI_EXECUTION_RUNTIME	acpos_runtime.provider_model_profiles / execution lineage	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	State guarded; never hard delete runtime history	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
+ROW	admin:AIAPI-01	SOURCE_REGISTERED_ACTION_DOCK_OR_ROW	AIAPI-01-BTN-RETIRE-PROVIDER-MODEL-PROFILE	BUTTON_OR_ROW_ACTION	SOURCE_GATE	AIAPI-01-GATE-PAGE	CLICK	retireProviderModelProfile	AIAPI-01-ACT-RETIRE-PROVIDER-MODEL-PROFILE	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION	SOURCE_PAGE_PERMISSION / SERVER_RECHECK	AIAPI-01-ACT-RETIRE-PROVIDER-MODEL-PROFILE typed schema + source contract fields + actor/scope/target + correlation_id + expected_version(if versioned) + idempotency_key	POST /v1/commands/AIAPI-01-ACT-RETIRE-PROVIDER-MODEL-PROFILE	NEW_COMMAND_AUTHORITY_AFTER_GLOBAL_SOURCE_EXHAUSTION	SHARED_AI_EXECUTION_RUNTIME	acpos_runtime.provider_model_profiles / execution lineage	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	State guarded; never hard delete runtime history	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
 P	admin:AIAPI-01
 P	SOURCE_REGISTERED_ACTION_DOCK_OR_ROW
 P	AIAPI-01-BTN-RETIRE-PROVIDER-MODEL-PROFILE
@@ -6351,9 +6351,9 @@ P	retireProviderModelProfile
 P	AIAPI-01-ACT-RETIRE-PROVIDER-MODEL-PROFILE
 P	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION
 P	SOURCE_PAGE_PERMISSION / SERVER_RECHECK
-P	AIAPI-01-ACT-RETIRE-PROVIDER-MODEL-PROFILE typed schema + source contract fields + actor/scope/target + correlation_id
-P	GET /v1/ui-projections/{pageUid}
-P	CLOSURE_SHARED_PROJECTION
+P	AIAPI-01-ACT-RETIRE-PROVIDER-MODEL-PROFILE typed schema + source contract fields + actor/scope/target + correlation_id + expected_version(if versioned) + idempotency_key
+P	POST /v1/commands/AIAPI-01-ACT-RETIRE-PROVIDER-MODEL-PROFILE
+P	NEW_COMMAND_AUTHORITY_AFTER_GLOBAL_SOURCE_EXHAUSTION
 P	SHARED_AI_EXECUTION_RUNTIME
 P	acpos_runtime.provider_model_profiles / execution lineage
 P	SOURCE_PAGE_STATE_REGISTRY / exact server result
@@ -6361,7 +6361,7 @@ P	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable
 P	State guarded; never hard delete runtime history
 P	SAME_PAGE_CONTEXT
 P	acpos_audit.audit_events + correlation_id + operation/result identity
-ROW	admin:AIAPI-01	SOURCE_REGISTERED_ACTION_DOCK_OR_ROW	AIAPI-01-BTN-RUN-PROVIDER-QUEUE-PROBE	BUTTON_OR_ROW_ACTION	SOURCE_GATE	AIAPI-01-GATE-PAGE	CLICK	runProviderQueueProbe	AIAPI-01-ACT-RUN-PROVIDER-QUEUE-PROBE	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION	SOURCE_PAGE_PERMISSION / SERVER_RECHECK	AIAPI-01-ACT-RUN-PROVIDER-QUEUE-PROBE typed schema + source contract fields + actor/scope/target + correlation_id + expected_version(if versioned) + idempotency_key	POST /v1/commands/AIAPI-01-ACT-RUN-PROVIDER-QUEUE-PROBE	NEW_AUTHORITY_AFTER_GLOBAL_SOURCE_EXHAUSTION	SHARED_AI_EXECUTION_RUNTIME	acpos_runtime.provider_model_profiles / execution lineage	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Diagnostic only; no provider external call	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
+ROW	admin:AIAPI-01	SOURCE_REGISTERED_ACTION_DOCK_OR_ROW	AIAPI-01-BTN-RUN-PROVIDER-QUEUE-PROBE	BUTTON_OR_ROW_ACTION	SOURCE_GATE	AIAPI-01-GATE-PAGE	CLICK	runProviderQueueProbe	AIAPI-01-ACT-RUN-PROVIDER-QUEUE-PROBE	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION	SOURCE_PAGE_PERMISSION / SERVER_RECHECK	AIAPI-01-ACT-RUN-PROVIDER-QUEUE-PROBE typed schema + source contract fields + actor/scope/target + correlation_id + expected_version(if versioned) + idempotency_key	POST /v1/commands/AIAPI-01-ACT-RUN-PROVIDER-QUEUE-PROBE	NEW_COMMAND_AUTHORITY_AFTER_GLOBAL_SOURCE_EXHAUSTION	SHARED_AI_EXECUTION_RUNTIME	acpos_runtime.provider_model_profiles / execution lineage	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Diagnostic only; no provider external call	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
 P	admin:AIAPI-01
 P	SOURCE_REGISTERED_ACTION_DOCK_OR_ROW
 P	AIAPI-01-BTN-RUN-PROVIDER-QUEUE-PROBE
@@ -6375,7 +6375,7 @@ P	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION
 P	SOURCE_PAGE_PERMISSION / SERVER_RECHECK
 P	AIAPI-01-ACT-RUN-PROVIDER-QUEUE-PROBE typed schema + source contract fields + actor/scope/target + correlation_id + expected_version(if versioned) + idempotency_key
 P	POST /v1/commands/AIAPI-01-ACT-RUN-PROVIDER-QUEUE-PROBE
-P	NEW_AUTHORITY_AFTER_GLOBAL_SOURCE_EXHAUSTION
+P	NEW_COMMAND_AUTHORITY_AFTER_GLOBAL_SOURCE_EXHAUSTION
 P	SHARED_AI_EXECUTION_RUNTIME
 P	acpos_runtime.provider_model_profiles / execution lineage
 P	SOURCE_PAGE_STATE_REGISTRY / exact server result
@@ -6383,7 +6383,7 @@ P	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable
 P	Diagnostic only; no provider external call
 P	SAME_PAGE_CONTEXT
 P	acpos_audit.audit_events + correlation_id + operation/result identity
-ROW	admin:AIAPI-01	SOURCE_REGISTERED_ACTION_DOCK_OR_ROW	AIAPI-01-BTN-RUN-SANDBOX-TEST	BUTTON_OR_ROW_ACTION	SOURCE_GATE	AIAPI-01-GATE-PAGE	CLICK	runSandboxTest	AIAPI-01-ACT-RUN-SANDBOX-TEST	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION	SOURCE_PAGE_PERMISSION / SERVER_RECHECK	AIAPI-01-ACT-RUN-SANDBOX-TEST typed schema + source contract fields + actor/scope/target + correlation_id + expected_version(if versioned) + idempotency_key	POST /v1/commands/AIAPI-01-ACT-RUN-SANDBOX-TEST	NEW_AUTHORITY_AFTER_GLOBAL_SOURCE_EXHAUSTION	SHARED_TYPED_COMMAND_RUNTIME	acpos_runtime.provider_model_profiles	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Production secret/output forbidden	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
+ROW	admin:AIAPI-01	SOURCE_REGISTERED_ACTION_DOCK_OR_ROW	AIAPI-01-BTN-RUN-SANDBOX-TEST	BUTTON_OR_ROW_ACTION	SOURCE_GATE	AIAPI-01-GATE-PAGE	CLICK	runSandboxTest	AIAPI-01-ACT-RUN-SANDBOX-TEST	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION	SOURCE_PAGE_PERMISSION / SERVER_RECHECK	AIAPI-01-ACT-RUN-SANDBOX-TEST typed schema + source contract fields + actor/scope/target + correlation_id + expected_version(if versioned) + idempotency_key	POST /v1/commands/AIAPI-01-ACT-RUN-SANDBOX-TEST	NEW_COMMAND_AUTHORITY_AFTER_GLOBAL_SOURCE_EXHAUSTION	SHARED_TYPED_COMMAND_RUNTIME	acpos_runtime.provider_model_profiles	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Production secret/output forbidden	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
 P	admin:AIAPI-01
 P	SOURCE_REGISTERED_ACTION_DOCK_OR_ROW
 P	AIAPI-01-BTN-RUN-SANDBOX-TEST
@@ -6397,7 +6397,7 @@ P	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION
 P	SOURCE_PAGE_PERMISSION / SERVER_RECHECK
 P	AIAPI-01-ACT-RUN-SANDBOX-TEST typed schema + source contract fields + actor/scope/target + correlation_id + expected_version(if versioned) + idempotency_key
 P	POST /v1/commands/AIAPI-01-ACT-RUN-SANDBOX-TEST
-P	NEW_AUTHORITY_AFTER_GLOBAL_SOURCE_EXHAUSTION
+P	NEW_COMMAND_AUTHORITY_AFTER_GLOBAL_SOURCE_EXHAUSTION
 P	SHARED_TYPED_COMMAND_RUNTIME
 P	acpos_runtime.provider_model_profiles
 P	SOURCE_PAGE_STATE_REGISTRY / exact server result
@@ -6427,7 +6427,7 @@ P	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable
 P	High-risk confirmation + reason + audit
 P	SAME_PAGE_CONTEXT
 P	acpos_audit.audit_events + correlation_id + operation/result identity
-ROW	admin:AIAPI-01	SOURCE_REGISTERED_ACTION_DOCK_OR_ROW	AIAPI-01-BTN-SET-PROVIDER-MODEL-CREDENTIAL	BUTTON_OR_ROW_ACTION	SOURCE_GATE	AIAPI-01-GATE-PAGE	CLICK	setProviderModelCredential	AIAPI-01-ACT-SET-PROVIDER-MODEL-CREDENTIAL	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION	SOURCE_PAGE_PERMISSION / SERVER_RECHECK	AIAPI-01-ACT-SET-PROVIDER-MODEL-CREDENTIAL typed schema + source contract fields + actor/scope/target + correlation_id	GET /v1/ui-projections/{pageUid}	CLOSURE_SHARED_PROJECTION	SHARED_AI_EXECUTION_RUNTIME	acpos_runtime.provider_model_profiles / execution lineage	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Write-only; secret env/reference owner	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
+ROW	admin:AIAPI-01	SOURCE_REGISTERED_ACTION_DOCK_OR_ROW	AIAPI-01-BTN-SET-PROVIDER-MODEL-CREDENTIAL	BUTTON_OR_ROW_ACTION	SOURCE_GATE	AIAPI-01-GATE-PAGE	CLICK	setProviderModelCredential	AIAPI-01-ACT-SET-PROVIDER-MODEL-CREDENTIAL	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION	SOURCE_PAGE_PERMISSION / SERVER_RECHECK	AIAPI-01-ACT-SET-PROVIDER-MODEL-CREDENTIAL typed schema + source contract fields + actor/scope/target + correlation_id + expected_version(if versioned) + idempotency_key	POST /v1/commands/AIAPI-01-ACT-SET-PROVIDER-MODEL-CREDENTIAL	NEW_COMMAND_AUTHORITY_AFTER_GLOBAL_SOURCE_EXHAUSTION	SHARED_AI_EXECUTION_RUNTIME	acpos_runtime.provider_model_profiles / execution lineage	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Write-only; secret env/reference owner	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
 P	admin:AIAPI-01
 P	SOURCE_REGISTERED_ACTION_DOCK_OR_ROW
 P	AIAPI-01-BTN-SET-PROVIDER-MODEL-CREDENTIAL
@@ -6439,9 +6439,9 @@ P	setProviderModelCredential
 P	AIAPI-01-ACT-SET-PROVIDER-MODEL-CREDENTIAL
 P	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION
 P	SOURCE_PAGE_PERMISSION / SERVER_RECHECK
-P	AIAPI-01-ACT-SET-PROVIDER-MODEL-CREDENTIAL typed schema + source contract fields + actor/scope/target + correlation_id
-P	GET /v1/ui-projections/{pageUid}
-P	CLOSURE_SHARED_PROJECTION
+P	AIAPI-01-ACT-SET-PROVIDER-MODEL-CREDENTIAL typed schema + source contract fields + actor/scope/target + correlation_id + expected_version(if versioned) + idempotency_key
+P	POST /v1/commands/AIAPI-01-ACT-SET-PROVIDER-MODEL-CREDENTIAL
+P	NEW_COMMAND_AUTHORITY_AFTER_GLOBAL_SOURCE_EXHAUSTION
 P	SHARED_AI_EXECUTION_RUNTIME
 P	acpos_runtime.provider_model_profiles / execution lineage
 P	SOURCE_PAGE_STATE_REGISTRY / exact server result
@@ -6449,7 +6449,7 @@ P	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable
 P	Write-only; secret env/reference owner
 P	SAME_PAGE_CONTEXT
 P	acpos_audit.audit_events + correlation_id + operation/result identity
-ROW	admin:AIAPI-01	SOURCE_REGISTERED_ACTION_DOCK_OR_ROW	AIAPI-01-BTN-TEST-PROVIDER-MODEL-PROFILE	BUTTON_OR_ROW_ACTION	SOURCE_GATE	AIAPI-01-GATE-PAGE	CLICK	testProviderModelProfile	AIAPI-01-ACT-TEST-PROVIDER-MODEL-PROFILE	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION	SOURCE_PAGE_PERMISSION / SERVER_RECHECK	AIAPI-01-ACT-TEST-PROVIDER-MODEL-PROFILE typed schema + source contract fields + actor/scope/target + correlation_id	GET /v1/ui-projections/{pageUid}	CLOSURE_SHARED_PROJECTION	SHARED_AI_EXECUTION_RUNTIME	acpos_runtime.provider_model_profiles / execution lineage	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Secret ref + adapter required	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
+ROW	admin:AIAPI-01	SOURCE_REGISTERED_ACTION_DOCK_OR_ROW	AIAPI-01-BTN-TEST-PROVIDER-MODEL-PROFILE	BUTTON_OR_ROW_ACTION	SOURCE_GATE	AIAPI-01-GATE-PAGE	CLICK	testProviderModelProfile	AIAPI-01-ACT-TEST-PROVIDER-MODEL-PROFILE	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION	SOURCE_PAGE_PERMISSION / SERVER_RECHECK	AIAPI-01-ACT-TEST-PROVIDER-MODEL-PROFILE typed schema + source contract fields + actor/scope/target + correlation_id + expected_version(if versioned) + idempotency_key	POST /v1/commands/AIAPI-01-ACT-TEST-PROVIDER-MODEL-PROFILE	NEW_COMMAND_AUTHORITY_AFTER_GLOBAL_SOURCE_EXHAUSTION	SHARED_AI_EXECUTION_RUNTIME	acpos_runtime.provider_model_profiles / execution lineage	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Secret ref + adapter required	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
 P	admin:AIAPI-01
 P	SOURCE_REGISTERED_ACTION_DOCK_OR_ROW
 P	AIAPI-01-BTN-TEST-PROVIDER-MODEL-PROFILE
@@ -6461,9 +6461,9 @@ P	testProviderModelProfile
 P	AIAPI-01-ACT-TEST-PROVIDER-MODEL-PROFILE
 P	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION
 P	SOURCE_PAGE_PERMISSION / SERVER_RECHECK
-P	AIAPI-01-ACT-TEST-PROVIDER-MODEL-PROFILE typed schema + source contract fields + actor/scope/target + correlation_id
-P	GET /v1/ui-projections/{pageUid}
-P	CLOSURE_SHARED_PROJECTION
+P	AIAPI-01-ACT-TEST-PROVIDER-MODEL-PROFILE typed schema + source contract fields + actor/scope/target + correlation_id + expected_version(if versioned) + idempotency_key
+P	POST /v1/commands/AIAPI-01-ACT-TEST-PROVIDER-MODEL-PROFILE
+P	NEW_COMMAND_AUTHORITY_AFTER_GLOBAL_SOURCE_EXHAUSTION
 P	SHARED_AI_EXECUTION_RUNTIME
 P	acpos_runtime.provider_model_profiles / execution lineage
 P	SOURCE_PAGE_STATE_REGISTRY / exact server result
@@ -6471,7 +6471,7 @@ P	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable
 P	Secret ref + adapter required
 P	SAME_PAGE_CONTEXT
 P	acpos_audit.audit_events + correlation_id + operation/result identity
-ROW	admin:AIAPI-01	SOURCE_REGISTERED_ACTION_DOCK_OR_ROW	AIAPI-01-BTN-UPDATE-PROVIDER-MODEL-PROFILE	BUTTON_OR_ROW_ACTION	SOURCE_GATE	AIAPI-01-GATE-PAGE	CLICK	updateProviderModelProfile	AIAPI-01-ACT-UPDATE-PROVIDER-MODEL-PROFILE	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION	SOURCE_PAGE_PERMISSION / SERVER_RECHECK	AIAPI-01-ACT-UPDATE-PROVIDER-MODEL-PROFILE typed schema + source contract fields + actor/scope/target + correlation_id	GET /v1/ui-projections/{pageUid}	CLOSURE_SHARED_PROJECTION	SHARED_AI_EXECUTION_RUNTIME	acpos_runtime.provider_model_profiles / execution lineage	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Expected version + audit	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
+ROW	admin:AIAPI-01	SOURCE_REGISTERED_ACTION_DOCK_OR_ROW	AIAPI-01-BTN-UPDATE-PROVIDER-MODEL-PROFILE	BUTTON_OR_ROW_ACTION	SOURCE_GATE	AIAPI-01-GATE-PAGE	CLICK	updateProviderModelProfile	AIAPI-01-ACT-UPDATE-PROVIDER-MODEL-PROFILE	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION	SOURCE_PAGE_PERMISSION / SERVER_RECHECK	AIAPI-01-ACT-UPDATE-PROVIDER-MODEL-PROFILE typed schema + source contract fields + actor/scope/target + correlation_id + expected_version(if versioned) + idempotency_key	POST /v1/commands/AIAPI-01-ACT-UPDATE-PROVIDER-MODEL-PROFILE	NEW_COMMAND_AUTHORITY_AFTER_GLOBAL_SOURCE_EXHAUSTION	SHARED_AI_EXECUTION_RUNTIME	acpos_runtime.provider_model_profiles / execution lineage	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Expected version + audit	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
 P	admin:AIAPI-01
 P	SOURCE_REGISTERED_ACTION_DOCK_OR_ROW
 P	AIAPI-01-BTN-UPDATE-PROVIDER-MODEL-PROFILE
@@ -6483,9 +6483,9 @@ P	updateProviderModelProfile
 P	AIAPI-01-ACT-UPDATE-PROVIDER-MODEL-PROFILE
 P	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION
 P	SOURCE_PAGE_PERMISSION / SERVER_RECHECK
-P	AIAPI-01-ACT-UPDATE-PROVIDER-MODEL-PROFILE typed schema + source contract fields + actor/scope/target + correlation_id
-P	GET /v1/ui-projections/{pageUid}
-P	CLOSURE_SHARED_PROJECTION
+P	AIAPI-01-ACT-UPDATE-PROVIDER-MODEL-PROFILE typed schema + source contract fields + actor/scope/target + correlation_id + expected_version(if versioned) + idempotency_key
+P	POST /v1/commands/AIAPI-01-ACT-UPDATE-PROVIDER-MODEL-PROFILE
+P	NEW_COMMAND_AUTHORITY_AFTER_GLOBAL_SOURCE_EXHAUSTION
 P	SHARED_AI_EXECUTION_RUNTIME
 P	acpos_runtime.provider_model_profiles / execution lineage
 P	SOURCE_PAGE_STATE_REGISTRY / exact server result
@@ -6494,7 +6494,7 @@ P	Expected version + audit
 P	SAME_PAGE_CONTEXT
 P	acpos_audit.audit_events + correlation_id + operation/result identity
 P	Construction Lookup Invariant
-P	施工 AI MUST resolve a UI action from exactly one row of this matrix. If a source control is UI_ONLY/READ_ONLY, API/DB write is explicitly N/A and creating a write endpoint is forbidden. If API Basis is NEW_AUTHORITY_AFTER_GLOBAL_SOURCE_EXHAUSTION, the only permitted implementation path is the Shared Typed Command Runtime endpoint shown in the row; page-local alternative endpoints are forbidden.
+P	施工 AI MUST resolve a UI action from exactly one row of this matrix. If a source control is UI_ONLY/READ_ONLY, API/DB write is explicitly N/A and creating a write endpoint is forbidden. If API Basis is NEW_QUERY_AUTHORITY_AFTER_GLOBAL_SOURCE_EXHAUSTION, use only the Shared Typed Query Runtime GET endpoint shown. If API Basis is NEW_COMMAND_AUTHORITY_AFTER_GLOBAL_SOURCE_EXHAUSTION, use only the Shared Typed Command Runtime POST endpoint shown. Page-local alternative endpoints are forbidden.
 ### PART word/header1.xml
 P	ORANGE ONE · ACPOS ACPOS-AI-03｜Mother Basic Logic Design
 ### PART word/footer1.xml

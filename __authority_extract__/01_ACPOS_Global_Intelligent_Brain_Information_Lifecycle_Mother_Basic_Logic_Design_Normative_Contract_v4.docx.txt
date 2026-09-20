@@ -8638,7 +8638,7 @@ P	G. Construction Handoff Rule
 P	施工 AI MUST resolve each UI control through this exact order: Page UID → Section/Region → Control UID → Trigger/Operation or Action UID → Gate → Permission → Input/Payload → Method/Path or shared Runtime Operation → Persistence/Provider Owner → Audit/Event → Success/Failure/Recovery → Next Page/Handoff. UI_ONLY/READ_ONLY controls MUST NOT create a write API. System-only operations MUST NOT cause a new visible button unless this closure/source explicitly materializes that control.
 P	When a provider/platform/environment value is runtime-specific, the exact binding is the registered Profile/Policy/Environment key named in this annex. Missing required value is a deterministic BLOCK; it is not permission to guess.
 P	Unified Page / Control / Action / API / DB / Runtime Construction Matrix
-P	[ACPOS-20260921-UNIFIED-CONTROL-RUNTIME-MATRIX] This matrix is the direct construction lookup. Existing source identifiers are preserved. New Action/Gate/Control identities are created only when exhaustive uploaded-source scan found the semantic control/operation but no exact UID/path. Existing exact Method/Path always wins; otherwise effectful operations use POST /v1/commands/{actionUid} through the Shared Typed Command Runtime. UI/read-only controls explicitly bind to N/A or projection runtime and MUST NOT create writes.
+P	[ACPOS-20260921-UNIFIED-CONTROL-RUNTIME-MATRIX-V2] This matrix is the direct construction lookup. Existing source identifiers are preserved. New Action/Gate/Control identities are created only when exhaustive uploaded-source scan found the semantic control/operation but no exact UID/path. Existing exact Method/Path always wins; otherwise effectful operations use POST /v1/commands/{actionUid} through the Shared Typed Command Runtime. UI/read-only controls explicitly bind to N/A or projection runtime and MUST NOT create writes.
 P	workspace:WB-01 — Unified Construction Bindings
 ROW	Page UID	Region	Control UID	Control Type	Visible When	Enabled/Gate	Trigger	Operation	Action UID	Action UID Status	Permission	Required Payload	API Method/Path	API Basis	Runtime	DB/Provider Owner	Success State	Failure State	UI Feedback/Recovery	Next Page/Handoff	Evidence
 P	Page UID
@@ -8662,7 +8662,7 @@ P	Failure State
 P	UI Feedback/Recovery
 P	Next Page/Handoff
 P	Evidence
-ROW	workspace:WB-01	SOURCE_REGION	WB-01-CMP-ANNOUNCEMENTS	SOURCE_CONTROL	AUTHORIZED_PAGE_CONTEXT	WB-01-GATE-PAGE	CLICK	UI_LOCAL_STATE	WB-01-ACT-UI-LOCAL-STATE	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION	SOURCE_PAGE_PERMISSION / SERVER_RECHECK	WB-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id	N/A — UI/READ ONLY	NO_EFFECTFUL_API	UI_LOCAL / READ_ONLY	READ_MODEL / NO_WRITE	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
+ROW	workspace:WB-01	SOURCE_REGION	WB-01-CMP-ANNOUNCEMENTS	SOURCE_CONTROL	AUTHORIZED_PAGE_CONTEXT	WB-01-GATE-PAGE	CLICK	UI_LOCAL_STATE	WB-01-ACT-UI-LOCAL-STATE	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION	SOURCE_PAGE_PERMISSION / SERVER_RECHECK	WB-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id	N/A — UI LOCAL ONLY	NO_EFFECTFUL_API	UI_LOCAL / READ_ONLY	READ_MODEL / NO_WRITE	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
 P	workspace:WB-01
 P	SOURCE_REGION
 P	WB-01-CMP-ANNOUNCEMENTS
@@ -8675,7 +8675,7 @@ P	WB-01-ACT-UI-LOCAL-STATE
 P	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION
 P	SOURCE_PAGE_PERMISSION / SERVER_RECHECK
 P	WB-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id
-P	N/A — UI/READ ONLY
+P	N/A — UI LOCAL ONLY
 P	NO_EFFECTFUL_API
 P	UI_LOCAL / READ_ONLY
 P	READ_MODEL / NO_WRITE
@@ -8684,7 +8684,7 @@ P	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable
 P	Registered success/error/disabled reason; no fabricated success
 P	SAME_PAGE_CONTEXT
 P	acpos_audit.audit_events + correlation_id + operation/result identity
-ROW	workspace:WB-01	SOURCE_REGION	WB-01-CMP-COMPANY-PROGRESS	SOURCE_CONTROL	AUTHORIZED_PAGE_CONTEXT	WB-01-GATE-PAGE	CLICK	UI_LOCAL_STATE	WB-01-ACT-UI-LOCAL-STATE	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION	SOURCE_PAGE_PERMISSION / SERVER_RECHECK	WB-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id	N/A — UI/READ ONLY	NO_EFFECTFUL_API	UI_LOCAL / READ_ONLY	READ_MODEL / NO_WRITE	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
+ROW	workspace:WB-01	SOURCE_REGION	WB-01-CMP-COMPANY-PROGRESS	SOURCE_CONTROL	AUTHORIZED_PAGE_CONTEXT	WB-01-GATE-PAGE	CLICK	UI_LOCAL_STATE	WB-01-ACT-UI-LOCAL-STATE	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION	SOURCE_PAGE_PERMISSION / SERVER_RECHECK	WB-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id	N/A — UI LOCAL ONLY	NO_EFFECTFUL_API	UI_LOCAL / READ_ONLY	READ_MODEL / NO_WRITE	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
 P	workspace:WB-01
 P	SOURCE_REGION
 P	WB-01-CMP-COMPANY-PROGRESS
@@ -8697,7 +8697,7 @@ P	WB-01-ACT-UI-LOCAL-STATE
 P	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION
 P	SOURCE_PAGE_PERMISSION / SERVER_RECHECK
 P	WB-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id
-P	N/A — UI/READ ONLY
+P	N/A — UI LOCAL ONLY
 P	NO_EFFECTFUL_API
 P	UI_LOCAL / READ_ONLY
 P	READ_MODEL / NO_WRITE
@@ -8706,7 +8706,7 @@ P	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable
 P	Registered success/error/disabled reason; no fabricated success
 P	SAME_PAGE_CONTEXT
 P	acpos_audit.audit_events + correlation_id + operation/result identity
-ROW	workspace:WB-01	SOURCE_REGION	WB-01-CMP-INDUSTRY-NEWS	SOURCE_CONTROL	AUTHORIZED_PAGE_CONTEXT	WB-01-GATE-PAGE	CLICK	UI_LOCAL_STATE	WB-01-ACT-UI-LOCAL-STATE	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION	SOURCE_PAGE_PERMISSION / SERVER_RECHECK	WB-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id	N/A — UI/READ ONLY	NO_EFFECTFUL_API	UI_LOCAL / READ_ONLY	READ_MODEL / NO_WRITE	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
+ROW	workspace:WB-01	SOURCE_REGION	WB-01-CMP-INDUSTRY-NEWS	SOURCE_CONTROL	AUTHORIZED_PAGE_CONTEXT	WB-01-GATE-PAGE	CLICK	UI_LOCAL_STATE	WB-01-ACT-UI-LOCAL-STATE	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION	SOURCE_PAGE_PERMISSION / SERVER_RECHECK	WB-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id	N/A — UI LOCAL ONLY	NO_EFFECTFUL_API	UI_LOCAL / READ_ONLY	READ_MODEL / NO_WRITE	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
 P	workspace:WB-01
 P	SOURCE_REGION
 P	WB-01-CMP-INDUSTRY-NEWS
@@ -8719,7 +8719,7 @@ P	WB-01-ACT-UI-LOCAL-STATE
 P	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION
 P	SOURCE_PAGE_PERMISSION / SERVER_RECHECK
 P	WB-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id
-P	N/A — UI/READ ONLY
+P	N/A — UI LOCAL ONLY
 P	NO_EFFECTFUL_API
 P	UI_LOCAL / READ_ONLY
 P	READ_MODEL / NO_WRITE
@@ -8728,7 +8728,7 @@ P	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable
 P	Registered success/error/disabled reason; no fabricated success
 P	SAME_PAGE_CONTEXT
 P	acpos_audit.audit_events + correlation_id + operation/result identity
-ROW	workspace:WB-01	SOURCE_REGION	WB-01-CMP-KPI-AVERAGE-PROGRESS	SOURCE_CONTROL	AUTHORIZED_PAGE_CONTEXT	WB-01-GATE-PAGE	CLICK	UI_LOCAL_STATE	WB-01-ACT-UI-LOCAL-STATE	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION	SOURCE_PAGE_PERMISSION / SERVER_RECHECK	WB-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id	N/A — UI/READ ONLY	NO_EFFECTFUL_API	UI_LOCAL / READ_ONLY	READ_MODEL / NO_WRITE	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
+ROW	workspace:WB-01	SOURCE_REGION	WB-01-CMP-KPI-AVERAGE-PROGRESS	SOURCE_CONTROL	AUTHORIZED_PAGE_CONTEXT	WB-01-GATE-PAGE	CLICK	UI_LOCAL_STATE	WB-01-ACT-UI-LOCAL-STATE	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION	SOURCE_PAGE_PERMISSION / SERVER_RECHECK	WB-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id	N/A — UI LOCAL ONLY	NO_EFFECTFUL_API	UI_LOCAL / READ_ONLY	READ_MODEL / NO_WRITE	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
 P	workspace:WB-01
 P	SOURCE_REGION
 P	WB-01-CMP-KPI-AVERAGE-PROGRESS
@@ -8741,7 +8741,7 @@ P	WB-01-ACT-UI-LOCAL-STATE
 P	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION
 P	SOURCE_PAGE_PERMISSION / SERVER_RECHECK
 P	WB-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id
-P	N/A — UI/READ ONLY
+P	N/A — UI LOCAL ONLY
 P	NO_EFFECTFUL_API
 P	UI_LOCAL / READ_ONLY
 P	READ_MODEL / NO_WRITE
@@ -8750,7 +8750,7 @@ P	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable
 P	Registered success/error/disabled reason; no fabricated success
 P	SAME_PAGE_CONTEXT
 P	acpos_audit.audit_events + correlation_id + operation/result identity
-ROW	workspace:WB-01	SOURCE_REGION	WB-01-CMP-KPI-COMPLETED	SOURCE_CONTROL	AUTHORIZED_PAGE_CONTEXT	WB-01-GATE-PAGE	CLICK	UI_LOCAL_STATE	WB-01-ACT-UI-LOCAL-STATE	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION	SOURCE_PAGE_PERMISSION / SERVER_RECHECK	WB-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id	N/A — UI/READ ONLY	NO_EFFECTFUL_API	UI_LOCAL / READ_ONLY	READ_MODEL / NO_WRITE	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
+ROW	workspace:WB-01	SOURCE_REGION	WB-01-CMP-KPI-COMPLETED	SOURCE_CONTROL	AUTHORIZED_PAGE_CONTEXT	WB-01-GATE-PAGE	CLICK	UI_LOCAL_STATE	WB-01-ACT-UI-LOCAL-STATE	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION	SOURCE_PAGE_PERMISSION / SERVER_RECHECK	WB-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id	N/A — UI LOCAL ONLY	NO_EFFECTFUL_API	UI_LOCAL / READ_ONLY	READ_MODEL / NO_WRITE	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
 P	workspace:WB-01
 P	SOURCE_REGION
 P	WB-01-CMP-KPI-COMPLETED
@@ -8763,7 +8763,7 @@ P	WB-01-ACT-UI-LOCAL-STATE
 P	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION
 P	SOURCE_PAGE_PERMISSION / SERVER_RECHECK
 P	WB-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id
-P	N/A — UI/READ ONLY
+P	N/A — UI LOCAL ONLY
 P	NO_EFFECTFUL_API
 P	UI_LOCAL / READ_ONLY
 P	READ_MODEL / NO_WRITE
@@ -8772,7 +8772,7 @@ P	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable
 P	Registered success/error/disabled reason; no fabricated success
 P	SAME_PAGE_CONTEXT
 P	acpos_audit.audit_events + correlation_id + operation/result identity
-ROW	workspace:WB-01	SOURCE_REGION	WB-01-CMP-KPI-PENDING-ACTION	SOURCE_CONTROL	AUTHORIZED_PAGE_CONTEXT	WB-01-GATE-PAGE	CLICK	UI_LOCAL_STATE	WB-01-ACT-UI-LOCAL-STATE	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION	SOURCE_PAGE_PERMISSION / SERVER_RECHECK	WB-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id	N/A — UI/READ ONLY	NO_EFFECTFUL_API	UI_LOCAL / READ_ONLY	READ_MODEL / NO_WRITE	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
+ROW	workspace:WB-01	SOURCE_REGION	WB-01-CMP-KPI-PENDING-ACTION	SOURCE_CONTROL	AUTHORIZED_PAGE_CONTEXT	WB-01-GATE-PAGE	CLICK	UI_LOCAL_STATE	WB-01-ACT-UI-LOCAL-STATE	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION	SOURCE_PAGE_PERMISSION / SERVER_RECHECK	WB-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id	N/A — UI LOCAL ONLY	NO_EFFECTFUL_API	UI_LOCAL / READ_ONLY	READ_MODEL / NO_WRITE	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
 P	workspace:WB-01
 P	SOURCE_REGION
 P	WB-01-CMP-KPI-PENDING-ACTION
@@ -8785,7 +8785,7 @@ P	WB-01-ACT-UI-LOCAL-STATE
 P	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION
 P	SOURCE_PAGE_PERMISSION / SERVER_RECHECK
 P	WB-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id
-P	N/A — UI/READ ONLY
+P	N/A — UI LOCAL ONLY
 P	NO_EFFECTFUL_API
 P	UI_LOCAL / READ_ONLY
 P	READ_MODEL / NO_WRITE
@@ -8794,7 +8794,7 @@ P	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable
 P	Registered success/error/disabled reason; no fabricated success
 P	SAME_PAGE_CONTEXT
 P	acpos_audit.audit_events + correlation_id + operation/result identity
-ROW	workspace:WB-01	SOURCE_REGION	WB-01-CMP-KPI-PENDING-REVIEW	SOURCE_CONTROL	AUTHORIZED_PAGE_CONTEXT	WB-01-GATE-PAGE	CLICK	UI_LOCAL_STATE	WB-01-ACT-UI-LOCAL-STATE	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION	SOURCE_PAGE_PERMISSION / SERVER_RECHECK	WB-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id	N/A — UI/READ ONLY	NO_EFFECTFUL_API	UI_LOCAL / READ_ONLY	READ_MODEL / NO_WRITE	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
+ROW	workspace:WB-01	SOURCE_REGION	WB-01-CMP-KPI-PENDING-REVIEW	SOURCE_CONTROL	AUTHORIZED_PAGE_CONTEXT	WB-01-GATE-PAGE	CLICK	UI_LOCAL_STATE	WB-01-ACT-UI-LOCAL-STATE	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION	SOURCE_PAGE_PERMISSION / SERVER_RECHECK	WB-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id	N/A — UI LOCAL ONLY	NO_EFFECTFUL_API	UI_LOCAL / READ_ONLY	READ_MODEL / NO_WRITE	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
 P	workspace:WB-01
 P	SOURCE_REGION
 P	WB-01-CMP-KPI-PENDING-REVIEW
@@ -8807,7 +8807,7 @@ P	WB-01-ACT-UI-LOCAL-STATE
 P	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION
 P	SOURCE_PAGE_PERMISSION / SERVER_RECHECK
 P	WB-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id
-P	N/A — UI/READ ONLY
+P	N/A — UI LOCAL ONLY
 P	NO_EFFECTFUL_API
 P	UI_LOCAL / READ_ONLY
 P	READ_MODEL / NO_WRITE
@@ -8816,7 +8816,7 @@ P	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable
 P	Registered success/error/disabled reason; no fabricated success
 P	SAME_PAGE_CONTEXT
 P	acpos_audit.audit_events + correlation_id + operation/result identity
-ROW	workspace:WB-01	SOURCE_REGION	WB-01-CMP-KPI-PROJECT-COUNT	SOURCE_CONTROL	AUTHORIZED_PAGE_CONTEXT	WB-01-GATE-PAGE	CLICK	UI_LOCAL_STATE	WB-01-ACT-UI-LOCAL-STATE	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION	SOURCE_PAGE_PERMISSION / SERVER_RECHECK	WB-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id	N/A — UI/READ ONLY	NO_EFFECTFUL_API	UI_LOCAL / READ_ONLY	READ_MODEL / NO_WRITE	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
+ROW	workspace:WB-01	SOURCE_REGION	WB-01-CMP-KPI-PROJECT-COUNT	SOURCE_CONTROL	AUTHORIZED_PAGE_CONTEXT	WB-01-GATE-PAGE	CLICK	UI_LOCAL_STATE	WB-01-ACT-UI-LOCAL-STATE	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION	SOURCE_PAGE_PERMISSION / SERVER_RECHECK	WB-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id	N/A — UI LOCAL ONLY	NO_EFFECTFUL_API	UI_LOCAL / READ_ONLY	READ_MODEL / NO_WRITE	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
 P	workspace:WB-01
 P	SOURCE_REGION
 P	WB-01-CMP-KPI-PROJECT-COUNT
@@ -8829,7 +8829,7 @@ P	WB-01-ACT-UI-LOCAL-STATE
 P	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION
 P	SOURCE_PAGE_PERMISSION / SERVER_RECHECK
 P	WB-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id
-P	N/A — UI/READ ONLY
+P	N/A — UI LOCAL ONLY
 P	NO_EFFECTFUL_API
 P	UI_LOCAL / READ_ONLY
 P	READ_MODEL / NO_WRITE
@@ -8838,7 +8838,7 @@ P	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable
 P	Registered success/error/disabled reason; no fabricated success
 P	SAME_PAGE_CONTEXT
 P	acpos_audit.audit_events + correlation_id + operation/result identity
-ROW	workspace:WB-01	SOURCE_REGION	WB-01-CMP-KPI-RUNNING	SOURCE_CONTROL	AUTHORIZED_PAGE_CONTEXT	WB-01-GATE-PAGE	CLICK	UI_LOCAL_STATE	WB-01-ACT-UI-LOCAL-STATE	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION	SOURCE_PAGE_PERMISSION / SERVER_RECHECK	WB-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id	N/A — UI/READ ONLY	NO_EFFECTFUL_API	UI_LOCAL / READ_ONLY	READ_MODEL / NO_WRITE	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
+ROW	workspace:WB-01	SOURCE_REGION	WB-01-CMP-KPI-RUNNING	SOURCE_CONTROL	AUTHORIZED_PAGE_CONTEXT	WB-01-GATE-PAGE	CLICK	UI_LOCAL_STATE	WB-01-ACT-UI-LOCAL-STATE	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION	SOURCE_PAGE_PERMISSION / SERVER_RECHECK	WB-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id	N/A — UI LOCAL ONLY	NO_EFFECTFUL_API	UI_LOCAL / READ_ONLY	READ_MODEL / NO_WRITE	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
 P	workspace:WB-01
 P	SOURCE_REGION
 P	WB-01-CMP-KPI-RUNNING
@@ -8851,7 +8851,7 @@ P	WB-01-ACT-UI-LOCAL-STATE
 P	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION
 P	SOURCE_PAGE_PERMISSION / SERVER_RECHECK
 P	WB-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id
-P	N/A — UI/READ ONLY
+P	N/A — UI LOCAL ONLY
 P	NO_EFFECTFUL_API
 P	UI_LOCAL / READ_ONLY
 P	READ_MODEL / NO_WRITE
@@ -8860,7 +8860,7 @@ P	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable
 P	Registered success/error/disabled reason; no fabricated success
 P	SAME_PAGE_CONTEXT
 P	acpos_audit.audit_events + correlation_id + operation/result identity
-ROW	workspace:WB-01	SOURCE_REGION	WB-01-CMP-NOTIFICATIONS	SOURCE_CONTROL	AUTHORIZED_PAGE_CONTEXT	WB-01-GATE-PAGE	CLICK	UI_LOCAL_STATE	WB-01-ACT-UI-LOCAL-STATE	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION	SOURCE_PAGE_PERMISSION / SERVER_RECHECK	WB-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id	N/A — UI/READ ONLY	NO_EFFECTFUL_API	UI_LOCAL / READ_ONLY	READ_MODEL / NO_WRITE	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
+ROW	workspace:WB-01	SOURCE_REGION	WB-01-CMP-NOTIFICATIONS	SOURCE_CONTROL	AUTHORIZED_PAGE_CONTEXT	WB-01-GATE-PAGE	CLICK	UI_LOCAL_STATE	WB-01-ACT-UI-LOCAL-STATE	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION	SOURCE_PAGE_PERMISSION / SERVER_RECHECK	WB-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id	N/A — UI LOCAL ONLY	NO_EFFECTFUL_API	UI_LOCAL / READ_ONLY	READ_MODEL / NO_WRITE	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
 P	workspace:WB-01
 P	SOURCE_REGION
 P	WB-01-CMP-NOTIFICATIONS
@@ -8873,7 +8873,7 @@ P	WB-01-ACT-UI-LOCAL-STATE
 P	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION
 P	SOURCE_PAGE_PERMISSION / SERVER_RECHECK
 P	WB-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id
-P	N/A — UI/READ ONLY
+P	N/A — UI LOCAL ONLY
 P	NO_EFFECTFUL_API
 P	UI_LOCAL / READ_ONLY
 P	READ_MODEL / NO_WRITE
@@ -8882,7 +8882,7 @@ P	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable
 P	Registered success/error/disabled reason; no fabricated success
 P	SAME_PAGE_CONTEXT
 P	acpos_audit.audit_events + correlation_id + operation/result identity
-ROW	workspace:WB-01	SOURCE_REGION	WB-01-CMP-PRODUCTION-SUMMARY	SOURCE_CONTROL	AUTHORIZED_PAGE_CONTEXT	WB-01-GATE-PAGE	CLICK	UI_LOCAL_STATE	WB-01-ACT-UI-LOCAL-STATE	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION	SOURCE_PAGE_PERMISSION / SERVER_RECHECK	WB-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id	N/A — UI/READ ONLY	NO_EFFECTFUL_API	UI_LOCAL / READ_ONLY	READ_MODEL / NO_WRITE	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
+ROW	workspace:WB-01	SOURCE_REGION	WB-01-CMP-PRODUCTION-SUMMARY	SOURCE_CONTROL	AUTHORIZED_PAGE_CONTEXT	WB-01-GATE-PAGE	CLICK	UI_LOCAL_STATE	WB-01-ACT-UI-LOCAL-STATE	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION	SOURCE_PAGE_PERMISSION / SERVER_RECHECK	WB-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id	N/A — UI LOCAL ONLY	NO_EFFECTFUL_API	UI_LOCAL / READ_ONLY	READ_MODEL / NO_WRITE	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
 P	workspace:WB-01
 P	SOURCE_REGION
 P	WB-01-CMP-PRODUCTION-SUMMARY
@@ -8895,7 +8895,7 @@ P	WB-01-ACT-UI-LOCAL-STATE
 P	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION
 P	SOURCE_PAGE_PERMISSION / SERVER_RECHECK
 P	WB-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id
-P	N/A — UI/READ ONLY
+P	N/A — UI LOCAL ONLY
 P	NO_EFFECTFUL_API
 P	UI_LOCAL / READ_ONLY
 P	READ_MODEL / NO_WRITE
@@ -8904,7 +8904,7 @@ P	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable
 P	Registered success/error/disabled reason; no fabricated success
 P	SAME_PAGE_CONTEXT
 P	acpos_audit.audit_events + correlation_id + operation/result identity
-ROW	workspace:WB-01	SOURCE_REGION	WB-01-CMP-PROJECT-PROGRESS	SOURCE_CONTROL	AUTHORIZED_PAGE_CONTEXT	WB-01-GATE-PAGE	CLICK	UI_LOCAL_STATE	WB-01-ACT-UI-LOCAL-STATE	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION	SOURCE_PAGE_PERMISSION / SERVER_RECHECK	WB-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id	N/A — UI/READ ONLY	NO_EFFECTFUL_API	UI_LOCAL / READ_ONLY	READ_MODEL / NO_WRITE	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
+ROW	workspace:WB-01	SOURCE_REGION	WB-01-CMP-PROJECT-PROGRESS	SOURCE_CONTROL	AUTHORIZED_PAGE_CONTEXT	WB-01-GATE-PAGE	CLICK	UI_LOCAL_STATE	WB-01-ACT-UI-LOCAL-STATE	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION	SOURCE_PAGE_PERMISSION / SERVER_RECHECK	WB-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id	N/A — UI LOCAL ONLY	NO_EFFECTFUL_API	UI_LOCAL / READ_ONLY	READ_MODEL / NO_WRITE	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
 P	workspace:WB-01
 P	SOURCE_REGION
 P	WB-01-CMP-PROJECT-PROGRESS
@@ -8917,7 +8917,7 @@ P	WB-01-ACT-UI-LOCAL-STATE
 P	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION
 P	SOURCE_PAGE_PERMISSION / SERVER_RECHECK
 P	WB-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id
-P	N/A — UI/READ ONLY
+P	N/A — UI LOCAL ONLY
 P	NO_EFFECTFUL_API
 P	UI_LOCAL / READ_ONLY
 P	READ_MODEL / NO_WRITE
@@ -8926,7 +8926,7 @@ P	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable
 P	Registered success/error/disabled reason; no fabricated success
 P	SAME_PAGE_CONTEXT
 P	acpos_audit.audit_events + correlation_id + operation/result identity
-ROW	workspace:WB-01	SOURCE_REGION	WB-01-CMP-RECENT-COMPLETIONS	SOURCE_CONTROL	AUTHORIZED_PAGE_CONTEXT	WB-01-GATE-PAGE	CLICK	UI_LOCAL_STATE	WB-01-ACT-UI-LOCAL-STATE	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION	SOURCE_PAGE_PERMISSION / SERVER_RECHECK	WB-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id	N/A — UI/READ ONLY	NO_EFFECTFUL_API	UI_LOCAL / READ_ONLY	READ_MODEL / NO_WRITE	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
+ROW	workspace:WB-01	SOURCE_REGION	WB-01-CMP-RECENT-COMPLETIONS	SOURCE_CONTROL	AUTHORIZED_PAGE_CONTEXT	WB-01-GATE-PAGE	CLICK	UI_LOCAL_STATE	WB-01-ACT-UI-LOCAL-STATE	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION	SOURCE_PAGE_PERMISSION / SERVER_RECHECK	WB-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id	N/A — UI LOCAL ONLY	NO_EFFECTFUL_API	UI_LOCAL / READ_ONLY	READ_MODEL / NO_WRITE	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
 P	workspace:WB-01
 P	SOURCE_REGION
 P	WB-01-CMP-RECENT-COMPLETIONS
@@ -8939,7 +8939,7 @@ P	WB-01-ACT-UI-LOCAL-STATE
 P	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION
 P	SOURCE_PAGE_PERMISSION / SERVER_RECHECK
 P	WB-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id
-P	N/A — UI/READ ONLY
+P	N/A — UI LOCAL ONLY
 P	NO_EFFECTFUL_API
 P	UI_LOCAL / READ_ONLY
 P	READ_MODEL / NO_WRITE
@@ -8948,7 +8948,7 @@ P	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable
 P	Registered success/error/disabled reason; no fabricated success
 P	SAME_PAGE_CONTEXT
 P	acpos_audit.audit_events + correlation_id + operation/result identity
-ROW	workspace:WB-01	SOURCE_REGION	WB-01-CMP-SYSTEM-STATUS	SOURCE_CONTROL	AUTHORIZED_PAGE_CONTEXT	WB-01-GATE-PAGE	CLICK	UI_LOCAL_STATE	WB-01-ACT-UI-LOCAL-STATE	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION	SOURCE_PAGE_PERMISSION / SERVER_RECHECK	WB-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id	N/A — UI/READ ONLY	NO_EFFECTFUL_API	UI_LOCAL / READ_ONLY	READ_MODEL / NO_WRITE	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
+ROW	workspace:WB-01	SOURCE_REGION	WB-01-CMP-SYSTEM-STATUS	SOURCE_CONTROL	AUTHORIZED_PAGE_CONTEXT	WB-01-GATE-PAGE	CLICK	UI_LOCAL_STATE	WB-01-ACT-UI-LOCAL-STATE	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION	SOURCE_PAGE_PERMISSION / SERVER_RECHECK	WB-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id	N/A — UI LOCAL ONLY	NO_EFFECTFUL_API	UI_LOCAL / READ_ONLY	READ_MODEL / NO_WRITE	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
 P	workspace:WB-01
 P	SOURCE_REGION
 P	WB-01-CMP-SYSTEM-STATUS
@@ -8961,7 +8961,7 @@ P	WB-01-ACT-UI-LOCAL-STATE
 P	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION
 P	SOURCE_PAGE_PERMISSION / SERVER_RECHECK
 P	WB-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id
-P	N/A — UI/READ ONLY
+P	N/A — UI LOCAL ONLY
 P	NO_EFFECTFUL_API
 P	UI_LOCAL / READ_ONLY
 P	READ_MODEL / NO_WRITE
@@ -9015,7 +9015,7 @@ P	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable
 P	Registered success/error/disabled reason; no fabricated success
 P	SAME_PAGE_CONTEXT
 P	acpos_audit.audit_events + correlation_id + operation/result identity
-ROW	workspace:INFO-01	INFO-01-SEC-12	INFO-01-BTN-AUDIT	BUTTON / 查看 Audit / Correlation	AUTHORIZED_PAGE_CONTEXT	INFO-01-GATE-PAGE	CLICK	UI_LOCAL_STATE	INFO-01-ACT-AUDIT-OPEN	EXISTING_ACTION_UID	INFO_PAGE_VIEW	INFO-01-ACT-AUDIT-OPEN typed schema + source contract fields + actor/scope/target + correlation_id	N/A — UI/READ ONLY	NO_EFFECTFUL_API	UI_LOCAL / READ_ONLY	acpos_knowledge.context_candidates	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
+ROW	workspace:INFO-01	INFO-01-SEC-12	INFO-01-BTN-AUDIT	BUTTON / 查看 Audit / Correlation	AUTHORIZED_PAGE_CONTEXT	INFO-01-GATE-PAGE	CLICK	UI_LOCAL_STATE	INFO-01-ACT-AUDIT-OPEN	EXISTING_ACTION_UID	INFO_PAGE_VIEW	INFO-01-ACT-AUDIT-OPEN typed schema + source contract fields + actor/scope/target + correlation_id	N/A — UI LOCAL ONLY	NO_EFFECTFUL_API	UI_LOCAL / READ_ONLY	acpos_knowledge.context_candidates	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
 P	workspace:INFO-01
 P	INFO-01-SEC-12
 P	INFO-01-BTN-AUDIT
@@ -9028,7 +9028,7 @@ P	INFO-01-ACT-AUDIT-OPEN
 P	EXISTING_ACTION_UID
 P	INFO_PAGE_VIEW
 P	INFO-01-ACT-AUDIT-OPEN typed schema + source contract fields + actor/scope/target + correlation_id
-P	N/A — UI/READ ONLY
+P	N/A — UI LOCAL ONLY
 P	NO_EFFECTFUL_API
 P	UI_LOCAL / READ_ONLY
 P	acpos_knowledge.context_candidates
@@ -9059,7 +9059,7 @@ P	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable
 P	Registered success/error/disabled reason; no fabricated success
 P	SAME_PAGE_CONTEXT
 P	acpos_audit.audit_events + correlation_id + operation/result identity
-ROW	workspace:INFO-01	INFO-01-SEC-06	INFO-01-BTN-CITATION	BUTTON / 查看 Citation	AUTHORIZED_PAGE_CONTEXT	INFO-01-GATE-EVIDENCE	CLICK	UI_LOCAL_STATE	INFO-01-ACT-CITATION-OPEN	EXISTING_ACTION_UID	INFO_READ	INFO-01-ACT-CITATION-OPEN typed schema + source contract fields + actor/scope/target + correlation_id	N/A — UI/READ ONLY	NO_EFFECTFUL_API	UI_LOCAL / READ_ONLY	acpos_knowledge.context_candidates	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
+ROW	workspace:INFO-01	INFO-01-SEC-06	INFO-01-BTN-CITATION	BUTTON / 查看 Citation	AUTHORIZED_PAGE_CONTEXT	INFO-01-GATE-EVIDENCE	CLICK	UI_LOCAL_STATE	INFO-01-ACT-CITATION-OPEN	EXISTING_ACTION_UID	INFO_READ	INFO-01-ACT-CITATION-OPEN typed schema + source contract fields + actor/scope/target + correlation_id	N/A — UI LOCAL ONLY	NO_EFFECTFUL_API	UI_LOCAL / READ_ONLY	acpos_knowledge.context_candidates	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
 P	workspace:INFO-01
 P	INFO-01-SEC-06
 P	INFO-01-BTN-CITATION
@@ -9072,7 +9072,7 @@ P	INFO-01-ACT-CITATION-OPEN
 P	EXISTING_ACTION_UID
 P	INFO_READ
 P	INFO-01-ACT-CITATION-OPEN typed schema + source contract fields + actor/scope/target + correlation_id
-P	N/A — UI/READ ONLY
+P	N/A — UI LOCAL ONLY
 P	NO_EFFECTFUL_API
 P	UI_LOCAL / READ_ONLY
 P	acpos_knowledge.context_candidates
@@ -9147,7 +9147,7 @@ P	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable
 P	Registered success/error/disabled reason; no fabricated success
 P	SAME_PAGE_CONTEXT
 P	acpos_audit.audit_events + correlation_id + operation/result identity
-ROW	workspace:INFO-01	SOURCE_REGION	INFO-01-CMP-ACTIONS	SOURCE_CONTROL	AUTHORIZED_PAGE_CONTEXT	INFO-01-GATE-PAGE	CLICK	UI_LOCAL_STATE	INFO-01-ACT-UI-LOCAL-STATE	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION	SOURCE_PAGE_PERMISSION / SERVER_RECHECK	INFO-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id	N/A — UI/READ ONLY	NO_EFFECTFUL_API	UI_LOCAL / READ_ONLY	acpos_knowledge.context_candidates	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
+ROW	workspace:INFO-01	SOURCE_REGION	INFO-01-CMP-ACTIONS	SOURCE_CONTROL	AUTHORIZED_PAGE_CONTEXT	INFO-01-GATE-PAGE	CLICK	UI_LOCAL_STATE	INFO-01-ACT-UI-LOCAL-STATE	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION	SOURCE_PAGE_PERMISSION / SERVER_RECHECK	INFO-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id	N/A — UI LOCAL ONLY	NO_EFFECTFUL_API	UI_LOCAL / READ_ONLY	acpos_knowledge.context_candidates	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
 P	workspace:INFO-01
 P	SOURCE_REGION
 P	INFO-01-CMP-ACTIONS
@@ -9160,7 +9160,7 @@ P	INFO-01-ACT-UI-LOCAL-STATE
 P	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION
 P	SOURCE_PAGE_PERMISSION / SERVER_RECHECK
 P	INFO-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id
-P	N/A — UI/READ ONLY
+P	N/A — UI LOCAL ONLY
 P	NO_EFFECTFUL_API
 P	UI_LOCAL / READ_ONLY
 P	acpos_knowledge.context_candidates
@@ -9169,7 +9169,7 @@ P	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable
 P	Registered success/error/disabled reason; no fabricated success
 P	SAME_PAGE_CONTEXT
 P	acpos_audit.audit_events + correlation_id + operation/result identity
-ROW	workspace:INFO-01	SOURCE_REGION	INFO-01-CMP-ADOPTION-REVIEW	SOURCE_CONTROL	AUTHORIZED_PAGE_CONTEXT	INFO-01-GATE-PAGE	CLICK	UI_LOCAL_STATE	INFO-01-ACT-UI-LOCAL-STATE	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION	SOURCE_PAGE_PERMISSION / SERVER_RECHECK	INFO-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id	N/A — UI/READ ONLY	NO_EFFECTFUL_API	UI_LOCAL / READ_ONLY	acpos_knowledge.context_candidates	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
+ROW	workspace:INFO-01	SOURCE_REGION	INFO-01-CMP-ADOPTION-REVIEW	SOURCE_CONTROL	AUTHORIZED_PAGE_CONTEXT	INFO-01-GATE-PAGE	CLICK	UI_LOCAL_STATE	INFO-01-ACT-UI-LOCAL-STATE	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION	SOURCE_PAGE_PERMISSION / SERVER_RECHECK	INFO-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id	N/A — UI LOCAL ONLY	NO_EFFECTFUL_API	UI_LOCAL / READ_ONLY	acpos_knowledge.context_candidates	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
 P	workspace:INFO-01
 P	SOURCE_REGION
 P	INFO-01-CMP-ADOPTION-REVIEW
@@ -9182,7 +9182,7 @@ P	INFO-01-ACT-UI-LOCAL-STATE
 P	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION
 P	SOURCE_PAGE_PERMISSION / SERVER_RECHECK
 P	INFO-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id
-P	N/A — UI/READ ONLY
+P	N/A — UI LOCAL ONLY
 P	NO_EFFECTFUL_API
 P	UI_LOCAL / READ_ONLY
 P	acpos_knowledge.context_candidates
@@ -9191,7 +9191,7 @@ P	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable
 P	Registered success/error/disabled reason; no fabricated success
 P	SAME_PAGE_CONTEXT
 P	acpos_audit.audit_events + correlation_id + operation/result identity
-ROW	workspace:INFO-01	SOURCE_REGION	INFO-01-CMP-ALERT	SOURCE_CONTROL	AUTHORIZED_PAGE_CONTEXT	INFO-01-GATE-PAGE	CLICK	UI_LOCAL_STATE	INFO-01-ACT-UI-LOCAL-STATE	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION	SOURCE_PAGE_PERMISSION / SERVER_RECHECK	INFO-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id	N/A — UI/READ ONLY	NO_EFFECTFUL_API	UI_LOCAL / READ_ONLY	acpos_knowledge.context_candidates	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
+ROW	workspace:INFO-01	SOURCE_REGION	INFO-01-CMP-ALERT	SOURCE_CONTROL	AUTHORIZED_PAGE_CONTEXT	INFO-01-GATE-PAGE	CLICK	UI_LOCAL_STATE	INFO-01-ACT-UI-LOCAL-STATE	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION	SOURCE_PAGE_PERMISSION / SERVER_RECHECK	INFO-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id	N/A — UI LOCAL ONLY	NO_EFFECTFUL_API	UI_LOCAL / READ_ONLY	acpos_knowledge.context_candidates	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
 P	workspace:INFO-01
 P	SOURCE_REGION
 P	INFO-01-CMP-ALERT
@@ -9204,7 +9204,7 @@ P	INFO-01-ACT-UI-LOCAL-STATE
 P	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION
 P	SOURCE_PAGE_PERMISSION / SERVER_RECHECK
 P	INFO-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id
-P	N/A — UI/READ ONLY
+P	N/A — UI LOCAL ONLY
 P	NO_EFFECTFUL_API
 P	UI_LOCAL / READ_ONLY
 P	acpos_knowledge.context_candidates
@@ -9213,7 +9213,7 @@ P	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable
 P	Registered success/error/disabled reason; no fabricated success
 P	SAME_PAGE_CONTEXT
 P	acpos_audit.audit_events + correlation_id + operation/result identity
-ROW	workspace:INFO-01	SOURCE_REGION	INFO-01-CMP-CANDIDATE-CITATION	SOURCE_CONTROL	AUTHORIZED_PAGE_CONTEXT	INFO-01-GATE-PAGE	CLICK	UI_LOCAL_STATE	INFO-01-ACT-UI-LOCAL-STATE	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION	SOURCE_PAGE_PERMISSION / SERVER_RECHECK	INFO-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id	N/A — UI/READ ONLY	NO_EFFECTFUL_API	UI_LOCAL / READ_ONLY	acpos_knowledge.context_candidates	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
+ROW	workspace:INFO-01	SOURCE_REGION	INFO-01-CMP-CANDIDATE-CITATION	SOURCE_CONTROL	AUTHORIZED_PAGE_CONTEXT	INFO-01-GATE-PAGE	CLICK	UI_LOCAL_STATE	INFO-01-ACT-UI-LOCAL-STATE	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION	SOURCE_PAGE_PERMISSION / SERVER_RECHECK	INFO-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id	N/A — UI LOCAL ONLY	NO_EFFECTFUL_API	UI_LOCAL / READ_ONLY	acpos_knowledge.context_candidates	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
 P	workspace:INFO-01
 P	SOURCE_REGION
 P	INFO-01-CMP-CANDIDATE-CITATION
@@ -9226,7 +9226,7 @@ P	INFO-01-ACT-UI-LOCAL-STATE
 P	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION
 P	SOURCE_PAGE_PERMISSION / SERVER_RECHECK
 P	INFO-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id
-P	N/A — UI/READ ONLY
+P	N/A — UI LOCAL ONLY
 P	NO_EFFECTFUL_API
 P	UI_LOCAL / READ_ONLY
 P	acpos_knowledge.context_candidates
@@ -9235,7 +9235,7 @@ P	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable
 P	Registered success/error/disabled reason; no fabricated success
 P	SAME_PAGE_CONTEXT
 P	acpos_audit.audit_events + correlation_id + operation/result identity
-ROW	workspace:INFO-01	SOURCE_REGION	INFO-01-CMP-CANDIDATE-FACTS	SOURCE_CONTROL	AUTHORIZED_PAGE_CONTEXT	INFO-01-GATE-PAGE	CLICK	UI_LOCAL_STATE	INFO-01-ACT-UI-LOCAL-STATE	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION	SOURCE_PAGE_PERMISSION / SERVER_RECHECK	INFO-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id	N/A — UI/READ ONLY	NO_EFFECTFUL_API	UI_LOCAL / READ_ONLY	acpos_knowledge.context_candidates	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
+ROW	workspace:INFO-01	SOURCE_REGION	INFO-01-CMP-CANDIDATE-FACTS	SOURCE_CONTROL	AUTHORIZED_PAGE_CONTEXT	INFO-01-GATE-PAGE	CLICK	UI_LOCAL_STATE	INFO-01-ACT-UI-LOCAL-STATE	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION	SOURCE_PAGE_PERMISSION / SERVER_RECHECK	INFO-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id	N/A — UI LOCAL ONLY	NO_EFFECTFUL_API	UI_LOCAL / READ_ONLY	acpos_knowledge.context_candidates	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
 P	workspace:INFO-01
 P	SOURCE_REGION
 P	INFO-01-CMP-CANDIDATE-FACTS
@@ -9248,7 +9248,7 @@ P	INFO-01-ACT-UI-LOCAL-STATE
 P	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION
 P	SOURCE_PAGE_PERMISSION / SERVER_RECHECK
 P	INFO-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id
-P	N/A — UI/READ ONLY
+P	N/A — UI LOCAL ONLY
 P	NO_EFFECTFUL_API
 P	UI_LOCAL / READ_ONLY
 P	acpos_knowledge.context_candidates
@@ -9257,7 +9257,7 @@ P	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable
 P	Registered success/error/disabled reason; no fabricated success
 P	SAME_PAGE_CONTEXT
 P	acpos_audit.audit_events + correlation_id + operation/result identity
-ROW	workspace:INFO-01	SOURCE_REGION	INFO-01-CMP-CANDIDATE-PREVIEW	SOURCE_CONTROL	AUTHORIZED_PAGE_CONTEXT	INFO-01-GATE-PAGE	CLICK	UI_LOCAL_STATE	INFO-01-ACT-UI-LOCAL-STATE	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION	SOURCE_PAGE_PERMISSION / SERVER_RECHECK	INFO-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id	N/A — UI/READ ONLY	NO_EFFECTFUL_API	UI_LOCAL / READ_ONLY	acpos_knowledge.context_candidates	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
+ROW	workspace:INFO-01	SOURCE_REGION	INFO-01-CMP-CANDIDATE-PREVIEW	SOURCE_CONTROL	AUTHORIZED_PAGE_CONTEXT	INFO-01-GATE-PAGE	CLICK	UI_LOCAL_STATE	INFO-01-ACT-UI-LOCAL-STATE	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION	SOURCE_PAGE_PERMISSION / SERVER_RECHECK	INFO-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id	N/A — UI LOCAL ONLY	NO_EFFECTFUL_API	UI_LOCAL / READ_ONLY	acpos_knowledge.context_candidates	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
 P	workspace:INFO-01
 P	SOURCE_REGION
 P	INFO-01-CMP-CANDIDATE-PREVIEW
@@ -9270,7 +9270,7 @@ P	INFO-01-ACT-UI-LOCAL-STATE
 P	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION
 P	SOURCE_PAGE_PERMISSION / SERVER_RECHECK
 P	INFO-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id
-P	N/A — UI/READ ONLY
+P	N/A — UI LOCAL ONLY
 P	NO_EFFECTFUL_API
 P	UI_LOCAL / READ_ONLY
 P	acpos_knowledge.context_candidates
@@ -9279,7 +9279,7 @@ P	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable
 P	Registered success/error/disabled reason; no fabricated success
 P	SAME_PAGE_CONTEXT
 P	acpos_audit.audit_events + correlation_id + operation/result identity
-ROW	workspace:INFO-01	SOURCE_REGION	INFO-01-CMP-CANDIDATE-SCOPE	SOURCE_CONTROL	AUTHORIZED_PAGE_CONTEXT	INFO-01-GATE-PAGE	CLICK	UI_LOCAL_STATE	INFO-01-ACT-UI-LOCAL-STATE	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION	SOURCE_PAGE_PERMISSION / SERVER_RECHECK	INFO-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id	N/A — UI/READ ONLY	NO_EFFECTFUL_API	UI_LOCAL / READ_ONLY	acpos_knowledge.context_candidates	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
+ROW	workspace:INFO-01	SOURCE_REGION	INFO-01-CMP-CANDIDATE-SCOPE	SOURCE_CONTROL	AUTHORIZED_PAGE_CONTEXT	INFO-01-GATE-PAGE	CLICK	UI_LOCAL_STATE	INFO-01-ACT-UI-LOCAL-STATE	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION	SOURCE_PAGE_PERMISSION / SERVER_RECHECK	INFO-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id	N/A — UI LOCAL ONLY	NO_EFFECTFUL_API	UI_LOCAL / READ_ONLY	acpos_knowledge.context_candidates	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
 P	workspace:INFO-01
 P	SOURCE_REGION
 P	INFO-01-CMP-CANDIDATE-SCOPE
@@ -9292,7 +9292,7 @@ P	INFO-01-ACT-UI-LOCAL-STATE
 P	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION
 P	SOURCE_PAGE_PERMISSION / SERVER_RECHECK
 P	INFO-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id
-P	N/A — UI/READ ONLY
+P	N/A — UI LOCAL ONLY
 P	NO_EFFECTFUL_API
 P	UI_LOCAL / READ_ONLY
 P	acpos_knowledge.context_candidates
@@ -9301,7 +9301,7 @@ P	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable
 P	Registered success/error/disabled reason; no fabricated success
 P	SAME_PAGE_CONTEXT
 P	acpos_audit.audit_events + correlation_id + operation/result identity
-ROW	workspace:INFO-01	SOURCE_REGION	INFO-01-CMP-CITATION	SOURCE_CONTROL	AUTHORIZED_PAGE_CONTEXT	INFO-01-GATE-PAGE	CLICK	UI_LOCAL_STATE	INFO-01-ACT-UI-LOCAL-STATE	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION	SOURCE_PAGE_PERMISSION / SERVER_RECHECK	INFO-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id	N/A — UI/READ ONLY	NO_EFFECTFUL_API	UI_LOCAL / READ_ONLY	acpos_knowledge.context_candidates	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
+ROW	workspace:INFO-01	SOURCE_REGION	INFO-01-CMP-CITATION	SOURCE_CONTROL	AUTHORIZED_PAGE_CONTEXT	INFO-01-GATE-PAGE	CLICK	UI_LOCAL_STATE	INFO-01-ACT-UI-LOCAL-STATE	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION	SOURCE_PAGE_PERMISSION / SERVER_RECHECK	INFO-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id	N/A — UI LOCAL ONLY	NO_EFFECTFUL_API	UI_LOCAL / READ_ONLY	acpos_knowledge.context_candidates	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
 P	workspace:INFO-01
 P	SOURCE_REGION
 P	INFO-01-CMP-CITATION
@@ -9314,7 +9314,7 @@ P	INFO-01-ACT-UI-LOCAL-STATE
 P	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION
 P	SOURCE_PAGE_PERMISSION / SERVER_RECHECK
 P	INFO-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id
-P	N/A — UI/READ ONLY
+P	N/A — UI LOCAL ONLY
 P	NO_EFFECTFUL_API
 P	UI_LOCAL / READ_ONLY
 P	acpos_knowledge.context_candidates
@@ -9323,7 +9323,7 @@ P	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable
 P	Registered success/error/disabled reason; no fabricated success
 P	SAME_PAGE_CONTEXT
 P	acpos_audit.audit_events + correlation_id + operation/result identity
-ROW	workspace:INFO-01	SOURCE_REGION	INFO-01-CMP-CONTEXT	SOURCE_CONTROL	AUTHORIZED_PAGE_CONTEXT	INFO-01-GATE-PAGE	CLICK	UI_LOCAL_STATE	INFO-01-ACT-UI-LOCAL-STATE	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION	SOURCE_PAGE_PERMISSION / SERVER_RECHECK	INFO-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id	N/A — UI/READ ONLY	NO_EFFECTFUL_API	UI_LOCAL / READ_ONLY	acpos_knowledge.context_candidates	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
+ROW	workspace:INFO-01	SOURCE_REGION	INFO-01-CMP-CONTEXT	SOURCE_CONTROL	AUTHORIZED_PAGE_CONTEXT	INFO-01-GATE-PAGE	CLICK	UI_LOCAL_STATE	INFO-01-ACT-UI-LOCAL-STATE	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION	SOURCE_PAGE_PERMISSION / SERVER_RECHECK	INFO-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id	N/A — UI LOCAL ONLY	NO_EFFECTFUL_API	UI_LOCAL / READ_ONLY	acpos_knowledge.context_candidates	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
 P	workspace:INFO-01
 P	SOURCE_REGION
 P	INFO-01-CMP-CONTEXT
@@ -9336,7 +9336,7 @@ P	INFO-01-ACT-UI-LOCAL-STATE
 P	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION
 P	SOURCE_PAGE_PERMISSION / SERVER_RECHECK
 P	INFO-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id
-P	N/A — UI/READ ONLY
+P	N/A — UI LOCAL ONLY
 P	NO_EFFECTFUL_API
 P	UI_LOCAL / READ_ONLY
 P	acpos_knowledge.context_candidates
@@ -9345,7 +9345,7 @@ P	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable
 P	Registered success/error/disabled reason; no fabricated success
 P	SAME_PAGE_CONTEXT
 P	acpos_audit.audit_events + correlation_id + operation/result identity
-ROW	workspace:INFO-01	SOURCE_REGION	INFO-01-CMP-EVIDENCE	SOURCE_CONTROL	AUTHORIZED_PAGE_CONTEXT	INFO-01-GATE-PAGE	CLICK	UI_LOCAL_STATE	INFO-01-ACT-UI-LOCAL-STATE	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION	SOURCE_PAGE_PERMISSION / SERVER_RECHECK	INFO-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id	N/A — UI/READ ONLY	NO_EFFECTFUL_API	UI_LOCAL / READ_ONLY	acpos_knowledge.context_candidates	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
+ROW	workspace:INFO-01	SOURCE_REGION	INFO-01-CMP-EVIDENCE	SOURCE_CONTROL	AUTHORIZED_PAGE_CONTEXT	INFO-01-GATE-PAGE	CLICK	UI_LOCAL_STATE	INFO-01-ACT-UI-LOCAL-STATE	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION	SOURCE_PAGE_PERMISSION / SERVER_RECHECK	INFO-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id	N/A — UI LOCAL ONLY	NO_EFFECTFUL_API	UI_LOCAL / READ_ONLY	acpos_knowledge.context_candidates	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
 P	workspace:INFO-01
 P	SOURCE_REGION
 P	INFO-01-CMP-EVIDENCE
@@ -9358,7 +9358,7 @@ P	INFO-01-ACT-UI-LOCAL-STATE
 P	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION
 P	SOURCE_PAGE_PERMISSION / SERVER_RECHECK
 P	INFO-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id
-P	N/A — UI/READ ONLY
+P	N/A — UI LOCAL ONLY
 P	NO_EFFECTFUL_API
 P	UI_LOCAL / READ_ONLY
 P	acpos_knowledge.context_candidates
@@ -9367,7 +9367,7 @@ P	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable
 P	Registered success/error/disabled reason; no fabricated success
 P	SAME_PAGE_CONTEXT
 P	acpos_audit.audit_events + correlation_id + operation/result identity
-ROW	workspace:INFO-01	SOURCE_REGION	INFO-01-CMP-FACT	SOURCE_CONTROL	AUTHORIZED_PAGE_CONTEXT	INFO-01-GATE-PAGE	CLICK	UI_LOCAL_STATE	INFO-01-ACT-UI-LOCAL-STATE	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION	SOURCE_PAGE_PERMISSION / SERVER_RECHECK	INFO-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id	N/A — UI/READ ONLY	NO_EFFECTFUL_API	UI_LOCAL / READ_ONLY	acpos_knowledge.context_candidates	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
+ROW	workspace:INFO-01	SOURCE_REGION	INFO-01-CMP-FACT	SOURCE_CONTROL	AUTHORIZED_PAGE_CONTEXT	INFO-01-GATE-PAGE	CLICK	UI_LOCAL_STATE	INFO-01-ACT-UI-LOCAL-STATE	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION	SOURCE_PAGE_PERMISSION / SERVER_RECHECK	INFO-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id	N/A — UI LOCAL ONLY	NO_EFFECTFUL_API	UI_LOCAL / READ_ONLY	acpos_knowledge.context_candidates	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
 P	workspace:INFO-01
 P	SOURCE_REGION
 P	INFO-01-CMP-FACT
@@ -9380,7 +9380,7 @@ P	INFO-01-ACT-UI-LOCAL-STATE
 P	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION
 P	SOURCE_PAGE_PERMISSION / SERVER_RECHECK
 P	INFO-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id
-P	N/A — UI/READ ONLY
+P	N/A — UI LOCAL ONLY
 P	NO_EFFECTFUL_API
 P	UI_LOCAL / READ_ONLY
 P	acpos_knowledge.context_candidates
@@ -9389,7 +9389,7 @@ P	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable
 P	Registered success/error/disabled reason; no fabricated success
 P	SAME_PAGE_CONTEXT
 P	acpos_audit.audit_events + correlation_id + operation/result identity
-ROW	workspace:INFO-01	SOURCE_REGION	INFO-01-CMP-FACTPACK-HEADER	SOURCE_CONTROL	AUTHORIZED_PAGE_CONTEXT	INFO-01-GATE-PAGE	CLICK	UI_LOCAL_STATE	INFO-01-ACT-UI-LOCAL-STATE	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION	SOURCE_PAGE_PERMISSION / SERVER_RECHECK	INFO-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id	N/A — UI/READ ONLY	NO_EFFECTFUL_API	UI_LOCAL / READ_ONLY	acpos_knowledge.context_candidates	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
+ROW	workspace:INFO-01	SOURCE_REGION	INFO-01-CMP-FACTPACK-HEADER	SOURCE_CONTROL	AUTHORIZED_PAGE_CONTEXT	INFO-01-GATE-PAGE	CLICK	UI_LOCAL_STATE	INFO-01-ACT-UI-LOCAL-STATE	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION	SOURCE_PAGE_PERMISSION / SERVER_RECHECK	INFO-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id	N/A — UI LOCAL ONLY	NO_EFFECTFUL_API	UI_LOCAL / READ_ONLY	acpos_knowledge.context_candidates	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
 P	workspace:INFO-01
 P	SOURCE_REGION
 P	INFO-01-CMP-FACTPACK-HEADER
@@ -9402,7 +9402,7 @@ P	INFO-01-ACT-UI-LOCAL-STATE
 P	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION
 P	SOURCE_PAGE_PERMISSION / SERVER_RECHECK
 P	INFO-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id
-P	N/A — UI/READ ONLY
+P	N/A — UI LOCAL ONLY
 P	NO_EFFECTFUL_API
 P	UI_LOCAL / READ_ONLY
 P	acpos_knowledge.context_candidates
@@ -9411,7 +9411,7 @@ P	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable
 P	Registered success/error/disabled reason; no fabricated success
 P	SAME_PAGE_CONTEXT
 P	acpos_audit.audit_events + correlation_id + operation/result identity
-ROW	workspace:INFO-01	SOURCE_REGION	INFO-01-CMP-FACTPACK-LIST	SOURCE_CONTROL	AUTHORIZED_PAGE_CONTEXT	INFO-01-GATE-PAGE	CLICK	UI_LOCAL_STATE	INFO-01-ACT-UI-LOCAL-STATE	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION	SOURCE_PAGE_PERMISSION / SERVER_RECHECK	INFO-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id	N/A — UI/READ ONLY	NO_EFFECTFUL_API	UI_LOCAL / READ_ONLY	acpos_knowledge.context_candidates	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
+ROW	workspace:INFO-01	SOURCE_REGION	INFO-01-CMP-FACTPACK-LIST	SOURCE_CONTROL	AUTHORIZED_PAGE_CONTEXT	INFO-01-GATE-PAGE	CLICK	UI_LOCAL_STATE	INFO-01-ACT-UI-LOCAL-STATE	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION	SOURCE_PAGE_PERMISSION / SERVER_RECHECK	INFO-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id	N/A — UI LOCAL ONLY	NO_EFFECTFUL_API	UI_LOCAL / READ_ONLY	acpos_knowledge.context_candidates	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
 P	workspace:INFO-01
 P	SOURCE_REGION
 P	INFO-01-CMP-FACTPACK-LIST
@@ -9424,7 +9424,7 @@ P	INFO-01-ACT-UI-LOCAL-STATE
 P	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION
 P	SOURCE_PAGE_PERMISSION / SERVER_RECHECK
 P	INFO-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id
-P	N/A — UI/READ ONLY
+P	N/A — UI LOCAL ONLY
 P	NO_EFFECTFUL_API
 P	UI_LOCAL / READ_ONLY
 P	acpos_knowledge.context_candidates
@@ -9433,7 +9433,7 @@ P	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable
 P	Registered success/error/disabled reason; no fabricated success
 P	SAME_PAGE_CONTEXT
 P	acpos_audit.audit_events + correlation_id + operation/result identity
-ROW	workspace:INFO-01	SOURCE_REGION	INFO-01-CMP-INFERENCE	SOURCE_CONTROL	AUTHORIZED_PAGE_CONTEXT	INFO-01-GATE-PAGE	CLICK	UI_LOCAL_STATE	INFO-01-ACT-UI-LOCAL-STATE	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION	SOURCE_PAGE_PERMISSION / SERVER_RECHECK	INFO-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id	N/A — UI/READ ONLY	NO_EFFECTFUL_API	UI_LOCAL / READ_ONLY	acpos_knowledge.context_candidates	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
+ROW	workspace:INFO-01	SOURCE_REGION	INFO-01-CMP-INFERENCE	SOURCE_CONTROL	AUTHORIZED_PAGE_CONTEXT	INFO-01-GATE-PAGE	CLICK	UI_LOCAL_STATE	INFO-01-ACT-UI-LOCAL-STATE	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION	SOURCE_PAGE_PERMISSION / SERVER_RECHECK	INFO-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id	N/A — UI LOCAL ONLY	NO_EFFECTFUL_API	UI_LOCAL / READ_ONLY	acpos_knowledge.context_candidates	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
 P	workspace:INFO-01
 P	SOURCE_REGION
 P	INFO-01-CMP-INFERENCE
@@ -9446,7 +9446,7 @@ P	INFO-01-ACT-UI-LOCAL-STATE
 P	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION
 P	SOURCE_PAGE_PERMISSION / SERVER_RECHECK
 P	INFO-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id
-P	N/A — UI/READ ONLY
+P	N/A — UI LOCAL ONLY
 P	NO_EFFECTFUL_API
 P	UI_LOCAL / READ_ONLY
 P	acpos_knowledge.context_candidates
@@ -9455,7 +9455,7 @@ P	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable
 P	Registered success/error/disabled reason; no fabricated success
 P	SAME_PAGE_CONTEXT
 P	acpos_audit.audit_events + correlation_id + operation/result identity
-ROW	workspace:INFO-01	SOURCE_REGION	INFO-01-CMP-QUALITY	SOURCE_CONTROL	AUTHORIZED_PAGE_CONTEXT	INFO-01-GATE-PAGE	CLICK	UI_LOCAL_STATE	INFO-01-ACT-UI-LOCAL-STATE	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION	SOURCE_PAGE_PERMISSION / SERVER_RECHECK	INFO-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id	N/A — UI/READ ONLY	NO_EFFECTFUL_API	UI_LOCAL / READ_ONLY	acpos_knowledge.context_candidates	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
+ROW	workspace:INFO-01	SOURCE_REGION	INFO-01-CMP-QUALITY	SOURCE_CONTROL	AUTHORIZED_PAGE_CONTEXT	INFO-01-GATE-PAGE	CLICK	UI_LOCAL_STATE	INFO-01-ACT-UI-LOCAL-STATE	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION	SOURCE_PAGE_PERMISSION / SERVER_RECHECK	INFO-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id	N/A — UI LOCAL ONLY	NO_EFFECTFUL_API	UI_LOCAL / READ_ONLY	acpos_knowledge.context_candidates	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
 P	workspace:INFO-01
 P	SOURCE_REGION
 P	INFO-01-CMP-QUALITY
@@ -9468,7 +9468,7 @@ P	INFO-01-ACT-UI-LOCAL-STATE
 P	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION
 P	SOURCE_PAGE_PERMISSION / SERVER_RECHECK
 P	INFO-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id
-P	N/A — UI/READ ONLY
+P	N/A — UI LOCAL ONLY
 P	NO_EFFECTFUL_API
 P	UI_LOCAL / READ_ONLY
 P	acpos_knowledge.context_candidates
@@ -9477,7 +9477,7 @@ P	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable
 P	Registered success/error/disabled reason; no fabricated success
 P	SAME_PAGE_CONTEXT
 P	acpos_audit.audit_events + correlation_id + operation/result identity
-ROW	workspace:INFO-01	SOURCE_REGION	INFO-01-CMP-RESEARCH	SOURCE_CONTROL	AUTHORIZED_PAGE_CONTEXT	INFO-01-GATE-PAGE	CLICK	UI_LOCAL_STATE	INFO-01-ACT-UI-LOCAL-STATE	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION	SOURCE_PAGE_PERMISSION / SERVER_RECHECK	INFO-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id	N/A — UI/READ ONLY	NO_EFFECTFUL_API	UI_LOCAL / READ_ONLY	acpos_knowledge.context_candidates	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
+ROW	workspace:INFO-01	SOURCE_REGION	INFO-01-CMP-RESEARCH	SOURCE_CONTROL	AUTHORIZED_PAGE_CONTEXT	INFO-01-GATE-PAGE	CLICK	UI_LOCAL_STATE	INFO-01-ACT-UI-LOCAL-STATE	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION	SOURCE_PAGE_PERMISSION / SERVER_RECHECK	INFO-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id	N/A — UI LOCAL ONLY	NO_EFFECTFUL_API	UI_LOCAL / READ_ONLY	acpos_knowledge.context_candidates	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
 P	workspace:INFO-01
 P	SOURCE_REGION
 P	INFO-01-CMP-RESEARCH
@@ -9490,7 +9490,7 @@ P	INFO-01-ACT-UI-LOCAL-STATE
 P	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION
 P	SOURCE_PAGE_PERMISSION / SERVER_RECHECK
 P	INFO-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id
-P	N/A — UI/READ ONLY
+P	N/A — UI LOCAL ONLY
 P	NO_EFFECTFUL_API
 P	UI_LOCAL / READ_ONLY
 P	acpos_knowledge.context_candidates
@@ -9499,7 +9499,7 @@ P	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable
 P	Registered success/error/disabled reason; no fabricated success
 P	SAME_PAGE_CONTEXT
 P	acpos_audit.audit_events + correlation_id + operation/result identity
-ROW	workspace:INFO-01	SOURCE_REGION	INFO-01-CMP-SCOPE	SOURCE_CONTROL	AUTHORIZED_PAGE_CONTEXT	INFO-01-GATE-PAGE	CLICK	UI_LOCAL_STATE	INFO-01-ACT-UI-LOCAL-STATE	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION	SOURCE_PAGE_PERMISSION / SERVER_RECHECK	INFO-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id	N/A — UI/READ ONLY	NO_EFFECTFUL_API	UI_LOCAL / READ_ONLY	acpos_knowledge.context_candidates	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
+ROW	workspace:INFO-01	SOURCE_REGION	INFO-01-CMP-SCOPE	SOURCE_CONTROL	AUTHORIZED_PAGE_CONTEXT	INFO-01-GATE-PAGE	CLICK	UI_LOCAL_STATE	INFO-01-ACT-UI-LOCAL-STATE	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION	SOURCE_PAGE_PERMISSION / SERVER_RECHECK	INFO-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id	N/A — UI LOCAL ONLY	NO_EFFECTFUL_API	UI_LOCAL / READ_ONLY	acpos_knowledge.context_candidates	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
 P	workspace:INFO-01
 P	SOURCE_REGION
 P	INFO-01-CMP-SCOPE
@@ -9512,7 +9512,7 @@ P	INFO-01-ACT-UI-LOCAL-STATE
 P	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION
 P	SOURCE_PAGE_PERMISSION / SERVER_RECHECK
 P	INFO-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id
-P	N/A — UI/READ ONLY
+P	N/A — UI LOCAL ONLY
 P	NO_EFFECTFUL_API
 P	UI_LOCAL / READ_ONLY
 P	acpos_knowledge.context_candidates
@@ -9521,7 +9521,7 @@ P	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable
 P	Registered success/error/disabled reason; no fabricated success
 P	SAME_PAGE_CONTEXT
 P	acpos_audit.audit_events + correlation_id + operation/result identity
-ROW	workspace:INFO-01	SOURCE_REGION	INFO-01-CMP-SOURCE-HEALTH	SOURCE_CONTROL	AUTHORIZED_PAGE_CONTEXT	INFO-01-GATE-PAGE	CLICK	UI_LOCAL_STATE	INFO-01-ACT-UI-LOCAL-STATE	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION	SOURCE_PAGE_PERMISSION / SERVER_RECHECK	INFO-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id	N/A — UI/READ ONLY	NO_EFFECTFUL_API	UI_LOCAL / READ_ONLY	acpos_knowledge.context_candidates	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
+ROW	workspace:INFO-01	SOURCE_REGION	INFO-01-CMP-SOURCE-HEALTH	SOURCE_CONTROL	AUTHORIZED_PAGE_CONTEXT	INFO-01-GATE-PAGE	CLICK	UI_LOCAL_STATE	INFO-01-ACT-UI-LOCAL-STATE	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION	SOURCE_PAGE_PERMISSION / SERVER_RECHECK	INFO-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id	N/A — UI LOCAL ONLY	NO_EFFECTFUL_API	UI_LOCAL / READ_ONLY	acpos_knowledge.context_candidates	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
 P	workspace:INFO-01
 P	SOURCE_REGION
 P	INFO-01-CMP-SOURCE-HEALTH
@@ -9534,7 +9534,7 @@ P	INFO-01-ACT-UI-LOCAL-STATE
 P	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION
 P	SOURCE_PAGE_PERMISSION / SERVER_RECHECK
 P	INFO-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id
-P	N/A — UI/READ ONLY
+P	N/A — UI LOCAL ONLY
 P	NO_EFFECTFUL_API
 P	UI_LOCAL / READ_ONLY
 P	acpos_knowledge.context_candidates
@@ -9543,7 +9543,7 @@ P	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable
 P	Registered success/error/disabled reason; no fabricated success
 P	SAME_PAGE_CONTEXT
 P	acpos_audit.audit_events + correlation_id + operation/result identity
-ROW	workspace:INFO-01	SOURCE_REGION	INFO-01-CMP-SOURCE-META	SOURCE_CONTROL	AUTHORIZED_PAGE_CONTEXT	INFO-01-GATE-PAGE	CLICK	UI_LOCAL_STATE	INFO-01-ACT-UI-LOCAL-STATE	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION	SOURCE_PAGE_PERMISSION / SERVER_RECHECK	INFO-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id	N/A — UI/READ ONLY	NO_EFFECTFUL_API	UI_LOCAL / READ_ONLY	acpos_knowledge.context_candidates	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
+ROW	workspace:INFO-01	SOURCE_REGION	INFO-01-CMP-SOURCE-META	SOURCE_CONTROL	AUTHORIZED_PAGE_CONTEXT	INFO-01-GATE-PAGE	CLICK	UI_LOCAL_STATE	INFO-01-ACT-UI-LOCAL-STATE	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION	SOURCE_PAGE_PERMISSION / SERVER_RECHECK	INFO-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id	N/A — UI LOCAL ONLY	NO_EFFECTFUL_API	UI_LOCAL / READ_ONLY	acpos_knowledge.context_candidates	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
 P	workspace:INFO-01
 P	SOURCE_REGION
 P	INFO-01-CMP-SOURCE-META
@@ -9556,7 +9556,7 @@ P	INFO-01-ACT-UI-LOCAL-STATE
 P	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION
 P	SOURCE_PAGE_PERMISSION / SERVER_RECHECK
 P	INFO-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id
-P	N/A — UI/READ ONLY
+P	N/A — UI LOCAL ONLY
 P	NO_EFFECTFUL_API
 P	UI_LOCAL / READ_ONLY
 P	acpos_knowledge.context_candidates
@@ -9565,7 +9565,7 @@ P	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable
 P	Registered success/error/disabled reason; no fabricated success
 P	SAME_PAGE_CONTEXT
 P	acpos_audit.audit_events + correlation_id + operation/result identity
-ROW	workspace:INFO-01	SOURCE_REGION	INFO-01-CMP-STATUS	SOURCE_CONTROL	AUTHORIZED_PAGE_CONTEXT	INFO-01-GATE-PAGE	CLICK	UI_LOCAL_STATE	INFO-01-ACT-UI-LOCAL-STATE	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION	SOURCE_PAGE_PERMISSION / SERVER_RECHECK	INFO-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id	N/A — UI/READ ONLY	NO_EFFECTFUL_API	UI_LOCAL / READ_ONLY	acpos_knowledge.context_candidates	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
+ROW	workspace:INFO-01	SOURCE_REGION	INFO-01-CMP-STATUS	SOURCE_CONTROL	AUTHORIZED_PAGE_CONTEXT	INFO-01-GATE-PAGE	CLICK	UI_LOCAL_STATE	INFO-01-ACT-UI-LOCAL-STATE	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION	SOURCE_PAGE_PERMISSION / SERVER_RECHECK	INFO-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id	N/A — UI LOCAL ONLY	NO_EFFECTFUL_API	UI_LOCAL / READ_ONLY	acpos_knowledge.context_candidates	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
 P	workspace:INFO-01
 P	SOURCE_REGION
 P	INFO-01-CMP-STATUS
@@ -9578,7 +9578,7 @@ P	INFO-01-ACT-UI-LOCAL-STATE
 P	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION
 P	SOURCE_PAGE_PERMISSION / SERVER_RECHECK
 P	INFO-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id
-P	N/A — UI/READ ONLY
+P	N/A — UI LOCAL ONLY
 P	NO_EFFECTFUL_API
 P	UI_LOCAL / READ_ONLY
 P	acpos_knowledge.context_candidates
@@ -10819,7 +10819,7 @@ P	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable
 P	Registered success/error/disabled reason; no fabricated success
 P	SAME_PAGE_CONTEXT
 P	acpos_audit.audit_events + correlation_id + operation/result identity
-ROW	workspace:INFO-01	INFO-01-SEC-02	INFO-01-SEL-SCOPE	FILTER / 範圍篩選 / Scope Filter	AUTHORIZED_PAGE_CONTEXT	INFO-01-GATE-READ	CLICK	UI_LOCAL_STATE	INFO-01-ACT-FILTER	EXISTING_ACTION_UID	INFO_READ	INFO-01-ACT-FILTER typed schema + source contract fields + actor/scope/target + correlation_id	N/A — UI/READ ONLY	NO_EFFECTFUL_API	UI_LOCAL / READ_ONLY	acpos_knowledge.context_candidates	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
+ROW	workspace:INFO-01	INFO-01-SEC-02	INFO-01-SEL-SCOPE	FILTER / 範圍篩選 / Scope Filter	AUTHORIZED_PAGE_CONTEXT	INFO-01-GATE-READ	CLICK	UI_LOCAL_STATE	INFO-01-ACT-FILTER	EXISTING_ACTION_UID	INFO_READ	INFO-01-ACT-FILTER typed schema + source contract fields + actor/scope/target + correlation_id	N/A — UI LOCAL ONLY	NO_EFFECTFUL_API	UI_LOCAL / READ_ONLY	acpos_knowledge.context_candidates	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
 P	workspace:INFO-01
 P	INFO-01-SEC-02
 P	INFO-01-SEL-SCOPE
@@ -10832,7 +10832,7 @@ P	INFO-01-ACT-FILTER
 P	EXISTING_ACTION_UID
 P	INFO_READ
 P	INFO-01-ACT-FILTER typed schema + source contract fields + actor/scope/target + correlation_id
-P	N/A — UI/READ ONLY
+P	N/A — UI LOCAL ONLY
 P	NO_EFFECTFUL_API
 P	UI_LOCAL / READ_ONLY
 P	acpos_knowledge.context_candidates
@@ -10841,7 +10841,7 @@ P	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable
 P	Registered success/error/disabled reason; no fabricated success
 P	SAME_PAGE_CONTEXT
 P	acpos_audit.audit_events + correlation_id + operation/result identity
-ROW	workspace:INFO-01	INFO-01-SEC-05	INFO-01-TAB-FACT	TAB / FACT	AUTHORIZED_PAGE_CONTEXT	INFO-01-GATE-FACTPACK	CLICK	UI_LOCAL_STATE	INFO-01-ACT-FACT-TYPE	EXISTING_ACTION_UID	INFO_READ	INFO-01-ACT-FACT-TYPE typed schema + source contract fields + actor/scope/target + correlation_id	N/A — UI/READ ONLY	NO_EFFECTFUL_API	UI_LOCAL / READ_ONLY	acpos_knowledge.context_candidates	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
+ROW	workspace:INFO-01	INFO-01-SEC-05	INFO-01-TAB-FACT	TAB / FACT	AUTHORIZED_PAGE_CONTEXT	INFO-01-GATE-FACTPACK	CLICK	UI_LOCAL_STATE	INFO-01-ACT-FACT-TYPE	EXISTING_ACTION_UID	INFO_READ	INFO-01-ACT-FACT-TYPE typed schema + source contract fields + actor/scope/target + correlation_id	N/A — UI LOCAL ONLY	NO_EFFECTFUL_API	UI_LOCAL / READ_ONLY	acpos_knowledge.context_candidates	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
 P	workspace:INFO-01
 P	INFO-01-SEC-05
 P	INFO-01-TAB-FACT
@@ -10854,7 +10854,7 @@ P	INFO-01-ACT-FACT-TYPE
 P	EXISTING_ACTION_UID
 P	INFO_READ
 P	INFO-01-ACT-FACT-TYPE typed schema + source contract fields + actor/scope/target + correlation_id
-P	N/A — UI/READ ONLY
+P	N/A — UI LOCAL ONLY
 P	NO_EFFECTFUL_API
 P	UI_LOCAL / READ_ONLY
 P	acpos_knowledge.context_candidates
@@ -10863,7 +10863,7 @@ P	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable
 P	Registered success/error/disabled reason; no fabricated success
 P	SAME_PAGE_CONTEXT
 P	acpos_audit.audit_events + correlation_id + operation/result identity
-ROW	workspace:INFO-01	INFO-01-SEC-05	INFO-01-TAB-INFERENCE	TAB / INFERENCE / RECOMMENDATION	AUTHORIZED_PAGE_CONTEXT	INFO-01-GATE-FACTPACK	CLICK	UI_LOCAL_STATE	INFO-01-ACT-FACT-TYPE	EXISTING_ACTION_UID	INFO_READ	INFO-01-ACT-FACT-TYPE typed schema + source contract fields + actor/scope/target + correlation_id	N/A — UI/READ ONLY	NO_EFFECTFUL_API	UI_LOCAL / READ_ONLY	acpos_knowledge.context_candidates	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
+ROW	workspace:INFO-01	INFO-01-SEC-05	INFO-01-TAB-INFERENCE	TAB / INFERENCE / RECOMMENDATION	AUTHORIZED_PAGE_CONTEXT	INFO-01-GATE-FACTPACK	CLICK	UI_LOCAL_STATE	INFO-01-ACT-FACT-TYPE	EXISTING_ACTION_UID	INFO_READ	INFO-01-ACT-FACT-TYPE typed schema + source contract fields + actor/scope/target + correlation_id	N/A — UI LOCAL ONLY	NO_EFFECTFUL_API	UI_LOCAL / READ_ONLY	acpos_knowledge.context_candidates	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
 P	workspace:INFO-01
 P	INFO-01-SEC-05
 P	INFO-01-TAB-INFERENCE
@@ -10876,7 +10876,7 @@ P	INFO-01-ACT-FACT-TYPE
 P	EXISTING_ACTION_UID
 P	INFO_READ
 P	INFO-01-ACT-FACT-TYPE typed schema + source contract fields + actor/scope/target + correlation_id
-P	N/A — UI/READ ONLY
+P	N/A — UI LOCAL ONLY
 P	NO_EFFECTFUL_API
 P	UI_LOCAL / READ_ONLY
 P	acpos_knowledge.context_candidates
@@ -10910,7 +10910,7 @@ P	Failure State
 P	UI Feedback/Recovery
 P	Next Page/Handoff
 P	Evidence
-ROW	admin:DB-01	SOURCE_REGION	DB-01-BTN-AUDIT	BUTTON / 查看 Audit Trace	AUTHORIZED_PAGE_CONTEXT	DB-01-GATE-AUDIT	CLICK	UI_LOCAL_STATE	DB-01-ACT-AUDIT-OPEN	EXISTING_ACTION_UID	DB_AUDIT_READ	DB-01-ACT-AUDIT-OPEN typed schema + source contract fields + actor/scope/target + correlation_id + expected_version(if versioned) + idempotency_key	POST /v1/commands/DB-01-ACT-AUDIT-OPEN	NEW_AUTHORITY_AFTER_GLOBAL_SOURCE_EXHAUSTION	SHARED_TYPED_COMMAND_RUNTIME	acpos_system.trace_edges	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
+ROW	admin:DB-01	SOURCE_REGION	DB-01-BTN-AUDIT	BUTTON / 查看 Audit Trace	AUTHORIZED_PAGE_CONTEXT	DB-01-GATE-AUDIT	CLICK	getUiProjection	DB-01-ACT-AUDIT-OPEN	EXISTING_ACTION_UID	DB_AUDIT_READ	DB-01-ACT-AUDIT-OPEN typed schema + source contract fields + actor/scope/target + correlation_id	GET /v1/ui-projections/{pageUid}	SOURCE:2026-09-21 shared closure#T0	READ_PROJECTION_RUNTIME	acpos_system.trace_edges	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
 P	admin:DB-01
 P	SOURCE_REGION
 P	DB-01-BTN-AUDIT
@@ -10918,21 +10918,21 @@ P	BUTTON / 查看 Audit Trace
 P	AUTHORIZED_PAGE_CONTEXT
 P	DB-01-GATE-AUDIT
 P	CLICK
-P	UI_LOCAL_STATE
+P	getUiProjection
 P	DB-01-ACT-AUDIT-OPEN
 P	EXISTING_ACTION_UID
 P	DB_AUDIT_READ
-P	DB-01-ACT-AUDIT-OPEN typed schema + source contract fields + actor/scope/target + correlation_id + expected_version(if versioned) + idempotency_key
-P	POST /v1/commands/DB-01-ACT-AUDIT-OPEN
-P	NEW_AUTHORITY_AFTER_GLOBAL_SOURCE_EXHAUSTION
-P	SHARED_TYPED_COMMAND_RUNTIME
+P	DB-01-ACT-AUDIT-OPEN typed schema + source contract fields + actor/scope/target + correlation_id
+P	GET /v1/ui-projections/{pageUid}
+P	SOURCE:2026-09-21 shared closure#T0
+P	READ_PROJECTION_RUNTIME
 P	acpos_system.trace_edges
 P	SOURCE_PAGE_STATE_REGISTRY / exact server result
 P	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable
 P	Registered success/error/disabled reason; no fabricated success
 P	SAME_PAGE_CONTEXT
 P	acpos_audit.audit_events + correlation_id + operation/result identity
-ROW	admin:DB-01	SOURCE_REGION	DB-01-BTN-INTEGRITY-REFRESH	BUTTON / 重新整理完整性	AUTHORIZED_PAGE_CONTEXT	DB-01-GATE-INTEGRITY	CLICK	UI_LOCAL_STATE	DB-01-ACT-INTEGRITY-REFRESH	EXISTING_ACTION_UID	DB_INTEGRITY_READ	DB-01-ACT-INTEGRITY-REFRESH typed schema + source contract fields + actor/scope/target + correlation_id + expected_version(if versioned) + idempotency_key	POST /v1/commands/DB-01-ACT-INTEGRITY-REFRESH	NEW_AUTHORITY_AFTER_GLOBAL_SOURCE_EXHAUSTION	SHARED_TYPED_COMMAND_RUNTIME	acpos_system.trace_edges	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
+ROW	admin:DB-01	SOURCE_REGION	DB-01-BTN-INTEGRITY-REFRESH	BUTTON / 重新整理完整性	AUTHORIZED_PAGE_CONTEXT	DB-01-GATE-INTEGRITY	CLICK	getUiProjection	DB-01-ACT-INTEGRITY-REFRESH	EXISTING_ACTION_UID	DB_INTEGRITY_READ	DB-01-ACT-INTEGRITY-REFRESH typed schema + source contract fields + actor/scope/target + correlation_id	GET /v1/ui-projections/{pageUid}	SOURCE:2026-09-21 shared closure#T0	READ_PROJECTION_RUNTIME	acpos_system.trace_edges	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
 P	admin:DB-01
 P	SOURCE_REGION
 P	DB-01-BTN-INTEGRITY-REFRESH
@@ -10940,21 +10940,21 @@ P	BUTTON / 重新整理完整性
 P	AUTHORIZED_PAGE_CONTEXT
 P	DB-01-GATE-INTEGRITY
 P	CLICK
-P	UI_LOCAL_STATE
+P	getUiProjection
 P	DB-01-ACT-INTEGRITY-REFRESH
 P	EXISTING_ACTION_UID
 P	DB_INTEGRITY_READ
-P	DB-01-ACT-INTEGRITY-REFRESH typed schema + source contract fields + actor/scope/target + correlation_id + expected_version(if versioned) + idempotency_key
-P	POST /v1/commands/DB-01-ACT-INTEGRITY-REFRESH
-P	NEW_AUTHORITY_AFTER_GLOBAL_SOURCE_EXHAUSTION
-P	SHARED_TYPED_COMMAND_RUNTIME
+P	DB-01-ACT-INTEGRITY-REFRESH typed schema + source contract fields + actor/scope/target + correlation_id
+P	GET /v1/ui-projections/{pageUid}
+P	SOURCE:2026-09-21 shared closure#T0
+P	READ_PROJECTION_RUNTIME
 P	acpos_system.trace_edges
 P	SOURCE_PAGE_STATE_REGISTRY / exact server result
 P	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable
 P	Registered success/error/disabled reason; no fabricated success
 P	SAME_PAGE_CONTEXT
 P	acpos_audit.audit_events + correlation_id + operation/result identity
-ROW	admin:DB-01	SOURCE_REGION	DB-01-BTN-MIGRATION-REFRESH	BUTTON / 重新整理 Migration	AUTHORIZED_PAGE_CONTEXT	DB-01-GATE-MIGRATION	CLICK	UI_LOCAL_STATE	DB-01-ACT-MIGRATION-REFRESH	EXISTING_ACTION_UID	DB_MIGRATION_READ	DB-01-ACT-MIGRATION-REFRESH typed schema + source contract fields + actor/scope/target + correlation_id + expected_version(if versioned) + idempotency_key	POST /v1/commands/DB-01-ACT-MIGRATION-REFRESH	NEW_AUTHORITY_AFTER_GLOBAL_SOURCE_EXHAUSTION	SHARED_TYPED_COMMAND_RUNTIME	acpos_system.trace_edges	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
+ROW	admin:DB-01	SOURCE_REGION	DB-01-BTN-MIGRATION-REFRESH	BUTTON / 重新整理 Migration	AUTHORIZED_PAGE_CONTEXT	DB-01-GATE-MIGRATION	CLICK	getUiProjection	DB-01-ACT-MIGRATION-REFRESH	EXISTING_ACTION_UID	DB_MIGRATION_READ	DB-01-ACT-MIGRATION-REFRESH typed schema + source contract fields + actor/scope/target + correlation_id	GET /v1/ui-projections/{pageUid}	SOURCE:2026-09-21 shared closure#T0	READ_PROJECTION_RUNTIME	acpos_system.trace_edges	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
 P	admin:DB-01
 P	SOURCE_REGION
 P	DB-01-BTN-MIGRATION-REFRESH
@@ -10962,21 +10962,21 @@ P	BUTTON / 重新整理 Migration
 P	AUTHORIZED_PAGE_CONTEXT
 P	DB-01-GATE-MIGRATION
 P	CLICK
-P	UI_LOCAL_STATE
+P	getUiProjection
 P	DB-01-ACT-MIGRATION-REFRESH
 P	EXISTING_ACTION_UID
 P	DB_MIGRATION_READ
-P	DB-01-ACT-MIGRATION-REFRESH typed schema + source contract fields + actor/scope/target + correlation_id + expected_version(if versioned) + idempotency_key
-P	POST /v1/commands/DB-01-ACT-MIGRATION-REFRESH
-P	NEW_AUTHORITY_AFTER_GLOBAL_SOURCE_EXHAUSTION
-P	SHARED_TYPED_COMMAND_RUNTIME
+P	DB-01-ACT-MIGRATION-REFRESH typed schema + source contract fields + actor/scope/target + correlation_id
+P	GET /v1/ui-projections/{pageUid}
+P	SOURCE:2026-09-21 shared closure#T0
+P	READ_PROJECTION_RUNTIME
 P	acpos_system.trace_edges
 P	SOURCE_PAGE_STATE_REGISTRY / exact server result
 P	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable
 P	Registered success/error/disabled reason; no fabricated success
 P	SAME_PAGE_CONTEXT
 P	acpos_audit.audit_events + correlation_id + operation/result identity
-ROW	admin:DB-01	SOURCE_REGION	DB-01-BTN-REFRESH	BUTTON / 重新整理 / Refresh	AUTHORIZED_PAGE_CONTEXT	DB-01-GATE-CONTEXT	CLICK	UI_LOCAL_STATE	DB-01-ACT-SCHEMA-REFRESH	EXISTING_ACTION_UID	DB_READ	DB-01-ACT-SCHEMA-REFRESH typed schema + source contract fields + actor/scope/target + correlation_id + expected_version(if versioned) + idempotency_key	POST /v1/commands/DB-01-ACT-SCHEMA-REFRESH	NEW_AUTHORITY_AFTER_GLOBAL_SOURCE_EXHAUSTION	SHARED_TYPED_COMMAND_RUNTIME	acpos_system.trace_edges	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
+ROW	admin:DB-01	SOURCE_REGION	DB-01-BTN-REFRESH	BUTTON / 重新整理 / Refresh	AUTHORIZED_PAGE_CONTEXT	DB-01-GATE-CONTEXT	CLICK	getUiProjection	DB-01-ACT-SCHEMA-REFRESH	EXISTING_ACTION_UID	DB_READ	DB-01-ACT-SCHEMA-REFRESH typed schema + source contract fields + actor/scope/target + correlation_id	GET /v1/ui-projections/{pageUid}	SOURCE:2026-09-21 shared closure#T0	READ_PROJECTION_RUNTIME	acpos_system.trace_edges	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
 P	admin:DB-01
 P	SOURCE_REGION
 P	DB-01-BTN-REFRESH
@@ -10984,21 +10984,21 @@ P	BUTTON / 重新整理 / Refresh
 P	AUTHORIZED_PAGE_CONTEXT
 P	DB-01-GATE-CONTEXT
 P	CLICK
-P	UI_LOCAL_STATE
+P	getUiProjection
 P	DB-01-ACT-SCHEMA-REFRESH
 P	EXISTING_ACTION_UID
 P	DB_READ
-P	DB-01-ACT-SCHEMA-REFRESH typed schema + source contract fields + actor/scope/target + correlation_id + expected_version(if versioned) + idempotency_key
-P	POST /v1/commands/DB-01-ACT-SCHEMA-REFRESH
-P	NEW_AUTHORITY_AFTER_GLOBAL_SOURCE_EXHAUSTION
-P	SHARED_TYPED_COMMAND_RUNTIME
+P	DB-01-ACT-SCHEMA-REFRESH typed schema + source contract fields + actor/scope/target + correlation_id
+P	GET /v1/ui-projections/{pageUid}
+P	SOURCE:2026-09-21 shared closure#T0
+P	READ_PROJECTION_RUNTIME
 P	acpos_system.trace_edges
 P	SOURCE_PAGE_STATE_REGISTRY / exact server result
 P	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable
 P	Registered success/error/disabled reason; no fabricated success
 P	SAME_PAGE_CONTEXT
 P	acpos_audit.audit_events + correlation_id + operation/result identity
-ROW	admin:DB-01	SOURCE_REGION	DB-01-BTN-SCHEMA-REFRESH	BUTTON / 重新讀取 Schema	AUTHORIZED_PAGE_CONTEXT	DB-01-GATE-SCHEMA	CLICK	UI_LOCAL_STATE	DB-01-ACT-SCHEMA-REFRESH	EXISTING_ACTION_UID	DB_READ	DB-01-ACT-SCHEMA-REFRESH typed schema + source contract fields + actor/scope/target + correlation_id + expected_version(if versioned) + idempotency_key	POST /v1/commands/DB-01-ACT-SCHEMA-REFRESH	NEW_AUTHORITY_AFTER_GLOBAL_SOURCE_EXHAUSTION	SHARED_TYPED_COMMAND_RUNTIME	acpos_system.trace_edges	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
+ROW	admin:DB-01	SOURCE_REGION	DB-01-BTN-SCHEMA-REFRESH	BUTTON / 重新讀取 Schema	AUTHORIZED_PAGE_CONTEXT	DB-01-GATE-SCHEMA	CLICK	getUiProjection	DB-01-ACT-SCHEMA-REFRESH	EXISTING_ACTION_UID	DB_READ	DB-01-ACT-SCHEMA-REFRESH typed schema + source contract fields + actor/scope/target + correlation_id	GET /v1/ui-projections/{pageUid}	SOURCE:2026-09-21 shared closure#T0	READ_PROJECTION_RUNTIME	acpos_system.trace_edges	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
 P	admin:DB-01
 P	SOURCE_REGION
 P	DB-01-BTN-SCHEMA-REFRESH
@@ -11006,21 +11006,21 @@ P	BUTTON / 重新讀取 Schema
 P	AUTHORIZED_PAGE_CONTEXT
 P	DB-01-GATE-SCHEMA
 P	CLICK
-P	UI_LOCAL_STATE
+P	getUiProjection
 P	DB-01-ACT-SCHEMA-REFRESH
 P	EXISTING_ACTION_UID
 P	DB_READ
-P	DB-01-ACT-SCHEMA-REFRESH typed schema + source contract fields + actor/scope/target + correlation_id + expected_version(if versioned) + idempotency_key
-P	POST /v1/commands/DB-01-ACT-SCHEMA-REFRESH
-P	NEW_AUTHORITY_AFTER_GLOBAL_SOURCE_EXHAUSTION
-P	SHARED_TYPED_COMMAND_RUNTIME
+P	DB-01-ACT-SCHEMA-REFRESH typed schema + source contract fields + actor/scope/target + correlation_id
+P	GET /v1/ui-projections/{pageUid}
+P	SOURCE:2026-09-21 shared closure#T0
+P	READ_PROJECTION_RUNTIME
 P	acpos_system.trace_edges
 P	SOURCE_PAGE_STATE_REGISTRY / exact server result
 P	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable
 P	Registered success/error/disabled reason; no fabricated success
 P	SAME_PAGE_CONTEXT
 P	acpos_audit.audit_events + correlation_id + operation/result identity
-ROW	admin:DB-01	SOURCE_REGION	DB-01-BTN-SYSTEM-LIFECYCLE	BUTTON / 開啟 System Lifecycle / Change Management	AUTHORIZED_PAGE_CONTEXT	DB-01-GATE-PAGE	CLICK	UI_LOCAL_STATE	DB-01-ACT-SYSTEM-LIFECYCLE	EXISTING_ACTION_UID	DB_READ	DB-01-ACT-SYSTEM-LIFECYCLE typed schema + source contract fields + actor/scope/target + correlation_id	N/A — UI/READ ONLY	NO_EFFECTFUL_API	UI_LOCAL / READ_ONLY	acpos_system.trace_edges	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
+ROW	admin:DB-01	SOURCE_REGION	DB-01-BTN-SYSTEM-LIFECYCLE	BUTTON / 開啟 System Lifecycle / Change Management	AUTHORIZED_PAGE_CONTEXT	DB-01-GATE-PAGE	CLICK	UI_LOCAL_STATE	DB-01-ACT-SYSTEM-LIFECYCLE	EXISTING_ACTION_UID	DB_READ	DB-01-ACT-SYSTEM-LIFECYCLE typed schema + source contract fields + actor/scope/target + correlation_id	N/A — UI LOCAL ONLY	NO_EFFECTFUL_API	UI_LOCAL / READ_ONLY	acpos_system.trace_edges	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
 P	admin:DB-01
 P	SOURCE_REGION
 P	DB-01-BTN-SYSTEM-LIFECYCLE
@@ -11033,7 +11033,7 @@ P	DB-01-ACT-SYSTEM-LIFECYCLE
 P	EXISTING_ACTION_UID
 P	DB_READ
 P	DB-01-ACT-SYSTEM-LIFECYCLE typed schema + source contract fields + actor/scope/target + correlation_id
-P	N/A — UI/READ ONLY
+P	N/A — UI LOCAL ONLY
 P	NO_EFFECTFUL_API
 P	UI_LOCAL / READ_ONLY
 P	acpos_system.trace_edges
@@ -11042,7 +11042,7 @@ P	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable
 P	Registered success/error/disabled reason; no fabricated success
 P	SAME_PAGE_CONTEXT
 P	acpos_audit.audit_events + correlation_id + operation/result identity
-ROW	admin:DB-01	SOURCE_REGION	DB-01-BTN-TRACE	PRIMARY_BUTTON / 追溯 / Trace	AUTHORIZED_PAGE_CONTEXT	DB-01-GATE-TRACE	CLICK	UI_LOCAL_STATE	DB-01-ACT-TRACE	EXISTING_ACTION_UID	DB_TRACE	DB-01-ACT-TRACE typed schema + source contract fields + actor/scope/target + correlation_id + expected_version(if versioned) + idempotency_key	POST /v1/commands/DB-01-ACT-TRACE	NEW_AUTHORITY_AFTER_GLOBAL_SOURCE_EXHAUSTION	SHARED_TYPED_COMMAND_RUNTIME	acpos_system.trace_edges	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
+ROW	admin:DB-01	SOURCE_REGION	DB-01-BTN-TRACE	PRIMARY_BUTTON / 追溯 / Trace	AUTHORIZED_PAGE_CONTEXT	DB-01-GATE-TRACE	CLICK	getUiProjection	DB-01-ACT-TRACE	EXISTING_ACTION_UID	DB_TRACE	DB-01-ACT-TRACE typed schema + source contract fields + actor/scope/target + correlation_id	GET /v1/ui-projections/{pageUid}	SOURCE:2026-09-21 shared closure#T0	READ_PROJECTION_RUNTIME	acpos_system.trace_edges	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
 P	admin:DB-01
 P	SOURCE_REGION
 P	DB-01-BTN-TRACE
@@ -11050,21 +11050,21 @@ P	PRIMARY_BUTTON / 追溯 / Trace
 P	AUTHORIZED_PAGE_CONTEXT
 P	DB-01-GATE-TRACE
 P	CLICK
-P	UI_LOCAL_STATE
+P	getUiProjection
 P	DB-01-ACT-TRACE
 P	EXISTING_ACTION_UID
 P	DB_TRACE
-P	DB-01-ACT-TRACE typed schema + source contract fields + actor/scope/target + correlation_id + expected_version(if versioned) + idempotency_key
-P	POST /v1/commands/DB-01-ACT-TRACE
-P	NEW_AUTHORITY_AFTER_GLOBAL_SOURCE_EXHAUSTION
-P	SHARED_TYPED_COMMAND_RUNTIME
+P	DB-01-ACT-TRACE typed schema + source contract fields + actor/scope/target + correlation_id
+P	GET /v1/ui-projections/{pageUid}
+P	SOURCE:2026-09-21 shared closure#T0
+P	READ_PROJECTION_RUNTIME
 P	acpos_system.trace_edges
 P	SOURCE_PAGE_STATE_REGISTRY / exact server result
 P	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable
 P	Registered success/error/disabled reason; no fabricated success
 P	SAME_PAGE_CONTEXT
 P	acpos_audit.audit_events + correlation_id + operation/result identity
-ROW	admin:DB-01	SOURCE_REGION	DB-01-CMP-AUDIT	SOURCE_CONTROL	AUTHORIZED_PAGE_CONTEXT	DB-01-GATE-PAGE	CLICK	UI_LOCAL_STATE	DB-01-ACT-UI-LOCAL-STATE	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION	SOURCE_PAGE_PERMISSION / SERVER_RECHECK	DB-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id	N/A — UI/READ ONLY	NO_EFFECTFUL_API	UI_LOCAL / READ_ONLY	acpos_system.trace_edges	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
+ROW	admin:DB-01	SOURCE_REGION	DB-01-CMP-AUDIT	SOURCE_CONTROL	AUTHORIZED_PAGE_CONTEXT	DB-01-GATE-PAGE	CLICK	UI_LOCAL_STATE	DB-01-ACT-UI-LOCAL-STATE	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION	SOURCE_PAGE_PERMISSION / SERVER_RECHECK	DB-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id	N/A — UI LOCAL ONLY	NO_EFFECTFUL_API	UI_LOCAL / READ_ONLY	acpos_system.trace_edges	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
 P	admin:DB-01
 P	SOURCE_REGION
 P	DB-01-CMP-AUDIT
@@ -11077,7 +11077,7 @@ P	DB-01-ACT-UI-LOCAL-STATE
 P	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION
 P	SOURCE_PAGE_PERMISSION / SERVER_RECHECK
 P	DB-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id
-P	N/A — UI/READ ONLY
+P	N/A — UI LOCAL ONLY
 P	NO_EFFECTFUL_API
 P	UI_LOCAL / READ_ONLY
 P	acpos_system.trace_edges
@@ -11086,7 +11086,7 @@ P	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable
 P	Registered success/error/disabled reason; no fabricated success
 P	SAME_PAGE_CONTEXT
 P	acpos_audit.audit_events + correlation_id + operation/result identity
-ROW	admin:DB-01	SOURCE_REGION	DB-01-CMP-COLUMNS	SOURCE_CONTROL	AUTHORIZED_PAGE_CONTEXT	DB-01-GATE-PAGE	CLICK	UI_LOCAL_STATE	DB-01-ACT-UI-LOCAL-STATE	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION	SOURCE_PAGE_PERMISSION / SERVER_RECHECK	DB-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id	N/A — UI/READ ONLY	NO_EFFECTFUL_API	UI_LOCAL / READ_ONLY	acpos_system.trace_edges	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
+ROW	admin:DB-01	SOURCE_REGION	DB-01-CMP-COLUMNS	SOURCE_CONTROL	AUTHORIZED_PAGE_CONTEXT	DB-01-GATE-PAGE	CLICK	UI_LOCAL_STATE	DB-01-ACT-UI-LOCAL-STATE	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION	SOURCE_PAGE_PERMISSION / SERVER_RECHECK	DB-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id	N/A — UI LOCAL ONLY	NO_EFFECTFUL_API	UI_LOCAL / READ_ONLY	acpos_system.trace_edges	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
 P	admin:DB-01
 P	SOURCE_REGION
 P	DB-01-CMP-COLUMNS
@@ -11099,7 +11099,7 @@ P	DB-01-ACT-UI-LOCAL-STATE
 P	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION
 P	SOURCE_PAGE_PERMISSION / SERVER_RECHECK
 P	DB-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id
-P	N/A — UI/READ ONLY
+P	N/A — UI LOCAL ONLY
 P	NO_EFFECTFUL_API
 P	UI_LOCAL / READ_ONLY
 P	acpos_system.trace_edges
@@ -11108,7 +11108,7 @@ P	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable
 P	Registered success/error/disabled reason; no fabricated success
 P	SAME_PAGE_CONTEXT
 P	acpos_audit.audit_events + correlation_id + operation/result identity
-ROW	admin:DB-01	SOURCE_REGION	DB-01-CMP-CONTEXT	SOURCE_CONTROL	AUTHORIZED_PAGE_CONTEXT	DB-01-GATE-PAGE	CLICK	UI_LOCAL_STATE	DB-01-ACT-UI-LOCAL-STATE	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION	SOURCE_PAGE_PERMISSION / SERVER_RECHECK	DB-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id	N/A — UI/READ ONLY	NO_EFFECTFUL_API	UI_LOCAL / READ_ONLY	acpos_system.trace_edges	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
+ROW	admin:DB-01	SOURCE_REGION	DB-01-CMP-CONTEXT	SOURCE_CONTROL	AUTHORIZED_PAGE_CONTEXT	DB-01-GATE-PAGE	CLICK	UI_LOCAL_STATE	DB-01-ACT-UI-LOCAL-STATE	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION	SOURCE_PAGE_PERMISSION / SERVER_RECHECK	DB-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id	N/A — UI LOCAL ONLY	NO_EFFECTFUL_API	UI_LOCAL / READ_ONLY	acpos_system.trace_edges	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
 P	admin:DB-01
 P	SOURCE_REGION
 P	DB-01-CMP-CONTEXT
@@ -11121,7 +11121,7 @@ P	DB-01-ACT-UI-LOCAL-STATE
 P	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION
 P	SOURCE_PAGE_PERMISSION / SERVER_RECHECK
 P	DB-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id
-P	N/A — UI/READ ONLY
+P	N/A — UI LOCAL ONLY
 P	NO_EFFECTFUL_API
 P	UI_LOCAL / READ_ONLY
 P	acpos_system.trace_edges
@@ -11130,7 +11130,7 @@ P	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable
 P	Registered success/error/disabled reason; no fabricated success
 P	SAME_PAGE_CONTEXT
 P	acpos_audit.audit_events + correlation_id + operation/result identity
-ROW	admin:DB-01	SOURCE_REGION	DB-01-CMP-EXPLORER	SOURCE_CONTROL	AUTHORIZED_PAGE_CONTEXT	DB-01-GATE-PAGE	CLICK	UI_LOCAL_STATE	DB-01-ACT-UI-LOCAL-STATE	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION	SOURCE_PAGE_PERMISSION / SERVER_RECHECK	DB-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id	N/A — UI/READ ONLY	NO_EFFECTFUL_API	UI_LOCAL / READ_ONLY	acpos_system.trace_edges	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
+ROW	admin:DB-01	SOURCE_REGION	DB-01-CMP-EXPLORER	SOURCE_CONTROL	AUTHORIZED_PAGE_CONTEXT	DB-01-GATE-PAGE	CLICK	UI_LOCAL_STATE	DB-01-ACT-UI-LOCAL-STATE	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION	SOURCE_PAGE_PERMISSION / SERVER_RECHECK	DB-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id	N/A — UI LOCAL ONLY	NO_EFFECTFUL_API	UI_LOCAL / READ_ONLY	acpos_system.trace_edges	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
 P	admin:DB-01
 P	SOURCE_REGION
 P	DB-01-CMP-EXPLORER
@@ -11143,7 +11143,7 @@ P	DB-01-ACT-UI-LOCAL-STATE
 P	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION
 P	SOURCE_PAGE_PERMISSION / SERVER_RECHECK
 P	DB-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id
-P	N/A — UI/READ ONLY
+P	N/A — UI LOCAL ONLY
 P	NO_EFFECTFUL_API
 P	UI_LOCAL / READ_ONLY
 P	acpos_system.trace_edges
@@ -11152,7 +11152,7 @@ P	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable
 P	Registered success/error/disabled reason; no fabricated success
 P	SAME_PAGE_CONTEXT
 P	acpos_audit.audit_events + correlation_id + operation/result identity
-ROW	admin:DB-01	SOURCE_REGION	DB-01-CMP-FINDINGS	SOURCE_CONTROL	AUTHORIZED_PAGE_CONTEXT	DB-01-GATE-PAGE	CLICK	UI_LOCAL_STATE	DB-01-ACT-UI-LOCAL-STATE	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION	SOURCE_PAGE_PERMISSION / SERVER_RECHECK	DB-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id	N/A — UI/READ ONLY	NO_EFFECTFUL_API	UI_LOCAL / READ_ONLY	acpos_system.trace_edges	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
+ROW	admin:DB-01	SOURCE_REGION	DB-01-CMP-FINDINGS	SOURCE_CONTROL	AUTHORIZED_PAGE_CONTEXT	DB-01-GATE-PAGE	CLICK	UI_LOCAL_STATE	DB-01-ACT-UI-LOCAL-STATE	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION	SOURCE_PAGE_PERMISSION / SERVER_RECHECK	DB-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id	N/A — UI LOCAL ONLY	NO_EFFECTFUL_API	UI_LOCAL / READ_ONLY	acpos_system.trace_edges	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
 P	admin:DB-01
 P	SOURCE_REGION
 P	DB-01-CMP-FINDINGS
@@ -11165,7 +11165,7 @@ P	DB-01-ACT-UI-LOCAL-STATE
 P	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION
 P	SOURCE_PAGE_PERMISSION / SERVER_RECHECK
 P	DB-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id
-P	N/A — UI/READ ONLY
+P	N/A — UI LOCAL ONLY
 P	NO_EFFECTFUL_API
 P	UI_LOCAL / READ_ONLY
 P	acpos_system.trace_edges
@@ -11174,7 +11174,7 @@ P	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable
 P	Registered success/error/disabled reason; no fabricated success
 P	SAME_PAGE_CONTEXT
 P	acpos_audit.audit_events + correlation_id + operation/result identity
-ROW	admin:DB-01	SOURCE_REGION	DB-01-CMP-INTEGRITY	SOURCE_CONTROL	AUTHORIZED_PAGE_CONTEXT	DB-01-GATE-PAGE	CLICK	UI_LOCAL_STATE	DB-01-ACT-UI-LOCAL-STATE	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION	SOURCE_PAGE_PERMISSION / SERVER_RECHECK	DB-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id	N/A — UI/READ ONLY	NO_EFFECTFUL_API	UI_LOCAL / READ_ONLY	acpos_system.trace_edges	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
+ROW	admin:DB-01	SOURCE_REGION	DB-01-CMP-INTEGRITY	SOURCE_CONTROL	AUTHORIZED_PAGE_CONTEXT	DB-01-GATE-PAGE	CLICK	UI_LOCAL_STATE	DB-01-ACT-UI-LOCAL-STATE	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION	SOURCE_PAGE_PERMISSION / SERVER_RECHECK	DB-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id	N/A — UI LOCAL ONLY	NO_EFFECTFUL_API	UI_LOCAL / READ_ONLY	acpos_system.trace_edges	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
 P	admin:DB-01
 P	SOURCE_REGION
 P	DB-01-CMP-INTEGRITY
@@ -11187,7 +11187,7 @@ P	DB-01-ACT-UI-LOCAL-STATE
 P	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION
 P	SOURCE_PAGE_PERMISSION / SERVER_RECHECK
 P	DB-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id
-P	N/A — UI/READ ONLY
+P	N/A — UI LOCAL ONLY
 P	NO_EFFECTFUL_API
 P	UI_LOCAL / READ_ONLY
 P	acpos_system.trace_edges
@@ -11196,7 +11196,7 @@ P	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable
 P	Registered success/error/disabled reason; no fabricated success
 P	SAME_PAGE_CONTEXT
 P	acpos_audit.audit_events + correlation_id + operation/result identity
-ROW	admin:DB-01	SOURCE_REGION	DB-01-CMP-MIGRATION	SOURCE_CONTROL	AUTHORIZED_PAGE_CONTEXT	DB-01-GATE-PAGE	CLICK	UI_LOCAL_STATE	DB-01-ACT-UI-LOCAL-STATE	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION	SOURCE_PAGE_PERMISSION / SERVER_RECHECK	DB-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id	N/A — UI/READ ONLY	NO_EFFECTFUL_API	UI_LOCAL / READ_ONLY	acpos_system.trace_edges	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
+ROW	admin:DB-01	SOURCE_REGION	DB-01-CMP-MIGRATION	SOURCE_CONTROL	AUTHORIZED_PAGE_CONTEXT	DB-01-GATE-PAGE	CLICK	UI_LOCAL_STATE	DB-01-ACT-UI-LOCAL-STATE	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION	SOURCE_PAGE_PERMISSION / SERVER_RECHECK	DB-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id	N/A — UI LOCAL ONLY	NO_EFFECTFUL_API	UI_LOCAL / READ_ONLY	acpos_system.trace_edges	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
 P	admin:DB-01
 P	SOURCE_REGION
 P	DB-01-CMP-MIGRATION
@@ -11209,7 +11209,7 @@ P	DB-01-ACT-UI-LOCAL-STATE
 P	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION
 P	SOURCE_PAGE_PERMISSION / SERVER_RECHECK
 P	DB-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id
-P	N/A — UI/READ ONLY
+P	N/A — UI LOCAL ONLY
 P	NO_EFFECTFUL_API
 P	UI_LOCAL / READ_ONLY
 P	acpos_system.trace_edges
@@ -11218,7 +11218,7 @@ P	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable
 P	Registered success/error/disabled reason; no fabricated success
 P	SAME_PAGE_CONTEXT
 P	acpos_audit.audit_events + correlation_id + operation/result identity
-ROW	admin:DB-01	SOURCE_REGION	DB-01-CMP-RELATIONS	SOURCE_CONTROL	AUTHORIZED_PAGE_CONTEXT	DB-01-GATE-PAGE	CLICK	UI_LOCAL_STATE	DB-01-ACT-UI-LOCAL-STATE	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION	SOURCE_PAGE_PERMISSION / SERVER_RECHECK	DB-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id	N/A — UI/READ ONLY	NO_EFFECTFUL_API	UI_LOCAL / READ_ONLY	acpos_system.trace_edges	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
+ROW	admin:DB-01	SOURCE_REGION	DB-01-CMP-RELATIONS	SOURCE_CONTROL	AUTHORIZED_PAGE_CONTEXT	DB-01-GATE-PAGE	CLICK	UI_LOCAL_STATE	DB-01-ACT-UI-LOCAL-STATE	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION	SOURCE_PAGE_PERMISSION / SERVER_RECHECK	DB-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id	N/A — UI LOCAL ONLY	NO_EFFECTFUL_API	UI_LOCAL / READ_ONLY	acpos_system.trace_edges	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
 P	admin:DB-01
 P	SOURCE_REGION
 P	DB-01-CMP-RELATIONS
@@ -11231,7 +11231,7 @@ P	DB-01-ACT-UI-LOCAL-STATE
 P	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION
 P	SOURCE_PAGE_PERMISSION / SERVER_RECHECK
 P	DB-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id
-P	N/A — UI/READ ONLY
+P	N/A — UI LOCAL ONLY
 P	NO_EFFECTFUL_API
 P	UI_LOCAL / READ_ONLY
 P	acpos_system.trace_edges
@@ -11240,7 +11240,7 @@ P	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable
 P	Registered success/error/disabled reason; no fabricated success
 P	SAME_PAGE_CONTEXT
 P	acpos_audit.audit_events + correlation_id + operation/result identity
-ROW	admin:DB-01	SOURCE_REGION	DB-01-CMP-SCHEMA	SOURCE_CONTROL	AUTHORIZED_PAGE_CONTEXT	DB-01-GATE-PAGE	CLICK	UI_LOCAL_STATE	DB-01-ACT-UI-LOCAL-STATE	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION	SOURCE_PAGE_PERMISSION / SERVER_RECHECK	DB-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id	N/A — UI/READ ONLY	NO_EFFECTFUL_API	UI_LOCAL / READ_ONLY	acpos_system.trace_edges	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
+ROW	admin:DB-01	SOURCE_REGION	DB-01-CMP-SCHEMA	SOURCE_CONTROL	AUTHORIZED_PAGE_CONTEXT	DB-01-GATE-PAGE	CLICK	UI_LOCAL_STATE	DB-01-ACT-UI-LOCAL-STATE	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION	SOURCE_PAGE_PERMISSION / SERVER_RECHECK	DB-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id	N/A — UI LOCAL ONLY	NO_EFFECTFUL_API	UI_LOCAL / READ_ONLY	acpos_system.trace_edges	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
 P	admin:DB-01
 P	SOURCE_REGION
 P	DB-01-CMP-SCHEMA
@@ -11253,7 +11253,7 @@ P	DB-01-ACT-UI-LOCAL-STATE
 P	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION
 P	SOURCE_PAGE_PERMISSION / SERVER_RECHECK
 P	DB-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id
-P	N/A — UI/READ ONLY
+P	N/A — UI LOCAL ONLY
 P	NO_EFFECTFUL_API
 P	UI_LOCAL / READ_ONLY
 P	acpos_system.trace_edges
@@ -11262,7 +11262,7 @@ P	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable
 P	Registered success/error/disabled reason; no fabricated success
 P	SAME_PAGE_CONTEXT
 P	acpos_audit.audit_events + correlation_id + operation/result identity
-ROW	admin:DB-01	SOURCE_REGION	DB-01-CMP-STATUS	SOURCE_CONTROL	AUTHORIZED_PAGE_CONTEXT	DB-01-GATE-PAGE	CLICK	UI_LOCAL_STATE	DB-01-ACT-UI-LOCAL-STATE	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION	SOURCE_PAGE_PERMISSION / SERVER_RECHECK	DB-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id	N/A — UI/READ ONLY	NO_EFFECTFUL_API	UI_LOCAL / READ_ONLY	acpos_system.trace_edges	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
+ROW	admin:DB-01	SOURCE_REGION	DB-01-CMP-STATUS	SOURCE_CONTROL	AUTHORIZED_PAGE_CONTEXT	DB-01-GATE-PAGE	CLICK	UI_LOCAL_STATE	DB-01-ACT-UI-LOCAL-STATE	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION	SOURCE_PAGE_PERMISSION / SERVER_RECHECK	DB-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id	N/A — UI LOCAL ONLY	NO_EFFECTFUL_API	UI_LOCAL / READ_ONLY	acpos_system.trace_edges	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
 P	admin:DB-01
 P	SOURCE_REGION
 P	DB-01-CMP-STATUS
@@ -11275,7 +11275,7 @@ P	DB-01-ACT-UI-LOCAL-STATE
 P	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION
 P	SOURCE_PAGE_PERMISSION / SERVER_RECHECK
 P	DB-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id
-P	N/A — UI/READ ONLY
+P	N/A — UI LOCAL ONLY
 P	NO_EFFECTFUL_API
 P	UI_LOCAL / READ_ONLY
 P	acpos_system.trace_edges
@@ -11284,7 +11284,7 @@ P	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable
 P	Registered success/error/disabled reason; no fabricated success
 P	SAME_PAGE_CONTEXT
 P	acpos_audit.audit_events + correlation_id + operation/result identity
-ROW	admin:DB-01	SOURCE_REGION	DB-01-CMP-TRACE-INPUT	SOURCE_CONTROL	AUTHORIZED_PAGE_CONTEXT	DB-01-GATE-PAGE	CLICK	UI_LOCAL_STATE	DB-01-ACT-UI-LOCAL-STATE	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION	SOURCE_PAGE_PERMISSION / SERVER_RECHECK	DB-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id	N/A — UI/READ ONLY	NO_EFFECTFUL_API	UI_LOCAL / READ_ONLY	acpos_system.trace_edges	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
+ROW	admin:DB-01	SOURCE_REGION	DB-01-CMP-TRACE-INPUT	SOURCE_CONTROL	AUTHORIZED_PAGE_CONTEXT	DB-01-GATE-PAGE	CLICK	UI_LOCAL_STATE	DB-01-ACT-UI-LOCAL-STATE	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION	SOURCE_PAGE_PERMISSION / SERVER_RECHECK	DB-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id	N/A — UI LOCAL ONLY	NO_EFFECTFUL_API	UI_LOCAL / READ_ONLY	acpos_system.trace_edges	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
 P	admin:DB-01
 P	SOURCE_REGION
 P	DB-01-CMP-TRACE-INPUT
@@ -11297,7 +11297,7 @@ P	DB-01-ACT-UI-LOCAL-STATE
 P	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION
 P	SOURCE_PAGE_PERMISSION / SERVER_RECHECK
 P	DB-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id
-P	N/A — UI/READ ONLY
+P	N/A — UI LOCAL ONLY
 P	NO_EFFECTFUL_API
 P	UI_LOCAL / READ_ONLY
 P	acpos_system.trace_edges
@@ -11306,7 +11306,7 @@ P	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable
 P	Registered success/error/disabled reason; no fabricated success
 P	SAME_PAGE_CONTEXT
 P	acpos_audit.audit_events + correlation_id + operation/result identity
-ROW	admin:DB-01	SOURCE_REGION	DB-01-CMP-TRACE-PATH	SOURCE_CONTROL	AUTHORIZED_PAGE_CONTEXT	DB-01-GATE-PAGE	CLICK	UI_LOCAL_STATE	DB-01-ACT-UI-LOCAL-STATE	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION	SOURCE_PAGE_PERMISSION / SERVER_RECHECK	DB-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id	N/A — UI/READ ONLY	NO_EFFECTFUL_API	UI_LOCAL / READ_ONLY	acpos_system.trace_edges	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
+ROW	admin:DB-01	SOURCE_REGION	DB-01-CMP-TRACE-PATH	SOURCE_CONTROL	AUTHORIZED_PAGE_CONTEXT	DB-01-GATE-PAGE	CLICK	UI_LOCAL_STATE	DB-01-ACT-UI-LOCAL-STATE	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION	SOURCE_PAGE_PERMISSION / SERVER_RECHECK	DB-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id	N/A — UI LOCAL ONLY	NO_EFFECTFUL_API	UI_LOCAL / READ_ONLY	acpos_system.trace_edges	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
 P	admin:DB-01
 P	SOURCE_REGION
 P	DB-01-CMP-TRACE-PATH
@@ -11319,7 +11319,7 @@ P	DB-01-ACT-UI-LOCAL-STATE
 P	NEW_ACTION_UID_FROM_EXISTING_CONTROL_OR_OPERATION
 P	SOURCE_PAGE_PERMISSION / SERVER_RECHECK
 P	DB-01-ACT-UI-LOCAL-STATE typed schema + source contract fields + actor/scope/target + correlation_id
-P	N/A — UI/READ ONLY
+P	N/A — UI LOCAL ONLY
 P	NO_EFFECTFUL_API
 P	UI_LOCAL / READ_ONLY
 P	acpos_system.trace_edges
@@ -11856,7 +11856,7 @@ P	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable
 P	Registered success/error/disabled reason; no fabricated success
 P	SAME_PAGE_CONTEXT
 P	acpos_audit.audit_events + correlation_id + operation/result identity
-ROW	admin:DB-01	SOURCE_REGION	DB-01-INP-AUDIT-ID	REFERENCE / Correlation / Entity / Version Ref	AUTHORIZED_PAGE_CONTEXT	DB-01-GATE-AUDIT	CLICK	UI_LOCAL_STATE	DB-01-ACT-CONTEXT	EXISTING_ACTION_UID	DB_AUDIT_READ	DB-01-ACT-CONTEXT typed schema + source contract fields + actor/scope/target + correlation_id	N/A — UI/READ ONLY	NO_EFFECTFUL_API	UI_LOCAL / READ_ONLY	acpos_system.trace_edges	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
+ROW	admin:DB-01	SOURCE_REGION	DB-01-INP-AUDIT-ID	REFERENCE / Correlation / Entity / Version Ref	AUTHORIZED_PAGE_CONTEXT	DB-01-GATE-AUDIT	CLICK	UI_LOCAL_STATE	DB-01-ACT-CONTEXT	EXISTING_ACTION_UID	DB_AUDIT_READ	DB-01-ACT-CONTEXT typed schema + source contract fields + actor/scope/target + correlation_id	N/A — UI LOCAL ONLY	NO_EFFECTFUL_API	UI_LOCAL / READ_ONLY	acpos_system.trace_edges	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
 P	admin:DB-01
 P	SOURCE_REGION
 P	DB-01-INP-AUDIT-ID
@@ -11869,7 +11869,7 @@ P	DB-01-ACT-CONTEXT
 P	EXISTING_ACTION_UID
 P	DB_AUDIT_READ
 P	DB-01-ACT-CONTEXT typed schema + source contract fields + actor/scope/target + correlation_id
-P	N/A — UI/READ ONLY
+P	N/A — UI LOCAL ONLY
 P	NO_EFFECTFUL_API
 P	UI_LOCAL / READ_ONLY
 P	acpos_system.trace_edges
@@ -11878,7 +11878,7 @@ P	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable
 P	Registered success/error/disabled reason; no fabricated success
 P	SAME_PAGE_CONTEXT
 P	acpos_audit.audit_events + correlation_id + operation/result identity
-ROW	admin:DB-01	SOURCE_REGION	DB-01-INP-MIGRATION-SEARCH	SEARCH / Migration ID	AUTHORIZED_PAGE_CONTEXT	DB-01-GATE-MIGRATION	INPUT_OR_SUBMIT	UI_LOCAL_STATE	DB-01-ACT-MIGRATION-REFRESH	EXISTING_ACTION_UID	DB_MIGRATION_READ	DB-01-ACT-MIGRATION-REFRESH typed schema + source contract fields + actor/scope/target + correlation_id + expected_version(if versioned) + idempotency_key	POST /v1/commands/DB-01-ACT-MIGRATION-REFRESH	NEW_AUTHORITY_AFTER_GLOBAL_SOURCE_EXHAUSTION	SHARED_TYPED_COMMAND_RUNTIME	acpos_system.trace_edges	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
+ROW	admin:DB-01	SOURCE_REGION	DB-01-INP-MIGRATION-SEARCH	SEARCH / Migration ID	AUTHORIZED_PAGE_CONTEXT	DB-01-GATE-MIGRATION	INPUT_OR_SUBMIT	getUiProjection	DB-01-ACT-MIGRATION-REFRESH	EXISTING_ACTION_UID	DB_MIGRATION_READ	DB-01-ACT-MIGRATION-REFRESH typed schema + source contract fields + actor/scope/target + correlation_id	GET /v1/ui-projections/{pageUid}	SOURCE:2026-09-21 shared closure#T0	READ_PROJECTION_RUNTIME	acpos_system.trace_edges	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
 P	admin:DB-01
 P	SOURCE_REGION
 P	DB-01-INP-MIGRATION-SEARCH
@@ -11886,14 +11886,14 @@ P	SEARCH / Migration ID
 P	AUTHORIZED_PAGE_CONTEXT
 P	DB-01-GATE-MIGRATION
 P	INPUT_OR_SUBMIT
-P	UI_LOCAL_STATE
+P	getUiProjection
 P	DB-01-ACT-MIGRATION-REFRESH
 P	EXISTING_ACTION_UID
 P	DB_MIGRATION_READ
-P	DB-01-ACT-MIGRATION-REFRESH typed schema + source contract fields + actor/scope/target + correlation_id + expected_version(if versioned) + idempotency_key
-P	POST /v1/commands/DB-01-ACT-MIGRATION-REFRESH
-P	NEW_AUTHORITY_AFTER_GLOBAL_SOURCE_EXHAUSTION
-P	SHARED_TYPED_COMMAND_RUNTIME
+P	DB-01-ACT-MIGRATION-REFRESH typed schema + source contract fields + actor/scope/target + correlation_id
+P	GET /v1/ui-projections/{pageUid}
+P	SOURCE:2026-09-21 shared closure#T0
+P	READ_PROJECTION_RUNTIME
 P	acpos_system.trace_edges
 P	SOURCE_PAGE_STATE_REGISTRY / exact server result
 P	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable
@@ -11922,7 +11922,7 @@ P	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable
 P	Registered success/error/disabled reason; no fabricated success
 P	SAME_PAGE_CONTEXT
 P	acpos_audit.audit_events + correlation_id + operation/result identity
-ROW	admin:DB-01	SOURCE_REGION	DB-01-INP-TRACE-ID	REFERENCE / Exact Source ID / Version	AUTHORIZED_PAGE_CONTEXT	DB-01-GATE-PAGE	CLICK	UI_LOCAL_STATE	DB-01-ACT-CONTEXT	EXISTING_ACTION_UID	DB_TRACE	DB-01-ACT-CONTEXT typed schema + source contract fields + actor/scope/target + correlation_id	N/A — UI/READ ONLY	NO_EFFECTFUL_API	UI_LOCAL / READ_ONLY	acpos_system.trace_edges	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
+ROW	admin:DB-01	SOURCE_REGION	DB-01-INP-TRACE-ID	REFERENCE / Exact Source ID / Version	AUTHORIZED_PAGE_CONTEXT	DB-01-GATE-PAGE	CLICK	UI_LOCAL_STATE	DB-01-ACT-CONTEXT	EXISTING_ACTION_UID	DB_TRACE	DB-01-ACT-CONTEXT typed schema + source contract fields + actor/scope/target + correlation_id	N/A — UI LOCAL ONLY	NO_EFFECTFUL_API	UI_LOCAL / READ_ONLY	acpos_system.trace_edges	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
 P	admin:DB-01
 P	SOURCE_REGION
 P	DB-01-INP-TRACE-ID
@@ -11935,7 +11935,7 @@ P	DB-01-ACT-CONTEXT
 P	EXISTING_ACTION_UID
 P	DB_TRACE
 P	DB-01-ACT-CONTEXT typed schema + source contract fields + actor/scope/target + correlation_id
-P	N/A — UI/READ ONLY
+P	N/A — UI LOCAL ONLY
 P	NO_EFFECTFUL_API
 P	UI_LOCAL / READ_ONLY
 P	acpos_system.trace_edges
@@ -11944,7 +11944,7 @@ P	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable
 P	Registered success/error/disabled reason; no fabricated success
 P	SAME_PAGE_CONTEXT
 P	acpos_audit.audit_events + correlation_id + operation/result identity
-ROW	admin:DB-01	SOURCE_REGION	DB-01-SEL-DOMAIN	SELECT / Domain	AUTHORIZED_PAGE_CONTEXT	DB-01-GATE-PAGE	CHANGE	UI_LOCAL_STATE	DB-01-ACT-FILTER	EXISTING_ACTION_UID	DB_READ	DB-01-ACT-FILTER typed schema + source contract fields + actor/scope/target + correlation_id	N/A — UI/READ ONLY	NO_EFFECTFUL_API	UI_LOCAL / READ_ONLY	acpos_system.trace_edges	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
+ROW	admin:DB-01	SOURCE_REGION	DB-01-SEL-DOMAIN	SELECT / Domain	AUTHORIZED_PAGE_CONTEXT	DB-01-GATE-PAGE	CHANGE	UI_LOCAL_STATE	DB-01-ACT-FILTER	EXISTING_ACTION_UID	DB_READ	DB-01-ACT-FILTER typed schema + source contract fields + actor/scope/target + correlation_id	N/A — UI LOCAL ONLY	NO_EFFECTFUL_API	UI_LOCAL / READ_ONLY	acpos_system.trace_edges	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
 P	admin:DB-01
 P	SOURCE_REGION
 P	DB-01-SEL-DOMAIN
@@ -11957,7 +11957,7 @@ P	DB-01-ACT-FILTER
 P	EXISTING_ACTION_UID
 P	DB_READ
 P	DB-01-ACT-FILTER typed schema + source contract fields + actor/scope/target + correlation_id
-P	N/A — UI/READ ONLY
+P	N/A — UI LOCAL ONLY
 P	NO_EFFECTFUL_API
 P	UI_LOCAL / READ_ONLY
 P	acpos_system.trace_edges
@@ -11966,7 +11966,7 @@ P	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable
 P	Registered success/error/disabled reason; no fabricated success
 P	SAME_PAGE_CONTEXT
 P	acpos_audit.audit_events + correlation_id + operation/result identity
-ROW	admin:DB-01	SOURCE_REGION	DB-01-SEL-ENTITY-TYPE	SELECT / Entity Type	AUTHORIZED_PAGE_CONTEXT	DB-01-GATE-PAGE	CHANGE	UI_LOCAL_STATE	DB-01-ACT-FILTER	EXISTING_ACTION_UID	DB_READ	DB-01-ACT-FILTER typed schema + source contract fields + actor/scope/target + correlation_id	N/A — UI/READ ONLY	NO_EFFECTFUL_API	UI_LOCAL / READ_ONLY	acpos_system.trace_edges	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
+ROW	admin:DB-01	SOURCE_REGION	DB-01-SEL-ENTITY-TYPE	SELECT / Entity Type	AUTHORIZED_PAGE_CONTEXT	DB-01-GATE-PAGE	CHANGE	UI_LOCAL_STATE	DB-01-ACT-FILTER	EXISTING_ACTION_UID	DB_READ	DB-01-ACT-FILTER typed schema + source contract fields + actor/scope/target + correlation_id	N/A — UI LOCAL ONLY	NO_EFFECTFUL_API	UI_LOCAL / READ_ONLY	acpos_system.trace_edges	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
 P	admin:DB-01
 P	SOURCE_REGION
 P	DB-01-SEL-ENTITY-TYPE
@@ -11979,7 +11979,7 @@ P	DB-01-ACT-FILTER
 P	EXISTING_ACTION_UID
 P	DB_READ
 P	DB-01-ACT-FILTER typed schema + source contract fields + actor/scope/target + correlation_id
-P	N/A — UI/READ ONLY
+P	N/A — UI LOCAL ONLY
 P	NO_EFFECTFUL_API
 P	UI_LOCAL / READ_ONLY
 P	acpos_system.trace_edges
@@ -11988,7 +11988,7 @@ P	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable
 P	Registered success/error/disabled reason; no fabricated success
 P	SAME_PAGE_CONTEXT
 P	acpos_audit.audit_events + correlation_id + operation/result identity
-ROW	admin:DB-01	SOURCE_REGION	DB-01-SEL-FINDING-TYPE	SELECT / Integrity Finding Type	AUTHORIZED_PAGE_CONTEXT	DB-01-GATE-INTEGRITY	CHANGE	UI_LOCAL_STATE	DB-01-ACT-FILTER	EXISTING_ACTION_UID	DB_INTEGRITY_READ	DB-01-ACT-FILTER typed schema + source contract fields + actor/scope/target + correlation_id	N/A — UI/READ ONLY	NO_EFFECTFUL_API	UI_LOCAL / READ_ONLY	acpos_system.trace_edges	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
+ROW	admin:DB-01	SOURCE_REGION	DB-01-SEL-FINDING-TYPE	SELECT / Integrity Finding Type	AUTHORIZED_PAGE_CONTEXT	DB-01-GATE-INTEGRITY	CHANGE	UI_LOCAL_STATE	DB-01-ACT-FILTER	EXISTING_ACTION_UID	DB_INTEGRITY_READ	DB-01-ACT-FILTER typed schema + source contract fields + actor/scope/target + correlation_id	N/A — UI LOCAL ONLY	NO_EFFECTFUL_API	UI_LOCAL / READ_ONLY	acpos_system.trace_edges	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
 P	admin:DB-01
 P	SOURCE_REGION
 P	DB-01-SEL-FINDING-TYPE
@@ -12001,7 +12001,7 @@ P	DB-01-ACT-FILTER
 P	EXISTING_ACTION_UID
 P	DB_INTEGRITY_READ
 P	DB-01-ACT-FILTER typed schema + source contract fields + actor/scope/target + correlation_id
-P	N/A — UI/READ ONLY
+P	N/A — UI LOCAL ONLY
 P	NO_EFFECTFUL_API
 P	UI_LOCAL / READ_ONLY
 P	acpos_system.trace_edges
@@ -12010,7 +12010,7 @@ P	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable
 P	Registered success/error/disabled reason; no fabricated success
 P	SAME_PAGE_CONTEXT
 P	acpos_audit.audit_events + correlation_id + operation/result identity
-ROW	admin:DB-01	SOURCE_REGION	DB-01-SEL-TRACE-TYPE	SELECT / Trace Source Type	AUTHORIZED_PAGE_CONTEXT	DB-01-GATE-PAGE	CHANGE	UI_LOCAL_STATE	DB-01-ACT-CONTEXT	EXISTING_ACTION_UID	DB_TRACE	DB-01-ACT-CONTEXT typed schema + source contract fields + actor/scope/target + correlation_id	N/A — UI/READ ONLY	NO_EFFECTFUL_API	UI_LOCAL / READ_ONLY	acpos_system.trace_edges	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
+ROW	admin:DB-01	SOURCE_REGION	DB-01-SEL-TRACE-TYPE	SELECT / Trace Source Type	AUTHORIZED_PAGE_CONTEXT	DB-01-GATE-PAGE	CHANGE	UI_LOCAL_STATE	DB-01-ACT-CONTEXT	EXISTING_ACTION_UID	DB_TRACE	DB-01-ACT-CONTEXT typed schema + source contract fields + actor/scope/target + correlation_id	N/A — UI LOCAL ONLY	NO_EFFECTFUL_API	UI_LOCAL / READ_ONLY	acpos_system.trace_edges	SOURCE_PAGE_STATE_REGISTRY / exact server result	SOURCE_PAGE_ERROR_REGISTRY / BLOCKED|ERROR|VERSION_CONFLICT as applicable	Registered success/error/disabled reason; no fabricated success	SAME_PAGE_CONTEXT	acpos_audit.audit_events + correlation_id + operation/result identity
 P	admin:DB-01
 P	SOURCE_REGION
 P	DB-01-SEL-TRACE-TYPE
@@ -12023,7 +12023,7 @@ P	DB-01-ACT-CONTEXT
 P	EXISTING_ACTION_UID
 P	DB_TRACE
 P	DB-01-ACT-CONTEXT typed schema + source contract fields + actor/scope/target + correlation_id
-P	N/A — UI/READ ONLY
+P	N/A — UI LOCAL ONLY
 P	NO_EFFECTFUL_API
 P	UI_LOCAL / READ_ONLY
 P	acpos_system.trace_edges
@@ -12143,7 +12143,7 @@ P	Registered success/error/disabled reason; no fabricated success
 P	SAME_PAGE_CONTEXT
 P	acpos_audit.audit_events + correlation_id + operation/result identity
 P	Construction Lookup Invariant
-P	施工 AI MUST resolve a UI action from exactly one row of this matrix. If a source control is UI_ONLY/READ_ONLY, API/DB write is explicitly N/A and creating a write endpoint is forbidden. If API Basis is NEW_AUTHORITY_AFTER_GLOBAL_SOURCE_EXHAUSTION, the only permitted implementation path is the Shared Typed Command Runtime endpoint shown in the row; page-local alternative endpoints are forbidden.
+P	施工 AI MUST resolve a UI action from exactly one row of this matrix. If a source control is UI_ONLY/READ_ONLY, API/DB write is explicitly N/A and creating a write endpoint is forbidden. If API Basis is NEW_QUERY_AUTHORITY_AFTER_GLOBAL_SOURCE_EXHAUSTION, use only the Shared Typed Query Runtime GET endpoint shown. If API Basis is NEW_COMMAND_AUTHORITY_AFTER_GLOBAL_SOURCE_EXHAUSTION, use only the Shared Typed Command Runtime POST endpoint shown. Page-local alternative endpoints are forbidden.
 ### PART word/header1.xml
 P	ORANGE ONE · ACPOS ACPOS-AI-01｜Mother Basic Logic Design
 ### PART word/footer1.xml
