@@ -43,8 +43,21 @@ post_delete_current_reference_migration:
   selected_profile_history_binding: MIGRATED_TO_HISTORY_ONLY
   active_product_owner_reference_to_deleted_root: REMOVED
 post_delete_validation:
-  exact_head_full_line: PENDING
-  exact_head_selected_profile: PENDING
-  exact_head_branch_guard: PENDING
+  exact_head_full_line: SUCCESS
+  exact_head_selected_profile: SUCCESS
+  exact_head_branch_guard: SUCCESS
 product_stage_credit: 0
-result: PHYSICAL_DELETE_COMMITTED_AWAITING_EXACT_HEAD_VALIDATION
+validated_cleanup_head_sha: 430019118cb49f9e2bc3abe50f4c6b7ee4ecffda
+validation_runs:
+  full_line: 35492783736
+  selected_profile: 35492783725
+  branch_guard: 35492783711
+  fresh_replay_identity: 35492783713
+  stage02_boundary: 35492783714
+  stage03_workflow: 35492783717
+effectful_product_jobs_after_cleanup:
+  fresh_replay: SKIPPED
+  stage02_actual: SKIPPED
+  stage03_actual: SKIPPED
+final_closure_state_requires_exact_head_revalidation: true
+result: PASS_CLEAN_BASELINE_EXACT_HEAD_VALIDATED

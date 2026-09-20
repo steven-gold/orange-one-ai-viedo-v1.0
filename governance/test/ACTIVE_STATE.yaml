@@ -21,7 +21,7 @@ execution:
   scope_mode: EXACT_PAGE_SCOPE_ONLY
   target_pages:
   - CORE-01
-  current_stage: STAGE-03-CLEAN-RESET-EXACT-HEAD-VALIDATION-REQUIRED
+  current_stage: STAGE-03-CLEAN-BASELINE-WUR-REQUIRED
   stage1:
     CORE-01: REVERIFY_REQUIRED_CLEAN_RESET
   stage2:
@@ -111,8 +111,8 @@ specification_mutation_safety:
   ordinary_mid_stage_specification_mutation: BLOCK
   stage_end_consolidated_promotion_requires_new_explicit_directive: true
   execution_context_lock_required: true
-status: CORE01_STAGE01_STAGE03_CLEAN_RESET_EXECUTED_EXACT_HEAD_VALIDATION_REQUIRED
-next_action: VERIFY_CORE01_STAGE01_STAGE03_CLEAN_RESET_EXACT_HEAD
+status: CORE01_STAGE01_STAGE03_CLEAN_BASELINE_READY_FRESH_STAGE01_WUR_REQUIRED
+next_action: WORK_UNIT_RESOLUTION_GATE_FOR_FRESH_STAGE01_SOURCE_INTAKE_REEXECUTION
 previous_closed_product_work_unit:
   work_unit_uid: WU-STAGE02-CORE01-STRUCTURAL-REMEDIATION-001
   canonical_name: CORE01_STRUCTURAL_CONTRACT_REMEDIATION
@@ -291,13 +291,14 @@ previous_closed_work_unit:
     source_runtime_residual_count: 0
     product_stage_credit: 0
 resume_control:
-  current_resume_point: CORE01_STAGE01_STAGE03_CLEAN_RESET_EXECUTED_EXACT_HEAD_VALIDATION_REQUIRED
-  current_work_unit_uid: WU-CORE01-STAGE01-STAGE03-CLEAN-RESET-R1
+  current_resume_point: CORE01_STAGE01_STAGE03_CLEAN_BASELINE_READY_FRESH_STAGE01_WUR_REQUIRED
+  current_work_unit_uid: null
   current_owner: .github/governance-source/active/source/10_REGISTRY/GOVERNANCE_LIFECYCLE_STAGE_REGISTRY.yaml
-  exact_next_action: VERIFY_CORE01_STAGE01_STAGE03_CLEAN_RESET_EXACT_HEAD
+  exact_next_action: WORK_UNIT_RESOLUTION_GATE_FOR_FRESH_STAGE01_SOURCE_INTAKE_REEXECUTION
   reentry_owner_capability: SOURCE_INTAKE_BASE_BLUEPRINT
   reentry_stage_uid: STAGE-01
-  reentry_reason: SOURCE_DECLARED_VISUAL_ANCHOR_AND_CANDIDATE_REFERENCES_REQUIRE_FRESH_PHYSICAL_MATERIALIZATION_UNDER_V2_2_16
+  reentry_reason: CLEAN_BASELINE_PERSISTED_AFTER_V2_2_16_UPSTREAM_MATERIALIZATION_REENTRY
+  predecessor_cleanup_work_unit_uid: WU-CORE01-STAGE01-STAGE03-CLEAN-RESET-R1
   cleanup_authorization_uid: USR-DIRECTIVE-20260920-CLEAR-STAGE01-STAGE03-CORE01-R1
   cleanup_receipt_ref: governance/test/history/cleanup/CORE01_STAGE01_STAGE03_CLEAN_RESET_R1.yaml
   human_visual_review_allowed: false
@@ -2479,7 +2480,7 @@ work_unit_resolution_gate_core01_stage01_stage03_clean_reentry_r1:
   dependency_legality: PASS
   applicability: PASS
   product_stage_credit: 0
-active_work_unit:
+closed_product_work_unit_core01_stage01_stage03_clean_reset_r1:
   work_unit_uid: WU-CORE01-STAGE01-STAGE03-CLEAN-RESET-R1
   canonical_name: CORE01_STAGE01_TO_STAGE03_CLEAN_RESET
   primary_task_layer: PRODUCT_STAGE_EXECUTION
@@ -2499,7 +2500,7 @@ active_work_unit:
   scope_manifest_ref: governance/test/CURRENT_EXECUTION_SCOPE_MANIFEST.yaml
   authorization_ref: governance/test/spec_change_authorizations/USR-DIRECTIVE-20260920-CLEAR-STAGE01-STAGE03-CORE01-R1.yaml
   cleanup_receipt_ref: governance/test/history/cleanup/CORE01_STAGE01_STAGE03_CLEAN_RESET_R1.yaml
-  current_status: CLEAN_RESET_EXECUTED_EXACT_HEAD_VALIDATION_REQUIRED
+  current_status: CLOSED_VERIFIED_CLEAN_BASELINE_NO_PRODUCT_CREDIT
   current_governance_uid: GOV-REV-20260920-CROSS-STAGE-MATERIALIZATION-CONSUMER-READINESS-HARDENING
   current_execution_allowed: false
   immutable_input_root: 00_SOURCE_INTAKE/immutable_inputs/core01_961aa8c1
@@ -2518,6 +2519,26 @@ active_work_unit:
   - BRANCH_GUARD_EXACT_HEAD_SUCCESS
   - PRODUCT_STAGE_CREDIT_ZERO
   product_stage_credit: 0
+  terminal_evidence:
+    validated_cleanup_head_sha: 430019118cb49f9e2bc3abe50f4c6b7ee4ecffda
+    full_line_run_id: 35492783736
+    full_line_result: success
+    selected_profile_run_id: 35492783725
+    selected_profile_result: success
+    branch_guard_run_id: 35492783711
+    branch_guard_result: success
+    fresh_replay_identity_run_id: 35492783713
+    fresh_replay_identity_result: success
+    fresh_replay_effectful_execution: SKIPPED
+    stage02_boundary_run_id: 35492783714
+    stage02_boundary_result: success
+    stage02_effectful_execution: SKIPPED
+    stage03_workflow_run_id: 35492783717
+    stage03_effectful_execution: SKIPPED
+    physical_old_run_residual_count: 0
+    physical_current_stage03_test_residual_count: 0
+    product_stage_credit: 0
+active_work_unit: null
 last_work_unit_resolution_gate: &id001
   resolution_uid: WUR-GOV-CROSS-STAGE-MATERIALIZATION-CONTINUITY-HARDENING-001
   normative_authority: false
@@ -3251,21 +3272,30 @@ suspended_product_state_for_cross_stage_governance_hardening:
   current_primary_task_authorization_uid: USR-DIRECTIVE-20260920-STAGE03-VISUAL-MATERIALIZATION-HARDENING-R3
   current_primary_task_product_stage_credit: 0
 work_unit_resolution_gate_cross_stage_materialization_hardening: *id001
-stage01_stage03_clean_reset_current:
-  artifact_type: PRODUCT_EXECUTION_CLEAN_RESET_RECEIPT_POINTER
+stage01_stage03_clean_reset_closure:
+  artifact_type: PRODUCT_EXECUTION_CLEAN_RESET_CLOSURE
   normative_authority: false
   governance_uid: GOV-REV-20260920-CROSS-STAGE-MATERIALIZATION-CONSUMER-READINESS-HARDENING
   authorization_uid: USR-DIRECTIVE-20260920-CLEAR-STAGE01-STAGE03-CORE01-R1
   resolution_uid: WUR-CORE01-STAGE01-STAGE03-CLEAN-REENTRY-20260920-001
   work_unit_uid: WU-CORE01-STAGE01-STAGE03-CLEAN-RESET-R1
-  baseline_head_sha: 06e9b1795666213697d8860ec6a8bd80a7767e4b
-  baseline_tree_sha: 2842ecd327ce3d2742f5f3bce01ace0096209343
   cleanup_receipt_ref: governance/test/history/cleanup/CORE01_STAGE01_STAGE03_CLEAN_RESET_R1.yaml
-  raw_source_recovery_ref: 00_SOURCE_INTAKE/immutable_inputs/core01_961aa8c1/RAW_SOURCE_RECOVERY_RECEIPT.yaml
-  deleted_tracked_file_count: 114
-  deleted_product_run_file_count: 112
-  deleted_stage03_current_test_file_count: 2
+  validated_cleanup_head_sha: 430019118cb49f9e2bc3abe50f4c6b7ee4ecffda
+  physical_old_run_residual_count: 0
+  physical_current_stage03_test_residual_count: 0
   raw_source_preserved_file_count: 2
   historical_profile_artifact_preserved_file_count: 3
-  stage01_stage02_stage03_product_credit_after_reset: 0
-  result: PHYSICAL_DELETE_COMMITTED_AWAITING_EXACT_HEAD_VALIDATION
+  exact_head_validation:
+    full_line_run_id: 35492783736
+    full_line_result: success
+    selected_profile_run_id: 35492783725
+    selected_profile_result: success
+    branch_guard_run_id: 35492783711
+    branch_guard_result: success
+    fresh_replay_identity_run_id: 35492783713
+    fresh_replay_identity_result: success
+    stage02_boundary_run_id: 35492783714
+    stage02_boundary_result: success
+    stage03_effectful_execution: SKIPPED
+  product_stage_credit: 0
+  result: CLOSED_VERIFIED_CLEAN_BASELINE_NO_PRODUCT_CREDIT
