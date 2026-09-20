@@ -93,6 +93,13 @@ product={
   'required_operations':ops,
   'required_outputs':outputs,
   'operation_bindings':operation_bindings,
+  'scanner_bindings':{
+    dim:{
+      'scanner_owner':'governance/ci/run_current_stage3_visual_design.py',
+      'result_owner':'governance/test/stage03/STAGE03_LATEST_TEST_EVIDENCE.json'
+    }
+    for dim in ((next((x for x in (load(ROOT/'governance/ci/stage_execution_semantic_adapters.yaml').get('stages') or {}).items() if x[0]=='STAGE-03'),('STAGE-03',{}))[1]).get('scanner_dimensions') or [])
+  },
   'required_gates':['ALL_REQUIRED_PAGES_STAGE2_CLOSED','GOVERNANCE_LOAD_RECEIPT_PASS','VAL-GOV-029','VAL-GOV-030','VAL-GOV-037','CLOSURE_EVIDENCE_CONTINUITY','CANONICAL_EXECUTION_PREFLIGHT','VISUAL_DESIGN_PROFILE_MATERIALIZATION_COMPLETENESS'],
   'required_evidence':['VISUAL_REVIEW_EVIDENCE','VISUAL_REFERENCE_ANNOTATION','VISUAL_INHERITANCE_MATRIX','VISUAL_SCENARIO_EVIDENCE_SET'],
   'definition_of_done':['ALL_PROFILE_REQUIRED_STAGE03_OUTPUTS_MATERIALIZED_FOR_CORE01','VISUAL_REFERENCE_ANNOTATION_COMPLETE','VISUAL_INHERITANCE_MATRIX_MATERIALIZED_WITH_UNRESOLVED_AUTHORITIES_PRESERVED','VISUAL_SCENARIO_EVIDENCE_SET_MATERIALIZED','EXPLICIT_ATOMIC_WORKBENCH_VISUAL_BINDINGS_PRESERVED','FUNCTIONAL_TO_VISUAL_TOPOLOGY_EQUIVALENCE_PRESERVED','NO_UNAPPROVED_FUNCTIONAL_TOPOLOGY_REDEFINITION','REVIEWABLE_VISUAL_EVIDENCE_COVERS_APPLICABLE_CONTROL_FIELD_STATE_DENOMINATOR','CURRENT_PROBLEM_DENOMINATOR_RECOMPUTED_FROM_PHYSICAL_CURRENT_INPUTS','UNRESOLVED_GLOBAL_VISUAL_SHELL_AUTHORITY_NOT_AUTOFILLED','VISUAL_REVIEW_EVIDENCE_PERSISTED_WHEN_REVIEWABLE','CORE01_STAGE03_REQUIRED_SCOPE_CLOSED_WITH_FRESH_EVIDENCE','ASSET01_REMAINS_OUT_OF_SCOPE_AND_UNMATERIALIZED','NEXT_RESUME_PERSISTED_TO_STAGE04_WORK_UNIT_RESOLUTION_BOUNDARY'],
@@ -112,7 +119,7 @@ state['next_action']='DELETE_STAGE03_GENERATED_OUTPUTS_AND_RUN_FRESH_STAGE03'
 state['resume_control']={'current_resume_point':'STAGE03_CORE01_CLEAN_REEXECUTION_REQUIRED','current_work_unit_uid':PRODUCT_WU,'current_owner':product['canonical_owner'],'historical_stage2_results_are_current_state':False,'stage2_execution_requires_fresh_entry_resolution':False,'exact_next_action':'DELETE_STAGE03_GENERATED_OUTPUTS_AND_RUN_FRESH_STAGE03','governance_validation_head':VALIDATED_HEAD,'governance_full_line_run_id':FULL_LINE_RUN,'governance_selected_profile_run_id':PROFILE_RUN,'governance_branch_authority_run_id':BRANCH_RUN}
 ex=state.setdefault('execution',{})
 ex['run_uid']=product['run_uid']; ex['scope_mode']='EXACT_PAGE_SCOPE_ONLY'; ex['target_pages']=['CORE-01']; ex['current_stage']='STAGE-03-CLEAN-REEXECUTION-REQUIRED'
-ex['stage3']={'result':'NOT_EXECUTED_AFTER_GOVERNANCE_SUCCESSOR','work_unit_uid':PRODUCT_WU,'work_unit_resolution':'PASS_SINGLE_LEGAL_SUCCESSOR','execution_started':False,'pre_execution_gate':'GOVERNANCE_LOAD_RECEIPT_REQUIRED','pre_execution_gate_status':'NOT_EXECUTED','stage_exit_allowed':False,'artifact_root_present':True,'prior_results_authoritative_for_current_governance':False,'revalidation_required_under_current_governance':True,'target_page_uids':['CORE-01'],'remaining_page_uids':['CORE-01'],'current_scope_manifest_ref':'governance/test/CURRENT_EXECUTION_SCOPE_MANIFEST.yaml','output_owner_materialized':True,'visual_review_required':True}
+ex['stage3']={'result':'NOT_EXECUTED','work_unit_uid':PRODUCT_WU,'work_unit_resolution':'PASS_SINGLE_LEGAL_SUCCESSOR','execution_started':False,'pre_execution_gate':'GOVERNANCE_LOAD_RECEIPT_REQUIRED','pre_execution_gate_status':'NOT_EXECUTED','stage_exit_allowed':False,'artifact_root_present':True,'prior_results_authoritative_for_current_governance':False,'revalidation_required_under_current_governance':True,'target_page_uids':['CORE-01'],'remaining_page_uids':['CORE-01'],'current_scope_manifest_ref':'governance/test/CURRENT_EXECUTION_SCOPE_MANIFEST.yaml','output_owner_materialized':True,'visual_review_required':True}
 ex['website_construction_allowed']=False; ex['deployment_allowed']=False
 state['execution']=ex
 gt=state.setdefault('governance_revision_transition',{})
