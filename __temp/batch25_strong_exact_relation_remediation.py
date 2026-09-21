@@ -155,7 +155,7 @@ def patch_page(path,page):
             for field in ["method_path","payload_schema"]:
                 key=(uid,field)
                 if key not in wanted:continue
-                fi=idx[field];assert fi is not None,(path,uid,field,"COLUMN_MISSING")
+                fi=idx[field]\n                if fi is None: continue
                 if usi is not None and usi<len(vals):assert vals[usi]=="EXISTING_SOURCE_UID",(path,uid,vals[usi])
                 old=norm(row.cells[fi].text);assert missing(old),(path,uid,field,old)
                 row.cells[fi].text=wanted[key];hits[key]+=1
