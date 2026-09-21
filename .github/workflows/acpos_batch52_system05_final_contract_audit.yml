@@ -1,0 +1,79 @@
+name: ACPOS Batch 52 System05 Final Contract Audit
+
+on:
+  push:
+    branches: [0921acpos]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: acpos-batch52-system05-final-contract-audit
+  cancel-in-progress: false
+
+jobs:
+  audit:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Verify Batch 51 boundary
+        shell: bash
+        run: |
+          set -euo pipefail
+          BASE="ed9689931041b59cea3cfc0b985b096455fd405a"
+          git cat-file -e "$BASE^{commit}"
+          test -z "$(git -c core.quotePath=false diff --name-only "$BASE" HEAD -- '*.docx')"
+          test "$(find . -maxdepth 1 -type f -name '*.docx' | wc -l)" -eq 31
+          echo "PASS: BATCH51 CONTENT BOUNDARY / 31 DOCX"
+
+      - name: Install audit runtime
+        run: python -m pip install --quiet python-docx
+
+      - name: Run Batch 52 System05 final contract audit
+        env:
+          PYTHONDONTWRITEBYTECODE: "1"
+        run: python -B __temp/batch52_system05_final_contract_audit.py
+
+      - name: Verify Batch 52 denominator
+        shell: bash
+        run: |
+          PYTHONDONTWRITEBYTECODE=1 python -B - <<'PY'
+          import json
+          from pathlib import Path
+          r=json.loads(Path("__batch52_system05_contract_audit.json").read_text(encoding="utf-8"))
+          s=r["summary"]
+          assert s["system05_cells"]==137,s
+          assert sum(v["cells"] for v in s["by_page"].values())==137,s
+          assert sum(s["by_field"].values())==137,s
+          print("PASS: BATCH52 SYSTEM05 FINAL DENOMINATOR")
+          print(json.dumps(s,ensure_ascii=False,sort_keys=True))
+          PY
+
+      - name: Upload Batch 52 evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: acpos-batch52-system05-final-contract-audit
+          path: |
+            __batch52_system05_contract_audit.json
+            __batch52_summary.txt
+          retention-days: 1
+          if-no-files-found: error
+
+      - name: Remove Batch 52 harness
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -f __batch52_system05_contract_audit.json __batch52_summary.txt
+          find . -type d -name __pycache__ -prune -exec rm -rf {} +
+          git config user.name "acpos-word-batch-52-audit"
+          git config user.email "actions@users.noreply.github.com"
+          git rm -f __temp/batch52_system05_final_contract_audit.py .github/workflows/acpos_batch52_system05_final_contract_audit.yml
+          git commit -m "chore(acpos): close batch 52 system05 final contract audit harness"
+          git push origin HEAD:0921acpos
+          test -z "$(git status --porcelain)"
+          echo "PASS: BATCH52 HARNESS REMOVED / CLEAN TREE"
