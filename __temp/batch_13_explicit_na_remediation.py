@@ -218,10 +218,10 @@ for uid in aiapi_targets:
     assert uid in s03_map,uid
     assert is_aiapi_direct_operation_action_na(s03_map[uid]),(uid,s03_map[uid])
 
-# Confirm System01 glossary explicitly describes Section Open as same registered READ_ONLY operation.
-s01_doc=Document(S01)
-s01_all="\n".join([p.text for p in s01_doc.paragraphs]+[c.text for t in s01_doc.tables for row in t.rows for c in row.cells])
-assert "Section Open = 同一 registered READ_ONLY operation" in s01_all,"S01_SECTION_OPEN_GLOSSARY_MISSING"
+# Confirm the WB page glossary explicitly describes Section Open as the same registered READ_ONLY operation.
+wb_doc_for_glossary=Document(WB)
+wb_all="\n".join([p.text for p in wb_doc_for_glossary.paragraphs]+[c.text for t in wb_doc_for_glossary.tables for row in t.rows for c in row.cells])
+assert "Section Open = 同一 registered READ_ONLY operation" in wb_all,"WB_SECTION_OPEN_GLOSSARY_MISSING"
 
 # Helpers.
 def add_landscape(doc):
