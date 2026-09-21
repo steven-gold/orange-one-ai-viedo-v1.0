@@ -115,7 +115,8 @@ assert all(x["wb_existing_full_rows"] for x in maps),[(x["compact_uid"],x["match
 
 summary={
   "compact_controls":14,
-  "unique_canonical_mappings":14,\n  "full_canonical_uid_already_in_wb":sum(1 for x in maps if x["wb_existing_full_rows"]),
+  "unique_canonical_mappings":14,
+  "full_canonical_uid_already_in_wb":sum(1 for x in maps if x["wb_existing_full_rows"]),
   "canonical_owner":S01,
   "action_values":dict(collections.Counter(x["matches"][0]["action"] for x in maps)),
   "gate_values":dict(collections.Counter(x["matches"][0]["gate"] for x in maps)),
