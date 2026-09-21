@@ -1,0 +1,79 @@
+name: ACPOS Batch 22 Canonical Owner Resolution Audit
+
+on:
+  push:
+    branches: [0921acpos]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: acpos-batch22-owner-resolution-audit
+  cancel-in-progress: false
+
+jobs:
+  audit:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Verify Batch 21 boundary
+        shell: bash
+        run: |
+          set -euo pipefail
+          BASE="0eea87264d7bc8312961ebeeb3c3c4cb28c31387"
+          git cat-file -e "$BASE^{commit}"
+          test -z "$(git -c core.quotePath=false diff --name-only "$BASE" HEAD -- '*.docx')"
+          test "$(find . -maxdepth 1 -type f -name '*.docx' | wc -l)" -eq 31
+          echo "PASS: BATCH21 CONTENT BOUNDARY / 31 DOCX"
+
+      - name: Install audit runtime
+        run: python -m pip install --quiet python-docx
+
+      - name: Run Batch 22 owner resolution audit
+        env:
+          PYTHONDONTWRITEBYTECODE: "1"
+        run: python -B __temp/batch22_canonical_owner_resolution_audit.py
+
+      - name: Verify Batch 22 denominator
+        shell: bash
+        run: |
+          PYTHONDONTWRITEBYTECODE=1 python -B - <<'PY'
+          import json
+          from pathlib import Path
+          r=json.loads(Path("__batch22_owner_resolution_audit.json").read_text(encoding="utf-8"))
+          s=r["summary"]
+          assert s["target_cells"]==341,s
+          assert s["unique_owner_source"]+s["raw_owner_collision"]+s["owner_source_absent"]==341,s
+          assert s["by_field"]=={"method_path":80,"payload_schema":137,"persistence_owner":124},s
+          print("PASS: BATCH22 OWNER RESOLUTION DENOMINATOR")
+          print(json.dumps(s,ensure_ascii=False,sort_keys=True))
+          PY
+
+      - name: Upload Batch 22 audit evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: acpos-batch22-canonical-owner-resolution-audit
+          path: |
+            __batch22_owner_resolution_audit.json
+            __batch22_summary.txt
+          retention-days: 1
+          if-no-files-found: error
+
+      - name: Remove Batch 22 audit harness
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -f __batch22_owner_resolution_audit.json __batch22_summary.txt
+          find . -type d -name __pycache__ -prune -exec rm -rf {} +
+          git config user.name "acpos-word-batch-22-audit"
+          git config user.email "actions@users.noreply.github.com"
+          git rm -f __temp/batch22_canonical_owner_resolution_audit.py .github/workflows/acpos_batch22_owner_resolution_audit.yml
+          git commit -m "chore(acpos): close batch 22 owner resolution audit harness"
+          git push origin HEAD:0921acpos
+          test -z "$(git status --porcelain)"
+          echo "PASS: BATCH22 AUDIT HARNESS REMOVED / CLEAN TREE"
