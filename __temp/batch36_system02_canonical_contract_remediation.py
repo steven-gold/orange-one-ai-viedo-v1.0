@@ -186,14 +186,34 @@ pre_owner=compose(parse_controls(S02))
 expected_cells=sum(len(x["fields"]) for x in TARGETS.values())
 assert expected_cells==34,expected_cells
 
+def collect_uid_operations(path):
+    d=Document(path);out=collections.defaultdict(set)
+    for t in d.tables:
+        if not t.rows: continue
+        h=[norm(c.text) for c in t.rows[0].cells]
+        ui=hfind(h,"control uid","target uid")
+        oi=hfind(h,"operation")
+        if ui is None or oi is None: continue
+        for row in t.rows[1:]:
+            vals=[norm(c.text) for c in row.cells]
+            if ui>=len(vals) or oi>=len(vals): continue
+            uid,op=vals[ui],vals[oi]
+            if uid and uid not in {"—","-"} and op and op not in {"—","-"}:
+                out[uid].add(op)
+    return out
+
+owner_uid_ops=collect_uid_operations(S02)
+
 # Preconditions.
 for uid,t in TARGETS.items():
     op=t["operation"];page=t["page"];pr=pre_page_maps[page][uid]
     assert pr["operation"]==op,(uid,pr["operation"],op)
     assert pr["runtime_status"] in {"EFFECTFUL_EXACT","READ_EXACT"},(uid,pr["runtime_status"])
     assert uid in pre_owner,(uid,"OWNER_UID_MISSING")
+    assert op in owner_uid_ops.get(uid,set()),(uid,"OWNER_OPERATION_AUTHORITY_MISSING",op,sorted(owner_uid_ops.get(uid,set())))
     orow=pre_owner[uid]
-    assert orow["operation"]==op,(uid,orow["operation"],op)
+    if not missing(orow.get("operation","")):
+        assert orow["operation"]==op,(uid,orow["operation"],op)
     assert orow["runtime_status"]==pr["runtime_status"],(uid,orow["runtime_status"],pr["runtime_status"])
     for f in t["fields"]:
         assert missing(pr.get(f,"")),(uid,"PAGE_NOT_MISSING",f,pr.get(f))
