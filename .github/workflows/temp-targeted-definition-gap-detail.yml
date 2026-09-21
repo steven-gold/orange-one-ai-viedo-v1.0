@@ -1,0 +1,54 @@
+name: Temp Targeted Definition Gap Detail
+
+on:
+  push:
+    branches: [0921acpos]
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: python -m pip install --quiet python-docx
+      - name: Print targeted gaps
+        shell: bash
+        run: |
+          python - <<'PY'
+          from docx import Document
+          import json,re
+          docs={
+          "CORE-01":"ACPOS_CORE-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx",
+          "EDIT-01":"ACPOS_EDIT-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx",
+          "SYS-01":"ACPOS_SYS-01_系統維護與生命週期工作區_Mother_Basic_Design_OPTIMIZED.docx",
+          "DEV-01":"ACPOS_DEV-01_企業自動開發系統_Mother_Basic_Design_OPTIMIZED.docx",
+          "SOC-01":"ACPOS_SOC-01_社群發布_Mother_Basic_Design_OPTIMIZED.docx",
+          "SG-02":"ACPOS_SG-02_QA審查項目名單_Mother_Basic_Design_OPTIMIZED.docx",
+          "ADMIN-STR-01":"ACPOS_admin_STR-01_戰略中心後台_Mother_Basic_Design_OPTIMIZED.docx"
+          }
+          pats={
+          "CORE-01":[r"unresolved LockReview",r"CriteriaVersion|criteria_version",r"LockReview Exact Contract"],
+          "EDIT-01":[r"15 ports|13 operations|22 ports|20 operations",r"NO_PUBLIC_API_ID_IN_CURRENT_AUTHORITY"],
+          "SYS-01":[r"CONTENT_INCOMPLETE|STALE_QA_EVIDENCE|SG-02|Criteria|DRAFT|REVIEW|APPROVED"],
+          "DEV-01":[r"criteria_version_id|scorecard_id|checksum|exact output|Rights|Policy|Delivery"],
+          "SOC-01":[r"criteria_version_id|scorecard_id|qa_gate_status|open_blocking_findings|exact_content_ref|checksum|Rights|Policy|Publish"],
+          "SG-02":[r"NEW_AUTHORITY_RUNTIME_IMPLEMENTATION_REQUIRED|MISSING at validation|submitGovernedResourceReview|Current Control Denominator"],
+          "ADMIN-STR-01":[r"exact current Operation Registry binding unresolved|exportProjection|saveDraft|createCandidate|compareCandidates|rejectStrategyCandidate|adoptAsContextCandidate"]
+          }
+          out={}
+          for uid,fn in docs.items():
+              d=Document(fn); hits=[]
+              for i,p in enumerate(d.paragraphs,1):
+                  tx=p.text.strip()
+                  if any(re.search(x,tx,re.I) for x in pats[uid]):
+                      hits.append({"kind":"p","index":i,"text":tx})
+              for ti,t in enumerate(d.tables,1):
+                  for ri,r in enumerate(t.rows[1:],1):
+                      tx=" | ".join(c.text.strip() for c in r.cells)
+                      if any(re.search(x,tx,re.I) for x in pats[uid]):
+                          hits.append({"kind":"t","table":ti,"row":ri,"text":tx})
+              out[uid]=hits[:120]
+          print("TARGET_GAPS",json.dumps(out,ensure_ascii=False))
+          PY
