@@ -348,8 +348,9 @@ Document(LOGIC)
 
 report={
     "machine":machine,
-    "mappings":maps,\n    "renamed_headers":renamed_headers,
-    "removed_findings":[{"page":a,"uid":b,"field":c} for a,b,c in sorted(removed)],
+    "mappings":maps,
+    "renamed_headers":renamed_headers,
+    "removed_findings":[{"page":a,"uid":b,"field":field} for a,b,field in sorted(removed)],
     "output_hashes":{WB:blob(WB),LOGIC:blob(LOGIC)},
 }
 Path("__batch11_cleanup_report.json").write_text(json.dumps(report,ensure_ascii=False,indent=2),encoding="utf-8")
