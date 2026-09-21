@@ -1,0 +1,45 @@
+name: ACPOS Batch 13 N-A Eligibility Audit
+
+on:
+  push:
+    branches: [0921acpos]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: acpos-batch-13-na-audit
+  cancel-in-progress: false
+
+jobs:
+  audit:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Install audit runtime
+        run: python -m pip install --quiet python-docx
+      - name: Verify no Word drift since Batch 12
+        shell: bash
+        run: |
+          python - <<'PY'
+          import subprocess
+          base="a781d70cffe719c52ae3f96149207fec0a66c921"
+          out=subprocess.check_output(["git","-c","core.quotePath=false","diff","--name-only",base,"HEAD","--","*.docx"],text=True)
+          changed=[x for x in out.splitlines() if x]
+          assert changed==[],changed
+          print("PASS: NO WORD DRIFT SINCE BATCH-12")
+          PY
+      - name: Preflight syntax
+        run: python -m py_compile __temp/batch_13_na_eligibility_audit.py
+      - name: Run Batch 13 N-A eligibility audit
+        run: python __temp/batch_13_na_eligibility_audit.py
+      - name: Upload audit evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: acpos-batch-13-na-eligibility-audit
+          path: __batch13_na_eligibility_audit.json
+          retention-days: 1
