@@ -166,8 +166,10 @@ def compose(rows):
         for f in FIELDS[1:]:
             vals=sorted(set(r.get(f,"") for r in rs if not missing(r.get(f,""))))
             fv[f]=vals
-            if missing(base.get(f,"")) and len(vals)==1:base[f]=vals[0]
-        base["_field_values"]=fv;out[uid]=base
+            if missing(base.get(f,"")) and len(vals)==1:
+                base[f]=vals[0]
+        base["_field_values"]=fv
+        out[uid]=base
     return out
 def blob(path):
     b=Path(path).read_bytes()
