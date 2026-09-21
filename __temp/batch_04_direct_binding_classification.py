@@ -213,7 +213,7 @@ doc.add_heading("Mandatory Conversion Integrity Guard",level=2)
 table(["Guard","Requirement"],[
 ["ENC-01 DOCX XML validity","Open produced DOCX with python-docx and parse all XML parts; invalid XML/encoding = FAIL."],
 ["ENC-02 Unicode replacement","U+FFFD replacement char, NUL, or undecodable text in DOCX/PDF extraction = FAIL."],
-["ENC-03 Mojibake signatures","Known UTF-8/Latin-1 corruption signatures such as ï¿½ / â€™ / â€œ / â€ / Ã¤ / Ã¥ / Ã© are forbidden unless explicitly present in source content."],
+["ENC-03 Mojibake signatures","Known UTF-8/Latin-1 corruption signatures are forbidden. The executable guard owns the signature list; the normative Word records only the rule so the document itself cannot self-trigger the detector."],
 ["ENC-04 Source-to-PDF CJK retention","After removing whitespace, PDF-extracted CJK count must retain at least 97 percent of source DOCX CJK count; otherwise FAIL."],
 ["ENC-05 Critical phrase retention","Batch marker and declared canonical English/Chinese phrases must survive PDF extraction."],
 ["ENC-06 Conversion freshness","Run encoding integrity immediately after every DOCX-to-PDF conversion; prior PASS cannot be reused."],
