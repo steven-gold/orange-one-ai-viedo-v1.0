@@ -142,24 +142,26 @@ def gap_inventory():
 pre=gap_inventory()
 assert len(pre)==277,len(pre)
 
-# Locate the Batch-08 synthetic mapping table.
+# Locate every governance/addendum table that carries compact WB aliases.
+# These tables are evidence/mapping material, not product Control Registry tables.
 wb=Document(WB)
-synthetic_table=None
-for t in wb.tables:
+compact_tables=[]
+compact_aliases=set()
+for ti,t in enumerate(wb.tables,1):
     if not t.rows:
         continue
     headers=[norm(c.text) for c in t.rows[0].cells]
-    if "WB Control UID" not in headers:
-        continue
-    rows=[]
+    table_aliases=set()
     for row in t.rows[1:]:
         vals=[norm(c.text) for c in row.cells]
-        if vals and vals[0].startswith("CTRL-"):
-            rows.append(vals)
-    if len(rows)==14:
-        synthetic_table=t
-        break
-assert synthetic_table is not None,"BATCH08_SYNTHETIC_TABLE_NOT_FOUND"
+        for v in vals:
+            if v.startswith("CTRL-…") or v.startswith("CTRL-..."):
+                table_aliases.add(v)
+    if table_aliases:
+        compact_tables.append({"table_no":ti,"table":t,"headers":headers,"aliases":sorted(table_aliases)})
+        compact_aliases.update(table_aliases)
+assert len(compact_aliases)==14,(len(compact_aliases),sorted(compact_aliases))
+assert len(compact_tables)>=1,len(compact_tables)
 
 # Read exact canonical product rows from WB and System 01.
 wb_product={}
@@ -178,11 +180,7 @@ s01_candidates=[
 s01_by_uid={r["control"]:r for r in s01_candidates}
 
 maps=[]
-for row in synthetic_table.rows[1:]:
-    vals=[norm(c.text) for c in row.cells]
-    compact=vals[0] if vals else ""
-    if not compact.startswith("CTRL-"):
-        continue
+for compact in sorted(compact_aliases):
     if "…" in compact:
         suffix=compact.split("…",1)[1]
     elif "..." in compact:
@@ -215,10 +213,18 @@ for row in synthetic_table.rows[1:]:
 assert len(maps)==14,len(maps)
 assert len(set(x["canonical_uid"] for x in maps))==14
 
-# Critical correction: this governance table is not a product Control Registry.
-headers=[norm(c.text) for c in synthetic_table.rows[0].cells]
-ci=headers.index("WB Control UID")
-synthetic_table.rows[0].cells[ci].text="WB Compact Alias (Non-Control)"
+# Critical correction: every governance table containing these compact aliases must be excluded
+# from the product Control denominator. Rename only header cells that can be parsed as Control UID.
+renamed_headers=[]
+for item in compact_tables:
+    t=item["table"]
+    headers=[norm(c.text) for c in t.rows[0].cells]
+    for i,h in enumerate(headers):
+        if "control uid" in h.lower():
+            old=h
+            t.rows[0].cells[i].text="Compact Alias (Non-Control)"
+            renamed_headers.append({"table":item["table_no"],"old":old,"new":"Compact Alias (Non-Control)"})
+assert renamed_headers,compact_tables
 
 # Rename the historical heading without destroying audit history.
 for p in wb.paragraphs:
@@ -342,7 +348,7 @@ Document(LOGIC)
 
 report={
     "machine":machine,
-    "mappings":maps,
+    "mappings":maps,\n    "renamed_headers":renamed_headers,
     "removed_findings":[{"page":a,"uid":b,"field":c} for a,b,c in sorted(removed)],
     "output_hashes":{WB:blob(WB),LOGIC:blob(LOGIC)},
 }
