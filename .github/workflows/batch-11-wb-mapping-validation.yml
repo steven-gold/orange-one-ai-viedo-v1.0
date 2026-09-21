@@ -1,0 +1,45 @@
+name: ACPOS Batch 11 WB Mapping Validation
+
+on:
+  push:
+    branches: [0921acpos]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: acpos-batch-11-wb-mapping-validation
+  cancel-in-progress: false
+
+jobs:
+  validate:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Install audit runtime
+        run: python -m pip install --quiet python-docx
+      - name: Verify no Word drift since Batch 10
+        shell: bash
+        run: |
+          python - <<'PY'
+          import subprocess
+          base="fd8c8079e543ab523bf774472faf713a4631118b"
+          out=subprocess.check_output(["git","-c","core.quotePath=false","diff","--name-only",base,"HEAD","--","*.docx"],text=True)
+          changed=[x for x in out.splitlines() if x]
+          assert changed==[],changed
+          print("PASS: NO WORD DRIFT SINCE BATCH-10")
+          PY
+      - name: Preflight syntax
+        run: python -m py_compile __temp/batch_11_wb_mapping_validation.py
+      - name: Validate one-to-one WB mappings
+        run: python __temp/batch_11_wb_mapping_validation.py
+      - name: Upload mapping evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: acpos-batch-11-wb-mapping-validation
+          path: __batch11_wb_mapping_validation.json
+          retention-days: 1
