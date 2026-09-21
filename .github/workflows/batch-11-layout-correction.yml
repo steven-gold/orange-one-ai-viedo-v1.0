@@ -1,0 +1,177 @@
+name: ACPOS Batch 11 Layout Correction
+
+on:
+  push:
+    branches: [0921acpos]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: acpos-batch-11-layout-correction
+  cancel-in-progress: false
+
+jobs:
+  fix:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install Word QA runtime
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq libreoffice-writer poppler-utils fonts-noto-cjk
+          python -m pip install --quiet python-docx pillow
+
+      - name: Verify exact starting Word state
+        shell: bash
+        run: |
+          python - <<'PY'
+          import subprocess
+          base="30e0b0396ee0bda9666b04835faaf4937b4d8927"
+          out=subprocess.check_output(["git","-c","core.quotePath=false","diff","--name-only",base,"HEAD","--","*.docx"],text=True)
+          changed=[x for x in out.splitlines() if x]
+          assert changed==[],changed
+          print("PASS: NO WORD DRIFT SINCE BATCH-11 SEMANTIC COMMIT")
+          PY
+
+      - name: Preflight syntax
+        run: python -m py_compile __temp/batch_11_layout_fix.py
+
+      - name: Apply layout-only correction
+        run: python __temp/batch_11_layout_fix.py
+
+      - name: Convert corrected DOCX files to PDF
+        shell: bash
+        run: |
+          mkdir -p __render_qa_batch11_layout/pdf
+          for f in           "ACPOS_WB-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx"           "ACPOS_SYSTEM_LOGIC_GLOBAL_INTEGRATION_Mother_Basic_Design_OPTIMIZED.docx"
+          do
+            libreoffice --headless --convert-to pdf --outdir __render_qa_batch11_layout/pdf "$f"
+          done
+
+      - name: Encoding and page-count gate
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import zipfile,xml.etree.ElementTree as ET,subprocess,re,json,unicodedata
+          files=[
+          "ACPOS_WB-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx",
+          "ACPOS_SYSTEM_LOGIC_GLOBAL_INTEGRATION_Mother_Basic_Design_OPTIMIZED.docx",
+          ]
+          expected_pages={
+          "ACPOS_WB-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx":23,
+          "ACPOS_SYSTEM_LOGIC_GLOBAL_INTEGRATION_Mother_Basic_Design_OPTIMIZED.docx":91,
+          }
+          bad=["\ufffd","ï¿½","â€™","â€œ","â€","Ã¤","Ã¥","Ã©","Ã¨","Â©","Â®"]
+          allowed={9,10,12,13};cjk=re.compile(r"[\u3400-\u4dbf\u4e00-\u9fff\uf900-\ufaff]");report={}
+          for fn in files:
+              docx=Path(fn);pdf=Path("__render_qa_batch11_layout/pdf")/(docx.stem+".pdf")
+              with zipfile.ZipFile(docx) as z:
+                  xmls=[n for n in z.namelist() if n.endswith(".xml") or n.endswith(".rels")]
+                  for n in xmls: ET.fromstring(z.read(n))
+                  root=ET.fromstring(z.read("word/document.xml"))
+                  ns="{http://schemas.openxmlformats.org/wordprocessingml/2006/main}"
+                  src="".join((e.text or "") for e in root.iter(ns+"t"))
+              pdftext=subprocess.check_output(["pdftotext","-layout",str(pdf),"-"],text=True,errors="strict")
+              info=subprocess.check_output(["pdfinfo",str(pdf)],text=True,errors="replace")
+              pages=int(next(x.split(":",1)[1].strip() for x in info.splitlines() if x.startswith("Pages:")))
+              assert pages==expected_pages[fn],(fn,pages,expected_pages[fn])
+              for label,text in [("DOCX",src),("PDF",pdftext)]:
+                  assert "\x00" not in text,(fn,label,"NUL")
+                  ctrl=[(i,ord(ch)) for i,ch in enumerate(text) if ord(ch)<32 and ord(ch) not in allowed]
+                  assert not ctrl[:20],(fn,label,"CONTROL",ctrl[:20])
+                  hits=[x for x in bad if x in text]
+                  assert not hits,(fn,label,"MOJIBAKE",hits)
+                  assert "\ufffd" not in unicodedata.normalize("NFC",text),(fn,label,"REPLACEMENT")
+              sc=len(cjk.findall(src));pc=len(cjk.findall(pdftext));ratio=pc/sc
+              assert ratio>=0.97,(fn,sc,pc,ratio)
+              report[fn]={"pages":pages,"source_cjk":sc,"pdf_cjk":pc,"cjk_ratio":ratio,"status":"PASS"}
+          Path("__render_qa_batch11_layout/encoding_page_report.json").write_text(json.dumps(report,ensure_ascii=False,indent=2),encoding="utf-8")
+          print("PASS: BATCH-11 LAYOUT ENCODING/PAGE COUNT",json.dumps(report,ensure_ascii=False))
+          PY
+
+      - name: Render corrected pages and geometry
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import subprocess,json,math
+          from PIL import Image,ImageChops,ImageDraw
+          files=[
+          "ACPOS_WB-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx",
+          "ACPOS_SYSTEM_LOGIC_GLOBAL_INTEGRATION_Mother_Basic_Design_OPTIMIZED.docx",
+          ]
+          qa=Path("__render_qa_batch11_layout");pdfdir=qa/"pdf";pngroot=qa/"png";contact=qa/"contact"
+          pngroot.mkdir(parents=True,exist_ok=True);contact.mkdir(parents=True,exist_ok=True)
+          report={}
+          for fn in files:
+              p=Path(fn);pf=pdfdir/(p.stem+".pdf")
+              info=subprocess.check_output(["pdfinfo",str(pf)],text=True,errors="replace")
+              pages=int(next(x.split(":",1)[1].strip() for x in info.splitlines() if x.startswith("Pages:")))
+              od=pngroot/p.stem;od.mkdir(parents=True,exist_ok=True)
+              subprocess.run(["pdftoppm","-png","-r","150",str(pf),str(od/"page")],check=True,stdout=subprocess.DEVNULL)
+              imgs=sorted(od.glob("page-*.png"));assert len(imgs)==pages
+              blank=[];edge=[];thumbs=[]
+              for i,img in enumerate(imgs,1):
+                  im=Image.open(img).convert("RGB")
+                  diff=ImageChops.difference(im,Image.new("RGB",im.size,"white"))
+                  bb=diff.getbbox()
+                  if bb is None:blank.append(i)
+                  else:
+                      l,t,r,b=bb
+                      if l<=2 or t<=2 or r>=im.width-2 or b>=im.height-2:edge.append(i)
+                  th=im.copy();th.thumbnail((420,594))
+                  canvas=Image.new("RGB",(440,630),"white");canvas.paste(th,((440-th.width)//2,10))
+                  ImageDraw.Draw(canvas).text((10,610),f"page {i}",fill="black");thumbs.append(canvas)
+              assert not blank,(fn,"BLANK",blank)
+              assert not edge,(fn,"EDGE",edge)
+              cols=4;rows=math.ceil(len(thumbs)/cols)
+              sheet=Image.new("RGB",(cols*440,rows*630),"white")
+              for i,th in enumerate(thumbs):sheet.paste(th,((i%cols)*440,(i//cols)*630))
+              sheet.save(contact/(p.stem+".jpg"),quality=88)
+              report[fn]={"pages":pages,"blank":blank,"edge":edge}
+          Path("__render_qa_batch11_layout/geometry_report.json").write_text(json.dumps(report,ensure_ascii=False,indent=2),encoding="utf-8")
+          print("PASS: BATCH-11 LAYOUT RENDER/GEOMETRY",json.dumps(report,ensure_ascii=False))
+          PY
+
+      - name: Verify exact layout-only scope
+        shell: bash
+        run: |
+          python - <<'PY'
+          import subprocess
+          allowed={
+          "ACPOS_WB-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx",
+          "ACPOS_SYSTEM_LOGIC_GLOBAL_INTEGRATION_Mother_Basic_Design_OPTIMIZED.docx",
+          }
+          out=subprocess.check_output(["git","-c","core.quotePath=false","diff","--name-only","--"],text=True)
+          changed={x for x in out.splitlines() if x}
+          assert changed==allowed,{"missing":sorted(allowed-changed),"unexpected":sorted(changed-allowed)}
+          print("PASS: BATCH-11 LAYOUT SCOPE EXACT 2 WORD")
+          PY
+
+      - name: Collect evidence
+        run: cp __batch11_layout_report.json __render_qa_batch11_layout/
+
+      - name: Upload layout evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: acpos-batch-11-layout-correction-evidence
+          path: __render_qa_batch11_layout
+          retention-days: 1
+
+      - name: Commit layout-only correction
+        shell: bash
+        run: |
+          rm -rf __render_qa_batch11_layout __temp/__pycache__ __batch11_layout_report.json
+          git rm __temp/batch_11_layout_fix.py .github/workflows/batch-11-layout-correction.yml
+          git config user.name "acpos-word-batch-11"
+          git config user.email "actions@users.noreply.github.com"
+          git add           "ACPOS_WB-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx"           "ACPOS_SYSTEM_LOGIC_GLOBAL_INTEGRATION_Mother_Basic_Design_OPTIMIZED.docx"
+          git commit -m "docs(acpos): tighten batch-11 render layout"
+          git push
