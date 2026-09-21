@@ -76,10 +76,12 @@ def rows_from(path):
             out.append(rec)
     return out
 
-DISPLAY_KEYS=("READONLY","LABEL","DISPLAY","METRIC","KPI","STATUS")
+DISPLAY_ONLY_TYPES={
+"READONLY","LABEL","TEXT","BADGE","STATUS","METRIC","KPI","DIVIDER","ICON","PANEL","CARD","VIEW","LIST","TABLE","CHIP","TAG","DISPLAY"
+}
 def display_only(r):
     typ=r.get("type","").upper()
-    return any(k in typ for k in DISPLAY_KEYS)
+    return typ in DISPLAY_ONLY_TYPES or any(x in typ for x in ["READONLY","LABEL","DISPLAY","METRIC","KPI","STATUS"])
 
 def classify(field,row):
     val=row.get(field,"");status=row.get("runtime_status","")
