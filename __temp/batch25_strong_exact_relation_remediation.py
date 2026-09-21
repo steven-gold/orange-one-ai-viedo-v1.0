@@ -162,7 +162,7 @@ def patch_page(path,page):
                 row.cells[fi].text=wanted[key];hits[key]+=1
     assert set(hits)==set(wanted),(path,sorted(set(wanted)-set(hits)),dict(hits))
     d.save(path);Document(path)
-    return dict(hits)
+    return {f"{u}:{fld}": n for (u,fld),n in hits.items()}
 
 patches={
 "CORE-01":patch_page(CORE,"CORE-01"),
