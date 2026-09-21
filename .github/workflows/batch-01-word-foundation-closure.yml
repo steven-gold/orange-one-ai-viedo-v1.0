@@ -1,0 +1,147 @@
+name: ACPOS Batch 01 Word Foundation Closure
+
+on:
+  push:
+    branches: [0921acpos]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: acpos-batch-01-foundation-closure
+  cancel-in-progress: false
+
+jobs:
+  close-batch-01:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install Word QA runtime
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq libreoffice-writer poppler-utils fonts-noto-cjk
+          python -m pip install --quiet python-docx pillow
+
+      - name: Apply batch 01
+        run: python __temp/batch_01_foundation_closure.py
+
+      - name: Semantic closure verification
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          from docx import Document
+
+          marker="ACPOS-20260921-BATCH-01-FOUNDATION-CLOSURE-V1"
+          checks={
+          "00_INDEX_ACPOS_Mother_Compliant_Basic_Design_Master.docx":["31 DOCX","0921acpos","MUST be resolved fresh"],
+          "ACPOS_GLOBAL_HOME_SHELL_NAVIGATION_Mother_Basic_Design_OPTIMIZED.docx":["TY01","TY15","font_family","computed metrics"],
+          "ACPOS_SYSTEM_LOGIC_GLOBAL_INTEGRATION_Mother_Basic_Design_OPTIMIZED.docx":["L01","L24","S01","S30","H01","H12","NOT_APPLICABLE"],
+          "ACPOS_CORE-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx":["LockReview contract is resolved","NOT_EXECUTED / IMPLEMENTATION_REQUIRED"],
+          "ACPOS_SYS-01_系統維護與生命週期工作區_Mother_Basic_Design_OPTIMIZED.docx":["CONTENT_INCOMPLETE","STALE_QA_EVIDENCE","CRITERIA_LIFECYCLE_REACHABILITY","DENOMINATOR_ALIGNMENT","QUALITY_CONTEXT_UNBOUND","HARD_BLOCK_BYPASS","RUNTIME_CLAIM"],
+          "ACPOS_DEV-01_企業自動開發系統_Mother_Basic_Design_OPTIMIZED.docx":["artifact_checksum","criteria_version_id","scorecard_id","open_blocking_findings","delivery_correlation_id"],
+          }
+          def txt(p):
+              d=Document(p)
+              return "\n".join([x.text for x in d.paragraphs]+[c.text for t in d.tables for r in t.rows for c in r.cells])
+          for fn,needles in checks.items():
+              t=txt(fn)
+              assert marker in t,fn
+              for n in needles: assert n in t,(fn,n)
+          assert "unresolved LockReview contract stays BLOCK" not in txt("ACPOS_CORE-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx")
+          print("PASS: BATCH-01 SEMANTIC CLOSURE 6/6")
+          PY
+
+      - name: Render and geometry QA
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import subprocess,json
+          from PIL import Image,ImageChops
+
+          docs=[
+          Path("00_INDEX_ACPOS_Mother_Compliant_Basic_Design_Master.docx"),
+          Path("ACPOS_GLOBAL_HOME_SHELL_NAVIGATION_Mother_Basic_Design_OPTIMIZED.docx"),
+          Path("ACPOS_SYSTEM_LOGIC_GLOBAL_INTEGRATION_Mother_Basic_Design_OPTIMIZED.docx"),
+          Path("ACPOS_CORE-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx"),
+          Path("ACPOS_SYS-01_系統維護與生命週期工作區_Mother_Basic_Design_OPTIMIZED.docx"),
+          Path("ACPOS_DEV-01_企業自動開發系統_Mother_Basic_Design_OPTIMIZED.docx"),
+          ]
+          qa=Path("__render_qa_batch01"); pdf=qa/"pdf"; png=qa/"png"
+          pdf.mkdir(parents=True,exist_ok=True); png.mkdir(parents=True,exist_ok=True)
+          report={"docs":{},"pages":0,"blank":[],"edge":[]}
+          for p in docs:
+              subprocess.run(["libreoffice","--headless","--convert-to","pdf","--outdir",str(pdf),str(p)],check=True,stdout=subprocess.DEVNULL)
+              pf=pdf/(p.stem+".pdf")
+              info=subprocess.check_output(["pdfinfo",str(pf)],text=True,errors="replace")
+              pages=int(next(x.split(":",1)[1].strip() for x in info.splitlines() if x.startswith("Pages:")))
+              od=png/p.stem; od.mkdir(parents=True,exist_ok=True)
+              subprocess.run(["pdftoppm","-png","-r","120",str(pf),str(od/"page")],check=True,stdout=subprocess.DEVNULL)
+              imgs=sorted(od.glob("page-*.png")); assert len(imgs)==pages
+              blank=[];edge=[]
+              for i,img in enumerate(imgs,1):
+                  im=Image.open(img).convert("RGB")
+                  diff=ImageChops.difference(im,Image.new("RGB",im.size,"white"))
+                  bb=diff.getbbox()
+                  if bb is None: blank.append(i); continue
+                  l,t,r,b=bb
+                  if l<=2 or t<=2 or r>=im.width-2 or b>=im.height-2: edge.append(i)
+              text=subprocess.check_output(["pdftotext","-layout",str(pf),"-"],text=True,errors="replace")
+              assert "ACPOS-20260921-BATCH-01-FOUNDATION-CLOSURE-V1" in text,p.name
+              report["docs"][p.name]={"pages":pages,"blank":blank,"edge":edge}
+              report["pages"]+=pages
+              report["blank"] += [(p.name,x) for x in blank]
+              report["edge"] += [(p.name,x) for x in edge]
+          assert not report["blank"],report["blank"]
+          assert not report["edge"],report["edge"]
+          (qa/"report.json").write_text(json.dumps(report,ensure_ascii=False,indent=2),encoding="utf-8")
+          print(json.dumps({"documents":6,"pages":report["pages"],"blank":0,"edge":0},ensure_ascii=False))
+          print("PASS: BATCH-01 RENDER/GEOMETRY QA 6/6")
+          PY
+
+      - name: Verify only batch 01 Word changed
+        shell: bash
+        run: |
+          git status --short
+          python - <<'PY'
+          import subprocess
+          allowed={
+          "00_INDEX_ACPOS_Mother_Compliant_Basic_Design_Master.docx",
+          "ACPOS_GLOBAL_HOME_SHELL_NAVIGATION_Mother_Basic_Design_OPTIMIZED.docx",
+          "ACPOS_SYSTEM_LOGIC_GLOBAL_INTEGRATION_Mother_Basic_Design_OPTIMIZED.docx",
+          "ACPOS_CORE-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx",
+          "ACPOS_SYS-01_系統維護與生命週期工作區_Mother_Basic_Design_OPTIMIZED.docx",
+          "ACPOS_DEV-01_企業自動開發系統_Mother_Basic_Design_OPTIMIZED.docx",
+          }
+          out=subprocess.check_output(["git","status","--porcelain"],text=True)
+          changed={line[3:] for line in out.splitlines() if line and not line[3:].startswith("__render_qa_batch01")}
+          unexpected={x for x in changed if x not in allowed and x not in {"__temp/batch_01_foundation_closure.py",".github/workflows/batch-01-word-foundation-closure.yml"}}
+          assert not unexpected,unexpected
+          assert allowed.issubset(changed), (allowed-changed)
+          print("PASS: CHANGE SCOPE EXACT 6 WORD")
+          PY
+
+      - name: Commit batch 01 and clean temporary tooling
+        shell: bash
+        run: |
+          rm -rf __render_qa_batch01
+          git rm __temp/batch_01_foundation_closure.py .github/workflows/batch-01-word-foundation-closure.yml
+          git config user.name "acpos-word-batch-01"
+          git config user.email "actions@users.noreply.github.com"
+          git add             00_INDEX_ACPOS_Mother_Compliant_Basic_Design_Master.docx             ACPOS_GLOBAL_HOME_SHELL_NAVIGATION_Mother_Basic_Design_OPTIMIZED.docx             ACPOS_SYSTEM_LOGIC_GLOBAL_INTEGRATION_Mother_Basic_Design_OPTIMIZED.docx             ACPOS_CORE-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx             ACPOS_SYS-01_系統維護與生命週期工作區_Mother_Basic_Design_OPTIMIZED.docx             ACPOS_DEV-01_企業自動開發系統_Mother_Basic_Design_OPTIMIZED.docx
+          git commit -m "docs(acpos): close batch-01 foundation design gaps"
+          git push
+
+      - name: Upload render evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: acpos-batch-01-render-evidence
+          path: __render_qa_batch01
+          retention-days: 1
