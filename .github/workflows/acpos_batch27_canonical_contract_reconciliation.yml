@@ -53,10 +53,10 @@ jobs:
           assert m["pre_contract_cells"]==335,m
           assert m["runtime_authority_mismatch_resolved"]==9,m
           assert m["runtime_status_corrections"]==3,m
-          assert m["post_contract_cells"]==326,m
-          assert (m["remaining_method_path"],m["remaining_payload_schema"],m["remaining_persistence_owner"])==(71,133,122),m
+          assert m["post_contract_cells"]==324,m
+          assert (m["remaining_method_path"],m["remaining_payload_schema"],m["remaining_persistence_owner"])==(71,132,121),m
           assert len(r["changed_docs"])==5,r["changed_docs"]
-          print("PASS: BATCH27 335 -> 326")
+          assert m["additional_read_applicability_retired"]==2,m\n          assert m["contract_cells_retired"]==11,m\n          print("PASS: BATCH27 335 -> 324")
           PY
 
       - name: Convert five DOCX files to PDF
