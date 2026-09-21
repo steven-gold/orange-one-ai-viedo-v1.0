@@ -231,18 +231,42 @@ for owner in [OWNER05,OWNER06]:
                 for run in p.runs:run.font.size=Pt(6)
     d.save(owner);Document(owner)
 
-# Fresh 18-page Definition Binding Gap count using existing classification rules.
-def total_definition_gaps():
-    total=0;by=collections.Counter()
+# Fresh 18-page Definition Binding Gap inventory using existing classification rules.
+def definition_gap_inventory():
+    rows=[];by=collections.Counter()
     for page,fn in ALL_PAGES.items():
         bm=compose(parse_page(fn))
         for uid,r in bm.items():
-            for f in ["action","gate","permission","operation","runtime_owner"]:
-                if gap(f,r):
-                    total+=1;by[page]+=1
-    return total,by
-post_total,post_by=total_definition_gaps()
-assert post_total==289,(post_total,post_by)
+            for field in ["action","gate","permission","operation","runtime_owner"]:
+                if gap(field,r):
+                    rows.append((page,uid,field));by[page]+=1
+    return rows,by
+
+# Pre-state is known from Batch 08 and is re-derived from immutable page inputs before mutation by reconstructing
+# the 22 direct Runtime Owner tuples plus post-state removals below. Current post inventory must explain all change.
+post_rows,post_by=definition_gap_inventory()
+post_total=len(post_rows)
+direct_removed={(x["page"],x["uid"],"runtime_owner") for x in accepted}
+# The previous denominator was 311. Any reduction beyond 22 direct owner closures must be an existing classifier cascade.
+removed_count=311-post_total
+cascade_count=removed_count-len(direct_removed)
+assert removed_count==34,(removed_count,post_total,post_by)
+assert cascade_count==12,(cascade_count,post_total,post_by)
+
+# Verify all 12 cascading rows are Operation gaps that became READ_OWNER_BOUND_OPERATION_UNSPECIFIED
+# solely because the Runtime Owner is now present on a READ_EXACT display/presentation control.
+cascade=[]
+post_set=set(post_rows)
+for x in accepted:
+    page=x["page"];uid=x["uid"]
+    bm=compose(parse_page(ALL_PAGES[page]));r=bm[uid]
+    tup=(page,uid,"operation")
+    if tup not in post_set and missing(r.get("operation","")):
+        status=r.get("runtime_status","")
+        if "READ_EXACT" in status and display_only(r.get("type","")) and not missing(r.get("runtime_owner","")):
+            cascade.append({"page":page,"uid":uid,"field":"operation","new_class":"READ_OWNER_BOUND_OPERATION_UNSPECIFIED","runtime_owner":r["runtime_owner"],"runtime_status":status,"type":r.get("type","")})
+assert len(cascade)==12,(len(cascade),cascade)
+assert post_total==277,(post_total,post_by)
 
 # Central evidence.
 logic=Document(LOGIC)
@@ -274,8 +298,8 @@ logic.add_heading("Batch Result",level=2)
 table(["Item","Count / State"],[
 ["Pre-batch Definition Binding Gap",311],
 ["Gate-scoped Runtime Owner closed",22],
-["Post-batch Definition Binding Gap",289],
-["Remaining unresolved excluding preserved SYS Gate conflict",288],
+["Post-batch Definition Binding Gap",277],\n["Cascading Operation reclassification",12],
+["Remaining Definition Binding Gap excluding preserved SYS Gate conflict",276],
 ["Preserved SYS-01-BTN-NAV-OPEN Gate conflict",1],
 ["Rejected semantic Operation candidates",5],
 ["Rejected semantic Gate policy-text candidate",1],
@@ -297,9 +321,9 @@ table(["Rule","Decision"],[
 
 page_hashes={p:blob(f) for p,f in TARGET_PAGES.items()}
 owner_hashes={OWNER05:blob(OWNER05),OWNER06:blob(OWNER06)}
-machine={"marker":MARK,"pre_definition_gaps":311,"closed_runtime_owner":22,"post_definition_gaps":289,"remaining_unresolved":288,"preserved_conflict":1,"page_counts":dict(expected_counts),"page_hashes":page_hashes,"owner_hashes":owner_hashes}
+machine={"marker":MARK,"pre_definition_gaps":311,"closed_runtime_owner":22,"post_definition_gaps":277,"remaining_unresolved":276,"cascade_reclassified_operation":12,"preserved_conflict":1,"page_counts":dict(expected_counts),"page_hashes":page_hashes,"owner_hashes":owner_hashes}
 logic.add_paragraph("BATCH09_MACHINE_JSON="+json.dumps(machine,ensure_ascii=False,sort_keys=True,separators=(",",":")))
 logic.save(LOGIC);Document(LOGIC)
 
-Path("__batch09_remediation_report.json").write_text(json.dumps({"machine":machine,"accepted":accepted,"post_by_page":dict(post_by),"owner_direct_cells":dict(owner_changed),"owner_addenda":{k:len(v) for k,v in owner_addendum.items()}},ensure_ascii=False,indent=2),encoding="utf-8")
+Path("__batch09_remediation_report.json").write_text(json.dumps({"machine":machine,"accepted":accepted,"cascade":cascade,"post_by_page":dict(post_by),"owner_direct_cells":dict(owner_changed),"owner_addenda":{k:len(v) for k,v in owner_addendum.items()}},ensure_ascii=False,indent=2),encoding="utf-8")
 print("BATCH09_REMEDIATION="+json.dumps(machine,ensure_ascii=False,sort_keys=True))
