@@ -1,19 +1,4 @@
-from pathlib import Path
-from docx import Document
-import json,re,subprocess
-
-BASE_HEAD="01343f341271c65d45405c4fb6de0dac96de5339"
-S03="03_ACPOS_AI_Execution_Script_Compiler_Tool_AIAPI_Runtime_Mother_Basic_Logic_Design_Normative_Contract_v1.0.docx"
-AIAPI="ACPOS_AIAPI-01_AI_API管理_Mother_Basic_Design_OPTIMIZED.docx"
-OPS=["configureGovernedResource","approveGovernedResource","runSandboxTest","setKillSwitch"]
-KW=["governed resource","sandbox","kill switch","provider profile","persistence","persist","audit","approval","configuration","quarantine","runtime","secret","test"]
-
-assert len(list(Path(".").glob("*.docx")))==31
-assert subprocess.check_output(["git","diff","--name-only",BASE_HEAD,"HEAD","--","*.docx'],text=True).strip()=="" if False else True
-# Word drift only:
-assert subprocess.check_output(["git","diff","--name-only",BASE_HEAD,"HEAD","--","*.docx"],text=True).strip()==""
-
-def norm(x):return re.sub(r"\s+"," ",(x or "").replace("\n"," | ").strip())
+"," | ").strip())
 rx=re.compile("|".join(re.escape(x) for x in OPS+KW),re.I)
 def collect(path):
     d=Document(path);out={"paragraphs":[],"rows":[]}
