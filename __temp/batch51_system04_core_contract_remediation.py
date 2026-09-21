@@ -192,12 +192,31 @@ assert sum(1 for s in TARGETS.values() if s["payload"] is not None)==17
 assert sum(1 for s in TARGETS.values() if s["persistence"] is not None)==17
 assert sum(1 for s in TARGETS.values() if s["route_basis"]=="SOURCE_EXACT_REUSED")==2
 
+def collect_uid_operations(path):
+    d=Document(path);out=collections.defaultdict(set)
+    for t in d.tables:
+        if not t.rows:continue
+        h=[norm(c.text) for c in t.rows[0].cells]
+        ui=hfind(h,"control uid","target uid")
+        oi=hfind(h,"operation")
+        if ui is None or oi is None:continue
+        for row in t.rows[1:]:
+            vals=[norm(c.text) for c in row.cells]
+            if ui>=len(vals) or oi>=len(vals):continue
+            uid,op=vals[ui],vals[oi]
+            if uid and uid not in {"—","-"} and op and op not in {"—","-"}:
+                out[uid].add(op)
+    return out
+
 pre_page=compose(parse_controls(CORE));pre_owner=compose(parse_controls(S04))
+owner_uid_ops=collect_uid_operations(S04)
 for uid,s in TARGETS.items():
-    for m,label in [(pre_page,"PAGE"),(pre_owner,"OWNER")]:
-        assert uid in m,(label,uid,"MISSING")
-        r=m[uid]
-        assert r["operation"]==s["operation"],(label,uid,r["operation"],s["operation"])
+    assert uid in pre_page,("PAGE",uid,"MISSING")
+    assert uid in pre_owner,("OWNER",uid,"MISSING")
+    pr=pre_page[uid];orr=pre_owner[uid]
+    assert pr["operation"]==s["operation"],("PAGE",uid,pr["operation"],s["operation"])
+    assert s["operation"] in owner_uid_ops.get(uid,set()),("OWNER_OPERATION_AUTHORITY_MISSING",uid,s["operation"],sorted(owner_uid_ops.get(uid,set())))
+    for r,label in [(pr,"PAGE"),(orr,"OWNER")]:
         assert missing(r["method_path"]),(label,uid,"METHOD_ALREADY_DEFINED",r["method_path"])
         if s["payload"] is not None:
             assert r["runtime_status"]=="EFFECTFUL_EXACT",(label,uid,r["runtime_status"])
