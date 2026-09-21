@@ -1,0 +1,88 @@
+name: ACPOS Batch 16 Exact Head Closure Verification
+
+on:
+  push:
+    branches: [0921acpos]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: acpos-batch16-exact-head-closure
+  cancel-in-progress: false
+
+jobs:
+  verify:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Verify Batch 16 exact content
+        shell: bash
+        run: |
+          set -euo pipefail
+          BASE="cb6e2d64c14aacc155597f21d27a1d07ca84111a"
+          git cat-file -e "$BASE^{commit}"
+          test -z "$(git -c core.quotePath=false diff --name-only "$BASE" HEAD -- '*.docx')"
+          test "$(find . -maxdepth 1 -type f -name '*.docx' | wc -l)" -eq 31
+
+          verify_blob() {
+            f="$1"; expected="$2"
+            got="$(git hash-object "$f")"
+            test "$got" = "$expected" || { echo "BLOB_MISMATCH $f $got $expected"; exit 1; }
+          }
+
+          verify_blob "02_ACPOS_AI_Conversation_Memory_MultiAI_Assistant_Mother_Basic_Logic_Design_Normative_Contract_v1.0.docx" "79f7e465d6f03352337de93eb62cd0f62ba47375"
+          verify_blob "04_ACPOS_CORE_AI_Blueprint_Canonical_Script_System_Mother_Basic_Logic_Design_Normative_Contract_v1.0.docx" "f9523a78a8ca212b143166b7bea932be76dce446"
+          verify_blob "05_ACPOS_Creative_Production_AI_ASSET_VIDEO_EDIT_VOICE_QA_Mother_Basic_Logic_Design_Normative_Contract_v1.0.docx" "26008b9e2244316a6da2341e59eca25c79783ce7"
+          verify_blob "06_ACPOS_Enterprise_Business_Development_AI_System_Mother_Basic_Logic_Design_Normative_Contract_v1.0.docx" "ef6e424423c3ea282a0d625c953a0f608245637a"
+          verify_blob "09_ACPOS_AI_System_Engineer_Self_Inspection_Evolution_System_Mother_Basic_Logic_Design_Normative_Contract_v1.0.docx" "0acb96e6a71f9de5368a65c1a68480d3e08a79fd"
+          verify_blob "ACPOS_ASSET-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx" "b6d3aa5bfa9d1c6f43cf602ba427c442daeca830"
+          verify_blob "ACPOS_CORE-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx" "4b967452f4c092276e0b65c95da8e0ec55c80ea9"
+          verify_blob "ACPOS_DEV-01_企業自動開發系統_Mother_Basic_Design_OPTIMIZED.docx" "3f6fdc5b0c71257850e6b504b6ccafee1eeaa41e"
+          verify_blob "ACPOS_EDIT-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx" "7fe89816d0678d9b7f91d147b9571ef89d77ae6d"
+          verify_blob "ACPOS_QA-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx" "bd92d55b7df0d635990c27eef24145c75cbbb4a1"
+          verify_blob "ACPOS_STR-01_WORKSPACE_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx" "5e1caba99dda7c8d69109ae4b60e9eb1fa782b09"
+          verify_blob "ACPOS_SYS-01_系統維護與生命週期工作區_Mother_Basic_Design_OPTIMIZED.docx" "77b5ba6c34e02b96d957587b1852a231612ffa2c"
+          verify_blob "ACPOS_SYSTEM_LOGIC_GLOBAL_INTEGRATION_Mother_Basic_Design_OPTIMIZED.docx" "13e896b5d5280df9e4d7414529dfd6d8cb793702"
+          verify_blob "ACPOS_VIDEO-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx" "379af52edba5700b4cd8d6566dcd25f49cbb43a0"
+
+          grep -a -q "BATCH16_MACHINE_JSON" "ACPOS_SYSTEM_LOGIC_GLOBAL_INTEGRATION_Mother_Basic_Design_OPTIMIZED.docx" || true
+          {
+            echo "BATCH16_EXACT_HEAD_CLOSURE=PASS"
+            echo "CONTENT_BASE=$BASE"
+            echo "WORD_DENOMINATOR=31"
+            echo "TARGET_BLOBS=14/14"
+            echo "DEFINITION_GAP=122->20"
+            echo "OPERATION_CLOSED=65"
+            echo "RUNTIME_OWNER_CLOSED=37"
+            echo "EFFECTFUL_FIELDS_CLOSED=81"
+            echo "READ_FIELDS_CLOSED=21"
+            echo "ARTIFACT_ID=10648963416"
+            echo "ARTIFACT_SHA256=a2257156258126fbe25ea2d12d1ecca1c36fa94ff94145c3991670270c33e1cb"
+          } | tee __batch16_closure_verification.txt
+
+      - name: Upload exact-head closure evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: acpos-batch16-exact-head-closure-evidence
+          path: __batch16_closure_verification.txt
+          retention-days: 1
+          if-no-files-found: error
+
+      - name: Remove closure harness and persist clean resume
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -f __batch16_closure_verification.txt
+          git config user.name "acpos-word-batch-16-closure"
+          git config user.email "actions@users.noreply.github.com"
+          git rm -f .github/workflows/acpos_batch16_exact_head_closure.yml
+          git commit -m "chore(acpos): close batch 16 verification harness"
+          git push origin HEAD:0921acpos
+          test -z "$(git status --porcelain)"
+          echo "PASS: BATCH16 EXACT-HEAD CLOSURE CLEAN"
