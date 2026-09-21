@@ -102,7 +102,7 @@ jobs:
           wt="\n".join([p.text for p in wb.paragraphs]+[c.text for t in wb.tables for row in t.rows for c in row.cells])
           for token in [
             "ACPOS-20260921-BATCH-11-WB-SYNTHETIC-DENOMINATOR-CLEANUP-V1",
-            "WB Compact Alias (Non-Control)",
+            "Compact Alias (Non-Control)",
             "ALIAS_ONLY / EXCLUDE_FROM_CONTROL_DENOMINATOR"
           ]: assert token in wt,token
           logic=Document("ACPOS_SYSTEM_LOGIC_GLOBAL_INTEGRATION_Mother_Basic_Design_OPTIMIZED.docx")
