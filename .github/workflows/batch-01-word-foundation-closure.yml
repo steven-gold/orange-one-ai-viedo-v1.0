@@ -119,7 +119,7 @@ jobs:
           "ACPOS_SYS-01_系統維護與生命週期工作區_Mother_Basic_Design_OPTIMIZED.docx",
           "ACPOS_DEV-01_企業自動開發系統_Mother_Basic_Design_OPTIMIZED.docx",
           }
-          out=subprocess.check_output(["git","diff","--name-only","--"],text=True)
+          out=subprocess.check_output(["git","-c","core.quotePath=false","diff","--name-only","--"],text=True)
           changed={x for x in out.splitlines() if x}
           assert changed==allowed, {"missing":sorted(allowed-changed),"unexpected":sorted(changed-allowed)}
           print("PASS: CHANGE SCOPE EXACT 6 WORD")
