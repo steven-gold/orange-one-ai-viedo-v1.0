@@ -259,7 +259,9 @@ add_table(logic,["Resolution","Cells retired from denominator","Result"],[
 ["IAM audit: EFFECTFUL_EXACT -> READ_EXACT + GET route",3,"Method/Path closed; Payload/Schema + Persistence Owner become non-applicable under READ_EXACT"],
 ["STR compare x2: EFFECTFUL_EXACT -> READ_EXACT + GET route + no-form read payload",6,"Method/Payload bound; persistence non-applicable"],
 ["STR adopt: retain EFFECTFUL_EXACT + POST route + request schema",2,"Method/Payload bound"],
-["Total previously isolated mismatch cells resolved",9,"All nine Batch-26 mismatch cells resolved"],\n["Additional applicability cells retired",2,"IAM read reclassification retires previously required Payload/Schema + Persistence Owner"],\n["Total contract cells retired",11,"335 -> 324"],
+["Total previously isolated mismatch cells resolved",9,"All nine Batch-26 mismatch cells resolved"],
+["Additional applicability cells retired",2,"IAM read reclassification retires previously required Payload/Schema + Persistence Owner"],
+["Total contract cells retired",11,"335 -> 324"],
 ],4.2)
 machine={
 "marker":MARK,"base_head":BASE_HEAD,"pre_contract_cells":335,"runtime_authority_mismatch_resolved":9,
