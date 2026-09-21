@@ -97,9 +97,12 @@ jobs:
           assert m["closed_runtime_owner"]==22,m
           assert m["post_definition_gaps"]==277,m
           assert m["remaining_unresolved"]==276,m
-          assert m["preserved_conflict"]==1,m\n          assert m["cascade_reclassified_operation"]==12,m
+          assert m["preserved_conflict"]==1,m
+          assert m["cascade_reclassified_operation"]==12,m
           assert m["page_counts"]=={"ASSET-01":1,"DEV-01":2,"EDIT-01":13,"ERP-01":6},m["page_counts"]
-          assert len(r["accepted"])==22\n          assert len(r["cascade"])==12\n          assert all(x["field"]=="operation" and x["new_class"]=="READ_OWNER_BOUND_OPERATION_UNSPECIFIED" for x in r["cascade"])
+          assert len(r["accepted"])==22
+          assert len(r["cascade"])==12
+          assert all(x["field"]=="operation" and x["new_class"]=="READ_OWNER_BOUND_OPERATION_UNSPECIFIED" for x in r["cascade"])
           for x in r["accepted"]:
               d=Document(x["file"])
               txt="\n".join(c.text for t in d.tables for row in t.rows for c in row.cells)
