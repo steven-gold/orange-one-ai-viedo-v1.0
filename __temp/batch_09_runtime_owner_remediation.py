@@ -298,7 +298,8 @@ logic.add_heading("Batch Result",level=2)
 table(["Item","Count / State"],[
 ["Pre-batch Definition Binding Gap",311],
 ["Gate-scoped Runtime Owner closed",22],
-["Post-batch Definition Binding Gap",277],\n["Cascading Operation reclassification",12],
+["Post-batch Definition Binding Gap",277],
+["Cascading Operation reclassification",12],
 ["Remaining Definition Binding Gap excluding preserved SYS Gate conflict",276],
 ["Preserved SYS-01-BTN-NAV-OPEN Gate conflict",1],
 ["Rejected semantic Operation candidates",5],
