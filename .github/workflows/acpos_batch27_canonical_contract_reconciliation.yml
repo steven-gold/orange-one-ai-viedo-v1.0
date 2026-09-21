@@ -56,7 +56,9 @@ jobs:
           assert m["post_contract_cells"]==324,m
           assert (m["remaining_method_path"],m["remaining_payload_schema"],m["remaining_persistence_owner"])==(71,132,121),m
           assert len(r["changed_docs"])==5,r["changed_docs"]
-          assert m["additional_read_applicability_retired"]==2,m\n          assert m["contract_cells_retired"]==11,m\n          print("PASS: BATCH27 335 -> 324")
+          assert m["additional_read_applicability_retired"]==2,m
+          assert m["contract_cells_retired"]==11,m
+          print("PASS: BATCH27 335 -> 324")
           PY
 
       - name: Convert five DOCX files to PDF
