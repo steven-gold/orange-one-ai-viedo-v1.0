@@ -1,0 +1,105 @@
+name: Temp 18 Page Definition Gap Audit
+
+on:
+  push:
+    branches: [0921acpos]
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: python -m pip install --quiet python-docx
+      - name: Audit definitions
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          from docx import Document
+          import json,re
+
+          docs={
+          "WB-01":"ACPOS_WB-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx",
+          "CORE-01":"ACPOS_CORE-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx",
+          "ASSET-01":"ACPOS_ASSET-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx",
+          "VIDEO-01":"ACPOS_VIDEO-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx",
+          "EDIT-01":"ACPOS_EDIT-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx",
+          "QA-01":"ACPOS_QA-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx",
+          "DB-01":"ACPOS_DB-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx",
+          "STR-01":"ACPOS_STR-01_WORKSPACE_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx",
+          "INFO-01":"ACPOS_INFO-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx",
+          "SYS-01":"ACPOS_SYS-01_系統維護與生命週期工作區_Mother_Basic_Design_OPTIMIZED.docx",
+          "IAM-01":"ACPOS_IAM-01_帳戶與權限_Mother_Basic_Design_OPTIMIZED.docx",
+          "DEV-01":"ACPOS_DEV-01_企業自動開發系統_Mother_Basic_Design_OPTIMIZED.docx",
+          "SOC-01":"ACPOS_SOC-01_社群發布_Mother_Basic_Design_OPTIMIZED.docx",
+          "ERP-01":"ACPOS_ERP-01_ERP與財務_Mother_Basic_Design_OPTIMIZED.docx",
+          "AIAPI-01":"ACPOS_AIAPI-01_AI_API管理_Mother_Basic_Design_OPTIMIZED.docx",
+          "SG-02":"ACPOS_SG-02_QA審查項目名單_Mother_Basic_Design_OPTIMIZED.docx",
+          "ADMIN-STR-01":"ACPOS_admin_STR-01_戰略中心後台_Mother_Basic_Design_OPTIMIZED.docx",
+          "KB-01":"ACPOS_KB-01_知識庫_Mother_Basic_Design_OPTIMIZED.docx",
+          }
+          categories={
+            "business_content":[r'catalog',r'profile',r'criteria',r'dimension',r'type',r'stage',r'category',r'欄位',r'項目',r'類型',r'階段'],
+            "entity_field":[r'entity',r'field',r'schema',r'payload',r'實體',r'欄位',r'資料結構'],
+            "control":[r'control uid',r'control id',r'control registry',r'控制'],
+            "action":[r'action uid',r'action id',r'action registry',r'操作'],
+            "gate_permission":[r'gate uid',r'permission',r'gate / ux',r'權限',r'gate'],
+            "payload":[r'payload',r'form schema',r'request schema',r'輸入契約'],
+            "operation_api":[r'operation',r'method / path',r'/v1/',r'api'],
+            "runtime_owner":[r'runtime owner',r'runtime binding',r'owner'],
+            "persistence":[r'persistence owner',r'db',r'database',r'table',r'projection',r'儲存',r'持久'],
+            "state_machine":[r'state',r'status',r'lifecycle',r'狀態'],
+            "success_failure":[r'success',r'failure',r'error',r'blocked',r'失敗',r'錯誤',r'成功'],
+            "handoff":[r'handoff',r'next page',r'downstream',r'upstream',r'交接',r'下一步'],
+            "evidence":[r'evidence',r'audit',r'checksum',r'provenance',r'證據',r'稽核'],
+            "empty_state":[r'empty',r'no data',r'沒有資料',r'空狀態'],
+          }
+          unresolved_rx=re.compile(r'\b(TBD|TODO|OPEN|UNRESOLVED|SOURCE_NOT_DEFINED|REQUIRE_EXACT_BINDING|IMPLEMENTATION_REQUIRED|NOT_DEFINED|MISSING)\b|尚未定義|未定義|待定|待補|缺失|無法解析|沒有定義|不存在正式',re.I)
+          runtime_rx=re.compile(r'NOT_EXECUTED|runtime.*pending|production.*pending|尚未驗收|尚未執行|effectful.*pending|implementation evidence|runtime implementation',re.I)
+          out={}
+          for uid,fn in docs.items():
+              d=Document(fn)
+              paras=[p.text.strip() for p in d.paragraphs if p.text.strip()]
+              table_rows=[]
+              table_headers=[]
+              for ti,t in enumerate(d.tables,1):
+                  rr=[[" ".join(c.text.split()) for c in r.cells] for r in t.rows]
+                  if not rr: continue
+                  table_headers.append({"index":ti,"header":rr[0],"rows":len(rr)-1})
+                  for ri,r in enumerate(rr[1:],1):
+                      if any(x.strip() for x in r):
+                          table_rows.append((ti,ri," | ".join(r)))
+              text="\n".join(paras+[x[2] for x in table_rows])
+              coverage={}
+              for cat,pats in categories.items():
+                  coverage[cat]=sum(1 for p in pats if re.search(p,text,re.I))
+              candidates=[]
+              for i,p in enumerate(paras):
+                  if unresolved_rx.search(p):
+                      candidates.append({"kind":"paragraph","index":i+1,"text":p[:800],"runtime_only":bool(runtime_rx.search(p))})
+              for ti,ri,row in table_rows:
+                  if unresolved_rx.search(row):
+                      candidates.append({"kind":"table","table":ti,"row":ri,"text":row[:1000],"runtime_only":bool(runtime_rx.search(row))})
+              # Extract special current closure/status tables and concrete business content summaries.
+              special=[]
+              for ti,t in enumerate(d.tables,1):
+                  rr=[[" ".join(c.text.split()) for c in r.cells] for r in t.rows]
+                  if not rr: continue
+                  blob=" | ".join(" | ".join(r) for r in rr[:12])
+                  if re.search(r'Business Content|Concrete|Remaining Runtime|Truthful Remaining|Completion|Authority|Denominator|Lifecycle|Profile|Criteria|Required Check|Issue Categor',blob,re.I):
+                      special.append({"index":ti,"header":rr[0],"rows":len(rr)-1,"samples":rr[1:8]})
+              out[uid]={
+                "file":fn,
+                "paragraph_count":len(paras),
+                "table_count":len(d.tables),
+                "coverage":coverage,
+                "unresolved_candidates":candidates[:120],
+                "special_tables":special[:30],
+              }
+          print("DEF_GAP_AUDIT_BEGIN")
+          print(json.dumps(out,ensure_ascii=False))
+          print("DEF_GAP_AUDIT_END")
+          PY
