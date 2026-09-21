@@ -119,8 +119,9 @@ jobs:
           "ACPOS_SYS-01_系統維護與生命週期工作區_Mother_Basic_Design_OPTIMIZED.docx",
           "ACPOS_DEV-01_企業自動開發系統_Mother_Basic_Design_OPTIMIZED.docx",
           }
-          out=subprocess.check_output(["git","status","--porcelain"],text=True)
-          changed={line[3:] for line in out.splitlines() if line and not line[3:].startswith("__render_qa_batch01")}
+          raw=subprocess.check_output(["git","status","--porcelain","-z"])
+          entries=[x.decode("utf-8") for x in raw.split(b"\\0") if x]
+          changed={line[3:] for line in entries if line and not line[3:].startswith("__render_qa_batch01")}
           unexpected={x for x in changed if x not in allowed and x not in {"__temp/batch_01_foundation_closure.py",".github/workflows/batch-01-word-foundation-closure.yml"}}
           assert not unexpected,unexpected
           assert allowed.issubset(changed), (allowed-changed)
