@@ -121,13 +121,24 @@ def classify(field,row):
     return "DEFINITION_BINDING_GAP"
 
 def best(rows):
-    b={}
+    # Exact-UID composition rule: a control may have its canonical fields split
+    # across multiple formal tables in the same page document. Compose only
+    # unique, non-conflicting values for the exact same Control UID.
+    groups=collections.defaultdict(list)
     for r in rows:
-        uid=r["control"]
-        score=sum(1 for k in FIELDS[1:] if not is_missing(r.get(k,"")))
-        if uid not in b or score>b[uid][0]:
-            b[uid]=(score,r)
-    return {k:v[1] for k,v in b.items()}
+        groups[r["control"]].append(r)
+    out={}
+    for uid,rs in groups.items():
+        ranked=sorted(rs,key=lambda r:sum(1 for k in FIELDS[1:] if not is_missing(r.get(k,""))),reverse=True)
+        base=dict(ranked[0])
+        for field in ["type","label","action","gate","permission","operation","runtime_owner","runtime_status"]:
+            if not is_missing(base.get(field,"")):
+                continue
+            vals=sorted(set(r.get(field,"") for r in rs if not is_missing(r.get(field,""))))
+            if len(vals)==1:
+                base[field]=vals[0]
+        out[uid]=base
+    return out
 
 def build_source_pool():
     src=[]
@@ -206,6 +217,7 @@ assert pre["conflicts"][0]["page"]=="SYS-01" and pre["conflicts"][0]["uid"]=="SY
 applied=[]
 page_cell_updates=collections.Counter()
 page_binding_updates=collections.Counter()
+page_overlay_updates=collections.Counter()
 
 for page in sorted(TARGET_PAGES):
     fn=PAGES[page]
@@ -247,15 +259,44 @@ for page in sorted(TARGET_PAGES):
                 changed+=1
             elif old!=value:
                 raise AssertionError(("TARGET_CELL_CONFLICT",page,uid,field,old,value,wr["table"],wr["row"]))
-        assert changed>0,("NO_WRITABLE_TARGET_CELL",page,uid,field,value)
+        mode="DIRECT_CELL"
+        if changed==0:
+            # WB dashboard controls live in a compact table that does not expose
+            # a Runtime Owner column. Do not widen that table. Materialize a
+            # separate exact-UID binding table instead.
+            assert page=="WB-01" and field=="runtime_owner" and value=="DASHBOARD_READ_MODEL",("NO_WRITABLE_TARGET_CELL",page,uid,field,value)
+            mode="EXACT_UID_BINDING_ADDENDUM"
+            page_overlay_updates[page]+=1
         applied.append({
           "page":page,"file":fn,"uid":uid,"field":field,"value":value,
-          "changed_cells":changed,
+          "changed_cells":changed,"mode":mode,
           "matched_by":sorted(set(s["matched_by"] for s in rec["sources"])),
           "source_files":sorted(set(s["source"] for s in rec["sources"]))
         })
         page_cell_updates[page]+=changed
         page_binding_updates[page]+=1
+
+    overlays=[x for x in applied if x["page"]==page and x["mode"]=="EXACT_UID_BINDING_ADDENDUM"]
+    if overlays:
+        sec=doc.add_section(WD_SECTION.NEW_PAGE)
+        sec.orientation=WD_ORIENT.LANDSCAPE
+        sec.page_width,sec.page_height=sec.page_height,sec.page_width
+        sec.top_margin=Inches(.45);sec.bottom_margin=Inches(.45);sec.left_margin=Inches(.45);sec.right_margin=Inches(.45)
+        doc.add_heading("Batch 05 · Exact UID Runtime Owner Binding Addendum",level=1)
+        p=doc.add_paragraph()
+        p.add_run("[ACPOS-20260921-BATCH-05-WB-RUNTIME-OWNER-ADDENDUM] ").bold=True
+        p.add_run("This addendum is part of the page definition. It supplies Runtime Owner only for the exact Control UID rows listed below. It does not create new Actions, Gates, Permissions, Operations, APIs, or Runtime implementation evidence.")
+        t=doc.add_table(rows=1,cols=3);t.style="Table Grid"
+        for i,h in enumerate(["Control UID","Runtime Owner","Authority Basis"]):
+            t.rows[0].cells[i].text=h
+        for x in overlays:
+            row=t.add_row().cells
+            row[0].text=x["uid"];row[1].text=x["value"]
+            row[2].text="Exact operation getDashboardReadModel -> DASHBOARD_READ_MODEL in Current System Authority"
+        for row in t.rows:
+            for cell in row.cells:
+                for pp in cell.paragraphs:
+                    for rr in pp.runs:rr.font.size=Pt(7)
     doc.save(fn)
     Document(fn)
 
@@ -321,13 +362,13 @@ table(["Item","Count / State"],[
 ],5.4)
 
 doc.add_heading("Modified Page Evidence",level=2)
-table(["Page","Applied bindings","Changed physical cells","Current Git blob SHA"],[
- [page,page_binding_updates[page],page_cell_updates[page],page_hashes[page]] for page in sorted(TARGET_PAGES)
+table(["Page","Applied bindings","Changed physical cells","Exact-UID addendum bindings","Current Git blob SHA"],[
+ [page,page_binding_updates[page],page_cell_updates[page],page_overlay_updates[page],page_hashes[page]] for page in sorted(TARGET_PAGES)
 ],5.0)
 
 doc.add_heading("Applied Exact Bindings",level=2)
-table(["Page","Control UID","Field","Exact Value","Matched By","Authority Source"],[
- [r["page"],r["uid"],r["field"],r["value"]," / ".join(r["matched_by"]),"; ".join(r["source_files"])]
+table(["Page","Control UID","Field","Exact Value","Materialization","Matched By","Authority Source"],[
+ [r["page"],r["uid"],r["field"],r["value"],r["mode"]," / ".join(r["matched_by"]),"; ".join(r["source_files"])]
  for r in applied
 ],3.8)
 
@@ -345,7 +386,7 @@ machine={
  "pre":{"definition_gaps":346,"resolvable":34,"unresolved":311,"conflict":1},
  "applied_bindings":34,
  "post":{"definition_gaps":post["total_definition_gaps"],"resolvable":post["resolvable"],"unresolved":post["unresolved"],"conflict":post["conflict"]},
- "modified_pages":{page:{"bindings":page_binding_updates[page],"changed_cells":page_cell_updates[page],"blob_sha":page_hashes[page]} for page in sorted(TARGET_PAGES)},
+ "modified_pages":{page:{"bindings":page_binding_updates[page],"changed_cells":page_cell_updates[page],"exact_uid_addendum_bindings":page_overlay_updates[page],"blob_sha":page_hashes[page]} for page in sorted(TARGET_PAGES)},
  "preserved_conflict":{"page":conf["page"],"uid":conf["uid"],"field":conf["field"],"values":vals}
 }
 doc.add_paragraph("BATCH05_MACHINE_JSON="+json.dumps(machine,ensure_ascii=False,sort_keys=True,separators=(",",":")))
