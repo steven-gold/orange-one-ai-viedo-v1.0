@@ -81,9 +81,41 @@ assert all(len(x["matches"])==1 for x in maps),[(x["compact_uid"],len(x["matches
 full=[x["matches"][0]["canonical_uid"] for x in maps]
 assert len(set(full))==14,full
 
+# Verify whether mapped full canonical UIDs already exist in the WB product registry.
+# Only an exact "Control UID" header counts; "WB Control UID" is a governance/mapping table.
+wb_product=[]
+dwb=Document(WB)
+for ti,t in enumerate(dwb.tables):
+    if not t.rows: continue
+    headers=[norm(c.text) for c in t.rows[0].cells]
+    ci=next((i for i,h in enumerate(headers) if h.lower()=="control uid"),None)
+    if ci is None: continue
+    ai=hfind(headers,"action uid");gi=hfind(headers,"gate uid","gate");pi=hfind(headers,"permission","auth resource")
+    oi=hfind(headers,"operation");roi=hfind(headers,"runtime owner");si=hfind(headers,"runtime status");tyi=hfind(headers,"type")
+    for rowno,row in enumerate(t.rows[1:],2):
+        vals=[norm(c.text) for c in row.cells]
+        uid=vals[ci] if ci<len(vals) else ""
+        if not uid: continue
+        wb_product.append({
+          "control":uid,"table":ti+1,"row":rowno,"headers":headers,
+          "type":vals[tyi] if tyi is not None and tyi<len(vals) else "",
+          "action":vals[ai] if ai is not None and ai<len(vals) else "",
+          "gate":vals[gi] if gi is not None and gi<len(vals) else "",
+          "permission":vals[pi] if pi is not None and pi<len(vals) else "",
+          "operation":vals[oi] if oi is not None and oi<len(vals) else "",
+          "runtime_owner":vals[roi] if roi is not None and roi<len(vals) else "",
+          "runtime_status":vals[si] if si is not None and si<len(vals) else ""
+        })
+wb_by_uid=collections.defaultdict(list)
+for r in wb_product: wb_by_uid[r["control"]].append(r)
+for x in maps:
+    uid=x["matches"][0]["canonical_uid"]
+    x["wb_existing_full_rows"]=wb_by_uid.get(uid,[])
+assert all(x["wb_existing_full_rows"] for x in maps),[(x["compact_uid"],x["matches"][0]["canonical_uid"]) for x in maps]
+
 summary={
   "compact_controls":14,
-  "unique_canonical_mappings":14,
+  "unique_canonical_mappings":14,\n  "full_canonical_uid_already_in_wb":sum(1 for x in maps if x["wb_existing_full_rows"]),
   "canonical_owner":S01,
   "action_values":dict(collections.Counter(x["matches"][0]["action"] for x in maps)),
   "gate_values":dict(collections.Counter(x["matches"][0]["gate"] for x in maps)),
