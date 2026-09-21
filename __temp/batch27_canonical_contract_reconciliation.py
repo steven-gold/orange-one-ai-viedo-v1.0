@@ -249,23 +249,23 @@ for page,m in page_maps.items():
         if st=="EFFECTFUL_EXACT" and not missing(op) and missing(r.get("persistence_owner","")):
             remaining.append(("persistence_owner",page,uid))
 rc=collections.Counter(f for f,_,_ in remaining)
-assert len(remaining)==326,len(remaining)
-assert rc=={"method_path":71,"payload_schema":133,"persistence_owner":122},rc
+assert len(remaining)==324,len(remaining)
+assert rc=={"method_path":71,"payload_schema":132,"persistence_owner":121},rc
 
 logic=Document(LOGIC);add_landscape(logic);logic.add_heading("Batch 27 · Runtime/Contract Semantic Reconciliation",level=1)
 p=logic.add_paragraph();p.add_run(f"[{MARK}] ").bold=True
 p.add_run("Batch 26 proved all four exact UID owner rows matched the page Runtime Status, but their same-operation contract evidence exposed two semantic inconsistencies: getUiProjection and compareCandidates are read-only contracts while the exact UID rows were marked EFFECTFUL_EXACT. This batch corrects those owner/page statuses to READ_EXACT, binds their existing GET contracts, and materializes the existing adoptAsContextCandidate POST/payload contract without claiming runtime execution.")
 add_table(logic,["Resolution","Cells retired from denominator","Result"],[
-["IAM audit: EFFECTFUL_EXACT -> READ_EXACT + GET route",1,"Method/Path closed; persistence not applicable"],
+["IAM audit: EFFECTFUL_EXACT -> READ_EXACT + GET route",3,"Method/Path closed; Payload/Schema + Persistence Owner become non-applicable under READ_EXACT"],
 ["STR compare x2: EFFECTFUL_EXACT -> READ_EXACT + GET route + no-form read payload",6,"Method/Payload bound; persistence non-applicable"],
 ["STR adopt: retain EFFECTFUL_EXACT + POST route + request schema",2,"Method/Payload bound"],
-["Total mismatch cells resolved",9,"335 -> 326"],
+["Total previously isolated mismatch cells resolved",9,"All nine Batch-26 mismatch cells resolved"],\n["Additional applicability cells retired",2,"IAM read reclassification retires previously required Payload/Schema + Persistence Owner"],\n["Total contract cells retired",11,"335 -> 324"],
 ],4.2)
 machine={
 "marker":MARK,"base_head":BASE_HEAD,"pre_contract_cells":335,"runtime_authority_mismatch_resolved":9,
 "runtime_status_corrections":3,"read_contracts_reconciled":3,"effectful_adopt_contract_bound":1,
-"post_contract_cells":326,"remaining_method_path":71,"remaining_payload_schema":133,
-"remaining_persistence_owner":122,"runtime_execution_claimed":False,
+"post_contract_cells":324,"remaining_method_path":71,"remaining_payload_schema":132,
+"remaining_persistence_owner":121,"additional_read_applicability_retired":2,"contract_cells_retired":11,"runtime_execution_claimed":False,
 }
 logic.add_paragraph("BATCH27_MACHINE_JSON="+json.dumps(machine,ensure_ascii=False,sort_keys=True,separators=(",",":")))
 logic.save(LOGIC);Document(LOGIC)
