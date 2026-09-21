@@ -1,0 +1,82 @@
+name: ACPOS Batch 26 Runtime Authority Mismatch Audit
+
+on:
+  push:
+    branches: [0921acpos]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: acpos-batch26-runtime-authority-mismatch-audit
+  cancel-in-progress: false
+
+jobs:
+  audit:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Verify Batch 25 boundary
+        shell: bash
+        run: |
+          set -euo pipefail
+          BASE="3efb960475948d7dff131fd0e83e5f0f7366b663"
+          git cat-file -e "$BASE^{commit}"
+          test -z "$(git -c core.quotePath=false diff --name-only "$BASE" HEAD -- '*.docx')"
+          test "$(find . -maxdepth 1 -type f -name '*.docx' | wc -l)" -eq 31
+          echo "PASS: BATCH25 CONTENT BOUNDARY / 31 DOCX"
+
+      - name: Install audit runtime
+        run: python -m pip install --quiet python-docx
+
+      - name: Run Batch 26 runtime authority mismatch audit
+        env:
+          PYTHONDONTWRITEBYTECODE: "1"
+        run: python -B __temp/batch26_runtime_authority_mismatch_audit.py
+
+      - name: Verify Batch 26 denominator
+        shell: bash
+        run: |
+          PYTHONDONTWRITEBYTECODE=1 python -B - <<'PY'
+          import json
+          from pathlib import Path
+          r=json.loads(Path("__batch26_runtime_authority_mismatch_audit.json").read_text(encoding="utf-8"))
+          s=r["summary"]
+          assert s["target_cells"]==9,s
+          assert s["unique_controls"]==4,s
+          assert sum(s[k] for k in [
+            "exact_uid_runtime_status_drift","exact_uid_status_match_field_source_mixed",
+            "exact_uid_status_match_field_authority_unresolved","exact_uid_owner_status_undefined",
+            "exact_uid_owner_status_conflict"])==9,s
+          print("PASS: BATCH26 RUNTIME AUTHORITY MISMATCH DENOMINATOR")
+          print(json.dumps(s,ensure_ascii=False,sort_keys=True))
+          PY
+
+      - name: Upload Batch 26 evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: acpos-batch26-runtime-authority-mismatch-audit
+          path: |
+            __batch26_runtime_authority_mismatch_audit.json
+            __batch26_summary.txt
+          retention-days: 1
+          if-no-files-found: error
+
+      - name: Remove Batch 26 harness
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -f __batch26_runtime_authority_mismatch_audit.json __batch26_summary.txt
+          find . -type d -name __pycache__ -prune -exec rm -rf {} +
+          git config user.name "acpos-word-batch-26-audit"
+          git config user.email "actions@users.noreply.github.com"
+          git rm -f __temp/batch26_runtime_authority_mismatch_audit.py .github/workflows/acpos_batch26_runtime_authority_mismatch_audit.yml
+          git commit -m "chore(acpos): close batch 26 runtime authority mismatch audit harness"
+          git push origin HEAD:0921acpos
+          test -z "$(git status --porcelain)"
+          echo "PASS: BATCH26 HARNESS REMOVED / CLEAN TREE"
