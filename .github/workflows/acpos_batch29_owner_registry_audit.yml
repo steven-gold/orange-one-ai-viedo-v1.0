@@ -1,0 +1,79 @@
+name: ACPOS Batch 29 Owner Registry Audit
+
+on:
+  push:
+    branches: [0921acpos]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: acpos-batch29-owner-registry-audit
+  cancel-in-progress: false
+
+jobs:
+  audit:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Verify Batch 28 boundary
+        shell: bash
+        run: |
+          set -euo pipefail
+          BASE="b3d60bbe78a43aaf25171887ee5d4b93b98601e6"
+          git cat-file -e "$BASE^{commit}"
+          test -z "$(git -c core.quotePath=false diff --name-only "$BASE" HEAD -- '*.docx')"
+          test "$(find . -maxdepth 1 -type f -name '*.docx' | wc -l)" -eq 31
+          echo "PASS: BATCH28 CONTENT BOUNDARY / 31 DOCX"
+
+      - name: Install audit runtime
+        run: python -m pip install --quiet python-docx
+
+      - name: Run Batch 29 owner registry audit
+        env:
+          PYTHONDONTWRITEBYTECODE: "1"
+        run: python -B __temp/batch29_owner_registry_audit.py
+
+      - name: Verify Batch 29 denominator
+        shell: bash
+        run: |
+          PYTHONDONTWRITEBYTECODE=1 python -B - <<'PY'
+          import json
+          from pathlib import Path
+          r=json.loads(Path("__batch29_owner_registry_audit.json").read_text(encoding="utf-8"))
+          s=r["summary"]
+          assert s["target_cells"]==324,s
+          keys=["registry_exact_unique","registry_exact_conflict","registry_unscoped_unique","registry_unscoped_conflict","registry_status_mismatch_only","no_registry_relation"]
+          assert sum(s[k] for k in keys)==324,s
+          print("PASS: BATCH29 OWNER REGISTRY DENOMINATOR")
+          print(json.dumps(s,ensure_ascii=False,sort_keys=True))
+          PY
+
+      - name: Upload Batch 29 evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: acpos-batch29-owner-registry-audit
+          path: |
+            __batch29_owner_registry_audit.json
+            __batch29_summary.txt
+          retention-days: 1
+          if-no-files-found: error
+
+      - name: Remove Batch 29 harness
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -f __batch29_owner_registry_audit.json __batch29_summary.txt
+          find . -type d -name __pycache__ -prune -exec rm -rf {} +
+          git config user.name "acpos-word-batch-29-audit"
+          git config user.email "actions@users.noreply.github.com"
+          git rm -f __temp/batch29_owner_registry_audit.py .github/workflows/acpos_batch29_owner_registry_audit.yml
+          git commit -m "chore(acpos): close batch 29 owner registry audit harness"
+          git push origin HEAD:0921acpos
+          test -z "$(git status --porcelain)"
+          echo "PASS: BATCH29 HARNESS REMOVED / CLEAN TREE"
