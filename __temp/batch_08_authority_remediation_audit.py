@@ -193,7 +193,8 @@ owner_rows=[]
 owner_counts=collections.Counter();by_field=collections.defaultdict(collections.Counter);by_page=collections.defaultdict(collections.Counter)
 for q in [x for x in queue if x["owner_state"]=="CANONICAL_OWNER_ROW_FIELD_UNDEFINED"]:
     s=owner_signals(q);cls=classify_owner_gap(q,s)
-    rec={k:v for k,v in q.items() if k!="owners"}|{"signals":s,"remediation_class":cls}
+    owner_sources=sorted(set(r["source"] for r in q["owners"]))
+    rec={k:v for k,v in q.items() if k!="owners"}|{"signals":s,"owner_sources":owner_sources,"remediation_class":cls}
     owner_rows.append(rec);owner_counts[cls]+=1;by_field[q["field"]][cls]+=1;by_page[q["page"]][cls]+=1
 
 # WB 28 mapping audit. Exact owner is absent; identify only exact existing anchors from the WB control itself.
@@ -213,11 +214,21 @@ for q in [x for x in queue if x["owner_state"]=="CANONICAL_OWNER_ROW_ABSENT"]:
     rec={k:v for k,v in q.items() if k!="owners"}|{"uid_form":uid_form,"existing_exact_anchors":anchors,"mapping_class":cls}
     wb_rows.append(rec);wb_classes[cls]+=1
 
+owner_source_counts=collections.Counter()
+owner_source_cardinality=collections.Counter()
+for r in owner_rows:
+    owner_source_cardinality[len(r["owner_sources"])]+=1
+    for s in r["owner_sources"]:owner_source_counts[s]+=1
+
 payload={
  "denominator":310,
+ "owner_source_counts":dict(owner_source_counts),
+ "owner_source_cardinality":{str(k):v for k,v in owner_source_cardinality.items()},
  "owner_field_undefined_count":282,
  "owner_row_absent_count":28,
  "owner_classification":dict(owner_counts),
+ "owner_source_counts":dict(owner_source_counts),
+ "owner_source_cardinality":{str(k):v for k,v in owner_source_cardinality.items()},
  "owner_by_field":{k:dict(v) for k,v in by_field.items()},
  "owner_by_page":{k:dict(v) for k,v in by_page.items()},
  "wb_mapping_classification":dict(wb_classes),
