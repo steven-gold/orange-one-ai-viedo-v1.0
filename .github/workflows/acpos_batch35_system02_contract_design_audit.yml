@@ -1,0 +1,78 @@
+name: ACPOS Batch 35 System02 Contract Design Audit
+
+on:
+  push:
+    branches: [0921acpos]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: acpos-batch35-system02-contract-design-audit
+  cancel-in-progress: false
+
+jobs:
+  audit:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Verify Batch 34 boundary
+        shell: bash
+        run: |
+          set -euo pipefail
+          BASE="ec3d35324f751693f41aad1a7d94ab4474929065"
+          git cat-file -e "$BASE^{commit}"
+          test -z "$(git -c core.quotePath=false diff --name-only "$BASE" HEAD -- '*.docx')"
+          test "$(find . -maxdepth 1 -type f -name '*.docx' | wc -l)" -eq 31
+          echo "PASS: BATCH34 CONTENT BOUNDARY / 31 DOCX"
+
+      - name: Install audit runtime
+        run: python -m pip install --quiet python-docx
+
+      - name: Run Batch 35 System02 contract design audit
+        env:
+          PYTHONDONTWRITEBYTECODE: "1"
+        run: python -B __temp/batch35_system02_contract_design_audit.py
+
+      - name: Verify Batch 35 output
+        shell: bash
+        run: |
+          PYTHONDONTWRITEBYTECODE=1 python -B - <<'PY'
+          import json
+          from pathlib import Path
+          r=json.loads(Path("__batch35_system02_contract_design_audit.json").read_text(encoding="utf-8"))
+          s=r["summary"]
+          assert s["operations"]==10,s
+          assert s["owner_paragraph_hits"]+s["owner_table_hits"]>0,s
+          print("PASS: BATCH35 SYSTEM02 DESIGN EVIDENCE")
+          print(json.dumps(s,ensure_ascii=False,sort_keys=True))
+          PY
+
+      - name: Upload Batch 35 evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: acpos-batch35-system02-contract-design-audit
+          path: |
+            __batch35_system02_contract_design_audit.json
+            __batch35_summary.txt
+          retention-days: 1
+          if-no-files-found: error
+
+      - name: Remove Batch 35 harness
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -f __batch35_system02_contract_design_audit.json __batch35_summary.txt
+          find . -type d -name __pycache__ -prune -exec rm -rf {} +
+          git config user.name "acpos-word-batch-35-audit"
+          git config user.email "actions@users.noreply.github.com"
+          git rm -f __temp/batch35_system02_contract_design_audit.py .github/workflows/acpos_batch35_system02_contract_design_audit.yml
+          git commit -m "chore(acpos): close batch 35 system02 design audit harness"
+          git push origin HEAD:0921acpos
+          test -z "$(git status --porcelain)"
+          echo "PASS: BATCH35 HARNESS REMOVED / CLEAN TREE"
