@@ -369,8 +369,8 @@ p.add_run("Batch 15 resolves all 42 remaining UI_LOCAL_OR_READ_SOURCE gaps by ow
 
 add_table(logic,["Resolution class","Count","Result"],[
  ["Pre-batch Definition Binding Gap",164,"Current Batch-14 denominator."],
- ["DB read-model Operation N/A",8,"Owner-bound local/read-model controls; no registered per-control Operation."],
- ["ERP READONLY field Operation N/A",20,"Field-level presentation/projection nodes; no per-field Operation."],
+ ["LEGITIMATE_NA_DB_READ_MODEL_OPERATION",8,"Owner-bound local/read-model controls; no registered per-control Operation."],
+ ["LEGITIMATE_NA_ERP_READ_PROJECTION_FIELD_OPERATION",20,"Field-level presentation/projection nodes; no per-field Operation."],
  ["ERP Connector Runtime Owner binding",7,ERP_CONNECTOR_OWNER],
  ["ERP Finance Runtime Owner binding",7,ERP_FINANCE_OWNER],
  ["Total gaps closed",42,"28 explicit N/A + 14 exact Runtime Owner bindings."],
