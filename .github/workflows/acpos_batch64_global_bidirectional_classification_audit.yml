@@ -1,0 +1,80 @@
+name: ACPOS Batch 64 Global Bidirectional Classification Audit
+
+on:
+  push:
+    branches: [0921acpos]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: acpos-batch64-global-bidirectional-audit
+  cancel-in-progress: false
+
+jobs:
+  audit:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Verify Batch 63 clean Word boundary
+        shell: bash
+        run: |
+          set -euo pipefail
+          BASE="7c16720b138ffcca9563d703e8e74879f2eb59d3"
+          git cat-file -e "$BASE^{commit}"
+          test -z "$(git -c core.quotePath=false diff --name-only "$BASE" HEAD -- '*.docx')"
+          test "$(find . -maxdepth 1 -type f -name '*.docx' | wc -l)" -eq 31
+          echo "PASS: BATCH63 WORD BOUNDARY"
+
+      - name: Install audit runtime
+        run: python -m pip install --quiet python-docx
+
+      - name: Run Batch 64 global bidirectional audit
+        env:
+          PYTHONDONTWRITEBYTECODE: "1"
+        run: python -B __temp/batch64_global_bidirectional_classification_audit.py
+
+      - name: Verify audit completeness
+        shell: bash
+        run: |
+          PYTHONDONTWRITEBYTECODE=1 python -B - <<'PY'
+          import json
+          from pathlib import Path
+          r=json.loads(Path("__batch64_global_bidirectional_audit.json").read_text(encoding="utf-8"))
+          s=r["summary"]
+          assert s["docx_files"]==31,s
+          assert s["legacy_r9_r5_hits"]==0,s
+          assert s["ambiguous_locator_hits"]==0,s
+          assert s["edit_target_rows"]==2,s
+          print("PASS: BATCH64 GLOBAL BIDIRECTIONAL AUDIT")
+          print(json.dumps(s,ensure_ascii=False,sort_keys=True))
+          PY
+
+      - name: Upload Batch 64 evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: acpos-batch64-global-bidirectional-classification-audit
+          path: |
+            __batch64_global_bidirectional_audit.json
+            __batch64_summary.json
+          retention-days: 2
+          if-no-files-found: error
+
+      - name: Remove Batch 64 audit harness
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -f __batch64_global_bidirectional_audit.json __batch64_summary.json
+          find . -type d -name __pycache__ -prune -exec rm -rf {} +
+          git config user.name "acpos-word-batch-64-audit"
+          git config user.email "actions@users.noreply.github.com"
+          git rm -f __temp/batch64_global_bidirectional_classification_audit.py .github/workflows/acpos_batch64_global_bidirectional_classification_audit.yml
+          git commit -m "chore(acpos): close batch 64 global bidirectional audit harness"
+          git push origin HEAD:0921acpos
+          test -z "$(git status --porcelain)"
+          echo "PASS: BATCH64 HARNESS REMOVED / CLEAN TREE"
