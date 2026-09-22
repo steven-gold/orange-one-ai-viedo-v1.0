@@ -32,7 +32,7 @@ jobs:
           from docx.oxml.ns import qn
           import re, subprocess, zipfile, json, collections
 
-          BASE="90666a070431935e1cb089997e9de2085765a80e"
+          BASE="20885d3f3a515494f78c74575e7d4a00e1e9a178"
           parent=subprocess.check_output(["git","rev-parse","HEAD^"],text=True).strip()
           if parent!=BASE: raise SystemExit(f"EXACT_HEAD_PARENT_FAIL {parent}")
           docs=sorted(Path(".").glob("*.docx"))
@@ -106,21 +106,22 @@ jobs:
               else:
                   p.text=text
           def replace_regex_doc(doc, pattern, repl, flags=re.I):
-              c=0
+              # OOXML paragraph-level selector: includes hyperlink/text-box w:t nodes,
+              # not only python-docx direct runs.
+              count=0
               rx=re.compile(pattern,flags)
-              for p in iter_paragraphs(doc):
-                  s="".join(r.text for r in p.runs) if p.runs else p.text
+              for p_el in doc._element.iter(qn("w:p")):
+                  ts=list(p_el.iter(qn("w:t")))
+                  if not ts: continue
+                  s="".join((t.text or "") for t in ts)
                   ns,n=rx.subn(repl,s)
                   if n:
-                      set_para_text(p,ns); c+=n
-              return c
+                      ts[0].text=ns
+                      for t in ts[1:]: t.text=""
+                      count+=n
+              return count
           def replace_exact_doc(doc, old, new):
-              c=0
-              for p in iter_paragraphs(doc):
-                  s="".join(r.text for r in p.runs) if p.runs else p.text
-                  if old in s:
-                      set_para_text(p,s.replace(old,new)); c+=s.count(old)
-              return c
+              return replace_regex_doc(doc,re.escape(old),lambda m:new,flags=0)
           def headers(t): return [norm(c.text) for c in t.rows[0].cells] if t.rows else []
           def set_cell(cell,text):
               if cell.paragraphs:
