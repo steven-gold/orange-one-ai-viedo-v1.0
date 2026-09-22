@@ -1,0 +1,144 @@
+name: ACPOS Batch68 Validation C Boundary Closure
+on:
+  push:
+    branches: [0921acpos]
+    paths:
+      - .github/workflows/acpos_batch68_validate_c_boundary_closure.yml
+permissions:
+  contents: write
+jobs:
+  validate:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Validate exact Word boundary and persisted closure
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+          import hashlib,json,subprocess,zipfile,re
+          import xml.etree.ElementTree as ET
+
+          EXPECTED_PARENT="1544f1031a0225dd442078c5cf2981075e138a36"
+          WRITEBACK_HEAD="44385f43573d4f7c8eca0f5223e03302735cc528"
+          WRITEBACK_TREE="303353dea733e51db9db909663536e563776cd35"
+          WF=Path(".github/workflows/acpos_batch68_validate_c_boundary_closure.yml")
+
+          parent=subprocess.check_output(["git","rev-parse","HEAD^"],text=True).strip()
+          if parent!=EXPECTED_PARENT:
+              raise SystemExit(f"EXACT_HEAD_PARENT_FAIL {parent}")
+          WF.unlink()
+
+          # The tested filesystem must equal the QA-approved writeback tree exactly.
+          drift=subprocess.check_output(["git","-c","core.quotepath=false","diff","--name-only",WRITEBACK_HEAD],text=True).splitlines()
+          if drift:
+              raise SystemExit(f"POST_WRITE_WORD_TREE_DRIFT {drift}")
+          parent_tree=subprocess.check_output(["git","rev-parse",f"{EXPECTED_PARENT}^{{tree}}"],text=True).strip()
+          if parent_tree!=WRITEBACK_TREE:
+              raise SystemExit(f"POST_AB_CLEANUP_TREE_DRIFT {parent_tree} expected={WRITEBACK_TREE}")
+
+          docs=sorted(Path(".").glob("*.docx"))
+          root_other=sorted(str(p) for p in Path(".").iterdir() if p.is_file() and p.suffix.lower()!=".docx")
+          if len(docs)!=31:
+              raise SystemExit(f"DOCX_BOUNDARY_FAIL count={len(docs)}")
+          if root_other:
+              raise SystemExit(f"ROOT_NON_WORD_FILE_FAIL {root_other}")
+
+          targets={
+            "02_ACPOS_AI_Conversation_Memory_MultiAI_Assistant_Mother_Basic_Logic_Design_Normative_Contract_v1.0.docx":"8183697cd706f6729fa7e4709c1cd6463c18c5641c0fbfc3cfbc21403b4ebc25",
+            "03_ACPOS_AI_Execution_Script_Compiler_Tool_AIAPI_Runtime_Mother_Basic_Logic_Design_Normative_Contract_v1.0.docx":"3ea8951ec21473c5a488d934a5681fee92860e3f136b9dd4a7e560c0019d3333",
+            "04_ACPOS_CORE_AI_Blueprint_Canonical_Script_System_Mother_Basic_Logic_Design_Normative_Contract_v1.0.docx":"62ad1a911361fbb5c60239308c8d8c5001f0e9999441a8f3c28498adf3e66b8a",
+            "05_ACPOS_Creative_Production_AI_ASSET_VIDEO_EDIT_VOICE_QA_Mother_Basic_Logic_Design_Normative_Contract_v1.0.docx":"984263036a3ddb980d5e095bdec379a81477b93a395ed04fd84405d17ff720d7",
+            "08_ACPOS_Strategy_Intelligence_MultiAI_Decision_System_Mother_Basic_Logic_Design_Normative_Contract_v1.0.docx":"c1d5a97795bfa6e0cf55fb1b8a88e39294417d91e990713f72c4c66572a6bfd6",
+            "09_ACPOS_AI_System_Engineer_Self_Inspection_Evolution_System_Mother_Basic_Logic_Design_Normative_Contract_v1.0.docx":"31a3495e505bf5e841a5430b754040bf0f8c2a3058666dafb8494db7811a42b9",
+            "ACPOS_CORE-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx":"23f118c02d012872099b79ce1af423faf0f0f573c0760256678ec22a8c9ec13d",
+            "ACPOS_STR-01_WORKSPACE_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx":"0d50f5add08f32b128464c7e974af33af64804b1ac4e7258d96535455f1894f7",
+            "ACPOS_SYS-01_系統維護與生命週期工作區_Mother_Basic_Design_OPTIMIZED.docx":"5b85b4fa66404157617762d712a64f8c31d24b444073fa8de5b3f11ef1135bf1",
+            "ACPOS_SYSTEM_LOGIC_GLOBAL_INTEGRATION_Mother_Basic_Design_OPTIMIZED.docx":"c8155825d14433614b77ff5877d4ee5cc481d0bea547d9c1f5b46e5a57b47908",
+          }
+          hash_fail=[]
+          invalid_zip=[]
+          for p in docs:
+              try:
+                  with zipfile.ZipFile(p) as z:
+                      bad=z.testzip()
+                      if bad is not None:
+                          invalid_zip.append((p.name,bad));continue
+                      names=set(z.namelist())
+                      if "word/document.xml" not in names:
+                          invalid_zip.append((p.name,"word/document.xml missing"));continue
+                      if p.name in targets:
+                          h=hashlib.sha256(z.read("word/document.xml")).hexdigest()
+                          if h!=targets[p.name]:
+                              hash_fail.append((p.name,h,targets[p.name]))
+              except Exception as e:
+                  invalid_zip.append((p.name,repr(e)))
+
+          logic=Path("ACPOS_SYSTEM_LOGIC_GLOBAL_INTEGRATION_Mother_Basic_Design_OPTIMIZED.docx")
+          with zipfile.ZipFile(logic) as z:
+              xml=z.read("word/document.xml")
+          root=ET.fromstring(xml)
+          W="{http://schemas.openxmlformats.org/wordprocessingml/2006/main}"
+          text="\n".join((n.text or "") for n in root.iter(W+"t"))
+          required=[
+            "WU-DOC-BIDIRECTIONAL-CONTRACT-REMEDIATION-068",
+            "DESIGN_CONTRACT_MAINTENANCE",
+            "USER_DIRECTIVE_2026-09-22_FIX_REMAINING_BIDIRECTIONAL_DEFECTS",
+            "ACPOS_SYSTEM_LOGIC_GLOBAL_INTEGRATION_Mother_Basic_Design_OPTIMIZED.docx",
+            "GOV-REV-20260921-TYPOGRAPHY-COMPUTED-METRICS-HARDENING",
+            "TYPOGRAPHY_COMPUTED_METRICS_HARDENING_CLOSED_WUR_REQUIRED",
+            "BIDIRECTIONAL_CONTRACT_REMEDIATION_CLOSED_NEXT_WUR_REQUIRED",
+          ]
+          missing_closure=[x for x in required if x not in text]
+
+          tmp_residual=[]
+          for p in Path(".").rglob("*"):
+              if not p.is_file(): continue
+              s=str(p)
+              if "/.git/" in "/"+s or s.startswith(".git/"): continue
+              if s==str(WF): continue
+              if p.suffix.lower() in {".tmp",".temp",".bak"} or p.name.startswith("__batch68") or "acpos_batch68_validate_" in p.name:
+                  tmp_residual.append(s)
+
+          summary={
+            "exact_parent":EXPECTED_PARENT,
+            "writeback_head":WRITEBACK_HEAD,
+            "writeback_tree":WRITEBACK_TREE,
+            "root_docx":len(docs),
+            "root_non_word_files":len(root_other),
+            "zip_integrity_failures":len(invalid_zip),
+            "target_xml_hashes_checked":len(targets),
+            "target_xml_hash_failures":len(hash_fail),
+            "closure_fields_required":len(required),
+            "closure_fields_missing":len(missing_closure),
+            "temporary_residuals":len(tmp_residual),
+            "post_write_tree_drift":len(drift),
+          }
+          print("BATCH68_VALIDATION_C_SUMMARY="+json.dumps(summary,ensure_ascii=False,sort_keys=True))
+          if invalid_zip: print("ZIP_FAIL="+json.dumps(invalid_zip,ensure_ascii=False))
+          if hash_fail: print("HASH_FAIL="+json.dumps(hash_fail,ensure_ascii=False))
+          if missing_closure: print("CLOSURE_MISSING="+json.dumps(missing_closure,ensure_ascii=False))
+          if tmp_residual: print("TEMP_RESIDUAL="+json.dumps(tmp_residual,ensure_ascii=False))
+          if invalid_zip or hash_fail or missing_closure or tmp_residual:
+              raise SystemExit("BATCH68_VALIDATION_C_FAIL")
+          print("BATCH68_VALIDATION_C_PASS")
+          PY
+      - name: Persist exact tested tree by removing harness
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "acpos-batch68-validate-c"
+          git config user.email "actions@users.noreply.github.com"
+          git add -A
+          mapfile -t staged < <(git -c core.quotepath=false diff --cached --name-only)
+          if [ "${#staged[@]}" -ne 1 ] || [ "${staged[0]}" != ".github/workflows/acpos_batch68_validate_c_boundary_closure.yml" ]; then
+            printf '%s\n' "${staged[@]}"
+            exit 1
+          fi
+          git commit -m "chore(acpos): close Batch68 validation C harness"
+          git push origin HEAD:0921acpos
