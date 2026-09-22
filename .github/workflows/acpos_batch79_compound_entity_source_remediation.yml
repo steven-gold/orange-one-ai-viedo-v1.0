@@ -28,7 +28,7 @@ jobs:
           from docx import Document
           from docx.table import _Row
 
-          EXPECTED_PARENT="04b1da9e358f71be33db24947baf99ffd6aecd85"
+          EXPECTED_PARENT="5ac0615ec999c6391321527cb788ffa233984681"
           WF=Path(".github/workflows/acpos_batch79_compound_entity_source_remediation.yml")
           parent=subprocess.check_output(["git","rev-parse","HEAD^"],text=True).strip()
           if parent!=EXPECTED_PARENT: raise SystemExit(f"EXACT_HEAD_PARENT_FAIL {parent}")
@@ -98,7 +98,7 @@ jobs:
 
           # DEV: authority proves Audience is projection and Topic is a Profile field/value.
           p=TARGETS["DEV"]; doc=Document(p)
-          hits=find_rows(doc,0,"Campaign / Audience")
+          hits=[h for h in find_rows(doc,0,"Campaign / Audience") if [norm(c.text) for c in h[2].rows[0].cells][:4]==["Entity","Purpose","Required Operations","Owner / Boundary"]]
           if len(hits)!=1: raise RuntimeError(f"DEV_CAMPAIGN_TARGET_{len(hits)}")
           _,_,_,row=hits[0]
           replace_row(row,[
@@ -107,7 +107,7 @@ jobs:
             "Create / Preview / Approve",
             "OutreachBatchService",
           ])
-          hits=find_rows(doc,0,"Discovery Profile / Topic")
+          hits=[h for h in find_rows(doc,0,"Discovery Profile / Topic") if [norm(c.text) for c in h[2].rows[0].cells][:4]==["Entity","Purpose","Required Operations","Owner / Boundary"]]
           if len(hits)!=1: raise RuntimeError(f"DEV_PROFILE_TARGET_{len(hits)}")
           _,_,_,row=hits[0]
           replace_row(row,[
