@@ -74,7 +74,7 @@ assert subprocess.check_output(["git","rev-parse",TARGET_HEAD],text=True).strip(
 assert subprocess.check_output(["git","diff","--name-only",TARGET_HEAD,"HEAD","--","*.docx"],text=True).strip()==""
 
 # Exact target root tree: 31 items and all DOCX.
-root_names=subprocess.check_output(["git","ls-tree","--name-only",TARGET_HEAD],text=True).splitlines()
+root_names=subprocess.check_output(["git","-c","core.quotePath=false","ls-tree","--name-only",TARGET_HEAD],text=True).splitlines()
 assert len(root_names)==31,(len(root_names),root_names)
 assert all(x.lower().endswith(".docx") for x in root_names),[x for x in root_names if not x.lower().endswith(".docx")]
 assert set(root_names)==set(p.name for p in Path(".").glob("*.docx")),(set(root_names)-set(p.name for p in Path(".").glob("*.docx")))
