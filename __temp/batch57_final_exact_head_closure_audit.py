@@ -127,9 +127,9 @@ for page,fn in PAGES.items():
             operation_missing.append((page,uid,st,r.get("action",""),r.get("type","")))
             continue
         if placeholder_op(op):operation_placeholders.append((page,uid,op))
-        if missing(r.get("action","")):action_gaps.append((page,uid,op))
-        if missing(r.get("gate","")):gate_gaps.append((page,uid,op))
-        if missing(r.get("permission","")):permission_gaps.append((page,uid,op))
+        if missing(r.get("action","")):action_gaps.append((page,uid,op,r.get("type",""),st,r.get("gate",""),r.get("permission",""),r.get("runtime_owner","")))
+        if missing(r.get("gate","")):gate_gaps.append((page,uid,op,r.get("type",""),st,r.get("action",""),r.get("permission",""),r.get("runtime_owner","")))
+        if missing(r.get("permission","")):permission_gaps.append((page,uid,op,r.get("type",""),st,r.get("action",""),r.get("gate",""),r.get("runtime_owner","")))
         if missing(r.get("runtime_owner","")):runtime_owner_gaps.append((page,uid,op))
         if missing(r.get("method_path","")):contract_gaps.append(("method_path",page,uid,op))
         if st=="EFFECTFUL_EXACT":
