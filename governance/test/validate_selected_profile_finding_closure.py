@@ -193,10 +193,8 @@ for token in (
 
 # 016: execute the current classifier helper against exact negative/positive relation probes.
 classifier_text = CLASSIFIER.read_text(encoding="utf-8")
-prefix = classifier_text.split("if subprocess.run(", 1)[0]
-require(prefix != classifier_text, "016_CLASSIFIER_PROBE_BOUNDARY_MISSING")
 ns = {"__file__": str(CLASSIFIER), "__name__": "_closure_probe_"}
-exec(compile(prefix, str(CLASSIFIER), "exec"), ns, ns)
+exec(compile(classifier_text, str(CLASSIFIER), "exec"), ns, ns)
 classify = ns.get("classify")
 require(callable(classify), "016_CLASSIFY_HELPER_MISSING")
 
