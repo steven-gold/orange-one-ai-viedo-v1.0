@@ -1,0 +1,440 @@
+name: ACPOS Batch 102 Word Content Quality Remediation
+on:
+  push:
+    branches: [0921acpos]
+    paths:
+      - .github/workflows/acpos_batch102_word_content_quality_remediation.yml
+permissions:
+  contents: write
+jobs:
+  remediate:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+      - name: Install DOCX and render tooling
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m pip install --quiet python-docx
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq libreoffice poppler-utils fonts-noto-cjk
+      - name: Apply five bounded Word remediations
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+          from docx import Document
+          from docx.oxml.ns import qn
+          import re, subprocess, zipfile, json, collections
+
+          BASE="90666a070431935e1cb089997e9de2085765a80e"
+          parent=subprocess.check_output(["git","rev-parse","HEAD^"],text=True).strip()
+          if parent!=BASE: raise SystemExit(f"EXACT_HEAD_PARENT_FAIL {parent}")
+          docs=sorted(Path(".").glob("*.docx"))
+          if len(docs)!=31: raise SystemExit(f"DOCX_COUNT_FAIL {len(docs)}")
+
+          INDEX=Path("00_INDEX_ACPOS_Mother_Compliant_Basic_Design_Master.docx")
+          GLOBAL=Path("ACPOS_SYSTEM_LOGIC_GLOBAL_INTEGRATION_Mother_Basic_Design_OPTIMIZED.docx")
+          SYSTEM08=Path("08_ACPOS_Strategy_Intelligence_MultiAI_Decision_System_Mother_Basic_Logic_Design_Normative_Contract_v1.0.docx")
+          ADMINSTR=Path("ACPOS_admin_STR-01_戰略中心後台_Mother_Basic_Design_OPTIMIZED.docx")
+
+          old_to_new={
+            "01_HOME/01_WB-01_公司首頁_儀表板_Mother_Compliant_Basic_Design.docx":"ACPOS_WB-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx",
+            "02_FRONT/02_CORE-01_核心 AI 工作區_Mother_Compliant_Basic_Design.docx":"ACPOS_CORE-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx",
+            "02_FRONT/03_ASSET-01_素材生產工作區_Mother_Compliant_Basic_Design.docx":"ACPOS_ASSET-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx",
+            "02_FRONT/04_VIDEO-01_影片生成工作區_Mother_Compliant_Basic_Design.docx":"ACPOS_VIDEO-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx",
+            "02_FRONT/05_EDIT-01_整合後製剪輯工作台_Mother_Compliant_Basic_Design.docx":"ACPOS_EDIT-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx",
+            "02_FRONT/06_QA-01_QA 審查工作區_Mother_Compliant_Basic_Design.docx":"ACPOS_QA-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx",
+            "02_FRONT/07_DB-01_資料庫_資料血緣工作區_Mother_Compliant_Basic_Design.docx":"ACPOS_DB-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx",
+            "02_FRONT/08_STR-01_戰略中心工作區_Mother_Compliant_Basic_Design.docx":"ACPOS_STR-01_WORKSPACE_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx",
+            "02_FRONT/09_INFO-01_最新資訊工作區_Mother_Compliant_Basic_Design.docx":"ACPOS_INFO-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx",
+            "03_ADMIN/10_SYS-01_系統維護_系統生命週期_Mother_Compliant_Basic_Design.docx":"ACPOS_SYS-01_系統維護與生命週期工作區_Mother_Basic_Design_OPTIMIZED.docx",
+            "03_ADMIN/11_IAM-01_帳戶與權限_Mother_Compliant_Basic_Design.docx":"ACPOS_IAM-01_帳戶與權限_Mother_Basic_Design_OPTIMIZED.docx",
+            "03_ADMIN/12_DEV-01_企業開發與商機自動化_Mother_Compliant_Basic_Design.docx":"ACPOS_DEV-01_企業自動開發系統_Mother_Basic_Design_OPTIMIZED.docx",
+            "03_ADMIN/13_SOC-01_自動廣告_公開市場商機與社群發布_Mother_Compliant_Basic_Design.docx":"ACPOS_SOC-01_社群發布_Mother_Basic_Design_OPTIMIZED.docx",
+            "03_ADMIN/14_ERP-01_ERP_財務_Mother_Compliant_Basic_Design.docx":"ACPOS_ERP-01_ERP與財務_Mother_Basic_Design_OPTIMIZED.docx",
+            "03_ADMIN/15_AIAPI-01_AI API 管理_Mother_Compliant_Basic_Design.docx":"ACPOS_AIAPI-01_AI_API管理_Mother_Basic_Design_OPTIMIZED.docx",
+            "03_ADMIN/16_SG-02_QA 審查項目_品質標準治理_Mother_Compliant_Basic_Design.docx":"ACPOS_SG-02_QA審查項目名單_Mother_Basic_Design_OPTIMIZED.docx",
+            "03_ADMIN/17_ADMIN-STR-01_戰略中心後台_Mother_Compliant_Basic_Design.docx":"ACPOS_admin_STR-01_戰略中心後台_Mother_Basic_Design_OPTIMIZED.docx",
+            "03_ADMIN/18_KB-01_知識庫與 Experience 中心_Mother_Compliant_Basic_Design.docx":"ACPOS_KB-01_知識庫_Mother_Basic_Design_OPTIMIZED.docx",
+            "04_LOGIN/19_LOGIN_登入_身份入口_Mother_Compliant_Basic_Design.docx":"ACPOS_LOGIN_IDENTITY_ENTRY_Mother_Basic_Design_OPTIMIZED.docx",
+            "05_SYSTEM_LOGIC/20_SYSTEM-LOGIC_全站系統邏輯與共享 Runtime_AI Continuity_Mother_Compliant_Basic_Design.docx":"ACPOS_SYSTEM_LOGIC_GLOBAL_INTEGRATION_Mother_Basic_Design_OPTIMIZED.docx",
+          }
+          supporting=[
+            ("Global Home / Shell / Navigation","ACPOS_GLOBAL_HOME_SHELL_NAVIGATION_Mother_Basic_Design_OPTIMIZED.docx"),
+            ("System Contract 01","01_ACPOS_Global_Intelligent_Brain_Information_Lifecycle_Mother_Basic_Logic_Design_Normative_Contract_v4.docx"),
+            ("System Contract 02","02_ACPOS_AI_Conversation_Memory_MultiAI_Assistant_Mother_Basic_Logic_Design_Normative_Contract_v1.0.docx"),
+            ("System Contract 03","03_ACPOS_AI_Execution_Script_Compiler_Tool_AIAPI_Runtime_Mother_Basic_Logic_Design_Normative_Contract_v1.0.docx"),
+            ("System Contract 04","04_ACPOS_CORE_AI_Blueprint_Canonical_Script_System_Mother_Basic_Logic_Design_Normative_Contract_v1.0.docx"),
+            ("System Contract 05","05_ACPOS_Creative_Production_AI_ASSET_VIDEO_EDIT_VOICE_QA_Mother_Basic_Logic_Design_Normative_Contract_v1.0.docx"),
+            ("System Contract 06","06_ACPOS_Enterprise_Business_Development_AI_System_Mother_Basic_Logic_Design_Normative_Contract_v1.0.docx"),
+            ("System Contract 07","07_ACPOS_Social_Publishing_AI_System_Mother_Basic_Logic_Design_Normative_Contract_v1.0.docx"),
+            ("System Contract 08","08_ACPOS_Strategy_Intelligence_MultiAI_Decision_System_Mother_Basic_Logic_Design_Normative_Contract_v1.0.docx"),
+            ("System Contract 09","09_ACPOS_AI_System_Engineer_Self_Inspection_Evolution_System_Mother_Basic_Logic_Design_Normative_Contract_v1.0.docx"),
+          ]
+          root_names={x.name for x in docs}
+          for _,fn in supporting:
+              if fn not in root_names: raise SystemExit(f"SUPPORT_FILE_MISSING {fn}")
+          for fn in old_to_new.values():
+              if fn not in root_names: raise SystemExit(f"INDEX_TARGET_MISSING {fn}")
+
+          def norm(s): return re.sub(r"\s+"," ",(s or "").strip())
+          def iter_paragraphs(doc):
+              seen=set()
+              for p in doc.paragraphs:
+                  if id(p._p) not in seen:
+                      seen.add(id(p._p)); yield p
+              def walk_table(t):
+                  for row in t.rows:
+                      for cell in row.cells:
+                          for p in cell.paragraphs:
+                              if id(p._p) not in seen:
+                                  seen.add(id(p._p)); yield p
+                          for nt in cell.tables:
+                              yield from walk_table(nt)
+              for t in doc.tables:
+                  yield from walk_table(t)
+          def set_para_text(p,text):
+              if p.runs:
+                  p.runs[0].text=text
+                  for r in p.runs[1:]: r.text=""
+              else:
+                  p.text=text
+          def replace_regex_doc(doc, pattern, repl, flags=re.I):
+              c=0
+              rx=re.compile(pattern,flags)
+              for p in iter_paragraphs(doc):
+                  s="".join(r.text for r in p.runs) if p.runs else p.text
+                  ns,n=rx.subn(repl,s)
+                  if n:
+                      set_para_text(p,ns); c+=n
+              return c
+          def replace_exact_doc(doc, old, new):
+              c=0
+              for p in iter_paragraphs(doc):
+                  s="".join(r.text for r in p.runs) if p.runs else p.text
+                  if old in s:
+                      set_para_text(p,s.replace(old,new)); c+=s.count(old)
+              return c
+          def headers(t): return [norm(c.text) for c in t.rows[0].cells] if t.rows else []
+          def set_cell(cell,text):
+              if cell.paragraphs:
+                  set_para_text(cell.paragraphs[0],text)
+                  for p in cell.paragraphs[1:]: set_para_text(p,"")
+              else: cell.text=text
+
+          changed=set()
+          metrics=collections.Counter()
+
+          # 1) INDEX old references + corpus count + supporting docs.
+          doc=Document(INDEX)
+          full_before="\n".join(p.text for p in iter_paragraphs(doc))
+          for old,new in old_to_new.items():
+              metrics["index_old_path_replacements"] += replace_exact_doc(doc,old,new)
+          metrics["index_count_replacements"] += replace_regex_doc(doc,r"共\s*21\s*份\s*Word","共 31 份 Word")
+          metrics["index_count_replacements"] += replace_regex_doc(doc,r"共\s*21\s*份\s*WORD","共 31 份 Word")
+          # table row current branch/head normalization
+          for t in doc.tables:
+              for row in t.rows:
+                  vals=[norm(c.text) for c in row.cells]
+                  if len(vals)>=2:
+                      key=vals[0]
+                      if key=="GitHub branch": set_cell(row.cells[1],"0921acpos"); metrics["current_truth_rows"]+=1
+                      elif key=="GitHub live HEAD": set_cell(row.cells[1],"RESOLVE_FRESH_AT_AUDIT_TIME"); metrics["current_truth_rows"]+=1
+          marker="[ACPOS-CURRENT-SUPPORTING-WORD-CORPUS-V1]"
+          if marker not in "\n".join(p.text for p in iter_paragraphs(doc)):
+              doc.add_heading("Current Supporting Word Corpus｜目前支援設計文件",level=2)
+              doc.add_paragraph(marker+" Package denominator = 31 Word files = 1 Index + 20 page/login/global-integration entries + 10 supporting design/system-contract files.")
+              t=doc.add_table(rows=1,cols=2); t.style="Table Grid"
+              t.rows[0].cells[0].text="Document Role"; t.rows[0].cells[1].text="Current Root Filename"
+              for role,fn in supporting:
+                  r=t.add_row().cells; r[0].text=role; r[1].text=fn
+              metrics["index_support_rows_added"]=len(supporting)
+          doc.save(INDEX); changed.add(INDEX.name)
+
+          # 2 + 3) Current Truth and stale exact-tree evidence, all current Word docs.
+          for path in docs:
+              doc=Document(path)
+              local=0
+              for t in doc.tables:
+                  for row in t.rows:
+                      vals=[norm(c.text) for c in row.cells]
+                      if len(vals)<2: continue
+                      key=vals[0]
+                      if key in {"GitHub branch","Current Branch","Branch"} and vals[1] in {"new","rebuild-v2.1.1"}:
+                          set_cell(row.cells[1],"0921acpos"); local+=1; metrics["current_truth_rows"]+=1
+                      elif key=="Repository / Branch":
+                          if "new" in vals[1] or "rebuild-v2.1.1" in vals[1]:
+                              set_cell(row.cells[1],"steven-gold/orange-one-ai-viedo-v1.0 / 0921acpos"); local+=1; metrics["current_truth_rows"]+=1
+                      elif key in {"Live HEAD","GitHub live HEAD","Current HEAD"} and re.search(r"[0-9a-f]{7,40}",vals[1],re.I):
+                          set_cell(row.cells[1],"RESOLVE_FRESH_AT_AUDIT_TIME"); local+=1; metrics["current_truth_rows"]+=1
+                      elif key in {"Current Governance UID","Governance Display Version"}:
+                          if re.search(r"GOV-REV-|v2\.",vals[1],re.I):
+                              set_cell(row.cells[1],"RESOLVE_FRESH_AT_AUDIT_TIME — Mother Governance 01→04 remains the planning/design authority."); local+=1; metrics["current_truth_rows"]+=1
+              local += replace_regex_doc(doc,r"Current exact tree\s+[0-9a-f]{40}","Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME")
+              metrics["stale_tree_literals_replaced"] += local
+              local2=0
+              local2 += replace_regex_doc(doc,r"GitHub\s+new\s+live\s+HEAD","GitHub branch 0921acpos; live HEAD resolves fresh at audit time")
+              local2 += replace_regex_doc(doc,r"Current branch\s+rebuild-v2\.1\.1\s*·\s*live HEAD\s+[0-9a-f]{40}","Word branch 0921acpos · live HEAD RESOLVE_FRESH_AT_AUDIT_TIME")
+              local2 += replace_regex_doc(doc,r"branch\s+new\s*/\s*HEAD\s+[0-9a-f]{7,40}(?:…|\.\.\.)?","branch 0921acpos / HEAD RESOLVE_FRESH_AT_AUDIT_TIME")
+              local2 += replace_regex_doc(doc,r"(Live HEAD\s*(?:[:：|]\s*)?)[0-9a-f]{40}",r"\1RESOLVE_FRESH_AT_AUDIT_TIME")
+              local2 += replace_regex_doc(doc,r"(Current HEAD\s*(?:[:：|]\s*)?)[0-9a-f]{40}",r"\1RESOLVE_FRESH_AT_AUDIT_TIME")
+              local2 += replace_regex_doc(doc,r"Repository\s*\|\s*steven-gold/orange-one-ai-viedo-v1\.0\s*/\s*branch\s+new\s*/\s*HEAD\s+[0-9a-f]{7,40}(?:…|\.\.\.)?","Repository | steven-gold/orange-one-ai-viedo-v1.0 / branch 0921acpos / HEAD RESOLVE_FRESH_AT_AUDIT_TIME")
+              metrics["current_truth_text_replacements"] += local2
+              if local or local2:
+                  doc.save(path); changed.add(path.name)
+
+          # 4) Strategy 6 contract dispositions.
+          decisions={
+            "CTRL-ADMIN-STR-03-ACT-01-ACT-DRAFT-SAVE":{
+              "runtime":"IAM_RUNTIME",
+              "persistence":"AUTHORITY_GAP_BLOCKED — exact STR draft persistence owner is not defined by current Word authority; MUST_NOT reuse IAM Authorization Draft persistence by operation-name similarity.",
+              "status":"INTENTIONAL_FAIL_CLOSED_AUTHORITY_GAP",
+              "closure":"AUTHORITY_GAP is explicit and fail-closed. Runtime owner IAM_RUNTIME is preserved; the control MUST remain disabled until an authorized STR draft persistence owner is materialized."
+            },
+            "CTRL-ADMIN-STR-04-ACT-03-ACT-EXPORT":{
+              "runtime":"INFO_COMMAND_RUNTIME",
+              "persistence":"Global Brain / Export Artifact + Export Audit",
+              "status":"EFFECTFUL_EXACT",
+              "closure":"DESIGN_BOUND_TO_EXISTING_SHARED_EXPORT_OWNER — exact exportProjection/ExportProjectionRequest evidence resolves to the shared INFO export persistence owner; runtime execution is not claimed by this Word."
+            },
+            "CTRL-ADMIN-STR-05-ACT-01-ACT-CANDIDATE-CREATE":{
+              "runtime":"AUTHORITY_GAP_BLOCKED — Strategy candidate owner is named at planning layer, but exact runtime binding is not uniquely defined by current Word authority.",
+              "persistence":"AUTHORITY_GAP_BLOCKED — exact Strategy candidate persistence owner is not defined; MUST_NOT infer from DEV/SYS createCandidate domains.",
+              "status":"INTENTIONAL_FAIL_CLOSED_AUTHORITY_GAP",
+              "closure":"AUTHORITY_GAP is explicit and fail-closed. createCandidate remains disabled until the authorized Strategy candidate runtime+persistence owner is materialized."
+            },
+            "CTRL-ADMIN-STR-06-ACT-01-ACT-CANDIDATE-COMPARE":{
+              "runtime":"STR-01 / shared registered service",
+              "persistence":"NOT_APPLICABLE — READ_EXACT / no mutation",
+              "status":"READ_EXACT",
+              "closure":"READ_EXACT design contract is source-backed by STR-01 compareCandidates. Persistence is NOT_APPLICABLE because the operation is a no-form read; runtime execution is not claimed."
+            },
+            "CTRL-ADMIN-STR-06-ACT-02-ACT-CANDIDATE-DECIDE":{
+              "runtime":"AUTHORITY_GAP_BLOCKED — Strategy candidate owner is named at planning layer, but exact reject runtime binding is not defined by current Word authority.",
+              "persistence":"AUTHORITY_GAP_BLOCKED — exact Strategy candidate decision/state persistence owner is not defined; MUST_NOT infer from another candidate domain.",
+              "status":"INTENTIONAL_FAIL_CLOSED_AUTHORITY_GAP",
+              "closure":"AUTHORITY_GAP is explicit and fail-closed. rejectStrategyCandidate remains disabled until authorized runtime/state persistence ownership is materialized."
+            },
+            "CTRL-ADMIN-STR-06-ACT-03-ACT-ADOPT-CONTEXT":{
+              "runtime":"STR-01 / shared registered service",
+              "persistence":"AI-01 Context Owner / Governed Strategy Context Adoption Link + System 08 Audit",
+              "status":"EFFECTFUL_EXACT",
+              "closure":"DESIGN_BOUND_TO_EXISTING_SHARED_CONTEXT_OWNER — source-backed adoptAsContextCandidate binding preserves AI-01 Context authority and System 08 audit linkage; runtime execution is not claimed."
+            }
+          }
+          operation_by_uid={
+            "CTRL-ADMIN-STR-03-ACT-01-ACT-DRAFT-SAVE":"saveDraft",
+            "CTRL-ADMIN-STR-04-ACT-03-ACT-EXPORT":"exportProjection",
+            "CTRL-ADMIN-STR-05-ACT-01-ACT-CANDIDATE-CREATE":"createCandidate",
+            "CTRL-ADMIN-STR-06-ACT-01-ACT-CANDIDATE-COMPARE":"compareCandidates",
+            "CTRL-ADMIN-STR-06-ACT-02-ACT-CANDIDATE-DECIDE":"rejectStrategyCandidate",
+            "CTRL-ADMIN-STR-06-ACT-03-ACT-ADOPT-CONTEXT":"adoptAsContextCandidate",
+          }
+          for path in [SYSTEM08,ADMINSTR]:
+              doc=Document(path)
+              touched=set()
+              for t in doc.tables:
+                  h=headers(t)
+                  if h==["Control UID","UID Status","Label","Type","Action UID","Gate","Permission / Auth Resource","Payload / Schema","Operation","Method / Path","Runtime Owner","Persistence Owner","Runtime Status"]:
+                      idx={x:i for i,x in enumerate(h)}
+                      for row in t.rows[1:]:
+                          uid=norm(row.cells[idx["Control UID"]].text)
+                          if uid in decisions:
+                              d=decisions[uid]
+                              set_cell(row.cells[idx["Runtime Owner"]],d["runtime"])
+                              set_cell(row.cells[idx["Persistence Owner"]],d["persistence"])
+                              set_cell(row.cells[idx["Runtime Status"]],d["status"])
+                              touched.add(uid)
+                  if h==["Control UID","Operation","Method / Path","Payload","Permission","Current Runtime Owner","Current Persistence Owner","Required closure before enablement","Current status"]:
+                      idx={x:i for i,x in enumerate(h)}
+                      for row in t.rows[1:]:
+                          uid=norm(row.cells[idx["Control UID"]].text)
+                          if uid in decisions:
+                              d=decisions[uid]
+                              set_cell(row.cells[idx["Current Runtime Owner"]],d["runtime"])
+                              set_cell(row.cells[idx["Current Persistence Owner"]],d["persistence"])
+                              set_cell(row.cells[idx["Required closure before enablement"]],d["closure"])
+                              set_cell(row.cells[idx["Current status"]],d["status"])
+                              touched.add(uid)
+                  if path==ADMINSTR and h==["Operation","Method / Path","Owner","Effect","施工 Gate"]:
+                      idx={x:i for i,x in enumerate(h)}
+                      for row in t.rows[1:]:
+                          op=norm(row.cells[idx["Operation"]].text)
+                          for uid,expected_op in operation_by_uid.items():
+                              if op==expected_op:
+                                  set_cell(row.cells[idx["施工 Gate"]],decisions[uid]["closure"])
+              if touched!=set(decisions):
+                  raise SystemExit(f"STRATEGY_TARGET_MISSING {path} {sorted(set(decisions)-touched)}")
+              # current summary prose: replace implementation-era ready/blocked split with design disposition.
+              replace_regex_doc(doc,r'\{"ready":\s*\[[^\n]+?\],\s*"blocked":\s*\[[^\n]+?\]\}',
+                  '{"design_bound":["exportProjection","compareCandidates","adoptAsContextCandidate"],"authority_gap_fail_closed":["saveDraft","createCandidate","rejectStrategyCandidate"]}')
+              replace_regex_doc(doc,
+                  r"All 19 source-preserving interaction controls are exact\. Current implementation materializes searchProjection, refreshProjection, configureGovernedResource and approveGovernedResource\. saveDraft, exportProjection, createCandidate, compareCandidates, rejectStrategyCandidate and adoptAsContextCandidate remain spec-bound but runtime-blocked; exportProjection additionally has BLOCKED_NO_CANONICAL_EXPORT_PERSISTENCE_OWNER in the operation registry\. Do not enable those controls until their exact runtime owner/persistence/authorization path is materialized and tested\.",
+                  "All 19 source-preserving interaction controls remain exact at the planning/design layer. exportProjection, compareCandidates and adoptAsContextCandidate now have source-backed design bindings. saveDraft, createCandidate and rejectStrategyCandidate are explicit AUTHORITY_GAP fail-closed dispositions and MUST remain disabled until authorized owner materialization. This Word does not claim runtime execution or Production readiness.")
+              doc.save(path); changed.add(path.name)
+              metrics["strategy_docs_updated"]+=1
+
+          # 5) Remove historical execution tail from Global Integration.
+          doc=Document(GLOBAL)
+          body=doc._element.body
+          children=list(body)
+          def child_text(el):
+              return norm("".join((t.text or "") for t in el.iter(qn("w:t"))))
+          start=None
+          for i,el in enumerate(children):
+              s=child_text(el)
+              if s.startswith("Batch 04 · Direct Binding Classification / Conversion Integrity Guard"):
+                  start=i; break
+          if start is None: raise SystemExit("GLOBAL_HISTORY_START_NOT_FOUND")
+          tail=[child_text(x) for x in children[start:] if x.tag!=qn("w:sectPr")]
+          joined="\n".join(tail)
+          if "BATCH61_MACHINE_JSON" not in joined or "Persisted Resume Point" not in joined:
+              raise SystemExit("GLOBAL_HISTORY_BOUNDARY_NOT_PROVEN")
+          if "Mother Planning / Basic Design Closure Annex" in joined:
+              raise SystemExit("GLOBAL_HISTORY_TAIL_CONTAINS_CURRENT_DESIGN_ANNEX")
+          removed=0
+          for el in list(body)[start:]:
+              if el.tag==qn("w:sectPr"): continue
+              body.remove(el); removed+=1
+          doc.add_heading("Historical Execution Evidence Separation｜歷史施工證據分離",level=1)
+          doc.add_paragraph("[ACPOS-GLOBAL-INTEGRATION-HISTORY-SEPARATION-V1] Batch/workflow/Machine JSON/resume-point ledgers are historical execution evidence and are not Current planning/basic-design Authority. They remain recoverable from source-control/workflow artifact history and MUST NOT be embedded as mutable Current design truth. This Word retains only current integration design contracts, owner/reference semantics, and audit/acceptance planning.")
+          doc.save(GLOBAL); changed.add(GLOBAL.name); metrics["global_history_body_elements_removed"]=removed
+
+          # Integrity.
+          for p in docs:
+              with zipfile.ZipFile(p) as z:
+                  bad=z.testzip()
+                  if bad: raise SystemExit(f"ZIP_CRC_FAIL {p} {bad}")
+          # Expected broad write set only current Word files + workflow.
+          modified=[x for x in subprocess.check_output(["git","-c","core.quotepath=false","diff","--name-only",BASE],text=True).splitlines() if x.endswith(".docx")]
+          if INDEX.name not in modified or GLOBAL.name not in modified or SYSTEM08.name not in modified or ADMINSTR.name not in modified:
+              raise SystemExit("REQUIRED_MODIFIED_DOC_MISSING")
+          Path("__batch102_patch_manifest.json").write_text(json.dumps({"metrics":dict(metrics),"modified_docx":modified},ensure_ascii=False,indent=2),encoding="utf-8")
+          print("BATCH102_PATCH_PASS="+json.dumps({"modified_docx":len(modified),**dict(metrics)},ensure_ascii=False,sort_keys=True))
+          PY
+      - name: Exact post-write validation
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+          from docx import Document
+          import re,json,zipfile,collections
+          docs=sorted(Path(".").glob("*.docx"))
+          def norm(s):return re.sub(r"\s+"," ",(s or "").strip())
+          def full(doc):
+              vals=[]
+              for p in doc.paragraphs: vals.append(p.text)
+              def walk(t):
+                  for row in t.rows:
+                      for c in row.cells:
+                          vals.extend(p.text for p in c.paragraphs)
+                          for nt in c.tables: walk(nt)
+              for t in doc.tables: walk(t)
+              return "\n".join(vals)
+          alltext={p.name:full(Document(p)) for p in docs}
+          corpus="\n".join(alltext.values())
+          old_refs=[
+            "01_HOME/01_WB-01_公司首頁_儀表板_Mother_Compliant_Basic_Design.docx",
+            "02_FRONT/02_CORE-01_核心 AI 工作區_Mother_Compliant_Basic_Design.docx",
+            "05_SYSTEM_LOGIC/20_SYSTEM-LOGIC_全站系統邏輯與共享 Runtime_AI Continuity_Mother_Compliant_Basic_Design.docx"
+          ]
+          if any(x in alltext["00_INDEX_ACPOS_Mother_Compliant_Basic_Design_Master.docx"] for x in old_refs):
+              raise SystemExit("INDEX_OLD_REFERENCE_RESIDUAL")
+          idx=alltext["00_INDEX_ACPOS_Mother_Compliant_Basic_Design_Master.docx"]
+          if "共 31 份 Word" not in idx or "[ACPOS-CURRENT-SUPPORTING-WORD-CORPUS-V1]" not in idx:
+              raise SystemExit("INDEX_DENOMINATOR_NOT_UPDATED")
+          if re.search(r"Current exact tree\s+[0-9a-f]{40}",corpus,re.I):
+              raise SystemExit("STALE_TREE_LITERAL_REMAINS")
+          bad_current=[]
+          for fn,s in alltext.items():
+              if re.search(r"GitHub\s+new\s+live\s+HEAD",s,re.I): bad_current.append((fn,"GITHUB_NEW_LIVE"))
+              if re.search(r"(?:Live HEAD|Current HEAD)\s*(?:[:：|]\s*)?[0-9a-f]{40}",s,re.I): bad_current.append((fn,"STATIC_HEAD"))
+              if re.search(r"(?:GitHub branch|Current Branch|Repository / Branch)\s*(?:\||\n|:)\s*(?:new|rebuild-v2\.1\.1)",s,re.I): bad_current.append((fn,"STALE_BRANCH"))
+          if bad_current: raise SystemExit("CURRENT_TRUTH_RESIDUAL "+repr(bad_current[:20]))
+          # Strategy exact target rows.
+          targets={
+            "CTRL-ADMIN-STR-03-ACT-01-ACT-DRAFT-SAVE":"INTENTIONAL_FAIL_CLOSED_AUTHORITY_GAP",
+            "CTRL-ADMIN-STR-04-ACT-03-ACT-EXPORT":"EFFECTFUL_EXACT",
+            "CTRL-ADMIN-STR-05-ACT-01-ACT-CANDIDATE-CREATE":"INTENTIONAL_FAIL_CLOSED_AUTHORITY_GAP",
+            "CTRL-ADMIN-STR-06-ACT-01-ACT-CANDIDATE-COMPARE":"READ_EXACT",
+            "CTRL-ADMIN-STR-06-ACT-02-ACT-CANDIDATE-DECIDE":"INTENTIONAL_FAIL_CLOSED_AUTHORITY_GAP",
+            "CTRL-ADMIN-STR-06-ACT-03-ACT-ADOPT-CONTEXT":"EFFECTFUL_EXACT"
+          }
+          for fn in [
+            "08_ACPOS_Strategy_Intelligence_MultiAI_Decision_System_Mother_Basic_Logic_Design_Normative_Contract_v1.0.docx",
+            "ACPOS_admin_STR-01_戰略中心後台_Mother_Basic_Design_OPTIMIZED.docx"
+          ]:
+              d=Document(fn); seen=set()
+              for t in d.tables:
+                  h=[norm(c.text) for c in t.rows[0].cells] if t.rows else []
+                  if "Control UID" not in h: continue
+                  ci=h.index("Control UID")
+                  for row in t.rows[1:]:
+                      uid=norm(row.cells[ci].text)
+                      if uid not in targets: continue
+                      txt=" | ".join(norm(c.text) for c in row.cells)
+                      if "SOURCE_NOT_DEFINED" in txt: raise SystemExit(f"STRATEGY_SOURCE_NOT_DEFINED_REMAINS {fn} {uid}")
+                      if h==["Control UID","UID Status","Label","Type","Action UID","Gate","Permission / Auth Resource","Payload / Schema","Operation","Method / Path","Runtime Owner","Persistence Owner","Runtime Status"]:
+                          if norm(row.cells[h.index("Runtime Status")].text)!=targets[uid]:
+                              raise SystemExit(f"STRATEGY_STATUS_MISMATCH {fn} {uid}")
+                          seen.add(uid)
+              if seen!=set(targets): raise SystemExit(f"STRATEGY_TARGET_SET_FAIL {fn} {seen}")
+          g=alltext["ACPOS_SYSTEM_LOGIC_GLOBAL_INTEGRATION_Mother_Basic_Design_OPTIMIZED.docx"]
+          for pat in [r"BATCH\d+_MACHINE_JSON",r"Batch\s+\d+\s*[·:]",r"Persisted Resume Point",r"remaining_contract_cells",r'"payload_defined"\s*:',r'"persistence_owner_defined"\s*:']:
+              if re.search(pat,g,re.I): raise SystemExit("GLOBAL_HISTORY_RESIDUAL "+pat)
+          print("BATCH102_POSTWRITE_PASS="+json.dumps({
+            "docx":len(docs),"index_old_refs":0,"stale_tree":0,"current_truth_residual":0,
+            "strategy_source_not_defined":0,"global_history_residual":0
+          },sort_keys=True))
+          PY
+      - name: Render all 31 current Word files
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p __render102/pdf __render102/png
+          while IFS= read -r -d '' f; do
+            libreoffice --headless --convert-to pdf --outdir __render102/pdf "$f" >/tmp/lo102.log 2>&1 || { echo "RENDER_FAIL $f"; cat /tmp/lo102.log; exit 1; }
+          done < <(find . -maxdepth 1 -name '*.docx' -print0 | sort -z)
+          python - <<'PY'
+          from pathlib import Path
+          import subprocess,re,json
+          pdfs=sorted(Path("__render102/pdf").glob("*.pdf"))
+          if len(pdfs)!=31:raise SystemExit(f"PDF_COUNT_FAIL {len(pdfs)}")
+          pages={};total=0
+          for pdf in pdfs:
+              slug=re.sub(r"[^A-Za-z0-9_.-]+","_",pdf.stem)
+              subprocess.check_call(["pdftoppm","-png","-r","96",str(pdf),str(Path("__render102/png")/slug)])
+              n=len(list(Path("__render102/png").glob(slug+"-*.png")))
+              if n<=0:raise SystemExit(f"NO_PNG {pdf}")
+              pages[pdf.name]=n;total+=n
+          Path("__batch102_render_manifest.json").write_text(json.dumps({"pdf_count":31,"png_count":total,"pages":pages},ensure_ascii=False,indent=2),encoding="utf-8")
+          print("BATCH102_RENDER_PASS="+json.dumps({"pdf_count":31,"png_count":total},sort_keys=True))
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: acpos-batch102-remediated-word-and-render
+          path: |
+            *.docx
+            __render102/pdf/*.pdf
+            __render102/png/*.png
+            __batch102_patch_manifest.json
+            __batch102_render_manifest.json
+          retention-days: 3
+      - name: Commit remediation
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf __render102 __batch102_patch_manifest.json __batch102_render_manifest.json
+          git config user.name "acpos-batch102-remediator"
+          git config user.email "actions@users.noreply.github.com"
+          git rm -f .github/workflows/acpos_batch102_word_content_quality_remediation.yml
+          git add *.docx
+          git commit -m "fix(acpos): remove Word stale truth pollution and close strategy design dispositions"
+          git push origin HEAD:0921acpos
