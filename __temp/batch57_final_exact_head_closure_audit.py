@@ -94,6 +94,7 @@ for fn in root_names:
 exact_rows=[]
 contract_gaps=[]
 operation_missing=[]
+passive_read_bindings=[]
 operation_placeholders=[]
 action_gaps=[]
 gate_gaps=[]
@@ -110,7 +111,20 @@ for page,fn in PAGES.items():
         exact_rows.append((page,uid,st))
         op=r.get("operation","")
         if missing(op):
-            operation_missing.append((page,uid,st))
+            # READ_EXACT passive projection/display bindings do not require a
+            # per-control Operation when there is no Action. They consume the
+            # page/read-model projection rather than define an endpoint.
+            if st=="READ_EXACT" and missing(r.get("action","")):
+                passive_read_bindings.append({
+                    "page":page,"uid":uid,"type":r.get("type",""),"label":r.get("label",""),
+                    "runtime_status":st,"runtime_owner":r.get("runtime_owner",""),
+                    "gate":r.get("gate",""),"permission":r.get("permission","")
+                })
+                for f in ["runtime_status","runtime_owner"]:
+                    vals=r["_values"].get(f,[])
+                    if len(vals)>1:multi_value_conflicts.append((page,uid,f,vals))
+                continue
+            operation_missing.append((page,uid,st,r.get("action",""),r.get("type","")))
             continue
         if placeholder_op(op):operation_placeholders.append((page,uid,op))
         if missing(r.get("action","")):action_gaps.append((page,uid,op))
@@ -148,6 +162,7 @@ summary={
 "invalid_non_docx_root_items":0,
 "page_contract_docs":len(PAGES),
 "exact_runtime_controls":len(exact_rows),
+"passive_read_bindings_without_operation":len(passive_read_bindings),
 "operation_missing":0,
 "operation_placeholders":0,
 "action_gaps":0,
@@ -162,6 +177,7 @@ summary={
 }
 report={"marker":"ACPOS-20260922-BATCH-57-FINAL-EXACT-HEAD-CONTRACT-CLOSURE-AUDIT-V1","summary":summary,
 "doc_integrity":doc_integrity,"exact_runtime_controls":[{"page":p,"uid":u,"runtime_status":s} for p,u,s in exact_rows],
+"passive_read_bindings_without_operation":passive_read_bindings,
 "failures":{"operation_missing":operation_missing,"operation_placeholders":operation_placeholders,"action_gaps":action_gaps,
 "gate_gaps":gate_gaps,"permission_gaps":permission_gaps,"runtime_owner_gaps":runtime_owner_gaps,"contract_gaps":contract_gaps,
 "multi_value_conflicts":multi_value_conflicts,"route_operation_conflicts":route_operation_conflicts}}
