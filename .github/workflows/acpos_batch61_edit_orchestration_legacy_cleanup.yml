@@ -1,0 +1,204 @@
+name: ACPOS Batch 61 EDIT Orchestration Legacy Cleanup
+
+on:
+  push:
+    branches: [0921acpos]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: acpos-batch61-edit-orchestration-cleanup
+  cancel-in-progress: false
+
+jobs:
+  remediate:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 75
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Verify Batch 60 clean Word boundary
+        shell: bash
+        run: |
+          set -euo pipefail
+          BASE="bfa065ca445959d9d872cbefdf6c35c00379a106"
+          git cat-file -e "$BASE^{commit}"
+          test -z "$(git -c core.quotePath=false diff --name-only "$BASE" HEAD -- '*.docx')"
+          test "$(find . -maxdepth 1 -type f -name '*.docx' | wc -l)" -eq 31
+          echo "PASS: BATCH60 WORD BOUNDARY"
+
+      - name: Install Word QA runtime
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq libreoffice-writer poppler-utils fonts-noto-cjk
+          python -m pip install --quiet python-docx pillow
+
+      - name: Apply Batch 61 remediation
+        env:
+          PYTHONDONTWRITEBYTECODE: "1"
+        run: python -B __temp/batch61_edit_orchestration_legacy_cleanup.py
+
+      - name: Verify Batch 61 semantics
+        shell: bash
+        run: |
+          PYTHONDONTWRITEBYTECODE=1 python -B - <<'PY'
+          import json
+          from pathlib import Path
+          r=json.loads(Path("__batch61_remediation_report.json").read_text(encoding="utf-8"))
+          m=r["machine"]
+          assert m["changed_docs"]==4,m
+          assert m["legacy_revision_name_replacements"]==1,m
+          assert m["ambiguous_locator_replacements"]==8,m
+          assert m["target_control_rows_patched"]==2,m
+          assert m["historical_ledger_rows_patched"]==2,m
+          assert m["orchestration_operation"]=="dispatchEditingFlowStartContinue",m
+          assert m["public_api_created"] is False,m
+          assert m["atomic_ports_reused"]==2,m
+          assert m["dispatch_exactly_one_port"] is True,m
+          assert m["ui_permission"]=="EDITING_USE" and m["runtime_port_permission"]=="editing.task.execute",m
+          assert m["runtime_execution_claimed"] is False,m
+          print("PASS: BATCH61 SEMANTICS")
+          PY
+
+      - name: Convert four changed DOCX to PDF
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p __render_qa_batch61/pdf
+          while IFS= read -r f; do
+            libreoffice --headless --convert-to pdf --outdir __render_qa_batch61/pdf "$f" >/dev/null
+          done <<'EOF'
+          02_ACPOS_AI_Conversation_Memory_MultiAI_Assistant_Mother_Basic_Logic_Design_Normative_Contract_v1.0.docx
+          05_ACPOS_Creative_Production_AI_ASSET_VIDEO_EDIT_VOICE_QA_Mother_Basic_Logic_Design_Normative_Contract_v1.0.docx
+          ACPOS_EDIT-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx
+          ACPOS_SYSTEM_LOGIC_GLOBAL_INTEGRATION_Mother_Basic_Design_OPTIMIZED.docx
+          EOF
+
+      - name: Full render encoding geometry and review-page QA
+        shell: bash
+        run: |
+          PYTHONDONTWRITEBYTECODE=1 python -B - <<'PY'
+          from pathlib import Path
+          import zipfile,xml.etree.ElementTree as ET,subprocess,re,json,math,shutil
+          from PIL import Image,ImageDraw
+          r=json.loads(Path("__batch61_remediation_report.json").read_text(encoding="utf-8"))
+          root=Path("__render_qa_batch61")
+          for d in ["png","contact","review_pages"]: (root/d).mkdir(exist_ok=True)
+          cjk=re.compile(r"[\u3400-\u4dbf\u4e00-\u9fff\uf900-\ufaff]")
+          bad=["\ufffd","ï¿½","â€™","â€œ","â€","Ã¤","Ã¥","Ã©","Ã¨","Â©","Â®","ðŸ"]
+          needles={
+            "02_ACPOS_AI_Conversation_Memory_MultiAI_Assistant_Mother_Basic_Logic_Design_Normative_Contract_v1.0.docx":["歷史/舊版 master"],
+            "05_ACPOS_Creative_Production_AI_ASSET_VIDEO_EDIT_VOICE_QA_Mother_Basic_Logic_Design_Normative_Contract_v1.0.docx":["dispatchEditingFlowStartContinue","Batch 61"],
+            "ACPOS_EDIT-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx":["dispatchEditingFlowStartContinue","Batch 61"],
+            "ACPOS_SYSTEM_LOGIC_GLOBAL_INTEGRATION_Mother_Basic_Design_OPTIMIZED.docx":["table 26 / row 9","Batch 61"],
+          }
+          rep={};locations={};total=0
+          for fn in r["changed_docs"]:
+              p=Path(fn);pdf=root/"pdf"/(p.stem+".pdf")
+              assert pdf.exists() and pdf.stat().st_size>0,(fn,"PDF_MISSING")
+              with zipfile.ZipFile(p) as z:
+                  assert z.testzip() is None,(fn,"ZIP_CRC")
+                  for n in [x for x in z.namelist() if x.endswith(".xml") or x.endswith(".rels")]: ET.fromstring(z.read(n))
+                  dx=ET.fromstring(z.read("word/document.xml"));ns="{http://schemas.openxmlformats.org/wordprocessingml/2006/main}"
+                  src="".join((e.text or "") for e in dx.iter(ns+"t"))
+              txt=subprocess.check_output(["pdftotext","-layout",str(pdf),"-"],text=True,errors="strict")
+              assert not [x for x in bad if x in src or x in txt],(fn,"MOJIBAKE")
+              sc=len(cjk.findall(src));pc=len(cjk.findall(txt))
+              ratio=pc/sc if sc else 1.0
+              assert ratio>=0.97,(fn,sc,pc,ratio)
+              out=root/"png"/p.stem;out.mkdir(exist_ok=True)
+              subprocess.check_call(["pdftoppm","-png","-r","96",str(pdf),str(out/"page")],stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL)
+              imgs=sorted(out.glob("page-*.png"));assert imgs
+              blank=[];edge=[];thumbs=[]
+              for idx,imf in enumerate(imgs,1):
+                  im=Image.open(imf).convert("L");w,h=im.size
+                  bbox=im.point(lambda x:255 if x<245 else 0).getbbox()
+                  if bbox is None:blank.append(idx)
+                  elif bbox[0]<=1 or bbox[1]<=1 or bbox[2]>=w-1 or bbox[3]>=h-1:edge.append({"page":idx,"bbox":bbox,"size":[w,h]})
+                  th=Image.open(imf).convert("RGB");th.thumbnail((260,360));thumbs.append((idx,th.copy()))
+              assert not blank,(fn,"BLANK",blank)
+              assert not edge,(fn,"EDGE",edge[:10])
+              cols=3;cw=275;ch=385;rows=math.ceil(len(thumbs)/cols)
+              sheet=Image.new("RGB",(cols*cw,rows*ch),"white");draw=ImageDraw.Draw(sheet)
+              for i,(page_no,im) in enumerate(thumbs):
+                  x=(i%cols)*cw+5;y=(i//cols)*ch+18
+                  sheet.paste(im,(x,y));draw.text((x,2+(i//cols)*ch),f"p{page_no}",fill="black")
+              sheet.save(root/"contact"/(p.stem+"_contact.jpg"),quality=86)
+              # Locate changed text pages by page-level pdftotext and copy their 96dpi PNG for manual review.
+              loc={}
+              for nd in needles.get(fn,[]):
+                  ps=[]
+                  for page_no in range(1,len(imgs)+1):
+                      pt=subprocess.check_output(["pdftotext","-f",str(page_no),"-l",str(page_no),"-layout",str(pdf),"-"],text=True,errors="replace")
+                      if nd in pt: ps.append(page_no)
+                  assert ps,(fn,"NEEDLE_PAGE_NOT_FOUND",nd)
+                  loc[nd]=ps
+                  for page_no in ps:
+                      srcimg=imgs[page_no-1]
+                      shutil.copy2(srcimg,root/"review_pages"/(p.stem+f"_p{page_no:03d}.png"))
+              locations[fn]=loc
+              total+=len(imgs)
+              rep[fn]={"pages":len(imgs),"cjk_ratio":ratio,"blank":0,"edge_clip":0,"status":"PASS"}
+              shutil.rmtree(out)
+          rep["_summary"]={"documents":len(r["changed_docs"]),"pages":total,"blank":0,"edge_clip":0,"status":"PASS"}
+          (root/"qa_report.json").write_text(json.dumps(rep,ensure_ascii=False,indent=2),encoding="utf-8")
+          (root/"page_locations.json").write_text(json.dumps(locations,ensure_ascii=False,indent=2),encoding="utf-8")
+          print("PASS: BATCH61 WORD QA",rep["_summary"])
+          print(json.dumps(locations,ensure_ascii=False,sort_keys=True))
+          PY
+
+      - name: Verify exact Word scope
+        shell: bash
+        run: |
+          PYTHONDONTWRITEBYTECODE=1 python -B - <<'PY'
+          import subprocess,json
+          from pathlib import Path
+          r=json.loads(Path("__batch61_remediation_report.json").read_text(encoding="utf-8"))
+          out=subprocess.check_output(["git","-c","core.quotePath=false","diff","--name-only","bfa065ca445959d9d872cbefdf6c35c00379a106","--","*.docx"],text=True)
+          changed=sorted(x for x in out.splitlines() if x)
+          expected=sorted(r["changed_docs"])
+          assert changed==expected,{"changed":changed,"expected":expected}
+          assert len(changed)==4
+          print("PASS: EXACT WORD SCOPE = 4")
+          PY
+
+      - name: Collect Batch 61 evidence
+        shell: bash
+        run: |
+          mkdir -p __batch61_evidence
+          cp __batch61_remediation_report.json __batch61_evidence/
+          cp __render_qa_batch61/qa_report.json __render_qa_batch61/
+          cp -R __render_qa_batch61/contact __render_qa_batch61/review_pages __render_qa_batch61/page_locations.json __batch61_evidence/
+          cp __render_qa_batch61/qa_report.json __batch61_evidence/
+
+      - name: Upload Batch 61 evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: acpos-batch61-edit-orchestration-legacy-cleanup-evidence
+          path: __batch61_evidence
+          retention-days: 2
+          if-no-files-found: error
+
+      - name: Commit Batch 61 and remove tooling
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "acpos-word-batch-61"
+          git config user.email "actions@users.noreply.github.com"
+          git add -- \
+            "02_ACPOS_AI_Conversation_Memory_MultiAI_Assistant_Mother_Basic_Logic_Design_Normative_Contract_v1.0.docx" \
+            "05_ACPOS_Creative_Production_AI_ASSET_VIDEO_EDIT_VOICE_QA_Mother_Basic_Logic_Design_Normative_Contract_v1.0.docx" \
+            "ACPOS_EDIT-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx" \
+            "ACPOS_SYSTEM_LOGIC_GLOBAL_INTEGRATION_Mother_Basic_Design_OPTIMIZED.docx"
+          git rm -f __temp/batch61_edit_orchestration_legacy_cleanup.py .github/workflows/acpos_batch61_edit_orchestration_legacy_cleanup.yml
+          rm -rf __batch61_remediation_report.json __batch61_evidence __render_qa_batch61
+          find . -type d -name __pycache__ -prune -exec rm -rf {} +
+          test "$(git diff --cached --name-only -- '*.docx' | wc -l)" -eq 4
+          git commit -m "docs(acpos): fix edit start orchestration and legacy revision ambiguity"
+          git push origin HEAD:0921acpos
+          test -z "$(git status --porcelain)"
+          echo "PASS: BATCH61 COMMITTED / CLEAN TREE"
