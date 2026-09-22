@@ -1,0 +1,167 @@
+name: ACPOS Batch 104 Fresh Word Quality Closure
+on:
+  push:
+    branches: [0921acpos]
+    paths:
+      - .github/workflows/acpos_batch104_fresh_word_quality_closure.yml
+permissions:
+  contents: write
+jobs:
+  audit:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 50
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 2}
+      - name: Install render tools
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq libreoffice poppler-utils imagemagick fonts-noto-cjk
+      - name: Fresh five-category closure audit
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+          import zipfile,xml.etree.ElementTree as ET,re,json,collections,subprocess,unicodedata
+          PARENT="a8a5c1d33b049a56c8b2da5af9e0000ce1729b93"
+          TREE="d92c91649e190ccb179e0e7253df3458e5a63be9"
+          if subprocess.check_output(["git","rev-parse","HEAD^"],text=True).strip()!=PARENT: raise SystemExit("EXACT_PARENT_FAIL")
+          if subprocess.check_output(["git","rev-parse","HEAD^^{tree}"],text=True).strip()!=TREE: raise SystemExit("WORD_TREE_DRIFT")
+          ds=sorted(Path(".").glob("*.docx"))
+          if len(ds)!=31: raise SystemExit(f"DOCX_COUNT_FAIL {len(ds)}")
+          W="{http://schemas.openxmlformats.org/wordprocessingml/2006/main}"
+          def n(s): return re.sub(r"\s+"," ",(s or "").replace("\n"," | ").strip())
+          def tx(e): return n("".join((x.text or "") for x in e.iter(W+"t")))
+          corpus={}; hard=[]; tracked=[]
+          badchars=set(chr(i) for i in list(range(0,9))+[11,12]+list(range(14,32)))
+          for d in ds:
+            with zipfile.ZipFile(d) as z:
+              if z.testzip(): hard.append([d.name,"ZIP_CRC"])
+              texts=[]; tabs=[]
+              for part in [x for x in z.namelist() if x.endswith(".xml")]:
+                try: root=ET.fromstring(z.read(part))
+                except Exception: hard.append([d.name,"XML_PARSE",part]); continue
+                if any(x.tag==W+"ins" for x in root.iter()): tracked.append([d.name,"INSERT",part])
+                if any(x.tag==W+"del" for x in root.iter()): tracked.append([d.name,"DELETE",part])
+                texts += [t.text for t in root.iter(W+"t") if t.text]
+              if "word/comments.xml" in z.namelist(): tracked.append([d.name,"COMMENTS"])
+              full="\n".join(texts)
+              if any(ch in badchars or unicodedata.category(ch)=="Cs" for ch in full): hard.append([d.name,"INVALID_CHAR"])
+              if any(x in full for x in ["ï¿½","â€™","â€œ","â€","æ–‡","ä¸­æ–‡","�"]): hard.append([d.name,"MOJIBAKE"])
+              root=ET.fromstring(z.read("word/document.xml"))
+              for t in root.iter(W+"tbl"):
+                trs=[x for x in list(t) if x.tag==W+"tr"]
+                if trs:
+                  rows=[[tx(c) for c in list(r) if c.tag==W+"tc"] for r in trs]
+                  tabs.append([rows[0],rows[1:]])
+              corpus[d.name]=[full,tabs]
+          idx=corpus["00_INDEX_ACPOS_Mother_Compliant_Basic_Design_Master.docx"][0]
+          oldrefs=re.findall(r"(?:01_HOME|02_FRONT|03_ADMIN|04_LOGIN|05_SYSTEM_LOGIC)/[^\n|]*?Mother_Compliant_Basic_Design\.docx",idx)
+          support=[
+            "ACPOS_GLOBAL_HOME_SHELL_NAVIGATION_Mother_Basic_Design_OPTIMIZED.docx",
+            "01_ACPOS_Global_Intelligent_Brain_Information_Lifecycle_Mother_Basic_Logic_Design_Normative_Contract_v4.docx",
+            "02_ACPOS_AI_Conversation_Memory_MultiAI_Assistant_Mother_Basic_Logic_Design_Normative_Contract_v1.0.docx",
+            "03_ACPOS_AI_Execution_Script_Compiler_Tool_AIAPI_Runtime_Mother_Basic_Logic_Design_Normative_Contract_v1.0.docx",
+            "04_ACPOS_CORE_AI_Blueprint_Canonical_Script_System_Mother_Basic_Logic_Design_Normative_Contract_v1.0.docx",
+            "05_ACPOS_Creative_Production_AI_ASSET_VIDEO_EDIT_VOICE_QA_Mother_Basic_Logic_Design_Normative_Contract_v1.0.docx",
+            "06_ACPOS_Enterprise_Business_Development_AI_System_Mother_Basic_Logic_Design_Normative_Contract_v1.0.docx",
+            "07_ACPOS_Social_Publishing_AI_System_Mother_Basic_Logic_Design_Normative_Contract_v1.0.docx",
+            "08_ACPOS_Strategy_Intelligence_MultiAI_Decision_System_Mother_Basic_Logic_Design_Normative_Contract_v1.0.docx",
+            "09_ACPOS_AI_System_Engineer_Self_Inspection_Evolution_System_Mother_Basic_Logic_Design_Normative_Contract_v1.0.docx"]
+          idxmiss=[x for x in support if x not in idx]
+          alltxt="\n".join(x[0] for x in corpus.values())
+          stale=re.findall(r"Current exact tree\s+[0-9a-f]{40}",alltxt,re.I)
+          truth=[]
+          pats=[r"GitHub\s+new\s+live\s+HEAD",r"(?:Live HEAD|Current HEAD)\s*(?:[:：|]\s*)?[0-9a-f]{40}",r"(?:GitHub branch|Current Branch|Repository / Branch)\s*(?:\||\n|:)\s*(?:new|rebuild-v2\.1\.1)"]
+          for fn,(s,_) in corpus.items():
+            for p in pats:
+              if re.search(p,s,re.I): truth.append([fn,p])
+          expected={
+            "CTRL-ADMIN-STR-03-ACT-01-ACT-DRAFT-SAVE":"INTENTIONAL_FAIL_CLOSED_AUTHORITY_GAP",
+            "CTRL-ADMIN-STR-04-ACT-03-ACT-EXPORT":"EFFECTFUL_EXACT",
+            "CTRL-ADMIN-STR-05-ACT-01-ACT-CANDIDATE-CREATE":"INTENTIONAL_FAIL_CLOSED_AUTHORITY_GAP",
+            "CTRL-ADMIN-STR-06-ACT-01-ACT-CANDIDATE-COMPARE":"READ_EXACT",
+            "CTRL-ADMIN-STR-06-ACT-02-ACT-CANDIDATE-DECIDE":"INTENTIONAL_FAIL_CLOSED_AUTHORITY_GAP",
+            "CTRL-ADMIN-STR-06-ACT-03-ACT-ADOPT-CONTEXT":"EFFECTFUL_EXACT"}
+          sbad=[]; seen={}
+          for fn in ["08_ACPOS_Strategy_Intelligence_MultiAI_Decision_System_Mother_Basic_Logic_Design_Normative_Contract_v1.0.docx","ACPOS_admin_STR-01_戰略中心後台_Mother_Basic_Design_OPTIMIZED.docx"]:
+            seen[fn]=set()
+            for h,rows in corpus[fn][1]:
+              if h==["Control UID","UID Status","Label","Type","Action UID","Gate","Permission / Auth Resource","Payload / Schema","Operation","Method / Path","Runtime Owner","Persistence Owner","Runtime Status"]:
+                for r in rows:
+                  if r and r[0] in expected:
+                    seen[fn].add(r[0])
+                    if "SOURCE_NOT_DEFINED" in " | ".join(r) or r[12]!=expected[r[0]]: sbad.append([fn,r[0],r[12]])
+            if seen[fn]!=set(expected): sbad.append([fn,"TARGET_SET",sorted(seen[fn])])
+          g=corpus["ACPOS_SYSTEM_LOGIC_GLOBAL_INTEGRATION_Mother_Basic_Design_OPTIMIZED.docx"][0]
+          gh=[p for p in [r"BATCH\d+_MACHINE_JSON",r"Batch\s+\d+\s*[·:]",r"Persisted Resume Point",r"remaining_contract_cells",r'"payload_defined"\s*:',r'"persistence_owner_defined"\s*:'] if re.search(p,g,re.I)]
+          app=[]; hier=0
+          HH=["Parent Identity","Child Identity","Cardinality","Creation Entry","Payload / Reference Binding","Ordering Semantics","Permission","State Dependency","Version Dependency","Move / Reparent","Archive / Delete Propagation","Upstream Change Impact","Downstream Revalidation","Authority Evidence"]
+          for _,tabs in corpus.values():
+            for h,rows in tabs:
+              if h==["Entity","Operation","Applicability","Authority Evidence"]: app += [r for r in rows if len(r)>=4]
+              if h==HH: hier += len(rows)
+          ac=collections.Counter(r[2] for r in app)
+          S={"docx":31,"hard":len(hard),"tracked":len(tracked),"index_old_refs":len(oldrefs),"index_count_ok":"共 31 份 Word" in idx,
+             "index_support_missing":len(idxmiss),"index_marker_ok":"[ACPOS-CURRENT-SUPPORTING-WORD-CORPUS-V1]" in idx,
+             "stale_tree":len(stale),"current_truth":len(truth),"strategy_findings":len(sbad),"global_history":len(gh),
+             "history_marker_ok":"[ACPOS-GLOBAL-INTEGRATION-HISTORY-SEPARATION-V1]" in g,
+             "app_rows":len(app),"required":ac["REQUIRED"],"optional":ac["OPTIONAL"],"not_applicable":ac["NOT_APPLICABLE"],"hierarchy_rows":hier}
+          Path("__batch104_quality.json").write_text(json.dumps({"summary":S,"hard":hard,"tracked":tracked,"oldrefs":oldrefs,"idxmiss":idxmiss,"truth":truth,"strategy":sbad,"global_history":gh},ensure_ascii=False,indent=2))
+          print("BATCH104_SUMMARY="+json.dumps(S,ensure_ascii=False,sort_keys=True))
+          fail=[]
+          if hard or tracked: fail+=["INTEGRITY"]
+          if oldrefs or not S["index_count_ok"] or idxmiss or not S["index_marker_ok"]: fail+=["INDEX"]
+          if stale: fail+=["STALE_TREE"]
+          if truth: fail+=["CURRENT_TRUTH"]
+          if sbad: fail+=["STRATEGY"]
+          if gh or not S["history_marker_ok"]: fail+=["GLOBAL_HISTORY"]
+          if len(app)!=2300 or ac["REQUIRED"]!=237 or ac["OPTIONAL"]!=0 or ac["NOT_APPLICABLE"]!=2063: fail+=["APP"]
+          if hier!=8: fail+=["HIERARCHY"]
+          if fail: raise SystemExit("BATCH104_FAIL "+repr(fail))
+          print("BATCH104_FRESH_QUALITY_PASS")
+          PY
+      - name: Render 31 Word and contact sheets
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p __r104/pdf __r104/jpg __r104/contact
+          while IFS= read -r -d '' f; do libreoffice --headless --convert-to pdf --outdir __r104/pdf "$f" >/tmp/lo104.log 2>&1 || { cat /tmp/lo104.log; exit 1; }; done < <(find . -maxdepth 1 -name '*.docx' -print0 | sort -z)
+          test "$(find __r104/pdf -name '*.pdf' | wc -l)" -eq 31
+          : > __r104/contact/MAPPING.txt
+          i=0; total=0
+          while IFS= read -r -d '' p; do
+            i=$((i+1)); id=$(printf "%02d" "$i"); base=$(basename "$p" .pdf)
+            pdftoppm -jpeg -r 36 "$p" "__r104/jpg/$id" >/dev/null 2>&1
+            n=$(find __r104/jpg -name "$id-*.jpg" | wc -l); total=$((total+n))
+            montage __r104/jpg/$id-*.jpg -thumbnail 170x -tile 5x -geometry +5+18 "__r104/contact/$id.jpg"
+            printf "%s|%s|%s\n" "$id" "$base" "$n" >> __r104/contact/MAPPING.txt
+          done < <(find __r104/pdf -name '*.pdf' -print0 | sort -z)
+          montage __r104/contact/[0-9][0-9].jpg -thumbnail 250x -tile 4x -geometry +8+24 __r104/contact/MASTER_31_DOCS.jpg
+          python - <<'PY'
+          from pathlib import Path
+          import json
+          rows=[]
+          for line in Path("__r104/contact/MAPPING.txt").read_text().splitlines():
+            i,n,p=line.split("|",2); rows.append({"id":i,"name":n,"pages":int(p)})
+          Path("__batch104_render.json").write_text(json.dumps({"pdf_count":31,"page_count":sum(x["pages"] for x in rows),"documents":rows},ensure_ascii=False,indent=2))
+          print("BATCH104_RENDER_PASS="+json.dumps({"pdf_count":31,"page_count":sum(x["pages"] for x in rows),"contact_sheets":31}))
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: acpos-batch104-fresh-quality-closure
+          path: |
+            __batch104_quality.json
+            __batch104_render.json
+            __r104/contact/*
+          retention-days: 3
+      - name: Close harness
+        run: |
+          rm -rf __r104 __batch104_quality.json __batch104_render.json
+          git config user.name acpos-batch104-audit
+          git config user.email actions@users.noreply.github.com
+          git rm -f .github/workflows/acpos_batch104_fresh_word_quality_closure.yml
+          git commit -m "chore(acpos): close batch 104 fresh Word quality audit"
+          git push origin HEAD:0921acpos
