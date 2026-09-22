@@ -1,0 +1,259 @@
+name: ACPOS Batch 79 Compound Entity Source Remediation
+on:
+  push:
+    branches: [0921acpos]
+    paths:
+      - .github/workflows/acpos_batch79_compound_entity_source_remediation.yml
+permissions:
+  contents: write
+jobs:
+  remediate:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+      - name: Install DOCX tooling
+        run: python -m pip install --quiet python-docx
+      - name: Apply source-backed entity corrections
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+          from copy import deepcopy
+          import re,subprocess,zipfile
+          from docx import Document
+          from docx.table import _Row
+
+          EXPECTED_PARENT="04b1da9e358f71be33db24947baf99ffd6aecd85"
+          WF=Path(".github/workflows/acpos_batch79_compound_entity_source_remediation.yml")
+          parent=subprocess.check_output(["git","rev-parse","HEAD^"],text=True).strip()
+          if parent!=EXPECTED_PARENT: raise SystemExit(f"EXACT_HEAD_PARENT_FAIL {parent}")
+
+          TARGETS={
+            "CORE":Path("ACPOS_CORE-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx"),
+            "DEV":Path("ACPOS_DEV-01_企業自動開發系統_Mother_Basic_Design_OPTIMIZED.docx"),
+            "INFO":Path("ACPOS_INFO-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx"),
+            "KB":Path("ACPOS_KB-01_知識庫_Mother_Basic_Design_OPTIMIZED.docx"),
+            "SYS":Path("ACPOS_SYS-01_系統維護與生命週期工作區_Mother_Basic_Design_OPTIMIZED.docx"),
+          }
+          for p in TARGETS.values():
+              if not p.exists(): raise SystemExit(f"MISSING_TARGET {p}")
+
+          def norm(s): return re.sub(r"\s+"," ",(s or "").strip())
+          def set_cell(cell,text):
+              if not cell.paragraphs:
+                  cell.add_paragraph()
+              p=cell.paragraphs[0]
+              if p.runs:
+                  p.runs[0].text=text
+                  for r in p.runs[1:]: r.text=""
+              else:
+                  p.add_run(text)
+              for extra in cell.paragraphs[1:]:
+                  for r in extra.runs:r.text=""
+
+          def find_rows(doc, col, exact):
+              out=[]
+              for ti,t in enumerate(doc.tables,1):
+                  for ri,row in enumerate(t.rows,1):
+                      if col < len(row.cells) and norm(row.cells[col].text)==exact:
+                          out.append((ti,ri,t,row))
+              return out
+
+          def replace_row(row, values):
+              if len(values)!=len(row.cells): raise RuntimeError(f"CELL_COUNT {len(row.cells)} != {len(values)}")
+              for c,v in zip(row.cells,values): set_cell(c,v)
+
+          def insert_clone_after(table,row,values):
+              new_tr=deepcopy(row._tr)
+              row._tr.addnext(new_tr)
+              new_row=_Row(new_tr,table)
+              replace_row(new_row,values)
+              return new_row
+
+          # CORE: three compound identities split by exact existing operations/owners.
+          p=TARGETS["CORE"]; doc=Document(p)
+          specs=[
+            ("AssistantSummary / CoreEvaluation",
+             ["AssistantSummary","createAssistantSummary / read within exact context","Assistant / Shared Conversation Core"],
+             ["CoreEvaluation","evaluateCoreCandidate / read criteria/evidence","CORE Evaluation"]),
+            ("ConversationThread / Message",
+             ["ConversationThread","createConversationThread / select / branch","AI Conversation Core"],
+             ["ConversationMessage","sendConversationMessage / analyze / quote","AI Conversation Core"]),
+            ("HumanDecision / StructuredDecision",
+             ["HumanDecision","recordCoreHumanDecision","Human / CORE"],
+             ["StructuredDecision","createAssistantStructuredDecision","Assistant / Shared Conversation Core"]),
+          ]
+          for old,a,b in specs:
+              hits=find_rows(doc,0,old)
+              if len(hits)!=1: raise RuntimeError(f"CORE_TARGET_{old}_{len(hits)}")
+              _,_,table,row=hits[0]
+              insert_clone_after(table,row,b)
+              replace_row(row,a)
+          doc.save(p)
+
+          # DEV: authority proves Audience is projection and Topic is a Profile field/value.
+          p=TARGETS["DEV"]; doc=Document(p)
+          hits=find_rows(doc,0,"Campaign / Audience")
+          if len(hits)!=1: raise RuntimeError(f"DEV_CAMPAIGN_TARGET_{len(hits)}")
+          _,_,_,row=hits[0]
+          replace_row(row,[
+            "Campaign",
+            "受眾批次、審查、統計；Audience Search/Filter 為 projection，不建立第二 Business Entity。",
+            "Create / Preview / Approve",
+            "OutreachBatchService",
+          ])
+          hits=find_rows(doc,0,"Discovery Profile / Topic")
+          if len(hits)!=1: raise RuntimeError(f"DEV_PROFILE_TARGET_{len(hits)}")
+          _,_,_,row=hits[0]
+          replace_row(row,[
+            "Discovery Profile",
+            "描述要找的商機條件與來源範圍；Topic 為 Profile 的條件／篩選值，不是獨立 Business Entity。",
+            "Create / Update / Activate / Pause / Retire（施工時綁唯一 owner）",
+            "Discovery domain；不得複製 KB Source Registry",
+          ])
+          doc.save(p)
+
+          # INFO: current authority is read/context selection only. Persist the non-BE role
+          # without inventing new entity UIDs or fake lifecycle.
+          p=TARGETS["INFO"]; doc=Document(p)
+          hits=find_rows(doc,1,"Inference / Recommendation")
+          if len(hits)!=1: raise RuntimeError(f"INFO_TARGET_{len(hits)}")
+          _,_,_,row=hits[0]
+          cells=[norm(c.text) for c in row.cells]
+          cells[3]="Entity Role=SUPPORTING_ARTIFACT；explicit non-FACT classification + supporting fact/evidence refs + scope；read/context selection only。"
+          replace_row(row,cells)
+          doc.save(p)
+
+          # KB: Acquisition Run already exists as the governed Business Entity. This row
+          # is only the page-submitted intent/request value.
+          p=TARGETS["KB"]; doc=Document(p)
+          hits=find_rows(doc,0,"KnowledgeAcquisitionIntent / Run")
+          if len(hits)!=1: raise RuntimeError(f"KB_TARGET_{len(hits)}")
+          _,_,_,row=hits[0]
+          replace_row(row,[
+            "KnowledgeAcquisitionIntent",
+            "Entity Role=VALUE_OBJECT；頁面提交 source_ref / scope / acquisition_mode / correlation_id / idempotency_key；Acquisition Run 為獨立 Business Entity。",
+            "Shared Acquisition Runtime",
+          ])
+          doc.save(p)
+
+          # SYS: avoid inventing local UIDs for shared Conversation/Thread/Message entities.
+          # Persist this inventory row as one exact shared-owner reference.
+          p=TARGETS["SYS"]; doc=Document(p)
+          hits=find_rows(doc,1,"Conversation / Thread")
+          if len(hits)!=1: raise RuntimeError(f"SYS_TARGET_{len(hits)}")
+          _,_,_,row=hits[0]
+          replace_row(row,[
+            norm(row.cells[0].text),
+            "Shared Conversation Core Reference",
+            "AI 討論共享實體參照",
+            "SHARED_OWNER_REFERENCE：Conversation / ConversationThread / ConversationMessage / Branch / Context / Decision Link；SYS-01 不建立第二套 entity owner。",
+            "Shared Conversation Core",
+          ])
+          doc.save(p)
+
+          # Zip integrity + exact target write set.
+          for p in TARGETS.values():
+              with zipfile.ZipFile(p) as z:
+                  bad=z.testzip()
+                  if bad: raise RuntimeError(f"ZIP_BAD {p} {bad}")
+
+          changed=subprocess.check_output(["git","-c","core.quotepath=false","diff","--name-only",EXPECTED_PARENT],text=True).splitlines()
+          expected=sorted(str(p) for p in TARGETS.values())+[".github/workflows/acpos_batch79_compound_entity_source_remediation.yml"]
+          if sorted(changed)!=sorted(expected):
+              raise SystemExit("WRITE_SET_FAIL\nEXPECTED="+repr(sorted(expected))+"\nACTUAL="+repr(sorted(changed)))
+          print("BATCH79_PATCH_PASS")
+          PY
+      - name: Structural verification
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from docx import Document
+          import re, json
+          def norm(s):return re.sub(r"\s+"," ",(s or "").strip())
+          def rows(fn):
+              d=Document(fn); out=[]
+              for ti,t in enumerate(d.tables,1):
+                  for ri,r in enumerate(t.rows,1):
+                      out.append((ti,ri,[norm(c.text) for c in r.cells]))
+              return out
+          checks={}
+          core=rows("ACPOS_CORE-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx")
+          flat=[c for _,_,r in core for c in r]
+          for old in ["AssistantSummary / CoreEvaluation","ConversationThread / Message","HumanDecision / StructuredDecision"]:
+              assert old not in flat,old
+          for new in ["AssistantSummary","CoreEvaluation","ConversationThread","ConversationMessage","HumanDecision","StructuredDecision"]:
+              assert new in flat,new
+          checks["CORE_SPLIT"]=6
+
+          dev=rows("ACPOS_DEV-01_企業自動開發系統_Mother_Basic_Design_OPTIMIZED.docx")
+          entity_rows=[r for _,_,r in dev if r and r[0] in {"Campaign","Discovery Profile"}]
+          assert len(entity_rows)>=2,entity_rows
+          assert any("Audience Search/Filter 為 projection" in " | ".join(r) for r in entity_rows)
+          assert any("Topic 為 Profile" in " | ".join(r) for r in entity_rows)
+          checks["DEV_RESOLUTION"]=2
+
+          info=rows("ACPOS_INFO-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx")
+          assert any(len(r)>3 and r[1]=="Inference / Recommendation" and "Entity Role=SUPPORTING_ARTIFACT" in r[3] for _,_,r in info)
+          checks["INFO_ROLE"]=1
+
+          kb=rows("ACPOS_KB-01_知識庫_Mother_Basic_Design_OPTIMIZED.docx")
+          assert any(r and r[0]=="KnowledgeAcquisitionIntent" and "Entity Role=VALUE_OBJECT" in " | ".join(r) for _,_,r in kb)
+          assert not any(r and r[0]=="KnowledgeAcquisitionIntent / Run" for _,_,r in kb)
+          assert any(r and r[0]=="Acquisition Run" for _,_,r in kb)
+          checks["KB_RESOLUTION"]=1
+
+          sysr=rows("ACPOS_SYS-01_系統維護與生命週期工作區_Mother_Basic_Design_OPTIMIZED.docx")
+          assert any(len(r)>4 and r[1]=="Shared Conversation Core Reference" and "SHARED_OWNER_REFERENCE" in r[3] for _,_,r in sysr)
+          assert not any(len(r)>1 and r[1]=="Conversation / Thread" for _,_,r in sysr)
+          checks["SYS_RESOLUTION"]=1
+
+          print("BATCH79_STRUCTURAL_PASS="+json.dumps(checks,ensure_ascii=False,sort_keys=True))
+          PY
+      - name: Render modified Word documents
+        shell: bash
+        run: |
+          set -euo pipefail
+          if ! command -v libreoffice >/dev/null 2>&1; then
+            sudo apt-get update -qq
+            sudo apt-get install -y -qq libreoffice poppler-utils fonts-noto-cjk
+          fi
+          mkdir -p __render79/pdf __render79/png
+          for f in             "ACPOS_CORE-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx"             "ACPOS_DEV-01_企業自動開發系統_Mother_Basic_Design_OPTIMIZED.docx"             "ACPOS_INFO-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx"             "ACPOS_KB-01_知識庫_Mother_Basic_Design_OPTIMIZED.docx"             "ACPOS_SYS-01_系統維護與生命週期工作區_Mother_Basic_Design_OPTIMIZED.docx"; do
+              libreoffice --headless --convert-to pdf --outdir __render79/pdf "$f" >/tmp/lo79.log 2>&1 || { cat /tmp/lo79.log; exit 1; }
+          done
+          python - <<'PY'
+          from pathlib import Path
+          import re,subprocess
+          out=Path("__render79/png")
+          for pdf in sorted(Path("__render79/pdf").glob("*.pdf")):
+              slug=re.sub(r"[^A-Za-z0-9_.-]+","_",pdf.stem)
+              subprocess.check_call(["pdftoppm","-png","-r","110",str(pdf),str(out/slug)])
+          pngs=list(out.glob("*.png"))
+          if not pngs: raise SystemExit("NO_RENDER_PNG")
+          print("BATCH79_RENDER_PNG_COUNT",len(pngs))
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: acpos-batch79-word-remediation-render
+          path: |
+            __render79/png/*.png
+            __render79/pdf/*.pdf
+          retention-days: 2
+      - name: Commit Word remediation and close harness
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf __render79
+          git config user.name "acpos-batch79-word-remediation"
+          git config user.email "actions@users.noreply.github.com"
+          git rm -f .github/workflows/acpos_batch79_compound_entity_source_remediation.yml
+          git add             "ACPOS_CORE-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx"             "ACPOS_DEV-01_企業自動開發系統_Mother_Basic_Design_OPTIMIZED.docx"             "ACPOS_INFO-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx"             "ACPOS_KB-01_知識庫_Mother_Basic_Design_OPTIMIZED.docx"             "ACPOS_SYS-01_系統維護與生命週期工作區_Mother_Basic_Design_OPTIMIZED.docx"
+          git commit -m "fix(acpos): resolve compound business entity source rows"
+          git push origin HEAD:0921acpos
