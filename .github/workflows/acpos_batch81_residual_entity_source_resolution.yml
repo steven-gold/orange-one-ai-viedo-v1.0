@@ -1,0 +1,123 @@
+name: ACPOS Batch 81 Residual Entity Source Resolution
+on:
+  push:
+    branches: [0921acpos]
+    paths:
+      - .github/workflows/acpos_batch81_residual_entity_source_resolution.yml
+permissions:
+  contents: write
+jobs:
+  audit:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+      - name: Resolve residual identities from current Word rows
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+          import json,re,subprocess,zipfile
+          import xml.etree.ElementTree as ET
+
+          EXPECTED_PARENT="7408ad0e8de761e66afa41aac57b79a995450bc4"
+          WF=Path(".github/workflows/acpos_batch81_residual_entity_source_resolution.yml")
+          parent=subprocess.check_output(["git","rev-parse","HEAD^"],text=True).strip()
+          if parent!=EXPECTED_PARENT: raise SystemExit(f"EXACT_HEAD_PARENT_FAIL {parent}")
+          WF.unlink()
+          drift=subprocess.check_output(["git","-c","core.quotepath=false","diff","--name-only",EXPECTED_PARENT],text=True).splitlines()
+          if drift: raise SystemExit(f"PRE_AUDIT_TREE_DRIFT {drift}")
+
+          TARGETS={
+            "CORE-01":["TopicProductionPackage"],
+            "DEV-01":["Company","Contact Point","Delivery","Market Signal"],
+            "ERP-01":["ERPFailure"],
+            "SOC-01":["ManualAction","PlatformCapability","PublishPolicy","PublishRequest","ExternalResult / Record"],
+            "KB-01":["Experience / Replay"],
+            "SYS-01":["Sandbox / Validation Run"],
+          }
+          FILES={
+            "CORE-01":"ACPOS_CORE-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx",
+            "DEV-01":"ACPOS_DEV-01_企業自動開發系統_Mother_Basic_Design_OPTIMIZED.docx",
+            "ERP-01":"ACPOS_ERP-01_ERP與財務_Mother_Basic_Design_OPTIMIZED.docx",
+            "SOC-01":"ACPOS_SOC-01_社群發布_Mother_Basic_Design_OPTIMIZED.docx",
+            "KB-01":"ACPOS_KB-01_知識庫_Mother_Basic_Design_OPTIMIZED.docx",
+            "SYS-01":"ACPOS_SYS-01_系統維護與生命週期工作區_Mother_Basic_Design_OPTIMIZED.docx",
+          }
+          W="{http://schemas.openxmlformats.org/wordprocessingml/2006/main}"
+          def norm(s): return re.sub(r"\s+"," ",(s or "").replace("\n"," | ").strip())
+          def txt(el): return norm("".join((x.text or "") for x in el.iter(W+"t")))
+
+          out={}
+          for page,names in TARGETS.items():
+              fn=FILES[page]
+              with zipfile.ZipFile(fn) as z:
+                  root=ET.fromstring(z.read("word/document.xml"))
+              hits={n:[] for n in names}
+              for ti,tbl in enumerate(root.iter(W+"tbl"),1):
+                  trs=[x for x in list(tbl) if x.tag==W+"tr"]
+                  if not trs: continue
+                  rows=[[txt(c) for c in list(tr) if c.tag==W+"tc"] for tr in trs]
+                  headers=rows[0] if rows else []
+                  for ri,row in enumerate(rows[1:],2):
+                      for n in names:
+                          if any(norm(c)==n for c in row):
+                              hits[n].append({"file":fn,"table":ti,"row":ri,"headers":headers,"cells":row})
+              # Also collect nearby paragraph evidence.
+              paras=[txt(p) for p in root.iter(W+"p")]
+              for n in names:
+                  near=[]
+                  for i,p in enumerate(paras):
+                      if n.lower() in p.lower():
+                          near.extend(paras[max(0,i-2):min(len(paras),i+3)])
+                  hits[n+"_paragraphs"]=list(dict.fromkeys(x for x in near if x))[:20]
+              out[page]=hits
+
+          unresolved=[]
+          for page,names in TARGETS.items():
+              for n in names:
+                  if not out[page].get(n):
+                      unresolved.append({"page":page,"identity":n})
+          summary={
+            "marker":"ACPOS-20260922-BATCH-81-RESIDUAL-ENTITY-SOURCE-RESOLUTION-V1",
+            "base_head":EXPECTED_PARENT,
+            "target_identity_count":sum(len(v) for v in TARGETS.values()),
+            "missing_exact_source_rows":len(unresolved),
+            "hits_by_identity":{
+              f"{p}::{n}":len(out[p][n]) for p,names in TARGETS.items() for n in names
+            },
+          }
+          Path("__batch81_residual_entity_source.json").write_text(json.dumps({"summary":summary,"evidence":out,"missing":unresolved},ensure_ascii=False,indent=2),encoding="utf-8")
+          Path("__batch81_summary.json").write_text(json.dumps(summary,ensure_ascii=False,indent=2),encoding="utf-8")
+          print("BATCH81_SUMMARY="+json.dumps(summary,ensure_ascii=False,sort_keys=True))
+          for p,names in TARGETS.items():
+              for n in names:
+                  print("BATCH81_ROW="+json.dumps({"page":p,"identity":n,"rows":out[p][n],"paragraphs":out[p].get(n+"_paragraphs",[])},ensure_ascii=False))
+          if unresolved: raise SystemExit("SOURCE_ROW_MISSING")
+          print("BATCH81_SOURCE_RESOLUTION_PASS")
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: acpos-batch81-residual-entity-source-resolution
+          path: |
+            __batch81_residual_entity_source.json
+            __batch81_summary.json
+          retention-days: 2
+      - name: Close harness
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -f __batch81_residual_entity_source.json __batch81_summary.json
+          git config user.name "acpos-batch81-source"
+          git config user.email "actions@users.noreply.github.com"
+          git add -A
+          mapfile -t staged < <(git -c core.quotepath=false diff --cached --name-only)
+          if [ "${#staged[@]}" -ne 1 ] || [ "${staged[0]}" != ".github/workflows/acpos_batch81_residual_entity_source_resolution.yml" ]; then
+            printf '%s\n' "${staged[@]}";exit 1
+          fi
+          git commit -m "chore(acpos): close batch 81 residual entity source resolution"
+          git push origin HEAD:0921acpos
