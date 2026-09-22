@@ -28,7 +28,7 @@ jobs:
           from docx import Document
           from docx.table import _Row
 
-          EXPECTED_PARENT="5ac0615ec999c6391321527cb788ffa233984681"
+          EXPECTED_PARENT="07db2f28421a898fc15f46ff9229e9b1b443e81f"
           WF=Path(".github/workflows/acpos_batch79_compound_entity_source_remediation.yml")
           parent=subprocess.check_output(["git","rev-parse","HEAD^"],text=True).strip()
           if parent!=EXPECTED_PARENT: raise SystemExit(f"EXACT_HEAD_PARENT_FAIL {parent}")
@@ -145,7 +145,7 @@ jobs:
           # SYS: avoid inventing local UIDs for shared Conversation/Thread/Message entities.
           # Persist this inventory row as one exact shared-owner reference.
           p=TARGETS["SYS"]; doc=Document(p)
-          hits=find_rows(doc,1,"Conversation / Thread")
+          hits=[h for h in find_rows(doc,1,"Conversation / Thread") if [norm(c.text) for c in h[2].rows[0].cells][:5]==["Entity UID","Canonical Name","用途","管理內容","Owner Boundary"]]
           if len(hits)!=1: raise RuntimeError(f"SYS_TARGET_{len(hits)}")
           _,_,_,row=hits[0]
           replace_row(row,[
