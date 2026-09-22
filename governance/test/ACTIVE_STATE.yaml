@@ -111,8 +111,8 @@ specification_mutation_safety:
   ordinary_mid_stage_specification_mutation: BLOCK
   stage_end_consolidated_promotion_requires_new_explicit_directive: true
   execution_context_lock_required: true
-status: TEST_EVIDENCE_RESIDUAL_DECONTAMINATION_MUTATED_VALIDATION_REQUIRED
-next_action: RUN_POST_CLEANUP_TEST_EVIDENCE_REFERENCE_AND_FULL_LINE_VALIDATION
+status: TEST_EVIDENCE_RESIDUAL_DECONTAMINATION_CLOSED_WORK_UNIT_RESOLUTION_REQUIRED
+next_action: WORK_UNIT_RESOLUTION_GATE_AFTER_TEST_EVIDENCE_RESIDUAL_DECONTAMINATION
 previous_closed_product_work_unit:
   work_unit_uid: WU-STAGE02-CORE01-STRUCTURAL-REMEDIATION-001
   canonical_name: CORE01_STRUCTURAL_CONTRACT_REMEDIATION
@@ -290,10 +290,10 @@ previous_closed_work_unit:
     source_runtime_residual_count: 0
     product_stage_credit: 0
 resume_control:
-  current_resume_point: TEST_EVIDENCE_RESIDUAL_DECONTAMINATION_MUTATED_VALIDATION_REQUIRED
-  current_work_unit_uid: WU-GOV-TEST-EVIDENCE-RESIDUAL-DECONTAMINATION-001
-  current_owner: governance/test/ACTIVE_STATE.yaml
-  exact_next_action: RUN_POST_CLEANUP_TEST_EVIDENCE_REFERENCE_AND_FULL_LINE_VALIDATION
+  current_resume_point: TEST_EVIDENCE_RESIDUAL_DECONTAMINATION_CLOSED_WUR_REQUIRED
+  current_work_unit_uid: null
+  current_owner: governance/specifications/current/EXECUTION_CYCLE_CONTROL.yaml
+  exact_next_action: WORK_UNIT_RESOLUTION_GATE_AFTER_TEST_EVIDENCE_RESIDUAL_DECONTAMINATION
   product_resume_preserved: CORE01_STAGE01_STAGE03_CLEAN_BASELINE_READY_FRESH_STAGE01_WUR_REQUIRED
   interrupted_test_resume_preserved: CORE01_SOURCE_TEST_BUGFIX_AND_CONTENT_INTEGRITY_FULL_LIFECYCLE_R2_ACTIVE
   reentry_owner_capability: SOURCE_INTAKE_BASE_BLUEPRINT
@@ -2738,26 +2738,38 @@ closed_governance_maintenance_work_unit_ci_residual_decontamination:
   - PRODUCT_STAGE_CREDIT_ZERO
   legal_next_transition: WORK_UNIT_RESOLUTION_GATE
   product_stage_credit: 0
-active_work_unit:
+closed_governance_maintenance_work_unit_test_evidence_residual_decontamination:
   work_unit_uid: WU-GOV-TEST-EVIDENCE-RESIDUAL-DECONTAMINATION-001
   canonical_name: TEST_HISTORY_EVIDENCE_RECEIPT_RESIDUAL_DECONTAMINATION
   primary_task_layer: GOVERNANCE_MAINTENANCE
-  current_status: MUTATION_COMMITTED_VALIDATION_REQUIRED
+  terminal_status: CLOSED_VERIFIED_NO_PRODUCT_CREDIT
   authorization_basis: EXPLICIT_USER_DIRECTIVE_20260923_CONTINUE_CLEANUP_AFTER_CI_DECONTAMINATION
   canonical_policy_owner: governance/specifications/current/EXECUTION_CYCLE_CONTROL.yaml
   state_owner: governance/test/ACTIVE_STATE.yaml
-  scope:
-  - PRESERVE_CURRENT_STATE_AND_CURRENT_PROJECTORS
-  - PRESERVE_REQUIRED_NEGATIVE_REGRESSION_AND_DEFECT_PREVENTION_EVIDENCE
-  - PRESERVE_REQUIRED_HISTORICAL_PROVENANCE_ONLY_WHEN_CURRENT_VALIDATOR_OR_MOTHER_REQUIRES_IT
-  - REMOVE_DEAD_OR_UNREFERENCED_TEST_HISTORY_EVIDENCE_RECEIPTS
-  - REMOVE_STALE_STAGE_PRODUCT_RUNTIME_EVIDENCE
-  - REMOVE_SUPERSEDED_ONE_TIME_AUTHORIZATION_RESIDUALS_NOT_REQUIRED_BY_CURRENT_MUTATION_CONTROL
-  out_of_scope:
-  - governance/specifications/current
-  - .github/governance-source/active/source/12_DOCS/mother-spec
-  - PRODUCT_STAGE_EXECUTION
-  - PRODUCT_AUTHORITY_MUTATION
+  disposition_summary:
+    obsolete_single_use_authorization_receipts_removed: 79
+    obsolete_unreferenced_test_evidence_removed: 8
+    total_files_removed: 87
+    governance_test_files_before: 98
+    governance_test_files_after: 11
+    retained_current_or_required_noncurrent_files: 11
+    current_governance_uid_unchanged: true
+    product_stage_credit: 0
+  closure_evidence:
+    cleanup_mutation_head_sha: bbdc037faa3372ca24689274ab820f6ea7266b10
+    cleanup_mutation_tree_sha: d1616944b73a08bbd0e7caff2014f9e0bebb4add
+    exact_head_fresh_replay_run_id: 35776332527
+    exact_head_fresh_replay_result: success
+    exact_head_stage02_boundary_run_id: 35776332522
+    exact_head_stage02_boundary_result: success
+    exact_head_selected_profile_run_id: 35776332355
+    exact_head_selected_profile_result: success
+    exact_head_branch_guard_run_id: 35776332737
+    exact_head_branch_guard_result: success
+    exact_head_full_line_run_id: 35776332602
+    exact_head_full_line_job_id: 106910367333
+    exact_head_full_line_result: success
+    mother_specification_mutated: false
   definition_of_done:
   - CURRENT_PROJECTOR_REFERENCES_RESOLVE
   - REQUIRED_NEGATIVE_REGRESSION_EVIDENCE_REMAINS
@@ -2767,8 +2779,9 @@ active_work_unit:
   - ACTIVE_DIRECT_AND_TRANSITIVE_CONSUMERS_HAVE_NO_BROKEN_REFERENCE
   - CURRENT_GOVERNANCE_UID_UNCHANGED
   - PRODUCT_STAGE_CREDIT_ZERO
-  legal_next_transition: CLOSE_TO_WORK_UNIT_RESOLUTION_GATE
+  legal_next_transition: WORK_UNIT_RESOLUTION_GATE
   product_stage_credit: 0
+active_work_unit: null
 last_work_unit_resolution_gate:
   resolution_uid: WUR-GOV-TEST-EVIDENCE-RESIDUAL-DECONTAMINATION-20260923-001
   normative_authority: false
