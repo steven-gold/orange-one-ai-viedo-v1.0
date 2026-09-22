@@ -1,0 +1,335 @@
+name: ACPOS Batch 92 Word-Only Mother Completeness Audit
+on:
+  push:
+    branches: [0921acpos]
+    paths:
+      - .github/workflows/acpos_batch92_word_only_mother_completeness_audit.yml
+permissions:
+  contents: write
+jobs:
+  audit:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+      - name: Audit current 31 Word files against Mother-required design domains
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+          import collections,json,re,subprocess,zipfile
+          import xml.etree.ElementTree as ET
+
+          EXPECTED_PARENT="e16987b2f48a784bfde40c4650140265e180f5c8"
+          WF=Path(".github/workflows/acpos_batch92_word_only_mother_completeness_audit.yml")
+          parent=subprocess.check_output(["git","rev-parse","HEAD^"],text=True).strip()
+          if parent!=EXPECTED_PARENT:
+              raise SystemExit(f"EXACT_HEAD_PARENT_FAIL {parent}")
+
+          PAGE_DOCS={
+            "AIAPI-01":"ACPOS_AIAPI-01_AI_API管理_Mother_Basic_Design_OPTIMIZED.docx",
+            "ASSET-01":"ACPOS_ASSET-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx",
+            "CORE-01":"ACPOS_CORE-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx",
+            "DB-01":"ACPOS_DB-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx",
+            "DEV-01":"ACPOS_DEV-01_企業自動開發系統_Mother_Basic_Design_OPTIMIZED.docx",
+            "EDIT-01":"ACPOS_EDIT-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx",
+            "ERP-01":"ACPOS_ERP-01_ERP與財務_Mother_Basic_Design_OPTIMIZED.docx",
+            "IAM-01":"ACPOS_IAM-01_帳戶與權限_Mother_Basic_Design_OPTIMIZED.docx",
+            "INFO-01":"ACPOS_INFO-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx",
+            "KB-01":"ACPOS_KB-01_知識庫_Mother_Basic_Design_OPTIMIZED.docx",
+            "QA-01":"ACPOS_QA-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx",
+            "SG-02":"ACPOS_SG-02_QA審查項目名單_Mother_Basic_Design_OPTIMIZED.docx",
+            "SOC-01":"ACPOS_SOC-01_社群發布_Mother_Basic_Design_OPTIMIZED.docx",
+            "STR-01":"ACPOS_STR-01_WORKSPACE_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx",
+            "SYS-01":"ACPOS_SYS-01_系統維護與生命週期工作區_Mother_Basic_Design_OPTIMIZED.docx",
+            "VIDEO-01":"ACPOS_VIDEO-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx",
+            "WB-01":"ACPOS_WB-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx",
+            "ADMIN-STR-01":"ACPOS_admin_STR-01_戰略中心後台_Mother_Basic_Design_OPTIMIZED.docx",
+          }
+          SYSTEM_DOCS={
+            "SYS-CONTRACT-01":"01_ACPOS_Global_Intelligent_Brain_Information_Lifecycle_Mother_Basic_Logic_Design_Normative_Contract_v4.docx",
+            "SYS-CONTRACT-02":"02_ACPOS_AI_Conversation_Memory_MultiAI_Assistant_Mother_Basic_Logic_Design_Normative_Contract_v1.0.docx",
+            "SYS-CONTRACT-03":"03_ACPOS_AI_Execution_Script_Compiler_Tool_AIAPI_Runtime_Mother_Basic_Logic_Design_Normative_Contract_v1.0.docx",
+            "SYS-CONTRACT-04":"04_ACPOS_CORE_AI_Blueprint_Canonical_Script_System_Mother_Basic_Logic_Design_Normative_Contract_v1.0.docx",
+            "SYS-CONTRACT-05":"05_ACPOS_Creative_Production_AI_ASSET_VIDEO_EDIT_VOICE_QA_Mother_Basic_Logic_Design_Normative_Contract_v1.0.docx",
+            "SYS-CONTRACT-06":"06_ACPOS_Enterprise_Business_Development_AI_System_Mother_Basic_Logic_Design_Normative_Contract_v1.0.docx",
+            "SYS-CONTRACT-07":"07_ACPOS_Social_Publishing_AI_System_Mother_Basic_Logic_Design_Normative_Contract_v1.0.docx",
+            "SYS-CONTRACT-08":"08_ACPOS_Strategy_Intelligence_MultiAI_Decision_System_Mother_Basic_Logic_Design_Normative_Contract_v1.0.docx",
+            "SYS-CONTRACT-09":"09_ACPOS_AI_System_Engineer_Self_Inspection_Evolution_System_Mother_Basic_Logic_Design_Normative_Contract_v1.0.docx",
+          }
+          GLOBAL_DOCS={
+            "INDEX":"00_INDEX_ACPOS_Mother_Compliant_Basic_Design_Master.docx",
+            "HOME":"ACPOS_GLOBAL_HOME_SHELL_NAVIGATION_Mother_Basic_Design_OPTIMIZED.docx",
+            "LOGIN":"ACPOS_LOGIN_IDENTITY_ENTRY_Mother_Basic_Design_OPTIMIZED.docx",
+            "GLOBAL-INTEGRATION":"ACPOS_SYSTEM_LOGIC_GLOBAL_INTEGRATION_Mother_Basic_Design_OPTIMIZED.docx",
+          }
+          ALL={**PAGE_DOCS,**SYSTEM_DOCS,**GLOBAL_DOCS}
+          W="{http://schemas.openxmlformats.org/wordprocessingml/2006/main}"
+
+          def norm(s):return re.sub(r"\s+"," ",(s or "").replace("\n"," | ").strip())
+          def txt(el):return norm("".join((x.text or "") for x in el.iter(W+"t")))
+          def extract(fn):
+              with zipfile.ZipFile(fn) as z:
+                  root=ET.fromstring(z.read("word/document.xml"))
+              paras=[txt(p) for p in root.iter(W+"p")]
+              tables=[]
+              for ti,tbl in enumerate(root.iter(W+"tbl"),1):
+                  trs=[x for x in list(tbl) if x.tag==W+"tr"]
+                  if not trs:continue
+                  rows=[[txt(c) for c in list(tr) if c.tag==W+"tc"] for tr in trs]
+                  tables.append({"table":ti,"headers":rows[0] if rows else [],"rows":rows[1:]})
+              full="\n".join(paras+[" | ".join(r) for t in tables for r in [t["headers"]]+t["rows"]])
+              return full,tables
+          def hit(text,patterns):
+              u=text.upper()
+              return any(re.search(p,u,re.I) for p in patterns)
+          def allhits(text,groups):
+              return all(hit(text,g) for g in groups)
+
+          if set(p.name for p in Path(".").glob("*.docx")) != set(ALL.values()):
+              raise SystemExit("ROOT_DOCX_SET_DRIFT")
+
+          docs={}
+          for uid,fn in ALL.items():
+              full,tables=extract(fn)
+              docs[uid]={"file":fn,"text":full,"tables":tables}
+
+          # Mother 01 general basic-design requirements.
+          PAGE_CHECKS={
+            "REQUIREMENTS":{
+              "mode":"all",
+              "groups":[[r"FUNCTIONAL REQUIREMENTS",r"功能需求"],[r"NON[- ]?FUNCTIONAL",r"非功能"]]
+            },
+            "ARCHITECTURE_DEPENDENCY":{
+              "mode":"all",
+              "groups":[[r"ARCHITECTURE",r"架構"],[r"DEPENDENC",r"依賴"]]
+            },
+            "NAVIGATION_ROUTING":{
+              "mode":"any",
+              "patterns":[r"NAVIGATION",r"ROUTING",r"導航",r"路由"]
+            },
+            "USER_FLOW_FUNCTIONAL_CHAIN":{
+              "mode":"all",
+              "groups":[[r"USER FLOW",r"FUNCTIONAL FLOW",r"FUNCTIONAL CHAIN",r"流程"],[r"SUCCESS",r"成功"],[r"FAILURE",r"失敗"]]
+            },
+            "CONTROL_FIELD_SPEC":{
+              "mode":"all",
+              "groups":[[r"CONTROL UID",r"CONTROL"],[r"FIELD",r"欄位"],[r"ACTION",r"操作"],[r"PERMISSION",r"權限"],[r"ERROR STATE",r"ERROR",r"錯誤"]]
+            },
+            "GATE_PERMISSION_FAILURE_RECOVERY":{
+              "mode":"all",
+              "groups":[[r"\bGATE\b",r"閘門"],[r"PERMISSION",r"權限"],[r"FAILURE",r"ERROR",r"失敗",r"錯誤"],[r"RECOVERY",r"RETRY",r"ROLLBACK",r"恢復",r"重試",r"回滾"]]
+            },
+            "CROSS_PAGE_SHARED_OWNER":{
+              "mode":"all",
+              "groups":[[r"CROSS[- ]?PAGE",r"跨頁",r"SHARED OWNER",r"SHARED_OWNER_REFERENCE"],[r"CANONICAL OWNER",r"OWNER / BOUNDARY",r"OWNER"]]
+            },
+            "INTERACTION_TOPOLOGY_WORKBENCH":{
+              "mode":"any",
+              "patterns":[r"INTERACTION TOPOLOGY",r"FUNCTIONAL WORKBENCH",r"WORKBENCH",r"互動拓撲",r"工作台"]
+            },
+            "VISUAL_GEOMETRY_LAYOUT":{
+              "mode":"all",
+              "groups":[[r"GEOMETRY",r"幾何",r"LAYOUT",r"版面"],[r"WIDTH",r"HEIGHT",r"尺寸",r"寬",r"高"],[r"BREAKPOINT",r"RESPONSIVE",r"RWD",r"響應式"]]
+            },
+            "VISUAL_ANCHOR_CANONICAL_VISUAL":{
+              "mode":"all",
+              "groups":[[r"VISUAL ANCHOR",r"視覺錨點"],[r"CANONICAL VISUAL",r"CURRENT VISUAL",r"VISUAL UID",r"正式視覺"]]
+            },
+            "VISUAL_PREVIEW_REVIEW_APPROVAL":{
+              "mode":"all",
+              "groups":[[r"VISUAL PREVIEW",r"PREVIEW",r"預覽"],[r"VISUAL REVIEW",r"REVIEW",r"審查"],[r"VISUAL_APPROVED",r"APPROVAL",r"核准",r"批准"]]
+            },
+            "A11Y_I18N":{
+              "mode":"all",
+              "groups":[[r"A11Y",r"ACCESSIBILITY",r"無障礙"],[r"I18N",r"LOCALIZATION",r"語系",r"多語"]]
+            },
+            "AUDIT_BASELINE":{
+              "mode":"all",
+              "groups":[[r"AUDIT BASELINE",r"AUDIT UID",r"稽核基線",r"稽核"],[r"EVIDENCE",r"證據"]]
+            },
+            "ACCEPTANCE_MATRIX":{
+              "mode":"all",
+              "groups":[[r"ACCEPTANCE MATRIX",r"ACCEPTANCE",r"驗收"],[r"REQUIRED",r"PASS",r"BLOCK",r"必要"]]
+            },
+            "DEFINITION_OF_DONE_FREEZE":{
+              "mode":"all",
+              "groups":[[r"DEFINITION OF DONE",r"\bDOD\b",r"完成定義"],[r"DESIGN FREEZE",r"FREEZE",r"封板"]]
+            },
+            "VERSION_AUDIT_TRACEABILITY":{
+              "mode":"all",
+              "groups":[[r"VERSION",r"版本"],[r"AUDIT",r"稽核"],[r"EVIDENCE",r"LINEAGE",r"TRACE",r"證據",r"追溯"]]
+            },
+          }
+
+          # Conditional checks are reported separately and never counted missing merely by absence.
+          CONDITIONAL={
+            "AI_CONVERSATION_CONTINUITY":[r"CONVERSATION",r"MULTI[- ]?AI",r"THREAD",r"AI CONTINUITY",r"對話"],
+            "ASYNC_PROVIDER_LIFECYCLE":[r"QUEUE",r"WORKER",r"CALLBACK",r"PROVIDER",r"JOB_START",r"QUEUED",r"RUNNING"],
+            "COMPLEX_STATE_MACHINE":[r"STATE MACHINE",r"TRANSITION UID",r"FROM STATE",r"TO STATE",r"ILLEGAL TRANSITION",r"狀態機"],
+            "GENERATED_ID_READONLY":[r"GENERATED ID",r"READ[- ]?ONLY PROJECTION",r"CHECKSUM",r"CANONICAL FILENAME",r"GENERATED.*READ"],
+          }
+
+          page_results={}
+          general_missing=[]
+          for page in PAGE_DOCS:
+              text=docs[page]["text"]
+              checks={}
+              for name,spec in PAGE_CHECKS.items():
+                  if spec["mode"]=="any":
+                      ok=hit(text,spec["patterns"])
+                  else:
+                      ok=allhits(text,spec["groups"])
+                  checks[name]=ok
+                  if not ok: general_missing.append({"page":page,"check":name})
+              cond={k:hit(text,pats) for k,pats in CONDITIONAL.items()}
+              page_results[page]={"checks":checks,"conditional_presence":cond}
+
+          # System-contract completeness expected from Mother functional-chain semantics.
+          SYSTEM_CHECKS={
+            "CANONICAL_OWNER":[r"CANONICAL OWNER",r"OWNER"],
+            "ACTION_OPERATION":[r"ACTION",r"OPERATION"],
+            "PAYLOAD_INPUT":[r"PAYLOAD",r"INPUT"],
+            "RUNTIME_OWNER":[r"RUNTIME OWNER",r"RUNTIME"],
+            "PERSISTENCE_DATA":[r"PERSISTENCE",r"DATABASE",r"REPOSITORY",r"DATA"],
+            "PERMISSION_GATE":[r"PERMISSION",r"GATE"],
+            "AUDIT_EVIDENCE":[r"AUDIT",r"EVIDENCE"],
+            "FAILURE_RECOVERY":[r"FAILURE",r"ERROR",r"RECOVERY",r"RETRY",r"ROLLBACK"],
+            "VERSION_IDEMPOTENCY":[r"VERSION",r"IDEMPOT"],
+            "PRODUCER_CONSUMER":[r"PRODUCER",r"CONSUMER",r"DEPENDENC"],
+          }
+          sys_results={}
+          sys_missing=[]
+          for uid in SYSTEM_DOCS:
+              text=docs[uid]["text"]
+              checks={}
+              for name,pats in SYSTEM_CHECKS.items():
+                  ok=hit(text,pats)
+                  checks[name]=ok
+                  if not ok:sys_missing.append({"system":uid,"check":name})
+              sys_results[uid]=checks
+
+          # Global docs: index/navigation/identity/integration responsibilities.
+          GLOBAL_CHECKS={
+            "INDEX":{
+              "INDEX_REGISTRY":[r"INDEX",r"REGISTRY",r"PAGE",r"SYSTEM"],
+              "VERSION_TRACE":[r"VERSION",r"OWNER",r"UID"],
+              "ACCEPTANCE_AUDIT":[r"ACCEPTANCE",r"AUDIT"],
+            },
+            "HOME":{
+              "NAVIGATION":[r"NAVIGATION",r"MENU",r"ROUTE",r"導航"],
+              "PERMISSION_VISIBILITY":[r"PERMISSION",r"VISIBILITY",r"ROLE",r"權限"],
+              "RESPONSIVE_A11Y":[r"RESPONSIVE",r"A11Y",r"ACCESSIBILITY",r"響應式"],
+              "I18N":[r"I18N",r"語系",r"LANGUAGE"],
+            },
+            "LOGIN":{
+              "IDENTITY_AUTH":[r"IDENTITY",r"AUTH",r"LOGIN",r"登入"],
+              "FAIL_CLOSED":[r"FAIL[- ]?CLOSED",r"DENY",r"BLOCK",r"拒絕",r"阻擋"],
+              "AUDIT":[r"AUDIT",r"稽核"],
+              "RECOVERY":[r"RECOVERY",r"ERROR",r"RETRY",r"錯誤",r"重試"],
+            },
+            "GLOBAL-INTEGRATION":{
+              "CROSS_PAGE":[r"CROSS[- ]?PAGE",r"PRODUCER",r"CONSUMER",r"跨頁"],
+              "OWNER_REFERENCE":[r"CANONICAL OWNER",r"SHARED OWNER",r"OWNER"],
+              "FORWARD_REVERSE":[r"FORWARD",r"REVERSE",r"DEPENDENC"],
+              "AUDIT_ACCEPTANCE":[r"AUDIT",r"ACCEPTANCE",r"EVIDENCE"],
+            },
+          }
+          global_results={}
+          global_missing=[]
+          for uid,checksdef in GLOBAL_CHECKS.items():
+              text=docs[uid]["text"]
+              checks={}
+              for name,pats in checksdef.items():
+                  ok=hit(text,pats)
+                  checks[name]=ok
+                  if not ok:global_missing.append({"global":uid,"check":name})
+              global_results[uid]=checks
+
+          # Current exact-head materialization checks already physically inspectable.
+          app_rows=0;app_tables=0;hier_rows=0;hier_tables=0
+          for page in PAGE_DOCS:
+              for t in docs[page]["tables"]:
+                  h=[norm(x) for x in t["headers"]]
+                  if h==["Entity","Operation","Applicability","Authority Evidence"]:
+                      app_tables+=1;app_rows+=len(t["rows"])
+                  if h==[
+                    "Parent Identity","Child Identity","Cardinality","Creation Entry",
+                    "Payload / Reference Binding","Ordering Semantics","Permission",
+                    "State Dependency","Version Dependency","Move / Reparent",
+                    "Archive / Delete Propagation","Upstream Change Impact",
+                    "Downstream Revalidation","Authority Evidence"
+                  ]:
+                      hier_tables+=1;hier_rows+=len(t["rows"])
+
+          # Separate missing-content from "fresh validation not represented by a static Word marker".
+          fresh_validation_work=[
+            "FULL_31_DOCX_RENDER_AND_VISUAL_QA_AT_CURRENT_HEAD",
+            "FULL_31_DOCX_FORWARD_REVERSE_REFERENCE_REAUDIT_AT_CURRENT_HEAD",
+            "FULL_31_DOCX_ACCEPTANCE_MATRIX_CROSS_DOCUMENT_RECONCILIATION",
+            "FULL_31_DOCX_INDEX_GLOBAL_INTEGRATION_SYNCHRONIZATION_REAUDIT",
+            "FINAL_MOTHER_01_04_DESIGN_FREEZE_CLOSURE_AUDIT",
+          ]
+
+          summary={
+            "marker":"ACPOS-20260922-BATCH-92-WORD-ONLY-MOTHER-COMPLETENESS-AUDIT-V1",
+            "base_head":EXPECTED_PARENT,
+            "docx_files":len(ALL),
+            "page_docs":len(PAGE_DOCS),
+            "system_docs":len(SYSTEM_DOCS),
+            "global_docs":len(GLOBAL_DOCS),
+            "general_page_check_denominator":len(PAGE_DOCS)*len(PAGE_CHECKS),
+            "general_page_missing_count":len(general_missing),
+            "general_page_missing_by_check":dict(collections.Counter(x["check"] for x in general_missing)),
+            "general_page_missing_by_page":dict(collections.Counter(x["page"] for x in general_missing)),
+            "system_check_denominator":len(SYSTEM_DOCS)*len(SYSTEM_CHECKS),
+            "system_missing_count":len(sys_missing),
+            "system_missing_by_check":dict(collections.Counter(x["check"] for x in sys_missing)),
+            "global_check_denominator":sum(len(v) for v in GLOBAL_CHECKS.values()),
+            "global_missing_count":len(global_missing),
+            "current_entity_applicability_tables":app_tables,
+            "current_entity_applicability_rows":app_rows,
+            "current_canonical_hierarchy_tables":hier_tables,
+            "current_canonical_hierarchy_rows":hier_rows,
+            "fresh_validation_work_not_satisfied_by_static_content_scan":fresh_validation_work,
+          }
+          out={
+            "summary":summary,
+            "page_results":page_results,
+            "general_page_missing":general_missing,
+            "system_results":sys_results,
+            "system_missing":sys_missing,
+            "global_results":global_results,
+            "global_missing":global_missing,
+            "conditional_presence":{p:page_results[p]["conditional_presence"] for p in PAGE_DOCS},
+            "fresh_validation_work":fresh_validation_work,
+          }
+          Path("__batch92_word_only_audit.json").write_text(json.dumps(out,ensure_ascii=False,indent=2),encoding="utf-8")
+          Path("__batch92_summary.json").write_text(json.dumps(summary,ensure_ascii=False,indent=2),encoding="utf-8")
+          print("BATCH92_SUMMARY="+json.dumps(summary,ensure_ascii=False,sort_keys=True))
+          print("BATCH92_PAGE_MISSING="+json.dumps(general_missing,ensure_ascii=False))
+          print("BATCH92_SYSTEM_MISSING="+json.dumps(sys_missing,ensure_ascii=False))
+          print("BATCH92_GLOBAL_MISSING="+json.dumps(global_missing,ensure_ascii=False))
+          print("BATCH92_WORD_ONLY_AUDIT_COMPLETE")
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: acpos-batch92-word-only-mother-completeness-audit
+          path: |
+            __batch92_word_only_audit.json
+            __batch92_summary.json
+          retention-days: 2
+      - name: Close harness
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -f __batch92_word_only_audit.json __batch92_summary.json
+          git config user.name "acpos-batch92-word-audit"
+          git config user.email "actions@users.noreply.github.com"
+          git rm -f .github/workflows/acpos_batch92_word_only_mother_completeness_audit.yml
+          git commit -m "chore(acpos): close batch 92 Word-only Mother audit"
+          git push origin HEAD:0921acpos
