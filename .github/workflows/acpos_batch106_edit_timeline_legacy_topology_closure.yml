@@ -1,0 +1,130 @@
+name: ACPOS Batch 106 EDIT Timeline Legacy Topology Closure
+on:
+  push:
+    branches: [0921acpos]
+    paths:
+      - .github/workflows/acpos_batch106_edit_timeline_legacy_topology_closure.yml
+permissions:
+  contents: write
+jobs:
+  close:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+      - name: Install tooling
+        run: |
+          python -m pip install --quiet python-docx
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq libreoffice poppler-utils fonts-noto-cjk
+      - name: Supersede legacy timeline topology
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from docx import Document
+          from pathlib import Path
+          import subprocess,zipfile,re,json
+          BASE="a131acf3cd39bce82b5bf06cea439881550adb92"
+          if subprocess.check_output(["git","rev-parse","HEAD^"],text=True).strip()!=BASE: raise SystemExit("EXACT_PARENT_FAIL")
+          p=Path("ACPOS_EDIT-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx")
+          d=Document(p)
+          def setp(par,text):
+              if par.runs:
+                  par.runs[0].text=text
+                  for r in par.runs[1:]:r.text=""
+              else:par.text=text
+          replaced=0
+          for par in d.paragraphs:
+              s=par.text
+              if s=="AUDIO/SYNC 畫面把 Voice/Music/SFX/Subtitle/LipSync 放在同一 Timeline；Dialogue Binding Guard 顯示 segment/timebase/fingerprint。Voice timing/version 改變時 LipSync+Subtitle 必須 STALE。":
+                  setp(par,"AUDIO/SYNC 畫面維持同一 Timeline，但改採 Grouped Precision Timeline：AUDIO group 展開 Voice/Music/SFX child lanes；DIALOGUE group 以 Subtitle 為可編輯 lane，LipSync + DialogueTimingBinding 改為附著於 Voice/Dialogue segment 的 status overlay / health rail。Voice timing/version 改變時受影響 LipSync + Subtitle/DialogueTimingBinding 必須 STALE / REVERIFY_REQUIRED。")
+                  replaced+=1
+              elif s=="PROJECT_TASK 主畫面完整落實 20/80：左側只讀 exact bindings；右側保持 16:9 Preview、General Toolbar、Range/Marker、Multi-track Timeline。首次生產沒有自由 Prompt、Asset Picker 或素材搜尋。":
+                  setp(par,"PROJECT_TASK 主畫面完整落實 20/80：左側只讀 exact bindings；右側保持 16:9 Preview、General Toolbar、Range/Marker、Grouped Multi-track Timeline。底層七類 editing responsibilities 不合併；顯示層以 VISUAL / AUDIO / DIALOGUE 三群組折疊與 Stage Focus 呈現。首次生產沒有自由 Prompt、Asset Picker 或素材搜尋。")
+                  replaced+=1
+          # Replace legacy geometry row.
+          hit=0
+          for t in d.tables:
+              for row in t.rows:
+                  vals=[" ".join(c.text.split()) for c in row.cells]
+                  if len(vals)>=2 and vals[0]=="Timeline" and "Video/Overlay/Voice/Music/SFX/Subtitle/LipSync + Dialogue Binding Guard" in vals[1]:
+                      row.cells[1].text="min-height 320px; default display = 3 groups (VISUAL / AUDIO / DIALOGUE). VISUAL expands Video+Overlay; AUDIO expands Voice+Music+SFX; DIALOGUE expands Subtitle while LipSync+DialogueTimingBinding render as status overlay/health rail. Group collapse/focus changes view density only, never edit truth."
+                      hit+=1
+          if hit!=1: raise SystemExit(f"LEGACY_GEOMETRY_ROW_MATCH_FAIL {hit}")
+          marker="[ACPOS-EDIT-01-LEGACY-VISUAL-SUPERSESSION-V1]"
+          if marker not in "\n".join(x.text for x in d.paragraphs):
+              d.add_heading("Legacy Visual Candidate Supersession｜舊視覺候選權威替代",level=2)
+              d.add_paragraph(marker+" Existing Visual Candidate A/B/C screenshots remain historical shell/region/layout references only. Any depiction that permanently exposes Video/Overlay/Voice/Music/SFX/Subtitle/LipSync as equal full-height lanes, or renders Dialogue Binding Guard as a permanent equal-weight timeline lane/panel, is SUPERSEDED for timeline topology by [ACPOS-EDIT-01-GROUPED-PRECISION-TIMELINE-V1]. Current structural visual authority is the Grouped Precision Timeline Website-structure Visual Preview; a future pixel-level candidate may refine appearance but MUST preserve the 3-group + status-overlay topology unless an authorized Change Set changes this contract.")
+          d.save(p)
+          with zipfile.ZipFile(p) as z:
+              if z.testzip(): raise SystemExit("ZIP_BAD")
+          print("BATCH106_WRITE_PASS="+json.dumps({"paragraph_replacements":replaced,"geometry_rows":hit}))
+          PY
+      - name: Fresh EDIT topology consistency audit
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from docx import Document
+          import re,json
+          fn="ACPOS_EDIT-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx"
+          d=Document(fn)
+          txt="\n".join([p.text for p in d.paragraphs]+[" | ".join(c.text for c in r.cells) for t in d.tables for r in t.rows])
+          required=[
+            "[ACPOS-EDIT-01-GROUPED-PRECISION-TIMELINE-V1]",
+            "[ACPOS-EDIT-01-LEGACY-VISUAL-SUPERSESSION-V1]",
+            "VISUAL / AUDIO / DIALOGUE",
+            "LipSync + DialogueTimingBinding",
+            "status overlay/health rail",
+            "MILLISECOND / SUBFRAME / SAMPLE",
+            "time_numerator:int64"
+          ]
+          missing=[x for x in required if x not in txt]
+          residual=[
+            "min-height 320px; Video/Overlay/Voice/Music/SFX/Subtitle/LipSync + Dialogue Binding Guard",
+            "AUDIO/SYNC 畫面把 Voice/Music/SFX/Subtitle/LipSync 放在同一 Timeline"
+          ]
+          found=[x for x in residual if x in txt]
+          if missing or found: raise SystemExit("TOPOLOGY_AUDIT_FAIL "+repr({"missing":missing,"residual":found}))
+          print("BATCH106_TOPOLOGY_PASS="+json.dumps({"missing":0,"legacy_residual":0}))
+          PY
+      - name: Render EDIT-01
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p __r106/pdf __r106/png
+          f="ACPOS_EDIT-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx"
+          libreoffice --headless --convert-to pdf --outdir __r106/pdf "$f" >/tmp/lo106.log 2>&1 || { cat /tmp/lo106.log; exit 1; }
+          pdf="__r106/pdf/ACPOS_EDIT-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.pdf"
+          pdftoppm -png -r 125 "$pdf" "__r106/png/EDIT"
+          python - <<'PY'
+          from pathlib import Path
+          import subprocess,re,json
+          imgs=sorted(Path("__r106/png").glob("EDIT-*.png"))
+          if not imgs:raise SystemExit("NO_PNG")
+          info=subprocess.check_output(["pdfinfo","__r106/pdf/ACPOS_EDIT-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.pdf"],text=True)
+          print("BATCH106_RENDER_PASS="+json.dumps({"png_count":len(imgs)}))
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: acpos-batch106-edit-timeline-legacy-closure
+          path: |
+            ACPOS_EDIT-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx
+            __r106/pdf/*.pdf
+            __r106/png/*.png
+          retention-days: 3
+      - name: Commit and push
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf __r106
+          git config user.name "acpos-batch106-design"
+          git config user.email "actions@users.noreply.github.com"
+          git rm -f .github/workflows/acpos_batch106_edit_timeline_legacy_topology_closure.yml
+          git add ACPOS_EDIT-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx
+          git commit -m "fix(acpos): supersede EDIT legacy seven-lane timeline topology"
+          git push origin HEAD:0921acpos
