@@ -97,6 +97,7 @@ operation_missing=[]
 passive_read_bindings=[]
 operation_placeholders=[]
 action_gaps=[]
+direct_operation_action_bindings=[]
 gate_gaps=[]
 permission_gaps=[]
 runtime_owner_gaps=[]
@@ -127,7 +128,16 @@ for page,fn in PAGES.items():
             operation_missing.append((page,uid,st,r.get("action",""),r.get("type","")))
             continue
         if placeholder_op(op):operation_placeholders.append((page,uid,op))
-        if missing(r.get("action","")):action_gaps.append((page,uid,op,r.get("type",""),st,r.get("gate",""),r.get("permission",""),r.get("runtime_owner","")))
+        if missing(r.get("action","")):
+            # A canonical Operation may itself be the action identity. This is
+            # used by direct provider/admin commands, passive read widgets and
+            # dashboard read-model bindings. Missing Action UID is blocking
+            # only when no exact Operation exists (handled above).
+            direct_operation_action_bindings.append({
+                "page":page,"uid":uid,"operation":op,"type":r.get("type",""),
+                "runtime_status":st,"gate":r.get("gate",""),"permission":r.get("permission",""),
+                "runtime_owner":r.get("runtime_owner","")
+            })
         if missing(r.get("gate","")):gate_gaps.append((page,uid,op,r.get("type",""),st,r.get("action",""),r.get("permission",""),r.get("runtime_owner","")))
         if missing(r.get("permission","")):permission_gaps.append((page,uid,op,r.get("type",""),st,r.get("action",""),r.get("gate",""),r.get("runtime_owner","")))
         if missing(r.get("runtime_owner","")):runtime_owner_gaps.append((page,uid,op))
@@ -163,6 +173,7 @@ summary={
 "page_contract_docs":len(PAGES),
 "exact_runtime_controls":len(exact_rows),
 "passive_read_bindings_without_operation":len(passive_read_bindings),
+"direct_operation_action_bindings":len(direct_operation_action_bindings),
 "operation_missing":0,
 "operation_placeholders":0,
 "action_gaps":0,
@@ -178,6 +189,7 @@ summary={
 report={"marker":"ACPOS-20260922-BATCH-57-FINAL-EXACT-HEAD-CONTRACT-CLOSURE-AUDIT-V1","summary":summary,
 "doc_integrity":doc_integrity,"exact_runtime_controls":[{"page":p,"uid":u,"runtime_status":s} for p,u,s in exact_rows],
 "passive_read_bindings_without_operation":passive_read_bindings,
+"direct_operation_action_bindings":direct_operation_action_bindings,
 "failures":{"operation_missing":operation_missing,"operation_placeholders":operation_placeholders,"action_gaps":action_gaps,
 "gate_gaps":gate_gaps,"permission_gaps":permission_gaps,"runtime_owner_gaps":runtime_owner_gaps,"contract_gaps":contract_gaps,
 "multi_value_conflicts":multi_value_conflicts,"route_operation_conflicts":route_operation_conflicts}}
