@@ -1,0 +1,77 @@
+name: ACPOS Batch 59 Full Audit Finding Classification
+
+on:
+  push:
+    branches: [0921acpos]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: acpos-batch59-finding-classification
+  cancel-in-progress: false
+
+jobs:
+  audit:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Verify Batch 58 clean Word boundary
+        shell: bash
+        run: |
+          set -euo pipefail
+          BASE="0440a385d21d29833846104fcad01197531fc22d"
+          git cat-file -e "$BASE^{commit}"
+          test -z "$(git -c core.quotePath=false diff --name-only "$BASE" HEAD -- '*.docx')"
+          test "$(find . -maxdepth 1 -type f -name '*.docx' | wc -l)" -eq 31
+          echo "PASS: BATCH58 WORD BOUNDARY"
+
+      - name: Install audit runtime
+        run: python -m pip install --quiet python-docx
+
+      - name: Run finding classification
+        env:
+          PYTHONDONTWRITEBYTECODE: "1"
+        run: python -B __temp/batch59_batch58_finding_classification.py
+
+      - name: Verify classification completeness
+        shell: bash
+        run: |
+          PYTHONDONTWRITEBYTECODE=1 python -B - <<'PY'
+          import json
+          from pathlib import Path
+          r=json.loads(Path("__batch59_finding_classification.json").read_text(encoding="utf-8"))
+          s=r["summary"]
+          assert s["target_exact_rows"]>0,s
+          assert s["source_not_defined_rows"]>=0,s
+          print(json.dumps(s,ensure_ascii=False,sort_keys=True))
+          PY
+
+      - name: Upload Batch 59 evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: acpos-batch59-full-audit-finding-classification
+          path: |
+            __batch59_finding_classification.json
+            __batch59_summary.json
+          retention-days: 2
+          if-no-files-found: error
+
+      - name: Remove Batch 59 harness
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -f __batch59_finding_classification.json __batch59_summary.json
+          find . -type d -name __pycache__ -prune -exec rm -rf {} +
+          git config user.name "acpos-word-batch-59-audit"
+          git config user.email "actions@users.noreply.github.com"
+          git rm -f __temp/batch59_batch58_finding_classification.py .github/workflows/acpos_batch59_finding_classification.yml
+          git commit -m "chore(acpos): close batch 59 finding classification harness"
+          git push origin HEAD:0921acpos
+          test -z "$(git status --porcelain)"
+          echo "PASS: BATCH59 HARNESS REMOVED / CLEAN TREE"
