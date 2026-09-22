@@ -104,13 +104,13 @@ specification_mutation_safety:
   ordinary_mid_stage_specification_mutation: BLOCK
   stage_end_consolidated_promotion_requires_new_explicit_directive: true
   execution_context_lock_required: true
-status: ROOT_AUDIT_RESIDUAL_PURGE_MUTATED_VALIDATION_REQUIRED
-next_action: RUN_ROOT_AUDIT_PURGE_EXACT_HEAD_VALIDATION
+status: ROOT_AUDIT_RESIDUAL_PURGE_CLOSED_WORK_UNIT_RESOLUTION_REQUIRED
+next_action: WORK_UNIT_RESOLUTION_GATE_AFTER_ROOT_AUDIT_RESIDUAL_PURGE
 resume_control:
-  current_resume_point: ROOT_AUDIT_RESIDUAL_PURGE_MUTATED_VALIDATION_REQUIRED
-  current_work_unit_uid: WU-GOV-ROOT-AUDIT-RESIDUAL-PURGE-001
-  current_owner: governance/test/ACTIVE_STATE.yaml
-  exact_next_action: RUN_ROOT_AUDIT_PURGE_EXACT_HEAD_VALIDATION
+  current_resume_point: ROOT_AUDIT_RESIDUAL_PURGE_CLOSED_WUR_REQUIRED
+  current_work_unit_uid: null
+  current_owner: governance/specifications/current/EXECUTION_CYCLE_CONTROL.yaml
+  exact_next_action: WORK_UNIT_RESOLUTION_GATE_AFTER_ROOT_AUDIT_RESIDUAL_PURGE
   product_resume_preserved: CORE01_STAGE01_STAGE03_CLEAN_BASELINE_READY_FRESH_STAGE01_WUR_REQUIRED
   interrupted_test_resume_preserved: CORE01_SOURCE_TEST_BUGFIX_AND_CONTENT_INTEGRITY_FULL_LIFECYCLE_R2_ACTIVE
   reentry_owner_capability: SOURCE_INTAKE_BASE_BLUEPRINT
@@ -226,34 +226,46 @@ closed_governance_maintenance_work_unit_active_state_compaction:
   - PRODUCT_STAGE_CREDIT_ZERO
   legal_next_transition: WORK_UNIT_RESOLUTION_GATE
   product_stage_credit: 0
-active_work_unit:
+closed_governance_maintenance_work_unit_root_audit_residual_purge:
   work_unit_uid: WU-GOV-ROOT-AUDIT-RESIDUAL-PURGE-001
   canonical_name: ROOT_AUDIT_SUPERSEDED_INSTANCE_PURGE
   primary_task_layer: GOVERNANCE_MAINTENANCE
-  current_status: MUTATION_COMMITTED_VALIDATION_REQUIRED
+  terminal_status: CLOSED_VERIFIED_NO_PRODUCT_CREDIT
   authorization_basis: EXPLICIT_USER_DIRECTIVE_20260923_CONTINUE_CLEANUP
   canonical_policy_owner: governance/specifications/current/EXECUTION_CYCLE_CONTROL.yaml
   state_owner: governance/test/ACTIVE_STATE.yaml
-  scope:
-  - DELETE_11_EVIDENCE_AUDIT_GOVERNANCE_STAGE_LOCK_V2112_INSTANCE
-  - DELETE_11_EVIDENCE_AUDIT_SEALED_GOVERNANCE_TEST_BASELINE_V2112_INSTANCE
-  - DELETE_11_EVIDENCE_AUDIT_V214_GOVERNANCE_CLEANUP_RECEIPT
-  - PRESERVE_LEDGER_TYPE_SEMANTICS_IN_CURRENT_VERIFIED_SOURCE
-  - PRESERVE_GIT_HISTORY_AS_HISTORICAL_DETAIL
-  out_of_scope:
-  - authority
-  - governance/specifications/current
-  - .github/governance-source/active/source
-  - PRODUCT_STAGE_EXECUTION
-  - PRODUCT_AUTHORITY_MUTATION
-  classification:
-    canonical_owner: CURRENT_GOVERNANCE_AND_VERIFIED_SOURCE_DEFINE_LEDGER_TYPES_NOT_THESE_INSTANCES
-    forward_reference: NONE_FROM_CURRENT_EXECUTION_SURFACE
-    reverse_reference: NONE_TO_EXACT_LEGACY_FILE_INSTANCES
-    runtime_or_workflow_reachability: NONE
-    test_regression_role: LEDGER_TYPE_SEMANTICS_PRESERVED_BY_CURRENT_SOURCE_AND_GUARDS
-    historical_retention_role: GIT_HISTORY_ONLY
-    disposition: SUPERSEDED_ACTIVE_CONTENT_REMOVE
+  disposition_summary:
+    removed_root_audit_instances: 3
+    removed_files:
+    - 11_EVIDENCE/audit/GOVERNANCE_STAGE_LOCK.yaml
+    - 11_EVIDENCE/audit/SEALED_GOVERNANCE_TEST_BASELINE.yaml
+    - 11_EVIDENCE/audit/V214_GOVERNANCE_CLEANUP_RECEIPT.yaml
+    root_11_evidence_file_count_after: 0
+    current_ledger_type_semantics_preserved: true
+    historical_detail_storage: GIT_HISTORY_ONLY
+    product_stage_credit: 0
+  closure_evidence:
+    purge_mutation_head_sha: c2612375df5645a64d9adf8d22bab07bd5f08544
+    purge_mutation_tree_sha: c7e4068d57f3175bd8884608f5fed957798dd754
+    exact_head_branch_guard_run_id: 35786791742
+    exact_head_branch_guard_result: success
+    exact_head_fresh_replay_run_id: 35786791734
+    exact_head_fresh_replay_result: success
+    exact_head_stage02_boundary_run_id: 35786791707
+    exact_head_stage02_boundary_result: success
+    exact_head_selected_profile_run_id: 35786791722
+    exact_head_selected_profile_result: success
+    exact_head_full_line_run_id: 35786791725
+    exact_head_full_line_job_id: 106945440042
+    exact_head_full_line_result: success
+    active_workflows_scanned: 11
+    active_direct_transitive_executable_targets: 33
+    lifecycle_stage_result: 11/11
+    preformal_result: 20/20
+    mandatory_regression_result: 17/17
+    source_runtime_residual_count: 0
+    current_governance_uid_unchanged: true
+    mother_specification_mutated: false
   definition_of_done:
   - EXACT_LEGACY_ROOT_AUDIT_FILE_COUNT_ZERO
   - LEDGER_TYPE_SEMANTICS_REMAIN_IN_VERIFIED_SOURCE
@@ -262,8 +274,9 @@ active_work_unit:
   - FULL_LINE_EXACT_HEAD_SUCCESS
   - CURRENT_GOVERNANCE_UID_UNCHANGED
   - PRODUCT_STAGE_CREDIT_ZERO
-  legal_next_transition: CLOSE_TO_WORK_UNIT_RESOLUTION_GATE
+  legal_next_transition: WORK_UNIT_RESOLUTION_GATE
   product_stage_credit: 0
+active_work_unit: null
 last_work_unit_resolution_gate:
   resolution_uid: WUR-GOV-ROOT-AUDIT-RESIDUAL-PURGE-20260923-001
   normative_authority: false
