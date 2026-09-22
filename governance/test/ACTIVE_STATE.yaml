@@ -111,8 +111,8 @@ specification_mutation_safety:
   ordinary_mid_stage_specification_mutation: BLOCK
   stage_end_consolidated_promotion_requires_new_explicit_directive: true
   execution_context_lock_required: true
-status: CORE_ASSET_ENCODED_PROVENANCE_PURGE_ACTIVE
-next_action: EXECUTE_CORE_ASSET_ENCODED_PROVENANCE_PURGE
+status: CORE_ASSET_ENCODED_PROVENANCE_PURGE_COMMITTED_SCAN_REQUIRED
+next_action: RUN_CORE_ASSET_ENCODED_PROVENANCE_RESIDUAL_SCAN
 previous_closed_product_work_unit:
   work_unit_uid: WU-STAGE02-CORE01-STRUCTURAL-REMEDIATION-001
   canonical_name: CORE01_STRUCTURAL_CONTRACT_REMEDIATION
@@ -135,7 +135,6 @@ previous_closed_product_work_unit:
   - EXTERNAL_AUTHORITY_AUTOFILL
   - UNAUTHORIZED_PRODUCT_SCOPE_EXPANSION
   canonical_policy_owner: governance/specifications/current/EXECUTION_CYCLE_CONTROL.yaml
-  canonical_owner: 00_SOURCE_INTAKE/fresh_run_003/04_PAGE_FUNCTIONAL_CONTRACT
   current_status: CLOSED_VERIFIED_STRUCTURAL_REMEDIATION_ZERO_CLOSURE_BLOCKERS
   source_attempt_uid: STAGE02-FRESH-20260918-007
   source_problem_denominator: 45
@@ -291,10 +290,10 @@ previous_closed_work_unit:
     source_runtime_residual_count: 0
     product_stage_credit: 0
 resume_control:
-  current_resume_point: CORE_ASSET_ENCODED_PROVENANCE_PURGE_ACTIVE
+  current_resume_point: CORE_ASSET_ENCODED_PROVENANCE_PURGE_COMMITTED_SCAN_REQUIRED
   current_work_unit_uid: WU-GOV-CORE-ASSET-ENCODED-PROVENANCE-PURGE-001
   current_owner: governance/test/ACTIVE_STATE.yaml
-  exact_next_action: DELETE_ENCODED_PRODUCT_PATH_BLOB_PROVENANCE_AND_RESCAN
+  exact_next_action: RUN_POST_MUTATION_RESIDUAL_SCAN_AND_EXACT_HEAD_VALIDATION
   product_resume_preserved: CORE01_STAGE01_STAGE03_CLEAN_BASELINE_READY_FRESH_STAGE01_WUR_REQUIRED
   interrupted_test_resume_preserved: CORE01_SOURCE_TEST_BUGFIX_AND_CONTENT_INTEGRITY_FULL_LIFECYCLE_R2_ACTIVE
   reentry_owner_capability: SOURCE_INTAKE_BASE_BLUEPRINT
@@ -520,7 +519,6 @@ closed_stage02_completeness_work_unit:
   primary_task_layer: PRODUCT_STAGE_EXECUTION
   scope:
   - CORE-01
-  canonical_owner: 00_SOURCE_INTAKE/fresh_run_006/04_PAGE_FUNCTIONAL_CONTRACT/CURRENT_PROBLEM_REGISTER.yaml
   current_status: CLOSED_VERIFIED
   source_attempt_uid: STAGE02-FRESH-20260919-CORE01-003
   source_problem_denominator: 0
@@ -659,14 +657,11 @@ closed_stage02_clean_replay_work_unit_r4:
   primary_task_layer: PRODUCT_STAGE_EXECUTION
   scope:
   - CORE-01
-  canonical_owner: 00_SOURCE_INTAKE/fresh_run_007/04_PAGE_FUNCTIONAL_CONTRACT/CURRENT_PROBLEM_REGISTER.yaml
   current_status: CLOSED_VERIFIED
   source_attempt_uid: STAGE02-FRESH-20260919-CORE01-004
   source_problem_denominator: 0
   source_closure_blocker_denominator: 0
   dependencies:
-  - 00_SOURCE_INTAKE/fresh_run_007/02_BASE_BLUEPRINT/CORE-01/PAGE_BASE_BLUEPRINT.yaml
-  - 00_SOURCE_INTAKE/fresh_run_007/03_BLUEPRINT_BINDING/CORE-01/BLUEPRINT_BINDING_MANIFEST.yaml
   required_outputs:
   - FUNCTIONAL_CHAIN_SPEC
   - DEPENDENCY_MAP
@@ -690,43 +685,30 @@ closed_stage02_clean_replay_work_unit_r4:
   operation_bindings:
     STAGE_EXECUTION_PREFLIGHT_COMPILE:
       executor_owner: governance/ci/run_current_stage2_actual_test.py
-      result_owner: 00_SOURCE_INTAKE/fresh_run_007/04_PAGE_FUNCTIONAL_CONTRACT/CURRENT_PROBLEM_REGISTER.yaml
     EFFECTIVE_CONTRACT_OVERLAY_COMPILE:
       executor_owner: governance/ci/run_current_stage2_actual_test.py
-      result_owner: 00_SOURCE_INTAKE/fresh_run_007/04_PAGE_FUNCTIONAL_CONTRACT/CURRENT_PROBLEM_REGISTER.yaml
     DEPENDENCY_TOPOLOGY_COMPILE:
       executor_owner: governance/ci/run_current_stage2_actual_test.py
-      result_owner: 00_SOURCE_INTAKE/fresh_run_007/04_PAGE_FUNCTIONAL_CONTRACT/CURRENT_PROBLEM_REGISTER.yaml
     CHANGE_IMPACT_MAP_COMPILE:
       executor_owner: governance/ci/run_current_stage2_actual_test.py
-      result_owner: 00_SOURCE_INTAKE/fresh_run_007/04_PAGE_FUNCTIONAL_CONTRACT/CURRENT_PROBLEM_REGISTER.yaml
     FUNCTIONAL_CHAIN_COMPILE:
       executor_owner: governance/ci/run_current_stage2_actual_test.py
-      result_owner: 00_SOURCE_INTAKE/fresh_run_007/04_PAGE_FUNCTIONAL_CONTRACT/CURRENT_PROBLEM_REGISTER.yaml
     DEPENDENCY_MAP_COMPILE:
       executor_owner: governance/ci/run_current_stage2_actual_test.py
-      result_owner: 00_SOURCE_INTAKE/fresh_run_007/04_PAGE_FUNCTIONAL_CONTRACT/CURRENT_PROBLEM_REGISTER.yaml
     PAGE_CONSTRUCTION_SPEC_COMPILE:
       executor_owner: governance/ci/run_current_stage2_actual_test.py
-      result_owner: 00_SOURCE_INTAKE/fresh_run_007/04_PAGE_FUNCTIONAL_CONTRACT/CURRENT_PROBLEM_REGISTER.yaml
     ASYNC_PROVIDER_CONTRACT_COMPILE:
       executor_owner: governance/ci/run_current_stage2_actual_test.py
-      result_owner: 00_SOURCE_INTAKE/fresh_run_007/04_PAGE_FUNCTIONAL_CONTRACT/CURRENT_PROBLEM_REGISTER.yaml
     SHARED_OWNER_PORT_RESOLVE:
       executor_owner: governance/ci/run_current_stage2_actual_test.py
-      result_owner: 00_SOURCE_INTAKE/fresh_run_007/04_PAGE_FUNCTIONAL_CONTRACT/CURRENT_PROBLEM_REGISTER.yaml
     FUNCTIONAL_WORKBENCH_CONTRACT_COMPILE:
       executor_owner: governance/ci/run_current_stage2_actual_test.py
-      result_owner: 00_SOURCE_INTAKE/fresh_run_007/04_PAGE_FUNCTIONAL_CONTRACT/CURRENT_PROBLEM_REGISTER.yaml
     INTERACTION_TOPOLOGY_COMPILE:
       executor_owner: governance/ci/run_current_stage2_actual_test.py
-      result_owner: 00_SOURCE_INTAKE/fresh_run_007/04_PAGE_FUNCTIONAL_CONTRACT/CURRENT_PROBLEM_REGISTER.yaml
     FUNCTION_ADMISSION_SCORECARD_COMPILE:
       executor_owner: governance/ci/run_current_stage2_actual_test.py
-      result_owner: 00_SOURCE_INTAKE/fresh_run_007/04_PAGE_FUNCTIONAL_CONTRACT/CURRENT_PROBLEM_REGISTER.yaml
     AUTO_COMPLETION_SCOPE_LEDGER_COMPILE:
       executor_owner: governance/ci/run_current_stage2_actual_test.py
-      result_owner: 00_SOURCE_INTAKE/fresh_run_007/04_PAGE_FUNCTIONAL_CONTRACT/CURRENT_PROBLEM_REGISTER.yaml
   scanner_bindings:
     ENTITY_OPERATION_DENOMINATOR:
       scanner_owner: governance/ci/run_current_stage2_actual_test.py
@@ -948,14 +930,11 @@ closed_product_work_unit_core01_stage02_r5:
   primary_task_layer: PRODUCT_STAGE_EXECUTION
   scope:
   - CORE-01
-  canonical_owner: 00_SOURCE_INTAKE/fresh_run_008/04_PAGE_FUNCTIONAL_CONTRACT/CURRENT_PROBLEM_REGISTER.yaml
   current_status: CLOSED_VERIFIED_FRESH_REPLAY_ZERO_GAPS
   source_attempt_uid: STAGE02-FRESH-20260919-CORE01-005
   source_problem_denominator: 0
   source_closure_blocker_denominator: 0
   dependencies:
-  - 00_SOURCE_INTAKE/fresh_run_008/02_BASE_BLUEPRINT/CORE-01/PAGE_BASE_BLUEPRINT.yaml
-  - 00_SOURCE_INTAKE/fresh_run_008/03_BLUEPRINT_BINDING/CORE-01/BLUEPRINT_BINDING_MANIFEST.yaml
   required_outputs:
   - FUNCTIONAL_CHAIN_SPEC
   - DEPENDENCY_MAP
@@ -979,43 +958,30 @@ closed_product_work_unit_core01_stage02_r5:
   operation_bindings:
     STAGE_EXECUTION_PREFLIGHT_COMPILE:
       executor_owner: governance/ci/run_current_stage2_actual_test.py
-      result_owner: 00_SOURCE_INTAKE/fresh_run_008/04_PAGE_FUNCTIONAL_CONTRACT/CURRENT_PROBLEM_REGISTER.yaml
     EFFECTIVE_CONTRACT_OVERLAY_COMPILE:
       executor_owner: governance/ci/run_current_stage2_actual_test.py
-      result_owner: 00_SOURCE_INTAKE/fresh_run_008/04_PAGE_FUNCTIONAL_CONTRACT/CURRENT_PROBLEM_REGISTER.yaml
     DEPENDENCY_TOPOLOGY_COMPILE:
       executor_owner: governance/ci/run_current_stage2_actual_test.py
-      result_owner: 00_SOURCE_INTAKE/fresh_run_008/04_PAGE_FUNCTIONAL_CONTRACT/CURRENT_PROBLEM_REGISTER.yaml
     CHANGE_IMPACT_MAP_COMPILE:
       executor_owner: governance/ci/run_current_stage2_actual_test.py
-      result_owner: 00_SOURCE_INTAKE/fresh_run_008/04_PAGE_FUNCTIONAL_CONTRACT/CURRENT_PROBLEM_REGISTER.yaml
     FUNCTIONAL_CHAIN_COMPILE:
       executor_owner: governance/ci/run_current_stage2_actual_test.py
-      result_owner: 00_SOURCE_INTAKE/fresh_run_008/04_PAGE_FUNCTIONAL_CONTRACT/CURRENT_PROBLEM_REGISTER.yaml
     DEPENDENCY_MAP_COMPILE:
       executor_owner: governance/ci/run_current_stage2_actual_test.py
-      result_owner: 00_SOURCE_INTAKE/fresh_run_008/04_PAGE_FUNCTIONAL_CONTRACT/CURRENT_PROBLEM_REGISTER.yaml
     PAGE_CONSTRUCTION_SPEC_COMPILE:
       executor_owner: governance/ci/run_current_stage2_actual_test.py
-      result_owner: 00_SOURCE_INTAKE/fresh_run_008/04_PAGE_FUNCTIONAL_CONTRACT/CURRENT_PROBLEM_REGISTER.yaml
     ASYNC_PROVIDER_CONTRACT_COMPILE:
       executor_owner: governance/ci/run_current_stage2_actual_test.py
-      result_owner: 00_SOURCE_INTAKE/fresh_run_008/04_PAGE_FUNCTIONAL_CONTRACT/CURRENT_PROBLEM_REGISTER.yaml
     SHARED_OWNER_PORT_RESOLVE:
       executor_owner: governance/ci/run_current_stage2_actual_test.py
-      result_owner: 00_SOURCE_INTAKE/fresh_run_008/04_PAGE_FUNCTIONAL_CONTRACT/CURRENT_PROBLEM_REGISTER.yaml
     FUNCTIONAL_WORKBENCH_CONTRACT_COMPILE:
       executor_owner: governance/ci/run_current_stage2_actual_test.py
-      result_owner: 00_SOURCE_INTAKE/fresh_run_008/04_PAGE_FUNCTIONAL_CONTRACT/CURRENT_PROBLEM_REGISTER.yaml
     INTERACTION_TOPOLOGY_COMPILE:
       executor_owner: governance/ci/run_current_stage2_actual_test.py
-      result_owner: 00_SOURCE_INTAKE/fresh_run_008/04_PAGE_FUNCTIONAL_CONTRACT/CURRENT_PROBLEM_REGISTER.yaml
     FUNCTION_ADMISSION_SCORECARD_COMPILE:
       executor_owner: governance/ci/run_current_stage2_actual_test.py
-      result_owner: 00_SOURCE_INTAKE/fresh_run_008/04_PAGE_FUNCTIONAL_CONTRACT/CURRENT_PROBLEM_REGISTER.yaml
     AUTO_COMPLETION_SCOPE_LEDGER_COMPILE:
       executor_owner: governance/ci/run_current_stage2_actual_test.py
-      result_owner: 00_SOURCE_INTAKE/fresh_run_008/04_PAGE_FUNCTIONAL_CONTRACT/CURRENT_PROBLEM_REGISTER.yaml
   scanner_bindings:
     ENTITY_OPERATION_DENOMINATOR:
       scanner_owner: governance/ci/run_current_stage2_actual_test.py
@@ -1256,8 +1222,6 @@ work_unit_resolution_gate_core01_fresh_replay_current:
   - ASSET-01
   predecessor_run_uid: FRESH-RUN-008
   successor_run_uid: FRESH-CORE01-D81DF9AC-STAGE02
-  predecessor_run_root: 00_SOURCE_INTAKE/fresh_run_008
-  successor_run_root: 00_SOURCE_INTAKE/run_core01_d81df9ac_stage02
   predecessor_maintenance_closure_head: d81df9ac58baa1c14077368e2390d20d3c6d5c43
   predecessor_maintenance_dynamic_replay_run_id: 35423708457
   predecessor_maintenance_selected_profile_run_id: 35423708517
@@ -1270,9 +1234,7 @@ closed_fresh_replay_execution_context_core01:
   current_context_eligibility: false
   status: CONSUMED
   run_uid: FRESH-CORE01-D81DF9AC-STAGE02
-  run_root: 00_SOURCE_INTAKE/run_core01_d81df9ac_stage02
   predecessor_run_uid: FRESH-RUN-008
-  predecessor_run_root: 00_SOURCE_INTAKE/fresh_run_008
   branch: rebuild-v2.1.1
   authorization_uid: USR-DIRECTIVE-20260919-EXECUTE-CORE01-THROUGH-STAGE02
   authorization_ref: governance/test/spec_change_authorizations/USR-DIRECTIVE-20260919-EXECUTE-CORE01-THROUGH-STAGE02.yaml
@@ -1393,14 +1355,11 @@ closed_product_work_unit_core01_stage02_current_replay:
   primary_task_layer: PRODUCT_STAGE_EXECUTION
   scope:
   - CORE-01
-  canonical_owner: 00_SOURCE_INTAKE/run_core01_d81df9ac_stage02/04_PAGE_FUNCTIONAL_CONTRACT/CURRENT_PROBLEM_REGISTER.yaml
   current_status: CLOSED_VERIFIED_FRESH_REPLAY_ZERO_GAPS
   source_attempt_uid: STAGE02-CORE01-D81DF9AC-REPLAY
   source_problem_denominator: 0
   source_closure_blocker_denominator: 0
   dependencies:
-  - 00_SOURCE_INTAKE/run_core01_d81df9ac_stage02/02_BASE_BLUEPRINT/CORE-01/PAGE_BASE_BLUEPRINT.yaml
-  - 00_SOURCE_INTAKE/run_core01_d81df9ac_stage02/03_BLUEPRINT_BINDING/CORE-01/BLUEPRINT_BINDING_MANIFEST.yaml
   required_outputs:
   - FUNCTIONAL_CHAIN_SPEC
   - DEPENDENCY_MAP
@@ -1424,43 +1383,30 @@ closed_product_work_unit_core01_stage02_current_replay:
   operation_bindings:
     STAGE_EXECUTION_PREFLIGHT_COMPILE:
       executor_owner: governance/ci/run_current_stage2_actual_test.py
-      result_owner: 00_SOURCE_INTAKE/run_core01_d81df9ac_stage02/04_PAGE_FUNCTIONAL_CONTRACT/CURRENT_PROBLEM_REGISTER.yaml
     EFFECTIVE_CONTRACT_OVERLAY_COMPILE:
       executor_owner: governance/ci/run_current_stage2_actual_test.py
-      result_owner: 00_SOURCE_INTAKE/run_core01_d81df9ac_stage02/04_PAGE_FUNCTIONAL_CONTRACT/CURRENT_PROBLEM_REGISTER.yaml
     DEPENDENCY_TOPOLOGY_COMPILE:
       executor_owner: governance/ci/run_current_stage2_actual_test.py
-      result_owner: 00_SOURCE_INTAKE/run_core01_d81df9ac_stage02/04_PAGE_FUNCTIONAL_CONTRACT/CURRENT_PROBLEM_REGISTER.yaml
     CHANGE_IMPACT_MAP_COMPILE:
       executor_owner: governance/ci/run_current_stage2_actual_test.py
-      result_owner: 00_SOURCE_INTAKE/run_core01_d81df9ac_stage02/04_PAGE_FUNCTIONAL_CONTRACT/CURRENT_PROBLEM_REGISTER.yaml
     FUNCTIONAL_CHAIN_COMPILE:
       executor_owner: governance/ci/run_current_stage2_actual_test.py
-      result_owner: 00_SOURCE_INTAKE/run_core01_d81df9ac_stage02/04_PAGE_FUNCTIONAL_CONTRACT/CURRENT_PROBLEM_REGISTER.yaml
     DEPENDENCY_MAP_COMPILE:
       executor_owner: governance/ci/run_current_stage2_actual_test.py
-      result_owner: 00_SOURCE_INTAKE/run_core01_d81df9ac_stage02/04_PAGE_FUNCTIONAL_CONTRACT/CURRENT_PROBLEM_REGISTER.yaml
     PAGE_CONSTRUCTION_SPEC_COMPILE:
       executor_owner: governance/ci/run_current_stage2_actual_test.py
-      result_owner: 00_SOURCE_INTAKE/run_core01_d81df9ac_stage02/04_PAGE_FUNCTIONAL_CONTRACT/CURRENT_PROBLEM_REGISTER.yaml
     ASYNC_PROVIDER_CONTRACT_COMPILE:
       executor_owner: governance/ci/run_current_stage2_actual_test.py
-      result_owner: 00_SOURCE_INTAKE/run_core01_d81df9ac_stage02/04_PAGE_FUNCTIONAL_CONTRACT/CURRENT_PROBLEM_REGISTER.yaml
     SHARED_OWNER_PORT_RESOLVE:
       executor_owner: governance/ci/run_current_stage2_actual_test.py
-      result_owner: 00_SOURCE_INTAKE/run_core01_d81df9ac_stage02/04_PAGE_FUNCTIONAL_CONTRACT/CURRENT_PROBLEM_REGISTER.yaml
     FUNCTIONAL_WORKBENCH_CONTRACT_COMPILE:
       executor_owner: governance/ci/run_current_stage2_actual_test.py
-      result_owner: 00_SOURCE_INTAKE/run_core01_d81df9ac_stage02/04_PAGE_FUNCTIONAL_CONTRACT/CURRENT_PROBLEM_REGISTER.yaml
     INTERACTION_TOPOLOGY_COMPILE:
       executor_owner: governance/ci/run_current_stage2_actual_test.py
-      result_owner: 00_SOURCE_INTAKE/run_core01_d81df9ac_stage02/04_PAGE_FUNCTIONAL_CONTRACT/CURRENT_PROBLEM_REGISTER.yaml
     FUNCTION_ADMISSION_SCORECARD_COMPILE:
       executor_owner: governance/ci/run_current_stage2_actual_test.py
-      result_owner: 00_SOURCE_INTAKE/run_core01_d81df9ac_stage02/04_PAGE_FUNCTIONAL_CONTRACT/CURRENT_PROBLEM_REGISTER.yaml
     AUTO_COMPLETION_SCOPE_LEDGER_COMPILE:
       executor_owner: governance/ci/run_current_stage2_actual_test.py
-      result_owner: 00_SOURCE_INTAKE/run_core01_d81df9ac_stage02/04_PAGE_FUNCTIONAL_CONTRACT/CURRENT_PROBLEM_REGISTER.yaml
   scanner_bindings:
     ENTITY_OPERATION_DENOMINATOR:
       scanner_owner: governance/ci/run_current_stage2_actual_test.py
@@ -2119,8 +2065,6 @@ work_unit_resolution_gate_asset01_clean_fresh_replay_after_shared_hardening:
   excluded_page_scope:
   - CORE-01
   predecessor_input_uid: IMMUTABLE-ASSET01-9668E230
-  predecessor_input_root: 00_SOURCE_INTAKE/immutable_inputs/asset01_9668e230
-  predecessor_raw_source_git_blob_sha: 9668e2307c722ea4cf64f93f07c92da1b3abcc28
   prior_product_attempt_uid: STAGE02-ASSET01-8133839F-REPLAY
   prior_product_attempt_role: HISTORICAL_PREDECESSOR_EVIDENCE_ONLY
   prior_functional_gap_total: 75
@@ -2531,8 +2475,6 @@ closed_product_work_unit_core01_stage01_stage03_clean_reset_r1:
   current_status: CLOSED_VERIFIED_CLEAN_BASELINE_NO_PRODUCT_CREDIT
   current_governance_uid: GOV-REV-20260920-CROSS-STAGE-MATERIALIZATION-CONSUMER-READINESS-HARDENING
   current_execution_allowed: false
-  immutable_input_root: 00_SOURCE_INTAKE/immutable_inputs/core01_961aa8c1
-  deleted_product_run_root: 00_SOURCE_INTAKE/run_core01_d81df9ac_stage02
   deleted_current_stage03_test_root: governance/test/stage03
   definition_of_done:
   - RAW_SOURCE_BYTE_EXACT_IMMUTABLE_INPUT_PRESERVED
@@ -2719,7 +2661,7 @@ active_work_unit:
   work_unit_uid: WU-GOV-CORE-ASSET-ENCODED-PROVENANCE-PURGE-001
   canonical_name: CORE_ASSET_ENCODED_PRODUCT_PROVENANCE_PURGE
   primary_task_layer: GOVERNANCE_MAINTENANCE
-  current_status: ACTIVE
+  current_status: CLEANUP_COMMITTED_POST_MUTATION_SCAN_REQUIRED
   authorization_basis: EXPLICIT_USER_DIRECTIVE_20260923_DELETE_ENCODED_PATH_BLOB_KEEP_GOVERNANCE
   canonical_policy_owner: governance/specifications/current/EXECUTION_CYCLE_CONTROL.yaml
   state_owner: governance/test/ACTIVE_STATE.yaml
@@ -2975,8 +2917,6 @@ preserved_stage03_product_work_unit:
   primary_task_layer: PRODUCT_STAGE_EXECUTION
   stage_uid: STAGE-03
   semantic_capability: VISUAL_DESIGN
-  canonical_owner: 00_SOURCE_INTAKE/run_core01_d81df9ac_stage02/05_VISUAL_DESIGN/CORE-01/VISUAL_DESIGN_SPEC_PACKAGE.yaml
-  output_root: 00_SOURCE_INTAKE/run_core01_d81df9ac_stage02/05_VISUAL_DESIGN/CORE-01
   current_status: SUSPENDED_FOR_AUTHORIZED_GOVERNANCE_SUCCESSOR
   resume_point: STAGE3_CORE01_VISUAL_REVIEW_PENDING
   next_action_after_governance_successor: DELETE_STAGE03_GENERATED_OUTPUTS_THEN_FRESH_REPLAY
@@ -3087,7 +3027,6 @@ work_unit_resolution_gate_stage03_product_restore_v2215:
   predecessor_work_unit_uid: WU-GOV-STAGE03-VISUAL-MATERIALIZATION-HARDENING-001
   predecessor_disposition: CLOSED_VERIFIED_NO_PRODUCT_CREDIT
   candidate_successor_work_unit_uid: WU-STAGE03-CORE01-VISUAL-DESIGN-001
-  canonical_owner: 00_SOURCE_INTAKE/run_core01_d81df9ac_stage02/05_VISUAL_DESIGN/CORE-01/VISUAL_DESIGN_SPEC_PACKAGE.yaml
   dependency_legality: PASS
   reverse_dependency_legality: PASS
   applicability: PASS
@@ -3117,32 +3056,13 @@ stage03_clean_baseline_receipt:
   next_attempt_uid: STAGE03-CORE01-V2215-20260920-003
   next_run_uid: VISUAL-CORE01-V2215-STAGE03-R3
   deleted_roots:
-  - 00_SOURCE_INTAKE/run_core01_d81df9ac_stage02/05_VISUAL_DESIGN
   - governance/test/stage03
   deleted_file_count: 23
   deleted_visual_file_count: 21
   deleted_current_test_evidence_file_count: 2
   historical_action_artifacts_preserved: true
   stage01_stage02_inputs_deleted: false
-  protected_subtree_sha256_before:
-    00_SOURCE_INTAKE/run_core01_d81df9ac_stage02/00_SOURCE_INTAKE: 4a46f4dcae0a1f76d3f79e8a69a0e30a0bf63a78781106586f5d4c061f070f0f
-    00_SOURCE_INTAKE/run_core01_d81df9ac_stage02/01_CLASSIFIED: fd070abb9a5144cf50315783e6fc45354b4eb44957ca1fddb2457b0a8700d9c3
-    00_SOURCE_INTAKE/run_core01_d81df9ac_stage02/02_BASE_BLUEPRINT: 4efdcdec6bc909470f022471a3109be4f434584f9aacf7b6b851f8fb9d8719c1
-    00_SOURCE_INTAKE/run_core01_d81df9ac_stage02/03_BLUEPRINT_BINDING: 7220a1c1ab5cc4e1970a67e035f4a93a7c43091e98046230f4209ab7112f3d20
-    00_SOURCE_INTAKE/run_core01_d81df9ac_stage02/04_PAGE_FUNCTIONAL_CONTRACT: 330f1671b1a8232d9128560ed67220e192065d1ab9c71896352d70180f4e7c36
-    00_SOURCE_INTAKE/run_core01_d81df9ac_stage02/CURRENT_RUN_MANIFEST.yaml: c0f203356402bfe301b6f58470aa1974d2402b4ac5931d0e49a60580f664a99f
-    00_SOURCE_INTAKE/run_core01_d81df9ac_stage02/EXECUTION_STATE.yaml: 463d083a4d16b661bb125823353de8c45fa01d8e1deb0ab60efe5292f3f918a6
-    00_SOURCE_INTAKE/run_core01_d81df9ac_stage02/RUN_CONTEXT.yaml: ab7b483a130cd1238f505cf89af8c6ceb3b96cd94a1534f48127b911d133049c
   result: PASS_CLEAN_BASELINE_R3
-  protected_subtree_sha256_after:
-    00_SOURCE_INTAKE/run_core01_d81df9ac_stage02/00_SOURCE_INTAKE: 4a46f4dcae0a1f76d3f79e8a69a0e30a0bf63a78781106586f5d4c061f070f0f
-    00_SOURCE_INTAKE/run_core01_d81df9ac_stage02/01_CLASSIFIED: fd070abb9a5144cf50315783e6fc45354b4eb44957ca1fddb2457b0a8700d9c3
-    00_SOURCE_INTAKE/run_core01_d81df9ac_stage02/02_BASE_BLUEPRINT: 4efdcdec6bc909470f022471a3109be4f434584f9aacf7b6b851f8fb9d8719c1
-    00_SOURCE_INTAKE/run_core01_d81df9ac_stage02/03_BLUEPRINT_BINDING: 7220a1c1ab5cc4e1970a67e035f4a93a7c43091e98046230f4209ab7112f3d20
-    00_SOURCE_INTAKE/run_core01_d81df9ac_stage02/04_PAGE_FUNCTIONAL_CONTRACT: 330f1671b1a8232d9128560ed67220e192065d1ab9c71896352d70180f4e7c36
-    00_SOURCE_INTAKE/run_core01_d81df9ac_stage02/CURRENT_RUN_MANIFEST.yaml: c0f203356402bfe301b6f58470aa1974d2402b4ac5931d0e49a60580f664a99f
-    00_SOURCE_INTAKE/run_core01_d81df9ac_stage02/EXECUTION_STATE.yaml: 463d083a4d16b661bb125823353de8c45fa01d8e1deb0ab60efe5292f3f918a6
-    00_SOURCE_INTAKE/run_core01_d81df9ac_stage02/RUN_CONTEXT.yaml: ab7b483a130cd1238f505cf89af8c6ceb3b96cd94a1534f48127b911d133049c
 work_unit_resolution_gate_stage03_high_pressure_harness_v2215:
   resolution_uid: WUR-TEST-STAGE03-HIGH-PRESSURE-HARNESS-V2215-001
   normative_authority: false
@@ -3283,32 +3203,13 @@ stage03_clean_baseline_receipt_history:
   cleanup_source_head_sha: 68a425161b1907c97cc539153598e8d68823df1e
   cleanup_workflow_run_id: '35484638894'
   deleted_roots:
-  - 00_SOURCE_INTAKE/run_core01_d81df9ac_stage02/05_VISUAL_DESIGN
   - governance/test/stage03
   deleted_file_count: 20
   deleted_visual_file_count: 18
   deleted_current_test_evidence_file_count: 2
   historical_action_artifact_preserved: true
   stage01_stage02_inputs_deleted: false
-  protected_subtree_sha256_before:
-    00_SOURCE_INTAKE/run_core01_d81df9ac_stage02/00_SOURCE_INTAKE: 4a46f4dcae0a1f76d3f79e8a69a0e30a0bf63a78781106586f5d4c061f070f0f
-    00_SOURCE_INTAKE/run_core01_d81df9ac_stage02/01_CLASSIFIED: fd070abb9a5144cf50315783e6fc45354b4eb44957ca1fddb2457b0a8700d9c3
-    00_SOURCE_INTAKE/run_core01_d81df9ac_stage02/02_BASE_BLUEPRINT: 4efdcdec6bc909470f022471a3109be4f434584f9aacf7b6b851f8fb9d8719c1
-    00_SOURCE_INTAKE/run_core01_d81df9ac_stage02/03_BLUEPRINT_BINDING: 7220a1c1ab5cc4e1970a67e035f4a93a7c43091e98046230f4209ab7112f3d20
-    00_SOURCE_INTAKE/run_core01_d81df9ac_stage02/04_PAGE_FUNCTIONAL_CONTRACT: 330f1671b1a8232d9128560ed67220e192065d1ab9c71896352d70180f4e7c36
-    00_SOURCE_INTAKE/run_core01_d81df9ac_stage02/CURRENT_RUN_MANIFEST.yaml: c0f203356402bfe301b6f58470aa1974d2402b4ac5931d0e49a60580f664a99f
-    00_SOURCE_INTAKE/run_core01_d81df9ac_stage02/EXECUTION_STATE.yaml: 463d083a4d16b661bb125823353de8c45fa01d8e1deb0ab60efe5292f3f918a6
-    00_SOURCE_INTAKE/run_core01_d81df9ac_stage02/RUN_CONTEXT.yaml: ab7b483a130cd1238f505cf89af8c6ceb3b96cd94a1534f48127b911d133049c
   result: PASS_CLEAN_BASELINE_CURRENT_STATE_FINALIZED
-  protected_subtree_sha256_after:
-    00_SOURCE_INTAKE/run_core01_d81df9ac_stage02/00_SOURCE_INTAKE: 4a46f4dcae0a1f76d3f79e8a69a0e30a0bf63a78781106586f5d4c061f070f0f
-    00_SOURCE_INTAKE/run_core01_d81df9ac_stage02/01_CLASSIFIED: fd070abb9a5144cf50315783e6fc45354b4eb44957ca1fddb2457b0a8700d9c3
-    00_SOURCE_INTAKE/run_core01_d81df9ac_stage02/02_BASE_BLUEPRINT: 4efdcdec6bc909470f022471a3109be4f434584f9aacf7b6b851f8fb9d8719c1
-    00_SOURCE_INTAKE/run_core01_d81df9ac_stage02/03_BLUEPRINT_BINDING: 7220a1c1ab5cc4e1970a67e035f4a93a7c43091e98046230f4209ab7112f3d20
-    00_SOURCE_INTAKE/run_core01_d81df9ac_stage02/04_PAGE_FUNCTIONAL_CONTRACT: 330f1671b1a8232d9128560ed67220e192065d1ab9c71896352d70180f4e7c36
-    00_SOURCE_INTAKE/run_core01_d81df9ac_stage02/CURRENT_RUN_MANIFEST.yaml: c0f203356402bfe301b6f58470aa1974d2402b4ac5931d0e49a60580f664a99f
-    00_SOURCE_INTAKE/run_core01_d81df9ac_stage02/EXECUTION_STATE.yaml: 463d083a4d16b661bb125823353de8c45fa01d8e1deb0ab60efe5292f3f918a6
-    00_SOURCE_INTAKE/run_core01_d81df9ac_stage02/RUN_CONTEXT.yaml: ab7b483a130cd1238f505cf89af8c6ceb3b96cd94a1534f48127b911d133049c
   state_projection_finalized: true
   state_projection_repair_source_head_sha: 5b5a9abd45e5aa78b1fe3c8b4a318a8470240fdf
 - artifact_type: STAGE03_CLEAN_BASELINE_RECEIPT
@@ -3326,32 +3227,13 @@ stage03_clean_baseline_receipt_history:
   next_attempt_uid: STAGE03-CORE01-V2215-20260920-002
   next_run_uid: VISUAL-CORE01-V2215-STAGE03-R2
   deleted_roots:
-  - 00_SOURCE_INTAKE/run_core01_d81df9ac_stage02/05_VISUAL_DESIGN
   - governance/test/stage03
   deleted_file_count: 23
   deleted_visual_file_count: 21
   deleted_current_test_evidence_file_count: 2
   historical_action_artifacts_preserved: true
   stage01_stage02_inputs_deleted: false
-  protected_subtree_sha256_before:
-    00_SOURCE_INTAKE/run_core01_d81df9ac_stage02/00_SOURCE_INTAKE: 4a46f4dcae0a1f76d3f79e8a69a0e30a0bf63a78781106586f5d4c061f070f0f
-    00_SOURCE_INTAKE/run_core01_d81df9ac_stage02/01_CLASSIFIED: fd070abb9a5144cf50315783e6fc45354b4eb44957ca1fddb2457b0a8700d9c3
-    00_SOURCE_INTAKE/run_core01_d81df9ac_stage02/02_BASE_BLUEPRINT: 4efdcdec6bc909470f022471a3109be4f434584f9aacf7b6b851f8fb9d8719c1
-    00_SOURCE_INTAKE/run_core01_d81df9ac_stage02/03_BLUEPRINT_BINDING: 7220a1c1ab5cc4e1970a67e035f4a93a7c43091e98046230f4209ab7112f3d20
-    00_SOURCE_INTAKE/run_core01_d81df9ac_stage02/04_PAGE_FUNCTIONAL_CONTRACT: 330f1671b1a8232d9128560ed67220e192065d1ab9c71896352d70180f4e7c36
-    00_SOURCE_INTAKE/run_core01_d81df9ac_stage02/CURRENT_RUN_MANIFEST.yaml: c0f203356402bfe301b6f58470aa1974d2402b4ac5931d0e49a60580f664a99f
-    00_SOURCE_INTAKE/run_core01_d81df9ac_stage02/EXECUTION_STATE.yaml: 463d083a4d16b661bb125823353de8c45fa01d8e1deb0ab60efe5292f3f918a6
-    00_SOURCE_INTAKE/run_core01_d81df9ac_stage02/RUN_CONTEXT.yaml: ab7b483a130cd1238f505cf89af8c6ceb3b96cd94a1534f48127b911d133049c
   result: PASS_CLEAN_BASELINE_R2
-  protected_subtree_sha256_after:
-    00_SOURCE_INTAKE/run_core01_d81df9ac_stage02/00_SOURCE_INTAKE: 4a46f4dcae0a1f76d3f79e8a69a0e30a0bf63a78781106586f5d4c061f070f0f
-    00_SOURCE_INTAKE/run_core01_d81df9ac_stage02/01_CLASSIFIED: fd070abb9a5144cf50315783e6fc45354b4eb44957ca1fddb2457b0a8700d9c3
-    00_SOURCE_INTAKE/run_core01_d81df9ac_stage02/02_BASE_BLUEPRINT: 4efdcdec6bc909470f022471a3109be4f434584f9aacf7b6b851f8fb9d8719c1
-    00_SOURCE_INTAKE/run_core01_d81df9ac_stage02/03_BLUEPRINT_BINDING: 7220a1c1ab5cc4e1970a67e035f4a93a7c43091e98046230f4209ab7112f3d20
-    00_SOURCE_INTAKE/run_core01_d81df9ac_stage02/04_PAGE_FUNCTIONAL_CONTRACT: 330f1671b1a8232d9128560ed67220e192065d1ab9c71896352d70180f4e7c36
-    00_SOURCE_INTAKE/run_core01_d81df9ac_stage02/CURRENT_RUN_MANIFEST.yaml: c0f203356402bfe301b6f58470aa1974d2402b4ac5931d0e49a60580f664a99f
-    00_SOURCE_INTAKE/run_core01_d81df9ac_stage02/EXECUTION_STATE.yaml: 463d083a4d16b661bb125823353de8c45fa01d8e1deb0ab60efe5292f3f918a6
-    00_SOURCE_INTAKE/run_core01_d81df9ac_stage02/RUN_CONTEXT.yaml: ab7b483a130cd1238f505cf89af8c6ceb3b96cd94a1534f48127b911d133049c
 closed_product_dependency_work_unit_stage03_visual_authority_materialization:
   work_unit_uid: WU-STAGE03-GLOBAL-VISUAL-AUTHORITY-MATERIALIZATION-001
   canonical_name: STAGE03_GLOBAL_VISUAL_AUTHORITY_MATERIALIZATION
@@ -3479,8 +3361,6 @@ suspended_product_work_unit_for_cross_stage_governance_hardening:
   current_status: REVERIFY_REQUIRED_UPSTREAM_SOURCE_CAPTURE_AND_SUCCESSOR_READINESS
   attempt_uid: STAGE03-CORE01-V2215-20260920-003
   run_uid: VISUAL-CORE01-V2215-STAGE03-R3
-  canonical_owner: 00_SOURCE_INTAKE/run_core01_d81df9ac_stage02/05_VISUAL_DESIGN/CORE-01/VISUAL_DESIGN_SPEC_PACKAGE.yaml
-  output_root: 00_SOURCE_INTAKE/run_core01_d81df9ac_stage02/05_VISUAL_DESIGN/CORE-01
   predecessor_stage02_work_unit_uid: WU-STAGE02-CORE01-D81DF9AC-REPLAY
   start_condition:
   - STAGE02_CLOSED_VERIFIED
@@ -3490,12 +3370,6 @@ suspended_product_work_unit_for_cross_stage_governance_hardening:
   - GOVERNANCE_V2_2_15_EXACT_HEAD_VALIDATED
   - WORK_UNIT_RESOLUTION_PASS_SINGLE_LEGAL_SUCCESSOR
   dependencies:
-  - 00_SOURCE_INTAKE/run_core01_d81df9ac_stage02/02_BASE_BLUEPRINT/CORE-01/VISUAL_BASE_BLUEPRINT.yaml
-  - 00_SOURCE_INTAKE/run_core01_d81df9ac_stage02/04_PAGE_FUNCTIONAL_CONTRACT/CORE-01/PAGE_CONSTRUCTION_SPEC_PACKAGE.yaml
-  - 00_SOURCE_INTAKE/run_core01_d81df9ac_stage02/04_PAGE_FUNCTIONAL_CONTRACT/CORE-01/FUNCTIONAL_WORKBENCH_CONTRACT.yaml
-  - 00_SOURCE_INTAKE/run_core01_d81df9ac_stage02/04_PAGE_FUNCTIONAL_CONTRACT/CORE-01/INTERACTION_TOPOLOGY_SPEC.yaml
-  - 00_SOURCE_INTAKE/run_core01_d81df9ac_stage02/04_PAGE_FUNCTIONAL_CONTRACT/CORE-01/AI_INTERACTION_CONTINUITY_CONTRACT.yaml
-  - 00_SOURCE_INTAKE/run_core01_d81df9ac_stage02/04_PAGE_FUNCTIONAL_CONTRACT/CORE-01/FUNCTION_VISUAL_IMPACT_MATRIX.yaml
   - authority/global/GLOBAL_HOME_SHELL_TEMPLATE_AUTHORITY_FINAL_LOCKED_V1.9.yaml
   - authority/global/GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY_FINAL_LOCKED.yaml
   required_operations:
@@ -3521,31 +3395,22 @@ suspended_product_work_unit_for_cross_stage_governance_hardening:
   operation_bindings:
     VISUAL_SPEC_COMPILE:
       executor_owner: governance/ci/run_current_stage3_visual_design.py
-      result_owner: 00_SOURCE_INTAKE/run_core01_d81df9ac_stage02/05_VISUAL_DESIGN/CORE-01/VISUAL_DESIGN_SPEC_PACKAGE.yaml
     GEOMETRY_CONTRACT_COMPILE:
       executor_owner: governance/ci/run_current_stage3_visual_design.py
-      result_owner: 00_SOURCE_INTAKE/run_core01_d81df9ac_stage02/05_VISUAL_DESIGN/CORE-01/VISUAL_GEOMETRY_CONTRACT.yaml
     VISUAL_PREVIEW_RENDER:
       executor_owner: governance/ci/run_current_stage3_visual_design.py
-      result_owner: 00_SOURCE_INTAKE/run_core01_d81df9ac_stage02/05_VISUAL_DESIGN/CORE-01/VISUAL_PREVIEW_EVIDENCE.yaml
     VISUAL_CHANGESET_COMPILE:
       executor_owner: governance/ci/run_current_stage3_visual_design.py
-      result_owner: 00_SOURCE_INTAKE/run_core01_d81df9ac_stage02/05_VISUAL_DESIGN/CORE-01/VISUAL_CHANGESET.yaml
     VISUAL_INTERACTION_TOPOLOGY_BIND:
       executor_owner: governance/ci/run_current_stage3_visual_design.py
-      result_owner: 00_SOURCE_INTAKE/run_core01_d81df9ac_stage02/05_VISUAL_DESIGN/CORE-01/VISUAL_INTERACTION_TOPOLOGY_BINDING.yaml
     FUNCTIONAL_WORKBENCH_LAYOUT_BIND:
       executor_owner: governance/ci/run_current_stage3_visual_design.py
-      result_owner: 00_SOURCE_INTAKE/run_core01_d81df9ac_stage02/05_VISUAL_DESIGN/CORE-01/FUNCTIONAL_WORKBENCH_LAYOUT_CONTRACT.yaml
     VISUAL_REFERENCE_ANNOTATION_COMPILE:
       executor_owner: governance/ci/run_current_stage3_visual_design.py
-      result_owner: 00_SOURCE_INTAKE/run_core01_d81df9ac_stage02/05_VISUAL_DESIGN/CORE-01/VISUAL_REFERENCE_ANNOTATION.yaml
     VISUAL_INHERITANCE_MATRIX_COMPILE:
       executor_owner: governance/ci/run_current_stage3_visual_design.py
-      result_owner: 00_SOURCE_INTAKE/run_core01_d81df9ac_stage02/05_VISUAL_DESIGN/CORE-01/VISUAL_INHERITANCE_MATRIX.yaml
     VISUAL_SCENARIO_EVIDENCE_COMPILE:
       executor_owner: governance/ci/run_current_stage3_visual_design.py
-      result_owner: 00_SOURCE_INTAKE/run_core01_d81df9ac_stage02/05_VISUAL_DESIGN/CORE-01/VISUAL_SCENARIO_EVIDENCE_SET.yaml
   scanner_bindings:
     VISUAL_DOMAIN:
       scanner_owner: governance/ci/run_current_stage3_visual_design.py
@@ -3605,7 +3470,6 @@ suspended_product_work_unit_for_cross_stage_governance_hardening:
     rule: DO_NOT_REACH_HUMAN_VISUAL_REVIEW_UNTIL_CURRENT_VISUAL_AUTHORITY_AND_REVIEWABILITY_GATES_PASS
   product_blocker_credit: 0
   legal_next_transition: STAGE03_CLOSED_TO_STAGE04_WORK_UNIT_RESOLUTION
-  planned_output_owner: 00_SOURCE_INTAKE/run_core01_d81df9ac_stage02/05_VISUAL_DESIGN/CORE-01/VISUAL_DESIGN_SPEC_PACKAGE.yaml
   generated_output_root_present: true
   fresh_execution_evidence_ref: governance/test/stage03/STAGE03_LATEST_TEST_EVIDENCE.json
   reentry_owner_capability: SOURCE_INTAKE_BASE_BLUEPRINT
@@ -3614,7 +3478,6 @@ suspended_product_work_unit_for_cross_stage_governance_hardening:
 suspended_product_resume_for_cross_stage_governance_hardening:
   current_resume_point: STAGE3_CORE01_VISUAL_REVIEW_PENDING
   current_work_unit_uid: WU-STAGE03-CORE01-VISUAL-DESIGN-001
-  current_owner: 00_SOURCE_INTAKE/run_core01_d81df9ac_stage02/05_VISUAL_DESIGN/CORE-01/VISUAL_DESIGN_SPEC_PACKAGE.yaml
   exact_next_action: HUMAN_VISUAL_REVIEW_CORE01_STAGE03
   historical_stage2_results_are_current_state: false
   stage2_execution_requires_fresh_entry_resolution: false

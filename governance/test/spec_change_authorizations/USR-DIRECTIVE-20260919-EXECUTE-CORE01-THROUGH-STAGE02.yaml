@@ -12,9 +12,7 @@ user_directive:
 - "都完成了就開始測試核心頁面，執行到stage-02"
 exact_scope:
   predecessor_run_uid: FRESH-RUN-008
-  predecessor_run_root: 00_SOURCE_INTAKE/fresh_run_008
   successor_run_uid: FRESH-CORE01-D81DF9AC-STAGE02
-  successor_run_root: 00_SOURCE_INTAKE/run_core01_d81df9ac_stage02
   replay_pages:
   - CORE-01
   excluded_replay_pages:
@@ -23,9 +21,7 @@ exact_scope:
   - STAGE-01
   - STAGE-02
   immutable_raw_sources:
-  - path: 00_SOURCE_INTAKE/fresh_run_008/00_SOURCE_INTAKE/RAW_SOURCE/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml
     git_blob_sha: 961aa8c1a9bff170099d10f9e6889f731b0ad437
-  - path: 00_SOURCE_INTAKE/fresh_run_008/00_SOURCE_INTAKE/RAW_SOURCE/CORE-01/CORE_CURRENT_CANONICAL_VISUAL_FINAL_LOCKED_V1.0.yaml
     git_blob_sha: 09665c0a4a6b86db912f9b44160d336bfc611ae6
   allowed_actions:
   - preserve exact CORE-01 Raw Source bytes before destructive cleanup
