@@ -3,7 +3,7 @@ on:
   push:
     branches: [0921acpos]
     paths:
-      - .github/workflows/acpos_batch95_planning_design_specification_audit.yml
+      - .github/workflows/acpos_batch95_post_remediation_planning_design_closure_audit.yml
 permissions:
   contents: write
 jobs:
@@ -24,8 +24,8 @@ jobs:
           import collections,json,re,subprocess,zipfile
           import xml.etree.ElementTree as ET
 
-          EXPECTED_PARENT="98f7ae68916522881809538f2039fa9dd26591b5"
-          WF=Path(".github/workflows/acpos_batch95_planning_design_specification_audit.yml")
+          EXPECTED_PARENT="03f97dc2f7da9ca849b883c5c6fb8906fa25be19"
+          WF=Path(".github/workflows/acpos_batch95_post_remediation_planning_design_closure_audit.yml")
           parent=subprocess.check_output(["git","rev-parse","HEAD^"],text=True).strip()
           if parent!=EXPECTED_PARENT:
               raise SystemExit(f"EXACT_HEAD_PARENT_FAIL {parent}")
@@ -375,6 +375,6 @@ jobs:
           rm -f __batch95_planning_design_audit.json __batch95_summary.json
           git config user.name "acpos-batch95-design-audit"
           git config user.email "actions@users.noreply.github.com"
-          git rm -f .github/workflows/acpos_batch95_planning_design_specification_audit.yml
+          git rm -f .github/workflows/acpos_batch95_post_remediation_planning_design_closure_audit.yml
           git commit -m "chore(acpos): close batch 95 planning design closure audit"
           git push origin HEAD:0921acpos
