@@ -32,7 +32,7 @@ jobs:
           from docx.enum.text import WD_BREAK
           import subprocess, zipfile, json, re
 
-          BASE="3a87f13498640606d4bb5e176c724a9cfe794213"
+          BASE="a1a5a792ef85c406cc051e024259e62c0ae9881f"
           if subprocess.check_output(["git","rev-parse","HEAD^"],text=True).strip()!=BASE:
               raise SystemExit("EXACT_PARENT_FAIL")
 
@@ -266,7 +266,7 @@ jobs:
               ])
 
               d.add_heading("6. System DoD",level=2)
-              add_paragraph("PASS only when exact rational time is preserved end-to-end; frame/sample-rate identities are resolvable where required; illegal precision modes fail closed; group projection never changes edit truth; timing/version mutations produce correct dependency invalidation; existing Stage Evaluation, Human Confirm, Render/Lock and QA Handoff authorities remain unchanged.")
+              d.add_paragraph("PASS only when exact rational time is preserved end-to-end; frame/sample-rate identities are resolvable where required; illegal precision modes fail closed; group projection never changes edit truth; timing/version mutations produce correct dependency invalidation; existing Stage Evaluation, Human Confirm, Render/Lock and QA Handoff authorities remain unchanged.")
               d.save(SYS)
 
           # ---------------- Global Integration ----------------
