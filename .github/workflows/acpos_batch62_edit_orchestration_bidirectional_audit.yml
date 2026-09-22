@@ -1,0 +1,90 @@
+name: ACPOS Batch 62 EDIT Orchestration Bidirectional Audit
+
+on:
+  push:
+    branches: [0921acpos]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: acpos-batch62-edit-bidirectional-audit
+  cancel-in-progress: false
+
+jobs:
+  audit:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Verify Batch 61 clean Word boundary
+        shell: bash
+        run: |
+          set -euo pipefail
+          BASE="2f709927292813154da145ec56791c51f33b1794"
+          git cat-file -e "$BASE^{commit}"
+          test -z "$(git -c core.quotePath=false diff --name-only "$BASE" HEAD -- '*.docx')"
+          test "$(find . -maxdepth 1 -type f -name '*.docx' | wc -l)" -eq 31
+          echo "PASS: BATCH61 CONTENT BOUNDARY"
+
+      - name: Install audit runtime
+        run: python -m pip install --quiet python-docx
+
+      - name: Run Batch 62 bidirectional audit
+        env:
+          PYTHONDONTWRITEBYTECODE: "1"
+        run: python -B __temp/batch62_edit_orchestration_bidirectional_audit.py
+
+      - name: Verify Batch 62 closure
+        shell: bash
+        run: |
+          PYTHONDONTWRITEBYTECODE=1 python -B - <<'PY'
+          import json
+          from pathlib import Path
+          r=json.loads(Path("__batch62_bidirectional_audit.json").read_text(encoding="utf-8"))
+          s=r["summary"]
+          assert s["docx_files"]==31,s
+          assert s["legacy_r9_r5_hits"]==0,s
+          assert s["ambiguous_locator_hits"]==0,s
+          assert s["target_exact_rows"]==2,s
+          assert s["target_docs"]==2,s
+          assert s["target_field_gaps"]==0,s
+          assert s["target_stale_atomic_operation_rows"]==0,s
+          assert s["target_action_operation_count"]==1,s
+          assert s["atomic_ports"]==2,s
+          assert s["atomic_port_required_field_gaps"]==0,s
+          assert s["reverse_binding_rows"]>=4,s
+          assert s["forward_branch_rows"]>=3,s
+          assert s["bidirectional_status"]=="PASS",s
+          assert s["runtime_execution_claimed"] is False,s
+          print("PASS: BATCH62 EDIT BIDIRECTIONAL CLOSURE")
+          print(json.dumps(s,ensure_ascii=False,sort_keys=True))
+          PY
+
+      - name: Upload Batch 62 evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: acpos-batch62-edit-orchestration-bidirectional-audit
+          path: |
+            __batch62_bidirectional_audit.json
+            __batch62_summary.json
+          retention-days: 2
+          if-no-files-found: error
+
+      - name: Remove Batch 62 audit harness
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -f __batch62_bidirectional_audit.json __batch62_summary.json
+          find . -type d -name __pycache__ -prune -exec rm -rf {} +
+          git config user.name "acpos-word-batch-62-audit"
+          git config user.email "actions@users.noreply.github.com"
+          git rm -f __temp/batch62_edit_orchestration_bidirectional_audit.py .github/workflows/acpos_batch62_edit_orchestration_bidirectional_audit.yml
+          git commit -m "chore(acpos): close batch 62 edit bidirectional audit harness"
+          git push origin HEAD:0921acpos
+          test -z "$(git status --porcelain)"
+          echo "PASS: BATCH62 HARNESS REMOVED / CLEAN TREE"
