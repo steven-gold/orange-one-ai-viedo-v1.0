@@ -1,0 +1,78 @@
+name: ACPOS Batch 66 Effective Parity Raw Ambiguity Audit
+
+on:
+  push:
+    branches: [0921acpos]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: acpos-batch66-effective-parity-audit
+  cancel-in-progress: false
+
+jobs:
+  audit:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Verify Batch 65 clean Word boundary
+        shell: bash
+        run: |
+          set -euo pipefail
+          BASE="9e20f1b7a080cb1ecc9795ab96b2428b8e794fcc"
+          git cat-file -e "$BASE^{commit}"
+          test -z "$(git -c core.quotePath=false diff --name-only "$BASE" HEAD -- '*.docx')"
+          test "$(find . -maxdepth 1 -type f -name '*.docx' | wc -l)" -eq 31
+          echo "PASS: BATCH65 WORD BOUNDARY"
+
+      - name: Install audit runtime
+        run: python -m pip install --quiet python-docx
+
+      - name: Run Batch 66 audit
+        env:
+          PYTHONDONTWRITEBYTECODE: "1"
+        run: python -B __temp/batch66_effective_parity_raw_ambiguity_audit.py
+
+      - name: Verify audit completeness
+        shell: bash
+        run: |
+          PYTHONDONTWRITEBYTECODE=1 python -B - <<'PY'
+          import json
+          from pathlib import Path
+          r=json.loads(Path("__batch66_effective_parity_raw_ambiguity.json").read_text(encoding="utf-8"))
+          s=r["summary"]
+          assert s["page_unique_exact_controls"]>0,s
+          assert s["owner_resolved"]>0,s
+          print("PASS: BATCH66 EFFECTIVE PARITY + RAW AMBIGUITY AUDIT")
+          print(json.dumps(s,ensure_ascii=False,sort_keys=True))
+          PY
+
+      - name: Upload Batch 66 evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: acpos-batch66-effective-parity-raw-ambiguity-audit
+          path: |
+            __batch66_effective_parity_raw_ambiguity.json
+            __batch66_summary.json
+          retention-days: 2
+          if-no-files-found: error
+
+      - name: Remove Batch 66 audit harness
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -f __batch66_effective_parity_raw_ambiguity.json __batch66_summary.json
+          find . -type d -name __pycache__ -prune -exec rm -rf {} +
+          git config user.name "acpos-word-batch-66-audit"
+          git config user.email "actions@users.noreply.github.com"
+          git rm -f __temp/batch66_effective_parity_raw_ambiguity_audit.py .github/workflows/acpos_batch66_effective_parity_raw_ambiguity_audit.yml
+          git commit -m "chore(acpos): close batch 66 effective parity audit harness"
+          git push origin HEAD:0921acpos
+          test -z "$(git status --porcelain)"
+          echo "PASS: BATCH66 HARNESS REMOVED / CLEAN TREE"
