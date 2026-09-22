@@ -113,7 +113,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          out="$(git -c core.quotePath=false diff --name-only d3eeb687015fe1f0220fce0a99629e129e5e5d39 HEAD -- '*.docx')"
+          out="$(git -c core.quotePath=false diff --name-only d3eeb687015fe1f0220fce0a99629e129e5e5d39 -- '*.docx')"
           test "$out" = "ACPOS_SYSTEM_LOGIC_GLOBAL_INTEGRATION_Mother_Basic_Design_OPTIMIZED.docx"
           echo "PASS: EXACT WORD SCOPE = SYSTEM LOGIC ONLY"
 
