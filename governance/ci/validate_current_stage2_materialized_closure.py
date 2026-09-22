@@ -3,11 +3,15 @@ from __future__ import annotations
 
 from collections import defaultdict
 from pathlib import Path
+import os
 import sys
 import yaml
 
 ROOT = Path(__file__).resolve().parents[2]
-RUN = ROOT / "00_SOURCE_INTAKE/fresh_run_003"
+RUN_ROOT_ENV = os.environ.get("ACPOS_RUN_ROOT", "").strip()
+if not RUN_ROOT_ENV:
+    raise SystemExit("BLOCK: ACPOS_RUN_ROOT_REQUIRED")
+RUN = ROOT / RUN_ROOT_ENV
 OUT = RUN / "04_PAGE_FUNCTIONAL_CONTRACT"
 RECEIPT = ROOT / "governance/test/stage02/STAGE02_MATERIAL_REMEDIATION_RECEIPT_R1.yaml"
 STATE = ROOT / "governance/test/ACTIVE_STATE.yaml"

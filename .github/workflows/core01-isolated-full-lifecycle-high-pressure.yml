@@ -9,8 +9,6 @@ jobs:
   core01-isolated-full-lifecycle:
     runs-on: ubuntu-latest
     timeout-minutes: 60
-    env:
-      CORE01_SOURCE_HEAD: "f25a79111bbf1da47fe55f4fc8967b2148558317"
     steps:
       - name: Checkout Current governance branch
         uses: actions/checkout@v4
@@ -36,10 +34,11 @@ jobs:
           echo "CORE01_CONTENT_REPORT=$CONTENT_REPORT" >> "$GITHUB_ENV"
           rm -rf "$SANDBOX"
           ACTUAL="$(git ls-remote https://github.com/${GITHUB_REPOSITORY}.git refs/heads/new | cut -f1)"
-          test "$ACTUAL" = "$CORE01_SOURCE_HEAD"
+          test -n "$ACTUAL"
+          echo "CORE01_SOURCE_HEAD=$ACTUAL" >> "$GITHUB_ENV"
           git clone --depth=1 --branch new "https://github.com/${GITHUB_REPOSITORY}.git" "$PRODUCT"
-          test "$(git -C "$PRODUCT" rev-parse HEAD)" = "$CORE01_SOURCE_HEAD"
-          echo "PASS: exact CORE-01 TEST_ONLY source provider locked at $CORE01_SOURCE_HEAD"
+          test "$(git -C "$PRODUCT" rev-parse HEAD)" = "$ACTUAL"
+          echo "PASS: CORE-01 TEST_ONLY source provider dynamically resolved at $ACTUAL"
 
       - name: Run Stage-01 through Stage-11 actual isolated high-pressure flow
         run: |

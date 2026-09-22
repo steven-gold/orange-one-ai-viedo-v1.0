@@ -111,8 +111,8 @@ specification_mutation_safety:
   ordinary_mid_stage_specification_mutation: BLOCK
   stage_end_consolidated_promotion_requires_new_explicit_directive: true
   execution_context_lock_required: true
-status: CI_RESIDUAL_DECONTAMINATION_ACTIVE
-next_action: CLASSIFY_AND_PURGE_NON_GOVERNING_CI_RESIDUALS
+status: CI_RESIDUAL_DECONTAMINATION_MUTATED_VALIDATION_REQUIRED
+next_action: RUN_POST_CLEANUP_ACTIVE_CONSUMER_AND_RESIDUAL_VALIDATION
 previous_closed_product_work_unit:
   work_unit_uid: WU-STAGE02-CORE01-STRUCTURAL-REMEDIATION-001
   canonical_name: CORE01_STRUCTURAL_CONTRACT_REMEDIATION
@@ -290,10 +290,10 @@ previous_closed_work_unit:
     source_runtime_residual_count: 0
     product_stage_credit: 0
 resume_control:
-  current_resume_point: CI_RESIDUAL_DECONTAMINATION_ACTIVE
+  current_resume_point: CI_RESIDUAL_DECONTAMINATION_MUTATED_VALIDATION_REQUIRED
   current_work_unit_uid: WU-GOV-CI-RESIDUAL-DECONTAMINATION-001
   current_owner: governance/test/ACTIVE_STATE.yaml
-  exact_next_action: CLASSIFY_ACTIVE_AND_DEAD_CI_THEN_PURGE_NON_GOVERNING_RESIDUALS
+  exact_next_action: RUN_POST_CLEANUP_ACTIVE_CONSUMER_AND_RESIDUAL_VALIDATION
   product_resume_preserved: CORE01_STAGE01_STAGE03_CLEAN_BASELINE_READY_FRESH_STAGE01_WUR_REQUIRED
   interrupted_test_resume_preserved: CORE01_SOURCE_TEST_BUGFIX_AND_CONTENT_INTEGRITY_FULL_LIFECYCLE_R2_ACTIVE
   reentry_owner_capability: SOURCE_INTAKE_BASE_BLUEPRINT
@@ -2689,7 +2689,7 @@ active_work_unit:
   work_unit_uid: WU-GOV-CI-RESIDUAL-DECONTAMINATION-001
   canonical_name: CI_PRODUCTION_CONSTRAINT_AND_DEFECT_GUARD_DECONTAMINATION
   primary_task_layer: GOVERNANCE_MAINTENANCE
-  current_status: ACTIVE
+  current_status: MUTATION_COMMITTED_VALIDATION_REQUIRED
   authorization_basis: EXPLICIT_USER_DIRECTIVE_20260923_KEEP_ONLY_PRODUCTION_CONSTRAINTS_AND_DEFECT_PREVENTION_CI
   canonical_policy_owner: governance/specifications/current/EXECUTION_CYCLE_CONTROL.yaml
   state_owner: governance/test/ACTIVE_STATE.yaml
