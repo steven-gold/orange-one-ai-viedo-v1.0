@@ -1,0 +1,225 @@
+name: ACPOS Batch 72 Entity Lifecycle Hierarchy Discovery
+on:
+  push:
+    branches: [0921acpos]
+    paths:
+      - .github/workflows/acpos_batch72_entity_lifecycle_hierarchy_discovery.yml
+permissions:
+  contents: write
+jobs:
+  audit:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+      - name: Discover entity lifecycle and hierarchy structures
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+          import collections, json, re, subprocess, zipfile
+          import xml.etree.ElementTree as ET
+
+          EXPECTED_PARENT="880591bb72fea81433b69e6f41a633946164738b"
+          WF=Path(".github/workflows/acpos_batch72_entity_lifecycle_hierarchy_discovery.yml")
+          parent=subprocess.check_output(["git","rev-parse","HEAD^"],text=True).strip()
+          if parent!=EXPECTED_PARENT:
+              raise SystemExit(f"EXACT_HEAD_PARENT_FAIL {parent}")
+          WF.unlink()
+          drift=subprocess.check_output(["git","-c","core.quotepath=false","diff","--name-only",EXPECTED_PARENT],text=True).splitlines()
+          if drift:
+              raise SystemExit(f"PRE_AUDIT_TREE_DRIFT {drift}")
+
+          PAGE_DOCS=[
+            "ACPOS_AIAPI-01_AI_API管理_Mother_Basic_Design_OPTIMIZED.docx",
+            "ACPOS_ASSET-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx",
+            "ACPOS_CORE-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx",
+            "ACPOS_DB-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx",
+            "ACPOS_DEV-01_企業自動開發系統_Mother_Basic_Design_OPTIMIZED.docx",
+            "ACPOS_EDIT-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx",
+            "ACPOS_ERP-01_ERP與財務_Mother_Basic_Design_OPTIMIZED.docx",
+            "ACPOS_IAM-01_帳戶與權限_Mother_Basic_Design_OPTIMIZED.docx",
+            "ACPOS_INFO-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx",
+            "ACPOS_KB-01_知識庫_Mother_Basic_Design_OPTIMIZED.docx",
+            "ACPOS_QA-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx",
+            "ACPOS_SG-02_QA審查項目名單_Mother_Basic_Design_OPTIMIZED.docx",
+            "ACPOS_SOC-01_社群發布_Mother_Basic_Design_OPTIMIZED.docx",
+            "ACPOS_STR-01_WORKSPACE_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx",
+            "ACPOS_SYS-01_系統維護與生命週期工作區_Mother_Basic_Design_OPTIMIZED.docx",
+            "ACPOS_VIDEO-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx",
+            "ACPOS_WB-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx",
+            "ACPOS_admin_STR-01_戰略中心後台_Mother_Basic_Design_OPTIMIZED.docx",
+          ]
+          SYSTEM_DOCS=[
+            "01_ACPOS_Global_Intelligent_Brain_Information_Lifecycle_Mother_Basic_Logic_Design_Normative_Contract_v4.docx",
+            "02_ACPOS_AI_Conversation_Memory_MultiAI_Assistant_Mother_Basic_Logic_Design_Normative_Contract_v1.0.docx",
+            "03_ACPOS_AI_Execution_Script_Compiler_Tool_AIAPI_Runtime_Mother_Basic_Logic_Design_Normative_Contract_v1.0.docx",
+            "04_ACPOS_CORE_AI_Blueprint_Canonical_Script_System_Mother_Basic_Logic_Design_Normative_Contract_v1.0.docx",
+            "05_ACPOS_Creative_Production_AI_ASSET_VIDEO_EDIT_VOICE_QA_Mother_Basic_Logic_Design_Normative_Contract_v1.0.docx",
+            "06_ACPOS_Enterprise_Business_Development_AI_System_Mother_Basic_Logic_Design_Normative_Contract_v1.0.docx",
+            "07_ACPOS_Social_Publishing_AI_System_Mother_Basic_Logic_Design_Normative_Contract_v1.0.docx",
+            "08_ACPOS_Strategy_Intelligence_MultiAI_Decision_System_Mother_Basic_Logic_Design_Normative_Contract_v1.0.docx",
+            "09_ACPOS_AI_System_Engineer_Self_Inspection_Evolution_System_Mother_Basic_Logic_Design_Normative_Contract_v1.0.docx",
+          ]
+          W="{http://schemas.openxmlformats.org/wordprocessingml/2006/main}"
+          REQUIRED_OPS=[
+            "DISCOVER_OR_LIST","SELECT_OR_OPEN","CREATE","CREATION_MODE","PARENT_BIND",
+            "CATEGORY_OR_GROUP_BIND","DRAFT","RESUME","EDIT","SAVE","VALIDATE",
+            "CONFIRM_OR_APPROVE","VERSION","REVISE","LOCK_OR_UNLOCK","REORDER",
+            "MOVE_OR_REPARENT","ARCHIVE_OR_DELETE","RESTORE","DEPENDENCY_IMPACT",
+            "AUDIT","ERROR_RECOVERY","NEXT_STEP",
+          ]
+          ENTITY_TERMS=[
+            "BUSINESS ENTITY","BUSINESS_ENTITY","BUSINESS ENTITY INVENTORY","BUSINESS_ENTITY_INVENTORY",
+            "ENTITY INVENTORY","ENTITY_OPERATION_MATRIX","ENTITY OPERATION MATRIX",
+            "ENTITY_HIERARCHY_MATRIX","ENTITY HIERARCHY MATRIX","ENTITY LIFECYCLE",
+            "業務實體","商業實體","實體清單","實體生命週期","實體操作矩陣",
+          ]
+          HIER_TERMS=[
+            "HIERARCHY","PARENT","CHILD","PARENT/CHILD","PARENT_CHILD","ENTITY_HIERARCHY",
+            "父層","子層","父子","階層","層級","REORDER","REPARENT","MOVE",
+          ]
+
+          def norm(s): return re.sub(r"\s+"," ",(s or "").replace("\n"," | ").strip())
+          def txt(el): return norm("".join((x.text or "") for x in el.iter(W+"t")))
+
+          def extract(path):
+              with zipfile.ZipFile(path) as z:
+                  root=ET.fromstring(z.read("word/document.xml"))
+              full=norm(" ".join((x.text or "") for x in root.iter(W+"t")))
+              tables=[]
+              for ti,tbl in enumerate(root.iter(W+"tbl"),1):
+                  trs=[x for x in list(tbl) if x.tag==W+"tr"]
+                  if not trs:continue
+                  rows=[]
+                  for tr in trs:
+                      cells=[txt(c) for c in list(tr) if c.tag==W+"tc"]
+                      rows.append(cells)
+                  header=" | ".join(rows[0]) if rows else ""
+                  sample=" || ".join(" | ".join(r) for r in rows[:5])
+                  hay=(header+" "+sample).upper()
+                  entity_score=sum(1 for t in ENTITY_TERMS if t.upper() in hay)
+                  hier_score=sum(1 for t in HIER_TERMS if t.upper() in hay)
+                  op_hits=[op for op in REQUIRED_OPS if op in hay]
+                  if entity_score or hier_score>=2 or len(op_hits)>=3:
+                      tables.append({
+                        "table":ti,"rows":len(rows),"header":header,
+                        "sample_rows":rows[:5],"entity_score":entity_score,
+                        "hierarchy_score":hier_score,"required_op_hits":op_hits,
+                      })
+              upper=full.upper()
+              return {
+                "text":full,
+                "entity_term_hits":{t:upper.count(t.upper()) for t in ENTITY_TERMS if upper.count(t.upper())},
+                "hierarchy_term_hits":{t:upper.count(t.upper()) for t in HIER_TERMS if upper.count(t.upper())},
+                "required_ops_present":[op for op in REQUIRED_OPS if op in upper],
+                "candidate_tables":tables,
+              }
+
+          docs=sorted(Path(".").glob("*.docx"))
+          if len(docs)!=31: raise SystemExit(f"DOCX_COUNT_FAIL {len(docs)}")
+
+          detail={}
+          for p in docs:
+              detail[p.name]=extract(p)
+
+          def class_summary(names):
+              out=[]
+              for fn in names:
+                  d=detail[fn]
+                  out.append({
+                    "file":fn,
+                    "entity_keyword_kinds":len(d["entity_term_hits"]),
+                    "entity_keyword_hits":sum(d["entity_term_hits"].values()),
+                    "hierarchy_keyword_kinds":len(d["hierarchy_term_hits"]),
+                    "hierarchy_keyword_hits":sum(d["hierarchy_term_hits"].values()),
+                    "required_ops_present":len(d["required_ops_present"]),
+                    "candidate_tables":len(d["candidate_tables"]),
+                  })
+              return out
+
+          pages=class_summary(PAGE_DOCS)
+          systems=class_summary(SYSTEM_DOCS)
+          page_entity_docs=[x["file"] for x in pages if x["entity_keyword_hits"]>0]
+          page_hier_docs=[x["file"] for x in pages if x["hierarchy_keyword_hits"]>0]
+          page_full_ops=[x["file"] for x in pages if x["required_ops_present"]==len(REQUIRED_OPS)]
+          page_candidate_table_docs=[x["file"] for x in pages if x["candidate_tables"]>0]
+
+          system_entity_docs=[x["file"] for x in systems if x["entity_keyword_hits"]>0]
+          system_hier_docs=[x["file"] for x in systems if x["hierarchy_keyword_hits"]>0]
+          system_full_ops=[x["file"] for x in systems if x["required_ops_present"]==len(REQUIRED_OPS)]
+
+          # Exact structural marker presence, stronger than generic prose keywords.
+          exact_markers=["BUSINESS_ENTITY_INVENTORY","ENTITY_OPERATION_MATRIX","ENTITY_HIERARCHY_MATRIX"]
+          marker_by_file={}
+          for fn,d in detail.items():
+              upper=d["text"].upper()
+              marker_by_file[fn]={m:(m in upper) for m in exact_markers}
+
+          summary={
+            "marker":"ACPOS-20260922-BATCH-72-ENTITY-LIFECYCLE-HIERARCHY-DISCOVERY-V1",
+            "base_head":EXPECTED_PARENT,
+            "docx_files":len(docs),
+            "page_docs":len(PAGE_DOCS),
+            "system_docs":len(SYSTEM_DOCS),
+            "page_docs_with_entity_terms":len(page_entity_docs),
+            "page_docs_with_hierarchy_terms":len(page_hier_docs),
+            "page_docs_with_candidate_entity_tables":len(page_candidate_table_docs),
+            "page_docs_with_all_23_required_operation_tokens":len(page_full_ops),
+            "system_docs_with_entity_terms":len(system_entity_docs),
+            "system_docs_with_hierarchy_terms":len(system_hier_docs),
+            "system_docs_with_all_23_required_operation_tokens":len(system_full_ops),
+            "files_with_business_entity_inventory_marker":sum(v["BUSINESS_ENTITY_INVENTORY"] for v in marker_by_file.values()),
+            "files_with_entity_operation_matrix_marker":sum(v["ENTITY_OPERATION_MATRIX"] for v in marker_by_file.values()),
+            "files_with_entity_hierarchy_matrix_marker":sum(v["ENTITY_HIERARCHY_MATRIX"] for v in marker_by_file.values()),
+          }
+          out={
+            "summary":summary,
+            "page_summary":pages,
+            "system_summary":systems,
+            "page_entity_docs":page_entity_docs,
+            "page_hierarchy_docs":page_hier_docs,
+            "page_full_required_operation_docs":page_full_ops,
+            "page_candidate_table_docs":page_candidate_table_docs,
+            "system_entity_docs":system_entity_docs,
+            "system_hierarchy_docs":system_hier_docs,
+            "system_full_required_operation_docs":system_full_ops,
+            "exact_marker_by_file":marker_by_file,
+            "detail":{fn:{
+              "entity_term_hits":d["entity_term_hits"],
+              "hierarchy_term_hits":d["hierarchy_term_hits"],
+              "required_ops_present":d["required_ops_present"],
+              "candidate_tables":d["candidate_tables"],
+            } for fn,d in detail.items()},
+          }
+          Path("__batch72_entity_hierarchy_discovery.json").write_text(json.dumps(out,ensure_ascii=False,indent=2),encoding="utf-8")
+          Path("__batch72_summary.json").write_text(json.dumps(summary,ensure_ascii=False,indent=2),encoding="utf-8")
+          print("BATCH72_SUMMARY="+json.dumps(summary,ensure_ascii=False,sort_keys=True))
+          print("BATCH72_DISCOVERY_PASS")
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: acpos-batch72-entity-lifecycle-hierarchy-discovery
+          path: |
+            __batch72_entity_hierarchy_discovery.json
+            __batch72_summary.json
+          retention-days: 2
+      - name: Close harness
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -f __batch72_entity_hierarchy_discovery.json __batch72_summary.json
+          git config user.name "acpos-batch72-search"
+          git config user.email "actions@users.noreply.github.com"
+          git add -A
+          mapfile -t staged < <(git -c core.quotepath=false diff --cached --name-only)
+          if [ "${#staged[@]}" -ne 1 ] || [ "${staged[0]}" != ".github/workflows/acpos_batch72_entity_lifecycle_hierarchy_discovery.yml" ]; then
+            printf '%s\n' "${staged[@]}"
+            exit 1
+          fi
+          git commit -m "chore(acpos): close batch 72 entity-hierarchy search harness"
+          git push origin HEAD:0921acpos
