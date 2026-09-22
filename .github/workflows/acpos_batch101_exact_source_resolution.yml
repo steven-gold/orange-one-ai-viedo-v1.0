@@ -1,0 +1,145 @@
+name: ACPOS Batch 101 Exact Source Resolution
+on:
+  push:
+    branches: [0921acpos]
+    paths:
+      - .github/workflows/acpos_batch101_exact_source_resolution.yml
+permissions:
+  contents: write
+jobs:
+  resolve:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+      - name: Extract exact source-backed remediation context
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+          import zipfile,xml.etree.ElementTree as ET,re,json,subprocess,collections
+          EXPECTED_PARENT="383fa390f75b5188fa28601e7c44717ac529eceb"
+          p=subprocess.check_output(["git","rev-parse","HEAD^"],text=True).strip()
+          if p!=EXPECTED_PARENT: raise SystemExit(f"EXACT_HEAD_PARENT_FAIL {p}")
+          docs=sorted(Path(".").glob("*.docx"))
+          if len(docs)!=31: raise SystemExit(f"DOCX_COUNT_FAIL {len(docs)}")
+          W="{http://schemas.openxmlformats.org/wordprocessingml/2006/main}"
+          def n(s):return re.sub(r"\s+"," ",(s or "").replace("\n"," | ").strip())
+          def tx(el):return n("".join((x.text or "") for x in el.iter(W+"t")))
+          def extract(doc):
+            with zipfile.ZipFile(doc) as z:root=ET.fromstring(z.read("word/document.xml"))
+            paras=[tx(p) for p in root.iter(W+"p")]
+            tabs=[]
+            for ti,tbl in enumerate(root.iter(W+"tbl"),1):
+              trs=[x for x in list(tbl) if x.tag==W+"tr"]
+              if not trs:continue
+              rows=[[tx(c) for c in list(tr) if c.tag==W+"tc"] for tr in trs]
+              tabs.append({"table":ti,"headers":rows[0] if rows else [],"rows":rows[1:]})
+            return paras,tabs
+
+          TARGETS=[
+            "CTRL-ADMIN-STR-03-ACT-01-ACT-DRAFT-SAVE",
+            "CTRL-ADMIN-STR-04-ACT-03-ACT-EXPORT",
+            "CTRL-ADMIN-STR-05-ACT-01-ACT-CANDIDATE-CREATE",
+            "CTRL-ADMIN-STR-06-ACT-01-ACT-CANDIDATE-COMPARE",
+            "CTRL-ADMIN-STR-06-ACT-02-ACT-CANDIDATE-DECIDE",
+            "CTRL-ADMIN-STR-06-ACT-03-ACT-ADOPT-CONTEXT",
+          ]
+          OPS=[
+            "saveDraft","exportProjection","createCandidate","compareCandidates",
+            "rejectStrategyCandidate","adoptAsContextCandidate"
+          ]
+          ROUTES=[
+            "POST /v1/drafts","POST /v1/exports","POST /v1/candidates",
+            "GET /v1/candidates/compare",
+            "POST /v1/ai/strategy/candidates/{strategyCandidateId}/reject",
+            "POST /v1/state-commands/strategycandidate/adoptascontextcandidate"
+          ]
+          strategy={k:[] for k in TARGETS}
+          strategy_ops={k:[] for k in OPS}
+          strategy_routes={k:[] for k in ROUTES}
+          index_rows=[]
+          global_history={"paragraphs":[],"tables":[]}
+          branch_head=[]
+          stale_tree_context=[]
+          for doc in docs:
+            paras,tabs=extract(doc)
+            for pi,s in enumerate(paras,1):
+              if not s: continue
+              for k in TARGETS:
+                if k in s: strategy[k].append({"file":doc.name,"kind":"P","loc":pi,"text":s})
+              for k in OPS:
+                if k in s: strategy_ops[k].append({"file":doc.name,"kind":"P","loc":pi,"text":s})
+              for k in ROUTES:
+                if k in s: strategy_routes[k].append({"file":doc.name,"kind":"P","loc":pi,"text":s})
+              if doc.name=="00_INDEX_ACPOS_Mother_Compliant_Basic_Design_Master.docx" and ".docx" in s:
+                index_rows.append({"kind":"P","loc":pi,"text":s})
+              if doc.name=="ACPOS_SYSTEM_LOGIC_GLOBAL_INTEGRATION_Mother_Basic_Design_OPTIMIZED.docx":
+                if re.search(r"BATCH\d+_MACHINE_JSON|Persisted Resume Point|remaining_contract_cells|payload_defined|persistence_owner_defined|Batch\s+\d+",s,re.I):
+                  global_history["paragraphs"].append({"loc":pi,"text":s})
+              if re.search(r"Current Truth|Live HEAD|Current HEAD|Current Branch|Repository / Branch|Authoring context",s,re.I):
+                if re.search(r"\bnew\b|rebuild-v2\.1\.1|[0-9a-f]{40}",s,re.I):
+                  branch_head.append({"file":doc.name,"kind":"P","loc":pi,"text":s})
+              if re.search(r"Current exact tree\s+[0-9a-f]{40}",s,re.I):
+                stale_tree_context.append({"file":doc.name,"kind":"P","loc":pi,"text":s})
+
+            for t in tabs:
+              for ri,row in enumerate([t["headers"]]+t["rows"],1):
+                joined=" | ".join(row)
+                for k in TARGETS:
+                  if k in joined: strategy[k].append({"file":doc.name,"kind":f"T{t['table']}","loc":ri,"headers":t["headers"],"cells":row})
+                for k in OPS:
+                  if k in joined: strategy_ops[k].append({"file":doc.name,"kind":f"T{t['table']}","loc":ri,"headers":t["headers"],"cells":row})
+                for k in ROUTES:
+                  if k in joined: strategy_routes[k].append({"file":doc.name,"kind":f"T{t['table']}","loc":ri,"headers":t["headers"],"cells":row})
+                if doc.name=="00_INDEX_ACPOS_Mother_Compliant_Basic_Design_Master.docx" and ".docx" in joined:
+                  index_rows.append({"kind":f"T{t['table']}","loc":ri,"headers":t["headers"],"cells":row})
+                if doc.name=="ACPOS_SYSTEM_LOGIC_GLOBAL_INTEGRATION_Mother_Basic_Design_OPTIMIZED.docx":
+                  if re.search(r"BATCH\d+_MACHINE_JSON|Persisted Resume Point|remaining_contract_cells|payload_defined|persistence_owner_defined|Batch\s+\d+",joined,re.I):
+                    global_history["tables"].append({"table":t["table"],"row":ri,"headers":t["headers"],"cells":row})
+                if re.search(r"Current Truth|Live HEAD|Current HEAD|Current Branch|Repository / Branch|Authoring context",joined,re.I):
+                  if re.search(r"\bnew\b|rebuild-v2\.1\.1|[0-9a-f]{40}",joined,re.I):
+                    branch_head.append({"file":doc.name,"kind":f"T{t['table']}","loc":ri,"headers":t["headers"],"cells":row})
+                if re.search(r"Current exact tree\s+[0-9a-f]{40}",joined,re.I):
+                  stale_tree_context.append({"file":doc.name,"kind":f"T{t['table']}","loc":ri,"headers":t["headers"],"cells":row})
+          out={
+            "marker":"ACPOS-20260922-BATCH-101-EXACT-SOURCE-RESOLUTION-V1",
+            "strategy_uid_hits":strategy,
+            "strategy_operation_hits":strategy_ops,
+            "strategy_route_hits":strategy_routes,
+            "index_docx_reference_rows":index_rows,
+            "global_history_context":global_history,
+            "branch_head_context":branch_head,
+            "stale_tree_context_sample":stale_tree_context[:120],
+            "root_docx_names":[d.name for d in docs]
+          }
+          Path("__batch101_source_resolution.json").write_text(json.dumps(out,ensure_ascii=False,indent=2),encoding="utf-8")
+          print("BATCH101_SUMMARY="+json.dumps({
+            "strategy_uid_hits":sum(len(v) for v in strategy.values()),
+            "index_reference_rows":len(index_rows),
+            "global_history_paragraphs":len(global_history["paragraphs"]),
+            "global_history_rows":len(global_history["tables"]),
+            "branch_head_context":len(branch_head),
+            "stale_tree_context_sample":len(stale_tree_context[:120])
+          },ensure_ascii=False,sort_keys=True))
+          print("BATCH101_SOURCE_RESOLUTION_PASS")
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: acpos-batch101-exact-source-resolution
+          path: __batch101_source_resolution.json
+          retention-days: 3
+      - name: Close resolver harness
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -f __batch101_source_resolution.json
+          git config user.name "acpos-batch101-resolver"
+          git config user.email "actions@users.noreply.github.com"
+          git rm -f .github/workflows/acpos_batch101_exact_source_resolution.yml
+          git commit -m "chore(acpos): close batch 101 exact source resolution"
+          git push origin HEAD:0921acpos
