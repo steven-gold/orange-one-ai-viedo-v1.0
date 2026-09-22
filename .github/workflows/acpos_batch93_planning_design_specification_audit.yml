@@ -1,0 +1,370 @@
+name: ACPOS Batch 93 Planning Design Specification Audit
+on:
+  push:
+    branches: [0921acpos]
+    paths:
+      - .github/workflows/acpos_batch93_planning_design_specification_audit.yml
+permissions:
+  contents: write
+jobs:
+  audit:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+      - name: Audit planning and basic-design specification coverage only
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+          import collections,json,re,subprocess,zipfile
+          import xml.etree.ElementTree as ET
+
+          EXPECTED_PARENT="93d405be2652ffcd9e636cc7d9e1bc33d532ce54"
+          WF=Path(".github/workflows/acpos_batch93_planning_design_specification_audit.yml")
+          parent=subprocess.check_output(["git","rev-parse","HEAD^"],text=True).strip()
+          if parent!=EXPECTED_PARENT:
+              raise SystemExit(f"EXACT_HEAD_PARENT_FAIL {parent}")
+
+          PAGE_DOCS={
+            "AIAPI-01":"ACPOS_AIAPI-01_AI_API管理_Mother_Basic_Design_OPTIMIZED.docx",
+            "ASSET-01":"ACPOS_ASSET-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx",
+            "CORE-01":"ACPOS_CORE-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx",
+            "DB-01":"ACPOS_DB-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx",
+            "DEV-01":"ACPOS_DEV-01_企業自動開發系統_Mother_Basic_Design_OPTIMIZED.docx",
+            "EDIT-01":"ACPOS_EDIT-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx",
+            "ERP-01":"ACPOS_ERP-01_ERP與財務_Mother_Basic_Design_OPTIMIZED.docx",
+            "IAM-01":"ACPOS_IAM-01_帳戶與權限_Mother_Basic_Design_OPTIMIZED.docx",
+            "INFO-01":"ACPOS_INFO-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx",
+            "KB-01":"ACPOS_KB-01_知識庫_Mother_Basic_Design_OPTIMIZED.docx",
+            "QA-01":"ACPOS_QA-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx",
+            "SG-02":"ACPOS_SG-02_QA審查項目名單_Mother_Basic_Design_OPTIMIZED.docx",
+            "SOC-01":"ACPOS_SOC-01_社群發布_Mother_Basic_Design_OPTIMIZED.docx",
+            "STR-01":"ACPOS_STR-01_WORKSPACE_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx",
+            "SYS-01":"ACPOS_SYS-01_系統維護與生命週期工作區_Mother_Basic_Design_OPTIMIZED.docx",
+            "VIDEO-01":"ACPOS_VIDEO-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx",
+            "WB-01":"ACPOS_WB-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx",
+            "ADMIN-STR-01":"ACPOS_admin_STR-01_戰略中心後台_Mother_Basic_Design_OPTIMIZED.docx",
+          }
+          SYSTEM_DOCS={
+            "SYSTEM-01":"01_ACPOS_Global_Intelligent_Brain_Information_Lifecycle_Mother_Basic_Logic_Design_Normative_Contract_v4.docx",
+            "SYSTEM-02":"02_ACPOS_AI_Conversation_Memory_MultiAI_Assistant_Mother_Basic_Logic_Design_Normative_Contract_v1.0.docx",
+            "SYSTEM-03":"03_ACPOS_AI_Execution_Script_Compiler_Tool_AIAPI_Runtime_Mother_Basic_Logic_Design_Normative_Contract_v1.0.docx",
+            "SYSTEM-04":"04_ACPOS_CORE_AI_Blueprint_Canonical_Script_System_Mother_Basic_Logic_Design_Normative_Contract_v1.0.docx",
+            "SYSTEM-05":"05_ACPOS_Creative_Production_AI_ASSET_VIDEO_EDIT_VOICE_QA_Mother_Basic_Logic_Design_Normative_Contract_v1.0.docx",
+            "SYSTEM-06":"06_ACPOS_Enterprise_Business_Development_AI_System_Mother_Basic_Logic_Design_Normative_Contract_v1.0.docx",
+            "SYSTEM-07":"07_ACPOS_Social_Publishing_AI_System_Mother_Basic_Logic_Design_Normative_Contract_v1.0.docx",
+            "SYSTEM-08":"08_ACPOS_Strategy_Intelligence_MultiAI_Decision_System_Mother_Basic_Logic_Design_Normative_Contract_v1.0.docx",
+            "SYSTEM-09":"09_ACPOS_AI_System_Engineer_Self_Inspection_Evolution_System_Mother_Basic_Logic_Design_Normative_Contract_v1.0.docx",
+          }
+          GLOBAL_DOCS={
+            "INDEX":"00_INDEX_ACPOS_Mother_Compliant_Basic_Design_Master.docx",
+            "HOME":"ACPOS_GLOBAL_HOME_SHELL_NAVIGATION_Mother_Basic_Design_OPTIMIZED.docx",
+            "LOGIN":"ACPOS_LOGIN_IDENTITY_ENTRY_Mother_Basic_Design_OPTIMIZED.docx",
+            "GLOBAL-INTEGRATION":"ACPOS_SYSTEM_LOGIC_GLOBAL_INTEGRATION_Mother_Basic_Design_OPTIMIZED.docx",
+          }
+          W="{http://schemas.openxmlformats.org/wordprocessingml/2006/main}"
+
+          def n(s):return re.sub(r"\s+"," ",(s or "").replace("\n"," | ").strip())
+          def txt(el):return n("".join((x.text or "") for x in el.iter(W+"t")))
+          def extract(fn):
+              with zipfile.ZipFile(fn) as z:root=ET.fromstring(z.read("word/document.xml"))
+              units=[]
+              tables=[]
+              for pi,p in enumerate(root.iter(W+"p"),1):
+                  s=txt(p)
+                  if s:units.append({"kind":"P","loc":pi,"text":s})
+              for ti,tbl in enumerate(root.iter(W+"tbl"),1):
+                  trs=[x for x in list(tbl) if x.tag==W+"tr"]
+                  if not trs:continue
+                  rows=[]
+                  for ri,tr in enumerate(trs,1):
+                      row=[txt(c) for c in list(tr) if c.tag==W+"tc"]
+                      rows.append(row)
+                      s=" | ".join(row)
+                      if s:units.append({"kind":f"T{ti}","loc":ri,"text":s})
+                  tables.append({"table":ti,"headers":rows[0] if rows else [],"rows":rows[1:]})
+              return "\n".join(x["text"] for x in units),units,tables
+          def hit(text,pats):
+              return any(re.search(p,text,re.I) for p in pats)
+          def group_score(text,groups):
+              return sum(1 for pats in groups if hit(text,pats))
+          def ev(units,pats,limit=3):
+              out=[]
+              for u in units:
+                  if hit(u["text"],pats):
+                      out.append({"loc":f'{u["kind"]}:{u["loc"]}',"text":u["text"][:420]})
+                      if len(out)>=limit:break
+              return out
+
+          PAGE_RULES={
+            "REQUIREMENT_DEFINITION":{
+              "groups":[
+                [r"BUSINESS GOAL",r"PRODUCT GOAL",r"PURPOSE",r"頁面定位",r"產品目標"],
+                [r"TARGET USER",r"PRIMARY USER",r"USER / ROLE",r"使用者",r"角色"],
+                [r"FUNCTIONAL REQUIRE",r"REQUIRED OPERATION",r"CAPABILIT",r"功能需求",r"功能"],
+                [r"NON[- ]?FUNCTIONAL",r"A11Y",r"I18N",r"SECURITY",r"IDEMPOT",r"AUDIT",r"非功能"],
+                [r"OUT[- ]?OF[- ]?SCOPE",r"NO DUPLICATE",r"不得建立",r"禁止"]
+              ],"need":4
+            },
+            "ARCHITECTURE_NAV_FLOW":{
+              "groups":[
+                [r"ARCHITECTURE",r"MODULE",r"SYSTEM BOUNDARY",r"架構",r"模組"],
+                [r"DEPENDENC",r"SHARED OWNER",r"OWNER / BOUNDARY",r"依賴",r"邊界"],
+                [r"NAVIGATION",r"ROUTE",r"ENTRY",r"RETURN",r"HANDOFF",r"導航",r"路由",r"入口"],
+                [r"USER FLOW",r"BUSINESS FLOW",r"REQUIRED CHAIN",r"FLOW",r"流程"],
+                [r"DATA FLOW",r"PAYLOAD",r"INPUT SOURCE",r"資料流",r"輸入"]
+              ],"need":4
+            },
+            "PAGE_REGISTRY_IDENTITY":{
+              "groups":[
+                [r"PAGE UID",r"PAGE IDENTITY"],
+                [r"CANONICAL NAME",r"DISPLAY NAME",r"頁面名稱"],
+                [r"ROUTE",r"ENTRY"],
+                [r"REQUIRED PERMISSION",r"PERMISSION"],
+                [r"OWNER",r"DESIGN OWNER",r"IMPLEMENTATION OWNER"]
+              ],"need":4
+            },
+            "DESIGN_SYSTEM_LAYOUT":{
+              "groups":[
+                [r"COLOR TOKEN",r"COLOR",r"色彩",r"科技紫"],
+                [r"TYPOGRAPHY",r"FONT",r"字體"],
+                [r"SPACING",r"GAP",r"PADDING",r"間距"],
+                [r"GRID",r"CONTAINER",r"LAYOUT",r"版面"],
+                [r"BREAKPOINT",r"RESPONSIVE",r"RWD",r"響應式"]
+              ],"need":4
+            },
+            "CONTROL_SPEC":{
+              "groups":[
+                [r"CONTROL UID"],
+                [r"CANONICAL NAME",r"LABEL KEY",r"LABEL"],
+                [r"TYPE"],
+                [r"POSITION",r"DIMENSION",r"WIDTH",r"HEIGHT"],
+                [r"DEFAULT STATE",r"HOVER STATE",r"FOCUS STATE",r"ACTIVE STATE",r"LOADING STATE",r"DISABLED STATE"],
+                [r"ERROR STATE",r"SUCCESS STATE"],
+                [r"VISIBILITY",r"PERMISSION REFERENCE",r"ACTION REFERENCE",r"PERMISSION",r"ACTION"]
+              ],"need":5
+            },
+            "FIELD_SPEC":{
+              "groups":[
+                [r"FIELD UID"],
+                [r"CANONICAL NAME",r"LABEL KEY",r"LABEL"],
+                [r"PLACEHOLDER",r"DEFAULT VALUE"],
+                [r"REQUIRED",r"VALIDATION RULE",r"LENGTH",r"RANGE"],
+                [r"READ[- ]?ONLY",r"DISABLED"],
+                [r"PERMISSION",r"LOCALIZATION",r"I18N"]
+              ],"need":4
+            },
+            "ENTITY_LIFECYCLE_HIERARCHY":{
+              "groups":[
+                [r"ENTITY",r"BUSINESS ENTITY"],
+                [r"OPERATION",r"APPLICABILITY"],
+                [r"PARENT IDENTITY",r"CHILD IDENTITY",r"HIERARCHY",r"父層",r"子層"],
+                [r"STATE",r"VERSION",r"LIFECYCLE",r"狀態",r"版本",r"生命週期"]
+              ],"need":3
+            },
+            "FUNCTIONAL_CHAIN_PLANNING":{
+              "groups":[
+                [r"BUSINESS INTENT",r"INTENT"],
+                [r"PRECONDITION",r"ENTRY"],
+                [r"CONTROL",r"TRIGGER"],
+                [r"GATE",r"PERMISSION"],
+                [r"ACTION",r"VALIDATION"],
+                [r"PAYLOAD",r"INPUT / OUTPUT",r"INPUT SOURCE"],
+                [r"OWNER",r"DATA",r"PROVIDER"],
+                [r"AUDIT",r"FEEDBACK",r"RESPONSE"],
+                [r"SUCCESS STATE",r"NEXT STATE",r"NEXT STEP"],
+                [r"FAILURE",r"RETRY",r"RECOVERY",r"ROLLBACK"]
+              ],"need":7
+            },
+            "CROSS_PAGE_FLOW":{
+              "groups":[
+                [r"CROSS[- ]?PAGE",r"SHARED OWNER",r"HANDOFF",r"跨頁"],
+                [r"SOURCE PAGE",r"EXIT STATE",r"EXPORT"],
+                [r"TARGET PAGE",r"TARGET ENTRY",r"ENTRY STATE"],
+                [r"NAVIGATION",r"ROUTING",r"BACK",r"CANCEL"],
+                [r"PERMISSION",r"FAILURE",r"RESUME"],
+                [r"AUDIT",r"EVIDENCE"]
+              ],"need":3
+            },
+            "INTERACTION_TOPOLOGY_CONTINUITY":{
+              "groups":[
+                [r"FUNCTIONAL WORKBENCH",r"WORKBENCH",r"WORKSPACE",r"工作台"],
+                [r"INTERACTION TOPOLOGY",r"ADJACENC",r"SEPARATION",r"互動拓撲"],
+                [r"CONTEXT",r"STATE CONTINUITY",r"THREAD",r"CONVERSATION",r"上下文",r"對話"],
+                [r"HANDOFF",r"NEXT STEP",r"NEXT ACTION"],
+                [r"AI",r"ASSISTANT",r"MULTI[- ]?AI",r"AI IDENTITY"]
+              ],"need":2
+            },
+            "VISUAL_GEOMETRY":{
+              "groups":[
+                [r"VIEWPORT",r"BREAKPOINT"],
+                [r"CONTAINER",r"GRID",r"GUTTER",r"MARGIN"],
+                [r"WIDTH",r"HEIGHT",r"MIN",r"MAX",r"DIMENSION"],
+                [r"GAP",r"PADDING",r"ALIGN"],
+                [r"OVERFLOW",r"SCROLL",r"WRAP",r"STACK",r"COLLAPSE"],
+                [r"Z[- ]?ORDER",r"OVERLAY"],
+                [r"TEXT CAPACITY",r"TRUNCATION",r"ELLIPSIS"],
+                [r"ASPECT RATIO",r"OBJECT[- ]?FIT",r"OBJECT[- ]?POSITION"],
+                [r"TOLERANCE",r"DIFF THRESHOLD"]
+              ],"need":6
+            },
+            "VISUAL_ANCHOR_PREVIEW":{
+              "groups":[
+                [r"VISUAL ANCHOR",r"ANCHOR UID"],
+                [r"POSITION RULE",r"DIMENSION RULE",r"RELATIONSHIP RULE",r"LOCK STATUS"],
+                [r"CANONICAL VISUAL",r"CURRENT CANONICAL VISUAL",r"VISUAL UID"],
+                [r"GENERATION MANIFEST",r"GENERATION UID"],
+                [r"VISUAL PREVIEW",r"PREVIEW"],
+                [r"VISUAL REVIEW",r"VISUAL APPROVED",r"APPROVAL STATUS"],
+                [r"VISUAL DRIFT",r"CHANGE SET"]
+              ],"need":4
+            },
+            "ASSET_BINDING":{
+              "groups":[
+                [r"ASSET UID",r"ASSET REGISTRY"],
+                [r"ASSET TYPE",r"FILE REFERENCE",r"SOURCE TYPE"],
+                [r"WIDTH",r"HEIGHT",r"ASPECT RATIO"],
+                [r"CROP",r"OBJECT FIT",r"OBJECT POSITION"],
+                [r"ASSET BIND",r"COMPONENT UID",r"SECTION UID"],
+                [r"LOCK",r"APPROVED",r"STATUS"]
+              ],"need":3
+            },
+            "A11Y_I18N":{
+              "groups":[
+                [r"A11Y",r"ACCESSIBILITY",r"ARIA",r"KEYBOARD",r"FOCUS",r"無障礙"],
+                [r"I18N",r"LOCALIZATION",r"LANGUAGE",r"語系",r"多語"]
+              ],"need":2
+            },
+            "AUDIT_ACCEPTANCE_DOD":{
+              "groups":[
+                [r"AUDIT UID",r"AUDIT BASELINE",r"AUDIT ITEM"],
+                [r"ACCEPTANCE MATRIX",r"ACCEPTANCE"],
+                [r"REQUIRED",r"OPTIONAL",r"NOT_APPLICABLE"],
+                [r"PASS CONDITION",r"PARTIAL CONDITION",r"FAIL CONDITION"],
+                [r"REQUIRED TEST",r"REQUIRED EVIDENCE",r"REQUIRED GATE"],
+                [r"DEFINITION OF DONE",r"\bDOD\b"]
+              ],"need":4
+            },
+            "DESIGN_FREEZE_PACKAGE":{
+              "groups":[
+                [r"DESIGN FREEZE",r"DESIGN_FROZEN",r"FREEZE"],
+                [r"LAYOUT MAPPING",r"COMPONENT MAPPING"],
+                [r"CONTROL / FIELD MAPPING",r"CONTROL.*FIELD"],
+                [r"ASSET MAPPING"],
+                [r"RESPONSIVE SPEC"],
+                [r"CURRENT CANONICAL VISUAL",r"CANONICAL VISUAL"],
+                [r"GENERATION MANIFEST"],
+                [r"AUDIT BASELINE",r"ACCEPTANCE MATRIX"],
+                [r"DEFINITION OF DONE"],
+                [r"DESIGN VERSION",r"VERSION"]
+              ],"need":6
+            },
+          }
+
+          docs={}
+          for page,fn in PAGE_DOCS.items():
+              full,units,tables=extract(fn)
+              docs[page]={"file":fn,"text":full,"units":units,"tables":tables}
+
+          page_results={}
+          missing=[]
+          for page,d in docs.items():
+              checks={}
+              for name,rule in PAGE_RULES.items():
+                  s=group_score(d["text"],rule["groups"])
+                  ok=s>=rule["need"]
+                  checks[name]={"pass":ok,"score":s,"need":rule["need"]}
+                  if not ok:
+                      # gather evidence for every partially-hit group to support manual review
+                      evidence=[]
+                      for gi,pats in enumerate(rule["groups"],1):
+                          e=ev(d["units"],pats,1)
+                          if e:evidence.append({"group":gi,"hit":e[0]})
+                      missing.append({"page":page,"check":name,"score":s,"need":rule["need"],"evidence":evidence})
+              page_results[page]=checks
+
+          # Exact current materializations that are design-planning content.
+          app_tables=app_rows=hier_tables=hier_rows=0
+          for page,d in docs.items():
+              for t in d["tables"]:
+                  h=[n(x) for x in t["headers"]]
+                  if h==["Entity","Operation","Applicability","Authority Evidence"]:
+                      app_tables+=1;app_rows+=len(t["rows"])
+                  if h==[
+                    "Parent Identity","Child Identity","Cardinality","Creation Entry",
+                    "Payload / Reference Binding","Ordering Semantics","Permission",
+                    "State Dependency","Version Dependency","Move / Reparent",
+                    "Archive / Delete Propagation","Upstream Change Impact",
+                    "Downstream Revalidation","Authority Evidence"
+                  ]:
+                      hier_tables+=1;hier_rows+=len(t["rows"])
+
+          # Supporting system/global design docs: only static planning/design contract domains.
+          support_files={**SYSTEM_DOCS,**GLOBAL_DOCS}
+          support_missing=[]
+          SUPPORT_RULES={
+            "OWNER_BOUNDARY":[r"OWNER",r"BOUNDARY"],
+            "DEPENDENCY_REFERENCE":[r"DEPENDENC",r"REFERENCE",r"SHARED"],
+            "DESIGN_CONTRACT":[r"DESIGN",r"CONTRACT",r"SPEC"],
+            "AUDIT_ACCEPTANCE":[r"AUDIT",r"ACCEPTANCE",r"EVIDENCE"],
+          }
+          for uid,fn in support_files.items():
+              full,_,_=extract(fn)
+              for name,pats in SUPPORT_RULES.items():
+                  if not hit(full,pats):
+                      support_missing.append({"document":uid,"check":name})
+
+          bycheck=collections.Counter(x["check"] for x in missing)
+          bypage=collections.Counter(x["page"] for x in missing)
+          summary={
+            "marker":"ACPOS-20260922-BATCH-93-PLANNING-DESIGN-SPECIFICATION-AUDIT-V1",
+            "base_head":EXPECTED_PARENT,
+            "scope":"WORD_PLANNING_AND_BASIC_DESIGN_SPECIFICATION_ONLY",
+            "page_docs":len(PAGE_DOCS),
+            "page_design_check_types":len(PAGE_RULES),
+            "page_design_denominator":len(PAGE_DOCS)*len(PAGE_RULES),
+            "candidate_design_gaps":len(missing),
+            "candidate_design_gaps_by_check":dict(bycheck),
+            "candidate_design_gaps_by_page":dict(bypage),
+            "support_design_docs":len(support_files),
+            "support_design_missing":len(support_missing),
+            "entity_applicability_tables":app_tables,
+            "entity_applicability_rows":app_rows,
+            "canonical_hierarchy_tables":hier_tables,
+            "canonical_hierarchy_rows":hier_rows,
+            "excluded_from_scope":[
+              "RUNTIME_EXECUTION_VERIFICATION","API_DEPLOYMENT","DATABASE_MIGRATION",
+              "STAGE_EXECUTION","PRODUCTION_ACCEPTANCE","EXTERNAL_PROVIDER_E2E",
+              "OTHER_BRANCH_EXECUTION_STATE"
+            ]
+          }
+          out={"summary":summary,"page_results":page_results,"candidate_design_gaps":missing,"support_missing":support_missing}
+          Path("__batch93_planning_design_audit.json").write_text(json.dumps(out,ensure_ascii=False,indent=2),encoding="utf-8")
+          Path("__batch93_summary.json").write_text(json.dumps(summary,ensure_ascii=False,indent=2),encoding="utf-8")
+          print("BATCH93_SUMMARY="+json.dumps(summary,ensure_ascii=False,sort_keys=True))
+          print("BATCH93_CANDIDATE_GAPS="+json.dumps([{"page":x["page"],"check":x["check"],"score":x["score"],"need":x["need"]} for x in missing],ensure_ascii=False))
+          print("BATCH93_SUPPORT_MISSING="+json.dumps(support_missing,ensure_ascii=False))
+          print("BATCH93_PLANNING_DESIGN_AUDIT_COMPLETE")
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: acpos-batch93-planning-design-specification-audit
+          path: |
+            __batch93_planning_design_audit.json
+            __batch93_summary.json
+          retention-days: 2
+      - name: Close harness
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -f __batch93_planning_design_audit.json __batch93_summary.json
+          git config user.name "acpos-batch93-design-audit"
+          git config user.email "actions@users.noreply.github.com"
+          git rm -f .github/workflows/acpos_batch93_planning_design_specification_audit.yml
+          git commit -m "chore(acpos): close batch 93 planning design specification audit"
+          git push origin HEAD:0921acpos
