@@ -253,7 +253,7 @@ add_table(d,["Check","Before","After","Resolution"],[
 ["Port selection","Implicit / ambiguous","Exactly-one state-dependent branch","No double invocation"],
 ["Permission bridge","EDITING_USE in control; editing.task.execute only on Ports","Both layers explicitly required","UI entitlement ≠ runtime execute authorization"],
 ["Legacy revision token","Explicit old revision label present","Generic historical/legacy wording","No obsolete revision identifier remains"],
-["Ambiguous locator shorthand","tNN/rNN strings containing r5/r9","table NN / row NN","No revision-token false positive"],
+["Ambiguous locator shorthand","tNN/rNN shorthand with revision-like row suffixes","table NN / row NN","No obsolete-revision false positive"],
 ],3.8)
 machine={
 "marker":MARK,"base_head":BASE_HEAD,"changed_docs":4,
