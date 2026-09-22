@@ -1,0 +1,341 @@
+name: ACPOS Batch 74 Canonical Business Entity Denominator Reaudit
+on:
+  push:
+    branches: [0921acpos]
+    paths:
+      - .github/workflows/acpos_batch74_canonical_business_entity_denominator_reaudit.yml
+permissions:
+  contents: write
+jobs:
+  audit:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+      - name: Rebuild canonical Business Entity denominator with bounded selectors
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+          import collections, json, re, subprocess, zipfile
+          import xml.etree.ElementTree as ET
+
+          EXPECTED_PARENT="eed3052bca898499c51c49df50a974a064296b1b"
+          WF=Path(".github/workflows/acpos_batch74_canonical_business_entity_denominator_reaudit.yml")
+          parent=subprocess.check_output(["git","rev-parse","HEAD^"],text=True).strip()
+          if parent!=EXPECTED_PARENT:
+              raise SystemExit(f"EXACT_HEAD_PARENT_FAIL {parent}")
+          WF.unlink()
+          drift=subprocess.check_output(["git","-c","core.quotepath=false","diff","--name-only",EXPECTED_PARENT],text=True).splitlines()
+          if drift:
+              raise SystemExit(f"PRE_AUDIT_TREE_DRIFT {drift}")
+
+          PAGE_DOCS={
+            "AIAPI-01":"ACPOS_AIAPI-01_AI_API管理_Mother_Basic_Design_OPTIMIZED.docx",
+            "ASSET-01":"ACPOS_ASSET-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx",
+            "CORE-01":"ACPOS_CORE-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx",
+            "DB-01":"ACPOS_DB-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx",
+            "DEV-01":"ACPOS_DEV-01_企業自動開發系統_Mother_Basic_Design_OPTIMIZED.docx",
+            "EDIT-01":"ACPOS_EDIT-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx",
+            "ERP-01":"ACPOS_ERP-01_ERP與財務_Mother_Basic_Design_OPTIMIZED.docx",
+            "IAM-01":"ACPOS_IAM-01_帳戶與權限_Mother_Basic_Design_OPTIMIZED.docx",
+            "INFO-01":"ACPOS_INFO-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx",
+            "KB-01":"ACPOS_KB-01_知識庫_Mother_Basic_Design_OPTIMIZED.docx",
+            "QA-01":"ACPOS_QA-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx",
+            "SG-02":"ACPOS_SG-02_QA審查項目名單_Mother_Basic_Design_OPTIMIZED.docx",
+            "SOC-01":"ACPOS_SOC-01_社群發布_Mother_Basic_Design_OPTIMIZED.docx",
+            "STR-01":"ACPOS_STR-01_WORKSPACE_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx",
+            "SYS-01":"ACPOS_SYS-01_系統維護與生命週期工作區_Mother_Basic_Design_OPTIMIZED.docx",
+            "VIDEO-01":"ACPOS_VIDEO-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx",
+            "WB-01":"ACPOS_WB-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx",
+            "ADMIN-STR-01":"ACPOS_admin_STR-01_戰略中心後台_Mother_Basic_Design_OPTIMIZED.docx",
+          }
+          REQUIRED_OPS=[
+            "DISCOVER_OR_LIST","SELECT_OR_OPEN","CREATE","CREATION_MODE","PARENT_BIND",
+            "CATEGORY_OR_GROUP_BIND","DRAFT","RESUME","EDIT","SAVE","VALIDATE",
+            "CONFIRM_OR_APPROVE","VERSION","REVISE","LOCK_OR_UNLOCK","REORDER",
+            "MOVE_OR_REPARENT","ARCHIVE_OR_DELETE","RESTORE","DEPENDENCY_IMPACT",
+            "AUDIT","ERROR_RECOVERY","NEXT_STEP",
+          ]
+          W="{http://schemas.openxmlformats.org/wordprocessingml/2006/main}"
+
+          OP_PATTERNS={
+            "DISCOVER_OR_LIST":[r"\bDISCOVER\b",r"\bLIST\b",r"DISCOVER/LIST",r"清單",r"列表",r"瀏覽",r"查詢"],
+            "SELECT_OR_OPEN":[r"\bSELECT\b",r"\bOPEN\b",r"DISCOVER/OPEN",r"選擇",r"開啟",r"查看"],
+            "CREATE":[r"\bCREATE\b",r"CREATE/RUN",r"CREATE/EDIT",r"新增",r"建立",r"創建"],
+            "CREATION_MODE":[r"CREATION[_ /-]*MODE",r"建立模式",r"新增模式"],
+            "PARENT_BIND":[r"PARENT[_ /-]*BIND",r"父層綁定",r"父項綁定"],
+            "CATEGORY_OR_GROUP_BIND":[r"CATEGORY[_ /-]*BIND",r"GROUP[_ /-]*BIND",r"分類綁定",r"群組綁定"],
+            "DRAFT":[r"\bDRAFT\b",r"草稿"],
+            "RESUME":[r"\bRESUME\b",r"續作",r"繼續"],
+            "EDIT":[r"\bEDIT\b",r"EDIT/ACTION",r"CREATE/EDIT",r"編輯",r"修改"],
+            "SAVE":[r"\bSAVE\b",r"儲存",r"保存"],
+            "VALIDATE":[r"\bVALIDATE\b",r"\bVALIDATION\b",r"驗證",r"校驗"],
+            "CONFIRM_OR_APPROVE":[r"\bCONFIRM\b",r"\bAPPROVE\b",r"APPROVE/DECIDE",r"\bREVIEW\b",r"確認",r"核准",r"審批",r"審查"],
+            "VERSION":[r"\bVERSION\b",r"版本"],
+            "REVISE":[r"\bREVISE\b",r"\bREVISION\b",r"修訂",r"改版"],
+            "LOCK_OR_UNLOCK":[r"\bLOCK\b",r"\bUNLOCK\b",r"鎖定",r"解鎖"],
+            "REORDER":[r"\bREORDER\b",r"排序",r"重排"],
+            "MOVE_OR_REPARENT":[r"\bREPARENT\b",r"\bMOVE\b",r"移動",r"改掛",r"變更父層"],
+            "ARCHIVE_OR_DELETE":[r"\bARCHIVE\b",r"\bDELETE\b",r"RETIRE/DELETE",r"ARCHIVE/RETIRE",r"\bRETIRE\b",r"封存",r"刪除",r"退役"],
+            "RESTORE":[r"\bRESTORE\b",r"還原",r"恢復"],
+            "DEPENDENCY_IMPACT":[r"DEPENDENCY[_ /-]*IMPACT",r"\bIMPACT\b",r"依賴影響",r"影響"],
+            "AUDIT":[r"\bAUDIT\b",r"稽核",r"審計"],
+            "ERROR_RECOVERY":[r"ERROR[_ /-]*RECOVERY",r"\bRECOVERY\b",r"\bROLLBACK\b",r"錯誤恢復",r"復原",r"回滾"],
+            "NEXT_STEP":[r"NEXT[_ /-]*STEP",r"NEXT[_ /-]*ACTION",r"下一步",r"下一動作"],
+          }
+          APP_PATTERNS={
+            "REQUIRED":[r"\bREQUIRED\b",r"必須",r"必填"],
+            "OPTIONAL":[r"\bOPTIONAL\b",r"可選",r"選用"],
+            "NOT_APPLICABLE":[r"\bNOT[_ /-]*APPLICABLE\b",r"\bN/A\b",r"\bNA\b",r"不適用"],
+          }
+          EXACT_ENTITY_HEADERS={
+            "BUSINESS ENTITY","BUSINESS_ENTITY","ENTITY","ENTITY NAME","ENTITY / REF","實體","業務實體","商業實體"
+          }
+          ENTITY_UID_HEADERS={"ENTITY UID"}
+          CANONICAL_NAME_HEADERS={"CANONICAL NAME"}
+          OP_TEXT_HEADERS={
+            "OPERATIONS","REQUIRED OPERATIONS","OPERATION","EFFECTFUL OPERATION","READ / PROJECTION",
+            "生命週期／約束","LIFECYCLE","LIFECYCLE / CONSTRAINT"
+          }
+          AUTH_HEADERS={"AUTHORITY EVIDENCE","AUTHORITY REF","AUTHORITY","EVIDENCE","權威依據","依據","證據"}
+          APPLICABILITY_HEADERS={"APPLICABILITY","適用性","適用"}
+
+          def norm(s): return re.sub(r"\s+"," ",(s or "").replace("\n"," | ").strip())
+          def up(s): return norm(s).upper()
+          def txt(el): return norm("".join((x.text or "") for x in el.iter(W+"t")))
+          def exact_idx(headers,names):
+              for i,h in enumerate(headers):
+                  if up(h) in names:return i
+              return None
+          def op_hits(text):
+              u=up(text); out=[]
+              for op,patterns in OP_PATTERNS.items():
+                  if any(re.search(p,u,re.I) for p in patterns):out.append(op)
+              return out
+          def applicability(text):
+              u=up(text); hits=[]
+              for a,patterns in APP_PATTERNS.items():
+                  if any(re.search(p,u,re.I) for p in patterns):hits.append(a)
+              return hits[0] if len(hits)==1 else ("AMBIGUOUS" if len(hits)>1 else "")
+          def parse(path):
+              with zipfile.ZipFile(path) as z:
+                  root=ET.fromstring(z.read("word/document.xml"))
+              tables=[]
+              for ti,tbl in enumerate(root.iter(W+"tbl"),1):
+                  trs=[x for x in list(tbl) if x.tag==W+"tr"]
+                  if not trs:continue
+                  rows=[]
+                  for tr in trs:
+                      rows.append([txt(c) for c in list(tr) if c.tag==W+"tc"])
+                  tables.append({"table":ti,"headers":rows[0] if rows else [],"rows":rows[1:]})
+              return tables
+
+          entity_sources=collections.defaultdict(list)
+          entity_op_evidence=collections.defaultdict(lambda:collections.defaultdict(list))
+          table_level_evidence=collections.defaultdict(lambda:collections.defaultdict(list))
+          selected_entity_tables=[]
+          rejected_identity_collision_tables=[]
+          rowlevel_wb=[]
+
+          for page,fn in PAGE_DOCS.items():
+              for t in parse(fn):
+                  headers=t["headers"]
+                  hupper=[up(x) for x in headers]
+                  ei=exact_idx(headers,EXACT_ENTITY_HEADERS)
+                  if ei is None:
+                      euid=exact_idx(headers,ENTITY_UID_HEADERS)
+                      cname=exact_idx(headers,CANONICAL_NAME_HEADERS)
+                      if euid is not None and cname is not None:
+                          ei=cname
+                  # Record the old false-positive class explicitly.
+                  if ei is None and any("IDENTITY" in h and "ENTITY" in h for h in hupper):
+                      rejected_identity_collision_tables.append({"page":page,"file":fn,"table":t["table"],"headers":headers})
+
+                  if ei is None:
+                      continue
+
+                  selected_entity_tables.append({"page":page,"file":fn,"table":t["table"],"headers":headers})
+                  appi=exact_idx(headers,APPLICABILITY_HEADERS)
+                  authi=exact_idx(headers,AUTH_HEADERS)
+
+                  # Wide operation columns: each operation is tied to the row entity.
+                  wide_cols=collections.defaultdict(list)
+                  for i,h in enumerate(headers):
+                      for op in op_hits(h):
+                          wide_cols[op].append(i)
+
+                  # Narrow operation text columns.
+                  text_cols=[i for i,h in enumerate(headers) if up(h) in OP_TEXT_HEADERS]
+
+                  for ri,row in enumerate(t["rows"],2):
+                      if ei>=len(row):continue
+                      ent=norm(row[ei])
+                      if not ent or ent in {"—","-","N/A","NA"}:continue
+                      key=(page,ent)
+                      entity_sources[key].append({"file":fn,"table":t["table"],"row":ri})
+
+                      app_cell=norm(row[appi]) if appi is not None and appi<len(row) else ""
+                      auth_cell=norm(row[authi]) if authi is not None and authi<len(row) else ""
+                      row_app=applicability(app_cell)
+
+                      for op,cols in wide_cols.items():
+                          vals=[norm(row[i]) for i in cols if i<len(row) and norm(row[i])]
+                          if not vals:continue
+                          raw=" | ".join(vals)
+                          ap=row_app or applicability(raw)
+                          entity_op_evidence[key][op].append({
+                            "file":fn,"table":t["table"],"row":ri,"source":"WIDE_MATRIX",
+                            "raw":raw,"applicability":ap,"authority_evidence":auth_cell,
+                          })
+
+                      for i in text_cols:
+                          if i>=len(row) or not norm(row[i]):continue
+                          raw=norm(row[i])
+                          for op in op_hits(raw):
+                              ap=row_app or applicability(raw)
+                              entity_op_evidence[key][op].append({
+                                "file":fn,"table":t["table"],"row":ri,"source":"OPERATION_TEXT",
+                                "raw":raw,"applicability":ap,"authority_evidence":auth_cell,
+                              })
+
+                      # Exact WB-style row: Entity | Operation | Applicability | Authority Evidence
+                      if ei is not None and len(text_cols)==1 and appi is not None:
+                          oi=text_cols[0]
+                          if oi<len(row):
+                              raw=norm(row[oi])
+                              oph=op_hits(raw)
+                              if oph:
+                                  rowlevel_wb.append({"page":page,"entity":ent,"operation_raw":raw,"ops":oph,"applicability":row_app,"authority_evidence":auth_cell})
+
+          entity_keys=sorted(entity_sources)
+          denominator=[]
+          for key in entity_keys:
+              page,ent=key
+              for op in REQUIRED_OPS:
+                  ev=entity_op_evidence[key].get(op,[])
+                  apps=sorted(set(x["applicability"] for x in ev if x["applicability"]))
+                  auth=sorted(set(x["authority_evidence"] for x in ev if x["authority_evidence"]))
+                  if not ev:
+                      disp="NO_ENTITY_BOUND_OPERATION_EVIDENCE"
+                  elif apps and all(a in {"REQUIRED","OPTIONAL","NOT_APPLICABLE"} for a in apps) and len(apps)==1:
+                      disp="EXPLICIT_CANONICAL_APPLICABILITY"
+                  elif "AMBIGUOUS" in apps or len([a for a in apps if a])>1:
+                      disp="AMBIGUOUS_APPLICABILITY"
+                  else:
+                      disp="OPERATION_EVIDENCE_WITHOUT_CANONICAL_APPLICABILITY"
+                  denominator.append({
+                    "page":page,"entity":ent,"operation":op,"disposition":disp,
+                    "applicability":apps,"authority_evidence":auth,"evidence":ev,
+                  })
+
+          bydisp=collections.Counter(x["disposition"] for x in denominator)
+          bypage=collections.Counter(p for p,_ in entity_keys)
+          unresolved=[x for x in denominator if x["disposition"]!="EXPLICIT_CANONICAL_APPLICABILITY"]
+
+          # Hierarchy: exact bounded header matches only.
+          HMAP={
+            "parent_identity":{"PARENT","PARENT ID","PARENT UID","父層","父項","父"},
+            "child_identity":{"CHILD","CHILD ID","CHILD UID","子層","子項","子"},
+            "cardinality":{"CARDINALITY","基數"},
+            "creation_entry":{"CREATION ENTRY","CREATE ENTRY","新增入口","建立入口"},
+            "payload_or_reference_binding":{"PAYLOAD / REFERENCE BINDING","REFERENCE BINDING","REF BINDING","PAYLOAD","引用綁定","參照綁定"},
+            "ordering_semantics":{"ORDERING","ORDERING SEMANTICS","排序"},
+            "permission":{"PERMISSION","權限"},
+            "state_dependency":{"STATE DEPENDENCY","狀態依賴"},
+            "version_dependency":{"VERSION DEPENDENCY","版本依賴"},
+            "move_or_reparent":{"MOVE / REPARENT","MOVE OR REPARENT","REPARENT","移動／改掛","變更父層"},
+            "archive_or_delete_propagation":{"ARCHIVE / DELETE PROPAGATION","DELETE PROPAGATION","封存／刪除傳播","級聯刪除"},
+            "upstream_change_impact":{"UPSTREAM CHANGE IMPACT","IMPACT","上游變更影響","影響"},
+            "downstream_revalidation":{"DOWNSTREAM REVALIDATION","REVALIDATION","下游重驗","重新驗證"},
+            "authority_evidence":{"AUTHORITY EVIDENCE","AUTHORITY","EVIDENCE","依據","證據"},
+          }
+          hier_edges=[]
+          hier_tables=[]
+          for page,fn in PAGE_DOCS.items():
+              for t in parse(fn):
+                  headers=t["headers"]
+                  ix={f:exact_idx(headers,names) for f,names in HMAP.items()}
+                  pi,ci=ix["parent_identity"],ix["child_identity"]
+                  if pi is None or ci is None or pi==ci:continue
+                  hier_tables.append({"page":page,"file":fn,"table":t["table"],"headers":headers})
+                  for ri,row in enumerate(t["rows"],2):
+                      pv=norm(row[pi]) if pi<len(row) else ""
+                      cv=norm(row[ci]) if ci<len(row) else ""
+                      if not pv and not cv:continue
+                      rec={"page":page,"file":fn,"table":t["table"],"row":ri}
+                      for f,i in ix.items():
+                          rec[f]=norm(row[i]) if i is not None and i<len(row) else ""
+                      hier_edges.append(rec)
+          hier_required=list(HMAP)
+          hier_missing=[]
+          for e in hier_edges:
+              miss=[f for f in hier_required if not e.get(f)]
+              if miss:hier_missing.append({"page":e["page"],"table":e["table"],"row":e["row"],"parent":e.get("parent_identity",""),"child":e.get("child_identity",""),"missing_fields":miss})
+
+          pages_without_entities=sorted(set(PAGE_DOCS)-set(p for p,_ in entity_keys))
+          pages_without_hierarchy=sorted(set(PAGE_DOCS)-set(e["page"] for e in hier_edges))
+          summary={
+            "marker":"ACPOS-20260922-BATCH-74-CANONICAL-BUSINESS-ENTITY-DENOMINATOR-R1",
+            "base_head":EXPECTED_PARENT,
+            "page_docs":len(PAGE_DOCS),
+            "selected_entity_tables":len(selected_entity_tables),
+            "rejected_identity_substring_false_positive_tables":len(rejected_identity_collision_tables),
+            "canonical_entity_identities":len(entity_keys),
+            "entities_by_page":dict(bypage),
+            "required_operation_types":len(REQUIRED_OPS),
+            "entity_operation_denominator":len(denominator),
+            "explicit_canonical_applicability":bydisp.get("EXPLICIT_CANONICAL_APPLICABILITY",0),
+            "operation_evidence_without_canonical_applicability":bydisp.get("OPERATION_EVIDENCE_WITHOUT_CANONICAL_APPLICABILITY",0),
+            "ambiguous_applicability":bydisp.get("AMBIGUOUS_APPLICABILITY",0),
+            "no_entity_bound_operation_evidence":bydisp.get("NO_ENTITY_BOUND_OPERATION_EVIDENCE",0),
+            "unresolved_entity_operation_pairs":len(unresolved),
+            "pages_without_canonical_entity_identity":pages_without_entities,
+            "hierarchy_tables":len(hier_tables),
+            "hierarchy_edges":len(hier_edges),
+            "hierarchy_edges_with_missing_required_fields":len(hier_missing),
+            "pages_without_physical_hierarchy_edges":pages_without_hierarchy,
+          }
+          out={
+            "summary":summary,
+            "entities":[{"page":p,"entity":e,"sources":entity_sources[(p,e)]} for p,e in entity_keys],
+            "denominator":denominator,
+            "unresolved":unresolved,
+            "selected_entity_tables":selected_entity_tables,
+            "rejected_identity_collision_tables":rejected_identity_collision_tables,
+            "rowlevel_wb":rowlevel_wb,
+            "hierarchy_tables":hier_tables,
+            "hierarchy_edges":hier_edges,
+            "hierarchy_missing":hier_missing,
+          }
+          Path("__batch74_canonical_entity_denominator.json").write_text(json.dumps(out,ensure_ascii=False,indent=2),encoding="utf-8")
+          Path("__batch74_summary.json").write_text(json.dumps(summary,ensure_ascii=False,indent=2),encoding="utf-8")
+          print("BATCH74_SUMMARY="+json.dumps(summary,ensure_ascii=False,sort_keys=True))
+          print("BATCH74_CANONICAL_DENOMINATOR_REBUILT")
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: acpos-batch74-canonical-business-entity-denominator
+          path: |
+            __batch74_canonical_entity_denominator.json
+            __batch74_summary.json
+          retention-days: 2
+      - name: Close harness
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -f __batch74_canonical_entity_denominator.json __batch74_summary.json
+          git config user.name "acpos-batch74-audit"
+          git config user.email "actions@users.noreply.github.com"
+          git add -A
+          mapfile -t staged < <(git -c core.quotepath=false diff --cached --name-only)
+          if [ "${#staged[@]}" -ne 1 ] || [ "${staged[0]}" != ".github/workflows/acpos_batch74_canonical_business_entity_denominator_reaudit.yml" ]; then
+            printf '%s\n' "${staged[@]}"
+            exit 1
+          fi
+          git commit -m "chore(acpos): close batch 74 canonical entity denominator harness"
+          git push origin HEAD:0921acpos
