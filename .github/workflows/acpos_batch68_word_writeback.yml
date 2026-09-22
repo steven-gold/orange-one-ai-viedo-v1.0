@@ -23,7 +23,7 @@ jobs:
           from pathlib import Path
           import base64, hashlib, html, os, re, subprocess, tempfile, zipfile
 
-          EXPECTED_PARENT = "55b9d4ab493e1ab3a5b1a659b25de227b6829c90"
+          EXPECTED_PARENT = "e906883b42b784315078900f0c68bc91545d672c"
           WORKFLOW = Path(".github/workflows/acpos_batch68_word_writeback.yml")
           parent = subprocess.check_output(["git","rev-parse","HEAD^"], text=True).strip()
           if parent != EXPECTED_PARENT:
@@ -164,8 +164,8 @@ jobs:
           # Remove harness BEFORE the commit: final tree under test has only the 10 Word changes.
           WORKFLOW.unlink()
 
-          changed = subprocess.check_output(["git","diff","--name-only",EXPECTED_PARENT], text=True).splitlines()
-          expected_changed = sorted(target.keys())
+          changed = subprocess.check_output(["git","-c","core.quotepath=false","diff","--name-only",EXPECTED_PARENT], text=True).splitlines()
+          expected_changed = sorted(list(target.keys()) + [str(WORKFLOW)])
           if sorted(changed) != expected_changed:
               raise SystemExit(f"WRITESET_FAIL changed={changed}")
           if len(list(Path(".").glob("*.docx"))) != 31:
