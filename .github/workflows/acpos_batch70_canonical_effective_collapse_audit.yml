@@ -1,0 +1,303 @@
+name: ACPOS Batch 70 Canonical Effective Collapse Audit
+on:
+  push:
+    branches: [0921acpos]
+    paths:
+      - .github/workflows/acpos_batch70_canonical_effective_collapse_audit.yml
+permissions:
+  contents: write
+jobs:
+  audit:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+      - name: Canonical effective-collapse audit
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+          import collections, json, re, subprocess, zipfile
+          import xml.etree.ElementTree as ET
+
+          EXPECTED_PARENT="a24d2e2639bff45916a94aeaac5ce6ec68836f4e"
+          WF=Path(".github/workflows/acpos_batch70_canonical_effective_collapse_audit.yml")
+          parent=subprocess.check_output(["git","rev-parse","HEAD^"],text=True).strip()
+          if parent != EXPECTED_PARENT:
+              raise SystemExit(f"EXACT_HEAD_PARENT_FAIL {parent}")
+          WF.unlink()
+          drift=subprocess.check_output(["git","-c","core.quotepath=false","diff","--name-only",EXPECTED_PARENT],text=True).splitlines()
+          if drift:
+              raise SystemExit(f"PRE_AUDIT_TREE_DRIFT {drift}")
+
+          SYSTEM_DOCS=[
+            "01_ACPOS_Global_Intelligent_Brain_Information_Lifecycle_Mother_Basic_Logic_Design_Normative_Contract_v4.docx",
+            "02_ACPOS_AI_Conversation_Memory_MultiAI_Assistant_Mother_Basic_Logic_Design_Normative_Contract_v1.0.docx",
+            "03_ACPOS_AI_Execution_Script_Compiler_Tool_AIAPI_Runtime_Mother_Basic_Logic_Design_Normative_Contract_v1.0.docx",
+            "04_ACPOS_CORE_AI_Blueprint_Canonical_Script_System_Mother_Basic_Logic_Design_Normative_Contract_v1.0.docx",
+            "05_ACPOS_Creative_Production_AI_ASSET_VIDEO_EDIT_VOICE_QA_Mother_Basic_Logic_Design_Normative_Contract_v1.0.docx",
+            "06_ACPOS_Enterprise_Business_Development_AI_System_Mother_Basic_Logic_Design_Normative_Contract_v1.0.docx",
+            "07_ACPOS_Social_Publishing_AI_System_Mother_Basic_Logic_Design_Normative_Contract_v1.0.docx",
+            "08_ACPOS_Strategy_Intelligence_MultiAI_Decision_System_Mother_Basic_Logic_Design_Normative_Contract_v1.0.docx",
+            "09_ACPOS_AI_System_Engineer_Self_Inspection_Evolution_System_Mother_Basic_Logic_Design_Normative_Contract_v1.0.docx",
+          ]
+          PAGE_DOCS={
+            "AIAPI-01":"ACPOS_AIAPI-01_AI_API管理_Mother_Basic_Design_OPTIMIZED.docx",
+            "ASSET-01":"ACPOS_ASSET-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx",
+            "CORE-01":"ACPOS_CORE-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx",
+            "DB-01":"ACPOS_DB-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx",
+            "DEV-01":"ACPOS_DEV-01_企業自動開發系統_Mother_Basic_Design_OPTIMIZED.docx",
+            "EDIT-01":"ACPOS_EDIT-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx",
+            "ERP-01":"ACPOS_ERP-01_ERP與財務_Mother_Basic_Design_OPTIMIZED.docx",
+            "IAM-01":"ACPOS_IAM-01_帳戶與權限_Mother_Basic_Design_OPTIMIZED.docx",
+            "INFO-01":"ACPOS_INFO-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx",
+            "KB-01":"ACPOS_KB-01_知識庫_Mother_Basic_Design_OPTIMIZED.docx",
+            "QA-01":"ACPOS_QA-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx",
+            "SG-02":"ACPOS_SG-02_QA審查項目名單_Mother_Basic_Design_OPTIMIZED.docx",
+            "SOC-01":"ACPOS_SOC-01_社群發布_Mother_Basic_Design_OPTIMIZED.docx",
+            "STR-01":"ACPOS_STR-01_WORKSPACE_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx",
+            "SYS-01":"ACPOS_SYS-01_系統維護與生命週期工作區_Mother_Basic_Design_OPTIMIZED.docx",
+            "VIDEO-01":"ACPOS_VIDEO-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx",
+            "WB-01":"ACPOS_WB-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx",
+            "ADMIN-STR-01":"ACPOS_admin_STR-01_戰略中心後台_Mother_Basic_Design_OPTIMIZED.docx",
+          }
+          S01,S02,S03,S04,S05,S06,S07,S08,S09=SYSTEM_DOCS
+          PAIR_PRECEDENCE={
+            tuple(sorted((S03,S09))):S03,
+            tuple(sorted((S02,S04))):S02,
+            tuple(sorted((S02,S06))):S06,
+            tuple(sorted((S02,S08))):S02,
+            tuple(sorted((S02,S09))):S02,
+            tuple(sorted((S01,S09))):S01,
+            tuple(sorted((S05,S09))):S05,
+          }
+          ACTIVE={"EFFECTFUL_EXACT","READ_EXACT"}
+          MISSING={"","—","-","SOURCE_NOT_DEFINED","UNCHANGED"}
+          EFFECTFUL_REQUIRED=["action","gate","permission","payload","operation","method","runtime_owner","persistence"]
+          READ_REQUIRED=["gate","permission","operation","method","runtime_owner"]
+          ALL_FIELDS=["action","gate","permission","payload","operation","method","runtime_owner","persistence","runtime_status"]
+          W="{http://schemas.openxmlformats.org/wordprocessingml/2006/main}"
+
+          def norm(s):
+              return re.sub(r"\s+"," ",(s or "").replace("\n"," | ").strip())
+          def missing(v):
+              return norm(v) in MISSING
+          def cell_text(el):
+              return norm("".join((x.text or "") for x in el.iter(W+"t")))
+          def hfind(headers,*needles):
+              hs=[norm(x).lower() for x in headers]
+              for needle in needles:
+                  n=needle.lower()
+                  for i,h in enumerate(hs):
+                      if n in h:return i
+              return None
+          def parse(path):
+              rows=[]
+              with zipfile.ZipFile(path) as z:
+                  root=ET.fromstring(z.read("word/document.xml"))
+              for ti,tbl in enumerate(root.iter(W+"tbl"),1):
+                  trs=[x for x in list(tbl) if x.tag==W+"tr"]
+                  if not trs: continue
+                  headers=[cell_text(c) for c in list(trs[0]) if c.tag==W+"tc"]
+                  ci=hfind(headers,"control uid","target uid")
+                  if ci is None: continue
+                  ix={
+                    "uid":ci,
+                    "action":hfind(headers,"action uid","action"),
+                    "gate":hfind(headers,"gate uid","gate"),
+                    "permission":hfind(headers,"permission","auth resource"),
+                    "payload":hfind(headers,"payload / schema","payload","schema"),
+                    "operation":hfind(headers,"operation"),
+                    "method":hfind(headers,"method / path","method","path"),
+                    "runtime_owner":hfind(headers,"runtime owner"),
+                    "persistence":hfind(headers,"persistence owner"),
+                    "runtime_status":hfind(headers,"runtime status"),
+                  }
+                  for ri,tr in enumerate(trs[1:],2):
+                      cells=[cell_text(c) for c in list(tr) if c.tag==W+"tc"]
+                      uid=cells[ci] if ci<len(cells) else ""
+                      if not uid or uid in {"—","-"}: continue
+                      r={k:(cells[i] if i is not None and i<len(cells) else "") for k,i in ix.items()}
+                      r.update({"file":path.name,"table":ti,"row":ri})
+                      rows.append(r)
+              return rows
+
+          docs=sorted(Path(".").glob("*.docx"))
+          if len(docs)!=31:
+              raise SystemExit(f"DOCX_COUNT_FAIL {len(docs)}")
+          rows=[]
+          for p in docs: rows.extend(parse(p))
+
+          sys=collections.defaultdict(lambda:collections.defaultdict(list))
+          for r in rows:
+              if r["file"] in SYSTEM_DOCS:
+                  sys[r["file"]][r["uid"]].append(r)
+
+          rev_page={fn:p for p,fn in PAGE_DOCS.items()}
+          page=collections.defaultdict(lambda:collections.defaultdict(list))
+          for r in rows:
+              if r["file"] in rev_page and r.get("runtime_status") in ACTIVE:
+                  page[rev_page[r["file"]]][r["uid"]].append(r)
+
+          owner_map={}
+          unresolved=[]
+          for puid,uidmap in page.items():
+              for uid,pr in uidmap.items():
+                  owners=[f for f in SYSTEM_DOCS if uid in sys[f]]
+                  chosen=None
+                  if len(owners)==1:
+                      chosen=owners[0]
+                  elif len(owners)>1:
+                      pair=tuple(sorted(owners))
+                      if pair in PAIR_PRECEDENCE:
+                          chosen=PAIR_PRECEDENCE[pair]
+                      else:
+                          exact_owners=[f for f in owners if any(x.get("runtime_status") in ACTIVE for x in sys[f][uid])]
+                          if len(exact_owners)==1: chosen=exact_owners[0]
+                  if chosen is None:
+                      unresolved.append({"page":puid,"uid":uid,"owners":owners})
+                  else:
+                      owner_map[(puid,uid)]=chosen
+
+          # Canonical collapse: owner+UID. Row fragments do not count as gaps if the
+          # field is present somewhere in the active exact canonical-owner projection.
+          candidates=[]
+          ambiguous=[]
+          per_uid=[]
+          for (puid,uid),owner in sorted(owner_map.items()):
+              rr=[x for x in sys[owner][uid] if x.get("runtime_status") in ACTIVE]
+              if not rr:
+                  candidates.append({"page":puid,"uid":uid,"owner":owner,"status":"NO_ACTIVE_OWNER_ROW","field":"runtime_status"})
+                  continue
+
+              statuses=sorted(set(x.get("runtime_status") for x in rr))
+              effective_status="EFFECTFUL_EXACT" if "EFFECTFUL_EXACT" in statuses else "READ_EXACT"
+              required=EFFECTFUL_REQUIRED if effective_status=="EFFECTFUL_EXACT" else READ_REQUIRED
+              values={}
+              for f in ALL_FIELDS:
+                  vals=sorted(set(norm(x.get(f,"")) for x in rr if not missing(x.get(f,""))))
+                  values[f]=vals
+              missing_fields=[f for f in required if not values[f]]
+              ambiguous_fields={f:v for f,v in values.items() if f!="runtime_status" and len(v)>1}
+
+              # Distinguish legal multi-behavior UIDs from a real field conflict:
+              # an Action/Operation/Route tuple is one behavior branch.
+              branches=collections.defaultdict(list)
+              for x in rr:
+                  sig=(norm(x.get("action","")),norm(x.get("operation","")),norm(x.get("method","")),norm(x.get("runtime_owner","")))
+                  branches[sig].append(x)
+              branch_gaps=[]
+              for sig,brows in branches.items():
+                  # Ignore empty informational fragments with no behavioral identity.
+                  if all(missing(v) for v in sig):
+                      continue
+                  bstatus="EFFECTFUL_EXACT" if any(x.get("runtime_status")=="EFFECTFUL_EXACT" for x in brows) else "READ_EXACT"
+                  breq=EFFECTFUL_REQUIRED if bstatus=="EFFECTFUL_EXACT" else READ_REQUIRED
+                  bvals={f:sorted(set(norm(x.get(f,"")) for x in brows if not missing(x.get(f,"")))) for f in ALL_FIELDS}
+                  bg=[f for f in breq if not bvals[f]]
+                  if bg:
+                      branch_gaps.append({
+                        "signature":{"action":sig[0],"operation":sig[1],"method":sig[2],"runtime_owner":sig[3]},
+                        "status":bstatus,"missing_fields":bg,
+                      })
+
+              if missing_fields:
+                  for f in missing_fields:
+                      candidates.append({"page":puid,"uid":uid,"owner":owner,"status":effective_status,"field":f})
+              if ambiguous_fields:
+                  ambiguous.append({"page":puid,"uid":uid,"owner":owner,"fields":ambiguous_fields,"branch_count":len(branches)})
+
+              per_uid.append({
+                "page":puid,"uid":uid,"owner":owner,"statuses":statuses,
+                "effective_status":effective_status,"missing_fields":missing_fields,
+                "multi_value_fields":sorted(ambiguous_fields),"branch_count":len(branches),
+                "branch_gaps":branch_gaps,
+              })
+
+          # Strict branch-level candidate denominator, deduped by UID/behavior/field.
+          branch_candidates=[]
+          for u in per_uid:
+              for b in u["branch_gaps"]:
+                  sig=b["signature"]
+                  for f in b["missing_fields"]:
+                      branch_candidates.append({
+                        "page":u["page"],"uid":u["uid"],"owner":u["owner"],
+                        "status":b["status"],"field":f,
+                        "action":sig["action"],"operation":sig["operation"],
+                        "method":sig["method"],"runtime_owner":sig["runtime_owner"],
+                      })
+
+          # False/raw-row reduction metrics.
+          batch69_raw=3854
+          uid_field_count=len(candidates)
+          branch_field_count=len(branch_candidates)
+          candidate_uids=sorted(set(x["uid"] for x in candidates))
+          branch_candidate_uids=sorted(set(x["uid"] for x in branch_candidates))
+          by_field=collections.Counter(x["field"] for x in candidates)
+          by_status=collections.Counter(x["status"] for x in candidates)
+          by_owner=collections.Counter(x["owner"] for x in candidates)
+          by_page=collections.Counter(x["page"] for x in candidates)
+          branch_by_field=collections.Counter(x["field"] for x in branch_candidates)
+          branch_by_page=collections.Counter(x["page"] for x in branch_candidates)
+
+          summary={
+            "marker":"ACPOS-20260922-BATCH-70-CANONICAL-EFFECTIVE-COLLAPSE-V1",
+            "base_head":EXPECTED_PARENT,
+            "docx_files":len(docs),
+            "page_uid_owner_bindings":len(owner_map),
+            "owner_unresolved":len(unresolved),
+            "batch69_raw_missing_cells":batch69_raw,
+            "canonical_uid_field_candidates":uid_field_count,
+            "canonical_candidate_uids":len(candidate_uids),
+            "canonical_candidates_by_field":dict(by_field),
+            "canonical_candidates_by_status":dict(by_status),
+            "canonical_candidates_by_page":dict(by_page),
+            "canonical_candidates_by_owner":dict(by_owner),
+            "branch_level_candidate_cells":branch_field_count,
+            "branch_level_candidate_uids":len(branch_candidate_uids),
+            "branch_candidates_by_field":dict(branch_by_field),
+            "branch_candidates_by_page":dict(branch_by_page),
+            "multi_value_uid_records":len(ambiguous),
+            "raw_to_canonical_reduction":batch69_raw-uid_field_count,
+          }
+          out={
+            "summary":summary,
+            "canonical_uid_field_candidates":candidates,
+            "branch_level_candidates":branch_candidates,
+            "multi_value_uid_records":ambiguous,
+            "per_uid":per_uid,
+            "owner_unresolved":unresolved,
+          }
+          Path("__batch70_effective_collapse.json").write_text(json.dumps(out,ensure_ascii=False,indent=2),encoding="utf-8")
+          Path("__batch70_summary.json").write_text(json.dumps(summary,ensure_ascii=False,indent=2),encoding="utf-8")
+          print("BATCH70_SUMMARY="+json.dumps(summary,ensure_ascii=False,sort_keys=True))
+          if unresolved:
+              raise SystemExit("BATCH70_OWNER_RESOLUTION_REGRESSION")
+          print("BATCH70_SEARCH_PASS")
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: acpos-batch70-canonical-effective-collapse
+          path: |
+            __batch70_effective_collapse.json
+            __batch70_summary.json
+          retention-days: 2
+      - name: Remove audit outputs and close harness
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -f __batch70_effective_collapse.json __batch70_summary.json
+          git config user.name "acpos-batch70-search"
+          git config user.email "actions@users.noreply.github.com"
+          git add -A
+          mapfile -t staged < <(git -c core.quotepath=false diff --cached --name-only)
+          if [ "${#staged[@]}" -ne 1 ] || [ "${staged[0]}" != ".github/workflows/acpos_batch70_canonical_effective_collapse_audit.yml" ]; then
+            printf '%s\n' "${staged[@]}"
+            exit 1
+          fi
+          git commit -m "chore(acpos): close batch 70 effective-collapse search harness"
+          git push origin HEAD:0921acpos
