@@ -25,7 +25,8 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          test "$(git rev-parse HEAD)" = "1dade15d7bb15279f70c89e2d87ef10403dcc803"
+          git cat-file -e "1dade15d7bb15279f70c89e2d87ef10403dcc803^{commit}"
+          test -z "$(git -c core.quotePath=false diff --name-only 1dade15d7bb15279f70c89e2d87ef10403dcc803 HEAD -- '*.docx')"
           test "$(find . -maxdepth 1 -type f -name '*.docx' | wc -l)" -eq 31
           test -z "$(git status --porcelain)"
           echo "PASS: CURRENT TRUTH ENTRY"
