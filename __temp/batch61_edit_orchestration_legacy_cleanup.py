@@ -272,8 +272,18 @@ texts={p.name:all_text(p) for p in Path(".").glob("*.docx")}
 all_join="\n".join(texts.values())
 legacy_hits=LEGACY_RE.findall(all_join)
 ambiguous_hits=AMBIG_LOCATOR_RE.findall(all_join)
-assert not legacy_hits,legacy_hits
-assert not ambiguous_hits,ambiguous_hits
+remaining_legacy_contexts=[]
+for fn,txt in texts.items():
+    for m in LEGACY_RE.finditer(txt):
+        remaining_legacy_contexts.append({"file":fn,"match":m.group(0),"context":txt[max(0,m.start()-140):m.end()+180]})
+remaining_ambiguous_contexts=[]
+for fn,txt in texts.items():
+    for m in AMBIG_LOCATOR_RE.finditer(txt):
+        remaining_ambiguous_contexts.append({"file":fn,"match":m.group(0),"context":txt[max(0,m.start()-140):m.end()+180]})
+print("BATCH61_REMAINING_LEGACY="+json.dumps(remaining_legacy_contexts,ensure_ascii=False))
+print("BATCH61_REMAINING_AMBIGUOUS_LOCATOR="+json.dumps(remaining_ambiguous_contexts,ensure_ascii=False))
+assert not legacy_hits,remaining_legacy_contexts
+assert not ambiguous_hits,remaining_ambiguous_contexts
 
 for path in [S05,EDIT]:
     txt=texts[path]
