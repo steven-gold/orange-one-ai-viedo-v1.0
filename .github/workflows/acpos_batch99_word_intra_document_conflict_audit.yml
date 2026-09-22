@@ -1,0 +1,171 @@
+name: ACPOS Batch 99 Word Intra-Document Conflict Audit
+on:
+  push:
+    branches: [0921acpos]
+    paths:
+      - .github/workflows/acpos_batch99_word_intra_document_conflict_audit.yml
+permissions:
+  contents: write
+jobs:
+  audit:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+      - name: Audit structured identity and semantic conflicts inside each Word
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+          import zipfile,xml.etree.ElementTree as ET,re,json,collections,subprocess
+          EXPECTED_PARENT="fd2b00283d66fda7d507a7362c933e5131b33561"
+          CURRENT_HEAD=EXPECTED_PARENT
+          CURRENT_TREE="d9782b31a96ae04dd84be270f1f53e8a9c9298a8"
+          p=subprocess.check_output(["git","rev-parse","HEAD^"],text=True).strip()
+          if p!=EXPECTED_PARENT:raise SystemExit(f"EXACT_HEAD_PARENT_FAIL {p}")
+          docs=sorted(Path(".").glob("*.docx"))
+          if len(docs)!=31:raise SystemExit(f"DOCX_COUNT_FAIL {len(docs)}")
+          W="{http://schemas.openxmlformats.org/wordprocessingml/2006/main}"
+          def n(s):return re.sub(r"\s+"," ",(s or "").replace("\n"," | ").strip())
+          def text(el):return n("".join((x.text or "") for x in el.iter(W+"t")))
+          def tables(doc):
+            with zipfile.ZipFile(doc) as z:root=ET.fromstring(z.read("word/document.xml"))
+            out=[]
+            for ti,tbl in enumerate(root.iter(W+"tbl"),1):
+              trs=[x for x in list(tbl) if x.tag==W+"tr"]
+              if not trs:continue
+              rows=[[text(c) for c in list(tr) if c.tag==W+"tc"] for tr in trs]
+              out.append({"table":ti,"headers":rows[0] if rows else [],"rows":rows[1:]})
+            paras=[text(p) for p in root.iter(W+"p")]
+            return out,"\n".join(x for x in paras if x)
+          CRITICAL=[
+            "CANONICAL NAME","TYPE","ROUTE","OWNER","CANONICAL OWNER","OWNER / BOUNDARY",
+            "PERMISSION","PERMISSION REFERENCE","REQUIRED PERMISSION","ACTION","ACTION REFERENCE",
+            "OPERATION","APPLICABILITY","STATUS","PARENT","PARENT UID","METHOD","PATH","API",
+            "RUNTIME OWNER","PERSISTENCE","PERSISTENCE OWNER","PAYLOAD","VERSION","STATE",
+            "VISIBILITY CONDITION","READ-ONLY RULE","DISABLED RULE","REQUIRED"
+          ]
+          def canon_header(h):
+            u=n(h).upper()
+            for k in sorted(CRITICAL,key=len,reverse=True):
+              if u==k:return k
+            # selected tolerant mappings only
+            if "CANONICAL OWNER" in u:return "CANONICAL OWNER"
+            if u.endswith(" OWNER") or u=="OWNER / BOUNDARY":return "OWNER"
+            if u in {"HTTP METHOD","METHOD"}:return "METHOD"
+            if u in {"API / ENTRY","API/ENTRY"}:return "API"
+            return None
+          uid_re=re.compile(r"^[A-Z][A-Z0-9]*(?:-[A-Z0-9]+){1,}(?:[._][A-Z0-9]+)*$")
+          structured_conflicts=[]
+          stale_current=[]
+          branch_claims=[]
+          history_residuals=[]
+          marker_duplicates=[]
+          row_self_conflicts=[]
+          perdoc={}
+          for doc in docs:
+            tabs,plain=tables(doc)
+            values=collections.defaultdict(lambda:collections.defaultdict(list))
+            marker_counts=collections.Counter(re.findall(r"\[ACPOS-[^\]]+\]",plain))
+            for m,c in marker_counts.items():
+              if c>1 and "DESIGN-CLOSURE" in m:
+                marker_duplicates.append({"file":doc.name,"marker":m,"count":c})
+            for t in tabs:
+              h=[n(x) for x in t["headers"]]
+              hu=[x.upper() for x in h]
+              for ri,row in enumerate(t["rows"],2):
+                row=[n(x) for x in row]
+                # exact identity selection by schema
+                identity=None
+                if h==["Entity","Operation","Applicability","Authority Evidence"] and len(row)>=2:
+                  identity=f"ENTITY_OP::{row[0]}::{row[1]}"
+                elif "Parent Identity" in h and "Child Identity" in h:
+                  identity=f"HIER::{row[h.index('Parent Identity')]}::{row[h.index('Child Identity')]}"
+                else:
+                  id_indexes=[i for i,x in enumerate(hu) if " UID" in x or x.endswith("UID") or x in {"UID","CONTROL UID","FIELD UID","ACTION UID","PAGE UID","FLOW UID","AUDIT UID","SECTION UID","COMPONENT UID"}]
+                  for i in id_indexes:
+                    if i<len(row) and row[i]:
+                      identity=row[i];break
+                  if identity is None and row and uid_re.match(row[0].upper()):
+                    identity=row[0]
+                if identity:
+                  for i,head in enumerate(h):
+                    if i>=len(row) or not row[i]:continue
+                    ch=canon_header(head)
+                    if ch:values[identity][ch].append({"value":row[i],"table":t["table"],"row":ri,"header":head})
+                # row-local applicability/status contradiction only in explicit columns
+                amap={n(head).upper():row[i] for i,head in enumerate(h) if i<len(row)}
+                if "APPLICABILITY" in amap and amap["APPLICABILITY"]:
+                  v=amap["APPLICABILITY"].upper()
+                  if v not in {"REQUIRED","OPTIONAL","NOT_APPLICABLE"}:
+                    row_self_conflicts.append({"file":doc.name,"table":t["table"],"row":ri,"type":"INVALID_APPLICABILITY_VALUE","value":amap["APPLICABILITY"]})
+            for ident,fields in values.items():
+              for fld,recs in fields.items():
+                uniq=sorted(set(r["value"] for r in recs if r["value"]))
+                if len(uniq)>1:
+                  structured_conflicts.append({"file":doc.name,"identity":ident,"field":fld,"values":uniq,"evidence":recs})
+            # current-truth literals
+            for m in re.finditer(r"Current exact tree\s+([0-9a-f]{40})",plain,re.I):
+              sha=m.group(1)
+              if sha!=CURRENT_TREE:
+                stale_current.append({"file":doc.name,"type":"STALE_CURRENT_TREE_LITERAL","value":sha,"expected":CURRENT_TREE,"context":plain[max(0,m.start()-80):m.end()+140]})
+            for m in re.finditer(r"Current HEAD[^0-9a-f]{0,20}([0-9a-f]{40})",plain,re.I):
+              sha=m.group(1)
+              if sha!=CURRENT_HEAD:
+                stale_current.append({"file":doc.name,"type":"STALE_CURRENT_HEAD_LITERAL","value":sha,"expected":CURRENT_HEAD,"context":plain[max(0,m.start()-80):m.end()+140]})
+            for pat in [r"GitHub\s+new\s+live\s+HEAD",r"branch\s+new\b",r"/tree/new\b"]:
+              for m in re.finditer(pat,plain,re.I):
+                branch_claims.append({"file":doc.name,"type":"NONCURRENT_BRANCH_CURRENT_TRUTH_LITERAL","match":m.group(0),"context":plain[max(0,m.start()-100):m.end()+150]})
+            # execution-history artifacts embedded in design corpus (candidate, not automatically error)
+            for pat,label in [
+              (r"BATCH\d+_MACHINE_JSON\s*=\s*\{","MACHINE_JSON"),
+              (r"Persisted Resume Point","RESUME_POINT"),
+              (r"workflow[_ ]run[_ ]id","WORKFLOW_RUN_ID"),
+              (r"artifact[_ ]id","ARTIFACT_ID"),
+              (r'"base_head"\s*:',"BASE_HEAD_JSON"),
+              (r"Batch\s+\d+\s*[·:]","BATCH_LEDGER_HEADING"),
+            ]:
+              for m in re.finditer(pat,plain,re.I):
+                history_residuals.append({"file":doc.name,"type":label,"match":m.group(0),"context":plain[max(0,m.start()-100):m.end()+220]})
+            perdoc[doc.name]={"tables":len(tabs),"structured_identities":len(values)}
+          out={
+            "marker":"ACPOS-20260922-BATCH-99-WORD-INTRA-DOCUMENT-CONFLICT-AUDIT-V1",
+            "base_head":EXPECTED_PARENT,"word_tree":CURRENT_TREE,"docx_count":len(docs),
+            "structured_field_conflicts":structured_conflicts,
+            "row_self_conflicts":row_self_conflicts,
+            "stale_current_truth_literals":stale_current,
+            "noncurrent_branch_current_truth_literals":branch_claims,
+            "execution_history_residual_candidates":history_residuals,
+            "duplicate_design_closure_markers":marker_duplicates,
+            "documents":perdoc
+          }
+          Path("__batch99_intra_conflicts.json").write_text(json.dumps(out,ensure_ascii=False,indent=2),encoding="utf-8")
+          print("BATCH99_SUMMARY="+json.dumps({
+            "structured_conflicts":len(structured_conflicts),
+            "row_self_conflicts":len(row_self_conflicts),
+            "stale_current_truth":len(stale_current),
+            "noncurrent_branch_claims":len(branch_claims),
+            "history_residual_candidates":len(history_residuals),
+            "duplicate_design_closure_markers":len(marker_duplicates)
+          },ensure_ascii=False,sort_keys=True))
+          print("BATCH99_AUDIT_EXECUTION_PASS")
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: acpos-batch99-word-intra-document-conflict-audit
+          path: __batch99_intra_conflicts.json
+          retention-days: 3
+      - name: Close audit harness
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -f __batch99_intra_conflicts.json
+          git config user.name "acpos-batch99-audit"
+          git config user.email "actions@users.noreply.github.com"
+          git rm -f .github/workflows/acpos_batch99_word_intra_document_conflict_audit.yml
+          git commit -m "chore(acpos): close batch 99 Word intra-document conflict audit"
+          git push origin HEAD:0921acpos
