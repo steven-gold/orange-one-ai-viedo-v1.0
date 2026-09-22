@@ -27,7 +27,7 @@ FIELDS=["control","type","label","action","gate","permission","payload_schema","
 PLACEHOLDER_RE=re.compile(r"^(RESOLVE_FROM_|SOURCE_NOT_DEFINED$|OPERATION_NOT_DEFINED$|TBD$|TODO$)",re.I)
 
 def norm(x):return re.sub(r"\s+"," ",(x or "").replace("\n"," | ").strip())
-def missing(v):return v in {"","—","-","SOURCE_NOT_DEFINED"}
+def missing(v):return v in {"","—","-","SOURCE_NOT_DEFINED","UNCHANGED"}
 def placeholder_op(v):
     v=norm(v)
     return bool(PLACEHOLDER_RE.search(v)) or "DURING_LOGIC_PHASE" in v or "EXISTING_GOVERNED_" in v
