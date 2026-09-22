@@ -104,13 +104,13 @@ specification_mutation_safety:
   ordinary_mid_stage_specification_mutation: BLOCK
   stage_end_consolidated_promotion_requires_new_explicit_directive: true
   execution_context_lock_required: true
-status: GENERATED_CI_EVIDENCE_SNAPSHOT_PURGE_MUTATED_VALIDATION_REQUIRED
-next_action: RUN_GENERATED_CI_EVIDENCE_SNAPSHOT_PURGE_EXACT_HEAD_VALIDATION
+status: GENERATED_CI_EVIDENCE_SNAPSHOT_PURGE_CLOSED_WORK_UNIT_RESOLUTION_REQUIRED
+next_action: WORK_UNIT_RESOLUTION_GATE_AFTER_GENERATED_CI_EVIDENCE_SNAPSHOT_PURGE
 resume_control:
-  current_resume_point: GENERATED_CI_EVIDENCE_SNAPSHOT_PURGE_MUTATED_VALIDATION_REQUIRED
-  current_work_unit_uid: WU-GOV-GENERATED-CI-EVIDENCE-SNAPSHOT-PURGE-001
-  current_owner: governance/test/ACTIVE_STATE.yaml
-  exact_next_action: RUN_GENERATED_CI_EVIDENCE_SNAPSHOT_PURGE_EXACT_HEAD_VALIDATION
+  current_resume_point: GENERATED_CI_EVIDENCE_SNAPSHOT_PURGE_CLOSED_WUR_REQUIRED
+  current_work_unit_uid: null
+  current_owner: governance/specifications/current/EXECUTION_CYCLE_CONTROL.yaml
+  exact_next_action: WORK_UNIT_RESOLUTION_GATE_AFTER_GENERATED_CI_EVIDENCE_SNAPSHOT_PURGE
   product_resume_preserved: CORE01_STAGE01_STAGE03_CLEAN_BASELINE_READY_FRESH_STAGE01_WUR_REQUIRED
   interrupted_test_resume_preserved: CORE01_SOURCE_TEST_BUGFIX_AND_CONTENT_INTEGRITY_FULL_LIFECYCLE_R2_ACTIVE
   reentry_owner_capability: SOURCE_INTAKE_BASE_BLUEPRINT
@@ -276,38 +276,50 @@ closed_governance_maintenance_work_unit_root_audit_residual_purge:
   - PRODUCT_STAGE_CREDIT_ZERO
   legal_next_transition: WORK_UNIT_RESOLUTION_GATE
   product_stage_credit: 0
-active_work_unit:
+closed_governance_maintenance_work_unit_generated_ci_evidence_snapshot_purge:
   work_unit_uid: WU-GOV-GENERATED-CI-EVIDENCE-SNAPSHOT-PURGE-001
   canonical_name: GENERATED_CI_EVIDENCE_SNAPSHOT_PURGE
   primary_task_layer: GOVERNANCE_MAINTENANCE
-  current_status: MUTATION_COMMITTED_VALIDATION_REQUIRED
+  terminal_status: CLOSED_VERIFIED_NO_PRODUCT_CREDIT
   authorization_basis: EXPLICIT_USER_DIRECTIVE_20260923_CONTINUE_CLEANUP
   canonical_policy_owner: governance/specifications/current/EXECUTION_CYCLE_CONTROL.yaml
   state_owner: governance/test/ACTIVE_STATE.yaml
-  scope:
-  - DELETE_TRACKED_FULL_LINE_SYSTEM_GATE_RESULT_JSON
-  - DELETE_TRACKED_SOURCE_IDENTITY_REPORT_JSON
-  - PRESERVE_RUNTIME_PRODUCERS
-  - PRESERVE_WORKFLOW_ARTIFACT_UPLOAD_CONTRACTS
-  - PRESERVE_TRIGGER_FILES
-  out_of_scope:
-  - .github/governance-source/active/source
-  - .github/governance-source/RUN_FULL_LINE_SYSTEM_GATE.py
-  - .github/governance-source/VERIFY_SOURCE_IDENTITY.py
-  - .github/governance-source/FULL_LINE_FAILURE_DIAGNOSTICS.py
-  - .github/governance-source/FULL_LINE_TRIGGER
-  - .github/governance-source/IDENTITY_TRIGGER
-  - authority
-  - governance/specifications/current
-  - PRODUCT_STAGE_EXECUTION
-  classification:
-    canonical_owner: RUNTIME_PRODUCER_AND_GITHUB_ACTION_ARTIFACT
-    forward_reference: WORKFLOW_UPLOAD_TARGET_REGENERATED_BEFORE_UPLOAD
-    reverse_reference: PRODUCER_WRITE_TARGET_AND_ARTIFACT_UPLOAD_ONLY
-    runtime_or_workflow_reachability: GENERATED_DURING_EACH_APPLICABLE_RUN
-    test_regression_role: PRODUCER_AND_UPLOAD_CONTRACT_PRESERVED
-    historical_retention_role: GITHUB_ACTIONS_ARTIFACT_AND_GIT_HISTORY
-    disposition: TEMP_BACKUP_INTERMEDIATE_REMOVE_FROM_CURRENT_TREE
+  disposition_summary:
+    tracked_generated_snapshots_removed: 2
+    removed_files:
+    - .github/governance-source/FULL_LINE_SYSTEM_GATE_RESULT.json
+    - .github/governance-source/SOURCE_IDENTITY_REPORT.json
+    runtime_producers_preserved: true
+    workflow_upload_contracts_preserved: true
+    trigger_files_preserved: true
+    historical_detail_storage: GITHUB_ACTIONS_ARTIFACT_AND_GIT_HISTORY
+    product_stage_credit: 0
+  closure_evidence:
+    purge_mutation_head_sha: aaba06b770bc18e3dfaff83a3a3ca952c9455fed
+    purge_mutation_tree_sha: 03663d626c83c9101be83bc52f61de61012a3f86
+    exact_head_branch_guard_run_id: 35795178175
+    exact_head_branch_guard_result: success
+    exact_head_fresh_replay_run_id: 35795178157
+    exact_head_fresh_replay_result: success
+    exact_head_stage02_boundary_run_id: 35795178194
+    exact_head_stage02_boundary_result: success
+    exact_head_selected_profile_run_id: 35795178235
+    exact_head_selected_profile_result: success
+    exact_head_full_line_run_id: 35795178181
+    exact_head_full_line_job_id: 106972716479
+    exact_head_full_line_result: success
+    generated_evidence_upload_step_result: success
+    generated_evidence_artifact_id: 10723403528
+    generated_evidence_artifact_sha256: a10c4b5a93c93507f5e6d3ed3ebd5cbaacc1ba109739e10f7bd2ad98bb6108b7
+    generated_evidence_artifact_uploaded_file_count: 5
+    active_workflows_scanned: 11
+    active_direct_transitive_executable_targets: 33
+    lifecycle_stage_result: 11/11
+    preformal_result: 20/20
+    mandatory_regression_result: 17/17
+    source_runtime_residual_count: 0
+    current_governance_uid_unchanged: true
+    mother_specification_mutated: false
   definition_of_done:
   - TRACKED_GENERATED_CI_EVIDENCE_SNAPSHOT_COUNT_ZERO
   - VERIFY_SOURCE_IDENTITY_STILL_GENERATES_REPORT
@@ -317,8 +329,9 @@ active_work_unit:
   - FULL_LINE_EXACT_HEAD_SUCCESS
   - CURRENT_GOVERNANCE_UID_UNCHANGED
   - PRODUCT_STAGE_CREDIT_ZERO
-  legal_next_transition: CLOSE_TO_WORK_UNIT_RESOLUTION_GATE
+  legal_next_transition: WORK_UNIT_RESOLUTION_GATE
   product_stage_credit: 0
+active_work_unit: null
 last_work_unit_resolution_gate:
   resolution_uid: WUR-GOV-GENERATED-CI-EVIDENCE-SNAPSHOT-PURGE-20260923-001
   normative_authority: false
