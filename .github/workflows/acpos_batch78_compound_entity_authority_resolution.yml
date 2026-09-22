@@ -1,0 +1,122 @@
+name: ACPOS Batch 78 Compound Entity Authority Resolution
+on:
+  push:
+    branches: [0921acpos]
+    paths:
+      - .github/workflows/acpos_batch78_compound_entity_authority_resolution.yml
+permissions:
+  contents: write
+jobs:
+  audit:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+      - name: Resolve split authority from all current Word rows
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+          import json,re,subprocess,zipfile,collections
+          import xml.etree.ElementTree as ET
+
+          EXPECTED_PARENT="3ea82d7d715aca83ae2541f878ba768ecbb384ae"
+          WF=Path(".github/workflows/acpos_batch78_compound_entity_authority_resolution.yml")
+          parent=subprocess.check_output(["git","rev-parse","HEAD^"],text=True).strip()
+          if parent!=EXPECTED_PARENT: raise SystemExit(f"EXACT_HEAD_PARENT_FAIL {parent}")
+          WF.unlink()
+          drift=subprocess.check_output(["git","-c","core.quotepath=false","diff","--name-only",EXPECTED_PARENT],text=True).splitlines()
+          if drift: raise SystemExit(f"PRE_AUDIT_TREE_DRIFT {drift}")
+
+          TARGETS={
+            "CORE_ASSISTANT_EVAL":["AssistantSummary","CoreEvaluation","Assistant Summary","Core Evaluation"],
+            "CORE_THREAD_MESSAGE":["ConversationThread","Conversation Thread","Message","Thread"],
+            "CORE_DECISIONS":["HumanDecision","Human Decision","StructuredDecision","Structured Decision"],
+            "DEV_CAMPAIGN_AUDIENCE":["Campaign","Audience"],
+            "DEV_PROFILE_TOPIC":["Discovery Profile","DiscoveryProfile","Topic"],
+            "INFO_INFERENCE_RECOMMENDATION":["Inference","Recommendation"],
+            "KB_INTENT_RUN":["KnowledgeAcquisitionIntent","Acquisition Run","AcquisitionRun"],
+            "SYS_CONVERSATION_THREAD":["Conversation","Thread"],
+          }
+          W="{http://schemas.openxmlformats.org/wordprocessingml/2006/main}"
+
+          def norm(s): return re.sub(r"\s+"," ",(s or "").replace("\n"," | ").strip())
+          def txt(el): return norm("".join((x.text or "") for x in el.iter(W+"t")))
+
+          docs=sorted(Path(".").glob("*.docx"))
+          if len(docs)!=31: raise SystemExit(f"DOCX_COUNT_FAIL {len(docs)}")
+
+          result={k:[] for k in TARGETS}
+          for p in docs:
+              with zipfile.ZipFile(p) as z:
+                  root=ET.fromstring(z.read("word/document.xml"))
+              # paragraphs
+              for pi,para in enumerate(root.iter(W+"p"),1):
+                  s=txt(para)
+                  if not s: continue
+                  su=s.upper()
+                  for group,terms in TARGETS.items():
+                      if any(t.upper() in su for t in terms):
+                          result[group].append({"file":p.name,"kind":"PARAGRAPH","index":pi,"text":s})
+              # tables
+              for ti,tbl in enumerate(root.iter(W+"tbl"),1):
+                  trs=[x for x in list(tbl) if x.tag==W+"tr"]
+                  if not trs: continue
+                  rows=[[txt(c) for c in list(tr) if c.tag==W+"tc"] for tr in trs]
+                  headers=rows[0] if rows else []
+                  for ri,row in enumerate(rows[1:],2):
+                      joined=" | ".join(row)
+                      ju=joined.upper()
+                      for group,terms in TARGETS.items():
+                          if any(t.upper() in ju for t in terms):
+                              result[group].append({
+                                "file":p.name,"kind":"TABLE_ROW","table":ti,"row":ri,
+                                "headers":headers,"cells":row
+                              })
+
+          # Deduplicate exact records.
+          for k,items in result.items():
+              seen=set();out=[]
+              for x in items:
+                  key=json.dumps(x,ensure_ascii=False,sort_keys=True)
+                  if key in seen: continue
+                  seen.add(key);out.append(x)
+              result[k]=out
+
+          summary={
+            "marker":"ACPOS-20260922-BATCH-78-COMPOUND-ENTITY-AUTHORITY-RESOLUTION-V1",
+            "base_head":EXPECTED_PARENT,
+            "docx_files":len(docs),
+            "groups":{k:len(v) for k,v in result.items()},
+            "total_authority_hits":sum(len(v) for v in result.values()),
+          }
+          Path("__batch78_compound_authority.json").write_text(json.dumps({"summary":summary,"groups":result},ensure_ascii=False,indent=2),encoding="utf-8")
+          Path("__batch78_summary.json").write_text(json.dumps(summary,ensure_ascii=False,indent=2),encoding="utf-8")
+          print("BATCH78_SUMMARY="+json.dumps(summary,ensure_ascii=False,sort_keys=True))
+          print("BATCH78_AUTHORITY_RESOLUTION_PASS")
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: acpos-batch78-compound-entity-authority-resolution
+          path: |
+            __batch78_compound_authority.json
+            __batch78_summary.json
+          retention-days: 2
+      - name: Close harness
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -f __batch78_compound_authority.json __batch78_summary.json
+          git config user.name "acpos-batch78-authority"
+          git config user.email "actions@users.noreply.github.com"
+          git add -A
+          mapfile -t staged < <(git -c core.quotepath=false diff --cached --name-only)
+          if [ "${#staged[@]}" -ne 1 ] || [ "${staged[0]}" != ".github/workflows/acpos_batch78_compound_entity_authority_resolution.yml" ]; then
+            printf '%s\n' "${staged[@]}";exit 1
+          fi
+          git commit -m "chore(acpos): close batch 78 compound authority resolution"
+          git push origin HEAD:0921acpos
