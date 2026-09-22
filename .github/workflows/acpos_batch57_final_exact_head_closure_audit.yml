@@ -29,62 +29,7 @@ jobs:
           git cat-file -e "$TARGET^{commit}"
           test -z "$(git -c core.quotePath=false diff --name-only "$TARGET" HEAD -- '*.docx')"
           test "$(git -c core.quotePath=false ls-tree --name-only "$TARGET" | wc -l)" -eq 31
-          test "$(git -c core.quotePath=false ls-tree --name-only "$TARGET" | grep -vc '\.docx)" -eq 0
-          echo "PASS: TARGET HEAD HAS EXACTLY 31 ROOT DOCX"
-
-      - name: Install audit runtime
-        run: python -m pip install --quiet python-docx
-
-      - name: Run Batch 57 final exact-head closure audit
-        env:
-          PYTHONDONTWRITEBYTECODE: "1"
-        run: python -B __temp/batch57_final_exact_head_closure_audit.py
-
-      - name: Verify Batch 57 closure
-        shell: bash
-        run: |
-          PYTHONDONTWRITEBYTECODE=1 python -B - <<'PY'
-          import json
-          from pathlib import Path
-          r=json.loads(Path("__batch57_final_closure_audit.json").read_text(encoding="utf-8"))
-          s=r["summary"]
-          assert s["target_head"]=="1fb4bc7f8cb3d7e923f530822d4b2a7889dbda9a",s
-          assert s["root_items"]==31 and s["docx_files"]==31 and s["invalid_non_docx_root_items"]==0,s
-          assert s["page_contract_docs"]==18,s
-          for k in ["operation_missing","operation_placeholders","action_gaps","gate_gaps","permission_gaps","runtime_owner_gaps","contract_gaps","multi_value_conflicts","same_page_route_operation_conflicts"]:
-              assert s[k]==0,(k,s)
-          assert s["closure_status"]=="PASS",s
-          assert s["runtime_execution_claimed"] is False,s
-          assert len(r["doc_integrity"])==31,r["doc_integrity"].keys()
-          print("PASS: BATCH57 FINAL EXACT-HEAD CONTRACT CLOSURE")
-          print(json.dumps(s,ensure_ascii=False,sort_keys=True))
-          PY
-
-      - name: Upload Batch 57 final evidence
-        uses: actions/upload-artifact@v4
-        with:
-          name: acpos-batch57-final-exact-head-contract-closure-evidence
-          path: |
-            __batch57_final_closure_audit.json
-            __batch57_target_tree.txt
-            __batch57_blob_manifest.txt
-          retention-days: 1
-          if-no-files-found: error
-
-      - name: Remove Batch 57 audit harness
-        shell: bash
-        run: |
-          set -euo pipefail
-          rm -f __batch57_final_closure_audit.json __batch57_target_tree.txt __batch57_blob_manifest.txt
-          find . -type d -name __pycache__ -prune -exec rm -rf {} +
-          git config user.name "acpos-word-batch-57-audit"
-          git config user.email "actions@users.noreply.github.com"
-          git rm -f __temp/batch57_final_exact_head_closure_audit.py .github/workflows/acpos_batch57_final_exact_head_closure_audit.yml
-          git commit -m "chore(acpos): close final exact-head contract audit harness"
-          git push origin HEAD:0921acpos
-          test -z "$(git status --porcelain)"
-          echo "PASS: BATCH57 HARNESS REMOVED / CLEAN TREE"
- || true)" -eq 0
+          test "$(git -c core.quotePath=false ls-tree --name-only "$TARGET" | grep -vc '\.docx$' || true)" -eq 0
           echo "PASS: TARGET HEAD HAS EXACTLY 31 ROOT DOCX"
 
       - name: Install audit runtime
