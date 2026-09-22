@@ -1,0 +1,137 @@
+name: ACPOS Batch 108 EDIT Visual Reference and Pagination Polish
+on:
+  push:
+    branches: [0921acpos]
+    paths:
+      - .github/workflows/acpos_batch108_edit_visual_reference_pagination_polish.yml
+permissions:
+  contents: write
+jobs:
+  polish:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+      - name: Install tooling
+        run: |
+          python -m pip install --quiet python-docx
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq libreoffice poppler-utils fonts-noto-cjk
+      - name: Apply visual-reference labels and no-split rows
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from docx import Document
+          from docx.oxml import OxmlElement
+          from docx.oxml.ns import qn
+          import subprocess,zipfile,re,json
+          BASE="ddc38c70b65e547b92fae50f343b2cd012dcfa54"
+          if subprocess.check_output(["git","rev-parse","HEAD^"],text=True).strip()!=BASE: raise SystemExit("EXACT_PARENT_FAIL")
+          fn="ACPOS_EDIT-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx"
+          d=Document(fn)
+          repl={
+            "6.1 UI Visual Candidate · A｜PROJECT_TASK Assembly Workspace":
+              "6.1 Legacy UI Visual Reference · A｜PROJECT_TASK Assembly Workspace｜PRE-UPGRADE TIMELINE TOPOLOGY",
+            "6.2 UI Visual Candidate · B｜Audio / LipSync / Subtitle + Dialogue Binding":
+              "6.2 Legacy UI Visual Reference · B｜Audio / LipSync / Subtitle + Dialogue Binding｜PRE-UPGRADE TIMELINE TOPOLOGY",
+            "6.3 UI Visual Candidate · C｜Semantic Correction + Manual Micro-Adjustment + Expanded Sidebar":
+              "6.3 Legacy UI Visual Reference · C｜Semantic Correction + Manual Micro-Adjustment + Expanded Sidebar｜PRE-UPGRADE TIMELINE TOPOLOGY",
+            "A｜PROJECT_TASK Assembly Workspace":
+              "A｜LEGACY PRE-UPGRADE REFERENCE｜PROJECT_TASK Assembly Workspace",
+            "B｜Audio / LipSync / Subtitle + Dialogue Binding":
+              "B｜LEGACY PRE-UPGRADE REFERENCE｜Audio / LipSync / Subtitle + Dialogue Binding",
+            "C｜Semantic Correction + Manual Micro-Adjustment + Expanded Sidebar":
+              "C｜LEGACY PRE-UPGRADE REFERENCE｜Semantic Correction + Manual Micro-Adjustment + Expanded Sidebar",
+          }
+          changed=0
+          for p in d.paragraphs:
+              if p.text in repl:
+                  txt=repl[p.text]
+                  if p.runs:
+                      p.runs[0].text=txt
+                      for r in p.runs[1:]:r.text=""
+                  else:p.text=txt
+                  changed+=1
+
+          # Prevent row splitting only in tables belonging to the new grouped-precision annex.
+          body=list(d._element.body)
+          start=None
+          for i,el in enumerate(body):
+              if el.tag==qn("w:p"):
+                  s="".join((t.text or "") for t in el.iter(qn("w:t")))
+                  if "[ACPOS-EDIT-01-GROUPED-PRECISION-TIMELINE-V1]" in s:
+                      start=i
+                      break
+          if start is None: raise SystemExit("GROUPED_MARKER_NOT_FOUND")
+          no_split_rows=0
+          for el in body[start:]:
+              if el.tag!=qn("w:tbl"):continue
+              for tr in el.iter(qn("w:tr")):
+                  trPr=tr.find(qn("w:trPr"))
+                  if trPr is None:
+                      trPr=OxmlElement("w:trPr"); tr.insert(0,trPr)
+                  if trPr.find(qn("w:cantSplit")) is None:
+                      trPr.append(OxmlElement("w:cantSplit"))
+                  no_split_rows+=1
+          if changed<6: raise SystemExit(f"LEGACY_LABEL_REPLACEMENTS_INCOMPLETE {changed}")
+          d.save(fn)
+          with zipfile.ZipFile(fn) as z:
+              if z.testzip():raise SystemExit("ZIP_BAD")
+          print("BATCH108_WRITE_PASS="+json.dumps({"legacy_labels":changed,"no_split_rows":no_split_rows}))
+          PY
+      - name: Validate visual authority labels
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from docx import Document
+          import json,re
+          d=Document("ACPOS_EDIT-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx")
+          t="\n".join([p.text for p in d.paragraphs]+[" | ".join(c.text for c in r.cells) for tb in d.tables for r in tb.rows])
+          req=["Legacy UI Visual Reference · A","Legacy UI Visual Reference · B","Legacy UI Visual Reference · C",
+               "LEGACY PRE-UPGRADE REFERENCE","[ACPOS-EDIT-01-GROUPED-PRECISION-TIMELINE-V1]",
+               "[ACPOS-EDIT-01-LEGACY-VISUAL-SUPERSESSION-V1]"]
+          miss=[x for x in req if x not in t]
+          old=[x for x in ["6.1 UI Visual Candidate · A","6.2 UI Visual Candidate · B","6.3 UI Visual Candidate · C"] if x in t]
+          if miss or old:raise SystemExit("VISUAL_AUTHORITY_LABEL_FAIL "+repr({"missing":miss,"old":old}))
+          print("BATCH108_AUTHORITY_PASS="+json.dumps({"missing":0,"old_candidate_labels":0}))
+          PY
+      - name: Render EDIT-01
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p __r108/pdf __r108/png
+          f="ACPOS_EDIT-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx"
+          libreoffice --headless --convert-to pdf --outdir __r108/pdf "$f" >/tmp/lo108.log 2>&1 || { cat /tmp/lo108.log; exit 1; }
+          pdf="__r108/pdf/ACPOS_EDIT-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.pdf"
+          pdftoppm -png -r 125 "$pdf" "__r108/png/EDIT"
+          python - <<'PY'
+          from pathlib import Path
+          import json
+          imgs=list(Path("__r108/png").glob("EDIT-*.png"))
+          if not imgs:raise SystemExit("NO_PNG")
+          print("BATCH108_RENDER_PASS="+json.dumps({"png_count":len(imgs)}))
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: acpos-batch108-edit-visual-reference-pagination-polish
+          path: |
+            ACPOS_EDIT-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx
+            __r108/pdf/*.pdf
+            __r108/png/*.png
+          retention-days: 3
+      - name: Commit and push
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf __r108
+          git config user.name "acpos-batch108-design"
+          git config user.email "actions@users.noreply.github.com"
+          git rm -f .github/workflows/acpos_batch108_edit_visual_reference_pagination_polish.yml
+          git add ACPOS_EDIT-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx
+          git commit -m "fix(acpos): polish EDIT grouped precision visual authority and pagination"
+          git push origin HEAD:0921acpos
