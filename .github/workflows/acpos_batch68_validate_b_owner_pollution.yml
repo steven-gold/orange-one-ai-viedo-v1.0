@@ -1,0 +1,237 @@
+name: ACPOS Batch68 Validation B Owner Pollution
+on:
+  push:
+    branches: [0921acpos]
+    paths:
+      - .github/workflows/acpos_batch68_validate_b_owner_pollution.yml
+permissions:
+  contents: write
+jobs:
+  validate:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+      - name: Install audit runtime
+        run: python -m pip install --quiet python-docx
+      - name: Validate pollution and canonical owner closure
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+          from docx import Document
+          import collections,json,re,subprocess
+
+          EXPECTED_PARENT="3787610a20ccc8417a3ac42819da7d2b9f07aa63"
+          WF=Path(".github/workflows/acpos_batch68_validate_b_owner_pollution.yml")
+          parent=subprocess.check_output(["git","rev-parse","HEAD^"],text=True).strip()
+          if parent!=EXPECTED_PARENT:
+              raise SystemExit(f"EXACT_HEAD_PARENT_FAIL {parent}")
+          WF.unlink()
+          drift=subprocess.check_output(["git","-c","core.quotepath=false","diff","--name-only",EXPECTED_PARENT],text=True).splitlines()
+          if drift:
+              raise SystemExit(f"PREVALIDATION_TREE_DRIFT {drift}")
+
+          SYSTEM_DOCS=[
+          "01_ACPOS_Global_Intelligent_Brain_Information_Lifecycle_Mother_Basic_Logic_Design_Normative_Contract_v4.docx",
+          "02_ACPOS_AI_Conversation_Memory_MultiAI_Assistant_Mother_Basic_Logic_Design_Normative_Contract_v1.0.docx",
+          "03_ACPOS_AI_Execution_Script_Compiler_Tool_AIAPI_Runtime_Mother_Basic_Logic_Design_Normative_Contract_v1.0.docx",
+          "04_ACPOS_CORE_AI_Blueprint_Canonical_Script_System_Mother_Basic_Logic_Design_Normative_Contract_v1.0.docx",
+          "05_ACPOS_Creative_Production_AI_ASSET_VIDEO_EDIT_VOICE_QA_Mother_Basic_Logic_Design_Normative_Contract_v1.0.docx",
+          "06_ACPOS_Enterprise_Business_Development_AI_System_Mother_Basic_Logic_Design_Normative_Contract_v1.0.docx",
+          "07_ACPOS_Social_Publishing_AI_System_Mother_Basic_Logic_Design_Normative_Contract_v1.0.docx",
+          "08_ACPOS_Strategy_Intelligence_MultiAI_Decision_System_Mother_Basic_Logic_Design_Normative_Contract_v1.0.docx",
+          "09_ACPOS_AI_System_Engineer_Self_Inspection_Evolution_System_Mother_Basic_Logic_Design_Normative_Contract_v1.0.docx",
+          ]
+          PAGE_DOCS={
+          "AIAPI-01":"ACPOS_AIAPI-01_AI_API管理_Mother_Basic_Design_OPTIMIZED.docx",
+          "ASSET-01":"ACPOS_ASSET-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx",
+          "CORE-01":"ACPOS_CORE-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx",
+          "DB-01":"ACPOS_DB-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx",
+          "DEV-01":"ACPOS_DEV-01_企業自動開發系統_Mother_Basic_Design_OPTIMIZED.docx",
+          "EDIT-01":"ACPOS_EDIT-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx",
+          "ERP-01":"ACPOS_ERP-01_ERP與財務_Mother_Basic_Design_OPTIMIZED.docx",
+          "IAM-01":"ACPOS_IAM-01_帳戶與權限_Mother_Basic_Design_OPTIMIZED.docx",
+          "INFO-01":"ACPOS_INFO-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx",
+          "KB-01":"ACPOS_KB-01_知識庫_Mother_Basic_Design_OPTIMIZED.docx",
+          "QA-01":"ACPOS_QA-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx",
+          "SG-02":"ACPOS_SG-02_QA審查項目名單_Mother_Basic_Design_OPTIMIZED.docx",
+          "SOC-01":"ACPOS_SOC-01_社群發布_Mother_Basic_Design_OPTIMIZED.docx",
+          "STR-01":"ACPOS_STR-01_WORKSPACE_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx",
+          "SYS-01":"ACPOS_SYS-01_系統維護與生命週期工作區_Mother_Basic_Design_OPTIMIZED.docx",
+          "VIDEO-01":"ACPOS_VIDEO-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx",
+          "WB-01":"ACPOS_WB-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx",
+          "ADMIN-STR-01":"ACPOS_admin_STR-01_戰略中心後台_Mother_Basic_Design_OPTIMIZED.docx",
+          }
+          S01,S02,S03,S04,S05,S06,S07,S08,S09=SYSTEM_DOCS
+          PAIR_PRECEDENCE={
+            tuple(sorted((S03,S09))):S03,
+            tuple(sorted((S02,S04))):S02,
+            tuple(sorted((S02,S06))):S06,
+            tuple(sorted((S02,S08))):S02,
+            tuple(sorted((S02,S09))):S02,
+            tuple(sorted((S01,S09))):S01,
+            tuple(sorted((S05,S09))):S05,
+          }
+          KB_UIDS={"KB-01-CTL-CITATION-OPEN","KB-01-CTL-REPLAY-OPEN"}
+          SG_UIDS={
+            "CTRL-ADMIN-SG-02-CRITERIA-TABLE-OPEN","CTRL-ADMIN-SG-02-DIMENSION-LIBRARY-OPEN","CTRL-ADMIN-SG-02-THRESHOLDS-OPEN",
+            "CTRL-ADMIN-SG-02-DEPARTMENT-MAPPING-OPEN","CTRL-ADMIN-SG-02-REQUIRED-CHECKS-OPEN","CTRL-ADMIN-SG-02-GATE-POLICY-OPEN",
+            "CTRL-ADMIN-SG-02-APPROVAL-OPEN","CTRL-ADMIN-SG-02-IMPACT-OPEN","CTRL-ADMIN-SG-02-ACT-03-ACT-NAV-OPEN",
+          }
+          SPECIAL=KB_UIDS|SG_UIDS
+          FIELDS=["action","gate","permission","payload","operation","method","runtime_owner","persistence","runtime_status"]
+          LEGACY_RE=re.compile(r"(?<![A-Za-z0-9])R(?:9(?:\.0\.1)?|5)(?![A-Za-z0-9])",re.I)
+          AMBIG_LOCATOR_RE=re.compile(r"\bt\d+/r(?:5|9)\b",re.I)
+
+          def norm(x): return re.sub(r"\s+"," ",(x or "").replace("\n"," | ").strip())
+          def missing(v): return v in {"","—","-","SOURCE_NOT_DEFINED","UNCHANGED"}
+          def hfind(headers,*needles):
+              hs=[norm(x).lower() for x in headers]
+              for needle in needles:
+                  n=needle.lower()
+                  for i,h in enumerate(hs):
+                      if n in h:return i
+              return None
+          def parse(path):
+              d=Document(path);out=[]
+              for ti,t in enumerate(d.tables,1):
+                  if not t.rows:continue
+                  h=[norm(c.text) for c in t.rows[0].cells];ci=hfind(h,"control uid","target uid")
+                  if ci is None:continue
+                  ix={"uid":ci,"action":hfind(h,"action uid"),"gate":hfind(h,"gate uid","gate"),
+                    "permission":hfind(h,"permission","auth resource"),"payload":hfind(h,"payload / schema","payload","schema"),
+                    "operation":hfind(h,"operation"),"method":hfind(h,"method / path","method","path"),
+                    "runtime_owner":hfind(h,"runtime owner"),"persistence":hfind(h,"persistence owner"),
+                    "runtime_status":hfind(h,"runtime status")}
+                  for ri,row in enumerate(t.rows[1:],2):
+                      vals=[norm(c.text) for c in row.cells]
+                      uid=vals[ci] if ci<len(vals) else ""
+                      if not uid or uid in {"—","-"}:continue
+                      rec={k:(vals[i] if i is not None and i<len(vals) else "") for k,i in ix.items()}
+                      rec.update({"file":path,"table":ti,"row":ri});out.append(rec)
+              return out
+          def compose(rows):
+              exact=[r for r in rows if r.get("runtime_status") in {"EFFECTFUL_EXACT","READ_EXACT"}]
+              pool=exact if exact else rows
+              base=max(pool,key=lambda r:sum(not missing(r.get(f,"")) for f in FIELDS)).copy()
+              vals_by={}
+              for f in FIELDS:
+                  vals=sorted(set(r.get(f,"") for r in pool if not missing(r.get(f,""))))
+                  vals_by[f]=vals
+                  if missing(base.get(f,"")) and len(vals)==1:base[f]=vals[0]
+              base["_values"]=vals_by;base["_rows"]=pool
+              return base
+
+          docs=sorted(Path(".").glob("*.docx"))
+          if len(docs)!=31: raise SystemExit(f"DOCX_COUNT_FAIL {len(docs)}")
+
+          # Preserve Batch64's exact pollution definitions.
+          all_text=[]
+          for p in docs:
+              d=Document(p)
+              all_text.extend(norm(x.text) for x in d.paragraphs if norm(x.text))
+              for t in d.tables:
+                  for row in t.rows:
+                      all_text.append(" | ".join(norm(c.text) for c in row.cells))
+          joined="\n".join(all_text)
+          legacy=list(LEGACY_RE.finditer(joined))
+          locators=list(AMBIG_LOCATOR_RE.finditer(joined))
+
+          sys_by_uid={f:collections.defaultdict(list) for f in SYSTEM_DOCS}
+          for f in SYSTEM_DOCS:
+              for r in parse(f): sys_by_uid[f][r["uid"]].append(r)
+          page_by_uid={page:collections.defaultdict(list) for page in PAGE_DOCS}
+          for page,fn in PAGE_DOCS.items():
+              for r in parse(fn):
+                  if r.get("runtime_status") in {"EFFECTFUL_EXACT","READ_EXACT"}:
+                      page_by_uid[page][r["uid"]].append(r)
+
+          effective_mismatches=[]; unresolved=[]; resolved=0
+          for page,uidmap in page_by_uid.items():
+              for uid,rows in uidmap.items():
+                  pc=compose(rows)
+                  owners=[f for f in SYSTEM_DOCS if uid in sys_by_uid[f]]
+                  if not owners:
+                      unresolved.append((page,uid,"NO_SYSTEM_OWNER_ROW",owners));continue
+                  chosen=None
+                  if len(owners)==1: chosen=owners[0]
+                  else:
+                      pair=tuple(sorted(owners))
+                      if pair in PAIR_PRECEDENCE: chosen=PAIR_PRECEDENCE[pair]
+                      else:
+                          exact_owners=[f for f in owners if any(r.get("runtime_status") in {"EFFECTFUL_EXACT","READ_EXACT"} for r in sys_by_uid[f][uid])]
+                          if len(exact_owners)==1: chosen=exact_owners[0]
+                  if chosen is None:
+                      unresolved.append((page,uid,"MULTI_OWNER_UNRESOLVED",owners));continue
+                  resolved+=1
+                  oc=compose(sys_by_uid[chosen][uid])
+                  for f in FIELDS:
+                      pv,ov=pc.get(f,""),oc.get(f,"")
+                      if missing(pv) and missing(ov): continue
+                      if missing(ov) and not missing(pv):
+                          effective_mismatches.append(("OWNER_MISSING_FIELD",page,uid,f,pv,ov,chosen))
+                      elif missing(pv) and not missing(ov):
+                          effective_mismatches.append(("PAGE_MISSING_FIELD",page,uid,f,pv,ov,chosen))
+                      elif pv!=ov:
+                          effective_mismatches.append(("VALUE_CONFLICT",page,uid,f,pv,ov,chosen))
+
+          special_violations=[]
+          for uid in sorted(SPECIAL):
+              expected=S01 if uid in KB_UIDS else S05
+              expected_rows=sys_by_uid[expected].get(uid,[])
+              exact_expected=[r for r in expected_rows if r.get("runtime_status") in {"EFFECTFUL_EXACT","READ_EXACT"}]
+              mirror_rows=sys_by_uid[S09].get(uid,[])
+              if not exact_expected:
+                  special_violations.append((uid,"CANONICAL_EXACT_OWNER_MISSING",expected))
+              if not mirror_rows:
+                  special_violations.append((uid,"SYSTEM09_REFERENCE_ROW_MISSING",S09))
+              for r in mirror_rows:
+                  if r.get("runtime_status")!="REFERENCE_ONLY":
+                      special_violations.append((uid,"SYSTEM09_NOT_REFERENCE_ONLY",r.get("runtime_status"),r["table"],r["row"]))
+              active_owners=[
+                f for f in SYSTEM_DOCS
+                if any(r.get("runtime_status") in {"EFFECTFUL_EXACT","READ_EXACT"} for r in sys_by_uid[f].get(uid,[]))
+              ]
+              if active_owners!=[expected]:
+                  special_violations.append((uid,"ACTIVE_OWNER_NOT_UNIQUE",active_owners,expected))
+
+          by_kind=collections.Counter(x[0] for x in effective_mismatches)
+          summary={
+            "docx_files":len(docs),
+            "legacy_r9_r5_hits":len(legacy),
+            "ambiguous_locator_hits":len(locators),
+            "owner_resolved":resolved,
+            "unresolved_owner_controls":len(unresolved),
+            "effective_mismatch_cells":len(effective_mismatches),
+            "effective_by_kind":dict(by_kind),
+            "effective_owner_missing_fields":by_kind.get("OWNER_MISSING_FIELD",0),
+            "special_canonical_owner_controls":len(SPECIAL),
+            "special_owner_violations":len(special_violations),
+          }
+          print("BATCH68_VALIDATION_B_SUMMARY="+json.dumps(summary,ensure_ascii=False,sort_keys=True))
+          if legacy or locators or unresolved or effective_mismatches or special_violations:
+              if unresolved: print("UNRESOLVED="+json.dumps(unresolved[:20],ensure_ascii=False))
+              if effective_mismatches: print("MISMATCHES="+json.dumps(effective_mismatches[:40],ensure_ascii=False))
+              if special_violations: print("SPECIAL="+json.dumps(special_violations,ensure_ascii=False))
+              raise SystemExit("BATCH68_VALIDATION_B_FAIL")
+          print("BATCH68_VALIDATION_B_PASS")
+          PY
+      - name: Persist exact tested tree by removing harness
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "acpos-batch68-validate-b"
+          git config user.email "actions@users.noreply.github.com"
+          git add -A
+          mapfile -t staged < <(git -c core.quotepath=false diff --cached --name-only)
+          if [ "${#staged[@]}" -ne 1 ] || [ "${staged[0]}" != ".github/workflows/acpos_batch68_validate_b_owner_pollution.yml" ]; then
+            printf '%s\n' "${staged[@]}"
+            exit 1
+          fi
+          git commit -m "chore(acpos): close Batch68 validation B harness"
+          git push origin HEAD:0921acpos
