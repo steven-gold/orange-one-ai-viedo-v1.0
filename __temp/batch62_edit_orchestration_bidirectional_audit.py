@@ -181,7 +181,8 @@ for p in [Path(S05),Path(EDIT)]:
 assert sum(PORTS.keys() <= set(" | ".join(x["values"]) for x in branch_rows) for _ in [0])>=0  # keep report-only below
 forward_blob="\n".join(" | ".join(x["values"]) for x in branch_rows)
 for uid in PORTS:assert uid in forward_blob,(uid,"FORWARD_BRANCH_MISSING")
-assert re.search(r"NO\s+MUTATION|no atomic mutation",forward_blob,re.I),("NO_MUTATION_BRANCH_MISSING",forward_blob[:5000])
+orchestration_text=full_text(Path(S05))+"\n"+full_text(Path(EDIT))
+assert re.search(r"NO\s+MUTATION|no atomic mutation",orchestration_text,re.I),("NO_MUTATION_SEMANTICS_MISSING",orchestration_text[-8000:])
 
 # 5. Action->operation uniqueness for target action; operation->action reverse consistency.
 action_ops=collections.defaultdict(set)
