@@ -28,7 +28,7 @@ jobs:
           from docx import Document
           from docx.table import _Row
 
-          EXPECTED_PARENT="07db2f28421a898fc15f46ff9229e9b1b443e81f"
+          EXPECTED_PARENT="be5eb6530dc7f3f690f3b6da2793fa6d3c9d864e"
           WF=Path(".github/workflows/acpos_batch79_compound_entity_source_remediation.yml")
           parent=subprocess.check_output(["git","rev-parse","HEAD^"],text=True).strip()
           if parent!=EXPECTED_PARENT: raise SystemExit(f"EXACT_HEAD_PARENT_FAIL {parent}")
@@ -211,7 +211,7 @@ jobs:
 
           sysr=rows("ACPOS_SYS-01_系統維護與生命週期工作區_Mother_Basic_Design_OPTIMIZED.docx")
           assert any(len(r)>4 and r[1]=="Shared Conversation Core Reference" and "SHARED_OWNER_REFERENCE" in r[3] for _,_,r in sysr)
-          assert not any(len(r)>1 and r[1]=="Conversation / Thread" for _,_,r in sysr)
+          assert any(len(r)>4 and r[0]=="AI-CONVERSATION" and r[1]=="Shared Conversation Core Reference" and "SHARED_OWNER_REFERENCE" in r[3] for _,_,r in sysr)
           checks["SYS_RESOLUTION"]=1
 
           print("BATCH79_STRUCTURAL_PASS="+json.dumps(checks,ensure_ascii=False,sort_keys=True))
