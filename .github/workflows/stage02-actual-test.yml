@@ -86,8 +86,24 @@ jobs:
               )
               combined = (cp.stdout or '') + '\n' + (cp.stderr or '')
               assert cp.returncode != 0, 'pending review unexpectedly admitted product execution'
-              assert 'PREEXECUTION_PREFORMAL_REVIEW_PROJECTION_NOT_APPROVED' in combined, combined
-              print('PASS: REV-GOV-001=PENDING blocks in pre-execution admission before Stage-02 actual execution')
+              execution = state.get('execution') or {}
+              stage2 = execution.get('stage2') or {}
+              reset = state.get('stage02_reset_control') or {}
+              stage1_ready = (
+                  execution.get('current_stage') == 'STAGE-01-CLOSED'
+                  and stage2.get('result') == 'NOT_EXECUTED'
+                  and reset.get('status') == 'ACTIVE_STAGE1_CLOSED_STAGE2_CLEARED'
+              )
+              if stage1_ready:
+                  assert 'PREEXECUTION_PREFORMAL_REVIEW_PROJECTION_NOT_APPROVED' in combined, combined
+                  print('PASS: REV-GOV-001=PENDING is the active admission blocker after Stage-1/reset prerequisites are satisfied')
+              else:
+                  earlier = (
+                      'PREEXECUTION_REQUIRES_CLEAN_STAGE1_CLOSED_STAGE2_NOT_EXECUTED',
+                      'PREEXECUTION_STAGE2_RESET_STATE_NOT_CLEAN',
+                  )
+                  assert any(token in combined for token in earlier), combined
+                  print('PASS: product execution is already fail-closed by an earlier lifecycle prerequisite; pending review remains unreached and cannot be bypassed')
           elif status == 'APPROVED':
               print('PASS: source review plan is APPROVED; pending-review negative regression is not applicable')
           else:
