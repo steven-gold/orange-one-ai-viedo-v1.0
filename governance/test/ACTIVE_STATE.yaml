@@ -111,8 +111,8 @@ specification_mutation_safety:
   ordinary_mid_stage_specification_mutation: BLOCK
   stage_end_consolidated_promotion_requires_new_explicit_directive: true
   execution_context_lock_required: true
-status: CORE_ASSET_ENCODED_PROVENANCE_PURGE_CLOSED_WORK_UNIT_RESOLUTION_REQUIRED
-next_action: WORK_UNIT_RESOLUTION_GATE_AFTER_CORE_ASSET_ENCODED_PROVENANCE_PURGE
+status: CI_RESIDUAL_DECONTAMINATION_ACTIVE
+next_action: CLASSIFY_AND_PURGE_NON_GOVERNING_CI_RESIDUALS
 previous_closed_product_work_unit:
   work_unit_uid: WU-STAGE02-CORE01-STRUCTURAL-REMEDIATION-001
   canonical_name: CORE01_STRUCTURAL_CONTRACT_REMEDIATION
@@ -290,10 +290,10 @@ previous_closed_work_unit:
     source_runtime_residual_count: 0
     product_stage_credit: 0
 resume_control:
-  current_resume_point: CORE_ASSET_ENCODED_PROVENANCE_PURGE_CLOSED_WUR_REQUIRED
-  current_work_unit_uid: null
-  current_owner: governance/specifications/current/EXECUTION_CYCLE_CONTROL.yaml
-  exact_next_action: WORK_UNIT_RESOLUTION_GATE_AFTER_CORE_ASSET_ENCODED_PROVENANCE_PURGE
+  current_resume_point: CI_RESIDUAL_DECONTAMINATION_ACTIVE
+  current_work_unit_uid: WU-GOV-CI-RESIDUAL-DECONTAMINATION-001
+  current_owner: governance/test/ACTIVE_STATE.yaml
+  exact_next_action: CLASSIFY_ACTIVE_AND_DEAD_CI_THEN_PURGE_NON_GOVERNING_RESIDUALS
   product_resume_preserved: CORE01_STAGE01_STAGE03_CLEAN_BASELINE_READY_FRESH_STAGE01_WUR_REQUIRED
   interrupted_test_resume_preserved: CORE01_SOURCE_TEST_BUGFIX_AND_CONTENT_INTEGRITY_FULL_LIFECYCLE_R2_ACTIVE
   reentry_owner_capability: SOURCE_INTAKE_BASE_BLUEPRINT
@@ -2685,8 +2685,52 @@ closed_governance_maintenance_work_unit_core_asset_encoded_provenance_purge:
   - PRODUCT_STAGE_CREDIT_ZERO
   legal_next_transition: WORK_UNIT_RESOLUTION_GATE
   product_stage_credit: 0
-active_work_unit: null
+active_work_unit:
+  work_unit_uid: WU-GOV-CI-RESIDUAL-DECONTAMINATION-001
+  canonical_name: CI_PRODUCTION_CONSTRAINT_AND_DEFECT_GUARD_DECONTAMINATION
+  primary_task_layer: GOVERNANCE_MAINTENANCE
+  current_status: ACTIVE
+  authorization_basis: EXPLICIT_USER_DIRECTIVE_20260923_KEEP_ONLY_PRODUCTION_CONSTRAINTS_AND_DEFECT_PREVENTION_CI
+  canonical_policy_owner: governance/specifications/current/EXECUTION_CYCLE_CONTROL.yaml
+  state_owner: governance/test/ACTIVE_STATE.yaml
+  scope:
+  - PRESERVE_CURRENT_PRODUCTION_MODE_CONSTRAINTS
+  - PRESERVE_DEFECT_AND_RESIDUAL_PREVENTION_GUARDS
+  - REMOVE_HISTORICAL_EXECUTION_INSTANCE_IDENTITIES_FROM_CI
+  - REMOVE_DEAD_OR_UNREFERENCED_LEGACY_CI
+  - MIGRATE_ACTIVE_CI_FROM_FIXED_HISTORICAL_IDENTITIES_TO_CURRENT_DYNAMIC_RESOLUTION
+  out_of_scope:
+  - governance/specifications/current
+  - .github/governance-source/active/source/12_DOCS/mother-spec
+  - PRODUCT_STAGE_EXECUTION
+  - PRODUCT_AUTHORITY_MUTATION
+  definition_of_done:
+  - ACTIVE_CI_HAS_NO_FIXED_HISTORICAL_RUN_ROOT
+  - ACTIVE_CI_HAS_NO_FIXED_HISTORICAL_PRODUCT_BLOB_SHA
+  - ACTIVE_CI_HAS_NO_FIXED_HISTORICAL_WORKFLOW_HEAD_JOB_ID
+  - REUSABLE_CI_HAS_NO_FIXED_HISTORICAL_DENOMINATOR
+  - DEFECT_PREVENTION_GUARDS_REMAIN_PRESENT
+  - DEAD_LEGACY_CI_REFERENCE_COUNT_ZERO
+  - ACTIVE_DIRECT_AND_TRANSITIVE_CONSUMERS_HAVE_NO_BROKEN_REFERENCE
+  - CURRENT_GOVERNANCE_UID_UNCHANGED
+  - PRODUCT_STAGE_CREDIT_ZERO
+  legal_next_transition: CLOSE_TO_WORK_UNIT_RESOLUTION_GATE
+  product_stage_credit: 0
 last_work_unit_resolution_gate:
+  resolution_uid: WUR-GOV-CI-RESIDUAL-DECONTAMINATION-20260923-001
+  normative_authority: false
+  result: PASS_SINGLE_LEGAL_SUCCESSOR
+  requested_primary_task_layer: GOVERNANCE_MAINTENANCE
+  resolved_work_unit_uid: WU-GOV-CI-RESIDUAL-DECONTAMINATION-001
+  authorization_basis: EXPLICIT_USER_DIRECTIVE_20260923_KEEP_ONLY_PRODUCTION_CONSTRAINTS_AND_DEFECT_PREVENTION_CI
+  canonical_owner: governance/test/ACTIVE_STATE.yaml
+  basis:
+  - PREDECESSOR_CI_PRODUCT_PROVENANCE_PURGE_WORK_UNIT_CLOSED
+  - PERSISTED_RESUME_REQUIRES_WORK_UNIT_RESOLUTION_GATE
+  - USER_EXPLICITLY_SELECTED_CI_RETENTION_SEMANTICS
+  - SEMANTIC_RESIDUAL_CLASSIFICATION_POLICY_APPLIES
+  product_stage_credit: 0
+previous_last_work_unit_resolution_gate:
   resolution_uid: WUR-GOV-CORE-ASSET-ENCODED-PROVENANCE-PURGE-20260923-001
   normative_authority: false
   result: PASS_SINGLE_LEGAL_SUCCESSOR
