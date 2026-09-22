@@ -69,9 +69,9 @@ full_lifecycle_governance_system_test:
   partial_suite_result_may_be_treated_as_full_line_pass: false
   exact_denominators_verified: true
   source_runtime_residual_count: 0
-  persisted_head_revalidation_required: true
-  terminal_result_credit_allowed: false
-  full_line_github_result: REVALIDATION_REQUIRED_AFTER_ACTIVE_STATE_COMPACTION
+  persisted_head_revalidation_required: false
+  terminal_result_credit_allowed: true
+  full_line_github_result: EXACT_HEAD_SUCCESS_AFTER_ACTIVE_STATE_COMPACTION
 stage_execution_loading:
   full_line_round_reads_all_source_files_for_integrity_and_regression: true
   normal_stage_execution_reads_only_stage_required_files_and_shared_dependencies: true
@@ -104,13 +104,13 @@ specification_mutation_safety:
   ordinary_mid_stage_specification_mutation: BLOCK
   stage_end_consolidated_promotion_requires_new_explicit_directive: true
   execution_context_lock_required: true
-status: ACTIVE_STATE_COMPACTION_HARNESS_REPAIR_VALIDATION_REQUIRED
-next_action: RUN_ACTIVE_STATE_COMPACTION_AND_BOUNDARY_EXACT_HEAD_VALIDATION
+status: ACTIVE_STATE_COMPACTION_CLOSED_WORK_UNIT_RESOLUTION_REQUIRED
+next_action: WORK_UNIT_RESOLUTION_GATE_AFTER_ACTIVE_STATE_COMPACTION
 resume_control:
-  current_resume_point: ACTIVE_STATE_COMPACTION_HARNESS_REPAIR_VALIDATION_REQUIRED
-  current_work_unit_uid: WU-GOV-ACTIVE-STATE-COMPACTION-001
-  current_owner: governance/test/ACTIVE_STATE.yaml
-  exact_next_action: RUN_ACTIVE_STATE_COMPACTION_AND_BOUNDARY_EXACT_HEAD_VALIDATION
+  current_resume_point: ACTIVE_STATE_COMPACTION_CLOSED_WUR_REQUIRED
+  current_work_unit_uid: null
+  current_owner: governance/specifications/current/EXECUTION_CYCLE_CONTROL.yaml
+  exact_next_action: WORK_UNIT_RESOLUTION_GATE_AFTER_ACTIVE_STATE_COMPACTION
   product_resume_preserved: CORE01_STAGE01_STAGE03_CLEAN_BASELINE_READY_FRESH_STAGE01_WUR_REQUIRED
   interrupted_test_resume_preserved: CORE01_SOURCE_TEST_BUGFIX_AND_CONTENT_INTEGRITY_FULL_LIFECYCLE_R2_ACTIVE
   reentry_owner_capability: SOURCE_INTAKE_BASE_BLUEPRINT
@@ -171,26 +171,49 @@ retained_governance_cleanup_summary:
     governance_test_file_count_after: 11
     validated_head_sha: 7a83dbaf02d08b481e42badce73b739b1fdaeb02
   historical_detail_storage: GIT_HISTORY_ONLY
-active_work_unit:
+closed_governance_maintenance_work_unit_active_state_compaction:
   work_unit_uid: WU-GOV-ACTIVE-STATE-COMPACTION-001
   canonical_name: ACTIVE_STATE_CURRENT_CONSUMER_MINIMUM_COMPACTION
   primary_task_layer: GOVERNANCE_MAINTENANCE
-  current_status: MUTATION_COMMITTED_VALIDATION_REQUIRED
+  terminal_status: CLOSED_VERIFIED_NO_PRODUCT_CREDIT
   authorization_basis: EXPLICIT_USER_DIRECTIVE_20260923_CONTINUE_CLEANUP_AFTER_TEST_EVIDENCE_PURGE
   canonical_policy_owner: governance/specifications/current/EXECUTION_CYCLE_CONTROL.yaml
   state_owner: governance/test/ACTIVE_STATE.yaml
-  scope:
-  - PRESERVE_CURRENT_GOVERNANCE_AND_PROFILE_PROJECTORS
-  - PRESERVE_CURRENT_EXECUTION_AND_RESUME_CONTRACTS
-  - PRESERVE_REQUIRED_DEFECT_PREVENTION_AND_NEGATIVE_REGRESSION_STATE
-  - PRESERVE_REQUIRED_NONCURRENT_PROFILE_PROVENANCE_BINDINGS
-  - REMOVE_EXPANDED_HISTORICAL_WORK_UNIT_AND_RUN_STATE_FROM_CURRENT_ACTIVE_STATE
-  - REMOVE_STALE_ONE_TIME_AUTHORIZATION_AND_PRODUCT_ATTEMPT_METADATA_FROM_CURRENT_ACTIVE_STATE
-  out_of_scope:
-  - governance/specifications/current
-  - .github/governance-source/active/source/12_DOCS/mother-spec
-  - PRODUCT_STAGE_EXECUTION
-  - PRODUCT_AUTHORITY_MUTATION
+  disposition_summary:
+    active_state_bytes_before: 177643
+    active_state_lines_before: 3702
+    active_state_bytes_after_compaction: 10867
+    active_state_lines_after_compaction: 221
+    approximate_size_reduction_percent: 94
+    governance_test_file_count_after_cleanup: 10
+    historical_expanded_work_units_removed_from_current_state: true
+    stale_one_time_authorization_metadata_removed_from_current_state: true
+    stale_product_attempt_metadata_removed_from_current_state: true
+    current_pending_review_rebased_to_current_governance_pending: true
+    product_stage_credit: 0
+  closure_evidence:
+    compaction_mutation_head_sha: 8ad2683d6750ef0a074a5cad03f564ed4cb88261
+    lifecycle_aware_boundary_fix_head_sha: 6d66ac838435b8008adbeadce2024bc04cc61596
+    lifecycle_aware_boundary_fix_tree_sha: 11f769c07ae7d05146ddbdea5e5d14dec3708cb4
+    exact_head_branch_guard_run_id: 35777312976
+    exact_head_branch_guard_result: success
+    exact_head_fresh_replay_run_id: 35777312964
+    exact_head_fresh_replay_result: success
+    exact_head_stage02_boundary_run_id: 35777313177
+    exact_head_stage02_boundary_result: success
+    exact_head_selected_profile_run_id: 35777313016
+    exact_head_selected_profile_result: success
+    exact_head_full_line_run_id: 35777313152
+    exact_head_full_line_job_id: 106913694893
+    exact_head_full_line_result: success
+    active_workflows_scanned: 11
+    active_direct_transitive_executable_targets: 33
+    lifecycle_stage_result: 11/11
+    preformal_result: 20/20
+    mandatory_regression_result: 17/17
+    source_runtime_residual_count: 0
+    mother_specification_mutated: false
+    current_governance_uid_unchanged: true
   definition_of_done:
   - CURRENT_ACTIVE_STATE_CONSUMER_SCHEMA_PRESERVED
   - CURRENT_PROJECTOR_PATHS_AND_GOVERNANCE_UID_PRESERVED
@@ -201,8 +224,9 @@ active_work_unit:
   - SELECTED_PROFILE_INTEGRITY_PASS
   - FULL_LINE_EXACT_HEAD_SUCCESS
   - PRODUCT_STAGE_CREDIT_ZERO
-  legal_next_transition: CLOSE_TO_WORK_UNIT_RESOLUTION_GATE
+  legal_next_transition: WORK_UNIT_RESOLUTION_GATE
   product_stage_credit: 0
+active_work_unit: null
 last_work_unit_resolution_gate:
   resolution_uid: WUR-GOV-ACTIVE-STATE-COMPACTION-20260923-001
   normative_authority: false
