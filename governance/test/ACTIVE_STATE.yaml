@@ -104,13 +104,13 @@ specification_mutation_safety:
   ordinary_mid_stage_specification_mutation: BLOCK
   stage_end_consolidated_promotion_requires_new_explicit_directive: true
   execution_context_lock_required: true
-status: ROOT_AUDIT_RESIDUAL_PURGE_ACTIVE
-next_action: DELETE_SUPERSEDED_ROOT_AUDIT_INSTANCES
+status: ROOT_AUDIT_RESIDUAL_PURGE_MUTATED_VALIDATION_REQUIRED
+next_action: RUN_ROOT_AUDIT_PURGE_EXACT_HEAD_VALIDATION
 resume_control:
-  current_resume_point: ROOT_AUDIT_RESIDUAL_PURGE_ACTIVE
+  current_resume_point: ROOT_AUDIT_RESIDUAL_PURGE_MUTATED_VALIDATION_REQUIRED
   current_work_unit_uid: WU-GOV-ROOT-AUDIT-RESIDUAL-PURGE-001
   current_owner: governance/test/ACTIVE_STATE.yaml
-  exact_next_action: DELETE_SUPERSEDED_ROOT_AUDIT_INSTANCES
+  exact_next_action: RUN_ROOT_AUDIT_PURGE_EXACT_HEAD_VALIDATION
   product_resume_preserved: CORE01_STAGE01_STAGE03_CLEAN_BASELINE_READY_FRESH_STAGE01_WUR_REQUIRED
   interrupted_test_resume_preserved: CORE01_SOURCE_TEST_BUGFIX_AND_CONTENT_INTEGRITY_FULL_LIFECYCLE_R2_ACTIVE
   reentry_owner_capability: SOURCE_INTAKE_BASE_BLUEPRINT
@@ -230,7 +230,7 @@ active_work_unit:
   work_unit_uid: WU-GOV-ROOT-AUDIT-RESIDUAL-PURGE-001
   canonical_name: ROOT_AUDIT_SUPERSEDED_INSTANCE_PURGE
   primary_task_layer: GOVERNANCE_MAINTENANCE
-  current_status: ACTIVE
+  current_status: MUTATION_COMMITTED_VALIDATION_REQUIRED
   authorization_basis: EXPLICIT_USER_DIRECTIVE_20260923_CONTINUE_CLEANUP
   canonical_policy_owner: governance/specifications/current/EXECUTION_CYCLE_CONTROL.yaml
   state_owner: governance/test/ACTIVE_STATE.yaml
