@@ -104,13 +104,13 @@ specification_mutation_safety:
   ordinary_mid_stage_specification_mutation: BLOCK
   stage_end_consolidated_promotion_requires_new_explicit_directive: true
   execution_context_lock_required: true
-status: ROOT_AUDIT_RESIDUAL_PURGE_CLOSED_WORK_UNIT_RESOLUTION_REQUIRED
-next_action: WORK_UNIT_RESOLUTION_GATE_AFTER_ROOT_AUDIT_RESIDUAL_PURGE
+status: GENERATED_CI_EVIDENCE_SNAPSHOT_PURGE_ACTIVE
+next_action: DELETE_TRACKED_GENERATED_CI_EVIDENCE_SNAPSHOTS
 resume_control:
-  current_resume_point: ROOT_AUDIT_RESIDUAL_PURGE_CLOSED_WUR_REQUIRED
-  current_work_unit_uid: null
-  current_owner: governance/specifications/current/EXECUTION_CYCLE_CONTROL.yaml
-  exact_next_action: WORK_UNIT_RESOLUTION_GATE_AFTER_ROOT_AUDIT_RESIDUAL_PURGE
+  current_resume_point: GENERATED_CI_EVIDENCE_SNAPSHOT_PURGE_ACTIVE
+  current_work_unit_uid: WU-GOV-GENERATED-CI-EVIDENCE-SNAPSHOT-PURGE-001
+  current_owner: governance/test/ACTIVE_STATE.yaml
+  exact_next_action: DELETE_TRACKED_GENERATED_CI_EVIDENCE_SNAPSHOTS
   product_resume_preserved: CORE01_STAGE01_STAGE03_CLEAN_BASELINE_READY_FRESH_STAGE01_WUR_REQUIRED
   interrupted_test_resume_preserved: CORE01_SOURCE_TEST_BUGFIX_AND_CONTENT_INTEGRITY_FULL_LIFECYCLE_R2_ACTIVE
   reentry_owner_capability: SOURCE_INTAKE_BASE_BLUEPRINT
@@ -276,8 +276,65 @@ closed_governance_maintenance_work_unit_root_audit_residual_purge:
   - PRODUCT_STAGE_CREDIT_ZERO
   legal_next_transition: WORK_UNIT_RESOLUTION_GATE
   product_stage_credit: 0
-active_work_unit: null
+active_work_unit:
+  work_unit_uid: WU-GOV-GENERATED-CI-EVIDENCE-SNAPSHOT-PURGE-001
+  canonical_name: GENERATED_CI_EVIDENCE_SNAPSHOT_PURGE
+  primary_task_layer: GOVERNANCE_MAINTENANCE
+  current_status: ACTIVE
+  authorization_basis: EXPLICIT_USER_DIRECTIVE_20260923_CONTINUE_CLEANUP
+  canonical_policy_owner: governance/specifications/current/EXECUTION_CYCLE_CONTROL.yaml
+  state_owner: governance/test/ACTIVE_STATE.yaml
+  scope:
+  - DELETE_TRACKED_FULL_LINE_SYSTEM_GATE_RESULT_JSON
+  - DELETE_TRACKED_SOURCE_IDENTITY_REPORT_JSON
+  - PRESERVE_RUNTIME_PRODUCERS
+  - PRESERVE_WORKFLOW_ARTIFACT_UPLOAD_CONTRACTS
+  - PRESERVE_TRIGGER_FILES
+  out_of_scope:
+  - .github/governance-source/active/source
+  - .github/governance-source/RUN_FULL_LINE_SYSTEM_GATE.py
+  - .github/governance-source/VERIFY_SOURCE_IDENTITY.py
+  - .github/governance-source/FULL_LINE_FAILURE_DIAGNOSTICS.py
+  - .github/governance-source/FULL_LINE_TRIGGER
+  - .github/governance-source/IDENTITY_TRIGGER
+  - authority
+  - governance/specifications/current
+  - PRODUCT_STAGE_EXECUTION
+  classification:
+    canonical_owner: RUNTIME_PRODUCER_AND_GITHUB_ACTION_ARTIFACT
+    forward_reference: WORKFLOW_UPLOAD_TARGET_REGENERATED_BEFORE_UPLOAD
+    reverse_reference: PRODUCER_WRITE_TARGET_AND_ARTIFACT_UPLOAD_ONLY
+    runtime_or_workflow_reachability: GENERATED_DURING_EACH_APPLICABLE_RUN
+    test_regression_role: PRODUCER_AND_UPLOAD_CONTRACT_PRESERVED
+    historical_retention_role: GITHUB_ACTIONS_ARTIFACT_AND_GIT_HISTORY
+    disposition: TEMP_BACKUP_INTERMEDIATE_REMOVE_FROM_CURRENT_TREE
+  definition_of_done:
+  - TRACKED_GENERATED_CI_EVIDENCE_SNAPSHOT_COUNT_ZERO
+  - VERIFY_SOURCE_IDENTITY_STILL_GENERATES_REPORT
+  - FULL_LINE_GATE_STILL_GENERATES_RESULT
+  - WORKFLOW_ARTIFACT_UPLOAD_STILL_SUCCEEDS
+  - ACTIVE_CONSUMER_REFERENCE_INTEGRITY_PASS
+  - FULL_LINE_EXACT_HEAD_SUCCESS
+  - CURRENT_GOVERNANCE_UID_UNCHANGED
+  - PRODUCT_STAGE_CREDIT_ZERO
+  legal_next_transition: CLOSE_TO_WORK_UNIT_RESOLUTION_GATE
+  product_stage_credit: 0
 last_work_unit_resolution_gate:
+  resolution_uid: WUR-GOV-GENERATED-CI-EVIDENCE-SNAPSHOT-PURGE-20260923-001
+  normative_authority: false
+  result: PASS_SINGLE_LEGAL_SUCCESSOR
+  requested_primary_task_layer: GOVERNANCE_MAINTENANCE
+  resolved_work_unit_uid: WU-GOV-GENERATED-CI-EVIDENCE-SNAPSHOT-PURGE-001
+  authorization_basis: EXPLICIT_USER_DIRECTIVE_20260923_CONTINUE_CLEANUP
+  canonical_owner: governance/test/ACTIVE_STATE.yaml
+  basis:
+  - PREDECESSOR_ROOT_AUDIT_RESIDUAL_PURGE_CLOSED_AND_EXACT_HEAD_VERIFIED
+  - USER_EXPLICITLY_REQUESTED_CONTINUED_CLEANUP
+  - GENERATED_EVIDENCE_FILES_ARE_RECREATED_BY_RUNTIME_PRODUCERS
+  - WORKFLOW_UPLOADS_RUNTIME_GENERATED_OUTPUTS
+  - TRACKED_SNAPSHOTS_ARE_NON_NORMATIVE_AND_REPLACEABLE
+  product_stage_credit: 0
+previous_last_work_unit_resolution_gate:
   resolution_uid: WUR-GOV-ROOT-AUDIT-RESIDUAL-PURGE-20260923-001
   normative_authority: false
   result: PASS_SINGLE_LEGAL_SUCCESSOR
