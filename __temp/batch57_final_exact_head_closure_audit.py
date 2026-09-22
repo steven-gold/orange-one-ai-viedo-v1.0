@@ -114,7 +114,7 @@ for page,fn in PAGES.items():
             # READ_EXACT passive projection/display bindings do not require a
             # per-control Operation when there is no Action. They consume the
             # page/read-model projection rather than define an endpoint.
-            if st=="READ_EXACT" and missing(r.get("action","")):
+            if st=="READ_EXACT" and (norm(r.get("type","")).upper()=="READONLY" or missing(r.get("action","")) or norm(r.get("action","")).upper().endswith("ACT-NOOP")):
                 passive_read_bindings.append({
                     "page":page,"uid":uid,"type":r.get("type",""),"label":r.get("label",""),
                     "runtime_status":st,"runtime_owner":r.get("runtime_owner",""),
