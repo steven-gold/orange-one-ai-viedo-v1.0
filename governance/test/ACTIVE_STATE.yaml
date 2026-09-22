@@ -104,13 +104,13 @@ specification_mutation_safety:
   ordinary_mid_stage_specification_mutation: BLOCK
   stage_end_consolidated_promotion_requires_new_explicit_directive: true
   execution_context_lock_required: true
-status: GOVERNANCE_TRIGGER_IDENTITY_DECONTAMINATION_MUTATED_VALIDATION_REQUIRED
-next_action: RUN_TRIGGER_IDENTITY_DECONTAMINATION_EXACT_HEAD_VALIDATION
+status: GOVERNANCE_TRIGGER_IDENTITY_DECONTAMINATION_CLOSED_WORK_UNIT_RESOLUTION_REQUIRED
+next_action: WORK_UNIT_RESOLUTION_GATE_AFTER_GOVERNANCE_TRIGGER_IDENTITY_DECONTAMINATION
 resume_control:
-  current_resume_point: GOVERNANCE_TRIGGER_IDENTITY_DECONTAMINATION_MUTATED_VALIDATION_REQUIRED
-  current_work_unit_uid: WU-GOV-TRIGGER-IDENTITY-DECONTAMINATION-001
-  current_owner: governance/test/ACTIVE_STATE.yaml
-  exact_next_action: RUN_TRIGGER_IDENTITY_DECONTAMINATION_EXACT_HEAD_VALIDATION
+  current_resume_point: GOVERNANCE_TRIGGER_IDENTITY_DECONTAMINATION_CLOSED_WUR_REQUIRED
+  current_work_unit_uid: null
+  current_owner: governance/specifications/current/EXECUTION_CYCLE_CONTROL.yaml
+  exact_next_action: WORK_UNIT_RESOLUTION_GATE_AFTER_GOVERNANCE_TRIGGER_IDENTITY_DECONTAMINATION
   product_resume_preserved: CORE01_STAGE01_STAGE03_CLEAN_BASELINE_READY_FRESH_STAGE01_WUR_REQUIRED
   interrupted_test_resume_preserved: CORE01_SOURCE_TEST_BUGFIX_AND_CONTENT_INTEGRITY_FULL_LIFECYCLE_R2_ACTIVE
   reentry_owner_capability: SOURCE_INTAKE_BASE_BLUEPRINT
@@ -331,34 +331,49 @@ closed_governance_maintenance_work_unit_generated_ci_evidence_snapshot_purge:
   - PRODUCT_STAGE_CREDIT_ZERO
   legal_next_transition: WORK_UNIT_RESOLUTION_GATE
   product_stage_credit: 0
-active_work_unit:
+closed_governance_maintenance_work_unit_trigger_identity_decontamination:
   work_unit_uid: WU-GOV-TRIGGER-IDENTITY-DECONTAMINATION-001
   canonical_name: GOVERNANCE_TRIGGER_IDENTITY_DECONTAMINATION
   primary_task_layer: GOVERNANCE_MAINTENANCE
-  current_status: MUTATION_COMMITTED_VALIDATION_REQUIRED
+  terminal_status: CLOSED_VERIFIED_NO_PRODUCT_CREDIT
   authorization_basis: EXPLICIT_USER_DIRECTIVE_20260923_CONTINUE_CLEANUP
   canonical_policy_owner: governance/specifications/current/EXECUTION_CYCLE_CONTROL.yaml
   state_owner: governance/test/ACTIVE_STATE.yaml
-  scope:
-  - REMOVE_STALE_GOVERNANCE_UID_AND_HEAD_FROM_FULL_LINE_TRIGGER_BASELINE_CONTENT
-  - REMOVE_STALE_DATE_FROM_IDENTITY_TRIGGER_BASELINE_CONTENT
-  - PRESERVE_FULL_LINE_TRIGGER_PATH_TRIGGER_ROLE
-  - PRESERVE_STAGE02_PERSISTENCE_CLOSE_OPTIONAL_EVIDENCE_CARRIER_CONTRACT
-  - PRESERVE_IDENTITY_TRIGGER_PATH_TRIGGER_ROLE
-  out_of_scope:
-  - WORKFLOW_TRIGGER_PATHS
-  - FRESH_REPLAY_MAINTENANCE_CLOSURE_PARSER
-  - governance/specifications/current
-  - .github/governance-source/active/source
-  - PRODUCT_STAGE_EXECUTION
-  classification:
-    canonical_owner: WORKFLOW_PATH_TRIGGER_CONTRACT
-    forward_reference: ACTIVE_WORKFLOW_PATH_FILTER_AND_OPTIONAL_MAINTENANCE_CLOSURE_PARSER
-    reverse_reference: FRESH_STAGE_REPLAY_AND_GOVERNANCE_GATE_WORKFLOWS
-    runtime_or_workflow_reachability: ACTIVE_TRIGGER_FILES
-    test_regression_role: PATH_TRIGGER_AND_FAIL_CLOSED_OPTIONAL_EVIDENCE_CARRIER
-    historical_retention_role: OLD_UID_HEAD_DATE_GIT_HISTORY_ONLY
-    disposition: SUPERSEDED_ACTIVE_CONTENT_MIGRATE_TO_NEUTRAL_TRIGGER_CONTRACT
+  disposition_summary:
+    trigger_files_migrated: 2
+    full_line_trigger_stale_governance_uid_removed: true
+    full_line_trigger_stale_head_removed: true
+    identity_trigger_stale_date_removed: true
+    full_line_trigger_path_role_preserved: true
+    identity_trigger_path_role_preserved: true
+    optional_stage02_persistence_close_evidence_carrier_preserved: true
+    product_stage_credit: 0
+  closure_evidence:
+    mutation_head_sha: 7777c79e6323b88e2bbfe398baa2ed4dbf4bf729
+    mutation_tree_sha: 6c1ff5d18c62cca3f268fef07a39dd6092b97166
+    exact_head_branch_guard_run_id: 35795747165
+    exact_head_branch_guard_result: success
+    exact_head_source_identity_run_id: 35795747094
+    exact_head_source_identity_result: success
+    exact_head_fresh_replay_run_id: 35795747007
+    exact_head_fresh_replay_result: success
+    exact_head_stage02_boundary_run_id: 35795747043
+    exact_head_stage02_boundary_result: success
+    exact_head_selected_profile_run_id: 35795747206
+    exact_head_selected_profile_result: success
+    exact_head_full_line_run_id: 35795747161
+    exact_head_full_line_job_id: 106974502502
+    exact_head_full_line_result: success
+    generated_evidence_artifact_id: 10723882472
+    generated_evidence_artifact_sha256: 2e3a93e9dbff927b3eff0328f87cf87b80359f26740ceaeeeef0950ccd1d28e7
+    active_workflows_scanned: 11
+    active_direct_transitive_executable_targets: 33
+    lifecycle_stage_result: 11/11
+    preformal_result: 20/20
+    mandatory_regression_result: 17/17
+    source_runtime_residual_count: 0
+    current_governance_uid_unchanged: true
+    mother_specification_mutated: false
   definition_of_done:
   - TRIGGER_FILES_CONTAIN_NO_STALE_GOVERNANCE_UID_HEAD_OR_DATE_IDENTITY
   - WORKFLOW_PATH_TRIGGER_ROLE_PRESERVED
@@ -367,8 +382,9 @@ active_work_unit:
   - FULL_LINE_EXACT_HEAD_SUCCESS
   - CURRENT_GOVERNANCE_UID_UNCHANGED
   - PRODUCT_STAGE_CREDIT_ZERO
-  legal_next_transition: CLOSE_TO_WORK_UNIT_RESOLUTION_GATE
+  legal_next_transition: WORK_UNIT_RESOLUTION_GATE
   product_stage_credit: 0
+active_work_unit: null
 last_work_unit_resolution_gate:
   resolution_uid: WUR-GOV-TRIGGER-IDENTITY-DECONTAMINATION-20260923-001
   normative_authority: false
