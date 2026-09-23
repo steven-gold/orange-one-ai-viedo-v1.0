@@ -1,0 +1,4022 @@
+schema_version: ACPOS_WORD_YAML_PROJECTION_V1
+projection_mode: SOURCE_GROUNDED_NO_INVENTION
+sequence: 24
+source:
+  branch: 0921acpos
+  git_head: 7bd2dbdb89b685c5f5f6045c8e3e17c5f2500db5
+  word_path: ACPOS_SG-02_QA審查項目名單_Mother_Basic_Design_OPTIMIZED.docx
+  word_sha256: cac5184d817c35339a7979492d03d49a68671518af7ef318c423b6af4c024e8a
+authority_rules:
+- Word source remains canonical for this projection.
+- Do not silently fill, correct, reconcile, or replace source content.
+- Do not convert BLOCKED, NOT_EXECUTED, REQUIRE_EXACT_BINDING, SOURCE_NOT_DEFINED into PASS.
+- Paragraph and table order is preserved by source index.
+document:
+  paragraphs:
+  - index: 0
+    style: Normal
+    text: ACPOS · SG-02
+  - index: 1
+    style: Normal
+    text: QA 審查項目名單｜Mother Basic Design
+  - index: 2
+    style: Normal
+    text: Quality Criteria · Gate Policy · Versioning · Impact · Approval
+  - index: 3
+    style: Normal
+    text: 頁面定位｜後台 QA Review Standard 治理面。管理 Criteria Version、Dimension、Threshold、Department Applicability、Required Check、Gate Policy、Impact 與 Approval；它不是 workspace:QA-01
+      的待審工作台，也不執行實際 QA 審查。
+  - index: 6
+    style: Heading 1
+    text: 1. 產品目標與治理邊界
+  - index: 7
+    style: List Bullet
+    text: 把 QA 評分標準的版本、維度、門檻、必檢項目、部門適用性、Gate Policy、Impact 與 Approval 放在單一治理頁中，避免標準散落在各 QA 工作區。
+  - index: 8
+    style: List Bullet
+    text: ACTIVE Criteria Version 不可原地修改；任何實質變更先形成新版本／新草稿，再進 Impact、Review 與 Approval，歷史審查結果永久保留原 criteria_version。
+  - index: 9
+    style: List Bullet
+    text: SG-02 只治理「審查標準」；專案、任務、影片、素材的實際 QA 執行仍由 QA Runtime / QA-01 負責。
+  - index: 10
+    style: List Bullet
+    text: Threshold 不得硬編碼在 UI、前端常數或 QA 執行頁；QA Runtime 必須讀取被正式綁定的 Criteria Version / Gate Policy。
+  - index: 11
+    style: List Bullet
+    text: 未註冊 Search / Filter / Export / Clone / Delete / Activate 等操作不得因便利性自行加入。
+  - index: 12
+    style: Heading 1
+    text: 2. Scope / Out-of-Scope
+  - index: 14
+    style: Heading 1
+    text: 3. Business Entity Inventory
+  - index: 16
+    style: Heading 1
+    text: 4. Business Entity × Operation Matrix
+  - index: 18
+    style: Heading 1
+    text: 5. Entity Hierarchy & Version Semantics
+  - index: 19
+    style: List Bullet
+    text: QualityCriteriaVersion 是版本根；Dimension / Threshold / Required Check / Department Mapping / Gate Policy 的正式狀態必須可追溯回該版本。
+  - index: 20
+    style: List Bullet
+    text: ACTIVE 版本為 immutable。修改需求先建立新的 Draft/Working Version，不允許把 ACTIVE row 直接改寫。
+  - index: 21
+    style: List Bullet
+    text: Review Result 必須保存 criteria_version_ref；後續 Criteria 更新不能回填或重算歷史結果，除非建立正式 Revalidation 結果且保留原結果。
+  - index: 22
+    style: List Bullet
+    text: 同一時點可存在歷史版本與待核准版本，但執行端只使用被 Current Mapping 明確指定的版本；不得用 latest/current 字串猜測。
+  - index: 23
+    style: List Bullet
+    text: SUPERSEDED 代表不再作為新工作的預設版本，但仍可被歷史 Review Result 引用；RETIRED 仍保留 Audit/Lineage。
+  - index: 24
+    style: Heading 1
+    text: 6. Lifecycle / State Model
+  - index: 27
+    style: Normal
+    text: 圖 1｜SG-02 Criteria Governance Workbench：版本名單為主，Dimension / Threshold / Required Checks 透過 Drawer 查看，Action Dock 僅保留合法 Configure / Approve。
+  - index: 28
+    style: Heading 1
+    text: 7. Functional Workbench / Interaction Topology
+  - index: 30
+    style: Heading 1
+    text: 8. Layout / Visual Geometry
+  - index: 32
+    style: Normal
+    text: 後續 Word Geometry 基準｜本頁起所有表格固定儲存格內距；短欄位與表頭水平＋垂直置中；長文字左對齊但保留安全距；表格採固定欄寬避免 Render 時被自動壓縮。
+  - index: 34
+    style: Heading 1
+    text: 9. Section Registry
+  - index: 36
+    style: Heading 1
+    text: 10. Control Registry / 11 Current Controls
+  - index: 38
+    style: Heading 1
+    text: 11. Configure Contract
+  - index: 40
+    style: List Bullet
+    text: Configure 只修改 DRAFT/允許狀態的 governed resource；若選中 ACTIVE Criteria，UI 應導向「建立新版本／新草稿」的治理流程，而不是直接改 ACTIVE。
+  - index: 41
+    style: List Bullet
+    text: Read-model 欄位由 projection 自動帶入，禁止要求使用者重新輸入 criteria_versions / dimensions / policies / mappings / approvals。
+  - index: 42
+    style: List Bullet
+    text: config_patch_json 必須在提交前提供結構化 Diff 預覽：Before / After / Affected Entity / Impact Required。
+  - index: 43
+    style: Heading 1
+    text: 12. Approve Contract
+  - index: 45
+    style: Normal
+    text: 核准不是啟用捷徑｜Approval 必須驗證 State、Version、Permission、Impact 與 Audit。核准 Criteria Version 不代表可修改舊 ACTIVE；也不允許把歷史 Review Result 換綁到新版本。
+  - index: 48
+    style: Normal
+    text: 圖 2｜SG-02 Approval / Impact：Configure 與 Approval 使用 Effectful Modal；Impact / Revalidation 與歷史版本可重現性必須在核准前被確認。
+  - index: 49
+    style: Heading 1
+    text: 13. Core Functional Chains
+  - index: 51
+    style: Heading 1
+    text: 14. Permission / Gate Model
+  - index: 53
+    style: List Bullet
+    text: 授權模型是 Account Permission Assignment Only；角色名稱與部門身分不得直接構成 allow。
+  - index: 54
+    style: List Bullet
+    text: Permission denied 與 Policy blocked 必須區分：前者依規則隱藏／拒絕，後者可顯示 Disabled Reason。
+  - index: 55
+    style: List Bullet
+    text: 前端 Visible/Disabled 只是 UX；真正 Effectful 操作必須在 server 重新驗證 identity、account_permission、scope、condition、state、version、idempotency、audit。
+  - index: 56
+    style: Heading 1
+    text: 15. Impact / Applicability / Revalidation
+  - index: 58
+    style: Heading 1
+    text: 16. QA-01 Integration Boundary
+  - index: 59
+    style: List Bullet
+    text: QA-01 的 Review Session / Scorecard 必須讀取 exact criteria_version_ref 與其 Dimension / Threshold / Required Check / Gate Policy；不得自行 hardcode 門檻。
+  - index: 60
+    style: List Bullet
+    text: SG-02 不顯示待審專案名單，也不執行 Approve Output / Finding / Correction / Handoff 等 QA 工作動作。
+  - index: 61
+    style: List Bullet
+    text: Criteria 版本升級不得自動替換進行中的 Review Session。是否重啟／revalidate 必須由 Impact + Runtime Contract 明確決定。
+  - index: 62
+    style: List Bullet
+    text: 如果下游工作類型找不到可用 Criteria Mapping，QA Runtime 應 fail closed，顯示「未綁定 QA 標準」而非選一個最新版本。
+  - index: 63
+    style: Heading 1
+    text: 17. Error / Recovery
+  - index: 65
+    style: Heading 1
+    text: 18. Responsive / i18n / Accessibility
+  - index: 67
+    style: Heading 1
+    text: 19. Validation / Acceptance
+  - index: 69
+    style: Heading 1
+    text: 20. Definition of Done / Construction Handoff
+  - index: 70
+    style: List Bullet
+    text: Static Design：Page / Section / Control / Field / Layout / State / Error / Permission / Action / Gate / Interaction / Visual Geometry 已可施工。
+  - index: 71
+    style: List Bullet
+    text: Functional Closure：Configure / Approve / Criteria Consumption / Historical Reproducibility / Impact / Revalidation 均有前後關聯，不留下「先做畫面、後補邏輯」的空洞。
+  - index: 72
+    style: List Bullet
+    text: Runtime Enablement：仍須由施工階段核對 Governance operation runtime、QA runtime mapping、DB persistence、permission assignment、audit、tests 與 deployment evidence；本 Word
+      不宣稱 Production Ready。
+  - index: 73
+    style: List Bullet
+    text: 任何實際施工發現未註冊功能（例如 Clone / Search / Export / Activate / Retire command），不得從本文件猜 API；必須回到 Current Authority 走正式補權威流程。
+  - index: 74
+    style: Normal
+    text: 施工交付結論｜SG-02 的設計目標不是「做一張 QA 標準表」，而是把 Criteria 的版本治理、Impact、Approval、歷史可重現性與 QA Runtime 綁定做成完整閉環；UI 保持單頁、低頻細節 Drawer 化、效應操作 Modal 化。
+  - index: 77
+    style: Heading 1
+    text: 2026-09-21 Machine Authority Construction Closure / 機器權威施工綁定封板
+  - index: 78
+    style: Normal
+    text: '[ACPOS-20260921-SOURCE-GROUNDED-CONSTRUCTION-CLOSURE-V2] Source-grounded only. Existing Current source wins; missing source values remain blocked/decision-required.
+      This closure supersedes the prior generic 2026-09-21 V1/V3 annex only, not the original domain logic or human visual review gates.'
+  - index: 79
+    style: Heading 2
+    text: SG-02 · Exact Construction Binding
+  - index: 80
+    style: Heading 3
+    text: SG-02 · Truthful Remaining Runtime / Governance Status
+  - index: 81
+    style: Heading 3
+    text: SG-02 Runtime Truth
+  - index: 82
+    style: Normal
+    text: The 12-control design binding is exact. Machine authority still records runtime_binding_validation = NOT_EXECUTED / effectful_runtime_ready = false. Construction
+      may implement only the exact registered operations; it MUST NOT claim runtime acceptance until execution evidence exists.
+  - index: 83
+    style: Heading 2
+    text: Page Construction Invariant
+  - index: 84
+    style: Normal
+    text: The exact control denominator above is the only construction denominator for this page. Components/fields/visual IDs are not counted as additional controls.
+      Existing source UIDs are preserved. A control classified UI_LOCAL_EXACT MUST NOT create a server write. A control classified SPEC_EXACT_RUNTIME_BLOCKED / NOT_EXECUTED
+      MUST remain disabled or fail-closed until its runtime evidence exists.
+  - index: 86
+    style: Heading 1
+    text: SG-02 Concrete QA Criteria Catalog / QA 審查項目正式明細
+  - index: 87
+    style: Normal
+    text: '[ACPOS-20260921-CONCRETE-BUSINESS-CONTENT-CLOSURE-V1] 這一段是完整來源掃描後補入的 Concrete Business Content Authority。既有來源已明確的內容沿用；原來源只有抽象 Criteria/Dimension 容器而缺實際明細者，以下項目標示為本次新
+      Authority。'
+  - index: 88
+    style: Normal
+    text: SG-02 不再只管理抽象 Dimension。以下 6 個 baseline profiles 與其 dimensions 是本次新增的正式施工 Authority；Runtime 仍需依 DRAFT→REVIEW→APPROVED lifecycle materialize CriteriaVersion，文件定義不等於
+      Production 已核准。
+  - index: 89
+    style: Heading 2
+    text: QCP-CORE-BASELINE-V1 · CORE · CORE / Blueprint / Canonical Script
+  - index: 90
+    style: Normal
+    text: 'Scoring: 每個 Dimension 0–100；Weighted Score = Score × Weight / 100；Total = 全部適用 Dimension 加總。PASS = Total ≥ 95 且所有 Hard Block / Required Check PASS。頁面不得自行新增第二套
+      threshold。'
+  - index: 91
+    style: Heading 2
+    text: QCP-ASSET-IMAGE-V1 · ASSET · IMAGE asset outputs
+  - index: 92
+    style: Normal
+    text: 'Scoring: 每個 Dimension 0–100；Weighted Score = Score × Weight / 100；Total = 全部適用 Dimension 加總。PASS = Total ≥ 95 且所有 Hard Block / Required Check PASS。頁面不得自行新增第二套
+      threshold。'
+  - index: 93
+    style: Heading 2
+    text: QCP-ASSET-AUDIO-V1 · ASSET · VOICE / MUSIC / SFX asset outputs
+  - index: 94
+    style: Normal
+    text: 'Scoring: 每個 Dimension 0–100；Weighted Score = Score × Weight / 100；Total = 全部適用 Dimension 加總。PASS = Total ≥ 95 且所有 Hard Block / Required Check PASS。頁面不得自行新增第二套
+      threshold。'
+  - index: 95
+    style: Heading 2
+    text: QCP-VIDEO-BASELINE-V1 · VIDEO · VIDEO candidate outputs
+  - index: 96
+    style: Normal
+    text: 'Scoring: 每個 Dimension 0–100；Weighted Score = Score × Weight / 100；Total = 全部適用 Dimension 加總。PASS = Total ≥ 95 且所有 Hard Block / Required Check PASS。頁面不得自行新增第二套
+      threshold。'
+  - index: 97
+    style: Heading 2
+    text: QCP-EDIT-FINAL-V1 · EDITING · EDIT stage/final outputs
+  - index: 98
+    style: Normal
+    text: 'Scoring: 每個 Dimension 0–100；Weighted Score = Score × Weight / 100；Total = 全部適用 Dimension 加總。PASS = Total ≥ 95 且所有 Hard Block / Required Check PASS。頁面不得自行新增第二套
+      threshold。'
+  - index: 99
+    style: Heading 2
+    text: QCP-QA-FINAL-OUTPUT-V1 · QA · Final output / release-candidate review
+  - index: 100
+    style: Normal
+    text: 'Scoring: 每個 Dimension 0–100；Weighted Score = Score × Weight / 100；Total = 全部適用 Dimension 加總。PASS = Total ≥ 95 且所有 Hard Block / Required Check PASS。頁面不得自行新增第二套
+      threshold。'
+  - index: 101
+    style: Heading 2
+    text: Canonical Required Checks
+  - index: 102
+    style: Heading 2
+    text: Canonical QA Issue Categories
+  - index: 103
+    style: Heading 2
+    text: SG-02 Page Rendering Contract
+  - index: 104
+    style: Heading 2
+    text: SG-02 Lifecycle Closure
+  - index: 105
+    style: Normal
+    text: 'New denominator: SG-02 Current Control Denominator = 12（原 11 + Submit Review）。任何仍宣稱 11 的舊 closure row 被此 V1 business-content closure supersede。'
+  - index: 106
+    style: Heading 2
+    text: Production Acceptance Truth (2026-09-21 validation)
+  - index: 108
+    style: Heading 2
+    text: Canonical Business Entity Operation Applicability Matrix / 業務實體操作適用性矩陣
+  - index: 109
+    style: Normal
+    text: 'Authority: Current Word design + Mother §71 bounded completion. 本矩陣只正規化既有行為與目前未授權行為；不得據此新增 Business Entity、Operation、Runtime 或 API。 Current tree: b2f81b20322dd9e9268001126b07931b437e27df.'
+  - index: 111
+    style: Heading 1
+    text: Mother Planning / Basic Design Closure Annex｜規劃設計規範閉環補充
+  - index: 112
+    style: Normal
+    text: '[ACPOS-20260922-PLANNING-DESIGN-CLOSURE-ANNEX-V1] 本附錄只補規劃／基本設計規範缺口；原頁面既有功能、Owner、Operation、Permission、Entity、Visual 與跨頁 Authority 仍為同一 Canonical Owner。不得由本附錄發明
+      Runtime/API/DB/Provider 行為，也不得建立第二套平行規範。'
+  - index: 113
+    style: Heading 2
+    text: Visual Geometry Contract Closure｜視覺幾何補齊
+  - index: 114
+    style: Normal
+    text: '[ACPOS-DESIGN-CLOSURE:SG-02:GEOMETRY]'
+  - index: 115
+    style: Heading 2
+    text: Visual Anchor / Preview / Review Contract｜視覺錨點與預覽審查補齊
+  - index: 116
+    style: Normal
+    text: '[ACPOS-DESIGN-CLOSURE:SG-02:VISUAL]'
+  - index: 117
+    style: Heading 2
+    text: Visual Generation / Review Planning Contract
+  - index: 118
+    style: Normal
+    text: '[ACPOS-DESIGN-CLOSURE:SG-02:VISUAL-CONTRACT]'
+  - index: 119
+    style: Heading 2
+    text: Asset Registry / Binding Applicability Closure｜素材註冊與綁定補齊
+  - index: 120
+    style: Normal
+    text: '[ACPOS-DESIGN-CLOSURE:SG-02:ASSET]'
+  - index: 121
+    style: Heading 2
+    text: Design Freeze Package Closure｜設計封板包補齊
+  - index: 122
+    style: Normal
+    text: '[ACPOS-DESIGN-CLOSURE:SG-02:FREEZE]'
+  - index: 124
+    style: Heading 1
+    text: SG-02 Persistence Owner Closure｜品質治理持久化 Owner 收斂
+  - index: 125
+    style: Normal
+    text: '[ACPOS-SG02-PERSISTENCE-OWNER-CLOSURE-V1] This annex closes the two SG-02 governance mutation Persistence Owner gaps. QualityGovernance remains the canonical
+      page/domain owner; IAM_RUNTIME remains the shared governance ingress, not the business persistence owner.'
+  - index: 126
+    style: Heading 2
+    text: Shared Invariants / 共用不變式
+  tables:
+  - index: 0
+    rows:
+    - row: 0
+      cells:
+      - 設計身份
+      - 定義
+    - row: 1
+      cells:
+      - Page UID
+      - admin:SG-02
+    - row: 2
+      cells:
+      - Canonical Name
+      - QA 審查項目名單 / Quality Criteria / Gate Policy
+    - row: 3
+      cells:
+      - Owner
+      - QualityGovernance
+    - row: 4
+      cells:
+      - Surface
+      - ADMIN · Single Page
+    - row: 5
+      cells:
+      - Primary Data
+      - criteria_versions / dimensions / policies / mappings / approvals
+    - row: 6
+      cells:
+      - Lifecycle
+      - DRAFT → REVIEW → APPROVED → ACTIVE → SUPERSEDED → RETIRED
+    - row: 7
+      cells:
+      - Current Actions
+      - Configure / Approve / Drawer Open
+    - row: 8
+      cells:
+      - Truth Rule
+      - 真實投影 only；缺值 = —；樣本 Criteria / Threshold 禁止
+  - index: 1
+    rows:
+    - row: 0
+      cells:
+      - 範圍
+      - 設計結論
+    - row: 1
+      cells:
+      - IN
+      - Criteria Version、Dimension Library、Threshold、Required Check、Department Mapping、Gate Policy、Impact、Approval、歷史版本重現。
+    - row: 2
+      cells:
+      - OUT
+      - Pending QA Queue、單一任務評分、Finding / Correction Request、素材或影片重新生成、未註冊 Criteria CRUD、任意 Search / Filter / Export。
+    - row: 3
+      cells:
+      - INTERFACE
+      - QA-01 只消費已生效且被任務／工作類型綁定的 Criteria Version；SG-02 不介入單一 Review Session 的操作。
+    - row: 4
+      cells:
+      - FAIL-CLOSED
+      - 任何缺少 Owner / Operation / Version / Impact / Permission / Approval 的變更，均 BLOCK + REPORT_AUTHORITY_GAP。
+  - index: 2
+    rows:
+    - row: 0
+      cells:
+      - Business Entity
+      - 責任
+      - 生命週期／約束
+    - row: 1
+      cells:
+      - quality_criteria_version
+      - 完整評分標準版本；承載 dimensions / thresholds / checks / gate bindings
+      - Versioned · immutable when ACTIVE
+    - row: 2
+      cells:
+      - dimension_library
+      - 評分類別與量測語義
+      - Reusable governed library
+    - row: 3
+      cells:
+      - threshold
+      - 某版本／維度的門檻與失敗語義
+      - Version-bound
+    - row: 4
+      cells:
+      - required_check
+      - 必檢項目與 blocking semantics
+      - Version / scope bound
+    - row: 5
+      cells:
+      - department_mapping
+      - 標準適用部門／工作類型對應
+      - Applicability owner
+    - row: 6
+      cells:
+      - quality_gate_policy
+      - 通過、阻擋、人工覆核等 Gate 規則
+      - Versioned policy
+    - row: 7
+      cells:
+      - impact_record
+      - 變更對任務、部門、歷史／未完成 Review 的影響
+      - Required before approval
+    - row: 8
+      cells:
+      - approval_record
+      - 核准者、理由、版本、時間與證據
+      - Append-only decision
+    - row: 9
+      cells:
+      - review_result_binding
+      - 既有 Review Result 所綁的原 Criteria Version
+      - Historical reproducibility
+  - index: 3
+    rows:
+    - row: 0
+      cells:
+      - Entity
+      - Discover
+      - Create
+      - Edit
+      - Review
+      - Approve
+      - Version
+      - Retire
+      - Impact
+      - Audit
+    - row: 1
+      cells:
+      - Criteria Version
+      - R
+      - —
+      - Configure→new draft
+      - Review
+      - Approve
+      - Versioned
+      - Supersede / Retire
+      - Impact required
+      - R
+    - row: 2
+      cells:
+      - Dimension Library
+      - R
+      - —
+      - Configure
+      - —
+      - Governed
+      - Versioned
+      - Retire only if legal
+      - Impact if referenced
+      - R
+    - row: 3
+      cells:
+      - Threshold
+      - R
+      - —
+      - Configure
+      - —
+      - Via criteria approval
+      - Version-bound
+      - No direct delete
+      - Impact required
+      - R
+    - row: 4
+      cells:
+      - Required Check
+      - R
+      - —
+      - Configure
+      - —
+      - Via criteria approval
+      - Version-bound
+      - No direct delete
+      - Impact required
+      - R
+    - row: 5
+      cells:
+      - Department Mapping
+      - R
+      - —
+      - Configure
+      - —
+      - Via criteria approval
+      - Version-bound
+      - No direct delete
+      - Impact required
+      - R
+    - row: 6
+      cells:
+      - Gate Policy
+      - R
+      - —
+      - Configure
+      - Review
+      - Approve
+      - Versioned
+      - Supersede / Retire
+      - Impact required
+      - R
+    - row: 7
+      cells:
+      - Impact Record
+      - R
+      - System/Create via governed change
+      - Append
+      - —
+      - Required evidence
+      - Append-only
+      - —
+      - Self
+      - R
+    - row: 8
+      cells:
+      - Approval Record
+      - R
+      - System after approval
+      - —
+      - —
+      - Approve operation
+      - Append-only
+      - —
+      - —
+      - R
+  - index: 4
+    rows:
+    - row: 0
+      cells:
+      - State
+      - 可做事項
+      - 禁止事項
+      - 下一步
+    - row: 1
+      cells:
+      - DRAFT
+      - 配置內容、Impact 初判
+      - 作為 Production QA Gate
+      - 提交 REVIEW
+    - row: 2
+      cells:
+      - REVIEW
+      - 凍結待審版本內容；核對 Impact / Mapping
+      - 直接改內容、直接 ACTIVE
+      - Approve 或 Return-to-Draft
+    - row: 3
+      cells:
+      - APPROVED
+      - 完成正式核准；等待啟用條件／Mapping
+      - 原地修改
+      - 依治理條件 ACTIVE
+    - row: 4
+      cells:
+      - ACTIVE
+      - 供新工作綁定；read-only
+      - 原地改 Threshold / Check / Policy
+      - 新版本取代後 SUPERSEDED
+    - row: 5
+      cells:
+      - SUPERSEDED
+      - 歷史可重現、不可作新預設
+      - 刪除歷史資料
+      - 保留或 RETIRED
+    - row: 6
+      cells:
+      - RETIRED
+      - 歷史讀取 / Audit
+      - 任何 Effectful 修改
+      - Terminal
+  - index: 5
+    rows:
+    - row: 0
+      cells:
+      - Surface
+      - 分類
+      - 責任
+      - 互動規則
+    - row: 1
+      cells:
+      - Criteria Version Table
+      - ATOMIC_WORKBENCH
+      - 版本名單、狀態、適用範圍、Approval/Impact 摘要
+      - 主工作面；不得把每個欄位拆成卡片
+    - row: 2
+      cells:
+      - Dimension / Threshold / Required Check
+      - SAME_SURFACE_CLUSTER
+      - 低頻細節與版本內容
+      - SECTION_OPEN → Drawer；不建立新 route
+    - row: 3
+      cells:
+      - Department Mapping / Gate Policy
+      - SAME_SURFACE_CLUSTER
+      - 適用性與 Gate 規則
+      - Drawer read；配置走 Configure Modal
+    - row: 4
+      cells:
+      - Approval / Impact
+      - SAME_SURFACE_CLUSTER
+      - 核准與變更影響
+      - Impact 先於 Approval；effectful 動作用 Modal
+    - row: 5
+      cells:
+      - QA-01 Execution
+      - CROSS_SURFACE_FLOW
+      - 消費正式 Criteria Version 執行 QA
+      - 只帶 exact criteria_version_ref；不共享未核准草稿
+    - row: 6
+      cells:
+      - Audit / Historical Detail
+      - INDEPENDENT_SUPPORT_PANEL
+      - 版本、理由、事件、歷史引用
+      - Drawer；read-only
+  - index: 6
+    rows:
+    - row: 0
+      cells:
+      - Region
+      - Geometry
+      - Rules
+    - row: 1
+      cells:
+      - Page Context
+      - 100% × 56px
+      - Page name、Current Criteria Version、Lifecycle、Scope / Blocker；缺值 = —
+    - row: 2
+      cells:
+      - Main Criteria Table
+      - Primary workspace
+      - 固定表頭；Version/State/Applicability/Approval/Impact；行內只保留必要摘要
+    - row: 3
+      cells:
+      - Governance Rail
+      - 約 28%
+      - Version Integrity / Approval / Impact / Revalidation / History readiness；真實狀態 only
+    - row: 4
+      cells:
+      - Detail Drawer
+      - 480–560px
+      - Dimension、Threshold、Required Check、Mapping、Policy、Impact、Audit；可滾動
+    - row: 5
+      cells:
+      - Configure / Approve Modal
+      - 效應操作專用
+      - Focus trap、Esc/cancel、Validation Summary、Reason/Rationale 必填
+    - row: 6
+      cells:
+      - Action Dock
+      - 56px
+      - 只顯示目前合法操作；最多一個 Primary CTA
+  - index: 7
+    rows:
+    - row: 0
+      cells:
+      - Section
+      - Priority
+      - Responsibility
+      - Surface
+    - row: 1
+      cells:
+      - SEC-01 Criteria Table
+      - CORE
+      - Current versions + summary
+      - Main
+    - row: 2
+      cells:
+      - SEC-02 Dimension Library
+      - SUPPORT
+      - Dimension definitions
+      - Drawer
+    - row: 3
+      cells:
+      - SEC-03 Thresholds
+      - SUPPORT
+      - Threshold semantics
+      - Drawer
+    - row: 4
+      cells:
+      - SEC-04 Department Mapping
+      - SUPPORT
+      - Applicability
+      - Drawer
+    - row: 5
+      cells:
+      - SEC-05 Required Checks
+      - SUPPORT
+      - Blocking required checks
+      - Drawer
+    - row: 6
+      cells:
+      - SEC-06 Gate Policy
+      - SUPPORT
+      - Pass/block/review policy
+      - Drawer
+    - row: 7
+      cells:
+      - SEC-07 Approval
+      - GOVERNANCE
+      - Approval status/evidence
+      - Drawer
+    - row: 8
+      cells:
+      - SEC-08 Impact
+      - GOVERNANCE
+      - Affected scope/revalidation
+      - Drawer
+    - row: 9
+      cells:
+      - SEC-09 Action Dock
+      - ACTION
+      - Configure / Approve / Detail
+      - Dock
+  - index: 8
+    rows:
+    - row: 0
+      cells:
+      - Control
+      - Type
+      - Operation / Effect
+      - Interaction
+    - row: 1
+      cells:
+      - Criteria Table Open
+      - SECTION_OPEN
+      - READ_ONLY
+      - Drawer / projection
+    - row: 2
+      cells:
+      - Dimension Library Open
+      - SECTION_OPEN
+      - READ_ONLY
+      - Drawer
+    - row: 3
+      cells:
+      - Thresholds Open
+      - SECTION_OPEN
+      - READ_ONLY
+      - Drawer
+    - row: 4
+      cells:
+      - Department Mapping Open
+      - SECTION_OPEN
+      - READ_ONLY
+      - Drawer
+    - row: 5
+      cells:
+      - Required Checks Open
+      - SECTION_OPEN
+      - READ_ONLY
+      - Drawer
+    - row: 6
+      cells:
+      - Gate Policy Open
+      - SECTION_OPEN
+      - READ_ONLY
+      - Drawer
+    - row: 7
+      cells:
+      - Approval Open
+      - SECTION_OPEN
+      - READ_ONLY
+      - Drawer
+    - row: 8
+      cells:
+      - Impact Open
+      - SECTION_OPEN
+      - READ_ONLY
+      - Drawer
+    - row: 9
+      cells:
+      - Configure
+      - BUSINESS_ACTION
+      - configureGovernedResource
+      - Form Modal
+    - row: 10
+      cells:
+      - Approve
+      - BUSINESS_ACTION
+      - approveGovernedResource
+      - Form Modal
+    - row: 11
+      cells:
+      - Nav / Detail Open
+      - BUSINESS_ACTION
+      - getUiProjection
+      - Drawer
+  - index: 9
+    rows:
+    - row: 0
+      cells:
+      - Field
+      - Type
+      - Required
+      - Design Rule
+    - row: 1
+      cells:
+      - resource_type
+      - string
+      - 'YES'
+      - 必須能 resolve 至 QualityGovernance 的合法資源類型
+    - row: 2
+      cells:
+      - resource_id
+      - reference
+      - 'YES'
+      - Exact governed resource；禁止 latest/current alias
+    - row: 3
+      cells:
+      - config_patch_json
+      - json
+      - 'YES'
+      - 只含該資源已註冊 schema 欄位；禁止 page-union inference
+    - row: 4
+      cells:
+      - reason
+      - text
+      - 'YES'
+      - 變更理由，寫入 Audit / Version lineage
+  - index: 10
+    rows:
+    - row: 0
+      cells:
+      - Field
+      - Required
+      - Design Rule
+    - row: 1
+      cells:
+      - resource_type
+      - 'YES'
+      - 與待核准資源類型一致
+    - row: 2
+      cells:
+      - resource_id
+      - 'YES'
+      - Exact review resource
+    - row: 3
+      cells:
+      - rationale
+      - 'YES'
+      - 核准／退回的治理理由
+    - row: 4
+      cells:
+      - expected_resource_version
+      - CONDITIONAL
+      - 存在版本控制時必須送出；不允許 force overwrite
+  - index: 11
+    rows:
+    - row: 0
+      cells:
+      - Chain
+      - Required Closure
+    - row: 1
+      cells:
+      - Configure Criteria
+      - Intent → Select exact governed resource → Read current version → Configure Gate → Modal validation → config_patch_json + reason → configureGovernedResource
+        → QualityGovernance owner → new/updated draft version → governance.configured → Projection refresh → Impact required / next review
+    - row: 2
+      cells:
+      - Approve Criteria
+      - Intent → exact REVIEW resource/version → Impact / mapping checks → Approval Gate → rationale + expected version → approveGovernedResource → QualityGovernance
+        owner → governance.approved → APPROVED → activation/mapping according to governance → Audit
+    - row: 3
+      cells:
+      - Consume in QA
+      - QA task created → exact applicable mapping → resolve exact ACTIVE criteria_version → Review Session persists criteria_version_ref → score/check/gate evaluate
+        against that version → Review Result stores exact version → future Criteria change does not mutate result
+    - row: 4
+      cells:
+      - Revalidation
+      - New version Impact → identify affected not-yet-terminal tasks / results → classify revalidation requirement → create explicit revalidation work/evidence via
+        registered owner when available → preserve original result/version → new result links prior evidence; no silent recomputation
+  - index: 12
+    rows:
+    - row: 0
+      cells:
+      - Gate
+      - Requirement
+      - Failure
+    - row: 1
+      cells:
+      - Page View
+      - identity + page:admin:SG-02 VIEW + exact account permission + scope/condition
+      - HIDE/DENY；server remains authoritative
+    - row: 2
+      cells:
+      - Read Section
+      - section VIEW + authorized scope
+      - No direct owner DB read
+    - row: 3
+      cells:
+      - Configure
+      - governance.configure + legal resource/state + exact schema + version/idempotency/audit
+      - BLOCK / VERSION_CONFLICT / POLICY_BLOCKED
+    - row: 4
+      cells:
+      - Approve
+      - governance.approve + REVIEW state + impact evidence + expected version + audit
+      - BLOCK / REVIEW_REQUIRED / VERSION_CONFLICT
+    - row: 5
+      cells:
+      - Historical Read
+      - authorized read + exact criteria_version_ref
+      - Do not substitute latest version
+  - index: 13
+    rows:
+    - row: 0
+      cells:
+      - Impact Area
+      - Required Analysis
+      - Decision
+    - row: 1
+      cells:
+      - Department Mapping
+      - 哪些部門／工作類型使用舊版本？
+      - 新增/變更 mapping 必須版本化
+    - row: 2
+      cells:
+      - Open QA Tasks
+      - 尚未完成的 Review Session 是否需保持舊版或重新開始？
+      - 不得 silent switch
+    - row: 3
+      cells:
+      - Historical Results
+      - 既有結果是否保留原 Criteria？
+      - Always preserve original binding
+    - row: 4
+      cells:
+      - Threshold Change
+      - 是否改變 PASS/FAIL / Gate 結果？
+      - High impact；requires explicit review
+    - row: 5
+      cells:
+      - Required Check Change
+      - 是否新增/取消 blocking check？
+      - High impact；requires explicit review
+    - row: 6
+      cells:
+      - Gate Policy Change
+      - 是否改變 QA → Handoff / Block / Correction 流程？
+      - High impact；cross-owner validation
+    - row: 7
+      cells:
+      - Dimension Semantics
+      - 名稱相同但量測定義是否改變？
+      - Semantic version change; do not masquerade as text edit
+  - index: 14
+    rows:
+    - row: 0
+      cells:
+      - Error
+      - Meaning
+      - Recovery
+    - row: 1
+      cells:
+      - AUTH_DENIED
+      - Page/section/action permission 不足
+      - Hide/deny protected control; preserve safe context
+    - row: 2
+      cells:
+      - VERSION_CONFLICT
+      - Criteria / Policy 已被其他版本更新
+      - Reload exact projection; discard stale modal or rebase explicitly
+    - row: 3
+      cells:
+      - INVALID_STATE
+      - ACTIVE/RETIRED 等狀態不允許修改
+      - Disable with reason; create legal new version instead
+    - row: 4
+      cells:
+      - IMPACT_INCOMPLETE
+      - Impact / affected scope 尚未確認
+      - Block approval; open Impact drawer
+    - row: 5
+      cells:
+      - APPROVAL_REQUIRED
+      - 變更尚未正式核准
+      - Keep REVIEW; no ACTIVE binding
+    - row: 6
+      cells:
+      - MAPPING_GAP
+      - 部門／工作類型沒有 Criteria binding
+      - Block downstream QA start; report gap
+    - row: 7
+      cells:
+      - HISTORY_MISMATCH
+      - 歷史 result 對不到原 criteria_version
+      - Block reinterpretation; restore exact historical reference
+    - row: 8
+      cells:
+      - UNDEFINED
+      - 未註冊 CRUD / Search / Filter / Export / API
+      - BLOCK + REPORT_AUTHORITY_GAP
+  - index: 15
+    rows:
+    - row: 0
+      cells:
+      - Area
+      - Requirement
+    - row: 1
+      cells:
+      - Responsive
+      - Desktop-first；同頁 reflow。不得為 mobile 建第二個 SG-02 page。
+    - row: 2
+      cells:
+      - Drawer
+      - 480–560px；可捲動；開啟後 focus trap；Esc 關閉；返回原觸發 control。
+    - row: 3
+      cells:
+      - Modal
+      - Effectful form only；首個錯誤欄位可聚焦；提交中保持幾何；取消不修改 Draft。
+    - row: 4
+      cells:
+      - Table
+      - 固定欄寬、固定內距、表頭重複；短欄置中，長文字左對齊；不得文字壓框。
+    - row: 5
+      cells:
+      - Keyboard
+      - 所有 SECTION_OPEN / Configure / Approve 可由鍵盤觸發，Focus Visible。
+    - row: 6
+      cells:
+      - States
+      - Loading 保留幾何；Empty / Error / Policy Blocked / Version Conflict 不得假造 business value。
+    - row: 7
+      cells:
+      - i18n
+      - zh-TW / zh-CN / en；QA / Gate / Criteria / Dimension 可依固定系統術語保留英文。
+  - index: 16
+    rows:
+    - row: 0
+      cells:
+      - ID
+      - Acceptance Condition
+    - row: 1
+      cells:
+      - ACC-01
+      - 單一 Current Admin Page；不重建舊多頁 QA Criteria UI
+    - row: 2
+      cells:
+      - ACC-02
+      - 頁面明確不是 Pending QA Queue / runtime QA workspace
+    - row: 3
+      cells:
+      - ACC-03
+      - Criteria Version / Dimension / Threshold / Required Check / Mapping / Gate Policy / Approval / Impact 均可被治理與追溯
+    - row: 4
+      cells:
+      - ACC-04
+      - 11 個 Current Controls 全部保留且無自行新增 Search / Filter / Export
+    - row: 5
+      cells:
+      - ACC-05
+      - ACTIVE criteria immutable；變更必須新版本 + Impact + Approval
+    - row: 6
+      cells:
+      - ACC-06
+      - 歷史 Review Result 永久保留 original criteria_version_ref
+    - row: 7
+      cells:
+      - ACC-07
+      - Configure / Approve 只使用已註冊 Governance operations
+    - row: 8
+      cells:
+      - ACC-08
+      - Threshold / Gate Policy 不 hardcode 於前端或 QA Runtime
+    - row: 9
+      cells:
+      - ACC-09
+      - Read-model data auto project；禁止 manual retype
+    - row: 10
+      cells:
+      - ACC-10
+      - Role / department 不作直接 authorization
+    - row: 11
+      cells:
+      - ACC-11
+      - Impact 不完整時 Approval fail closed
+    - row: 12
+      cells:
+      - ACC-12
+      - QA-01 找不到 mapping 時不猜 latest version
+    - row: 13
+      cells:
+      - ACC-13
+      - 缺值 = —；無 sample/mock criteria / score / threshold
+    - row: 14
+      cells:
+      - ACC-14
+      - Drawer / Modal / Table Geometry 與 A11y 合格
+    - row: 15
+      cells:
+      - ACC-15
+      - 設計文件完成不等於 Runtime / E2E / Production 完成
+  - index: 17
+    rows:
+    - row: 0
+      cells:
+      - Authority
+      - Value
+    - row: 1
+      cells:
+      - Source Commit
+      - 165c6440cb53b1b45ec96905241fb4d56dc3b867
+    - row: 2
+      cells:
+      - Machine Authority
+      - authority/pages/admin/SG-02/ACPOS_SG-02_QA_REVIEW_STANDARD_FINAL_LOCKED_ENCODING.yaml
+    - row: 3
+      cells:
+      - Authority SHA-256
+      - 4e5c1ac3ac8d0d127eef4fb04afd47d6127b424c2b03dd11837b70a157659a70
+    - row: 4
+      cells:
+      - Expected Control Denominator
+      - '12'
+    - row: 5
+      cells:
+      - Unique Control Rows
+      - '12'
+    - row: 6
+      cells:
+      - Denominator Gate
+      - PASS
+  - index: 18
+    rows:
+    - row: 0
+      cells:
+      - Control UID
+      - UID Status
+      - Label
+      - Type
+      - Action UID
+      - Gate
+      - Permission / Auth Resource
+      - Payload / Schema
+      - Operation
+      - Method / Path
+      - Runtime Owner
+      - Persistence Owner
+      - Runtime Status
+    - row: 1
+      cells:
+      - CTRL-ADMIN-SG-02-CRITERIA-TABLE-OPEN
+      - EXISTING_SOURCE_UID
+      - —
+      - SECTION_OPEN
+      - ACT-NAV-OPEN
+      - SOURCE_PAGE_GATE
+      - VIEW
+      - —
+      - getUiProjection
+      - GET /v1/ui-projections/{pageUid}
+      - Projection / source page read owner
+      - —
+      - READ_EXACT
+    - row: 2
+      cells:
+      - CTRL-ADMIN-SG-02-DIMENSION-LIBRARY-OPEN
+      - EXISTING_SOURCE_UID
+      - —
+      - SECTION_OPEN
+      - ACT-NAV-OPEN
+      - SOURCE_PAGE_GATE
+      - VIEW
+      - —
+      - getUiProjection
+      - GET /v1/ui-projections/{pageUid}
+      - Projection / source page read owner
+      - —
+      - READ_EXACT
+    - row: 3
+      cells:
+      - CTRL-ADMIN-SG-02-THRESHOLDS-OPEN
+      - EXISTING_SOURCE_UID
+      - —
+      - SECTION_OPEN
+      - ACT-NAV-OPEN
+      - SOURCE_PAGE_GATE
+      - VIEW
+      - —
+      - getUiProjection
+      - GET /v1/ui-projections/{pageUid}
+      - Projection / source page read owner
+      - —
+      - READ_EXACT
+    - row: 4
+      cells:
+      - CTRL-ADMIN-SG-02-DEPARTMENT-MAPPING-OPEN
+      - EXISTING_SOURCE_UID
+      - —
+      - SECTION_OPEN
+      - ACT-NAV-OPEN
+      - SOURCE_PAGE_GATE
+      - VIEW
+      - —
+      - getUiProjection
+      - GET /v1/ui-projections/{pageUid}
+      - Projection / source page read owner
+      - —
+      - READ_EXACT
+    - row: 5
+      cells:
+      - CTRL-ADMIN-SG-02-REQUIRED-CHECKS-OPEN
+      - EXISTING_SOURCE_UID
+      - —
+      - SECTION_OPEN
+      - ACT-NAV-OPEN
+      - SOURCE_PAGE_GATE
+      - VIEW
+      - —
+      - getUiProjection
+      - GET /v1/ui-projections/{pageUid}
+      - Projection / source page read owner
+      - —
+      - READ_EXACT
+    - row: 6
+      cells:
+      - CTRL-ADMIN-SG-02-GATE-POLICY-OPEN
+      - EXISTING_SOURCE_UID
+      - —
+      - SECTION_OPEN
+      - ACT-NAV-OPEN
+      - SOURCE_PAGE_GATE
+      - VIEW
+      - —
+      - getUiProjection
+      - GET /v1/ui-projections/{pageUid}
+      - Projection / source page read owner
+      - —
+      - READ_EXACT
+    - row: 7
+      cells:
+      - CTRL-ADMIN-SG-02-APPROVAL-OPEN
+      - EXISTING_SOURCE_UID
+      - —
+      - SECTION_OPEN
+      - ACT-NAV-OPEN
+      - SOURCE_PAGE_GATE
+      - VIEW
+      - —
+      - getUiProjection
+      - GET /v1/ui-projections/{pageUid}
+      - Projection / source page read owner
+      - —
+      - READ_EXACT
+    - row: 8
+      cells:
+      - CTRL-ADMIN-SG-02-IMPACT-OPEN
+      - EXISTING_SOURCE_UID
+      - —
+      - SECTION_OPEN
+      - ACT-NAV-OPEN
+      - SOURCE_PAGE_GATE
+      - VIEW
+      - —
+      - getUiProjection
+      - GET /v1/ui-projections/{pageUid}
+      - Projection / source page read owner
+      - —
+      - READ_EXACT
+    - row: 9
+      cells:
+      - CTRL-ADMIN-SG-02-ACT-01-ACT-CONFIGURE
+      - EXISTING_SOURCE_UID
+      - —
+      - BUSINESS_ACTION
+      - ACT-CONFIGURE
+      - SOURCE_PAGE_GATE
+      - governance.configure
+      - ConfigureGovernedResourceRequest
+      - configureGovernedResource
+      - PATCH /v1/governance/resources/{id}
+      - IAM_RUNTIME
+      - QualityGovernance / Resolved Governed Criteria Resource Draft/Version + Impact/Audit
+      - SPEC_EXACT_RUNTIME_NOT_EXECUTED
+    - row: 10
+      cells:
+      - CTRL-ADMIN-SG-02-ACT-02-ACT-APPROVE
+      - EXISTING_SOURCE_UID
+      - —
+      - BUSINESS_ACTION
+      - ACT-APPROVE
+      - SOURCE_PAGE_GATE
+      - governance.approve
+      - ApproveGovernedResourceRequest
+      - approveGovernedResource
+      - POST /v1/governance/resources/{id}/approve
+      - IAM_RUNTIME
+      - QualityGovernance / Resolved Governed Criteria Resource Approved Version + ApprovalRecord/Impact/Audit
+      - SPEC_EXACT_RUNTIME_NOT_EXECUTED
+    - row: 11
+      cells:
+      - CTRL-ADMIN-SG-02-ACT-03-ACT-NAV-OPEN
+      - EXISTING_SOURCE_UID
+      - —
+      - BUSINESS_ACTION
+      - ACT-NAV-OPEN
+      - SOURCE_PAGE_GATE
+      - page.view
+      - —
+      - getUiProjection
+      - GET /v1/ui-projections/{pageUid}
+      - Projection / source page read owner
+      - —
+      - READ_EXACT
+    - row: 12
+      cells:
+      - CTRL-ADMIN-SG-02-ACT-04-ACT-SUBMIT-REVIEW
+      - NEW_AUTHORITY_AFTER_COMPLETE_SOURCE_SCAN
+      - 送出審查 / Submit Review
+      - SECONDARY_BUTTON
+      - SG-02-ACT-SUBMIT-REVIEW
+      - SG-02-GATE-SUBMIT-REVIEW
+      - quality.criteria.configure
+      - SubmitGovernedResourceReviewRequest
+      - submitGovernedResourceReview
+      - POST /v1/governance/resources/{id}/submit-review
+      - Quality Governance Runtime
+      - governed Criteria Draft / Review lifecycle
+      - NEW_AUTHORITY_RUNTIME_IMPLEMENTATION_REQUIRED
+  - index: 19
+    rows:
+    - row: 0
+      cells:
+      - Finding
+      - Source-grounded status
+    - row: 1
+      cells:
+      - RUNTIME_BINDING_VALIDATION
+      - '{"status": "SOURCE_TESTS_6/6_PASS; PRODUCTION_READONLY_9/9_PASS; EFFECTFUL_PENDING_FORMAL_CRITERIA_MATERIALIZATION_AND_SUBMIT_REVIEW_RUNTIME"}'
+  - index: 20
+    rows:
+    - row: 0
+      cells:
+      - Profile UID
+      - Department
+      - Applicability
+      - Pass Threshold
+      - Authority Basis
+    - row: 1
+      cells:
+      - QCP-CORE-BASELINE-V1
+      - CORE
+      - CORE / Blueprint / Canonical Script
+      - '95'
+      - NEW 95 threshold authority; criteria rows new authority
+  - index: 21
+    rows:
+    - row: 0
+      cells:
+      - Order
+      - Dimension UID
+      - 審查項目
+      - English
+      - Weight
+      - Hard Block
+      - Definition
+    - row: 1
+      cells:
+      - '1'
+      - QA-DIM-CORE-GOAL
+      - 目標／Blueprint 意圖符合
+      - Goal / Blueprint Intent Compliance
+      - '15'
+      - 'NO'
+      - 核心故事、Topic、Blueprint 與明確目標一致
+    - row: 2
+      cells:
+      - '2'
+      - QA-DIM-CORE-LOGIC
+      - 故事／邏輯結構
+      - Story / Logic Structure
+      - '20'
+      - 'NO'
+      - 因果、前後條件、敘事結構無矛盾
+    - row: 3
+      cells:
+      - '3'
+      - QA-DIM-CORE-DNA-PLAN
+      - 角色／DNA 規劃一致性
+      - Character / DNA Plan Consistency
+      - '15'
+      - 'NO'
+      - 角色身份、外觀、行為、DNA 規劃不互相衝突
+    - row: 4
+      cells:
+      - '4'
+      - QA-DIM-CORE-SCENE-OBJECT
+      - 場景／物件連續規劃
+      - Scene / Object Continuity Plan
+      - '10'
+      - 'NO'
+      - 場景、物件、出現條件與連續性規劃完整
+    - row: 5
+      cells:
+      - '5'
+      - QA-DIM-CORE-COMPLETENESS
+      - 製作需求完整性
+      - Production Requirement Completeness
+      - '15'
+      - 'NO'
+      - ASSET/VIDEO/EDIT/VOICE/Subtitle 所需資訊可施工
+    - row: 6
+      cells:
+      - '6'
+      - QA-DIM-CORE-AMBIGUITY
+      - 歧義／衝突控制
+      - Ambiguity / Contradiction Control
+      - '10'
+      - 'NO'
+      - 無未裁決歧義、互斥指令或不明 owner
+    - row: 7
+      cells:
+      - '7'
+      - QA-DIM-EVIDENCE-PROVENANCE
+      - 證據／來源可追溯
+      - Evidence / Provenance
+      - '10'
+      - 'NO'
+      - 來源、版本、引用、決策證據完整
+    - row: 8
+      cells:
+      - '8'
+      - QA-DIM-RIGHTS-POLICY
+      - 權利／政策
+      - Rights / Policy
+      - '5'
+      - HARD BLOCK
+      - 權利、政策、禁止內容與使用限制必須 PASS
+  - index: 22
+    rows:
+    - row: 0
+      cells:
+      - Profile UID
+      - Department
+      - Applicability
+      - Pass Threshold
+      - Authority Basis
+    - row: 1
+      cells:
+      - QCP-ASSET-IMAGE-V1
+      - ASSET
+      - IMAGE asset outputs
+      - '95'
+      - NEW 95 threshold authority; concrete dimensions new authority
+  - index: 23
+    rows:
+    - row: 0
+      cells:
+      - Order
+      - Dimension UID
+      - 審查項目
+      - English
+      - Weight
+      - Hard Block
+      - Definition
+    - row: 1
+      cells:
+      - '1'
+      - QA-DIM-ASSET-SCRIPT
+      - 腳本／Manifest 符合
+      - Script / Manifest Compliance
+      - '15'
+      - 'NO'
+      - 符合 ASSET Script、Manifest Item 與用途
+    - row: 2
+      cells:
+      - '2'
+      - QA-DIM-ASSET-IDENTITY
+      - 人物／角色 DNA 一致性
+      - Character / Identity DNA Fidelity
+      - '20'
+      - 'NO'
+      - 臉、身形、服裝、標誌特徵與 DNA 一致
+    - row: 3
+      cells:
+      - '3'
+      - QA-DIM-ASSET-OBJECT
+      - 物件一致性
+      - Object Fidelity
+      - '10'
+      - 'NO'
+      - 物件形狀、材質、尺寸比例與指定版本一致
+    - row: 4
+      cells:
+      - '4'
+      - QA-DIM-ASSET-SCENE
+      - 場景／環境一致性
+      - Scene / Environment Fidelity
+      - '10'
+      - 'NO'
+      - 環境、空間、背景元素與 Scene DNA 一致
+    - row: 5
+      cells:
+      - '5'
+      - QA-DIM-ASSET-COMPOSITION
+      - 構圖／取景
+      - Composition / Framing
+      - '10'
+      - 'NO'
+      - 主體位置、鏡位意圖、留白與視覺重心合理
+    - row: 6
+      cells:
+      - '6'
+      - QA-DIM-ASSET-GEOMETRY
+      - 解剖／幾何／生成瑕疵
+      - Anatomy / Geometry / Artifact Integrity
+      - '15'
+      - 'NO'
+      - 手指、肢體、透視、破圖、重影、錯字等無明顯瑕疵
+    - row: 7
+      cells:
+      - '7'
+      - QA-DIM-ASSET-STYLE
+      - 風格／色彩／光線一致性
+      - Style / Color / Lighting Consistency
+      - '10'
+      - 'NO'
+      - 風格、色調、光線與系列基準一致
+    - row: 8
+      cells:
+      - '8'
+      - QA-DIM-ASSET-TECH
+      - 技術品質
+      - Technical Image Quality
+      - '5'
+      - 'NO'
+      - 尺寸、解析度、格式、清晰度與檔案完整
+    - row: 9
+      cells:
+      - '9'
+      - QA-DIM-RIGHTS-POLICY
+      - 權利／政策
+      - Rights / Policy
+      - '5'
+      - HARD BLOCK
+      - 權利與政策要求必須 PASS
+  - index: 24
+    rows:
+    - row: 0
+      cells:
+      - Profile UID
+      - Department
+      - Applicability
+      - Pass Threshold
+      - Authority Basis
+    - row: 1
+      cells:
+      - QCP-ASSET-AUDIO-V1
+      - ASSET
+      - VOICE / MUSIC / SFX asset outputs
+      - '95'
+      - NEW 95 threshold authority; concrete dimensions new authority
+  - index: 25
+    rows:
+    - row: 0
+      cells:
+      - Order
+      - Dimension UID
+      - 審查項目
+      - English
+      - Weight
+      - Hard Block
+      - Definition
+    - row: 1
+      cells:
+      - '1'
+      - QA-DIM-AUDIO-SCRIPT
+      - 腳本／Manifest 符合
+      - Script / Manifest Compliance
+      - '15'
+      - 'NO'
+      - 符合 Voice/Music/SFX Script 與用途
+    - row: 2
+      cells:
+      - '2'
+      - QA-DIM-AUDIO-IDENTITY
+      - 聲音身份／語意一致
+      - Voice Identity / Semantic Fit
+      - '20'
+      - 'NO'
+      - 指定角色聲線、語氣或音樂/SFX 意圖一致
+    - row: 3
+      cells:
+      - '3'
+      - QA-DIM-AUDIO-CONTENT
+      - 發音／內容正確
+      - Pronunciation / Content Accuracy
+      - '15'
+      - 'NO'
+      - 台詞、名稱、語言、發音與文字來源正確
+    - row: 4
+      cells:
+      - '4'
+      - QA-DIM-AUDIO-TIMING
+      - 時間／長度
+      - Timing / Duration
+      - '10'
+      - 'NO'
+      - 開始、結束、節奏與所屬片段長度合理
+    - row: 5
+      cells:
+      - '5'
+      - QA-DIM-AUDIO-NOISE
+      - 雜訊／爆音／失真
+      - Noise / Clipping / Distortion
+      - '15'
+      - 'NO'
+      - 無不可接受雜訊、爆音、削波、失真
+    - row: 6
+      cells:
+      - '6'
+      - QA-DIM-AUDIO-LEVEL
+      - 音量／動態
+      - Level / Dynamics
+      - '10'
+      - 'NO'
+      - 音量、峰值、動態與可懂度符合用途
+    - row: 7
+      cells:
+      - '7'
+      - QA-DIM-AUDIO-TECH
+      - 技術格式
+      - Technical Audio Format
+      - '10'
+      - 'NO'
+      - 取樣率、聲道、檔案格式與完整性符合輸出契約
+    - row: 8
+      cells:
+      - '8'
+      - QA-DIM-RIGHTS-POLICY
+      - 權利／政策
+      - Rights / Policy
+      - '5'
+      - HARD BLOCK
+      - 授權、素材來源與政策要求必須 PASS
+  - index: 26
+    rows:
+    - row: 0
+      cells:
+      - Profile UID
+      - Department
+      - Applicability
+      - Pass Threshold
+      - Authority Basis
+    - row: 1
+      cells:
+      - QCP-VIDEO-BASELINE-V1
+      - VIDEO
+      - VIDEO candidate outputs
+      - '95'
+      - Threshold 95 and 9 dimensions derived from existing VIDEO authority; weights new authority
+  - index: 27
+    rows:
+    - row: 0
+      cells:
+      - Order
+      - Dimension UID
+      - 審查項目
+      - English
+      - Weight
+      - Hard Block
+      - Definition
+    - row: 1
+      cells:
+      - '1'
+      - VIDEO-01-SCORE-SCRIPT
+      - 腳本符合
+      - Script Compliance
+      - '15'
+      - 'NO'
+      - 符合 Blueprint/VIDEO Script 與 shot beats
+    - row: 2
+      cells:
+      - '2'
+      - VIDEO-01-SCORE-IDENTITY
+      - 人物／身份穩定
+      - Character / Identity Stability
+      - '15'
+      - 'NO'
+      - 人物臉、身形、服裝、DNA 穩定
+    - row: 3
+      cells:
+      - '3'
+      - VIDEO-01-SCORE-MOTION
+      - 動作／身體連續性
+      - Motion / Body Continuity
+      - '15'
+      - 'NO'
+      - 動作連續、物理合理、無跳變
+    - row: 4
+      cells:
+      - '4'
+      - VIDEO-01-SCORE-CAMERA
+      - 鏡頭／視線
+      - Camera / Gaze
+      - '10'
+      - 'NO'
+      - 鏡位、構圖、視線與行動方向符合腳本
+    - row: 5
+      cells:
+      - '5'
+      - VIDEO-01-SCORE-SCENE
+      - 場景／連續性
+      - Scene / Continuity
+      - '10'
+      - 'NO'
+      - 場景、物件、空間與幀間狀態連續
+    - row: 6
+      cells:
+      - '6'
+      - VIDEO-01-SCORE-TIMING
+      - 時間／片長
+      - Timing / Duration
+      - '10'
+      - 'NO'
+      - 片段長度、節奏、事件時序符合要求
+    - row: 7
+      cells:
+      - '7'
+      - VIDEO-01-SCORE-TECH
+      - 技術品質
+      - Technical Quality
+      - '10'
+      - 'NO'
+      - 無破幀、閃爍、嚴重壓縮或不可用輸出
+    - row: 8
+      cells:
+      - '8'
+      - VIDEO-01-SCORE-ASSET
+      - 素材／DNA 忠實度
+      - Asset / DNA Fidelity
+      - '10'
+      - 'NO'
+      - 綁定素材與 DNA 在影片中保持一致
+    - row: 9
+      cells:
+      - '9'
+      - VIDEO-01-SCORE-RIGHTS
+      - 權利／政策
+      - Rights / Policy
+      - '5'
+      - HARD BLOCK
+      - 權利與政策 Hard Block 必須 PASS
+  - index: 28
+    rows:
+    - row: 0
+      cells:
+      - Profile UID
+      - Department
+      - Applicability
+      - Pass Threshold
+      - Authority Basis
+    - row: 1
+      cells:
+      - QCP-EDIT-FINAL-V1
+      - EDITING
+      - EDIT stage/final outputs
+      - '95'
+      - Threshold 95 derived from existing EDIT authority; concrete dimensions/weights new authority
+  - index: 29
+    rows:
+    - row: 0
+      cells:
+      - Order
+      - Dimension UID
+      - 審查項目
+      - English
+      - Weight
+      - Hard Block
+      - Definition
+    - row: 1
+      cells:
+      - '1'
+      - QA-DIM-EDIT-ASSEMBLY
+      - 鏡頭順序／組接符合
+      - Assembly / Shot Order Compliance
+      - '12'
+      - 'NO'
+      - Shot order、cut point 與 Script/Assembly 規格一致
+    - row: 2
+      cells:
+      - '2'
+      - QA-DIM-EDIT-PACING
+      - 節奏／剪接／轉場
+      - Pacing / Cuts / Transitions
+      - '10'
+      - 'NO'
+      - 節奏、剪接點、轉場自然且符合情緒
+    - row: 3
+      cells:
+      - '3'
+      - QA-DIM-EDIT-VISUAL
+      - 畫面／色彩／幀連續
+      - Visual / Color / Frame Continuity
+      - '8'
+      - 'NO'
+      - 色彩、亮度、構圖與幀間連續無異常
+    - row: 4
+      cells:
+      - '4'
+      - QA-DIM-EDIT-VOICE
+      - 配音／對白品質
+      - Voice / Dialogue Quality
+      - '8'
+      - 'NO'
+      - 對白清楚、聲線正確、無截斷或不合理停頓
+    - row: 5
+      cells:
+      - '5'
+      - QA-DIM-EDIT-BGM
+      - BGM 音量／Duck
+      - BGM Balance / Ducking
+      - '6'
+      - 'NO'
+      - BGM 與對白平衡、ducking 合理
+    - row: 6
+      cells:
+      - '6'
+      - QA-DIM-EDIT-SFX
+      - 音效時間／層次
+      - SFX Timing / Layering
+      - '6'
+      - 'NO'
+      - SFX 時點、層次與事件一致
+    - row: 7
+      cells:
+      - '7'
+      - QA-DIM-EDIT-AVSYNC
+      - 音畫同步
+      - Audio / Video Sync
+      - '8'
+      - 'NO'
+      - 聲音事件與畫面事件同步
+    - row: 8
+      cells:
+      - '8'
+      - QA-DIM-EDIT-LIPSYNC
+      - 嘴型／口型同步
+      - Lip Sync
+      - '10'
+      - 'NO'
+      - 嘴型與 DialogueTimingBinding／Voice Segment 對齊
+    - row: 9
+      cells:
+      - '9'
+      - QA-DIM-EDIT-SUB-CONTENT
+      - 字幕內容正確
+      - Subtitle Content Accuracy
+      - '8'
+      - 'NO'
+      - 字幕文字、語言、專有名詞與台詞一致
+    - row: 10
+      cells:
+      - '10'
+      - QA-DIM-EDIT-SUB-TIMING
+      - 字幕時間／可讀性／安全區
+      - Subtitle Timing / Readability / Safe Area
+      - '8'
+      - 'NO'
+      - In/Out、閱讀時間、換行、遮擋、安全區符合規範
+    - row: 11
+      cells:
+      - '11'
+      - QA-DIM-EDIT-TECH
+      - 最終輸出技術完整
+      - Technical Output Integrity
+      - '8'
+      - 'NO'
+      - Resolution/FPS/Codec/Duration/Tracks/Manifest 可驗證
+    - row: 12
+      cells:
+      - '12'
+      - QA-DIM-EDIT-RIGHTS
+      - 權利／來源／政策
+      - Rights / Provenance / Policy
+      - '8'
+      - HARD BLOCK
+      - Rights、Provenance、Policy Hard Block 必須 PASS
+  - index: 30
+    rows:
+    - row: 0
+      cells:
+      - Profile UID
+      - Department
+      - Applicability
+      - Pass Threshold
+      - Authority Basis
+    - row: 1
+      cells:
+      - QCP-QA-FINAL-OUTPUT-V1
+      - QA
+      - Final output / release-candidate review
+      - '95'
+      - Concrete final QA catalog and weights new authority
+  - index: 31
+    rows:
+    - row: 0
+      cells:
+      - Order
+      - Dimension UID
+      - 審查項目
+      - English
+      - Weight
+      - Hard Block
+      - Definition
+    - row: 1
+      cells:
+      - '1'
+      - QA-DIM-FINAL-SCRIPT
+      - 腳本／目標符合
+      - Script / Goal Compliance
+      - '6'
+      - 'NO'
+      - 最終輸出符合 Blueprint、Script 與目標
+    - row: 2
+      cells:
+      - '2'
+      - QA-DIM-FINAL-IDENTITY
+      - 人物／角色一致性
+      - Character Identity Consistency
+      - '9'
+      - 'NO'
+      - 人物臉、身形、服裝、DNA 跨鏡頭一致
+    - row: 3
+      cells:
+      - '3'
+      - QA-DIM-FINAL-SCENE
+      - 場景／物件一致性
+      - Scene / Object Consistency
+      - '7'
+      - 'NO'
+      - 場景、物件、空間關係與版本一致
+    - row: 4
+      cells:
+      - '4'
+      - QA-DIM-FINAL-COMPOSITION
+      - 構圖／取景
+      - Composition / Framing
+      - '6'
+      - 'NO'
+      - 構圖、主體位置、視覺重心符合意圖
+    - row: 5
+      cells:
+      - '5'
+      - QA-DIM-FINAL-MOTION
+      - 動作／身體連續性
+      - Motion / Body Continuity
+      - '7'
+      - 'NO'
+      - 動作連續、姿態合理、無瞬移
+    - row: 6
+      cells:
+      - '6'
+      - QA-DIM-FINAL-FRAME
+      - 幀間連續性
+      - Frame-to-Frame Continuity
+      - '8'
+      - 'NO'
+      - 相鄰幀無閃爍、跳變、物體突變或不合理 morph
+    - row: 7
+      cells:
+      - '7'
+      - QA-DIM-FINAL-CAMERA
+      - 鏡頭／視線連續
+      - Camera / Gaze Continuity
+      - '5'
+      - 'NO'
+      - 鏡位、軸線、視線與運動方向連續
+    - row: 8
+      cells:
+      - '8'
+      - QA-DIM-FINAL-LIPSYNC
+      - 嘴型／口型同步
+      - Lip Sync
+      - '7'
+      - 'NO'
+      - 嘴型與實際語音/DialogueTimingBinding 對齊
+    - row: 9
+      cells:
+      - '9'
+      - QA-DIM-FINAL-VOICE
+      - 配音／對白品質
+      - Voice / Dialogue Quality
+      - '6'
+      - 'NO'
+      - 聲線、語氣、清晰度與角色一致
+    - row: 10
+      cells:
+      - '10'
+      - QA-DIM-FINAL-AUDIO
+      - 音訊技術品質
+      - Audio Technical Quality
+      - '5'
+      - 'NO'
+      - 無 clipping、noise、dropout、失真
+    - row: 11
+      cells:
+      - '11'
+      - QA-DIM-FINAL-MIX
+      - BGM／音效平衡與時間
+      - BGM / SFX Balance & Timing
+      - '5'
+      - 'NO'
+      - BGM、SFX 與對白音量/時點合理
+    - row: 12
+      cells:
+      - '12'
+      - QA-DIM-FINAL-SUBCONTENT
+      - 字幕內容正確
+      - Subtitle Content Accuracy
+      - '6'
+      - 'NO'
+      - 字幕與台詞、語言、專有名詞一致
+    - row: 13
+      cells:
+      - '13'
+      - QA-DIM-FINAL-SUBTIMING
+      - 字幕時間／可讀性／安全區
+      - Subtitle Timing / Readability / Safe Area
+      - '6'
+      - 'NO'
+      - 字幕 in/out、閱讀時間、換行、遮擋、安全區正確
+    - row: 14
+      cells:
+      - '14'
+      - QA-DIM-FINAL-EDIT
+      - 剪輯節奏／轉場
+      - Editing Pacing / Transition
+      - '6'
+      - 'NO'
+      - 節奏、cut、transition 與敘事情緒一致
+    - row: 15
+      cells:
+      - '15'
+      - QA-DIM-FINAL-AVSYNC
+      - 音畫同步
+      - Audio / Video Sync
+      - '5'
+      - 'NO'
+      - 對白、SFX、音樂事件與畫面同步
+    - row: 16
+      cells:
+      - '16'
+      - QA-DIM-FINAL-TECH
+      - 輸出技術完整
+      - Technical Output Integrity
+      - '4'
+      - 'NO'
+      - Resolution/FPS/Codec/Duration/Manifest/Decode 正常
+    - row: 17
+      cells:
+      - '17'
+      - QA-DIM-FINAL-RIGHTS
+      - 權利／政策／來源
+      - Rights / Policy / Provenance
+      - '2'
+      - HARD BLOCK
+      - Rights/Policy/Provenance Hard Block 必須 PASS
+  - index: 32
+    rows:
+    - row: 0
+      cells:
+      - Check UID
+      - Name
+      - Blocking Rule
+    - row: 1
+      cells:
+      - QA-CHK-OUTPUT-IDENTITY
+      - Exact Output Identity
+      - Exact output_id/version/artifact ref resolved; no latest/default alias
+    - row: 2
+      cells:
+      - QA-CHK-CHECKSUM
+      - Checksum / Manifest
+      - Artifact checksum matches exact manifest/output bytes
+    - row: 3
+      cells:
+      - QA-CHK-PROVENANCE
+      - Provenance / Lineage
+      - Blueprint/Script/Asset/Video/Edit lineage and source refs are complete
+    - row: 4
+      cells:
+      - QA-CHK-CRITERIA
+      - Approved Criteria Binding
+      - Exact CriteriaVersion + QualityGatePolicyVersion is APPROVED and applicable
+    - row: 5
+      cells:
+      - QA-CHK-RIGHTS
+      - Rights / Policy
+      - Rights, content policy, channel/use restrictions PASS
+    - row: 6
+      cells:
+      - QA-CHK-BOUND-INPUTS
+      - Bound Inputs
+      - Required input asset/script/DNA refs exist and are not stale/superseded
+    - row: 7
+      cells:
+      - QA-CHK-DECODE
+      - Decode / Technical Manifest
+      - Output opens/decodes; duration/resolution/fps/track manifest matches contract
+    - row: 8
+      cells:
+      - QA-CHK-BLOCKING-FINDING
+      - Blocking Findings
+      - No unresolved blocking Finding/Hard Block
+    - row: 9
+      cells:
+      - QA-CHK-MANUAL-REVIEW
+      - Manual Review
+      - Required ManualReviewCase is closed/passed
+    - row: 10
+      cells:
+      - QA-CHK-RECHECK
+      - Correction/Recheck Freshness
+      - After correction, QA uses a verified NEW exact output version before closure
+  - index: 33
+    rows:
+    - row: 0
+      cells:
+      - Category UID
+      - Enum
+      - Display
+    - row: 1
+      cells:
+      - QA-ISSUE-SCRIPT
+      - SCRIPT_COMPLIANCE
+      - 腳本／目標不符
+    - row: 2
+      cells:
+      - QA-ISSUE-IDENTITY
+      - IDENTITY_CONSISTENCY
+      - 人物／角色／DNA 一致性
+    - row: 3
+      cells:
+      - QA-ISSUE-SCENE
+      - SCENE_OBJECT_CONTINUITY
+      - 場景／物件連續性
+    - row: 4
+      cells:
+      - QA-ISSUE-COMPOSITION
+      - COMPOSITION_FRAMING
+      - 構圖／取景
+    - row: 5
+      cells:
+      - QA-ISSUE-MOTION
+      - MOTION_CONTINUITY
+      - 動作／身體連續性
+    - row: 6
+      cells:
+      - QA-ISSUE-FRAME
+      - FRAME_CONTINUITY
+      - 幀間連續性
+    - row: 7
+      cells:
+      - QA-ISSUE-CAMERA
+      - CAMERA_GAZE
+      - 鏡頭／視線
+    - row: 8
+      cells:
+      - QA-ISSUE-LIPSYNC
+      - LIP_SYNC
+      - 嘴型／口型同步
+    - row: 9
+      cells:
+      - QA-ISSUE-VOICE
+      - VOICE_DIALOGUE
+      - 配音／對白
+    - row: 10
+      cells:
+      - QA-ISSUE-AUDIO
+      - AUDIO_TECHNICAL
+      - 音訊技術品質
+    - row: 11
+      cells:
+      - QA-ISSUE-MIX
+      - BGM_SFX
+      - BGM／音效
+    - row: 12
+      cells:
+      - QA-ISSUE-SUBCONTENT
+      - SUBTITLE_CONTENT
+      - 字幕內容
+    - row: 13
+      cells:
+      - QA-ISSUE-SUBTIMING
+      - SUBTITLE_TIMING_READABILITY
+      - 字幕時間／可讀性
+    - row: 14
+      cells:
+      - QA-ISSUE-EDIT
+      - EDITING_PACING
+      - 剪輯節奏／轉場
+    - row: 15
+      cells:
+      - QA-ISSUE-AVSYNC
+      - AV_SYNC
+      - 音畫同步
+    - row: 16
+      cells:
+      - QA-ISSUE-TECH
+      - TECHNICAL_OUTPUT
+      - 技術輸出
+    - row: 17
+      cells:
+      - QA-ISSUE-RIGHTS
+      - RIGHTS_POLICY_PROVENANCE
+      - 權利／政策／來源
+    - row: 18
+      cells:
+      - QA-ISSUE-EVIDENCE
+      - EVIDENCE_PROVENANCE
+      - 證據／追溯
+  - index: 34
+    rows:
+    - row: 0
+      cells:
+      - Surface
+      - Must Display
+    - row: 1
+      cells:
+      - Criteria Table
+      - Profile UID / Criteria Version / Department / Artifact Applicability / Status / Threshold / Dimension Count / Required Check Count / Approval Ref
+    - row: 2
+      cells:
+      - Dimension Library Drawer
+      - 逐項 Dimension UID / 中文名 / English / Definition；禁止只顯示 dimensions JSON/count
+    - row: 3
+      cells:
+      - Threshold Drawer
+      - 每個 Profile 的 overall pass threshold=95；Hard Block override；VIDEO/EDIT 95 沿用既有 authority，其餘 95 為本次新 Authority
+    - row: 4
+      cells:
+      - Required Checks Drawer
+      - 逐項顯示上述 10 個 checks、PASS/BLOCK 狀態與 Evidence refs
+    - row: 5
+      cells:
+      - Department Mapping
+      - CORE→CORE profile；ASSET→IMAGE/AUDIO profile by artifact type；VIDEO→VIDEO profile；EDITING→EDIT profile；QA→FINAL OUTPUT profile
+    - row: 6
+      cells:
+      - Approval / Impact
+      - 顯示 DRAFT/REVIEW/APPROVED/ACTIVE/SUPERSEDED、content hash、affected tasks、revalidation requirement
+  - index: 35
+    rows:
+    - row: 0
+      cells:
+      - State
+      - Control / Operation
+      - Rule
+    - row: 1
+      cells:
+      - EMPTY
+      - Existing Configure control = Create Draft mode
+      - 有 quality.criteria.configure 權限時可從 canonical baseline profile 建立第一個 DRAFT；不可因 EMPTY 永久 disable。
+    - row: 2
+      cells:
+      - DRAFT
+      - Configure
+      - 只可修改 DRAFT；APPROVED/ACTIVE immutable。
+    - row: 3
+      cells:
+      - DRAFT → REVIEW
+      - 'NEW: Submit Review'
+      - 新增 Control UID CTRL-ADMIN-SG-02-ACT-04-ACT-SUBMIT-REVIEW；Action UID SG-02-ACT-SUBMIT-REVIEW；new operation submitGovernedResourceReview；POST /v1/governance/resources/{id}/submit-review；permission
+        quality.criteria.configure；產生 audit event governance.review_submitted。
+    - row: 4
+      cells:
+      - REVIEW
+      - Approve
+      - 沿用 approveGovernedResource；permission governance.approve；通過後 materialize APPROVED quality_criteria_version。
+    - row: 5
+      cells:
+      - APPROVED / ACTIVE
+      - Read-only
+      - 修改必須建立新 version；不得原地覆寫。
+  - index: 36
+    rows:
+    - row: 0
+      cells:
+      - Evidence
+      - Result
+    - row: 1
+      cells:
+      - Source/runtime release tests
+      - 6/6 PASS
+    - row: 2
+      cells:
+      - Production release SHA
+      - e28f528eab7c739fc8d585d962d74d3a689fa7da
+    - row: 3
+      cells:
+      - Production read-only controls
+      - 9/9 PASS · getUiProjection · HTTP 200 · drawers visible
+    - row: 4
+      cells:
+      - Production criteria data at validation
+      - EMPTY · criteria_versions=[] · dimensions=null · required_checks=null · gate_policy=null
+    - row: 5
+      cells:
+      - Concrete QA detail in Production
+      - MISSING at validation
+    - row: 6
+      cells:
+      - Configure / Approve
+      - Both disabled because no materialized Criteria lifecycle data
+    - row: 7
+      cells:
+      - Effectful acceptance
+      - BLOCKED until new lifecycle closure is implemented and at least one formal CriteriaVersion is DRAFT→REVIEW→APPROVED
+  - index: 37
+    rows:
+    - row: 0
+      cells:
+      - Entity
+      - Operation
+      - Applicability
+      - Authority Evidence
+    - row: 1
+      cells:
+      - approval_record
+      - ARCHIVE_OR_DELETE
+      - NOT_APPLICABLE
+      - Current lifecycle matrix dash normalized to NOT_APPLICABLE; no operation is authorized in this current matrix cell. T4R9[—]
+    - row: 2
+      cells:
+      - approval_record
+      - AUDIT
+      - REQUIRED
+      - Current explicit applicability preserved. T4R9[R]
+    - row: 3
+      cells:
+      - approval_record
+      - CATEGORY_OR_GROUP_BIND
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 4
+      cells:
+      - approval_record
+      - CONFIRM_OR_APPROVE
+      - REQUIRED
+      - Current entity-bound operation evidence normalized to REQUIRED. T4R9[— | Approve operation]
+    - row: 5
+      cells:
+      - approval_record
+      - CREATE
+      - REQUIRED
+      - Current entity-bound operation evidence normalized to REQUIRED. T4R9[System after approval]
+    - row: 6
+      cells:
+      - approval_record
+      - CREATION_MODE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 7
+      cells:
+      - approval_record
+      - DEPENDENCY_IMPACT
+      - NOT_APPLICABLE
+      - Current lifecycle matrix dash normalized to NOT_APPLICABLE; no operation is authorized in this current matrix cell. T4R9[—]
+    - row: 8
+      cells:
+      - approval_record
+      - DISCOVER_OR_LIST
+      - REQUIRED
+      - Current explicit applicability preserved. T4R9[R]
+    - row: 9
+      cells:
+      - approval_record
+      - DRAFT
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 10
+      cells:
+      - approval_record
+      - EDIT
+      - NOT_APPLICABLE
+      - Current lifecycle matrix dash normalized to NOT_APPLICABLE; no operation is authorized in this current matrix cell. T4R9[—]
+    - row: 11
+      cells:
+      - approval_record
+      - ERROR_RECOVERY
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 12
+      cells:
+      - approval_record
+      - LOCK_OR_UNLOCK
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 13
+      cells:
+      - approval_record
+      - MOVE_OR_REPARENT
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 14
+      cells:
+      - approval_record
+      - NEXT_STEP
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 15
+      cells:
+      - approval_record
+      - PARENT_BIND
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 16
+      cells:
+      - approval_record
+      - REORDER
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 17
+      cells:
+      - approval_record
+      - RESTORE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 18
+      cells:
+      - approval_record
+      - RESUME
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 19
+      cells:
+      - approval_record
+      - REVISE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 20
+      cells:
+      - approval_record
+      - SAVE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 21
+      cells:
+      - approval_record
+      - SELECT_OR_OPEN
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 22
+      cells:
+      - approval_record
+      - VALIDATE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 23
+      cells:
+      - approval_record
+      - VERSION
+      - REQUIRED
+      - Current entity-bound operation evidence normalized to REQUIRED. T4R9[Append-only]
+    - row: 24
+      cells:
+      - department_mapping
+      - ARCHIVE_OR_DELETE
+      - REQUIRED
+      - Current entity-bound operation evidence normalized to REQUIRED. T4R6[No direct delete]
+    - row: 25
+      cells:
+      - department_mapping
+      - AUDIT
+      - REQUIRED
+      - Current explicit applicability preserved. T4R6[R]
+    - row: 26
+      cells:
+      - department_mapping
+      - CATEGORY_OR_GROUP_BIND
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 27
+      cells:
+      - department_mapping
+      - CONFIRM_OR_APPROVE
+      - REQUIRED
+      - Current entity-bound operation evidence normalized to REQUIRED. T4R6[— | Via criteria approval]
+    - row: 28
+      cells:
+      - department_mapping
+      - CREATE
+      - NOT_APPLICABLE
+      - Current lifecycle matrix dash normalized to NOT_APPLICABLE; no operation is authorized in this current matrix cell. T4R6[—]
+    - row: 29
+      cells:
+      - department_mapping
+      - CREATION_MODE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 30
+      cells:
+      - department_mapping
+      - DEPENDENCY_IMPACT
+      - REQUIRED
+      - Current explicit applicability preserved. T4R6[Impact required]
+    - row: 31
+      cells:
+      - department_mapping
+      - DISCOVER_OR_LIST
+      - REQUIRED
+      - Current explicit applicability preserved. T4R6[R]
+    - row: 32
+      cells:
+      - department_mapping
+      - DRAFT
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 33
+      cells:
+      - department_mapping
+      - EDIT
+      - REQUIRED
+      - Current entity-bound operation evidence normalized to REQUIRED. T4R6[Configure]
+    - row: 34
+      cells:
+      - department_mapping
+      - ERROR_RECOVERY
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 35
+      cells:
+      - department_mapping
+      - LOCK_OR_UNLOCK
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 36
+      cells:
+      - department_mapping
+      - MOVE_OR_REPARENT
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 37
+      cells:
+      - department_mapping
+      - NEXT_STEP
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 38
+      cells:
+      - department_mapping
+      - PARENT_BIND
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 39
+      cells:
+      - department_mapping
+      - REORDER
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 40
+      cells:
+      - department_mapping
+      - RESTORE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 41
+      cells:
+      - department_mapping
+      - RESUME
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 42
+      cells:
+      - department_mapping
+      - REVISE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 43
+      cells:
+      - department_mapping
+      - SAVE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 44
+      cells:
+      - department_mapping
+      - SELECT_OR_OPEN
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 45
+      cells:
+      - department_mapping
+      - VALIDATE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 46
+      cells:
+      - department_mapping
+      - VERSION
+      - REQUIRED
+      - Current entity-bound operation evidence normalized to REQUIRED. T4R6[Version-bound]
+    - row: 47
+      cells:
+      - dimension_library
+      - ARCHIVE_OR_DELETE
+      - REQUIRED
+      - Current entity-bound operation evidence normalized to REQUIRED. T4R3[Retire only if legal]
+    - row: 48
+      cells:
+      - dimension_library
+      - AUDIT
+      - REQUIRED
+      - Current explicit applicability preserved. T4R3[R]
+    - row: 49
+      cells:
+      - dimension_library
+      - CATEGORY_OR_GROUP_BIND
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 50
+      cells:
+      - dimension_library
+      - CONFIRM_OR_APPROVE
+      - REQUIRED
+      - Current entity-bound operation evidence normalized to REQUIRED. T4R3[— | Governed]
+    - row: 51
+      cells:
+      - dimension_library
+      - CREATE
+      - NOT_APPLICABLE
+      - Current lifecycle matrix dash normalized to NOT_APPLICABLE; no operation is authorized in this current matrix cell. T4R3[—]
+    - row: 52
+      cells:
+      - dimension_library
+      - CREATION_MODE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 53
+      cells:
+      - dimension_library
+      - DEPENDENCY_IMPACT
+      - REQUIRED
+      - Current entity-bound operation evidence normalized to REQUIRED. T4R3[Impact if referenced]
+    - row: 54
+      cells:
+      - dimension_library
+      - DISCOVER_OR_LIST
+      - REQUIRED
+      - Current explicit applicability preserved. T4R3[R]
+    - row: 55
+      cells:
+      - dimension_library
+      - DRAFT
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 56
+      cells:
+      - dimension_library
+      - EDIT
+      - REQUIRED
+      - Current entity-bound operation evidence normalized to REQUIRED. T4R3[Configure]
+    - row: 57
+      cells:
+      - dimension_library
+      - ERROR_RECOVERY
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 58
+      cells:
+      - dimension_library
+      - LOCK_OR_UNLOCK
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 59
+      cells:
+      - dimension_library
+      - MOVE_OR_REPARENT
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 60
+      cells:
+      - dimension_library
+      - NEXT_STEP
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 61
+      cells:
+      - dimension_library
+      - PARENT_BIND
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 62
+      cells:
+      - dimension_library
+      - REORDER
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 63
+      cells:
+      - dimension_library
+      - RESTORE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 64
+      cells:
+      - dimension_library
+      - RESUME
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 65
+      cells:
+      - dimension_library
+      - REVISE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 66
+      cells:
+      - dimension_library
+      - SAVE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 67
+      cells:
+      - dimension_library
+      - SELECT_OR_OPEN
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 68
+      cells:
+      - dimension_library
+      - VALIDATE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 69
+      cells:
+      - dimension_library
+      - VERSION
+      - REQUIRED
+      - Current entity-bound operation evidence normalized to REQUIRED. T4R3[Versioned]
+    - row: 70
+      cells:
+      - impact_record
+      - ARCHIVE_OR_DELETE
+      - NOT_APPLICABLE
+      - Current lifecycle matrix dash normalized to NOT_APPLICABLE; no operation is authorized in this current matrix cell. T4R8[—]
+    - row: 71
+      cells:
+      - impact_record
+      - AUDIT
+      - REQUIRED
+      - Current explicit applicability preserved. T4R8[R]
+    - row: 72
+      cells:
+      - impact_record
+      - CATEGORY_OR_GROUP_BIND
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 73
+      cells:
+      - impact_record
+      - CONFIRM_OR_APPROVE
+      - REQUIRED
+      - Current explicit applicability preserved. T4R8[— | Required evidence]
+    - row: 74
+      cells:
+      - impact_record
+      - CREATE
+      - REQUIRED
+      - Current entity-bound operation evidence normalized to REQUIRED. T4R8[System/Create via governed change]
+    - row: 75
+      cells:
+      - impact_record
+      - CREATION_MODE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 76
+      cells:
+      - impact_record
+      - DEPENDENCY_IMPACT
+      - REQUIRED
+      - Current entity-bound operation evidence normalized to REQUIRED. T4R8[Self]
+    - row: 77
+      cells:
+      - impact_record
+      - DISCOVER_OR_LIST
+      - REQUIRED
+      - Current explicit applicability preserved. T4R8[R]
+    - row: 78
+      cells:
+      - impact_record
+      - DRAFT
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 79
+      cells:
+      - impact_record
+      - EDIT
+      - REQUIRED
+      - Current entity-bound operation evidence normalized to REQUIRED. T4R8[Append]
+    - row: 80
+      cells:
+      - impact_record
+      - ERROR_RECOVERY
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 81
+      cells:
+      - impact_record
+      - LOCK_OR_UNLOCK
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 82
+      cells:
+      - impact_record
+      - MOVE_OR_REPARENT
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 83
+      cells:
+      - impact_record
+      - NEXT_STEP
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 84
+      cells:
+      - impact_record
+      - PARENT_BIND
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 85
+      cells:
+      - impact_record
+      - REORDER
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 86
+      cells:
+      - impact_record
+      - RESTORE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 87
+      cells:
+      - impact_record
+      - RESUME
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 88
+      cells:
+      - impact_record
+      - REVISE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 89
+      cells:
+      - impact_record
+      - SAVE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 90
+      cells:
+      - impact_record
+      - SELECT_OR_OPEN
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 91
+      cells:
+      - impact_record
+      - VALIDATE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 92
+      cells:
+      - impact_record
+      - VERSION
+      - REQUIRED
+      - Current entity-bound operation evidence normalized to REQUIRED. T4R8[Append-only]
+    - row: 93
+      cells:
+      - quality_criteria_version
+      - ARCHIVE_OR_DELETE
+      - REQUIRED
+      - Current entity-bound operation evidence normalized to REQUIRED. T4R2[Supersede / Retire]
+    - row: 94
+      cells:
+      - quality_criteria_version
+      - AUDIT
+      - REQUIRED
+      - Current explicit applicability preserved. T4R2[R]
+    - row: 95
+      cells:
+      - quality_criteria_version
+      - CATEGORY_OR_GROUP_BIND
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 96
+      cells:
+      - quality_criteria_version
+      - CONFIRM_OR_APPROVE
+      - REQUIRED
+      - Current entity-bound operation evidence normalized to REQUIRED. T4R2[Review | Approve]
+    - row: 97
+      cells:
+      - quality_criteria_version
+      - CREATE
+      - NOT_APPLICABLE
+      - Current lifecycle matrix dash normalized to NOT_APPLICABLE; no operation is authorized in this current matrix cell. T4R2[—]
+    - row: 98
+      cells:
+      - quality_criteria_version
+      - CREATION_MODE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 99
+      cells:
+      - quality_criteria_version
+      - DEPENDENCY_IMPACT
+      - REQUIRED
+      - Current explicit applicability preserved. T4R2[Impact required]
+    - row: 100
+      cells:
+      - quality_criteria_version
+      - DISCOVER_OR_LIST
+      - REQUIRED
+      - Current explicit applicability preserved. T4R2[R]
+    - row: 101
+      cells:
+      - quality_criteria_version
+      - DRAFT
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 102
+      cells:
+      - quality_criteria_version
+      - EDIT
+      - REQUIRED
+      - Current entity-bound operation evidence normalized to REQUIRED. T4R2[Configure→new draft]
+    - row: 103
+      cells:
+      - quality_criteria_version
+      - ERROR_RECOVERY
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 104
+      cells:
+      - quality_criteria_version
+      - LOCK_OR_UNLOCK
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 105
+      cells:
+      - quality_criteria_version
+      - MOVE_OR_REPARENT
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 106
+      cells:
+      - quality_criteria_version
+      - NEXT_STEP
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 107
+      cells:
+      - quality_criteria_version
+      - PARENT_BIND
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 108
+      cells:
+      - quality_criteria_version
+      - REORDER
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 109
+      cells:
+      - quality_criteria_version
+      - RESTORE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 110
+      cells:
+      - quality_criteria_version
+      - RESUME
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 111
+      cells:
+      - quality_criteria_version
+      - REVISE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 112
+      cells:
+      - quality_criteria_version
+      - SAVE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 113
+      cells:
+      - quality_criteria_version
+      - SELECT_OR_OPEN
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 114
+      cells:
+      - quality_criteria_version
+      - VALIDATE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 115
+      cells:
+      - quality_criteria_version
+      - VERSION
+      - REQUIRED
+      - Current entity-bound operation evidence normalized to REQUIRED. T4R2[Versioned]
+    - row: 116
+      cells:
+      - quality_gate_policy
+      - ARCHIVE_OR_DELETE
+      - REQUIRED
+      - Current entity-bound operation evidence normalized to REQUIRED. T4R7[Supersede / Retire]
+    - row: 117
+      cells:
+      - quality_gate_policy
+      - AUDIT
+      - REQUIRED
+      - Current explicit applicability preserved. T4R7[R]
+    - row: 118
+      cells:
+      - quality_gate_policy
+      - CATEGORY_OR_GROUP_BIND
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 119
+      cells:
+      - quality_gate_policy
+      - CONFIRM_OR_APPROVE
+      - REQUIRED
+      - Current entity-bound operation evidence normalized to REQUIRED. T4R7[Review | Approve]
+    - row: 120
+      cells:
+      - quality_gate_policy
+      - CREATE
+      - NOT_APPLICABLE
+      - Current lifecycle matrix dash normalized to NOT_APPLICABLE; no operation is authorized in this current matrix cell. T4R7[—]
+    - row: 121
+      cells:
+      - quality_gate_policy
+      - CREATION_MODE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 122
+      cells:
+      - quality_gate_policy
+      - DEPENDENCY_IMPACT
+      - REQUIRED
+      - Current explicit applicability preserved. T4R7[Impact required]
+    - row: 123
+      cells:
+      - quality_gate_policy
+      - DISCOVER_OR_LIST
+      - REQUIRED
+      - Current explicit applicability preserved. T4R7[R]
+    - row: 124
+      cells:
+      - quality_gate_policy
+      - DRAFT
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 125
+      cells:
+      - quality_gate_policy
+      - EDIT
+      - REQUIRED
+      - Current entity-bound operation evidence normalized to REQUIRED. T4R7[Configure]
+    - row: 126
+      cells:
+      - quality_gate_policy
+      - ERROR_RECOVERY
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 127
+      cells:
+      - quality_gate_policy
+      - LOCK_OR_UNLOCK
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 128
+      cells:
+      - quality_gate_policy
+      - MOVE_OR_REPARENT
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 129
+      cells:
+      - quality_gate_policy
+      - NEXT_STEP
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 130
+      cells:
+      - quality_gate_policy
+      - PARENT_BIND
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 131
+      cells:
+      - quality_gate_policy
+      - REORDER
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 132
+      cells:
+      - quality_gate_policy
+      - RESTORE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 133
+      cells:
+      - quality_gate_policy
+      - RESUME
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 134
+      cells:
+      - quality_gate_policy
+      - REVISE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 135
+      cells:
+      - quality_gate_policy
+      - SAVE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 136
+      cells:
+      - quality_gate_policy
+      - SELECT_OR_OPEN
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 137
+      cells:
+      - quality_gate_policy
+      - VALIDATE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 138
+      cells:
+      - quality_gate_policy
+      - VERSION
+      - REQUIRED
+      - Current entity-bound operation evidence normalized to REQUIRED. T4R7[Versioned]
+    - row: 139
+      cells:
+      - required_check
+      - ARCHIVE_OR_DELETE
+      - REQUIRED
+      - Current entity-bound operation evidence normalized to REQUIRED. T4R5[No direct delete]
+    - row: 140
+      cells:
+      - required_check
+      - AUDIT
+      - REQUIRED
+      - Current explicit applicability preserved. T4R5[R]
+    - row: 141
+      cells:
+      - required_check
+      - CATEGORY_OR_GROUP_BIND
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 142
+      cells:
+      - required_check
+      - CONFIRM_OR_APPROVE
+      - REQUIRED
+      - Current entity-bound operation evidence normalized to REQUIRED. T4R5[— | Via criteria approval]
+    - row: 143
+      cells:
+      - required_check
+      - CREATE
+      - NOT_APPLICABLE
+      - Current lifecycle matrix dash normalized to NOT_APPLICABLE; no operation is authorized in this current matrix cell. T4R5[—]
+    - row: 144
+      cells:
+      - required_check
+      - CREATION_MODE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 145
+      cells:
+      - required_check
+      - DEPENDENCY_IMPACT
+      - REQUIRED
+      - Current explicit applicability preserved. T4R5[Impact required]
+    - row: 146
+      cells:
+      - required_check
+      - DISCOVER_OR_LIST
+      - REQUIRED
+      - Current explicit applicability preserved. T4R5[R]
+    - row: 147
+      cells:
+      - required_check
+      - DRAFT
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 148
+      cells:
+      - required_check
+      - EDIT
+      - REQUIRED
+      - Current entity-bound operation evidence normalized to REQUIRED. T4R5[Configure]
+    - row: 149
+      cells:
+      - required_check
+      - ERROR_RECOVERY
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 150
+      cells:
+      - required_check
+      - LOCK_OR_UNLOCK
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 151
+      cells:
+      - required_check
+      - MOVE_OR_REPARENT
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 152
+      cells:
+      - required_check
+      - NEXT_STEP
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 153
+      cells:
+      - required_check
+      - PARENT_BIND
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 154
+      cells:
+      - required_check
+      - REORDER
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 155
+      cells:
+      - required_check
+      - RESTORE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 156
+      cells:
+      - required_check
+      - RESUME
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 157
+      cells:
+      - required_check
+      - REVISE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 158
+      cells:
+      - required_check
+      - SAVE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 159
+      cells:
+      - required_check
+      - SELECT_OR_OPEN
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 160
+      cells:
+      - required_check
+      - VALIDATE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 161
+      cells:
+      - required_check
+      - VERSION
+      - REQUIRED
+      - Current entity-bound operation evidence normalized to REQUIRED. T3R5[Version / scope bound]; T4R5[Version-bound]
+    - row: 162
+      cells:
+      - review_result_binding
+      - ARCHIVE_OR_DELETE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 163
+      cells:
+      - review_result_binding
+      - AUDIT
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 164
+      cells:
+      - review_result_binding
+      - CATEGORY_OR_GROUP_BIND
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 165
+      cells:
+      - review_result_binding
+      - CONFIRM_OR_APPROVE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 166
+      cells:
+      - review_result_binding
+      - CREATE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 167
+      cells:
+      - review_result_binding
+      - CREATION_MODE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 168
+      cells:
+      - review_result_binding
+      - DEPENDENCY_IMPACT
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 169
+      cells:
+      - review_result_binding
+      - DISCOVER_OR_LIST
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 170
+      cells:
+      - review_result_binding
+      - DRAFT
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 171
+      cells:
+      - review_result_binding
+      - EDIT
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 172
+      cells:
+      - review_result_binding
+      - ERROR_RECOVERY
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 173
+      cells:
+      - review_result_binding
+      - LOCK_OR_UNLOCK
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 174
+      cells:
+      - review_result_binding
+      - MOVE_OR_REPARENT
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 175
+      cells:
+      - review_result_binding
+      - NEXT_STEP
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 176
+      cells:
+      - review_result_binding
+      - PARENT_BIND
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 177
+      cells:
+      - review_result_binding
+      - REORDER
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 178
+      cells:
+      - review_result_binding
+      - RESTORE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 179
+      cells:
+      - review_result_binding
+      - RESUME
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 180
+      cells:
+      - review_result_binding
+      - REVISE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 181
+      cells:
+      - review_result_binding
+      - SAVE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 182
+      cells:
+      - review_result_binding
+      - SELECT_OR_OPEN
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 183
+      cells:
+      - review_result_binding
+      - VALIDATE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 184
+      cells:
+      - review_result_binding
+      - VERSION
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 185
+      cells:
+      - threshold
+      - ARCHIVE_OR_DELETE
+      - REQUIRED
+      - Current entity-bound operation evidence normalized to REQUIRED. T4R4[No direct delete]
+    - row: 186
+      cells:
+      - threshold
+      - AUDIT
+      - REQUIRED
+      - Current explicit applicability preserved. T4R4[R]
+    - row: 187
+      cells:
+      - threshold
+      - CATEGORY_OR_GROUP_BIND
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 188
+      cells:
+      - threshold
+      - CONFIRM_OR_APPROVE
+      - REQUIRED
+      - Current entity-bound operation evidence normalized to REQUIRED. T4R4[— | Via criteria approval]
+    - row: 189
+      cells:
+      - threshold
+      - CREATE
+      - NOT_APPLICABLE
+      - Current lifecycle matrix dash normalized to NOT_APPLICABLE; no operation is authorized in this current matrix cell. T4R4[—]
+    - row: 190
+      cells:
+      - threshold
+      - CREATION_MODE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 191
+      cells:
+      - threshold
+      - DEPENDENCY_IMPACT
+      - REQUIRED
+      - Current explicit applicability preserved. T4R4[Impact required]
+    - row: 192
+      cells:
+      - threshold
+      - DISCOVER_OR_LIST
+      - REQUIRED
+      - Current explicit applicability preserved. T4R4[R]
+    - row: 193
+      cells:
+      - threshold
+      - DRAFT
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 194
+      cells:
+      - threshold
+      - EDIT
+      - REQUIRED
+      - Current entity-bound operation evidence normalized to REQUIRED. T4R4[Configure]
+    - row: 195
+      cells:
+      - threshold
+      - ERROR_RECOVERY
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 196
+      cells:
+      - threshold
+      - LOCK_OR_UNLOCK
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 197
+      cells:
+      - threshold
+      - MOVE_OR_REPARENT
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 198
+      cells:
+      - threshold
+      - NEXT_STEP
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 199
+      cells:
+      - threshold
+      - PARENT_BIND
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 200
+      cells:
+      - threshold
+      - REORDER
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 201
+      cells:
+      - threshold
+      - RESTORE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 202
+      cells:
+      - threshold
+      - RESUME
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 203
+      cells:
+      - threshold
+      - REVISE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 204
+      cells:
+      - threshold
+      - SAVE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 205
+      cells:
+      - threshold
+      - SELECT_OR_OPEN
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 206
+      cells:
+      - threshold
+      - VALIDATE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 207
+      cells:
+      - threshold
+      - VERSION
+      - REQUIRED
+      - Current entity-bound operation evidence normalized to REQUIRED. T3R4[Version-bound]; T4R4[Version-bound]
+  - index: 38
+    rows:
+    - row: 0
+      cells:
+      - Design Item / 設計項目
+      - Canonical Planning Design Contract / 正式規劃設計契約
+    - row: 1
+      cells:
+      - Viewport / Breakpoint UID
+      - SHARED_OWNER_REFERENCE → current Global Home breakpoint contract; page-specific breakpoint/reflow rules in this Word override only where explicitly registered.
+    - row: 2
+      cells:
+      - Container Width / Min / Max
+      - Retain current Global Shell + page Primary Grid width contract. No page-local implicit width may override an existing exact dimension.
+    - row: 3
+      cells:
+      - Grid Columns / Span / Gutter / Outer Margin
+      - Use the existing page Primary Grid / section mapping and current gap/margin values; any structural grid change requires Change Set.
+    - row: 4
+      cells:
+      - Section Bounding Rules
+      - Every registered Section remains within its current Workspace region; sticky/fixed/overlay areas MUST NOT occlude required controls.
+    - row: 5
+      cells:
+      - Component / Control / Field Width / Height Rules
+      - Use current Control/Field Dimensions or shared component token. State transitions MUST NOT cause layout jump.
+    - row: 6
+      cells:
+      - Min / Max Width / Height
+      - Inherit current exact values where present; otherwise shared component minimums apply. Required input/button content may not compress below its registered
+        usable size.
+    - row: 7
+      cells:
+      - Gap / Padding / Alignment
+      - Use current page spacing/grid tokens; alignment changes outside token tolerance require Visual Review.
+    - row: 8
+      cells:
+      - Aspect Ratio
+      - NOT_APPLICABLE unless the current page declares an image/video/preview ratio; when declared, the exact current ratio remains authoritative.
+    - row: 9
+      cells:
+      - Overflow / Scroll Rule
+      - No hidden overflow for actionable content. Long technical values use existing ellipsis + tooltip/drawer rule; large tables may use the current controlled
+        horizontal-scroll rule.
+    - row: 10
+      cells:
+      - Collapse / Stack / Wrap Rule
+      - Reflow may stack/collapse only within the current responsive contract; semantic order, required adjacency and operation order MUST NOT change.
+    - row: 11
+      cells:
+      - Z-order / Overlay Rule
+      - Global Header / Sidebar overlay / Dialog / Drawer layers remain above Workspace without blocking required content; overlay expansion MUST NOT reflow the primary
+        Workspace unless explicitly specified.
+    - row: 12
+      cells:
+      - Text Capacity / Truncation / Wrap Rule
+      - Required labels/status/error text may not be clipped. Long IDs/technical values use controlled ellipsis with recoverable full value; no silent semantic truncation.
+    - row: 13
+      cells:
+      - Asset Object-fit / Object-position
+      - REFERENCE_ONLY → current Asset Binding owner when a formal visual asset exists; otherwise NOT_APPLICABLE.
+    - row: 14
+      cells:
+      - Locked Visual Anchors
+      - Bound to the Visual Anchor Registry in this annex; unlisted regions are not implicitly editable.
+    - row: 15
+      cells:
+      - Allowed Tolerance / Diff Threshold
+      - 'Locked anchors and structural grid: zero unapproved drift. Token-level micro adjustment is allowed only inside current Design Token/Layout rules; structural
+        changes require Change Set + re-review.'
+    - row: 16
+      cells:
+      - Geometry Failure Set
+      - Detect overlap, clipping, horizontal overflow, unapproved scroll, control compression, unexpected wrap/stack, aspect drift, misalignment, sticky/fixed occlusion
+        and header/sidebar/workspace collision.
+  - index: 39
+    rows:
+    - row: 0
+      cells:
+      - Anchor UID
+      - Position Rule
+      - Dimension Rule
+      - Relationship Rule
+      - Lock Status
+    - row: 1
+      cells:
+      - SG-02-VA-HEADER
+      - Fixed at top of shared shell
+      - 58px full-width according to current shell authority
+      - Above Sidebar/Workspace; must not be covered by page content
+      - LOCKED
+    - row: 2
+      cells:
+      - SG-02-VA-SIDEBAR
+      - Fixed left rail under shared shell header
+      - 64px resting; 221px overlay expansion where current shell defines it
+      - Overlay expansion must not silently change the approved page Primary Grid
+      - LOCKED
+    - row: 3
+      cells:
+      - SG-02-VA-WORKSPACE
+      - Current page primary content region below Header / beside resting rail
+      - Use this Word's existing Primary Grid / section dimensions
+      - Owns page-local section geometry; dialogs/drawers are overlays, not replacement layout
+      - LOCKED_EXCEPT_AUTHORIZED_CHANGE_SET
+  - index: 40
+    rows:
+    - row: 0
+      cells:
+      - Design Item / 設計項目
+      - Canonical Planning Design Contract / 正式規劃設計契約
+    - row: 1
+      cells:
+      - Current Canonical Visual
+      - REFERENCE_ONLY → current visual/baseline already named in this Word or shared current visual owner. This annex does not replace it.
+    - row: 2
+      cells:
+      - Visual Candidate UID
+      - Generated candidate MUST receive a unique Visual UID and Parent Visual UID; no candidate is deemed approved merely by this annex.
+    - row: 3
+      cells:
+      - Generation Manifest
+      - Required before generation; MUST bind Page UID, Design Version, Reference Visual UID, Design System Version, Layout UID, Component Versions, Asset refs, Viewport,
+        Language, Theme, Change Level/Set and locked/editable areas.
+    - row: 4
+      cells:
+      - Visual Preview
+      - MUST represent the actual website structure, not a moodboard. Preview occurs after page/design specification and before Design Freeze.
+    - row: 5
+      cells:
+      - Visual Review
+      - Authorized reviewer checks function-to-visual mapping, geometry, anchors, responsive order, A11y/i18n and visual drift.
+    - row: 6
+      cells:
+      - Approval Status
+      - VISUAL_APPROVED is required before DESIGN_FROZEN. This planning annex does NOT self-approve the page.
+    - row: 7
+      cells:
+      - Change Set / Drift
+      - Any layout/asset/typography/color/component/navigation/dimension/information-hierarchy change outside the approved Change Set is VISUAL_DRIFT_FAIL.
+  - index: 41
+    rows:
+    - row: 0
+      cells:
+      - Design Item / 設計項目
+      - Canonical Planning Design Contract / 正式規劃設計契約
+    - row: 1
+      cells:
+      - Page-local Asset Registry Applicability
+      - REFERENCE_ONLY / CONDITIONAL. Existing page-owned formal Asset UID rows, if present, remain authoritative; this annex creates no duplicate Asset UID.
+    - row: 2
+      cells:
+      - Shared Shell Assets
+      - SHARED_OWNER_REFERENCE → Global Home / Design System owns logo, navigation icons, generic status icons and shared shell visuals; page MUST NOT clone them.
+    - row: 3
+      cells:
+      - Dynamic Business Content
+      - Provider logos, thumbnails, output previews, evidence images or other runtime/business data are NOT automatically design assets; they remain data/projection
+        unless current page explicitly registers an Asset UID.
+    - row: 4
+      cells:
+      - Binding Contract
+      - Any formal page-owned asset MUST bind Page UID + Section UID + Component UID + Asset UID + position + width/height + aspect ratio + crop/object-fit/object-position
+        + lock status.
+    - row: 5
+      cells:
+      - Modification Rule
+      - APPROVED/LOCKED assets may not be regenerated, recolored, cropped or repurposed without an authorized Change Set and Visual Review.
+    - row: 6
+      cells:
+      - N/A Authority
+      - When a page has no page-owned formal visual asset, page-local Asset Binding is NOT_APPLICABLE with this reason; shared assets remain referenced from their
+        existing canonical owner.
+  - index: 42
+    rows:
+    - row: 0
+      cells:
+      - Design Item / 設計項目
+      - Canonical Planning Design Contract / 正式規劃設計契約
+    - row: 1
+      cells:
+      - Canonical UID
+      - SG-02
+    - row: 2
+      cells:
+      - Canonical Name
+      - SG-02
+    - row: 3
+      cells:
+      - Owner File
+      - ACPOS_SG-02_QA審查項目名單_Mother_Basic_Design_OPTIMIZED.docx
+    - row: 4
+      cells:
+      - Page / Capability Spec
+      - This current Word remains the single page design Canonical Owner.
+    - row: 5
+      cells:
+      - Layout Mapping
+      - REFERENCE → existing Page Layout / Primary Grid / Section mapping + Design System/Layout closure annex.
+    - row: 6
+      cells:
+      - Component Mapping
+      - REFERENCE → current Component/Section registry in this Word; no duplicate component inventory is introduced.
+    - row: 7
+      cells:
+      - Control / Field Mapping
+      - REFERENCE → current Control / Field / Action / Permission design tables and invariants in this Word.
+    - row: 8
+      cells:
+      - Asset Mapping
+      - REFERENCE → current page Asset Registry if any; otherwise explicit shared-owner / NOT_APPLICABLE asset rule in this annex.
+    - row: 9
+      cells:
+      - Responsive Spec
+      - REFERENCE → current page responsive rules + Visual Geometry closure annex.
+    - row: 10
+      cells:
+      - Current Canonical Visual
+      - REFERENCE → current visual/baseline already owned by this page/shared visual authority; candidate does not replace it without approval.
+    - row: 11
+      cells:
+      - Generation Manifest
+      - REQUIRED before a new candidate is generated; fields are defined by the Visual contract in this annex.
+    - row: 12
+      cells:
+      - Audit Baseline
+      - REFERENCE → existing Audit/Acceptance section in this Word.
+    - row: 13
+      cells:
+      - Acceptance Matrix
+      - Current page acceptance section plus this annex; REQUIRED / OPTIONAL / NOT_APPLICABLE classification is preserved.
+    - row: 14
+      cells:
+      - Definition of Done
+      - Planning/basic-design DoD is the current page DoD plus zero unresolved REQUIRED design-spec gaps.
+    - row: 15
+      cells:
+      - Design Version
+      - Use this Word's current version metadata / exact repository revision; this annex MUST NOT invent a parallel design version.
+    - row: 16
+      cells:
+      - Freeze Status
+      - DESIGN_FREEZE_PACKAGE_DEFINED. DESIGN_FROZEN may be asserted only after required Visual Preview/Review/Approval and all applicable design gates actually pass;
+        this annex does not self-approve.
+  - index: 43
+    rows:
+    - row: 0
+      cells:
+      - Control UID
+      - Business Entity / Resolution
+      - Canonical Persistence Owner
+      - Design Semantics
+    - row: 1
+      cells:
+      - CTRL-ADMIN-SG-02-ACT-01-ACT-CONFIGURE
+      - QualityGovernance governed resource
+      - QualityGovernance / Resolved Governed Criteria Resource Draft/Version + Impact/Audit
+      - resource_type/resource_id MUST resolve to a legal QualityGovernance resource (criteria version, dimension/threshold/check/mapping/gate-policy domain). Configure
+        persists a governed draft/version plus impact and audit lineage; it never mutates an ACTIVE version in place.
+    - row: 2
+      cells:
+      - CTRL-ADMIN-SG-02-ACT-02-ACT-APPROVE
+      - QualityGovernance governed resource
+      - QualityGovernance / Resolved Governed Criteria Resource Approved Version + ApprovalRecord/Impact/Audit
+      - Approval requires exact REVIEW resource/version, impact/mapping evidence and rationale. Persistence records APPROVED state/version, ApprovalRecord, Impact
+        and audit lineage; downstream QA resolves exact ACTIVE criteria_version and historical results retain their original binding.
+  - index: 44
+    rows:
+    - row: 0
+      cells:
+      - Invariant
+      - Rule
+    - row: 1
+      cells:
+      - Ingress ≠ Persistence Owner
+      - Shared route/runtime/identity ingress does not transfer business data authority. The target resource/entity decides canonical persistence.
+    - row: 2
+      cells:
+      - Exact identity/version
+      - Every effectful mutation MUST resolve the exact entity/resource identity and version/state required by its current gate; latest/current aliases may not silently
+        replace exact binding.
+    - row: 3
+      cells:
+      - Audit lineage
+      - Effectful state/version changes preserve correlation/idempotency/evidence or rationale as applicable and generate/retain governed audit lineage.
+    - row: 4
+      cells:
+      - No parallel authority
+      - The closure reuses the existing canonical owner shown in the current Word corpus and MUST NOT create a duplicate store/service for the same concept.
+    - row: 5
+      cells:
+      - Runtime evidence separation
+      - A complete design Persistence Owner does not claim application/API/DB/Production execution. Runtime status remains separately evidenced and may remain NOT_EXECUTED
+        where the current Word says so.

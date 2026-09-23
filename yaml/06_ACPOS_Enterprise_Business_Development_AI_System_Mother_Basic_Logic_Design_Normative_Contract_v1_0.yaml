@@ -1,0 +1,5551 @@
+schema_version: ACPOS_WORD_YAML_PROJECTION_V1
+projection_mode: SOURCE_GROUNDED_NO_INVENTION
+sequence: 7
+source:
+  branch: 0921acpos
+  git_head: 7bd2dbdb89b685c5f5f6045c8e3e17c5f2500db5
+  word_path: 06_ACPOS_Enterprise_Business_Development_AI_System_Mother_Basic_Logic_Design_Normative_Contract_v1.0.docx
+  word_sha256: c10a7d8d218e266513741bd71ae1c3471a461ea15b3b638145dd6e083b199fa4
+authority_rules:
+- Word source remains canonical for this projection.
+- Do not silently fill, correct, reconcile, or replace source content.
+- Do not convert BLOCKED, NOT_EXECUTED, REQUIRE_EXACT_BINDING, SOURCE_NOT_DEFINED into PASS.
+- Paragraph and table order is preserved by source index.
+document:
+  paragraphs:
+  - index: 0
+    style: Normal
+    text: ACPOS-AI-06
+  - index: 1
+    style: Normal
+    text: Enterprise Business Development AI System
+  - index: 2
+    style: Normal
+    text: Mother Basic Logic Design + Normative Logic Contract
+  - index: 3
+    style: Normal
+    text: 企業商機搜集、公司身份、聯絡證據、個人化開發、合規、Campaign、個別寄送、回覆與營收閉環母規範
+  - index: 6
+    style: Normal
+    text: Authority Context
+  - index: 7
+    style: Normal
+    text: 'Current Governance: GOV-REV-20260920-CROSS-STAGE-MATERIALIZATION-CONSUMER-READINESS-HARDENING · display v2.2.16 · Branch: rebuild-v2.1.1 · design artifact
+      only.'
+  - index: 9
+    style: Heading 1
+    text: 0. 文件身份與使用方式
+  - index: 10
+    style: Normal
+    text: 本文件定義 ACPOS 企業自動開發 AI 系統的系統級母設計。它不是單一 DEV-01 頁面說明，也不是 Email 供應商操作手冊；它規定企業商機如何被發現、驗證、去重、評估、個人化、合規審查、形成 Campaign、拆成每位收件者的獨立 Delivery，並將 Reply / Outcome /
+      Revenue / Experience 回寫成可追溯閉環。
+  - index: 12
+    style: Heading 1
+    text: 1. Purpose / Scope / Out-of-Scope
+  - index: 13
+    style: Heading 2
+    text: 1.1 Purpose
+  - index: 14
+    style: List Bullet
+    text: 把公開市場訊號轉成可驗證的企業商機，而不是把網路文字直接當成 Lead Truth。
+  - index: 15
+    style: List Bullet
+    text: 建立唯一 Company Master 與可追溯 Contact Evidence，避免同一公司、同一聯絡點、同一 Campaign 形成第二套資料。
+  - index: 16
+    style: List Bullet
+    text: 讓 AI 個人化內容只使用 Evidence-supported fact；推論必須顯式標示為 inference。
+  - index: 17
+    style: List Bullet
+    text: 把合規、Suppression、Unsubscribe、寄送政策、Rate、Schedule、Approval 變成 effectful delivery 前的硬 Gate。
+  - index: 18
+    style: List Bullet
+    text: 允許 Campaign-level 大量操作，但每個外寄 Email envelope 永遠保持 exactly one To，CC/BCC empty。
+  - index: 19
+    style: List Bullet
+    text: 建立 Reply → Human Owner → Meeting → Proposal → Negotiation → Won/Lost → Revenue Attribution → Experience 的閉環。
+  - index: 20
+    style: Heading 2
+    text: 1.2 In Scope / Out-of-Scope
+  - index: 22
+    style: Heading 1
+    text: 2. Authority Inheritance / Owner Boundary
+  - index: 23
+    style: Normal
+    text: AI-06 MUST follow ONE CONCEPT / ONE OWNER / REFERENCE, DO NOT COPY. Existing Company Master, Contact, Campaign, Delivery, Suppression, Evidence, shared
+      acquisition and audit owners MUST be reused. A missing UI or missing binding is not permission to create another Company DB, Audience DB, BulkSend service,
+      crawler, Evidence store or Suppression engine.
+  - index: 26
+    style: Normal
+    text: 圖 1｜Enterprise Business Development Lifecycle。
+  - index: 27
+    style: Heading 1
+    text: 3. System Architecture / Functional Workbench Topology
+  - index: 29
+    style: Heading 1
+    text: 4. Core Entity Registry
+  - index: 31
+    style: Heading 1
+    text: 5. Entity × Operation Matrix
+  - index: 33
+    style: Heading 1
+    text: 6. Normative Invariant Registry
+  - index: 35
+    style: Heading 1
+    text: 7. Discovery Topic / Profile Contract
+  - index: 37
+    style: Heading 1
+    text: 8. Market Signal / Opportunity Qualification
+  - index: 38
+    style: Normal
+    text: MarketSignal is evidence-bearing, not a free-form AI impression. Qualification must separately preserve observed facts, inferred intent, scoring rationale,
+      freshness and disposition.
+  - index: 40
+    style: Heading 1
+    text: 9. Company Identity Resolution / Dedup / Merge
+  - index: 42
+    style: Normal
+    text: 圖 2｜Company Identity Resolution & Evidence。
+  - index: 44
+    style: Heading 1
+    text: 10. Contact Discovery / Evidence / Verification
+  - index: 47
+    style: Heading 1
+    text: 11. Enterprise Development Profile / Personalization
+  - index: 49
+    style: Normal
+    text: 'Personalization input contract: Company Fit + Contact Role + Campaign Objective + Product/IP + Country/Language + exact Evidence Set. Industry/role-specific
+      tone may vary, but factual claims may not exceed the evidence set.'
+  - index: 50
+    style: Heading 1
+    text: 12. Message Candidate / Review / Version Contract
+  - index: 52
+    style: Heading 1
+    text: 13. Compliance / Eligibility / Suppression
+  - index: 54
+    style: Heading 1
+    text: 14. Recipient Selection / Campaign Contract
+  - index: 55
+    style: Normal
+    text: The user may select many companies/contacts and create one Campaign. Selection UI may span pagination, but before persistence it MUST resolve to exact authorized
+      recipient_refs. Filter/search text is never itself the audience.
+  - index: 58
+    style: Normal
+    text: 圖 3｜Campaign-level Dispatch → Individual Delivery。
+  - index: 59
+    style: Heading 1
+    text: 15. Campaign Approval / Dispatch / Individual Delivery
+  - index: 61
+    style: Heading 1
+    text: 16. Delivery Lifecycle / Retry / Provider Boundary
+  - index: 63
+    style: Heading 1
+    text: 17. Reply / Follow-up / Stop Rules
+  - index: 65
+    style: Heading 1
+    text: 18. CRM Funnel / Opportunity / Revenue Attribution
+  - index: 67
+    style: Normal
+    text: 圖 4｜Reply-to-Revenue Closed Loop。
+  - index: 69
+    style: Heading 1
+    text: 19. State Transition Guard Matrix
+  - index: 71
+    style: Heading 1
+    text: 20. Event / Consumer Contract
+  - index: 73
+    style: Normal
+    text: Event transport, topic names, retention and delivery semantics are REQUIRE_EXACT_BINDING. Event names here are semantic contract names, not invented broker
+      topics.
+  - index: 74
+    style: Heading 1
+    text: 21. Concurrency / Idempotency / Retry
+  - index: 76
+    style: Heading 1
+    text: 22. Error / Recovery Contract
+  - index: 78
+    style: Heading 1
+    text: 23. Security / Privacy / Audit
+  - index: 80
+    style: Heading 1
+    text: 24. Exact Binding Ledger
+  - index: 82
+    style: Heading 1
+    text: 25. Acceptance Matrix
+  - index: 84
+    style: Heading 1
+    text: 26. Negative Regression Matrix
+  - index: 86
+    style: Heading 1
+    text: 27. Given / When / Then Acceptance Scenarios
+  - index: 88
+    style: Heading 1
+    text: 28. Construction Handoff / Definition of Done
+  - index: 89
+    style: List Bullet
+    text: Implementation MUST resolve every REQUIRE_EXACT_BINDING item from Current Authority before effectful Production execution.
+  - index: 90
+    style: List Bullet
+    text: Frontend MUST reuse existing Company Master/Campaign/Delivery/Suppression/Evidence owners rather than materialize parallel stores.
+  - index: 91
+    style: List Bullet
+    text: Backend MUST enforce the same hard gates as UI and must remain safe if controls are invoked outside UI.
+  - index: 92
+    style: List Bullet
+    text: Email provider connector, sender domain readiness, webhook verification, bounce/complaint/unsubscribe ingestion and Production E2E require independent fresh
+      evidence.
+  - index: 93
+    style: List Bullet
+    text: Acceptance denominator includes normal path + destructive negative regressions + concurrency/idempotency + partial failure + suppression/unsubscribe + evidence
+      freshness.
+  - index: 94
+    style: List Bullet
+    text: Social publishing begins only through AI07 handoff; this document does not approve or implement external platform publishing.
+  - index: 95
+    style: List Bullet
+    text: Closure of this Word means DESIGN_CONTENT_COMPLETE only; formal approval and runtime proof remain separate governance events.
+  - index: 96
+    style: Heading 1
+    text: 29. Source Basis / Traceability Notes
+  - index: 98
+    style: Heading 1
+    text: 30. Closure Declaration
+  - index: 100
+    style: Normal
+    text: This document is a normative design contract. It constrains subsequent implementation; it does not replace Current Runtime Authority or fresh validation
+      evidence.
+  - index: 101
+    style: Heading 1
+    text: 2026-09-21 Source-Grounded Construction Closure / 來源實證施工封板
+  - index: 103
+    style: Heading 1
+    text: 2026-09-21 Source-Grounded Construction Closure / 來源實證施工封板
+  - index: 104
+    style: Normal
+    text: '[ACPOS-20260921-SOURCE-GROUNDED-CONSTRUCTION-CLOSURE-V2] Source-grounded only. Existing Current source wins; missing source values remain blocked/decision-required.
+      This closure supersedes the prior generic 2026-09-21 V1/V3 annex only, not the original domain logic or human visual review gates.'
+  - index: 105
+    style: Heading 2
+    text: Source-backed Runtime Quantitative Truth
+  - index: 106
+    style: Normal
+    text: 'Rule: SOURCE_NOT_DEFINED is not a default value. It is an explicit unresolved design parameter. Construction MUST preserve fail-closed behavior or request
+      a formal policy decision; it MUST NOT restore the removed 50/50/200, 24, 96k, 365-day or other generic values without a new authority decision.'
+  - index: 107
+    style: Heading 2
+    text: Page / Control Exact Binding
+  - index: 108
+    style: Heading 2
+    text: DEV-01 · Exact Construction Binding
+  - index: 109
+    style: Heading 2
+    text: ERP-01 · Exact Construction Binding
+  - index: 110
+    style: Heading 3
+    text: ERP Denominator Clarification
+  - index: 111
+    style: Normal
+    text: 42 is the complete current page-control denominator. The separate “17 + 12 = 29 source controls” acceptance statement is a source-control coverage slice,
+      not the full page denominator. It MUST NOT replace the 42-control registry.
+  - index: 112
+    style: Heading 2
+    text: Construction Resolution Rule
+  - index: 113
+    style: Normal
+    text: '施工 AI MUST resolve UI behavior from this order: page machine authority → exact control row → action/gate/permission → payload/schema → operation/method/path
+      → runtime/persistence owner → source runtime status. If a row is SPEC_EXACT_RUNTIME_BLOCKED or SPEC_EXACT_RUNTIME_NOT_EXECUTED, the UI definition is known but
+      effectful enablement is forbidden until implementation evidence closes. If a quantitative value is SOURCE_NOT_DEFINED, do not choose a “reasonable” number.'
+  - index: 115
+    style: Heading 1
+    text: Enterprise Business Development QA Consumption Synchronization
+  - index: 116
+    style: Normal
+    text: '[ACPOS-20260921-NINE-SYSTEM-QA-SYNC-V1] 本節同步目前九份系統文件對 QA Criteria、Business Content Completeness、SG-02 lifecycle 與跨系統 evidence lineage 的共同理解。此同步只更新 Word
+      authority，不代表任何外部 Runtime/Production 已施工。'
+  - index: 117
+    style: Heading 2
+    text: Canonical Quality Governance Baseline
+  - index: 118
+    style: Heading 2
+    text: Enterprise Output Quality Rule
+  - index: 119
+    style: Heading 2
+    text: No Parallel QA System
+  - index: 120
+    style: Normal
+    text: 06 MUST NOT create a separate enterprise-only quality score that substitutes for governed QA. Business KPIs, lead scores or campaign scores may exist for
+      business decisions, but they are not QA Gate scores and cannot satisfy release-quality acceptance.
+  - index: 122
+    style: Heading 1
+    text: Batch 08 · Canonical Spec Remediation Register
+  - index: 123
+    style: Normal
+    text: '[ACPOS-20260921-BATCH-08-AUTHORITY-REMEDIATION-DENOMINATOR-V1::06_ACPOS_Enterprise_Business_Development_AI_System_Mother_Basic_Logic_Design_Normative_Contract_v1.0.docx]
+      Every row below is owned uniquely by this Canonical System document. Current evidence does not authorize a concrete missing value, a LEGITIMATE_N/A classification,
+      or a Runtime-blocked reclassification. The canonical owner must explicitly define the field or explicitly declare its non-applicability/blocking semantics before
+      any page binding may close.'
+  - index: 125
+    style: Heading 1
+    text: Batch 09 · Gate-scoped Runtime Owner Closure Ledger
+  - index: 126
+    style: Normal
+    text: '[ACPOS-20260921-BATCH-09-GATE-SCOPED-RUNTIME-OWNER-V1::06_ACPOS_Enterprise_Business_Development_AI_System_Mother_Basic_Logic_Design_Normative_Contract_v1.0.docx]
+      This ledger supersedes the listed Batch-08 Runtime Owner remediation rows for current-state verification.'
+  - index: 128
+    style: Heading 1
+    text: Batch 15 · ERP Owner-Specific Read Projection Closure
+  - index: 129
+    style: Normal
+    text: '[ACPOS-20260921-BATCH-15-OWNER-SPECIFIC-READ-PROJECTION-CLOSURE-V1::SYSTEM06] ERP READONLY field controls are projection/presentation nodes, not independent
+      execution entrypoints. Connector read fields are owned by ERPConnectorService because the exact Connector canonical boundary is uniformly owned by ERPConnectorService.
+      Finance read fields are owned by FinanceGuardrailService because all exact READ_EXACT Finance operations are owned by FinanceGuardrailService; the separate
+      EFFECTFUL exportProjection owner is excluded from this read-owner rule. Sync read fields already carry ERPConnectorService. For all twenty exact READONLY rows,
+      field-level Operation is non-applicable and MUST remain ''—''; source acquisition occurs through the owner service/read operations, not through a per-field
+      Operation.'
+  - index: 131
+    style: Heading 1
+    text: Batch 16 · Canonical Operation / Runtime Owner Contract Closure
+  - index: 132
+    style: Normal
+    text: '[ACPOS-20260921-BATCH-16-OPERATION-OWNER-CONTRACT-CLOSURE-V1::CANONICAL_OWNER] This ledger materializes the missing Operation and/or Runtime Owner definitions
+      inside the already-resolved Canonical Owner. It does not create a parallel owner, and it does not synthesize public API routes. Existing Method/Path values
+      are preserved; where Method/Path is absent, transport binding remains implementation-required.'
+  - index: 134
+    style: Heading 1
+    text: Batch 17 · DEV Local Stage Selector Permission Applicability
+  - index: 135
+    style: Normal
+    text: '[ACPOS-20260921-BATCH-17-REMAINING-DEFINITION-CLOSURE-V1::SYSTEM06::DEV] The five DEV-01 stage selector controls are UI_LOCAL_EXACT segment selectors.
+      They change local/page stage focus only, have no Operation, Method/Path, Runtime Owner, Persistence Owner, or external effect. DEV-01-GATE-PAGE is already the
+      page interaction boundary. Therefore a separate control-level Permission/Auth Resource is non-applicable and MUST remain ''—''; no permission identifier may
+      be invented.'
+  - index: 137
+    style: Heading 1
+    text: Batch 49 · System 06 Enterprise / ERP Canonical Contracts
+  - index: 138
+    style: Normal
+    text: '[ACPOS-20260922-BATCH-49-SYSTEM06-ENTERPRISE-ERP-CONTRACT-REMEDIATION-V1::SYSTEM06] These bindings close only Payload/Schema and Persistence Owner gaps.
+      Existing Method/Path, Action, Gate, Permission, Runtime Owner and Runtime Status remain unchanged. Projection/search/export state stays derived; enterprise
+      canonical entities reuse their existing owners; ERP connector secrets remain references only; no Production/provider execution is claimed.'
+  tables:
+  - index: 0
+    rows:
+    - row: 0
+      cells:
+      - Field
+      - Current Design Status
+      - Rule
+    - row: 1
+      cells:
+      - Document State
+      - DESIGN_CONTENT_COMPLETE
+      - FORMAL_APPROVAL_NOT_SELF_GRANTED · RUNTIME_NOT_PROVEN_BY_DOCUMENT
+  - index: 1
+    rows:
+    - row: 0
+      cells:
+      - 項目
+      - 規範
+    - row: 1
+      cells:
+      - Owner
+      - ACPOS-AI-06 Enterprise Business Development AI System
+    - row: 2
+      cells:
+      - Primary responsibility
+      - Enterprise discovery, company identity, contact evidence, qualification, personalization, outreach campaign, individual delivery, reply/follow-up, CRM outcome,
+        revenue attribution.
+    - row: 3
+      cells:
+      - Shared dependencies
+      - AI-01 Context/Evidence; AI-02 Conversation; AI-03 execution/provider/tool; existing Shared Acquisition/Knowledge source owners; IAM/Compliance/ERP exact owners
+        via binding.
+    - row: 4
+      cells:
+      - Hard boundary
+      - Social Publishing is AI-07. AI-06 may create a governed handoff/request but MUST_NOT recreate social account, target, publishing, metrics or platform runtime.
+    - row: 5
+      cells:
+      - Runtime claim
+      - Word completion MUST_NOT be reported as email connector, DNS authentication, webhook, bounce, complaint, unsubscribe, Production E2E or deployment completion.
+  - index: 2
+    rows:
+    - row: 0
+      cells:
+      - In Scope
+      - Out of Scope / Other Owner
+    - row: 1
+      cells:
+      - Discovery Topic/Profile, public business signals, company candidates
+      - 'Generic crawling/search engine implementation: shared acquisition/knowledge owner; provider execution: AI-03'
+    - row: 2
+      cells:
+      - Company identity resolution, alias/domain/registration matching, merge preview
+      - 'Global context/evidence truth engine: AI-01'
+    - row: 3
+      cells:
+      - Contact evidence, verification, eligibility, suppression
+      - Generic IAM/security policy engine and legal advice are not redefined here
+    - row: 4
+      cells:
+      - Enterprise Development Profile, fit/intent/timing, message personalization
+      - 'Conversation memory/UI shared core: AI-02'
+    - row: 5
+      cells:
+      - Outreach Campaign, recipient preview, approval, schedule, dispatch
+      - 'Social platform publishing/account/target runtime: AI-07'
+    - row: 6
+      cells:
+      - Individual email delivery semantics, reply/follow-up/outcome
+      - 'Raw provider adapter/gateway implementation: AI-03'
+    - row: 7
+      cells:
+      - CRM opportunity stages, revenue attribution handoff
+      - ERP accounting truth remains ERP owner; AI-06 only binds attribution refs
+  - index: 3
+    rows:
+    - row: 0
+      cells:
+      - Concept
+      - Canonical Owner Rule
+      - AI-06 behavior
+    - row: 1
+      cells:
+      - Context / factual truth
+      - AI-01 / current evidence owner
+      - Reference exact evidence/context; MUST_NOT copy into a second truth store.
+    - row: 2
+      cells:
+      - Conversation / review dialogue
+      - AI-02
+      - Use shared Conversation Core when conversation is needed.
+    - row: 3
+      cells:
+      - Provider / tool execution
+      - AI-03
+      - Request governed capability; MUST_NOT call provider directly from domain logic.
+    - row: 4
+      cells:
+      - Company Master
+      - Existing enterprise development owner
+      - Search, resolve, merge; MUST_NOT create duplicate master.
+    - row: 5
+      cells:
+      - Contact Point
+      - Existing contact owner
+      - Add/verify with source evidence; never guess.
+    - row: 6
+      cells:
+      - Campaign / Delivery
+      - Existing outreach owner
+      - Campaign holds recipient_refs; runtime fans out individual deliveries.
+    - row: 7
+      cells:
+      - Suppression
+      - Existing global suppression owner
+      - Cross-campaign hard gate; no local override.
+    - row: 8
+      cells:
+      - Social publishing
+      - AI-07
+      - Only handoff; no duplicate platform publishing system.
+  - index: 4
+    rows:
+    - row: 0
+      cells:
+      - Layer
+      - Responsibility
+      - Required Output
+    - row: 1
+      cells:
+      - Intent Layer
+      - Define Product/Service, target market, industry, region, company type/size, priority, allowed sources, intent threshold.
+      - DiscoveryProfile / scope
+    - row: 2
+      cells:
+      - Acquisition Interface
+      - Request allowed public acquisition through existing shared source runtime.
+      - Evidence-backed MarketSignal
+    - row: 3
+      cells:
+      - Signal & Qualification
+      - Normalize, deduplicate, freshness, classify fit/intent/timing.
+      - OpportunityQualification
+    - row: 4
+      cells:
+      - Identity Layer
+      - Resolve company via registration/jurisdiction/domain/alias and merge preview.
+      - Canonical Company Master ref
+    - row: 5
+      cells:
+      - Contact Layer
+      - Discover public business contacts; verify source and status.
+      - Verified ContactPoint + evidence
+    - row: 6
+      cells:
+      - Personalization Layer
+      - Assemble Company Fit + Contact Role + Objective + Product/IP + locale.
+      - MessageCandidate
+    - row: 7
+      cells:
+      - Compliance Layer
+      - Country/company/contact/source/campaign policy, suppression, DNC, unsubscribe, sender health.
+      - EligibilityDecision PASS/REVIEW/BLOCK
+    - row: 8
+      cells:
+      - Campaign Layer
+      - Exact recipient_refs + exact message version + sender + schedule + approval.
+      - Approved Campaign
+    - row: 9
+      cells:
+      - Delivery Layer
+      - Fan-out one recipient per email; retry/idempotency/rate/audit.
+      - IndividualDelivery records
+    - row: 10
+      cells:
+      - Response Layer
+      - Reply/bounce/complaint/unsubscribe and sequence stop rules.
+      - ResponseEvent / FollowUp state
+    - row: 11
+      cells:
+      - CRM/Outcome
+      - Human owner, meeting, proposal, negotiation, won/lost, attribution.
+      - OpportunityOutcome + revenue refs
+    - row: 12
+      cells:
+      - Experience
+      - Approved lessons from outcomes, not automatic self-adoption.
+      - ExperienceCandidate / learning refs
+  - index: 5
+    rows:
+    - row: 0
+      cells:
+      - Entity
+      - Purpose
+    - row: 1
+      cells:
+      - MarketIntent
+      - What product/service/opportunity is being sought.
+    - row: 2
+      cells:
+      - DiscoveryProfile
+      - Reusable governed search/qualification configuration.
+    - row: 3
+      cells:
+      - DiscoveryJob
+      - Single execution of discovery profile.
+    - row: 4
+      cells:
+      - SourceRef
+      - Allowed source identity governed elsewhere.
+    - row: 5
+      cells:
+      - MarketSignal
+      - Normalized public signal with source, time, freshness.
+    - row: 6
+      cells:
+      - SignalEvidence
+      - Exact evidence fragment/url/date supporting a claim.
+    - row: 7
+      cells:
+      - CompanyCandidate
+      - Unresolved company candidate from signals.
+    - row: 8
+      cells:
+      - CompanyIdentity
+      - Registration/jurisdiction/domain/alias identity set.
+    - row: 9
+      cells:
+      - CompanyMaster
+      - Single canonical enterprise record.
+    - row: 10
+      cells:
+      - CompanyAlias
+      - Historical/brand/alternate name mapping.
+    - row: 11
+      cells:
+      - CompanyMergeCandidate
+      - Potential duplicate identity pair/set.
+    - row: 12
+      cells:
+      - CompanyMergeDecision
+      - Preview/confirm/reject merge with evidence.
+    - row: 13
+      cells:
+      - ContactPoint
+      - Business email/contact endpoint.
+    - row: 14
+      cells:
+      - ContactEvidence
+      - Source proof for contact point.
+    - row: 15
+      cells:
+      - ContactVerification
+      - verification_status, verified_at, method, reason.
+    - row: 16
+      cells:
+      - EnterpriseDevelopmentProfile
+      - Industry, region, size, positioning, products, target customers, recent activity, potential needs, suitable offer, role, fit, evidence.
+    - row: 17
+      cells:
+      - OpportunityQualification
+      - fit/intent/timing/status with reasons.
+    - row: 18
+      cells:
+      - ComplianceProfile
+      - Recipient/campaign jurisdiction and policy inputs.
+    - row: 19
+      cells:
+      - EligibilityDecision
+      - PASS/REVIEW/BLOCK with reasons.
+    - row: 20
+      cells:
+      - SuppressionEntry
+      - Cross-campaign no-contact record.
+    - row: 21
+      cells:
+      - MessageCandidate
+      - AI-generated but not yet approved outreach content.
+    - row: 22
+      cells:
+      - MessageVersion
+      - Immutable reviewed content version.
+    - row: 23
+      cells:
+      - PersonalizationContext
+      - Exact evidence/context used for one recipient.
+    - row: 24
+      cells:
+      - Campaign
+      - Batch container for exact recipient_refs and message/sender/schedule refs.
+    - row: 25
+      cells:
+      - RecipientPreview
+      - Pre-approval/pre-dispatch resolved recipient denominator.
+    - row: 26
+      cells:
+      - CampaignApproval
+      - Human/governed approval distinct from send.
+    - row: 27
+      cells:
+      - IndividualDelivery
+      - One recipient, one envelope, one delivery lifecycle.
+    - row: 28
+      cells:
+      - DeliveryAttempt
+      - One provider attempt under one delivery.
+    - row: 29
+      cells:
+      - SenderAccount
+      - Governed authorized sender identity.
+    - row: 30
+      cells:
+      - SendPolicy
+      - timezone/window/rate/cap/cooldown/follow-up constraints.
+    - row: 31
+      cells:
+      - ReplyEvent
+      - Inbound response bound to exact delivery/contact/company.
+    - row: 32
+      cells:
+      - BounceEvent
+      - Delivery failure classification.
+    - row: 33
+      cells:
+      - ComplaintEvent
+      - Complaint/abuse signal.
+    - row: 34
+      cells:
+      - UnsubscribeEvent
+      - Immediate opt-out event.
+    - row: 35
+      cells:
+      - FollowUpPlan
+      - Finite governed next-contact plan.
+    - row: 36
+      cells:
+      - Opportunity
+      - CRM business opportunity.
+    - row: 37
+      cells:
+      - HumanOwnerAssignment
+      - Human accountable owner after positive reply or escalation.
+    - row: 38
+      cells:
+      - MeetingRecord
+      - Meeting milestone reference.
+    - row: 39
+      cells:
+      - ProposalRecord
+      - Proposal milestone reference.
+    - row: 40
+      cells:
+      - NegotiationRecord
+      - Negotiation milestone reference.
+    - row: 41
+      cells:
+      - OpportunityOutcome
+      - Won/Lost/other terminal outcome.
+    - row: 42
+      cells:
+      - RevenueAttribution
+      - ERP/finance ref connecting outcome to revenue/cost/ROI.
+    - row: 43
+      cells:
+      - AuditEvent
+      - Immutable effectful/action trace.
+    - row: 44
+      cells:
+      - ExperienceCandidate
+      - Outcome-derived candidate lesson pending admission.
+  - index: 6
+    rows:
+    - row: 0
+      cells:
+      - Entity
+      - Operations
+      - Critical Guard
+    - row: 1
+      cells:
+      - DiscoveryProfile
+      - CREATE / UPDATE / ACTIVATE / PAUSE / RESUME / RETIRE
+      - No second discovery engine; allowed sources required.
+    - row: 2
+      cells:
+      - DiscoveryJob
+      - START / PAUSE / RESUME / STOP / REPLAY
+      - State guard + audit; replay cannot duplicate admitted entities.
+    - row: 3
+      cells:
+      - MarketSignal
+      - INGEST / NORMALIZE / DEDUPE / QUALIFY
+      - Source/evidence/freshness required.
+    - row: 4
+      cells:
+      - CompanyCandidate
+      - RESOLVE_IDENTITY / LINK_EXISTING / CREATE_MASTER
+      - Name-only identity is insufficient.
+    - row: 5
+      cells:
+      - CompanyMaster
+      - SEARCH / READ / UPDATE_ALLOWED_FIELDS / MERGE_PREVIEW / MERGE
+      - Merge is non-destructive and evidence-backed.
+    - row: 6
+      cells:
+      - ContactPoint
+      - ADD / VERIFY / DISABLE / VIEW_EVIDENCE
+      - Guessed email forbidden.
+    - row: 7
+      cells:
+      - EnterpriseDevelopmentProfile
+      - BUILD / REFRESH / SCORE / REVIEW
+      - Facts vs inference labels mandatory.
+    - row: 8
+      cells:
+      - MessageCandidate
+      - CREATE / REVIEW / RETURN / REJECT / APPROVE_VERSION
+      - Approval creates immutable MessageVersion.
+    - row: 9
+      cells:
+      - Campaign
+      - CREATE / PREVIEW / APPROVE / DISPATCH / PAUSE / STOP
+      - Approval != send; recipient preview rechecked.
+    - row: 10
+      cells:
+      - SuppressionEntry
+      - ADD / ENFORCE / RELEASE_IF_AUTHORIZED
+      - Global cross-campaign hard gate.
+    - row: 11
+      cells:
+      - IndividualDelivery
+      - CREATE / QUEUE / SEND / CANCEL / RETRY
+      - Exactly one To; CC/BCC empty.
+    - row: 12
+      cells:
+      - ReplyEvent
+      - INGEST / CLASSIFY / STOP_SEQUENCE / ESCALATE
+      - Any reply can stop automated sequence per policy.
+    - row: 13
+      cells:
+      - FollowUpPlan
+      - CREATE / ADVANCE / STOP / EXPIRE
+      - Finite; interval/count not hardcoded in Mother.
+    - row: 14
+      cells:
+      - Opportunity
+      - CREATE / ASSIGN_OWNER / ADVANCE / CLOSE
+      - Human ownership required for governed sales milestones.
+    - row: 15
+      cells:
+      - RevenueAttribution
+      - LINK_COST / LINK_REVENUE / COMPUTE_REF
+      - ERP remains financial truth owner.
+    - row: 16
+      cells:
+      - ExperienceCandidate
+      - CREATE / REVIEW / ADMIT / REJECT
+      - No self-adoption.
+  - index: 7
+    rows:
+    - row: 0
+      cells:
+      - UID / Rule
+    - row: 1
+      cells:
+      - AI06-INV-001 ONE Company Master authority; duplicate enterprise stores are forbidden.
+    - row: 2
+      cells:
+      - AI06-INV-002 Discovery MUST reuse the registered shared acquisition/source mechanism; no DEV-specific crawler fork.
+    - row: 3
+      cells:
+      - AI06-INV-003 Every factual company claim used for qualification or personalization MUST bind Evidence + Source + Verified/Freshness time.
+    - row: 4
+      cells:
+      - AI06-INV-004 AI MUST_NOT invent recent activity, partnership history, revenue, need, customer, contact identity or email address.
+    - row: 5
+      cells:
+      - AI06-INV-005 Potential Need is inference unless supported by explicit evidence; inference MUST be labeled and MUST_NOT be presented as fact.
+    - row: 6
+      cells:
+      - AI06-INV-006 Company identity MUST NOT be resolved by display name alone.
+    - row: 7
+      cells:
+      - AI06-INV-007 Registration/jurisdiction identifiers are preferred identity anchors when available.
+    - row: 8
+      cells:
+      - AI06-INV-008 Domain, official website, aliases and evidence may support identity resolution but MUST preserve confidence/reason.
+    - row: 9
+      cells:
+      - AI06-INV-009 Merge MUST require preview before effectful confirm.
+    - row: 10
+      cells:
+      - AI06-INV-010 Merge MUST preserve aliases, source evidence, contacts, history and lineage; destructive duplicate delete is forbidden.
+    - row: 11
+      cells:
+      - AI06-INV-011 Existing Company Master MUST be enriched rather than recreated when identity matches.
+    - row: 12
+      cells:
+      - AI06-INV-012 ContactPoint MUST have source evidence and verification state before eligibility.
+    - row: 13
+      cells:
+      - AI06-INV-013 Guessed email patterns are forbidden.
+    - row: 14
+      cells:
+      - AI06-INV-014 Publicly listed business email, official API/source or legally authorized service is preferred contact evidence.
+    - row: 15
+      cells:
+      - AI06-INV-015 Contact disable/invalid status MUST prevent new outbound work until reverified.
+    - row: 16
+      cells:
+      - AI06-INV-016 Contact Evidence must remain inspectable after delivery.
+    - row: 17
+      cells:
+      - AI06-INV-017 Qualification MUST expose fit, intent and timing reasons; opaque score-only decisions are insufficient.
+    - row: 18
+      cells:
+      - AI06-INV-018 Fit Score does not replace Evidence or eligibility.
+    - row: 19
+      cells:
+      - AI06-INV-019 Ignored/blocked signals MUST retain disposition reason when governance requires auditability.
+    - row: 20
+      cells:
+      - AI06-INV-020 Personalization context MUST bind exact company/contact/campaign objective/product-or-IP/country-language inputs.
+    - row: 21
+      cells:
+      - AI06-INV-021 Message Candidate is not approved content.
+    - row: 22
+      cells:
+      - AI06-INV-022 Approved MessageVersion MUST be immutable; edits create a new version.
+    - row: 23
+      cells:
+      - AI06-INV-023 Sent content MUST bind exact Approved MessageVersion; never resolve "latest" at send time.
+    - row: 24
+      cells:
+      - AI06-INV-024 Human edit history and approved/sent version lineage MUST be preserved.
+    - row: 25
+      cells:
+      - AI06-INV-025 Compliance status is recipient/campaign-contextual and MUST be recomputed when material inputs change.
+    - row: 26
+      cells:
+      - AI06-INV-026 Compliance decision vocabulary is PASS / REVIEW / BLOCK unless Current Authority says otherwise.
+    - row: 27
+      cells:
+      - AI06-INV-027 REVIEW cannot silently become PASS.
+    - row: 28
+      cells:
+      - AI06-INV-028 BLOCK cannot be bypassed by UI, batch approval, high fit score or retry.
+    - row: 29
+      cells:
+      - AI06-INV-029 Global Suppression applies across Campaigns.
+    - row: 30
+      cells:
+      - AI06-INV-030 Unsubscribe is an immediate hard stop for future prohibited outreach.
+    - row: 31
+      cells:
+      - AI06-INV-031 Suppression MUST be checked during selection, before Campaign approval and immediately before dispatch.
+    - row: 32
+      cells:
+      - AI06-INV-032 Recipient selection MUST resolve to exact authorized recipient_refs; filter/query text is not a recipient list.
+    - row: 33
+      cells:
+      - AI06-INV-033 Duplicate recipient_ref inside one Campaign MUST collapse to one logical recipient.
+    - row: 34
+      cells:
+      - AI06-INV-034 Campaign is the formal batch container; no Audience DB or BulkSend DB may be introduced.
+    - row: 35
+      cells:
+      - AI06-INV-035 Campaign approval is distinct from dispatch.
+    - row: 36
+      cells:
+      - AI06-INV-036 Campaign Preview MUST show exact eligible/blocked/suppressed/no-valid-contact/duplicate counts.
+    - row: 37
+      cells:
+      - AI06-INV-037 Recipient Preview MUST be refreshed when message/sender/schedule/policy/suppression/version changes.
+    - row: 38
+      cells:
+      - AI06-INV-038 Dispatch MUST fail closed if recipient denominator cannot be resolved exactly.
+    - row: 39
+      cells:
+      - AI06-INV-039 One Campaign MAY contain many recipient_refs.
+    - row: 40
+      cells:
+      - AI06-INV-040 Every actual outbound email MUST have exactly one To recipient.
+    - row: 41
+      cells:
+      - AI06-INV-041 Outbound outreach email CC and BCC MUST be empty.
+    - row: 42
+      cells:
+      - AI06-INV-042 Campaign-level bulk dispatch MUST fan out into IndividualDelivery units.
+    - row: 43
+      cells:
+      - AI06-INV-043 One Campaign/recipient pair permits at most ONE_ACTIVE_DELIVERY unless explicit governed resend exists.
+    - row: 44
+      cells:
+      - AI06-INV-044 Partial campaign success MUST never be reported as COMPLETE.
+    - row: 45
+      cells:
+      - AI06-INV-045 Aggregate campaign result MUST preserve per-recipient succeeded/blocked/failed detail.
+    - row: 46
+      cells:
+      - AI06-INV-046 Dispatch MUST enforce sender authorization.
+    - row: 47
+      cells:
+      - AI06-INV-047 Dispatch MUST enforce schedule/timezone/send-window policy.
+    - row: 48
+      cells:
+      - AI06-INV-048 Dispatch MUST enforce current rate/cap/cooldown policy.
+    - row: 49
+      cells:
+      - AI06-INV-049 Dispatch MUST enforce suppression and compliance again at effect time.
+    - row: 50
+      cells:
+      - AI06-INV-050 Dispatch MUST use idempotency to prevent duplicate side effects.
+    - row: 51
+      cells:
+      - AI06-INV-051 expected_version or equivalent concurrency control is required for mutable effectful state.
+    - row: 52
+      cells:
+      - AI06-INV-052 Kill Switch MUST stop legal target scope and MUST be audited with reason/actor/time.
+    - row: 53
+      cells:
+      - AI06-INV-053 Kill Switch MUST_NOT retroactively alter already completed deliveries.
+    - row: 54
+      cells:
+      - AI06-INV-054 Retry is only permitted for retry-eligible failure classes.
+    - row: 55
+      cells:
+      - AI06-INV-055 Retry MUST create or bind a new DeliveryAttempt, not erase previous attempt evidence.
+    - row: 56
+      cells:
+      - AI06-INV-056 Same idempotency key with materially different payload MUST be rejected.
+    - row: 57
+      cells:
+      - AI06-INV-057 Provider success without verified local persistence/audit is not terminal success.
+    - row: 58
+      cells:
+      - AI06-INV-058 Provider failure MUST_NOT mutate Campaign approval or message version.
+    - row: 59
+      cells:
+      - AI06-INV-059 Bounce MUST update contact/delivery health according to governed classification.
+    - row: 60
+      cells:
+      - AI06-INV-060 Complaint MUST trigger policy/sender/contact protection workflow as applicable.
+    - row: 61
+      cells:
+      - AI06-INV-061 Reply MUST bind exact prior delivery/contact/company/campaign.
+    - row: 62
+      cells:
+      - AI06-INV-062 Received reply MUST stop or reevaluate remaining automated follow-up according to policy.
+    - row: 63
+      cells:
+      - AI06-INV-063 Positive reply MUST be eligible for Human Owner assignment.
+    - row: 64
+      cells:
+      - AI06-INV-064 Follow-up count and interval are configuration/policy values; Mother MUST_NOT hardcode arbitrary numbers.
+    - row: 65
+      cells:
+      - AI06-INV-065 Follow-up is finite; infinite automated sequences are forbidden.
+    - row: 66
+      cells:
+      - AI06-INV-066 Unsubscribe, suppression, complaint block and invalid contact supersede pending follow-up.
+    - row: 67
+      cells:
+      - AI06-INV-067 Human Owner assignment does not rewrite source evidence or Company identity.
+    - row: 68
+      cells:
+      - AI06-INV-068 Meeting/Proposal/Negotiation/Won/Lost are business milestones, not email delivery states.
+    - row: 69
+      cells:
+      - AI06-INV-069 Opportunity outcome MUST remain traceable to originating Company, Contact, Campaign and evidence lineage.
+    - row: 70
+      cells:
+      - AI06-INV-070 Revenue Attribution MUST reference ERP/finance truth; AI06 MUST_NOT invent revenue amounts.
+    - row: 71
+      cells:
+      - AI06-INV-071 Campaign Cost and Deal Revenue must remain separate facts before ROI derivation.
+    - row: 72
+      cells:
+      - AI06-INV-072 Experience/Learning MUST use outcome evidence and MUST NOT self-adopt without admission rules.
+    - row: 73
+      cells:
+      - AI06-INV-073 External facts with stale evidence MUST be refreshed or marked stale before use in new personalization.
+    - row: 74
+      cells:
+      - AI06-INV-074 Deleted/retired source does not erase historical evidence needed for sent-message audit.
+    - row: 75
+      cells:
+      - AI06-INV-075 Evidence retention and contact privacy/retention are distinct policies and MUST be separately governed.
+    - row: 76
+      cells:
+      - AI06-INV-076 PII/secret data MUST follow classification and least-access rules.
+    - row: 77
+      cells:
+      - AI06-INV-077 Raw provider credentials MUST never enter MessageCandidate, logs, audit payloads or exported lead data.
+    - row: 78
+      cells:
+      - AI06-INV-078 Export MUST respect permission/classification and must not bypass suppression/privacy rules.
+    - row: 79
+      cells:
+      - AI06-INV-079 UI-hidden action is not a backend security control.
+    - row: 80
+      cells:
+      - AI06-INV-080 Every effectful operation MUST have identity, permission, scope, condition/state guard, audit and correlation.
+    - row: 81
+      cells:
+      - AI06-INV-081 Every effectful side effect MUST be idempotent or explicitly non-repeatable with safe recovery.
+    - row: 82
+      cells:
+      - AI06-INV-082 Audit MUST distinguish Candidate, Approved Version and Sent Version.
+    - row: 83
+      cells:
+      - AI06-INV-083 Audit MUST retain AI provider/model/template version where content generation used AI, subject to exact owner binding.
+    - row: 84
+      cells:
+      - AI06-INV-084 Audit MUST retain Human Edits separately from AI draft.
+    - row: 85
+      cells:
+      - AI06-INV-085 Production connector absence MUST be represented as NOT_PROVEN/BLOCKED, never simulated success.
+    - row: 86
+      cells:
+      - AI06-INV-086 SPF/DKIM/DMARC or equivalent sender-domain readiness is a precondition when Current delivery policy requires it.
+    - row: 87
+      cells:
+      - AI06-INV-087 New sender warm-up/rate limits MUST be driven by governed sender policy, not AI guesswork.
+    - row: 88
+      cells:
+      - AI06-INV-088 Social outreach/publishing MUST hand off to AI07; AI06 MUST_NOT directly create a second social publisher.
+    - row: 89
+      cells:
+      - AI06-INV-089 Direct Message to external platforms MUST_NOT be assumed available without official API/capability/policy authority.
+    - row: 90
+      cells:
+      - AI06-INV-090 Mention/tag of a specific target company MUST require human/governed approval when AI07 policy says so.
+    - row: 91
+      cells:
+      - AI06-INV-091 Shared external acquisition MUST not be duplicated inside DEV runtime.
+    - row: 92
+      cells:
+      - AI06-INV-092 A historical UI/page layout is not current backend authority.
+    - row: 93
+      cells:
+      - AI06-INV-093 FILE_SPEC_COMPLETE does not imply Application/Runtime/Email E2E/Deploy complete.
+    - row: 94
+      cells:
+      - AI06-INV-094 Current Authority exact bindings MUST supersede historical names/paths when they differ.
+    - row: 95
+      cells:
+      - AI06-INV-095 Missing exact binding MUST be recorded REQUIRE_EXACT_BINDING, not invented.
+    - row: 96
+      cells:
+      - AI06-INV-096 Completion requires all applicable acceptance cases and negative regression cases, not only happy path.
+  - index: 8
+    rows:
+    - row: 0
+      cells:
+      - Field Group
+      - Required Meaning
+      - Rule
+    - row: 1
+      cells:
+      - Offer Context
+      - Product/Service or ACPOS IP/Product being developed
+      - Must be explicit before intent classification.
+    - row: 2
+      cells:
+      - Target Scope
+      - Industry, company type/size, region/market, language
+      - May be partial only if profile explicitly allows broad discovery.
+    - row: 3
+      cells:
+      - Keyword Logic
+      - Include/Exclude keywords, trigger events
+      - Exclusion MUST be applied before qualification credit.
+    - row: 4
+      cells:
+      - Sources
+      - Allowed Source refs + source health
+      - Only ACTIVE/rights-valid sources may be used when source registry enforces these states.
+    - row: 5
+      cells:
+      - Intent
+      - Intent threshold + signal classes
+      - Threshold cannot be silently changed during a run.
+    - row: 6
+      cells:
+      - Mode
+      - Single/continuous, interval, priority
+      - Lifecycle must use shared start/pause/resume/stop semantics.
+    - row: 7
+      cells:
+      - Limits
+      - Result/rate limits
+      - Use Current policy; Mother does not invent numeric limits.
+  - index: 9
+    rows:
+    - row: 0
+      cells:
+      - Signal Class
+      - Example Meaning
+      - Qualification Rule
+    - row: 1
+      cells:
+      - DIRECT_NEED
+      - Explicit request for product/service/vendor/quote
+      - Strong intent if source and freshness valid.
+    - row: 2
+      cells:
+      - COMPARISON
+      - Comparing vendors/solutions
+      - High/nurture based on fit and timing.
+    - row: 3
+      cells:
+      - COMPETITOR_PAIN
+      - Complaint/problem with existing solution
+      - Inference about need MUST remain labeled.
+    - row: 4
+      cells:
+      - EXPANSION_EVENT
+      - Hiring, expansion, launch, procurement
+      - Event is fact if sourced; need is separate inference.
+    - row: 5
+      cells:
+      - PARTNERSHIP_SIGNAL
+      - Public partnership/licensing/distribution interest
+      - Must not fabricate relationship history.
+    - row: 6
+      cells:
+      - LOW_CONFIDENCE
+      - Weak/general mention
+      - Observe/Nurture; MUST NOT promote only by score manipulation.
+  - index: 10
+    rows:
+    - row: 0
+      cells:
+      - Decision
+      - MUST
+      - MUST_NOT
+    - row: 1
+      cells:
+      - Resolve existing
+      - Compare registration/jurisdiction, official domain/site, aliases, source evidence.
+      - Use name-only exact string as final identity proof.
+    - row: 2
+      cells:
+      - Create master
+      - Only when no canonical company match exists under Current identity rules.
+      - Create a second master because a new source uses a different display name.
+    - row: 3
+      cells:
+      - Merge preview
+      - Show survivor, merged refs, contacts, evidence, aliases, delivery/suppression history and conflicts.
+      - Hide information loss or silently merge.
+    - row: 4
+      cells:
+      - Merge confirm
+      - Preserve lineage and redirect references to canonical identity.
+      - Delete historical evidence or overwrite source provenance.
+  - index: 11
+    rows:
+    - row: 0
+      cells:
+      - Field
+      - Requirement
+    - row: 1
+      cells:
+      - contact_type
+      - Business email / role contact / other governed type.
+    - row: 2
+      cells:
+      - value
+      - Exact contact endpoint; normalized.
+    - row: 3
+      cells:
+      - source_ref
+      - Official/public/authorized source reference.
+    - row: 4
+      cells:
+      - source_url_or_locator
+      - Exact source locator when applicable.
+    - row: 5
+      cells:
+      - publicly_listed
+      - Whether source openly published this business contact.
+    - row: 6
+      cells:
+      - discovered_at
+      - Acquisition time.
+    - row: 7
+      cells:
+      - verified_at
+      - Verification time; null until verified.
+    - row: 8
+      cells:
+      - verification_status
+      - UNVERIFIED / VERIFIED / INVALID / DISABLED or Current authority vocabulary.
+    - row: 9
+      cells:
+      - jurisdiction
+      - Where required for compliance.
+    - row: 10
+      cells:
+      - do_not_contact
+      - Explicit block signal.
+    - row: 11
+      cells:
+      - evidence_ref
+      - Exact supporting evidence object.
+  - index: 12
+    rows:
+    - row: 0
+      cells:
+      - Contact Rule
+      - Normative Behavior
+    - row: 1
+      cells:
+      - Guessing
+      - firstname.lastname@company.com style guessing is MUST_NOT.
+    - row: 2
+      cells:
+      - Invalid contact
+      - Disable from new selection; preserve history.
+    - row: 3
+      cells:
+      - Verification
+      - Verification status must be explicit and auditable.
+    - row: 4
+      cells:
+      - Evidence
+      - Every outbound-eligible contact must resolve to inspectable evidence.
+    - row: 5
+      cells:
+      - One-to-many
+      - Company can have multiple contacts; each contact preserves distinct evidence/status.
+  - index: 13
+    rows:
+    - row: 0
+      cells:
+      - Profile Field
+      - Rule
+    - row: 1
+      cells:
+      - Industry
+      - Required when applicable; facts require evidence; inferred values must be labeled and cannot be silently promoted to fact.
+    - row: 2
+      cells:
+      - Country / Region
+      - Required when applicable; facts require evidence; inferred values must be labeled and cannot be silently promoted to fact.
+    - row: 3
+      cells:
+      - Size
+      - Required when applicable; facts require evidence; inferred values must be labeled and cannot be silently promoted to fact.
+    - row: 4
+      cells:
+      - Brand Positioning
+      - Required when applicable; facts require evidence; inferred values must be labeled and cannot be silently promoted to fact.
+    - row: 5
+      cells:
+      - Products / Services
+      - Required when applicable; facts require evidence; inferred values must be labeled and cannot be silently promoted to fact.
+    - row: 6
+      cells:
+      - Target Customers
+      - Required when applicable; facts require evidence; inferred values must be labeled and cannot be silently promoted to fact.
+    - row: 7
+      cells:
+      - Public Recent Activity + evidence
+      - Required when applicable; facts require evidence; inferred values must be labeled and cannot be silently promoted to fact.
+    - row: 8
+      cells:
+      - Potential Needs + inference label
+      - Required when applicable; facts require evidence; inferred values must be labeled and cannot be silently promoted to fact.
+    - row: 9
+      cells:
+      - Suitable ACPOS IP / Product
+      - Required when applicable; facts require evidence; inferred values must be labeled and cannot be silently promoted to fact.
+    - row: 10
+      cells:
+      - Decision Role
+      - Required when applicable; facts require evidence; inferred values must be labeled and cannot be silently promoted to fact.
+    - row: 11
+      cells:
+      - Fit Score 0–100
+      - Required when applicable; facts require evidence; inferred values must be labeled and cannot be silently promoted to fact.
+    - row: 12
+      cells:
+      - Fit Reason
+      - Required when applicable; facts require evidence; inferred values must be labeled and cannot be silently promoted to fact.
+    - row: 13
+      cells:
+      - Intent
+      - Required when applicable; facts require evidence; inferred values must be labeled and cannot be silently promoted to fact.
+    - row: 14
+      cells:
+      - Timing
+      - Required when applicable; facts require evidence; inferred values must be labeled and cannot be silently promoted to fact.
+    - row: 15
+      cells:
+      - Evidence Set
+      - Required when applicable; facts require evidence; inferred values must be labeled and cannot be silently promoted to fact.
+    - row: 16
+      cells:
+      - Last Verified / Freshness
+      - Required when applicable; facts require evidence; inferred values must be labeled and cannot be silently promoted to fact.
+  - index: 14
+    rows:
+    - row: 0
+      cells:
+      - Stage
+      - State
+      - Rule
+    - row: 1
+      cells:
+      - Generate
+      - CANDIDATE
+      - AI draft only; binds exact PersonalizationContext and generation metadata.
+    - row: 2
+      cells:
+      - Human/Governed Review
+      - REVIEW_REQUIRED
+      - Reviewer may edit, return, reject or approve; edits remain attributable.
+    - row: 3
+      cells:
+      - Approve
+      - APPROVED_VERSION
+      - Creates immutable MessageVersion; approval != dispatch.
+    - row: 4
+      cells:
+      - Change
+      - NEW_CANDIDATE
+      - Material edit after approval creates a new candidate/version and invalidates dependent approval as required.
+    - row: 5
+      cells:
+      - Send
+      - SENT_VERSION
+      - Delivery binds exact approved content actually sent.
+  - index: 15
+    rows:
+    - row: 0
+      cells:
+      - Gate
+      - Inputs
+      - Result / Effect
+    - row: 1
+      cells:
+      - Compliance
+      - Recipient Country, Company Type, Contact Type, Source, Campaign, current policy
+      - PASS / REVIEW / BLOCK
+    - row: 2
+      cells:
+      - Contact validity
+      - verification status, evidence freshness, invalid/disabled state
+      - Eligible / review / block
+    - row: 3
+      cells:
+      - Suppression
+      - global suppression + campaign/local exclusions
+      - Suppressed recipient cannot be dispatched
+    - row: 4
+      cells:
+      - Unsubscribe
+      - reply/event bound to recipient
+      - Immediate future prohibited outreach stop
+    - row: 5
+      cells:
+      - Sender readiness
+      - authorized sender, domain/auth/health where required
+      - Dispatch allowed or blocked
+    - row: 6
+      cells:
+      - Schedule/rate
+      - timezone/window, daily/per-domain cap, cooldown
+      - Queue or block until legal
+  - index: 16
+    rows:
+    - row: 0
+      cells:
+      - Campaign Field
+      - Required Rule
+    - row: 1
+      cells:
+      - campaign_name
+      - Required human/system label.
+    - row: 2
+      cells:
+      - message_version_id
+      - Exact APPROVED MessageVersion; never "latest".
+    - row: 3
+      cells:
+      - recipient_refs
+      - Exact deduplicated authorized reference_list; at least one eligible recipient.
+    - row: 4
+      cells:
+      - sender_account_id
+      - Exact authorized SenderAccount.
+    - row: 5
+      cells:
+      - schedule_policy
+      - Optional only if schema/policy permits; exact version/binding.
+    - row: 6
+      cells:
+      - approval_ref
+      - Required before dispatch when approval policy requires it.
+    - row: 7
+      cells:
+      - recipient_preview_ref
+      - Must represent current denominator at approval/dispatch boundary.
+  - index: 17
+    rows:
+    - row: 0
+      cells:
+      - Level
+      - Allowed Behavior
+      - Hard Lock
+    - row: 1
+      cells:
+      - UI
+      - One action may dispatch an approved Campaign.
+      - Cannot send directly from unapproved MessageCandidate.
+    - row: 2
+      cells:
+      - Campaign Runtime
+      - dispatch(campaign_id, governed window/policy)
+      - Approval + suppression + compliance + sender + schedule + rate + idempotency + audit.
+    - row: 3
+      cells:
+      - Fan-out
+      - Create/queue one IndividualDelivery per eligible recipient_ref.
+      - No multi-recipient email envelope.
+    - row: 4
+      cells:
+      - Email Envelope
+      - Exactly 1 To.
+      - CC/BCC empty.
+    - row: 5
+      cells:
+      - Result
+      - Aggregate plus exact per-delivery states.
+      - Partial failure never renders COMPLETE.
+    - row: 6
+      cells:
+      - Kill Switch
+      - Stop pending/in-flight legal target scope.
+      - Reason + actor + audit required.
+  - index: 18
+    rows:
+    - row: 0
+      cells:
+      - State
+      - Meaning
+    - row: 1
+      cells:
+      - DRAFT
+      - Delivery prepared, no provider side effect.
+    - row: 2
+      cells:
+      - QUEUED
+      - Admitted to send queue.
+    - row: 3
+      cells:
+      - RATE_HELD
+      - Waiting on rate/cap policy.
+    - row: 4
+      cells:
+      - SCHEDULE_HELD
+      - Waiting on allowed time window.
+    - row: 5
+      cells:
+      - SENDING
+      - Effectful provider call in progress.
+    - row: 6
+      cells:
+      - SENT
+      - Provider accepted according to connector semantics.
+    - row: 7
+      cells:
+      - DELIVERED_OR_ACCEPTED
+      - Delivery evidence if provider supports it.
+    - row: 8
+      cells:
+      - BOUNCED
+      - Bounce received/classified.
+    - row: 9
+      cells:
+      - COMPLAINT
+      - Complaint/abuse event received.
+    - row: 10
+      cells:
+      - REPLIED
+      - Inbound reply bound.
+    - row: 11
+      cells:
+      - UNSUBSCRIBED
+      - Recipient opted out.
+    - row: 12
+      cells:
+      - CANCELLED
+      - Cancelled before legal completion.
+    - row: 13
+      cells:
+      - FAILED_RETRYABLE
+      - Failure class permits governed retry.
+    - row: 14
+      cells:
+      - FAILED_FINAL
+      - No automatic retry.
+    - row: 15
+      cells:
+      - SUPPRESSED
+      - Blocked by suppression.
+    - row: 16
+      cells:
+      - BLOCKED_COMPLIANCE
+      - Blocked by compliance/eligibility.
+  - index: 19
+    rows:
+    - row: 0
+      cells:
+      - Trigger
+      - Required Behavior
+    - row: 1
+      cells:
+      - Any inbound reply
+      - Bind exact delivery/contact/company/campaign; reevaluate or stop automated sequence per policy.
+    - row: 2
+      cells:
+      - Positive reply
+      - Create/escalate Opportunity and HumanOwnerAssignment when applicable.
+    - row: 3
+      cells:
+      - Negative/no-interest
+      - Stop or disposition according to policy; preserve outcome.
+    - row: 4
+      cells:
+      - Unsubscribe
+      - Immediate suppression/no-contact effect; cancel pending prohibited follow-ups.
+    - row: 5
+      cells:
+      - Complaint
+      - Stop affected outreach and invoke policy/sender protection.
+    - row: 6
+      cells:
+      - Bounce invalid
+      - Mark contact/delivery health; do not blindly retry invalid endpoint.
+    - row: 7
+      cells:
+      - No reply
+      - Only finite governed follow-up; count/interval from policy, not hardcoded.
+  - index: 20
+    rows:
+    - row: 0
+      cells:
+      - Milestone
+      - Owner / Rule
+    - row: 1
+      cells:
+      - Positive Reply
+      - AI06 classifies with evidence; human escalation when required.
+    - row: 2
+      cells:
+      - Human Owner
+      - Accountable person; assignment does not change source truth.
+    - row: 3
+      cells:
+      - Meeting
+      - Business milestone; not email state.
+    - row: 4
+      cells:
+      - Proposal
+      - Versioned business artifact/reference; exact owner binding required.
+    - row: 5
+      cells:
+      - Negotiation
+      - Business stage with human governance.
+    - row: 6
+      cells:
+      - Won / Lost
+      - Terminal opportunity outcome with reason/evidence.
+    - row: 7
+      cells:
+      - Revenue Attribution
+      - References ERP/Finance revenue/cost truth; AI06 does not create accounting facts.
+    - row: 8
+      cells:
+      - ROI
+      - Derived from governed cost/revenue refs; calculation owner exact binding required.
+    - row: 9
+      cells:
+      - Experience
+      - Outcome-derived candidate insight; admission governed by AI01/experience rules.
+  - index: 21
+    rows:
+    - row: 0
+      cells:
+      - Transition
+      - Actor
+      - Trigger
+      - Precondition
+      - Guard
+      - Side Effect
+      - Failure / Recovery
+    - row: 1
+      cells:
+      - DISCOVERY_PROFILE_DRAFT→ACTIVE
+      - Authorized user/system
+      - Activate
+      - required scope + allowed sources
+      - permission + version
+      - emit profile event
+      - invalid config → BLOCK
+    - row: 2
+      cells:
+      - DISCOVERY_JOB_CREATED→RUNNING
+      - Authorized actor
+      - Start
+      - profile ACTIVE
+      - state + idempotency
+      - acquisition request
+      - connector unavailable → BLOCK/RETRY
+    - row: 3
+      cells:
+      - RUNNING→PAUSED
+      - Authorized actor
+      - Pause
+      - job RUNNING
+      - expected_version
+      - pause execution
+      - stale state → VERSION_CONFLICT
+    - row: 4
+      cells:
+      - PAUSED→RUNNING
+      - Authorized actor
+      - Resume
+      - job PAUSED
+      - expected_version
+      - resume execution
+      - stale state → VERSION_CONFLICT
+    - row: 5
+      cells:
+      - RUNNING/PAUSED→STOPPED
+      - Authorized actor
+      - Stop
+      - job current
+      - scope + audit
+      - stop future acquisition
+      - preserve completed evidence
+    - row: 6
+      cells:
+      - COMPANY_CANDIDATE→RESOLVED_EXISTING
+      - Identity resolver/reviewer
+      - Identity match
+      - evidence + canonical match
+      - identity policy
+      - link existing master
+      - ambiguous → REVIEW_REQUIRED
+    - row: 7
+      cells:
+      - COMPANY_CANDIDATE→NEW_MASTER
+      - Authorized resolver
+      - Create master
+      - no existing match
+      - identity proof
+      - create canonical company
+      - insufficient proof → BLOCK
+    - row: 8
+      cells:
+      - MERGE_CANDIDATE→MERGED
+      - Authorized reviewer
+      - Confirm merge
+      - preview + no unresolved blocking conflicts
+      - permission + version
+      - redirect refs/preserve lineage
+      - conflict → REVIEW
+    - row: 9
+      cells:
+      - CONTACT_UNVERIFIED→VERIFIED
+      - Verifier
+      - Verify
+      - evidence + method
+      - contact policy
+      - set verified_at/status
+      - failed → INVALID/REVIEW
+    - row: 10
+      cells:
+      - MESSAGE_CANDIDATE→APPROVED_VERSION
+      - Reviewer
+      - Approve
+      - evidence/personalization/compliance reviewable
+      - review permission
+      - materialize immutable version
+      - material edit → new candidate
+    - row: 11
+      cells:
+      - CAMPAIGN_DRAFT→PREVIEW_READY
+      - System
+      - Resolve recipients
+      - exact recipient_refs
+      - auth + suppression
+      - recipient preview
+      - unresolved denominator → BLOCK
+    - row: 12
+      cells:
+      - PREVIEW_READY→APPROVED
+      - Reviewer
+      - Approve campaign
+      - preview current + message version + sender/policy
+      - approval permission
+      - approval event
+      - stale preview → REVIEW_REQUIRED
+    - row: 13
+      cells:
+      - APPROVED→DISPATCHING
+      - Authorized actor
+      - Dispatch
+      - all gates current
+      - idempotency + state
+      - fan-out deliveries
+      - any hard gate → block affected/all per policy
+    - row: 14
+      cells:
+      - DELIVERY_QUEUED→SENDING
+      - Worker
+      - Send due item
+      - eligible + window/rate
+      - idempotency + attempt
+      - provider effect
+      - policy changes → HOLD/BLOCK
+    - row: 15
+      cells:
+      - SENDING→SENT
+      - Provider callback/result
+      - Accepted
+      - correlated attempt
+      - callback authenticity
+      - persist result
+      - unknown correlation → QUARANTINE
+    - row: 16
+      cells:
+      - SENT→REPLIED
+      - Inbound handler
+      - Reply
+      - correlated inbound
+      - source authenticity
+      - stop/reevaluate sequence
+      - ambiguous → REVIEW
+    - row: 17
+      cells:
+      - SENT/QUEUED→UNSUBSCRIBED
+      - Inbound/policy
+      - Unsubscribe
+      - recipient identity
+      - suppression permission
+      - suppress/cancel future
+      - must not continue send
+    - row: 18
+      cells:
+      - REPLIED_POSITIVE→OWNER_ASSIGNED
+      - Authorized workflow
+      - Escalate
+      - positive classification
+      - assignment rules
+      - create owner assignment
+      - no owner → queue review
+    - row: 19
+      cells:
+      - OPPORTUNITY→WON/LOST
+      - Authorized human/workflow
+      - Close
+      - required outcome evidence
+      - permission + version
+      - terminal outcome event
+      - cannot auto-infer terminal result
+  - index: 22
+    rows:
+    - row: 0
+      cells:
+      - Event
+      - Producer
+      - Consumer
+      - Minimum Contract
+    - row: 1
+      cells:
+      - DiscoveryProfileActivated
+      - Profile owner
+      - Discovery scheduler
+      - profile_ref/version, actor, correlation
+    - row: 2
+      cells:
+      - DiscoveryJobStarted
+      - Discovery runtime
+      - Acquisition interface
+      - job_ref/profile_ref/scope
+    - row: 3
+      cells:
+      - MarketSignalIngested
+      - Acquisition interface
+      - Qualification
+      - signal_ref/evidence_ref/freshness
+    - row: 4
+      cells:
+      - CompanyIdentityResolved
+      - Identity resolver
+      - Company master/profile builder
+      - candidate_ref/company_ref/evidence
+    - row: 5
+      cells:
+      - CompanyMergeConfirmed
+      - Company master
+      - Contact/Campaign/Audit consumers
+      - survivor_ref/merged_refs/lineage
+    - row: 6
+      cells:
+      - ContactVerified
+      - Contact owner
+      - Eligibility/selection
+      - contact_ref/status/evidence/version
+    - row: 7
+      cells:
+      - ContactDisabled
+      - Contact owner
+      - Eligibility/campaign
+      - contact_ref/reason
+    - row: 8
+      cells:
+      - QualificationUpdated
+      - Qualification
+      - Personalization/CRM
+      - company_ref/fit/intent/timing/reasons
+    - row: 9
+      cells:
+      - MessageCandidateCreated
+      - Personalization
+      - Review
+      - candidate_ref/context_fingerprint
+    - row: 10
+      cells:
+      - MessageVersionApproved
+      - Review owner
+      - Campaign
+      - message_version_ref/approval_ref
+    - row: 11
+      cells:
+      - SuppressionChanged
+      - Suppression owner
+      - Selection/Dispatch/Follow-up
+      - recipient_ref/status/reason/version
+    - row: 12
+      cells:
+      - CampaignPreviewResolved
+      - Campaign runtime
+      - Approval
+      - campaign_ref/denominator counts/preview_ref
+    - row: 13
+      cells:
+      - CampaignApproved
+      - Approval owner
+      - Dispatch
+      - campaign_ref/approval_ref/version
+    - row: 14
+      cells:
+      - CampaignDispatchStarted
+      - Campaign runtime
+      - Delivery fan-out
+      - campaign_ref/idempotency/correlation
+    - row: 15
+      cells:
+      - IndividualDeliveryCreated
+      - Delivery runtime
+      - Queue/Audit
+      - delivery_ref/recipient_ref/message_version/sender
+    - row: 16
+      cells:
+      - DeliveryAttemptResult
+      - Provider gateway
+      - Delivery state/Audit
+      - attempt_ref/status/provider_result
+    - row: 17
+      cells:
+      - ReplyReceived
+      - Inbound connector
+      - Follow-up/CRM
+      - reply_ref/delivery_ref/contact_ref
+    - row: 18
+      cells:
+      - BounceReceived
+      - Inbound connector
+      - Contact/Delivery policy
+      - delivery_ref/bounce_class
+    - row: 19
+      cells:
+      - ComplaintReceived
+      - Inbound connector
+      - Suppression/Sender protection
+      - delivery_ref/recipient_ref
+    - row: 20
+      cells:
+      - UnsubscribeReceived
+      - Inbound connector
+      - Suppression/Follow-up
+      - recipient_ref/source event
+    - row: 21
+      cells:
+      - OpportunityOwnerAssigned
+      - CRM
+      - Human workflow
+      - opportunity_ref/owner_ref
+    - row: 22
+      cells:
+      - OpportunityClosed
+      - CRM
+      - ERP/Experience
+      - outcome/revenue attribution refs
+  - index: 23
+    rows:
+    - row: 0
+      cells:
+      - Scenario
+      - Required Rule
+    - row: 1
+      cells:
+      - Two reviewers edit same MessageCandidate
+      - Optimistic concurrency; stale writer gets VERSION_CONFLICT.
+    - row: 2
+      cells:
+      - Suppression changes after approval
+      - Recipient preview/dispatch must re-evaluate; approval alone cannot bypass new suppression.
+    - row: 3
+      cells:
+      - Campaign dispatch retried
+      - Same idempotency key + same payload returns/reuses same logical dispatch; no duplicate delivery.
+    - row: 4
+      cells:
+      - Same idempotency key + different payload
+      - Reject; never silently treat as retry.
+    - row: 5
+      cells:
+      - Late provider callback
+      - Must bind exact DeliveryAttempt; cannot overwrite newer terminal state without legal transition.
+    - row: 6
+      cells:
+      - Duplicate reply webhook
+      - Deduplicate by provider/event identity + correlation; no duplicate CRM milestone.
+    - row: 7
+      cells:
+      - Company merge races with campaign creation
+      - Campaign must resolve current canonical company/contact refs before persistence/effect.
+    - row: 8
+      cells:
+      - Contact disabled while queued
+      - Effect-time gate blocks pending send.
+    - row: 9
+      cells:
+      - Kill switch concurrent with send
+      - Stop not-yet-legally-completed work; exact race disposition must be auditable.
+  - index: 24
+    rows:
+    - row: 0
+      cells:
+      - Error
+      - Trigger
+      - Recovery
+    - row: 1
+      cells:
+      - SUPPRESSION_BLOCK
+      - Recipient suppressed/unsubscribed
+      - Block outbound; preserve evidence; cancel illegal pending follow-up.
+    - row: 2
+      cells:
+      - CONTACT_INVALID
+      - No valid/verified outbound contact
+      - Remove from eligible denominator; request evidence/verification.
+    - row: 3
+      cells:
+      - IDENTITY_AMBIGUOUS
+      - Company identity cannot resolve uniquely
+      - REVIEW_REQUIRED; no duplicate master creation.
+    - row: 4
+      cells:
+      - EVIDENCE_MISSING
+      - Fact/contact/claim lacks required evidence
+      - BLOCK fact use or downgrade to explicit inference if permitted.
+    - row: 5
+      cells:
+      - STALE_EVIDENCE
+      - Evidence outside freshness rule
+      - Refresh or mark stale; cannot present as current fact.
+    - row: 6
+      cells:
+      - RECIPIENT_RESOLUTION_FAIL
+      - Filter/selection cannot resolve exact authorized refs
+      - BLOCK + REPORT_AUTHORITY_GAP; never send query text.
+    - row: 7
+      cells:
+      - CAMPAIGN_STALE
+      - message/sender/schedule/policy/recipient preview stale
+      - REVIEW_REQUIRED / VERSION_CONFLICT.
+    - row: 8
+      cells:
+      - DELIVERY_ENVELOPE_ILLEGAL
+      - To count !=1 or CC/BCC nonempty
+      - Block individual delivery.
+    - row: 9
+      cells:
+      - DUPLICATE_ACTIVE_DELIVERY
+      - Same campaign/recipient already active
+      - Reuse existing logical work or block; no duplicate send.
+    - row: 10
+      cells:
+      - RATE_OR_WINDOW_BLOCK
+      - Rate cap/time window prevents send
+      - Hold until legal; no fake failure.
+    - row: 11
+      cells:
+      - PROVIDER_RETRYABLE
+      - Transient provider/transport failure
+      - New attempt under same delivery; governed backoff.
+    - row: 12
+      cells:
+      - PROVIDER_FINAL
+      - Non-retryable provider failure
+      - FAILED_FINAL; human/system review if needed.
+    - row: 13
+      cells:
+      - PARTIAL_CAMPAIGN
+      - Some deliveries succeed, others block/fail
+      - Never COMPLETE; report exact aggregate and item states.
+    - row: 14
+      cells:
+      - UNDEFINED_BINDING
+      - Unregistered API/table/permission/service requested
+      - BLOCK + REQUIRE_EXACT_BINDING; never invent parallel runtime.
+  - index: 25
+    rows:
+    - row: 0
+      cells:
+      - Control
+      - Normative Requirement
+    - row: 1
+      cells:
+      - Least privilege
+      - Company/contact/export/campaign/dispatch/reveal actions require exact permission/scope/condition gates.
+    - row: 2
+      cells:
+      - Secret handling
+      - Sender/provider credentials only via secret_ref/secret manager; never plaintext in lead or message data.
+    - row: 3
+      cells:
+      - Contact privacy
+      - Contact fields classified; access/export logged and scoped.
+    - row: 4
+      cells:
+      - Source rights
+      - Only legally allowed/authorized sources may feed discovery when source policy requires it.
+    - row: 5
+      cells:
+      - Audit chain
+      - Lead Evidence → AI generation metadata → AI draft → Human edits → Approved Version → Sent Version → Delivery → Reply/Bounce/Complaint/Unsubscribe → Outcome.
+    - row: 6
+      cells:
+      - Data minimization
+      - Do not collect unrelated personal data merely because a source exposes it.
+    - row: 7
+      cells:
+      - Retention
+      - Lead/contact/evidence/audit/delivery/CRM records may have different retention owners; no one-size-fits-all deletion.
+    - row: 8
+      cells:
+      - Deletion
+      - Deletion/retirement cannot break required audit/provenance; legal retention exact binding required.
+  - index: 26
+    rows:
+    - row: 0
+      cells:
+      - Binding Item
+      - Owner Source
+      - Design Status
+    - row: 1
+      cells:
+      - Discovery API/operation IDs
+      - Current Authority
+      - REQUIRE_CURRENT_BINDING
+    - row: 2
+      cells:
+      - Company Master tables/owner
+      - Current DB/Authority
+      - REQUIRE_CURRENT_BINDING
+    - row: 3
+      cells:
+      - Contact tables/verification vocabulary
+      - Current DB/Authority
+      - REQUIRE_CURRENT_BINDING
+    - row: 4
+      cells:
+      - Campaign API/schema
+      - Current Outreach Authority
+      - REQUIRE_CURRENT_BINDING
+    - row: 5
+      cells:
+      - Delivery API/worker/queue
+      - Current Runtime
+      - REQUIRE_EXACT_BINDING
+    - row: 6
+      cells:
+      - Suppression owner/table/API
+      - Current compliance/outreach owner
+      - REQUIRE_CURRENT_BINDING
+    - row: 7
+      cells:
+      - Compliance engine/ruleset version
+      - Current policy owner
+      - REQUIRE_EXACT_BINDING
+    - row: 8
+      cells:
+      - Sender account/credential owner
+      - Current provider/email owner
+      - REQUIRE_EXACT_BINDING
+    - row: 9
+      cells:
+      - Email connector/provider adapter
+      - AI03/current provider authority
+      - REQUIRE_EXACT_BINDING
+    - row: 10
+      cells:
+      - Webhook/callback verification
+      - Current connector authority
+      - REQUIRE_EXACT_BINDING
+    - row: 11
+      cells:
+      - Retry/backoff numeric policy
+      - Current runtime policy
+      - REQUIRE_EXACT_BINDING
+    - row: 12
+      cells:
+      - Daily/per-domain caps
+      - Current sender/campaign policy
+      - REQUIRE_EXACT_BINDING
+    - row: 13
+      cells:
+      - SPF/DKIM/DMARC readiness evidence owner
+      - Current deployment/email authority
+      - REQUIRE_EXACT_BINDING
+    - row: 14
+      cells:
+      - Event bus/topics/delivery semantics
+      - Current event/runtime authority
+      - REQUIRE_EXACT_BINDING
+    - row: 15
+      cells:
+      - ERP revenue/cost/ROI refs
+      - ERP/Finance owner
+      - REQUIRE_CURRENT_BINDING
+    - row: 16
+      cells:
+      - CRM opportunity owner/stages if different
+      - Current business owner
+      - REQUIRE_CURRENT_BINDING
+    - row: 17
+      cells:
+      - Retention/erasure periods
+      - Privacy/Compliance owner
+      - REQUIRE_EXACT_BINDING
+    - row: 18
+      cells:
+      - Production E2E evidence
+      - Current validation/evidence owner
+      - REQUIRE_FRESH_EVIDENCE
+  - index: 27
+    rows:
+    - row: 0
+      cells:
+      - UID
+      - Item
+      - PASS Condition
+    - row: 1
+      cells:
+      - AI06-ACC-01
+      - One Company Master
+      - No duplicate enterprise master created for same canonical identity.
+    - row: 2
+      cells:
+      - AI06-ACC-02
+      - Shared Acquisition Reuse
+      - No second DEV crawler/search/evidence runtime.
+    - row: 3
+      cells:
+      - AI06-ACC-03
+      - Evidence-backed facts
+      - Every factual personalization claim resolves evidence/source/date.
+    - row: 4
+      cells:
+      - AI06-ACC-04
+      - Inference labeling
+      - Potential needs/intent inference never presented as sourced fact.
+    - row: 5
+      cells:
+      - AI06-ACC-05
+      - No guessed email
+      - Generated email-pattern contact cannot become outbound eligible.
+    - row: 6
+      cells:
+      - AI06-ACC-06
+      - Identity resolution
+      - Name-only match cannot auto-create/merge canonical identity.
+    - row: 7
+      cells:
+      - AI06-ACC-07
+      - Merge preview
+      - Effectful merge requires preview and preserves lineage.
+    - row: 8
+      cells:
+      - AI06-ACC-08
+      - Contact evidence
+      - Every outbound contact has inspectable source evidence.
+    - row: 9
+      cells:
+      - AI06-ACC-09
+      - Contact status
+      - Invalid/disabled contact blocked.
+    - row: 10
+      cells:
+      - AI06-ACC-10
+      - Qualification explainability
+      - Fit/intent/timing reasons visible/auditable.
+    - row: 11
+      cells:
+      - AI06-ACC-11
+      - Candidate boundary
+      - AI draft never equals approved version.
+    - row: 12
+      cells:
+      - AI06-ACC-12
+      - Immutable version
+      - Approved message edit creates new version.
+    - row: 13
+      cells:
+      - AI06-ACC-13
+      - Exact sent version
+      - Sent delivery binds exact approved message version.
+    - row: 14
+      cells:
+      - AI06-ACC-14
+      - Human edit lineage
+      - AI draft/human edits/approved/sent versions distinguishable.
+    - row: 15
+      cells:
+      - AI06-ACC-15
+      - Compliance tri-state
+      - PASS/REVIEW/BLOCK semantics enforced.
+    - row: 16
+      cells:
+      - AI06-ACC-16
+      - Suppression global
+      - Suppressed recipient blocked across campaigns.
+    - row: 17
+      cells:
+      - AI06-ACC-17
+      - Unsubscribe hard stop
+      - Unsubscribe cancels future prohibited outreach.
+    - row: 18
+      cells:
+      - AI06-ACC-18
+      - Exact selection
+      - Campaign recipient list consists of exact authorized refs.
+    - row: 19
+      cells:
+      - AI06-ACC-19
+      - No filter-as-recipient
+      - Query/filter text cannot be dispatched.
+    - row: 20
+      cells:
+      - AI06-ACC-20
+      - Recipient dedupe
+      - Same recipient appears once per campaign denominator.
+    - row: 21
+      cells:
+      - AI06-ACC-21
+      - No Audience DB
+      - Selection does not materialize a second audience master.
+    - row: 22
+      cells:
+      - AI06-ACC-22
+      - Preview before approval
+      - Current recipient preview exists before approval.
+    - row: 23
+      cells:
+      - AI06-ACC-23
+      - Recheck before dispatch
+      - Suppression/compliance/sender/schedule/rate rechecked at effect time.
+    - row: 24
+      cells:
+      - AI06-ACC-24
+      - Approval != Send
+      - Campaign approval cannot itself cause external email side effect.
+    - row: 25
+      cells:
+      - AI06-ACC-25
+      - Batch fan-out
+      - One campaign dispatch creates individual deliveries.
+    - row: 26
+      cells:
+      - AI06-ACC-26
+      - Exactly one To
+      - Every outbound email envelope has exactly one To.
+    - row: 27
+      cells:
+      - AI06-ACC-27
+      - Empty CC/BCC
+      - Every outreach envelope has no CC/BCC.
+    - row: 28
+      cells:
+      - AI06-ACC-28
+      - No duplicate delivery
+      - Idempotent retry does not create second active campaign-recipient send.
+    - row: 29
+      cells:
+      - AI06-ACC-29
+      - Partial truth
+      - Partial campaign failure not labeled COMPLETE.
+    - row: 30
+      cells:
+      - AI06-ACC-30
+      - Kill switch
+      - Authorized kill switch stops eligible pending work and is audited.
+    - row: 31
+      cells:
+      - AI06-ACC-31
+      - Reply correlation
+      - Reply binds original delivery/contact/company/campaign.
+    - row: 32
+      cells:
+      - AI06-ACC-32
+      - Reply stop rule
+      - Reply reevaluates/stops automated follow-up.
+    - row: 33
+      cells:
+      - AI06-ACC-33
+      - Finite follow-up
+      - No infinite automated sequence.
+    - row: 34
+      cells:
+      - AI06-ACC-34
+      - Bounce handling
+      - Invalid bounce prevents blind retry.
+    - row: 35
+      cells:
+      - AI06-ACC-35
+      - Complaint protection
+      - Complaint activates governed sender/recipient protection.
+    - row: 36
+      cells:
+      - AI06-ACC-36
+      - Human owner
+      - Positive reply can transition to accountable human owner.
+    - row: 37
+      cells:
+      - AI06-ACC-37
+      - CRM separation
+      - Meeting/proposal/negotiation/won-lost are not confused with delivery states.
+    - row: 38
+      cells:
+      - AI06-ACC-38
+      - Outcome lineage
+      - Won/Lost remains traceable to source campaign/evidence.
+    - row: 39
+      cells:
+      - AI06-ACC-39
+      - ERP truth
+      - Revenue attribution references ERP facts, does not invent amounts.
+    - row: 40
+      cells:
+      - AI06-ACC-40
+      - ROI lineage
+      - ROI derives from governed cost/revenue refs.
+    - row: 41
+      cells:
+      - AI06-ACC-41
+      - Experience admission
+      - Outcome lesson not self-adopted.
+    - row: 42
+      cells:
+      - AI06-ACC-42
+      - Secret safety
+      - No plaintext sender/provider secret in records/log/audit.
+    - row: 43
+      cells:
+      - AI06-ACC-43
+      - Export governance
+      - Export cannot bypass privacy/permission.
+    - row: 44
+      cells:
+      - AI06-ACC-44
+      - AI07 boundary
+      - Social publishing handoff does not create duplicate publisher.
+    - row: 45
+      cells:
+      - AI06-ACC-45
+      - Runtime truth
+      - FILE_SPEC_COMPLETE never reported as email Production E2E.
+  - index: 28
+    rows:
+    - row: 0
+      cells:
+      - Case
+      - Mutation / Fault
+      - Expected
+    - row: 1
+      cells:
+      - NEG-01
+      - Same company appears under alias
+      - Must link/merge; duplicate Company Master creation blocked.
+    - row: 2
+      cells:
+      - NEG-02
+      - Name matches but jurisdiction conflicts
+      - Auto-merge blocked; review required.
+    - row: 3
+      cells:
+      - NEG-03
+      - AI guesses likely email
+      - Contact cannot enter eligible set.
+    - row: 4
+      cells:
+      - NEG-04
+      - Contact source removed from UI
+      - Historical sent audit still retains legal evidence reference.
+    - row: 5
+      cells:
+      - NEG-05
+      - Recent activity has no source
+      - Cannot be phrased as factual personalization.
+    - row: 6
+      cells:
+      - NEG-06
+      - Potential need inferred
+      - Must remain inference-labeled.
+    - row: 7
+      cells:
+      - NEG-07
+      - High fit but compliance BLOCK
+      - Dispatch blocked.
+    - row: 8
+      cells:
+      - NEG-08
+      - Campaign approved then recipient suppressed
+      - Dispatch recheck blocks recipient.
+    - row: 9
+      cells:
+      - NEG-09
+      - Filter string passed as recipient list
+      - Dispatch blocked.
+    - row: 10
+      cells:
+      - NEG-10
+      - Duplicate recipient selected twice
+      - Campaign denominator contains one logical recipient.
+    - row: 11
+      cells:
+      - NEG-11
+      - Bulk UI sends multi-To envelope
+      - Regression fail.
+    - row: 12
+      cells:
+      - NEG-12
+      - CC added for convenience
+      - Regression fail.
+    - row: 13
+      cells:
+      - NEG-13
+      - BCC used for tracking
+      - Regression fail.
+    - row: 14
+      cells:
+      - NEG-14
+      - Candidate sent before approval
+      - Blocked.
+    - row: 15
+      cells:
+      - NEG-15
+      - Approved message edited in place
+      - Regression fail; new version required.
+    - row: 16
+      cells:
+      - NEG-16
+      - Send resolves latest message at runtime
+      - Regression fail; exact version required.
+    - row: 17
+      cells:
+      - NEG-17
+      - Same dispatch retried after timeout
+      - No duplicate external side effect.
+    - row: 18
+      cells:
+      - NEG-18
+      - Same idempotency key different payload
+      - Rejected.
+    - row: 19
+      cells:
+      - NEG-19
+      - Late success callback after final failure
+      - Cannot silently overwrite without legal transition.
+    - row: 20
+      cells:
+      - NEG-20
+      - Provider says accepted but local audit write fails
+      - Not terminal complete; recovery required.
+    - row: 21
+      cells:
+      - NEG-21
+      - Partial campaign succeeds 90%
+      - Overall must show partial, not complete.
+    - row: 22
+      cells:
+      - NEG-22
+      - Kill switch during queue
+      - Pending legal scope stops, completed sends remain historical.
+    - row: 23
+      cells:
+      - NEG-23
+      - Reply arrives while follow-up queued
+      - Queued follow-up reevaluated/stopped per policy.
+    - row: 24
+      cells:
+      - NEG-24
+      - Unsubscribe arrives after approval before send
+      - Recipient blocked at effect time.
+    - row: 25
+      cells:
+      - NEG-25
+      - Complaint arrives
+      - Future automated send protected/blocked per policy.
+    - row: 26
+      cells:
+      - NEG-26
+      - Hard bounce classified invalid
+      - Blind retry blocked.
+    - row: 27
+      cells:
+      - NEG-27
+      - No reply forever
+      - Infinite sequence impossible.
+    - row: 28
+      cells:
+      - NEG-28
+      - Positive reply auto-marked Won by AI
+      - Blocked; terminal business outcome needs authority/human governance.
+    - row: 29
+      cells:
+      - NEG-29
+      - AI invents deal revenue
+      - Blocked; ERP ref required.
+    - row: 30
+      cells:
+      - NEG-30
+      - Old evidence reused as current without freshness check
+      - Must mark stale/refresh.
+    - row: 31
+      cells:
+      - NEG-31
+      - Export all contacts without permission
+      - Blocked/audited.
+    - row: 32
+      cells:
+      - NEG-32
+      - Second Suppression List added in UI module
+      - Regression fail.
+    - row: 33
+      cells:
+      - NEG-33
+      - DEV-specific crawler added
+      - Regression fail.
+    - row: 34
+      cells:
+      - NEG-34
+      - Social DM assumed available
+      - Blocked without AI07 official capability/policy binding.
+    - row: 35
+      cells:
+      - NEG-35
+      - Word completion called Production-ready email
+      - Regression fail.
+    - row: 36
+      cells:
+      - NEG-36
+      - Historical DEV page path treated as current API authority
+      - Regression fail; exact current binding required.
+    - row: 37
+      cells:
+      - NEG-37
+      - Company merge loses delivery history
+      - Regression fail.
+    - row: 38
+      cells:
+      - NEG-38
+      - Company merge loses suppression lineage
+      - Regression fail.
+    - row: 39
+      cells:
+      - NEG-39
+      - Contact verification overwritten without history
+      - Regression fail.
+    - row: 40
+      cells:
+      - NEG-40
+      - Review result changed without expected version
+      - VERSION_CONFLICT / fail closed.
+  - index: 29
+    rows:
+    - row: 0
+      cells:
+      - ID
+      - Given
+      - When
+      - Then
+    - row: 1
+      cells:
+      - GWT-01
+      - Given a new public company signal with valid evidence
+      - When identity matches an existing Company Master
+      - Then enrich/link existing company; do not create duplicate.
+    - row: 2
+      cells:
+      - GWT-02
+      - Given same display name but conflicting registration region
+      - When identity resolution runs
+      - Then require review; do not auto-merge.
+    - row: 3
+      cells:
+      - GWT-03
+      - Given no public business email
+      - When AI proposes a guessed pattern
+      - Then contact eligibility is blocked.
+    - row: 4
+      cells:
+      - GWT-04
+      - Given verified public email + evidence
+      - When eligibility evaluates PASS
+      - Then contact may enter recipient selection.
+    - row: 5
+      cells:
+      - GWT-05
+      - Given recent-activity statement without source
+      - When MessageCandidate is generated
+      - Then factual statement is rejected/removed or explicitly non-factual.
+    - row: 6
+      cells:
+      - GWT-06
+      - Given inferred need
+      - When personalization renders it
+      - Then it is labeled inference and not asserted as fact.
+    - row: 7
+      cells:
+      - GWT-07
+      - Given 100 fit score but compliance BLOCK
+      - When campaign preview runs
+      - Then recipient remains blocked.
+    - row: 8
+      cells:
+      - GWT-08
+      - Given recipient selected across multiple pages
+      - When Campaign is created
+      - Then exact authorized recipient_ref is stored once.
+    - row: 9
+      cells:
+      - GWT-09
+      - Given only filter query but no resolved refs
+      - When Create Campaign is requested
+      - Then BLOCK + authority/error report.
+    - row: 10
+      cells:
+      - GWT-10
+      - Given draft message
+      - When reviewer approves
+      - Then immutable MessageVersion is created.
+    - row: 11
+      cells:
+      - GWT-11
+      - Given approved MessageVersion
+      - When editor changes content
+      - Then new candidate/version is required.
+    - row: 12
+      cells:
+      - GWT-12
+      - Given approved Campaign
+      - When Dispatch is pressed
+      - Then approval alone does not bypass effect-time gates.
+    - row: 13
+      cells:
+      - GWT-13
+      - Given one Campaign with 500 eligible recipients
+      - When dispatch begins
+      - Then runtime fans out 500 logical individual deliveries, subject to current policy.
+    - row: 14
+      cells:
+      - GWT-14
+      - Given an IndividualDelivery
+      - When envelope is built
+      - Then To count = 1 and CC/BCC are empty.
+    - row: 15
+      cells:
+      - GWT-15
+      - Given one recipient was suppressed after approval
+      - When send worker evaluates it
+      - Then that delivery is blocked while other legal items may proceed per policy.
+    - row: 16
+      cells:
+      - GWT-16
+      - Given same dispatch request is retried
+      - When idempotency key/payload are identical
+      - Then no duplicate logical delivery is created.
+    - row: 17
+      cells:
+      - GWT-17
+      - Given same idempotency key with changed recipients
+      - When request is submitted
+      - Then reject as idempotency conflict.
+    - row: 18
+      cells:
+      - GWT-18
+      - Given sender daily cap reached
+      - When a queued delivery becomes due
+      - Then hold until policy allows; do not falsify sent/failed state.
+    - row: 19
+      cells:
+      - GWT-19
+      - Given Kill Switch authorized
+      - When activated
+      - Then pending/in-flight legal scope stops and audit records actor/reason.
+    - row: 20
+      cells:
+      - GWT-20
+      - Given provider timeout retryable
+      - When retry occurs
+      - Then create new DeliveryAttempt under same logical delivery.
+    - row: 21
+      cells:
+      - GWT-21
+      - Given hard bounce invalid contact
+      - When retry planner runs
+      - Then blind resend is not allowed.
+    - row: 22
+      cells:
+      - GWT-22
+      - Given inbound reply
+      - When correlated
+      - Then planned follow-up is stopped/reevaluated.
+    - row: 23
+      cells:
+      - GWT-23
+      - Given unsubscribe
+      - When event is validated
+      - Then suppression hard gate applies to future prohibited campaigns.
+    - row: 24
+      cells:
+      - GWT-24
+      - Given complaint
+      - When event is validated
+      - Then recipient/sender protection workflow activates.
+    - row: 25
+      cells:
+      - GWT-25
+      - Given positive reply
+      - When business escalation is allowed
+      - Then Opportunity/HumanOwner may be created without changing evidence truth.
+    - row: 26
+      cells:
+      - GWT-26
+      - Given meeting completed
+      - When CRM advances
+      - Then email delivery state remains unchanged; business milestone advances separately.
+    - row: 27
+      cells:
+      - GWT-27
+      - Given opportunity marked Won
+      - When revenue attribution is requested
+      - Then use ERP/Finance revenue ref, not AI-estimated amount.
+    - row: 28
+      cells:
+      - GWT-28
+      - Given Won outcome and actual cost/revenue refs
+      - When ROI is calculated
+      - Then result remains traceable to both refs.
+    - row: 29
+      cells:
+      - GWT-29
+      - Given outcome-derived lesson
+      - When ExperienceCandidate is created
+      - Then it is not automatically adopted.
+    - row: 30
+      cells:
+      - GWT-30
+      - Given evidence becomes stale
+      - When new campaign personalization runs
+      - Then refresh or mark stale before factual use.
+    - row: 31
+      cells:
+      - GWT-31
+      - Given company merge
+      - When references are rewritten
+      - Then contacts, campaigns, delivery, suppression and audit lineage remain reachable.
+    - row: 32
+      cells:
+      - GWT-32
+      - Given user exports contacts
+      - When permission/classification fails
+      - Then export is blocked and audited.
+    - row: 33
+      cells:
+      - GWT-33
+      - Given social publishing request
+      - When AI06 reaches channel handoff
+      - Then route to AI07; no internal duplicate social publisher is created.
+    - row: 34
+      cells:
+      - GWT-34
+      - Given official social DM capability absent
+      - When outreach logic considers DM
+      - Then capability is unavailable/blocked, not assumed.
+    - row: 35
+      cells:
+      - GWT-35
+      - Given Word passes QA
+      - When status is reported
+      - Then only design content completion is claimed.
+    - row: 36
+      cells:
+      - GWT-36
+      - Given Production email connector has no fresh E2E evidence
+      - When go-live status is queried
+      - Then status remains NOT_PROVEN/BLOCKED.
+  - index: 30
+    rows:
+    - row: 0
+      cells:
+      - Source
+      - Used For
+      - Authority Caution
+    - row: 1
+      cells:
+      - DEV-01 企業自動開發系統｜FINAL_LOCKED
+      - Single-page workflow, Campaign recipient_refs, bulk dispatch with individual deliveries, one To / empty CC/BCC, no second systems.
+      - Document itself states implementation not executed.
+    - row: 2
+      cells:
+      - ACPOS 主動商機施工更新｜2026-09-06
+      - Active-first discovery, shared acquisition reuse, company/contact/evidence/intent/qualification controls, current-gap semantics.
+      - Historical GitHub snapshot is design/source evidence, not present Current runtime proof.
+    - row: 3
+      cells:
+      - 工作區 FINAL FREEZE 後至企業開發中心更新紀錄
+      - End-to-end enterprise outreach, contact-source rules, approval defaults, compliance/suppression, audit chain, CRM/ROI/profile semantics.
+      - Delta appendix; does not by itself prove Production implementation.
+    - row: 4
+      cells:
+      - Current ACPOS Governance v2.2.16
+      - One authority/owner, verify-before-claim, evidence-before-claim, exact binding and no parallel system principles.
+      - Current governance controls execution claims; this Word remains design artifact.
+  - index: 31
+    rows:
+    - row: 0
+      cells:
+      - Field
+      - Value
+    - row: 1
+      cells:
+      - Design content
+      - COMPLETE
+    - row: 2
+      cells:
+      - Formal approval
+      - NOT SELF-GRANTED
+    - row: 3
+      cells:
+      - Runtime implementation
+      - NOT PROVEN BY DOCUMENT
+    - row: 4
+      cells:
+      - External Email E2E
+      - REQUIRES FRESH PRODUCTION EVIDENCE
+    - row: 5
+      cells:
+      - Social Publishing
+      - OUT OF SCOPE → AI-07
+    - row: 6
+      cells:
+      - Next document
+      - ACPOS-AI-07 Social Publishing AI System — only upon explicit continuation
+  - index: 32
+    rows:
+    - row: 0
+      cells:
+      - Runtime Policy
+      - Exact Value / Binding
+      - Source
+      - Status
+    - row: 1
+      cells:
+      - PROVIDER_QUEUE_CAPACITY
+      - '100'
+      - authority/runtime/ACPOS_PRODUCTION_ASYNC_QUEUE_RUNTIME_CONTRACT_FINAL_LOCKED_V1.0.yaml
+      - SOURCE_EXACT
+    - row: 2
+      cells:
+      - PROVIDER_QUEUE_MAX_ATTEMPTS
+      - '3'
+      - same queue policy
+      - SOURCE_EXACT
+    - row: 3
+      cells:
+      - PROVIDER_QUEUE_LEASE_SECONDS
+      - '120'
+      - same queue policy
+      - SOURCE_EXACT
+    - row: 4
+      cells:
+      - PROVIDER_QUEUE_BACKOFF_SECONDS
+      - 30,120,300
+      - same queue policy
+      - SOURCE_EXACT
+    - row: 5
+      cells:
+      - PROVIDER_WORKER_MAX_BATCH
+      - '10'
+      - same worker policy
+      - SOURCE_EXACT
+  - index: 33
+    rows:
+    - row: 0
+      cells:
+      - Authority
+      - Value
+    - row: 1
+      cells:
+      - Source Commit
+      - 165c6440cb53b1b45ec96905241fb4d56dc3b867
+    - row: 2
+      cells:
+      - Machine Authority
+      - authority/pages/admin/DEV-01/ACPOS_DEV-01_ENTERPRISE_AUTOMATION_SINGLE_PAGE_FINAL_LOCKED_ENCODING.yaml
+    - row: 3
+      cells:
+      - Authority SHA-256
+      - bdcf5bb77fde5ddc5739bba82a5ef9bc540284354a18554e2c1f6b860baa14ed
+    - row: 4
+      cells:
+      - Expected Control Denominator
+      - '22'
+    - row: 5
+      cells:
+      - Unique Control Rows
+      - '22'
+    - row: 6
+      cells:
+      - Denominator Gate
+      - PASS
+  - index: 34
+    rows:
+    - row: 0
+      cells:
+      - Control UID
+      - UID Status
+      - Label
+      - Type
+      - Action UID
+      - Gate
+      - Permission / Auth Resource
+      - Payload / Schema
+      - Operation
+      - Method / Path
+      - Runtime Owner
+      - Persistence Owner
+      - Runtime Status
+    - row: 1
+      cells:
+      - DEV-01-BTN-CAMPAIGN-APPROVE
+      - EXISTING_SOURCE_UID
+      - 核准 Campaign
+      - PRIMARY_BUTTON
+      - DEV-01-ACT-CAMPAIGN-APPROVE
+      - DEV-01-GATE-CAMPAIGN-APPROVAL
+      - outreach.batch.approve
+      - ApproveOutreachCampaignRequest
+      - approveOutreachCampaign
+      - POST /v1/outreach/campaigns/{campaignId}/approve
+      - —
+      - Existing Outreach Owner / CampaignApproval + Campaign Audit
+      - EFFECTFUL_EXACT
+    - row: 2
+      cells:
+      - DEV-01-BTN-CAMPAIGN-CREATE
+      - EXISTING_SOURCE_UID
+      - 建立 Campaign
+      - PRIMARY_BUTTON
+      - DEV-01-ACT-CAMPAIGN-CREATE
+      - DEV-01-GATE-CAMPAIGN
+      - outreach.batch.create
+      - CreateOutreachCampaignRequest
+      - createOutreachCampaign
+      - POST /v1/outreach/campaigns
+      - INFO_COMMAND_RUNTIME
+      - Existing Outreach Owner / Campaign + Audit
+      - EFFECTFUL_EXACT
+    - row: 3
+      cells:
+      - DEV-01-BTN-CAMPAIGN-SEARCH
+      - EXISTING_SOURCE_UID
+      - 搜尋受眾
+      - SEARCH_ACTION
+      - DEV-01-ACT-CAMPAIGN-SEARCH
+      - DEV-01-GATE-CAMPAIGN
+      - projection.search
+      - SearchEnterpriseAudienceProjectionRequest
+      - searchProjection
+      - POST /v1/search
+      - INFO_COMMAND_RUNTIME
+      - Global Brain / SemanticIndexResult + Search Audit
+      - EFFECTFUL_EXACT
+    - row: 4
+      cells:
+      - DEV-01-BTN-CANDIDATE-CREATE
+      - EXISTING_SOURCE_UID
+      - 建立 Candidate
+      - PRIMARY_BUTTON
+      - DEV-01-ACT-CANDIDATE-CREATE
+      - DEV-01-GATE-MESSAGE-WRITE
+      - candidate.create
+      - CreateEnterpriseCompanyCandidateRequest
+      - createCandidate
+      - POST /v1/candidates
+      - —
+      - Existing Enterprise Development Owner / CompanyCandidate + Evidence/Audit
+      - EFFECTFUL_EXACT
+    - row: 5
+      cells:
+      - DEV-01-BTN-CANDIDATE-DECIDE
+      - EXISTING_SOURCE_UID
+      - 審查 Candidate
+      - PRIMARY_BUTTON
+      - DEV-01-ACT-CANDIDATE-DECIDE
+      - DEV-01-GATE-MESSAGE-REVIEW
+      - candidate.decide
+      - DecideEnterpriseCandidateRequest
+      - decideCandidate
+      - POST /v1/candidates/{id}/decision
+      - CANDIDATE_DECISION_RUNTIME
+      - public.context_candidates
+      - EFFECTFUL_EXACT
+    - row: 6
+      cells:
+      - DEV-01-BTN-CR-CREATE
+      - EXISTING_SOURCE_UID
+      - 要求修改
+      - SECONDARY_BUTTON
+      - DEV-01-ACT-CR-CREATE
+      - DEV-01-GATE-MESSAGE-REVIEW
+      - core.change.create
+      - CreateEnterpriseChangeRequestRequest
+      - createChangeRequest
+      - POST /v1/change-requests
+      - CANDIDATE_DECISION_RUNTIME
+      - Existing Governed Change Request Owner / ChangeRequest + Audit
+      - EFFECTFUL_EXACT
+    - row: 7
+      cells:
+      - DEV-01-BTN-DIRECTORY-SEARCH
+      - EXISTING_SOURCE_UID
+      - 搜尋企業
+      - SEARCH_ACTION
+      - DEV-01-ACT-DIRECTORY-SEARCH
+      - DEV-01-GATE-DIRECTORY-READ
+      - projection.search
+      - SearchEnterpriseDirectoryProjectionRequest
+      - searchProjection
+      - POST /v1/search
+      - INFO_COMMAND_RUNTIME
+      - Global Brain / SemanticIndexResult + Search Audit
+      - EFFECTFUL_EXACT
+    - row: 8
+      cells:
+      - DEV-01-BTN-DISCOVERY-PAUSE
+      - EXISTING_SOURCE_UID
+      - 暫停
+      - SECONDARY_BUTTON
+      - DEV-01-ACT-DISCOVERY-PAUSE
+      - DEV-01-GATE-DISCOVERY-RUNNING
+      - outreach.discovery.configure
+      - PauseCompanyDiscoveryRequest
+      - pauseCompanyDiscovery
+      - POST /v1/outreach/discovery-jobs/{jobId}/pause
+      - —
+      - Shared Acquisition / Knowledge Owner / DiscoveryJob State + Audit
+      - EFFECTFUL_EXACT
+    - row: 9
+      cells:
+      - DEV-01-BTN-DISCOVERY-RESUME
+      - EXISTING_SOURCE_UID
+      - 繼續
+      - SECONDARY_BUTTON
+      - DEV-01-ACT-DISCOVERY-RESUME
+      - DEV-01-GATE-DISCOVERY-PAUSED
+      - outreach.discovery.configure
+      - ResumeCompanyDiscoveryRequest
+      - resumeCompanyDiscovery
+      - POST /v1/outreach/discovery-jobs/{jobId}/resume
+      - —
+      - Shared Acquisition / Knowledge Owner / DiscoveryJob State + Audit
+      - EFFECTFUL_EXACT
+    - row: 10
+      cells:
+      - DEV-01-BTN-DISCOVERY-START
+      - EXISTING_SOURCE_UID
+      - 開始搜集
+      - PRIMARY_BUTTON
+      - DEV-01-ACT-DISCOVERY-START
+      - DEV-01-GATE-DISCOVERY-START
+      - outreach.discovery.configure
+      - StartCompanyDiscoveryRequest
+      - startCompanyDiscovery
+      - POST /v1/outreach/discovery-jobs
+      - —
+      - Shared Acquisition / Knowledge Owner / DiscoveryJob + Audit
+      - EFFECTFUL_EXACT
+    - row: 11
+      cells:
+      - DEV-01-BTN-DISCOVERY-STOP
+      - EXISTING_SOURCE_UID
+      - 停止
+      - DANGER_COMPACT_BUTTON
+      - DEV-01-ACT-DISCOVERY-STOP
+      - DEV-01-GATE-DISCOVERY-RUNNING
+      - outreach.discovery.configure
+      - StopCompanyDiscoveryRequest
+      - stopCompanyDiscovery
+      - POST /v1/outreach/discovery-jobs/{jobId}/stop
+      - —
+      - Shared Acquisition / Knowledge Owner / DiscoveryJob State + Audit
+      - EFFECTFUL_EXACT
+    - row: 12
+      cells:
+      - DEV-01-BTN-EMAIL-DISPATCH
+      - EXISTING_SOURCE_UID
+      - 開始一對一發送
+      - PRIMARY_BUTTON
+      - DEV-01-ACT-EMAIL-DISPATCH
+      - DEV-01-GATE-DISPATCH
+      - outreach.send.dispatch
+      - DispatchOutreachCampaignRequest
+      - dispatchOutreachCampaign
+      - POST /v1/outreach/campaigns/{campaignId}/dispatch
+      - —
+      - Existing Outreach Owner / Campaign Dispatch + IndividualDelivery + Audit
+      - EFFECTFUL_EXACT
+    - row: 13
+      cells:
+      - DEV-01-BTN-EXPORT
+      - EXISTING_SOURCE_UID
+      - 匯出
+      - COMPACT_BUTTON
+      - DEV-01-ACT-EXPORT
+      - DEV-01-GATE-EXPORT
+      - projection.export
+      - ExportEnterpriseProjectionRequest
+      - exportProjection
+      - POST /v1/exports
+      - INFO_COMMAND_RUNTIME
+      - Existing Projection/Export Owner / Enterprise Export Artifact + Export Audit
+      - EFFECTFUL_EXACT
+    - row: 14
+      cells:
+      - DEV-01-BTN-KILL-SWITCH
+      - EXISTING_SOURCE_UID
+      - 停止發送
+      - DANGER_CONFIRM_BUTTON
+      - DEV-01-ACT-KILL-SWITCH
+      - DEV-01-GATE-KILL-SWITCH
+      - ops.kill_switch
+      - SetEnterpriseOutreachKillSwitchRequest
+      - setKillSwitch
+      - POST /v1/operations/kill-switch
+      - AIAPI_PROVIDER_COMMAND_RUNTIME
+      - Existing Operations Governance / Kill Switch State + Audit
+      - EFFECTFUL_EXACT
+    - row: 15
+      cells:
+      - DEV-01-BTN-MERGE
+      - EXISTING_SOURCE_UID
+      - 確認合併
+      - PRIMARY_BUTTON
+      - DEV-01-ACT-MERGE
+      - DEV-01-GATE-MERGE-CONFIRM
+      - outreach.directory.merge
+      - MergeCompanyCandidateRequest
+      - mergeCompanyCandidate
+      - POST /v1/outreach/companies/{companyId}/merge
+      - —
+      - Existing Enterprise Development Owner / CompanyMaster + CompanyMergeDecision + Lineage Audit
+      - EFFECTFUL_EXACT
+    - row: 16
+      cells:
+      - DEV-01-BTN-MERGE-PREVIEW
+      - EXISTING_SOURCE_UID
+      - 預覽合併
+      - SECONDARY_BUTTON
+      - DEV-01-ACT-MERGE-PREVIEW
+      - DEV-01-GATE-MERGE
+      - outreach.directory.merge
+      - PreviewCompanyMergeRequest
+      - previewCompanyMerge
+      - POST /v1/outreach/companies/merge-preview
+      - —
+      - Existing Enterprise Development Owner / CompanyMergeCandidate + Merge Preview Evidence
+      - EFFECTFUL_EXACT
+    - row: 17
+      cells:
+      - DEV-01-BTN-REFRESH
+      - EXISTING_SOURCE_UID
+      - 重新整理
+      - COMPACT_BUTTON
+      - DEV-01-ACT-REFRESH
+      - DEV-01-GATE-DELIVERY-READ
+      - projection.refresh
+      - RefreshEnterpriseProjectionRequest
+      - refreshProjection
+      - POST /v1/projections/refresh
+      - INFO_COMMAND_RUNTIME
+      - Global Brain / Enterprise Projection + Projection Audit
+      - EFFECTFUL_EXACT
+    - row: 18
+      cells:
+      - DEV-01-BTN-STAGE-1
+      - EXISTING_SOURCE_UID
+      - 名單持續搜集
+      - SEGMENT_BUTTON
+      - DEV-01-ACT-STAGE-1-SELECT
+      - DEV-01-GATE-PAGE
+      - —
+      - —
+      - —
+      - —
+      - —
+      - —
+      - UI_LOCAL_EXACT
+    - row: 19
+      cells:
+      - DEV-01-BTN-STAGE-2
+      - EXISTING_SOURCE_UID
+      - 企業資料庫
+      - SEGMENT_BUTTON
+      - DEV-01-ACT-STAGE-2-SELECT
+      - DEV-01-GATE-PAGE
+      - —
+      - —
+      - —
+      - —
+      - —
+      - —
+      - UI_LOCAL_EXACT
+    - row: 20
+      cells:
+      - DEV-01-BTN-STAGE-3
+      - EXISTING_SOURCE_UID
+      - 開發信內容
+      - SEGMENT_BUTTON
+      - DEV-01-ACT-STAGE-3-SELECT
+      - DEV-01-GATE-PAGE
+      - —
+      - —
+      - —
+      - —
+      - —
+      - —
+      - UI_LOCAL_EXACT
+    - row: 21
+      cells:
+      - DEV-01-BTN-STAGE-4
+      - EXISTING_SOURCE_UID
+      - Campaign / 受眾批次
+      - SEGMENT_BUTTON
+      - DEV-01-ACT-STAGE-4-SELECT
+      - DEV-01-GATE-PAGE
+      - —
+      - —
+      - —
+      - —
+      - —
+      - —
+      - UI_LOCAL_EXACT
+    - row: 22
+      cells:
+      - DEV-01-BTN-STAGE-5
+      - EXISTING_SOURCE_UID
+      - 一對一發送控制
+      - SEGMENT_BUTTON
+      - DEV-01-ACT-STAGE-5-SELECT
+      - DEV-01-GATE-PAGE
+      - —
+      - —
+      - —
+      - —
+      - —
+      - —
+      - UI_LOCAL_EXACT
+  - index: 35
+    rows:
+    - row: 0
+      cells:
+      - Authority
+      - Value
+    - row: 1
+      cells:
+      - Source Commit
+      - 165c6440cb53b1b45ec96905241fb4d56dc3b867
+    - row: 2
+      cells:
+      - Machine Authority
+      - authority/pages/admin/ERP-01/ACPOS_ERP-01_ERP_FINANCE_SINGLE_PAGE_FINAL_LOCKED_ENCODING.yaml
+    - row: 3
+      cells:
+      - Authority SHA-256
+      - ce3e4c9b9a7fcac9e81d8ee02dbc97e8cdba261167a27a6d555aa32c05c1d391
+    - row: 4
+      cells:
+      - Expected Control Denominator
+      - '42'
+    - row: 5
+      cells:
+      - Unique Control Rows
+      - '42'
+    - row: 6
+      cells:
+      - Denominator Gate
+      - PASS
+  - index: 36
+    rows:
+    - row: 0
+      cells:
+      - Control UID
+      - UID Status
+      - Label
+      - Type
+      - Action UID
+      - Gate
+      - Permission / Auth Resource
+      - Payload / Schema
+      - Operation
+      - Method / Path
+      - Runtime Owner
+      - Persistence Owner
+      - Runtime Status
+    - row: 1
+      cells:
+      - ERP-01-BTN-CONNECTOR-CREATE
+      - EXISTING_SOURCE_UID
+      - 新增 ERP 連接
+      - BUTTON
+      - ERP-01-ACT-CONNECTOR-CREATE
+      - ERP-01-GATE-CONNECTOR-WRITE
+      - ERP-01-PERM-CONNECTOR
+      - CreateERPConnectorRequest
+      - createERPConnector
+      - POST /v1/erp/connectors
+      - ERPConnectorService
+      - ERPConnectorService / ERP Connector Configuration + Audit
+      - EFFECTFUL_EXACT
+    - row: 2
+      cells:
+      - ERP-01-BTN-CONNECTOR-UPDATE
+      - EXISTING_SOURCE_UID
+      - 更新 ERP 連接
+      - BUTTON
+      - ERP-01-ACT-CONNECTOR-UPDATE
+      - ERP-01-GATE-CONNECTOR-WRITE
+      - ERP-01-PERM-CONNECTOR
+      - UpdateERPConnectorRequest
+      - updateERPConnector
+      - PATCH /v1/erp/connectors/{id}
+      - ERPConnectorService
+      - ERPConnectorService / ERP Connector Configuration + Audit
+      - EFFECTFUL_EXACT
+    - row: 3
+      cells:
+      - ERP-01-BTN-CONNECTOR-VALIDATE
+      - EXISTING_SOURCE_UID
+      - 驗證 ERP 連接
+      - BUTTON
+      - ERP-01-ACT-CONNECTOR-VALIDATE
+      - ERP-01-GATE-CONNECTOR-VALIDATE
+      - ERP-01-PERM-CONNECTOR
+      - ValidateERPConnectorRequest
+      - validateERPConnector
+      - POST /v1/erp/connectors/{id}/validate
+      - ERPConnectorService
+      - ERPConnectorService / ERP Connector Validation Evidence
+      - EFFECTFUL_EXACT
+    - row: 4
+      cells:
+      - ERP-01-BTN-DETAIL
+      - EXISTING_SOURCE_UID
+      - 查看詳細資料 / Audit
+      - BUTTON
+      - ERP-01-ACT-DETAIL-OPEN
+      - ERP-01-GATE-PAGE
+      - ERP-01-PERM-READ
+      - —
+      - getUiProjection
+      - GET /v1/ui-projections/{pageUid}
+      - Projection / source page read owner
+      - —
+      - READ_EXACT
+    - row: 5
+      cells:
+      - ERP-01-BTN-EXPORT
+      - EXISTING_SOURCE_UID
+      - 匯出目前投影
+      - BUTTON
+      - ERP-01-ACT-EXPORT
+      - ERP-01-GATE-FINANCE
+      - ERP-01-PERM-FINANCE
+      - ExportERPProjectionRequest
+      - exportProjection
+      - POST /v1/exports
+      - Existing Projection/Export owner
+      - Existing Projection/Export Owner / ERP Export Artifact + Export Audit
+      - EFFECTFUL_EXACT
+    - row: 6
+      cells:
+      - ERP-01-BTN-FACTPACK
+      - EXISTING_SOURCE_UID
+      - 取得 Fact Pack
+      - BUTTON
+      - ERP-01-ACT-FACTPACK
+      - ERP-01-GATE-FINANCE
+      - ERP-01-PERM-FINANCE
+      - —
+      - getERPFinanceFactPack
+      - GET /v1/erp/finance/fact-pack
+      - FinanceGuardrailService
+      - —
+      - READ_EXACT
+    - row: 7
+      cells:
+      - ERP-01-BTN-FAILURE-GET
+      - EXISTING_SOURCE_UID
+      - 查看失敗原因
+      - BUTTON
+      - ERP-01-ACT-FAILURE-GET
+      - ERP-01-GATE-SYNC-READ
+      - ERP-01-PERM-SYNC
+      - —
+      - getERPFailure
+      - GET /v1/erp/failures/{id}
+      - ERPConnectorService
+      - —
+      - READ_EXACT
+    - row: 8
+      cells:
+      - ERP-01-BTN-FORECAST
+      - EXISTING_SOURCE_UID
+      - 取得 Forecast
+      - BUTTON
+      - ERP-01-ACT-FORECAST
+      - ERP-01-GATE-FINANCE
+      - ERP-01-PERM-FINANCE
+      - —
+      - getERPForecast
+      - GET /v1/erp/forecasts
+      - FinanceGuardrailService
+      - —
+      - READ_EXACT
+    - row: 9
+      cells:
+      - ERP-01-BTN-GUARDRAILS
+      - EXISTING_SOURCE_UID
+      - 取得產能 Guardrails
+      - BUTTON
+      - ERP-01-ACT-GUARDRAILS
+      - ERP-01-GATE-FINANCE
+      - ERP-01-PERM-FINANCE
+      - —
+      - getERPCapacityGuardrails
+      - GET /v1/erp/capacity/guardrails
+      - FinanceGuardrailService
+      - —
+      - READ_EXACT
+    - row: 10
+      cells:
+      - ERP-01-BTN-MAPPING-VALIDATE
+      - EXISTING_SOURCE_UID
+      - 驗證 Mapping
+      - BUTTON
+      - ERP-01-ACT-MAPPING-VALIDATE
+      - ERP-01-GATE-MAPPING-VALIDATE
+      - ERP-01-PERM-CONNECTOR
+      - ValidateERPMappingRequest
+      - validateERPMapping
+      - POST /v1/erp/mappings/{id}/validate
+      - ERPConnectorService
+      - ERPConnectorService / ERP Mapping Validation Evidence
+      - EFFECTFUL_EXACT
+    - row: 11
+      cells:
+      - ERP-01-BTN-SNAPSHOT-REFRESH
+      - EXISTING_SOURCE_UID
+      - 更新 Snapshot
+      - BUTTON
+      - ERP-01-ACT-SNAPSHOT-REFRESH
+      - ERP-01-GATE-SNAPSHOT-REFRESH
+      - ERP-01-PERM-SYNC
+      - RefreshERPSnapshotRequest
+      - refreshERPSnapshot
+      - POST /v1/erp/snapshots/refresh
+      - ERPConnectorService
+      - ERPConnectorService / ERP Snapshot + Freshness/Audit
+      - EFFECTFUL_EXACT
+    - row: 12
+      cells:
+      - ERP-01-BTN-SYNC-CREATE
+      - EXISTING_SOURCE_UID
+      - 建立同步工作
+      - BUTTON
+      - ERP-01-ACT-SYNC-CREATE
+      - ERP-01-GATE-SYNC-CREATE
+      - ERP-01-PERM-SYNC
+      - CreateERPSyncJobRequest
+      - createERPSyncJob
+      - POST /v1/erp/sync-jobs
+      - ERPConnectorService
+      - ERPConnectorService / ERP Sync Job + Audit
+      - EFFECTFUL_EXACT
+    - row: 13
+      cells:
+      - ERP-01-BTN-SYNC-RETRY
+      - EXISTING_SOURCE_UID
+      - 重試失敗同步
+      - BUTTON
+      - ERP-01-ACT-SYNC-RETRY
+      - ERP-01-GATE-SYNC-RETRY
+      - ERP-01-PERM-SYNC
+      - RetryERPSyncRequest
+      - retryERPSync
+      - POST /v1/erp/sync-jobs/{id}/retry
+      - ERPConnectorService
+      - ERPConnectorService / ERP Sync Attempt + Failure/Audit
+      - EFFECTFUL_EXACT
+    - row: 14
+      cells:
+      - ERP-01-BTN-SYNC-STATUS
+      - EXISTING_SOURCE_UID
+      - 查看同步狀態
+      - BUTTON
+      - ERP-01-ACT-SYNC-STATUS
+      - ERP-01-GATE-SYNC-READ
+      - ERP-01-PERM-SYNC
+      - —
+      - getERPSyncStatus
+      - GET /v1/erp/sync-jobs/{id}
+      - ERPConnectorService
+      - —
+      - READ_EXACT
+    - row: 15
+      cells:
+      - ERP-01-BTN-TAB-CONNECTOR
+      - EXISTING_SOURCE_UID
+      - ERP 連接
+      - TAB
+      - ERP-01-ACT-VIEW-CONNECTOR
+      - ERP-01-GATE-PAGE
+      - ERP-01-PERM-READ
+      - —
+      - —
+      - —
+      - —
+      - —
+      - UI_LOCAL_EXACT
+    - row: 16
+      cells:
+      - ERP-01-BTN-TAB-FINANCE
+      - EXISTING_SOURCE_UID
+      - 財務概況
+      - TAB
+      - ERP-01-ACT-VIEW-FINANCE
+      - ERP-01-GATE-PAGE
+      - ERP-01-PERM-READ
+      - —
+      - —
+      - —
+      - —
+      - —
+      - UI_LOCAL_EXACT
+    - row: 17
+      cells:
+      - ERP-01-BTN-TAB-SYNC
+      - EXISTING_SOURCE_UID
+      - 同步與資料品質
+      - TAB
+      - ERP-01-ACT-VIEW-SYNC
+      - ERP-01-GATE-PAGE
+      - ERP-01-PERM-READ
+      - —
+      - —
+      - —
+      - —
+      - —
+      - UI_LOCAL_EXACT
+    - row: 18
+      cells:
+      - ERP-01-FLD-AUDIT-REF
+      - EXISTING_SOURCE_UID
+      - Audit Ref
+      - READONLY
+      - ERP-01-ACT-READ
+      - ERP-01-GATE-PAGE
+      - ERP-01-PERM-READ
+      - —
+      - getUiProjection
+      - GET /v1/ui-projections/{pageUid}
+      - Projection / source page read owner
+      - —
+      - READ_EXACT
+    - row: 19
+      cells:
+      - ERP-01-FLD-CONN-ADAPTER-KEY
+      - EXISTING_SOURCE_UID
+      - Adapter Key
+      - READONLY
+      - ERP-01-ACT-READ-CONNECTOR
+      - ERP-01-GATE-CONNECTOR-READ
+      - ERP-01-PERM-CONNECTOR
+      - —
+      - —
+      - —
+      - ERPConnectorService
+      - —
+      - UI_LOCAL_OR_READ_SOURCE
+    - row: 20
+      cells:
+      - ERP-01-FLD-CONN-CONNECTION-STATUS
+      - EXISTING_SOURCE_UID
+      - Connection Status
+      - READONLY
+      - ERP-01-ACT-READ-CONNECTOR
+      - ERP-01-GATE-CONNECTOR-READ
+      - ERP-01-PERM-CONNECTOR
+      - —
+      - —
+      - —
+      - ERPConnectorService
+      - —
+      - UI_LOCAL_OR_READ_SOURCE
+    - row: 21
+      cells:
+      - ERP-01-FLD-CONN-CONNECTOR-ID
+      - EXISTING_SOURCE_UID
+      - Connector ID
+      - READONLY
+      - ERP-01-ACT-READ-CONNECTOR
+      - ERP-01-GATE-CONNECTOR-READ
+      - ERP-01-PERM-CONNECTOR
+      - —
+      - —
+      - —
+      - ERPConnectorService
+      - —
+      - UI_LOCAL_OR_READ_SOURCE
+    - row: 22
+      cells:
+      - ERP-01-FLD-CONN-ENTITY-SCOPE
+      - EXISTING_SOURCE_UID
+      - Entity Scope
+      - READONLY
+      - ERP-01-ACT-READ-CONNECTOR
+      - ERP-01-GATE-CONNECTOR-READ
+      - ERP-01-PERM-CONNECTOR
+      - —
+      - —
+      - —
+      - ERPConnectorService
+      - —
+      - UI_LOCAL_OR_READ_SOURCE
+    - row: 23
+      cells:
+      - ERP-01-FLD-CONN-MAPPING-VERSION
+      - EXISTING_SOURCE_UID
+      - Mapping Version
+      - READONLY
+      - ERP-01-ACT-READ-CONNECTOR
+      - ERP-01-GATE-CONNECTOR-READ
+      - ERP-01-PERM-CONNECTOR
+      - —
+      - —
+      - —
+      - ERPConnectorService
+      - —
+      - UI_LOCAL_OR_READ_SOURCE
+    - row: 24
+      cells:
+      - ERP-01-FLD-CONN-PROVIDER-KEY
+      - EXISTING_SOURCE_UID
+      - Provider Key
+      - READONLY
+      - ERP-01-ACT-READ-CONNECTOR
+      - ERP-01-GATE-CONNECTOR-READ
+      - ERP-01-PERM-CONNECTOR
+      - —
+      - —
+      - —
+      - ERPConnectorService
+      - —
+      - UI_LOCAL_OR_READ_SOURCE
+    - row: 25
+      cells:
+      - ERP-01-FLD-CONN-SECRET-REFERENCE-ID
+      - EXISTING_SOURCE_UID
+      - Secret Reference ID
+      - READONLY
+      - ERP-01-ACT-READ-CONNECTOR
+      - ERP-01-GATE-CONNECTOR-READ
+      - ERP-01-PERM-CONNECTOR
+      - —
+      - —
+      - —
+      - ERPConnectorService
+      - —
+      - UI_LOCAL_OR_READ_SOURCE
+    - row: 26
+      cells:
+      - ERP-01-FLD-FIN-CAPACITY
+      - EXISTING_SOURCE_UID
+      - 產能
+      - READONLY
+      - ERP-01-ACT-READ-FINANCE
+      - ERP-01-GATE-FINANCE
+      - ERP-01-PERM-FINANCE
+      - —
+      - —
+      - —
+      - FinanceGuardrailService
+      - —
+      - UI_LOCAL_OR_READ_SOURCE
+    - row: 27
+      cells:
+      - ERP-01-FLD-FIN-CASHFLOW
+      - EXISTING_SOURCE_UID
+      - 現金流
+      - READONLY
+      - ERP-01-ACT-READ-FINANCE
+      - ERP-01-GATE-FINANCE
+      - ERP-01-PERM-FINANCE
+      - —
+      - —
+      - —
+      - FinanceGuardrailService
+      - —
+      - UI_LOCAL_OR_READ_SOURCE
+    - row: 28
+      cells:
+      - ERP-01-FLD-FIN-COST
+      - EXISTING_SOURCE_UID
+      - 成本
+      - READONLY
+      - ERP-01-ACT-READ-FINANCE
+      - ERP-01-GATE-FINANCE
+      - ERP-01-PERM-FINANCE
+      - —
+      - —
+      - —
+      - FinanceGuardrailService
+      - —
+      - UI_LOCAL_OR_READ_SOURCE
+    - row: 29
+      cells:
+      - ERP-01-FLD-FIN-FORECAST
+      - EXISTING_SOURCE_UID
+      - Forecast
+      - READONLY
+      - ERP-01-ACT-READ-FINANCE
+      - ERP-01-GATE-FINANCE
+      - ERP-01-PERM-FINANCE
+      - —
+      - —
+      - —
+      - FinanceGuardrailService
+      - —
+      - UI_LOCAL_OR_READ_SOURCE
+    - row: 30
+      cells:
+      - ERP-01-FLD-FIN-GUARDRAILS
+      - EXISTING_SOURCE_UID
+      - Guardrails
+      - READONLY
+      - ERP-01-ACT-READ-FINANCE
+      - ERP-01-GATE-FINANCE
+      - ERP-01-PERM-FINANCE
+      - —
+      - —
+      - —
+      - FinanceGuardrailService
+      - —
+      - UI_LOCAL_OR_READ_SOURCE
+    - row: 31
+      cells:
+      - ERP-01-FLD-FIN-RECOMMENDATION-BOUNDARY
+      - EXISTING_SOURCE_UID
+      - 建議邊界
+      - READONLY
+      - ERP-01-ACT-READ-FINANCE
+      - ERP-01-GATE-FINANCE
+      - ERP-01-PERM-FINANCE
+      - —
+      - —
+      - —
+      - FinanceGuardrailService
+      - —
+      - UI_LOCAL_OR_READ_SOURCE
+    - row: 32
+      cells:
+      - ERP-01-FLD-FIN-REVENUE
+      - EXISTING_SOURCE_UID
+      - 收益
+      - READONLY
+      - ERP-01-ACT-READ-FINANCE
+      - ERP-01-GATE-FINANCE
+      - ERP-01-PERM-FINANCE
+      - —
+      - —
+      - —
+      - FinanceGuardrailService
+      - —
+      - UI_LOCAL_OR_READ_SOURCE
+    - row: 33
+      cells:
+      - ERP-01-FLD-FRESHNESS
+      - EXISTING_SOURCE_UID
+      - 資料時間 / Freshness
+      - READONLY
+      - ERP-01-ACT-READ
+      - ERP-01-GATE-PAGE
+      - ERP-01-PERM-READ
+      - —
+      - getUiProjection
+      - GET /v1/ui-projections/{pageUid}
+      - Projection / source page read owner
+      - —
+      - READ_EXACT
+    - row: 34
+      cells:
+      - ERP-01-FLD-READINESS
+      - EXISTING_SOURCE_UID
+      - 目前狀態 / Blockers
+      - READONLY
+      - ERP-01-ACT-READ
+      - ERP-01-GATE-PAGE
+      - ERP-01-PERM-READ
+      - —
+      - getUiProjection
+      - GET /v1/ui-projections/{pageUid}
+      - Projection / source page read owner
+      - —
+      - READ_EXACT
+    - row: 35
+      cells:
+      - ERP-01-FLD-SCOPE
+      - EXISTING_SOURCE_UID
+      - ERP Scope
+      - READONLY
+      - ERP-01-ACT-READ
+      - ERP-01-GATE-PAGE
+      - ERP-01-PERM-READ
+      - —
+      - getUiProjection
+      - GET /v1/ui-projections/{pageUid}
+      - Projection / source page read owner
+      - —
+      - READ_EXACT
+    - row: 36
+      cells:
+      - ERP-01-FLD-SNAPSHOT
+      - EXISTING_SOURCE_UID
+      - Snapshot ID
+      - READONLY
+      - ERP-01-ACT-READ
+      - ERP-01-GATE-PAGE
+      - ERP-01-PERM-READ
+      - —
+      - getUiProjection
+      - GET /v1/ui-projections/{pageUid}
+      - Projection / source page read owner
+      - —
+      - READ_EXACT
+    - row: 37
+      cells:
+      - ERP-01-FLD-SYNC-COMPLETENESS
+      - EXISTING_SOURCE_UID
+      - 完整度
+      - READONLY
+      - ERP-01-ACT-READ-SYNC
+      - ERP-01-GATE-SYNC-READ
+      - ERP-01-PERM-SYNC
+      - —
+      - —
+      - —
+      - ERPConnectorService
+      - —
+      - UI_LOCAL_OR_READ_SOURCE
+    - row: 38
+      cells:
+      - ERP-01-FLD-SYNC-CURRENCY-TIMEZONE
+      - EXISTING_SOURCE_UID
+      - 幣別 / 時區
+      - READONLY
+      - ERP-01-ACT-READ-SYNC
+      - ERP-01-GATE-SYNC-READ
+      - ERP-01-PERM-SYNC
+      - —
+      - —
+      - —
+      - ERPConnectorService
+      - —
+      - UI_LOCAL_OR_READ_SOURCE
+    - row: 39
+      cells:
+      - ERP-01-FLD-SYNC-FAILURE-ID
+      - EXISTING_SOURCE_UID
+      - Failure ID
+      - READONLY
+      - ERP-01-ACT-READ-SYNC
+      - ERP-01-GATE-SYNC-READ
+      - ERP-01-PERM-SYNC
+      - —
+      - —
+      - —
+      - ERPConnectorService
+      - —
+      - UI_LOCAL_OR_READ_SOURCE
+    - row: 40
+      cells:
+      - ERP-01-FLD-SYNC-FRESHNESS-AT
+      - EXISTING_SOURCE_UID
+      - Freshness At
+      - READONLY
+      - ERP-01-ACT-READ-SYNC
+      - ERP-01-GATE-SYNC-READ
+      - ERP-01-PERM-SYNC
+      - —
+      - —
+      - —
+      - ERPConnectorService
+      - —
+      - UI_LOCAL_OR_READ_SOURCE
+    - row: 41
+      cells:
+      - ERP-01-FLD-SYNC-LAST-SYNC-STATUS
+      - EXISTING_SOURCE_UID
+      - Last Sync Status
+      - READONLY
+      - ERP-01-ACT-READ-SYNC
+      - ERP-01-GATE-SYNC-READ
+      - ERP-01-PERM-SYNC
+      - —
+      - —
+      - —
+      - ERPConnectorService
+      - —
+      - UI_LOCAL_OR_READ_SOURCE
+    - row: 42
+      cells:
+      - ERP-01-FLD-SYNC-SNAPSHOT-ID
+      - EXISTING_SOURCE_UID
+      - Snapshot ID
+      - READONLY
+      - ERP-01-ACT-READ-SYNC
+      - ERP-01-GATE-SYNC-READ
+      - ERP-01-PERM-SYNC
+      - —
+      - —
+      - —
+      - ERPConnectorService
+      - —
+      - UI_LOCAL_OR_READ_SOURCE
+  - index: 37
+    rows:
+    - row: 0
+      cells:
+      - Profile UID
+      - Owner
+      - Applicability
+      - Dimensions
+      - Pass Threshold
+    - row: 1
+      cells:
+      - QCP-CORE-BASELINE-V1
+      - CORE
+      - CORE / Blueprint / Canonical Script
+      - '8'
+      - '95'
+    - row: 2
+      cells:
+      - QCP-ASSET-IMAGE-V1
+      - ASSET
+      - IMAGE-compatible asset outputs
+      - '9'
+      - '95'
+    - row: 3
+      cells:
+      - QCP-ASSET-AUDIO-V1
+      - ASSET
+      - VOICE / MUSIC / SFX outputs
+      - '8'
+      - '95'
+    - row: 4
+      cells:
+      - QCP-VIDEO-BASELINE-V1
+      - VIDEO
+      - VIDEO candidate outputs
+      - '9'
+      - '95'
+    - row: 5
+      cells:
+      - QCP-EDIT-FINAL-V1
+      - EDITING
+      - EDIT stage / final outputs
+      - '12'
+      - '95'
+    - row: 6
+      cells:
+      - QCP-QA-FINAL-OUTPUT-V1
+      - QA
+      - Final output / release-candidate review
+      - '17'
+      - '95'
+  - index: 38
+    rows:
+    - row: 0
+      cells:
+      - Invariant
+      - System-wide rule
+    - row: 1
+      cells:
+      - QA-SYNC-01
+      - 任何需要 Quality Review / Score / Evaluation 的系統，MUST resolve exact approved Criteria Profile + CriteriaVersion + QualityGatePolicyVersion；不得用 generic/default/latest
+        取代。
+    - row: 2
+      cells:
+      - QA-SYNC-02
+      - Static canonical catalog 必須有具體 rows；只有 Registry/Library/Dimension 容器而沒有 canonical content = CONTENT_INCOMPLETE。
+    - row: 3
+      cells:
+      - QA-SYNC-03
+      - Dynamic runtime records 可以為空；禁止用 mock/sample/fake business rows 讓頁面看起來完整。
+    - row: 4
+      cells:
+      - QA-SYNC-04
+      - QA score 不能覆蓋 Hard Block / Required Check；Rights / Policy / Evidence / Checksum / Provenance 等 blocker FAIL 時不得因總分高而 PASS。
+    - row: 5
+      cells:
+      - QA-SYNC-05
+      - Correction 必須產生 NEW exact output/version 後才可 Recheck；不得在原輸出上直接關閉 Finding。
+    - row: 6
+      cells:
+      - QA-SYNC-06
+      - Human Review 完成不等於 QA Gate PASS；人工不能繞過 Hard Block / Evidence / Policy / Criteria。
+    - row: 7
+      cells:
+      - QA-SYNC-07
+      - SG-02 lifecycle canonical path = EMPTY → DRAFT → REVIEW → APPROVED / ACTIVE → SUPERSEDED。
+    - row: 8
+      cells:
+      - QA-SYNC-08
+      - SG-02 Current Control Denominator = 12，包含 Submit Review；舊 11-control 描述不得作為 Current truth。
+    - row: 9
+      cells:
+      - QA-SYNC-09
+      - 只有 Word authority 已定義不等於 Runtime 已完成；Implementation / Production evidence 必須獨立標示。
+  - index: 39
+    rows:
+    - row: 0
+      cells:
+      - Enterprise output case
+      - QA requirement
+    - row: 1
+      cells:
+      - Creative/media artifact generated for outreach/delivery
+      - Must resolve the applicable existing QCP profile by artifact type; if no applicable profile exists, BLOCK and route a governed profile request to SG-02 rather
+        than inventing a generic score.
+    - row: 2
+      cells:
+      - Business records (lead/target/campaign/account metadata)
+      - These are dynamic business data, not QA Criteria catalog rows; do not seed fake values. Validate with business schema/permission/runtime rules.
+    - row: 3
+      cells:
+      - Externally deliverable content
+      - Must carry exact output/version/checksum + criteria_version_id + scorecard_id + required-check state before delivery/publish handoff.
+    - row: 4
+      cells:
+      - Corrected deliverable
+      - Must use NEW exact output/version and fresh recheck evidence.
+    - row: 5
+      cells:
+      - Rights/policy-sensitive delivery
+      - Rights/Policy Required Check and provenance evidence are mandatory hard gate.
+  - index: 40
+    rows:
+    - row: 0
+      cells:
+      - State
+      - Count
+    - row: 1
+      cells:
+      - CANONICAL_SPEC_REMEDIATION_REQUIRED
+      - '54'
+    - row: 2
+      cells:
+      - FORMAL_NOT_APPLICABLE
+      - '0'
+    - row: 3
+      cells:
+      - FORMAL_RUNTIME_BLOCKED
+      - '0'
+    - row: 4
+      cells:
+      - PAGE_BINDING_MUTATION_AUTHORIZED
+      - '0'
+  - index: 41
+    rows:
+    - row: 0
+      cells:
+      - Page
+      - Control UID
+      - Missing Field
+      - Type
+      - Existing Action
+      - Existing Gate
+      - Existing Permission
+      - Existing Operation
+      - Existing Runtime Owner
+      - Runtime Status
+      - Required Owner Action
+    - row: 1
+      cells:
+      - DEV-01
+      - DEV-01-BTN-CAMPAIGN-APPROVE
+      - runtime_owner
+      - PRIMARY_BUTTON
+      - DEV-01-ACT-CAMPAIGN-APPROVE
+      - DEV-01-GATE-CAMPAIGN-APPROVAL
+      - outreach.batch.approve
+      - approveOutreachCampaign
+      - —
+      - EFFECTFUL_EXACT
+      - DEFINE_EXACT_VALUE_OR_EXPLICIT_NA/BLOCKED_IN_CANONICAL_OWNER
+    - row: 2
+      cells:
+      - DEV-01
+      - DEV-01-BTN-CAMPAIGN-CREATE
+      - runtime_owner
+      - PRIMARY_BUTTON
+      - DEV-01-ACT-CAMPAIGN-CREATE
+      - DEV-01-GATE-CAMPAIGN
+      - outreach.batch.create
+      - createOutreachCampaign
+      - —
+      - EFFECTFUL_EXACT
+      - DEFINE_EXACT_VALUE_OR_EXPLICIT_NA/BLOCKED_IN_CANONICAL_OWNER
+    - row: 3
+      cells:
+      - DEV-01
+      - DEV-01-BTN-CANDIDATE-CREATE
+      - runtime_owner
+      - PRIMARY_BUTTON
+      - DEV-01-ACT-CANDIDATE-CREATE
+      - DEV-01-GATE-MESSAGE-WRITE
+      - candidate.create
+      - createCandidate
+      - —
+      - EFFECTFUL_EXACT
+      - DEFINE_EXACT_VALUE_OR_EXPLICIT_NA/BLOCKED_IN_CANONICAL_OWNER
+    - row: 4
+      cells:
+      - DEV-01
+      - DEV-01-BTN-CR-CREATE
+      - runtime_owner
+      - SECONDARY_BUTTON
+      - DEV-01-ACT-CR-CREATE
+      - DEV-01-GATE-MESSAGE-REVIEW
+      - core.change.create
+      - createChangeRequest
+      - —
+      - EFFECTFUL_EXACT
+      - DEFINE_EXACT_VALUE_OR_EXPLICIT_NA/BLOCKED_IN_CANONICAL_OWNER
+    - row: 5
+      cells:
+      - DEV-01
+      - DEV-01-BTN-DISCOVERY-PAUSE
+      - runtime_owner
+      - SECONDARY_BUTTON
+      - DEV-01-ACT-DISCOVERY-PAUSE
+      - DEV-01-GATE-DISCOVERY-RUNNING
+      - outreach.discovery.configure
+      - pauseCompanyDiscovery
+      - —
+      - EFFECTFUL_EXACT
+      - DEFINE_EXACT_VALUE_OR_EXPLICIT_NA/BLOCKED_IN_CANONICAL_OWNER
+    - row: 6
+      cells:
+      - DEV-01
+      - DEV-01-BTN-DISCOVERY-RESUME
+      - runtime_owner
+      - SECONDARY_BUTTON
+      - DEV-01-ACT-DISCOVERY-RESUME
+      - DEV-01-GATE-DISCOVERY-PAUSED
+      - outreach.discovery.configure
+      - resumeCompanyDiscovery
+      - —
+      - EFFECTFUL_EXACT
+      - DEFINE_EXACT_VALUE_OR_EXPLICIT_NA/BLOCKED_IN_CANONICAL_OWNER
+    - row: 7
+      cells:
+      - DEV-01
+      - DEV-01-BTN-DISCOVERY-START
+      - runtime_owner
+      - PRIMARY_BUTTON
+      - DEV-01-ACT-DISCOVERY-START
+      - DEV-01-GATE-DISCOVERY-START
+      - outreach.discovery.configure
+      - startCompanyDiscovery
+      - —
+      - EFFECTFUL_EXACT
+      - DEFINE_EXACT_VALUE_OR_EXPLICIT_NA/BLOCKED_IN_CANONICAL_OWNER
+    - row: 8
+      cells:
+      - DEV-01
+      - DEV-01-BTN-MERGE
+      - runtime_owner
+      - PRIMARY_BUTTON
+      - DEV-01-ACT-MERGE
+      - DEV-01-GATE-MERGE-CONFIRM
+      - outreach.directory.merge
+      - mergeCompanyCandidate
+      - —
+      - EFFECTFUL_EXACT
+      - DEFINE_EXACT_VALUE_OR_EXPLICIT_NA/BLOCKED_IN_CANONICAL_OWNER
+    - row: 9
+      cells:
+      - DEV-01
+      - DEV-01-BTN-MERGE-PREVIEW
+      - runtime_owner
+      - SECONDARY_BUTTON
+      - DEV-01-ACT-MERGE-PREVIEW
+      - DEV-01-GATE-MERGE
+      - outreach.directory.merge
+      - previewCompanyMerge
+      - —
+      - EFFECTFUL_EXACT
+      - DEFINE_EXACT_VALUE_OR_EXPLICIT_NA/BLOCKED_IN_CANONICAL_OWNER
+    - row: 10
+      cells:
+      - DEV-01
+      - DEV-01-BTN-STAGE-1
+      - permission
+      - SEGMENT_BUTTON
+      - DEV-01-ACT-STAGE-1-SELECT
+      - DEV-01-GATE-PAGE
+      - —
+      - —
+      - —
+      - UI_LOCAL_EXACT
+      - DEFINE_EXACT_VALUE_OR_EXPLICIT_NA/BLOCKED_IN_CANONICAL_OWNER
+    - row: 11
+      cells:
+      - DEV-01
+      - DEV-01-BTN-STAGE-2
+      - permission
+      - SEGMENT_BUTTON
+      - DEV-01-ACT-STAGE-2-SELECT
+      - DEV-01-GATE-PAGE
+      - —
+      - —
+      - —
+      - UI_LOCAL_EXACT
+      - DEFINE_EXACT_VALUE_OR_EXPLICIT_NA/BLOCKED_IN_CANONICAL_OWNER
+    - row: 12
+      cells:
+      - DEV-01
+      - DEV-01-BTN-STAGE-3
+      - permission
+      - SEGMENT_BUTTON
+      - DEV-01-ACT-STAGE-3-SELECT
+      - DEV-01-GATE-PAGE
+      - —
+      - —
+      - —
+      - UI_LOCAL_EXACT
+      - DEFINE_EXACT_VALUE_OR_EXPLICIT_NA/BLOCKED_IN_CANONICAL_OWNER
+    - row: 13
+      cells:
+      - DEV-01
+      - DEV-01-BTN-STAGE-4
+      - permission
+      - SEGMENT_BUTTON
+      - DEV-01-ACT-STAGE-4-SELECT
+      - DEV-01-GATE-PAGE
+      - —
+      - —
+      - —
+      - UI_LOCAL_EXACT
+      - DEFINE_EXACT_VALUE_OR_EXPLICIT_NA/BLOCKED_IN_CANONICAL_OWNER
+    - row: 14
+      cells:
+      - DEV-01
+      - DEV-01-BTN-STAGE-5
+      - permission
+      - SEGMENT_BUTTON
+      - DEV-01-ACT-STAGE-5-SELECT
+      - DEV-01-GATE-PAGE
+      - —
+      - —
+      - —
+      - UI_LOCAL_EXACT
+      - DEFINE_EXACT_VALUE_OR_EXPLICIT_NA/BLOCKED_IN_CANONICAL_OWNER
+    - row: 15
+      cells:
+      - ERP-01
+      - ERP-01-FLD-CONN-ADAPTER-KEY
+      - operation
+      - READONLY
+      - ERP-01-ACT-READ-CONNECTOR
+      - ERP-01-GATE-CONNECTOR-READ
+      - ERP-01-PERM-CONNECTOR
+      - —
+      - —
+      - UI_LOCAL_OR_READ_SOURCE
+      - DEFINE_EXACT_VALUE_OR_EXPLICIT_NA/BLOCKED_IN_CANONICAL_OWNER
+    - row: 16
+      cells:
+      - ERP-01
+      - ERP-01-FLD-CONN-ADAPTER-KEY
+      - runtime_owner
+      - READONLY
+      - ERP-01-ACT-READ-CONNECTOR
+      - ERP-01-GATE-CONNECTOR-READ
+      - ERP-01-PERM-CONNECTOR
+      - —
+      - —
+      - UI_LOCAL_OR_READ_SOURCE
+      - DEFINE_EXACT_VALUE_OR_EXPLICIT_NA/BLOCKED_IN_CANONICAL_OWNER
+    - row: 17
+      cells:
+      - ERP-01
+      - ERP-01-FLD-CONN-CONNECTION-STATUS
+      - operation
+      - READONLY
+      - ERP-01-ACT-READ-CONNECTOR
+      - ERP-01-GATE-CONNECTOR-READ
+      - ERP-01-PERM-CONNECTOR
+      - —
+      - —
+      - UI_LOCAL_OR_READ_SOURCE
+      - DEFINE_EXACT_VALUE_OR_EXPLICIT_NA/BLOCKED_IN_CANONICAL_OWNER
+    - row: 18
+      cells:
+      - ERP-01
+      - ERP-01-FLD-CONN-CONNECTION-STATUS
+      - runtime_owner
+      - READONLY
+      - ERP-01-ACT-READ-CONNECTOR
+      - ERP-01-GATE-CONNECTOR-READ
+      - ERP-01-PERM-CONNECTOR
+      - —
+      - —
+      - UI_LOCAL_OR_READ_SOURCE
+      - DEFINE_EXACT_VALUE_OR_EXPLICIT_NA/BLOCKED_IN_CANONICAL_OWNER
+    - row: 19
+      cells:
+      - ERP-01
+      - ERP-01-FLD-CONN-CONNECTOR-ID
+      - operation
+      - READONLY
+      - ERP-01-ACT-READ-CONNECTOR
+      - ERP-01-GATE-CONNECTOR-READ
+      - ERP-01-PERM-CONNECTOR
+      - —
+      - —
+      - UI_LOCAL_OR_READ_SOURCE
+      - DEFINE_EXACT_VALUE_OR_EXPLICIT_NA/BLOCKED_IN_CANONICAL_OWNER
+    - row: 20
+      cells:
+      - ERP-01
+      - ERP-01-FLD-CONN-CONNECTOR-ID
+      - runtime_owner
+      - READONLY
+      - ERP-01-ACT-READ-CONNECTOR
+      - ERP-01-GATE-CONNECTOR-READ
+      - ERP-01-PERM-CONNECTOR
+      - —
+      - —
+      - UI_LOCAL_OR_READ_SOURCE
+      - DEFINE_EXACT_VALUE_OR_EXPLICIT_NA/BLOCKED_IN_CANONICAL_OWNER
+    - row: 21
+      cells:
+      - ERP-01
+      - ERP-01-FLD-CONN-ENTITY-SCOPE
+      - operation
+      - READONLY
+      - ERP-01-ACT-READ-CONNECTOR
+      - ERP-01-GATE-CONNECTOR-READ
+      - ERP-01-PERM-CONNECTOR
+      - —
+      - —
+      - UI_LOCAL_OR_READ_SOURCE
+      - DEFINE_EXACT_VALUE_OR_EXPLICIT_NA/BLOCKED_IN_CANONICAL_OWNER
+    - row: 22
+      cells:
+      - ERP-01
+      - ERP-01-FLD-CONN-ENTITY-SCOPE
+      - runtime_owner
+      - READONLY
+      - ERP-01-ACT-READ-CONNECTOR
+      - ERP-01-GATE-CONNECTOR-READ
+      - ERP-01-PERM-CONNECTOR
+      - —
+      - —
+      - UI_LOCAL_OR_READ_SOURCE
+      - DEFINE_EXACT_VALUE_OR_EXPLICIT_NA/BLOCKED_IN_CANONICAL_OWNER
+    - row: 23
+      cells:
+      - ERP-01
+      - ERP-01-FLD-CONN-MAPPING-VERSION
+      - operation
+      - READONLY
+      - ERP-01-ACT-READ-CONNECTOR
+      - ERP-01-GATE-CONNECTOR-READ
+      - ERP-01-PERM-CONNECTOR
+      - —
+      - —
+      - UI_LOCAL_OR_READ_SOURCE
+      - DEFINE_EXACT_VALUE_OR_EXPLICIT_NA/BLOCKED_IN_CANONICAL_OWNER
+    - row: 24
+      cells:
+      - ERP-01
+      - ERP-01-FLD-CONN-MAPPING-VERSION
+      - runtime_owner
+      - READONLY
+      - ERP-01-ACT-READ-CONNECTOR
+      - ERP-01-GATE-CONNECTOR-READ
+      - ERP-01-PERM-CONNECTOR
+      - —
+      - —
+      - UI_LOCAL_OR_READ_SOURCE
+      - DEFINE_EXACT_VALUE_OR_EXPLICIT_NA/BLOCKED_IN_CANONICAL_OWNER
+    - row: 25
+      cells:
+      - ERP-01
+      - ERP-01-FLD-CONN-PROVIDER-KEY
+      - operation
+      - READONLY
+      - ERP-01-ACT-READ-CONNECTOR
+      - ERP-01-GATE-CONNECTOR-READ
+      - ERP-01-PERM-CONNECTOR
+      - —
+      - —
+      - UI_LOCAL_OR_READ_SOURCE
+      - DEFINE_EXACT_VALUE_OR_EXPLICIT_NA/BLOCKED_IN_CANONICAL_OWNER
+    - row: 26
+      cells:
+      - ERP-01
+      - ERP-01-FLD-CONN-PROVIDER-KEY
+      - runtime_owner
+      - READONLY
+      - ERP-01-ACT-READ-CONNECTOR
+      - ERP-01-GATE-CONNECTOR-READ
+      - ERP-01-PERM-CONNECTOR
+      - —
+      - —
+      - UI_LOCAL_OR_READ_SOURCE
+      - DEFINE_EXACT_VALUE_OR_EXPLICIT_NA/BLOCKED_IN_CANONICAL_OWNER
+    - row: 27
+      cells:
+      - ERP-01
+      - ERP-01-FLD-CONN-SECRET-REFERENCE-ID
+      - operation
+      - READONLY
+      - ERP-01-ACT-READ-CONNECTOR
+      - ERP-01-GATE-CONNECTOR-READ
+      - ERP-01-PERM-CONNECTOR
+      - —
+      - —
+      - UI_LOCAL_OR_READ_SOURCE
+      - DEFINE_EXACT_VALUE_OR_EXPLICIT_NA/BLOCKED_IN_CANONICAL_OWNER
+    - row: 28
+      cells:
+      - ERP-01
+      - ERP-01-FLD-CONN-SECRET-REFERENCE-ID
+      - runtime_owner
+      - READONLY
+      - ERP-01-ACT-READ-CONNECTOR
+      - ERP-01-GATE-CONNECTOR-READ
+      - ERP-01-PERM-CONNECTOR
+      - —
+      - —
+      - UI_LOCAL_OR_READ_SOURCE
+      - DEFINE_EXACT_VALUE_OR_EXPLICIT_NA/BLOCKED_IN_CANONICAL_OWNER
+    - row: 29
+      cells:
+      - ERP-01
+      - ERP-01-FLD-FIN-CAPACITY
+      - operation
+      - READONLY
+      - ERP-01-ACT-READ-FINANCE
+      - ERP-01-GATE-FINANCE
+      - ERP-01-PERM-FINANCE
+      - —
+      - —
+      - UI_LOCAL_OR_READ_SOURCE
+      - DEFINE_EXACT_VALUE_OR_EXPLICIT_NA/BLOCKED_IN_CANONICAL_OWNER
+    - row: 30
+      cells:
+      - ERP-01
+      - ERP-01-FLD-FIN-CAPACITY
+      - runtime_owner
+      - READONLY
+      - ERP-01-ACT-READ-FINANCE
+      - ERP-01-GATE-FINANCE
+      - ERP-01-PERM-FINANCE
+      - —
+      - —
+      - UI_LOCAL_OR_READ_SOURCE
+      - DEFINE_EXACT_VALUE_OR_EXPLICIT_NA/BLOCKED_IN_CANONICAL_OWNER
+    - row: 31
+      cells:
+      - ERP-01
+      - ERP-01-FLD-FIN-CASHFLOW
+      - operation
+      - READONLY
+      - ERP-01-ACT-READ-FINANCE
+      - ERP-01-GATE-FINANCE
+      - ERP-01-PERM-FINANCE
+      - —
+      - —
+      - UI_LOCAL_OR_READ_SOURCE
+      - DEFINE_EXACT_VALUE_OR_EXPLICIT_NA/BLOCKED_IN_CANONICAL_OWNER
+    - row: 32
+      cells:
+      - ERP-01
+      - ERP-01-FLD-FIN-CASHFLOW
+      - runtime_owner
+      - READONLY
+      - ERP-01-ACT-READ-FINANCE
+      - ERP-01-GATE-FINANCE
+      - ERP-01-PERM-FINANCE
+      - —
+      - —
+      - UI_LOCAL_OR_READ_SOURCE
+      - DEFINE_EXACT_VALUE_OR_EXPLICIT_NA/BLOCKED_IN_CANONICAL_OWNER
+    - row: 33
+      cells:
+      - ERP-01
+      - ERP-01-FLD-FIN-COST
+      - operation
+      - READONLY
+      - ERP-01-ACT-READ-FINANCE
+      - ERP-01-GATE-FINANCE
+      - ERP-01-PERM-FINANCE
+      - —
+      - —
+      - UI_LOCAL_OR_READ_SOURCE
+      - DEFINE_EXACT_VALUE_OR_EXPLICIT_NA/BLOCKED_IN_CANONICAL_OWNER
+    - row: 34
+      cells:
+      - ERP-01
+      - ERP-01-FLD-FIN-COST
+      - runtime_owner
+      - READONLY
+      - ERP-01-ACT-READ-FINANCE
+      - ERP-01-GATE-FINANCE
+      - ERP-01-PERM-FINANCE
+      - —
+      - —
+      - UI_LOCAL_OR_READ_SOURCE
+      - DEFINE_EXACT_VALUE_OR_EXPLICIT_NA/BLOCKED_IN_CANONICAL_OWNER
+    - row: 35
+      cells:
+      - ERP-01
+      - ERP-01-FLD-FIN-FORECAST
+      - operation
+      - READONLY
+      - ERP-01-ACT-READ-FINANCE
+      - ERP-01-GATE-FINANCE
+      - ERP-01-PERM-FINANCE
+      - —
+      - —
+      - UI_LOCAL_OR_READ_SOURCE
+      - DEFINE_EXACT_VALUE_OR_EXPLICIT_NA/BLOCKED_IN_CANONICAL_OWNER
+    - row: 36
+      cells:
+      - ERP-01
+      - ERP-01-FLD-FIN-FORECAST
+      - runtime_owner
+      - READONLY
+      - ERP-01-ACT-READ-FINANCE
+      - ERP-01-GATE-FINANCE
+      - ERP-01-PERM-FINANCE
+      - —
+      - —
+      - UI_LOCAL_OR_READ_SOURCE
+      - DEFINE_EXACT_VALUE_OR_EXPLICIT_NA/BLOCKED_IN_CANONICAL_OWNER
+    - row: 37
+      cells:
+      - ERP-01
+      - ERP-01-FLD-FIN-GUARDRAILS
+      - operation
+      - READONLY
+      - ERP-01-ACT-READ-FINANCE
+      - ERP-01-GATE-FINANCE
+      - ERP-01-PERM-FINANCE
+      - —
+      - —
+      - UI_LOCAL_OR_READ_SOURCE
+      - DEFINE_EXACT_VALUE_OR_EXPLICIT_NA/BLOCKED_IN_CANONICAL_OWNER
+    - row: 38
+      cells:
+      - ERP-01
+      - ERP-01-FLD-FIN-GUARDRAILS
+      - runtime_owner
+      - READONLY
+      - ERP-01-ACT-READ-FINANCE
+      - ERP-01-GATE-FINANCE
+      - ERP-01-PERM-FINANCE
+      - —
+      - —
+      - UI_LOCAL_OR_READ_SOURCE
+      - DEFINE_EXACT_VALUE_OR_EXPLICIT_NA/BLOCKED_IN_CANONICAL_OWNER
+    - row: 39
+      cells:
+      - ERP-01
+      - ERP-01-FLD-FIN-RECOMMENDATION-BOUNDARY
+      - operation
+      - READONLY
+      - ERP-01-ACT-READ-FINANCE
+      - ERP-01-GATE-FINANCE
+      - ERP-01-PERM-FINANCE
+      - —
+      - —
+      - UI_LOCAL_OR_READ_SOURCE
+      - DEFINE_EXACT_VALUE_OR_EXPLICIT_NA/BLOCKED_IN_CANONICAL_OWNER
+    - row: 40
+      cells:
+      - ERP-01
+      - ERP-01-FLD-FIN-RECOMMENDATION-BOUNDARY
+      - runtime_owner
+      - READONLY
+      - ERP-01-ACT-READ-FINANCE
+      - ERP-01-GATE-FINANCE
+      - ERP-01-PERM-FINANCE
+      - —
+      - —
+      - UI_LOCAL_OR_READ_SOURCE
+      - DEFINE_EXACT_VALUE_OR_EXPLICIT_NA/BLOCKED_IN_CANONICAL_OWNER
+    - row: 41
+      cells:
+      - ERP-01
+      - ERP-01-FLD-FIN-REVENUE
+      - operation
+      - READONLY
+      - ERP-01-ACT-READ-FINANCE
+      - ERP-01-GATE-FINANCE
+      - ERP-01-PERM-FINANCE
+      - —
+      - —
+      - UI_LOCAL_OR_READ_SOURCE
+      - DEFINE_EXACT_VALUE_OR_EXPLICIT_NA/BLOCKED_IN_CANONICAL_OWNER
+    - row: 42
+      cells:
+      - ERP-01
+      - ERP-01-FLD-FIN-REVENUE
+      - runtime_owner
+      - READONLY
+      - ERP-01-ACT-READ-FINANCE
+      - ERP-01-GATE-FINANCE
+      - ERP-01-PERM-FINANCE
+      - —
+      - —
+      - UI_LOCAL_OR_READ_SOURCE
+      - DEFINE_EXACT_VALUE_OR_EXPLICIT_NA/BLOCKED_IN_CANONICAL_OWNER
+    - row: 43
+      cells:
+      - ERP-01
+      - ERP-01-FLD-SYNC-COMPLETENESS
+      - operation
+      - READONLY
+      - ERP-01-ACT-READ-SYNC
+      - ERP-01-GATE-SYNC-READ
+      - ERP-01-PERM-SYNC
+      - —
+      - —
+      - UI_LOCAL_OR_READ_SOURCE
+      - DEFINE_EXACT_VALUE_OR_EXPLICIT_NA/BLOCKED_IN_CANONICAL_OWNER
+    - row: 44
+      cells:
+      - ERP-01
+      - ERP-01-FLD-SYNC-COMPLETENESS
+      - runtime_owner
+      - READONLY
+      - ERP-01-ACT-READ-SYNC
+      - ERP-01-GATE-SYNC-READ
+      - ERP-01-PERM-SYNC
+      - —
+      - —
+      - UI_LOCAL_OR_READ_SOURCE
+      - DEFINE_EXACT_VALUE_OR_EXPLICIT_NA/BLOCKED_IN_CANONICAL_OWNER
+    - row: 45
+      cells:
+      - ERP-01
+      - ERP-01-FLD-SYNC-CURRENCY-TIMEZONE
+      - operation
+      - READONLY
+      - ERP-01-ACT-READ-SYNC
+      - ERP-01-GATE-SYNC-READ
+      - ERP-01-PERM-SYNC
+      - —
+      - —
+      - UI_LOCAL_OR_READ_SOURCE
+      - DEFINE_EXACT_VALUE_OR_EXPLICIT_NA/BLOCKED_IN_CANONICAL_OWNER
+    - row: 46
+      cells:
+      - ERP-01
+      - ERP-01-FLD-SYNC-CURRENCY-TIMEZONE
+      - runtime_owner
+      - READONLY
+      - ERP-01-ACT-READ-SYNC
+      - ERP-01-GATE-SYNC-READ
+      - ERP-01-PERM-SYNC
+      - —
+      - —
+      - UI_LOCAL_OR_READ_SOURCE
+      - DEFINE_EXACT_VALUE_OR_EXPLICIT_NA/BLOCKED_IN_CANONICAL_OWNER
+    - row: 47
+      cells:
+      - ERP-01
+      - ERP-01-FLD-SYNC-FAILURE-ID
+      - operation
+      - READONLY
+      - ERP-01-ACT-READ-SYNC
+      - ERP-01-GATE-SYNC-READ
+      - ERP-01-PERM-SYNC
+      - —
+      - —
+      - UI_LOCAL_OR_READ_SOURCE
+      - DEFINE_EXACT_VALUE_OR_EXPLICIT_NA/BLOCKED_IN_CANONICAL_OWNER
+    - row: 48
+      cells:
+      - ERP-01
+      - ERP-01-FLD-SYNC-FAILURE-ID
+      - runtime_owner
+      - READONLY
+      - ERP-01-ACT-READ-SYNC
+      - ERP-01-GATE-SYNC-READ
+      - ERP-01-PERM-SYNC
+      - —
+      - —
+      - UI_LOCAL_OR_READ_SOURCE
+      - DEFINE_EXACT_VALUE_OR_EXPLICIT_NA/BLOCKED_IN_CANONICAL_OWNER
+    - row: 49
+      cells:
+      - ERP-01
+      - ERP-01-FLD-SYNC-FRESHNESS-AT
+      - operation
+      - READONLY
+      - ERP-01-ACT-READ-SYNC
+      - ERP-01-GATE-SYNC-READ
+      - ERP-01-PERM-SYNC
+      - —
+      - —
+      - UI_LOCAL_OR_READ_SOURCE
+      - DEFINE_EXACT_VALUE_OR_EXPLICIT_NA/BLOCKED_IN_CANONICAL_OWNER
+    - row: 50
+      cells:
+      - ERP-01
+      - ERP-01-FLD-SYNC-FRESHNESS-AT
+      - runtime_owner
+      - READONLY
+      - ERP-01-ACT-READ-SYNC
+      - ERP-01-GATE-SYNC-READ
+      - ERP-01-PERM-SYNC
+      - —
+      - —
+      - UI_LOCAL_OR_READ_SOURCE
+      - DEFINE_EXACT_VALUE_OR_EXPLICIT_NA/BLOCKED_IN_CANONICAL_OWNER
+    - row: 51
+      cells:
+      - ERP-01
+      - ERP-01-FLD-SYNC-LAST-SYNC-STATUS
+      - operation
+      - READONLY
+      - ERP-01-ACT-READ-SYNC
+      - ERP-01-GATE-SYNC-READ
+      - ERP-01-PERM-SYNC
+      - —
+      - —
+      - UI_LOCAL_OR_READ_SOURCE
+      - DEFINE_EXACT_VALUE_OR_EXPLICIT_NA/BLOCKED_IN_CANONICAL_OWNER
+    - row: 52
+      cells:
+      - ERP-01
+      - ERP-01-FLD-SYNC-LAST-SYNC-STATUS
+      - runtime_owner
+      - READONLY
+      - ERP-01-ACT-READ-SYNC
+      - ERP-01-GATE-SYNC-READ
+      - ERP-01-PERM-SYNC
+      - —
+      - —
+      - UI_LOCAL_OR_READ_SOURCE
+      - DEFINE_EXACT_VALUE_OR_EXPLICIT_NA/BLOCKED_IN_CANONICAL_OWNER
+    - row: 53
+      cells:
+      - ERP-01
+      - ERP-01-FLD-SYNC-SNAPSHOT-ID
+      - operation
+      - READONLY
+      - ERP-01-ACT-READ-SYNC
+      - ERP-01-GATE-SYNC-READ
+      - ERP-01-PERM-SYNC
+      - —
+      - —
+      - UI_LOCAL_OR_READ_SOURCE
+      - DEFINE_EXACT_VALUE_OR_EXPLICIT_NA/BLOCKED_IN_CANONICAL_OWNER
+    - row: 54
+      cells:
+      - ERP-01
+      - ERP-01-FLD-SYNC-SNAPSHOT-ID
+      - runtime_owner
+      - READONLY
+      - ERP-01-ACT-READ-SYNC
+      - ERP-01-GATE-SYNC-READ
+      - ERP-01-PERM-SYNC
+      - —
+      - —
+      - UI_LOCAL_OR_READ_SOURCE
+      - DEFINE_EXACT_VALUE_OR_EXPLICIT_NA/BLOCKED_IN_CANONICAL_OWNER
+  - index: 42
+    rows:
+    - row: 0
+      cells:
+      - Page
+      - Control UID
+      - Gate
+      - Runtime Owner
+      - Status
+    - row: 1
+      cells:
+      - DEV-01
+      - DEV-01-BTN-CAMPAIGN-CREATE
+      - DEV-01-GATE-CAMPAIGN
+      - INFO_COMMAND_RUNTIME
+      - CLOSED_BY_BATCH_09
+    - row: 2
+      cells:
+      - DEV-01
+      - DEV-01-BTN-CR-CREATE
+      - DEV-01-GATE-MESSAGE-REVIEW
+      - CANDIDATE_DECISION_RUNTIME
+      - CLOSED_BY_BATCH_09
+    - row: 3
+      cells:
+      - ERP-01
+      - ERP-01-FLD-SYNC-COMPLETENESS
+      - ERP-01-GATE-SYNC-READ
+      - ERPConnectorService
+      - CLOSED_BY_BATCH_09
+    - row: 4
+      cells:
+      - ERP-01
+      - ERP-01-FLD-SYNC-CURRENCY-TIMEZONE
+      - ERP-01-GATE-SYNC-READ
+      - ERPConnectorService
+      - CLOSED_BY_BATCH_09
+    - row: 5
+      cells:
+      - ERP-01
+      - ERP-01-FLD-SYNC-FAILURE-ID
+      - ERP-01-GATE-SYNC-READ
+      - ERPConnectorService
+      - CLOSED_BY_BATCH_09
+    - row: 6
+      cells:
+      - ERP-01
+      - ERP-01-FLD-SYNC-FRESHNESS-AT
+      - ERP-01-GATE-SYNC-READ
+      - ERPConnectorService
+      - CLOSED_BY_BATCH_09
+    - row: 7
+      cells:
+      - ERP-01
+      - ERP-01-FLD-SYNC-LAST-SYNC-STATUS
+      - ERP-01-GATE-SYNC-READ
+      - ERPConnectorService
+      - CLOSED_BY_BATCH_09
+    - row: 8
+      cells:
+      - ERP-01
+      - ERP-01-FLD-SYNC-SNAPSHOT-ID
+      - ERP-01-GATE-SYNC-READ
+      - ERPConnectorService
+      - CLOSED_BY_BATCH_09
+  - index: 43
+    rows:
+    - row: 0
+      cells:
+      - Read Group
+      - Exact Action
+      - Gate
+      - Permission
+      - Resolved Runtime Owner
+      - Operation Handling
+    - row: 1
+      cells:
+      - Connector
+      - ERP-01-ACT-READ-CONNECTOR
+      - ERP-01-GATE-CONNECTOR-READ
+      - ERP-01-PERM-CONNECTOR
+      - ERPConnectorService
+      - PER_FIELD_OPERATION_NA
+    - row: 2
+      cells:
+      - Finance
+      - ERP-01-ACT-READ-FINANCE
+      - ERP-01-GATE-FINANCE
+      - ERP-01-PERM-FINANCE
+      - FinanceGuardrailService
+      - PER_FIELD_OPERATION_NA
+    - row: 3
+      cells:
+      - Sync
+      - ERP-01-ACT-READ-SYNC
+      - ERP-01-GATE-SYNC-READ
+      - ERP-01-PERM-SYNC
+      - ERPConnectorService
+      - PER_FIELD_OPERATION_NA
+  - index: 44
+    rows:
+    - row: 0
+      cells:
+      - Target UID
+      - Group
+      - Field
+      - Resolved Value / Applicability
+      - Status
+    - row: 1
+      cells:
+      - ERP-01-FLD-CONN-ADAPTER-KEY
+      - Connector
+      - Runtime Owner
+      - ERPConnectorService
+      - BOUND_BY_BATCH_15
+    - row: 2
+      cells:
+      - ERP-01-FLD-CONN-CONNECTION-STATUS
+      - Connector
+      - Runtime Owner
+      - ERPConnectorService
+      - BOUND_BY_BATCH_15
+    - row: 3
+      cells:
+      - ERP-01-FLD-CONN-CONNECTOR-ID
+      - Connector
+      - Runtime Owner
+      - ERPConnectorService
+      - BOUND_BY_BATCH_15
+    - row: 4
+      cells:
+      - ERP-01-FLD-CONN-ENTITY-SCOPE
+      - Connector
+      - Runtime Owner
+      - ERPConnectorService
+      - BOUND_BY_BATCH_15
+    - row: 5
+      cells:
+      - ERP-01-FLD-CONN-MAPPING-VERSION
+      - Connector
+      - Runtime Owner
+      - ERPConnectorService
+      - BOUND_BY_BATCH_15
+    - row: 6
+      cells:
+      - ERP-01-FLD-CONN-PROVIDER-KEY
+      - Connector
+      - Runtime Owner
+      - ERPConnectorService
+      - BOUND_BY_BATCH_15
+    - row: 7
+      cells:
+      - ERP-01-FLD-CONN-SECRET-REFERENCE-ID
+      - Connector
+      - Runtime Owner
+      - ERPConnectorService
+      - BOUND_BY_BATCH_15
+    - row: 8
+      cells:
+      - ERP-01-FLD-FIN-CAPACITY
+      - Finance
+      - Runtime Owner
+      - FinanceGuardrailService
+      - BOUND_BY_BATCH_15
+    - row: 9
+      cells:
+      - ERP-01-FLD-FIN-CASHFLOW
+      - Finance
+      - Runtime Owner
+      - FinanceGuardrailService
+      - BOUND_BY_BATCH_15
+    - row: 10
+      cells:
+      - ERP-01-FLD-FIN-COST
+      - Finance
+      - Runtime Owner
+      - FinanceGuardrailService
+      - BOUND_BY_BATCH_15
+    - row: 11
+      cells:
+      - ERP-01-FLD-FIN-FORECAST
+      - Finance
+      - Runtime Owner
+      - FinanceGuardrailService
+      - BOUND_BY_BATCH_15
+    - row: 12
+      cells:
+      - ERP-01-FLD-FIN-GUARDRAILS
+      - Finance
+      - Runtime Owner
+      - FinanceGuardrailService
+      - BOUND_BY_BATCH_15
+    - row: 13
+      cells:
+      - ERP-01-FLD-FIN-RECOMMENDATION-BOUNDARY
+      - Finance
+      - Runtime Owner
+      - FinanceGuardrailService
+      - BOUND_BY_BATCH_15
+    - row: 14
+      cells:
+      - ERP-01-FLD-FIN-REVENUE
+      - Finance
+      - Runtime Owner
+      - FinanceGuardrailService
+      - BOUND_BY_BATCH_15
+    - row: 15
+      cells:
+      - ERP-01-FLD-CONN-ADAPTER-KEY
+      - Connector
+      - Operation
+      - N/A
+      - LEGITIMATE_NA_ERP_READ_PROJECTION_FIELD_OPERATION
+    - row: 16
+      cells:
+      - ERP-01-FLD-CONN-CONNECTION-STATUS
+      - Connector
+      - Operation
+      - N/A
+      - LEGITIMATE_NA_ERP_READ_PROJECTION_FIELD_OPERATION
+    - row: 17
+      cells:
+      - ERP-01-FLD-CONN-CONNECTOR-ID
+      - Connector
+      - Operation
+      - N/A
+      - LEGITIMATE_NA_ERP_READ_PROJECTION_FIELD_OPERATION
+    - row: 18
+      cells:
+      - ERP-01-FLD-CONN-ENTITY-SCOPE
+      - Connector
+      - Operation
+      - N/A
+      - LEGITIMATE_NA_ERP_READ_PROJECTION_FIELD_OPERATION
+    - row: 19
+      cells:
+      - ERP-01-FLD-CONN-MAPPING-VERSION
+      - Connector
+      - Operation
+      - N/A
+      - LEGITIMATE_NA_ERP_READ_PROJECTION_FIELD_OPERATION
+    - row: 20
+      cells:
+      - ERP-01-FLD-CONN-PROVIDER-KEY
+      - Connector
+      - Operation
+      - N/A
+      - LEGITIMATE_NA_ERP_READ_PROJECTION_FIELD_OPERATION
+    - row: 21
+      cells:
+      - ERP-01-FLD-CONN-SECRET-REFERENCE-ID
+      - Connector
+      - Operation
+      - N/A
+      - LEGITIMATE_NA_ERP_READ_PROJECTION_FIELD_OPERATION
+    - row: 22
+      cells:
+      - ERP-01-FLD-FIN-CAPACITY
+      - Finance
+      - Operation
+      - N/A
+      - LEGITIMATE_NA_ERP_READ_PROJECTION_FIELD_OPERATION
+    - row: 23
+      cells:
+      - ERP-01-FLD-FIN-CASHFLOW
+      - Finance
+      - Operation
+      - N/A
+      - LEGITIMATE_NA_ERP_READ_PROJECTION_FIELD_OPERATION
+    - row: 24
+      cells:
+      - ERP-01-FLD-FIN-COST
+      - Finance
+      - Operation
+      - N/A
+      - LEGITIMATE_NA_ERP_READ_PROJECTION_FIELD_OPERATION
+    - row: 25
+      cells:
+      - ERP-01-FLD-FIN-FORECAST
+      - Finance
+      - Operation
+      - N/A
+      - LEGITIMATE_NA_ERP_READ_PROJECTION_FIELD_OPERATION
+    - row: 26
+      cells:
+      - ERP-01-FLD-FIN-GUARDRAILS
+      - Finance
+      - Operation
+      - N/A
+      - LEGITIMATE_NA_ERP_READ_PROJECTION_FIELD_OPERATION
+    - row: 27
+      cells:
+      - ERP-01-FLD-FIN-RECOMMENDATION-BOUNDARY
+      - Finance
+      - Operation
+      - N/A
+      - LEGITIMATE_NA_ERP_READ_PROJECTION_FIELD_OPERATION
+    - row: 28
+      cells:
+      - ERP-01-FLD-FIN-REVENUE
+      - Finance
+      - Operation
+      - N/A
+      - LEGITIMATE_NA_ERP_READ_PROJECTION_FIELD_OPERATION
+    - row: 29
+      cells:
+      - ERP-01-FLD-SYNC-COMPLETENESS
+      - Sync
+      - Operation
+      - N/A
+      - LEGITIMATE_NA_ERP_READ_PROJECTION_FIELD_OPERATION
+    - row: 30
+      cells:
+      - ERP-01-FLD-SYNC-CURRENCY-TIMEZONE
+      - Sync
+      - Operation
+      - N/A
+      - LEGITIMATE_NA_ERP_READ_PROJECTION_FIELD_OPERATION
+    - row: 31
+      cells:
+      - ERP-01-FLD-SYNC-FAILURE-ID
+      - Sync
+      - Operation
+      - N/A
+      - LEGITIMATE_NA_ERP_READ_PROJECTION_FIELD_OPERATION
+    - row: 32
+      cells:
+      - ERP-01-FLD-SYNC-FRESHNESS-AT
+      - Sync
+      - Operation
+      - N/A
+      - LEGITIMATE_NA_ERP_READ_PROJECTION_FIELD_OPERATION
+    - row: 33
+      cells:
+      - ERP-01-FLD-SYNC-LAST-SYNC-STATUS
+      - Sync
+      - Operation
+      - N/A
+      - LEGITIMATE_NA_ERP_READ_PROJECTION_FIELD_OPERATION
+    - row: 34
+      cells:
+      - ERP-01-FLD-SYNC-SNAPSHOT-ID
+      - Sync
+      - Operation
+      - N/A
+      - LEGITIMATE_NA_ERP_READ_PROJECTION_FIELD_OPERATION
+  - index: 45
+    rows:
+    - row: 0
+      cells:
+      - Page
+      - Target UID
+      - Closed Field(s)
+      - Operation
+      - Runtime Owner
+      - Runtime Status
+      - Transport Handling
+      - Authority Basis
+    - row: 1
+      cells:
+      - DEV-01
+      - DEV-01-BTN-CAMPAIGN-APPROVE
+      - runtime_owner
+      - approveOutreachCampaign
+      - Existing outreach owner
+      - EFFECTFUL_EXACT
+      - POST /v1/outreach/campaigns/{campaignId}/approve
+      - Existing enterprise development / outreach / shared acquisition owner boundary
+    - row: 2
+      cells:
+      - DEV-01
+      - DEV-01-BTN-CANDIDATE-CREATE
+      - runtime_owner
+      - createCandidate
+      - Existing enterprise development owner
+      - EFFECTFUL_EXACT
+      - POST /v1/candidates
+      - Existing enterprise development / outreach / shared acquisition owner boundary
+    - row: 3
+      cells:
+      - DEV-01
+      - DEV-01-BTN-DISCOVERY-PAUSE
+      - runtime_owner
+      - pauseCompanyDiscovery
+      - Shared Acquisition / Knowledge owner
+      - EFFECTFUL_EXACT
+      - POST /v1/outreach/discovery-jobs/{jobId}/pause
+      - Existing enterprise development / outreach / shared acquisition owner boundary
+    - row: 4
+      cells:
+      - DEV-01
+      - DEV-01-BTN-DISCOVERY-RESUME
+      - runtime_owner
+      - resumeCompanyDiscovery
+      - Shared Acquisition / Knowledge owner
+      - EFFECTFUL_EXACT
+      - POST /v1/outreach/discovery-jobs/{jobId}/resume
+      - Existing enterprise development / outreach / shared acquisition owner boundary
+    - row: 5
+      cells:
+      - DEV-01
+      - DEV-01-BTN-DISCOVERY-START
+      - runtime_owner
+      - startCompanyDiscovery
+      - Shared Acquisition / Knowledge owner
+      - EFFECTFUL_EXACT
+      - POST /v1/outreach/discovery-jobs
+      - Existing enterprise development / outreach / shared acquisition owner boundary
+    - row: 6
+      cells:
+      - DEV-01
+      - DEV-01-BTN-DISCOVERY-STOP
+      - runtime_owner
+      - stopCompanyDiscovery
+      - Shared Acquisition / Knowledge owner
+      - EFFECTFUL_EXACT
+      - POST /v1/outreach/discovery-jobs/{jobId}/stop
+      - Existing enterprise development / outreach / shared acquisition owner boundary
+    - row: 7
+      cells:
+      - DEV-01
+      - DEV-01-BTN-EMAIL-DISPATCH
+      - runtime_owner
+      - dispatchOutreachCampaign
+      - Existing outreach owner
+      - EFFECTFUL_EXACT
+      - POST /v1/outreach/campaigns/{campaignId}/dispatch
+      - Existing enterprise development / outreach / shared acquisition owner boundary
+    - row: 8
+      cells:
+      - DEV-01
+      - DEV-01-BTN-MERGE
+      - runtime_owner
+      - mergeCompanyCandidate
+      - Existing enterprise development owner
+      - EFFECTFUL_EXACT
+      - POST /v1/outreach/companies/{companyId}/merge
+      - Existing enterprise development / outreach / shared acquisition owner boundary
+    - row: 9
+      cells:
+      - DEV-01
+      - DEV-01-BTN-MERGE-PREVIEW
+      - runtime_owner
+      - previewCompanyMerge
+      - Existing enterprise development owner
+      - EFFECTFUL_EXACT
+      - POST /v1/outreach/companies/merge-preview
+      - Existing enterprise development / outreach / shared acquisition owner boundary
+  - index: 46
+    rows:
+    - row: 0
+      cells:
+      - Target UID
+      - Field
+      - Action
+      - Gate
+      - Runtime Status
+      - Applicability
+    - row: 1
+      cells:
+      - DEV-01-BTN-STAGE-1
+      - Permission/Auth Resource
+      - DEV-01-ACT-STAGE-1-SELECT
+      - DEV-01-GATE-PAGE
+      - UI_LOCAL_EXACT
+      - LEGITIMATE_NA_DEV_LOCAL_STAGE_PERMISSION
+    - row: 2
+      cells:
+      - DEV-01-BTN-STAGE-2
+      - Permission/Auth Resource
+      - DEV-01-ACT-STAGE-2-SELECT
+      - DEV-01-GATE-PAGE
+      - UI_LOCAL_EXACT
+      - LEGITIMATE_NA_DEV_LOCAL_STAGE_PERMISSION
+    - row: 3
+      cells:
+      - DEV-01-BTN-STAGE-3
+      - Permission/Auth Resource
+      - DEV-01-ACT-STAGE-3-SELECT
+      - DEV-01-GATE-PAGE
+      - UI_LOCAL_EXACT
+      - LEGITIMATE_NA_DEV_LOCAL_STAGE_PERMISSION
+    - row: 4
+      cells:
+      - DEV-01-BTN-STAGE-4
+      - Permission/Auth Resource
+      - DEV-01-ACT-STAGE-4-SELECT
+      - DEV-01-GATE-PAGE
+      - UI_LOCAL_EXACT
+      - LEGITIMATE_NA_DEV_LOCAL_STAGE_PERMISSION
+    - row: 5
+      cells:
+      - DEV-01-BTN-STAGE-5
+      - Permission/Auth Resource
+      - DEV-01-ACT-STAGE-5-SELECT
+      - DEV-01-GATE-PAGE
+      - UI_LOCAL_EXACT
+      - LEGITIMATE_NA_DEV_LOCAL_STAGE_PERMISSION
+  - index: 47
+    rows:
+    - row: 0
+      cells:
+      - Control UID
+      - Operation
+      - Payload / Schema
+      - Persistence Owner
+      - Required Semantics
+    - row: 1
+      cells:
+      - DEV-01-BTN-CAMPAIGN-APPROVE
+      - approveOutreachCampaign
+      - ApproveOutreachCampaignRequest
+      - Existing Outreach Owner / CampaignApproval + Campaign Audit
+      - Approval is distinct from dispatch. The exact Campaign/version/recipient refs and reviewer authority must resolve before approval is persisted.
+    - row: 2
+      cells:
+      - DEV-01-BTN-CAMPAIGN-CREATE
+      - createOutreachCampaign
+      - CreateOutreachCampaignRequest
+      - Existing Outreach Owner / Campaign + Audit
+      - Campaign persists an exact recipient_ref set, message/sender/schedule refs and governance metadata. Search/filter text is never itself the audience.
+    - row: 3
+      cells:
+      - DEV-01-BTN-CAMPAIGN-SEARCH
+      - searchProjection
+      - SearchEnterpriseAudienceProjectionRequest
+      - Global Brain / SemanticIndexResult + Search Audit
+      - Audience search persists derived search/index result pointers and scope only; it must dereference exact source/evidence and never create a second Company/Audience
+        truth store.
+    - row: 4
+      cells:
+      - DEV-01-BTN-CANDIDATE-CREATE
+      - createCandidate
+      - CreateEnterpriseCompanyCandidateRequest
+      - Existing Enterprise Development Owner / CompanyCandidate + Evidence/Audit
+      - Candidate creation records unresolved company evidence under the existing enterprise owner. Candidate is not CompanyMaster and cannot bypass identity resolution.
+    - row: 5
+      cells:
+      - DEV-01-BTN-CANDIDATE-DECIDE
+      - decideCandidate
+      - DecideEnterpriseCandidateRequest
+      - UNCHANGED
+      - Decision must bind exact candidate/version and review evidence. Existing persistence public.context_candidates remains unchanged.
+    - row: 6
+      cells:
+      - DEV-01-BTN-CR-CREATE
+      - createChangeRequest
+      - CreateEnterpriseChangeRequestRequest
+      - Existing Governed Change Request Owner / ChangeRequest + Audit
+      - Change Request records requested correction/change scope and audit lineage; it does not itself mutate canonical enterprise state.
+    - row: 7
+      cells:
+      - DEV-01-BTN-DIRECTORY-SEARCH
+      - searchProjection
+      - SearchEnterpriseDirectoryProjectionRequest
+      - Global Brain / SemanticIndexResult + Search Audit
+      - Directory search is a derived projection/search contract and must not create a duplicate CompanyMaster or independent directory truth store.
+    - row: 8
+      cells:
+      - DEV-01-BTN-DISCOVERY-PAUSE
+      - pauseCompanyDiscovery
+      - PauseCompanyDiscoveryRequest
+      - Shared Acquisition / Knowledge Owner / DiscoveryJob State + Audit
+      - Pause changes only the exact DiscoveryJob state with actor/reason/version audit; it does not replace the shared acquisition engine.
+    - row: 9
+      cells:
+      - DEV-01-BTN-DISCOVERY-RESUME
+      - resumeCompanyDiscovery
+      - ResumeCompanyDiscoveryRequest
+      - Shared Acquisition / Knowledge Owner / DiscoveryJob State + Audit
+      - Resume requires exact paused job/version and preserves prior attempts/evidence.
+    - row: 10
+      cells:
+      - DEV-01-BTN-DISCOVERY-START
+      - startCompanyDiscovery
+      - StartCompanyDiscoveryRequest
+      - Shared Acquisition / Knowledge Owner / DiscoveryJob + Audit
+      - Start creates/binds a DiscoveryJob from an authorized active profile and allowed source scope; connector absence remains BLOCK/RETRY, not simulated success.
+    - row: 11
+      cells:
+      - DEV-01-BTN-DISCOVERY-STOP
+      - stopCompanyDiscovery
+      - StopCompanyDiscoveryRequest
+      - Shared Acquisition / Knowledge Owner / DiscoveryJob State + Audit
+      - Stop closes the legal target job scope while preserving historical evidence and replay/idempotency lineage.
+    - row: 12
+      cells:
+      - DEV-01-BTN-EMAIL-DISPATCH
+      - dispatchOutreachCampaign
+      - DispatchOutreachCampaignRequest
+      - Existing Outreach Owner / Campaign Dispatch + IndividualDelivery + Audit
+      - Dispatch fans out approved Campaign recipients into exactly-one-To IndividualDelivery units. Provider acceptance and Production connector E2E remain separate
+        runtime evidence.
+    - row: 13
+      cells:
+      - DEV-01-BTN-EXPORT
+      - exportProjection
+      - ExportEnterpriseProjectionRequest
+      - Existing Projection/Export Owner / Enterprise Export Artifact + Export Audit
+      - Export persists an authorized derived artifact and audit lineage only; permission/classification/privacy/suppression gates remain mandatory.
+    - row: 14
+      cells:
+      - DEV-01-BTN-KILL-SWITCH
+      - setKillSwitch
+      - SetEnterpriseOutreachKillSwitchRequest
+      - Existing Operations Governance / Kill Switch State + Audit
+      - Kill switch stops eligible pending/in-flight legal scope and records actor/reason/time. Already-completed sends remain immutable historical facts.
+    - row: 15
+      cells:
+      - DEV-01-BTN-MERGE
+      - mergeCompanyCandidate
+      - MergeCompanyCandidateRequest
+      - Existing Enterprise Development Owner / CompanyMaster + CompanyMergeDecision + Lineage Audit
+      - Effectful merge requires prior preview, exact survivor/merged refs and no blocking conflict; aliases/evidence/contacts/history/suppression lineage must be
+        preserved.
+    - row: 16
+      cells:
+      - DEV-01-BTN-MERGE-PREVIEW
+      - previewCompanyMerge
+      - PreviewCompanyMergeRequest
+      - Existing Enterprise Development Owner / CompanyMergeCandidate + Merge Preview Evidence
+      - Preview records candidate identity conflicts/survivor/lineage evidence only and cannot itself merge or delete CompanyMaster history.
+    - row: 17
+      cells:
+      - DEV-01-BTN-REFRESH
+      - refreshProjection
+      - RefreshEnterpriseProjectionRequest
+      - Global Brain / Enterprise Projection + Projection Audit
+      - Refresh rematerializes derived enterprise projection state from canonical owners; projection cannot become a second Company/Campaign/Delivery truth.
+    - row: 18
+      cells:
+      - ERP-01-BTN-CONNECTOR-CREATE
+      - createERPConnector
+      - CreateERPConnectorRequest
+      - ERPConnectorService / ERP Connector Configuration + Audit
+      - Connector configuration persists provider/adapter/entity scope/mapping/secret-reference metadata only. Raw secret plaintext must remain outside this persistence
+        boundary.
+    - row: 19
+      cells:
+      - ERP-01-BTN-CONNECTOR-UPDATE
+      - updateERPConnector
+      - UpdateERPConnectorRequest
+      - ERPConnectorService / ERP Connector Configuration + Audit
+      - Update changes exact connector configuration/version with audit. Secret material remains referenced, not copied into Word/log/audit payload.
+    - row: 20
+      cells:
+      - ERP-01-BTN-CONNECTOR-VALIDATE
+      - validateERPConnector
+      - ValidateERPConnectorRequest
+      - ERPConnectorService / ERP Connector Validation Evidence
+      - Validation persists bounded connectivity/schema/capability evidence for an exact connector/version; a pass is not equivalent to Production business-data correctness.
+    - row: 21
+      cells:
+      - ERP-01-BTN-EXPORT
+      - exportProjection
+      - ExportERPProjectionRequest
+      - Existing Projection/Export Owner / ERP Export Artifact + Export Audit
+      - ERP export persists derived projection/export artifact and audit only; ERP/Finance remains financial truth and export cannot mutate accounting facts.
+    - row: 22
+      cells:
+      - ERP-01-BTN-MAPPING-VALIDATE
+      - validateERPMapping
+      - ValidateERPMappingRequest
+      - ERPConnectorService / ERP Mapping Validation Evidence
+      - Mapping validation records exact mapping-version/entity-scope result/evidence without silently changing canonical financial data.
+    - row: 23
+      cells:
+      - ERP-01-BTN-SNAPSHOT-REFRESH
+      - refreshERPSnapshot
+      - RefreshERPSnapshotRequest
+      - ERPConnectorService / ERP Snapshot + Freshness/Audit
+      - Snapshot refresh persists immutable snapshot identity/freshness/completeness lineage sourced from the connector; it does not fabricate finance values.
+    - row: 24
+      cells:
+      - ERP-01-BTN-SYNC-CREATE
+      - createERPSyncJob
+      - CreateERPSyncJobRequest
+      - ERPConnectorService / ERP Sync Job + Audit
+      - Sync job persists exact connector/mapping/scope/snapshot target and idempotency/audit metadata. Job creation is not sync completion.
+    - row: 25
+      cells:
+      - ERP-01-BTN-SYNC-RETRY
+      - retryERPSync
+      - RetryERPSyncRequest
+      - ERPConnectorService / ERP Sync Attempt + Failure/Audit
+      - Retry binds the failed sync job/failure/version and creates auditable retry-attempt lineage; prior failure evidence must not be erased.

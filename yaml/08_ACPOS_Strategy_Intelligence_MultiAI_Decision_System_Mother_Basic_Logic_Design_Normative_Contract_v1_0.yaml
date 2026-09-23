@@ -1,0 +1,4909 @@
+schema_version: ACPOS_WORD_YAML_PROJECTION_V1
+projection_mode: SOURCE_GROUNDED_NO_INVENTION
+sequence: 9
+source:
+  branch: 0921acpos
+  git_head: 7bd2dbdb89b685c5f5f6045c8e3e17c5f2500db5
+  word_path: 08_ACPOS_Strategy_Intelligence_MultiAI_Decision_System_Mother_Basic_Logic_Design_Normative_Contract_v1.0.docx
+  word_sha256: e4814e8c8dd81f2f56c9a9fd7db847662647b859401914a2ca1ab6797d83e1dc
+authority_rules:
+- Word source remains canonical for this projection.
+- Do not silently fill, correct, reconcile, or replace source content.
+- Do not convert BLOCKED, NOT_EXECUTED, REQUIRE_EXACT_BINDING, SOURCE_NOT_DEFINED into PASS.
+- Paragraph and table order is preserved by source index.
+document:
+  paragraphs:
+  - index: 0
+    style: Normal
+    text: ACPOS-AI-08
+  - index: 1
+    style: Normal
+    text: Strategy Intelligence / Multi-AI Decision System
+  - index: 2
+    style: Normal
+    text: 策略智能／多 AI 決策系統
+  - index: 3
+    style: Normal
+    text: Mother Basic Logic Design + Normative Logic Contract
+  - index: 5
+    style: Caption Small
+    text: 圖 1｜策略智能的受治理生命週期；分析、比較與多 AI 討論只形成決策候選，正式決策仍需 Human Review。
+  - index: 7
+    style: Heading 1
+    text: 1. Design Identity / 設計定位
+  - index: 8
+    style: Normal
+    text: 核心定位
+  - index: 9
+    style: Rule
+    text: • 本文件是 ACPOS Strategy Intelligence 的系統邏輯 Owner；它定義如何從受治理資料形成可追溯策略分析、選項比較、Multi-AI 討論、Decision Candidate 與 Decision Ledger。
+  - index: 10
+    style: Rule
+    text: • 它不是 Conversation Core（AI-02）、不是 Provider Router（AI-03）、不是企業開發執行器（AI-06）、不是社群發布執行器（AI-07）、也不是系統自我修改器（AI-09）。
+  - index: 11
+    style: Rule
+    text: • AI 的策略建議、共識、Alert 或 Resource Proposal 都不是正式公司決策；只有授權 Human Decision 才能形成 Decision Ledger 結果。
+  - index: 12
+    style: Rule
+    text: • 策略中心可以顯示、建議與導航到 Owner Module；Finance / Workflow / Governance / Production 的 effectful action 必須留在原 Owner。
+  - index: 14
+    style: Heading 1
+    text: 2. Scope / Out-of-Scope / Owner Boundary
+  - index: 17
+    style: Heading 1
+    text: 3. System Architecture / 策略智能系統架構
+  - index: 19
+    style: Caption Small
+    text: 圖 2｜策略推理 Truth Separation；從 Fact 到 Decision 的每一層都有不同證據與治理門檻。
+  - index: 22
+    style: Heading 1
+    text: 4. Entity Hierarchy / Relationship / Impact Graph
+  - index: 24
+    style: Heading 1
+    text: 5. Entity × Operation Matrix
+  - index: 26
+    style: Heading 1
+    text: 6. Normative Invariant Registry
+  - index: 28
+    style: Heading 1
+    text: 7. Fact / Inference / Assumption / Risk / Opportunity Contract
+  - index: 30
+    style: Caption Small
+    text: 圖 3｜策略 Truth/Reasoning 分層；Fact、推論、假設、風險/機會、建議、決策不可互相偷升格。
+  - index: 32
+    style: Heading 1
+    text: 8. Strategic Context / Fact Pack Contract
+  - index: 34
+    style: Normal
+    text: FactPack 最小欄位
+  - index: 35
+    style: Rule
+    text: • fact_pack_id / version / scope / created_at / source_fact_refs / evidence_refs / unresolved_conflicts / freshness_state / classification / permission_projection
+      / context_fingerprint。
+  - index: 36
+    style: Rule
+    text: • 任何 REQUIRED source 缺失時：保留 incomplete，建立 OpenQuestion / EvidenceGap；不得以模型常識補成正式 Fact。
+  - index: 37
+    style: Heading 1
+    text: 9. Multi-AI Same-Baseline Contract
+  - index: 39
+    style: Caption Small
+    text: 圖 4｜多 AI 合法比較需要同一 Original Question、Context Fingerprint、Fact Pack Version、Constraint Set。
+  - index: 41
+    style: Heading 1
+    text: 10. Multi-AI Validity / Comparability Decision Matrix
+  - index: 43
+    style: Heading 1
+    text: 11. Scenario / Branch / What-if Contract
+  - index: 45
+    style: Heading 1
+    text: 12. Option Comparison / Decision Support Contract
+  - index: 47
+    style: Heading 1
+    text: 13. Four Formal Strategy Outputs
+  - index: 49
+    style: Normal
+    text: 輸出共通規則
+  - index: 50
+    style: Rule
+    text: • 所有輸出 MUST 綁 exact StrategyTopic / Question / ContextFingerprint / FactPack / Candidate version。
+  - index: 51
+    style: Rule
+    text: • 任何修訂 MUST 產生新版本並保存 predecessor。
+  - index: 52
+    style: Rule
+    text: • 同一輸出不可同時兼任正式 Decision / Budget Approval / Workflow Command / Production Action。
+  - index: 53
+    style: Heading 1
+    text: 14. Decision Candidate / Human Review / Decision Ledger
+  - index: 55
+    style: Heading 1
+    text: 15. State Machine / Lifecycle
+  - index: 57
+    style: Heading 1
+    text: 16. State Transition Guard Matrix
+  - index: 59
+    style: Heading 1
+    text: 17. Concurrency / Version / Idempotency
+  - index: 61
+    style: Heading 1
+    text: 18. Event / Consumer Contract
+  - index: 63
+    style: Normal
+    text: ACPOSIntegrationEvent 共通欄位
+  - index: 64
+    style: Rule
+    text: • event_type / event_id / source_domain / source_object_ref / exact_version_ref / correlation_id / actor_ref / scope / timestamp / consumer / delivery_state
+      / idempotency_key / retry_count / causation_ref / audit_ref。
+  - index: 65
+    style: Rule
+    text: • Duplicate delivery MUST idempotently dedupe；same event_id + different payload MUST BLOCK。
+  - index: 66
+    style: Heading 1
+    text: 19. Feedback / Expected-vs-Actual / Strategic Experience
+  - index: 68
+    style: Caption Small
+    text: 圖 5｜策略決策之後由 Owner Module 執行，實際結果回流 Expected-vs-Actual，再形成 Strategic Experience Candidate。
+  - index: 70
+    style: Heading 1
+    text: 20. Impact Graph / Reverification
+  - index: 72
+    style: Heading 1
+    text: 21. Error / Recovery / Retry / Fallback
+  - index: 74
+    style: Heading 1
+    text: 22. Security / Classification / Audit / NFR
+  - index: 76
+    style: Heading 1
+    text: 23. Exact Binding Ledger / Construction Binding Plan
+  - index: 78
+    style: Heading 1
+    text: 24. Function Admission / Auto-completion Scope
+  - index: 80
+    style: Heading 1
+    text: 25. Acceptance Matrix
+  - index: 82
+    style: Heading 1
+    text: 26. Negative Regression Matrix
+  - index: 84
+    style: Heading 1
+    text: 27. Given / When / Then Acceptance Scenarios
+  - index: 86
+    style: Heading 1
+    text: 28. Construction Handoff / 工程移交
+  - index: 87
+    style: Normal
+    text: 施工順序（Search-before-create）
+  - index: 88
+    style: Rule
+    text: • 1. 先解析 Current Governance / Registry / existing Strategy owner / permissions / actions / data/runtime owner。
+  - index: 89
+    style: Rule
+    text: • 2. 以本文件 Entity/Operation/State/Event/Acceptance 分母建立 binding manifest。
+  - index: 90
+    style: Rule
+    text: • 3. 先綁 AI-01 Context/Truth、AI-02 Conversation/Multi-AI、AI-03 Router/Job，再施工 Strategy domain-specific analysis/candidate/ledger。
+  - index: 91
+    style: Rule
+    text: • 4. 對 `REQUIRE_EXACT_BINDING` 項目執行 UID/name/alias/deprecated/registry/owner/code/route/data object 全搜尋；找到 owner 就修改/綁定，不建第二套。
+  - index: 92
+    style: Rule
+    text: • 5. 建立 automated tests：same-baseline、truth separation、human gate、stale version、idempotency、owner boundary、impact/reverify、negative regressions。
+  - index: 93
+    style: Rule
+    text: • 6. Runtime/DB/API/Browser/Production 驗證必須另取得 fresh evidence；本 Word 不替代 Implementation/Production acceptance。
+  - index: 95
+    style: Heading 1
+    text: 29. Closure Status / 文件封閉條件
+  - index: 97
+    style: Heading 1
+    text: 2026-09-21 Source-Grounded Construction Closure / 來源實證施工封板
+  - index: 99
+    style: Heading 1
+    text: 2026-09-21 Source-Grounded Construction Closure / 來源實證施工封板
+  - index: 100
+    style: Normal
+    text: '[ACPOS-20260921-SOURCE-GROUNDED-CONSTRUCTION-CLOSURE-V2] Source-grounded only. Existing Current source wins; missing source values remain blocked/decision-required.
+      This closure supersedes the prior generic 2026-09-21 V1/V3 annex only, not the original domain logic or human visual review gates.'
+  - index: 101
+    style: Heading 2
+    text: Source-backed Runtime Quantitative Truth
+  - index: 102
+    style: Normal
+    text: 'Rule: SOURCE_NOT_DEFINED is not a default value. It is an explicit unresolved design parameter. Construction MUST preserve fail-closed behavior or request
+      a formal policy decision; it MUST NOT restore the removed 50/50/200, 24, 96k, 365-day or other generic values without a new authority decision.'
+  - index: 103
+    style: Heading 2
+    text: Page / Control Exact Binding
+  - index: 104
+    style: Heading 2
+    text: STR-01 · Exact Construction Binding
+  - index: 105
+    style: Heading 2
+    text: ADMIN-STR-01 · Exact Construction Binding
+  - index: 106
+    style: Heading 3
+    text: ADMIN-STR-01 · Truthful Remaining Runtime / Governance Status
+  - index: 107
+    style: Heading 3
+    text: Strategy Admin Runtime Materialization Boundary
+  - index: 108
+    style: Normal
+    text: All 19 source-preserving interaction controls remain exact at the planning/design layer. saveDraft is now canonically bound to shared IAM_RUNTIME ingress
+      with StrategyService / PlatformPlaybook Draft Version + Audit persistence; createCandidate is bound to StrategyService / OpportunityCandidate + Version/Audit;
+      rejectStrategyCandidate is bound to StrategyService / StrategyCandidate Rejected State + DecisionContext + Audit. exportProjection, compareCandidates and adoptAsContextCandidate
+      retain their prior source-backed bindings. These are design-authority bindings only; this Word does not claim runtime execution or Production readiness.
+  - index: 109
+    style: Heading 2
+    text: Construction Resolution Rule
+  - index: 110
+    style: Normal
+    text: '施工 AI MUST resolve UI behavior from this order: page machine authority → exact control row → action/gate/permission → payload/schema → operation/method/path
+      → runtime/persistence owner → source runtime status. If a row is SPEC_EXACT_RUNTIME_BLOCKED or SPEC_EXACT_RUNTIME_NOT_EXECUTED, the UI definition is known but
+      effectful enablement is forbidden until implementation evidence closes. If a quantitative value is SOURCE_NOT_DEFINED, do not choose a “reasonable” number.'
+  - index: 112
+    style: Heading 1
+    text: Strategy Intelligence / Human Decision vs QA Governance Synchronization
+  - index: 113
+    style: Normal
+    text: '[ACPOS-20260921-NINE-SYSTEM-QA-SYNC-V1] 本節同步目前九份系統文件對 QA Criteria、Business Content Completeness、SG-02 lifecycle 與跨系統 evidence lineage 的共同理解。此同步只更新 Word
+      authority，不代表任何外部 Runtime/Production 已施工。'
+  - index: 114
+    style: Heading 2
+    text: Canonical Quality Governance Baseline
+  - index: 115
+    style: Heading 2
+    text: Decision-domain Separation
+  - index: 116
+    style: Heading 2
+    text: When Strategy Outputs Need QA
+  - index: 118
+    style: Heading 1
+    text: System 08 Synchronization · Strategy Admin Runtime Boundary
+  - index: 119
+    style: Normal
+    text: '[ACPOS-20260921-BATCH-02-CONSUMER-CONTRACT-CLOSURE-V1] 本節只補齊既有 Current source 已可證明的設計契約。既有 Control / Action / Gate / Permission / Owner / Operation / Route
+      優先；SOURCE_NOT_DEFINED、NO_PUBLIC_API_ID_IN_CURRENT_AUTHORITY、SPEC_EXACT_RUNTIME_BLOCKED 不得由 Word 自行發明或升格為 Runtime 完成。'
+  - index: 120
+    style: Normal
+    text: These six operations already have exact source-preserving control/operation contracts. This closure makes the missing runtime/persistence boundary explicit
+      instead of inventing owners. Existing permission resources are authoritative design inputs, but enablement remains forbidden until the runtime enforcement path
+      is materially implemented and tested.
+  - index: 121
+    style: Normal
+    text: Front-office STR-01 operations that are already EFFECTFUL_EXACT remain distinct from the six ADMIN STR rows above. A front-office shared-service binding
+      is not evidence that the admin route has a materialized runtime/persistence owner. Do not transfer completion credit across those boundaries.
+  - index: 123
+    style: Heading 1
+    text: Batch 10 · Cross-System Reference-Only Supersession Register
+  - index: 124
+    style: Normal
+    text: '[ACPOS-20260921-BATCH-10-CANONICAL-OWNER-PRECEDENCE-V1::REFERENCE_ONLY::08_ACPOS_Strategy_Intelligence_MultiAI_Decision_System_Mother_Basic_Logic_Design_Normative_Contract_v1.0.docx]
+      The exact UIDs below remain in this document for integration, inspection, or domain-consumer context only. Their physical presence MUST NOT be interpreted as
+      Canonical Owner registration. Batch 10 resolves the canonical owner from pre-existing owner-boundary authority; no business binding value is changed.'
+  - index: 125
+    style: Normal
+    text: 'Scanner rule: tables in this supersession register deliberately use ''Reference UID'', not ''Control UID''. Listed UIDs are reference-only in this document
+      and MUST be excluded from canonical-owner denominator calculations.'
+  - index: 127
+    style: Heading 1
+    text: Batch 27 · Strategy Compare / Adopt Contract Reconciliation
+  - index: 128
+    style: Normal
+    text: '[ACPOS-20260922-BATCH-27-CANONICAL-CONTRACT-RECONCILIATION-V1::SYSTEM08] compareCandidates is reconciled as a read-only comparison contract because the
+      existing owner contract is GET /v1/candidates/compare, uses a no-form read contract, and explicitly expects no mutation. adoptAsContextCandidate remains EFFECTFUL_EXACT
+      and reuses the existing POST + AdoptAsContextCandidateRequest contract. Runtime execution is not asserted by this Word closure.'
+  - index: 130
+    style: Heading 1
+    text: Batch 43 · Strategy Review / Context Adoption Canonical Contracts
+  - index: 131
+    style: Normal
+    text: '[ACPOS-20260922-BATCH-43-SYSTEM08-STRATEGY-CONTRACT-REMEDIATION-V1::SYSTEM08] Review submission is a governed request to enter REVIEW_REQUIRED, never an
+      approval. Context adoption requires prior human review and persists through AI-01 Context authority plus System 08 audit linkage; Strategy does not create a
+      second Context Engine.'
+  - index: 133
+    style: Heading 1
+    text: Strategy Canonical Authority Closure｜戰略功能正式 Owner 收斂
+  - index: 134
+    style: Normal
+    text: '[ACPOS-STRATEGY-AUTHORITY-CLOSURE-V1] This annex closes the three remaining planning/basic-design Authority gaps without creating a parallel Strategy runtime.
+      It is derived from the existing Owner Boundary (StrategyService + StrategyFactPackService + shared owners), Business Entity registry, lifecycle matrix, functional
+      chains, payload contracts and existing operation routes.'
+  - index: 135
+    style: Heading 2
+    text: Owner and Entity Resolution Rules
+  - index: 136
+    style: Heading 2
+    text: End-to-End Internal Function Chains
+  - index: 137
+    style: Heading 2
+    text: Failure / Recovery / Acceptance
+  - index: 139
+    style: Heading 1
+    text: ADMIN-STR Persistence Owner Closure｜戰略治理持久化 Owner 收斂
+  - index: 140
+    style: Normal
+    text: '[ACPOS-ADMIN-STR-PERSISTENCE-OWNER-CLOSURE-V1] This annex closes the four remaining ADMIN-STR governance mutation Persistence Owner gaps using the existing
+      View/Entity/Owner boundary. IAM_RUNTIME is shared governance ingress only; StrategyFactPackService and StrategyService retain canonical business persistence
+      authority.'
+  - index: 141
+    style: Heading 2
+    text: Shared Invariants / 共用不變式
+  tables:
+  - index: 0
+    rows:
+    - row: 0
+      cells:
+      - Document Identity
+      - Value
+    - row: 1
+      cells:
+      - Document UID
+      - ACPOS-AI-08
+    - row: 2
+      cells:
+      - Status
+      - DESIGN_CONTENT_COMPLETE
+    - row: 3
+      cells:
+      - Approval
+      - FORMAL_APPROVAL_NOT_SELF_GRANTED
+    - row: 4
+      cells:
+      - Runtime Claim
+      - RUNTIME_NOT_PROVEN_BY_DOCUMENT
+    - row: 5
+      cells:
+      - Current Governance Basis
+      - GOV-REV-20260920-CROSS-STAGE-MATERIALIZATION-CONSUMER-READINESS-HARDENING / display v2.2.16
+    - row: 6
+      cells:
+      - Bootstrap Branch / HEAD
+      - rebuild-v2.1.1 / 61648a2db043047f5907515442e7279d15b8033d
+    - row: 7
+      cells:
+      - Design Date
+      - '2026-09-21'
+    - row: 8
+      cells:
+      - Primary Product Anchor
+      - workspace:STR-01 / Strategic Center Workspace
+  - index: 1
+    rows:
+    - row: 0
+      cells:
+      - Dimension
+      - Normative Definition
+    - row: 1
+      cells:
+      - Business Goal
+      - 以真實 Fact/Evidence、內部狀態、資源/成本/風險、歷史 Experience 為基礎，產生可比較、可審查、可回饋的策略選項。
+    - row: 2
+      cells:
+      - Primary User
+      - 管理層、策略分析者、授權決策者。
+    - row: 3
+      cells:
+      - Primary Object
+      - Strategy Topic / Strategic Question / Strategy Candidate / Decision Candidate。
+    - row: 4
+      cells:
+      - Human Boundary
+      - AI 分析與建議；人類作正式決策；Owner Module 作 effectful execution。
+    - row: 5
+      cells:
+      - Version Boundary
+      - Strategy Output / Candidate / Scenario / Decision Brief / Memory append-only；revision 產生新版本。
+    - row: 6
+      cells:
+      - Truth Boundary
+      - Fact、Inference、Assumption、Risk/Opportunity、Recommendation、Decision 必須分層，不得互相偷升格。
+  - index: 2
+    rows:
+    - row: 0
+      cells:
+      - Type
+      - Included / Excluded
+    - row: 1
+      cells:
+      - IN SCOPE
+      - Strategic Context、Fact Pack、Question/Constraint、Analysis、Forecast/Pattern、Risk/Opportunity、Option、Resource Impact、Scenario、Multi-AI Same-Baseline、Cross-Review、Consensus/Disagreement、Decision
+        Candidate、Human Review、Decision Ledger、Expected-vs-Actual、Strategic Experience Candidate。
+    - row: 2
+      cells:
+      - OUT OF SCOPE
+      - Shared Conversation persistence、Provider routing、ERP booking/approval、Workflow command、Production action、Email/Social publish、Authority mutation、system deployment。
+    - row: 3
+      cells:
+      - REFERENCES
+      - AI-01 Global Brain / Context；AI-02 Conversation & Multi-AI Core；AI-03 Execution Router；AI-06/07 business outcomes；AI-09 System Lifecycle。
+    - row: 4
+      cells:
+      - NO SECOND SYSTEM
+      - 不得建立 Strategy 專屬的第二套 Conversation Engine、Context Engine、Provider Router、Fact Store、Experience Engine、Workflow Engine 或 Approval Engine。
+  - index: 3
+    rows:
+    - row: 0
+      cells:
+      - Layer
+      - Owner / Purpose
+      - Must Not
+    - row: 1
+      cells:
+      - Strategic Context Resolver
+      - 引用 AI-01 ContextSnapshot/Fingerprint，組裝市場、內部、資源、成本、風險、治理來源。
+      - 不得用聊天記憶或 latest alias 偷換 exact version。
+    - row: 2
+      cells:
+      - Fact Pack
+      - 受治理 Fact/Evidence 的版本化集合。
+      - 不得混入未標示 Inference/Assumption。
+    - row: 3
+      cells:
+      - Strategy Analysis
+      - Pattern / Baseline / Forecast / Need / Opportunity / Risk / Priority。
+      - 不得隱藏 assumptions / uncertainty。
+    - row: 4
+      cells:
+      - Multi-AI Decision Analysis
+      - 同一 baseline 下的獨立觀點、cross-review、comparison、revision。
+      - 不得不同問題/不同資料版本後假裝可比較。
+    - row: 5
+      cells:
+      - Decision Support
+      - Option Comparison、Recommendation、Alert、Resource Proposal、Decision Brief。
+      - 不得自動寫正式決策。
+    - row: 6
+      cells:
+      - Human Review / Decision Ledger
+      - 授權 reviewer 記錄決策、理由、風險、執行 owner、audit。
+      - 不得由 AI self-approve。
+    - row: 7
+      cells:
+      - Feedback / Experience
+      - Expected vs Actual、KPI/Cost/Risk/Revenue outcome、Learning Candidate。
+      - 不得把一次結果直接升格永久規則。
+  - index: 4
+    rows:
+    - row: 0
+      cells:
+      - Entity
+      - Purpose
+    - row: 1
+      cells:
+      - StrategyTopic
+      - 策略討論與決策範圍的根實體
+    - row: 2
+      cells:
+      - StrategicQuestion
+      - 要被分析/決策的原始問題
+    - row: 3
+      cells:
+      - ConstraintSet
+      - 資源、時間、風險、治理、權限等約束集合
+    - row: 4
+      cells:
+      - StrategicContextSnapshot
+      - 本次策略分析 frozen context
+    - row: 5
+      cells:
+      - ContextFingerprint
+      - Context identity hash / version identity
+    - row: 6
+      cells:
+      - SourceFact
+      - 具 exact evidence 的事實
+    - row: 7
+      cells:
+      - EvidenceRef
+      - 來源、時間/版本、範圍、品質/信心
+    - row: 8
+      cells:
+      - FactPack
+      - 本輪可用的受治理 Fact/Evidence 集合
+    - row: 9
+      cells:
+      - Inference
+      - 由 Fact 推導的可檢查解讀
+    - row: 10
+      cells:
+      - Assumption
+      - 明示但尚未驗證的前提
+    - row: 11
+      cells:
+      - Baseline
+      - 比較或 forecast 的基準
+    - row: 12
+      cells:
+      - PatternFinding
+      - 歷史/當前資料中的模式
+    - row: 13
+      cells:
+      - Forecast
+      - 具 horizon 與 uncertainty 的預測
+    - row: 14
+      cells:
+      - Opportunity
+      - 可能正向結果與條件
+    - row: 15
+      cells:
+      - Risk
+      - 可能負向暴露與條件
+    - row: 16
+      cells:
+      - Unknown
+      - 目前沒有足夠證據回答的缺口
+    - row: 17
+      cells:
+      - OpenQuestion
+      - 需要額外資訊/人類澄清的問題
+    - row: 18
+      cells:
+      - StrategyOption
+      - 可被比較的策略方案
+    - row: 19
+      cells:
+      - ResourceImpact
+      - 資源/容量/成本影響
+    - row: 20
+      cells:
+      - ExpectedImpact
+      - 預期 KPI/時間/風險結果
+    - row: 21
+      cells:
+      - Scenario
+      - 假設/條件組合下的策略世界
+    - row: 22
+      cells:
+      - ScenarioBranch
+      - 從 exact baseline/option 建立的 scenario 分支
+    - row: 23
+      cells:
+      - AIViewpoint
+      - 單一 AI 在 frozen baseline 下的完整觀點
+    - row: 24
+      cells:
+      - CrossAIReview
+      - 針對 exact AI response refs 的評估
+    - row: 25
+      cells:
+      - ConsensusRecord
+      - 證據化共識清單
+    - row: 26
+      cells:
+      - DisagreementRecord
+      - 分歧、原因、證據缺口
+    - row: 27
+      cells:
+      - StrategyRecommendation
+      - 建議路徑與理由
+    - row: 28
+      cells:
+      - StrategyAlert
+      - 機會/風險提醒
+    - row: 29
+      cells:
+      - ResourceProposal
+      - 資源配置建議，不是批准
+    - row: 30
+      cells:
+      - DecisionBrief
+      - 供人類決策的摘要
+    - row: 31
+      cells:
+      - StrategyCandidate
+      - 受治理策略候選版本
+    - row: 32
+      cells:
+      - DecisionCandidate
+      - 已具必要證據、選項、風險、unknowns 的審查候選
+    - row: 33
+      cells:
+      - HumanReview
+      - 人類審查與理由
+    - row: 34
+      cells:
+      - DecisionLedgerEntry
+      - 正式決策結果
+    - row: 35
+      cells:
+      - ExecutionHandoff
+      - 決策到 Owner Module 的交接 reference
+    - row: 36
+      cells:
+      - ExecutionResultRef
+      - Owner Module 執行結果引用
+    - row: 37
+      cells:
+      - ExpectedActualRecord
+      - 預期 vs 實際比較
+    - row: 38
+      cells:
+      - StrategicExperienceCandidate
+      - 由結果整理出的學習候選
+    - row: 39
+      cells:
+      - StrategicExperience
+      - 經治理採用的策略經驗
+  - index: 5
+    rows:
+    - row: 0
+      cells:
+      - Parent / Source
+      - Relationship
+      - Child / Consumer
+      - Rule
+    - row: 1
+      cells:
+      - StrategyTopic
+      - contains
+      - StrategicQuestion / ConstraintSet
+      - 問題與約束必須有 exact version。
+    - row: 2
+      cells:
+      - StrategicQuestion
+      - freezes with
+      - StrategicContextSnapshot / ContextFingerprint
+      - 比較與 Multi-AI 必須綁同一 fingerprint。
+    - row: 3
+      cells:
+      - FactPack
+      - contains
+      - SourceFact / EvidenceRef
+      - Fact 必須可追 exact evidence。
+    - row: 4
+      cells:
+      - SourceFact
+      - supports
+      - Inference / Forecast / Risk / Opportunity
+      - 推理層不得反向覆寫 Fact。
+    - row: 5
+      cells:
+      - StrategyOption
+      - has
+      - ResourceImpact / ExpectedImpact / Risk / Dependency
+      - Option 缺任一必要維度則標示 incomplete。
+    - row: 6
+      cells:
+      - Scenario
+      - branches from
+      - Exact Baseline + Option + Assumption Set
+      - 分支不可 silent rebase。
+    - row: 7
+      cells:
+      - AIViewpoint
+      - compares/reviews
+      - Exact AIViewpoint refs
+      - AI output 不是 Source Fact。
+    - row: 8
+      cells:
+      - DecisionCandidate
+      - summarizes
+      - Options + Evidence + Risk + Unknowns
+      - 未達 Gate 不得進 Human Review。
+    - row: 9
+      cells:
+      - HumanReview
+      - creates
+      - DecisionLedgerEntry
+      - AI 不得替代 reviewer。
+    - row: 10
+      cells:
+      - DecisionLedgerEntry
+      - hands off
+      - ExecutionHandoff
+      - Effectful action 仍在 owner module。
+    - row: 11
+      cells:
+      - ExecutionResultRef
+      - feeds
+      - ExpectedActualRecord
+      - 歷史結果不能被新結果覆寫。
+    - row: 12
+      cells:
+      - ExpectedActualRecord
+      - proposes
+      - StrategicExperienceCandidate
+      - Learning 不能自我採用。
+  - index: 6
+    rows:
+    - row: 0
+      cells:
+      - Entity
+      - Operations
+      - Normative Semantics
+    - row: 1
+      cells:
+      - StrategyTopic
+      - CREATE / SELECT / ARCHIVE
+      - 建立/選擇策略題目；不可隱性切換 current topic。
+    - row: 2
+      cells:
+      - StrategicQuestion
+      - DEFINE / REVISE / VERSION
+      - 保存 original question；revision append-only。
+    - row: 3
+      cells:
+      - StrategicContextSnapshot
+      - RESOLVE / FREEZE / VERIFY
+      - 執行前必須 frozen，並可重建 fingerprint。
+    - row: 4
+      cells:
+      - FactPack
+      - COMPILE / VALIDATE / VERSION
+      - 來源不足則 incomplete；不可 AI-fill。
+    - row: 5
+      cells:
+      - SourceFact
+      - ADD / VERIFY / SUPERSEDE
+      - 需 evidence/time/version；不得被 inference 覆寫。
+    - row: 6
+      cells:
+      - Inference
+      - DERIVE / CHALLENGE / REVISE
+      - 必須列出 supporting fact refs。
+    - row: 7
+      cells:
+      - Assumption
+      - DECLARE / TEST / RETIRE
+      - 未驗證前不得當 Fact。
+    - row: 8
+      cells:
+      - Forecast
+      - GENERATE / CALIBRATE / COMPARE
+      - 必須有 horizon、baseline、uncertainty。
+    - row: 9
+      cells:
+      - Risk/Opportunity
+      - IDENTIFY / ASSESS / UPDATE
+      - 需條件、scope、evidence、uncertainty。
+    - row: 10
+      cells:
+      - StrategyOption
+      - GENERATE / COMPARE / REVISE
+      - 比較欄位完整、同 baseline。
+    - row: 11
+      cells:
+      - ScenarioBranch
+      - CREATE / REBASE_EXPLICIT / COMPARE
+      - silent rebase 禁止。
+    - row: 12
+      cells:
+      - AIViewpoint
+      - GENERATE / CROSS_REVIEW / REVISE
+      - 只針對 exact refs。
+    - row: 13
+      cells:
+      - Consensus/Disagreement
+      - SYNTHESIZE / VERIFY
+      - 共識不能升格 Fact。
+    - row: 14
+      cells:
+      - StrategyCandidate
+      - SUBMIT / VERSION / WITHDRAW
+      - 候選 immutable；revision new version。
+    - row: 15
+      cells:
+      - DecisionCandidate
+      - ASSEMBLE / VALIDATE / SUBMIT_REVIEW
+      - 未滿足 evidence/risk/unknowns gate 即 BLOCK。
+    - row: 16
+      cells:
+      - HumanReview
+      - APPROVE / REJECT / REQUEST_REVISION
+      - 需要 actor/time/reason。
+    - row: 17
+      cells:
+      - DecisionLedgerEntry
+      - RECORD / SUPERSEDE / TRACE
+      - 正式決策 append-only audit trail。
+    - row: 18
+      cells:
+      - ExecutionHandoff
+      - CREATE / ACK / TRACK
+      - handoff 不等於 owner execution。
+    - row: 19
+      cells:
+      - ExpectedActualRecord
+      - COMPARE / EXPLAIN / CLOSE
+      - 使用 exact expected and actual refs。
+    - row: 20
+      cells:
+      - StrategicExperienceCandidate
+      - PROPOSE / REVIEW / ADOPT
+      - 不可 self-adopt。
+  - index: 7
+    rows:
+    - row: 0
+      cells:
+      - ID
+      - Class
+      - Normative Rule
+    - row: 1
+      cells:
+      - INV-001
+      - CONTEXT
+      - 每次正式策略分析 MUST 綁定 exact StrategyTopic、StrategicQuestion version、ConstraintSet version。
+    - row: 2
+      cells:
+      - INV-002
+      - CONTEXT
+      - 正式分析開始前 StrategicContextSnapshot MUST FROZEN。
+    - row: 3
+      cells:
+      - INV-003
+      - CONTEXT
+      - ContextFingerprint MUST 可由 exact refs/version/hash 重建。
+    - row: 4
+      cells:
+      - INV-004
+      - CONTEXT
+      - 任何 missing source/resource/cost/risk/governance value MUST 保持 missing/incomplete，MUST_NOT AI-fill。
+    - row: 5
+      cells:
+      - INV-005
+      - CONTEXT
+      - External Intelligence MUST_NOT 覆寫 confirmed decision 或 current governed internal truth。
+    - row: 6
+      cells:
+      - INV-006
+      - CONTEXT
+      - Formal trace MUST_NOT 使用 latest/current/default alias 代替 exact version。
+    - row: 7
+      cells:
+      - INV-007
+      - CONTEXT
+      - 跨專案/跨 topic context silent fallback MUST BLOCK。
+    - row: 8
+      cells:
+      - INV-008
+      - CONTEXT
+      - Stale Context MUST 顯示並要求 re-resolve/review，不得 silent rebase。
+    - row: 9
+      cells:
+      - INV-009
+      - CONTEXT
+      - Context 與 FactPack MUST 有 scope/classification/permission provenance。
+    - row: 10
+      cells:
+      - INV-010
+      - CONTEXT
+      - Human instruction 與 confirmed decision priority MUST 高於外部情報。
+    - row: 11
+      cells:
+      - INV-011
+      - TRUTH
+      - SourceFact MUST 有 EvidenceRef、source_time_or_version、scope、quality/confidence。
+    - row: 12
+      cells:
+      - INV-012
+      - TRUTH
+      - Inference MUST 明示 supporting_fact_refs。
+    - row: 13
+      cells:
+      - INV-013
+      - TRUTH
+      - Assumption MUST 明示 unverified 狀態。
+    - row: 14
+      cells:
+      - INV-014
+      - TRUTH
+      - Assumption MUST_NOT 因多 AI 同意而升格 Fact。
+    - row: 15
+      cells:
+      - INV-015
+      - TRUTH
+      - Unknown MUST 保留為 Unknown；MUST_NOT 用語言流暢度掩蓋。
+    - row: 16
+      cells:
+      - INV-016
+      - TRUTH
+      - Risk / Opportunity MUST 綁定 scenario/condition/time horizon。
+    - row: 17
+      cells:
+      - INV-017
+      - TRUTH
+      - Forecast MUST 有 baseline、horizon、uncertainty。
+    - row: 18
+      cells:
+      - INV-018
+      - TRUTH
+      - Fact correction MUST 建立 supersession/lineage，不得原地抹掉歷史。
+    - row: 19
+      cells:
+      - INV-019
+      - TRUTH
+      - Semantic Index result MUST_NOT 成為 SourceFact authority。
+    - row: 20
+      cells:
+      - INV-020
+      - TRUTH
+      - Evidence conflict MUST 建立 ConflictRecord/Review，不得 silent choose。
+    - row: 21
+      cells:
+      - INV-021
+      - MULTI_AI
+      - Multi-AI 第一輪 MUST 使用 same Original Question。
+    - row: 22
+      cells:
+      - INV-022
+      - MULTI_AI
+      - Multi-AI 比較 MUST 使用 same ContextFingerprint。
+    - row: 23
+      cells:
+      - INV-023
+      - MULTI_AI
+      - Multi-AI 比較 MUST 使用 same FactPack version。
+    - row: 24
+      cells:
+      - INV-024
+      - MULTI_AI
+      - Multi-AI 比較 MUST 使用 same ConstraintSet version。
+    - row: 25
+      cells:
+      - INV-025
+      - MULTI_AI
+      - 不同 baseline 的 AI output MUST 標示 NOT_DIRECTLY_COMPARABLE。
+    - row: 26
+      cells:
+      - INV-026
+      - MULTI_AI
+      - AI participant MUST 產生獨立完整觀點，不得先看到其他 AI 回答後假裝 independent。
+    - row: 27
+      cells:
+      - INV-027
+      - MULTI_AI
+      - Cross Review MUST 指向 exact target response refs。
+    - row: 28
+      cells:
+      - INV-028
+      - MULTI_AI
+      - Other AI output MUST remain AI statement，MUST_NOT become Source Fact。
+    - row: 29
+      cells:
+      - INV-029
+      - MULTI_AI
+      - Cross Review MUST 回到 Original Question + Shared Context + Fact/Evidence。
+    - row: 30
+      cells:
+      - INV-030
+      - MULTI_AI
+      - Multi-AI consensus MUST_NOT 自動成為 Decision。
+    - row: 31
+      cells:
+      - INV-031
+      - MULTI_AI
+      - Assistant synthesis MUST 列出 consensus、disagreement、unknowns、evidence gaps。
+    - row: 32
+      cells:
+      - INV-032
+      - MULTI_AI
+      - Provider/model picker MUST_NOT 由 Strategy UI 手動選擇；routing 屬 AI-03。
+    - row: 33
+      cells:
+      - INV-033
+      - OPTIONS
+      - StrategyOption MUST 有 expected benefit/impact、resource/cost impact、risk、time horizon、dependency、evidence、uncertainty。
+    - row: 34
+      cells:
+      - INV-034
+      - OPTIONS
+      - Option Comparison MUST 使用同一 comparison dimension set。
+    - row: 35
+      cells:
+      - INV-035
+      - OPTIONS
+      - 缺資料的 option MUST 顯示 incomplete，而非以 AI guessed value 補齊。
+    - row: 36
+      cells:
+      - INV-036
+      - OPTIONS
+      - 推薦 MUST 列出 less-preferred/rejected options 與理由。
+    - row: 37
+      cells:
+      - INV-037
+      - OPTIONS
+      - Recommendation MUST 顯示 assumptions、risks、uncertainties。
+    - row: 38
+      cells:
+      - INV-038
+      - OPTIONS
+      - ResourceProposal MUST 僅是 proposal；MUST_NOT 寫 Finance approval。
+    - row: 39
+      cells:
+      - INV-039
+      - OPTIONS
+      - StrategyAlert MUST 區分 risk / opportunity / data gap。
+    - row: 40
+      cells:
+      - INV-040
+      - OPTIONS
+      - DecisionBrief MUST 包含 decision_needed 與 unknowns。
+    - row: 41
+      cells:
+      - INV-041
+      - OPTIONS
+      - ScenarioBranch MUST 綁 exact baseline、option、assumption set、parent branch。
+    - row: 42
+      cells:
+      - INV-042
+      - OPTIONS
+      - ScenarioBranch MUST_NOT silent merge 回主線。
+    - row: 43
+      cells:
+      - INV-043
+      - OPTIONS
+      - Scenario rebase MUST explicit 並產生新 version/fingerprint。
+    - row: 44
+      cells:
+      - INV-044
+      - OPTIONS
+      - Compare MUST_NOT 省略不利 evidence 或 conflict。
+    - row: 45
+      cells:
+      - INV-045
+      - DECISION
+      - Raw AI response MUST_NOT 直接成為 StrategyCandidate。
+    - row: 46
+      cells:
+      - INV-046
+      - DECISION
+      - StrategyCandidate MUST append-only versioned。
+    - row: 47
+      cells:
+      - INV-047
+      - DECISION
+      - DecisionCandidate MUST 通過 evidence/risk/unknown/comparison completeness gate。
+    - row: 48
+      cells:
+      - INV-048
+      - DECISION
+      - Human Review MUST 由具權限 actor 執行。
+    - row: 49
+      cells:
+      - INV-049
+      - DECISION
+      - AI MUST_NOT self-approve DecisionCandidate。
+    - row: 50
+      cells:
+      - INV-050
+      - DECISION
+      - DecisionLedger result MUST 與 StrategyRecommendation separation。
+    - row: 51
+      cells:
+      - INV-051
+      - DECISION
+      - DecisionLedger MUST 記錄 actor、time、reason、candidate ref、risk、approval level、execution status。
+    - row: 52
+      cells:
+      - INV-052
+      - DECISION
+      - Rejected decision MUST 保留原因與 source refs。
+    - row: 53
+      cells:
+      - INV-053
+      - DECISION
+      - Superseded Decision MUST 保留 predecessor/successor lineage。
+    - row: 54
+      cells:
+      - INV-054
+      - DECISION
+      - Adopt-as-context MUST 只是 governed context adoption，不等於 owner module execution。
+    - row: 55
+      cells:
+      - INV-055
+      - DECISION
+      - Budget/workflow/governance/production action MUST 留在 owning module。
+    - row: 56
+      cells:
+      - INV-056
+      - DECISION
+      - Decision status MUST_NOT 由 UI-only state 推斷。
+    - row: 57
+      cells:
+      - INV-057
+      - FEEDBACK
+      - Owner execution handoff MUST 指向 exact DecisionLedgerEntry。
+    - row: 58
+      cells:
+      - INV-058
+      - FEEDBACK
+      - Handoff ACK MUST_NOT 被當成 execution success。
+    - row: 59
+      cells:
+      - INV-059
+      - FEEDBACK
+      - ExecutionResultRef MUST 來自 owner module/evidence。
+    - row: 60
+      cells:
+      - INV-060
+      - FEEDBACK
+      - Expected vs Actual MUST 使用 same metric definition/window/unit。
+    - row: 61
+      cells:
+      - INV-061
+      - FEEDBACK
+      - Missing actual MUST_NOT 表示為 0。
+    - row: 62
+      cells:
+      - INV-062
+      - FEEDBACK
+      - Strategic Experience Candidate MUST 由 execution/performance feedback 支持。
+    - row: 63
+      cells:
+      - INV-063
+      - FEEDBACK
+      - Learning Candidate MUST_NOT self-adopt。
+    - row: 64
+      cells:
+      - INV-064
+      - FEEDBACK
+      - Single outcome MUST_NOT 直接升格成 universal strategy rule。
+    - row: 65
+      cells:
+      - INV-065
+      - FEEDBACK
+      - Forecast accuracy MUST 綁定原 forecast version/horizon。
+    - row: 66
+      cells:
+      - INV-066
+      - FEEDBACK
+      - Experience revision MUST append-only。
+    - row: 67
+      cells:
+      - INV-067
+      - CONCURRENCY
+      - 每個 effectful owner handoff MUST 有 idempotency key 或 owner-side equivalent。
+    - row: 68
+      cells:
+      - INV-068
+      - CONCURRENCY
+      - 同一 DecisionCandidate + same request replay MUST return same logical result where effect semantics require idempotency。
+    - row: 69
+      cells:
+      - INV-069
+      - CONCURRENCY
+      - Same idempotency key + different payload MUST BLOCK。
+    - row: 70
+      cells:
+      - INV-070
+      - CONCURRENCY
+      - Concurrent review MUST 使用 expected_version / optimistic concurrency。
+    - row: 71
+      cells:
+      - INV-071
+      - CONCURRENCY
+      - Stale reviewer write MUST BLOCK 並要求 refresh/compare。
+    - row: 72
+      cells:
+      - INV-072
+      - CONCURRENCY
+      - Late AI response MUST_NOT overwrite newer candidate state。
+    - row: 73
+      cells:
+      - INV-073
+      - CONCURRENCY
+      - Cancelled analysis job late callback MUST quarantine。
+    - row: 74
+      cells:
+      - INV-074
+      - CONCURRENCY
+      - Retry MUST 建立新 attempt identity。
+    - row: 75
+      cells:
+      - INV-075
+      - CONCURRENCY
+      - Non-retryable policy/permission/evidence failure MUST_NOT automatic retry。
+    - row: 76
+      cells:
+      - INV-076
+      - CONCURRENCY
+      - Unknown external/owner execution state MUST require reconcile before retry。
+    - row: 77
+      cells:
+      - INV-077
+      - GOVERNANCE
+      - Permission MUST 檢查 read/analyze/review/adopt/handoff operation scope。
+    - row: 78
+      cells:
+      - INV-078
+      - GOVERNANCE
+      - Classification MUST 限制哪些 AI/provider/tool 可接觸 context。
+    - row: 79
+      cells:
+      - INV-079
+      - GOVERNANCE
+      - Sensitive internal cost/resource/risk data MUST_NOT 出現在不授權 transcript/export。
+    - row: 80
+      cells:
+      - INV-080
+      - GOVERNANCE
+      - Provider brand 可顯示；technical model secret/runtime detail 歸 AI-03/API management。
+    - row: 81
+      cells:
+      - INV-081
+      - GOVERNANCE
+      - Audit MUST 記錄 correlation_id、actor、topic、question version、context fingerprint、candidate/decision refs。
+    - row: 82
+      cells:
+      - INV-082
+      - GOVERNANCE
+      - No evidence = NOT_VERIFIED；MUST_NOT 宣稱 data-backed recommendation。
+    - row: 83
+      cells:
+      - INV-083
+      - GOVERNANCE
+      - Simulation/Replay MUST 與 Production/owner execution 隔離。
+    - row: 84
+      cells:
+      - INV-084
+      - GOVERNANCE
+      - Strategy test success MUST_NOT 宣稱 business execution success。
+    - row: 85
+      cells:
+      - INV-085
+      - GOVERNANCE
+      - Design document MUST_NOT 宣稱 Runtime/API/DB/Production complete。
+    - row: 86
+      cells:
+      - INV-086
+      - GOVERNANCE
+      - Undefined behavior MUST BLOCK + REQUIRE_EXACT_BINDING / REPORT_AUTHORITY_GAP。
+    - row: 87
+      cells:
+      - INV-087
+      - OWNER
+      - Conversation persistence/branch/message identity MUST 由 AI-02 owner。
+    - row: 88
+      cells:
+      - INV-088
+      - OWNER
+      - Context/Truth precedence MUST 由 AI-01 owner。
+    - row: 89
+      cells:
+      - INV-089
+      - OWNER
+      - Provider routing/tool execution MUST 由 AI-03 owner。
+    - row: 90
+      cells:
+      - INV-090
+      - OWNER
+      - Enterprise email/CRM execution MUST 由 AI-06 owner。
+    - row: 91
+      cells:
+      - INV-091
+      - OWNER
+      - Social publish execution MUST 由 AI-07 owner。
+    - row: 92
+      cells:
+      - INV-092
+      - OWNER
+      - System change/authority mutation MUST 由 AI-09 owner。
+    - row: 93
+      cells:
+      - INV-093
+      - OWNER
+      - Strategy MUST reference shared owners; MUST_NOT duplicate engines。
+    - row: 94
+      cells:
+      - INV-094
+      - OWNER
+      - Exact API/DB/permission/runtime identity lacking current authority MUST be REQUIRE_EXACT_BINDING。
+    - row: 95
+      cells:
+      - INV-095
+      - OWNER
+      - One concept MUST have one canonical owner; parallel strategy page/system FORBIDDEN。
+    - row: 96
+      cells:
+      - INV-096
+      - OWNER
+      - Search-before-create MUST precede later implementation binding。
+  - index: 8
+    rows:
+    - row: 0
+      cells:
+      - Class
+      - Required Fields
+      - Admission / Promotion Rule
+    - row: 1
+      cells:
+      - FACT
+      - claim, scope, evidence_refs, source_time_or_version, confidence/quality
+      - 只有 evidence-backed claim；conflict unresolved 時不可當唯一事實。
+    - row: 2
+      cells:
+      - INFERENCE
+      - statement, supporting_fact_refs, method/reason, uncertainty
+      - 可被 challenge/revise；不得覆寫 Fact。
+    - row: 3
+      cells:
+      - ASSUMPTION
+      - premise, owner, reason, testability, status
+      - 明示未驗證；必須能被測試/retire。
+    - row: 4
+      cells:
+      - RISK
+      - condition, exposure, likelihood/range, impact, horizon, evidence
+      - 必須 scenario-aware；不可只給主觀形容詞。
+    - row: 5
+      cells:
+      - OPPORTUNITY
+      - condition, upside, constraints, horizon, evidence
+      - 必須同時列出 dependency/risk。
+    - row: 6
+      cells:
+      - RECOMMENDATION
+      - option_ref, reason, tradeoff, evidence, risk, uncertainty
+      - 不是 Decision；需 human review。
+    - row: 7
+      cells:
+      - DECISION
+      - candidate_ref, result, reason, actor, time, approval level, audit
+      - 只能由 human-governed review 產生。
+  - index: 9
+    rows:
+    - row: 0
+      cells:
+      - Priority
+      - Source Class
+      - Required Metadata
+      - Rule
+    - row: 1
+      cells:
+      - P0
+      - Current Human Instruction
+      - actor, time, scope, instruction version
+      - 本輪意圖最高優先，但不得越權改 fact/decision history。
+    - row: 2
+      cells:
+      - P1
+      - Confirmed Decision
+      - decision_id, version, status, scope
+      - 不得被外部情報 silent overwrite。
+    - row: 3
+      cells:
+      - P2
+      - Current Valid Internal Data
+      - source_ref, version/time, scope, classification
+      - 成本/資源/KPI/風險若缺值不得 AI-fill。
+    - row: 4
+      cells:
+      - P3
+      - Historical Analysis / Baseline / Experience
+      - version, outcome refs, validity window
+      - 只在適用範圍內作背景/先驗。
+    - row: 5
+      cells:
+      - P4
+      - External Intelligence
+      - source, fetched_at, freshness, confidence, license/rights
+      - 不得取代 internal confirmed truth。
+  - index: 10
+    rows:
+    - row: 0
+      cells:
+      - Round / Operation
+      - Required Inputs
+      - Output Contract
+      - Invalid If
+    - row: 1
+      cells:
+      - INDEPENDENT_RESPONSE
+      - same question + same context fingerprint + same fact pack + same constraints
+      - 完整獨立觀點、evidence refs、assumptions、risks、unknowns
+      - 參與者先看到其他 AI 回覆後才作第一輪。
+    - row: 2
+      cells:
+      - CROSS_REVIEW
+      - target_response_refs + baseline identity
+      - strengths, weaknesses, evidence issues, omissions, correction suggestions
+      - 只針對對方語氣，不回到 original question/evidence。
+    - row: 3
+      cells:
+      - CROSS_COMPARISON
+      - '>=2 exact response refs + same baseline'
+      - consensus, disagreement, blind spots, evidence gaps
+      - 不同 baseline 未標示。
+    - row: 4
+      cells:
+      - REVISION
+      - own prior ref + critique refs + same baseline or explicit rebase
+      - new immutable revision + change rationale
+      - 原地覆寫舊回覆。
+    - row: 5
+      cells:
+      - EVIDENCE_CHECK
+      - claim refs + exact Fact/Evidence
+      - supported / unsupported / conflicted / unknown
+      - 把另一 AI 說法當 evidence。
+    - row: 6
+      cells:
+      - ASSISTANT_SYNTHESIS
+      - all selected exact refs
+      - meeting record, consensus, disagreement, open questions
+      - 助理自行發明新分析或決策。
+  - index: 11
+    rows:
+    - row: 0
+      cells:
+      - Condition
+      - Direct Compare?
+      - Required Disposition
+    - row: 1
+      cells:
+      - Question、Fingerprint、FactPack、ConstraintSet 全相同
+      - 'YES'
+      - 可計入 formal comparison。
+    - row: 2
+      cells:
+      - Question 相同，但 ContextFingerprint 不同
+      - 'NO'
+      - 標記 BASELINE_MISMATCH；需 re-run 或 explicit rebase。
+    - row: 3
+      cells:
+      - FactPack version 不同
+      - 'NO'
+      - 標記 EVIDENCE_VERSION_MISMATCH。
+    - row: 4
+      cells:
+      - ConstraintSet 不同
+      - 'NO'
+      - 只能做 scenario comparison，不得當同題平行意見。
+    - row: 5
+      cells:
+      - AI provider/model 不同，但 baseline 相同
+      - 'YES'
+      - Provider 差異是觀點來源，不影響 baseline validity。
+    - row: 6
+      cells:
+      - 某 AI target refs 遺失
+      - PARTIAL
+      - 只 BLOCK 該 cross-review request。
+    - row: 7
+      cells:
+      - Evidence conflict unresolved
+      - LIMITED
+      - 允許分析衝突，但不得產生 data-certain conclusion。
+  - index: 12
+    rows:
+    - row: 0
+      cells:
+      - Object
+      - Required Identity
+      - Rules
+    - row: 1
+      cells:
+      - Scenario
+      - scenario_id + parent_question + baseline_ref + assumption_set + constraint_set
+      - 所有假設顯式；與 current baseline 分離。
+    - row: 2
+      cells:
+      - ScenarioBranch
+      - branch_id + parent_scenario/option + created_from_ref + fingerprint
+      - 主線後續變化不自動灌入。
+    - row: 3
+      cells:
+      - Explicit Rebase
+      - old_fingerprint + new_fingerprint + changed_refs + actor/reason
+      - 產生新 branch version；保留舊版。
+    - row: 4
+      cells:
+      - Merge/Adopt
+      - source branch + selected claims/options + human confirmation
+      - 不得自動合併；採用後仍走 DecisionCandidate/Human Review。
+    - row: 5
+      cells:
+      - Scenario Compare
+      - same metric definitions + explicit differing assumptions
+      - 差異來源必須可解釋。
+  - index: 13
+    rows:
+    - row: 0
+      cells:
+      - Field
+      - Required Meaning
+      - Missing Handling
+    - row: 1
+      cells:
+      - option_id / title
+      - 唯一 immutable option identity
+      - BLOCK formal comparison if absent。
+    - row: 2
+      cells:
+      - expected_benefit / expected_impact
+      - 明確 KPI/業務效果與 horizon
+      - 顯示 incomplete。
+    - row: 3
+      cells:
+      - resource_need / cost_impact
+      - 容量、成本、人力/資源影響
+      - 不得 AI 猜數字。
+    - row: 4
+      cells:
+      - risk
+      - 主要風險與條件
+      - 至少 risk state required。
+    - row: 5
+      cells:
+      - dependency
+      - 前置條件/owner module
+      - 缺 owner/dependency 則 review-required。
+    - row: 6
+      cells:
+      - evidence
+      - 支持/反對 evidence refs
+      - 無 evidence = not verified。
+    - row: 7
+      cells:
+      - uncertainty
+      - unknowns / confidence range
+      - 不得隱藏。
+    - row: 8
+      cells:
+      - reversibility
+      - 是否可回復/退出成本
+      - 未知就 explicit unknown。
+    - row: 9
+      cells:
+      - time_horizon
+      - 何時評估與 expected window
+      - 不同 horizon 不直接比較。
+    - row: 10
+      cells:
+      - AI_recommendation_state
+      - support / neutral / caution / insufficient evidence
+      - 不能直接變 human decision。
+  - index: 14
+    rows:
+    - row: 0
+      cells:
+      - Output
+      - Required Fields
+      - Boundary
+    - row: 1
+      cells:
+      - STRATEGY_RECOMMENDATION
+      - summary, basis, recommended_path, reason, risk, uncertainty, evidence_refs
+      - 建議；非正式決策。
+    - row: 2
+      cells:
+      - STRATEGY_ALERT
+      - alert_type, scope, reason, evidence_refs, urgency/priority_state, recommended_response
+      - 提醒；不可直接觸發 owner effect。
+    - row: 3
+      cells:
+      - RESOURCE_PROPOSAL
+      - target, resource_need, reason, expected_effect, cost/capacity impact, risk, dependency
+      - 只提案；Finance/Workflow/Governance 批准。
+    - row: 4
+      cells:
+      - DECISION_BRIEF
+      - issue, context, candidate_options, recommended_option, less-preferred/rejected options, key_risks, unknowns, decision_needed
+      - 供 Human Review；不等於 Decision Ledger。
+  - index: 15
+    rows:
+    - row: 0
+      cells:
+      - Stage
+      - Required
+      - Forbidden
+    - row: 1
+      cells:
+      - StrategyCandidate
+      - analysis basis, options, evidence, risk, uncertainty, unknowns, version
+      - raw AI output 直接升格。
+    - row: 2
+      cells:
+      - DecisionCandidate
+      - candidate ref, decision question, option set, recommendation, rejected/less-preferred options, evidence gaps, review scope
+      - 缺風險/unknowns/compare 就 submit。
+    - row: 3
+      cells:
+      - HumanReview
+      - reviewer identity/permission, decision result, reason, evidence refs, expected_version
+      - AI self-approval、stale write。
+    - row: 4
+      cells:
+      - DecisionLedgerEntry
+      - decision_id, topic, candidate_ref, proposal_summary, source_refs, risk, approval_level, result, reason, actor/time, execution_status/ref, audit_ref
+      - 用 Strategy Recommendation 取代正式 ledger。
+  - index: 16
+    rows:
+    - row: 0
+      cells:
+      - State
+      - Meaning
+    - row: 1
+      cells:
+      - TOPIC_OPEN
+      - 策略題目可分析
+    - row: 2
+      cells:
+      - CONTEXT_RESOLVING
+      - 組裝來源/權限/版本
+    - row: 3
+      cells:
+      - CONTEXT_FROZEN
+      - ContextSnapshot/Fingerprint frozen
+    - row: 4
+      cells:
+      - FACTPACK_INCOMPLETE
+      - 必要 fact/evidence 缺失
+    - row: 5
+      cells:
+      - FACTPACK_READY
+      - FactPack 可供分析
+    - row: 6
+      cells:
+      - ANALYSIS_RUNNING
+      - 單/多 AI 分析中
+    - row: 7
+      cells:
+      - ANALYSIS_PARTIAL
+      - 部分 AI/工具失敗，但可保留證據化結果
+    - row: 8
+      cells:
+      - ANALYSIS_READY
+      - 分析輸出可審查
+    - row: 9
+      cells:
+      - OPTIONS_READY
+      - '>=1 option；formal compare 視 denominator'
+    - row: 10
+      cells:
+      - COMPARISON_READY
+      - 合法同 baseline option comparison
+    - row: 11
+      cells:
+      - CANDIDATE_DRAFT
+      - 策略候選草稿
+    - row: 12
+      cells:
+      - CANDIDATE_READY
+      - 候選內容完整
+    - row: 13
+      cells:
+      - REVIEW_REQUIRED
+      - 等待 human review
+    - row: 14
+      cells:
+      - REVISION_REQUIRED
+      - review 要求修訂
+    - row: 15
+      cells:
+      - ADOPTED_AS_CONTEXT
+      - 已採用為 governed strategy context
+    - row: 16
+      cells:
+      - DECISION_REJECTED
+      - 正式拒絕
+    - row: 17
+      cells:
+      - DECISION_APPROVED
+      - 正式 Decision Ledger approved/result
+    - row: 18
+      cells:
+      - HANDOFF_PENDING
+      - 等待 owner module ack
+    - row: 19
+      cells:
+      - HANDOFF_ACKED
+      - owner 接收，不等於執行完成
+    - row: 20
+      cells:
+      - EXECUTION_PENDING
+      - owner 執行中/未回報
+    - row: 21
+      cells:
+      - OUTCOME_PARTIAL
+      - 只有部分結果
+    - row: 22
+      cells:
+      - OUTCOME_VERIFIED
+      - actual result 具 evidence
+    - row: 23
+      cells:
+      - EXPERIENCE_CANDIDATE
+      - learning candidate
+    - row: 24
+      cells:
+      - CLOSED
+      - 本次策略 cycle 關閉；history immutable
+  - index: 17
+    rows:
+    - row: 0
+      cells:
+      - Transition
+      - Actor/Trigger
+      - Preconditions
+      - Side Effect / Audit
+      - Failure / Recovery
+    - row: 1
+      cells:
+      - TOPIC_OPEN→CONTEXT_RESOLVING
+      - user/system select topic
+      - topic/question/permission
+      - resolve refs
+      - BLOCK on unresolved scope
+    - row: 2
+      cells:
+      - CONTEXT_RESOLVING→CONTEXT_FROZEN
+      - context ready
+      - exact refs/version/classification
+      - freeze snapshot/fingerprint
+      - BLOCK on missing required identity
+    - row: 3
+      cells:
+      - CONTEXT_FROZEN→FACTPACK_READY
+      - facts compiled
+      - required evidence + no unresolved blocking conflict
+      - persist factpack version
+      - FACTPACK_INCOMPLETE otherwise
+    - row: 4
+      cells:
+      - FACTPACK_READY→ANALYSIS_RUNNING
+      - analyze
+      - question + constraints + context + permissions
+      - create analysis run
+      - idempotent run identity
+    - row: 5
+      cells:
+      - ANALYSIS_RUNNING→ANALYSIS_READY
+      - all required participant outputs terminal
+      - same baseline identities + response refs
+      - persist immutable outputs
+      - PARTIAL if denominator incomplete
+    - row: 6
+      cells:
+      - ANALYSIS_READY→COMPARISON_READY
+      - compare
+      - '>=2 comparable options/viewpoints'
+      - compile comparison
+      - BLOCK baseline mismatch
+    - row: 7
+      cells:
+      - ANALYSIS_READY→CANDIDATE_READY
+      - draft candidate
+      - basis/risk/unknowns/evidence complete
+      - new candidate version
+      - incomplete stays draft
+    - row: 8
+      cells:
+      - CANDIDATE_READY→REVIEW_REQUIRED
+      - submit review
+      - expected_version + STR_REVIEW-like permission + evidence
+      - review request
+      - stale/missing = BLOCK
+    - row: 9
+      cells:
+      - REVIEW_REQUIRED→REVISION_REQUIRED
+      - human request revision
+      - reviewer/reason
+      - append review record
+      - candidate preserved
+    - row: 10
+      cells:
+      - REVIEW_REQUIRED→DECISION_REJECTED
+      - human reject
+      - reviewer/reason
+      - ledger result reject
+      - no owner execution
+    - row: 11
+      cells:
+      - REVIEW_REQUIRED→DECISION_APPROVED
+      - human approve
+      - reviewer/reason/approval level
+      - ledger result approve
+      - AI cannot trigger
+    - row: 12
+      cells:
+      - DECISION_APPROVED→HANDOFF_PENDING
+      - handoff to owner
+      - exact decision ref + owner mapping
+      - create handoff
+      - missing owner = BLOCK
+    - row: 13
+      cells:
+      - HANDOFF_PENDING→HANDOFF_ACKED
+      - owner ack
+      - handoff id + owner actor
+      - ack event
+      - not execution success
+    - row: 14
+      cells:
+      - HANDOFF_ACKED→OUTCOME_VERIFIED
+      - owner result
+      - exact execution/result refs + evidence
+      - expected-vs-actual
+      - PARTIAL if incomplete
+    - row: 15
+      cells:
+      - OUTCOME_VERIFIED→EXPERIENCE_CANDIDATE
+      - learning compile
+      - decision+expected+actual+differences
+      - new learning candidate
+      - no self-adopt
+    - row: 16
+      cells:
+      - EXPERIENCE_CANDIDATE→CLOSED
+      - review/terminalize
+      - learning disposition + audit
+      - close cycle
+      - history immutable
+  - index: 18
+    rows:
+    - row: 0
+      cells:
+      - Scenario
+      - Required Rule
+    - row: 1
+      cells:
+      - Two reviewers submit simultaneously
+      - 使用 expected_version；第一個成功後第二個 stale write BLOCK。
+    - row: 2
+      cells:
+      - AI late response after candidate revision
+      - 只保存 response attempt；不得覆寫 current candidate。
+    - row: 3
+      cells:
+      - Same analysis request replay
+      - same idempotency scope -> return same logical run / dedupe。
+    - row: 4
+      cells:
+      - Same key different payload
+      - BLOCK + audit anomaly。
+    - row: 5
+      cells:
+      - Scenario branch rebase while compare open
+      - 舊 compare 標記 REVERIFY_REQUIRED；不得 silent update。
+    - row: 6
+      cells:
+      - FactPack superseded while analysis running
+      - 分析輸出綁原 FactPack；新 current 不反向重寫舊輸出。
+    - row: 7
+      cells:
+      - Decision superseded
+      - 新 DecisionLedgerEntry + predecessor link；舊 decision 永久可追。
+    - row: 8
+      cells:
+      - Owner execution result arrives twice
+      - consumer dedupe by event/idempotency key；actual record 不重複計算。
+  - index: 19
+    rows:
+    - row: 0
+      cells:
+      - Event
+      - Producer
+      - Consumer
+      - Required Payload
+    - row: 1
+      cells:
+      - strategy.topic.opened
+      - Strategy Workspace
+      - Conversation/Context extension
+      - topic_ref, question_ref, actor
+    - row: 2
+      cells:
+      - strategy.context.frozen
+      - Context Resolver
+      - Strategy Analysis
+      - snapshot_ref, fingerprint, source_refs
+    - row: 3
+      cells:
+      - strategy.factpack.ready
+      - FactPack Compiler
+      - Analysis/Multi-AI
+      - fact_pack_ref, version, conflicts
+    - row: 4
+      cells:
+      - strategy.analysis.started
+      - Strategy Analysis
+      - Audit/Conversation
+      - run_id, baseline identities
+    - row: 5
+      cells:
+      - strategy.ai_viewpoint.completed
+      - AI-03 runtime callback
+      - Strategy Analysis
+      - response_ref, participant_alias, baseline refs
+    - row: 6
+      cells:
+      - strategy.multi_ai.round.completed
+      - Multi-AI Orchestrator
+      - Assistant/Comparison
+      - round, response refs, denominator
+    - row: 7
+      cells:
+      - strategy.comparison.ready
+      - Comparison Engine
+      - Decision Support
+      - option/view refs, comparison version
+    - row: 8
+      cells:
+      - strategy.candidate.created
+      - Decision Support
+      - Review UI/Audit
+      - candidate_ref, predecessor
+    - row: 9
+      cells:
+      - strategy.review.submitted
+      - Strategy Workspace
+      - Human Review owner
+      - candidate_ref, expected_version
+    - row: 10
+      cells:
+      - strategy.review.revision_required
+      - Human Review
+      - Strategy Workspace
+      - review_ref, reason
+    - row: 11
+      cells:
+      - strategy.decision.rejected
+      - Human Review
+      - Ledger/Feedback
+      - decision_id, reason
+    - row: 12
+      cells:
+      - strategy.decision.approved
+      - Human Review
+      - Ledger/Handoff
+      - decision_id, approval level
+    - row: 13
+      cells:
+      - strategy.context_adopted
+      - Human Review
+      - AI-01 Context owner
+      - candidate/decision refs
+    - row: 14
+      cells:
+      - strategy.handoff.created
+      - Strategy Workspace
+      - Owner module
+      - decision_ref, owner_ref
+    - row: 15
+      cells:
+      - strategy.handoff.acked
+      - Owner module
+      - Strategy Ledger
+      - handoff_ref, actor
+    - row: 16
+      cells:
+      - strategy.execution.result_linked
+      - Owner module
+      - Feedback
+      - execution_ref, result_ref
+    - row: 17
+      cells:
+      - strategy.expected_actual.ready
+      - Feedback
+      - Experience Candidate
+      - expected/actual/difference refs
+    - row: 18
+      cells:
+      - strategy.experience.candidate.created
+      - Feedback
+      - Experience Review
+      - candidate_ref, evidence refs
+    - row: 19
+      cells:
+      - strategy.experience.adopted
+      - Governed Experience owner
+      - Future Strategy Context
+      - experience_ref, review evidence
+    - row: 20
+      cells:
+      - strategy.conflict.detected
+      - Any strategy consumer
+      - Human Review/Audit
+      - conflict_ref, affected refs
+    - row: 21
+      cells:
+      - strategy.reverify.required
+      - Impact Graph
+      - Affected consumers
+      - changed_ref, descendant refs
+    - row: 22
+      cells:
+      - strategy.cycle.closed
+      - Strategy Workspace
+      - Audit/History
+      - terminal status, unresolved items
+  - index: 20
+    rows:
+    - row: 0
+      cells:
+      - Phase
+      - Required Inputs
+      - Output
+      - Boundary
+    - row: 1
+      cells:
+      - Expected
+      - decision_ref, option_ref, expected KPI/cost/risk/horizon
+      - ExpectedImpact version
+      - 預期值不可在結果出來後回填竄改。
+    - row: 2
+      cells:
+      - Actual
+      - owner execution result refs, KPI/cost/revenue/risk evidence
+      - ActualResult set
+      - 缺值 ≠ 0。
+    - row: 3
+      cells:
+      - Difference
+      - same metric definition/window/unit
+      - variance + explanation candidate
+      - 不同口徑不可直接相減。
+    - row: 4
+      cells:
+      - Learning
+      - decision + expected + actual + context + confounders
+      - StrategicExperienceCandidate
+      - 單一 outcome 不得泛化。
+    - row: 5
+      cells:
+      - Adoption
+      - authorized review
+      - StrategicExperience version
+      - 不可 AI self-adopt。
+  - index: 21
+    rows:
+    - row: 0
+      cells:
+      - Changed Object
+      - Impacted Descendants
+      - Mandatory Disposition
+    - row: 1
+      cells:
+      - SourceFact / Evidence version
+      - Inference, Forecast, Risk, Opportunity, Options, AI viewpoints, Candidate
+      - REVERIFY_REQUIRED based on dependency closure。
+    - row: 2
+      cells:
+      - ConstraintSet
+      - Options, Scenario branches, comparisons, candidates
+      - old outputs remain historical; current formal compare invalidated。
+    - row: 3
+      cells:
+      - Decision
+      - Handoff, expected impact, feedback cycle
+      - new decision lineage；owner execution mapping recheck。
+    - row: 4
+      cells:
+      - Actual KPI definition/window
+      - Expected-vs-Actual, Learning Candidate
+      - recompute or mark incomparable。
+    - row: 5
+      cells:
+      - Strategic Experience adoption
+      - future context retrieval/ranking only
+      - 不得改寫歷史 decision。
+  - index: 22
+    rows:
+    - row: 0
+      cells:
+      - Error Class
+      - Condition
+      - Recovery
+    - row: 1
+      cells:
+      - CONTEXT_MISSING
+      - required context identity unavailable
+      - BLOCK analysis; show missing refs; resolve then retry
+    - row: 2
+      cells:
+      - FACT_EVIDENCE_MISSING
+      - fact lacks evidence/time/version
+      - mark incomplete; open evidence gap
+    - row: 3
+      cells:
+      - FACT_CONFLICT
+      - sources conflict
+      - create conflict; human/evidence review; no silent choose
+    - row: 4
+      cells:
+      - BASELINE_MISMATCH
+      - multi-AI fingerprints differ
+      - NOT_DIRECTLY_COMPARABLE; re-run/rebase
+    - row: 5
+      cells:
+      - AI_PARTIAL_FAILURE
+      - one participant terminal fail
+      - preserve other outputs; comparison denominator incomplete
+    - row: 6
+      cells:
+      - TARGET_REF_MISSING
+      - cross-review target absent
+      - block only request; preserve conversation
+    - row: 7
+      cells:
+      - OPTION_INCOMPLETE
+      - missing cost/risk/dependency/etc
+      - candidate cannot enter formal review
+    - row: 8
+      cells:
+      - STALE_REVIEW_WRITE
+      - expected_version mismatch
+      - refresh/compare; do not overwrite
+    - row: 9
+      cells:
+      - PERMISSION_DENIED
+      - operation permission missing
+      - BLOCK; audit; no fallback identity
+    - row: 10
+      cells:
+      - OWNER_MAPPING_MISSING
+      - decision cannot resolve execution owner
+      - BLOCK handoff; REQUIRE_EXACT_BINDING
+    - row: 11
+      cells:
+      - EXECUTION_STATE_UNKNOWN
+      - owner result ambiguous
+      - reconcile before retry/learning
+    - row: 12
+      cells:
+      - METRIC_INCOMPARABLE
+      - definition/window/unit mismatch
+      - mark incomparable; no false variance
+    - row: 13
+      cells:
+      - EXPERIENCE_EVIDENCE_INSUFFICIENT
+      - learning lacks outcome support
+      - candidate remains incomplete
+    - row: 14
+      cells:
+      - RETRYABLE_PROVIDER_FAILURE
+      - AI analysis provider transient failure
+      - AI-03 retry/fallback from canonical request/baseline
+    - row: 15
+      cells:
+      - NON_RETRYABLE_POLICY_FAILURE
+      - classification/policy/evidence gate fails
+      - no automatic retry
+    - row: 16
+      cells:
+      - CANCELLED_JOB_LATE_CALLBACK
+      - callback after cancel
+      - quarantine; no state mutation
+  - index: 23
+    rows:
+    - row: 0
+      cells:
+      - Area
+      - Normative Requirement
+    - row: 1
+      cells:
+      - Least Privilege
+      - strategy.read / conversation.write / compare / review / adopt 等 operation scope 必須分開。
+    - row: 2
+      cells:
+      - Classification
+      - FactPack/Context/Attachment 根據 classification 決定可用 AI/provider/tool。
+    - row: 3
+      cells:
+      - Secret Handling
+      - Strategy output/log 不保存 provider secret；technical details 由 AI-03/API management owner。
+    - row: 4
+      cells:
+      - Evidence Integrity
+      - source refs/version/hash/time 不得被 UI summary 替代。
+    - row: 5
+      cells:
+      - Auditability
+      - 每個 candidate/review/decision/handoff/outcome 具 correlation/audit refs。
+    - row: 6
+      cells:
+      - Explainability
+      - Recommendation 必須顯示 basis/assumption/risk/uncertainty/evidence。
+    - row: 7
+      cells:
+      - Determinism
+      - 同一 frozen baseline 的 comparison identity 可重播/驗證。
+    - row: 8
+      cells:
+      - Availability
+      - 部分 AI 失敗允許 PARTIAL，但不得冒充完整 multi-AI denominator。
+    - row: 9
+      cells:
+      - Performance
+      - 長分析用 job orchestration；UI request timeout 不代表取消 backend job。
+    - row: 10
+      cells:
+      - Cost Intelligence
+      - 分析成本由 AI-03 runtime 記錄；Strategy 不自行估算真實 provider cost。
+    - row: 11
+      cells:
+      - Retention
+      - Decision/Audit/FactPack/ContextSnapshot/AIViewpoint/Scenario/Experience 各自依 owner retention；不得用同一 TTL 粗暴刪除。
+    - row: 12
+      cells:
+      - Observability
+      - 至少記錄 latency、run status、baseline identity、participant denominator、review status、handoff status。
+  - index: 24
+    rows:
+    - row: 0
+      cells:
+      - Binding Item
+      - Status
+      - Construction Rule
+    - row: 1
+      cells:
+      - Strategy Topic persistence
+      - REQUIRE_CURRENT_BINDING
+      - 若 current repo 已有 owner，修改/綁定既有 owner；禁止新建 parallel table/service。
+    - row: 2
+      cells:
+      - FactPack schema/store
+      - REQUIRE_EXACT_BINDING
+      - 引用 AI-01/INFO owner；不得在 Strategy 私建第二 Fact Store。
+    - row: 3
+      cells:
+      - ContextSnapshot/Fingerprint service
+      - OWNER_AI01_REFERENCE
+      - Strategy 只 consume exact ref。
+    - row: 4
+      cells:
+      - Conversation/Thread/Branch
+      - OWNER_AI02_REFERENCE
+      - Strategy extension only。
+    - row: 5
+      cells:
+      - Multi-AI participant/session runtime
+      - OWNER_AI02_AI03_REFERENCE
+      - aliases/relations via AI-02；routing via AI-03。
+    - row: 6
+      cells:
+      - Strategy Analysis service/API
+      - REQUIRE_EXACT_BINDING
+      - Search-before-create。
+    - row: 7
+      cells:
+      - Option Comparison API
+      - REQUIRE_EXACT_BINDING
+      - 需要 exact current owner。
+    - row: 8
+      cells:
+      - Strategy Candidate persistence
+      - REQUIRE_EXACT_BINDING
+      - append-only/version semantics mandatory。
+    - row: 9
+      cells:
+      - Human Review action/permission
+      - SOURCE_ANCHOR_STR_REVIEW / REQUIRE_CURRENT_BINDING
+      - 以 current registry/permission owner 為準。
+    - row: 10
+      cells:
+      - Adopt Context action/permission
+      - SOURCE_ANCHOR_STR_ADOPT / REQUIRE_CURRENT_BINDING
+      - 只採用 context，不執行 owner action。
+    - row: 11
+      cells:
+      - Decision Ledger store/API
+      - REQUIRE_EXACT_BINDING
+      - 不可用 UI state 代替。
+    - row: 12
+      cells:
+      - Owner Handoff event/transport
+      - REQUIRE_EXACT_BINDING
+      - event bus/queue/topic 不在文件中猜。
+    - row: 13
+      cells:
+      - ERP cost/resource read binding
+      - OWNER_ERP_REFERENCE
+      - read-only context，approval 仍 ERP/Finance。
+    - row: 14
+      cells:
+      - Workflow execution binding
+      - OWNER_WORKFLOW_REFERENCE
+      - Strategy 不重做。
+    - row: 15
+      cells:
+      - Production/Department handoff
+      - OWNER_DOMAIN_REFERENCE
+      - decision ref -> owner action。
+    - row: 16
+      cells:
+      - Expected/Actual KPI binding
+      - REQUIRE_EXACT_BINDING
+      - metric registry/window/unit owner required。
+    - row: 17
+      cells:
+      - Strategic Experience store/adoption
+      - OWNER_AI01_EXPERIENCE_REFERENCE
+      - learning candidate 經治理採用。
+    - row: 18
+      cells:
+      - Idempotency store/TTL
+      - REQUIRE_EXACT_BINDING
+      - 不在 design 文檔假造數值。
+    - row: 19
+      cells:
+      - Event bus/delivery retry
+      - REQUIRE_EXACT_BINDING
+      - delivery semantics需 current runtime authority。
+    - row: 20
+      cells:
+      - Retention/Archive policy
+      - REQUIRE_EXACT_BINDING
+      - 按 artifact class 綁 owner。
+  - index: 25
+    rows:
+    - row: 0
+      cells:
+      - Candidate Function
+      - Admission
+      - Reason
+    - row: 1
+      cells:
+      - Same-Baseline Multi-AI Compare
+      - REQUIRED
+      - 既有 strategy authority 明確存在。
+    - row: 2
+      cells:
+      - Scenario Branch / What-if
+      - REQUIRED_SYSTEM_LOGIC
+      - 屬 Strategy Decision System owner，本文件正式化其語義。
+    - row: 3
+      cells:
+      - Human Review / Decision Ledger
+      - REQUIRED
+      - AI result 不可直接成正式決策。
+    - row: 4
+      cells:
+      - Automatic Budget Reallocation
+      - NO_AUTO_COMPLETION
+      - Owner=Finance；Strategy 只能提案。
+    - row: 5
+      cells:
+      - Automatic Workflow Priority Change
+      - NO_AUTO_COMPLETION
+      - Owner=Workflow/Runtime。
+    - row: 6
+      cells:
+      - Automatic Social/Email execution
+      - NO_AUTO_COMPLETION
+      - Owner=AI-06/07。
+    - row: 7
+      cells:
+      - Strategy self-approval
+      - FORBIDDEN
+      - 違反 human gate。
+    - row: 8
+      cells:
+      - Manual Provider Picker
+      - FORBIDDEN
+      - Owner=AI-03 Router。
+    - row: 9
+      cells:
+      - Second Fact Store / Conversation Engine
+      - FORBIDDEN
+      - 違反 one-owner。
+    - row: 10
+      cells:
+      - Exact API/DB identity not in current authority
+      - REQUIRE_EXACT_BINDING
+      - 不得 AI invention。
+  - index: 26
+    rows:
+    - row: 0
+      cells:
+      - ID
+      - Acceptance Item
+      - Pass Condition
+    - row: 1
+      cells:
+      - ACC-01
+      - Single Strategy Owner
+      - 只有一套 Strategy Intelligence owner；無 parallel Strategic Center system。
+    - row: 2
+      cells:
+      - ACC-02
+      - Strategic Context
+      - 所有來源可追 exact ref/time/version/scope/confidence。
+    - row: 3
+      cells:
+      - ACC-03
+      - Fact Separation
+      - Fact/Inference/Assumption/Recommendation/Decision 可機器區分。
+    - row: 4
+      cells:
+      - ACC-04
+      - No AI Fill
+      - 缺 source/cost/resource/risk/KPI 保持 incomplete。
+    - row: 5
+      cells:
+      - ACC-05
+      - Same Question
+      - Multi-AI 第一輪 original question identity 一致。
+    - row: 6
+      cells:
+      - ACC-06
+      - Same Fingerprint
+      - Multi-AI ContextFingerprint 一致。
+    - row: 7
+      cells:
+      - ACC-07
+      - Same FactPack
+      - Multi-AI FactPack version 一致。
+    - row: 8
+      cells:
+      - ACC-08
+      - Same Constraints
+      - Multi-AI ConstraintSet version 一致。
+    - row: 9
+      cells:
+      - ACC-09
+      - Independent First Round
+      - 第一輪不受其他 AI 回答污染。
+    - row: 10
+      cells:
+      - ACC-10
+      - Cross Review
+      - target refs、round、relation 可追。
+    - row: 11
+      cells:
+      - ACC-11
+      - Consensus Boundary
+      - Consensus 不會自動升格 Fact/Decision。
+    - row: 12
+      cells:
+      - ACC-12
+      - Assistant Boundary
+      - Assistant 只彙整/紀錄，不自行作 strategy decision。
+    - row: 13
+      cells:
+      - ACC-13
+      - Option Completeness
+      - 每個 option 包含 impact/cost/resource/risk/horizon/dependency/evidence/uncertainty。
+    - row: 14
+      cells:
+      - ACC-14
+      - Four Outputs
+      - Recommendation/Alert/Resource Proposal/Decision Brief 分離。
+    - row: 15
+      cells:
+      - ACC-15
+      - Recommendation Transparency
+      - basis/assumption/risk/uncertainty/evidence visible。
+    - row: 16
+      cells:
+      - ACC-16
+      - Resource Proposal Boundary
+      - 不直接寫 Finance approval。
+    - row: 17
+      cells:
+      - ACC-17
+      - Decision Candidate Gate
+      - 缺 evidence/risk/unknowns/comparison 不得 submit。
+    - row: 18
+      cells:
+      - ACC-18
+      - Human Review
+      - approve/reject/revision 有 actor/time/reason。
+    - row: 19
+      cells:
+      - ACC-19
+      - Decision Ledger
+      - candidate/source/risk/approval/result/reason/actor/time/execution/audit 可追。
+    - row: 20
+      cells:
+      - ACC-20
+      - Immutable History
+      - candidate/output/scenario/decision/memory append-only。
+    - row: 21
+      cells:
+      - ACC-21
+      - Scenario Branch
+      - parent/baseline/assumption/fingerprint 可追；無 silent rebase。
+    - row: 22
+      cells:
+      - ACC-22
+      - Concurrency
+      - expected_version/stale write fail-closed。
+    - row: 23
+      cells:
+      - ACC-23
+      - Idempotency
+      - same key same payload dedupe；same key different payload block。
+    - row: 24
+      cells:
+      - ACC-24
+      - Event Trace
+      - events 有 version/correlation/idempotency/audit refs。
+    - row: 25
+      cells:
+      - ACC-25
+      - Owner Handoff
+      - decision→owner module exact handoff，不假裝執行成功。
+    - row: 26
+      cells:
+      - ACC-26
+      - ERP/Workflow Boundary
+      - effectful approval/execution 留原 owner。
+    - row: 27
+      cells:
+      - ACC-27
+      - Expected vs Actual
+      - same metric/window/unit。
+    - row: 28
+      cells:
+      - ACC-28
+      - Missing Actual
+      - 不得當 0。
+    - row: 29
+      cells:
+      - ACC-29
+      - Experience Candidate
+      - execution evidence-backed。
+    - row: 30
+      cells:
+      - ACC-30
+      - No Self Adoption
+      - Experience learning 不自我採用。
+    - row: 31
+      cells:
+      - ACC-31
+      - Impact Graph
+      - 上游變更會標示 impacted descendants REVERIFY_REQUIRED。
+    - row: 32
+      cells:
+      - ACC-32
+      - Classification
+      - 敏感 context 受 classification/provider/tool gate。
+    - row: 33
+      cells:
+      - ACC-33
+      - No Manual Provider
+      - Strategy UI 無 provider/model picker。
+    - row: 34
+      cells:
+      - ACC-34
+      - No Second Conversation
+      - 共享 AI-02 core。
+    - row: 35
+      cells:
+      - ACC-35
+      - No Second Context Engine
+      - 共享 AI-01 context/truth。
+    - row: 36
+      cells:
+      - ACC-36
+      - No Second Router
+      - 共享 AI-03 runtime。
+    - row: 37
+      cells:
+      - ACC-37
+      - Exact Binding
+      - 未有 authority 的 API/DB/transport 保持 REQUIRE_EXACT_BINDING。
+    - row: 38
+      cells:
+      - ACC-38
+      - Negative Regression
+      - 所有 MUST_NOT/Block scenario 具反向測試。
+    - row: 39
+      cells:
+      - ACC-39
+      - Construction Handoff
+      - 工程能依 owner/binding/gate/state/event contract施工。
+    - row: 40
+      cells:
+      - ACC-40
+      - Document Truth
+      - Word 完成不宣稱 Runtime/Production 完成。
+  - index: 27
+    rows:
+    - row: 0
+      cells:
+      - ID
+      - Mutation / Failure Case
+      - Expected Result
+    - row: 1
+      cells:
+      - NEG-01
+      - Multi-AI 同題但 ContextFingerprint 不同
+      - BLOCK direct comparison / BASELINE_MISMATCH
+    - row: 2
+      cells:
+      - NEG-02
+      - FactPack 版本不同卻合併排名
+      - BLOCK / evidence version mismatch
+    - row: 3
+      cells:
+      - NEG-03
+      - ConstraintSet 不同卻當 parallel answer
+      - BLOCK direct compare; scenario-only
+    - row: 4
+      cells:
+      - NEG-04
+      - AI-B 第一輪先看到 AI-A
+      - Independent-first-round violation
+    - row: 5
+      cells:
+      - NEG-05
+      - Consensus 無 evidence 被標 Fact
+      - BLOCK promotion
+    - row: 6
+      cells:
+      - NEG-06
+      - AI output 直接寫 Decision Ledger
+      - BLOCK
+    - row: 7
+      cells:
+      - NEG-07
+      - Recommendation 隱藏 assumption
+      - BLOCK candidate completeness
+    - row: 8
+      cells:
+      - NEG-08
+      - Recommendation 隱藏 risk/uncertainty
+      - BLOCK
+    - row: 9
+      cells:
+      - NEG-09
+      - Resource Proposal 直接調整預算
+      - BLOCK owner boundary
+    - row: 10
+      cells:
+      - NEG-10
+      - Strategy Alert 直接 pause workflow
+      - BLOCK owner boundary
+    - row: 11
+      cells:
+      - NEG-11
+      - Scenario branch 自動合回主線
+      - BLOCK
+    - row: 12
+      cells:
+      - NEG-12
+      - Scenario silent rebase
+      - BLOCK; explicit new version required
+    - row: 13
+      cells:
+      - NEG-13
+      - Fact conflict 系統任選一邊
+      - BLOCK; conflict review
+    - row: 14
+      cells:
+      - NEG-14
+      - External intelligence 覆寫 confirmed decision
+      - BLOCK
+    - row: 15
+      cells:
+      - NEG-15
+      - Missing KPI 被填 0
+      - BLOCK / incomplete
+    - row: 16
+      cells:
+      - NEG-16
+      - Missing cost 由 AI 猜值
+      - BLOCK
+    - row: 17
+      cells:
+      - NEG-17
+      - Option 不含 dependency/evidence
+      - BLOCK formal review
+    - row: 18
+      cells:
+      - NEG-18
+      - 不同 time horizon 直接比較
+      - BLOCK/incomparable
+    - row: 19
+      cells:
+      - NEG-19
+      - DecisionCandidate 缺 unknowns
+      - BLOCK submit review
+    - row: 20
+      cells:
+      - NEG-20
+      - AI self-approve candidate
+      - BLOCK
+    - row: 21
+      cells:
+      - NEG-21
+      - Stale reviewer version overwrite新結果
+      - BLOCK optimistic concurrency
+    - row: 22
+      cells:
+      - NEG-22
+      - 同 idempotency key 不同 payload
+      - BLOCK
+    - row: 23
+      cells:
+      - NEG-23
+      - 取消後 late callback 更新 candidate
+      - QUARANTINE
+    - row: 24
+      cells:
+      - NEG-24
+      - Cross-review target ref 不存在
+      - block request only
+    - row: 25
+      cells:
+      - NEG-25
+      - Other AI output 被當 Source Fact
+      - BLOCK
+    - row: 26
+      cells:
+      - NEG-26
+      - Manual provider picker 出現在 Strategy UI
+      - FAIL owner boundary
+    - row: 27
+      cells:
+      - NEG-27
+      - Strategy 新建 second conversation store
+      - FAIL duplicate system
+    - row: 28
+      cells:
+      - NEG-28
+      - Strategy 新建 second fact store
+      - FAIL duplicate owner
+    - row: 29
+      cells:
+      - NEG-29
+      - Handoff ACK 當 execution success
+      - FAIL status semantics
+    - row: 30
+      cells:
+      - NEG-30
+      - Owner result unknown 就重送 effect
+      - BLOCK reconcile first
+    - row: 31
+      cells:
+      - NEG-31
+      - Expected/Actual 指標口徑不同直接相減
+      - BLOCK/incomparable
+    - row: 32
+      cells:
+      - NEG-32
+      - 單一成功案例自動成永久經驗
+      - BLOCK self-adoption/generalization
+    - row: 33
+      cells:
+      - NEG-33
+      - Learning candidate 改寫歷史 decision
+      - BLOCK immutability
+    - row: 34
+      cells:
+      - NEG-34
+      - 舊 Fact 變更但 descendant 不 reverify
+      - FAIL impact graph
+    - row: 35
+      cells:
+      - NEG-35
+      - 敏感 cost context 送未授權 provider
+      - BLOCK classification
+    - row: 36
+      cells:
+      - NEG-36
+      - 設計文件宣稱 Production ready
+      - FAIL evidence governance
+  - index: 28
+    rows:
+    - row: 0
+      cells:
+      - ID
+      - Given
+      - When
+      - Then
+    - row: 1
+      cells:
+      - GWT-01
+      - 同一 Question/Fingerprint/FactPack/Constraints
+      - 啟動 A/B/C Parallel
+      - 三者獨立回答且可 formal compare
+    - row: 2
+      cells:
+      - GWT-02
+      - Question 相同但 fingerprint 不同
+      - 要求 compare
+      - 標記 baseline mismatch 並 BLOCK direct compare
+    - row: 3
+      cells:
+      - GWT-03
+      - 'AI-B review #AI-A'
+      - target refs 存在
+      - 產生 CrossAIReview，仍以 Fact/Evidence 為依據
+    - row: 4
+      cells:
+      - GWT-04
+      - AI-A/B/C 全同意無 evidence claim
+      - Assistant synthesis
+      - 只標 consensus，不升格 Fact
+    - row: 5
+      cells:
+      - GWT-05
+      - FactPack 缺成本資料
+      - 建立 Resource Proposal
+      - 成本欄 incomplete，不 AI-fill
+    - row: 6
+      cells:
+      - GWT-06
+      - SourceFact 衝突
+      - 策略分析
+      - 建立 conflict/uncertainty，禁止 data-certain conclusion
+    - row: 7
+      cells:
+      - GWT-07
+      - 外部情報與 confirmed decision 衝突
+      - resolve context
+      - confirmed decision 保持 current；外部作 evidence/conflict
+    - row: 8
+      cells:
+      - GWT-08
+      - Option 缺 risk
+      - submit review
+      - BLOCK
+    - row: 9
+      cells:
+      - GWT-09
+      - Option 有完整 fields
+      - compare
+      - 使用一致欄位與 horizon
+    - row: 10
+      cells:
+      - GWT-10
+      - Resource Proposal 完成
+      - 使用者核准策略
+      - 只形成 decision/handoff，不直接改 Finance
+    - row: 11
+      cells:
+      - GWT-11
+      - Strategy Alert 高風險
+      - 使用者選擇執行
+      - 導航/交接 owner module，不直接 pause workflow
+    - row: 12
+      cells:
+      - GWT-12
+      - DecisionCandidate ready
+      - reviewer approve
+      - 建立 DecisionLedgerEntry
+    - row: 13
+      cells:
+      - GWT-13
+      - DecisionCandidate ready
+      - AI 嘗試 approve
+      - BLOCK
+    - row: 14
+      cells:
+      - GWT-14
+      - Reviewer 用舊 expected_version
+      - 提交決策
+      - BLOCK stale write
+    - row: 15
+      cells:
+      - GWT-15
+      - Scenario branch 建立後主線變更
+      - 再次開 branch
+      - 舊 branch 不 silent update
+    - row: 16
+      cells:
+      - GWT-16
+      - Scenario explicit rebase
+      - 使用者確認
+      - 建立新 branch version / fingerprint
+    - row: 17
+      cells:
+      - GWT-17
+      - 同一 analysis request 重送
+      - same idempotency key/payload
+      - dedupe/reuse logical run
+    - row: 18
+      cells:
+      - GWT-18
+      - same key different payload
+      - 提交
+      - BLOCK + audit
+    - row: 19
+      cells:
+      - GWT-19
+      - 部分 AI provider fail
+      - multi-AI run terminal
+      - 保存其他 views，denominator=partial，不宣稱完整
+    - row: 20
+      cells:
+      - GWT-20
+      - target response missing
+      - cross review
+      - 只 BLOCK 該 request
+    - row: 21
+      cells:
+      - GWT-21
+      - Owner module ACK handoff
+      - strategy status
+      - HANDOFF_ACKED，不等於 execution success
+    - row: 22
+      cells:
+      - GWT-22
+      - Owner result verified
+      - feedback compile
+      - 建立 ExpectedActualRecord
+    - row: 23
+      cells:
+      - GWT-23
+      - Actual KPI 缺失
+      - feedback compile
+      - 顯示 incomplete，不當 0
+    - row: 24
+      cells:
+      - GWT-24
+      - Expected/Actual unit 不同
+      - difference analysis
+      - BLOCK direct variance
+    - row: 25
+      cells:
+      - GWT-25
+      - Learning 有一筆成功案例
+      - 建立 experience candidate
+      - 候選成立但不可 auto-adopt
+    - row: 26
+      cells:
+      - GWT-26
+      - Experience reviewer 採用
+      - future strategy retrieval
+      - 可作 governed experience；不改歷史 decision
+    - row: 27
+      cells:
+      - GWT-27
+      - Fact correction supersedes old fact
+      - impact scan
+      - 相關 inference/options/candidate 標 REVERIFY_REQUIRED
+    - row: 28
+      cells:
+      - GWT-28
+      - 敏感 Context 未授權 provider
+      - analysis route
+      - BLOCK before provider call
+    - row: 29
+      cells:
+      - GWT-29
+      - Manual provider picker request
+      - Strategy UI
+      - 不存在/禁止；由 AI-03 Router 決定
+    - row: 30
+      cells:
+      - GWT-30
+      - 未知 API/DB identity
+      - construction binding
+      - 標 REQUIRE_EXACT_BINDING，不 invent
+    - row: 31
+      cells:
+      - GWT-31
+      - Word QA 完成
+      - 查詢 Runtime 狀態
+      - 仍為 RUNTIME_NOT_PROVEN；文件不證明 Runtime
+    - row: 32
+      cells:
+      - GWT-32
+      - Decision rejected
+      - history review
+      - 拒絕原因與 source refs 可追
+  - index: 29
+    rows:
+    - row: 0
+      cells:
+      - Handoff Artifact
+      - Minimum Content
+    - row: 1
+      cells:
+      - Entity Registry Binding
+      - entity uid/name/owner/path/schema/version/status
+    - row: 2
+      cells:
+      - Operation Binding
+      - operation → action/gate/permission/payload/API/runtime/state/audit/feedback
+    - row: 3
+      cells:
+      - Same-Baseline Manifest
+      - question ref/context fingerprint/factpack/constraints/participant denominator
+    - row: 4
+      cells:
+      - Decision Contract
+      - candidate/review/ledger/handoff identities and transitions
+    - row: 5
+      cells:
+      - Impact Graph
+      - source→derived→candidate→decision→handoff→feedback dependency closure
+    - row: 6
+      cells:
+      - Test Matrix
+      - Acceptance + Negative Regression + GWT mapped to executable tests
+    - row: 7
+      cells:
+      - Evidence Plan
+      - unit/integration/e2e/audit/production evidence owners
+    - row: 8
+      cells:
+      - Resume/Closure
+      - exact current state + unresolved bindings + legal next work unit
+  - index: 30
+    rows:
+    - row: 0
+      cells:
+      - Dimension
+      - Status
+      - Meaning
+    - row: 1
+      cells:
+      - Design Content
+      - COMPLETE
+      - Strategy Intelligence system logic、boundaries、entities、states、events、acceptance 已完整定義。
+    - row: 2
+      cells:
+      - Normative Logic
+      - COMPLETE
+      - MUST/MUST_NOT/BLOCK/REQUIRED、transition、concurrency、retry、negative regressions 已定義。
+    - row: 3
+      cells:
+      - Exact Runtime Binding
+      - PARTIAL / REQUIRE_EXACT_BINDING
+      - 未由 Current Authority 證明的 API/DB/transport/TTL 不假造。
+    - row: 4
+      cells:
+      - Formal Governance Approval
+      - NOT SELF-GRANTED
+      - AI 不自我批准設計。
+    - row: 5
+      cells:
+      - Runtime / Production
+      - NOT PROVEN BY DOCUMENT
+      - 需 fresh implementation/DB/API/browser/deployment evidence。
+  - index: 31
+    rows:
+    - row: 0
+      cells:
+      - Runtime Policy
+      - Exact Value / Binding
+      - Source
+      - Status
+    - row: 1
+      cells:
+      - PROVIDER_QUEUE_CAPACITY
+      - '100'
+      - authority/runtime/ACPOS_PRODUCTION_ASYNC_QUEUE_RUNTIME_CONTRACT_FINAL_LOCKED_V1.0.yaml
+      - SOURCE_EXACT
+    - row: 2
+      cells:
+      - PROVIDER_QUEUE_MAX_ATTEMPTS
+      - '3'
+      - same queue policy
+      - SOURCE_EXACT
+    - row: 3
+      cells:
+      - PROVIDER_QUEUE_LEASE_SECONDS
+      - '120'
+      - same queue policy
+      - SOURCE_EXACT
+    - row: 4
+      cells:
+      - PROVIDER_QUEUE_BACKOFF_SECONDS
+      - 30,120,300
+      - same queue policy
+      - SOURCE_EXACT
+    - row: 5
+      cells:
+      - PROVIDER_WORKER_MAX_BATCH
+      - '10'
+      - same worker policy
+      - SOURCE_EXACT
+  - index: 32
+    rows:
+    - row: 0
+      cells:
+      - Authority
+      - Value
+    - row: 1
+      cells:
+      - Source Commit
+      - 165c6440cb53b1b45ec96905241fb4d56dc3b867
+    - row: 2
+      cells:
+      - Machine Authority
+      - authority/pages/workspace/STR-01/ACPOS_STR-01_FINAL_LOCKED_ENCODING_PROVIDER_BOUND.yaml
+    - row: 3
+      cells:
+      - Authority SHA-256
+      - ce709e58e09b635f23aa0fa1ef85b11ba313550c6235f48003e68d0a43ac2f7d
+    - row: 4
+      cells:
+      - Expected Control Denominator
+      - '57'
+    - row: 5
+      cells:
+      - Unique Control Rows
+      - '57'
+    - row: 6
+      cells:
+      - Denominator Gate
+      - PASS
+  - index: 33
+    rows:
+    - row: 0
+      cells:
+      - Control UID
+      - UID Status
+      - Label
+      - Type
+      - Action UID
+      - Gate
+      - Permission / Auth Resource
+      - Payload / Schema
+      - Operation
+      - Method / Path
+      - Runtime Owner
+      - Persistence Owner
+      - Runtime Status
+    - row: 1
+      cells:
+      - STR-01-BTN-ADOPT
+      - EXISTING_SOURCE_UID
+      - 採用策略 Context
+      - PRIMARY_BUTTON
+      - STR-01-ACT-ADOPT
+      - STR-01-GATE-ADOPT
+      - STR_ADOPT
+      - AdoptAsContextCandidateRequest
+      - adoptAsContextCandidate
+      - POST /v1/state-commands/strategycandidate/adoptascontextcandidate
+      - STR-01 / shared registered service
+      - AI-01 Context Owner / Governed Strategy Context Adoption Link + System 08 Audit
+      - EFFECTFUL_EXACT
+    - row: 2
+      cells:
+      - STR-01-BTN-ATTACH
+      - EXISTING_SOURCE_UID
+      - 附件 / 圖片
+      - ATTACHMENT
+      - —
+      - STR-01-GATE-TOPIC
+      - STR_VIEW
+      - —
+      - —
+      - —
+      - STR-01 / shared registered service
+      - —
+      - READ_EXACT
+    - row: 3
+      cells:
+      - STR-01-BTN-AUDIT
+      - EXISTING_SOURCE_UID
+      - 查看 Audit / Trace
+      - BUTTON
+      - STR-01-ACT-AUDIT
+      - STR-01-GATE-PAGE
+      - STR_VIEW
+      - —
+      - —
+      - —
+      - STR-01 / shared registered service
+      - —
+      - UI_LOCAL_EXACT
+    - row: 4
+      cells:
+      - STR-01-BTN-COMPARE
+      - EXISTING_SOURCE_UID
+      - 比較方案
+      - BUTTON
+      - STR-01-ACT-COMPARE
+      - STR-01-GATE-COMPARE
+      - STR_COMPARE
+      - No-form read contract
+      - compareCandidates
+      - GET /v1/candidates/compare
+      - STR-01 / shared registered service
+      - —
+      - READ_EXACT
+    - row: 5
+      cells:
+      - STR-01-BTN-OPEN-OWNER
+      - EXISTING_SOURCE_UID
+      - 開啟執行責任模組
+      - BUTTON
+      - STR-01-ACT-OPEN-OWNER
+      - STR-01-GATE-PAGE
+      - STR_VIEW
+      - —
+      - —
+      - —
+      - STR-01 / shared registered service
+      - —
+      - UI_LOCAL_EXACT
+    - row: 6
+      cells:
+      - STR-01-BTN-SEND
+      - EXISTING_SOURCE_UID
+      - 送出
+      - PRIMARY_BUTTON
+      - STR-01-ACT-SEND
+      - STR-01-GATE-MESSAGE
+      - STR_CONVERSATION
+      - —
+      - sendConversationMessage
+      - —
+      - STR-01 / shared registered service
+      - —
+      - EFFECTFUL_EXACT
+    - row: 7
+      cells:
+      - STR-01-BTN-STOP
+      - EXISTING_SOURCE_UID
+      - 停止生成
+      - BUTTON
+      - STR-01-ACT-STOP
+      - STR-01-GATE-MESSAGE
+      - STR_CONVERSATION
+      - —
+      - stopConversationGeneration
+      - —
+      - STR-01 / shared registered service
+      - —
+      - EFFECTFUL_EXACT
+    - row: 8
+      cells:
+      - STR-01-BTN-SUBMIT-REVIEW
+      - EXISTING_SOURCE_UID
+      - 送出策略審查
+      - PRIMARY_BUTTON
+      - STR-01-ACT-REVIEW
+      - STR-01-GATE-REVIEW
+      - STR_REVIEW
+      - SubmitStrategyReviewRequest
+      - submitStrategyReview
+      - POST /v1/state-commands/strategycandidate/submitstrategyreview
+      - STR-01 / shared registered service
+      - System 08 / StrategyCandidate + Review State/Audit
+      - EFFECTFUL_EXACT
+    - row: 9
+      cells:
+      - STR-01-CARD-ALERT
+      - EXISTING_SOURCE_UID
+      - Strategy Alert
+      - READONLY_CARD
+      - STR-01-ACT-NOOP
+      - STR-01-GATE-ANALYSIS
+      - STR_VIEW
+      - —
+      - —
+      - —
+      - STR-01 / shared registered service
+      - —
+      - READ_EXACT
+    - row: 10
+      cells:
+      - STR-01-CARD-BRIEF
+      - EXISTING_SOURCE_UID
+      - Decision Brief
+      - READONLY_CARD
+      - STR-01-ACT-NOOP
+      - STR-01-GATE-ANALYSIS
+      - STR_VIEW
+      - —
+      - —
+      - —
+      - STR-01 / shared registered service
+      - —
+      - READ_EXACT
+    - row: 11
+      cells:
+      - STR-01-CARD-RECOMMENDATION
+      - EXISTING_SOURCE_UID
+      - Strategy Recommendation
+      - READONLY_CARD
+      - STR-01-ACT-NOOP
+      - STR-01-GATE-ANALYSIS
+      - STR_VIEW
+      - —
+      - —
+      - —
+      - STR-01 / shared registered service
+      - —
+      - READ_EXACT
+    - row: 12
+      cells:
+      - STR-01-CARD-RESOURCE
+      - EXISTING_SOURCE_UID
+      - Resource Proposal
+      - READONLY_CARD
+      - STR-01-ACT-NOOP
+      - STR-01-GATE-ANALYSIS
+      - STR_VIEW
+      - —
+      - —
+      - —
+      - STR-01 / shared registered service
+      - —
+      - READ_EXACT
+    - row: 13
+      cells:
+      - STR-01-FLD-ACTUAL
+      - EXISTING_SOURCE_UID
+      - Actual
+      - READONLY
+      - STR-01-ACT-NOOP
+      - STR-01-GATE-FEEDBACK
+      - STR_VIEW
+      - —
+      - —
+      - —
+      - STR-01 / shared registered service
+      - —
+      - READ_EXACT
+    - row: 14
+      cells:
+      - STR-01-FLD-ASSISTANT-SUMMARY
+      - EXISTING_SOURCE_UID
+      - Assistant Summary
+      - READONLY
+      - STR-01-ACT-NOOP
+      - STR-01-GATE-ANALYSIS
+      - STR_VIEW
+      - —
+      - —
+      - —
+      - STR-01 / shared registered service
+      - —
+      - READ_EXACT
+    - row: 15
+      cells:
+      - STR-01-FLD-ASSUMPTIONS
+      - EXISTING_SOURCE_UID
+      - 假設 / Assumptions
+      - READONLY
+      - STR-01-ACT-NOOP
+      - STR-01-GATE-ANALYSIS
+      - STR_VIEW
+      - —
+      - —
+      - —
+      - STR-01 / shared registered service
+      - —
+      - READ_EXACT
+    - row: 16
+      cells:
+      - STR-01-FLD-BASIS
+      - EXISTING_SOURCE_UID
+      - 分析依據 / Basis
+      - READONLY
+      - STR-01-ACT-NOOP
+      - STR-01-GATE-ANALYSIS
+      - STR_VIEW
+      - —
+      - —
+      - —
+      - STR-01 / shared registered service
+      - —
+      - READ_EXACT
+    - row: 17
+      cells:
+      - STR-01-FLD-CANDIDATE-REF
+      - EXISTING_SOURCE_UID
+      - Strategy Candidate
+      - READONLY
+      - STR-01-ACT-NOOP
+      - STR-01-GATE-PAGE
+      - STR_VIEW
+      - —
+      - —
+      - —
+      - STR-01 / shared registered service
+      - —
+      - READ_EXACT
+    - row: 18
+      cells:
+      - STR-01-FLD-CONTEXT-CONFIDENCE
+      - EXISTING_SOURCE_UID
+      - Confidence / Quality
+      - READONLY
+      - STR-01-ACT-NOOP
+      - STR-01-GATE-CONTEXT
+      - STR_VIEW
+      - —
+      - —
+      - —
+      - STR-01 / shared registered service
+      - —
+      - READ_EXACT
+    - row: 19
+      cells:
+      - STR-01-FLD-CONTEXT-PRIORITY
+      - EXISTING_SOURCE_UID
+      - Context Priority
+      - READONLY
+      - STR-01-ACT-NOOP
+      - STR-01-GATE-CONTEXT
+      - STR_VIEW
+      - —
+      - —
+      - —
+      - STR-01 / shared registered service
+      - —
+      - READ_EXACT
+    - row: 20
+      cells:
+      - STR-01-FLD-CONTEXT-SOURCE
+      - EXISTING_SOURCE_UID
+      - Source / Ref
+      - READONLY
+      - STR-01-ACT-NOOP
+      - STR-01-GATE-CONTEXT
+      - STR_VIEW
+      - —
+      - —
+      - —
+      - STR-01 / shared registered service
+      - —
+      - READ_EXACT
+    - row: 21
+      cells:
+      - STR-01-FLD-CONTEXT-TIME
+      - EXISTING_SOURCE_UID
+      - Source Time / Version
+      - READONLY
+      - STR-01-ACT-NOOP
+      - STR-01-GATE-CONTEXT
+      - STR_VIEW
+      - —
+      - —
+      - —
+      - STR-01 / shared registered service
+      - —
+      - READ_EXACT
+    - row: 22
+      cells:
+      - STR-01-FLD-CORRELATION
+      - EXISTING_SOURCE_UID
+      - Correlation / Audit Ref
+      - READONLY
+      - STR-01-ACT-NOOP
+      - STR-01-GATE-PAGE
+      - STR_VIEW
+      - —
+      - —
+      - —
+      - STR-01 / shared registered service
+      - —
+      - READ_EXACT
+    - row: 23
+      cells:
+      - STR-01-FLD-DECISION-ID
+      - EXISTING_SOURCE_UID
+      - Decision ID
+      - READONLY
+      - STR-01-ACT-NOOP
+      - STR-01-GATE-PAGE
+      - STR_VIEW
+      - —
+      - —
+      - —
+      - STR-01 / shared registered service
+      - —
+      - READ_EXACT
+    - row: 24
+      cells:
+      - STR-01-FLD-DECISION-REASON
+      - EXISTING_SOURCE_UID
+      - Decision Reason
+      - READONLY
+      - STR-01-ACT-NOOP
+      - STR-01-GATE-PAGE
+      - STR_VIEW
+      - —
+      - —
+      - —
+      - STR-01 / shared registered service
+      - —
+      - READ_EXACT
+    - row: 25
+      cells:
+      - STR-01-FLD-DECISION-RESULT
+      - EXISTING_SOURCE_UID
+      - Decision Result
+      - READONLY
+      - STR-01-ACT-NOOP
+      - STR-01-GATE-PAGE
+      - STR_VIEW
+      - —
+      - —
+      - —
+      - STR-01 / shared registered service
+      - —
+      - READ_EXACT
+    - row: 26
+      cells:
+      - STR-01-FLD-DECISION-STATE
+      - EXISTING_SOURCE_UID
+      - Decision Status
+      - READONLY
+      - STR-01-ACT-NOOP
+      - STR-01-GATE-PAGE
+      - STR_VIEW
+      - —
+      - —
+      - —
+      - STR-01 / shared registered service
+      - —
+      - READ_EXACT
+    - row: 27
+      cells:
+      - STR-01-FLD-DIFFERENCE
+      - EXISTING_SOURCE_UID
+      - Difference Analysis
+      - READONLY
+      - STR-01-ACT-NOOP
+      - STR-01-GATE-FEEDBACK
+      - STR_VIEW
+      - —
+      - —
+      - —
+      - STR-01 / shared registered service
+      - —
+      - READ_EXACT
+    - row: 28
+      cells:
+      - STR-01-FLD-DISABLED
+      - EXISTING_SOURCE_UID
+      - Disabled Reason
+      - READONLY
+      - STR-01-ACT-NOOP
+      - STR-01-GATE-PAGE
+      - STR_VIEW
+      - —
+      - —
+      - —
+      - STR-01 / shared registered service
+      - —
+      - READ_EXACT
+    - row: 29
+      cells:
+      - STR-01-FLD-EXECUTION-STATE
+      - EXISTING_SOURCE_UID
+      - Execution Status / Ref
+      - READONLY
+      - STR-01-ACT-NOOP
+      - STR-01-GATE-PAGE
+      - STR_VIEW
+      - —
+      - —
+      - —
+      - STR-01 / shared registered service
+      - —
+      - READ_EXACT
+    - row: 30
+      cells:
+      - STR-01-FLD-EXPECTED
+      - EXISTING_SOURCE_UID
+      - Expected
+      - READONLY
+      - STR-01-ACT-NOOP
+      - STR-01-GATE-FEEDBACK
+      - STR_VIEW
+      - —
+      - —
+      - —
+      - STR-01 / shared registered service
+      - —
+      - READ_EXACT
+    - row: 31
+      cells:
+      - STR-01-FLD-HORIZON
+      - EXISTING_SOURCE_UID
+      - Time Horizon
+      - READONLY
+      - STR-01-ACT-NOOP
+      - STR-01-GATE-PAGE
+      - STR_VIEW
+      - —
+      - —
+      - —
+      - STR-01 / shared registered service
+      - —
+      - READ_EXACT
+    - row: 32
+      cells:
+      - STR-01-FLD-KPI
+      - EXISTING_SOURCE_UID
+      - KPI / Performance Change
+      - READONLY
+      - STR-01-ACT-NOOP
+      - STR-01-GATE-FEEDBACK
+      - STR_VIEW
+      - —
+      - —
+      - —
+      - STR-01 / shared registered service
+      - —
+      - READ_EXACT
+    - row: 33
+      cells:
+      - STR-01-FLD-LEARNING
+      - EXISTING_SOURCE_UID
+      - Learning
+      - READONLY
+      - STR-01-ACT-NOOP
+      - STR-01-GATE-FEEDBACK
+      - STR_VIEW
+      - —
+      - —
+      - —
+      - STR-01 / shared registered service
+      - —
+      - READ_EXACT
+    - row: 34
+      cells:
+      - STR-01-FLD-MEETING-RECORD
+      - EXISTING_SOURCE_UID
+      - Meeting / Discussion Record
+      - READONLY
+      - STR-01-ACT-NOOP
+      - STR-01-GATE-ANALYSIS
+      - STR_VIEW
+      - —
+      - —
+      - —
+      - STR-01 / shared registered service
+      - —
+      - READ_EXACT
+    - row: 35
+      cells:
+      - STR-01-FLD-OPEN-QUESTIONS
+      - EXISTING_SOURCE_UID
+      - Open Questions
+      - READONLY
+      - STR-01-ACT-NOOP
+      - STR-01-GATE-ANALYSIS
+      - STR_VIEW
+      - —
+      - —
+      - —
+      - STR-01 / shared registered service
+      - —
+      - READ_EXACT
+    - row: 36
+      cells:
+      - STR-01-FLD-OPPORTUNITIES
+      - EXISTING_SOURCE_UID
+      - 機會 / Opportunities
+      - READONLY
+      - STR-01-ACT-NOOP
+      - STR-01-GATE-ANALYSIS
+      - STR_VIEW
+      - —
+      - —
+      - —
+      - STR-01 / shared registered service
+      - —
+      - READ_EXACT
+    - row: 37
+      cells:
+      - STR-01-FLD-OWNER-BOUNDARY
+      - EXISTING_SOURCE_UID
+      - Execution Owner Boundary
+      - READONLY
+      - STR-01-ACT-NOOP
+      - STR-01-GATE-PAGE
+      - STR_VIEW
+      - —
+      - —
+      - —
+      - STR-01 / shared registered service
+      - —
+      - READ_EXACT
+    - row: 38
+      cells:
+      - STR-01-FLD-PATTERN
+      - EXISTING_SOURCE_UID
+      - Pattern / Baseline / Forecast
+      - READONLY
+      - STR-01-ACT-NOOP
+      - STR-01-GATE-ANALYSIS
+      - STR_VIEW
+      - —
+      - —
+      - —
+      - STR-01 / shared registered service
+      - —
+      - READ_EXACT
+    - row: 39
+      cells:
+      - STR-01-FLD-PROVIDER-BRAND
+      - EXISTING_SOURCE_UID
+      - Provider Brand
+      - READONLY
+      - STR-01-ACT-NOOP
+      - STR-01-GATE-PAGE
+      - STR_VIEW
+      - —
+      - —
+      - —
+      - STR-01 / shared registered service
+      - —
+      - READ_EXACT
+    - row: 40
+      cells:
+      - STR-01-FLD-REVIEW-STATE
+      - EXISTING_SOURCE_UID
+      - Review State
+      - READONLY
+      - STR-01-ACT-NOOP
+      - STR-01-GATE-PAGE
+      - STR_VIEW
+      - —
+      - —
+      - —
+      - STR-01 / shared registered service
+      - —
+      - READ_EXACT
+    - row: 41
+      cells:
+      - STR-01-FLD-RISKS
+      - EXISTING_SOURCE_UID
+      - 風險 / Risks
+      - READONLY
+      - STR-01-ACT-NOOP
+      - STR-01-GATE-ANALYSIS
+      - STR_VIEW
+      - —
+      - —
+      - —
+      - STR-01 / shared registered service
+      - —
+      - READ_EXACT
+    - row: 42
+      cells:
+      - STR-01-FLD-SCOPE
+      - EXISTING_SOURCE_UID
+      - Strategy Scope
+      - READONLY
+      - STR-01-ACT-NOOP
+      - STR-01-GATE-PAGE
+      - STR_VIEW
+      - —
+      - —
+      - —
+      - STR-01 / shared registered service
+      - —
+      - READ_EXACT
+    - row: 43
+      cells:
+      - STR-01-FLD-STATE
+      - EXISTING_SOURCE_UID
+      - Strategy State
+      - READONLY
+      - STR-01-ACT-NOOP
+      - STR-01-GATE-PAGE
+      - STR_VIEW
+      - —
+      - —
+      - —
+      - STR-01 / shared registered service
+      - —
+      - READ_EXACT
+    - row: 44
+      cells:
+      - STR-01-FLD-TOPIC
+      - EXISTING_SOURCE_UID
+      - Strategy Topic
+      - READONLY
+      - STR-01-ACT-NOOP
+      - STR-01-GATE-PAGE
+      - STR_VIEW
+      - —
+      - —
+      - —
+      - STR-01 / shared registered service
+      - —
+      - READ_EXACT
+    - row: 45
+      cells:
+      - STR-01-FLD-UNCERTAINTY
+      - EXISTING_SOURCE_UID
+      - 不確定性 / Uncertainty
+      - READONLY
+      - STR-01-ACT-NOOP
+      - STR-01-GATE-ANALYSIS
+      - STR_VIEW
+      - —
+      - —
+      - —
+      - STR-01 / shared registered service
+      - —
+      - READ_EXACT
+    - row: 46
+      cells:
+      - STR-01-INP-MESSAGE
+      - EXISTING_SOURCE_UID
+      - 輸入策略議題、問題或分析要求
+      - TEXTAREA
+      - STR-01-ACT-SEND
+      - STR-01-GATE-MESSAGE
+      - STR_CONVERSATION
+      - —
+      - sendConversationMessage
+      - —
+      - STR-01 / shared registered service
+      - —
+      - EFFECTFUL_EXACT
+    - row: 47
+      cells:
+      - STR-01-INP-TOPIC-SEARCH
+      - EXISTING_SOURCE_UID
+      - 搜尋策略議題
+      - SEARCH
+      - STR-01-ACT-FILTER
+      - STR-01-GATE-PAGE
+      - STR_VIEW
+      - —
+      - —
+      - —
+      - STR-01 / shared registered service
+      - —
+      - UI_LOCAL_EXACT
+    - row: 48
+      cells:
+      - STR-01-LST-ALERTS
+      - EXISTING_SOURCE_UID
+      - Strategy Alerts / Open Questions
+      - LIST
+      - STR-01-ACT-NOOP
+      - STR-01-GATE-PAGE
+      - STR_VIEW
+      - —
+      - —
+      - —
+      - STR-01 / shared registered service
+      - —
+      - READ_EXACT
+    - row: 49
+      cells:
+      - STR-01-LST-BASELINES
+      - EXISTING_SOURCE_UID
+      - Baseline History
+      - LIST
+      - STR-01-ACT-NOOP
+      - STR-01-GATE-MEMORY
+      - STR_VIEW
+      - —
+      - —
+      - —
+      - STR-01 / shared registered service
+      - —
+      - READ_EXACT
+    - row: 50
+      cells:
+      - STR-01-LST-CONTEXT
+      - EXISTING_SOURCE_UID
+      - Strategic Context Sources
+      - LIST
+      - STR-01-ACT-NOOP
+      - STR-01-GATE-CONTEXT
+      - STR_VIEW
+      - —
+      - —
+      - —
+      - STR-01 / shared registered service
+      - —
+      - READ_EXACT
+    - row: 51
+      cells:
+      - STR-01-LST-EXPERIMENTS
+      - EXISTING_SOURCE_UID
+      - Experiment Records
+      - LIST
+      - STR-01-ACT-NOOP
+      - STR-01-GATE-MEMORY
+      - STR_VIEW
+      - —
+      - —
+      - —
+      - STR-01 / shared registered service
+      - —
+      - READ_EXACT
+    - row: 52
+      cells:
+      - STR-01-LST-LEARNING
+      - EXISTING_SOURCE_UID
+      - Learning Results
+      - LIST
+      - STR-01-ACT-NOOP
+      - STR-01-GATE-MEMORY
+      - STR_VIEW
+      - —
+      - —
+      - —
+      - STR-01 / shared registered service
+      - —
+      - READ_EXACT
+    - row: 53
+      cells:
+      - STR-01-LST-PATTERNS
+      - EXISTING_SOURCE_UID
+      - Strategy Pattern / Cases
+      - LIST
+      - STR-01-ACT-NOOP
+      - STR-01-GATE-MEMORY
+      - STR_VIEW
+      - —
+      - —
+      - —
+      - STR-01 / shared registered service
+      - —
+      - READ_EXACT
+    - row: 54
+      cells:
+      - STR-01-LST-TOPICS
+      - EXISTING_SOURCE_UID
+      - Strategy Topics / History
+      - LIST
+      - STR-01-ACT-TOPIC-SELECT
+      - STR-01-GATE-PAGE
+      - STR_VIEW
+      - —
+      - —
+      - —
+      - STR-01 / shared registered service
+      - —
+      - UI_LOCAL_EXACT
+    - row: 55
+      cells:
+      - STR-01-TBL-COMPARE
+      - EXISTING_SOURCE_UID
+      - Strategy Option Comparison
+      - TABLE
+      - STR-01-ACT-COMPARE
+      - STR-01-GATE-COMPARE
+      - STR_COMPARE
+      - No-form read contract
+      - compareCandidates
+      - GET /v1/candidates/compare
+      - STR-01 / shared registered service
+      - —
+      - READ_EXACT
+    - row: 56
+      cells:
+      - STR-01-TGL-MODE
+      - EXISTING_SOURCE_UID
+      - Single AI / Multi AI
+      - TOGGLE
+      - STR-01-ACT-MODE
+      - STR-01-GATE-TOPIC
+      - STR_VIEW
+      - —
+      - —
+      - —
+      - STR-01 / shared registered service
+      - —
+      - UI_LOCAL_EXACT
+    - row: 57
+      cells:
+      - STR-01-VIEW-CONVERSATION
+      - EXISTING_SOURCE_UID
+      - Strategic AI Conversation
+      - CONVERSATION
+      - —
+      - STR-01-GATE-TOPIC
+      - STR_VIEW
+      - —
+      - —
+      - —
+      - STR-01 / shared registered service
+      - —
+      - READ_EXACT
+  - index: 34
+    rows:
+    - row: 0
+      cells:
+      - Authority
+      - Value
+    - row: 1
+      cells:
+      - Source Commit
+      - 165c6440cb53b1b45ec96905241fb4d56dc3b867
+    - row: 2
+      cells:
+      - Machine Authority
+      - authority/pages/admin/STR-01/ACPOS_STRATEGY_CENTER_SINGLE_PAGE_FINAL_LOCKED_ENCODING.yaml
+    - row: 3
+      cells:
+      - Authority SHA-256
+      - 7e458ce42fbceea4060d9eeb91b29977dc625e4f6804398c1db44a0eba6ccfeb
+    - row: 4
+      cells:
+      - Expected Control Denominator
+      - '19'
+    - row: 5
+      cells:
+      - Unique Control Rows
+      - '19'
+    - row: 6
+      cells:
+      - Denominator Gate
+      - PASS
+  - index: 35
+    rows:
+    - row: 0
+      cells:
+      - Control UID
+      - UID Status
+      - Label
+      - Type
+      - Action UID
+      - Gate
+      - Permission / Auth Resource
+      - Payload / Schema
+      - Operation
+      - Method / Path
+      - Runtime Owner
+      - Persistence Owner
+      - Runtime Status
+    - row: 1
+      cells:
+      - CTRL-ADMIN-STR-01-ACT-01-ACT-SEARCH
+      - EXISTING_SOURCE_UID
+      - ACT-SEARCH
+      - FORM_MODAL
+      - ACT-SEARCH
+      - CURRENT_VIEW_AND_SOURCE_ACTION_GATE
+      - admin:STR-01::ACT-SEARCH
+      - SearchProjectionRequest
+      - searchProjection
+      - POST /v1/search
+      - INFO_COMMAND_RUNTIME
+      - —
+      - EFFECTFUL_RUNTIME_MATERIALIZED
+    - row: 2
+      cells:
+      - CTRL-ADMIN-STR-01-ACT-02-ACT-REFRESH
+      - EXISTING_SOURCE_UID
+      - ACT-REFRESH
+      - FORM_MODAL
+      - ACT-REFRESH
+      - CURRENT_VIEW_AND_SOURCE_ACTION_GATE
+      - admin:STR-01::ACT-REFRESH
+      - RefreshProjectionRequest
+      - refreshProjection
+      - POST /v1/projections/refresh
+      - INFO_COMMAND_RUNTIME
+      - —
+      - EFFECTFUL_RUNTIME_MATERIALIZED
+    - row: 3
+      cells:
+      - CTRL-ADMIN-STR-01-ACT-03-ACT-NAV-OPEN
+      - EXISTING_SOURCE_UID
+      - ACT-NAV-OPEN
+      - DRAWER
+      - ACT-NAV-OPEN
+      - CURRENT_VIEW_AND_SOURCE_ACTION_GATE
+      - admin:STR-01::ACT-NAV-OPEN
+      - —
+      - getUiProjection
+      - GET /v1/ui-projections/{pageUid}
+      - Projection / source page read owner
+      - —
+      - READ_EXACT
+    - row: 4
+      cells:
+      - CTRL-ADMIN-STR-02-ACT-01-ACT-CONFIGURE
+      - EXISTING_SOURCE_UID
+      - ACT-CONFIGURE
+      - FORM_MODAL
+      - ACT-CONFIGURE
+      - CURRENT_VIEW_AND_SOURCE_ACTION_GATE
+      - admin:STR-02::ACT-CONFIGURE
+      - ConfigureGovernedResourceRequest
+      - configureGovernedResource
+      - PATCH /v1/governance/resources/{id}
+      - IAM_RUNTIME
+      - StrategyFactPackService / Resolved StrategicSource or StrategicFact Governed State/Version + Audit
+      - EFFECTFUL_RUNTIME_MATERIALIZED
+    - row: 5
+      cells:
+      - CTRL-ADMIN-STR-02-ACT-02-ACT-APPROVE
+      - EXISTING_SOURCE_UID
+      - ACT-APPROVE
+      - FORM_MODAL
+      - ACT-APPROVE
+      - CURRENT_VIEW_AND_SOURCE_ACTION_GATE
+      - admin:STR-02::ACT-APPROVE
+      - ApproveGovernedResourceRequest
+      - approveGovernedResource
+      - POST /v1/governance/resources/{id}/approve
+      - IAM_RUNTIME
+      - StrategyFactPackService / Resolved StrategicSource or StrategicFact Approved State/Version + Approval/Audit
+      - EFFECTFUL_RUNTIME_MATERIALIZED
+    - row: 6
+      cells:
+      - CTRL-ADMIN-STR-02-ACT-03-ACT-NAV-OPEN
+      - EXISTING_SOURCE_UID
+      - ACT-NAV-OPEN
+      - DRAWER
+      - ACT-NAV-OPEN
+      - CURRENT_VIEW_AND_SOURCE_ACTION_GATE
+      - admin:STR-02::ACT-NAV-OPEN
+      - —
+      - getUiProjection
+      - GET /v1/ui-projections/{pageUid}
+      - Projection / source page read owner
+      - —
+      - READ_EXACT
+    - row: 7
+      cells:
+      - CTRL-ADMIN-STR-03-ACT-01-ACT-DRAFT-SAVE
+      - EXISTING_SOURCE_UID
+      - ACT-DRAFT-SAVE
+      - FORM_MODAL
+      - ACT-DRAFT-SAVE
+      - CURRENT_VIEW_AND_SOURCE_ACTION_GATE
+      - admin:STR-03::ACT-DRAFT-SAVE
+      - SaveDraftRequest
+      - saveDraft
+      - POST /v1/drafts
+      - IAM_RUNTIME
+      - StrategyService / PlatformPlaybook Draft Version + Audit
+      - EFFECTFUL_EXACT
+    - row: 8
+      cells:
+      - CTRL-ADMIN-STR-03-ACT-02-ACT-APPROVE
+      - EXISTING_SOURCE_UID
+      - ACT-APPROVE
+      - FORM_MODAL
+      - ACT-APPROVE
+      - CURRENT_VIEW_AND_SOURCE_ACTION_GATE
+      - admin:STR-03::ACT-APPROVE
+      - ApproveGovernedResourceRequest
+      - approveGovernedResource
+      - POST /v1/governance/resources/{id}/approve
+      - IAM_RUNTIME
+      - StrategyService / PlatformPlaybook Approved Version + Approval/Audit
+      - EFFECTFUL_RUNTIME_MATERIALIZED
+    - row: 9
+      cells:
+      - CTRL-ADMIN-STR-03-ACT-03-ACT-NAV-OPEN
+      - EXISTING_SOURCE_UID
+      - ACT-NAV-OPEN
+      - DRAWER
+      - ACT-NAV-OPEN
+      - CURRENT_VIEW_AND_SOURCE_ACTION_GATE
+      - admin:STR-03::ACT-NAV-OPEN
+      - —
+      - getUiProjection
+      - GET /v1/ui-projections/{pageUid}
+      - Projection / source page read owner
+      - —
+      - READ_EXACT
+    - row: 10
+      cells:
+      - CTRL-ADMIN-STR-04-ACT-01-ACT-SEARCH
+      - EXISTING_SOURCE_UID
+      - ACT-SEARCH
+      - FORM_MODAL
+      - ACT-SEARCH
+      - CURRENT_VIEW_AND_SOURCE_ACTION_GATE
+      - admin:STR-04::ACT-SEARCH
+      - SearchProjectionRequest
+      - searchProjection
+      - POST /v1/search
+      - INFO_COMMAND_RUNTIME
+      - —
+      - EFFECTFUL_RUNTIME_MATERIALIZED
+    - row: 11
+      cells:
+      - CTRL-ADMIN-STR-04-ACT-02-ACT-NAV-OPEN
+      - EXISTING_SOURCE_UID
+      - ACT-NAV-OPEN
+      - DRAWER
+      - ACT-NAV-OPEN
+      - CURRENT_VIEW_AND_SOURCE_ACTION_GATE
+      - admin:STR-04::ACT-NAV-OPEN
+      - —
+      - getUiProjection
+      - GET /v1/ui-projections/{pageUid}
+      - Projection / source page read owner
+      - —
+      - READ_EXACT
+    - row: 12
+      cells:
+      - CTRL-ADMIN-STR-04-ACT-03-ACT-EXPORT
+      - EXISTING_SOURCE_UID
+      - ACT-EXPORT
+      - FORM_MODAL
+      - ACT-EXPORT
+      - CURRENT_VIEW_AND_SOURCE_ACTION_GATE
+      - admin:STR-04::ACT-EXPORT
+      - ExportProjectionRequest
+      - exportProjection
+      - POST /v1/exports
+      - INFO_COMMAND_RUNTIME
+      - Global Brain / Export Artifact + Export Audit
+      - EFFECTFUL_EXACT
+    - row: 13
+      cells:
+      - CTRL-ADMIN-STR-05-ACT-01-ACT-CANDIDATE-CREATE
+      - EXISTING_SOURCE_UID
+      - ACT-CANDIDATE-CREATE
+      - FORM_MODAL
+      - ACT-CANDIDATE-CREATE
+      - CURRENT_VIEW_AND_SOURCE_ACTION_GATE
+      - admin:STR-05::ACT-CANDIDATE-CREATE
+      - CreateCandidateRequest
+      - createCandidate
+      - POST /v1/candidates
+      - StrategyService
+      - StrategyService / OpportunityCandidate + Version/Audit
+      - EFFECTFUL_EXACT
+    - row: 14
+      cells:
+      - CTRL-ADMIN-STR-05-ACT-02-ACT-APPROVE
+      - EXISTING_SOURCE_UID
+      - ACT-APPROVE
+      - FORM_MODAL
+      - ACT-APPROVE
+      - CURRENT_VIEW_AND_SOURCE_ACTION_GATE
+      - admin:STR-05::ACT-APPROVE
+      - ApproveGovernedResourceRequest
+      - approveGovernedResource
+      - POST /v1/governance/resources/{id}/approve
+      - IAM_RUNTIME
+      - StrategyService / OpportunityCandidate Approved State + Version/Audit
+      - EFFECTFUL_RUNTIME_MATERIALIZED
+    - row: 15
+      cells:
+      - CTRL-ADMIN-STR-05-ACT-03-ACT-NAV-OPEN
+      - EXISTING_SOURCE_UID
+      - ACT-NAV-OPEN
+      - DRAWER
+      - ACT-NAV-OPEN
+      - CURRENT_VIEW_AND_SOURCE_ACTION_GATE
+      - admin:STR-05::ACT-NAV-OPEN
+      - —
+      - getUiProjection
+      - GET /v1/ui-projections/{pageUid}
+      - Projection / source page read owner
+      - —
+      - READ_EXACT
+    - row: 16
+      cells:
+      - CTRL-ADMIN-STR-06-ACT-01-ACT-CANDIDATE-COMPARE
+      - EXISTING_SOURCE_UID
+      - ACT-CANDIDATE-COMPARE
+      - DRAWER
+      - ACT-CANDIDATE-COMPARE
+      - CURRENT_VIEW_AND_SOURCE_ACTION_GATE
+      - admin:STR-06::ACT-CANDIDATE-COMPARE
+      - —
+      - compareCandidates
+      - GET /v1/candidates/compare
+      - STR-01 / shared registered service
+      - NOT_APPLICABLE — READ_EXACT / no mutation
+      - READ_EXACT
+    - row: 17
+      cells:
+      - CTRL-ADMIN-STR-06-ACT-02-ACT-CANDIDATE-DECIDE
+      - EXISTING_SOURCE_UID
+      - ACT-CANDIDATE-DECIDE
+      - FORM_MODAL
+      - ACT-CANDIDATE-DECIDE
+      - CURRENT_VIEW_AND_SOURCE_ACTION_GATE
+      - admin:STR-06::ACT-CANDIDATE-DECIDE
+      - RejectStrategyCandidateRequest
+      - rejectStrategyCandidate
+      - POST /v1/ai/strategy/candidates/{strategyCandidateId}/reject
+      - StrategyService
+      - StrategyService / StrategyCandidate Rejected State + DecisionContext + Audit
+      - EFFECTFUL_EXACT
+    - row: 18
+      cells:
+      - CTRL-ADMIN-STR-06-ACT-03-ACT-ADOPT-CONTEXT
+      - EXISTING_SOURCE_UID
+      - ACT-ADOPT-CONTEXT
+      - FORM_MODAL
+      - ACT-ADOPT-CONTEXT
+      - CURRENT_VIEW_AND_SOURCE_ACTION_GATE
+      - admin:STR-06::ACT-ADOPT-CONTEXT
+      - AdoptAsContextCandidateRequest
+      - adoptAsContextCandidate
+      - POST /v1/state-commands/strategycandidate/adoptascontextcandidate
+      - STR-01 / shared registered service
+      - AI-01 Context Owner / Governed Strategy Context Adoption Link + System 08 Audit
+      - EFFECTFUL_EXACT
+    - row: 19
+      cells:
+      - CTRL-ADMIN-STR-06-ACT-04-ACT-NAV-OPEN
+      - EXISTING_SOURCE_UID
+      - ACT-NAV-OPEN
+      - DRAWER
+      - ACT-NAV-OPEN
+      - CURRENT_VIEW_AND_SOURCE_ACTION_GATE
+      - admin:STR-06::ACT-NAV-OPEN
+      - —
+      - getUiProjection
+      - GET /v1/ui-projections/{pageUid}
+      - Projection / source page read owner
+      - —
+      - READ_EXACT
+  - index: 36
+    rows:
+    - row: 0
+      cells:
+      - Finding
+      - Source-grounded status
+    - row: 1
+      cells:
+      - DESIGN_AUTHORITY_RESOLVED_RUNTIME_NOT_ASSERTED
+      - '{"control_uid": "CTRL-ADMIN-STR-03-ACT-01-ACT-DRAFT-SAVE", "operation": "saveDraft", "design_runtime_owner": "IAM_RUNTIME", "design_persistence_owner": "StrategyService
+        / PlatformPlaybook Draft Version + Audit", "runtime_execution_claimed": false}'
+    - row: 2
+      cells:
+      - RUNTIME_IMPLEMENTATION_BLOCKED
+      - '{"control_uid": "CTRL-ADMIN-STR-04-ACT-03-ACT-EXPORT", "operation": "exportProjection"}'
+    - row: 3
+      cells:
+      - DESIGN_AUTHORITY_RESOLVED_RUNTIME_NOT_ASSERTED
+      - '{"control_uid": "CTRL-ADMIN-STR-05-ACT-01-ACT-CANDIDATE-CREATE", "operation": "createCandidate", "design_runtime_owner": "StrategyService", "design_persistence_owner":
+        "StrategyService / OpportunityCandidate + Version/Audit", "runtime_execution_claimed": false}'
+    - row: 4
+      cells:
+      - RUNTIME_IMPLEMENTATION_BLOCKED
+      - '{"control_uid": "CTRL-ADMIN-STR-06-ACT-01-ACT-CANDIDATE-COMPARE", "operation": "compareCandidates"}'
+    - row: 5
+      cells:
+      - DESIGN_AUTHORITY_RESOLVED_RUNTIME_NOT_ASSERTED
+      - '{"control_uid": "CTRL-ADMIN-STR-06-ACT-02-ACT-CANDIDATE-DECIDE", "operation": "rejectStrategyCandidate", "design_runtime_owner": "StrategyService", "design_persistence_owner":
+        "StrategyService / StrategyCandidate Rejected State + DecisionContext + Audit", "runtime_execution_claimed": false}'
+    - row: 6
+      cells:
+      - RUNTIME_IMPLEMENTATION_BLOCKED
+      - '{"control_uid": "CTRL-ADMIN-STR-06-ACT-03-ACT-ADOPT-CONTEXT", "operation": "adoptAsContextCandidate"}'
+    - row: 7
+      cells:
+      - DESIGN_AUTHORITY_COMPLETE_RUNTIME_EVIDENCE_SEPARATE
+      - '{"design_bound": ["saveDraft", "exportProjection", "createCandidate", "compareCandidates", "rejectStrategyCandidate", "adoptAsContextCandidate"], "runtime_execution_claimed":
+        false}'
+  - index: 37
+    rows:
+    - row: 0
+      cells:
+      - Profile UID
+      - Owner
+      - Applicability
+      - Dimensions
+      - Pass Threshold
+    - row: 1
+      cells:
+      - QCP-CORE-BASELINE-V1
+      - CORE
+      - CORE / Blueprint / Canonical Script
+      - '8'
+      - '95'
+    - row: 2
+      cells:
+      - QCP-ASSET-IMAGE-V1
+      - ASSET
+      - IMAGE-compatible asset outputs
+      - '9'
+      - '95'
+    - row: 3
+      cells:
+      - QCP-ASSET-AUDIO-V1
+      - ASSET
+      - VOICE / MUSIC / SFX outputs
+      - '8'
+      - '95'
+    - row: 4
+      cells:
+      - QCP-VIDEO-BASELINE-V1
+      - VIDEO
+      - VIDEO candidate outputs
+      - '9'
+      - '95'
+    - row: 5
+      cells:
+      - QCP-EDIT-FINAL-V1
+      - EDITING
+      - EDIT stage / final outputs
+      - '12'
+      - '95'
+    - row: 6
+      cells:
+      - QCP-QA-FINAL-OUTPUT-V1
+      - QA
+      - Final output / release-candidate review
+      - '17'
+      - '95'
+  - index: 38
+    rows:
+    - row: 0
+      cells:
+      - Invariant
+      - System-wide rule
+    - row: 1
+      cells:
+      - QA-SYNC-01
+      - 任何需要 Quality Review / Score / Evaluation 的系統，MUST resolve exact approved Criteria Profile + CriteriaVersion + QualityGatePolicyVersion；不得用 generic/default/latest
+        取代。
+    - row: 2
+      cells:
+      - QA-SYNC-02
+      - Static canonical catalog 必須有具體 rows；只有 Registry/Library/Dimension 容器而沒有 canonical content = CONTENT_INCOMPLETE。
+    - row: 3
+      cells:
+      - QA-SYNC-03
+      - Dynamic runtime records 可以為空；禁止用 mock/sample/fake business rows 讓頁面看起來完整。
+    - row: 4
+      cells:
+      - QA-SYNC-04
+      - QA score 不能覆蓋 Hard Block / Required Check；Rights / Policy / Evidence / Checksum / Provenance 等 blocker FAIL 時不得因總分高而 PASS。
+    - row: 5
+      cells:
+      - QA-SYNC-05
+      - Correction 必須產生 NEW exact output/version 後才可 Recheck；不得在原輸出上直接關閉 Finding。
+    - row: 6
+      cells:
+      - QA-SYNC-06
+      - Human Review 完成不等於 QA Gate PASS；人工不能繞過 Hard Block / Evidence / Policy / Criteria。
+    - row: 7
+      cells:
+      - QA-SYNC-07
+      - SG-02 lifecycle canonical path = EMPTY → DRAFT → REVIEW → APPROVED / ACTIVE → SUPERSEDED。
+    - row: 8
+      cells:
+      - QA-SYNC-08
+      - SG-02 Current Control Denominator = 12，包含 Submit Review；舊 11-control 描述不得作為 Current truth。
+    - row: 9
+      cells:
+      - QA-SYNC-09
+      - 只有 Word authority 已定義不等於 Runtime 已完成；Implementation / Production evidence 必須獨立標示。
+  - index: 39
+    rows:
+    - row: 0
+      cells:
+      - Concept
+      - Strategy system meaning
+      - QA meaning
+      - Invariant
+    - row: 1
+      cells:
+      - Candidate score / confidence
+      - Decision-support signal for strategy comparison
+      - Not a QA dimension score
+      - Never reuse strategy confidence as QA PASS evidence.
+    - row: 2
+      cells:
+      - Human strategy approval
+      - Business/strategic decision authority
+      - Not QA Manual Review completion
+      - A strategy-approved artifact may still require QA before external/release use.
+    - row: 3
+      cells:
+      - Evidence
+      - Supports strategy facts/candidates/decisions
+      - Supports QA dimension findings/checks
+      - Refs may overlap but owner/state semantics stay distinct.
+    - row: 4
+      cells:
+      - Risk
+      - Strategic/business risk
+      - Quality/rights/policy blocking condition
+      - Do not collapse into one generic severity.
+  - index: 40
+    rows:
+    - row: 0
+      cells:
+      - Output
+      - Rule
+    - row: 1
+      cells:
+      - Internal strategy candidate / fact projection
+      - Uses strategy governance; no automatic QA profile unless explicitly mapped.
+    - row: 2
+      cells:
+      - Presentation/media/report artifact generated from strategy
+      - Resolve applicable existing QCP profile by artifact type before release/external distribution.
+    - row: 3
+      cells:
+      - New recurring strategy-specific quality checklist
+      - Must be created as a governed SG-02 profile/version; an empty 'criteria' container is not acceptable.
+    - row: 4
+      cells:
+      - Artifact changed after QA
+      - Fresh evaluation required before publication/delivery.
+  - index: 41
+    rows:
+    - row: 0
+      cells:
+      - Control UID
+      - Operation
+      - Method / Path
+      - Payload
+      - Permission
+      - Current Runtime Owner
+      - Current Persistence Owner
+      - Required closure before enablement
+      - Current status
+    - row: 1
+      cells:
+      - CTRL-ADMIN-STR-03-ACT-01-ACT-DRAFT-SAVE
+      - saveDraft
+      - POST /v1/drafts
+      - SaveDraftRequest
+      - admin:STR-03::ACT-DRAFT-SAVE
+      - IAM_RUNTIME
+      - StrategyService / PlatformPlaybook Draft Version + Audit
+      - DESIGN_AUTHORITY_RESOLVED — shared IAM_RUNTIME may remain the registered draft/governance ingress, while canonical business persistence is StrategyService
+        / PlatformPlaybook Draft Version + Audit. The operation creates or updates only a governed PlatformPlaybook draft version; it does not approve, publish, or
+        bypass later approval. Runtime execution is not claimed by this Word.
+      - EFFECTFUL_EXACT
+    - row: 2
+      cells:
+      - CTRL-ADMIN-STR-04-ACT-03-ACT-EXPORT
+      - exportProjection
+      - POST /v1/exports
+      - ExportProjectionRequest
+      - admin:STR-04::ACT-EXPORT
+      - INFO_COMMAND_RUNTIME
+      - Global Brain / Export Artifact + Export Audit
+      - DESIGN_BOUND_TO_EXISTING_SHARED_EXPORT_OWNER — exact exportProjection/ExportProjectionRequest evidence resolves to the shared INFO export persistence owner;
+        runtime execution is not claimed by this Word.
+      - EFFECTFUL_EXACT
+    - row: 3
+      cells:
+      - CTRL-ADMIN-STR-05-ACT-01-ACT-CANDIDATE-CREATE
+      - createCandidate
+      - POST /v1/candidates
+      - CreateCandidateRequest
+      - admin:STR-05::ACT-CANDIDATE-CREATE
+      - StrategyService
+      - StrategyService / OpportunityCandidate + Version/Audit
+      - DESIGN_AUTHORITY_RESOLVED — the Opportunity view and lifecycle matrix bind createCandidate to OpportunityCandidate.CREATE/EDIT under StrategyService. Persistence
+        creates or versions an OpportunityCandidate with evidence lineage; it does not create a StrategyCandidate decision object and does not auto-approve it. Runtime
+        execution is not claimed by this Word.
+      - EFFECTFUL_EXACT
+    - row: 4
+      cells:
+      - CTRL-ADMIN-STR-06-ACT-01-ACT-CANDIDATE-COMPARE
+      - compareCandidates
+      - GET /v1/candidates/compare
+      - No-form read contract
+      - admin:STR-06::ACT-CANDIDATE-COMPARE
+      - STR-01 / shared registered service
+      - NOT_APPLICABLE — READ_EXACT / no mutation
+      - READ_EXACT design contract is source-backed by STR-01 compareCandidates. Persistence is NOT_APPLICABLE because the operation is a no-form read; runtime execution
+        is not claimed.
+      - READ_EXACT
+    - row: 5
+      cells:
+      - CTRL-ADMIN-STR-06-ACT-02-ACT-CANDIDATE-DECIDE
+      - rejectStrategyCandidate
+      - POST /v1/ai/strategy/candidates/{strategyCandidateId}/reject
+      - RejectStrategyCandidateRequest
+      - admin:STR-06::ACT-CANDIDATE-DECIDE
+      - StrategyService
+      - StrategyService / StrategyCandidate Rejected State + DecisionContext + Audit
+      - DESIGN_AUTHORITY_RESOLVED — Decision Reject/Adopt flow and StrategyCandidate.CONFIRM_OR_APPROVE bind rejectStrategyCandidate to StrategyService. Reject persists
+        the exact candidate/version rejected state, decision reason/evidence into DecisionContext, and audit lineage; it creates no ContextCandidate and executes
+        no downstream owner action. Runtime execution is not claimed by this Word.
+      - EFFECTFUL_EXACT
+    - row: 6
+      cells:
+      - CTRL-ADMIN-STR-06-ACT-03-ACT-ADOPT-CONTEXT
+      - adoptAsContextCandidate
+      - POST /v1/state-commands/strategycandidate/adoptascontextcandidate
+      - AdoptAsContextCandidateRequest
+      - admin:STR-06::ACT-ADOPT-CONTEXT
+      - STR-01 / shared registered service
+      - AI-01 Context Owner / Governed Strategy Context Adoption Link + System 08 Audit
+      - DESIGN_BOUND_TO_EXISTING_SHARED_CONTEXT_OWNER — source-backed adoptAsContextCandidate binding preserves AI-01 Context authority and System 08 audit linkage;
+        runtime execution is not claimed.
+      - EFFECTFUL_EXACT
+  - index: 42
+    rows:
+    - row: 0
+      cells:
+      - Rule
+      - Required behavior
+    - row: 1
+      cells:
+      - Owner resolution
+      - Search and bind existing canonical runtime/persistence owner first. Do not create a parallel Strategy runtime merely to clear the table.
+    - row: 2
+      cells:
+      - Authorization
+      - Existing permission resource must be enforced at the materialized runtime boundary; a Word permission cell alone is not runtime evidence.
+    - row: 3
+      cells:
+      - Persistence
+      - Mutation operations must identify canonical persistence owner/transaction boundary before enablement.
+    - row: 4
+      cells:
+      - Read-only compare
+      - GET comparison must still have canonical runtime/read owner and authorization evidence; absence of mutation does not waive owner binding.
+    - row: 5
+      cells:
+      - UI state
+      - Keep blocked controls disabled/fail-closed. Do not treat exact route/payload as implementation completion.
+    - row: 6
+      cells:
+      - Fresh evidence
+      - Only current-revision implementation + authorization + persistence/read + audit validation may change SPEC_EXACT_RUNTIME_BLOCKED.
+  - index: 43
+    rows:
+    - row: 0
+      cells:
+      - Reference UID
+      - Page
+      - Missing Field
+      - Canonical Owner
+      - Local Role
+      - Authority Basis
+    - row: 1
+      cells:
+      - STR-01-BTN-ATTACH
+      - STR-01
+      - operation
+      - 02_ACPOS_AI_Conversation_Memory_MultiAI_Assistant_Mother_Basic_Logic_Design_Normative_Contract_v1.0.docx
+      - CROSS_SYSTEM_REFERENCE_ONLY
+      - System 02 is the unique Shared Conversation Core; STR conversation view/attachment controls are conversation-core concerns consumed by Strategy.
+    - row: 2
+      cells:
+      - STR-01-VIEW-CONVERSATION
+      - STR-01
+      - operation
+      - 02_ACPOS_AI_Conversation_Memory_MultiAI_Assistant_Mother_Basic_Logic_Design_Normative_Contract_v1.0.docx
+      - CROSS_SYSTEM_REFERENCE_ONLY
+      - System 02 is the unique Shared Conversation Core; STR conversation view/attachment controls are conversation-core concerns consumed by Strategy.
+  - index: 44
+    rows:
+    - row: 0
+      cells:
+      - Control UID
+      - Operation
+      - Runtime Status
+      - Method / Path
+      - Payload / Schema
+      - Persistence Semantics
+    - row: 1
+      cells:
+      - STR-01-TBL-COMPARE
+      - compareCandidates
+      - READ_EXACT
+      - GET /v1/candidates/compare
+      - No-form read contract
+      - N/A - no mutation
+    - row: 2
+      cells:
+      - STR-01-BTN-COMPARE
+      - compareCandidates
+      - READ_EXACT
+      - GET /v1/candidates/compare
+      - No-form read contract
+      - N/A - no mutation
+    - row: 3
+      cells:
+      - STR-01-BTN-ADOPT
+      - adoptAsContextCandidate
+      - EFFECTFUL_EXACT
+      - POST /v1/state-commands/strategycandidate/adoptascontextcandidate
+      - AdoptAsContextCandidateRequest
+      - Still requires explicit persistence-owner remediation if no exact owner is defined
+  - index: 45
+    rows:
+    - row: 0
+      cells:
+      - Control UID
+      - Operation
+      - Method / Path
+      - Payload / Schema
+      - Persistence Owner
+      - Semantics
+    - row: 1
+      cells:
+      - STR-01-BTN-SUBMIT-REVIEW
+      - submitStrategyReview
+      - POST /v1/state-commands/strategycandidate/submitstrategyreview
+      - SubmitStrategyReviewRequest
+      - System 08 / StrategyCandidate + Review State/Audit
+      - CANDIDATE_READY→REVIEW_REQUIRED requires exact candidate, expected_version, review permission and evidence; submission creates/updates governed review-request
+        state only and must not create an approval decision.
+    - row: 2
+      cells:
+      - STR-01-BTN-ADOPT
+      - adoptAsContextCandidate
+      - UNCHANGED
+      - UNCHANGED
+      - AI-01 Context Owner / Governed Strategy Context Adoption Link + System 08 Audit
+      - Adopt-as-context occurs only after human review/decision evidence and does not execute an owner module. Context authority remains AI-01; System 08 preserves
+        candidate/decision/audit linkage without creating a second Context Engine.
+  - index: 46
+    rows:
+    - row: 0
+      cells:
+      - Control UID
+      - Operation
+      - Canonical Runtime Owner
+      - Canonical Persistence Owner
+      - Entity/Lifecycle Authority
+      - Exact Design Semantics
+    - row: 1
+      cells:
+      - CTRL-ADMIN-STR-03-ACT-01-ACT-DRAFT-SAVE
+      - saveDraft
+      - IAM_RUNTIME
+      - StrategyService / PlatformPlaybook Draft Version + Audit
+      - PlatformPlaybook / CREATE + EDIT + VERSION + AUDIT
+      - DESIGN_AUTHORITY_RESOLVED — shared IAM_RUNTIME may remain the registered draft/governance ingress, while canonical business persistence is StrategyService
+        / PlatformPlaybook Draft Version + Audit. The operation creates or updates only a governed PlatformPlaybook draft version; it does not approve, publish, or
+        bypass later approval. Runtime execution is not claimed by this Word.
+    - row: 2
+      cells:
+      - CTRL-ADMIN-STR-05-ACT-01-ACT-CANDIDATE-CREATE
+      - createCandidate
+      - StrategyService
+      - StrategyService / OpportunityCandidate + Version/Audit
+      - OpportunityCandidate / CREATE + EDIT + VERSION + AUDIT
+      - DESIGN_AUTHORITY_RESOLVED — the Opportunity view and lifecycle matrix bind createCandidate to OpportunityCandidate.CREATE/EDIT under StrategyService. Persistence
+        creates or versions an OpportunityCandidate with evidence lineage; it does not create a StrategyCandidate decision object and does not auto-approve it. Runtime
+        execution is not claimed by this Word.
+    - row: 3
+      cells:
+      - CTRL-ADMIN-STR-06-ACT-02-ACT-CANDIDATE-DECIDE
+      - rejectStrategyCandidate
+      - StrategyService
+      - StrategyService / StrategyCandidate Rejected State + DecisionContext + Audit
+      - StrategyCandidate / CONFIRM_OR_APPROVE + VERSION + AUDIT
+      - DESIGN_AUTHORITY_RESOLVED — Decision Reject/Adopt flow and StrategyCandidate.CONFIRM_OR_APPROVE bind rejectStrategyCandidate to StrategyService. Reject persists
+        the exact candidate/version rejected state, decision reason/evidence into DecisionContext, and audit lineage; it creates no ContextCandidate and executes
+        no downstream owner action. Runtime execution is not claimed by this Word.
+  - index: 47
+    rows:
+    - row: 0
+      cells:
+      - Rule
+      - Normative Result
+    - row: 1
+      cells:
+      - No second Strategy runtime
+      - StrategyService remains the canonical Strategy business owner. StrategyFactPackService remains fact/acquisition authority. Shared IAM/INFO owners may provide
+        registered ingress/governance/export capabilities but do not become Strategy business persistence owners.
+    - row: 2
+      cells:
+      - saveDraft disambiguation
+      - POST /v1/drafts is a shared draft ingress. In ADMIN STR Playbook view, resource_type/target_ref resolve the business entity to PlatformPlaybook; canonical
+        persistence therefore belongs to StrategyService / PlatformPlaybook Draft Version + Audit.
+    - row: 3
+      cells:
+      - createCandidate disambiguation
+      - ADMIN STR View 4 is Opportunity. The lifecycle matrix explicitly marks OpportunityCandidate Create/Edit as Create Candidate*. Therefore POST /v1/candidates
+        here creates/versions OpportunityCandidate, not StrategyCandidate.
+    - row: 4
+      cells:
+      - rejectStrategyCandidate disambiguation
+      - The path contains strategyCandidateId and the Decision flow explicitly performs Reject/Adopt. StrategyCandidate.CONFIRM_OR_APPROVE is REQUIRED; rejection
+        persists candidate state + human reason/evidence in DecisionContext and audit lineage.
+    - row: 5
+      cells:
+      - Approval separation
+      - Draft Save and Create Candidate do not imply approval. Existing approveGovernedResource remains the later explicit approval gate where applicable.
+    - row: 6
+      cells:
+      - Context separation
+      - Reject never creates ContextCandidate. Only adoptAsContextCandidate may create governed context handoff and still preserves AI-01 downstream context authority.
+    - row: 7
+      cells:
+      - Runtime evidence separation
+      - Design authority is now complete. Runtime implementation/production acceptance remain outside this Word-only scope and must be proven separately; lack of
+        runtime evidence MUST NOT mutate the design owner mapping back into SOURCE_NOT_DEFINED/AUTHORITY_GAP.
+  - index: 48
+    rows:
+    - row: 0
+      cells:
+      - Function
+      - Canonical Chain
+    - row: 1
+      cells:
+      - Playbook Draft Save
+      - Selected platform/account scope + SaveDraftRequest → admin:STR-03 permission/gate → IAM_RUNTIME shared ingress → StrategyService resolves PlatformPlaybook
+        target → append/create governed draft version + references → audit → refreshed Playbook projection → later explicit approval.
+    - row: 2
+      cells:
+      - Opportunity Candidate Create
+      - Trend/Forecast projection + evidence + CreateCandidateRequest → admin:STR-05 permission/gate → StrategyService → OpportunityCandidate create/version → evidence
+        lineage + audit → DRAFT/REVIEW projection → explicit later approval.
+    - row: 3
+      cells:
+      - Strategy Candidate Reject
+      - Exact strategyCandidateId + expected/current version context + decision_reason/evidence_refs → admin:STR-06 permission/state gate → StrategyService → persist
+        rejected StrategyCandidate state + DecisionContext reason/evidence → audit → refreshed Decision projection; no ContextCandidate/downstream execution.
+  - index: 49
+    rows:
+    - row: 0
+      cells:
+      - Case
+      - Required Behavior
+    - row: 1
+      cells:
+      - resource_type/target_ref cannot resolve PlatformPlaybook
+      - Fail closed; no draft persistence.
+    - row: 2
+      cells:
+      - Opportunity candidate evidence/source invalid
+      - Fail closed; no candidate creation/version.
+    - row: 3
+      cells:
+      - Strategy candidate ID/version mismatch
+      - Fail closed; no rejected-state mutation.
+    - row: 4
+      cells:
+      - Permission/gate failure
+      - No mutation; explicit denied/error response and audit where policy requires.
+    - row: 5
+      cells:
+      - Partial persistence
+      - Forbidden. Business state/version/audit linkage must be transactionally coherent at the design contract level.
+    - row: 6
+      cells:
+      - Acceptance
+      - PASS when both System 08 and ADMIN-STR-01 expose the same three Runtime/Persistence Owner mappings, no Authority-gap placeholder remains for these controls,
+        and no second Strategy runtime/business store is introduced.
+  - index: 50
+    rows:
+    - row: 0
+      cells:
+      - Control UID
+      - Business Entity / Resolution
+      - Canonical Persistence Owner
+      - Design Semantics
+    - row: 1
+      cells:
+      - CTRL-ADMIN-STR-02-ACT-01-ACT-CONFIGURE
+      - StrategicSource or StrategicFact
+      - StrategyFactPackService / Resolved StrategicSource or StrategicFact Governed State/Version + Audit
+      - ADMIN STR View 2 is Intelligence/Fact governance. resource_type/resource_id resolves the exact StrategicSource or StrategicFact; shared IAM_RUNTIME is governance
+        ingress only. Persistence remains StrategyFactPackService, preserving source/fact version, citation/quality/scope and audit lineage.
+    - row: 2
+      cells:
+      - CTRL-ADMIN-STR-02-ACT-02-ACT-APPROVE
+      - StrategicSource or StrategicFact
+      - StrategyFactPackService / Resolved StrategicSource or StrategicFact Approved State/Version + Approval/Audit
+      - Approves the exact Intelligence/Fact governed resource/version under StrategyFactPackService. Approval persists exact approved state/version plus rationale/evidence
+        and audit lineage; inference cannot be promoted to Fact without evidence governance.
+    - row: 3
+      cells:
+      - CTRL-ADMIN-STR-03-ACT-02-ACT-APPROVE
+      - PlatformPlaybook
+      - StrategyService / PlatformPlaybook Approved Version + Approval/Audit
+      - Playbook approval follows the existing draft/version chain. Persistence resolves exact PlatformPlaybook/version and records approved state, rationale/approval
+        and audit lineage; it does not publish or execute downstream work.
+    - row: 4
+      cells:
+      - CTRL-ADMIN-STR-05-ACT-02-ACT-APPROVE
+      - OpportunityCandidate
+      - StrategyService / OpportunityCandidate Approved State + Version/Audit
+      - Opportunity approval resolves the exact OpportunityCandidate/version created from governed Trend/Forecast evidence, persists approved/review state plus evidence/audit
+        lineage, and does not convert the candidate into an automatic Strategy decision or downstream execution.
+  - index: 51
+    rows:
+    - row: 0
+      cells:
+      - Invariant
+      - Rule
+    - row: 1
+      cells:
+      - Ingress ≠ Persistence Owner
+      - Shared route/runtime/identity ingress does not transfer business data authority. The target resource/entity decides canonical persistence.
+    - row: 2
+      cells:
+      - Exact identity/version
+      - Every effectful mutation MUST resolve the exact entity/resource identity and version/state required by its current gate; latest/current aliases may not silently
+        replace exact binding.
+    - row: 3
+      cells:
+      - Audit lineage
+      - Effectful state/version changes preserve correlation/idempotency/evidence or rationale as applicable and generate/retain governed audit lineage.
+    - row: 4
+      cells:
+      - No parallel authority
+      - The closure reuses the existing canonical owner shown in the current Word corpus and MUST NOT create a duplicate store/service for the same concept.
+    - row: 5
+      cells:
+      - Runtime evidence separation
+      - A complete design Persistence Owner does not claim application/API/DB/Production execution. Runtime status remains separately evidenced and may remain NOT_EXECUTED
+        where the current Word says so.

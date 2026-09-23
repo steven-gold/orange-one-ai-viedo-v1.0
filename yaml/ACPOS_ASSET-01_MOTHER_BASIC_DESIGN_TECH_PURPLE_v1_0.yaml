@@ -1,0 +1,5344 @@
+schema_version: ACPOS_WORD_YAML_PROJECTION_V1
+projection_mode: SOURCE_GROUNDED_NO_INVENTION
+sequence: 12
+source:
+  branch: 0921acpos
+  git_head: 7bd2dbdb89b685c5f5f6045c8e3e17c5f2500db5
+  word_path: ACPOS_ASSET-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx
+  word_sha256: ab270a8409b9d0a3b8dc6283aa6abfb717ec545c08387bb207cf8d7036c99ef1
+authority_rules:
+- Word source remains canonical for this projection.
+- Do not silently fill, correct, reconcile, or replace source content.
+- Do not convert BLOCKED, NOT_EXECUTED, REQUIRE_EXACT_BINDING, SOURCE_NOT_DEFINED into PASS.
+- Paragraph and table order is preserved by source index.
+document:
+  paragraphs:
+  - index: 0
+    style: Normal
+    text: ACPOS ASSET-01
+  - index: 1
+    style: Title
+    text: '素材生產工作區
+
+      Mother Basic Design｜科技紫重製版'
+  - index: 2
+    style: Normal
+    text: 從 exact Blueprint / Canonical Script / DNA / Asset Manifest 到 Reuse First、Generate Missing、Layer/Patch、Evaluate/Decision、Exact Handoff 的可施工 Basic Design。
+  - index: 5
+    style: Normal
+    text: 本文件不是「圖庫示意」：視覺稿內只使用 Current Authority 正式 Section / Control / Gate / State 與 exact-ref placeholder；沒有假專案、假素材數量、假 Provider、假版本、假評分。
+  - index: 7
+    style: Heading 1
+    text: 1. Current Truth / Source Precedence
+  - index: 8
+    style: List Bullet
+    text: Current Truth 以 GitHub branch 0921acpos; live HEAD resolves fresh at audit time 與 Current Authority Manifest 為準；聊天內容只作搜尋線索。
+  - index: 9
+    style: List Bullet
+    text: 頁面 Authority：authority/pages/workspace/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml。
+  - index: 10
+    style: List Bullet
+    text: '視覺：GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY；科技紫 Primary #8B5CFF / Secondary #6E35FF。'
+  - index: 11
+    style: List Bullet
+    text: Shell：頂部 58px 全寬；左側預設 64px icon-only，hover/focus 才出現 221px Overlay；workspace 不 reflow。
+  - index: 12
+    style: List Bullet
+    text: Naming：ACPOS_SYSTEM 唯一治理 Canonical Filename / Artifact Identity / Version / Checksum；ASSET 不可手動命名或 Rename。
+  - index: 13
+    style: List Bullet
+    text: Unknown / unregistered behavior：BLOCK + REPORT_AUTHORITY_GAP。
+  - index: 14
+    style: Heading 2
+    text: 1.1 Mother Basic Design 產物鏈
+  - index: 17
+    style: Heading 1
+    text: 2. Requirement / Scope / Hard Boundary
+  - index: 18
+    style: Normal
+    text: 頁面目的：在單一 ASSET-01 工作區，讀取已鎖定的 Project/Topic/Task 上游來源，優先 Reuse exact eligible assets，只對 Missing 項目執行生成，完成候選、ASSET criteria 評估、人工 Confirm/Modify、可選 Layer/Patch、Lock
+      exact version，最後產生 Exact Handoff Manifest 交付 VIDEO。
+  - index: 20
+    style: Heading 2
+    text: 2.1 Asset Types
+  - index: 23
+    style: Heading 1
+    text: 3. Business Entity × Operation / Ownership
+  - index: 26
+    style: Heading 1
+    text: 4. Stage / Journey / Interaction Topology
+  - index: 28
+    style: Heading 2
+    text: 4.1 AUTO vs MANUAL
+  - index: 30
+    style: Heading 2
+    text: 4.2 Functional Chain
+  - index: 31
+    style: Normal
+    text: CORE exact handoff → Resolve Inputs → Reuse First / Generate Missing → image-compatible Layer / Composite (audio skips) → ASSET Evaluation → WAIT_CONFIRMATION
+      → Confirm 或 Modify → Lock Exact Version → Exact Handoff Manifest → VIDEO boundary。
+  - index: 33
+    style: Heading 1
+    text: 5. Page / Section / Component / Visual Architecture
+  - index: 35
+    style: Heading 2
+    text: 5.1 Components
+  - index: 38
+    style: Heading 2
+    text: 5.2 Geometry
+  - index: 41
+    style: Heading 1
+    text: 6.1 UI Visual Candidate · A｜Main Production / WAIT_CONFIRMATION
+  - index: 43
+    style: Normal
+    text: A｜Main Production / WAIT_CONFIRMATION
+  - index: 44
+    style: Normal
+    text: 主畫面對應：SEC-01 Context / Execution、SEC-02 Manifest / List、SEC-03 Binding、SEC-04 Preview / Compare、SEC-05 Reuse First、SEC-09 Score / Version / Decision、SEC-08
+      Runtime。
+  - index: 46
+    style: Heading 1
+    text: 6.2 UI Visual Candidate · B｜Correction Conversation
+  - index: 48
+    style: Normal
+    text: B｜Correction Conversation
+  - index: 49
+    style: Normal
+    text: Correction 僅在 Modify/Finding 路徑顯示；繁中修改要求 → Correction Script Candidate → Human Approve → Shared Translation / Routing → Execute approved correction。
+  - index: 51
+    style: Heading 1
+    text: 6.3 UI Visual Candidate · C｜Layer / Patch + Expanded Sidebar
+  - index: 53
+    style: Normal
+    text: C｜Layer / Patch + Expanded Sidebar
+  - index: 54
+    style: Normal
+    text: Layer/Patch 僅 image-compatible asset type 顯示；畫面同時展示 221px 展開 Sidebar Overlay。接受 Patch 產生新 ASSET_VERSION + 新 LAYER_DOCUMENT_VERSION，永不覆寫 source。
+  - index: 56
+    style: Heading 1
+    text: 6.4 UI Visual Candidate · D｜Audio Asset / No Layer Controls
+  - index: 58
+    style: Normal
+    text: D｜Audio Asset / No Layer Controls
+  - index: 59
+    style: Normal
+    text: Voice / Music / SFX 使用 Audio Waveform Preview；Layer / Patch 不 render，明確顯示 Not Applicable，不用 disabled 假控制。
+  - index: 61
+    style: Heading 1
+    text: 6.5 UI Visual Candidate · E｜Finalize / Exact Handoff
+  - index: 63
+    style: Normal
+    text: E｜Finalize / Exact Handoff
+  - index: 64
+    style: Normal
+    text: Finalize 只在 Confirm + Required complete + Missing=0 + exact version locked + handoff manifest verified 後可 Handoff → VIDEO；VIDEO 內部功能不出現在本頁。
+  - index: 66
+    style: Heading 1
+    text: 7. Atomic Control Matrix · 85/85
+  - index: 67
+    style: Normal
+    text: 以下 85 Controls 皆直接取自 Current ASSET-01 Authority；不得新增未列控制。表格跨頁時重複 Header。
+  - index: 70
+    style: Heading 1
+    text: 8. Action / Gate / Permission / Runtime Matrix · 44/44
+  - index: 73
+    style: Heading 1
+    text: 9. Gate / Permission Contract
+  - index: 74
+    style: Heading 2
+    text: 9.1 Permissions · 8/8
+  - index: 76
+    style: Heading 2
+    text: 9.2 Gates · 21/21
+  - index: 79
+    style: Heading 1
+    text: 10. Integration Ports · 19/19
+  - index: 81
+    style: Normal
+    text: Page code 不得自行發明 endpoint；所有 effectful runtime 只能綁定上列 Current Integration Port 或明確 shared system operation。
+  - index: 83
+    style: Heading 1
+    text: 11. State / Recovery / Error Contract
+  - index: 84
+    style: Heading 2
+    text: 11.1 Page States · 10/10
+  - index: 86
+    style: Heading 2
+    text: 11.2 Error / Recovery · 17/17
+  - index: 89
+    style: Heading 1
+    text: 12. Data Binding / Script / Naming Contract
+  - index: 91
+    style: Heading 2
+    text: 12.1 Production Script Sections
+  - index: 92
+    style: Normal
+    text: ASSET Script 使用現有 8-section content contract：Requirement / Identity-DNA / Character / Scene / Object-Text / Style-Light-VFX / Audio / Output。ASSET 頁不建立平行
+      Script Authority。
+  - index: 94
+    style: Heading 1
+    text: 13. Layer / Patch Functional Design
+  - index: 95
+    style: Normal
+    text: Layer/Patch 是 ACPOS Versioned Layer Document / AssetPatch Runtime 的 UI 實體化；只有 image-compatible asset types 可用。Voice/Music/SFX 不 render Layer/Patch controls。
+  - index: 97
+    style: Heading 2
+    text: 13.1 Layer Types
+  - index: 98
+    style: Normal
+    text: BACKGROUND / CHARACTER_BODY / FACE / EYES / NOSE / MOUTH / HAIR / COSTUME / PROPS / FOREGROUND / EFFECTS / TEXT_UI / MASK / ADJUSTMENT。
+  - index: 99
+    style: Heading 2
+    text: 13.2 Blend Modes
+  - index: 100
+    style: Normal
+    text: NORMAL / MULTIPLY / SCREEN / OVERLAY / SOFT_LIGHT / HARD_LIGHT / COLOR_DODGE / LINEAR_DODGE / COLOR_BURN / LINEAR_BURN / DIFFERENCE / EXCLUSION。
+  - index: 102
+    style: Heading 1
+    text: 14. Function ↔ Visual Binding
+  - index: 105
+    style: Heading 1
+    text: 15. Cross-page Flow / Handoff Boundary
+  - index: 106
+    style: Normal
+    text: Inbound：CORE/Blueprint 已完成 Project/Topic/Task + Child Lock + Canonical Script + DNA + Asset Manifest 等 exact refs，透過 Department Handoff 讓 ASSET Task READY。
+  - index: 107
+    style: Normal
+    text: Outbound：ASSET 只交付 Exact Asset Handoff Manifest；VIDEO 消費 exact locked asset version/ref，不得從 filename 推論 business identity。
+  - index: 110
+    style: Heading 1
+    text: 16. Acceptance / Hard Locks / DoD
+  - index: 112
+    style: Heading 2
+    text: 16.1 Hard Locks
+  - index: 113
+    style: List Bullet
+    text: Only ASSET-01 is current executable ASSET workspace page；不得建立 split/parallel ASSET page。
+  - index: 114
+    style: List Bullet
+    text: Provider/Model 只由 shared AI API Routing 決定；頁面不得配置 provider/model。
+  - index: 115
+    style: List Bullet
+    text: Canonical filename / output identity 由 ACPOS_SYSTEM；不得手動 rename。
+  - index: 116
+    style: List Bullet
+    text: All versions immutable；correction/patch creates new version。
+  - index: 117
+    style: List Bullet
+    text: Exact Handoff Manifest required before VIDEO receives output。
+  - index: 118
+    style: List Bullet
+    text: ASSET-only LayerDocument / AssetPatch；跨部門 patch/output mutation forbidden。
+  - index: 119
+    style: List Bullet
+    text: No unlisted Section / Component / Control / Action / State / Gate / Permission / API / Business Sample Data。
+  - index: 120
+    style: Heading 2
+    text: 16.2 DoD / Freeze
+  - index: 123
+    style: Heading 1
+    text: 17. Resume / Next Transition
+  - index: 124
+    style: Normal
+    text: 這份 Word 的合法下一步不是直接施工。依 Mother Basic Design / Visual governance，先由 Human Reviewer 檢視 ASSET-01 的工作區比例、科技紫風格、5 種狀態與功能對位；若需要調整，修改 Visual Candidate；只有 Selected
+      Approved Candidate 形成後，才可進 Authority Update / Design Freeze / Implementation Handoff。
+  - index: 126
+    style: Normal
+    text: 文件版號 v1.0 僅代表本次 Basic Design 文件 revision，不等於 Current Governance / Page Authority version。
+  - index: 128
+    style: Heading 1
+    text: 2026-09-21 Machine Authority Construction Closure / 機器權威施工綁定封板
+  - index: 129
+    style: Normal
+    text: '[ACPOS-20260921-SOURCE-GROUNDED-CONSTRUCTION-CLOSURE-V2] Source-grounded only. Existing Current source wins; missing source values remain blocked/decision-required.
+      This closure supersedes the prior generic 2026-09-21 V1/V3 annex only, not the original domain logic or human visual review gates.'
+  - index: 130
+    style: Heading 2
+    text: ASSET-01 · Exact Construction Binding
+  - index: 131
+    style: Heading 2
+    text: Page Construction Invariant
+  - index: 132
+    style: Normal
+    text: The exact control denominator above is the only construction denominator for this page. Components/fields/visual IDs are not counted as additional controls.
+      Existing source UIDs are preserved. A control classified UI_LOCAL_EXACT MUST NOT create a server write. A control classified SPEC_EXACT_RUNTIME_BLOCKED / NOT_EXECUTED
+      MUST remain disabled or fail-closed until its runtime evidence exists.
+  - index: 134
+    style: Heading 1
+    text: ASSET-01 Concrete Evaluation Dimensions
+  - index: 135
+    style: Normal
+    text: '[ACPOS-20260921-CONCRETE-BUSINESS-CONTENT-CLOSURE-V1] 這一段是完整來源掃描後補入的 Concrete Business Content Authority。既有來源已明確的內容沿用；原來源只有抽象 Criteria/Dimension 容器而缺實際明細者，以下項目標示為本次新
+      Authority。'
+  - index: 136
+    style: Heading 2
+    text: QCP-ASSET-IMAGE-V1 · ASSET · IMAGE asset outputs
+  - index: 137
+    style: Normal
+    text: 'Scoring: 每個 Dimension 0–100；Weighted Score = Score × Weight / 100；Total = 全部適用 Dimension 加總。PASS = Total ≥ 95 且所有 Hard Block / Required Check PASS。頁面不得自行新增第二套
+      threshold。'
+  - index: 138
+    style: Heading 2
+    text: QCP-ASSET-AUDIO-V1 · ASSET · VOICE / MUSIC / SFX asset outputs
+  - index: 139
+    style: Normal
+    text: 'Scoring: 每個 Dimension 0–100；Weighted Score = Score × Weight / 100；Total = 全部適用 Dimension 加總。PASS = Total ≥ 95 且所有 Hard Block / Required Check PASS。頁面不得自行新增第二套
+      threshold。'
+  - index: 140
+    style: Normal
+    text: ASSET-01-FLD-DIMENSIONS 必須依 Asset Type 選擇 IMAGE 或 AUDIO profile，逐項顯示 Dimension UID / Label / Weight / Score / Hard Block / Evidence。CHARACTER/SCENE/OBJECT/VFX/THUMBNAIL
+      等 image-compatible 類使用 IMAGE profile；VOICE/MUSIC/SFX 使用 AUDIO profile。不得再只顯示抽象欄位名稱。
+  - index: 142
+    style: Heading 1
+    text: Batch 16 · Operation / Runtime Owner Binding Ledger
+  - index: 143
+    style: Normal
+    text: '[ACPOS-20260921-BATCH-16-OPERATION-OWNER-CONTRACT-CLOSURE-V1::PAGE::ASSET-01] The existing product-control registry cells above are updated only for the
+      exact fields authorized by the matching Canonical Owner contract. No Method/Path is invented and no Runtime/Production execution is claimed.'
+  - index: 145
+    style: Heading 1
+    text: Batch 56 · ASSET-01 Final Contract Binding Ledger
+  - index: 146
+    style: Normal
+    text: '[ACPOS-20260922-BATCH-56-ASSET-FINAL-CONTRACT-REMEDIATION-V1::PAGE::ASSET-01] Existing correction-script, restore-as-new and version-lock state-command
+      routes are preserved. Eighteen previously undefined ASSET routes are formal System 05 design contracts. Layer/Patch/Composition/Asset versions remain immutable/versioned;
+      preview is non-applied; source hash/version mismatch fails closed; handoff carries exact provenance. No provider/runtime deployment is claimed.'
+  - index: 148
+    style: Heading 2
+    text: Canonical Business Entity Operation Applicability Matrix / 業務實體操作適用性矩陣
+  - index: 149
+    style: Normal
+    text: 'Authority: Current Word design + Mother §71 bounded completion. 本矩陣只正規化既有行為與目前未授權行為；不得據此新增 Business Entity、Operation、Runtime 或 API。 Current tree: b2f81b20322dd9e9268001126b07931b437e27df.'
+  - index: 151
+    style: Heading 1
+    text: Mother Planning / Basic Design Closure Annex｜規劃設計規範閉環補充
+  - index: 152
+    style: Normal
+    text: '[ACPOS-20260922-PLANNING-DESIGN-CLOSURE-ANNEX-V1] 本附錄只補規劃／基本設計規範缺口；原頁面既有功能、Owner、Operation、Permission、Entity、Visual 與跨頁 Authority 仍為同一 Canonical Owner。不得由本附錄發明
+      Runtime/API/DB/Provider 行為，也不得建立第二套平行規範。'
+  - index: 153
+    style: Heading 2
+    text: Design System / Layout Closure｜設計系統與版面補齊
+  - index: 154
+    style: Normal
+    text: '[ACPOS-DESIGN-CLOSURE:ASSET-01:DESIGN-SYSTEM]'
+  - index: 155
+    style: Heading 2
+    text: Visual Geometry Contract Closure｜視覺幾何補齊
+  - index: 156
+    style: Normal
+    text: '[ACPOS-DESIGN-CLOSURE:ASSET-01:GEOMETRY]'
+  - index: 157
+    style: Heading 2
+    text: A11y / i18n Design Contract Closure｜無障礙與語系補齊
+  - index: 158
+    style: Normal
+    text: '[ACPOS-DESIGN-CLOSURE:ASSET-01:A11Y-I18N]'
+  - index: 159
+    style: Heading 2
+    text: Audit Baseline / Acceptance Matrix / Definition of Done Closure
+  - index: 160
+    style: Normal
+    text: '[ACPOS-DESIGN-CLOSURE:ASSET-01:AUDIT]'
+  - index: 161
+    style: Heading 2
+    text: Design Freeze Package Closure｜設計封板包補齊
+  - index: 162
+    style: Normal
+    text: '[ACPOS-DESIGN-CLOSURE:ASSET-01:FREEZE]'
+  tables:
+  - index: 0
+    rows:
+    - row: 0
+      cells:
+      - Current Truth
+      - Value
+    - row: 1
+      cells:
+      - Repository / Branch
+      - steven-gold/orange-one-ai-viedo-v1.0 / 0921acpos
+    - row: 2
+      cells:
+      - Live HEAD
+      - RESOLVE_FRESH_AT_AUDIT_TIME
+    - row: 3
+      cells:
+      - Current Authority Manifest SHA
+      - 465329b6fb19b8e44c3083a9f280015ee95cc55c
+    - row: 4
+      cells:
+      - ASSET-01 Authority SHA
+      - 9668e2307c722ea4cf64f93f07c92da1b3abcc28
+    - row: 5
+      cells:
+      - Page UID
+      - ASSET-01
+    - row: 6
+      cells:
+      - Authority
+      - ASSET_PAGE_VISUAL_AUTHORITY_FINAL · FINAL_LOCKED · Current-only
+    - row: 7
+      cells:
+      - Visual System
+      - GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY · dark purple enterprise AI production workstation
+    - row: 8
+      cells:
+      - Global Shell
+      - V1.9 · 58px full-width header · 64px collapsed / 221px overlay sidebar
+    - row: 9
+      cells:
+      - Document status
+      - BASIC DESIGN / VISUAL CANDIDATE
+    - row: 10
+      cells:
+      - Design freeze
+      - FALSE · Pending Human Review
+  - index: 1
+    rows:
+    - row: 0
+      cells:
+      - Artifact Layer
+      - ASSET-01 落地內容
+      - 狀態
+    - row: 1
+      cells:
+      - Current Truth / Requirement
+      - Current-only Authority + ASSET-only boundary + real-data-only
+      - BOUND
+    - row: 2
+      cells:
+      - Entity / Operation
+      - 18 Objects + 44 Actions + 19 Ports
+      - BOUND
+    - row: 3
+      cells:
+      - Hierarchy / Journey
+      - 5 Stage + 5 Transition；AUTO/MANUAL
+      - BOUND
+    - row: 4
+      cells:
+      - Workbench / Interaction Topology
+      - 20/60/20 preview-first；lower rows extend full width
+      - BOUND
+    - row: 5
+      cells:
+      - Page / Section / Component
+      - 10 Sections + 16 Components + 10 Visuals
+      - BOUND
+    - row: 6
+      cells:
+      - Control / Gate / Permission
+      - 85 Controls + 21 Gates + 8 Permissions
+      - BOUND
+    - row: 7
+      cells:
+      - State / Recovery
+      - 10 Page States + 17 Error/Recovery
+      - BOUND
+    - row: 8
+      cells:
+      - Data Binding
+      - Blueprint / Script / DNA / Manifest / Naming / Instruction / Route exact refs
+      - BOUND
+    - row: 9
+      cells:
+      - Function ↔ Visual
+      - 每個視覺狀態對應 Section / Controls / Gates
+      - MATERIALIZED
+    - row: 10
+      cells:
+      - Visual Anchor / Manifest
+      - 本文件 5 個 Candidate Visual
+      - CANDIDATE
+    - row: 11
+      cells:
+      - Design Review / Freeze
+      - 需 Human Review 才可升級 Current Canonical Visual
+      - PENDING / FALSE
+  - index: 2
+    rows:
+    - row: 0
+      cells:
+      - Allowed
+      - Forbidden
+    - row: 1
+      cells:
+      - ASSET-only production / evaluation / correction / layer / handoff
+      - VIDEO / EDIT / VOICE / QA 內部控制或 Runtime
+    - row: 2
+      cells:
+      - AUTO / MANUAL 共享 exact input resolution
+      - 第一次生產手動輸入 provider prompt / script
+    - row: 3
+      cells:
+      - Read-only Provider/Model runtime projection
+      - 頁面層 Provider / Model selector
+    - row: 4
+      cells:
+      - ACPOS_SYSTEM canonical filename read-only
+      - 手動 Rename / local filename formula / path guessing
+    - row: 5
+      cells:
+      - Versioned Layer Document / AssetPatch for image-compatible assets
+      - Photoshop API / PSD compatibility inference
+    - row: 6
+      cells:
+      - Correction creates new candidate/version
+      - 覆寫已存在版本
+    - row: 7
+      cells:
+      - Exact Handoff Manifest
+      - 只靠 filename 推論 downstream identity
+  - index: 3
+    rows:
+    - row: 0
+      cells:
+      - UID
+      - Type
+      - Output
+      - Preview
+    - row: 1
+      cells:
+      - ASSET-01-TYPE-CHARACTER
+      - Character
+      - IMAGE
+      - IMAGE
+    - row: 2
+      cells:
+      - ASSET-01-TYPE-SCENE
+      - Scene / Environment
+      - IMAGE
+      - IMAGE
+    - row: 3
+      cells:
+      - ASSET-01-TYPE-OBJECT
+      - Object / Prop
+      - IMAGE
+      - IMAGE
+    - row: 4
+      cells:
+      - ASSET-01-TYPE-VFX
+      - VFX / Effect
+      - IMAGE_OR_SEQUENCE
+      - IMAGE
+    - row: 5
+      cells:
+      - ASSET-01-TYPE-TEXTURE
+      - Texture / Material
+      - IMAGE
+      - IMAGE
+    - row: 6
+      cells:
+      - ASSET-01-TYPE-VOICE
+      - Voice
+      - AUDIO
+      - AUDIO_WAVEFORM
+    - row: 7
+      cells:
+      - ASSET-01-TYPE-MUSIC
+      - Music
+      - AUDIO
+      - AUDIO_WAVEFORM
+    - row: 8
+      cells:
+      - ASSET-01-TYPE-SFX
+      - SFX
+      - AUDIO
+      - AUDIO_WAVEFORM
+    - row: 9
+      cells:
+      - ASSET-01-TYPE-TEXT
+      - Text / Title Card
+      - IMAGE
+      - IMAGE
+    - row: 10
+      cells:
+      - ASSET-01-TYPE-REFERENCE
+      - Anchor / Reference
+      - REFERENCE
+      - IMAGE_OR_METADATA
+  - index: 4
+    rows:
+    - row: 0
+      cells:
+      - Object UID
+      - Entity
+      - Owner
+      - Required Content
+    - row: 1
+      cells:
+      - ASSET-01-REF-BLUEPRINT
+      - LockedBlueprintRef
+      - CORE/BLUEPRINT
+      - immutable exact child lock/blueprint version/hash
+    - row: 2
+      cells:
+      - ASSET-01-REF-SCRIPT
+      - AssetProductionScriptViewRef
+      - CORE/SCRIPT
+      - provider-neutral ASSET Script View/Section/version/hash
+    - row: 3
+      cells:
+      - ASSET-01-REF-DNA
+      - DNABindingRef
+      - CORE/BLUEPRINT
+      - DNA/identity/continuity exact refs
+    - row: 4
+      cells:
+      - ASSET-01-REF-MANIFEST
+      - AssetManifestRef
+      - CORE/BLUEPRINT
+      - required asset items/type/purpose/reuse policy
+    - row: 5
+      cells:
+      - ASSET-01-REF-NAMING
+      - SystemOutputNamingRef
+      - ACPOS_SYSTEM
+      - canonical filename/output artifact identity/version/checksum policy; page read-only
+    - row: 6
+      cells:
+      - ASSET-01-REF-INSTRUCTION
+      - InstructionPackageRef
+      - InstructionCompiler
+      - approved provider-neutral instruction package
+    - row: 7
+      cells:
+      - ASSET-01-REF-ROUTE
+      - ProviderRouteSnapshotRef
+      - ACPOS AI API Router
+      - approved route/provider/model/capability snapshot; page read-only
+    - row: 8
+      cells:
+      - ASSET-01-OBJ-INPUT-MANIFEST
+      - AssetExecutionInputManifest
+      - ASSET/ORCH
+      - task+blueprint+script+DNA+manifest+naming+instruction+route+input fingerprint
+    - row: 9
+      cells:
+      - ASSET-01-OBJ-CANDIDATE
+      - AssetCandidateOutput
+      - ASSET
+      - candidate artifact exact version/uri/canonical filename/checksum/provenance
+    - row: 10
+      cells:
+      - ASSET-01-OBJ-EVALUATION
+      - AssetEvaluation
+      - ASSET/EVALUATION
+      - criteria version/dimension scores/hard blocks/evidence/result
+    - row: 11
+      cells:
+      - ASSET-01-OBJ-FINDING
+      - AssetFinding
+      - ASSET/EVALUATION
+      - issue type/asset/layer/region/evidence
+    - row: 12
+      cells:
+      - ASSET-01-OBJ-CORRECTION
+      - AssetCorrectionContext
+      - ASSET/AI
+      - current exact refs + issue + zh-TW request + candidate
+    - row: 13
+      cells:
+      - ASSET-01-OBJ-CORRECTION-SCRIPT
+      - CorrectionScriptCandidate
+      - ACPOS Script System
+      - provider-neutral delta; human approved before translation
+    - row: 14
+      cells:
+      - ASSET-01-OBJ-LAYER-DOC
+      - VersionedLayerDocument
+      - AssetCatalogService
+      - immutable versions of image-compatible layer document
+    - row: 15
+      cells:
+      - ASSET-01-OBJ-ASSET-PATCH
+      - AssetPatch
+      - AssetCatalogService
+      - source asset/layer/region/blueprint/DNA/preserve constraints/preview/decision
+    - row: 16
+      cells:
+      - ASSET-01-OBJ-ASSET-VERSION
+      - AssetOutputVersion
+      - AssetCatalogService
+      - immutable exact artifact version + canonical filename/checksum
+    - row: 17
+      cells:
+      - ASSET-01-OBJ-SCORECARD
+      - AssetScorecard
+      - ASSET/EVALUATION
+      - target output + criteria version + scores/issues/evidence
+    - row: 18
+      cells:
+      - ASSET-01-OBJ-HANDOFF
+      - AssetHandoffManifest
+      - ASSET boundary
+      - exact locked output + layer/composite refs + blueprint/script/DNA/manifest/naming/score/rights/contract hash
+  - index: 5
+    rows:
+    - row: 0
+      cells:
+      - Stage UID
+      - Stage
+      - Flow
+    - row: 1
+      cells:
+      - ASSET-01-STAGE-01-RESOLVE
+      - Resolve Inputs
+      - Resolve exact Task→Blueprint→ASSET Script→DNA→Asset Manifest→ACPOS Naming→Instruction/Route; first production has no manual prompt.
+    - row: 2
+      cells:
+      - ASSET-01-STAGE-02-REUSE-GENERATE
+      - Reuse First / Generate Missing
+      - Resolve each required manifest item; reuse exact eligible asset first; only generate Missing items.
+    - row: 3
+      cells:
+      - ASSET-01-STAGE-03-LAYER-COMPOSITE
+      - Layer / Composite
+      - For image-compatible assets, optional Layer/Patch/Composite; audio assets skip LayerRuntime. No cross-department edit.
+    - row: 4
+      cells:
+      - ASSET-01-STAGE-04-EVALUATE-DECIDE
+      - Evaluate / Confirm or Modify
+      - Run bound ASSET criteria → WAIT_CONFIRMATION; Confirm or enter Correction. AUTO advances only after Confirm.
+    - row: 5
+      cells:
+      - ASSET-01-STAGE-05-FINALIZE
+      - Lock / Handoff
+      - Seal exact asset output manifest, lock exact version, handoff exact manifest to VIDEO.
+  - index: 6
+    rows:
+    - row: 0
+      cells:
+      - Mode
+      - Same exact inputs
+      - After Confirm
+    - row: 1
+      cells:
+      - AUTO
+      - Blueprint / Script / DNA / Manifest / Naming / Instruction / Route 都由系統自動解析
+      - 自動前進下一個 scheduled task
+    - row: 2
+      cells:
+      - MANUAL
+      - 完全相同；不得變成人工 prompt 模式
+      - 使用者手動開始下一個 task
+    - row: 3
+      cells:
+      - Error
+      - Queue/task 停在失敗 item；禁止 AI skip/reorder/create
+      - 修復後 Retry / Resume current stage
+  - index: 7
+    rows:
+    - row: 0
+      cells:
+      - Section UID
+      - Name
+      - Responsibility
+      - Visual UID
+    - row: 1
+      cells:
+      - ASSET-01-SEC-01
+      - Context / Execution
+      - Project/Topic/Task、AUTO/MANUAL、Execute、Stage/Runtime 摘要
+      - ASSET-01-VIS-CONTEXT
+    - row: 2
+      cells:
+      - ASSET-01-SEC-02
+      - Asset Manifest / List
+      - 目前 Task 的素材需求、Reuse/Missing 狀態、素材清單與搜尋；不建立自由素材 Picker
+      - ASSET-01-VIS-LEFT
+    - row: 3
+      cells:
+      - ASSET-01-SEC-03
+      - Blueprint / Script / DNA Binding
+      - Locked Blueprint、ASSET Script Role/Section、DNA、Manifest Item、Canonical Filename、Checksum、Rights/Policy 唯讀綁定
+      - ASSET-01-VIS-BINDING
+    - row: 4
+      cells:
+      - ASSET-01-SEC-04
+      - Preview / Compare
+      - Image/Audio 依素材類型預覽；Single/A-B/A-B-C 動態比較
+      - ASSET-01-VIS-PREVIEW
+    - row: 5
+      cells:
+      - ASSET-01-SEC-05
+      - Reuse First / Generate Missing
+      - Required/Reuse/Missing/Deferred 解析與候選產出狀態
+      - ASSET-01-VIS-REUSE
+    - row: 6
+      cells:
+      - ASSET-01-SEC-06
+      - Correction Conversation
+      - 僅 Modify 時允許繁中修正；系統自動帶入 exact context；使用共用 Translation/API Routing
+      - ASSET-01-VIS-CORRECTION
+    - row: 7
+      cells:
+      - ASSET-01-SEC-07
+      - Layer / Patch
+      - 僅支援圖層的圖像素材；Versioned Layer Document / Asset Patch；不屬 Photoshop/PSD 外部整合
+      - ASSET-01-VIS-LAYER
+    - row: 8
+      cells:
+      - ASSET-01-SEC-08
+      - Runtime / Provider
+      - Route/Provider/Model/Job/Attempt/Callback/Retry/Trace 唯讀；禁止任何頁面層 Provider/Model 指派控制
+      - ASSET-01-VIS-RUNTIME
+    - row: 9
+      cells:
+      - ASSET-01-SEC-09
+      - Score / Version / Decision
+      - ASSET Approved Criteria、Version Compare、Confirm/Modify/Lock
+      - ASSET-01-VIS-DECISION
+    - row: 10
+      cells:
+      - ASSET-01-SEC-10
+      - Exact Handoff Manifest
+      - 鎖定 Exact Asset Version/Layer/Composite/Blueprint/Script/DNA/Filename/Checksum/Score/Rights/Contract 後交付 VIDEO
+      - ASSET-01-VIS-HANDOFF
+  - index: 8
+    rows:
+    - row: 0
+      cells:
+      - Component UID
+      - Section
+      - Name
+    - row: 1
+      cells:
+      - ASSET-01-CMP-CONTEXT
+      - ASSET-01-SEC-01
+      - Context/Execution Bar
+    - row: 2
+      cells:
+      - ASSET-01-CMP-ASSET-LIST
+      - ASSET-01-SEC-02
+      - Asset Manifest/List
+    - row: 3
+      cells:
+      - ASSET-01-CMP-BINDING
+      - ASSET-01-SEC-03
+      - Blueprint/Script/DNA/Manifest Binding
+    - row: 4
+      cells:
+      - ASSET-01-CMP-PREVIEW
+      - ASSET-01-SEC-04
+      - Preview Surface
+    - row: 5
+      cells:
+      - ASSET-01-CMP-COMPARE
+      - ASSET-01-SEC-04
+      - Compare Toolbar
+    - row: 6
+      cells:
+      - ASSET-01-CMP-REUSE
+      - ASSET-01-SEC-05
+      - Reuse/Generate Status
+    - row: 7
+      cells:
+      - ASSET-01-CMP-SCRIPT
+      - ASSET-01-SEC-03
+      - ASSET Script View
+    - row: 8
+      cells:
+      - ASSET-01-CMP-CORRECTION
+      - ASSET-01-SEC-06
+      - Correction Conversation
+    - row: 9
+      cells:
+      - ASSET-01-CMP-LAYER-STACK
+      - ASSET-01-SEC-07
+      - Layer Stack
+    - row: 10
+      cells:
+      - ASSET-01-CMP-LAYER-INSPECTOR
+      - ASSET-01-SEC-07
+      - Layer Properties/Mask
+    - row: 11
+      cells:
+      - ASSET-01-CMP-PATCH
+      - ASSET-01-SEC-07
+      - Asset Patch Decision
+    - row: 12
+      cells:
+      - ASSET-01-CMP-RUNTIME
+      - ASSET-01-SEC-08
+      - Runtime/Provider Read Model
+    - row: 13
+      cells:
+      - ASSET-01-CMP-SCORE
+      - ASSET-01-SEC-09
+      - ASSET Scorecard
+    - row: 14
+      cells:
+      - ASSET-01-CMP-VERSION
+      - ASSET-01-SEC-09
+      - Version/Compare
+    - row: 15
+      cells:
+      - ASSET-01-CMP-DECISION
+      - ASSET-01-SEC-09
+      - Decision Dock
+    - row: 16
+      cells:
+      - ASSET-01-CMP-HANDOFF
+      - ASSET-01-SEC-10
+      - Exact Handoff Manifest
+  - index: 9
+    rows:
+    - row: 0
+      cells:
+      - Area
+      - Geometry / Rule
+    - row: 1
+      cells:
+      - Desktop
+      - min-width 1280px；Main workspace independent vertical scroll
+    - row: 2
+      cells:
+      - Primary Grid
+      - Left 20% min 260px / Center 60% preview-first / Right 20% min 280px
+    - row: 3
+      cells:
+      - Lower Rows
+      - Layer / Correction / Runtime / Handoff 可向下延伸 full width
+    - row: 4
+      cells:
+      - Top Shell
+      - 58px fixed full-width Header
+    - row: 5
+      cells:
+      - Sidebar
+      - 64px collapsed icon-only；221px expanded overlay；no reflow
+    - row: 6
+      cells:
+      - Visual Tokens
+      - dark purple enterprise AI production workstation；page-local palette forbidden
+  - index: 10
+    rows:
+    - row: 0
+      cells:
+      - Control UID
+      - Sec
+      - Component
+      - Type
+      - Label
+      - Action
+      - Gate
+      - Permission
+    - row: 1
+      cells:
+      - ASSET-01-CTL-PROJECT
+      - SEC-01
+      - Context
+      - SELECT
+      - Project
+      - ASSET-01-ACT-PROJECT-SELECT
+      - ASSET-01-GATE-PAGE
+      - ASSET_USE
+    - row: 2
+      cells:
+      - ASSET-01-CTL-TOPIC
+      - SEC-01
+      - Context
+      - SELECT
+      - Topic
+      - ASSET-01-ACT-TOPIC-SELECT
+      - ASSET-01-GATE-PAGE
+      - ASSET_USE
+    - row: 3
+      cells:
+      - ASSET-01-FLD-TASK
+      - SEC-01
+      - Context
+      - READONLY
+      - Production Task
+      - ASSET-01-ACT-BINDING-VIEW
+      - ASSET-01-GATE-CONTEXT
+      - ASSET_USE
+    - row: 4
+      cells:
+      - ASSET-01-FLD-TASK-STATUS
+      - SEC-01
+      - Context
+      - STATUS
+      - Task Status
+      - ASSET-01-ACT-BINDING-VIEW
+      - ASSET-01-GATE-CONTEXT
+      - ASSET_USE
+    - row: 5
+      cells:
+      - ASSET-01-CTL-MODE
+      - SEC-01
+      - Context
+      - SEGMENTED
+      - AUTO / MANUAL
+      - ASSET-01-ACT-MODE-SET
+      - ASSET-01-GATE-CONTEXT
+      - ASSET_USE
+    - row: 6
+      cells:
+      - ASSET-01-BTN-EXECUTE
+      - SEC-01
+      - Context
+      - PRIMARY_BUTTON
+      - 執行
+      - ASSET-01-ACT-FLOW-START
+      - ASSET-01-GATE-EXECUTE
+      - ASSET_EXECUTE
+    - row: 7
+      cells:
+      - ASSET-01-FLD-STAGE
+      - SEC-01
+      - Context
+      - READONLY
+      - Current Stage
+      - ASSET-01-ACT-BINDING-VIEW
+      - ASSET-01-GATE-CONTEXT
+      - ASSET_USE
+    - row: 8
+      cells:
+      - ASSET-01-FLD-SEARCH
+      - SEC-02
+      - Asset List
+      - SEARCH
+      - 搜尋素材
+      - ASSET-01-ACT-ASSET-SEARCH
+      - ASSET-01-GATE-CONTEXT
+      - ASSET_USE
+    - row: 9
+      cells:
+      - ASSET-01-CTL-FILTER
+      - SEC-02
+      - Asset List
+      - FILTER
+      - Filter
+      - ASSET-01-ACT-ASSET-FILTER
+      - ASSET-01-GATE-CONTEXT
+      - ASSET_USE
+    - row: 10
+      cells:
+      - ASSET-01-LST-ASSET
+      - SEC-02
+      - Asset List
+      - LIST
+      - Asset Items
+      - ASSET-01-ACT-ASSET-SELECT
+      - ASSET-01-GATE-CONTEXT
+      - ASSET_USE
+    - row: 11
+      cells:
+      - ASSET-01-FLD-MANIFEST-REQUIRED
+      - SEC-02
+      - Reuse
+      - READONLY
+      - Required
+      - ASSET-01-ACT-BINDING-VIEW
+      - ASSET-01-GATE-MANIFEST
+      - ASSET_USE
+    - row: 12
+      cells:
+      - ASSET-01-FLD-MANIFEST-REUSE
+      - SEC-02
+      - Reuse
+      - READONLY
+      - Reuse
+      - ASSET-01-ACT-BINDING-VIEW
+      - ASSET-01-GATE-MANIFEST
+      - ASSET_USE
+    - row: 13
+      cells:
+      - ASSET-01-FLD-MANIFEST-MISSING
+      - SEC-02
+      - Reuse
+      - READONLY
+      - Missing
+      - ASSET-01-ACT-BINDING-VIEW
+      - ASSET-01-GATE-MANIFEST
+      - ASSET_USE
+    - row: 14
+      cells:
+      - ASSET-01-FLD-MANIFEST-DEFERRED
+      - SEC-02
+      - Reuse
+      - READONLY
+      - Deferred
+      - ASSET-01-ACT-BINDING-VIEW
+      - ASSET-01-GATE-MANIFEST
+      - ASSET_USE
+    - row: 15
+      cells:
+      - ASSET-01-FLD-BLUEPRINT
+      - SEC-03
+      - Binding
+      - READONLY
+      - Locked Blueprint / Child Lock
+      - ASSET-01-ACT-BINDING-VIEW
+      - ASSET-01-GATE-CHILD-LOCK
+      - ASSET_USE
+    - row: 16
+      cells:
+      - ASSET-01-FLD-SCRIPT
+      - SEC-03
+      - Binding
+      - READONLY
+      - ASSET Script Role / Section / Hash
+      - ASSET-01-ACT-BINDING-VIEW
+      - ASSET-01-GATE-SCRIPT
+      - ASSET_USE
+    - row: 17
+      cells:
+      - ASSET-01-FLD-DNA
+      - SEC-03
+      - Binding
+      - READONLY
+      - DNA / Identity / Continuity Refs
+      - ASSET-01-ACT-BINDING-VIEW
+      - ASSET-01-GATE-MANIFEST
+      - ASSET_USE
+    - row: 18
+      cells:
+      - ASSET-01-FLD-MANIFEST
+      - SEC-03
+      - Binding
+      - READONLY
+      - Asset Manifest Item ID / Purpose
+      - ASSET-01-ACT-BINDING-VIEW
+      - ASSET-01-GATE-MANIFEST
+      - ASSET_USE
+    - row: 19
+      cells:
+      - ASSET-01-FLD-INPUT-FINGERPRINT
+      - SEC-03
+      - Binding
+      - READONLY
+      - Input Fingerprint
+      - ASSET-01-ACT-BINDING-VIEW
+      - ASSET-01-GATE-MANIFEST
+      - ASSET_USE
+    - row: 20
+      cells:
+      - ASSET-01-FLD-NAMING-AUTHORITY
+      - SEC-03
+      - Binding
+      - READONLY
+      - Filename Authority = ACPOS_SYSTEM
+      - ASSET-01-ACT-BINDING-VIEW
+      - ASSET-01-GATE-NAMING
+      - ASSET_USE
+    - row: 21
+      cells:
+      - ASSET-01-FLD-CANONICAL-FILENAME
+      - SEC-03
+      - Binding
+      - READONLY
+      - Canonical Filename
+      - ASSET-01-ACT-BINDING-VIEW
+      - ASSET-01-GATE-NAMING
+      - ASSET_USE
+    - row: 22
+      cells:
+      - ASSET-01-FLD-OUTPUT-ID
+      - SEC-03
+      - Binding
+      - READONLY
+      - Output Artifact ID / Exact Version
+      - ASSET-01-ACT-BINDING-VIEW
+      - ASSET-01-GATE-NAMING
+      - ASSET_USE
+    - row: 23
+      cells:
+      - ASSET-01-FLD-CHECKSUM
+      - SEC-03
+      - Binding
+      - READONLY
+      - Checksum
+      - ASSET-01-ACT-BINDING-VIEW
+      - ASSET-01-GATE-NAMING
+      - ASSET_USE
+    - row: 24
+      cells:
+      - ASSET-01-FLD-RIGHTS
+      - SEC-03
+      - Binding
+      - READONLY
+      - Rights / Policy
+      - ASSET-01-ACT-BINDING-VIEW
+      - ASSET-01-GATE-MANIFEST
+      - ASSET_USE
+    - row: 25
+      cells:
+      - ASSET-01-FLD-INSTRUCTION
+      - SEC-03
+      - Binding
+      - READONLY
+      - Approved Instruction Package
+      - ASSET-01-ACT-BINDING-VIEW
+      - ASSET-01-GATE-ROUTE
+      - ASSET_USE
+    - row: 26
+      cells:
+      - ASSET-01-BTN-BLUEPRINT
+      - SEC-03
+      - Binding
+      - SECONDARY_BUTTON
+      - 查看 Blueprint
+      - ASSET-01-ACT-BLUEPRINT-VIEW
+      - ASSET-01-GATE-CHILD-LOCK
+      - ASSET_USE
+    - row: 27
+      cells:
+      - ASSET-01-BTN-SCRIPT
+      - SEC-03
+      - Script
+      - SECONDARY_BUTTON
+      - 查看 ASSET Script
+      - ASSET-01-ACT-SCRIPT-VIEW
+      - ASSET-01-GATE-SCRIPT
+      - ASSET_USE
+    - row: 28
+      cells:
+      - ASSET-01-BTN-SINGLE
+      - SEC-04
+      - Compare
+      - CONTROL
+      - Single
+      - ASSET-01-ACT-COMPARE-SINGLE
+      - ASSET-01-GATE-COMPARE
+      - ASSET_USE
+    - row: 29
+      cells:
+      - ASSET-01-BTN-AB
+      - SEC-04
+      - Compare
+      - CONTROL
+      - A/B
+      - ASSET-01-ACT-COMPARE-AB
+      - ASSET-01-GATE-COMPARE
+      - ASSET_USE
+    - row: 30
+      cells:
+      - ASSET-01-BTN-ABC
+      - SEC-04
+      - Compare
+      - CONTROL
+      - A/B/C
+      - ASSET-01-ACT-COMPARE-ABC
+      - ASSET-01-GATE-COMPARE
+      - ASSET_USE
+    - row: 31
+      cells:
+      - ASSET-01-BTN-ZOOM-OUT
+      - SEC-04
+      - Compare
+      - CONTROL
+      - −
+      - ASSET-01-ACT-ZOOM-OUT
+      - ASSET-01-GATE-CANDIDATE
+      - ASSET_USE
+    - row: 32
+      cells:
+      - ASSET-01-BTN-ZOOM-IN
+      - SEC-04
+      - Compare
+      - CONTROL
+      - +
+      - ASSET-01-ACT-ZOOM-IN
+      - ASSET-01-GATE-CANDIDATE
+      - ASSET_USE
+    - row: 33
+      cells:
+      - ASSET-01-BTN-FIT
+      - SEC-04
+      - Compare
+      - CONTROL
+      - Fit
+      - ASSET-01-ACT-FIT
+      - ASSET-01-GATE-CANDIDATE
+      - ASSET_USE
+    - row: 34
+      cells:
+      - ASSET-01-BTN-REFERENCE
+      - SEC-04
+      - Compare
+      - CONTROL
+      - Reference
+      - ASSET-01-ACT-REFERENCE-TOGGLE
+      - ASSET-01-GATE-CANDIDATE
+      - ASSET_USE
+    - row: 35
+      cells:
+      - ASSET-01-LST-COMPARE-VERSIONS
+      - SEC-04
+      - Preview
+      - LIST
+      - Selected Versions
+      - ASSET-01-ACT-COMPARE-SINGLE
+      - ASSET-01-GATE-COMPARE
+      - ASSET_USE
+    - row: 36
+      cells:
+      - ASSET-01-BTN-RESULT-DETAIL
+      - SEC-04
+      - Preview
+      - SECONDARY_BUTTON
+      - 查看結果詳情
+      - ASSET-01-ACT-RESULT-VIEW
+      - ASSET-01-GATE-EVALUATION
+      - ASSET_USE
+    - row: 37
+      cells:
+      - ASSET-01-BTN-CORRECTION-OPEN
+      - SEC-06
+      - Correction
+      - CONTROL
+      - 開始修正
+      - ASSET-01-ACT-CORRECTION-OPEN
+      - ASSET-01-GATE-CORRECTION
+      - ASSET_CORRECT
+    - row: 38
+      cells:
+      - ASSET-01-TXT-CORRECTION-REQUEST
+      - SEC-06
+      - Correction
+      - CONTROL
+      - 繁中修改要求
+      - ASSET-01-ACT-CORRECTION-GENERATE
+      - ASSET-01-GATE-CORRECTION
+      - ASSET_CORRECT
+    - row: 39
+      cells:
+      - ASSET-01-BTN-CORRECTION-GENERATE
+      - SEC-06
+      - Correction
+      - CONTROL
+      - 產生修正腳本候選
+      - ASSET-01-ACT-CORRECTION-GENERATE
+      - ASSET-01-GATE-CORRECTION
+      - ASSET_CORRECT
+    - row: 40
+      cells:
+      - ASSET-01-BTN-CORRECTION-APPROVE
+      - SEC-06
+      - Correction
+      - CONTROL
+      - 核准候選
+      - ASSET-01-ACT-CORRECTION-APPROVE
+      - ASSET-01-GATE-CORRECTION
+      - ASSET_CORRECT
+    - row: 41
+      cells:
+      - ASSET-01-BTN-CORRECTION-EXECUTE
+      - SEC-06
+      - Correction
+      - CONTROL
+      - 執行修正
+      - ASSET-01-ACT-CORRECTION-EXECUTE
+      - ASSET-01-GATE-CORRECTION
+      - ASSET_EXECUTE
+    - row: 42
+      cells:
+      - ASSET-01-BTN-LAYER-DOC-CREATE
+      - SEC-07
+      - Layer
+      - CONTROL
+      - 建立 Layer Document
+      - ASSET-01-ACT-LAYER-DOC-CREATE
+      - ASSET-01-GATE-LAYER-WRITE
+      - ASSET_LAYER_WRITE
+    - row: 43
+      cells:
+      - ASSET-01-BTN-LAYER-DOC-UPDATE
+      - SEC-07
+      - Layer
+      - CONTROL
+      - 更新 Layer Document
+      - ASSET-01-ACT-LAYER-DOC-UPDATE
+      - ASSET-01-GATE-LAYER-WRITE
+      - ASSET_LAYER_WRITE
+    - row: 44
+      cells:
+      - ASSET-01-BTN-LAYER-ADD
+      - SEC-07
+      - Layer
+      - CONTROL
+      - 新增 Layer
+      - ASSET-01-ACT-LAYER-ADD
+      - ASSET-01-GATE-LAYER-WRITE
+      - ASSET_LAYER_WRITE
+    - row: 45
+      cells:
+      - ASSET-01-BTN-LAYER-DELETE
+      - SEC-07
+      - Layer
+      - CONTROL
+      - 刪除 Layer
+      - ASSET-01-ACT-LAYER-DELETE
+      - ASSET-01-GATE-LAYER-WRITE
+      - ASSET_LAYER_WRITE
+    - row: 46
+      cells:
+      - ASSET-01-BTN-LAYER-DUPLICATE
+      - SEC-07
+      - Layer
+      - CONTROL
+      - 複製 Layer
+      - ASSET-01-ACT-LAYER-DUPLICATE
+      - ASSET-01-GATE-LAYER-WRITE
+      - ASSET_LAYER_WRITE
+    - row: 47
+      cells:
+      - ASSET-01-BTN-LAYER-REORDER
+      - SEC-07
+      - Layer
+      - CONTROL
+      - 排序 Layer
+      - ASSET-01-ACT-LAYER-REORDER
+      - ASSET-01-GATE-LAYER-WRITE
+      - ASSET_LAYER_WRITE
+    - row: 48
+      cells:
+      - ASSET-01-CTL-LAYER-PROPERTIES
+      - SEC-07
+      - Layer
+      - CONTROL
+      - Opacity / Blend / Transform
+      - ASSET-01-ACT-LAYER-PROPERTIES
+      - ASSET-01-GATE-LAYER-WRITE
+      - ASSET_LAYER_WRITE
+    - row: 49
+      cells:
+      - ASSET-01-CTL-LAYER-MASK
+      - SEC-07
+      - Layer
+      - CONTROL
+      - Mask / Semantic Region
+      - ASSET-01-ACT-LAYER-MASK
+      - ASSET-01-GATE-LAYER-WRITE
+      - ASSET_LAYER_WRITE
+    - row: 50
+      cells:
+      - ASSET-01-BTN-PATCH-CREATE
+      - SEC-07
+      - Patch
+      - CONTROL
+      - 建立 Patch
+      - ASSET-01-ACT-PATCH-CREATE
+      - ASSET-01-GATE-LAYER-WRITE
+      - ASSET_LAYER_WRITE
+    - row: 51
+      cells:
+      - ASSET-01-BTN-PATCH-PREVIEW
+      - SEC-07
+      - Patch
+      - CONTROL
+      - 預覽 Patch
+      - ASSET-01-ACT-PATCH-PREVIEW
+      - ASSET-01-GATE-PATCH-PREVIEW
+      - ASSET_LAYER_WRITE
+    - row: 52
+      cells:
+      - ASSET-01-BTN-PATCH-ACCEPT
+      - SEC-07
+      - Patch
+      - CONTROL
+      - 接受 Patch
+      - ASSET-01-ACT-PATCH-ACCEPT
+      - ASSET-01-GATE-PATCH-DECISION
+      - ASSET_PATCH_DECIDE
+    - row: 53
+      cells:
+      - ASSET-01-BTN-PATCH-REJECT
+      - SEC-07
+      - Patch
+      - CONTROL
+      - 拒絕 Patch
+      - ASSET-01-ACT-PATCH-REJECT
+      - ASSET-01-GATE-PATCH-DECISION
+      - ASSET_PATCH_DECIDE
+    - row: 54
+      cells:
+      - ASSET-01-BTN-PATCH-REVISE
+      - SEC-07
+      - Patch
+      - CONTROL
+      - 要求修改 Patch
+      - ASSET-01-ACT-PATCH-REVISE
+      - ASSET-01-GATE-PATCH-DECISION
+      - ASSET_PATCH_DECIDE
+    - row: 55
+      cells:
+      - ASSET-01-FLD-ROUTE
+      - SEC-08
+      - Runtime
+      - READONLY
+      - Route State
+      - ASSET-01-ACT-RUNTIME-VIEW
+      - ASSET-01-GATE-PAGE
+      - ASSET_USE
+    - row: 56
+      cells:
+      - ASSET-01-FLD-PROVIDER
+      - SEC-08
+      - Runtime
+      - READONLY
+      - Provider / Model
+      - ASSET-01-ACT-RUNTIME-VIEW
+      - ASSET-01-GATE-PAGE
+      - ASSET_USE
+    - row: 57
+      cells:
+      - ASSET-01-FLD-JOB
+      - SEC-08
+      - Runtime
+      - READONLY
+      - Provider Job State
+      - ASSET-01-ACT-RUNTIME-VIEW
+      - ASSET-01-GATE-PAGE
+      - ASSET_USE
+    - row: 58
+      cells:
+      - ASSET-01-FLD-ATTEMPT
+      - SEC-08
+      - Runtime
+      - READONLY
+      - Attempt
+      - ASSET-01-ACT-RUNTIME-VIEW
+      - ASSET-01-GATE-PAGE
+      - ASSET_USE
+    - row: 59
+      cells:
+      - ASSET-01-FLD-CALLBACK
+      - SEC-08
+      - Runtime
+      - READONLY
+      - Callback
+      - ASSET-01-ACT-RUNTIME-VIEW
+      - ASSET-01-GATE-PAGE
+      - ASSET_USE
+    - row: 60
+      cells:
+      - ASSET-01-FLD-RETRY-ELIGIBILITY
+      - SEC-08
+      - Runtime
+      - READONLY
+      - Retry Eligibility
+      - ASSET-01-ACT-RUNTIME-VIEW
+      - ASSET-01-GATE-PAGE
+      - ASSET_USE
+    - row: 61
+      cells:
+      - ASSET-01-FLD-TRACE
+      - SEC-08
+      - Runtime
+      - READONLY
+      - Correlation / Trace
+      - ASSET-01-ACT-RUNTIME-VIEW
+      - ASSET-01-GATE-PAGE
+      - ASSET_USE
+    - row: 62
+      cells:
+      - ASSET-01-BTN-RETRY
+      - SEC-08
+      - Runtime
+      - SECONDARY_BUTTON
+      - Retry
+      - ASSET-01-ACT-TASK-RETRY
+      - ASSET-01-GATE-RETRY
+      - ASSET_EXECUTE
+    - row: 63
+      cells:
+      - ASSET-01-BTN-RUNTIME-DETAIL
+      - SEC-08
+      - Runtime
+      - SECONDARY_BUTTON
+      - 查看 Runtime 詳情
+      - ASSET-01-ACT-RUNTIME-VIEW
+      - ASSET-01-GATE-PAGE
+      - ASSET_USE
+    - row: 64
+      cells:
+      - ASSET-01-FLD-CRITERIA
+      - SEC-09
+      - Score
+      - READONLY
+      - ASSET Criteria Version
+      - ASSET-01-ACT-RESULT-VIEW
+      - ASSET-01-GATE-EVALUATION
+      - ASSET_USE
+    - row: 65
+      cells:
+      - ASSET-01-FLD-DIMENSIONS
+      - SEC-09
+      - Score
+      - READONLY
+      - Dimension UID / Label / Weight / Score / Hard Block
+      - ASSET-01-ACT-RESULT-VIEW
+      - ASSET-01-GATE-EVALUATION
+      - ASSET_USE
+    - row: 66
+      cells:
+      - ASSET-01-FLD-OVERALL
+      - SEC-09
+      - Score
+      - READONLY
+      - Overall Score
+      - ASSET-01-ACT-RESULT-VIEW
+      - ASSET-01-GATE-EVALUATION
+      - ASSET_USE
+    - row: 67
+      cells:
+      - ASSET-01-FLD-ISSUES
+      - SEC-09
+      - Score
+      - READONLY
+      - Issue Summary
+      - ASSET-01-ACT-RESULT-VIEW
+      - ASSET-01-GATE-EVALUATION
+      - ASSET_USE
+    - row: 68
+      cells:
+      - ASSET-01-BTN-EVALUATE
+      - SEC-09
+      - Score
+      - SECONDARY_BUTTON
+      - 重新評估
+      - ASSET-01-ACT-EVALUATE
+      - ASSET-01-GATE-EVALUATION
+      - ASSET_SCORE
+    - row: 69
+      cells:
+      - ASSET-01-BTN-CONFIRM
+      - SEC-09
+      - Decision
+      - PRIMARY_BUTTON
+      - 確認版本
+      - ASSET-01-ACT-CANDIDATE-CONFIRM
+      - ASSET-01-GATE-CONFIRM
+      - ASSET_DECIDE
+    - row: 70
+      cells:
+      - ASSET-01-BTN-MODIFY
+      - SEC-09
+      - Decision
+      - SECONDARY_BUTTON
+      - 修改版本
+      - ASSET-01-ACT-CORRECTION-OPEN
+      - ASSET-01-GATE-WAIT-CONFIRM
+      - ASSET_CORRECT
+    - row: 71
+      cells:
+      - ASSET-01-BTN-VERSION-HISTORY
+      - SEC-09
+      - Version
+      - SECONDARY_BUTTON
+      - 版本歷史
+      - ASSET-01-ACT-VERSION-HISTORY
+      - ASSET-01-GATE-CANDIDATE
+      - ASSET_USE
+    - row: 72
+      cells:
+      - ASSET-01-BTN-RESTORE-AS-NEW
+      - SEC-09
+      - Version
+      - SECONDARY_BUTTON
+      - Restore as New Version
+      - ASSET-01-ACT-RESTORE-AS-NEW
+      - ASSET-01-GATE-CANDIDATE
+      - ASSET_DECIDE
+    - row: 73
+      cells:
+      - ASSET-01-BTN-LOCK
+      - SEC-09
+      - Decision
+      - SECONDARY_BUTTON
+      - Lock Exact Version
+      - ASSET-01-ACT-VERSION-LOCK
+      - ASSET-01-GATE-LOCK
+      - ASSET_DECIDE
+    - row: 74
+      cells:
+      - ASSET-01-FLD-HANDOFF-ASSET-VERSION
+      - SEC-10
+      - Handoff
+      - READONLY
+      - ASSET VERSION
+      - ASSET-01-ACT-BINDING-VIEW
+      - ASSET-01-GATE-HANDOFF
+      - ASSET_USE
+    - row: 75
+      cells:
+      - ASSET-01-FLD-HANDOFF-LAYER-COMPOSITE
+      - SEC-10
+      - Handoff
+      - READONLY
+      - LAYER COMPOSITE
+      - ASSET-01-ACT-BINDING-VIEW
+      - ASSET-01-GATE-HANDOFF
+      - ASSET_USE
+    - row: 76
+      cells:
+      - ASSET-01-FLD-HANDOFF-BLUEPRINT
+      - SEC-10
+      - Handoff
+      - READONLY
+      - BLUEPRINT
+      - ASSET-01-ACT-BINDING-VIEW
+      - ASSET-01-GATE-HANDOFF
+      - ASSET_USE
+    - row: 77
+      cells:
+      - ASSET-01-FLD-HANDOFF-SCRIPT-HASH
+      - SEC-10
+      - Handoff
+      - READONLY
+      - SCRIPT HASH
+      - ASSET-01-ACT-BINDING-VIEW
+      - ASSET-01-GATE-HANDOFF
+      - ASSET_USE
+    - row: 78
+      cells:
+      - ASSET-01-FLD-HANDOFF-DNA
+      - SEC-10
+      - Handoff
+      - READONLY
+      - DNA
+      - ASSET-01-ACT-BINDING-VIEW
+      - ASSET-01-GATE-HANDOFF
+      - ASSET_USE
+    - row: 79
+      cells:
+      - ASSET-01-FLD-HANDOFF-MANIFEST-ITEMS
+      - SEC-10
+      - Handoff
+      - READONLY
+      - MANIFEST ITEMS
+      - ASSET-01-ACT-BINDING-VIEW
+      - ASSET-01-GATE-HANDOFF
+      - ASSET_USE
+    - row: 80
+      cells:
+      - ASSET-01-FLD-HANDOFF-CANONICAL-FILENAME
+      - SEC-10
+      - Handoff
+      - READONLY
+      - CANONICAL FILENAME
+      - ASSET-01-ACT-BINDING-VIEW
+      - ASSET-01-GATE-HANDOFF
+      - ASSET_USE
+    - row: 81
+      cells:
+      - ASSET-01-FLD-HANDOFF-CHECKSUM
+      - SEC-10
+      - Handoff
+      - READONLY
+      - CHECKSUM
+      - ASSET-01-ACT-BINDING-VIEW
+      - ASSET-01-GATE-HANDOFF
+      - ASSET_USE
+    - row: 82
+      cells:
+      - ASSET-01-FLD-HANDOFF-SCORECARD
+      - SEC-10
+      - Handoff
+      - READONLY
+      - SCORECARD
+      - ASSET-01-ACT-BINDING-VIEW
+      - ASSET-01-GATE-HANDOFF
+      - ASSET_USE
+    - row: 83
+      cells:
+      - ASSET-01-FLD-HANDOFF-RIGHTS
+      - SEC-10
+      - Handoff
+      - READONLY
+      - RIGHTS
+      - ASSET-01-ACT-BINDING-VIEW
+      - ASSET-01-GATE-HANDOFF
+      - ASSET_USE
+    - row: 84
+      cells:
+      - ASSET-01-FLD-HANDOFF-CONTRACT-HASH
+      - SEC-10
+      - Handoff
+      - READONLY
+      - CONTRACT HASH
+      - ASSET-01-ACT-BINDING-VIEW
+      - ASSET-01-GATE-HANDOFF
+      - ASSET_USE
+    - row: 85
+      cells:
+      - ASSET-01-BTN-HANDOFF
+      - SEC-10
+      - Handoff
+      - PRIMARY_BUTTON
+      - Handoff → VIDEO
+      - ASSET-01-ACT-HANDOFF
+      - ASSET-01-GATE-HANDOFF
+      - ASSET_HANDOFF
+  - index: 11
+    rows:
+    - row: 0
+      cells:
+      - Action UID
+      - Label
+      - Permission
+      - Gate
+      - Effect
+      - Port / Owner
+    - row: 1
+      cells:
+      - ASSET-01-ACT-PROJECT-SELECT
+      - Select Project
+      - ASSET_USE
+      - ASSET-01-GATE-PAGE
+      - CONTEXT_STATE
+      - —
+    - row: 2
+      cells:
+      - ASSET-01-ACT-TOPIC-SELECT
+      - Select Topic
+      - ASSET_USE
+      - ASSET-01-GATE-PAGE
+      - CONTEXT_STATE
+      - —
+    - row: 3
+      cells:
+      - ASSET-01-ACT-MODE-SET
+      - Set AUTO/MANUAL
+      - ASSET_USE
+      - ASSET-01-GATE-CONTEXT
+      - CONTEXT_STATE
+      - —
+    - row: 4
+      cells:
+      - ASSET-01-ACT-FLOW-START
+      - Execute / Resume Current Stage
+      - ASSET_EXECUTE
+      - ASSET-01-GATE-EXECUTE
+      - JOB_START
+      - ASSET-01-PORT-EXECUTE
+    - row: 5
+      cells:
+      - ASSET-01-ACT-ASSET-SEARCH
+      - Search Asset Manifest
+      - ASSET_USE
+      - ASSET-01-GATE-CONTEXT
+      - UI_ONLY
+      - —
+    - row: 6
+      cells:
+      - ASSET-01-ACT-ASSET-FILTER
+      - Filter Asset Manifest
+      - ASSET_USE
+      - ASSET-01-GATE-CONTEXT
+      - UI_ONLY
+      - —
+    - row: 7
+      cells:
+      - ASSET-01-ACT-ASSET-SELECT
+      - Select Asset Context
+      - ASSET_USE
+      - ASSET-01-GATE-CONTEXT
+      - CONTEXT_STATE
+      - —
+    - row: 8
+      cells:
+      - ASSET-01-ACT-BLUEPRINT-VIEW
+      - View Locked Blueprint
+      - ASSET_USE
+      - ASSET-01-GATE-CHILD-LOCK
+      - UI_ONLY
+      - —
+    - row: 9
+      cells:
+      - ASSET-01-ACT-SCRIPT-VIEW
+      - View ASSET Script
+      - ASSET_USE
+      - ASSET-01-GATE-SCRIPT
+      - UI_ONLY
+      - —
+    - row: 10
+      cells:
+      - ASSET-01-ACT-BINDING-VIEW
+      - View Binding Manifest
+      - ASSET_USE
+      - ASSET-01-GATE-MANIFEST
+      - UI_ONLY
+      - —
+    - row: 11
+      cells:
+      - ASSET-01-ACT-COMPARE-SINGLE
+      - Single Compare
+      - ASSET_USE
+      - ASSET-01-GATE-COMPARE
+      - UI_ONLY
+      - —
+    - row: 12
+      cells:
+      - ASSET-01-ACT-COMPARE-AB
+      - A/B Compare
+      - ASSET_USE
+      - ASSET-01-GATE-COMPARE
+      - UI_ONLY
+      - —
+    - row: 13
+      cells:
+      - ASSET-01-ACT-COMPARE-ABC
+      - A/B/C Compare
+      - ASSET_USE
+      - ASSET-01-GATE-COMPARE
+      - UI_ONLY
+      - —
+    - row: 14
+      cells:
+      - ASSET-01-ACT-ZOOM-IN
+      - Zoom In
+      - ASSET_USE
+      - ASSET-01-GATE-CANDIDATE
+      - UI_ONLY
+      - —
+    - row: 15
+      cells:
+      - ASSET-01-ACT-ZOOM-OUT
+      - Zoom Out
+      - ASSET_USE
+      - ASSET-01-GATE-CANDIDATE
+      - UI_ONLY
+      - —
+    - row: 16
+      cells:
+      - ASSET-01-ACT-FIT
+      - Fit Preview
+      - ASSET_USE
+      - ASSET-01-GATE-CANDIDATE
+      - UI_ONLY
+      - —
+    - row: 17
+      cells:
+      - ASSET-01-ACT-REFERENCE-TOGGLE
+      - Reference Overlay
+      - ASSET_USE
+      - ASSET-01-GATE-CANDIDATE
+      - UI_ONLY
+      - —
+    - row: 18
+      cells:
+      - ASSET-01-ACT-RESULT-VIEW
+      - View Evaluation/Issues
+      - ASSET_USE
+      - ASSET-01-GATE-EVALUATION
+      - UI_ONLY
+      - —
+    - row: 19
+      cells:
+      - ASSET-01-ACT-EVALUATE
+      - Run/Refresh ASSET Evaluation
+      - ASSET_SCORE
+      - ASSET-01-GATE-EVALUATION
+      - SCORE_MUTATION
+      - ASSET-01-PORT-SCORECARD
+    - row: 20
+      cells:
+      - ASSET-01-ACT-CANDIDATE-CONFIRM
+      - Confirm Exact Candidate
+      - ASSET_DECIDE
+      - ASSET-01-GATE-CONFIRM
+      - DECISION_MUTATION
+      - ASSET-01-PORT-DECISION
+    - row: 21
+      cells:
+      - ASSET-01-ACT-CORRECTION-OPEN
+      - Open Correction
+      - ASSET_CORRECT
+      - ASSET-01-GATE-CORRECTION
+      - CONTEXT_STATE
+      - —
+    - row: 22
+      cells:
+      - ASSET-01-ACT-CORRECTION-GENERATE
+      - Generate Correction Script Candidate
+      - ASSET_CORRECT
+      - ASSET-01-GATE-CORRECTION
+      - CANDIDATE_CREATE
+      - Shared Script System
+    - row: 23
+      cells:
+      - ASSET-01-ACT-CORRECTION-APPROVE
+      - Approve Correction Candidate
+      - ASSET_CORRECT
+      - ASSET-01-GATE-CORRECTION
+      - DECISION_MUTATION
+      - Shared Script System
+    - row: 24
+      cells:
+      - ASSET-01-ACT-CORRECTION-EXECUTE
+      - Execute Approved Correction
+      - ASSET_EXECUTE
+      - ASSET-01-GATE-CORRECTION
+      - JOB_START
+      - ASSET-01-PORT-EXECUTE
+    - row: 25
+      cells:
+      - ASSET-01-ACT-FINDING-CREATE
+      - Create Finding
+      - ASSET_CORRECT
+      - ASSET-01-GATE-EVALUATION
+      - FINDING_CREATE
+      - ASSET-01-PORT-FINDING
+    - row: 26
+      cells:
+      - ASSET-01-ACT-TASK-RETRY
+      - Retry Task
+      - ASSET_EXECUTE
+      - ASSET-01-GATE-RETRY
+      - JOB_START
+      - ASSET-01-PORT-RETRY
+    - row: 27
+      cells:
+      - ASSET-01-ACT-RUNTIME-VIEW
+      - View Runtime Detail
+      - ASSET_USE
+      - ASSET-01-GATE-PAGE
+      - UI_ONLY
+      - —
+    - row: 28
+      cells:
+      - ASSET-01-ACT-VERSION-HISTORY
+      - View Version History
+      - ASSET_USE
+      - ASSET-01-GATE-CANDIDATE
+      - UI_ONLY
+      - —
+    - row: 29
+      cells:
+      - ASSET-01-ACT-RESTORE-AS-NEW
+      - Restore as New Version Draft
+      - ASSET_DECIDE
+      - ASSET-01-GATE-CANDIDATE
+      - VERSION_CREATE
+      - —
+    - row: 30
+      cells:
+      - ASSET-01-ACT-VERSION-LOCK
+      - Lock Exact Asset Version
+      - ASSET_DECIDE
+      - ASSET-01-GATE-LOCK
+      - VERSION_LOCK
+      - —
+    - row: 31
+      cells:
+      - ASSET-01-ACT-HANDOFF
+      - Handoff to VIDEO
+      - ASSET_HANDOFF
+      - ASSET-01-GATE-HANDOFF
+      - HANDOFF_CREATE
+      - ASSET-01-PORT-OUT-VIDEO
+    - row: 32
+      cells:
+      - ASSET-01-ACT-LAYER-DOC-CREATE
+      - Create Versioned Layer Document
+      - ASSET_LAYER_WRITE
+      - ASSET-01-GATE-LAYER-WRITE
+      - VERSION_CREATE
+      - ASSET-01-PORT-LAYER-DOC-CREATE
+    - row: 33
+      cells:
+      - ASSET-01-ACT-LAYER-DOC-UPDATE
+      - Update Layer Document
+      - ASSET_LAYER_WRITE
+      - ASSET-01-GATE-LAYER-WRITE
+      - DRAFT_MUTATION
+      - ASSET-01-PORT-LAYER-DOC-UPDATE
+    - row: 34
+      cells:
+      - ASSET-01-ACT-LAYER-ADD
+      - Add Layer
+      - ASSET_LAYER_WRITE
+      - ASSET-01-GATE-LAYER-WRITE
+      - DRAFT_MUTATION
+      - ASSET-01-PORT-LAYER-ADD
+    - row: 35
+      cells:
+      - ASSET-01-ACT-LAYER-DELETE
+      - Delete Layer
+      - ASSET_LAYER_WRITE
+      - ASSET-01-GATE-LAYER-WRITE
+      - DRAFT_MUTATION
+      - ASSET-01-PORT-LAYER-DELETE
+    - row: 36
+      cells:
+      - ASSET-01-ACT-LAYER-DUPLICATE
+      - Duplicate Layer
+      - ASSET_LAYER_WRITE
+      - ASSET-01-GATE-LAYER-WRITE
+      - DRAFT_MUTATION
+      - ASSET-01-PORT-LAYER-DUP
+    - row: 37
+      cells:
+      - ASSET-01-ACT-LAYER-REORDER
+      - Reorder Layer
+      - ASSET_LAYER_WRITE
+      - ASSET-01-GATE-LAYER-WRITE
+      - DRAFT_MUTATION
+      - ASSET-01-PORT-LAYER-REORDER
+    - row: 38
+      cells:
+      - ASSET-01-ACT-LAYER-PROPERTIES
+      - Update Layer Properties
+      - ASSET_LAYER_WRITE
+      - ASSET-01-GATE-LAYER-WRITE
+      - DRAFT_MUTATION
+      - ASSET-01-PORT-LAYER-PROPS
+    - row: 39
+      cells:
+      - ASSET-01-ACT-LAYER-MASK
+      - Update Layer Mask
+      - ASSET_LAYER_WRITE
+      - ASSET-01-GATE-LAYER-WRITE
+      - DRAFT_MUTATION
+      - ASSET-01-PORT-LAYER-MASK
+    - row: 40
+      cells:
+      - ASSET-01-ACT-PATCH-CREATE
+      - Create Asset Patch
+      - ASSET_LAYER_WRITE
+      - ASSET-01-GATE-LAYER-WRITE
+      - CANDIDATE_CREATE
+      - ASSET-01-PORT-PATCH-CREATE
+    - row: 41
+      cells:
+      - ASSET-01-ACT-PATCH-PREVIEW
+      - Preview Asset Patch
+      - ASSET_LAYER_WRITE
+      - ASSET-01-GATE-PATCH-PREVIEW
+      - JOB_START
+      - ASSET-01-PORT-PATCH-PREVIEW
+    - row: 42
+      cells:
+      - ASSET-01-ACT-PATCH-ACCEPT
+      - Accept Asset Patch
+      - ASSET_PATCH_DECIDE
+      - ASSET-01-GATE-PATCH-DECISION
+      - VERSION_CREATE
+      - ASSET-01-PORT-PATCH-DECIDE
+    - row: 43
+      cells:
+      - ASSET-01-ACT-PATCH-REJECT
+      - Reject Asset Patch
+      - ASSET_PATCH_DECIDE
+      - ASSET-01-GATE-PATCH-DECISION
+      - DECISION_MUTATION
+      - ASSET-01-PORT-PATCH-DECIDE
+    - row: 44
+      cells:
+      - ASSET-01-ACT-PATCH-REVISE
+      - Revise Asset Patch
+      - ASSET_PATCH_DECIDE
+      - ASSET-01-GATE-PATCH-DECISION
+      - CONTEXT_STATE
+      - —
+  - index: 12
+    rows:
+    - row: 0
+      cells:
+      - Permission
+      - Backend code(s)
+      - Purpose
+    - row: 1
+      cells:
+      - ASSET_USE
+      - asset.task.read
+      - Read page/task/asset/binding/runtime
+    - row: 2
+      cells:
+      - ASSET_EXECUTE
+      - asset.task.execute + department.task.execute
+      - Execute/retry ASSET task
+    - row: 3
+      cells:
+      - ASSET_CORRECT
+      - finding.write + correction.create
+      - Finding/correction lifecycle
+    - row: 4
+      cells:
+      - ASSET_SCORE
+      - asset.score.write + department.score.write
+      - ASSET scorecard/evaluation persist
+    - row: 5
+      cells:
+      - ASSET_DECIDE
+      - department.output.decide
+      - Candidate decision / exact version confirm
+    - row: 6
+      cells:
+      - ASSET_HANDOFF
+      - asset.handoff.create + department.handoff.create
+      - ASSET→VIDEO exact handoff
+    - row: 7
+      cells:
+      - ASSET_LAYER_WRITE
+      - asset.layer.write
+      - Layer document mutation
+    - row: 8
+      cells:
+      - ASSET_PATCH_DECIDE
+      - asset.patch.decide
+      - Asset patch decision
+  - index: 13
+    rows:
+    - row: 0
+      cells:
+      - Gate UID
+      - Condition
+    - row: 1
+      cells:
+      - ASSET-01-GATE-PAGE
+      - page permission + scoped task read
+    - row: 2
+      cells:
+      - ASSET-01-GATE-CONTEXT
+      - Project/Topic/Task exact context resolved
+    - row: 3
+      cells:
+      - ASSET-01-GATE-CHILD-LOCK
+      - exact child lock + blueprint version/hash valid
+    - row: 4
+      cells:
+      - ASSET-01-GATE-SCRIPT
+      - ASSET Script View/Section/version/hash valid
+    - row: 5
+      cells:
+      - ASSET-01-GATE-MANIFEST
+      - Asset Manifest item refs + DNA refs + input fingerprint valid
+    - row: 6
+      cells:
+      - ASSET-01-GATE-NAMING
+      - ACPOS_SYSTEM canonical filename + output identity reservation available; page rename forbidden
+    - row: 7
+      cells:
+      - ASSET-01-GATE-ROUTE
+      - approved route/capability/rights/policy snapshot available
+    - row: 8
+      cells:
+      - ASSET-01-GATE-EXECUTE
+      - context+child lock+script+manifest+naming+route all PASS
+    - row: 9
+      cells:
+      - ASSET-01-GATE-CANDIDATE
+      - verified candidate output + provenance + checksum available
+    - row: 10
+      cells:
+      - ASSET-01-GATE-EVALUATION
+      - approved ASSET criteria version + candidate valid
+    - row: 11
+      cells:
+      - ASSET-01-GATE-WAIT-CONFIRM
+      - evaluation complete; page is WAIT_CONFIRMATION
+    - row: 12
+      cells:
+      - ASSET-01-GATE-CORRECTION
+      - finding/issue exists or human chose Modify; exact current context unchanged
+    - row: 13
+      cells:
+      - ASSET-01-GATE-LAYER-ELIGIBLE
+      - asset type supports versioned layer document; audio/non-layer assets false
+    - row: 14
+      cells:
+      - ASSET-01-GATE-LAYER-WRITE
+      - layer eligible + exact asset version + unlocked layer/document + permission
+    - row: 15
+      cells:
+      - ASSET-01-GATE-PATCH-PREVIEW
+      - asset patch draft valid + lineage/blueprint/DNA/preserve constraints PASS
+    - row: 16
+      cells:
+      - ASSET-01-GATE-PATCH-DECISION
+      - patch PREVIEW_READY + permission
+    - row: 17
+      cells:
+      - ASSET-01-GATE-CONFIRM
+      - evaluation PASS per bound criteria + no hard block + human confirm
+    - row: 18
+      cells:
+      - ASSET-01-GATE-LOCK
+      - confirmed exact asset version + all Required complete + no Missing + manifest valid
+    - row: 19
+      cells:
+      - ASSET-01-GATE-HANDOFF
+      - exact locked Asset Version + Exact Asset Handoff Manifest verified
+    - row: 20
+      cells:
+      - ASSET-01-GATE-RETRY
+      - task BLOCKED/FAILED + retry policy eligible + route snapshot still valid
+    - row: 21
+      cells:
+      - ASSET-01-GATE-COMPARE
+      - selected version count 1..3; no empty compare cell
+  - index: 14
+    rows:
+    - row: 0
+      cells:
+      - Port UID
+      - Boundary
+      - Operation
+      - Method / Path
+      - Permission
+    - row: 1
+      cells:
+      - ASSET-01-PORT-IN-CORE-HANDOFF
+      - Inbound / Task Ready
+      - createDepartmentHandoff
+      - POST /v1/handoffs
+      - department.handoff.create
+    - row: 2
+      cells:
+      - ASSET-01-PORT-EXECUTE
+      - Execute Task
+      - requestTaskExecution
+      - POST /v1/tasks/{taskId}/execute
+      - department.task.execute
+    - row: 3
+      cells:
+      - ASSET-01-PORT-RETRY
+      - Retry Task
+      - retryTaskExecution
+      - POST /v1/tasks/{taskId}/retry
+      - department.task.execute
+    - row: 4
+      cells:
+      - ASSET-01-PORT-FINDING
+      - Evaluation Finding
+      - createFinding
+      - POST /v1/findings
+      - finding.write
+    - row: 5
+      cells:
+      - ASSET-01-PORT-CORRECTION
+      - Correction Request
+      - createCorrectionRequest
+      - POST /v1/correction-requests
+      - correction.create
+    - row: 6
+      cells:
+      - ASSET-01-PORT-DECISION
+      - Candidate Confirm
+      - decideOutputCandidate
+      - POST /v1/tasks/{taskId}/outputs/{outputVersionId}/decision
+      - department.output.decide
+    - row: 7
+      cells:
+      - ASSET-01-PORT-SCORECARD
+      - Score Persist
+      - submitScorecard
+      - POST /v1/scorecards
+      - department.score.write
+    - row: 8
+      cells:
+      - ASSET-01-PORT-OUT-VIDEO
+      - Outbound to VIDEO
+      - createDepartmentHandoff
+      - POST /v1/handoffs
+      - department.handoff.create
+    - row: 9
+      cells:
+      - ASSET-01-PORT-LAYER-DOC-CREATE
+      - Layer Runtime
+      - createLayerDocument
+      - POST /v1/layer-documents
+      - asset.layer.write
+    - row: 10
+      cells:
+      - ASSET-01-PORT-LAYER-DOC-UPDATE
+      - Layer Runtime
+      - updateLayerDocument
+      - PATCH /v1/layer-documents/{layerDocumentId}
+      - asset.layer.write
+    - row: 11
+      cells:
+      - ASSET-01-PORT-LAYER-ADD
+      - Layer Runtime
+      - addLayer
+      - POST /v1/layer-documents/{layerDocumentId}/layers
+      - asset.layer.write
+    - row: 12
+      cells:
+      - ASSET-01-PORT-LAYER-DELETE
+      - Layer Runtime
+      - deleteLayer
+      - DELETE /v1/layer-documents/{layerDocumentId}/layers/{layerId}
+      - asset.layer.write
+    - row: 13
+      cells:
+      - ASSET-01-PORT-LAYER-DUP
+      - Layer Runtime
+      - duplicateLayer
+      - POST /v1/layer-documents/{layerDocumentId}/layers/{layerId}/duplicate
+      - asset.layer.write
+    - row: 14
+      cells:
+      - ASSET-01-PORT-LAYER-REORDER
+      - Layer Runtime
+      - reorderLayer
+      - POST /v1/layer-documents/{layerDocumentId}/layers/{layerId}/reorder
+      - asset.layer.write
+    - row: 15
+      cells:
+      - ASSET-01-PORT-LAYER-PROPS
+      - Layer Runtime
+      - updateLayerProperties
+      - PATCH /v1/layer-documents/{layerDocumentId}/layers/{layerId}
+      - asset.layer.write
+    - row: 16
+      cells:
+      - ASSET-01-PORT-LAYER-MASK
+      - Layer Runtime
+      - updateLayerMask
+      - PATCH /v1/layer-documents/{layerDocumentId}/layers/{layerId}/mask
+      - asset.layer.write
+    - row: 17
+      cells:
+      - ASSET-01-PORT-PATCH-CREATE
+      - Asset Patch
+      - createAssetPatch
+      - POST /v1/asset-patches
+      - asset.layer.write
+    - row: 18
+      cells:
+      - ASSET-01-PORT-PATCH-PREVIEW
+      - Asset Patch
+      - previewAssetPatch
+      - POST /v1/asset-patches/{patchId}/preview
+      - asset.layer.write
+    - row: 19
+      cells:
+      - ASSET-01-PORT-PATCH-DECIDE
+      - Asset Patch
+      - decideAssetPatch
+      - POST /v1/asset-patches/{patchId}/decision
+      - asset.patch.decide
+  - index: 15
+    rows:
+    - row: 0
+      cells:
+      - State UID
+      - Display
+    - row: 1
+      cells:
+      - ASSET-01-ST-PAGE-LOADING
+      - LOADING
+    - row: 2
+      cells:
+      - ASSET-01-ST-PAGE-READY
+      - READY
+    - row: 3
+      cells:
+      - ASSET-01-ST-PAGE-EXECUTING
+      - EXECUTING
+    - row: 4
+      cells:
+      - ASSET-01-ST-PAGE-CANDIDATE
+      - CANDIDATE_OUTPUT
+    - row: 5
+      cells:
+      - ASSET-01-ST-PAGE-WAIT-CONFIRM
+      - WAIT_CONFIRMATION
+    - row: 6
+      cells:
+      - ASSET-01-ST-PAGE-CORRECTION
+      - CORRECTION_REQUIRED
+    - row: 7
+      cells:
+      - ASSET-01-ST-PAGE-CONFIRMED
+      - CONFIRMED
+    - row: 8
+      cells:
+      - ASSET-01-ST-PAGE-LOCKED
+      - LOCKED
+    - row: 9
+      cells:
+      - ASSET-01-ST-PAGE-HANDOFF
+      - HANDOFF
+    - row: 10
+      cells:
+      - ASSET-01-ST-PAGE-ERROR
+      - ERROR
+  - index: 16
+    rows:
+    - row: 0
+      cells:
+      - Error UID
+      - Context
+      - Recovery
+    - row: 1
+      cells:
+      - ASSET-01-ERR-CONTEXT-001
+      - Project/Topic/Task context missing/stale
+      - BLOCK; re-resolve exact task
+    - row: 2
+      cells:
+      - ASSET-01-ERR-BLUEPRINT-001
+      - Child lock/Blueprint missing/hash mismatch
+      - BLOCK; return Core/Blueprint owner
+    - row: 3
+      cells:
+      - ASSET-01-ERR-SCRIPT-001
+      - ASSET Script View/Section missing/hash mismatch
+      - BLOCK; no local script guess
+    - row: 4
+      cells:
+      - ASSET-01-ERR-DNA-001
+      - DNA/continuity ref missing or mismatch
+      - BLOCK; no substitute
+    - row: 5
+      cells:
+      - ASSET-01-ERR-MANIFEST-001
+      - Asset Manifest item/type/purpose/reuse status invalid
+      - BLOCK; re-resolve upstream manifest
+    - row: 6
+      cells:
+      - ASSET-01-ERR-NAMING-001
+      - Canonical filename/output identity unavailable or mismatched
+      - BLOCK; wait ACPOS naming resolution; page cannot rename
+    - row: 7
+      cells:
+      - ASSET-01-ERR-ROUTE-001
+      - Approved Provider Route unavailable
+      - BLOCK; wait ACPOS Core/API Router
+    - row: 8
+      cells:
+      - ASSET-01-ERR-PROVIDER-001
+      - Provider job/callback failed
+      - Preserve task/candidate; show retry eligibility
+    - row: 9
+      cells:
+      - ASSET-01-ERR-CANDIDATE-001
+      - Candidate provenance/checksum invalid
+      - BLOCK evaluation/decision
+    - row: 10
+      cells:
+      - ASSET-01-ERR-CRITERIA-001
+      - ASSET criteria version missing/wrong department
+      - BLOCK evaluation; no generic default
+    - row: 11
+      cells:
+      - ASSET-01-ERR-CORRECTION-001
+      - Correction context stale/candidate unapproved
+      - Return correction discussion; no execute
+    - row: 12
+      cells:
+      - ASSET-01-ERR-TRANSLATION-001
+      - Shared Translation/Compiler failed
+      - BLOCK provider execution; preserve Chinese candidate
+    - row: 13
+      cells:
+      - ASSET-01-ERR-LAYER-001
+      - Layer operation invalid/locked/cross-document
+      - BLOCK mutation
+    - row: 14
+      cells:
+      - ASSET-01-ERR-PATCH-001
+      - Patch lineage/preserve/preview invalid
+      - BLOCK patch decision
+    - row: 15
+      cells:
+      - ASSET-01-ERR-VERSION-001
+      - Overwrite/non-exact version attempt
+      - BLOCK; create new version only
+    - row: 16
+      cells:
+      - ASSET-01-ERR-HANDOFF-001
+      - Exact handoff manifest/contract/hash incomplete
+      - BLOCK handoff; preserve locked version
+    - row: 17
+      cells:
+      - ASSET-01-ERR-PERM-001
+      - Permission/scope denied
+      - Disable action + show real reason
+  - index: 17
+    rows:
+    - row: 0
+      cells:
+      - Binding
+      - Owner
+      - ASSET Rule
+    - row: 1
+      cells:
+      - Locked Blueprint / Child Lock
+      - CORE / BLUEPRINT
+      - exact version/hash；mismatch = BLOCK
+    - row: 2
+      cells:
+      - Canonical Production Script
+      - CORE Script System
+      - department specialized ASSET script consumes exact canonical script version/hash
+    - row: 3
+      cells:
+      - ASSET Production Script View
+      - CORE / SCRIPT
+      - provider-neutral；8 sections；first production read-only
+    - row: 4
+      cells:
+      - DNA Binding
+      - CORE / BLUEPRINT
+      - identity/continuity exact refs
+    - row: 5
+      cells:
+      - Asset Manifest
+      - CORE / BLUEPRINT
+      - required item/type/purpose/reuse policy
+    - row: 6
+      cells:
+      - Instruction Package
+      - InstructionCompiler
+      - approved provider-neutral instruction package
+    - row: 7
+      cells:
+      - Provider Route Snapshot
+      - ACPOS AI API Router
+      - page read-only；no provider/model selector
+    - row: 8
+      cells:
+      - Canonical Filename / Output Identity
+      - ACPOS_SYSTEM
+      - page read-only；manual rename forbidden
+    - row: 9
+      cells:
+      - Scorecard
+      - ASSET/EVALUATION
+      - task-bound Approved ASSET Criteria Version；no second scoring scheme
+  - index: 18
+    rows:
+    - row: 0
+      cells:
+      - Rule
+      - Design consequence
+    - row: 1
+      cells:
+      - Accepted layer mutation increments Layer Document Version
+      - 任何新增/刪除/排序/Mask/Properties 都保留版本線
+    - row: 2
+      cells:
+      - Locked layer rejects destructive mutation
+      - 刪除/修改按鈕依 gate/permission 真實 disable reason
+    - row: 3
+      cells:
+      - Opacity 0.0..1.0
+      - Inspector 使用 bounded field，不接受自由文字
+    - row: 4
+      cells:
+      - Parent layer same document
+      - 跨 document move = BLOCK
+    - row: 5
+      cells:
+      - z_index unique + compact
+      - Reorder 由 runtime 驗證
+    - row: 6
+      cells:
+      - Accepted Patch
+      - create NEW ASSET_VERSION + NEW LAYER_DOCUMENT_VERSION；source immutable
+    - row: 7
+      cells:
+      - Photoshop/PSD
+      - NOT IMPLIED；不得顯示 PSD import/export 或 Adobe API
+  - index: 19
+    rows:
+    - row: 0
+      cells:
+      - Visual
+      - Primary Sections
+      - Why it exists
+      - Not allowed
+    - row: 1
+      cells:
+      - A Main Production
+      - 01/02/03/04/05/08/09
+      - 日常 Reuse/Generate + Preview + Decision
+      - 自由素材 picker、假 KPI、Provider selector
+    - row: 2
+      cells:
+      - B Correction
+      - 06 + current context + preview
+      - Modify/Finding 後精準修正
+      - 無 finding/context 時常駐修正框
+    - row: 3
+      cells:
+      - C Layer/Patch
+      - 07 + image preview + runtime
+      - 局部圖層/patch 版本化
+      - Audio layer controls、PSD/Photoshop inference
+    - row: 4
+      cells:
+      - D Audio
+      - 04/05/08/09
+      - Voice/Music/SFX waveform production
+      - Layer/Patch controls
+    - row: 5
+      cells:
+      - E Handoff
+      - 10 + 08
+      - exact locked manifest transfer to VIDEO
+      - VIDEO internal UI / timeline / generation controls
+  - index: 20
+    rows:
+    - row: 0
+      cells:
+      - Direction
+      - Payload / Ref
+      - Boundary rule
+    - row: 1
+      cells:
+      - CORE → ASSET
+      - Project / Topic / Task / Blueprint / Canonical Script / DNA / Asset Manifest / Naming / Instruction / Route refs
+      - ASSET validates only；不得修改 upstream Authority
+    - row: 2
+      cells:
+      - ASSET → VIDEO
+      - Exact Asset Version / Layer Composite / Blueprint / Script Hash / DNA / Manifest Items / Canonical Filename / Checksum / Scorecard / Rights / Contract Hash
+      - VIDEO internal controls not copied into ASSET
+  - index: 21
+    rows:
+    - row: 0
+      cells:
+      - Denominator
+      - Current
+    - row: 1
+      cells:
+      - Sections
+      - 10/10
+    - row: 2
+      cells:
+      - Components
+      - 16/16
+    - row: 3
+      cells:
+      - Visuals
+      - 10/10 authority visuals; 5 materialized design candidates in this Word
+    - row: 4
+      cells:
+      - Permissions
+      - 8/8
+    - row: 5
+      cells:
+      - Gates
+      - 21/21
+    - row: 6
+      cells:
+      - Actions
+      - 44/44
+    - row: 7
+      cells:
+      - Controls
+      - 85/85
+    - row: 8
+      cells:
+      - Objects
+      - 18/18
+    - row: 9
+      cells:
+      - Errors
+      - 17/17
+    - row: 10
+      cells:
+      - Stages / Transitions
+      - 5 / 5
+    - row: 11
+      cells:
+      - Integration Ports
+      - 19/19
+    - row: 12
+      cells:
+      - Script Roles
+      - '2'
+    - row: 13
+      cells:
+      - Asset Types
+      - '10'
+    - row: 14
+      cells:
+      - Unresolved control-action refs
+      - 0 (Authority derived validation)
+    - row: 15
+      cells:
+      - Unbound actions
+      - 0 (Authority derived validation)
+  - index: 22
+    rows:
+    - row: 0
+      cells:
+      - Item
+      - Status
+    - row: 1
+      cells:
+      - Mother Basic Design structure
+      - COMPLETE
+    - row: 2
+      cells:
+      - Exact Current denominator binding
+      - COMPLETE
+    - row: 3
+      cells:
+      - Technology-purple UI materialization
+      - 5 Visual Candidates
+    - row: 4
+      cells:
+      - Fake business data
+      - 0 by design
+    - row: 5
+      cells:
+      - Human visual/function review
+      - PENDING
+    - row: 6
+      cells:
+      - Selected approved candidate
+      - NOT YET
+    - row: 7
+      cells:
+      - Authority update
+      - BLOCKED pending approval
+    - row: 8
+      cells:
+      - DESIGN_FROZEN
+      - 'FALSE'
+  - index: 23
+    rows:
+    - row: 0
+      cells:
+      - Resume field
+      - Value
+    - row: 1
+      cells:
+      - Current Governance Manifest
+      - ACPOS_CURRENT_AUTHORITY_MANIFEST_FINAL_LOCKED
+    - row: 2
+      cells:
+      - Branch / HEAD
+      - new / 165c6440cb53b1b45ec96905241fb4d56dc3b867
+    - row: 3
+      cells:
+      - Page
+      - ASSET-01
+    - row: 4
+      cells:
+      - Document Work Unit
+      - ASSET-01 Mother Basic Design Visual Rebuild
+    - row: 5
+      cells:
+      - Authority denominator
+      - 10 Sec / 16 Comp / 85 Ctrl / 44 Act / 21 Gate / 19 Port
+    - row: 6
+      cells:
+      - Visual candidate status
+      - PENDING HUMAN REVIEW
+    - row: 7
+      cells:
+      - Design freeze
+      - 'FALSE'
+    - row: 8
+      cells:
+      - Implementation claim
+      - NONE
+    - row: 9
+      cells:
+      - Production claim
+      - NONE
+  - index: 24
+    rows:
+    - row: 0
+      cells:
+      - Authority
+      - Value
+    - row: 1
+      cells:
+      - Source Commit
+      - 165c6440cb53b1b45ec96905241fb4d56dc3b867
+    - row: 2
+      cells:
+      - Machine Authority
+      - authority/pages/workspace/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    - row: 3
+      cells:
+      - Authority SHA-256
+      - 60497a42c5907d47a9e90d95e53d358c5a357864769c58f540a13f963687df0a
+    - row: 4
+      cells:
+      - Expected Control Denominator
+      - '85'
+    - row: 5
+      cells:
+      - Unique Control Rows
+      - '85'
+    - row: 6
+      cells:
+      - Denominator Gate
+      - PASS
+  - index: 25
+    rows:
+    - row: 0
+      cells:
+      - Control UID
+      - UID Status
+      - Label
+      - Type
+      - Action UID
+      - Gate
+      - Permission / Auth Resource
+      - Payload / Schema
+      - Operation
+      - Method / Path
+      - Runtime Owner
+      - Persistence Owner
+      - Runtime Status
+    - row: 1
+      cells:
+      - ASSET-01-BTN-AB
+      - EXISTING_SOURCE_UID
+      - A/B
+      - CONTROL
+      - ASSET-01-ACT-COMPARE-AB
+      - ASSET-01-GATE-COMPARE
+      - ASSET_USE
+      - —
+      - —
+      - —
+      - —
+      - —
+      - UI_LOCAL_EXACT
+    - row: 2
+      cells:
+      - ASSET-01-BTN-ABC
+      - EXISTING_SOURCE_UID
+      - A/B/C
+      - CONTROL
+      - ASSET-01-ACT-COMPARE-ABC
+      - ASSET-01-GATE-COMPARE
+      - ASSET_USE
+      - —
+      - —
+      - —
+      - —
+      - —
+      - UI_LOCAL_EXACT
+    - row: 3
+      cells:
+      - ASSET-01-BTN-BLUEPRINT
+      - EXISTING_SOURCE_UID
+      - 查看 Blueprint
+      - SECONDARY_BUTTON
+      - ASSET-01-ACT-BLUEPRINT-VIEW
+      - ASSET-01-GATE-CHILD-LOCK
+      - ASSET_USE
+      - —
+      - —
+      - —
+      - —
+      - —
+      - UI_LOCAL_EXACT
+    - row: 4
+      cells:
+      - ASSET-01-BTN-CONFIRM
+      - EXISTING_SOURCE_UID
+      - 確認版本
+      - PRIMARY_BUTTON
+      - ASSET-01-ACT-CANDIDATE-CONFIRM
+      - ASSET-01-GATE-CONFIRM
+      - ASSET_DECIDE
+      - ConfirmAssetCandidateRequest
+      - confirmAssetCandidate
+      - POST /v1/asset-runtime-runs/{runId}/candidates/{assetVersionId}/confirm
+      - SHARED_PRODUCTION_OPERATION_RUNTIME
+      - System 05 / AssetVersion Confirmed State + Decision/Audit
+      - EFFECTFUL_EXACT
+    - row: 5
+      cells:
+      - ASSET-01-BTN-CORRECTION-APPROVE
+      - EXISTING_SOURCE_UID
+      - 核准候選
+      - CONTROL
+      - ASSET-01-ACT-CORRECTION-APPROVE
+      - ASSET-01-GATE-CORRECTION
+      - ASSET_CORRECT
+      - ApproveAssetCorrectionScriptCandidateRequest
+      - approveCorrectionScriptCandidate
+      - POST /v1/state-commands/correctionscript/approve
+      - SHARED_PRODUCTION_OPERATION_RUNTIME
+      - public.correction_script_versions
+      - EFFECTFUL_EXACT
+    - row: 6
+      cells:
+      - ASSET-01-BTN-CORRECTION-EXECUTE
+      - EXISTING_SOURCE_UID
+      - 執行修正
+      - CONTROL
+      - ASSET-01-ACT-CORRECTION-EXECUTE
+      - ASSET-01-GATE-CORRECTION
+      - ASSET_EXECUTE
+      - ExecuteAssetCorrectionRequest
+      - executeAssetCorrection
+      - POST /v1/asset-runtime-runs/{runId}/corrections/execute
+      - SHARED_PRODUCTION_OPERATION_RUNTIME
+      - System 05 / AssetVersion + PatchVersion/Delta Lineage + Audit
+      - EFFECTFUL_EXACT
+    - row: 7
+      cells:
+      - ASSET-01-BTN-CORRECTION-GENERATE
+      - EXISTING_SOURCE_UID
+      - 產生修正腳本候選
+      - CONTROL
+      - ASSET-01-ACT-CORRECTION-GENERATE
+      - ASSET-01-GATE-CORRECTION
+      - ASSET_CORRECT
+      - GenerateAssetCorrectionScriptCandidateRequest
+      - generateCorrectionScriptCandidate
+      - POST /v1/state-commands/correctionscript/generate
+      - SHARED_PRODUCTION_OPERATION_RUNTIME
+      - public.correction_script_versions
+      - EFFECTFUL_EXACT
+    - row: 8
+      cells:
+      - ASSET-01-BTN-CORRECTION-OPEN
+      - EXISTING_SOURCE_UID
+      - 開始修正
+      - CONTROL
+      - ASSET-01-ACT-CORRECTION-OPEN
+      - ASSET-01-GATE-CORRECTION
+      - ASSET_CORRECT
+      - —
+      - —
+      - —
+      - —
+      - —
+      - UI_LOCAL_EXACT
+    - row: 9
+      cells:
+      - ASSET-01-BTN-EVALUATE
+      - EXISTING_SOURCE_UID
+      - 重新評估
+      - SECONDARY_BUTTON
+      - ASSET-01-ACT-EVALUATE
+      - ASSET-01-GATE-EVALUATION
+      - ASSET_SCORE
+      - EvaluateAssetCandidateRequest
+      - evaluateAssetCandidate
+      - POST /v1/asset-runtime-runs/{runId}/candidates/{assetVersionId}/evaluations
+      - SHARED_PRODUCTION_OPERATION_RUNTIME
+      - System 05 / EvaluationResult + Asset Evidence/Audit
+      - EFFECTFUL_EXACT
+    - row: 10
+      cells:
+      - ASSET-01-BTN-EXECUTE
+      - EXISTING_SOURCE_UID
+      - 執行
+      - PRIMARY_BUTTON
+      - ASSET-01-ACT-FLOW-START
+      - ASSET-01-GATE-EXECUTE
+      - ASSET_EXECUTE
+      - StartAssetProductionFlowRequest
+      - startAssetProductionFlow
+      - POST /v1/asset-runtime-runs
+      - SHARED_PRODUCTION_OPERATION_RUNTIME
+      - System 05 / ProductionWorkItem + AssetVersion Generation Lineage + Audit
+      - EFFECTFUL_EXACT
+    - row: 11
+      cells:
+      - ASSET-01-BTN-FIT
+      - EXISTING_SOURCE_UID
+      - Fit
+      - CONTROL
+      - ASSET-01-ACT-FIT
+      - ASSET-01-GATE-CANDIDATE
+      - ASSET_USE
+      - —
+      - —
+      - —
+      - —
+      - —
+      - UI_LOCAL_EXACT
+    - row: 12
+      cells:
+      - ASSET-01-BTN-HANDOFF
+      - EXISTING_SOURCE_UID
+      - Handoff → VIDEO
+      - PRIMARY_BUTTON
+      - ASSET-01-ACT-HANDOFF
+      - ASSET-01-GATE-HANDOFF
+      - ASSET_HANDOFF
+      - HandoffAssetToVideoRequest
+      - handoffAssetToVideo
+      - POST /v1/asset-runtime-runs/{runId}/handoff-to-video
+      - SHARED_PRODUCTION_OPERATION_RUNTIME
+      - System 05 / HandoffManifest + AssetVersion Provenance/Audit
+      - EFFECTFUL_EXACT
+    - row: 13
+      cells:
+      - ASSET-01-BTN-LAYER-ADD
+      - EXISTING_SOURCE_UID
+      - 新增 Layer
+      - CONTROL
+      - ASSET-01-ACT-LAYER-ADD
+      - ASSET-01-GATE-LAYER-WRITE
+      - ASSET_LAYER_WRITE
+      - AddAssetLayerRequest
+      - addAssetLayer
+      - POST /v1/asset-runtime-runs/{runId}/layer-documents/{compositionDocumentId}/layers
+      - SHARED_PRODUCTION_OPERATION_RUNTIME
+      - System 05 / LayerVersion + CompositionVersion
+      - EFFECTFUL_EXACT
+    - row: 14
+      cells:
+      - ASSET-01-BTN-LAYER-DELETE
+      - EXISTING_SOURCE_UID
+      - 刪除 Layer
+      - CONTROL
+      - ASSET-01-ACT-LAYER-DELETE
+      - ASSET-01-GATE-LAYER-WRITE
+      - ASSET_LAYER_WRITE
+      - DeleteAssetLayerRequest
+      - deleteAssetLayer
+      - DELETE /v1/asset-runtime-runs/{runId}/layer-documents/{compositionDocumentId}/layers/{layerId}
+      - SHARED_PRODUCTION_OPERATION_RUNTIME
+      - System 05 / LayerVersion Tombstone + CompositionVersion
+      - EFFECTFUL_EXACT
+    - row: 15
+      cells:
+      - ASSET-01-BTN-LAYER-DOC-CREATE
+      - EXISTING_SOURCE_UID
+      - 建立 Layer Document
+      - CONTROL
+      - ASSET-01-ACT-LAYER-DOC-CREATE
+      - ASSET-01-GATE-LAYER-WRITE
+      - ASSET_LAYER_WRITE
+      - CreateAssetLayerDocumentRequest
+      - createAssetLayerDocument
+      - POST /v1/asset-runtime-runs/{runId}/layer-documents
+      - SHARED_PRODUCTION_OPERATION_RUNTIME
+      - System 05 / CompositionDocument + CompositionVersion
+      - EFFECTFUL_EXACT
+    - row: 16
+      cells:
+      - ASSET-01-BTN-LAYER-DOC-UPDATE
+      - EXISTING_SOURCE_UID
+      - 更新 Layer Document
+      - CONTROL
+      - ASSET-01-ACT-LAYER-DOC-UPDATE
+      - ASSET-01-GATE-LAYER-WRITE
+      - ASSET_LAYER_WRITE
+      - UpdateAssetLayerDocumentRequest
+      - updateAssetLayerDocument
+      - PATCH /v1/asset-runtime-runs/{runId}/layer-documents/{compositionDocumentId}
+      - SHARED_PRODUCTION_OPERATION_RUNTIME
+      - System 05 / CompositionDocument + New CompositionVersion Lineage
+      - EFFECTFUL_EXACT
+    - row: 17
+      cells:
+      - ASSET-01-BTN-LAYER-DUPLICATE
+      - EXISTING_SOURCE_UID
+      - 複製 Layer
+      - CONTROL
+      - ASSET-01-ACT-LAYER-DUPLICATE
+      - ASSET-01-GATE-LAYER-WRITE
+      - ASSET_LAYER_WRITE
+      - DuplicateAssetLayerRequest
+      - duplicateAssetLayer
+      - POST /v1/asset-runtime-runs/{runId}/layer-documents/{compositionDocumentId}/layers/{layerId}/duplicate
+      - SHARED_PRODUCTION_OPERATION_RUNTIME
+      - System 05 / LayerVersion + CompositionVersion
+      - EFFECTFUL_EXACT
+    - row: 18
+      cells:
+      - ASSET-01-BTN-LAYER-REORDER
+      - EXISTING_SOURCE_UID
+      - 排序 Layer
+      - CONTROL
+      - ASSET-01-ACT-LAYER-REORDER
+      - ASSET-01-GATE-LAYER-WRITE
+      - ASSET_LAYER_WRITE
+      - ReorderAssetLayersRequest
+      - reorderAssetLayers
+      - POST /v1/asset-runtime-runs/{runId}/layer-documents/{compositionDocumentId}/layers/reorder
+      - SHARED_PRODUCTION_OPERATION_RUNTIME
+      - System 05 / CompositionVersion + Layer Ordering Lineage
+      - EFFECTFUL_EXACT
+    - row: 19
+      cells:
+      - ASSET-01-BTN-LOCK
+      - EXISTING_SOURCE_UID
+      - Lock Exact Version
+      - SECONDARY_BUTTON
+      - ASSET-01-ACT-VERSION-LOCK
+      - ASSET-01-GATE-LOCK
+      - ASSET_DECIDE
+      - LockAssetVersionRequest
+      - lockAssetVersion
+      - POST /v1/state-commands/assetversion/lock
+      - SHARED_PRODUCTION_OPERATION_RUNTIME
+      - public.production_output_version_locks
+      - EFFECTFUL_EXACT
+    - row: 20
+      cells:
+      - ASSET-01-BTN-MODIFY
+      - EXISTING_SOURCE_UID
+      - 修改版本
+      - SECONDARY_BUTTON
+      - ASSET-01-ACT-CORRECTION-OPEN
+      - ASSET-01-GATE-WAIT-CONFIRM
+      - ASSET_CORRECT
+      - —
+      - —
+      - —
+      - —
+      - —
+      - UI_LOCAL_EXACT
+    - row: 21
+      cells:
+      - ASSET-01-BTN-PATCH-ACCEPT
+      - EXISTING_SOURCE_UID
+      - 接受 Patch
+      - CONTROL
+      - ASSET-01-ACT-PATCH-ACCEPT
+      - ASSET-01-GATE-PATCH-DECISION
+      - ASSET_PATCH_DECIDE
+      - AcceptAssetPatchRequest
+      - acceptAssetPatch
+      - POST /v1/asset-runtime-runs/{runId}/layer-documents/{compositionDocumentId}/patches/{patchVersionId}/accept
+      - SHARED_PRODUCTION_OPERATION_RUNTIME
+      - System 05 / PatchVersion + LayerVersion + CompositionVersion
+      - EFFECTFUL_EXACT
+    - row: 22
+      cells:
+      - ASSET-01-BTN-PATCH-CREATE
+      - EXISTING_SOURCE_UID
+      - 建立 Patch
+      - CONTROL
+      - ASSET-01-ACT-PATCH-CREATE
+      - ASSET-01-GATE-LAYER-WRITE
+      - ASSET_LAYER_WRITE
+      - CreateAssetPatchRequest
+      - createAssetPatch
+      - POST /v1/asset-runtime-runs/{runId}/layer-documents/{compositionDocumentId}/patches
+      - SHARED_PRODUCTION_OPERATION_RUNTIME
+      - System 05 / PatchVersion + SourceBinding
+      - EFFECTFUL_EXACT
+    - row: 23
+      cells:
+      - ASSET-01-BTN-PATCH-PREVIEW
+      - EXISTING_SOURCE_UID
+      - 預覽 Patch
+      - CONTROL
+      - ASSET-01-ACT-PATCH-PREVIEW
+      - ASSET-01-GATE-PATCH-PREVIEW
+      - ASSET_LAYER_WRITE
+      - PreviewAssetPatchRequest
+      - previewAssetPatch
+      - POST /v1/asset-runtime-runs/{runId}/layer-documents/{compositionDocumentId}/patches/{patchVersionId}/preview
+      - SHARED_PRODUCTION_OPERATION_RUNTIME
+      - System 05 / PatchVersion Candidate + Preview Evidence (non-applied)
+      - EFFECTFUL_EXACT
+    - row: 24
+      cells:
+      - ASSET-01-BTN-PATCH-REJECT
+      - EXISTING_SOURCE_UID
+      - 拒絕 Patch
+      - CONTROL
+      - ASSET-01-ACT-PATCH-REJECT
+      - ASSET-01-GATE-PATCH-DECISION
+      - ASSET_PATCH_DECIDE
+      - RejectAssetPatchRequest
+      - rejectAssetPatch
+      - POST /v1/asset-runtime-runs/{runId}/layer-documents/{compositionDocumentId}/patches/{patchVersionId}/reject
+      - SHARED_PRODUCTION_OPERATION_RUNTIME
+      - System 05 / PatchVersion Rejected State + Decision/Audit
+      - EFFECTFUL_EXACT
+    - row: 25
+      cells:
+      - ASSET-01-BTN-PATCH-REVISE
+      - EXISTING_SOURCE_UID
+      - 要求修改 Patch
+      - CONTROL
+      - ASSET-01-ACT-PATCH-REVISE
+      - ASSET-01-GATE-PATCH-DECISION
+      - ASSET_PATCH_DECIDE
+      - —
+      - —
+      - —
+      - —
+      - —
+      - UI_LOCAL_EXACT
+    - row: 26
+      cells:
+      - ASSET-01-BTN-REFERENCE
+      - EXISTING_SOURCE_UID
+      - Reference
+      - CONTROL
+      - ASSET-01-ACT-REFERENCE-TOGGLE
+      - ASSET-01-GATE-CANDIDATE
+      - ASSET_USE
+      - —
+      - —
+      - —
+      - —
+      - —
+      - UI_LOCAL_EXACT
+    - row: 27
+      cells:
+      - ASSET-01-BTN-RESTORE-AS-NEW
+      - EXISTING_SOURCE_UID
+      - Restore as New Version
+      - SECONDARY_BUTTON
+      - ASSET-01-ACT-RESTORE-AS-NEW
+      - ASSET-01-GATE-CANDIDATE
+      - ASSET_DECIDE
+      - RestoreAssetVersionAsNewDraftRequest
+      - restoreAssetVersionAsNewDraft
+      - POST /v1/state-commands/assetversion/restoreasnewdraft
+      - SHARED_PRODUCTION_OPERATION_RUNTIME
+      - public.asset_version_restore_drafts
+      - EFFECTFUL_EXACT
+    - row: 28
+      cells:
+      - ASSET-01-BTN-RESULT-DETAIL
+      - EXISTING_SOURCE_UID
+      - 查看結果詳情
+      - SECONDARY_BUTTON
+      - ASSET-01-ACT-RESULT-VIEW
+      - ASSET-01-GATE-EVALUATION
+      - ASSET_USE
+      - —
+      - —
+      - —
+      - —
+      - —
+      - UI_LOCAL_EXACT
+    - row: 29
+      cells:
+      - ASSET-01-BTN-RETRY
+      - EXISTING_SOURCE_UID
+      - Retry
+      - SECONDARY_BUTTON
+      - ASSET-01-ACT-TASK-RETRY
+      - ASSET-01-GATE-RETRY
+      - ASSET_EXECUTE
+      - RetryAssetTaskRequest
+      - retryAssetTask
+      - POST /v1/asset-runtime-runs/{runId}/tasks/{taskId}/retry
+      - SHARED_PRODUCTION_OPERATION_RUNTIME
+      - System 05 / ProductionWorkItem Retry Attempt + Asset Runtime Audit
+      - EFFECTFUL_EXACT
+    - row: 30
+      cells:
+      - ASSET-01-BTN-RUNTIME-DETAIL
+      - EXISTING_SOURCE_UID
+      - 查看 Runtime 詳情
+      - SECONDARY_BUTTON
+      - ASSET-01-ACT-RUNTIME-VIEW
+      - ASSET-01-GATE-PAGE
+      - ASSET_USE
+      - —
+      - —
+      - —
+      - —
+      - —
+      - UI_LOCAL_EXACT
+    - row: 31
+      cells:
+      - ASSET-01-BTN-SCRIPT
+      - EXISTING_SOURCE_UID
+      - 查看 ASSET Script
+      - SECONDARY_BUTTON
+      - ASSET-01-ACT-SCRIPT-VIEW
+      - ASSET-01-GATE-SCRIPT
+      - ASSET_USE
+      - —
+      - —
+      - —
+      - —
+      - —
+      - UI_LOCAL_EXACT
+    - row: 32
+      cells:
+      - ASSET-01-BTN-SINGLE
+      - EXISTING_SOURCE_UID
+      - Single
+      - CONTROL
+      - ASSET-01-ACT-COMPARE-SINGLE
+      - ASSET-01-GATE-COMPARE
+      - ASSET_USE
+      - —
+      - —
+      - —
+      - —
+      - —
+      - UI_LOCAL_EXACT
+    - row: 33
+      cells:
+      - ASSET-01-BTN-VERSION-HISTORY
+      - EXISTING_SOURCE_UID
+      - 版本歷史
+      - SECONDARY_BUTTON
+      - ASSET-01-ACT-VERSION-HISTORY
+      - ASSET-01-GATE-CANDIDATE
+      - ASSET_USE
+      - —
+      - —
+      - —
+      - —
+      - —
+      - UI_LOCAL_EXACT
+    - row: 34
+      cells:
+      - ASSET-01-BTN-ZOOM-IN
+      - EXISTING_SOURCE_UID
+      - +
+      - CONTROL
+      - ASSET-01-ACT-ZOOM-IN
+      - ASSET-01-GATE-CANDIDATE
+      - ASSET_USE
+      - —
+      - —
+      - —
+      - —
+      - —
+      - UI_LOCAL_EXACT
+    - row: 35
+      cells:
+      - ASSET-01-BTN-ZOOM-OUT
+      - EXISTING_SOURCE_UID
+      - −
+      - CONTROL
+      - ASSET-01-ACT-ZOOM-OUT
+      - ASSET-01-GATE-CANDIDATE
+      - ASSET_USE
+      - —
+      - —
+      - —
+      - —
+      - —
+      - UI_LOCAL_EXACT
+    - row: 36
+      cells:
+      - ASSET-01-CTL-FILTER
+      - EXISTING_SOURCE_UID
+      - Filter
+      - FILTER
+      - ASSET-01-ACT-ASSET-FILTER
+      - ASSET-01-GATE-CONTEXT
+      - ASSET_USE
+      - —
+      - —
+      - —
+      - —
+      - —
+      - UI_LOCAL_EXACT
+    - row: 37
+      cells:
+      - ASSET-01-CTL-LAYER-MASK
+      - EXISTING_SOURCE_UID
+      - Mask / Semantic Region
+      - CONTROL
+      - ASSET-01-ACT-LAYER-MASK
+      - ASSET-01-GATE-LAYER-WRITE
+      - ASSET_LAYER_WRITE
+      - UpdateAssetLayerMaskRequest
+      - updateAssetLayerMask
+      - PUT /v1/asset-runtime-runs/{runId}/layer-documents/{compositionDocumentId}/layers/{layerId}/mask
+      - SHARED_PRODUCTION_OPERATION_RUNTIME
+      - System 05 / LayerVersion + SpatialRegion + CompositionVersion
+      - EFFECTFUL_EXACT
+    - row: 38
+      cells:
+      - ASSET-01-CTL-LAYER-PROPERTIES
+      - EXISTING_SOURCE_UID
+      - Opacity / Blend / Transform
+      - CONTROL
+      - ASSET-01-ACT-LAYER-PROPERTIES
+      - ASSET-01-GATE-LAYER-WRITE
+      - ASSET_LAYER_WRITE
+      - UpdateAssetLayerPropertiesRequest
+      - updateAssetLayerProperties
+      - PATCH /v1/asset-runtime-runs/{runId}/layer-documents/{compositionDocumentId}/layers/{layerId}/properties
+      - SHARED_PRODUCTION_OPERATION_RUNTIME
+      - System 05 / LayerVersion + CompositionVersion
+      - EFFECTFUL_EXACT
+    - row: 39
+      cells:
+      - ASSET-01-CTL-MODE
+      - EXISTING_SOURCE_UID
+      - AUTO / MANUAL
+      - SEGMENTED
+      - ASSET-01-ACT-MODE-SET
+      - ASSET-01-GATE-CONTEXT
+      - ASSET_USE
+      - —
+      - —
+      - —
+      - —
+      - —
+      - UI_LOCAL_EXACT
+    - row: 40
+      cells:
+      - ASSET-01-CTL-PROJECT
+      - EXISTING_SOURCE_UID
+      - Project
+      - SELECT
+      - ASSET-01-ACT-PROJECT-SELECT
+      - ASSET-01-GATE-PAGE
+      - ASSET_USE
+      - —
+      - —
+      - —
+      - —
+      - —
+      - UI_LOCAL_EXACT
+    - row: 41
+      cells:
+      - ASSET-01-CTL-TOPIC
+      - EXISTING_SOURCE_UID
+      - Topic
+      - SELECT
+      - ASSET-01-ACT-TOPIC-SELECT
+      - ASSET-01-GATE-PAGE
+      - ASSET_USE
+      - —
+      - —
+      - —
+      - —
+      - —
+      - UI_LOCAL_EXACT
+    - row: 42
+      cells:
+      - ASSET-01-FLD-ATTEMPT
+      - EXISTING_SOURCE_UID
+      - Attempt
+      - READONLY
+      - ASSET-01-ACT-RUNTIME-VIEW
+      - ASSET-01-GATE-PAGE
+      - ASSET_USE
+      - —
+      - —
+      - —
+      - —
+      - —
+      - UI_LOCAL_EXACT
+    - row: 43
+      cells:
+      - ASSET-01-FLD-BLUEPRINT
+      - EXISTING_SOURCE_UID
+      - Locked Blueprint / Child Lock
+      - READONLY
+      - ASSET-01-ACT-BINDING-VIEW
+      - ASSET-01-GATE-CHILD-LOCK
+      - ASSET_USE
+      - —
+      - —
+      - —
+      - —
+      - —
+      - UI_LOCAL_EXACT
+    - row: 44
+      cells:
+      - ASSET-01-FLD-CALLBACK
+      - EXISTING_SOURCE_UID
+      - Callback
+      - READONLY
+      - ASSET-01-ACT-RUNTIME-VIEW
+      - ASSET-01-GATE-PAGE
+      - ASSET_USE
+      - —
+      - —
+      - —
+      - —
+      - —
+      - UI_LOCAL_EXACT
+    - row: 45
+      cells:
+      - ASSET-01-FLD-CANONICAL-FILENAME
+      - EXISTING_SOURCE_UID
+      - Canonical Filename
+      - READONLY
+      - ASSET-01-ACT-BINDING-VIEW
+      - ASSET-01-GATE-NAMING
+      - ASSET_USE
+      - —
+      - —
+      - —
+      - —
+      - —
+      - UI_LOCAL_EXACT
+    - row: 46
+      cells:
+      - ASSET-01-FLD-CHECKSUM
+      - EXISTING_SOURCE_UID
+      - Checksum
+      - READONLY
+      - ASSET-01-ACT-BINDING-VIEW
+      - ASSET-01-GATE-NAMING
+      - ASSET_USE
+      - —
+      - —
+      - —
+      - —
+      - —
+      - UI_LOCAL_EXACT
+    - row: 47
+      cells:
+      - ASSET-01-FLD-CRITERIA
+      - EXISTING_SOURCE_UID
+      - ASSET Criteria Version
+      - READONLY
+      - ASSET-01-ACT-RESULT-VIEW
+      - ASSET-01-GATE-EVALUATION
+      - ASSET_USE
+      - —
+      - —
+      - —
+      - —
+      - —
+      - UI_LOCAL_EXACT
+    - row: 48
+      cells:
+      - ASSET-01-FLD-DIMENSIONS
+      - EXISTING_SOURCE_UID
+      - Dimension UID / Label / Weight / Score / Hard Block
+      - READONLY
+      - ASSET-01-ACT-RESULT-VIEW
+      - ASSET-01-GATE-EVALUATION
+      - ASSET_USE
+      - —
+      - —
+      - —
+      - —
+      - —
+      - UI_LOCAL_EXACT
+    - row: 49
+      cells:
+      - ASSET-01-FLD-DNA
+      - EXISTING_SOURCE_UID
+      - DNA / Identity / Continuity Refs
+      - READONLY
+      - ASSET-01-ACT-BINDING-VIEW
+      - ASSET-01-GATE-MANIFEST
+      - ASSET_USE
+      - —
+      - —
+      - —
+      - —
+      - —
+      - UI_LOCAL_EXACT
+    - row: 50
+      cells:
+      - ASSET-01-FLD-HANDOFF-ASSET-VERSION
+      - EXISTING_SOURCE_UID
+      - ASSET VERSION
+      - READONLY
+      - ASSET-01-ACT-BINDING-VIEW
+      - ASSET-01-GATE-HANDOFF
+      - ASSET_USE
+      - —
+      - —
+      - —
+      - —
+      - —
+      - UI_LOCAL_EXACT
+    - row: 51
+      cells:
+      - ASSET-01-FLD-HANDOFF-BLUEPRINT
+      - EXISTING_SOURCE_UID
+      - BLUEPRINT
+      - READONLY
+      - ASSET-01-ACT-BINDING-VIEW
+      - ASSET-01-GATE-HANDOFF
+      - ASSET_USE
+      - —
+      - —
+      - —
+      - —
+      - —
+      - UI_LOCAL_EXACT
+    - row: 52
+      cells:
+      - ASSET-01-FLD-HANDOFF-CANONICAL-FILENAME
+      - EXISTING_SOURCE_UID
+      - CANONICAL FILENAME
+      - READONLY
+      - ASSET-01-ACT-BINDING-VIEW
+      - ASSET-01-GATE-HANDOFF
+      - ASSET_USE
+      - —
+      - —
+      - —
+      - —
+      - —
+      - UI_LOCAL_EXACT
+    - row: 53
+      cells:
+      - ASSET-01-FLD-HANDOFF-CHECKSUM
+      - EXISTING_SOURCE_UID
+      - CHECKSUM
+      - READONLY
+      - ASSET-01-ACT-BINDING-VIEW
+      - ASSET-01-GATE-HANDOFF
+      - ASSET_USE
+      - —
+      - —
+      - —
+      - —
+      - —
+      - UI_LOCAL_EXACT
+    - row: 54
+      cells:
+      - ASSET-01-FLD-HANDOFF-CONTRACT-HASH
+      - EXISTING_SOURCE_UID
+      - CONTRACT HASH
+      - READONLY
+      - ASSET-01-ACT-BINDING-VIEW
+      - ASSET-01-GATE-HANDOFF
+      - ASSET_USE
+      - —
+      - —
+      - —
+      - —
+      - —
+      - UI_LOCAL_EXACT
+    - row: 55
+      cells:
+      - ASSET-01-FLD-HANDOFF-DNA
+      - EXISTING_SOURCE_UID
+      - DNA
+      - READONLY
+      - ASSET-01-ACT-BINDING-VIEW
+      - ASSET-01-GATE-HANDOFF
+      - ASSET_USE
+      - —
+      - —
+      - —
+      - —
+      - —
+      - UI_LOCAL_EXACT
+    - row: 56
+      cells:
+      - ASSET-01-FLD-HANDOFF-LAYER-COMPOSITE
+      - EXISTING_SOURCE_UID
+      - LAYER COMPOSITE
+      - READONLY
+      - ASSET-01-ACT-BINDING-VIEW
+      - ASSET-01-GATE-HANDOFF
+      - ASSET_USE
+      - —
+      - —
+      - —
+      - —
+      - —
+      - UI_LOCAL_EXACT
+    - row: 57
+      cells:
+      - ASSET-01-FLD-HANDOFF-MANIFEST-ITEMS
+      - EXISTING_SOURCE_UID
+      - MANIFEST ITEMS
+      - READONLY
+      - ASSET-01-ACT-BINDING-VIEW
+      - ASSET-01-GATE-HANDOFF
+      - ASSET_USE
+      - —
+      - —
+      - —
+      - —
+      - —
+      - UI_LOCAL_EXACT
+    - row: 58
+      cells:
+      - ASSET-01-FLD-HANDOFF-RIGHTS
+      - EXISTING_SOURCE_UID
+      - RIGHTS
+      - READONLY
+      - ASSET-01-ACT-BINDING-VIEW
+      - ASSET-01-GATE-HANDOFF
+      - ASSET_USE
+      - —
+      - —
+      - —
+      - —
+      - —
+      - UI_LOCAL_EXACT
+    - row: 59
+      cells:
+      - ASSET-01-FLD-HANDOFF-SCORECARD
+      - EXISTING_SOURCE_UID
+      - SCORECARD
+      - READONLY
+      - ASSET-01-ACT-BINDING-VIEW
+      - ASSET-01-GATE-HANDOFF
+      - ASSET_USE
+      - —
+      - —
+      - —
+      - —
+      - —
+      - UI_LOCAL_EXACT
+    - row: 60
+      cells:
+      - ASSET-01-FLD-HANDOFF-SCRIPT-HASH
+      - EXISTING_SOURCE_UID
+      - SCRIPT HASH
+      - READONLY
+      - ASSET-01-ACT-BINDING-VIEW
+      - ASSET-01-GATE-HANDOFF
+      - ASSET_USE
+      - —
+      - —
+      - —
+      - —
+      - —
+      - UI_LOCAL_EXACT
+    - row: 61
+      cells:
+      - ASSET-01-FLD-INPUT-FINGERPRINT
+      - EXISTING_SOURCE_UID
+      - Input Fingerprint
+      - READONLY
+      - ASSET-01-ACT-BINDING-VIEW
+      - ASSET-01-GATE-MANIFEST
+      - ASSET_USE
+      - —
+      - —
+      - —
+      - —
+      - —
+      - UI_LOCAL_EXACT
+    - row: 62
+      cells:
+      - ASSET-01-FLD-INSTRUCTION
+      - EXISTING_SOURCE_UID
+      - Approved Instruction Package
+      - READONLY
+      - ASSET-01-ACT-BINDING-VIEW
+      - ASSET-01-GATE-ROUTE
+      - ASSET_USE
+      - —
+      - —
+      - —
+      - —
+      - —
+      - UI_LOCAL_EXACT
+    - row: 63
+      cells:
+      - ASSET-01-FLD-ISSUES
+      - EXISTING_SOURCE_UID
+      - Issue Summary
+      - READONLY
+      - ASSET-01-ACT-RESULT-VIEW
+      - ASSET-01-GATE-EVALUATION
+      - ASSET_USE
+      - —
+      - —
+      - —
+      - —
+      - —
+      - UI_LOCAL_EXACT
+    - row: 64
+      cells:
+      - ASSET-01-FLD-JOB
+      - EXISTING_SOURCE_UID
+      - Provider Job State
+      - READONLY
+      - ASSET-01-ACT-RUNTIME-VIEW
+      - ASSET-01-GATE-PAGE
+      - ASSET_USE
+      - —
+      - —
+      - —
+      - —
+      - —
+      - UI_LOCAL_EXACT
+    - row: 65
+      cells:
+      - ASSET-01-FLD-MANIFEST
+      - EXISTING_SOURCE_UID
+      - Asset Manifest Item ID / Purpose
+      - READONLY
+      - ASSET-01-ACT-BINDING-VIEW
+      - ASSET-01-GATE-MANIFEST
+      - ASSET_USE
+      - —
+      - —
+      - —
+      - —
+      - —
+      - UI_LOCAL_EXACT
+    - row: 66
+      cells:
+      - ASSET-01-FLD-MANIFEST-DEFERRED
+      - EXISTING_SOURCE_UID
+      - Deferred
+      - READONLY
+      - ASSET-01-ACT-BINDING-VIEW
+      - ASSET-01-GATE-MANIFEST
+      - ASSET_USE
+      - —
+      - —
+      - —
+      - —
+      - —
+      - UI_LOCAL_EXACT
+    - row: 67
+      cells:
+      - ASSET-01-FLD-MANIFEST-MISSING
+      - EXISTING_SOURCE_UID
+      - Missing
+      - READONLY
+      - ASSET-01-ACT-BINDING-VIEW
+      - ASSET-01-GATE-MANIFEST
+      - ASSET_USE
+      - —
+      - —
+      - —
+      - —
+      - —
+      - UI_LOCAL_EXACT
+    - row: 68
+      cells:
+      - ASSET-01-FLD-MANIFEST-REQUIRED
+      - EXISTING_SOURCE_UID
+      - Required
+      - READONLY
+      - ASSET-01-ACT-BINDING-VIEW
+      - ASSET-01-GATE-MANIFEST
+      - ASSET_USE
+      - —
+      - —
+      - —
+      - —
+      - —
+      - UI_LOCAL_EXACT
+    - row: 69
+      cells:
+      - ASSET-01-FLD-MANIFEST-REUSE
+      - EXISTING_SOURCE_UID
+      - Reuse
+      - READONLY
+      - ASSET-01-ACT-BINDING-VIEW
+      - ASSET-01-GATE-MANIFEST
+      - ASSET_USE
+      - —
+      - —
+      - —
+      - —
+      - —
+      - UI_LOCAL_EXACT
+    - row: 70
+      cells:
+      - ASSET-01-FLD-NAMING-AUTHORITY
+      - EXISTING_SOURCE_UID
+      - Filename Authority = ACPOS_SYSTEM
+      - READONLY
+      - ASSET-01-ACT-BINDING-VIEW
+      - ASSET-01-GATE-NAMING
+      - ASSET_USE
+      - —
+      - —
+      - —
+      - —
+      - —
+      - UI_LOCAL_EXACT
+    - row: 71
+      cells:
+      - ASSET-01-FLD-OUTPUT-ID
+      - EXISTING_SOURCE_UID
+      - Output Artifact ID / Exact Version
+      - READONLY
+      - ASSET-01-ACT-BINDING-VIEW
+      - ASSET-01-GATE-NAMING
+      - ASSET_USE
+      - —
+      - —
+      - —
+      - —
+      - —
+      - UI_LOCAL_EXACT
+    - row: 72
+      cells:
+      - ASSET-01-FLD-OVERALL
+      - EXISTING_SOURCE_UID
+      - Overall Score
+      - READONLY
+      - ASSET-01-ACT-RESULT-VIEW
+      - ASSET-01-GATE-EVALUATION
+      - ASSET_USE
+      - —
+      - —
+      - —
+      - —
+      - —
+      - UI_LOCAL_EXACT
+    - row: 73
+      cells:
+      - ASSET-01-FLD-PROVIDER
+      - EXISTING_SOURCE_UID
+      - Provider / Model
+      - READONLY
+      - ASSET-01-ACT-RUNTIME-VIEW
+      - ASSET-01-GATE-PAGE
+      - ASSET_USE
+      - —
+      - —
+      - —
+      - —
+      - —
+      - UI_LOCAL_EXACT
+    - row: 74
+      cells:
+      - ASSET-01-FLD-RETRY-ELIGIBILITY
+      - EXISTING_SOURCE_UID
+      - Retry Eligibility
+      - READONLY
+      - ASSET-01-ACT-RUNTIME-VIEW
+      - ASSET-01-GATE-PAGE
+      - ASSET_USE
+      - —
+      - —
+      - —
+      - —
+      - —
+      - UI_LOCAL_EXACT
+    - row: 75
+      cells:
+      - ASSET-01-FLD-RIGHTS
+      - EXISTING_SOURCE_UID
+      - Rights / Policy
+      - READONLY
+      - ASSET-01-ACT-BINDING-VIEW
+      - ASSET-01-GATE-MANIFEST
+      - ASSET_USE
+      - —
+      - —
+      - —
+      - —
+      - —
+      - UI_LOCAL_EXACT
+    - row: 76
+      cells:
+      - ASSET-01-FLD-ROUTE
+      - EXISTING_SOURCE_UID
+      - Route State
+      - READONLY
+      - ASSET-01-ACT-RUNTIME-VIEW
+      - ASSET-01-GATE-PAGE
+      - ASSET_USE
+      - —
+      - —
+      - —
+      - —
+      - —
+      - UI_LOCAL_EXACT
+    - row: 77
+      cells:
+      - ASSET-01-FLD-SCRIPT
+      - EXISTING_SOURCE_UID
+      - ASSET Script Role / Section / Hash
+      - READONLY
+      - ASSET-01-ACT-BINDING-VIEW
+      - ASSET-01-GATE-SCRIPT
+      - ASSET_USE
+      - —
+      - —
+      - —
+      - —
+      - —
+      - UI_LOCAL_EXACT
+    - row: 78
+      cells:
+      - ASSET-01-FLD-SEARCH
+      - EXISTING_SOURCE_UID
+      - 搜尋素材
+      - SEARCH
+      - ASSET-01-ACT-ASSET-SEARCH
+      - ASSET-01-GATE-CONTEXT
+      - ASSET_USE
+      - —
+      - —
+      - —
+      - —
+      - —
+      - UI_LOCAL_EXACT
+    - row: 79
+      cells:
+      - ASSET-01-FLD-STAGE
+      - EXISTING_SOURCE_UID
+      - Current Stage
+      - READONLY
+      - ASSET-01-ACT-BINDING-VIEW
+      - ASSET-01-GATE-CONTEXT
+      - ASSET_USE
+      - —
+      - —
+      - —
+      - —
+      - —
+      - UI_LOCAL_EXACT
+    - row: 80
+      cells:
+      - ASSET-01-FLD-TASK
+      - EXISTING_SOURCE_UID
+      - Production Task
+      - READONLY
+      - ASSET-01-ACT-BINDING-VIEW
+      - ASSET-01-GATE-CONTEXT
+      - ASSET_USE
+      - —
+      - —
+      - —
+      - —
+      - —
+      - UI_LOCAL_EXACT
+    - row: 81
+      cells:
+      - ASSET-01-FLD-TASK-STATUS
+      - EXISTING_SOURCE_UID
+      - Task Status
+      - STATUS
+      - ASSET-01-ACT-BINDING-VIEW
+      - ASSET-01-GATE-CONTEXT
+      - ASSET_USE
+      - —
+      - —
+      - —
+      - —
+      - —
+      - UI_LOCAL_EXACT
+    - row: 82
+      cells:
+      - ASSET-01-FLD-TRACE
+      - EXISTING_SOURCE_UID
+      - Correlation / Trace
+      - READONLY
+      - ASSET-01-ACT-RUNTIME-VIEW
+      - ASSET-01-GATE-PAGE
+      - ASSET_USE
+      - —
+      - —
+      - —
+      - —
+      - —
+      - UI_LOCAL_EXACT
+    - row: 83
+      cells:
+      - ASSET-01-LST-ASSET
+      - EXISTING_SOURCE_UID
+      - Asset Items
+      - LIST
+      - ASSET-01-ACT-ASSET-SELECT
+      - ASSET-01-GATE-CONTEXT
+      - ASSET_USE
+      - —
+      - —
+      - —
+      - —
+      - —
+      - UI_LOCAL_EXACT
+    - row: 84
+      cells:
+      - ASSET-01-LST-COMPARE-VERSIONS
+      - EXISTING_SOURCE_UID
+      - Selected Versions
+      - LIST
+      - ASSET-01-ACT-COMPARE-SINGLE
+      - ASSET-01-GATE-COMPARE
+      - ASSET_USE
+      - —
+      - —
+      - —
+      - —
+      - —
+      - UI_LOCAL_EXACT
+    - row: 85
+      cells:
+      - ASSET-01-TXT-CORRECTION-REQUEST
+      - EXISTING_SOURCE_UID
+      - 繁中修改要求
+      - CONTROL
+      - ASSET-01-ACT-CORRECTION-GENERATE
+      - ASSET-01-GATE-CORRECTION
+      - ASSET_CORRECT
+      - GenerateAssetCorrectionScriptCandidateRequest
+      - generateCorrectionScriptCandidate
+      - POST /v1/state-commands/correctionscript/generate
+      - SHARED_PRODUCTION_OPERATION_RUNTIME
+      - public.correction_script_versions
+      - EFFECTFUL_EXACT
+  - index: 26
+    rows:
+    - row: 0
+      cells:
+      - Profile UID
+      - Department
+      - Applicability
+      - Pass Threshold
+      - Authority Basis
+    - row: 1
+      cells:
+      - QCP-ASSET-IMAGE-V1
+      - ASSET
+      - IMAGE asset outputs
+      - '95'
+      - NEW 95 threshold authority; concrete dimensions new authority
+  - index: 27
+    rows:
+    - row: 0
+      cells:
+      - Order
+      - Dimension UID
+      - 審查項目
+      - English
+      - Weight
+      - Hard Block
+      - Definition
+    - row: 1
+      cells:
+      - '1'
+      - QA-DIM-ASSET-SCRIPT
+      - 腳本／Manifest 符合
+      - Script / Manifest Compliance
+      - '15'
+      - 'NO'
+      - 符合 ASSET Script、Manifest Item 與用途
+    - row: 2
+      cells:
+      - '2'
+      - QA-DIM-ASSET-IDENTITY
+      - 人物／角色 DNA 一致性
+      - Character / Identity DNA Fidelity
+      - '20'
+      - 'NO'
+      - 臉、身形、服裝、標誌特徵與 DNA 一致
+    - row: 3
+      cells:
+      - '3'
+      - QA-DIM-ASSET-OBJECT
+      - 物件一致性
+      - Object Fidelity
+      - '10'
+      - 'NO'
+      - 物件形狀、材質、尺寸比例與指定版本一致
+    - row: 4
+      cells:
+      - '4'
+      - QA-DIM-ASSET-SCENE
+      - 場景／環境一致性
+      - Scene / Environment Fidelity
+      - '10'
+      - 'NO'
+      - 環境、空間、背景元素與 Scene DNA 一致
+    - row: 5
+      cells:
+      - '5'
+      - QA-DIM-ASSET-COMPOSITION
+      - 構圖／取景
+      - Composition / Framing
+      - '10'
+      - 'NO'
+      - 主體位置、鏡位意圖、留白與視覺重心合理
+    - row: 6
+      cells:
+      - '6'
+      - QA-DIM-ASSET-GEOMETRY
+      - 解剖／幾何／生成瑕疵
+      - Anatomy / Geometry / Artifact Integrity
+      - '15'
+      - 'NO'
+      - 手指、肢體、透視、破圖、重影、錯字等無明顯瑕疵
+    - row: 7
+      cells:
+      - '7'
+      - QA-DIM-ASSET-STYLE
+      - 風格／色彩／光線一致性
+      - Style / Color / Lighting Consistency
+      - '10'
+      - 'NO'
+      - 風格、色調、光線與系列基準一致
+    - row: 8
+      cells:
+      - '8'
+      - QA-DIM-ASSET-TECH
+      - 技術品質
+      - Technical Image Quality
+      - '5'
+      - 'NO'
+      - 尺寸、解析度、格式、清晰度與檔案完整
+    - row: 9
+      cells:
+      - '9'
+      - QA-DIM-RIGHTS-POLICY
+      - 權利／政策
+      - Rights / Policy
+      - '5'
+      - HARD BLOCK
+      - 權利與政策要求必須 PASS
+  - index: 28
+    rows:
+    - row: 0
+      cells:
+      - Profile UID
+      - Department
+      - Applicability
+      - Pass Threshold
+      - Authority Basis
+    - row: 1
+      cells:
+      - QCP-ASSET-AUDIO-V1
+      - ASSET
+      - VOICE / MUSIC / SFX asset outputs
+      - '95'
+      - NEW 95 threshold authority; concrete dimensions new authority
+  - index: 29
+    rows:
+    - row: 0
+      cells:
+      - Order
+      - Dimension UID
+      - 審查項目
+      - English
+      - Weight
+      - Hard Block
+      - Definition
+    - row: 1
+      cells:
+      - '1'
+      - QA-DIM-AUDIO-SCRIPT
+      - 腳本／Manifest 符合
+      - Script / Manifest Compliance
+      - '15'
+      - 'NO'
+      - 符合 Voice/Music/SFX Script 與用途
+    - row: 2
+      cells:
+      - '2'
+      - QA-DIM-AUDIO-IDENTITY
+      - 聲音身份／語意一致
+      - Voice Identity / Semantic Fit
+      - '20'
+      - 'NO'
+      - 指定角色聲線、語氣或音樂/SFX 意圖一致
+    - row: 3
+      cells:
+      - '3'
+      - QA-DIM-AUDIO-CONTENT
+      - 發音／內容正確
+      - Pronunciation / Content Accuracy
+      - '15'
+      - 'NO'
+      - 台詞、名稱、語言、發音與文字來源正確
+    - row: 4
+      cells:
+      - '4'
+      - QA-DIM-AUDIO-TIMING
+      - 時間／長度
+      - Timing / Duration
+      - '10'
+      - 'NO'
+      - 開始、結束、節奏與所屬片段長度合理
+    - row: 5
+      cells:
+      - '5'
+      - QA-DIM-AUDIO-NOISE
+      - 雜訊／爆音／失真
+      - Noise / Clipping / Distortion
+      - '15'
+      - 'NO'
+      - 無不可接受雜訊、爆音、削波、失真
+    - row: 6
+      cells:
+      - '6'
+      - QA-DIM-AUDIO-LEVEL
+      - 音量／動態
+      - Level / Dynamics
+      - '10'
+      - 'NO'
+      - 音量、峰值、動態與可懂度符合用途
+    - row: 7
+      cells:
+      - '7'
+      - QA-DIM-AUDIO-TECH
+      - 技術格式
+      - Technical Audio Format
+      - '10'
+      - 'NO'
+      - 取樣率、聲道、檔案格式與完整性符合輸出契約
+    - row: 8
+      cells:
+      - '8'
+      - QA-DIM-RIGHTS-POLICY
+      - 權利／政策
+      - Rights / Policy
+      - '5'
+      - HARD BLOCK
+      - 授權、素材來源與政策要求必須 PASS
+  - index: 30
+    rows:
+    - row: 0
+      cells:
+      - Target UID
+      - Closed Field(s)
+      - Operation
+      - Runtime Owner
+      - Runtime Status
+      - Existing Method / Path
+      - Result
+    - row: 1
+      cells:
+      - ASSET-01-BTN-CONFIRM
+      - operation,runtime_owner
+      - confirmAssetCandidate
+      - SHARED_PRODUCTION_OPERATION_RUNTIME
+      - EFFECTFUL_EXACT
+      - —
+      - BOUND_BY_BATCH_16
+    - row: 2
+      cells:
+      - ASSET-01-BTN-CORRECTION-EXECUTE
+      - operation
+      - executeAssetCorrection
+      - SHARED_PRODUCTION_OPERATION_RUNTIME
+      - EFFECTFUL_EXACT
+      - —
+      - BOUND_BY_BATCH_16
+    - row: 3
+      cells:
+      - ASSET-01-BTN-EVALUATE
+      - operation,runtime_owner
+      - evaluateAssetCandidate
+      - SHARED_PRODUCTION_OPERATION_RUNTIME
+      - EFFECTFUL_EXACT
+      - —
+      - BOUND_BY_BATCH_16
+    - row: 4
+      cells:
+      - ASSET-01-BTN-EXECUTE
+      - operation,runtime_owner
+      - startAssetProductionFlow
+      - SHARED_PRODUCTION_OPERATION_RUNTIME
+      - EFFECTFUL_EXACT
+      - —
+      - BOUND_BY_BATCH_16
+    - row: 5
+      cells:
+      - ASSET-01-BTN-HANDOFF
+      - operation,runtime_owner
+      - handoffAssetToVideo
+      - SHARED_PRODUCTION_OPERATION_RUNTIME
+      - EFFECTFUL_EXACT
+      - —
+      - BOUND_BY_BATCH_16
+    - row: 6
+      cells:
+      - ASSET-01-BTN-LAYER-ADD
+      - operation,runtime_owner
+      - addAssetLayer
+      - SHARED_PRODUCTION_OPERATION_RUNTIME
+      - EFFECTFUL_EXACT
+      - —
+      - BOUND_BY_BATCH_16
+    - row: 7
+      cells:
+      - ASSET-01-BTN-LAYER-DELETE
+      - operation,runtime_owner
+      - deleteAssetLayer
+      - SHARED_PRODUCTION_OPERATION_RUNTIME
+      - EFFECTFUL_EXACT
+      - —
+      - BOUND_BY_BATCH_16
+    - row: 8
+      cells:
+      - ASSET-01-BTN-LAYER-DOC-CREATE
+      - operation,runtime_owner
+      - createAssetLayerDocument
+      - SHARED_PRODUCTION_OPERATION_RUNTIME
+      - EFFECTFUL_EXACT
+      - —
+      - BOUND_BY_BATCH_16
+    - row: 9
+      cells:
+      - ASSET-01-BTN-LAYER-DOC-UPDATE
+      - operation,runtime_owner
+      - updateAssetLayerDocument
+      - SHARED_PRODUCTION_OPERATION_RUNTIME
+      - EFFECTFUL_EXACT
+      - —
+      - BOUND_BY_BATCH_16
+    - row: 10
+      cells:
+      - ASSET-01-BTN-LAYER-DUPLICATE
+      - operation,runtime_owner
+      - duplicateAssetLayer
+      - SHARED_PRODUCTION_OPERATION_RUNTIME
+      - EFFECTFUL_EXACT
+      - —
+      - BOUND_BY_BATCH_16
+    - row: 11
+      cells:
+      - ASSET-01-BTN-LAYER-REORDER
+      - operation,runtime_owner
+      - reorderAssetLayers
+      - SHARED_PRODUCTION_OPERATION_RUNTIME
+      - EFFECTFUL_EXACT
+      - —
+      - BOUND_BY_BATCH_16
+    - row: 12
+      cells:
+      - ASSET-01-BTN-PATCH-ACCEPT
+      - operation,runtime_owner
+      - acceptAssetPatch
+      - SHARED_PRODUCTION_OPERATION_RUNTIME
+      - EFFECTFUL_EXACT
+      - —
+      - BOUND_BY_BATCH_16
+    - row: 13
+      cells:
+      - ASSET-01-BTN-PATCH-CREATE
+      - operation,runtime_owner
+      - createAssetPatch
+      - SHARED_PRODUCTION_OPERATION_RUNTIME
+      - EFFECTFUL_EXACT
+      - —
+      - BOUND_BY_BATCH_16
+    - row: 14
+      cells:
+      - ASSET-01-BTN-PATCH-PREVIEW
+      - operation,runtime_owner
+      - previewAssetPatch
+      - SHARED_PRODUCTION_OPERATION_RUNTIME
+      - EFFECTFUL_EXACT
+      - —
+      - BOUND_BY_BATCH_16
+    - row: 15
+      cells:
+      - ASSET-01-BTN-PATCH-REJECT
+      - operation,runtime_owner
+      - rejectAssetPatch
+      - SHARED_PRODUCTION_OPERATION_RUNTIME
+      - EFFECTFUL_EXACT
+      - —
+      - BOUND_BY_BATCH_16
+    - row: 16
+      cells:
+      - ASSET-01-BTN-RETRY
+      - operation,runtime_owner
+      - retryAssetTask
+      - SHARED_PRODUCTION_OPERATION_RUNTIME
+      - EFFECTFUL_EXACT
+      - —
+      - BOUND_BY_BATCH_16
+    - row: 17
+      cells:
+      - ASSET-01-CTL-LAYER-MASK
+      - operation,runtime_owner
+      - updateAssetLayerMask
+      - SHARED_PRODUCTION_OPERATION_RUNTIME
+      - EFFECTFUL_EXACT
+      - —
+      - BOUND_BY_BATCH_16
+    - row: 18
+      cells:
+      - ASSET-01-CTL-LAYER-PROPERTIES
+      - operation,runtime_owner
+      - updateAssetLayerProperties
+      - SHARED_PRODUCTION_OPERATION_RUNTIME
+      - EFFECTFUL_EXACT
+      - —
+      - BOUND_BY_BATCH_16
+  - index: 31
+    rows:
+    - row: 0
+      cells:
+      - Control UID
+      - Operation
+      - Method / Path
+      - Payload / Schema
+      - Persistence Owner
+      - Semantics
+    - row: 1
+      cells:
+      - ASSET-01-BTN-EXECUTE
+      - startAssetProductionFlow
+      - POST /v1/asset-runtime-runs
+      - StartAssetProductionFlowRequest
+      - System 05 / ProductionWorkItem + AssetVersion Generation Lineage + Audit
+      - Starts ASSET production only from exact admitted CORE/Topic/Asset inputs and bindings. Run creation is not output confirmation or provider success.
+    - row: 2
+      cells:
+      - ASSET-01-TXT-CORRECTION-REQUEST
+      - generateCorrectionScriptCandidate
+      - POST /v1/state-commands/correctionscript/generate
+      - GenerateAssetCorrectionScriptCandidateRequest
+      - public.correction_script_versions
+      - The correction request text participates in the governed correction-script candidate command; candidate/version preserves exact source, finding and context
+        refs and is not approved correction authority.
+    - row: 3
+      cells:
+      - ASSET-01-BTN-CORRECTION-GENERATE
+      - generateCorrectionScriptCandidate
+      - POST /v1/state-commands/correctionscript/generate
+      - GenerateAssetCorrectionScriptCandidateRequest
+      - public.correction_script_versions
+      - Reuses exact Current state-command route. Generated correction script is a candidate/version only; approval remains separate.
+    - row: 4
+      cells:
+      - ASSET-01-BTN-CORRECTION-APPROVE
+      - approveCorrectionScriptCandidate
+      - POST /v1/state-commands/correctionscript/approve
+      - ApproveAssetCorrectionScriptCandidateRequest
+      - public.correction_script_versions
+      - Reuses exact Current approval route/persistence. Approval binds exact candidate/version and authorized human decision evidence.
+    - row: 5
+      cells:
+      - ASSET-01-BTN-CORRECTION-EXECUTE
+      - executeAssetCorrection
+      - POST /v1/asset-runtime-runs/{runId}/corrections/execute
+      - ExecuteAssetCorrectionRequest
+      - System 05 / AssetVersion + PatchVersion/Delta Lineage + Audit
+      - Executes only an approved correction against exact source/version/region/layer refs. Correction creates a new AssetVersion or bounded PatchVersion and never
+        overwrites confirmed source.
+    - row: 6
+      cells:
+      - ASSET-01-BTN-LAYER-DOC-CREATE
+      - createAssetLayerDocument
+      - POST /v1/asset-runtime-runs/{runId}/layer-documents
+      - CreateAssetLayerDocumentRequest
+      - System 05 / CompositionDocument + CompositionVersion
+      - Creates the logical composition tree and first immutable CompositionVersion from exact source bindings.
+    - row: 7
+      cells:
+      - ASSET-01-BTN-LAYER-DOC-UPDATE
+      - updateAssetLayerDocument
+      - PATCH /v1/asset-runtime-runs/{runId}/layer-documents/{compositionDocumentId}
+      - UpdateAssetLayerDocumentRequest
+      - System 05 / CompositionDocument + New CompositionVersion Lineage
+      - Updates create a new composition version from expected document/version; historical composition snapshots remain immutable.
+    - row: 8
+      cells:
+      - ASSET-01-BTN-LAYER-ADD
+      - addAssetLayer
+      - POST /v1/asset-runtime-runs/{runId}/layer-documents/{compositionDocumentId}/layers
+      - AddAssetLayerRequest
+      - System 05 / LayerVersion + CompositionVersion
+      - Adds a new versioned layer and composition snapshot with exact source/ref provenance.
+    - row: 9
+      cells:
+      - ASSET-01-BTN-LAYER-DELETE
+      - deleteAssetLayer
+      - DELETE /v1/asset-runtime-runs/{runId}/layer-documents/{compositionDocumentId}/layers/{layerId}
+      - DeleteAssetLayerRequest
+      - System 05 / LayerVersion Tombstone + CompositionVersion
+      - Deletion is versioned/tombstoned through a new composition state; prior LayerVersion remains recoverable/auditable.
+    - row: 10
+      cells:
+      - ASSET-01-BTN-LAYER-DUPLICATE
+      - duplicateAssetLayer
+      - POST /v1/asset-runtime-runs/{runId}/layer-documents/{compositionDocumentId}/layers/{layerId}/duplicate
+      - DuplicateAssetLayerRequest
+      - System 05 / LayerVersion + CompositionVersion
+      - Duplicate creates a new layer identity/version from exact source layer lineage; it does not alias the same mutable row.
+    - row: 11
+      cells:
+      - ASSET-01-BTN-LAYER-REORDER
+      - reorderAssetLayers
+      - POST /v1/asset-runtime-runs/{runId}/layer-documents/{compositionDocumentId}/layers/reorder
+      - ReorderAssetLayersRequest
+      - System 05 / CompositionVersion + Layer Ordering Lineage
+      - Reorder creates a new composition version from exact expected layer order/version and preserves layer identities.
+    - row: 12
+      cells:
+      - ASSET-01-CTL-LAYER-PROPERTIES
+      - updateAssetLayerProperties
+      - PATCH /v1/asset-runtime-runs/{runId}/layer-documents/{compositionDocumentId}/layers/{layerId}/properties
+      - UpdateAssetLayerPropertiesRequest
+      - System 05 / LayerVersion + CompositionVersion
+      - Opacity/blend/transform changes create a new LayerVersion/composition snapshot; unaffected layers/content remain preserved.
+    - row: 13
+      cells:
+      - ASSET-01-CTL-LAYER-MASK
+      - updateAssetLayerMask
+      - PUT /v1/asset-runtime-runs/{runId}/layer-documents/{compositionDocumentId}/layers/{layerId}/mask
+      - UpdateAssetLayerMaskRequest
+      - System 05 / LayerVersion + SpatialRegion + CompositionVersion
+      - Mask/semantic-region update binds an exact SpatialRegion and creates versioned layer/composition state; content outside authorized region must remain preserved.
+    - row: 14
+      cells:
+      - ASSET-01-BTN-PATCH-CREATE
+      - createAssetPatch
+      - POST /v1/asset-runtime-runs/{runId}/layer-documents/{compositionDocumentId}/patches
+      - CreateAssetPatchRequest
+      - System 05 / PatchVersion + SourceBinding
+      - Patch is a bounded delta against exact source hash/version/region. Source mismatch blocks and the same PatchVersion cannot be applied twice to the same target
+        state.
+    - row: 15
+      cells:
+      - ASSET-01-BTN-PATCH-PREVIEW
+      - previewAssetPatch
+      - POST /v1/asset-runtime-runs/{runId}/layer-documents/{compositionDocumentId}/patches/{patchVersionId}/preview
+      - PreviewAssetPatchRequest
+      - System 05 / PatchVersion Candidate + Preview Evidence (non-applied)
+      - Preview materializes bounded preview evidence only; it must not alter the canonical composition or count as patch acceptance.
+    - row: 16
+      cells:
+      - ASSET-01-BTN-PATCH-ACCEPT
+      - acceptAssetPatch
+      - POST /v1/asset-runtime-runs/{runId}/layer-documents/{compositionDocumentId}/patches/{patchVersionId}/accept
+      - AcceptAssetPatchRequest
+      - System 05 / PatchVersion + LayerVersion + CompositionVersion
+      - Acceptance applies exact non-stale PatchVersion once, producing new version lineage while preserving unaffected content.
+    - row: 17
+      cells:
+      - ASSET-01-BTN-PATCH-REJECT
+      - rejectAssetPatch
+      - POST /v1/asset-runtime-runs/{runId}/layer-documents/{compositionDocumentId}/patches/{patchVersionId}/reject
+      - RejectAssetPatchRequest
+      - System 05 / PatchVersion Rejected State + Decision/Audit
+      - Reject records an explicit decision against exact patch version/evidence and leaves source composition unchanged.
+    - row: 18
+      cells:
+      - ASSET-01-BTN-RETRY
+      - retryAssetTask
+      - POST /v1/asset-runtime-runs/{runId}/tasks/{taskId}/retry
+      - RetryAssetTaskRequest
+      - System 05 / ProductionWorkItem Retry Attempt + Asset Runtime Audit
+      - Retry binds exact failed task/attempt/version and preserves prior failure evidence; it cannot silently change scope/source binding.
+    - row: 19
+      cells:
+      - ASSET-01-BTN-EVALUATE
+      - evaluateAssetCandidate
+      - POST /v1/asset-runtime-runs/{runId}/candidates/{assetVersionId}/evaluations
+      - EvaluateAssetCandidateRequest
+      - System 05 / EvaluationResult + Asset Evidence/Audit
+      - Evaluation records exact criteria results/evidence/findings for the candidate AssetVersion. Score alone cannot auto-confirm, lock or handoff.
+    - row: 20
+      cells:
+      - ASSET-01-BTN-CONFIRM
+      - confirmAssetCandidate
+      - POST /v1/asset-runtime-runs/{runId}/candidates/{assetVersionId}/confirm
+      - ConfirmAssetCandidateRequest
+      - System 05 / AssetVersion Confirmed State + Decision/Audit
+      - Confirmation selects exact candidate version under authorized decision evidence and creates immutable confirmed AssetVersion lineage.
+    - row: 21
+      cells:
+      - ASSET-01-BTN-RESTORE-AS-NEW
+      - restoreAssetVersionAsNewDraft
+      - POST /v1/state-commands/assetversion/restoreasnewdraft
+      - RestoreAssetVersionAsNewDraftRequest
+      - public.asset_version_restore_drafts
+      - Reuses exact Current route/persistence. Restore always creates a new draft/version lineage from exact source; historical AssetVersion is never overwritten.
+    - row: 22
+      cells:
+      - ASSET-01-BTN-LOCK
+      - lockAssetVersion
+      - POST /v1/state-commands/assetversion/lock
+      - LockAssetVersionRequest
+      - public.production_output_version_locks
+      - Reuses exact Current route/persistence. Lock binds exact AssetVersion/hash and authorized decision evidence; it does not imply downstream handoff completion.
+    - row: 23
+      cells:
+      - ASSET-01-BTN-HANDOFF
+      - handoffAssetToVideo
+      - POST /v1/asset-runtime-runs/{runId}/handoff-to-video
+      - HandoffAssetToVideoRequest
+      - System 05 / HandoffManifest + AssetVersion Provenance/Audit
+      - ASSET→VIDEO handoff contains exact AssetVersion UIDs/versions/checksums + layer/patch refs + score/evaluation + rights + continuity + output contract. Successor
+        admission remains separate.
+  - index: 32
+    rows:
+    - row: 0
+      cells:
+      - Entity
+      - Operation
+      - Applicability
+      - Authority Evidence
+    - row: 1
+      cells:
+      - CorrectionScriptCandidate
+      - ARCHIVE_OR_DELETE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 2
+      cells:
+      - CorrectionScriptCandidate
+      - AUDIT
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 3
+      cells:
+      - CorrectionScriptCandidate
+      - CATEGORY_OR_GROUP_BIND
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 4
+      cells:
+      - CorrectionScriptCandidate
+      - CONFIRM_OR_APPROVE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 5
+      cells:
+      - CorrectionScriptCandidate
+      - CREATE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 6
+      cells:
+      - CorrectionScriptCandidate
+      - CREATION_MODE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 7
+      cells:
+      - CorrectionScriptCandidate
+      - DEPENDENCY_IMPACT
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 8
+      cells:
+      - CorrectionScriptCandidate
+      - DISCOVER_OR_LIST
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 9
+      cells:
+      - CorrectionScriptCandidate
+      - DRAFT
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 10
+      cells:
+      - CorrectionScriptCandidate
+      - EDIT
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 11
+      cells:
+      - CorrectionScriptCandidate
+      - ERROR_RECOVERY
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 12
+      cells:
+      - CorrectionScriptCandidate
+      - LOCK_OR_UNLOCK
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 13
+      cells:
+      - CorrectionScriptCandidate
+      - MOVE_OR_REPARENT
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 14
+      cells:
+      - CorrectionScriptCandidate
+      - NEXT_STEP
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 15
+      cells:
+      - CorrectionScriptCandidate
+      - PARENT_BIND
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 16
+      cells:
+      - CorrectionScriptCandidate
+      - REORDER
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 17
+      cells:
+      - CorrectionScriptCandidate
+      - RESTORE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 18
+      cells:
+      - CorrectionScriptCandidate
+      - RESUME
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 19
+      cells:
+      - CorrectionScriptCandidate
+      - REVISE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 20
+      cells:
+      - CorrectionScriptCandidate
+      - SAVE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 21
+      cells:
+      - CorrectionScriptCandidate
+      - SELECT_OR_OPEN
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 22
+      cells:
+      - CorrectionScriptCandidate
+      - VALIDATE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 23
+      cells:
+      - CorrectionScriptCandidate
+      - VERSION
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 24
+      cells:
+      - VersionedLayerDocument
+      - ARCHIVE_OR_DELETE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 25
+      cells:
+      - VersionedLayerDocument
+      - AUDIT
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 26
+      cells:
+      - VersionedLayerDocument
+      - CATEGORY_OR_GROUP_BIND
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 27
+      cells:
+      - VersionedLayerDocument
+      - CONFIRM_OR_APPROVE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 28
+      cells:
+      - VersionedLayerDocument
+      - CREATE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 29
+      cells:
+      - VersionedLayerDocument
+      - CREATION_MODE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 30
+      cells:
+      - VersionedLayerDocument
+      - DEPENDENCY_IMPACT
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 31
+      cells:
+      - VersionedLayerDocument
+      - DISCOVER_OR_LIST
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 32
+      cells:
+      - VersionedLayerDocument
+      - DRAFT
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 33
+      cells:
+      - VersionedLayerDocument
+      - EDIT
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 34
+      cells:
+      - VersionedLayerDocument
+      - ERROR_RECOVERY
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 35
+      cells:
+      - VersionedLayerDocument
+      - LOCK_OR_UNLOCK
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 36
+      cells:
+      - VersionedLayerDocument
+      - MOVE_OR_REPARENT
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 37
+      cells:
+      - VersionedLayerDocument
+      - NEXT_STEP
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 38
+      cells:
+      - VersionedLayerDocument
+      - PARENT_BIND
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 39
+      cells:
+      - VersionedLayerDocument
+      - REORDER
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 40
+      cells:
+      - VersionedLayerDocument
+      - RESTORE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 41
+      cells:
+      - VersionedLayerDocument
+      - RESUME
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 42
+      cells:
+      - VersionedLayerDocument
+      - REVISE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 43
+      cells:
+      - VersionedLayerDocument
+      - SAVE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 44
+      cells:
+      - VersionedLayerDocument
+      - SELECT_OR_OPEN
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 45
+      cells:
+      - VersionedLayerDocument
+      - VALIDATE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 46
+      cells:
+      - VersionedLayerDocument
+      - VERSION
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+  - index: 33
+    rows:
+    - row: 0
+      cells:
+      - Design Item / 設計項目
+      - Canonical Planning Design Contract / 正式規劃設計契約
+    - row: 1
+      cells:
+      - Color Tokens
+      - SHARED_OWNER_REFERENCE → current Global Home / Shell Design System tech-purple token set; existing page-local approved override, if any, remains authoritative.
+    - row: 2
+      cells:
+      - Typography Tokens
+      - SHARED_OWNER_REFERENCE → current Global Design System typography; page-local text hierarchy may only use registered heading/body/label/technical text roles.
+    - row: 3
+      cells:
+      - Spacing Tokens
+      - Use registered gap/padding/spacing tokens; existing exact page gaps remain authoritative; no ad-hoc pixel drift.
+    - row: 4
+      cells:
+      - Component States
+      - Default / Hover / Focus / Active / Loading / Disabled / Success / Error MUST NOT change the approved component footprint unless the current component contract
+        explicitly allows it.
+    - row: 5
+      cells:
+      - Primary Layout
+      - Use this Word's existing Primary Grid / Section / Workspace layout as the page-local authority; this annex introduces no second grid.
+    - row: 6
+      cells:
+      - Navigation Region
+      - Global Header and collapsible/overlay Sidebar remain shared shell regions; page Workspace starts in the registered content region.
+    - row: 7
+      cells:
+      - Responsive Behavior
+      - Use the current page responsive rule and shared shell breakpoint owner; semantic order and functional topology MUST remain stable across reflow.
+    - row: 8
+      cells:
+      - Design Ownership
+      - Page owns page-local layout/components; Global Shell owns shared header/sidebar/tokens; references only, no duplicated shared payload.
+  - index: 34
+    rows:
+    - row: 0
+      cells:
+      - Design Item / 設計項目
+      - Canonical Planning Design Contract / 正式規劃設計契約
+    - row: 1
+      cells:
+      - Viewport / Breakpoint UID
+      - SHARED_OWNER_REFERENCE → current Global Home breakpoint contract; page-specific breakpoint/reflow rules in this Word override only where explicitly registered.
+    - row: 2
+      cells:
+      - Container Width / Min / Max
+      - Retain current Global Shell + page Primary Grid width contract. No page-local implicit width may override an existing exact dimension.
+    - row: 3
+      cells:
+      - Grid Columns / Span / Gutter / Outer Margin
+      - Use the existing page Primary Grid / section mapping and current gap/margin values; any structural grid change requires Change Set.
+    - row: 4
+      cells:
+      - Section Bounding Rules
+      - Every registered Section remains within its current Workspace region; sticky/fixed/overlay areas MUST NOT occlude required controls.
+    - row: 5
+      cells:
+      - Component / Control / Field Width / Height Rules
+      - Use current Control/Field Dimensions or shared component token. State transitions MUST NOT cause layout jump.
+    - row: 6
+      cells:
+      - Min / Max Width / Height
+      - Inherit current exact values where present; otherwise shared component minimums apply. Required input/button content may not compress below its registered
+        usable size.
+    - row: 7
+      cells:
+      - Gap / Padding / Alignment
+      - Use current page spacing/grid tokens; alignment changes outside token tolerance require Visual Review.
+    - row: 8
+      cells:
+      - Aspect Ratio
+      - NOT_APPLICABLE unless the current page declares an image/video/preview ratio; when declared, the exact current ratio remains authoritative.
+    - row: 9
+      cells:
+      - Overflow / Scroll Rule
+      - No hidden overflow for actionable content. Long technical values use existing ellipsis + tooltip/drawer rule; large tables may use the current controlled
+        horizontal-scroll rule.
+    - row: 10
+      cells:
+      - Collapse / Stack / Wrap Rule
+      - Reflow may stack/collapse only within the current responsive contract; semantic order, required adjacency and operation order MUST NOT change.
+    - row: 11
+      cells:
+      - Z-order / Overlay Rule
+      - Global Header / Sidebar overlay / Dialog / Drawer layers remain above Workspace without blocking required content; overlay expansion MUST NOT reflow the primary
+        Workspace unless explicitly specified.
+    - row: 12
+      cells:
+      - Text Capacity / Truncation / Wrap Rule
+      - Required labels/status/error text may not be clipped. Long IDs/technical values use controlled ellipsis with recoverable full value; no silent semantic truncation.
+    - row: 13
+      cells:
+      - Asset Object-fit / Object-position
+      - REFERENCE_ONLY → current Asset Binding owner when a formal visual asset exists; otherwise NOT_APPLICABLE.
+    - row: 14
+      cells:
+      - Locked Visual Anchors
+      - Bound to the Visual Anchor Registry in this annex; unlisted regions are not implicitly editable.
+    - row: 15
+      cells:
+      - Allowed Tolerance / Diff Threshold
+      - 'Locked anchors and structural grid: zero unapproved drift. Token-level micro adjustment is allowed only inside current Design Token/Layout rules; structural
+        changes require Change Set + re-review.'
+    - row: 16
+      cells:
+      - Geometry Failure Set
+      - Detect overlap, clipping, horizontal overflow, unapproved scroll, control compression, unexpected wrap/stack, aspect drift, misalignment, sticky/fixed occlusion
+        and header/sidebar/workspace collision.
+  - index: 35
+    rows:
+    - row: 0
+      cells:
+      - Design Item / 設計項目
+      - Canonical Planning Design Contract / 正式規劃設計契約
+    - row: 1
+      cells:
+      - Keyboard / Focus
+      - Reading and focus order MUST follow semantic operation order. Every interactive control is keyboard reachable; Focus state remains visibly distinct.
+    - row: 2
+      cells:
+      - ARIA / Label
+      - Icon-only controls require accessible name/label; form fields bind visible label, validation/error description and required state.
+    - row: 3
+      cells:
+      - Modal / Drawer
+      - On open, focus enters the surface; focus remains contained where modal; close/cancel is keyboard reachable; focus returns to the invoking control.
+    - row: 4
+      cells:
+      - Color / State
+      - State meaning MUST NOT rely on color alone; text/icon/state label remains available under current contrast tokens.
+    - row: 5
+      cells:
+      - Error / Validation
+      - Error state is announced/associated with its control or field; failure does not erase user input unless the current design explicitly requires reset.
+    - row: 6
+      cells:
+      - i18n Languages
+      - zh-TW / zh-CN / en are design-supported language contexts. Labels/help/error/status text must use localization-owned copy rather than page-local semantic
+        duplication.
+    - row: 7
+      cells:
+      - Variable Text Length
+      - Localized text may wrap/reflow within current responsive rules but MUST NOT alter functional order, hide required actions or create uncontrolled layout drift.
+  - index: 36
+    rows:
+    - row: 0
+      cells:
+      - Design Item / 設計項目
+      - Canonical Planning Design Contract / 正式規劃設計契約
+    - row: 1
+      cells:
+      - Audit UID
+      - ASSET-01-AUD-DESIGN-001
+    - row: 2
+      cells:
+      - Target UID
+      - ASSET-01
+    - row: 3
+      cells:
+      - Required Audit Items
+      - Requirement/Page identity where applicable; Architecture/Flow; Control/Field; Entity/Operation applicability; Cross-page/topology; Geometry; Visual Anchor/Preview
+        contract; A11y/i18n; Asset applicability; Design Freeze package.
+    - row: 4
+      cells:
+      - Required Tests
+      - Word structural completeness audit; forward/reverse design-reference audit; DOCX render visual QA; design-only semantic consistency audit.
+    - row: 5
+      cells:
+      - Required Evidence
+      - Exact Word hash/tree identity; audit result; render page set; visual-review record when a candidate is generated.
+    - row: 6
+      cells:
+      - Required Gates
+      - Requirement, Naming, Architecture, Navigation, User Flow, Page Registry, Design System, Layout, Component, Asset applicability/binding, Page Design, Visual
+        Preview/Review/Approval, Audit Baseline, Acceptance Matrix, DoD.
+    - row: 7
+      cells:
+      - Acceptance Matrix
+      - Every item is classified REQUIRED / OPTIONAL / NOT_APPLICABLE with owner/evidence. REQUIRED may not be downgraded merely to obtain PASS.
+    - row: 8
+      cells:
+      - PASS Condition
+      - All applicable REQUIRED planning/basic-design items are complete and internally consistent; no unresolved duplicate owner/reference or required design gap.
+    - row: 9
+      cells:
+      - PARTIAL Condition
+      - Only explicitly OPTIONAL or justified NOT_APPLICABLE design items remain; no REQUIRED item is missing.
+    - row: 10
+      cells:
+      - FAIL Condition
+      - Any REQUIRED planning/design contract, owner/reference, geometry, topology, acceptance condition or visual prerequisite is unresolved or contradictory.
+    - row: 11
+      cells:
+      - Definition of Done
+      - Current Word is self-contained enough for authorized construction handoff, while unresolved product choices remain explicitly blocked rather than invented.
+  - index: 37
+    rows:
+    - row: 0
+      cells:
+      - Design Item / 設計項目
+      - Canonical Planning Design Contract / 正式規劃設計契約
+    - row: 1
+      cells:
+      - Canonical UID
+      - ASSET-01
+    - row: 2
+      cells:
+      - Canonical Name
+      - ASSET-01
+    - row: 3
+      cells:
+      - Owner File
+      - ACPOS_ASSET-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx
+    - row: 4
+      cells:
+      - Page / Capability Spec
+      - This current Word remains the single page design Canonical Owner.
+    - row: 5
+      cells:
+      - Layout Mapping
+      - REFERENCE → existing Page Layout / Primary Grid / Section mapping + Design System/Layout closure annex.
+    - row: 6
+      cells:
+      - Component Mapping
+      - REFERENCE → current Component/Section registry in this Word; no duplicate component inventory is introduced.
+    - row: 7
+      cells:
+      - Control / Field Mapping
+      - REFERENCE → current Control / Field / Action / Permission design tables and invariants in this Word.
+    - row: 8
+      cells:
+      - Asset Mapping
+      - REFERENCE → current page Asset Registry if any; otherwise explicit shared-owner / NOT_APPLICABLE asset rule in this annex.
+    - row: 9
+      cells:
+      - Responsive Spec
+      - REFERENCE → current page responsive rules + Visual Geometry closure annex.
+    - row: 10
+      cells:
+      - Current Canonical Visual
+      - REFERENCE → current visual/baseline already owned by this page/shared visual authority; candidate does not replace it without approval.
+    - row: 11
+      cells:
+      - Generation Manifest
+      - REQUIRED before a new candidate is generated; fields are defined by the Visual contract in this annex.
+    - row: 12
+      cells:
+      - Audit Baseline
+      - REFERENCE → ASSET-01-AUD-DESIGN-001
+    - row: 13
+      cells:
+      - Acceptance Matrix
+      - Current page acceptance section plus this annex; REQUIRED / OPTIONAL / NOT_APPLICABLE classification is preserved.
+    - row: 14
+      cells:
+      - Definition of Done
+      - Planning/basic-design DoD is the current page DoD plus zero unresolved REQUIRED design-spec gaps.
+    - row: 15
+      cells:
+      - Design Version
+      - Use this Word's current version metadata / exact repository revision; this annex MUST NOT invent a parallel design version.
+    - row: 16
+      cells:
+      - Freeze Status
+      - DESIGN_FREEZE_PACKAGE_DEFINED. DESIGN_FROZEN may be asserted only after required Visual Preview/Review/Approval and all applicable design gates actually pass;
+        this annex does not self-approve.

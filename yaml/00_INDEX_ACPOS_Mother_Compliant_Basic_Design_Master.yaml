@@ -1,0 +1,761 @@
+schema_version: ACPOS_WORD_YAML_PROJECTION_V1
+projection_mode: SOURCE_GROUNDED_NO_INVENTION
+sequence: 1
+source:
+  branch: 0921acpos
+  git_head: 7bd2dbdb89b685c5f5f6045c8e3e17c5f2500db5
+  word_path: 00_INDEX_ACPOS_Mother_Compliant_Basic_Design_Master.docx
+  word_sha256: bab362ba82086f3a3f2193d1cebf9c98b16fa62f09f234601798c6c591624096
+authority_rules:
+- Word source remains canonical for this projection.
+- Do not silently fill, correct, reconcile, or replace source content.
+- Do not convert BLOCKED, NOT_EXECUTED, REQUIRE_EXACT_BINDING, SOURCE_NOT_DEFINED into PASS.
+- Paragraph and table order is preserved by source index.
+document:
+  paragraphs:
+  - index: 0
+    style: Normal
+    text: 'ACPOS MASTER-INDEX｜18 Current Pages + Login Entry + System Logic｜總目錄與治理說明
+
+      Mother-Compliant Basic Design / 基礎設計施工藍圖規格'
+  - index: 1
+    style: Normal
+    text: Current HEAD：MUST be resolved fresh from GitHub branch 0921acpos at audit/execution time. Historical SHA references are evidence only and MUST NOT be treated
+      as Current Truth.
+  - index: 2
+    style: Heading 1
+    text: 1. 交付範圍
+  - index: 3
+    style: Normal
+    text: 本包共 20 份 Basic Design：18 個 GitHub Current Pages + Login/Identity Entry + 全站 System Logic；另有本總目錄，共 31 份 Word。每一份頁面文件均獨立完成 Mother S076–S083 相容的 27 項 Blueprint
+      artifact denominator，避免把所有頁面混成一份大文件。
+  - index: 5
+    style: Heading 1
+    text: 2. 來源處理順序（分開處理，不混抽）
+  - index: 7
+    style: Heading 1
+    text: 3. 每份 Word 固定 27 項 Artifact
+  - index: 9
+    style: Heading 1
+    text: 4. 文件索引
+  - index: 11
+    style: Heading 1
+    text: 5. 全包 Design Freeze 狀態
+  - index: 12
+    style: Normal
+    text: 這一包是「最完整方向的 Basic Design Draft」，不是施工證據。每頁均已建立完整 artifacts 與 8 種視覺候選，但正式 DESIGN_FROZEN 仍需 Human Visual/Functional Review，並在核准後把變更 materialize 回既有 Current
+      Authority owner。未經該步驟，不得直接施工。
+  - index: 14
+    style: Heading 1
+    text: 2026-09-21 Source-Grounded Construction Closure Index
+  - index: 15
+    style: Normal
+    text: '[ACPOS-20260921-SOURCE-GROUNDED-CONSTRUCTION-CLOSURE-V2] Source-grounded only. Existing Current source wins; missing source values remain blocked/decision-required.
+      This closure supersedes the prior generic 2026-09-21 V1/V3 annex only, not the original domain logic or human visual review gates.'
+  - index: 16
+    style: Normal
+    text: This index records construction definition status only. Human Visual Review / Design Freeze and Production runtime acceptance remain independent gates.
+  - index: 18
+    style: Heading 1
+    text: Concrete Business Content Closure Index
+  - index: 19
+    style: Normal
+    text: '[ACPOS-20260921-CONCRETE-BUSINESS-CONTENT-CLOSURE-V1] 這一段是完整來源掃描後補入的 Concrete Business Content Authority。既有來源已明確的內容沿用；原來源只有抽象 Criteria/Dimension 容器而缺實際明細者，以下項目標示為本次新
+      Authority。'
+  - index: 21
+    style: Heading 1
+    text: Current Package Identity / Dynamic Denominator Closure
+  - index: 22
+    style: Normal
+    text: '[ACPOS-20260921-BATCH-01-FOUNDATION-CLOSURE-V1] 本節為 0921acpos Current Word package 的正式缺口閉合內容。只定義 Basic Design / authority contract；若缺 Runtime / Production
+      evidence，狀態仍必須維持 NOT_EXECUTED / IMPLEMENTATION_REQUIRED，不得因文件定義完成而宣告 Runtime 完成。'
+  - index: 23
+    style: Heading 2
+    text: Current Supporting Word Corpus｜目前支援設計文件
+  - index: 24
+    style: Normal
+    text: '[ACPOS-CURRENT-SUPPORTING-WORD-CORPUS-V1] Package denominator = 31 Word files = 1 Index + 20 page/login/global-integration entries + 10 supporting design/system-contract
+      files.'
+  tables:
+  - index: 0
+    rows:
+    - row: 0
+      cells:
+      - Item
+      - Count / State
+    - row: 1
+      cells:
+      - GitHub branch
+      - 0921acpos
+    - row: 2
+      cells:
+      - GitHub live HEAD
+      - RESOLVE_FRESH_AT_AUDIT_TIME
+    - row: 3
+      cells:
+      - Current pages
+      - '18'
+    - row: 4
+      cells:
+      - Additional design surfaces
+      - Login Entry + System Logic = 2
+    - row: 5
+      cells:
+      - Per-page Visual Candidates
+      - A–H = 8
+    - row: 6
+      cells:
+      - Per-page required Blueprint artifacts
+      - 27 + hard-prohibition appendix
+    - row: 7
+      cells:
+      - Design freeze
+      - FALSE / human visual approval pending
+    - row: 8
+      cells:
+      - Repository mutation
+      - NONE — this delivery is local planning artifact only
+  - index: 1
+    rows:
+    - row: 0
+      cells:
+      - Order
+      - Source Group
+      - Role
+      - Conflict Rule
+    - row: 1
+      cells:
+      - '1'
+      - Current Authority Clean / GitHub Current
+      - 確立 current page owner / global/system boundaries
+      - GitHub new Current wins
+    - row: 2
+      cells:
+      - '2'
+      - 企業開發與自動廣告
+      - DEV/SOC 更新需求；必要影響 KB/System
+      - Authorized design update only
+    - row: 3
+      cells:
+      - '3'
+      - AI 對話邏輯
+      - Shared AI Conversation Core + Multi-AI + Continuity
+      - No second AI system
+    - row: 4
+      cells:
+      - '4'
+      - Word 頁面規範
+      - 各頁原始概念與細節補充
+      - Reference only; cannot override Current
+    - row: 5
+      cells:
+      - '5'
+      - Mother Basic Design
+      - 將上述內容編譯成完整設計 artifacts
+      - Controls depth/trace/freeze; not product authority
+    - row: 6
+      cells:
+      - '6'
+      - 本輪設計延伸
+      - 只補 minimal functional closure
+      - REVIEW_REQUIRED; not implemented
+  - index: 2
+    rows:
+    - row: 0
+      cells:
+      - '#'
+      - Required Artifact
+      - Hard Rule
+    - row: 1
+      cells:
+      - '1'
+      - Current Truth / Source Map
+      - Missing => package incomplete / implementation forbidden
+    - row: 2
+      cells:
+      - '2'
+      - Requirement / Problem Definition
+      - Missing => package incomplete / implementation forbidden
+    - row: 3
+      cells:
+      - '3'
+      - Business Entity Inventory
+      - Missing => package incomplete / implementation forbidden
+    - row: 4
+      cells:
+      - '4'
+      - Business Entity Operation Matrix
+      - Missing => package incomplete / implementation forbidden
+    - row: 5
+      cells:
+      - '5'
+      - Entity Hierarchy Matrix
+      - Missing => package incomplete / implementation forbidden
+    - row: 6
+      cells:
+      - '6'
+      - User Journey Registry
+      - Missing => package incomplete / implementation forbidden
+    - row: 7
+      cells:
+      - '7'
+      - Functional Workbench Contract
+      - Missing => package incomplete / implementation forbidden
+    - row: 8
+      cells:
+      - '8'
+      - Interaction Topology
+      - Missing => package incomplete / implementation forbidden
+    - row: 9
+      cells:
+      - '9'
+      - AI Continuity Contract（適用）
+      - Missing => package incomplete / implementation forbidden
+    - row: 10
+      cells:
+      - '10'
+      - Functional Chain
+      - Missing => package incomplete / implementation forbidden
+    - row: 11
+      cells:
+      - '11'
+      - Cross-page Flow
+      - Missing => package incomplete / implementation forbidden
+    - row: 12
+      cells:
+      - '12'
+      - Page Design
+      - Missing => package incomplete / implementation forbidden
+    - row: 13
+      cells:
+      - '13'
+      - Section / Component Registry
+      - Missing => package incomplete / implementation forbidden
+    - row: 14
+      cells:
+      - '14'
+      - Control / Field / Action / Gate / Permission Binding
+      - Missing => package incomplete / implementation forbidden
+    - row: 15
+      cells:
+      - '15'
+      - State / Transition / Recovery
+      - Missing => package incomplete / implementation forbidden
+    - row: 16
+      cells:
+      - '16'
+      - Data Object Binding
+      - Missing => package incomplete / implementation forbidden
+    - row: 17
+      cells:
+      - '17'
+      - Function Visual Impact Matrix
+      - Missing => package incomplete / implementation forbidden
+    - row: 18
+      cells:
+      - '18'
+      - Visual Anchor Registry
+      - Missing => package incomplete / implementation forbidden
+    - row: 19
+      cells:
+      - '19'
+      - Visual Generation Manifest
+      - Missing => package incomplete / implementation forbidden
+    - row: 20
+      cells:
+      - '20'
+      - Visual Candidates A–H
+      - Missing => package incomplete / implementation forbidden
+    - row: 21
+      cells:
+      - '21'
+      - Code Gap / Construction Delta Matrix
+      - Missing => package incomplete / implementation forbidden
+    - row: 22
+      cells:
+      - '22'
+      - Pre-Implementation Guards
+      - Missing => package incomplete / implementation forbidden
+    - row: 23
+      cells:
+      - '23'
+      - Implementation Handoff
+      - Missing => package incomplete / implementation forbidden
+    - row: 24
+      cells:
+      - '24'
+      - Acceptance Matrix
+      - Missing => package incomplete / implementation forbidden
+    - row: 25
+      cells:
+      - '25'
+      - Audit Baseline
+      - Missing => package incomplete / implementation forbidden
+    - row: 26
+      cells:
+      - '26'
+      - Definition of Done
+      - Missing => package incomplete / implementation forbidden
+    - row: 27
+      cells:
+      - '27'
+      - Resume / Next Step
+      - Missing => package incomplete / implementation forbidden
+  - index: 3
+    rows:
+    - row: 0
+      cells:
+      - '#'
+      - UID
+      - Name
+      - Surface
+      - Current Owner Basis
+      - Special Merge
+      - Word Path
+    - row: 1
+      cells:
+      - '1'
+      - WB-01
+      - 公司首頁／儀表板
+      - HOME
+      - authority/pages/workspace/WB-01/ACPOS_WB-01_FINAL_LOCKED_ENCODING.yaml
+      - Current + page concept reconciliation
+      - ACPOS_WB-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx
+    - row: 2
+      cells:
+      - '2'
+      - CORE-01
+      - 核心 AI 工作區
+      - FRONT
+      - authority/pages/workspace/CORE-01/CORE_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED.yaml
+      - AI continuity integrated
+      - ACPOS_CORE-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx
+    - row: 3
+      cells:
+      - '3'
+      - ASSET-01
+      - 素材生產工作區
+      - FRONT
+      - authority/pages/workspace/ASSET-01/ASSET_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+      - AI continuity integrated
+      - ACPOS_ASSET-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx
+    - row: 4
+      cells:
+      - '4'
+      - VIDEO-01
+      - 影片生成工作區
+      - FRONT
+      - authority/pages/workspace/VIDEO-01/VIDEO_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+      - AI continuity integrated
+      - ACPOS_VIDEO-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx
+    - row: 5
+      cells:
+      - '5'
+      - EDIT-01
+      - 整合後製剪輯工作台
+      - FRONT
+      - authority/pages/workspace/EDIT-01/ACPOS_EDIT-01_FINAL_LOCKED_ENCODING_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+      - AI continuity integrated
+      - ACPOS_EDIT-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx
+    - row: 6
+      cells:
+      - '6'
+      - QA-01
+      - QA 審查工作區
+      - FRONT
+      - authority/pages/workspace/QA-01/ACPOS_QA-01_FINAL_LOCKED_ENCODING_DEDUP_CLEAN.yaml
+      - Current + page concept reconciliation
+      - ACPOS_QA-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx
+    - row: 7
+      cells:
+      - '7'
+      - DB-01
+      - 資料庫／資料血緣工作區
+      - FRONT
+      - authority/pages/admin/DB-01/ACPOS_DB-01_FINAL_LOCKED_ENCODING.yaml
+      - Current + page concept reconciliation
+      - ACPOS_DB-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx
+    - row: 8
+      cells:
+      - '8'
+      - STR-01
+      - 戰略中心工作區
+      - FRONT
+      - authority/pages/workspace/STR-01/ACPOS_STR-01_FINAL_LOCKED_ENCODING_PROVIDER_BOUND.yaml
+      - AI continuity integrated
+      - ACPOS_STR-01_WORKSPACE_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx
+    - row: 9
+      cells:
+      - '9'
+      - INFO-01
+      - 最新資訊工作區
+      - FRONT
+      - authority/pages/workspace/INFO-01/ACPOS_INFO-01_FINAL_LOCKED_ENCODING.yaml
+      - Current + page concept reconciliation
+      - ACPOS_INFO-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx
+    - row: 10
+      cells:
+      - '10'
+      - SYS-01
+      - 系統維護／系統生命週期
+      - ADMIN
+      - authority/pages/admin/SYS-01/ACPOS_SYS-01_SYSTEM_LIFECYCLE_AI_FINAL_DESIGN_ENCODING.yaml
+      - AI continuity integrated
+      - ACPOS_SYS-01_系統維護與生命週期工作區_Mother_Basic_Design_OPTIMIZED.docx
+    - row: 11
+      cells:
+      - '11'
+      - IAM-01
+      - 帳戶與權限
+      - ADMIN
+      - authority/pages/admin/IAM-01/ACPOS_IAM-01_ACCOUNT_PERMISSION_SINGLE_PAGE_FINAL_LOCKED_ENCODING.yaml
+      - Current + page concept reconciliation
+      - ACPOS_IAM-01_帳戶與權限_Mother_Basic_Design_OPTIMIZED.docx
+    - row: 12
+      cells:
+      - '12'
+      - DEV-01
+      - 企業開發與商機自動化
+      - ADMIN
+      - authority/pages/admin/DEV-01/ACPOS_DEV-01_ENTERPRISE_AUTOMATION_SINGLE_PAGE_FINAL_LOCKED_ENCODING.yaml
+      - Enterprise/Ads update integrated; AI continuity integrated
+      - ACPOS_DEV-01_企業自動開發系統_Mother_Basic_Design_OPTIMIZED.docx
+    - row: 13
+      cells:
+      - '13'
+      - SOC-01
+      - 自動廣告／公開市場商機與社群發布
+      - ADMIN
+      - authority/pages/admin/SOC-01/ACPOS_SOC-01_SOCIAL_PUBLISHING_SINGLE_PAGE_FINAL_LOCKED_ENCODING.yaml
+      - Enterprise/Ads update integrated; AI continuity integrated
+      - ACPOS_SOC-01_社群發布_Mother_Basic_Design_OPTIMIZED.docx
+    - row: 14
+      cells:
+      - '14'
+      - ERP-01
+      - ERP／財務
+      - ADMIN
+      - authority/pages/admin/ERP-01/ACPOS_ERP-01_ERP_FINANCE_SINGLE_PAGE_FINAL_LOCKED_ENCODING.yaml
+      - Current + page concept reconciliation
+      - ACPOS_ERP-01_ERP與財務_Mother_Basic_Design_OPTIMIZED.docx
+    - row: 15
+      cells:
+      - '15'
+      - AIAPI-01
+      - AI API 管理
+      - ADMIN
+      - authority/pages/admin/AIAPI-01/ACPOS_AIAPI-01_FINAL_LOCKED_ENCODING.yaml
+      - Current + page concept reconciliation
+      - ACPOS_AIAPI-01_AI_API管理_Mother_Basic_Design_OPTIMIZED.docx
+    - row: 16
+      cells:
+      - '16'
+      - SG-02
+      - QA 審查項目／品質標準治理
+      - ADMIN
+      - authority/pages/admin/SG-02/ACPOS_SG-02_QA_REVIEW_STANDARD_FINAL_LOCKED_ENCODING.yaml
+      - Current + page concept reconciliation
+      - ACPOS_SG-02_QA審查項目名單_Mother_Basic_Design_OPTIMIZED.docx
+    - row: 17
+      cells:
+      - '17'
+      - ADMIN-STR-01
+      - 戰略中心後台
+      - ADMIN
+      - authority/pages/admin/STR-01/ACPOS_STRATEGY_CENTER_SINGLE_PAGE_FINAL_LOCKED_ENCODING.yaml
+      - Current + page concept reconciliation
+      - ACPOS_admin_STR-01_戰略中心後台_Mother_Basic_Design_OPTIMIZED.docx
+    - row: 18
+      cells:
+      - '18'
+      - KB-01
+      - 知識庫與 Experience 中心
+      - ADMIN
+      - authority/pages/admin/KB-01/ACPOS_KB-01_FINAL_LOCKED_ENCODING.yaml
+      - AI continuity integrated
+      - ACPOS_KB-01_知識庫_Mother_Basic_Design_OPTIMIZED.docx
+    - row: 19
+      cells:
+      - '19'
+      - LOGIN
+      - 登入／身份入口
+      - LOGIN
+      - authority/global/ACPOS_SYSTEM_AUTHORITY_FINAL_LOCKED_CURRENT.yaml + production identity runtime
+      - Current + page concept reconciliation
+      - ACPOS_LOGIN_IDENTITY_ENTRY_Mother_Basic_Design_OPTIMIZED.docx
+    - row: 20
+      cells:
+      - '20'
+      - SYSTEM-LOGIC
+      - 全站系統邏輯與共享 Runtime/AI Continuity
+      - SYSTEM
+      - authority/global/ACPOS_SYSTEM_AUTHORITY_FINAL_LOCKED_CURRENT.yaml
+      - AI continuity integrated
+      - ACPOS_SYSTEM_LOGIC_GLOBAL_INTEGRATION_Mother_Basic_Design_OPTIMIZED.docx
+  - index: 4
+    rows:
+    - row: 0
+      cells:
+      - Page
+      - Expected Controls
+      - Exact Rows
+      - Denominator
+      - True Runtime / Governance Status
+    - row: 1
+      cells:
+      - WB-01
+      - '14'
+      - '14'
+      - PASS
+      - NO_DEFINITION_GAP
+    - row: 2
+      cells:
+      - CORE-01
+      - '50'
+      - '50'
+      - PASS
+      - NO_DEFINITION_GAP
+    - row: 3
+      cells:
+      - ASSET-01
+      - '85'
+      - '85'
+      - PASS
+      - NO_DEFINITION_GAP
+    - row: 4
+      cells:
+      - VIDEO-01
+      - '85'
+      - '85'
+      - PASS
+      - NO_DEFINITION_GAP
+    - row: 5
+      cells:
+      - EDIT-01
+      - '160'
+      - '160'
+      - PASS
+      - STALE_DERIVED_VALIDATION_COUNT
+    - row: 6
+      cells:
+      - QA-01
+      - '87'
+      - '87'
+      - PASS
+      - NO_DEFINITION_GAP
+    - row: 7
+      cells:
+      - DB-01
+      - '49'
+      - '49'
+      - PASS
+      - NO_DEFINITION_GAP
+    - row: 8
+      cells:
+      - STR-01
+      - '57'
+      - '57'
+      - PASS
+      - NO_DEFINITION_GAP
+    - row: 9
+      cells:
+      - INFO-01
+      - '66'
+      - '66'
+      - PASS
+      - NO_DEFINITION_GAP
+    - row: 10
+      cells:
+      - SYS-01
+      - '12'
+      - '12'
+      - PASS
+      - NO_DEFINITION_GAP
+    - row: 11
+      cells:
+      - IAM-01
+      - '14'
+      - '14'
+      - PASS
+      - NO_DEFINITION_GAP
+    - row: 12
+      cells:
+      - DEV-01
+      - '22'
+      - '22'
+      - PASS
+      - NO_DEFINITION_GAP
+    - row: 13
+      cells:
+      - SOC-01
+      - '67'
+      - '67'
+      - PASS
+      - NO_DEFINITION_GAP
+    - row: 14
+      cells:
+      - ERP-01
+      - '42'
+      - '42'
+      - PASS
+      - NO_DEFINITION_GAP
+    - row: 15
+      cells:
+      - AIAPI-01
+      - '17'
+      - '17'
+      - PASS
+      - NO_DEFINITION_GAP
+    - row: 16
+      cells:
+      - SG-02
+      - '12'
+      - '12'
+      - PASS
+      - RUNTIME_BINDING_VALIDATION
+    - row: 17
+      cells:
+      - ADMIN-STR-01
+      - '19'
+      - '19'
+      - PASS
+      - RUNTIME_IMPLEMENTATION_BLOCKED; RUNTIME_IMPLEMENTATION_BLOCKED; RUNTIME_IMPLEMENTATION_BLOCKED; RUNTIME_IMPLEMENTATION_BLOCKED; RUNTIME_IMPLEMENTATION_BLOCKED;
+        RUNTIME_IMPLEMENTATION_BLOCKED; PARTIAL_RUNTIME_MATERIALIZATION
+    - row: 18
+      cells:
+      - KB-01
+      - '27'
+      - '27'
+      - PASS
+      - IMPLEMENTATION_EXECUTION_EVIDENCE
+  - index: 5
+    rows:
+    - row: 0
+      cells:
+      - Page
+      - Previous defect
+      - Closure
+    - row: 1
+      cells:
+      - CORE-01
+      - Approved CORE Criteria referenced, no concrete dimensions
+      - 8-dimension CORE baseline profile added + page row-render requirement
+    - row: 2
+      cells:
+      - ASSET-01
+      - Scorecard fields existed, no concrete dimension catalog
+      - 9-dimension IMAGE + 8-dimension AUDIO profiles added
+    - row: 3
+      cells:
+      - VIDEO-01
+      - 9 dimensions existed but no governed weights/profile
+      - Existing 9 UIDs preserved; weights + SG-02 mapping added
+    - row: 4
+      cells:
+      - EDIT-01
+      - dimension_scores existed, no concrete stage dimension names
+      - 12-dimension EDIT profile + stage applicability added
+    - row: 5
+      cells:
+      - QA-01
+      - Generated dimension table existed, but actual review items absent
+      - 17 concrete final-output review items + exact scorecard display contract added
+    - row: 6
+      cells:
+      - SG-02
+      - Dimension/Criteria containers empty; lifecycle lacked DRAFT→REVIEW action
+      - 6 baseline profiles + dimension/check/category catalogs + Submit Review authority; denominator 12
+  - index: 6
+    rows:
+    - row: 0
+      cells:
+      - Other pages audited
+      - Result
+    - row: 1
+      cells:
+      - WB-01 / DB-01 / INFO-01 / IAM-01
+      - 'No same defect: fixed schemas/sections/entities are concrete; runtime records are intentionally dynamic.'
+    - row: 2
+      cells:
+      - DEV-01 / SOC-01 / ERP-01 / AIAPI-01
+      - 'No same defect: business entities, stages/contracts/fields are concrete; values/providers/amounts remain real-data-only.'
+    - row: 3
+      cells:
+      - STR-01 / Admin STR-01 / KB-01 / SYS-01
+      - 'No same defect: workflow/entity/review/source contracts are concrete; dynamic facts/candidates/sources must not be seeded.'
+  - index: 7
+    rows:
+    - row: 0
+      cells:
+      - Item
+      - Current rule
+    - row: 1
+      cells:
+      - Branch
+      - 0921acpos
+    - row: 2
+      cells:
+      - Physical package denominator
+      - '31 DOCX: 1 Index + 9 System Normative + 18 Page Design + Login + System Logic + Global Shell'
+    - row: 3
+      cells:
+      - HEAD identity
+      - Dynamic. Resolve fresh from GitHub before audit, batch execution, validation and completion declaration; do not hard-code a historical SHA as Current Truth.
+    - row: 4
+      cells:
+      - File applicability
+      - Every physical DOCX in the package is in denominator unless an explicit Current Authority exclusion exists.
+    - row: 5
+      cells:
+      - Evidence
+      - Current branch root scan + exact Git blob SHA for each target file + fresh batch validation run.
+    - row: 6
+      cells:
+      - Stale metadata rule
+      - Any embedded branch/SHA/count that conflicts with the fresh physical scan is historical evidence only, not Current package authority.
+  - index: 8
+    rows:
+    - row: 0
+      cells:
+      - Document Role
+      - Current Root Filename
+    - row: 1
+      cells:
+      - Global Home / Shell / Navigation
+      - ACPOS_GLOBAL_HOME_SHELL_NAVIGATION_Mother_Basic_Design_OPTIMIZED.docx
+    - row: 2
+      cells:
+      - System Contract 01
+      - 01_ACPOS_Global_Intelligent_Brain_Information_Lifecycle_Mother_Basic_Logic_Design_Normative_Contract_v4.docx
+    - row: 3
+      cells:
+      - System Contract 02
+      - 02_ACPOS_AI_Conversation_Memory_MultiAI_Assistant_Mother_Basic_Logic_Design_Normative_Contract_v1.0.docx
+    - row: 4
+      cells:
+      - System Contract 03
+      - 03_ACPOS_AI_Execution_Script_Compiler_Tool_AIAPI_Runtime_Mother_Basic_Logic_Design_Normative_Contract_v1.0.docx
+    - row: 5
+      cells:
+      - System Contract 04
+      - 04_ACPOS_CORE_AI_Blueprint_Canonical_Script_System_Mother_Basic_Logic_Design_Normative_Contract_v1.0.docx
+    - row: 6
+      cells:
+      - System Contract 05
+      - 05_ACPOS_Creative_Production_AI_ASSET_VIDEO_EDIT_VOICE_QA_Mother_Basic_Logic_Design_Normative_Contract_v1.0.docx
+    - row: 7
+      cells:
+      - System Contract 06
+      - 06_ACPOS_Enterprise_Business_Development_AI_System_Mother_Basic_Logic_Design_Normative_Contract_v1.0.docx
+    - row: 8
+      cells:
+      - System Contract 07
+      - 07_ACPOS_Social_Publishing_AI_System_Mother_Basic_Logic_Design_Normative_Contract_v1.0.docx
+    - row: 9
+      cells:
+      - System Contract 08
+      - 08_ACPOS_Strategy_Intelligence_MultiAI_Decision_System_Mother_Basic_Logic_Design_Normative_Contract_v1.0.docx
+    - row: 10
+      cells:
+      - System Contract 09
+      - 09_ACPOS_AI_System_Engineer_Self_Inspection_Evolution_System_Mother_Basic_Logic_Design_Normative_Contract_v1.0.docx

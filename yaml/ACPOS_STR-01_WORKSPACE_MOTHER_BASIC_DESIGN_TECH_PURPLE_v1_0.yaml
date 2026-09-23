@@ -1,0 +1,3722 @@
+schema_version: ACPOS_WORD_YAML_PROJECTION_V1
+projection_mode: SOURCE_GROUNDED_NO_INVENTION
+sequence: 26
+source:
+  branch: 0921acpos
+  git_head: 7bd2dbdb89b685c5f5f6045c8e3e17c5f2500db5
+  word_path: ACPOS_STR-01_WORKSPACE_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx
+  word_sha256: 3230c6b995176ed5cadb6d34bd13ad944c39ea039b1cd850beaa2205d3862ffb
+authority_rules:
+- Word source remains canonical for this projection.
+- Do not silently fill, correct, reconcile, or replace source content.
+- Do not convert BLOCKED, NOT_EXECUTED, REQUIRE_EXACT_BINDING, SOURCE_NOT_DEFINED into PASS.
+- Paragraph and table order is preserved by source index.
+document:
+  paragraphs:
+  - index: 0
+    style: Normal
+    text: ACPOS · STR-01
+  - index: 1
+    style: Normal
+    text: '戰略中心工作區
+
+      Mother-Compliant Basic Design · Tech Purple'
+  - index: 2
+    style: Normal
+    text: 'Current Authority 基準：GitHub new · 165c6440cb53…
+
+      UI Candidate，不代表 Current Canonical Visual 已更新'
+  - index: 5
+    style: Heading 1
+    text: 0. Current Truth / Authority Basis
+  - index: 6
+    style: Normal
+    text: 本文件只作 STR-01 Basic Design / Construction Blueprint。Current Authority、Global Shell、Global Visual 為上位來源；本 Word 不反向修改 Authority。
+  - index: 8
+    style: Heading 2
+    text: Current Registry Denominator
+  - index: 10
+    style: Heading 2
+    text: Governance Consistency Note
+  - index: 11
+    style: Normal
+    text: Current Manifest、authority header 與 shared_provider_adapter_binding 都指向 ACPOS_PRODUCTION_SCRIPT_CONTENT_AND_PROVIDER_ADAPTER_CONTRACT@V1.3；同檔 legacy validation/hard-lock
+      文字仍殘留 V1.2。本文依 Current Manifest + formal binding 使用 V1.3，並保留此差異作治理修正事項，不宣稱 Authority 已被改寫。
+  - index: 12
+    style: Heading 1
+    text: 1. Purpose / Hard Boundary
+  - index: 13
+    style: List Bullet
+    text: STR-01 用於企業策略情報整理、趨勢分析、方案比較、風險評估、資源建議與人工決策輔助。
+  - index: 14
+    style: List Bullet
+    text: AI only provides analysis/proposals. Formal strategy decision is human-governed.
+  - index: 15
+    style: List Bullet
+    text: Finance / Workflow / Governance / Production execution remains in owning modules.
+  - index: 16
+    style: List Bullet
+    text: External intelligence cannot overwrite confirmed decisions/current governed internal truth.
+  - index: 17
+    style: List Bullet
+    text: Missing source/finance/resource/risk/KPI/evidence values remain —; AI must not invent them.
+  - index: 19
+    style: Heading 1
+    text: 2. Strategic Context Contract
+  - index: 21
+    style: Heading 2
+    text: Required Context Metadata
+  - index: 23
+    style: Heading 2
+    text: Supported Source Types
+  - index: 25
+    style: Heading 1
+    text: 3. Business Object Inventory · 12/12
+  - index: 28
+    style: Heading 1
+    text: 4. Conversation / AI Continuity Contract
+  - index: 29
+    style: List Bullet
+    text: Shared Core = ACPOS AI Conversation Core; strategy extension only.
+  - index: 30
+    style: List Bullet
+    text: Modes = SINGLE_AI / MULTI_AI. Assistant always exists and is not a mode.
+  - index: 31
+    style: List Bullet
+    text: MULTI_AI = same original question + same Strategic Context + same evidence basis → independent complete viewpoints → Assistant synthesis after responses.
+  - index: 32
+    style: List Bullet
+    text: Provider/Model picker is FORBIDDEN. Provider brand may display on response; technical details belong to AIAPI-01.
+  - index: 33
+    style: List Bullet
+    text: Input supports zh-TW instruction, file/image refs, @Strategy/@Alert/@Knowledge/@Decision, quoted message/response refs.
+  - index: 34
+    style: List Bullet
+    text: Raw AI response never becomes formal Strategy Decision automatically.
+  - index: 35
+    style: Heading 2
+    text: Visible Record
+  - index: 37
+    style: Heading 1
+    text: 5. Strategy Analysis / Output Contract
+  - index: 39
+    style: Heading 2
+    text: Four Structured Outputs
+  - index: 42
+    style: Heading 1
+    text: 6. Page / Section / Component Registry
+  - index: 43
+    style: Heading 2
+    text: 6.1 Sections · 12/12
+  - index: 45
+    style: Heading 2
+    text: 6.2 Components · 16/16
+  - index: 48
+    style: Heading 1
+    text: 7. Interaction / Stage Flow
+  - index: 50
+    style: Heading 2
+    text: Functional Flow
+  - index: 51
+    style: Normal
+    text: Resolve Context → Strategic Conversation → Analyze/Compare → Structured Outputs → Human Review/Decision → Owner Execution Feedback/Learning。STR-01 不跨界執行
+      owner-module action。
+  - index: 52
+    style: Heading 1
+    text: 8. Action / Operation Contract · 11/11
+  - index: 55
+    style: Heading 1
+    text: 9. Visual Architecture / Tech Purple UI Candidate
+  - index: 56
+    style: Normal
+    text: 'Global Shell: 58px fixed Header；64px icon-only collapsed sidebar；221px hover/focus overlay，不造成 workspace reflow。STR-01 Primary Grid ≈ 19% / 59% / 22%，Conversation
+      是中心 dominant region。'
+  - index: 57
+    style: Heading 2
+    text: 9.1 Visual A — Single AI Main Workspace
+  - index: 59
+    style: Normal
+    text: Strategy Topics / Context / Alerts + Strategic AI Conversation + Outputs / Human Review。所有 business values = —。
+  - index: 60
+    style: Heading 2
+    text: 9.2 Visual B — Multi AI Same-Context Workspace
+  - index: 62
+    style: Normal
+    text: 三個獨立 viewpoints 使用同一 original question + Strategic Context；Assistant 只在回應後綜整。
+  - index: 64
+    style: Heading 1
+    text: 10. Visual State Set
+  - index: 65
+    style: Heading 2
+    text: 10.1 Visual C — Option Comparison
+  - index: 67
+    style: Normal
+    text: Exact strategy candidate/version refs only；比較欄位包含 benefit / cost / risk / horizon / dependency / evidence / uncertainty。
+  - index: 68
+    style: Heading 2
+    text: 10.2 Visual D — Human Review / Decision Ledger
+  - index: 70
+    style: Normal
+    text: 221px Sidebar Overlay + Human Review + Decision Ledger + Cross-module owner boundaries。
+  - index: 72
+    style: Heading 1
+    text: 11. Memory / Feedback / Audit Visual
+  - index: 73
+    style: Heading 2
+    text: 11.1 Visual E — Strategic Memory / Feedback Loop
+  - index: 75
+    style: Normal
+    text: Strategic Memory append-only；Execution result / KPI / Expected-vs-Actual 從 owner module 回流；Provider brand only。
+  - index: 76
+    style: Heading 1
+    text: 12. Geometry / Workbench Ratio
+  - index: 79
+    style: Heading 1
+    text: 13. Control / Field / Action / Gate / Permission Binding · 57/57
+  - index: 82
+    style: Heading 1
+    text: 14. Gate / Permission Contract
+  - index: 83
+    style: Heading 2
+    text: 14.1 Gates · 11/11
+  - index: 85
+    style: Heading 2
+    text: 14.2 Permissions · 5/5
+  - index: 88
+    style: Heading 1
+    text: 15. State / Error / Recovery
+  - index: 89
+    style: Heading 2
+    text: 15.1 Page States · 9/9
+  - index: 91
+    style: Heading 2
+    text: 15.2 Errors · 9/9
+  - index: 94
+    style: Heading 1
+    text: 16. Integration Ports · 6/6
+  - index: 96
+    style: Heading 2
+    text: Provider Adapter Boundary
+  - index: 97
+    style: List Bullet
+    text: Required capability = TEXT_CHAT.
+  - index: 98
+    style: List Bullet
+    text: Profile owner = admin:AIAPI-01#provider_model_profiles.
+  - index: 99
+    style: List Bullet
+    text: No page-local provider registry or prompt compiler.
+  - index: 100
+    style: List Bullet
+    text: No manual Provider/Model picker.
+  - index: 101
+    style: List Bullet
+    text: Provider-specific prompt syntax / request JSON / endpoint / secrets are forbidden in STR-01.
+  - index: 102
+    style: List Bullet
+    text: Fallback must recompile from canonical strategic meaning for the fallback profile; cross-provider compiled-prompt reuse is forbidden.
+  - index: 103
+    style: Heading 1
+    text: 17. Decision Ledger / Human Gate
+  - index: 106
+    style: Heading 1
+    text: 18. Function ↔ Visual Traceability
+  - index: 108
+    style: Heading 1
+    text: 19. Visual Generation Manifest
+  - index: 111
+    style: Heading 1
+    text: 20. Hard Locks / Pre-Implementation Guards
+  - index: 112
+    style: List Bullet
+    text: Only workspace:STR-01 is Current executable Strategic Center workspace.
+  - index: 113
+    style: List Bullet
+    text: AI cannot directly create formal decision, budget approval, workflow change, production action, release or publish.
+  - index: 114
+    style: List Bullet
+    text: External intelligence cannot overwrite confirmed decisions/current internal truth.
+  - index: 115
+    style: List Bullet
+    text: Single/Multi AI share the same Conversation Core; Multi AI uses same question/context/evidence.
+  - index: 116
+    style: List Bullet
+    text: No Provider/Model picker; routing is system-owned.
+  - index: 117
+    style: List Bullet
+    text: Four output types remain distinct.
+  - index: 118
+    style: List Bullet
+    text: Candidate/output/memory/history revisions append new versions; no overwrite.
+  - index: 119
+    style: List Bullet
+    text: Missing source/confidence/finance/capacity/KPI/risk/evidence/execution values remain —.
+  - index: 120
+    style: List Bullet
+    text: No unlisted Section/Component/Control/Action/State/Gate/Permission/Port/business sample data.
+  - index: 121
+    style: Heading 1
+    text: 21. Acceptance Matrix
+  - index: 124
+    style: Heading 1
+    text: 22. Audit Baseline / Evidence Contract
+  - index: 126
+    style: Heading 1
+    text: 23. Definition of Done / Design Freeze Gate
+  - index: 128
+    style: Heading 1
+    text: 24. Resume / Next Step
+  - index: 129
+    style: List Bullet
+    text: Human review STR-01 visual proportions, information density, conversation dominance and decision boundary.
+  - index: 130
+    style: List Bullet
+    text: If approved, complete governed Design Freeze before construction.
+  - index: 131
+    style: List Bullet
+    text: If rejected, revise this Word/UI candidate only; Current Authority changes require governed change request.
+  - index: 132
+    style: List Bullet
+    text: Separate governance maintenance should resolve V1.2 residual wording without changing STR-01 page logic.
+  - index: 134
+    style: Heading 1
+    text: 2026-09-21 Machine Authority Construction Closure / 機器權威施工綁定封板
+  - index: 135
+    style: Normal
+    text: '[ACPOS-20260921-SOURCE-GROUNDED-CONSTRUCTION-CLOSURE-V2] Source-grounded only. Existing Current source wins; missing source values remain blocked/decision-required.
+      This closure supersedes the prior generic 2026-09-21 V1/V3 annex only, not the original domain logic or human visual review gates.'
+  - index: 136
+    style: Heading 2
+    text: STR-01 · Exact Construction Binding
+  - index: 137
+    style: Heading 2
+    text: Page Construction Invariant
+  - index: 138
+    style: Normal
+    text: The exact control denominator above is the only construction denominator for this page. Components/fields/visual IDs are not counted as additional controls.
+      Existing source UIDs are preserved. A control classified UI_LOCAL_EXACT MUST NOT create a server write. A control classified SPEC_EXACT_RUNTIME_BLOCKED / NOT_EXECUTED
+      MUST remain disabled or fail-closed until its runtime evidence exists.
+  - index: 140
+    style: Heading 1
+    text: Batch 16 · Operation / Runtime Owner Binding Ledger
+  - index: 141
+    style: Normal
+    text: '[ACPOS-20260921-BATCH-16-OPERATION-OWNER-CONTRACT-CLOSURE-V1::PAGE::STR-01] The existing product-control registry cells above are updated only for the
+      exact fields authorized by the matching Canonical Owner contract. No Method/Path is invented and no Runtime/Production execution is claimed.'
+  - index: 143
+    style: Heading 1
+    text: Batch 25 · Strong Exact Relation Binding Ledger
+  - index: 144
+    style: Normal
+    text: '[ACPOS-20260922-BATCH-25-STRONG-EXACT-RELATION-REMEDIATION-V1::PAGE::STR-01] Only same Canonical Owner + same Operation + identical Runtime Status relations
+      are materialized. No shared-Gate inference, label matching, blocked-source promotion, or cross-owner transfer is permitted.'
+  - index: 146
+    style: Heading 1
+    text: Batch 27 · Canonical Contract Reconciliation Ledger
+  - index: 147
+    style: Normal
+    text: '[ACPOS-20260922-BATCH-27-CANONICAL-CONTRACT-RECONCILIATION-V1::PAGE::STR-01] Bindings below are synchronized from the matching Canonical Owner amendment.
+      Read-only controls do not acquire a Persistence Owner. Runtime execution remains outside this Word evidence.'
+  - index: 149
+    style: Heading 1
+    text: Batch 36 · Shared Conversation Core Contract Binding Ledger
+  - index: 150
+    style: Normal
+    text: '[ACPOS-20260922-BATCH-36-SYSTEM02-CANONICAL-CONTRACT-REMEDIATION-V1::PAGE::STR-01] Only the fields listed in the Current 324-cell denominator are synchronized.
+      Existing Action/Gate/Permission/Operation/Runtime Owner/Runtime Status values remain unchanged.'
+  - index: 152
+    style: Heading 1
+    text: Batch 43 · STR-01 Strategy Contract Binding Ledger
+  - index: 153
+    style: Normal
+    text: '[ACPOS-20260922-BATCH-43-SYSTEM08-STRATEGY-CONTRACT-REMEDIATION-V1::PAGE::STR-01] Review submission is a governed request to enter REVIEW_REQUIRED, never
+      an approval. Context adoption requires prior human review and persists through AI-01 Context authority plus System 08 audit linkage; Strategy does not create
+      a second Context Engine.'
+  - index: 155
+    style: Heading 2
+    text: Canonical Business Entity Operation Applicability Matrix / 業務實體操作適用性矩陣
+  - index: 156
+    style: Normal
+    text: 'Authority: Current Word design + Mother §71 bounded completion. 本矩陣只正規化既有行為與目前未授權行為；不得據此新增 Business Entity、Operation、Runtime 或 API。 Current tree: b2f81b20322dd9e9268001126b07931b437e27df.'
+  - index: 158
+    style: Heading 1
+    text: Mother Planning / Basic Design Closure Annex｜規劃設計規範閉環補充
+  - index: 159
+    style: Normal
+    text: '[ACPOS-20260922-PLANNING-DESIGN-CLOSURE-ANNEX-V1] 本附錄只補規劃／基本設計規範缺口；原頁面既有功能、Owner、Operation、Permission、Entity、Visual 與跨頁 Authority 仍為同一 Canonical Owner。不得由本附錄發明
+      Runtime/API/DB/Provider 行為，也不得建立第二套平行規範。'
+  - index: 160
+    style: Heading 2
+    text: Requirement Definition Gate Closure｜需求定義補齊
+  - index: 161
+    style: Normal
+    text: '[ACPOS-DESIGN-CLOSURE:STR-01:REQUIREMENTS]'
+  - index: 162
+    style: Heading 2
+    text: Design System / Layout Closure｜設計系統與版面補齊
+  - index: 163
+    style: Normal
+    text: '[ACPOS-DESIGN-CLOSURE:STR-01:DESIGN-SYSTEM]'
+  - index: 164
+    style: Heading 2
+    text: Visual Geometry Contract Closure｜視覺幾何補齊
+  - index: 165
+    style: Normal
+    text: '[ACPOS-DESIGN-CLOSURE:STR-01:GEOMETRY]'
+  - index: 166
+    style: Heading 2
+    text: Visual Anchor / Preview / Review Contract｜視覺錨點與預覽審查補齊
+  - index: 167
+    style: Normal
+    text: '[ACPOS-DESIGN-CLOSURE:STR-01:VISUAL]'
+  - index: 168
+    style: Heading 2
+    text: Visual Generation / Review Planning Contract
+  - index: 169
+    style: Normal
+    text: '[ACPOS-DESIGN-CLOSURE:STR-01:VISUAL-CONTRACT]'
+  - index: 170
+    style: Heading 2
+    text: A11y / i18n Design Contract Closure｜無障礙與語系補齊
+  - index: 171
+    style: Normal
+    text: '[ACPOS-DESIGN-CLOSURE:STR-01:A11Y-I18N]'
+  tables:
+  - index: 0
+    rows:
+    - row: 0
+      cells:
+      - 項目
+      - Current
+    - row: 1
+      cells:
+      - Page UID
+      - workspace:STR-01
+    - row: 2
+      cells:
+      - Canonical Name
+      - 戰略中心工作區 / Strategic Center Workspace
+    - row: 3
+      cells:
+      - Page Authority SHA
+      - 618e56f2f993bc818d943cb14db6ce455d68a1c5
+    - row: 4
+      cells:
+      - Manifest SHA
+      - 465329b6fb19b8e44c3083a9f280015ee95cc55c
+    - row: 5
+      cells:
+      - Authority Status
+      - FINAL_LOCKED / current_only
+    - row: 6
+      cells:
+      - Design Status
+      - VISUAL_CANDIDATE / PENDING HUMAN REVIEW
+    - row: 7
+      cells:
+      - Design Freeze
+      - 'FALSE'
+  - index: 1
+    rows:
+    - row: 0
+      cells:
+      - 優先序
+      - 來源
+      - 作用
+    - row: 1
+      cells:
+      - '1'
+      - ACPOS_CURRENT_AUTHORITY_MANIFEST
+      - Current authority set
+    - row: 2
+      cells:
+      - '2'
+      - GLOBAL_HOME_SHELL_TEMPLATE_AUTHORITY V1.9
+      - 58px Header / 64px collapsed / 221px overlay
+    - row: 3
+      cells:
+      - '3'
+      - GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY V1.0
+      - 科技紫 tokens / component states
+    - row: 4
+      cells:
+      - '4'
+      - authority/pages/workspace/STR-01/ACPOS_STR-01_FINAL_LOCKED_ENCODING_PROVIDER_BOUND.yaml
+      - STR-01 UX/business/registry
+    - row: 5
+      cells:
+      - '5'
+      - 本 Word
+      - UI candidate / construction reference
+  - index: 2
+    rows:
+    - row: 0
+      cells:
+      - Artifact
+      - Count
+    - row: 1
+      cells:
+      - Sections / Visuals
+      - 12 / 12
+    - row: 2
+      cells:
+      - Components
+      - '16'
+    - row: 3
+      cells:
+      - Controls
+      - '57'
+    - row: 4
+      cells:
+      - Actions
+      - '11'
+    - row: 5
+      cells:
+      - Gates / Permissions
+      - 11 / 5
+    - row: 6
+      cells:
+      - Objects / Errors / States
+      - 12 / 9 / 9
+    - row: 7
+      cells:
+      - Stages
+      - '6'
+    - row: 8
+      cells:
+      - Integration Ports
+      - '6'
+  - index: 3
+    rows:
+    - row: 0
+      cells:
+      - Priority
+      - Meaning
+    - row: 1
+      cells:
+      - P0
+      - Current Human Instruction
+    - row: 2
+      cells:
+      - P1
+      - Confirmed Decision
+    - row: 3
+      cells:
+      - P2
+      - Current Valid Internal Data
+    - row: 4
+      cells:
+      - P3
+      - Historical Strategic Analysis / Baseline / Experience
+    - row: 5
+      cells:
+      - P4
+      - External Intelligence
+  - index: 4
+    rows:
+    - row: 0
+      cells:
+      - Field
+      - Rule
+    - row: 1
+      cells:
+      - source_ref
+      - REQUIRED / exact source metadata
+    - row: 2
+      cells:
+      - source_type
+      - REQUIRED / exact source metadata
+    - row: 3
+      cells:
+      - source_time_or_version
+      - REQUIRED / exact source metadata
+    - row: 4
+      cells:
+      - scope
+      - REQUIRED / exact source metadata
+    - row: 5
+      cells:
+      - confidence_or_quality_state
+      - REQUIRED / exact source metadata
+  - index: 5
+    rows:
+    - row: 0
+      cells:
+      - Type
+    - row: 1
+      cells:
+      - 市場情報
+    - row: 2
+      cells:
+      - 產業資料
+    - row: 3
+      cells:
+      - 競爭資訊
+    - row: 4
+      cells:
+      - 企業內部資料
+    - row: 5
+      cells:
+      - 資源能力
+    - row: 6
+      cells:
+      - 成本資訊
+    - row: 7
+      cells:
+      - 風險資訊
+    - row: 8
+      cells:
+      - Governance 條件
+  - index: 6
+    rows:
+    - row: 0
+      cells:
+      - Object UID
+      - Entity
+      - Required Content
+    - row: 1
+      cells:
+      - STR-01-OBJ-TOPIC
+      - StrategyTopicRef
+      - strategy_topic_id + title + scope + objective + status + conversation/thread refs
+    - row: 2
+      cells:
+      - STR-01-OBJ-CONTEXT
+      - StrategicContextBundle
+      - market/industry/competition/internal/resource/cost/risk/governance refs + priority + source_time/version + confidence
+    - row: 3
+      cells:
+      - STR-01-OBJ-CONVERSATION
+      - StrategicConversationRef
+      - conversation_id + topic ref + mode + message refs + context fingerprint + audit
+    - row: 4
+      cells:
+      - STR-01-OBJ-ANALYSIS
+      - StrategyAnalysisResult
+      - basis + assumptions + opportunity + risk + uncertainty + pattern/baseline/forecast + evidence
+    - row: 5
+      cells:
+      - STR-01-OBJ-CANDIDATE
+      - StrategyCandidate
+      - candidate_id/version + output type + proposal + analysis refs + risk + uncertainty + evidence + state
+    - row: 6
+      cells:
+      - STR-01-OBJ-RECOMMENDATION
+      - StrategyRecommendation
+      - summary + basis + recommended path + reason + risk + uncertainty + evidence
+    - row: 7
+      cells:
+      - STR-01-OBJ-ALERT
+      - StrategyAlert
+      - alert type + scope + reason + evidence + urgency/priority + recommended response
+    - row: 8
+      cells:
+      - STR-01-OBJ-RESOURCE
+      - ResourceProposal
+      - target + need + reason + expected effect + cost/capacity impact + risk + dependency
+    - row: 9
+      cells:
+      - STR-01-OBJ-BRIEF
+      - DecisionBrief
+      - issue + context + options + recommendation + alternatives + risks + unknowns + decision needed
+    - row: 10
+      cells:
+      - STR-01-OBJ-LEDGER
+      - StrategyDecisionLedgerEntry
+      - decision_id + candidate + sources + risk + approval level + result + reason + actor/time + execution status/ref
+    - row: 11
+      cells:
+      - STR-01-OBJ-MEMORY
+      - StrategicExperienceRef
+      - pattern/case/experiment/baseline/result/KPI/expected-vs-actual/learning + immutable history
+    - row: 12
+      cells:
+      - STR-01-OBJ-FEEDBACK
+      - StrategyExecutionFeedback
+      - execution ref + actual result + KPI/revenue/cost/performance + expected-vs-actual + learning
+  - index: 7
+    rows:
+    - row: 0
+      cells:
+      - Record
+    - row: 1
+      cells:
+      - User instruction
+    - row: 2
+      cells:
+      - AI viewpoints
+    - row: 3
+      cells:
+      - Assistant summary
+    - row: 4
+      cells:
+      - analysis basis
+    - row: 5
+      cells:
+      - assumptions
+    - row: 6
+      cells:
+      - risks
+    - row: 7
+      cells:
+      - uncertainty
+    - row: 8
+      cells:
+      - human decision record
+  - index: 8
+    rows:
+    - row: 0
+      cells:
+      - Analysis Mandatory Field
+    - row: 1
+      cells:
+      - analysis_basis
+    - row: 2
+      cells:
+      - assumptions
+    - row: 3
+      cells:
+      - opportunities
+    - row: 4
+      cells:
+      - risks
+    - row: 5
+      cells:
+      - uncertainties
+    - row: 6
+      cells:
+      - option_comparison
+    - row: 7
+      cells:
+      - recommendation_reason
+    - row: 8
+      cells:
+      - evidence_refs
+  - index: 9
+    rows:
+    - row: 0
+      cells:
+      - Type
+      - Meaning
+    - row: 1
+      cells:
+      - STRATEGY_RECOMMENDATION
+      - Strategy Recommendation / 策略建議
+    - row: 2
+      cells:
+      - STRATEGY_ALERT
+      - Strategy Alert / 風險與機會提醒
+    - row: 3
+      cells:
+      - RESOURCE_PROPOSAL
+      - Resource Proposal / 資源配置建議；approval belongs to owner module
+    - row: 4
+      cells:
+      - DECISION_BRIEF
+      - Decision Brief / 決策摘要
+  - index: 10
+    rows:
+    - row: 0
+      cells:
+      - Section UID
+      - Name
+      - Responsibility
+      - Visual
+    - row: 1
+      cells:
+      - STR-01-SEC-01
+      - Strategy Context Bar
+      - Strategy Topic, scope, horizon, mode, state, current decision status
+      - STR-01-VIS-CONTEXT
+    - row: 2
+      cells:
+      - STR-01-SEC-02
+      - Strategy Topics / History
+      - Strategy topic list, search, current topic selection, previous discussions
+      - STR-01-VIS-LEFT-TOPIC
+    - row: 3
+      cells:
+      - STR-01-SEC-03
+      - Strategic Context
+      - Market/industry/competition/internal/resource/cost/risk/governance sources and confidence
+      - STR-01-VIS-LEFT-CONTEXT
+    - row: 4
+      cells:
+      - STR-01-SEC-04
+      - Strategic Alerts / Open Questions
+      - Relevant opportunity/risk alerts and missing-information questions
+      - STR-01-VIS-LEFT-ALERT
+    - row: 5
+      cells:
+      - STR-01-SEC-05
+      - Strategic AI Conversation
+      - Single/Multi AI conversation, attachment/image/reference, assistant summary
+      - STR-01-VIS-CONVERSATION
+    - row: 6
+      cells:
+      - STR-01-SEC-06
+      - Strategy Analysis
+      - Basis, assumptions, opportunity, risk, uncertainty, pattern/baseline/forecast
+      - STR-01-VIS-ANALYSIS
+    - row: 7
+      cells:
+      - STR-01-SEC-07
+      - Option Comparison
+      - Compare strategy candidates/options without deleting prior versions
+      - STR-01-VIS-COMPARE
+    - row: 8
+      cells:
+      - STR-01-SEC-08
+      - Strategy Outputs
+      - Recommendation, Alert, Resource Proposal, Decision Brief
+      - STR-01-VIS-RIGHT-OUTPUT
+    - row: 9
+      cells:
+      - STR-01-SEC-09
+      - Human Review / Decision Ledger
+      - Review status, candidate status, human decision record, execution status
+      - STR-01-VIS-RIGHT-DECISION
+    - row: 10
+      cells:
+      - STR-01-SEC-10
+      - Strategic Memory / Experience
+      - Patterns, cases, experiments, baselines, KPI changes and learning
+      - STR-01-VIS-MEMORY
+    - row: 11
+      cells:
+      - STR-01-SEC-11
+      - Feedback Loop
+      - Expected vs Actual, difference, learning, owner execution feedback
+      - STR-01-VIS-FEEDBACK
+    - row: 12
+      cells:
+      - STR-01-SEC-12
+      - Audit / Boundary
+      - Source trace, provider brand, correlation, permission, owner handoff boundary
+      - STR-01-VIS-STATUS
+  - index: 11
+    rows:
+    - row: 0
+      cells:
+      - Component UID
+      - Section
+      - Name
+    - row: 1
+      cells:
+      - STR-01-CMP-CONTEXT
+      - STR-01-SEC-01
+      - Strategic Context Bar
+    - row: 2
+      cells:
+      - STR-01-CMP-TOPICS
+      - STR-01-SEC-02
+      - Strategy Topic List / History
+    - row: 3
+      cells:
+      - STR-01-CMP-SOURCE-STACK
+      - STR-01-SEC-03
+      - Strategic Context Source Stack
+    - row: 4
+      cells:
+      - STR-01-CMP-ALERTS
+      - STR-01-SEC-04
+      - Strategy Alerts / Open Questions
+    - row: 5
+      cells:
+      - STR-01-CMP-CONVERSATION
+      - STR-01-SEC-05
+      - AI Conversation Workspace
+    - row: 6
+      cells:
+      - STR-01-CMP-MODE
+      - STR-01-SEC-05
+      - Single / Multi AI Mode
+    - row: 7
+      cells:
+      - STR-01-CMP-COMPOSER
+      - STR-01-SEC-05
+      - Conversation Composer
+    - row: 8
+      cells:
+      - STR-01-CMP-ASSISTANT
+      - STR-01-SEC-05
+      - Assistant Summary / Meeting Record
+    - row: 9
+      cells:
+      - STR-01-CMP-ANALYSIS
+      - STR-01-SEC-06
+      - Strategy Analysis Result
+    - row: 10
+      cells:
+      - STR-01-CMP-COMPARE
+      - STR-01-SEC-07
+      - Option Comparison
+    - row: 11
+      cells:
+      - STR-01-CMP-OUTPUTS
+      - STR-01-SEC-08
+      - Strategic Output Cards
+    - row: 12
+      cells:
+      - STR-01-CMP-REVIEW
+      - STR-01-SEC-09
+      - Human Review
+    - row: 13
+      cells:
+      - STR-01-CMP-LEDGER
+      - STR-01-SEC-09
+      - Decision Ledger
+    - row: 14
+      cells:
+      - STR-01-CMP-MEMORY
+      - STR-01-SEC-10
+      - Strategic Memory / Experience
+    - row: 15
+      cells:
+      - STR-01-CMP-FEEDBACK
+      - STR-01-SEC-11
+      - Expected vs Actual / Learning
+    - row: 16
+      cells:
+      - STR-01-CMP-STATUS
+      - STR-01-SEC-12
+      - Audit / Boundary / Handoff Status
+  - index: 12
+    rows:
+    - row: 0
+      cells:
+      - Stage UID
+      - Stage
+      - Flow
+    - row: 1
+      cells:
+      - STR-01-STAGE-01-CONTEXT
+      - Resolve Strategic Context
+      - Topic + sources + confirmed decisions + current internal data + historical experience + external intelligence
+    - row: 2
+      cells:
+      - STR-01-STAGE-02-CONVERSE
+      - Strategic Conversation
+      - Single/Multi AI same issue/context -> independent views -> Assistant record
+    - row: 3
+      cells:
+      - STR-01-STAGE-03-ANALYZE
+      - Analyze / Compare
+      - Pattern/Baseline/Forecast -> Need/Opportunity/Risk/Priority -> Option comparison
+    - row: 4
+      cells:
+      - STR-01-STAGE-04-OUTPUT
+      - Strategic Outputs
+      - Recommendation / Alert / Resource Proposal / Decision Brief candidate outputs
+    - row: 5
+      cells:
+      - STR-01-STAGE-05-HUMAN
+      - Human Review / Decision
+      - Submit strategy review -> human decision -> governed strategy context adoption when approved
+    - row: 6
+      cells:
+      - STR-01-STAGE-06-FEEDBACK
+      - Execution Feedback / Learning
+      - Owner execution result -> Expected vs Actual -> Learning -> Strategic Experience
+  - index: 13
+    rows:
+    - row: 0
+      cells:
+      - Action UID
+      - Label
+      - Permission
+      - Gate
+      - Effect
+      - Operation
+    - row: 1
+      cells:
+      - STR-01-ACT-NOOP
+      - Read display
+      - STR_VIEW
+      - STR-01-GATE-PAGE
+      - READ_ONLY
+      - —
+    - row: 2
+      cells:
+      - STR-01-ACT-TOPIC-SELECT
+      - Select Strategy Topic
+      - STR_VIEW
+      - STR-01-GATE-PAGE
+      - CONTEXT_STATE
+      - —
+    - row: 3
+      cells:
+      - STR-01-ACT-FILTER
+      - Filter current strategic projection
+      - STR_VIEW
+      - STR-01-GATE-PAGE
+      - UI_ONLY
+      - —
+    - row: 4
+      cells:
+      - STR-01-ACT-MODE
+      - Single / Multi AI mode
+      - STR_VIEW
+      - STR-01-GATE-TOPIC
+      - UI_ONLY
+      - —
+    - row: 5
+      cells:
+      - STR-01-ACT-SEND
+      - Send Strategic Message
+      - STR_CONVERSATION
+      - STR-01-GATE-MESSAGE
+      - CONVERSATION_WRITE
+      - sendConversationMessage
+    - row: 6
+      cells:
+      - STR-01-ACT-STOP
+      - Stop Current Generation
+      - STR_CONVERSATION
+      - STR-01-GATE-MESSAGE
+      - CONVERSATION_CONTROL
+      - stopConversationGeneration
+    - row: 7
+      cells:
+      - STR-01-ACT-COMPARE
+      - Compare Strategy Candidates
+      - STR_COMPARE
+      - STR-01-GATE-COMPARE
+      - READ_MODEL_QUERY
+      - compareCandidates
+    - row: 8
+      cells:
+      - STR-01-ACT-REVIEW
+      - Submit Strategy Review
+      - STR_REVIEW
+      - STR-01-GATE-REVIEW
+      - STRATEGY_REVIEW_REQUEST
+      - submitStrategyReview
+    - row: 9
+      cells:
+      - STR-01-ACT-ADOPT
+      - Adopt Reviewed Strategy Context
+      - STR_ADOPT
+      - STR-01-GATE-ADOPT
+      - STRATEGY_CONTEXT_ADOPTION
+      - adoptAsContextCandidate
+    - row: 10
+      cells:
+      - STR-01-ACT-OPEN-OWNER
+      - Open Execution Owner Module
+      - STR_VIEW
+      - STR-01-GATE-PAGE
+      - UI_NAVIGATION
+      - —
+    - row: 11
+      cells:
+      - STR-01-ACT-AUDIT
+      - Open Audit / Trace
+      - STR_VIEW
+      - STR-01-GATE-PAGE
+      - UI_ONLY
+      - —
+  - index: 14
+    rows:
+    - row: 0
+      cells:
+      - Region
+      - Geometry / Behavior
+    - row: 1
+      cells:
+      - Global Header
+      - 58px fixed top, full width
+    - row: 2
+      cells:
+      - Collapsed Sidebar
+      - 64px interaction rail; icons only; no visible panel
+    - row: 3
+      cells:
+      - Expanded Sidebar
+      - 221px fixed overlay; no page reflow
+    - row: 4
+      cells:
+      - Workspace Origin
+      - x=78px / y=68px
+    - row: 5
+      cells:
+      - Context Bar
+      - 100% width; h=56px
+    - row: 6
+      cells:
+      - Primary Grid
+      - minmax(280px,1fr) / minmax(720px,3fr) / minmax(320px,1.12fr); ≈19/59/22; gap 16px
+    - row: 7
+      cells:
+      - Conversation
+      - center upper; dominant
+    - row: 8
+      cells:
+      - Analysis
+      - center lower; stacked/collapsible
+    - row: 9
+      cells:
+      - Option Compare
+      - lower full-width
+    - row: 10
+      cells:
+      - Memory / Feedback
+      - lower full-width / 2-column
+    - row: 11
+      cells:
+      - Controls
+      - h40; radius10; missing data = —
+    - row: 12
+      cells:
+      - Panels
+      - radius12; global tech-purple only
+  - index: 15
+    rows:
+    - row: 0
+      cells:
+      - Control UID
+      - Section
+      - Type / Label
+      - Action
+      - Gate
+      - Permission
+    - row: 1
+      cells:
+      - STR-01-FLD-TOPIC
+      - STR-01-SEC-01
+      - READONLY / Strategy Topic
+      - STR-01-ACT-NOOP
+      - STR-01-GATE-PAGE
+      - STR_VIEW
+    - row: 2
+      cells:
+      - STR-01-FLD-SCOPE
+      - STR-01-SEC-01
+      - READONLY / Strategy Scope
+      - STR-01-ACT-NOOP
+      - STR-01-GATE-PAGE
+      - STR_VIEW
+    - row: 3
+      cells:
+      - STR-01-FLD-HORIZON
+      - STR-01-SEC-01
+      - READONLY / Time Horizon
+      - STR-01-ACT-NOOP
+      - STR-01-GATE-PAGE
+      - STR_VIEW
+    - row: 4
+      cells:
+      - STR-01-FLD-STATE
+      - STR-01-SEC-01
+      - READONLY / Strategy State
+      - STR-01-ACT-NOOP
+      - STR-01-GATE-PAGE
+      - STR_VIEW
+    - row: 5
+      cells:
+      - STR-01-FLD-DECISION-STATE
+      - STR-01-SEC-01
+      - READONLY / Decision Status
+      - STR-01-ACT-NOOP
+      - STR-01-GATE-PAGE
+      - STR_VIEW
+    - row: 6
+      cells:
+      - STR-01-TGL-MODE
+      - STR-01-SEC-01
+      - TOGGLE / Single AI / Multi AI
+      - STR-01-ACT-MODE
+      - STR-01-GATE-TOPIC
+      - STR_VIEW
+    - row: 7
+      cells:
+      - STR-01-INP-TOPIC-SEARCH
+      - STR-01-SEC-02
+      - SEARCH / 搜尋策略議題
+      - STR-01-ACT-FILTER
+      - STR-01-GATE-PAGE
+      - STR_VIEW
+    - row: 8
+      cells:
+      - STR-01-LST-TOPICS
+      - STR-01-SEC-02
+      - LIST / Strategy Topics / History
+      - STR-01-ACT-TOPIC-SELECT
+      - STR-01-GATE-PAGE
+      - STR_VIEW
+    - row: 9
+      cells:
+      - STR-01-LST-CONTEXT
+      - STR-01-SEC-03
+      - LIST / Strategic Context Sources
+      - STR-01-ACT-NOOP
+      - STR-01-GATE-CONTEXT
+      - STR_VIEW
+    - row: 10
+      cells:
+      - STR-01-FLD-CONTEXT-PRIORITY
+      - STR-01-SEC-03
+      - READONLY / Context Priority
+      - STR-01-ACT-NOOP
+      - STR-01-GATE-CONTEXT
+      - STR_VIEW
+    - row: 11
+      cells:
+      - STR-01-FLD-CONTEXT-SOURCE
+      - STR-01-SEC-03
+      - READONLY / Source / Ref
+      - STR-01-ACT-NOOP
+      - STR-01-GATE-CONTEXT
+      - STR_VIEW
+    - row: 12
+      cells:
+      - STR-01-FLD-CONTEXT-TIME
+      - STR-01-SEC-03
+      - READONLY / Source Time / Version
+      - STR-01-ACT-NOOP
+      - STR-01-GATE-CONTEXT
+      - STR_VIEW
+    - row: 13
+      cells:
+      - STR-01-FLD-CONTEXT-CONFIDENCE
+      - STR-01-SEC-03
+      - READONLY / Confidence / Quality
+      - STR-01-ACT-NOOP
+      - STR-01-GATE-CONTEXT
+      - STR_VIEW
+    - row: 14
+      cells:
+      - STR-01-LST-ALERTS
+      - STR-01-SEC-04
+      - LIST / Strategy Alerts / Open Questions
+      - STR-01-ACT-NOOP
+      - STR-01-GATE-PAGE
+      - STR_VIEW
+    - row: 15
+      cells:
+      - STR-01-VIEW-CONVERSATION
+      - STR-01-SEC-05
+      - CONVERSATION / Strategic AI Conversation
+      - —
+      - STR-01-GATE-TOPIC
+      - STR_VIEW
+    - row: 16
+      cells:
+      - STR-01-BTN-ATTACH
+      - STR-01-SEC-05
+      - ATTACHMENT / 附件 / 圖片
+      - —
+      - STR-01-GATE-TOPIC
+      - STR_VIEW
+    - row: 17
+      cells:
+      - STR-01-INP-MESSAGE
+      - STR-01-SEC-05
+      - TEXTAREA / 輸入策略議題、問題或分析要求
+      - STR-01-ACT-SEND
+      - STR-01-GATE-MESSAGE
+      - STR_CONVERSATION
+    - row: 18
+      cells:
+      - STR-01-BTN-SEND
+      - STR-01-SEC-05
+      - PRIMARY_BUTTON / 送出
+      - STR-01-ACT-SEND
+      - STR-01-GATE-MESSAGE
+      - STR_CONVERSATION
+    - row: 19
+      cells:
+      - STR-01-BTN-STOP
+      - STR-01-SEC-05
+      - BUTTON / 停止生成
+      - STR-01-ACT-STOP
+      - STR-01-GATE-MESSAGE
+      - STR_CONVERSATION
+    - row: 20
+      cells:
+      - STR-01-FLD-ASSISTANT-SUMMARY
+      - STR-01-SEC-05
+      - READONLY / Assistant Summary
+      - STR-01-ACT-NOOP
+      - STR-01-GATE-ANALYSIS
+      - STR_VIEW
+    - row: 21
+      cells:
+      - STR-01-FLD-OPEN-QUESTIONS
+      - STR-01-SEC-05
+      - READONLY / Open Questions
+      - STR-01-ACT-NOOP
+      - STR-01-GATE-ANALYSIS
+      - STR_VIEW
+    - row: 22
+      cells:
+      - STR-01-FLD-MEETING-RECORD
+      - STR-01-SEC-05
+      - READONLY / Meeting / Discussion Record
+      - STR-01-ACT-NOOP
+      - STR-01-GATE-ANALYSIS
+      - STR_VIEW
+    - row: 23
+      cells:
+      - STR-01-FLD-BASIS
+      - STR-01-SEC-06
+      - READONLY / 分析依據 / Basis
+      - STR-01-ACT-NOOP
+      - STR-01-GATE-ANALYSIS
+      - STR_VIEW
+    - row: 24
+      cells:
+      - STR-01-FLD-ASSUMPTIONS
+      - STR-01-SEC-06
+      - READONLY / 假設 / Assumptions
+      - STR-01-ACT-NOOP
+      - STR-01-GATE-ANALYSIS
+      - STR_VIEW
+    - row: 25
+      cells:
+      - STR-01-FLD-OPPORTUNITIES
+      - STR-01-SEC-06
+      - READONLY / 機會 / Opportunities
+      - STR-01-ACT-NOOP
+      - STR-01-GATE-ANALYSIS
+      - STR_VIEW
+    - row: 26
+      cells:
+      - STR-01-FLD-RISKS
+      - STR-01-SEC-06
+      - READONLY / 風險 / Risks
+      - STR-01-ACT-NOOP
+      - STR-01-GATE-ANALYSIS
+      - STR_VIEW
+    - row: 27
+      cells:
+      - STR-01-FLD-UNCERTAINTY
+      - STR-01-SEC-06
+      - READONLY / 不確定性 / Uncertainty
+      - STR-01-ACT-NOOP
+      - STR-01-GATE-ANALYSIS
+      - STR_VIEW
+    - row: 28
+      cells:
+      - STR-01-FLD-PATTERN
+      - STR-01-SEC-06
+      - READONLY / Pattern / Baseline / Forecast
+      - STR-01-ACT-NOOP
+      - STR-01-GATE-ANALYSIS
+      - STR_VIEW
+    - row: 29
+      cells:
+      - STR-01-TBL-COMPARE
+      - STR-01-SEC-07
+      - TABLE / Strategy Option Comparison
+      - STR-01-ACT-COMPARE
+      - STR-01-GATE-COMPARE
+      - STR_COMPARE
+    - row: 30
+      cells:
+      - STR-01-BTN-COMPARE
+      - STR-01-SEC-07
+      - BUTTON / 比較方案
+      - STR-01-ACT-COMPARE
+      - STR-01-GATE-COMPARE
+      - STR_COMPARE
+    - row: 31
+      cells:
+      - STR-01-CARD-RECOMMENDATION
+      - STR-01-SEC-08
+      - READONLY_CARD / Strategy Recommendation
+      - STR-01-ACT-NOOP
+      - STR-01-GATE-ANALYSIS
+      - STR_VIEW
+    - row: 32
+      cells:
+      - STR-01-CARD-ALERT
+      - STR-01-SEC-08
+      - READONLY_CARD / Strategy Alert
+      - STR-01-ACT-NOOP
+      - STR-01-GATE-ANALYSIS
+      - STR_VIEW
+    - row: 33
+      cells:
+      - STR-01-CARD-RESOURCE
+      - STR-01-SEC-08
+      - READONLY_CARD / Resource Proposal
+      - STR-01-ACT-NOOP
+      - STR-01-GATE-ANALYSIS
+      - STR_VIEW
+    - row: 34
+      cells:
+      - STR-01-CARD-BRIEF
+      - STR-01-SEC-08
+      - READONLY_CARD / Decision Brief
+      - STR-01-ACT-NOOP
+      - STR-01-GATE-ANALYSIS
+      - STR_VIEW
+    - row: 35
+      cells:
+      - STR-01-FLD-CANDIDATE-REF
+      - STR-01-SEC-09
+      - READONLY / Strategy Candidate
+      - STR-01-ACT-NOOP
+      - STR-01-GATE-PAGE
+      - STR_VIEW
+    - row: 36
+      cells:
+      - STR-01-FLD-REVIEW-STATE
+      - STR-01-SEC-09
+      - READONLY / Review State
+      - STR-01-ACT-NOOP
+      - STR-01-GATE-PAGE
+      - STR_VIEW
+    - row: 37
+      cells:
+      - STR-01-FLD-DECISION-ID
+      - STR-01-SEC-09
+      - READONLY / Decision ID
+      - STR-01-ACT-NOOP
+      - STR-01-GATE-PAGE
+      - STR_VIEW
+    - row: 38
+      cells:
+      - STR-01-FLD-DECISION-RESULT
+      - STR-01-SEC-09
+      - READONLY / Decision Result
+      - STR-01-ACT-NOOP
+      - STR-01-GATE-PAGE
+      - STR_VIEW
+    - row: 39
+      cells:
+      - STR-01-FLD-DECISION-REASON
+      - STR-01-SEC-09
+      - READONLY / Decision Reason
+      - STR-01-ACT-NOOP
+      - STR-01-GATE-PAGE
+      - STR_VIEW
+    - row: 40
+      cells:
+      - STR-01-FLD-EXECUTION-STATE
+      - STR-01-SEC-09
+      - READONLY / Execution Status / Ref
+      - STR-01-ACT-NOOP
+      - STR-01-GATE-PAGE
+      - STR_VIEW
+    - row: 41
+      cells:
+      - STR-01-BTN-SUBMIT-REVIEW
+      - STR-01-SEC-09
+      - PRIMARY_BUTTON / 送出策略審查
+      - STR-01-ACT-REVIEW
+      - STR-01-GATE-REVIEW
+      - STR_REVIEW
+    - row: 42
+      cells:
+      - STR-01-BTN-ADOPT
+      - STR-01-SEC-09
+      - PRIMARY_BUTTON / 採用策略 Context
+      - STR-01-ACT-ADOPT
+      - STR-01-GATE-ADOPT
+      - STR_ADOPT
+    - row: 43
+      cells:
+      - STR-01-BTN-OPEN-OWNER
+      - STR-01-SEC-09
+      - BUTTON / 開啟執行責任模組
+      - STR-01-ACT-OPEN-OWNER
+      - STR-01-GATE-PAGE
+      - STR_VIEW
+    - row: 44
+      cells:
+      - STR-01-LST-PATTERNS
+      - STR-01-SEC-10
+      - LIST / Strategy Pattern / Cases
+      - STR-01-ACT-NOOP
+      - STR-01-GATE-MEMORY
+      - STR_VIEW
+    - row: 45
+      cells:
+      - STR-01-LST-EXPERIMENTS
+      - STR-01-SEC-10
+      - LIST / Experiment Records
+      - STR-01-ACT-NOOP
+      - STR-01-GATE-MEMORY
+      - STR_VIEW
+    - row: 46
+      cells:
+      - STR-01-LST-BASELINES
+      - STR-01-SEC-10
+      - LIST / Baseline History
+      - STR-01-ACT-NOOP
+      - STR-01-GATE-MEMORY
+      - STR_VIEW
+    - row: 47
+      cells:
+      - STR-01-LST-LEARNING
+      - STR-01-SEC-10
+      - LIST / Learning Results
+      - STR-01-ACT-NOOP
+      - STR-01-GATE-MEMORY
+      - STR_VIEW
+    - row: 48
+      cells:
+      - STR-01-FLD-EXPECTED
+      - STR-01-SEC-11
+      - READONLY / Expected
+      - STR-01-ACT-NOOP
+      - STR-01-GATE-FEEDBACK
+      - STR_VIEW
+    - row: 49
+      cells:
+      - STR-01-FLD-ACTUAL
+      - STR-01-SEC-11
+      - READONLY / Actual
+      - STR-01-ACT-NOOP
+      - STR-01-GATE-FEEDBACK
+      - STR_VIEW
+    - row: 50
+      cells:
+      - STR-01-FLD-DIFFERENCE
+      - STR-01-SEC-11
+      - READONLY / Difference Analysis
+      - STR-01-ACT-NOOP
+      - STR-01-GATE-FEEDBACK
+      - STR_VIEW
+    - row: 51
+      cells:
+      - STR-01-FLD-KPI
+      - STR-01-SEC-11
+      - READONLY / KPI / Performance Change
+      - STR-01-ACT-NOOP
+      - STR-01-GATE-FEEDBACK
+      - STR_VIEW
+    - row: 52
+      cells:
+      - STR-01-FLD-LEARNING
+      - STR-01-SEC-11
+      - READONLY / Learning
+      - STR-01-ACT-NOOP
+      - STR-01-GATE-FEEDBACK
+      - STR_VIEW
+    - row: 53
+      cells:
+      - STR-01-FLD-PROVIDER-BRAND
+      - STR-01-SEC-12
+      - READONLY / Provider Brand
+      - STR-01-ACT-NOOP
+      - STR-01-GATE-PAGE
+      - STR_VIEW
+    - row: 54
+      cells:
+      - STR-01-FLD-CORRELATION
+      - STR-01-SEC-12
+      - READONLY / Correlation / Audit Ref
+      - STR-01-ACT-NOOP
+      - STR-01-GATE-PAGE
+      - STR_VIEW
+    - row: 55
+      cells:
+      - STR-01-FLD-DISABLED
+      - STR-01-SEC-12
+      - READONLY / Disabled Reason
+      - STR-01-ACT-NOOP
+      - STR-01-GATE-PAGE
+      - STR_VIEW
+    - row: 56
+      cells:
+      - STR-01-FLD-OWNER-BOUNDARY
+      - STR-01-SEC-12
+      - READONLY / Execution Owner Boundary
+      - STR-01-ACT-NOOP
+      - STR-01-GATE-PAGE
+      - STR_VIEW
+    - row: 57
+      cells:
+      - STR-01-BTN-AUDIT
+      - STR-01-SEC-12
+      - BUTTON / 查看 Audit / Trace
+      - STR-01-ACT-AUDIT
+      - STR-01-GATE-PAGE
+      - STR_VIEW
+  - index: 16
+    rows:
+    - row: 0
+      cells:
+      - Gate UID
+      - Condition
+    - row: 1
+      cells:
+      - STR-01-GATE-PAGE
+      - explicit Account Permission Assignment + scope + condition + audit
+    - row: 2
+      cells:
+      - STR-01-GATE-TOPIC
+      - exact Strategy Topic / discussion context is selected and active
+    - row: 3
+      cells:
+      - STR-01-GATE-CONTEXT
+      - Strategic Context sources have exact refs/version/time + authorization + confidence/quality state
+    - row: 4
+      cells:
+      - STR-01-GATE-MESSAGE
+      - active conversation + strategy topic + context ready + non-empty message + conversation.write
+    - row: 5
+      cells:
+      - STR-01-GATE-MULTI
+      - mode=MULTI_AI + assigned AI route/group available from shared ACPOS Router; no manual Provider/Model picker
+    - row: 6
+      cells:
+      - STR-01-GATE-ANALYSIS
+      - AI response(s) + Assistant Summary + source/evidence refs available
+    - row: 7
+      cells:
+      - STR-01-GATE-COMPARE
+      - at least 2 exact strategy candidate refs/version refs available
+    - row: 8
+      cells:
+      - STR-01-GATE-REVIEW
+      - exact Strategy Candidate state=CANDIDATE + analysis basis/risk/uncertainty/evidence + expected version + strategy.decision.propose
+    - row: 9
+      cells:
+      - STR-01-GATE-ADOPT
+      - exact Strategy Candidate state=REVIEW_REQUIRED + human review decision/reason + evidence refs + strategy.decision.approve
+    - row: 10
+      cells:
+      - STR-01-GATE-MEMORY
+      - authorized strategic memory/experience projection available
+    - row: 11
+      cells:
+      - STR-01-GATE-FEEDBACK
+      - execution/performance result refs available; read-only in STR-01
+  - index: 17
+    rows:
+    - row: 0
+      cells:
+      - Permission UID
+      - Backend Scope
+      - Purpose
+    - row: 1
+      cells:
+      - STR_VIEW
+      - strategy.read
+      - Read Strategic Center projection/context/output/decision/memory
+    - row: 2
+      cells:
+      - STR_CONVERSATION
+      - conversation.write
+      - Send Strategic Center conversation message
+    - row: 3
+      cells:
+      - STR_COMPARE
+      - candidate.read
+      - Compare strategy candidates/options
+    - row: 4
+      cells:
+      - STR_REVIEW
+      - strategy.decision.propose
+      - Submit strategy candidate for human review
+    - row: 5
+      cells:
+      - STR_ADOPT
+      - strategy.decision.approve
+      - Adopt reviewed strategy candidate as governed context
+  - index: 18
+    rows:
+    - row: 0
+      cells:
+      - State UID
+      - Display
+      - Definition
+    - row: 1
+      cells:
+      - STR-01-ST-EMPTY
+      - EMPTY
+      - No Strategy Topic/discussion selected
+    - row: 2
+      cells:
+      - STR-01-ST-READY
+      - READY
+      - Strategy Topic + context ready
+    - row: 3
+      cells:
+      - STR-01-ST-RESPONDING
+      - RESPONDING
+      - Single/Multi AI response active
+    - row: 4
+      cells:
+      - STR-01-ST-ANALYZING
+      - ANALYZING
+      - Assistant synthesis / strategy analysis active
+    - row: 5
+      cells:
+      - STR-01-ST-CANDIDATE
+      - CANDIDATE_READY
+      - Strategy candidate/output ready
+    - row: 6
+      cells:
+      - STR-01-ST-REVIEW
+      - REVIEW_REQUIRED
+      - Human strategy review required
+    - row: 7
+      cells:
+      - STR-01-ST-ADOPTED
+      - ADOPTED_CONTEXT
+      - Human-reviewed strategy context adopted; owner execution still separate
+    - row: 8
+      cells:
+      - STR-01-ST-FEEDBACK
+      - FEEDBACK_AVAILABLE
+      - Execution/performance feedback available
+    - row: 9
+      cells:
+      - STR-01-ST-ERROR
+      - ERROR/BLOCKED
+      - Real permission/context/runtime/error blocker
+  - index: 19
+    rows:
+    - row: 0
+      cells:
+      - Error UID
+      - Context
+      - Recovery
+    - row: 1
+      cells:
+      - STR-01-ERR-CONTEXT-001
+      - Strategic Context source/ref/time/version unavailable or stale
+      - BLOCK dependent analysis; show exact missing source; do not AI-fill
+    - row: 2
+      cells:
+      - STR-01-ERR-CONVERSATION-001
+      - Conversation/session/message/attachment/mode invalid
+      - Preserve topic/context; show registered error/retry eligibility
+    - row: 3
+      cells:
+      - STR-01-ERR-CANDIDATE-001
+      - Strategy candidate/version/evidence invalid or stale
+      - BLOCK compare/review/adoption
+    - row: 4
+      cells:
+      - STR-01-ERR-REVIEW-001
+      - Review prerequisites/permission/expected version invalid
+      - BLOCK submit review; preserve candidate
+    - row: 5
+      cells:
+      - STR-01-ERR-ADOPT-001
+      - Adoption prerequisites/human decision/evidence/version invalid
+      - BLOCK adoption; no auto-approval
+    - row: 6
+      cells:
+      - STR-01-ERR-MEMORY-001
+      - Strategic Memory/Experience projection unavailable
+      - Show unavailable state; do not substitute unvalidated conversation
+    - row: 7
+      cells:
+      - STR-01-ERR-FEEDBACK-001
+      - Execution result / KPI / Expected-vs-Actual refs missing
+      - Show pending/incomplete feedback; do not fabricate performance
+    - row: 8
+      cells:
+      - STR-01-ERR-PERM-001
+      - Permission/scope denied
+      - Hide/disable according to actual server result
+    - row: 9
+      cells:
+      - STR-01-ERR-UNDEFINED-001
+      - Unlisted Section/Component/Control/Action/Gate/Permission/Port requested
+      - BLOCK + REPORT_AUTHORITY_GAP
+  - index: 20
+    rows:
+    - row: 0
+      cells:
+      - Port UID
+      - Boundary
+      - Operation
+      - Method
+      - Permission
+      - Exposure
+    - row: 1
+      cells:
+      - STR-01-PORT-PROJECTION
+      - Strategic Center Projection
+      - getUiProjection
+      - GET /v1/ui-projections/{pageUid}
+      - page/strategy read
+      - all read-only strategic page data
+    - row: 2
+      cells:
+      - STR-01-PORT-CONVERSATION
+      - Strategic Conversation
+      - sendConversationMessage
+      - POST /v1/conversations/{conversationId}/messages
+      - conversation.write
+      - Single/Multi AI through shared conversation core; provider routing system-owned
+    - row: 3
+      cells:
+      - STR-01-PORT-STOP
+      - Conversation Control
+      - stopConversationGeneration
+      - POST /v1/conversations/{conversationId}/generation/stop
+      - conversation.write
+      - current conversation only
+    - row: 4
+      cells:
+      - STR-01-PORT-COMPARE
+      - Strategy Candidate Compare
+      - compareCandidates
+      - GET /v1/candidates/compare
+      - candidate.read
+      - exact candidate refs only
+    - row: 5
+      cells:
+      - STR-01-PORT-REVIEW
+      - Strategy Review
+      - submitStrategyReview
+      - POST /v1/state-commands/strategycandidate/submitstrategyreview
+      - strategy.decision.propose
+      - human review request; no auto approval
+    - row: 6
+      cells:
+      - STR-01-PORT-ADOPT
+      - Strategy Context Adoption
+      - adoptAsContextCandidate
+      - POST /v1/state-commands/strategycandidate/adoptascontextcandidate
+      - strategy.decision.approve
+      - governed context adoption only; owner module executes later
+  - index: 21
+    rows:
+    - row: 0
+      cells:
+      - Requirement
+      - Rule
+    - row: 1
+      cells:
+      - Candidate vs Decision
+      - Strategy recommendation/candidate is not formal Decision Ledger result.
+    - row: 2
+      cells:
+      - Human Gate
+      - Required before governed context adoption.
+    - row: 3
+      cells:
+      - Budget reallocation
+      - ERP & Finance owner
+    - row: 4
+      cells:
+      - Production priority / pause / resume / cancel
+      - Workflow & Runtime owner
+    - row: 5
+      cells:
+      - Account / channel governance
+      - Governance / Project owner
+    - row: 6
+      cells:
+      - Production execution
+      - Core / Department Workflow owner
+  - index: 22
+    rows:
+    - row: 0
+      cells:
+      - Function
+      - Visual Region
+      - Controls / Output
+    - row: 1
+      cells:
+      - Context
+      - STR-01-VIS-CONTEXT
+      - Topic / Scope / Horizon / State / Decision / Single-Multi
+    - row: 2
+      cells:
+      - Topics
+      - STR-01-VIS-LEFT-TOPIC
+      - Search / History / Select
+    - row: 3
+      cells:
+      - Strategic Context
+      - STR-01-VIS-LEFT-CONTEXT
+      - Priority / Source / Time-Version / Confidence
+    - row: 4
+      cells:
+      - Alerts
+      - STR-01-VIS-LEFT-ALERT
+      - Opportunity/Risk Alerts / Open Questions
+    - row: 5
+      cells:
+      - Conversation
+      - STR-01-VIS-CONVERSATION
+      - Conversation / Attach / Message / Send / Stop / Assistant
+    - row: 6
+      cells:
+      - Analysis
+      - STR-01-VIS-ANALYSIS
+      - Basis / Assumptions / Opportunity / Risk / Uncertainty / Forecast
+    - row: 7
+      cells:
+      - Compare
+      - STR-01-VIS-COMPARE
+      - Candidate comparison
+    - row: 8
+      cells:
+      - Outputs
+      - STR-01-VIS-RIGHT-OUTPUT
+      - Recommendation / Alert / Resource / Brief
+    - row: 9
+      cells:
+      - Decision
+      - STR-01-VIS-RIGHT-DECISION
+      - Candidate / Review / Decision Ledger / Owner link
+    - row: 10
+      cells:
+      - Memory
+      - STR-01-VIS-MEMORY
+      - Patterns / Experiments / Baselines / Learning
+    - row: 11
+      cells:
+      - Feedback
+      - STR-01-VIS-FEEDBACK
+      - Expected / Actual / Difference / KPI / Learning
+    - row: 12
+      cells:
+      - Audit
+      - STR-01-VIS-STATUS
+      - Provider Brand / Correlation / Disabled / Owner Boundary
+  - index: 23
+    rows:
+    - row: 0
+      cells:
+      - Visual
+      - Purpose
+      - Status
+    - row: 1
+      cells:
+      - A
+      - Single AI main workbench
+      - CANDIDATE
+    - row: 2
+      cells:
+      - B
+      - Multi AI same-context independent viewpoints
+      - CANDIDATE
+    - row: 3
+      cells:
+      - C
+      - Option comparison
+      - CANDIDATE
+    - row: 4
+      cells:
+      - D
+      - Human review / Decision Ledger / owner boundary
+      - CANDIDATE
+    - row: 5
+      cells:
+      - E
+      - Strategic Memory / Feedback / Audit
+      - CANDIDATE
+  - index: 24
+    rows:
+    - row: 0
+      cells:
+      - UID
+      - Item
+      - Condition
+    - row: 1
+      cells:
+      - STR-01-ACC-01
+      - Single Page / Global Visual
+      - Only workspace:STR-01; Global Shell/Visual inherited
+    - row: 2
+      cells:
+      - STR-01-ACC-02
+      - Strategic Context
+      - Exact ref/time/version/confidence; no AI fill
+    - row: 3
+      cells:
+      - STR-01-ACC-03
+      - Single / Multi AI
+      - Same context; no provider picker; Assistant always exists
+    - row: 4
+      cells:
+      - STR-01-ACC-04
+      - Analysis Transparency
+      - Basis/assumptions/opportunity/risk/uncertainty/evidence visible
+    - row: 5
+      cells:
+      - STR-01-ACC-05
+      - Four Outputs
+      - Recommendation / Alert / Resource / Decision Brief remain distinct
+    - row: 6
+      cells:
+      - STR-01-ACC-06
+      - Human Decision
+      - AI result never formal decision; review then human adoption
+    - row: 7
+      cells:
+      - STR-01-ACC-07
+      - Cross-module Boundary
+      - Execution remains owner module
+    - row: 8
+      cells:
+      - STR-01-ACC-08
+      - Decision Ledger
+      - Decision/candidate/source/risk/result/actor/execution/audit traceable
+    - row: 9
+      cells:
+      - STR-01-ACC-09
+      - Immutable History
+      - Candidate/output/memory/history not overwritten
+    - row: 10
+      cells:
+      - STR-01-ACC-10
+      - Feedback Loop
+      - Execution → Expected vs Actual → Learning → Strategic Experience
+    - row: 11
+      cells:
+      - STR-01-ACC-11
+      - Scrollable Page
+      - height:auto + overflow-y:auto
+    - row: 12
+      cells:
+      - STR-01-ACC-12
+      - Machine Binding
+      - Every control resolves registry binding; unlisted=BLOCK
+    - row: 13
+      cells:
+      - STR-01-ACC-13
+      - Shared Provider Adapter
+      - TEXT_CHAT through shared AIAPI-01 ProviderModelProfile / Adapter; no local picker/router/compiler
+  - index: 25
+    rows:
+    - row: 0
+      cells:
+      - Evidence
+      - Required
+    - row: 1
+      cells:
+      - Authority Identity
+      - authority/pages/workspace/STR-01/ACPOS_STR-01_FINAL_LOCKED_ENCODING_PROVIDER_BOUND.yaml @ 618e56f2f993bc818d943cb14db6ce455d68a1c5
+    - row: 2
+      cells:
+      - Branch / HEAD
+      - new @ 165c6440cb53b1b45ec96905241fb4d56dc3b867
+    - row: 3
+      cells:
+      - Current Manifest
+      - 465329b6fb19b8e44c3083a9f280015ee95cc55c
+    - row: 4
+      cells:
+      - Registry denominator
+      - 12 sections / 16 components / 57 controls / 11 actions / 6 ports
+    - row: 5
+      cells:
+      - UI evidence
+      - 5 candidate UI PNGs embedded
+    - row: 6
+      cells:
+      - Real data policy
+      - Missing business values = —; invented data forbidden
+    - row: 7
+      cells:
+      - Provider binding
+      - Current construction basis = V1.3; source file V1.2 residual noted
+    - row: 8
+      cells:
+      - Boundary
+      - Proposal/analysis only; owner module executes
+  - index: 26
+    rows:
+    - row: 0
+      cells:
+      - Gate
+      - Status
+    - row: 1
+      cells:
+      - Current Authority resolved
+      - PASS
+    - row: 2
+      cells:
+      - Mother Basic Design artifacts present
+      - PASS
+    - row: 3
+      cells:
+      - 57 Control bindings enumerated
+      - PASS
+    - row: 4
+      cells:
+      - 11 Action / 11 Gate / 5 Permission enumerated
+      - PASS
+    - row: 5
+      cells:
+      - 5 UI candidate states embedded
+      - PASS
+    - row: 6
+      cells:
+      - No fake business data
+      - PASS
+    - row: 7
+      cells:
+      - No cross-module execution controls introduced
+      - PASS
+    - row: 8
+      cells:
+      - Human visual / functional review
+      - PENDING
+    - row: 9
+      cells:
+      - DESIGN_FROZEN
+      - 'FALSE'
+  - index: 27
+    rows:
+    - row: 0
+      cells:
+      - Authority
+      - Value
+    - row: 1
+      cells:
+      - Source Commit
+      - 165c6440cb53b1b45ec96905241fb4d56dc3b867
+    - row: 2
+      cells:
+      - Machine Authority
+      - authority/pages/workspace/STR-01/ACPOS_STR-01_FINAL_LOCKED_ENCODING_PROVIDER_BOUND.yaml
+    - row: 3
+      cells:
+      - Authority SHA-256
+      - ce709e58e09b635f23aa0fa1ef85b11ba313550c6235f48003e68d0a43ac2f7d
+    - row: 4
+      cells:
+      - Expected Control Denominator
+      - '57'
+    - row: 5
+      cells:
+      - Unique Control Rows
+      - '57'
+    - row: 6
+      cells:
+      - Denominator Gate
+      - PASS
+  - index: 28
+    rows:
+    - row: 0
+      cells:
+      - Control UID
+      - UID Status
+      - Label
+      - Type
+      - Action UID
+      - Gate
+      - Permission / Auth Resource
+      - Payload / Schema
+      - Operation
+      - Method / Path
+      - Runtime Owner
+      - Persistence Owner
+      - Runtime Status
+    - row: 1
+      cells:
+      - STR-01-BTN-ADOPT
+      - EXISTING_SOURCE_UID
+      - 採用策略 Context
+      - PRIMARY_BUTTON
+      - STR-01-ACT-ADOPT
+      - STR-01-GATE-ADOPT
+      - STR_ADOPT
+      - AdoptAsContextCandidateRequest
+      - adoptAsContextCandidate
+      - POST /v1/state-commands/strategycandidate/adoptascontextcandidate
+      - STR-01 / shared registered service
+      - AI-01 Context Owner / Governed Strategy Context Adoption Link + System 08 Audit
+      - EFFECTFUL_EXACT
+    - row: 2
+      cells:
+      - STR-01-BTN-ATTACH
+      - EXISTING_SOURCE_UID
+      - 附件 / 圖片
+      - ATTACHMENT
+      - —
+      - STR-01-GATE-TOPIC
+      - STR_VIEW
+      - —
+      - getConversationAttachmentContext
+      - GET /v1/conversations/{CONVERSATION_ID}/attachments/{ATTACHMENT_ID}/context
+      - STR-01 / shared registered service
+      - —
+      - READ_EXACT
+    - row: 3
+      cells:
+      - STR-01-BTN-AUDIT
+      - EXISTING_SOURCE_UID
+      - 查看 Audit / Trace
+      - BUTTON
+      - STR-01-ACT-AUDIT
+      - STR-01-GATE-PAGE
+      - STR_VIEW
+      - —
+      - —
+      - —
+      - STR-01 / shared registered service
+      - —
+      - UI_LOCAL_EXACT
+    - row: 4
+      cells:
+      - STR-01-BTN-COMPARE
+      - EXISTING_SOURCE_UID
+      - 比較方案
+      - BUTTON
+      - STR-01-ACT-COMPARE
+      - STR-01-GATE-COMPARE
+      - STR_COMPARE
+      - No-form read contract
+      - compareCandidates
+      - GET /v1/candidates/compare
+      - STR-01 / shared registered service
+      - —
+      - READ_EXACT
+    - row: 5
+      cells:
+      - STR-01-BTN-OPEN-OWNER
+      - EXISTING_SOURCE_UID
+      - 開啟執行責任模組
+      - BUTTON
+      - STR-01-ACT-OPEN-OWNER
+      - STR-01-GATE-PAGE
+      - STR_VIEW
+      - —
+      - —
+      - —
+      - STR-01 / shared registered service
+      - —
+      - UI_LOCAL_EXACT
+    - row: 6
+      cells:
+      - STR-01-BTN-SEND
+      - EXISTING_SOURCE_UID
+      - 送出
+      - PRIMARY_BUTTON
+      - STR-01-ACT-SEND
+      - STR-01-GATE-MESSAGE
+      - STR_CONVERSATION
+      - SendConversationMessageRequest
+      - sendConversationMessage
+      - POST /v1/conversations/{CONVERSATION_ID}/messages
+      - STR-01 / shared registered service
+      - Shared Conversation Core / ConversationMessage + ConversationContextBinding
+      - EFFECTFUL_EXACT
+    - row: 7
+      cells:
+      - STR-01-BTN-STOP
+      - EXISTING_SOURCE_UID
+      - 停止生成
+      - BUTTON
+      - STR-01-ACT-STOP
+      - STR-01-GATE-MESSAGE
+      - STR_CONVERSATION
+      - StopConversationGenerationRequest
+      - stopConversationGeneration
+      - POST /v1/conversations/{CONVERSATION_ID}/generation/stop
+      - STR-01 / shared registered service
+      - ACPOS-AI-03 Runtime Job + ACPOS-AI-02 ConversationAuditEnvelope
+      - EFFECTFUL_EXACT
+    - row: 8
+      cells:
+      - STR-01-BTN-SUBMIT-REVIEW
+      - EXISTING_SOURCE_UID
+      - 送出策略審查
+      - PRIMARY_BUTTON
+      - STR-01-ACT-REVIEW
+      - STR-01-GATE-REVIEW
+      - STR_REVIEW
+      - SubmitStrategyReviewRequest
+      - submitStrategyReview
+      - POST /v1/state-commands/strategycandidate/submitstrategyreview
+      - STR-01 / shared registered service
+      - System 08 / StrategyCandidate + Review State/Audit
+      - EFFECTFUL_EXACT
+    - row: 9
+      cells:
+      - STR-01-CARD-ALERT
+      - EXISTING_SOURCE_UID
+      - Strategy Alert
+      - READONLY_CARD
+      - STR-01-ACT-NOOP
+      - STR-01-GATE-ANALYSIS
+      - STR_VIEW
+      - —
+      - —
+      - —
+      - STR-01 / shared registered service
+      - —
+      - READ_EXACT
+    - row: 10
+      cells:
+      - STR-01-CARD-BRIEF
+      - EXISTING_SOURCE_UID
+      - Decision Brief
+      - READONLY_CARD
+      - STR-01-ACT-NOOP
+      - STR-01-GATE-ANALYSIS
+      - STR_VIEW
+      - —
+      - —
+      - —
+      - STR-01 / shared registered service
+      - —
+      - READ_EXACT
+    - row: 11
+      cells:
+      - STR-01-CARD-RECOMMENDATION
+      - EXISTING_SOURCE_UID
+      - Strategy Recommendation
+      - READONLY_CARD
+      - STR-01-ACT-NOOP
+      - STR-01-GATE-ANALYSIS
+      - STR_VIEW
+      - —
+      - —
+      - —
+      - STR-01 / shared registered service
+      - —
+      - READ_EXACT
+    - row: 12
+      cells:
+      - STR-01-CARD-RESOURCE
+      - EXISTING_SOURCE_UID
+      - Resource Proposal
+      - READONLY_CARD
+      - STR-01-ACT-NOOP
+      - STR-01-GATE-ANALYSIS
+      - STR_VIEW
+      - —
+      - —
+      - —
+      - STR-01 / shared registered service
+      - —
+      - READ_EXACT
+    - row: 13
+      cells:
+      - STR-01-FLD-ACTUAL
+      - EXISTING_SOURCE_UID
+      - Actual
+      - READONLY
+      - STR-01-ACT-NOOP
+      - STR-01-GATE-FEEDBACK
+      - STR_VIEW
+      - —
+      - —
+      - —
+      - STR-01 / shared registered service
+      - —
+      - READ_EXACT
+    - row: 14
+      cells:
+      - STR-01-FLD-ASSISTANT-SUMMARY
+      - EXISTING_SOURCE_UID
+      - Assistant Summary
+      - READONLY
+      - STR-01-ACT-NOOP
+      - STR-01-GATE-ANALYSIS
+      - STR_VIEW
+      - —
+      - —
+      - —
+      - STR-01 / shared registered service
+      - —
+      - READ_EXACT
+    - row: 15
+      cells:
+      - STR-01-FLD-ASSUMPTIONS
+      - EXISTING_SOURCE_UID
+      - 假設 / Assumptions
+      - READONLY
+      - STR-01-ACT-NOOP
+      - STR-01-GATE-ANALYSIS
+      - STR_VIEW
+      - —
+      - —
+      - —
+      - STR-01 / shared registered service
+      - —
+      - READ_EXACT
+    - row: 16
+      cells:
+      - STR-01-FLD-BASIS
+      - EXISTING_SOURCE_UID
+      - 分析依據 / Basis
+      - READONLY
+      - STR-01-ACT-NOOP
+      - STR-01-GATE-ANALYSIS
+      - STR_VIEW
+      - —
+      - —
+      - —
+      - STR-01 / shared registered service
+      - —
+      - READ_EXACT
+    - row: 17
+      cells:
+      - STR-01-FLD-CANDIDATE-REF
+      - EXISTING_SOURCE_UID
+      - Strategy Candidate
+      - READONLY
+      - STR-01-ACT-NOOP
+      - STR-01-GATE-PAGE
+      - STR_VIEW
+      - —
+      - —
+      - —
+      - STR-01 / shared registered service
+      - —
+      - READ_EXACT
+    - row: 18
+      cells:
+      - STR-01-FLD-CONTEXT-CONFIDENCE
+      - EXISTING_SOURCE_UID
+      - Confidence / Quality
+      - READONLY
+      - STR-01-ACT-NOOP
+      - STR-01-GATE-CONTEXT
+      - STR_VIEW
+      - —
+      - —
+      - —
+      - STR-01 / shared registered service
+      - —
+      - READ_EXACT
+    - row: 19
+      cells:
+      - STR-01-FLD-CONTEXT-PRIORITY
+      - EXISTING_SOURCE_UID
+      - Context Priority
+      - READONLY
+      - STR-01-ACT-NOOP
+      - STR-01-GATE-CONTEXT
+      - STR_VIEW
+      - —
+      - —
+      - —
+      - STR-01 / shared registered service
+      - —
+      - READ_EXACT
+    - row: 20
+      cells:
+      - STR-01-FLD-CONTEXT-SOURCE
+      - EXISTING_SOURCE_UID
+      - Source / Ref
+      - READONLY
+      - STR-01-ACT-NOOP
+      - STR-01-GATE-CONTEXT
+      - STR_VIEW
+      - —
+      - —
+      - —
+      - STR-01 / shared registered service
+      - —
+      - READ_EXACT
+    - row: 21
+      cells:
+      - STR-01-FLD-CONTEXT-TIME
+      - EXISTING_SOURCE_UID
+      - Source Time / Version
+      - READONLY
+      - STR-01-ACT-NOOP
+      - STR-01-GATE-CONTEXT
+      - STR_VIEW
+      - —
+      - —
+      - —
+      - STR-01 / shared registered service
+      - —
+      - READ_EXACT
+    - row: 22
+      cells:
+      - STR-01-FLD-CORRELATION
+      - EXISTING_SOURCE_UID
+      - Correlation / Audit Ref
+      - READONLY
+      - STR-01-ACT-NOOP
+      - STR-01-GATE-PAGE
+      - STR_VIEW
+      - —
+      - —
+      - —
+      - STR-01 / shared registered service
+      - —
+      - READ_EXACT
+    - row: 23
+      cells:
+      - STR-01-FLD-DECISION-ID
+      - EXISTING_SOURCE_UID
+      - Decision ID
+      - READONLY
+      - STR-01-ACT-NOOP
+      - STR-01-GATE-PAGE
+      - STR_VIEW
+      - —
+      - —
+      - —
+      - STR-01 / shared registered service
+      - —
+      - READ_EXACT
+    - row: 24
+      cells:
+      - STR-01-FLD-DECISION-REASON
+      - EXISTING_SOURCE_UID
+      - Decision Reason
+      - READONLY
+      - STR-01-ACT-NOOP
+      - STR-01-GATE-PAGE
+      - STR_VIEW
+      - —
+      - —
+      - —
+      - STR-01 / shared registered service
+      - —
+      - READ_EXACT
+    - row: 25
+      cells:
+      - STR-01-FLD-DECISION-RESULT
+      - EXISTING_SOURCE_UID
+      - Decision Result
+      - READONLY
+      - STR-01-ACT-NOOP
+      - STR-01-GATE-PAGE
+      - STR_VIEW
+      - —
+      - —
+      - —
+      - STR-01 / shared registered service
+      - —
+      - READ_EXACT
+    - row: 26
+      cells:
+      - STR-01-FLD-DECISION-STATE
+      - EXISTING_SOURCE_UID
+      - Decision Status
+      - READONLY
+      - STR-01-ACT-NOOP
+      - STR-01-GATE-PAGE
+      - STR_VIEW
+      - —
+      - —
+      - —
+      - STR-01 / shared registered service
+      - —
+      - READ_EXACT
+    - row: 27
+      cells:
+      - STR-01-FLD-DIFFERENCE
+      - EXISTING_SOURCE_UID
+      - Difference Analysis
+      - READONLY
+      - STR-01-ACT-NOOP
+      - STR-01-GATE-FEEDBACK
+      - STR_VIEW
+      - —
+      - —
+      - —
+      - STR-01 / shared registered service
+      - —
+      - READ_EXACT
+    - row: 28
+      cells:
+      - STR-01-FLD-DISABLED
+      - EXISTING_SOURCE_UID
+      - Disabled Reason
+      - READONLY
+      - STR-01-ACT-NOOP
+      - STR-01-GATE-PAGE
+      - STR_VIEW
+      - —
+      - —
+      - —
+      - STR-01 / shared registered service
+      - —
+      - READ_EXACT
+    - row: 29
+      cells:
+      - STR-01-FLD-EXECUTION-STATE
+      - EXISTING_SOURCE_UID
+      - Execution Status / Ref
+      - READONLY
+      - STR-01-ACT-NOOP
+      - STR-01-GATE-PAGE
+      - STR_VIEW
+      - —
+      - —
+      - —
+      - STR-01 / shared registered service
+      - —
+      - READ_EXACT
+    - row: 30
+      cells:
+      - STR-01-FLD-EXPECTED
+      - EXISTING_SOURCE_UID
+      - Expected
+      - READONLY
+      - STR-01-ACT-NOOP
+      - STR-01-GATE-FEEDBACK
+      - STR_VIEW
+      - —
+      - —
+      - —
+      - STR-01 / shared registered service
+      - —
+      - READ_EXACT
+    - row: 31
+      cells:
+      - STR-01-FLD-HORIZON
+      - EXISTING_SOURCE_UID
+      - Time Horizon
+      - READONLY
+      - STR-01-ACT-NOOP
+      - STR-01-GATE-PAGE
+      - STR_VIEW
+      - —
+      - —
+      - —
+      - STR-01 / shared registered service
+      - —
+      - READ_EXACT
+    - row: 32
+      cells:
+      - STR-01-FLD-KPI
+      - EXISTING_SOURCE_UID
+      - KPI / Performance Change
+      - READONLY
+      - STR-01-ACT-NOOP
+      - STR-01-GATE-FEEDBACK
+      - STR_VIEW
+      - —
+      - —
+      - —
+      - STR-01 / shared registered service
+      - —
+      - READ_EXACT
+    - row: 33
+      cells:
+      - STR-01-FLD-LEARNING
+      - EXISTING_SOURCE_UID
+      - Learning
+      - READONLY
+      - STR-01-ACT-NOOP
+      - STR-01-GATE-FEEDBACK
+      - STR_VIEW
+      - —
+      - —
+      - —
+      - STR-01 / shared registered service
+      - —
+      - READ_EXACT
+    - row: 34
+      cells:
+      - STR-01-FLD-MEETING-RECORD
+      - EXISTING_SOURCE_UID
+      - Meeting / Discussion Record
+      - READONLY
+      - STR-01-ACT-NOOP
+      - STR-01-GATE-ANALYSIS
+      - STR_VIEW
+      - —
+      - —
+      - —
+      - STR-01 / shared registered service
+      - —
+      - READ_EXACT
+    - row: 35
+      cells:
+      - STR-01-FLD-OPEN-QUESTIONS
+      - EXISTING_SOURCE_UID
+      - Open Questions
+      - READONLY
+      - STR-01-ACT-NOOP
+      - STR-01-GATE-ANALYSIS
+      - STR_VIEW
+      - —
+      - —
+      - —
+      - STR-01 / shared registered service
+      - —
+      - READ_EXACT
+    - row: 36
+      cells:
+      - STR-01-FLD-OPPORTUNITIES
+      - EXISTING_SOURCE_UID
+      - 機會 / Opportunities
+      - READONLY
+      - STR-01-ACT-NOOP
+      - STR-01-GATE-ANALYSIS
+      - STR_VIEW
+      - —
+      - —
+      - —
+      - STR-01 / shared registered service
+      - —
+      - READ_EXACT
+    - row: 37
+      cells:
+      - STR-01-FLD-OWNER-BOUNDARY
+      - EXISTING_SOURCE_UID
+      - Execution Owner Boundary
+      - READONLY
+      - STR-01-ACT-NOOP
+      - STR-01-GATE-PAGE
+      - STR_VIEW
+      - —
+      - —
+      - —
+      - STR-01 / shared registered service
+      - —
+      - READ_EXACT
+    - row: 38
+      cells:
+      - STR-01-FLD-PATTERN
+      - EXISTING_SOURCE_UID
+      - Pattern / Baseline / Forecast
+      - READONLY
+      - STR-01-ACT-NOOP
+      - STR-01-GATE-ANALYSIS
+      - STR_VIEW
+      - —
+      - —
+      - —
+      - STR-01 / shared registered service
+      - —
+      - READ_EXACT
+    - row: 39
+      cells:
+      - STR-01-FLD-PROVIDER-BRAND
+      - EXISTING_SOURCE_UID
+      - Provider Brand
+      - READONLY
+      - STR-01-ACT-NOOP
+      - STR-01-GATE-PAGE
+      - STR_VIEW
+      - —
+      - —
+      - —
+      - STR-01 / shared registered service
+      - —
+      - READ_EXACT
+    - row: 40
+      cells:
+      - STR-01-FLD-REVIEW-STATE
+      - EXISTING_SOURCE_UID
+      - Review State
+      - READONLY
+      - STR-01-ACT-NOOP
+      - STR-01-GATE-PAGE
+      - STR_VIEW
+      - —
+      - —
+      - —
+      - STR-01 / shared registered service
+      - —
+      - READ_EXACT
+    - row: 41
+      cells:
+      - STR-01-FLD-RISKS
+      - EXISTING_SOURCE_UID
+      - 風險 / Risks
+      - READONLY
+      - STR-01-ACT-NOOP
+      - STR-01-GATE-ANALYSIS
+      - STR_VIEW
+      - —
+      - —
+      - —
+      - STR-01 / shared registered service
+      - —
+      - READ_EXACT
+    - row: 42
+      cells:
+      - STR-01-FLD-SCOPE
+      - EXISTING_SOURCE_UID
+      - Strategy Scope
+      - READONLY
+      - STR-01-ACT-NOOP
+      - STR-01-GATE-PAGE
+      - STR_VIEW
+      - —
+      - —
+      - —
+      - STR-01 / shared registered service
+      - —
+      - READ_EXACT
+    - row: 43
+      cells:
+      - STR-01-FLD-STATE
+      - EXISTING_SOURCE_UID
+      - Strategy State
+      - READONLY
+      - STR-01-ACT-NOOP
+      - STR-01-GATE-PAGE
+      - STR_VIEW
+      - —
+      - —
+      - —
+      - STR-01 / shared registered service
+      - —
+      - READ_EXACT
+    - row: 44
+      cells:
+      - STR-01-FLD-TOPIC
+      - EXISTING_SOURCE_UID
+      - Strategy Topic
+      - READONLY
+      - STR-01-ACT-NOOP
+      - STR-01-GATE-PAGE
+      - STR_VIEW
+      - —
+      - —
+      - —
+      - STR-01 / shared registered service
+      - —
+      - READ_EXACT
+    - row: 45
+      cells:
+      - STR-01-FLD-UNCERTAINTY
+      - EXISTING_SOURCE_UID
+      - 不確定性 / Uncertainty
+      - READONLY
+      - STR-01-ACT-NOOP
+      - STR-01-GATE-ANALYSIS
+      - STR_VIEW
+      - —
+      - —
+      - —
+      - STR-01 / shared registered service
+      - —
+      - READ_EXACT
+    - row: 46
+      cells:
+      - STR-01-INP-MESSAGE
+      - EXISTING_SOURCE_UID
+      - 輸入策略議題、問題或分析要求
+      - TEXTAREA
+      - STR-01-ACT-SEND
+      - STR-01-GATE-MESSAGE
+      - STR_CONVERSATION
+      - SendConversationMessageRequest
+      - sendConversationMessage
+      - POST /v1/conversations/{CONVERSATION_ID}/messages
+      - STR-01 / shared registered service
+      - Shared Conversation Core / ConversationMessage + ConversationContextBinding
+      - EFFECTFUL_EXACT
+    - row: 47
+      cells:
+      - STR-01-INP-TOPIC-SEARCH
+      - EXISTING_SOURCE_UID
+      - 搜尋策略議題
+      - SEARCH
+      - STR-01-ACT-FILTER
+      - STR-01-GATE-PAGE
+      - STR_VIEW
+      - —
+      - —
+      - —
+      - STR-01 / shared registered service
+      - —
+      - UI_LOCAL_EXACT
+    - row: 48
+      cells:
+      - STR-01-LST-ALERTS
+      - EXISTING_SOURCE_UID
+      - Strategy Alerts / Open Questions
+      - LIST
+      - STR-01-ACT-NOOP
+      - STR-01-GATE-PAGE
+      - STR_VIEW
+      - —
+      - —
+      - —
+      - STR-01 / shared registered service
+      - —
+      - READ_EXACT
+    - row: 49
+      cells:
+      - STR-01-LST-BASELINES
+      - EXISTING_SOURCE_UID
+      - Baseline History
+      - LIST
+      - STR-01-ACT-NOOP
+      - STR-01-GATE-MEMORY
+      - STR_VIEW
+      - —
+      - —
+      - —
+      - STR-01 / shared registered service
+      - —
+      - READ_EXACT
+    - row: 50
+      cells:
+      - STR-01-LST-CONTEXT
+      - EXISTING_SOURCE_UID
+      - Strategic Context Sources
+      - LIST
+      - STR-01-ACT-NOOP
+      - STR-01-GATE-CONTEXT
+      - STR_VIEW
+      - —
+      - —
+      - —
+      - STR-01 / shared registered service
+      - —
+      - READ_EXACT
+    - row: 51
+      cells:
+      - STR-01-LST-EXPERIMENTS
+      - EXISTING_SOURCE_UID
+      - Experiment Records
+      - LIST
+      - STR-01-ACT-NOOP
+      - STR-01-GATE-MEMORY
+      - STR_VIEW
+      - —
+      - —
+      - —
+      - STR-01 / shared registered service
+      - —
+      - READ_EXACT
+    - row: 52
+      cells:
+      - STR-01-LST-LEARNING
+      - EXISTING_SOURCE_UID
+      - Learning Results
+      - LIST
+      - STR-01-ACT-NOOP
+      - STR-01-GATE-MEMORY
+      - STR_VIEW
+      - —
+      - —
+      - —
+      - STR-01 / shared registered service
+      - —
+      - READ_EXACT
+    - row: 53
+      cells:
+      - STR-01-LST-PATTERNS
+      - EXISTING_SOURCE_UID
+      - Strategy Pattern / Cases
+      - LIST
+      - STR-01-ACT-NOOP
+      - STR-01-GATE-MEMORY
+      - STR_VIEW
+      - —
+      - —
+      - —
+      - STR-01 / shared registered service
+      - —
+      - READ_EXACT
+    - row: 54
+      cells:
+      - STR-01-LST-TOPICS
+      - EXISTING_SOURCE_UID
+      - Strategy Topics / History
+      - LIST
+      - STR-01-ACT-TOPIC-SELECT
+      - STR-01-GATE-PAGE
+      - STR_VIEW
+      - —
+      - —
+      - —
+      - STR-01 / shared registered service
+      - —
+      - UI_LOCAL_EXACT
+    - row: 55
+      cells:
+      - STR-01-TBL-COMPARE
+      - EXISTING_SOURCE_UID
+      - Strategy Option Comparison
+      - TABLE
+      - STR-01-ACT-COMPARE
+      - STR-01-GATE-COMPARE
+      - STR_COMPARE
+      - No-form read contract
+      - compareCandidates
+      - GET /v1/candidates/compare
+      - STR-01 / shared registered service
+      - —
+      - READ_EXACT
+    - row: 56
+      cells:
+      - STR-01-TGL-MODE
+      - EXISTING_SOURCE_UID
+      - Single AI / Multi AI
+      - TOGGLE
+      - STR-01-ACT-MODE
+      - STR-01-GATE-TOPIC
+      - STR_VIEW
+      - —
+      - —
+      - —
+      - STR-01 / shared registered service
+      - —
+      - UI_LOCAL_EXACT
+    - row: 57
+      cells:
+      - STR-01-VIEW-CONVERSATION
+      - EXISTING_SOURCE_UID
+      - Strategic AI Conversation
+      - CONVERSATION
+      - —
+      - STR-01-GATE-TOPIC
+      - STR_VIEW
+      - —
+      - getStrategicConversationProjection
+      - GET /v1/conversations/{CONVERSATION_ID}/projections/strategy
+      - STR-01 / shared registered service
+      - —
+      - READ_EXACT
+  - index: 29
+    rows:
+    - row: 0
+      cells:
+      - Target UID
+      - Closed Field(s)
+      - Operation
+      - Runtime Owner
+      - Runtime Status
+      - Existing Method / Path
+      - Result
+    - row: 1
+      cells:
+      - STR-01-BTN-ATTACH
+      - operation
+      - getConversationAttachmentContext
+      - STR-01 / shared registered service
+      - READ_EXACT
+      - —
+      - BOUND_BY_BATCH_16
+    - row: 2
+      cells:
+      - STR-01-VIEW-CONVERSATION
+      - operation
+      - getStrategicConversationProjection
+      - STR-01 / shared registered service
+      - READ_EXACT
+      - —
+      - BOUND_BY_BATCH_16
+  - index: 30
+    rows:
+    - row: 0
+      cells:
+      - Control UID
+      - Field
+      - Operation
+      - Runtime Status
+      - Bound Value
+      - Result
+    - row: 1
+      cells:
+      - STR-01-BTN-SEND
+      - method_path
+      - sendConversationMessage
+      - EFFECTFUL_EXACT
+      - POST /v1/conversations/{CONVERSATION_ID}/messages
+      - STRONG_EXACT_RELATION_BOUND
+    - row: 2
+      cells:
+      - STR-01-BTN-STOP
+      - method_path
+      - stopConversationGeneration
+      - EFFECTFUL_EXACT
+      - POST /v1/conversations/{CONVERSATION_ID}/generation/stop
+      - STRONG_EXACT_RELATION_BOUND
+    - row: 3
+      cells:
+      - STR-01-INP-MESSAGE
+      - method_path
+      - sendConversationMessage
+      - EFFECTFUL_EXACT
+      - POST /v1/conversations/{CONVERSATION_ID}/messages
+      - STRONG_EXACT_RELATION_BOUND
+  - index: 31
+    rows:
+    - row: 0
+      cells:
+      - Control UID
+      - Operation
+      - Runtime Status
+      - Method / Path
+      - Result
+    - row: 1
+      cells:
+      - STR-01-TBL-COMPARE
+      - compareCandidates
+      - READ_EXACT
+      - GET /v1/candidates/compare
+      - No-form read; persistence owner non-applicable
+    - row: 2
+      cells:
+      - STR-01-BTN-COMPARE
+      - compareCandidates
+      - READ_EXACT
+      - GET /v1/candidates/compare
+      - No-form read; persistence owner non-applicable
+    - row: 3
+      cells:
+      - STR-01-BTN-ADOPT
+      - adoptAsContextCandidate
+      - EFFECTFUL_EXACT
+      - POST /v1/state-commands/strategycandidate/adoptascontextcandidate
+      - Payload=AdoptAsContextCandidateRequest
+  - index: 32
+    rows:
+    - row: 0
+      cells:
+      - Control UID
+      - Operation
+      - Fields Closed
+      - Method / Path
+      - Payload / Schema
+      - Persistence Owner
+    - row: 1
+      cells:
+      - STR-01-VIEW-CONVERSATION
+      - getStrategicConversationProjection
+      - method_path
+      - GET /v1/conversations/{CONVERSATION_ID}/projections/strategy
+      - N/A
+      - N/A
+    - row: 2
+      cells:
+      - STR-01-BTN-ATTACH
+      - getConversationAttachmentContext
+      - method_path
+      - GET /v1/conversations/{CONVERSATION_ID}/attachments/{ATTACHMENT_ID}/context
+      - N/A
+      - N/A
+    - row: 3
+      cells:
+      - STR-01-INP-MESSAGE
+      - sendConversationMessage
+      - payload_schema, persistence_owner
+      - POST /v1/conversations/{CONVERSATION_ID}/messages
+      - SendConversationMessageRequest
+      - Shared Conversation Core / ConversationMessage + ConversationContextBinding
+    - row: 4
+      cells:
+      - STR-01-BTN-SEND
+      - sendConversationMessage
+      - payload_schema, persistence_owner
+      - POST /v1/conversations/{CONVERSATION_ID}/messages
+      - SendConversationMessageRequest
+      - Shared Conversation Core / ConversationMessage + ConversationContextBinding
+    - row: 5
+      cells:
+      - STR-01-BTN-STOP
+      - stopConversationGeneration
+      - payload_schema, persistence_owner
+      - POST /v1/conversations/{CONVERSATION_ID}/generation/stop
+      - StopConversationGenerationRequest
+      - ACPOS-AI-03 Runtime Job + ACPOS-AI-02 ConversationAuditEnvelope
+  - index: 33
+    rows:
+    - row: 0
+      cells:
+      - Control UID
+      - Operation
+      - Method / Path
+      - Payload / Schema
+      - Persistence Owner
+      - Semantics
+    - row: 1
+      cells:
+      - STR-01-BTN-SUBMIT-REVIEW
+      - submitStrategyReview
+      - POST /v1/state-commands/strategycandidate/submitstrategyreview
+      - SubmitStrategyReviewRequest
+      - System 08 / StrategyCandidate + Review State/Audit
+      - CANDIDATE_READY→REVIEW_REQUIRED requires exact candidate, expected_version, review permission and evidence; submission creates/updates governed review-request
+        state only and must not create an approval decision.
+    - row: 2
+      cells:
+      - STR-01-BTN-ADOPT
+      - adoptAsContextCandidate
+      - UNCHANGED
+      - UNCHANGED
+      - AI-01 Context Owner / Governed Strategy Context Adoption Link + System 08 Audit
+      - Adopt-as-context occurs only after human review/decision evidence and does not execute an owner module. Context authority remains AI-01; System 08 preserves
+        candidate/decision/audit linkage without creating a second Context Engine.
+  - index: 34
+    rows:
+    - row: 0
+      cells:
+      - Entity
+      - Operation
+      - Applicability
+      - Authority Evidence
+    - row: 1
+      cells:
+      - StrategyCandidate
+      - ARCHIVE_OR_DELETE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 2
+      cells:
+      - StrategyCandidate
+      - AUDIT
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 3
+      cells:
+      - StrategyCandidate
+      - CATEGORY_OR_GROUP_BIND
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 4
+      cells:
+      - StrategyCandidate
+      - CONFIRM_OR_APPROVE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 5
+      cells:
+      - StrategyCandidate
+      - CREATE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 6
+      cells:
+      - StrategyCandidate
+      - CREATION_MODE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 7
+      cells:
+      - StrategyCandidate
+      - DEPENDENCY_IMPACT
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 8
+      cells:
+      - StrategyCandidate
+      - DISCOVER_OR_LIST
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 9
+      cells:
+      - StrategyCandidate
+      - DRAFT
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 10
+      cells:
+      - StrategyCandidate
+      - EDIT
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 11
+      cells:
+      - StrategyCandidate
+      - ERROR_RECOVERY
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 12
+      cells:
+      - StrategyCandidate
+      - LOCK_OR_UNLOCK
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 13
+      cells:
+      - StrategyCandidate
+      - MOVE_OR_REPARENT
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 14
+      cells:
+      - StrategyCandidate
+      - NEXT_STEP
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 15
+      cells:
+      - StrategyCandidate
+      - PARENT_BIND
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 16
+      cells:
+      - StrategyCandidate
+      - REORDER
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 17
+      cells:
+      - StrategyCandidate
+      - RESTORE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 18
+      cells:
+      - StrategyCandidate
+      - RESUME
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 19
+      cells:
+      - StrategyCandidate
+      - REVISE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 20
+      cells:
+      - StrategyCandidate
+      - SAVE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 21
+      cells:
+      - StrategyCandidate
+      - SELECT_OR_OPEN
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 22
+      cells:
+      - StrategyCandidate
+      - VALIDATE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 23
+      cells:
+      - StrategyCandidate
+      - VERSION
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 24
+      cells:
+      - StrategyDecisionLedgerEntry
+      - ARCHIVE_OR_DELETE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 25
+      cells:
+      - StrategyDecisionLedgerEntry
+      - AUDIT
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 26
+      cells:
+      - StrategyDecisionLedgerEntry
+      - CATEGORY_OR_GROUP_BIND
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 27
+      cells:
+      - StrategyDecisionLedgerEntry
+      - CONFIRM_OR_APPROVE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 28
+      cells:
+      - StrategyDecisionLedgerEntry
+      - CREATE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 29
+      cells:
+      - StrategyDecisionLedgerEntry
+      - CREATION_MODE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 30
+      cells:
+      - StrategyDecisionLedgerEntry
+      - DEPENDENCY_IMPACT
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 31
+      cells:
+      - StrategyDecisionLedgerEntry
+      - DISCOVER_OR_LIST
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 32
+      cells:
+      - StrategyDecisionLedgerEntry
+      - DRAFT
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 33
+      cells:
+      - StrategyDecisionLedgerEntry
+      - EDIT
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 34
+      cells:
+      - StrategyDecisionLedgerEntry
+      - ERROR_RECOVERY
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 35
+      cells:
+      - StrategyDecisionLedgerEntry
+      - LOCK_OR_UNLOCK
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 36
+      cells:
+      - StrategyDecisionLedgerEntry
+      - MOVE_OR_REPARENT
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 37
+      cells:
+      - StrategyDecisionLedgerEntry
+      - NEXT_STEP
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 38
+      cells:
+      - StrategyDecisionLedgerEntry
+      - PARENT_BIND
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 39
+      cells:
+      - StrategyDecisionLedgerEntry
+      - REORDER
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 40
+      cells:
+      - StrategyDecisionLedgerEntry
+      - RESTORE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 41
+      cells:
+      - StrategyDecisionLedgerEntry
+      - RESUME
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 42
+      cells:
+      - StrategyDecisionLedgerEntry
+      - REVISE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 43
+      cells:
+      - StrategyDecisionLedgerEntry
+      - SAVE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 44
+      cells:
+      - StrategyDecisionLedgerEntry
+      - SELECT_OR_OPEN
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 45
+      cells:
+      - StrategyDecisionLedgerEntry
+      - VALIDATE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 46
+      cells:
+      - StrategyDecisionLedgerEntry
+      - VERSION
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+  - index: 35
+    rows:
+    - row: 0
+      cells:
+      - Design Item / 設計項目
+      - Canonical Planning Design Contract / 正式規劃設計契約
+    - row: 1
+      cells:
+      - Project Scope
+      - STR-01／戰略工作區 current Word planning/basic-design scope；僅補設計規範，不改變已存在產品 Authority。
+    - row: 2
+      cells:
+      - Business Goal
+      - 在同一 Strategy Workspace 保留 topic/context/conversation continuity，讓受權限控制的使用者完成 TEXT_CHAT 型策略討論、分析、建議與決策支援。
+    - row: 3
+      cells:
+      - Target User / Role Definition
+      - 具 STR-01 戰略工作區與對話權限的內部策略使用者／決策參與者。
+    - row: 4
+      cells:
+      - Functional Requirements
+      - 建立或恢復策略 context、TEXT_CHAT 對話、引用 evidence/context、查看分析與 recommendation、形成決策支援／resource proposal／feedback 並安全 handoff。
+    - row: 5
+      cells:
+      - Non-functional Requirements
+      - Conversation/thread continuity、Exact context fingerprint、Audit、Fail Closed、不得將 Assistant output 自動視為 Human approval。
+    - row: 6
+      cells:
+      - Out-of-Scope Definition
+      - 禁止建立第二 Conversation Core、禁止繞過 Human Decision/Approval、禁止為缺失能力發明新的 runtime/provider。
+    - row: 7
+      cells:
+      - Glossary
+      - STR-01 使用本文既有 Entity / Operation / State / Owner / Evidence / Version 名詞；同義詞不得建立第二 identity。
+    - row: 8
+      cells:
+      - Naming Registry Initial State
+      - Page UID=STR-01；Owner File=ACPOS_STR-01_WORKSPACE_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx；Current canonical filename only；禁止 copy/backup/alternate owner。
+    - row: 9
+      cells:
+      - Authority
+      - Current STR-01 Word + Mother 01→04；缺產品選擇時 BLOCK，不由本附錄猜測。
+  - index: 36
+    rows:
+    - row: 0
+      cells:
+      - Design Item / 設計項目
+      - Canonical Planning Design Contract / 正式規劃設計契約
+    - row: 1
+      cells:
+      - Color Tokens
+      - SHARED_OWNER_REFERENCE → current Global Home / Shell Design System tech-purple token set; existing page-local approved override, if any, remains authoritative.
+    - row: 2
+      cells:
+      - Typography Tokens
+      - SHARED_OWNER_REFERENCE → current Global Design System typography; page-local text hierarchy may only use registered heading/body/label/technical text roles.
+    - row: 3
+      cells:
+      - Spacing Tokens
+      - Use registered gap/padding/spacing tokens; existing exact page gaps remain authoritative; no ad-hoc pixel drift.
+    - row: 4
+      cells:
+      - Component States
+      - Default / Hover / Focus / Active / Loading / Disabled / Success / Error MUST NOT change the approved component footprint unless the current component contract
+        explicitly allows it.
+    - row: 5
+      cells:
+      - Primary Layout
+      - Use this Word's existing Primary Grid / Section / Workspace layout as the page-local authority; this annex introduces no second grid.
+    - row: 6
+      cells:
+      - Navigation Region
+      - Global Header and collapsible/overlay Sidebar remain shared shell regions; page Workspace starts in the registered content region.
+    - row: 7
+      cells:
+      - Responsive Behavior
+      - Use the current page responsive rule and shared shell breakpoint owner; semantic order and functional topology MUST remain stable across reflow.
+    - row: 8
+      cells:
+      - Design Ownership
+      - Page owns page-local layout/components; Global Shell owns shared header/sidebar/tokens; references only, no duplicated shared payload.
+  - index: 37
+    rows:
+    - row: 0
+      cells:
+      - Design Item / 設計項目
+      - Canonical Planning Design Contract / 正式規劃設計契約
+    - row: 1
+      cells:
+      - Viewport / Breakpoint UID
+      - SHARED_OWNER_REFERENCE → current Global Home breakpoint contract; page-specific breakpoint/reflow rules in this Word override only where explicitly registered.
+    - row: 2
+      cells:
+      - Container Width / Min / Max
+      - Retain current Global Shell + page Primary Grid width contract. No page-local implicit width may override an existing exact dimension.
+    - row: 3
+      cells:
+      - Grid Columns / Span / Gutter / Outer Margin
+      - Use the existing page Primary Grid / section mapping and current gap/margin values; any structural grid change requires Change Set.
+    - row: 4
+      cells:
+      - Section Bounding Rules
+      - Every registered Section remains within its current Workspace region; sticky/fixed/overlay areas MUST NOT occlude required controls.
+    - row: 5
+      cells:
+      - Component / Control / Field Width / Height Rules
+      - Use current Control/Field Dimensions or shared component token. State transitions MUST NOT cause layout jump.
+    - row: 6
+      cells:
+      - Min / Max Width / Height
+      - Inherit current exact values where present; otherwise shared component minimums apply. Required input/button content may not compress below its registered
+        usable size.
+    - row: 7
+      cells:
+      - Gap / Padding / Alignment
+      - Use current page spacing/grid tokens; alignment changes outside token tolerance require Visual Review.
+    - row: 8
+      cells:
+      - Aspect Ratio
+      - NOT_APPLICABLE unless the current page declares an image/video/preview ratio; when declared, the exact current ratio remains authoritative.
+    - row: 9
+      cells:
+      - Overflow / Scroll Rule
+      - No hidden overflow for actionable content. Long technical values use existing ellipsis + tooltip/drawer rule; large tables may use the current controlled
+        horizontal-scroll rule.
+    - row: 10
+      cells:
+      - Collapse / Stack / Wrap Rule
+      - Reflow may stack/collapse only within the current responsive contract; semantic order, required adjacency and operation order MUST NOT change.
+    - row: 11
+      cells:
+      - Z-order / Overlay Rule
+      - Global Header / Sidebar overlay / Dialog / Drawer layers remain above Workspace without blocking required content; overlay expansion MUST NOT reflow the primary
+        Workspace unless explicitly specified.
+    - row: 12
+      cells:
+      - Text Capacity / Truncation / Wrap Rule
+      - Required labels/status/error text may not be clipped. Long IDs/technical values use controlled ellipsis with recoverable full value; no silent semantic truncation.
+    - row: 13
+      cells:
+      - Asset Object-fit / Object-position
+      - REFERENCE_ONLY → current Asset Binding owner when a formal visual asset exists; otherwise NOT_APPLICABLE.
+    - row: 14
+      cells:
+      - Locked Visual Anchors
+      - Bound to the Visual Anchor Registry in this annex; unlisted regions are not implicitly editable.
+    - row: 15
+      cells:
+      - Allowed Tolerance / Diff Threshold
+      - 'Locked anchors and structural grid: zero unapproved drift. Token-level micro adjustment is allowed only inside current Design Token/Layout rules; structural
+        changes require Change Set + re-review.'
+    - row: 16
+      cells:
+      - Geometry Failure Set
+      - Detect overlap, clipping, horizontal overflow, unapproved scroll, control compression, unexpected wrap/stack, aspect drift, misalignment, sticky/fixed occlusion
+        and header/sidebar/workspace collision.
+  - index: 38
+    rows:
+    - row: 0
+      cells:
+      - Anchor UID
+      - Position Rule
+      - Dimension Rule
+      - Relationship Rule
+      - Lock Status
+    - row: 1
+      cells:
+      - STR-01-VA-HEADER
+      - Fixed at top of shared shell
+      - 58px full-width according to current shell authority
+      - Above Sidebar/Workspace; must not be covered by page content
+      - LOCKED
+    - row: 2
+      cells:
+      - STR-01-VA-SIDEBAR
+      - Fixed left rail under shared shell header
+      - 64px resting; 221px overlay expansion where current shell defines it
+      - Overlay expansion must not silently change the approved page Primary Grid
+      - LOCKED
+    - row: 3
+      cells:
+      - STR-01-VA-WORKSPACE
+      - Current page primary content region below Header / beside resting rail
+      - Use this Word's existing Primary Grid / section dimensions
+      - Owns page-local section geometry; dialogs/drawers are overlays, not replacement layout
+      - LOCKED_EXCEPT_AUTHORIZED_CHANGE_SET
+  - index: 39
+    rows:
+    - row: 0
+      cells:
+      - Design Item / 設計項目
+      - Canonical Planning Design Contract / 正式規劃設計契約
+    - row: 1
+      cells:
+      - Current Canonical Visual
+      - REFERENCE_ONLY → current visual/baseline already named in this Word or shared current visual owner. This annex does not replace it.
+    - row: 2
+      cells:
+      - Visual Candidate UID
+      - Generated candidate MUST receive a unique Visual UID and Parent Visual UID; no candidate is deemed approved merely by this annex.
+    - row: 3
+      cells:
+      - Generation Manifest
+      - Required before generation; MUST bind Page UID, Design Version, Reference Visual UID, Design System Version, Layout UID, Component Versions, Asset refs, Viewport,
+        Language, Theme, Change Level/Set and locked/editable areas.
+    - row: 4
+      cells:
+      - Visual Preview
+      - MUST represent the actual website structure, not a moodboard. Preview occurs after page/design specification and before Design Freeze.
+    - row: 5
+      cells:
+      - Visual Review
+      - Authorized reviewer checks function-to-visual mapping, geometry, anchors, responsive order, A11y/i18n and visual drift.
+    - row: 6
+      cells:
+      - Approval Status
+      - VISUAL_APPROVED is required before DESIGN_FROZEN. This planning annex does NOT self-approve the page.
+    - row: 7
+      cells:
+      - Change Set / Drift
+      - Any layout/asset/typography/color/component/navigation/dimension/information-hierarchy change outside the approved Change Set is VISUAL_DRIFT_FAIL.
+  - index: 40
+    rows:
+    - row: 0
+      cells:
+      - Design Item / 設計項目
+      - Canonical Planning Design Contract / 正式規劃設計契約
+    - row: 1
+      cells:
+      - Keyboard / Focus
+      - Reading and focus order MUST follow semantic operation order. Every interactive control is keyboard reachable; Focus state remains visibly distinct.
+    - row: 2
+      cells:
+      - ARIA / Label
+      - Icon-only controls require accessible name/label; form fields bind visible label, validation/error description and required state.
+    - row: 3
+      cells:
+      - Modal / Drawer
+      - On open, focus enters the surface; focus remains contained where modal; close/cancel is keyboard reachable; focus returns to the invoking control.
+    - row: 4
+      cells:
+      - Color / State
+      - State meaning MUST NOT rely on color alone; text/icon/state label remains available under current contrast tokens.
+    - row: 5
+      cells:
+      - Error / Validation
+      - Error state is announced/associated with its control or field; failure does not erase user input unless the current design explicitly requires reset.
+    - row: 6
+      cells:
+      - i18n Languages
+      - zh-TW / zh-CN / en are design-supported language contexts. Labels/help/error/status text must use localization-owned copy rather than page-local semantic
+        duplication.
+    - row: 7
+      cells:
+      - Variable Text Length
+      - Localized text may wrap/reflow within current responsive rules but MUST NOT alter functional order, hide required actions or create uncontrolled layout drift.

@@ -1,0 +1,2869 @@
+schema_version: ACPOS_WORD_YAML_PROJECTION_V1
+projection_mode: SOURCE_GROUNDED_NO_INVENTION
+sequence: 17
+source:
+  branch: 0921acpos
+  git_head: 7bd2dbdb89b685c5f5f6045c8e3e17c5f2500db5
+  word_path: ACPOS_ERP-01_ERP與財務_Mother_Basic_Design_OPTIMIZED.docx
+  word_sha256: 3ab6d767ae08891b69c2f61d9408e9d39e9d84e5d8f3ac12d07f4c8234778eff
+authority_rules:
+- Word source remains canonical for this projection.
+- Do not silently fill, correct, reconcile, or replace source content.
+- Do not convert BLOCKED, NOT_EXECUTED, REQUIRE_EXACT_BINDING, SOURCE_NOT_DEFINED into PASS.
+- Paragraph and table order is preserved by source index.
+document:
+  paragraphs:
+  - index: 0
+    style: Normal
+    text: 'ERP-01 ERP 與財務
+
+      Mother Basic Design · Functional Completion · Data Truth & Finance Governance
+
+      ORANGE ONE · admin:ERP-01'
+  - index: 1
+    style: Normal
+    text: 本版保留單頁三個主要工作 View，並依母規範補齊 Entity × Operation、功能加入／排除規則、Finance Read Model、Data Trust、Connector/Mapping、Sync Recovery、Functional Chain、Permission、State、Error、Visual
+      Geometry、A11y、Acceptance 與施工映射。
+  - index: 2
+    style: Normal
+    text: 核心優化：財務數值、Forecast、Capacity Guardrail、Recommendation Boundary 明確分層；Connector 與 Mapping 先驗證再進 Sync；Freshness、Completeness、Currency/Timezone 成為資料可信度帶。未註冊的收入／支出／Ledger／Budget
+      寫入與外部 ERP Writeback 不進本頁 effectful UI。
+  - index: 4
+    style: Normal
+    text: 圖 1｜ERP-01 財務概況：Actual Finance、Forecast、Guardrails 與 Data Trust 分層呈現。
+  - index: 5
+    style: Heading 1
+    text: 1. Page Identity / 頁面定位與產品目標
+  - index: 7
+    style: Heading 1
+    text: 2. Scope / 需求、角色與 Out-of-Scope
+  - index: 9
+    style: Heading 1
+    text: 3. Business Entity × Operation / 實體與操作矩陣
+  - index: 11
+    style: Heading 1
+    text: 4. Entity Hierarchy / 資料與生命週期
+  - index: 12
+    style: Normal
+    text: ERP Connector → Mapping → Connector Validation → Sync Job → Snapshot → Data Quality / Freshness / Completeness → Finance Read Model / Fact Pack / Forecast
+      / Guardrails。Failure、Audit、Correlation、Version、Scope 與 Permission 橫跨全鏈。
+  - index: 13
+    style: Normal
+    text: Finance View 不是第二套 Ledger。它只消費受治理 Read Model；任何新的收入、支出、Journal、Budget 或外部 ERP Write 操作，只有在未來存在精確 Operation / Permission / State Contract 時才能進入 effectful
+      UI。
+  - index: 14
+    style: Heading 1
+    text: 5. Three-View Functional Workbench / 三大工作 View
+  - index: 16
+    style: Heading 1
+    text: 6. Functional Admission / 功能加入、降級與排除規則
+  - index: 18
+    style: Heading 1
+    text: 7. Visual Architecture / 版面與資訊層級
+  - index: 20
+    style: Normal
+    text: 圖 2｜ERP-01 連接與同步：Connector、Mapping、Snapshot、Sync、Quality 與 Recovery 合併在同一頁。
+  - index: 22
+    style: Heading 1
+    text: 8. Finance Read Model / 財務資訊語義與顯示規則
+  - index: 24
+    style: Heading 1
+    text: 9. Connector / Mapping Contract / ERP 連接契約
+  - index: 26
+    style: Heading 1
+    text: 10. Sync & Data Quality Contract / 同步與資料品質
+  - index: 28
+    style: Heading 1
+    text: 11. Functional Chain / 端到端功能鏈
+  - index: 30
+    style: Heading 1
+    text: 12. Control Registry / 42 個頁面控制
+  - index: 32
+    style: Normal
+    text: Control 不是「畫面上必須全部常駐」。低頻技術欄位與 Failure/Audit 進 Detail Drawer；Action Dock 僅呈現目前 View/State/Permission 合法按鈕，避免技術控制牆。
+  - index: 33
+    style: Heading 1
+    text: 13. Action Registry / 18 個 Action
+  - index: 35
+    style: Heading 1
+    text: 14. Gate / Permission / Security Matrix
+  - index: 37
+    style: Normal
+    text: 頁面內明確使用的權限包括：erp.connector.read、erp.connector.write、erp.connector.validate、erp.mapping.validate、erp.sync.request、erp.sync.retry、erp.snapshot.read、finance.read。Role
+      Name 與 Department Membership 不得直接授權。
+  - index: 38
+    style: Heading 1
+    text: 15. State / Transition / Recovery
+  - index: 40
+    style: Heading 1
+    text: 16. Error / Recovery Registry
+  - index: 42
+    style: Heading 1
+    text: 17. Integration Ports / Runtime Binding
+  - index: 44
+    style: Heading 1
+    text: 18. Data Truth / Security / Audit Hard Locks
+  - index: 45
+    style: List Bullet
+    text: ERPConnectorService 是唯一 Connector/Snapshot/Sync Owner；FinanceGuardrailService 是唯一 Finance/Capacity/Forecast Owner。
+  - index: 46
+    style: List Bullet
+    text: Raw Secret 永不顯示；只處理 Secret Reference ID。
+  - index: 47
+    style: List Bullet
+    text: ERP_write_from_ACPOS 禁止；任何外部 ERP 寫入需未來另有明確註冊 Operation。
+  - index: 48
+    style: List Bullet
+    text: Missing / unavailable 不得當 0；Finance amount 未授權時 Mask。
+  - index: 49
+    style: List Bullet
+    text: 前端 Hide 不是 Authorization；Server 必須驗 Identity、Permission、Scope、State、Expected Version、Idempotency、Audit。
+  - index: 50
+    style: List Bullet
+    text: 不得建立第二 ERP、Finance、Snapshot、Sync、Export、Permission 或 Provider/API-key 系統。
+  - index: 51
+    style: List Bullet
+    text: 不得使用 fake KPI、fake chart、sample amount、synthetic completeness/freshness/failure。
+  - index: 52
+    style: Heading 1
+    text: 19. Visual State / A11y / Localization
+  - index: 54
+    style: Heading 1
+    text: 20. Acceptance Matrix / 驗收矩陣
+  - index: 56
+    style: Heading 1
+    text: 21. Definition of Done / Design Freeze 前完成條件
+  - index: 57
+    style: List Bullet
+    text: Page Identity、Scope、Out-of-Scope、Entity × Operation、Data/State Hierarchy 完整。
+  - index: 58
+    style: List Bullet
+    text: 8 Sections、42 Controls、18 Actions、10 Gates、8 Errors、14 Runtime Operations 的頁面映射完整。
+  - index: 59
+    style: List Bullet
+    text: Finance / Connector / Sync 三 View 與 Visual Geometry 固定；未指定區域不得因微調漂移。
+  - index: 60
+    style: List Bullet
+    text: 兩張實際 UI Design Preview 對應真實頁面結構，不是概念圖。
+  - index: 61
+    style: List Bullet
+    text: Finance Write Boundary、Secret Boundary、External ERP Writeback Boundary、Missing-as-zero Boundary 明確。
+  - index: 62
+    style: List Bullet
+    text: A11y / i18n / Disabled Reason / Error Recovery / Audit / Version / Correlation 均具施工落點。
+  - index: 63
+    style: List Bullet
+    text: 所有 effectful control 均可追溯到 Operation / Gate / Permission；未註冊能力 fail-closed。
+  - index: 64
+    style: Heading 1
+    text: 22. Construction Mapping / 施工切片與驗證順序
+  - index: 66
+    style: Normal
+    text: 最終設計裁決：ERP-01 是「可信財務讀模型 + ERP 連接與同步治理工作台」，不是第二套會計／Ledger 系統。任何未被正式 Operation 支持的寫入功能都不透過 UI 假裝完成；頁面只呈現可被精確驗證、可追溯、可 fail-closed 的能力。
+  - index: 68
+    style: Heading 1
+    text: 2026-09-21 Machine Authority Construction Closure / 機器權威施工綁定封板
+  - index: 69
+    style: Normal
+    text: '[ACPOS-20260921-SOURCE-GROUNDED-CONSTRUCTION-CLOSURE-V2] Source-grounded only. Existing Current source wins; missing source values remain blocked/decision-required.
+      This closure supersedes the prior generic 2026-09-21 V1/V3 annex only, not the original domain logic or human visual review gates.'
+  - index: 70
+    style: Heading 2
+    text: ERP-01 · Exact Construction Binding
+  - index: 71
+    style: Heading 3
+    text: ERP Denominator Clarification
+  - index: 72
+    style: Normal
+    text: 42 is the complete current page-control denominator. The separate “17 + 12 = 29 source controls” acceptance statement is a source-control coverage slice,
+      not the full page denominator. It MUST NOT replace the 42-control registry.
+  - index: 73
+    style: Heading 2
+    text: Page Construction Invariant
+  - index: 74
+    style: Normal
+    text: The exact control denominator above is the only construction denominator for this page. Components/fields/visual IDs are not counted as additional controls.
+      Existing source UIDs are preserved. A control classified UI_LOCAL_EXACT MUST NOT create a server write. A control classified SPEC_EXACT_RUNTIME_BLOCKED / NOT_EXECUTED
+      MUST remain disabled or fail-closed until its runtime evidence exists.
+  - index: 76
+    style: Heading 1
+    text: Batch 15 · ERP Read Projection Binding / Applicability Ledger
+  - index: 77
+    style: Normal
+    text: '[ACPOS-20260921-BATCH-15-OWNER-SPECIFIC-READ-PROJECTION-CLOSURE-V1::PAGE::ERP-01] Fourteen Runtime Owner cells are bound in the existing product registry;
+      twenty READONLY field Operation cells remain ''—'' by explicit non-applicability. No API route or per-field Operation is invented.'
+  - index: 79
+    style: Heading 1
+    text: Batch 49 · ERP-01 Connector / Sync Contract Binding Ledger
+  - index: 80
+    style: Normal
+    text: '[ACPOS-20260922-BATCH-49-SYSTEM06-ENTERPRISE-ERP-CONTRACT-REMEDIATION-V1::PAGE::ERP-01] These bindings close only Payload/Schema and Persistence Owner
+      gaps. Existing Method/Path, Action, Gate, Permission, Runtime Owner and Runtime Status remain unchanged. Projection/search/export state stays derived; enterprise
+      canonical entities reuse their existing owners; ERP connector secrets remain references only; no Production/provider execution is claimed.'
+  - index: 82
+    style: Heading 2
+    text: Canonical Business Entity Operation Applicability Matrix / 業務實體操作適用性矩陣
+  - index: 83
+    style: Normal
+    text: 'Authority: Current Word design + Mother §71 bounded completion. 本矩陣只正規化既有行為與目前未授權行為；不得據此新增 Business Entity、Operation、Runtime 或 API。 Current tree: b2f81b20322dd9e9268001126b07931b437e27df.'
+  - index: 85
+    style: Heading 1
+    text: Mother Planning / Basic Design Closure Annex｜規劃設計規範閉環補充
+  - index: 86
+    style: Normal
+    text: '[ACPOS-20260922-PLANNING-DESIGN-CLOSURE-ANNEX-V1] 本附錄只補規劃／基本設計規範缺口；原頁面既有功能、Owner、Operation、Permission、Entity、Visual 與跨頁 Authority 仍為同一 Canonical Owner。不得由本附錄發明
+      Runtime/API/DB/Provider 行為，也不得建立第二套平行規範。'
+  - index: 87
+    style: Heading 2
+    text: Visual Geometry Contract Closure｜視覺幾何補齊
+  - index: 88
+    style: Normal
+    text: '[ACPOS-DESIGN-CLOSURE:ERP-01:GEOMETRY]'
+  - index: 89
+    style: Heading 2
+    text: Visual Anchor / Preview / Review Contract｜視覺錨點與預覽審查補齊
+  - index: 90
+    style: Normal
+    text: '[ACPOS-DESIGN-CLOSURE:ERP-01:VISUAL]'
+  - index: 91
+    style: Heading 2
+    text: Visual Generation / Review Planning Contract
+  - index: 92
+    style: Normal
+    text: '[ACPOS-DESIGN-CLOSURE:ERP-01:VISUAL-CONTRACT]'
+  - index: 93
+    style: Heading 2
+    text: Asset Registry / Binding Applicability Closure｜素材註冊與綁定補齊
+  - index: 94
+    style: Normal
+    text: '[ACPOS-DESIGN-CLOSURE:ERP-01:ASSET]'
+  - index: 95
+    style: Heading 2
+    text: Audit Baseline / Acceptance Matrix / Definition of Done Closure
+  - index: 96
+    style: Normal
+    text: '[ACPOS-DESIGN-CLOSURE:ERP-01:AUDIT]'
+  - index: 97
+    style: Heading 2
+    text: Design Freeze Package Closure｜設計封板包補齊
+  - index: 98
+    style: Normal
+    text: '[ACPOS-DESIGN-CLOSURE:ERP-01:FREEZE]'
+  tables:
+  - index: 0
+    rows:
+    - row: 0
+      cells:
+      - 項目
+      - 設計規格
+    - row: 1
+      cells:
+      - Page UID
+      - admin:ERP-01
+    - row: 2
+      cells:
+      - 顯示名稱
+      - ERP / ERP & Finance
+    - row: 3
+      cells:
+      - Surface
+      - ADMIN
+    - row: 4
+      cells:
+      - 主要目的
+      - 將財務 Read Model、ERP Connector/Mapping、Snapshot/Sync/Data Quality 集中在單一工作區。
+    - row: 5
+      cells:
+      - 主要使用者
+      - 具有 ERP/Finance L1 與精確 operation permission 的管理者／財務／系統營運人員。
+    - row: 6
+      cells:
+      - 主流程
+      - Finance Overview ↔ ERP Connection ↔ Sync & Data Quality；Detail/Audit 使用 secondary drawer。
+    - row: 7
+      cells:
+      - 產品原則
+      - One ERP owner、One Finance owner、Real data only、Fail Closed、Exact Version、No missing-as-zero。
+    - row: 8
+      cells:
+      - 完成語義
+      - 頁面成功只能描述已完成的 View/Action；不能用本頁規格完成推論 Runtime、E2E 或 Production Ready。
+  - index: 1
+    rows:
+    - row: 0
+      cells:
+      - 類型
+      - 內容
+    - row: 1
+      cells:
+      - In Scope
+      - 成本、收益、現金流、產能、Forecast、Guardrails、Recommendation Boundary；ERP Connector 建立/更新/驗證；Mapping 驗證；Snapshot Refresh；Sync 建立/狀態/重試；Failure Detail；Export。
+    - row: 2
+      cells:
+      - 產品優化
+      - 將 Finance Actual、Forecast、Guardrail 三種語義分開；增加 Data Trust Strip；Connector/Mapping/Sync 做前置條件與合法下一步；Failure Recovery 與 Audit Drawer 同頁。
+    - row: 3
+      cells:
+      - Out of Scope
+      - 建立收入、建立支出、直接編輯 Ledger、Budget Reallocation 執行、Manual Journal、外部 ERP Writeback、第二 Finance/ERP Service、第二 Export Service、頁面內 Secret Store。
+    - row: 4
+      cells:
+      - Non-functional
+      - Secret Reference only、Amount permission mask、Missing=—、Stale/Incomplete 可見、Idempotency、Expected Version、Audit、A11y、1280+ Desktop。
+  - index: 2
+    rows:
+    - row: 0
+      cells:
+      - Entity
+      - Read / Projection
+      - Operation
+      - 核心邊界
+    - row: 1
+      cells:
+      - FinanceReadModel
+      - Cost / Revenue / Cashflow / Capacity
+      - Get Fact Pack / Forecast / Guardrails / Export
+      - 只讀；前端不自行計算權威財務值。
+    - row: 2
+      cells:
+      - ERPConnector
+      - Connector / Provider / Adapter / Scope / Status
+      - Create / Update / Validate
+      - Secret 只保存 Reference ID。
+    - row: 3
+      cells:
+      - ERPMapping
+      - Mapping Version / Schema Binding
+      - Validate Mapping
+      - Mapping 未通過不可假裝 Connector Ready。
+    - row: 4
+      cells:
+      - ERPSnapshot
+      - Snapshot / Freshness / Currency-Timezone / Completeness
+      - Refresh Snapshot
+      - 缺值不是 0；Freshness/Completeness 是資料信任條件。
+    - row: 5
+      cells:
+      - ERPSyncJob
+      - Sync Job / Status / Failure
+      - Create / Get Status / Retry
+      - 只有 failed 且 retry-eligible job 可重試。
+    - row: 6
+      cells:
+      - ERPFailure
+      - Failure ID / reason / retry eligibility
+      - Get Failure
+      - 低頻 detail drawer；不複製第二 Failure Store。
+    - row: 7
+      cells:
+      - Audit / Correlation
+      - Audit Ref / Version / Correlation
+      - Open Detail
+      - Effectful operation 必須留下追溯。
+    - row: 8
+      cells:
+      - ExportProjection
+      - Authorized current projection
+      - Export
+      - 只匯出授權 Scope；沿用既有 Export owner。
+  - index: 3
+    rows:
+    - row: 0
+      cells:
+      - View
+      - 主工作區
+      - 主要操作
+      - 條件／限制
+    - row: 1
+      cells:
+      - 財務概況
+      - Cost / Revenue / Cashflow / Capacity / Forecast / Guardrails / Recommendation Boundary
+      - Fact Pack / Guardrails / Forecast / Export
+      - Actual 與 Forecast/Guardrail 分層；無 fake KPI / client formula。
+    - row: 2
+      cells:
+      - ERP 連接
+      - Connector Identity、Provider/Adapter、Secret Ref、Entity Scope、Connection Status、Mapping Version
+      - Create / Update / Validate Connector / Validate Mapping
+      - Secret Value 不進頁面；Mapping/Connector 狀態決定合法下一步。
+    - row: 3
+      cells:
+      - 同步與資料品質
+      - Snapshot、Freshness、Currency-Timezone、Completeness、Last Sync、Failure
+      - Refresh Snapshot / Create Sync / Status / Retry / Failure Detail
+      - Stale / Failed / Incomplete 顯示真實狀態；Retry 僅合法 Job。
+  - index: 4
+    rows:
+    - row: 0
+      cells:
+      - 能力
+      - 裁決
+      - 理由
+    - row: 1
+      cells:
+      - Finance Fact Pack / Forecast / Guardrail
+      - 保留主流程
+      - 已有精確 Read Operation。
+    - row: 2
+      cells:
+      - Connector Create / Update / Validate
+      - 保留主流程
+      - 已有精確 Effectful Operation + Gate。
+    - row: 3
+      cells:
+      - Mapping Validate
+      - 保留主流程
+      - 避免 Sync 在未知 Mapping 下執行。
+    - row: 4
+      cells:
+      - Snapshot / Sync / Retry
+      - 保留主流程
+      - 具精確 Job / State / Retry Gate。
+    - row: 5
+      cells:
+      - Raw Secret Reveal / Secret Value Field
+      - 排除
+      - ERP 頁面只處理 secret_reference_id。
+    - row: 6
+      cells:
+      - 新增收入／支出／Ledger Edit / Journal
+      - 不加入 effectful UI
+      - 沒有精確已註冊 Operation；要求時 BLOCK + Authority Gap。
+    - row: 7
+      cells:
+      - Budget Reallocation 執行
+      - 不加入
+      - 沒有精確 Operation / Approval Contract。
+    - row: 8
+      cells:
+      - External ERP Writeback
+      - 禁止
+      - 本頁只做 Connector/Read/Sync，不回寫 ERP。
+    - row: 9
+      cells:
+      - 裝飾性 KPI / Trend / Sample Amount
+      - 排除
+      - 缺值不得用 0 或假資料補齊。
+  - index: 5
+    rows:
+    - row: 0
+      cells:
+      - 區域
+      - Geometry / 行為
+    - row: 1
+      cells:
+      - Global Header
+      - 58px；沿用全站 Header。
+    - row: 2
+      cells:
+      - Sidebar
+      - 64px collapsed interaction rail；expanded overlay 221px，不推動 workspace。
+    - row: 3
+      cells:
+      - Context Bar
+      - 56px；顯示 Page Title、Scope、Snapshot、Freshness。
+    - row: 4
+      cells:
+      - View Bar
+      - 52px；財務概況 / ERP 連接 / 同步與資料品質，僅切換 UI context。
+    - row: 5
+      cells:
+      - Primary Grid
+      - 72% 主工作區 + 28% Governance Rail，gap 16px。
+    - row: 6
+      cells:
+      - Detail Drawer
+      - 480–560px；Failure/Audit/Version/Correlation/低頻內容。
+    - row: 7
+      cells:
+      - Action Dock
+      - 56px；只顯示目前 View + State + Permission 合法操作；最多 1 個 dominant CTA。
+    - row: 8
+      cells:
+      - Minimum Width
+      - 1280px；以下 horizontal scroll，不建立不同功能流程。
+  - index: 6
+    rows:
+    - row: 0
+      cells:
+      - 語義層
+      - 內容
+      - 顯示／治理規則
+    - row: 1
+      cells:
+      - Actual / 已發生
+      - Cost、Revenue、Cashflow、Capacity
+      - 只顯示授權 Read Model；Raw amount 需 finance.read。
+    - row: 2
+      cells:
+      - Forecast / 預測
+      - Forecast
+      - 必須標示預測語義，不與 Actual 混用。
+    - row: 3
+      cells:
+      - Guardrail / 邊界
+      - Capacity Guardrails
+      - 描述容量／限制／門檻，不假裝為已發生財務。
+    - row: 4
+      cells:
+      - Recommendation Boundary / 建議邊界
+      - Read-only recommendation boundary
+      - 建議不是會計分錄，也不直接執行 Budget / Ledger mutation。
+    - row: 5
+      cells:
+      - Data Trust
+      - Freshness / Completeness / Currency-Timezone / Snapshot
+      - 任何資料不完整或過期，狀態需明確顯示。
+    - row: 6
+      cells:
+      - Missing Value
+      - — / STALE / INCOMPLETE / MASKED
+      - 禁止 missing-as-zero。
+  - index: 7
+    rows:
+    - row: 0
+      cells:
+      - 欄位／操作
+      - 規格
+    - row: 1
+      cells:
+      - Connector fields
+      - provider_key / adapter_key / secret_reference_id / entity_scope / mapping_version + registered mapping schema fields。
+    - row: 2
+      cells:
+      - Create
+      - Schema-driven modal；不得加入 raw secret value 或 client-authored runtime state。
+    - row: 3
+      cells:
+      - Update
+      - 只依精確既有 Update Schema；禁止把 Page 欄位 union 成 request。
+    - row: 4
+      cells:
+      - Validate Connector
+      - 精確 Connector + Version + State Guard + Permission + Audit。
+    - row: 5
+      cells:
+      - Validate Mapping
+      - 精確 Mapping Version / Schema；Fail 時保留原狀態，不假裝 READY。
+    - row: 6
+      cells:
+      - Secret Boundary
+      - UI 只顯示 Secret Reference ID；Secret Value 永不 normal-render。
+  - index: 8
+    rows:
+    - row: 0
+      cells:
+      - 能力
+      - 契約
+    - row: 1
+      cells:
+      - Refresh Snapshot
+      - 刷新既有 Snapshot Projection；State/Scope/Version/Idempotency/Audit 皆需成立。
+    - row: 2
+      cells:
+      - Create Sync Job
+      - 精確 Connector + Scope + Current Request Schema；不得把 fixture/example 變成 UI default。
+    - row: 3
+      cells:
+      - Get Sync Status
+      - 讀取 exact Job；不以「已按下按鈕」推論成功。
+    - row: 4
+      cells:
+      - Retry Sync
+      - 只有 failed + retry-eligible exact job 可用；重試需 idempotency / audit。
+    - row: 5
+      cells:
+      - Failure Detail
+      - 顯示允許的 Failure detail + correlation/version；低頻 Drawer。
+    - row: 6
+      cells:
+      - Data Quality
+      - Freshness、Completeness、Currency-Timezone、Last Sync Status 是第一級判讀資訊。
+    - row: 7
+      cells:
+      - Partial / Failed
+      - 維持 SNAPSHOT_FAILED / DATA_INCOMPLETE / 真實狀態，不顯示 COMPLETE。
+  - index: 9
+    rows:
+    - row: 0
+      cells:
+      - Chain
+      - 完整鏈路
+    - row: 1
+      cells:
+      - Finance Read
+      - Intent → Page Gate → finance.read → getUiProjection/Finance Operations → Read Model → Mask/Data Trust → UI State
+    - row: 2
+      cells:
+      - Fact Pack
+      - Finance View → Gate → getERPFinanceFactPack → FinanceGuardrailService → exact response → Audit/Display
+    - row: 3
+      cells:
+      - Connector Create
+      - Form → Connector Write Gate → exact schema → createERPConnector → ERPConnectorService → State CONFIGURING → Audit
+    - row: 4
+      cells:
+      - Connector Validate
+      - Exact Connector → Validate Gate → validateERPConnector → READY / DEGRADED / FAILED → UI + Failure Ref
+    - row: 5
+      cells:
+      - Mapping Validate
+      - Exact Mapping/Version → Mapping Gate → validateERPMapping → Result → allow/block next step
+    - row: 6
+      cells:
+      - Sync Create
+      - Exact Connector/Scope → Sync Create Gate → createERPSyncJob → Job → Status → Snapshot/Data Quality
+    - row: 7
+      cells:
+      - Sync Retry
+      - Failed exact Job → Retry Gate → retryERPSync → missing legal work only → Status/Audit
+    - row: 8
+      cells:
+      - Export
+      - Authorized View/Scope → Export Gate → exportProjection → Existing Export owner → Result Ref
+  - index: 10
+    rows:
+    - row: 0
+      cells:
+      - 群組
+      - 數量
+      - 內容
+    - row: 1
+      cells:
+      - Context / Tabs
+      - '6'
+      - Scope、Snapshot、Freshness + 3 View Tabs。
+    - row: 2
+      cells:
+      - Finance
+      - '11'
+      - 7 Read Fields + Fact Pack / Guardrails / Forecast / Export。
+    - row: 3
+      cells:
+      - Connector
+      - '11'
+      - 7 Read Fields + Create / Update / Validate / Mapping Validate。
+    - row: 4
+      cells:
+      - Sync & Quality
+      - '11'
+      - 6 Read Fields + Refresh / Create / Status / Retry / Failure。
+    - row: 5
+      cells:
+      - Governance Rail
+      - '3'
+      - Readiness / Audit Ref / Detail Drawer。
+  - index: 11
+    rows:
+    - row: 0
+      cells:
+      - 類別
+      - Action
+      - Effect
+    - row: 1
+      cells:
+      - UI Context
+      - READ / VIEW-FINANCE / VIEW-CONNECTOR / VIEW-SYNC / DETAIL-OPEN
+      - Read / UI-only / Drawer-only
+    - row: 2
+      cells:
+      - Finance
+      - FACTPACK / GUARDRAILS / FORECAST / EXPORT
+      - 4 個 Read/Export Action
+    - row: 3
+      cells:
+      - Connector
+      - CONNECTOR-CREATE / UPDATE / VALIDATE / MAPPING-VALIDATE
+      - 4 個 Effectful Validation/Config Action
+    - row: 4
+      cells:
+      - Sync
+      - SNAPSHOT-REFRESH / SYNC-CREATE / SYNC-STATUS / SYNC-RETRY / FAILURE-GET
+      - 5 個 Snapshot/Job/Failure Action
+  - index: 12
+    rows:
+    - row: 0
+      cells:
+      - Gate
+      - 條件
+    - row: 1
+      cells:
+      - PAGE
+      - Identity + page VIEW + erp_finance L1 + exact account permission + scope/condition/classification/audit
+    - row: 2
+      cells:
+      - FINANCE
+      - PAGE + finance.read；否則 amount mask / non-amount status only
+    - row: 3
+      cells:
+      - CONNECTOR READ
+      - PAGE + erp.connector.read + field mask
+    - row: 4
+      cells:
+      - CONNECTOR WRITE
+      - PAGE + erp.connector.write + schema + expected_version + idempotency + state_guard + audit
+    - row: 5
+      cells:
+      - CONNECTOR VALIDATE
+      - PAGE + erp.connector.validate + exact connector/version
+    - row: 6
+      cells:
+      - MAPPING VALIDATE
+      - PAGE + erp.mapping.validate + exact mapping/version/schema
+    - row: 7
+      cells:
+      - SYNC READ
+      - PAGE + exact read permission + sync/snapshot/failure ref
+    - row: 8
+      cells:
+      - SNAPSHOT REFRESH
+      - PAGE + source refresh permission + scope/version/state/idempotency/audit
+    - row: 9
+      cells:
+      - SYNC CREATE
+      - PAGE + erp.sync.request + exact request + connector/scope/version/idempotency/audit
+    - row: 10
+      cells:
+      - SYNC RETRY
+      - PAGE + erp.sync.retry + exact failed retry-eligible job + state/version/idempotency/audit
+  - index: 13
+    rows:
+    - row: 0
+      cells:
+      - Domain
+      - States
+      - Transition Rule
+    - row: 1
+      cells:
+      - Common
+      - LOADING / READY / EMPTY / ERROR / POLICY_BLOCKED / VERSION_CONFLICT / REVIEW_REQUIRED / EXTERNAL_PENDING / READ_ONLY / ARCHIVED
+      - View Tab 切換不改 business state。
+    - row: 2
+      cells:
+      - Connector
+      - CONNECTOR_UNCONFIGURED / CONFIGURING / VALIDATING / READY / DEGRADED
+      - Create → CONFIGURING；Update → VALIDATING；Validate → READY / DEGRADED / FAILED。
+    - row: 3
+      cells:
+      - Snapshot
+      - SNAPSHOT_STALE / SNAPSHOT_SYNCING / SNAPSHOT_FAILED / DATA_INCOMPLETE
+      - Refresh/Sync 只依真實 Job 結果轉移。
+    - row: 4
+      cells:
+      - Failure
+      - Exact Failure + Retry Eligibility
+      - 無 retry eligibility 時 Retry disabled。
+  - index: 14
+    rows:
+    - row: 0
+      cells:
+      - Error
+      - Trigger
+      - Recovery
+    - row: 1
+      cells:
+      - AUTH
+      - Permission / Scope / Mask denied
+      - Hide/deny protected surface；Server DENY 為最終權威。
+    - row: 2
+      cells:
+      - SECRET
+      - Secret value 要被顯示/存入頁面
+      - BLOCK；只用 secret_reference_id。
+    - row: 3
+      cells:
+      - VERSION
+      - Expected version / exact ref stale
+      - VERSION_CONFLICT；reload exact projection。
+    - row: 4
+      cells:
+      - CONNECTOR
+      - Connector/Mapping validation fail
+      - 保留 DEGRADED/FAILED；顯示 permitted failure ref。
+    - row: 5
+      cells:
+      - SYNC
+      - Sync/Refresh partial or fail
+      - 保持 SNAPSHOT_FAILED / DATA_INCOMPLETE；只重試合法 job。
+    - row: 6
+      cells:
+      - FINANCE
+      - Finance missing/stale/incomplete/masked
+      - 顯示 — / stale / incomplete / masked；禁止合成 0。
+    - row: 7
+      cells:
+      - UNREGISTERED WRITE
+      - 要求 Revenue/Expense/Ledger/Budget/ERP write
+      - BLOCK + Authority Gap。
+    - row: 8
+      cells:
+      - UNDEFINED
+      - 未註冊欄位/operation/route/service
+      - BLOCK + Authority Gap。
+  - index: 15
+    rows:
+    - row: 0
+      cells:
+      - Operation
+      - Method / Path
+      - Owner
+    - row: 1
+      cells:
+      - getUiProjection
+      - GET /v1/ui-projections/{pageUid}
+      - Projection / Read Owner
+    - row: 2
+      cells:
+      - createERPConnector
+      - POST /v1/erp/connectors
+      - ERPConnectorService
+    - row: 3
+      cells:
+      - updateERPConnector
+      - PATCH /v1/erp/connectors/{id}
+      - ERPConnectorService
+    - row: 4
+      cells:
+      - validateERPConnector
+      - POST /v1/erp/connectors/{id}/validate
+      - ERPConnectorService
+    - row: 5
+      cells:
+      - validateERPMapping
+      - POST /v1/erp/mappings/{id}/validate
+      - ERPConnectorService
+    - row: 6
+      cells:
+      - refreshERPSnapshot
+      - POST /v1/erp/snapshots/refresh
+      - ERPConnectorService
+    - row: 7
+      cells:
+      - createERPSyncJob
+      - POST /v1/erp/sync-jobs
+      - ERPConnectorService
+    - row: 8
+      cells:
+      - getERPSyncStatus
+      - GET /v1/erp/sync-jobs/{id}
+      - ERPConnectorService
+    - row: 9
+      cells:
+      - retryERPSync
+      - POST /v1/erp/sync-jobs/{id}/retry
+      - ERPConnectorService
+    - row: 10
+      cells:
+      - getERPFailure
+      - GET /v1/erp/failures/{id}
+      - ERPConnectorService
+    - row: 11
+      cells:
+      - getERPFinanceFactPack
+      - GET /v1/erp/finance/fact-pack
+      - FinanceGuardrailService
+    - row: 12
+      cells:
+      - getERPCapacityGuardrails
+      - GET /v1/erp/capacity/guardrails
+      - FinanceGuardrailService
+    - row: 13
+      cells:
+      - getERPForecast
+      - GET /v1/erp/forecasts
+      - FinanceGuardrailService
+    - row: 14
+      cells:
+      - exportProjection
+      - POST /v1/exports
+      - Existing Export Owner
+  - index: 16
+    rows:
+    - row: 0
+      cells:
+      - 項目
+      - 要求
+    - row: 1
+      cells:
+      - Button States
+      - Default / Hover / Focus / Active / Loading / Disabled / Success / Error；Disabled 必須可解釋原因。
+    - row: 2
+      cells:
+      - Focus
+      - 所有 effectful control、tabs、drawer trigger、table row action 均須 keyboard reachable + visible focus。
+    - row: 3
+      cells:
+      - Screen Reader
+      - Tabs、Status、Masked Value、Error/Recovery、Table Header、Drawer Title 具語意名稱。
+    - row: 4
+      cells:
+      - Contrast
+      - 沿用科技紫 Global Visual；文字、border、focus ring 符合可讀性。
+    - row: 5
+      cells:
+      - i18n
+      - zh-TW / zh-CN / en；ERP、ID、Forecast、Guardrail 等術語在三語文案中一致。
+    - row: 6
+      cells:
+      - Responsive
+      - 正式操作流程鎖定 desktop 1280+；窄螢幕 horizontal scroll，不變更業務流程。
+  - index: 17
+    rows:
+    - row: 0
+      cells:
+      - UID
+      - 驗收項目
+      - PASS 條件
+    - row: 1
+      cells:
+      - ACC-01
+      - Single Current Page
+      - 只有 ERP-01；不重建 ERP-02 standalone navigation。
+    - row: 2
+      cells:
+      - ACC-02
+      - Owner Reuse
+      - ERPConnectorService + FinanceGuardrailService；無第二 service/store。
+    - row: 3
+      cells:
+      - ACC-03
+      - Source Control Coverage
+      - 17 + 12 source controls = 29 均有映射。
+    - row: 4
+      cells:
+      - ACC-04
+      - Operation Coverage
+      - 14 unique ERP operations 均有頁面綁定。
+    - row: 5
+      cells:
+      - ACC-05
+      - Finance Boundary
+      - Finance 只讀/Export；無未註冊收入/支出/Ledger/Budget Write。
+    - row: 6
+      cells:
+      - ACC-06
+      - External ERP Boundary
+      - 無 ACPOS → ERP writeback path。
+    - row: 7
+      cells:
+      - ACC-07
+      - Secret Boundary
+      - 只有 secret_reference_id。
+    - row: 8
+      cells:
+      - ACC-08
+      - Data Truth
+      - Missing=— / stale / incomplete / error；無 zero substitution。
+    - row: 9
+      cells:
+      - ACC-09
+      - Authorization
+      - Account permission + scope/state/version/idempotency/audit。
+    - row: 10
+      cells:
+      - ACC-10
+      - Same-page UX
+      - 3 View tabs UI-only；Audit/Failure secondary drawer。
+    - row: 11
+      cells:
+      - ACC-11
+      - Layout
+      - 56 Context + 52 View Bar + 72/28 + 480–560 Drawer + 56 Action Dock。
+    - row: 12
+      cells:
+      - ACC-12
+      - No Fake UI
+      - 無 decorative KPI/chart/sample finance/connector values。
+    - row: 13
+      cells:
+      - ACC-13
+      - Form Authority
+      - Effectful request 使用 exact schema；no page-union inference。
+    - row: 14
+      cells:
+      - ACC-14
+      - State Truth
+      - Connector/Snapshot 使用正式 State vocabulary。
+    - row: 15
+      cells:
+      - ACC-15
+      - Truthful Completion
+      - 文件完整不等同 Runtime/E2E/Deployment 完成。
+  - index: 18
+    rows:
+    - row: 0
+      cells:
+      - 施工切片
+      - 內容
+      - 驗證重點
+    - row: 1
+      cells:
+      - Slice A
+      - Shell + Context + View Bar
+      - 確認 3 View 不產生 route/business mutation。
+    - row: 2
+      cells:
+      - Slice B
+      - Finance Read Model
+      - Permission Mask + FactPack/Forecast/Guardrail/Export + missing/stale state。
+    - row: 3
+      cells:
+      - Slice C
+      - Connector / Mapping
+      - Create/Update/Validate + Secret Boundary + version/state guards。
+    - row: 4
+      cells:
+      - Slice D
+      - Sync / Snapshot
+      - Refresh/Create/Status/Retry/Failure + Data Quality。
+    - row: 5
+      cells:
+      - Slice E
+      - Security / Error
+      - Unauthorized / Mask / Version Conflict / Secret / Partial Sync / Unregistered Write。
+    - row: 6
+      cells:
+      - Slice F
+      - Cross-view / Persistence
+      - 切換 View 保留合法 context；Drawer/Audit/Failure 可追溯。
+    - row: 7
+      cells:
+      - Slice G
+      - Visual / A11y
+      - Geometry、overflow、focus、disabled reason、table header、localization。
+  - index: 19
+    rows:
+    - row: 0
+      cells:
+      - Authority
+      - Value
+    - row: 1
+      cells:
+      - Source Commit
+      - 165c6440cb53b1b45ec96905241fb4d56dc3b867
+    - row: 2
+      cells:
+      - Machine Authority
+      - authority/pages/admin/ERP-01/ACPOS_ERP-01_ERP_FINANCE_SINGLE_PAGE_FINAL_LOCKED_ENCODING.yaml
+    - row: 3
+      cells:
+      - Authority SHA-256
+      - ce3e4c9b9a7fcac9e81d8ee02dbc97e8cdba261167a27a6d555aa32c05c1d391
+    - row: 4
+      cells:
+      - Expected Control Denominator
+      - '42'
+    - row: 5
+      cells:
+      - Unique Control Rows
+      - '42'
+    - row: 6
+      cells:
+      - Denominator Gate
+      - PASS
+  - index: 20
+    rows:
+    - row: 0
+      cells:
+      - Control UID
+      - UID Status
+      - Label
+      - Type
+      - Action UID
+      - Gate
+      - Permission / Auth Resource
+      - Payload / Schema
+      - Operation
+      - Method / Path
+      - Runtime Owner
+      - Persistence Owner
+      - Runtime Status
+    - row: 1
+      cells:
+      - ERP-01-BTN-CONNECTOR-CREATE
+      - EXISTING_SOURCE_UID
+      - 新增 ERP 連接
+      - BUTTON
+      - ERP-01-ACT-CONNECTOR-CREATE
+      - ERP-01-GATE-CONNECTOR-WRITE
+      - ERP-01-PERM-CONNECTOR
+      - CreateERPConnectorRequest
+      - createERPConnector
+      - POST /v1/erp/connectors
+      - ERPConnectorService
+      - ERPConnectorService / ERP Connector Configuration + Audit
+      - EFFECTFUL_EXACT
+    - row: 2
+      cells:
+      - ERP-01-BTN-CONNECTOR-UPDATE
+      - EXISTING_SOURCE_UID
+      - 更新 ERP 連接
+      - BUTTON
+      - ERP-01-ACT-CONNECTOR-UPDATE
+      - ERP-01-GATE-CONNECTOR-WRITE
+      - ERP-01-PERM-CONNECTOR
+      - UpdateERPConnectorRequest
+      - updateERPConnector
+      - PATCH /v1/erp/connectors/{id}
+      - ERPConnectorService
+      - ERPConnectorService / ERP Connector Configuration + Audit
+      - EFFECTFUL_EXACT
+    - row: 3
+      cells:
+      - ERP-01-BTN-CONNECTOR-VALIDATE
+      - EXISTING_SOURCE_UID
+      - 驗證 ERP 連接
+      - BUTTON
+      - ERP-01-ACT-CONNECTOR-VALIDATE
+      - ERP-01-GATE-CONNECTOR-VALIDATE
+      - ERP-01-PERM-CONNECTOR
+      - ValidateERPConnectorRequest
+      - validateERPConnector
+      - POST /v1/erp/connectors/{id}/validate
+      - ERPConnectorService
+      - ERPConnectorService / ERP Connector Validation Evidence
+      - EFFECTFUL_EXACT
+    - row: 4
+      cells:
+      - ERP-01-BTN-DETAIL
+      - EXISTING_SOURCE_UID
+      - 查看詳細資料 / Audit
+      - BUTTON
+      - ERP-01-ACT-DETAIL-OPEN
+      - ERP-01-GATE-PAGE
+      - ERP-01-PERM-READ
+      - —
+      - getUiProjection
+      - GET /v1/ui-projections/{pageUid}
+      - Projection / source page read owner
+      - —
+      - READ_EXACT
+    - row: 5
+      cells:
+      - ERP-01-BTN-EXPORT
+      - EXISTING_SOURCE_UID
+      - 匯出目前投影
+      - BUTTON
+      - ERP-01-ACT-EXPORT
+      - ERP-01-GATE-FINANCE
+      - ERP-01-PERM-FINANCE
+      - ExportERPProjectionRequest
+      - exportProjection
+      - POST /v1/exports
+      - Existing Projection/Export owner
+      - Existing Projection/Export Owner / ERP Export Artifact + Export Audit
+      - EFFECTFUL_EXACT
+    - row: 6
+      cells:
+      - ERP-01-BTN-FACTPACK
+      - EXISTING_SOURCE_UID
+      - 取得 Fact Pack
+      - BUTTON
+      - ERP-01-ACT-FACTPACK
+      - ERP-01-GATE-FINANCE
+      - ERP-01-PERM-FINANCE
+      - —
+      - getERPFinanceFactPack
+      - GET /v1/erp/finance/fact-pack
+      - FinanceGuardrailService
+      - —
+      - READ_EXACT
+    - row: 7
+      cells:
+      - ERP-01-BTN-FAILURE-GET
+      - EXISTING_SOURCE_UID
+      - 查看失敗原因
+      - BUTTON
+      - ERP-01-ACT-FAILURE-GET
+      - ERP-01-GATE-SYNC-READ
+      - ERP-01-PERM-SYNC
+      - —
+      - getERPFailure
+      - GET /v1/erp/failures/{id}
+      - ERPConnectorService
+      - —
+      - READ_EXACT
+    - row: 8
+      cells:
+      - ERP-01-BTN-FORECAST
+      - EXISTING_SOURCE_UID
+      - 取得 Forecast
+      - BUTTON
+      - ERP-01-ACT-FORECAST
+      - ERP-01-GATE-FINANCE
+      - ERP-01-PERM-FINANCE
+      - —
+      - getERPForecast
+      - GET /v1/erp/forecasts
+      - FinanceGuardrailService
+      - —
+      - READ_EXACT
+    - row: 9
+      cells:
+      - ERP-01-BTN-GUARDRAILS
+      - EXISTING_SOURCE_UID
+      - 取得產能 Guardrails
+      - BUTTON
+      - ERP-01-ACT-GUARDRAILS
+      - ERP-01-GATE-FINANCE
+      - ERP-01-PERM-FINANCE
+      - —
+      - getERPCapacityGuardrails
+      - GET /v1/erp/capacity/guardrails
+      - FinanceGuardrailService
+      - —
+      - READ_EXACT
+    - row: 10
+      cells:
+      - ERP-01-BTN-MAPPING-VALIDATE
+      - EXISTING_SOURCE_UID
+      - 驗證 Mapping
+      - BUTTON
+      - ERP-01-ACT-MAPPING-VALIDATE
+      - ERP-01-GATE-MAPPING-VALIDATE
+      - ERP-01-PERM-CONNECTOR
+      - ValidateERPMappingRequest
+      - validateERPMapping
+      - POST /v1/erp/mappings/{id}/validate
+      - ERPConnectorService
+      - ERPConnectorService / ERP Mapping Validation Evidence
+      - EFFECTFUL_EXACT
+    - row: 11
+      cells:
+      - ERP-01-BTN-SNAPSHOT-REFRESH
+      - EXISTING_SOURCE_UID
+      - 更新 Snapshot
+      - BUTTON
+      - ERP-01-ACT-SNAPSHOT-REFRESH
+      - ERP-01-GATE-SNAPSHOT-REFRESH
+      - ERP-01-PERM-SYNC
+      - RefreshERPSnapshotRequest
+      - refreshERPSnapshot
+      - POST /v1/erp/snapshots/refresh
+      - ERPConnectorService
+      - ERPConnectorService / ERP Snapshot + Freshness/Audit
+      - EFFECTFUL_EXACT
+    - row: 12
+      cells:
+      - ERP-01-BTN-SYNC-CREATE
+      - EXISTING_SOURCE_UID
+      - 建立同步工作
+      - BUTTON
+      - ERP-01-ACT-SYNC-CREATE
+      - ERP-01-GATE-SYNC-CREATE
+      - ERP-01-PERM-SYNC
+      - CreateERPSyncJobRequest
+      - createERPSyncJob
+      - POST /v1/erp/sync-jobs
+      - ERPConnectorService
+      - ERPConnectorService / ERP Sync Job + Audit
+      - EFFECTFUL_EXACT
+    - row: 13
+      cells:
+      - ERP-01-BTN-SYNC-RETRY
+      - EXISTING_SOURCE_UID
+      - 重試失敗同步
+      - BUTTON
+      - ERP-01-ACT-SYNC-RETRY
+      - ERP-01-GATE-SYNC-RETRY
+      - ERP-01-PERM-SYNC
+      - RetryERPSyncRequest
+      - retryERPSync
+      - POST /v1/erp/sync-jobs/{id}/retry
+      - ERPConnectorService
+      - ERPConnectorService / ERP Sync Attempt + Failure/Audit
+      - EFFECTFUL_EXACT
+    - row: 14
+      cells:
+      - ERP-01-BTN-SYNC-STATUS
+      - EXISTING_SOURCE_UID
+      - 查看同步狀態
+      - BUTTON
+      - ERP-01-ACT-SYNC-STATUS
+      - ERP-01-GATE-SYNC-READ
+      - ERP-01-PERM-SYNC
+      - —
+      - getERPSyncStatus
+      - GET /v1/erp/sync-jobs/{id}
+      - ERPConnectorService
+      - —
+      - READ_EXACT
+    - row: 15
+      cells:
+      - ERP-01-BTN-TAB-CONNECTOR
+      - EXISTING_SOURCE_UID
+      - ERP 連接
+      - TAB
+      - ERP-01-ACT-VIEW-CONNECTOR
+      - ERP-01-GATE-PAGE
+      - ERP-01-PERM-READ
+      - —
+      - —
+      - —
+      - —
+      - —
+      - UI_LOCAL_EXACT
+    - row: 16
+      cells:
+      - ERP-01-BTN-TAB-FINANCE
+      - EXISTING_SOURCE_UID
+      - 財務概況
+      - TAB
+      - ERP-01-ACT-VIEW-FINANCE
+      - ERP-01-GATE-PAGE
+      - ERP-01-PERM-READ
+      - —
+      - —
+      - —
+      - —
+      - —
+      - UI_LOCAL_EXACT
+    - row: 17
+      cells:
+      - ERP-01-BTN-TAB-SYNC
+      - EXISTING_SOURCE_UID
+      - 同步與資料品質
+      - TAB
+      - ERP-01-ACT-VIEW-SYNC
+      - ERP-01-GATE-PAGE
+      - ERP-01-PERM-READ
+      - —
+      - —
+      - —
+      - —
+      - —
+      - UI_LOCAL_EXACT
+    - row: 18
+      cells:
+      - ERP-01-FLD-AUDIT-REF
+      - EXISTING_SOURCE_UID
+      - Audit Ref
+      - READONLY
+      - ERP-01-ACT-READ
+      - ERP-01-GATE-PAGE
+      - ERP-01-PERM-READ
+      - —
+      - getUiProjection
+      - GET /v1/ui-projections/{pageUid}
+      - Projection / source page read owner
+      - —
+      - READ_EXACT
+    - row: 19
+      cells:
+      - ERP-01-FLD-CONN-ADAPTER-KEY
+      - EXISTING_SOURCE_UID
+      - Adapter Key
+      - READONLY
+      - ERP-01-ACT-READ-CONNECTOR
+      - ERP-01-GATE-CONNECTOR-READ
+      - ERP-01-PERM-CONNECTOR
+      - —
+      - —
+      - —
+      - ERPConnectorService
+      - —
+      - UI_LOCAL_OR_READ_SOURCE
+    - row: 20
+      cells:
+      - ERP-01-FLD-CONN-CONNECTION-STATUS
+      - EXISTING_SOURCE_UID
+      - Connection Status
+      - READONLY
+      - ERP-01-ACT-READ-CONNECTOR
+      - ERP-01-GATE-CONNECTOR-READ
+      - ERP-01-PERM-CONNECTOR
+      - —
+      - —
+      - —
+      - ERPConnectorService
+      - —
+      - UI_LOCAL_OR_READ_SOURCE
+    - row: 21
+      cells:
+      - ERP-01-FLD-CONN-CONNECTOR-ID
+      - EXISTING_SOURCE_UID
+      - Connector ID
+      - READONLY
+      - ERP-01-ACT-READ-CONNECTOR
+      - ERP-01-GATE-CONNECTOR-READ
+      - ERP-01-PERM-CONNECTOR
+      - —
+      - —
+      - —
+      - ERPConnectorService
+      - —
+      - UI_LOCAL_OR_READ_SOURCE
+    - row: 22
+      cells:
+      - ERP-01-FLD-CONN-ENTITY-SCOPE
+      - EXISTING_SOURCE_UID
+      - Entity Scope
+      - READONLY
+      - ERP-01-ACT-READ-CONNECTOR
+      - ERP-01-GATE-CONNECTOR-READ
+      - ERP-01-PERM-CONNECTOR
+      - —
+      - —
+      - —
+      - ERPConnectorService
+      - —
+      - UI_LOCAL_OR_READ_SOURCE
+    - row: 23
+      cells:
+      - ERP-01-FLD-CONN-MAPPING-VERSION
+      - EXISTING_SOURCE_UID
+      - Mapping Version
+      - READONLY
+      - ERP-01-ACT-READ-CONNECTOR
+      - ERP-01-GATE-CONNECTOR-READ
+      - ERP-01-PERM-CONNECTOR
+      - —
+      - —
+      - —
+      - ERPConnectorService
+      - —
+      - UI_LOCAL_OR_READ_SOURCE
+    - row: 24
+      cells:
+      - ERP-01-FLD-CONN-PROVIDER-KEY
+      - EXISTING_SOURCE_UID
+      - Provider Key
+      - READONLY
+      - ERP-01-ACT-READ-CONNECTOR
+      - ERP-01-GATE-CONNECTOR-READ
+      - ERP-01-PERM-CONNECTOR
+      - —
+      - —
+      - —
+      - ERPConnectorService
+      - —
+      - UI_LOCAL_OR_READ_SOURCE
+    - row: 25
+      cells:
+      - ERP-01-FLD-CONN-SECRET-REFERENCE-ID
+      - EXISTING_SOURCE_UID
+      - Secret Reference ID
+      - READONLY
+      - ERP-01-ACT-READ-CONNECTOR
+      - ERP-01-GATE-CONNECTOR-READ
+      - ERP-01-PERM-CONNECTOR
+      - —
+      - —
+      - —
+      - ERPConnectorService
+      - —
+      - UI_LOCAL_OR_READ_SOURCE
+    - row: 26
+      cells:
+      - ERP-01-FLD-FIN-CAPACITY
+      - EXISTING_SOURCE_UID
+      - 產能
+      - READONLY
+      - ERP-01-ACT-READ-FINANCE
+      - ERP-01-GATE-FINANCE
+      - ERP-01-PERM-FINANCE
+      - —
+      - —
+      - —
+      - FinanceGuardrailService
+      - —
+      - UI_LOCAL_OR_READ_SOURCE
+    - row: 27
+      cells:
+      - ERP-01-FLD-FIN-CASHFLOW
+      - EXISTING_SOURCE_UID
+      - 現金流
+      - READONLY
+      - ERP-01-ACT-READ-FINANCE
+      - ERP-01-GATE-FINANCE
+      - ERP-01-PERM-FINANCE
+      - —
+      - —
+      - —
+      - FinanceGuardrailService
+      - —
+      - UI_LOCAL_OR_READ_SOURCE
+    - row: 28
+      cells:
+      - ERP-01-FLD-FIN-COST
+      - EXISTING_SOURCE_UID
+      - 成本
+      - READONLY
+      - ERP-01-ACT-READ-FINANCE
+      - ERP-01-GATE-FINANCE
+      - ERP-01-PERM-FINANCE
+      - —
+      - —
+      - —
+      - FinanceGuardrailService
+      - —
+      - UI_LOCAL_OR_READ_SOURCE
+    - row: 29
+      cells:
+      - ERP-01-FLD-FIN-FORECAST
+      - EXISTING_SOURCE_UID
+      - Forecast
+      - READONLY
+      - ERP-01-ACT-READ-FINANCE
+      - ERP-01-GATE-FINANCE
+      - ERP-01-PERM-FINANCE
+      - —
+      - —
+      - —
+      - FinanceGuardrailService
+      - —
+      - UI_LOCAL_OR_READ_SOURCE
+    - row: 30
+      cells:
+      - ERP-01-FLD-FIN-GUARDRAILS
+      - EXISTING_SOURCE_UID
+      - Guardrails
+      - READONLY
+      - ERP-01-ACT-READ-FINANCE
+      - ERP-01-GATE-FINANCE
+      - ERP-01-PERM-FINANCE
+      - —
+      - —
+      - —
+      - FinanceGuardrailService
+      - —
+      - UI_LOCAL_OR_READ_SOURCE
+    - row: 31
+      cells:
+      - ERP-01-FLD-FIN-RECOMMENDATION-BOUNDARY
+      - EXISTING_SOURCE_UID
+      - 建議邊界
+      - READONLY
+      - ERP-01-ACT-READ-FINANCE
+      - ERP-01-GATE-FINANCE
+      - ERP-01-PERM-FINANCE
+      - —
+      - —
+      - —
+      - FinanceGuardrailService
+      - —
+      - UI_LOCAL_OR_READ_SOURCE
+    - row: 32
+      cells:
+      - ERP-01-FLD-FIN-REVENUE
+      - EXISTING_SOURCE_UID
+      - 收益
+      - READONLY
+      - ERP-01-ACT-READ-FINANCE
+      - ERP-01-GATE-FINANCE
+      - ERP-01-PERM-FINANCE
+      - —
+      - —
+      - —
+      - FinanceGuardrailService
+      - —
+      - UI_LOCAL_OR_READ_SOURCE
+    - row: 33
+      cells:
+      - ERP-01-FLD-FRESHNESS
+      - EXISTING_SOURCE_UID
+      - 資料時間 / Freshness
+      - READONLY
+      - ERP-01-ACT-READ
+      - ERP-01-GATE-PAGE
+      - ERP-01-PERM-READ
+      - —
+      - getUiProjection
+      - GET /v1/ui-projections/{pageUid}
+      - Projection / source page read owner
+      - —
+      - READ_EXACT
+    - row: 34
+      cells:
+      - ERP-01-FLD-READINESS
+      - EXISTING_SOURCE_UID
+      - 目前狀態 / Blockers
+      - READONLY
+      - ERP-01-ACT-READ
+      - ERP-01-GATE-PAGE
+      - ERP-01-PERM-READ
+      - —
+      - getUiProjection
+      - GET /v1/ui-projections/{pageUid}
+      - Projection / source page read owner
+      - —
+      - READ_EXACT
+    - row: 35
+      cells:
+      - ERP-01-FLD-SCOPE
+      - EXISTING_SOURCE_UID
+      - ERP Scope
+      - READONLY
+      - ERP-01-ACT-READ
+      - ERP-01-GATE-PAGE
+      - ERP-01-PERM-READ
+      - —
+      - getUiProjection
+      - GET /v1/ui-projections/{pageUid}
+      - Projection / source page read owner
+      - —
+      - READ_EXACT
+    - row: 36
+      cells:
+      - ERP-01-FLD-SNAPSHOT
+      - EXISTING_SOURCE_UID
+      - Snapshot ID
+      - READONLY
+      - ERP-01-ACT-READ
+      - ERP-01-GATE-PAGE
+      - ERP-01-PERM-READ
+      - —
+      - getUiProjection
+      - GET /v1/ui-projections/{pageUid}
+      - Projection / source page read owner
+      - —
+      - READ_EXACT
+    - row: 37
+      cells:
+      - ERP-01-FLD-SYNC-COMPLETENESS
+      - EXISTING_SOURCE_UID
+      - 完整度
+      - READONLY
+      - ERP-01-ACT-READ-SYNC
+      - ERP-01-GATE-SYNC-READ
+      - ERP-01-PERM-SYNC
+      - —
+      - —
+      - —
+      - ERPConnectorService
+      - —
+      - UI_LOCAL_OR_READ_SOURCE
+    - row: 38
+      cells:
+      - ERP-01-FLD-SYNC-CURRENCY-TIMEZONE
+      - EXISTING_SOURCE_UID
+      - 幣別 / 時區
+      - READONLY
+      - ERP-01-ACT-READ-SYNC
+      - ERP-01-GATE-SYNC-READ
+      - ERP-01-PERM-SYNC
+      - —
+      - —
+      - —
+      - ERPConnectorService
+      - —
+      - UI_LOCAL_OR_READ_SOURCE
+    - row: 39
+      cells:
+      - ERP-01-FLD-SYNC-FAILURE-ID
+      - EXISTING_SOURCE_UID
+      - Failure ID
+      - READONLY
+      - ERP-01-ACT-READ-SYNC
+      - ERP-01-GATE-SYNC-READ
+      - ERP-01-PERM-SYNC
+      - —
+      - —
+      - —
+      - ERPConnectorService
+      - —
+      - UI_LOCAL_OR_READ_SOURCE
+    - row: 40
+      cells:
+      - ERP-01-FLD-SYNC-FRESHNESS-AT
+      - EXISTING_SOURCE_UID
+      - Freshness At
+      - READONLY
+      - ERP-01-ACT-READ-SYNC
+      - ERP-01-GATE-SYNC-READ
+      - ERP-01-PERM-SYNC
+      - —
+      - —
+      - —
+      - ERPConnectorService
+      - —
+      - UI_LOCAL_OR_READ_SOURCE
+    - row: 41
+      cells:
+      - ERP-01-FLD-SYNC-LAST-SYNC-STATUS
+      - EXISTING_SOURCE_UID
+      - Last Sync Status
+      - READONLY
+      - ERP-01-ACT-READ-SYNC
+      - ERP-01-GATE-SYNC-READ
+      - ERP-01-PERM-SYNC
+      - —
+      - —
+      - —
+      - ERPConnectorService
+      - —
+      - UI_LOCAL_OR_READ_SOURCE
+    - row: 42
+      cells:
+      - ERP-01-FLD-SYNC-SNAPSHOT-ID
+      - EXISTING_SOURCE_UID
+      - Snapshot ID
+      - READONLY
+      - ERP-01-ACT-READ-SYNC
+      - ERP-01-GATE-SYNC-READ
+      - ERP-01-PERM-SYNC
+      - —
+      - —
+      - —
+      - ERPConnectorService
+      - —
+      - UI_LOCAL_OR_READ_SOURCE
+  - index: 21
+    rows:
+    - row: 0
+      cells:
+      - Target UID
+      - Group
+      - Runtime Owner
+      - Operation
+      - Handling
+    - row: 1
+      cells:
+      - ERP-01-FLD-CONN-ADAPTER-KEY
+      - Connector
+      - ERPConnectorService
+      - —
+      - OWNER_BOUND / OPERATION_NA
+    - row: 2
+      cells:
+      - ERP-01-FLD-CONN-CONNECTION-STATUS
+      - Connector
+      - ERPConnectorService
+      - —
+      - OWNER_BOUND / OPERATION_NA
+    - row: 3
+      cells:
+      - ERP-01-FLD-CONN-CONNECTOR-ID
+      - Connector
+      - ERPConnectorService
+      - —
+      - OWNER_BOUND / OPERATION_NA
+    - row: 4
+      cells:
+      - ERP-01-FLD-CONN-ENTITY-SCOPE
+      - Connector
+      - ERPConnectorService
+      - —
+      - OWNER_BOUND / OPERATION_NA
+    - row: 5
+      cells:
+      - ERP-01-FLD-CONN-MAPPING-VERSION
+      - Connector
+      - ERPConnectorService
+      - —
+      - OWNER_BOUND / OPERATION_NA
+    - row: 6
+      cells:
+      - ERP-01-FLD-CONN-PROVIDER-KEY
+      - Connector
+      - ERPConnectorService
+      - —
+      - OWNER_BOUND / OPERATION_NA
+    - row: 7
+      cells:
+      - ERP-01-FLD-CONN-SECRET-REFERENCE-ID
+      - Connector
+      - ERPConnectorService
+      - —
+      - OWNER_BOUND / OPERATION_NA
+    - row: 8
+      cells:
+      - ERP-01-FLD-FIN-CAPACITY
+      - Finance
+      - FinanceGuardrailService
+      - —
+      - OWNER_BOUND / OPERATION_NA
+    - row: 9
+      cells:
+      - ERP-01-FLD-FIN-CASHFLOW
+      - Finance
+      - FinanceGuardrailService
+      - —
+      - OWNER_BOUND / OPERATION_NA
+    - row: 10
+      cells:
+      - ERP-01-FLD-FIN-COST
+      - Finance
+      - FinanceGuardrailService
+      - —
+      - OWNER_BOUND / OPERATION_NA
+    - row: 11
+      cells:
+      - ERP-01-FLD-FIN-FORECAST
+      - Finance
+      - FinanceGuardrailService
+      - —
+      - OWNER_BOUND / OPERATION_NA
+    - row: 12
+      cells:
+      - ERP-01-FLD-FIN-GUARDRAILS
+      - Finance
+      - FinanceGuardrailService
+      - —
+      - OWNER_BOUND / OPERATION_NA
+    - row: 13
+      cells:
+      - ERP-01-FLD-FIN-RECOMMENDATION-BOUNDARY
+      - Finance
+      - FinanceGuardrailService
+      - —
+      - OWNER_BOUND / OPERATION_NA
+    - row: 14
+      cells:
+      - ERP-01-FLD-FIN-REVENUE
+      - Finance
+      - FinanceGuardrailService
+      - —
+      - OWNER_BOUND / OPERATION_NA
+    - row: 15
+      cells:
+      - ERP-01-FLD-SYNC-COMPLETENESS
+      - Sync
+      - ERPConnectorService
+      - —
+      - EXISTING_OWNER / OPERATION_NA
+    - row: 16
+      cells:
+      - ERP-01-FLD-SYNC-CURRENCY-TIMEZONE
+      - Sync
+      - ERPConnectorService
+      - —
+      - EXISTING_OWNER / OPERATION_NA
+    - row: 17
+      cells:
+      - ERP-01-FLD-SYNC-FAILURE-ID
+      - Sync
+      - ERPConnectorService
+      - —
+      - EXISTING_OWNER / OPERATION_NA
+    - row: 18
+      cells:
+      - ERP-01-FLD-SYNC-FRESHNESS-AT
+      - Sync
+      - ERPConnectorService
+      - —
+      - EXISTING_OWNER / OPERATION_NA
+    - row: 19
+      cells:
+      - ERP-01-FLD-SYNC-LAST-SYNC-STATUS
+      - Sync
+      - ERPConnectorService
+      - —
+      - EXISTING_OWNER / OPERATION_NA
+    - row: 20
+      cells:
+      - ERP-01-FLD-SYNC-SNAPSHOT-ID
+      - Sync
+      - ERPConnectorService
+      - —
+      - EXISTING_OWNER / OPERATION_NA
+  - index: 22
+    rows:
+    - row: 0
+      cells:
+      - Control UID
+      - Operation
+      - Payload / Schema
+      - Persistence Owner
+      - Required Semantics
+    - row: 1
+      cells:
+      - ERP-01-BTN-CONNECTOR-CREATE
+      - createERPConnector
+      - CreateERPConnectorRequest
+      - ERPConnectorService / ERP Connector Configuration + Audit
+      - Connector configuration persists provider/adapter/entity scope/mapping/secret-reference metadata only. Raw secret plaintext must remain outside this persistence
+        boundary.
+    - row: 2
+      cells:
+      - ERP-01-BTN-CONNECTOR-UPDATE
+      - updateERPConnector
+      - UpdateERPConnectorRequest
+      - ERPConnectorService / ERP Connector Configuration + Audit
+      - Update changes exact connector configuration/version with audit. Secret material remains referenced, not copied into Word/log/audit payload.
+    - row: 3
+      cells:
+      - ERP-01-BTN-CONNECTOR-VALIDATE
+      - validateERPConnector
+      - ValidateERPConnectorRequest
+      - ERPConnectorService / ERP Connector Validation Evidence
+      - Validation persists bounded connectivity/schema/capability evidence for an exact connector/version; a pass is not equivalent to Production business-data correctness.
+    - row: 4
+      cells:
+      - ERP-01-BTN-EXPORT
+      - exportProjection
+      - ExportERPProjectionRequest
+      - Existing Projection/Export Owner / ERP Export Artifact + Export Audit
+      - ERP export persists derived projection/export artifact and audit only; ERP/Finance remains financial truth and export cannot mutate accounting facts.
+    - row: 5
+      cells:
+      - ERP-01-BTN-MAPPING-VALIDATE
+      - validateERPMapping
+      - ValidateERPMappingRequest
+      - ERPConnectorService / ERP Mapping Validation Evidence
+      - Mapping validation records exact mapping-version/entity-scope result/evidence without silently changing canonical financial data.
+    - row: 6
+      cells:
+      - ERP-01-BTN-SNAPSHOT-REFRESH
+      - refreshERPSnapshot
+      - RefreshERPSnapshotRequest
+      - ERPConnectorService / ERP Snapshot + Freshness/Audit
+      - Snapshot refresh persists immutable snapshot identity/freshness/completeness lineage sourced from the connector; it does not fabricate finance values.
+    - row: 7
+      cells:
+      - ERP-01-BTN-SYNC-CREATE
+      - createERPSyncJob
+      - CreateERPSyncJobRequest
+      - ERPConnectorService / ERP Sync Job + Audit
+      - Sync job persists exact connector/mapping/scope/snapshot target and idempotency/audit metadata. Job creation is not sync completion.
+    - row: 8
+      cells:
+      - ERP-01-BTN-SYNC-RETRY
+      - retryERPSync
+      - RetryERPSyncRequest
+      - ERPConnectorService / ERP Sync Attempt + Failure/Audit
+      - Retry binds the failed sync job/failure/version and creates auditable retry-attempt lineage; prior failure evidence must not be erased.
+  - index: 23
+    rows:
+    - row: 0
+      cells:
+      - Entity
+      - Operation
+      - Applicability
+      - Authority Evidence
+    - row: 1
+      cells:
+      - ERPConnector
+      - ARCHIVE_OR_DELETE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 2
+      cells:
+      - ERPConnector
+      - AUDIT
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 3
+      cells:
+      - ERPConnector
+      - CATEGORY_OR_GROUP_BIND
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 4
+      cells:
+      - ERPConnector
+      - CONFIRM_OR_APPROVE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 5
+      cells:
+      - ERPConnector
+      - CREATE
+      - REQUIRED
+      - Current entity-bound operation evidence normalized to REQUIRED. T3R3[Create / Update / Validate]
+    - row: 6
+      cells:
+      - ERPConnector
+      - CREATION_MODE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 7
+      cells:
+      - ERPConnector
+      - DEPENDENCY_IMPACT
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 8
+      cells:
+      - ERPConnector
+      - DISCOVER_OR_LIST
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 9
+      cells:
+      - ERPConnector
+      - DRAFT
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 10
+      cells:
+      - ERPConnector
+      - EDIT
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 11
+      cells:
+      - ERPConnector
+      - ERROR_RECOVERY
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 12
+      cells:
+      - ERPConnector
+      - LOCK_OR_UNLOCK
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 13
+      cells:
+      - ERPConnector
+      - MOVE_OR_REPARENT
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 14
+      cells:
+      - ERPConnector
+      - NEXT_STEP
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 15
+      cells:
+      - ERPConnector
+      - PARENT_BIND
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 16
+      cells:
+      - ERPConnector
+      - REORDER
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 17
+      cells:
+      - ERPConnector
+      - RESTORE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 18
+      cells:
+      - ERPConnector
+      - RESUME
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 19
+      cells:
+      - ERPConnector
+      - REVISE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 20
+      cells:
+      - ERPConnector
+      - SAVE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 21
+      cells:
+      - ERPConnector
+      - SELECT_OR_OPEN
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 22
+      cells:
+      - ERPConnector
+      - VALIDATE
+      - REQUIRED
+      - Current entity-bound operation evidence normalized to REQUIRED. T3R3[Create / Update / Validate]
+    - row: 23
+      cells:
+      - ERPConnector
+      - VERSION
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 24
+      cells:
+      - ERPFailure
+      - ARCHIVE_OR_DELETE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 25
+      cells:
+      - ERPFailure
+      - AUDIT
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 26
+      cells:
+      - ERPFailure
+      - CATEGORY_OR_GROUP_BIND
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 27
+      cells:
+      - ERPFailure
+      - CONFIRM_OR_APPROVE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 28
+      cells:
+      - ERPFailure
+      - CREATE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 29
+      cells:
+      - ERPFailure
+      - CREATION_MODE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 30
+      cells:
+      - ERPFailure
+      - DEPENDENCY_IMPACT
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 31
+      cells:
+      - ERPFailure
+      - DISCOVER_OR_LIST
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 32
+      cells:
+      - ERPFailure
+      - DRAFT
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 33
+      cells:
+      - ERPFailure
+      - EDIT
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 34
+      cells:
+      - ERPFailure
+      - ERROR_RECOVERY
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 35
+      cells:
+      - ERPFailure
+      - LOCK_OR_UNLOCK
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 36
+      cells:
+      - ERPFailure
+      - MOVE_OR_REPARENT
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 37
+      cells:
+      - ERPFailure
+      - NEXT_STEP
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 38
+      cells:
+      - ERPFailure
+      - PARENT_BIND
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 39
+      cells:
+      - ERPFailure
+      - REORDER
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 40
+      cells:
+      - ERPFailure
+      - RESTORE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 41
+      cells:
+      - ERPFailure
+      - RESUME
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 42
+      cells:
+      - ERPFailure
+      - REVISE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 43
+      cells:
+      - ERPFailure
+      - SAVE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 44
+      cells:
+      - ERPFailure
+      - SELECT_OR_OPEN
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 45
+      cells:
+      - ERPFailure
+      - VALIDATE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 46
+      cells:
+      - ERPFailure
+      - VERSION
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 47
+      cells:
+      - ERPMapping
+      - ARCHIVE_OR_DELETE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 48
+      cells:
+      - ERPMapping
+      - AUDIT
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 49
+      cells:
+      - ERPMapping
+      - CATEGORY_OR_GROUP_BIND
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 50
+      cells:
+      - ERPMapping
+      - CONFIRM_OR_APPROVE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 51
+      cells:
+      - ERPMapping
+      - CREATE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 52
+      cells:
+      - ERPMapping
+      - CREATION_MODE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 53
+      cells:
+      - ERPMapping
+      - DEPENDENCY_IMPACT
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 54
+      cells:
+      - ERPMapping
+      - DISCOVER_OR_LIST
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 55
+      cells:
+      - ERPMapping
+      - DRAFT
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 56
+      cells:
+      - ERPMapping
+      - EDIT
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 57
+      cells:
+      - ERPMapping
+      - ERROR_RECOVERY
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 58
+      cells:
+      - ERPMapping
+      - LOCK_OR_UNLOCK
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 59
+      cells:
+      - ERPMapping
+      - MOVE_OR_REPARENT
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 60
+      cells:
+      - ERPMapping
+      - NEXT_STEP
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 61
+      cells:
+      - ERPMapping
+      - PARENT_BIND
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 62
+      cells:
+      - ERPMapping
+      - REORDER
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 63
+      cells:
+      - ERPMapping
+      - RESTORE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 64
+      cells:
+      - ERPMapping
+      - RESUME
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 65
+      cells:
+      - ERPMapping
+      - REVISE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 66
+      cells:
+      - ERPMapping
+      - SAVE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 67
+      cells:
+      - ERPMapping
+      - SELECT_OR_OPEN
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 68
+      cells:
+      - ERPMapping
+      - VALIDATE
+      - REQUIRED
+      - Current entity-bound operation evidence normalized to REQUIRED. T3R4[Validate Mapping]
+    - row: 69
+      cells:
+      - ERPMapping
+      - VERSION
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 70
+      cells:
+      - ERPSyncJob
+      - ARCHIVE_OR_DELETE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 71
+      cells:
+      - ERPSyncJob
+      - AUDIT
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 72
+      cells:
+      - ERPSyncJob
+      - CATEGORY_OR_GROUP_BIND
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 73
+      cells:
+      - ERPSyncJob
+      - CONFIRM_OR_APPROVE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 74
+      cells:
+      - ERPSyncJob
+      - CREATE
+      - REQUIRED
+      - Current entity-bound operation evidence normalized to REQUIRED. T3R6[Create / Get Status / Retry]
+    - row: 75
+      cells:
+      - ERPSyncJob
+      - CREATION_MODE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 76
+      cells:
+      - ERPSyncJob
+      - DEPENDENCY_IMPACT
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 77
+      cells:
+      - ERPSyncJob
+      - DISCOVER_OR_LIST
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 78
+      cells:
+      - ERPSyncJob
+      - DRAFT
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 79
+      cells:
+      - ERPSyncJob
+      - EDIT
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 80
+      cells:
+      - ERPSyncJob
+      - ERROR_RECOVERY
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 81
+      cells:
+      - ERPSyncJob
+      - LOCK_OR_UNLOCK
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 82
+      cells:
+      - ERPSyncJob
+      - MOVE_OR_REPARENT
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 83
+      cells:
+      - ERPSyncJob
+      - NEXT_STEP
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 84
+      cells:
+      - ERPSyncJob
+      - PARENT_BIND
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 85
+      cells:
+      - ERPSyncJob
+      - REORDER
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 86
+      cells:
+      - ERPSyncJob
+      - RESTORE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 87
+      cells:
+      - ERPSyncJob
+      - RESUME
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 88
+      cells:
+      - ERPSyncJob
+      - REVISE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 89
+      cells:
+      - ERPSyncJob
+      - SAVE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 90
+      cells:
+      - ERPSyncJob
+      - SELECT_OR_OPEN
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 91
+      cells:
+      - ERPSyncJob
+      - VALIDATE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 92
+      cells:
+      - ERPSyncJob
+      - VERSION
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+  - index: 24
+    rows:
+    - row: 0
+      cells:
+      - Design Item / 設計項目
+      - Canonical Planning Design Contract / 正式規劃設計契約
+    - row: 1
+      cells:
+      - Viewport / Breakpoint UID
+      - SHARED_OWNER_REFERENCE → current Global Home breakpoint contract; page-specific breakpoint/reflow rules in this Word override only where explicitly registered.
+    - row: 2
+      cells:
+      - Container Width / Min / Max
+      - Retain current Global Shell + page Primary Grid width contract. No page-local implicit width may override an existing exact dimension.
+    - row: 3
+      cells:
+      - Grid Columns / Span / Gutter / Outer Margin
+      - Use the existing page Primary Grid / section mapping and current gap/margin values; any structural grid change requires Change Set.
+    - row: 4
+      cells:
+      - Section Bounding Rules
+      - Every registered Section remains within its current Workspace region; sticky/fixed/overlay areas MUST NOT occlude required controls.
+    - row: 5
+      cells:
+      - Component / Control / Field Width / Height Rules
+      - Use current Control/Field Dimensions or shared component token. State transitions MUST NOT cause layout jump.
+    - row: 6
+      cells:
+      - Min / Max Width / Height
+      - Inherit current exact values where present; otherwise shared component minimums apply. Required input/button content may not compress below its registered
+        usable size.
+    - row: 7
+      cells:
+      - Gap / Padding / Alignment
+      - Use current page spacing/grid tokens; alignment changes outside token tolerance require Visual Review.
+    - row: 8
+      cells:
+      - Aspect Ratio
+      - NOT_APPLICABLE unless the current page declares an image/video/preview ratio; when declared, the exact current ratio remains authoritative.
+    - row: 9
+      cells:
+      - Overflow / Scroll Rule
+      - No hidden overflow for actionable content. Long technical values use existing ellipsis + tooltip/drawer rule; large tables may use the current controlled
+        horizontal-scroll rule.
+    - row: 10
+      cells:
+      - Collapse / Stack / Wrap Rule
+      - Reflow may stack/collapse only within the current responsive contract; semantic order, required adjacency and operation order MUST NOT change.
+    - row: 11
+      cells:
+      - Z-order / Overlay Rule
+      - Global Header / Sidebar overlay / Dialog / Drawer layers remain above Workspace without blocking required content; overlay expansion MUST NOT reflow the primary
+        Workspace unless explicitly specified.
+    - row: 12
+      cells:
+      - Text Capacity / Truncation / Wrap Rule
+      - Required labels/status/error text may not be clipped. Long IDs/technical values use controlled ellipsis with recoverable full value; no silent semantic truncation.
+    - row: 13
+      cells:
+      - Asset Object-fit / Object-position
+      - REFERENCE_ONLY → current Asset Binding owner when a formal visual asset exists; otherwise NOT_APPLICABLE.
+    - row: 14
+      cells:
+      - Locked Visual Anchors
+      - Bound to the Visual Anchor Registry in this annex; unlisted regions are not implicitly editable.
+    - row: 15
+      cells:
+      - Allowed Tolerance / Diff Threshold
+      - 'Locked anchors and structural grid: zero unapproved drift. Token-level micro adjustment is allowed only inside current Design Token/Layout rules; structural
+        changes require Change Set + re-review.'
+    - row: 16
+      cells:
+      - Geometry Failure Set
+      - Detect overlap, clipping, horizontal overflow, unapproved scroll, control compression, unexpected wrap/stack, aspect drift, misalignment, sticky/fixed occlusion
+        and header/sidebar/workspace collision.
+  - index: 25
+    rows:
+    - row: 0
+      cells:
+      - Anchor UID
+      - Position Rule
+      - Dimension Rule
+      - Relationship Rule
+      - Lock Status
+    - row: 1
+      cells:
+      - ERP-01-VA-HEADER
+      - Fixed at top of shared shell
+      - 58px full-width according to current shell authority
+      - Above Sidebar/Workspace; must not be covered by page content
+      - LOCKED
+    - row: 2
+      cells:
+      - ERP-01-VA-SIDEBAR
+      - Fixed left rail under shared shell header
+      - 64px resting; 221px overlay expansion where current shell defines it
+      - Overlay expansion must not silently change the approved page Primary Grid
+      - LOCKED
+    - row: 3
+      cells:
+      - ERP-01-VA-WORKSPACE
+      - Current page primary content region below Header / beside resting rail
+      - Use this Word's existing Primary Grid / section dimensions
+      - Owns page-local section geometry; dialogs/drawers are overlays, not replacement layout
+      - LOCKED_EXCEPT_AUTHORIZED_CHANGE_SET
+  - index: 26
+    rows:
+    - row: 0
+      cells:
+      - Design Item / 設計項目
+      - Canonical Planning Design Contract / 正式規劃設計契約
+    - row: 1
+      cells:
+      - Current Canonical Visual
+      - REFERENCE_ONLY → current visual/baseline already named in this Word or shared current visual owner. This annex does not replace it.
+    - row: 2
+      cells:
+      - Visual Candidate UID
+      - Generated candidate MUST receive a unique Visual UID and Parent Visual UID; no candidate is deemed approved merely by this annex.
+    - row: 3
+      cells:
+      - Generation Manifest
+      - Required before generation; MUST bind Page UID, Design Version, Reference Visual UID, Design System Version, Layout UID, Component Versions, Asset refs, Viewport,
+        Language, Theme, Change Level/Set and locked/editable areas.
+    - row: 4
+      cells:
+      - Visual Preview
+      - MUST represent the actual website structure, not a moodboard. Preview occurs after page/design specification and before Design Freeze.
+    - row: 5
+      cells:
+      - Visual Review
+      - Authorized reviewer checks function-to-visual mapping, geometry, anchors, responsive order, A11y/i18n and visual drift.
+    - row: 6
+      cells:
+      - Approval Status
+      - VISUAL_APPROVED is required before DESIGN_FROZEN. This planning annex does NOT self-approve the page.
+    - row: 7
+      cells:
+      - Change Set / Drift
+      - Any layout/asset/typography/color/component/navigation/dimension/information-hierarchy change outside the approved Change Set is VISUAL_DRIFT_FAIL.
+  - index: 27
+    rows:
+    - row: 0
+      cells:
+      - Design Item / 設計項目
+      - Canonical Planning Design Contract / 正式規劃設計契約
+    - row: 1
+      cells:
+      - Page-local Asset Registry Applicability
+      - REFERENCE_ONLY / CONDITIONAL. Existing page-owned formal Asset UID rows, if present, remain authoritative; this annex creates no duplicate Asset UID.
+    - row: 2
+      cells:
+      - Shared Shell Assets
+      - SHARED_OWNER_REFERENCE → Global Home / Design System owns logo, navigation icons, generic status icons and shared shell visuals; page MUST NOT clone them.
+    - row: 3
+      cells:
+      - Dynamic Business Content
+      - Provider logos, thumbnails, output previews, evidence images or other runtime/business data are NOT automatically design assets; they remain data/projection
+        unless current page explicitly registers an Asset UID.
+    - row: 4
+      cells:
+      - Binding Contract
+      - Any formal page-owned asset MUST bind Page UID + Section UID + Component UID + Asset UID + position + width/height + aspect ratio + crop/object-fit/object-position
+        + lock status.
+    - row: 5
+      cells:
+      - Modification Rule
+      - APPROVED/LOCKED assets may not be regenerated, recolored, cropped or repurposed without an authorized Change Set and Visual Review.
+    - row: 6
+      cells:
+      - N/A Authority
+      - When a page has no page-owned formal visual asset, page-local Asset Binding is NOT_APPLICABLE with this reason; shared assets remain referenced from their
+        existing canonical owner.
+  - index: 28
+    rows:
+    - row: 0
+      cells:
+      - Design Item / 設計項目
+      - Canonical Planning Design Contract / 正式規劃設計契約
+    - row: 1
+      cells:
+      - Audit UID
+      - ERP-01-AUD-DESIGN-001
+    - row: 2
+      cells:
+      - Target UID
+      - ERP-01
+    - row: 3
+      cells:
+      - Required Audit Items
+      - Requirement/Page identity where applicable; Architecture/Flow; Control/Field; Entity/Operation applicability; Cross-page/topology; Geometry; Visual Anchor/Preview
+        contract; A11y/i18n; Asset applicability; Design Freeze package.
+    - row: 4
+      cells:
+      - Required Tests
+      - Word structural completeness audit; forward/reverse design-reference audit; DOCX render visual QA; design-only semantic consistency audit.
+    - row: 5
+      cells:
+      - Required Evidence
+      - Exact Word hash/tree identity; audit result; render page set; visual-review record when a candidate is generated.
+    - row: 6
+      cells:
+      - Required Gates
+      - Requirement, Naming, Architecture, Navigation, User Flow, Page Registry, Design System, Layout, Component, Asset applicability/binding, Page Design, Visual
+        Preview/Review/Approval, Audit Baseline, Acceptance Matrix, DoD.
+    - row: 7
+      cells:
+      - Acceptance Matrix
+      - Every item is classified REQUIRED / OPTIONAL / NOT_APPLICABLE with owner/evidence. REQUIRED may not be downgraded merely to obtain PASS.
+    - row: 8
+      cells:
+      - PASS Condition
+      - All applicable REQUIRED planning/basic-design items are complete and internally consistent; no unresolved duplicate owner/reference or required design gap.
+    - row: 9
+      cells:
+      - PARTIAL Condition
+      - Only explicitly OPTIONAL or justified NOT_APPLICABLE design items remain; no REQUIRED item is missing.
+    - row: 10
+      cells:
+      - FAIL Condition
+      - Any REQUIRED planning/design contract, owner/reference, geometry, topology, acceptance condition or visual prerequisite is unresolved or contradictory.
+    - row: 11
+      cells:
+      - Definition of Done
+      - Current Word is self-contained enough for authorized construction handoff, while unresolved product choices remain explicitly blocked rather than invented.
+  - index: 29
+    rows:
+    - row: 0
+      cells:
+      - Design Item / 設計項目
+      - Canonical Planning Design Contract / 正式規劃設計契約
+    - row: 1
+      cells:
+      - Canonical UID
+      - ERP-01
+    - row: 2
+      cells:
+      - Canonical Name
+      - ERP-01
+    - row: 3
+      cells:
+      - Owner File
+      - ACPOS_ERP-01_ERP與財務_Mother_Basic_Design_OPTIMIZED.docx
+    - row: 4
+      cells:
+      - Page / Capability Spec
+      - This current Word remains the single page design Canonical Owner.
+    - row: 5
+      cells:
+      - Layout Mapping
+      - REFERENCE → existing Page Layout / Primary Grid / Section mapping + Design System/Layout closure annex.
+    - row: 6
+      cells:
+      - Component Mapping
+      - REFERENCE → current Component/Section registry in this Word; no duplicate component inventory is introduced.
+    - row: 7
+      cells:
+      - Control / Field Mapping
+      - REFERENCE → current Control / Field / Action / Permission design tables and invariants in this Word.
+    - row: 8
+      cells:
+      - Asset Mapping
+      - REFERENCE → current page Asset Registry if any; otherwise explicit shared-owner / NOT_APPLICABLE asset rule in this annex.
+    - row: 9
+      cells:
+      - Responsive Spec
+      - REFERENCE → current page responsive rules + Visual Geometry closure annex.
+    - row: 10
+      cells:
+      - Current Canonical Visual
+      - REFERENCE → current visual/baseline already owned by this page/shared visual authority; candidate does not replace it without approval.
+    - row: 11
+      cells:
+      - Generation Manifest
+      - REQUIRED before a new candidate is generated; fields are defined by the Visual contract in this annex.
+    - row: 12
+      cells:
+      - Audit Baseline
+      - REFERENCE → ERP-01-AUD-DESIGN-001
+    - row: 13
+      cells:
+      - Acceptance Matrix
+      - Current page acceptance section plus this annex; REQUIRED / OPTIONAL / NOT_APPLICABLE classification is preserved.
+    - row: 14
+      cells:
+      - Definition of Done
+      - Planning/basic-design DoD is the current page DoD plus zero unresolved REQUIRED design-spec gaps.
+    - row: 15
+      cells:
+      - Design Version
+      - Use this Word's current version metadata / exact repository revision; this annex MUST NOT invent a parallel design version.
+    - row: 16
+      cells:
+      - Freeze Status
+      - DESIGN_FREEZE_PACKAGE_DEFINED. DESIGN_FROZEN may be asserted only after required Visual Preview/Review/Approval and all applicable design gates actually pass;
+        this annex does not self-approve.

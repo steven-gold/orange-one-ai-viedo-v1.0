@@ -1,0 +1,5670 @@
+schema_version: ACPOS_WORD_YAML_PROJECTION_V1
+projection_mode: SOURCE_GROUNDED_NO_INVENTION
+sequence: 23
+source:
+  branch: 0921acpos
+  git_head: 7bd2dbdb89b685c5f5f6045c8e3e17c5f2500db5
+  word_path: ACPOS_QA-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx
+  word_sha256: b212a3f1c4ff823e84b06524c3e9591ddc3753b711d1bd576426632f1a6c54b4
+authority_rules:
+- Word source remains canonical for this projection.
+- Do not silently fill, correct, reconcile, or replace source content.
+- Do not convert BLOCKED, NOT_EXECUTED, REQUIRE_EXACT_BINDING, SOURCE_NOT_DEFINED into PASS.
+- Paragraph and table order is preserved by source index.
+document:
+  paragraphs:
+  - index: 0
+    style: Normal
+    text: ACPOS · Mother Basic Design
+  - index: 1
+    style: Title
+    text: QA-01 QA 審查工作區
+  - index: 2
+    style: Normal
+    text: 科技紫 UI 重製 · Current Authority Bound · Visual Candidate
+  - index: 3
+    style: Normal
+    text: 用途：可施工 Basic Design + 真實 QA 工作區視覺參考；不是 GitHub 已施工畫面，也不是已核准 Canonical Visual。
+  - index: 5
+    style: Normal
+    text: 文件版號 v1.0 僅代表本次 Word revision，不等於 Governance / Page Authority revision。
+  - index: 7
+    style: Heading 1
+    text: 1. Current Truth / Basic Design Boundary
+  - index: 8
+    style: Normal
+    text: QA-01 是唯一 Current executable QA workspace。QA 的責任是 exact-output validation、System/AI scorecard、evidence/finding/manual-review projection、correction request、recheck、QA
+      gate decision 與 Release Candidate 建立；QA 不修改 Script / Asset / Video / Editing output，也不直接 Publish。
+  - index: 10
+    style: Heading 1
+    text: 2. Mother Basic Design Artifact Chain
+  - index: 11
+    style: List Bullet
+    text: 01. Current Truth / Authority Binding
+  - index: 12
+    style: List Bullet
+    text: 02. Requirement & Scope
+  - index: 13
+    style: List Bullet
+    text: 03. Entity / Operation / State
+  - index: 14
+    style: List Bullet
+    text: 04. Hierarchy / Journey / Workbench
+  - index: 15
+    style: List Bullet
+    text: 05. Interaction Topology
+  - index: 16
+    style: List Bullet
+    text: 06. Functional Chain / Cross-page Boundary
+  - index: 17
+    style: List Bullet
+    text: 07. Page / Section / Component
+  - index: 18
+    style: List Bullet
+    text: 08. Control / Field / Action / Gate / Permission
+  - index: 19
+    style: List Bullet
+    text: 09. State / Error / Recovery
+  - index: 20
+    style: List Bullet
+    text: 10. Data / Evidence / Policy Binding
+  - index: 21
+    style: List Bullet
+    text: 11. Function ↔ Visual Binding
+  - index: 22
+    style: List Bullet
+    text: 12. Visual Anchor / Manifest / Candidate
+  - index: 23
+    style: List Bullet
+    text: 13. Acceptance / Audit / DoD
+  - index: 24
+    style: List Bullet
+    text: 14. Human Review / Design Freeze / Resume
+  - index: 25
+    style: Normal
+    text: 本文件的 UI 圖是上述 Basic Design 的視覺 materialization；不能以示意資訊取代 Current Authority，也不能因視覺方便新增 QA 控制。
+  - index: 26
+    style: Heading 2
+    text: 2.1 Functional Workbench
+  - index: 28
+    style: Heading 1
+    text: 3. Entity / Object Model · 16/16
+  - index: 30
+    style: Heading 1
+    text: 4. Stage / Journey / Transition
+  - index: 31
+    style: Heading 2
+    text: 4.1 Legal Stage Transitions · 6/6
+  - index: 32
+    style: Normal
+    text: AUTO 僅按照目前 Topic 既有 QA tasks 的 canonical order 逐一處理，max_active_task=1；禁止 AI reorder/create/skip。MANUAL 每次由 Human 選一筆。
+  - index: 34
+    style: Heading 1
+    text: 5. Section / Component Architecture
+  - index: 35
+    style: Heading 2
+    text: 5.1 Sections · 10/10
+  - index: 37
+    style: Heading 2
+    text: 5.2 Components · 21/21
+  - index: 39
+    style: Heading 1
+    text: 6.1 UI Visual Candidate · A · AUTO Topic Review
+  - index: 41
+    style: Normal
+    text: A · AUTO Topic Review
+  - index: 42
+    style: Normal
+    text: AUTO 主畫面：左側只負責 Topic-scoped queue 與 AUTO progress；中央維持 exact output viewer；右側只顯示 System/AI scorecard。Top Context 全部 read-only。
+  - index: 44
+    style: Heading 1
+    text: 6.2 UI Visual Candidate · B · MANUAL Single Review
+  - index: 46
+    style: Normal
+    text: B · MANUAL Single Review
+  - index: 47
+    style: Normal
+    text: MANUAL 模式：Human 一次選一個 QA task；Start Review 只在 NOT_STARTED + QA-01-GATE-START PASS 時可用；Scorecard 仍禁止人工打分。
+  - index: 49
+    style: Heading 1
+    text: 6.3 UI Visual Candidate · C · Finding + Governed Manual Review
+  - index: 51
+    style: Normal
+    text: C · Finding + Governed Manual Review
+  - index: 52
+    style: Normal
+    text: Finding + Manual Review：Finding 可以建立；Manual Review 只在 governed ManualReviewCase required/open 時顯示，而且只有「修改 / 通過」兩個 function，不能變成空白人工評分表。
+  - index: 54
+    style: Heading 1
+    text: 6.4 UI Visual Candidate · D · Recheck Before / After
+  - index: 56
+    style: Normal
+    text: D · Recheck Before / After
+  - index: 57
+    style: Normal
+    text: Recheck：只有原 failed exact version + verified NEW exact version 都存在時才 50/50；否則不渲染空 B pane。QA 不直接修改 upstream output。
+  - index: 59
+    style: Heading 1
+    text: 6.5 UI Visual Candidate · E · QA Gate / Release Candidate
+  - index: 61
+    style: Normal
+    text: E · QA Gate / Release Candidate
+  - index: 62
+    style: Normal
+    text: Release Candidate：需 QA PASS、Finding closed、Manual Review closed、Rights/Policy/Channel scope 全部正確；QA 只建立 ReleasePackage Candidate，不包含 approveRelease / Publish。
+  - index: 64
+    style: Heading 1
+    text: 7. Atomic Control Matrix · 87/87
+  - index: 65
+    style: Normal
+    text: 87 Controls 全部來自 Current QA-01 Authority。Top Context 為 READONLY；Scorecard 沒有 Human scoring/decision control；Manual Review Modify/Pass 為條件式控制。
+  - index: 66
+    style: Heading 1
+    text: 8. Action / Gate / Permission Matrix · 32/32
+  - index: 67
+    style: Heading 2
+    text: 8.1 Permissions · 7/7
+  - index: 69
+    style: Heading 1
+    text: 9. Gate Contract · 19/19
+  - index: 70
+    style: Normal
+    text: Hard Gate precedence：Evidence / Rights / Policy / Checksum / Provenance / Required Check failure 都能覆蓋 numeric score；UI 不得使用本地 threshold 代替 bound CriteriaVersion
+      / QualityGatePolicy。
+  - index: 72
+    style: Heading 1
+    text: 10. Integration Ports · 10/10
+  - index: 73
+    style: Normal
+    text: AUTO Topic QA 的 method_path 明確是 SYSTEM_OPERATION_REGISTRY_REQUIRED；frontend MUST NOT invent URL。PASS/FAIL ports 是 governed internal dispatch，不是可見直接 PASS/FAIL
+      buttons。
+  - index: 75
+    style: Heading 1
+    text: 11. Error / Recovery Contract · 17/17
+  - index: 77
+    style: Heading 1
+    text: 12. Scorecard / Manual Review Contract
+  - index: 79
+    style: Heading 1
+    text: 13. Evidence / Finding / Correction / Recheck
+  - index: 81
+    style: Heading 1
+    text: 14. Release Policy / Candidate Contract
+  - index: 83
+    style: Heading 1
+    text: 15. Function ↔ Visual Binding
+  - index: 85
+    style: Heading 1
+    text: 16. Cross-page / Department Boundary
+  - index: 87
+    style: Heading 1
+    text: 17. Acceptance / Hard Locks / DoD
+  - index: 88
+    style: Heading 2
+    text: 17.1 Hard Locks
+  - index: 89
+    style: List Bullet
+    text: Only QA-01 is current executable QA workspace; do not recreate QA-02/03/04 as pages.
+  - index: 90
+    style: List Bullet
+    text: 'QA is judge, not editor: no Script/Asset/Video/Edit mutation.'
+  - index: 91
+    style: List Bullet
+    text: Top Context is read-only; no input/select controls for Project/Topic/QATask/TargetOutput/State.
+  - index: 92
+    style: List Bullet
+    text: System/AI performs scoring; Scorecard area has no human action.
+  - index: 93
+    style: List Bullet
+    text: Manual Review Modify/Pass only when governed ManualReviewCase is required/open.
+  - index: 94
+    style: List Bullet
+    text: No direct Close Finding without verified NEW exact output + Recheck.
+  - index: 95
+    style: List Bullet
+    text: No generic/default scorecard or local numeric threshold.
+  - index: 96
+    style: List Bullet
+    text: Hard blocks override numeric score.
+  - index: 97
+    style: List Bullet
+    text: QA PASS != Publish; last visible release action is Create Release Candidate.
+  - index: 98
+    style: List Bullet
+    text: No fake score/evidence/version/runtime/checksum/rights/policy values; missing = —.
+  - index: 99
+    style: List Bullet
+    text: AUTO max active=1; no reorder/create/skip; low-score warning only follows bound policy threshold.
+  - index: 100
+    style: List Bullet
+    text: Unlisted Section/Component/Control/Action/State/Gate/Permission/Port = BLOCK.
+  - index: 101
+    style: Heading 2
+    text: 17.2 Design Freeze
+  - index: 103
+    style: Heading 1
+    text: 18. Resume / Next Transition
+  - index: 104
+    style: Normal
+    text: 合法下一步是 Human Reviewer 檢視 QA-01 的功能對位、AUTO/MANUAL queue、exact viewer/evidence capture、System/AI scorecard、conditional Manual Review、Correction/Recheck 與
+      Release Candidate 邊界；若需修改先更新 Visual Candidate。只有 Selected Approved Candidate 形成後，才可進 Authority Update / Design Freeze / Implementation Handoff。
+  - index: 105
+    style: Normal
+    text: 文件版號 v1.0 僅代表本次 Basic Design 文件 revision，不等於 Current Governance / Page Authority version。
+  - index: 107
+    style: Heading 1
+    text: 2026-09-21 Machine Authority Construction Closure / 機器權威施工綁定封板
+  - index: 108
+    style: Normal
+    text: '[ACPOS-20260921-SOURCE-GROUNDED-CONSTRUCTION-CLOSURE-V2] Source-grounded only. Existing Current source wins; missing source values remain blocked/decision-required.
+      This closure supersedes the prior generic 2026-09-21 V1/V3 annex only, not the original domain logic or human visual review gates.'
+  - index: 109
+    style: Heading 2
+    text: QA-01 · Exact Construction Binding
+  - index: 110
+    style: Heading 2
+    text: Page Construction Invariant
+  - index: 111
+    style: Normal
+    text: The exact control denominator above is the only construction denominator for this page. Components/fields/visual IDs are not counted as additional controls.
+      Existing source UIDs are preserved. A control classified UI_LOCAL_EXACT MUST NOT create a server write. A control classified SPEC_EXACT_RUNTIME_BLOCKED / NOT_EXECUTED
+      MUST remain disabled or fail-closed until its runtime evidence exists.
+  - index: 113
+    style: Heading 1
+    text: QA-01 Concrete Review Item Display / 實際審查項目顯示
+  - index: 114
+    style: Normal
+    text: '[ACPOS-20260921-CONCRETE-BUSINESS-CONTENT-CLOSURE-V1] 這一段是完整來源掃描後補入的 Concrete Business Content Authority。既有來源已明確的內容沿用；原來源只有抽象 Criteria/Dimension 容器而缺實際明細者，以下項目標示為本次新
+      Authority。'
+  - index: 115
+    style: Heading 2
+    text: QCP-QA-FINAL-OUTPUT-V1 · QA · Final output / release-candidate review
+  - index: 116
+    style: Normal
+    text: 'Scoring: 每個 Dimension 0–100；Weighted Score = Score × Weight / 100；Total = 全部適用 Dimension 加總。PASS = Total ≥ 95 且所有 Hard Block / Required Check PASS。頁面不得自行新增第二套
+      threshold。'
+  - index: 117
+    style: Heading 2
+    text: QA-01 Scorecard Row Contract
+  - index: 119
+    style: Heading 1
+    text: Batch 16 · Operation / Runtime Owner Binding Ledger
+  - index: 120
+    style: Normal
+    text: '[ACPOS-20260921-BATCH-16-OPERATION-OWNER-CONTRACT-CLOSURE-V1::PAGE::QA-01] The existing product-control registry cells above are updated only for the exact
+      fields authorized by the matching Canonical Owner contract. No Method/Path is invented and no Runtime/Production execution is claimed.'
+  - index: 122
+    style: Heading 1
+    text: Batch 32 · Operation Placeholder Closure Ledger
+  - index: 123
+    style: Normal
+    text: '[ACPOS-20260922-BATCH-32-OPERATION-PLACEHOLDER-REMEDIATION-V1::PAGE::QA-01] The page Operation field is synchronized to the Canonical Owner operation.
+      No transport/payload/persistence value is synthesized by this batch.'
+  - index: 125
+    style: Heading 1
+    text: Batch 54 · QA-01 Contract Binding Ledger
+  - index: 126
+    style: Normal
+    text: '[ACPOS-20260922-BATCH-54-QA-CONTRACT-REMEDIATION-V1::PAGE::QA-01] QA contracts preserve exact source/version/criteria/evidence boundaries. Machine score
+      cannot bypass manual review. ReleaseCandidate is not published truth. CLIENT/QA evidence-point/range mutations are LOCAL LOCAL session-draft operations and
+      do not fabricate server APIs or canonical Findings.'
+  - index: 128
+    style: Heading 2
+    text: Canonical Business Entity Operation Applicability Matrix / 業務實體操作適用性矩陣
+  - index: 129
+    style: Normal
+    text: 'Authority: Current Word design + Mother §71 bounded completion. 本矩陣只正規化既有行為與目前未授權行為；不得據此新增 Business Entity、Operation、Runtime 或 API。 Current tree: b2f81b20322dd9e9268001126b07931b437e27df.'
+  - index: 131
+    style: Heading 1
+    text: Mother Planning / Basic Design Closure Annex｜規劃設計規範閉環補充
+  - index: 132
+    style: Normal
+    text: '[ACPOS-20260922-PLANNING-DESIGN-CLOSURE-ANNEX-V1] 本附錄只補規劃／基本設計規範缺口；原頁面既有功能、Owner、Operation、Permission、Entity、Visual 與跨頁 Authority 仍為同一 Canonical Owner。不得由本附錄發明
+      Runtime/API/DB/Provider 行為，也不得建立第二套平行規範。'
+  - index: 133
+    style: Heading 2
+    text: Page Registry Identity Closure｜頁面識別補齊
+  - index: 134
+    style: Normal
+    text: '[ACPOS-DESIGN-CLOSURE:QA-01:PAGE-IDENTITY]'
+  - index: 135
+    style: Heading 2
+    text: Design System / Layout Closure｜設計系統與版面補齊
+  - index: 136
+    style: Normal
+    text: '[ACPOS-DESIGN-CLOSURE:QA-01:DESIGN-SYSTEM]'
+  - index: 137
+    style: Heading 2
+    text: Visual Geometry Contract Closure｜視覺幾何補齊
+  - index: 138
+    style: Normal
+    text: '[ACPOS-DESIGN-CLOSURE:QA-01:GEOMETRY]'
+  - index: 139
+    style: Heading 2
+    text: Visual Anchor / Preview / Review Contract｜視覺錨點與預覽審查補齊
+  - index: 140
+    style: Normal
+    text: '[ACPOS-DESIGN-CLOSURE:QA-01:VISUAL]'
+  - index: 141
+    style: Heading 2
+    text: Visual Generation / Review Planning Contract
+  - index: 142
+    style: Normal
+    text: '[ACPOS-DESIGN-CLOSURE:QA-01:VISUAL-CONTRACT]'
+  - index: 143
+    style: Heading 2
+    text: Asset Registry / Binding Applicability Closure｜素材註冊與綁定補齊
+  - index: 144
+    style: Normal
+    text: '[ACPOS-DESIGN-CLOSURE:QA-01:ASSET]'
+  - index: 145
+    style: Heading 2
+    text: Design Freeze Package Closure｜設計封板包補齊
+  - index: 146
+    style: Normal
+    text: '[ACPOS-DESIGN-CLOSURE:QA-01:FREEZE]'
+  tables:
+  - index: 0
+    rows:
+    - row: 0
+      cells:
+      - Current Truth
+      - Bound Value
+    - row: 1
+      cells:
+      - Repository / Branch
+      - steven-gold/orange-one-ai-viedo-v1.0 / 0921acpos
+    - row: 2
+      cells:
+      - Live HEAD
+      - RESOLVE_FRESH_AT_AUDIT_TIME
+    - row: 3
+      cells:
+      - Current Authority
+      - authority/pages/workspace/QA-01/ACPOS_QA-01_FINAL_LOCKED_ENCODING_DEDUP_CLEAN.yaml
+    - row: 4
+      cells:
+      - Authority SHA
+      - 101d7af019ada27c7bbf2af8f19423c951294e23
+    - row: 5
+      cells:
+      - Authority Status
+      - FINAL_LOCKED / CURRENT ONLY
+    - row: 6
+      cells:
+      - Global Shell
+      - GLOBAL_HOME_SHELL_TEMPLATE_AUTHORITY@V1.9
+    - row: 7
+      cells:
+      - Global Visual
+      - GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY@V1.0
+    - row: 8
+      cells:
+      - Document Design State
+      - VISUAL_CANDIDATE / PENDING HUMAN REVIEW
+    - row: 9
+      cells:
+      - DESIGN_FROZEN
+      - 'FALSE'
+  - index: 1
+    rows:
+    - row: 0
+      cells:
+      - Dimension
+      - Current Contract
+    - row: 1
+      cells:
+      - Page model
+      - Single Page QA Review Workspace
+    - row: 2
+      cells:
+      - Data truth
+      - Real data only; missing = —
+    - row: 3
+      cells:
+      - Top Context
+      - Read-only chips; Project/Topic/QATask/TargetOutput/State 不可編輯
+    - row: 4
+      cells:
+      - Review modes
+      - AUTO / MANUAL；模式只改排程方式，不改 exact context/result
+    - row: 5
+      cells:
+      - Primary grid
+      - 20% Queue / 60% Exact Viewer / 20% Scorecard
+    - row: 6
+      cells:
+      - Manual scoring
+      - FORBIDDEN
+    - row: 7
+      cells:
+      - Score origin
+      - SYSTEM_AI_GENERATED_FROM_BOUND_CRITERIA
+    - row: 8
+      cells:
+      - Manual Review
+      - Only when governed ManualReviewCase is required/open; exactly Modify / Pass
+    - row: 9
+      cells:
+      - Release boundary
+      - QA creates Release Candidate only; ReleaseService continues; no Publish
+  - index: 2
+    rows:
+    - row: 0
+      cells:
+      - Workbench Layer
+      - Responsibility
+    - row: 1
+      cells:
+      - Context
+      - Read-only Project / Topic / QA Task / Exact Output / Review State
+    - row: 2
+      cells:
+      - Queue
+      - AUTO/MANUAL + current authorized QA queue; no task creation
+    - row: 3
+      cells:
+      - Viewer
+      - Read-only exact output + localization/evidence capture
+    - row: 4
+      cells:
+      - Script / Criteria
+      - Exact QAValidationScriptView + approved CriteriaVersion / Gate Policy
+    - row: 5
+      cells:
+      - Score / Gate
+      - System/AI generated only; no human scoring controls
+    - row: 6
+      cells:
+      - Finding / Manual Review
+      - Finding creation; conditional governed Manual Review
+    - row: 7
+      cells:
+      - Correction / Recheck
+      - Request original owner correction; verified NEW output required
+    - row: 8
+      cells:
+      - Release Candidate
+      - Create candidate only when all gates pass
+    - row: 9
+      cells:
+      - Status / Audit
+      - Error/disabled/correlation/trace
+  - index: 3
+    rows:
+    - row: 0
+      cells:
+      - Object UID
+      - Entity
+      - Owner
+      - Required Content
+    - row: 1
+      cells:
+      - QA-01-REF-HANDOFF
+      - QAHandoffRef
+      - Upstream boundary
+      - exact handoff/task/output/script/score/evidence refs + hashes
+    - row: 2
+      cells:
+      - QA-01-REF-TASK
+      - QATaskRef
+      - QA Orchestration
+      - workspace/project/topic/task + exact scope/state
+    - row: 3
+      cells:
+      - QA-01-REF-OUTPUT
+      - ExactOutputVersionRef
+      - Upstream output owner
+      - output_version_id + artifact refs + checksum + provenance + output contract hash
+    - row: 4
+      cells:
+      - QA-01-REF-SCRIPT
+      - QAValidationScriptViewRef
+      - InstructionCompiler
+      - script_view_id + canonical version + included/excluded refs + constraints + view_hash
+    - row: 5
+      cells:
+      - QA-01-REF-CRITERIA
+      - QACriteriaVersionRef
+      - ScoringService
+      - approved criteria_version_id + quality_gate_policy_version + dimensions/hard gates
+    - row: 6
+      cells:
+      - QA-01-REF-RIGHTS
+      - RightsPolicyRef
+      - Rights/Policy
+      - exact rights policy version + gate state
+    - row: 7
+      cells:
+      - QA-01-REF-CHANNEL
+      - ChannelPolicyRef
+      - Release/Channel Policy
+      - exact policy/account scope ref when applicable
+    - row: 8
+      cells:
+      - QA-01-OBJ-REVIEW
+      - QAReviewRun
+      - QAService
+      - target output + contract/goal/hash + script/criteria/policy/score/finding/evidence/reviewer + gate_status
+    - row: 9
+      cells:
+      - QA-01-OBJ-SCORECARD
+      - QAScorecard
+      - ScoringService
+      - exact target + criteria + dimensions + evidence + total + hard gate + scorer
+    - row: 10
+      cells:
+      - QA-01-OBJ-FINDING
+      - Finding
+      - ManualReviewService
+      - source + severity + category + affected_scope + evidence + detected_by + status
+    - row: 11
+      cells:
+      - QA-01-OBJ-MANUAL
+      - ManualReviewCase
+      - ManualReviewService
+      - case ref + owner + reason + blocker + governed decision/status/history
+    - row: 12
+      cells:
+      - QA-01-OBJ-CORRECTION
+      - CorrectionRequest
+      - ManualReviewService
+      - finding/score/source instruction/failed version/affected_scope/root cause/target department/revalidation
+    - row: 13
+      cells:
+      - QA-01-OBJ-RECHECK
+      - QARecheckContext
+      - QAService
+      - qa_review_id + correction refs + failed output ref + verified new exact output ref
+    - row: 14
+      cells:
+      - QA-01-OBJ-GATE
+      - QAGateDecision
+      - QAService
+      - qa_review_id + PASS/FAIL/BLOCK state + reason/evidence + actor + version
+    - row: 15
+      cells:
+      - QA-01-OBJ-RELEASE
+      - ReleasePackageCandidate
+      - ReleaseService
+      - exact output refs + qa_gate_ref + rights_gate_ref + evidence + channel optional + immutable lineage
+    - row: 16
+      cells:
+      - QA-01-REF-AUDIT
+      - AuditTraceRef
+      - Governance
+      - correlation_id + causation/idempotency refs + audit events + version trace
+  - index: 4
+    rows:
+    - row: 0
+      cells:
+      - Stage UID
+      - Stage
+      - Flow
+    - row: 1
+      cells:
+      - QA-01-STAGE-01-RESOLVE
+      - Resolve / Start Review
+      - Validate QAHandoff/QATask/exact output/script/criteria/rights/policy -> startQaReview
+    - row: 2
+      cells:
+      - QA-01-STAGE-02-VALIDATE
+      - Score / Evidence
+      - Review exact output -> required checks -> evidence -> QA scorecard
+    - row: 3
+      cells:
+      - QA-01-STAGE-03-FINDING
+      - Finding / Manual Review
+      - Create findings; surface ManualReviewCase when required; QA does not edit upstream
+    - row: 4
+      cells:
+      - QA-01-STAGE-04-RECHECK
+      - Correction / Recheck
+      - CreateCorrectionRequest -> original owner creates NEW output -> startRecheck -> re-score
+    - row: 5
+      cells:
+      - QA-01-STAGE-05-GATE
+      - QA Gate / Release Candidate
+      - decide PASS/FAIL; if eligible createReleasePackage candidate -> ReleaseService
+  - index: 5
+    rows:
+    - row: 0
+      cells:
+      - Transition
+      - From
+      - To
+      - Trigger
+      - Gate
+    - row: 1
+      cells:
+      - QA-01-STTR-01
+      - STAGE-01
+      - STAGE-02
+      - Start Review
+      - QA-01-GATE-START
+    - row: 2
+      cells:
+      - QA-01-STTR-02
+      - STAGE-02
+      - STAGE-03
+      - Finding/manual review needed
+      - QA-01-GATE-FINDING
+    - row: 3
+      cells:
+      - QA-01-STTR-03
+      - STAGE-03
+      - STAGE-04
+      - Correction Request + verified new output
+      - QA-01-GATE-RECHECK
+    - row: 4
+      cells:
+      - QA-01-STTR-04
+      - STAGE-04
+      - STAGE-05
+      - Recheck score/evidence completed
+      - QA-01-GATE-SCORE
+    - row: 5
+      cells:
+      - QA-01-STTR-05
+      - STAGE-02
+      - STAGE-05
+      - No correction/manual blocker and scoring complete
+      - QA-01-GATE-PASS
+    - row: 6
+      cells:
+      - QA-01-STTR-06
+      - STAGE-05
+      - STAGE-05
+      - PASS -> Create Release Candidate
+      - QA-01-GATE-RELEASE
+  - index: 6
+    rows:
+    - row: 0
+      cells:
+      - Section UID
+      - Name
+      - Responsibility
+      - Visual
+    - row: 1
+      cells:
+      - QA-01-SEC-01
+      - Context / Review Start
+      - Project/Topic/QATask/Target Output/Review State/Start Review
+      - QA-01-VIS-CONTEXT
+    - row: 2
+      cells:
+      - QA-01-SEC-02
+      - QA Review Queue
+      - AUTO/MANUAL mode; Topic-scoped sequential auto review or manual queue selection; search/filter; no task creation
+      - QA-01-VIS-LEFT
+    - row: 3
+      cells:
+      - QA-01-SEC-03
+      - Exact Output Viewer
+      - Read-only exact target output, frame/time/range localization, evidence binding, conditional recheck compare
+      - QA-01-VIS-VIEWER
+    - row: 4
+      cells:
+      - QA-01-SEC-04
+      - QA Script / Criteria
+      - QAValidationScriptView + approved CriteriaVersion + policy refs
+      - QA-01-VIS-SCRIPT
+    - row: 5
+      cells:
+      - QA-01-SEC-05
+      - Evidence / Required Checks
+      - Evidence, checksum, provenance, rights/policy and required checks
+      - QA-01-VIS-EVIDENCE
+    - row: 6
+      cells:
+      - QA-01-SEC-06
+      - Scorecard / QA Gate
+      - System-generated task-bound QA scorecard, hard blocks, QA gate result, release readiness; no human decision control in Scorecard
+      - QA-01-VIS-RIGHT
+    - row: 7
+      cells:
+      - QA-01-SEC-07
+      - Finding / Manual Review
+      - Finding detail, severity/category/scope/evidence, manual-review projection
+      - QA-01-VIS-FINDING
+    - row: 8
+      cells:
+      - QA-01-SEC-08
+      - Correction / Recheck
+      - CorrectionRequest to original owner; verified new output; recheck
+      - QA-01-VIS-RECHECK
+    - row: 9
+      cells:
+      - QA-01-SEC-09
+      - Release Candidate
+      - QA pass + rights/policy/manual review readiness -> ReleasePackage candidate
+      - QA-01-VIS-RELEASE
+    - row: 10
+      cells:
+      - QA-01-SEC-10
+      - Status / Audit
+      - Current state, errors, disabled reason, audit/correlation/trace
+      - QA-01-VIS-STATUS
+  - index: 7
+    rows:
+    - row: 0
+      cells:
+      - Component UID
+      - Section
+      - Component
+    - row: 1
+      cells:
+      - QA-01-CMP-CONTEXT
+      - SEC-01
+      - QA Context / Start Review
+    - row: 2
+      cells:
+      - QA-01-CMP-QUEUE
+      - SEC-02
+      - QA Review Queue
+    - row: 3
+      cells:
+      - QA-01-CMP-VIEWER
+      - SEC-03
+      - Exact Output Viewer
+    - row: 4
+      cells:
+      - QA-01-CMP-COMPARE
+      - SEC-03
+      - Conditional Before / After Compare
+    - row: 5
+      cells:
+      - QA-01-CMP-SCRIPT
+      - SEC-04
+      - QA Validation Script
+    - row: 6
+      cells:
+      - QA-01-CMP-CRITERIA
+      - SEC-04
+      - Approved QA Criteria / Gate Policy
+    - row: 7
+      cells:
+      - QA-01-CMP-EVIDENCE
+      - SEC-05
+      - Evidence / Required Checks
+    - row: 8
+      cells:
+      - QA-01-CMP-SCORE
+      - SEC-06
+      - QA Scorecard
+    - row: 9
+      cells:
+      - QA-01-CMP-GATE
+      - SEC-06
+      - QA Gate Decision
+    - row: 10
+      cells:
+      - QA-01-CMP-FINDING-LIST
+      - SEC-07
+      - Finding List / Filter
+    - row: 11
+      cells:
+      - QA-01-CMP-FINDING-FORM
+      - SEC-07
+      - Finding Create / Detail
+    - row: 12
+      cells:
+      - QA-01-CMP-MANUAL
+      - SEC-07
+      - Manual Review Projection
+    - row: 13
+      cells:
+      - QA-01-CMP-CORRECTION
+      - SEC-08
+      - Correction Request
+    - row: 14
+      cells:
+      - QA-01-CMP-RECHECK
+      - SEC-08
+      - Verified New Version / Recheck
+    - row: 15
+      cells:
+      - QA-01-CMP-RELEASE-READY
+      - SEC-09
+      - Release Eligibility
+    - row: 16
+      cells:
+      - QA-01-CMP-RELEASE
+      - SEC-09
+      - Release Candidate / Package
+    - row: 17
+      cells:
+      - QA-01-CMP-STATUS
+      - SEC-10
+      - Status / Error / Audit
+    - row: 18
+      cells:
+      - QA-01-CMP-REVIEW-MODE
+      - SEC-02
+      - AUTO / MANUAL QA Review Mode
+    - row: 19
+      cells:
+      - QA-01-CMP-AUTO-PROGRESS
+      - SEC-02
+      - AUTO Topic Review Progress / Warning State
+    - row: 20
+      cells:
+      - QA-01-CMP-EVIDENCE-CAPTURE
+      - SEC-03
+      - Viewer QA Localization / Evidence Capture
+    - row: 21
+      cells:
+      - QA-01-CMP-MANUAL-DECISION
+      - SEC-07
+      - Manual Review Modify / Pass Decision
+  - index: 8
+    rows:
+    - row: 0
+      cells:
+      - Control UID
+      - Sec
+      - Component
+      - Type
+      - Label
+      - Action
+      - Gate
+      - Permission
+    - row: 1
+      cells:
+      - QA-01-FLD-PROJECT
+      - QA-01-SEC-01
+      - QA-01-CMP-CONTEXT
+      - READONLY
+      - Project
+      - QA-01-ACT-NOOP-VIEW
+      - QA-01-GATE-PAGE
+      - QA_USE
+    - row: 2
+      cells:
+      - QA-01-FLD-TOPIC
+      - QA-01-SEC-01
+      - QA-01-CMP-CONTEXT
+      - READONLY
+      - Topic
+      - QA-01-ACT-NOOP-VIEW
+      - QA-01-GATE-PAGE
+      - QA_USE
+    - row: 3
+      cells:
+      - QA-01-FLD-QA-TASK
+      - QA-01-SEC-01
+      - QA-01-CMP-CONTEXT
+      - READONLY
+      - QA Task
+      - QA-01-ACT-NOOP-VIEW
+      - QA-01-GATE-PAGE
+      - QA_USE
+    - row: 4
+      cells:
+      - QA-01-FLD-TARGET-OUTPUT
+      - QA-01-SEC-01
+      - QA-01-CMP-CONTEXT
+      - READONLY
+      - Target Output Version
+      - QA-01-ACT-NOOP-VIEW
+      - QA-01-GATE-PAGE
+      - QA_USE
+    - row: 5
+      cells:
+      - QA-01-FLD-REVIEW-STATE
+      - QA-01-SEC-01
+      - QA-01-CMP-CONTEXT
+      - READONLY
+      - QA Review State
+      - QA-01-ACT-NOOP-VIEW
+      - QA-01-GATE-PAGE
+      - QA_USE
+    - row: 6
+      cells:
+      - QA-01-BTN-START-REVIEW
+      - QA-01-SEC-01
+      - QA-01-CMP-CONTEXT
+      - BUTTON
+      - 開始審查 / Start Review
+      - QA-01-ACT-START-REVIEW
+      - QA-01-GATE-START
+      - QA_USE
+    - row: 7
+      cells:
+      - QA-01-INP-QUEUE-SEARCH
+      - QA-01-SEC-02
+      - QA-01-CMP-QUEUE
+      - SEARCH
+      - 搜尋 QA Task / Output / Finding
+      - QA-01-ACT-QUEUE-SEARCH
+      - QA-01-GATE-PAGE
+      - QA_USE
+    - row: 8
+      cells:
+      - QA-01-SEL-QUEUE-STATE
+      - QA-01-SEC-02
+      - QA-01-CMP-QUEUE
+      - SELECT
+      - 狀態篩選
+      - QA-01-ACT-QUEUE-FILTER
+      - QA-01-GATE-PAGE
+      - QA_USE
+    - row: 9
+      cells:
+      - QA-01-SEL-QUEUE-SEVERITY
+      - QA-01-SEC-02
+      - QA-01-CMP-QUEUE
+      - SELECT
+      - Severity
+      - QA-01-ACT-QUEUE-FILTER
+      - QA-01-GATE-PAGE
+      - QA_USE
+    - row: 10
+      cells:
+      - QA-01-LIST-REVIEWS
+      - QA-01-SEC-02
+      - QA-01-CMP-QUEUE
+      - LIST
+      - QA Review Queue
+      - QA-01-ACT-REVIEW-SELECT
+      - QA-01-GATE-PAGE
+      - QA_USE
+    - row: 11
+      cells:
+      - QA-01-VIEW-OUTPUT
+      - QA-01-SEC-03
+      - QA-01-CMP-VIEWER
+      - VIEWER
+      - Exact Output Viewer
+      - QA-01-ACT-NOOP-VIEW
+      - QA-01-GATE-VIEWER
+      - QA_USE
+    - row: 12
+      cells:
+      - QA-01-BTN-PLAY
+      - QA-01-SEC-03
+      - QA-01-CMP-VIEWER
+      - BUTTON
+      - Play / Pause
+      - QA-01-ACT-VIEWER-PLAY
+      - QA-01-GATE-VIEWER
+      - QA_USE
+    - row: 13
+      cells:
+      - QA-01-CTL-SEEK
+      - QA-01-SEC-03
+      - QA-01-CMP-VIEWER
+      - RANGE
+      - Seek / Timecode
+      - QA-01-ACT-VIEWER-SEEK
+      - QA-01-GATE-VIEWER
+      - QA_USE
+    - row: 14
+      cells:
+      - QA-01-BTN-VOLUME
+      - QA-01-SEC-03
+      - QA-01-CMP-VIEWER
+      - BUTTON
+      - Volume / Mute
+      - QA-01-ACT-VIEWER-VOLUME
+      - QA-01-GATE-VIEWER
+      - QA_USE
+    - row: 15
+      cells:
+      - QA-01-BTN-FULLSCREEN
+      - QA-01-SEC-03
+      - QA-01-CMP-VIEWER
+      - BUTTON
+      - Fullscreen
+      - QA-01-ACT-VIEWER-FULLSCREEN
+      - QA-01-GATE-VIEWER
+      - QA_USE
+    - row: 16
+      cells:
+      - QA-01-BTN-COMPARE
+      - QA-01-SEC-03
+      - QA-01-CMP-COMPARE
+      - BUTTON
+      - Before / After Compare
+      - QA-01-ACT-COMPARE-TOGGLE
+      - QA-01-GATE-COMPARE
+      - QA_USE
+    - row: 17
+      cells:
+      - QA-01-FLD-QA-SCRIPT
+      - QA-01-SEC-04
+      - QA-01-CMP-SCRIPT
+      - READONLY
+      - QA Validation Script View
+      - QA-01-ACT-NOOP-VIEW
+      - QA-01-GATE-SCRIPT
+      - QA_USE
+    - row: 18
+      cells:
+      - QA-01-FLD-SCRIPT-HASH
+      - QA-01-SEC-04
+      - QA-01-CMP-SCRIPT
+      - READONLY
+      - Script View Hash
+      - QA-01-ACT-NOOP-VIEW
+      - QA-01-GATE-SCRIPT
+      - QA_USE
+    - row: 19
+      cells:
+      - QA-01-FLD-CRITERIA-VERSION
+      - QA-01-SEC-04
+      - QA-01-CMP-CRITERIA
+      - READONLY
+      - Criteria Version
+      - QA-01-ACT-NOOP-VIEW
+      - QA-01-GATE-CRITERIA
+      - QA_USE
+    - row: 20
+      cells:
+      - QA-01-FLD-GATE-POLICY
+      - QA-01-SEC-04
+      - QA-01-CMP-CRITERIA
+      - READONLY
+      - Quality Gate Policy Version
+      - QA-01-ACT-NOOP-VIEW
+      - QA-01-GATE-CRITERIA
+      - QA_USE
+    - row: 21
+      cells:
+      - QA-01-BTN-SCRIPT-VIEW
+      - QA-01-SEC-04
+      - QA-01-CMP-SCRIPT
+      - BUTTON
+      - 查看 QA 驗證腳本
+      - QA-01-ACT-SCRIPT-VIEW
+      - QA-01-GATE-SCRIPT
+      - QA_USE
+    - row: 22
+      cells:
+      - QA-01-FLD-EVIDENCE
+      - QA-01-SEC-05
+      - QA-01-CMP-EVIDENCE
+      - READONLY
+      - Evidence Refs
+      - QA-01-ACT-NOOP-VIEW
+      - QA-01-GATE-EVIDENCE
+      - QA_USE
+    - row: 23
+      cells:
+      - QA-01-FLD-CHECKSUM
+      - QA-01-SEC-05
+      - QA-01-CMP-EVIDENCE
+      - READONLY
+      - Artifact Checksum
+      - QA-01-ACT-NOOP-VIEW
+      - QA-01-GATE-EVIDENCE
+      - QA_USE
+    - row: 24
+      cells:
+      - QA-01-FLD-PROVENANCE
+      - QA-01-SEC-05
+      - QA-01-CMP-EVIDENCE
+      - READONLY
+      - Provenance
+      - QA-01-ACT-NOOP-VIEW
+      - QA-01-GATE-EVIDENCE
+      - QA_USE
+    - row: 25
+      cells:
+      - QA-01-FLD-REQUIRED-CHECKS
+      - QA-01-SEC-05
+      - QA-01-CMP-EVIDENCE
+      - READONLY
+      - Required Checks
+      - QA-01-ACT-NOOP-VIEW
+      - QA-01-GATE-EVIDENCE
+      - QA_USE
+    - row: 26
+      cells:
+      - QA-01-FLD-RIGHTS
+      - QA-01-SEC-05
+      - QA-01-CMP-EVIDENCE
+      - READONLY
+      - Rights Gate
+      - QA-01-ACT-NOOP-VIEW
+      - QA-01-GATE-EVIDENCE
+      - QA_USE
+    - row: 27
+      cells:
+      - QA-01-FLD-POLICY
+      - QA-01-SEC-05
+      - QA-01-CMP-EVIDENCE
+      - READONLY
+      - Policy Gate
+      - QA-01-ACT-NOOP-VIEW
+      - QA-01-GATE-EVIDENCE
+      - QA_USE
+    - row: 28
+      cells:
+      - QA-01-BTN-EVIDENCE
+      - QA-01-SEC-05
+      - QA-01-CMP-EVIDENCE
+      - BUTTON
+      - 查看 Evidence / Checks
+      - QA-01-ACT-EVIDENCE-VIEW
+      - QA-01-GATE-EVIDENCE
+      - QA_USE
+    - row: 29
+      cells:
+      - QA-01-FLD-TOTAL-SCORE
+      - QA-01-SEC-06
+      - QA-01-CMP-SCORE
+      - READONLY
+      - Total Score
+      - QA-01-ACT-NOOP-VIEW
+      - QA-01-GATE-PAGE
+      - QA_USE
+    - row: 30
+      cells:
+      - QA-01-FLD-HARD-BLOCK
+      - QA-01-SEC-06
+      - QA-01-CMP-SCORE
+      - READONLY
+      - Hard Block
+      - QA-01-ACT-NOOP-VIEW
+      - QA-01-GATE-PAGE
+      - QA_USE
+    - row: 31
+      cells:
+      - QA-01-FLD-GATE-STATUS
+      - QA-01-SEC-06
+      - QA-01-CMP-GATE
+      - READONLY
+      - QA Gate Result
+      - QA-01-ACT-NOOP-VIEW
+      - QA-01-GATE-PAGE
+      - QA_USE
+    - row: 32
+      cells:
+      - QA-01-FLD-OPEN-FINDINGS
+      - QA-01-SEC-06
+      - QA-01-CMP-GATE
+      - READONLY
+      - Open Blocking Findings
+      - QA-01-ACT-NOOP-VIEW
+      - QA-01-GATE-PAGE
+      - QA_USE
+    - row: 33
+      cells:
+      - QA-01-FLD-MANUAL-STATE
+      - QA-01-SEC-06
+      - QA-01-CMP-GATE
+      - READONLY
+      - Manual Review
+      - QA-01-ACT-NOOP-VIEW
+      - QA-01-GATE-PAGE
+      - QA_USE
+    - row: 34
+      cells:
+      - QA-01-LIST-FINDINGS
+      - QA-01-SEC-07
+      - QA-01-CMP-FINDING-LIST
+      - LIST
+      - Finding List
+      - QA-01-ACT-FINDING-SELECT
+      - QA-01-GATE-PAGE
+      - QA_USE
+    - row: 35
+      cells:
+      - QA-01-INP-FINDING-SEVERITY
+      - QA-01-SEC-07
+      - QA-01-CMP-FINDING-FORM
+      - SELECT
+      - Severity（registered enum）
+      - QA-01-ACT-NOOP-VIEW
+      - QA-01-GATE-FINDING
+      - QA_FINDING
+    - row: 36
+      cells:
+      - QA-01-INP-FINDING-CATEGORY
+      - QA-01-SEC-07
+      - QA-01-CMP-FINDING-FORM
+      - SELECT
+      - Category（registered QA issue category）
+      - QA-01-ACT-NOOP-VIEW
+      - QA-01-GATE-FINDING
+      - QA_FINDING
+    - row: 37
+      cells:
+      - QA-01-INP-FINDING-SCOPE
+      - QA-01-SEC-07
+      - QA-01-CMP-FINDING-FORM
+      - PREFILLED_SCOPE_INPUT
+      - Affected Scope
+      - QA-01-ACT-NOOP-VIEW
+      - QA-01-GATE-FINDING
+      - QA_FINDING
+    - row: 38
+      cells:
+      - QA-01-INP-FINDING-EVIDENCE
+      - QA-01-SEC-07
+      - QA-01-CMP-FINDING-FORM
+      - READONLY
+      - Evidence Refs（auto-bound）
+      - QA-01-ACT-NOOP-VIEW
+      - QA-01-GATE-FINDING
+      - QA_FINDING
+    - row: 39
+      cells:
+      - QA-01-BTN-FINDING-CREATE
+      - QA-01-SEC-07
+      - QA-01-CMP-FINDING-FORM
+      - PRIMARY_BUTTON
+      - 建立 Finding
+      - QA-01-ACT-FINDING-CREATE
+      - QA-01-GATE-FINDING
+      - QA_FINDING
+    - row: 40
+      cells:
+      - QA-01-FLD-MANUAL-CASE
+      - QA-01-SEC-07
+      - QA-01-CMP-MANUAL
+      - READONLY
+      - Manual Review Case
+      - QA-01-ACT-NOOP-VIEW
+      - QA-01-GATE-MANUAL
+      - QA_USE
+    - row: 41
+      cells:
+      - QA-01-FLD-MANUAL-OWNER
+      - QA-01-SEC-07
+      - QA-01-CMP-MANUAL
+      - READONLY
+      - Owner
+      - QA-01-ACT-NOOP-VIEW
+      - QA-01-GATE-MANUAL
+      - QA_USE
+    - row: 42
+      cells:
+      - QA-01-FLD-MANUAL-BLOCKER
+      - QA-01-SEC-07
+      - QA-01-CMP-MANUAL
+      - READONLY
+      - Blocking Reason
+      - QA-01-ACT-NOOP-VIEW
+      - QA-01-GATE-MANUAL
+      - QA_USE
+    - row: 43
+      cells:
+      - QA-01-FLD-MANUAL-DECISION
+      - QA-01-SEC-07
+      - QA-01-CMP-MANUAL
+      - READONLY
+      - Decision / History
+      - QA-01-ACT-NOOP-VIEW
+      - QA-01-GATE-MANUAL
+      - QA_USE
+    - row: 44
+      cells:
+      - QA-01-BTN-MANUAL-VIEW
+      - QA-01-SEC-07
+      - QA-01-CMP-MANUAL
+      - BUTTON
+      - 查看人工審查 / View Manual Review
+      - QA-01-ACT-MANUAL-VIEW
+      - QA-01-GATE-MANUAL
+      - QA_USE
+    - row: 45
+      cells:
+      - QA-01-INP-CORR-FINDINGS
+      - QA-01-SEC-08
+      - QA-01-CMP-CORRECTION
+      - READONLY
+      - Finding IDs
+      - QA-01-ACT-NOOP-VIEW
+      - QA-01-GATE-CORRECTION
+      - QA_CORRECTION
+    - row: 46
+      cells:
+      - QA-01-INP-CORR-SCORECARDS
+      - QA-01-SEC-08
+      - QA-01-CMP-CORRECTION
+      - READONLY
+      - Source Scorecard IDs
+      - QA-01-ACT-NOOP-VIEW
+      - QA-01-GATE-CORRECTION
+      - QA_CORRECTION
+    - row: 47
+      cells:
+      - QA-01-INP-CORR-INSTRUCTION
+      - QA-01-SEC-08
+      - QA-01-CMP-CORRECTION
+      - READONLY
+      - Source Instruction Package
+      - QA-01-ACT-NOOP-VIEW
+      - QA-01-GATE-CORRECTION
+      - QA_CORRECTION
+    - row: 48
+      cells:
+      - QA-01-INP-CORR-SCOPE
+      - QA-01-SEC-08
+      - QA-01-CMP-CORRECTION
+      - PREFILLED_SCOPE_INPUT
+      - Affected Scope
+      - QA-01-ACT-NOOP-VIEW
+      - QA-01-GATE-CORRECTION
+      - QA_CORRECTION
+    - row: 49
+      cells:
+      - QA-01-INP-CORR-ROOT
+      - QA-01-SEC-08
+      - QA-01-CMP-CORRECTION
+      - SELECT
+      - Root Cause（canonical enum）
+      - QA-01-ACT-NOOP-VIEW
+      - QA-01-GATE-CORRECTION
+      - QA_CORRECTION
+    - row: 50
+      cells:
+      - QA-01-INP-CORR-ACTION
+      - QA-01-SEC-08
+      - QA-01-CMP-CORRECTION
+      - TEXTAREA
+      - Required Action
+      - QA-01-ACT-NOOP-VIEW
+      - QA-01-GATE-CORRECTION
+      - QA_CORRECTION
+    - row: 51
+      cells:
+      - QA-01-INP-CORR-TARGET
+      - QA-01-SEC-08
+      - QA-01-CMP-CORRECTION
+      - READONLY
+      - Target Department / Original Owner
+      - QA-01-ACT-NOOP-VIEW
+      - QA-01-GATE-CORRECTION
+      - QA_CORRECTION
+    - row: 52
+      cells:
+      - QA-01-INP-CORR-REVALIDATE
+      - QA-01-SEC-08
+      - QA-01-CMP-CORRECTION
+      - MULTISELECT
+      - Revalidation Requirements
+      - QA-01-ACT-NOOP-VIEW
+      - QA-01-GATE-CORRECTION
+      - QA_CORRECTION
+    - row: 53
+      cells:
+      - QA-01-BTN-CORRECTION
+      - QA-01-SEC-08
+      - QA-01-CMP-CORRECTION
+      - PRIMARY_BUTTON
+      - 要求修正 / Request Correction
+      - QA-01-ACT-CORRECTION-REQUEST
+      - QA-01-GATE-CORRECTION
+      - QA_CORRECTION
+    - row: 54
+      cells:
+      - QA-01-FLD-FAILED-VERSION
+      - QA-01-SEC-08
+      - QA-01-CMP-RECHECK
+      - READONLY
+      - Failed Output Version
+      - QA-01-ACT-NOOP-VIEW
+      - QA-01-GATE-RECHECK
+      - QA_USE
+    - row: 55
+      cells:
+      - QA-01-FLD-NEW-VERSION
+      - QA-01-SEC-08
+      - QA-01-CMP-RECHECK
+      - READONLY
+      - Verified New Output Version
+      - QA-01-ACT-NOOP-VIEW
+      - QA-01-GATE-RECHECK
+      - QA_USE
+    - row: 56
+      cells:
+      - QA-01-FLD-RECHECK-STATUS
+      - QA-01-SEC-08
+      - QA-01-CMP-RECHECK
+      - READONLY
+      - Recheck Status
+      - QA-01-ACT-NOOP-VIEW
+      - QA-01-GATE-RECHECK
+      - QA_USE
+    - row: 57
+      cells:
+      - QA-01-BTN-RECHECK
+      - QA-01-SEC-08
+      - QA-01-CMP-RECHECK
+      - PRIMARY_BUTTON
+      - 開始 Recheck
+      - QA-01-ACT-RECHECK-START
+      - QA-01-GATE-RECHECK
+      - QA_GATE
+    - row: 58
+      cells:
+      - QA-01-FLD-REL-QA-PASS
+      - QA-01-SEC-09
+      - QA-01-CMP-RELEASE-READY
+      - READONLY
+      - QA PASS
+      - QA-01-ACT-NOOP-VIEW
+      - QA-01-GATE-PAGE
+      - QA_USE
+    - row: 59
+      cells:
+      - QA-01-FLD-REL-FINDINGS
+      - QA-01-SEC-09
+      - QA-01-CMP-RELEASE-READY
+      - READONLY
+      - All Findings Closed
+      - QA-01-ACT-NOOP-VIEW
+      - QA-01-GATE-PAGE
+      - QA_USE
+    - row: 60
+      cells:
+      - QA-01-FLD-REL-MANUAL
+      - QA-01-SEC-09
+      - QA-01-CMP-RELEASE-READY
+      - READONLY
+      - Manual Review Closed
+      - QA-01-ACT-NOOP-VIEW
+      - QA-01-GATE-PAGE
+      - QA_USE
+    - row: 61
+      cells:
+      - QA-01-FLD-REL-RIGHTS
+      - QA-01-SEC-09
+      - QA-01-CMP-RELEASE-READY
+      - READONLY
+      - Rights Valid
+      - QA-01-ACT-NOOP-VIEW
+      - QA-01-GATE-PAGE
+      - QA_USE
+    - row: 62
+      cells:
+      - QA-01-FLD-REL-POLICY
+      - QA-01-SEC-09
+      - QA-01-CMP-RELEASE-READY
+      - READONLY
+      - Policy Valid
+      - QA-01-ACT-NOOP-VIEW
+      - QA-01-GATE-PAGE
+      - QA_USE
+    - row: 63
+      cells:
+      - QA-01-FLD-REL-CHANNEL
+      - QA-01-SEC-09
+      - QA-01-CMP-RELEASE-READY
+      - READONLY
+      - Channel / Account Scope
+      - QA-01-ACT-NOOP-VIEW
+      - QA-01-GATE-PAGE
+      - QA_USE
+    - row: 64
+      cells:
+      - QA-01-FLD-REL-PACKAGE
+      - QA-01-SEC-09
+      - QA-01-CMP-RELEASE
+      - READONLY
+      - Release Package Candidate
+      - QA-01-ACT-NOOP-VIEW
+      - QA-01-GATE-RELEASE
+      - QA_USE
+    - row: 65
+      cells:
+      - QA-01-FLD-REL-OUTPUTS
+      - QA-01-SEC-09
+      - QA-01-CMP-RELEASE
+      - READONLY
+      - Exact Output Version IDs
+      - QA-01-ACT-NOOP-VIEW
+      - QA-01-GATE-RELEASE
+      - QA_USE
+    - row: 66
+      cells:
+      - QA-01-FLD-REL-QA-GATE
+      - QA-01-SEC-09
+      - QA-01-CMP-RELEASE
+      - READONLY
+      - QA Gate Ref
+      - QA-01-ACT-NOOP-VIEW
+      - QA-01-GATE-RELEASE
+      - QA_USE
+    - row: 67
+      cells:
+      - QA-01-FLD-REL-RIGHTS-GATE
+      - QA-01-SEC-09
+      - QA-01-CMP-RELEASE
+      - READONLY
+      - Rights Gate Ref
+      - QA-01-ACT-NOOP-VIEW
+      - QA-01-GATE-RELEASE
+      - QA_USE
+    - row: 68
+      cells:
+      - QA-01-BTN-RELEASE-CREATE
+      - QA-01-SEC-09
+      - QA-01-CMP-RELEASE
+      - PRIMARY_BUTTON
+      - 建立 Release Candidate
+      - QA-01-ACT-RELEASE-CREATE
+      - QA-01-GATE-RELEASE
+      - QA_RELEASE
+    - row: 69
+      cells:
+      - QA-01-FLD-PAGE-STATE
+      - QA-01-SEC-10
+      - QA-01-CMP-STATUS
+      - READONLY
+      - Page / QA State
+      - QA-01-ACT-NOOP-VIEW
+      - QA-01-GATE-PAGE
+      - QA_USE
+    - row: 70
+      cells:
+      - QA-01-FLD-ERROR
+      - QA-01-SEC-10
+      - QA-01-CMP-STATUS
+      - READONLY
+      - Error UID / Reason
+      - QA-01-ACT-NOOP-VIEW
+      - QA-01-GATE-PAGE
+      - QA_USE
+    - row: 71
+      cells:
+      - QA-01-FLD-DISABLED
+      - QA-01-SEC-10
+      - QA-01-CMP-STATUS
+      - READONLY
+      - Disabled Reason
+      - QA-01-ACT-NOOP-VIEW
+      - QA-01-GATE-PAGE
+      - QA_USE
+    - row: 72
+      cells:
+      - QA-01-FLD-CORRELATION
+      - QA-01-SEC-10
+      - QA-01-CMP-STATUS
+      - READONLY
+      - Correlation / Idempotency
+      - QA-01-ACT-NOOP-VIEW
+      - QA-01-GATE-PAGE
+      - QA_USE
+    - row: 73
+      cells:
+      - QA-01-FLD-AUDIT
+      - QA-01-SEC-10
+      - QA-01-CMP-STATUS
+      - READONLY
+      - Audit / Trace
+      - QA-01-ACT-NOOP-VIEW
+      - QA-01-GATE-PAGE
+      - QA_USE
+    - row: 74
+      cells:
+      - QA-01-BTN-AUDIT
+      - QA-01-SEC-10
+      - QA-01-CMP-STATUS
+      - BUTTON
+      - 查看 Audit / Trace
+      - QA-01-ACT-AUDIT-VIEW
+      - QA-01-GATE-PAGE
+      - QA_USE
+    - row: 75
+      cells:
+      - QA-01-SEG-REVIEW-MODE
+      - QA-01-SEC-02
+      - QA-01-CMP-REVIEW-MODE
+      - SEGMENTED_CONTROL
+      - 審查模式 / Review Mode
+      - QA-01-ACT-REVIEW-MODE-SET
+      - QA-01-GATE-PAGE
+      - QA_USE
+    - row: 76
+      cells:
+      - QA-01-BTN-AUTO-START
+      - QA-01-SEC-02
+      - QA-01-CMP-REVIEW-MODE
+      - PRIMARY_BUTTON
+      - 開始自動審查 / Start AUTO Review
+      - QA-01-ACT-AUTO-START
+      - QA-01-GATE-AUTO
+      - QA_AUTO
+    - row: 77
+      cells:
+      - QA-01-FLD-AUTO-PROGRESS
+      - QA-01-SEC-02
+      - QA-01-CMP-AUTO-PROGRESS
+      - READONLY
+      - AUTO Progress
+      - QA-01-ACT-NOOP-VIEW
+      - QA-01-GATE-PAGE
+      - QA_USE
+    - row: 78
+      cells:
+      - QA-01-SEL-QUEUE-SOURCE-DEPT
+      - QA-01-SEC-02
+      - QA-01-CMP-QUEUE
+      - SELECT
+      - 來源部門 / Source Department
+      - QA-01-ACT-QUEUE-FILTER
+      - QA-01-GATE-PAGE
+      - QA_USE
+    - row: 79
+      cells:
+      - QA-01-BTN-PREV-FRAME
+      - QA-01-SEC-03
+      - QA-01-CMP-EVIDENCE-CAPTURE
+      - BUTTON
+      - 上一幀 / Previous Frame
+      - QA-01-ACT-VIEWER-PREV-FRAME
+      - QA-01-GATE-VIEWER
+      - QA_USE
+    - row: 80
+      cells:
+      - QA-01-BTN-NEXT-FRAME
+      - QA-01-SEC-03
+      - QA-01-CMP-EVIDENCE-CAPTURE
+      - BUTTON
+      - 下一幀 / Next Frame
+      - QA-01-ACT-VIEWER-NEXT-FRAME
+      - QA-01-GATE-VIEWER
+      - QA_USE
+    - row: 81
+      cells:
+      - QA-01-FLD-CURRENT-TIMECODE
+      - QA-01-SEC-03
+      - QA-01-CMP-EVIDENCE-CAPTURE
+      - READONLY
+      - Current Timecode
+      - QA-01-ACT-NOOP-VIEW
+      - QA-01-GATE-VIEWER
+      - QA_USE
+    - row: 82
+      cells:
+      - QA-01-BTN-FINDING-POINT
+      - QA-01-SEC-03
+      - QA-01-CMP-EVIDENCE-CAPTURE
+      - BUTTON
+      - 標記 Finding 位置 / Set Finding Point
+      - QA-01-ACT-EVIDENCE-POINT
+      - QA-01-GATE-EVIDENCE-CAPTURE
+      - QA_FINDING
+    - row: 83
+      cells:
+      - QA-01-BTN-EVIDENCE-IN
+      - QA-01-SEC-03
+      - QA-01-CMP-EVIDENCE-CAPTURE
+      - BUTTON
+      - Evidence In
+      - QA-01-ACT-EVIDENCE-RANGE-IN
+      - QA-01-GATE-EVIDENCE-CAPTURE
+      - QA_FINDING
+    - row: 84
+      cells:
+      - QA-01-BTN-EVIDENCE-OUT
+      - QA-01-SEC-03
+      - QA-01-CMP-EVIDENCE-CAPTURE
+      - BUTTON
+      - Evidence Out
+      - QA-01-ACT-EVIDENCE-RANGE-OUT
+      - QA-01-GATE-EVIDENCE-CAPTURE
+      - QA_FINDING
+    - row: 85
+      cells:
+      - QA-01-LIST-SCORE-DIMENSIONS
+      - QA-01-SEC-06
+      - QA-01-CMP-SCORE
+      - GENERATED_SCORECARD_TABLE
+      - Generated Criteria Dimensions
+      - QA-01-ACT-NOOP-VIEW
+      - QA-01-GATE-SCORE
+      - QA_USE
+    - row: 86
+      cells:
+      - QA-01-BTN-MANUAL-MODIFY
+      - QA-01-SEC-07
+      - QA-01-CMP-MANUAL-DECISION
+      - BUTTON
+      - 修改 / Modify
+      - QA-01-ACT-MANUAL-MODIFY
+      - QA-01-GATE-MANUAL-DECISION
+      - QA_USE
+    - row: 87
+      cells:
+      - QA-01-BTN-MANUAL-PASS
+      - QA-01-SEC-07
+      - QA-01-CMP-MANUAL-DECISION
+      - PRIMARY_BUTTON
+      - 通過 / Pass
+      - QA-01-ACT-MANUAL-PASS
+      - QA-01-GATE-MANUAL-DECISION
+      - QA_USE
+  - index: 9
+    rows:
+    - row: 0
+      cells:
+      - Action UID
+      - Permission
+      - Gate
+      - Effect Type
+    - row: 1
+      cells:
+      - QA-01-ACT-NOOP-VIEW
+      - QA_USE
+      - QA-01-GATE-PAGE
+      - UI_ONLY
+    - row: 2
+      cells:
+      - QA-01-ACT-CONTEXT-SET
+      - QA_USE
+      - QA-01-GATE-PAGE
+      - CONTEXT_STATE
+    - row: 3
+      cells:
+      - QA-01-ACT-START-REVIEW
+      - QA_USE
+      - QA-01-GATE-START
+      - QA_REVIEW_START
+    - row: 4
+      cells:
+      - QA-01-ACT-QUEUE-SEARCH
+      - QA_USE
+      - QA-01-GATE-PAGE
+      - UI_ONLY
+    - row: 5
+      cells:
+      - QA-01-ACT-QUEUE-FILTER
+      - QA_USE
+      - QA-01-GATE-PAGE
+      - UI_ONLY
+    - row: 6
+      cells:
+      - QA-01-ACT-REVIEW-SELECT
+      - QA_USE
+      - QA-01-GATE-PAGE
+      - CONTEXT_STATE
+    - row: 7
+      cells:
+      - QA-01-ACT-VIEWER-PLAY
+      - QA_USE
+      - QA-01-GATE-VIEWER
+      - UI_ONLY
+    - row: 8
+      cells:
+      - QA-01-ACT-VIEWER-SEEK
+      - QA_USE
+      - QA-01-GATE-VIEWER
+      - UI_ONLY
+    - row: 9
+      cells:
+      - QA-01-ACT-VIEWER-VOLUME
+      - QA_USE
+      - QA-01-GATE-VIEWER
+      - UI_ONLY
+    - row: 10
+      cells:
+      - QA-01-ACT-VIEWER-FULLSCREEN
+      - QA_USE
+      - QA-01-GATE-VIEWER
+      - UI_ONLY
+    - row: 11
+      cells:
+      - QA-01-ACT-COMPARE-TOGGLE
+      - QA_USE
+      - QA-01-GATE-COMPARE
+      - UI_ONLY
+    - row: 12
+      cells:
+      - QA-01-ACT-SCRIPT-VIEW
+      - QA_USE
+      - QA-01-GATE-SCRIPT
+      - UI_ONLY
+    - row: 13
+      cells:
+      - QA-01-ACT-EVIDENCE-VIEW
+      - QA_USE
+      - QA-01-GATE-EVIDENCE
+      - UI_ONLY
+    - row: 14
+      cells:
+      - QA-01-ACT-SCORECARD-SUBMIT
+      - QA_SCORE
+      - QA-01-GATE-SCORE
+      - SCORE_MUTATION
+    - row: 15
+      cells:
+      - QA-01-ACT-FINDING-CREATE
+      - QA_FINDING
+      - QA-01-GATE-FINDING
+      - FINDING_CREATE
+    - row: 16
+      cells:
+      - QA-01-ACT-FINDING-SELECT
+      - QA_USE
+      - QA-01-GATE-PAGE
+      - CONTEXT_STATE
+    - row: 17
+      cells:
+      - QA-01-ACT-MANUAL-VIEW
+      - QA_USE
+      - QA-01-GATE-MANUAL
+      - UI_ONLY
+    - row: 18
+      cells:
+      - QA-01-ACT-CORRECTION-REQUEST
+      - QA_CORRECTION
+      - QA-01-GATE-CORRECTION
+      - CORRECTION_CREATE
+    - row: 19
+      cells:
+      - QA-01-ACT-RECHECK-START
+      - QA_GATE
+      - QA-01-GATE-RECHECK
+      - QA_RECHECK_START
+    - row: 20
+      cells:
+      - QA-01-ACT-GATE-PASS
+      - QA_GATE
+      - QA-01-GATE-PASS
+      - QA_GATE_DECISION
+    - row: 21
+      cells:
+      - QA-01-ACT-GATE-FAIL
+      - QA_GATE
+      - QA-01-GATE-FAIL
+      - QA_GATE_DECISION
+    - row: 22
+      cells:
+      - QA-01-ACT-RELEASE-CREATE
+      - QA_RELEASE
+      - QA-01-GATE-RELEASE
+      - RELEASE_CANDIDATE_CREATE
+    - row: 23
+      cells:
+      - QA-01-ACT-AUDIT-VIEW
+      - QA_USE
+      - QA-01-GATE-PAGE
+      - UI_ONLY
+    - row: 24
+      cells:
+      - QA-01-ACT-REVIEW-MODE-SET
+      - QA_USE
+      - QA-01-GATE-PAGE
+      - UI_ONLY
+    - row: 25
+      cells:
+      - QA-01-ACT-AUTO-START
+      - QA_AUTO
+      - QA-01-GATE-AUTO
+      - AUTO_QA_ORCHESTRATION
+    - row: 26
+      cells:
+      - QA-01-ACT-VIEWER-PREV-FRAME
+      - QA_USE
+      - QA-01-GATE-VIEWER
+      - UI_ONLY
+    - row: 27
+      cells:
+      - QA-01-ACT-VIEWER-NEXT-FRAME
+      - QA_USE
+      - QA-01-GATE-VIEWER
+      - UI_ONLY
+    - row: 28
+      cells:
+      - QA-01-ACT-EVIDENCE-POINT
+      - QA_FINDING
+      - QA-01-GATE-EVIDENCE-CAPTURE
+      - EVIDENCE_CONTEXT
+    - row: 29
+      cells:
+      - QA-01-ACT-EVIDENCE-RANGE-IN
+      - QA_FINDING
+      - QA-01-GATE-EVIDENCE-CAPTURE
+      - EVIDENCE_CONTEXT
+    - row: 30
+      cells:
+      - QA-01-ACT-EVIDENCE-RANGE-OUT
+      - QA_FINDING
+      - QA-01-GATE-EVIDENCE-CAPTURE
+      - EVIDENCE_CONTEXT
+    - row: 31
+      cells:
+      - QA-01-ACT-MANUAL-MODIFY
+      - QA_USE
+      - QA-01-GATE-MANUAL-DECISION
+      - MANUAL_REVIEW_MUTATION
+    - row: 32
+      cells:
+      - QA-01-ACT-MANUAL-PASS
+      - QA_USE
+      - QA-01-GATE-MANUAL-DECISION
+      - MANUAL_REVIEW_MUTATION
+  - index: 10
+    rows:
+    - row: 0
+      cells:
+      - Permission
+      - Backend Scope
+      - Purpose
+    - row: 1
+      cells:
+      - QA_USE
+      - qa.task.read
+      - Enter/read QA page, task/review/output/script/evidence projections
+    - row: 2
+      cells:
+      - QA_SCORE
+      - qa.score.write
+      - Persist QA scorecard
+    - row: 3
+      cells:
+      - QA_GATE
+      - qa.gate.decide
+      - Start recheck / decide governed QA PASS or FAIL
+    - row: 4
+      cells:
+      - QA_FINDING
+      - finding.write
+      - Create QA finding
+    - row: 5
+      cells:
+      - QA_CORRECTION
+      - correction.create
+      - Create correction request to original owner
+    - row: 6
+      cells:
+      - QA_RELEASE
+      - release.create
+      - Create release candidate/package only
+    - row: 7
+      cells:
+      - QA_AUTO
+      - qa.auto.review
+      - Start Topic-scoped sequential AUTO QA; no publish/release-approval authority
+  - index: 11
+    rows:
+    - row: 0
+      cells:
+      - Gate UID
+      - Condition
+    - row: 1
+      cells:
+      - QA-01-GATE-PAGE
+      - authorized QA page/task scope + exact account permission
+    - row: 2
+      cells:
+      - QA-01-GATE-CONTEXT
+      - exact Project + Topic + QATask + TargetOutputVersion resolved; no latest/default alias
+    - row: 3
+      cells:
+      - QA-01-GATE-START
+      - context PASS + output_version_ids explicit + qa_profile_id resolved + not superseded
+    - row: 4
+      cells:
+      - QA-01-GATE-VIEWER
+      - exact output artifact/checksum/provenance resolvable for current QA review
+    - row: 5
+      cells:
+      - QA-01-GATE-COMPARE
+      - state=RECHECK + original failed exact version + verified new exact version both resolvable
+    - row: 6
+      cells:
+      - QA-01-GATE-SCRIPT
+      - QAValidationScriptView exact id/version/hash + department=QA
+    - row: 7
+      cells:
+      - QA-01-GATE-CRITERIA
+      - approved QA CriteriaVersion + QualityGatePolicyVersion for exact target output
+    - row: 8
+      cells:
+      - QA-01-GATE-EVIDENCE
+      - evidence refs, checksum, provenance, required checks, rights/policy refs resolved
+    - row: 9
+      cells:
+      - QA-01-GATE-SCORE
+      - IN_REVIEW or RECHECK + target version explicit + criteria + evidence + required checks
+    - row: 10
+      cells:
+      - QA-01-GATE-FINDING
+      - active QA review + exact source/output/evidence + severity/category/affected_scope valid
+    - row: 11
+      cells:
+      - QA-01-GATE-CORRECTION
+      - finding/scorecard + failed version + affected_scope + original owner + source instruction package + revalidation requirements
+    - row: 12
+      cells:
+      - QA-01-GATE-RECHECK
+      - CORRECTION_REQUIRED + verified NEW exact output version exists + correction request linkage valid
+    - row: 13
+      cells:
+      - QA-01-GATE-PASS
+      - bound criteria/policy PASS + no hard block + blocking findings closed + required manual review closed + rights/policy valid
+    - row: 14
+      cells:
+      - QA-01-GATE-FAIL
+      - active review/recheck + sufficient evidence for governed FAIL decision
+    - row: 15
+      cells:
+      - QA-01-GATE-RELEASE
+      - QA PASS + all findings closed + manual review closed + rights/policy valid + exact output versions + release.create permission
+    - row: 16
+      cells:
+      - QA-01-GATE-MANUAL
+      - manual review required or existing ManualReviewCase ref
+    - row: 17
+      cells:
+      - QA-01-GATE-AUTO
+      - mode=AUTO + exact Project/Topic + authorized Topic QA queue + QA_AUTO; each task resolves exact output/script/criteria/evidence
+    - row: 18
+      cells:
+      - QA-01-GATE-EVIDENCE-CAPTURE
+      - active QA review + exact output/version/checksum/provenance + supported viewer point/range context
+    - row: 19
+      cells:
+      - QA-01-GATE-MANUAL-DECISION
+      - governed ManualReviewCase required/open + exact review/output/scorecard + separate Manual Review mutation authority
+  - index: 12
+    rows:
+    - row: 0
+      cells:
+      - Port UID
+      - Boundary
+      - Operation
+      - Method / Path
+      - Permission
+    - row: 1
+      cells:
+      - QA-01-PORT-PROJECTION
+      - Read page projection
+      - getUiProjection
+      - GET /v1/ui-projections/{pageUid}
+      - page/control authorization + qa.task.read
+    - row: 2
+      cells:
+      - QA-01-PORT-START
+      - Start QA Review
+      - startQaReview
+      - POST /v1/qa/reviews
+      - api:startQaReview + account authorization
+    - row: 3
+      cells:
+      - QA-01-PORT-SCORECARD
+      - QA Scorecard
+      - submitScorecard
+      - POST /v1/scorecards
+      - qa.score.write
+    - row: 4
+      cells:
+      - QA-01-PORT-FINDING
+      - Finding
+      - createFinding
+      - POST /v1/findings
+      - finding.write
+    - row: 5
+      cells:
+      - QA-01-PORT-CORRECTION
+      - Correction Request
+      - createCorrectionRequest
+      - POST /v1/correction-requests
+      - correction.create
+    - row: 6
+      cells:
+      - QA-01-PORT-RECHECK
+      - Recheck
+      - startRecheck
+      - POST /v1/state-commands/qareview/startrecheck
+      - api:startRecheck + qa.gate.decide
+    - row: 7
+      cells:
+      - QA-01-PORT-PASS
+      - QA PASS
+      - decidePass
+      - POST /v1/state-commands/qareview/decidepass
+      - qa.gate.decide
+    - row: 8
+      cells:
+      - QA-01-PORT-FAIL
+      - QA FAIL
+      - decideFail
+      - POST /v1/state-commands/qareview/decidefail
+      - qa.gate.decide
+    - row: 9
+      cells:
+      - QA-01-PORT-RELEASE
+      - Release Candidate
+      - createReleasePackage
+      - POST /v1/release-packages
+      - release.create
+    - row: 10
+      cells:
+      - QA-01-PORT-AUTO-TOPIC
+      - AUTO Topic QA Orchestration
+      - startAutoTopicQaReview
+      - SYSTEM_OPERATION_REGISTRY_REQUIRED
+      - qa.auto.review + exact topic scope
+  - index: 13
+    rows:
+    - row: 0
+      cells:
+      - Error UID
+      - Context
+      - Recovery
+    - row: 1
+      cells:
+      - QA-01-ERR-CONTEXT-001
+      - Project/Topic/QATask/TargetOutputVersion missing, stale or mismatched
+      - BLOCK review; resolve exact context; no implicit latest/default
+    - row: 2
+      cells:
+      - QA-01-ERR-OUTPUT-001
+      - Output artifact/version/checksum/provenance invalid
+      - BLOCK viewer/score/gate; preserve review context
+    - row: 3
+      cells:
+      - QA-01-ERR-SCRIPT-001
+      - QAValidationScriptView missing/hash/department mismatch
+      - BLOCK scoring; no generic QA script fallback
+    - row: 4
+      cells:
+      - QA-01-ERR-CRITERIA-001
+      - QA CriteriaVersion/QualityGatePolicy missing or unapproved
+      - BLOCK scoring/gate; no local default threshold
+    - row: 5
+      cells:
+      - QA-01-ERR-EVIDENCE-001
+      - Required evidence/checksum/provenance/check missing
+      - BLOCK gate/release; show exact missing evidence
+    - row: 6
+      cells:
+      - QA-01-ERR-RIGHTS-001
+      - Rights/Policy invalid or unavailable
+      - HARD BLOCK; numeric score cannot override
+    - row: 7
+      cells:
+      - QA-01-ERR-FINDING-001
+      - Finding payload/source/scope/evidence invalid
+      - BLOCK finding create; preserve current review
+    - row: 8
+      cells:
+      - QA-01-ERR-CORRECTION-001
+      - Correction request lacks failed version/original owner/source instruction/revalidation scope
+      - BLOCK request; QA never executes upstream edit
+    - row: 9
+      cells:
+      - QA-01-ERR-RECHECK-001
+      - New output absent, same as failed version, or correction linkage invalid
+      - BLOCK recheck; wait verified new exact version
+    - row: 10
+      cells:
+      - QA-01-ERR-GATE-001
+      - PASS/FAIL decision prerequisites invalid or stale
+      - BLOCK decision; refresh exact review state
+    - row: 11
+      cells:
+      - QA-01-ERR-MANUAL-001
+      - Required ManualReviewCase unresolved/open
+      - BLOCK PASS/Release; show manual review blocker
+    - row: 12
+      cells:
+      - QA-01-ERR-RELEASE-001
+      - Release candidate eligibility refs invalid
+      - BLOCK package creation; no publish fallback
+    - row: 13
+      cells:
+      - QA-01-ERR-PERM-001
+      - Permission/scope denied
+      - Disable action + show actual reason
+    - row: 14
+      cells:
+      - QA-01-ERR-UNDEFINED-001
+      - Unlisted Section/Component/Control/Action/Gate/Permission/Port requested
+      - BLOCK + REPORT_AUTHORITY_GAP
+    - row: 15
+      cells:
+      - QA-01-ERR-AUTO-001
+      - AUTO cannot resolve Topic QA queue / exact next-task context
+      - BLOCK current item; preserve queue; no reorder/create/skip
+    - row: 16
+      cells:
+      - QA-01-ERR-EVIDENCE-CAPTURE-001
+      - Evidence capture lacks exact output/version/checksum/provenance or valid point/range
+      - BLOCK capture only; no manual Evidence ID fallback
+    - row: 17
+      cells:
+      - QA-01-ERR-MANUAL-ACTION-001
+      - Manual Review Modify/Pass requested but governed ManualReviewCase or mutation authority missing/stale
+      - BLOCK Manual Review action; do not invent API/permission
+  - index: 14
+    rows:
+    - row: 0
+      cells:
+      - Rule
+      - Required Behavior
+    - row: 1
+      cells:
+      - Score Source
+      - Task-bound approved CriteriaVersion + QualityGatePolicyVersion
+    - row: 2
+      cells:
+      - Score Origin
+      - SYSTEM_AI_GENERATED_FROM_BOUND_CRITERIA
+    - row: 3
+      cells:
+      - Manual Scoring
+      - FORBIDDEN
+    - row: 4
+      cells:
+      - Human Scorecard Action
+      - NONE
+    - row: 5
+      cells:
+      - Hard Gate
+      - Evidence/Rights/Policy/Checksum/Provenance/Required Check failure overrides numeric score
+    - row: 6
+      cells:
+      - Generic Post-score Confirm/Modify
+      - NONE
+    - row: 7
+      cells:
+      - Manual Review Trigger
+      - Only when governed ManualReviewCase required/open
+    - row: 8
+      cells:
+      - Allowed Human Functions
+      - Exactly MODIFY / PASS
+    - row: 9
+      cells:
+      - Manual Review PASS
+      - Pass/close Manual Review requirement, then re-evaluate normal QA Gate; not direct QA PASS
+    - row: 10
+      cells:
+      - Manual Review MODIFY
+      - Enter governed modification flow; never blank score form
+  - index: 15
+    rows:
+    - row: 0
+      cells:
+      - Area
+      - Current Design
+    - row: 1
+      cells:
+      - Evidence Capture
+      - 'Video/Edit: ±1 frame, exact timecode, Finding point, Evidence In/Out; no upstream mutation'
+    - row: 2
+      cells:
+      - Finding Severity
+      - Registered enum only; no free-text severity
+    - row: 3
+      cells:
+      - Finding Category
+      - Registered QA issue category only; missing registry => BLOCK
+    - row: 4
+      cells:
+      - Affected Scope
+      - Prefilled from viewer current context/range; Human may narrow without changing exact output identity
+    - row: 5
+      cells:
+      - Evidence IDs
+      - Auto-bound; manual Evidence ID typing forbidden
+    - row: 6
+      cells:
+      - Correction IDs / Owner
+      - Finding/Scorecard/InstructionPackage/OriginalOwner refs auto-bound
+    - row: 7
+      cells:
+      - Root Cause
+      - 'Canonical enum only: CANON/SCRIPT_VIEW/INSTRUCTION_PACKAGE/INPUT_ASSET/PROVIDER_ROUTE/OUTPUT_ARTIFACT/RIGHTS_POLICY/QUALITY_CRITERIA/EDITING/UNKNOWN'
+    - row: 8
+      cells:
+      - Closure
+      - QA never directly closes failed finding after upstream edit; verified NEW exact version + RECHECK + re-evaluation required
+  - index: 16
+    rows:
+    - row: 0
+      cells:
+      - Preflight
+      - Required
+    - row: 1
+      cells:
+      - Exact Review
+      - QAReviewRun status=PASS and exact output_version_id match
+    - row: 2
+      cells:
+      - QA Gate Ref
+      - Exact PASS Scorecard ref matches review/output/criteria
+    - row: 3
+      cells:
+      - Findings / Manual
+      - No open Finding; no undecided required ManualReviewCase
+    - row: 4
+      cells:
+      - Policy Binding
+      - Exactly one active APPROVED release_policy_binding per exact output version
+    - row: 5
+      cells:
+      - Rights
+      - rights_gate_ref equals bound rights_policy_version_id and status/gate PASS
+    - row: 6
+      cells:
+      - Channel
+      - If channel_required=true, channel_policy_ref exact match + approved account scope
+    - row: 7
+      cells:
+      - Idempotency
+      - One QA review creates at most one canonical ReleasePackage; repeat returns same candidate
+    - row: 8
+      cells:
+      - Side Effects
+      - Candidate creation does not approve release and does not publish
+  - index: 17
+    rows:
+    - row: 0
+      cells:
+      - Visual
+      - Functions
+      - Why it exists
+      - Forbidden
+    - row: 1
+      cells:
+      - A AUTO
+      - Queue orchestration + exact viewer + generated scorecard
+      - Topic sequential QA with max active=1
+      - reorder/create/skip; auto publish
+    - row: 2
+      cells:
+      - B MANUAL
+      - Single selected QA task + Start Review
+      - Human controls task scheduling only
+      - human score input
+    - row: 3
+      cells:
+      - C Finding / Manual
+      - Evidence-bound Finding + conditional ManualReviewCase
+      - Governed issue/manual-review workflow
+      - blank score form; direct QA PASS
+    - row: 4
+      cells:
+      - D Recheck
+      - Before/After exact versions + Correction/Recheck
+      - Verified NEW version validation
+      - empty B pane; direct upstream edit
+    - row: 5
+      cells:
+      - E Release
+      - Readiness + ReleasePackage candidate
+      - QA terminal visible action
+      - approveRelease; Publish; external dispatch
+  - index: 18
+    rows:
+    - row: 0
+      cells:
+      - Direction
+      - Exact Ref / Payload
+      - Boundary
+    - row: 1
+      cells:
+      - Upstream → QA
+      - QAHandoff + QATask + ExactOutputVersion + QAValidationScriptView + Criteria + Evidence + Rights/Policy
+      - QA consumes exact refs only; no latest/default alias
+    - row: 2
+      cells:
+      - QA → Original Owner
+      - CorrectionRequest + Finding/Scorecard/InstructionPackage + affected scope + root cause + revalidation
+      - QA requests correction; does not execute Script/Asset/Video/Edit mutation
+    - row: 3
+      cells:
+      - Owner → QA Recheck
+      - Verified NEW exact output + correction linkage
+      - Before/After only after exact new version exists
+    - row: 4
+      cells:
+      - QA → ReleaseService
+      - ReleasePackage Candidate with exact output + qa_gate_ref + rights/channel policy version refs
+      - QA stops at candidate; ReleaseService owns approval/release; PublishingService owns publish
+  - index: 19
+    rows:
+    - row: 0
+      cells:
+      - Denominator
+      - Current
+    - row: 1
+      cells:
+      - Sections
+      - 10/10
+    - row: 2
+      cells:
+      - Visuals
+      - 10/10
+    - row: 3
+      cells:
+      - Components
+      - 21/21
+    - row: 4
+      cells:
+      - Controls
+      - 87/87
+    - row: 5
+      cells:
+      - Actions
+      - 32/32
+    - row: 6
+      cells:
+      - Objects / Refs
+      - 16/16
+    - row: 7
+      cells:
+      - Gates
+      - 19/19
+    - row: 8
+      cells:
+      - Permissions
+      - 7/7
+    - row: 9
+      cells:
+      - Errors
+      - 17/17
+    - row: 10
+      cells:
+      - Page States
+      - 10/10
+    - row: 11
+      cells:
+      - Stages / Transitions
+      - 5 / 6
+    - row: 12
+      cells:
+      - Integration Ports
+      - 10/10
+    - row: 13
+      cells:
+      - Direct QA upstream mutation controls
+      - '0'
+    - row: 14
+      cells:
+      - Direct Publish controls
+      - '0'
+    - row: 15
+      cells:
+      - Approve Release controls
+      - '0'
+    - row: 16
+      cells:
+      - Direct PASS/FAIL visible controls
+      - '0'
+    - row: 17
+      cells:
+      - Blank Manual Score controls
+      - '0'
+    - row: 18
+      cells:
+      - Conditional Manual Review buttons
+      - 2 exactly
+  - index: 20
+    rows:
+    - row: 0
+      cells:
+      - Item
+      - Status
+    - row: 1
+      cells:
+      - Mother Basic Design structure
+      - COMPLETE
+    - row: 2
+      cells:
+      - Exact Current denominator binding
+      - COMPLETE
+    - row: 3
+      cells:
+      - Technology-purple UI materialization
+      - 5 Visual Candidates
+    - row: 4
+      cells:
+      - Fake business data
+      - 0 by design
+    - row: 5
+      cells:
+      - Human visual/function review
+      - PENDING
+    - row: 6
+      cells:
+      - Selected approved candidate
+      - NOT YET
+    - row: 7
+      cells:
+      - Authority update
+      - BLOCKED pending approval
+    - row: 8
+      cells:
+      - DESIGN_FROZEN
+      - 'FALSE'
+    - row: 9
+      cells:
+      - Implementation claim
+      - NONE
+    - row: 10
+      cells:
+      - Production claim
+      - NONE
+  - index: 21
+    rows:
+    - row: 0
+      cells:
+      - Resume field
+      - Value
+    - row: 1
+      cells:
+      - Branch / HEAD
+      - new / 165c6440cb53b1b45ec96905241fb4d56dc3b867
+    - row: 2
+      cells:
+      - Page
+      - QA-01
+    - row: 3
+      cells:
+      - Authority SHA
+      - 101d7af019ada27c7bbf2af8f19423c951294e23
+    - row: 4
+      cells:
+      - Document Work Unit
+      - QA-01 Mother Basic Design Visual Rebuild
+    - row: 5
+      cells:
+      - Authority denominator
+      - 10 Sec / 21 Comp / 87 Ctrl / 32 Act / 19 Gate / 10 Port
+    - row: 6
+      cells:
+      - Visual candidate status
+      - PENDING HUMAN REVIEW
+    - row: 7
+      cells:
+      - Design freeze
+      - 'FALSE'
+    - row: 8
+      cells:
+      - Implementation claim
+      - NONE
+    - row: 9
+      cells:
+      - Production claim
+      - NONE
+  - index: 22
+    rows:
+    - row: 0
+      cells:
+      - Authority
+      - Value
+    - row: 1
+      cells:
+      - Source Commit
+      - 165c6440cb53b1b45ec96905241fb4d56dc3b867
+    - row: 2
+      cells:
+      - Machine Authority
+      - authority/pages/workspace/QA-01/ACPOS_QA-01_FINAL_LOCKED_ENCODING_DEDUP_CLEAN.yaml
+    - row: 3
+      cells:
+      - Authority SHA-256
+      - 5196e7ba09383b81634d8e669629201108dc02706ad76fbc37ee2f43f95187e9
+    - row: 4
+      cells:
+      - Expected Control Denominator
+      - '87'
+    - row: 5
+      cells:
+      - Unique Control Rows
+      - '87'
+    - row: 6
+      cells:
+      - Denominator Gate
+      - PASS
+  - index: 23
+    rows:
+    - row: 0
+      cells:
+      - Control UID
+      - UID Status
+      - Label
+      - Type
+      - Action UID
+      - Gate
+      - Permission / Auth Resource
+      - Payload / Schema
+      - Operation
+      - Method / Path
+      - Runtime Owner
+      - Persistence Owner
+      - Runtime Status
+    - row: 1
+      cells:
+      - QA-01-BTN-AUDIT
+      - EXISTING_SOURCE_UID
+      - 查看 Audit / Trace
+      - BUTTON
+      - QA-01-ACT-AUDIT-VIEW
+      - QA-01-GATE-PAGE
+      - QA_USE
+      - —
+      - —
+      - —
+      - CLIENT
+      - —
+      - UI_LOCAL_EXACT
+    - row: 2
+      cells:
+      - QA-01-BTN-AUTO-START
+      - EXISTING_SOURCE_UID
+      - 開始自動審查 / Start AUTO Review
+      - PRIMARY_BUTTON
+      - QA-01-ACT-AUTO-START
+      - QA-01-GATE-AUTO
+      - QA_AUTO
+      - StartAutoTopicQaReviewRequest
+      - startAutoTopicQaReview
+      - POST /v1/qa/reviews/auto
+      - QAService
+      - QAService / AutoQAReviewCase + QAScorecard + Evaluation Evidence
+      - EFFECTFUL_EXACT
+    - row: 3
+      cells:
+      - QA-01-BTN-COMPARE
+      - EXISTING_SOURCE_UID
+      - Before / After Compare
+      - BUTTON
+      - QA-01-ACT-COMPARE-TOGGLE
+      - QA-01-GATE-COMPARE
+      - QA_USE
+      - —
+      - —
+      - —
+      - CLIENT
+      - —
+      - UI_LOCAL_EXACT
+    - row: 4
+      cells:
+      - QA-01-BTN-CORRECTION
+      - EXISTING_SOURCE_UID
+      - 要求修正 / Request Correction
+      - PRIMARY_BUTTON
+      - QA-01-ACT-CORRECTION-REQUEST
+      - QA-01-GATE-CORRECTION
+      - QA_CORRECTION
+      - CreateCorrectionRequestPayload
+      - createCorrectionRequest
+      - POST /v1/correction-requests
+      - QA/ManualReviewService
+      - public.correction_requests
+      - EFFECTFUL_EXACT
+    - row: 5
+      cells:
+      - QA-01-BTN-EVIDENCE
+      - EXISTING_SOURCE_UID
+      - 查看 Evidence / Checks
+      - BUTTON
+      - QA-01-ACT-EVIDENCE-VIEW
+      - QA-01-GATE-EVIDENCE
+      - QA_USE
+      - —
+      - —
+      - —
+      - CLIENT
+      - —
+      - UI_LOCAL_EXACT
+    - row: 6
+      cells:
+      - QA-01-BTN-EVIDENCE-IN
+      - EXISTING_SOURCE_UID
+      - Evidence In
+      - BUTTON
+      - QA-01-ACT-EVIDENCE-RANGE-IN
+      - QA-01-GATE-EVIDENCE-CAPTURE
+      - QA_FINDING
+      - SetQAEvidenceRangeInCommand
+      - setQAEvidenceRangeIn
+      - LOCAL LOCAL
+      - CLIENT/QA
+      - CLIENT/QA / EvidenceCaptureDraft (session-local, non-canonical)
+      - EFFECTFUL_EXACT
+    - row: 7
+      cells:
+      - QA-01-BTN-EVIDENCE-OUT
+      - EXISTING_SOURCE_UID
+      - Evidence Out
+      - BUTTON
+      - QA-01-ACT-EVIDENCE-RANGE-OUT
+      - QA-01-GATE-EVIDENCE-CAPTURE
+      - QA_FINDING
+      - SetQAEvidenceRangeOutCommand
+      - setQAEvidenceRangeOut
+      - LOCAL LOCAL
+      - CLIENT/QA
+      - CLIENT/QA / EvidenceCaptureDraft (session-local, non-canonical)
+      - EFFECTFUL_EXACT
+    - row: 8
+      cells:
+      - QA-01-BTN-FINDING-CREATE
+      - EXISTING_SOURCE_UID
+      - 建立 Finding
+      - PRIMARY_BUTTON
+      - QA-01-ACT-FINDING-CREATE
+      - QA-01-GATE-FINDING
+      - QA_FINDING
+      - CreateFindingRequest
+      - createFinding
+      - POST /v1/findings
+      - QA/ManualReviewService
+      - public.findings
+      - EFFECTFUL_EXACT
+    - row: 9
+      cells:
+      - QA-01-BTN-FINDING-POINT
+      - EXISTING_SOURCE_UID
+      - 標記 Finding 位置 / Set Finding Point
+      - BUTTON
+      - QA-01-ACT-EVIDENCE-POINT
+      - QA-01-GATE-EVIDENCE-CAPTURE
+      - QA_FINDING
+      - SetQAFindingPointCommand
+      - setQAFindingPoint
+      - LOCAL LOCAL
+      - CLIENT/QA
+      - CLIENT/QA / EvidenceCaptureDraft (session-local, non-canonical)
+      - EFFECTFUL_EXACT
+    - row: 10
+      cells:
+      - QA-01-BTN-FULLSCREEN
+      - EXISTING_SOURCE_UID
+      - Fullscreen
+      - BUTTON
+      - QA-01-ACT-VIEWER-FULLSCREEN
+      - QA-01-GATE-VIEWER
+      - QA_USE
+      - —
+      - —
+      - —
+      - CLIENT
+      - —
+      - UI_LOCAL_EXACT
+    - row: 11
+      cells:
+      - QA-01-BTN-MANUAL-MODIFY
+      - EXISTING_SOURCE_UID
+      - 修改 / Modify
+      - BUTTON
+      - QA-01-ACT-MANUAL-MODIFY
+      - QA-01-GATE-MANUAL-DECISION
+      - QA_USE
+      - ModifyManualReviewRequest
+      - modifyManualReview
+      - POST /v1/qa/manual-reviews/{reviewCaseId}/modify
+      - ManualReviewService
+      - ManualReviewService / ManualReviewCase + Human Decision/Audit
+      - EFFECTFUL_EXACT
+    - row: 12
+      cells:
+      - QA-01-BTN-MANUAL-PASS
+      - EXISTING_SOURCE_UID
+      - 通過 / Pass
+      - PRIMARY_BUTTON
+      - QA-01-ACT-MANUAL-PASS
+      - QA-01-GATE-MANUAL-DECISION
+      - QA_USE
+      - PassManualReviewRequest
+      - passManualReview
+      - POST /v1/qa/manual-reviews/{reviewCaseId}/pass
+      - ManualReviewService
+      - ManualReviewService / ManualReviewCase + Human Decision/Audit
+      - EFFECTFUL_EXACT
+    - row: 13
+      cells:
+      - QA-01-BTN-MANUAL-VIEW
+      - EXISTING_SOURCE_UID
+      - 查看人工審查 / View Manual Review
+      - BUTTON
+      - QA-01-ACT-MANUAL-VIEW
+      - QA-01-GATE-MANUAL
+      - QA_USE
+      - —
+      - —
+      - —
+      - CLIENT
+      - —
+      - UI_LOCAL_EXACT
+    - row: 14
+      cells:
+      - QA-01-BTN-NEXT-FRAME
+      - EXISTING_SOURCE_UID
+      - 下一幀 / Next Frame
+      - BUTTON
+      - QA-01-ACT-VIEWER-NEXT-FRAME
+      - QA-01-GATE-VIEWER
+      - QA_USE
+      - —
+      - —
+      - —
+      - CLIENT
+      - —
+      - UI_LOCAL_EXACT
+    - row: 15
+      cells:
+      - QA-01-BTN-PLAY
+      - EXISTING_SOURCE_UID
+      - Play / Pause
+      - BUTTON
+      - QA-01-ACT-VIEWER-PLAY
+      - QA-01-GATE-VIEWER
+      - QA_USE
+      - —
+      - —
+      - —
+      - CLIENT
+      - —
+      - UI_LOCAL_EXACT
+    - row: 16
+      cells:
+      - QA-01-BTN-PREV-FRAME
+      - EXISTING_SOURCE_UID
+      - 上一幀 / Previous Frame
+      - BUTTON
+      - QA-01-ACT-VIEWER-PREV-FRAME
+      - QA-01-GATE-VIEWER
+      - QA_USE
+      - —
+      - —
+      - —
+      - CLIENT
+      - —
+      - UI_LOCAL_EXACT
+    - row: 17
+      cells:
+      - QA-01-BTN-RECHECK
+      - EXISTING_SOURCE_UID
+      - 開始 Recheck
+      - PRIMARY_BUTTON
+      - QA-01-ACT-RECHECK-START
+      - QA-01-GATE-RECHECK
+      - QA_GATE
+      - StartQaRecheckRequest
+      - startRecheck
+      - POST /v1/qa/reviews/{reviewId}/rechecks
+      - QAService
+      - QAService / QARecheckCase + QAScorecard + Audit
+      - EFFECTFUL_EXACT
+    - row: 18
+      cells:
+      - QA-01-BTN-RELEASE-CREATE
+      - EXISTING_SOURCE_UID
+      - 建立 Release Candidate
+      - PRIMARY_BUTTON
+      - QA-01-ACT-RELEASE-CREATE
+      - QA-01-GATE-RELEASE
+      - QA_RELEASE
+      - CreateReleaseCandidateRequest
+      - createReleasePackage
+      - POST /v1/qa/release-candidates
+      - ReleaseService
+      - ReleaseService / ReleaseCandidate + Provenance/Audit
+      - EFFECTFUL_EXACT
+    - row: 19
+      cells:
+      - QA-01-BTN-SCRIPT-VIEW
+      - EXISTING_SOURCE_UID
+      - 查看 QA 驗證腳本
+      - BUTTON
+      - QA-01-ACT-SCRIPT-VIEW
+      - QA-01-GATE-SCRIPT
+      - QA_USE
+      - —
+      - —
+      - —
+      - CLIENT
+      - —
+      - UI_LOCAL_EXACT
+    - row: 20
+      cells:
+      - QA-01-BTN-START-REVIEW
+      - EXISTING_SOURCE_UID
+      - 開始審查 / Start Review
+      - BUTTON
+      - QA-01-ACT-START-REVIEW
+      - QA-01-GATE-START
+      - QA_USE
+      - StartQaReviewRequest
+      - startQaReview
+      - POST /v1/qa/reviews
+      - QAService
+      - QAService / QAReviewCase + QAScorecard + Audit
+      - EFFECTFUL_EXACT
+    - row: 21
+      cells:
+      - QA-01-BTN-VOLUME
+      - EXISTING_SOURCE_UID
+      - Volume / Mute
+      - BUTTON
+      - QA-01-ACT-VIEWER-VOLUME
+      - QA-01-GATE-VIEWER
+      - QA_USE
+      - —
+      - —
+      - —
+      - CLIENT
+      - —
+      - UI_LOCAL_EXACT
+    - row: 22
+      cells:
+      - QA-01-CTL-SEEK
+      - EXISTING_SOURCE_UID
+      - Seek / Timecode
+      - RANGE
+      - QA-01-ACT-VIEWER-SEEK
+      - QA-01-GATE-VIEWER
+      - QA_USE
+      - —
+      - —
+      - —
+      - CLIENT
+      - —
+      - UI_LOCAL_EXACT
+    - row: 23
+      cells:
+      - QA-01-FLD-AUDIT
+      - EXISTING_SOURCE_UID
+      - Audit / Trace
+      - READONLY
+      - QA-01-ACT-NOOP-VIEW
+      - QA-01-GATE-PAGE
+      - QA_USE
+      - —
+      - —
+      - —
+      - CLIENT
+      - —
+      - UI_LOCAL_EXACT
+    - row: 24
+      cells:
+      - QA-01-FLD-AUTO-PROGRESS
+      - EXISTING_SOURCE_UID
+      - AUTO Progress
+      - READONLY
+      - QA-01-ACT-NOOP-VIEW
+      - QA-01-GATE-PAGE
+      - QA_USE
+      - —
+      - —
+      - —
+      - CLIENT
+      - —
+      - UI_LOCAL_EXACT
+    - row: 25
+      cells:
+      - QA-01-FLD-CHECKSUM
+      - EXISTING_SOURCE_UID
+      - Artifact Checksum
+      - READONLY
+      - QA-01-ACT-NOOP-VIEW
+      - QA-01-GATE-EVIDENCE
+      - QA_USE
+      - —
+      - —
+      - —
+      - CLIENT
+      - —
+      - UI_LOCAL_EXACT
+    - row: 26
+      cells:
+      - QA-01-FLD-CORRELATION
+      - EXISTING_SOURCE_UID
+      - Correlation / Idempotency
+      - READONLY
+      - QA-01-ACT-NOOP-VIEW
+      - QA-01-GATE-PAGE
+      - QA_USE
+      - —
+      - —
+      - —
+      - CLIENT
+      - —
+      - UI_LOCAL_EXACT
+    - row: 27
+      cells:
+      - QA-01-FLD-CRITERIA-VERSION
+      - EXISTING_SOURCE_UID
+      - Criteria Version
+      - READONLY
+      - QA-01-ACT-NOOP-VIEW
+      - QA-01-GATE-CRITERIA
+      - QA_USE
+      - —
+      - —
+      - —
+      - CLIENT
+      - —
+      - UI_LOCAL_EXACT
+    - row: 28
+      cells:
+      - QA-01-FLD-CURRENT-TIMECODE
+      - EXISTING_SOURCE_UID
+      - Current Timecode
+      - READONLY
+      - QA-01-ACT-NOOP-VIEW
+      - QA-01-GATE-VIEWER
+      - QA_USE
+      - —
+      - —
+      - —
+      - CLIENT
+      - —
+      - UI_LOCAL_EXACT
+    - row: 29
+      cells:
+      - QA-01-FLD-DISABLED
+      - EXISTING_SOURCE_UID
+      - Disabled Reason
+      - READONLY
+      - QA-01-ACT-NOOP-VIEW
+      - QA-01-GATE-PAGE
+      - QA_USE
+      - —
+      - —
+      - —
+      - CLIENT
+      - —
+      - UI_LOCAL_EXACT
+    - row: 30
+      cells:
+      - QA-01-FLD-ERROR
+      - EXISTING_SOURCE_UID
+      - Error UID / Reason
+      - READONLY
+      - QA-01-ACT-NOOP-VIEW
+      - QA-01-GATE-PAGE
+      - QA_USE
+      - —
+      - —
+      - —
+      - CLIENT
+      - —
+      - UI_LOCAL_EXACT
+    - row: 31
+      cells:
+      - QA-01-FLD-EVIDENCE
+      - EXISTING_SOURCE_UID
+      - Evidence Refs
+      - READONLY
+      - QA-01-ACT-NOOP-VIEW
+      - QA-01-GATE-EVIDENCE
+      - QA_USE
+      - —
+      - —
+      - —
+      - CLIENT
+      - —
+      - UI_LOCAL_EXACT
+    - row: 32
+      cells:
+      - QA-01-FLD-FAILED-VERSION
+      - EXISTING_SOURCE_UID
+      - Failed Output Version
+      - READONLY
+      - QA-01-ACT-NOOP-VIEW
+      - QA-01-GATE-RECHECK
+      - QA_USE
+      - —
+      - —
+      - —
+      - CLIENT
+      - —
+      - UI_LOCAL_EXACT
+    - row: 33
+      cells:
+      - QA-01-FLD-GATE-POLICY
+      - EXISTING_SOURCE_UID
+      - Quality Gate Policy Version
+      - READONLY
+      - QA-01-ACT-NOOP-VIEW
+      - QA-01-GATE-CRITERIA
+      - QA_USE
+      - —
+      - —
+      - —
+      - CLIENT
+      - —
+      - UI_LOCAL_EXACT
+    - row: 34
+      cells:
+      - QA-01-FLD-GATE-STATUS
+      - EXISTING_SOURCE_UID
+      - QA Gate Result
+      - READONLY
+      - QA-01-ACT-NOOP-VIEW
+      - QA-01-GATE-PAGE
+      - QA_USE
+      - —
+      - —
+      - —
+      - CLIENT
+      - —
+      - UI_LOCAL_EXACT
+    - row: 35
+      cells:
+      - QA-01-FLD-HARD-BLOCK
+      - EXISTING_SOURCE_UID
+      - Hard Block
+      - READONLY
+      - QA-01-ACT-NOOP-VIEW
+      - QA-01-GATE-PAGE
+      - QA_USE
+      - —
+      - —
+      - —
+      - CLIENT
+      - —
+      - UI_LOCAL_EXACT
+    - row: 36
+      cells:
+      - QA-01-FLD-MANUAL-BLOCKER
+      - EXISTING_SOURCE_UID
+      - Blocking Reason
+      - READONLY
+      - QA-01-ACT-NOOP-VIEW
+      - QA-01-GATE-MANUAL
+      - QA_USE
+      - —
+      - —
+      - —
+      - CLIENT
+      - —
+      - UI_LOCAL_EXACT
+    - row: 37
+      cells:
+      - QA-01-FLD-MANUAL-CASE
+      - EXISTING_SOURCE_UID
+      - Manual Review Case
+      - READONLY
+      - QA-01-ACT-NOOP-VIEW
+      - QA-01-GATE-MANUAL
+      - QA_USE
+      - —
+      - —
+      - —
+      - CLIENT
+      - —
+      - UI_LOCAL_EXACT
+    - row: 38
+      cells:
+      - QA-01-FLD-MANUAL-DECISION
+      - EXISTING_SOURCE_UID
+      - Decision / History
+      - READONLY
+      - QA-01-ACT-NOOP-VIEW
+      - QA-01-GATE-MANUAL
+      - QA_USE
+      - —
+      - —
+      - —
+      - CLIENT
+      - —
+      - UI_LOCAL_EXACT
+    - row: 39
+      cells:
+      - QA-01-FLD-MANUAL-OWNER
+      - EXISTING_SOURCE_UID
+      - Owner
+      - READONLY
+      - QA-01-ACT-NOOP-VIEW
+      - QA-01-GATE-MANUAL
+      - QA_USE
+      - —
+      - —
+      - —
+      - CLIENT
+      - —
+      - UI_LOCAL_EXACT
+    - row: 40
+      cells:
+      - QA-01-FLD-MANUAL-STATE
+      - EXISTING_SOURCE_UID
+      - Manual Review
+      - READONLY
+      - QA-01-ACT-NOOP-VIEW
+      - QA-01-GATE-PAGE
+      - QA_USE
+      - —
+      - —
+      - —
+      - CLIENT
+      - —
+      - UI_LOCAL_EXACT
+    - row: 41
+      cells:
+      - QA-01-FLD-NEW-VERSION
+      - EXISTING_SOURCE_UID
+      - Verified New Output Version
+      - READONLY
+      - QA-01-ACT-NOOP-VIEW
+      - QA-01-GATE-RECHECK
+      - QA_USE
+      - —
+      - —
+      - —
+      - CLIENT
+      - —
+      - UI_LOCAL_EXACT
+    - row: 42
+      cells:
+      - QA-01-FLD-OPEN-FINDINGS
+      - EXISTING_SOURCE_UID
+      - Open Blocking Findings
+      - READONLY
+      - QA-01-ACT-NOOP-VIEW
+      - QA-01-GATE-PAGE
+      - QA_USE
+      - —
+      - —
+      - —
+      - CLIENT
+      - —
+      - UI_LOCAL_EXACT
+    - row: 43
+      cells:
+      - QA-01-FLD-PAGE-STATE
+      - EXISTING_SOURCE_UID
+      - Page / QA State
+      - READONLY
+      - QA-01-ACT-NOOP-VIEW
+      - QA-01-GATE-PAGE
+      - QA_USE
+      - —
+      - —
+      - —
+      - CLIENT
+      - —
+      - UI_LOCAL_EXACT
+    - row: 44
+      cells:
+      - QA-01-FLD-POLICY
+      - EXISTING_SOURCE_UID
+      - Policy Gate
+      - READONLY
+      - QA-01-ACT-NOOP-VIEW
+      - QA-01-GATE-EVIDENCE
+      - QA_USE
+      - —
+      - —
+      - —
+      - CLIENT
+      - —
+      - UI_LOCAL_EXACT
+    - row: 45
+      cells:
+      - QA-01-FLD-PROJECT
+      - EXISTING_SOURCE_UID
+      - Project
+      - READONLY
+      - QA-01-ACT-NOOP-VIEW
+      - QA-01-GATE-PAGE
+      - QA_USE
+      - —
+      - —
+      - —
+      - CLIENT
+      - —
+      - UI_LOCAL_EXACT
+    - row: 46
+      cells:
+      - QA-01-FLD-PROVENANCE
+      - EXISTING_SOURCE_UID
+      - Provenance
+      - READONLY
+      - QA-01-ACT-NOOP-VIEW
+      - QA-01-GATE-EVIDENCE
+      - QA_USE
+      - —
+      - —
+      - —
+      - CLIENT
+      - —
+      - UI_LOCAL_EXACT
+    - row: 47
+      cells:
+      - QA-01-FLD-QA-SCRIPT
+      - EXISTING_SOURCE_UID
+      - QA Validation Script View
+      - READONLY
+      - QA-01-ACT-NOOP-VIEW
+      - QA-01-GATE-SCRIPT
+      - QA_USE
+      - —
+      - —
+      - —
+      - CLIENT
+      - —
+      - UI_LOCAL_EXACT
+    - row: 48
+      cells:
+      - QA-01-FLD-QA-TASK
+      - EXISTING_SOURCE_UID
+      - QA Task
+      - READONLY
+      - QA-01-ACT-NOOP-VIEW
+      - QA-01-GATE-PAGE
+      - QA_USE
+      - —
+      - —
+      - —
+      - CLIENT
+      - —
+      - UI_LOCAL_EXACT
+    - row: 49
+      cells:
+      - QA-01-FLD-RECHECK-STATUS
+      - EXISTING_SOURCE_UID
+      - Recheck Status
+      - READONLY
+      - QA-01-ACT-NOOP-VIEW
+      - QA-01-GATE-RECHECK
+      - QA_USE
+      - —
+      - —
+      - —
+      - CLIENT
+      - —
+      - UI_LOCAL_EXACT
+    - row: 50
+      cells:
+      - QA-01-FLD-REL-CHANNEL
+      - EXISTING_SOURCE_UID
+      - Channel / Account Scope
+      - READONLY
+      - QA-01-ACT-NOOP-VIEW
+      - QA-01-GATE-PAGE
+      - QA_USE
+      - —
+      - —
+      - —
+      - CLIENT
+      - —
+      - UI_LOCAL_EXACT
+    - row: 51
+      cells:
+      - QA-01-FLD-REL-FINDINGS
+      - EXISTING_SOURCE_UID
+      - All Findings Closed
+      - READONLY
+      - QA-01-ACT-NOOP-VIEW
+      - QA-01-GATE-PAGE
+      - QA_USE
+      - —
+      - —
+      - —
+      - CLIENT
+      - —
+      - UI_LOCAL_EXACT
+    - row: 52
+      cells:
+      - QA-01-FLD-REL-MANUAL
+      - EXISTING_SOURCE_UID
+      - Manual Review Closed
+      - READONLY
+      - QA-01-ACT-NOOP-VIEW
+      - QA-01-GATE-PAGE
+      - QA_USE
+      - —
+      - —
+      - —
+      - CLIENT
+      - —
+      - UI_LOCAL_EXACT
+    - row: 53
+      cells:
+      - QA-01-FLD-REL-OUTPUTS
+      - EXISTING_SOURCE_UID
+      - Exact Output Version IDs
+      - READONLY
+      - QA-01-ACT-NOOP-VIEW
+      - QA-01-GATE-RELEASE
+      - QA_USE
+      - —
+      - —
+      - —
+      - CLIENT
+      - —
+      - UI_LOCAL_EXACT
+    - row: 54
+      cells:
+      - QA-01-FLD-REL-PACKAGE
+      - EXISTING_SOURCE_UID
+      - Release Package Candidate
+      - READONLY
+      - QA-01-ACT-NOOP-VIEW
+      - QA-01-GATE-RELEASE
+      - QA_USE
+      - —
+      - —
+      - —
+      - CLIENT
+      - —
+      - UI_LOCAL_EXACT
+    - row: 55
+      cells:
+      - QA-01-FLD-REL-POLICY
+      - EXISTING_SOURCE_UID
+      - Policy Valid
+      - READONLY
+      - QA-01-ACT-NOOP-VIEW
+      - QA-01-GATE-PAGE
+      - QA_USE
+      - —
+      - —
+      - —
+      - CLIENT
+      - —
+      - UI_LOCAL_EXACT
+    - row: 56
+      cells:
+      - QA-01-FLD-REL-QA-GATE
+      - EXISTING_SOURCE_UID
+      - QA Gate Ref
+      - READONLY
+      - QA-01-ACT-NOOP-VIEW
+      - QA-01-GATE-RELEASE
+      - QA_USE
+      - —
+      - —
+      - —
+      - CLIENT
+      - —
+      - UI_LOCAL_EXACT
+    - row: 57
+      cells:
+      - QA-01-FLD-REL-QA-PASS
+      - EXISTING_SOURCE_UID
+      - QA PASS
+      - READONLY
+      - QA-01-ACT-NOOP-VIEW
+      - QA-01-GATE-PAGE
+      - QA_USE
+      - —
+      - —
+      - —
+      - CLIENT
+      - —
+      - UI_LOCAL_EXACT
+    - row: 58
+      cells:
+      - QA-01-FLD-REL-RIGHTS
+      - EXISTING_SOURCE_UID
+      - Rights Valid
+      - READONLY
+      - QA-01-ACT-NOOP-VIEW
+      - QA-01-GATE-PAGE
+      - QA_USE
+      - —
+      - —
+      - —
+      - CLIENT
+      - —
+      - UI_LOCAL_EXACT
+    - row: 59
+      cells:
+      - QA-01-FLD-REL-RIGHTS-GATE
+      - EXISTING_SOURCE_UID
+      - Rights Gate Ref
+      - READONLY
+      - QA-01-ACT-NOOP-VIEW
+      - QA-01-GATE-RELEASE
+      - QA_USE
+      - —
+      - —
+      - —
+      - CLIENT
+      - —
+      - UI_LOCAL_EXACT
+    - row: 60
+      cells:
+      - QA-01-FLD-REQUIRED-CHECKS
+      - EXISTING_SOURCE_UID
+      - Required Checks
+      - READONLY
+      - QA-01-ACT-NOOP-VIEW
+      - QA-01-GATE-EVIDENCE
+      - QA_USE
+      - —
+      - —
+      - —
+      - CLIENT
+      - —
+      - UI_LOCAL_EXACT
+    - row: 61
+      cells:
+      - QA-01-FLD-REVIEW-STATE
+      - EXISTING_SOURCE_UID
+      - QA Review State
+      - READONLY
+      - QA-01-ACT-NOOP-VIEW
+      - QA-01-GATE-PAGE
+      - QA_USE
+      - —
+      - —
+      - —
+      - CLIENT
+      - —
+      - UI_LOCAL_EXACT
+    - row: 62
+      cells:
+      - QA-01-FLD-RIGHTS
+      - EXISTING_SOURCE_UID
+      - Rights Gate
+      - READONLY
+      - QA-01-ACT-NOOP-VIEW
+      - QA-01-GATE-EVIDENCE
+      - QA_USE
+      - —
+      - —
+      - —
+      - CLIENT
+      - —
+      - UI_LOCAL_EXACT
+    - row: 63
+      cells:
+      - QA-01-FLD-SCRIPT-HASH
+      - EXISTING_SOURCE_UID
+      - Script View Hash
+      - READONLY
+      - QA-01-ACT-NOOP-VIEW
+      - QA-01-GATE-SCRIPT
+      - QA_USE
+      - —
+      - —
+      - —
+      - CLIENT
+      - —
+      - UI_LOCAL_EXACT
+    - row: 64
+      cells:
+      - QA-01-FLD-TARGET-OUTPUT
+      - EXISTING_SOURCE_UID
+      - Target Output Version
+      - READONLY
+      - QA-01-ACT-NOOP-VIEW
+      - QA-01-GATE-PAGE
+      - QA_USE
+      - —
+      - —
+      - —
+      - CLIENT
+      - —
+      - UI_LOCAL_EXACT
+    - row: 65
+      cells:
+      - QA-01-FLD-TOPIC
+      - EXISTING_SOURCE_UID
+      - Topic
+      - READONLY
+      - QA-01-ACT-NOOP-VIEW
+      - QA-01-GATE-PAGE
+      - QA_USE
+      - —
+      - —
+      - —
+      - CLIENT
+      - —
+      - UI_LOCAL_EXACT
+    - row: 66
+      cells:
+      - QA-01-FLD-TOTAL-SCORE
+      - EXISTING_SOURCE_UID
+      - Total Score
+      - READONLY
+      - QA-01-ACT-NOOP-VIEW
+      - QA-01-GATE-PAGE
+      - QA_USE
+      - —
+      - —
+      - —
+      - CLIENT
+      - —
+      - UI_LOCAL_EXACT
+    - row: 67
+      cells:
+      - QA-01-INP-CORR-ACTION
+      - EXISTING_SOURCE_UID
+      - Required Action
+      - TEXTAREA
+      - QA-01-ACT-NOOP-VIEW
+      - QA-01-GATE-CORRECTION
+      - QA_CORRECTION
+      - —
+      - —
+      - —
+      - CLIENT
+      - —
+      - UI_LOCAL_EXACT
+    - row: 68
+      cells:
+      - QA-01-INP-CORR-FINDINGS
+      - EXISTING_SOURCE_UID
+      - Finding IDs
+      - READONLY
+      - QA-01-ACT-NOOP-VIEW
+      - QA-01-GATE-CORRECTION
+      - QA_CORRECTION
+      - —
+      - —
+      - —
+      - CLIENT
+      - —
+      - UI_LOCAL_EXACT
+    - row: 69
+      cells:
+      - QA-01-INP-CORR-INSTRUCTION
+      - EXISTING_SOURCE_UID
+      - Source Instruction Package
+      - READONLY
+      - QA-01-ACT-NOOP-VIEW
+      - QA-01-GATE-CORRECTION
+      - QA_CORRECTION
+      - —
+      - —
+      - —
+      - CLIENT
+      - —
+      - UI_LOCAL_EXACT
+    - row: 70
+      cells:
+      - QA-01-INP-CORR-REVALIDATE
+      - EXISTING_SOURCE_UID
+      - Revalidation Requirements
+      - MULTISELECT
+      - QA-01-ACT-NOOP-VIEW
+      - QA-01-GATE-CORRECTION
+      - QA_CORRECTION
+      - —
+      - —
+      - —
+      - CLIENT
+      - —
+      - UI_LOCAL_EXACT
+    - row: 71
+      cells:
+      - QA-01-INP-CORR-ROOT
+      - EXISTING_SOURCE_UID
+      - Root Cause（canonical enum）
+      - SELECT
+      - QA-01-ACT-NOOP-VIEW
+      - QA-01-GATE-CORRECTION
+      - QA_CORRECTION
+      - —
+      - —
+      - —
+      - CLIENT
+      - —
+      - UI_LOCAL_EXACT
+    - row: 72
+      cells:
+      - QA-01-INP-CORR-SCOPE
+      - EXISTING_SOURCE_UID
+      - Affected Scope
+      - PREFILLED_SCOPE_INPUT
+      - QA-01-ACT-NOOP-VIEW
+      - QA-01-GATE-CORRECTION
+      - QA_CORRECTION
+      - —
+      - —
+      - —
+      - CLIENT
+      - —
+      - UI_LOCAL_EXACT
+    - row: 73
+      cells:
+      - QA-01-INP-CORR-SCORECARDS
+      - EXISTING_SOURCE_UID
+      - Source Scorecard IDs
+      - READONLY
+      - QA-01-ACT-NOOP-VIEW
+      - QA-01-GATE-CORRECTION
+      - QA_CORRECTION
+      - —
+      - —
+      - —
+      - CLIENT
+      - —
+      - UI_LOCAL_EXACT
+    - row: 74
+      cells:
+      - QA-01-INP-CORR-TARGET
+      - EXISTING_SOURCE_UID
+      - Target Department / Original Owner
+      - READONLY
+      - QA-01-ACT-NOOP-VIEW
+      - QA-01-GATE-CORRECTION
+      - QA_CORRECTION
+      - —
+      - —
+      - —
+      - CLIENT
+      - —
+      - UI_LOCAL_EXACT
+    - row: 75
+      cells:
+      - QA-01-INP-FINDING-CATEGORY
+      - EXISTING_SOURCE_UID
+      - Category（registered QA issue category）
+      - SELECT
+      - QA-01-ACT-NOOP-VIEW
+      - QA-01-GATE-FINDING
+      - QA_FINDING
+      - —
+      - —
+      - —
+      - CLIENT
+      - —
+      - UI_LOCAL_EXACT
+    - row: 76
+      cells:
+      - QA-01-INP-FINDING-EVIDENCE
+      - EXISTING_SOURCE_UID
+      - Evidence Refs（auto-bound）
+      - READONLY
+      - QA-01-ACT-NOOP-VIEW
+      - QA-01-GATE-FINDING
+      - QA_FINDING
+      - —
+      - —
+      - —
+      - CLIENT
+      - —
+      - UI_LOCAL_EXACT
+    - row: 77
+      cells:
+      - QA-01-INP-FINDING-SCOPE
+      - EXISTING_SOURCE_UID
+      - Affected Scope
+      - PREFILLED_SCOPE_INPUT
+      - QA-01-ACT-NOOP-VIEW
+      - QA-01-GATE-FINDING
+      - QA_FINDING
+      - —
+      - —
+      - —
+      - CLIENT
+      - —
+      - UI_LOCAL_EXACT
+    - row: 78
+      cells:
+      - QA-01-INP-FINDING-SEVERITY
+      - EXISTING_SOURCE_UID
+      - Severity（registered enum）
+      - SELECT
+      - QA-01-ACT-NOOP-VIEW
+      - QA-01-GATE-FINDING
+      - QA_FINDING
+      - —
+      - —
+      - —
+      - CLIENT
+      - —
+      - UI_LOCAL_EXACT
+    - row: 79
+      cells:
+      - QA-01-INP-QUEUE-SEARCH
+      - EXISTING_SOURCE_UID
+      - 搜尋 QA Task / Output / Finding
+      - SEARCH
+      - QA-01-ACT-QUEUE-SEARCH
+      - QA-01-GATE-PAGE
+      - QA_USE
+      - —
+      - —
+      - —
+      - CLIENT
+      - —
+      - UI_LOCAL_EXACT
+    - row: 80
+      cells:
+      - QA-01-LIST-FINDINGS
+      - EXISTING_SOURCE_UID
+      - Finding List
+      - LIST
+      - QA-01-ACT-FINDING-SELECT
+      - QA-01-GATE-PAGE
+      - QA_USE
+      - —
+      - —
+      - —
+      - CLIENT
+      - —
+      - UI_LOCAL_EXACT
+    - row: 81
+      cells:
+      - QA-01-LIST-REVIEWS
+      - EXISTING_SOURCE_UID
+      - QA Review Queue
+      - LIST
+      - QA-01-ACT-REVIEW-SELECT
+      - QA-01-GATE-PAGE
+      - QA_USE
+      - —
+      - —
+      - —
+      - CLIENT
+      - —
+      - UI_LOCAL_EXACT
+    - row: 82
+      cells:
+      - QA-01-LIST-SCORE-DIMENSIONS
+      - EXISTING_SOURCE_UID
+      - Generated Criteria Dimensions
+      - GENERATED_SCORECARD_TABLE
+      - QA-01-ACT-NOOP-VIEW
+      - QA-01-GATE-SCORE
+      - QA_USE
+      - —
+      - —
+      - —
+      - CLIENT
+      - —
+      - UI_LOCAL_EXACT
+    - row: 83
+      cells:
+      - QA-01-SEG-REVIEW-MODE
+      - EXISTING_SOURCE_UID
+      - 審查模式 / Review Mode
+      - SEGMENTED_CONTROL
+      - QA-01-ACT-REVIEW-MODE-SET
+      - QA-01-GATE-PAGE
+      - QA_USE
+      - —
+      - —
+      - —
+      - CLIENT
+      - —
+      - UI_LOCAL_EXACT
+    - row: 84
+      cells:
+      - QA-01-SEL-QUEUE-SEVERITY
+      - EXISTING_SOURCE_UID
+      - Severity
+      - SELECT
+      - QA-01-ACT-QUEUE-FILTER
+      - QA-01-GATE-PAGE
+      - QA_USE
+      - —
+      - —
+      - —
+      - CLIENT
+      - —
+      - UI_LOCAL_EXACT
+    - row: 85
+      cells:
+      - QA-01-SEL-QUEUE-SOURCE-DEPT
+      - EXISTING_SOURCE_UID
+      - 來源部門 / Source Department
+      - SELECT
+      - QA-01-ACT-QUEUE-FILTER
+      - QA-01-GATE-PAGE
+      - QA_USE
+      - —
+      - —
+      - —
+      - CLIENT
+      - —
+      - UI_LOCAL_EXACT
+    - row: 86
+      cells:
+      - QA-01-SEL-QUEUE-STATE
+      - EXISTING_SOURCE_UID
+      - 狀態篩選
+      - SELECT
+      - QA-01-ACT-QUEUE-FILTER
+      - QA-01-GATE-PAGE
+      - QA_USE
+      - —
+      - —
+      - —
+      - CLIENT
+      - —
+      - UI_LOCAL_EXACT
+    - row: 87
+      cells:
+      - QA-01-VIEW-OUTPUT
+      - EXISTING_SOURCE_UID
+      - Exact Output Viewer
+      - VIEWER
+      - QA-01-ACT-NOOP-VIEW
+      - QA-01-GATE-VIEWER
+      - QA_USE
+      - —
+      - —
+      - —
+      - CLIENT
+      - —
+      - UI_LOCAL_EXACT
+  - index: 24
+    rows:
+    - row: 0
+      cells:
+      - Profile UID
+      - Department
+      - Applicability
+      - Pass Threshold
+      - Authority Basis
+    - row: 1
+      cells:
+      - QCP-QA-FINAL-OUTPUT-V1
+      - QA
+      - Final output / release-candidate review
+      - '95'
+      - Concrete final QA catalog and weights new authority
+  - index: 25
+    rows:
+    - row: 0
+      cells:
+      - Order
+      - Dimension UID
+      - 審查項目
+      - English
+      - Weight
+      - Hard Block
+      - Definition
+    - row: 1
+      cells:
+      - '1'
+      - QA-DIM-FINAL-SCRIPT
+      - 腳本／目標符合
+      - Script / Goal Compliance
+      - '6'
+      - 'NO'
+      - 最終輸出符合 Blueprint、Script 與目標
+    - row: 2
+      cells:
+      - '2'
+      - QA-DIM-FINAL-IDENTITY
+      - 人物／角色一致性
+      - Character Identity Consistency
+      - '9'
+      - 'NO'
+      - 人物臉、身形、服裝、DNA 跨鏡頭一致
+    - row: 3
+      cells:
+      - '3'
+      - QA-DIM-FINAL-SCENE
+      - 場景／物件一致性
+      - Scene / Object Consistency
+      - '7'
+      - 'NO'
+      - 場景、物件、空間關係與版本一致
+    - row: 4
+      cells:
+      - '4'
+      - QA-DIM-FINAL-COMPOSITION
+      - 構圖／取景
+      - Composition / Framing
+      - '6'
+      - 'NO'
+      - 構圖、主體位置、視覺重心符合意圖
+    - row: 5
+      cells:
+      - '5'
+      - QA-DIM-FINAL-MOTION
+      - 動作／身體連續性
+      - Motion / Body Continuity
+      - '7'
+      - 'NO'
+      - 動作連續、姿態合理、無瞬移
+    - row: 6
+      cells:
+      - '6'
+      - QA-DIM-FINAL-FRAME
+      - 幀間連續性
+      - Frame-to-Frame Continuity
+      - '8'
+      - 'NO'
+      - 相鄰幀無閃爍、跳變、物體突變或不合理 morph
+    - row: 7
+      cells:
+      - '7'
+      - QA-DIM-FINAL-CAMERA
+      - 鏡頭／視線連續
+      - Camera / Gaze Continuity
+      - '5'
+      - 'NO'
+      - 鏡位、軸線、視線與運動方向連續
+    - row: 8
+      cells:
+      - '8'
+      - QA-DIM-FINAL-LIPSYNC
+      - 嘴型／口型同步
+      - Lip Sync
+      - '7'
+      - 'NO'
+      - 嘴型與實際語音/DialogueTimingBinding 對齊
+    - row: 9
+      cells:
+      - '9'
+      - QA-DIM-FINAL-VOICE
+      - 配音／對白品質
+      - Voice / Dialogue Quality
+      - '6'
+      - 'NO'
+      - 聲線、語氣、清晰度與角色一致
+    - row: 10
+      cells:
+      - '10'
+      - QA-DIM-FINAL-AUDIO
+      - 音訊技術品質
+      - Audio Technical Quality
+      - '5'
+      - 'NO'
+      - 無 clipping、noise、dropout、失真
+    - row: 11
+      cells:
+      - '11'
+      - QA-DIM-FINAL-MIX
+      - BGM／音效平衡與時間
+      - BGM / SFX Balance & Timing
+      - '5'
+      - 'NO'
+      - BGM、SFX 與對白音量/時點合理
+    - row: 12
+      cells:
+      - '12'
+      - QA-DIM-FINAL-SUBCONTENT
+      - 字幕內容正確
+      - Subtitle Content Accuracy
+      - '6'
+      - 'NO'
+      - 字幕與台詞、語言、專有名詞一致
+    - row: 13
+      cells:
+      - '13'
+      - QA-DIM-FINAL-SUBTIMING
+      - 字幕時間／可讀性／安全區
+      - Subtitle Timing / Readability / Safe Area
+      - '6'
+      - 'NO'
+      - 字幕 in/out、閱讀時間、換行、遮擋、安全區正確
+    - row: 14
+      cells:
+      - '14'
+      - QA-DIM-FINAL-EDIT
+      - 剪輯節奏／轉場
+      - Editing Pacing / Transition
+      - '6'
+      - 'NO'
+      - 節奏、cut、transition 與敘事情緒一致
+    - row: 15
+      cells:
+      - '15'
+      - QA-DIM-FINAL-AVSYNC
+      - 音畫同步
+      - Audio / Video Sync
+      - '5'
+      - 'NO'
+      - 對白、SFX、音樂事件與畫面同步
+    - row: 16
+      cells:
+      - '16'
+      - QA-DIM-FINAL-TECH
+      - 輸出技術完整
+      - Technical Output Integrity
+      - '4'
+      - 'NO'
+      - Resolution/FPS/Codec/Duration/Manifest/Decode 正常
+    - row: 17
+      cells:
+      - '17'
+      - QA-DIM-FINAL-RIGHTS
+      - 權利／政策／來源
+      - Rights / Policy / Provenance
+      - '2'
+      - HARD BLOCK
+      - Rights/Policy/Provenance Hard Block 必須 PASS
+  - index: 26
+    rows:
+    - row: 0
+      cells:
+      - Column
+      - Rule
+    - row: 1
+      cells:
+      - Order
+      - 沿 approved profile 固定排序；不可 frontend 自排
+    - row: 2
+      cells:
+      - Dimension UID
+      - Exact UID
+    - row: 3
+      cells:
+      - 審查項目
+      - 顯示具體中文名稱，例如 人物／角色一致性、幀間連續性、嘴型／口型同步、字幕內容、字幕時間／可讀性、音訊品質、構圖等
+    - row: 4
+      cells:
+      - Weight
+      - Profile-bound；當前適用 rows 總和必須 =100
+    - row: 5
+      cells:
+      - Score
+      - System/AI 0–100；人工不可直接輸入
+    - row: 6
+      cells:
+      - Weighted Score
+      - score×weight/100
+    - row: 7
+      cells:
+      - Status
+      - PASS / FINDING / HARD_BLOCK / N/A
+    - row: 8
+      cells:
+      - Hard Block
+      - 是/否；任何 Hard Block FAIL 覆蓋 total score
+    - row: 9
+      cells:
+      - Evidence Refs
+      - Viewer exact frame/time/range/output/checksum/provenance refs
+    - row: 10
+      cells:
+      - Finding Count
+      - 該 dimension 的 open/closed findings
+  - index: 27
+    rows:
+    - row: 0
+      cells:
+      - UI behavior
+      - Exact Rule
+    - row: 1
+      cells:
+      - Criteria header
+      - 顯示 Profile UID、Criteria Version、Policy Version、Department、Artifact Type、Threshold=95、Approval status
+    - row: 2
+      cells:
+      - Score rows
+      - QA-01-LIST-SCORE-DIMENSIONS 必須逐項 render approved criteria rows；不得只顯示 Dimension count/JSON blob
+    - row: 3
+      cells:
+      - Row click
+      - 聚焦 Exact Output Viewer 對應 Evidence/frame/time/range；不修改上游輸出
+    - row: 4
+      cells:
+      - Missing Criteria
+      - BLOCK QA scoring；顯示 QA-01-ERR-CRITERIA-001；禁止空 Scorecard 或 generic fallback
+    - row: 5
+      cells:
+      - Required Checks
+      - 固定列出 10 個 canonical checks 與 Evidence / PASS/BLOCK
+    - row: 6
+      cells:
+      - Finding Category
+      - 必須從 canonical issue categories 選；缺 category = BLOCK + REPORT_AUTHORITY_GAP
+    - row: 7
+      cells:
+      - Manual Review
+      - 仍只有 MODIFY / PASS；不新增人工 score input；Manual PASS 不能繞過 QA Gate
+  - index: 28
+    rows:
+    - row: 0
+      cells:
+      - Target UID
+      - Closed Field(s)
+      - Operation
+      - Runtime Owner
+      - Runtime Status
+      - Existing Method / Path
+      - Result
+    - row: 1
+      cells:
+      - QA-01-BTN-EVIDENCE-IN
+      - operation
+      - setQAEvidenceRangeIn
+      - CLIENT/QA
+      - EFFECTFUL_EXACT
+      - —
+      - BOUND_BY_BATCH_16
+    - row: 2
+      cells:
+      - QA-01-BTN-EVIDENCE-OUT
+      - operation
+      - setQAEvidenceRangeOut
+      - CLIENT/QA
+      - EFFECTFUL_EXACT
+      - —
+      - BOUND_BY_BATCH_16
+    - row: 3
+      cells:
+      - QA-01-BTN-FINDING-POINT
+      - operation
+      - setQAFindingPoint
+      - CLIENT/QA
+      - EFFECTFUL_EXACT
+      - —
+      - BOUND_BY_BATCH_16
+  - index: 29
+    rows:
+    - row: 0
+      cells:
+      - Control UID
+      - Operation
+      - Runtime Owner
+      - Runtime Status
+      - Downstream Contract State
+    - row: 1
+      cells:
+      - QA-01-BTN-MANUAL-MODIFY
+      - modifyManualReview
+      - ManualReviewService
+      - EFFECTFUL_EXACT
+      - Method/Path + Payload/Schema + Persistence Owner remain for later remediation
+    - row: 2
+      cells:
+      - QA-01-BTN-MANUAL-PASS
+      - passManualReview
+      - ManualReviewService
+      - EFFECTFUL_EXACT
+      - Method/Path + Payload/Schema + Persistence Owner remain for later remediation
+  - index: 30
+    rows:
+    - row: 0
+      cells:
+      - Control UID
+      - Operation
+      - Method / Path
+      - Payload / Schema
+      - Persistence Owner
+      - Semantics
+    - row: 1
+      cells:
+      - QA-01-BTN-START-REVIEW
+      - startQaReview
+      - POST /v1/qa/reviews
+      - StartQaReviewRequest
+      - QAService / QAReviewCase + QAScorecard + Audit
+      - Starts QA only from ExactOutputVersion + QAValidationScriptView + approved CriteriaVersion/QualityGatePolicy + Evidence + Rights/Policy + checksum/provenance.
+        Missing required criterion/evidence is BLOCK.
+    - row: 2
+      cells:
+      - QA-01-BTN-FINDING-CREATE
+      - createFinding
+      - POST /v1/findings
+      - CreateFindingRequest
+      - public.findings
+      - Finding must bind owning domain, exact source version, evidence, severity and expected correction; route/persistence are existing Current authority.
+    - row: 3
+      cells:
+      - QA-01-BTN-CORRECTION
+      - createCorrectionRequest
+      - POST /v1/correction-requests
+      - CreateCorrectionRequestPayload
+      - public.correction_requests
+      - CorrectionRequest routes to the original canonical owner with exact source + required delta/evidence. QA does not directly edit upstream output.
+    - row: 4
+      cells:
+      - QA-01-BTN-RECHECK
+      - startRecheck
+      - POST /v1/qa/reviews/{reviewId}/rechecks
+      - StartQaRecheckRequest
+      - QAService / QARecheckCase + QAScorecard + Audit
+      - Recheck is only against a new exact corrected version; historical PASS cannot close a finding on a newer revision.
+    - row: 5
+      cells:
+      - QA-01-BTN-RELEASE-CREATE
+      - createReleasePackage
+      - POST /v1/qa/release-candidates
+      - CreateReleaseCandidateRequest
+      - ReleaseService / ReleaseCandidate + Provenance/Audit
+      - Creates ReleaseCandidate only from exact QA PASS/version/checksum/provenance. ReleaseCandidate is not published/released-to-channel truth.
+    - row: 6
+      cells:
+      - QA-01-BTN-AUTO-START
+      - startAutoTopicQaReview
+      - POST /v1/qa/reviews/auto
+      - StartAutoTopicQaReviewRequest
+      - QAService / AutoQAReviewCase + QAScorecard + Evaluation Evidence
+      - AUTO review evaluates exact output against approved criteria/evidence. Machine score cannot bypass required manual review or auto-release.
+    - row: 7
+      cells:
+      - QA-01-BTN-FINDING-POINT
+      - setQAFindingPoint
+      - LOCAL LOCAL
+      - SetQAFindingPointCommand
+      - CLIENT/QA / EvidenceCaptureDraft (session-local, non-canonical)
+      - Client-only evidence marker mutation. It records a local draft point bound to the current exact output; it does not create a Finding until the governed Finding
+        create command is submitted.
+    - row: 8
+      cells:
+      - QA-01-BTN-EVIDENCE-IN
+      - setQAEvidenceRangeIn
+      - LOCAL LOCAL
+      - SetQAEvidenceRangeInCommand
+      - CLIENT/QA / EvidenceCaptureDraft (session-local, non-canonical)
+      - Client-only local range-start capture. No server API or canonical QA decision is implied.
+    - row: 9
+      cells:
+      - QA-01-BTN-EVIDENCE-OUT
+      - setQAEvidenceRangeOut
+      - LOCAL LOCAL
+      - SetQAEvidenceRangeOutCommand
+      - CLIENT/QA / EvidenceCaptureDraft (session-local, non-canonical)
+      - Client-only local range-end capture. Range remains a draft until bound into a governed Finding/evidence submission.
+    - row: 10
+      cells:
+      - QA-01-BTN-MANUAL-MODIFY
+      - modifyManualReview
+      - POST /v1/qa/manual-reviews/{reviewCaseId}/modify
+      - ModifyManualReviewRequest
+      - ManualReviewService / ManualReviewCase + Human Decision/Audit
+      - Modifies the exact manual review case under an authorized reviewer. Required manual review cannot be bypassed; unresolved case/reviewer/state fails closed.
+    - row: 11
+      cells:
+      - QA-01-BTN-MANUAL-PASS
+      - passManualReview
+      - POST /v1/qa/manual-reviews/{reviewCaseId}/pass
+      - PassManualReviewRequest
+      - ManualReviewService / ManualReviewCase + Human Decision/Audit
+      - Records authorized manual-review PASS for exact case/output/version. Machine score alone is insufficient and cannot substitute reviewer evidence.
+  - index: 31
+    rows:
+    - row: 0
+      cells:
+      - Entity
+      - Operation
+      - Applicability
+      - Authority Evidence
+    - row: 1
+      cells:
+      - CorrectionRequest
+      - ARCHIVE_OR_DELETE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 2
+      cells:
+      - CorrectionRequest
+      - AUDIT
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 3
+      cells:
+      - CorrectionRequest
+      - CATEGORY_OR_GROUP_BIND
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 4
+      cells:
+      - CorrectionRequest
+      - CONFIRM_OR_APPROVE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 5
+      cells:
+      - CorrectionRequest
+      - CREATE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 6
+      cells:
+      - CorrectionRequest
+      - CREATION_MODE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 7
+      cells:
+      - CorrectionRequest
+      - DEPENDENCY_IMPACT
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 8
+      cells:
+      - CorrectionRequest
+      - DISCOVER_OR_LIST
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 9
+      cells:
+      - CorrectionRequest
+      - DRAFT
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 10
+      cells:
+      - CorrectionRequest
+      - EDIT
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 11
+      cells:
+      - CorrectionRequest
+      - ERROR_RECOVERY
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 12
+      cells:
+      - CorrectionRequest
+      - LOCK_OR_UNLOCK
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 13
+      cells:
+      - CorrectionRequest
+      - MOVE_OR_REPARENT
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 14
+      cells:
+      - CorrectionRequest
+      - NEXT_STEP
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 15
+      cells:
+      - CorrectionRequest
+      - PARENT_BIND
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 16
+      cells:
+      - CorrectionRequest
+      - REORDER
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 17
+      cells:
+      - CorrectionRequest
+      - RESTORE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 18
+      cells:
+      - CorrectionRequest
+      - RESUME
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 19
+      cells:
+      - CorrectionRequest
+      - REVISE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 20
+      cells:
+      - CorrectionRequest
+      - SAVE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 21
+      cells:
+      - CorrectionRequest
+      - SELECT_OR_OPEN
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 22
+      cells:
+      - CorrectionRequest
+      - VALIDATE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 23
+      cells:
+      - CorrectionRequest
+      - VERSION
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 24
+      cells:
+      - Finding
+      - ARCHIVE_OR_DELETE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 25
+      cells:
+      - Finding
+      - AUDIT
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 26
+      cells:
+      - Finding
+      - CATEGORY_OR_GROUP_BIND
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 27
+      cells:
+      - Finding
+      - CONFIRM_OR_APPROVE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 28
+      cells:
+      - Finding
+      - CREATE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 29
+      cells:
+      - Finding
+      - CREATION_MODE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 30
+      cells:
+      - Finding
+      - DEPENDENCY_IMPACT
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 31
+      cells:
+      - Finding
+      - DISCOVER_OR_LIST
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 32
+      cells:
+      - Finding
+      - DRAFT
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 33
+      cells:
+      - Finding
+      - EDIT
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 34
+      cells:
+      - Finding
+      - ERROR_RECOVERY
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 35
+      cells:
+      - Finding
+      - LOCK_OR_UNLOCK
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 36
+      cells:
+      - Finding
+      - MOVE_OR_REPARENT
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 37
+      cells:
+      - Finding
+      - NEXT_STEP
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 38
+      cells:
+      - Finding
+      - PARENT_BIND
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 39
+      cells:
+      - Finding
+      - REORDER
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 40
+      cells:
+      - Finding
+      - RESTORE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 41
+      cells:
+      - Finding
+      - RESUME
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 42
+      cells:
+      - Finding
+      - REVISE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 43
+      cells:
+      - Finding
+      - SAVE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 44
+      cells:
+      - Finding
+      - SELECT_OR_OPEN
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 45
+      cells:
+      - Finding
+      - VALIDATE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 46
+      cells:
+      - Finding
+      - VERSION
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 47
+      cells:
+      - ManualReviewCase
+      - ARCHIVE_OR_DELETE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 48
+      cells:
+      - ManualReviewCase
+      - AUDIT
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 49
+      cells:
+      - ManualReviewCase
+      - CATEGORY_OR_GROUP_BIND
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 50
+      cells:
+      - ManualReviewCase
+      - CONFIRM_OR_APPROVE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 51
+      cells:
+      - ManualReviewCase
+      - CREATE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 52
+      cells:
+      - ManualReviewCase
+      - CREATION_MODE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 53
+      cells:
+      - ManualReviewCase
+      - DEPENDENCY_IMPACT
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 54
+      cells:
+      - ManualReviewCase
+      - DISCOVER_OR_LIST
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 55
+      cells:
+      - ManualReviewCase
+      - DRAFT
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 56
+      cells:
+      - ManualReviewCase
+      - EDIT
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 57
+      cells:
+      - ManualReviewCase
+      - ERROR_RECOVERY
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 58
+      cells:
+      - ManualReviewCase
+      - LOCK_OR_UNLOCK
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 59
+      cells:
+      - ManualReviewCase
+      - MOVE_OR_REPARENT
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 60
+      cells:
+      - ManualReviewCase
+      - NEXT_STEP
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 61
+      cells:
+      - ManualReviewCase
+      - PARENT_BIND
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 62
+      cells:
+      - ManualReviewCase
+      - REORDER
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 63
+      cells:
+      - ManualReviewCase
+      - RESTORE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 64
+      cells:
+      - ManualReviewCase
+      - RESUME
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 65
+      cells:
+      - ManualReviewCase
+      - REVISE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 66
+      cells:
+      - ManualReviewCase
+      - SAVE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 67
+      cells:
+      - ManualReviewCase
+      - SELECT_OR_OPEN
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 68
+      cells:
+      - ManualReviewCase
+      - VALIDATE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 69
+      cells:
+      - ManualReviewCase
+      - VERSION
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 70
+      cells:
+      - QAGateDecision
+      - ARCHIVE_OR_DELETE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 71
+      cells:
+      - QAGateDecision
+      - AUDIT
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 72
+      cells:
+      - QAGateDecision
+      - CATEGORY_OR_GROUP_BIND
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 73
+      cells:
+      - QAGateDecision
+      - CONFIRM_OR_APPROVE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 74
+      cells:
+      - QAGateDecision
+      - CREATE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 75
+      cells:
+      - QAGateDecision
+      - CREATION_MODE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 76
+      cells:
+      - QAGateDecision
+      - DEPENDENCY_IMPACT
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 77
+      cells:
+      - QAGateDecision
+      - DISCOVER_OR_LIST
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 78
+      cells:
+      - QAGateDecision
+      - DRAFT
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 79
+      cells:
+      - QAGateDecision
+      - EDIT
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 80
+      cells:
+      - QAGateDecision
+      - ERROR_RECOVERY
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 81
+      cells:
+      - QAGateDecision
+      - LOCK_OR_UNLOCK
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 82
+      cells:
+      - QAGateDecision
+      - MOVE_OR_REPARENT
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 83
+      cells:
+      - QAGateDecision
+      - NEXT_STEP
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 84
+      cells:
+      - QAGateDecision
+      - PARENT_BIND
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 85
+      cells:
+      - QAGateDecision
+      - REORDER
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 86
+      cells:
+      - QAGateDecision
+      - RESTORE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 87
+      cells:
+      - QAGateDecision
+      - RESUME
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 88
+      cells:
+      - QAGateDecision
+      - REVISE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 89
+      cells:
+      - QAGateDecision
+      - SAVE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 90
+      cells:
+      - QAGateDecision
+      - SELECT_OR_OPEN
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 91
+      cells:
+      - QAGateDecision
+      - VALIDATE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 92
+      cells:
+      - QAGateDecision
+      - VERSION
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 93
+      cells:
+      - QAReviewRun
+      - ARCHIVE_OR_DELETE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 94
+      cells:
+      - QAReviewRun
+      - AUDIT
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 95
+      cells:
+      - QAReviewRun
+      - CATEGORY_OR_GROUP_BIND
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 96
+      cells:
+      - QAReviewRun
+      - CONFIRM_OR_APPROVE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 97
+      cells:
+      - QAReviewRun
+      - CREATE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 98
+      cells:
+      - QAReviewRun
+      - CREATION_MODE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 99
+      cells:
+      - QAReviewRun
+      - DEPENDENCY_IMPACT
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 100
+      cells:
+      - QAReviewRun
+      - DISCOVER_OR_LIST
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 101
+      cells:
+      - QAReviewRun
+      - DRAFT
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 102
+      cells:
+      - QAReviewRun
+      - EDIT
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 103
+      cells:
+      - QAReviewRun
+      - ERROR_RECOVERY
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 104
+      cells:
+      - QAReviewRun
+      - LOCK_OR_UNLOCK
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 105
+      cells:
+      - QAReviewRun
+      - MOVE_OR_REPARENT
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 106
+      cells:
+      - QAReviewRun
+      - NEXT_STEP
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 107
+      cells:
+      - QAReviewRun
+      - PARENT_BIND
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 108
+      cells:
+      - QAReviewRun
+      - REORDER
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 109
+      cells:
+      - QAReviewRun
+      - RESTORE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 110
+      cells:
+      - QAReviewRun
+      - RESUME
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 111
+      cells:
+      - QAReviewRun
+      - REVISE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 112
+      cells:
+      - QAReviewRun
+      - SAVE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 113
+      cells:
+      - QAReviewRun
+      - SELECT_OR_OPEN
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 114
+      cells:
+      - QAReviewRun
+      - VALIDATE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 115
+      cells:
+      - QAReviewRun
+      - VERSION
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 116
+      cells:
+      - ReleasePackageCandidate
+      - ARCHIVE_OR_DELETE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 117
+      cells:
+      - ReleasePackageCandidate
+      - AUDIT
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 118
+      cells:
+      - ReleasePackageCandidate
+      - CATEGORY_OR_GROUP_BIND
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 119
+      cells:
+      - ReleasePackageCandidate
+      - CONFIRM_OR_APPROVE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 120
+      cells:
+      - ReleasePackageCandidate
+      - CREATE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 121
+      cells:
+      - ReleasePackageCandidate
+      - CREATION_MODE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 122
+      cells:
+      - ReleasePackageCandidate
+      - DEPENDENCY_IMPACT
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 123
+      cells:
+      - ReleasePackageCandidate
+      - DISCOVER_OR_LIST
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 124
+      cells:
+      - ReleasePackageCandidate
+      - DRAFT
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 125
+      cells:
+      - ReleasePackageCandidate
+      - EDIT
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 126
+      cells:
+      - ReleasePackageCandidate
+      - ERROR_RECOVERY
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 127
+      cells:
+      - ReleasePackageCandidate
+      - LOCK_OR_UNLOCK
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 128
+      cells:
+      - ReleasePackageCandidate
+      - MOVE_OR_REPARENT
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 129
+      cells:
+      - ReleasePackageCandidate
+      - NEXT_STEP
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 130
+      cells:
+      - ReleasePackageCandidate
+      - PARENT_BIND
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 131
+      cells:
+      - ReleasePackageCandidate
+      - REORDER
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 132
+      cells:
+      - ReleasePackageCandidate
+      - RESTORE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 133
+      cells:
+      - ReleasePackageCandidate
+      - RESUME
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 134
+      cells:
+      - ReleasePackageCandidate
+      - REVISE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 135
+      cells:
+      - ReleasePackageCandidate
+      - SAVE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 136
+      cells:
+      - ReleasePackageCandidate
+      - SELECT_OR_OPEN
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 137
+      cells:
+      - ReleasePackageCandidate
+      - VALIDATE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 138
+      cells:
+      - ReleasePackageCandidate
+      - VERSION
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+  - index: 32
+    rows:
+    - row: 0
+      cells:
+      - Design Item / 設計項目
+      - Canonical Planning Design Contract / 正式規劃設計契約
+    - row: 1
+      cells:
+      - Page UID
+      - QA-01
+    - row: 2
+      cells:
+      - Canonical Name
+      - QA-01
+    - row: 3
+      cells:
+      - Display Name
+      - QA 審查工作區
+    - row: 4
+      cells:
+      - Route
+      - SHARED_OWNER_REFERENCE → ACPOS_GLOBAL_HOME_SHELL_NAVIGATION_Mother_Basic_Design_OPTIMIZED.docx resolves the current route for this Page UID; this page MUST
+        NOT duplicate or invent a second route literal.
+    - row: 5
+      cells:
+      - Module UID
+      - REFERENCE_ONLY → current Index / Global Navigation module mapping for this Page UID.
+    - row: 6
+      cells:
+      - Purpose
+      - QA 審查工作區 current canonical page responsibility as defined by this Word.
+    - row: 7
+      cells:
+      - Parent UID
+      - REFERENCE_ONLY → current Global Navigation parent mapping.
+    - row: 8
+      cells:
+      - Required Permission
+      - Use the exact permission references already bound to current controls/actions; fail closed when unresolved.
+    - row: 9
+      cells:
+      - Design Owner
+      - ACPOS_QA-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx
+    - row: 10
+      cells:
+      - Implementation Owner
+      - REFERENCE_ONLY → existing owner/port mappings in this Word; no new implementation owner is created here.
+    - row: 11
+      cells:
+      - Visual Status
+      - Current canonical visual/baseline remains authoritative; candidate requires Visual Review before Authority update.
+  - index: 33
+    rows:
+    - row: 0
+      cells:
+      - Design Item / 設計項目
+      - Canonical Planning Design Contract / 正式規劃設計契約
+    - row: 1
+      cells:
+      - Color Tokens
+      - SHARED_OWNER_REFERENCE → current Global Home / Shell Design System tech-purple token set; existing page-local approved override, if any, remains authoritative.
+    - row: 2
+      cells:
+      - Typography Tokens
+      - SHARED_OWNER_REFERENCE → current Global Design System typography; page-local text hierarchy may only use registered heading/body/label/technical text roles.
+    - row: 3
+      cells:
+      - Spacing Tokens
+      - Use registered gap/padding/spacing tokens; existing exact page gaps remain authoritative; no ad-hoc pixel drift.
+    - row: 4
+      cells:
+      - Component States
+      - Default / Hover / Focus / Active / Loading / Disabled / Success / Error MUST NOT change the approved component footprint unless the current component contract
+        explicitly allows it.
+    - row: 5
+      cells:
+      - Primary Layout
+      - Use this Word's existing Primary Grid / Section / Workspace layout as the page-local authority; this annex introduces no second grid.
+    - row: 6
+      cells:
+      - Navigation Region
+      - Global Header and collapsible/overlay Sidebar remain shared shell regions; page Workspace starts in the registered content region.
+    - row: 7
+      cells:
+      - Responsive Behavior
+      - Use the current page responsive rule and shared shell breakpoint owner; semantic order and functional topology MUST remain stable across reflow.
+    - row: 8
+      cells:
+      - Design Ownership
+      - Page owns page-local layout/components; Global Shell owns shared header/sidebar/tokens; references only, no duplicated shared payload.
+  - index: 34
+    rows:
+    - row: 0
+      cells:
+      - Design Item / 設計項目
+      - Canonical Planning Design Contract / 正式規劃設計契約
+    - row: 1
+      cells:
+      - Viewport / Breakpoint UID
+      - SHARED_OWNER_REFERENCE → current Global Home breakpoint contract; page-specific breakpoint/reflow rules in this Word override only where explicitly registered.
+    - row: 2
+      cells:
+      - Container Width / Min / Max
+      - Retain current Global Shell + page Primary Grid width contract. No page-local implicit width may override an existing exact dimension.
+    - row: 3
+      cells:
+      - Grid Columns / Span / Gutter / Outer Margin
+      - Use the existing page Primary Grid / section mapping and current gap/margin values; any structural grid change requires Change Set.
+    - row: 4
+      cells:
+      - Section Bounding Rules
+      - Every registered Section remains within its current Workspace region; sticky/fixed/overlay areas MUST NOT occlude required controls.
+    - row: 5
+      cells:
+      - Component / Control / Field Width / Height Rules
+      - Use current Control/Field Dimensions or shared component token. State transitions MUST NOT cause layout jump.
+    - row: 6
+      cells:
+      - Min / Max Width / Height
+      - Inherit current exact values where present; otherwise shared component minimums apply. Required input/button content may not compress below its registered
+        usable size.
+    - row: 7
+      cells:
+      - Gap / Padding / Alignment
+      - Use current page spacing/grid tokens; alignment changes outside token tolerance require Visual Review.
+    - row: 8
+      cells:
+      - Aspect Ratio
+      - NOT_APPLICABLE unless the current page declares an image/video/preview ratio; when declared, the exact current ratio remains authoritative.
+    - row: 9
+      cells:
+      - Overflow / Scroll Rule
+      - No hidden overflow for actionable content. Long technical values use existing ellipsis + tooltip/drawer rule; large tables may use the current controlled
+        horizontal-scroll rule.
+    - row: 10
+      cells:
+      - Collapse / Stack / Wrap Rule
+      - Reflow may stack/collapse only within the current responsive contract; semantic order, required adjacency and operation order MUST NOT change.
+    - row: 11
+      cells:
+      - Z-order / Overlay Rule
+      - Global Header / Sidebar overlay / Dialog / Drawer layers remain above Workspace without blocking required content; overlay expansion MUST NOT reflow the primary
+        Workspace unless explicitly specified.
+    - row: 12
+      cells:
+      - Text Capacity / Truncation / Wrap Rule
+      - Required labels/status/error text may not be clipped. Long IDs/technical values use controlled ellipsis with recoverable full value; no silent semantic truncation.
+    - row: 13
+      cells:
+      - Asset Object-fit / Object-position
+      - REFERENCE_ONLY → current Asset Binding owner when a formal visual asset exists; otherwise NOT_APPLICABLE.
+    - row: 14
+      cells:
+      - Locked Visual Anchors
+      - Bound to the Visual Anchor Registry in this annex; unlisted regions are not implicitly editable.
+    - row: 15
+      cells:
+      - Allowed Tolerance / Diff Threshold
+      - 'Locked anchors and structural grid: zero unapproved drift. Token-level micro adjustment is allowed only inside current Design Token/Layout rules; structural
+        changes require Change Set + re-review.'
+    - row: 16
+      cells:
+      - Geometry Failure Set
+      - Detect overlap, clipping, horizontal overflow, unapproved scroll, control compression, unexpected wrap/stack, aspect drift, misalignment, sticky/fixed occlusion
+        and header/sidebar/workspace collision.
+  - index: 35
+    rows:
+    - row: 0
+      cells:
+      - Anchor UID
+      - Position Rule
+      - Dimension Rule
+      - Relationship Rule
+      - Lock Status
+    - row: 1
+      cells:
+      - QA-01-VA-HEADER
+      - Fixed at top of shared shell
+      - 58px full-width according to current shell authority
+      - Above Sidebar/Workspace; must not be covered by page content
+      - LOCKED
+    - row: 2
+      cells:
+      - QA-01-VA-SIDEBAR
+      - Fixed left rail under shared shell header
+      - 64px resting; 221px overlay expansion where current shell defines it
+      - Overlay expansion must not silently change the approved page Primary Grid
+      - LOCKED
+    - row: 3
+      cells:
+      - QA-01-VA-WORKSPACE
+      - Current page primary content region below Header / beside resting rail
+      - Use this Word's existing Primary Grid / section dimensions
+      - Owns page-local section geometry; dialogs/drawers are overlays, not replacement layout
+      - LOCKED_EXCEPT_AUTHORIZED_CHANGE_SET
+  - index: 36
+    rows:
+    - row: 0
+      cells:
+      - Design Item / 設計項目
+      - Canonical Planning Design Contract / 正式規劃設計契約
+    - row: 1
+      cells:
+      - Current Canonical Visual
+      - REFERENCE_ONLY → current visual/baseline already named in this Word or shared current visual owner. This annex does not replace it.
+    - row: 2
+      cells:
+      - Visual Candidate UID
+      - Generated candidate MUST receive a unique Visual UID and Parent Visual UID; no candidate is deemed approved merely by this annex.
+    - row: 3
+      cells:
+      - Generation Manifest
+      - Required before generation; MUST bind Page UID, Design Version, Reference Visual UID, Design System Version, Layout UID, Component Versions, Asset refs, Viewport,
+        Language, Theme, Change Level/Set and locked/editable areas.
+    - row: 4
+      cells:
+      - Visual Preview
+      - MUST represent the actual website structure, not a moodboard. Preview occurs after page/design specification and before Design Freeze.
+    - row: 5
+      cells:
+      - Visual Review
+      - Authorized reviewer checks function-to-visual mapping, geometry, anchors, responsive order, A11y/i18n and visual drift.
+    - row: 6
+      cells:
+      - Approval Status
+      - VISUAL_APPROVED is required before DESIGN_FROZEN. This planning annex does NOT self-approve the page.
+    - row: 7
+      cells:
+      - Change Set / Drift
+      - Any layout/asset/typography/color/component/navigation/dimension/information-hierarchy change outside the approved Change Set is VISUAL_DRIFT_FAIL.
+  - index: 37
+    rows:
+    - row: 0
+      cells:
+      - Design Item / 設計項目
+      - Canonical Planning Design Contract / 正式規劃設計契約
+    - row: 1
+      cells:
+      - Page-local Asset Registry Applicability
+      - REFERENCE_ONLY / CONDITIONAL. Existing page-owned formal Asset UID rows, if present, remain authoritative; this annex creates no duplicate Asset UID.
+    - row: 2
+      cells:
+      - Shared Shell Assets
+      - SHARED_OWNER_REFERENCE → Global Home / Design System owns logo, navigation icons, generic status icons and shared shell visuals; page MUST NOT clone them.
+    - row: 3
+      cells:
+      - Dynamic Business Content
+      - Provider logos, thumbnails, output previews, evidence images or other runtime/business data are NOT automatically design assets; they remain data/projection
+        unless current page explicitly registers an Asset UID.
+    - row: 4
+      cells:
+      - Binding Contract
+      - Any formal page-owned asset MUST bind Page UID + Section UID + Component UID + Asset UID + position + width/height + aspect ratio + crop/object-fit/object-position
+        + lock status.
+    - row: 5
+      cells:
+      - Modification Rule
+      - APPROVED/LOCKED assets may not be regenerated, recolored, cropped or repurposed without an authorized Change Set and Visual Review.
+    - row: 6
+      cells:
+      - N/A Authority
+      - When a page has no page-owned formal visual asset, page-local Asset Binding is NOT_APPLICABLE with this reason; shared assets remain referenced from their
+        existing canonical owner.
+  - index: 38
+    rows:
+    - row: 0
+      cells:
+      - Design Item / 設計項目
+      - Canonical Planning Design Contract / 正式規劃設計契約
+    - row: 1
+      cells:
+      - Canonical UID
+      - QA-01
+    - row: 2
+      cells:
+      - Canonical Name
+      - QA-01
+    - row: 3
+      cells:
+      - Owner File
+      - ACPOS_QA-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx
+    - row: 4
+      cells:
+      - Page / Capability Spec
+      - This current Word remains the single page design Canonical Owner.
+    - row: 5
+      cells:
+      - Layout Mapping
+      - REFERENCE → existing Page Layout / Primary Grid / Section mapping + Design System/Layout closure annex.
+    - row: 6
+      cells:
+      - Component Mapping
+      - REFERENCE → current Component/Section registry in this Word; no duplicate component inventory is introduced.
+    - row: 7
+      cells:
+      - Control / Field Mapping
+      - REFERENCE → current Control / Field / Action / Permission design tables and invariants in this Word.
+    - row: 8
+      cells:
+      - Asset Mapping
+      - REFERENCE → current page Asset Registry if any; otherwise explicit shared-owner / NOT_APPLICABLE asset rule in this annex.
+    - row: 9
+      cells:
+      - Responsive Spec
+      - REFERENCE → current page responsive rules + Visual Geometry closure annex.
+    - row: 10
+      cells:
+      - Current Canonical Visual
+      - REFERENCE → current visual/baseline already owned by this page/shared visual authority; candidate does not replace it without approval.
+    - row: 11
+      cells:
+      - Generation Manifest
+      - REQUIRED before a new candidate is generated; fields are defined by the Visual contract in this annex.
+    - row: 12
+      cells:
+      - Audit Baseline
+      - REFERENCE → existing Audit/Acceptance section in this Word.
+    - row: 13
+      cells:
+      - Acceptance Matrix
+      - Current page acceptance section plus this annex; REQUIRED / OPTIONAL / NOT_APPLICABLE classification is preserved.
+    - row: 14
+      cells:
+      - Definition of Done
+      - Planning/basic-design DoD is the current page DoD plus zero unresolved REQUIRED design-spec gaps.
+    - row: 15
+      cells:
+      - Design Version
+      - Use this Word's current version metadata / exact repository revision; this annex MUST NOT invent a parallel design version.
+    - row: 16
+      cells:
+      - Freeze Status
+      - DESIGN_FREEZE_PACKAGE_DEFINED. DESIGN_FROZEN may be asserted only after required Visual Preview/Review/Approval and all applicable design gates actually pass;
+        this annex does not self-approve.

@@ -1,0 +1,3809 @@
+schema_version: ACPOS_WORD_YAML_PROJECTION_V1
+projection_mode: SOURCE_GROUNDED_NO_INVENTION
+sequence: 25
+source:
+  branch: 0921acpos
+  git_head: 7bd2dbdb89b685c5f5f6045c8e3e17c5f2500db5
+  word_path: ACPOS_SOC-01_社群發布_Mother_Basic_Design_OPTIMIZED.docx
+  word_sha256: 5950b577eccd51a4b43f60f2dbd0839b6f08eadcd31c5c2cbfba4688ce0c1a25
+authority_rules:
+- Word source remains canonical for this projection.
+- Do not silently fill, correct, reconcile, or replace source content.
+- Do not convert BLOCKED, NOT_EXECUTED, REQUIRE_EXACT_BINDING, SOURCE_NOT_DEFINED into PASS.
+- Paragraph and table order is preserved by source index.
+document:
+  paragraphs:
+  - index: 0
+    style: Normal
+    text: 'SOC-01 社群發布
+
+      Mother Basic Design · Functional Completion · Social Publishing Governance
+
+      ORANGE ONE · admin:SOC-01'
+  - index: 1
+    style: Normal
+    text: 本版沿用 SOC-01 單頁五階段架構，補齊母規範要求的產品定位、Entity × Operation、功能加入/降級規則、Market Target Discovery、Content Package、Publish Policy、External State Truth、Functional Chain、權限／狀態／錯誤、Visual
+      Geometry、A11y、Acceptance 與施工映射。
+  - index: 2
+    style: Normal
+    text: 核心優化：保留「平台能力 → 帳號與目標 → 內容包 → 發佈計畫 → 結果與紀錄」五階段，不重建第二套社群系統；將公開市場目標探索、Signal Qualification 與來源治理收斂到「帳號與目標」階段，直接重用 Shared Acquisition / Target Directory / Manual
+      Action / Publishing Runtime。
+  - index: 4
+    style: Normal
+    text: 圖 1｜SOC-01 帳號與目標：Target Discovery、Target Directory、Market Signal 與 Governance Rail。
+  - index: 5
+    style: Heading 1
+    text: 1. Page Identity / 頁面定位與產品目標
+  - index: 7
+    style: Heading 1
+    text: 2. Scope / 需求、角色、Out-of-Scope 與非功能要求
+  - index: 9
+    style: Heading 1
+    text: 3. Business Entity × Operation / 產品實體與操作矩陣
+  - index: 11
+    style: Heading 1
+    text: 4. Entity Hierarchy / 資料、身份與生命週期關係
+  - index: 12
+    style: Normal
+    text: Platform Capability → Social Account Binding → Social Target Discovery Job → Social Market Target → Content Package / Candidate → Target Posting Policy
+      → Publish Request → External Result / Metrics / Interaction。Manual Action、Evidence、Audit、Version、Correlation、Suppression / Rights / Policy 為跨鏈治理層。
+  - index: 13
+    style: Normal
+    text: Market Signal 優化層只存在於「Discovery Result 的判讀與排序」：它必須保留 Source / Canonical URL / External ID / Published/Discovered Time / Topic Match / Evidence / Capability
+      / Status，且不得變成第二套 Engagement Database。
+  - index: 14
+    style: Heading 1
+    text: 5. Five-Stage Functional Workbench / 五階段工作區
+  - index: 16
+    style: Heading 1
+    text: 6. Content Optimization / 母規範缺口補齊與 UX 優化
+  - index: 19
+    style: Normal
+    text: 圖 2｜SOC-01 Content Package、Publish Plan 與 Results：Approval / Publish / External State 三層分離。
+  - index: 20
+    style: Heading 1
+    text: 7. Interaction Topology / Layout / Visual Geometry
+  - index: 22
+    style: Heading 1
+    text: 8. Functional Chain / 端到端功能鏈
+  - index: 24
+    style: Heading 1
+    text: 9. Operations / Actions / Integration Ports
+  - index: 26
+    style: Normal
+    text: UI stage-select actions與 Detail Open 是 client/UI state，不應被錯誤施工成 API。正式 effectful action 只能使用已註冊 operation；缺少 exact binding 時必須 BLOCK。
+  - index: 27
+    style: Heading 1
+    text: 10. Form / Input Contract / 欄位規格
+  - index: 29
+    style: Heading 1
+    text: 11. Control Registry / 控制分母與顯示策略
+  - index: 30
+    style: Normal
+    text: Current 控制分母：9 Sections / 67 Controls / 21 Actions / 14 Gates / 16 Permissions。Word 不用把低頻 read-only control 做成大卡片；施工時仍需保持每個 control → section/component/visual/action/gate/permission
+      的可追溯綁定。
+  - index: 32
+    style: Heading 1
+    text: 12. Gate / Permission / Security Boundary
+  - index: 35
+    style: Heading 1
+    text: 13. State Model / Transition / Truthful Status
+  - index: 37
+    style: Heading 1
+    text: 14. Error / Recovery / Partial Failure
+  - index: 39
+    style: Heading 1
+    text: 15. Data / Lineage / External Integration Boundary
+  - index: 41
+    style: Heading 1
+    text: 16. i18n / Accessibility / Responsive / Visual States
+  - index: 43
+    style: Heading 1
+    text: 17. Acceptance Matrix / Definition of Done
+  - index: 45
+    style: Heading 1
+    text: 18. Hard Locks / 施工不可破壞規則
+  - index: 46
+    style: List Bullet
+    text: 不得新增第二套 Social Publishing / Platform Registry / Account Registry / Target DB / Credential Store / Adapter / Scheduler / Analytics。
+  - index: 47
+    style: List Bullet
+    text: 五個 Stage 是同頁 UI context；切換不得改變 Business State 或丟失 exact refs。
+  - index: 48
+    style: List Bullet
+    text: 平台能力、Health、Policy、External Status 只能來自真實 registered projection。
+  - index: 49
+    style: List Bullet
+    text: Raw credential 不得預設顯示、記錄於普通 UI state 或寫入文件範例。
+  - index: 50
+    style: List Bullet
+    text: verifySocialAccountBinding / verifySocialTargetCapability 保持 service-runtime operation，不新增使用者 Verify 按鈕。
+  - index: 51
+    style: List Bullet
+    text: Content Candidate APPROVE 不會 Publish；Publish Request 成功不等於 external POSTED。
+  - index: 52
+    style: List Bullet
+    text: 特定公司 Mention/Tag 強制人工審查；Mass Commenting/Tagging/Cold Outreach 禁止。
+  - index: 53
+    style: List Bullet
+    text: Direct Message 只有官方 API、帳號權限與平台政策明確允許時才能存在。
+  - index: 54
+    style: List Bullet
+    text: Withdrawal 沒有正式 mutation 時保持 read-only，不新增 Withdraw button。
+  - index: 55
+    style: List Bullet
+    text: 未知欄位、未註冊 operation、permission 或 provider behavior 必須 Fail Closed。
+  - index: 56
+    style: Heading 1
+    text: 19. Construction Mapping / 實作順序與驗收方式
+  - index: 58
+    style: Normal
+    text: Word 完成只代表 SOC-01 Basic Design 已補齊。正式施工完成仍必須有實際 Implementation、Runtime、Database、Permission、External Integration、Browser/E2E、Production Evidence；不得用文件完成替代系統完成。
+  - index: 60
+    style: Heading 1
+    text: 2026-09-21 Machine Authority Construction Closure / 機器權威施工綁定封板
+  - index: 61
+    style: Normal
+    text: '[ACPOS-20260921-SOURCE-GROUNDED-CONSTRUCTION-CLOSURE-V2] Source-grounded only. Existing Current source wins; missing source values remain blocked/decision-required.
+      This closure supersedes the prior generic 2026-09-21 V1/V3 annex only, not the original domain logic or human visual review gates.'
+  - index: 62
+    style: Heading 2
+    text: SOC-01 · Exact Construction Binding
+  - index: 63
+    style: Heading 2
+    text: Page Construction Invariant
+  - index: 64
+    style: Normal
+    text: The exact control denominator above is the only construction denominator for this page. Components/fields/visual IDs are not counted as additional controls.
+      Existing source UIDs are preserved. A control classified UI_LOCAL_EXACT MUST NOT create a server write. A control classified SPEC_EXACT_RUNTIME_BLOCKED / NOT_EXECUTED
+      MUST remain disabled or fail-closed until its runtime evidence exists.
+  - index: 66
+    style: Heading 1
+    text: SOC-01 Publish QA Eligibility Consumer Contract
+  - index: 67
+    style: Normal
+    text: '[ACPOS-20260921-BATCH-02-CONSUMER-CONTRACT-CLOSURE-V1] 本節只補齊既有 Current source 已可證明的設計契約。既有 Control / Action / Gate / Permission / Owner / Operation / Route
+      優先；SOURCE_NOT_DEFINED、NO_PUBLIC_API_ID_IN_CURRENT_AUTHORITY、SPEC_EXACT_RUNTIME_BLOCKED 不得由 Word 自行發明或升格為 Runtime 完成。'
+  - index: 68
+    style: Normal
+    text: 'Existing publish authority remains unchanged: SOC-01-BTN-PUBLISH → SOC-01-ACT-PUBLISH-REQUEST → SOC-01-GATE-PUBLISH → SOC-01-PERM-PUBLISH → requestSocialTargetPublish
+      → POST /v1/social/targets/{targetId}/publish → PublishingService. This batch adds the missing governed QA eligibility bindings to that SAME publish gate; it
+      does not create a second publish API.'
+  - index: 70
+    style: Heading 1
+    text: Batch 47 · SOC-01 Social Contract Binding Ledger
+  - index: 71
+    style: Normal
+    text: '[ACPOS-20260922-BATCH-47-SYSTEM07-SOCIAL-CONTRACT-REMEDIATION-V1] Social effectful contracts preserve external-provider truth, secret isolation, candidate
+      governance and derived-projection boundaries. Credential reveal never persists plaintext secret; local publish request acceptance never equals external publish
+      success.'
+  - index: 73
+    style: Heading 2
+    text: Canonical Business Entity Operation Applicability Matrix / 業務實體操作適用性矩陣
+  - index: 74
+    style: Normal
+    text: 'Authority: Current Word design + Mother §71 bounded completion. 本矩陣只正規化既有行為與目前未授權行為；不得據此新增 Business Entity、Operation、Runtime 或 API。 Current tree: b2f81b20322dd9e9268001126b07931b437e27df.'
+  - index: 76
+    style: Heading 1
+    text: Mother Planning / Basic Design Closure Annex｜規劃設計規範閉環補充
+  - index: 77
+    style: Normal
+    text: '[ACPOS-20260922-PLANNING-DESIGN-CLOSURE-ANNEX-V1] 本附錄只補規劃／基本設計規範缺口；原頁面既有功能、Owner、Operation、Permission、Entity、Visual 與跨頁 Authority 仍為同一 Canonical Owner。不得由本附錄發明
+      Runtime/API/DB/Provider 行為，也不得建立第二套平行規範。'
+  - index: 78
+    style: Heading 2
+    text: Design System / Layout Closure｜設計系統與版面補齊
+  - index: 79
+    style: Normal
+    text: '[ACPOS-DESIGN-CLOSURE:SOC-01:DESIGN-SYSTEM]'
+  - index: 80
+    style: Heading 2
+    text: Visual Geometry Contract Closure｜視覺幾何補齊
+  - index: 81
+    style: Normal
+    text: '[ACPOS-DESIGN-CLOSURE:SOC-01:GEOMETRY]'
+  - index: 82
+    style: Heading 2
+    text: Visual Anchor / Preview / Review Contract｜視覺錨點與預覽審查補齊
+  - index: 83
+    style: Normal
+    text: '[ACPOS-DESIGN-CLOSURE:SOC-01:VISUAL]'
+  - index: 84
+    style: Heading 2
+    text: Visual Generation / Review Planning Contract
+  - index: 85
+    style: Normal
+    text: '[ACPOS-DESIGN-CLOSURE:SOC-01:VISUAL-CONTRACT]'
+  - index: 86
+    style: Heading 2
+    text: Asset Registry / Binding Applicability Closure｜素材註冊與綁定補齊
+  - index: 87
+    style: Normal
+    text: '[ACPOS-DESIGN-CLOSURE:SOC-01:ASSET]'
+  - index: 88
+    style: Heading 2
+    text: Design Freeze Package Closure｜設計封板包補齊
+  - index: 89
+    style: Normal
+    text: '[ACPOS-DESIGN-CLOSURE:SOC-01:FREEZE]'
+  tables:
+  - index: 0
+    rows:
+    - row: 0
+      cells:
+      - 項目
+      - 設計規格
+    - row: 1
+      cells:
+      - Page UID
+      - admin:SOC-01
+    - row: 2
+      cells:
+      - 顯示名稱
+      - 社群發布 / Social Publishing
+    - row: 3
+      cells:
+      - Surface
+      - ADMIN
+    - row: 4
+      cells:
+      - 主要目的
+      - 用單一工作區完成平台能力、帳號/目標、內容包、發佈計畫與真實結果紀錄。
+    - row: 5
+      cells:
+      - 核心使用者
+      - 具 Social Publishing L1 與對應 operation permission 的管理者／營運人員。
+    - row: 6
+      cells:
+      - 主流程
+      - Platform & Capability → Accounts & Targets → Content Package → Publish Plan → Results & Records
+    - row: 7
+      cells:
+      - 產品原則
+      - 精確 Target、精確 Content Package、精確 Account、精確 Policy；不得用 latest/current/default alias 執行 effectful action。
+    - row: 8
+      cells:
+      - 完成語義
+      - 建立 Publish Request 只代表本地受治理要求已接受；外部 POSTED 必須來自真實 adapter callback / recorded projection。
+  - index: 1
+    rows:
+    - row: 0
+      cells:
+      - 類型
+      - 內容
+    - row: 1
+      cells:
+      - In Scope
+      - 平台能力與 Health；帳號綁定與 Secret 安全；Target Discovery / Directory / Join / Manual Action；Content Package / Candidate；Target Posting Policy；Target-scoped Publish Request；Results
+        / Metrics / Interaction / Callback / Incident。
+    - row: 2
+      cells:
+      - 優化補強
+      - 在 Stage 02 內加入「使用者定義要找什麼」的 Discovery Profile/Topic、Source Scope Mode、Signal Qualification 與 Evidence Drawer；它們是既有 Discovery/Target Directory 的 UX 強化，不新增 Stage、L1
+        Page 或第二 Target DB。
+    - row: 3
+      cells:
+      - Out of Scope
+      - 第二套 Platform Registry、Account Registry、Target DB、Credential Store、Scheduler/Queue、Analytics DB、Provider/API-key UI、bulkSocialPublish、新的 withdrawal mutation、任意
+        Direct Message / Mass Commenting。
+    - row: 4
+      cells:
+      - Non-functional
+      - Real data only、Fail Closed、Exact Version、Idempotency、Audit、Secret masking、External state truth、Keyboard/A11y、1280+ desktop、無視覺漂移。
+  - index: 2
+    rows:
+    - row: 0
+      cells:
+      - Entity
+      - Read / Projection
+      - Effectful Operation
+      - 核心邊界
+    - row: 1
+      cells:
+      - PlatformCapability
+      - 查看平台能力／Health／Policy
+      - 平台治理設定、條件式 Kill Switch
+      - 平台能力不可猜測；只有真實 registered capability。
+    - row: 2
+      cells:
+      - SocialAccountBinding
+      - 帳號/綁定/憑證狀態
+      - Bind / Unbind / Reveal Credential
+      - Secret 預設遮蔽；Reveal 是高風險 audited operation。
+    - row: 3
+      cells:
+      - SocialTargetDiscoveryJob
+      - 搜尋條件、mode、結果
+      - Create Discovery
+      - 'Required: platform、target types、categories、keywords、mode。'
+    - row: 4
+      cells:
+      - SocialMarketTarget
+      - Target Directory、Capability、狀態
+      - Join / Manual Complete
+      - Target state 決定合法操作；不允許 client bypass。
+    - row: 5
+      cells:
+      - ContentPackage
+      - Release source、platform variant、metadata、thumbnail、policy
+      - Save Draft / Candidate Decision
+      - 平台原生 variant；Blind identical copy 禁止。
+    - row: 6
+      cells:
+      - PublishPolicy
+      - interval / limits / cooldown / window
+      - Configure Target Policy
+      - Auto Publish/Human Approval 從治理政策讀取，不新增本地 toggle。
+    - row: 7
+      cells:
+      - PublishRequest
+      - target + content package + channel account
+      - Request Publish
+      - 一個 request 對一個 exact target；no bulk endpoint。
+    - row: 8
+      cells:
+      - ExternalResult / Record
+      - status、metrics、interaction、callback、incident
+      - Search / Refresh / Detail
+      - 外部成功只由記錄狀態判定；withdrawal read-only。
+    - row: 9
+      cells:
+      - ManualAction
+      - 待人工動作
+      - Complete
+      - 平台限制不能用自動化繞過。
+    - row: 10
+      cells:
+      - Evidence / Audit
+      - source ref、version、correlation、policy evidence
+      - Open Detail Drawer
+      - 低頻 secondary view，不做永久卡片牆。
+  - index: 3
+    rows:
+    - row: 0
+      cells:
+      - Stage
+      - 主工作區
+      - 主要操作
+      - 條件／限制
+    - row: 1
+      cells:
+      - 01 平台能力
+      - 平台清單、Target Type Capability、Policy、Health、Enable State
+      - 設定平台治理資源
+      - Kill Switch 僅高風險、條件成立時顯示。
+    - row: 2
+      cells:
+      - 02 帳號與目標
+      - Account Binding、Credential Status、Target Discovery、Target Directory、Capability、Manual Action
+      - 建立目標搜尋
+      - 加入／驗證、人工處理、Reveal Credential 都依狀態條件顯示。
+    - row: 3
+      cells:
+      - 03 內容包
+      - Release Candidate、Platform Variants、Metadata、Thumbnail、Policy Check、Candidate/Version
+      - 儲存內容 Draft / 審查 Candidate
+      - Candidate APPROVE 不會發佈。
+    - row: 4
+      cells:
+      - 04 發佈計畫
+      - Target、Account Binding、Posting Policy、Content Package、Schedule、Queue
+      - 建立發佈要求
+      - 一個 Target 一個 Request；PENDING_EXTERNAL 不是 POSTED。
+    - row: 5
+      cells:
+      - 05 結果與紀錄
+      - Post、Target/Frequency、External Status、Metrics、Interaction、Callback、Incident、Withdrawal
+      - 搜尋 / 重新整理
+      - Withdrawal 沒有正式 mutation 時只讀。
+  - index: 4
+    rows:
+    - row: 0
+      cells:
+      - 優化項
+      - 補齊內容
+      - 不變式
+    - row: 1
+      cells:
+      - Target Discovery Profile / Topic
+      - 將「使用者要找什麼」集中成 Topic/Discovery Profile；主畫面只留 required conditions，Market/Language/Minimum Scale/Exclude Keywords 進 Advanced Drawer。
+      - 使用既有 CreateSocialTargetDiscoveryRequest；不新增第二 Discovery Runtime。
+    - row: 2
+      cells:
+      - Source Scope / Broad Discovery
+      - 允許 Search Discovery / Web Fetch / Structured JSON Fetch 在政策範圍內發現候選 Source/Target；正式 Source 管理仍由共享 Source/KB owner。
+      - Raw acquisition 不可直接變 Business Truth。
+    - row: 3
+      cells:
+      - Signal Qualification
+      - Target/Source 結果可顯示 Intent、Fit、Freshness、Capability、Status；Evidence/原文/完整理由進 Drawer。
+      - 不把 AI 推論當 Evidence；不新增大面積 AI explanation cards。
+    - row: 4
+      cells:
+      - Platform-native Content
+      - Master source 轉為各平台原生 variant；metadata/thumbnail/policy 各自受控。
+      - 禁止盲目同文跨平台複製。
+    - row: 5
+      cells:
+      - Publish Truth
+      - Publish Request 與 External Success 分離。
+      - Request created → PENDING_EXTERNAL；只有真實 callback/result 才能 POSTED。
+    - row: 6
+      cells:
+      - High-risk & Low-frequency
+      - Credential reveal、Kill Switch、Audit、Callback、Incident、History 放 Drawer / conditional action。
+      - 每個情境最多一個 Primary CTA。
+  - index: 5
+    rows:
+    - row: 0
+      cells:
+      - Region / Token
+      - 規格
+    - row: 1
+      cells:
+      - Global Header
+      - 58px fixed full-width；左側 ORANGE ONE；右側 Notification / To-do / Running / Language / Surface Switch / Account。
+    - row: 2
+      cells:
+      - Sidebar
+      - 預設 64px icon-only transparent rail；hover/focus 展開 221px overlay，不壓縮 Workspace。
+    - row: 3
+      cells:
+      - Workspace Origin
+      - x=78px / y=68px；right inset 16px；無 shell outer card。
+    - row: 4
+      cells:
+      - Context Bar
+      - 56px；Page title、Current Stage、Scope、真實狀態；不塞裝飾 KPI。
+    - row: 5
+      cells:
+      - Stage Bar
+      - 52px；5 個 equal-width compact segmented controls；切換只改 UI context。
+    - row: 6
+      cells:
+      - Primary Workspace
+      - 72%；只顯示 Active Stage。表單／table／list 以高資訊密度但不擁擠為原則。
+    - row: 7
+      cells:
+      - Governance Rail
+      - 28%；只顯示當前 Stage 的 blockers/readiness/policy/capability。
+    - row: 8
+      cells:
+      - Detail Drawer
+      - 480–560px；Evidence、History、Audit、Credential Access、Callback、Incident。
+    - row: 9
+      cells:
+      - Action Dock
+      - 56px；僅 current legal actions；一個情境最多 1 Primary CTA。
+    - row: 10
+      cells:
+      - Controls
+      - 標準高 40px；compact 32px；button radius 10px；touch target 至少 44×44。
+    - row: 11
+      cells:
+      - Responsive
+      - Desktop-first；1280px 以下維持 min-width 1280 + horizontal scroll；不建立第二套 mobile workflow。
+  - index: 6
+    rows:
+    - row: 0
+      cells:
+      - 功能鏈
+      - 完整鏈路
+      - Failure / Recovery
+    - row: 1
+      cells:
+      - Target Discovery
+      - Intent/Topic → Required Conditions → Page Gate → Discovery Gate → createSocialTargetDiscovery → Shared Acquisition/Adapter → Discovery Result → Target Directory
+        / Capability → Join/Manual Action → next state
+      - BLOCK when source/capability/policy/rights missing；不得 fabricate target。
+    - row: 2
+      cells:
+      - Content Approval
+      - Exact Release Candidate → Content Package Draft → Policy Check → saveDraft → Candidate REVIEW → decideCandidate → exact hash/version validation → APPROVED
+        package
+      - APPROVE 不建立 Publish Request；REJECT/RETURN 不批准 package。
+    - row: 3
+      cells:
+      - Publish Request
+      - READY_TO_POST target → approved Content Package → approved Channel Account → posting policy/cooldown/frequency/time-window → requestSocialTargetPublish →
+        atomic publish_request + target PENDING_EXTERNAL → adapter processing → real callback/result → POSTED/other state
+      - Local request accepted ≠ external success；partial/external pending 必須真實呈現。
+  - index: 7
+    rows:
+    - row: 0
+      cells:
+      - Operation
+      - Method / Path
+      - Role
+    - row: 1
+      cells:
+      - getUiProjection
+      - GET /v1/ui-projections/{pageUid}
+      - Read current projection
+    - row: 2
+      cells:
+      - configureGovernedResource
+      - PATCH /v1/governance/resources/{id}
+      - Platform governed resource config
+    - row: 3
+      cells:
+      - setKillSwitch
+      - POST /v1/operations/kill-switch
+      - Conditional high-risk stop
+    - row: 4
+      cells:
+      - bindSocialAccount
+      - PUT /v1/social/accounts/{accountId}/binding
+      - Bind account
+    - row: 5
+      cells:
+      - revealSocialCredential
+      - POST /v1/social/accounts/{accountId}/credential/reveal
+      - High-risk audited reveal
+    - row: 6
+      cells:
+      - unbindSocialAccount
+      - POST /v1/social/accounts/{accountId}/unbind
+      - Unbind
+    - row: 7
+      cells:
+      - createSocialTargetDiscovery
+      - POST /v1/social/target-discovery-jobs
+      - Create discovery
+    - row: 8
+      cells:
+      - requestSocialTargetJoin
+      - POST /v1/social/targets/{targetId}/join
+      - Join/verify target
+    - row: 9
+      cells:
+      - completeSocialManualAction
+      - POST /v1/social/manual-actions/{actionId}/complete
+      - Complete manual action
+    - row: 10
+      cells:
+      - searchProjection
+      - POST /v1/search
+      - Search target/records projection
+    - row: 11
+      cells:
+      - saveDraft
+      - POST /v1/drafts
+      - Content draft
+    - row: 12
+      cells:
+      - decideCandidate
+      - POST /v1/candidates/{id}/decision
+      - Content candidate decision
+    - row: 13
+      cells:
+      - configureSocialTargetPolicy
+      - PUT /v1/social/targets/{targetId}/posting-policy
+      - Target posting policy
+    - row: 14
+      cells:
+      - requestSocialTargetPublish
+      - POST /v1/social/targets/{targetId}/publish
+      - Target-scoped publish request
+    - row: 15
+      cells:
+      - refreshProjection
+      - POST /v1/projections/refresh
+      - Refresh records projection
+  - index: 8
+    rows:
+    - row: 0
+      cells:
+      - Contract
+      - Fields
+      - UI / Validation Rule
+    - row: 1
+      cells:
+      - Bind Social Account
+      - platform_key*, display_name*, login_identifier*, auth_mode*, credential_value*, credential_username?, external_account_ref?
+      - credential_value 為 input-only secret，不可回填成一般欄位。
+    - row: 2
+      cells:
+      - Target Discovery
+      - job_name*, platform_key*, target_types*, categories*, keywords*, mode*; market?, language?, minimum_scale?, exclude_keywords?
+      - Required fields 保留主表單；optional advanced fields 可收進 Drawer。
+    - row: 3
+      cells:
+      - Target Posting Policy
+      - minimum_interval_hours*, daily_limit*, weekly_limit*; same_content_cooldown_hours?, similar_content_cooldown_hours?, allowed_time_window?, target_rule_notes?
+      - 不得自行新增 auto_publish / human_approval request key。
+    - row: 4
+      cells:
+      - Publish Request
+      - content_package_id*, channel_account_id*; schedule_at?, content_hash?, content_similarity_key?
+      - target_id 由 URL path 為 canonical；一個 request 對一個 exact target。
+  - index: 9
+    rows:
+    - row: 0
+      cells:
+      - Group
+      - Count
+      - 代表控制
+      - 顯示規則
+    - row: 1
+      cells:
+      - Context + Stage Nav
+      - '7'
+      - Scope/Version/Correlation、Current State、5 Stage Segments
+      - Always visible within authorized page context
+    - row: 2
+      cells:
+      - Platform & Capability
+      - '7'
+      - Platform List / Capability / Policy / Health / Enable State / Config / Kill
+      - Kill conditional only
+    - row: 3
+      cells:
+      - Accounts & Targets
+      - '13'
+      - Account/Credential/Binding Verify/Target Directory/Capability/Manual Queue + Bind/Reveal/Unbind/Discovery/Join/Manual/Search
+      - Reveal/Join/Manual actions state-gated
+    - row: 4
+      cells:
+      - Content Package
+      - '9'
+      - Release Source / Variants / Metadata / Thumbnail / Policy / Approval / Version + Save / Decide
+      - No Send button
+    - row: 5
+      cells:
+      - Publish Plan
+      - '16'
+      - Target / Capability / Policy fields / Content / Account / Schedule / Auto/Human policy / Queue / Manual Assist + Policy Save / Publish
+      - Primary CTA = Publish Request only when gate PASS
+    - row: 6
+      cells:
+      - Results & Records
+      - '12'
+      - Posts / Target History / External Status / Metrics / Interactions / Manual / Callbacks / Incidents / Withdrawal / Search / Refresh / Detail
+      - Read/search/refresh only; withdrawal read-only
+    - row: 7
+      cells:
+      - Governance Rail
+      - '3'
+      - Detail drawer, Blockers/Readiness, current stage governance
+      - No decorative KPI
+  - index: 10
+    rows:
+    - row: 0
+      cells:
+      - Gate Family
+      - 必要條件
+      - Security / Product Rule
+    - row: 1
+      cells:
+      - PAGE / READ
+      - Identity + Social Publishing L1 + exact account permissions + scope + condition + classification + audit
+      - Frontend hide ≠ authorization。
+    - row: 2
+      cells:
+      - PLATFORM / KILL
+      - Exact governed resource/version；Kill 需 target/scope/reason/confirmation
+      - 高風險操作不得常駐 dominant。
+    - row: 3
+      cells:
+      - ACCOUNT / CREDENTIAL
+      - Exact account/platform/version/idempotency/state；Reveal 需 reason + audit
+      - Raw secret normal-render forbidden。
+    - row: 4
+      cells:
+      - DISCOVERY / TARGET JOIN / MANUAL
+      - Exact request schema + capability/policy + legal target state
+      - 平台限制不能 client bypass。
+    - row: 5
+      cells:
+      - CONTENT / CANDIDATE
+      - Exact release/content/candidate/version + legal state + audit
+      - Candidate approval ≠ publish。
+    - row: 6
+      cells:
+      - POLICY / PUBLISH
+      - JOINED/READY_TO_POST + exact policy + exact content/account + rights/approval + cooldown/frequency/window + idempotency
+      - Publish request = local governed request only。
+    - row: 7
+      cells:
+      - RECORDS
+      - Authorized read/search/refresh
+      - Metrics/External Status 只能真實 projection。
+  - index: 11
+    rows:
+    - row: 0
+      cells:
+      - Permission Group
+      - 權限
+      - 規則
+    - row: 1
+      cells:
+      - Page / Read
+      - social_publishing L1 + source account auth
+      - L1 只是設定 UX；runtime 仍檢 exact resource/action。
+    - row: 2
+      cells:
+      - Platform
+      - configureGovernedResource / ops.kill_switch
+      - No local permission code invention。
+    - row: 3
+      cells:
+      - Account
+      - social.account.configure / reveal / unbind
+      - Secret/Account high-risk semantics retained。
+    - row: 4
+      cells:
+      - Target
+      - social.target.discovery / join / manual_action.complete
+      - State and capability required。
+    - row: 5
+      cells:
+      - Content
+      - saveDraft source permission / candidate.decide
+      - No provider picker。
+    - row: 6
+      cells:
+      - Publish
+      - social.schedule.configure / social.publish.request
+      - Target-scoped only。
+    - row: 7
+      cells:
+      - Records
+      - projection.search / projection.refresh
+      - Read-oriented operations。
+  - index: 12
+    rows:
+    - row: 0
+      cells:
+      - Domain
+      - State / Transition
+      - 不變式
+    - row: 1
+      cells:
+      - Account
+      - UNBOUND → CONFIGURED → BOUND_LOCKED / REAUTH_REQUIRED
+      - Verify 是 service-runtime 狀態，不新增 Verify button。
+    - row: 2
+      cells:
+      - Target
+      - DISCOVERED → READY_TO_JOIN → MANUAL_ACTION_REQUIRED / PENDING_ADMIN_APPROVAL → JOINED → READY_TO_POST → PENDING_EXTERNAL → POSTED / COOLDOWN / UNAVAILABLE
+      - Page 只能觸發合法 transition；不可直接指定任意 state。
+    - row: 3
+      cells:
+      - Content Candidate
+      - DRAFT → REVIEW → APPROVED / REJECTED / RETURN
+      - APPROVE 原子封存 exact package hash/version；不 publish。
+    - row: 4
+      cells:
+      - Publish Request
+      - READY_TO_POST → PENDING_EXTERNAL → real external progress/result
+      - 本地成功不代表外部 success。
+    - row: 5
+      cells:
+      - Common UI
+      - LOADING / READY / EMPTY / ERROR / POLICY_BLOCKED / VERSION_CONFLICT / EXTERNAL_PENDING / READ_ONLY / BLOCKED
+      - 各狀態 geometry 不得跳動。
+  - index: 13
+    rows:
+    - row: 0
+      cells:
+      - Error Class
+      - Condition
+      - Recovery
+    - row: 1
+      cells:
+      - AUTH
+      - Permission/scope/classification denied
+      - Server DENY authoritative；只顯示可揭露原因。
+    - row: 2
+      cells:
+      - SECRET / ACCOUNT
+      - Secret handling invalid、binding/version mismatch、verification failure
+      - 不顯 raw secret；保持 CONFIGURED/REAUTH_REQUIRED 真實狀態。
+    - row: 3
+      cells:
+      - DISCOVERY / TARGET
+      - Discovery invalid、platform/capability unavailable、target state illegal
+      - 保留 form/context；BLOCK action；不 fabricate target。
+    - row: 4
+      cells:
+      - CONTENT / POLICY
+      - Source/version/policy stale or blocked
+      - 維持 Draft/Candidate；reload exact version。
+    - row: 5
+      cells:
+      - PUBLISH
+      - Target/content/account/approval/policy/idempotency invalid
+      - 不建立 fake success；保留 correlation/evidence。
+    - row: 6
+      cells:
+      - EXTERNAL
+      - Manual action / pending / unavailable
+      - 顯示 MANUAL_ACTION_REQUIRED / PENDING_EXTERNAL / UNAVAILABLE。
+    - row: 7
+      cells:
+      - PARTIAL
+      - Composite/future multi-target orchestration 部分成功
+      - 逐 target 顯示 succeeded/blocked/failed；只重試缺少的合法工作。
+    - row: 8
+      cells:
+      - UNDEFINED
+      - Unregistered field/operation/route/service/permission
+      - BLOCK + report gap；禁止平行系統。
+  - index: 14
+    rows:
+    - row: 0
+      cells:
+      - Data Group
+      - Owner / Object
+      - Lineage Rule
+    - row: 1
+      cells:
+      - Account & Credential
+      - social_account_bindings / channel_accounts / secret reference
+      - Secret 永不一般顯示；credential reveal 需 audited operation。
+    - row: 2
+      cells:
+      - Target Discovery
+      - social_target_discovery_jobs / social_market_targets / shared acquisition evidence
+      - Raw acquisition → normalization/evidence → governed target projection；不能直接寫 Business Truth。
+    - row: 3
+      cells:
+      - Content
+      - content_packages / release_packages / Draft/Candidate
+      - Exact package hash/version；platform-native variant。
+    - row: 4
+      cells:
+      - Publish
+      - publish_requests
+      - canonical identity 必須使用 social_target_id / content_package_id FK；metadata identity fallback forbidden。
+    - row: 5
+      cells:
+      - External Platform
+      - PublishingAdapterService
+      - Page 不直接 SDK call；external result/callback 才能決定 POSTED。
+    - row: 6
+      cells:
+      - Analytics / Records
+      - PublishingAnalyticsService + existing projections
+      - Metrics/interactions/callback/incident real data only。
+  - index: 15
+    rows:
+    - row: 0
+      cells:
+      - 項目
+      - 規格
+    - row: 1
+      cells:
+      - Locales
+      - zh-TW / zh-CN / en；ORANGE ONE、AI、API 等固定系統詞可保留英文。
+    - row: 2
+      cells:
+      - Keyboard
+      - Stage segmented controls、search、buttons、drawer 必須可 Tab/Shift+Tab；focus visible。
+    - row: 3
+      cells:
+      - Focus / Disabled
+      - Focus 不可只靠顏色；Disabled effectful control 必須提供原因。
+    - row: 4
+      cells:
+      - Screen Reader
+      - 圖像需 alt text；資料表需 header row；effectful control 需可讀 label/state/disabled reason。
+    - row: 5
+      cells:
+      - Visual State
+      - DEFAULT / HOVER / ACTIVE / SELECTED / DISABLED / LOADING / ERROR / SUCCESS / WARNING / PROCESSING；狀態不改變 control geometry。
+    - row: 6
+      cells:
+      - Missing Data
+      - 使用 —；禁止假平台、假帳號、假 Target、假 Metrics、假 Status。
+    - row: 7
+      cells:
+      - Responsive
+      - 1280 / 1440 / 1920 至少做 geometry validation；overflow/clipping/unexpected wrap = 0。
+  - index: 16
+    rows:
+    - row: 0
+      cells:
+      - Acceptance
+      - PASS Condition
+    - row: 1
+      cells:
+      - Single Page / Five Stage
+      - 只有 SOC-01；五階段同頁，不拆成第二套 Social pages。
+    - row: 2
+      cells:
+      - Owner Reuse
+      - PublishingAdapter / PublishingService / Analytics / Governance / shared acquisition 全部重用。
+    - row: 3
+      cells:
+      - Account & Secret
+      - Bind/Reveal/Unbind exact operation；Secret default masked。
+    - row: 4
+      cells:
+      - Target Discovery
+      - Exact discovery fields + CONTINUOUS/SINGLE_RUN；Source/capability/policy/rights 必須成立。
+    - row: 5
+      cells:
+      - Content Boundary
+      - Content Draft/Candidate/Approval 與 Publish 分離；platform-native variants。
+    - row: 6
+      cells:
+      - Publish Contract
+      - Exact target + approved content package + approved matching channel account + posting policy + idempotency。
+    - row: 7
+      cells:
+      - External Truth
+      - PENDING_EXTERNAL 不得顯示 POSTED；只有真實 callback/result 可更新 external state。
+    - row: 8
+      cells:
+      - Authorization
+      - L1 + exact account permission/scope/state/version/idempotency/audit；role/department bypass = 0。
+    - row: 9
+      cells:
+      - No Parallel System
+      - 第二 registry/account/target/content/publish/analytics/credential/provider system = 0。
+    - row: 10
+      cells:
+      - UI Necessity
+      - 每情境最多 1 Primary CTA；低頻 detail 在 Drawer；假 KPI/chart = 0。
+    - row: 11
+      cells:
+      - Geometry
+      - 1280/1440/1920：overlap/clipping/overflow/text overflow/anchor drift = 0。
+    - row: 12
+      cells:
+      - A11y / i18n
+      - Keyboard、focus、alt、table header、zh-TW/zh-CN/en 皆通過。
+  - index: 17
+    rows:
+    - row: 0
+      cells:
+      - 順序
+      - 施工內容
+      - 驗證
+    - row: 1
+      cells:
+      - '1'
+      - Page shell + 5-stage context + 72/28 layout + action dock + drawer
+      - 1280/1440/1920 geometry screenshot / DOM fingerprint
+    - row: 2
+      cells:
+      - '2'
+      - Projection read + Platform/Account/Target read models
+      - Identity + permission + empty/loading/error + real-data-only
+    - row: 3
+      cells:
+      - '3'
+      - Account bind/unbind/reveal + Target discovery/join/manual action
+      - Exact operation/method/path + version/idempotency/audit + negative auth tests
+    - row: 4
+      cells:
+      - '4'
+      - Content Package Draft/Candidate + approval sealing
+      - Hash/version match + approve/reject/return + no publish side effect
+    - row: 5
+      cells:
+      - '5'
+      - Posting Policy + Publish Request
+      - Exact target/content/account + policy/cooldown/frequency + atomic local persistence
+    - row: 6
+      cells:
+      - '6'
+      - External callback/status + Results/Records
+      - PENDING_EXTERNAL vs POSTED truth + refresh/search + incident/callback detail
+    - row: 7
+      cells:
+      - '7'
+      - Regression / Security / A11y / i18n
+      - No parallel system, no secret leak, no unauthorized mutation, full browser E2E
+  - index: 18
+    rows:
+    - row: 0
+      cells:
+      - Authority
+      - Value
+    - row: 1
+      cells:
+      - Source Commit
+      - 165c6440cb53b1b45ec96905241fb4d56dc3b867
+    - row: 2
+      cells:
+      - Machine Authority
+      - authority/pages/admin/SOC-01/ACPOS_SOC-01_SOCIAL_PUBLISHING_SINGLE_PAGE_FINAL_LOCKED_ENCODING.yaml
+    - row: 3
+      cells:
+      - Authority SHA-256
+      - 8ebd9acd0cec671f9d017b4396074f838f8a6056b6b35a889394af9a0dad8d79
+    - row: 4
+      cells:
+      - Expected Control Denominator
+      - '67'
+    - row: 5
+      cells:
+      - Unique Control Rows
+      - '67'
+    - row: 6
+      cells:
+      - Denominator Gate
+      - PASS
+  - index: 19
+    rows:
+    - row: 0
+      cells:
+      - Control UID
+      - UID Status
+      - Label
+      - Type
+      - Action UID
+      - Gate
+      - Permission / Auth Resource
+      - Payload / Schema
+      - Operation
+      - Method / Path
+      - Runtime Owner
+      - Persistence Owner
+      - Runtime Status
+    - row: 1
+      cells:
+      - SOC-01-BTN-ACCOUNT-BIND
+      - EXISTING_SOURCE_UID
+      - 設定帳號並綁定
+      - BUTTON
+      - SOC-01-ACT-ACCOUNT-BIND
+      - SOC-01-GATE-ACCOUNT
+      - SOC-01-PERM-ACCOUNT-CONFIG
+      - BindSocialAccountRequest
+      - bindSocialAccount
+      - PUT /v1/social/accounts/{accountId}/binding
+      - PublishingAdapterService
+      - System 07 / SocialAccountBinding + Audit
+      - EFFECTFUL_EXACT
+    - row: 2
+      cells:
+      - SOC-01-BTN-ACCOUNT-UNBIND
+      - EXISTING_SOURCE_UID
+      - 解除綁定
+      - BUTTON
+      - SOC-01-ACT-ACCOUNT-UNBIND
+      - SOC-01-GATE-ACCOUNT
+      - SOC-01-PERM-ACCOUNT-UNBIND
+      - UnbindSocialAccountRequest
+      - unbindSocialAccount
+      - POST /v1/social/accounts/{accountId}/unbind
+      - PublishingAdapterService
+      - System 07 / SocialAccountBinding State + Audit
+      - EFFECTFUL_EXACT
+    - row: 3
+      cells:
+      - SOC-01-BTN-CANDIDATE-DECIDE
+      - EXISTING_SOURCE_UID
+      - 審查內容 Candidate
+      - BUTTON
+      - SOC-01-ACT-CANDIDATE-DECIDE
+      - SOC-01-GATE-CANDIDATE
+      - SOC-01-PERM-CANDIDATE-DECIDE
+      - DecideSocialContentCandidateRequest
+      - decideCandidate
+      - POST /v1/candidates/{id}/decision
+      - Existing Candidate owner
+      - public.context_candidates
+      - EFFECTFUL_EXACT
+    - row: 4
+      cells:
+      - SOC-01-BTN-CONTENT-SAVE
+      - EXISTING_SOURCE_UID
+      - 儲存內容 Draft
+      - BUTTON
+      - SOC-01-ACT-CONTENT-SAVE
+      - SOC-01-GATE-CONTENT
+      - SOC-01-PERM-DRAFT
+      - SaveSocialContentDraftRequest
+      - saveDraft
+      - POST /v1/drafts
+      - Existing Draft/Candidate owner
+      - Existing Draft/Candidate Owner / Social Content Draft + Audit
+      - EFFECTFUL_EXACT
+    - row: 5
+      cells:
+      - SOC-01-BTN-CREDENTIAL-REVEAL
+      - EXISTING_SOURCE_UID
+      - 顯示憑證
+      - BUTTON
+      - SOC-01-ACT-CREDENTIAL-REVEAL
+      - SOC-01-GATE-CREDENTIAL
+      - SOC-01-PERM-CREDENTIAL-REVEAL
+      - RevealSocialCredentialRequest
+      - revealSocialCredential
+      - POST /v1/social/accounts/{accountId}/credential/reveal
+      - PublishingAdapterService
+      - Secret/Vault Owner + Credential Reveal Audit
+      - EFFECTFUL_EXACT
+    - row: 6
+      cells:
+      - SOC-01-BTN-DETAIL
+      - EXISTING_SOURCE_UID
+      - 查看證據／Audit／歷史
+      - BUTTON
+      - SOC-01-ACT-DETAIL-OPEN
+      - SOC-01-GATE-READ
+      - SOC-01-PERM-READ
+      - —
+      - —
+      - —
+      - —
+      - —
+      - UI_LOCAL_EXACT
+    - row: 7
+      cells:
+      - SOC-01-BTN-KILL
+      - EXISTING_SOURCE_UID
+      - 停止高風險操作
+      - BUTTON
+      - SOC-01-ACT-KILL-SWITCH
+      - SOC-01-GATE-KILL
+      - SOC-01-PERM-KILL
+      - SetKillSwitchRequest
+      - setKillSwitch
+      - POST /v1/operations/kill-switch
+      - Existing Operations Governance
+      - Existing Operations Governance / Kill Switch State + Audit
+      - EFFECTFUL_EXACT
+    - row: 8
+      cells:
+      - SOC-01-BTN-MANUAL-COMPLETE
+      - EXISTING_SOURCE_UID
+      - 完成人工處理
+      - BUTTON
+      - SOC-01-ACT-MANUAL-COMPLETE
+      - SOC-01-GATE-MANUAL
+      - SOC-01-PERM-MANUAL-ACTION
+      - CompleteSocialManualActionRequest
+      - completeSocialManualAction
+      - POST /v1/social/manual-actions/{actionId}/complete
+      - PublishingAdapterService
+      - System 07 / Social Manual Action + Audit
+      - EFFECTFUL_EXACT
+    - row: 9
+      cells:
+      - SOC-01-BTN-PLATFORM-CONFIG
+      - EXISTING_SOURCE_UID
+      - 設定平台治理資源
+      - BUTTON
+      - SOC-01-ACT-PLATFORM-CONFIG
+      - SOC-01-GATE-PLATFORM-CONFIG
+      - SOC-01-PERM-PLATFORM-CONFIG
+      - ConfigureGovernedResourceRequest
+      - configureGovernedResource
+      - PATCH /v1/governance/resources/{id}
+      - Existing Governance/Policy owner
+      - Resolved Governed Resource Canonical Owner + Governance Audit
+      - EFFECTFUL_EXACT
+    - row: 10
+      cells:
+      - SOC-01-BTN-POLICY-CONFIG
+      - EXISTING_SOURCE_UID
+      - 儲存發佈政策
+      - BUTTON
+      - SOC-01-ACT-POLICY-CONFIG
+      - SOC-01-GATE-POLICY
+      - SOC-01-PERM-SCHEDULE
+      - ConfigureSocialTargetPolicyRequest
+      - configureSocialTargetPolicy
+      - PUT /v1/social/targets/{targetId}/posting-policy
+      - PublishingService
+      - System 07 / Social Target Posting Policy + Audit
+      - EFFECTFUL_EXACT
+    - row: 11
+      cells:
+      - SOC-01-BTN-PUBLISH
+      - EXISTING_SOURCE_UID
+      - 建立發佈要求
+      - PRIMARY_BUTTON
+      - SOC-01-ACT-PUBLISH-REQUEST
+      - SOC-01-GATE-PUBLISH
+      - SOC-01-PERM-PUBLISH
+      - SocialTargetPublishRequest
+      - requestSocialTargetPublish
+      - POST /v1/social/targets/{targetId}/publish
+      - PublishingService
+      - System 07 / PublishRequest + Target Publish State + Audit
+      - EFFECTFUL_EXACT
+    - row: 12
+      cells:
+      - SOC-01-BTN-REFRESH
+      - EXISTING_SOURCE_UID
+      - 重新整理
+      - BUTTON
+      - SOC-01-ACT-REFRESH
+      - SOC-01-GATE-RECORDS
+      - SOC-01-PERM-REFRESH
+      - RefreshSocialProjectionRequest
+      - refreshProjection
+      - POST /v1/projections/refresh
+      - Projection owner
+      - System 07 / Social Projection + Projection Audit
+      - EFFECTFUL_EXACT
+    - row: 13
+      cells:
+      - SOC-01-BTN-TARGET-DISCOVERY
+      - EXISTING_SOURCE_UID
+      - 建立目標搜尋
+      - BUTTON
+      - SOC-01-ACT-TARGET-DISCOVERY
+      - SOC-01-GATE-DISCOVERY
+      - SOC-01-PERM-TARGET-DISCOVERY
+      - CreateSocialTargetDiscoveryRequest
+      - createSocialTargetDiscovery
+      - POST /v1/social/target-discovery-jobs
+      - PublishingAdapterService
+      - System 07 / SocialTargetDiscoveryJob + Discovery Evidence
+      - EFFECTFUL_EXACT
+    - row: 14
+      cells:
+      - SOC-01-BTN-TARGET-JOIN
+      - EXISTING_SOURCE_UID
+      - 要求加入／驗證目標
+      - BUTTON
+      - SOC-01-ACT-TARGET-JOIN
+      - SOC-01-GATE-TARGET-JOIN
+      - SOC-01-PERM-TARGET-JOIN
+      - SocialTargetJoinRequest
+      - requestSocialTargetJoin
+      - POST /v1/social/targets/{targetId}/join
+      - PublishingAdapterService
+      - System 07 / Social Target Join Request + Audit
+      - EFFECTFUL_EXACT
+    - row: 15
+      cells:
+      - SOC-01-FLD-ACCOUNT-LIST
+      - EXISTING_SOURCE_UID
+      - 社群帳號
+      - READONLY
+      - SOC-01-ACT-PROJECTION-READ
+      - SOC-01-GATE-READ
+      - SOC-01-PERM-READ
+      - —
+      - getUiProjection
+      - GET /v1/ui-projections/{pageUid}
+      - Projection / source page read owner
+      - —
+      - READ_EXACT
+    - row: 16
+      cells:
+      - SOC-01-FLD-ALLOWED-WINDOW
+      - EXISTING_SOURCE_UID
+      - allowed_time_window
+      - READONLY
+      - SOC-01-ACT-PROJECTION-READ
+      - SOC-01-GATE-READ
+      - SOC-01-PERM-READ
+      - —
+      - getUiProjection
+      - GET /v1/ui-projections/{pageUid}
+      - Projection / source page read owner
+      - —
+      - READ_EXACT
+    - row: 17
+      cells:
+      - SOC-01-FLD-APPROVAL
+      - EXISTING_SOURCE_UID
+      - 審查狀態
+      - READONLY
+      - SOC-01-ACT-PROJECTION-READ
+      - SOC-01-GATE-READ
+      - SOC-01-PERM-READ
+      - —
+      - getUiProjection
+      - GET /v1/ui-projections/{pageUid}
+      - Projection / source page read owner
+      - —
+      - READ_EXACT
+    - row: 18
+      cells:
+      - SOC-01-FLD-AUTO-PUBLISH-POLICY
+      - EXISTING_SOURCE_UID
+      - Auto Publish Policy
+      - READONLY
+      - SOC-01-ACT-PROJECTION-READ
+      - SOC-01-GATE-READ
+      - SOC-01-PERM-READ
+      - —
+      - getUiProjection
+      - GET /v1/ui-projections/{pageUid}
+      - Projection / source page read owner
+      - —
+      - READ_EXACT
+    - row: 19
+      cells:
+      - SOC-01-FLD-BINDING-VERIFY
+      - EXISTING_SOURCE_UID
+      - 綁定驗證狀態
+      - READONLY
+      - SOC-01-ACT-PROJECTION-READ
+      - SOC-01-GATE-READ
+      - SOC-01-PERM-READ
+      - —
+      - getUiProjection
+      - GET /v1/ui-projections/{pageUid}
+      - Projection / source page read owner
+      - —
+      - READ_EXACT
+    - row: 20
+      cells:
+      - SOC-01-FLD-BLOCKERS
+      - EXISTING_SOURCE_UID
+      - 目前 Blockers / Readiness
+      - READONLY
+      - SOC-01-ACT-PROJECTION-READ
+      - SOC-01-GATE-READ
+      - SOC-01-PERM-READ
+      - —
+      - getUiProjection
+      - GET /v1/ui-projections/{pageUid}
+      - Projection / source page read owner
+      - —
+      - READ_EXACT
+    - row: 21
+      cells:
+      - SOC-01-FLD-CALLBACKS
+      - EXISTING_SOURCE_UID
+      - Callback
+      - READONLY
+      - SOC-01-ACT-PROJECTION-READ
+      - SOC-01-GATE-RECORDS
+      - SOC-01-PERM-READ
+      - —
+      - getUiProjection
+      - GET /v1/ui-projections/{pageUid}
+      - Projection / source page read owner
+      - —
+      - READ_EXACT
+    - row: 22
+      cells:
+      - SOC-01-FLD-CAPABILITY
+      - EXISTING_SOURCE_UID
+      - Target Type Capability
+      - READONLY
+      - SOC-01-ACT-PROJECTION-READ
+      - SOC-01-GATE-READ
+      - SOC-01-PERM-READ
+      - —
+      - getUiProjection
+      - GET /v1/ui-projections/{pageUid}
+      - Projection / source page read owner
+      - —
+      - READ_EXACT
+    - row: 23
+      cells:
+      - SOC-01-FLD-CHANNEL-ACCOUNT
+      - EXISTING_SOURCE_UID
+      - channel_account_id
+      - READONLY
+      - SOC-01-ACT-PROJECTION-READ
+      - SOC-01-GATE-READ
+      - SOC-01-PERM-READ
+      - —
+      - getUiProjection
+      - GET /v1/ui-projections/{pageUid}
+      - Projection / source page read owner
+      - —
+      - READ_EXACT
+    - row: 24
+      cells:
+      - SOC-01-FLD-CONTENT-PACKAGE
+      - EXISTING_SOURCE_UID
+      - content_package_id
+      - READONLY
+      - SOC-01-ACT-PROJECTION-READ
+      - SOC-01-GATE-READ
+      - SOC-01-PERM-READ
+      - —
+      - getUiProjection
+      - GET /v1/ui-projections/{pageUid}
+      - Projection / source page read owner
+      - —
+      - READ_EXACT
+    - row: 25
+      cells:
+      - SOC-01-FLD-CONTEXT
+      - EXISTING_SOURCE_UID
+      - Scope / Version / Correlation
+      - READONLY
+      - SOC-01-ACT-PROJECTION-READ
+      - SOC-01-GATE-READ
+      - SOC-01-PERM-READ
+      - —
+      - getUiProjection
+      - GET /v1/ui-projections/{pageUid}
+      - Projection / source page read owner
+      - —
+      - READ_EXACT
+    - row: 26
+      cells:
+      - SOC-01-FLD-CREDENTIAL-STATUS
+      - EXISTING_SOURCE_UID
+      - 憑證狀態
+      - READONLY
+      - SOC-01-ACT-PROJECTION-READ
+      - SOC-01-GATE-READ
+      - SOC-01-PERM-READ
+      - —
+      - getUiProjection
+      - GET /v1/ui-projections/{pageUid}
+      - Projection / source page read owner
+      - —
+      - READ_EXACT
+    - row: 27
+      cells:
+      - SOC-01-FLD-CURRENT-STATE
+      - EXISTING_SOURCE_UID
+      - 目前狀態
+      - READONLY
+      - SOC-01-ACT-PROJECTION-READ
+      - SOC-01-GATE-READ
+      - SOC-01-PERM-READ
+      - —
+      - getUiProjection
+      - GET /v1/ui-projections/{pageUid}
+      - Projection / source page read owner
+      - —
+      - READ_EXACT
+    - row: 28
+      cells:
+      - SOC-01-FLD-DAILY-LIMIT
+      - EXISTING_SOURCE_UID
+      - daily_limit
+      - READONLY
+      - SOC-01-ACT-PROJECTION-READ
+      - SOC-01-GATE-READ
+      - SOC-01-PERM-READ
+      - —
+      - getUiProjection
+      - GET /v1/ui-projections/{pageUid}
+      - Projection / source page read owner
+      - —
+      - READ_EXACT
+    - row: 29
+      cells:
+      - SOC-01-FLD-ENABLE-STATE
+      - EXISTING_SOURCE_UID
+      - 啟用／停用狀態
+      - READONLY
+      - SOC-01-ACT-PROJECTION-READ
+      - SOC-01-GATE-READ
+      - SOC-01-PERM-READ
+      - —
+      - getUiProjection
+      - GET /v1/ui-projections/{pageUid}
+      - Projection / source page read owner
+      - —
+      - READ_EXACT
+    - row: 30
+      cells:
+      - SOC-01-FLD-HEALTH
+      - EXISTING_SOURCE_UID
+      - 平台 Health
+      - READONLY
+      - SOC-01-ACT-PROJECTION-READ
+      - SOC-01-GATE-READ
+      - SOC-01-PERM-READ
+      - —
+      - getUiProjection
+      - GET /v1/ui-projections/{pageUid}
+      - Projection / source page read owner
+      - —
+      - READ_EXACT
+    - row: 31
+      cells:
+      - SOC-01-FLD-HUMAN-APPROVAL-POLICY
+      - EXISTING_SOURCE_UID
+      - Human Approval Requirement
+      - READONLY
+      - SOC-01-ACT-PROJECTION-READ
+      - SOC-01-GATE-READ
+      - SOC-01-PERM-READ
+      - —
+      - getUiProjection
+      - GET /v1/ui-projections/{pageUid}
+      - Projection / source page read owner
+      - —
+      - READ_EXACT
+    - row: 32
+      cells:
+      - SOC-01-FLD-INCIDENTS
+      - EXISTING_SOURCE_UID
+      - Incident
+      - READONLY
+      - SOC-01-ACT-PROJECTION-READ
+      - SOC-01-GATE-RECORDS
+      - SOC-01-PERM-READ
+      - —
+      - getUiProjection
+      - GET /v1/ui-projections/{pageUid}
+      - Projection / source page read owner
+      - —
+      - READ_EXACT
+    - row: 33
+      cells:
+      - SOC-01-FLD-INTERACTIONS
+      - EXISTING_SOURCE_UID
+      - 互動紀錄
+      - READONLY
+      - SOC-01-ACT-PROJECTION-READ
+      - SOC-01-GATE-RECORDS
+      - SOC-01-PERM-READ
+      - —
+      - getUiProjection
+      - GET /v1/ui-projections/{pageUid}
+      - Projection / source page read owner
+      - —
+      - READ_EXACT
+    - row: 34
+      cells:
+      - SOC-01-FLD-MANUAL-ASSIST-QUEUE
+      - EXISTING_SOURCE_UID
+      - Manual Assist Queue
+      - READONLY
+      - SOC-01-ACT-PROJECTION-READ
+      - SOC-01-GATE-READ
+      - SOC-01-PERM-READ
+      - —
+      - getUiProjection
+      - GET /v1/ui-projections/{pageUid}
+      - Projection / source page read owner
+      - —
+      - READ_EXACT
+    - row: 35
+      cells:
+      - SOC-01-FLD-MANUAL-HISTORY
+      - EXISTING_SOURCE_UID
+      - Manual Action History
+      - READONLY
+      - SOC-01-ACT-PROJECTION-READ
+      - SOC-01-GATE-RECORDS
+      - SOC-01-PERM-READ
+      - —
+      - getUiProjection
+      - GET /v1/ui-projections/{pageUid}
+      - Projection / source page read owner
+      - —
+      - READ_EXACT
+    - row: 36
+      cells:
+      - SOC-01-FLD-MANUAL-QUEUE
+      - EXISTING_SOURCE_UID
+      - Manual Action Queue
+      - READONLY
+      - SOC-01-ACT-PROJECTION-READ
+      - SOC-01-GATE-READ
+      - SOC-01-PERM-READ
+      - —
+      - getUiProjection
+      - GET /v1/ui-projections/{pageUid}
+      - Projection / source page read owner
+      - —
+      - READ_EXACT
+    - row: 37
+      cells:
+      - SOC-01-FLD-METADATA
+      - EXISTING_SOURCE_UID
+      - Metadata
+      - READONLY
+      - SOC-01-ACT-PROJECTION-READ
+      - SOC-01-GATE-READ
+      - SOC-01-PERM-READ
+      - —
+      - getUiProjection
+      - GET /v1/ui-projections/{pageUid}
+      - Projection / source page read owner
+      - —
+      - READ_EXACT
+    - row: 38
+      cells:
+      - SOC-01-FLD-METRICS
+      - EXISTING_SOURCE_UID
+      - Metrics
+      - READONLY
+      - SOC-01-ACT-PROJECTION-READ
+      - SOC-01-GATE-RECORDS
+      - SOC-01-PERM-READ
+      - —
+      - getUiProjection
+      - GET /v1/ui-projections/{pageUid}
+      - Projection / source page read owner
+      - —
+      - READ_EXACT
+    - row: 39
+      cells:
+      - SOC-01-FLD-MIN-INTERVAL
+      - EXISTING_SOURCE_UID
+      - minimum_interval_hours
+      - READONLY
+      - SOC-01-ACT-PROJECTION-READ
+      - SOC-01-GATE-READ
+      - SOC-01-PERM-READ
+      - —
+      - getUiProjection
+      - GET /v1/ui-projections/{pageUid}
+      - Projection / source page read owner
+      - —
+      - READ_EXACT
+    - row: 40
+      cells:
+      - SOC-01-FLD-PLATFORM-LIST
+      - EXISTING_SOURCE_UID
+      - 平台清單
+      - READONLY
+      - SOC-01-ACT-PROJECTION-READ
+      - SOC-01-GATE-READ
+      - SOC-01-PERM-READ
+      - —
+      - getUiProjection
+      - GET /v1/ui-projections/{pageUid}
+      - Projection / source page read owner
+      - —
+      - READ_EXACT
+    - row: 41
+      cells:
+      - SOC-01-FLD-PLATFORM-VARIANTS
+      - EXISTING_SOURCE_UID
+      - 平台內容版本
+      - READONLY
+      - SOC-01-ACT-PROJECTION-READ
+      - SOC-01-GATE-READ
+      - SOC-01-PERM-READ
+      - —
+      - getUiProjection
+      - GET /v1/ui-projections/{pageUid}
+      - Projection / source page read owner
+      - —
+      - READ_EXACT
+    - row: 42
+      cells:
+      - SOC-01-FLD-POLICY
+      - EXISTING_SOURCE_UID
+      - 平台政策
+      - READONLY
+      - SOC-01-ACT-PROJECTION-READ
+      - SOC-01-GATE-READ
+      - SOC-01-PERM-READ
+      - —
+      - getUiProjection
+      - GET /v1/ui-projections/{pageUid}
+      - Projection / source page read owner
+      - —
+      - READ_EXACT
+    - row: 43
+      cells:
+      - SOC-01-FLD-POLICY-CHECK
+      - EXISTING_SOURCE_UID
+      - Policy Check
+      - READONLY
+      - SOC-01-ACT-PROJECTION-READ
+      - SOC-01-GATE-READ
+      - SOC-01-PERM-READ
+      - —
+      - getUiProjection
+      - GET /v1/ui-projections/{pageUid}
+      - Projection / source page read owner
+      - —
+      - READ_EXACT
+    - row: 44
+      cells:
+      - SOC-01-FLD-POST-STATUS
+      - EXISTING_SOURCE_UID
+      - 外部狀態
+      - READONLY
+      - SOC-01-ACT-PROJECTION-READ
+      - SOC-01-GATE-RECORDS
+      - SOC-01-PERM-READ
+      - —
+      - getUiProjection
+      - GET /v1/ui-projections/{pageUid}
+      - Projection / source page read owner
+      - —
+      - READ_EXACT
+    - row: 45
+      cells:
+      - SOC-01-FLD-POSTS
+      - EXISTING_SOURCE_UID
+      - 貼文紀錄
+      - READONLY
+      - SOC-01-ACT-PROJECTION-READ
+      - SOC-01-GATE-RECORDS
+      - SOC-01-PERM-READ
+      - —
+      - getUiProjection
+      - GET /v1/ui-projections/{pageUid}
+      - Projection / source page read owner
+      - —
+      - READ_EXACT
+    - row: 46
+      cells:
+      - SOC-01-FLD-PUBLISH-QUEUE
+      - EXISTING_SOURCE_UID
+      - Publish Queue
+      - READONLY
+      - SOC-01-ACT-PROJECTION-READ
+      - SOC-01-GATE-READ
+      - SOC-01-PERM-READ
+      - —
+      - getUiProjection
+      - GET /v1/ui-projections/{pageUid}
+      - Projection / source page read owner
+      - —
+      - READ_EXACT
+    - row: 47
+      cells:
+      - SOC-01-FLD-RELEASE-SOURCE
+      - EXISTING_SOURCE_UID
+      - Release Candidate Source
+      - READONLY
+      - SOC-01-ACT-PROJECTION-READ
+      - SOC-01-GATE-READ
+      - SOC-01-PERM-READ
+      - —
+      - getUiProjection
+      - GET /v1/ui-projections/{pageUid}
+      - Projection / source page read owner
+      - —
+      - READ_EXACT
+    - row: 48
+      cells:
+      - SOC-01-FLD-SAME-COOLDOWN
+      - EXISTING_SOURCE_UID
+      - same_content_cooldown_hours
+      - READONLY
+      - SOC-01-ACT-PROJECTION-READ
+      - SOC-01-GATE-READ
+      - SOC-01-PERM-READ
+      - —
+      - getUiProjection
+      - GET /v1/ui-projections/{pageUid}
+      - Projection / source page read owner
+      - —
+      - READ_EXACT
+    - row: 49
+      cells:
+      - SOC-01-FLD-SCHEDULE-AT
+      - EXISTING_SOURCE_UID
+      - schedule_at
+      - READONLY
+      - SOC-01-ACT-PROJECTION-READ
+      - SOC-01-GATE-READ
+      - SOC-01-PERM-READ
+      - —
+      - getUiProjection
+      - GET /v1/ui-projections/{pageUid}
+      - Projection / source page read owner
+      - —
+      - READ_EXACT
+    - row: 50
+      cells:
+      - SOC-01-FLD-SIMILAR-COOLDOWN
+      - EXISTING_SOURCE_UID
+      - similar_content_cooldown_hours
+      - READONLY
+      - SOC-01-ACT-PROJECTION-READ
+      - SOC-01-GATE-READ
+      - SOC-01-PERM-READ
+      - —
+      - getUiProjection
+      - GET /v1/ui-projections/{pageUid}
+      - Projection / source page read owner
+      - —
+      - READ_EXACT
+    - row: 51
+      cells:
+      - SOC-01-FLD-TARGET-CAPABILITY
+      - EXISTING_SOURCE_UID
+      - Target Capability
+      - READONLY
+      - SOC-01-ACT-PROJECTION-READ
+      - SOC-01-GATE-READ
+      - SOC-01-PERM-READ
+      - —
+      - getUiProjection
+      - GET /v1/ui-projections/{pageUid}
+      - Projection / source page read owner
+      - —
+      - READ_EXACT
+    - row: 52
+      cells:
+      - SOC-01-FLD-TARGET-CAPABILITY-STATUS
+      - EXISTING_SOURCE_UID
+      - Target Capability / Account Binding
+      - READONLY
+      - SOC-01-ACT-PROJECTION-READ
+      - SOC-01-GATE-READ
+      - SOC-01-PERM-READ
+      - —
+      - getUiProjection
+      - GET /v1/ui-projections/{pageUid}
+      - Projection / source page read owner
+      - —
+      - READ_EXACT
+    - row: 53
+      cells:
+      - SOC-01-FLD-TARGET-DIRECTORY
+      - EXISTING_SOURCE_UID
+      - Target Directory
+      - READONLY
+      - SOC-01-ACT-PROJECTION-READ
+      - SOC-01-GATE-READ
+      - SOC-01-PERM-READ
+      - —
+      - getUiProjection
+      - GET /v1/ui-projections/{pageUid}
+      - Projection / source page read owner
+      - —
+      - READ_EXACT
+    - row: 54
+      cells:
+      - SOC-01-FLD-TARGET-HISTORY
+      - EXISTING_SOURCE_UID
+      - Target / 頻率紀錄
+      - READONLY
+      - SOC-01-ACT-PROJECTION-READ
+      - SOC-01-GATE-RECORDS
+      - SOC-01-PERM-READ
+      - —
+      - getUiProjection
+      - GET /v1/ui-projections/{pageUid}
+      - Projection / source page read owner
+      - —
+      - READ_EXACT
+    - row: 55
+      cells:
+      - SOC-01-FLD-TARGET-RULE-NOTES
+      - EXISTING_SOURCE_UID
+      - target_rule_notes
+      - READONLY
+      - SOC-01-ACT-PROJECTION-READ
+      - SOC-01-GATE-READ
+      - SOC-01-PERM-READ
+      - —
+      - getUiProjection
+      - GET /v1/ui-projections/{pageUid}
+      - Projection / source page read owner
+      - —
+      - READ_EXACT
+    - row: 56
+      cells:
+      - SOC-01-FLD-TARGET-SELECTOR
+      - EXISTING_SOURCE_UID
+      - 發佈 Target
+      - READONLY
+      - SOC-01-ACT-PROJECTION-READ
+      - SOC-01-GATE-READ
+      - SOC-01-PERM-READ
+      - —
+      - getUiProjection
+      - GET /v1/ui-projections/{pageUid}
+      - Projection / source page read owner
+      - —
+      - READ_EXACT
+    - row: 57
+      cells:
+      - SOC-01-FLD-THUMBNAIL
+      - EXISTING_SOURCE_UID
+      - Thumbnail
+      - READONLY
+      - SOC-01-ACT-PROJECTION-READ
+      - SOC-01-GATE-READ
+      - SOC-01-PERM-READ
+      - —
+      - getUiProjection
+      - GET /v1/ui-projections/{pageUid}
+      - Projection / source page read owner
+      - —
+      - READ_EXACT
+    - row: 58
+      cells:
+      - SOC-01-FLD-VERSION-HISTORY
+      - EXISTING_SOURCE_UID
+      - 版本紀錄
+      - READONLY
+      - SOC-01-ACT-PROJECTION-READ
+      - SOC-01-GATE-READ
+      - SOC-01-PERM-READ
+      - —
+      - getUiProjection
+      - GET /v1/ui-projections/{pageUid}
+      - Projection / source page read owner
+      - —
+      - READ_EXACT
+    - row: 59
+      cells:
+      - SOC-01-FLD-WEEKLY-LIMIT
+      - EXISTING_SOURCE_UID
+      - weekly_limit
+      - READONLY
+      - SOC-01-ACT-PROJECTION-READ
+      - SOC-01-GATE-READ
+      - SOC-01-PERM-READ
+      - —
+      - getUiProjection
+      - GET /v1/ui-projections/{pageUid}
+      - Projection / source page read owner
+      - —
+      - READ_EXACT
+    - row: 60
+      cells:
+      - SOC-01-FLD-WITHDRAWAL
+      - EXISTING_SOURCE_UID
+      - 撤回狀態／紀錄
+      - READONLY
+      - SOC-01-ACT-PROJECTION-READ
+      - SOC-01-GATE-RECORDS
+      - SOC-01-PERM-READ
+      - —
+      - getUiProjection
+      - GET /v1/ui-projections/{pageUid}
+      - Projection / source page read owner
+      - —
+      - READ_EXACT
+    - row: 61
+      cells:
+      - SOC-01-INP-RECORD-SEARCH
+      - EXISTING_SOURCE_UID
+      - 搜尋紀錄
+      - SEARCH
+      - SOC-01-ACT-SEARCH
+      - SOC-01-GATE-RECORDS
+      - SOC-01-PERM-SEARCH
+      - SearchSocialProjectionRequest
+      - searchProjection
+      - POST /v1/search
+      - Projection/Search owner
+      - System 07 / Search Projection Result + Search Audit
+      - EFFECTFUL_EXACT
+    - row: 62
+      cells:
+      - SOC-01-INP-TARGET-SEARCH
+      - EXISTING_SOURCE_UID
+      - 搜尋 Target Directory
+      - SEARCH
+      - SOC-01-ACT-SEARCH
+      - SOC-01-GATE-READ
+      - SOC-01-PERM-SEARCH
+      - SearchSocialProjectionRequest
+      - searchProjection
+      - POST /v1/search
+      - Projection/Search owner
+      - System 07 / Search Projection Result + Search Audit
+      - EFFECTFUL_EXACT
+    - row: 63
+      cells:
+      - SOC-01-TAB-STAGE-1
+      - EXISTING_SOURCE_UID
+      - 平台能力
+      - SEGMENT
+      - SOC-01-ACT-STAGE-1-SELECT
+      - SOC-01-GATE-PAGE
+      - SOC-01-PERM-PAGE
+      - —
+      - —
+      - —
+      - —
+      - —
+      - UI_LOCAL_EXACT
+    - row: 64
+      cells:
+      - SOC-01-TAB-STAGE-2
+      - EXISTING_SOURCE_UID
+      - 帳號與目標
+      - SEGMENT
+      - SOC-01-ACT-STAGE-2-SELECT
+      - SOC-01-GATE-PAGE
+      - SOC-01-PERM-PAGE
+      - —
+      - —
+      - —
+      - —
+      - —
+      - UI_LOCAL_EXACT
+    - row: 65
+      cells:
+      - SOC-01-TAB-STAGE-3
+      - EXISTING_SOURCE_UID
+      - 內容包
+      - SEGMENT
+      - SOC-01-ACT-STAGE-3-SELECT
+      - SOC-01-GATE-PAGE
+      - SOC-01-PERM-PAGE
+      - —
+      - —
+      - —
+      - —
+      - —
+      - UI_LOCAL_EXACT
+    - row: 66
+      cells:
+      - SOC-01-TAB-STAGE-4
+      - EXISTING_SOURCE_UID
+      - 發佈計畫
+      - SEGMENT
+      - SOC-01-ACT-STAGE-4-SELECT
+      - SOC-01-GATE-PAGE
+      - SOC-01-PERM-PAGE
+      - —
+      - —
+      - —
+      - —
+      - —
+      - UI_LOCAL_EXACT
+    - row: 67
+      cells:
+      - SOC-01-TAB-STAGE-5
+      - EXISTING_SOURCE_UID
+      - 結果與紀錄
+      - SEGMENT
+      - SOC-01-ACT-STAGE-5-SELECT
+      - SOC-01-GATE-PAGE
+      - SOC-01-PERM-PAGE
+      - —
+      - —
+      - —
+      - —
+      - —
+      - UI_LOCAL_EXACT
+  - index: 20
+    rows:
+    - row: 0
+      cells:
+      - QA eligibility binding
+      - Required contract
+    - row: 1
+      cells:
+      - exact_content_ref
+      - Exact reviewed content/release candidate ref; alias/latest-only forbidden.
+    - row: 2
+      cells:
+      - output_version_ref
+      - Exact reviewed content/output version.
+    - row: 3
+      cells:
+      - artifact_checksum
+      - Must match the QA-reviewed artifact/content manifest.
+    - row: 4
+      cells:
+      - criteria_profile_uid
+      - Applicable governed QA profile.
+    - row: 5
+      cells:
+      - criteria_version_id
+      - Exact APPROVED criteria version.
+    - row: 6
+      cells:
+      - quality_gate_policy_version
+      - Exact gate policy version paired with the scorecard.
+    - row: 7
+      cells:
+      - scorecard_id
+      - Fresh scorecard for the exact version.
+    - row: 8
+      cells:
+      - qa_gate_status
+      - Must equal PASS for governed publish eligibility.
+    - row: 9
+      cells:
+      - required_checks
+      - All applicable hard checks PASS, including Rights/Policy/Provenance/Checksum where required.
+    - row: 10
+      cells:
+      - open_blocking_findings
+      - Must equal 0.
+    - row: 11
+      cells:
+      - evidence_refs
+      - Required-check / review / recheck / manual-case evidence lineage.
+  - index: 21
+    rows:
+    - row: 0
+      cells:
+      - Gate condition
+      - Required behavior
+    - row: 1
+      cells:
+      - Exact target/content/account/policy valid
+      - Continue to QA eligibility validation.
+    - row: 2
+      cells:
+      - Missing exact version/checksum/criteria/scorecard/evidence
+      - BLOCK before requestSocialTargetPublish.
+    - row: 3
+      cells:
+      - Artifact/content changed after QA
+      - Previous scorecard becomes stale; BLOCK until fresh recheck.
+    - row: 4
+      cells:
+      - qa_gate_status != PASS
+      - BLOCK.
+    - row: 5
+      cells:
+      - required hard check FAIL or open_blocking_findings > 0
+      - BLOCK regardless of aggregate score or business approval.
+    - row: 6
+      cells:
+      - Eligibility PASS
+      - May invoke existing requestSocialTargetPublish only; local request acceptance becomes PENDING_EXTERNAL, not POSTED.
+    - row: 7
+      cells:
+      - External result
+      - Only real adapter callback/result can transition external publish truth to POSTED/failed/other recorded state.
+  - index: 22
+    rows:
+    - row: 0
+      cells:
+      - Control UID
+      - Operation
+      - Payload / Schema
+      - Persistence Owner
+    - row: 1
+      cells:
+      - SOC-01-BTN-ACCOUNT-BIND
+      - bindSocialAccount
+      - BindSocialAccountRequest
+      - System 07 / SocialAccountBinding + Audit
+    - row: 2
+      cells:
+      - SOC-01-BTN-ACCOUNT-UNBIND
+      - unbindSocialAccount
+      - UnbindSocialAccountRequest
+      - System 07 / SocialAccountBinding State + Audit
+    - row: 3
+      cells:
+      - SOC-01-BTN-CANDIDATE-DECIDE
+      - decideCandidate
+      - DecideSocialContentCandidateRequest
+      - UNCHANGED
+    - row: 4
+      cells:
+      - SOC-01-BTN-CONTENT-SAVE
+      - saveDraft
+      - SaveSocialContentDraftRequest
+      - Existing Draft/Candidate Owner / Social Content Draft + Audit
+    - row: 5
+      cells:
+      - SOC-01-BTN-CREDENTIAL-REVEAL
+      - revealSocialCredential
+      - RevealSocialCredentialRequest
+      - Secret/Vault Owner + Credential Reveal Audit
+    - row: 6
+      cells:
+      - SOC-01-BTN-KILL
+      - setKillSwitch
+      - SetKillSwitchRequest
+      - Existing Operations Governance / Kill Switch State + Audit
+    - row: 7
+      cells:
+      - SOC-01-BTN-MANUAL-COMPLETE
+      - completeSocialManualAction
+      - CompleteSocialManualActionRequest
+      - System 07 / Social Manual Action + Audit
+    - row: 8
+      cells:
+      - SOC-01-BTN-PLATFORM-CONFIG
+      - configureGovernedResource
+      - ConfigureGovernedResourceRequest
+      - Resolved Governed Resource Canonical Owner + Governance Audit
+    - row: 9
+      cells:
+      - SOC-01-BTN-POLICY-CONFIG
+      - configureSocialTargetPolicy
+      - ConfigureSocialTargetPolicyRequest
+      - System 07 / Social Target Posting Policy + Audit
+    - row: 10
+      cells:
+      - SOC-01-BTN-PUBLISH
+      - requestSocialTargetPublish
+      - SocialTargetPublishRequest
+      - System 07 / PublishRequest + Target Publish State + Audit
+    - row: 11
+      cells:
+      - SOC-01-BTN-REFRESH
+      - refreshProjection
+      - RefreshSocialProjectionRequest
+      - System 07 / Social Projection + Projection Audit
+    - row: 12
+      cells:
+      - SOC-01-BTN-TARGET-DISCOVERY
+      - createSocialTargetDiscovery
+      - CreateSocialTargetDiscoveryRequest
+      - System 07 / SocialTargetDiscoveryJob + Discovery Evidence
+    - row: 13
+      cells:
+      - SOC-01-BTN-TARGET-JOIN
+      - requestSocialTargetJoin
+      - SocialTargetJoinRequest
+      - System 07 / Social Target Join Request + Audit
+    - row: 14
+      cells:
+      - SOC-01-INP-RECORD-SEARCH
+      - searchProjection
+      - SearchSocialProjectionRequest
+      - System 07 / Search Projection Result + Search Audit
+    - row: 15
+      cells:
+      - SOC-01-INP-TARGET-SEARCH
+      - searchProjection
+      - SearchSocialProjectionRequest
+      - System 07 / Search Projection Result + Search Audit
+  - index: 23
+    rows:
+    - row: 0
+      cells:
+      - Entity
+      - Operation
+      - Applicability
+      - Authority Evidence
+    - row: 1
+      cells:
+      - ContentPackage
+      - ARCHIVE_OR_DELETE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 2
+      cells:
+      - ContentPackage
+      - AUDIT
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 3
+      cells:
+      - ContentPackage
+      - CATEGORY_OR_GROUP_BIND
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 4
+      cells:
+      - ContentPackage
+      - CONFIRM_OR_APPROVE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 5
+      cells:
+      - ContentPackage
+      - CREATE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 6
+      cells:
+      - ContentPackage
+      - CREATION_MODE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 7
+      cells:
+      - ContentPackage
+      - DEPENDENCY_IMPACT
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 8
+      cells:
+      - ContentPackage
+      - DISCOVER_OR_LIST
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 9
+      cells:
+      - ContentPackage
+      - DRAFT
+      - REQUIRED
+      - Current entity-bound operation evidence normalized to REQUIRED. T3R6[Save Draft / Candidate Decision]
+    - row: 10
+      cells:
+      - ContentPackage
+      - EDIT
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 11
+      cells:
+      - ContentPackage
+      - ERROR_RECOVERY
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 12
+      cells:
+      - ContentPackage
+      - LOCK_OR_UNLOCK
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 13
+      cells:
+      - ContentPackage
+      - MOVE_OR_REPARENT
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 14
+      cells:
+      - ContentPackage
+      - NEXT_STEP
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 15
+      cells:
+      - ContentPackage
+      - PARENT_BIND
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 16
+      cells:
+      - ContentPackage
+      - REORDER
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 17
+      cells:
+      - ContentPackage
+      - RESTORE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 18
+      cells:
+      - ContentPackage
+      - RESUME
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 19
+      cells:
+      - ContentPackage
+      - REVISE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 20
+      cells:
+      - ContentPackage
+      - SAVE
+      - REQUIRED
+      - Current entity-bound operation evidence normalized to REQUIRED. T3R6[Save Draft / Candidate Decision]
+    - row: 21
+      cells:
+      - ContentPackage
+      - SELECT_OR_OPEN
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 22
+      cells:
+      - ContentPackage
+      - VALIDATE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 23
+      cells:
+      - ContentPackage
+      - VERSION
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 24
+      cells:
+      - ExternalResult / Record
+      - ARCHIVE_OR_DELETE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 25
+      cells:
+      - ExternalResult / Record
+      - AUDIT
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 26
+      cells:
+      - ExternalResult / Record
+      - CATEGORY_OR_GROUP_BIND
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 27
+      cells:
+      - ExternalResult / Record
+      - CONFIRM_OR_APPROVE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 28
+      cells:
+      - ExternalResult / Record
+      - CREATE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 29
+      cells:
+      - ExternalResult / Record
+      - CREATION_MODE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 30
+      cells:
+      - ExternalResult / Record
+      - DEPENDENCY_IMPACT
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 31
+      cells:
+      - ExternalResult / Record
+      - DISCOVER_OR_LIST
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 32
+      cells:
+      - ExternalResult / Record
+      - DRAFT
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 33
+      cells:
+      - ExternalResult / Record
+      - EDIT
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 34
+      cells:
+      - ExternalResult / Record
+      - ERROR_RECOVERY
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 35
+      cells:
+      - ExternalResult / Record
+      - LOCK_OR_UNLOCK
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 36
+      cells:
+      - ExternalResult / Record
+      - MOVE_OR_REPARENT
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 37
+      cells:
+      - ExternalResult / Record
+      - NEXT_STEP
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 38
+      cells:
+      - ExternalResult / Record
+      - PARENT_BIND
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 39
+      cells:
+      - ExternalResult / Record
+      - REORDER
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 40
+      cells:
+      - ExternalResult / Record
+      - RESTORE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 41
+      cells:
+      - ExternalResult / Record
+      - RESUME
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 42
+      cells:
+      - ExternalResult / Record
+      - REVISE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 43
+      cells:
+      - ExternalResult / Record
+      - SAVE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 44
+      cells:
+      - ExternalResult / Record
+      - SELECT_OR_OPEN
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 45
+      cells:
+      - ExternalResult / Record
+      - VALIDATE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 46
+      cells:
+      - ExternalResult / Record
+      - VERSION
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 47
+      cells:
+      - ManualAction
+      - ARCHIVE_OR_DELETE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 48
+      cells:
+      - ManualAction
+      - AUDIT
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 49
+      cells:
+      - ManualAction
+      - CATEGORY_OR_GROUP_BIND
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 50
+      cells:
+      - ManualAction
+      - CONFIRM_OR_APPROVE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 51
+      cells:
+      - ManualAction
+      - CREATE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 52
+      cells:
+      - ManualAction
+      - CREATION_MODE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 53
+      cells:
+      - ManualAction
+      - DEPENDENCY_IMPACT
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 54
+      cells:
+      - ManualAction
+      - DISCOVER_OR_LIST
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 55
+      cells:
+      - ManualAction
+      - DRAFT
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 56
+      cells:
+      - ManualAction
+      - EDIT
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 57
+      cells:
+      - ManualAction
+      - ERROR_RECOVERY
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 58
+      cells:
+      - ManualAction
+      - LOCK_OR_UNLOCK
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 59
+      cells:
+      - ManualAction
+      - MOVE_OR_REPARENT
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 60
+      cells:
+      - ManualAction
+      - NEXT_STEP
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 61
+      cells:
+      - ManualAction
+      - PARENT_BIND
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 62
+      cells:
+      - ManualAction
+      - REORDER
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 63
+      cells:
+      - ManualAction
+      - RESTORE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 64
+      cells:
+      - ManualAction
+      - RESUME
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 65
+      cells:
+      - ManualAction
+      - REVISE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 66
+      cells:
+      - ManualAction
+      - SAVE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 67
+      cells:
+      - ManualAction
+      - SELECT_OR_OPEN
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 68
+      cells:
+      - ManualAction
+      - VALIDATE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 69
+      cells:
+      - ManualAction
+      - VERSION
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 70
+      cells:
+      - PlatformCapability
+      - ARCHIVE_OR_DELETE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 71
+      cells:
+      - PlatformCapability
+      - AUDIT
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 72
+      cells:
+      - PlatformCapability
+      - CATEGORY_OR_GROUP_BIND
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 73
+      cells:
+      - PlatformCapability
+      - CONFIRM_OR_APPROVE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 74
+      cells:
+      - PlatformCapability
+      - CREATE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 75
+      cells:
+      - PlatformCapability
+      - CREATION_MODE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 76
+      cells:
+      - PlatformCapability
+      - DEPENDENCY_IMPACT
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 77
+      cells:
+      - PlatformCapability
+      - DISCOVER_OR_LIST
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 78
+      cells:
+      - PlatformCapability
+      - DRAFT
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 79
+      cells:
+      - PlatformCapability
+      - EDIT
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 80
+      cells:
+      - PlatformCapability
+      - ERROR_RECOVERY
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 81
+      cells:
+      - PlatformCapability
+      - LOCK_OR_UNLOCK
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 82
+      cells:
+      - PlatformCapability
+      - MOVE_OR_REPARENT
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 83
+      cells:
+      - PlatformCapability
+      - NEXT_STEP
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 84
+      cells:
+      - PlatformCapability
+      - PARENT_BIND
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 85
+      cells:
+      - PlatformCapability
+      - REORDER
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 86
+      cells:
+      - PlatformCapability
+      - RESTORE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 87
+      cells:
+      - PlatformCapability
+      - RESUME
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 88
+      cells:
+      - PlatformCapability
+      - REVISE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 89
+      cells:
+      - PlatformCapability
+      - SAVE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 90
+      cells:
+      - PlatformCapability
+      - SELECT_OR_OPEN
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 91
+      cells:
+      - PlatformCapability
+      - VALIDATE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 92
+      cells:
+      - PlatformCapability
+      - VERSION
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 93
+      cells:
+      - PublishPolicy
+      - ARCHIVE_OR_DELETE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 94
+      cells:
+      - PublishPolicy
+      - AUDIT
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 95
+      cells:
+      - PublishPolicy
+      - CATEGORY_OR_GROUP_BIND
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 96
+      cells:
+      - PublishPolicy
+      - CONFIRM_OR_APPROVE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 97
+      cells:
+      - PublishPolicy
+      - CREATE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 98
+      cells:
+      - PublishPolicy
+      - CREATION_MODE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 99
+      cells:
+      - PublishPolicy
+      - DEPENDENCY_IMPACT
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 100
+      cells:
+      - PublishPolicy
+      - DISCOVER_OR_LIST
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 101
+      cells:
+      - PublishPolicy
+      - DRAFT
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 102
+      cells:
+      - PublishPolicy
+      - EDIT
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 103
+      cells:
+      - PublishPolicy
+      - ERROR_RECOVERY
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 104
+      cells:
+      - PublishPolicy
+      - LOCK_OR_UNLOCK
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 105
+      cells:
+      - PublishPolicy
+      - MOVE_OR_REPARENT
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 106
+      cells:
+      - PublishPolicy
+      - NEXT_STEP
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 107
+      cells:
+      - PublishPolicy
+      - PARENT_BIND
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 108
+      cells:
+      - PublishPolicy
+      - REORDER
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 109
+      cells:
+      - PublishPolicy
+      - RESTORE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 110
+      cells:
+      - PublishPolicy
+      - RESUME
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 111
+      cells:
+      - PublishPolicy
+      - REVISE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 112
+      cells:
+      - PublishPolicy
+      - SAVE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 113
+      cells:
+      - PublishPolicy
+      - SELECT_OR_OPEN
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 114
+      cells:
+      - PublishPolicy
+      - VALIDATE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 115
+      cells:
+      - PublishPolicy
+      - VERSION
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 116
+      cells:
+      - PublishRequest
+      - ARCHIVE_OR_DELETE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 117
+      cells:
+      - PublishRequest
+      - AUDIT
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 118
+      cells:
+      - PublishRequest
+      - CATEGORY_OR_GROUP_BIND
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 119
+      cells:
+      - PublishRequest
+      - CONFIRM_OR_APPROVE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 120
+      cells:
+      - PublishRequest
+      - CREATE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 121
+      cells:
+      - PublishRequest
+      - CREATION_MODE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 122
+      cells:
+      - PublishRequest
+      - DEPENDENCY_IMPACT
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 123
+      cells:
+      - PublishRequest
+      - DISCOVER_OR_LIST
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 124
+      cells:
+      - PublishRequest
+      - DRAFT
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 125
+      cells:
+      - PublishRequest
+      - EDIT
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 126
+      cells:
+      - PublishRequest
+      - ERROR_RECOVERY
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 127
+      cells:
+      - PublishRequest
+      - LOCK_OR_UNLOCK
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 128
+      cells:
+      - PublishRequest
+      - MOVE_OR_REPARENT
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 129
+      cells:
+      - PublishRequest
+      - NEXT_STEP
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 130
+      cells:
+      - PublishRequest
+      - PARENT_BIND
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 131
+      cells:
+      - PublishRequest
+      - REORDER
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 132
+      cells:
+      - PublishRequest
+      - RESTORE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 133
+      cells:
+      - PublishRequest
+      - RESUME
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 134
+      cells:
+      - PublishRequest
+      - REVISE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 135
+      cells:
+      - PublishRequest
+      - SAVE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 136
+      cells:
+      - PublishRequest
+      - SELECT_OR_OPEN
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 137
+      cells:
+      - PublishRequest
+      - VALIDATE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 138
+      cells:
+      - PublishRequest
+      - VERSION
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 139
+      cells:
+      - SocialMarketTarget
+      - ARCHIVE_OR_DELETE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 140
+      cells:
+      - SocialMarketTarget
+      - AUDIT
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 141
+      cells:
+      - SocialMarketTarget
+      - CATEGORY_OR_GROUP_BIND
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 142
+      cells:
+      - SocialMarketTarget
+      - CONFIRM_OR_APPROVE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 143
+      cells:
+      - SocialMarketTarget
+      - CREATE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 144
+      cells:
+      - SocialMarketTarget
+      - CREATION_MODE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 145
+      cells:
+      - SocialMarketTarget
+      - DEPENDENCY_IMPACT
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 146
+      cells:
+      - SocialMarketTarget
+      - DISCOVER_OR_LIST
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 147
+      cells:
+      - SocialMarketTarget
+      - DRAFT
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 148
+      cells:
+      - SocialMarketTarget
+      - EDIT
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 149
+      cells:
+      - SocialMarketTarget
+      - ERROR_RECOVERY
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 150
+      cells:
+      - SocialMarketTarget
+      - LOCK_OR_UNLOCK
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 151
+      cells:
+      - SocialMarketTarget
+      - MOVE_OR_REPARENT
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 152
+      cells:
+      - SocialMarketTarget
+      - NEXT_STEP
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 153
+      cells:
+      - SocialMarketTarget
+      - PARENT_BIND
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 154
+      cells:
+      - SocialMarketTarget
+      - REORDER
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 155
+      cells:
+      - SocialMarketTarget
+      - RESTORE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 156
+      cells:
+      - SocialMarketTarget
+      - RESUME
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 157
+      cells:
+      - SocialMarketTarget
+      - REVISE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 158
+      cells:
+      - SocialMarketTarget
+      - SAVE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 159
+      cells:
+      - SocialMarketTarget
+      - SELECT_OR_OPEN
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 160
+      cells:
+      - SocialMarketTarget
+      - VALIDATE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 161
+      cells:
+      - SocialMarketTarget
+      - VERSION
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 162
+      cells:
+      - SocialTargetDiscoveryJob
+      - ARCHIVE_OR_DELETE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 163
+      cells:
+      - SocialTargetDiscoveryJob
+      - AUDIT
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 164
+      cells:
+      - SocialTargetDiscoveryJob
+      - CATEGORY_OR_GROUP_BIND
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 165
+      cells:
+      - SocialTargetDiscoveryJob
+      - CONFIRM_OR_APPROVE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 166
+      cells:
+      - SocialTargetDiscoveryJob
+      - CREATE
+      - REQUIRED
+      - Current entity-bound operation evidence normalized to REQUIRED. T3R4[Create Discovery]
+    - row: 167
+      cells:
+      - SocialTargetDiscoveryJob
+      - CREATION_MODE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 168
+      cells:
+      - SocialTargetDiscoveryJob
+      - DEPENDENCY_IMPACT
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 169
+      cells:
+      - SocialTargetDiscoveryJob
+      - DISCOVER_OR_LIST
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 170
+      cells:
+      - SocialTargetDiscoveryJob
+      - DRAFT
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 171
+      cells:
+      - SocialTargetDiscoveryJob
+      - EDIT
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 172
+      cells:
+      - SocialTargetDiscoveryJob
+      - ERROR_RECOVERY
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 173
+      cells:
+      - SocialTargetDiscoveryJob
+      - LOCK_OR_UNLOCK
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 174
+      cells:
+      - SocialTargetDiscoveryJob
+      - MOVE_OR_REPARENT
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 175
+      cells:
+      - SocialTargetDiscoveryJob
+      - NEXT_STEP
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 176
+      cells:
+      - SocialTargetDiscoveryJob
+      - PARENT_BIND
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 177
+      cells:
+      - SocialTargetDiscoveryJob
+      - REORDER
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 178
+      cells:
+      - SocialTargetDiscoveryJob
+      - RESTORE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 179
+      cells:
+      - SocialTargetDiscoveryJob
+      - RESUME
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 180
+      cells:
+      - SocialTargetDiscoveryJob
+      - REVISE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 181
+      cells:
+      - SocialTargetDiscoveryJob
+      - SAVE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 182
+      cells:
+      - SocialTargetDiscoveryJob
+      - SELECT_OR_OPEN
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 183
+      cells:
+      - SocialTargetDiscoveryJob
+      - VALIDATE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 184
+      cells:
+      - SocialTargetDiscoveryJob
+      - VERSION
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+  - index: 24
+    rows:
+    - row: 0
+      cells:
+      - Design Item / 設計項目
+      - Canonical Planning Design Contract / 正式規劃設計契約
+    - row: 1
+      cells:
+      - Color Tokens
+      - SHARED_OWNER_REFERENCE → current Global Home / Shell Design System tech-purple token set; existing page-local approved override, if any, remains authoritative.
+    - row: 2
+      cells:
+      - Typography Tokens
+      - SHARED_OWNER_REFERENCE → current Global Design System typography; page-local text hierarchy may only use registered heading/body/label/technical text roles.
+    - row: 3
+      cells:
+      - Spacing Tokens
+      - Use registered gap/padding/spacing tokens; existing exact page gaps remain authoritative; no ad-hoc pixel drift.
+    - row: 4
+      cells:
+      - Component States
+      - Default / Hover / Focus / Active / Loading / Disabled / Success / Error MUST NOT change the approved component footprint unless the current component contract
+        explicitly allows it.
+    - row: 5
+      cells:
+      - Primary Layout
+      - Use this Word's existing Primary Grid / Section / Workspace layout as the page-local authority; this annex introduces no second grid.
+    - row: 6
+      cells:
+      - Navigation Region
+      - Global Header and collapsible/overlay Sidebar remain shared shell regions; page Workspace starts in the registered content region.
+    - row: 7
+      cells:
+      - Responsive Behavior
+      - Use the current page responsive rule and shared shell breakpoint owner; semantic order and functional topology MUST remain stable across reflow.
+    - row: 8
+      cells:
+      - Design Ownership
+      - Page owns page-local layout/components; Global Shell owns shared header/sidebar/tokens; references only, no duplicated shared payload.
+  - index: 25
+    rows:
+    - row: 0
+      cells:
+      - Design Item / 設計項目
+      - Canonical Planning Design Contract / 正式規劃設計契約
+    - row: 1
+      cells:
+      - Viewport / Breakpoint UID
+      - SHARED_OWNER_REFERENCE → current Global Home breakpoint contract; page-specific breakpoint/reflow rules in this Word override only where explicitly registered.
+    - row: 2
+      cells:
+      - Container Width / Min / Max
+      - Retain current Global Shell + page Primary Grid width contract. No page-local implicit width may override an existing exact dimension.
+    - row: 3
+      cells:
+      - Grid Columns / Span / Gutter / Outer Margin
+      - Use the existing page Primary Grid / section mapping and current gap/margin values; any structural grid change requires Change Set.
+    - row: 4
+      cells:
+      - Section Bounding Rules
+      - Every registered Section remains within its current Workspace region; sticky/fixed/overlay areas MUST NOT occlude required controls.
+    - row: 5
+      cells:
+      - Component / Control / Field Width / Height Rules
+      - Use current Control/Field Dimensions or shared component token. State transitions MUST NOT cause layout jump.
+    - row: 6
+      cells:
+      - Min / Max Width / Height
+      - Inherit current exact values where present; otherwise shared component minimums apply. Required input/button content may not compress below its registered
+        usable size.
+    - row: 7
+      cells:
+      - Gap / Padding / Alignment
+      - Use current page spacing/grid tokens; alignment changes outside token tolerance require Visual Review.
+    - row: 8
+      cells:
+      - Aspect Ratio
+      - NOT_APPLICABLE unless the current page declares an image/video/preview ratio; when declared, the exact current ratio remains authoritative.
+    - row: 9
+      cells:
+      - Overflow / Scroll Rule
+      - No hidden overflow for actionable content. Long technical values use existing ellipsis + tooltip/drawer rule; large tables may use the current controlled
+        horizontal-scroll rule.
+    - row: 10
+      cells:
+      - Collapse / Stack / Wrap Rule
+      - Reflow may stack/collapse only within the current responsive contract; semantic order, required adjacency and operation order MUST NOT change.
+    - row: 11
+      cells:
+      - Z-order / Overlay Rule
+      - Global Header / Sidebar overlay / Dialog / Drawer layers remain above Workspace without blocking required content; overlay expansion MUST NOT reflow the primary
+        Workspace unless explicitly specified.
+    - row: 12
+      cells:
+      - Text Capacity / Truncation / Wrap Rule
+      - Required labels/status/error text may not be clipped. Long IDs/technical values use controlled ellipsis with recoverable full value; no silent semantic truncation.
+    - row: 13
+      cells:
+      - Asset Object-fit / Object-position
+      - REFERENCE_ONLY → current Asset Binding owner when a formal visual asset exists; otherwise NOT_APPLICABLE.
+    - row: 14
+      cells:
+      - Locked Visual Anchors
+      - Bound to the Visual Anchor Registry in this annex; unlisted regions are not implicitly editable.
+    - row: 15
+      cells:
+      - Allowed Tolerance / Diff Threshold
+      - 'Locked anchors and structural grid: zero unapproved drift. Token-level micro adjustment is allowed only inside current Design Token/Layout rules; structural
+        changes require Change Set + re-review.'
+    - row: 16
+      cells:
+      - Geometry Failure Set
+      - Detect overlap, clipping, horizontal overflow, unapproved scroll, control compression, unexpected wrap/stack, aspect drift, misalignment, sticky/fixed occlusion
+        and header/sidebar/workspace collision.
+  - index: 26
+    rows:
+    - row: 0
+      cells:
+      - Anchor UID
+      - Position Rule
+      - Dimension Rule
+      - Relationship Rule
+      - Lock Status
+    - row: 1
+      cells:
+      - SOC-01-VA-HEADER
+      - Fixed at top of shared shell
+      - 58px full-width according to current shell authority
+      - Above Sidebar/Workspace; must not be covered by page content
+      - LOCKED
+    - row: 2
+      cells:
+      - SOC-01-VA-SIDEBAR
+      - Fixed left rail under shared shell header
+      - 64px resting; 221px overlay expansion where current shell defines it
+      - Overlay expansion must not silently change the approved page Primary Grid
+      - LOCKED
+    - row: 3
+      cells:
+      - SOC-01-VA-WORKSPACE
+      - Current page primary content region below Header / beside resting rail
+      - Use this Word's existing Primary Grid / section dimensions
+      - Owns page-local section geometry; dialogs/drawers are overlays, not replacement layout
+      - LOCKED_EXCEPT_AUTHORIZED_CHANGE_SET
+  - index: 27
+    rows:
+    - row: 0
+      cells:
+      - Design Item / 設計項目
+      - Canonical Planning Design Contract / 正式規劃設計契約
+    - row: 1
+      cells:
+      - Current Canonical Visual
+      - REFERENCE_ONLY → current visual/baseline already named in this Word or shared current visual owner. This annex does not replace it.
+    - row: 2
+      cells:
+      - Visual Candidate UID
+      - Generated candidate MUST receive a unique Visual UID and Parent Visual UID; no candidate is deemed approved merely by this annex.
+    - row: 3
+      cells:
+      - Generation Manifest
+      - Required before generation; MUST bind Page UID, Design Version, Reference Visual UID, Design System Version, Layout UID, Component Versions, Asset refs, Viewport,
+        Language, Theme, Change Level/Set and locked/editable areas.
+    - row: 4
+      cells:
+      - Visual Preview
+      - MUST represent the actual website structure, not a moodboard. Preview occurs after page/design specification and before Design Freeze.
+    - row: 5
+      cells:
+      - Visual Review
+      - Authorized reviewer checks function-to-visual mapping, geometry, anchors, responsive order, A11y/i18n and visual drift.
+    - row: 6
+      cells:
+      - Approval Status
+      - VISUAL_APPROVED is required before DESIGN_FROZEN. This planning annex does NOT self-approve the page.
+    - row: 7
+      cells:
+      - Change Set / Drift
+      - Any layout/asset/typography/color/component/navigation/dimension/information-hierarchy change outside the approved Change Set is VISUAL_DRIFT_FAIL.
+  - index: 28
+    rows:
+    - row: 0
+      cells:
+      - Design Item / 設計項目
+      - Canonical Planning Design Contract / 正式規劃設計契約
+    - row: 1
+      cells:
+      - Page-local Asset Registry Applicability
+      - REFERENCE_ONLY / CONDITIONAL. Existing page-owned formal Asset UID rows, if present, remain authoritative; this annex creates no duplicate Asset UID.
+    - row: 2
+      cells:
+      - Shared Shell Assets
+      - SHARED_OWNER_REFERENCE → Global Home / Design System owns logo, navigation icons, generic status icons and shared shell visuals; page MUST NOT clone them.
+    - row: 3
+      cells:
+      - Dynamic Business Content
+      - Provider logos, thumbnails, output previews, evidence images or other runtime/business data are NOT automatically design assets; they remain data/projection
+        unless current page explicitly registers an Asset UID.
+    - row: 4
+      cells:
+      - Binding Contract
+      - Any formal page-owned asset MUST bind Page UID + Section UID + Component UID + Asset UID + position + width/height + aspect ratio + crop/object-fit/object-position
+        + lock status.
+    - row: 5
+      cells:
+      - Modification Rule
+      - APPROVED/LOCKED assets may not be regenerated, recolored, cropped or repurposed without an authorized Change Set and Visual Review.
+    - row: 6
+      cells:
+      - N/A Authority
+      - When a page has no page-owned formal visual asset, page-local Asset Binding is NOT_APPLICABLE with this reason; shared assets remain referenced from their
+        existing canonical owner.
+  - index: 29
+    rows:
+    - row: 0
+      cells:
+      - Design Item / 設計項目
+      - Canonical Planning Design Contract / 正式規劃設計契約
+    - row: 1
+      cells:
+      - Canonical UID
+      - SOC-01
+    - row: 2
+      cells:
+      - Canonical Name
+      - SOC-01
+    - row: 3
+      cells:
+      - Owner File
+      - ACPOS_SOC-01_社群發布_Mother_Basic_Design_OPTIMIZED.docx
+    - row: 4
+      cells:
+      - Page / Capability Spec
+      - This current Word remains the single page design Canonical Owner.
+    - row: 5
+      cells:
+      - Layout Mapping
+      - REFERENCE → existing Page Layout / Primary Grid / Section mapping + Design System/Layout closure annex.
+    - row: 6
+      cells:
+      - Component Mapping
+      - REFERENCE → current Component/Section registry in this Word; no duplicate component inventory is introduced.
+    - row: 7
+      cells:
+      - Control / Field Mapping
+      - REFERENCE → current Control / Field / Action / Permission design tables and invariants in this Word.
+    - row: 8
+      cells:
+      - Asset Mapping
+      - REFERENCE → current page Asset Registry if any; otherwise explicit shared-owner / NOT_APPLICABLE asset rule in this annex.
+    - row: 9
+      cells:
+      - Responsive Spec
+      - REFERENCE → current page responsive rules + Visual Geometry closure annex.
+    - row: 10
+      cells:
+      - Current Canonical Visual
+      - REFERENCE → current visual/baseline already owned by this page/shared visual authority; candidate does not replace it without approval.
+    - row: 11
+      cells:
+      - Generation Manifest
+      - REQUIRED before a new candidate is generated; fields are defined by the Visual contract in this annex.
+    - row: 12
+      cells:
+      - Audit Baseline
+      - REFERENCE → existing Audit/Acceptance section in this Word.
+    - row: 13
+      cells:
+      - Acceptance Matrix
+      - Current page acceptance section plus this annex; REQUIRED / OPTIONAL / NOT_APPLICABLE classification is preserved.
+    - row: 14
+      cells:
+      - Definition of Done
+      - Planning/basic-design DoD is the current page DoD plus zero unresolved REQUIRED design-spec gaps.
+    - row: 15
+      cells:
+      - Design Version
+      - Use this Word's current version metadata / exact repository revision; this annex MUST NOT invent a parallel design version.
+    - row: 16
+      cells:
+      - Freeze Status
+      - DESIGN_FREEZE_PACKAGE_DEFINED. DESIGN_FROZEN may be asserted only after required Visual Preview/Review/Approval and all applicable design gates actually pass;
+        this annex does not self-approve.

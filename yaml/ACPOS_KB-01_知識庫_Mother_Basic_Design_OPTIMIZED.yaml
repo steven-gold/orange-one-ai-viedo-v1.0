@@ -1,0 +1,2987 @@
+schema_version: ACPOS_WORD_YAML_PROJECTION_V1
+projection_mode: SOURCE_GROUNDED_NO_INVENTION
+sequence: 21
+source:
+  branch: 0921acpos
+  git_head: 7bd2dbdb89b685c5f5f6045c8e3e17c5f2500db5
+  word_path: ACPOS_KB-01_知識庫_Mother_Basic_Design_OPTIMIZED.docx
+  word_sha256: 023ec50eaac1b9de6214d1dce1a2a8e9c2e4769a42f01252275da6de036af7b8
+authority_rules:
+- Word source remains canonical for this projection.
+- Do not silently fill, correct, reconcile, or replace source content.
+- Do not convert BLOCKED, NOT_EXECUTED, REQUIRE_EXACT_BINDING, SOURCE_NOT_DEFINED into PASS.
+- Paragraph and table order is preserved by source index.
+document:
+  paragraphs:
+  - index: 0
+    style: Normal
+    text: ACPOS · KB-01
+  - index: 1
+    style: Normal
+    text: 知識庫｜Mother Basic Design
+  - index: 2
+    style: Normal
+    text: Knowledge & Experience · Source / Acquisition / Citation / Context / Replay / Learning / Review
+  - index: 5
+    style: Heading 1
+    text: 1. Product Scope / 產品責任與硬邊界
+  - index: 6
+    style: List Bullet
+    text: KB-01 是「知識與經驗治理」頁，不是一般檔案櫃、聊天歷史、搜尋入口或第二套 INFO 頁。
+  - index: 7
+    style: List Bullet
+    text: Source → Acquisition → Normalize → Evidence/Citation → Context Candidate 與 Execution → Experience → Replay → Learning → Knowledge Draft → Human Review →
+      Approved Version 形成兩條可追溯主鏈。
+  - index: 8
+    style: List Bullet
+    text: Approved Knowledge 可作為後續 AI / Strategy / Production 的 Context Input，但仍受 Scope、Permission、Current Truth 與版本條件限制。
+  - index: 9
+    style: List Bullet
+    text: Conversation 訊息、AI 回覆、未驗證搜索結果、未完成 Outcome 不可直接標成 Approved Knowledge。
+  - index: 11
+    style: Heading 1
+    text: 2. Business Entity Inventory / 核心業務實體
+  - index: 13
+    style: Heading 1
+    text: 3. Business Entity × Operation Matrix
+  - index: 16
+    style: Heading 1
+    text: 4. Entity Hierarchy / Lineage
+  - index: 18
+    style: Heading 1
+    text: 5. Five-View Functional Workbench
+  - index: 21
+    style: Heading 1
+    text: 6. Visual / Geometry Contract
+  - index: 24
+    style: Normal
+    text: 圖 1｜來源與蒐集工作面：Source Governance、Acquisition Intent、Ingestion Queue 與共享 Runtime 邊界。
+  - index: 25
+    style: Heading 1
+    text: 7. Functional Admission / Auto-Completion Scope
+  - index: 27
+    style: Heading 1
+    text: 8. Functional Chain / 端到端主流程
+  - index: 28
+    style: Heading 2
+    text: 8.1 Source → Approved Knowledge
+  - index: 29
+    style: Normal
+    text: Intent → Authorized Scope → Create/Select KnowledgeSource → Rights/Classification/Freshness/Retention Validation → Acquisition Intent → Shared Runtime Job
+      → Immutable Snapshot → Normalize → Evidence/Citation → Search/Review → Knowledge Draft → Version Diff → Mandatory Checks → Human Decision → Approved Version
+      → Eligible Context Input。
+  - index: 30
+    style: Heading 2
+    text: 8.2 Search → Context Candidate
+  - index: 31
+    style: Normal
+    text: Query + Scope → Authorized Search Results → Select exact refs → Open Citation/Evidence → Local Basket add/remove → Purpose + Scope → Conflict / Version
+      / Classification Gate → Create ACPOSContextCandidate → READY_FOR_CONSUMER_REVIEW → Consumer-domain adoption。
+  - index: 32
+    style: Heading 2
+    text: 8.3 Real Execution → Learning
+  - index: 33
+    style: Normal
+    text: Real Execution → ACPOSExperienceRecord → Outcome Completeness → Replay exact lineage → Compare Attempt/Version → Root Cause / Pattern → Create Learning
+      Candidate → Governed review outside KB or create Knowledge Draft → Human Knowledge Review。
+  - index: 35
+    style: Heading 1
+    text: 9. Action / Operation Contract
+  - index: 38
+    style: Heading 1
+    text: 10. Form / Input Contract
+  - index: 40
+    style: Heading 1
+    text: 11. Control Registry / 顯示與操作分母
+  - index: 41
+    style: Normal
+    text: 正式控制分母為 27：5 個 View Tab、2 個 Search 入口、Source 5 個狀態/編輯控制、Acquisition 2、Citation 1、Context 3、Replay 2、Learning/Draft 2、Knowledge Draft/Version 2、Review 3。所有
+      Effectful Control 必須同時具備 Action + Gate + Permission + State 條件。
+  - index: 43
+    style: Heading 1
+    text: 12. Gate / Permission / Security Boundary
+  - index: 44
+    style: Normal
+    text: Permission Model：Account Permission Assignment Only。Role name、department membership、前端隱藏狀態都不得作為 Allow。Server Gate 順序至少包含 identity → account_permission →
+      scope → condition/classification → state_guard → expected_version（versioned write）→ idempotency（side effect）→ audit。
+  - index: 46
+    style: Heading 2
+    text: 12.1 Gate Summary
+  - index: 48
+    style: Heading 1
+    text: 13. State Model / Lifecycle
+  - index: 51
+    style: Normal
+    text: 圖 2｜Experience / Replay 與 Knowledge Review：真實 Outcome、Exact Lineage、Learning Candidate、Evidence Review 與人工決策。
+  - index: 52
+    style: Heading 1
+    text: 14. Error / Recovery Contract
+  - index: 54
+    style: Heading 1
+    text: 15. Data Truth / Citation / Knowledge Formalization
+  - index: 57
+    style: Heading 1
+    text: 16. Acquisition Runtime Boundary
+  - index: 58
+    style: Normal
+    text: KB-01 只擁有 KnowledgeAcquisitionIntent；Fetch/Render/Retry/Robots/Rights/Rate Limit/Immutable Snapshot/Canonical URL/Hash Dedupe/Normalize/Evidence/Audit 由共享
+      Acquisition Runtime 擁有。
+  - index: 60
+    style: Heading 1
+    text: 17. i18n / Accessibility / Responsive
+  - index: 62
+    style: Heading 1
+    text: 18. Acceptance Matrix / Design DoD
+  - index: 64
+    style: Heading 1
+    text: 19. Hard Locks / 施工不可破壞規則
+  - index: 65
+    style: List Bullet
+    text: 不得將 Conversation / AI Response / Search Result 直接寫成 Approved Knowledge。
+  - index: 66
+    style: List Bullet
+    text: 不得在 KB-01 建立第二套 crawler、Context Engine、Experience Engine、Learning Engine、INFO Search DB 或 Provider Picker。
+  - index: 67
+    style: List Bullet
+    text: 不得讓 Context Candidate 在 KB-01 直接變成 Consumer Domain 的 Adopted Context。
+  - index: 68
+    style: List Bullet
+    text: 不得人工建立假的 Experience / Outcome / Cost / Provider / QA Result。
+  - index: 69
+    style: List Bullet
+    text: 不得將 Learning Candidate 自動改寫 Canon、Criteria、Permission 或 RoutePolicy。
+  - index: 70
+    style: List Bullet
+    text: 不得顯示或保存 raw secret；只使用 Secret Reference / registered connector。
+  - index: 71
+    style: List Bullet
+    text: 不得以 latest/current/default alias 做 effectful versioned write；必須綁 exact ID/version。
+  - index: 72
+    style: List Bullet
+    text: 不得因 UI 已畫出控制就宣稱 API/DB/Runtime/E2E/Deploy 已完成。
+  - index: 73
+    style: List Bullet
+    text: 未知 operation/field/route/permission/service 一律 BLOCK + REPORT_AUTHORITY_GAP。
+  - index: 74
+    style: Heading 1
+    text: 20. Construction Mapping / 實作順序
+  - index: 78
+    style: Heading 1
+    text: 2026-09-21 Machine Authority Construction Closure / 機器權威施工綁定封板
+  - index: 79
+    style: Normal
+    text: '[ACPOS-20260921-SOURCE-GROUNDED-CONSTRUCTION-CLOSURE-V2] Source-grounded only. Existing Current source wins; missing source values remain blocked/decision-required.
+      This closure supersedes the prior generic 2026-09-21 V1/V3 annex only, not the original domain logic or human visual review gates.'
+  - index: 80
+    style: Heading 2
+    text: KB-01 · Exact Construction Binding
+  - index: 81
+    style: Heading 3
+    text: KB-01 · Truthful Remaining Runtime / Governance Status
+  - index: 82
+    style: Heading 3
+    text: KB-01 Runtime Truth
+  - index: 83
+    style: Normal
+    text: The 27 controls and 21 action contracts are exact, including method/path. Machine authority still records application/api/db/crawler_execution/e2e/deploy
+      = NOT_EXECUTED. Therefore the specification is construction-complete while Production implementation acceptance remains open.
+  - index: 84
+    style: Heading 2
+    text: Page Construction Invariant
+  - index: 85
+    style: Normal
+    text: The exact control denominator above is the only construction denominator for this page. Components/fields/visual IDs are not counted as additional controls.
+      Existing source UIDs are preserved. A control classified UI_LOCAL_EXACT MUST NOT create a server write. A control classified SPEC_EXACT_RUNTIME_BLOCKED / NOT_EXECUTED
+      MUST remain disabled or fail-closed until its runtime evidence exists.
+  - index: 87
+    style: Heading 1
+    text: Batch 17 · KB Local Tab Applicability Ledger
+  - index: 88
+    style: Normal
+    text: '[ACPOS-20260921-BATCH-17-REMAINING-DEFINITION-CLOSURE-V1::PAGE::KB-01] Action and Gate remain ''—'' for the exact five local tabs. knowledge.read remains
+      the read access boundary; no execution endpoint or transition gate is synthesized.'
+  - index: 90
+    style: Heading 2
+    text: Canonical Business Entity Operation Applicability Matrix / 業務實體操作適用性矩陣
+  - index: 91
+    style: Normal
+    text: 'Authority: Current Word design + Mother §71 bounded completion. 本矩陣只正規化既有行為與目前未授權行為；不得據此新增 Business Entity、Operation、Runtime 或 API。 Current tree: b2f81b20322dd9e9268001126b07931b437e27df.'
+  - index: 93
+    style: Heading 1
+    text: Mother Planning / Basic Design Closure Annex｜規劃設計規範閉環補充
+  - index: 94
+    style: Normal
+    text: '[ACPOS-20260922-PLANNING-DESIGN-CLOSURE-ANNEX-V1] 本附錄只補規劃／基本設計規範缺口；原頁面既有功能、Owner、Operation、Permission、Entity、Visual 與跨頁 Authority 仍為同一 Canonical Owner。不得由本附錄發明
+      Runtime/API/DB/Provider 行為，也不得建立第二套平行規範。'
+  - index: 95
+    style: Heading 2
+    text: Design System / Layout Closure｜設計系統與版面補齊
+  - index: 96
+    style: Normal
+    text: '[ACPOS-DESIGN-CLOSURE:KB-01:DESIGN-SYSTEM]'
+  - index: 97
+    style: Heading 2
+    text: Visual Geometry Contract Closure｜視覺幾何補齊
+  - index: 98
+    style: Normal
+    text: '[ACPOS-DESIGN-CLOSURE:KB-01:GEOMETRY]'
+  - index: 99
+    style: Heading 2
+    text: Visual Anchor / Preview / Review Contract｜視覺錨點與預覽審查補齊
+  - index: 100
+    style: Normal
+    text: '[ACPOS-DESIGN-CLOSURE:KB-01:VISUAL]'
+  - index: 101
+    style: Heading 2
+    text: Visual Generation / Review Planning Contract
+  - index: 102
+    style: Normal
+    text: '[ACPOS-DESIGN-CLOSURE:KB-01:VISUAL-CONTRACT]'
+  - index: 103
+    style: Heading 2
+    text: Asset Registry / Binding Applicability Closure｜素材註冊與綁定補齊
+  - index: 104
+    style: Normal
+    text: '[ACPOS-DESIGN-CLOSURE:KB-01:ASSET]'
+  - index: 105
+    style: Heading 2
+    text: Design Freeze Package Closure｜設計封板包補齊
+  - index: 106
+    style: Normal
+    text: '[ACPOS-DESIGN-CLOSURE:KB-01:FREEZE]'
+  - index: 108
+    style: Heading 1
+    text: KB-01 Persistence Owner Closure｜知識與經驗持久化 Owner 收斂
+  - index: 109
+    style: Normal
+    text: '[ACPOS-KB-PERSISTENCE-OWNER-CLOSURE-V1] This annex closes the 14 KB-01 mutation Persistence Owner gaps from the existing Entity/Canonical Owner table,
+      lifecycle matrix, relationship contract and Action Group/Owner table. It introduces no second Knowledge, Context, Learning or Acquisition owner.'
+  - index: 110
+    style: Heading 2
+    text: Shared Invariants / 共用不變式
+  tables:
+  - index: 0
+    rows:
+    - row: 0
+      cells:
+      - 頁面定位｜單一後台 Knowledge & Experience Governance 工作區。管理 Knowledge Source、Acquisition、Search/Citation、Context Candidate、Experience Replay、Learning Candidate 與 Knowledge
+        Review；不複製 INFO、Strategy、Provider、QA 或 Canon/Blueprint 的責任。
+  - index: 1
+    rows:
+    - row: 0
+      cells:
+      - 頁面身份
+      - 施工定義
+    - row: 1
+      cells:
+      - Page UID
+      - admin:KB-01
+    - row: 2
+      cells:
+      - Current Route
+      - /admin/knowledge
+    - row: 3
+      cells:
+      - Surface / Model
+      - ADMIN / Single-page 5-view
+    - row: 4
+      cells:
+      - Primary Owners
+      - FactPackService + KnowledgeExperienceService；共享 ACPOS Context / Experience / Evolution engines
+    - row: 5
+      cells:
+      - Runtime Boundary
+      - 蒐集使用既有 ACPOS Shared External Data Acquisition Runtime；頁面不建立第二套 crawler
+    - row: 6
+      cells:
+      - Data Truth
+      - Real data only；缺值 = —；Conversation 不等於 Approved Knowledge
+    - row: 7
+      cells:
+      - Current Runtime Truth
+      - 設計規格可施工；Application / API / DB / crawler / E2E / deploy 必須由後續實測證據成立
+  - index: 2
+    rows:
+    - row: 0
+      cells:
+      - 不可跨越的責任｜KB-01 不寫 Canon/Blueprint、不做正式 Strategy Decision、不提供 Provider Picker、不做 Media QA、不建立第二套 Context / Experience / Learning Event / Crawler。未知功能一律 BLOCK
+        + REPORT_AUTHORITY_GAP。
+  - index: 3
+    rows:
+    - row: 0
+      cells:
+      - 實體
+      - 責任
+      - Canonical Owner
+    - row: 1
+      cells:
+      - KnowledgeSource
+      - 來源身份、Scope、Rights、Classification、Collection、Freshness、Retention、Status
+      - KnowledgeExperienceService
+    - row: 2
+      cells:
+      - KnowledgeAcquisitionIntent
+      - Entity Role=VALUE_OBJECT；頁面提交 source_ref / scope / acquisition_mode / correlation_id / idempotency_key；Acquisition Run 為獨立 Business Entity。
+      - Shared Acquisition Runtime
+    - row: 3
+      cells:
+      - KnowledgeSearchResult
+      - Approved/traceable Knowledge、Fact、Evidence 的授權搜尋投影
+      - FactPack + KnowledgeExperience
+    - row: 4
+      cells:
+      - KnowledgeCitation
+      - Source/Location/Time/Version/Checksum/Classification/Evidence
+      - FactPack + KnowledgeExperience
+    - row: 5
+      cells:
+      - ACPOSContextCandidate
+      - 從選取的 Knowledge/Fact/Evidence 建立受治理 Context Candidate
+      - ACPOSContextEngine
+    - row: 6
+      cells:
+      - ACPOSExperienceRecord / Replay
+      - 真實執行 Input→Route→Output→Evaluation→Correction→Outcome 可重播鏈
+      - ACPOSExperienceEngine
+    - row: 7
+      cells:
+      - ACPOSLearningCandidate
+      - 基於完整 Outcome / Root Cause / Pattern 的治理候選
+      - ACPOSEvolutionEngine
+    - row: 8
+      cells:
+      - KnowledgeVersion / Review
+      - Draft、Version Diff、Mandatory Check、Approve/Return/Reject、Supersession
+      - KnowledgeExperienceService
+  - index: 4
+    rows:
+    - row: 0
+      cells:
+      - Entity
+      - Discover/Open
+      - Create
+      - Edit
+      - Lifecycle
+      - Archive/Retire
+      - Evidence
+      - Applicability
+    - row: 1
+      cells:
+      - KnowledgeSource
+      - List/Open
+      - CREATE
+      - EDIT/SAVE
+      - PAUSE/RESUME
+      - RETIRE
+      - AUDIT
+      - REQUIRED
+    - row: 2
+      cells:
+      - Acquisition Run
+      - List/Open
+      - START
+      - N/A
+      - RETRY eligible only
+      - N/A
+      - AUDIT
+      - REQUIRED
+    - row: 3
+      cells:
+      - Search Result / Citation
+      - DISCOVER/OPEN
+      - N/A
+      - N/A
+      - N/A
+      - N/A
+      - TRACE
+      - REQUIRED
+    - row: 4
+      cells:
+      - Context Candidate
+      - Basket/View
+      - CREATE
+      - Local draft add/remove
+      - Consumer-domain adopt
+      - RETIRE by owner
+      - AUDIT
+      - REQUIRED
+    - row: 5
+      cells:
+      - Experience / Replay
+      - DISCOVER/OPEN
+      - System capture only
+      - COMPARE
+      - N/A
+      - N/A
+      - TRACE
+      - REQUIRED
+    - row: 6
+      cells:
+      - Learning Candidate
+      - OPEN
+      - CREATE
+      - Draft by registered schema
+      - Governance adoption outside KB
+      - SUPERSEDE by owner
+      - AUDIT
+      - REQUIRED
+    - row: 7
+      cells:
+      - KnowledgeVersion
+      - Queue/Open
+      - From Experience
+      - SAVE DRAFT
+      - APPROVE/RETURN/REJECT
+      - SUPERSEDE/RETIRE
+      - AUDIT
+      - REQUIRED
+  - index: 5
+    rows:
+    - row: 0
+      cells:
+      - Bounded Completion｜只補足上述可由 Current Intent + Owner + State + Evidence 推導出的最小閉環；不因畫面對稱而增加 Generic CRUD、批次 Publish、人工 Experience 建立、Provider 選擇或自動 Knowledge
+        Approval。
+  - index: 6
+    rows:
+    - row: 0
+      cells:
+      - Source Context
+      - Derived Object / Relation
+      - 強制關係
+    - row: 1
+      cells:
+      - KnowledgeSource
+      - Acquisition Intent / Run
+      - Exact source_ref + scope + rights/classification + version
+    - row: 2
+      cells:
+      - Acquisition Run
+      - Snapshot / Normalized Refs / Citation
+      - Immutable snapshot；canonical URL + content hash dedupe；Evidence 可追溯
+    - row: 3
+      cells:
+      - Knowledge / Fact / Evidence
+      - ACPOSContextCandidate
+      - selected_refs + evidence_refs + context_fingerprint；建立後交由 Consumer Domain 採用
+    - row: 4
+      cells:
+      - Real Execution
+      - ACPOSExperienceRecord
+      - 只來自真實執行；含 route/attempt/evaluation/QA/correction/outcome lineage
+    - row: 5
+      cells:
+      - Experience Record
+      - Replay / Learning Candidate
+      - Outcome 完整 + lineage 可解析才可建立 Learning Candidate
+    - row: 6
+      cells:
+      - Learning / Experience
+      - Knowledge Draft
+      - Draft 綁定 exact experience/evidence refs；不覆蓋既有 Approved Version
+    - row: 7
+      cells:
+      - Knowledge Draft
+      - Approved Knowledge Version
+      - Human Review + mandatory checks + citation/outcome + conflict resolution + expected_version
+  - index: 7
+    rows:
+    - row: 0
+      cells:
+      - Parent Identity
+      - Child Identity
+      - Cardinality
+      - Creation Entry
+      - Payload / Reference Binding
+      - Ordering Semantics
+      - Permission
+      - State Dependency
+      - Version Dependency
+      - Move / Reparent
+      - Archive / Delete Propagation
+      - Upstream Change Impact
+      - Downstream Revalidation
+      - Authority Evidence
+    - row: 1
+      cells:
+      - KnowledgeSource
+      - Acquisition Run
+      - 1:N
+      - Submit KnowledgeAcquisitionIntent value object to Shared Acquisition Runtime; create/retry governed Acquisition Run.
+      - source_ref + scope + acquisition_mode + correlation_id + idempotency_key; Runtime owns fetch/retry/snapshot/dedupe.
+      - Run creation/attempt sequence; manual REORDER is NOT_APPLICABLE.
+      - knowledge.source.read + knowledge.ingestion.execute + authorized scope/rights/classification; fail closed.
+      - KnowledgeSource must be current and allowed by rights/classification/state; retired source cannot silently restart.
+      - Exact source_ref/source version + run identity/checkpoint; historical run evidence remains immutable.
+      - NOT_APPLICABLE — Run stays bound to its source_ref.
+      - NO_CASCADE — retiring Source does not delete immutable Run/Snapshot/Evidence history.
+      - Source scope/rights/classification/version change invalidates future-run assumptions and affected unresolved consumers.
+      - Fresh run/consumer verification required where source authority materially changes; historical evidence is preserved.
+      - KB-01 Tables 5,7,11,13,15,17-20; CreateKnowledgeAcquisitionIntentRequest; Mother §71.
+    - row: 2
+      cells:
+      - Experience / Replay
+      - Learning Candidate
+      - N:M via experience_refs
+      - Create Learning Candidate only from real execution with OUTCOME_COMPLETE and resolvable lineage.
+      - experience_refs + scope + pattern + proposed_improvement + evidence_refs + limitations + correlation/idempotency
+      - No user-managed sibling order; REORDER is NOT_APPLICABLE.
+      - knowledge.experience.read + knowledge.learning.create; exact scope/evidence gate; fail closed.
+      - Experience outcome must be complete; missing real outcome forbids learning creation.
+      - Exact experience/evidence refs and lineage; supersession preserves prior evidence.
+      - NOT_APPLICABLE — candidate references exact Experience records; no reparent operation is authorized.
+      - NO_CASCADE — Experience remains immutable; Learning Candidate may be superseded/rejected by its owner.
+      - Material evidence/outcome correction requires candidate impact review and invalidates unsupported assumptions.
+      - Affected Learning Candidate review/adoption evidence becomes REVERIFY_REQUIRED before downstream governance use.
+      - KB-01 Tables 5,7,11,13,15,17-20; CreateACPOSLearningCandidateRequest; Mother §71.
+    - row: 3
+      cells:
+      - Experience / Replay
+      - KnowledgeVersion
+      - N:M evidence lineage
+      - Create Knowledge Draft/Version from Experience, then save draft and enter mandatory Human Review.
+      - exact experience/evidence refs + knowledge_id + expected_version + title/type/scope/classification + citations/outcomes
+      - Version sequence is governed; manual REORDER is NOT_APPLICABLE.
+      - knowledge.experience.read + knowledge draft/review permissions + mandatory review gates; fail closed.
+      - Real Experience/outcome evidence must resolve; KnowledgeVersion follows DRAFT→REVIEW→APPROVED/RETURNED/REJECTED→SUPERSEDED/RETIRED.
+      - expected_version + exact prior approved version + evidence/citation refs; Approved version is immutable.
+      - NOT_APPLICABLE — new version supersedes exact prior; reparent is not an authorized operation.
+      - NO_CASCADE — supersession/retirement preserves prior approved version and evidence lineage.
+      - Changed experience/citation/outcome before approval requires diff/impact review; approved immutable versions are not overwritten.
+      - Mandatory checks + Human Review rerun for impacted Draft/Review candidate before approval.
+      - KB-01 Tables 5,7,11,13,15,17-20; SaveKnowledgeDraftRequest + Knowledge APPROVE gate; Mother §71.
+  - index: 8
+    rows:
+    - row: 0
+      cells:
+      - View
+      - Sections
+      - 工作責任
+    - row: 1
+      cells:
+      - Knowledge Overview
+      - S02 + S16
+      - 治理摘要、Warnings、5 類真實 KPI/狀態投影；只搜尋，不做隱含 mutation
+    - row: 2
+      cells:
+      - 來源與蒐集
+      - S03–S05 + S16
+      - Source Directory / Source Governance / Acquisition Intent / Ingestion Queue；24/50/26
+    - row: 3
+      cells:
+      - 搜尋 / Citation / Context
+      - S06–S08 + S16
+      - Search Result → Citation/Evidence → Context Basket → Context Candidate；34/44/22
+    - row: 4
+      cells:
+      - Experience / Replay
+      - S09–S11 + S16
+      - Experience Directory → Replay → Root Cause / Learning；24/54/22
+    - row: 5
+      cells:
+      - Knowledge Review
+      - S12–S15 + S16
+      - Review Queue → Draft/Evidence → Version Diff → Decision Rail；23/55/22
+  - index: 9
+    rows:
+    - row: 0
+      cells:
+      - Interaction Topology｜五個 View 全部在 admin:KB-01 同一頁內切換；View switch 僅改 UI Context，不重置已選 Source / Draft / Experience 或未提交表單，也不得另開平行 Knowledge 子頁。
+  - index: 10
+    rows:
+    - row: 0
+      cells:
+      - 項目
+      - 施工值 / 規則
+    - row: 1
+      cells:
+      - Desktop minimum
+      - 1280px；低於最小寬度保留同一頁語義，不建立第二套 mobile workflow
+    - row: 2
+      cells:
+      - Context Bar
+      - 56px
+    - row: 3
+      cells:
+      - View Tabs
+      - 52px
+    - row: 4
+      cells:
+      - Section Gap / Padding
+      - 16px / 16px
+    - row: 5
+      cells:
+      - Control Height
+      - 40px；Touch Target ≥ 44×44px
+    - row: 6
+      cells:
+      - Panel Radius
+      - 12px
+    - row: 7
+      cells:
+      - Detail Drawer
+      - 500–560px；read detail 用 Drawer，effectful action 用 Modal
+    - row: 8
+      cells:
+      - Data table
+      - Sticky/fixed header；Long value = Ellipsis + Drawer；禁止 hidden row click action
+    - row: 9
+      cells:
+      - Visual style
+      - Global dark tech-purple；頁面不得自建第二套 palette/button theme
+    - row: 10
+      cells:
+      - Missing / Loading
+      - — / 保留 geometry skeleton；不得產生假 KPI 或 sample knowledge data
+  - index: 11
+    rows:
+    - row: 0
+      cells:
+      - 候選功能
+      - Admission
+      - 理由 / Owner
+      - 施工處置
+    - row: 1
+      cells:
+      - Source create/update/pause/resume/retire
+      - ADMIT
+      - 有明確 owner / schema / permission / state machine
+      - 正式控制 + Gate
+    - row: 2
+      cells:
+      - Ingestion start/retry
+      - ADMIT
+      - Shared Acquisition Runtime owns fetch/retry/evidence
+      - 正式控制；頁面只提交 intent
+    - row: 3
+      cells:
+      - Context Candidate adopt
+      - DO NOT AUTO-COMPLETE
+      - Consumer-domain governance owns adoption
+      - KB 只建立 READY_FOR_CONSUMER_REVIEW
+    - row: 4
+      cells:
+      - Experience manual create/edit
+      - REJECT
+      - Experience 必須來自 real execution
+      - 禁止人工造 Experience
+    - row: 5
+      cells:
+      - Learning Candidate auto-apply to Canon/Criteria/Policy
+      - REJECT
+      - Governance owners 不同
+      - 只建立 Candidate
+    - row: 6
+      cells:
+      - Knowledge auto-approve from AI/chat
+      - REJECT
+      - Human Review + Evidence mandatory
+      - 必須進 Review
+    - row: 7
+      cells:
+      - Raw secret field
+      - REJECT
+      - Secret boundary
+      - 只允許 secret_reference_id / connector binding
+    - row: 8
+      cells:
+      - Parallel crawler / INFO search database
+      - REJECT
+      - Second-system / duplication
+      - 重用 shared runtime / existing projections
+  - index: 12
+    rows:
+    - row: 0
+      cells:
+      - Truthful State｜Request accepted ≠ Knowledge approved；Acquisition completed ≠ Evidence valid；Experience captured ≠ Outcome complete；Learning Candidate created
+        ≠ Canon/Criteria/Policy changed。
+  - index: 13
+    rows:
+    - row: 0
+      cells:
+      - Action Group
+      - Operations
+      - Effect
+      - Owner
+    - row: 1
+      cells:
+      - Search / Citation
+      - searchKnowledge; getCitation
+      - READ
+      - FactPack + KnowledgeExperience
+    - row: 2
+      cells:
+      - Source
+      - create / update / pause / resume / retire KnowledgeSource
+      - CREATE/UPDATE/STATE
+      - KnowledgeExperienceService
+    - row: 3
+      cells:
+      - Acquisition
+      - createAcquisitionJob; retryAcquisitionJob
+      - CREATE_JOB/RETRY
+      - Shared Acquisition Runtime
+    - row: 4
+      cells:
+      - Context
+      - add/remove local draft item; createContextCandidate
+      - LOCAL + CREATE
+      - Page UI State + ACPOSContextEngine
+    - row: 5
+      cells:
+      - Experience
+      - getExperienceReplay; compareExperienceReplay
+      - READ / READ_COMPARE
+      - ACPOSExperienceEngine
+    - row: 6
+      cells:
+      - Learning
+      - createLearningCandidate
+      - CREATE
+      - ACPOSEvolutionEngine
+    - row: 7
+      cells:
+      - Knowledge Draft
+      - create from experience; save draft; compare versions
+      - CREATE/UPDATE/COMPARE
+      - KnowledgeExperienceService
+    - row: 8
+      cells:
+      - Review
+      - approve / return / reject Knowledge Draft
+      - APPROVE/REVIEW_DECISION
+      - KnowledgeExperienceService
+  - index: 14
+    rows:
+    - row: 0
+      cells:
+      - Runtime Gate｜文件定義正式 Operation Contract，但 Application/API/DB/Crawler/E2E/Deploy 目前不得由設計文件推定完成。施工若找不到 exact operation + authorization + persistence/runtime
+        binding，該控制必須 Disabled/BLOCK，不得假成功。
+  - index: 15
+    rows:
+    - row: 0
+      cells:
+      - Schema
+      - Required
+      - Optional / System
+      - Forbidden / Block
+    - row: 1
+      cells:
+      - CreateKnowledgeSourceRequest
+      - name, source_type, scope, rights, classification, collection_method, freshness_policy, retention_policy, correlation_id, idempotency_key
+      - collection_config, secret_reference_id
+      - raw_secret / credential_plaintext
+    - row: 2
+      cells:
+      - UpdateKnowledgeSourceRequest
+      - source_id, expected_version, correlation_id, idempotency_key
+      - 同上可 patch 欄位
+      - status direct write / raw secret
+    - row: 3
+      cells:
+      - SourceStateChangeRequest
+      - source_id, expected_version, reason, correlation_id, idempotency_key
+      - —
+      - 隱式 state write
+    - row: 4
+      cells:
+      - CreateKnowledgeAcquisitionIntentRequest
+      - source_ref, scope, acquisition_mode, correlation_id, idempotency_key
+      - seed/domain/path/depth/pages/sitemap/js/content/language/schedule/recrawl/rate profile
+      - robots/rights/credential/retry/snapshot/dedupe 由 Runtime 擁有
+    - row: 5
+      cells:
+      - KBSearchRequest
+      - query, scope
+      - classification, freshness, type, review state, source, date, cursor/page_size
+      - 越權 scope
+    - row: 6
+      cells:
+      - CreateACPOSContextCandidateRequest
+      - purpose, scope, selected_refs, evidence_refs, correlation_id, idempotency_key
+      - system binds account_scope/page_uid/context_fingerprint
+      - 缺 Citation / unresolved conflict
+    - row: 7
+      cells:
+      - CreateACPOSLearningCandidateRequest
+      - experience_refs, scope, pattern, proposed_improvement, evidence_refs, limitations, correlation/idempotency
+      - —
+      - Outcome pending
+    - row: 8
+      cells:
+      - SaveKnowledgeDraftRequest
+      - knowledge_id, expected_version, title, type, scope, classification, correlation/idempotency
+      - summary, content, citations, outcomes, experiences
+      - 覆寫 approved version
+    - row: 9
+      cells:
+      - ReviewKnowledgeDraftRequest
+      - knowledge_id, expected_version, review_rationale, decision, mandatory_check_results, correlation/idempotency
+      - decision = APPROVE/RETURN/REJECT
+      - 無 rationale / checks / evidence
+  - index: 16
+    rows:
+    - row: 0
+      cells:
+      - 類別
+      - Control Count
+      - 主要顯示規則
+    - row: 1
+      cells:
+      - View / Read
+      - '8'
+      - Authorized 才可見；View switch 不改 Business State
+    - row: 2
+      cells:
+      - Source / Acquisition
+      - '7'
+      - Source selected/status/rights/version 決定 enabled；Denied 隱藏，State blocked 顯示 disabled reason
+    - row: 3
+      cells:
+      - Context
+      - '3'
+      - Result selected + traceable evidence；Local basket 不產生 Authority
+    - row: 4
+      cells:
+      - Experience / Learning
+      - '4'
+      - Outcome / comparable refs / lineage 決定可用性
+    - row: 5
+      cells:
+      - Knowledge Review
+      - '5'
+      - Draft editable / Review state / previous version / mandatory checks 決定操作
+  - index: 17
+    rows:
+    - row: 0
+      cells:
+      - Permission
+      - 用途
+    - row: 1
+      cells:
+      - knowledge.read
+      - 頁面/搜尋/知識讀取
+    - row: 2
+      cells:
+      - knowledge.source.read
+      - 來源讀取
+    - row: 3
+      cells:
+      - knowledge.source.configure
+      - 來源設定與生命週期
+    - row: 4
+      cells:
+      - knowledge.ingestion.read
+      - 蒐集 Run 讀取
+    - row: 5
+      cells:
+      - knowledge.ingestion.execute
+      - 啟動/重試蒐集
+    - row: 6
+      cells:
+      - knowledge.context.create
+      - Context Basket / Candidate
+    - row: 7
+      cells:
+      - knowledge.experience.read
+      - Experience / Replay
+    - row: 8
+      cells:
+      - knowledge.learning.create
+      - Learning Candidate
+    - row: 9
+      cells:
+      - knowledge.draft.write
+      - Knowledge Draft
+    - row: 10
+      cells:
+      - knowledge.review.approve
+      - Review Decision
+  - index: 18
+    rows:
+    - row: 0
+      cells:
+      - Gate
+      - Minimum Condition
+    - row: 1
+      cells:
+      - READ
+      - knowledge.read + authorized scope + classification mask
+    - row: 2
+      cells:
+      - SOURCE SAVE
+      - source draft + rights/classification + expected_version
+    - row: 3
+      cells:
+      - PAUSE/RESUME/RETIRE
+      - exact source state + expected_version + active-run constraints
+    - row: 4
+      cells:
+      - INGEST START
+      - ACTIVE source + rights/config + no prohibited duplicate run + connector available
+    - row: 5
+      cells:
+      - INGEST RETRY
+      - FAILED + retry_eligible + policy allows
+    - row: 6
+      cells:
+      - CONTEXT CREATE
+      - selected refs + purpose + scope + traceable factual evidence + no version conflict
+    - row: 7
+      cells:
+      - LEARNING CREATE
+      - OUTCOME_COMPLETE + root cause/pattern evidence
+    - row: 8
+      cells:
+      - DRAFT SAVE
+      - required fields + expected_version + valid classification
+    - row: 9
+      cells:
+      - KNOWLEDGE REVIEW
+      - REVIEW + rationale
+    - row: 10
+      cells:
+      - KNOWLEDGE APPROVE
+      - mandatory checks + fact citation/outcome + conflict resolved + prior version preserved + expected_version
+  - index: 19
+    rows:
+    - row: 0
+      cells:
+      - Object
+      - Lifecycle
+      - Hard Rule
+    - row: 1
+      cells:
+      - KnowledgeSource
+      - DRAFT → ACTIVE ↔ PAUSED → RETIRED
+      - Retired 不得被隱式復活；state change 需 exact version
+    - row: 2
+      cells:
+      - IngestionRun
+      - PENDING → RUNNING → NORMALIZING → COMPLETED / FAILED → RETRY_ELIGIBLE → PENDING
+      - Retry 只針對 policy 允許的 failure
+    - row: 3
+      cells:
+      - ContextCandidate
+      - DRAFT → READY_FOR_CONSUMER_REVIEW → ADOPTED / REJECTED / RETIRED
+      - ADOPT/REJECT 屬 Consumer Domain Governance
+    - row: 4
+      cells:
+      - ExperienceRecord
+      - CAPTURED → OUTCOME_PENDING → OUTCOME_COMPLETE → REPLAY_READY
+      - 沒有真實 outcome 不建立 learning
+    - row: 5
+      cells:
+      - LearningCandidate
+      - DRAFT → REVIEW → ADOPTED / REJECTED / SUPERSEDED
+      - 不得自動修改 Canon/Criteria/Permission/RoutePolicy
+    - row: 6
+      cells:
+      - KnowledgeVersion
+      - DRAFT → REVIEW → APPROVED / RETURNED / REJECTED → SUPERSEDED / RETIRED
+      - Approved version immutable；新版本 supersede exact prior
+  - index: 20
+    rows:
+    - row: 0
+      cells:
+      - Error
+      - Recovery
+    - row: 1
+      cells:
+      - KB_PERMISSION_DENIED
+      - 隱藏受保護內容/操作；Server 仍拒絕直接呼叫
+    - row: 2
+      cells:
+      - KB_SCOPE_INVALID
+      - 修正 Scope；不得自動擴權
+    - row: 3
+      cells:
+      - KB_VERSION_CONFLICT
+      - 重新載入 exact version + review diff；禁止 force overwrite
+    - row: 4
+      cells:
+      - KB_SOURCE_RIGHTS_INVALID
+      - 修正 Rights / Classification / Source Governance
+    - row: 5
+      cells:
+      - KB_DUPLICATE_ACTIVE_RUN
+      - 開啟既有 Run；不得建立第二個衝突 Job
+    - row: 6
+      cells:
+      - KB_INGESTION_NOT_RETRYABLE
+      - 開啟 Failure Detail，先處理根因
+    - row: 7
+      cells:
+      - KB_CITATION_REQUIRED
+      - 加入有效 Citation 或把 Fact 重分類
+    - row: 8
+      cells:
+      - KB_CONTEXT_CONFLICT
+      - 先解版本/來源衝突再 Create
+    - row: 9
+      cells:
+      - KB_OUTCOME_PENDING
+      - 等待真實 Outcome，不可補假結果
+    - row: 10
+      cells:
+      - KB_LINEAGE_INCOMPLETE
+      - 補齊 Source/Route/Attempt/Eval/Outcome exact lineage
+    - row: 11
+      cells:
+      - KB_REVIEW_CHECK_INCOMPLETE
+      - 完成 Mandatory Checklist
+    - row: 12
+      cells:
+      - KB_AUTHORITY_CONFLICT
+      - 與 Current Truth/Authority 衝突時停止並人工處理
+    - row: 13
+      cells:
+      - KB_RAW_SECRET_FORBIDDEN
+      - 改用 Secret Reference / registered connector
+    - row: 14
+      cells:
+      - KB_UNSUPPORTED_OPERATION
+      - BLOCK + REPORT_AUTHORITY_GAP
+  - index: 21
+    rows:
+    - row: 0
+      cells:
+      - 階段
+      - 允許的資料語義
+      - 不可誤認
+    - row: 1
+      cells:
+      - Raw Acquisition
+      - 外部/內部原始資料與 immutable snapshot
+      - 不是 Fact、不是 Approved Knowledge
+    - row: 2
+      cells:
+      - Normalized Evidence
+      - 已正規化且有 Source/Time/Version/Checksum
+      - 不是自動批准的 Knowledge
+    - row: 3
+      cells:
+      - Search Result
+      - 授權投影，可為 Knowledge / Fact / Evidence
+      - 搜尋命中 ≠ Current Truth
+    - row: 4
+      cells:
+      - Context Candidate
+      - 受治理 Context 組合，等待 Consumer Review
+      - Candidate ≠ Adopted Context
+    - row: 5
+      cells:
+      - Experience
+      - 真實執行紀錄 + Outcome
+      - 對話紀錄 ≠ Experience
+    - row: 6
+      cells:
+      - Learning Candidate
+      - 從 Outcome / Root Cause 推導的治理候選
+      - Candidate ≠ Canon/Policy Change
+    - row: 7
+      cells:
+      - Knowledge Draft
+      - 可編輯、待審核版本
+      - Draft ≠ Approved
+    - row: 8
+      cells:
+      - Approved Knowledge
+      - Human-reviewed immutable version
+      - 仍受 Scope / Permission / Current Truth 限制
+  - index: 22
+    rows:
+    - row: 0
+      cells:
+      - Formalization Lock｜任何 factual claim 進入 Approved Knowledge 前必須具有可追溯 Citation/Source 或 validated governed outcome；Inference 必須標明為 inference，不得因 AI 生成或多人討論而自動升格。
+  - index: 23
+    rows:
+    - row: 0
+      cells:
+      - Allowed Mode
+      - 用途
+    - row: 1
+      cells:
+      - WEB_CRAWL
+      - 受控網站爬取
+    - row: 2
+      cells:
+      - WEB_FETCH
+      - 單頁/資源抓取
+    - row: 3
+      cells:
+      - SEARCH_DISCOVERY
+      - 搜尋發現
+    - row: 4
+      cells:
+      - SITEMAP_DISCOVERY
+      - Sitemap discovery
+    - row: 5
+      cells:
+      - RSS_ATOM_INGEST
+      - Feed ingestion
+    - row: 6
+      cells:
+      - STRUCTURED_HTTP_JSON_FETCH
+      - 結構化 JSON fetch
+    - row: 7
+      cells:
+      - DOCUMENT_FETCH
+      - 文件取得
+    - row: 8
+      cells:
+      - OPTIONAL_JS_RENDER_WHEN_REGISTERED
+      - 註冊後才允許 JS render
+    - row: 9
+      cells:
+      - SCHEDULED_RECRAWL
+      - 治理後定期重抓
+  - index: 24
+    rows:
+    - row: 0
+      cells:
+      - 面向
+      - 規格
+    - row: 1
+      cells:
+      - Locales
+      - zh-TW / zh-CN / en；ACPOS / AI / API / QA / Provider / Experience / Citation 可保留固定英文術語
+    - row: 2
+      cells:
+      - Keyboard
+      - 所有 Tabs / Table actions / Drawer / Modal 可鍵盤操作；Focus visible 且不只依顏色
+    - row: 3
+      cells:
+      - Disabled Reason
+      - Authorized but state-blocked 控制須提供可讀原因；permission denied 則不渲染
+    - row: 4
+      cells:
+      - Drawer / Modal
+      - Focus trap + Escape/close 行為一致；effectful form only when registered
+    - row: 5
+      cells:
+      - Responsive
+      - Desktop-first；同一頁 reflow，不建立 mobile-only 第二頁
+    - row: 6
+      cells:
+      - Tables
+      - 固定欄寬、Cell margin、表頭置中、短欄位水平+垂直置中、Row 禁止跨頁拆列
+    - row: 7
+      cells:
+      - Text capacity
+      - Long value ellipsis + detail drawer；不得讓 UID/hash/URL 壓破容器
+  - index: 25
+    rows:
+    - row: 0
+      cells:
+      - Acceptance
+      - Pass Condition
+    - row: 1
+      cells:
+      - Single Current Page
+      - 只有 admin:KB-01 作為 Knowledge & Experience 後台入口；route /admin/knowledge。
+    - row: 2
+      cells:
+      - Count Integrity
+      - 16 Sections / 22 Components / 127 Field Definitions / 27 Controls / 21 Actions / 17 Gates / 14 Errors 保持可追溯。
+    - row: 3
+      cells:
+      - Effectful Control Binding
+      - 每個 Effectful Control 都具備 exact Action + Gate + Permission + schema/state。
+    - row: 4
+      cells:
+      - Fact Evidence
+      - Fact Approval 必須可追溯 Citation/Source 或 validated governed outcome。
+    - row: 5
+      cells:
+      - Approved Immutability
+      - Approved Knowledge 不可就地覆蓋；新版本只能 supersede exact prior。
+    - row: 6
+      cells:
+      - No Parallel System
+      - 不建立第二套 Context/Experience/Learning/Event/Crawler/INFO/Provider 系統。
+    - row: 7
+      cells:
+      - Truthful State
+      - 不把 pending/candidate/draft 變成 success/adopted/approved。
+    - row: 8
+      cells:
+      - Security
+      - Raw Secret 禁止；Account Permission + Scope + Classification + Version + Idempotency + Audit server-side。
+    - row: 9
+      cells:
+      - Runtime Truth
+      - 設計完成不等於 runtime/E2E/deploy 完成；缺 exact binding 必須 fail closed。
+    - row: 10
+      cells:
+      - Visual Integrity
+      - 無假 KPI/樣本 business data；所有缺值顯示 —。
+    - row: 11
+      cells:
+      - Recovery
+      - Version/rights/citation/outcome/lineage/conflict 錯誤都有明確 Recovery，不使用 silent fallback。
+    - row: 12
+      cells:
+      - Accessibility
+      - Heading hierarchy、table headers、image alt、keyboard focus、disabled reason 全部通過。
+  - index: 26
+    rows:
+    - row: 0
+      cells:
+      - Phase
+      - 施工內容
+      - Gate
+    - row: 1
+      cells:
+      - '1'
+      - Mount admin:KB-01 + /admin/knowledge + account permission / scope projection
+      - Page READ gate
+    - row: 2
+      cells:
+      - '2'
+      - 完成 5 View shell、16 Section、22 Component 與 27 Control 的 deterministic rendering
+      - Control denominator exact
+    - row: 3
+      cells:
+      - '3'
+      - Source / Acquisition：schemas、state machine、Shared Runtime intent binding、failure drawer
+      - Rights + version + duplicate-run gate
+    - row: 4
+      cells:
+      - '4'
+      - Search / Citation / Context：traceable result、Citation、local basket、Context Candidate
+      - Evidence + conflict + classification gate
+    - row: 5
+      cells:
+      - '5'
+      - Experience / Replay / Learning：exact lineage、Outcome completeness、compare、Learning Candidate
+      - Outcome + lineage gate
+    - row: 6
+      cells:
+      - '6'
+      - Knowledge Review：Draft save、Version diff、mandatory check、Approve/Return/Reject
+      - Human review + expected_version gate
+    - row: 7
+      cells:
+      - '7'
+      - Audit / Error / i18n / a11y / regression / sandbox / E2E
+      - All acceptance conditions
+    - row: 8
+      cells:
+      - '8'
+      - Production enablement
+      - 只有 exact operation/runtime/DB/permission/deploy evidence 都成立才可啟用 effectful controls
+  - index: 27
+    rows:
+    - row: 0
+      cells:
+      - 最後施工原則｜先把 Read Projection、Permission、State、Evidence、Version 與 Owner Binding 做對，再打開 effectful controls。任何正式 Operation 若尚未 materialize，按鈕必須保持 disabled / blocked，不用
+        workaround 補假後端。
+  - index: 28
+    rows:
+    - row: 0
+      cells:
+      - Authority
+      - Value
+    - row: 1
+      cells:
+      - Source Commit
+      - 165c6440cb53b1b45ec96905241fb4d56dc3b867
+    - row: 2
+      cells:
+      - Machine Authority
+      - authority/pages/admin/KB-01/ACPOS_KB-01_FINAL_LOCKED_ENCODING.yaml
+    - row: 3
+      cells:
+      - Authority SHA-256
+      - 9fcf647d6cd0232ef8dff09bd8808bad22f1123d60b4d56fd2fc3f4fede276ec
+    - row: 4
+      cells:
+      - Expected Control Denominator
+      - '27'
+    - row: 5
+      cells:
+      - Unique Control Rows
+      - '27'
+    - row: 6
+      cells:
+      - Denominator Gate
+      - PASS
+  - index: 29
+    rows:
+    - row: 0
+      cells:
+      - Control UID
+      - UID Status
+      - Label
+      - Type
+      - Action UID
+      - Gate
+      - Permission / Auth Resource
+      - Payload / Schema
+      - Operation
+      - Method / Path
+      - Runtime Owner
+      - Persistence Owner
+      - Runtime Status
+    - row: 1
+      cells:
+      - KB-01-CTL-VIEW-OVERVIEW
+      - EXISTING_SOURCE_UID
+      - 知識總覽
+      - TAB
+      - —
+      - —
+      - knowledge.read
+      - —
+      - —
+      - —
+      - PAGE_UI_STATE
+      - —
+      - UI_LOCAL_EXACT
+    - row: 2
+      cells:
+      - KB-01-CTL-VIEW-SOURCE
+      - EXISTING_SOURCE_UID
+      - 來源與蒐集
+      - TAB
+      - —
+      - —
+      - knowledge.read
+      - —
+      - —
+      - —
+      - PAGE_UI_STATE
+      - —
+      - UI_LOCAL_EXACT
+    - row: 3
+      cells:
+      - KB-01-CTL-VIEW-SEARCH
+      - EXISTING_SOURCE_UID
+      - 搜尋 / Citation / Context
+      - TAB
+      - —
+      - —
+      - knowledge.read
+      - —
+      - —
+      - —
+      - PAGE_UI_STATE
+      - —
+      - UI_LOCAL_EXACT
+    - row: 4
+      cells:
+      - KB-01-CTL-VIEW-EXPERIENCE
+      - EXISTING_SOURCE_UID
+      - Experience / Replay
+      - TAB
+      - —
+      - —
+      - knowledge.read
+      - —
+      - —
+      - —
+      - PAGE_UI_STATE
+      - —
+      - UI_LOCAL_EXACT
+    - row: 5
+      cells:
+      - KB-01-CTL-VIEW-REVIEW
+      - EXISTING_SOURCE_UID
+      - Knowledge Review
+      - TAB
+      - —
+      - —
+      - knowledge.read
+      - —
+      - —
+      - —
+      - PAGE_UI_STATE
+      - —
+      - UI_LOCAL_EXACT
+    - row: 6
+      cells:
+      - KB-01-CTL-SEARCH-GLOBAL
+      - EXISTING_SOURCE_UID
+      - 搜尋
+      - SEARCH
+      - KB-01-ACT-SEARCH
+      - KB-01-GATE-READ
+      - knowledge.read
+      - KBSearchRequest
+      - searchKnowledge
+      - POST /v1/knowledge/search
+      - FactPackService + KnowledgeExperienceService
+      - —
+      - SPEC_EXACT_RUNTIME_NOT_EXECUTED
+    - row: 7
+      cells:
+      - KB-01-CTL-SOURCE-CREATE
+      - EXISTING_SOURCE_UID
+      - 新增來源
+      - PRIMARY_BUTTON
+      - KB-01-ACT-SOURCE-CREATE
+      - KB-01-GATE-SOURCE-WRITE
+      - knowledge.source.configure
+      - CreateKnowledgeSourceRequest
+      - createKnowledgeSource
+      - POST /v1/knowledge/sources
+      - KnowledgeExperienceService
+      - KnowledgeExperienceService / KnowledgeSource State + Version + Audit
+      - SPEC_EXACT_RUNTIME_NOT_EXECUTED
+    - row: 8
+      cells:
+      - KB-01-CTL-SOURCE-SAVE
+      - EXISTING_SOURCE_UID
+      - 儲存來源設定
+      - PRIMARY_BUTTON
+      - KB-01-ACT-SOURCE-SAVE
+      - KB-01-GATE-SOURCE-SAVE
+      - knowledge.source.configure
+      - UpdateKnowledgeSourceRequest
+      - updateKnowledgeSource
+      - PATCH /v1/knowledge/sources/{sourceId}
+      - KnowledgeExperienceService
+      - KnowledgeExperienceService / KnowledgeSource State + Version + Audit
+      - SPEC_EXACT_RUNTIME_NOT_EXECUTED
+    - row: 9
+      cells:
+      - KB-01-CTL-SOURCE-PAUSE
+      - EXISTING_SOURCE_UID
+      - 暫停
+      - BUTTON
+      - KB-01-ACT-SOURCE-PAUSE
+      - KB-01-GATE-SOURCE-PAUSE
+      - knowledge.source.configure
+      - SourceStateChangeRequest
+      - pauseKnowledgeSource
+      - POST /v1/knowledge/sources/{sourceId}/pause
+      - KnowledgeExperienceService
+      - KnowledgeExperienceService / KnowledgeSource State + Version + Audit
+      - SPEC_EXACT_RUNTIME_NOT_EXECUTED
+    - row: 10
+      cells:
+      - KB-01-CTL-SOURCE-RESUME
+      - EXISTING_SOURCE_UID
+      - 恢復
+      - BUTTON
+      - KB-01-ACT-SOURCE-RESUME
+      - KB-01-GATE-SOURCE-RESUME
+      - knowledge.source.configure
+      - SourceStateChangeRequest
+      - resumeKnowledgeSource
+      - POST /v1/knowledge/sources/{sourceId}/resume
+      - KnowledgeExperienceService
+      - KnowledgeExperienceService / KnowledgeSource State + Version + Audit
+      - SPEC_EXACT_RUNTIME_NOT_EXECUTED
+    - row: 11
+      cells:
+      - KB-01-CTL-SOURCE-RETIRE
+      - EXISTING_SOURCE_UID
+      - 退役
+      - DANGER_BUTTON
+      - KB-01-ACT-SOURCE-RETIRE
+      - KB-01-GATE-SOURCE-RETIRE
+      - knowledge.source.configure
+      - SourceStateChangeRequest
+      - retireKnowledgeSource
+      - POST /v1/knowledge/sources/{sourceId}/retire
+      - KnowledgeExperienceService
+      - KnowledgeExperienceService / KnowledgeSource State + Version + Audit
+      - SPEC_EXACT_RUNTIME_NOT_EXECUTED
+    - row: 12
+      cells:
+      - KB-01-CTL-INGEST-START
+      - EXISTING_SOURCE_UID
+      - 開始蒐集 / Ingest
+      - PRIMARY_BUTTON
+      - KB-01-ACT-INGEST-START
+      - KB-01-GATE-INGEST-START
+      - knowledge.ingestion.execute
+      - CreateKnowledgeAcquisitionIntentRequest
+      - createAcquisitionJob
+      - POST /v1/acpos/acquisition/jobs
+      - ACPOS_SHARED_EXTERNAL_DATA_ACQUISITION_RUNTIME
+      - Shared Acquisition Runtime / Acquisition Run + Snapshot/Evidence + Audit
+      - SPEC_EXACT_RUNTIME_NOT_EXECUTED
+    - row: 13
+      cells:
+      - KB-01-CTL-INGEST-RETRY
+      - EXISTING_SOURCE_UID
+      - 重試
+      - BUTTON
+      - KB-01-ACT-INGEST-RETRY
+      - KB-01-GATE-INGEST-RETRY
+      - knowledge.ingestion.execute
+      - RetryAcquisitionJobRequest
+      - retryAcquisitionJob
+      - POST /v1/acpos/acquisition/jobs/{jobId}/retry
+      - ACPOS_SHARED_EXTERNAL_DATA_ACQUISITION_RUNTIME
+      - Shared Acquisition Runtime / Acquisition Run + Snapshot/Evidence + Audit
+      - SPEC_EXACT_RUNTIME_NOT_EXECUTED
+    - row: 14
+      cells:
+      - KB-01-CTL-SEARCH
+      - EXISTING_SOURCE_UID
+      - 搜尋
+      - PRIMARY_BUTTON
+      - KB-01-ACT-SEARCH
+      - KB-01-GATE-READ
+      - knowledge.read
+      - KBSearchRequest
+      - searchKnowledge
+      - POST /v1/knowledge/search
+      - FactPackService + KnowledgeExperienceService
+      - —
+      - SPEC_EXACT_RUNTIME_NOT_EXECUTED
+    - row: 15
+      cells:
+      - KB-01-CTL-CITATION-OPEN
+      - EXISTING_SOURCE_UID
+      - 查看 Citation
+      - BUTTON
+      - KB-01-ACT-CITATION-OPEN
+      - KB-01-GATE-READ
+      - knowledge.read
+      - —
+      - getCitation
+      - GET /v1/knowledge/citations/{citationId}
+      - FactPackService + KnowledgeExperienceService
+      - —
+      - READ_EXACT
+    - row: 16
+      cells:
+      - KB-01-CTL-CONTEXT-ADD
+      - EXISTING_SOURCE_UID
+      - 加入 Context
+      - BUTTON
+      - KB-01-ACT-CONTEXT-ITEM-ADD
+      - KB-01-GATE-CONTEXT-DRAFT
+      - knowledge.context.create
+      - ContextDraftItem
+      - addContextDraftItem
+      - LOCAL LOCAL
+      - PAGE_UI_STATE
+      - —
+      - UI_LOCAL_EXACT
+    - row: 17
+      cells:
+      - KB-01-CTL-CONTEXT-REMOVE
+      - EXISTING_SOURCE_UID
+      - 移除
+      - BUTTON
+      - KB-01-ACT-CONTEXT-ITEM-REMOVE
+      - KB-01-GATE-CONTEXT-DRAFT
+      - knowledge.context.create
+      - ContextDraftItem
+      - removeContextDraftItem
+      - LOCAL LOCAL
+      - PAGE_UI_STATE
+      - —
+      - UI_LOCAL_EXACT
+    - row: 18
+      cells:
+      - KB-01-CTL-CONTEXT-CREATE
+      - EXISTING_SOURCE_UID
+      - 建立 Context Candidate
+      - PRIMARY_BUTTON
+      - KB-01-ACT-CONTEXT-CANDIDATE-CREATE
+      - KB-01-GATE-CONTEXT-CREATE
+      - knowledge.context.create
+      - CreateACPOSContextCandidateRequest
+      - createContextCandidate
+      - POST /v1/acpos/context-candidates
+      - ACPOSContextEngine
+      - ACPOSContextEngine / ACPOSContextCandidate + Evidence/Audit
+      - SPEC_EXACT_RUNTIME_NOT_EXECUTED
+    - row: 19
+      cells:
+      - KB-01-CTL-REPLAY-OPEN
+      - EXISTING_SOURCE_UID
+      - 查看 Replay
+      - BUTTON
+      - KB-01-ACT-REPLAY-OPEN
+      - KB-01-GATE-EXPERIENCE-READ
+      - knowledge.experience.read
+      - —
+      - getExperienceReplay
+      - GET /v1/acpos/experience/{experienceId}/replay
+      - ACPOSExperienceEngine
+      - —
+      - READ_EXACT
+    - row: 20
+      cells:
+      - KB-01-CTL-REPLAY-COMPARE
+      - EXISTING_SOURCE_UID
+      - 比較 Attempt / Version
+      - BUTTON
+      - KB-01-ACT-REPLAY-COMPARE
+      - KB-01-GATE-REPLAY-COMPARE
+      - knowledge.experience.read
+      - CompareExperienceReplayRequest
+      - compareExperienceReplay
+      - POST /v1/acpos/experience/replay/compare
+      - ACPOSExperienceEngine
+      - —
+      - SPEC_EXACT_RUNTIME_NOT_EXECUTED
+    - row: 21
+      cells:
+      - KB-01-CTL-LEARNING-CREATE
+      - EXISTING_SOURCE_UID
+      - 建立 Learning Candidate
+      - PRIMARY_BUTTON
+      - KB-01-ACT-LEARNING-CREATE
+      - KB-01-GATE-LEARNING-CREATE
+      - knowledge.learning.create
+      - CreateACPOSLearningCandidateRequest
+      - createLearningCandidate
+      - POST /v1/acpos/learning-candidates
+      - ACPOSEvolutionEngine
+      - ACPOSEvolutionEngine / ACPOSLearningCandidate + Evidence/Audit
+      - SPEC_EXACT_RUNTIME_NOT_EXECUTED
+    - row: 22
+      cells:
+      - KB-01-CTL-DRAFT-FROM-EXP
+      - EXISTING_SOURCE_UID
+      - 建立 Knowledge Draft
+      - BUTTON
+      - KB-01-ACT-KNOWLEDGE-DRAFT-FROM-EXPERIENCE
+      - KB-01-GATE-DRAFT-FROM-EXP
+      - knowledge.draft.write
+      - CreateKnowledgeDraftFromExperienceRequest
+      - createKnowledgeDraftFromExperience
+      - POST /v1/knowledge/drafts/from-experience
+      - KnowledgeExperienceService
+      - KnowledgeExperienceService / KnowledgeVersion Draft + Evidence/Citation + Audit
+      - SPEC_EXACT_RUNTIME_NOT_EXECUTED
+    - row: 23
+      cells:
+      - KB-01-CTL-DRAFT-SAVE
+      - EXISTING_SOURCE_UID
+      - 儲存 Draft
+      - PRIMARY_BUTTON
+      - KB-01-ACT-KNOWLEDGE-DRAFT-SAVE
+      - KB-01-GATE-DRAFT-SAVE
+      - knowledge.draft.write
+      - SaveKnowledgeDraftRequest
+      - saveKnowledgeDraft
+      - PATCH /v1/knowledge/drafts/{knowledgeId}
+      - KnowledgeExperienceService
+      - KnowledgeExperienceService / KnowledgeVersion Draft + Evidence/Citation + Audit
+      - SPEC_EXACT_RUNTIME_NOT_EXECUTED
+    - row: 24
+      cells:
+      - KB-01-CTL-VERSION-COMPARE
+      - EXISTING_SOURCE_UID
+      - 比較前版
+      - BUTTON
+      - KB-01-ACT-KNOWLEDGE-VERSION-COMPARE
+      - KB-01-GATE-READ
+      - knowledge.read
+      - CompareKnowledgeVersionsRequest
+      - compareKnowledgeVersions
+      - POST /v1/knowledge/versions/compare
+      - KnowledgeExperienceService
+      - —
+      - SPEC_EXACT_RUNTIME_NOT_EXECUTED
+    - row: 25
+      cells:
+      - KB-01-CTL-APPROVE
+      - EXISTING_SOURCE_UID
+      - 核准
+      - PRIMARY_BUTTON
+      - KB-01-ACT-KNOWLEDGE-APPROVE
+      - KB-01-GATE-KNOWLEDGE-APPROVE
+      - knowledge.review.approve
+      - ReviewKnowledgeDraftRequest
+      - approveKnowledgeDraft
+      - POST /v1/knowledge/drafts/{knowledgeId}/approve
+      - KnowledgeExperienceService
+      - KnowledgeExperienceService / KnowledgeVersion Review State + Approval/Review + Audit
+      - SPEC_EXACT_RUNTIME_NOT_EXECUTED
+    - row: 26
+      cells:
+      - KB-01-CTL-RETURN
+      - EXISTING_SOURCE_UID
+      - 退回修改
+      - BUTTON
+      - KB-01-ACT-KNOWLEDGE-RETURN
+      - KB-01-GATE-KNOWLEDGE-REVIEW
+      - knowledge.review.approve
+      - ReviewKnowledgeDraftRequest
+      - returnKnowledgeDraft
+      - POST /v1/knowledge/drafts/{knowledgeId}/return
+      - KnowledgeExperienceService
+      - KnowledgeExperienceService / KnowledgeVersion Review State + Approval/Review + Audit
+      - SPEC_EXACT_RUNTIME_NOT_EXECUTED
+    - row: 27
+      cells:
+      - KB-01-CTL-REJECT
+      - EXISTING_SOURCE_UID
+      - 拒絕
+      - DANGER_BUTTON
+      - KB-01-ACT-KNOWLEDGE-REJECT
+      - KB-01-GATE-KNOWLEDGE-REVIEW
+      - knowledge.review.approve
+      - ReviewKnowledgeDraftRequest
+      - rejectKnowledgeDraft
+      - POST /v1/knowledge/drafts/{knowledgeId}/reject
+      - KnowledgeExperienceService
+      - KnowledgeExperienceService / KnowledgeVersion Review State + Approval/Review + Audit
+      - SPEC_EXACT_RUNTIME_NOT_EXECUTED
+  - index: 30
+    rows:
+    - row: 0
+      cells:
+      - Finding
+      - Source-grounded status
+    - row: 1
+      cells:
+      - IMPLEMENTATION_EXECUTION_EVIDENCE
+      - '{"status": "application/api/db/crawler/e2e/deploy NOT_EXECUTED"}'
+  - index: 31
+    rows:
+    - row: 0
+      cells:
+      - Target UID
+      - Action
+      - Gate
+      - Permission
+      - Handling
+    - row: 1
+      cells:
+      - KB-01-CTL-VIEW-EXPERIENCE
+      - —
+      - —
+      - knowledge.read
+      - LEGITIMATE_NA_KB_LOCAL_TAB_ACTION_GATE
+    - row: 2
+      cells:
+      - KB-01-CTL-VIEW-OVERVIEW
+      - —
+      - —
+      - knowledge.read
+      - LEGITIMATE_NA_KB_LOCAL_TAB_ACTION_GATE
+    - row: 3
+      cells:
+      - KB-01-CTL-VIEW-REVIEW
+      - —
+      - —
+      - knowledge.read
+      - LEGITIMATE_NA_KB_LOCAL_TAB_ACTION_GATE
+    - row: 4
+      cells:
+      - KB-01-CTL-VIEW-SEARCH
+      - —
+      - —
+      - knowledge.read
+      - LEGITIMATE_NA_KB_LOCAL_TAB_ACTION_GATE
+    - row: 5
+      cells:
+      - KB-01-CTL-VIEW-SOURCE
+      - —
+      - —
+      - knowledge.read
+      - LEGITIMATE_NA_KB_LOCAL_TAB_ACTION_GATE
+  - index: 32
+    rows:
+    - row: 0
+      cells:
+      - Entity
+      - Operation
+      - Applicability
+      - Authority Evidence
+    - row: 1
+      cells:
+      - Acquisition Run
+      - ARCHIVE_OR_DELETE
+      - REQUIRED
+      - Current explicit applicability preserved. T5R3[N/A]
+    - row: 2
+      cells:
+      - Acquisition Run
+      - AUDIT
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 3
+      cells:
+      - Acquisition Run
+      - CATEGORY_OR_GROUP_BIND
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 4
+      cells:
+      - Acquisition Run
+      - CONFIRM_OR_APPROVE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 5
+      cells:
+      - Acquisition Run
+      - CREATE
+      - REQUIRED
+      - Current explicit applicability preserved. T5R3[START]
+    - row: 6
+      cells:
+      - Acquisition Run
+      - CREATION_MODE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 7
+      cells:
+      - Acquisition Run
+      - DEPENDENCY_IMPACT
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 8
+      cells:
+      - Acquisition Run
+      - DISCOVER_OR_LIST
+      - REQUIRED
+      - Current explicit applicability preserved. T5R3[List/Open]
+    - row: 9
+      cells:
+      - Acquisition Run
+      - DRAFT
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 10
+      cells:
+      - Acquisition Run
+      - EDIT
+      - REQUIRED
+      - Current explicit applicability preserved. T5R3[N/A]
+    - row: 11
+      cells:
+      - Acquisition Run
+      - ERROR_RECOVERY
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 12
+      cells:
+      - Acquisition Run
+      - LOCK_OR_UNLOCK
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 13
+      cells:
+      - Acquisition Run
+      - MOVE_OR_REPARENT
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 14
+      cells:
+      - Acquisition Run
+      - NEXT_STEP
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 15
+      cells:
+      - Acquisition Run
+      - PARENT_BIND
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 16
+      cells:
+      - Acquisition Run
+      - REORDER
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 17
+      cells:
+      - Acquisition Run
+      - RESTORE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 18
+      cells:
+      - Acquisition Run
+      - RESUME
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 19
+      cells:
+      - Acquisition Run
+      - REVISE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 20
+      cells:
+      - Acquisition Run
+      - SAVE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 21
+      cells:
+      - Acquisition Run
+      - SELECT_OR_OPEN
+      - REQUIRED
+      - Current explicit applicability preserved. T5R3[List/Open]
+    - row: 22
+      cells:
+      - Acquisition Run
+      - VALIDATE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 23
+      cells:
+      - Acquisition Run
+      - VERSION
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 24
+      cells:
+      - Experience / Replay
+      - ARCHIVE_OR_DELETE
+      - REQUIRED
+      - Current explicit applicability preserved. T5R6[N/A]
+    - row: 25
+      cells:
+      - Experience / Replay
+      - AUDIT
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 26
+      cells:
+      - Experience / Replay
+      - CATEGORY_OR_GROUP_BIND
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 27
+      cells:
+      - Experience / Replay
+      - CONFIRM_OR_APPROVE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 28
+      cells:
+      - Experience / Replay
+      - CREATE
+      - REQUIRED
+      - Current explicit applicability preserved. T5R6[System capture only]
+    - row: 29
+      cells:
+      - Experience / Replay
+      - CREATION_MODE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 30
+      cells:
+      - Experience / Replay
+      - DEPENDENCY_IMPACT
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 31
+      cells:
+      - Experience / Replay
+      - DISCOVER_OR_LIST
+      - REQUIRED
+      - Current explicit applicability preserved. T5R6[DISCOVER/OPEN]
+    - row: 32
+      cells:
+      - Experience / Replay
+      - DRAFT
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 33
+      cells:
+      - Experience / Replay
+      - EDIT
+      - REQUIRED
+      - Current explicit applicability preserved. T5R6[COMPARE]
+    - row: 34
+      cells:
+      - Experience / Replay
+      - ERROR_RECOVERY
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 35
+      cells:
+      - Experience / Replay
+      - LOCK_OR_UNLOCK
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 36
+      cells:
+      - Experience / Replay
+      - MOVE_OR_REPARENT
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 37
+      cells:
+      - Experience / Replay
+      - NEXT_STEP
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 38
+      cells:
+      - Experience / Replay
+      - PARENT_BIND
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 39
+      cells:
+      - Experience / Replay
+      - REORDER
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 40
+      cells:
+      - Experience / Replay
+      - RESTORE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 41
+      cells:
+      - Experience / Replay
+      - RESUME
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 42
+      cells:
+      - Experience / Replay
+      - REVISE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 43
+      cells:
+      - Experience / Replay
+      - SAVE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 44
+      cells:
+      - Experience / Replay
+      - SELECT_OR_OPEN
+      - REQUIRED
+      - Current explicit applicability preserved. T5R6[DISCOVER/OPEN]
+    - row: 45
+      cells:
+      - Experience / Replay
+      - VALIDATE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 46
+      cells:
+      - Experience / Replay
+      - VERSION
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 47
+      cells:
+      - KnowledgeSource
+      - ARCHIVE_OR_DELETE
+      - REQUIRED
+      - Current explicit applicability preserved. T5R2[RETIRE]
+    - row: 48
+      cells:
+      - KnowledgeSource
+      - AUDIT
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 49
+      cells:
+      - KnowledgeSource
+      - CATEGORY_OR_GROUP_BIND
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 50
+      cells:
+      - KnowledgeSource
+      - CONFIRM_OR_APPROVE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 51
+      cells:
+      - KnowledgeSource
+      - CREATE
+      - REQUIRED
+      - Current explicit applicability preserved. T5R2[CREATE]
+    - row: 52
+      cells:
+      - KnowledgeSource
+      - CREATION_MODE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 53
+      cells:
+      - KnowledgeSource
+      - DEPENDENCY_IMPACT
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 54
+      cells:
+      - KnowledgeSource
+      - DISCOVER_OR_LIST
+      - REQUIRED
+      - Current explicit applicability preserved. T5R2[List/Open]
+    - row: 55
+      cells:
+      - KnowledgeSource
+      - DRAFT
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 56
+      cells:
+      - KnowledgeSource
+      - EDIT
+      - REQUIRED
+      - Current explicit applicability preserved. T5R2[EDIT/SAVE]
+    - row: 57
+      cells:
+      - KnowledgeSource
+      - ERROR_RECOVERY
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 58
+      cells:
+      - KnowledgeSource
+      - LOCK_OR_UNLOCK
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 59
+      cells:
+      - KnowledgeSource
+      - MOVE_OR_REPARENT
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 60
+      cells:
+      - KnowledgeSource
+      - NEXT_STEP
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 61
+      cells:
+      - KnowledgeSource
+      - PARENT_BIND
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 62
+      cells:
+      - KnowledgeSource
+      - REORDER
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 63
+      cells:
+      - KnowledgeSource
+      - RESTORE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 64
+      cells:
+      - KnowledgeSource
+      - RESUME
+      - REQUIRED
+      - Current explicit applicability preserved. T5R2[PAUSE/RESUME]
+    - row: 65
+      cells:
+      - KnowledgeSource
+      - REVISE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 66
+      cells:
+      - KnowledgeSource
+      - SAVE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 67
+      cells:
+      - KnowledgeSource
+      - SELECT_OR_OPEN
+      - REQUIRED
+      - Current explicit applicability preserved. T5R2[List/Open]
+    - row: 68
+      cells:
+      - KnowledgeSource
+      - VALIDATE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 69
+      cells:
+      - KnowledgeSource
+      - VERSION
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 70
+      cells:
+      - KnowledgeVersion
+      - ARCHIVE_OR_DELETE
+      - REQUIRED
+      - Current explicit applicability preserved. T5R8[SUPERSEDE/RETIRE]
+    - row: 71
+      cells:
+      - KnowledgeVersion
+      - AUDIT
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 72
+      cells:
+      - KnowledgeVersion
+      - CATEGORY_OR_GROUP_BIND
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 73
+      cells:
+      - KnowledgeVersion
+      - CONFIRM_OR_APPROVE
+      - REQUIRED
+      - Current explicit applicability preserved. T5R8[APPROVE/RETURN/REJECT]
+    - row: 74
+      cells:
+      - KnowledgeVersion
+      - CREATE
+      - REQUIRED
+      - Current explicit applicability preserved. T5R8[From Experience]
+    - row: 75
+      cells:
+      - KnowledgeVersion
+      - CREATION_MODE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 76
+      cells:
+      - KnowledgeVersion
+      - DEPENDENCY_IMPACT
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 77
+      cells:
+      - KnowledgeVersion
+      - DISCOVER_OR_LIST
+      - REQUIRED
+      - Current explicit applicability preserved. T5R8[Queue/Open]
+    - row: 78
+      cells:
+      - KnowledgeVersion
+      - DRAFT
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 79
+      cells:
+      - KnowledgeVersion
+      - EDIT
+      - REQUIRED
+      - Current explicit applicability preserved. T5R8[SAVE DRAFT]
+    - row: 80
+      cells:
+      - KnowledgeVersion
+      - ERROR_RECOVERY
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 81
+      cells:
+      - KnowledgeVersion
+      - LOCK_OR_UNLOCK
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 82
+      cells:
+      - KnowledgeVersion
+      - MOVE_OR_REPARENT
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 83
+      cells:
+      - KnowledgeVersion
+      - NEXT_STEP
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 84
+      cells:
+      - KnowledgeVersion
+      - PARENT_BIND
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 85
+      cells:
+      - KnowledgeVersion
+      - REORDER
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 86
+      cells:
+      - KnowledgeVersion
+      - RESTORE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 87
+      cells:
+      - KnowledgeVersion
+      - RESUME
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 88
+      cells:
+      - KnowledgeVersion
+      - REVISE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 89
+      cells:
+      - KnowledgeVersion
+      - SAVE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 90
+      cells:
+      - KnowledgeVersion
+      - SELECT_OR_OPEN
+      - REQUIRED
+      - Current explicit applicability preserved. T5R8[Queue/Open]
+    - row: 91
+      cells:
+      - KnowledgeVersion
+      - VALIDATE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 92
+      cells:
+      - KnowledgeVersion
+      - VERSION
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 93
+      cells:
+      - Learning Candidate
+      - ARCHIVE_OR_DELETE
+      - REQUIRED
+      - Current explicit applicability preserved. T5R7[SUPERSEDE by owner]
+    - row: 94
+      cells:
+      - Learning Candidate
+      - AUDIT
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 95
+      cells:
+      - Learning Candidate
+      - CATEGORY_OR_GROUP_BIND
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 96
+      cells:
+      - Learning Candidate
+      - CONFIRM_OR_APPROVE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 97
+      cells:
+      - Learning Candidate
+      - CREATE
+      - REQUIRED
+      - Current explicit applicability preserved. T5R7[CREATE]
+    - row: 98
+      cells:
+      - Learning Candidate
+      - CREATION_MODE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 99
+      cells:
+      - Learning Candidate
+      - DEPENDENCY_IMPACT
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 100
+      cells:
+      - Learning Candidate
+      - DISCOVER_OR_LIST
+      - REQUIRED
+      - Current explicit applicability preserved. T5R7[OPEN]
+    - row: 101
+      cells:
+      - Learning Candidate
+      - DRAFT
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 102
+      cells:
+      - Learning Candidate
+      - EDIT
+      - REQUIRED
+      - Current explicit applicability preserved. T5R7[Draft by registered schema]
+    - row: 103
+      cells:
+      - Learning Candidate
+      - ERROR_RECOVERY
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 104
+      cells:
+      - Learning Candidate
+      - LOCK_OR_UNLOCK
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 105
+      cells:
+      - Learning Candidate
+      - MOVE_OR_REPARENT
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 106
+      cells:
+      - Learning Candidate
+      - NEXT_STEP
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 107
+      cells:
+      - Learning Candidate
+      - PARENT_BIND
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 108
+      cells:
+      - Learning Candidate
+      - REORDER
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 109
+      cells:
+      - Learning Candidate
+      - RESTORE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 110
+      cells:
+      - Learning Candidate
+      - RESUME
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 111
+      cells:
+      - Learning Candidate
+      - REVISE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 112
+      cells:
+      - Learning Candidate
+      - SAVE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 113
+      cells:
+      - Learning Candidate
+      - SELECT_OR_OPEN
+      - REQUIRED
+      - Current explicit applicability preserved. T5R7[OPEN]
+    - row: 114
+      cells:
+      - Learning Candidate
+      - VALIDATE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 115
+      cells:
+      - Learning Candidate
+      - VERSION
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+  - index: 33
+    rows:
+    - row: 0
+      cells:
+      - Design Item / 設計項目
+      - Canonical Planning Design Contract / 正式規劃設計契約
+    - row: 1
+      cells:
+      - Color Tokens
+      - SHARED_OWNER_REFERENCE → current Global Home / Shell Design System tech-purple token set; existing page-local approved override, if any, remains authoritative.
+    - row: 2
+      cells:
+      - Typography Tokens
+      - SHARED_OWNER_REFERENCE → current Global Design System typography; page-local text hierarchy may only use registered heading/body/label/technical text roles.
+    - row: 3
+      cells:
+      - Spacing Tokens
+      - Use registered gap/padding/spacing tokens; existing exact page gaps remain authoritative; no ad-hoc pixel drift.
+    - row: 4
+      cells:
+      - Component States
+      - Default / Hover / Focus / Active / Loading / Disabled / Success / Error MUST NOT change the approved component footprint unless the current component contract
+        explicitly allows it.
+    - row: 5
+      cells:
+      - Primary Layout
+      - Use this Word's existing Primary Grid / Section / Workspace layout as the page-local authority; this annex introduces no second grid.
+    - row: 6
+      cells:
+      - Navigation Region
+      - Global Header and collapsible/overlay Sidebar remain shared shell regions; page Workspace starts in the registered content region.
+    - row: 7
+      cells:
+      - Responsive Behavior
+      - Use the current page responsive rule and shared shell breakpoint owner; semantic order and functional topology MUST remain stable across reflow.
+    - row: 8
+      cells:
+      - Design Ownership
+      - Page owns page-local layout/components; Global Shell owns shared header/sidebar/tokens; references only, no duplicated shared payload.
+  - index: 34
+    rows:
+    - row: 0
+      cells:
+      - Design Item / 設計項目
+      - Canonical Planning Design Contract / 正式規劃設計契約
+    - row: 1
+      cells:
+      - Viewport / Breakpoint UID
+      - SHARED_OWNER_REFERENCE → current Global Home breakpoint contract; page-specific breakpoint/reflow rules in this Word override only where explicitly registered.
+    - row: 2
+      cells:
+      - Container Width / Min / Max
+      - Retain current Global Shell + page Primary Grid width contract. No page-local implicit width may override an existing exact dimension.
+    - row: 3
+      cells:
+      - Grid Columns / Span / Gutter / Outer Margin
+      - Use the existing page Primary Grid / section mapping and current gap/margin values; any structural grid change requires Change Set.
+    - row: 4
+      cells:
+      - Section Bounding Rules
+      - Every registered Section remains within its current Workspace region; sticky/fixed/overlay areas MUST NOT occlude required controls.
+    - row: 5
+      cells:
+      - Component / Control / Field Width / Height Rules
+      - Use current Control/Field Dimensions or shared component token. State transitions MUST NOT cause layout jump.
+    - row: 6
+      cells:
+      - Min / Max Width / Height
+      - Inherit current exact values where present; otherwise shared component minimums apply. Required input/button content may not compress below its registered
+        usable size.
+    - row: 7
+      cells:
+      - Gap / Padding / Alignment
+      - Use current page spacing/grid tokens; alignment changes outside token tolerance require Visual Review.
+    - row: 8
+      cells:
+      - Aspect Ratio
+      - NOT_APPLICABLE unless the current page declares an image/video/preview ratio; when declared, the exact current ratio remains authoritative.
+    - row: 9
+      cells:
+      - Overflow / Scroll Rule
+      - No hidden overflow for actionable content. Long technical values use existing ellipsis + tooltip/drawer rule; large tables may use the current controlled
+        horizontal-scroll rule.
+    - row: 10
+      cells:
+      - Collapse / Stack / Wrap Rule
+      - Reflow may stack/collapse only within the current responsive contract; semantic order, required adjacency and operation order MUST NOT change.
+    - row: 11
+      cells:
+      - Z-order / Overlay Rule
+      - Global Header / Sidebar overlay / Dialog / Drawer layers remain above Workspace without blocking required content; overlay expansion MUST NOT reflow the primary
+        Workspace unless explicitly specified.
+    - row: 12
+      cells:
+      - Text Capacity / Truncation / Wrap Rule
+      - Required labels/status/error text may not be clipped. Long IDs/technical values use controlled ellipsis with recoverable full value; no silent semantic truncation.
+    - row: 13
+      cells:
+      - Asset Object-fit / Object-position
+      - REFERENCE_ONLY → current Asset Binding owner when a formal visual asset exists; otherwise NOT_APPLICABLE.
+    - row: 14
+      cells:
+      - Locked Visual Anchors
+      - Bound to the Visual Anchor Registry in this annex; unlisted regions are not implicitly editable.
+    - row: 15
+      cells:
+      - Allowed Tolerance / Diff Threshold
+      - 'Locked anchors and structural grid: zero unapproved drift. Token-level micro adjustment is allowed only inside current Design Token/Layout rules; structural
+        changes require Change Set + re-review.'
+    - row: 16
+      cells:
+      - Geometry Failure Set
+      - Detect overlap, clipping, horizontal overflow, unapproved scroll, control compression, unexpected wrap/stack, aspect drift, misalignment, sticky/fixed occlusion
+        and header/sidebar/workspace collision.
+  - index: 35
+    rows:
+    - row: 0
+      cells:
+      - Anchor UID
+      - Position Rule
+      - Dimension Rule
+      - Relationship Rule
+      - Lock Status
+    - row: 1
+      cells:
+      - KB-01-VA-HEADER
+      - Fixed at top of shared shell
+      - 58px full-width according to current shell authority
+      - Above Sidebar/Workspace; must not be covered by page content
+      - LOCKED
+    - row: 2
+      cells:
+      - KB-01-VA-SIDEBAR
+      - Fixed left rail under shared shell header
+      - 64px resting; 221px overlay expansion where current shell defines it
+      - Overlay expansion must not silently change the approved page Primary Grid
+      - LOCKED
+    - row: 3
+      cells:
+      - KB-01-VA-WORKSPACE
+      - Current page primary content region below Header / beside resting rail
+      - Use this Word's existing Primary Grid / section dimensions
+      - Owns page-local section geometry; dialogs/drawers are overlays, not replacement layout
+      - LOCKED_EXCEPT_AUTHORIZED_CHANGE_SET
+  - index: 36
+    rows:
+    - row: 0
+      cells:
+      - Design Item / 設計項目
+      - Canonical Planning Design Contract / 正式規劃設計契約
+    - row: 1
+      cells:
+      - Current Canonical Visual
+      - REFERENCE_ONLY → current visual/baseline already named in this Word or shared current visual owner. This annex does not replace it.
+    - row: 2
+      cells:
+      - Visual Candidate UID
+      - Generated candidate MUST receive a unique Visual UID and Parent Visual UID; no candidate is deemed approved merely by this annex.
+    - row: 3
+      cells:
+      - Generation Manifest
+      - Required before generation; MUST bind Page UID, Design Version, Reference Visual UID, Design System Version, Layout UID, Component Versions, Asset refs, Viewport,
+        Language, Theme, Change Level/Set and locked/editable areas.
+    - row: 4
+      cells:
+      - Visual Preview
+      - MUST represent the actual website structure, not a moodboard. Preview occurs after page/design specification and before Design Freeze.
+    - row: 5
+      cells:
+      - Visual Review
+      - Authorized reviewer checks function-to-visual mapping, geometry, anchors, responsive order, A11y/i18n and visual drift.
+    - row: 6
+      cells:
+      - Approval Status
+      - VISUAL_APPROVED is required before DESIGN_FROZEN. This planning annex does NOT self-approve the page.
+    - row: 7
+      cells:
+      - Change Set / Drift
+      - Any layout/asset/typography/color/component/navigation/dimension/information-hierarchy change outside the approved Change Set is VISUAL_DRIFT_FAIL.
+  - index: 37
+    rows:
+    - row: 0
+      cells:
+      - Design Item / 設計項目
+      - Canonical Planning Design Contract / 正式規劃設計契約
+    - row: 1
+      cells:
+      - Page-local Asset Registry Applicability
+      - REFERENCE_ONLY / CONDITIONAL. Existing page-owned formal Asset UID rows, if present, remain authoritative; this annex creates no duplicate Asset UID.
+    - row: 2
+      cells:
+      - Shared Shell Assets
+      - SHARED_OWNER_REFERENCE → Global Home / Design System owns logo, navigation icons, generic status icons and shared shell visuals; page MUST NOT clone them.
+    - row: 3
+      cells:
+      - Dynamic Business Content
+      - Provider logos, thumbnails, output previews, evidence images or other runtime/business data are NOT automatically design assets; they remain data/projection
+        unless current page explicitly registers an Asset UID.
+    - row: 4
+      cells:
+      - Binding Contract
+      - Any formal page-owned asset MUST bind Page UID + Section UID + Component UID + Asset UID + position + width/height + aspect ratio + crop/object-fit/object-position
+        + lock status.
+    - row: 5
+      cells:
+      - Modification Rule
+      - APPROVED/LOCKED assets may not be regenerated, recolored, cropped or repurposed without an authorized Change Set and Visual Review.
+    - row: 6
+      cells:
+      - N/A Authority
+      - When a page has no page-owned formal visual asset, page-local Asset Binding is NOT_APPLICABLE with this reason; shared assets remain referenced from their
+        existing canonical owner.
+  - index: 38
+    rows:
+    - row: 0
+      cells:
+      - Design Item / 設計項目
+      - Canonical Planning Design Contract / 正式規劃設計契約
+    - row: 1
+      cells:
+      - Canonical UID
+      - KB-01
+    - row: 2
+      cells:
+      - Canonical Name
+      - KB-01
+    - row: 3
+      cells:
+      - Owner File
+      - ACPOS_KB-01_知識庫_Mother_Basic_Design_OPTIMIZED.docx
+    - row: 4
+      cells:
+      - Page / Capability Spec
+      - This current Word remains the single page design Canonical Owner.
+    - row: 5
+      cells:
+      - Layout Mapping
+      - REFERENCE → existing Page Layout / Primary Grid / Section mapping + Design System/Layout closure annex.
+    - row: 6
+      cells:
+      - Component Mapping
+      - REFERENCE → current Component/Section registry in this Word; no duplicate component inventory is introduced.
+    - row: 7
+      cells:
+      - Control / Field Mapping
+      - REFERENCE → current Control / Field / Action / Permission design tables and invariants in this Word.
+    - row: 8
+      cells:
+      - Asset Mapping
+      - REFERENCE → current page Asset Registry if any; otherwise explicit shared-owner / NOT_APPLICABLE asset rule in this annex.
+    - row: 9
+      cells:
+      - Responsive Spec
+      - REFERENCE → current page responsive rules + Visual Geometry closure annex.
+    - row: 10
+      cells:
+      - Current Canonical Visual
+      - REFERENCE → current visual/baseline already owned by this page/shared visual authority; candidate does not replace it without approval.
+    - row: 11
+      cells:
+      - Generation Manifest
+      - REQUIRED before a new candidate is generated; fields are defined by the Visual contract in this annex.
+    - row: 12
+      cells:
+      - Audit Baseline
+      - REFERENCE → existing Audit/Acceptance section in this Word.
+    - row: 13
+      cells:
+      - Acceptance Matrix
+      - Current page acceptance section plus this annex; REQUIRED / OPTIONAL / NOT_APPLICABLE classification is preserved.
+    - row: 14
+      cells:
+      - Definition of Done
+      - Planning/basic-design DoD is the current page DoD plus zero unresolved REQUIRED design-spec gaps.
+    - row: 15
+      cells:
+      - Design Version
+      - Use this Word's current version metadata / exact repository revision; this annex MUST NOT invent a parallel design version.
+    - row: 16
+      cells:
+      - Freeze Status
+      - DESIGN_FREEZE_PACKAGE_DEFINED. DESIGN_FROZEN may be asserted only after required Visual Preview/Review/Approval and all applicable design gates actually pass;
+        this annex does not self-approve.
+  - index: 39
+    rows:
+    - row: 0
+      cells:
+      - Control UID
+      - Business Entity / Resolution
+      - Canonical Persistence Owner
+      - Design Semantics
+    - row: 1
+      cells:
+      - KB-01-CTL-SOURCE-CREATE
+      - KnowledgeSource
+      - KnowledgeExperienceService / KnowledgeSource State + Version + Audit
+      - Source create/update/state-transition persists the exact KnowledgeSource identity, scope/rights/classification/configuration, lifecycle state/version and
+        audit lineage. RETIRED may not be silently revived; historical source/version evidence remains addressable.
+    - row: 2
+      cells:
+      - KB-01-CTL-SOURCE-SAVE
+      - KnowledgeSource
+      - KnowledgeExperienceService / KnowledgeSource State + Version + Audit
+      - Source create/update/state-transition persists the exact KnowledgeSource identity, scope/rights/classification/configuration, lifecycle state/version and
+        audit lineage. RETIRED may not be silently revived; historical source/version evidence remains addressable.
+    - row: 3
+      cells:
+      - KB-01-CTL-SOURCE-PAUSE
+      - KnowledgeSource
+      - KnowledgeExperienceService / KnowledgeSource State + Version + Audit
+      - Source create/update/state-transition persists the exact KnowledgeSource identity, scope/rights/classification/configuration, lifecycle state/version and
+        audit lineage. RETIRED may not be silently revived; historical source/version evidence remains addressable.
+    - row: 4
+      cells:
+      - KB-01-CTL-SOURCE-RESUME
+      - KnowledgeSource
+      - KnowledgeExperienceService / KnowledgeSource State + Version + Audit
+      - Source create/update/state-transition persists the exact KnowledgeSource identity, scope/rights/classification/configuration, lifecycle state/version and
+        audit lineage. RETIRED may not be silently revived; historical source/version evidence remains addressable.
+    - row: 5
+      cells:
+      - KB-01-CTL-SOURCE-RETIRE
+      - KnowledgeSource
+      - KnowledgeExperienceService / KnowledgeSource State + Version + Audit
+      - Source create/update/state-transition persists the exact KnowledgeSource identity, scope/rights/classification/configuration, lifecycle state/version and
+        audit lineage. RETIRED may not be silently revived; historical source/version evidence remains addressable.
+    - row: 6
+      cells:
+      - KB-01-CTL-INGEST-START
+      - Acquisition Run
+      - Shared Acquisition Runtime / Acquisition Run + Snapshot/Evidence + Audit
+      - KnowledgeAcquisitionIntent is a value object; create/retry persists a governed Acquisition Run under Shared Acquisition Runtime with exact source_ref/scope/mode/correlation/idempotency,
+        attempt/checkpoint, immutable snapshot/evidence and audit lineage. It does not create a second crawler owner.
+    - row: 7
+      cells:
+      - KB-01-CTL-INGEST-RETRY
+      - Acquisition Run
+      - Shared Acquisition Runtime / Acquisition Run + Snapshot/Evidence + Audit
+      - KnowledgeAcquisitionIntent is a value object; create/retry persists a governed Acquisition Run under Shared Acquisition Runtime with exact source_ref/scope/mode/correlation/idempotency,
+        attempt/checkpoint, immutable snapshot/evidence and audit lineage. It does not create a second crawler owner.
+    - row: 8
+      cells:
+      - KB-01-CTL-CONTEXT-CREATE
+      - ACPOSContextCandidate
+      - ACPOSContextEngine / ACPOSContextCandidate + Evidence/Audit
+      - Creates a governed Context Candidate from authorized Knowledge/Fact/Evidence refs. Candidate remains READY_FOR_CONSUMER_REVIEW and does not self-adopt or
+        duplicate source Authority payload.
+    - row: 9
+      cells:
+      - KB-01-CTL-LEARNING-CREATE
+      - ACPOSLearningCandidate
+      - ACPOSEvolutionEngine / ACPOSLearningCandidate + Evidence/Audit
+      - Creates a governed Learning Candidate only from complete real Experience/outcome lineage. Candidate remains non-authoritative until separate governed review/adoption
+        and may not self-write Canon/Criteria/Policy.
+    - row: 10
+      cells:
+      - KB-01-CTL-DRAFT-FROM-EXP
+      - KnowledgeVersion / Draft
+      - KnowledgeExperienceService / KnowledgeVersion Draft + Evidence/Citation + Audit
+      - Creates or updates the governed KnowledgeVersion DRAFT from exact Experience/Evidence/Citation refs and expected version. Draft mutation is versioned and
+        auditable and does not imply approval.
+    - row: 11
+      cells:
+      - KB-01-CTL-DRAFT-SAVE
+      - KnowledgeVersion / Draft
+      - KnowledgeExperienceService / KnowledgeVersion Draft + Evidence/Citation + Audit
+      - Creates or updates the governed KnowledgeVersion DRAFT from exact Experience/Evidence/Citation refs and expected version. Draft mutation is versioned and
+        auditable and does not imply approval.
+    - row: 12
+      cells:
+      - KB-01-CTL-APPROVE
+      - KnowledgeVersion / Review
+      - KnowledgeExperienceService / KnowledgeVersion Review State + Approval/Review + Audit
+      - Persists the exact KnowledgeVersion review transition and human review evidence. APPROVE makes the governed approved version immutable; RETURN/REJECT preserve
+        prior approved versions and evidence lineage rather than overwriting history.
+    - row: 13
+      cells:
+      - KB-01-CTL-RETURN
+      - KnowledgeVersion / Review
+      - KnowledgeExperienceService / KnowledgeVersion Review State + Approval/Review + Audit
+      - Persists the exact KnowledgeVersion review transition and human review evidence. APPROVE makes the governed approved version immutable; RETURN/REJECT preserve
+        prior approved versions and evidence lineage rather than overwriting history.
+    - row: 14
+      cells:
+      - KB-01-CTL-REJECT
+      - KnowledgeVersion / Review
+      - KnowledgeExperienceService / KnowledgeVersion Review State + Approval/Review + Audit
+      - Persists the exact KnowledgeVersion review transition and human review evidence. APPROVE makes the governed approved version immutable; RETURN/REJECT preserve
+        prior approved versions and evidence lineage rather than overwriting history.
+  - index: 40
+    rows:
+    - row: 0
+      cells:
+      - Invariant
+      - Rule
+    - row: 1
+      cells:
+      - Ingress ≠ Persistence Owner
+      - Shared route/runtime/identity ingress does not transfer business data authority. The target resource/entity decides canonical persistence.
+    - row: 2
+      cells:
+      - Exact identity/version
+      - Every effectful mutation MUST resolve the exact entity/resource identity and version/state required by its current gate; latest/current aliases may not silently
+        replace exact binding.
+    - row: 3
+      cells:
+      - Audit lineage
+      - Effectful state/version changes preserve correlation/idempotency/evidence or rationale as applicable and generate/retain governed audit lineage.
+    - row: 4
+      cells:
+      - No parallel authority
+      - The closure reuses the existing canonical owner shown in the current Word corpus and MUST NOT create a duplicate store/service for the same concept.
+    - row: 5
+      cells:
+      - Runtime evidence separation
+      - A complete design Persistence Owner does not claim application/API/DB/Production execution. Runtime status remains separately evidenced and may remain NOT_EXECUTED
+        where the current Word says so.

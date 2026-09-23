@@ -1,0 +1,4932 @@
+schema_version: ACPOS_WORD_YAML_PROJECTION_V1
+projection_mode: SOURCE_GROUNDED_NO_INVENTION
+sequence: 29
+source:
+  branch: 0921acpos
+  git_head: 7bd2dbdb89b685c5f5f6045c8e3e17c5f2500db5
+  word_path: ACPOS_VIDEO-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx
+  word_sha256: 46595ce7795166622a2034e9ceca60fe8b716e0bb9f707dbf7c6f619614b8258
+authority_rules:
+- Word source remains canonical for this projection.
+- Do not silently fill, correct, reconcile, or replace source content.
+- Do not convert BLOCKED, NOT_EXECUTED, REQUIRE_EXACT_BINDING, SOURCE_NOT_DEFINED into PASS.
+- Paragraph and table order is preserved by source index.
+document:
+  paragraphs:
+  - index: 0
+    style: Normal
+    text: ACPOS VIDEO-01
+  - index: 1
+    style: Normal
+    text: 影片生產工作區 · Mother Basic Design
+  - index: 2
+    style: Normal
+    text: Technology Purple UI Rebuild · v1.0
+  - index: 3
+    style: Normal
+    text: 本文件以 GitHub new Current Authority 為唯一頁面基準，依 Mother Basic Design 產物鏈重建 VIDEO-01。視覺稿是待人工審查的 Design Candidate，不代表 Authority 已更新或程式已施工。
+  - index: 6
+    style: Heading 1
+    text: 1. Mother Basic Design Compliance Chain
+  - index: 9
+    style: Heading 1
+    text: 2. Current Scope / Boundary
+  - index: 10
+    style: List Bullet
+    text: VIDEO-01 是唯一 Current VIDEO workspace；禁止建立 split/parallel VIDEO pages。
+  - index: 11
+    style: List Bullet
+    text: 首次生產自動解析 Blueprint / VIDEO Script / DNA / Approved Assets / Instruction / Route；自由 Prompt = FORBIDDEN。
+  - index: 12
+    style: List Bullet
+    text: Project Asset Picker = FORBIDDEN；只能消費 ASSET handoff exact refs。
+  - index: 13
+    style: List Bullet
+    text: Provider/Model Picker = FORBIDDEN；Provider route 只讀，由 shared AI API Routing 決定。
+  - index: 14
+    style: List Bullet
+    text: Preview 為 16:9；沒有 Candidate 時只顯示單一播放器；Compare 僅 Current+Candidate 同時存在且使用者開啟時 50/50。
+  - index: 15
+    style: List Bullet
+    text: Correction 只允許 Scene / Shot / Time / Object / Layer semantic scope；不是 EDIT Timeline。
+  - index: 16
+    style: List Bullet
+    text: VIDEO 最終只可 Handoff → EDIT；禁止 VIDEO→QA / Release。
+  - index: 17
+    style: Heading 2
+    text: 2.1 System Geometry
+  - index: 20
+    style: Heading 1
+    text: 3. Entity / Object Model · 17/17
+  - index: 23
+    style: Heading 1
+    text: 4. Stage / Journey / Transition
+  - index: 25
+    style: Heading 2
+    text: 4.1 Legal Stage Transitions
+  - index: 27
+    style: Normal
+    text: AUTO 與 MANUAL 使用相同 exact data source；差別只在 Confirm 後是否自動開始下一個已排程 Task。任何 Failure/Block 都停在 current task，不允許 AI skip/reorder/create。
+  - index: 29
+    style: Heading 1
+    text: 5. Section / Component Architecture
+  - index: 30
+    style: Heading 2
+    text: 5.1 Sections · 10/10
+  - index: 33
+    style: Heading 2
+    text: 5.2 Components · 17/17
+  - index: 36
+    style: Heading 1
+    text: 6.1 UI Visual Candidate · A｜Main Production / Candidate Output
+  - index: 38
+    style: Normal
+    text: A｜Main Production / Candidate Output
+  - index: 39
+    style: Normal
+    text: 主生產畫面對應 SEC-01/02/03/04/07；左側 Scene/Shot + exact bindings、中間 16:9 Preview、右側 Version/Score/Decision。首次生產沒有自由 Prompt、Asset Picker、Provider Picker。
+  - index: 41
+    style: Heading 1
+    text: 6.2 UI Visual Candidate · B｜Conditional A/B Compare
+  - index: 43
+    style: Normal
+    text: B｜Conditional A/B Compare
+  - index: 44
+    style: Normal
+    text: Compare 是條件式視圖：Current only 時 B viewer 完全不存在；只有 Current+Candidate 且 user enables Compare 才 50/50。
+  - index: 46
+    style: Heading 1
+    text: 6.3 UI Visual Candidate · C｜VIDEO-only Correction + Expanded Sidebar
+  - index: 48
+    style: Normal
+    text: C｜VIDEO-only Correction + Expanded Sidebar
+  - index: 49
+    style: Normal
+    text: Correction 僅 VIDEO scope：Scene/Shot/time/object/layer。繁中修改要求 → Correction Script Candidate → Human Approve → Shared Translation/Adapter → Execute；畫面同時展示
+      221px Sidebar Overlay。
+  - index: 51
+    style: Heading 1
+    text: 6.4 UI Visual Candidate · D｜VIDEO Stage Evaluation / Issue
+  - index: 53
+    style: Normal
+    text: D｜VIDEO Stage Evaluation / Issue
+  - index: 54
+    style: Normal
+    text: Evaluation 只使用 Approved VIDEO Criteria 的 9 個 dimensions；Rights/Policy 是 hard block；不得用 generic/default score schema。
+  - index: 56
+    style: Heading 1
+    text: 6.5 UI Visual Candidate · E｜Finalize / Exact Handoff → EDIT
+  - index: 58
+    style: Normal
+    text: E｜Finalize / Exact Handoff → EDIT
+  - index: 59
+    style: Normal
+    text: Finalize 必須 Confirmed exact Video Version + Scorecard + Manifest + Lock；唯一合法 outbound = Handoff → EDIT。
+  - index: 61
+    style: Heading 1
+    text: 7. Atomic Control Matrix · 85/85
+  - index: 62
+    style: Normal
+    text: 85 Controls 全部來自 Current VIDEO-01 Authority；未列控制 = BLOCK。
+  - index: 65
+    style: Heading 1
+    text: 8. Action / Gate / Permission Matrix · 34/34
+  - index: 68
+    style: Heading 1
+    text: 9. Gate / Permission Contract
+  - index: 69
+    style: Heading 2
+    text: 9.1 Permissions · 6/6
+  - index: 71
+    style: Heading 2
+    text: 9.2 Gates · 16/16
+  - index: 74
+    style: Heading 1
+    text: 10. Integration Ports · 8/8
+  - index: 76
+    style: Normal
+    text: Page code 不得自行發明 endpoint；Correction translation/provider syntax 由 shared compiler/adapter/router 處理，不在 VIDEO 頁建立第二套 runtime。
+  - index: 78
+    style: Heading 1
+    text: 11. Error / Recovery Contract · 17/17
+  - index: 81
+    style: Heading 1
+    text: 12. VIDEO Evaluation Contract · 9 Dimensions
+  - index: 83
+    style: Normal
+    text: Confirm Gate 依 Current Authority：VIDEO score ≥95 + no hard block + human selection。Rights / Policy 必須 PASS；不得只看 numeric score 自動確認。
+  - index: 85
+    style: Heading 1
+    text: 13. Data Binding / Script / Provider Contract
+  - index: 87
+    style: Heading 2
+    text: 13.1 VIDEO Production Script Sections
+  - index: 88
+    style: Normal
+    text: Shot Intent / Input Binding / Composition / Action-Motion / Camera / Timing / Environment / Output Constraints。Provider-neutral；不得把 Kling 或其他 Provider syntax
+      寫成核心 Script。
+  - index: 90
+    style: Heading 1
+    text: 14. Correction Functional Design
+  - index: 92
+    style: Normal
+    text: 禁止：EDIT Timeline/Clip/Subtitle/Audio Mixing；禁止 ASSET Layer Editor/AssetPatch；若 Blueprint/DNA/Asset binding 要變更，必須退回 upstream owner。
+  - index: 94
+    style: Heading 1
+    text: 15. Function ↔ Visual Binding
+  - index: 97
+    style: Heading 1
+    text: 16. Cross-page Flow / Boundary
+  - index: 99
+    style: Normal
+    text: Canonical chain = ASSET → VIDEO → EDIT+VOICE → QA。VIDEO 不可跳過 EDIT 直接進 QA/Release。
+  - index: 101
+    style: Heading 1
+    text: 17. Acceptance / Hard Locks / DoD
+  - index: 103
+    style: Heading 2
+    text: 17.1 Hard Locks
+  - index: 104
+    style: List Bullet
+    text: Only VIDEO-01 is current executable VIDEO workspace.
+  - index: 105
+    style: List Bullet
+    text: 'First production: free Prompt/manual script input = FORBIDDEN.'
+  - index: 106
+    style: List Bullet
+    text: Project Asset / DNA / Provider / Model picker = FORBIDDEN.
+  - index: 107
+    style: List Bullet
+    text: No permanent dual player; Compare B exists only conditionally.
+  - index: 108
+    style: List Bullet
+    text: No EDIT Timeline/Clip/Subtitle/Audio Mixing/Final Render in VIDEO.
+  - index: 109
+    style: List Bullet
+    text: No ASSET Layer Editor/AssetPatch operations in VIDEO.
+  - index: 110
+    style: List Bullet
+    text: No generic/default scoring; only Approved VIDEO criteria.
+  - index: 111
+    style: List Bullet
+    text: Video Version immutable; correction/retry creates new version.
+  - index: 112
+    style: List Bullet
+    text: No direct VIDEO→QA/Release; target = EDIT.
+  - index: 113
+    style: List Bullet
+    text: No fake Provider/Score/Version/Duration/Runtime; missing = —.
+  - index: 114
+    style: List Bullet
+    text: Unlisted Section/Component/Control/Action/State/Gate/Error/Port = BLOCK.
+  - index: 115
+    style: Heading 2
+    text: 17.2 Design Freeze
+  - index: 118
+    style: Heading 1
+    text: 18. Resume / Next Transition
+  - index: 119
+    style: Normal
+    text: 合法下一步是 Human Reviewer 檢視 VIDEO-01 的功能對位、16:9 viewer、conditional compare、correction scope、evaluation、manifest/handoff 與科技紫視覺；若需修改先更新 Visual Candidate。只有
+      Selected Approved Candidate 形成後，才可進 Authority Update / Design Freeze / Implementation Handoff。
+  - index: 121
+    style: Normal
+    text: 文件版號 v1.0 僅代表本次 Basic Design 文件 revision，不等於 Current Governance / Page Authority version。
+  - index: 123
+    style: Heading 1
+    text: 2026-09-21 Machine Authority Construction Closure / 機器權威施工綁定封板
+  - index: 124
+    style: Normal
+    text: '[ACPOS-20260921-SOURCE-GROUNDED-CONSTRUCTION-CLOSURE-V2] Source-grounded only. Existing Current source wins; missing source values remain blocked/decision-required.
+      This closure supersedes the prior generic 2026-09-21 V1/V3 annex only, not the original domain logic or human visual review gates.'
+  - index: 125
+    style: Heading 2
+    text: VIDEO-01 · Exact Construction Binding
+  - index: 126
+    style: Heading 2
+    text: Page Construction Invariant
+  - index: 127
+    style: Normal
+    text: The exact control denominator above is the only construction denominator for this page. Components/fields/visual IDs are not counted as additional controls.
+      Existing source UIDs are preserved. A control classified UI_LOCAL_EXACT MUST NOT create a server write. A control classified SPEC_EXACT_RUNTIME_BLOCKED / NOT_EXECUTED
+      MUST remain disabled or fail-closed until its runtime evidence exists.
+  - index: 129
+    style: Heading 1
+    text: VIDEO-01 Governed Dimension Weights
+  - index: 130
+    style: Normal
+    text: '[ACPOS-20260921-CONCRETE-BUSINESS-CONTENT-CLOSURE-V1] 這一段是完整來源掃描後補入的 Concrete Business Content Authority。既有來源已明確的內容沿用；原來源只有抽象 Criteria/Dimension 容器而缺實際明細者，以下項目標示為本次新
+      Authority。'
+  - index: 131
+    style: Heading 2
+    text: QCP-VIDEO-BASELINE-V1 · VIDEO · VIDEO candidate outputs
+  - index: 132
+    style: Normal
+    text: 'Scoring: 每個 Dimension 0–100；Weighted Score = Score × Weight / 100；Total = 全部適用 Dimension 加總。PASS = Total ≥ 95 且所有 Hard Block / Required Check PASS。頁面不得自行新增第二套
+      threshold。'
+  - index: 133
+    style: Normal
+    text: VIDEO 已有 9 個 concrete Score UID；本 closure 不建立第二套 UID，只補治理權重與 SG-02 profile binding。既有 VIDEO-01-FLD-SCORE-* 控制逐項顯示。
+  - index: 135
+    style: Heading 1
+    text: Batch 16 · Operation / Runtime Owner Binding Ledger
+  - index: 136
+    style: Normal
+    text: '[ACPOS-20260921-BATCH-16-OPERATION-OWNER-CONTRACT-CLOSURE-V1::PAGE::VIDEO-01] The existing product-control registry cells above are updated only for the
+      exact fields authorized by the matching Canonical Owner contract. No Method/Path is invented and no Runtime/Production execution is claimed.'
+  - index: 138
+    style: Heading 1
+    text: Batch 55 · VIDEO-01 Contract Binding Ledger
+  - index: 139
+    style: Normal
+    text: '[ACPOS-20260922-BATCH-55-VIDEO-CONTRACT-REMEDIATION-V1::PAGE::VIDEO-01] Existing Video lock and correction-script state-command routes are preserved. Seven
+      previously undefined VIDEO routes are formal System 05 design contracts. VideoOutputVersion remains immutable/versioned; correction creates new lineage; evaluation
+      cannot auto-confirm; handoff requires exact successor-consumable provenance. No provider/runtime deployment is claimed.'
+  - index: 141
+    style: Heading 2
+    text: Canonical Business Entity Operation Applicability Matrix / 業務實體操作適用性矩陣
+  - index: 142
+    style: Normal
+    text: 'Authority: Current Word design + Mother §71 bounded completion. 本矩陣只正規化既有行為與目前未授權行為；不得據此新增 Business Entity、Operation、Runtime 或 API。 Current tree: b2f81b20322dd9e9268001126b07931b437e27df.'
+  - index: 144
+    style: Heading 1
+    text: Mother Planning / Basic Design Closure Annex｜規劃設計規範閉環補充
+  - index: 145
+    style: Normal
+    text: '[ACPOS-20260922-PLANNING-DESIGN-CLOSURE-ANNEX-V1] 本附錄只補規劃／基本設計規範缺口；原頁面既有功能、Owner、Operation、Permission、Entity、Visual 與跨頁 Authority 仍為同一 Canonical Owner。不得由本附錄發明
+      Runtime/API/DB/Provider 行為，也不得建立第二套平行規範。'
+  - index: 146
+    style: Heading 2
+    text: Design System / Layout Closure｜設計系統與版面補齊
+  - index: 147
+    style: Normal
+    text: '[ACPOS-DESIGN-CLOSURE:VIDEO-01:DESIGN-SYSTEM]'
+  - index: 148
+    style: Heading 2
+    text: Visual Geometry Contract Closure｜視覺幾何補齊
+  - index: 149
+    style: Normal
+    text: '[ACPOS-DESIGN-CLOSURE:VIDEO-01:GEOMETRY]'
+  - index: 150
+    style: Heading 2
+    text: Visual Anchor / Preview / Review Contract｜視覺錨點與預覽審查補齊
+  - index: 151
+    style: Normal
+    text: '[ACPOS-DESIGN-CLOSURE:VIDEO-01:VISUAL]'
+  - index: 152
+    style: Heading 2
+    text: Visual Generation / Review Planning Contract
+  - index: 153
+    style: Normal
+    text: '[ACPOS-DESIGN-CLOSURE:VIDEO-01:VISUAL-CONTRACT]'
+  - index: 154
+    style: Heading 2
+    text: A11y / i18n Design Contract Closure｜無障礙與語系補齊
+  - index: 155
+    style: Normal
+    text: '[ACPOS-DESIGN-CLOSURE:VIDEO-01:A11Y-I18N]'
+  - index: 156
+    style: Heading 2
+    text: Audit Baseline / Acceptance Matrix / Definition of Done Closure
+  - index: 157
+    style: Normal
+    text: '[ACPOS-DESIGN-CLOSURE:VIDEO-01:AUDIT]'
+  - index: 158
+    style: Heading 2
+    text: Design Freeze Package Closure｜設計封板包補齊
+  - index: 159
+    style: Normal
+    text: '[ACPOS-DESIGN-CLOSURE:VIDEO-01:FREEZE]'
+  tables:
+  - index: 0
+    rows:
+    - row: 0
+      cells:
+      - Current Truth
+      - Value
+    - row: 1
+      cells:
+      - Branch
+      - 0921acpos
+    - row: 2
+      cells:
+      - Live HEAD
+      - RESOLVE_FRESH_AT_AUDIT_TIME
+    - row: 3
+      cells:
+      - Current Authority
+      - VIDEO_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    - row: 4
+      cells:
+      - Authority SHA
+      - cac1b53e513c4e8c5f13a9014ae87aa08b6f9774
+    - row: 5
+      cells:
+      - Current Governance Manifest SHA
+      - 465329b6fb19b8e44c3083a9f280015ee95cc55c
+    - row: 6
+      cells:
+      - Page UID
+      - VIDEO-01
+    - row: 7
+      cells:
+      - Status
+      - FINAL_LOCKED Current Authority / Visual Candidate Pending Human Review
+    - row: 8
+      cells:
+      - DESIGN_FROZEN
+      - 'FALSE'
+  - index: 1
+    rows:
+    - row: 0
+      cells:
+      - Artifact / Layer
+      - VIDEO-01 materialization
+    - row: 1
+      cells:
+      - Current Truth / Authority
+      - Branch, HEAD, Current Manifest, Page Authority exact ref
+    - row: 2
+      cells:
+      - Requirement / Scope
+      - Single-page VIDEO production workspace; no EDIT/ASSET/QA internals
+    - row: 3
+      cells:
+      - Entity / Object
+      - 17 exact Objects/Refs
+    - row: 4
+      cells:
+      - Stage / Journey
+      - 5 Stages + 5 legal transitions
+    - row: 5
+      cells:
+      - Workbench / Topology
+      - 20/60/20 VIDEO production grid + lower correction/runtime/evaluation/manifest rows
+    - row: 6
+      cells:
+      - Section / Component
+      - 10 Sections + 17 Components
+    - row: 7
+      cells:
+      - Atomic Control / Action
+      - 85 Controls + 34 Actions
+    - row: 8
+      cells:
+      - Gate / Permission
+      - 16 Gates + 6 Permissions
+    - row: 9
+      cells:
+      - Error / Recovery
+      - 17 exact Error contracts
+    - row: 10
+      cells:
+      - Integration
+      - 8 exact Integration Ports
+    - row: 11
+      cells:
+      - Function ↔ Visual
+      - 5 UI candidates mapped to current functions
+    - row: 12
+      cells:
+      - Visual Review / Freeze
+      - PENDING HUMAN REVIEW / DESIGN_FROZEN=FALSE
+  - index: 2
+    rows:
+    - row: 0
+      cells:
+      - Region
+      - Exact rule
+    - row: 1
+      cells:
+      - Global Header
+      - 58px fixed full-width
+    - row: 2
+      cells:
+      - Sidebar
+      - 64px collapsed icon-only; 221px expanded overlay; no workspace reflow
+    - row: 3
+      cells:
+      - Primary Left
+      - 20% min 260px · Scene/Shot + exact bound input
+    - row: 4
+      cells:
+      - Primary Center
+      - 60% · 16:9 preview-first
+    - row: 5
+      cells:
+      - Primary Right
+      - 20% min 280px · Version/Score/Decision
+    - row: 6
+      cells:
+      - Lower Rows
+      - Correction / Runtime / Evaluation / Manifest normal page flow
+    - row: 7
+      cells:
+      - Min desktop
+      - 1280px; no invented mobile workflow
+  - index: 3
+    rows:
+    - row: 0
+      cells:
+      - Object UID
+      - Entity
+      - Owner
+      - Required Content
+    - row: 1
+      cells:
+      - VIDEO-01-REF-BLUEPRINT
+      - LockedBlueprintRef
+      - CORE/BLUEPRINT
+      - project/topic/task + child_blueprint_version_id + hash + lock_state
+    - row: 2
+      cells:
+      - VIDEO-01-REF-VIDEO-SCRIPT
+      - VisualGenerationScriptViewRef
+      - CORE/SCRIPT
+      - package/script view/section/version/hash; provider-neutral
+    - row: 3
+      cells:
+      - VIDEO-01-REF-INSTRUCTION
+      - InstructionPackageRef
+      - InstructionCompiler
+      - same task/manifest; APPROVED_FOR_EXECUTION
+    - row: 4
+      cells:
+      - VIDEO-01-REF-DNA
+      - DNABindingRef
+      - CORE/BLUEPRINT
+      - character/scene/object/continuity IDs/versions/hashes
+    - row: 5
+      cells:
+      - VIDEO-01-REF-ASSET-HANDOFF
+      - ApprovedAssetHandoffRef
+      - ASSET boundary
+      - exact asset IDs/versions/filename/checksum/purpose/rights
+    - row: 6
+      cells:
+      - VIDEO-01-OBJ-INPUT-MANIFEST
+      - VideoExecutionInputManifest
+      - VIDEO/ORCH
+      - task + blueprint + script + asset + instruction + route refs + fingerprint
+    - row: 7
+      cells:
+      - VIDEO-01-OBJ-PROVIDER-JOB
+      - ProviderJobRef
+      - MediaExecutionService
+      - route/provider/model/job/attempt/callback/correlation/status
+    - row: 8
+      cells:
+      - VIDEO-01-OBJ-VIDEO-CANDIDATE
+      - VideoCandidateOutput
+      - VIDEO
+      - task/shot refs + output URI + checksum + provenance + version
+    - row: 9
+      cells:
+      - VIDEO-01-OBJ-EVALUATION
+      - VideoStageEvaluation
+      - VIDEO/EVALUATION
+      - criteria version + dimension scores + overall + hard blocks + evidence
+    - row: 10
+      cells:
+      - VIDEO-01-OBJ-FINDING
+      - VideoFinding
+      - VIDEO/EVALUATION
+      - issue type + shot/time/object/layer + evidence refs
+    - row: 11
+      cells:
+      - VIDEO-01-OBJ-CORRECTION-CONTEXT
+      - VideoCorrectionContext
+      - VIDEO/AI
+      - current exact refs + affected_scope + finding/evidence + zh-TW requirement
+    - row: 12
+      cells:
+      - VIDEO-01-OBJ-CORRECTION-SCRIPT
+      - CorrectionScriptCandidate
+      - VIDEO/AI
+      - source script ref/hash + target scope + Chinese delta + candidate hash + approval state
+    - row: 13
+      cells:
+      - VIDEO-01-OBJ-CORRECTION-TRANSLATION
+      - CorrectionTranslationRef
+      - Shared Instruction/Provider layer
+      - approved candidate + instruction/compiler/adapter refs + translated payload hash
+    - row: 14
+      cells:
+      - VIDEO-01-OBJ-VIDEO-VERSION
+      - ExactVideoVersion
+      - VIDEO
+      - candidate/confirmed state + output ref + lineage
+    - row: 15
+      cells:
+      - VIDEO-01-OBJ-OUTPUT-MANIFEST
+      - VideoOutputManifest
+      - VIDEO boundary
+      - exact Video/Shot/Layer versions + script hash + asset fingerprint + URI/checksum + score/evidence/rights
+    - row: 16
+      cells:
+      - VIDEO-01-OBJ-VERSION-LOCK
+      - VideoVersionLock
+      - VIDEO
+      - exact video_version_id + manifest hash + lock actor/time
+    - row: 17
+      cells:
+      - VIDEO-01-OBJ-HANDOFF
+      - VideoEditingHandoff
+      - VIDEO boundary
+      - locked exact output + manifest/checksum + scorecard + contract hash + target EDIT
+  - index: 4
+    rows:
+    - row: 0
+      cells:
+      - Stage UID
+      - Stage
+      - Flow
+    - row: 1
+      cells:
+      - VIDEO-01-STAGE-01-RESOLVE
+      - Resolve Inputs
+      - Resolve exact Blueprint→VIDEO Script→DNA/Asset→Instruction Package→Core Route; no manual prompt.
+    - row: 2
+      cells:
+      - VIDEO-01-STAGE-02-GENERATE
+      - Generate / Regenerate
+      - requestTaskExecution or approved correction/retry path; Provider routing/backend materializes candidate.
+    - row: 3
+      cells:
+      - VIDEO-01-STAGE-03-EVALUATE
+      - VIDEO Evaluation
+      - Run VIDEO criteria, findings/evidence, overall score; enter WAIT_CONFIRMATION.
+    - row: 4
+      cells:
+      - VIDEO-01-STAGE-04-DECIDE
+      - Confirm / Modify
+      - Confirm candidate or open correction loop. AUTO only advances after Confirm.
+    - row: 5
+      cells:
+      - VIDEO-01-STAGE-05-FINALIZE
+      - Lock / Handoff
+      - Seal exact output manifest, lock exact Video Version, handoff to EDIT.
+  - index: 5
+    rows:
+    - row: 0
+      cells:
+      - Transition
+      - From
+      - To
+      - Trigger
+      - Gate
+    - row: 1
+      cells:
+      - VIDEO-01-STTR-01
+      - STAGE-01 Resolve Inputs
+      - STAGE-02 Generate
+      - VIDEO-01-ACT-FLOW-START
+      - All input/route gates PASS
+    - row: 2
+      cells:
+      - VIDEO-01-STTR-02
+      - STAGE-02 Generate
+      - STAGE-03 Evaluate
+      - Verified Candidate Output
+      - Candidate provenance/checksum PASS
+    - row: 3
+      cells:
+      - VIDEO-01-STTR-03
+      - STAGE-03 Evaluate
+      - STAGE-04 Decide
+      - VIDEO-01-ACT-EVALUATE
+      - Criteria/evidence completed
+    - row: 4
+      cells:
+      - VIDEO-01-STTR-04
+      - STAGE-04 Decide
+      - STAGE-02 Generate
+      - VIDEO-01-ACT-CORRECTION-EXECUTE
+      - Modify path; new candidate only
+    - row: 5
+      cells:
+      - VIDEO-01-STTR-05
+      - STAGE-04 Decide
+      - STAGE-05 Finalize
+      - VIDEO-01-ACT-CANDIDATE-CONFIRM
+      - Score≥95 + no hard block + human confirm
+  - index: 6
+    rows:
+    - row: 0
+      cells:
+      - Section UID
+      - Name
+      - Responsibility
+      - Position
+    - row: 1
+      cells:
+      - VIDEO-01-SEC-01
+      - Context / Execution
+      - Project / Topic / Task / Status / AUTO-MANUAL / Execute
+      - Top 100%
+    - row: 2
+      cells:
+      - VIDEO-01-SEC-02
+      - Production List & Bound Input
+      - Scene/Shot list + Blueprint/Script/DNA/Asset exact refs read-only
+      - Primary left 20%
+    - row: 3
+      cells:
+      - VIDEO-01-SEC-03
+      - Main Preview / Compare
+      - Single 16:9 primary preview; conditional A/B compare
+      - Primary center 60%
+    - row: 4
+      cells:
+      - VIDEO-01-SEC-04
+      - Version / Score / Decision
+      - Current/Candidate version, VIDEO criteria score, Confirm/Modify
+      - Primary right 20%
+    - row: 5
+      cells:
+      - VIDEO-01-SEC-05
+      - Correction Scope
+      - Scene/Shot/Start-End Time/Object/Layer local correction target
+      - Below primary full width
+    - row: 6
+      cells:
+      - VIDEO-01-SEC-06
+      - AI Semantic Correction
+      - Traditional Chinese correction request + candidate script lifecycle
+      - Below correction left/center
+    - row: 7
+      cells:
+      - VIDEO-01-SEC-07
+      - Provider Runtime
+      - Approved Route read-only + provider job/retry status
+      - Below correction right
+    - row: 8
+      cells:
+      - VIDEO-01-SEC-08
+      - Stage Evaluation / Issue
+      - VIDEO-specific multidimensional evaluation, Finding/Evidence/Recheck
+      - Lower full width
+    - row: 9
+      cells:
+      - VIDEO-01-SEC-09
+      - Exact Output Manifest / Lock / Handoff
+      - Exact version lineage + lock + VIDEO→EDIT handoff
+      - Bottom full width
+    - row: 10
+      cells:
+      - VIDEO-01-SEC-10
+      - State / Error / Audit
+      - Runtime state, blocking reason, correlation/audit trace
+      - Background/read projection
+  - index: 7
+    rows:
+    - row: 0
+      cells:
+      - Component UID
+      - Section
+      - Component
+      - Responsibility
+    - row: 1
+      cells:
+      - VIDEO-01-CMP-CONTEXT
+      - SEC-01
+      - ContextExecutionBar
+      - Project/Topic/Task/Status/Mode/Execute
+    - row: 2
+      cells:
+      - VIDEO-01-CMP-PRODUCTION-LIST
+      - SEC-02
+      - SceneShotList
+      - Scene/Shot task navigation and filter
+    - row: 3
+      cells:
+      - VIDEO-01-CMP-BLUEPRINT-BIND
+      - SEC-02
+      - BlueprintBindingCard
+      - Exact Locked Blueprint/ChildLock/InputFingerprint read-only
+    - row: 4
+      cells:
+      - VIDEO-01-CMP-SCRIPT-BIND
+      - SEC-02
+      - VideoScriptRoleCard
+      - Canonical VIDEO Script View/Section read-only
+    - row: 5
+      cells:
+      - VIDEO-01-CMP-DNA-BIND
+      - SEC-02
+      - DNABindingCard
+      - Exact Character/Scene/Object/Continuity refs read-only
+    - row: 6
+      cells:
+      - VIDEO-01-CMP-ASSET-BIND
+      - SEC-02
+      - ApprovedAssetBindingCard
+      - Approved Asset Handoff exact ID/version/filename/checksum/purpose
+    - row: 7
+      cells:
+      - VIDEO-01-CMP-PREVIEW
+      - SEC-03
+      - MainVideoPreview
+      - 16:9 current video viewer and transport
+    - row: 8
+      cells:
+      - VIDEO-01-CMP-COMPARE
+      - SEC-03
+      - ConditionalCompare
+      - A/B only when Candidate exists and Compare enabled
+    - row: 9
+      cells:
+      - VIDEO-01-CMP-VERSION
+      - SEC-04
+      - VideoVersionCard
+      - Current/Candidate exact video version info
+    - row: 10
+      cells:
+      - VIDEO-01-CMP-SCORE
+      - SEC-04
+      - VideoScoreCard
+      - VIDEO-specific score dimensions and hard blocks
+    - row: 11
+      cells:
+      - VIDEO-01-CMP-DECISION
+      - SEC-04
+      - DecisionPanel
+      - Confirm/Modify/Lock/Handoff state-based controls
+    - row: 12
+      cells:
+      - VIDEO-01-CMP-CORRECTION-SCOPE
+      - SEC-05
+      - VideoCorrectionScope
+      - Scene/Shot/time/object/layer correction scope
+    - row: 13
+      cells:
+      - VIDEO-01-CMP-AI-REVISION
+      - SEC-06
+      - VideoCorrectionConversation
+      - Correction-only zh-TW semantic revision
+    - row: 14
+      cells:
+      - VIDEO-01-CMP-PROVIDER-RUNTIME
+      - SEC-07
+      - ProviderRuntimeCard
+      - Approved route/provider/model/job status read-only
+    - row: 15
+      cells:
+      - VIDEO-01-CMP-EVALUATION
+      - SEC-08
+      - VideoStageEvaluation
+      - VIDEO dimensions, score, evidence, finding/recheck
+    - row: 16
+      cells:
+      - VIDEO-01-CMP-MANIFEST
+      - SEC-09
+      - ExactOutputManifest
+      - Exact lineage/checksum/score/evidence/handoff payload
+    - row: 17
+      cells:
+      - VIDEO-01-CMP-STATUS
+      - SEC-10
+      - RuntimeStatusErrorAudit
+      - State, error, trace, disabled reason
+  - index: 8
+    rows:
+    - row: 0
+      cells:
+      - Control UID
+      - Sec
+      - Component
+      - Type
+      - Label
+      - Action
+      - Gate
+      - Permission
+    - row: 1
+      cells:
+      - VIDEO-01-FLD-PROJECT
+      - VIDEO-01-SEC-01
+      - VIDEO-01-CMP-CONTEXT
+      - SELECT
+      - Project
+      - VIDEO-01-ACT-PROJECT-SET
+      - VIDEO-01-GATE-PAGE
+      - VIDEO_USE
+    - row: 2
+      cells:
+      - VIDEO-01-FLD-TOPIC
+      - VIDEO-01-SEC-01
+      - VIDEO-01-CMP-CONTEXT
+      - SELECT
+      - Topic
+      - VIDEO-01-ACT-TOPIC-SET
+      - VIDEO-01-GATE-PAGE
+      - VIDEO_USE
+    - row: 3
+      cells:
+      - VIDEO-01-FLD-TASK
+      - VIDEO-01-SEC-01
+      - VIDEO-01-CMP-CONTEXT
+      - SELECT
+      - Production Task
+      - VIDEO-01-ACT-TASK-SET
+      - VIDEO-01-GATE-PAGE
+      - VIDEO_USE
+    - row: 4
+      cells:
+      - VIDEO-01-FLD-STATUS
+      - VIDEO-01-SEC-01
+      - VIDEO-01-CMP-CONTEXT
+      - STATUS
+      - Task Status
+      - VIDEO-01-ACT-NOOP-VIEW
+      - VIDEO-01-GATE-PAGE
+      - VIDEO_USE
+    - row: 5
+      cells:
+      - VIDEO-01-CTL-MODE
+      - VIDEO-01-SEC-01
+      - VIDEO-01-CMP-CONTEXT
+      - SEGMENTED
+      - AUTO / MANUAL
+      - VIDEO-01-ACT-MODE-SET
+      - VIDEO-01-GATE-TASK-READY
+      - VIDEO_USE
+    - row: 6
+      cells:
+      - VIDEO-01-BTN-EXECUTE
+      - VIDEO-01-SEC-01
+      - VIDEO-01-CMP-CONTEXT
+      - BUTTON
+      - 執行 / Execute
+      - VIDEO-01-ACT-FLOW-START
+      - VIDEO-01-GATE-EXECUTE
+      - VIDEO_EXECUTE
+    - row: 7
+      cells:
+      - VIDEO-01-BTN-BLUEPRINT
+      - VIDEO-01-SEC-01
+      - VIDEO-01-CMP-CONTEXT
+      - BUTTON
+      - 查看 Blueprint
+      - VIDEO-01-ACT-BLUEPRINT-VIEW
+      - VIDEO-01-GATE-CHILD-LOCK
+      - VIDEO_USE
+    - row: 8
+      cells:
+      - VIDEO-01-BTN-PACKAGE
+      - VIDEO-01-SEC-01
+      - VIDEO-01-CMP-CONTEXT
+      - BUTTON
+      - 查看 VIDEO Script / Instruction
+      - VIDEO-01-ACT-SCRIPT-VIEW
+      - VIDEO-01-GATE-SCRIPT
+      - VIDEO_USE
+    - row: 9
+      cells:
+      - VIDEO-01-FLD-SEARCH
+      - VIDEO-01-SEC-02
+      - VIDEO-01-CMP-PRODUCTION-LIST
+      - CONTROL
+      - 搜尋 Scene / Shot
+      - VIDEO-01-ACT-LIST-SEARCH
+      - VIDEO-01-GATE-PAGE
+      - VIDEO_USE
+    - row: 10
+      cells:
+      - VIDEO-01-CTL-FILTER
+      - VIDEO-01-SEC-02
+      - VIDEO-01-CMP-PRODUCTION-LIST
+      - CONTROL
+      - Filter
+      - VIDEO-01-ACT-LIST-FILTER
+      - VIDEO-01-GATE-PAGE
+      - VIDEO_USE
+    - row: 11
+      cells:
+      - VIDEO-01-CTL-SHOT-SELECT
+      - VIDEO-01-SEC-02
+      - VIDEO-01-CMP-PRODUCTION-LIST
+      - CONTROL
+      - Scene / Shot Item
+      - VIDEO-01-ACT-SHOT-SELECT
+      - VIDEO-01-GATE-PAGE
+      - VIDEO_USE
+    - row: 12
+      cells:
+      - VIDEO-01-FLD-BLUEPRINT-REF
+      - VIDEO-01-SEC-02
+      - VIDEO-01-CMP-ASSET-BIND
+      - READONLY
+      - Blueprint / ChildLock Ref
+      - VIDEO-01-ACT-NOOP-VIEW
+      - VIDEO-01-GATE-PAGE
+      - VIDEO_USE
+    - row: 13
+      cells:
+      - VIDEO-01-FLD-INPUT-FINGERPRINT
+      - VIDEO-01-SEC-02
+      - VIDEO-01-CMP-ASSET-BIND
+      - READONLY
+      - Input Fingerprint
+      - VIDEO-01-ACT-NOOP-VIEW
+      - VIDEO-01-GATE-PAGE
+      - VIDEO_USE
+    - row: 14
+      cells:
+      - VIDEO-01-FLD-SCRIPT-SECTION
+      - VIDEO-01-SEC-02
+      - VIDEO-01-CMP-ASSET-BIND
+      - READONLY
+      - VIDEO Script Role / Section / Hash
+      - VIDEO-01-ACT-NOOP-VIEW
+      - VIDEO-01-GATE-PAGE
+      - VIDEO_USE
+    - row: 15
+      cells:
+      - VIDEO-01-FLD-DNA-REFS
+      - VIDEO-01-SEC-02
+      - VIDEO-01-CMP-ASSET-BIND
+      - READONLY
+      - DNA / Continuity Refs
+      - VIDEO-01-ACT-NOOP-VIEW
+      - VIDEO-01-GATE-PAGE
+      - VIDEO_USE
+    - row: 16
+      cells:
+      - VIDEO-01-FLD-ASSET-REFS
+      - VIDEO-01-SEC-02
+      - VIDEO-01-CMP-ASSET-BIND
+      - READONLY
+      - Approved Asset IDs / Versions
+      - VIDEO-01-ACT-NOOP-VIEW
+      - VIDEO-01-GATE-ASSET-BIND
+      - VIDEO_USE
+    - row: 17
+      cells:
+      - VIDEO-01-FLD-FILENAME-CHECKSUM
+      - VIDEO-01-SEC-02
+      - VIDEO-01-CMP-ASSET-BIND
+      - READONLY
+      - Filename / Checksum / Purpose Binding
+      - VIDEO-01-ACT-NOOP-VIEW
+      - VIDEO-01-GATE-ASSET-BIND
+      - VIDEO_USE
+    - row: 18
+      cells:
+      - VIDEO-01-FLD-RIGHTS
+      - VIDEO-01-SEC-02
+      - VIDEO-01-CMP-ASSET-BIND
+      - READONLY
+      - Rights / Policy
+      - VIDEO-01-ACT-NOOP-VIEW
+      - VIDEO-01-GATE-PAGE
+      - VIDEO_USE
+    - row: 19
+      cells:
+      - VIDEO-01-FLD-INSTRUCTION
+      - VIDEO-01-SEC-02
+      - VIDEO-01-CMP-ASSET-BIND
+      - READONLY
+      - Approved Instruction Package
+      - VIDEO-01-ACT-NOOP-VIEW
+      - VIDEO-01-GATE-PAGE
+      - VIDEO_USE
+    - row: 20
+      cells:
+      - VIDEO-01-BTN-PLAY
+      - VIDEO-01-SEC-03
+      - VIDEO-01-CMP-PREVIEW
+      - CONTROL
+      - Play/Pause
+      - VIDEO-01-ACT-PREVIEW-PLAY
+      - VIDEO-01-GATE-PAGE
+      - VIDEO_USE
+    - row: 21
+      cells:
+      - VIDEO-01-CTL-SEEK
+      - VIDEO-01-SEC-03
+      - VIDEO-01-CMP-PREVIEW
+      - CONTROL
+      - Seek
+      - VIDEO-01-ACT-PREVIEW-SEEK
+      - VIDEO-01-GATE-PAGE
+      - VIDEO_USE
+    - row: 22
+      cells:
+      - VIDEO-01-FLD-TIMECODE
+      - VIDEO-01-SEC-03
+      - VIDEO-01-CMP-PREVIEW
+      - CONTROL
+      - Timecode
+      - VIDEO-01-ACT-PREVIEW-SEEK
+      - VIDEO-01-GATE-PAGE
+      - VIDEO_USE
+    - row: 23
+      cells:
+      - VIDEO-01-BTN-VOLUME
+      - VIDEO-01-SEC-03
+      - VIDEO-01-CMP-PREVIEW
+      - CONTROL
+      - Volume/Mute
+      - VIDEO-01-ACT-PREVIEW-VOLUME
+      - VIDEO-01-GATE-PAGE
+      - VIDEO_USE
+    - row: 24
+      cells:
+      - VIDEO-01-BTN-FULLSCREEN
+      - VIDEO-01-SEC-03
+      - VIDEO-01-CMP-PREVIEW
+      - CONTROL
+      - Fullscreen
+      - VIDEO-01-ACT-PREVIEW-FULLSCREEN
+      - VIDEO-01-GATE-PAGE
+      - VIDEO_USE
+    - row: 25
+      cells:
+      - VIDEO-01-CTL-COMPARE
+      - VIDEO-01-SEC-03
+      - VIDEO-01-CMP-COMPARE
+      - CONTROL
+      - Compare
+      - VIDEO-01-ACT-COMPARE-TOGGLE
+      - VIDEO-01-GATE-PAGE
+      - VIDEO_USE
+    - row: 26
+      cells:
+      - VIDEO-01-CTL-VERSION-A
+      - VIDEO-01-SEC-03
+      - VIDEO-01-CMP-COMPARE
+      - CONTROL
+      - Version A / Current
+      - VIDEO-01-ACT-COMPARE-A
+      - VIDEO-01-GATE-PAGE
+      - VIDEO_USE
+    - row: 27
+      cells:
+      - VIDEO-01-CTL-VERSION-B
+      - VIDEO-01-SEC-03
+      - VIDEO-01-CMP-COMPARE
+      - CONTROL
+      - Version B / Candidate
+      - VIDEO-01-ACT-COMPARE-B
+      - VIDEO-01-GATE-CANDIDATE
+      - VIDEO_USE
+    - row: 28
+      cells:
+      - VIDEO-01-FLD-CURRENT-VERSION
+      - VIDEO-01-SEC-04
+      - VIDEO-01-CMP-VERSION
+      - READONLY
+      - Current Exact Video Version
+      - VIDEO-01-ACT-NOOP-VIEW
+      - VIDEO-01-GATE-PAGE
+      - VIDEO_USE
+    - row: 29
+      cells:
+      - VIDEO-01-FLD-CANDIDATE-VERSION
+      - VIDEO-01-SEC-04
+      - VIDEO-01-CMP-VERSION
+      - READONLY
+      - Candidate Version
+      - VIDEO-01-ACT-NOOP-VIEW
+      - VIDEO-01-GATE-PAGE
+      - VIDEO_USE
+    - row: 30
+      cells:
+      - VIDEO-01-FLD-OVERALL-SCORE
+      - VIDEO-01-SEC-04
+      - VIDEO-01-CMP-SCORE
+      - READONLY
+      - Overall Score
+      - VIDEO-01-ACT-NOOP-VIEW
+      - VIDEO-01-GATE-PAGE
+      - VIDEO_USE
+    - row: 31
+      cells:
+      - VIDEO-01-FLD-ISSUE-SUMMARY
+      - VIDEO-01-SEC-04
+      - VIDEO-01-CMP-SCORE
+      - READONLY
+      - Issue Summary
+      - VIDEO-01-ACT-NOOP-VIEW
+      - VIDEO-01-GATE-PAGE
+      - VIDEO_USE
+    - row: 32
+      cells:
+      - VIDEO-01-FLD-CRITERIA-VERSION
+      - VIDEO-01-SEC-04
+      - VIDEO-01-CMP-VERSION
+      - READONLY
+      - VIDEO Criteria Version
+      - VIDEO-01-ACT-NOOP-VIEW
+      - VIDEO-01-GATE-PAGE
+      - VIDEO_USE
+    - row: 33
+      cells:
+      - VIDEO-01-BTN-SCORE-DETAIL
+      - VIDEO-01-SEC-04
+      - VIDEO-01-CMP-DECISION
+      - BUTTON
+      - 查看 VIDEO 評分
+      - VIDEO-01-ACT-EVALUATION-VIEW
+      - VIDEO-01-GATE-EVALUATION
+      - VIDEO_USE
+    - row: 34
+      cells:
+      - VIDEO-01-BTN-CONFIRM
+      - VIDEO-01-SEC-04
+      - VIDEO-01-CMP-DECISION
+      - BUTTON
+      - 確認版本
+      - VIDEO-01-ACT-CANDIDATE-CONFIRM
+      - VIDEO-01-GATE-CONFIRM
+      - VIDEO_DECIDE
+    - row: 35
+      cells:
+      - VIDEO-01-BTN-MODIFY
+      - VIDEO-01-SEC-04
+      - VIDEO-01-CMP-DECISION
+      - BUTTON
+      - 修改
+      - VIDEO-01-ACT-CORRECTION-OPEN
+      - VIDEO-01-GATE-CORRECTION
+      - VIDEO_CORRECT
+    - row: 36
+      cells:
+      - VIDEO-01-BTN-LOCK
+      - VIDEO-01-SEC-04
+      - VIDEO-01-CMP-DECISION
+      - BUTTON
+      - Lock
+      - VIDEO-01-ACT-VERSION-LOCK
+      - VIDEO-01-GATE-LOCK
+      - VIDEO_DECIDE
+    - row: 37
+      cells:
+      - VIDEO-01-BTN-HANDOFF
+      - VIDEO-01-SEC-04
+      - VIDEO-01-CMP-DECISION
+      - BUTTON
+      - Handoff → EDIT
+      - VIDEO-01-ACT-HANDOFF
+      - VIDEO-01-GATE-HANDOFF
+      - VIDEO_HANDOFF
+    - row: 38
+      cells:
+      - VIDEO-01-FLD-SCENE
+      - VIDEO-01-SEC-05
+      - VIDEO-01-CMP-CORRECTION-SCOPE
+      - FIELD
+      - Scene
+      - VIDEO-01-ACT-CORRECTION-SCOPE-SET
+      - VIDEO-01-GATE-CORRECTION
+      - VIDEO_CORRECT
+    - row: 39
+      cells:
+      - VIDEO-01-FLD-SHOT
+      - VIDEO-01-SEC-05
+      - VIDEO-01-CMP-CORRECTION-SCOPE
+      - FIELD
+      - Shot
+      - VIDEO-01-ACT-CORRECTION-SCOPE-SET
+      - VIDEO-01-GATE-CORRECTION
+      - VIDEO_CORRECT
+    - row: 40
+      cells:
+      - VIDEO-01-FLD-START-TC
+      - VIDEO-01-SEC-05
+      - VIDEO-01-CMP-CORRECTION-SCOPE
+      - FIELD
+      - Start Timecode
+      - VIDEO-01-ACT-CORRECTION-SCOPE-SET
+      - VIDEO-01-GATE-CORRECTION
+      - VIDEO_CORRECT
+    - row: 41
+      cells:
+      - VIDEO-01-FLD-END-TC
+      - VIDEO-01-SEC-05
+      - VIDEO-01-CMP-CORRECTION-SCOPE
+      - FIELD
+      - End Timecode
+      - VIDEO-01-ACT-CORRECTION-SCOPE-SET
+      - VIDEO-01-GATE-CORRECTION
+      - VIDEO_CORRECT
+    - row: 42
+      cells:
+      - VIDEO-01-FLD-TARGET-OBJECT
+      - VIDEO-01-SEC-05
+      - VIDEO-01-CMP-CORRECTION-SCOPE
+      - FIELD
+      - Target Object
+      - VIDEO-01-ACT-CORRECTION-SCOPE-SET
+      - VIDEO-01-GATE-CORRECTION
+      - VIDEO_CORRECT
+    - row: 43
+      cells:
+      - VIDEO-01-FLD-TARGET-LAYER
+      - VIDEO-01-SEC-05
+      - VIDEO-01-CMP-CORRECTION-SCOPE
+      - FIELD
+      - Target Layer
+      - VIDEO-01-ACT-CORRECTION-SCOPE-SET
+      - VIDEO-01-GATE-CORRECTION
+      - VIDEO_CORRECT
+    - row: 44
+      cells:
+      - VIDEO-01-FLD-ISSUE-REF
+      - VIDEO-01-SEC-05
+      - VIDEO-01-CMP-CORRECTION-SCOPE
+      - FIELD
+      - Issue / Finding / Evidence
+      - VIDEO-01-ACT-CORRECTION-SCOPE-SET
+      - VIDEO-01-GATE-CORRECTION
+      - VIDEO_CORRECT
+    - row: 45
+      cells:
+      - VIDEO-01-BTN-CONTEXT-BUILD
+      - VIDEO-01-SEC-05
+      - VIDEO-01-CMP-CORRECTION-SCOPE
+      - BUTTON
+      - 建立修正 Context
+      - VIDEO-01-ACT-CORRECTION-CONTEXT
+      - VIDEO-01-GATE-CORRECTION
+      - VIDEO_CORRECT
+    - row: 46
+      cells:
+      - VIDEO-01-TXT-CORRECTION
+      - VIDEO-01-SEC-06
+      - VIDEO-01-CMP-AI-REVISION
+      - TEXTAREA
+      - 繁中修改要求
+      - VIDEO-01-ACT-CORRECTION-REQUEST-SET
+      - VIDEO-01-GATE-CORRECTION
+      - VIDEO_CORRECT
+    - row: 47
+      cells:
+      - VIDEO-01-BTN-GEN-CORRECTION
+      - VIDEO-01-SEC-06
+      - VIDEO-01-CMP-AI-REVISION
+      - BUTTON
+      - 產生修正腳本
+      - VIDEO-01-ACT-CORRECTION-GENERATE
+      - VIDEO-01-GATE-CORRECTION
+      - VIDEO_CORRECT
+    - row: 48
+      cells:
+      - VIDEO-01-BTN-APPROVE-CORRECTION
+      - VIDEO-01-SEC-06
+      - VIDEO-01-CMP-AI-REVISION
+      - BUTTON
+      - 核准修正腳本
+      - VIDEO-01-ACT-CORRECTION-APPROVE
+      - VIDEO-01-GATE-CORRECTION
+      - VIDEO_CORRECT
+    - row: 49
+      cells:
+      - VIDEO-01-BTN-EXEC-CORRECTION
+      - VIDEO-01-SEC-06
+      - VIDEO-01-CMP-AI-REVISION
+      - BUTTON
+      - 執行修正
+      - VIDEO-01-ACT-CORRECTION-EXECUTE
+      - VIDEO-01-GATE-CORRECTION
+      - VIDEO_CORRECT
+    - row: 50
+      cells:
+      - VIDEO-01-BTN-COMPARE-CORRECTION
+      - VIDEO-01-SEC-06
+      - VIDEO-01-CMP-AI-REVISION
+      - BUTTON
+      - 比較結果
+      - VIDEO-01-ACT-COMPARE-TOGGLE
+      - VIDEO-01-GATE-CORRECTION
+      - VIDEO_CORRECT
+    - row: 51
+      cells:
+      - VIDEO-01-FLD-ROUTE
+      - VIDEO-01-SEC-07
+      - VIDEO-01-CMP-PROVIDER-RUNTIME
+      - READONLY
+      - Approved Route / Capability
+      - VIDEO-01-ACT-NOOP-VIEW
+      - VIDEO-01-GATE-PAGE
+      - VIDEO_USE
+    - row: 52
+      cells:
+      - VIDEO-01-FLD-PROVIDER
+      - VIDEO-01-SEC-07
+      - VIDEO-01-CMP-PROVIDER-RUNTIME
+      - READONLY
+      - Provider Brand / Model
+      - VIDEO-01-ACT-NOOP-VIEW
+      - VIDEO-01-GATE-PAGE
+      - VIDEO_USE
+    - row: 53
+      cells:
+      - VIDEO-01-FLD-JOB-STATE
+      - VIDEO-01-SEC-07
+      - VIDEO-01-CMP-PROVIDER-RUNTIME
+      - READONLY
+      - Provider Job State
+      - VIDEO-01-ACT-NOOP-VIEW
+      - VIDEO-01-GATE-PAGE
+      - VIDEO_USE
+    - row: 54
+      cells:
+      - VIDEO-01-FLD-ATTEMPT
+      - VIDEO-01-SEC-07
+      - VIDEO-01-CMP-PROVIDER-RUNTIME
+      - READONLY
+      - Attempt / Callback
+      - VIDEO-01-ACT-NOOP-VIEW
+      - VIDEO-01-GATE-PAGE
+      - VIDEO_USE
+    - row: 55
+      cells:
+      - VIDEO-01-FLD-RETRY
+      - VIDEO-01-SEC-07
+      - VIDEO-01-CMP-PROVIDER-RUNTIME
+      - READONLY
+      - Retry Eligibility
+      - VIDEO-01-ACT-NOOP-VIEW
+      - VIDEO-01-GATE-PAGE
+      - VIDEO_USE
+    - row: 56
+      cells:
+      - VIDEO-01-FLD-CORRELATION
+      - VIDEO-01-SEC-07
+      - VIDEO-01-CMP-PROVIDER-RUNTIME
+      - READONLY
+      - Correlation / Trace
+      - VIDEO-01-ACT-NOOP-VIEW
+      - VIDEO-01-GATE-PAGE
+      - VIDEO_USE
+    - row: 57
+      cells:
+      - VIDEO-01-BTN-RETRY
+      - VIDEO-01-SEC-07
+      - VIDEO-01-CMP-PROVIDER-RUNTIME
+      - BUTTON
+      - Retry
+      - VIDEO-01-ACT-TASK-RETRY
+      - VIDEO-01-GATE-RETRY
+      - VIDEO_EXECUTE
+    - row: 58
+      cells:
+      - VIDEO-01-BTN-RUNTIME-DETAIL
+      - VIDEO-01-SEC-07
+      - VIDEO-01-CMP-PROVIDER-RUNTIME
+      - BUTTON
+      - 查看 Runtime 詳情
+      - VIDEO-01-ACT-RUNTIME-VIEW
+      - VIDEO-01-GATE-PAGE
+      - VIDEO_USE
+    - row: 59
+      cells:
+      - VIDEO-01-FLD-SCORE-SCRIPT
+      - VIDEO-01-SEC-08
+      - VIDEO-01-CMP-EVALUATION
+      - READONLY
+      - VIDEO-01-SCORE-SCRIPT
+      - VIDEO-01-ACT-NOOP-VIEW
+      - VIDEO-01-GATE-EVALUATION
+      - VIDEO_USE
+    - row: 60
+      cells:
+      - VIDEO-01-FLD-SCORE-IDENTITY
+      - VIDEO-01-SEC-08
+      - VIDEO-01-CMP-EVALUATION
+      - READONLY
+      - VIDEO-01-SCORE-IDENTITY
+      - VIDEO-01-ACT-NOOP-VIEW
+      - VIDEO-01-GATE-EVALUATION
+      - VIDEO_USE
+    - row: 61
+      cells:
+      - VIDEO-01-FLD-SCORE-MOTION
+      - VIDEO-01-SEC-08
+      - VIDEO-01-CMP-EVALUATION
+      - READONLY
+      - VIDEO-01-SCORE-MOTION
+      - VIDEO-01-ACT-NOOP-VIEW
+      - VIDEO-01-GATE-EVALUATION
+      - VIDEO_USE
+    - row: 62
+      cells:
+      - VIDEO-01-FLD-SCORE-CAMERA
+      - VIDEO-01-SEC-08
+      - VIDEO-01-CMP-EVALUATION
+      - READONLY
+      - VIDEO-01-SCORE-CAMERA
+      - VIDEO-01-ACT-NOOP-VIEW
+      - VIDEO-01-GATE-EVALUATION
+      - VIDEO_USE
+    - row: 63
+      cells:
+      - VIDEO-01-FLD-SCORE-SCENE
+      - VIDEO-01-SEC-08
+      - VIDEO-01-CMP-EVALUATION
+      - READONLY
+      - VIDEO-01-SCORE-SCENE
+      - VIDEO-01-ACT-NOOP-VIEW
+      - VIDEO-01-GATE-EVALUATION
+      - VIDEO_USE
+    - row: 64
+      cells:
+      - VIDEO-01-FLD-SCORE-TIMING
+      - VIDEO-01-SEC-08
+      - VIDEO-01-CMP-EVALUATION
+      - READONLY
+      - VIDEO-01-SCORE-TIMING
+      - VIDEO-01-ACT-NOOP-VIEW
+      - VIDEO-01-GATE-EVALUATION
+      - VIDEO_USE
+    - row: 65
+      cells:
+      - VIDEO-01-FLD-SCORE-TECH
+      - VIDEO-01-SEC-08
+      - VIDEO-01-CMP-EVALUATION
+      - READONLY
+      - VIDEO-01-SCORE-TECH
+      - VIDEO-01-ACT-NOOP-VIEW
+      - VIDEO-01-GATE-EVALUATION
+      - VIDEO_USE
+    - row: 66
+      cells:
+      - VIDEO-01-FLD-SCORE-ASSET
+      - VIDEO-01-SEC-08
+      - VIDEO-01-CMP-EVALUATION
+      - READONLY
+      - VIDEO-01-SCORE-ASSET
+      - VIDEO-01-ACT-NOOP-VIEW
+      - VIDEO-01-GATE-EVALUATION
+      - VIDEO_USE
+    - row: 67
+      cells:
+      - VIDEO-01-FLD-SCORE-RIGHTS
+      - VIDEO-01-SEC-08
+      - VIDEO-01-CMP-EVALUATION
+      - READONLY
+      - VIDEO-01-SCORE-RIGHTS
+      - VIDEO-01-ACT-NOOP-VIEW
+      - VIDEO-01-GATE-EVALUATION
+      - VIDEO_USE
+    - row: 68
+      cells:
+      - VIDEO-01-BTN-EVALUATE
+      - VIDEO-01-SEC-08
+      - VIDEO-01-CMP-EVALUATION
+      - BUTTON
+      - 重新評分
+      - VIDEO-01-ACT-EVALUATE
+      - VIDEO-01-GATE-EVALUATION
+      - VIDEO_SCORE
+    - row: 69
+      cells:
+      - VIDEO-01-BTN-FINDING
+      - VIDEO-01-SEC-08
+      - VIDEO-01-CMP-EVALUATION
+      - BUTTON
+      - 建立 Finding
+      - VIDEO-01-ACT-FINDING-CREATE
+      - VIDEO-01-GATE-EVALUATION
+      - VIDEO_CORRECT
+    - row: 70
+      cells:
+      - VIDEO-01-BTN-ISSUE-OPEN
+      - VIDEO-01-SEC-08
+      - VIDEO-01-CMP-EVALUATION
+      - BUTTON
+      - 開啟 Issue
+      - VIDEO-01-ACT-ISSUE-OPEN
+      - VIDEO-01-GATE-EVALUATION
+      - VIDEO_USE
+    - row: 71
+      cells:
+      - VIDEO-01-FLD-VIDEO-VERSION
+      - VIDEO-01-SEC-09
+      - VIDEO-01-CMP-MANIFEST
+      - READONLY
+      - Exact Video Version ID
+      - VIDEO-01-ACT-NOOP-VIEW
+      - VIDEO-01-GATE-LOCK
+      - VIDEO_USE
+    - row: 72
+      cells:
+      - VIDEO-01-FLD-SHOT-VERSIONS
+      - VIDEO-01-SEC-09
+      - VIDEO-01-CMP-MANIFEST
+      - READONLY
+      - Shot Version refs
+      - VIDEO-01-ACT-NOOP-VIEW
+      - VIDEO-01-GATE-LOCK
+      - VIDEO_USE
+    - row: 73
+      cells:
+      - VIDEO-01-FLD-LAYER-VERSIONS
+      - VIDEO-01-SEC-09
+      - VIDEO-01-CMP-MANIFEST
+      - READONLY
+      - Layer Version refs
+      - VIDEO-01-ACT-NOOP-VIEW
+      - VIDEO-01-GATE-LOCK
+      - VIDEO_USE
+    - row: 74
+      cells:
+      - VIDEO-01-FLD-SCRIPT-HASH
+      - VIDEO-01-SEC-09
+      - VIDEO-01-CMP-MANIFEST
+      - READONLY
+      - Script Section Hash
+      - VIDEO-01-ACT-NOOP-VIEW
+      - VIDEO-01-GATE-LOCK
+      - VIDEO_USE
+    - row: 75
+      cells:
+      - VIDEO-01-FLD-ASSET-FINGERPRINT
+      - VIDEO-01-SEC-09
+      - VIDEO-01-CMP-MANIFEST
+      - READONLY
+      - Asset Dependency Fingerprint
+      - VIDEO-01-ACT-NOOP-VIEW
+      - VIDEO-01-GATE-LOCK
+      - VIDEO_USE
+    - row: 76
+      cells:
+      - VIDEO-01-FLD-OUTPUT-URI
+      - VIDEO-01-SEC-09
+      - VIDEO-01-CMP-MANIFEST
+      - READONLY
+      - Output URI / Composite Ref
+      - VIDEO-01-ACT-NOOP-VIEW
+      - VIDEO-01-GATE-LOCK
+      - VIDEO_USE
+    - row: 77
+      cells:
+      - VIDEO-01-FLD-CHECKSUM
+      - VIDEO-01-SEC-09
+      - VIDEO-01-CMP-MANIFEST
+      - READONLY
+      - Checksum
+      - VIDEO-01-ACT-NOOP-VIEW
+      - VIDEO-01-GATE-LOCK
+      - VIDEO_USE
+    - row: 78
+      cells:
+      - VIDEO-01-FLD-SCORECARD
+      - VIDEO-01-SEC-09
+      - VIDEO-01-CMP-MANIFEST
+      - READONLY
+      - Scorecard / Criteria Ref
+      - VIDEO-01-ACT-NOOP-VIEW
+      - VIDEO-01-GATE-LOCK
+      - VIDEO_USE
+    - row: 79
+      cells:
+      - VIDEO-01-FLD-EVIDENCE
+      - VIDEO-01-SEC-09
+      - VIDEO-01-CMP-MANIFEST
+      - READONLY
+      - Evidence refs
+      - VIDEO-01-ACT-NOOP-VIEW
+      - VIDEO-01-GATE-LOCK
+      - VIDEO_USE
+    - row: 80
+      cells:
+      - VIDEO-01-FLD-HANDOFF-CONTRACT
+      - VIDEO-01-SEC-09
+      - VIDEO-01-CMP-MANIFEST
+      - READONLY
+      - Handoff Contract Hash
+      - VIDEO-01-ACT-NOOP-VIEW
+      - VIDEO-01-GATE-LOCK
+      - VIDEO_USE
+    - row: 81
+      cells:
+      - VIDEO-01-FLD-PAGE-STATE
+      - VIDEO-01-SEC-10
+      - VIDEO-01-CMP-STATUS
+      - READONLY
+      - Page State
+      - VIDEO-01-ACT-NOOP-VIEW
+      - VIDEO-01-GATE-PAGE
+      - VIDEO_USE
+    - row: 82
+      cells:
+      - VIDEO-01-FLD-TASK-STATE
+      - VIDEO-01-SEC-10
+      - VIDEO-01-CMP-STATUS
+      - READONLY
+      - DepartmentTask State
+      - VIDEO-01-ACT-NOOP-VIEW
+      - VIDEO-01-GATE-PAGE
+      - VIDEO_USE
+    - row: 83
+      cells:
+      - VIDEO-01-FLD-ERROR
+      - VIDEO-01-SEC-10
+      - VIDEO-01-CMP-STATUS
+      - READONLY
+      - Error UID / Reason
+      - VIDEO-01-ACT-NOOP-VIEW
+      - VIDEO-01-GATE-PAGE
+      - VIDEO_USE
+    - row: 84
+      cells:
+      - VIDEO-01-FLD-DISABLED-REASON
+      - VIDEO-01-SEC-10
+      - VIDEO-01-CMP-STATUS
+      - READONLY
+      - Disabled Reason
+      - VIDEO-01-ACT-NOOP-VIEW
+      - VIDEO-01-GATE-PAGE
+      - VIDEO_USE
+    - row: 85
+      cells:
+      - VIDEO-01-FLD-AUDIT
+      - VIDEO-01-SEC-10
+      - VIDEO-01-CMP-STATUS
+      - READONLY
+      - Audit / Trace
+      - VIDEO-01-ACT-NOOP-VIEW
+      - VIDEO-01-GATE-PAGE
+      - VIDEO_USE
+  - index: 9
+    rows:
+    - row: 0
+      cells:
+      - Action UID
+      - Permission
+      - Gate
+      - Effect Type
+    - row: 1
+      cells:
+      - VIDEO-01-ACT-NOOP-VIEW
+      - VIDEO_USE
+      - VIDEO-01-GATE-PAGE
+      - UI_ONLY
+    - row: 2
+      cells:
+      - VIDEO-01-ACT-PROJECT-SET
+      - VIDEO_USE
+      - VIDEO-01-GATE-PAGE
+      - CONTEXT_STATE
+    - row: 3
+      cells:
+      - VIDEO-01-ACT-TOPIC-SET
+      - VIDEO_USE
+      - VIDEO-01-GATE-PAGE
+      - CONTEXT_STATE
+    - row: 4
+      cells:
+      - VIDEO-01-ACT-TASK-SET
+      - VIDEO_USE
+      - VIDEO-01-GATE-PAGE
+      - CONTEXT_STATE
+    - row: 5
+      cells:
+      - VIDEO-01-ACT-MODE-SET
+      - VIDEO_USE
+      - VIDEO-01-GATE-TASK-READY
+      - CONTEXT_STATE
+    - row: 6
+      cells:
+      - VIDEO-01-ACT-FLOW-START
+      - VIDEO_EXECUTE
+      - VIDEO-01-GATE-EXECUTE
+      - JOB_START
+    - row: 7
+      cells:
+      - VIDEO-01-ACT-BLUEPRINT-VIEW
+      - VIDEO_USE
+      - VIDEO-01-GATE-CHILD-LOCK
+      - UI_ONLY
+    - row: 8
+      cells:
+      - VIDEO-01-ACT-SCRIPT-VIEW
+      - VIDEO_USE
+      - VIDEO-01-GATE-SCRIPT
+      - UI_ONLY
+    - row: 9
+      cells:
+      - VIDEO-01-ACT-LIST-SEARCH
+      - VIDEO_USE
+      - VIDEO-01-GATE-PAGE
+      - UI_ONLY
+    - row: 10
+      cells:
+      - VIDEO-01-ACT-LIST-FILTER
+      - VIDEO_USE
+      - VIDEO-01-GATE-PAGE
+      - UI_ONLY
+    - row: 11
+      cells:
+      - VIDEO-01-ACT-SHOT-SELECT
+      - VIDEO_USE
+      - VIDEO-01-GATE-PAGE
+      - UI_ONLY
+    - row: 12
+      cells:
+      - VIDEO-01-ACT-PREVIEW-PLAY
+      - VIDEO_USE
+      - VIDEO-01-GATE-CANDIDATE
+      - UI_ONLY
+    - row: 13
+      cells:
+      - VIDEO-01-ACT-PREVIEW-SEEK
+      - VIDEO_USE
+      - VIDEO-01-GATE-CANDIDATE
+      - UI_ONLY
+    - row: 14
+      cells:
+      - VIDEO-01-ACT-PREVIEW-VOLUME
+      - VIDEO_USE
+      - VIDEO-01-GATE-CANDIDATE
+      - UI_ONLY
+    - row: 15
+      cells:
+      - VIDEO-01-ACT-PREVIEW-FULLSCREEN
+      - VIDEO_USE
+      - VIDEO-01-GATE-CANDIDATE
+      - UI_ONLY
+    - row: 16
+      cells:
+      - VIDEO-01-ACT-COMPARE-TOGGLE
+      - VIDEO_USE
+      - VIDEO-01-GATE-COMPARE
+      - UI_ONLY
+    - row: 17
+      cells:
+      - VIDEO-01-ACT-COMPARE-A
+      - VIDEO_USE
+      - VIDEO-01-GATE-COMPARE
+      - UI_ONLY
+    - row: 18
+      cells:
+      - VIDEO-01-ACT-COMPARE-B
+      - VIDEO_USE
+      - VIDEO-01-GATE-COMPARE
+      - UI_ONLY
+    - row: 19
+      cells:
+      - VIDEO-01-ACT-EVALUATION-VIEW
+      - VIDEO_USE
+      - VIDEO-01-GATE-EVALUATION
+      - UI_ONLY
+    - row: 20
+      cells:
+      - VIDEO-01-ACT-EVALUATE
+      - VIDEO_SCORE
+      - VIDEO-01-GATE-EVALUATION
+      - SCORE_MUTATION
+    - row: 21
+      cells:
+      - VIDEO-01-ACT-CANDIDATE-CONFIRM
+      - VIDEO_DECIDE
+      - VIDEO-01-GATE-CONFIRM
+      - DECISION_MUTATION
+    - row: 22
+      cells:
+      - VIDEO-01-ACT-CORRECTION-OPEN
+      - VIDEO_CORRECT
+      - VIDEO-01-GATE-CORRECTION
+      - CONTEXT_STATE
+    - row: 23
+      cells:
+      - VIDEO-01-ACT-CORRECTION-SCOPE-SET
+      - VIDEO_CORRECT
+      - VIDEO-01-GATE-CORRECTION
+      - CONTEXT_STATE
+    - row: 24
+      cells:
+      - VIDEO-01-ACT-CORRECTION-CONTEXT
+      - VIDEO_CORRECT
+      - VIDEO-01-GATE-CORRECTION
+      - CONTEXT_STATE
+    - row: 25
+      cells:
+      - VIDEO-01-ACT-CORRECTION-REQUEST-SET
+      - VIDEO_CORRECT
+      - VIDEO-01-GATE-CORRECTION
+      - CONTEXT_STATE
+    - row: 26
+      cells:
+      - VIDEO-01-ACT-CORRECTION-GENERATE
+      - VIDEO_CORRECT
+      - VIDEO-01-GATE-CORRECTION
+      - CANDIDATE_CREATE
+    - row: 27
+      cells:
+      - VIDEO-01-ACT-CORRECTION-APPROVE
+      - VIDEO_CORRECT
+      - VIDEO-01-GATE-CORRECTION
+      - DECISION_MUTATION
+    - row: 28
+      cells:
+      - VIDEO-01-ACT-CORRECTION-EXECUTE
+      - VIDEO_EXECUTE
+      - VIDEO-01-GATE-CORRECTION
+      - JOB_START
+    - row: 29
+      cells:
+      - VIDEO-01-ACT-TASK-RETRY
+      - VIDEO_EXECUTE
+      - VIDEO-01-GATE-RETRY
+      - JOB_START
+    - row: 30
+      cells:
+      - VIDEO-01-ACT-RUNTIME-VIEW
+      - VIDEO_USE
+      - VIDEO-01-GATE-PAGE
+      - UI_ONLY
+    - row: 31
+      cells:
+      - VIDEO-01-ACT-FINDING-CREATE
+      - VIDEO_CORRECT
+      - VIDEO-01-GATE-EVALUATION
+      - FINDING_CREATE
+    - row: 32
+      cells:
+      - VIDEO-01-ACT-ISSUE-OPEN
+      - VIDEO_USE
+      - VIDEO-01-GATE-EVALUATION
+      - UI_ONLY
+    - row: 33
+      cells:
+      - VIDEO-01-ACT-VERSION-LOCK
+      - VIDEO_DECIDE
+      - VIDEO-01-GATE-LOCK
+      - VERSION_LOCK
+    - row: 34
+      cells:
+      - VIDEO-01-ACT-HANDOFF
+      - VIDEO_HANDOFF
+      - VIDEO-01-GATE-HANDOFF
+      - HANDOFF_CREATE
+  - index: 10
+    rows:
+    - row: 0
+      cells:
+      - Permission
+      - Registered Scope
+      - Purpose
+    - row: 1
+      cells:
+      - VIDEO_USE
+      - video.task.read
+      - Enter page / basic projection
+    - row: 2
+      cells:
+      - VIDEO_EXECUTE
+      - video.task.execute + department.task.execute
+      - Execute/retry assigned VIDEO task
+    - row: 3
+      cells:
+      - VIDEO_DECIDE
+      - department.output.decide
+      - Confirm/modify candidate
+    - row: 4
+      cells:
+      - VIDEO_SCORE
+      - video.score.write + department.score.write
+      - Persist VIDEO scorecard
+    - row: 5
+      cells:
+      - VIDEO_CORRECT
+      - finding.write + correction.create
+      - Create finding/correction
+    - row: 6
+      cells:
+      - VIDEO_HANDOFF
+      - video.handoff.create + department.handoff.create
+      - Create VIDEO→EDIT handoff
+  - index: 11
+    rows:
+    - row: 0
+      cells:
+      - Gate UID
+      - Condition
+    - row: 1
+      cells:
+      - VIDEO-01-GATE-PAGE
+      - Authorized page + project/task scope
+    - row: 2
+      cells:
+      - VIDEO-01-GATE-TASK-READY
+      - Assigned VIDEO task READY and dependency Handoff complete
+    - row: 3
+      cells:
+      - VIDEO-01-GATE-CHILD-LOCK
+      - Exact ChildLock/Blueprint version+hash valid
+    - row: 4
+      cells:
+      - VIDEO-01-GATE-SCRIPT
+      - Exact VIDEO Script View/Section + hash resolved
+    - row: 5
+      cells:
+      - VIDEO-01-GATE-ASSET-BIND
+      - Approved asset refs exact ID/version/filename/checksum/purpose match
+    - row: 6
+      cells:
+      - VIDEO-01-GATE-INSTRUCTION
+      - Approved Instruction Package resolvable for same task/manifest
+    - row: 7
+      cells:
+      - VIDEO-01-GATE-ROUTE
+      - Core-approved Provider Candidate Group/Capability/rights/budget policy PASS
+    - row: 8
+      cells:
+      - VIDEO-01-GATE-EXECUTE
+      - TASK_READY + CHILD_LOCK + SCRIPT + ASSET_BIND + INSTRUCTION + ROUTE
+    - row: 9
+      cells:
+      - VIDEO-01-GATE-CANDIDATE
+      - Verified provider result materialized as Candidate with provenance/checksum
+    - row: 10
+      cells:
+      - VIDEO-01-GATE-EVALUATION
+      - Approved VIDEO criteria version + all required dimensions/evidence
+    - row: 11
+      cells:
+      - VIDEO-01-GATE-CONFIRM
+      - VIDEO score ≥95 + no hard block + human selection
+    - row: 12
+      cells:
+      - VIDEO-01-GATE-CORRECTION
+      - Finding + affected_scope + current exact refs + correction reason
+    - row: 13
+      cells:
+      - VIDEO-01-GATE-RETRY
+      - Runtime BLOCKED/FAILED + retry policy eligible
+    - row: 14
+      cells:
+      - VIDEO-01-GATE-LOCK
+      - Confirmed exact Video Version + scorecard + exact output manifest complete
+    - row: 15
+      cells:
+      - VIDEO-01-GATE-HANDOFF
+      - Locked exact Video Version + handoff manifest/contract hash PASS
+    - row: 16
+      cells:
+      - VIDEO-01-GATE-COMPARE
+      - Candidate exists + Current exists + user enables Compare
+  - index: 12
+    rows:
+    - row: 0
+      cells:
+      - Port UID
+      - Boundary
+      - Operation
+      - Method / Path
+      - Permission
+    - row: 1
+      cells:
+      - VIDEO-01-PORT-IN-ASSET-HANDOFF
+      - Inbound / Dependency Ready
+      - createDepartmentHandoff
+      - POST /v1/handoffs
+      - department.handoff.create
+    - row: 2
+      cells:
+      - VIDEO-01-PORT-EXECUTE
+      - Generate
+      - requestTaskExecution
+      - POST /v1/tasks/{taskId}/execute
+      - department.task.execute
+    - row: 3
+      cells:
+      - VIDEO-01-PORT-RETRY
+      - Retry
+      - retryTaskExecution
+      - POST /v1/tasks/{taskId}/retry
+      - department.task.execute
+    - row: 4
+      cells:
+      - VIDEO-01-PORT-FINDING
+      - Evaluation Finding
+      - createFinding
+      - POST /v1/findings
+      - finding.write
+    - row: 5
+      cells:
+      - VIDEO-01-PORT-CORRECTION
+      - Correction Request
+      - createCorrectionRequest
+      - POST /v1/correction-requests
+      - correction.create
+    - row: 6
+      cells:
+      - VIDEO-01-PORT-DECISION
+      - Candidate Confirm
+      - decideOutputCandidate
+      - POST /v1/tasks/{taskId}/outputs/{outputVersionId}/decision
+      - department.output.decide
+    - row: 7
+      cells:
+      - VIDEO-01-PORT-SCORECARD
+      - Score Persist
+      - submitScorecard
+      - POST /v1/scorecards
+      - department.score.write
+    - row: 8
+      cells:
+      - VIDEO-01-PORT-OUT-EDIT
+      - Outbound to EDIT
+      - createDepartmentHandoff
+      - POST /v1/handoffs
+      - department.handoff.create
+  - index: 13
+    rows:
+    - row: 0
+      cells:
+      - Error UID
+      - Context
+      - Recovery
+    - row: 1
+      cells:
+      - VIDEO-01-ERR-CONTEXT-001
+      - Project/Topic/Task context missing or stale
+      - Reset context and resolve current task
+    - row: 2
+      cells:
+      - VIDEO-01-ERR-BLUEPRINT-001
+      - Locked Blueprint/ChildLock missing/mismatch
+      - BLOCK; return Core/Blueprint owner
+    - row: 3
+      cells:
+      - VIDEO-01-ERR-SCRIPT-001
+      - VIDEO Script Role/Section missing/hash mismatch
+      - BLOCK; do not generate prompt locally
+    - row: 4
+      cells:
+      - VIDEO-01-ERR-ASSET-001
+      - Approved Asset binding ID/version/filename/checksum/purpose mismatch
+      - BLOCK; return Blueprint→Asset regeneration/update path
+    - row: 5
+      cells:
+      - VIDEO-01-ERR-INSTRUCTION-001
+      - Approved Instruction Package unavailable
+      - BLOCK; INSTRUCTION_PACKAGE_REQUIRED
+    - row: 6
+      cells:
+      - VIDEO-01-ERR-ROUTE-001
+      - Provider capability/rights/budget route unavailable
+      - BLOCK; wait Core/API routing resolution
+    - row: 7
+      cells:
+      - VIDEO-01-ERR-PROVIDER-001
+      - Provider job failed/callback invalid
+      - Preserve task/current output; show retry eligibility
+    - row: 8
+      cells:
+      - VIDEO-01-ERR-CALLBACK-001
+      - Callback pending/invalid/duplicate/hash mismatch
+      - No domain mutation for invalid result; audit
+    - row: 9
+      cells:
+      - VIDEO-01-ERR-CANDIDATE-001
+      - Candidate output/provenance/checksum invalid
+      - BLOCK decision/score
+    - row: 10
+      cells:
+      - VIDEO-01-ERR-CRITERIA-001
+      - VIDEO criteria version missing/not approved/wrong department
+      - BLOCK evaluation; no generic default criteria
+    - row: 11
+      cells:
+      - VIDEO-01-ERR-SCOPE-001
+      - Correction scope missing or outside current Shot/object/layer/time range
+      - BLOCK correction
+    - row: 12
+      cells:
+      - VIDEO-01-ERR-CORRECTION-001
+      - Correction candidate not approved or source context stale
+      - Return correction discussion; no execute
+    - row: 13
+      cells:
+      - VIDEO-01-ERR-TRANSLATION-001
+      - Shared translation/compiler failed or mismatched candidate
+      - BLOCK provider execution; preserve Chinese candidate
+    - row: 14
+      cells:
+      - VIDEO-01-ERR-VERSION-001
+      - Attempt to overwrite or use non-exact version
+      - BLOCK; create new immutable version only
+    - row: 15
+      cells:
+      - VIDEO-01-ERR-MANIFEST-001
+      - Output manifest/checksum/lineage incomplete
+      - BLOCK Lock/Handoff
+    - row: 16
+      cells:
+      - VIDEO-01-ERR-PERM-001
+      - Permission/scope denied
+      - Disable action + show real reason
+    - row: 17
+      cells:
+      - VIDEO-01-ERR-HANDOFF-001
+      - Handoff dependency/contract/hash invalid
+      - BLOCK Handoff; preserve locked version
+  - index: 14
+    rows:
+    - row: 0
+      cells:
+      - Score UID
+      - Dimension
+      - Definition
+    - row: 1
+      cells:
+      - VIDEO-01-SCORE-SCRIPT
+      - Script Compliance
+      - Matches Blueprint/VIDEO Script intent and required shot beats
+    - row: 2
+      cells:
+      - VIDEO-01-SCORE-IDENTITY
+      - Character / Identity Stability
+      - Character face/body/clothing/DNA consistency
+    - row: 3
+      cells:
+      - VIDEO-01-SCORE-MOTION
+      - Motion / Body Continuity
+      - Movement continuity and physical plausibility
+    - row: 4
+      cells:
+      - VIDEO-01-SCORE-CAMERA
+      - Camera / Gaze
+      - Camera instruction, framing, gaze/action direction
+    - row: 5
+      cells:
+      - VIDEO-01-SCORE-SCENE
+      - Scene / Continuity
+      - Scene/world continuity, bridge/setting consistency
+    - row: 6
+      cells:
+      - VIDEO-01-SCORE-TIMING
+      - Timing / Duration
+      - Shot duration, beats, temporal progression
+    - row: 7
+      cells:
+      - VIDEO-01-SCORE-TECH
+      - Technical Quality
+      - Resolution, flicker/artifacts, anatomy/physics, visual defects
+    - row: 8
+      cells:
+      - VIDEO-01-SCORE-ASSET
+      - Asset / DNA Fidelity
+      - Exact bound assets/DNA visually respected
+    - row: 9
+      cells:
+      - VIDEO-01-SCORE-RIGHTS
+      - Rights / Policy
+      - Hard block; PASS required regardless of numeric score
+  - index: 15
+    rows:
+    - row: 0
+      cells:
+      - Binding
+      - Owner
+      - VIDEO Rule
+    - row: 1
+      cells:
+      - Locked Blueprint / ChildLock
+      - CORE / BLUEPRINT
+      - exact version/hash; mismatch = BLOCK
+    - row: 2
+      cells:
+      - CORE Canonical Production Script
+      - CORE Script System
+      - VIDEO specialized script consumes exact project/topic/canonical_script_version/hash
+    - row: 3
+      cells:
+      - VIDEO Script View
+      - CORE / SCRIPT
+      - provider-neutral 8-section VisualGenerationScriptView; first production read-only
+    - row: 4
+      cells:
+      - DNA / Continuity
+      - CORE / BLUEPRINT
+      - exact character/scene/object/continuity refs
+    - row: 5
+      cells:
+      - Approved Asset Handoff
+      - ASSET boundary
+      - exact ID/version/filename/checksum/purpose/rights; no picker
+    - row: 6
+      cells:
+      - Instruction Package
+      - InstructionCompiler
+      - same task/manifest; APPROVED_FOR_EXECUTION
+    - row: 7
+      cells:
+      - Provider Route
+      - Shared AI API Router
+      - read-only on page; no provider/model selection
+    - row: 8
+      cells:
+      - Output Version
+      - VIDEO
+      - append-only exact candidate/confirmed version; overwrite forbidden
+  - index: 16
+    rows:
+    - row: 0
+      cells:
+      - Step
+      - Required behavior
+    - row: 1
+      cells:
+      - 1. Scope
+      - Resolve exact Scene / Shot / Start-End Time / Object / Layer + Finding/Evidence
+    - row: 2
+      cells:
+      - 2. Context
+      - Build VideoCorrectionContext with current exact refs; stale/mismatched context = BLOCK
+    - row: 3
+      cells:
+      - 3. Human request
+      - Traditional Chinese semantic request only
+    - row: 4
+      cells:
+      - 4. Candidate
+      - Generate CorrectionScriptCandidate from current VIDEO Script + issue; source remains immutable
+    - row: 5
+      cells:
+      - 5. Human approval
+      - Candidate must be approved before shared translation/compiler
+    - row: 6
+      cells:
+      - 6. Execute
+      - Shared adapter/router executes approved correction; new Candidate/Version only
+    - row: 7
+      cells:
+      - 7. Compare
+      - Conditional A/B compare after new candidate exists
+  - index: 17
+    rows:
+    - row: 0
+      cells:
+      - Visual
+      - Functions
+      - Why it exists
+      - Forbidden
+    - row: 1
+      cells:
+      - A Main Production
+      - Context / Scene-Shot / Binding / Preview / Decision / Runtime
+      - 日常 Generate/Review 工作台
+      - free prompt, asset picker, provider picker
+    - row: 2
+      cells:
+      - B A/B Compare
+      - Current + Candidate conditional viewer
+      - Human decision / visual comparison
+      - permanent double player
+    - row: 3
+      cells:
+      - C Correction
+      - Correction Scope + zh-TW semantic correction + runtime
+      - Modify/Finding loop
+      - EDIT timeline / ASSET patch
+    - row: 4
+      cells:
+      - D Evaluation
+      - 9 VIDEO dimensions + Finding/Issue
+      - VIDEO-specific quality decision
+      - generic/default score
+    - row: 5
+      cells:
+      - E Handoff
+      - Exact Output Manifest + Lock + EDIT handoff
+      - append-only finalization
+      - VIDEO→QA/Release
+  - index: 18
+    rows:
+    - row: 0
+      cells:
+      - Direction
+      - Exact payload / ref
+      - Boundary rule
+    - row: 1
+      cells:
+      - ASSET → VIDEO
+      - Task + Locked Blueprint + VIDEO Script + DNA + Approved Asset refs + Instruction + Route
+      - VIDEO validates/consumes exact refs; no manual asset picking
+    - row: 2
+      cells:
+      - VIDEO → EDIT
+      - Locked Exact Video Version + Shot/Layer refs + Script Hash + Asset Fingerprint + URI/Checksum + Scorecard/Evidence + Contract Hash
+      - EDIT internals not rendered in VIDEO; exact handoff only
+  - index: 19
+    rows:
+    - row: 0
+      cells:
+      - Denominator
+      - Current
+    - row: 1
+      cells:
+      - Sections
+      - 10/10
+    - row: 2
+      cells:
+      - Components
+      - 17/17
+    - row: 3
+      cells:
+      - Authority Visual Regions
+      - 9/9
+    - row: 4
+      cells:
+      - Controls
+      - 85/85
+    - row: 5
+      cells:
+      - Actions
+      - 34/34
+    - row: 6
+      cells:
+      - Objects / Refs
+      - 17/17
+    - row: 7
+      cells:
+      - Gates
+      - 16/16
+    - row: 8
+      cells:
+      - Permissions
+      - 6/6
+    - row: 9
+      cells:
+      - Errors
+      - 17/17
+    - row: 10
+      cells:
+      - Stages / Transitions
+      - 5 / 5
+    - row: 11
+      cells:
+      - Score Dimensions
+      - 9/9
+    - row: 12
+      cells:
+      - Integration Ports
+      - 8/8
+    - row: 13
+      cells:
+      - Unresolved control-action refs
+      - 0 per Current derived validation
+    - row: 14
+      cells:
+      - Unbound actions
+      - 0 per Current derived validation
+  - index: 20
+    rows:
+    - row: 0
+      cells:
+      - Item
+      - Status
+    - row: 1
+      cells:
+      - Mother Basic Design structure
+      - COMPLETE
+    - row: 2
+      cells:
+      - Exact Current denominator binding
+      - COMPLETE
+    - row: 3
+      cells:
+      - Technology-purple UI materialization
+      - 5 Visual Candidates
+    - row: 4
+      cells:
+      - Fake business data
+      - 0 by design
+    - row: 5
+      cells:
+      - Human visual/function review
+      - PENDING
+    - row: 6
+      cells:
+      - Selected approved candidate
+      - NOT YET
+    - row: 7
+      cells:
+      - Authority update
+      - BLOCKED pending approval
+    - row: 8
+      cells:
+      - DESIGN_FROZEN
+      - 'FALSE'
+    - row: 9
+      cells:
+      - Implementation claim
+      - NONE
+    - row: 10
+      cells:
+      - Production claim
+      - NONE
+  - index: 21
+    rows:
+    - row: 0
+      cells:
+      - Resume field
+      - Value
+    - row: 1
+      cells:
+      - Branch / HEAD
+      - new / 165c6440cb53b1b45ec96905241fb4d56dc3b867
+    - row: 2
+      cells:
+      - Page
+      - VIDEO-01
+    - row: 3
+      cells:
+      - Authority SHA
+      - cac1b53e513c4e8c5f13a9014ae87aa08b6f9774
+    - row: 4
+      cells:
+      - Document Work Unit
+      - VIDEO-01 Mother Basic Design Visual Rebuild
+    - row: 5
+      cells:
+      - Authority denominator
+      - 10 Sec / 17 Comp / 85 Ctrl / 34 Act / 16 Gate / 8 Port / 9 Score
+    - row: 6
+      cells:
+      - Visual candidate status
+      - PENDING HUMAN REVIEW
+    - row: 7
+      cells:
+      - Design freeze
+      - 'FALSE'
+    - row: 8
+      cells:
+      - Implementation claim
+      - NONE
+    - row: 9
+      cells:
+      - Production claim
+      - NONE
+  - index: 22
+    rows:
+    - row: 0
+      cells:
+      - Authority
+      - Value
+    - row: 1
+      cells:
+      - Source Commit
+      - 165c6440cb53b1b45ec96905241fb4d56dc3b867
+    - row: 2
+      cells:
+      - Machine Authority
+      - authority/pages/workspace/VIDEO-01/VIDEO_PAGE_VISUAL_AUTHORITY_FINAL_SCRIPT_CONTENT_CLOSED_V1.1.yaml
+    - row: 3
+      cells:
+      - Authority SHA-256
+      - 3f927e4ba85f075f06901016395ce2666731e15b95493af67e35961340aa657b
+    - row: 4
+      cells:
+      - Expected Control Denominator
+      - '85'
+    - row: 5
+      cells:
+      - Unique Control Rows
+      - '85'
+    - row: 6
+      cells:
+      - Denominator Gate
+      - PASS
+  - index: 23
+    rows:
+    - row: 0
+      cells:
+      - Control UID
+      - UID Status
+      - Label
+      - Type
+      - Action UID
+      - Gate
+      - Permission / Auth Resource
+      - Payload / Schema
+      - Operation
+      - Method / Path
+      - Runtime Owner
+      - Persistence Owner
+      - Runtime Status
+    - row: 1
+      cells:
+      - VIDEO-01-BTN-APPROVE-CORRECTION
+      - EXISTING_SOURCE_UID
+      - 核准修正腳本
+      - BUTTON
+      - VIDEO-01-ACT-CORRECTION-APPROVE
+      - VIDEO-01-GATE-CORRECTION
+      - VIDEO_CORRECT
+      - ApproveVideoCorrectionScriptCandidateRequest
+      - approveCorrectionScriptCandidate
+      - POST /v1/state-commands/correctionscript/approve
+      - VIDEO/HUMAN
+      - public.correction_script_versions
+      - EFFECTFUL_EXACT
+    - row: 2
+      cells:
+      - VIDEO-01-BTN-BLUEPRINT
+      - EXISTING_SOURCE_UID
+      - 查看 Blueprint
+      - BUTTON
+      - VIDEO-01-ACT-BLUEPRINT-VIEW
+      - VIDEO-01-GATE-CHILD-LOCK
+      - VIDEO_USE
+      - —
+      - —
+      - —
+      - CLIENT
+      - —
+      - UI_LOCAL_EXACT
+    - row: 3
+      cells:
+      - VIDEO-01-BTN-COMPARE-CORRECTION
+      - EXISTING_SOURCE_UID
+      - 比較結果
+      - BUTTON
+      - VIDEO-01-ACT-COMPARE-TOGGLE
+      - VIDEO-01-GATE-CORRECTION
+      - VIDEO_CORRECT
+      - —
+      - —
+      - —
+      - CLIENT
+      - —
+      - UI_LOCAL_EXACT
+    - row: 4
+      cells:
+      - VIDEO-01-BTN-CONFIRM
+      - EXISTING_SOURCE_UID
+      - 確認版本
+      - BUTTON
+      - VIDEO-01-ACT-CANDIDATE-CONFIRM
+      - VIDEO-01-GATE-CONFIRM
+      - VIDEO_DECIDE
+      - ConfirmVideoCandidateRequest
+      - confirmVideoCandidate
+      - POST /v1/video-runtime-runs/{runId}/candidates/{videoOutputVersionId}/confirm
+      - VIDEO/DECISION
+      - System 05 / VideoOutputVersion Confirmed State + Decision Evidence/Audit
+      - EFFECTFUL_EXACT
+    - row: 5
+      cells:
+      - VIDEO-01-BTN-CONTEXT-BUILD
+      - EXISTING_SOURCE_UID
+      - 建立修正 Context
+      - BUTTON
+      - VIDEO-01-ACT-CORRECTION-CONTEXT
+      - VIDEO-01-GATE-CORRECTION
+      - VIDEO_CORRECT
+      - —
+      - —
+      - —
+      - VIDEO/AI
+      - —
+      - UI_LOCAL_EXACT
+    - row: 6
+      cells:
+      - VIDEO-01-BTN-EVALUATE
+      - EXISTING_SOURCE_UID
+      - 重新評分
+      - BUTTON
+      - VIDEO-01-ACT-EVALUATE
+      - VIDEO-01-GATE-EVALUATION
+      - VIDEO_SCORE
+      - EvaluateVideoCandidateRequest
+      - evaluateVideoCandidate
+      - POST /v1/video-runtime-runs/{runId}/candidates/{videoOutputVersionId}/evaluations
+      - VIDEO/EVALUATION
+      - System 05 / EvaluationResult + Video Evidence/Audit
+      - EFFECTFUL_EXACT
+    - row: 7
+      cells:
+      - VIDEO-01-BTN-EXEC-CORRECTION
+      - EXISTING_SOURCE_UID
+      - 執行修正
+      - BUTTON
+      - VIDEO-01-ACT-CORRECTION-EXECUTE
+      - VIDEO-01-GATE-CORRECTION
+      - VIDEO_CORRECT
+      - ExecuteVideoCorrectionRequest
+      - executeVideoCorrection
+      - POST /v1/video-runtime-runs/{runId}/corrections/execute
+      - VIDEO/RUNTIME
+      - System 05 / VideoOutputVersion + Correction/Delta Lineage + Audit
+      - EFFECTFUL_EXACT
+    - row: 8
+      cells:
+      - VIDEO-01-BTN-EXECUTE
+      - EXISTING_SOURCE_UID
+      - 執行 / Execute
+      - BUTTON
+      - VIDEO-01-ACT-FLOW-START
+      - VIDEO-01-GATE-EXECUTE
+      - VIDEO_EXECUTE
+      - StartVideoGenerationFlowRequest
+      - startVideoGenerationFlow
+      - POST /v1/video-runtime-runs
+      - VIDEO/RUNTIME
+      - System 05 / ProductionWorkItem + VideoOutputVersion Generation Lineage + Audit
+      - EFFECTFUL_EXACT
+    - row: 9
+      cells:
+      - VIDEO-01-BTN-FINDING
+      - EXISTING_SOURCE_UID
+      - 建立 Finding
+      - BUTTON
+      - VIDEO-01-ACT-FINDING-CREATE
+      - VIDEO-01-GATE-EVALUATION
+      - VIDEO_CORRECT
+      - CreateVideoFindingRequest
+      - createVideoFinding
+      - POST /v1/video-runtime-runs/{runId}/candidates/{videoOutputVersionId}/findings
+      - VIDEO/EVALUATION
+      - System 05 / Finding + Video Evidence/Audit
+      - EFFECTFUL_EXACT
+    - row: 10
+      cells:
+      - VIDEO-01-BTN-FULLSCREEN
+      - EXISTING_SOURCE_UID
+      - Fullscreen
+      - CONTROL
+      - VIDEO-01-ACT-PREVIEW-FULLSCREEN
+      - VIDEO-01-GATE-PAGE
+      - VIDEO_USE
+      - —
+      - —
+      - —
+      - CLIENT
+      - —
+      - UI_LOCAL_EXACT
+    - row: 11
+      cells:
+      - VIDEO-01-BTN-GEN-CORRECTION
+      - EXISTING_SOURCE_UID
+      - 產生修正腳本
+      - BUTTON
+      - VIDEO-01-ACT-CORRECTION-GENERATE
+      - VIDEO-01-GATE-CORRECTION
+      - VIDEO_CORRECT
+      - GenerateVideoCorrectionScriptCandidateRequest
+      - generateCorrectionScriptCandidate
+      - POST /v1/state-commands/correctionscript/generate
+      - VIDEO/AI
+      - public.correction_script_versions
+      - EFFECTFUL_EXACT
+    - row: 12
+      cells:
+      - VIDEO-01-BTN-HANDOFF
+      - EXISTING_SOURCE_UID
+      - Handoff → EDIT
+      - BUTTON
+      - VIDEO-01-ACT-HANDOFF
+      - VIDEO-01-GATE-HANDOFF
+      - VIDEO_HANDOFF
+      - HandoffVideoToEditRequest
+      - handoffVideoToEdit
+      - POST /v1/video-runtime-runs/{runId}/handoff-to-edit
+      - VIDEO/HANDOFF
+      - System 05 / HandoffManifest + VideoOutputVersion Provenance/Audit
+      - EFFECTFUL_EXACT
+    - row: 13
+      cells:
+      - VIDEO-01-BTN-ISSUE-OPEN
+      - EXISTING_SOURCE_UID
+      - 開啟 Issue
+      - BUTTON
+      - VIDEO-01-ACT-ISSUE-OPEN
+      - VIDEO-01-GATE-EVALUATION
+      - VIDEO_USE
+      - —
+      - —
+      - —
+      - CLIENT
+      - —
+      - UI_LOCAL_EXACT
+    - row: 14
+      cells:
+      - VIDEO-01-BTN-LOCK
+      - EXISTING_SOURCE_UID
+      - Lock
+      - BUTTON
+      - VIDEO-01-ACT-VERSION-LOCK
+      - VIDEO-01-GATE-LOCK
+      - VIDEO_DECIDE
+      - LockVideoVersionRequest
+      - lockVideoVersion
+      - POST /v1/state-commands/videoversion/lock
+      - VIDEO/VERSION
+      - public.production_output_version_locks
+      - EFFECTFUL_EXACT
+    - row: 15
+      cells:
+      - VIDEO-01-BTN-MODIFY
+      - EXISTING_SOURCE_UID
+      - 修改
+      - BUTTON
+      - VIDEO-01-ACT-CORRECTION-OPEN
+      - VIDEO-01-GATE-CORRECTION
+      - VIDEO_CORRECT
+      - —
+      - —
+      - —
+      - CLIENT/VIDEO
+      - —
+      - UI_LOCAL_EXACT
+    - row: 16
+      cells:
+      - VIDEO-01-BTN-PACKAGE
+      - EXISTING_SOURCE_UID
+      - 查看 VIDEO Script / Instruction
+      - BUTTON
+      - VIDEO-01-ACT-SCRIPT-VIEW
+      - VIDEO-01-GATE-SCRIPT
+      - VIDEO_USE
+      - —
+      - —
+      - —
+      - CLIENT
+      - —
+      - UI_LOCAL_EXACT
+    - row: 17
+      cells:
+      - VIDEO-01-BTN-PLAY
+      - EXISTING_SOURCE_UID
+      - Play/Pause
+      - CONTROL
+      - VIDEO-01-ACT-PREVIEW-PLAY
+      - VIDEO-01-GATE-PAGE
+      - VIDEO_USE
+      - —
+      - —
+      - —
+      - CLIENT
+      - —
+      - UI_LOCAL_EXACT
+    - row: 18
+      cells:
+      - VIDEO-01-BTN-RETRY
+      - EXISTING_SOURCE_UID
+      - Retry
+      - BUTTON
+      - VIDEO-01-ACT-TASK-RETRY
+      - VIDEO-01-GATE-RETRY
+      - VIDEO_EXECUTE
+      - RetryVideoTaskRequest
+      - retryVideoTask
+      - POST /v1/video-runtime-runs/{runId}/tasks/{taskId}/retry
+      - VIDEO/RUNTIME
+      - System 05 / ProductionWorkItem Retry Attempt + Video Generation Audit
+      - EFFECTFUL_EXACT
+    - row: 19
+      cells:
+      - VIDEO-01-BTN-RUNTIME-DETAIL
+      - EXISTING_SOURCE_UID
+      - 查看 Runtime 詳情
+      - BUTTON
+      - VIDEO-01-ACT-RUNTIME-VIEW
+      - VIDEO-01-GATE-PAGE
+      - VIDEO_USE
+      - —
+      - —
+      - —
+      - CLIENT
+      - —
+      - UI_LOCAL_EXACT
+    - row: 20
+      cells:
+      - VIDEO-01-BTN-SCORE-DETAIL
+      - EXISTING_SOURCE_UID
+      - 查看 VIDEO 評分
+      - BUTTON
+      - VIDEO-01-ACT-EVALUATION-VIEW
+      - VIDEO-01-GATE-EVALUATION
+      - VIDEO_USE
+      - —
+      - —
+      - —
+      - CLIENT
+      - —
+      - UI_LOCAL_EXACT
+    - row: 21
+      cells:
+      - VIDEO-01-BTN-VOLUME
+      - EXISTING_SOURCE_UID
+      - Volume/Mute
+      - CONTROL
+      - VIDEO-01-ACT-PREVIEW-VOLUME
+      - VIDEO-01-GATE-PAGE
+      - VIDEO_USE
+      - —
+      - —
+      - —
+      - CLIENT
+      - —
+      - UI_LOCAL_EXACT
+    - row: 22
+      cells:
+      - VIDEO-01-CTL-COMPARE
+      - EXISTING_SOURCE_UID
+      - Compare
+      - CONTROL
+      - VIDEO-01-ACT-COMPARE-TOGGLE
+      - VIDEO-01-GATE-PAGE
+      - VIDEO_USE
+      - —
+      - —
+      - —
+      - CLIENT
+      - —
+      - UI_LOCAL_EXACT
+    - row: 23
+      cells:
+      - VIDEO-01-CTL-FILTER
+      - EXISTING_SOURCE_UID
+      - Filter
+      - CONTROL
+      - VIDEO-01-ACT-LIST-FILTER
+      - VIDEO-01-GATE-PAGE
+      - VIDEO_USE
+      - —
+      - —
+      - —
+      - CLIENT
+      - —
+      - UI_LOCAL_EXACT
+    - row: 24
+      cells:
+      - VIDEO-01-CTL-MODE
+      - EXISTING_SOURCE_UID
+      - AUTO / MANUAL
+      - SEGMENTED
+      - VIDEO-01-ACT-MODE-SET
+      - VIDEO-01-GATE-TASK-READY
+      - VIDEO_USE
+      - —
+      - —
+      - —
+      - CLIENT/ORCH
+      - —
+      - UI_LOCAL_EXACT
+    - row: 25
+      cells:
+      - VIDEO-01-CTL-SEEK
+      - EXISTING_SOURCE_UID
+      - Seek
+      - CONTROL
+      - VIDEO-01-ACT-PREVIEW-SEEK
+      - VIDEO-01-GATE-PAGE
+      - VIDEO_USE
+      - —
+      - —
+      - —
+      - CLIENT
+      - —
+      - UI_LOCAL_EXACT
+    - row: 26
+      cells:
+      - VIDEO-01-CTL-SHOT-SELECT
+      - EXISTING_SOURCE_UID
+      - Scene / Shot Item
+      - CONTROL
+      - VIDEO-01-ACT-SHOT-SELECT
+      - VIDEO-01-GATE-PAGE
+      - VIDEO_USE
+      - —
+      - —
+      - —
+      - CLIENT
+      - —
+      - UI_LOCAL_EXACT
+    - row: 27
+      cells:
+      - VIDEO-01-CTL-VERSION-A
+      - EXISTING_SOURCE_UID
+      - Version A / Current
+      - CONTROL
+      - VIDEO-01-ACT-COMPARE-A
+      - VIDEO-01-GATE-PAGE
+      - VIDEO_USE
+      - —
+      - —
+      - —
+      - CLIENT
+      - —
+      - UI_LOCAL_EXACT
+    - row: 28
+      cells:
+      - VIDEO-01-CTL-VERSION-B
+      - EXISTING_SOURCE_UID
+      - Version B / Candidate
+      - CONTROL
+      - VIDEO-01-ACT-COMPARE-B
+      - VIDEO-01-GATE-CANDIDATE
+      - VIDEO_USE
+      - —
+      - —
+      - —
+      - CLIENT
+      - —
+      - UI_LOCAL_EXACT
+    - row: 29
+      cells:
+      - VIDEO-01-FLD-ASSET-FINGERPRINT
+      - EXISTING_SOURCE_UID
+      - Asset Dependency Fingerprint
+      - READONLY
+      - VIDEO-01-ACT-NOOP-VIEW
+      - VIDEO-01-GATE-LOCK
+      - VIDEO_USE
+      - —
+      - —
+      - —
+      - CLIENT
+      - —
+      - UI_LOCAL_EXACT
+    - row: 30
+      cells:
+      - VIDEO-01-FLD-ASSET-REFS
+      - EXISTING_SOURCE_UID
+      - Approved Asset IDs / Versions
+      - READONLY
+      - VIDEO-01-ACT-NOOP-VIEW
+      - VIDEO-01-GATE-ASSET-BIND
+      - VIDEO_USE
+      - —
+      - —
+      - —
+      - CLIENT
+      - —
+      - UI_LOCAL_EXACT
+    - row: 31
+      cells:
+      - VIDEO-01-FLD-ATTEMPT
+      - EXISTING_SOURCE_UID
+      - Attempt / Callback
+      - READONLY
+      - VIDEO-01-ACT-NOOP-VIEW
+      - VIDEO-01-GATE-PAGE
+      - VIDEO_USE
+      - —
+      - —
+      - —
+      - CLIENT
+      - —
+      - UI_LOCAL_EXACT
+    - row: 32
+      cells:
+      - VIDEO-01-FLD-AUDIT
+      - EXISTING_SOURCE_UID
+      - Audit / Trace
+      - READONLY
+      - VIDEO-01-ACT-NOOP-VIEW
+      - VIDEO-01-GATE-PAGE
+      - VIDEO_USE
+      - —
+      - —
+      - —
+      - CLIENT
+      - —
+      - UI_LOCAL_EXACT
+    - row: 33
+      cells:
+      - VIDEO-01-FLD-BLUEPRINT-REF
+      - EXISTING_SOURCE_UID
+      - Blueprint / ChildLock Ref
+      - READONLY
+      - VIDEO-01-ACT-NOOP-VIEW
+      - VIDEO-01-GATE-PAGE
+      - VIDEO_USE
+      - —
+      - —
+      - —
+      - CLIENT
+      - —
+      - UI_LOCAL_EXACT
+    - row: 34
+      cells:
+      - VIDEO-01-FLD-CANDIDATE-VERSION
+      - EXISTING_SOURCE_UID
+      - Candidate Version
+      - READONLY
+      - VIDEO-01-ACT-NOOP-VIEW
+      - VIDEO-01-GATE-PAGE
+      - VIDEO_USE
+      - —
+      - —
+      - —
+      - CLIENT
+      - —
+      - UI_LOCAL_EXACT
+    - row: 35
+      cells:
+      - VIDEO-01-FLD-CHECKSUM
+      - EXISTING_SOURCE_UID
+      - Checksum
+      - READONLY
+      - VIDEO-01-ACT-NOOP-VIEW
+      - VIDEO-01-GATE-LOCK
+      - VIDEO_USE
+      - —
+      - —
+      - —
+      - CLIENT
+      - —
+      - UI_LOCAL_EXACT
+    - row: 36
+      cells:
+      - VIDEO-01-FLD-CORRELATION
+      - EXISTING_SOURCE_UID
+      - Correlation / Trace
+      - READONLY
+      - VIDEO-01-ACT-NOOP-VIEW
+      - VIDEO-01-GATE-PAGE
+      - VIDEO_USE
+      - —
+      - —
+      - —
+      - CLIENT
+      - —
+      - UI_LOCAL_EXACT
+    - row: 37
+      cells:
+      - VIDEO-01-FLD-CRITERIA-VERSION
+      - EXISTING_SOURCE_UID
+      - VIDEO Criteria Version
+      - READONLY
+      - VIDEO-01-ACT-NOOP-VIEW
+      - VIDEO-01-GATE-PAGE
+      - VIDEO_USE
+      - —
+      - —
+      - —
+      - CLIENT
+      - —
+      - UI_LOCAL_EXACT
+    - row: 38
+      cells:
+      - VIDEO-01-FLD-CURRENT-VERSION
+      - EXISTING_SOURCE_UID
+      - Current Exact Video Version
+      - READONLY
+      - VIDEO-01-ACT-NOOP-VIEW
+      - VIDEO-01-GATE-PAGE
+      - VIDEO_USE
+      - —
+      - —
+      - —
+      - CLIENT
+      - —
+      - UI_LOCAL_EXACT
+    - row: 39
+      cells:
+      - VIDEO-01-FLD-DISABLED-REASON
+      - EXISTING_SOURCE_UID
+      - Disabled Reason
+      - READONLY
+      - VIDEO-01-ACT-NOOP-VIEW
+      - VIDEO-01-GATE-PAGE
+      - VIDEO_USE
+      - —
+      - —
+      - —
+      - CLIENT
+      - —
+      - UI_LOCAL_EXACT
+    - row: 40
+      cells:
+      - VIDEO-01-FLD-DNA-REFS
+      - EXISTING_SOURCE_UID
+      - DNA / Continuity Refs
+      - READONLY
+      - VIDEO-01-ACT-NOOP-VIEW
+      - VIDEO-01-GATE-PAGE
+      - VIDEO_USE
+      - —
+      - —
+      - —
+      - CLIENT
+      - —
+      - UI_LOCAL_EXACT
+    - row: 41
+      cells:
+      - VIDEO-01-FLD-END-TC
+      - EXISTING_SOURCE_UID
+      - End Timecode
+      - FIELD
+      - VIDEO-01-ACT-CORRECTION-SCOPE-SET
+      - VIDEO-01-GATE-CORRECTION
+      - VIDEO_CORRECT
+      - —
+      - —
+      - —
+      - CLIENT/VIDEO
+      - —
+      - UI_LOCAL_EXACT
+    - row: 42
+      cells:
+      - VIDEO-01-FLD-ERROR
+      - EXISTING_SOURCE_UID
+      - Error UID / Reason
+      - READONLY
+      - VIDEO-01-ACT-NOOP-VIEW
+      - VIDEO-01-GATE-PAGE
+      - VIDEO_USE
+      - —
+      - —
+      - —
+      - CLIENT
+      - —
+      - UI_LOCAL_EXACT
+    - row: 43
+      cells:
+      - VIDEO-01-FLD-EVIDENCE
+      - EXISTING_SOURCE_UID
+      - Evidence refs
+      - READONLY
+      - VIDEO-01-ACT-NOOP-VIEW
+      - VIDEO-01-GATE-LOCK
+      - VIDEO_USE
+      - —
+      - —
+      - —
+      - CLIENT
+      - —
+      - UI_LOCAL_EXACT
+    - row: 44
+      cells:
+      - VIDEO-01-FLD-FILENAME-CHECKSUM
+      - EXISTING_SOURCE_UID
+      - Filename / Checksum / Purpose Binding
+      - READONLY
+      - VIDEO-01-ACT-NOOP-VIEW
+      - VIDEO-01-GATE-ASSET-BIND
+      - VIDEO_USE
+      - —
+      - —
+      - —
+      - CLIENT
+      - —
+      - UI_LOCAL_EXACT
+    - row: 45
+      cells:
+      - VIDEO-01-FLD-HANDOFF-CONTRACT
+      - EXISTING_SOURCE_UID
+      - Handoff Contract Hash
+      - READONLY
+      - VIDEO-01-ACT-NOOP-VIEW
+      - VIDEO-01-GATE-LOCK
+      - VIDEO_USE
+      - —
+      - —
+      - —
+      - CLIENT
+      - —
+      - UI_LOCAL_EXACT
+    - row: 46
+      cells:
+      - VIDEO-01-FLD-INPUT-FINGERPRINT
+      - EXISTING_SOURCE_UID
+      - Input Fingerprint
+      - READONLY
+      - VIDEO-01-ACT-NOOP-VIEW
+      - VIDEO-01-GATE-PAGE
+      - VIDEO_USE
+      - —
+      - —
+      - —
+      - CLIENT
+      - —
+      - UI_LOCAL_EXACT
+    - row: 47
+      cells:
+      - VIDEO-01-FLD-INSTRUCTION
+      - EXISTING_SOURCE_UID
+      - Approved Instruction Package
+      - READONLY
+      - VIDEO-01-ACT-NOOP-VIEW
+      - VIDEO-01-GATE-PAGE
+      - VIDEO_USE
+      - —
+      - —
+      - —
+      - CLIENT
+      - —
+      - UI_LOCAL_EXACT
+    - row: 48
+      cells:
+      - VIDEO-01-FLD-ISSUE-REF
+      - EXISTING_SOURCE_UID
+      - Issue / Finding / Evidence
+      - FIELD
+      - VIDEO-01-ACT-CORRECTION-SCOPE-SET
+      - VIDEO-01-GATE-CORRECTION
+      - VIDEO_CORRECT
+      - —
+      - —
+      - —
+      - CLIENT/VIDEO
+      - —
+      - UI_LOCAL_EXACT
+    - row: 49
+      cells:
+      - VIDEO-01-FLD-ISSUE-SUMMARY
+      - EXISTING_SOURCE_UID
+      - Issue Summary
+      - READONLY
+      - VIDEO-01-ACT-NOOP-VIEW
+      - VIDEO-01-GATE-PAGE
+      - VIDEO_USE
+      - —
+      - —
+      - —
+      - CLIENT
+      - —
+      - UI_LOCAL_EXACT
+    - row: 50
+      cells:
+      - VIDEO-01-FLD-JOB-STATE
+      - EXISTING_SOURCE_UID
+      - Provider Job State
+      - READONLY
+      - VIDEO-01-ACT-NOOP-VIEW
+      - VIDEO-01-GATE-PAGE
+      - VIDEO_USE
+      - —
+      - —
+      - —
+      - CLIENT
+      - —
+      - UI_LOCAL_EXACT
+    - row: 51
+      cells:
+      - VIDEO-01-FLD-LAYER-VERSIONS
+      - EXISTING_SOURCE_UID
+      - Layer Version refs
+      - READONLY
+      - VIDEO-01-ACT-NOOP-VIEW
+      - VIDEO-01-GATE-LOCK
+      - VIDEO_USE
+      - —
+      - —
+      - —
+      - CLIENT
+      - —
+      - UI_LOCAL_EXACT
+    - row: 52
+      cells:
+      - VIDEO-01-FLD-OUTPUT-URI
+      - EXISTING_SOURCE_UID
+      - Output URI / Composite Ref
+      - READONLY
+      - VIDEO-01-ACT-NOOP-VIEW
+      - VIDEO-01-GATE-LOCK
+      - VIDEO_USE
+      - —
+      - —
+      - —
+      - CLIENT
+      - —
+      - UI_LOCAL_EXACT
+    - row: 53
+      cells:
+      - VIDEO-01-FLD-OVERALL-SCORE
+      - EXISTING_SOURCE_UID
+      - Overall Score
+      - READONLY
+      - VIDEO-01-ACT-NOOP-VIEW
+      - VIDEO-01-GATE-PAGE
+      - VIDEO_USE
+      - —
+      - —
+      - —
+      - CLIENT
+      - —
+      - UI_LOCAL_EXACT
+    - row: 54
+      cells:
+      - VIDEO-01-FLD-PAGE-STATE
+      - EXISTING_SOURCE_UID
+      - Page State
+      - READONLY
+      - VIDEO-01-ACT-NOOP-VIEW
+      - VIDEO-01-GATE-PAGE
+      - VIDEO_USE
+      - —
+      - —
+      - —
+      - CLIENT
+      - —
+      - UI_LOCAL_EXACT
+    - row: 55
+      cells:
+      - VIDEO-01-FLD-PROJECT
+      - EXISTING_SOURCE_UID
+      - Project
+      - SELECT
+      - VIDEO-01-ACT-PROJECT-SET
+      - VIDEO-01-GATE-PAGE
+      - VIDEO_USE
+      - —
+      - —
+      - —
+      - CLIENT/ORCH
+      - —
+      - UI_LOCAL_EXACT
+    - row: 56
+      cells:
+      - VIDEO-01-FLD-PROVIDER
+      - EXISTING_SOURCE_UID
+      - Provider Brand / Model
+      - READONLY
+      - VIDEO-01-ACT-NOOP-VIEW
+      - VIDEO-01-GATE-PAGE
+      - VIDEO_USE
+      - —
+      - —
+      - —
+      - CLIENT
+      - —
+      - UI_LOCAL_EXACT
+    - row: 57
+      cells:
+      - VIDEO-01-FLD-RETRY
+      - EXISTING_SOURCE_UID
+      - Retry Eligibility
+      - READONLY
+      - VIDEO-01-ACT-NOOP-VIEW
+      - VIDEO-01-GATE-PAGE
+      - VIDEO_USE
+      - —
+      - —
+      - —
+      - CLIENT
+      - —
+      - UI_LOCAL_EXACT
+    - row: 58
+      cells:
+      - VIDEO-01-FLD-RIGHTS
+      - EXISTING_SOURCE_UID
+      - Rights / Policy
+      - READONLY
+      - VIDEO-01-ACT-NOOP-VIEW
+      - VIDEO-01-GATE-PAGE
+      - VIDEO_USE
+      - —
+      - —
+      - —
+      - CLIENT
+      - —
+      - UI_LOCAL_EXACT
+    - row: 59
+      cells:
+      - VIDEO-01-FLD-ROUTE
+      - EXISTING_SOURCE_UID
+      - Approved Route / Capability
+      - READONLY
+      - VIDEO-01-ACT-NOOP-VIEW
+      - VIDEO-01-GATE-PAGE
+      - VIDEO_USE
+      - —
+      - —
+      - —
+      - CLIENT
+      - —
+      - UI_LOCAL_EXACT
+    - row: 60
+      cells:
+      - VIDEO-01-FLD-SCENE
+      - EXISTING_SOURCE_UID
+      - Scene
+      - FIELD
+      - VIDEO-01-ACT-CORRECTION-SCOPE-SET
+      - VIDEO-01-GATE-CORRECTION
+      - VIDEO_CORRECT
+      - —
+      - —
+      - —
+      - CLIENT/VIDEO
+      - —
+      - UI_LOCAL_EXACT
+    - row: 61
+      cells:
+      - VIDEO-01-FLD-SCORE-ASSET
+      - EXISTING_SOURCE_UID
+      - VIDEO-01-SCORE-ASSET
+      - READONLY
+      - VIDEO-01-ACT-NOOP-VIEW
+      - VIDEO-01-GATE-EVALUATION
+      - VIDEO_USE
+      - —
+      - —
+      - —
+      - CLIENT
+      - —
+      - UI_LOCAL_EXACT
+    - row: 62
+      cells:
+      - VIDEO-01-FLD-SCORE-CAMERA
+      - EXISTING_SOURCE_UID
+      - VIDEO-01-SCORE-CAMERA
+      - READONLY
+      - VIDEO-01-ACT-NOOP-VIEW
+      - VIDEO-01-GATE-EVALUATION
+      - VIDEO_USE
+      - —
+      - —
+      - —
+      - CLIENT
+      - —
+      - UI_LOCAL_EXACT
+    - row: 63
+      cells:
+      - VIDEO-01-FLD-SCORE-IDENTITY
+      - EXISTING_SOURCE_UID
+      - VIDEO-01-SCORE-IDENTITY
+      - READONLY
+      - VIDEO-01-ACT-NOOP-VIEW
+      - VIDEO-01-GATE-EVALUATION
+      - VIDEO_USE
+      - —
+      - —
+      - —
+      - CLIENT
+      - —
+      - UI_LOCAL_EXACT
+    - row: 64
+      cells:
+      - VIDEO-01-FLD-SCORE-MOTION
+      - EXISTING_SOURCE_UID
+      - VIDEO-01-SCORE-MOTION
+      - READONLY
+      - VIDEO-01-ACT-NOOP-VIEW
+      - VIDEO-01-GATE-EVALUATION
+      - VIDEO_USE
+      - —
+      - —
+      - —
+      - CLIENT
+      - —
+      - UI_LOCAL_EXACT
+    - row: 65
+      cells:
+      - VIDEO-01-FLD-SCORE-RIGHTS
+      - EXISTING_SOURCE_UID
+      - VIDEO-01-SCORE-RIGHTS
+      - READONLY
+      - VIDEO-01-ACT-NOOP-VIEW
+      - VIDEO-01-GATE-EVALUATION
+      - VIDEO_USE
+      - —
+      - —
+      - —
+      - CLIENT
+      - —
+      - UI_LOCAL_EXACT
+    - row: 66
+      cells:
+      - VIDEO-01-FLD-SCORE-SCENE
+      - EXISTING_SOURCE_UID
+      - VIDEO-01-SCORE-SCENE
+      - READONLY
+      - VIDEO-01-ACT-NOOP-VIEW
+      - VIDEO-01-GATE-EVALUATION
+      - VIDEO_USE
+      - —
+      - —
+      - —
+      - CLIENT
+      - —
+      - UI_LOCAL_EXACT
+    - row: 67
+      cells:
+      - VIDEO-01-FLD-SCORE-SCRIPT
+      - EXISTING_SOURCE_UID
+      - VIDEO-01-SCORE-SCRIPT
+      - READONLY
+      - VIDEO-01-ACT-NOOP-VIEW
+      - VIDEO-01-GATE-EVALUATION
+      - VIDEO_USE
+      - —
+      - —
+      - —
+      - CLIENT
+      - —
+      - UI_LOCAL_EXACT
+    - row: 68
+      cells:
+      - VIDEO-01-FLD-SCORE-TECH
+      - EXISTING_SOURCE_UID
+      - VIDEO-01-SCORE-TECH
+      - READONLY
+      - VIDEO-01-ACT-NOOP-VIEW
+      - VIDEO-01-GATE-EVALUATION
+      - VIDEO_USE
+      - —
+      - —
+      - —
+      - CLIENT
+      - —
+      - UI_LOCAL_EXACT
+    - row: 69
+      cells:
+      - VIDEO-01-FLD-SCORE-TIMING
+      - EXISTING_SOURCE_UID
+      - VIDEO-01-SCORE-TIMING
+      - READONLY
+      - VIDEO-01-ACT-NOOP-VIEW
+      - VIDEO-01-GATE-EVALUATION
+      - VIDEO_USE
+      - —
+      - —
+      - —
+      - CLIENT
+      - —
+      - UI_LOCAL_EXACT
+    - row: 70
+      cells:
+      - VIDEO-01-FLD-SCORECARD
+      - EXISTING_SOURCE_UID
+      - Scorecard / Criteria Ref
+      - READONLY
+      - VIDEO-01-ACT-NOOP-VIEW
+      - VIDEO-01-GATE-LOCK
+      - VIDEO_USE
+      - —
+      - —
+      - —
+      - CLIENT
+      - —
+      - UI_LOCAL_EXACT
+    - row: 71
+      cells:
+      - VIDEO-01-FLD-SCRIPT-HASH
+      - EXISTING_SOURCE_UID
+      - Script Section Hash
+      - READONLY
+      - VIDEO-01-ACT-NOOP-VIEW
+      - VIDEO-01-GATE-LOCK
+      - VIDEO_USE
+      - —
+      - —
+      - —
+      - CLIENT
+      - —
+      - UI_LOCAL_EXACT
+    - row: 72
+      cells:
+      - VIDEO-01-FLD-SCRIPT-SECTION
+      - EXISTING_SOURCE_UID
+      - VIDEO Script Role / Section / Hash
+      - READONLY
+      - VIDEO-01-ACT-NOOP-VIEW
+      - VIDEO-01-GATE-PAGE
+      - VIDEO_USE
+      - —
+      - —
+      - —
+      - CLIENT
+      - —
+      - UI_LOCAL_EXACT
+    - row: 73
+      cells:
+      - VIDEO-01-FLD-SEARCH
+      - EXISTING_SOURCE_UID
+      - 搜尋 Scene / Shot
+      - CONTROL
+      - VIDEO-01-ACT-LIST-SEARCH
+      - VIDEO-01-GATE-PAGE
+      - VIDEO_USE
+      - —
+      - —
+      - —
+      - CLIENT
+      - —
+      - UI_LOCAL_EXACT
+    - row: 74
+      cells:
+      - VIDEO-01-FLD-SHOT
+      - EXISTING_SOURCE_UID
+      - Shot
+      - FIELD
+      - VIDEO-01-ACT-CORRECTION-SCOPE-SET
+      - VIDEO-01-GATE-CORRECTION
+      - VIDEO_CORRECT
+      - —
+      - —
+      - —
+      - CLIENT/VIDEO
+      - —
+      - UI_LOCAL_EXACT
+    - row: 75
+      cells:
+      - VIDEO-01-FLD-SHOT-VERSIONS
+      - EXISTING_SOURCE_UID
+      - Shot Version refs
+      - READONLY
+      - VIDEO-01-ACT-NOOP-VIEW
+      - VIDEO-01-GATE-LOCK
+      - VIDEO_USE
+      - —
+      - —
+      - —
+      - CLIENT
+      - —
+      - UI_LOCAL_EXACT
+    - row: 76
+      cells:
+      - VIDEO-01-FLD-START-TC
+      - EXISTING_SOURCE_UID
+      - Start Timecode
+      - FIELD
+      - VIDEO-01-ACT-CORRECTION-SCOPE-SET
+      - VIDEO-01-GATE-CORRECTION
+      - VIDEO_CORRECT
+      - —
+      - —
+      - —
+      - CLIENT/VIDEO
+      - —
+      - UI_LOCAL_EXACT
+    - row: 77
+      cells:
+      - VIDEO-01-FLD-STATUS
+      - EXISTING_SOURCE_UID
+      - Task Status
+      - STATUS
+      - VIDEO-01-ACT-NOOP-VIEW
+      - VIDEO-01-GATE-PAGE
+      - VIDEO_USE
+      - —
+      - —
+      - —
+      - CLIENT
+      - —
+      - UI_LOCAL_EXACT
+    - row: 78
+      cells:
+      - VIDEO-01-FLD-TARGET-LAYER
+      - EXISTING_SOURCE_UID
+      - Target Layer
+      - FIELD
+      - VIDEO-01-ACT-CORRECTION-SCOPE-SET
+      - VIDEO-01-GATE-CORRECTION
+      - VIDEO_CORRECT
+      - —
+      - —
+      - —
+      - CLIENT/VIDEO
+      - —
+      - UI_LOCAL_EXACT
+    - row: 79
+      cells:
+      - VIDEO-01-FLD-TARGET-OBJECT
+      - EXISTING_SOURCE_UID
+      - Target Object
+      - FIELD
+      - VIDEO-01-ACT-CORRECTION-SCOPE-SET
+      - VIDEO-01-GATE-CORRECTION
+      - VIDEO_CORRECT
+      - —
+      - —
+      - —
+      - CLIENT/VIDEO
+      - —
+      - UI_LOCAL_EXACT
+    - row: 80
+      cells:
+      - VIDEO-01-FLD-TASK
+      - EXISTING_SOURCE_UID
+      - Production Task
+      - SELECT
+      - VIDEO-01-ACT-TASK-SET
+      - VIDEO-01-GATE-PAGE
+      - VIDEO_USE
+      - —
+      - —
+      - —
+      - CLIENT/ORCH
+      - —
+      - UI_LOCAL_EXACT
+    - row: 81
+      cells:
+      - VIDEO-01-FLD-TASK-STATE
+      - EXISTING_SOURCE_UID
+      - DepartmentTask State
+      - READONLY
+      - VIDEO-01-ACT-NOOP-VIEW
+      - VIDEO-01-GATE-PAGE
+      - VIDEO_USE
+      - —
+      - —
+      - —
+      - CLIENT
+      - —
+      - UI_LOCAL_EXACT
+    - row: 82
+      cells:
+      - VIDEO-01-FLD-TIMECODE
+      - EXISTING_SOURCE_UID
+      - Timecode
+      - CONTROL
+      - VIDEO-01-ACT-PREVIEW-SEEK
+      - VIDEO-01-GATE-PAGE
+      - VIDEO_USE
+      - —
+      - —
+      - —
+      - CLIENT
+      - —
+      - UI_LOCAL_EXACT
+    - row: 83
+      cells:
+      - VIDEO-01-FLD-TOPIC
+      - EXISTING_SOURCE_UID
+      - Topic
+      - SELECT
+      - VIDEO-01-ACT-TOPIC-SET
+      - VIDEO-01-GATE-PAGE
+      - VIDEO_USE
+      - —
+      - —
+      - —
+      - CLIENT/ORCH
+      - —
+      - UI_LOCAL_EXACT
+    - row: 84
+      cells:
+      - VIDEO-01-FLD-VIDEO-VERSION
+      - EXISTING_SOURCE_UID
+      - Exact Video Version ID
+      - READONLY
+      - VIDEO-01-ACT-NOOP-VIEW
+      - VIDEO-01-GATE-LOCK
+      - VIDEO_USE
+      - —
+      - —
+      - —
+      - CLIENT
+      - —
+      - UI_LOCAL_EXACT
+    - row: 85
+      cells:
+      - VIDEO-01-TXT-CORRECTION
+      - EXISTING_SOURCE_UID
+      - 繁中修改要求
+      - TEXTAREA
+      - VIDEO-01-ACT-CORRECTION-REQUEST-SET
+      - VIDEO-01-GATE-CORRECTION
+      - VIDEO_CORRECT
+      - —
+      - —
+      - —
+      - CLIENT
+      - —
+      - UI_LOCAL_EXACT
+  - index: 24
+    rows:
+    - row: 0
+      cells:
+      - Profile UID
+      - Department
+      - Applicability
+      - Pass Threshold
+      - Authority Basis
+    - row: 1
+      cells:
+      - QCP-VIDEO-BASELINE-V1
+      - VIDEO
+      - VIDEO candidate outputs
+      - '95'
+      - Threshold 95 and 9 dimensions derived from existing VIDEO authority; weights new authority
+  - index: 25
+    rows:
+    - row: 0
+      cells:
+      - Order
+      - Dimension UID
+      - 審查項目
+      - English
+      - Weight
+      - Hard Block
+      - Definition
+    - row: 1
+      cells:
+      - '1'
+      - VIDEO-01-SCORE-SCRIPT
+      - 腳本符合
+      - Script Compliance
+      - '15'
+      - 'NO'
+      - 符合 Blueprint/VIDEO Script 與 shot beats
+    - row: 2
+      cells:
+      - '2'
+      - VIDEO-01-SCORE-IDENTITY
+      - 人物／身份穩定
+      - Character / Identity Stability
+      - '15'
+      - 'NO'
+      - 人物臉、身形、服裝、DNA 穩定
+    - row: 3
+      cells:
+      - '3'
+      - VIDEO-01-SCORE-MOTION
+      - 動作／身體連續性
+      - Motion / Body Continuity
+      - '15'
+      - 'NO'
+      - 動作連續、物理合理、無跳變
+    - row: 4
+      cells:
+      - '4'
+      - VIDEO-01-SCORE-CAMERA
+      - 鏡頭／視線
+      - Camera / Gaze
+      - '10'
+      - 'NO'
+      - 鏡位、構圖、視線與行動方向符合腳本
+    - row: 5
+      cells:
+      - '5'
+      - VIDEO-01-SCORE-SCENE
+      - 場景／連續性
+      - Scene / Continuity
+      - '10'
+      - 'NO'
+      - 場景、物件、空間與幀間狀態連續
+    - row: 6
+      cells:
+      - '6'
+      - VIDEO-01-SCORE-TIMING
+      - 時間／片長
+      - Timing / Duration
+      - '10'
+      - 'NO'
+      - 片段長度、節奏、事件時序符合要求
+    - row: 7
+      cells:
+      - '7'
+      - VIDEO-01-SCORE-TECH
+      - 技術品質
+      - Technical Quality
+      - '10'
+      - 'NO'
+      - 無破幀、閃爍、嚴重壓縮或不可用輸出
+    - row: 8
+      cells:
+      - '8'
+      - VIDEO-01-SCORE-ASSET
+      - 素材／DNA 忠實度
+      - Asset / DNA Fidelity
+      - '10'
+      - 'NO'
+      - 綁定素材與 DNA 在影片中保持一致
+    - row: 9
+      cells:
+      - '9'
+      - VIDEO-01-SCORE-RIGHTS
+      - 權利／政策
+      - Rights / Policy
+      - '5'
+      - HARD BLOCK
+      - 權利與政策 Hard Block 必須 PASS
+  - index: 26
+    rows:
+    - row: 0
+      cells:
+      - Target UID
+      - Closed Field(s)
+      - Operation
+      - Runtime Owner
+      - Runtime Status
+      - Existing Method / Path
+      - Result
+    - row: 1
+      cells:
+      - VIDEO-01-BTN-CONFIRM
+      - operation
+      - confirmVideoCandidate
+      - VIDEO/DECISION
+      - EFFECTFUL_EXACT
+      - —
+      - BOUND_BY_BATCH_16
+    - row: 2
+      cells:
+      - VIDEO-01-BTN-EVALUATE
+      - operation
+      - evaluateVideoCandidate
+      - VIDEO/EVALUATION
+      - EFFECTFUL_EXACT
+      - —
+      - BOUND_BY_BATCH_16
+    - row: 3
+      cells:
+      - VIDEO-01-BTN-EXEC-CORRECTION
+      - operation
+      - executeVideoCorrection
+      - VIDEO/RUNTIME
+      - EFFECTFUL_EXACT
+      - —
+      - BOUND_BY_BATCH_16
+    - row: 4
+      cells:
+      - VIDEO-01-BTN-EXECUTE
+      - operation
+      - startVideoGenerationFlow
+      - VIDEO/RUNTIME
+      - EFFECTFUL_EXACT
+      - —
+      - BOUND_BY_BATCH_16
+    - row: 5
+      cells:
+      - VIDEO-01-BTN-FINDING
+      - operation
+      - createVideoFinding
+      - VIDEO/EVALUATION
+      - EFFECTFUL_EXACT
+      - —
+      - BOUND_BY_BATCH_16
+    - row: 6
+      cells:
+      - VIDEO-01-BTN-HANDOFF
+      - operation
+      - handoffVideoToEdit
+      - VIDEO/HANDOFF
+      - EFFECTFUL_EXACT
+      - —
+      - BOUND_BY_BATCH_16
+    - row: 7
+      cells:
+      - VIDEO-01-BTN-RETRY
+      - operation
+      - retryVideoTask
+      - VIDEO/RUNTIME
+      - EFFECTFUL_EXACT
+      - —
+      - BOUND_BY_BATCH_16
+  - index: 27
+    rows:
+    - row: 0
+      cells:
+      - Control UID
+      - Operation
+      - Method / Path
+      - Payload / Schema
+      - Persistence Owner
+      - Semantics
+    - row: 1
+      cells:
+      - VIDEO-01-BTN-EXECUTE
+      - startVideoGenerationFlow
+      - POST /v1/video-runtime-runs
+      - StartVideoGenerationFlowRequest
+      - System 05 / ProductionWorkItem + VideoOutputVersion Generation Lineage + Audit
+      - Starts generation only from exact admitted production input/bindings. Job/run creation is not output confirmation; provider/runtime success requires separate
+        evidence.
+    - row: 2
+      cells:
+      - VIDEO-01-BTN-CONFIRM
+      - confirmVideoCandidate
+      - POST /v1/video-runtime-runs/{runId}/candidates/{videoOutputVersionId}/confirm
+      - ConfirmVideoCandidateRequest
+      - System 05 / VideoOutputVersion Confirmed State + Decision Evidence/Audit
+      - Confirmation binds exact candidate/output version and authorized decision evidence, producing immutable confirmed lineage without overwriting prior VideoOutputVersion.
+    - row: 3
+      cells:
+      - VIDEO-01-BTN-LOCK
+      - lockVideoVersion
+      - POST /v1/state-commands/videoversion/lock
+      - LockVideoVersionRequest
+      - public.production_output_version_locks
+      - Reuses exact Current lock route/persistence. Lock binds exact video output version/hash and governed decision evidence; request/command is not self-approval.
+    - row: 4
+      cells:
+      - VIDEO-01-BTN-HANDOFF
+      - handoffVideoToEdit
+      - POST /v1/video-runtime-runs/{runId}/handoff-to-edit
+      - HandoffVideoToEditRequest
+      - System 05 / HandoffManifest + VideoOutputVersion Provenance/Audit
+      - VIDEO→EDIT handoff must include exact VideoOutputVersion + Scene/Shot lineage + Asset/Script/DNA refs + continuity + rights/policy; successor admission remains
+        separate.
+    - row: 5
+      cells:
+      - VIDEO-01-BTN-GEN-CORRECTION
+      - generateCorrectionScriptCandidate
+      - POST /v1/state-commands/correctionscript/generate
+      - GenerateVideoCorrectionScriptCandidateRequest
+      - public.correction_script_versions
+      - Reuses exact Current correction-script generation route. Persists a candidate/version with exact source/output/findings/context refs; candidate is not approved
+        correction authority.
+    - row: 6
+      cells:
+      - VIDEO-01-BTN-APPROVE-CORRECTION
+      - approveCorrectionScriptCandidate
+      - POST /v1/state-commands/correctionscript/approve
+      - ApproveVideoCorrectionScriptCandidateRequest
+      - public.correction_script_versions
+      - Reuses exact Current approval route. Human/authorized approval binds exact correction script candidate/version; prior versions remain immutable.
+    - row: 7
+      cells:
+      - VIDEO-01-BTN-EXEC-CORRECTION
+      - executeVideoCorrection
+      - POST /v1/video-runtime-runs/{runId}/corrections/execute
+      - ExecuteVideoCorrectionRequest
+      - System 05 / VideoOutputVersion + Correction/Delta Lineage + Audit
+      - Executes only an approved correction script/delta against exact selected source version. Correction produces a new VideoOutputVersion and preserves unchanged
+        shot lineage.
+    - row: 8
+      cells:
+      - VIDEO-01-BTN-RETRY
+      - retryVideoTask
+      - POST /v1/video-runtime-runs/{runId}/tasks/{taskId}/retry
+      - RetryVideoTaskRequest
+      - System 05 / ProductionWorkItem Retry Attempt + Video Generation Audit
+      - Retry binds exact failed task/attempt/version and preserves failure evidence; it cannot erase prior attempts or change scope silently.
+    - row: 9
+      cells:
+      - VIDEO-01-BTN-EVALUATE
+      - evaluateVideoCandidate
+      - POST /v1/video-runtime-runs/{runId}/candidates/{videoOutputVersionId}/evaluations
+      - EvaluateVideoCandidateRequest
+      - System 05 / EvaluationResult + Video Evidence/Audit
+      - Evaluation records score/evidence/findings against exact criteria and VideoOutputVersion. Score alone cannot auto-confirm, lock or handoff.
+    - row: 10
+      cells:
+      - VIDEO-01-BTN-FINDING
+      - createVideoFinding
+      - POST /v1/video-runtime-runs/{runId}/candidates/{videoOutputVersionId}/findings
+      - CreateVideoFindingRequest
+      - System 05 / Finding + Video Evidence/Audit
+      - Finding binds exact source VideoOutputVersion/shot or scene lineage, category, severity, evidence and expected correction; no silent acceptance.
+  - index: 28
+    rows:
+    - row: 0
+      cells:
+      - Entity
+      - Operation
+      - Applicability
+      - Authority Evidence
+    - row: 1
+      cells:
+      - CorrectionScriptCandidate
+      - ARCHIVE_OR_DELETE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 2
+      cells:
+      - CorrectionScriptCandidate
+      - AUDIT
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 3
+      cells:
+      - CorrectionScriptCandidate
+      - CATEGORY_OR_GROUP_BIND
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 4
+      cells:
+      - CorrectionScriptCandidate
+      - CONFIRM_OR_APPROVE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 5
+      cells:
+      - CorrectionScriptCandidate
+      - CREATE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 6
+      cells:
+      - CorrectionScriptCandidate
+      - CREATION_MODE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 7
+      cells:
+      - CorrectionScriptCandidate
+      - DEPENDENCY_IMPACT
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 8
+      cells:
+      - CorrectionScriptCandidate
+      - DISCOVER_OR_LIST
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 9
+      cells:
+      - CorrectionScriptCandidate
+      - DRAFT
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 10
+      cells:
+      - CorrectionScriptCandidate
+      - EDIT
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 11
+      cells:
+      - CorrectionScriptCandidate
+      - ERROR_RECOVERY
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 12
+      cells:
+      - CorrectionScriptCandidate
+      - LOCK_OR_UNLOCK
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 13
+      cells:
+      - CorrectionScriptCandidate
+      - MOVE_OR_REPARENT
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 14
+      cells:
+      - CorrectionScriptCandidate
+      - NEXT_STEP
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 15
+      cells:
+      - CorrectionScriptCandidate
+      - PARENT_BIND
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 16
+      cells:
+      - CorrectionScriptCandidate
+      - REORDER
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 17
+      cells:
+      - CorrectionScriptCandidate
+      - RESTORE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 18
+      cells:
+      - CorrectionScriptCandidate
+      - RESUME
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 19
+      cells:
+      - CorrectionScriptCandidate
+      - REVISE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 20
+      cells:
+      - CorrectionScriptCandidate
+      - SAVE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 21
+      cells:
+      - CorrectionScriptCandidate
+      - SELECT_OR_OPEN
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 22
+      cells:
+      - CorrectionScriptCandidate
+      - VALIDATE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 23
+      cells:
+      - CorrectionScriptCandidate
+      - VERSION
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 24
+      cells:
+      - ExactVideoVersion
+      - ARCHIVE_OR_DELETE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 25
+      cells:
+      - ExactVideoVersion
+      - AUDIT
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 26
+      cells:
+      - ExactVideoVersion
+      - CATEGORY_OR_GROUP_BIND
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 27
+      cells:
+      - ExactVideoVersion
+      - CONFIRM_OR_APPROVE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 28
+      cells:
+      - ExactVideoVersion
+      - CREATE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 29
+      cells:
+      - ExactVideoVersion
+      - CREATION_MODE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 30
+      cells:
+      - ExactVideoVersion
+      - DEPENDENCY_IMPACT
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 31
+      cells:
+      - ExactVideoVersion
+      - DISCOVER_OR_LIST
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 32
+      cells:
+      - ExactVideoVersion
+      - DRAFT
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 33
+      cells:
+      - ExactVideoVersion
+      - EDIT
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 34
+      cells:
+      - ExactVideoVersion
+      - ERROR_RECOVERY
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 35
+      cells:
+      - ExactVideoVersion
+      - LOCK_OR_UNLOCK
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 36
+      cells:
+      - ExactVideoVersion
+      - MOVE_OR_REPARENT
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 37
+      cells:
+      - ExactVideoVersion
+      - NEXT_STEP
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 38
+      cells:
+      - ExactVideoVersion
+      - PARENT_BIND
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 39
+      cells:
+      - ExactVideoVersion
+      - REORDER
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 40
+      cells:
+      - ExactVideoVersion
+      - RESTORE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 41
+      cells:
+      - ExactVideoVersion
+      - RESUME
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 42
+      cells:
+      - ExactVideoVersion
+      - REVISE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 43
+      cells:
+      - ExactVideoVersion
+      - SAVE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 44
+      cells:
+      - ExactVideoVersion
+      - SELECT_OR_OPEN
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 45
+      cells:
+      - ExactVideoVersion
+      - VALIDATE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 46
+      cells:
+      - ExactVideoVersion
+      - VERSION
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 47
+      cells:
+      - VideoVersionLock
+      - ARCHIVE_OR_DELETE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 48
+      cells:
+      - VideoVersionLock
+      - AUDIT
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 49
+      cells:
+      - VideoVersionLock
+      - CATEGORY_OR_GROUP_BIND
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 50
+      cells:
+      - VideoVersionLock
+      - CONFIRM_OR_APPROVE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 51
+      cells:
+      - VideoVersionLock
+      - CREATE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 52
+      cells:
+      - VideoVersionLock
+      - CREATION_MODE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 53
+      cells:
+      - VideoVersionLock
+      - DEPENDENCY_IMPACT
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 54
+      cells:
+      - VideoVersionLock
+      - DISCOVER_OR_LIST
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 55
+      cells:
+      - VideoVersionLock
+      - DRAFT
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 56
+      cells:
+      - VideoVersionLock
+      - EDIT
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 57
+      cells:
+      - VideoVersionLock
+      - ERROR_RECOVERY
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 58
+      cells:
+      - VideoVersionLock
+      - LOCK_OR_UNLOCK
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 59
+      cells:
+      - VideoVersionLock
+      - MOVE_OR_REPARENT
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 60
+      cells:
+      - VideoVersionLock
+      - NEXT_STEP
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 61
+      cells:
+      - VideoVersionLock
+      - PARENT_BIND
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 62
+      cells:
+      - VideoVersionLock
+      - REORDER
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 63
+      cells:
+      - VideoVersionLock
+      - RESTORE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 64
+      cells:
+      - VideoVersionLock
+      - RESUME
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 65
+      cells:
+      - VideoVersionLock
+      - REVISE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 66
+      cells:
+      - VideoVersionLock
+      - SAVE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 67
+      cells:
+      - VideoVersionLock
+      - SELECT_OR_OPEN
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 68
+      cells:
+      - VideoVersionLock
+      - VALIDATE
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+    - row: 69
+      cells:
+      - VideoVersionLock
+      - VERSION
+      - NOT_APPLICABLE
+      - 'Current Word tree: RESOLVE_FRESH_AT_AUDIT_TIME: zero entity-bound operation evidence for this entity/operation. Mother §71 forbids speculative CRUD/sibling-feature
+        expansion; current revision authorizes no new behavior.'
+  - index: 29
+    rows:
+    - row: 0
+      cells:
+      - Design Item / 設計項目
+      - Canonical Planning Design Contract / 正式規劃設計契約
+    - row: 1
+      cells:
+      - Color Tokens
+      - SHARED_OWNER_REFERENCE → current Global Home / Shell Design System tech-purple token set; existing page-local approved override, if any, remains authoritative.
+    - row: 2
+      cells:
+      - Typography Tokens
+      - SHARED_OWNER_REFERENCE → current Global Design System typography; page-local text hierarchy may only use registered heading/body/label/technical text roles.
+    - row: 3
+      cells:
+      - Spacing Tokens
+      - Use registered gap/padding/spacing tokens; existing exact page gaps remain authoritative; no ad-hoc pixel drift.
+    - row: 4
+      cells:
+      - Component States
+      - Default / Hover / Focus / Active / Loading / Disabled / Success / Error MUST NOT change the approved component footprint unless the current component contract
+        explicitly allows it.
+    - row: 5
+      cells:
+      - Primary Layout
+      - Use this Word's existing Primary Grid / Section / Workspace layout as the page-local authority; this annex introduces no second grid.
+    - row: 6
+      cells:
+      - Navigation Region
+      - Global Header and collapsible/overlay Sidebar remain shared shell regions; page Workspace starts in the registered content region.
+    - row: 7
+      cells:
+      - Responsive Behavior
+      - Use the current page responsive rule and shared shell breakpoint owner; semantic order and functional topology MUST remain stable across reflow.
+    - row: 8
+      cells:
+      - Design Ownership
+      - Page owns page-local layout/components; Global Shell owns shared header/sidebar/tokens; references only, no duplicated shared payload.
+  - index: 30
+    rows:
+    - row: 0
+      cells:
+      - Design Item / 設計項目
+      - Canonical Planning Design Contract / 正式規劃設計契約
+    - row: 1
+      cells:
+      - Viewport / Breakpoint UID
+      - SHARED_OWNER_REFERENCE → current Global Home breakpoint contract; page-specific breakpoint/reflow rules in this Word override only where explicitly registered.
+    - row: 2
+      cells:
+      - Container Width / Min / Max
+      - Retain current Global Shell + page Primary Grid width contract. No page-local implicit width may override an existing exact dimension.
+    - row: 3
+      cells:
+      - Grid Columns / Span / Gutter / Outer Margin
+      - Use the existing page Primary Grid / section mapping and current gap/margin values; any structural grid change requires Change Set.
+    - row: 4
+      cells:
+      - Section Bounding Rules
+      - Every registered Section remains within its current Workspace region; sticky/fixed/overlay areas MUST NOT occlude required controls.
+    - row: 5
+      cells:
+      - Component / Control / Field Width / Height Rules
+      - Use current Control/Field Dimensions or shared component token. State transitions MUST NOT cause layout jump.
+    - row: 6
+      cells:
+      - Min / Max Width / Height
+      - Inherit current exact values where present; otherwise shared component minimums apply. Required input/button content may not compress below its registered
+        usable size.
+    - row: 7
+      cells:
+      - Gap / Padding / Alignment
+      - Use current page spacing/grid tokens; alignment changes outside token tolerance require Visual Review.
+    - row: 8
+      cells:
+      - Aspect Ratio
+      - NOT_APPLICABLE unless the current page declares an image/video/preview ratio; when declared, the exact current ratio remains authoritative.
+    - row: 9
+      cells:
+      - Overflow / Scroll Rule
+      - No hidden overflow for actionable content. Long technical values use existing ellipsis + tooltip/drawer rule; large tables may use the current controlled
+        horizontal-scroll rule.
+    - row: 10
+      cells:
+      - Collapse / Stack / Wrap Rule
+      - Reflow may stack/collapse only within the current responsive contract; semantic order, required adjacency and operation order MUST NOT change.
+    - row: 11
+      cells:
+      - Z-order / Overlay Rule
+      - Global Header / Sidebar overlay / Dialog / Drawer layers remain above Workspace without blocking required content; overlay expansion MUST NOT reflow the primary
+        Workspace unless explicitly specified.
+    - row: 12
+      cells:
+      - Text Capacity / Truncation / Wrap Rule
+      - Required labels/status/error text may not be clipped. Long IDs/technical values use controlled ellipsis with recoverable full value; no silent semantic truncation.
+    - row: 13
+      cells:
+      - Asset Object-fit / Object-position
+      - REFERENCE_ONLY → current Asset Binding owner when a formal visual asset exists; otherwise NOT_APPLICABLE.
+    - row: 14
+      cells:
+      - Locked Visual Anchors
+      - Bound to the Visual Anchor Registry in this annex; unlisted regions are not implicitly editable.
+    - row: 15
+      cells:
+      - Allowed Tolerance / Diff Threshold
+      - 'Locked anchors and structural grid: zero unapproved drift. Token-level micro adjustment is allowed only inside current Design Token/Layout rules; structural
+        changes require Change Set + re-review.'
+    - row: 16
+      cells:
+      - Geometry Failure Set
+      - Detect overlap, clipping, horizontal overflow, unapproved scroll, control compression, unexpected wrap/stack, aspect drift, misalignment, sticky/fixed occlusion
+        and header/sidebar/workspace collision.
+  - index: 31
+    rows:
+    - row: 0
+      cells:
+      - Anchor UID
+      - Position Rule
+      - Dimension Rule
+      - Relationship Rule
+      - Lock Status
+    - row: 1
+      cells:
+      - VIDEO-01-VA-HEADER
+      - Fixed at top of shared shell
+      - 58px full-width according to current shell authority
+      - Above Sidebar/Workspace; must not be covered by page content
+      - LOCKED
+    - row: 2
+      cells:
+      - VIDEO-01-VA-SIDEBAR
+      - Fixed left rail under shared shell header
+      - 64px resting; 221px overlay expansion where current shell defines it
+      - Overlay expansion must not silently change the approved page Primary Grid
+      - LOCKED
+    - row: 3
+      cells:
+      - VIDEO-01-VA-WORKSPACE
+      - Current page primary content region below Header / beside resting rail
+      - Use this Word's existing Primary Grid / section dimensions
+      - Owns page-local section geometry; dialogs/drawers are overlays, not replacement layout
+      - LOCKED_EXCEPT_AUTHORIZED_CHANGE_SET
+  - index: 32
+    rows:
+    - row: 0
+      cells:
+      - Design Item / 設計項目
+      - Canonical Planning Design Contract / 正式規劃設計契約
+    - row: 1
+      cells:
+      - Current Canonical Visual
+      - REFERENCE_ONLY → current visual/baseline already named in this Word or shared current visual owner. This annex does not replace it.
+    - row: 2
+      cells:
+      - Visual Candidate UID
+      - Generated candidate MUST receive a unique Visual UID and Parent Visual UID; no candidate is deemed approved merely by this annex.
+    - row: 3
+      cells:
+      - Generation Manifest
+      - Required before generation; MUST bind Page UID, Design Version, Reference Visual UID, Design System Version, Layout UID, Component Versions, Asset refs, Viewport,
+        Language, Theme, Change Level/Set and locked/editable areas.
+    - row: 4
+      cells:
+      - Visual Preview
+      - MUST represent the actual website structure, not a moodboard. Preview occurs after page/design specification and before Design Freeze.
+    - row: 5
+      cells:
+      - Visual Review
+      - Authorized reviewer checks function-to-visual mapping, geometry, anchors, responsive order, A11y/i18n and visual drift.
+    - row: 6
+      cells:
+      - Approval Status
+      - VISUAL_APPROVED is required before DESIGN_FROZEN. This planning annex does NOT self-approve the page.
+    - row: 7
+      cells:
+      - Change Set / Drift
+      - Any layout/asset/typography/color/component/navigation/dimension/information-hierarchy change outside the approved Change Set is VISUAL_DRIFT_FAIL.
+  - index: 33
+    rows:
+    - row: 0
+      cells:
+      - Design Item / 設計項目
+      - Canonical Planning Design Contract / 正式規劃設計契約
+    - row: 1
+      cells:
+      - Keyboard / Focus
+      - Reading and focus order MUST follow semantic operation order. Every interactive control is keyboard reachable; Focus state remains visibly distinct.
+    - row: 2
+      cells:
+      - ARIA / Label
+      - Icon-only controls require accessible name/label; form fields bind visible label, validation/error description and required state.
+    - row: 3
+      cells:
+      - Modal / Drawer
+      - On open, focus enters the surface; focus remains contained where modal; close/cancel is keyboard reachable; focus returns to the invoking control.
+    - row: 4
+      cells:
+      - Color / State
+      - State meaning MUST NOT rely on color alone; text/icon/state label remains available under current contrast tokens.
+    - row: 5
+      cells:
+      - Error / Validation
+      - Error state is announced/associated with its control or field; failure does not erase user input unless the current design explicitly requires reset.
+    - row: 6
+      cells:
+      - i18n Languages
+      - zh-TW / zh-CN / en are design-supported language contexts. Labels/help/error/status text must use localization-owned copy rather than page-local semantic
+        duplication.
+    - row: 7
+      cells:
+      - Variable Text Length
+      - Localized text may wrap/reflow within current responsive rules but MUST NOT alter functional order, hide required actions or create uncontrolled layout drift.
+  - index: 34
+    rows:
+    - row: 0
+      cells:
+      - Design Item / 設計項目
+      - Canonical Planning Design Contract / 正式規劃設計契約
+    - row: 1
+      cells:
+      - Audit UID
+      - VIDEO-01-AUD-DESIGN-001
+    - row: 2
+      cells:
+      - Target UID
+      - VIDEO-01
+    - row: 3
+      cells:
+      - Required Audit Items
+      - Requirement/Page identity where applicable; Architecture/Flow; Control/Field; Entity/Operation applicability; Cross-page/topology; Geometry; Visual Anchor/Preview
+        contract; A11y/i18n; Asset applicability; Design Freeze package.
+    - row: 4
+      cells:
+      - Required Tests
+      - Word structural completeness audit; forward/reverse design-reference audit; DOCX render visual QA; design-only semantic consistency audit.
+    - row: 5
+      cells:
+      - Required Evidence
+      - Exact Word hash/tree identity; audit result; render page set; visual-review record when a candidate is generated.
+    - row: 6
+      cells:
+      - Required Gates
+      - Requirement, Naming, Architecture, Navigation, User Flow, Page Registry, Design System, Layout, Component, Asset applicability/binding, Page Design, Visual
+        Preview/Review/Approval, Audit Baseline, Acceptance Matrix, DoD.
+    - row: 7
+      cells:
+      - Acceptance Matrix
+      - Every item is classified REQUIRED / OPTIONAL / NOT_APPLICABLE with owner/evidence. REQUIRED may not be downgraded merely to obtain PASS.
+    - row: 8
+      cells:
+      - PASS Condition
+      - All applicable REQUIRED planning/basic-design items are complete and internally consistent; no unresolved duplicate owner/reference or required design gap.
+    - row: 9
+      cells:
+      - PARTIAL Condition
+      - Only explicitly OPTIONAL or justified NOT_APPLICABLE design items remain; no REQUIRED item is missing.
+    - row: 10
+      cells:
+      - FAIL Condition
+      - Any REQUIRED planning/design contract, owner/reference, geometry, topology, acceptance condition or visual prerequisite is unresolved or contradictory.
+    - row: 11
+      cells:
+      - Definition of Done
+      - Current Word is self-contained enough for authorized construction handoff, while unresolved product choices remain explicitly blocked rather than invented.
+  - index: 35
+    rows:
+    - row: 0
+      cells:
+      - Design Item / 設計項目
+      - Canonical Planning Design Contract / 正式規劃設計契約
+    - row: 1
+      cells:
+      - Canonical UID
+      - VIDEO-01
+    - row: 2
+      cells:
+      - Canonical Name
+      - VIDEO-01
+    - row: 3
+      cells:
+      - Owner File
+      - ACPOS_VIDEO-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx
+    - row: 4
+      cells:
+      - Page / Capability Spec
+      - This current Word remains the single page design Canonical Owner.
+    - row: 5
+      cells:
+      - Layout Mapping
+      - REFERENCE → existing Page Layout / Primary Grid / Section mapping + Design System/Layout closure annex.
+    - row: 6
+      cells:
+      - Component Mapping
+      - REFERENCE → current Component/Section registry in this Word; no duplicate component inventory is introduced.
+    - row: 7
+      cells:
+      - Control / Field Mapping
+      - REFERENCE → current Control / Field / Action / Permission design tables and invariants in this Word.
+    - row: 8
+      cells:
+      - Asset Mapping
+      - REFERENCE → current page Asset Registry if any; otherwise explicit shared-owner / NOT_APPLICABLE asset rule in this annex.
+    - row: 9
+      cells:
+      - Responsive Spec
+      - REFERENCE → current page responsive rules + Visual Geometry closure annex.
+    - row: 10
+      cells:
+      - Current Canonical Visual
+      - REFERENCE → current visual/baseline already owned by this page/shared visual authority; candidate does not replace it without approval.
+    - row: 11
+      cells:
+      - Generation Manifest
+      - REQUIRED before a new candidate is generated; fields are defined by the Visual contract in this annex.
+    - row: 12
+      cells:
+      - Audit Baseline
+      - REFERENCE → VIDEO-01-AUD-DESIGN-001
+    - row: 13
+      cells:
+      - Acceptance Matrix
+      - Current page acceptance section plus this annex; REQUIRED / OPTIONAL / NOT_APPLICABLE classification is preserved.
+    - row: 14
+      cells:
+      - Definition of Done
+      - Planning/basic-design DoD is the current page DoD plus zero unresolved REQUIRED design-spec gaps.
+    - row: 15
+      cells:
+      - Design Version
+      - Use this Word's current version metadata / exact repository revision; this annex MUST NOT invent a parallel design version.
+    - row: 16
+      cells:
+      - Freeze Status
+      - DESIGN_FREEZE_PACKAGE_DEFINED. DESIGN_FROZEN may be asserted only after required Visual Preview/Review/Approval and all applicable design gates actually pass;
+        this annex does not self-approve.
