@@ -104,13 +104,13 @@ specification_mutation_safety:
   ordinary_mid_stage_specification_mutation: BLOCK
   stage_end_consolidated_promotion_requires_new_explicit_directive: true
   execution_context_lock_required: true
-status: WORD_STAGE01_PRODUCT_WU_REMOVED_GOVERNANCE_MAINTENANCE_RESOLUTION_REQUIRED
-next_action: RESOLVE_WORD_TO_YAML_PRE_STAGE01_GOVERNANCE_MAINTENANCE_WORK_UNIT
+status: WORD_YAML_PRE_STAGE01_GOVERNANCE_MAINTENANCE_ACTIVE
+next_action: PROMOTE_WORD_YAML_PRE_STAGE01_GOVERNANCE_HARDENING
 resume_control:
-  current_resume_point: WORD_STAGE01_PRODUCT_WU_REMOVED_GOVERNANCE_MAINTENANCE_RESOLUTION_REQUIRED
-  current_work_unit_uid: null
-  current_owner: GOVERNANCE_MAINTENANCE
-  exact_next_action: RESOLVE_WORD_TO_YAML_PRE_STAGE01_GOVERNANCE_MAINTENANCE_WORK_UNIT
+  current_resume_point: WORD_YAML_PRE_STAGE01_GOVERNANCE_MAINTENANCE_ACTIVE
+  current_work_unit_uid: WU-GOV-WORD-YAML-PRESTAGE01-HARDENING-001
+  current_owner: SOURCE_INTAKE_STAGE1_GOVERNANCE
+  exact_next_action: PROMOTE_WORD_YAML_PRE_STAGE01_GOVERNANCE_HARDENING
   product_resume_preserved: CORE01_STAGE01_ACTIVE_PREEXECUTION_GOVERNANCE_LOAD_REQUIRED
   interrupted_test_resume_preserved: CORE01_SOURCE_TEST_BUGFIX_AND_CONTENT_INTEGRITY_FULL_LIFECYCLE_R2_ACTIVE
   reentry_owner_capability: SOURCE_INTAKE_BASE_BLUEPRINT
@@ -175,8 +175,34 @@ current_governance_review_decision:
   machine_generated_approval: false
   product_stage_credit: 0
 current_primary_task_layer: GOVERNANCE_MAINTENANCE
-current_primary_task_authorization_uid: EXPLICIT_USER_DIRECTIVE_20260923_WORD_YAML_PRE_STAGE01_GOVERNANCE_AND_AUDIT
+current_primary_task_authorization_uid: USR-DIRECTIVE-20260923-WORD-YAML-PRESTAGE01-HARDENING-R1
 current_primary_task_product_stage_credit: 0
+active_work_unit:
+  work_unit_uid: WU-GOV-WORD-YAML-PRESTAGE01-HARDENING-001
+  canonical_name: WORD_YAML_PRE_STAGE01_PROJECTION_RECONCILIATION_GOVERNANCE_HARDENING
+  primary_task_layer: GOVERNANCE_MAINTENANCE
+  semantic_capability: SOURCE_INTAKE_STAGE1_GOVERNANCE
+  canonical_owner_refs:
+  - .github/governance-source/active/source/12_DOCS/mother-spec/01_BLUEPRINT_DESIGN_GOVERNANCE.md
+  - .github/governance-source/active/source/12_DOCS/mother-spec/02_IMPLEMENTATION_DELIVERY_STANDARD.md
+  - .github/governance-source/active/source/12_DOCS/mother-spec/03_EXECUTION_CONTROL_STANDARD.md
+  - .github/governance-source/active/source/12_DOCS/mother-spec/04_AUDIT_PROGRESS_STANDARD.md
+  - .github/governance-source/active/source/10_REGISTRY/GOVERNANCE_LIFECYCLE_STAGE_REGISTRY.yaml
+  - .github/governance-source/active/source/10_REGISTRY/STAGE1_SOURCE_FACT_CONTRACTS.yaml
+  - .github/governance-source/active/source/10_REGISTRY/AUDIT_CATALOG.yaml
+  current_status: ACTIVE_AUTHORIZED_PREPROMOTION
+  authorization_uid: USR-DIRECTIVE-20260923-WORD-YAML-PRESTAGE01-HARDENING-R1
+  exact_scope:
+  - WORD_DOCX_RAW_SOURCE_IMMUTABILITY
+  - CANONICAL_YAML_PROJECTION
+  - WORD_YAML_ZERO_LOSS_RECONCILIATION
+  - PRE_STAGE01_ENTRY_GATE
+  - AUDIT_DENOMINATOR_AND_EVIDENCE
+  - MACHINE_VALIDATOR_AND_NEGATIVE_REGRESSION
+  product_data_mutation_allowed: false
+  product_authority_mutation_allowed: false
+  product_stage_credit: 0
+  current_status_after_successor_promotion: REVALIDATION_REQUIRED
 word_source_snapshot_for_future_projection:
   normative_authority: false
   role: SOURCE_CONTEXT_ONLY_NOT_ACTIVE_WORK_UNIT
