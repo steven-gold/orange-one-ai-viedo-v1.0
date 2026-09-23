@@ -1043,6 +1043,7 @@ def update_current(semantic,checks,bundle,zips):
 
     ap=ROOT/'governance/test/ACTIVE_STATE.yaml'
     a=load(ap)
+    a.setdefault('execution',{})['current_stage']=None
     a['specification_uid']=NEW_UID
     a['status']='WORD_YAML_PRE_STAGE01_SUCCESSOR_PROMOTED_EXACT_HEAD_REVALIDATION_REQUIRED'
     a['next_action']='RUN_EXACT_HEAD_WORD_YAML_GOVERNANCE_VALIDATION'
