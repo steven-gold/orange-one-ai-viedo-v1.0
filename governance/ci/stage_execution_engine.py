@@ -417,8 +417,8 @@ def execute_active(stage_uid):
     if not path.is_file(): fail('ACTIVE_STAGE_EXECUTOR_OWNER_MISSING:'+owner)
     if path.resolve()==Path(__file__).resolve(): fail('COMMON_ENGINE_RECURSIVE_EXECUTOR_FORBIDDEN')
     adapter=(adapters.get('stages') or {}).get(stage_uid) or {}
-    declared=str(adapter.get('effectful_executor_owner') or '')
-    if declared!=owner: fail('ACTIVE_STAGE_EXECUTOR_OWNER_NOT_CANONICAL_ADAPTER:'+owner)
+    if adapter.get('effectful_executor_owner_resolution')!='CURRENT_WORK_UNIT_OPERATION_BINDING_ONLY':
+        fail('ACTIVE_STAGE_EXECUTOR_OWNER_RESOLUTION_POLICY_INVALID:'+stage_uid)
     ref=str(adapter.get('stepwise_execution_contract_ref') or '')
     if ref!='stepwise_execution_defaults': fail('ACTIVE_STAGE_STEPWISE_EXECUTION_CONTRACT_REF_INVALID:'+stage_uid)
     stepwise=adapters.get('stepwise_execution_defaults')
