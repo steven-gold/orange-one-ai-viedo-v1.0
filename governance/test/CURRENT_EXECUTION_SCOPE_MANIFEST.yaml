@@ -3,20 +3,20 @@ artifact_type: EXECUTION_SCOPE_MANIFEST
 normative_authority: false
 governance_uid: GOV-REV-20260923-WORD-PROJECTION-NEXTSTEP-CONSUMER-SYNC-HARDENING
 owning_capability: SOURCE_INTAKE_PRESTAGE_VALIDATION
-scope_kind: CLOSED_TEST_VALIDATION_WORD_SOURCE_FLEET_PRESTAGE_AUDIT
-work_unit_uid: WU-TEST-WORD-SOURCE-FLEET-DEEP-AUDIT-20260923-002
+scope_kind: EXACT_PRESTAGE_CORE01_WORD_YAML_SOURCE_MATERIALIZATION
+work_unit_uid: WU-PRESTAGE-CORE01-WORD-YAML-PROJECTION-20260923-001
 included_units:
-- ALL_31_0921ACPOS_DOCX_SOURCE_SET
-- CONTENT_READINESS_MACHINE_COVERAGE
-- FULL_SOURCE_NODE_IDENTITY_AND_ORDER
-- DOCX_STRUCTURE_PROJECTION_COMPATIBILITY
-- BINARY_MEDIA_RELATIONSHIP_LINEAGE
-- INDEPENDENT_VALIDATOR_CONTRACT_KEY_SYNC
-- NO_YAML_MATERIALIZATION_FOR_ANY_DOCUMENT
+- CORE01_SOURCE_DOCUMENT_CONTENT_AUDIT
+- CORE01_RAW_WORD_IMMUTABILITY_LOCK
+- CORE01_CANONICAL_YAML_PROJECTION
+- CORE01_FROZEN_BINARY_SOURCE_PARTS
+- CORE01_WORD_YAML_ZERO_LOSS_RECONCILIATION
+- CORE01_SOURCE_PAIR_FREEZE
+- CORE01_INDEPENDENT_POST_CONVERSION_VALIDATION
 excluded_units: []
 remaining_units: []
 stage_required_units: []
-scope_selection_authority: EXPLICIT_USER_DIRECTIVE_20260923_AUDIT_ALL_WORDS_BEFORE_CORE_YAML
+scope_selection_authority: EXPLICIT_USER_DIRECTIVE_20260923_AUDIT_ALL_WORDS_THEN_CORE_YAML_ONLY
 source_context_only:
   page_uid: CORE-01
   product_stage_credit: 0
@@ -46,12 +46,12 @@ pre_execution_gate_status: PASS
 partial_scope: false
 stage_exit_credit_allowed: false
 product_stage_execution_allowed: false
-product_stage_execution_block_reason: CORE01_PRESTAGE_WORD_YAML_WORK_UNIT_NOT_YET_CREATED
+product_stage_execution_block_reason: CORE01_PRESTAGE_SOURCE_PAIR_NOT_YET_FROZEN_AND_VALIDATED
 fresh_revalidation_required: false
 product_stage_revalidation_required: false
 product_stage_revalidation_credit: 0
-next_action: CREATE_CORE01_PRESTAGE_WORD_YAML_WORK_UNIT
-closure_status: CLOSED_VERIFIED_NO_PRODUCT_CREDIT
+next_action: RUN_CORE01_EXACT_WORD_YAML_PRESTAGE_MATERIALIZATION
+closure_status: ACTIVE_PRESTAGE_MATERIALIZATION
 closure_evidence:
   source_head: 6249dbadad182cecd3810683b260dccd11901bcc
   document_denominator: 31
@@ -63,3 +63,14 @@ closure_evidence:
   deep_audit_artifact_zip_sha256: 2d5f123c5c1435a140f8943a0bd27a745e45456602b9f4461f6a86e420b6e9bb
   exact_head_full_line_run_id: 35831458562
   result: PASS
+prestage_dependency_evidence:
+  fleet_audit_closure_commit: ac68780bdc90f2a710f472729aaa6a1b30aa8fa2
+  fleet_deep_audit_run_id: 35831458578
+  fleet_deep_audit_artifact_id: 10738332262
+  fleet_deep_audit_artifact_zip_sha256: 2d5f123c5c1435a140f8943a0bd27a745e45456602b9f4461f6a86e420b6e9bb
+  fleet_document_denominator: 31
+  fleet_projection_compatibility_pass_count: 31
+  fleet_projection_compatibility_fail_count: 0
+  fleet_content_review_candidate_count: 0
+  stage01_execution_started: false
+  product_stage_credit: 0
