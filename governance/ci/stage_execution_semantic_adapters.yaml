@@ -176,7 +176,7 @@ stepwise_execution_defaults:
 stages:
   STAGE-01:
     stepwise_execution_contract_ref: stepwise_execution_defaults
-    effectful_executor_owner: .github/governance-maintenance/run_fresh_stage_replay.py
+    effectful_executor_owner_resolution: CURRENT_WORK_UNIT_OPERATION_BINDING_ONLY
     profile_name: SOURCE_INTAKE_AND_BASE_BLUEPRINT
     semantic_dimensions:
     - SOURCE_CAPTURE
@@ -199,7 +199,7 @@ stages:
     product_completion_credit_from_definition_audit: 0
   STAGE-02:
     stepwise_execution_contract_ref: stepwise_execution_defaults
-    effectful_executor_owner: governance/ci/run_current_stage2_actual_test.py
+    effectful_executor_owner_resolution: CURRENT_WORK_UNIT_OPERATION_BINDING_ONLY
     profile_name: PAGE_FUNCTIONAL_CONTRACT
     semantic_dimensions:
     - FUNCTION
@@ -245,7 +245,7 @@ stages:
     product_completion_credit_from_definition_audit: 0
   STAGE-03:
     stepwise_execution_contract_ref: stepwise_execution_defaults
-    effectful_executor_owner: governance/ci/run_current_stage3_visual_design.py
+    effectful_executor_owner_resolution: CURRENT_WORK_UNIT_OPERATION_BINDING_ONLY
     profile_name: VISUAL_DESIGN
     semantic_dimensions:
     - VISUAL_SPEC
