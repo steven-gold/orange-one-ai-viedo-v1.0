@@ -3,7 +3,7 @@ artifact_type: EXECUTION_SCOPE_MANIFEST
 normative_authority: false
 governance_uid: GOV-REV-20260921-TYPOGRAPHY-COMPUTED-METRICS-HARDENING
 owning_capability: SOURCE_INTAKE_AND_BASE_BLUEPRINT
-scope_kind: EXACT_SINGLE_PAGE_STAGE01_WORD_SOURCE_CANDIDATE_BLOCKED_PREFORMAL_REVIEW
+scope_kind: EXACT_SINGLE_PAGE_STAGE01_WORD_SOURCE_ACTIVE_PREEXECUTION
 work_unit_uid: WU-CORE01-STAGE01-WORD-SOURCE-INTAKE-20260923-001
 included_units:
 - CORE-01
@@ -42,12 +42,17 @@ denominator_source_refs:
 - source_snapshot
 - ACPOS_CORE-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx
 entry_gate: GOVERNANCE_PREFORMAL_READY
-entry_gate_status: BLOCKED_REQUIRED_HUMAN_GOVERNANCE_REVIEW
+entry_gate_status: PASS_USER_APPROVED_CURRENT_TARGET_HASH
 blocking_review_item_uid: REV-GOV-001
+blocking_review_status: APPROVED_BY_USER_CURRENT_TARGET_HASH
+review_approval_evidence_ref: governance/test/ACTIVE_STATE.yaml#pending_governance_review
+pre_execution_gate: GOVERNANCE_LOAD_RECEIPT_PASS
+pre_execution_gate_status: PENDING
 partial_scope: false
 stage_exit_credit_allowed: false
 product_stage_execution_allowed: false
+product_stage_execution_block_reason: GOVERNANCE_LOAD_RECEIPT_REQUIRED_BEFORE_ANY_STAGE_OPERATION
 fresh_revalidation_required: true
 product_stage_revalidation_required: true
 product_stage_revalidation_credit: 0
-next_action: USER_OR_AUTHORIZED_GOVERNANCE_REVIEWER_DECISION_REV_GOV_001
+next_action: MATERIALIZE_STAGE01_GOVERNANCE_LOAD_RECEIPT

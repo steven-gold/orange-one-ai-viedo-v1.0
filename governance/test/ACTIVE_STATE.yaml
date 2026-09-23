@@ -21,9 +21,9 @@ execution:
   scope_mode: EXACT_PAGE_SCOPE_ONLY
   target_pages:
   - CORE-01
-  current_stage: STAGE-01-ENTRY-BLOCKED-PREFORMAL-GOVERNANCE-REVIEW
+  current_stage: STAGE-01-ACTIVE-PREEXECUTION-GOVERNANCE-LOAD-REQUIRED
   stage1:
-    CORE-01: NOT_EXECUTED_ENTRY_GATE_BLOCKED
+    CORE-01: ACTIVE_PREEXECUTION
   stage2:
     result: NOT_EXECUTED
     stage_entry_gate: NOT_EXECUTED
@@ -104,21 +104,22 @@ specification_mutation_safety:
   ordinary_mid_stage_specification_mutation: BLOCK
   stage_end_consolidated_promotion_requires_new_explicit_directive: true
   execution_context_lock_required: true
-status: CORE01_STAGE01_WORD_SOURCE_READY_PREFORMAL_REVIEW_BLOCKED
-next_action: USER_OR_AUTHORIZED_GOVERNANCE_REVIEWER_DECISION_REV_GOV_001
+status: CORE01_STAGE01_ACTIVE_PREEXECUTION_GOVERNANCE_LOAD_REQUIRED
+next_action: MATERIALIZE_STAGE01_GOVERNANCE_LOAD_RECEIPT
 resume_control:
-  current_resume_point: CORE01_STAGE01_WORD_SOURCE_READY_PREFORMAL_REVIEW_BLOCKED
-  current_work_unit_uid: null
-  current_owner: .github/governance-source/active/source/10_REGISTRY/REVIEW_PROGRESS_LEDGER.yaml
-  exact_next_action: USER_OR_AUTHORIZED_GOVERNANCE_REVIEWER_DECISION_REV_GOV_001
-  product_resume_preserved: CORE01_STAGE01_WORD_SOURCE_READY_PREFORMAL_REVIEW_BLOCKED
+  current_resume_point: CORE01_STAGE01_ACTIVE_PREEXECUTION_GOVERNANCE_LOAD_REQUIRED
+  current_work_unit_uid: WU-CORE01-STAGE01-WORD-SOURCE-INTAKE-20260923-001
+  current_owner: SOURCE_INTAKE_BASE_BLUEPRINT
+  exact_next_action: MATERIALIZE_STAGE01_GOVERNANCE_LOAD_RECEIPT
+  product_resume_preserved: CORE01_STAGE01_ACTIVE_PREEXECUTION_GOVERNANCE_LOAD_REQUIRED
   interrupted_test_resume_preserved: CORE01_SOURCE_TEST_BUGFIX_AND_CONTENT_INTEGRITY_FULL_LIFECYCLE_R2_ACTIVE
   reentry_owner_capability: SOURCE_INTAKE_BASE_BLUEPRINT
   reentry_stage_uid: STAGE-01
-  reentry_reason: CLEAN_BASELINE_PERSISTED_AFTER_MULTIDIRECTIONAL_PROCESS_AUDIT_CLOSURE
+  reentry_reason: USER_APPROVED_REV_GOV_001_FOR_CURRENT_TARGET_HASH
   cleanup_receipt_ref: governance/test/history/cleanup/CORE01_STAGE01_STAGE03_CLEAN_RESET_R1.yaml
   human_visual_review_allowed: false
   product_execution_allowed: false
+  product_execution_block_reason: GOVERNANCE_LOAD_RECEIPT_REQUIRED_BEFORE_ANY_STAGE_OPERATION
   website_construction_allowed: false
   deployment_allowed: false
 governance_revision_transition:
@@ -144,14 +145,35 @@ pending_governance_review:
   review_type: PREFORMAL_GOVERNANCE_REVIEW
   target_uid: GOVERNANCE_PACKAGE
   reviewer_role: USER_OR_AUTHORIZED_GOVERNANCE_REVIEWER
-  status: PENDING
+  status: APPROVED_BY_USER_CURRENT_TARGET_HASH
   machine_may_auto_approve: false
-  approval_source: NONE
+  approval_source: EXPLICIT_USER_DIRECTIVE
   target_governance_uid: GOV-REV-20260921-TYPOGRAPHY-COMPUTED-METRICS-HARDENING
+  target_verified_package_sha256: 8d60815f6d06c6f46d93a17cf82b606011670dde5b72691dd482e27c91d97871
+  target_deterministic_source_bundle_sha256: 655519ff9e456739903a04bd049ade37b0a51148966f196eebb87770544a642b
+  target_semantic_authority_content_hash: c213b2ec8d2e1f82627a3ed50fa715e440515d1b3ed2e66facc8f5f36095e6c8
   source_review_plan_owner: .github/governance-source/active/source/10_REGISTRY/REVIEW_PROGRESS_LEDGER.yaml
+  protected_review_plan_mutated: false
   explicit_user_decision_required: true
-  explicit_user_decision_observed: false
+  explicit_user_decision_observed: true
+  explicit_user_decision_text: 處理進入stage-01
+  approved_at: '2026-09-23T08:50:00+08:00'
+  approval_evidence_ref: governance/test/ACTIVE_STATE.yaml#pending_governance_review
   self_reported_approval: FORBIDDEN
+current_governance_review_decision:
+  decision_uid: USR-REV-GOV-001-20260923-STAGE01-ENTRY
+  decision_source: USER
+  review_item_uid: REV-GOV-001
+  decision: APPROVE_CURRENT_TARGET_AND_ENTER_STAGE01
+  decision_text: 處理進入stage-01
+  decision_scope:
+    page_uid: CORE-01
+    stage_uid: STAGE-01
+    governance_uid: GOV-REV-20260921-TYPOGRAPHY-COMPUTED-METRICS-HARDENING
+    verified_package_sha256: 8d60815f6d06c6f46d93a17cf82b606011670dde5b72691dd482e27c91d97871
+  decided_at: '2026-09-23T08:50:00+08:00'
+  machine_generated_approval: false
+  product_stage_credit: 0
 current_primary_task_layer: PRODUCT_STAGE_EXECUTION
 current_primary_task_authorization_uid: EXPLICIT_USER_DIRECTIVE_20260923_READ_CORE01_WORD_AND_EXECUTE_STAGE_FLOW
 current_primary_task_product_stage_credit: 0
@@ -163,11 +185,14 @@ stage01_word_source_intake_candidate:
   stage_name: SOURCE_INTAKE_AND_BASE_BLUEPRINT
   page_uid: CORE-01
   entry_gate: GOVERNANCE_PREFORMAL_READY
-  entry_gate_status: BLOCKED_REQUIRED_HUMAN_GOVERNANCE_REVIEW
+  entry_gate_status: PASS_USER_APPROVED_CURRENT_TARGET_HASH
   blocking_review_item_uid: REV-GOV-001
   blocking_review_type: PREFORMAL_GOVERNANCE_REVIEW
   reviewer_role: USER_OR_AUTHORIZED_GOVERNANCE_REVIEWER
   machine_may_auto_approve: false
+  user_review_decision_observed: true
+  pre_execution_gate: GOVERNANCE_LOAD_RECEIPT_PASS
+  pre_execution_gate_status: PENDING
   actual_stage_execution_started: false
   product_stage_credit: 0
   source_snapshot:
@@ -193,8 +218,9 @@ stage01_word_source_intake_candidate:
     integration_port_count: 19
     visual_candidate_count: 5
   next_legal_transition:
-    on_review_approved_current_target_hash: ACTIVATE_STAGE01_WORK_UNIT_AND_MATERIALIZE_WORD_SOURCE_PROVIDER
-    while_review_pending: BLOCK_PRODUCT_STAGE_EXECUTION
+    on_review_approved_current_target_hash: ACTIVATED_STAGE01_WORK_UNIT
+    current_required_transition: MATERIALIZE_STAGE01_GOVERNANCE_LOAD_RECEIPT
+    before_governance_load_receipt_pass: BLOCK_ALL_STAGE01_OPERATIONS
 retained_governance_cleanup_summary:
   role: COMPACT_NON_NORMATIVE_PROVENANCE
   product_stage_credit: 0
@@ -532,30 +558,92 @@ closed_governance_maintenance_work_unit_final_residual_classification_and_seal:
   - PRODUCT_STAGE_CREDIT_ZERO
   legal_next_transition: WORK_UNIT_RESOLUTION_GATE
   product_stage_credit: 0
-active_work_unit: null
+active_work_unit:
+  work_unit_uid: WU-CORE01-STAGE01-WORD-SOURCE-INTAKE-20260923-001
+  canonical_name: CORE01_STAGE01_WORD_SOURCE_INTAKE_AND_BASE_BLUEPRINT
+  primary_task_layer: PRODUCT_STAGE_EXECUTION
+  stage_uid: STAGE-01
+  semantic_capability: SOURCE_INTAKE_AND_BASE_BLUEPRINT
+  scope:
+  - CORE-01
+  canonical_owner: SOURCE_INTAKE_BASE_BLUEPRINT
+  current_status: ACTIVE_PREEXECUTION_GOVERNANCE_LOAD_REQUIRED
+  entry_gate: GOVERNANCE_PREFORMAL_READY
+  entry_gate_status: PASS_USER_APPROVED_CURRENT_TARGET_HASH
+  pre_execution_gate: GOVERNANCE_LOAD_RECEIPT_PASS
+  pre_execution_gate_status: PENDING
+  dependencies:
+  - governance/test/CURRENT_EXECUTION_SCOPE_MANIFEST.yaml
+  - GOVERNANCE_CURRENT.yaml
+  - governance/specifications/REGISTRY.yaml
+  - .github/governance-source/active/source/10_REGISTRY/GOVERNANCE_LIFECYCLE_STAGE_REGISTRY.yaml
+  - .github/governance-source/active/source/10_REGISTRY/STAGE1_SOURCE_FACT_CONTRACTS.yaml
+  required_outputs:
+  - SOURCE_STRUCTURE_MANIFEST
+  - SOURCE_SEGMENT_MAP
+  - SOURCE_CONTEXT_MANIFEST
+  - CONTENT_SUPERSESSION_CONFLICT_LEDGER
+  - SOURCE_DEPENDENCY_MAP
+  - CLASSIFIED_ARTIFACT_SET
+  - PAGE_BASE_BLUEPRINT
+  - VISUAL_BASE_BLUEPRINT
+  - BLUEPRINT_BINDING_MANIFEST
+  operation_bindings:
+    SOURCE_STRUCTURE_ENUMERATION: {executor_owner: SOURCE_INTAKE_BASE_BLUEPRINT, result_owner: SOURCE_INTAKE_BASE_BLUEPRINT}
+    SOURCE_SEGMENT_MAPPING: {executor_owner: SOURCE_INTAKE_BASE_BLUEPRINT, result_owner: SOURCE_INTAKE_BASE_BLUEPRINT}
+    SOURCE_CONTEXT_COMPILATION: {executor_owner: SOURCE_INTAKE_BASE_BLUEPRINT, result_owner: SOURCE_INTAKE_BASE_BLUEPRINT}
+    SOURCE_SUPERSESSION_CONFLICT_RESOLUTION: {executor_owner: SOURCE_INTAKE_BASE_BLUEPRINT, result_owner: SOURCE_INTAKE_BASE_BLUEPRINT}
+    SOURCE_DEPENDENCY_EXTRACTION: {executor_owner: SOURCE_INTAKE_BASE_BLUEPRINT, result_owner: SOURCE_INTAKE_BASE_BLUEPRINT}
+    RESPONSIBILITY_CLASSIFICATION: {executor_owner: SOURCE_INTAKE_BASE_BLUEPRINT, result_owner: SOURCE_INTAKE_BASE_BLUEPRINT}
+    PAGE_BASE_BLUEPRINT_COMPILE: {executor_owner: SOURCE_INTAKE_BASE_BLUEPRINT, result_owner: SOURCE_INTAKE_BASE_BLUEPRINT}
+    VISUAL_BASE_BLUEPRINT_COMPILE: {executor_owner: SOURCE_INTAKE_BASE_BLUEPRINT, result_owner: SOURCE_INTAKE_BASE_BLUEPRINT}
+    BLUEPRINT_BINDING_COMPILE: {executor_owner: SOURCE_INTAKE_BASE_BLUEPRINT, result_owner: SOURCE_INTAKE_BASE_BLUEPRINT}
+  scanner_bindings:
+    SOURCE_COMPLETENESS: {scanner_owner: VAL-GOV-026, result_owner: SOURCE_INTAKE_BASE_BLUEPRINT}
+    SOURCE_IDENTITY: {scanner_owner: VAL-GOV-026, result_owner: SOURCE_INTAKE_BASE_BLUEPRINT}
+    CLASSIFICATION_COMPLETENESS: {scanner_owner: VAL-GOV-026, result_owner: SOURCE_INTAKE_BASE_BLUEPRINT}
+    BLUEPRINT_BINDING: {scanner_owner: VAL-GOV-026, result_owner: SOURCE_INTAKE_BASE_BLUEPRINT}
+    UNRESOLVED_AUTHORITY_PRESERVATION: {scanner_owner: VAL-GOV-026, result_owner: SOURCE_INTAKE_BASE_BLUEPRINT}
+  source_snapshot_ref: governance/test/ACTIVE_STATE.yaml#stage01_word_source_intake_candidate.source_snapshot
+  required_governance_load_receipt_before_execution: true
+  actual_stage_execution_started: false
+  product_blocker_credit: 0
+  out_of_scope:
+  - ASSET-01
+  - VIDEO-01
+  - EDIT-01
+  - VOICE-01
+  - QA-01
+  - STAGE-02
+  - STAGE-03
+  - WEBSITE_CONSTRUCTION
+  - DEPLOYMENT
 last_work_unit_resolution_gate:
   resolution_uid: WUR-CORE01-STAGE01-WORD-SOURCE-INTAKE-20260923-001
   normative_authority: false
-  result: BLOCKED_REQUIRED_HUMAN_GOVERNANCE_REVIEW
+  result: PASS_SINGLE_LEGAL_SUCCESSOR
   requested_primary_task_layer: PRODUCT_STAGE_EXECUTION
-  candidate_work_unit_uid: WU-CORE01-STAGE01-WORD-SOURCE-INTAKE-20260923-001
+  resolved_work_unit_uid: WU-CORE01-STAGE01-WORD-SOURCE-INTAKE-20260923-001
   candidate_stage_uid: STAGE-01
   candidate_page_uid: CORE-01
-  authorization_basis: EXPLICIT_USER_DIRECTIVE_20260923_READ_CORE01_WORD_AND_EXECUTE_STAGE_FLOW
+  authorization_basis:
+  - EXPLICIT_USER_DIRECTIVE_20260923_READ_CORE01_WORD_AND_EXECUTE_STAGE_FLOW
+  - USR-REV-GOV-001-20260923-STAGE01-ENTRY
   canonical_owner: SOURCE_INTAKE_BASE_BLUEPRINT
   source_snapshot_bound: true
   source_branch: 0921acpos
+  source_branch_head_sha_reverified: 6249dbadad182cecd3810683b260dccd11901bcc
   source_blob_sha: 1cafe3bbccb7168cc5606aa4e21fb7edb5a54439
   source_sha256: 943af192004b587d6aab36e114eeb40430c9ea45614cc154d62dd9e3b5cbefeb
   entry_gate: GOVERNANCE_PREFORMAL_READY
   blocking_review_item_uid: REV-GOV-001
-  blocking_review_status: PENDING
+  blocking_review_status: APPROVED_BY_USER_CURRENT_TARGET_HASH
   reviewer_role: USER_OR_AUTHORIZED_GOVERNANCE_REVIEWER
   machine_may_auto_approve: false
-  active_work_unit_created: false
+  active_work_unit_created: true
   product_stage_execution_started: false
   product_stage_credit: 0
-  exact_next_action: USER_OR_AUTHORIZED_GOVERNANCE_REVIEWER_DECISION_REV_GOV_001
+  exact_next_action: MATERIALIZE_STAGE01_GOVERNANCE_LOAD_RECEIPT
 previous_last_work_unit_resolution_gate:
   resolution_uid: WUR-GOV-FINAL-RESIDUAL-CLASSIFICATION-SEAL-20260923-001
   normative_authority: false
