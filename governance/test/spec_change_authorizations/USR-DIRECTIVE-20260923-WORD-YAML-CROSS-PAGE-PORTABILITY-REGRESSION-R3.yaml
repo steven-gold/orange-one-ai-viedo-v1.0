@@ -1,0 +1,47 @@
+schema_version: 1
+artifact_type: SPECIFICATION_CHANGE_AUTHORIZATION_RECEIPT
+normative_authority: false
+authorization_uid: USR-DIRECTIVE-20260923-WORD-YAML-CROSS-PAGE-PORTABILITY-REGRESSION-R3
+authority_source: EXPLICIT_USER_DIRECTIVE
+directive_text: 檢測並確保 Word-to-YAML 規範可適用所有不同類型頁面；固定只能是必要結構標題／schema，頁面功能、控制項、內容與數量不得寫死；缺失的跨頁型 portability regression 必須正式落盤後才能宣稱完成。
+status: APPROVED_FOR_EXACT_SCOPE
+single_use: true
+ai_may_expand_scope: false
+ai_may_reuse_authorization: false
+current_governance_uid: GOV-REV-20260923-WORD-YAML-PAGE-NEUTRAL-SCHEMA-PORTABILITY-HARDENING
+baseline_commit_sha: 06f2df4a373fdb6f061552cf86e27dd9c62128ed
+baseline_tree_sha: 8a1722b86b614beb8f79af4cdeb0619c9ba9b9c3
+governance_mutation_boundary: OUTSIDE_GOVERNED_EXECUTION_CYCLE
+pre_write_context_verification:
+  relevant_scope_read_complete: true
+  canonical_owner_resolution_complete: true
+  existing_semantics_comparison_complete: true
+  duplicate_search_complete: true
+  conflict_search_complete: true
+  second_system_search_complete: true
+  gap_proven_before_write: true
+  reviewed_authority_ref_count: 9
+  reviewed_existing_owner_ref_count: 7
+  write_disposition: MODIFY_EXISTING_CANONICAL_OWNER
+  comparison_result: NO_UNRESOLVED_DUPLICATE_CONFLICT_OR_SECOND_SYSTEM
+exact_scope:
+  allowed:
+  - MATERIALIZE_REQUIRED_CROSS_PAGE_DOCX_PROJECTION_PORTABILITY_REGRESSION
+  - PRESERVE_FIXED_SCHEMA_DYNAMIC_PAGE_CONTENT_CONTRACT
+  - UPDATE_GOVERNANCE_SOURCE_IDENTITY_FOR_TEST_ASSET_CHANGE
+  - ASSIGN_NEW_IMMUTABLE_GOVERNANCE_UID_AND_DISPLAY_VERSION
+  - RUN_PORTABILITY_STAGE1_SELECTED_PROFILE_FULL_LINE_EXACT_HEAD_VALIDATION
+  forbidden:
+  - PRODUCT_BASIC_DESIGN_CONTENT_OR_REQUIRED_HEADING_MUTATION
+  - PRODUCT_PAGE_SCHEMA_SPECIALIZATION
+  - CORE01_PRODUCT_DATA_MUTATION
+  - CORE01_PRODUCT_AUTHORITY_MUTATION
+  - PRODUCT_BEHAVIOR_INVENTION
+  - PRODUCT_STAGE01_EXECUTION
+  - PRODUCT_STAGE_CREDIT
+  - WEBSITE_CONSTRUCTION
+  - DEPLOYMENT
+  - HISTORICAL_EVIDENCE_AS_CURRENT_CREDIT
+product_stage_credit: 0
+duplicate_and_residual_cleanup_required: true
+one_canonical_execution_closure_model_required: true
