@@ -1,0 +1,23 @@
+name: Word Projection Next-Step Consumer Sync Promotion
+on:
+  push:
+    branches:
+      - rebuild-v2.1.1
+    paths:
+      - "governance/test/spec_change_authorizations/USR-DIRECTIVE-20260923-WORD-PROJECTION-NEXTSTEP-CONSUMER-SYNC-R5.yaml"
+permissions:
+  contents: write
+jobs:
+  promote:
+    runs-on: ubuntu-latest
+    timeout-minutes: 55
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: python -m pip install --disable-pip-version-check PyYAML==6.0.2
+      - name: Promote Word projection next-step consumer synchronization
+        run: python .github/governance-maintenance/promote_word_projection_nextstep_consumer_sync.py
