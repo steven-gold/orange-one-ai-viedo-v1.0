@@ -807,7 +807,7 @@ def ensure_cross_page_portability_regression():
     marker="c('projection_fixed_schema_positive',_prun(),'PASS')\n"
     if marker not in body:
         raise RuntimeError('projection fixed-schema positive marker missing')
-    add=r'''c('projection_fixed_schema_positive',_prun(),'PASS')
+    add=r"""c('projection_fixed_schema_positive',_prun(),'PASS')
 
 def _projection_shape_portability():
     with tempfile.TemporaryDirectory() as td:
@@ -825,7 +825,7 @@ def _projection_shape_portability():
         materially_different=(len(ia['package_parts']),len(ia['source_nodes']))!=(len(ib['package_parts']),len(ib['source_nodes']))
         return 'PASS' if shape_ok and materially_different else 'FAIL'
 c('projection_schema_portable_across_materially_different_docx',_projection_shape_portability(),'PASS')
-'''
+"""
     body=body.replace(marker,add,1)
     p.write_text(body,encoding='utf-8')
 
