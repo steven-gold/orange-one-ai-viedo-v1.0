@@ -3,6 +3,9 @@ registry_uid: STAGE-STEP-REGISTRY-001
 domain_uid: STAGE_LIFECYCLE_FLOW
 step_schema_ref: governance/execution-domains/STEP_CONTRACT_SCHEMA.yaml
 audit_profile_ref: governance/execution-domains/AUDIT_PROFILE.yaml
+authority_binding_registry_ref: governance/execution-domains/AUTHORITY_BINDINGS.yaml
+authority_mode: EXECUTION_PROJECTION_ONLY
+may_create_new_normative_requirement: false
 lifecycle_registry_ref: .github/governance-source/active/source/10_REGISTRY/GOVERNANCE_LIFECYCLE_STAGE_REGISTRY.yaml
 invariant_registry_ref: .github/governance-source/active/source/10_REGISTRY/STAGE_EXECUTION_INVARIANT_REGISTRY.yaml
 stage_denominator: DYNAMIC_REGISTERED_APPLICABLE_STAGES
