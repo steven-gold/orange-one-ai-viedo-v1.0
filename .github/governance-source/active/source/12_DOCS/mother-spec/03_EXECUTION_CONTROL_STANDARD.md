@@ -1047,6 +1047,39 @@ Effectful Product Stage execution MUST preserve the governed task-layer order: t
 
 Historical commits, historical Stage outputs, superseded candidates, prior generated artifacts, and old run directories MAY be used only for provenance or registered negative regression. They MUST_NOT supply a missing Current product value, contract field, trigger, Authority binding, denominator, or completion credit. Fresh replay MUST begin from registered immutable inputs and Current Authority; if those Current inputs are insufficient, execution must expose the owning gap instead of reading history to manufacture the missing product data.
 
+<!-- SECTION_UID: WEB-GOV-03-S062A -->
+## 62A. Universal Stepwise Execution / No Bulk Preproduction Contract
+
+This contract applies to every governed execution mode, including Basic Design authoring/review, source intake, Word/DOCX-to-YAML projection, every Product Stage, remediation, audit, verification, deployment preparation, and later lifecycle execution. It is not limited to governance maintenance.
+
+The canonical execution semantic is strictly:
+
+`RESOLVE CURRENT STEP -> VERIFY STEP INPUTS -> EXECUTE ONLY CURRENT STEP -> MATERIALIZE ONLY CURRENT-STEP OUTPUTS -> VALIDATE CURRENT-STEP OUTPUTS -> RECONCILE CURRENT-STEP DENOMINATOR -> PERSIST CURRENT-STEP EVIDENCE/CHECKPOINT -> AUTHORIZE NEXT STEP -> STOP OR ADVANCE`.
+
+`Dependency-Ordered Batch Execution` in WEB-GOV-03-S062 means dependency-ordered bounded atomic steps. It MUST_NOT be interpreted as permission to bulk-generate multiple future steps, multiple Stages, or an entire page lifecycle before validating intermediate outputs.
+
+Permanent rules:
+
+1. Exactly one effectful current step is admitted at a time. A bounded range or full-lifecycle request changes only the legal continuation range; it does not change atomic step semantics.
+2. A step MUST declare exact prerequisites, input identities/hashes, operation/owner, output denominator, validators, evidence, failure disposition, checkpoint, and legal successor before execution.
+3. Only outputs owned by the current step MAY be materialized. Future-step placeholder content, speculative downstream records, guessed bindings, and pre-created completion artifacts are FORBIDDEN.
+4. Current-step validation and denominator reconciliation MUST complete before successor admission. Missing required content, partial rows, unresolved references, schema drift, duplicate identity, contradiction, or unowned output blocks the successor.
+5. PASS authorizes only the registered successor. FAIL/BLOCKED/NOT_VERIFIED stops effectful continuation and records the earliest owning re-entry point. No downstream work may be used to hide or retroactively complete an upstream gap.
+6. A retry re-enters the failed owning step from its immutable/current legal inputs. It MUST_NOT rebuild already-valid predecessor facts unless invalidation evidence requires it.
+7. Full-page, multi-page, multi-Stage, or full-lifecycle execution MUST repeatedly apply this same atomic contract. Parallelism is allowed only among independent operations inside the same admitted step when their complete inputs are already frozen and their outputs do not depend on each other.
+8. Audit is interleaved, not deferred: every effectful step ends with evidence validation and checkpoint reconciliation. Final audit is an additional full reconciliation and MUST_NOT substitute for missing local step audits.
+9. Historical outputs and previous generated page data are never execution inputs unless a Current rule explicitly classifies them as immutable authority/provenance. New page execution begins from the selected Current Word/source and Current governance contracts.
+10. The execution engine MUST fail closed if any runner, workflow, adapter, script, or AI instruction attempts to skip, merge, reorder, preproduce, or silently infer governed steps.
+
+The four canonical process layers are ordered and non-overlapping:
+
+- `BASIC_DESIGN_GOVERNANCE_FLOW`: establish and review complete Basic Design; close only after Basic Design denominator/evidence PASS.
+- `WORD_YAML_SOURCE_FLOW`: content-readiness audit -> immutable Word/source lock -> exact Canonical YAML projection -> independent zero-loss reconciliation -> source-pair freeze. It MUST NOT perform Stage product semantics.
+- `STAGE_LIFECYCLE_FLOW`: consume only admitted frozen inputs and execute registered Stage operations sequentially through the same Common Stage Engine. Each Stage and each registered operation remains checkpointed.
+- `AUDIT_CLOSURE_FLOW`: perform the local audit after every step and the applicable Work Unit/Stage/system/final audit at its registered boundary; claims follow evidence, never precede it.
+
+Cross-layer handoff requires an explicit PASS receipt and exact identity/hash binding. A later layer MUST_NOT repair an earlier layer by invention.
+
 <!-- SECTION_UID: WEB-GOV-03-S063 -->
 ## 63. Mandatory Session Bootstrap / Resume Gate
 
