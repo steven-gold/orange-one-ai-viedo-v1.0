@@ -1,0 +1,798 @@
+schema_version: ACPOS_WORD_YAML_PROJECTION_V1
+projection_mode: SOURCE_GROUNDED_NO_INVENTION
+scope:
+  uid: GLOBAL-HOME-SHELL-NAVIGATION
+  title: 首頁外框／全站菜單／Navigation Shell
+  stage: WORD_TO_YAML
+source:
+  branch: 0921acpos
+  git_head: 33a8d6fcf125a76cc9558a0db35019dc80ee5874
+  word_path: ACPOS_GLOBAL_HOME_SHELL_NAVIGATION_Mother_Basic_Design_OPTIMIZED.docx
+  word_sha256: 334a4679600f092b733bfd8d41a3bc44fe9078b14be2e1bc27a2bc5f4232e15e
+authority_rules:
+- Word source remains canonical for this projection.
+- Do not convert BLOCKED, NOT_EXECUTED, REQUIRE_EXACT_BINDING, SOURCE_NOT_DEFINED into PASS.
+- Do not invent Action, Gate, Permission, Operation, API, Runtime Owner, Persistence Owner, route, field, KPI, or navigation item.
+- Paragraph and table order is preserved by source index.
+document:
+  paragraphs:
+  - index: 0
+    style: Normal
+    text: ORANGE ONE
+  - index: 1
+    style: Normal
+    text: GLOBAL-SHELL
+  - index: 2
+    style: Title
+    text: 首頁外框／上欄／自適應伸縮菜單
+  - index: 3
+    style: Normal
+    text: Global Home / Shell / Adaptive Navigation
+  - index: 4
+    style: Normal
+    text: 全站共用 Layout、Header、Front/Admin Navigation 與 Workspace Mount 施工基準
+  - index: 7
+    style: Heading 1
+    text: 1. Shell Identity / 設計目標
+  - index: 9
+    style: Heading 1
+    text: 2. Coupled Reflow Geometry / 選單與工作區連動
+  - index: 11
+    style: Normal
+    text: 圖 1　Sidebar 收合與展開時，Workspace 必須同步調整位置與可用寬度。
+  - index: 15
+    style: Heading 1
+    text: 3. Header Contract / 上方固定欄
+  - index: 17
+    style: List Bullet
+    text: Header 永遠固定於 viewport top；工作區 top = 68px，保留 10px vertical gutter。
+  - index: 18
+    style: List Bullet
+    text: Header 不顯示 Permission Chip；權限屬 Account-bound Authorization。
+  - index: 19
+    style: List Bullet
+    text: Page Title 由各 Page Authority 管理；Global Header 中央不再放頁名，避免與右側 Account Cluster 衝突。
+  - index: 20
+    style: List Bullet
+    text: Popover / Language Menu 使用高於 Workspace 的 z-index，但不得改變 Sidebar/Workspace Geometry。
+  - index: 21
+    style: Heading 1
+    text: 4. Front Navigation / 前台 9 個 L1
+  - index: 24
+    style: Heading 1
+    text: 5. Admin Navigation / 後台 9 個 L1
+  - index: 26
+    style: Heading 1
+    text: 6. Sidebar Interaction State Machine
+  - index: 28
+    style: List Bullet
+    text: 建議共享 transition 160–200ms；`prefers-reduced-motion` 時近乎即時。
+  - index: 29
+    style: List Bullet
+    text: Expanded Sidebar 仍固定 top=58px / bottom=0，但不是浮在 Workspace 上方；它是 Shell Grid 的第一欄。
+  - index: 30
+    style: List Bullet
+    text: Workspace 自己的 horizontal overflow 只能處理 Page 內部 min-width；不得用 Sidebar Overlay 造成額外 occlusion。
+  - index: 31
+    style: List Bullet
+    text: 所有 Page 必須能在兩種 Shell 寬度下維持 control 可操作、無遮蓋、無 off-screen primary action。
+  - index: 32
+    style: Heading 1
+    text: 7. Workspace Mount / Page Integration Contract
+  - index: 34
+    style: Heading 1
+    text: 8. Page Responsive Compatibility
+  - index: 36
+    style: Heading 1
+    text: 9. Permission / Visibility / Active State
+  - index: 37
+    style: List Bullet
+    text: Navigation 顯示只依 Account Permission Assignment 與 Canonical Navigation Authority。
+  - index: 38
+    style: List Bullet
+    text: Permission denied：整個 Nav Item `HIDDEN`，剩餘項目維持原相對順序。
+  - index: 39
+    style: List Bullet
+    text: Authorized but state blocked：既有 Control 可 `DISABLED` 並提供可讀原因。
+  - index: 40
+    style: List Bullet
+    text: Active Front Item 由 canonical page ancestry 決定；Active Admin Item 由 exact admin page UID 決定；禁止用 URL 字串猜測。
+  - index: 41
+    style: List Bullet
+    text: Surface Switch 只顯示使用者有權限進入的合法目標；沒有合法目標時 fail-closed。
+  - index: 42
+    style: Heading 1
+    text: 10. Controls / A11y / i18n
+  - index: 44
+    style: List Bullet
+    text: 支援 zh-TW / zh-CN / en；ORANGE ONE、ACPOS、AI、API、QA 等固定術語依全域規則處理。
+  - index: 45
+    style: List Bullet
+    text: Focus 不得只靠顏色；Selected/Active 同時使用背景／邊框／狀態屬性。
+  - index: 46
+    style: List Bullet
+    text: 收合 Sidebar 時 Nav Label 可視上隱藏，但 Icon 必須具有完整 aria-label。
+  - index: 47
+    style: Heading 1
+    text: 11. Error / Recovery
+  - index: 49
+    style: Heading 1
+    text: 12. Acceptance Matrix
+  - index: 51
+    style: Heading 1
+    text: 13. Construction Mapping / 後續施工切片
+  - index: 52
+    style: Normal
+    text: 1.  把 Sidebar width 變成 Shell 單一狀態來源，移除 overlay-only workspace 固定 left 規則。
+  - index: 53
+    style: Normal
+    text: 2.  讓 Workspace left / width 或 grid column 與 Sidebar width 同步 transition。
+  - index: 54
+    style: Normal
+    text: 3.  以 1024 / 1280 / 1440 / 1536 / 1920 驗證 collapsed + expanded 共 10 組 viewport/state。
+  - index: 55
+    style: Normal
+    text: 4.  逐頁檢查最左側 Primary Action、Table header、Input、Conversation composer 不被遮住。
+  - index: 56
+    style: Normal
+    text: 5.  重跑 Navigation visibility、Keyboard、Reduced Motion、Header overflow、Frontend/Admin switch。
+  - index: 57
+    style: Normal
+    text: 6.  完成 Visual Review 後再進實際 Runtime/Business Logic；Word 本身不等於程式已施工。
+  - index: 59
+    style: Heading 1
+    text: Global Typography Authority / TY01–TY15
+  - index: 60
+    style: Normal
+    text: '[ACPOS-20260921-BATCH-01-FOUNDATION-CLOSURE-V1] 本節為 0921acpos Current Word package 的正式缺口閉合內容。只定義 Basic Design / authority contract；若缺 Runtime / Production
+      evidence，狀態仍必須維持 NOT_EXECUTED / IMPLEMENTATION_REQUIRED，不得因文件定義完成而宣告 Runtime 完成。'
+  - index: 61
+    style: Normal
+    text: Canonical font stack：Inter / system-ui / -apple-system / BlinkMacSystemFont / 'Segoe UI' / 'Noto Sans TC' / 'PingFang TC' / sans-serif。若實際產品環境無 Inter，必須落到可量測且可重現的
+      system/CJK fallback；不得以不同字型截圖替代 computed metrics。
+  - index: 62
+    style: Heading 2
+    text: Typography Denominator / Computed Metrics
+  tables:
+  - index: 0
+    rows:
+    - row: 0
+      cells:
+      - '最新 Layout 裁決
+
+        左側菜單與工作區屬同一個 Shell Layout。菜單展開時，工作區同步右移並縮窄；菜單收合時，工作區同步左移並放大。禁止 Sidebar 以 Overlay 方式遮住 Workspace。'
+  - index: 1
+    rows:
+    - row: 0
+      cells:
+      - 項目
+      - 規格
+    - row: 1
+      cells:
+      - Layout UID
+      - GHS-LAYOUT-ADAPTIVE-COUPLED-SHELL
+    - row: 2
+      cells:
+      - 用途
+      - 所有登入後 Front / Admin 頁面的固定外框與 Workspace Mount
+    - row: 3
+      cells:
+      - Header
+      - 固定頂部 58px；全寬
+    - row: 4
+      cells:
+      - Sidebar
+      - 收合 64px；展開 221px；與 Workspace 共同參與 Layout 計算
+    - row: 5
+      cells:
+      - Workspace
+      - 依 Sidebar 寬度自適應；不得被 Sidebar 遮住
+    - row: 6
+      cells:
+      - 視覺
+      - Dark Tech Purple；沿用全站 Violet Token
+    - row: 7
+      cells:
+      - 真實資料
+      - 通知／待辦／執行中／帳戶只能顯示實際 Projection；缺值不得造假
+  - index: 2
+    rows:
+    - row: 0
+      cells:
+      - 狀態
+      - Sidebar
+      - Workspace Left
+      - Workspace Width
+      - 行為
+    - row: 1
+      cells:
+      - COLLAPSED
+      - 64px
+      - 78px = 64 + 14
+      - 100vw - 64 - 14 - 16
+      - 工作區最大化；僅顯示 9 個 Icon
+    - row: 2
+      cells:
+      - EXPANDED
+      - 221px
+      - 235px = 221 + 14
+      - 100vw - 221 - 14 - 16
+      - 工作區同步縮窄／右移；菜單完整顯示 Label
+    - row: 3
+      cells:
+      - TRANSITION
+      - 64 ↔ 221px
+      - 78 ↔ 235px
+      - 連續插值
+      - Sidebar 與 Workspace 使用同一 transition duration；不得先蓋住再跳位
+  - index: 3
+    rows:
+    - row: 0
+      cells:
+      - 'Implementation Geometry
+
+        建議由 Shell 根節點以 CSS Grid 或單一共享 `--sidebar-width` 變數驅動：Header 跨全欄；Sidebar 與 Workspace 為同一 Layout 的相鄰 Column。禁止維持 `workspace left=78px` 同時把 Sidebar 展開至 221px。'
+  - index: 4
+    rows:
+    - row: 0
+      cells:
+      - 區域
+      - 尺寸／順序
+      - 功能與邊界
+    - row: 1
+      cells:
+      - Brand
+      - 左側 x≈30px；Header h58
+      - 使用 ORANGE ONE Canonical Logo；不可拉伸、裁切或自行重畫
+    - row: 2
+      cells:
+      - Quick Status
+      - Notification → To-do → Running
+      - 只讀真實狀態；無 Runtime 時顯示受控 Disabled，不可假數據
+    - row: 3
+      cells:
+      - Language
+      - 72px 基準
+      - zh-TW / zh-CN / en；切換不改變 Business State
+    - row: 4
+      cells:
+      - Surface Switch
+      - Frontend / Admin
+      - 切換到各 Surface 的合法首個目標；不新增第三 Surface
+    - row: 5
+      cells:
+      - Account
+      - 132–220px
+      - 登入顯示帳戶資訊；未登入顯示 Login；名稱溢出 Ellipsis
+  - index: 5
+    rows:
+    - row: 0
+      cells:
+      - 序
+      - 顯示名稱
+      - Page UID
+      - Route
+    - row: 1
+      cells:
+      - '01'
+      - 儀表板
+      - workspace:WB-01
+      - /
+    - row: 2
+      cells:
+      - '02'
+      - 專案 / 專題
+      - CORE-01
+      - /core
+    - row: 3
+      cells:
+      - '03'
+      - 素材
+      - ASSET-01
+      - /assets
+    - row: 4
+      cells:
+      - '04'
+      - 影片
+      - VIDEO-01
+      - /video
+    - row: 5
+      cells:
+      - '05'
+      - 剪輯配音
+      - EDIT-01
+      - /edit
+    - row: 6
+      cells:
+      - '06'
+      - QA
+      - QA-01
+      - /qa
+    - row: 7
+      cells:
+      - '07'
+      - 資料庫
+      - admin:DB-01
+      - /database
+    - row: 8
+      cells:
+      - 08
+      - 戰略中心
+      - workspace:STR-01
+      - /strategy
+    - row: 9
+      cells:
+      - 09
+      - 最新資訊
+      - workspace:INFO-01
+      - /info
+  - index: 6
+    rows:
+    - row: 0
+      cells:
+      - 'Flat L1
+
+        Front 9 項全部為直接 L1 Leaf；禁止子選單、第二行 subtitle、chevron 與 page-local global menu。'
+  - index: 7
+    rows:
+    - row: 0
+      cells:
+      - 序
+      - 顯示名稱
+      - Page UID
+      - Route
+    - row: 1
+      cells:
+      - '01'
+      - 系統維護
+      - admin:SYS-01
+      - /admin/system
+    - row: 2
+      cells:
+      - '02'
+      - 帳戶與權限
+      - admin:IAM-01
+      - /admin/accounts
+    - row: 3
+      cells:
+      - '03'
+      - 企業自動開發系統
+      - admin:DEV-01
+      - /admin/dev
+    - row: 4
+      cells:
+      - '04'
+      - 社群發布
+      - admin:SOC-01
+      - /admin/social
+    - row: 5
+      cells:
+      - '05'
+      - ERP
+      - admin:ERP-01
+      - /admin/erp
+    - row: 6
+      cells:
+      - '06'
+      - AI API
+      - admin:AIAPI-01
+      - /admin/aiapi
+    - row: 7
+      cells:
+      - '07'
+      - QA 評分項目
+      - admin:SG-02
+      - /admin/qa-criteria
+    - row: 8
+      cells:
+      - 08
+      - 戰略中心
+      - admin:STR-01
+      - /admin/strategy
+    - row: 9
+      cells:
+      - 09
+      - 知識庫
+      - admin:KB-01
+      - /admin/knowledge
+  - index: 8
+    rows:
+    - row: 0
+      cells:
+      - 事件
+      - 前狀態
+      - 後狀態
+      - Workspace 同步
+    - row: 1
+      cells:
+      - pointerenter / focusin
+      - COLLAPSED
+      - EXPANDING → EXPANDED
+      - left 78→235；width 同步縮窄
+    - row: 2
+      cells:
+      - pointerleave + no focus
+      - EXPANDED
+      - COLLAPSING → COLLAPSED
+      - 180ms delay 後 left 235→78；width 同步放大
+    - row: 3
+      cells:
+      - Route completed
+      - EXPANDED
+      - COLLAPSED
+      - 導航後立即收合並恢復最大 Workspace
+    - row: 4
+      cells:
+      - Escape
+      - EXPANDED
+      - COLLAPSED
+      - 若 Focus 不需保留，立即同步收合
+    - row: 5
+      cells:
+      - Keyboard Tab 進入 Sidebar
+      - COLLAPSED
+      - EXPANDED
+      - Label 顯示；Workspace 同步 reflow，不遮住 Focus target
+  - index: 9
+    rows:
+    - row: 0
+      cells:
+      - 項目
+      - 規格
+    - row: 1
+      cells:
+      - Top
+      - 68px
+    - row: 2
+      cells:
+      - Right inset
+      - 16px
+    - row: 3
+      cells:
+      - Bottom inset
+      - 16px
+    - row: 4
+      cells:
+      - Sidebar gap
+      - 14px
+    - row: 5
+      cells:
+      - Collapsed available width
+      - calc(100vw - 94px)
+    - row: 6
+      cells:
+      - Expanded available width
+      - calc(100vw - 251px)
+    - row: 7
+      cells:
+      - Overflow
+      - Page 自己的內容若仍低於其 min-width，僅允許 Workspace 內 horizontal scroll
+    - row: 8
+      cells:
+      - Mount ownership
+      - Global Shell 只提供 slot，不得包第二層 global outer card
+  - index: 10
+    rows:
+    - row: 0
+      cells:
+      - Viewport 情境
+      - Shell 行為
+      - Page 行為
+    - row: 1
+      cells:
+      - '>=1531px'
+      - Expanded 仍可提供 >=1280px Workspace
+      - 大型工作區可維持 1280px 以上內容
+    - row: 2
+      cells:
+      - 1440–1530px
+      - Expanded Workspace <1280px
+      - 頁面先使用其已定義 responsive reflow；若 Authority 明確 min-width=1280，則在 Workspace 內 scroll
+    - row: 3
+      cells:
+      - 1024–1439px
+      - Sidebar 仍可收合/展開
+      - 不得改回 Overlay；可依 Page Authority 縮排、換列或 Workspace scroll
+    - row: 4
+      cells:
+      - 低於產品最小寬度
+      - 維持 fail-safe layout
+      - 不得新增另一套 Mobile-only workflow，除非 Page Authority 明確允許
+  - index: 11
+    rows:
+    - row: 0
+      cells:
+      - Control
+      - 最低尺寸
+      - A11y / 行為
+    - row: 1
+      cells:
+      - Nav hit target
+      - 44×44
+      - Icon 20px；Keyboard focus 可見；Label 展開後可讀
+    - row: 2
+      cells:
+      - Header quick button
+      - h36 / min52
+      - Disabled reason 必須可被輔助技術讀取
+    - row: 3
+      cells:
+      - Language
+      - h36 / 72
+      - aria-haspopup/listbox；選中值有 aria-selected
+    - row: 4
+      cells:
+      - Surface switch
+      - h36
+      - aria-current=page；切換不 mutation business data
+    - row: 5
+      cells:
+      - Account
+      - h36 / min132
+      - Ellipsis；popover focus/escape 可控
+  - index: 12
+    rows:
+    - row: 0
+      cells:
+      - 情境
+      - UI 行為
+      - 禁止
+    - row: 1
+      cells:
+      - Identity 未綁定
+      - 顯示 Login / 導向登入；Page projection fail-closed
+      - 假姓名、假帳戶
+    - row: 2
+      cells:
+      - Navigation target 不可解析
+      - 停用該跳轉並回報 Authority Gap
+      - 猜 route
+    - row: 3
+      cells:
+      - Permission denied
+      - 隱藏對應 Item
+      - 顯示後再前端擋
+    - row: 4
+      cells:
+      - Quick status unavailable
+      - 保留幾何、Disabled + reason
+      - 顯示假 0 當成功值
+    - row: 5
+      cells:
+      - Shell transition error
+      - 強制落到穩定 collapsed 或 expanded state
+      - 半展開覆蓋 Workspace
+  - index: 13
+    rows:
+    - row: 0
+      cells:
+      - Acceptance UID
+      - PASS 條件
+    - row: 1
+      cells:
+      - SHELL-ACC-01
+      - Sidebar 展開時 Workspace 不被覆蓋；兩者同一 Layout reflow。
+    - row: 2
+      cells:
+      - SHELL-ACC-02
+      - Collapsed 64px / Expanded 221px；Workspace left 分別 78px / 235px。
+    - row: 3
+      cells:
+      - SHELL-ACC-03
+      - Header 58px 固定；Workspace top 68px；右 16、下 16。
+    - row: 4
+      cells:
+      - SHELL-ACC-04
+      - Front 9、Admin 9 的 UID / route / order 正確。
+    - row: 5
+      cells:
+      - SHELL-ACC-05
+      - Permission denied item hidden；active item 唯一且可追溯。
+    - row: 6
+      cells:
+      - SHELL-ACC-06
+      - Sidebar keyboard focus 展開時，內容同步縮放，不遮住焦點控制。
+    - row: 7
+      cells:
+      - SHELL-ACC-07
+      - 所有頁在 collapsed / expanded 兩種殼層狀態均無遮蓋、控制可操作。
+    - row: 8
+      cells:
+      - SHELL-ACC-08
+      - No fake quick-status / account / permission data。
+    - row: 9
+      cells:
+      - SHELL-ACC-09
+      - 三語與 Focus / Reduced Motion / Popover 行為可驗證。
+    - row: 10
+      cells:
+      - SHELL-ACC-10
+      - Shell 只提供共用框架，不建立第二套 Page Header / Page Runtime。
+  - index: 14
+    rows:
+    - row: 0
+      cells:
+      - Token
+      - Font size
+      - Weight
+      - Line height
+      - Letter spacing
+      - Applicability
+    - row: 1
+      cells:
+      - display-xl
+      - 32px
+      - '700'
+      - '1.20'
+      - -0.02em
+      - Page title / major dashboard heading
+    - row: 2
+      cells:
+      - heading-lg
+      - 24px
+      - '700'
+      - '1.25'
+      - -0.01em
+      - Primary section heading
+    - row: 3
+      cells:
+      - heading-md
+      - 20px
+      - '600'
+      - '1.30'
+      - '0'
+      - Card / panel heading
+    - row: 4
+      cells:
+      - body-md
+      - 14px
+      - '400'
+      - '1.55'
+      - '0'
+      - Primary body / form content
+    - row: 5
+      cells:
+      - body-sm
+      - 12px
+      - '400'
+      - '1.50'
+      - '0'
+      - Secondary text / helper / metadata
+    - row: 6
+      cells:
+      - label-md
+      - 13px
+      - '600'
+      - '1.35'
+      - '0'
+      - Form label / table header / compact control label
+    - row: 7
+      cells:
+      - button-md
+      - 14px
+      - '600'
+      - '1.00'
+      - '0'
+      - Primary / secondary button text
+    - row: 8
+      cells:
+      - mono-sm
+      - 12px
+      - '400'
+      - '1.45'
+      - '0'
+      - UID / hash / technical reference
+  - index: 15
+    rows:
+    - row: 0
+      cells:
+      - ID
+      - Field / Check
+      - Closure rule
+    - row: 1
+      cells:
+      - TY01
+      - target_uid
+      - Every governed text target has stable target UID; page-only representative samples are insufficient.
+    - row: 2
+      cells:
+      - TY02
+      - page_or_scope_uid
+      - Bind target to exact page/shell/shared scope.
+    - row: 3
+      cells:
+      - TY03
+      - viewport_breakpoint
+      - Resolve desktop/tablet/mobile or explicit NOT_APPLICABLE.
+    - row: 4
+      cells:
+      - TY04
+      - language_theme
+      - Bind zh-TW/zh-CN/en and theme variant when applicable.
+    - row: 5
+      cells:
+      - TY05
+      - typography_authority_ref
+      - Every target resolves to this Global Typography Authority or an approved page override.
+    - row: 6
+      cells:
+      - TY06
+      - font_family
+      - Use approved UI font stack; CJK must have deterministic fallback.
+    - row: 7
+      cells:
+      - TY07
+      - font_size
+      - Explicit token/value required for each target class.
+    - row: 8
+      cells:
+      - TY08
+      - font_weight
+      - Explicit semantic weight; do not infer from screenshot.
+    - row: 9
+      cells:
+      - TY09
+      - line_height
+      - Explicit line-height token/value.
+    - row: 10
+      cells:
+      - TY10
+      - letter_spacing
+      - Explicit tracking value/token.
+    - row: 11
+      cells:
+      - TY11
+      - container_width
+      - Text metrics must be evaluated against actual container width.
+    - row: 12
+      cells:
+      - TY12
+      - wrap_rule
+      - Define wrap/no-wrap behavior and max lines.
+    - row: 13
+      cells:
+      - TY13
+      - truncation_rule
+      - Define ellipsis/clamp/overflow behavior.
+    - row: 14
+      cells:
+      - TY14
+      - expected_line_count_rule
+      - Define expected line-count envelope when layout-sensitive.
+    - row: 15
+      cells:
+      - TY15
+      - tolerance
+      - Define measurable tolerance for computed metric/render comparison.
+  - index: 16
+    rows:
+    - row: 0
+      cells:
+      - Rule
+      - Requirement
+    - row: 1
+      cells:
+      - Target denominator
+      - Every visible governed text target in Global Shell + each page must be inventoried. Screenshot samples do not close the denominator.
+    - row: 2
+      cells:
+      - Computed metrics
+      - Validation must compare resolved font-family, size, weight, line-height, letter-spacing, width, wrapping and truncation at the declared viewport/language.
+    - row: 3
+      cells:
+      - Tolerance
+      - Default typography metric tolerance = ±1 CSS px for box/line-height geometry and ±1 rendered line unless page authority defines stricter tolerance; semantic
+        overflow/clipping = zero tolerance.
+    - row: 4
+      cells:
+      - Responsive behavior
+      - If a target changes token/wrap at a breakpoint, each applicable breakpoint is a separate denominator row.
+    - row: 5
+      cells:
+      - Override
+      - Page-level override must name target_uid + authority_ref + reason; unbound local typography is BLOCK.
+supporting_authority:
+- word_path: 00_INDEX_ACPOS_Mother_Compliant_Basic_Design_Master.docx
+  word_sha256: bab362ba82086f3a3f2193d1cebf9c98b16fa62f09f234601798c6c591624096
+- word_path: ACPOS_SYSTEM_LOGIC_GLOBAL_INTEGRATION_Mother_Basic_Design_OPTIMIZED.docx
+  word_sha256: 4709e92a27cc7280561446f8e1f0a33d903df608aada41d07439b99ab110eb75
