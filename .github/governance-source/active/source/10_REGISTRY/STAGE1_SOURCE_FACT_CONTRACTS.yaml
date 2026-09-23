@@ -253,6 +253,39 @@ required_evidence_integrity_contract:
   parser_validation_required_before_materialized_or_closed: true
   schema_or_required_field_validation_required_before_materialized_or_closed: true
   malformed_or_unparseable_required_evidence: BLOCK
+universal_stepwise_source_flow:
+  authority_ref: WEB-GOV-03-S062A
+  flow_uid: WORD_YAML_SOURCE_FLOW
+  bulk_preproduction: FORBIDDEN
+  future_step_materialization: FORBIDDEN
+  successor_requires_current_step_pass: true
+  failure_disposition: STOP_AT_CURRENT_STEP_AND_PERSIST_BLOCKING_EVIDENCE
+  steps:
+  - step_uid: SOURCE_DOCUMENT_CONTENT_READINESS
+    allowed_output_classes: [SOURCE_DOCUMENT_CONTENT_AUDIT]
+    next_step: RAW_SOURCE_IMMUTABLE_LOCK
+  - step_uid: RAW_SOURCE_IMMUTABLE_LOCK
+    allowed_output_classes: [RAW_SOURCE_REFERENCE_MANIFEST, RAW_SOURCE_CAPTURE_STATE, RAW_SOURCE_IMMUTABILITY_RECEIPT]
+    next_step: CANONICAL_SOURCE_PROJECTION
+  - step_uid: CANONICAL_SOURCE_PROJECTION
+    allowed_output_classes: [CANONICAL_SOURCE_PROJECTION, FROZEN_BINARY_SOURCE_PART]
+    semantic_interpretation: FORBIDDEN
+    next_step: INDEPENDENT_ZERO_LOSS_RECONCILIATION
+  - step_uid: INDEPENDENT_ZERO_LOSS_RECONCILIATION
+    allowed_output_classes: [SOURCE_PROJECTION_RECONCILIATION_EVIDENCE]
+    next_step: SOURCE_PAIR_FREEZE
+  - step_uid: SOURCE_PAIR_FREEZE
+    allowed_output_classes: [SOURCE_PROJECTION_FREEZE_RECEIPT]
+    next_step: STAGE01_WORK_UNIT_RESOLUTION
+  per_step_required_controls:
+  - EXACT_INPUT_IDENTITY_AND_HASH
+  - OUTPUT_DENOMINATOR
+  - REQUIRED_FIELD_VALIDATION
+  - LOCAL_EVIDENCE
+  - CHECKPOINT
+  - LEGAL_SUCCESSOR_DECISION
+  stage_semantic_materialization_inside_word_yaml_flow: FORBIDDEN
+
 structured_document_source_projection_contract:
   applicability:
     required_source_formats:
