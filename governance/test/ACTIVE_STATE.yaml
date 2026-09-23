@@ -104,13 +104,13 @@ specification_mutation_safety:
   ordinary_mid_stage_specification_mutation: BLOCK
   stage_end_consolidated_promotion_requires_new_explicit_directive: true
   execution_context_lock_required: true
-status: WORD_SOURCE_FLEET_DEEP_AUDIT_REEXECUTION_ACTIVE
-next_action: RUN_ALL_31_WORD_DEEP_CONTENT_AND_PROJECTION_AUDIT
+status: WORD_SOURCE_FLEET_PRESTAGE_AUDIT_CLOSED_READY_FOR_CORE_YAML
+next_action: CREATE_CORE01_PRESTAGE_WORD_YAML_WORK_UNIT
 resume_control:
-  current_resume_point: WORD_SOURCE_FLEET_DEEP_AUDIT_REEXECUTION_ACTIVE
+  current_resume_point: WORD_SOURCE_FLEET_PRESTAGE_AUDIT_CLOSED_READY_FOR_CORE_YAML
   current_work_unit_uid: WU-TEST-WORD-SOURCE-FLEET-DEEP-AUDIT-20260923-002
   current_owner: SOURCE_INTAKE_PRESTAGE_VALIDATION
-  exact_next_action: RUN_ALL_31_WORD_DEEP_CONTENT_AND_PROJECTION_AUDIT
+  exact_next_action: CREATE_CORE01_PRESTAGE_WORD_YAML_WORK_UNIT
   product_resume_preserved: CORE01_STAGE01_ACTIVE_PREEXECUTION_GOVERNANCE_LOAD_REQUIRED
   interrupted_test_resume_preserved: CORE01_SOURCE_TEST_BUGFIX_AND_CONTENT_INTEGRITY_FULL_LIFECYCLE_R2_ACTIVE
   reentry_owner_capability: SOURCE_INTAKE_BASE_BLUEPRINT
@@ -119,7 +119,7 @@ resume_control:
   cleanup_receipt_ref: governance/test/history/cleanup/CORE01_STAGE01_STAGE03_CLEAN_RESET_R1.yaml
   human_visual_review_allowed: false
   product_execution_allowed: false
-  product_execution_block_reason: ALL_WORD_DEEP_AUDIT_NOT_YET_CLOSED
+  product_execution_block_reason: CORE01_PRESTAGE_WORD_YAML_WORK_UNIT_NOT_YET_CREATED
   website_construction_allowed: false
   deployment_allowed: false
 governance_revision_transition:
@@ -185,44 +185,34 @@ active_work_unit:
   canonical_name: ALL_31_WORD_SOURCE_DEEP_CONTENT_AND_PROJECTION_AUDIT
   primary_task_layer: TEST_OR_VALIDATION_MAINTENANCE
   semantic_capability: SOURCE_INTAKE_PRESTAGE_VALIDATION
-  canonical_owner_refs:
-  - .github/governance-source/active/source/10_REGISTRY/STAGE1_SOURCE_FACT_CONTRACTS.yaml
-  - .github/governance-source/active/source/09_TESTS/governance/governance_stage1_pipeline_guard.py
-  - governance/ci/validate_docx_source_projection_independent.py
-  - .github/governance-maintenance/audit_word_source_fleet.py
-  current_status: ACTIVE_DEEP_AUDIT_REEXECUTION
+  current_status: CLOSED_VERIFIED_NO_PRODUCT_CREDIT
   authorization_uid: EXPLICIT_USER_DIRECTIVE_20260923_AUDIT_ALL_WORDS_BEFORE_CORE_YAML
-  exact_scope:
-  - ALL_31_DOCX_EXACT_SOURCE_SET
-  - CONTENT_READINESS_MACHINE_COVERAGE
-  - FULL_SOURCE_NODE_IDENTITY_AND_ORDER
-  - DOCX_STRUCTURE_PROJECTION_COMPATIBILITY
-  - BINARY_MEDIA_RELATIONSHIP_LINEAGE
-  - INDEPENDENT_VALIDATOR_CONTRACT_KEY_SYNC
-  - CORE_YAML_EXECUTION_FORBIDDEN_UNTIL_DEEP_AUDIT_CLOSED
   product_data_mutation_allowed: false
   product_authority_mutation_allowed: false
   product_stage_credit: 0
-  predecessor_word_fleet_fast_audit:
+  closure_evidence:
     source_branch: 0921acpos
     source_head: 6249dbadad182cecd3810683b260dccd11901bcc
     document_denominator: 31
-    compatibility_pass: 31
-    compatibility_fail: 0
+    projection_compatibility_pass_count: 31
+    projection_compatibility_fail_count: 0
     content_review_candidate_count: 0
-    run_id: 35828158745
-    status: PASS_FAST_FULL_DENOMINATOR_NO_PRODUCT_CREDIT
-  superseded_deep_audit_attempt:
-    run_id: 35828158719
-    result: FAIL_CHECKER_FALSE_POSITIVE
-    failure_signature: PROJECTION_ORDER_NOT_CONTIGUOUS
-    root_cause: AUDIT_EXPECTED_ZERO_BASED_ORDER_BUT_CANONICAL_PRODUCER_IS_ONE_BASED
-    current_closure_credit: false
-  premature_core_projection_attempt:
-    run_id: 35829105769
-    result: FAIL_NO_PERSISTED_PRODUCT_ARTIFACT
-    stage01_execution_started: false
-    product_stage_credit: 0
+    deep_audit_run_id: 35831458578
+    deep_audit_job_id: 107084797733
+    deep_audit_artifact_id: 10738332262
+    deep_audit_artifact_zip_sha256: 2d5f123c5c1435a140f8943a0bd27a745e45456602b9f4461f6a86e420b6e9bb
+    deep_audit_result: PASS_ALL_PROJECTION_COMPATIBLE
+    exact_head_full_line_run_id: 35831458562
+    exact_head_full_line_result: success
+    exact_head_selected_profile_run_id: 35831458488
+    exact_head_selected_profile_result: success
+    exact_head_branch_guard_run_id: 35831458530
+    exact_head_branch_guard_result: success
+    exact_head_fresh_replay_run_id: 35831458565
+    exact_head_fresh_replay_result: success
+    exact_head_stage02_maintenance_run_id: 35831458499
+    exact_head_stage02_maintenance_result: success
+  legal_next_transition: CREATE_CORE01_PRESTAGE_WORD_YAML_WORK_UNIT
 word_source_snapshot_for_future_projection:
   normative_authority: false
   role: SOURCE_CONTEXT_ONLY_NOT_ACTIVE_WORK_UNIT

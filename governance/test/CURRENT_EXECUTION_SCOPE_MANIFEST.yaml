@@ -3,7 +3,7 @@ artifact_type: EXECUTION_SCOPE_MANIFEST
 normative_authority: false
 governance_uid: GOV-REV-20260923-WORD-PROJECTION-NEXTSTEP-CONSUMER-SYNC-HARDENING
 owning_capability: SOURCE_INTAKE_PRESTAGE_VALIDATION
-scope_kind: EXACT_TEST_VALIDATION_WORD_SOURCE_FLEET_DEEP_AUDIT
+scope_kind: CLOSED_TEST_VALIDATION_WORD_SOURCE_FLEET_PRESTAGE_AUDIT
 work_unit_uid: WU-TEST-WORD-SOURCE-FLEET-DEEP-AUDIT-20260923-002
 included_units:
 - ALL_31_0921ACPOS_DOCX_SOURCE_SET
@@ -46,9 +46,20 @@ pre_execution_gate_status: PASS
 partial_scope: false
 stage_exit_credit_allowed: false
 product_stage_execution_allowed: false
-product_stage_execution_block_reason: ALL_WORD_DEEP_AUDIT_NOT_YET_CLOSED
+product_stage_execution_block_reason: CORE01_PRESTAGE_WORD_YAML_WORK_UNIT_NOT_YET_CREATED
 fresh_revalidation_required: false
 product_stage_revalidation_required: false
 product_stage_revalidation_credit: 0
-next_action: RUN_ALL_31_WORD_DEEP_CONTENT_AND_PROJECTION_AUDIT
-closure_status: ACTIVE_DEEP_AUDIT_REEXECUTION
+next_action: CREATE_CORE01_PRESTAGE_WORD_YAML_WORK_UNIT
+closure_status: CLOSED_VERIFIED_NO_PRODUCT_CREDIT
+closure_evidence:
+  source_head: 6249dbadad182cecd3810683b260dccd11901bcc
+  document_denominator: 31
+  projection_compatibility_pass_count: 31
+  projection_compatibility_fail_count: 0
+  content_review_candidate_count: 0
+  deep_audit_run_id: 35831458578
+  deep_audit_artifact_id: 10738332262
+  deep_audit_artifact_zip_sha256: 2d5f123c5c1435a140f8943a0bd27a745e45456602b9f4461f6a86e420b6e9bb
+  exact_head_full_line_run_id: 35831458562
+  result: PASS

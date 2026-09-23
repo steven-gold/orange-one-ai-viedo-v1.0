@@ -44,12 +44,33 @@ limits:
   stage01_semantic_classification_executed: false
   per_node_exact_hash_reconciliation_for_nonselected_documents: false
   selected_document_exact_reconciliation_policy: REQUIRED_DURING_FORMAL_CONVERSION
-result: FAST_COMPATIBILITY_PASS_DEEP_AUDIT_REEXECUTION_REQUIRED
+result: PASS_ALL_31_WORDS_PRESTAGE_CONTENT_AND_PROJECTION_COMPATIBLE
 product_stage_credit: 0
 
-deep_audit_current_status: REEXECUTION_REQUIRED_AFTER_CHECKER_FIX
+deep_audit_current_status: CLOSED_VERIFIED
 deep_audit_previous_run_id: 35828158719
 deep_audit_previous_failure_signature: PROJECTION_ORDER_NOT_CONTIGUOUS
 deep_audit_previous_failure_root_cause: AUDIT_ZERO_BASED_EXPECTATION_CONFLICTED_WITH_CANONICAL_ONE_BASED_PROJECTION_ORDER
-current_closure_credit: false
-core_yaml_materialization_allowed: false
+current_closure_credit: true
+core_yaml_materialization_allowed: true
+
+deep_audit_closure_evidence:
+  run_id: 35831458578
+  job_id: 107084797733
+  artifact_id: 10738332262
+  artifact_zip_sha256: 2d5f123c5c1435a140f8943a0bd27a745e45456602b9f4461f6a86e420b6e9bb
+  run_head_sha: f0864a771aaaa9517882cc886a866bda31c90bf5
+  source_head: 6249dbadad182cecd3810683b260dccd11901bcc
+  document_count: 31
+  projection_compatibility_pass_count: 31
+  projection_compatibility_fail_count: 0
+  content_review_candidate_count: 0
+  result: PASS_ALL_PROJECTION_COMPATIBLE
+  exact_head_full_line_run_id: 35831458562
+  exact_head_selected_profile_run_id: 35831458488
+  exact_head_branch_guard_run_id: 35831458530
+  exact_head_fresh_replay_run_id: 35831458565
+  exact_head_stage02_maintenance_run_id: 35831458499
+  word_content_mutation_required_count: 0
+  common_projection_contract_mutation_required_count: 0
+  product_stage_credit: 0
