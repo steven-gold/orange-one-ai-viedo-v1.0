@@ -1,0 +1,3935 @@
+{
+  "schema_version": "ACPOS_WORD_YAML_RAW_SOURCE_LOCK_V1",
+  "stage": "WY-02_RAW_SOURCE_IMMUTABLE_LOCK",
+  "source_branch": "0921acpos",
+  "source_git_head": "adc0cf718d3205f930c8f58527ea847b4c4f8860",
+  "word_count": 31,
+  "invariants": [
+    "All 31 Word files are canonical immutable inputs for WY-03.",
+    "Any DOCX byte change invalidates this lock and requires WY-01 re-audit and a new WY-02 lock.",
+    "WY-03 MUST bind every projection to source path, git_blob_sha, file sha256, package-part sha256, and deterministic source locators.",
+    "No semantic invention or silent correction is allowed during projection."
+  ],
+  "entries": [
+    {
+      "sequence": 1,
+      "path": "00_INDEX_ACPOS_Mother_Compliant_Basic_Design_Master.docx",
+      "git_blob_sha": "8640a7d759383d2f5aee9bec47ffc364fe8c9e8b",
+      "byte_size": 46837,
+      "sha256": "bab362ba82086f3a3f2193d1cebf9c98b16fa62f09f234601798c6c591624096",
+      "package_part_count": 19,
+      "package_parts": [
+        {
+          "path": "[Content_Types].xml",
+          "size": 1994,
+          "sha256": "479ad1a2258771db93540fbde6ad43e861d8d39dd2559e3f6db17286b11cc6ab"
+        },
+        {
+          "path": "_rels/.rels",
+          "size": 734,
+          "sha256": "a9ae57efe9186f07d48303bcac5d54c7e359bf3f503939c03ad2954e5c59a5c4"
+        },
+        {
+          "path": "docProps/core.xml",
+          "size": 721,
+          "sha256": "d14be8284e406d14dc2a576b19f15e7f637b955f9e27a3d9ed871ec99606f7ba"
+        },
+        {
+          "path": "docProps/app.xml",
+          "size": 1132,
+          "sha256": "be664981c3141cddfc59362beb287ebf20d0773660e2dd6faac5968a5930a081"
+        },
+        {
+          "path": "word/document.xml",
+          "size": 150425,
+          "sha256": "75407daa2b2ac68d3649d360ca7e90357c19b7a7f6436aa131f0b2fcc4b33fb1"
+        },
+        {
+          "path": "word/_rels/document.xml.rels",
+          "size": 1484,
+          "sha256": "157ed86827865b095c9c6b39e7c3451315a4b0d6127daa8636026684d8b9df89"
+        },
+        {
+          "path": "word/styles.xml",
+          "size": 349772,
+          "sha256": "e061463e79bd5dd3e487164212bbaa8eeb36eefbac0378d7823a7becfcfad299"
+        },
+        {
+          "path": "word/stylesWithEffects.xml",
+          "size": 438131,
+          "sha256": "463ae0928cf0d84775dbf8cf18d6c3029f6707c81bf590f6d6dd8757a5e93f15"
+        },
+        {
+          "path": "word/settings.xml",
+          "size": 2535,
+          "sha256": "51a0d348fe85965c66e4748a03c3c0d055d78455514f03cb121c334af7d73689"
+        },
+        {
+          "path": "word/webSettings.xml",
+          "size": 438,
+          "sha256": "349d36de7434d09f86987ff671d8814964a0588c1e630c06e562cda7e75e9f95"
+        },
+        {
+          "path": "word/fontTable.xml",
+          "size": 2811,
+          "sha256": "79385fb7f60247507ecaffc292e9ebd52ea0657b8634f629ba6fccc54011d6bb"
+        },
+        {
+          "path": "word/theme/theme1.xml",
+          "size": 10939,
+          "sha256": "e3a8ab7db9ca7afca56f5f2820a56e8b660016c647773555b060b0a02ac76941"
+        },
+        {
+          "path": "customXml/item1.xml",
+          "size": 262,
+          "sha256": "a86086ffc5d8e83ebd6c71a55d1d2efaa31b137977f5f3a752366e1023612144"
+        },
+        {
+          "path": "customXml/_rels/item1.xml.rels",
+          "size": 295,
+          "sha256": "1ca6c9a64edcebe24ee703a54403611b322d96da33371779e742d2d3f7ed7a6c"
+        },
+        {
+          "path": "customXml/itemProps1.xml",
+          "size": 354,
+          "sha256": "c542307b13ec29a8b546217bb37936ab4822e044b265d2952985ec3d6afed24e"
+        },
+        {
+          "path": "word/numbering.xml",
+          "size": 5513,
+          "sha256": "70976f19cbcd896e51890859fe6ecb3467a5a7ad0c040160fedc5a1993cb09ce"
+        },
+        {
+          "path": "word/header1.xml",
+          "size": 1562,
+          "sha256": "e5c9873e612c9cf3abf84c41bd4a3adc61bac835e6efe338bf57c4b69167b4c1"
+        },
+        {
+          "path": "word/footer1.xml",
+          "size": 1567,
+          "sha256": "05b7b4894d638255108440c05c3dbec24578c994d5e8a3b9aab41ff43a7f20f4"
+        },
+        {
+          "path": "docProps/thumbnail.jpeg",
+          "size": 8324,
+          "sha256": "96367138dc44ce09bf2c8f0f8e49348a1478d2c5c0af69bbc2bbc38b63cdcead"
+        }
+      ]
+    },
+    {
+      "sequence": 2,
+      "path": "01_ACPOS_Global_Intelligent_Brain_Information_Lifecycle_Mother_Basic_Logic_Design_Normative_Contract_v4.docx",
+      "git_blob_sha": "350bfd858792b1ecba65459273ff0587c2df0269",
+      "byte_size": 500304,
+      "sha256": "351b4dfc83936b56e4b139b431fe36ce850121ece591f7718cfb9ae5d11671e6",
+      "package_part_count": 23,
+      "package_parts": [
+        {
+          "path": "[Content_Types].xml",
+          "size": 2044,
+          "sha256": "ecbe3f7dfd70530319fed457805e79a3df0cc177119a7d97bacbb25f516c7adb"
+        },
+        {
+          "path": "_rels/.rels",
+          "size": 734,
+          "sha256": "a9ae57efe9186f07d48303bcac5d54c7e359bf3f503939c03ad2954e5c59a5c4"
+        },
+        {
+          "path": "docProps/core.xml",
+          "size": 1094,
+          "sha256": "19949b4f71e18a000c5affcdd217107f9454a36921568c219a669ccdcae5f16b"
+        },
+        {
+          "path": "docProps/app.xml",
+          "size": 1132,
+          "sha256": "be664981c3141cddfc59362beb287ebf20d0773660e2dd6faac5968a5930a081"
+        },
+        {
+          "path": "word/document.xml",
+          "size": 1541678,
+          "sha256": "be4090832b6f0853805955972a031f8da492d5f3c73f25e85319f147eeec8b62"
+        },
+        {
+          "path": "word/_rels/document.xml.rels",
+          "size": 2016,
+          "sha256": "ed1619c8cc36a58de1ce19c13236aaa02e7a8f48a33eeedcf78a841d914df41c"
+        },
+        {
+          "path": "word/styles.xml",
+          "size": 351323,
+          "sha256": "464f4ce1f6df8d54f5ca8743dd0c364cbb4320f9beb26eb0662fd1a3a6b14b8f"
+        },
+        {
+          "path": "word/stylesWithEffects.xml",
+          "size": 438131,
+          "sha256": "463ae0928cf0d84775dbf8cf18d6c3029f6707c81bf590f6d6dd8757a5e93f15"
+        },
+        {
+          "path": "word/settings.xml",
+          "size": 2535,
+          "sha256": "51a0d348fe85965c66e4748a03c3c0d055d78455514f03cb121c334af7d73689"
+        },
+        {
+          "path": "word/webSettings.xml",
+          "size": 438,
+          "sha256": "349d36de7434d09f86987ff671d8814964a0588c1e630c06e562cda7e75e9f95"
+        },
+        {
+          "path": "word/fontTable.xml",
+          "size": 2811,
+          "sha256": "79385fb7f60247507ecaffc292e9ebd52ea0657b8634f629ba6fccc54011d6bb"
+        },
+        {
+          "path": "word/theme/theme1.xml",
+          "size": 10939,
+          "sha256": "e3a8ab7db9ca7afca56f5f2820a56e8b660016c647773555b060b0a02ac76941"
+        },
+        {
+          "path": "customXml/item1.xml",
+          "size": 262,
+          "sha256": "a86086ffc5d8e83ebd6c71a55d1d2efaa31b137977f5f3a752366e1023612144"
+        },
+        {
+          "path": "customXml/_rels/item1.xml.rels",
+          "size": 295,
+          "sha256": "1ca6c9a64edcebe24ee703a54403611b322d96da33371779e742d2d3f7ed7a6c"
+        },
+        {
+          "path": "customXml/itemProps1.xml",
+          "size": 354,
+          "sha256": "c542307b13ec29a8b546217bb37936ab4822e044b265d2952985ec3d6afed24e"
+        },
+        {
+          "path": "word/numbering.xml",
+          "size": 5513,
+          "sha256": "70976f19cbcd896e51890859fe6ecb3467a5a7ad0c040160fedc5a1993cb09ce"
+        },
+        {
+          "path": "word/media/image1.png",
+          "size": 133613,
+          "sha256": "9acff16599732c89920e79f68c591b7b721a37a79a23071c84dd689b3376aeb9"
+        },
+        {
+          "path": "word/media/image2.png",
+          "size": 104724,
+          "sha256": "632f2b4b87061eaf6174ff8134bd81e221120bba019f1c436f8b2bcfb95380f5"
+        },
+        {
+          "path": "word/media/image3.png",
+          "size": 105522,
+          "sha256": "3b88647ed0f68045845eead6967bc8b3a176d5b359dfda335bb541c3c64377e6"
+        },
+        {
+          "path": "word/media/image4.png",
+          "size": 70957,
+          "sha256": "cab9f3d36ed23a169c3b30ccdbc92af1cfed57341da1e4ed35889068e56e5181"
+        },
+        {
+          "path": "word/header1.xml",
+          "size": 1557,
+          "sha256": "9b264de99a705f3e4052bc013ada1f89ae0c00a97366d32b5829efc7920ca1ad"
+        },
+        {
+          "path": "word/footer1.xml",
+          "size": 1574,
+          "sha256": "63872e81530ce31dd13b23b68910b8deb27385534a782d80a084b6c7d908adc1"
+        },
+        {
+          "path": "docProps/thumbnail.jpeg",
+          "size": 8324,
+          "sha256": "96367138dc44ce09bf2c8f0f8e49348a1478d2c5c0af69bbc2bbc38b63cdcead"
+        }
+      ]
+    },
+    {
+      "sequence": 3,
+      "path": "02_ACPOS_AI_Conversation_Memory_MultiAI_Assistant_Mother_Basic_Logic_Design_Normative_Contract_v1.0.docx",
+      "git_blob_sha": "999b4945287fa581fb1a7a35ce8243616c00ebc0",
+      "byte_size": 800413,
+      "sha256": "61fb762181ccf99a53c92ca5592a9c16dc800fc89e8e6a9e58559d1297f6f152",
+      "package_part_count": 27,
+      "package_parts": [
+        {
+          "path": "[Content_Types].xml",
+          "size": 2044,
+          "sha256": "ecbe3f7dfd70530319fed457805e79a3df0cc177119a7d97bacbb25f516c7adb"
+        },
+        {
+          "path": "_rels/.rels",
+          "size": 734,
+          "sha256": "a9ae57efe9186f07d48303bcac5d54c7e359bf3f503939c03ad2954e5c59a5c4"
+        },
+        {
+          "path": "docProps/core.xml",
+          "size": 1094,
+          "sha256": "19949b4f71e18a000c5affcdd217107f9454a36921568c219a669ccdcae5f16b"
+        },
+        {
+          "path": "docProps/app.xml",
+          "size": 1132,
+          "sha256": "be664981c3141cddfc59362beb287ebf20d0773660e2dd6faac5968a5930a081"
+        },
+        {
+          "path": "word/document.xml",
+          "size": 1213426,
+          "sha256": "2b5b2930800908a84112a8c88ebed7613372b8992c7dd4fa4cc4edf359365360"
+        },
+        {
+          "path": "word/_rels/document.xml.rels",
+          "size": 2548,
+          "sha256": "6a2fa4de4f69d07d2af8d8c3e433f54334f4b7d53c45ef4d59804d1b44bd9c2e"
+        },
+        {
+          "path": "word/styles.xml",
+          "size": 351323,
+          "sha256": "464f4ce1f6df8d54f5ca8743dd0c364cbb4320f9beb26eb0662fd1a3a6b14b8f"
+        },
+        {
+          "path": "word/stylesWithEffects.xml",
+          "size": 438131,
+          "sha256": "463ae0928cf0d84775dbf8cf18d6c3029f6707c81bf590f6d6dd8757a5e93f15"
+        },
+        {
+          "path": "word/settings.xml",
+          "size": 2535,
+          "sha256": "51a0d348fe85965c66e4748a03c3c0d055d78455514f03cb121c334af7d73689"
+        },
+        {
+          "path": "word/webSettings.xml",
+          "size": 438,
+          "sha256": "349d36de7434d09f86987ff671d8814964a0588c1e630c06e562cda7e75e9f95"
+        },
+        {
+          "path": "word/fontTable.xml",
+          "size": 2811,
+          "sha256": "79385fb7f60247507ecaffc292e9ebd52ea0657b8634f629ba6fccc54011d6bb"
+        },
+        {
+          "path": "word/theme/theme1.xml",
+          "size": 10939,
+          "sha256": "e3a8ab7db9ca7afca56f5f2820a56e8b660016c647773555b060b0a02ac76941"
+        },
+        {
+          "path": "customXml/item1.xml",
+          "size": 262,
+          "sha256": "a86086ffc5d8e83ebd6c71a55d1d2efaa31b137977f5f3a752366e1023612144"
+        },
+        {
+          "path": "customXml/_rels/item1.xml.rels",
+          "size": 295,
+          "sha256": "1ca6c9a64edcebe24ee703a54403611b322d96da33371779e742d2d3f7ed7a6c"
+        },
+        {
+          "path": "customXml/itemProps1.xml",
+          "size": 354,
+          "sha256": "c542307b13ec29a8b546217bb37936ab4822e044b265d2952985ec3d6afed24e"
+        },
+        {
+          "path": "word/numbering.xml",
+          "size": 5513,
+          "sha256": "70976f19cbcd896e51890859fe6ecb3467a5a7ad0c040160fedc5a1993cb09ce"
+        },
+        {
+          "path": "word/media/image1.png",
+          "size": 133613,
+          "sha256": "9acff16599732c89920e79f68c591b7b721a37a79a23071c84dd689b3376aeb9"
+        },
+        {
+          "path": "word/media/image2.png",
+          "size": 104724,
+          "sha256": "632f2b4b87061eaf6174ff8134bd81e221120bba019f1c436f8b2bcfb95380f5"
+        },
+        {
+          "path": "word/media/image3.png",
+          "size": 105522,
+          "sha256": "3b88647ed0f68045845eead6967bc8b3a176d5b359dfda335bb541c3c64377e6"
+        },
+        {
+          "path": "word/media/image4.png",
+          "size": 70957,
+          "sha256": "cab9f3d36ed23a169c3b30ccdbc92af1cfed57341da1e4ed35889068e56e5181"
+        },
+        {
+          "path": "word/header1.xml",
+          "size": 1551,
+          "sha256": "811de6348bf3f42d7cd3b145272ba5f3443410b16edcafa113479a99f4478062"
+        },
+        {
+          "path": "word/footer1.xml",
+          "size": 1574,
+          "sha256": "489eab7fc18bf231d124332ec671e8fb83d59e3d6ab3de35d214887d4188fb53"
+        },
+        {
+          "path": "word/media/image5.png",
+          "size": 123964,
+          "sha256": "808d334f3920875f4abf7222c9c82116e8a4e259bf6d8e03d5e43b31f4fd4382"
+        },
+        {
+          "path": "word/media/image6.png",
+          "size": 87245,
+          "sha256": "99be95124b75032aec7d76af432d7170415d3ef8c08a155156ae27666aa99262"
+        },
+        {
+          "path": "word/media/image7.png",
+          "size": 85315,
+          "sha256": "d48e6b226d3a3e3d26e3dd139fe2884d49c5e23da47b7b2a2e7ee251f44eef48"
+        },
+        {
+          "path": "word/media/image8.png",
+          "size": 93957,
+          "sha256": "140bd07ae5796680b22dc98d1050e71044898cad1dcea09a235950a495cbcb34"
+        },
+        {
+          "path": "docProps/thumbnail.jpeg",
+          "size": 8324,
+          "sha256": "96367138dc44ce09bf2c8f0f8e49348a1478d2c5c0af69bbc2bbc38b63cdcead"
+        }
+      ]
+    },
+    {
+      "sequence": 4,
+      "path": "03_ACPOS_AI_Execution_Script_Compiler_Tool_AIAPI_Runtime_Mother_Basic_Logic_Design_Normative_Contract_v1.0.docx",
+      "git_blob_sha": "ef8abf2079540f2c6a4fab34d093ab83a760ef20",
+      "byte_size": 518511,
+      "sha256": "b857d9a2f1bd308272907714be2e98a280d6c6cc9a83354a2f2a2a03fad7f65f",
+      "package_part_count": 23,
+      "package_parts": [
+        {
+          "path": "[Content_Types].xml",
+          "size": 2044,
+          "sha256": "ecbe3f7dfd70530319fed457805e79a3df0cc177119a7d97bacbb25f516c7adb"
+        },
+        {
+          "path": "_rels/.rels",
+          "size": 734,
+          "sha256": "a9ae57efe9186f07d48303bcac5d54c7e359bf3f503939c03ad2954e5c59a5c4"
+        },
+        {
+          "path": "docProps/core.xml",
+          "size": 1035,
+          "sha256": "0047e636c19779ebfe98e60c6e7fbaebfbdd0361f2fa02a16121f64db676857c"
+        },
+        {
+          "path": "docProps/app.xml",
+          "size": 1132,
+          "sha256": "be664981c3141cddfc59362beb287ebf20d0773660e2dd6faac5968a5930a081"
+        },
+        {
+          "path": "word/document.xml",
+          "size": 1527159,
+          "sha256": "9519da996355bb8f7090856346a6e961fa47b5b5a26467b81028cb64eea1abf0"
+        },
+        {
+          "path": "word/_rels/document.xml.rels",
+          "size": 2016,
+          "sha256": "e9cc554c4d0778fbe2818bf95da7b26ee8a42328a3b355b9925b0a1d1e5fcbfa"
+        },
+        {
+          "path": "word/styles.xml",
+          "size": 349938,
+          "sha256": "10ddf6418910d241d7961a894503c3dceb0838bd75d1ebb22a75d1d344a14f91"
+        },
+        {
+          "path": "word/stylesWithEffects.xml",
+          "size": 438131,
+          "sha256": "463ae0928cf0d84775dbf8cf18d6c3029f6707c81bf590f6d6dd8757a5e93f15"
+        },
+        {
+          "path": "word/settings.xml",
+          "size": 2535,
+          "sha256": "51a0d348fe85965c66e4748a03c3c0d055d78455514f03cb121c334af7d73689"
+        },
+        {
+          "path": "word/webSettings.xml",
+          "size": 438,
+          "sha256": "349d36de7434d09f86987ff671d8814964a0588c1e630c06e562cda7e75e9f95"
+        },
+        {
+          "path": "word/fontTable.xml",
+          "size": 2811,
+          "sha256": "79385fb7f60247507ecaffc292e9ebd52ea0657b8634f629ba6fccc54011d6bb"
+        },
+        {
+          "path": "word/theme/theme1.xml",
+          "size": 10939,
+          "sha256": "e3a8ab7db9ca7afca56f5f2820a56e8b660016c647773555b060b0a02ac76941"
+        },
+        {
+          "path": "customXml/item1.xml",
+          "size": 262,
+          "sha256": "a86086ffc5d8e83ebd6c71a55d1d2efaa31b137977f5f3a752366e1023612144"
+        },
+        {
+          "path": "customXml/_rels/item1.xml.rels",
+          "size": 295,
+          "sha256": "1ca6c9a64edcebe24ee703a54403611b322d96da33371779e742d2d3f7ed7a6c"
+        },
+        {
+          "path": "customXml/itemProps1.xml",
+          "size": 354,
+          "sha256": "c542307b13ec29a8b546217bb37936ab4822e044b265d2952985ec3d6afed24e"
+        },
+        {
+          "path": "word/numbering.xml",
+          "size": 5513,
+          "sha256": "70976f19cbcd896e51890859fe6ecb3467a5a7ad0c040160fedc5a1993cb09ce"
+        },
+        {
+          "path": "word/header1.xml",
+          "size": 1522,
+          "sha256": "61dc9a571a7bf1b6720ad3b03e0478c8494d05a72e0b2f57650d175e0af496ab"
+        },
+        {
+          "path": "word/footer1.xml",
+          "size": 1544,
+          "sha256": "ff96ee0502aefa447c4832e794196649c8c54842045a089d39e6069d79c39a45"
+        },
+        {
+          "path": "word/media/image1.png",
+          "size": 186221,
+          "sha256": "7c366c064d142237a72a8cd375ac3d8a3e6f540e3b278d1e9e25f9dedb47d4a1"
+        },
+        {
+          "path": "word/media/image2.png",
+          "size": 105038,
+          "sha256": "8f2d521b80da55f523fa7f1be44924648fa9f8a94963814a439abe5db9041342"
+        },
+        {
+          "path": "word/media/image3.png",
+          "size": 121499,
+          "sha256": "8d98ab547f92ae86d402abc660a7bd11d3382a6ca22ae1056ea23da21e44f0ad"
+        },
+        {
+          "path": "word/media/image4.png",
+          "size": 79804,
+          "sha256": "c37621ce491b3c73b6651bc67e1f2f81aeef26ca26b93718326cc3b22594288f"
+        },
+        {
+          "path": "docProps/thumbnail.jpeg",
+          "size": 8324,
+          "sha256": "96367138dc44ce09bf2c8f0f8e49348a1478d2c5c0af69bbc2bbc38b63cdcead"
+        }
+      ]
+    },
+    {
+      "sequence": 5,
+      "path": "04_ACPOS_CORE_AI_Blueprint_Canonical_Script_System_Mother_Basic_Logic_Design_Normative_Contract_v1.0.docx",
+      "git_blob_sha": "d47a2ed531414742daba323489198bd964fb8a8b",
+      "byte_size": 553944,
+      "sha256": "eddc09a97e193ddd2f69ae1376642859c0fdd11391424757ab58182f2d09b9cb",
+      "package_part_count": 23,
+      "package_parts": [
+        {
+          "path": "[Content_Types].xml",
+          "size": 2044,
+          "sha256": "ecbe3f7dfd70530319fed457805e79a3df0cc177119a7d97bacbb25f516c7adb"
+        },
+        {
+          "path": "_rels/.rels",
+          "size": 734,
+          "sha256": "a9ae57efe9186f07d48303bcac5d54c7e359bf3f503939c03ad2954e5c59a5c4"
+        },
+        {
+          "path": "docProps/core.xml",
+          "size": 1022,
+          "sha256": "fda5e6b27675a40a8edc684237e4b736379791edae4a7b4c03d092df7f97805a"
+        },
+        {
+          "path": "docProps/app.xml",
+          "size": 1132,
+          "sha256": "be664981c3141cddfc59362beb287ebf20d0773660e2dd6faac5968a5930a081"
+        },
+        {
+          "path": "word/document.xml",
+          "size": 1469689,
+          "sha256": "ed0984f2e9c6a4e0a25c5d2399304f1ac5a93ea9517ce9b50b3ece65ef7fb4c3"
+        },
+        {
+          "path": "word/_rels/document.xml.rels",
+          "size": 2016,
+          "sha256": "e9cc554c4d0778fbe2818bf95da7b26ee8a42328a3b355b9925b0a1d1e5fcbfa"
+        },
+        {
+          "path": "word/styles.xml",
+          "size": 349938,
+          "sha256": "10ddf6418910d241d7961a894503c3dceb0838bd75d1ebb22a75d1d344a14f91"
+        },
+        {
+          "path": "word/stylesWithEffects.xml",
+          "size": 438131,
+          "sha256": "463ae0928cf0d84775dbf8cf18d6c3029f6707c81bf590f6d6dd8757a5e93f15"
+        },
+        {
+          "path": "word/settings.xml",
+          "size": 2535,
+          "sha256": "51a0d348fe85965c66e4748a03c3c0d055d78455514f03cb121c334af7d73689"
+        },
+        {
+          "path": "word/webSettings.xml",
+          "size": 438,
+          "sha256": "349d36de7434d09f86987ff671d8814964a0588c1e630c06e562cda7e75e9f95"
+        },
+        {
+          "path": "word/fontTable.xml",
+          "size": 2811,
+          "sha256": "79385fb7f60247507ecaffc292e9ebd52ea0657b8634f629ba6fccc54011d6bb"
+        },
+        {
+          "path": "word/theme/theme1.xml",
+          "size": 10939,
+          "sha256": "e3a8ab7db9ca7afca56f5f2820a56e8b660016c647773555b060b0a02ac76941"
+        },
+        {
+          "path": "customXml/item1.xml",
+          "size": 262,
+          "sha256": "a86086ffc5d8e83ebd6c71a55d1d2efaa31b137977f5f3a752366e1023612144"
+        },
+        {
+          "path": "customXml/_rels/item1.xml.rels",
+          "size": 295,
+          "sha256": "1ca6c9a64edcebe24ee703a54403611b322d96da33371779e742d2d3f7ed7a6c"
+        },
+        {
+          "path": "customXml/itemProps1.xml",
+          "size": 354,
+          "sha256": "c542307b13ec29a8b546217bb37936ab4822e044b265d2952985ec3d6afed24e"
+        },
+        {
+          "path": "word/numbering.xml",
+          "size": 5513,
+          "sha256": "70976f19cbcd896e51890859fe6ecb3467a5a7ad0c040160fedc5a1993cb09ce"
+        },
+        {
+          "path": "word/header1.xml",
+          "size": 1522,
+          "sha256": "521800689d244aebf0028a019c2346c751e827fd3a04b4f5b4feedb11aa721c9"
+        },
+        {
+          "path": "word/footer1.xml",
+          "size": 1544,
+          "sha256": "ff96ee0502aefa447c4832e794196649c8c54842045a089d39e6069d79c39a45"
+        },
+        {
+          "path": "word/media/image1.png",
+          "size": 152889,
+          "sha256": "81006c598e851ef12dfea12ad2c81ad00d081b4dadb81491149ea8097a2b0209"
+        },
+        {
+          "path": "word/media/image2.png",
+          "size": 94148,
+          "sha256": "e7fd29044b6e659a167794385141dc4b47eb6e89773a3ce2b792cea9cc3e47cd"
+        },
+        {
+          "path": "word/media/image3.png",
+          "size": 115923,
+          "sha256": "1b6902600b4422f4d0f3d11b1936262e4f5001f0a7fd6fdc992aa412ef96c72f"
+        },
+        {
+          "path": "word/media/image4.png",
+          "size": 153890,
+          "sha256": "c14a5e0412208b005e443c8d53fd3a2b9f5670190619ceed56342d96340c799a"
+        },
+        {
+          "path": "docProps/thumbnail.jpeg",
+          "size": 8324,
+          "sha256": "96367138dc44ce09bf2c8f0f8e49348a1478d2c5c0af69bbc2bbc38b63cdcead"
+        }
+      ]
+    },
+    {
+      "sequence": 6,
+      "path": "05_ACPOS_Creative_Production_AI_ASSET_VIDEO_EDIT_VOICE_QA_Mother_Basic_Logic_Design_Normative_Contract_v1.0.docx",
+      "git_blob_sha": "bd0b9d435872479af4e8acbb46d898d164edde8c",
+      "byte_size": 557066,
+      "sha256": "81ddb7b678e0dcfafcd4a6f530591aa84871841fe3df584f8359ff2e1bae9a29",
+      "package_part_count": 23,
+      "package_parts": [
+        {
+          "path": "[Content_Types].xml",
+          "size": 2044,
+          "sha256": "ecbe3f7dfd70530319fed457805e79a3df0cc177119a7d97bacbb25f516c7adb"
+        },
+        {
+          "path": "_rels/.rels",
+          "size": 734,
+          "sha256": "a9ae57efe9186f07d48303bcac5d54c7e359bf3f503939c03ad2954e5c59a5c4"
+        },
+        {
+          "path": "docProps/core.xml",
+          "size": 1089,
+          "sha256": "0d70113144fbc1c0222426eb013bd9dd91543d3f7bcfcef67fb6895b65c03f85"
+        },
+        {
+          "path": "docProps/app.xml",
+          "size": 1132,
+          "sha256": "be664981c3141cddfc59362beb287ebf20d0773660e2dd6faac5968a5930a081"
+        },
+        {
+          "path": "word/document.xml",
+          "size": 2550632,
+          "sha256": "331f76e6f5dd4f490cf6e611fdb3e8ad0d836c0dbfe7ef22096f787d68a0a329"
+        },
+        {
+          "path": "word/_rels/document.xml.rels",
+          "size": 2016,
+          "sha256": "e9cc554c4d0778fbe2818bf95da7b26ee8a42328a3b355b9925b0a1d1e5fcbfa"
+        },
+        {
+          "path": "word/styles.xml",
+          "size": 349938,
+          "sha256": "377298a34f8be3d077eac36232d79ac8ce8427e0c7a2ab6ded3e5256e983a727"
+        },
+        {
+          "path": "word/stylesWithEffects.xml",
+          "size": 438131,
+          "sha256": "463ae0928cf0d84775dbf8cf18d6c3029f6707c81bf590f6d6dd8757a5e93f15"
+        },
+        {
+          "path": "word/settings.xml",
+          "size": 2535,
+          "sha256": "51a0d348fe85965c66e4748a03c3c0d055d78455514f03cb121c334af7d73689"
+        },
+        {
+          "path": "word/webSettings.xml",
+          "size": 438,
+          "sha256": "349d36de7434d09f86987ff671d8814964a0588c1e630c06e562cda7e75e9f95"
+        },
+        {
+          "path": "word/fontTable.xml",
+          "size": 2811,
+          "sha256": "79385fb7f60247507ecaffc292e9ebd52ea0657b8634f629ba6fccc54011d6bb"
+        },
+        {
+          "path": "word/theme/theme1.xml",
+          "size": 10939,
+          "sha256": "e3a8ab7db9ca7afca56f5f2820a56e8b660016c647773555b060b0a02ac76941"
+        },
+        {
+          "path": "customXml/item1.xml",
+          "size": 262,
+          "sha256": "a86086ffc5d8e83ebd6c71a55d1d2efaa31b137977f5f3a752366e1023612144"
+        },
+        {
+          "path": "customXml/_rels/item1.xml.rels",
+          "size": 295,
+          "sha256": "1ca6c9a64edcebe24ee703a54403611b322d96da33371779e742d2d3f7ed7a6c"
+        },
+        {
+          "path": "customXml/itemProps1.xml",
+          "size": 354,
+          "sha256": "c542307b13ec29a8b546217bb37936ab4822e044b265d2952985ec3d6afed24e"
+        },
+        {
+          "path": "word/numbering.xml",
+          "size": 5513,
+          "sha256": "70976f19cbcd896e51890859fe6ecb3467a5a7ad0c040160fedc5a1993cb09ce"
+        },
+        {
+          "path": "word/header1.xml",
+          "size": 1522,
+          "sha256": "f0c7ed2953255f30633bd1cdf69b00f54bd814d6ac1de3783d032fcb008366c1"
+        },
+        {
+          "path": "word/footer1.xml",
+          "size": 1544,
+          "sha256": "ff96ee0502aefa447c4832e794196649c8c54842045a089d39e6069d79c39a45"
+        },
+        {
+          "path": "word/media/image1.png",
+          "size": 100314,
+          "sha256": "3e94015957cca0fe6946e9f0ab22e740e9cca4e05858fc6277281fecec9ec3e7"
+        },
+        {
+          "path": "word/media/image2.png",
+          "size": 169625,
+          "sha256": "b0750615e0ef17bc3bd8216d9c62ad9f090566f195676b545771799bc96b5461"
+        },
+        {
+          "path": "word/media/image3.png",
+          "size": 122237,
+          "sha256": "5853995ac611bf5e5aac3f1e5cc2b1e14174562c7e51671fe102e2eacbc5fac9"
+        },
+        {
+          "path": "word/media/image4.png",
+          "size": 83674,
+          "sha256": "3619bd8c91b9002a11e42a0eb27e70c35b3674ef6d4d7e3fb81d14c2f739d755"
+        },
+        {
+          "path": "docProps/thumbnail.jpeg",
+          "size": 8324,
+          "sha256": "96367138dc44ce09bf2c8f0f8e49348a1478d2c5c0af69bbc2bbc38b63cdcead"
+        }
+      ]
+    },
+    {
+      "sequence": 7,
+      "path": "06_ACPOS_Enterprise_Business_Development_AI_System_Mother_Basic_Logic_Design_Normative_Contract_v1.0.docx",
+      "git_blob_sha": "88c92e57efbcb5e6947b3526f7d74f714be29276",
+      "byte_size": 743743,
+      "sha256": "c10a7d8d218e266513741bd71ae1c3471a461ea15b3b638145dd6e083b199fa4",
+      "package_part_count": 27,
+      "package_parts": [
+        {
+          "path": "[Content_Types].xml",
+          "size": 2044,
+          "sha256": "ecbe3f7dfd70530319fed457805e79a3df0cc177119a7d97bacbb25f516c7adb"
+        },
+        {
+          "path": "_rels/.rels",
+          "size": 734,
+          "sha256": "a9ae57efe9186f07d48303bcac5d54c7e359bf3f503939c03ad2954e5c59a5c4"
+        },
+        {
+          "path": "docProps/core.xml",
+          "size": 1127,
+          "sha256": "a10040b2b1e5f1db3515da68090ab41742bcafbf9d7e510312bd9cc1f8dc2e6e"
+        },
+        {
+          "path": "docProps/app.xml",
+          "size": 1132,
+          "sha256": "be664981c3141cddfc59362beb287ebf20d0773660e2dd6faac5968a5930a081"
+        },
+        {
+          "path": "word/document.xml",
+          "size": 942969,
+          "sha256": "7a7bd38d7cb97cc78c613815ab0b37676fae1270c2139aae05dbf721c5277642"
+        },
+        {
+          "path": "word/_rels/document.xml.rels",
+          "size": 2548,
+          "sha256": "317b90285a7ad11b7ebfddb43b5addb5b7b2170a7411eb811cf1dc998a54ebcf"
+        },
+        {
+          "path": "word/styles.xml",
+          "size": 349938,
+          "sha256": "377298a34f8be3d077eac36232d79ac8ce8427e0c7a2ab6ded3e5256e983a727"
+        },
+        {
+          "path": "word/stylesWithEffects.xml",
+          "size": 438131,
+          "sha256": "463ae0928cf0d84775dbf8cf18d6c3029f6707c81bf590f6d6dd8757a5e93f15"
+        },
+        {
+          "path": "word/settings.xml",
+          "size": 2535,
+          "sha256": "51a0d348fe85965c66e4748a03c3c0d055d78455514f03cb121c334af7d73689"
+        },
+        {
+          "path": "word/webSettings.xml",
+          "size": 438,
+          "sha256": "349d36de7434d09f86987ff671d8814964a0588c1e630c06e562cda7e75e9f95"
+        },
+        {
+          "path": "word/fontTable.xml",
+          "size": 2811,
+          "sha256": "79385fb7f60247507ecaffc292e9ebd52ea0657b8634f629ba6fccc54011d6bb"
+        },
+        {
+          "path": "word/theme/theme1.xml",
+          "size": 10939,
+          "sha256": "e3a8ab7db9ca7afca56f5f2820a56e8b660016c647773555b060b0a02ac76941"
+        },
+        {
+          "path": "customXml/item1.xml",
+          "size": 262,
+          "sha256": "a86086ffc5d8e83ebd6c71a55d1d2efaa31b137977f5f3a752366e1023612144"
+        },
+        {
+          "path": "customXml/_rels/item1.xml.rels",
+          "size": 295,
+          "sha256": "1ca6c9a64edcebe24ee703a54403611b322d96da33371779e742d2d3f7ed7a6c"
+        },
+        {
+          "path": "customXml/itemProps1.xml",
+          "size": 354,
+          "sha256": "c542307b13ec29a8b546217bb37936ab4822e044b265d2952985ec3d6afed24e"
+        },
+        {
+          "path": "word/numbering.xml",
+          "size": 5513,
+          "sha256": "70976f19cbcd896e51890859fe6ecb3467a5a7ad0c040160fedc5a1993cb09ce"
+        },
+        {
+          "path": "word/header1.xml",
+          "size": 1431,
+          "sha256": "3c565b021548907a6270d9aa38c9f78cfd4c462d58278506ebf3a93997c9646f"
+        },
+        {
+          "path": "word/footer1.xml",
+          "size": 1479,
+          "sha256": "a196eebe1a54ee3e2f50614cea1c937b3744cb7bd737cffc7a0235a2547f38fe"
+        },
+        {
+          "path": "word/media/image1.png",
+          "size": 100314,
+          "sha256": "3e94015957cca0fe6946e9f0ab22e740e9cca4e05858fc6277281fecec9ec3e7"
+        },
+        {
+          "path": "word/media/image2.png",
+          "size": 169625,
+          "sha256": "b0750615e0ef17bc3bd8216d9c62ad9f090566f195676b545771799bc96b5461"
+        },
+        {
+          "path": "word/media/image3.png",
+          "size": 122237,
+          "sha256": "5853995ac611bf5e5aac3f1e5cc2b1e14174562c7e51671fe102e2eacbc5fac9"
+        },
+        {
+          "path": "word/media/image4.png",
+          "size": 83674,
+          "sha256": "3619bd8c91b9002a11e42a0eb27e70c35b3674ef6d4d7e3fb81d14c2f739d755"
+        },
+        {
+          "path": "word/media/image5.png",
+          "size": 81187,
+          "sha256": "92f5771af7fef5bef4eae407b0ba90aa43f82a6377bf6359d828b1992b9a4a6a"
+        },
+        {
+          "path": "word/media/image6.png",
+          "size": 67989,
+          "sha256": "94e85b88e819df6d75877e91fb3b04f66784e76bc59606dd1a55b1c54abdb195"
+        },
+        {
+          "path": "word/media/image7.png",
+          "size": 68777,
+          "sha256": "87d0194993ebd4a3c711ea00a03224474ab3eb3cad6f3f95e1263a13653bc9dc"
+        },
+        {
+          "path": "word/media/image8.png",
+          "size": 61794,
+          "sha256": "2ba1cb12322d449d8198db83efb6485a0bc86c0afcac86910db7a367dca32d3b"
+        },
+        {
+          "path": "docProps/thumbnail.jpeg",
+          "size": 8324,
+          "sha256": "96367138dc44ce09bf2c8f0f8e49348a1478d2c5c0af69bbc2bbc38b63cdcead"
+        }
+      ]
+    },
+    {
+      "sequence": 8,
+      "path": "07_ACPOS_Social_Publishing_AI_System_Mother_Basic_Logic_Design_Normative_Contract_v1.0.docx",
+      "git_blob_sha": "b42f1c49e62f2fac9f5d734f9e58d001d41ef0bb",
+      "byte_size": 901510,
+      "sha256": "82e99ba9d0ac21650af7b6d9da8a1500711f50befc6fc987837d0a871d7b6c73",
+      "package_part_count": 31,
+      "package_parts": [
+        {
+          "path": "[Content_Types].xml",
+          "size": 2044,
+          "sha256": "ecbe3f7dfd70530319fed457805e79a3df0cc177119a7d97bacbb25f516c7adb"
+        },
+        {
+          "path": "_rels/.rels",
+          "size": 734,
+          "sha256": "a9ae57efe9186f07d48303bcac5d54c7e359bf3f503939c03ad2954e5c59a5c4"
+        },
+        {
+          "path": "docProps/core.xml",
+          "size": 945,
+          "sha256": "fe43e36d983400dc404b51dd8755fd644a575269909c86b7cbdea75767f8a8a9"
+        },
+        {
+          "path": "docProps/app.xml",
+          "size": 1132,
+          "sha256": "be664981c3141cddfc59362beb287ebf20d0773660e2dd6faac5968a5930a081"
+        },
+        {
+          "path": "word/document.xml",
+          "size": 1698854,
+          "sha256": "6303e45e1c1de23b5b0e7b6f78d61d5b82138dccc508697cbc6fd866e41cf126"
+        },
+        {
+          "path": "word/_rels/document.xml.rels",
+          "size": 3083,
+          "sha256": "43d3e6a31fa8a6d3f2a44e56c350fe5051dcd5fe372e043d66212cfc4222f2bc"
+        },
+        {
+          "path": "word/styles.xml",
+          "size": 349938,
+          "sha256": "377298a34f8be3d077eac36232d79ac8ce8427e0c7a2ab6ded3e5256e983a727"
+        },
+        {
+          "path": "word/stylesWithEffects.xml",
+          "size": 438131,
+          "sha256": "463ae0928cf0d84775dbf8cf18d6c3029f6707c81bf590f6d6dd8757a5e93f15"
+        },
+        {
+          "path": "word/settings.xml",
+          "size": 2535,
+          "sha256": "51a0d348fe85965c66e4748a03c3c0d055d78455514f03cb121c334af7d73689"
+        },
+        {
+          "path": "word/webSettings.xml",
+          "size": 438,
+          "sha256": "349d36de7434d09f86987ff671d8814964a0588c1e630c06e562cda7e75e9f95"
+        },
+        {
+          "path": "word/fontTable.xml",
+          "size": 2811,
+          "sha256": "79385fb7f60247507ecaffc292e9ebd52ea0657b8634f629ba6fccc54011d6bb"
+        },
+        {
+          "path": "word/theme/theme1.xml",
+          "size": 10939,
+          "sha256": "e3a8ab7db9ca7afca56f5f2820a56e8b660016c647773555b060b0a02ac76941"
+        },
+        {
+          "path": "customXml/item1.xml",
+          "size": 262,
+          "sha256": "a86086ffc5d8e83ebd6c71a55d1d2efaa31b137977f5f3a752366e1023612144"
+        },
+        {
+          "path": "customXml/_rels/item1.xml.rels",
+          "size": 295,
+          "sha256": "1ca6c9a64edcebe24ee703a54403611b322d96da33371779e742d2d3f7ed7a6c"
+        },
+        {
+          "path": "customXml/itemProps1.xml",
+          "size": 354,
+          "sha256": "c542307b13ec29a8b546217bb37936ab4822e044b265d2952985ec3d6afed24e"
+        },
+        {
+          "path": "word/numbering.xml",
+          "size": 5513,
+          "sha256": "70976f19cbcd896e51890859fe6ecb3467a5a7ad0c040160fedc5a1993cb09ce"
+        },
+        {
+          "path": "word/header1.xml",
+          "size": 1564,
+          "sha256": "43125515f4904e48bc8b4a049d1e33a464eb0e56e6d567f14ca0f59e079892cc"
+        },
+        {
+          "path": "word/footer1.xml",
+          "size": 1612,
+          "sha256": "0aad5607e2eb09358645d8a6bc2ffa24bd5ae7bf0a713f3e185032caec391741"
+        },
+        {
+          "path": "word/media/image1.png",
+          "size": 100314,
+          "sha256": "3e94015957cca0fe6946e9f0ab22e740e9cca4e05858fc6277281fecec9ec3e7"
+        },
+        {
+          "path": "word/media/image2.png",
+          "size": 169625,
+          "sha256": "b0750615e0ef17bc3bd8216d9c62ad9f090566f195676b545771799bc96b5461"
+        },
+        {
+          "path": "word/media/image3.png",
+          "size": 122237,
+          "sha256": "5853995ac611bf5e5aac3f1e5cc2b1e14174562c7e51671fe102e2eacbc5fac9"
+        },
+        {
+          "path": "word/media/image4.png",
+          "size": 83674,
+          "sha256": "3619bd8c91b9002a11e42a0eb27e70c35b3674ef6d4d7e3fb81d14c2f739d755"
+        },
+        {
+          "path": "word/media/image5.png",
+          "size": 81187,
+          "sha256": "92f5771af7fef5bef4eae407b0ba90aa43f82a6377bf6359d828b1992b9a4a6a"
+        },
+        {
+          "path": "word/media/image6.png",
+          "size": 67989,
+          "sha256": "94e85b88e819df6d75877e91fb3b04f66784e76bc59606dd1a55b1c54abdb195"
+        },
+        {
+          "path": "word/media/image7.png",
+          "size": 68777,
+          "sha256": "87d0194993ebd4a3c711ea00a03224474ab3eb3cad6f3f95e1263a13653bc9dc"
+        },
+        {
+          "path": "word/media/image8.png",
+          "size": 61794,
+          "sha256": "2ba1cb12322d449d8198db83efb6485a0bc86c0afcac86910db7a367dca32d3b"
+        },
+        {
+          "path": "word/media/image9.png",
+          "size": 38658,
+          "sha256": "89bad26dc78d24b75443f29a5d32f38d786cd103f95a5035051570f34bcbdea3"
+        },
+        {
+          "path": "word/media/image10.png",
+          "size": 47877,
+          "sha256": "b13cef836c492b76f0e907abdd2676639d3253c1427d121a51221a52238e10b0"
+        },
+        {
+          "path": "word/media/image11.png",
+          "size": 47739,
+          "sha256": "61cc02aa61992bfedcc3bd62d336387009336629e1529b627d753b4cc29f3d0a"
+        },
+        {
+          "path": "word/media/image12.png",
+          "size": 38218,
+          "sha256": "d97b72c16bda3cd2d6f3aa68e55988b8952753e7c177db0db3bca84fd123f8b2"
+        },
+        {
+          "path": "docProps/thumbnail.jpeg",
+          "size": 8324,
+          "sha256": "96367138dc44ce09bf2c8f0f8e49348a1478d2c5c0af69bbc2bbc38b63cdcead"
+        }
+      ]
+    },
+    {
+      "sequence": 9,
+      "path": "08_ACPOS_Strategy_Intelligence_MultiAI_Decision_System_Mother_Basic_Logic_Design_Normative_Contract_v1.0.docx",
+      "git_blob_sha": "f5ec7e0594940b787e6da401573110319a2b2874",
+      "byte_size": 408695,
+      "sha256": "e4814e8c8dd81f2f56c9a9fd7db847662647b859401914a2ca1ab6797d83e1dc",
+      "package_part_count": 23,
+      "package_parts": [
+        {
+          "path": "[Content_Types].xml",
+          "size": 2044,
+          "sha256": "ecbe3f7dfd70530319fed457805e79a3df0cc177119a7d97bacbb25f516c7adb"
+        },
+        {
+          "path": "_rels/.rels",
+          "size": 734,
+          "sha256": "a9ae57efe9186f07d48303bcac5d54c7e359bf3f503939c03ad2954e5c59a5c4"
+        },
+        {
+          "path": "docProps/core.xml",
+          "size": 997,
+          "sha256": "3040d5ddafa896ac9aa7c97dbcf541b5efd706aca0718791f0decafcfd4d3a81"
+        },
+        {
+          "path": "docProps/app.xml",
+          "size": 1132,
+          "sha256": "be664981c3141cddfc59362beb287ebf20d0773660e2dd6faac5968a5930a081"
+        },
+        {
+          "path": "word/document.xml",
+          "size": 864986,
+          "sha256": "1bdf2ca61c1f9805dcb6b3f0d4c8fc4d77bd38498c561a44a14d0645ae145629"
+        },
+        {
+          "path": "word/_rels/document.xml.rels",
+          "size": 2016,
+          "sha256": "e9cc554c4d0778fbe2818bf95da7b26ee8a42328a3b355b9925b0a1d1e5fcbfa"
+        },
+        {
+          "path": "word/styles.xml",
+          "size": 350536,
+          "sha256": "bfb14a9440df932e95e253c79eb0fe25a3e5696e943efa5fd0c324f175fbb01b"
+        },
+        {
+          "path": "word/stylesWithEffects.xml",
+          "size": 438131,
+          "sha256": "463ae0928cf0d84775dbf8cf18d6c3029f6707c81bf590f6d6dd8757a5e93f15"
+        },
+        {
+          "path": "word/settings.xml",
+          "size": 2535,
+          "sha256": "51a0d348fe85965c66e4748a03c3c0d055d78455514f03cb121c334af7d73689"
+        },
+        {
+          "path": "word/webSettings.xml",
+          "size": 438,
+          "sha256": "349d36de7434d09f86987ff671d8814964a0588c1e630c06e562cda7e75e9f95"
+        },
+        {
+          "path": "word/fontTable.xml",
+          "size": 2811,
+          "sha256": "79385fb7f60247507ecaffc292e9ebd52ea0657b8634f629ba6fccc54011d6bb"
+        },
+        {
+          "path": "word/theme/theme1.xml",
+          "size": 10939,
+          "sha256": "e3a8ab7db9ca7afca56f5f2820a56e8b660016c647773555b060b0a02ac76941"
+        },
+        {
+          "path": "customXml/item1.xml",
+          "size": 262,
+          "sha256": "a86086ffc5d8e83ebd6c71a55d1d2efaa31b137977f5f3a752366e1023612144"
+        },
+        {
+          "path": "customXml/_rels/item1.xml.rels",
+          "size": 295,
+          "sha256": "1ca6c9a64edcebe24ee703a54403611b322d96da33371779e742d2d3f7ed7a6c"
+        },
+        {
+          "path": "customXml/itemProps1.xml",
+          "size": 354,
+          "sha256": "c542307b13ec29a8b546217bb37936ab4822e044b265d2952985ec3d6afed24e"
+        },
+        {
+          "path": "word/numbering.xml",
+          "size": 5513,
+          "sha256": "70976f19cbcd896e51890859fe6ecb3467a5a7ad0c040160fedc5a1993cb09ce"
+        },
+        {
+          "path": "word/header1.xml",
+          "size": 1475,
+          "sha256": "eee84c05ca8812857f5fef10eefdc2f70e9bbd489b0462fc1f18e4d197f07988"
+        },
+        {
+          "path": "word/footer1.xml",
+          "size": 1483,
+          "sha256": "de8cc248b05b0f2ac6bf10f6250933aa0ca335d587c039b95b8a2168e3b1d190"
+        },
+        {
+          "path": "word/media/image1.png",
+          "size": 65968,
+          "sha256": "ad62513be099f519da4540321039d292be2692e4a1d68384a770c006f332b7c0"
+        },
+        {
+          "path": "word/media/image2.png",
+          "size": 97396,
+          "sha256": "f4cebfbd3341eac7a18d004d6195e8bab971f53d4bf4209b17ebd04e5721b8ba"
+        },
+        {
+          "path": "word/media/image3.png",
+          "size": 112509,
+          "sha256": "a5888decb467070f4bb55c5bce1e4764500f0f8c65634e2d38c2634f86717e8b"
+        },
+        {
+          "path": "word/media/image4.png",
+          "size": 72969,
+          "sha256": "d05581aeaeb47aa7f2b5addb9db5eae52eed735e52cc1a09086415a5c4c3ccc4"
+        },
+        {
+          "path": "docProps/thumbnail.jpeg",
+          "size": 8324,
+          "sha256": "96367138dc44ce09bf2c8f0f8e49348a1478d2c5c0af69bbc2bbc38b63cdcead"
+        }
+      ]
+    },
+    {
+      "sequence": 10,
+      "path": "09_ACPOS_AI_System_Engineer_Self_Inspection_Evolution_System_Mother_Basic_Logic_Design_Normative_Contract_v1.0.docx",
+      "git_blob_sha": "c832e29c3e456abd96b22728f5f6a533595013f4",
+      "byte_size": 623043,
+      "sha256": "8a62738464742f6c4f04e94a81ce6494dea3e4678dc6d6d530437121771b7c46",
+      "package_part_count": 27,
+      "package_parts": [
+        {
+          "path": "[Content_Types].xml",
+          "size": 2044,
+          "sha256": "ecbe3f7dfd70530319fed457805e79a3df0cc177119a7d97bacbb25f516c7adb"
+        },
+        {
+          "path": "_rels/.rels",
+          "size": 734,
+          "sha256": "a9ae57efe9186f07d48303bcac5d54c7e359bf3f503939c03ad2954e5c59a5c4"
+        },
+        {
+          "path": "docProps/core.xml",
+          "size": 1053,
+          "sha256": "a311dc0914b22076ac79acfbe7af17a1a5a78b0e30169f12a95a042dae0144cb"
+        },
+        {
+          "path": "docProps/app.xml",
+          "size": 1132,
+          "sha256": "be664981c3141cddfc59362beb287ebf20d0773660e2dd6faac5968a5930a081"
+        },
+        {
+          "path": "word/document.xml",
+          "size": 1317776,
+          "sha256": "8f435bbbd4a186548eb039bb6a11a21c7984ceb1f5830609c0c266d56a53d2d6"
+        },
+        {
+          "path": "word/_rels/document.xml.rels",
+          "size": 2548,
+          "sha256": "317b90285a7ad11b7ebfddb43b5addb5b7b2170a7411eb811cf1dc998a54ebcf"
+        },
+        {
+          "path": "word/styles.xml",
+          "size": 350536,
+          "sha256": "bfb14a9440df932e95e253c79eb0fe25a3e5696e943efa5fd0c324f175fbb01b"
+        },
+        {
+          "path": "word/stylesWithEffects.xml",
+          "size": 438131,
+          "sha256": "463ae0928cf0d84775dbf8cf18d6c3029f6707c81bf590f6d6dd8757a5e93f15"
+        },
+        {
+          "path": "word/settings.xml",
+          "size": 2535,
+          "sha256": "51a0d348fe85965c66e4748a03c3c0d055d78455514f03cb121c334af7d73689"
+        },
+        {
+          "path": "word/webSettings.xml",
+          "size": 438,
+          "sha256": "349d36de7434d09f86987ff671d8814964a0588c1e630c06e562cda7e75e9f95"
+        },
+        {
+          "path": "word/fontTable.xml",
+          "size": 2811,
+          "sha256": "79385fb7f60247507ecaffc292e9ebd52ea0657b8634f629ba6fccc54011d6bb"
+        },
+        {
+          "path": "word/theme/theme1.xml",
+          "size": 10939,
+          "sha256": "e3a8ab7db9ca7afca56f5f2820a56e8b660016c647773555b060b0a02ac76941"
+        },
+        {
+          "path": "customXml/item1.xml",
+          "size": 262,
+          "sha256": "a86086ffc5d8e83ebd6c71a55d1d2efaa31b137977f5f3a752366e1023612144"
+        },
+        {
+          "path": "customXml/_rels/item1.xml.rels",
+          "size": 295,
+          "sha256": "1ca6c9a64edcebe24ee703a54403611b322d96da33371779e742d2d3f7ed7a6c"
+        },
+        {
+          "path": "customXml/itemProps1.xml",
+          "size": 354,
+          "sha256": "c542307b13ec29a8b546217bb37936ab4822e044b265d2952985ec3d6afed24e"
+        },
+        {
+          "path": "word/numbering.xml",
+          "size": 5513,
+          "sha256": "70976f19cbcd896e51890859fe6ecb3467a5a7ad0c040160fedc5a1993cb09ce"
+        },
+        {
+          "path": "word/header1.xml",
+          "size": 1534,
+          "sha256": "fcbf447e8d77048d71d959990d7ead18aae506b532223d080d421ca18281a254"
+        },
+        {
+          "path": "word/footer1.xml",
+          "size": 1535,
+          "sha256": "73813b640898d9dee0ec03675029a6a06b81c3ef1810147c8a87c8585da1df45"
+        },
+        {
+          "path": "word/media/image1.png",
+          "size": 65968,
+          "sha256": "ad62513be099f519da4540321039d292be2692e4a1d68384a770c006f332b7c0"
+        },
+        {
+          "path": "word/media/image2.png",
+          "size": 97396,
+          "sha256": "f4cebfbd3341eac7a18d004d6195e8bab971f53d4bf4209b17ebd04e5721b8ba"
+        },
+        {
+          "path": "word/media/image3.png",
+          "size": 112509,
+          "sha256": "a5888decb467070f4bb55c5bce1e4764500f0f8c65634e2d38c2634f86717e8b"
+        },
+        {
+          "path": "word/media/image4.png",
+          "size": 72969,
+          "sha256": "d05581aeaeb47aa7f2b5addb9db5eae52eed735e52cc1a09086415a5c4c3ccc4"
+        },
+        {
+          "path": "word/media/image5.png",
+          "size": 63860,
+          "sha256": "702c08864d4224ee2031d26d4db03203451bc63e4633b824124f8f6478ce1551"
+        },
+        {
+          "path": "word/media/image6.png",
+          "size": 54042,
+          "sha256": "ce768a28233a3a91eb420a60e5fdf98559b02c9fd4d89bed0584eeaf6e4974c5"
+        },
+        {
+          "path": "word/media/image7.png",
+          "size": 55213,
+          "sha256": "33ab4fd080e9c2f309086be0f62513bec6d130a95c5c052fcc63a40e311e7455"
+        },
+        {
+          "path": "word/media/image8.png",
+          "size": 52446,
+          "sha256": "41fec34df8655bc69a4cf28e1e34c6ca0ac9a25a98d138a3e8b51f510e2158ec"
+        },
+        {
+          "path": "docProps/thumbnail.jpeg",
+          "size": 8324,
+          "sha256": "96367138dc44ce09bf2c8f0f8e49348a1478d2c5c0af69bbc2bbc38b63cdcead"
+        }
+      ]
+    },
+    {
+      "sequence": 11,
+      "path": "ACPOS_AIAPI-01_AI_API管理_Mother_Basic_Design_OPTIMIZED.docx",
+      "git_blob_sha": "a96bf6a032b6c07cbe5133e280c25e7727cf3f37",
+      "byte_size": 1058731,
+      "sha256": "a6d969b26e0f8372b3746750fe869355acf746479a95ee92a4ec4a3019c6e8a5",
+      "package_part_count": 27,
+      "package_parts": [
+        {
+          "path": "[Content_Types].xml",
+          "size": 2044,
+          "sha256": "ecbe3f7dfd70530319fed457805e79a3df0cc177119a7d97bacbb25f516c7adb"
+        },
+        {
+          "path": "_rels/.rels",
+          "size": 734,
+          "sha256": "a9ae57efe9186f07d48303bcac5d54c7e359bf3f503939c03ad2954e5c59a5c4"
+        },
+        {
+          "path": "docProps/core.xml",
+          "size": 846,
+          "sha256": "75058263a8f8078ee6bf38d0b65731626b8c6f70d9ed6b6ef82a483e51800c71"
+        },
+        {
+          "path": "docProps/app.xml",
+          "size": 1132,
+          "sha256": "be664981c3141cddfc59362beb287ebf20d0773660e2dd6faac5968a5930a081"
+        },
+        {
+          "path": "word/document.xml",
+          "size": 862510,
+          "sha256": "49223f88dac40075a3931a5d5ee49ead43657b132058a394b989fd23f47ef733"
+        },
+        {
+          "path": "word/_rels/document.xml.rels",
+          "size": 2548,
+          "sha256": "317b90285a7ad11b7ebfddb43b5addb5b7b2170a7411eb811cf1dc998a54ebcf"
+        },
+        {
+          "path": "word/styles.xml",
+          "size": 350025,
+          "sha256": "22b84cf050d2c531d6d07fd290e525f8cb7aece4614e3033ceaa02005a8ecb9e"
+        },
+        {
+          "path": "word/stylesWithEffects.xml",
+          "size": 438131,
+          "sha256": "463ae0928cf0d84775dbf8cf18d6c3029f6707c81bf590f6d6dd8757a5e93f15"
+        },
+        {
+          "path": "word/settings.xml",
+          "size": 2535,
+          "sha256": "51a0d348fe85965c66e4748a03c3c0d055d78455514f03cb121c334af7d73689"
+        },
+        {
+          "path": "word/webSettings.xml",
+          "size": 438,
+          "sha256": "349d36de7434d09f86987ff671d8814964a0588c1e630c06e562cda7e75e9f95"
+        },
+        {
+          "path": "word/fontTable.xml",
+          "size": 2811,
+          "sha256": "79385fb7f60247507ecaffc292e9ebd52ea0657b8634f629ba6fccc54011d6bb"
+        },
+        {
+          "path": "word/theme/theme1.xml",
+          "size": 10939,
+          "sha256": "e3a8ab7db9ca7afca56f5f2820a56e8b660016c647773555b060b0a02ac76941"
+        },
+        {
+          "path": "customXml/item1.xml",
+          "size": 262,
+          "sha256": "a86086ffc5d8e83ebd6c71a55d1d2efaa31b137977f5f3a752366e1023612144"
+        },
+        {
+          "path": "customXml/_rels/item1.xml.rels",
+          "size": 295,
+          "sha256": "1ca6c9a64edcebe24ee703a54403611b322d96da33371779e742d2d3f7ed7a6c"
+        },
+        {
+          "path": "customXml/itemProps1.xml",
+          "size": 354,
+          "sha256": "c542307b13ec29a8b546217bb37936ab4822e044b265d2952985ec3d6afed24e"
+        },
+        {
+          "path": "word/numbering.xml",
+          "size": 5513,
+          "sha256": "70976f19cbcd896e51890859fe6ecb3467a5a7ad0c040160fedc5a1993cb09ce"
+        },
+        {
+          "path": "word/header1.xml",
+          "size": 1385,
+          "sha256": "5912d6712bd8cc60927d1e83ecc4a6f07043f71ccd2cdac987259f6ddaaa690a"
+        },
+        {
+          "path": "word/footer1.xml",
+          "size": 1359,
+          "sha256": "797cdbf7a544aeffd1adb5009266a4420e0cca349cce8d10e8c402fd416f6a5f"
+        },
+        {
+          "path": "word/media/image1.png",
+          "size": 129850,
+          "sha256": "82f95efd2938f93dcb78b537c3097f2e6258ff394f94799ccaebb812fecfd5a1"
+        },
+        {
+          "path": "word/media/image2.png",
+          "size": 99745,
+          "sha256": "bcd63b4f03625ce0f38a882d23f5d0653dce9aa3fd2fe70399e5a77c5260b4f6"
+        },
+        {
+          "path": "word/media/image3.png",
+          "size": 158457,
+          "sha256": "3ae45e7bb3c1e74f5d7833af1c037c6a5f9b6732f2c4d324292ea34c99a301a2"
+        },
+        {
+          "path": "word/media/image4.png",
+          "size": 149620,
+          "sha256": "126f0886bcfe6db57046d2e3e91e20e449b5c78c4433a3e73e5135a1d9b73a53"
+        },
+        {
+          "path": "word/media/image5.png",
+          "size": 131699,
+          "sha256": "2a78642e977102181baf495609595b784d4831df83e9b8efe7aef5bcc5a0c5d6"
+        },
+        {
+          "path": "word/media/image6.png",
+          "size": 142874,
+          "sha256": "c5d3db3c3aabe61b3469ff9df084b65782a32be7991b2dff84ea2a212078f77b"
+        },
+        {
+          "path": "word/media/image7.png",
+          "size": 121039,
+          "sha256": "b5ce489ee00b231259217889fec4c010ca8b668095619d4010e289a519893c44"
+        },
+        {
+          "path": "word/media/image8.png",
+          "size": 112485,
+          "sha256": "8a4f238f56b7daa1c65086f184921cc92b7623c700d76340a9da8da4b84b3610"
+        },
+        {
+          "path": "docProps/thumbnail.jpeg",
+          "size": 8324,
+          "sha256": "96367138dc44ce09bf2c8f0f8e49348a1478d2c5c0af69bbc2bbc38b63cdcead"
+        }
+      ]
+    },
+    {
+      "sequence": 12,
+      "path": "ACPOS_ASSET-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx",
+      "git_blob_sha": "4d1e8abb1a7e68547b7ffb55d8fb3e2ee5d8d411",
+      "byte_size": 699714,
+      "sha256": "ab270a8409b9d0a3b8dc6283aa6abfb717ec545c08387bb207cf8d7036c99ef1",
+      "package_part_count": 24,
+      "package_parts": [
+        {
+          "path": "[Content_Types].xml",
+          "size": 2044,
+          "sha256": "ecbe3f7dfd70530319fed457805e79a3df0cc177119a7d97bacbb25f516c7adb"
+        },
+        {
+          "path": "_rels/.rels",
+          "size": 734,
+          "sha256": "a9ae57efe9186f07d48303bcac5d54c7e359bf3f503939c03ad2954e5c59a5c4"
+        },
+        {
+          "path": "docProps/core.xml",
+          "size": 721,
+          "sha256": "d14be8284e406d14dc2a576b19f15e7f637b955f9e27a3d9ed871ec99606f7ba"
+        },
+        {
+          "path": "docProps/app.xml",
+          "size": 1132,
+          "sha256": "be664981c3141cddfc59362beb287ebf20d0773660e2dd6faac5968a5930a081"
+        },
+        {
+          "path": "word/document.xml",
+          "size": 995430,
+          "sha256": "5f0c64e7aaae841dfedd72f5d833ef78edd523e634b707f649568a9f9b2260bb"
+        },
+        {
+          "path": "word/_rels/document.xml.rels",
+          "size": 2149,
+          "sha256": "d69cb9e07e7e20010f8cc70129bc47a2c1c8aced743c3f5898c1a68711aac789"
+        },
+        {
+          "path": "word/styles.xml",
+          "size": 350135,
+          "sha256": "8ae4d620f7269f68cbf346e2fd3eb3e585c437be803877c5e9e9f8df5dfe03ba"
+        },
+        {
+          "path": "word/stylesWithEffects.xml",
+          "size": 438131,
+          "sha256": "463ae0928cf0d84775dbf8cf18d6c3029f6707c81bf590f6d6dd8757a5e93f15"
+        },
+        {
+          "path": "word/settings.xml",
+          "size": 2535,
+          "sha256": "51a0d348fe85965c66e4748a03c3c0d055d78455514f03cb121c334af7d73689"
+        },
+        {
+          "path": "word/webSettings.xml",
+          "size": 438,
+          "sha256": "349d36de7434d09f86987ff671d8814964a0588c1e630c06e562cda7e75e9f95"
+        },
+        {
+          "path": "word/fontTable.xml",
+          "size": 2811,
+          "sha256": "79385fb7f60247507ecaffc292e9ebd52ea0657b8634f629ba6fccc54011d6bb"
+        },
+        {
+          "path": "word/theme/theme1.xml",
+          "size": 10939,
+          "sha256": "e3a8ab7db9ca7afca56f5f2820a56e8b660016c647773555b060b0a02ac76941"
+        },
+        {
+          "path": "customXml/item1.xml",
+          "size": 262,
+          "sha256": "a86086ffc5d8e83ebd6c71a55d1d2efaa31b137977f5f3a752366e1023612144"
+        },
+        {
+          "path": "customXml/_rels/item1.xml.rels",
+          "size": 295,
+          "sha256": "1ca6c9a64edcebe24ee703a54403611b322d96da33371779e742d2d3f7ed7a6c"
+        },
+        {
+          "path": "customXml/itemProps1.xml",
+          "size": 354,
+          "sha256": "c542307b13ec29a8b546217bb37936ab4822e044b265d2952985ec3d6afed24e"
+        },
+        {
+          "path": "word/numbering.xml",
+          "size": 5513,
+          "sha256": "70976f19cbcd896e51890859fe6ecb3467a5a7ad0c040160fedc5a1993cb09ce"
+        },
+        {
+          "path": "word/header1.xml",
+          "size": 1449,
+          "sha256": "02fdd8f4d42656c4568499076bea6c16bd0a20d960765bf9eb43372a6aaf0d39"
+        },
+        {
+          "path": "word/footer1.xml",
+          "size": 1460,
+          "sha256": "52f9cc6e7acfe7fcc7db6f5b75689a6e2b5435fba2f91211e55fdf9e78c177ce"
+        },
+        {
+          "path": "word/media/image1.png",
+          "size": 125855,
+          "sha256": "61b806b104ccfd5ea92faac42fcda7463a3a9e677e666f52f0f168dd4b24ab4c"
+        },
+        {
+          "path": "word/media/image2.png",
+          "size": 140501,
+          "sha256": "a073eff39b45b97f89e3285439023d08eacfffa648b3b1d5a5b89284dfeee6b8"
+        },
+        {
+          "path": "word/media/image3.png",
+          "size": 144586,
+          "sha256": "85b0654e0e5f297003b6a91a48206573ea10648fc3b646f1cf7f99bcd06984d2"
+        },
+        {
+          "path": "word/media/image4.png",
+          "size": 130997,
+          "sha256": "714deee6f91b643ccd14330cc25a9ac74ecbf3603eec0039ff6dda40f96a28ee"
+        },
+        {
+          "path": "word/media/image5.png",
+          "size": 103506,
+          "sha256": "f83432c90664ec0bd1b24cd3795dd7c452d335263ee27384ebad073edaeaef9f"
+        },
+        {
+          "path": "docProps/thumbnail.jpeg",
+          "size": 8324,
+          "sha256": "96367138dc44ce09bf2c8f0f8e49348a1478d2c5c0af69bbc2bbc38b63cdcead"
+        }
+      ]
+    },
+    {
+      "sequence": 13,
+      "path": "ACPOS_CORE-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx",
+      "git_blob_sha": "e433984e3b62cc1f5287d9502a80bc067db1fc49",
+      "byte_size": 1028247,
+      "sha256": "824515a6509d11c975a3150f0739c3b5023c1241f0414225c4cece8c46ac8cf3",
+      "package_part_count": 24,
+      "package_parts": [
+        {
+          "path": "[Content_Types].xml",
+          "size": 2044,
+          "sha256": "ecbe3f7dfd70530319fed457805e79a3df0cc177119a7d97bacbb25f516c7adb"
+        },
+        {
+          "path": "_rels/.rels",
+          "size": 734,
+          "sha256": "a9ae57efe9186f07d48303bcac5d54c7e359bf3f503939c03ad2954e5c59a5c4"
+        },
+        {
+          "path": "docProps/core.xml",
+          "size": 721,
+          "sha256": "d14be8284e406d14dc2a576b19f15e7f637b955f9e27a3d9ed871ec99606f7ba"
+        },
+        {
+          "path": "docProps/app.xml",
+          "size": 1132,
+          "sha256": "be664981c3141cddfc59362beb287ebf20d0773660e2dd6faac5968a5930a081"
+        },
+        {
+          "path": "word/document.xml",
+          "size": 1407057,
+          "sha256": "c109d246f2747753961650e307c5078798efc3e2f90bfaa25255b1108826f986"
+        },
+        {
+          "path": "word/_rels/document.xml.rels",
+          "size": 2149,
+          "sha256": "d69cb9e07e7e20010f8cc70129bc47a2c1c8aced743c3f5898c1a68711aac789"
+        },
+        {
+          "path": "word/styles.xml",
+          "size": 349917,
+          "sha256": "55a529ae89771490fa220a09578f4fe4b653bdcb642f9dd4af687bfd4c529af5"
+        },
+        {
+          "path": "word/stylesWithEffects.xml",
+          "size": 438131,
+          "sha256": "463ae0928cf0d84775dbf8cf18d6c3029f6707c81bf590f6d6dd8757a5e93f15"
+        },
+        {
+          "path": "word/settings.xml",
+          "size": 2535,
+          "sha256": "51a0d348fe85965c66e4748a03c3c0d055d78455514f03cb121c334af7d73689"
+        },
+        {
+          "path": "word/webSettings.xml",
+          "size": 438,
+          "sha256": "349d36de7434d09f86987ff671d8814964a0588c1e630c06e562cda7e75e9f95"
+        },
+        {
+          "path": "word/fontTable.xml",
+          "size": 2811,
+          "sha256": "79385fb7f60247507ecaffc292e9ebd52ea0657b8634f629ba6fccc54011d6bb"
+        },
+        {
+          "path": "word/theme/theme1.xml",
+          "size": 10939,
+          "sha256": "e3a8ab7db9ca7afca56f5f2820a56e8b660016c647773555b060b0a02ac76941"
+        },
+        {
+          "path": "customXml/item1.xml",
+          "size": 262,
+          "sha256": "a86086ffc5d8e83ebd6c71a55d1d2efaa31b137977f5f3a752366e1023612144"
+        },
+        {
+          "path": "customXml/_rels/item1.xml.rels",
+          "size": 295,
+          "sha256": "1ca6c9a64edcebe24ee703a54403611b322d96da33371779e742d2d3f7ed7a6c"
+        },
+        {
+          "path": "customXml/itemProps1.xml",
+          "size": 354,
+          "sha256": "c542307b13ec29a8b546217bb37936ab4822e044b265d2952985ec3d6afed24e"
+        },
+        {
+          "path": "word/numbering.xml",
+          "size": 5513,
+          "sha256": "70976f19cbcd896e51890859fe6ecb3467a5a7ad0c040160fedc5a1993cb09ce"
+        },
+        {
+          "path": "word/header1.xml",
+          "size": 1509,
+          "sha256": "cfe249405da584c32fbc405ea118a6da882cf60f66cadec9229e63a80e5b2bae"
+        },
+        {
+          "path": "word/footer1.xml",
+          "size": 1530,
+          "sha256": "1b5a03ac56def7ad836d5e411f27cbc2dba1f6dfc6e2f62cf74b264cb0b791a8"
+        },
+        {
+          "path": "word/media/image1.png",
+          "size": 205554,
+          "sha256": "763b78c7678b73d134b06c0534b9ef01cbbb2e532ab1e240bbbd98e3362c0bde"
+        },
+        {
+          "path": "word/media/image2.png",
+          "size": 175729,
+          "sha256": "7c20f32b7d79a667ab349cf0be6eb3c4480074756d6c62f645fddf8627547828"
+        },
+        {
+          "path": "word/media/image3.png",
+          "size": 216176,
+          "sha256": "e0768b4b32cacccebf920f5ced93055d1e323325c4920ace87d265ed302fa0f5"
+        },
+        {
+          "path": "word/media/image4.png",
+          "size": 226236,
+          "sha256": "7efd2d774f50ee9045c03d751c0d7cfccf5268426287f7152bd6cf1720994e44"
+        },
+        {
+          "path": "word/media/image5.png",
+          "size": 148398,
+          "sha256": "dcba7dbc8ed3bdbc18423eeb4a6295a86dd6201282be5923421a75284e868ced"
+        },
+        {
+          "path": "docProps/thumbnail.jpeg",
+          "size": 8324,
+          "sha256": "96367138dc44ce09bf2c8f0f8e49348a1478d2c5c0af69bbc2bbc38b63cdcead"
+        }
+      ]
+    },
+    {
+      "sequence": 14,
+      "path": "ACPOS_DB-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx",
+      "git_blob_sha": "cf4b4576432fa0946fb3fbaeda9b3a59c12357a1",
+      "byte_size": 494358,
+      "sha256": "bc95845574b815540fbe1a726e0d659eef7ee1346aea3450b7d019b47a496895",
+      "package_part_count": 24,
+      "package_parts": [
+        {
+          "path": "[Content_Types].xml",
+          "size": 2044,
+          "sha256": "ecbe3f7dfd70530319fed457805e79a3df0cc177119a7d97bacbb25f516c7adb"
+        },
+        {
+          "path": "_rels/.rels",
+          "size": 734,
+          "sha256": "a9ae57efe9186f07d48303bcac5d54c7e359bf3f503939c03ad2954e5c59a5c4"
+        },
+        {
+          "path": "docProps/core.xml",
+          "size": 721,
+          "sha256": "d14be8284e406d14dc2a576b19f15e7f637b955f9e27a3d9ed871ec99606f7ba"
+        },
+        {
+          "path": "docProps/app.xml",
+          "size": 1132,
+          "sha256": "be664981c3141cddfc59362beb287ebf20d0773660e2dd6faac5968a5930a081"
+        },
+        {
+          "path": "word/document.xml",
+          "size": 578893,
+          "sha256": "e66e4010edeff3e884626a055248962d04d7b803f7d128f2aa552a2d3abbb8af"
+        },
+        {
+          "path": "word/_rels/document.xml.rels",
+          "size": 2149,
+          "sha256": "d69cb9e07e7e20010f8cc70129bc47a2c1c8aced743c3f5898c1a68711aac789"
+        },
+        {
+          "path": "word/styles.xml",
+          "size": 350110,
+          "sha256": "62d36db1ccddf19287bfe08253151ebef4abf2b4cd867669e0cb5c1ef51d829c"
+        },
+        {
+          "path": "word/stylesWithEffects.xml",
+          "size": 438131,
+          "sha256": "463ae0928cf0d84775dbf8cf18d6c3029f6707c81bf590f6d6dd8757a5e93f15"
+        },
+        {
+          "path": "word/settings.xml",
+          "size": 2535,
+          "sha256": "51a0d348fe85965c66e4748a03c3c0d055d78455514f03cb121c334af7d73689"
+        },
+        {
+          "path": "word/webSettings.xml",
+          "size": 438,
+          "sha256": "349d36de7434d09f86987ff671d8814964a0588c1e630c06e562cda7e75e9f95"
+        },
+        {
+          "path": "word/fontTable.xml",
+          "size": 2811,
+          "sha256": "79385fb7f60247507ecaffc292e9ebd52ea0657b8634f629ba6fccc54011d6bb"
+        },
+        {
+          "path": "word/theme/theme1.xml",
+          "size": 10939,
+          "sha256": "e3a8ab7db9ca7afca56f5f2820a56e8b660016c647773555b060b0a02ac76941"
+        },
+        {
+          "path": "customXml/item1.xml",
+          "size": 262,
+          "sha256": "a86086ffc5d8e83ebd6c71a55d1d2efaa31b137977f5f3a752366e1023612144"
+        },
+        {
+          "path": "customXml/_rels/item1.xml.rels",
+          "size": 295,
+          "sha256": "1ca6c9a64edcebe24ee703a54403611b322d96da33371779e742d2d3f7ed7a6c"
+        },
+        {
+          "path": "customXml/itemProps1.xml",
+          "size": 354,
+          "sha256": "c542307b13ec29a8b546217bb37936ab4822e044b265d2952985ec3d6afed24e"
+        },
+        {
+          "path": "word/numbering.xml",
+          "size": 5513,
+          "sha256": "70976f19cbcd896e51890859fe6ecb3467a5a7ad0c040160fedc5a1993cb09ce"
+        },
+        {
+          "path": "word/header1.xml",
+          "size": 1410,
+          "sha256": "677b62bb4041be824e46c324a8eb8a2e906ec506ec0222eccae7cb508169d769"
+        },
+        {
+          "path": "word/footer1.xml",
+          "size": 1473,
+          "sha256": "6362a7310047c7cb905692f0b74ce6c5fcc8cb18281c8438eaef8bfd884c5632"
+        },
+        {
+          "path": "word/media/image1.png",
+          "size": 98737,
+          "sha256": "cacac7fcdbc4b842a7838a67891230c18b1db1b0df9323d38efc7c11e8efe47b"
+        },
+        {
+          "path": "word/media/image2.png",
+          "size": 106711,
+          "sha256": "18029908cdb62316303b70d585f45d46a973f44d635021684c52c95c2d969c42"
+        },
+        {
+          "path": "word/media/image3.png",
+          "size": 76427,
+          "sha256": "5bd4d1d83285cfdde789dbcf2d66c5165582b4966049c17a2dfae981fb6ac189"
+        },
+        {
+          "path": "word/media/image4.png",
+          "size": 80781,
+          "sha256": "f5f0278993857936179dfc74ebdaf52ee53efddd0c98ff9d5552dc330ef8acb0"
+        },
+        {
+          "path": "word/media/image5.png",
+          "size": 95482,
+          "sha256": "4475775fb84b66acfc58e6861a77288469334420abf686d2f3d5994d2c84e97c"
+        },
+        {
+          "path": "docProps/thumbnail.jpeg",
+          "size": 8324,
+          "sha256": "96367138dc44ce09bf2c8f0f8e49348a1478d2c5c0af69bbc2bbc38b63cdcead"
+        }
+      ]
+    },
+    {
+      "sequence": 15,
+      "path": "ACPOS_DEV-01_企業自動開發系統_Mother_Basic_Design_OPTIMIZED.docx",
+      "git_blob_sha": "cee9f1f89cab5a2d5773afbad0d74f7fabf4fc22",
+      "byte_size": 287380,
+      "sha256": "aa00684b11fad2b498c7a5b3b7a8a8f08ebf57cadbfbf2d6a86fe0fe298a3af1",
+      "package_part_count": 21,
+      "package_parts": [
+        {
+          "path": "[Content_Types].xml",
+          "size": 2044,
+          "sha256": "ecbe3f7dfd70530319fed457805e79a3df0cc177119a7d97bacbb25f516c7adb"
+        },
+        {
+          "path": "_rels/.rels",
+          "size": 734,
+          "sha256": "a9ae57efe9186f07d48303bcac5d54c7e359bf3f503939c03ad2954e5c59a5c4"
+        },
+        {
+          "path": "docProps/core.xml",
+          "size": 791,
+          "sha256": "4f3bd47fa48904f246937ec922fa38b71f27b9f663faa804b84c0921fa360975"
+        },
+        {
+          "path": "docProps/app.xml",
+          "size": 1132,
+          "sha256": "be664981c3141cddfc59362beb287ebf20d0773660e2dd6faac5968a5930a081"
+        },
+        {
+          "path": "word/document.xml",
+          "size": 806926,
+          "sha256": "4f2424cd7ad1aec6b2daec5f976a7f0b628bf0dabbd18c5f5345a74f0106dee9"
+        },
+        {
+          "path": "word/_rels/document.xml.rels",
+          "size": 1750,
+          "sha256": "1cd6cb9b4f34c97bd4f3d39f33ca3831df5ebbcc12bb256184003184d5575459"
+        },
+        {
+          "path": "word/styles.xml",
+          "size": 350094,
+          "sha256": "50482bb9b37252c7798166c09ee40849534c74fe1d66407432e78f151ae5d9aa"
+        },
+        {
+          "path": "word/stylesWithEffects.xml",
+          "size": 438131,
+          "sha256": "463ae0928cf0d84775dbf8cf18d6c3029f6707c81bf590f6d6dd8757a5e93f15"
+        },
+        {
+          "path": "word/settings.xml",
+          "size": 2535,
+          "sha256": "51a0d348fe85965c66e4748a03c3c0d055d78455514f03cb121c334af7d73689"
+        },
+        {
+          "path": "word/webSettings.xml",
+          "size": 438,
+          "sha256": "349d36de7434d09f86987ff671d8814964a0588c1e630c06e562cda7e75e9f95"
+        },
+        {
+          "path": "word/fontTable.xml",
+          "size": 2811,
+          "sha256": "79385fb7f60247507ecaffc292e9ebd52ea0657b8634f629ba6fccc54011d6bb"
+        },
+        {
+          "path": "word/theme/theme1.xml",
+          "size": 10939,
+          "sha256": "e3a8ab7db9ca7afca56f5f2820a56e8b660016c647773555b060b0a02ac76941"
+        },
+        {
+          "path": "customXml/item1.xml",
+          "size": 262,
+          "sha256": "a86086ffc5d8e83ebd6c71a55d1d2efaa31b137977f5f3a752366e1023612144"
+        },
+        {
+          "path": "customXml/_rels/item1.xml.rels",
+          "size": 295,
+          "sha256": "1ca6c9a64edcebe24ee703a54403611b322d96da33371779e742d2d3f7ed7a6c"
+        },
+        {
+          "path": "customXml/itemProps1.xml",
+          "size": 354,
+          "sha256": "c542307b13ec29a8b546217bb37936ab4822e044b265d2952985ec3d6afed24e"
+        },
+        {
+          "path": "word/numbering.xml",
+          "size": 5513,
+          "sha256": "70976f19cbcd896e51890859fe6ecb3467a5a7ad0c040160fedc5a1993cb09ce"
+        },
+        {
+          "path": "word/header1.xml",
+          "size": 1542,
+          "sha256": "98a9f36351b576d4fd67a21404f5a627a03012fc72b5ff25eaa4d7a5ee5499e0"
+        },
+        {
+          "path": "word/footer1.xml",
+          "size": 1537,
+          "sha256": "4cf7eda36cad98906f22b5b1e492da7f8583890fcd0113969d56cd8eddf57921"
+        },
+        {
+          "path": "word/media/image1.png",
+          "size": 129850,
+          "sha256": "82f95efd2938f93dcb78b537c3097f2e6258ff394f94799ccaebb812fecfd5a1"
+        },
+        {
+          "path": "word/media/image2.png",
+          "size": 99745,
+          "sha256": "bcd63b4f03625ce0f38a882d23f5d0653dce9aa3fd2fe70399e5a77c5260b4f6"
+        },
+        {
+          "path": "docProps/thumbnail.jpeg",
+          "size": 8324,
+          "sha256": "96367138dc44ce09bf2c8f0f8e49348a1478d2c5c0af69bbc2bbc38b63cdcead"
+        }
+      ]
+    },
+    {
+      "sequence": 16,
+      "path": "ACPOS_EDIT-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx",
+      "git_blob_sha": "74122591a04c1d7f9aa7bdccad36df3c940945e9",
+      "byte_size": 615071,
+      "sha256": "80d9393b99d352663779e4eb0b8d530b5857334062af3e26a8cce81f236f6d37",
+      "package_part_count": 24,
+      "package_parts": [
+        {
+          "path": "[Content_Types].xml",
+          "size": 2044,
+          "sha256": "ecbe3f7dfd70530319fed457805e79a3df0cc177119a7d97bacbb25f516c7adb"
+        },
+        {
+          "path": "_rels/.rels",
+          "size": 734,
+          "sha256": "a9ae57efe9186f07d48303bcac5d54c7e359bf3f503939c03ad2954e5c59a5c4"
+        },
+        {
+          "path": "docProps/core.xml",
+          "size": 721,
+          "sha256": "d14be8284e406d14dc2a576b19f15e7f637b955f9e27a3d9ed871ec99606f7ba"
+        },
+        {
+          "path": "docProps/app.xml",
+          "size": 1132,
+          "sha256": "be664981c3141cddfc59362beb287ebf20d0773660e2dd6faac5968a5930a081"
+        },
+        {
+          "path": "word/document.xml",
+          "size": 1245581,
+          "sha256": "9b4cffeec5911b2f6bc6547b96a05d3a2b6bdabb03a14a20b24c98119f60c019"
+        },
+        {
+          "path": "word/_rels/document.xml.rels",
+          "size": 2149,
+          "sha256": "d69cb9e07e7e20010f8cc70129bc47a2c1c8aced743c3f5898c1a68711aac789"
+        },
+        {
+          "path": "word/styles.xml",
+          "size": 349862,
+          "sha256": "2af50b0c2c317d593d8631d8dd969838cefef9527d8efef057aadda8da6881bc"
+        },
+        {
+          "path": "word/stylesWithEffects.xml",
+          "size": 438131,
+          "sha256": "463ae0928cf0d84775dbf8cf18d6c3029f6707c81bf590f6d6dd8757a5e93f15"
+        },
+        {
+          "path": "word/settings.xml",
+          "size": 2535,
+          "sha256": "51a0d348fe85965c66e4748a03c3c0d055d78455514f03cb121c334af7d73689"
+        },
+        {
+          "path": "word/webSettings.xml",
+          "size": 438,
+          "sha256": "349d36de7434d09f86987ff671d8814964a0588c1e630c06e562cda7e75e9f95"
+        },
+        {
+          "path": "word/fontTable.xml",
+          "size": 2811,
+          "sha256": "79385fb7f60247507ecaffc292e9ebd52ea0657b8634f629ba6fccc54011d6bb"
+        },
+        {
+          "path": "word/theme/theme1.xml",
+          "size": 10939,
+          "sha256": "e3a8ab7db9ca7afca56f5f2820a56e8b660016c647773555b060b0a02ac76941"
+        },
+        {
+          "path": "customXml/item1.xml",
+          "size": 262,
+          "sha256": "a86086ffc5d8e83ebd6c71a55d1d2efaa31b137977f5f3a752366e1023612144"
+        },
+        {
+          "path": "customXml/_rels/item1.xml.rels",
+          "size": 295,
+          "sha256": "1ca6c9a64edcebe24ee703a54403611b322d96da33371779e742d2d3f7ed7a6c"
+        },
+        {
+          "path": "customXml/itemProps1.xml",
+          "size": 354,
+          "sha256": "c542307b13ec29a8b546217bb37936ab4822e044b265d2952985ec3d6afed24e"
+        },
+        {
+          "path": "word/numbering.xml",
+          "size": 5513,
+          "sha256": "70976f19cbcd896e51890859fe6ecb3467a5a7ad0c040160fedc5a1993cb09ce"
+        },
+        {
+          "path": "word/header1.xml",
+          "size": 1519,
+          "sha256": "129ead75102d286c9dd7cc053298842281900c83f1ee70159d5f6921208a9198"
+        },
+        {
+          "path": "word/footer1.xml",
+          "size": 1539,
+          "sha256": "847341c9fe6e102e1b4136e60550a44738f413d49c4484b2785cce2cd67315d5"
+        },
+        {
+          "path": "word/media/image1.png",
+          "size": 106984,
+          "sha256": "d76c68e72998b0c75769602c65803caea293f1ed1035d3fb2197a9d2678ec4a4"
+        },
+        {
+          "path": "word/media/image2.png",
+          "size": 109968,
+          "sha256": "2f501c98c7442fedf0d498b49ca939dd0d034fd830a2d3e5d475f5864028acb9"
+        },
+        {
+          "path": "word/media/image3.png",
+          "size": 124020,
+          "sha256": "bbc327458a60c4f99b569f012fa0f69f4f6607ff393f1c00dcfb10c4aa93190e"
+        },
+        {
+          "path": "word/media/image4.png",
+          "size": 101191,
+          "sha256": "6c463b1858005105e4ec0228176336674716fba65e90841bf08a1e016d94a335"
+        },
+        {
+          "path": "word/media/image5.png",
+          "size": 106446,
+          "sha256": "857d813c73a698224b1c1487e21fe190693b50b660db966d8898211c877cbd3e"
+        },
+        {
+          "path": "docProps/thumbnail.jpeg",
+          "size": 8324,
+          "sha256": "96367138dc44ce09bf2c8f0f8e49348a1478d2c5c0af69bbc2bbc38b63cdcead"
+        }
+      ]
+    },
+    {
+      "sequence": 17,
+      "path": "ACPOS_ERP-01_ERP與財務_Mother_Basic_Design_OPTIMIZED.docx",
+      "git_blob_sha": "2bcdc5f835f822c987698c9b294a43bc99c8cfd4",
+      "byte_size": 833172,
+      "sha256": "3ab6d767ae08891b69c2f61d9408e9d39e9d84e5d8f3ac12d07f4c8234778eff",
+      "package_part_count": 25,
+      "package_parts": [
+        {
+          "path": "[Content_Types].xml",
+          "size": 2044,
+          "sha256": "ecbe3f7dfd70530319fed457805e79a3df0cc177119a7d97bacbb25f516c7adb"
+        },
+        {
+          "path": "_rels/.rels",
+          "size": 734,
+          "sha256": "a9ae57efe9186f07d48303bcac5d54c7e359bf3f503939c03ad2954e5c59a5c4"
+        },
+        {
+          "path": "docProps/core.xml",
+          "size": 846,
+          "sha256": "75058263a8f8078ee6bf38d0b65731626b8c6f70d9ed6b6ef82a483e51800c71"
+        },
+        {
+          "path": "docProps/app.xml",
+          "size": 1132,
+          "sha256": "be664981c3141cddfc59362beb287ebf20d0773660e2dd6faac5968a5930a081"
+        },
+        {
+          "path": "word/document.xml",
+          "size": 550801,
+          "sha256": "f563e02df5fd761eec1ca6300e13757439db2bbae16c8d08db02f0f08cfbddc6"
+        },
+        {
+          "path": "word/_rels/document.xml.rels",
+          "size": 2282,
+          "sha256": "72866562d5ebeb38fe03c36af0d2e959bed3a4a2edfd1e1e2386d2053b4a5531"
+        },
+        {
+          "path": "word/styles.xml",
+          "size": 350030,
+          "sha256": "a1a4aabdc25466664f327b1eec8b233c06d0c83251da2834c0b000d7f09b62aa"
+        },
+        {
+          "path": "word/stylesWithEffects.xml",
+          "size": 438131,
+          "sha256": "463ae0928cf0d84775dbf8cf18d6c3029f6707c81bf590f6d6dd8757a5e93f15"
+        },
+        {
+          "path": "word/settings.xml",
+          "size": 2535,
+          "sha256": "51a0d348fe85965c66e4748a03c3c0d055d78455514f03cb121c334af7d73689"
+        },
+        {
+          "path": "word/webSettings.xml",
+          "size": 438,
+          "sha256": "349d36de7434d09f86987ff671d8814964a0588c1e630c06e562cda7e75e9f95"
+        },
+        {
+          "path": "word/fontTable.xml",
+          "size": 2811,
+          "sha256": "79385fb7f60247507ecaffc292e9ebd52ea0657b8634f629ba6fccc54011d6bb"
+        },
+        {
+          "path": "word/theme/theme1.xml",
+          "size": 10939,
+          "sha256": "e3a8ab7db9ca7afca56f5f2820a56e8b660016c647773555b060b0a02ac76941"
+        },
+        {
+          "path": "customXml/item1.xml",
+          "size": 262,
+          "sha256": "a86086ffc5d8e83ebd6c71a55d1d2efaa31b137977f5f3a752366e1023612144"
+        },
+        {
+          "path": "customXml/_rels/item1.xml.rels",
+          "size": 295,
+          "sha256": "1ca6c9a64edcebe24ee703a54403611b322d96da33371779e742d2d3f7ed7a6c"
+        },
+        {
+          "path": "customXml/itemProps1.xml",
+          "size": 354,
+          "sha256": "c542307b13ec29a8b546217bb37936ab4822e044b265d2952985ec3d6afed24e"
+        },
+        {
+          "path": "word/numbering.xml",
+          "size": 5513,
+          "sha256": "70976f19cbcd896e51890859fe6ecb3467a5a7ad0c040160fedc5a1993cb09ce"
+        },
+        {
+          "path": "word/header1.xml",
+          "size": 1383,
+          "sha256": "a0a1a72b83e1c5505d8cd7e3414e6f532f595c226c9f82f628394cab636ffd7e"
+        },
+        {
+          "path": "word/footer1.xml",
+          "size": 1357,
+          "sha256": "a183cb19cd13c2ab4cadff1ad74704ae219162a4cbf904b6194e4994ab024f54"
+        },
+        {
+          "path": "word/media/image1.png",
+          "size": 129850,
+          "sha256": "82f95efd2938f93dcb78b537c3097f2e6258ff394f94799ccaebb812fecfd5a1"
+        },
+        {
+          "path": "word/media/image2.png",
+          "size": 99745,
+          "sha256": "bcd63b4f03625ce0f38a882d23f5d0653dce9aa3fd2fe70399e5a77c5260b4f6"
+        },
+        {
+          "path": "word/media/image3.png",
+          "size": 158457,
+          "sha256": "3ae45e7bb3c1e74f5d7833af1c037c6a5f9b6732f2c4d324292ea34c99a301a2"
+        },
+        {
+          "path": "word/media/image4.png",
+          "size": 149620,
+          "sha256": "126f0886bcfe6db57046d2e3e91e20e449b5c78c4433a3e73e5135a1d9b73a53"
+        },
+        {
+          "path": "word/media/image5.png",
+          "size": 131699,
+          "sha256": "2a78642e977102181baf495609595b784d4831df83e9b8efe7aef5bcc5a0c5d6"
+        },
+        {
+          "path": "word/media/image6.png",
+          "size": 142874,
+          "sha256": "c5d3db3c3aabe61b3469ff9df084b65782a32be7991b2dff84ea2a212078f77b"
+        },
+        {
+          "path": "docProps/thumbnail.jpeg",
+          "size": 8324,
+          "sha256": "96367138dc44ce09bf2c8f0f8e49348a1478d2c5c0af69bbc2bbc38b63cdcead"
+        }
+      ]
+    },
+    {
+      "sequence": 18,
+      "path": "ACPOS_GLOBAL_HOME_SHELL_NAVIGATION_Mother_Basic_Design_OPTIMIZED.docx",
+      "git_blob_sha": "10ca6bff403b3d8b7c3abf4ad1633e9717ce3945",
+      "byte_size": 144652,
+      "sha256": "334a4679600f092b733bfd8d41a3bc44fe9078b14be2e1bc27a2bc5f4232e15e",
+      "package_part_count": 19,
+      "package_parts": [
+        {
+          "path": "[Content_Types].xml",
+          "size": 1916,
+          "sha256": "641cf94154dbac62b28308772123f5a2b1fb5dd09a73216a53b4f09d6e0a3990"
+        },
+        {
+          "path": "_rels/.rels",
+          "size": 734,
+          "sha256": "a9ae57efe9186f07d48303bcac5d54c7e359bf3f503939c03ad2954e5c59a5c4"
+        },
+        {
+          "path": "docProps/core.xml",
+          "size": 721,
+          "sha256": "d14be8284e406d14dc2a576b19f15e7f637b955f9e27a3d9ed871ec99606f7ba"
+        },
+        {
+          "path": "docProps/app.xml",
+          "size": 1132,
+          "sha256": "be664981c3141cddfc59362beb287ebf20d0773660e2dd6faac5968a5930a081"
+        },
+        {
+          "path": "word/document.xml",
+          "size": 135433,
+          "sha256": "48e760b87ef0079c1cfbd7f1d861d764a16aa2481105d5ae77c9a8e2d42b6e94"
+        },
+        {
+          "path": "word/_rels/document.xml.rels",
+          "size": 1488,
+          "sha256": "7d23e7ba6a1227f2c2d4150b2c2c5622f19af97d958cf4644c64ffffa796fb65"
+        },
+        {
+          "path": "word/styles.xml",
+          "size": 349921,
+          "sha256": "0611ec94d8c6cddbc3b335a2689c574942d6174e1f2c01d2231cf1f55937cbea"
+        },
+        {
+          "path": "word/stylesWithEffects.xml",
+          "size": 438131,
+          "sha256": "463ae0928cf0d84775dbf8cf18d6c3029f6707c81bf590f6d6dd8757a5e93f15"
+        },
+        {
+          "path": "word/settings.xml",
+          "size": 2535,
+          "sha256": "51a0d348fe85965c66e4748a03c3c0d055d78455514f03cb121c334af7d73689"
+        },
+        {
+          "path": "word/webSettings.xml",
+          "size": 438,
+          "sha256": "349d36de7434d09f86987ff671d8814964a0588c1e630c06e562cda7e75e9f95"
+        },
+        {
+          "path": "word/fontTable.xml",
+          "size": 2811,
+          "sha256": "79385fb7f60247507ecaffc292e9ebd52ea0657b8634f629ba6fccc54011d6bb"
+        },
+        {
+          "path": "word/theme/theme1.xml",
+          "size": 10939,
+          "sha256": "e3a8ab7db9ca7afca56f5f2820a56e8b660016c647773555b060b0a02ac76941"
+        },
+        {
+          "path": "customXml/item1.xml",
+          "size": 262,
+          "sha256": "a86086ffc5d8e83ebd6c71a55d1d2efaa31b137977f5f3a752366e1023612144"
+        },
+        {
+          "path": "customXml/_rels/item1.xml.rels",
+          "size": 295,
+          "sha256": "1ca6c9a64edcebe24ee703a54403611b322d96da33371779e742d2d3f7ed7a6c"
+        },
+        {
+          "path": "customXml/itemProps1.xml",
+          "size": 354,
+          "sha256": "c542307b13ec29a8b546217bb37936ab4822e044b265d2952985ec3d6afed24e"
+        },
+        {
+          "path": "word/numbering.xml",
+          "size": 5513,
+          "sha256": "70976f19cbcd896e51890859fe6ecb3467a5a7ad0c040160fedc5a1993cb09ce"
+        },
+        {
+          "path": "word/footer1.xml",
+          "size": 1502,
+          "sha256": "063769a98bca48b8c1470a257e88c4316e5bf69c72667a00c75075785acc3db5"
+        },
+        {
+          "path": "word/media/image1.png",
+          "size": 104800,
+          "sha256": "2357b5377c7026ef34aaf6d68d9e8b7bfa707af1d4c41dc116956ad611758246"
+        },
+        {
+          "path": "docProps/thumbnail.jpeg",
+          "size": 8324,
+          "sha256": "96367138dc44ce09bf2c8f0f8e49348a1478d2c5c0af69bbc2bbc38b63cdcead"
+        }
+      ]
+    },
+    {
+      "sequence": 19,
+      "path": "ACPOS_IAM-01_帳戶與權限_Mother_Basic_Design_OPTIMIZED.docx",
+      "git_blob_sha": "770c67db9135aa0a0cb165c9b897c45f0ad9dab4",
+      "byte_size": 324499,
+      "sha256": "03bc0445c97e04bb085f0ceb1446fa2c8e64d5531157156f66fbfd2c6147a82d",
+      "package_part_count": 21,
+      "package_parts": [
+        {
+          "path": "[Content_Types].xml",
+          "size": 2044,
+          "sha256": "ecbe3f7dfd70530319fed457805e79a3df0cc177119a7d97bacbb25f516c7adb"
+        },
+        {
+          "path": "_rels/.rels",
+          "size": 734,
+          "sha256": "a9ae57efe9186f07d48303bcac5d54c7e359bf3f503939c03ad2954e5c59a5c4"
+        },
+        {
+          "path": "docProps/core.xml",
+          "size": 904,
+          "sha256": "742f109b9c46716cee847c75bd9c1e6bc93521b5731a2c52cb566ab5160b9f1a"
+        },
+        {
+          "path": "docProps/app.xml",
+          "size": 1132,
+          "sha256": "be664981c3141cddfc59362beb287ebf20d0773660e2dd6faac5968a5930a081"
+        },
+        {
+          "path": "word/document.xml",
+          "size": 983157,
+          "sha256": "fcb347c7528e33cec5d9e685af9acaba773ac3c135584de280236dc603dad9b0"
+        },
+        {
+          "path": "word/_rels/document.xml.rels",
+          "size": 1750,
+          "sha256": "1cd6cb9b4f34c97bd4f3d39f33ca3831df5ebbcc12bb256184003184d5575459"
+        },
+        {
+          "path": "word/styles.xml",
+          "size": 350094,
+          "sha256": "50482bb9b37252c7798166c09ee40849534c74fe1d66407432e78f151ae5d9aa"
+        },
+        {
+          "path": "word/stylesWithEffects.xml",
+          "size": 438131,
+          "sha256": "463ae0928cf0d84775dbf8cf18d6c3029f6707c81bf590f6d6dd8757a5e93f15"
+        },
+        {
+          "path": "word/settings.xml",
+          "size": 2535,
+          "sha256": "51a0d348fe85965c66e4748a03c3c0d055d78455514f03cb121c334af7d73689"
+        },
+        {
+          "path": "word/webSettings.xml",
+          "size": 438,
+          "sha256": "349d36de7434d09f86987ff671d8814964a0588c1e630c06e562cda7e75e9f95"
+        },
+        {
+          "path": "word/fontTable.xml",
+          "size": 2811,
+          "sha256": "79385fb7f60247507ecaffc292e9ebd52ea0657b8634f629ba6fccc54011d6bb"
+        },
+        {
+          "path": "word/theme/theme1.xml",
+          "size": 10939,
+          "sha256": "e3a8ab7db9ca7afca56f5f2820a56e8b660016c647773555b060b0a02ac76941"
+        },
+        {
+          "path": "customXml/item1.xml",
+          "size": 262,
+          "sha256": "a86086ffc5d8e83ebd6c71a55d1d2efaa31b137977f5f3a752366e1023612144"
+        },
+        {
+          "path": "customXml/_rels/item1.xml.rels",
+          "size": 295,
+          "sha256": "1ca6c9a64edcebe24ee703a54403611b322d96da33371779e742d2d3f7ed7a6c"
+        },
+        {
+          "path": "customXml/itemProps1.xml",
+          "size": 354,
+          "sha256": "c542307b13ec29a8b546217bb37936ab4822e044b265d2952985ec3d6afed24e"
+        },
+        {
+          "path": "word/numbering.xml",
+          "size": 5513,
+          "sha256": "70976f19cbcd896e51890859fe6ecb3467a5a7ad0c040160fedc5a1993cb09ce"
+        },
+        {
+          "path": "word/header1.xml",
+          "size": 1542,
+          "sha256": "8f70a8c884419d2f3c6c2921355da4335a4e22407dab06505dfa92e492292405"
+        },
+        {
+          "path": "word/footer1.xml",
+          "size": 1528,
+          "sha256": "16dffeaffc501a0f8c6dbbc383d70da0cc15ab64ad1c8b1effc551fb19c0d00c"
+        },
+        {
+          "path": "word/media/image1.png",
+          "size": 148876,
+          "sha256": "ee5da399941ca5920f5c58feca171f647d1a89308e8213d9331074b5d9df4374"
+        },
+        {
+          "path": "word/media/image2.png",
+          "size": 117270,
+          "sha256": "4e51ebcd164ce4f36687b283084be6fe4f3256a546aa788109cec6804088cc56"
+        },
+        {
+          "path": "docProps/thumbnail.jpeg",
+          "size": 8324,
+          "sha256": "96367138dc44ce09bf2c8f0f8e49348a1478d2c5c0af69bbc2bbc38b63cdcead"
+        }
+      ]
+    },
+    {
+      "sequence": 20,
+      "path": "ACPOS_INFO-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx",
+      "git_blob_sha": "5301f05cd3da463326a912ab35e4bf36e3e4f197",
+      "byte_size": 459395,
+      "sha256": "553378eae155dc74356f05bc8e0462287b1e7d95bc7944f3a599eeef996b0ee1",
+      "package_part_count": 24,
+      "package_parts": [
+        {
+          "path": "[Content_Types].xml",
+          "size": 2044,
+          "sha256": "ecbe3f7dfd70530319fed457805e79a3df0cc177119a7d97bacbb25f516c7adb"
+        },
+        {
+          "path": "_rels/.rels",
+          "size": 734,
+          "sha256": "a9ae57efe9186f07d48303bcac5d54c7e359bf3f503939c03ad2954e5c59a5c4"
+        },
+        {
+          "path": "docProps/core.xml",
+          "size": 721,
+          "sha256": "d14be8284e406d14dc2a576b19f15e7f637b955f9e27a3d9ed871ec99606f7ba"
+        },
+        {
+          "path": "docProps/app.xml",
+          "size": 1132,
+          "sha256": "be664981c3141cddfc59362beb287ebf20d0773660e2dd6faac5968a5930a081"
+        },
+        {
+          "path": "word/document.xml",
+          "size": 646218,
+          "sha256": "462b39c3a709fe7c78c395c988819cad83413e2b001daac47943ab5525df9240"
+        },
+        {
+          "path": "word/_rels/document.xml.rels",
+          "size": 2149,
+          "sha256": "d69cb9e07e7e20010f8cc70129bc47a2c1c8aced743c3f5898c1a68711aac789"
+        },
+        {
+          "path": "word/styles.xml",
+          "size": 349878,
+          "sha256": "0f5623e970c6ad3a943500db59eb853a32c1386341032511659c63a76ae64608"
+        },
+        {
+          "path": "word/stylesWithEffects.xml",
+          "size": 438131,
+          "sha256": "463ae0928cf0d84775dbf8cf18d6c3029f6707c81bf590f6d6dd8757a5e93f15"
+        },
+        {
+          "path": "word/settings.xml",
+          "size": 2535,
+          "sha256": "51a0d348fe85965c66e4748a03c3c0d055d78455514f03cb121c334af7d73689"
+        },
+        {
+          "path": "word/webSettings.xml",
+          "size": 438,
+          "sha256": "349d36de7434d09f86987ff671d8814964a0588c1e630c06e562cda7e75e9f95"
+        },
+        {
+          "path": "word/fontTable.xml",
+          "size": 2811,
+          "sha256": "79385fb7f60247507ecaffc292e9ebd52ea0657b8634f629ba6fccc54011d6bb"
+        },
+        {
+          "path": "word/theme/theme1.xml",
+          "size": 10939,
+          "sha256": "e3a8ab7db9ca7afca56f5f2820a56e8b660016c647773555b060b0a02ac76941"
+        },
+        {
+          "path": "customXml/item1.xml",
+          "size": 262,
+          "sha256": "a86086ffc5d8e83ebd6c71a55d1d2efaa31b137977f5f3a752366e1023612144"
+        },
+        {
+          "path": "customXml/_rels/item1.xml.rels",
+          "size": 295,
+          "sha256": "1ca6c9a64edcebe24ee703a54403611b322d96da33371779e742d2d3f7ed7a6c"
+        },
+        {
+          "path": "customXml/itemProps1.xml",
+          "size": 354,
+          "sha256": "c542307b13ec29a8b546217bb37936ab4822e044b265d2952985ec3d6afed24e"
+        },
+        {
+          "path": "word/numbering.xml",
+          "size": 5513,
+          "sha256": "70976f19cbcd896e51890859fe6ecb3467a5a7ad0c040160fedc5a1993cb09ce"
+        },
+        {
+          "path": "word/header1.xml",
+          "size": 1459,
+          "sha256": "9c5796f5c564331b36187e209ed0d38f5ae80368a9f5a27334beede3cb60d298"
+        },
+        {
+          "path": "word/footer1.xml",
+          "size": 1479,
+          "sha256": "6687241216f4a6c68166190939fccf928286527373722f10685046af9ebb7c12"
+        },
+        {
+          "path": "word/media/image1.png",
+          "size": 84816,
+          "sha256": "57eb7f79e246d84c824b5c174fc28d44ad014eb98866adb40d81e77b1044a34c"
+        },
+        {
+          "path": "word/media/image2.png",
+          "size": 85684,
+          "sha256": "6d8b6ff199058e8ab4394750741ff5f54a9e94a69baaee4ca0db67fb796d3ec5"
+        },
+        {
+          "path": "word/media/image3.png",
+          "size": 83016,
+          "sha256": "f388fe78c1a9febc3be45ca2d59b6f727b415ac744a41d385e43967df0cde6a3"
+        },
+        {
+          "path": "word/media/image4.png",
+          "size": 86903,
+          "sha256": "8b138bd4ae821083bb4e9be5f498ccdae3aeee80b4a6ad249337dc31df88df3c"
+        },
+        {
+          "path": "word/media/image5.png",
+          "size": 83272,
+          "sha256": "89f3cfaf46971f19227918175ad9d8c2aa04791a45ab461773a877cdbb3d18a4"
+        },
+        {
+          "path": "docProps/thumbnail.jpeg",
+          "size": 8324,
+          "sha256": "96367138dc44ce09bf2c8f0f8e49348a1478d2c5c0af69bbc2bbc38b63cdcead"
+        }
+      ]
+    },
+    {
+      "sequence": 21,
+      "path": "ACPOS_KB-01_知識庫_Mother_Basic_Design_OPTIMIZED.docx",
+      "git_blob_sha": "bb7e070a923e9dad31e8d23624d6973e85a9a8b4",
+      "byte_size": 430478,
+      "sha256": "023ec50eaac1b9de6214d1dce1a2a8e9c2e4769a42f01252275da6de036af7b8",
+      "package_part_count": 23,
+      "package_parts": [
+        {
+          "path": "[Content_Types].xml",
+          "size": 2044,
+          "sha256": "ecbe3f7dfd70530319fed457805e79a3df0cc177119a7d97bacbb25f516c7adb"
+        },
+        {
+          "path": "_rels/.rels",
+          "size": 734,
+          "sha256": "a9ae57efe9186f07d48303bcac5d54c7e359bf3f503939c03ad2954e5c59a5c4"
+        },
+        {
+          "path": "docProps/core.xml",
+          "size": 925,
+          "sha256": "d6ed3ad9595a20768a878f06a2f922985459e445270e01f0ef28845667f04dbc"
+        },
+        {
+          "path": "docProps/app.xml",
+          "size": 1132,
+          "sha256": "be664981c3141cddfc59362beb287ebf20d0773660e2dd6faac5968a5930a081"
+        },
+        {
+          "path": "word/document.xml",
+          "size": 644946,
+          "sha256": "82bd868ef4f432592dbca8893644c6c11433dddc3a3e3f935be6184119f448c3"
+        },
+        {
+          "path": "word/_rels/document.xml.rels",
+          "size": 2016,
+          "sha256": "e9cc554c4d0778fbe2818bf95da7b26ee8a42328a3b355b9925b0a1d1e5fcbfa"
+        },
+        {
+          "path": "word/styles.xml",
+          "size": 350199,
+          "sha256": "728a2ea8ce9f6cf8133939c6d63491a25a1a6371f93e6737b5d03619a91d2902"
+        },
+        {
+          "path": "word/stylesWithEffects.xml",
+          "size": 438131,
+          "sha256": "463ae0928cf0d84775dbf8cf18d6c3029f6707c81bf590f6d6dd8757a5e93f15"
+        },
+        {
+          "path": "word/settings.xml",
+          "size": 2535,
+          "sha256": "51a0d348fe85965c66e4748a03c3c0d055d78455514f03cb121c334af7d73689"
+        },
+        {
+          "path": "word/webSettings.xml",
+          "size": 438,
+          "sha256": "349d36de7434d09f86987ff671d8814964a0588c1e630c06e562cda7e75e9f95"
+        },
+        {
+          "path": "word/fontTable.xml",
+          "size": 2811,
+          "sha256": "79385fb7f60247507ecaffc292e9ebd52ea0657b8634f629ba6fccc54011d6bb"
+        },
+        {
+          "path": "word/theme/theme1.xml",
+          "size": 10939,
+          "sha256": "e3a8ab7db9ca7afca56f5f2820a56e8b660016c647773555b060b0a02ac76941"
+        },
+        {
+          "path": "customXml/item1.xml",
+          "size": 262,
+          "sha256": "a86086ffc5d8e83ebd6c71a55d1d2efaa31b137977f5f3a752366e1023612144"
+        },
+        {
+          "path": "customXml/_rels/item1.xml.rels",
+          "size": 295,
+          "sha256": "1ca6c9a64edcebe24ee703a54403611b322d96da33371779e742d2d3f7ed7a6c"
+        },
+        {
+          "path": "customXml/itemProps1.xml",
+          "size": 354,
+          "sha256": "c542307b13ec29a8b546217bb37936ab4822e044b265d2952985ec3d6afed24e"
+        },
+        {
+          "path": "word/numbering.xml",
+          "size": 5513,
+          "sha256": "70976f19cbcd896e51890859fe6ecb3467a5a7ad0c040160fedc5a1993cb09ce"
+        },
+        {
+          "path": "word/header1.xml",
+          "size": 1382,
+          "sha256": "0a358303dfba3e3f4775410c5b097b49210c1d0576bf6545d5266098169ed44b"
+        },
+        {
+          "path": "word/footer1.xml",
+          "size": 1381,
+          "sha256": "3b5122b8555edd5dc9aac8d61d9f9bf400605876e5a3d4aa07ea4512b2ced30e"
+        },
+        {
+          "path": "word/media/image1.png",
+          "size": 75055,
+          "sha256": "9071389e69fabdcf86daf8ddc00c5563ded0b9b28fadef73f28539be53e50245"
+        },
+        {
+          "path": "word/media/image2.png",
+          "size": 78527,
+          "sha256": "91a381ebc49b4c73623b4cb280042df3f19d09ef23f5a654f5db399cbe4467cb"
+        },
+        {
+          "path": "word/media/image3.png",
+          "size": 116977,
+          "sha256": "35baae94b5357b5ce1a40cb4cf06b60964826d0282592c197922466ee8f83da8"
+        },
+        {
+          "path": "word/media/image4.png",
+          "size": 112803,
+          "sha256": "d87c484a0fc00790418d28e25886924dad155253b941c58285bcfd10db24c46b"
+        },
+        {
+          "path": "docProps/thumbnail.jpeg",
+          "size": 8324,
+          "sha256": "96367138dc44ce09bf2c8f0f8e49348a1478d2c5c0af69bbc2bbc38b63cdcead"
+        }
+      ]
+    },
+    {
+      "sequence": 22,
+      "path": "ACPOS_LOGIN_IDENTITY_ENTRY_Mother_Basic_Design_OPTIMIZED.docx",
+      "git_blob_sha": "d1fad32247d9f7417898ca44ad9a8ba895f4c6d6",
+      "byte_size": 92658,
+      "sha256": "d8fde21a6a68bdb0762c10e6181c5e6ecf09b882e3082d563caf74276e20b972",
+      "package_part_count": 19,
+      "package_parts": [
+        {
+          "path": "[Content_Types].xml",
+          "size": 1916,
+          "sha256": "641cf94154dbac62b28308772123f5a2b1fb5dd09a73216a53b4f09d6e0a3990"
+        },
+        {
+          "path": "_rels/.rels",
+          "size": 734,
+          "sha256": "a9ae57efe9186f07d48303bcac5d54c7e359bf3f503939c03ad2954e5c59a5c4"
+        },
+        {
+          "path": "docProps/core.xml",
+          "size": 721,
+          "sha256": "d14be8284e406d14dc2a576b19f15e7f637b955f9e27a3d9ed871ec99606f7ba"
+        },
+        {
+          "path": "docProps/app.xml",
+          "size": 1132,
+          "sha256": "be664981c3141cddfc59362beb287ebf20d0773660e2dd6faac5968a5930a081"
+        },
+        {
+          "path": "word/document.xml",
+          "size": 65238,
+          "sha256": "3d2a9262a44156513ba4a1b576cdb8ad61e78816826c8d2d2d0bf617b27878d8"
+        },
+        {
+          "path": "word/_rels/document.xml.rels",
+          "size": 1488,
+          "sha256": "7d23e7ba6a1227f2c2d4150b2c2c5622f19af97d958cf4644c64ffffa796fb65"
+        },
+        {
+          "path": "word/styles.xml",
+          "size": 349921,
+          "sha256": "0611ec94d8c6cddbc3b335a2689c574942d6174e1f2c01d2231cf1f55937cbea"
+        },
+        {
+          "path": "word/stylesWithEffects.xml",
+          "size": 438131,
+          "sha256": "463ae0928cf0d84775dbf8cf18d6c3029f6707c81bf590f6d6dd8757a5e93f15"
+        },
+        {
+          "path": "word/settings.xml",
+          "size": 2535,
+          "sha256": "51a0d348fe85965c66e4748a03c3c0d055d78455514f03cb121c334af7d73689"
+        },
+        {
+          "path": "word/webSettings.xml",
+          "size": 438,
+          "sha256": "349d36de7434d09f86987ff671d8814964a0588c1e630c06e562cda7e75e9f95"
+        },
+        {
+          "path": "word/fontTable.xml",
+          "size": 2811,
+          "sha256": "79385fb7f60247507ecaffc292e9ebd52ea0657b8634f629ba6fccc54011d6bb"
+        },
+        {
+          "path": "word/theme/theme1.xml",
+          "size": 10939,
+          "sha256": "e3a8ab7db9ca7afca56f5f2820a56e8b660016c647773555b060b0a02ac76941"
+        },
+        {
+          "path": "customXml/item1.xml",
+          "size": 262,
+          "sha256": "a86086ffc5d8e83ebd6c71a55d1d2efaa31b137977f5f3a752366e1023612144"
+        },
+        {
+          "path": "customXml/_rels/item1.xml.rels",
+          "size": 295,
+          "sha256": "1ca6c9a64edcebe24ee703a54403611b322d96da33371779e742d2d3f7ed7a6c"
+        },
+        {
+          "path": "customXml/itemProps1.xml",
+          "size": 354,
+          "sha256": "c542307b13ec29a8b546217bb37936ab4822e044b265d2952985ec3d6afed24e"
+        },
+        {
+          "path": "word/numbering.xml",
+          "size": 5513,
+          "sha256": "70976f19cbcd896e51890859fe6ecb3467a5a7ad0c040160fedc5a1993cb09ce"
+        },
+        {
+          "path": "word/footer1.xml",
+          "size": 1502,
+          "sha256": "063769a98bca48b8c1470a257e88c4316e5bf69c72667a00c75075785acc3db5"
+        },
+        {
+          "path": "word/media/image1.png",
+          "size": 55225,
+          "sha256": "3dd2b6a74e1a982ff1a4ff427a9af0f704a43bb61c9cf2ad8b0bd349cc854f12"
+        },
+        {
+          "path": "docProps/thumbnail.jpeg",
+          "size": 8324,
+          "sha256": "96367138dc44ce09bf2c8f0f8e49348a1478d2c5c0af69bbc2bbc38b63cdcead"
+        }
+      ]
+    },
+    {
+      "sequence": 23,
+      "path": "ACPOS_QA-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx",
+      "git_blob_sha": "f8ee3061d9b7073b7bcfcabcba4b9a09f26bf475",
+      "byte_size": 523506,
+      "sha256": "b212a3f1c4ff823e84b06524c3e9591ddc3753b711d1bd576426632f1a6c54b4",
+      "package_part_count": 22,
+      "package_parts": [
+        {
+          "path": "[Content_Types].xml",
+          "size": 1788,
+          "sha256": "1a1b7bf7aeab6ab754ba491b21600be5de0b06b910a5e1034eed09dfba6f5f1e"
+        },
+        {
+          "path": "_rels/.rels",
+          "size": 734,
+          "sha256": "a9ae57efe9186f07d48303bcac5d54c7e359bf3f503939c03ad2954e5c59a5c4"
+        },
+        {
+          "path": "docProps/core.xml",
+          "size": 721,
+          "sha256": "d14be8284e406d14dc2a576b19f15e7f637b955f9e27a3d9ed871ec99606f7ba"
+        },
+        {
+          "path": "docProps/app.xml",
+          "size": 1132,
+          "sha256": "be664981c3141cddfc59362beb287ebf20d0773660e2dd6faac5968a5930a081"
+        },
+        {
+          "path": "word/document.xml",
+          "size": 950913,
+          "sha256": "26e9903612b76e3e6d91b71f50de6b7cc6edba6d1d328014a7b71b45aa3c2e0f"
+        },
+        {
+          "path": "word/_rels/document.xml.rels",
+          "size": 1891,
+          "sha256": "58ccba781d6334bcf4abfbf0756b73d3a07659051d330576db8ed976a93caeda"
+        },
+        {
+          "path": "word/styles.xml",
+          "size": 349694,
+          "sha256": "c16431d1e666f934dd5355b787056492093d4ae555dcb51b6027a39066778b8e"
+        },
+        {
+          "path": "word/stylesWithEffects.xml",
+          "size": 438131,
+          "sha256": "463ae0928cf0d84775dbf8cf18d6c3029f6707c81bf590f6d6dd8757a5e93f15"
+        },
+        {
+          "path": "word/settings.xml",
+          "size": 2535,
+          "sha256": "51a0d348fe85965c66e4748a03c3c0d055d78455514f03cb121c334af7d73689"
+        },
+        {
+          "path": "word/webSettings.xml",
+          "size": 438,
+          "sha256": "349d36de7434d09f86987ff671d8814964a0588c1e630c06e562cda7e75e9f95"
+        },
+        {
+          "path": "word/fontTable.xml",
+          "size": 2811,
+          "sha256": "79385fb7f60247507ecaffc292e9ebd52ea0657b8634f629ba6fccc54011d6bb"
+        },
+        {
+          "path": "word/theme/theme1.xml",
+          "size": 10939,
+          "sha256": "e3a8ab7db9ca7afca56f5f2820a56e8b660016c647773555b060b0a02ac76941"
+        },
+        {
+          "path": "customXml/item1.xml",
+          "size": 262,
+          "sha256": "a86086ffc5d8e83ebd6c71a55d1d2efaa31b137977f5f3a752366e1023612144"
+        },
+        {
+          "path": "customXml/_rels/item1.xml.rels",
+          "size": 295,
+          "sha256": "1ca6c9a64edcebe24ee703a54403611b322d96da33371779e742d2d3f7ed7a6c"
+        },
+        {
+          "path": "customXml/itemProps1.xml",
+          "size": 354,
+          "sha256": "c542307b13ec29a8b546217bb37936ab4822e044b265d2952985ec3d6afed24e"
+        },
+        {
+          "path": "word/numbering.xml",
+          "size": 5513,
+          "sha256": "70976f19cbcd896e51890859fe6ecb3467a5a7ad0c040160fedc5a1993cb09ce"
+        },
+        {
+          "path": "word/media/image1.png",
+          "size": 104844,
+          "sha256": "7a67f526931ed814488f4370f6b7a3e7a05407a5b35d378d323bd160c2343047"
+        },
+        {
+          "path": "word/media/image2.png",
+          "size": 101892,
+          "sha256": "e50e51b4f1324b64b4a4237de80eb5424a45d03d9e5cac4d8bd9dfeb976c973e"
+        },
+        {
+          "path": "word/media/image3.png",
+          "size": 99029,
+          "sha256": "41a0817c11fe2955d354951e7edcda8855f83a63924824f0e77674ed7598f013"
+        },
+        {
+          "path": "word/media/image4.png",
+          "size": 104156,
+          "sha256": "f0f7aa3ebda108b6f636acf292abfdaa2a310999099df4fd9711efbd040fab8a"
+        },
+        {
+          "path": "word/media/image5.png",
+          "size": 67832,
+          "sha256": "6b76c1ea7bd3004b4cda838d19b941c1448d6d8f8ddddb75f3f211eafe9416a2"
+        },
+        {
+          "path": "docProps/thumbnail.jpeg",
+          "size": 8324,
+          "sha256": "96367138dc44ce09bf2c8f0f8e49348a1478d2c5c0af69bbc2bbc38b63cdcead"
+        }
+      ]
+    },
+    {
+      "sequence": 24,
+      "path": "ACPOS_SG-02_QA審查項目名單_Mother_Basic_Design_OPTIMIZED.docx",
+      "git_blob_sha": "5e84997bcf0c57c29fa592a9c6615bb6c1567dba",
+      "byte_size": 216757,
+      "sha256": "cac5184d817c35339a7979492d03d49a68671518af7ef318c423b6af4c024e8a",
+      "package_part_count": 21,
+      "package_parts": [
+        {
+          "path": "[Content_Types].xml",
+          "size": 2044,
+          "sha256": "ecbe3f7dfd70530319fed457805e79a3df0cc177119a7d97bacbb25f516c7adb"
+        },
+        {
+          "path": "_rels/.rels",
+          "size": 734,
+          "sha256": "a9ae57efe9186f07d48303bcac5d54c7e359bf3f503939c03ad2954e5c59a5c4"
+        },
+        {
+          "path": "docProps/core.xml",
+          "size": 825,
+          "sha256": "cabecf989385c484936592673d5d0f00af5737e3698afd7670d809e9befbb1b9"
+        },
+        {
+          "path": "docProps/app.xml",
+          "size": 1132,
+          "sha256": "be664981c3141cddfc59362beb287ebf20d0773660e2dd6faac5968a5930a081"
+        },
+        {
+          "path": "word/document.xml",
+          "size": 773058,
+          "sha256": "d107f2a03a3925b0fab339236dbe3dfbf91f18b246c41b5f16c21adf455e36de"
+        },
+        {
+          "path": "word/_rels/document.xml.rels",
+          "size": 1750,
+          "sha256": "1cd6cb9b4f34c97bd4f3d39f33ca3831df5ebbcc12bb256184003184d5575459"
+        },
+        {
+          "path": "word/styles.xml",
+          "size": 350199,
+          "sha256": "87c762f31615d6dd608c81f14f70d751b95d04dff0630634a248a031521348b3"
+        },
+        {
+          "path": "word/stylesWithEffects.xml",
+          "size": 438131,
+          "sha256": "463ae0928cf0d84775dbf8cf18d6c3029f6707c81bf590f6d6dd8757a5e93f15"
+        },
+        {
+          "path": "word/settings.xml",
+          "size": 2535,
+          "sha256": "51a0d348fe85965c66e4748a03c3c0d055d78455514f03cb121c334af7d73689"
+        },
+        {
+          "path": "word/webSettings.xml",
+          "size": 438,
+          "sha256": "349d36de7434d09f86987ff671d8814964a0588c1e630c06e562cda7e75e9f95"
+        },
+        {
+          "path": "word/fontTable.xml",
+          "size": 2811,
+          "sha256": "79385fb7f60247507ecaffc292e9ebd52ea0657b8634f629ba6fccc54011d6bb"
+        },
+        {
+          "path": "word/theme/theme1.xml",
+          "size": 10939,
+          "sha256": "e3a8ab7db9ca7afca56f5f2820a56e8b660016c647773555b060b0a02ac76941"
+        },
+        {
+          "path": "customXml/item1.xml",
+          "size": 262,
+          "sha256": "a86086ffc5d8e83ebd6c71a55d1d2efaa31b137977f5f3a752366e1023612144"
+        },
+        {
+          "path": "customXml/_rels/item1.xml.rels",
+          "size": 295,
+          "sha256": "1ca6c9a64edcebe24ee703a54403611b322d96da33371779e742d2d3f7ed7a6c"
+        },
+        {
+          "path": "customXml/itemProps1.xml",
+          "size": 354,
+          "sha256": "c542307b13ec29a8b546217bb37936ab4822e044b265d2952985ec3d6afed24e"
+        },
+        {
+          "path": "word/numbering.xml",
+          "size": 5513,
+          "sha256": "70976f19cbcd896e51890859fe6ecb3467a5a7ad0c040160fedc5a1993cb09ce"
+        },
+        {
+          "path": "word/header1.xml",
+          "size": 1546,
+          "sha256": "99849106fc0f98bdba7db195f5c45f64116bbaa3c1b6e0e8d85ed7df4eae1d79"
+        },
+        {
+          "path": "word/footer1.xml",
+          "size": 1543,
+          "sha256": "7262c8960ef89b922e5f3e2352f995a196814f621203026d6930ee443d983a55"
+        },
+        {
+          "path": "word/media/image1.png",
+          "size": 75055,
+          "sha256": "9071389e69fabdcf86daf8ddc00c5563ded0b9b28fadef73f28539be53e50245"
+        },
+        {
+          "path": "word/media/image2.png",
+          "size": 78527,
+          "sha256": "91a381ebc49b4c73623b4cb280042df3f19d09ef23f5a654f5db399cbe4467cb"
+        },
+        {
+          "path": "docProps/thumbnail.jpeg",
+          "size": 8324,
+          "sha256": "96367138dc44ce09bf2c8f0f8e49348a1478d2c5c0af69bbc2bbc38b63cdcead"
+        }
+      ]
+    },
+    {
+      "sequence": 25,
+      "path": "ACPOS_SOC-01_社群發布_Mother_Basic_Design_OPTIMIZED.docx",
+      "git_blob_sha": "2a9973bd39af710edd0c49dd3c232dc218abdd8b",
+      "byte_size": 576020,
+      "sha256": "5950b577eccd51a4b43f60f2dbd0839b6f08eadcd31c5c2cbfba4688ce0c1a25",
+      "package_part_count": 23,
+      "package_parts": [
+        {
+          "path": "[Content_Types].xml",
+          "size": 2044,
+          "sha256": "ecbe3f7dfd70530319fed457805e79a3df0cc177119a7d97bacbb25f516c7adb"
+        },
+        {
+          "path": "_rels/.rels",
+          "size": 734,
+          "sha256": "a9ae57efe9186f07d48303bcac5d54c7e359bf3f503939c03ad2954e5c59a5c4"
+        },
+        {
+          "path": "docProps/core.xml",
+          "size": 846,
+          "sha256": "75058263a8f8078ee6bf38d0b65731626b8c6f70d9ed6b6ef82a483e51800c71"
+        },
+        {
+          "path": "docProps/app.xml",
+          "size": 1132,
+          "sha256": "be664981c3141cddfc59362beb287ebf20d0773660e2dd6faac5968a5930a081"
+        },
+        {
+          "path": "word/document.xml",
+          "size": 627486,
+          "sha256": "53ba02476f605b91d56083515946921325604aae65ca7b777cf8b9cef5415201"
+        },
+        {
+          "path": "word/_rels/document.xml.rels",
+          "size": 2016,
+          "sha256": "e9cc554c4d0778fbe2818bf95da7b26ee8a42328a3b355b9925b0a1d1e5fcbfa"
+        },
+        {
+          "path": "word/styles.xml",
+          "size": 350030,
+          "sha256": "a1a4aabdc25466664f327b1eec8b233c06d0c83251da2834c0b000d7f09b62aa"
+        },
+        {
+          "path": "word/stylesWithEffects.xml",
+          "size": 438131,
+          "sha256": "463ae0928cf0d84775dbf8cf18d6c3029f6707c81bf590f6d6dd8757a5e93f15"
+        },
+        {
+          "path": "word/settings.xml",
+          "size": 2535,
+          "sha256": "51a0d348fe85965c66e4748a03c3c0d055d78455514f03cb121c334af7d73689"
+        },
+        {
+          "path": "word/webSettings.xml",
+          "size": 438,
+          "sha256": "349d36de7434d09f86987ff671d8814964a0588c1e630c06e562cda7e75e9f95"
+        },
+        {
+          "path": "word/fontTable.xml",
+          "size": 2811,
+          "sha256": "79385fb7f60247507ecaffc292e9ebd52ea0657b8634f629ba6fccc54011d6bb"
+        },
+        {
+          "path": "word/theme/theme1.xml",
+          "size": 10939,
+          "sha256": "e3a8ab7db9ca7afca56f5f2820a56e8b660016c647773555b060b0a02ac76941"
+        },
+        {
+          "path": "customXml/item1.xml",
+          "size": 262,
+          "sha256": "a86086ffc5d8e83ebd6c71a55d1d2efaa31b137977f5f3a752366e1023612144"
+        },
+        {
+          "path": "customXml/_rels/item1.xml.rels",
+          "size": 295,
+          "sha256": "1ca6c9a64edcebe24ee703a54403611b322d96da33371779e742d2d3f7ed7a6c"
+        },
+        {
+          "path": "customXml/itemProps1.xml",
+          "size": 354,
+          "sha256": "c542307b13ec29a8b546217bb37936ab4822e044b265d2952985ec3d6afed24e"
+        },
+        {
+          "path": "word/numbering.xml",
+          "size": 5513,
+          "sha256": "70976f19cbcd896e51890859fe6ecb3467a5a7ad0c040160fedc5a1993cb09ce"
+        },
+        {
+          "path": "word/header1.xml",
+          "size": 1383,
+          "sha256": "8fccb19079445159a14b48b84e7e3d3a07983a54889d1c691149b6a934bae7fd"
+        },
+        {
+          "path": "word/footer1.xml",
+          "size": 1356,
+          "sha256": "2d29a6336287306c6ff0e066ae684f45452d83a79aa2183b6a0ee0f997c265ee"
+        },
+        {
+          "path": "word/media/image1.png",
+          "size": 129850,
+          "sha256": "82f95efd2938f93dcb78b537c3097f2e6258ff394f94799ccaebb812fecfd5a1"
+        },
+        {
+          "path": "word/media/image2.png",
+          "size": 99745,
+          "sha256": "bcd63b4f03625ce0f38a882d23f5d0653dce9aa3fd2fe70399e5a77c5260b4f6"
+        },
+        {
+          "path": "word/media/image3.png",
+          "size": 158457,
+          "sha256": "3ae45e7bb3c1e74f5d7833af1c037c6a5f9b6732f2c4d324292ea34c99a301a2"
+        },
+        {
+          "path": "word/media/image4.png",
+          "size": 149620,
+          "sha256": "126f0886bcfe6db57046d2e3e91e20e449b5c78c4433a3e73e5135a1d9b73a53"
+        },
+        {
+          "path": "docProps/thumbnail.jpeg",
+          "size": 8324,
+          "sha256": "96367138dc44ce09bf2c8f0f8e49348a1478d2c5c0af69bbc2bbc38b63cdcead"
+        }
+      ]
+    },
+    {
+      "sequence": 26,
+      "path": "ACPOS_STR-01_WORKSPACE_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx",
+      "git_blob_sha": "f4a977729b7f3b5a1da9b27209e9f133e82b8619",
+      "byte_size": 431417,
+      "sha256": "3230c6b995176ed5cadb6d34bd13ad944c39ea039b1cd850beaa2205d3862ffb",
+      "package_part_count": 24,
+      "package_parts": [
+        {
+          "path": "[Content_Types].xml",
+          "size": 2044,
+          "sha256": "ecbe3f7dfd70530319fed457805e79a3df0cc177119a7d97bacbb25f516c7adb"
+        },
+        {
+          "path": "_rels/.rels",
+          "size": 734,
+          "sha256": "a9ae57efe9186f07d48303bcac5d54c7e359bf3f503939c03ad2954e5c59a5c4"
+        },
+        {
+          "path": "docProps/core.xml",
+          "size": 721,
+          "sha256": "d14be8284e406d14dc2a576b19f15e7f637b955f9e27a3d9ed871ec99606f7ba"
+        },
+        {
+          "path": "docProps/app.xml",
+          "size": 1132,
+          "sha256": "be664981c3141cddfc59362beb287ebf20d0773660e2dd6faac5968a5930a081"
+        },
+        {
+          "path": "word/document.xml",
+          "size": 641646,
+          "sha256": "ce709c28917b928bcd470d22c92d47283679a53e5114f669f88432a276eb5d41"
+        },
+        {
+          "path": "word/_rels/document.xml.rels",
+          "size": 2149,
+          "sha256": "d69cb9e07e7e20010f8cc70129bc47a2c1c8aced743c3f5898c1a68711aac789"
+        },
+        {
+          "path": "word/styles.xml",
+          "size": 349837,
+          "sha256": "3256b6b5567923c1ac19a1a4ed10acb8c959ca40c03aa0e843a344c0c9724ef5"
+        },
+        {
+          "path": "word/stylesWithEffects.xml",
+          "size": 438131,
+          "sha256": "463ae0928cf0d84775dbf8cf18d6c3029f6707c81bf590f6d6dd8757a5e93f15"
+        },
+        {
+          "path": "word/settings.xml",
+          "size": 2535,
+          "sha256": "51a0d348fe85965c66e4748a03c3c0d055d78455514f03cb121c334af7d73689"
+        },
+        {
+          "path": "word/webSettings.xml",
+          "size": 438,
+          "sha256": "349d36de7434d09f86987ff671d8814964a0588c1e630c06e562cda7e75e9f95"
+        },
+        {
+          "path": "word/fontTable.xml",
+          "size": 2811,
+          "sha256": "79385fb7f60247507ecaffc292e9ebd52ea0657b8634f629ba6fccc54011d6bb"
+        },
+        {
+          "path": "word/theme/theme1.xml",
+          "size": 10939,
+          "sha256": "e3a8ab7db9ca7afca56f5f2820a56e8b660016c647773555b060b0a02ac76941"
+        },
+        {
+          "path": "customXml/item1.xml",
+          "size": 262,
+          "sha256": "a86086ffc5d8e83ebd6c71a55d1d2efaa31b137977f5f3a752366e1023612144"
+        },
+        {
+          "path": "customXml/_rels/item1.xml.rels",
+          "size": 295,
+          "sha256": "1ca6c9a64edcebe24ee703a54403611b322d96da33371779e742d2d3f7ed7a6c"
+        },
+        {
+          "path": "customXml/itemProps1.xml",
+          "size": 354,
+          "sha256": "c542307b13ec29a8b546217bb37936ab4822e044b265d2952985ec3d6afed24e"
+        },
+        {
+          "path": "word/numbering.xml",
+          "size": 5513,
+          "sha256": "70976f19cbcd896e51890859fe6ecb3467a5a7ad0c040160fedc5a1993cb09ce"
+        },
+        {
+          "path": "word/header1.xml",
+          "size": 1436,
+          "sha256": "8c36d215f2e4a4f28fa7c6c97812bad7e2c503a5d934f0dfcd6092a8fbadfda2"
+        },
+        {
+          "path": "word/footer1.xml",
+          "size": 1478,
+          "sha256": "339888e2f925be0e23f94e26a7ffc23b315f98d58d244ed7231c102abbffca17"
+        },
+        {
+          "path": "word/media/image1.png",
+          "size": 92454,
+          "sha256": "f430fac500d6e65870ecefb646e9ece6ad57c1a4771d7d90a01cb0072fca5c6a"
+        },
+        {
+          "path": "word/media/image2.png",
+          "size": 93448,
+          "sha256": "4c0eb7574d41f270455a4bf8226e34f24f56cdc0f19c253f05a657f93294a48c"
+        },
+        {
+          "path": "word/media/image3.png",
+          "size": 54550,
+          "sha256": "548bd153fb637369386997e670dcce1c2f2414f42d4424906cfbc591e46d05bf"
+        },
+        {
+          "path": "word/media/image4.png",
+          "size": 83994,
+          "sha256": "09dd63ad0487df480c935e2ce80dfb8006c5fe1bb1212484773c919fdce6ac0f"
+        },
+        {
+          "path": "word/media/image5.png",
+          "size": 65593,
+          "sha256": "790b2db5f1e758cace52065af98957de64199f066900887a4eccc7f5f183c5e6"
+        },
+        {
+          "path": "docProps/thumbnail.jpeg",
+          "size": 8324,
+          "sha256": "96367138dc44ce09bf2c8f0f8e49348a1478d2c5c0af69bbc2bbc38b63cdcead"
+        }
+      ]
+    },
+    {
+      "sequence": 27,
+      "path": "ACPOS_SYS-01_系統維護與生命週期工作區_Mother_Basic_Design_OPTIMIZED.docx",
+      "git_blob_sha": "a709ee851a52dbf68fe8c8fb201e832256bdc6d7",
+      "byte_size": 352516,
+      "sha256": "81bf5dec243133524211d7f4e50278484c66714a728a0e397ec2f8e3f6a467f8",
+      "package_part_count": 21,
+      "package_parts": [
+        {
+          "path": "[Content_Types].xml",
+          "size": 2044,
+          "sha256": "ecbe3f7dfd70530319fed457805e79a3df0cc177119a7d97bacbb25f516c7adb"
+        },
+        {
+          "path": "_rels/.rels",
+          "size": 734,
+          "sha256": "a9ae57efe9186f07d48303bcac5d54c7e359bf3f503939c03ad2954e5c59a5c4"
+        },
+        {
+          "path": "docProps/core.xml",
+          "size": 912,
+          "sha256": "e77c03061fc58ada1eb63f70b499816d8cbcb6944044e66b878ba8575ee85d09"
+        },
+        {
+          "path": "docProps/app.xml",
+          "size": 1132,
+          "sha256": "be664981c3141cddfc59362beb287ebf20d0773660e2dd6faac5968a5930a081"
+        },
+        {
+          "path": "word/document.xml",
+          "size": 1333434,
+          "sha256": "9c86bf11e1ba27b259b59a3df5b87c1439c6ca1e3a9f0c73f480449bb8dd8c38"
+        },
+        {
+          "path": "word/_rels/document.xml.rels",
+          "size": 1750,
+          "sha256": "1cd6cb9b4f34c97bd4f3d39f33ca3831df5ebbcc12bb256184003184d5575459"
+        },
+        {
+          "path": "word/styles.xml",
+          "size": 350094,
+          "sha256": "50482bb9b37252c7798166c09ee40849534c74fe1d66407432e78f151ae5d9aa"
+        },
+        {
+          "path": "word/stylesWithEffects.xml",
+          "size": 438131,
+          "sha256": "463ae0928cf0d84775dbf8cf18d6c3029f6707c81bf590f6d6dd8757a5e93f15"
+        },
+        {
+          "path": "word/settings.xml",
+          "size": 2535,
+          "sha256": "51a0d348fe85965c66e4748a03c3c0d055d78455514f03cb121c334af7d73689"
+        },
+        {
+          "path": "word/webSettings.xml",
+          "size": 438,
+          "sha256": "349d36de7434d09f86987ff671d8814964a0588c1e630c06e562cda7e75e9f95"
+        },
+        {
+          "path": "word/fontTable.xml",
+          "size": 2811,
+          "sha256": "79385fb7f60247507ecaffc292e9ebd52ea0657b8634f629ba6fccc54011d6bb"
+        },
+        {
+          "path": "word/theme/theme1.xml",
+          "size": 10939,
+          "sha256": "e3a8ab7db9ca7afca56f5f2820a56e8b660016c647773555b060b0a02ac76941"
+        },
+        {
+          "path": "customXml/item1.xml",
+          "size": 262,
+          "sha256": "a86086ffc5d8e83ebd6c71a55d1d2efaa31b137977f5f3a752366e1023612144"
+        },
+        {
+          "path": "customXml/_rels/item1.xml.rels",
+          "size": 295,
+          "sha256": "1ca6c9a64edcebe24ee703a54403611b322d96da33371779e742d2d3f7ed7a6c"
+        },
+        {
+          "path": "customXml/itemProps1.xml",
+          "size": 354,
+          "sha256": "c542307b13ec29a8b546217bb37936ab4822e044b265d2952985ec3d6afed24e"
+        },
+        {
+          "path": "word/numbering.xml",
+          "size": 5513,
+          "sha256": "70976f19cbcd896e51890859fe6ecb3467a5a7ad0c040160fedc5a1993cb09ce"
+        },
+        {
+          "path": "word/header1.xml",
+          "size": 1542,
+          "sha256": "981808323b61df83ea8ec5ff42781b3f0184c3435d3fa6251e43e938932a5cb2"
+        },
+        {
+          "path": "word/footer1.xml",
+          "size": 1559,
+          "sha256": "fb4b6ac85c04f4198b5ca87844e6f90bd951466fea447147e7ff53a100083d71"
+        },
+        {
+          "path": "word/media/image1.png",
+          "size": 159177,
+          "sha256": "c8cf3a14fb7816603e8692adaade434dad718a360315439584c3d966f0c135bb"
+        },
+        {
+          "path": "word/media/image2.png",
+          "size": 120835,
+          "sha256": "c1894cec8e804541b40e3c3369bb39e7004809c70d48a5c3f3ee9909b7397185"
+        },
+        {
+          "path": "docProps/thumbnail.jpeg",
+          "size": 8324,
+          "sha256": "96367138dc44ce09bf2c8f0f8e49348a1478d2c5c0af69bbc2bbc38b63cdcead"
+        }
+      ]
+    },
+    {
+      "sequence": 28,
+      "path": "ACPOS_SYSTEM_LOGIC_GLOBAL_INTEGRATION_Mother_Basic_Design_OPTIMIZED.docx",
+      "git_blob_sha": "d18f010673cc0ddedb64b97ee0945851345f3e01",
+      "byte_size": 184983,
+      "sha256": "4709e92a27cc7280561446f8e1f0a33d903df608aada41d07439b99ab110eb75",
+      "package_part_count": 19,
+      "package_parts": [
+        {
+          "path": "[Content_Types].xml",
+          "size": 1916,
+          "sha256": "641cf94154dbac62b28308772123f5a2b1fb5dd09a73216a53b4f09d6e0a3990"
+        },
+        {
+          "path": "_rels/.rels",
+          "size": 734,
+          "sha256": "a9ae57efe9186f07d48303bcac5d54c7e359bf3f503939c03ad2954e5c59a5c4"
+        },
+        {
+          "path": "docProps/core.xml",
+          "size": 721,
+          "sha256": "d14be8284e406d14dc2a576b19f15e7f637b955f9e27a3d9ed871ec99606f7ba"
+        },
+        {
+          "path": "docProps/app.xml",
+          "size": 1132,
+          "sha256": "be664981c3141cddfc59362beb287ebf20d0773660e2dd6faac5968a5930a081"
+        },
+        {
+          "path": "word/document.xml",
+          "size": 261734,
+          "sha256": "1b040df880da9d97995aa9af90b3be42906f4df45cdf942a1e72685d160f0d03"
+        },
+        {
+          "path": "word/_rels/document.xml.rels",
+          "size": 1488,
+          "sha256": "7d23e7ba6a1227f2c2d4150b2c2c5622f19af97d958cf4644c64ffffa796fb65"
+        },
+        {
+          "path": "word/styles.xml",
+          "size": 349921,
+          "sha256": "0611ec94d8c6cddbc3b335a2689c574942d6174e1f2c01d2231cf1f55937cbea"
+        },
+        {
+          "path": "word/stylesWithEffects.xml",
+          "size": 438131,
+          "sha256": "463ae0928cf0d84775dbf8cf18d6c3029f6707c81bf590f6d6dd8757a5e93f15"
+        },
+        {
+          "path": "word/settings.xml",
+          "size": 2535,
+          "sha256": "51a0d348fe85965c66e4748a03c3c0d055d78455514f03cb121c334af7d73689"
+        },
+        {
+          "path": "word/webSettings.xml",
+          "size": 438,
+          "sha256": "349d36de7434d09f86987ff671d8814964a0588c1e630c06e562cda7e75e9f95"
+        },
+        {
+          "path": "word/fontTable.xml",
+          "size": 2811,
+          "sha256": "79385fb7f60247507ecaffc292e9ebd52ea0657b8634f629ba6fccc54011d6bb"
+        },
+        {
+          "path": "word/theme/theme1.xml",
+          "size": 10939,
+          "sha256": "e3a8ab7db9ca7afca56f5f2820a56e8b660016c647773555b060b0a02ac76941"
+        },
+        {
+          "path": "customXml/item1.xml",
+          "size": 262,
+          "sha256": "a86086ffc5d8e83ebd6c71a55d1d2efaa31b137977f5f3a752366e1023612144"
+        },
+        {
+          "path": "customXml/_rels/item1.xml.rels",
+          "size": 295,
+          "sha256": "1ca6c9a64edcebe24ee703a54403611b322d96da33371779e742d2d3f7ed7a6c"
+        },
+        {
+          "path": "customXml/itemProps1.xml",
+          "size": 354,
+          "sha256": "c542307b13ec29a8b546217bb37936ab4822e044b265d2952985ec3d6afed24e"
+        },
+        {
+          "path": "word/numbering.xml",
+          "size": 5513,
+          "sha256": "70976f19cbcd896e51890859fe6ecb3467a5a7ad0c040160fedc5a1993cb09ce"
+        },
+        {
+          "path": "word/footer1.xml",
+          "size": 1502,
+          "sha256": "063769a98bca48b8c1470a257e88c4316e5bf69c72667a00c75075785acc3db5"
+        },
+        {
+          "path": "word/media/image1.png",
+          "size": 133116,
+          "sha256": "418080f5f25cbddb5e84d53b9e50289e034a5f7d447144b18a37dba63b5c9a04"
+        },
+        {
+          "path": "docProps/thumbnail.jpeg",
+          "size": 8324,
+          "sha256": "96367138dc44ce09bf2c8f0f8e49348a1478d2c5c0af69bbc2bbc38b63cdcead"
+        }
+      ]
+    },
+    {
+      "sequence": 29,
+      "path": "ACPOS_VIDEO-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx",
+      "git_blob_sha": "76cc6589131101391bf03f8971049c4de39a2e4c",
+      "byte_size": 610774,
+      "sha256": "46595ce7795166622a2034e9ceca60fe8b716e0bb9f707dbf7c6f619614b8258",
+      "package_part_count": 24,
+      "package_parts": [
+        {
+          "path": "[Content_Types].xml",
+          "size": 2044,
+          "sha256": "ecbe3f7dfd70530319fed457805e79a3df0cc177119a7d97bacbb25f516c7adb"
+        },
+        {
+          "path": "_rels/.rels",
+          "size": 734,
+          "sha256": "a9ae57efe9186f07d48303bcac5d54c7e359bf3f503939c03ad2954e5c59a5c4"
+        },
+        {
+          "path": "docProps/core.xml",
+          "size": 721,
+          "sha256": "d14be8284e406d14dc2a576b19f15e7f637b955f9e27a3d9ed871ec99606f7ba"
+        },
+        {
+          "path": "docProps/app.xml",
+          "size": 1132,
+          "sha256": "be664981c3141cddfc59362beb287ebf20d0773660e2dd6faac5968a5930a081"
+        },
+        {
+          "path": "word/document.xml",
+          "size": 889584,
+          "sha256": "4d9cfc9c8c4f4eb33b0f821161f47b3f3e1f5e3be8a806a0a45297d4d12708d4"
+        },
+        {
+          "path": "word/_rels/document.xml.rels",
+          "size": 2149,
+          "sha256": "d69cb9e07e7e20010f8cc70129bc47a2c1c8aced743c3f5898c1a68711aac789"
+        },
+        {
+          "path": "word/styles.xml",
+          "size": 349862,
+          "sha256": "2af50b0c2c317d593d8631d8dd969838cefef9527d8efef057aadda8da6881bc"
+        },
+        {
+          "path": "word/stylesWithEffects.xml",
+          "size": 438131,
+          "sha256": "463ae0928cf0d84775dbf8cf18d6c3029f6707c81bf590f6d6dd8757a5e93f15"
+        },
+        {
+          "path": "word/settings.xml",
+          "size": 2535,
+          "sha256": "51a0d348fe85965c66e4748a03c3c0d055d78455514f03cb121c334af7d73689"
+        },
+        {
+          "path": "word/webSettings.xml",
+          "size": 438,
+          "sha256": "349d36de7434d09f86987ff671d8814964a0588c1e630c06e562cda7e75e9f95"
+        },
+        {
+          "path": "word/fontTable.xml",
+          "size": 2811,
+          "sha256": "79385fb7f60247507ecaffc292e9ebd52ea0657b8634f629ba6fccc54011d6bb"
+        },
+        {
+          "path": "word/theme/theme1.xml",
+          "size": 10939,
+          "sha256": "e3a8ab7db9ca7afca56f5f2820a56e8b660016c647773555b060b0a02ac76941"
+        },
+        {
+          "path": "customXml/item1.xml",
+          "size": 262,
+          "sha256": "a86086ffc5d8e83ebd6c71a55d1d2efaa31b137977f5f3a752366e1023612144"
+        },
+        {
+          "path": "customXml/_rels/item1.xml.rels",
+          "size": 295,
+          "sha256": "1ca6c9a64edcebe24ee703a54403611b322d96da33371779e742d2d3f7ed7a6c"
+        },
+        {
+          "path": "customXml/itemProps1.xml",
+          "size": 354,
+          "sha256": "c542307b13ec29a8b546217bb37936ab4822e044b265d2952985ec3d6afed24e"
+        },
+        {
+          "path": "word/numbering.xml",
+          "size": 5513,
+          "sha256": "70976f19cbcd896e51890859fe6ecb3467a5a7ad0c040160fedc5a1993cb09ce"
+        },
+        {
+          "path": "word/header1.xml",
+          "size": 1520,
+          "sha256": "a8c452175016911341d7607f4cdd354fb5e0cff5e3c7a8c2d7dc86ef816a5b1e"
+        },
+        {
+          "path": "word/footer1.xml",
+          "size": 1539,
+          "sha256": "847341c9fe6e102e1b4136e60550a44738f413d49c4484b2785cce2cd67315d5"
+        },
+        {
+          "path": "word/media/image1.png",
+          "size": 116494,
+          "sha256": "9a1132b60f5d4b0e02a07b38bc6132a9a92f9013fd2edfe6939dfe023e23af98"
+        },
+        {
+          "path": "word/media/image2.png",
+          "size": 119939,
+          "sha256": "348cfb72c640818fe668a3ee1b37a8d8c753f6d8e51339aa55d54774c46c11ba"
+        },
+        {
+          "path": "word/media/image3.png",
+          "size": 121043,
+          "sha256": "2b783e09267c952b87d238ae01c56b089b21f20e7e0fc3379037b19f91a3ab3e"
+        },
+        {
+          "path": "word/media/image4.png",
+          "size": 112756,
+          "sha256": "3c2ff8b87d7dae89b1a2070feec335db3098775e2152b94ade59334052967d85"
+        },
+        {
+          "path": "word/media/image5.png",
+          "size": 94210,
+          "sha256": "603818167442c61395b0d07c2cbd0ab55b8ba3310aecfdfc09eade2c5960b337"
+        },
+        {
+          "path": "docProps/thumbnail.jpeg",
+          "size": 8324,
+          "sha256": "96367138dc44ce09bf2c8f0f8e49348a1478d2c5c0af69bbc2bbc38b63cdcead"
+        }
+      ]
+    },
+    {
+      "sequence": 30,
+      "path": "ACPOS_WB-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx",
+      "git_blob_sha": "707423830b80a318154077995264ebbf48863b2b",
+      "byte_size": 413317,
+      "sha256": "2b1908530b5bd312a3928f80b422d0f65d7e9932ace90730df9b038666621262",
+      "package_part_count": 24,
+      "package_parts": [
+        {
+          "path": "[Content_Types].xml",
+          "size": 2172,
+          "sha256": "c75b3648375b8bbd16d2e13833138be5386b0faddd81c3219dd308649c15a005"
+        },
+        {
+          "path": "_rels/.rels",
+          "size": 734,
+          "sha256": "a9ae57efe9186f07d48303bcac5d54c7e359bf3f503939c03ad2954e5c59a5c4"
+        },
+        {
+          "path": "docProps/core.xml",
+          "size": 721,
+          "sha256": "d14be8284e406d14dc2a576b19f15e7f637b955f9e27a3d9ed871ec99606f7ba"
+        },
+        {
+          "path": "docProps/app.xml",
+          "size": 1132,
+          "sha256": "be664981c3141cddfc59362beb287ebf20d0773660e2dd6faac5968a5930a081"
+        },
+        {
+          "path": "word/document.xml",
+          "size": 703883,
+          "sha256": "88be2555b587f71707b2b372cf47c0ee4904389e6a4a200cf31e05a4ee03c567"
+        },
+        {
+          "path": "word/_rels/document.xml.rels",
+          "size": 2145,
+          "sha256": "1ed1a544ce64e16ea4c624b26334387460a89c9f7ab32919b7cd53a381956d8b"
+        },
+        {
+          "path": "word/styles.xml",
+          "size": 349751,
+          "sha256": "e5c39e00dcec6d5b5b07a3305055c96cdb5e9b98701210d6a1c73414e9ae3549"
+        },
+        {
+          "path": "word/stylesWithEffects.xml",
+          "size": 438131,
+          "sha256": "463ae0928cf0d84775dbf8cf18d6c3029f6707c81bf590f6d6dd8757a5e93f15"
+        },
+        {
+          "path": "word/settings.xml",
+          "size": 2535,
+          "sha256": "51a0d348fe85965c66e4748a03c3c0d055d78455514f03cb121c334af7d73689"
+        },
+        {
+          "path": "word/webSettings.xml",
+          "size": 438,
+          "sha256": "349d36de7434d09f86987ff671d8814964a0588c1e630c06e562cda7e75e9f95"
+        },
+        {
+          "path": "word/fontTable.xml",
+          "size": 2811,
+          "sha256": "79385fb7f60247507ecaffc292e9ebd52ea0657b8634f629ba6fccc54011d6bb"
+        },
+        {
+          "path": "word/theme/theme1.xml",
+          "size": 10939,
+          "sha256": "e3a8ab7db9ca7afca56f5f2820a56e8b660016c647773555b060b0a02ac76941"
+        },
+        {
+          "path": "customXml/item1.xml",
+          "size": 262,
+          "sha256": "a86086ffc5d8e83ebd6c71a55d1d2efaa31b137977f5f3a752366e1023612144"
+        },
+        {
+          "path": "customXml/_rels/item1.xml.rels",
+          "size": 295,
+          "sha256": "1ca6c9a64edcebe24ee703a54403611b322d96da33371779e742d2d3f7ed7a6c"
+        },
+        {
+          "path": "customXml/itemProps1.xml",
+          "size": 354,
+          "sha256": "c542307b13ec29a8b546217bb37936ab4822e044b265d2952985ec3d6afed24e"
+        },
+        {
+          "path": "word/numbering.xml",
+          "size": 5513,
+          "sha256": "70976f19cbcd896e51890859fe6ecb3467a5a7ad0c040160fedc5a1993cb09ce"
+        },
+        {
+          "path": "word/media/image1.png",
+          "size": 99922,
+          "sha256": "b939918ffd27a4ffd66243eab4156d699b3e8d6d0a3b505781d34b5cc8250bf0"
+        },
+        {
+          "path": "word/media/image2.png",
+          "size": 107640,
+          "sha256": "2e325d96c05f86d23abd36bc8c5dd0a646fefc27664a7b3073c544813a9113df"
+        },
+        {
+          "path": "word/media/image3.png",
+          "size": 70893,
+          "sha256": "bd26cfdd6b2c0265e2ac7e6be55fb63fdbeceadc6cf35ff39bf7c5340b35a0bf"
+        },
+        {
+          "path": "word/media/image4.png",
+          "size": 101352,
+          "sha256": "ec9a89132df7a21aedfe3dd45367b3c2b7b87f2ce154fec9c5b7d308c9255a06"
+        },
+        {
+          "path": "word/footer1.xml",
+          "size": 1585,
+          "sha256": "f1690abff16e71ea13de786f901c1e2a1a16662ddfa3afdfe545c575a2594ba7"
+        },
+        {
+          "path": "word/footer2.xml",
+          "size": 1585,
+          "sha256": "f1690abff16e71ea13de786f901c1e2a1a16662ddfa3afdfe545c575a2594ba7"
+        },
+        {
+          "path": "word/footer3.xml",
+          "size": 1585,
+          "sha256": "f1690abff16e71ea13de786f901c1e2a1a16662ddfa3afdfe545c575a2594ba7"
+        },
+        {
+          "path": "docProps/thumbnail.jpeg",
+          "size": 8324,
+          "sha256": "96367138dc44ce09bf2c8f0f8e49348a1478d2c5c0af69bbc2bbc38b63cdcead"
+        }
+      ]
+    },
+    {
+      "sequence": 31,
+      "path": "ACPOS_admin_STR-01_戰略中心後台_Mother_Basic_Design_OPTIMIZED.docx",
+      "git_blob_sha": "f36b2e75cae15d93b1d885d90e1b04233930e7c6",
+      "byte_size": 433942,
+      "sha256": "761409cbf660cdb225812ce2aaf6f90cc4fce8c88dacb2324e5464351ff46f2b",
+      "package_part_count": 23,
+      "package_parts": [
+        {
+          "path": "[Content_Types].xml",
+          "size": 2044,
+          "sha256": "ecbe3f7dfd70530319fed457805e79a3df0cc177119a7d97bacbb25f516c7adb"
+        },
+        {
+          "path": "_rels/.rels",
+          "size": 734,
+          "sha256": "a9ae57efe9186f07d48303bcac5d54c7e359bf3f503939c03ad2954e5c59a5c4"
+        },
+        {
+          "path": "docProps/core.xml",
+          "size": 897,
+          "sha256": "16ee0f4b4286d66502e546c931315913fbf21fae3143427b62ecd2230864339d"
+        },
+        {
+          "path": "docProps/app.xml",
+          "size": 1132,
+          "sha256": "be664981c3141cddfc59362beb287ebf20d0773660e2dd6faac5968a5930a081"
+        },
+        {
+          "path": "word/document.xml",
+          "size": 670794,
+          "sha256": "5935c4a4fc0e33994ee0495581e8ff6ce805ae628acb238fbc86d973fbbc8163"
+        },
+        {
+          "path": "word/_rels/document.xml.rels",
+          "size": 2016,
+          "sha256": "e9cc554c4d0778fbe2818bf95da7b26ee8a42328a3b355b9925b0a1d1e5fcbfa"
+        },
+        {
+          "path": "word/styles.xml",
+          "size": 350199,
+          "sha256": "728a2ea8ce9f6cf8133939c6d63491a25a1a6371f93e6737b5d03619a91d2902"
+        },
+        {
+          "path": "word/stylesWithEffects.xml",
+          "size": 438131,
+          "sha256": "463ae0928cf0d84775dbf8cf18d6c3029f6707c81bf590f6d6dd8757a5e93f15"
+        },
+        {
+          "path": "word/settings.xml",
+          "size": 2535,
+          "sha256": "51a0d348fe85965c66e4748a03c3c0d055d78455514f03cb121c334af7d73689"
+        },
+        {
+          "path": "word/webSettings.xml",
+          "size": 438,
+          "sha256": "349d36de7434d09f86987ff671d8814964a0588c1e630c06e562cda7e75e9f95"
+        },
+        {
+          "path": "word/fontTable.xml",
+          "size": 2811,
+          "sha256": "79385fb7f60247507ecaffc292e9ebd52ea0657b8634f629ba6fccc54011d6bb"
+        },
+        {
+          "path": "word/theme/theme1.xml",
+          "size": 10939,
+          "sha256": "e3a8ab7db9ca7afca56f5f2820a56e8b660016c647773555b060b0a02ac76941"
+        },
+        {
+          "path": "customXml/item1.xml",
+          "size": 262,
+          "sha256": "a86086ffc5d8e83ebd6c71a55d1d2efaa31b137977f5f3a752366e1023612144"
+        },
+        {
+          "path": "customXml/_rels/item1.xml.rels",
+          "size": 295,
+          "sha256": "1ca6c9a64edcebe24ee703a54403611b322d96da33371779e742d2d3f7ed7a6c"
+        },
+        {
+          "path": "customXml/itemProps1.xml",
+          "size": 354,
+          "sha256": "c542307b13ec29a8b546217bb37936ab4822e044b265d2952985ec3d6afed24e"
+        },
+        {
+          "path": "word/numbering.xml",
+          "size": 5513,
+          "sha256": "70976f19cbcd896e51890859fe6ecb3467a5a7ad0c040160fedc5a1993cb09ce"
+        },
+        {
+          "path": "word/header1.xml",
+          "size": 1389,
+          "sha256": "a1cbefa594d4216c71af348614ef84d97d4b5da77c403e56245bba24ba9b16db"
+        },
+        {
+          "path": "word/footer1.xml",
+          "size": 1368,
+          "sha256": "a7ed4c4089a17385f5b7b0710db881a83d62d04d08664685f013f0696da5555c"
+        },
+        {
+          "path": "word/media/image1.png",
+          "size": 75055,
+          "sha256": "9071389e69fabdcf86daf8ddc00c5563ded0b9b28fadef73f28539be53e50245"
+        },
+        {
+          "path": "word/media/image2.png",
+          "size": 78527,
+          "sha256": "91a381ebc49b4c73623b4cb280042df3f19d09ef23f5a654f5db399cbe4467cb"
+        },
+        {
+          "path": "word/media/image3.png",
+          "size": 115290,
+          "sha256": "182e6c8b6bb6f9df2edcc67d9921baa4e72a4fe0023d6fc713521e4b350bc31b"
+        },
+        {
+          "path": "word/media/image4.png",
+          "size": 117020,
+          "sha256": "2c6b14324c1f1aa4d6a3a298fec4e9c6fbef3fffab53c048fbbcb0d43e24383b"
+        },
+        {
+          "path": "docProps/thumbnail.jpeg",
+          "size": 8324,
+          "sha256": "96367138dc44ce09bf2c8f0f8e49348a1478d2c5c0af69bbc2bbc38b63cdcead"
+        }
+      ]
+    }
+  ]
+}
