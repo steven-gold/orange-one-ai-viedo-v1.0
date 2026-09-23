@@ -1,0 +1,123 @@
+schema_version: 1
+registry_uid: AUDIT-STEP-REGISTRY-001
+domain_uid: AUDIT_CLOSURE_FLOW
+step_schema_ref: governance/execution-domains/STEP_CONTRACT_SCHEMA.yaml
+audit_profile_ref: governance/execution-domains/AUDIT_PROFILE.yaml
+steps:
+- step_uid: AU-01-TARGET_CONTEXT_RESOLUTION
+  purpose: Resolve exact audit target, governance revision, source revision, scope and owning execution step.
+  prerequisites: [AUDIT_INVOCATION]
+  entry_gate: AUDIT_TARGET_DECLARED
+  inputs: [AUDIT_TARGET, CURRENT_GOVERNANCE, CURRENT_EXECUTION_CONTEXT]
+  input_required_fields: [target_uid, target_type, governance_uid, governance_revision, source_revision, owning_step_uid]
+  operations: [RESOLVE_TARGET, RESOLVE_CURRENT_REVISION, RESOLVE_OWNER, RESOLVE_APPLICABILITY]
+  outputs: [AUDIT_CONTEXT]
+  output_required_fields: [target_uid, governance_revision, source_revision, owner_uid, applicability]
+  denominator: EXACT_DECLARED_AUDIT_TARGET_CONTEXT
+  completeness_and_pass_condition: {context_resolution_percent: 100, unresolved_identity_count: 0}
+  validators_and_evidence: [AUDIT_CONTEXT_VALIDATION, AUDIT_STEP_RECEIPT]
+  failure_reentry_checkpoint_next_step: {failure: STOP, reentry: AU-01-TARGET_CONTEXT_RESOLUTION, checkpoint: AU-01, next_step: AU-02-DENOMINATOR_BUILD}
+- step_uid: AU-02-DENOMINATOR_BUILD
+  purpose: Build the complete dynamic applicable audit denominator from authority and current step outputs.
+  prerequisites: [AU-01-PASS]
+  entry_gate: AUDIT_CONTEXT_PASS
+  inputs: [AUDIT_CONTEXT, CURRENT_AUTHORITY_SET, CURRENT_STEP_OUTPUTS]
+  input_required_fields: [target_uid, authority_refs, output_classes]
+  operations: [ENUMERATE_REQUIRED_ITEMS, CLASSIFY_APPLICABILITY, RESOLVE_REQUIRED_AUDIT_DIMENSIONS]
+  outputs: [AUDIT_DENOMINATOR]
+  output_required_fields: [item_uid, item_type, applicability, authority_ref, required_audit_dimensions]
+  denominator: ALL_APPLICABLE_REQUIRED_ITEMS_FOR_AUDIT_TARGET
+  completeness_and_pass_condition: {enumeration_coverage_percent: 100, implicit_na_count: 0, missing_authority_binding_count: 0}
+  validators_and_evidence: [AUDIT_DENOMINATOR_VALIDATION, AUDIT_STEP_RECEIPT]
+  failure_reentry_checkpoint_next_step: {failure: STOP, reentry: AU-02-DENOMINATOR_BUILD, checkpoint: AU-02, next_step: AU-03-EVIDENCE_RESOLUTION}
+- step_uid: AU-03-EVIDENCE_RESOLUTION
+  purpose: Resolve exact required evidence for every applicable denominator item.
+  prerequisites: [AU-02-PASS]
+  entry_gate: AUDIT_DENOMINATOR_PASS
+  inputs: [AUDIT_DENOMINATOR, CURRENT_EVIDENCE_INDEX]
+  input_required_fields: [item_uid, evidence_requirement]
+  operations: [RESOLVE_EVIDENCE_REFS, VERIFY_EVIDENCE_IDENTITY, VERIFY_EVIDENCE_LEVEL]
+  outputs: [AUDIT_EVIDENCE_MAP]
+  output_required_fields: [item_uid, evidence_uid, evidence_type, source_revision, evidence_level, artifact_ref]
+  denominator: ALL_REQUIRED_EVIDENCE_BINDINGS
+  completeness_and_pass_condition: {evidence_binding_coverage_percent: 100, missing_required_evidence_count: 0}
+  validators_and_evidence: [EVIDENCE_BINDING_AUDIT, AUDIT_STEP_RECEIPT]
+  failure_reentry_checkpoint_next_step: {failure: STOP, reentry: EARLIEST_EVIDENCE_OWNER, checkpoint: AU-03, next_step: AU-04-EVIDENCE_BYTES_SCHEMA_VALIDATION}
+- step_uid: AU-04-EVIDENCE_BYTES_SCHEMA_VALIDATION
+  purpose: Validate physical evidence bytes, parser readability, schema and required fields before granting evidence credit.
+  prerequisites: [AU-03-PASS]
+  entry_gate: AUDIT_EVIDENCE_MAP_COMPLETE
+  inputs: [AUDIT_EVIDENCE_MAP]
+  input_required_fields: [evidence_uid, artifact_ref, evidence_type]
+  operations: [VERIFY_PHYSICAL_EXISTENCE, VERIFY_HASH_AND_REVISION, PARSE_EVIDENCE, VALIDATE_SCHEMA, VALIDATE_REQUIRED_FIELDS]
+  outputs: [VALIDATED_EVIDENCE_SET]
+  output_required_fields: [evidence_uid, content_hash, parse_result, schema_result, required_field_result]
+  denominator: ALL_REQUIRED_EVIDENCE_ARTIFACTS
+  completeness_and_pass_condition: {validated_evidence_percent: 100, malformed_count: 0, stale_count: 0, schema_failure_count: 0}
+  validators_and_evidence: [EVIDENCE_INTEGRITY_VALIDATION, AUDIT_STEP_RECEIPT]
+  failure_reentry_checkpoint_next_step: {failure: STOP, reentry: EARLIEST_EVIDENCE_OWNER, checkpoint: AU-04, next_step: AU-05-DOMAIN_VALIDATION}
+- step_uid: AU-05-DOMAIN_VALIDATION
+  purpose: Run the fixed universal audit dimensions plus all target-specific registered validators.
+  prerequisites: [AU-04-PASS]
+  entry_gate: REQUIRED_EVIDENCE_VALID
+  inputs: [AUDIT_DENOMINATOR, VALIDATED_EVIDENCE_SET, DOMAIN_AUDIT_PROFILE]
+  input_required_fields: [item_uid, required_audit_dimensions, evidence_uid]
+  operations: [RUN_UNIVERSAL_AUDIT_DIMENSIONS, RUN_REGISTERED_TARGET_VALIDATORS]
+  outputs: [AUDIT_FINDINGS]
+  output_required_fields: [finding_uid, item_uid, audit_dimension, validator_uid, result, evidence_ref, owner_uid]
+  denominator: ALL_APPLICABLE_AUDIT_DIMENSIONS_TIMES_REQUIRED_ITEMS
+  completeness_and_pass_condition: {validator_execution_percent: 100, unexecuted_required_validator_count: 0}
+  validators_and_evidence: [AUDIT_EXECUTION_COVERAGE_VALIDATION, AUDIT_STEP_RECEIPT]
+  failure_reentry_checkpoint_next_step: {failure: STOP, reentry: AU-05-DOMAIN_VALIDATION, checkpoint: AU-05, next_step: AU-06-GAP_CONFLICT_ORPHAN_CLASSIFICATION}
+- step_uid: AU-06-GAP_CONFLICT_ORPHAN_CLASSIFICATION
+  purpose: Classify every non-pass finding and bind it to the earliest owning step without hiding or duplicating defects.
+  prerequisites: [AU-05-PASS_OR_FINDINGS_MATERIALIZED]
+  entry_gate: ALL_REQUIRED_VALIDATORS_EXECUTED
+  inputs: [AUDIT_FINDINGS, AUDIT_DENOMINATOR]
+  input_required_fields: [finding_uid, item_uid, result, owner_uid]
+  operations: [CLASSIFY_GAPS, CLASSIFY_CONFLICTS, CLASSIFY_DUPLICATES, CLASSIFY_ORPHANS, RESOLVE_EARLIEST_OWNER]
+  outputs: [AUDIT_PROBLEM_REGISTER]
+  output_required_fields: [problem_uid, finding_uid, classification, severity, owner_uid, owning_step_uid, disposition]
+  denominator: ALL_NON_PASS_OR_STRUCTURAL_FINDINGS
+  completeness_and_pass_condition: {classification_coverage_percent: 100, unowned_problem_count: 0, duplicate_problem_identity_count: 0}
+  validators_and_evidence: [PROBLEM_CLASSIFICATION_AUDIT, AUDIT_STEP_RECEIPT]
+  failure_reentry_checkpoint_next_step: {failure: STOP, reentry: AU-06-GAP_CONFLICT_ORPHAN_CLASSIFICATION, checkpoint: AU-06, next_step: AU-07-DENOMINATOR_RECONCILIATION}
+- step_uid: AU-07-DENOMINATOR_RECONCILIATION
+  purpose: Reconcile every denominator item, validator result, evidence binding and problem disposition exactly once.
+  prerequisites: [AU-06-PASS]
+  entry_gate: ALL_FINDINGS_CLASSIFIED
+  inputs: [AUDIT_DENOMINATOR, AUDIT_FINDINGS, AUDIT_PROBLEM_REGISTER, VALIDATED_EVIDENCE_SET]
+  input_required_fields: [item_uid, result, evidence_ref, disposition]
+  operations: [RECONCILE_ITEMS, RECONCILE_VALIDATORS, RECONCILE_EVIDENCE, RECONCILE_PROBLEMS]
+  outputs: [AUDIT_RECONCILIATION]
+  output_required_fields: [denominator_count, audited_count, pass_count, partial_count, fail_count, blocked_count, not_verified_count, na_count, unresolved_problem_count]
+  denominator: COMPLETE_AUDIT_DENOMINATOR
+  completeness_and_pass_condition: {reconciliation_coverage_percent: 100, missing_item_count: 0, duplicate_item_count: 0}
+  validators_and_evidence: [AUDIT_RECONCILIATION_VALIDATION, AUDIT_STEP_RECEIPT]
+  failure_reentry_checkpoint_next_step: {failure: STOP, reentry: EARLIEST_AUDIT_OR_PRODUCT_OWNER, checkpoint: AU-07, next_step: AU-08-RESULT_AND-RECEIPT}
+- step_uid: AU-08-RESULT_AND-RECEIPT
+  purpose: Assign the only legal audit result and persist an exact audit receipt.
+  prerequisites: [AU-07-PASS]
+  entry_gate: AUDIT_RECONCILIATION_COMPLETE
+  inputs: [AUDIT_RECONCILIATION, AUDIT_PROBLEM_REGISTER]
+  input_required_fields: [denominator_count, audited_count, unresolved_problem_count]
+  operations: [CLASSIFY_FINAL_RESULT, MATERIALIZE_AUDIT_RECEIPT]
+  outputs: [AUDIT_RECEIPT]
+  output_required_fields: [audit_uid, target_uid, governance_revision, source_revision, denominator_hash, result, evidence_refs, problem_refs]
+  denominator: EXACT_RECONCILED_AUDIT
+  completeness_and_pass_condition: {receipt_field_coverage_percent: 100, ambiguous_result_count: 0}
+  validators_and_evidence: [AUDIT_RECEIPT_SCHEMA_VALIDATION, AUDIT_RECEIPT]
+  failure_reentry_checkpoint_next_step: {failure: STOP, reentry: AU-07-DENOMINATOR_RECONCILIATION, checkpoint: AU-08, next_step: AU-09-CHECKPOINT_SUCCESSOR_DECISION}
+- step_uid: AU-09-CHECKPOINT_SUCCESSOR_DECISION
+  purpose: Persist resume state and authorize exactly one successor only when audit result is PASS.
+  prerequisites: [AU-08-PASS]
+  entry_gate: AUDIT_RECEIPT_VALID
+  inputs: [AUDIT_RECEIPT, CURRENT_EXECUTION_CHECKPOINT]
+  input_required_fields: [audit_uid, result, owning_step_uid]
+  operations: [PERSIST_CHECKPOINT, RESOLVE_LEGAL_SUCCESSOR, AUTHORIZE_OR_BLOCK_SUCCESSOR]
+  outputs: [AUDIT_CHECKPOINT_RECEIPT, SUCCESSOR_AUTHORIZATION]
+  output_required_fields: [checkpoint_uid, audit_uid, result, next_step_uid, authorization_state]
+  denominator: EXACT_CURRENT_AUDIT_AND_REGISTERED_SUCCESSOR_EDGE
+  completeness_and_pass_condition: {checkpoint_persisted: true, successor_authorized_only_if_pass: true}
+  validators_and_evidence: [CHECKPOINT_SUCCESSOR_AUDIT, AUDIT_CHECKPOINT_RECEIPT]
+  failure_reentry_checkpoint_next_step: {failure: STOP_AND_REENTER_EARLIEST_OWNER, reentry: EARLIEST_OWNING_STEP, checkpoint: AU-09, next_step: REGISTERED_SUCCESSOR_IF_PASS_ELSE_NONE}
