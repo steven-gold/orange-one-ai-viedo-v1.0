@@ -1,0 +1,26 @@
+name: Word Source Fleet Fast Compatibility Audit
+on:
+  push:
+    branches:
+      - rebuild-v2.1.1
+    paths:
+      - ".github/governance-maintenance/audit_word_source_fleet_fast.py"
+permissions:
+  contents: read
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.11"}
+      - run: python -m pip install --disable-pip-version-check PyYAML==6.0.2
+      - run: python .github/governance-maintenance/audit_word_source_fleet_fast.py
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: word-source-fleet-fast-audit
+          path: /tmp/word_source_fleet_fast_audit.json
+          if-no-files-found: error
