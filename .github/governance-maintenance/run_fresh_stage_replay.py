@@ -3,7 +3,7 @@ from __future__ import annotations
 
 from pathlib import Path
 import hashlib
-import json
+import json\nimport os
 import re
 import subprocess
 import sys
@@ -272,6 +272,8 @@ def main() -> None:
         return
 
     ctx = resolve_execution_context()
+    if "--execute" in sys.argv and os.environ.get("ACPOS_COMMON_STAGE_ENGINE_EXECUTION") != "1":
+        raise RuntimeError("DIRECT_EFFECTFUL_INVOCATION_FORBIDDEN_USE_COMMON_STAGE_ENGINE")
     if not any(x in sys.argv for x in ("--print-context-json", "--print-context-github-output")) and "--execute" not in sys.argv:
         raise RuntimeError("DIRECT_EFFECTFUL_INVOCATION_FORBIDDEN_USE_COMMON_STAGE_ENGINE")
     if "--print-context-json" in sys.argv:
