@@ -1,0 +1,48 @@
+schema_version: 1
+artifact_type: WORD_SOURCE_FLEET_PRESTAGE_AUDIT_EVIDENCE
+normative_authority: false
+governance_uid: GOV-REV-20260923-WORD-PROJECTION-NEXTSTEP-CONSUMER-SYNC-HARDENING
+source_repository: steven-gold/orange-one-ai-viedo-v1.0
+source_branch: 0921acpos
+source_head: 6249dbadad182cecd3810683b260dccd11901bcc
+denominator:
+  method: GIT_TREE_ALL_DOCX_EXACT_PATHS_CORE_QUOTEPATH_FALSE
+  document_count: 31
+  index_document_count: 1
+  system_logic_normative_contract_count: 9
+  page_or_system_basic_design_count: 21
+checks:
+- DOCX_PACKAGE_OPEN_AND_REQUIRED_PARTS
+- COMPLETE_XML_PARSEABILITY
+- COMPLETE_RELATIONSHIP_TARGET_RESOLUTION
+- COMPLETE_NON_XML_BINARY_PART_HASHABILITY
+- IMAGE_RELATIONSHIP_TO_BINARY_PART_BINDING
+- DRAWING_TO_IMAGE_RELATIONSHIP_BINDING
+- CURRENT_FIXED_YAML_PROJECTION_SCHEMA_CAPABILITY
+- CURRENT_FROZEN_BINARY_SOURCE_PART_CONTRACT_CAPABILITY
+- MACHINE_DETECTABLE_REQUIRED_BASIC_DESIGN_DOMAIN_COVERAGE
+results:
+  projection_compatibility_pass_count: 31
+  projection_compatibility_fail_count: 0
+  global_contract_failure_count: 0
+  content_review_candidate_count: 0
+  machine_detected_required_domain_gap_count: 0
+  word_content_mutation_required_by_this_audit_count: 0
+workflow_evidence:
+  run_id: 35828158745
+  artifact_id: 10735339522
+  artifact_zip_sha256: cfb9458950d231fdb06d1fcfa8a9bdee4e8e48ab43d806c2bd18c7aa7dbc9c08
+  run_head_sha: 54e5f6f6792c78218e5f1db28157a8e495bfb011
+superseded_attempts:
+- run_id: 35828007101
+  disposition: NO_CURRENT_CREDIT
+  reason:
+  - UTF8_FILENAMES_WERE_GIT_CSTYLE_QUOTED_CAUSING_22_OF_31_DENOMINATOR
+  - HARNESS_EXPECTED_NONOWNER_SEMANTIC_PRESERVATION_KEY
+limits:
+  yaml_materialized_for_non_core_documents: false
+  stage01_semantic_classification_executed: false
+  per_node_exact_hash_reconciliation_for_nonselected_documents: false
+  selected_document_exact_reconciliation_policy: REQUIRED_DURING_FORMAL_CONVERSION
+result: PASS_ALL_31_WORDS_PRESTAGE_COMPATIBLE_NO_WORD_MUTATION_REQUIRED
+product_stage_credit: 0
