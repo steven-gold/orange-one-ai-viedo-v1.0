@@ -127,7 +127,10 @@ governance_revision_transition:
   predecessor_governance_uid: GOV-REV-20260923-WORD-YAML-PAGE-NEUTRAL-SCHEMA-PORTABILITY-HARDENING
   predecessor_attempt_preserved_as_historical_evidence: true
   predecessor_attempt_may_close_under_current_governance: false
-  fresh_revalidation_required: true
+  fresh_revalidation_required: false
+  governance_policy_consumer_revalidation_required: true
+  product_stage_revalidation_required: false
+  product_stage_revalidation_credit: 0
   selected_execution_profile_preserved: true
   product_fresh_replay_required_after_governance_change: true
   canonical_rule_registry_required_for_fresh_revalidation: true
@@ -207,6 +210,9 @@ active_work_unit:
   product_authority_mutation_allowed: false
   product_stage_credit: 0
   current_status_after_successor_promotion: REVALIDATION_REQUIRED
+  governance_policy_consumer_revalidation_required: true
+  product_stage_revalidation_required: false
+  product_stage_revalidation_credit: 0
 word_source_snapshot_for_future_projection:
   normative_authority: false
   role: SOURCE_CONTEXT_ONLY_NOT_ACTIVE_WORK_UNIT
