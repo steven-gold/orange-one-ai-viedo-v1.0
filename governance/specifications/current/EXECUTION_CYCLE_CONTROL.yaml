@@ -1,4 +1,4 @@
-schema_version: 10
+schema_version: 11
 artifact_uid: GOV-COMP-EXECUTION-CYCLE-CONTROL
 artifact_type: GOVERNANCE_SPECIFICATION_COMPONENT
 normative_status: ACTIVE_CURRENT_GOVERNANCE_COMPONENT
@@ -353,6 +353,7 @@ pre_stage_source_projection_admission:
   canonical_contract_ref: .github/governance-source/active/source/10_REGISTRY/STAGE1_SOURCE_FACT_CONTRACTS.yaml
   invariant_uid: GOV-INV-SOURCE-PROJECTION-FIDELITY-001
   required_order:
+  - CONTENT_READINESS_PASS
   - RAW_CAPTURE_LOCKED
   - PROJECTION_COMPLETE
   - RECONCILIATION_PASS
@@ -365,3 +366,8 @@ pre_stage_source_projection_admission:
   raw_word_semantic_reparse_during_source_intake: BLOCK
   schema_alias_or_optional_field_fallback: BLOCK
   not_applicable_requires_authority_evidence: true
+  source_document_content_readiness_audit_required: true
+  frozen_binary_source_part_materialization_required_when_present: true
+  stage01_binary_source_access: PROJECTION_RESOLVED_FROZEN_BINARY_ONLY
+  direct_docx_binary_reextract: BLOCK
+  projection_producer_ref: governance/ci/build_docx_source_projection.py

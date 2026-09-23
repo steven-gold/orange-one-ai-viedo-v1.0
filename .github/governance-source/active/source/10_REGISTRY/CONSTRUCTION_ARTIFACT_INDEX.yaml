@@ -358,8 +358,8 @@ implementation_manifest_contract:
   - governance_load_receipt
   - dependency_closure
   - typed_identity_registry_ref
-  loader_policy: Code construction MUST load the manifest first, then only the exact normative and artifact refs declared by that manifest plus their dependency closure. Whole-package rescans are forbidden
-    unless a declared integrity/audit operation explicitly requires them.
+  loader_policy: Code construction MUST load the manifest first, then only the exact normative and artifact refs declared by that manifest plus their dependency closure. Whole-package rescans are forbidden unless a declared
+    integrity/audit operation explicitly requires them.
   no_governance_load_receipt_no_execution: true
   effective_normative_set_must_be_compiled_before_execution: true
   required_field_presence_is_not_sufficient: true
@@ -582,7 +582,7 @@ write_target_lock_contract:
   governance_registry_write_during_construction: BLOCK
   unregistered_write_target: BLOCK
   prewrite_hash_mismatch: BLOCK
-governance_revision: v2.2.20-word-yaml-cross-page-portability-regression-closure
+governance_revision: v2.2.21-word-content-binary-source-projection-hardening
 reference_rule_registry_ref: REG-REFERENCE-RULE-001
 semantic_authority_baseline_ref: REG-SEMANTIC-AUTHORITY-BASELINE-001
 typed_identity_authority_registry_ref: REG-PROGRAM-IDENTITY-AUTHORITY-001

@@ -1235,3 +1235,13 @@ A selected source-intake/base-blueprint execution active Work Unit MUST carry th
 The Canonical Projection schema is a single owner. Consumers MUST read the registered schema fields and MUST NOT maintain local alternate field-name maps, permissive alias fallback, page-specific schemas, or parser-specific optional-field interpretations. Unknown producer fields and missing required fields are schema drift and block. Sequence semantics that carry source order MUST use explicit registered indices and exact list order; YAML mapping order alone MUST NOT carry source semantics.
 
 If a locked source pair changes after selected source-intake/base-blueprint execution has started, the current selected source-intake/base-blueprint execution attempt is invalid for the impacted source set, the Product Work Unit must stop, affected descendant evidence becomes REVERIFY_REQUIRED, and execution re-enters the pre-Stage projection/reconciliation boundary. No downstream patch may manufacture continuity.
+
+### Frozen Binary Part Admission and Mutation Invalidation / 凍結二進位來源准入與失效
+
+CONTENT_READINESS_PASS is required before RAW_CAPTURE_LOCKED for structured Word/DOCX. Any Word repair after audit invalidates the audit and requires a fresh audit before locking.
+
+At reconciliation and selected source-intake/base-blueprint admission, every expected non-XML binary package part MUST exist at the deterministic frozen-binary location and its bytes MUST match the package-part SHA-256. Missing, extra, duplicate, re-encoded, hash-mismatched, or path-mismatched frozen binary parts are blocking source-fidelity defects.
+
+After SOURCE_PAIR_FROZEN, the Word, Canonical YAML projection, content-readiness audit binding, and frozen binary-part set are immutable for that attempt. Mutation of any member invalidates selected source-intake/base-blueprint eligibility and requires pre-stage re-entry.
+
+Selected source-intake/base-blueprint execution may read binary pixels/bytes only through the frozen-binary resolver defined by the projection contract. Direct DOCX unzip/reparse for semantic recovery is forbidden.

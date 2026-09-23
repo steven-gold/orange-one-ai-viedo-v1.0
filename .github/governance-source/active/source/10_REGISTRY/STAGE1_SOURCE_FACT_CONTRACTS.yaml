@@ -4,7 +4,7 @@ artifact_type: STAGE1_SOURCE_FACT_CONTRACTS
 status: CURRENT_CANDIDATE
 canonical_path: 10_REGISTRY/STAGE1_SOURCE_FACT_CONTRACTS.yaml
 owner_uid: OWNER-GOVERNANCE-STAGE1-SOURCE-FACTS
-governance_revision: v2.2.20-word-yaml-cross-page-portability-regression-closure
+governance_revision: v2.2.21-word-content-binary-source-projection-hardening
 normative_section_uids:
 - WEB-GOV-01-S069
 - WEB-GOV-01-S090
@@ -104,7 +104,7 @@ raw_source_capture_contract:
   content_addressed_identity_required: true
   structured_document_projection_required_formats:
   - DOCX
-  structured_document_exact_next_step: CANONICAL_SOURCE_PROJECTION
+  structured_document_exact_next_step: SOURCE_DOCUMENT_CONTENT_AUDIT
   default_exact_next_step: SOURCE_STRUCTURE_ENUMERATION
   in_place_raw_source_mutation: BLOCK
 source_structure_semantic_granularity_contract:
@@ -261,6 +261,7 @@ structured_document_source_projection_contract:
     not_applicable_requires_authority_evidence: true
     implicit_not_applicable: BLOCK
   state_machine:
+  - CONTENT_READINESS_PASS
   - RAW_CAPTURE_LOCKED
   - PROJECTION_COMPLETE
   - RECONCILIATION_PASS
@@ -280,11 +281,14 @@ structured_document_source_projection_contract:
     - source_path
     - source_git_blob_sha
     - source_sha256
+    - content_readiness_audit_uid
     - lock_state
     - writable
     - mutation_policy
     - content_hash
     terminal_lock_state: RAW_CAPTURE_LOCKED
+    content_readiness_pass_required: true
+    word_repair_after_pass_invalidates_audit: true
   projection:
     artifact_path_template: 00_SOURCE_INTAKE/SOURCE_PROJECTIONS/{source_uid}/CANONICAL_SOURCE_PROJECTION.yaml
     schema_uid: SCHEMA-DOCX-CANONICAL-SOURCE-PROJECTION-001
@@ -437,6 +441,10 @@ structured_document_source_projection_contract:
     - raw_source_hash_mismatch
     - projection_hash_mismatch
     - unresolved_required_source_nodes
+    - missing_frozen_binary_parts
+    - unexpected_frozen_binary_parts
+    - frozen_binary_hash_mismatch
+    - frozen_binary_path_mismatch
     all_zero_required_for_pass: true
     reverse_trace_required: true
     unsupported_count_required_for_pass: 0
@@ -494,3 +502,49 @@ structured_document_source_projection_contract:
     every_projection_source_node_exactly_once_disposition_required: true
     silent_projection_node_omission: BLOCK
     derived_node_without_projection_lineage: BLOCK
+    binary_source_access: EXACT_FROZEN_BINARY_PART_RESOLVED_FROM_PROJECTION_ONLY
+    direct_docx_binary_reextract: BLOCK
+    binary_hash_verification_before_use: true
+    derived_visual_description_may_replace_frozen_binary_bytes: false
+  source_document_content_readiness_audit:
+    evidence_path_template: 00_SOURCE_INTAKE/SOURCE_PROJECTIONS/{source_uid}/SOURCE_DOCUMENT_CONTENT_AUDIT.yaml
+    required_before_raw_source_lock: true
+    artifact_type: SOURCE_DOCUMENT_CONTENT_AUDIT
+    required_field_order:
+    - schema_version
+    - artifact_uid
+    - artifact_type
+    - source_uid
+    - source_sha256
+    - page_uid
+    - audit_standard_uid
+    - required_design_domain_uids
+    - observed_design_domain_uids
+    - missing_required_design_domain_uids
+    - matrix_integrity
+    - visual_source_integrity
+    - render_integrity
+    - open_downstream_states
+    - unresolved_required_gap_count
+    - contradiction_count
+    - result
+    - evidence_content_hash
+    pass_state: PASS
+    unresolved_required_gap_count_required: 0
+    contradiction_count_required: 0
+    product_specific_counts: DYNAMIC_FROM_DOCUMENT
+    downstream_not_executed_or_review_pending_is_automatic_content_gap: false
+  frozen_binary_source_part_materialization:
+    required_for_non_xml_binary_package_parts: true
+    storage_root_template: 00_SOURCE_INTAKE/SOURCE_PROJECTIONS/{source_uid}/FROZEN_BINARY_PARTS
+    filename_rule: '{part_sha256}{lowercase_original_suffix}'
+    source_bytes: EXACT_DOCX_PACKAGE_PART_BYTES
+    reencode_or_render_or_resample: BLOCK
+    expected_set: EVERY_PACKAGE_PART_NOT_ENDING_XML_OR_RELS
+    extra_file: BLOCK
+    missing_file: BLOCK
+    hash_mismatch: BLOCK
+    semantic_interpretation_during_materialization: BLOCK
+    stage01_binary_access: PROJECTION_PACKAGE_PART_HASH_TO_FROZEN_BINARY_PATH_ONLY
+    direct_docx_binary_reextract_during_stage01: BLOCK
+    hash_verify_before_each_semantic_use: true

@@ -4,7 +4,7 @@ artifact_type: IMMUTABLE_SEMANTIC_AUTHORITY_BASELINE
 status: CURRENT_CANDIDATE_IMMUTABLE
 canonical_path: 10_REGISTRY/SEMANTIC_AUTHORITY_BASELINE.yaml
 owner_uid: OWNER-GOVERNANCE-SEMANTIC-ANCHOR
-governance_revision: v2.2.20-word-yaml-cross-page-portability-regression-closure
+governance_revision: v2.2.21-word-content-binary-source-projection-hardening
 anchor_policy:
   official_refresh_must_not_mutate: true
   compiler_must_not_regenerate: true
@@ -866,8 +866,8 @@ mandatory_regression_assets:
   expected_total: 21
   expected_passed: 21
 - path: 09_TESTS/governance/test_stage1_source_to_blueprint_minimal_control.py
-  expected_total: 45
-  expected_passed: 45
+  expected_total: 47
+  expected_passed: 47
 - path: 09_TESTS/governance/test_v2_1_0_regressions.py
   expected_total: 12
   expected_passed: 12
@@ -910,7 +910,7 @@ package_integrity_assets:
 - 09_TESTS/governance/test_v2_1_14_test_feedback_spec_evolution.py
 - 09_TESTS/governance/validate_product_neutral_entity_lifecycle.py
 - 09_TESTS/governance/test_v2_1_14_product_neutral_entity_lifecycle.py
-content_hash: 543fcfd8c3f71a87e9f82efafdc479a55acb6eb9728aba20e784cd022ecd19d9
+content_hash: cc6d95e16e035c0bc401fe6f6d6f09e74d76c79eb24bbfc0c4e568e93d0431f7
 protected_hash_paths:
 - 09_TESTS/governance/validate_test_feedback_spec_evolution.py
 - 09_TESTS/governance/test_v2_1_14_test_feedback_spec_evolution.py

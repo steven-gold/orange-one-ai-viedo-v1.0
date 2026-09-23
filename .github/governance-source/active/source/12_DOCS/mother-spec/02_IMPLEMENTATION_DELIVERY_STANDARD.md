@@ -1259,3 +1259,14 @@ selected source-intake/base-blueprint execution machine execution MUST consume o
 selected source-intake/base-blueprint execution derived Source Structure, Segment Mapping, Source Facts, classifications, and Blueprints MUST be written to separate derived artifacts. No selected source-intake/base-blueprint execution operation may rewrite the raw source, projection, reconciliation evidence, or freeze receipt. Every derived source-structure disposition MUST retain exact projection-source-node lineage. Missing projection lineage, projection hash drift, pair-hash drift, or fallback to an unverified projection is a blocking admission defect.
 
 If the source does not require projection, NOT_APPLICABLE is legal only with explicit source-type Authority evidence. Absence of a projection file is never implicit N/A.
+
+### Content Audit, Source Lock and Frozen Binary Delivery Order / 內容稽核、來源鎖定與二進位交付順序
+
+For structured Word/DOCX input, the exact pre-execution order is:
+SOURCE DOCUMENT CONTENT REVIEW -> REPAIR WORD IF REQUIRED -> CONTENT_READINESS_PASS -> RAW SOURCE IMMUTABILITY LOCK -> CANONICAL YAML PROJECTION -> FROZEN BINARY SOURCE-PART MATERIALIZATION -> ZERO-LOSS RECONCILIATION -> SOURCE PAIR FREEZE -> WORK UNIT RESOLUTION.
+
+The immutable source lock MUST bind the PASS content-readiness audit UID. No producer may create a valid lock receipt for a Word whose content-readiness audit is missing, non-PASS, stale, or bound to a different source hash.
+
+Frozen binary source parts are projection-owned evidence. The delivery producer MUST copy exact source bytes, never screenshot/re-render/re-encode them, and MUST create exactly one deterministic frozen binary path per binary package-part hash. Derived thumbnails, OCR text, image descriptions, annotations, or AI visual interpretations are separate derived evidence and MUST NOT replace the exact frozen binary bytes.
+
+The common DOCX projection producer MUST be product/page neutral. It MUST derive every count and source row from the current immutable document and MUST NOT contain page-specific field vocabularies, page IDs, function names, control names, or expected content counts.

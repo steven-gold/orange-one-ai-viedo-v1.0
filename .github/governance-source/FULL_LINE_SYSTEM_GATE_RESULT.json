@@ -1,8 +1,8 @@
 {
   "artifact_type": "NON_NORMATIVE_FULL_LINE_SYSTEM_GATE_EVIDENCE",
   "mode": "SYSTEM_ROUND_1_FULL_LINE_HIGH_PRESSURE",
-  "source_zip_sha256": "caddc2e7bf325cdbf9ba2c2227ebf0d0273f0eaf8ba6fef6be1be8ac0217e0f0",
-  "deterministic_source_bundle_sha256": "c3b2828a2864898f43b0f9437b7105afa6f457815710cc36e3ddf4184c5902cb",
+  "source_zip_sha256": "266a281cb3d13a17daaab3b185f22a9a150bcfbe565ce8ab0e832c10c2756c1d",
+  "deterministic_source_bundle_sha256": "a9498bcb6509272ebeb5eb0edbe9cdfa964b58369b5fddde77c3912a7ee20dba",
   "lifecycle_stage_count": 11,
   "lifecycle_stage_uids": [
     "STAGE-01",
@@ -39,8 +39,8 @@
       "passed_expectations": 21
     },
     "test_stage1_source_to_blueprint_minimal_control.py": {
-      "total": 45,
-      "passed_expectations": 45
+      "total": 47,
+      "passed_expectations": 47
     },
     "test_v2_1_0_regressions.py": {
       "total": 12,
@@ -519,7 +519,7 @@
         "validator_identities": 36,
         "audit_types": 15,
         "naming_items": 13,
-        "semantic_anchor_hash": "543fcfd8c3f71a87e9f82efafdc479a55acb6eb9728aba20e784cd022ecd19d9"
+        "semantic_anchor_hash": "cc6d95e16e035c0bc401fe6f6d6f09e74d76c79eb24bbfc0c4e568e93d0431f7"
       },
       {
         "check_id": "program_artifact_instance_guard",
@@ -530,8 +530,8 @@
       {
         "check_id": "current_test_evidence_sync",
         "status": "PASS",
-        "current_revision": "v2.2.20",
-        "current_source_revision": "v2.2.20-word-yaml-cross-page-portability-regression-closure",
+        "current_revision": "v2.2.21",
+        "current_source_revision": "v2.2.21-word-content-binary-source-projection-hardening",
         "fresh_revalidation_required": true,
         "current_mandatory_suite_count": 17,
         "historical_evidence_suite_count": 17,
@@ -588,7 +588,7 @@
       {
         "check_id": "acceptance_blueprint_compiled_baseline",
         "status": "PASS",
-        "compiled_requirements": 822,
+        "compiled_requirements": 832,
         "audit_denominator": 15,
         "failures": []
       },
@@ -659,8 +659,8 @@
             "suite": "test_stage1_source_to_blueprint_minimal_control.py",
             "returncode": 0,
             "ok": true,
-            "total": 45,
-            "passed_expectations": 45,
+            "total": 47,
+            "passed_expectations": 47,
             "semantic_cases_total": null,
             "semantic_passed_expectations": null,
             "fuzz_total": null,

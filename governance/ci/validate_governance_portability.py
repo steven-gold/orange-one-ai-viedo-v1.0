@@ -188,6 +188,16 @@ else:
     for _k,_v in _required_generic.items():
         if _projection.get(_k)!=_v:
             failures.append('source_projection_common_schema_product_neutrality:'+_k)
+_producer=ROOT/'governance/ci/build_docx_source_projection.py'
+if not _producer.is_file():
+    failures.append('docx_projection_producer_missing')
+else:
+    _pt=_producer.read_text(encoding='utf-8')
+    if literal_product_identity.search(_pt):
+        failures.append('docx_projection_producer_product_identity_leak')
+    for _token in ('CORE-01','ASSET-01','VIDEO-01','EDIT-01'):
+        if _token in _pt:
+            failures.append('docx_projection_producer_literal_page_identity:'+_token)
 out={
     'status':'PASS' if not failures else 'FAIL',
     'canonical_registry_uid':canonical.get('registry_uid'),

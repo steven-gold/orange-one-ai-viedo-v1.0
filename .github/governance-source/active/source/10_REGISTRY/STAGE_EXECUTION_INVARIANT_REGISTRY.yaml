@@ -4,7 +4,7 @@ artifact_type: STAGE_EXECUTION_INVARIANT_REGISTRY
 status: CURRENT_CANDIDATE
 canonical_path: 10_REGISTRY/STAGE_EXECUTION_INVARIANT_REGISTRY.yaml
 owner_uid: OWNER-GOVERNANCE-STAGE-EXECUTION-INVARIANT
-governance_revision: v2.2.20-word-yaml-cross-page-portability-regression-closure
+governance_revision: v2.2.21-word-content-binary-source-projection-hardening
 scope:
   applies_to_stages:
   - STAGE-01
@@ -1189,6 +1189,12 @@ invariants:
     fixed_page_uid_or_page_type: BLOCK
     fixed_product_function_control_or_source_content_count: BLOCK
     cross_page_content_shape_portability_required: true
+    content_readiness_audit_before_raw_lock: true
+    content_readiness_required_gap_count: 0
+    frozen_binary_source_parts_required_when_present: true
+    frozen_binary_bytes_exact_hash_required: true
+    stage01_direct_docx_binary_reextract: BLOCK
+    stage01_binary_access: PROJECTION_RESOLVED_FROZEN_BINARY_ONLY
 stage02_observed_defect_mapping:
 - finding: PORT_EXPOSURE_WITHOUT_TRIGGER
   mapped_invariant: RELATION_SEMANTIC_SEPARATION

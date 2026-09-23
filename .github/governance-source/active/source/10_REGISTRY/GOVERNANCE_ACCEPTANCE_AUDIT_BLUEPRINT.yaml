@@ -5,7 +5,7 @@ blueprint_type: ACCEPTANCE_AUDIT_BLUEPRINT
 status: CURRENT_CANDIDATE
 canonical_path: 10_REGISTRY/GOVERNANCE_ACCEPTANCE_AUDIT_BLUEPRINT.yaml
 owner_uid: OWNER-GOVERNANCE-ACCEPTANCE
-governance_revision: v2.2.20-word-yaml-cross-page-portability-regression-closure
+governance_revision: v2.2.21-word-content-binary-source-projection-hardening
 normative_section_uids:
 - WEB-GOV-04-S071
 - WEB-GOV-04-S076
@@ -376,3 +376,8 @@ structured_document_source_projection_audit_contract:
   fixed_product_page_or_function_vocabulary: BLOCK
   fixed_source_content_count: BLOCK
   cross_page_materially_different_content_shape_portability_required: true
+  source_document_content_readiness_audit_required: true
+  zero_unresolved_required_word_content_gap_required: true
+  frozen_binary_source_parts_required_when_present: true
+  frozen_binary_exact_hash_required: true
+  stage01_direct_docx_binary_reextract: BLOCK

@@ -216,7 +216,7 @@ def _make_minimal_docx(path):
     rootrels='''<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="word/document.xml"/></Relationships>'''
     doc='''<?xml version="1.0" encoding="UTF-8" standalone="yes"?><w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:body><w:p><w:r><w:t>固定來源</w:t></w:r></w:p><w:tbl><w:tr><w:tc><w:p><w:r><w:t>表格內容</w:t></w:r></w:p></w:tc></w:tr></w:tbl><w:sectPr/></w:body></w:document>'''
     with zipfile.ZipFile(path,'w',compression=zipfile.ZIP_DEFLATED) as z:
-        z.writestr('[Content_Types].xml',ct); z.writestr('_rels/.rels',rootrels); z.writestr('word/document.xml',doc)
+        z.writestr('[Content_Types].xml',ct); z.writestr('_rels/.rels',rootrels); z.writestr('word/document.xml',doc); z.writestr('docProps/thumbnail.png',b'\x89PNG\r\n\x1a\nTEST_BINARY_SOURCE_PART')
 
 def _projection_fixture(root):
     rawrel='00_SOURCE_INTAKE/RAW_SOURCE/CORE-01/SOURCE.docx'; raw=root/rawrel; _make_minimal_docx(raw)
@@ -224,9 +224,15 @@ def _projection_fixture(root):
     rawcap={'artifact_uid':'RAW-CAP-DOCX','artifact_type':'RAW_SOURCE_REFERENCE_MANIFEST','status':'CURRENT_RAW_SOURCE_CAPTURE','capture_root':'00_SOURCE_INTAKE/RAW_SOURCE','records':[{'source_uid':suid,'source_format':'DOCX','projection_required':True,'page_uid':'CORE-01','source_role':'MIXED_PAGE_VISUAL_SOURCE_INPUT','source_domain_scope':'MIXED_PAGE_VISUAL','source_path':'fixture://docx1','target_path':rawrel,'source_git_blob_sha':blob,'target_git_blob_sha':blob,'content_mutated':False}]}
     capstate={'run_uid':'PROJ1','state':'CAPTURE_CLOSED','next_step':'CANONICAL_SOURCE_PROJECTION','recapture_allowed':False}
     contract=g._projection_contract(PKG); rc=contract['raw_source_lock']; pc=contract['projection']; ac=contract['reconciliation']; fc=contract['pair_freeze']; base=f"00_SOURCE_INTAKE/SOURCE_PROJECTIONS/{suid}"
-    lock={'schema_version':1,'artifact_uid':'LOCK-DOCX1','artifact_type':'RAW_SOURCE_IMMUTABILITY_RECEIPT','source_uid':suid,'source_path':rawrel,'source_git_blob_sha':blob,'source_sha256':rawsha,'lock_state':'RAW_CAPTURE_LOCKED','writable':False,'mutation_policy':'NEW_SOURCE_REVISION_NEW_PROJECTION_NEW_RECONCILIATION'}
+    contentc=contract['source_document_content_readiness_audit']; binaryc=contract['frozen_binary_source_part_materialization']
+    ca={'schema_version':1,'artifact_uid':'CONTENT-AUDIT-DOCX1','artifact_type':'SOURCE_DOCUMENT_CONTENT_AUDIT','source_uid':suid,'source_sha256':rawsha,'page_uid':'SYNTH-PAGE-A','audit_standard_uid':'WEB-GOV-01-S090','required_design_domain_uids':['PAGE_IDENTITY'],'observed_design_domain_uids':['PAGE_IDENTITY'],'missing_required_design_domain_uids':[],'matrix_integrity':{'required_rows':1,'complete_rows':1,'missing_rows':0,'duplicate_uid_count':0},'visual_source_integrity':{'embedded_visual_count':0,'missing_visual_count':0},'render_integrity':{'render_required':False,'render_result':'NOT_APPLICABLE_SYNTHETIC_FIXTURE'},'open_downstream_states':[],'unresolved_required_gap_count':0,'contradiction_count':0,'result':'PASS'}
+    ca['evidence_content_hash']=g._hash_without(ca,'evidence_content_hash'); write(root/f'{base}/SOURCE_DOCUMENT_CONTENT_AUDIT.yaml',ca)
+    lock={'schema_version':1,'artifact_uid':'LOCK-DOCX1','artifact_type':'RAW_SOURCE_IMMUTABILITY_RECEIPT','source_uid':suid,'source_path':rawrel,'source_git_blob_sha':blob,'source_sha256':rawsha,'content_readiness_audit_uid':ca['artifact_uid'],'lock_state':'RAW_CAPTURE_LOCKED','writable':False,'mutation_policy':'NEW_SOURCE_REVISION_NEW_PROJECTION_NEW_RECONCILIATION'}
     lock['content_hash']=g._hash_without(lock,'content_hash'); write(root/f'{base}/RAW_SOURCE_IMMUTABILITY_RECEIPT.yaml',lock)
     inv=g.derive_docx_inventory(raw)
+    with zipfile.ZipFile(raw,'r') as _z:
+        for _row in g._binary_parts_from_inventory(inv):
+            _dst=g._binary_ref(root,binaryc,suid,_row); _dst.parent.mkdir(parents=True,exist_ok=True); _dst.write_bytes(_z.read(_row['package_part_path']))
     den=[{'denominator_uid':'DEN-PACKAGE-PART','denominator_type':'PACKAGE_PART','required_count':len(inv['package_parts']),'projected_count':len(inv['package_parts'])},{'denominator_uid':'DEN-RELATIONSHIP','denominator_type':'RELATIONSHIP','required_count':len(inv['relationships']),'projected_count':len(inv['relationships'])},{'denominator_uid':'DEN-XML-NODE','denominator_type':'XML_NODE','required_count':len(inv['source_nodes']),'projected_count':len(inv['source_nodes'])}]
     proj={'schema_version':1,'artifact_uid':'PROJ-DOCX1','artifact_type':'CANONICAL_SOURCE_PROJECTION','projection_schema_uid':pc['schema_uid'],'projection_schema_revision':pc['schema_revision'],'projection_role':pc['role'],'normative_authority':False,'source_identity':{'source_uid':suid,'source_path':rawrel,'source_format':'DOCX','source_git_blob_sha':blob,'source_sha256':rawsha,'raw_source_lock_receipt_uid':lock['artifact_uid']},'extraction_identity':{'extractor_uid':'TEST-EXTRACTOR','extractor_version':'1','extraction_run_uid':'RUN-1','extraction_evidence_ref':'fixture://extract'},'serialization_contract':{'yaml_profile':'YAML_1_2_SAFE_SUBSET','encoding':'UTF-8','line_ending':'LF','key_order_contract_uid':pc['schema_uid'],'anchors_aliases':'FORBIDDEN','implicit_custom_tags':'FORBIDDEN'},'denominator_rows':den,'package_parts':inv['package_parts'],'relationships':inv['relationships'],'source_nodes':inv['source_nodes']}
     proj['projection_content_hash']=None; proj['status']='PROJECTION_COMPLETE'; proj['projection_content_hash']=g._hash_without(proj,'projection_content_hash'); write(root/f'{base}/CANONICAL_SOURCE_PROJECTION.yaml',proj)
@@ -245,12 +251,19 @@ def _prun(mut=None):
 
 c('projection_fixed_schema_positive',_prun(),'PASS')
 
+def _p_content_audit_missing(r,rawcap,capstate,f): (r/f"{f['base']}/SOURCE_DOCUMENT_CONTENT_AUDIT.yaml").unlink()
+c('projection_content_readiness_audit_required',_prun(_p_content_audit_missing),'FAIL')
+def _p_frozen_binary_missing(r,rawcap,capstate,f):
+    for p in (r/f"{f['base']}/FROZEN_BINARY_PARTS").iterdir():
+        if p.is_file(): p.unlink(); break
+c('projection_frozen_binary_part_required',_prun(_p_frozen_binary_missing),'FAIL')
+
 def _projection_shape_portability():
     with tempfile.TemporaryDirectory() as td:
         r=Path(td); a=r/'A.docx'; b=r/'B.docx'
         _make_minimal_docx(a)
         ct='''<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/><Override PartName="/word/header1.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.header+xml"/></Types>'''
-        rootrels='''<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="word/document.xml"/></Relationships>'''
+        rootrels='''<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="word/document.xml"/><Relationship Id="rId2" Type="http://schemas.openxmlformats.org/package/2006/relationships/metadata/thumbnail" Target="docProps/thumbnail.png"/></Relationships>'''
         doc='''<?xml version="1.0" encoding="UTF-8" standalone="yes"?><w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:body><w:p><w:pPr/><w:r><w:t>Different page content shape</w:t></w:r></w:p><w:p><w:r><w:t>Second structure</w:t><w:br/><w:t>Second line</w:t></w:r></w:p><w:sectPr/></w:body></w:document>'''
         header='''<?xml version="1.0" encoding="UTF-8" standalone="yes"?><w:hdr xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:p><w:r><w:t>Header</w:t></w:r></w:p></w:hdr>'''
         with zipfile.ZipFile(b,'w',compression=zipfile.ZIP_DEFLATED) as z:

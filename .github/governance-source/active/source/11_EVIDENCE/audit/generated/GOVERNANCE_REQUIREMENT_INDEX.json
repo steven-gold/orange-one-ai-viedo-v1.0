@@ -5,7 +5,7 @@
     {
       "document_id": "WEB-GOV-01",
       "path": "12_DOCS/mother-spec/01_BLUEPRINT_DESIGN_GOVERNANCE.md",
-      "sha256": "36b342bbedff103d854d64b9cd92388da6d6590ece6aa652b3061487e669af37",
+      "sha256": "0f0e6df7d0fb72f713e9379a5b0c1bc3e48368b006b03c2e3e3321d5f6384142",
       "version": "2.2.3",
       "status": "normative",
       "permanent_inheritance": true
@@ -13,7 +13,7 @@
     {
       "document_id": "WEB-GOV-02",
       "path": "12_DOCS/mother-spec/02_IMPLEMENTATION_DELIVERY_STANDARD.md",
-      "sha256": "3a385ca16e41bfdf635f91b5289033abfdd0fbe5c61effedf77886e3a7da5cc2",
+      "sha256": "d47cd54d432e58e3d68d4a6efa31aa83e82068e359e5e6891a046c432ddc496e",
       "version": "2.2.3",
       "status": "normative",
       "permanent_inheritance": true
@@ -21,7 +21,7 @@
     {
       "document_id": "WEB-GOV-03",
       "path": "12_DOCS/mother-spec/03_EXECUTION_CONTROL_STANDARD.md",
-      "sha256": "95378fc122475d0eedeebb0780e6ce5e5a46328fa60294572a105bf458fcc5b1",
+      "sha256": "c864a89d20124e48d61fd91ad5c796ecf709e73803e9db9727cb6aa3467824eb",
       "version": "2.2.3",
       "status": "normative",
       "permanent_inheritance": true
@@ -29,18 +29,18 @@
     {
       "document_id": "WEB-GOV-04",
       "path": "12_DOCS/mother-spec/04_AUDIT_PROGRESS_STANDARD.md",
-      "sha256": "8ba088bcf66646a901db47f561cb0d3986a9c81cedae5c15897fd5a13ae63220",
+      "sha256": "4c431e62ea6fee720feb8f69f5f139e7bdd513078ae8ac219722d7c5a93b025b",
       "version": "2.2.3",
       "status": "normative",
       "permanent_inheritance": true
     }
   ],
   "counts": {
-    "total": 822,
-    "must": 642,
+    "total": 832,
+    "must": 652,
     "must_not": 180,
-    "auto": 489,
-    "manual_evidence": 333
+    "auto": 497,
+    "manual_evidence": 335
   },
   "requirements": [
     {
@@ -4342,6 +4342,48 @@
       "blocking": true
     },
     {
+      "requirement_id": "GOV01-MUST-228",
+      "source": "WEB-GOV-01",
+      "section": "Source Document Content Readiness and Frozen Binary Source Parts / 來源文件內容就緒與凍結二進位來源",
+      "line": 1806,
+      "modality": "MUST",
+      "clause_hash": "6a294cf4685abcbc986601328a54685552086c24cbfe6ad0a12169576091ff8e",
+      "clause_excerpt": "Before a governed Word/DOCX becomes immutable source input, the document MUST receive a per-document Source Document Content Readiness Audit. The audit is a review/evidence artifac",
+      "list_item_count": 0,
+      "list_hash": null,
+      "validator_id": "audit_binding_guard",
+      "automation": "AUTO",
+      "blocking": true
+    },
+    {
+      "requirement_id": "GOV01-MUST-229",
+      "source": "WEB-GOV-01",
+      "section": "Source Document Content Readiness and Frozen Binary Source Parts / 來源文件內容就緒與凍結二進位來源",
+      "line": 1810,
+      "modality": "MUST",
+      "clause_hash": "d2abc08e82c9796a620e5eb2dd2ac110e3f92715c1f335b0698db22cb409ecd3",
+      "clause_excerpt": "For any non-XML binary package part contained in the accepted DOCX, projection MUST materialize the exact bytes into the projection-owned frozen binary-part store using a determini",
+      "list_item_count": 0,
+      "list_hash": null,
+      "validator_id": "audit_binding_guard",
+      "automation": "AUTO",
+      "blocking": true
+    },
+    {
+      "requirement_id": "GOV01-MUST-230",
+      "source": "WEB-GOV-01",
+      "section": "Source Document Content Readiness and Frozen Binary Source Parts / 來源文件內容就緒與凍結二進位來源",
+      "line": 1812,
+      "modality": "MUST",
+      "clause_hash": "c9af4d5b5cef1476aeb12b4c72d5593e4b85f272d3388e17ce9f6e604f5c99a0",
+      "clause_excerpt": "For visual or embedded-source interpretation, downstream source-intake execution MAY dereference only the exact frozen binary part resolved from Canonical Projection package-part h",
+      "list_item_count": 0,
+      "list_hash": null,
+      "validator_id": "manual_semantic_guard",
+      "automation": "MANUAL_EVIDENCE",
+      "blocking": true
+    },
+    {
       "requirement_id": "GOV02-MUST_NOT-001",
       "source": "WEB-GOV-02",
       "section": "0. 規範目的",
@@ -6719,6 +6761,48 @@
       "list_hash": null,
       "validator_id": "mapping_schema_guard",
       "automation": "AUTO",
+      "blocking": true
+    },
+    {
+      "requirement_id": "GOV02-MUST-141",
+      "source": "WEB-GOV-02",
+      "section": "Content Audit, Source Lock and Frozen Binary Delivery Order / 內容稽核、來源鎖定與二進位交付順序",
+      "line": 1268,
+      "modality": "MUST",
+      "clause_hash": "517c32e126fe5f650f52de004bb4b095f2948a91f03e683b4108410fc61e4d18",
+      "clause_excerpt": "The immutable source lock MUST bind the PASS content-readiness audit UID. No producer may create a valid lock receipt for a Word whose content-readiness audit is missing, non-PASS,",
+      "list_item_count": 0,
+      "list_hash": null,
+      "validator_id": "audit_binding_guard",
+      "automation": "AUTO",
+      "blocking": true
+    },
+    {
+      "requirement_id": "GOV02-MUST-142",
+      "source": "WEB-GOV-02",
+      "section": "Content Audit, Source Lock and Frozen Binary Delivery Order / 內容稽核、來源鎖定與二進位交付順序",
+      "line": 1270,
+      "modality": "MUST",
+      "clause_hash": "9b35c356cead1effa9756a4299c9d2b7d7cfda735bfc7820f0080ba59c00def9",
+      "clause_excerpt": "Frozen binary source parts are projection-owned evidence. The delivery producer MUST copy exact source bytes, never screenshot/re-render/re-encode them, and MUST create exactly one",
+      "list_item_count": 0,
+      "list_hash": null,
+      "validator_id": "audit_binding_guard",
+      "automation": "AUTO",
+      "blocking": true
+    },
+    {
+      "requirement_id": "GOV02-MUST-143",
+      "source": "WEB-GOV-02",
+      "section": "Content Audit, Source Lock and Frozen Binary Delivery Order / 內容稽核、來源鎖定與二進位交付順序",
+      "line": 1272,
+      "modality": "MUST",
+      "clause_hash": "2b6bd332799effc6612434a41f9092d645aed8aa49d4d5effc444be3917596c0",
+      "clause_excerpt": "The common DOCX projection producer MUST be product/page neutral. It MUST derive every count and source row from the current immutable document and MUST NOT contain page-specific f",
+      "list_item_count": 0,
+      "list_hash": null,
+      "validator_id": "manual_semantic_guard",
+      "automation": "MANUAL_EVIDENCE",
       "blocking": true
     },
     {
@@ -9312,6 +9396,20 @@
       "blocking": true
     },
     {
+      "requirement_id": "GOV03-MUST-138",
+      "source": "WEB-GOV-03",
+      "section": "Frozen Binary Part Admission and Mutation Invalidation / 凍結二進位來源准入與失效",
+      "line": 1243,
+      "modality": "MUST",
+      "clause_hash": "0c43fcf959aebd8f9fdfd03ca75b10dfa7661cee799844616f39ce46126e8fb9",
+      "clause_excerpt": "At reconciliation and selected source-intake/base-blueprint admission, every expected non-XML binary package part MUST exist at the deterministic frozen-binary location and its byt",
+      "list_item_count": 0,
+      "list_hash": null,
+      "validator_id": "duplicate_guard",
+      "automation": "AUTO",
+      "blocking": true
+    },
+    {
       "requirement_id": "GOV04-MUST-001",
       "source": "WEB-GOV-04",
       "section": "1. 稽核最高原則",
@@ -11545,6 +11643,48 @@
       "modality": "MUST",
       "clause_hash": "43e8c48e04bc9831d15cf55592d5856d0130844e9275b9452d79c5e5c19de8c5",
       "clause_excerpt": "Negative regression MUST include at least: Word byte mutation after lock; missing projection row; duplicate row; row-order drift; extra/unregistered field; missing required field; ",
+      "list_item_count": 0,
+      "list_hash": null,
+      "validator_id": "audit_binding_guard",
+      "automation": "AUTO",
+      "blocking": true
+    },
+    {
+      "requirement_id": "GOV04-MUST-139",
+      "source": "WEB-GOV-04",
+      "section": "Content Readiness and Frozen Binary Source Audit / 內容就緒與凍結二進位來源稽核",
+      "line": 1568,
+      "modality": "MUST",
+      "clause_hash": "786481c7edde8bdb246d939b3501a390683ed08815f1481bd853d00f26655e61",
+      "clause_excerpt": "Audit MUST verify that the exact Word selected for projection has a PASS Source Document Content Readiness Audit bound to the same source UID/hash, with zero unresolved REQUIRED de",
+      "list_item_count": 0,
+      "list_hash": null,
+      "validator_id": "audit_binding_guard",
+      "automation": "AUTO",
+      "blocking": true
+    },
+    {
+      "requirement_id": "GOV04-MUST-140",
+      "source": "WEB-GOV-04",
+      "section": "Content Readiness and Frozen Binary Source Audit / 內容就緒與凍結二進位來源稽核",
+      "line": 1570,
+      "modality": "MUST",
+      "clause_hash": "16aee743f263ea2255c57d7fa2d42d02c8c7e6312bb7112f2e204fc2a1b568d7",
+      "clause_excerpt": "For every non-XML binary package part independently observed in the raw DOCX package, Audit MUST verify exactly one frozen binary file at the deterministic content-addressed path, ",
+      "list_item_count": 0,
+      "list_hash": null,
+      "validator_id": "audit_binding_guard",
+      "automation": "AUTO",
+      "blocking": true
+    },
+    {
+      "requirement_id": "GOV04-MUST-141",
+      "source": "WEB-GOV-04",
+      "section": "Content Readiness and Frozen Binary Source Audit / 內容就緒與凍結二進位來源稽核",
+      "line": 1572,
+      "modality": "MUST",
+      "clause_hash": "f59af32c6e0a72e6e0a2c3c273472723e452abf6430ac66d74119646407d8522",
+      "clause_excerpt": "Destructive regression MUST include missing content-readiness audit and missing or hash-mismatched frozen binary source part. A source-fidelity PASS with unavailable pixels/bytes f",
       "list_item_count": 0,
       "list_hash": null,
       "validator_id": "audit_binding_guard",

@@ -4,7 +4,7 @@ artifact_type: EXECUTION_PROFILE_REGISTRY
 status: CURRENT_CANDIDATE
 canonical_path: 10_REGISTRY/GOVERNANCE_LIFECYCLE_STAGE_REGISTRY.yaml
 owner_uid: OWNER-GOVERNANCE-LIFECYCLE
-governance_revision: v2.2.20-word-yaml-cross-page-portability-regression-closure
+governance_revision: v2.2.21-word-content-binary-source-projection-hardening
 normative_section_uids:
 - WEB-GOV-02-S004
 - WEB-GOV-02-S067
@@ -231,6 +231,11 @@ stages:
     raw_word_semantic_reparse: BLOCK
     unverified_projection: BLOCK
     implicit_na: BLOCK
+    content_readiness_audit_required: true
+    content_readiness_result: PASS
+    frozen_binary_source_parts_required_when_present: true
+    frozen_binary_hash_verification_required: true
+    direct_docx_binary_reextract: BLOCK
   source_projection_semantic_preservation_gate:
     required_when_projection_applicable: true
     semantic_input: EXACT_FROZEN_CANONICAL_SOURCE_PROJECTION_ONLY
@@ -239,6 +244,8 @@ stages:
     projection_mutation: BLOCK
     raw_source_hash_or_projection_hash_drift: STOP_AND_REENTER_PRE_STAGE_SOURCE_PROJECTION
     derived_source_structure_lineage_required: true
+    binary_visual_semantics_source: FROZEN_BINARY_PART_RESOLVED_FROM_PROJECTION
+    binary_visual_source_hash_verification_required: true
 - stage_uid: STAGE-02
   name: PAGE_FUNCTIONAL_CONTRACT
   scope_mode: ALL_REQUIRED_PAGES

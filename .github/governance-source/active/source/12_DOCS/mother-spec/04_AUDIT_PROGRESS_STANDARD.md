@@ -1562,3 +1562,11 @@ The audit MUST verify that the projection contains no product-semantic interpret
 Negative regression MUST include at least: Word byte mutation after lock; missing projection row; duplicate row; row-order drift; extra/unregistered field; missing required field; relationship omission; package-part hash mismatch; projection hash drift; reconciliation self-declared PASS with nonzero mismatch; freeze receipt missing; pair-hash mismatch; projection mutation after freeze; direct selected source-intake/base-blueprint execution admission without a frozen pair; and semantic interpretation inserted into projection. Portability regression MUST also prove that at least two materially different structured-document/page-content shapes use the same registered projection schema without common-policy edits, fixed page identities, fixed page-type enums, fixed product-function/control vocabularies, fixed source-heading values, or fixed source-content counts.
 
 A PASS is valid only for the exact immutable Word/YAML pair and exact schema revision tested. It does not transfer to a re-saved Word document, regenerated YAML, different extractor revision, or modified ordering even when visible prose appears equivalent.
+
+### Content Readiness and Frozen Binary Source Audit / 內容就緒與凍結二進位來源稽核
+
+Audit MUST verify that the exact Word selected for projection has a PASS Source Document Content Readiness Audit bound to the same source UID/hash, with zero unresolved REQUIRED design-content gaps and zero unresolved document-level contradictions. Product-specific denominators are source-derived; Audit MUST NOT substitute universal page counts.
+
+For every non-XML binary package part independently observed in the raw DOCX package, Audit MUST verify exactly one frozen binary file at the deterministic content-addressed path, byte length equality, SHA-256 equality, and continued traceability through package part + relationship + XML source-node evidence where applicable. Absence of relationship/source-node use is not permission to drop the binary package part; semantic disposition occurs later.
+
+Destructive regression MUST include missing content-readiness audit and missing or hash-mismatched frozen binary source part. A source-fidelity PASS with unavailable pixels/bytes for an embedded visual is false completion and MUST be blocked.

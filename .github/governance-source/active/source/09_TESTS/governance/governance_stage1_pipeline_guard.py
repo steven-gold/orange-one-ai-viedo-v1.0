@@ -239,6 +239,25 @@ def _projection_required_records(rawcap:dict):
 def _resolve_template(template:str,source_uid:str)->str:
     return str(template).replace('{source_uid}',str(source_uid))
 
+
+def _content_audit_contract(package_root:Path):
+    return (_projection_contract(package_root).get('source_document_content_readiness_audit') or {})
+
+def _binary_contract(package_root:Path):
+    return (_projection_contract(package_root).get('frozen_binary_source_part_materialization') or {})
+
+def _is_binary_package_part(path:str)->bool:
+    q=str(path).lower()
+    return not (q.endswith('.xml') or q.endswith('.rels'))
+
+def _binary_parts_from_inventory(inv:dict):
+    return [x for x in (inv.get('package_parts') or []) if _is_binary_package_part(x.get('package_part_path') or '')]
+
+def _binary_ref(workspace:Path,contract:dict,source_uid:str,row:dict)->Path:
+    root=workspace/_resolve_template(contract.get('storage_root_template',''),source_uid)
+    suffix=Path(str(row.get('package_part_path') or '')).suffix.lower()
+    return root/(str(row.get('part_sha256'))+suffix)
+
 def validate_pre_stage_source_projection(package_root:Path,workspace:Path,rawcap:dict,capstate:dict):
     failures=[]; contract=_projection_contract(package_root)
     recs=_projection_required_records(rawcap)
@@ -266,17 +285,25 @@ def validate_pre_stage_source_projection(package_root:Path,workspace:Path,rawcap
         if not raw.is_file():
             failures.append('projection_raw_source_missing:'+suid); continue
         raw_sha=file_sha(raw); blob=git_blob_sha(raw)
+        contentc=contract.get('source_document_content_readiness_audit') or {}
+        binaryc=contract.get('frozen_binary_source_part_materialization') or {}
+        content_audit_path=workspace/_resolve_template(contentc.get('evidence_path_template',''),suid)
         lock_path=workspace/_resolve_template(raw_lock.get('receipt_path_template',''),suid)
         proj_path=workspace/_resolve_template(projc.get('artifact_path_template',''),suid)
         rec_path=workspace/_resolve_template(reconc.get('evidence_path_template',''),suid)
         freeze_path=workspace/_resolve_template(freezec.get('receipt_path_template',''),suid)
-        for p,label in [(lock_path,'raw_source_immutability_receipt'),(proj_path,'canonical_source_projection'),(rec_path,'source_projection_reconciliation_evidence'),(freeze_path,'source_projection_freeze_receipt')]:
+        for p,label in [(content_audit_path,'source_document_content_audit'),(lock_path,'raw_source_immutability_receipt'),(proj_path,'canonical_source_projection'),(rec_path,'source_projection_reconciliation_evidence'),(freeze_path,'source_projection_freeze_receipt')]:
             if not p.is_file(): failures.append(label+'_missing:'+suid)
-        if not all(p.is_file() for p in (lock_path,proj_path,rec_path,freeze_path)):
+        if not all(p.is_file() for p in (content_audit_path,lock_path,proj_path,rec_path,freeze_path)):
             continue
-        lock=load_yaml(lock_path); projection=load_yaml(proj_path); evidence=load_yaml(rec_path); freeze=load_yaml(freeze_path)
+        content_audit=load_yaml(content_audit_path); lock=load_yaml(lock_path); projection=load_yaml(proj_path); evidence=load_yaml(rec_path); freeze=load_yaml(freeze_path)
+        _exact_keys(content_audit,contentc.get('required_field_order') or [],'source_document_content_audit:'+suid,failures)
+        if content_audit.get('artifact_type')!=contentc.get('artifact_type') or content_audit.get('source_uid')!=suid or content_audit.get('source_sha256')!=raw_sha: failures.append('source_document_content_audit_identity_hash_mismatch:'+suid)
+        if content_audit.get('result')!=contentc.get('pass_state') or content_audit.get('unresolved_required_gap_count')!=0 or content_audit.get('contradiction_count')!=0 or (content_audit.get('missing_required_design_domain_uids') or []): failures.append('source_document_content_readiness_not_pass:'+suid)
+        if content_audit.get('evidence_content_hash')!=_hash_without(content_audit,'evidence_content_hash'): failures.append('source_document_content_audit_hash_mismatch:'+suid)
         _exact_keys(lock,raw_lock.get('required_field_order') or [],'raw_source_lock:'+suid,failures)
         if lock.get('artifact_type')!='RAW_SOURCE_IMMUTABILITY_RECEIPT' or lock.get('source_uid')!=suid: failures.append('raw_source_lock_identity_invalid:'+suid)
+        if lock.get('content_readiness_audit_uid')!=content_audit.get('artifact_uid'): failures.append('raw_source_lock_content_readiness_audit_uid_mismatch:'+suid)
         if lock.get('source_sha256')!=raw_sha or lock.get('source_git_blob_sha')!=blob: failures.append('raw_source_lock_hash_mismatch:'+suid)
         if lock.get('lock_state')!=raw_lock.get('terminal_lock_state') or lock.get('writable') is not False: failures.append('raw_source_not_immutable:'+suid)
         if lock.get('content_hash')!=_hash_without(lock,'content_hash'): failures.append('raw_source_lock_content_hash_mismatch:'+suid)
@@ -311,6 +338,16 @@ def validate_pre_stage_source_projection(package_root:Path,workspace:Path,rawcap
             expected=derive_docx_inventory(raw)
         except Exception as exc:
             failures.append('independent_docx_inventory_failed:'+suid+':'+str(exc)); continue
+        expected_binary=_binary_parts_from_inventory(expected)
+        expected_binary_paths=set()
+        for _row in expected_binary:
+            _bp=_binary_ref(workspace,binaryc,suid,_row); expected_binary_paths.add(_bp)
+            if not _bp.is_file(): failures.append('frozen_binary_source_part_missing:'+suid+':'+str(_row.get('package_part_path'))); continue
+            if _bp.stat().st_size!=_row.get('size_bytes'): failures.append('frozen_binary_source_part_size_mismatch:'+suid+':'+str(_row.get('package_part_path')))
+            if file_sha(_bp)!=_row.get('part_sha256'): failures.append('frozen_binary_source_part_hash_mismatch:'+suid+':'+str(_row.get('package_part_path')))
+        _broot=workspace/_resolve_template(binaryc.get('storage_root_template',''),suid)
+        actual_binary_paths=set(p for p in _broot.iterdir() if p.is_file()) if _broot.is_dir() else set()
+        for _extra in sorted(actual_binary_paths-expected_binary_paths): failures.append('frozen_binary_source_part_unexpected:'+suid+':'+_extra.name)
         actual_parts=projection.get('package_parts') or []
         actual_rels=projection.get('relationships') or []
         actual_nodes=projection.get('source_nodes') or []
