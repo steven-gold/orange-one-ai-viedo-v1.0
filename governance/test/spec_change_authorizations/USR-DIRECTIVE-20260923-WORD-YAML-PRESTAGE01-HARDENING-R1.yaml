@@ -3,14 +3,14 @@ artifact_type: SPECIFICATION_CHANGE_AUTHORIZATION_RECEIPT
 normative_authority: false
 authorization_uid: USR-DIRECTIVE-20260923-WORD-YAML-PRESTAGE01-HARDENING-R1
 authority_source: EXPLICIT_USER_DIRECTIVE
-directive_text: 先把 Word-Stage01 過程的標準規範以及稽核內容建立起來；移除尚未執行的 Stage-01 WU；Word 與 YAML 稽核確定沒有誤差後才能進入 Stage-01。
+directive_text: 先把 Word-Stage01 過程的標準規範以及稽核內容建立起來；移除尚未執行的 Stage-01 WU；Word 與 YAML 稽核確定沒有誤差後才能進入 Stage-01；原始 Word 納管後不可編輯，Word/YAML 對帳 PASS 後雙方鎖定不可編輯；Canonical YAML 必須使用固定 schema、固定欄位、固定欄位順序與固定轉換流程，禁止格式漂移、缺欄、自由擴欄、摘要替代或 Stage-01 直接重讀 Word 造成語意漂移。
 status: APPROVED_FOR_EXACT_SCOPE
 single_use: true
 ai_may_expand_scope: false
 ai_may_reuse_authorization: false
 current_governance_uid: GOV-REV-20260921-TYPOGRAPHY-COMPUTED-METRICS-HARDENING
-baseline_commit_sha: e645cb4ff98b3d3c31174e9a20e41f57f1dbe428
-baseline_tree_sha: a13a5a5485bfd76e0bf8907405d88121e8f0a3f9
+baseline_commit_sha: 7f0a46756f49b7b302c97b33d6da04afadb1f2fb
+baseline_tree_sha: 968077483f7821da88f49eb7b08b20440490f982
 governance_mutation_boundary: OUTSIDE_GOVERNED_EXECUTION_CYCLE
 pre_write_context_verification:
   relevant_scope_read_complete: true
@@ -32,6 +32,10 @@ exact_scope:
   - ADD_WORD_YAML_RECONCILIATION_AUDIT_DENOMINATOR_AND_EVIDENCE
   - SYNCHRONIZE_STAGE01_LIFECYCLE_SOURCE_FACT_AUDIT_ACCEPTANCE_AND_COMMON_VALIDATORS
   - ADD_MACHINE_VALIDATOR_AND_NEGATIVE_REGRESSION_FOR_PROJECTION_DRIFT
+  - REQUIRE_FIXED_CANONICAL_PROJECTION_SCHEMA_FIELD_ORDER_AND_SERIALIZATION
+  - FREEZE_RAW_WORD_AND_CANONICAL_YAML_AS_IMMUTABLE_PAIR_AFTER_RECONCILIATION_PASS
+  - REQUIRE_STAGE01_EXACT_FROZEN_PROJECTION_CONSUMPTION_AND_MUTATION_INVALIDATION
+  - BLOCK_DIRECT_WORD_SEMANTIC_REPARSE_DURING_STAGE01
   - ASSIGN_NEW_IMMUTABLE_GOVERNANCE_UID_AND_DISPLAY_VERSION
   - RUN_CONTAMINATION_CONTRADICTION_PORTABILITY_SELECTED_PROFILE_FULL_LINE_EXACT_HEAD_VALIDATION
   forbidden:
