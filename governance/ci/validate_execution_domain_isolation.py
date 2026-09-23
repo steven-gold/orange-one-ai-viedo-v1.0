@@ -85,6 +85,19 @@ for name in DOMAINS:
 audit=yaml.safe_load((ROOT/AUDIT_REF).read_text()) or {}
 if audit.get('fixed_audit_dimensions') is None: errors.append('AUDIT_DIMENSIONS_MISSING')
 if audit.get('applies_to_every_page_system_and_execution_step') is not True: errors.append('AUDIT_NOT_UNIVERSAL')
+# Explicit integrity-audit exception: resolve every execution projection authority identity
+# against the canonical governance source tree. Ordinary product execution remains index/domain-only.
+authority_root=ROOT/'.github/governance-source/active/source'
+authority_text='\n'.join(
+ p.read_text(errors='ignore')
+ for p in authority_root.rglob('*')
+ if p.is_file() and p.suffix.lower() in {'.md','.yaml','.yml'}
+)
+for group_name in ('basic_design','word_yaml','stage','audit'):
+ for step_label, refs in (bindings.get(group_name) or {}).items():
+  for authority_ref in refs or []:
+   if authority_ref not in authority_text:
+    errors.append(f'UNRESOLVED_AUTHORITY_BINDING:{group_name}:{step_label}:{authority_ref}')
 if errors:
  print('\n'.join(errors)); sys.exit(1)
 print(f'PASS: 4 domains isolated; fixed step schema fields={len(required)}; universal audit profile bound; all declared steps structurally complete')
