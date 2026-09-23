@@ -191,6 +191,8 @@ jobs:
       - name: Prove pre-execution completion path before Stage-02 execution
         if: ${{ env.STAGE02_REVALIDATION_MODE != '1' }}
         run: python governance/ci/compile_stage_execution_preflight.py --admission-check
+      - name: Validate common Stage-02 admission
+        run: python governance/ci/stage_execution_engine.py --admission-check --stage STAGE-02
       - name: Run complete 75-file full-lifecycle high-pressure system gate on exact Stage-02 execution SHA
         run: python .github/governance-source/RUN_FULL_LINE_SYSTEM_GATE.py
       - name: Prove verified source remained byte-clean before Stage-02 actual test
