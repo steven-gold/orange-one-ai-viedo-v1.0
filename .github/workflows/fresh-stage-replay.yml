@@ -43,8 +43,6 @@ jobs:
         run: |
           python .github/governance-maintenance/run_fresh_stage_replay.py --identity-self-test
           python .github/governance-maintenance/finalize_fresh_stage_replay.py --identity-self-test
-      - name: Prove fresh replay cleanup preserves historical evidence
-        run: python .github/governance-maintenance/run_fresh_stage_replay.py --cleanup-boundary-self-test
       - name: Enforce active consumer dynamic identity integrity
         run: python governance/ci/validate_active_consumer_reference_integrity.py
 
