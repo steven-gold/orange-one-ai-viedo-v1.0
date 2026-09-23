@@ -1,0 +1,71 @@
+schema_version: 1
+artifact_type: STAGE_EXECUTION_LOAD_TARGET_MANIFEST
+normative_authority: false
+work_unit_uid: WU-STAGE01-CORE01-943AF192-REPLAY
+stage_uid: STAGE-01
+semantic_capability: SOURCE_INTAKE_BASE_BLUEPRINT
+page_or_scope_uids:
+- CORE-01
+execution_run_uid: CORE01-943AF192-STAGE01-R1
+governance_uid: GOV-REV-20260923-WORD-PROJECTION-NEXTSTEP-CONSUMER-SYNC-HARDENING
+governance_revision: v2.2.22-word-projection-nextstep-consumer-sync-hardening
+selected_execution_profile_uid: ACPOS-WEB-DELIVERY-PROFILE-11
+active_work_unit_hash: 07b7420470abfecca1091a0cf4e6df519024eb121d565ae68060e67442877f20
+execution_scope_manifest_sha256: 6b8fd084eccef6299f2d2217856f3775337d672d99939025f89d2155d0c78341
+source_projection_admission:
+  applicability: REQUIRED
+  bindings:
+  - source_uid: SRC-DOCX-CORE01-943AF192
+    freeze_receipt_ref: 00_SOURCE_INTAKE/prestage_core01_943af192_word_yaml/00_SOURCE_INTAKE/SOURCE_PROJECTIONS/SRC-DOCX-CORE01-943AF192/SOURCE_PROJECTION_FREEZE_RECEIPT.yaml
+    pair_hash: 5fc4838e5c04c460fec2039ab406d25083ccfa05e88c7c56f4d3e9ea47ccdb83
+    raw_source_sha256: 943af192004b587d6aab36e114eeb40430c9ea45614cc154d62dd9e3b5cbefeb
+    projection_uid: PROJ-SRC-DOCX-CORE01-943AF192
+    projection_content_hash: e11b1caad15fc06a83ebb9cf99f5c19072dcad75eb84f1366787306ddd24a13f
+common_normative_bundle_refs:
+- BUNDLE-GOV-COMMON-CORE
+- BUNDLE-GOV-CONSTRUCTION-BASE
+- BUNDLE-GOV-AUDIT-BASE
+stage_normative_section_uids:
+- WEB-GOV-01-S040A
+- WEB-GOV-01-S058
+- WEB-GOV-01-S063
+- WEB-GOV-01-S064
+- WEB-GOV-01-S065
+- WEB-GOV-01-S069
+- WEB-GOV-03-S052
+- WEB-GOV-04-S059A
+- WEB-GOV-04-S067
+- WEB-GOV-04-S069
+- WEB-GOV-04-S070
+- WEB-GOV-01-S075
+- WEB-GOV-03-S069
+- WEB-GOV-04-S083
+- WEB-GOV-02-S075
+- WEB-GOV-03-S071
+- WEB-GOV-04-S085
+- WEB-GOV-01-S088
+- WEB-GOV-01-S090
+- WEB-GOV-02-S077
+- WEB-GOV-03-S072
+- WEB-GOV-04-S087
+profile_normative_section_uids: []
+item_specific_normative_section_uids: []
+artifact_specific_normative_section_uids: []
+dependency_normative_section_uids: []
+loaded_artifact_refs:
+- GOVERNANCE_CURRENT.yaml
+- governance/specifications/REGISTRY.yaml
+- governance/test/ACTIVE_STATE.yaml
+- governance/test/CURRENT_EXECUTION_SCOPE_MANIFEST.yaml
+- .github/governance-source/active/source/10_REGISTRY/GOVERNANCE_LIFECYCLE_STAGE_REGISTRY.yaml
+- .github/governance-source/active/source/10_REGISTRY/CONSTRUCTION_ARTIFACT_INDEX.yaml
+- .github/governance-source/active/source/10_REGISTRY/GOVERNANCE_ACCEPTANCE_AUDIT_BLUEPRINT.yaml
+- 00_SOURCE_INTAKE/prestage_core01_943af192_word_yaml/00_SOURCE_INTAKE/SOURCE_PROJECTIONS/SRC-DOCX-CORE01-943AF192/SOURCE_PROJECTION_FREEZE_RECEIPT.yaml
+- 00_SOURCE_INTAKE/prestage_core01_943af192_word_yaml/00_SOURCE_INTAKE/SOURCE_PROJECTIONS/SRC-DOCX-CORE01-943AF192/CANONICAL_SOURCE_PROJECTION.yaml
+- 00_SOURCE_INTAKE/prestage_core01_943af192_word_yaml/00_SOURCE_INTAKE/SOURCE_PROJECTIONS/SRC-DOCX-CORE01-943AF192/SOURCE_PROJECTION_RECONCILIATION_EVIDENCE.yaml
+- 00_SOURCE_INTAKE/prestage_core01_943af192_word_yaml/00_SOURCE_INTAKE/SOURCE_PROJECTIONS/SRC-DOCX-CORE01-943AF192/SOURCE_DOCUMENT_CONTENT_AUDIT.yaml
+- 00_SOURCE_INTAKE/prestage_core01_943af192_word_yaml/00_SOURCE_INTAKE/SOURCE_PROJECTIONS/SRC-DOCX-CORE01-943AF192/RAW_SOURCE_IMMUTABILITY_RECEIPT.yaml
+- .github/governance-source/active/source/10_REGISTRY/STAGE1_SOURCE_FACT_CONTRACTS.yaml
+acceptance_audit_blueprint_ref: BP-GOVERNANCE-ACCEPTANCE-001
+governance_load_receipt_ref: governance/test/preexecution/stage_governance_load/WU-STAGE01-CORE01-943AF192-REPLAY/GOVERNANCE_LOAD_RECEIPT.yaml
+status: PREEXECUTION_TARGET_FROZEN
