@@ -161,7 +161,9 @@ jobs:
         id: context
         shell: bash
         run: python .github/governance-maintenance/run_fresh_stage_replay.py --print-context-github-output >> "$GITHUB_OUTPUT"
-      - name: Execute fresh replay from persisted Current context
+      - name: Enforce Current Active Stage boundary through common engine
+        run: python governance/ci/stage_execution_engine.py --admission-check --stage "${{ steps.context.outputs.stage_uid }}"
+      - name: Execute Current Active Stage from persisted Current context
         run: python .github/governance-maintenance/run_fresh_stage_replay.py
       - name: Upload fresh replay evidence
         id: evidence
@@ -172,20 +174,9 @@ jobs:
           retention-days: 30
           path: |
             ${{ steps.context.outputs.run_root }}
-            .github/stage02-test/STAGE02_ACTUAL_TEST_RESULT.json
-            governance/test/stage02
-      - name: Bind exact workflow and artifact provenance
-        env:
-          FRESH_REPLAY_RUN_ID: "${{ github.run_id }}"
-          FRESH_REPLAY_SOURCE_SHA: "${{ github.sha }}"
-          FRESH_EVIDENCE_ARTIFACT_ID: "${{ steps.evidence.outputs.artifact-id }}"
-          FRESH_EVIDENCE_ARTIFACT_DIGEST: "${{ steps.evidence.outputs.artifact-digest }}"
-        run: python .github/governance-maintenance/finalize_fresh_stage_replay.py
-      - name: Validate current-attempt projection before persistence
+      - name: Validate Active Stage consumer integrity before persistence
         run: |
-          python governance/ci/validate_validation_remediation_closure_protocol.py
-          python governance/ci/validate_governance_portability.py
-          python governance/ci/validate_profile_history_binding.py
+          python governance/ci/stage_execution_engine.py --admission-check --stage "${{ steps.context.outputs.stage_uid }}"
           python governance/ci/validate_active_consumer_reference_integrity.py
       - name: Persist fresh replay execution state
         shell: bash
