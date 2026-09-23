@@ -419,7 +419,8 @@ def execute_active(stage_uid):
     adapter=(adapters.get('stages') or {}).get(stage_uid) or {}
     declared=str(adapter.get('effectful_executor_owner') or '')
     if declared!=owner: fail('ACTIVE_STAGE_EXECUTOR_OWNER_NOT_CANONICAL_ADAPTER:'+owner)
-    child_env=dict(os.environ); child_env['ACPOS_COMMON_STAGE_ENGINE_EXECUTION']='1'\n    subprocess.run([sys.executable,str(path),'--execute'],cwd=ROOT,check=True,env=child_env)
+    child_env=dict(os.environ); child_env['ACPOS_COMMON_STAGE_ENGINE_EXECUTION']='1'
+    subprocess.run([sys.executable,str(path),'--execute'],cwd=ROOT,check=True,env=child_env)
     print(f'PASS: common engine executed registered active-stage adapter stage={stage_uid} owner={owner}')
 
 
