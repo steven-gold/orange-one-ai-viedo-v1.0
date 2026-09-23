@@ -51,19 +51,21 @@ def hash_without(d,key):
 
 def fresh_counts(inv):
     nodes=inv.get('source_nodes') or []
+    doc_nodes=[x for x in nodes if str(x.get('package_part_path') or '')=='word/document.xml']
     parts=inv.get('package_parts') or []
     binary=[x for x in parts if not str(x.get('package_part_path') or '').lower().endswith(('.xml','.rels'))]
     images=[x for x in binary if str(x.get('content_type') or '').startswith('image/')]
-    kinds=[str(x.get('source_node_kind') or '') for x in nodes]
+    doc_kinds=[str(x.get('source_node_kind') or '') for x in doc_nodes]
     return {
-      'paragraphs':sum(1 for x in kinds if x=='PARAGRAPH'),
-      'tables':sum(1 for x in kinds if x=='TABLE'),
-      'drawings':sum(1 for x in kinds if x=='DRAWING'),
+      'paragraphs':sum(1 for x in doc_kinds if x=='PARAGRAPH'),
+      'tables':sum(1 for x in doc_kinds if x=='TABLE'),
+      'drawings':sum(1 for x in doc_kinds if x=='DRAWING'),
       'binary_parts':len(binary),
       'image_parts':len(images),
       'package_parts':len(parts),
       'relationships':len(inv.get('relationships') or []),
       'source_nodes':len(nodes),
+      'document_xml_source_nodes':len(doc_nodes),
       'duplicate_source_node_uid_count':len(nodes)-len(set(str(x.get('source_node_uid')) for x in nodes))
     }
 
