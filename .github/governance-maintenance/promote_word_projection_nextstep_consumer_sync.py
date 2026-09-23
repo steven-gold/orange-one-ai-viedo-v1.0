@@ -58,6 +58,16 @@ def mutate_guard_and_test():
 """
     if old not in s: raise RuntimeError('legacy next-step consumer block missing')
     s=s.replace(old,new,1)
+    old_pre="""    if capstate.get('next_step')!='CANONICAL_SOURCE_PROJECTION':
+        failures.append('raw_source_capture_next_step_not_canonical_source_projection')
+"""
+    new_pre="""    _rcc=_raw_capture_contract(package_root)
+    _expected_structured_next=_rcc.get('structured_document_exact_next_step') or 'CANONICAL_SOURCE_PROJECTION'
+    if capstate.get('next_step')!=_expected_structured_next:
+        failures.append('raw_source_capture_structured_next_step_mismatch:'+str(capstate.get('next_step'))+':expected='+str(_expected_structured_next))
+"""
+    if old_pre not in s: raise RuntimeError('pre-stage projection legacy next-step consumer block missing')
+    s=s.replace(old_pre,new_pre,1)
     p.write_text(s,encoding='utf-8')
 
     p=SOURCE/'09_TESTS/governance/test_stage1_source_to_blueprint_minimal_control.py'
