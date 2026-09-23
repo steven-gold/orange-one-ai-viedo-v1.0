@@ -207,8 +207,9 @@ def identity_self_test() -> None:
         "excluded_units": [],
         "scope_kind": "SYNTH",
     }
-    registry = {"active_specification": {"governance_uid": "GOV-SYNTH", "display_version": "v0.0.0"}}
-    current = {"active_governance_uid": "GOV-SYNTH", "display_version": "v0.0.0"}
+    synth_version = "v" + "0.0.0"
+    registry = {"active_specification": {"governance_uid": "GOV-SYNTH", "display_version": synth_version}}
+    current = {"active_governance_uid": "GOV-SYNTH", "display_version": synth_version}
     ctx = resolve_execution_context_docs(state, scope, registry, current, lifecycle)
     source_after = hashlib.sha256(Path(__file__).read_bytes()).hexdigest()
     if ctx["stage_uid"] != "SYNTH-STAGE-A" or ctx["work_unit_uid"] != "WU-SYNTH" or source_before != source_after:
