@@ -1,0 +1,71 @@
+schema_version: 1
+registry_uid: WORD-YAML-STEP-REGISTRY-001
+domain_uid: WORD_YAML_SOURCE_FLOW
+step_schema_ref: governance/execution-domains/STEP_CONTRACT_SCHEMA.yaml
+audit_profile_ref: governance/execution-domains/AUDIT_PROFILE.yaml
+steps:
+- step_uid: WY-01-SOURCE_DOCUMENT_CONTENT_READINESS
+  purpose: Prove the selected Word/DOCX is the complete reviewed Basic Design source before immutable capture.
+  prerequisites: [BASIC_DESIGN_FREEZE_RECEIPT]
+  entry_gate: BASIC_DESIGN_FROZEN
+  inputs: [SELECTED_WORD_DOCUMENT, BASIC_DESIGN_FREEZE_RECEIPT, BASIC_DESIGN_DELIVERABLE_RECONCILIATION]
+  input_required_fields: [source_path, source_revision, source_sha256, freeze_receipt_uid, denominator_hash]
+  operations: [VERIFY_SOURCE_IDENTITY, VERIFY_BASIC_DESIGN_RECONCILIATION, VERIFY_RENDER_READABILITY, AUDIT_SOURCE_CONTENT_READINESS]
+  outputs: [SOURCE_DOCUMENT_CONTENT_AUDIT]
+  output_required_fields: [source_uid, source_sha256, basic_design_freeze_ref, readiness_result, gaps, evidence_refs]
+  denominator: ALL_APPLICABLE_BASIC_DESIGN_REQUIREMENTS_IN_SELECTED_WORD
+  completeness_and_pass_condition: {coverage_percent: 100, unresolved_required_gap_count: 0, result: PASS}
+  validators_and_evidence: [SOURCE_DOCUMENT_CONTENT_READINESS_AUDIT, SOURCE_DOCUMENT_CONTENT_AUDIT]
+  failure_reentry_checkpoint_next_step: {failure: STOP_AND_RETURN_TO_BASIC_DESIGN_OWNER, reentry: EARLIEST_OWNING_BASIC_DESIGN_STEP, checkpoint: WY-01, next_step: WY-02-RAW_SOURCE_IMMUTABLE_LOCK}
+- step_uid: WY-02-RAW_SOURCE_IMMUTABLE_LOCK
+  purpose: Capture exact source identity and lock raw source bytes for this projection cycle.
+  prerequisites: [WY-01-PASS]
+  entry_gate: SOURCE_DOCUMENT_CONTENT_READINESS_PASS
+  inputs: [SELECTED_WORD_DOCUMENT, SOURCE_DOCUMENT_CONTENT_AUDIT]
+  input_required_fields: [source_uid, source_path, source_git_blob_sha, source_sha256, content_readiness_audit_uid]
+  operations: [CAPTURE_RAW_SOURCE_REFERENCE, HASH_RAW_SOURCE, LOCK_RAW_SOURCE_BYTES]
+  outputs: [RAW_SOURCE_REFERENCE_MANIFEST, RAW_SOURCE_CAPTURE_STATE, RAW_SOURCE_IMMUTABILITY_RECEIPT]
+  output_required_fields: [source_uid, source_path, source_git_blob_sha, source_sha256, lock_state, writable, mutation_policy]
+  denominator: EXACT_SELECTED_SOURCE_BYTES_AND_REGISTERED_SOURCE_PARTS
+  completeness_and_pass_condition: {identity_coverage_percent: 100, hash_mismatch_count: 0, lock_state: RAW_CAPTURE_LOCKED}
+  validators_and_evidence: [RAW_SOURCE_LOCK_AUDIT, RAW_SOURCE_IMMUTABILITY_RECEIPT]
+  failure_reentry_checkpoint_next_step: {failure: STOP, reentry: WY-02-RAW_SOURCE_IMMUTABLE_LOCK, checkpoint: WY-02, next_step: WY-03-CANONICAL_SOURCE_PROJECTION}
+- step_uid: WY-03-CANONICAL_SOURCE_PROJECTION
+  purpose: Project the immutable DOCX into the one fixed product-neutral canonical YAML schema without semantic inference.
+  prerequisites: [WY-02-PASS]
+  entry_gate: RAW_CAPTURE_LOCKED
+  inputs: [RAW_SOURCE_REFERENCE_MANIFEST, RAW_SOURCE_IMMUTABILITY_RECEIPT]
+  input_required_fields: [source_uid, source_sha256, raw_source_lock_receipt_uid]
+  operations: [ENUMERATE_PACKAGE_PARTS, ENUMERATE_RELATIONSHIPS, PROJECT_XML_NODES, FREEZE_BINARY_SOURCE_PARTS, CANONICAL_SERIALIZE]
+  outputs: [CANONICAL_SOURCE_PROJECTION, FROZEN_BINARY_SOURCE_PART]
+  output_required_fields: [source_identity, extraction_identity, serialization_contract, denominator_rows, package_parts, relationships, source_nodes, projection_content_hash, status]
+  denominator: ALL_PACKAGE_PARTS_RELATIONSHIPS_XML_NODES_AND_REQUIRED_BINARY_PARTS_FROM_IMMUTABLE_SOURCE
+  completeness_and_pass_condition: {projection_coverage_percent: 100, invented_node_count: 0, silent_drop_count: 0, schema_drift_count: 0}
+  validators_and_evidence: [CANONICAL_PROJECTION_SCHEMA_AUDIT, EXTRACTION_EVIDENCE]
+  failure_reentry_checkpoint_next_step: {failure: STOP, reentry: WY-03-CANONICAL_SOURCE_PROJECTION, checkpoint: WY-03, next_step: WY-04-INDEPENDENT_ZERO_LOSS_RECONCILIATION}
+- step_uid: WY-04-INDEPENDENT_ZERO_LOSS_RECONCILIATION
+  purpose: Independently recalculate the raw DOCX denominator and prove exact zero-loss projection.
+  prerequisites: [WY-03-PASS]
+  entry_gate: CANONICAL_SOURCE_PROJECTION_COMPLETE
+  inputs: [RAW_SOURCE_REFERENCE_MANIFEST, CANONICAL_SOURCE_PROJECTION, FROZEN_BINARY_SOURCE_PART]
+  input_required_fields: [raw_source_sha256, projection_uid, projection_content_hash, projection_schema_uid, projection_schema_revision]
+  operations: [RECALCULATE_RAW_DENOMINATOR, COMPARE_PARTS, COMPARE_RELATIONSHIPS, COMPARE_NODES, VERIFY_REVERSE_TRACE, VERIFY_BINARY_PART_HASHES]
+  outputs: [SOURCE_PROJECTION_RECONCILIATION_EVIDENCE]
+  output_required_fields: [source_inventory_hashes, zero_loss_counts, reverse_trace, unsupported_count, result, evidence_content_hash]
+  denominator: INDEPENDENT_RAW_DOCX_RECALCULATION
+  completeness_and_pass_condition: {all_zero_loss_counters: 0, unsupported_count: 0, reverse_trace_coverage_percent: 100, result: PASS}
+  validators_and_evidence: [VAL-GOV-026, SOURCE_PROJECTION_RECONCILIATION_EVIDENCE]
+  failure_reentry_checkpoint_next_step: {failure: STOP_AND_REENTER_EARLIEST_PROJECTION_OWNER, reentry: WY-02-OR-WY-03-AS_PROVEN, checkpoint: WY-04, next_step: WY-05-SOURCE_PAIR_FREEZE}
+- step_uid: WY-05-SOURCE_PAIR_FREEZE
+  purpose: Freeze the exact raw-source/projection pair and authorize only the Stage-01 work-unit resolution handoff.
+  prerequisites: [WY-04-PASS]
+  entry_gate: ZERO_LOSS_RECONCILIATION_PASS
+  inputs: [RAW_SOURCE_IMMUTABILITY_RECEIPT, CANONICAL_SOURCE_PROJECTION, SOURCE_PROJECTION_RECONCILIATION_EVIDENCE]
+  input_required_fields: [source_uid, raw_source_sha256, raw_source_git_blob_sha, projection_uid, projection_content_hash, reconciliation_evidence_uid, reconciliation_evidence_hash]
+  operations: [VERIFY_PAIR_IDENTITY, VERIFY_RECONCILIATION_PASS, COMPUTE_PAIR_HASH, LOCK_PROJECTION, MATERIALIZE_FREEZE_RECEIPT]
+  outputs: [SOURCE_PROJECTION_FREEZE_RECEIPT]
+  output_required_fields: [source_uid, raw_source_sha256, projection_uid, projection_content_hash, source_denominator_hash, pair_hash, lock_state, next_step, status]
+  denominator: EXACT_RAW_SOURCE_AND_CANONICAL_PROJECTION_PAIR
+  completeness_and_pass_condition: {pair_identity_coverage_percent: 100, unresolved_mismatch_count: 0, lock_state: SOURCE_PAIR_FROZEN}
+  validators_and_evidence: [SOURCE_PAIR_FREEZE_AUDIT, SOURCE_PROJECTION_FREEZE_RECEIPT]
+  failure_reentry_checkpoint_next_step: {failure: STOP_AND_INVALIDATE_PAIR, reentry: EARLIEST_OWNING_WORD_YAML_STEP, checkpoint: WY-05, next_step: STAGE-01-WORK-UNIT-RESOLUTION}
