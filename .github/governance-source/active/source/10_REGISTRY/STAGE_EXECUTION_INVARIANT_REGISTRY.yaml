@@ -40,18 +40,10 @@ scope:
   - PRODUCT_PROFILE
   stage_specific_exception_without_registered_authority: BLOCK
 provenance:
-  empirical_source_role: DEFECT_DISCOVERY_INPUT_NOT_CURRENT_CONSTRUCTION_AUTHORITY
-  github_repository: steven-gold/orange-one-ai-viedo-v1.0
-  github_commit: 17bc1c30ee033f50dbb6ed99d02fcc5d951049c0
-  github_artifact: docs/construction/evidence/STAGE2_GOVERNANCE_CORRECTION_PACKAGE_R1.yaml
-  observed_stage: STAGE-02
-  generalization_rule: DEFECT_REPEATABLE_OUTSIDE_OBSERVED_STAGE_MUST_BE_REPAIRED_AT_COMMON_INVARIANT_LAYER
-  empirical_product_markers:
-  - ACPOS
-  - CORE-01
-  - steven-gold/orange-one-ai-viedo
-  legacy_product_env_prefixes:
-  - ACPOS_
+  role: GENERALIZED_GOVERNANCE_RULE_LINEAGE
+  product_specific_execution_evidence_is_current_authority: false
+  product_specific_marker_in_rule_definition: FORBIDDEN
+  generalization_rule: REPEATABLE_DEFECT_MUST_BE_REPAIRED_AT_COMMON_INVARIANT_LAYER
 invariants:
   RELATION_SEMANTIC_SEPARATION:
     port_exposure_is_trigger: false
