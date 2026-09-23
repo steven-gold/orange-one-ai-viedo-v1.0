@@ -86,11 +86,11 @@ The common DOCX projection producer MUST be product/page neutral. It MUST derive
 
 CONTENT_READINESS_PASS is required before RAW_CAPTURE_LOCKED for structured Word/DOCX. Any Word repair after audit invalidates the audit and requires a fresh audit before locking.
 
-At reconciliation and Stage-01 admission, every expected non-XML binary package part MUST exist at the deterministic frozen-binary location and its bytes MUST match the package-part SHA-256. Missing, extra, duplicate, re-encoded, hash-mismatched, or path-mismatched frozen binary parts are blocking source-fidelity defects.
+At reconciliation and selected source-intake/base-blueprint admission, every expected non-XML binary package part MUST exist at the deterministic frozen-binary location and its bytes MUST match the package-part SHA-256. Missing, extra, duplicate, re-encoded, hash-mismatched, or path-mismatched frozen binary parts are blocking source-fidelity defects.
 
-After SOURCE_PAIR_FROZEN, the Word, Canonical YAML projection, content-readiness audit binding, and frozen binary-part set are immutable for that attempt. Mutation of any member invalidates Stage-01 eligibility and requires pre-stage re-entry.
+After SOURCE_PAIR_FROZEN, the Word, Canonical YAML projection, content-readiness audit binding, and frozen binary-part set are immutable for that attempt. Mutation of any member invalidates selected source-intake/base-blueprint eligibility and requires pre-stage re-entry.
 
-Stage-01 may read binary pixels/bytes only through the frozen-binary resolver defined by the projection contract. Direct DOCX unzip/reparse for semantic recovery is forbidden.
+Selected source-intake/base-blueprint execution may read binary pixels/bytes only through the frozen-binary resolver defined by the projection contract. Direct DOCX unzip/reparse for semantic recovery is forbidden.
 ''')
     append_once(SOURCE/'12_DOCS/mother-spec/04_AUDIT_PROGRESS_STANDARD.md',
       '### Content Readiness and Frozen Binary Source Audit',
