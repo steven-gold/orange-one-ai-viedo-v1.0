@@ -5,7 +5,7 @@
     {
       "document_id": "WEB-GOV-01",
       "path": "12_DOCS/mother-spec/01_BLUEPRINT_DESIGN_GOVERNANCE.md",
-      "sha256": "f30e80ff37e7349f6f29943d8ecc54189359cfc8729ef6b4bc4ffdc89935a993",
+      "sha256": "36b342bbedff103d854d64b9cd92388da6d6590ece6aa652b3061487e669af37",
       "version": "2.2.3",
       "status": "normative",
       "permanent_inheritance": true
@@ -29,18 +29,18 @@
     {
       "document_id": "WEB-GOV-04",
       "path": "12_DOCS/mother-spec/04_AUDIT_PROGRESS_STANDARD.md",
-      "sha256": "1446d68792adc31a772b91ce4cca500c4a698a0bdf79335f18293784393fbd91",
+      "sha256": "8ba088bcf66646a901db47f561cb0d3986a9c81cedae5c15897fd5a13ae63220",
       "version": "2.2.3",
       "status": "normative",
       "permanent_inheritance": true
     }
   ],
   "counts": {
-    "total": 821,
-    "must": 641,
+    "total": 822,
+    "must": 642,
     "must_not": 180,
     "auto": 489,
-    "manual_evidence": 332
+    "manual_evidence": 333
   },
   "requirements": [
     {
@@ -4291,6 +4291,20 @@
       "section": "90. Immutable Structured-Document Canonical Projection / 結構化文件固定無損投影",
       "line": 1796,
       "modality": "MUST",
+      "clause_hash": "19541d2bbdec91b94d04b26286b5e76ca8fbf49e59c19e75ac5849f053e5fa1b",
+      "clause_excerpt": "Only the structural schema is fixed. Product/page content is dynamic and MUST be derived from each immutable source. Common policy MUST NOT hard-code page UID values, page-type enu",
+      "list_item_count": 0,
+      "list_hash": null,
+      "validator_id": "manual_semantic_guard",
+      "automation": "MANUAL_EVIDENCE",
+      "blocking": true
+    },
+    {
+      "requirement_id": "GOV01-MUST-225",
+      "source": "WEB-GOV-01",
+      "section": "90. Immutable Structured-Document Canonical Projection / 結構化文件固定無損投影",
+      "line": 1798,
+      "modality": "MUST",
       "clause_hash": "bc08e362356f704817cb7f1c501c1ef2b1c477277ae129f7d2f6e46e5b764178",
       "clause_excerpt": "Projection is extraction only. It MUST NOT assign page/visual responsibility, product behavior, ownership, authority satisfaction, functional classification, or downstream design c",
       "list_item_count": 0,
@@ -4300,10 +4314,10 @@
       "blocking": true
     },
     {
-      "requirement_id": "GOV01-MUST-225",
+      "requirement_id": "GOV01-MUST-226",
       "source": "WEB-GOV-01",
       "section": "90. Immutable Structured-Document Canonical Projection / 結構化文件固定無損投影",
-      "line": 1798,
+      "line": 1800,
       "modality": "MUST",
       "clause_hash": "61f1f7daa01f4b4a7ccc52685bceb8e8f44685b52b4cd97790da58cb18595f6c",
       "clause_excerpt": "Every observed OOXML XML element is representable through the generic fixed XML-node envelope. New XML qualified names therefore do not authorize schema drift. A source construct t",
@@ -4314,10 +4328,10 @@
       "blocking": true
     },
     {
-      "requirement_id": "GOV01-MUST-226",
+      "requirement_id": "GOV01-MUST-227",
       "source": "WEB-GOV-01",
       "section": "90. Immutable Structured-Document Canonical Projection / 結構化文件固定無損投影",
-      "line": 1800,
+      "line": 1802,
       "modality": "MUST",
       "clause_hash": "be3c1d91f6f14d726d8feb309b99c6d55a044968e31486393b8d6eaaffe3c7e0",
       "clause_excerpt": "Canonical ordering MUST be deterministic: package parts by canonical package path; relationships by relationship-part path then relationship ID; XML nodes by registered projection ",
@@ -11529,7 +11543,7 @@
       "section": "87. Word/DOCX to Canonical YAML Zero-Loss Reconciliation Audit / Word-DOCX 與 Canonical YAML 零損失對帳稽核",
       "line": 1562,
       "modality": "MUST",
-      "clause_hash": "76df520c3e50ba580530617e9fa3e3dc6d665e0a0eba04f39e8bbae7fd17a8f9",
+      "clause_hash": "43e8c48e04bc9831d15cf55592d5856d0130844e9275b9452d79c5e5c19de8c5",
       "clause_excerpt": "Negative regression MUST include at least: Word byte mutation after lock; missing projection row; duplicate row; row-order drift; extra/unregistered field; missing required field; ",
       "list_item_count": 0,
       "list_hash": null,

@@ -122,3 +122,9 @@ The candidate package cannot self-prove integrity. The trust-root hash set is an
 - Canonical YAML projection has one registered fixed schema/ordering contract and is non-authority.
 - Reconciliation PASS freezes the exact Word/YAML pair; any pair mutation invalidates admission.
 - Stage-01 may consume only the frozen projection and may not reparse Word as a semantic fallback.
+
+## v2.2.19 page-neutral projection schema portability rule
+- Captured Word/DOCX bytes are immutable; byte changes create a new source revision.
+- Canonical YAML projection has one registered fixed schema/ordering contract and is non-authority.
+- Reconciliation PASS freezes the exact Word/YAML pair; any pair mutation invalidates admission.
+- Stage-01 may consume only the frozen projection and may not reparse Word as a semantic fallback.

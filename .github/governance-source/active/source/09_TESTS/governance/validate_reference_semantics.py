@@ -4,7 +4,7 @@ import json,re,yaml,sys,hashlib,copy
 import ast
 sys.dont_write_bytecode=True
 ROOT=Path(__file__).resolve().parents[2]
-SEMANTIC_BASELINE_CONTENT_HASH = '01ebdfe231cc1b5797d1869e7ccbb3b37774b44330ff0c103d6c82992f92937b'
+SEMANTIC_BASELINE_CONTENT_HASH = '71feb81a3f2054800c003eda484f5168ac7945112220fbeb007bc71c69ef02f2'
 
 _YAML_CACHE={}
 _FRONTMATTER_CACHE={}

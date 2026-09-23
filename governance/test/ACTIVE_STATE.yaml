@@ -2,7 +2,7 @@ schema_version: 23
 artifact_type: ACTIVE_GOVERNANCE_TEST_STATE
 normative_authority: false
 specification_registry_ref: governance/specifications/REGISTRY.yaml
-specification_uid: GOV-REV-20260923-WORD-YAML-PRESTAGE01-SOURCE-FIDELITY-HARDENING
+specification_uid: GOV-REV-20260923-WORD-YAML-PAGE-NEUTRAL-SCHEMA-PORTABILITY-HARDENING
 canonical_rule_registry_ref: governance/specifications/current/CANONICAL_RULE_REGISTRY.yaml
 canonical_rule_registry_uid: GOV-CANONICAL-RULE-REGISTRY-001
 selected_execution_profile_state:
@@ -79,7 +79,7 @@ stage_execution_loading:
 stage_execution_remediation_closure_protocol:
   specification_ref: governance/specifications/current/VALIDATION_REMEDIATION_CLOSURE_PROTOCOL.yaml
   canonical_execution_rule_set: true
-  frozen_specification_uid: GOV-REV-20260923-WORD-YAML-PRESTAGE01-SOURCE-FIDELITY-HARDENING
+  frozen_specification_uid: GOV-REV-20260923-WORD-YAML-PAGE-NEUTRAL-SCHEMA-PORTABILITY-HARDENING
   audit_only_blocked_loop_may_count_as_progress: false
   remediation_must_materially_eliminate_remediable_gap: true
   full_line_high_pressure_required_before_every_fresh_execution_or_reexecution: true
@@ -104,13 +104,13 @@ specification_mutation_safety:
   ordinary_mid_stage_specification_mutation: BLOCK
   stage_end_consolidated_promotion_requires_new_explicit_directive: true
   execution_context_lock_required: true
-status: WORD_YAML_PAGE_NEUTRAL_SCHEMA_GOVERNANCE_MAINTENANCE_ACTIVE
-next_action: PROMOTE_WORD_YAML_PAGE_NEUTRAL_SCHEMA_HARDENING
+status: WORD_YAML_PAGE_NEUTRAL_SCHEMA_SUCCESSOR_PROMOTED_EXACT_HEAD_REVALIDATION_REQUIRED
+next_action: RUN_EXACT_HEAD_WORD_YAML_PAGE_NEUTRAL_SCHEMA_VALIDATION
 resume_control:
-  current_resume_point: WORD_YAML_PAGE_NEUTRAL_SCHEMA_GOVERNANCE_MAINTENANCE_ACTIVE
+  current_resume_point: WORD_YAML_PAGE_NEUTRAL_SCHEMA_SUCCESSOR_PROMOTED_EXACT_HEAD_REVALIDATION_REQUIRED
   current_work_unit_uid: WU-GOV-WORD-YAML-PRESTAGE01-HARDENING-001
   current_owner: SOURCE_INTAKE_STAGE1_GOVERNANCE
-  exact_next_action: PROMOTE_WORD_YAML_PAGE_NEUTRAL_SCHEMA_HARDENING
+  exact_next_action: RUN_EXACT_HEAD_WORD_YAML_PAGE_NEUTRAL_SCHEMA_VALIDATION
   product_resume_preserved: CORE01_STAGE01_ACTIVE_PREEXECUTION_GOVERNANCE_LOAD_REQUIRED
   interrupted_test_resume_preserved: CORE01_SOURCE_TEST_BUGFIX_AND_CONTENT_INTEGRITY_FULL_LIFECYCLE_R2_ACTIVE
   reentry_owner_capability: SOURCE_INTAKE_BASE_BLUEPRINT
@@ -123,11 +123,11 @@ resume_control:
   website_construction_allowed: false
   deployment_allowed: false
 governance_revision_transition:
-  current_governance_uid: GOV-REV-20260923-WORD-YAML-PRESTAGE01-SOURCE-FIDELITY-HARDENING
-  predecessor_governance_uid: GOV-REV-20260921-TYPOGRAPHY-COMPUTED-METRICS-HARDENING
+  current_governance_uid: GOV-REV-20260923-WORD-YAML-PAGE-NEUTRAL-SCHEMA-PORTABILITY-HARDENING
+  predecessor_governance_uid: GOV-REV-20260923-WORD-YAML-PRESTAGE01-SOURCE-FIDELITY-HARDENING
   predecessor_attempt_preserved_as_historical_evidence: true
   predecessor_attempt_may_close_under_current_governance: false
-  fresh_revalidation_required: false
+  fresh_revalidation_required: true
   selected_execution_profile_preserved: true
   product_fresh_replay_required_after_governance_change: true
   canonical_rule_registry_required_for_fresh_revalidation: true
@@ -137,7 +137,7 @@ governance_revision_transition:
   current_governance_product_credit: 0
   current_product_attempt_uid: null
   current_product_attempt_run_uid: null
-  fresh_revalidation_scope: WORD_YAML_PRE_STAGE01_POLICY_CONSUMERS_ONLY_NO_PRODUCT_STAGE_CREDIT
+  fresh_revalidation_scope: WORD_YAML_PAGE_NEUTRAL_SCHEMA_POLICY_CONSUMERS_ONLY_NO_PRODUCT_STAGE_CREDIT
   clean_reset_under_current_governance: true
   fresh_stage01_execution_requires_new_work_unit_resolution: true
 pending_governance_review:
@@ -190,7 +190,7 @@ active_work_unit:
   - .github/governance-source/active/source/10_REGISTRY/GOVERNANCE_LIFECYCLE_STAGE_REGISTRY.yaml
   - .github/governance-source/active/source/10_REGISTRY/STAGE1_SOURCE_FACT_CONTRACTS.yaml
   - .github/governance-source/active/source/10_REGISTRY/AUDIT_CATALOG.yaml
-  current_status: ACTIVE_AUTHORIZED_PREPROMOTION_R2
+  current_status: PROMOTION_MATERIALIZED_EXACT_HEAD_REVALIDATION_REQUIRED
   authorization_uid: USR-DIRECTIVE-20260923-WORD-YAML-PAGE-NEUTRAL-SCHEMA-HARDENING-R2
   exact_scope:
   - WORD_DOCX_RAW_SOURCE_IMMUTABILITY

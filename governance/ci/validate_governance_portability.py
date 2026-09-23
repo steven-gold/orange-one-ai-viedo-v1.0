@@ -150,6 +150,44 @@ if wu.get('required_when_no_legal_active_primary_work_unit') is not True or wu.g
 if credit.get('product_stage_gap_reduction_credit') != 0 or credit.get('product_completion_credit') != 0: failures.append('governance_maintenance_product_credit_not_zero')
 if terminal.get('outer_terminal_conclusion_is_closure_authority') is not True or terminal.get('inner_step_pass_is_terminal_run_pass') is not False: failures.append('outer_terminal_closure_semantics_invalid')
 
+# Structured-document projection portability: fixed schema, dynamic page/product content.
+_source_contract_path=ROOT/'.github/governance-source/active/source/10_REGISTRY/STAGE1_SOURCE_FACT_CONTRACTS.yaml'
+if not _source_contract_path.is_file():
+    failures.append('source_projection_contract_missing')
+else:
+    _source_contract=yaml.safe_load(_source_contract_path.read_text(encoding='utf-8')) or {}
+    _projection_root=_source_contract.get('structured_document_source_projection_contract') or {}
+    _projection=_projection_root.get('projection') or {}
+    _projection_blob=json.dumps(_projection_root,ensure_ascii=False,sort_keys=True)
+    if literal_product_identity.search(_projection_blob):
+        failures.append('source_projection_common_schema_product_identity_leak')
+    _fixed_semantic_fields={'page_uid','page_type','business_entity_uid','function_uid','operation_uid','control_uid','field_uid','visual_style_uid','required_heading_text'}
+    _schema_lists=[
+      _projection.get('canonical_top_level_field_order') or [],
+      _projection.get('source_identity_field_order') or [],
+      _projection.get('extraction_identity_field_order') or [],
+      _projection.get('serialization_contract_field_order') or [],
+      _projection.get('denominator_row_field_order') or [],
+      _projection.get('package_part_row_field_order') or [],
+      _projection.get('relationship_row_field_order') or [],
+      _projection.get('source_node_row_field_order') or [],
+    ]
+    if any(_fixed_semantic_fields & set(map(str,_fields)) for _fields in _schema_lists):
+        failures.append('source_projection_common_schema_product_semantic_field_leak')
+    _required_generic={
+      'fixed_scope':'SCHEMA_KEYS_TYPES_ORDER_AND_FIDELITY_INVARIANTS_ONLY',
+      'content_denominator':'DYNAMIC_FROM_EACH_IMMUTABLE_RAW_SOURCE',
+      'fixed_product_page_uid_enum':'FORBIDDEN',
+      'fixed_page_type_enum':'FORBIDDEN',
+      'fixed_business_entity_or_function_enum':'FORBIDDEN',
+      'fixed_control_field_or_visual_value_enum':'FORBIDDEN',
+      'fixed_source_content_count':'FORBIDDEN',
+      'fixed_source_heading_value_enum':'FORBIDDEN',
+      'page_or_product_specific_projection_schema':'FORBIDDEN',
+    }
+    for _k,_v in _required_generic.items():
+        if _projection.get(_k)!=_v:
+            failures.append('source_projection_common_schema_product_neutrality:'+_k)
 out={
     'status':'PASS' if not failures else 'FAIL',
     'canonical_registry_uid':canonical.get('registry_uid'),

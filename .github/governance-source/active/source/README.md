@@ -76,3 +76,6 @@ This successor requires complete per-target typography baselines and Browser/run
 
 ## v2.2.18 Word/YAML pre-Stage01 source fidelity hardening
 Structured Word/DOCX source is immutable after capture; Canonical YAML uses one fixed schema and is zero-loss reconciled and pair-frozen before Stage-01 activation. Stage-01 consumes only the exact frozen projection.
+
+## v2.2.19 Word/YAML page-neutral schema portability hardening
+The Canonical Word/DOCX projection schema fixes only structural keys, types, ordering and fidelity invariants. Page/function/content values and denominators remain dynamic per immutable source, with cross-page content-shape portability regression.

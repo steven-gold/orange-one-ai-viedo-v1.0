@@ -1,4 +1,4 @@
-schema_version: 8
+schema_version: 9
 artifact_uid: GOV-COMP-EXECUTION-CYCLE-CONTROL
 artifact_type: GOVERNANCE_SPECIFICATION_COMPONENT
 normative_status: ACTIVE_CURRENT_GOVERNANCE_COMPONENT
@@ -194,10 +194,10 @@ work_unit_resolution_gate:
   ai_may_invent_successor_work_unit: false
   multiple_materially_distinct_legal_successors_without_authority: WORK_UNIT_RESOLUTION_AMBIGUOUS_BLOCK
   nearest_stage_file_test_or_blocker_is_implicit_successor: false
-  stage01_source_projection_pre_activation_required_when_applicable: true
-  stage01_source_projection_freeze_receipt_required: true
-  stage01_source_projection_pair_hash_binding_required: true
-  stage01_unverified_projection_activation: BLOCK
+  source_intake_projection_pre_activation_required_when_applicable: true
+  source_intake_projection_freeze_receipt_required: true
+  source_intake_projection_pair_hash_binding_required: true
+  source_intake_unverified_projection_activation: BLOCK
 design_contract_remediation_routing:
   applies_to_local_gap_classes:
   - INPUT_SOURCE_GAP
@@ -358,10 +358,10 @@ pre_stage_source_projection_admission:
   - RECONCILIATION_PASS
   - SOURCE_PAIR_FROZEN
   - STAGE01_ELIGIBLE
-  stage01_work_unit_activation_before_source_pair_frozen: BLOCK
+  source_intake_work_unit_activation_before_source_pair_frozen: BLOCK
   raw_source_and_projection_mutable_after_pair_freeze: false
   any_pair_member_mutation: INVALIDATE_PAIR_AND_REENTER_PRE_STAGE_PROJECTION
-  stage01_semantic_input: EXACT_FROZEN_CANONICAL_SOURCE_PROJECTION_ONLY
-  raw_word_semantic_reparse_during_stage01: BLOCK
+  source_intake_semantic_input: EXACT_FROZEN_CANONICAL_SOURCE_PROJECTION_ONLY
+  raw_word_semantic_reparse_during_source_intake: BLOCK
   schema_alias_or_optional_field_fallback: BLOCK
   not_applicable_requires_authority_evidence: true

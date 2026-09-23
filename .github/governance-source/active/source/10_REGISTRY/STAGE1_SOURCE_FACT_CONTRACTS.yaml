@@ -4,7 +4,7 @@ artifact_type: STAGE1_SOURCE_FACT_CONTRACTS
 status: CURRENT_CANDIDATE
 canonical_path: 10_REGISTRY/STAGE1_SOURCE_FACT_CONTRACTS.yaml
 owner_uid: OWNER-GOVERNANCE-STAGE1-SOURCE-FACTS
-governance_revision: v2.2.18-word-yaml-prestage01-source-fidelity-hardening
+governance_revision: v2.2.19-word-yaml-page-neutral-schema-portability-hardening
 normative_section_uids:
 - WEB-GOV-01-S069
 - WEB-GOV-01-S090
@@ -293,6 +293,15 @@ structured_document_source_projection_contract:
     normative_authority: false
     semantic_interpretation_during_projection: BLOCK
     manual_summary_or_rewrite: BLOCK
+    fixed_scope: SCHEMA_KEYS_TYPES_ORDER_AND_FIDELITY_INVARIANTS_ONLY
+    content_denominator: DYNAMIC_FROM_EACH_IMMUTABLE_RAW_SOURCE
+    fixed_product_page_uid_enum: FORBIDDEN
+    fixed_page_type_enum: FORBIDDEN
+    fixed_business_entity_or_function_enum: FORBIDDEN
+    fixed_control_field_or_visual_value_enum: FORBIDDEN
+    fixed_source_content_count: FORBIDDEN
+    fixed_source_heading_value_enum: FORBIDDEN
+    page_or_product_specific_projection_schema: FORBIDDEN
     unknown_or_extra_field: BLOCK
     missing_required_field: BLOCK
     mapping_key_order_drift: BLOCK

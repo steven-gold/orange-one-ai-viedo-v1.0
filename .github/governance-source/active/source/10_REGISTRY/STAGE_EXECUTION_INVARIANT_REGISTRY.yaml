@@ -4,7 +4,7 @@ artifact_type: STAGE_EXECUTION_INVARIANT_REGISTRY
 status: CURRENT_CANDIDATE
 canonical_path: 10_REGISTRY/STAGE_EXECUTION_INVARIANT_REGISTRY.yaml
 owner_uid: OWNER-GOVERNANCE-STAGE-EXECUTION-INVARIANT
-governance_revision: v2.2.18-word-yaml-prestage01-source-fidelity-hardening
+governance_revision: v2.2.19-word-yaml-page-neutral-schema-portability-hardening
 scope:
   applies_to_stages:
   - STAGE-01
@@ -1184,6 +1184,11 @@ invariants:
     schema_or_field_order_drift: BLOCK
     silent_source_omission: BLOCK
     source_pair_mutation_disposition: INVALIDATE_AND_REENTER_PRE_STAGE_PROJECTION
+    fixed_projection_scope: SCHEMA_KEYS_TYPES_ORDER_AND_FIDELITY_INVARIANTS_ONLY
+    page_product_content: DYNAMIC_FROM_EACH_IMMUTABLE_RAW_SOURCE
+    fixed_page_uid_or_page_type: BLOCK
+    fixed_product_function_control_or_source_content_count: BLOCK
+    cross_page_content_shape_portability_required: true
 stage02_observed_defect_mapping:
 - finding: PORT_EXPOSURE_WITHOUT_TRIGGER
   mapped_invariant: RELATION_SEMANTIC_SEPARATION
