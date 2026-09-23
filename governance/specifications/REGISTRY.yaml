@@ -31,3 +31,16 @@ mutation_policy:
   new_file_after_freeze: FORBIDDEN
   product_execution_on_rebuild: FORBIDDEN
   product_execution_target: 0921acpos
+
+
+execution_domain_entrypoints:
+  selection_required_before_rule_read: true
+  recursive_governance_tree_scan: FORBIDDEN
+  undeclared_rule_read: FORBIDDEN
+  manifests:
+    BASIC_DESIGN: governance/execution-domains/BASIC_DESIGN/DOMAIN.yaml
+    WORD_YAML: governance/execution-domains/WORD_YAML/DOMAIN.yaml
+    STAGE: governance/execution-domains/STAGE/DOMAIN.yaml
+    AUDIT: governance/execution-domains/AUDIT/DOMAIN.yaml
+  universal_stepwise_authority: WEB-GOV-03-S062A
+  local_audit_after_every_effectful_step: REQUIRED
