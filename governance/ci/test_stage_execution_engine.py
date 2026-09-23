@@ -2,6 +2,7 @@
 from copy import deepcopy
 from pathlib import Path
 import ast
+import importlib.util
 import sys
 ROOT=Path(__file__).resolve().parents[2]
 sys.path.insert(0,str(ROOT/'governance/ci'))
@@ -295,10 +296,25 @@ for uid,st in stage_rows.items():
         if not materializer or not materializer_path.is_file():
             audit_error('DENOMINATOR_APPLICABILITY',f'PACKAGE_MATERIALIZER_MISSING:{uid}:{materializer}')
         else:
-            materializer_text=materializer_path.read_text(encoding='utf-8')
-            for artifact_uid,filename in sorted(packaged.items()):
-                if str(filename) not in materializer_text:
-                    audit_error('DENOMINATOR_APPLICABILITY',f'PACKAGED_ARTIFACT_NOT_MATERIALIZED:{uid}:{artifact_uid}:{filename}')
+            spec=importlib.util.spec_from_file_location('stage_packaged_materializer_'+uid.replace('-','_'),materializer_path)
+            if spec is None or spec.loader is None:
+                audit_error('DENOMINATOR_APPLICABILITY',f'PACKAGE_MATERIALIZER_IMPORT_UNRESOLVED:{uid}:{materializer}')
+            else:
+                module=importlib.util.module_from_spec(spec)
+                try:
+                    spec.loader.exec_module(module)
+                except BaseException as exc:
+                    audit_error('DENOMINATOR_APPLICABILITY',f'PACKAGE_MATERIALIZER_IMPORT_FAILED:{uid}:{materializer}:{type(exc).__name__}')
+                else:
+                    producer_contract=getattr(module,'PACKAGED_ARTIFACT_CONTRACT',None)
+                    if not isinstance(producer_contract,dict):
+                        audit_error('DENOMINATOR_APPLICABILITY',f'PACKAGE_MATERIALIZER_CONTRACT_MISSING:{uid}:{materializer}')
+                    else:
+                        if producer_contract.get('package_manifest_field')!=packaged_contract.get('package_manifest_field'):
+                            audit_error('DENOMINATOR_APPLICABILITY',f'PACKAGE_MANIFEST_FIELD_DRIFT:{uid}')
+                        producer_artifacts=producer_contract.get('artifacts') or {}
+                        if producer_artifacts!=packaged:
+                            audit_error('DENOMINATOR_APPLICABILITY',f'PACKAGE_MATERIALIZER_ARTIFACT_CONTRACT_DRIFT:{uid}')
     for applicability_key,rows in (st.get('required_output_applicability') or {}).items():
         required=set(rows or [])
         unbound=sorted(required-all_outputs-set(packaged))
