@@ -1,0 +1,53 @@
+schema_version: 1
+artifact_uid: CONTENT-AUDIT-SRC-DOCX-CORE01-943AF192
+artifact_type: SOURCE_DOCUMENT_CONTENT_AUDIT
+source_uid: SRC-DOCX-CORE01-943AF192
+source_sha256: 943af192004b587d6aab36e114eeb40430c9ea45614cc154d62dd9e3b5cbefeb
+page_uid: CORE-01
+audit_standard_uid: WEB-GOV-01-S090
+required_design_domain_uids:
+- IDENTITY_SCOPE
+- VISUAL_LAYOUT
+- INTERACTION_CONTROL
+- STATE_GATE_ERROR
+- DATA_SCHEMA
+- INTEGRATION_RUNTIME
+- WORKFLOW_LIFECYCLE
+- QA_ACCEPTANCE
+observed_design_domain_uids:
+- IDENTITY_SCOPE
+- VISUAL_LAYOUT
+- INTERACTION_CONTROL
+- STATE_GATE_ERROR
+- DATA_SCHEMA
+- INTEGRATION_RUNTIME
+- WORKFLOW_LIFECYCLE
+- QA_ACCEPTANCE
+missing_required_design_domain_uids: []
+matrix_integrity:
+  fleet_deep_audit_run_id: 35831458578
+  fleet_deep_audit_artifact_id: 10738332262
+  source_paragraph_count: 3494
+  source_table_count: 45
+  source_relationship_count: 20
+  source_node_count: 69348
+  duplicate_source_node_uid_count: 0
+visual_source_integrity:
+  drawing_count: 5
+  binary_package_part_count: 6
+  image_package_part_count: 6
+  missing_visual_count: 0
+  binary_pixel_source_required: true
+  deep_audit_relationship_and_binary_lineage: PASS
+render_integrity:
+  exact_source_hash_bound_rendered_page_count_observed: 56
+  legacy_summary_extraction_used_as_execution_input: false
+  source_sha256: 943af192004b587d6aab36e114eeb40430c9ea45614cc154d62dd9e3b5cbefeb
+  result: PASS_EXACT_SOURCE_HASH_BOUND_RENDER_EVIDENCE
+open_downstream_states:
+- STAGE01_NOT_EXECUTED
+- HUMAN_VISUAL_REVIEW_NOT_REACHED
+unresolved_required_gap_count: 0
+contradiction_count: 0
+result: PASS
+evidence_content_hash: 31246c126f9872e7618576f331e1d7983eb29830b41f2b8a927fb1c6f3ddcf75

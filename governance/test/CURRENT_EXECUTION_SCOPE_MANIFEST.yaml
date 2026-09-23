@@ -3,7 +3,7 @@ artifact_type: EXECUTION_SCOPE_MANIFEST
 normative_authority: false
 governance_uid: GOV-REV-20260923-WORD-PROJECTION-NEXTSTEP-CONSUMER-SYNC-HARDENING
 owning_capability: SOURCE_INTAKE_PRESTAGE_VALIDATION
-scope_kind: EXACT_PRESTAGE_CORE01_WORD_YAML_SOURCE_MATERIALIZATION
+scope_kind: CLOSED_PRESTAGE_CORE01_WORD_YAML_FROZEN_SOURCE_PAIR
 work_unit_uid: WU-PRESTAGE-CORE01-WORD-YAML-PROJECTION-20260923-001
 included_units:
 - CORE01_SOURCE_DOCUMENT_CONTENT_AUDIT
@@ -46,23 +46,22 @@ pre_execution_gate_status: PASS
 partial_scope: false
 stage_exit_credit_allowed: false
 product_stage_execution_allowed: false
-product_stage_execution_block_reason: CORE01_PRESTAGE_SOURCE_PAIR_NOT_YET_FROZEN_AND_VALIDATED
+product_stage_execution_block_reason: CORE01_STAGE01_WORK_UNIT_NOT_YET_RESOLVED_AFTER_FROZEN_SOURCE_PAIR
 fresh_revalidation_required: false
 product_stage_revalidation_required: false
 product_stage_revalidation_credit: 0
-next_action: RUN_CORE01_EXACT_WORD_YAML_PRESTAGE_MATERIALIZATION
-closure_status: ACTIVE_PRESTAGE_MATERIALIZATION
+next_action: RESOLVE_CORE01_STAGE01_WORK_UNIT
+closure_status: CLOSED_FROZEN_VALIDATED_NO_PRODUCT_STAGE_CREDIT
 closure_evidence:
-  source_head: 6249dbadad182cecd3810683b260dccd11901bcc
-  document_denominator: 31
-  projection_compatibility_pass_count: 31
-  projection_compatibility_fail_count: 0
-  content_review_candidate_count: 0
-  deep_audit_run_id: 35831458578
-  deep_audit_artifact_id: 10738332262
-  deep_audit_artifact_zip_sha256: 2d5f123c5c1435a140f8943a0bd27a745e45456602b9f4461f6a86e420b6e9bb
-  exact_head_full_line_run_id: 35831458562
-  result: PASS
+  source_uid: SRC-DOCX-CORE01-943AF192
+  source_sha256: 943af192004b587d6aab36e114eeb40430c9ea45614cc154d62dd9e3b5cbefeb
+  projection_content_hash: e11b1caad15fc06a83ebb9cf99f5c19072dcad75eb84f1366787306ddd24a13f
+  reconciliation_evidence_hash: a979fae195e1092435656ffaee040e839d812d23fe4fdc2c5283a002e3a21d4a
+  pair_hash: 5fc4838e5c04c460fec2039ab406d25083ccfa05e88c7c56f4d3e9ea47ccdb83
+  frozen_binary_part_count: 6
+  independent_validation_evidence: 00_SOURCE_INTAKE/prestage_core01_943af192_word_yaml/PRESTAGE_INDEPENDENT_VALIDATION_EVIDENCE.yaml
+  fleet_deep_audit_run_id: 35831458578
+  product_stage_credit: 0
 prestage_dependency_evidence:
   fleet_audit_closure_commit: ac68780bdc90f2a710f472729aaa6a1b30aa8fa2
   fleet_deep_audit_run_id: 35831458578

@@ -104,13 +104,13 @@ specification_mutation_safety:
   ordinary_mid_stage_specification_mutation: BLOCK
   stage_end_consolidated_promotion_requires_new_explicit_directive: true
   execution_context_lock_required: true
-status: CORE01_WORD_YAML_PRESTAGE_MATERIALIZATION_ACTIVE
-next_action: RUN_CORE01_EXACT_WORD_YAML_PRESTAGE_MATERIALIZATION
+status: CORE01_WORD_YAML_PRESTAGE_FROZEN_VALIDATED
+next_action: RESOLVE_CORE01_STAGE01_WORK_UNIT
 resume_control:
-  current_resume_point: CORE01_WORD_YAML_PRESTAGE_MATERIALIZATION_ACTIVE
+  current_resume_point: CORE01_WORD_YAML_PRESTAGE_FROZEN_VALIDATED
   current_work_unit_uid: WU-PRESTAGE-CORE01-WORD-YAML-PROJECTION-20260923-001
   current_owner: SOURCE_INTAKE_PRESTAGE_VALIDATION
-  exact_next_action: RUN_CORE01_EXACT_WORD_YAML_PRESTAGE_MATERIALIZATION
+  exact_next_action: RESOLVE_CORE01_STAGE01_WORK_UNIT
   product_resume_preserved: CORE01_STAGE01_ACTIVE_PREEXECUTION_GOVERNANCE_LOAD_REQUIRED
   interrupted_test_resume_preserved: CORE01_SOURCE_TEST_BUGFIX_AND_CONTENT_INTEGRITY_FULL_LIFECYCLE_R2_ACTIVE
   reentry_owner_capability: SOURCE_INTAKE_BASE_BLUEPRINT
@@ -119,7 +119,7 @@ resume_control:
   cleanup_receipt_ref: governance/test/history/cleanup/CORE01_STAGE01_STAGE03_CLEAN_RESET_R1.yaml
   human_visual_review_allowed: false
   product_execution_allowed: false
-  product_execution_block_reason: CORE01_PRESTAGE_SOURCE_PAIR_NOT_YET_FROZEN_AND_VALIDATED
+  product_execution_block_reason: CORE01_STAGE01_WORK_UNIT_NOT_YET_RESOLVED_AFTER_FROZEN_SOURCE_PAIR
   website_construction_allowed: false
   deployment_allowed: false
 governance_revision_transition:
@@ -185,59 +185,36 @@ active_work_unit:
   canonical_name: CORE01_EXACT_WORD_YAML_PRESTAGE_SOURCE_MATERIALIZATION
   primary_task_layer: TEST_OR_VALIDATION_MAINTENANCE
   semantic_capability: SOURCE_INTAKE_PRESTAGE_VALIDATION
-  canonical_owner_refs:
-  - .github/governance-source/active/source/10_REGISTRY/STAGE1_SOURCE_FACT_CONTRACTS.yaml
-  - governance/ci/build_docx_source_projection.py
-  - governance/ci/validate_docx_source_projection_independent.py
-  current_status: ACTIVE_PRESTAGE_MATERIALIZATION
+  current_status: CLOSED_FROZEN_VALIDATED_NO_PRODUCT_STAGE_CREDIT
   authorization_uid: EXPLICIT_USER_DIRECTIVE_20260923_AUDIT_ALL_WORDS_THEN_CORE_YAML_ONLY
   exact_scope:
   - CORE01_SOURCE_DOCUMENT_CONTENT_AUDIT
   - CORE01_RAW_WORD_IMMUTABILITY_LOCK
   - CORE01_CANONICAL_YAML_PROJECTION
-  - CORE01_FROZEN_BINARY_SOURCE_PARTS
-  - CORE01_WORD_YAML_ZERO_LOSS_RECONCILIATION
+  - CORE01_FROZEN_BINARY_PARTS
+  - CORE01_ZERO_LOSS_RECONCILIATION
   - CORE01_SOURCE_PAIR_FREEZE
   - CORE01_INDEPENDENT_POST_CONVERSION_VALIDATION
-  product_data_mutation_allowed: true
+  product_data_mutation_allowed: false
   product_authority_mutation_allowed: false
   product_stage_credit: 0
-  predecessor_fleet_audit_closure:
-    closure_commit: ac68780bdc90f2a710f472729aaa6a1b30aa8fa2
-    source_head: 6249dbadad182cecd3810683b260dccd11901bcc
-    document_denominator: 31
-    projection_compatibility_pass_count: 31
-    projection_compatibility_fail_count: 0
-    content_review_candidate_count: 0
-    deep_audit_run_id: 35831458578
-    deep_audit_artifact_id: 10738332262
-    deep_audit_artifact_zip_sha256: 2d5f123c5c1435a140f8943a0bd27a745e45456602b9f4461f6a86e420b6e9bb
-    closure_exact_head_full_line_run_id: 35834408586
-    closure_exact_head_selected_profile_run_id: 35834408575
-    closure_exact_head_branch_guard_run_id: 35834408598
-    closure_exact_head_fresh_replay_run_id: 35834408623
-    closure_exact_head_stage02_maintenance_run_id: 35834408758
-  stage01_execution_started: false
-word_source_snapshot_for_future_projection:
-  normative_authority: false
-  role: SOURCE_CONTEXT_ONLY_NOT_ACTIVE_WORK_UNIT
-  page_uid: CORE-01
-  source_repository: steven-gold/orange-one-ai-viedo-v1.0
-  source_branch: 0921acpos
-  source_branch_head_sha: 6249dbadad182cecd3810683b260dccd11901bcc
-  source_tree_sha: e36f80c0c4e5ad407ebbd8b71541979e9db02595
-  source_path: ACPOS_CORE-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx
-  source_git_blob_sha: 1cafe3bbccb7168cc5606aa4e21fb7edb5a54439
-  source_sha256: 943af192004b587d6aab36e114eeb40430c9ea45614cc154d62dd9e3b5cbefeb
-  rendered_page_count_observed: 56
-  paragraph_count_observed: 152
-  table_count_observed: 45
-  visual_candidate_count_observed: 5
-  extraction_workflow_run_id: 35802694635
-  extraction_artifact_id: 10726682269
-  extraction_artifact_sha256: 4ce6a719c62490e286e16663d850ad1659864df0803a8a9015a17142b4218b90
-  product_stage_execution_started: false
-  may_be_used_as_stage01_input_before_word_yaml_reconciliation_pass: false
+  closure_evidence:
+    workspace: 00_SOURCE_INTAKE/prestage_core01_943af192_word_yaml
+    source_uid: SRC-DOCX-CORE01-943AF192
+    source_sha256: 943af192004b587d6aab36e114eeb40430c9ea45614cc154d62dd9e3b5cbefeb
+    source_git_blob_sha: 1cafe3bbccb7168cc5606aa4e21fb7edb5a54439
+    projection_uid: PROJ-SRC-DOCX-CORE01-943AF192
+    projection_content_hash: e11b1caad15fc06a83ebb9cf99f5c19072dcad75eb84f1366787306ddd24a13f
+    reconciliation_evidence_uid: RECON-SRC-DOCX-CORE01-943AF192
+    reconciliation_evidence_hash: a979fae195e1092435656ffaee040e839d812d23fe4fdc2c5283a002e3a21d4a
+    pair_hash: 5fc4838e5c04c460fec2039ab406d25083ccfa05e88c7c56f4d3e9ea47ccdb83
+    frozen_binary_part_count: 6
+    independent_validation_evidence: 00_SOURCE_INTAKE/prestage_core01_943af192_word_yaml/PRESTAGE_INDEPENDENT_VALIDATION_EVIDENCE.yaml
+    fleet_deep_audit_run_id: 35831458578
+    fleet_deep_audit_artifact_id: 10738332262
+    stage01_execution_started: false
+    product_stage_credit: 0
+  legal_next_transition: WORK_UNIT_RESOLUTION_GATE_FOR_STAGE01
 retained_governance_cleanup_summary:
   role: COMPACT_NON_NORMATIVE_PROVENANCE
   product_stage_credit: 0
@@ -590,3 +567,25 @@ previous_last_work_unit_resolution_gate:
   - ACTIVE_STATE_CURRENT_FILE_CONTAINS_LARGE_EXPANDED_HISTORICAL_RESIDUAL
   - SEMANTIC_RESIDUAL_CLASSIFICATION_POLICY_APPLIES
   product_stage_credit: 0
+core01_frozen_source_pair:
+  normative_authority: false
+  role: FROZEN_PRESTAGE_SOURCE_PAIR_CONTEXT
+  page_uid: CORE-01
+  source_uid: SRC-DOCX-CORE01-943AF192
+  source_repository: steven-gold/orange-one-ai-viedo-v1.0
+  source_branch: 0921acpos
+  source_branch_head_sha: 6249dbadad182cecd3810683b260dccd11901bcc
+  source_path: ACPOS_CORE-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx
+  source_git_blob_sha: 1cafe3bbccb7168cc5606aa4e21fb7edb5a54439
+  source_sha256: 943af192004b587d6aab36e114eeb40430c9ea45614cc154d62dd9e3b5cbefeb
+  canonical_projection_ref: 00_SOURCE_INTAKE/prestage_core01_943af192_word_yaml/00_SOURCE_INTAKE/SOURCE_PROJECTIONS/SRC-DOCX-CORE01-943AF192/CANONICAL_SOURCE_PROJECTION.yaml
+  projection_content_hash: e11b1caad15fc06a83ebb9cf99f5c19072dcad75eb84f1366787306ddd24a13f
+  reconciliation_ref: 00_SOURCE_INTAKE/prestage_core01_943af192_word_yaml/00_SOURCE_INTAKE/SOURCE_PROJECTIONS/SRC-DOCX-CORE01-943AF192/SOURCE_PROJECTION_RECONCILIATION_EVIDENCE.yaml
+  reconciliation_evidence_hash: a979fae195e1092435656ffaee040e839d812d23fe4fdc2c5283a002e3a21d4a
+  freeze_receipt_ref: 00_SOURCE_INTAKE/prestage_core01_943af192_word_yaml/00_SOURCE_INTAKE/SOURCE_PROJECTIONS/SRC-DOCX-CORE01-943AF192/SOURCE_PROJECTION_FREEZE_RECEIPT.yaml
+  pair_hash: 5fc4838e5c04c460fec2039ab406d25083ccfa05e88c7c56f4d3e9ea47ccdb83
+  frozen_binary_part_count: 6
+  fleet_deep_audit_run_id: 35831458578
+  fleet_deep_audit_artifact_id: 10738332262
+  product_stage_execution_started: false
+  stage01_admission_status: NOT_YET_RESOLVED
