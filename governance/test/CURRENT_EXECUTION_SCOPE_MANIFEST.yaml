@@ -2,21 +2,18 @@ schema_version: 1
 artifact_type: EXECUTION_SCOPE_MANIFEST
 normative_authority: false
 governance_uid: GOV-REV-20260923-WORD-PROJECTION-NEXTSTEP-CONSUMER-SYNC-HARDENING
-owning_capability: SOURCE_INTAKE_PRESTAGE_VALIDATION
-scope_kind: CLOSED_PRESTAGE_CORE01_WORD_YAML_FROZEN_SOURCE_PAIR
-work_unit_uid: WU-PRESTAGE-CORE01-WORD-YAML-PROJECTION-20260923-001
+owning_capability: SOURCE_INTAKE_BASE_BLUEPRINT
+scope_kind: EXACT_SINGLE_PAGE_STAGE01_FROZEN_PROJECTION_REENTRY
+work_unit_uid: WU-STAGE01-CORE01-943AF192-REPLAY
 included_units:
-- CORE01_SOURCE_DOCUMENT_CONTENT_AUDIT
-- CORE01_RAW_WORD_IMMUTABILITY_LOCK
-- CORE01_CANONICAL_YAML_PROJECTION
-- CORE01_FROZEN_BINARY_SOURCE_PARTS
-- CORE01_WORD_YAML_ZERO_LOSS_RECONCILIATION
-- CORE01_SOURCE_PAIR_FREEZE
-- CORE01_INDEPENDENT_POST_CONVERSION_VALIDATION
-excluded_units: []
-remaining_units: []
-stage_required_units: []
-scope_selection_authority: EXPLICIT_USER_DIRECTIVE_20260923_AUDIT_ALL_WORDS_THEN_CORE_YAML_ONLY
+- CORE-01
+excluded_units:
+- ASSET-01
+remaining_units:
+- CORE-01
+stage_required_units:
+- CORE-01
+scope_selection_authority: EXPLICIT_USER_DIRECTIVE_20260923_NEXT_STEP_RESOLVE_CORE01_STAGE01_WU
 source_context_only:
   page_uid: CORE-01
   product_stage_credit: 0
@@ -32,13 +29,13 @@ source_context_only:
     extraction_artifact_id: 10726682269
     extraction_artifact_sha256: 4ce6a719c62490e286e16663d850ad1659864df0803a8a9015a17142b4218b90
 dependency_closure_refs:
-- governance/test/ACTIVE_STATE.yaml
-- GOVERNANCE_CURRENT.yaml
-- governance/specifications/REGISTRY.yaml
+- 00_SOURCE_INTAKE/prestage_core01_943af192_word_yaml/00_SOURCE_INTAKE/SOURCE_PROJECTIONS/SRC-DOCX-CORE01-943AF192/SOURCE_PROJECTION_FREEZE_RECEIPT.yaml
+- 00_SOURCE_INTAKE/prestage_core01_943af192_word_yaml/00_SOURCE_INTAKE/SOURCE_PROJECTIONS/SRC-DOCX-CORE01-943AF192/CANONICAL_SOURCE_PROJECTION.yaml
+- 00_SOURCE_INTAKE/prestage_core01_943af192_word_yaml/00_SOURCE_INTAKE/SOURCE_PROJECTIONS/SRC-DOCX-CORE01-943AF192/SOURCE_PROJECTION_RECONCILIATION_EVIDENCE.yaml
+- 00_SOURCE_INTAKE/prestage_core01_943af192_word_yaml/00_SOURCE_INTAKE/SOURCE_PROJECTIONS/SRC-DOCX-CORE01-943AF192/SOURCE_DOCUMENT_CONTENT_AUDIT.yaml
+- 00_SOURCE_INTAKE/prestage_core01_943af192_word_yaml/00_SOURCE_INTAKE/SOURCE_PROJECTIONS/SRC-DOCX-CORE01-943AF192/RAW_SOURCE_IMMUTABILITY_RECEIPT.yaml
 - .github/governance-source/active/source/10_REGISTRY/GOVERNANCE_LIFECYCLE_STAGE_REGISTRY.yaml
 - .github/governance-source/active/source/10_REGISTRY/STAGE1_SOURCE_FACT_CONTRACTS.yaml
-- governance/ci/validate_governance_portability.py
-- .github/governance-source/active/source/10_REGISTRY/AUDIT_CATALOG.yaml
 entry_gate: GOVERNANCE_MAINTENANCE_AUTHORIZATION_READY
 entry_gate_status: PASS
 pre_execution_gate: SPECIFICATION_CHANGE_AUTHORIZATION_PREEXISTS_MUTATION
@@ -46,12 +43,12 @@ pre_execution_gate_status: PASS
 partial_scope: false
 stage_exit_credit_allowed: false
 product_stage_execution_allowed: false
-product_stage_execution_block_reason: CORE01_STAGE01_WORK_UNIT_NOT_YET_RESOLVED_AFTER_FROZEN_SOURCE_PAIR
-fresh_revalidation_required: false
+product_stage_execution_block_reason: CORE01_STAGE01_GOVERNANCE_LOAD_RECEIPT_NOT_YET_PASS
+fresh_revalidation_required: true
 product_stage_revalidation_required: false
 product_stage_revalidation_credit: 0
-next_action: RESOLVE_CORE01_STAGE01_WORK_UNIT
-closure_status: CLOSED_FROZEN_VALIDATED_NO_PRODUCT_STAGE_CREDIT
+next_action: GENERATE_CORE01_STAGE01_GOVERNANCE_LOAD_RECEIPT
+closure_status: ACTIVE_PREEXECUTION_GOVERNANCE_LOAD_REQUIRED
 closure_evidence:
   source_uid: SRC-DOCX-CORE01-943AF192
   source_sha256: 943af192004b587d6aab36e114eeb40430c9ea45614cc154d62dd9e3b5cbefeb
@@ -73,3 +70,13 @@ prestage_dependency_evidence:
   fleet_content_review_candidate_count: 0
   stage01_execution_started: false
   product_stage_credit: 0
+denominator_source_refs:
+- 00_SOURCE_INTAKE/prestage_core01_943af192_word_yaml/00_SOURCE_INTAKE/SOURCE_PROJECTIONS/SRC-DOCX-CORE01-943AF192/CANONICAL_SOURCE_PROJECTION.yaml
+- 00_SOURCE_INTAKE/prestage_core01_943af192_word_yaml/00_SOURCE_INTAKE/SOURCE_PROJECTIONS/SRC-DOCX-CORE01-943AF192/SOURCE_PROJECTION_FREEZE_RECEIPT.yaml
+source_projection_binding:
+  source_uid: SRC-DOCX-CORE01-943AF192
+  freeze_receipt_ref: 00_SOURCE_INTAKE/prestage_core01_943af192_word_yaml/00_SOURCE_INTAKE/SOURCE_PROJECTIONS/SRC-DOCX-CORE01-943AF192/SOURCE_PROJECTION_FREEZE_RECEIPT.yaml
+  pair_hash: 5fc4838e5c04c460fec2039ab406d25083ccfa05e88c7c56f4d3e9ea47ccdb83
+  raw_source_sha256: 943af192004b587d6aab36e114eeb40430c9ea45614cc154d62dd9e3b5cbefeb
+  projection_uid: PROJ-SRC-DOCX-CORE01-943AF192
+  projection_content_hash: e11b1caad15fc06a83ebb9cf99f5c19072dcad75eb84f1366787306ddd24a13f

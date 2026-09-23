@@ -11,19 +11,31 @@ selected_execution_profile_state:
   global_normative_authority: false
   profile_step_identities_are_global_governance: false
   execution_state_key: execution
-  current_step_state_key: stage3
+  current_step_state_key: stage1
   history_binding_ref: governance/test/SELECTED_PROFILE_HISTORY_BINDING.yaml
   profile_validator_refs:
   - governance/ci/validate_profile_history_binding.py
 execution:
   branch: rebuild-v2.1.1
-  run_uid: CLEAN-CORE01-STAGE01-STAGE03-20260920-R1
+  run_uid: CORE01-943AF192-STAGE01-R1
   scope_mode: EXACT_PAGE_SCOPE_ONLY
   target_pages:
   - CORE-01
-  current_stage: null
+  current_stage: STAGE-01-PREEXECUTION
   stage1:
+    result: NOT_EXECUTED
     CORE-01: NOT_EXECUTED
+    work_unit_uid: WU-STAGE01-CORE01-943AF192-REPLAY
+    work_unit_resolution: PASS_SINGLE_LEGAL_SUCCESSOR
+    execution_started: false
+    pre_execution_gate: GOVERNANCE_LOAD_RECEIPT_PASS
+    pre_execution_gate_status: NOT_EXECUTED
+    stage_exit_allowed: false
+    artifact_root_present: false
+    target_page_uids:
+    - CORE-01
+    remaining_page_uids:
+    - CORE-01
   stage2:
     result: NOT_EXECUTED
     stage_entry_gate: NOT_EXECUTED
@@ -104,22 +116,17 @@ specification_mutation_safety:
   ordinary_mid_stage_specification_mutation: BLOCK
   stage_end_consolidated_promotion_requires_new_explicit_directive: true
   execution_context_lock_required: true
-status: CORE01_WORD_YAML_PRESTAGE_FROZEN_VALIDATED
-next_action: RESOLVE_CORE01_STAGE01_WORK_UNIT
+status: CORE01_STAGE01_WORK_UNIT_RESOLVED_PREEXECUTION_GOVERNANCE_LOAD_REQUIRED
+next_action: GENERATE_CORE01_STAGE01_GOVERNANCE_LOAD_RECEIPT
 resume_control:
-  current_resume_point: CORE01_WORD_YAML_PRESTAGE_FROZEN_VALIDATED
-  current_work_unit_uid: WU-PRESTAGE-CORE01-WORD-YAML-PROJECTION-20260923-001
-  current_owner: SOURCE_INTAKE_PRESTAGE_VALIDATION
-  exact_next_action: RESOLVE_CORE01_STAGE01_WORK_UNIT
-  product_resume_preserved: CORE01_STAGE01_ACTIVE_PREEXECUTION_GOVERNANCE_LOAD_REQUIRED
-  interrupted_test_resume_preserved: CORE01_SOURCE_TEST_BUGFIX_AND_CONTENT_INTEGRITY_FULL_LIFECYCLE_R2_ACTIVE
-  reentry_owner_capability: SOURCE_INTAKE_BASE_BLUEPRINT
-  reentry_stage_uid: STAGE-01
-  reentry_reason: USER_APPROVED_REV_GOV_001_FOR_CURRENT_TARGET_HASH
-  cleanup_receipt_ref: governance/test/history/cleanup/CORE01_STAGE01_STAGE03_CLEAN_RESET_R1.yaml
-  human_visual_review_allowed: false
+  current_resume_point: CORE01_STAGE01_WORK_UNIT_RESOLVED_PREEXECUTION_GOVERNANCE_LOAD_REQUIRED
+  current_work_unit_uid: WU-STAGE01-CORE01-943AF192-REPLAY
+  current_owner: 00_SOURCE_INTAKE/run_core01_943af192_stage01/00_SOURCE_INTAKE/evidence/STAGE1_VALIDATION_EVIDENCE.yaml
+  exact_next_action: GENERATE_CORE01_STAGE01_GOVERNANCE_LOAD_RECEIPT
+  historical_stage2_results_are_current_state: false
+  stage2_execution_requires_fresh_entry_resolution: true
   product_execution_allowed: false
-  product_execution_block_reason: CORE01_STAGE01_WORK_UNIT_NOT_YET_RESOLVED_AFTER_FROZEN_SOURCE_PAIR
+  product_execution_block_reason: CORE01_STAGE01_GOVERNANCE_LOAD_RECEIPT_NOT_YET_PASS
   website_construction_allowed: false
   deployment_allowed: false
 governance_revision_transition:
@@ -177,44 +184,105 @@ current_governance_review_decision:
   decided_at: '2026-09-23T08:50:00+08:00'
   machine_generated_approval: false
   product_stage_credit: 0
-current_primary_task_layer: TEST_OR_VALIDATION_MAINTENANCE
-current_primary_task_authorization_uid: EXPLICIT_USER_DIRECTIVE_20260923_AUDIT_ALL_WORDS_THEN_CORE_YAML_ONLY
+current_primary_task_layer: PRODUCT_STAGE_EXECUTION
+current_primary_task_authorization_uid: EXPLICIT_USER_DIRECTIVE_20260923_NEXT_STEP_RESOLVE_CORE01_STAGE01_WU
 current_primary_task_product_stage_credit: 0
 active_work_unit:
-  work_unit_uid: WU-PRESTAGE-CORE01-WORD-YAML-PROJECTION-20260923-001
-  canonical_name: CORE01_EXACT_WORD_YAML_PRESTAGE_SOURCE_MATERIALIZATION
-  primary_task_layer: TEST_OR_VALIDATION_MAINTENANCE
-  semantic_capability: SOURCE_INTAKE_PRESTAGE_VALIDATION
-  current_status: CLOSED_FROZEN_VALIDATED_NO_PRODUCT_STAGE_CREDIT
-  authorization_uid: EXPLICIT_USER_DIRECTIVE_20260923_AUDIT_ALL_WORDS_THEN_CORE_YAML_ONLY
-  exact_scope:
-  - CORE01_SOURCE_DOCUMENT_CONTENT_AUDIT
-  - CORE01_RAW_WORD_IMMUTABILITY_LOCK
-  - CORE01_CANONICAL_YAML_PROJECTION
-  - CORE01_FROZEN_BINARY_PARTS
-  - CORE01_ZERO_LOSS_RECONCILIATION
-  - CORE01_SOURCE_PAIR_FREEZE
-  - CORE01_INDEPENDENT_POST_CONVERSION_VALIDATION
-  product_data_mutation_allowed: false
-  product_authority_mutation_allowed: false
-  product_stage_credit: 0
-  closure_evidence:
-    workspace: 00_SOURCE_INTAKE/prestage_core01_943af192_word_yaml
-    source_uid: SRC-DOCX-CORE01-943AF192
-    source_sha256: 943af192004b587d6aab36e114eeb40430c9ea45614cc154d62dd9e3b5cbefeb
-    source_git_blob_sha: 1cafe3bbccb7168cc5606aa4e21fb7edb5a54439
-    projection_uid: PROJ-SRC-DOCX-CORE01-943AF192
-    projection_content_hash: e11b1caad15fc06a83ebb9cf99f5c19072dcad75eb84f1366787306ddd24a13f
-    reconciliation_evidence_uid: RECON-SRC-DOCX-CORE01-943AF192
-    reconciliation_evidence_hash: a979fae195e1092435656ffaee040e839d812d23fe4fdc2c5283a002e3a21d4a
-    pair_hash: 5fc4838e5c04c460fec2039ab406d25083ccfa05e88c7c56f4d3e9ea47ccdb83
-    frozen_binary_part_count: 6
-    independent_validation_evidence: 00_SOURCE_INTAKE/prestage_core01_943af192_word_yaml/PRESTAGE_INDEPENDENT_VALIDATION_EVIDENCE.yaml
-    fleet_deep_audit_run_id: 35831458578
-    fleet_deep_audit_artifact_id: 10738332262
-    stage01_execution_started: false
-    product_stage_credit: 0
-  legal_next_transition: WORK_UNIT_RESOLUTION_GATE_FOR_STAGE01
+  work_unit_uid: WU-STAGE01-CORE01-943AF192-REPLAY
+  canonical_name: CORE-01_STAGE-01_FRESH_REPLAY
+  primary_task_layer: PRODUCT_STAGE_EXECUTION
+  stage_uid: STAGE-01
+  semantic_capability: SOURCE_INTAKE_BASE_BLUEPRINT
+  scope:
+  - CORE-01
+  canonical_owner: 00_SOURCE_INTAKE/run_core01_943af192_stage01/00_SOURCE_INTAKE/evidence/STAGE1_VALIDATION_EVIDENCE.yaml
+  current_status: ACTIVE_PREEXECUTION_GOVERNANCE_LOAD_REQUIRED
+  authorization_uid: EXPLICIT_USER_DIRECTIVE_20260923_NEXT_STEP_RESOLVE_CORE01_STAGE01_WU
+  dependencies:
+  - 00_SOURCE_INTAKE/prestage_core01_943af192_word_yaml/00_SOURCE_INTAKE/SOURCE_PROJECTIONS/SRC-DOCX-CORE01-943AF192/SOURCE_PROJECTION_FREEZE_RECEIPT.yaml
+  - 00_SOURCE_INTAKE/prestage_core01_943af192_word_yaml/00_SOURCE_INTAKE/SOURCE_PROJECTIONS/SRC-DOCX-CORE01-943AF192/CANONICAL_SOURCE_PROJECTION.yaml
+  - 00_SOURCE_INTAKE/prestage_core01_943af192_word_yaml/00_SOURCE_INTAKE/SOURCE_PROJECTIONS/SRC-DOCX-CORE01-943AF192/SOURCE_PROJECTION_RECONCILIATION_EVIDENCE.yaml
+  - 00_SOURCE_INTAKE/prestage_core01_943af192_word_yaml/00_SOURCE_INTAKE/SOURCE_PROJECTIONS/SRC-DOCX-CORE01-943AF192/SOURCE_DOCUMENT_CONTENT_AUDIT.yaml
+  - 00_SOURCE_INTAKE/prestage_core01_943af192_word_yaml/00_SOURCE_INTAKE/SOURCE_PROJECTIONS/SRC-DOCX-CORE01-943AF192/RAW_SOURCE_IMMUTABILITY_RECEIPT.yaml
+  - .github/governance-source/active/source/10_REGISTRY/GOVERNANCE_LIFECYCLE_STAGE_REGISTRY.yaml
+  - .github/governance-source/active/source/10_REGISTRY/STAGE1_SOURCE_FACT_CONTRACTS.yaml
+  required_outputs:
+  - SOURCE_STRUCTURE_MANIFEST
+  - SOURCE_SEGMENT_MAP
+  - SOURCE_CONTEXT_MANIFEST
+  - CONTENT_SUPERSESSION_CONFLICT_LEDGER
+  - SOURCE_DEPENDENCY_MAP
+  - CLASSIFIED_ARTIFACT_SET
+  - PAGE_BASE_BLUEPRINT
+  - VISUAL_BASE_BLUEPRINT
+  - BLUEPRINT_BINDING_MANIFEST
+  operation_bindings:
+    SOURCE_STRUCTURE_ENUMERATION:
+      executor_owner: .github/governance-maintenance/run_fresh_stage_replay.py
+      result_owner: 00_SOURCE_INTAKE/run_core01_943af192_stage01/00_SOURCE_INTAKE/evidence/STAGE1_VALIDATION_EVIDENCE.yaml
+    SOURCE_SEGMENT_MAPPING:
+      executor_owner: .github/governance-maintenance/run_fresh_stage_replay.py
+      result_owner: 00_SOURCE_INTAKE/run_core01_943af192_stage01/00_SOURCE_INTAKE/evidence/STAGE1_VALIDATION_EVIDENCE.yaml
+    SOURCE_CONTEXT_COMPILATION:
+      executor_owner: .github/governance-maintenance/run_fresh_stage_replay.py
+      result_owner: 00_SOURCE_INTAKE/run_core01_943af192_stage01/00_SOURCE_INTAKE/evidence/STAGE1_VALIDATION_EVIDENCE.yaml
+    SOURCE_SUPERSESSION_CONFLICT_RESOLUTION:
+      executor_owner: .github/governance-maintenance/run_fresh_stage_replay.py
+      result_owner: 00_SOURCE_INTAKE/run_core01_943af192_stage01/00_SOURCE_INTAKE/evidence/STAGE1_VALIDATION_EVIDENCE.yaml
+    SOURCE_DEPENDENCY_EXTRACTION:
+      executor_owner: .github/governance-maintenance/run_fresh_stage_replay.py
+      result_owner: 00_SOURCE_INTAKE/run_core01_943af192_stage01/00_SOURCE_INTAKE/evidence/STAGE1_VALIDATION_EVIDENCE.yaml
+    RESPONSIBILITY_CLASSIFICATION:
+      executor_owner: .github/governance-maintenance/run_fresh_stage_replay.py
+      result_owner: 00_SOURCE_INTAKE/run_core01_943af192_stage01/00_SOURCE_INTAKE/evidence/STAGE1_VALIDATION_EVIDENCE.yaml
+    PAGE_BASE_BLUEPRINT_COMPILE:
+      executor_owner: .github/governance-maintenance/run_fresh_stage_replay.py
+      result_owner: 00_SOURCE_INTAKE/run_core01_943af192_stage01/00_SOURCE_INTAKE/evidence/STAGE1_VALIDATION_EVIDENCE.yaml
+    VISUAL_BASE_BLUEPRINT_COMPILE:
+      executor_owner: .github/governance-maintenance/run_fresh_stage_replay.py
+      result_owner: 00_SOURCE_INTAKE/run_core01_943af192_stage01/00_SOURCE_INTAKE/evidence/STAGE1_VALIDATION_EVIDENCE.yaml
+    BLUEPRINT_BINDING_COMPILE:
+      executor_owner: .github/governance-maintenance/run_fresh_stage_replay.py
+      result_owner: 00_SOURCE_INTAKE/run_core01_943af192_stage01/00_SOURCE_INTAKE/evidence/STAGE1_VALIDATION_EVIDENCE.yaml
+  scanner_bindings:
+    SOURCE_COMPLETENESS:
+      scanner_owner: .github/governance-source/active/source/09_TESTS/governance/governance_stage1_pipeline_guard.py
+      result_owner: 00_SOURCE_INTAKE/run_core01_943af192_stage01/00_SOURCE_INTAKE/evidence/STAGE1_VALIDATION_EVIDENCE.yaml
+    SOURCE_IDENTITY:
+      scanner_owner: .github/governance-source/active/source/09_TESTS/governance/governance_stage1_pipeline_guard.py
+      result_owner: 00_SOURCE_INTAKE/run_core01_943af192_stage01/00_SOURCE_INTAKE/evidence/STAGE1_VALIDATION_EVIDENCE.yaml
+    CLASSIFICATION_COMPLETENESS:
+      scanner_owner: .github/governance-source/active/source/09_TESTS/governance/governance_stage1_pipeline_guard.py
+      result_owner: 00_SOURCE_INTAKE/run_core01_943af192_stage01/00_SOURCE_INTAKE/evidence/STAGE1_VALIDATION_EVIDENCE.yaml
+    BLUEPRINT_BINDING:
+      scanner_owner: .github/governance-source/active/source/09_TESTS/governance/governance_stage1_pipeline_guard.py
+      result_owner: 00_SOURCE_INTAKE/run_core01_943af192_stage01/00_SOURCE_INTAKE/evidence/STAGE1_VALIDATION_EVIDENCE.yaml
+    UNRESOLVED_AUTHORITY_PRESERVATION:
+      scanner_owner: .github/governance-source/active/source/09_TESTS/governance/governance_stage1_pipeline_guard.py
+      result_owner: 00_SOURCE_INTAKE/run_core01_943af192_stage01/00_SOURCE_INTAKE/evidence/STAGE1_VALIDATION_EVIDENCE.yaml
+    SOURCE_PROJECTION_LOCK:
+      scanner_owner: .github/governance-source/active/source/09_TESTS/governance/governance_stage1_pipeline_guard.py
+      result_owner: 00_SOURCE_INTAKE/run_core01_943af192_stage01/00_SOURCE_INTAKE/evidence/STAGE1_VALIDATION_EVIDENCE.yaml
+  source_projection_admission:
+    applicability: REQUIRED
+    bindings:
+    - source_uid: SRC-DOCX-CORE01-943AF192
+      freeze_receipt_ref: 00_SOURCE_INTAKE/prestage_core01_943af192_word_yaml/00_SOURCE_INTAKE/SOURCE_PROJECTIONS/SRC-DOCX-CORE01-943AF192/SOURCE_PROJECTION_FREEZE_RECEIPT.yaml
+      pair_hash: 5fc4838e5c04c460fec2039ab406d25083ccfa05e88c7c56f4d3e9ea47ccdb83
+      raw_source_sha256: 943af192004b587d6aab36e114eeb40430c9ea45614cc154d62dd9e3b5cbefeb
+      projection_uid: PROJ-SRC-DOCX-CORE01-943AF192
+      projection_content_hash: e11b1caad15fc06a83ebb9cf99f5c19072dcad75eb84f1366787306ddd24a13f
+  planned_run_root: 00_SOURCE_INTAKE/run_core01_943af192_stage01
+  pre_execution_gate: GOVERNANCE_LOAD_RECEIPT_PASS
+  pre_execution_gate_status: NOT_EXECUTED
+  execution_started: false
+  product_blocker_credit: 0
+  out_of_scope:
+  - ASSET-01
+  - STAGE-02
+  - STAGE-03
+  - WEBSITE_CONSTRUCTION
+  - DEPLOYMENT
 retained_governance_cleanup_summary:
   role: COMPACT_NON_NORMATIVE_PROVENANCE
   product_stage_credit: 0
@@ -588,4 +656,29 @@ core01_frozen_source_pair:
   fleet_deep_audit_run_id: 35831458578
   fleet_deep_audit_artifact_id: 10738332262
   product_stage_execution_started: false
-  stage01_admission_status: NOT_YET_RESOLVED
+  stage01_admission_status: WORK_UNIT_RESOLVED_GOVERNANCE_LOAD_REQUIRED
+  stage01_work_unit_uid: WU-STAGE01-CORE01-943AF192-REPLAY
+last_work_unit_resolution_gate:
+  resolution_uid: WUR-CORE01-STAGE01-943AF192-FROZEN-SOURCE
+  normative_authority: false
+  result: PASS_SINGLE_LEGAL_SUCCESSOR
+  requested_primary_task_layer: PRODUCT_STAGE_EXECUTION
+  resolved_work_unit_uid: WU-STAGE01-CORE01-943AF192-REPLAY
+  authorization_basis: EXPLICIT_USER_DIRECTIVE_20260923_NEXT_STEP_RESOLVE_CORE01_STAGE01_WU
+  current_governance_uid: GOV-REV-20260923-WORD-PROJECTION-NEXTSTEP-CONSUMER-SYNC-HARDENING
+  predecessor_work_unit_uid: WU-PRESTAGE-CORE01-WORD-YAML-PROJECTION-20260923-001
+  page_scope:
+  - CORE-01
+  stage_uid: STAGE-01
+  semantic_capability: SOURCE_INTAKE_BASE_BLUEPRINT
+  source_uid: SRC-DOCX-CORE01-943AF192
+  pair_hash: 5fc4838e5c04c460fec2039ab406d25083ccfa05e88c7c56f4d3e9ea47ccdb83
+  basis:
+  - CURRENT_RESUME_EXACT_NEXT_ACTION_RESOLVE_CORE01_STAGE01_WORK_UNIT
+  - PRESTAGE_SOURCE_PAIR_FROZEN_AND_VALIDATED
+  - SOURCE_PROJECTION_RECONCILIATION_PASS
+  - INDEPENDENT_POST_CONVERSION_VALIDATION_PASS
+  - CURRENT_REENTRY_MAP_SOURCE_INTAKE_BASE_BLUEPRINT_TO_STAGE01
+  - USER_EXPLICITLY_REQUESTED_NEXT_STEP
+  - NO_MATERIALLY_DISTINCT_LEGAL_PRODUCT_SUCCESSOR
+  product_stage_credit: 0
