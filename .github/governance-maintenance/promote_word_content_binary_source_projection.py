@@ -487,7 +487,7 @@ def main():
         if p.exists(): p.unlink()
     run('git','config','user.name','github-actions[bot]'); run('git','config','user.email','41898282+github-actions[bot]@users.noreply.github.com'); run('git','add','-A')
     if run('git','diff','--cached','--quiet',check=False).returncode==0: raise RuntimeError('no promotion delta')
-    msg='feat(governance): harden Word content and frozen binary source projection\\n\\nSpec-Change-Authorization: '+AUTH_UID+'\\nSpec-Change-Scope: WORD_CONTENT_READINESS_FROZEN_BINARY_SOURCE_PROJECTION'
+    msg='feat(governance): harden Word content and frozen binary source projection\n\nSpec-Change-Authorization: '+AUTH_UID+'\nSpec-Change-Scope: WORD_CONTENT_READINESS_FROZEN_BINARY_SOURCE_PROJECTION'
     run('git','commit','-m',msg); run(sys.executable,str(ROOT/'governance/ci/specification_mutation_guard.py')); run('git','push','origin','HEAD:rebuild-v2.1.1')
     print(json.dumps({'new_uid':NEW_UID,'semantic_hash':semantic,'checksums_hash':checks,'bundle_hash':bundle,'zip_hash':zips},indent=2))
     print('PROMOTION_PUSHED',run('git','rev-parse','HEAD').stdout.strip())
