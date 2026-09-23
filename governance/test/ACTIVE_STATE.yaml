@@ -104,13 +104,13 @@ specification_mutation_safety:
   ordinary_mid_stage_specification_mutation: BLOCK
   stage_end_consolidated_promotion_requires_new_explicit_directive: true
   execution_context_lock_required: true
-status: FINAL_RESIDUAL_CLASSIFICATION_AND_SEAL_MUTATED_VALIDATION_REQUIRED
-next_action: RUN_FINAL_154_FILE_SEAL_EXACT_HEAD_VALIDATION
+status: FINAL_RESIDUAL_CLASSIFICATION_AND_SEAL_CLOSED_WORK_UNIT_RESOLUTION_REQUIRED
+next_action: WORK_UNIT_RESOLUTION_GATE_AFTER_FINAL_CLEAN_SEAL
 resume_control:
-  current_resume_point: FINAL_RESIDUAL_CLASSIFICATION_AND_SEAL_MUTATED_VALIDATION_REQUIRED
-  current_work_unit_uid: WU-GOV-FINAL-RESIDUAL-CLASSIFICATION-SEAL-001
-  current_owner: governance/test/ACTIVE_STATE.yaml
-  exact_next_action: RUN_FINAL_154_FILE_SEAL_EXACT_HEAD_VALIDATION
+  current_resume_point: FINAL_RESIDUAL_CLASSIFICATION_AND_SEAL_CLOSED_WUR_REQUIRED
+  current_work_unit_uid: null
+  current_owner: governance/specifications/current/EXECUTION_CYCLE_CONTROL.yaml
+  exact_next_action: WORK_UNIT_RESOLUTION_GATE_AFTER_FINAL_CLEAN_SEAL
   product_resume_preserved: CORE01_STAGE01_STAGE03_CLEAN_BASELINE_READY_FRESH_STAGE01_WUR_REQUIRED
   interrupted_test_resume_preserved: CORE01_SOURCE_TEST_BUGFIX_AND_CONTENT_INTEGRITY_FULL_LIFECYCLE_R2_ACTIVE
   reentry_owner_capability: SOURCE_INTAKE_BASE_BLUEPRINT
@@ -384,63 +384,115 @@ closed_governance_maintenance_work_unit_trigger_identity_decontamination:
   - PRODUCT_STAGE_CREDIT_ZERO
   legal_next_transition: WORK_UNIT_RESOLUTION_GATE
   product_stage_credit: 0
-active_work_unit:
+closed_governance_maintenance_work_unit_final_residual_classification_and_seal:
   work_unit_uid: WU-GOV-FINAL-RESIDUAL-CLASSIFICATION-SEAL-001
   canonical_name: FINAL_154_FILE_RESIDUAL_CLASSIFICATION_AND_CLEAN_SEAL
   primary_task_layer: GOVERNANCE_MAINTENANCE
-  current_status: MUTATION_COMMITTED_VALIDATION_REQUIRED
+  terminal_status: CLOSED_VERIFIED_NO_PRODUCT_CREDIT
   authorization_basis: EXPLICIT_USER_DIRECTIVE_20260923_FINAL_CLEAN_SEAL_154_FILE_INVENTORY
   canonical_policy_owner: governance/specifications/current/EXECUTION_CYCLE_CONTROL.yaml
   state_owner: governance/test/ACTIVE_STATE.yaml
-  denominator:
-    total_tracked_files: 154
-    verified_source_lineage_files: 75
-    non_verified_source_files: 79
-  provisional_disposition:
-    keep_active_after_migration: 96
+  final_inventory:
+    tracked_file_count: 154
+    keep_active: 96
     keep_non_current: 58
     remove: 0
-    migrate_active_residuals: 3
     unknown: 0
+    verified_source_lineage_exact_file_count: 75
+    governance_test_file_count: 10
+    current_product_source_or_runtime_file_count: 0
+    current_stage01_stage02_stage03_product_output_root_count: 0
+    temporary_backup_residual_count: 0
+  keep_active_breakdown:
+    current_entry_registry_and_specifications: 11
+    branch_authority_lock: 1
+    global_product_authority: 2
+    governance_ci: 35
+    governance_test_current_surfaces: 6
+    governance_maintenance_runtime: 2
+    workflows: 11
+    governance_source_outer_runtime_and_contract: 6
+    gitignore: 1
+    verified_source_current_profile_and_mother_registries: 19
+    verified_source_integrity_scaffolding: 2
   keep_non_current_breakdown:
     verified_source_09_tests_regression_signatures: 37
     verified_source_11_evidence_provenance_fixtures: 15
-    verified_source_readme_and_versioning_history: 2
+    verified_source_readme_and_versioning_lineage_history: 2
     governance_test_historical_provenance: 4
-  migrate_active_residuals:
-  - .github/governance-source/README.md
-  - .github/workflows/repository-three-branch-recovery.yml
-  - governance/ci/stress_test_stage03_core01.py
-  immutable_or_externally_owned_exclusions:
-  - .github/governance-source/active/source
-  - authority/global
-  - governance/specifications/current
-  classification_basis:
-    canonical_owner: CURRENT_REGISTRY_CURRENT_GOVERNANCE_BRANCH_AUTHORITY_AND_ACTIVE_WORKFLOW_GRAPH
-    forward_reference: COMPLETE_BY_COHORT_AND_ACTIVE_CONSUMER_ROLE
-    reverse_reference: ACTIVE_WORKFLOW_AND_RUNTIME_GRAPH_PLUS_EXACT_SOURCE_IDENTITY
-    runtime_or_workflow_reachability: RESOLVED_FOR_ALL_COHORTS
-    test_regression_role: VERIFIED_SOURCE_09_TESTS_PRESERVED_AS_NON_CURRENT_REGRESSION_SIGNATURES
-    historical_retention_role: VERIFIED_SOURCE_11_EVIDENCE_AND_TRACKED_PROFILE_HISTORY_PRESERVED_NON_CURRENT
-  planned_migrations:
-  - OUTER_README_STALE_DETERMINISTIC_HASH_TO_CURRENT_VERIFIED_SOURCE_IDENTITY
-  - BRANCH_RECOVERY_MUTATOR_TO_READ_ONLY_FAIL_CLOSED_AUTHORITY_VALIDATOR
-  - STAGE03_STRESS_TRIGGER_COMMENT_TO_VERSION_NEUTRAL_MARKER
+  migrated_active_residuals:
+  - path: .github/governance-source/README.md
+    disposition_before: SUPERSEDED_ACTIVE_CONTENT
+    disposition_after: CURRENT_REQUIRED_KEEP_ACTIVE
+    remediation: STALE_DETERMINISTIC_HASH_REPLACED_WITH_CURRENT_VERIFIED_SOURCE_IDENTITY
+  - path: .github/workflows/repository-three-branch-recovery.yml
+    disposition_before: SUPERSEDED_ACTIVE_CONTENT
+    disposition_after: CURRENT_REQUIRED_KEEP_ACTIVE
+    remediation: DESTRUCTIVE_RECOVERY_MUTATOR_REPLACED_BY_READ_ONLY_FAIL_CLOSED_AUTHORITY_VALIDATOR
+  - path: governance/ci/stress_test_stage03_core01.py
+    disposition_before: SUPERSEDED_ACTIVE_CONTENT
+    disposition_after: CURRENT_REQUIRED_KEEP_ACTIVE
+    remediation: VERSION_BOUND_TRIGGER_COMMENT_REPLACED_BY_CURRENT_GOVERNANCE_NEUTRAL_MARKER
+  six_dimension_result:
+    canonical_owner: COMPLETE
+    forward_reference: COMPLETE
+    reverse_reference: COMPLETE
+    runtime_or_workflow_reachability: COMPLETE
+    test_regression_role: COMPLETE
+    historical_retention_role: COMPLETE
+    unknown_disposition_count: 0
+  hidden_defect_sweep:
+    stale_v2215_v2216_active_trigger_identity_count: 0
+    stale_outer_fd7f_bundle_hash_count: 0
+    active_patch_ref_main_new_count: 0
+    active_branch_delete_command_count: 0
+    product_runtime_directory_count: 0
+    current_stage_product_output_root_count: 0
+    temporary_backup_residual_count: 0
+  closure_evidence:
+    mutation_head_sha: da0529027598b0a0f9d867a6239495a2aa7d9ca3
+    mutation_tree_sha: bc7852af83ca204102a149b75ed65112623b289d
+    exact_head_branch_guard_run_id: 35800585015
+    exact_head_branch_guard_job_id: 106989773774
+    exact_head_branch_guard_result: success
+    branch_guard_mode: READ_ONLY_FAIL_CLOSED
+    exact_head_fresh_replay_run_id: 35800584988
+    exact_head_fresh_replay_result: success
+    exact_head_stage02_boundary_run_id: 35800584880
+    exact_head_stage02_boundary_result: success
+    exact_head_selected_profile_run_id: 35800584892
+    exact_head_selected_profile_result: success
+    exact_head_stage03_high_pressure_run_id: 35800585044
+    exact_head_stage03_high_pressure_result: success
+    exact_head_full_line_run_id: 35800584873
+    exact_head_full_line_job_id: 106989773501
+    exact_head_full_line_result: success
+    generated_evidence_artifact_id: 10725503571
+    generated_evidence_artifact_sha256: 913c59ec394d6543a96dee2531f4ecc8e90710204f0f6b60d8138c64a139103d
+    active_workflows_scanned: 11
+    active_direct_transitive_executable_targets: 33
+    lifecycle_stage_result: 11/11
+    preformal_result: 20/20
+    mandatory_regression_result: 17/17
+    source_runtime_residual_count: 0
+    verified_source_byte_clean: true
+    current_governance_uid_unchanged: true
+    mother_specification_mutated: false
+    product_stage_credit: 0
   definition_of_done:
   - ALL_154_TRACKED_FILES_HAVE_NON_UNKNOWN_DISPOSITION
   - VERIFIED_75_FILE_SOURCE_REMAINS_BYTE_EXACT
   - ACTIVE_WORKFLOW_GRAPH_REMAINS_COMPLETE
-  - BRANCH_AUTHORITY_GUARD_NO_LONGER_FORCE_RESETS_OR_DELETES_BRANCHES
+  - BRANCH_AUTHORITY_GUARD_IS_READ_ONLY_FAIL_CLOSED
   - OUTER_GOVERNANCE_SOURCE_README_MATCHES_CURRENT_VERIFIED_SOURCE_IDENTITY
-  - ACTIVE_EXECUTABLES_CONTAIN_NO_STALE_V2215_V2216_TRIGGER_IDENTITY
+  - ACTIVE_EXECUTABLES_HAVE_ZERO_STALE_V2215_V2216_TRIGGER_IDENTITY
   - KEEP_NON_CURRENT_COHORTS_REMAIN_NON_CURRENT_AND_NON_AUTHORITY
-  - EXACT_HEAD_BRANCH_AUTHORITY_PASS
-  - EXACT_HEAD_SOURCE_IDENTITY_PASS
-  - EXACT_HEAD_SELECTED_PROFILE_PASS
-  - EXACT_HEAD_FULL_LINE_PASS
+  - CURRENT_PRODUCT_RUNTIME_AND_STAGE_OUTPUT_RESIDUAL_ZERO
+  - FULL_LINE_EXACT_HEAD_SUCCESS
   - PRODUCT_STAGE_CREDIT_ZERO
-  legal_next_transition: CLOSE_TO_WORK_UNIT_RESOLUTION_GATE
+  legal_next_transition: WORK_UNIT_RESOLUTION_GATE
   product_stage_credit: 0
+active_work_unit: null
 last_work_unit_resolution_gate:
   resolution_uid: WUR-GOV-FINAL-RESIDUAL-CLASSIFICATION-SEAL-20260923-001
   normative_authority: false
