@@ -1,0 +1,149 @@
+schema_version: 1
+registry_uid: BASIC-DESIGN-STEP-REGISTRY-001
+domain_uid: BASIC_DESIGN_GOVERNANCE_FLOW
+step_schema_ref: governance/execution-domains/STEP_CONTRACT_SCHEMA.yaml
+audit_profile_ref: governance/execution-domains/AUDIT_PROFILE.yaml
+steps:
+- step_uid: BD-01-SCOPE_AUTHORITY_RESOLUTION
+  purpose: Freeze applicable design scope, current authorities, owners, naming and applicability.
+  prerequisites: [CURRENT_GOVERNANCE_RESOLVED]
+  entry_gate: CURRENT_BASIC_DESIGN_SCOPE_DECLARED
+  inputs: [CURRENT_BASIC_DESIGN_SCOPE, CURRENT_AUTHORITY_SET]
+  input_required_fields: [scope_uid, authority_uid, authority_revision, authority_source, owner_uid]
+  operations: [RESOLVE_SCOPE, RESOLVE_AUTHORITY, RESOLVE_OWNER, CLASSIFY_APPLICABILITY]
+  outputs: [BASIC_DESIGN_SCOPE_MANIFEST, BASIC_DESIGN_AUTHORITY_MAP]
+  output_required_fields: [canonical_uid, owner_uid, authority_ref, applicability, evidence_ref]
+  denominator: ALL_APPLICABLE_DESIGN_DOMAINS_AND_SOURCE_AUTHORITIES
+  completeness_and_pass_condition: {coverage_percent: 100, unresolved_authority_gap_count: 0, unresolved_conflict_count: 0}
+  validators_and_evidence: [AUTHORITY_SCOPE_AUDIT, BASIC_DESIGN_STEP_RECEIPT]
+  failure_reentry_checkpoint_next_step: {failure: STOP, reentry: BD-01-SCOPE_AUTHORITY_RESOLUTION, checkpoint: BD-01, next_step: BD-02-REQUIREMENT_ARCHITECTURE}
+- step_uid: BD-02-REQUIREMENT_ARCHITECTURE
+  purpose: Materialize complete requirements, architecture, boundaries, dependencies, navigation, flows and data/state design.
+  prerequisites: [BD-01-PASS]
+  entry_gate: BASIC_DESIGN_AUTHORITY_MAP_FROZEN
+  inputs: [BASIC_DESIGN_SCOPE_MANIFEST, BASIC_DESIGN_AUTHORITY_MAP]
+  input_required_fields: [requirements, modules, dependencies, boundaries]
+  operations: [MATERIALIZE_REQUIREMENTS, MATERIALIZE_ARCHITECTURE, MATERIALIZE_DEPENDENCIES, MATERIALIZE_NAVIGATION_AND_FLOW, MATERIALIZE_DATA_AND_STATE]
+  outputs: [REQUIREMENT_ARCHITECTURE_DESIGN]
+  output_required_fields: [requirement_uid, architecture_uid, dependency_edges, boundary_rules, state_data_bindings]
+  denominator: ALL_APPLICABLE_REQUIREMENTS_ARCHITECTURE_AND_DEPENDENCY_ITEMS
+  completeness_and_pass_condition: {coverage_percent: 100, missing_required_item_count: 0, unresolved_conflict_count: 0}
+  validators_and_evidence: [REQUIREMENT_ARCHITECTURE_AUDIT, BASIC_DESIGN_STEP_RECEIPT]
+  failure_reentry_checkpoint_next_step: {failure: STOP, reentry: BD-02-REQUIREMENT_ARCHITECTURE, checkpoint: BD-02, next_step: BD-03-ENTITY_OPERATION}
+- step_uid: BD-03-ENTITY_OPERATION
+  purpose: Materialize business entities, hierarchy and every applicable operation.
+  prerequisites: [BD-02-PASS]
+  entry_gate: REQUIREMENT_ARCHITECTURE_PASS
+  inputs: [REQUIREMENT_ARCHITECTURE_DESIGN]
+  input_required_fields: [requirement_uid, architecture_uid]
+  operations: [BUILD_ENTITY_INVENTORY, BUILD_ENTITY_HIERARCHY, BUILD_ENTITY_OPERATION_MATRIX]
+  outputs: [BUSINESS_ENTITY_INVENTORY, BUSINESS_ENTITY_OPERATION_MATRIX, ENTITY_HIERARCHY_MATRIX]
+  output_required_fields: [entity_uid, operation_uid, parent_uid, owner_uid, read_mutation_class]
+  denominator: ALL_APPLICABLE_BUSINESS_ENTITIES_OPERATIONS_AND_HIERARCHY_RELATIONS
+  completeness_and_pass_condition: {coverage_percent: 100, orphan_operation_count: 0, missing_owner_count: 0}
+  validators_and_evidence: [ENTITY_OPERATION_AUDIT, BASIC_DESIGN_STEP_RECEIPT]
+  failure_reentry_checkpoint_next_step: {failure: STOP, reentry: BD-03-ENTITY_OPERATION, checkpoint: BD-03, next_step: BD-04-JOURNEY_WORKBENCH_TOPOLOGY}
+- step_uid: BD-04-JOURNEY_WORKBENCH_TOPOLOGY
+  purpose: Bind operations into journeys, workbenches and interaction topology including AI continuity when applicable.
+  prerequisites: [BD-03-PASS]
+  entry_gate: ENTITY_OPERATION_PASS
+  inputs: [BUSINESS_ENTITY_OPERATION_MATRIX, ENTITY_HIERARCHY_MATRIX]
+  input_required_fields: [entity_uid, operation_uid]
+  operations: [BUILD_JOURNEY_REGISTRY, BUILD_WORKBENCH_CONTRACT, BUILD_INTERACTION_TOPOLOGY, BUILD_AI_CONTINUITY_IF_APPLICABLE]
+  outputs: [USER_JOURNEY_REGISTRY, FUNCTIONAL_WORKBENCH_CONTRACT, INTERACTION_TOPOLOGY, AI_INTERACTION_CONTINUITY_PROFILE]
+  output_required_fields: [journey_uid, workbench_uid, operation_uid, topology_edge, next_action]
+  denominator: ALL_APPLICABLE_JOURNEYS_WORKBENCHES_OPERATIONS_AND_TOPOLOGY_EDGES
+  completeness_and_pass_condition: {coverage_percent: 100, unbound_operation_count: 0, undefined_next_action_count: 0}
+  validators_and_evidence: [JOURNEY_TOPOLOGY_AUDIT, BASIC_DESIGN_STEP_RECEIPT]
+  failure_reentry_checkpoint_next_step: {failure: STOP, reentry: BD-04-JOURNEY_WORKBENCH_TOPOLOGY, checkpoint: BD-04, next_step: BD-05-PAGE_CONTROL_STATE_CONTRACT}
+- step_uid: BD-05-PAGE_CONTROL_STATE_CONTRACT
+  purpose: Materialize every page/surface section, component, control, field, gate, permission, state, transition, error and recovery path.
+  prerequisites: [BD-04-PASS]
+  entry_gate: JOURNEY_TOPOLOGY_PASS
+  inputs: [USER_JOURNEY_REGISTRY, FUNCTIONAL_WORKBENCH_CONTRACT, INTERACTION_TOPOLOGY]
+  input_required_fields: [journey_uid, workbench_uid, operation_uid]
+  operations: [MATERIALIZE_PAGE_STRUCTURE, MATERIALIZE_CONTROLS_FIELDS, MATERIALIZE_GATES_PERMISSIONS, MATERIALIZE_STATES_TRANSITIONS, MATERIALIZE_ERROR_RECOVERY]
+  outputs: [PAGE_SURFACE_DESIGN_CONTRACT]
+  output_required_fields: [page_uid, section_uid, component_uid, control_uid, field_uid, gate_uid, permission_uid, state_uid, transition_uid, error_uid, recovery_uid, next_step]
+  denominator: ALL_APPLICABLE_PAGE_SURFACE_AND_INTERACTION_ITEMS
+  completeness_and_pass_condition: {coverage_percent: 100, unbound_control_count: 0, unbound_field_count: 0, missing_recovery_count: 0, undefined_next_step_count: 0}
+  validators_and_evidence: [PAGE_CONTROL_STATE_AUDIT, BASIC_DESIGN_STEP_RECEIPT]
+  failure_reentry_checkpoint_next_step: {failure: STOP, reentry: BD-05-PAGE_CONTROL_STATE_CONTRACT, checkpoint: BD-05, next_step: BD-06-FUNCTION_VISUAL_TRACE}
+- step_uid: BD-06-FUNCTION_VISUAL_TRACE
+  purpose: Establish forward and reverse function-to-visual traceability and cross-page design relationships.
+  prerequisites: [BD-05-PASS]
+  entry_gate: PAGE_CONTROL_STATE_PASS
+  inputs: [PAGE_SURFACE_DESIGN_CONTRACT, FUNCTIONAL_WORKBENCH_CONTRACT]
+  input_required_fields: [operation_uid, control_uid, state_uid]
+  operations: [BUILD_FUNCTION_VISUAL_TRACE, BUILD_REVERSE_VISUAL_OWNERSHIP, BUILD_CROSS_PAGE_RELATIONSHIPS]
+  outputs: [FUNCTION_VISUAL_TRACEABILITY, CROSS_PAGE_RELATION_MATRIX]
+  output_required_fields: [operation_uid, visual_anchor_uid, control_uid, state_uid, source_page_uid, target_page_uid]
+  denominator: ALL_REQUIRED_FUNCTIONS_VISIBLE_ELEMENTS_AND_CROSS_PAGE_RELATIONS
+  completeness_and_pass_condition: {forward_coverage_percent: 100, reverse_coverage_percent: 100, orphan_visual_count: 0}
+  validators_and_evidence: [FUNCTION_VISUAL_TRACE_AUDIT, BASIC_DESIGN_STEP_RECEIPT]
+  failure_reentry_checkpoint_next_step: {failure: STOP, reentry: BD-06-FUNCTION_VISUAL_TRACE, checkpoint: BD-06, next_step: BD-07-VISUAL_AUTHORITY_STYLE}
+- step_uid: BD-07-VISUAL_AUTHORITY_STYLE
+  purpose: Resolve inherited visual authority or approve a complete visual style definition.
+  prerequisites: [BD-06-PASS]
+  entry_gate: FUNCTION_VISUAL_TRACE_PASS
+  inputs: [FUNCTION_VISUAL_TRACEABILITY, CURRENT_VISUAL_AUTHORITY_SET]
+  input_required_fields: [visual_anchor_uid, authority_ref]
+  operations: [RESOLVE_VISUAL_INHERITANCE, MATERIALIZE_STYLE_DEFINITION_IF_REQUIRED]
+  outputs: [VISUAL_INHERITANCE_MATRIX, VISUAL_STYLE_DEFINITION]
+  output_required_fields: [authority_uid, token_or_component, lock_override_state, style_category, state_semantics]
+  denominator: ALL_APPLICABLE_VISUAL_AUTHORITIES_AND_STYLE_CATEGORIES
+  completeness_and_pass_condition: {coverage_percent: 100, missing_style_category_count: 0, unresolved_visual_authority_conflict_count: 0}
+  validators_and_evidence: [VISUAL_AUTHORITY_STYLE_AUDIT, BASIC_DESIGN_STEP_RECEIPT]
+  failure_reentry_checkpoint_next_step: {failure: STOP, reentry: BD-07-VISUAL_AUTHORITY_STYLE, checkpoint: BD-07, next_step: BD-08-VISUAL_SCENARIO_DESIGN}
+- step_uid: BD-08-VISUAL_SCENARIO_DESIGN
+  purpose: Produce and annotate every required visual scenario/state using frozen functional topology and visual authority.
+  prerequisites: [BD-07-PASS]
+  entry_gate: VISUAL_AUTHORITY_STYLE_PASS
+  inputs: [VISUAL_INHERITANCE_MATRIX, VISUAL_STYLE_DEFINITION, PAGE_SURFACE_DESIGN_CONTRACT, FUNCTION_VISUAL_TRACEABILITY]
+  input_required_fields: [page_uid, scenario_uid, state_uid, visual_anchor_uid]
+  operations: [RESOLVE_SCENARIO_DENOMINATOR, PRODUCE_VISUAL_CANDIDATES, ANNOTATE_VISUAL_REFERENCES, REVIEW_VISUAL_CANDIDATES]
+  outputs: [VISUAL_SCENARIO_SET, VISUAL_REFERENCE_ANNOTATIONS, DESIGN_REVIEW_ITEMS]
+  output_required_fields: [visual_uid, page_uid, scenario_uid, state_uid, visual_anchor_uids, authority_refs, verification_purpose, review_state]
+  denominator: ALL_REQUIRED_USER_VISIBLE_STATES_SCENARIOS_AND_RECOVERY_BRANCHES
+  completeness_and_pass_condition: {scenario_coverage_percent: 100, missing_visual_candidate_count: 0, missing_annotation_count: 0, unresolved_review_item_count: 0}
+  validators_and_evidence: [VISUAL_SCENARIO_AUDIT, BASIC_DESIGN_STEP_RECEIPT]
+  failure_reentry_checkpoint_next_step: {failure: STOP, reentry: BD-08-VISUAL_SCENARIO_DESIGN, checkpoint: BD-08, next_step: BD-09-HUMAN_READABLE_DELIVERABLE}
+- step_uid: BD-09-HUMAN_READABLE_DELIVERABLE
+  purpose: Assemble the complete reviewable Word/DOCX with all governed detail and required figures embedded in context.
+  prerequisites: [BD-08-PASS]
+  entry_gate: VISUAL_SCENARIO_REVIEW_PASS
+  inputs: [ALL_BASIC_DESIGN_MACHINE_READABLE_ARTIFACTS, VISUAL_SCENARIO_SET, VISUAL_REFERENCE_ANNOTATIONS]
+  input_required_fields: [canonical_uid, source_binding, review_state]
+  operations: [ASSEMBLE_DOCUMENT, EMBED_REQUIRED_FIGURES, EMBED_COMPLETE_TABLES_OR_APPENDICES, RENDER_READABILITY_REVIEW]
+  outputs: [HUMAN_READABLE_BASIC_DESIGN_DOCUMENT]
+  output_required_fields: [document_uid, source_revision, embedded_figure_manifest, denominator_binding, render_evidence_ref]
+  denominator: ALL_REQUIRED_DESIGN_DETAIL_AND_EMBEDDED_FIGURES
+  completeness_and_pass_condition: {detail_coverage_percent: 100, embedded_figure_coverage_percent: 100, missing_caption_annotation_count: 0}
+  validators_and_evidence: [DOCUMENT_COMPLETENESS_RENDER_AUDIT, BASIC_DESIGN_STEP_RECEIPT]
+  failure_reentry_checkpoint_next_step: {failure: STOP, reentry: EARLIEST_OWNING_BASIC_DESIGN_STEP, checkpoint: BD-09, next_step: BD-10-DENOMINATOR_RECONCILIATION}
+- step_uid: BD-10-DENOMINATOR_RECONCILIATION
+  purpose: Reconcile every required design UID and row between denominator, machine-readable design and human-readable document.
+  prerequisites: [BD-09-PASS]
+  entry_gate: HUMAN_READABLE_DELIVERABLE_PASS
+  inputs: [BASIC_DESIGN_DENOMINATOR_SNAPSHOT, ALL_BASIC_DESIGN_ARTIFACTS, HUMAN_READABLE_BASIC_DESIGN_DOCUMENT]
+  input_required_fields: [category, uid, required_count, materialized_count]
+  operations: [RECONCILE_CATEGORY_COUNTS, RECONCILE_UIDS, RECONCILE_REQUIRED_FIELDS, RECONCILE_NA_EVIDENCE, RECONCILE_VISUALS]
+  outputs: [BASIC_DESIGN_DELIVERABLE_RECONCILIATION]
+  output_required_fields: [category, denominator_uid, expected_count, actual_count, missing_uids, duplicate_uids, result]
+  denominator: COMPLETE_BASIC_DESIGN_DENOMINATOR
+  completeness_and_pass_condition: {coverage_percent: 100, missing_uid_count: 0, duplicate_inflation_count: 0, unresolved_required_gap_count: 0}
+  validators_and_evidence: [BASIC_DESIGN_DENOMINATOR_AUDIT, BASIC_DESIGN_STEP_RECEIPT]
+  failure_reentry_checkpoint_next_step: {failure: STOP_AND_REENTER_EARLIEST_OWNER, reentry: EARLIEST_OWNING_BASIC_DESIGN_STEP, checkpoint: BD-10, next_step: BD-11-FREEZE}
+- step_uid: BD-11-FREEZE
+  purpose: Freeze Basic Design only after all local receipts and denominator reconciliation pass.
+  prerequisites: [BD-01-THROUGH-BD-10-PASS]
+  entry_gate: BASIC_DESIGN_DELIVERABLE_RECONCILIATION_PASS
+  inputs: [ALL_BASIC_DESIGN_STEP_RECEIPTS, BASIC_DESIGN_DELIVERABLE_RECONCILIATION, HUMAN_READABLE_BASIC_DESIGN_DOCUMENT]
+  input_required_fields: [receipt_uid, result, source_revision, denominator_hash]
+  operations: [VERIFY_RECEIPT_CHAIN, VERIFY_ZERO_OPEN_REQUIRED_GAPS, MATERIALIZE_FREEZE_RECEIPT]
+  outputs: [BASIC_DESIGN_FREEZE_RECEIPT]
+  output_required_fields: [scope_uid, source_revision, denominator_hash, receipt_chain, status, next_domain]
+  denominator: ALL_BASIC_DESIGN_REQUIRED_STEPS_AND_ITEMS
+  completeness_and_pass_condition: {all_steps_pass: true, coverage_percent: 100, open_required_gap_count: 0}
+  validators_and_evidence: [BASIC_DESIGN_FREEZE_AUDIT, BASIC_DESIGN_FREEZE_RECEIPT]
+  failure_reentry_checkpoint_next_step: {failure: STOP_AND_REENTER_EARLIEST_OWNER, reentry: EARLIEST_OWNING_BASIC_DESIGN_STEP, checkpoint: BD-11, next_step: WORD_YAML_SOURCE_DOCUMENT_CONTENT_READINESS}
