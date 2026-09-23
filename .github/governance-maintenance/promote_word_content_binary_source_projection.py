@@ -53,9 +53,9 @@ def append_once(path,marker,text):
 
 def mutate_mother():
     append_once(SOURCE/'12_DOCS/mother-spec/01_BLUEPRINT_DESIGN_GOVERNANCE.md',
-      '### 90.1 Source Document Content Readiness and Frozen Binary Source Parts',
+      '### Source Document Content Readiness and Frozen Binary Source Parts',
       r'''
-### 90.1 Source Document Content Readiness and Frozen Binary Source Parts / 來源文件內容就緒與凍結二進位來源
+### Source Document Content Readiness and Frozen Binary Source Parts / 來源文件內容就緒與凍結二進位來源
 
 Before a governed Word/DOCX becomes immutable source input, the document MUST receive a per-document Source Document Content Readiness Audit. The audit is a review/evidence artifact, not Product Authority and not a replacement for the Word. It MUST verify the applicable Basic Design requirement domains against the actual document, identify missing required design content, duplicate or contradictory identities, incomplete required matrices, visual-source presence/traceability, and render/readability evidence. If a REQUIRED design gap is found, the Word remains a mutable candidate, the gap is repaired in the Word, the Word receives a new exact source identity, and the audit is rerun. A document with unresolved required design gaps MUST NOT receive the raw-source immutable lock.
 
@@ -66,9 +66,9 @@ For any non-XML binary package part contained in the accepted DOCX, projection M
 For visual or embedded-source interpretation, downstream source-intake execution MAY dereference only the exact frozen binary part resolved from Canonical Projection package-part hash + relationship/source-node lineage. It MUST NOT reopen or re-extract the Word package as a semantic fallback. XML/text semantics continue to come from the Canonical Projection source-node rows. Every binary dereference MUST verify the content hash immediately before use.
 ''')
     append_once(SOURCE/'12_DOCS/mother-spec/02_IMPLEMENTATION_DELIVERY_STANDARD.md',
-      '### 77.1 Content Audit, Source Lock and Frozen Binary Delivery Order',
+      '### Content Audit, Source Lock and Frozen Binary Delivery Order',
       r'''
-### 77.1 Content Audit, Source Lock and Frozen Binary Delivery Order / 內容稽核、來源鎖定與二進位交付順序
+### Content Audit, Source Lock and Frozen Binary Delivery Order / 內容稽核、來源鎖定與二進位交付順序
 
 For structured Word/DOCX input, the exact pre-execution order is:
 SOURCE DOCUMENT CONTENT REVIEW -> REPAIR WORD IF REQUIRED -> CONTENT_READINESS_PASS -> RAW SOURCE IMMUTABILITY LOCK -> CANONICAL YAML PROJECTION -> FROZEN BINARY SOURCE-PART MATERIALIZATION -> ZERO-LOSS RECONCILIATION -> SOURCE PAIR FREEZE -> WORK UNIT RESOLUTION.
@@ -80,9 +80,9 @@ Frozen binary source parts are projection-owned evidence. The delivery producer 
 The common DOCX projection producer MUST be product/page neutral. It MUST derive every count and source row from the current immutable document and MUST NOT contain page-specific field vocabularies, page IDs, function names, control names, or expected content counts.
 ''')
     append_once(SOURCE/'12_DOCS/mother-spec/03_EXECUTION_CONTROL_STANDARD.md',
-      '### 72.1 Frozen Binary Part Admission and Mutation Invalidation',
+      '### Frozen Binary Part Admission and Mutation Invalidation',
       r'''
-### 72.1 Frozen Binary Part Admission and Mutation Invalidation / 凍結二進位來源准入與失效
+### Frozen Binary Part Admission and Mutation Invalidation / 凍結二進位來源准入與失效
 
 CONTENT_READINESS_PASS is required before RAW_CAPTURE_LOCKED for structured Word/DOCX. Any Word repair after audit invalidates the audit and requires a fresh audit before locking.
 
@@ -93,9 +93,9 @@ After SOURCE_PAIR_FROZEN, the Word, Canonical YAML projection, content-readiness
 Stage-01 may read binary pixels/bytes only through the frozen-binary resolver defined by the projection contract. Direct DOCX unzip/reparse for semantic recovery is forbidden.
 ''')
     append_once(SOURCE/'12_DOCS/mother-spec/04_AUDIT_PROGRESS_STANDARD.md',
-      '### 87.1 Content Readiness and Frozen Binary Source Audit',
+      '### Content Readiness and Frozen Binary Source Audit',
       r'''
-### 87.1 Content Readiness and Frozen Binary Source Audit / 內容就緒與凍結二進位來源稽核
+### Content Readiness and Frozen Binary Source Audit / 內容就緒與凍結二進位來源稽核
 
 Audit MUST verify that the exact Word selected for projection has a PASS Source Document Content Readiness Audit bound to the same source UID/hash, with zero unresolved REQUIRED design-content gaps and zero unresolved document-level contradictions. Product-specific denominators are source-derived; Audit MUST NOT substitute universal page counts.
 
@@ -270,7 +270,7 @@ def mutate_tests():
 
     marker="    lock={'schema_version':1,'artifact_uid':'LOCK-DOCX1','artifact_type':'RAW_SOURCE_IMMUTABILITY_RECEIPT','source_uid':suid,'source_path':rawrel,'source_git_blob_sha':blob,'source_sha256':rawsha,'lock_state':'RAW_CAPTURE_LOCKED','writable':False,'mutation_policy':'NEW_SOURCE_REVISION_NEW_PROJECTION_NEW_RECONCILIATION'}\n"
     if marker in s:
-        repl="    contentc=contract['source_document_content_readiness_audit']; binaryc=contract['frozen_binary_source_part_materialization']\n    ca={'schema_version':1,'artifact_uid':'CONTENT-AUDIT-DOCX1','artifact_type':'SOURCE_DOCUMENT_CONTENT_AUDIT','source_uid':suid,'source_sha256':rawsha,'page_uid':'SYNTH-PAGE-A','audit_standard_uid':'WEB-GOV-01-S090.1','required_design_domain_uids':['PAGE_IDENTITY'],'observed_design_domain_uids':['PAGE_IDENTITY'],'missing_required_design_domain_uids':[],'matrix_integrity':{'required_rows':1,'complete_rows':1,'missing_rows':0,'duplicate_uid_count':0},'visual_source_integrity':{'embedded_visual_count':0,'missing_visual_count':0},'render_integrity':{'render_required':False,'render_result':'NOT_APPLICABLE_SYNTHETIC_FIXTURE'},'open_downstream_states':[],'unresolved_required_gap_count':0,'contradiction_count':0,'result':'PASS'}\n    ca['evidence_content_hash']=g._hash_without(ca,'evidence_content_hash'); write(root/f'{base}/SOURCE_DOCUMENT_CONTENT_AUDIT.yaml',ca)\n    lock={'schema_version':1,'artifact_uid':'LOCK-DOCX1','artifact_type':'RAW_SOURCE_IMMUTABILITY_RECEIPT','source_uid':suid,'source_path':rawrel,'source_git_blob_sha':blob,'source_sha256':rawsha,'content_readiness_audit_uid':ca['artifact_uid'],'lock_state':'RAW_CAPTURE_LOCKED','writable':False,'mutation_policy':'NEW_SOURCE_REVISION_NEW_PROJECTION_NEW_RECONCILIATION'}\n"
+        repl="    contentc=contract['source_document_content_readiness_audit']; binaryc=contract['frozen_binary_source_part_materialization']\n    ca={'schema_version':1,'artifact_uid':'CONTENT-AUDIT-DOCX1','artifact_type':'SOURCE_DOCUMENT_CONTENT_AUDIT','source_uid':suid,'source_sha256':rawsha,'page_uid':'SYNTH-PAGE-A','audit_standard_uid':'WEB-GOV-01-S090','required_design_domain_uids':['PAGE_IDENTITY'],'observed_design_domain_uids':['PAGE_IDENTITY'],'missing_required_design_domain_uids':[],'matrix_integrity':{'required_rows':1,'complete_rows':1,'missing_rows':0,'duplicate_uid_count':0},'visual_source_integrity':{'embedded_visual_count':0,'missing_visual_count':0},'render_integrity':{'render_required':False,'render_result':'NOT_APPLICABLE_SYNTHETIC_FIXTURE'},'open_downstream_states':[],'unresolved_required_gap_count':0,'contradiction_count':0,'result':'PASS'}\n    ca['evidence_content_hash']=g._hash_without(ca,'evidence_content_hash'); write(root/f'{base}/SOURCE_DOCUMENT_CONTENT_AUDIT.yaml',ca)\n    lock={'schema_version':1,'artifact_uid':'LOCK-DOCX1','artifact_type':'RAW_SOURCE_IMMUTABILITY_RECEIPT','source_uid':suid,'source_path':rawrel,'source_git_blob_sha':blob,'source_sha256':rawsha,'content_readiness_audit_uid':ca['artifact_uid'],'lock_state':'RAW_CAPTURE_LOCKED','writable':False,'mutation_policy':'NEW_SOURCE_REVISION_NEW_PROJECTION_NEW_RECONCILIATION'}\n"
         s=s.replace(marker,repl,1)
 
     marker="    inv=g.derive_docx_inventory(raw)\n"
