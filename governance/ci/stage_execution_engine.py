@@ -113,6 +113,10 @@ def validate_definition_data(profile,adapters):
         bad=sorted(set(map(str,producers.values()))-ops)
         if bad: fail(f'STAGE_OUTPUT_PRODUCER_NOT_OPERATION:{uid}:{bad}')
         if st.get('pre_execution_gate')!='GOVERNANCE_LOAD_RECEIPT_PASS': fail(f'STAGE_PREEXECUTION_GATE_DRIFT:{uid}')
+        if uid=='STAGE-01':
+            pg=st.get('pre_stage_source_projection_admission_gate') or {}
+            if pg.get('required') is not True or pg.get('evaluation_boundary')!='BEFORE_PRODUCT_STAGE01_WORK_UNIT_ACTIVATION' or pg.get('freeze_state')!='SOURCE_PAIR_FROZEN' or pg.get('validator_uid')!='VAL-GOV-026':
+                fail('PRE_STAGE_SOURCE_PROJECTION_GATE_INVALID')
         if (st.get('semantic_granularity_gate') or {}).get('mode')!='REQUIRED': fail(f'SEMANTIC_GRANULARITY_GATE_MISSING:{uid}')
         if (st.get('closure_evidence_continuity_gate') or {}).get('mode')!='REQUIRED': fail(f'CLOSURE_EVIDENCE_CONTINUITY_GATE_MISSING:{uid}')
         opt=st.get('canonical_execution_optimization_gate') or {}
@@ -169,11 +173,41 @@ def plan(stage_uid):
     contracts=(adapters.get('common_execution_skeleton') or {}).get('phase_contracts') or {}
     return {'artifact_type':'COMMON_STAGE_EXECUTION_PLAN','normative_authority':False,'governance_uid':gov,'selected_profile_uid':profile.get('profile_uid'),'stage_uid':stage_uid,'stage_name':st.get('name'),'scope_mode':st.get('scope_mode'),'entry_gate':st.get('entry_gate'),'exit_gate':st.get('exit_gate'),'next_stage_uid':st.get('next_stage_uid'),'semantic_dimensions':ad.get('semantic_dimensions'),'scanner_dimensions':ad.get('scanner_dimensions'),'denominator_kind':ad.get('denominator_kind'),'operations':st.get('operations'),'outputs':st.get('outputs'),'output_producers':st.get('output_producers'),'validators':st.get('validators'),'required_evidence_types':st.get('required_evidence'),'phases':[{'ordinal':i+1,'phase_uid':ph,'executor_owner':'COMMON_STAGE_EXECUTION_ENGINE','semantic_owner':'STAGE_SEMANTIC_ADAPTER' if ph in semantic_phases else 'COMMON_STAGE_EXECUTION_ENGINE','required_artifact':contracts[ph]['required_artifact'],'pass_condition':contracts[ph]['pass_condition'],'definition_status':'BOUND'} for i,ph in enumerate(EXPECTED_PHASES)],'definition_audit_product_completion_credit':0}
 
+def validate_stage01_source_projection_admission(work,stage):
+    gate=stage.get('pre_stage_source_projection_admission_gate') or {}
+    adm=work.get('source_projection_admission')
+    if not isinstance(adm,dict): fail('STAGE01_SOURCE_PROJECTION_ADMISSION_BINDING_MISSING')
+    applicability=adm.get('applicability')
+    if applicability=='NOT_APPLICABLE_WITH_AUTHORITY':
+        if not adm.get('authority_evidence_ref'): fail('STAGE01_SOURCE_PROJECTION_NA_AUTHORITY_MISSING')
+        return True
+    if applicability!='REQUIRED': fail('STAGE01_SOURCE_PROJECTION_APPLICABILITY_UNRESOLVED')
+    bindings=adm.get('bindings')
+    if not isinstance(bindings,list) or not bindings: fail('STAGE01_SOURCE_PROJECTION_BINDING_SET_MISSING')
+    seen=set()
+    required=['source_uid','freeze_receipt_ref','pair_hash','raw_source_sha256','projection_uid','projection_content_hash']
+    for b in bindings:
+        if not isinstance(b,dict) or list(b.keys())!=required: fail('STAGE01_SOURCE_PROJECTION_BINDING_SCHEMA_DRIFT')
+        suid=str(b.get('source_uid') or '')
+        if not suid or suid in seen: fail('STAGE01_SOURCE_PROJECTION_SOURCE_UID_INVALID:'+suid)
+        seen.add(suid)
+        rel=str(b.get('freeze_receipt_ref') or '')
+        if not rel or rel.startswith('/') or '..' in Path(rel).parts: fail('STAGE01_SOURCE_PROJECTION_RECEIPT_REF_INVALID:'+suid)
+        fp=ROOT/rel
+        if not fp.is_file(): fail('STAGE01_SOURCE_PROJECTION_FREEZE_RECEIPT_MISSING:'+suid)
+        fr=y(fp)
+        if fr.get('artifact_type')!='SOURCE_PROJECTION_FREEZE_RECEIPT' or fr.get('source_uid')!=suid or fr.get('status')!='FROZEN_FOR_STAGE01' or fr.get('lock_state')!='SOURCE_PAIR_FROZEN' or fr.get('raw_source_writable') is not False or fr.get('projection_writable') is not False:
+            fail('STAGE01_SOURCE_PROJECTION_FREEZE_RECEIPT_INVALID:'+suid)
+        for k in ('pair_hash','raw_source_sha256','projection_uid','projection_content_hash'):
+            if fr.get(k)!=b.get(k): fail('STAGE01_SOURCE_PROJECTION_BINDING_HASH_DRIFT:'+suid+':'+k)
+    return True
+
 def validate_work_unit_bindings(stage_uid,work,stages,adapters):
     if stage_uid not in stages: fail(f'UNKNOWN_STAGE:{stage_uid}')
     if not isinstance(work,dict): fail('ACTIVE_PRODUCT_WORK_UNIT_MISSING')
     if work.get('primary_task_layer')!='PRODUCT_STAGE_EXECUTION': fail('ACTIVE_WORK_UNIT_NOT_PRODUCT_STAGE_EXECUTION')
     if work.get('stage_uid')!=stage_uid: fail('ACTIVE_WORK_UNIT_STAGE_MISMATCH')
+    if stage_uid=='STAGE-01': validate_stage01_source_projection_admission(work,stages[stage_uid])
     if str(work.get('current_status') or '').startswith('CLOSED'): fail('ACTIVE_PRODUCT_WORK_UNIT_ALREADY_CLOSED')
     req=set(map(str,work.get('required_outputs') or [])); prof=set(map(str,stages[stage_uid].get('outputs') or []))
     if req and not prof.issubset(req): fail('ACTIVE_WORK_UNIT_OUTPUT_DENOMINATOR_INCOMPLETE')

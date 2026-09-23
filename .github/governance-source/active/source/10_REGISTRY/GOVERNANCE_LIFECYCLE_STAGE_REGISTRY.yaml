@@ -4,7 +4,7 @@ artifact_type: EXECUTION_PROFILE_REGISTRY
 status: CURRENT_CANDIDATE
 canonical_path: 10_REGISTRY/GOVERNANCE_LIFECYCLE_STAGE_REGISTRY.yaml
 owner_uid: OWNER-GOVERNANCE-LIFECYCLE
-governance_revision: v2.2.17-typography-computed-metrics-hardening
+governance_revision: v2.2.18-word-yaml-prestage01-source-fidelity-hardening
 normative_section_uids:
 - WEB-GOV-02-S004
 - WEB-GOV-02-S067
@@ -104,6 +104,10 @@ stages:
   - WEB-GOV-03-S071
   - WEB-GOV-04-S085
   - WEB-GOV-01-S088
+  - WEB-GOV-01-S090
+  - WEB-GOV-02-S077
+  - WEB-GOV-03-S072
+  - WEB-GOV-04-S087
   pre_execution_gate: GOVERNANCE_LOAD_RECEIPT_PASS
   validator_names:
   - STAGE1_SOURCE_PIPELINE_GUARD
@@ -215,6 +219,26 @@ stages:
     reference_only_source_dependency_may_receive_stage1_completion_credit: false
     missing_required_physical_owner_disposition: SOURCE_CAPTURE_GAP
     ai_may_invent_missing_source_content: false
+  pre_stage_source_projection_admission_gate:
+    required: true
+    applicability: STRUCTURED_DOCUMENT_REQUIRING_MACHINE_PROJECTION_OR_AUTHORITY_NA
+    evaluation_boundary: BEFORE_PRODUCT_STAGE01_WORK_UNIT_ACTIVATION
+    validator_uid: VAL-GOV-026
+    reconciliation_gate: WORD_YAML_SOURCE_FIDELITY_GATE
+    reconciliation_result: PASS
+    freeze_state: SOURCE_PAIR_FROZEN
+    work_unit_binding_set_required: true
+    raw_word_semantic_reparse: BLOCK
+    unverified_projection: BLOCK
+    implicit_na: BLOCK
+  source_projection_semantic_preservation_gate:
+    required_when_projection_applicable: true
+    semantic_input: EXACT_FROZEN_CANONICAL_SOURCE_PROJECTION_ONLY
+    every_projection_source_node_exactly_once_disposition_required: true
+    projection_node_silent_omission: BLOCK
+    projection_mutation: BLOCK
+    raw_source_hash_or_projection_hash_drift: STOP_AND_REENTER_PRE_STAGE_SOURCE_PROJECTION
+    derived_source_structure_lineage_required: true
 - stage_uid: STAGE-02
   name: PAGE_FUNCTIONAL_CONTRACT
   scope_mode: ALL_REQUIRED_PAGES

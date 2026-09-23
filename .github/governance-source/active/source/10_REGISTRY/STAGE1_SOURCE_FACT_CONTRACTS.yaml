@@ -4,9 +4,13 @@ artifact_type: STAGE1_SOURCE_FACT_CONTRACTS
 status: CURRENT_CANDIDATE
 canonical_path: 10_REGISTRY/STAGE1_SOURCE_FACT_CONTRACTS.yaml
 owner_uid: OWNER-GOVERNANCE-STAGE1-SOURCE-FACTS
-governance_revision: v2.2.8-structured-mutation-selector-hardening
+governance_revision: v2.2.18-word-yaml-prestage01-source-fidelity-hardening
 normative_section_uids:
 - WEB-GOV-01-S069
+- WEB-GOV-01-S090
+- WEB-GOV-02-S077
+- WEB-GOV-03-S072
+- WEB-GOV-04-S087
 contracts:
   SOURCE_CONTEXT_MANIFEST:
     required_fields:
@@ -96,6 +100,13 @@ raw_source_capture_contract:
   physical_file_set_must_exactly_equal_registered_target_paths: true
   mixed_page_visual_source_role: MIXED_PAGE_VISUAL_SOURCE_INPUT
   biased_role_for_mixed_source: BLOCK
+  raw_source_immutable_on_capture: true
+  content_addressed_identity_required: true
+  structured_document_projection_required_formats:
+  - DOCX
+  structured_document_exact_next_step: CANONICAL_SOURCE_PROJECTION
+  default_exact_next_step: SOURCE_STRUCTURE_ENUMERATION
+  in_place_raw_source_mutation: BLOCK
 source_structure_semantic_granularity_contract:
   syntax_level_is_not_governance_granularity: true
   terminality_field: terminality_state
@@ -242,3 +253,235 @@ required_evidence_integrity_contract:
   parser_validation_required_before_materialized_or_closed: true
   schema_or_required_field_validation_required_before_materialized_or_closed: true
   malformed_or_unparseable_required_evidence: BLOCK
+structured_document_source_projection_contract:
+  applicability:
+    required_source_formats:
+    - DOCX
+    source_format_detection: RAW_SOURCE_REFERENCE_MANIFEST.source_format_PLUS_REGISTERED_EXTENSION_CROSSCHECK
+    not_applicable_requires_authority_evidence: true
+    implicit_not_applicable: BLOCK
+  state_machine:
+  - RAW_CAPTURE_LOCKED
+  - PROJECTION_COMPLETE
+  - RECONCILIATION_PASS
+  - SOURCE_PAIR_FROZEN
+  - STAGE01_ELIGIBLE
+  raw_source_lock:
+    receipt_path_template: 00_SOURCE_INTAKE/SOURCE_PROJECTIONS/{source_uid}/RAW_SOURCE_IMMUTABILITY_RECEIPT.yaml
+    required_before_projection: true
+    raw_source_bytes_writable_after_lock: false
+    in_place_source_revision_change: BLOCK
+    byte_change_disposition: NEW_SOURCE_REVISION_NEW_PROJECTION_NEW_RECONCILIATION
+    required_field_order:
+    - schema_version
+    - artifact_uid
+    - artifact_type
+    - source_uid
+    - source_path
+    - source_git_blob_sha
+    - source_sha256
+    - lock_state
+    - writable
+    - mutation_policy
+    - content_hash
+    terminal_lock_state: RAW_CAPTURE_LOCKED
+  projection:
+    artifact_path_template: 00_SOURCE_INTAKE/SOURCE_PROJECTIONS/{source_uid}/CANONICAL_SOURCE_PROJECTION.yaml
+    schema_uid: SCHEMA-DOCX-CANONICAL-SOURCE-PROJECTION-001
+    schema_revision: 1
+    role: MACHINE_READABLE_NON_AUTHORITY_MIRROR
+    normative_authority: false
+    semantic_interpretation_during_projection: BLOCK
+    manual_summary_or_rewrite: BLOCK
+    unknown_or_extra_field: BLOCK
+    missing_required_field: BLOCK
+    mapping_key_order_drift: BLOCK
+    sequence_order_drift: BLOCK
+    canonical_top_level_field_order:
+    - schema_version
+    - artifact_uid
+    - artifact_type
+    - projection_schema_uid
+    - projection_schema_revision
+    - projection_role
+    - normative_authority
+    - source_identity
+    - extraction_identity
+    - serialization_contract
+    - denominator_rows
+    - package_parts
+    - relationships
+    - source_nodes
+    - projection_content_hash
+    - status
+    source_identity_field_order:
+    - source_uid
+    - source_path
+    - source_format
+    - source_git_blob_sha
+    - source_sha256
+    - raw_source_lock_receipt_uid
+    extraction_identity_field_order:
+    - extractor_uid
+    - extractor_version
+    - extraction_run_uid
+    - extraction_evidence_ref
+    serialization_contract_field_order:
+    - yaml_profile
+    - encoding
+    - line_ending
+    - key_order_contract_uid
+    - anchors_aliases
+    - implicit_custom_tags
+    denominator_row_field_order:
+    - denominator_uid
+    - denominator_type
+    - required_count
+    - projected_count
+    required_denominator_order:
+    - PACKAGE_PART
+    - RELATIONSHIP
+    - XML_NODE
+    package_part_row_field_order:
+    - package_part_path
+    - content_type
+    - size_bytes
+    - part_sha256
+    relationship_row_field_order:
+    - relationship_part_path
+    - relationship_id
+    - relationship_type
+    - target
+    - target_mode
+    source_node_row_field_order:
+    - source_node_uid
+    - source_node_kind
+    - projection_order_index
+    - document_order_index
+    - package_part_path
+    - xml_qname
+    - xml_path
+    - parent_source_node_uid
+    - attributes_json
+    - direct_text
+    - tail_text
+    - element_xml_sha256
+    - node_content_sha256
+    - projection_status
+    - unsupported_reason
+    source_node_kind_contract: REGISTERED_GENERIC_OOXML_ELEMENT_ENVELOPE_WITH_SPECIALIZED_KIND_HINTS
+    unregistered_xml_qname_schema_expansion_required: false
+    generic_xml_element_envelope_handles_new_qname: true
+    unsupported_parse_or_representation: UNSUPPORTED_SOURCE_NODE_BLOCK
+    canonical_sequence_order:
+      package_parts: PACKAGE_PATH_ASC
+      relationships: RELATIONSHIP_PART_PATH_ASC_THEN_RELATIONSHIP_ID_ASC
+      source_nodes: PROJECTION_TRAVERSAL_ORDER_ASC
+    canonical_serialization:
+      yaml_profile: YAML_1_2_SAFE_SUBSET
+      encoding: UTF-8
+      line_ending: LF
+      anchors_aliases: FORBIDDEN
+      implicit_custom_tags: FORBIDDEN
+      null_literal: 'null'
+  reconciliation:
+    evidence_path_template: 00_SOURCE_INTAKE/SOURCE_PROJECTIONS/{source_uid}/SOURCE_PROJECTION_RECONCILIATION_EVIDENCE.yaml
+    validator_uid: VAL-GOV-026
+    denominator_source: INDEPENDENT_RAW_DOCX_RECALCULATION
+    projection_summary_as_denominator: FORBIDDEN
+    required_field_order:
+    - schema_version
+    - artifact_uid
+    - artifact_type
+    - validator_uid
+    - source_uid
+    - raw_source_sha256
+    - projection_uid
+    - projection_content_hash
+    - projection_schema_uid
+    - projection_schema_revision
+    - source_inventory_hashes
+    - zero_loss_counts
+    - reverse_trace
+    - unsupported_count
+    - result
+    - evidence_content_hash
+    source_inventory_hashes_field_order:
+    - package_parts_hash
+    - relationships_hash
+    - source_nodes_hash
+    zero_loss_count_field_order:
+    - missing_package_parts
+    - duplicate_package_parts
+    - package_hash_mismatch
+    - missing_relationships
+    - duplicate_relationships
+    - relationship_mismatch
+    - missing_source_nodes
+    - duplicate_source_nodes
+    - source_node_content_mismatch
+    - source_node_order_mismatch
+    - untraceable_projection_nodes
+    - invented_projection_nodes
+    - unsupported_silent_drop
+    - schema_field_order_mismatch
+    - raw_source_hash_mismatch
+    - projection_hash_mismatch
+    - unresolved_required_source_nodes
+    all_zero_required_for_pass: true
+    reverse_trace_required: true
+    unsupported_count_required_for_pass: 0
+    pass_state: PASS
+  pair_freeze:
+    receipt_path_template: 00_SOURCE_INTAKE/SOURCE_PROJECTIONS/{source_uid}/SOURCE_PROJECTION_FREEZE_RECEIPT.yaml
+    required_field_order:
+    - schema_version
+    - artifact_uid
+    - artifact_type
+    - source_uid
+    - raw_source_sha256
+    - raw_source_git_blob_sha
+    - projection_uid
+    - projection_content_hash
+    - projection_schema_uid
+    - projection_schema_revision
+    - reconciliation_evidence_uid
+    - reconciliation_evidence_hash
+    - source_denominator_hash
+    - pair_hash
+    - lock_state
+    - raw_source_writable
+    - projection_writable
+    - mutation_disposition
+    - next_step
+    - status
+    lock_state: SOURCE_PAIR_FROZEN
+    raw_source_writable: false
+    projection_writable: false
+    next_step: STAGE01_WORK_UNIT_RESOLUTION
+    status: FROZEN_FOR_STAGE01
+    mutation_disposition: INVALIDATE_PAIR_REQUIRE_NEW_RECONCILIATION
+  stage01_consumption:
+    raw_word_semantic_reparse: BLOCK
+    raw_word_access: HASH_RECONCILIATION_REVIEW_EVIDENCE_ONLY
+    semantic_input: EXACT_FROZEN_CANONICAL_SOURCE_PROJECTION_ONLY
+    projection_mutation_during_stage01: BLOCK
+    required_work_unit_binding_fields:
+    - source_uid
+    - freeze_receipt_ref
+    - pair_hash
+    - raw_source_sha256
+    - projection_uid
+    - projection_content_hash
+    source_structure_projection_node_disposition_field_order:
+    - projection_source_node_uid
+    - disposition
+    - source_structure_node_uids
+    - evidence_ref
+    allowed_projection_node_dispositions:
+    - SEMANTIC_SOURCE_NODE
+    - STRUCTURAL_SUPPORT
+    - NON_SEMANTIC_WITH_EVIDENCE
+    every_projection_source_node_exactly_once_disposition_required: true
+    silent_projection_node_omission: BLOCK
+    derived_node_without_projection_lineage: BLOCK

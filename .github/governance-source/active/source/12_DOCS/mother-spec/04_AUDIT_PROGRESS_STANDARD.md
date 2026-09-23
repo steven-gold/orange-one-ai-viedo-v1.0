@@ -1547,3 +1547,18 @@ Each evidence row MUST preserve the exact expected metrics, actual computed metr
 Audit MUST fail for any REQUIRED target with missing baseline, missing runtime capture, missing computed metric, duplicate credit, unresolved typography Authority, font-family/weight mismatch, numeric tolerance breach, unexpected wrap/truncation, clipping, overflow, or text-container dimension violation. Representative samples MUST_NOT satisfy the complete denominator.
 
 Typography evidence MUST remain traceable to the same Current Canonical Visual/Geometry baseline and exact deployed/source revision used by the surrounding Visual Geometry and Production Acceptance evidence.
+
+<!-- SECTION_UID: WEB-GOV-04-S087 -->
+## 87. Word/DOCX to Canonical YAML Zero-Loss Reconciliation Audit / Word-DOCX 與 Canonical YAML 零損失對帳稽核
+
+The source-fidelity audit MUST independently reconstruct the applicable DOCX package/source denominator from the immutable raw bytes and compare it with the Canonical Source Projection. Projection-provided summary counts are diagnostic only and MUST NOT be the audit denominator.
+
+The audit MUST reconcile, UID/identity by UID/identity and in canonical order, at least: package-part path/content type/size/hash; relationship-part identity, relationship ID/type/target/target mode; XML-node qualified name, canonical XML locator, parent identity, projection order, document-order locator when applicable, attributes, direct/tail text, structural fragment hash, node-content hash; binary/media part hash; raw-source SHA-256/git-blob identity; projection schema UID/revision; projection content hash; and reverse trace from every projected row to the immutable raw source.
+
+Before SOURCE_PAIR_FROZEN and selected source-intake/base-blueprint execution eligibility, all of the following MUST be zero: missing package parts; duplicate package parts; package hash mismatches; missing relationships; duplicate relationships; relationship mismatches; missing source nodes; duplicate source nodes; source-node content mismatches; source-node order mismatches; untraceable projection nodes; invented projection nodes; unsupported silent drops; fixed-schema field/order mismatches; raw-source hash mismatches; projection hash mismatches; unresolved required source nodes.
+
+The audit MUST verify that the projection contains no product-semantic interpretation fields and that every selected source-intake/base-blueprint execution source-structure disposition for a projected source node is explicit, exactly-once, and traceable to the frozen projection. A projection node may be treated as structural support or non-semantic only through an explicit selected source-intake/base-blueprint execution disposition/evidence record; silence is not a disposition.
+
+Negative regression MUST include at least: Word byte mutation after lock; missing projection row; duplicate row; row-order drift; extra/unregistered field; missing required field; relationship omission; package-part hash mismatch; projection hash drift; reconciliation self-declared PASS with nonzero mismatch; freeze receipt missing; pair-hash mismatch; projection mutation after freeze; direct selected source-intake/base-blueprint execution admission without a frozen pair; and semantic interpretation inserted into projection.
+
+A PASS is valid only for the exact immutable Word/YAML pair and exact schema revision tested. It does not transfer to a re-saved Word document, regenerated YAML, different extractor revision, or modified ordering even when visible prose appears equivalent.

@@ -6,7 +6,7 @@ if __name__ != "__main__" and "pytest" in _governance_runner_sys.modules:
     import pytest as _governance_pytest
     _governance_pytest.skip("standalone governance regression executable; use registered subprocess runner", allow_module_level=True)
 from pathlib import Path
-import copy, importlib.util, json, tempfile, yaml
+import copy, importlib.util, json, tempfile, zipfile, yaml
 HERE=Path(__file__).resolve().parent; PKG=HERE.parents[1]
 spec=importlib.util.spec_from_file_location('guard',HERE/'governance_stage1_pipeline_guard.py'); g=importlib.util.module_from_spec(spec); spec.loader.exec_module(g)
 
@@ -208,6 +208,70 @@ c('mixed_terminal_source_node_must_be_recursively_decomposed',run(mixed_terminal
 def unresolved_container_source_node(r,f):
     p=r/'00_SOURCE_INTAKE/SOURCE_STRUCTURE_MANIFEST.yaml'; d=yaml.safe_load(p.read_text()); n=d['sources'][0]['observed_nodes'][0]; n['terminality_state']='UNRESOLVED_CONTAINER'; n['unresolved_child_responsibility_count']=1; d['sources'][0]['structure_manifest_hash']=g.content_hash(d['sources'][0]); write(p,d)
 c('unresolved_container_node_blocks_stage1_closure',run(unresolved_container_source_node),'FAIL')
+
+
+def _make_minimal_docx(path):
+    path.parent.mkdir(parents=True,exist_ok=True)
+    ct='''<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/></Types>'''
+    rootrels='''<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="word/document.xml"/></Relationships>'''
+    doc='''<?xml version="1.0" encoding="UTF-8" standalone="yes"?><w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:body><w:p><w:r><w:t>固定來源</w:t></w:r></w:p><w:tbl><w:tr><w:tc><w:p><w:r><w:t>表格內容</w:t></w:r></w:p></w:tc></w:tr></w:tbl><w:sectPr/></w:body></w:document>'''
+    with zipfile.ZipFile(path,'w',compression=zipfile.ZIP_DEFLATED) as z:
+        z.writestr('[Content_Types].xml',ct); z.writestr('_rels/.rels',rootrels); z.writestr('word/document.xml',doc)
+
+def _projection_fixture(root):
+    rawrel='00_SOURCE_INTAKE/RAW_SOURCE/CORE-01/SOURCE.docx'; raw=root/rawrel; _make_minimal_docx(raw)
+    rawsha=g.file_sha(raw); blob=g.git_blob_sha(raw); suid='DOCX1'
+    rawcap={'artifact_uid':'RAW-CAP-DOCX','artifact_type':'RAW_SOURCE_REFERENCE_MANIFEST','status':'CURRENT_RAW_SOURCE_CAPTURE','capture_root':'00_SOURCE_INTAKE/RAW_SOURCE','records':[{'source_uid':suid,'source_format':'DOCX','projection_required':True,'page_uid':'CORE-01','source_role':'MIXED_PAGE_VISUAL_SOURCE_INPUT','source_domain_scope':'MIXED_PAGE_VISUAL','source_path':'fixture://docx1','target_path':rawrel,'source_git_blob_sha':blob,'target_git_blob_sha':blob,'content_mutated':False}]}
+    capstate={'run_uid':'PROJ1','state':'CAPTURE_CLOSED','next_step':'CANONICAL_SOURCE_PROJECTION','recapture_allowed':False}
+    contract=g._projection_contract(PKG); rc=contract['raw_source_lock']; pc=contract['projection']; ac=contract['reconciliation']; fc=contract['pair_freeze']; base=f"00_SOURCE_INTAKE/SOURCE_PROJECTIONS/{suid}"
+    lock={'schema_version':1,'artifact_uid':'LOCK-DOCX1','artifact_type':'RAW_SOURCE_IMMUTABILITY_RECEIPT','source_uid':suid,'source_path':rawrel,'source_git_blob_sha':blob,'source_sha256':rawsha,'lock_state':'RAW_CAPTURE_LOCKED','writable':False,'mutation_policy':'NEW_SOURCE_REVISION_NEW_PROJECTION_NEW_RECONCILIATION'}
+    lock['content_hash']=g._hash_without(lock,'content_hash'); write(root/f'{base}/RAW_SOURCE_IMMUTABILITY_RECEIPT.yaml',lock)
+    inv=g.derive_docx_inventory(raw)
+    den=[{'denominator_uid':'DEN-PACKAGE-PART','denominator_type':'PACKAGE_PART','required_count':len(inv['package_parts']),'projected_count':len(inv['package_parts'])},{'denominator_uid':'DEN-RELATIONSHIP','denominator_type':'RELATIONSHIP','required_count':len(inv['relationships']),'projected_count':len(inv['relationships'])},{'denominator_uid':'DEN-XML-NODE','denominator_type':'XML_NODE','required_count':len(inv['source_nodes']),'projected_count':len(inv['source_nodes'])}]
+    proj={'schema_version':1,'artifact_uid':'PROJ-DOCX1','artifact_type':'CANONICAL_SOURCE_PROJECTION','projection_schema_uid':pc['schema_uid'],'projection_schema_revision':pc['schema_revision'],'projection_role':pc['role'],'normative_authority':False,'source_identity':{'source_uid':suid,'source_path':rawrel,'source_format':'DOCX','source_git_blob_sha':blob,'source_sha256':rawsha,'raw_source_lock_receipt_uid':lock['artifact_uid']},'extraction_identity':{'extractor_uid':'TEST-EXTRACTOR','extractor_version':'1','extraction_run_uid':'RUN-1','extraction_evidence_ref':'fixture://extract'},'serialization_contract':{'yaml_profile':'YAML_1_2_SAFE_SUBSET','encoding':'UTF-8','line_ending':'LF','key_order_contract_uid':pc['schema_uid'],'anchors_aliases':'FORBIDDEN','implicit_custom_tags':'FORBIDDEN'},'denominator_rows':den,'package_parts':inv['package_parts'],'relationships':inv['relationships'],'source_nodes':inv['source_nodes']}
+    proj['projection_content_hash']=None; proj['status']='PROJECTION_COMPLETE'; proj['projection_content_hash']=g._hash_without(proj,'projection_content_hash'); write(root/f'{base}/CANONICAL_SOURCE_PROJECTION.yaml',proj)
+    zero={k:0 for k in ac['zero_loss_count_field_order']}
+    ev={'schema_version':1,'artifact_uid':'RECON-DOCX1','artifact_type':'SOURCE_PROJECTION_RECONCILIATION_EVIDENCE','validator_uid':'VAL-GOV-026','source_uid':suid,'raw_source_sha256':rawsha,'projection_uid':proj['artifact_uid'],'projection_content_hash':proj['projection_content_hash'],'projection_schema_uid':pc['schema_uid'],'projection_schema_revision':pc['schema_revision'],'source_inventory_hashes':{'package_parts_hash':inv['package_parts_hash'],'relationships_hash':inv['relationships_hash'],'source_nodes_hash':inv['source_nodes_hash']},'zero_loss_counts':zero,'reverse_trace':'COMPLETE','unsupported_count':0,'result':'PASS'}
+    ev['evidence_content_hash']=g._hash_without(ev,'evidence_content_hash'); write(root/f'{base}/SOURCE_PROJECTION_RECONCILIATION_EVIDENCE.yaml',ev)
+    dh=g.stable_hash_obj(den); pair=g.sha256_bytes((rawsha+'\n'+proj['projection_content_hash']+'\n'+ev['evidence_content_hash']+'\n'+pc['schema_uid']+'\n'+str(pc['schema_revision'])+'\n'+dh+'\n').encode())
+    fr={'schema_version':1,'artifact_uid':'FREEZE-DOCX1','artifact_type':'SOURCE_PROJECTION_FREEZE_RECEIPT','source_uid':suid,'raw_source_sha256':rawsha,'raw_source_git_blob_sha':blob,'projection_uid':proj['artifact_uid'],'projection_content_hash':proj['projection_content_hash'],'projection_schema_uid':pc['schema_uid'],'projection_schema_revision':pc['schema_revision'],'reconciliation_evidence_uid':ev['artifact_uid'],'reconciliation_evidence_hash':ev['evidence_content_hash'],'source_denominator_hash':dh,'pair_hash':pair,'lock_state':'SOURCE_PAIR_FROZEN','raw_source_writable':False,'projection_writable':False,'mutation_disposition':'INVALIDATE_PAIR_REQUIRE_NEW_RECONCILIATION','next_step':'STAGE01_WORK_UNIT_RESOLUTION','status':'FROZEN_FOR_STAGE01'}; write(root/f'{base}/SOURCE_PROJECTION_FREEZE_RECEIPT.yaml',fr)
+    return rawcap,capstate,{'base':base,'raw':raw,'proj':proj,'ev':ev,'freeze':fr}
+
+def _prun(mut=None):
+    with tempfile.TemporaryDirectory() as td:
+        r=Path(td); rawcap,capstate,f=_projection_fixture(r)
+        if mut: mut(r,rawcap,capstate,f)
+        return 'PASS' if not g.validate_pre_stage_source_projection(PKG,r,rawcap,capstate)['failures'] else 'FAIL'
+
+c('projection_fixed_schema_positive',_prun(),'PASS')
+def _p_word_mutation(r,rawcap,capstate,f): f['raw'].write_bytes(f['raw'].read_bytes()+b'X')
+c('projection_word_byte_mutation_after_lock',_prun(_p_word_mutation),'FAIL')
+def _p_missing_node(r,rawcap,capstate,f):
+    p=r/f"{f['base']}/CANONICAL_SOURCE_PROJECTION.yaml"; d=yaml.safe_load(p.read_text()); d['source_nodes']=d['source_nodes'][:-1]; d['projection_content_hash']=g._hash_without(d,'projection_content_hash'); write(p,d)
+c('projection_missing_source_node',_prun(_p_missing_node),'FAIL')
+def _p_duplicate_node(r,rawcap,capstate,f):
+    p=r/f"{f['base']}/CANONICAL_SOURCE_PROJECTION.yaml"; d=yaml.safe_load(p.read_text()); d['source_nodes'].append(copy.deepcopy(d['source_nodes'][0])); d['projection_content_hash']=g._hash_without(d,'projection_content_hash'); write(p,d)
+c('projection_duplicate_source_node',_prun(_p_duplicate_node),'FAIL')
+def _p_order_drift(r,rawcap,capstate,f):
+    p=r/f"{f['base']}/CANONICAL_SOURCE_PROJECTION.yaml"; d=yaml.safe_load(p.read_text()); d['source_nodes'][0],d['source_nodes'][1]=d['source_nodes'][1],d['source_nodes'][0]; d['projection_content_hash']=g._hash_without(d,'projection_content_hash'); write(p,d)
+c('projection_source_order_drift',_prun(_p_order_drift),'FAIL')
+def _p_extra_field(r,rawcap,capstate,f):
+    p=r/f"{f['base']}/CANONICAL_SOURCE_PROJECTION.yaml"; d=yaml.safe_load(p.read_text()); d['source_nodes'][0]['ad_hoc']='x'; d['projection_content_hash']=g._hash_without(d,'projection_content_hash'); write(p,d)
+c('projection_extra_field_schema_drift',_prun(_p_extra_field),'FAIL')
+def _p_relation_omit(r,rawcap,capstate,f):
+    p=r/f"{f['base']}/CANONICAL_SOURCE_PROJECTION.yaml"; d=yaml.safe_load(p.read_text()); d['relationships']=[]; d['projection_content_hash']=g._hash_without(d,'projection_content_hash'); write(p,d)
+c('projection_relationship_omission',_prun(_p_relation_omit),'FAIL')
+def _p_fake_pass(r,rawcap,capstate,f):
+    p=r/f"{f['base']}/SOURCE_PROJECTION_RECONCILIATION_EVIDENCE.yaml"; d=yaml.safe_load(p.read_text()); d['zero_loss_counts']['missing_source_nodes']=1; d['evidence_content_hash']=g._hash_without(d,'evidence_content_hash'); write(p,d)
+c('projection_self_declared_pass_nonzero_mismatch',_prun(_p_fake_pass),'FAIL')
+def _p_freeze_missing(r,rawcap,capstate,f): (r/f"{f['base']}/SOURCE_PROJECTION_FREEZE_RECEIPT.yaml").unlink()
+c('projection_freeze_receipt_required',_prun(_p_freeze_missing),'FAIL')
+def _p_pair_hash(r,rawcap,capstate,f):
+    p=r/f"{f['base']}/SOURCE_PROJECTION_FREEZE_RECEIPT.yaml"; d=yaml.safe_load(p.read_text()); d['pair_hash']='0'*64; write(p,d)
+c('projection_pair_hash_mismatch',_prun(_p_pair_hash),'FAIL')
+def _p_semantic_field(r,rawcap,capstate,f):
+    p=r/f"{f['base']}/CANONICAL_SOURCE_PROJECTION.yaml"; d=yaml.safe_load(p.read_text()); d['source_nodes'][0]['responsibility_uid']='PAGE'; d['projection_content_hash']=g._hash_without(d,'projection_content_hash'); write(p,d)
+c('projection_semantic_interpretation_forbidden',_prun(_p_semantic_field),'FAIL')
 
 out={'suite':'Stage-1 Source Enumeration → Classification → Dual Base Blueprint minimal-control','fixture_policy':'OBSERVABLE_FACTS_ONLY','validator_receives_expected_outcome':False,'total':len(cases),'passed_expectations':sum(x['ok'] for x in cases),'results':cases}
 print(json.dumps(out,ensure_ascii=False,indent=2)); raise SystemExit(0 if out['passed_expectations']==out['total'] else 1)

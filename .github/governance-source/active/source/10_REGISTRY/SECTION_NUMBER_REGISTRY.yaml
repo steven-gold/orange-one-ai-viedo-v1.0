@@ -5,7 +5,7 @@ artifact_type: SECTION_NUMBER_REGISTRY
 status: CURRENT_CANDIDATE
 canonical_path: 10_REGISTRY/SECTION_NUMBER_REGISTRY.yaml
 owner_uid: OWNER-GOVERNANCE-SECTION-REGISTRY
-governance_revision: v2.2.17-typography-computed-metrics-hardening
+governance_revision: v2.2.18-word-yaml-prestage01-source-fidelity-hardening
 policy:
   unique_numeric_h2_per_document: true
   section_uid_is_canonical_reference: true
@@ -781,6 +781,13 @@ documents:
     heading: '## 89. Typography Computed Metrics Baseline Gate / 字體計算值基準 Gate'
     path: 12_DOCS/mother-spec/01_BLUEPRINT_DESIGN_GOVERNANCE.md
     binding_sha256: 566fd8e46f0262f47edbced6cca3d91616c82a54f5706b0073b982462e280ea5
+  - section_uid: WEB-GOV-01-S090
+    level: 2
+    canonical_number: '90'
+    title: Immutable Structured-Document Canonical Projection / 結構化文件固定無損投影
+    heading: '## 90. Immutable Structured-Document Canonical Projection / 結構化文件固定無損投影'
+    path: 12_DOCS/mother-spec/01_BLUEPRINT_DESIGN_GOVERNANCE.md
+    binding_sha256: 52b74b6275245e9fefb2d1277dd9cd87e43ac751613f91b1bc16642b5b054d70
 - document_id: WEB-GOV-02
   path: 12_DOCS/mother-spec/02_IMPLEMENTATION_DELIVERY_STANDARD.md
   sections:
@@ -1372,6 +1379,13 @@ documents:
     heading: '## 76. Typography Computed Metrics Runtime Verification / 字體計算值執行驗證'
     path: 12_DOCS/mother-spec/02_IMPLEMENTATION_DELIVERY_STANDARD.md
     binding_sha256: 42efd9ec42a657305591ae2ac65e1cbb829e7939975fa5b76ffcf59a660798fb
+  - section_uid: WEB-GOV-02-S077
+    level: 2
+    canonical_number: '77'
+    title: Pre-Execution Source Projection Admission and Immutable Pair Consumption / 前置來源投影准入與雙鎖消費
+    heading: '## 77. Pre-Execution Source Projection Admission and Immutable Pair Consumption / 前置來源投影准入與雙鎖消費'
+    path: 12_DOCS/mother-spec/02_IMPLEMENTATION_DELIVERY_STANDARD.md
+    binding_sha256: a62701a6677ab5773229b225f93821ea4c661f4cc515ab06e882b28c1f90c229
 - document_id: WEB-GOV-03
   path: 12_DOCS/mother-spec/03_EXECUTION_CONTROL_STANDARD.md
   sections:
@@ -1921,6 +1935,13 @@ documents:
     heading: '## 71. 跨階段實體交接 / Consumer Readiness / 回退控制 / Cross-Stage Materialized Handoff, Consumer Readiness and Re-entry Control'
     path: 12_DOCS/mother-spec/03_EXECUTION_CONTROL_STANDARD.md
     binding_sha256: 25a25c12c973efcd86025830a6fb889e4de24725b2bc849512bfeec0c1e32e8c
+  - section_uid: WEB-GOV-03-S072
+    level: 2
+    canonical_number: '72'
+    title: Source Projection Freeze, Mutation Invalidation and Re-entry Control / 來源投影鎖定、變更失效與重入控制
+    heading: '## 72. Source Projection Freeze, Mutation Invalidation and Re-entry Control / 來源投影鎖定、變更失效與重入控制'
+    path: 12_DOCS/mother-spec/03_EXECUTION_CONTROL_STANDARD.md
+    binding_sha256: a3d876389655a777a058a2ade82ace20fd3e99bf176d60ae510f8d4c8cd87fe7
 - document_id: WEB-GOV-04
   path: 12_DOCS/mother-spec/04_AUDIT_PROGRESS_STANDARD.md
   sections:
@@ -2596,6 +2617,13 @@ documents:
     heading: '## 86. Typography Computed Metrics Evidence Audit / 字體計算值證據稽核'
     path: 12_DOCS/mother-spec/04_AUDIT_PROGRESS_STANDARD.md
     binding_sha256: 75397c849870f5c4c29ae4d2afb175991d0cee1c7ca54276a9cd65002d70309c
+  - section_uid: WEB-GOV-04-S087
+    level: 2
+    canonical_number: '87'
+    title: Word/DOCX to Canonical YAML Zero-Loss Reconciliation Audit / Word-DOCX 與 Canonical YAML 零損失對帳稽核
+    heading: '## 87. Word/DOCX to Canonical YAML Zero-Loss Reconciliation Audit / Word-DOCX 與 Canonical YAML 零損失對帳稽核'
+    path: 12_DOCS/mother-spec/04_AUDIT_PROGRESS_STANDARD.md
+    binding_sha256: 3d96fb02bf6961d3acdfea44d7cacdd98dee074134d24201a75851017a5d331f
 historical_duplicate_groups:
 - document_id: WEB-GOV-01
   duplicate_number: '63'

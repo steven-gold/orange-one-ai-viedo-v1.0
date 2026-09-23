@@ -16,10 +16,10 @@ CHECKSUMS = SOURCE / 'CHECKSUMS.sha256'
 TRUST_ROOT = Path('/tmp/acpos-governance-external-trust-root.json')
 RESULT = ROOT / '.github' / 'governance-source' / 'FULL_LINE_SYSTEM_GATE_RESULT.json'
 
-EXPECTED_CHECKSUMS_SHA256 = '30d660da649521f33503ffe59c61e4257d36f057601cd1e71326194f4934b123'
-EXPECTED_SEMANTIC_CONTENT_HASH = 'c213b2ec8d2e1f82627a3ed50fa715e440515d1b3ed2e66facc8f5f36095e6c8'
-EXPECTED_SOURCE_ZIP_SHA256 = '8d60815f6d06c6f46d93a17cf82b606011670dde5b72691dd482e27c91d97871'
-EXPECTED_BUNDLE_SHA256 = '655519ff9e456739903a04bd049ade37b0a51148966f196eebb87770544a642b'
+EXPECTED_CHECKSUMS_SHA256 = '2493f5d83de423aefe2dcabf9940fd59f1e5f75840834348858fffb398bc4d2e'
+EXPECTED_SEMANTIC_CONTENT_HASH = '01ebdfe231cc1b5797d1869e7ccbb3b37774b44330ff0c103d6c82992f92937b'
+EXPECTED_SOURCE_ZIP_SHA256 = '308c0a3c722dbec69eb6878b64b455797d50d60d738ba56cc3f93e0d77e1c394'
+EXPECTED_BUNDLE_SHA256 = '1d85dbf2f5b7e2f479a82b6783cc037b87345c650f5100ad36b35f17c4abb7cc'
 EXPECTED_SELECTED_PROFILE_STEP_UIDS = [f'STAGE-{i:02}' for i in range(1, 12)]
 EXPECTED_SELECTED_PROFILE_STEP_NAMES = [
     'SOURCE_INTAKE_AND_BASE_BLUEPRINT','PAGE_FUNCTIONAL_CONTRACT','VISUAL_DESIGN','FOUNDATION_FREEZE',
@@ -34,7 +34,7 @@ EXPECTED_SUITES = {'test_high_pressure_hardening.py': {'total': 25, 'passed_expe
                                       'escaped': 0},
  'test_execution_load_guard.py': {'total': 14, 'passed_expectations': 14},
  'test_prefomal_stress_repairs.py': {'total': 21, 'passed_expectations': 21},
- 'test_stage1_source_to_blueprint_minimal_control.py': {'total': 33, 'passed_expectations': 33},
+ 'test_stage1_source_to_blueprint_minimal_control.py': {'total': 44, 'passed_expectations': 44},
  'test_v2_1_0_regressions.py': {'total': 12, 'passed_expectations': 12},
  'test_v2_1_0_post_v1_8_regressions.py': {'total': 6, 'passed_expectations': 6},
  'test_bugfix_regressions.py': {'total': 30, 'passed_expectations': 30},

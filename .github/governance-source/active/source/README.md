@@ -73,3 +73,6 @@ This successor preserves the v2.2.14 Stage-03 visual materialization semantics w
 
 ## v2.2.17 typography computed metrics hardening
 This successor requires complete per-target typography baselines and Browser/runtime computed-metric evidence across applicable viewports, languages, and themes. It remains product-neutral and denominator-dynamic.
+
+## v2.2.18 Word/YAML pre-Stage01 source fidelity hardening
+Structured Word/DOCX source is immutable after capture; Canonical YAML uses one fixed schema and is zero-loss reconciled and pair-frozen before Stage-01 activation. Stage-01 consumes only the exact frozen projection.

@@ -116,3 +116,9 @@ The candidate package cannot self-prove integrity. The trust-root hash set is an
 - Typography intent, overflow checks, and screenshots alone do not prove computed-style conformance.
 - Every applicable text-bearing target requires Authority-derived expected metrics and runtime computed evidence.
 - Representative samples, manually entered computed values, and missing-target denominators are blocking.
+
+## v2.2.18 structured-source projection lock rule
+- Captured Word/DOCX bytes are immutable; byte changes create a new source revision.
+- Canonical YAML projection has one registered fixed schema/ordering contract and is non-authority.
+- Reconciliation PASS freezes the exact Word/YAML pair; any pair mutation invalidates admission.
+- Stage-01 may consume only the frozen projection and may not reparse Word as a semantic fallback.

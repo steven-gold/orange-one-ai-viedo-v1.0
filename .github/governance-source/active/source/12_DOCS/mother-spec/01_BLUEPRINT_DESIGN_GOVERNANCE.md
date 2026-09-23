@@ -1783,3 +1783,18 @@ Each baseline row MUST bind at least: target_uid; page_or_scope_uid; viewport_or
 A text-bearing target MAY be NOT_APPLICABLE only with exact Authority evidence proving that no rendered typography is present for that target/state. Missing baseline rows, missing required metric fields, duplicate target credit, representative-sample credit, or baseline values inferred from the current rendered result rather than Design Authority are blocking defects.
 
 The typography baseline is part of the Visual Geometry Contract and MUST be frozen with the approved design. Typography intent MUST NOT be reduced to a visual-diff-only assertion.
+
+<!-- SECTION_UID: WEB-GOV-01-S090 -->
+## 90. Immutable Structured-Document Canonical Projection / 結構化文件固定無損投影
+
+A governed DOCX or equivalent structured human-readable design source MUST first be captured as immutable source bytes before any machine projection is produced. The captured source bytes are the Original Source Authority for source truth. In-place editing, replacement, normalization, re-save, re-export, or hidden mutation of the captured source is forbidden. Any byte change requires a new source revision/source UID and a new projection/audit cycle; a changed source MUST NOT inherit a prior reconciliation PASS.
+
+For DOCX, the machine-readable execution input is a Canonical Source Projection. The projection is a generated non-authority mirror and MUST NOT replace, weaken, summarize, reinterpret, or supersede the Word source. Projection generation MUST preserve the complete dynamically observed DOCX package denominator: package parts, relationships, XML structural nodes, exact source order/parentage, text-bearing values, attributes, structural hashes, binary/media hashes, source-part identity, and reverse trace to the exact immutable source.
+
+The Canonical Source Projection MUST use one registered schema UID/revision and one fixed serialization contract. Top-level fields, nested object fields, row fields, sequence ordering, null representation, encoding, line ending, anchor/alias policy, and content-hash rules are part of the contract. A producer MUST NOT add ad-hoc fields, rename fields, silently omit fields, reorder governed sequences, or create a page-specific/product-specific alternative projection schema. A field that does not apply remains present with the contract-defined null/empty value where the schema requires fixed shape.
+
+Projection is extraction only. It MUST NOT assign page/visual responsibility, product behavior, ownership, authority satisfaction, functional classification, or downstream design conclusions. Those are selected source-intake/base-blueprint execution derived interpretations. A projection row containing inferred product semantics or AI-completed source content is invalid.
+
+Every observed OOXML XML element is representable through the generic fixed XML-node envelope. New XML qualified names therefore do not authorize schema drift. A source construct that the registered extractor cannot parse or represent MUST surface as UNSUPPORTED_SOURCE_NODE / UNSUPPORTED_SOURCE_PART and MUST block reconciliation; silent drop, best-effort omission, or summary substitution is forbidden.
+
+Canonical ordering MUST be deterministic: package parts by canonical package path; relationships by relationship-part path then relationship ID; XML nodes by registered projection traversal order with explicit projection_order_index and parent_source_node_uid. Human-friendly layout interpretation MUST NOT be used as an implicit ordering rule. Document visual/semantic interpretation occurs later and MUST retain projection lineage.

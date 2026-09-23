@@ -1242,3 +1242,20 @@ For each target, runtime evidence MUST record at least: target_uid; typography_a
 Expected and actual values MUST be compared per target against the frozen typography baseline and tolerance. Missing targets, missing computed values, unexpected clipping/overflow/wrap/truncation, font-family or weight mismatch, or numeric metrics outside tolerance MUST FAIL. A successful screenshot, page render, build, or aggregate typography visual-diff score MUST_NOT substitute for target-level computed evidence.
 
 Localization verification MUST re-run the applicable typography target denominator for each Required language context whose rendered text can change geometry.
+
+<!-- SECTION_UID: WEB-GOV-02-S077 -->
+## 77. Pre-Execution Source Projection Admission and Immutable Pair Consumption / 前置來源投影准入與雙鎖消費
+
+For every source to which Structured-Document Projection applies, the legal order is fixed:
+
+RAW SOURCE CAPTURE -> RAW SOURCE IMMUTABILITY LOCK -> CANONICAL SOURCE PROJECTION -> WORD/YAML ZERO-LOSS RECONCILIATION -> SOURCE PAIR FREEZE -> SOURCE-INTAKE/BASE-BLUEPRINT EXECUTION WORK UNIT RESOLUTION -> GOVERNANCE LOAD RECEIPT -> SOURCE-INTAKE/BASE-BLUEPRINT EXECUTION OPERATIONS.
+
+A selected source-intake/base-blueprint execution Product Work Unit MUST NOT be activated before the applicable source pair has a PASS reconciliation receipt and a FROZEN source-pair receipt. Governance Load does not replace the pre-Stage source-fidelity gate; it follows legal Work Unit activation.
+
+The frozen pair receipt MUST bind exact raw-source SHA-256/git-blob identity, Canonical Source Projection UID/content hash/schema UID/revision, reconciliation evidence UID/hash, complete source-denominator hash, and pair hash. After pair freeze, both the captured Word source and its Canonical YAML projection are immutable for that selected source-intake/base-blueprint execution attempt. Mutation of either side invalidates the pair receipt and all descendant selected source-intake/base-blueprint execution admission credit.
+
+selected source-intake/base-blueprint execution machine execution MUST consume only the exact frozen Canonical Source Projection for semantic source enumeration. Raw Word bytes remain available only for source-identity/hash/reconciliation verification and reviewer evidence; selected source-intake/base-blueprint execution MUST NOT bypass the projection by reparsing Word as an alternate semantic input or by mixing a newer Word parse with an older projection.
+
+selected source-intake/base-blueprint execution derived Source Structure, Segment Mapping, Source Facts, classifications, and Blueprints MUST be written to separate derived artifacts. No selected source-intake/base-blueprint execution operation may rewrite the raw source, projection, reconciliation evidence, or freeze receipt. Every derived source-structure disposition MUST retain exact projection-source-node lineage. Missing projection lineage, projection hash drift, pair-hash drift, or fallback to an unverified projection is a blocking admission defect.
+
+If the source does not require projection, NOT_APPLICABLE is legal only with explicit source-type Authority evidence. Absence of a projection file is never implicit N/A.

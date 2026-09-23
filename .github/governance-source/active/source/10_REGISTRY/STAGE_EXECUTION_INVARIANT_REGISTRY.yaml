@@ -4,7 +4,7 @@ artifact_type: STAGE_EXECUTION_INVARIANT_REGISTRY
 status: CURRENT_CANDIDATE
 canonical_path: 10_REGISTRY/STAGE_EXECUTION_INVARIANT_REGISTRY.yaml
 owner_uid: OWNER-GOVERNANCE-STAGE-EXECUTION-INVARIANT
-governance_revision: v2.2.17-typography-computed-metrics-hardening
+governance_revision: v2.2.18-word-yaml-prestage01-source-fidelity-hardening
 scope:
   applies_to_stages:
   - STAGE-01
@@ -1169,6 +1169,21 @@ invariants:
     unexpected_wrap_or_truncation: BLOCK
     font_family_or_weight_mismatch: BLOCK
     numeric_tolerance_breach: BLOCK
+  SOURCE_PROJECTION_FIDELITY:
+    invariant_uid: GOV-INV-SOURCE-PROJECTION-FIDELITY-001
+    applicability: STRUCTURED_DOCUMENT_SOURCE_REQUIRING_MACHINE_PROJECTION
+    raw_source_authority: IMMUTABLE_ORIGINAL_SOURCE_BYTES
+    projection_role: MACHINE_READABLE_NON_AUTHORITY_MIRROR
+    projection_schema_uid: SCHEMA-DOCX-CANONICAL-SOURCE-PROJECTION-001
+    projection_schema_revision: 1
+    pre_stage_reconciliation_required: true
+    pair_freeze_required: true
+    stage01_activation_before_pair_freeze: BLOCK
+    raw_word_semantic_reparse_during_stage01: BLOCK
+    projection_mutation_after_freeze: BLOCK
+    schema_or_field_order_drift: BLOCK
+    silent_source_omission: BLOCK
+    source_pair_mutation_disposition: INVALIDATE_AND_REENTER_PRE_STAGE_PROJECTION
 stage02_observed_defect_mapping:
 - finding: PORT_EXPOSURE_WITHOUT_TRIGGER
   mapped_invariant: RELATION_SEMANTIC_SEPARATION

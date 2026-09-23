@@ -5,7 +5,7 @@ blueprint_type: ACCEPTANCE_AUDIT_BLUEPRINT
 status: CURRENT_CANDIDATE
 canonical_path: 10_REGISTRY/GOVERNANCE_ACCEPTANCE_AUDIT_BLUEPRINT.yaml
 owner_uid: OWNER-GOVERNANCE-ACCEPTANCE
-governance_revision: v2.2.17-typography-computed-metrics-hardening
+governance_revision: v2.2.18-word-yaml-prestage01-source-fidelity-hardening
 normative_section_uids:
 - WEB-GOV-04-S071
 - WEB-GOV-04-S076
@@ -24,6 +24,10 @@ normative_section_uids:
 - WEB-GOV-01-S089
 - WEB-GOV-02-S076
 - WEB-GOV-04-S086
+- WEB-GOV-01-S090
+- WEB-GOV-02-S077
+- WEB-GOV-03-S072
+- WEB-GOV-04-S087
 audit_catalog_ref: REG-AUDIT-CATALOG-001
 audit_item_uids:
 - AUD-GOV-001
@@ -40,6 +44,7 @@ audit_item_uids:
 - AUD-GOV-012
 - AUD-GOV-013
 - AUD-GOV-014
+- AUD-GOV-015
 acceptance_contract:
   denominator_is_blueprint_owned: true
   audit_matrix_may_not_add_requirements: true
@@ -329,6 +334,10 @@ required_normative_section_uids:
 - WEB-GOV-01-S089
 - WEB-GOV-02-S076
 - WEB-GOV-04-S086
+- WEB-GOV-01-S090
+- WEB-GOV-02-S077
+- WEB-GOV-03-S072
+- WEB-GOV-04-S087
 cross_stage_materialization_consumer_readiness_contract:
   required: true
   audit_item_uid: AUD-GOV-014
@@ -353,3 +362,12 @@ cross_stage_materialization_consumer_readiness_contract:
   successor_consumer_readiness_required: true
   zero_unresolved_required_handoff_edges_at_exit: true
   downstream_discovered_upstream_gap_reentry_required: true
+structured_document_source_projection_audit_contract:
+  audit_item_uid: AUD-GOV-015
+  validator_uid: VAL-GOV-026
+  dynamic_raw_source_denominator_required: true
+  projection_summary_denominator_credit: 0
+  zero_loss_reconciliation_required: true
+  source_pair_freeze_required_before_stage01: true
+  fixed_schema_and_field_order_required: true
+  negative_regression_required: true

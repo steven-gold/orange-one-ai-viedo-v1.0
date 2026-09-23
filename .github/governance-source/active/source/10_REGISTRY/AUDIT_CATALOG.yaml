@@ -4,7 +4,7 @@ artifact_type: AUDIT_CATALOG
 status: CURRENT_CANDIDATE
 canonical_path: 10_REGISTRY/AUDIT_CATALOG.yaml
 owner_uid: OWNER-GOVERNANCE-AUDIT-CATALOG
-governance_revision: v2.2.17-typography-computed-metrics-hardening
+governance_revision: v2.2.18-word-yaml-prestage01-source-fidelity-hardening
 normative_section_uids:
 - WEB-GOV-04-S072
 - WEB-GOV-04-S073
@@ -20,6 +20,10 @@ normative_section_uids:
 - WEB-GOV-01-S089
 - WEB-GOV-02-S076
 - WEB-GOV-04-S086
+- WEB-GOV-01-S090
+- WEB-GOV-02-S077
+- WEB-GOV-03-S072
+- WEB-GOV-04-S087
 denominator_policy: FIXED_BY_CURRENT_ACCEPTANCE_AUDIT_BLUEPRINT
 items:
 - audit_item_uid: AUD-GOV-001
@@ -210,3 +214,19 @@ items:
   - DENOMINATOR_INCLUSION
   - SUCCESSOR_CONSUMER_READINESS
   - UPSTREAM_REENTRY
+- audit_item_uid: AUD-GOV-015
+  audit_type: STRUCTURED_DOCUMENT_CANONICAL_PROJECTION_ZERO_LOSS_RECONCILIATION
+  stage_uid: PREFORMAL
+  target_uid: GOVERNANCE_PACKAGE
+  requirement_type: BLOCKING
+  validator_uid: VAL-GOV-026
+  required_evidence:
+  - SOURCE_PROJECTION_RECONCILIATION_EVIDENCE
+  - SOURCE_PROJECTION_FREEZE_RECEIPT
+  - VALIDATOR_RESULT
+  denominator_eligible: true
+  status: REQUIRED
+  validator_name: STAGE1_SOURCE_PIPELINE_GUARD
+  audit_type_uid: AUDTYPE-GOV-015
+  applicability: STRUCTURED_DOCUMENT_SOURCE_REQUIRING_MACHINE_PROJECTION
+  not_applicable_requires_authority: true

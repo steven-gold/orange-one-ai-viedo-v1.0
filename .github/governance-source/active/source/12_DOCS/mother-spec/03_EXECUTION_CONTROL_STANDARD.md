@@ -1218,3 +1218,20 @@ The closed failure-class vocabulary includes REFERENCE_ONLY_UNMATERIALIZED, PHYS
 If a downstream capability discovers an upstream-owned handoff defect, downstream mutation MUST stop. Execution MUST reopen the earliest owning capability, mark affected descendants REVERIFY_REQUIRED, preserve only reverse-dependency-proven unaffected evidence, and resume from the earliest impacted successor boundary. A downstream patch MUST NOT manufacture the missing upstream artifact or claim the predecessor was complete.
 
 This control applies to every registered lifecycle Stage. Stage-local success, functional-gap-zero, visual-review-ready, implementation-complete, test-pass, build-pass, staging-pass, deployment-pass, or production-pass MUST NOT bypass materialized handoff and consumer readiness.
+
+<!-- SECTION_UID: WEB-GOV-03-S072 -->
+## 72. Source Projection Freeze, Mutation Invalidation and Re-entry Control / 來源投影鎖定、變更失效與重入控制
+
+Structured-document source control is fail-closed. Raw capture closure creates an immutable content-addressed source identity. Projection and reconciliation occur outside Product Stage execution. A legal selected source-intake/base-blueprint execution Work Unit Resolution MUST verify the source-projection applicability decision and, when REQUIRED, the exact frozen-pair receipt before activation.
+
+The source-fidelity state machine is:
+RAW_CAPTURE_LOCKED -> PROJECTION_COMPLETE -> RECONCILIATION_PASS -> SOURCE_PAIR_FROZEN -> STAGE01_ELIGIBLE.
+No state may be skipped, inferred from file presence, or self-declared by the projection producer.
+
+Any change to raw-source bytes, raw-source source UID/path binding, projection schema UID/revision, projection rows, governed row ordering, projection content hash, reconciliation evidence, source denominator, or pair hash invalidates SOURCE_PAIR_FROZEN and STAGE01_ELIGIBLE. Recovery requires a fresh projection plus fresh reconciliation from the immutable/new source revision. Editing the prior locked YAML in place and recomputing only its hash is forbidden.
+
+A selected source-intake/base-blueprint execution active Work Unit MUST carry the complete applicable freeze-receipt binding set. The common execution engine MUST fail admission for missing receipt, non-PASS reconciliation, non-frozen pair state, missing physical receipt, hash mismatch, source set mismatch, or unproven N/A. Product Stage execution credit remains zero while such a defect exists.
+
+The Canonical Projection schema is a single owner. Consumers MUST read the registered schema fields and MUST NOT maintain local alternate field-name maps, permissive alias fallback, page-specific schemas, or parser-specific optional-field interpretations. Unknown producer fields and missing required fields are schema drift and block. Sequence semantics that carry source order MUST use explicit registered indices and exact list order; YAML mapping order alone MUST NOT carry source semantics.
+
+If a locked source pair changes after selected source-intake/base-blueprint execution has started, the current selected source-intake/base-blueprint execution attempt is invalid for the impacted source set, the Product Work Unit must stop, affected descendant evidence becomes REVERIFY_REQUIRED, and execution re-enters the pre-Stage projection/reconciliation boundary. No downstream patch may manufacture continuity.

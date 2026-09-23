@@ -2,7 +2,7 @@ schema_version: 23
 artifact_type: ACTIVE_GOVERNANCE_TEST_STATE
 normative_authority: false
 specification_registry_ref: governance/specifications/REGISTRY.yaml
-specification_uid: GOV-REV-20260921-TYPOGRAPHY-COMPUTED-METRICS-HARDENING
+specification_uid: GOV-REV-20260923-WORD-YAML-PRESTAGE01-SOURCE-FIDELITY-HARDENING
 canonical_rule_registry_ref: governance/specifications/current/CANONICAL_RULE_REGISTRY.yaml
 canonical_rule_registry_uid: GOV-CANONICAL-RULE-REGISTRY-001
 selected_execution_profile_state:
@@ -21,7 +21,7 @@ execution:
   scope_mode: EXACT_PAGE_SCOPE_ONLY
   target_pages:
   - CORE-01
-  current_stage: WORD_STAGE01_NOT_EXECUTED_GOVERNANCE_MAINTENANCE_RESOLUTION_REQUIRED
+  current_stage: null
   stage1:
     CORE-01: NOT_EXECUTED
   stage2:
@@ -79,7 +79,7 @@ stage_execution_loading:
 stage_execution_remediation_closure_protocol:
   specification_ref: governance/specifications/current/VALIDATION_REMEDIATION_CLOSURE_PROTOCOL.yaml
   canonical_execution_rule_set: true
-  frozen_specification_uid: GOV-REV-20260921-TYPOGRAPHY-COMPUTED-METRICS-HARDENING
+  frozen_specification_uid: GOV-REV-20260923-WORD-YAML-PRESTAGE01-SOURCE-FIDELITY-HARDENING
   audit_only_blocked_loop_may_count_as_progress: false
   remediation_must_materially_eliminate_remediable_gap: true
   full_line_high_pressure_required_before_every_fresh_execution_or_reexecution: true
@@ -104,13 +104,13 @@ specification_mutation_safety:
   ordinary_mid_stage_specification_mutation: BLOCK
   stage_end_consolidated_promotion_requires_new_explicit_directive: true
   execution_context_lock_required: true
-status: WORD_YAML_PRE_STAGE01_GOVERNANCE_MAINTENANCE_ACTIVE
-next_action: PROMOTE_WORD_YAML_PRE_STAGE01_GOVERNANCE_HARDENING
+status: WORD_YAML_PRE_STAGE01_SUCCESSOR_PROMOTED_EXACT_HEAD_REVALIDATION_REQUIRED
+next_action: RUN_EXACT_HEAD_WORD_YAML_GOVERNANCE_VALIDATION
 resume_control:
-  current_resume_point: WORD_YAML_PRE_STAGE01_GOVERNANCE_MAINTENANCE_ACTIVE
+  current_resume_point: WORD_YAML_PRE_STAGE01_SUCCESSOR_PROMOTED_EXACT_HEAD_REVALIDATION_REQUIRED
   current_work_unit_uid: WU-GOV-WORD-YAML-PRESTAGE01-HARDENING-001
   current_owner: SOURCE_INTAKE_STAGE1_GOVERNANCE
-  exact_next_action: PROMOTE_WORD_YAML_PRE_STAGE01_GOVERNANCE_HARDENING
+  exact_next_action: RUN_EXACT_HEAD_WORD_YAML_GOVERNANCE_VALIDATION
   product_resume_preserved: CORE01_STAGE01_ACTIVE_PREEXECUTION_GOVERNANCE_LOAD_REQUIRED
   interrupted_test_resume_preserved: CORE01_SOURCE_TEST_BUGFIX_AND_CONTENT_INTEGRITY_FULL_LIFECYCLE_R2_ACTIVE
   reentry_owner_capability: SOURCE_INTAKE_BASE_BLUEPRINT
@@ -119,15 +119,15 @@ resume_control:
   cleanup_receipt_ref: governance/test/history/cleanup/CORE01_STAGE01_STAGE03_CLEAN_RESET_R1.yaml
   human_visual_review_allowed: false
   product_execution_allowed: false
-  product_execution_block_reason: WORD_YAML_PRE_STAGE01_GOVERNANCE_AND_RECONCILIATION_GATE_NOT_ESTABLISHED
+  product_execution_block_reason: WORD_YAML_PROJECTION_RECONCILIATION_NOT_YET_EXECUTED
   website_construction_allowed: false
   deployment_allowed: false
 governance_revision_transition:
-  current_governance_uid: GOV-REV-20260921-TYPOGRAPHY-COMPUTED-METRICS-HARDENING
-  predecessor_governance_uid: GOV-REV-20260920-CROSS-STAGE-MATERIALIZATION-CONSUMER-READINESS-HARDENING
+  current_governance_uid: GOV-REV-20260923-WORD-YAML-PRESTAGE01-SOURCE-FIDELITY-HARDENING
+  predecessor_governance_uid: GOV-REV-20260921-TYPOGRAPHY-COMPUTED-METRICS-HARDENING
   predecessor_attempt_preserved_as_historical_evidence: true
   predecessor_attempt_may_close_under_current_governance: false
-  fresh_revalidation_required: false
+  fresh_revalidation_required: true
   selected_execution_profile_preserved: true
   product_fresh_replay_required_after_governance_change: true
   canonical_rule_registry_required_for_fresh_revalidation: true
@@ -137,7 +137,7 @@ governance_revision_transition:
   current_governance_product_credit: 0
   current_product_attempt_uid: null
   current_product_attempt_run_uid: null
-  fresh_revalidation_scope: GOVERNANCE_POLICY_CONSUMERS_ONLY_NO_PRODUCT_STAGE_REVALIDATION_CREDIT
+  fresh_revalidation_scope: WORD_YAML_PRE_STAGE01_POLICY_CONSUMERS_ONLY_NO_PRODUCT_STAGE_CREDIT
   clean_reset_under_current_governance: true
   fresh_stage01_execution_requires_new_work_unit_resolution: true
 pending_governance_review:
@@ -190,7 +190,7 @@ active_work_unit:
   - .github/governance-source/active/source/10_REGISTRY/GOVERNANCE_LIFECYCLE_STAGE_REGISTRY.yaml
   - .github/governance-source/active/source/10_REGISTRY/STAGE1_SOURCE_FACT_CONTRACTS.yaml
   - .github/governance-source/active/source/10_REGISTRY/AUDIT_CATALOG.yaml
-  current_status: ACTIVE_AUTHORIZED_PREPROMOTION
+  current_status: PROMOTION_MATERIALIZED_EXACT_HEAD_REVALIDATION_REQUIRED
   authorization_uid: USR-DIRECTIVE-20260923-WORD-YAML-PRESTAGE01-HARDENING-R1
   exact_scope:
   - WORD_DOCX_RAW_SOURCE_IMMUTABILITY
@@ -559,66 +559,6 @@ closed_governance_maintenance_work_unit_final_residual_classification_and_seal:
   - FULL_LINE_EXACT_HEAD_SUCCESS
   - PRODUCT_STAGE_CREDIT_ZERO
   legal_next_transition: WORK_UNIT_RESOLUTION_GATE
-  product_stage_credit: 0
-previous_last_work_unit_resolution_gate:
-  resolution_uid: WUR-GOV-FINAL-RESIDUAL-CLASSIFICATION-SEAL-20260923-001
-  normative_authority: false
-  result: PASS_SINGLE_LEGAL_SUCCESSOR
-  requested_primary_task_layer: GOVERNANCE_MAINTENANCE
-  resolved_work_unit_uid: WU-GOV-FINAL-RESIDUAL-CLASSIFICATION-SEAL-001
-  authorization_basis: EXPLICIT_USER_DIRECTIVE_20260923_FINAL_CLEAN_SEAL_154_FILE_INVENTORY
-  canonical_owner: governance/test/ACTIVE_STATE.yaml
-  basis:
-  - PREDECESSOR_TRIGGER_IDENTITY_DECONTAMINATION_CLOSED_AND_EXACT_HEAD_VERIFIED
-  - USER_EXPLICITLY_REQUESTED_FINAL_KEEP_ACTIVE_KEEP_NON_CURRENT_REMOVE_INVENTORY
-  - ALL_154_TRACKED_FILES_ENUMERATED
-  - VERIFIED_SOURCE_LINEAGE_MUST_REMAIN_EXACT_75_FILE_SET
-  - THREE_ACTIVE_RESIDUALS_HAVE_COMPLETE_MIGRATION_TARGETS
-  product_stage_credit: 0
-previous_last_work_unit_resolution_gate:
-  resolution_uid: WUR-GOV-TRIGGER-IDENTITY-DECONTAMINATION-20260923-001
-  normative_authority: false
-  result: PASS_SINGLE_LEGAL_SUCCESSOR
-  requested_primary_task_layer: GOVERNANCE_MAINTENANCE
-  resolved_work_unit_uid: WU-GOV-TRIGGER-IDENTITY-DECONTAMINATION-001
-  authorization_basis: EXPLICIT_USER_DIRECTIVE_20260923_CONTINUE_CLEANUP
-  canonical_owner: governance/test/ACTIVE_STATE.yaml
-  basis:
-  - PREDECESSOR_GENERATED_CI_EVIDENCE_SNAPSHOT_PURGE_CLOSED_AND_EXACT_HEAD_VERIFIED
-  - USER_EXPLICITLY_REQUESTED_CONTINUED_CLEANUP
-  - FULL_LINE_TRIGGER_BASELINE_CONTAINS_SUPERSEDED_GOVERNANCE_UID_AND_HEAD
-  - IDENTITY_TRIGGER_BASELINE_CONTAINS_STALE_DATE_ONLY
-  - ACTIVE_CONSUMER_CONTRACT_HAS_BEEN_RESOLVED
-  product_stage_credit: 0
-previous_last_work_unit_resolution_gate:
-  resolution_uid: WUR-GOV-GENERATED-CI-EVIDENCE-SNAPSHOT-PURGE-20260923-001
-  normative_authority: false
-  result: PASS_SINGLE_LEGAL_SUCCESSOR
-  requested_primary_task_layer: GOVERNANCE_MAINTENANCE
-  resolved_work_unit_uid: WU-GOV-GENERATED-CI-EVIDENCE-SNAPSHOT-PURGE-001
-  authorization_basis: EXPLICIT_USER_DIRECTIVE_20260923_CONTINUE_CLEANUP
-  canonical_owner: governance/test/ACTIVE_STATE.yaml
-  basis:
-  - PREDECESSOR_ROOT_AUDIT_RESIDUAL_PURGE_CLOSED_AND_EXACT_HEAD_VERIFIED
-  - USER_EXPLICITLY_REQUESTED_CONTINUED_CLEANUP
-  - GENERATED_EVIDENCE_FILES_ARE_RECREATED_BY_RUNTIME_PRODUCERS
-  - WORKFLOW_UPLOADS_RUNTIME_GENERATED_OUTPUTS
-  - TRACKED_SNAPSHOTS_ARE_NON_NORMATIVE_AND_REPLACEABLE
-  product_stage_credit: 0
-previous_last_work_unit_resolution_gate:
-  resolution_uid: WUR-GOV-ROOT-AUDIT-RESIDUAL-PURGE-20260923-001
-  normative_authority: false
-  result: PASS_SINGLE_LEGAL_SUCCESSOR
-  requested_primary_task_layer: GOVERNANCE_MAINTENANCE
-  resolved_work_unit_uid: WU-GOV-ROOT-AUDIT-RESIDUAL-PURGE-001
-  authorization_basis: EXPLICIT_USER_DIRECTIVE_20260923_CONTINUE_CLEANUP
-  canonical_owner: governance/test/ACTIVE_STATE.yaml
-  basis:
-  - PREDECESSOR_ACTIVE_STATE_COMPACTION_WORK_UNIT_CLOSED_AND_EXACT_HEAD_VERIFIED
-  - USER_EXPLICITLY_REQUESTED_CONTINUED_CLEANUP
-  - EXACT_LEGACY_AUDIT_INSTANCES_HAVE_NO_CURRENT_DIRECT_OR_RUNTIME_REFERENCE
-  - VERIFIED_SOURCE_PRESERVES_LEDGER_TYPE_SEMANTICS_WITHOUT_BINDING_LEGACY_INSTANCES
-  - SEMANTIC_RESIDUAL_CLASSIFICATION_POLICY_APPLIES
   product_stage_credit: 0
 previous_last_work_unit_resolution_gate:
   resolution_uid: WUR-GOV-ACTIVE-STATE-COMPACTION-20260923-001

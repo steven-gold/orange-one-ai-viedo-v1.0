@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 from __future__ import annotations
 from pathlib import Path
-import hashlib, json, re, sys, yaml
+import hashlib, json, re, sys, zipfile, xml.etree.ElementTree as ET, yaml
 
 FORBIDDEN_EXPECTATION_KEYS={"should_fail","is_invalid","expected_status","expected_result","precomputed_blocker_count","expected_pass"}
 FORBIDDEN_PARTS={"__pycache__",".next","dist","build","coverage","playwright-report","test-results","node_modules"}
@@ -112,6 +112,292 @@ def validate_blueprint_external_authority_carry(blueprint:dict, dep:dict, raw_so
             failures.append('blueprint_unresolved_external_authority_false_resolution:'+str(x.get('gap_uid')))
     return failures
 
+
+PROJECTION_CONTRACT_REL='10_REGISTRY/STAGE1_SOURCE_FACT_CONTRACTS.yaml'
+
+def _projection_contract(package_root:Path):
+    reg=load_yaml(package_root/PROJECTION_CONTRACT_REL)
+    return reg.get('structured_document_source_projection_contract') or {}
+
+def _exact_keys(obj,expected,label,failures):
+    if not isinstance(obj,dict):
+        failures.append(label+'_not_mapping'); return
+    actual=list(obj.keys())
+    if actual!=list(expected):
+        failures.append(label+'_field_order_or_schema_mismatch:expected='+str(list(expected))+':actual='+str(actual))
+
+def _hash_without(doc,key):
+    d=copy_dict=dict(doc)
+    d.pop(key,None)
+    return stable_hash_obj(d)
+
+def _local_name(qname:str)->str:
+    return qname.rsplit('}',1)[-1] if '}' in qname else qname
+
+def _content_types(z:zipfile.ZipFile):
+    defaults={}; overrides={}
+    try:
+        root=ET.fromstring(z.read('[Content_Types].xml'))
+        for el in list(root):
+            ln=_local_name(el.tag)
+            if ln=='Default':
+                defaults[str(el.attrib.get('Extension') or '').lower()]=str(el.attrib.get('ContentType') or '')
+            elif ln=='Override':
+                overrides[str(el.attrib.get('PartName') or '').lstrip('/')]=str(el.attrib.get('ContentType') or '')
+    except Exception:
+        pass
+    return defaults,overrides
+
+def derive_docx_inventory(raw_path:Path):
+    if not zipfile.is_zipfile(raw_path):
+        raise ValueError('DOCX_NOT_ZIP_PACKAGE')
+    package_parts=[]; relationships=[]; source_nodes=[]
+    with zipfile.ZipFile(raw_path,'r') as z:
+        names=sorted(n for n in z.namelist() if not n.endswith('/'))
+        defaults,overrides=_content_types(z)
+        for name in names:
+            b=z.read(name); ext=name.rsplit('.',1)[-1].lower() if '.' in name else ''
+            package_parts.append({
+              'package_part_path':name,
+              'content_type':overrides.get(name,defaults.get(ext,'')),
+              'size_bytes':len(b),
+              'part_sha256':sha256_bytes(b)
+            })
+        for name in sorted(n for n in names if n.endswith('.rels')):
+            try:
+                root=ET.fromstring(z.read(name))
+            except Exception as exc:
+                raise ValueError('DOCX_RELATIONSHIP_PARSE_FAILED:'+name+':'+str(exc))
+            for el in list(root):
+                if _local_name(el.tag)!='Relationship':
+                    continue
+                relationships.append({
+                  'relationship_part_path':name,
+                  'relationship_id':str(el.attrib.get('Id') or ''),
+                  'relationship_type':str(el.attrib.get('Type') or ''),
+                  'target':str(el.attrib.get('Target') or ''),
+                  'target_mode':str(el.attrib.get('TargetMode') or 'Internal')
+                })
+        relationships.sort(key=lambda x:(x['relationship_part_path'],x['relationship_id']))
+        global_index=0; doc_index=0
+        kind_map={'p':'PARAGRAPH','tbl':'TABLE','tr':'TABLE_ROW','tc':'TABLE_CELL','r':'TEXT_RUN','t':'TEXT','drawing':'DRAWING','hyperlink':'HYPERLINK','sectPr':'SECTION_PROPERTIES','br':'BREAK','tab':'TAB'}
+        for name in sorted(n for n in names if n.endswith('.xml') and n!='[Content_Types].xml'):
+            try:
+                root=ET.fromstring(z.read(name))
+            except Exception as exc:
+                raise ValueError('DOCX_XML_PARSE_FAILED:'+name+':'+str(exc))
+            def walk(el,path,parent_uid):
+                nonlocal global_index,doc_index
+                global_index+=1
+                q=str(el.tag); local=_local_name(q)
+                uid='SN-'+sha256_bytes((name+'\0'+path+'\0'+q).encode())[:24].upper()
+                doi=None
+                if name=='word/document.xml':
+                    doc_index+=1; doi=doc_index
+                attrs=json.dumps({str(k):str(v) for k,v in sorted(el.attrib.items())},ensure_ascii=False,separators=(',',':'))
+                base={
+                  'source_node_uid':uid,
+                  'source_node_kind':kind_map.get(local,'OOXML_ELEMENT'),
+                  'projection_order_index':global_index,
+                  'document_order_index':doi,
+                  'package_part_path':name,
+                  'xml_qname':q,
+                  'xml_path':path,
+                  'parent_source_node_uid':parent_uid,
+                  'attributes_json':attrs,
+                  'direct_text':el.text or '',
+                  'tail_text':el.tail or '',
+                  'element_xml_sha256':sha256_bytes(ET.tostring(el,encoding='utf-8'))
+                }
+                node_hash=stable_hash_obj(base)
+                row=dict(base)
+                row['node_content_sha256']=node_hash
+                row['projection_status']='PROJECTED'
+                row['unsupported_reason']=None
+                source_nodes.append(row)
+                for idx,ch in enumerate(list(el)):
+                    walk(ch,path+'/'+str(idx),uid)
+            walk(root,'/0',None)
+    return {
+      'package_parts':package_parts,
+      'relationships':relationships,
+      'source_nodes':source_nodes,
+      'package_parts_hash':stable_hash_obj(package_parts),
+      'relationships_hash':stable_hash_obj(relationships),
+      'source_nodes_hash':stable_hash_obj(source_nodes)
+    }
+
+def _projection_required_records(rawcap:dict):
+    out=[]
+    for rec in rawcap.get('records') or []:
+        fmt=str(rec.get('source_format') or '').upper()
+        target=str(rec.get('target_path') or '')
+        if fmt=='DOCX' or target.lower().endswith('.docx'):
+            out.append(rec)
+    return out
+
+def _resolve_template(template:str,source_uid:str)->str:
+    return str(template).replace('{source_uid}',str(source_uid))
+
+def validate_pre_stage_source_projection(package_root:Path,workspace:Path,rawcap:dict,capstate:dict):
+    failures=[]; contract=_projection_contract(package_root)
+    recs=_projection_required_records(rawcap)
+    result={'required':bool(recs),'failures':failures,'bindings':{}}
+    if not recs:
+        return result
+    if not contract:
+        failures.append('structured_document_projection_contract_missing'); return result
+    if capstate.get('next_step')!='CANONICAL_SOURCE_PROJECTION':
+        failures.append('raw_source_capture_next_step_not_canonical_source_projection')
+    raw_lock=contract.get('raw_source_lock') or {}
+    projc=contract.get('projection') or {}
+    reconc=contract.get('reconciliation') or {}
+    freezec=contract.get('pair_freeze') or {}
+    for rec in recs:
+        suid=str(rec.get('source_uid') or '')
+        if not suid:
+            failures.append('projection_source_uid_missing'); continue
+        if str(rec.get('source_format') or '').upper()!='DOCX':
+            failures.append('docx_source_format_explicit_identity_missing:'+suid)
+        if rec.get('projection_required') is not True:
+            failures.append('docx_projection_required_flag_missing:'+suid)
+        target=str(rec.get('target_path') or '')
+        raw=workspace/target
+        if not raw.is_file():
+            failures.append('projection_raw_source_missing:'+suid); continue
+        raw_sha=file_sha(raw); blob=git_blob_sha(raw)
+        lock_path=workspace/_resolve_template(raw_lock.get('receipt_path_template',''),suid)
+        proj_path=workspace/_resolve_template(projc.get('artifact_path_template',''),suid)
+        rec_path=workspace/_resolve_template(reconc.get('evidence_path_template',''),suid)
+        freeze_path=workspace/_resolve_template(freezec.get('receipt_path_template',''),suid)
+        for p,label in [(lock_path,'raw_source_immutability_receipt'),(proj_path,'canonical_source_projection'),(rec_path,'source_projection_reconciliation_evidence'),(freeze_path,'source_projection_freeze_receipt')]:
+            if not p.is_file(): failures.append(label+'_missing:'+suid)
+        if not all(p.is_file() for p in (lock_path,proj_path,rec_path,freeze_path)):
+            continue
+        lock=load_yaml(lock_path); projection=load_yaml(proj_path); evidence=load_yaml(rec_path); freeze=load_yaml(freeze_path)
+        _exact_keys(lock,raw_lock.get('required_field_order') or [],'raw_source_lock:'+suid,failures)
+        if lock.get('artifact_type')!='RAW_SOURCE_IMMUTABILITY_RECEIPT' or lock.get('source_uid')!=suid: failures.append('raw_source_lock_identity_invalid:'+suid)
+        if lock.get('source_sha256')!=raw_sha or lock.get('source_git_blob_sha')!=blob: failures.append('raw_source_lock_hash_mismatch:'+suid)
+        if lock.get('lock_state')!=raw_lock.get('terminal_lock_state') or lock.get('writable') is not False: failures.append('raw_source_not_immutable:'+suid)
+        if lock.get('content_hash')!=_hash_without(lock,'content_hash'): failures.append('raw_source_lock_content_hash_mismatch:'+suid)
+
+        _exact_keys(projection,projc.get('canonical_top_level_field_order') or [],'projection:'+suid,failures)
+        if projection.get('artifact_type')!='CANONICAL_SOURCE_PROJECTION' or projection.get('projection_schema_uid')!=projc.get('schema_uid') or projection.get('projection_schema_revision')!=projc.get('schema_revision'): failures.append('projection_schema_identity_mismatch:'+suid)
+        if projection.get('projection_role')!=projc.get('role') or projection.get('normative_authority') is not False: failures.append('projection_authority_role_invalid:'+suid)
+        _exact_keys(projection.get('source_identity'),projc.get('source_identity_field_order') or [],'projection_source_identity:'+suid,failures)
+        _exact_keys(projection.get('extraction_identity'),projc.get('extraction_identity_field_order') or [],'projection_extraction_identity:'+suid,failures)
+        _exact_keys(projection.get('serialization_contract'),projc.get('serialization_contract_field_order') or [],'projection_serialization:'+suid,failures)
+        sid=projection.get('source_identity') or {}
+        if sid.get('source_uid')!=suid or sid.get('source_sha256')!=raw_sha or sid.get('source_git_blob_sha')!=blob or str(sid.get('source_format') or '').upper()!='DOCX': failures.append('projection_source_identity_hash_mismatch:'+suid)
+        if sid.get('raw_source_lock_receipt_uid')!=lock.get('artifact_uid'): failures.append('projection_raw_lock_uid_mismatch:'+suid)
+        serial=projection.get('serialization_contract') or {}
+        canon=projc.get('canonical_serialization') or {}
+        for k in ('yaml_profile','encoding','line_ending','anchors_aliases','implicit_custom_tags'):
+            if serial.get(k)!=canon.get(k): failures.append('projection_serialization_contract_mismatch:'+suid+':'+k)
+
+        for row in projection.get('denominator_rows') or []: _exact_keys(row,projc.get('denominator_row_field_order') or [],'projection_denominator_row:'+suid,failures)
+        for row in projection.get('package_parts') or []: _exact_keys(row,projc.get('package_part_row_field_order') or [],'projection_package_part:'+suid,failures)
+        for row in projection.get('relationships') or []: _exact_keys(row,projc.get('relationship_row_field_order') or [],'projection_relationship:'+suid,failures)
+        for row in projection.get('source_nodes') or []:
+            _exact_keys(row,projc.get('source_node_row_field_order') or [],'projection_source_node:'+suid,failures)
+            forbidden={'responsibility','responsibility_uid','planning_domain','product_behavior','authority_satisfied','classification','canonical_owner_uid'}
+            if forbidden & set(row or {}): failures.append('projection_semantic_interpretation_field_present:'+suid)
+            if isinstance(row,dict):
+                rb=dict(row); got=rb.pop('node_content_sha256',None); rb.pop('projection_status',None); rb.pop('unsupported_reason',None)
+                if got!=stable_hash_obj(rb): failures.append('projection_source_node_content_hash_mismatch:'+str(row.get('source_node_uid')))
+                if row.get('projection_status')!='PROJECTED' or row.get('unsupported_reason') not in (None,''): failures.append('projection_source_node_not_cleanly_projected:'+str(row.get('source_node_uid')))
+
+        try:
+            expected=derive_docx_inventory(raw)
+        except Exception as exc:
+            failures.append('independent_docx_inventory_failed:'+suid+':'+str(exc)); continue
+        actual_parts=projection.get('package_parts') or []
+        actual_rels=projection.get('relationships') or []
+        actual_nodes=projection.get('source_nodes') or []
+        if actual_parts!=expected['package_parts']: failures.append('projection_package_part_inventory_mismatch:'+suid)
+        if actual_rels!=expected['relationships']: failures.append('projection_relationship_inventory_mismatch:'+suid)
+        if actual_nodes!=expected['source_nodes']: failures.append('projection_source_node_inventory_or_order_mismatch:'+suid)
+        den=projection.get('denominator_rows') or []
+        expected_den=[
+          {'denominator_uid':'DEN-PACKAGE-PART','denominator_type':'PACKAGE_PART','required_count':len(expected['package_parts']),'projected_count':len(actual_parts)},
+          {'denominator_uid':'DEN-RELATIONSHIP','denominator_type':'RELATIONSHIP','required_count':len(expected['relationships']),'projected_count':len(actual_rels)},
+          {'denominator_uid':'DEN-XML-NODE','denominator_type':'XML_NODE','required_count':len(expected['source_nodes']),'projected_count':len(actual_nodes)}
+        ]
+        if den!=expected_den: failures.append('projection_denominator_rows_mismatch:'+suid)
+        ph=_hash_without(projection,'projection_content_hash')
+        if projection.get('projection_content_hash')!=ph: failures.append('projection_content_hash_mismatch:'+suid)
+        if projection.get('status')!='PROJECTION_COMPLETE': failures.append('projection_status_not_complete:'+suid)
+
+        _exact_keys(evidence,reconc.get('required_field_order') or [],'projection_reconciliation:'+suid,failures)
+        _exact_keys(evidence.get('source_inventory_hashes'),reconc.get('source_inventory_hashes_field_order') or [],'projection_reconciliation_inventory_hashes:'+suid,failures)
+        _exact_keys(evidence.get('zero_loss_counts'),reconc.get('zero_loss_count_field_order') or [],'projection_reconciliation_zero_loss_counts:'+suid,failures)
+        if evidence.get('validator_uid')!=reconc.get('validator_uid') or evidence.get('source_uid')!=suid: failures.append('projection_reconciliation_identity_invalid:'+suid)
+        if evidence.get('raw_source_sha256')!=raw_sha or evidence.get('projection_uid')!=projection.get('artifact_uid') or evidence.get('projection_content_hash')!=ph: failures.append('projection_reconciliation_hash_binding_mismatch:'+suid)
+        if evidence.get('projection_schema_uid')!=projc.get('schema_uid') or evidence.get('projection_schema_revision')!=projc.get('schema_revision'): failures.append('projection_reconciliation_schema_binding_mismatch:'+suid)
+        ih=evidence.get('source_inventory_hashes') or {}
+        if ih!={'package_parts_hash':expected['package_parts_hash'],'relationships_hash':expected['relationships_hash'],'source_nodes_hash':expected['source_nodes_hash']}: failures.append('projection_reconciliation_inventory_hash_mismatch:'+suid)
+        zero=evidence.get('zero_loss_counts') or {}
+        if any(v!=0 for v in zero.values()): failures.append('projection_reconciliation_nonzero_mismatch:'+suid)
+        if evidence.get('reverse_trace')!='COMPLETE' or evidence.get('unsupported_count')!=0 or evidence.get('result')!='PASS': failures.append('projection_reconciliation_not_pass:'+suid)
+        eh=_hash_without(evidence,'evidence_content_hash')
+        if evidence.get('evidence_content_hash')!=eh: failures.append('projection_reconciliation_evidence_hash_mismatch:'+suid)
+
+        _exact_keys(freeze,freezec.get('required_field_order') or [],'projection_freeze:'+suid,failures)
+        denom_hash=stable_hash_obj(expected_den)
+        pair_hash=sha256_bytes((raw_sha+'\n'+ph+'\n'+eh+'\n'+str(projc.get('schema_uid'))+'\n'+str(projc.get('schema_revision'))+'\n'+denom_hash+'\n').encode())
+        expected_freeze={
+          'schema_version':1,'artifact_uid':freeze.get('artifact_uid'),'artifact_type':'SOURCE_PROJECTION_FREEZE_RECEIPT',
+          'source_uid':suid,'raw_source_sha256':raw_sha,'raw_source_git_blob_sha':blob,
+          'projection_uid':projection.get('artifact_uid'),'projection_content_hash':ph,
+          'projection_schema_uid':projc.get('schema_uid'),'projection_schema_revision':projc.get('schema_revision'),
+          'reconciliation_evidence_uid':evidence.get('artifact_uid'),'reconciliation_evidence_hash':eh,
+          'source_denominator_hash':denom_hash,'pair_hash':pair_hash,'lock_state':freezec.get('lock_state'),
+          'raw_source_writable':False,'projection_writable':False,'mutation_disposition':freezec.get('mutation_disposition'),
+          'next_step':freezec.get('next_step'),'status':freezec.get('status')
+        }
+        for k,v in expected_freeze.items():
+            if k!='artifact_uid' and freeze.get(k)!=v: failures.append('projection_freeze_binding_mismatch:'+suid+':'+k)
+        result['bindings'][suid]={
+          'projection_uid':projection.get('artifact_uid'),'projection_content_hash':ph,
+          'pair_hash':pair_hash,'raw_source_sha256':raw_sha,
+          'source_node_uids':[x.get('source_node_uid') for x in expected['source_nodes']],
+          'freeze_receipt_ref':freeze_path.relative_to(workspace).as_posix()
+        }
+    return result
+
+def validate_projection_stage1_consumption(struct:dict,projection_result:dict,workspace:Path):
+    failures=[]
+    if not projection_result.get('required'): return failures
+    sources={x.get('source_uid'):x for x in (struct.get('sources') or []) if isinstance(x,dict) and x.get('source_uid')}
+    contract=projection_result
+    for suid,b in (projection_result.get('bindings') or {}).items():
+        src=sources.get(suid)
+        if not src:
+            failures.append('projection_source_missing_from_source_structure:'+suid); continue
+        if src.get('source_projection_uid')!=b.get('projection_uid') or src.get('source_projection_content_hash')!=b.get('projection_content_hash') or src.get('source_projection_pair_hash')!=b.get('pair_hash'):
+            failures.append('source_structure_projection_binding_mismatch:'+suid)
+        rows=src.get('projection_node_dispositions')
+        if not isinstance(rows,list):
+            failures.append('projection_node_dispositions_missing:'+suid); continue
+        expected=set(b.get('source_node_uids') or []); seen=set()
+        for row in rows:
+            if not isinstance(row,dict):
+                failures.append('projection_node_disposition_not_mapping:'+suid); continue
+            keys=['projection_source_node_uid','disposition','source_structure_node_uids','evidence_ref']
+            if list(row.keys())!=keys: failures.append('projection_node_disposition_schema_or_order_mismatch:'+suid)
+            uid=row.get('projection_source_node_uid')
+            if uid in seen: failures.append('projection_node_disposition_duplicate:'+str(uid))
+            if uid: seen.add(uid)
+            if row.get('disposition') not in {'SEMANTIC_SOURCE_NODE','STRUCTURAL_SUPPORT','NON_SEMANTIC_WITH_EVIDENCE'}: failures.append('projection_node_disposition_invalid:'+str(uid))
+            if row.get('disposition')=='NON_SEMANTIC_WITH_EVIDENCE':
+                ev=row.get('evidence_ref')
+                if not ev or not (workspace/str(ev)).is_file(): failures.append('projection_node_nonsemantic_evidence_missing:'+str(uid))
+            elif not (row.get('source_structure_node_uids') or []):
+                failures.append('projection_node_structure_lineage_missing:'+str(uid))
+        if seen!=expected:
+            failures.append('projection_node_disposition_denominator_mismatch:'+suid+':missing='+str(sorted(expected-seen))+':extra='+str(sorted(seen-expected)))
+    return failures
+
 def validate(package_root:Path,workspace:Path):
     failures=[]; package_root=package_root.resolve(); workspace=workspace.resolve(); nh=normative_hash(package_root)
     def need(rel,label):
@@ -126,8 +412,13 @@ def validate(package_root:Path,workspace:Path):
     manifest=need('CURRENT_RUN_MANIFEST.yaml','current_run_manifest')
     if capstate:
         if capstate.get('state')!='CAPTURE_CLOSED': failures.append('raw_source_capture_not_closed')
-        if capstate.get('next_step')!='SOURCE_STRUCTURE_ENUMERATION': failures.append('raw_source_capture_next_step_not_exact_source_structure_enumeration')
+        _pr=_projection_required_records(rawcap)
+        _expected_next='CANONICAL_SOURCE_PROJECTION' if _pr else 'SOURCE_STRUCTURE_ENUMERATION'
+        if capstate.get('next_step')!=_expected_next: failures.append('raw_source_capture_next_step_mismatch:'+str(capstate.get('next_step'))+':expected='+_expected_next)
         if capstate.get('recapture_allowed') is not False: failures.append('closed_raw_source_capture_still_writable')
+    projection_result=validate_pre_stage_source_projection(package_root,workspace,rawcap,capstate)
+    failures.extend(projection_result.get('failures') or [])
+    failures.extend(validate_projection_stage1_consumption(struct,projection_result,workspace))
     if rawcap:
         if rawcap.get('artifact_type')!='RAW_SOURCE_REFERENCE_MANIFEST': failures.append('raw_source_manifest_type_mismatch')
         if rawcap.get('status')!='CURRENT_RAW_SOURCE_CAPTURE': failures.append('raw_source_manifest_not_current')
@@ -170,6 +461,13 @@ def validate(package_root:Path,workspace:Path):
         for x in sorted(set(declared)-set(actual_files)): failures.append(f'manifest_missing_physical:{x}')
 
     raw_sources={s.get('source_uid'):s for s in (sm.get('raw_sources') or []) if s.get('source_uid')}
+    for _suid,_bind in (projection_result.get('bindings') or {}).items():
+        _rs=raw_sources.get(_suid)
+        if not _rs:
+            failures.append('projection_source_missing_from_segment_map:'+_suid)
+        else:
+            if _rs.get('source_projection_uid')!=_bind.get('projection_uid') or _rs.get('source_projection_content_hash')!=_bind.get('projection_content_hash') or _rs.get('source_projection_pair_hash')!=_bind.get('pair_hash'):
+                failures.append('segment_map_projection_binding_mismatch:'+_suid)
     if rawcap:
         cap_by_uid={x.get('source_uid'):x for x in (rawcap.get('records') or []) if x.get('source_uid')}
         if set(cap_by_uid)!=set(raw_sources): failures.append('raw_capture_segment_map_source_set_mismatch')

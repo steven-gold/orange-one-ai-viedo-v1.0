@@ -4,7 +4,7 @@ artifact_type: REFERENCE_RULE_REGISTRY
 status: CURRENT_CANDIDATE
 canonical_path: 10_REGISTRY/REFERENCE_RULE_REGISTRY.yaml
 owner_uid: OWNER-GOVERNANCE-REFERENCE-SEMANTICS
-governance_revision: v2.2.17-typography-computed-metrics-hardening
+governance_revision: v2.2.18-word-yaml-prestage01-source-fidelity-hardening
 normative_section_uids:
 - WEB-GOV-01-S005
 - WEB-GOV-01-S006-03
@@ -108,6 +108,10 @@ stage_reference_rules:
     - WEB-GOV-03-S071
     - WEB-GOV-04-S085
     - WEB-GOV-01-S088
+    - WEB-GOV-01-S090
+    - WEB-GOV-02-S077
+    - WEB-GOV-03-S072
+    - WEB-GOV-04-S087
   STAGE-02:
     rule_uid: REFRULE-STAGE-02
     exact_required_normative_section_uids:
@@ -371,6 +375,9 @@ common_bundle_reference_rules:
     - WEB-GOV-03-S071
     - WEB-GOV-01-S089
     - WEB-GOV-02-S076
+    - WEB-GOV-01-S090
+    - WEB-GOV-02-S077
+    - WEB-GOV-03-S072
   BUNDLE-GOV-AUDIT-BASE:
     rule_uid: REFRULE-BUNDLE-03
     exact_section_uids:
@@ -385,6 +392,7 @@ common_bundle_reference_rules:
     - WEB-GOV-04-S084
     - WEB-GOV-04-S085
     - WEB-GOV-04-S086
+    - WEB-GOV-04-S087
 validator_identities:
 - validator_uid: VAL-GOV-001
   canonical_name: ACCEPTANCE_BLUEPRINT_GUARD
@@ -687,6 +695,11 @@ audit_type_identities:
   denominator_eligible: true
 - audit_type_uid: AUDTYPE-GOV-014
   canonical_name: CROSS_STAGE_MATERIALIZATION_AND_CONSUMER_READINESS
+  allowed_stage_uids:
+  - PREFORMAL
+  denominator_eligible: true
+- audit_type_uid: AUDTYPE-GOV-015
+  canonical_name: STRUCTURED_DOCUMENT_CANONICAL_PROJECTION_ZERO_LOSS_RECONCILIATION
   allowed_stage_uids:
   - PREFORMAL
   denominator_eligible: true
