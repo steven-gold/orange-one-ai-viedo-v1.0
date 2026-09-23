@@ -104,13 +104,13 @@ specification_mutation_safety:
   ordinary_mid_stage_specification_mutation: BLOCK
   stage_end_consolidated_promotion_requires_new_explicit_directive: true
   execution_context_lock_required: true
-status: WORD_YAML_CROSS_PAGE_PORTABILITY_REGRESSION_SUCCESSOR_PROMOTED_EXACT_HEAD_REVALIDATION_REQUIRED
-next_action: RUN_EXACT_HEAD_WORD_YAML_CROSS_PAGE_PORTABILITY_REGRESSION_VALIDATION
+status: WORD_CONTENT_BINARY_SOURCE_PROJECTION_GOVERNANCE_MAINTENANCE_ACTIVE
+next_action: PROMOTE_WORD_CONTENT_BINARY_SOURCE_PROJECTION_HARDENING
 resume_control:
-  current_resume_point: WORD_YAML_CROSS_PAGE_PORTABILITY_REGRESSION_SUCCESSOR_PROMOTED_EXACT_HEAD_REVALIDATION_REQUIRED
-  current_work_unit_uid: WU-GOV-WORD-YAML-PRESTAGE01-HARDENING-001
+  current_resume_point: WORD_CONTENT_BINARY_SOURCE_PROJECTION_GOVERNANCE_MAINTENANCE_ACTIVE
+  current_work_unit_uid: WU-GOV-WORD-CONTENT-BINARY-SOURCE-PROJECTION-001
   current_owner: SOURCE_INTAKE_STAGE1_GOVERNANCE
-  exact_next_action: RUN_EXACT_HEAD_WORD_YAML_CROSS_PAGE_PORTABILITY_REGRESSION_VALIDATION
+  exact_next_action: PROMOTE_WORD_CONTENT_BINARY_SOURCE_PROJECTION_HARDENING
   product_resume_preserved: CORE01_STAGE01_ACTIVE_PREEXECUTION_GOVERNANCE_LOAD_REQUIRED
   interrupted_test_resume_preserved: CORE01_SOURCE_TEST_BUGFIX_AND_CONTENT_INTEGRITY_FULL_LIFECYCLE_R2_ACTIVE
   reentry_owner_capability: SOURCE_INTAKE_BASE_BLUEPRINT
@@ -119,7 +119,7 @@ resume_control:
   cleanup_receipt_ref: governance/test/history/cleanup/CORE01_STAGE01_STAGE03_CLEAN_RESET_R1.yaml
   human_visual_review_allowed: false
   product_execution_allowed: false
-  product_execution_block_reason: WORD_YAML_PROJECTION_RECONCILIATION_NOT_YET_EXECUTED
+  product_execution_block_reason: WORD_CONTENT_BINARY_SOURCE_PROJECTION_GOVERNANCE_NOT_YET_PROMOTED
   website_construction_allowed: false
   deployment_allowed: false
 governance_revision_transition:
@@ -178,11 +178,11 @@ current_governance_review_decision:
   machine_generated_approval: false
   product_stage_credit: 0
 current_primary_task_layer: GOVERNANCE_MAINTENANCE
-current_primary_task_authorization_uid: USR-DIRECTIVE-20260923-WORD-YAML-CROSS-PAGE-PORTABILITY-REGRESSION-R3
+current_primary_task_authorization_uid: USR-DIRECTIVE-20260923-WORD-CONTENT-BINARY-SOURCE-PROJECTION-R4
 current_primary_task_product_stage_credit: 0
 active_work_unit:
-  work_unit_uid: WU-GOV-WORD-YAML-PRESTAGE01-HARDENING-001
-  canonical_name: WORD_YAML_PRE_STAGE01_PROJECTION_RECONCILIATION_GOVERNANCE_HARDENING
+  work_unit_uid: WU-GOV-WORD-CONTENT-BINARY-SOURCE-PROJECTION-001
+  canonical_name: WORD_CONTENT_READINESS_BINARY_SOURCE_PROJECTION_GOVERNANCE_HARDENING
   primary_task_layer: GOVERNANCE_MAINTENANCE
   semantic_capability: SOURCE_INTAKE_STAGE1_GOVERNANCE
   canonical_owner_refs:
@@ -190,29 +190,31 @@ active_work_unit:
   - .github/governance-source/active/source/12_DOCS/mother-spec/02_IMPLEMENTATION_DELIVERY_STANDARD.md
   - .github/governance-source/active/source/12_DOCS/mother-spec/03_EXECUTION_CONTROL_STANDARD.md
   - .github/governance-source/active/source/12_DOCS/mother-spec/04_AUDIT_PROGRESS_STANDARD.md
-  - .github/governance-source/active/source/10_REGISTRY/GOVERNANCE_LIFECYCLE_STAGE_REGISTRY.yaml
   - .github/governance-source/active/source/10_REGISTRY/STAGE1_SOURCE_FACT_CONTRACTS.yaml
+  - .github/governance-source/active/source/10_REGISTRY/GOVERNANCE_LIFECYCLE_STAGE_REGISTRY.yaml
   - .github/governance-source/active/source/10_REGISTRY/AUDIT_CATALOG.yaml
-  current_status: PROMOTION_MATERIALIZED_EXACT_HEAD_REVALIDATION_REQUIRED
-  authorization_uid: USR-DIRECTIVE-20260923-WORD-YAML-CROSS-PAGE-PORTABILITY-REGRESSION-R3
+  - governance/specifications/current/EXECUTION_CYCLE_CONTROL.yaml
+  - governance/ci/build_docx_source_projection.py
+  current_status: ACTIVE_AUTHORIZED_PREPROMOTION_R4
+  authorization_uid: USR-DIRECTIVE-20260923-WORD-CONTENT-BINARY-SOURCE-PROJECTION-R4
   exact_scope:
-  - WORD_DOCX_RAW_SOURCE_IMMUTABILITY
-  - CANONICAL_YAML_PROJECTION
+  - SOURCE_DOCUMENT_CONTENT_READINESS_AUDIT
+  - RAW_WORD_POST_AUDIT_IMMUTABILITY
+  - FROZEN_BINARY_SOURCE_PART_MATERIALIZATION
   - WORD_YAML_ZERO_LOSS_RECONCILIATION
-  - PRE_STAGE01_ENTRY_GATE
-  - AUDIT_DENOMINATOR_AND_EVIDENCE
-  - MACHINE_VALIDATOR_AND_NEGATIVE_REGRESSION
-  - FIXED_SCHEMA_DYNAMIC_PAGE_CONTENT
-  - NO_PRODUCT_PAGE_FUNCTION_CONTROL_OR_CONTENT_COUNT_HARDCODING
-  - CROSS_PAGE_CONTENT_SHAPE_PORTABILITY_REGRESSION
-  - CROSS_PAGE_PORTABILITY_REGRESSION_MATERIALIZATION_CLOSURE
+  - STAGE01_FROZEN_BINARY_SEMANTIC_ACCESS
+  - PRODUCT_NEUTRAL_DOCX_PROJECTION_PRODUCER
   product_data_mutation_allowed: false
   product_authority_mutation_allowed: false
   product_stage_credit: 0
-  current_status_after_successor_promotion: REVALIDATION_REQUIRED
-  governance_policy_consumer_revalidation_required: true
-  product_stage_revalidation_required: false
-  product_stage_revalidation_credit: 0
+  predecessor_governance_validation:
+    predecessor_governance_uid: GOV-REV-20260923-WORD-YAML-CROSS-PAGE-PORTABILITY-REGRESSION-CLOSURE
+    exact_head_sha: a16a5cd28e23dc9f173f2631f2bf802258ab043a
+    full_line_run_id: 35819049861
+    selected_profile_run_id: 35819049901
+    branch_guard_run_id: 35819049875
+    fresh_replay_run_id: 35819049908
+    status: CLOSED_EXACT_HEAD_VALIDATED_NO_PRODUCT_CREDIT
 word_source_snapshot_for_future_projection:
   normative_authority: false
   role: SOURCE_CONTEXT_ONLY_NOT_ACTIVE_WORK_UNIT
