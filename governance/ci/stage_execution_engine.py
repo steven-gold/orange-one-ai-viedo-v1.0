@@ -419,7 +419,9 @@ def execute_active(stage_uid):
     adapter=(adapters.get('stages') or {}).get(stage_uid) or {}
     declared=str(adapter.get('effectful_executor_owner') or '')
     if declared!=owner: fail('ACTIVE_STAGE_EXECUTOR_OWNER_NOT_CANONICAL_ADAPTER:'+owner)
-    stepwise=adapter.get('stepwise_execution_contract')
+    ref=str(adapter.get('stepwise_execution_contract_ref') or '')
+    if ref!='stepwise_execution_defaults': fail('ACTIVE_STAGE_STEPWISE_EXECUTION_CONTRACT_REF_INVALID:'+stage_uid)
+    stepwise=adapters.get('stepwise_execution_defaults')
     if not isinstance(stepwise,dict): fail('ACTIVE_STAGE_STEPWISE_EXECUTION_CONTRACT_MISSING:'+stage_uid)
     if stepwise.get('mode')!='OPERATION_BY_OPERATION': fail('ACTIVE_STAGE_STEPWISE_EXECUTION_MODE_INVALID:'+stage_uid)
     if stepwise.get('bulk_stage_materialization')!='FORBIDDEN': fail('ACTIVE_STAGE_BULK_MATERIALIZATION_NOT_FORBIDDEN:'+stage_uid)
