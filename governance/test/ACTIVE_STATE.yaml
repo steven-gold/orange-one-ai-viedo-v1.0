@@ -104,13 +104,13 @@ specification_mutation_safety:
   ordinary_mid_stage_specification_mutation: BLOCK
   stage_end_consolidated_promotion_requires_new_explicit_directive: true
   execution_context_lock_required: true
-status: FINAL_RESIDUAL_CLASSIFICATION_AND_SEAL_ACTIVE
-next_action: MIGRATE_FINAL_ACTIVE_RESIDUALS_AND_VALIDATE_154_FILE_INVENTORY
+status: FINAL_RESIDUAL_CLASSIFICATION_AND_SEAL_MUTATED_VALIDATION_REQUIRED
+next_action: RUN_FINAL_154_FILE_SEAL_EXACT_HEAD_VALIDATION
 resume_control:
-  current_resume_point: FINAL_RESIDUAL_CLASSIFICATION_AND_SEAL_ACTIVE
+  current_resume_point: FINAL_RESIDUAL_CLASSIFICATION_AND_SEAL_MUTATED_VALIDATION_REQUIRED
   current_work_unit_uid: WU-GOV-FINAL-RESIDUAL-CLASSIFICATION-SEAL-001
   current_owner: governance/test/ACTIVE_STATE.yaml
-  exact_next_action: MIGRATE_FINAL_ACTIVE_RESIDUALS_AND_VALIDATE_154_FILE_INVENTORY
+  exact_next_action: RUN_FINAL_154_FILE_SEAL_EXACT_HEAD_VALIDATION
   product_resume_preserved: CORE01_STAGE01_STAGE03_CLEAN_BASELINE_READY_FRESH_STAGE01_WUR_REQUIRED
   interrupted_test_resume_preserved: CORE01_SOURCE_TEST_BUGFIX_AND_CONTENT_INTEGRITY_FULL_LIFECYCLE_R2_ACTIVE
   reentry_owner_capability: SOURCE_INTAKE_BASE_BLUEPRINT
@@ -388,7 +388,7 @@ active_work_unit:
   work_unit_uid: WU-GOV-FINAL-RESIDUAL-CLASSIFICATION-SEAL-001
   canonical_name: FINAL_154_FILE_RESIDUAL_CLASSIFICATION_AND_CLEAN_SEAL
   primary_task_layer: GOVERNANCE_MAINTENANCE
-  current_status: ACTIVE
+  current_status: MUTATION_COMMITTED_VALIDATION_REQUIRED
   authorization_basis: EXPLICIT_USER_DIRECTIVE_20260923_FINAL_CLEAN_SEAL_154_FILE_INVENTORY
   canonical_policy_owner: governance/specifications/current/EXECUTION_CYCLE_CONTROL.yaml
   state_owner: governance/test/ACTIVE_STATE.yaml

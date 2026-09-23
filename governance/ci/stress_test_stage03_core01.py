@@ -174,4 +174,4 @@ for f in findings:
 if result != 'PASS':
     raise SystemExit(1)
 
-# stage03-high-pressure-trigger: v2.2.15-human-review-pending-r3
+# stage03-high-pressure-trigger: current-governance-human-review-pending
