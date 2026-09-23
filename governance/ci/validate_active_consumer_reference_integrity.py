@@ -189,6 +189,8 @@ def stage_boundary_semantic_findings(path_rel: str, text: str) -> list[str]:
     elif path_rel == FRESH_REPLAY_WORKFLOW:
         execute_marker = "  execute-fresh-replay:"
         segment = text.split(execute_marker, 1)[1] if execute_marker in text else ""
+        if "--cleanup-boundary-self-test" in text:
+            findings.append("OBSOLETE_FRESH_REPLAY_CLI_OPTION:--cleanup-boundary-self-test")
         if not segment:
             findings.append("EXECUTE_JOB_MISSING")
         else:
