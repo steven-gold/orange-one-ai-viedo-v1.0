@@ -514,6 +514,8 @@ def main():
         self_test()
         return
     if a.execute:
+        if os.environ.get("ACPOS_COMMON_STAGE_ENGINE_EXECUTION") != "1":
+            raise RuntimeError("DIRECT_EFFECTFUL_INVOCATION_FORBIDDEN_USE_COMMON_STAGE_ENGINE")
         execute()
         return
     if a.bind_provenance:
