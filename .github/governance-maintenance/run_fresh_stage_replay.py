@@ -272,6 +272,8 @@ def main() -> None:
         return
 
     ctx = resolve_execution_context()
+    if not any(x in sys.argv for x in ("--print-context-json", "--print-context-github-output")) and "--execute" not in sys.argv:
+        raise RuntimeError("DIRECT_EFFECTFUL_INVOCATION_FORBIDDEN_USE_COMMON_STAGE_ENGINE")
     if "--print-context-json" in sys.argv:
         print(json.dumps(ctx, ensure_ascii=False, indent=2))
         return
