@@ -104,13 +104,13 @@ specification_mutation_safety:
   ordinary_mid_stage_specification_mutation: BLOCK
   stage_end_consolidated_promotion_requires_new_explicit_directive: true
   execution_context_lock_required: true
-status: WORD_CONTENT_BINARY_SOURCE_PROJECTION_SUCCESSOR_PROMOTED_EXACT_HEAD_REVALIDATION_REQUIRED
-next_action: RUN_EXACT_HEAD_WORD_CONTENT_BINARY_SOURCE_PROJECTION_VALIDATION
+status: WORD_PROJECTION_NEXTSTEP_CONSUMER_SYNC_GOVERNANCE_MAINTENANCE_ACTIVE
+next_action: PROMOTE_WORD_PROJECTION_NEXTSTEP_CONSUMER_SYNC_HARDENING
 resume_control:
-  current_resume_point: WORD_CONTENT_BINARY_SOURCE_PROJECTION_SUCCESSOR_PROMOTED_EXACT_HEAD_REVALIDATION_REQUIRED
-  current_work_unit_uid: WU-GOV-WORD-CONTENT-BINARY-SOURCE-PROJECTION-001
+  current_resume_point: WORD_PROJECTION_NEXTSTEP_CONSUMER_SYNC_GOVERNANCE_MAINTENANCE_ACTIVE
+  current_work_unit_uid: WU-GOV-WORD-PROJECTION-NEXTSTEP-CONSUMER-SYNC-001
   current_owner: SOURCE_INTAKE_STAGE1_GOVERNANCE
-  exact_next_action: RUN_EXACT_HEAD_WORD_CONTENT_BINARY_SOURCE_PROJECTION_VALIDATION
+  exact_next_action: PROMOTE_WORD_PROJECTION_NEXTSTEP_CONSUMER_SYNC_HARDENING
   product_resume_preserved: CORE01_STAGE01_ACTIVE_PREEXECUTION_GOVERNANCE_LOAD_REQUIRED
   interrupted_test_resume_preserved: CORE01_SOURCE_TEST_BUGFIX_AND_CONTENT_INTEGRITY_FULL_LIFECYCLE_R2_ACTIVE
   reentry_owner_capability: SOURCE_INTAKE_BASE_BLUEPRINT
@@ -119,7 +119,7 @@ resume_control:
   cleanup_receipt_ref: governance/test/history/cleanup/CORE01_STAGE01_STAGE03_CLEAN_RESET_R1.yaml
   human_visual_review_allowed: false
   product_execution_allowed: false
-  product_execution_block_reason: CORE01_WORD_CONTENT_AUDIT_AND_PROJECTION_NOT_YET_MATERIALIZED
+  product_execution_block_reason: CORE01_WORD_PROJECTION_BLOCKED_BY_NEXTSTEP_CONSUMER_SYNC
   website_construction_allowed: false
   deployment_allowed: false
 governance_revision_transition:
@@ -178,30 +178,35 @@ current_governance_review_decision:
   machine_generated_approval: false
   product_stage_credit: 0
 current_primary_task_layer: GOVERNANCE_MAINTENANCE
-current_primary_task_authorization_uid: USR-DIRECTIVE-20260923-WORD-CONTENT-BINARY-SOURCE-PROJECTION-R4
+current_primary_task_authorization_uid: USR-DIRECTIVE-20260923-WORD-PROJECTION-NEXTSTEP-CONSUMER-SYNC-R5
 current_primary_task_product_stage_credit: 0
 active_work_unit:
-  work_unit_uid: WU-GOV-WORD-CONTENT-BINARY-SOURCE-PROJECTION-001
-  canonical_name: WORD_CONTENT_READINESS_BINARY_SOURCE_PROJECTION_GOVERNANCE_HARDENING
+  work_unit_uid: WU-GOV-WORD-PROJECTION-NEXTSTEP-CONSUMER-SYNC-001
+  canonical_name: WORD_PROJECTION_NEXTSTEP_CONSUMER_SYNC_GOVERNANCE_HARDENING
   primary_task_layer: GOVERNANCE_MAINTENANCE
   semantic_capability: SOURCE_INTAKE_STAGE1_GOVERNANCE
   canonical_owner_refs:
-  - .github/governance-source/active/source/12_DOCS/mother-spec/01_BLUEPRINT_DESIGN_GOVERNANCE.md
-  - .github/governance-source/active/source/12_DOCS/mother-spec/02_IMPLEMENTATION_DELIVERY_STANDARD.md
-  - .github/governance-source/active/source/12_DOCS/mother-spec/03_EXECUTION_CONTROL_STANDARD.md
-  - .github/governance-source/active/source/12_DOCS/mother-spec/04_AUDIT_PROGRESS_STANDARD.md
   - .github/governance-source/active/source/10_REGISTRY/STAGE1_SOURCE_FACT_CONTRACTS.yaml
-  current_status: PROMOTION_MATERIALIZED_EXACT_HEAD_REVALIDATION_REQUIRED
-  authorization_uid: USR-DIRECTIVE-20260923-WORD-CONTENT-BINARY-SOURCE-PROJECTION-R4
+  - .github/governance-source/active/source/09_TESTS/governance/governance_stage1_pipeline_guard.py
+  - .github/governance-source/active/source/09_TESTS/governance/test_stage1_source_to_blueprint_minimal_control.py
+  - governance/ci/build_docx_source_projection.py
+  current_status: ACTIVE_AUTHORIZED_PREPROMOTION_R5
+  authorization_uid: USR-DIRECTIVE-20260923-WORD-PROJECTION-NEXTSTEP-CONSUMER-SYNC-R5
   exact_scope:
-  - SOURCE_DOCUMENT_CONTENT_READINESS_AUDIT
-  - RAW_WORD_POST_AUDIT_IMMUTABILITY
-  - FROZEN_BINARY_SOURCE_PART_MATERIALIZATION
-  - STAGE01_FROZEN_BINARY_SEMANTIC_ACCESS
-  - PRODUCT_NEUTRAL_DOCX_PROJECTION_PRODUCER
+  - CANONICAL_STRUCTURED_DOCUMENT_NEXTSTEP_CONSUMER_SYNC
+  - PRODUCER_VALIDATOR_FIXTURE_ALIGNMENT
+  - LEGACY_NEXTSTEP_NEGATIVE_REGRESSION
   product_data_mutation_allowed: false
   product_authority_mutation_allowed: false
   product_stage_credit: 0
+  predecessor_governance_validation:
+    predecessor_governance_uid: GOV-REV-20260923-WORD-CONTENT-BINARY-SOURCE-PROJECTION-HARDENING
+    exact_head_sha: cc22d38f1de1935dbf0fa9a677f9ebc27c4dc787
+    full_line_run_id: 35824825165
+    selected_profile_run_id: 35824825263
+    branch_guard_run_id: 35824825280
+    fresh_replay_run_id: 35824825217
+    status: CLOSED_EXACT_HEAD_VALIDATED_NO_PRODUCT_CREDIT
 word_source_snapshot_for_future_projection:
   normative_authority: false
   role: SOURCE_CONTEXT_ONLY_NOT_ACTIVE_WORK_UNIT

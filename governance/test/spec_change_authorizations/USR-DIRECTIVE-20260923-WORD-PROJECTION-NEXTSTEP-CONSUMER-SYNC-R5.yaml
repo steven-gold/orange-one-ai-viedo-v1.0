@@ -1,0 +1,44 @@
+schema_version: 1
+artifact_type: SPECIFICATION_CHANGE_AUTHORIZATION_RECEIPT
+normative_authority: false
+authorization_uid: USR-DIRECTIVE-20260923-WORD-PROJECTION-NEXTSTEP-CONSUMER-SYNC-R5
+authority_source: EXPLICIT_USER_DIRECTIVE
+directive_text: 依照規劃把該補的補齊、該刪的刪除；在 CORE Word 正式 Word-to-YAML 之前先修正實測發現的 canonical structured-document next-step producer/validator/fixture drift，禁止帶著已知治理 consumer 錯誤進入產品批次。
+status: APPROVED_FOR_EXACT_SCOPE
+single_use: true
+ai_may_expand_scope: false
+ai_may_reuse_authorization: false
+current_governance_uid: GOV-REV-20260923-WORD-CONTENT-BINARY-SOURCE-PROJECTION-HARDENING
+baseline_commit_sha: 694ec9c18a404c005e326d126383941b9e04ff23
+baseline_tree_sha: 0e080a0cd1602add97511f49b36c97ad8390a010
+governance_mutation_boundary: OUTSIDE_GOVERNED_EXECUTION_CYCLE
+pre_write_context_verification:
+  relevant_scope_read_complete: true
+  canonical_owner_resolution_complete: true
+  existing_semantics_comparison_complete: true
+  duplicate_search_complete: true
+  conflict_search_complete: true
+  second_system_search_complete: true
+  gap_proven_before_write: true
+  reviewed_authority_ref_count: 8
+  reviewed_existing_owner_ref_count: 6
+  write_disposition: MODIFY_EXISTING_CANONICAL_OWNER
+  comparison_result: NO_UNRESOLVED_DUPLICATE_CONFLICT_OR_SECOND_SYSTEM
+exact_scope:
+  allowed:
+  - FIX_STAGE1_PROJECTION_NEXTSTEP_CONSUMER_TO_CANONICAL_CONTRACT
+  - SYNCHRONIZE_DOCX_PROJECTION_PRODUCER_VALIDATOR_FIXTURE_NEXTSTEP
+  - ADD_LEGACY_CANONICAL_SOURCE_PROJECTION_NEXTSTEP_NEGATIVE_REGRESSION
+  - UPDATE_STAGE1_REGRESSION_CANONICAL_DENOMINATOR
+  - ASSIGN_NEW_IMMUTABLE_GOVERNANCE_UID_AND_DISPLAY_VERSION
+  - RUN_PORTABILITY_SELECTED_PROFILE_FULL_LINE_EXACT_HEAD_VALIDATION
+  forbidden:
+  - MODIFY_CORE01_WORD
+  - MATERIALIZE_CORE01_PRODUCT_PROJECTION_BEFORE_SUCCESSOR_EXACT_HEAD
+  - PRODUCT_STAGE01_EXECUTION
+  - PRODUCT_STAGE_CREDIT
+  - WEBSITE_CONSTRUCTION
+  - DEPLOYMENT
+product_stage_credit: 0
+duplicate_and_residual_cleanup_required: true
+one_canonical_execution_closure_model_required: true
