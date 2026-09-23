@@ -36,7 +36,6 @@ topology:
   vertical_concurrency: 1
   page_uid_sticky_from_stage: STAGE-05
   page_uid_sticky_through_stage: STAGE-11
-stages:
 universal_stage_stepwise_execution_contract:
   authority_ref: WEB-GOV-03-S062A
   applies_to_all_registered_stages: true
@@ -64,6 +63,7 @@ universal_stage_stepwise_execution_contract:
   - SUCCESSOR_ENTRY_GATE_PASS
   historical_product_output_as_missing_current_input: FORBIDDEN
 
+stages:
 - stage_uid: STAGE-01
   name: SOURCE_INTAKE_AND_BASE_BLUEPRINT
   scope_mode: ALL_REQUIRED_PAGES
