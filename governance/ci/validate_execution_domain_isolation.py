@@ -12,6 +12,8 @@ EXPECTED={
 }
 SCHEMA_REF='governance/execution-domains/STEP_CONTRACT_SCHEMA.yaml'
 AUDIT_REF='governance/execution-domains/AUDIT_PROFILE.yaml'
+BINDING_REF='governance/execution-domains/AUTHORITY_BINDINGS.yaml'
+bindings=yaml.safe_load((ROOT/BINDING_REF).read_text()) or {}
 errors=[]
 schema=yaml.safe_load((ROOT/SCHEMA_REF).read_text()) or {}
 required=schema.get('required_step_fields') or []
@@ -55,17 +57,30 @@ for name in DOMAINS:
   if sd.get('domain_uid')!=uid: errors.append(f'STEP_REGISTRY_DOMAIN_MISMATCH:{name}')
   if sd.get('step_schema_ref')!=SCHEMA_REF: errors.append(f'STEP_REGISTRY_SCHEMA_MISMATCH:{name}')
   if sd.get('audit_profile_ref')!=AUDIT_REF: errors.append(f'STEP_REGISTRY_AUDIT_MISMATCH:{name}')
+  if sd.get('authority_binding_registry_ref')!=BINDING_REF: errors.append(f'AUTHORITY_BINDING_REF_MISMATCH:{name}')
+  if sd.get('authority_mode')!='EXECUTION_PROJECTION_ONLY': errors.append(f'AUTHORITY_MODE_INVALID:{name}')
+  if sd.get('may_create_new_normative_requirement') is not False: errors.append(f'NORMATIVE_DUPLICATION_NOT_FORBIDDEN:{name}')
+  binding_key={'BASIC_DESIGN':'basic_design','WORD_YAML':'word_yaml','STAGE':'stage','AUDIT':'audit'}[name]
+  bmap=bindings.get(binding_key) or {}
   if name=='STAGE':
    op=sd.get('operation_contract') or {}
    cl=sd.get('stage_closure_contract') or {}
    validate_step(name,op,'operation_contract')
    validate_step(name,cl,'stage_closure_contract')
+   for label in ('operation_contract','stage_closure_contract'):
+    if not bmap.get(label): errors.append(f'MISSING_AUTHORITY_BINDING:{name}:{label}')
    if sd.get('execution_rules',{}).get('every_registered_operation_must_instantiate_operation_contract') is not True:
     errors.append('STAGE_OPERATION_TEMPLATE_NOT_MANDATORY')
   else:
    steps=sd.get('steps') or []
    if not steps: errors.append(f'NO_STEPS:{name}')
-   for step in steps: validate_step(name,step,step.get('step_uid','UNKNOWN'))
+   for step in steps:
+    label=step.get('step_uid','UNKNOWN')
+    validate_step(name,step,label)
+    if not bmap.get(label): errors.append(f'MISSING_AUTHORITY_BINDING:{name}:{label}')
+   step_ids={s.get('step_uid') for s in steps}
+   for label in bmap:
+    if label not in step_ids: errors.append(f'ORPHAN_AUTHORITY_BINDING:{name}:{label}')
 
 audit=yaml.safe_load((ROOT/AUDIT_REF).read_text()) or {}
 if audit.get('fixed_audit_dimensions') is None: errors.append('AUDIT_DIMENSIONS_MISSING')
