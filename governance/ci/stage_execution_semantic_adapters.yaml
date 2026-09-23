@@ -164,8 +164,18 @@ execution_driver_contract:
   unregistered_scanner_execution: BLOCK
   missing_operation_binding: BLOCK
   missing_scanner_binding: BLOCK
+stepwise_execution_defaults:
+  authority_ref: WEB-GOV-03-S062A
+  mode: OPERATION_BY_OPERATION
+  bulk_stage_materialization: FORBIDDEN
+  checkpoint_after_each_operation: true
+  successor_requires_operation_pass: true
+  future_operation_preproduction: FORBIDDEN
+  current_operation_output_only: true
+
 stages:
   STAGE-01:
+    stepwise_execution_contract_ref: stepwise_execution_defaults
     effectful_executor_owner: .github/governance-maintenance/run_fresh_stage_replay.py
     profile_name: SOURCE_INTAKE_AND_BASE_BLUEPRINT
     semantic_dimensions:
@@ -188,6 +198,7 @@ stages:
     scanner_mode: NORMALIZED_COMMON_EVIDENCE_CONTRACT
     product_completion_credit_from_definition_audit: 0
   STAGE-02:
+    stepwise_execution_contract_ref: stepwise_execution_defaults
     effectful_executor_owner: governance/ci/run_current_stage2_actual_test.py
     profile_name: PAGE_FUNCTIONAL_CONTRACT
     semantic_dimensions:
@@ -233,6 +244,7 @@ stages:
         FUNCTION_VISUAL_IMPACT_MATRIX: FUNCTION_VISUAL_IMPACT_MATRIX.yaml
     product_completion_credit_from_definition_audit: 0
   STAGE-03:
+    stepwise_execution_contract_ref: stepwise_execution_defaults
     effectful_executor_owner: governance/ci/run_current_stage3_visual_design.py
     profile_name: VISUAL_DESIGN
     semantic_dimensions:
@@ -257,6 +269,7 @@ stages:
     scanner_mode: NORMALIZED_COMMON_EVIDENCE_CONTRACT
     product_completion_credit_from_definition_audit: 0
   STAGE-04:
+    stepwise_execution_contract_ref: stepwise_execution_defaults
     profile_name: FOUNDATION_FREEZE
     semantic_dimensions:
     - DESIGN_FREEZE
@@ -275,6 +288,7 @@ stages:
     scanner_mode: NORMALIZED_COMMON_EVIDENCE_CONTRACT
     product_completion_credit_from_definition_audit: 0
   STAGE-05:
+    stepwise_execution_contract_ref: stepwise_execution_defaults
     profile_name: IMPLEMENTATION
     semantic_dimensions:
     - FRONTEND
@@ -310,6 +324,7 @@ stages:
     scanner_mode: NORMALIZED_COMMON_EVIDENCE_CONTRACT
     product_completion_credit_from_definition_audit: 0
   STAGE-06:
+    stepwise_execution_contract_ref: stepwise_execution_defaults
     profile_name: VERIFICATION_QA
     semantic_dimensions:
     - UNIT
@@ -336,6 +351,7 @@ stages:
     scanner_mode: NORMALIZED_COMMON_EVIDENCE_CONTRACT
     product_completion_credit_from_definition_audit: 0
   STAGE-07:
+    stepwise_execution_contract_ref: stepwise_execution_defaults
     profile_name: BUILD_RELEASE_CANDIDATE
     semantic_dimensions:
     - PRODUCTION_BUILD
@@ -355,6 +371,7 @@ stages:
     scanner_mode: NORMALIZED_COMMON_EVIDENCE_CONTRACT
     product_completion_credit_from_definition_audit: 0
   STAGE-08:
+    stepwise_execution_contract_ref: stepwise_execution_defaults
     profile_name: STAGING
     semantic_dimensions:
     - STAGING_DEPLOYMENT
@@ -371,6 +388,7 @@ stages:
     scanner_mode: NORMALIZED_COMMON_EVIDENCE_CONTRACT
     product_completion_credit_from_definition_audit: 0
   STAGE-09:
+    stepwise_execution_contract_ref: stepwise_execution_defaults
     profile_name: PRODUCTION_CUTOVER
     semantic_dimensions:
     - PRODUCTION_CONFIGURATION
@@ -389,6 +407,7 @@ stages:
     scanner_mode: NORMALIZED_COMMON_EVIDENCE_CONTRACT
     product_completion_credit_from_definition_audit: 0
   STAGE-10:
+    stepwise_execution_contract_ref: stepwise_execution_defaults
     profile_name: PRODUCTION_ACCEPTANCE
     semantic_dimensions:
     - PRODUCTION_BROWSER
@@ -417,6 +436,7 @@ stages:
     scanner_mode: NORMALIZED_COMMON_EVIDENCE_CONTRACT
     product_completion_credit_from_definition_audit: 0
   STAGE-11:
+    stepwise_execution_contract_ref: stepwise_execution_defaults
     profile_name: CLOSURE_OPERATIONS
     semantic_dimensions:
     - MONITORING
