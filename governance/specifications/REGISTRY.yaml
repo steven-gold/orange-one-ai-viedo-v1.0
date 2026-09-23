@@ -8,8 +8,8 @@ stable_entrypoint:
   test_state_root: governance/test
   active_test_state: governance/test/ACTIVE_STATE.yaml
 active_specification:
-  governance_uid: GOV-REV-20260923-WORD-YAML-PAGE-NEUTRAL-SCHEMA-PORTABILITY-HARDENING
-  display_version: v2.2.19
+  governance_uid: GOV-REV-20260923-WORD-YAML-CROSS-PAGE-PORTABILITY-REGRESSION-CLOSURE
+  display_version: v2.2.20
   version_role: CURRENT_GOVERNANCE_DISPLAY_VERSION
   aliases:
   - neutral-portable-governance
@@ -37,12 +37,13 @@ active_specification:
   - typography-computed-metrics-hardening
   - word-yaml-prestage01-source-fidelity-hardening
   - word-yaml-page-neutral-schema-portability-hardening
+  - word-yaml-cross-page-portability-regression-closure
   status: ACTIVE_CURRENT_GOVERNANCE
 immediate_predecessor:
-  governance_uid: GOV-REV-20260923-WORD-YAML-PRESTAGE01-SOURCE-FIDELITY-HARDENING
-  display_version: v2.2.18
+  governance_uid: GOV-REV-20260923-WORD-YAML-PAGE-NEUTRAL-SCHEMA-PORTABILITY-HARDENING
+  display_version: v2.2.19
   version_role: SUPERSEDED_CURRENT_GOVERNANCE_HISTORY
-  status: SUPERSEDED_HISTORY_ONLY_AFTER_WORD_YAML_PAGE_NEUTRAL_SCHEMA_PORTABILITY_HARDENING
+  status: SUPERSEDED_HISTORY_ONLY_AFTER_WORD_YAML_CROSS_PAGE_PORTABILITY_REGRESSION_CLOSURE
 version_role_contract:
   current_governance_display_version_owner: active_specification
   verified_source_package_version_role: VERIFIED_SOURCE_LINEAGE_HISTORY

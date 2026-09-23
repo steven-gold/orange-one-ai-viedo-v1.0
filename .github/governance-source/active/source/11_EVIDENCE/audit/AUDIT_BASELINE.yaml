@@ -4,14 +4,14 @@ artifact_type: AUDIT_BASELINE
 status: CURRENT_COMPILED
 canonical_path: 11_EVIDENCE/audit/AUDIT_BASELINE.yaml
 owner_uid: OWNER-GOVERNANCE-AUDIT-BASELINE
-governance_revision: v2.2.19-word-yaml-page-neutral-schema-portability-hardening
+governance_revision: v2.2.20-word-yaml-cross-page-portability-regression-closure
 compiled_from:
   acceptance_blueprint_uid: BP-GOVERNANCE-ACCEPTANCE-001
-  acceptance_blueprint_sha256: 92fb1ee1652e23d933c9514d41dbf4476d9d993da732e4bc6bd27b3fd5e1abda
+  acceptance_blueprint_sha256: 1cb0b2abc471f389e634a226869dc0a44a75563dbf363623a293898ea6b58ac3
   audit_catalog_uid: REG-AUDIT-CATALOG-001
-  audit_catalog_sha256: 5583e32dce52e7fdf9626ec424c5c4f81c14599d3ebab65e4ee62c8630c47496
+  audit_catalog_sha256: 4c072ddd0b91f77aabe5b07b84dffc9084015cacd7c92bfe93d337150238c326
   section_registry_uid: REG-NORMATIVE-SECTION-001
-  section_registry_sha256: 53a1a89aaab7e2587734c0f6f63e8b0e0e468eb9886fc7e821af834a4c63fbb9
+  section_registry_sha256: c058d9daac80a467c29d4400e9f69d0fa5c02a00475af8033968211a63b5c733
 denominator:
   audit_item_uids:
   - AUD-GOV-001
@@ -6650,4 +6650,4 @@ governance_compilation:
     validator: audit_binding_guard
     auto: AUTO
     blocking: true
-content_hash: 812a2f3047d61d70e4dd82e3bb9e714ddf9d182316ea49a459c9073ac80ed3dd
+content_hash: a0ca103bd24d06e580bf5f8fe7e5c25903c9d69628a50b64c417ee963cca6850

@@ -79,3 +79,6 @@ Structured Word/DOCX source is immutable after capture; Canonical YAML uses one 
 
 ## v2.2.19 Word/YAML page-neutral schema portability hardening
 The Canonical Word/DOCX projection schema fixes only structural keys, types, ordering and fidelity invariants. Page/function/content values and denominators remain dynamic per immutable source, with cross-page content-shape portability regression.
+
+## v2.2.20 Word/YAML cross-page portability regression closure
+The page-neutral Word/DOCX projection contract now has a materialized regression proving materially different DOCX content structures use the same registered schema without common-policy edits.

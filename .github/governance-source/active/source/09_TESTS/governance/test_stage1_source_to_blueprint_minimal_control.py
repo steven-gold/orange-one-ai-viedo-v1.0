@@ -244,6 +244,23 @@ def _prun(mut=None):
         return 'PASS' if not g.validate_pre_stage_source_projection(PKG,r,rawcap,capstate)['failures'] else 'FAIL'
 
 c('projection_fixed_schema_positive',_prun(),'PASS')
+
+def _projection_shape_portability():
+    with tempfile.TemporaryDirectory() as td:
+        r=Path(td); a=r/'A.docx'; b=r/'B.docx'
+        _make_minimal_docx(a)
+        ct='''<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/><Override PartName="/word/header1.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.header+xml"/></Types>'''
+        rootrels='''<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="word/document.xml"/></Relationships>'''
+        doc='''<?xml version="1.0" encoding="UTF-8" standalone="yes"?><w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:body><w:p><w:pPr/><w:r><w:t>Different page content shape</w:t></w:r></w:p><w:p><w:r><w:t>Second structure</w:t><w:br/><w:t>Second line</w:t></w:r></w:p><w:sectPr/></w:body></w:document>'''
+        header='''<?xml version="1.0" encoding="UTF-8" standalone="yes"?><w:hdr xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:p><w:r><w:t>Header</w:t></w:r></w:p></w:hdr>'''
+        with zipfile.ZipFile(b,'w',compression=zipfile.ZIP_DEFLATED) as z:
+            z.writestr('[Content_Types].xml',ct); z.writestr('_rels/.rels',rootrels); z.writestr('word/document.xml',doc); z.writestr('word/header1.xml',header)
+        ia=g.derive_docx_inventory(a); ib=g.derive_docx_inventory(b)
+        expected=g._projection_contract(PKG)['projection']['source_node_row_field_order']
+        shape_ok=all(list(row.keys())==expected for row in ia['source_nodes']+ib['source_nodes'])
+        materially_different=(len(ia['package_parts']),len(ia['source_nodes']))!=(len(ib['package_parts']),len(ib['source_nodes']))
+        return 'PASS' if shape_ok and materially_different else 'FAIL'
+c('projection_schema_portable_across_materially_different_docx',_projection_shape_portability(),'PASS')
 def _p_word_mutation(r,rawcap,capstate,f): f['raw'].write_bytes(f['raw'].read_bytes()+b'X')
 c('projection_word_byte_mutation_after_lock',_prun(_p_word_mutation),'FAIL')
 def _p_missing_node(r,rawcap,capstate,f):
