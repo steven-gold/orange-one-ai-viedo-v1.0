@@ -1,0 +1,49 @@
+schema_version: 1
+schema_uid: GOV-EXECUTION-STEP-CONTRACT-001
+role: UNIVERSAL_EXECUTION_STEP_SCHEMA
+applies_to: [BASIC_DESIGN, WORD_YAML, STAGE, AUDIT]
+fixed_structure_across_all_pages_and_systems: true
+page_specific_schema_variation: FORBIDDEN
+required_step_fields:
+- step_uid
+- purpose
+- prerequisites
+- entry_gate
+- inputs
+- input_required_fields
+- operations
+- outputs
+- output_required_fields
+- denominator
+- completeness_and_pass_condition
+- validators_and_evidence
+- failure_reentry_checkpoint_next_step
+field_semantics:
+  prerequisites: exact predecessor receipts/authority required before admission
+  entry_gate: machine-decidable admission condition
+  inputs: exact artifact/input classes allowed for this step
+  input_required_fields: required identities/hashes/fields before effectful execution
+  operations: ordered actions owned by this step only
+  outputs: only artifact classes this step may materialize
+  output_required_fields: fixed required structure for produced artifacts
+  denominator: complete dynamic applicable universe; representative sampling forbidden
+  completeness_and_pass_condition: exact 100-percent/zero-gap or explicit N/A evidence criteria
+  validators_and_evidence: validators plus local evidence required before PASS
+  failure_reentry_checkpoint_next_step: fail disposition, owning re-entry, checkpoint, exact successor
+universal_invariants:
+  one_current_effectful_step: true
+  future_step_preproduction: FORBIDDEN
+  undeclared_output: FORBIDDEN
+  blank_required_field_completion_credit: 0
+  silent_omission_completion_credit: 0
+  representative_sample_completion_credit: 0
+  aggregate_summary_completion_credit: 0
+  not_applicable_requires_evidence: true
+  unresolved_authority_gap_may_pass: false
+  unresolved_conflict_may_pass: false
+  unresolved_required_item_may_pass: false
+  local_audit_before_successor: REQUIRED
+  checkpoint_after_each_step: REQUIRED
+  successor_requires_current_pass: true
+  failure_stops_downstream_effectful_execution: true
+  retry_reenters_earliest_owning_step: true
