@@ -82,3 +82,6 @@ The Canonical Word/DOCX projection schema fixes only structural keys, types, ord
 
 ## v2.2.20 Word/YAML cross-page portability regression closure
 The page-neutral Word/DOCX projection contract now has a materialized regression proving materially different DOCX content structures use the same registered schema without common-policy edits.
+
+## v2.2.22 Word projection next-step consumer sync hardening
+The DOCX projection validator now resolves the structured-document raw-capture next step from the canonical Stage-01 source contract instead of retaining a legacy literal. Producer, validator and regression fixture therefore share one owner.

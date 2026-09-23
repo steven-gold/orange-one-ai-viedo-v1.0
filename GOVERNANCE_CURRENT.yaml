@@ -1,8 +1,8 @@
 schema_version: 7
 artifact_uid: GOVERNANCE-CURRENT-ENTRYPOINT-001
 artifact_type: GOVERNANCE_CURRENT_ENTRYPOINT
-active_governance_uid: GOV-REV-20260923-WORD-CONTENT-BINARY-SOURCE-PROJECTION-HARDENING
-display_version: v2.2.21
+active_governance_uid: GOV-REV-20260923-WORD-PROJECTION-NEXTSTEP-CONSUMER-SYNC-HARDENING
+display_version: v2.2.22
 version_role: CURRENT_GOVERNANCE_DISPLAY_VERSION
 registry_ref: governance/specifications/REGISTRY.yaml
 specification_root: governance/specifications/current
@@ -24,12 +24,12 @@ historical_evidence_is_current_authority: false
 source_identity:
   version_role: VERIFIED_SOURCE_LINEAGE_HISTORY
   source_bytes_changed_by_current_successor: true
-  verified_package_sha256: 266a281cb3d13a17daaab3b185f22a9a150bcfbe565ce8ab0e832c10c2756c1d
-  deterministic_source_bundle_sha256: a9498bcb6509272ebeb5eb0edbe9cdfa964b58369b5fddde77c3912a7ee20dba
-  checksum_manifest_sha256: 4ee9fe136633a5aabdd21093c7e6ac2e3bc90ec80b36a54f9c9252c947ddaaf8
-  semantic_authority_content_hash: cc6d95e16e035c0bc401fe6f6d6f09e74d76c79eb24bbfc0c4e568e93d0431f7
+  verified_package_sha256: 892c98a6d8c711ba724ec2d2583c747739daf9569b9eed14d4e38d0e0b11bef2
+  deterministic_source_bundle_sha256: 9a3b7cc8d198d9611f92ebf3d35614e4a8ebb4dab2203a40d3672d84ca05591e
+  checksum_manifest_sha256: 5cd7f08c3e0ed130f8c18c8ff735feeeb41a12083bf9138182538a9d9b86e4cd
+  semantic_authority_content_hash: 59f56fab490f0724d66055259ae0424529ce3ba83bdedd7e77b526a1807ee716
   may_override_active_governance_version: false
-  verified_source_revision: v2.2.21-word-content-binary-source-projection-hardening
+  verified_source_revision: v2.2.22-word-projection-nextstep-consumer-sync-hardening
 current_primary_task_selection_contract:
   session_bootstrap_resume_gate_required: true
   task_layer_classification_required: true

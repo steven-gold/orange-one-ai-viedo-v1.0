@@ -222,7 +222,7 @@ def _projection_fixture(root):
     rawrel='00_SOURCE_INTAKE/RAW_SOURCE/CORE-01/SOURCE.docx'; raw=root/rawrel; _make_minimal_docx(raw)
     rawsha=g.file_sha(raw); blob=g.git_blob_sha(raw); suid='DOCX1'
     rawcap={'artifact_uid':'RAW-CAP-DOCX','artifact_type':'RAW_SOURCE_REFERENCE_MANIFEST','status':'CURRENT_RAW_SOURCE_CAPTURE','capture_root':'00_SOURCE_INTAKE/RAW_SOURCE','records':[{'source_uid':suid,'source_format':'DOCX','projection_required':True,'page_uid':'CORE-01','source_role':'MIXED_PAGE_VISUAL_SOURCE_INPUT','source_domain_scope':'MIXED_PAGE_VISUAL','source_path':'fixture://docx1','target_path':rawrel,'source_git_blob_sha':blob,'target_git_blob_sha':blob,'content_mutated':False}]}
-    capstate={'run_uid':'PROJ1','state':'CAPTURE_CLOSED','next_step':'CANONICAL_SOURCE_PROJECTION','recapture_allowed':False}
+    capstate={'run_uid':'PROJ1','state':'CAPTURE_CLOSED','next_step':'SOURCE_DOCUMENT_CONTENT_AUDIT','recapture_allowed':False}
     contract=g._projection_contract(PKG); rc=contract['raw_source_lock']; pc=contract['projection']; ac=contract['reconciliation']; fc=contract['pair_freeze']; base=f"00_SOURCE_INTAKE/SOURCE_PROJECTIONS/{suid}"
     contentc=contract['source_document_content_readiness_audit']; binaryc=contract['frozen_binary_source_part_materialization']
     ca={'schema_version':1,'artifact_uid':'CONTENT-AUDIT-DOCX1','artifact_type':'SOURCE_DOCUMENT_CONTENT_AUDIT','source_uid':suid,'source_sha256':rawsha,'page_uid':'SYNTH-PAGE-A','audit_standard_uid':'WEB-GOV-01-S090','required_design_domain_uids':['PAGE_IDENTITY'],'observed_design_domain_uids':['PAGE_IDENTITY'],'missing_required_design_domain_uids':[],'matrix_integrity':{'required_rows':1,'complete_rows':1,'missing_rows':0,'duplicate_uid_count':0},'visual_source_integrity':{'embedded_visual_count':0,'missing_visual_count':0},'render_integrity':{'render_required':False,'render_result':'NOT_APPLICABLE_SYNTHETIC_FIXTURE'},'open_downstream_states':[],'unresolved_required_gap_count':0,'contradiction_count':0,'result':'PASS'}
@@ -253,6 +253,8 @@ c('projection_fixed_schema_positive',_prun(),'PASS')
 
 def _p_content_audit_missing(r,rawcap,capstate,f): (r/f"{f['base']}/SOURCE_DOCUMENT_CONTENT_AUDIT.yaml").unlink()
 c('projection_content_readiness_audit_required',_prun(_p_content_audit_missing),'FAIL')
+def _p_legacy_projection_next_step(r,rawcap,capstate,f): capstate['next_step']='CANONICAL_SOURCE_PROJECTION'
+c('projection_legacy_next_step_drift_blocked',_prun(_p_legacy_projection_next_step),'FAIL')
 def _p_frozen_binary_missing(r,rawcap,capstate,f):
     for p in (r/f"{f['base']}/FROZEN_BINARY_PARTS").iterdir():
         if p.is_file(): p.unlink(); break

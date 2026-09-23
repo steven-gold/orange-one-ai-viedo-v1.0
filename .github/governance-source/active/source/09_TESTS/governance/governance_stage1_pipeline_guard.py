@@ -119,6 +119,10 @@ def _projection_contract(package_root:Path):
     reg=load_yaml(package_root/PROJECTION_CONTRACT_REL)
     return reg.get('structured_document_source_projection_contract') or {}
 
+def _raw_capture_contract(package_root:Path):
+    reg=load_yaml(package_root/PROJECTION_CONTRACT_REL)
+    return reg.get('raw_source_capture_contract') or {}
+
 def _exact_keys(obj,expected,label,failures):
     if not isinstance(obj,dict):
         failures.append(label+'_not_mapping'); return
@@ -266,8 +270,10 @@ def validate_pre_stage_source_projection(package_root:Path,workspace:Path,rawcap
         return result
     if not contract:
         failures.append('structured_document_projection_contract_missing'); return result
-    if capstate.get('next_step')!='CANONICAL_SOURCE_PROJECTION':
-        failures.append('raw_source_capture_next_step_not_canonical_source_projection')
+    _rcc=_raw_capture_contract(package_root)
+    _expected_structured_next=_rcc.get('structured_document_exact_next_step') or 'CANONICAL_SOURCE_PROJECTION'
+    if capstate.get('next_step')!=_expected_structured_next:
+        failures.append('raw_source_capture_structured_next_step_mismatch:'+str(capstate.get('next_step'))+':expected='+str(_expected_structured_next))
     raw_lock=contract.get('raw_source_lock') or {}
     projc=contract.get('projection') or {}
     reconc=contract.get('reconciliation') or {}
@@ -450,8 +456,9 @@ def validate(package_root:Path,workspace:Path):
     if capstate:
         if capstate.get('state')!='CAPTURE_CLOSED': failures.append('raw_source_capture_not_closed')
         _pr=_projection_required_records(rawcap)
-        _expected_next='CANONICAL_SOURCE_PROJECTION' if _pr else 'SOURCE_STRUCTURE_ENUMERATION'
-        if capstate.get('next_step')!=_expected_next: failures.append('raw_source_capture_next_step_mismatch:'+str(capstate.get('next_step'))+':expected='+_expected_next)
+        _rcc=_raw_capture_contract(package_root)
+        _expected_next=(_rcc.get('structured_document_exact_next_step') if _pr else _rcc.get('default_exact_next_step')) or ('CANONICAL_SOURCE_PROJECTION' if _pr else 'SOURCE_STRUCTURE_ENUMERATION')
+        if capstate.get('next_step')!=_expected_next: failures.append('raw_source_capture_next_step_mismatch:'+str(capstate.get('next_step'))+':expected='+str(_expected_next))
         if capstate.get('recapture_allowed') is not False: failures.append('closed_raw_source_capture_still_writable')
     projection_result=validate_pre_stage_source_projection(package_root,workspace,rawcap,capstate)
     failures.extend(projection_result.get('failures') or [])

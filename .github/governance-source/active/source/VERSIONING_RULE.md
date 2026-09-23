@@ -134,3 +134,8 @@ The candidate package cannot self-prove integrity. The trust-root hash set is an
 - Canonical YAML projection has one registered fixed schema/ordering contract and is non-authority.
 - Reconciliation PASS freezes the exact Word/YAML pair; any pair mutation invalidates admission.
 - Stage-01 may consume only the frozen projection and may not reparse Word as a semantic fallback.
+
+## v2.2.22 projection next-step consumer sync rule
+- Reusable projection consumers MUST resolve structured-document next-step identity from the canonical source contract.
+- Legacy local next-step literals are forbidden when a canonical contract field exists.
+- Positive and negative regression fixtures MUST consume the same canonical sequence.
