@@ -1,84 +1,28 @@
-schema_version: 1
-artifact_uid: ACPOS-REPOSITORY-BRANCH-AUTHORITY-LOCK-20260914
-status: ACTIVE
+schema_version: 2
+artifact_uid: ACPOS-REPOSITORY-BRANCH-AUTHORITY-LOCK-20260923
+status: FINAL_LOCKED
 scope: steven-gold/orange-one-ai-viedo-v1.0
-authority: EXPLICIT_USER_DECISION
-cutoff:
-  local_timezone: Asia/Taipei
-  local_time: '2026-09-12T00:00:00+08:00'
-  utc_time: '2026-09-11T16:00:00Z'
-primary_branches:
+authority: EXPLICIT_USER_DECISION_20260923
+branches:
+  rebuild-v2.1.1:
+    role: IMMUTABLE_GOVERNANCE_RULESET
+    preserve: true
+    gpt_write_policy: FORBIDDEN
+    product_execution: FORBIDDEN
+    additions: FORBIDDEN
+    modifications: FORBIDDEN
+    deletions: FORBIDDEN
+  0921acpos:
+    role: PRODUCT_EXECUTION_WORKLINE
+    preserve: true
+    gpt_write_policy: ALLOWED_ONLY_FOR_USER_DIRECTED_PRODUCT_EXECUTION
+    governance_definition_mutation: FORBIDDEN
   main:
     role: PRODUCTION_PRIMARY_HISTORY
-    required_baseline_sha: 1e081935b96d5b539e29eb16a6b067c4489ef2dd
-    baseline_is_pre_cutoff: true
-    gpt_write_policy: FORBIDDEN_UNLESS_USER_EXPLICITLY_AUTHORIZES_MAIN_MUTATION
-    automatic_merge_from_governance_or_temp_branch: FORBIDDEN
+    gpt_write_policy: FORBIDDEN_UNLESS_USER_EXPLICITLY_AUTHORIZES
   new:
     role: PRODUCT_DEVELOPMENT_PRIMARY_HISTORY
-    required_baseline_sha: 165c6440cb53b1b45ec96905241fb4d56dc3b867
-    baseline_is_pre_cutoff: true
-    gpt_write_policy: FORBIDDEN_UNLESS_USER_EXPLICITLY_AUTHORIZES_NEW_MUTATION
-    automatic_merge_from_governance_or_temp_branch: FORBIDDEN
-  rebuild-v2.1.1:
-    role: ACTIVE_GOVERNANCE_REBUILD_WORKLINE
-    preserve: true
-    gpt_write_policy: ALLOWED_ONLY_FOR_CURRENT_USER_DIRECTED_GOVERNANCE_OR_REBUILD_TASK
-  0921acpos:
-    role: USER_AUTHORIZED_INDEPENDENT_WORKLINE
-    preserve: true
-    authorization_basis: EXPLICIT_USER_DIRECTIVE_20260921_CREATE_INDEPENDENT_BRANCH
-    gpt_write_policy: ALLOWED_ONLY_FOR_CURRENT_USER_DIRECTED_TASK
-branch_creation_policy:
-  default: FORBIDDEN
-  explicit_user_authorization_required: true
-  gpt_self_created_branch: FORBIDDEN
-  temporary_branch: FORBIDDEN
-  candidate_branch: FORBIDDEN
-  safety_branch: FORBIDDEN
-  staging_branch: FORBIDDEN_UNLESS_USER_EXPLICITLY_AUTHORIZES
-  branch_name_inference_from_task: FORBIDDEN
-  create_branch_to_bypass_primary_branch_rules: FORBIDDEN
-allowed_branch_targets_without_new_branch_creation:
-  - main
-  - new
-  - rebuild-v2.1.1
-  - 0921acpos
-cleanup_policy:
-  post_cutoff_nonprimary_gpt_temp_or_helper_refs: DELETE
-  pre_cutoff_historical_refs: PRESERVE_UNLESS_USER_EXPLICITLY_ORDERS_DELETION
-  deletion_must_not_rewrite_commit_evidence: true
-  receipt_commit_sha_may_remain_reachable_by_object_history: true
-execution_policy:
-  before_any_github_write:
-    - RESOLVE_USER_SELECTED_PRIMARY_BRANCH
-    - VERIFY_TARGET_BRANCH_IS_AN_AUTHORIZED_PERSISTENT_BRANCH
-    - VERIFY_USER_DID_NOT_REQUEST_A_NEW_BRANCH
-  if_target_branch_is_ambiguous: BLOCK_WRITE_AND_REPORT
-  if_new_branch_seems_convenient: DO_NOT_CREATE
-  if_workflow_or_tool_defaults_to_main: DO_NOT_ASSUME_MAIN
-  cross_branch_copy_or_merge_without_explicit_user_authority: FORBIDDEN
-  analysis_or_test_evidence_may_not_be_merged_into_main_or_new_implicitly: true
-enforcement:
-  operational_guard_workflow: .github/workflows/repository-three-branch-recovery.yml
-  operational_guard_current_location: rebuild-v2.1.1
-  repository_admin_ruleset_write_available_to_current_connector: false
-  hard_account_level_prevention_claim: FORBIDDEN
-  required_reporting: DISTINGUISH_GOVERNANCE_GUARD_FROM_GITHUB_ADMIN_RULESET
-incident_recovery:
-  main_restored_to_pre_cutoff: true
-  new_restored_to_pre_cutoff: true
-  rebuild_preserved: true
-  post_cutoff_tmp_namespace_removed: true
-  post_cutoff_rebuild_helper_namespace_removed: true
-  governance_pilot_namespace_removed: true
-  exact_branch_creation_timestamp_available_from_branch_api: false
-  cleanup_detection_basis:
-    - HEAD_COMMIT_TIMESTAMP_AT_OR_AFTER_CUTOFF
-    - KNOWN_GPT_TEMP_OR_HELPER_NAMESPACE
-prohibitions:
-  - DO_NOT_CREATE_BRANCH_FOR_ROUTINE_GOVERNANCE_TESTING
-  - DO_NOT_USE_MAIN_AS_TEMPORARY_EVIDENCE_SINK
-  - DO_NOT_USE_NEW_AS_TEMPORARY_EVIDENCE_SINK
-  - DO_NOT_MERGE_NONCURRENT_GOVERNANCE_CANDIDATE_TO_MAIN_OR_NEW_WITHOUT_EXPLICIT_USER_AUTHORITY
-  - DO_NOT_REPORT_BRANCH_CLEANUP_COMPLETE_WITHOUT_DIRECT_BRANCH_API_VERIFICATION
+    gpt_write_policy: FORBIDDEN_UNLESS_USER_EXPLICITLY_AUTHORIZES
+platform_enforcement:
+  github_admin_ruleset_available_to_current_connector: false
+  repository_internal_guard_is_not_platform_branch_protection: true
