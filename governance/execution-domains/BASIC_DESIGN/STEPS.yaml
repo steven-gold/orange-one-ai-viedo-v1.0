@@ -3,6 +3,9 @@ registry_uid: BASIC-DESIGN-STEP-REGISTRY-001
 domain_uid: BASIC_DESIGN_GOVERNANCE_FLOW
 step_schema_ref: governance/execution-domains/STEP_CONTRACT_SCHEMA.yaml
 audit_profile_ref: governance/execution-domains/AUDIT_PROFILE.yaml
+authority_binding_registry_ref: governance/execution-domains/AUTHORITY_BINDINGS.yaml
+authority_mode: EXECUTION_PROJECTION_ONLY
+may_create_new_normative_requirement: false
 steps:
 - step_uid: BD-01-SCOPE_AUTHORITY_RESOLUTION
   purpose: Freeze applicable design scope, current authorities, owners, naming and applicability.
