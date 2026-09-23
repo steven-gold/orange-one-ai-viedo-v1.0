@@ -840,6 +840,10 @@ def mutate_policy():
 
     semp=SOURCE/'10_REGISTRY/SEMANTIC_AUTHORITY_BASELINE.yaml'
     sem=load(semp)
+    for _spec in sem.get('mandatory_regression_assets') or []:
+        if Path(str(_spec.get('path') or '')).name=='test_stage1_source_to_blueprint_minimal_control.py':
+            _spec['expected_total']=44
+            _spec['expected_passed']=44
     _audit_types=sem['semantic_snapshot'].setdefault('audit_type_identities',[])
     if not any(x.get('audit_type_uid')=='AUDTYPE-GOV-015' for x in _audit_types):
         _audit_types.append({'audit_type_uid':'AUDTYPE-GOV-015','canonical_name':'STRUCTURED_DOCUMENT_CANONICAL_PROJECTION_ZERO_LOSS_RECONCILIATION','allowed_stage_uids':['PREFORMAL'],'denominator_eligible':True})
@@ -997,6 +1001,13 @@ def refresh_source():
     run(sys.executable,str(SOURCE/'09_TESTS/governance/compile_governance_baseline.py'))
     run(sys.executable,str(SOURCE/'09_TESTS/governance/refresh_governance_root_manifest.py'))
     checks,bundle,zips=source_checksums_and_archives()
+    _full=ROOT/'.github/governance-source/RUN_FULL_LINE_SYSTEM_GATE.py'
+    _full_text=_full.read_text(encoding='utf-8')
+    _old_suite="'test_stage1_source_to_blueprint_minimal_control.py': {'total': 33, 'passed_expectations': 33}"
+    _new_suite="'test_stage1_source_to_blueprint_minimal_control.py': {'total': 44, 'passed_expectations': 44}"
+    if _old_suite not in _full_text:
+        raise RuntimeError('full-line stage1 expected suite denominator owner missing')
+    _full.write_text(_full_text.replace(_old_suite,_new_suite,1),encoding='utf-8')
     replace_const(ROOT/'.github/governance-source/VERIFY_SOURCE_IDENTITY.py','EXPECTED_BUNDLE_SHA256',bundle)
     replace_const(ROOT/'.github/governance-source/VERIFY_SOURCE_IDENTITY.py','EXPECTED_SOURCE_ZIP_SHA256',zips)
     for name,val in [('EXPECTED_CHECKSUMS_SHA256',checks),('EXPECTED_SEMANTIC_CONTENT_HASH',semantic_hash),('EXPECTED_SOURCE_ZIP_SHA256',zips),('EXPECTED_BUNDLE_SHA256',bundle)]:
