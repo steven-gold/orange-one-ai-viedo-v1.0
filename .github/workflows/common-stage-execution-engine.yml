@@ -1,0 +1,79 @@
+name: Common Stage Execution Engine Controller
+
+on:
+  workflow_dispatch:
+    inputs:
+      stage_uid:
+        description: Selected-profile Stage
+        required: true
+        type: choice
+        options: [STAGE-01, STAGE-02, STAGE-03, STAGE-04, STAGE-05, STAGE-06, STAGE-07, STAGE-08, STAGE-09, STAGE-10, STAGE-11]
+      mode:
+        description: Common engine mode
+        required: true
+        default: plan
+        type: choice
+        options: [plan, admission-check, execute, validate-evidence, validate-terminal]
+      evidence_path:
+        description: Repo-relative normalized evidence path for validation modes
+        required: false
+        type: string
+      receipt_path:
+        description: Repo-relative exact-head terminal receipt path
+        required: false
+        type: string
+
+permissions:
+  contents: write
+  actions: read
+
+jobs:
+  common-stage-engine:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Install verifier dependency
+        run: python -m pip install --disable-pip-version-check 'PyYAML==6.0.2'
+      - name: Re-resolve Current governance
+        run: |
+          python governance/ci/governance_resolver.py
+          python governance/ci/validate_selected_execution_profile_integrity.py
+      - name: Validate common engine definition and negative regression
+        run: |
+          python governance/ci/stage_execution_engine.py --definition-audit-all
+          python governance/ci/test_stage_execution_engine.py
+      - name: Run selected common-engine mode
+        env:
+          STAGE_UID: ${{ inputs.stage_uid }}
+          MODE: ${{ inputs.mode }}
+          EVIDENCE_PATH: ${{ inputs.evidence_path }}
+          RECEIPT_PATH: ${{ inputs.receipt_path }}
+        run: |
+          set -euo pipefail
+          case "$MODE" in
+            plan)
+              python governance/ci/stage_execution_engine.py --plan --stage "$STAGE_UID"
+              ;;
+            admission-check)
+              python governance/ci/stage_execution_engine.py --admission-check --stage "$STAGE_UID"
+              ;;
+            execute)
+              python .github/governance-source/RUN_FULL_LINE_SYSTEM_GATE.py
+              python governance/ci/stage_execution_engine.py --execute --stage "$STAGE_UID"
+              ;;
+            validate-evidence)
+              test -n "$EVIDENCE_PATH"
+              python governance/ci/stage_execution_engine.py --validate-evidence --stage "$STAGE_UID" --evidence "$EVIDENCE_PATH"
+              ;;
+            validate-terminal)
+              test -n "$EVIDENCE_PATH"
+              test -n "$RECEIPT_PATH"
+              python governance/ci/stage_execution_engine.py --validate-terminal-receipt --stage "$STAGE_UID" --evidence "$EVIDENCE_PATH" --receipt "$RECEIPT_PATH"
+              ;;
+            *)
+              echo "BLOCK: unsupported common engine mode $MODE" >&2
+              exit 1
+              ;;
+          esac

@@ -1,0 +1,67 @@
+schema_version: 1
+artifact_uid: REG-BLUEPRINT-001
+artifact_type: BLUEPRINT_REGISTRY
+status: CURRENT_CANDIDATE
+canonical_path: 10_REGISTRY/BLUEPRINT_REGISTRY.yaml
+owner_uid: OWNER-GOVERNANCE-BLUEPRINT
+governance_revision: v2.2.22-word-projection-nextstep-consumer-sync-hardening
+normative_section_uids:
+- WEB-GOV-01-S039
+- WEB-GOV-01-S069
+- WEB-GOV-04-S071
+- WEB-GOV-01-S076
+- WEB-GOV-01-S077
+- WEB-GOV-01-S078
+- WEB-GOV-01-S079
+- WEB-GOV-01-S080
+- WEB-GOV-01-S081
+- WEB-GOV-01-S082
+- WEB-GOV-01-S083
+rules:
+  one_current_per_scope_and_type: true
+  page_visual_editable_owner_separation: true
+  cross_domain_payload_duplication: BLOCK
+  input_hash_required: true
+  changed_input_marks_reverify: true
+blueprint_types:
+- blueprint_type: PAGE_BASE_BLUEPRINT
+  planning_domain: PAGE_CONSTRUCTION
+  created_stage_uid: STAGE-01
+  owner_mode: PAGE
+  blueprint_type_uid: BPTYPE-GOV-001
+- blueprint_type: VISUAL_BASE_BLUEPRINT
+  planning_domain: VISUAL_CONSTRUCTION
+  created_stage_uid: STAGE-01
+  owner_mode: VISUAL
+  blueprint_type_uid: BPTYPE-GOV-002
+- blueprint_type: PAGE_CONSTRUCTION_SPEC_PACKAGE
+  planning_domain: PAGE_CONSTRUCTION
+  created_stage_uid: STAGE-02
+  owner_mode: PAGE
+  blueprint_type_uid: BPTYPE-GOV-003
+- blueprint_type: VISUAL_DESIGN_SPEC_PACKAGE
+  planning_domain: VISUAL_CONSTRUCTION
+  created_stage_uid: STAGE-03
+  owner_mode: VISUAL
+  blueprint_type_uid: BPTYPE-GOV-004
+- blueprint_type: DESIGN_FREEZE_PACKAGE
+  planning_domain: NON_OWNING_BINDING
+  created_stage_uid: STAGE-04
+  owner_mode: BINDING_ONLY
+  blueprint_type_uid: BPTYPE-GOV-005
+- blueprint_type: ACCEPTANCE_AUDIT_BLUEPRINT
+  planning_domain: ACCEPTANCE
+  created_stage_uid: STAGE-04
+  owner_mode: ACCEPTANCE
+  blueprint_type_uid: BPTYPE-GOV-006
+- blueprint_type: BASIC_DESIGN_PACKAGE
+  planning_domain: BASIC_DESIGN
+  created_stage_uid: STAGE-04
+  owner_mode: BINDING_ONLY
+  blueprint_type_uid: BPTYPE-GOV-007
+current_governance_blueprints:
+- blueprint_uid: BP-GOVERNANCE-ACCEPTANCE-001
+  blueprint_type: ACCEPTANCE_AUDIT_BLUEPRINT
+  canonical_path: 10_REGISTRY/GOVERNANCE_ACCEPTANCE_AUDIT_BLUEPRINT.yaml
+  status: CURRENT_CANDIDATE
+  blueprint_type_uid: BPTYPE-GOV-006
