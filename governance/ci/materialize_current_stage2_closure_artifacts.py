@@ -13,6 +13,18 @@ import yaml
 ROOT = Path(__file__).resolve().parents[2]
 STATE = ROOT / "governance/test/ACTIVE_STATE.yaml"
 
+PACKAGED_ARTIFACT_CONTRACT = {
+    "package_manifest_field": "included_artifacts",
+    "artifacts": {
+        "BUSINESS_ENTITY_INVENTORY": "BUSINESS_ENTITY_INVENTORY.yaml",
+        "BUSINESS_ENTITY_OPERATION_MATRIX": "BUSINESS_ENTITY_OPERATION_MATRIX.yaml",
+        "ENTITY_HIERARCHY_MATRIX": "ENTITY_HIERARCHY_MATRIX.yaml",
+        "INTERACTION_TOPOLOGY_MATRIX": "INTERACTION_TOPOLOGY_SPEC.yaml",
+        "FUNCTION_VISUAL_IMPACT_MATRIX": "FUNCTION_VISUAL_IMPACT_MATRIX.yaml",
+    },
+}
+
+
 def die(msg: str) -> None:
     print("BLOCK:", msg, file=sys.stderr)
     raise SystemExit(1)
