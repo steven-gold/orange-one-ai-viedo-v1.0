@@ -166,6 +166,7 @@ execution_driver_contract:
   missing_scanner_binding: BLOCK
 stages:
   STAGE-01:
+    effectful_executor_owner: .github/governance-maintenance/run_fresh_stage_replay.py
     profile_name: SOURCE_INTAKE_AND_BASE_BLUEPRINT
     semantic_dimensions:
     - SOURCE_CAPTURE
@@ -187,6 +188,7 @@ stages:
     scanner_mode: NORMALIZED_COMMON_EVIDENCE_CONTRACT
     product_completion_credit_from_definition_audit: 0
   STAGE-02:
+    effectful_executor_owner: governance/ci/run_current_stage2_actual_test.py
     profile_name: PAGE_FUNCTIONAL_CONTRACT
     semantic_dimensions:
     - FUNCTION
@@ -231,6 +233,7 @@ stages:
         FUNCTION_VISUAL_IMPACT_MATRIX: FUNCTION_VISUAL_IMPACT_MATRIX.yaml
     product_completion_credit_from_definition_audit: 0
   STAGE-03:
+    effectful_executor_owner: governance/ci/run_current_stage3_visual_design.py
     profile_name: VISUAL_DESIGN
     semantic_dimensions:
     - VISUAL_SPEC
