@@ -17,7 +17,7 @@ REGISTRY = ROOT / "governance/specifications/REGISTRY.yaml"
 NEGATIVE_MATRIX = ROOT / "governance/test/EXECUTION_CLOSURE_NEGATIVE_REGRESSION_MATRIX.yaml"
 ACTIVE_STATE = ROOT / "governance/test/ACTIVE_STATE.yaml"
 FRESH_REPLAY_RUNNER = ".github/governance-maintenance/run_fresh_stage_replay.py"
-FRESH_REPLAY_WORKFLOW = ".github/workflows/fresh-stage-replay.yml"
+COMMON_STAGE_WORKFLOW = ".github/workflows/common-stage-execution-engine.yml"
 
 EXEC_REF = re.compile(
     r"python(?:3)?\s+(?:-m\s+)?"
@@ -29,10 +29,8 @@ UNSAFE_TERMINAL_TOKENS = ("PASS_EXECUTION_SOURCE_HEAD", "CLOSED_VERIFIED")
 CURRENT_STATE_TOKENS = ("governance/test/ACTIVE_STATE.yaml", "ACTIVE_STATE.yaml")
 RUN_ID_TOKENS = ("GITHUB_RUN_ID", "github.run_id")
 DYNAMIC_REPLAY_EXECUTABLES = (
-    ".github/workflows/fresh-stage-replay.yml",
-    ".github/governance-maintenance/run_fresh_stage_replay.py",
-    ".github/governance-maintenance/finalize_fresh_stage_replay.py",
-    "governance/ci/run_current_stage2_actual_test.py",
+    ".github/workflows/common-stage-execution-engine.yml",
+    "governance/ci/stage_execution_engine.py",
 )
 STALE_PRODUCT_RUN_ROOT_LITERAL = re.compile(r"00_SOURCE_INTAKE/(?:fresh_run_\d+|run_[A-Za-z0-9]+_[0-9a-f]{8,}(?:_[A-Za-z0-9-]+)?)")
 FIXED_REPLAY_IDENTITY_PATTERNS = {
@@ -206,25 +204,18 @@ def stage_boundary_semantic_findings(path_rel: str, text: str) -> list[str]:
                     findings.append("EFFECTFUL_STAGE_WORKFLOW_COMMON_ADMISSION_MISSING:" + stage_uid)
                 if "workflow_dispatch" not in text:
                     findings.append("EFFECTFUL_STAGE_WORKFLOW_EXPLICIT_DISPATCH_MISSING:" + stage_uid)
-    if path_rel == FRESH_REPLAY_WORKFLOW:
-        execute_marker = "  execute-fresh-replay:"
-        segment = text.split(execute_marker, 1)[1] if execute_marker in text else ""
-        if "--cleanup-boundary-self-test" in text:
-            findings.append("OBSOLETE_FRESH_REPLAY_CLI_OPTION:--cleanup-boundary-self-test")
-        if not segment:
-            findings.append("EXECUTE_JOB_MISSING")
-        else:
-            context_idx = segment.find("--print-context-github-output")
-            admission_idx = segment.find("stage_execution_engine.py --admission-check")
-            execute_idx = segment.find("run: python .github/governance-maintenance/run_fresh_stage_replay.py\n")
-            if "steps.context.outputs.stage_uid" not in segment:
-                findings.append("ACTIVE_STAGE_OUTPUT_NOT_CONSUMED")
-            if admission_idx < 0:
-                findings.append("COMMON_ENGINE_ADMISSION_NOT_ENFORCED")
-            if context_idx >= 0 and admission_idx >= 0 and admission_idx < context_idx:
-                findings.append("COMMON_ENGINE_ADMISSION_BEFORE_CONTEXT_RESOLUTION")
-            if admission_idx >= 0 and execute_idx >= 0 and execute_idx < admission_idx:
-                findings.append("EFFECTFUL_RUNNER_BEFORE_COMMON_ENGINE_ADMISSION")
+    if path_rel == COMMON_STAGE_WORKFLOW:
+        if "workflow_dispatch" not in text:
+            findings.append("COMMON_STAGE_WORKFLOW_EXPLICIT_DISPATCH_MISSING")
+        if "stage_execution_engine.py --execute --stage" not in text:
+            findings.append("COMMON_STAGE_WORKFLOW_EXECUTE_MODE_MISSING")
+        for token in (
+            "run_current_stage2_actual_test.py",
+            "run_current_stage3_visual_design.py",
+            "run_fresh_stage_replay.py",
+        ):
+            if token in text:
+                findings.append("DIRECT_STAGE_ADAPTER_INVOCATION_FROM_WORKFLOW_FORBIDDEN:" + token)
     return sorted(set(findings))
 
 
