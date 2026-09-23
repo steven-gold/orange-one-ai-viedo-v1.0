@@ -21,9 +21,9 @@ execution:
   scope_mode: EXACT_PAGE_SCOPE_ONLY
   target_pages:
   - CORE-01
-  current_stage: STAGE-03-CLEAN-BASELINE-WUR-REQUIRED
+  current_stage: STAGE-01-ENTRY-BLOCKED-PREFORMAL-GOVERNANCE-REVIEW
   stage1:
-    CORE-01: REVERIFY_REQUIRED_CLEAN_RESET
+    CORE-01: NOT_EXECUTED_ENTRY_GATE_BLOCKED
   stage2:
     result: NOT_EXECUTED
     stage_entry_gate: NOT_EXECUTED
@@ -104,14 +104,14 @@ specification_mutation_safety:
   ordinary_mid_stage_specification_mutation: BLOCK
   stage_end_consolidated_promotion_requires_new_explicit_directive: true
   execution_context_lock_required: true
-status: FINAL_RESIDUAL_CLASSIFICATION_AND_SEAL_CLOSED_WORK_UNIT_RESOLUTION_REQUIRED
-next_action: WORK_UNIT_RESOLUTION_GATE_AFTER_FINAL_CLEAN_SEAL
+status: CORE01_STAGE01_WORD_SOURCE_READY_PREFORMAL_REVIEW_BLOCKED
+next_action: USER_OR_AUTHORIZED_GOVERNANCE_REVIEWER_DECISION_REV_GOV_001
 resume_control:
-  current_resume_point: FINAL_RESIDUAL_CLASSIFICATION_AND_SEAL_CLOSED_WUR_REQUIRED
+  current_resume_point: CORE01_STAGE01_WORD_SOURCE_READY_PREFORMAL_REVIEW_BLOCKED
   current_work_unit_uid: null
-  current_owner: governance/specifications/current/EXECUTION_CYCLE_CONTROL.yaml
-  exact_next_action: WORK_UNIT_RESOLUTION_GATE_AFTER_FINAL_CLEAN_SEAL
-  product_resume_preserved: CORE01_STAGE01_STAGE03_CLEAN_BASELINE_READY_FRESH_STAGE01_WUR_REQUIRED
+  current_owner: .github/governance-source/active/source/10_REGISTRY/REVIEW_PROGRESS_LEDGER.yaml
+  exact_next_action: USER_OR_AUTHORIZED_GOVERNANCE_REVIEWER_DECISION_REV_GOV_001
+  product_resume_preserved: CORE01_STAGE01_WORD_SOURCE_READY_PREFORMAL_REVIEW_BLOCKED
   interrupted_test_resume_preserved: CORE01_SOURCE_TEST_BUGFIX_AND_CONTENT_INTEGRITY_FULL_LIFECYCLE_R2_ACTIVE
   reentry_owner_capability: SOURCE_INTAKE_BASE_BLUEPRINT
   reentry_stage_uid: STAGE-01
@@ -152,9 +152,49 @@ pending_governance_review:
   explicit_user_decision_required: true
   explicit_user_decision_observed: false
   self_reported_approval: FORBIDDEN
-current_primary_task_layer: GOVERNANCE_MAINTENANCE
-current_primary_task_authorization_uid: EXPLICIT_USER_DIRECTIVE_20260923_CONTINUE_CLEANUP_AFTER_TEST_EVIDENCE_PURGE
+current_primary_task_layer: PRODUCT_STAGE_EXECUTION
+current_primary_task_authorization_uid: EXPLICIT_USER_DIRECTIVE_20260923_READ_CORE01_WORD_AND_EXECUTE_STAGE_FLOW
 current_primary_task_product_stage_credit: 0
+stage01_word_source_intake_candidate:
+  normative_authority: false
+  candidate_work_unit_uid: WU-CORE01-STAGE01-WORD-SOURCE-INTAKE-20260923-001
+  primary_task_layer: PRODUCT_STAGE_EXECUTION
+  stage_uid: STAGE-01
+  stage_name: SOURCE_INTAKE_AND_BASE_BLUEPRINT
+  page_uid: CORE-01
+  entry_gate: GOVERNANCE_PREFORMAL_READY
+  entry_gate_status: BLOCKED_REQUIRED_HUMAN_GOVERNANCE_REVIEW
+  blocking_review_item_uid: REV-GOV-001
+  blocking_review_type: PREFORMAL_GOVERNANCE_REVIEW
+  reviewer_role: USER_OR_AUTHORIZED_GOVERNANCE_REVIEWER
+  machine_may_auto_approve: false
+  actual_stage_execution_started: false
+  product_stage_credit: 0
+  source_snapshot:
+    repository: steven-gold/orange-one-ai-viedo-v1.0
+    branch: 0921acpos
+    branch_head_sha_after_extraction_cleanup: 6249dbadad182cecd3810683b260dccd11901bcc
+    branch_tree_sha_after_extraction_cleanup: e36f80c0c4e5ad407ebbd8b71541979e9db02595
+    source_path: ACPOS_CORE-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx
+    source_git_blob_sha: 1cafe3bbccb7168cc5606aa4e21fb7edb5a54439
+    source_sha256: 943af192004b587d6aab36e114eeb40430c9ea45614cc154d62dd9e3b5cbefeb
+    page_count_rendered: 56
+    paragraph_count: 152
+    table_count: 45
+    inline_shape_count: 5
+    embedded_media_count: 5
+    extraction_workflow_run_id: 35802694635
+    extraction_artifact_id: 10726682269
+    extraction_artifact_sha256: 4ce6a719c62490e286e16663d850ad1659864df0803a8a9015a17142b4218b90
+    temporary_extraction_workflow_present_after_cleanup: false
+  observed_design_denominators:
+    control_count: 50
+    action_runtime_binding_count: 34
+    integration_port_count: 19
+    visual_candidate_count: 5
+  next_legal_transition:
+    on_review_approved_current_target_hash: ACTIVATE_STAGE01_WORK_UNIT_AND_MATERIALIZE_WORD_SOURCE_PROVIDER
+    while_review_pending: BLOCK_PRODUCT_STAGE_EXECUTION
 retained_governance_cleanup_summary:
   role: COMPACT_NON_NORMATIVE_PROVENANCE
   product_stage_credit: 0
@@ -494,6 +534,29 @@ closed_governance_maintenance_work_unit_final_residual_classification_and_seal:
   product_stage_credit: 0
 active_work_unit: null
 last_work_unit_resolution_gate:
+  resolution_uid: WUR-CORE01-STAGE01-WORD-SOURCE-INTAKE-20260923-001
+  normative_authority: false
+  result: BLOCKED_REQUIRED_HUMAN_GOVERNANCE_REVIEW
+  requested_primary_task_layer: PRODUCT_STAGE_EXECUTION
+  candidate_work_unit_uid: WU-CORE01-STAGE01-WORD-SOURCE-INTAKE-20260923-001
+  candidate_stage_uid: STAGE-01
+  candidate_page_uid: CORE-01
+  authorization_basis: EXPLICIT_USER_DIRECTIVE_20260923_READ_CORE01_WORD_AND_EXECUTE_STAGE_FLOW
+  canonical_owner: SOURCE_INTAKE_BASE_BLUEPRINT
+  source_snapshot_bound: true
+  source_branch: 0921acpos
+  source_blob_sha: 1cafe3bbccb7168cc5606aa4e21fb7edb5a54439
+  source_sha256: 943af192004b587d6aab36e114eeb40430c9ea45614cc154d62dd9e3b5cbefeb
+  entry_gate: GOVERNANCE_PREFORMAL_READY
+  blocking_review_item_uid: REV-GOV-001
+  blocking_review_status: PENDING
+  reviewer_role: USER_OR_AUTHORIZED_GOVERNANCE_REVIEWER
+  machine_may_auto_approve: false
+  active_work_unit_created: false
+  product_stage_execution_started: false
+  product_stage_credit: 0
+  exact_next_action: USER_OR_AUTHORIZED_GOVERNANCE_REVIEWER_DECISION_REV_GOV_001
+previous_last_work_unit_resolution_gate:
   resolution_uid: WUR-GOV-FINAL-RESIDUAL-CLASSIFICATION-SEAL-20260923-001
   normative_authority: false
   result: PASS_SINGLE_LEGAL_SUCCESSOR

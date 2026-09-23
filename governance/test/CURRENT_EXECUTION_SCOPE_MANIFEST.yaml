@@ -2,48 +2,52 @@ schema_version: 1
 artifact_type: EXECUTION_SCOPE_MANIFEST
 normative_authority: false
 governance_uid: GOV-REV-20260921-TYPOGRAPHY-COMPUTED-METRICS-HARDENING
-owning_capability: GOVERNANCE_MAINTENANCE
-scope_kind: TYPOGRAPHY_COMPUTED_METRICS_NORMATIVE_SUCCESSOR
-work_unit_uid: WU-GOV-CONTENT-INTEGRITY-TYPOGRAPHY-CONSUMER-HARDENING-001
+owning_capability: SOURCE_INTAKE_AND_BASE_BLUEPRINT
+scope_kind: EXACT_SINGLE_PAGE_STAGE01_WORD_SOURCE_CANDIDATE_BLOCKED_PREFORMAL_REVIEW
+work_unit_uid: WU-CORE01-STAGE01-WORD-SOURCE-INTAKE-20260923-001
 included_units:
-- FIND-20260921-003_TYPOGRAPHY_COMPUTED_METRICS_POLICY
+- CORE-01
 excluded_units:
-- PRODUCT_DATA_MUTATION
-- PRODUCT_AUTHORITY_MUTATION
-- PRODUCT_BEHAVIOR_INVENTION
-- FORMAL_PRODUCTION_DEPLOYMENT
-- FORMAL_PRODUCTION_DATABASE_MIGRATION
-remaining_units: []
-scope_selection_authority: USR-DIRECTIVE-20260921-CONTENT-INTEGRITY-TYPOGRAPHY-CONSUMER-HARDENING-R1
+- ASSET-01
+- VIDEO-01
+- EDIT-01
+- VOICE-01
+- QA-01
+remaining_units:
+- CORE-01
+stage_required_units:
+- CORE-01
+scope_selection_authority: EXPLICIT_USER_DIRECTIVE_20260923_READ_CORE01_WORD_AND_EXECUTE_STAGE_FLOW
+source_snapshot:
+  repository: steven-gold/orange-one-ai-viedo-v1.0
+  branch: 0921acpos
+  branch_head_sha: 6249dbadad182cecd3810683b260dccd11901bcc
+  branch_tree_sha: e36f80c0c4e5ad407ebbd8b71541979e9db02595
+  source_path: ACPOS_CORE-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx
+  source_git_blob_sha: 1cafe3bbccb7168cc5606aa4e21fb7edb5a54439
+  source_sha256: 943af192004b587d6aab36e114eeb40430c9ea45614cc154d62dd9e3b5cbefeb
+  extraction_workflow_run_id: 35802694635
+  extraction_artifact_id: 10726682269
+  extracted_paragraph_count: 152
+  extracted_table_count: 45
+  extracted_visual_candidate_count: 5
 dependency_closure_refs:
-- governance/specifications/current/SPECIFICATION_MUTATION_CONTROL.yaml
-- governance/specifications/current/GOVERNANCE_LAYER_SEPARATION_AND_PORTABILITY.yaml
-- .github/governance-source/active/source/12_DOCS/mother-spec/01_BLUEPRINT_DESIGN_GOVERNANCE.md
-- .github/governance-source/active/source/12_DOCS/mother-spec/02_IMPLEMENTATION_DELIVERY_STANDARD.md
-- .github/governance-source/active/source/12_DOCS/mother-spec/04_AUDIT_PROGRESS_STANDARD.md
-- .github/governance-source/active/source/10_REGISTRY/STAGE_EXECUTION_INVARIANT_REGISTRY.yaml
+- governance/test/ACTIVE_STATE.yaml
+- GOVERNANCE_CURRENT.yaml
+- governance/specifications/REGISTRY.yaml
 - .github/governance-source/active/source/10_REGISTRY/GOVERNANCE_LIFECYCLE_STAGE_REGISTRY.yaml
-- .github/governance-source/active/source/10_REGISTRY/AUDIT_CATALOG.yaml
+- .github/governance-source/active/source/10_REGISTRY/REVIEW_PROGRESS_LEDGER.yaml
+- .github/governance-source/active/source/10_REGISTRY/STAGE1_SOURCE_FACT_CONTRACTS.yaml
 denominator_source_refs:
-- governance/test/SPECIFICATION_CHANGE_CANDIDATES.yaml
-- governance/specifications/current/INTERACTION_TOPOLOGY_AI_CONTINUITY.yaml
+- source_snapshot
+- ACPOS_CORE-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx
+entry_gate: GOVERNANCE_PREFORMAL_READY
+entry_gate_status: BLOCKED_REQUIRED_HUMAN_GOVERNANCE_REVIEW
+blocking_review_item_uid: REV-GOV-001
 partial_scope: false
 stage_exit_credit_allowed: false
-fresh_revalidation_required: false
-governance_policy_consumer_revalidation_required: false
-product_stage_revalidation_required: false
+product_stage_execution_allowed: false
+fresh_revalidation_required: true
+product_stage_revalidation_required: true
 product_stage_revalidation_credit: 0
-projection_correction_finding_uid: FIND-20260921-004
-closure_status: CLOSED_VERIFIED_NO_PRODUCT_CREDIT
-closure_validation_head: f2140ddb1ee508b21982f3eee1cdde2ada1fb973
-closure_selected_profile_run_id: 35545647732
-closure_full_line_run_id: 35545647729
-closure_branch_guard_run_id: 35545647661
-closure_stage02_boundary_run_id: 35545647694
-closure_fresh_replay_run_id: 35545647835
-closure_stage03_product_run_id: 35545647790
-closure_discovered_validation_findings:
-- FIND-20260921-004
-- FIND-20260921-005
-- FIND-20260921-006
-next_action: WORK_UNIT_RESOLUTION_GATE_AFTER_TYPOGRAPHY_HARDENING_CLOSURE
+next_action: USER_OR_AUTHORIZED_GOVERNANCE_REVIEWER_DECISION_REV_GOV_001
