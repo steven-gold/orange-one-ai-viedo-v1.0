@@ -1,0 +1,23 @@
+name: Word YAML Page-Neutral Schema Governance Promotion
+on:
+  push:
+    branches:
+      - rebuild-v2.1.1
+    paths:
+      - "governance/test/spec_change_authorizations/USR-DIRECTIVE-20260923-WORD-YAML-PAGE-NEUTRAL-SCHEMA-HARDENING-R2.yaml"
+permissions:
+  contents: write
+jobs:
+  promote:
+    runs-on: ubuntu-latest
+    timeout-minutes: 55
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: python -m pip install --disable-pip-version-check PyYAML==6.0.2
+      - name: Promote page-neutral fixed-schema dynamic-content source projection hardening
+        run: python .github/governance-maintenance/promote_word_yaml_page_neutral_schema_governance.py --mode promote
