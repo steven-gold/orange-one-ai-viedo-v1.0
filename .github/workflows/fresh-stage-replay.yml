@@ -9,6 +9,7 @@ on:
       - '.github/governance-maintenance/finalize_fresh_stage_replay.py'
       - '.github/governance-source/FULL_LINE_TRIGGER'
       - 'governance/ci/validate_active_consumer_reference_integrity.py'
+      - 'governance/ci/validate_stage01_frozen_projection_execution.py'
       - 'governance/test/ACTIVE_STATE.yaml'
   workflow_dispatch:
     inputs:
@@ -45,6 +46,8 @@ jobs:
           python .github/governance-maintenance/finalize_fresh_stage_replay.py --identity-self-test
       - name: Enforce active consumer dynamic identity integrity
         run: python governance/ci/validate_active_consumer_reference_integrity.py
+      - name: Regression test frozen-projection Stage-01 execution scanner
+        run: python governance/ci/validate_stage01_frozen_projection_execution.py --self-test
 
   close-stage02-revalidation-persistence-maintenance:
     if: ${{ github.event_name == 'push' && contains(github.event.head_commit.message, '[stage02-persistence-close]') }}
