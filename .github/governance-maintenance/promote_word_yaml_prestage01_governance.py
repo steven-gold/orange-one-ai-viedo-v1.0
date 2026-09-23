@@ -827,6 +827,9 @@ def mutate_policy():
 
     rp=SOURCE/'10_REGISTRY/REFERENCE_RULE_REGISTRY.yaml'
     ref=load(rp)
+    _ref_audit_types=ref.setdefault('audit_type_identities',[])
+    if not any(x.get('audit_type_uid')=='AUDTYPE-GOV-015' for x in _ref_audit_types):
+        _ref_audit_types.append({'audit_type_uid':'AUDTYPE-GOV-015','canonical_name':'STRUCTURED_DOCUMENT_CANONICAL_PROJECTION_ZERO_LOSS_RECONCILIATION','allowed_stage_uids':['PREFORMAL'],'denominator_eligible':True})
     unique_extend(ref['stage_reference_rules']['STAGE-01']['exact_required_normative_section_uids'],section_uids)
     if 'BUNDLE-GOV-CONSTRUCTION-BASE' in ref.get('common_bundle_reference_rules',{}):
         unique_extend(ref['common_bundle_reference_rules']['BUNDLE-GOV-CONSTRUCTION-BASE']['exact_section_uids'],['WEB-GOV-01-S090','WEB-GOV-02-S077','WEB-GOV-03-S072'])
