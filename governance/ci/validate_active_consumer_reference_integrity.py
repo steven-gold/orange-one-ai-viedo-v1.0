@@ -15,6 +15,9 @@ WORKFLOW_ROOT = ROOT / ".github" / "workflows"
 REPORT = ROOT / "governance" / "test" / "ACTIVE_CONSUMER_REFERENCE_INTEGRITY_REPORT.json"
 REGISTRY = ROOT / "governance/specifications/REGISTRY.yaml"
 NEGATIVE_MATRIX = ROOT / "governance/test/EXECUTION_CLOSURE_NEGATIVE_REGRESSION_MATRIX.yaml"
+ACTIVE_STATE = ROOT / "governance/test/ACTIVE_STATE.yaml"
+FRESH_REPLAY_RUNNER = ".github/governance-maintenance/run_fresh_stage_replay.py"
+FRESH_REPLAY_WORKFLOW = ".github/workflows/fresh-stage-replay.yml"
 
 EXEC_REF = re.compile(
     r"python(?:3)?\s+(?:-m\s+)?"
@@ -146,6 +149,61 @@ def fixed_dynamic_replay_identities(path_rel: str, text: str) -> list[str]:
 
 def stale_product_run_root_literals(text: str) -> list[str]:
     return sorted(set(STALE_PRODUCT_RUN_ROOT_LITERAL.findall(text)))
+
+
+def stage_boundary_semantic_findings(path_rel: str, text: str) -> list[str]:
+    findings: list[str] = []
+    if path_rel == FRESH_REPLAY_RUNNER:
+        forbidden = {
+            "LEGACY_REPLAY_CONTEXT": "fresh_replay_execution_context",
+            "DIRECT_STAGE2_EXECUTOR": "run_current_stage2_actual_test.py",
+            "LEGACY_STAGE2_STRUCTURAL_MATERIALIZER": "stage2_structural_materialize",
+            "LEGACY_STAGE2_PROJECTION_MATERIALIZER": "materialize_stage2_projection",
+            "PREMATURE_STAGE1_CLOSE_RESET": "reset_current_state_for_stage1",
+            "PRIVATE_CROSS_STAGE_BINDER": "bind_common_stage_work_unit",
+        }
+        for kind, token in forbidden.items():
+            if token in text:
+                findings.append(f"{kind}:{token}")
+        required_tokens = {
+            "ACTIVE_WORK_UNIT_DRIVER": "active_work_unit",
+            "CURRENT_SCOPE_DRIVER": "CURRENT_EXECUTION_SCOPE_MANIFEST.yaml",
+            "LIFECYCLE_REGISTRY_DRIVER": "GOVERNANCE_LIFECYCLE_STAGE_REGISTRY.yaml",
+            "COMMON_ENGINE_ADMISSION": "--admission-check",
+            "PLANNED_RUN_ROOT_FROM_WU": "planned_run_root",
+        }
+        for kind, token in required_tokens.items():
+            if token not in text:
+                findings.append(f"MISSING_{kind}:{token}")
+        try:
+            tree = ast.parse(text)
+        except SyntaxError:
+            return sorted(set(findings + ["PYTHON_PARSE_ERROR"]))
+        for node in ast.walk(tree):
+            if not isinstance(node, ast.Call):
+                continue
+            literals = _string_constants(node)
+            for lit in literals:
+                if re.search(r"run_current_stage\d+_actual_test\.py", lit):
+                    findings.append(f"DIRECT_STAGE_SPECIFIC_EXECUTOR_LITERAL:{lit}")
+    elif path_rel == FRESH_REPLAY_WORKFLOW:
+        execute_marker = "  execute-fresh-replay:"
+        segment = text.split(execute_marker, 1)[1] if execute_marker in text else ""
+        if not segment:
+            findings.append("EXECUTE_JOB_MISSING")
+        else:
+            context_idx = segment.find("--print-context-github-output")
+            admission_idx = segment.find("stage_execution_engine.py --admission-check")
+            execute_idx = segment.find("run_fresh_stage_replay.py")
+            if "steps.context.outputs.stage_uid" not in segment:
+                findings.append("ACTIVE_STAGE_OUTPUT_NOT_CONSUMED")
+            if admission_idx < 0:
+                findings.append("COMMON_ENGINE_ADMISSION_NOT_ENFORCED")
+            if context_idx >= 0 and admission_idx >= 0 and admission_idx < context_idx:
+                findings.append("COMMON_ENGINE_ADMISSION_BEFORE_CONTEXT_RESOLUTION")
+            if admission_idx >= 0 and execute_idx >= 0 and execute_idx < admission_idx:
+                findings.append("EFFECTFUL_RUNNER_BEFORE_COMMON_ENGINE_ADMISSION")
+    return sorted(set(findings))
 
 
 def unsafe_preterminal_current_projection(text: str) -> bool:
@@ -409,6 +467,8 @@ def main() -> int:
             errors.append(f"FIXED_EXECUTION_IDENTITY_IN_DYNAMIC_REPLAY:{rel(workflow)}:{finding}")
         for literal in stale_product_run_root_literals(text):
             errors.append(f"STALE_PRODUCT_RUN_ROOT_LITERAL_IN_ACTIVE_WORKFLOW:{rel(workflow)}:{literal}")
+        for finding in stage_boundary_semantic_findings(rel(workflow), text):
+            errors.append(f"STAGE_BOUNDARY_SEMANTIC_INTEGRITY:{rel(workflow)}:{finding}")
         for wf_ref in LOCAL_WORKFLOW_REF.findall(text):
             if not (ROOT / wf_ref).is_file():
                 missing_workflows.append(wf_ref)
@@ -438,6 +498,8 @@ def main() -> int:
             errors.append(f"FIXED_EXECUTION_IDENTITY_IN_DYNAMIC_REPLAY:{script_rel}:{finding}")
         for literal in stale_product_run_root_literals(text):
             errors.append(f"STALE_PRODUCT_RUN_ROOT_LITERAL_IN_ACTIVE_CONSUMER:{script_rel}:{literal}")
+        for finding in stage_boundary_semantic_findings(script_rel, text):
+            errors.append(f"STAGE_BOUNDARY_SEMANTIC_INTEGRITY:{script_rel}:{finding}")
         for child in python_executable_refs(text):
             referenced_by[child].add(script_rel)
             if child not in visited:
@@ -483,6 +545,7 @@ def main() -> int:
         "dynamic_replay_executable_set": list(DYNAMIC_REPLAY_EXECUTABLES),
         "dynamic_replay_fixed_identity_guard": "ENFORCED",
         "stale_product_run_root_literal_guard": "ENFORCED_FOR_ACTIVE_AND_TRANSITIVE_CONSUMERS",
+        "stage_boundary_semantic_integrity_guard": "ENFORCED_FOR_FRESH_REPLAY_ORCHESTRATION",
         "active_governance_projectors": projector_values,
         "projector_inventory_source": "governance/specifications/REGISTRY.yaml",
         "required_regression_gate_presence": gate_presence,
@@ -504,6 +567,7 @@ def main() -> int:
     print("PASS: complete projector inventory resolved from Registry and profile-bound state keys")
     print("PASS: no stale literal product run root remains in active or transitive executable consumers")
     print("PASS: no same-run preterminal Current closure PASS projection remains")
+    print("PASS: active Stage orchestration has no legacy replay context, private successor execution, or premature-close bypass")
     print("PASS: terminal-result negative regressions blocked")
     print("PASS: ACTIVE_CONSUMER_REFERENCE_INTEGRITY")
     return 0
