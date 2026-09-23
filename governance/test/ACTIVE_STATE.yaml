@@ -104,13 +104,13 @@ specification_mutation_safety:
   ordinary_mid_stage_specification_mutation: BLOCK
   stage_end_consolidated_promotion_requires_new_explicit_directive: true
   execution_context_lock_required: true
-status: GOVERNANCE_TRIGGER_IDENTITY_DECONTAMINATION_CLOSED_WORK_UNIT_RESOLUTION_REQUIRED
-next_action: WORK_UNIT_RESOLUTION_GATE_AFTER_GOVERNANCE_TRIGGER_IDENTITY_DECONTAMINATION
+status: FINAL_RESIDUAL_CLASSIFICATION_AND_SEAL_ACTIVE
+next_action: MIGRATE_FINAL_ACTIVE_RESIDUALS_AND_VALIDATE_154_FILE_INVENTORY
 resume_control:
-  current_resume_point: GOVERNANCE_TRIGGER_IDENTITY_DECONTAMINATION_CLOSED_WUR_REQUIRED
-  current_work_unit_uid: null
-  current_owner: governance/specifications/current/EXECUTION_CYCLE_CONTROL.yaml
-  exact_next_action: WORK_UNIT_RESOLUTION_GATE_AFTER_GOVERNANCE_TRIGGER_IDENTITY_DECONTAMINATION
+  current_resume_point: FINAL_RESIDUAL_CLASSIFICATION_AND_SEAL_ACTIVE
+  current_work_unit_uid: WU-GOV-FINAL-RESIDUAL-CLASSIFICATION-SEAL-001
+  current_owner: governance/test/ACTIVE_STATE.yaml
+  exact_next_action: MIGRATE_FINAL_ACTIVE_RESIDUALS_AND_VALIDATE_154_FILE_INVENTORY
   product_resume_preserved: CORE01_STAGE01_STAGE03_CLEAN_BASELINE_READY_FRESH_STAGE01_WUR_REQUIRED
   interrupted_test_resume_preserved: CORE01_SOURCE_TEST_BUGFIX_AND_CONTENT_INTEGRITY_FULL_LIFECYCLE_R2_ACTIVE
   reentry_owner_capability: SOURCE_INTAKE_BASE_BLUEPRINT
@@ -384,8 +384,79 @@ closed_governance_maintenance_work_unit_trigger_identity_decontamination:
   - PRODUCT_STAGE_CREDIT_ZERO
   legal_next_transition: WORK_UNIT_RESOLUTION_GATE
   product_stage_credit: 0
-active_work_unit: null
+active_work_unit:
+  work_unit_uid: WU-GOV-FINAL-RESIDUAL-CLASSIFICATION-SEAL-001
+  canonical_name: FINAL_154_FILE_RESIDUAL_CLASSIFICATION_AND_CLEAN_SEAL
+  primary_task_layer: GOVERNANCE_MAINTENANCE
+  current_status: ACTIVE
+  authorization_basis: EXPLICIT_USER_DIRECTIVE_20260923_FINAL_CLEAN_SEAL_154_FILE_INVENTORY
+  canonical_policy_owner: governance/specifications/current/EXECUTION_CYCLE_CONTROL.yaml
+  state_owner: governance/test/ACTIVE_STATE.yaml
+  denominator:
+    total_tracked_files: 154
+    verified_source_lineage_files: 75
+    non_verified_source_files: 79
+  provisional_disposition:
+    keep_active_after_migration: 96
+    keep_non_current: 58
+    remove: 0
+    migrate_active_residuals: 3
+    unknown: 0
+  keep_non_current_breakdown:
+    verified_source_09_tests_regression_signatures: 37
+    verified_source_11_evidence_provenance_fixtures: 15
+    verified_source_readme_and_versioning_history: 2
+    governance_test_historical_provenance: 4
+  migrate_active_residuals:
+  - .github/governance-source/README.md
+  - .github/workflows/repository-three-branch-recovery.yml
+  - governance/ci/stress_test_stage03_core01.py
+  immutable_or_externally_owned_exclusions:
+  - .github/governance-source/active/source
+  - authority/global
+  - governance/specifications/current
+  classification_basis:
+    canonical_owner: CURRENT_REGISTRY_CURRENT_GOVERNANCE_BRANCH_AUTHORITY_AND_ACTIVE_WORKFLOW_GRAPH
+    forward_reference: COMPLETE_BY_COHORT_AND_ACTIVE_CONSUMER_ROLE
+    reverse_reference: ACTIVE_WORKFLOW_AND_RUNTIME_GRAPH_PLUS_EXACT_SOURCE_IDENTITY
+    runtime_or_workflow_reachability: RESOLVED_FOR_ALL_COHORTS
+    test_regression_role: VERIFIED_SOURCE_09_TESTS_PRESERVED_AS_NON_CURRENT_REGRESSION_SIGNATURES
+    historical_retention_role: VERIFIED_SOURCE_11_EVIDENCE_AND_TRACKED_PROFILE_HISTORY_PRESERVED_NON_CURRENT
+  planned_migrations:
+  - OUTER_README_STALE_DETERMINISTIC_HASH_TO_CURRENT_VERIFIED_SOURCE_IDENTITY
+  - BRANCH_RECOVERY_MUTATOR_TO_READ_ONLY_FAIL_CLOSED_AUTHORITY_VALIDATOR
+  - STAGE03_STRESS_TRIGGER_COMMENT_TO_VERSION_NEUTRAL_MARKER
+  definition_of_done:
+  - ALL_154_TRACKED_FILES_HAVE_NON_UNKNOWN_DISPOSITION
+  - VERIFIED_75_FILE_SOURCE_REMAINS_BYTE_EXACT
+  - ACTIVE_WORKFLOW_GRAPH_REMAINS_COMPLETE
+  - BRANCH_AUTHORITY_GUARD_NO_LONGER_FORCE_RESETS_OR_DELETES_BRANCHES
+  - OUTER_GOVERNANCE_SOURCE_README_MATCHES_CURRENT_VERIFIED_SOURCE_IDENTITY
+  - ACTIVE_EXECUTABLES_CONTAIN_NO_STALE_V2215_V2216_TRIGGER_IDENTITY
+  - KEEP_NON_CURRENT_COHORTS_REMAIN_NON_CURRENT_AND_NON_AUTHORITY
+  - EXACT_HEAD_BRANCH_AUTHORITY_PASS
+  - EXACT_HEAD_SOURCE_IDENTITY_PASS
+  - EXACT_HEAD_SELECTED_PROFILE_PASS
+  - EXACT_HEAD_FULL_LINE_PASS
+  - PRODUCT_STAGE_CREDIT_ZERO
+  legal_next_transition: CLOSE_TO_WORK_UNIT_RESOLUTION_GATE
+  product_stage_credit: 0
 last_work_unit_resolution_gate:
+  resolution_uid: WUR-GOV-FINAL-RESIDUAL-CLASSIFICATION-SEAL-20260923-001
+  normative_authority: false
+  result: PASS_SINGLE_LEGAL_SUCCESSOR
+  requested_primary_task_layer: GOVERNANCE_MAINTENANCE
+  resolved_work_unit_uid: WU-GOV-FINAL-RESIDUAL-CLASSIFICATION-SEAL-001
+  authorization_basis: EXPLICIT_USER_DIRECTIVE_20260923_FINAL_CLEAN_SEAL_154_FILE_INVENTORY
+  canonical_owner: governance/test/ACTIVE_STATE.yaml
+  basis:
+  - PREDECESSOR_TRIGGER_IDENTITY_DECONTAMINATION_CLOSED_AND_EXACT_HEAD_VERIFIED
+  - USER_EXPLICITLY_REQUESTED_FINAL_KEEP_ACTIVE_KEEP_NON_CURRENT_REMOVE_INVENTORY
+  - ALL_154_TRACKED_FILES_ENUMERATED
+  - VERIFIED_SOURCE_LINEAGE_MUST_REMAIN_EXACT_75_FILE_SET
+  - THREE_ACTIVE_RESIDUALS_HAVE_COMPLETE_MIGRATION_TARGETS
+  product_stage_credit: 0
+previous_last_work_unit_resolution_gate:
   resolution_uid: WUR-GOV-TRIGGER-IDENTITY-DECONTAMINATION-20260923-001
   normative_authority: false
   result: PASS_SINGLE_LEGAL_SUCCESSOR
