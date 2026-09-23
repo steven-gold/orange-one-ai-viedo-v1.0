@@ -29,7 +29,7 @@ execution:
     work_unit_resolution: PASS_SINGLE_LEGAL_SUCCESSOR
     execution_started: false
     pre_execution_gate: GOVERNANCE_LOAD_RECEIPT_PASS
-    pre_execution_gate_status: PASS
+    pre_execution_gate_status: NOT_EXECUTED
     stage_exit_allowed: false
     artifact_root_present: false
     prior_results_authoritative_for_current_governance: false
@@ -38,7 +38,6 @@ execution:
     - CORE-01
     remaining_page_uids:
     - CORE-01
-    governance_load_receipt_ref: governance/test/preexecution/stage_governance_load/WU-STAGE01-CORE01-943AF192-REPLAY/GOVERNANCE_LOAD_RECEIPT.yaml
   stage2:
     result: NOT_EXECUTED
     stage_entry_gate: NOT_EXECUTED
@@ -119,17 +118,17 @@ specification_mutation_safety:
   ordinary_mid_stage_specification_mutation: BLOCK
   stage_end_consolidated_promotion_requires_new_explicit_directive: true
   execution_context_lock_required: true
-status: STAGE_PREEXECUTION_GOVERNANCE_LOAD_PASS_EXECUTION_READY
-next_action: EXECUTE_ACTIVE_STAGE_WORK_UNIT
+status: STAGE_PREEXECUTION_GOVERNANCE_LOAD_REQUIRED
+next_action: BUILD_STAGE_GOVERNANCE_LOAD_RECEIPT
 resume_control:
-  current_resume_point: STAGE_PREEXECUTION_GOVERNANCE_LOAD_PASS_EXECUTION_READY
+  current_resume_point: STAGE_PREEXECUTION_GOVERNANCE_LOAD_REQUIRED
   current_work_unit_uid: WU-STAGE01-CORE01-943AF192-REPLAY
   current_owner: 00_SOURCE_INTAKE/run_core01_943af192_stage01/00_SOURCE_INTAKE/evidence/STAGE1_VALIDATION_EVIDENCE.yaml
-  exact_next_action: EXECUTE_ACTIVE_STAGE_WORK_UNIT
+  exact_next_action: BUILD_STAGE_GOVERNANCE_LOAD_RECEIPT
   historical_stage2_results_are_current_state: false
   stage2_execution_requires_fresh_entry_resolution: true
-  product_execution_allowed: true
-  product_execution_block_reason: null
+  product_execution_allowed: false
+  product_execution_block_reason: SCANNER_OWNER_MIGRATION_REQUIRES_FRESH_GOVERNANCE_LOAD
   website_construction_allowed: false
   deployment_allowed: false
 governance_revision_transition:
@@ -199,7 +198,7 @@ active_work_unit:
   scope:
   - CORE-01
   canonical_owner: 00_SOURCE_INTAKE/run_core01_943af192_stage01/00_SOURCE_INTAKE/evidence/STAGE1_VALIDATION_EVIDENCE.yaml
-  current_status: ACTIVE_PREEXECUTION_GOVERNANCE_LOAD_PASS_EXECUTION_READY
+  current_status: ACTIVE_PREEXECUTION_GOVERNANCE_LOAD_REQUIRED
   authorization_uid: EXPLICIT_USER_DIRECTIVE_20260923_NEXT_STEP_RESOLVE_CORE01_STAGE01_WU
   dependencies:
   - 00_SOURCE_INTAKE/prestage_core01_943af192_word_yaml/00_SOURCE_INTAKE/SOURCE_PROJECTIONS/SRC-DOCX-CORE01-943AF192/SOURCE_PROJECTION_FREEZE_RECEIPT.yaml
@@ -249,22 +248,22 @@ active_work_unit:
       result_owner: 00_SOURCE_INTAKE/run_core01_943af192_stage01/00_SOURCE_INTAKE/evidence/STAGE1_VALIDATION_EVIDENCE.yaml
   scanner_bindings:
     SOURCE_COMPLETENESS:
-      scanner_owner: .github/governance-source/active/source/09_TESTS/governance/governance_stage1_pipeline_guard.py
+      scanner_owner: governance/ci/validate_stage01_frozen_projection_execution.py
       result_owner: 00_SOURCE_INTAKE/run_core01_943af192_stage01/00_SOURCE_INTAKE/evidence/STAGE1_VALIDATION_EVIDENCE.yaml
     SOURCE_IDENTITY:
-      scanner_owner: .github/governance-source/active/source/09_TESTS/governance/governance_stage1_pipeline_guard.py
+      scanner_owner: governance/ci/validate_stage01_frozen_projection_execution.py
       result_owner: 00_SOURCE_INTAKE/run_core01_943af192_stage01/00_SOURCE_INTAKE/evidence/STAGE1_VALIDATION_EVIDENCE.yaml
     CLASSIFICATION_COMPLETENESS:
-      scanner_owner: .github/governance-source/active/source/09_TESTS/governance/governance_stage1_pipeline_guard.py
+      scanner_owner: governance/ci/validate_stage01_frozen_projection_execution.py
       result_owner: 00_SOURCE_INTAKE/run_core01_943af192_stage01/00_SOURCE_INTAKE/evidence/STAGE1_VALIDATION_EVIDENCE.yaml
     BLUEPRINT_BINDING:
-      scanner_owner: .github/governance-source/active/source/09_TESTS/governance/governance_stage1_pipeline_guard.py
+      scanner_owner: governance/ci/validate_stage01_frozen_projection_execution.py
       result_owner: 00_SOURCE_INTAKE/run_core01_943af192_stage01/00_SOURCE_INTAKE/evidence/STAGE1_VALIDATION_EVIDENCE.yaml
     UNRESOLVED_AUTHORITY_PRESERVATION:
-      scanner_owner: .github/governance-source/active/source/09_TESTS/governance/governance_stage1_pipeline_guard.py
+      scanner_owner: governance/ci/validate_stage01_frozen_projection_execution.py
       result_owner: 00_SOURCE_INTAKE/run_core01_943af192_stage01/00_SOURCE_INTAKE/evidence/STAGE1_VALIDATION_EVIDENCE.yaml
     SOURCE_PROJECTION_LOCK:
-      scanner_owner: .github/governance-source/active/source/09_TESTS/governance/governance_stage1_pipeline_guard.py
+      scanner_owner: governance/ci/validate_stage01_frozen_projection_execution.py
       result_owner: 00_SOURCE_INTAKE/run_core01_943af192_stage01/00_SOURCE_INTAKE/evidence/STAGE1_VALIDATION_EVIDENCE.yaml
   source_projection_admission:
     applicability: REQUIRED
@@ -277,7 +276,7 @@ active_work_unit:
       projection_content_hash: e11b1caad15fc06a83ebb9cf99f5c19072dcad75eb84f1366787306ddd24a13f
   planned_run_root: 00_SOURCE_INTAKE/run_core01_943af192_stage01
   pre_execution_gate: GOVERNANCE_LOAD_RECEIPT_PASS
-  pre_execution_gate_status: PASS
+  pre_execution_gate_status: NOT_EXECUTED
   execution_started: false
   product_blocker_credit: 0
   out_of_scope:
@@ -286,9 +285,6 @@ active_work_unit:
   - STAGE-03
   - WEBSITE_CONSTRUCTION
   - DEPLOYMENT
-  governance_load_target_manifest_ref: governance/test/preexecution/stage_governance_load/WU-STAGE01-CORE01-943AF192-REPLAY/STAGE_EXECUTION_LOAD_TARGET_MANIFEST.yaml
-  governance_load_receipt_ref: governance/test/preexecution/stage_governance_load/WU-STAGE01-CORE01-943AF192-REPLAY/GOVERNANCE_LOAD_RECEIPT.yaml
-  governance_load_receipt_uid: LOAD-WU-STAGE01-CORE01-943AF192-REPLAY-v2-2-22-word-projection-nextstep-consumer-sync-hardening
 retained_governance_cleanup_summary:
   role: COMPACT_NON_NORMATIVE_PROVENANCE
   product_stage_credit: 0

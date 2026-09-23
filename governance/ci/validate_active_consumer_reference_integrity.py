@@ -443,12 +443,53 @@ def run_negative_regressions(errors: list[str]) -> dict[str, bool]:
     return results
 
 
+def validate_active_work_unit_scanner_semantic_boundary(errors: list[str]) -> None:
+    if not ACTIVE_STATE.is_file():
+        errors.append("ACTIVE_STATE_MISSING_FOR_SCANNER_BOUNDARY")
+        return
+    state = load_yaml(ACTIVE_STATE)
+    work = state.get("active_work_unit") or {}
+    admission = work.get("source_projection_admission") or {}
+    if admission.get("applicability") != "REQUIRED":
+        return
+    scanners = work.get("scanner_bindings") or {}
+    if not isinstance(scanners, dict) or not scanners:
+        errors.append("ACTIVE_WORK_UNIT_SCANNER_BINDINGS_MISSING")
+        return
+    forbidden = (
+        "derive_docx_inventory(",
+        "zipfile.ZipFile",
+        "build_docx_source_projection.py",
+    )
+    for scanner_uid, binding in sorted(scanners.items()):
+        if not isinstance(binding, dict):
+            errors.append("ACTIVE_WORK_UNIT_SCANNER_BINDING_INVALID:" + str(scanner_uid))
+            continue
+        owner = str(binding.get("scanner_owner") or "").strip()
+        if not owner:
+            errors.append("ACTIVE_WORK_UNIT_SCANNER_OWNER_MISSING:" + str(scanner_uid))
+            continue
+        path = ROOT / owner
+        if not path.is_file():
+            errors.append("ACTIVE_WORK_UNIT_SCANNER_OWNER_TARGET_MISSING:" + owner)
+            continue
+        body = path.read_text(encoding="utf-8")
+        for token in forbidden:
+            if token in body:
+                errors.append(
+                    "FROZEN_PROJECTION_ACTIVE_SCANNER_RAW_SOURCE_REPARSE_FORBIDDEN:"
+                    + str(scanner_uid) + ":" + owner + ":" + token
+                )
+
+
 def main() -> int:
     errors: list[str] = []
     referenced_by: dict[str, set[str]] = defaultdict(set)
     workflow_count = 0
     unsafe_workflows: list[str] = []
     missing_workflows: list[str] = []
+
+    validate_active_work_unit_scanner_semantic_boundary(errors)
 
     registry = load_yaml(REGISTRY)
     current_uid = (registry.get("active_specification") or {}).get("governance_uid")

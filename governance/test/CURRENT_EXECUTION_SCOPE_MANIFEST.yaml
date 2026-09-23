@@ -39,16 +39,16 @@ dependency_closure_refs:
 entry_gate: GOVERNANCE_MAINTENANCE_AUTHORIZATION_READY
 entry_gate_status: PASS
 pre_execution_gate: SPECIFICATION_CHANGE_AUTHORIZATION_PREEXISTS_MUTATION
-pre_execution_gate_status: PASS
+pre_execution_gate_status: NOT_EXECUTED
 partial_scope: false
 stage_exit_credit_allowed: false
-product_stage_execution_allowed: true
-product_stage_execution_block_reason: null
+product_stage_execution_allowed: false
+product_stage_execution_block_reason: SCANNER_OWNER_MIGRATION_REQUIRES_FRESH_GOVERNANCE_LOAD
 fresh_revalidation_required: true
 product_stage_revalidation_required: false
 product_stage_revalidation_credit: 0
-next_action: EXECUTE_ACTIVE_STAGE_WORK_UNIT
-closure_status: ACTIVE_PREEXECUTION_GOVERNANCE_LOAD_PASS_EXECUTION_READY
+next_action: BUILD_STAGE_GOVERNANCE_LOAD_RECEIPT
+closure_status: ACTIVE_PREEXECUTION_GOVERNANCE_LOAD_REQUIRED
 closure_evidence:
   source_uid: SRC-DOCX-CORE01-943AF192
   source_sha256: 943af192004b587d6aab36e114eeb40430c9ea45614cc154d62dd9e3b5cbefeb
@@ -80,6 +80,4 @@ source_projection_binding:
   raw_source_sha256: 943af192004b587d6aab36e114eeb40430c9ea45614cc154d62dd9e3b5cbefeb
   projection_uid: PROJ-SRC-DOCX-CORE01-943AF192
   projection_content_hash: e11b1caad15fc06a83ebb9cf99f5c19072dcad75eb84f1366787306ddd24a13f
-governance_load_target_manifest_ref: governance/test/preexecution/stage_governance_load/WU-STAGE01-CORE01-943AF192-REPLAY/STAGE_EXECUTION_LOAD_TARGET_MANIFEST.yaml
-governance_load_receipt_ref: governance/test/preexecution/stage_governance_load/WU-STAGE01-CORE01-943AF192-REPLAY/GOVERNANCE_LOAD_RECEIPT.yaml
-governance_load_receipt_uid: LOAD-WU-STAGE01-CORE01-943AF192-REPLAY-v2-2-22-word-projection-nextstep-consumer-sync-hardening
+LOAD-WU-STAGE01-CORE01-943AF192-REPLAY-v2-2-22-word-projection-nextstep-consumer-sync-hardening
