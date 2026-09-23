@@ -37,6 +37,33 @@ topology:
   page_uid_sticky_from_stage: STAGE-05
   page_uid_sticky_through_stage: STAGE-11
 stages:
+universal_stage_stepwise_execution_contract:
+  authority_ref: WEB-GOV-03-S062A
+  applies_to_all_registered_stages: true
+  common_engine_only: true
+  one_effectful_operation_at_a_time: true
+  stage_range_does_not_change_atomicity: true
+  bulk_stage_materialization: FORBIDDEN
+  future_stage_preproduction: FORBIDDEN
+  successor_stage_execution_before_predecessor_closure: FORBIDDEN
+  operation_sequence:
+  - RESOLVE_OPERATION
+  - VERIFY_OPERATION_INPUTS
+  - EXECUTE_OPERATION
+  - MATERIALIZE_OPERATION_OUTPUTS
+  - VALIDATE_OPERATION_OUTPUTS
+  - RECONCILE_OPERATION_DENOMINATOR
+  - PERSIST_OPERATION_EVIDENCE_AND_CHECKPOINT
+  - AUTHORIZE_REGISTERED_SUCCESSOR_OPERATION
+  operation_failure_disposition: STOP_AND_REENTER_EARLIEST_OWNING_OPERATION
+  stage_closure_requires_all_operation_receipts: true
+  stage_successor_admission_requires:
+  - PREDECESSOR_STAGE_TERMINAL_PASS
+  - CROSS_STAGE_HANDOFF_READINESS_PASS
+  - SUCCESSOR_INPUT_MATERIALIZATION_PASS
+  - SUCCESSOR_ENTRY_GATE_PASS
+  historical_product_output_as_missing_current_input: FORBIDDEN
+
 - stage_uid: STAGE-01
   name: SOURCE_INTAKE_AND_BASE_BLUEPRINT
   scope_mode: ALL_REQUIRED_PAGES
