@@ -156,6 +156,10 @@ def stage_boundary_semantic_findings(path_rel: str, text: str) -> list[str]:
     if path_rel == FRESH_REPLAY_RUNNER:
         forbidden = {
             "LEGACY_REPLAY_CONTEXT": "fresh_replay_execution_context",
+            "PRESTAGE_GUARD_REUSE": "governance_stage1_pipeline_guard.py",
+            "RAW_DOCX_REPARSE_HELPER": "derive_docx_inventory",
+            "RAW_DOCX_ZIP_ACCESS": "zipfile",
+            "RAW_DOCX_LITERAL": ".docx",
             "DIRECT_STAGE2_EXECUTOR": "run_current_stage2_actual_test.py",
             "LEGACY_STAGE2_STRUCTURAL_MATERIALIZER": "stage2_structural_materialize",
             "LEGACY_STAGE2_PROJECTION_MATERIALIZER": "materialize_stage2_projection",
@@ -186,7 +190,23 @@ def stage_boundary_semantic_findings(path_rel: str, text: str) -> list[str]:
             for lit in literals:
                 if re.search(r"run_current_stage\d+_actual_test\.py", lit):
                     findings.append(f"DIRECT_STAGE_SPECIFIC_EXECUTOR_LITERAL:{lit}")
-    elif path_rel == FRESH_REPLAY_WORKFLOW:
+    elif path_rel.startswith(".github/workflows/"):
+        stage_match = re.search(r"/stage(\d{2})[^/]*\.ya?ml$", path_rel, re.IGNORECASE)
+        if stage_match:
+            stage_num = stage_match.group(1)
+            stage_uid = "STAGE-" + stage_num
+            effectful_patterns = (
+                re.compile(rf"run_current_stage{int(stage_num)}_[A-Za-z0-9_]+\.py(?:\s+--execute)?\s*$", re.MULTILINE),
+                re.compile(rf"run_current_stage{int(stage_num)}_[A-Za-z0-9_]+\.py\s+--execute", re.MULTILINE),
+            )
+            effectful = any(p.search(text) for p in effectful_patterns)
+            if effectful:
+                required_admission = f"stage_execution_engine.py --admission-check --stage {stage_uid}"
+                if required_admission not in text and f'stage_execution_engine.py --admission-check --stage "{stage_uid}"' not in text:
+                    findings.append("EFFECTFUL_STAGE_WORKFLOW_COMMON_ADMISSION_MISSING:" + stage_uid)
+                if "workflow_dispatch" not in text:
+                    findings.append("EFFECTFUL_STAGE_WORKFLOW_EXPLICIT_DISPATCH_MISSING:" + stage_uid)
+    if path_rel == FRESH_REPLAY_WORKFLOW:
         execute_marker = "  execute-fresh-replay:"
         segment = text.split(execute_marker, 1)[1] if execute_marker in text else ""
         if "--cleanup-boundary-self-test" in text:
