@@ -13,6 +13,8 @@ from pathlib import Path
 import yaml
 
 ROOT = Path(__file__).resolve().parents[2]
+if os.environ.get("ACPOS_COMMON_STAGE_ENGINE_EXECUTION") != "1":
+    raise RuntimeError("DIRECT_EFFECTFUL_INVOCATION_FORBIDDEN_USE_COMMON_STAGE_ENGINE")
 SELF_TEST_REVALIDATION_AUTHORITY = '--self-test-revalidation-authority' in sys.argv
 SELF_TEST_APPLICABILITY_PROJECTION = '--self-test-applicability-projection' in sys.argv
 SELF_TEST_SHARED_CONTRACT = '--self-test-shared-contract-hardening' in sys.argv
