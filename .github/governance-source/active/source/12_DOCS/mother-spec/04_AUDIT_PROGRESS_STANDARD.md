@@ -91,6 +91,14 @@ Progress MAY 因 Regression、變更或舊 Evidence 失效而下降。
 - `PERIODIC_PROGRESS_AUDIT`
 
 <!-- SECTION_UID: WEB-GOV-04-S005 -->
+## 4A. Interleaved Step Audit / No End-Only Audit
+
+Audit is part of execution control and MUST run after every effectful governed step. Bulk production followed by one end-of-run audit is FORBIDDEN when intermediate outputs are consumed by later steps.
+
+Each step audit MUST bind the exact Current Governance UID, source/input identities and hashes, step/operation UID, produced output denominator, validators, unresolved gaps, evidence references, checkpoint/resume state, and legal successor decision. `PASS` admits only the registered next step. `FAIL`, `BLOCKED`, `PARTIAL`, or `NOT_VERIFIED` MUST stop successor effectful execution.
+
+Boundary audits (Work Unit, Stage, Module, System, Release, Deployment, Production, Final Acceptance) are cumulative reconciliation gates. They MUST verify the chain of local step receipts and MUST NOT manufacture completion credit for a missing local receipt.
+
 ## 5. Audit Classification
 
 Audit Item 狀態只能使用：
