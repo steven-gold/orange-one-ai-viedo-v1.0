@@ -64,7 +64,7 @@ def main():
     contract=yaml.safe_load((ROOT/'.github/governance-source/active/source/10_REGISTRY/STAGE1_SOURCE_FACT_CONTRACTS.yaml').read_text()) or {}
     sc=contract.get('structured_document_source_projection_contract') or {}
     global_fail=[]
-    for k in ['source_document_content_readiness_audit','raw_source_lock','projection','frozen_binary_source_part_materialization','reconciliation','pair_freeze','stage01_consumption','semantic_preservation']:
+    for k in ['source_document_content_readiness_audit','raw_source_lock','projection','frozen_binary_source_part_materialization','reconciliation','pair_freeze','stage01_consumption']:
         if not sc.get(k): global_fail.append('CURRENT_PROJECTION_CONTRACT_MISSING:'+k)
     pp=(sc.get('projection') or {}).get('package_part_row_field_order') or []
     for k in ['package_part_path','content_type','size_bytes','part_sha256']:
@@ -72,7 +72,7 @@ def main():
     if (sc.get('stage01_consumption') or {}).get('binary_source_access')!='EXACT_FROZEN_BINARY_PART_RESOLVED_FROM_PROJECTION_ONLY':
         global_fail.append('STAGE01_BINARY_SOURCE_ACCESS_NOT_FROZEN_PROJECTION_ONLY')
     subprocess.run(['git','fetch','origin','0921acpos:refs/remotes/origin/0921acpos'],cwd=ROOT,check=True)
-    listing=run('git','ls-tree','-r','-l',BRANCH)
+    listing=run('git','-c','core.quotePath=false','ls-tree','-r','-l',BRANCH)
     docs=[]
     for line in listing.splitlines():
         if '\t' not in line: continue

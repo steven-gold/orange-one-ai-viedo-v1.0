@@ -165,7 +165,7 @@ def audit_one(path, blob_sha, data):
 
 def main():
     subprocess.run(['git','fetch','origin','0921acpos:refs/remotes/origin/0921acpos'],cwd=ROOT,check=True)
-    raw=sh('git','ls-tree','-r','-l',BRANCH)
+    raw=sh('git','-c','core.quotePath=false','ls-tree','-r','-l',BRANCH)
     docs=[]
     for line in raw.splitlines():
         if '\t' not in line: continue
