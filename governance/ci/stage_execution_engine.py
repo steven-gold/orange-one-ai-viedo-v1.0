@@ -398,6 +398,31 @@ def validate_terminal(stage_uid,evidence,receipt):
     if r.get('head_sha')!=head: fail('TERMINAL_RECEIPT_HEAD_MISMATCH')
     print(f'PASS: terminal receipt exact-head closure valid for {stage_uid} head={head}')
 
+def execute_active(stage_uid):
+    _,_,_,_,adapters,stages=validate_definition()
+    work=active_product(stage_uid)
+    state=y(STATE); scope=y(SCOPE)
+    if (work.get('pre_execution_gate_status')!='PASS'
+        or scope.get('product_stage_execution_allowed') is not True
+        or (state.get('resume_control') or {}).get('product_execution_allowed') is not True):
+        fail('ACTIVE_STAGE_EXECUTION_NOT_ADMITTED')
+    bindings=work.get('operation_bindings') or {}
+    owners=sorted({str(v.get('executor_owner') or '') for v in bindings.values() if isinstance(v,dict)})
+    if not owners or any(not x for x in owners): fail('ACTIVE_STAGE_EXECUTOR_OWNER_SET_INVALID')
+    if len(owners)!=1: fail('ACTIVE_STAGE_MULTIPLE_EFFECTFUL_EXECUTOR_OWNERS_FORBIDDEN:'+repr(owners))
+    owner=owners[0]
+    rel=Path(owner)
+    if rel.is_absolute() or '..' in rel.parts: fail('ACTIVE_STAGE_EXECUTOR_OWNER_PATH_INVALID')
+    path=ROOT/rel
+    if not path.is_file(): fail('ACTIVE_STAGE_EXECUTOR_OWNER_MISSING:'+owner)
+    if path.resolve()==Path(__file__).resolve(): fail('COMMON_ENGINE_RECURSIVE_EXECUTOR_FORBIDDEN')
+    adapter=(adapters.get('stages') or {}).get(stage_uid) or {}
+    declared=str(adapter.get('effectful_executor_owner') or '')
+    if declared!=owner: fail('ACTIVE_STAGE_EXECUTOR_OWNER_NOT_CANONICAL_ADAPTER:'+owner)
+    subprocess.run([sys.executable,str(path),'--execute'],cwd=ROOT,check=True)
+    print(f'PASS: common engine executed registered active-stage adapter stage={stage_uid} owner={owner}')
+
+
 def compatibility_main(stage_uid):
     _,_,_,_,adapters,stages=validate_definition()
     if stage_uid not in stages: fail(f'UNKNOWN_STAGE:{stage_uid}')
@@ -409,9 +434,12 @@ def compatibility_main(stage_uid):
 
 def main():
     p=argparse.ArgumentParser(); g=p.add_mutually_exclusive_group(required=True)
-    g.add_argument('--definition-audit-all',action='store_true'); g.add_argument('--plan',action='store_true'); g.add_argument('--admission-check',action='store_true'); g.add_argument('--validate-evidence',action='store_true'); g.add_argument('--validate-terminal-receipt',action='store_true')
+    g.add_argument('--definition-audit-all',action='store_true'); g.add_argument('--plan',action='store_true'); g.add_argument('--admission-check',action='store_true'); g.add_argument('--validate-evidence',action='store_true'); g.add_argument('--validate-terminal-receipt',action='store_true'); g.add_argument('--execute',action='store_true')
     p.add_argument('--stage'); p.add_argument('--evidence'); p.add_argument('--receipt'); a=p.parse_args()
     try:
+        if a.execute:
+            if not a.stage: fail('STAGE_REQUIRED')
+            execute_active(a.stage); return
         if a.definition_audit_all:
             _,_,_,profile,_,stages=validate_definition()
             print(f'PASS: common Stage Execution Engine definition audit stages={len(stages)}/{profile.get("profile_local_denominator")} phases={len(EXPECTED_PHASES)}/{len(EXPECTED_PHASES)}')
