@@ -23,7 +23,9 @@ LOCK='00_SOURCE_INTAKE/prestage_core01_943af192_word_yaml/00_SOURCE_INTAKE/SOURC
 WU='WU-STAGE01-CORE01-943AF192-REPLAY'
 WUR='WUR-CORE01-STAGE01-943AF192-FROZEN-SOURCE'
 AUTH='EXPLICIT_USER_DIRECTIVE_20260923_NEXT_STEP_RESOLVE_CORE01_STAGE01_WU'
-RUNROOT='00_SOURCE_INTAKE/run_core01_943af192_stage01'
+PAGE_UID='CORE-01'
+SOURCE_FINGERPRINT=SOURCE_UID.rsplit('-',1)[-1].lower()
+RUNROOT='00_SOURCE_INTAKE/' + 'run_' + PAGE_UID.lower().replace('-','') + '_' + SOURCE_FINGERPRINT + '_stage01'
 OWNER=RUNROOT+'/00_SOURCE_INTAKE/evidence/STAGE1_VALIDATION_EVIDENCE.yaml'
 
 def load(p): 
@@ -81,7 +83,19 @@ ex=state.setdefault('execution',{})
 ex['current_stage']='STAGE-01-PREEXECUTION'
 ex['run_uid']='CORE01-943AF192-STAGE01-R1'
 ex['target_pages']=['CORE-01']
-ex.setdefault('stage1',{})['CORE-01']='NOT_EXECUTED'
+ex['stage1']={
+  'result':'NOT_EXECUTED',
+  'CORE-01':'NOT_EXECUTED',
+  'work_unit_uid':WU,
+  'work_unit_resolution':'PASS_SINGLE_LEGAL_SUCCESSOR',
+  'execution_started':False,
+  'pre_execution_gate':'GOVERNANCE_LOAD_RECEIPT_PASS',
+  'pre_execution_gate_status':'NOT_EXECUTED',
+  'stage_exit_allowed':False,
+  'artifact_root_present':False,
+  'target_page_uids':['CORE-01'],
+  'remaining_page_uids':['CORE-01'],
+}
 ex['website_construction_allowed']=False; ex['deployment_allowed']=False
 
 dependencies=[FREEZE,PROJ,RECON,AUDIT,LOCK,
@@ -188,8 +202,11 @@ for p in [ROOT/'.github/governance-maintenance/resolve_core01_stage01_work_unit.
 run('git','config','user.name','github-actions[bot]')
 run('git','config','user.email','41898282+github-actions[bot]@users.noreply.github.com')
 run('git','add','-A')
-if run('git','diff','--cached','--quiet').returncode==0:
+_diff=subprocess.run(['git','diff','--cached','--quiet'],cwd=ROOT)
+if _diff.returncode==0:
     raise SystemExit('BLOCK:NO_WUR_DELTA')
+if _diff.returncode!=1:
+    raise SystemExit('BLOCK:GIT_DIFF_CHECK_FAILED:'+str(_diff.returncode))
 run('git','commit','-m','feat(stage1): resolve CORE-01 Stage-01 work unit after frozen source pair')
 head=run('git','rev-parse','HEAD').stdout.strip()
 run('git','push','origin','HEAD:rebuild-v2.1.1')
