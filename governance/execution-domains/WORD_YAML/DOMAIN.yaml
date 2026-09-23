@@ -1,0 +1,19 @@
+domain_uid: WORD_YAML_SOURCE_FLOW
+role: EXECUTION_DOMAIN_MANIFEST
+authority:
+- .github/governance-source/active/source/10_REGISTRY/STAGE1_SOURCE_FACT_CONTRACTS.yaml
+- governance/ci/build_docx_source_projection.py
+- governance/ci/validate_docx_source_projection_independent.py
+shared_required:
+- .github/governance-source/active/source/12_DOCS/mother-spec/01_BLUEPRINT_DESIGN_GOVERNANCE.md
+- .github/governance-source/active/source/12_DOCS/mother-spec/03_EXECUTION_CONTROL_STANDARD.md
+audit_handoff:
+- .github/governance-source/active/source/12_DOCS/mother-spec/04_AUDIT_PROGRESS_STANDARD.md
+entry_input_class: BASIC_DESIGN_FREEZE_RECEIPT_AND_SELECTED_WORD
+terminal_output_class: SOURCE_PROJECTION_FREEZE_RECEIPT
+next_domain: STAGE
+recursive_governance_tree_scan: FORBIDDEN
+undeclared_rule_read: FORBIDDEN
+stage_semantic_materialization: FORBIDDEN
+bulk_preproduction: FORBIDDEN
+execution_semantic: WEB-GOV-03-S062A
