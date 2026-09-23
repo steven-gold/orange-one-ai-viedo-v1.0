@@ -99,7 +99,7 @@ def main():
     exact_keys(proj.get('source_identity') or {},pc.get('source_identity_field_order') or [],'PROJECTION_SOURCE_IDENTITY',fail)
     exact_keys(proj.get('extraction_identity') or {},pc.get('extraction_identity_field_order') or [],'PROJECTION_EXTRACTION_IDENTITY',fail)
     exact_keys(proj.get('serialization_contract') or {},pc.get('serialization_contract_field_order') or [],'PROJECTION_SERIALIZATION',fail)
-    exact_keys(ev,ec.get('evidence_field_order') or [],'RECONCILIATION_EVIDENCE',fail)
+    exact_keys(ev,ec.get('required_field_order') or [],'RECONCILIATION_EVIDENCE',fail)
     exact_keys(freeze,fc.get('required_field_order') or [],'FREEZE_RECEIPT',fail)
     if ca.get('result')!='PASS' or ca.get('unresolved_required_gap_count')!=0 or ca.get('contradiction_count')!=0 or (ca.get('missing_required_design_domain_uids') or []): fail.append('CONTENT_AUDIT_NOT_PASS')
     if ca.get('source_uid')!=suid or ca.get('source_sha256')!=raw_sha: fail.append('CONTENT_AUDIT_SOURCE_BINDING_MISMATCH')

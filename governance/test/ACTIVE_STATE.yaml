@@ -104,13 +104,13 @@ specification_mutation_safety:
   ordinary_mid_stage_specification_mutation: BLOCK
   stage_end_consolidated_promotion_requires_new_explicit_directive: true
   execution_context_lock_required: true
-status: CORE01_PRESTAGE_WORD_YAML_PROJECTION_TOOLING_READY
-next_action: VALIDATE_AND_TRIGGER_CORE01_WORD_YAML_PRESTAGE_PROJECTION
+status: WORD_SOURCE_FLEET_DEEP_AUDIT_REEXECUTION_ACTIVE
+next_action: RUN_ALL_31_WORD_DEEP_CONTENT_AND_PROJECTION_AUDIT
 resume_control:
-  current_resume_point: CORE01_PRESTAGE_WORD_YAML_PROJECTION_TOOLING_READY
-  current_work_unit_uid: WU-PRESTAGE-CORE01-WORD-YAML-PROJECTION-20260923-001
-  current_owner: SOURCE_INTAKE_PRESTAGE_PROJECTION
-  exact_next_action: VALIDATE_AND_TRIGGER_CORE01_WORD_YAML_PRESTAGE_PROJECTION
+  current_resume_point: WORD_SOURCE_FLEET_DEEP_AUDIT_REEXECUTION_ACTIVE
+  current_work_unit_uid: WU-TEST-WORD-SOURCE-FLEET-DEEP-AUDIT-20260923-002
+  current_owner: SOURCE_INTAKE_PRESTAGE_VALIDATION
+  exact_next_action: RUN_ALL_31_WORD_DEEP_CONTENT_AND_PROJECTION_AUDIT
   product_resume_preserved: CORE01_STAGE01_ACTIVE_PREEXECUTION_GOVERNANCE_LOAD_REQUIRED
   interrupted_test_resume_preserved: CORE01_SOURCE_TEST_BUGFIX_AND_CONTENT_INTEGRITY_FULL_LIFECYCLE_R2_ACTIVE
   reentry_owner_capability: SOURCE_INTAKE_BASE_BLUEPRINT
@@ -119,7 +119,7 @@ resume_control:
   cleanup_receipt_ref: governance/test/history/cleanup/CORE01_STAGE01_STAGE03_CLEAN_RESET_R1.yaml
   human_visual_review_allowed: false
   product_execution_allowed: false
-  product_execution_block_reason: CORE01_SOURCE_PAIR_NOT_YET_MATERIALIZED_AND_FROZEN
+  product_execution_block_reason: ALL_WORD_DEEP_AUDIT_NOT_YET_CLOSED
   website_construction_allowed: false
   deployment_allowed: false
 governance_revision_transition:
@@ -181,45 +181,48 @@ current_primary_task_layer: TEST_OR_VALIDATION_MAINTENANCE
 current_primary_task_authorization_uid: EXPLICIT_USER_DIRECTIVE_20260923_ALL_WORDS_AUDIT_THEN_CORE_YAML_ONLY
 current_primary_task_product_stage_credit: 0
 active_work_unit:
-  work_unit_uid: WU-PRESTAGE-CORE01-WORD-YAML-PROJECTION-20260923-001
-  canonical_name: CORE01_WORD_YAML_PRESTAGE_SOURCE_PROJECTION
+  work_unit_uid: WU-TEST-WORD-SOURCE-FLEET-DEEP-AUDIT-20260923-002
+  canonical_name: ALL_31_WORD_SOURCE_DEEP_CONTENT_AND_PROJECTION_AUDIT
   primary_task_layer: TEST_OR_VALIDATION_MAINTENANCE
-  semantic_capability: SOURCE_INTAKE_PRESTAGE_PROJECTION
+  semantic_capability: SOURCE_INTAKE_PRESTAGE_VALIDATION
   canonical_owner_refs:
   - .github/governance-source/active/source/10_REGISTRY/STAGE1_SOURCE_FACT_CONTRACTS.yaml
-  - governance/ci/build_docx_source_projection.py
+  - .github/governance-source/active/source/09_TESTS/governance/governance_stage1_pipeline_guard.py
   - governance/ci/validate_docx_source_projection_independent.py
-  current_status: TOOLING_READY_FLEET_AUDIT_CLOSED_CORE_NOT_YET_MATERIALIZED
-  authorization_uid: EXPLICIT_USER_DIRECTIVE_20260923_ALL_WORDS_AUDIT_THEN_CORE_YAML_ONLY
+  - .github/governance-maintenance/audit_word_source_fleet.py
+  current_status: ACTIVE_DEEP_AUDIT_REEXECUTION
+  authorization_uid: EXPLICIT_USER_DIRECTIVE_20260923_AUDIT_ALL_WORDS_BEFORE_CORE_YAML
   exact_scope:
-  - CORE01_SOURCE_DOCUMENT_CONTENT_AUDIT
-  - CORE01_EXACT_WORD_RAW_SOURCE_COPY
-  - CORE01_RAW_SOURCE_IMMUTABILITY_LOCK
-  - CORE01_CANONICAL_SOURCE_PROJECTION_YAML
-  - CORE01_FROZEN_BINARY_SOURCE_PARTS
-  - CORE01_WORD_YAML_ZERO_LOSS_RECONCILIATION
-  - CORE01_SOURCE_PAIR_FREEZE
-  - CORE01_INDEPENDENT_POST_CONVERSION_VALIDATION
-  excluded_scope:
-  - NON_CORE_YAML_MATERIALIZATION
-  - STAGE01_WORK_UNIT_ACTIVATION
-  - STAGE01_EXECUTION
-  - PRODUCT_STAGE_CREDIT
-  product_data_mutation_allowed: true
-  product_data_mutation_limit: CORE01_PRESTAGE_SOURCE_PROJECTION_ARTIFACTS_ONLY
+  - ALL_31_DOCX_EXACT_SOURCE_SET
+  - CONTENT_READINESS_MACHINE_COVERAGE
+  - FULL_SOURCE_NODE_IDENTITY_AND_ORDER
+  - DOCX_STRUCTURE_PROJECTION_COMPATIBILITY
+  - BINARY_MEDIA_RELATIONSHIP_LINEAGE
+  - INDEPENDENT_VALIDATOR_CONTRACT_KEY_SYNC
+  - CORE_YAML_EXECUTION_FORBIDDEN_UNTIL_DEEP_AUDIT_CLOSED
+  product_data_mutation_allowed: false
   product_authority_mutation_allowed: false
   product_stage_credit: 0
-  predecessor_word_fleet_audit:
+  predecessor_word_fleet_fast_audit:
     source_branch: 0921acpos
     source_head: 6249dbadad182cecd3810683b260dccd11901bcc
     document_denominator: 31
     compatibility_pass: 31
     compatibility_fail: 0
     content_review_candidate_count: 0
-    workflow_run_id: 35828158745
-    artifact_id: 10735339522
-    artifact_zip_sha256: cfb9458950d231fdb06d1fcfa8a9bdee4e8e48ab43d806c2bd18c7aa7dbc9c08
-    result: PASS_ALL_31_WORDS_PRESTAGE_COMPATIBLE
+    run_id: 35828158745
+    status: PASS_FAST_FULL_DENOMINATOR_NO_PRODUCT_CREDIT
+  superseded_deep_audit_attempt:
+    run_id: 35828158719
+    result: FAIL_CHECKER_FALSE_POSITIVE
+    failure_signature: PROJECTION_ORDER_NOT_CONTIGUOUS
+    root_cause: AUDIT_EXPECTED_ZERO_BASED_ORDER_BUT_CANONICAL_PRODUCER_IS_ONE_BASED
+    current_closure_credit: false
+  premature_core_projection_attempt:
+    run_id: 35829105769
+    result: FAIL_NO_PERSISTED_PRODUCT_ARTIFACT
+    stage01_execution_started: false
+    product_stage_credit: 0
 word_source_snapshot_for_future_projection:
   normative_authority: false
   role: SOURCE_CONTEXT_ONLY_NOT_ACTIVE_WORK_UNIT
