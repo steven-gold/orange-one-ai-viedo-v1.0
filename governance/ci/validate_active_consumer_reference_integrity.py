@@ -194,7 +194,7 @@ def stage_boundary_semantic_findings(path_rel: str, text: str) -> list[str]:
         else:
             context_idx = segment.find("--print-context-github-output")
             admission_idx = segment.find("stage_execution_engine.py --admission-check")
-            execute_idx = segment.find("run_fresh_stage_replay.py")
+            execute_idx = segment.find("run: python .github/governance-maintenance/run_fresh_stage_replay.py\n")
             if "steps.context.outputs.stage_uid" not in segment:
                 findings.append("ACTIVE_STAGE_OUTPUT_NOT_CONSUMED")
             if admission_idx < 0:
