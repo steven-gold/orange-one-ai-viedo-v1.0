@@ -28,9 +28,9 @@ jobs:
       - name: Install verifier dependency
         run: python -m pip install --disable-pip-version-check 'PyYAML==6.0.2'
       - name: Enforce reusable-policy neutrality and portability
-        - name: Validate execution domain isolation
-          run: python governance/ci/validate_execution_domain_isolation.py
         run: python governance/ci/validate_governance_portability.py
+      - name: Validate execution domain isolation
+        run: python governance/ci/validate_execution_domain_isolation.py
       - name: Report Mother literal contamination denominator
         shell: bash
         run: |
