@@ -3,17 +3,19 @@ artifact_type: EXECUTION_SCOPE_MANIFEST
 normative_authority: false
 governance_uid: GOV-REV-20260923-WORD-YAML-PRESTAGE01-SOURCE-FIDELITY-HARDENING
 owning_capability: GOVERNANCE_MAINTENANCE
-scope_kind: EXACT_GOVERNANCE_MAINTENANCE_WORD_YAML_PRE_STAGE01
+scope_kind: EXACT_GOVERNANCE_MAINTENANCE_WORD_YAML_PAGE_NEUTRAL_SCHEMA
 work_unit_uid: WU-GOV-WORD-YAML-PRESTAGE01-HARDENING-001
 included_units:
 - WORD_DOCX_SOURCE_PROJECTION_CONTRACT
 - WORD_YAML_RECONCILIATION_ENTRY_GATE
 - WORD_YAML_RECONCILIATION_AUDIT
 - STAGE01_SOURCE_PROJECTION_VALIDATION
+- PRODUCT_PAGE_NEUTRAL_PROJECTION_SCHEMA
+- CROSS_PAGE_CONTENT_SHAPE_PORTABILITY_REGRESSION
 excluded_units: []
 remaining_units: []
 stage_required_units: []
-scope_selection_authority: USR-DIRECTIVE-20260923-WORD-YAML-PRESTAGE01-HARDENING-R1
+scope_selection_authority: USR-DIRECTIVE-20260923-WORD-YAML-PAGE-NEUTRAL-SCHEMA-HARDENING-R2
 source_context_only:
   page_uid: CORE-01
   product_stage_credit: 0
@@ -34,6 +36,7 @@ dependency_closure_refs:
 - governance/specifications/REGISTRY.yaml
 - .github/governance-source/active/source/10_REGISTRY/GOVERNANCE_LIFECYCLE_STAGE_REGISTRY.yaml
 - .github/governance-source/active/source/10_REGISTRY/STAGE1_SOURCE_FACT_CONTRACTS.yaml
+- governance/ci/validate_governance_portability.py
 - .github/governance-source/active/source/10_REGISTRY/AUDIT_CATALOG.yaml
 entry_gate: GOVERNANCE_MAINTENANCE_AUTHORIZATION_READY
 entry_gate_status: PASS
@@ -46,5 +49,5 @@ product_stage_execution_block_reason: WORD_YAML_PROJECTION_RECONCILIATION_NOT_YE
 fresh_revalidation_required: false
 product_stage_revalidation_required: false
 product_stage_revalidation_credit: 0
-next_action: RUN_EXACT_HEAD_WORD_YAML_GOVERNANCE_VALIDATION
-closure_status: PROMOTION_MATERIALIZED_EXACT_HEAD_REVALIDATION_REQUIRED
+next_action: PROMOTE_WORD_YAML_PAGE_NEUTRAL_SCHEMA_HARDENING
+closure_status: ACTIVE_AUTHORIZED_PREPROMOTION_R2
