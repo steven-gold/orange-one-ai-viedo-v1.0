@@ -1,0 +1,20 @@
+domain_uid: STAGE_LIFECYCLE_FLOW
+role: EXECUTION_DOMAIN_MANIFEST
+authority:
+- .github/governance-source/active/source/10_REGISTRY/GOVERNANCE_LIFECYCLE_STAGE_REGISTRY.yaml
+- .github/governance-source/active/source/10_REGISTRY/STAGE_EXECUTION_INVARIANT_REGISTRY.yaml
+- governance/ci/stage_execution_engine.py
+- governance/ci/stage_execution_semantic_adapters.yaml
+shared_required:
+- .github/governance-source/active/source/12_DOCS/mother-spec/02_IMPLEMENTATION_DELIVERY_STANDARD.md
+- .github/governance-source/active/source/12_DOCS/mother-spec/03_EXECUTION_CONTROL_STANDARD.md
+audit_handoff:
+- .github/governance-source/active/source/12_DOCS/mother-spec/04_AUDIT_PROGRESS_STANDARD.md
+entry_input_class: SOURCE_PROJECTION_FREEZE_RECEIPT_AND_CURRENT_WORK_UNIT
+terminal_output_class: REGISTERED_STAGE_TERMINAL_RECEIPT
+stage_range: STAGE-01_THROUGH_STAGE-11
+recursive_governance_tree_scan: FORBIDDEN
+undeclared_rule_read: FORBIDDEN
+operation_execution: OPERATION_BY_OPERATION
+bulk_stage_materialization: FORBIDDEN
+execution_semantic: WEB-GOV-03-S062A
