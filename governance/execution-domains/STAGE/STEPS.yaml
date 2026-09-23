@@ -1,0 +1,67 @@
+schema_version: 1
+registry_uid: STAGE-STEP-REGISTRY-001
+domain_uid: STAGE_LIFECYCLE_FLOW
+step_schema_ref: governance/execution-domains/STEP_CONTRACT_SCHEMA.yaml
+audit_profile_ref: governance/execution-domains/AUDIT_PROFILE.yaml
+lifecycle_registry_ref: .github/governance-source/active/source/10_REGISTRY/GOVERNANCE_LIFECYCLE_STAGE_REGISTRY.yaml
+invariant_registry_ref: .github/governance-source/active/source/10_REGISTRY/STAGE_EXECUTION_INVARIANT_REGISTRY.yaml
+stage_denominator: DYNAMIC_REGISTERED_APPLICABLE_STAGES
+stage_order: [STAGE-01, STAGE-02, STAGE-03, STAGE-04, STAGE-05, STAGE-06, STAGE-07, STAGE-08, STAGE-09, STAGE-10, STAGE-11]
+operation_contract:
+  step_uid: ST-{stage_uid}-{operation_uid}
+  purpose: Execute exactly one registered current Stage operation and no future operation.
+  prerequisites: [PREDECESSOR_OPERATION_PASS_OR_STAGE_ENTRY_GATE_PASS]
+  entry_gate: CURRENT_OPERATION_PREREQUISITES_AND_INPUTS_VERIFIED
+  inputs: [REGISTERED_OPERATION_INPUTS, CURRENT_WORK_UNIT_BINDING, PREDECESSOR_RECEIPTS]
+  input_required_fields: [stage_uid, operation_uid, work_unit_uid, source_or_predecessor_identity, authority_revision, owner_binding]
+  operations: [RESOLVE_OPERATION, VERIFY_OPERATION_INPUTS, EXECUTE_ONLY_CURRENT_OPERATION, MATERIALIZE_ONLY_CURRENT_OPERATION_OUTPUTS]
+  outputs: [REGISTERED_CURRENT_OPERATION_OUTPUTS]
+  output_required_fields: [artifact_uid, artifact_type, stage_uid, operation_uid, source_lineage, owner_uid, content_hash, status]
+  denominator: COMPLETE_DYNAMIC_APPLICABLE_UNIVERSE_FOR_CURRENT_OPERATION
+  completeness_and_pass_condition:
+    required_denominator_coverage_percent: 100
+    missing_required_item_count: 0
+    unresolved_required_gap_count: 0
+    unresolved_conflict_count: 0
+    undeclared_output_count: 0
+    future_operation_output_count: 0
+  validators_and_evidence: [REGISTERED_OPERATION_VALIDATORS, DOMAIN_AUDIT_PROFILE, OPERATION_STEP_RECEIPT]
+  failure_reentry_checkpoint_next_step:
+    failure: STOP_DOWNSTREAM_EFFECTFUL_EXECUTION
+    reentry: EARLIEST_OWNING_OPERATION
+    checkpoint: CURRENT_OPERATION_CHECKPOINT
+    next_step: EXACT_NEXT_REGISTERED_OPERATION_OR_STAGE_CLOSURE
+stage_closure_contract:
+  step_uid: ST-{stage_uid}-CLOSURE
+  purpose: Close one Stage only after every applicable operation receipt and Stage denominator pass.
+  prerequisites: [ALL_APPLICABLE_STAGE_OPERATION_RECEIPTS_PASS]
+  entry_gate: ALL_REGISTERED_STAGE_OPERATIONS_TERMINAL
+  inputs: [ALL_STAGE_OPERATION_RECEIPTS, REGISTERED_STAGE_OUTPUTS, REQUIRED_STAGE_EVIDENCE]
+  input_required_fields: [stage_uid, operation_receipts, output_hashes, evidence_refs]
+  operations: [RECONCILE_STAGE_OUTPUT_DENOMINATOR, VERIFY_REQUIRED_EVIDENCE, VERIFY_INVARIANTS, VERIFY_SUCCESSOR_INPUT_READINESS]
+  outputs: [REGISTERED_STAGE_TERMINAL_RECEIPT]
+  output_required_fields: [stage_uid, denominator_hash, operation_receipt_chain, evidence_refs, result, next_stage_uid]
+  denominator: COMPLETE_REGISTERED_APPLICABLE_STAGE_UNIVERSE
+  completeness_and_pass_condition:
+    operation_receipt_coverage_percent: 100
+    required_output_coverage_percent: 100
+    missing_required_evidence_count: 0
+    unresolved_required_gap_count: 0
+    invariant_failure_count: 0
+  validators_and_evidence: [REGISTERED_STAGE_VALIDATORS, CROSS_STAGE_INVARIANTS, STAGE_CLOSURE_AUDIT, REGISTERED_STAGE_TERMINAL_RECEIPT]
+  failure_reentry_checkpoint_next_step:
+    failure: STOP_AND_REENTER_EARLIEST_OWNING_OPERATION
+    reentry: EARLIEST_OWNING_OPERATION
+    checkpoint: STAGE_CLOSURE_CHECKPOINT
+    next_step: REGISTERED_NEXT_STAGE_ENTRY_OR_LIFECYCLE_CLOSURE
+execution_rules:
+  expand_operations_from_lifecycle_registry: true
+  every_registered_operation_must_instantiate_operation_contract: true
+  operation_order_must_match_registry: true
+  output_producer_binding_must_match_registry: true
+  page_specific_operation_schema: FORBIDDEN
+  stage_specific_step_shape_variation: FORBIDDEN
+  skip_registered_operation: FORBIDDEN
+  merge_multiple_effectful_operations_into_one_execution: FORBIDDEN
+  future_stage_preproduction: FORBIDDEN
+  whole_stage_adapter_as_single_effectful_step: FORBIDDEN
