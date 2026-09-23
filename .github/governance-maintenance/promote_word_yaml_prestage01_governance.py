@@ -837,6 +837,9 @@ def mutate_policy():
 
     semp=SOURCE/'10_REGISTRY/SEMANTIC_AUTHORITY_BASELINE.yaml'
     sem=load(semp)
+    _audit_types=sem['semantic_snapshot'].setdefault('audit_type_identities',[])
+    if not any(x.get('audit_type_uid')=='AUDTYPE-GOV-015' for x in _audit_types):
+        _audit_types.append({'audit_type_uid':'AUDTYPE-GOV-015','canonical_name':'STRUCTURED_DOCUMENT_CANONICAL_PROJECTION_ZERO_LOSS_RECONCILIATION','allowed_stage_uids':['PREFORMAL'],'denominator_eligible':True})
     unique_extend(sem['semantic_snapshot']['stage_reference_rules']['STAGE-01']['exact_required_normative_section_uids'],section_uids)
     cb=sem['semantic_snapshot'].get('common_bundle_reference_rules') or {}
     if 'BUNDLE-GOV-CONSTRUCTION-BASE' in cb: unique_extend(cb['BUNDLE-GOV-CONSTRUCTION-BASE']['exact_section_uids'],['WEB-GOV-01-S090','WEB-GOV-02-S077','WEB-GOV-03-S072'])
