@@ -958,6 +958,19 @@ def source_checksums_and_archives():
             zf.writestr(zi,p.read_bytes())
     return sha(checks),hashlib.sha256(bundle).hexdigest(),hashlib.sha256(zbuf.getvalue()).hexdigest()
 
+def prepare_source_candidate_state():
+    gp=SOURCE/'11_EVIDENCE/audit/GOVERNANCE_CANDIDATE_STATE.yaml'
+    g=load(gp)
+    g['candidate']='v2.2.18_WORD_YAML_PRESTAGE01_SOURCE_FIDELITY_HARDENING_CANDIDATE'
+    g['status']='CANDIDATE_UNDER_FRESH_SUCCESSOR_REVALIDATION'
+    fresh=g.setdefault('fresh_revalidation',{})
+    fresh.update({
+      'required':True,'current_source_revision':NEW_REV,'current_closure_credit':False,
+      'predecessor_evidence_current_closure_credit':False,'persisted_head_full_line_required':True,
+      'historical_evidence_may_close_successor':False
+    })
+    dump(gp,g)
+
 def refresh_source():
     sem=load(SOURCE/'10_REGISTRY/SEMANTIC_AUTHORITY_BASELINE.yaml')
     semantic_hash=sem['content_hash']
@@ -1077,16 +1090,6 @@ def update_current(semantic,checks,bundle,zips):
         if 'content_hash' in d: d['content_hash']=hobj(d)
         dump(sf,d)
 
-    gp=SOURCE/'11_EVIDENCE/audit/GOVERNANCE_CANDIDATE_STATE.yaml'
-    g=load(gp); g['candidate']='v2.2.18_WORD_YAML_PRESTAGE01_SOURCE_FIDELITY_HARDENING_CANDIDATE'
-    g['status']='CANDIDATE_UNDER_FRESH_SUCCESSOR_REVALIDATION'
-    fresh=g.setdefault('fresh_revalidation',{})
-    fresh.update({
-      'required':True,'current_source_revision':NEW_REV,'current_closure_credit':False,
-      'predecessor_evidence_current_closure_credit':False,'persisted_head_full_line_required':True,
-      'historical_evidence_may_close_successor':False
-    })
-    dump(gp,g)
 
 def validate_all():
     env=os.environ.copy()
@@ -1118,6 +1121,7 @@ def apply():
         raise RuntimeError('unexpected Current Governance')
     mutate_policy()
     mutate_current_components()
+    prepare_source_candidate_state()
     semantic,checks,bundle,zips=refresh_source()
     update_current(semantic,checks,bundle,zips)
     return {'semantic_hash':semantic,'checksums_hash':checks,'bundle_hash':bundle,'zip_hash':zips}
