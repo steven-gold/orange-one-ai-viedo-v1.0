@@ -1,0 +1,16 @@
+domain_uid: AUDIT_CLOSURE_FLOW
+role: EXECUTION_DOMAIN_MANIFEST
+authority:
+- .github/governance-source/active/source/12_DOCS/mother-spec/04_AUDIT_PROGRESS_STANDARD.md
+- .github/governance-source/active/source/10_REGISTRY/AUDIT_CATALOG.yaml
+- .github/governance-source/active/source/10_REGISTRY/GOVERNANCE_ACCEPTANCE_AUDIT_BLUEPRINT.yaml
+shared_required:
+- .github/governance-source/active/source/12_DOCS/mother-spec/03_EXECUTION_CONTROL_STANDARD.md
+entry_input_class: CURRENT_STEP_OUTPUT_AND_EVIDENCE
+terminal_output_class: AUDIT_RECEIPT
+invocation: AFTER_EVERY_EFFECTFUL_STEP_AND_REGISTERED_BOUNDARY
+recursive_governance_tree_scan: FORBIDDEN
+undeclared_rule_read: FORBIDDEN
+end_only_audit: FORBIDDEN
+completion_claim_without_current_evidence: FORBIDDEN
+execution_semantic: WEB-GOV-03-S062A
