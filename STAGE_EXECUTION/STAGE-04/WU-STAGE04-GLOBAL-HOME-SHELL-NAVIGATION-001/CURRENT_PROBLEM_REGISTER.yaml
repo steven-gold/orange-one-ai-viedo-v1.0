@@ -1,0 +1,37 @@
+artifact_uid: CPR-STAGE04-HOME-001
+artifact_type: CURRENT_PROBLEM_REGISTER
+stage_uid: STAGE-04
+work_unit_uid: WU-STAGE04-GLOBAL-HOME-SHELL-NAVIGATION-001
+governed_unit_uid: GLOBAL-HOME-SHELL-NAVIGATION
+problems:
+- problem_uid: GAP-STAGE04-HOME-VDSP-BINDINGS-001
+  class: UPSTREAM_VISUAL_DESIGN_PROJECTION_GAP
+  finding: STAGE03_VISUAL_DESIGN_PACKAGE_TRANSITIVE_BINDINGS_INCOMPLETE
+  evidence: "7/7 required Stage04 freeze binding markers absent"
+  owner: STAGE-03:VISUAL_DESIGN
+  product_completion_credit: 0
+  status: OPEN
+- problem_uid: GAP-STAGE04-HOME-VRA-SCHEMA-001
+  class: UPSTREAM_VISUAL_DESIGN_PROJECTION_GAP
+  finding: VISUAL_REFERENCE_ANNOTATION_REQUIRED_FIELDS_UNMATERIALIZED
+  evidence: "20/20 WEB-GOV-01-S079 field markers absent"
+  owner: STAGE-03:VISUAL_DESIGN
+  product_completion_credit: 0
+  status: OPEN
+- problem_uid: GAP-STAGE04-HOME-VIM-SCHEMA-001
+  class: UPSTREAM_VISUAL_DESIGN_PROJECTION_GAP
+  finding: VISUAL_INHERITANCE_MATRIX_REQUIRED_FIELDS_UNMATERIALIZED
+  evidence: "11/11 WEB-GOV-01-S080 field markers absent"
+  owner: STAGE-03:VISUAL_DESIGN
+  product_completion_credit: 0
+  status: OPEN
+- problem_uid: GAP-STAGE04-HOME-TYPOGRAPHY-001
+  class: UPSTREAM_VISUAL_DESIGN_PROJECTION_GAP
+  finding: TYPOGRAPHY_EXPECTED_BASELINE_TARGET_DENOMINATOR_UNMATERIALIZED
+  evidence: "14/14 inspected WEB-GOV-01-S089 baseline field markers absent"
+  owner: STAGE-03:VISUAL_DESIGN
+  product_completion_credit: 0
+  status: OPEN
+open_problem_total: 4
+closure_blocker_total: 4
+status: CURRENT_OPEN_BLOCKERS
