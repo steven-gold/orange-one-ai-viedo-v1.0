@@ -1,0 +1,26 @@
+artifact_uid: OPREC-WU-STAGE01-GLOBAL-HOME-SHELL-NAVIGATION-001-BLUEPRINT_BINDING_COMPILE-20260924
+artifact_type: OPERATION_STEP_RECEIPT
+stage_uid: STAGE-01
+operation_uid: BLUEPRINT_BINDING_COMPILE
+work_unit_uid: WU-STAGE01-GLOBAL-HOME-SHELL-NAVIGATION-001
+owner_uid: SOURCE_BOUND_STAGE01_OWNER:SRC-DOCX-334A4679600F092B733B
+input_refs:
+- 02_BASE_BLUEPRINT/SRC-DOCX-334A4679600F092B733B/PAGE_BASE_BLUEPRINT.yaml
+- 02_BASE_BLUEPRINT/SRC-DOCX-334A4679600F092B733B/VISUAL_BASE_BLUEPRINT.yaml
+output_refs:
+- 03_BLUEPRINT_BINDING/SRC-DOCX-334A4679600F092B733B/BLUEPRINT_BINDING_MANIFEST.yaml
+denominator:
+  required_blueprints: 2
+  bound_blueprints: 2
+  required_bindings: 1
+  materialized_bindings: 1
+completeness_and_pass_condition:
+  stale_blueprint_hash_count: 0
+  missing_blueprint_count: 0
+  unexpected_blueprint_count: 0
+  embedded_blueprint_payload_count: 0
+  duplicate_binding_count: 0
+result: PASS
+legal_successor: WORK_UNIT_STAGE01_SCOPE_CLOSURE
+status: PASS
+content_hash: c3909036973c1204d264a7a5ba735955a08d8d1e62ffe1061d0a9313984d17a5

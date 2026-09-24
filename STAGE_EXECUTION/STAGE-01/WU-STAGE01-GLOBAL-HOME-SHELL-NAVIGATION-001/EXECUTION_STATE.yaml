@@ -1,9 +1,8 @@
-artifact_uid: EXEC-STATE-WU-STAGE01-GLOBAL-HOME-SHELL-NAVIGATION-001
+artifact_uid: EXECSTATE-WU-STAGE01-GLOBAL-HOME-SHELL-NAVIGATION-001
 artifact_type: WORK_UNIT_EXECUTION_STATE
 stage_uid: STAGE-01
 work_unit_uid: WU-STAGE01-GLOBAL-HOME-SHELL-NAVIGATION-001
-primary_task_layer: PRODUCT_STAGE_EXECUTION
-current_operation: BLUEPRINT_BINDING_COMPILE
+current_operation: WORK_UNIT_STAGE01_SCOPE_CLOSURE
 source_segment_mapping_completed: true
 source_fact_materialization_started: true
 source_fact_materialization_completed: true
@@ -16,8 +15,8 @@ page_base_blueprint_gate_passed: true
 visual_base_blueprint_started: true
 visual_base_blueprint_completed: true
 visual_base_blueprint_gate_passed: true
-blueprint_binding_started: false
-blueprint_binding_completed: false
+blueprint_binding_started: true
+blueprint_binding_completed: true
 completed_operations:
 - SOURCE_STRUCTURE_ENUMERATION
 - SOURCE_SEGMENT_MAPPING
@@ -27,9 +26,10 @@ completed_operations:
 - RESPONSIBILITY_CLASSIFICATION
 - PAGE_BASE_BLUEPRINT_COMPILE
 - VISUAL_BASE_BLUEPRINT_COMPILE
-next_operation: BLUEPRINT_BINDING_COMPILE
+- BLUEPRINT_BINDING_COMPILE
+next_operation: WORK_UNIT_STAGE01_SCOPE_CLOSURE
 source_uid: SRC-DOCX-334A4679600F092B733B
-last_effectful_action: VISUAL_BASE_BLUEPRINT_COMPILE
-last_effectful_head: 6399acea2af36eae67af443992e2d5a84d77d1a1
+last_effectful_action: BLUEPRINT_BINDING_COMPILE
+last_effectful_head: 3bb1d216078b34c4e3e1bf06abe31f31bdc81d41
 status: ACTIVE
-content_hash: 1e52a8f89fc5371035067fb0d29b3f6d9a1bad19c695eb9bfcd1c33cc0aba650
+content_hash: df91f2700f2c99cab64eb56c74cd035807b3e79de1e8fe242afabb15f1ebe747
