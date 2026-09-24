@@ -1,0 +1,28 @@
+artifact_uid: OPREC-WU-STAGE01-GLOBAL-HOME-SHELL-NAVIGATION-001-VISUAL_BASE_BLUEPRINT_COMPILE-20260924
+artifact_type: OPERATION_STEP_RECEIPT
+stage_uid: STAGE-01
+operation_uid: VISUAL_BASE_BLUEPRINT_COMPILE
+work_unit_uid: WU-STAGE01-GLOBAL-HOME-SHELL-NAVIGATION-001
+owner_uid: SOURCE_BOUND_STAGE01_OWNER:SRC-DOCX-334A4679600F092B733B
+input_refs:
+- 01_CLASSIFIED/SRC-DOCX-334A4679600F092B733B/VISUAL/
+- 00_SOURCE_INTAKE/SOURCE_CONTEXT_MANIFEST.yaml
+- 00_SOURCE_INTAKE/CONTENT_SUPERSESSION_CONFLICT_LEDGER.yaml
+- 00_SOURCE_INTAKE/SOURCE_DEPENDENCY_MAP.yaml
+output_refs:
+- 02_BASE_BLUEPRINT/SRC-DOCX-334A4679600F092B733B/VISUAL_BASE_BLUEPRINT.yaml
+denominator:
+  required_visual_responsibilities: 6
+  bound_visual_responsibilities: 6
+  required_source_fact_refs: 3
+  bound_source_fact_refs: 3
+completeness_and_pass_condition:
+  stale_input_hash_count: 0
+  missing_responsibility_count: 0
+  unexpected_responsibility_count: 0
+  direct_raw_source_input_count: 0
+  unresolved_shared_ref_count: 0
+result: PASS
+legal_successor: BLUEPRINT_BINDING_COMPILE
+status: PASS
+content_hash: 2c5bca919dbcdac1596e38b8157a04f7f3c3d2455586abc03c541631089e59c5
