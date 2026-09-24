@@ -1,0 +1,12 @@
+artifact_uid: VITB-STAGE03-HOME-001
+artifact_type: VISUAL_INTERACTION_TOPOLOGY_BINDING
+stage_uid: STAGE-03
+governed_unit_uid: GLOBAL-HOME-SHELL-NAVIGATION
+bindings:
+- {operation: OPEN_CANONICAL_TARGET, visual_entry: NAVIGATION_ITEM, state_binding: ACTIVE_ITEM, success_feedback: WORKSPACE_MOUNTED, error_feedback: TARGET_UNRESOLVED_FAIL_CLOSED}
+- {operation: RESOLVE_NAVIGATION_VISIBILITY, visual_entry: NAVIGATION_SURFACE, state_binding: AUTHORIZED_ITEMS_ONLY, success_feedback: VISIBLE_ORDERED_NAV, error_feedback: HIDDEN_DENIED_ITEMS}
+- {operation: APPLY_LANGUAGE_SELECTION, visual_entry: LANGUAGE_POPOVER, state_binding: SELECTED_LANGUAGE, success_feedback: SHELL_TEXT_RERENDER, error_feedback: KEEP_CURRENT_VALID_LANGUAGE}
+- {operation: READ_STATUS_PROJECTION, visual_entry: QUICK_STATUS, state_binding: READ_ONLY_STATUS, success_feedback: STATUS_VISIBLE, error_feedback: CONTROLLED_DISABLED_NO_FAKE_DATA}
+- {operation: SYNCHRONIZE_WORKSPACE_LAYOUT, visual_entry: SIDEBAR_STATE, state_binding: COUPLED_REFLOW, success_feedback: UNOBSCURED_WORKSPACE, error_feedback: RESTORE_VALID_LAYOUT}
+functional_topology_redefined: false
+status: CURRENT
