@@ -26,7 +26,16 @@ closure_control_artifacts:
 - STAGE_EXECUTION/STAGE-01/CLOSURE/STAGE01_FULL_DENOMINATOR_AUDIT.yaml
 - STAGE_EXECUTION/STAGE-01/CLOSURE/STAGE_EXECUTION_PREFLIGHT_RECEIPT.yaml
 exact_head_gate_required: true
-exact_head_gate_status: PENDING
-stage_exit_authorized: false
-status: PENDING_EXACT_HEAD_CLOSURE_GATE
+exact_head_gate_status: PASS
+stage_exit_authorized: true
+status: ALL_REQUIRED_PAGES_STAGE1_CLOSED
 artifact_hash: bce7cd88dea4e36d18cbb4f771381ae987a8e15247b2f51a843b7bedd99749dc
+exact_head_gate_receipt:
+  provider: github_actions
+  repository_or_project: steven-gold/orange-one-ai-viedo-v1.0
+  head_sha: 69813e47c4d3ff93b590f5f537840a8277bc512e
+  run_id: 35957876502
+  job_denominator:
+  - stage01-exact-head-closure-gate/gate
+  conclusion: success
+legal_next_transition: STAGE02_WORK_UNIT_RESOLUTION_GATE
