@@ -13,7 +13,7 @@ lifecycle_registry: .github/governance-source/active/source/10_REGISTRY/GOVERNAN
 stage_invariant_registry: .github/governance-source/active/source/10_REGISTRY/STAGE_EXECUTION_INVARIANT_REGISTRY.yaml
 rules_root: governance/specifications/current
 branch_role_contract:
-  governance-v2.2.23-unit-lifecycle: GOVERNANCE_REVISION_CANDIDATE
+  governance-v2.2.23-unit-lifecycle: IMMUTABLE_GOVERNANCE_RULESET
   rebuild-v2.1.1: IMMUTABLE_GOVERNANCE_RULESET
   0921acpos: PRODUCT_EXECUTION_WORKLINE
 forbidden_in_ruleset_branch:
@@ -28,7 +28,7 @@ forbidden_in_ruleset_branch:
   - PRODUCT_HISTORY
   - PRODUCT_AUTHORITY
 mutation_policy:
-  governance_revision_candidate_mutation: ALLOWED_UNTIL_FORMAL_FREEZE
+  governance_v2_2_23_after_freeze: FORBIDDEN
   rebuild_v2_1_1_after_freeze: FORBIDDEN
   new_file_after_freeze: FORBIDDEN
   product_execution_on_rebuild: FORBIDDEN
