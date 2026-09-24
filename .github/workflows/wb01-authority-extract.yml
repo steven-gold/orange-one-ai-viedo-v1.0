@@ -1,0 +1,42 @@
+name: WB01 Authority Extract
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [0921acpos]
+    paths:
+      - '.github/workflows/wb01-authority-extract.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  extract:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: 0921acpos
+      - name: Extract exact WB01 authority rows
+        run: |
+          python - <<'PY'
+          import zipfile, re
+          from xml.etree import ElementTree as ET
+          p='ACPOS_WB-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx'
+          with zipfile.ZipFile(p) as z:
+              xml=z.read('word/document.xml')
+          root=ET.fromstring(xml)
+          ns={'w':'http://schemas.openxmlformats.org/wordprocessingml/2006/main'}
+          rows=[]
+          for tr in root.findall('.//w:tr',ns):
+              cells=[]
+              for tc in tr.findall('./w:tc',ns):
+                  txt=''.join(t.text or '' for t in tc.findall('.//w:t',ns)).strip()
+                  cells.append(txt)
+              line=' | '.join(cells)
+              if re.search(r'Control UID|Action UID|Gate UID|SECTION_OPEN|查看',line,re.I):
+                  rows.append(line)
+          print('WB01_AUTHORITY_MATCH_COUNT='+str(len(rows)))
+          for i,line in enumerate(rows):
+              print(f'WB01_AUTHORITY_ROW[{i}]={line}')
+          PY
