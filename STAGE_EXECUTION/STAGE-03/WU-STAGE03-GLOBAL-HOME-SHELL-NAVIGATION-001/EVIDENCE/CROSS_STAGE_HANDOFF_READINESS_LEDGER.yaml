@@ -1,0 +1,31 @@
+artifact_uid: HANDOFF-STAGE03-TO-STAGE04-GLOBAL-HOME-SHELL-001
+artifact_type: CROSS_STAGE_HANDOFF_READINESS_LEDGER
+producer_stage_uid: STAGE-03
+consumer_stage_uid: STAGE-04
+governed_unit_uid: GLOBAL-HOME-SHELL-NAVIGATION
+required_inputs:
+- input_uid: PAGE_CONSTRUCTION_SPEC_PACKAGE
+  ref: STAGE_EXECUTION/STAGE-02/WU-STAGE02-GLOBAL-HOME-SHELL-NAVIGATION-001/PAGE_CONSTRUCTION_SPEC_PACKAGE.yaml
+  reference_resolution_status: PASS
+  physical_materialization_status: PASS
+  required_field_completeness: PASS
+  consumer_readiness_status: PASS
+- input_uid: VISUAL_DESIGN_SPEC_PACKAGE
+  ref: STAGE_EXECUTION/STAGE-03/WU-STAGE03-GLOBAL-HOME-SHELL-NAVIGATION-001/VISUAL_DESIGN_SPEC_PACKAGE.yaml
+  reference_resolution_status: PASS
+  physical_materialization_status: PASS
+  required_field_completeness: PASS
+  consumer_readiness_status: PASS
+- input_uid: DEPENDENCY_MAP
+  ref: STAGE_EXECUTION/STAGE-02/WU-STAGE02-GLOBAL-HOME-SHELL-NAVIGATION-001/DEPENDENCY_MAP.yaml
+  reference_resolution_status: PASS
+  physical_materialization_status: PASS
+  required_field_completeness: PASS
+  consumer_readiness_status: PASS
+reference_resolution_complete: true
+physical_materialization_complete: true
+required_field_completeness_complete: true
+denominator_reconciled: true
+consumer_readiness_complete: true
+unresolved_required_dependency_total: 0
+status: PASS
