@@ -235,3 +235,59 @@ selected_stage02_work_unit_uid: null
 selected_stage02_page_uid: null
 stage02_effectful_operation_started: false
 next_step: CLASSIFY_STAGE02_REQUIRED_PAGE_UNIVERSE_FROM_CURRENT_STAGE01_ROWS_AND_LIFECYCLE_SCOPE_MODE
+
+product_page_scope_classification:
+  rule: PAGE_UID_MUST_BE_EXPLICIT_PRODUCT_PAGE_UID_NOT_SOURCE_UID_AND_NOT_HISTORICAL_SYSTEM_SNAPSHOT
+  required_product_page_count: 19
+  required_product_page_uids:
+  - identity:login
+  - workspace:WB-01
+  - CORE-01
+  - ASSET-01
+  - VIDEO-01
+  - EDIT-01
+  - QA-01
+  - workspace:INFO-01
+  - workspace:STR-01
+  - admin:AIAPI-01
+  - admin:DB-01
+  - admin:DEV-01
+  - admin:ERP-01
+  - admin:IAM-01
+  - admin:KB-01
+  - admin:SG-02
+  - admin:SOC-01
+  - admin:STR-01
+  - admin:SYS-01
+  shared_non_page_scope_count: 12
+  shared_non_page_scopes:
+  - scope_uid: SRC-DOCX-334A4679600F092B733B
+    disposition: SHARED_GLOBAL_HOME_SHELL_NAVIGATION_DEPENDENCY
+  - scope_uid: Earlier snapshot
+    disposition: SHARED_SYSTEM_LOGIC_AUTHORITY_NOT_STAGE02_PAGE
+  - scope_uid: SRC-DOCX-BAB362BA82086F3A3F21
+    disposition: NORMATIVE_MASTER_INDEX_AUTHORITY_NOT_STAGE02_PAGE
+  - scope_uid: SRC-DOCX-351B4DFC83936B56E4B1
+    disposition: NORMATIVE_LOGIC_AUTHORITY_NOT_STAGE02_PAGE
+  - scope_uid: SRC-DOCX-61FB762181CCF99A53C9
+    disposition: NORMATIVE_LOGIC_AUTHORITY_NOT_STAGE02_PAGE
+  - scope_uid: SRC-DOCX-B857D9A2F1BD30827290
+    disposition: NORMATIVE_LOGIC_AUTHORITY_NOT_STAGE02_PAGE
+  - scope_uid: SRC-DOCX-EDDC09A97E193DDD2F69
+    disposition: NORMATIVE_LOGIC_AUTHORITY_NOT_STAGE02_PAGE
+  - scope_uid: SRC-DOCX-81DDB7B678E0DCFAFCD4
+    disposition: NORMATIVE_LOGIC_AUTHORITY_NOT_STAGE02_PAGE
+  - scope_uid: SRC-DOCX-C10A7D8D218E26651374
+    disposition: NORMATIVE_LOGIC_AUTHORITY_NOT_STAGE02_PAGE
+  - scope_uid: SRC-DOCX-82E99BA9D0AC21650AF7
+    disposition: NORMATIVE_LOGIC_AUTHORITY_NOT_STAGE02_PAGE
+  - scope_uid: SRC-DOCX-E4814E8C8DD81F2F56C9
+    disposition: NORMATIVE_LOGIC_AUTHORITY_NOT_STAGE02_PAGE
+  - scope_uid: SRC-DOCX-8A62738464742F6C4F04
+    disposition: NORMATIVE_LOGIC_AUTHORITY_NOT_STAGE02_PAGE
+stage02_required_page_universe_status: RESOLVED_19_PRODUCT_PAGES_PLUS_12_SHARED_AUTHORITY_SCOPES
+stage02_order_status: PENDING_CANONICAL_NAVIGATION_AND_DEPENDENCY_ORDER_RESOLUTION
+selected_stage02_work_unit_uid: null
+selected_stage02_page_uid: null
+stage02_effectful_operation_started: false
+next_step: RESOLVE_STAGE02_CANONICAL_PAGE_ORDER_FROM_CURRENT_NAVIGATION_AND_DEPENDENCY_AUTHORITY
