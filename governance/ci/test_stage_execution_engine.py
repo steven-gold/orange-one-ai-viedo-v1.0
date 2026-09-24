@@ -343,10 +343,17 @@ if all_stage_negative_cases!=11:
 consumer=(ROOT/'governance/ci/validate_active_consumer_reference_integrity.py').read_text(encoding='utf-8')
 if 'STALE_PRODUCT_RUN_ROOT_LITERAL' not in consumer:
     audit_error('RESIDUAL_STALE_CONSUMER','STALE_PRODUCT_RUN_ROOT_GUARD_MISSING')
-for wf in ('governance-selected-profile-integrity.yml','governance-full-line-system-gate.yml'):
-    text=(ROOT/'.github/workflows'/wf).read_text(encoding='utf-8')
-    if 'validate_active_consumer_reference_integrity.py' not in text:
-        audit_error('RESIDUAL_STALE_CONSUMER',f'ACTIVE_CONSUMER_GATE_NOT_WIRED:{wf}')
+workflow_paths=sorted((ROOT/'.github/workflows').glob('*.yml'))+sorted((ROOT/'.github/workflows').glob('*.yaml'))
+if not workflow_paths:
+    audit_error('RESIDUAL_STALE_CONSUMER','ACTIVE_WORKFLOW_SET_EMPTY')
+for wfpath in workflow_paths:
+    text=wfpath.read_text(encoding='utf-8')
+    for stale in ('GOVERNANCE_CURRENT.yaml','governance/test/ACTIVE_STATE.yaml','governance/test/CURRENT_EXECUTION_SCOPE_MANIFEST.yaml'):
+        if stale in text:
+            audit_error('RESIDUAL_STALE_CONSUMER',f'ACTIVE_WORKFLOW_STALE_RUNSTATE_REF:{wfpath.name}:{stale}')
+common_wf=ROOT/'.github/workflows/common-stage-execution-engine.yml'
+if not common_wf.is_file() or 'stage_execution_engine.py' not in common_wf.read_text(encoding='utf-8'):
+    audit_error('RESIDUAL_STALE_CONSUMER','COMMON_STAGE_ENGINE_WORKFLOW_NOT_WIRED')
 
 # Mode 8: Source-Truth Contamination.
 forbidden=set(reg.get('forbidden_in_ruleset_branch') or [])
