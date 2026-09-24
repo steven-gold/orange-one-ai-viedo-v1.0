@@ -408,8 +408,8 @@ validator_identities:
   - AUDIT_CATALOG
   - LIFECYCLE_STAGE
 - validator_uid: VAL-GOV-003
-  canonical_name: CONSTRUCTION_ARTIFACT_INDEX_GUARD
-  implementation_path: 09_TESTS/governance/validate_construction_artifact_index.py
+  canonical_name: INDEXED_INCREMENTAL_VALIDATION_GUARD
+  implementation_path: 09_TESTS/governance/validate_indexed_incremental_validation.py
   identity_mode: PHYSICAL_VALIDATOR
   allowed_usage:
   - AUDIT_CATALOG
