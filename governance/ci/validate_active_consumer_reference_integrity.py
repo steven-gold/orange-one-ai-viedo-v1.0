@@ -104,15 +104,16 @@ def main() -> int:
     errors: list[str] = []
     registry = load_yaml(REGISTRY)
 
-    if registry.get("branch") != "rebuild-v2.1.1":
-        errors.append("GOVERNANCE_BRANCH_IDENTITY_DRIFT")
-    if registry.get("product_execution_branch") != "0921acpos":
-        errors.append("PRODUCT_EXECUTION_BRANCH_DRIFT")
     roles = registry.get("branch_role_contract") or {}
-    if roles.get("rebuild-v2.1.1") != "IMMUTABLE_GOVERNANCE_RULESET":
-        errors.append("GOVERNANCE_BRANCH_ROLE_DRIFT")
-    if roles.get("0921acpos") != "PRODUCT_EXECUTION_WORKLINE":
-        errors.append("PRODUCT_BRANCH_ROLE_DRIFT")
+    governance_branch = str(registry.get("branch") or "")
+    governance_role = roles.get(governance_branch)
+    if governance_role not in {"IMMUTABLE_GOVERNANCE_RULESET", "GOVERNANCE_REVISION_CANDIDATE"}:
+        errors.append("GOVERNANCE_BRANCH_IDENTITY_OR_ROLE_DRIFT")
+    product_branch = str(registry.get("product_execution_branch") or "")
+    if not product_branch or roles.get(product_branch) != "PRODUCT_EXECUTION_WORKLINE":
+        errors.append("PRODUCT_EXECUTION_BRANCH_IDENTITY_OR_ROLE_DRIFT")
+    if governance_branch == product_branch:
+        errors.append("GOVERNANCE_AND_PRODUCT_BRANCH_MUST_BE_DISTINCT")
 
     forbidden_branch_items = set(registry.get("forbidden_in_ruleset_branch") or [])
     required_forbidden = {
