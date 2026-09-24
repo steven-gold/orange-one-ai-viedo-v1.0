@@ -37,9 +37,6 @@ current_artifacts:
   path: 10_REGISTRY/GOVERNANCE_ROOT_MANIFEST.yaml
   sha256: SELF_EXCLUDED
   hash_policy: SELF_EXCLUDED_TO_AVOID_SELF_REFERENCE
-- artifact_uid: REG-CONSTRUCTION-ARTIFACT-001
-  path: 10_REGISTRY/CONSTRUCTION_ARTIFACT_INDEX.yaml
-  sha256: 22ebfabd4ed965c36265b11af836956445832684bd755e8c83cb85520995aaa8
 - artifact_uid: REG-NAMING-001
   path: 10_REGISTRY/NAMING_REGISTRY.yaml
   sha256: bf42907ff3f7bd1da370fc4e37ed95e29999af1daeeac37a2f58bc622d5bdd2f
@@ -122,7 +119,7 @@ validators:
 - path: 09_TESTS/governance/validate_governance.py
   sha256: 68a051dec389316a8b1b6fb830e04d7664d4db47802faabc84cd596d81e1d772
   artifact_uid: VAL-GOV-009
-- path: 09_TESTS/governance/validate_construction_artifact_index.py
+- path: 09_TESTS/governance/validate_indexed_incremental_validation.py
   sha256: 32faf4cb4ffdbfce2cb60557e7bcfb165ba182d9812831e857063065a004c08a
   artifact_uid: VAL-GOV-003
 - path: 09_TESTS/governance/governance_stage1_pipeline_guard.py
