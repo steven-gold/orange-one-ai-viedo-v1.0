@@ -1,0 +1,159 @@
+artifact_uid: CL-SRC-DOCX-61FB762181CCF99A53C9-ERROR_RECOVERY_REQUIREMENT
+page_uid: SRC-DOCX-61FB762181CCF99A53C9
+planning_domain: PAGE_CONSTRUCTION
+responsibility_uid: ERROR_RECOVERY_REQUIREMENT
+responsibility_class: ERROR_RECOVERY_REQUIREMENT
+responsibilities:
+- ERROR_RECOVERY_REQUIREMENT
+canonical_owner_uid: OWNER-SOURCE-SRC-DOCX-61FB762181CCF99A53C9
+target_path: 01_CLASSIFIED/SRC-DOCX-61FB762181CCF99A53C9/PAGE/ERROR_RECOVERY_REQUIREMENT.yaml
+lifecycle_uid: LC-STAGE01-ERROR_RECOVERY_REQUIREMENT
+approval_scope_uid: AP-STAGE01-SRC-DOCX-61FB762181CCF99A53C9
+version_scope_uid: VER-12027aa9225d
+test_scope_uid: TEST-STAGE01-ERROR_RECOVERY_REQUIREMENT
+source_lineage:
+- source_uid: SRC-DOCX-61FB762181CCF99A53C9
+  source_segment_uids:
+  - SEG-SN-DCC3D26A191CFA693890B80B
+  - SEG-SN-DF8F97E26ADA270F5030ECB5
+  - SEG-SN-A21B764CCC89A3E597808813
+  - SEG-SN-A9CC8886737E2E415A6257B3
+  - SEG-SN-1F775B434C56872A01EF71BF
+  - SEG-SN-D17E71787432F7EC0A2C3A5B
+  - SEG-SN-C953696AC5C6EF5C336D72B3
+  - SEG-SN-872241332747CF4D49F57D0E
+  - SEG-SN-57A30E6D066D5A59821DD839
+  - SEG-SN-7321F99A6B2B1C834E96AF0A
+  - SEG-SN-59106DDD7DC53B6C15950166
+  - SEG-SN-C0679F3DF4E8DC9DADA35B26
+  - SEG-SN-545D31E6428477A91B531806
+  - SEG-SN-1096251268D87C42B968EC5B
+  - SEG-SN-BA9AD3859AED5828A868C831
+  - SEG-SN-58BFC52DFE3A4A56AEAA4F83
+  - SEG-SN-4A8FF8D44E1F3647E15F8CDE
+  - SEG-SN-4FD053B83AA55EFBFFD9B8C6
+  - SEG-SN-2D2CAE4E29ED13B78CB1E2F8
+  - SEG-SN-305DB48AF30CA748376E4A9F
+  - SEG-SN-D847BBC11BE0C0394A3D74B7
+  - SEG-SN-D44FDEF1A5F3D06FB05E8235
+  - SEG-SN-556F5176B1C7D73DF10FB2E2
+  - SEG-SN-D9FCD59AAB764E7B31089B6D
+  - SEG-SN-9350D43461A349EF3710E921
+  - SEG-SN-B2B9421451AAD918EC6F9778
+  - SEG-SN-75C3286A34D0973CA414AE4C
+  - SEG-SN-322A55E9FFB07C15863B75B0
+  - SEG-SN-019115BC71527FBE4305A7BE
+  - SEG-SN-184F6CE6E4FC829ABACAFD94
+  - SEG-SN-D2A341545047D2494D86024F
+  - SEG-SN-D44E99D2DA308579FAE24423
+  - SEG-SN-1BF49F7F9262202F606184AC
+  - SEG-SN-2F091BD66C25B88E11A9521B
+  - SEG-SN-91EA5654716787D75D95B685
+facts:
+- source_node_uid: SN-DCC3D26A191CFA693890B80B
+  document_order_index: 1340
+  source_text: Conversation、Thread、Branch、Message、AI Response Ref、Assistant Record、Multi-AI Session、Cross-AI Relation、Context Snapshot Ref、Context Fingerprint、Resume Pointer、Conversation Memory Projection、Attachment Ref、Parser、Events、Audit、Errors。
+- source_node_uid: SN-DF8F97E26ADA270F5030ECB5
+  document_order_index: 8758
+  source_text: Message retry MUST preserve idempotency identity; duplicate submit MUST_NOT create duplicate logical message.
+- source_node_uid: SN-A21B764CCC89A3E597808813
+  document_order_index: 8881
+  source_text: Conversation surface MUST expose actual unavailable/error states rather than invent response content.
+- source_node_uid: SN-A9CC8886737E2E415A6257B3
+  document_order_index: 9845
+  source_text: Terminal failure recorded; no fabricated answer.
+- source_node_uid: SN-1F775B434C56872A01EF71BF
+  document_order_index: 10328
+  source_text: Failure Rule
+- source_node_uid: SN-D17E71787432F7EC0A2C3A5B
+  document_order_index: 11204
+  source_text: terminal failure known
+- source_node_uid: SN-C953696AC5C6EF5C336D72B3
+  document_order_index: 11223
+  source_text: failure record
+- source_node_uid: SN-872241332747CF4D49F57D0E
+  document_order_index: 11280
+  source_text: Show recovery eligibility
+- source_node_uid: SN-57A30E6D066D5A59821DD839
+  document_order_index: 14472
+  source_text: PARSER_ERROR
+- source_node_uid: SN-7321F99A6B2B1C834E96AF0A
+  document_order_index: 16488
+  source_text: Failure
+- source_node_uid: SN-59106DDD7DC53B6C15950166
+  document_order_index: 16507
+  source_text: Failure produces no fabricated answer; user sees deterministic retry/refresh path when allowed.
+- source_node_uid: SN-C0679F3DF4E8DC9DADA35B26
+  document_order_index: 17249
+  source_text: Partial Failure
+- source_node_uid: SN-545D31E6428477A91B531806
+  document_order_index: 23701
+  source_text: failure class, retry eligibility
+- source_node_uid: SN-1096251268D87C42B968EC5B
+  document_order_index: 25463
+  source_text: CLIENT_RETRY
+- source_node_uid: SN-BA9AD3859AED5828A868C831
+  document_order_index: 25482
+  source_text: Network retry MUST reuse idempotency key; generating a new key creates a new logical operation.
+- source_node_uid: SN-58BFC52DFE3A4A56AEAA4F83
+  document_order_index: 25574
+  source_text: 31. Error / Retry / Stop / Recovery Contract
+- source_node_uid: SN-4A8FF8D44E1F3647E15F8CDE
+  document_order_index: 25607
+  source_text: Error Class
+- source_node_uid: SN-4FD053B83AA55EFBFFD9B8C6
+  document_order_index: 25647
+  source_text: Recovery
+- source_node_uid: SN-2D2CAE4E29ED13B78CB1E2F8
+  document_order_index: 25688
+  source_text: NON_RETRYABLE until user fixes ref
+- source_node_uid: SN-305DB48AF30CA748376E4A9F
+  document_order_index: 25707
+  source_text: Show exact token/ref error; no fuzzy fallback.
+- source_node_uid: SN-D847BBC11BE0C0394A3D74B7
+  document_order_index: 25808
+  source_text: NON_RETRYABLE
+- source_node_uid: SN-D44FDEF1A5F3D06FB05E8235
+  document_order_index: 25928
+  source_text: RETRYABLE or BLOCK based owner
+- source_node_uid: SN-556F5176B1C7D73DF10FB2E2
+  document_order_index: 25988
+  source_text: RETRYABLE if AI-03 says allowed
+- source_node_uid: SN-D9FCD59AAB764E7B31089B6D
+  document_order_index: 26048
+  source_text: NON_RETRYABLE
+- source_node_uid: SN-9350D43461A349EF3710E921
+  document_order_index: 26067
+  source_text: Persist failure; no synthetic answer.
+- source_node_uid: SN-B2B9421451AAD918EC6F9778
+  document_order_index: 27143
+  source_text: Measure invalid/ambiguous/cross-scope resolution failures.
+- source_node_uid: SN-75C3286A34D0973CA414AE4C
+  document_order_index: 27411
+  source_text: FAILURE_CLASSIFICATION
+- source_node_uid: SN-322A55E9FFB07C15863B75B0
+  document_order_index: 27430
+  source_text: Terminal failure must map to known class/disposition.
+- source_node_uid: SN-019115BC71527FBE4305A7BE
+  document_order_index: 31803
+  source_text: Duplicate send retry creates two logical messages
+- source_node_uid: SN-184F6CE6E4FC829ABACAFD94
+  document_order_index: 31983
+  source_text: One Multi-AI failure deletes successful participant responses
+- source_node_uid: SN-D2A341545047D2494D86024F
+  document_order_index: 33926
+  source_text: Given duplicate send retry same key/payload
+- source_node_uid: SN-D44E99D2DA308579FAE24423
+  document_order_index: 34201
+  source_text: Then A/B persist and C shows failure; no fake three-way consensus.
+- source_node_uid: SN-1BF49F7F9262202F606184AC
+  document_order_index: 34780
+  source_text: Operation semantics, preconditions, state/error/idempotency rules.
+- source_node_uid: SN-2F091BD66C25B88E11A9521B
+  document_order_index: 35708
+  source_text: Error/Recovery Classes
+- source_node_uid: SN-91EA5654716787D75D95B685
+  document_order_index: 36292
+  source_text: Appendix A. Error / Block Code Baseline
+status: CURRENT_CLASSIFICATION
+content_hash: 5f6abb220ecd69b24647ad63c23804bcc22bf998f3fe06eca735339fb1d8fe06
