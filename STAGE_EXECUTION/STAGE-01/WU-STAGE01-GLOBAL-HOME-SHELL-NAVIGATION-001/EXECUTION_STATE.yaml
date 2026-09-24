@@ -3,10 +3,23 @@ artifact_type: WORK_UNIT_EXECUTION_STATE
 stage_uid: STAGE-01
 work_unit_uid: WU-STAGE01-GLOBAL-HOME-SHELL-NAVIGATION-001
 primary_task_layer: PRODUCT_STAGE_EXECUTION
-current_operation: SOURCE_STRUCTURE_ENUMERATION
-completed_operations: []
-next_operation: SOURCE_STRUCTURE_ENUMERATION
+current_operation: SOURCE_SEGMENT_MAPPING
+source_segment_mapping_completed: false
+source_fact_materialization_started: false
+source_fact_materialization_completed: false
+responsibility_classification_started: false
+responsibility_classification_completed: false
+page_base_blueprint_started: false
+page_base_blueprint_completed: false
+visual_base_blueprint_started: false
+visual_base_blueprint_completed: false
+blueprint_binding_started: false
+blueprint_binding_completed: false
+completed_operations:
+- SOURCE_STRUCTURE_ENUMERATION
+next_operation: SOURCE_SEGMENT_MAPPING
 source_uid: SRC-DOCX-334A4679600F092B733B
 pair_hash: 2e552f2c87ed524a3cd2960ddf3be6b951c3069eb74adec973202741a4e752c0
+last_effectful_action: SOURCE_STRUCTURE_ENUMERATION
+last_effectful_head: ec20edb8dcb0cf00b5ba090aac18015b871ec301
 status: ACTIVE
-content_hash: ef96ce12f99ef4d1139e6e6d2f398f8786bdc0de5164b0c85badd27ced334829

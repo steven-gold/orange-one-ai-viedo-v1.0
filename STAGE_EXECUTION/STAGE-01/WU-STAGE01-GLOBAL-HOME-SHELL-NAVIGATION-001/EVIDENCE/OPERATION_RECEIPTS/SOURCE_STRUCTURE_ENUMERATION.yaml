@@ -1,0 +1,32 @@
+artifact_uid: OPREC-WU-STAGE01-GLOBAL-HOME-SHELL-NAVIGATION-001-SOURCE_STRUCTURE_ENUMERATION-20260924
+artifact_type: OPERATION_STEP_RECEIPT
+stage_uid: STAGE-01
+operation_uid: SOURCE_STRUCTURE_ENUMERATION
+work_unit_uid: WU-STAGE01-GLOBAL-HOME-SHELL-NAVIGATION-001
+source_lineage:
+  source_uid: SRC-DOCX-334A4679600F092B733B
+  projection_uid: PROJ-SRC-DOCX-334A4679600F092B733B
+  projection_content_hash: 22e4cd330d19cd576b1f5534d288c2aadb62ec785db361a6af4ef54b99cdfe57
+owner_uid: SOURCE_BOUND_STAGE01_OWNER:SRC-DOCX-334A4679600F092B733B
+input_refs:
+- 00_SOURCE_INTAKE/SOURCE_PROJECTIONS/SRC-DOCX-334A4679600F092B733B/CANONICAL_SOURCE_PROJECTION.yaml
+- 00_SOURCE_INTAKE/SOURCE_PROJECTIONS/SRC-DOCX-334A4679600F092B733B/SOURCE_PROJECTION_FREEZE_RECEIPT.yaml
+output_refs:
+- 00_SOURCE_INTAKE/SOURCE_STRUCTURE_MANIFEST.yaml
+- EVIDENCE/SOURCE_ENUMERATION_EVIDENCE.yaml
+denominator:
+  projection_source_nodes: 24708
+  disposed_projection_source_nodes: 24708
+completeness_and_pass_condition:
+  denominator_coverage_percent: 100
+  missing_required_item_count: 0
+  unresolved_required_gap_count: 0
+  unresolved_conflict_count: 0
+  undeclared_output_count: 0
+  future_operation_output_count: 0
+validators_and_evidence:
+- FRESH_PROJECTION_NODE_DENOMINATOR_RECONCILIATION
+- EVIDENCE/SOURCE_ENUMERATION_EVIDENCE.yaml
+result: PASS
+legal_successor: SOURCE_SEGMENT_MAPPING
+status: PASS
