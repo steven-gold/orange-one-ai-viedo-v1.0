@@ -1,0 +1,31 @@
+artifact_uid: SCAN-STAGE03-WB01-001
+artifact_type: STAGE03_SCANNER_RESULT
+stage_uid: STAGE-03
+work_unit_uid: WU-STAGE03-WB01-DASHBOARD-001
+denominator:
+  required_visual_binding_total: 14
+  geometry_unit_total: 6
+  required_total: 20
+scanner_results:
+- {scanner_dimension: VISUAL_DOMAIN, status: PASS}
+- {scanner_dimension: GEOMETRY, status: PASS}
+- {scanner_dimension: PREVIEW_IDENTITY, status: PASS}
+- {scanner_dimension: FUNCTION_TO_VISUAL_BINDING, status: PASS}
+- {scanner_dimension: ATOMIC_WORKBENCH_COHESION, status: PASS}
+- {scanner_dimension: TOPOLOGY_EQUIVALENCE, status: PASS}
+- {scanner_dimension: RESPONSIVE_ORDER, status: PASS}
+validator_results:
+- {validator_uid: VAL-GOV-029, status: PASS}
+- {validator_uid: VAL-GOV-030, status: PASS}
+remediation:
+  discovered_gap_total: 2
+  remediated_gap_total: 2
+  unresolved_gap_total: 0
+open_gap_total: 0
+closure_blocker_total: 0
+result: PASS
+evidence_gate:
+  head_sha: 38a3d1c186e30e5601788c53f97df8923b85fc59
+  run_id: 36052760705
+  job_id: 107812140193
+  conclusion: success
