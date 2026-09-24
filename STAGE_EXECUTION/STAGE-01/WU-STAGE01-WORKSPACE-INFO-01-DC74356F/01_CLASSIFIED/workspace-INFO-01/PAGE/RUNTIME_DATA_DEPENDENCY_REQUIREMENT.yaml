@@ -1,0 +1,96 @@
+artifact_uid: CL-SRC-DOCX-553378EAE155DC74356F-RUNTIME_DATA_DEPENDENCY_REQUIREMENT
+page_uid: workspace:INFO-01
+planning_domain: PAGE_CONSTRUCTION
+responsibility_uid: RUNTIME_DATA_DEPENDENCY_REQUIREMENT
+responsibility_class: RUNTIME_DATA_DEPENDENCY_REQUIREMENT
+responsibilities:
+- RUNTIME_DATA_DEPENDENCY_REQUIREMENT
+canonical_owner_uid: OWNER-SOURCE-SRC-DOCX-553378EAE155DC74356F
+target_path: 01_CLASSIFIED/workspace-INFO-01/PAGE/RUNTIME_DATA_DEPENDENCY_REQUIREMENT.yaml
+lifecycle_uid: LC-STAGE01-RUNTIME_DATA_DEPENDENCY_REQUIREMENT
+approval_scope_uid: AP-STAGE01-workspace-INFO-01
+version_scope_uid: VER-81b316c4d511
+test_scope_uid: TEST-STAGE01-RUNTIME_DATA_DEPENDENCY_REQUIREMENT
+source_lineage:
+- source_uid: SRC-DOCX-553378EAE155DC74356F
+  source_segment_uids:
+  - SEG-SN-305D98152D48202DC8B430F3
+  - SEG-SN-7EF4D0947B8EADE224316A2C
+  - SEG-SN-4F0168EB6B54DF619C63A8C6
+  - SEG-SN-AA4766AF10D139A03DB4BBF2
+  - SEG-SN-485F261B0F44435CF6FBCA54
+  - SEG-SN-DD4359A229AE8B14915340D1
+  - SEG-SN-C83AFAC2D6FB353594633F3F
+  - SEG-SN-D3451790C0155B5323122E8E
+  - SEG-SN-2DC0D2C95AF3B8F378032D0D
+  - SEG-SN-3A88319C650CEB31AFA4F61D
+  - SEG-SN-F7F35B03E6CACC15EEC91397
+  - SEG-SN-7791776F6F618CA9D1C7862B
+  - SEG-SN-3538E366214DA27E9D2AB963
+  - SEG-SN-6D19D2BD77594879969333DC
+  - SEG-SN-7284D94E9C1ABD2374976EFA
+  - SEG-SN-3F8E85BD79FA15EB8468A942
+  - SEG-SN-6A2C3A7247F2F5EEAD01F93C
+  - SEG-SN-51B23EB73126BAFFC19D4F25
+  - SEG-SN-CAF551D559EB8DA9D90D6551
+facts:
+- source_node_uid: SN-305D98152D48202DC8B430F3
+  document_order_index: 1158
+  source_text: Research Queue / Research Run is read-model status only.
+- source_node_uid: SN-7EF4D0947B8EADE224316A2C
+  document_order_index: 2419
+  source_text: Research Queue / Runs
+- source_node_uid: SN-4F0168EB6B54DF619C63A8C6
+  document_order_index: 2434
+  source_text: Read-only research queue/run status
+- source_node_uid: SN-AA4766AF10D139A03DB4BBF2
+  document_order_index: 3314
+  source_text: Research Queue / Runs
+- source_node_uid: SN-485F261B0F44435CF6FBCA54
+  document_order_index: 3931
+  source_text: Freshness / Completeness / Confidence / Research Queue
+- source_node_uid: SN-DD4359A229AE8B14915340D1
+  document_order_index: 4522
+  source_text: 8.1 Visual C — STALE / INCOMPLETE + Research Queue
+- source_node_uid: SN-C83AFAC2D6FB353594633F3F
+  document_order_index: 4556
+  source_text: Reference state demonstrates governed STALE/INCOMPLETE semantics；Research Queue remains read-only and has no Start/Cancel/Retry button。
+- source_node_uid: SN-D3451790C0155B5323122E8E
+  document_order_index: 10876
+  source_text: LIST / 研究佇列 / Research Queue
+- source_node_uid: SN-2DC0D2C95AF3B8F378032D0D
+  document_order_index: 14687
+  source_text: Research run/queue projection missing or failed
+- source_node_uid: SN-3A88319C650CEB31AFA4F61D
+  document_order_index: 15617
+  source_text: Raw crawl/research runtime is NOT owned by INFO-01.
+- source_node_uid: SN-F7F35B03E6CACC15EEC91397
+  document_order_index: 15633
+  source_text: Research and fact acquisition use shared external-data acquisition runtime only when registered.
+- source_node_uid: SN-7791776F6F618CA9D1C7862B
+  document_order_index: 15641
+  source_text: No provider secrets or unregistered owner database reads are rendered.
+- source_node_uid: SN-3538E366214DA27E9D2AB963
+  document_order_index: 16678
+  source_text: Queue/run status only
+- source_node_uid: SN-6D19D2BD77594879969333DC
+  document_order_index: 17228
+  source_text: Research Queue / Run is read-only; no unregistered Start/Cancel/Retry.
+- source_node_uid: SN-7284D94E9C1ABD2374976EFA
+  document_order_index: 17605
+  source_text: Research Queue/Run read-only; no Start/Cancel action
+- source_node_uid: SN-3F8E85BD79FA15EB8468A942
+  document_order_index: 18893
+  source_text: Runtime Owner
+- source_node_uid: SN-6A2C3A7247F2F5EEAD01F93C
+  document_order_index: 18911
+  source_text: Runtime Status
+- source_node_uid: SN-51B23EB73126BAFFC19D4F25
+  document_order_index: 25335
+  source_text: 研究佇列 / Research Queue
+- source_node_uid: SN-CAF551D559EB8DA9D90D6551
+  document_order_index: 25843
+  source_text: The exact control denominator above is the only construction denominator for this page. Components/fields/visual IDs are not counted as additional controls. Existing source UIDs are preserved. A control classified
+    UI_LOCAL_EXACT MUST NOT create a server write. A control classified SPEC_EXACT_RUNTIME_BLOCKED / NOT_EXECUTED MUST remain disabled or fail-closed until its runtime evidence exists.
+status: CURRENT_CLASSIFICATION
+content_hash: 26f65342cb640b48f2785ec35242dcb07eaf36936463c9077a421cc7339f15da
