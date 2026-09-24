@@ -393,8 +393,8 @@ semantic_snapshot:
     - AUDIT_CATALOG
     - LIFECYCLE_STAGE
   - validator_uid: VAL-GOV-003
-    canonical_name: CONSTRUCTION_ARTIFACT_INDEX_GUARD
-    implementation_path: 09_TESTS/governance/validate_construction_artifact_index.py
+    canonical_name: INDEXED_INCREMENTAL_VALIDATION_GUARD
+    implementation_path: 09_TESTS/governance/validate_indexed_incremental_validation.py
     identity_mode: PHYSICAL_VALIDATOR
     allowed_usage:
     - AUDIT_CATALOG
@@ -799,14 +799,13 @@ required_root_manifest_paths:
 - 09_TESTS/governance/test_v2_1_0_post_v1_8_regressions.py
 - 09_TESTS/governance/test_v2_1_0_regressions.py
 - 09_TESTS/governance/validate_cleanup_protection.py
-- 09_TESTS/governance/validate_construction_artifact_index.py
+- 09_TESTS/governance/validate_indexed_incremental_validation.py
 - 09_TESTS/governance/validate_execution_governance_load.py
 - 09_TESTS/governance/validate_governance.py
 - 09_TESTS/governance/validate_reference_semantics.py
 - 09_TESTS/governance/validate_section_registry.py
 - 10_REGISTRY/AUDIT_CATALOG.yaml
 - 10_REGISTRY/BLUEPRINT_REGISTRY.yaml
-- 10_REGISTRY/CONSTRUCTION_ARTIFACT_INDEX.yaml
 - 10_REGISTRY/GOVERNANCE_ACCEPTANCE_AUDIT_BLUEPRINT.yaml
 - 10_REGISTRY/GOVERNANCE_LIFECYCLE_STAGE_REGISTRY.yaml
 - 10_REGISTRY/GOVERNANCE_ROOT_MANIFEST.yaml
