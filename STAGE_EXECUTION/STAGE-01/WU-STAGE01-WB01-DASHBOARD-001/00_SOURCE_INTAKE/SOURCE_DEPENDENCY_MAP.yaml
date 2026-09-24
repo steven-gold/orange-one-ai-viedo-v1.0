@@ -1,0 +1,20 @@
+artifact_uid: SF-DEPENDENCY-WU-STAGE01-WB01-DASHBOARD-001
+artifact_type: SOURCE_DEPENDENCY_MAP
+page_uids:
+- workspace:WB-01
+page_uid_or_scope_uid: workspace:WB-01
+status: CURRENT_SOURCE_FACT
+edges:
+- edge_uid: DEP-SEQUENCE-SRC-DOCX-2B1908530B5BD312A392
+  producer_source_uid: SRC-DOCX-2B1908530B5BD312A392
+  consumer_source_uid: SRC-DOCX-2B1908530B5BD312A392
+  dependency_type: SEQUENCE
+  authority_evidence_ref: EVIDENCE/SOURCE_ENUMERATION_EVIDENCE.yaml
+- edge_uid: DEP-GLOBAL-SHELL-WB01
+  producer_source_uid: SRC-DOCX-334A4679600F092B733B
+  consumer_source_uid: SRC-DOCX-2B1908530B5BD312A392
+  dependency_type: SHARED_OWNER
+  authority_evidence_ref: EVIDENCE/PREDECESSOR_GLOBAL_SHELL_TERMINAL_RECEIPT.yaml
+unresolved_authority_gaps: []
+invented_dependency_count: 0
+content_hash: 12098a32240a1d727ec04c5e176c25199959a90c69c511d6f467db30a587f1be

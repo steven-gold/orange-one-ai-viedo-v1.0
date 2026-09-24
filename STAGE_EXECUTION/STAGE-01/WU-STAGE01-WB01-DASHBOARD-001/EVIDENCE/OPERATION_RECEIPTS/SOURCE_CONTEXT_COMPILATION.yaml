@@ -1,0 +1,30 @@
+artifact_uid: OPREC-WU-STAGE01-WB01-DASHBOARD-001-SOURCE_CONTEXT_COMPILATION-20260924
+artifact_type: OPERATION_STEP_RECEIPT
+stage_uid: STAGE-01
+operation_uid: SOURCE_CONTEXT_COMPILATION
+work_unit_uid: WU-STAGE01-WB01-DASHBOARD-001
+governance_uid: GOV-REV-20260923-WORD-PROJECTION-NEXTSTEP-CONSUMER-SYNC-HARDENING
+governance_head: 40469342b2632d8453986d5800c9ccb9233208d5
+source_lineage:
+  source_uid: SRC-DOCX-2B1908530B5BD312A392
+  projection_uid: PROJ-SRC-DOCX-2B1908530B5BD312A392
+  projection_content_hash: dde5eb0c8eb8bf57b6cd498b260fe66e70b709c92d6d89ecfc7b6fa12a04db52
+  pair_hash: 140f9e5e90c83f4050b621e83563304aaff10603d26cdda1895f6b4d9af675ff
+owner_uid: SOURCE_BOUND_STAGE01_OWNER:SRC-DOCX-2B1908530B5BD312A392
+input_refs:
+- 00_SOURCE_INTAKE/SOURCE_SEGMENT_MAP.yaml
+output_refs:
+- 00_SOURCE_INTAKE/SOURCE_CONTEXT_MANIFEST.yaml
+denominator:
+  required_semantic_source_nodes: 1272
+  context_source_nodes: 1272
+  context_edges: 1271
+completeness_and_pass_condition:
+  denominator_coverage_percent: 100
+  missing_required_item_count: 0
+  duplicate_node_count: 0
+  invalid_context_edge_count: 0
+  unresolved_required_gap_count: 0
+result: PASS
+legal_successor: SOURCE_SUPERSESSION_CONFLICT_RESOLUTION
+status: PASS

@@ -1,0 +1,37 @@
+artifact_uid: GUARD-WU-STAGE01-WB01-DASHBOARD-001-20260924
+artifact_type: STAGE1_SOURCE_PIPELINE_GUARD_RESULT
+validator_uid: VAL-GOV-026
+validator_name: STAGE1_SOURCE_PIPELINE_GUARD
+validation_mode: CURRENT_REVISION_BOUNDARY_RECONCILIATION
+direct_script_reexecution: false
+direct_script_reexecution_disposition: NOT_REQUIRED_FROZEN_PROJECTION_AND_FRESH_OPERATION_CHAIN_RECONCILED
+governance_uid: GOV-REV-20260923-WORD-PROJECTION-NEXTSTEP-CONSUMER-SYNC-HARDENING
+governance_head: 40469342b2632d8453986d5800c9ccb9233208d5
+product_head_before_closure: 556deb3e342a071f01f31d701492aacd9c2f9c1c
+operation_output_candidate_tree_audited: ab5a89f9880c73f8b5b3189e4b898e916d7e511e
+canonical_owner_uid: SOURCE_BOUND_STAGE01_OWNER:SRC-DOCX-2B1908530B5BD312A392
+projection_admission_evidence:
+  validator_uid: VAL-GOV-026
+  evidence_ref: 00_SOURCE_INTAKE/SOURCE_PROJECTIONS/SRC-DOCX-2B1908530B5BD312A392/SOURCE_PROJECTION_RECONCILIATION_EVIDENCE.yaml
+  projection_content_hash: dde5eb0c8eb8bf57b6cd498b260fe66e70b709c92d6d89ecfc7b6fa12a04db52
+  pair_hash: 140f9e5e90c83f4050b621e83563304aaff10603d26cdda1895f6b4d9af675ff
+  zero_loss_mismatch_count: 0
+  reverse_trace: COMPLETE
+  unsupported_count: 0
+  result: PASS
+source_fact_contract_guard:
+  validator_uid: VAL-GOV-025
+  canonical_name: SOURCE_FACT_CONTRACT_GUARD
+  result: PASS_BY_FRESH_CURRENT_OPERATION_RECEIPT_CHAIN
+operation_receipt_denominator: 9
+operation_receipt_pass_count: 9
+operation_output_byte_drift_count: 0
+unreferenced_residual_count: 0
+manifest_missing_physical_count: 0
+artifact_count: 18
+blueprint_count: 2
+binding_count: 1
+required_source_node_count: 1272
+failures: []
+status: PASS
+result: PASS

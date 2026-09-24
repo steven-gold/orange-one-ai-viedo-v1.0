@@ -1,0 +1,31 @@
+artifact_uid: CL-SRC-DOCX-2B1908530B5BD312A392-DASHBOARD_KPI_LAYOUT
+page_uid: workspace:WB-01
+planning_domain: VISUAL_CONSTRUCTION
+responsibility_uid: DASHBOARD_KPI_LAYOUT
+responsibility_class: DASHBOARD_KPI_LAYOUT
+responsibilities:
+- DASHBOARD_KPI_LAYOUT
+canonical_owner_uid: OWNER-SOURCE-SRC-DOCX-2B1908530B5BD312A392
+target_path: 01_CLASSIFIED/workspace-WB-01/VISUAL/DASHBOARD_KPI_LAYOUT.yaml
+lifecycle_uid: LC-STAGE01-DASHBOARD_KPI_LAYOUT
+approval_scope_uid: AP-STAGE01-workspace-WB-01
+version_scope_uid: VER-e9c5560eb754
+test_scope_uid: TEST-STAGE01-DASHBOARD_KPI_LAYOUT
+source_lineage:
+- source_uid: SRC-DOCX-2B1908530B5BD312A392
+  source_segment_uids:
+  - SEG-SN-09C336C61CD86A47F23523A3
+  - SEG-SN-F084EDAE6A119F5E52C7D126
+  - SEG-SN-D0B1DAC9CB6B1F6A3AFA4FBD
+facts:
+- source_node_uid: SN-09C336C61CD86A47F23523A3
+  document_order_index: 4755
+  source_text: 同 group sections 必須維持 canonical row group；不得插入無關 panel 破壞 6 KPI / 8+4 / 8+4 / 4+4+4 / 12 topology。
+- source_node_uid: SN-F084EDAE6A119F5E52C7D126
+  document_order_index: 6384
+  source_text: '>=1440 exact 6×KPI row; 1280–1439 3+3 KPI; <1280 fixed min-width=1280 horizontal scroll'
+- source_node_uid: SN-D0B1DAC9CB6B1F6A3AFA4FBD
+  document_order_index: 17135
+  source_text: 禁止 Correction Rate KPI、Provider Health main card、System Health main KPI、Monthly Spend、Raw Cost Trend、素材總數/影片產出 legacy KPI。
+status: CURRENT_CLASSIFICATION
+content_hash: eb22faa754a704deb0455f69aceaf62723d2e75a72cf4a85d07f990503dca9d3
