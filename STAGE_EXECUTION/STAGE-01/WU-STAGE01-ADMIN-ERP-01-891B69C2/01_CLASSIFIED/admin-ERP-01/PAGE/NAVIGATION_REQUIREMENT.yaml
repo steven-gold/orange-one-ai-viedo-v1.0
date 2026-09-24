@@ -1,0 +1,36 @@
+artifact_uid: CL-SRC-DOCX-3AB6D767AE08891B69C2-NAVIGATION_REQUIREMENT
+page_uid: admin:ERP-01
+planning_domain: PAGE_CONSTRUCTION
+responsibility_uid: NAVIGATION_REQUIREMENT
+responsibility_class: NAVIGATION_REQUIREMENT
+responsibilities:
+- NAVIGATION_REQUIREMENT
+canonical_owner_uid: OWNER-SOURCE-SRC-DOCX-3AB6D767AE08891B69C2
+target_path: 01_CLASSIFIED/admin-ERP-01/PAGE/NAVIGATION_REQUIREMENT.yaml
+lifecycle_uid: LC-STAGE01-NAVIGATION_REQUIREMENT
+approval_scope_uid: AP-STAGE01-admin-ERP-01
+version_scope_uid: VER-9cd6b4782240
+test_scope_uid: TEST-STAGE01-NAVIGATION_REQUIREMENT
+source_lineage:
+- source_uid: SRC-DOCX-3AB6D767AE08891B69C2
+  source_segment_uids:
+  - SEG-SN-B740B26DFD145BF650D97B6E
+  - SEG-SN-F429ED0FD0AB8086799CAEFA
+  - SEG-SN-FCAD112E85B3EE541290FAB2
+  - SEG-SN-308FDA2C9B6CC9D0D5F09CD1
+facts:
+- source_node_uid: SN-B740B26DFD145BF650D97B6E
+  document_order_index: 8375
+  source_text: 只有 ERP-01；不重建 ERP-02 standalone navigation。
+- source_node_uid: SN-F429ED0FD0AB8086799CAEFA
+  document_order_index: 9499
+  source_text: 確認 3 View 不產生 route/business mutation。
+- source_node_uid: SN-FCAD112E85B3EE541290FAB2
+  document_order_index: 20499
+  source_text: Any layout/asset/typography/color/component/navigation/dimension/information-hierarchy change outside the approved Change Set is VISUAL_DRIFT_FAIL.
+- source_node_uid: SN-308FDA2C9B6CC9D0D5F09CD1
+  document_order_index: 20713
+  source_text: Requirement, Naming, Architecture, Navigation, User Flow, Page Registry, Design System, Layout, Component, Asset applicability/binding, Page Design, Visual Preview/Review/Approval, Audit Baseline, Acceptance
+    Matrix, DoD.
+status: CURRENT_CLASSIFICATION
+content_hash: 263ca044b3843719e252b75ac29554619b06a567a046e1a41950a9e3fe122bd3

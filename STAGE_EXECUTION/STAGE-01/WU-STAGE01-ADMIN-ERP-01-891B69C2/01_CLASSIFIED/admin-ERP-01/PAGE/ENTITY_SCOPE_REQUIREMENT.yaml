@@ -1,0 +1,187 @@
+artifact_uid: CL-SRC-DOCX-3AB6D767AE08891B69C2-ENTITY_SCOPE_REQUIREMENT
+page_uid: admin:ERP-01
+planning_domain: PAGE_CONSTRUCTION
+responsibility_uid: ENTITY_SCOPE_REQUIREMENT
+responsibility_class: ENTITY_SCOPE_REQUIREMENT
+responsibilities:
+- ENTITY_SCOPE_REQUIREMENT
+canonical_owner_uid: OWNER-SOURCE-SRC-DOCX-3AB6D767AE08891B69C2
+target_path: 01_CLASSIFIED/admin-ERP-01/PAGE/ENTITY_SCOPE_REQUIREMENT.yaml
+lifecycle_uid: LC-STAGE01-ENTITY_SCOPE_REQUIREMENT
+approval_scope_uid: AP-STAGE01-admin-ERP-01
+version_scope_uid: VER-9cd6b4782240
+test_scope_uid: TEST-STAGE01-ENTITY_SCOPE_REQUIREMENT
+source_lineage:
+- source_uid: SRC-DOCX-3AB6D767AE08891B69C2
+  source_segment_uids:
+  - SEG-SN-0ACE09C428716FB28C863548
+  - SEG-SN-11342ACCA498EFFC42B0AB87
+  - SEG-SN-A2A6B9AE3D72B948CEC00945
+  - SEG-SN-65D5EBF2CE850A77057A4D77
+  - SEG-SN-AE416C33344443B8C7145822
+  - SEG-SN-CBAA3307AC81E61F44DE7727
+  - SEG-SN-56EE21DB862822812CC95962
+  - SEG-SN-D17923C7BC342526DEFE5470
+  - SEG-SN-718E3616811981CD3B066398
+  - SEG-SN-0C21C63CE946EC8ADFC9220B
+  - SEG-SN-499B241C739413B70BF34183
+  - SEG-SN-4CB841D7CFAE7FE1489F10EB
+  - SEG-SN-3E6AA520817B11B7F59B9A1D
+  - SEG-SN-B3780F570FCF8B29FFD32857
+  - SEG-SN-14B252637F64251BEE32AC4F
+  - SEG-SN-6DDA88010916F8CBA4179BCA
+  - SEG-SN-BAF2F2901283E42059C4EEF6
+  - SEG-SN-AB0AA5AE533246AF26BB79F4
+  - SEG-SN-32091198B929121E6F16D0DF
+  - SEG-SN-393F5A925ECAB0DAFD5B8FD4
+  - SEG-SN-A7B97D4CCDB70982A8A0B395
+  - SEG-SN-4C18B0DDAB8DA36F0DB54981
+  - SEG-SN-52B8133F4C7B0BBB3B9241BA
+  - SEG-SN-337C156466753893CBCA2669
+  - SEG-SN-8D6DE4B1336016737D262EF7
+  - SEG-SN-DCBC0EE1A4C7B119D25E800A
+  - SEG-SN-E33B7E9A7FEB858E61EE3D6B
+  - SEG-SN-86AE78841856592F3C702F13
+  - SEG-SN-8371982C04D1C00D087F66E4
+  - SEG-SN-D93C4AF6DD7C0C6818DCBD1F
+  - SEG-SN-BF9A2633052865671F6F04C4
+  - SEG-SN-BB8AFF35DA1C124FBDB5332E
+  - SEG-SN-D37A694536435CE293C3A321
+  - SEG-SN-64D4EDE987676733FA7CD27B
+  - SEG-SN-DC9E3B39879E137E827A2243
+  - SEG-SN-402DC8A590E35CDAC9F1D396
+  - SEG-SN-77AF25F7D80E266B828507B4
+  - SEG-SN-E0B2DB38EAE4A4B3D7D3205B
+  - SEG-SN-C60995FB3DD20802AD229D7A
+  - SEG-SN-CFE06C0F611239D88042C2E3
+  - SEG-SN-0388753AC8CFB27B91382C26
+  - SEG-SN-DE5D70A1EA00E2CB1FF4379E
+facts:
+- source_node_uid: SN-0ACE09C428716FB28C863548
+  document_order_index: 100
+  source_text: 1. Page Identity / 頁面定位與產品目標
+- source_node_uid: SN-11342ACCA498EFFC42B0AB87
+  document_order_index: 754
+  source_text: 3. Business Entity × Operation / 實體與操作矩陣
+- source_node_uid: SN-A2A6B9AE3D72B948CEC00945
+  document_order_index: 790
+  source_text: Entity
+- source_node_uid: SN-65D5EBF2CE850A77057A4D77
+  document_order_index: 812
+  source_text: Read / Projection
+- source_node_uid: SN-AE416C33344443B8C7145822
+  document_order_index: 1460
+  source_text: ExportProjection
+- source_node_uid: SN-CBAA3307AC81E61F44DE7727
+  document_order_index: 1480
+  source_text: Authorized current projection
+- source_node_uid: SN-56EE21DB862822812CC95962
+  document_order_index: 4614
+  source_text: Authorized View/Scope → Export Gate → exportProjection → Existing Export owner → Result Ref
+- source_node_uid: SN-D17923C7BC342526DEFE5470
+  document_order_index: 6947
+  source_text: getUiProjection
+- source_node_uid: SN-718E3616811981CD3B066398
+  document_order_index: 6967
+  source_text: GET /v1/ui-projections/{pageUid}
+- source_node_uid: SN-0C21C63CE946EC8ADFC9220B
+  document_order_index: 6987
+  source_text: Projection / Read Owner
+- source_node_uid: SN-499B241C739413B70BF34183
+  document_order_index: 7766
+  source_text: exportProjection
+- source_node_uid: SN-4CB841D7CFAE7FE1489F10EB
+  document_order_index: 10568
+  source_text: getUiProjection
+- source_node_uid: SN-3E6AA520817B11B7F59B9A1D
+  document_order_index: 10576
+  source_text: GET /v1/ui-projections/{pageUid}
+- source_node_uid: SN-B3780F570FCF8B29FFD32857
+  document_order_index: 10584
+  source_text: Projection / source page read owner
+- source_node_uid: SN-14B252637F64251BEE32AC4F
+  document_order_index: 10663
+  source_text: ExportERPProjectionRequest
+- source_node_uid: SN-6DDA88010916F8CBA4179BCA
+  document_order_index: 10671
+  source_text: exportProjection
+- source_node_uid: SN-BAF2F2901283E42059C4EEF6
+  document_order_index: 10687
+  source_text: Existing Projection/Export owner
+- source_node_uid: SN-AB0AA5AE533246AF26BB79F4
+  document_order_index: 12018
+  source_text: getUiProjection
+- source_node_uid: SN-32091198B929121E6F16D0DF
+  document_order_index: 12026
+  source_text: GET /v1/ui-projections/{pageUid}
+- source_node_uid: SN-393F5A925ECAB0DAFD5B8FD4
+  document_order_index: 12034
+  source_text: Projection / source page read owner
+- source_node_uid: SN-A7B97D4CCDB70982A8A0B395
+  document_order_index: 12368
+  source_text: ERP-01-FLD-CONN-ENTITY-SCOPE
+- source_node_uid: SN-4C18B0DDAB8DA36F0DB54981
+  document_order_index: 12384
+  source_text: Entity Scope
+- source_node_uid: SN-52B8133F4C7B0BBB3B9241BA
+  document_order_index: 13565
+  source_text: getUiProjection
+- source_node_uid: SN-337C156466753893CBCA2669
+  document_order_index: 13573
+  source_text: GET /v1/ui-projections/{pageUid}
+- source_node_uid: SN-8D6DE4B1336016737D262EF7
+  document_order_index: 13581
+  source_text: Projection / source page read owner
+- source_node_uid: SN-DCBC0EE1A4C7B119D25E800A
+  document_order_index: 13670
+  source_text: getUiProjection
+- source_node_uid: SN-E33B7E9A7FEB858E61EE3D6B
+  document_order_index: 13678
+  source_text: GET /v1/ui-projections/{pageUid}
+- source_node_uid: SN-86AE78841856592F3C702F13
+  document_order_index: 13686
+  source_text: Projection / source page read owner
+- source_node_uid: SN-8371982C04D1C00D087F66E4
+  document_order_index: 13775
+  source_text: getUiProjection
+- source_node_uid: SN-D93C4AF6DD7C0C6818DCBD1F
+  document_order_index: 13783
+  source_text: GET /v1/ui-projections/{pageUid}
+- source_node_uid: SN-BF9A2633052865671F6F04C4
+  document_order_index: 13791
+  source_text: Projection / source page read owner
+- source_node_uid: SN-BB8AFF35DA1C124FBDB5332E
+  document_order_index: 13880
+  source_text: getUiProjection
+- source_node_uid: SN-D37A694536435CE293C3A321
+  document_order_index: 13888
+  source_text: GET /v1/ui-projections/{pageUid}
+- source_node_uid: SN-64D4EDE987676733FA7CD27B
+  document_order_index: 13896
+  source_text: Projection / source page read owner
+- source_node_uid: SN-DC9E3B39879E137E827A2243
+  document_order_index: 14558
+  source_text: Batch 15 · ERP Read Projection Binding / Applicability Ledger
+- source_node_uid: SN-402DC8A590E35CDAC9F1D396
+  document_order_index: 14563
+  source_text: '[ACPOS-20260921-BATCH-15-OWNER-SPECIFIC-READ-PROJECTION-CLOSURE-V1::PAGE::ERP-01]'
+- source_node_uid: SN-77AF25F7D80E266B828507B4
+  document_order_index: 14798
+  source_text: ERP-01-FLD-CONN-ENTITY-SCOPE
+- source_node_uid: SN-E0B2DB38EAE4A4B3D7D3205B
+  document_order_index: 15916
+  source_text: exportProjection
+- source_node_uid: SN-C60995FB3DD20802AD229D7A
+  document_order_index: 15926
+  source_text: ExportERPProjectionRequest
+- source_node_uid: SN-CFE06C0F611239D88042C2E3
+  document_order_index: 16048
+  source_text: Snapshot refresh persists immutable snapshot identity/freshness/completeness lineage sourced from the connector; it does not fabricate finance values.
+- source_node_uid: SN-0388753AC8CFB27B91382C26
+  document_order_index: 16158
+  source_text: Canonical Business Entity Operation Applicability Matrix / 業務實體操作適用性矩陣
+- source_node_uid: SN-DE5D70A1EA00E2CB1FF4379E
+  document_order_index: 16184
+  source_text: Entity
+status: CURRENT_CLASSIFICATION
+content_hash: e8d499bc31a8846d4c5e2dabb2d527ddfa6049d11e976a73f94248497c0b050f

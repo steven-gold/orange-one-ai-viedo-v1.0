@@ -1,0 +1,93 @@
+artifact_uid: CL-SRC-DOCX-3AB6D767AE08891B69C2-RUNTIME_DATA_DEPENDENCY_REQUIREMENT
+page_uid: admin:ERP-01
+planning_domain: PAGE_CONSTRUCTION
+responsibility_uid: RUNTIME_DATA_DEPENDENCY_REQUIREMENT
+responsibility_class: RUNTIME_DATA_DEPENDENCY_REQUIREMENT
+responsibilities:
+- RUNTIME_DATA_DEPENDENCY_REQUIREMENT
+canonical_owner_uid: OWNER-SOURCE-SRC-DOCX-3AB6D767AE08891B69C2
+target_path: 01_CLASSIFIED/admin-ERP-01/PAGE/RUNTIME_DATA_DEPENDENCY_REQUIREMENT.yaml
+lifecycle_uid: LC-STAGE01-RUNTIME_DATA_DEPENDENCY_REQUIREMENT
+approval_scope_uid: AP-STAGE01-admin-ERP-01
+version_scope_uid: VER-9cd6b4782240
+test_scope_uid: TEST-STAGE01-RUNTIME_DATA_DEPENDENCY_REQUIREMENT
+source_lineage:
+- source_uid: SRC-DOCX-3AB6D767AE08891B69C2
+  source_segment_uids:
+  - SEG-SN-D93C007EDC7D57620DA17689
+  - SEG-SN-03A93238DD32CA8DA154FB92
+  - SEG-SN-A6936D83A4DB39BEF743DD9B
+  - SEG-SN-A380F03CDF3F0E12F57252D6
+  - SEG-SN-7BB81D9CCFAABB2E7372786B
+  - SEG-SN-B0088082C0E37DD2DA86125E
+  - SEG-SN-25D8E7E9B6806CCEB9281205
+  - SEG-SN-1021007BEC82374071DDD908
+  - SEG-SN-08C8453F5B39450A748D46E5
+  - SEG-SN-A8F9CC66F813356B13250BC1
+  - SEG-SN-D0A233C840CE8DDE4E912670
+  - SEG-SN-9ACF1E24F92477688FFB9531
+  - SEG-SN-54C8732F82162A35737BA4F9
+  - SEG-SN-9AA6B78D1036948AFFC4B928
+  - SEG-SN-6541590D30720F9E3089F6D8
+  - SEG-SN-4275DB0E18C690CE06F9C31F
+  - SEG-SN-4C9D7334EA1384D2B18ADC91
+  - SEG-SN-079A6A689E365B5EE51D4CB8
+facts:
+- source_node_uid: SN-D93C007EDC7D57620DA17689
+  document_order_index: 500
+  source_text: 頁面成功只能描述已完成的 View/Action；不能用本頁規格完成推論 Runtime、E2E 或 Production Ready。
+- source_node_uid: SN-03A93238DD32CA8DA154FB92
+  document_order_index: 982
+  source_text: Connector / Provider / Adapter / Scope / Status
+- source_node_uid: SN-A6936D83A4DB39BEF743DD9B
+  document_order_index: 1799
+  source_text: Connector Identity、Provider/Adapter、Secret Ref、Entity Scope、Connection Status、Mapping Version
+- source_node_uid: SN-A380F03CDF3F0E12F57252D6
+  document_order_index: 3616
+  source_text: provider_key / adapter_key / secret_reference_id / entity_scope / mapping_version + registered mapping schema fields。
+- source_node_uid: SN-7BB81D9CCFAABB2E7372786B
+  document_order_index: 3659
+  source_text: Schema-driven modal；不得加入 raw secret value 或 client-authored runtime state。
+- source_node_uid: SN-B0088082C0E37DD2DA86125E
+  document_order_index: 6845
+  source_text: 17. Integration Ports / Runtime Binding
+- source_node_uid: SN-25D8E7E9B6806CCEB9281205
+  document_order_index: 9257
+  source_text: 文件完整不等同 Runtime/E2E/Deployment 完成。
+- source_node_uid: SN-1021007BEC82374071DDD908
+  document_order_index: 9292
+  source_text: 8 Sections、42 Controls、18 Actions、10 Gates、8 Errors、14 Runtime Operations 的頁面映射完整。
+- source_node_uid: SN-08C8453F5B39450A748D46E5
+  document_order_index: 10174
+  source_text: Runtime Owner
+- source_node_uid: SN-A8F9CC66F813356B13250BC1
+  document_order_index: 10192
+  source_text: Runtime Status
+- source_node_uid: SN-D0A233C840CE8DDE4E912670
+  document_order_index: 12574
+  source_text: ERP-01-FLD-CONN-PROVIDER-KEY
+- source_node_uid: SN-9ACF1E24F92477688FFB9531
+  document_order_index: 12590
+  source_text: Provider Key
+- source_node_uid: SN-54C8732F82162A35737BA4F9
+  document_order_index: 14546
+  source_text: The exact control denominator above is the only construction denominator for this page. Components/fields/visual IDs are not counted as additional controls. Existing source UIDs are preserved. A control classified
+    UI_LOCAL_EXACT MUST NOT create a server write. A control classified SPEC_EXACT_RUNTIME_BLOCKED / NOT_EXECUTED MUST remain disabled or fail-closed until its runtime evidence exists.
+- source_node_uid: SN-9AA6B78D1036948AFFC4B928
+  document_order_index: 14565
+  source_text: Fourteen Runtime Owner cells are bound in the existing product registry; twenty READONLY field Operation cells remain '—' by explicit non-applicability. No API route or per-field Operation is invented.
+- source_node_uid: SN-6541590D30720F9E3089F6D8
+  document_order_index: 14612
+  source_text: Runtime Owner
+- source_node_uid: SN-4275DB0E18C690CE06F9C31F
+  document_order_index: 14900
+  source_text: ERP-01-FLD-CONN-PROVIDER-KEY
+- source_node_uid: SN-4C9D7334EA1384D2B18ADC91
+  document_order_index: 15793
+  source_text: Connector configuration persists provider/adapter/entity scope/mapping/secret-reference metadata only. Raw secret plaintext must remain outside this persistence boundary.
+- source_node_uid: SN-079A6A689E365B5EE51D4CB8
+  document_order_index: 20567
+  source_text: Provider logos, thumbnails, output previews, evidence images or other runtime/business data are NOT automatically design assets; they remain data/projection unless current page explicitly registers an Asset
+    UID.
+status: CURRENT_CLASSIFICATION
+content_hash: bfcbde06df3f2b8faf52277f6978ad71532675cef2b0cb85e08057e112be404a

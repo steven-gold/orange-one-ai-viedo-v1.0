@@ -1,0 +1,129 @@
+artifact_uid: CL-SRC-DOCX-3AB6D767AE08891B69C2-AUTHORITY_PERMISSION_REQUIREMENT
+page_uid: admin:ERP-01
+planning_domain: PAGE_CONSTRUCTION
+responsibility_uid: AUTHORITY_PERMISSION_REQUIREMENT
+responsibility_class: AUTHORITY_PERMISSION_REQUIREMENT
+responsibilities:
+- AUTHORITY_PERMISSION_REQUIREMENT
+canonical_owner_uid: OWNER-SOURCE-SRC-DOCX-3AB6D767AE08891B69C2
+target_path: 01_CLASSIFIED/admin-ERP-01/PAGE/AUTHORITY_PERMISSION_REQUIREMENT.yaml
+lifecycle_uid: LC-STAGE01-AUTHORITY_PERMISSION_REQUIREMENT
+approval_scope_uid: AP-STAGE01-admin-ERP-01
+version_scope_uid: VER-9cd6b4782240
+test_scope_uid: TEST-STAGE01-AUTHORITY_PERMISSION_REQUIREMENT
+source_lineage:
+- source_uid: SRC-DOCX-3AB6D767AE08891B69C2
+  source_segment_uids:
+  - SEG-SN-9C5FAC6AAFBFB729AD3131A6
+  - SEG-SN-00FBDC6CDEA0614DC78B6A80
+  - SEG-SN-C893D19079D2C3DD21DA562E
+  - SEG-SN-5714BAB687CC43DA03CC8DB7
+  - SEG-SN-8DBBEDF184B68EE3B421F018
+  - SEG-SN-F168965668B00769CB878746
+  - SEG-SN-A66BFDB090A21A50AAD1F900
+  - SEG-SN-A37D2CFED6E2C4E0FC8585F7
+  - SEG-SN-685053ACE4406DEAC2181544
+  - SEG-SN-ACAF2770742248D88B8547B9
+  - SEG-SN-3FBAE0700A703215F3F56B4F
+  - SEG-SN-5BA5B6D6A08E3359AA18F16B
+  - SEG-SN-06FC7B1F2BD9219060E56B1F
+  - SEG-SN-B6993F79B0AEC22C2824A805
+  - SEG-SN-651DF28B9BF82F064A070D3D
+  - SEG-SN-1411C689E7C15C24DD454AEA
+  - SEG-SN-8533622184EDD28D4D4659DF
+  - SEG-SN-7CAE4B2024C062B3AB5569D0
+  - SEG-SN-C83AFAC2D6FB353594633F3F
+  - SEG-SN-C733CDE243E590D27887BB88
+  - SEG-SN-218013E4F57CF41B5C3CE484
+  - SEG-SN-2007F3AE23CC22AD4C517827
+  - SEG-SN-013D51F0309F053C5A396188
+  - SEG-SN-94D495F3FD2A6A29CA488CB4
+  - SEG-SN-2EFC54DA77A72E2E57096337
+  - SEG-SN-4141512DCEBA05AE7C3394A1
+  - SEG-SN-4BD85675C73EA6FEABC8BCFB
+facts:
+- source_node_uid: SN-9C5FAC6AAFBFB729AD3131A6
+  document_order_index: 32
+  source_text: 本版保留單頁三個主要工作 View，並依母規範補齊 Entity × Operation、功能加入／排除規則、Finance Read Model、Data Trust、Connector/Mapping、Sync Recovery、Functional Chain、Permission、State、Error、Visual Geometry、A11y、Acceptance 與施工映射。
+- source_node_uid: SN-00FBDC6CDEA0614DC78B6A80
+  document_order_index: 371
+  source_text: 具有 ERP/Finance L1 與精確 operation permission 的管理者／財務／系統營運人員。
+- source_node_uid: SN-C893D19079D2C3DD21DA562E
+  document_order_index: 741
+  source_text: Secret Reference only、Amount permission mask、Missing=—、Stale/Incomplete 可見、Idempotency、Expected Version、Audit、A11y、1280+ Desktop。
+- source_node_uid: SN-5714BAB687CC43DA03CC8DB7
+  document_order_index: 1520
+  source_text: 只匯出授權 Scope；沿用既有 Export owner。
+- source_node_uid: SN-8DBBEDF184B68EE3B421F018
+  document_order_index: 1543
+  source_text: ERP Connector → Mapping → Connector Validation → Sync Job → Snapshot → Data Quality / Freshness / Completeness → Finance Read Model / Fact Pack / Forecast / Guardrails。Failure、Audit、Correlation、Version、Scope
+    與 Permission 橫跨全鏈。
+- source_node_uid: SN-F168965668B00769CB878746
+  document_order_index: 1561
+  source_text: Finance View 不是第二套 Ledger。它只消費受治理 Read Model；任何新的收入、支出、Journal、Budget 或外部 ERP Write 操作，只有在未來存在精確 Operation / Permission / State Contract 時才能進入 effectful UI。
+- source_node_uid: SN-A66BFDB090A21A50AAD1F900
+  document_order_index: 2991
+  source_text: 56px；只顯示目前 View + State + Permission 合法操作；最多 1 個 dominant CTA。
+- source_node_uid: SN-A37D2CFED6E2C4E0FC8585F7
+  document_order_index: 3189
+  source_text: 只顯示授權 Read Model；Raw amount 需 finance.read。
+- source_node_uid: SN-685053ACE4406DEAC2181544
+  document_order_index: 3745
+  source_text: 精確 Connector + Version + State Guard + Permission + Audit。
+- source_node_uid: SN-ACAF2770742248D88B8547B9
+  document_order_index: 5042
+  source_text: Control 不是「畫面上必須全部常駐」。低頻技術欄位與 Failure/Audit 進 Detail Drawer；Action Dock 僅呈現目前 View/State/Permission 合法按鈕，避免技術控制牆。
+- source_node_uid: SN-3FBAE0700A703215F3F56B4F
+  document_order_index: 5396
+  source_text: 14. Gate / Permission / Security Matrix
+- source_node_uid: SN-5BA5B6D6A08E3359AA18F16B
+  document_order_index: 5495
+  source_text: Identity + page VIEW + erp_finance L1 + exact account permission + scope/condition/classification/audit
+- source_node_uid: SN-06FC7B1F2BD9219060E56B1F
+  document_order_index: 5753
+  source_text: PAGE + exact read permission + sync/snapshot/failure ref
+- source_node_uid: SN-B6993F79B0AEC22C2824A805
+  document_order_index: 5796
+  source_text: PAGE + source refresh permission + scope/version/state/idempotency/audit
+- source_node_uid: SN-651DF28B9BF82F064A070D3D
+  document_order_index: 5895
+  source_text: 頁面內明確使用的權限包括：erp.connector.read、erp.connector.write、erp.connector.validate、erp.mapping.validate、erp.sync.request、erp.sync.retry、erp.snapshot.read、finance.read。Role Name 與 Department Membership 不得直接授權。
+- source_node_uid: SN-1411C689E7C15C24DD454AEA
+  document_order_index: 6371
+  source_text: Permission / Scope / Mask denied
+- source_node_uid: SN-8533622184EDD28D4D4659DF
+  document_order_index: 7863
+  source_text: Missing / unavailable 不得當 0；Finance amount 未授權時 Mask。
+- source_node_uid: SN-7CAE4B2024C062B3AB5569D0
+  document_order_index: 7874
+  source_text: 前端 Hide 不是 Authorization；Server 必須驗 Identity、Permission、Scope、State、Expected Version、Idempotency、Audit。
+- source_node_uid: SN-C83AFAC2D6FB353594633F3F
+  document_order_index: 7885
+  source_text: 不得建立第二 ERP、Finance、Snapshot、Sync、Export、Permission 或 Provider/API-key 系統。
+- source_node_uid: SN-C733CDE243E590D27887BB88
+  document_order_index: 8879
+  source_text: Account permission + scope/state/version/idempotency/audit。
+- source_node_uid: SN-218013E4F57CF41B5C3CE484
+  document_order_index: 9347
+  source_text: 所有 effectful control 均可追溯到 Operation / Gate / Permission；未註冊能力 fail-closed。
+- source_node_uid: SN-2007F3AE23CC22AD4C517827
+  document_order_index: 9562
+  source_text: Permission Mask + FactPack/Forecast/Guardrail/Export + missing/stale state。
+- source_node_uid: SN-013D51F0309F053C5A396188
+  document_order_index: 10138
+  source_text: Permission / Auth Resource
+- source_node_uid: SN-94D495F3FD2A6A29CA488CB4
+  document_order_index: 15673
+  source_text: These bindings close only Payload/Schema and Persistence Owner gaps. Existing Method/Path, Action, Gate, Permission, Runtime Owner and Runtime Status remain unchanged. Projection/search/export state stays derived;
+    enterprise canonical entities reuse their existing owners; ERP connector secrets remain references only; no Production/provider execution is claimed.
+- source_node_uid: SN-2EFC54DA77A72E2E57096337
+  document_order_index: 16161
+  source_text: 'Authority: Current Word design + Mother §71 bounded completion. 本矩陣只正規化既有行為與目前未授權行為；不得據此新增 Business Entity、Operation、Runtime 或 API。 Current tree: b2f81b20322dd9e9268001126b07931b437e27df.'
+- source_node_uid: SN-4141512DCEBA05AE7C3394A1
+  document_order_index: 19999
+  source_text: 本附錄只補規劃／基本設計規範缺口；原頁面既有功能、Owner、Operation、Permission、Entity、Visual 與跨頁 Authority 仍為同一 Canonical Owner。不得由本附錄發明 Runtime/API/DB/Provider 行為，也不得建立第二套平行規範。
+- source_node_uid: SN-4BD85675C73EA6FEABC8BCFB
+  document_order_index: 20898
+  source_text: REFERENCE → current Control / Field / Action / Permission design tables and invariants in this Word.
+status: CURRENT_CLASSIFICATION
+content_hash: 332aa444679180f6f12998fe137aee086fd0cbb02331d4f1d0e399add80f0509
