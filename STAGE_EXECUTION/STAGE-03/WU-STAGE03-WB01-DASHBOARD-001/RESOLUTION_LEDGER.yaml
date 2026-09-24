@@ -1,0 +1,22 @@
+artifact_uid: RESOLUTION-STAGE03-WB01-001
+artifact_type: RESOLUTION_LEDGER
+stage_uid: STAGE-03
+governed_unit_uid: workspace:WB-01
+entries:
+- resolution_uid: RES-STAGE03-WB01-POST-REVIEW-CONSUMER-001
+  class: COMMON_ENGINE_DEFECT
+  finding: PRODUCT_STAGE03_VALIDATION_REJECTED_VISUAL_APPROVED
+  remediation_owner: .github/workflows/product-stage03-validation.yml
+  remediation_commit: d1bdd6c980057bf7981182a83f176d89afb4c831
+  replay_run_id: "36027398225"
+  replay_result: PASS
+  product_completion_credit: 0
+  status: RESOLVED
+- resolution_uid: RES-STAGE03-WB01-CANONICAL-PREFLIGHT-001
+  class: EXECUTION_EVIDENCE_GAP
+  finding: CANONICAL_STAGE_EXECUTION_PREFLIGHT_NOT_MATERIALIZED_BEFORE_CLOSURE_VALIDATION
+  disposition: MATERIALIZE_CURRENT_CYCLE_PREFLIGHT_AND_REPLAY_BEFORE_STAGE_EXIT
+  product_completion_credit: 0
+  status: REMEDIATION_IN_PROGRESS
+append_only: true
+status: CURRENT
