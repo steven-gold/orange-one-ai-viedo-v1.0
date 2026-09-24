@@ -1,0 +1,10 @@
+artifact_uid: DEP-STAGE02-WB01-001
+artifact_type: DEPENDENCY_MAP
+stage_uid: STAGE-02
+governed_unit_uid: workspace:WB-01
+dependencies:
+- {dependency_uid: DEP-WB01-PERMISSION, owner_ref: ACCOUNT_PERMISSION_ASSIGNMENT, requirement: REQUIRED}
+- {dependency_uid: DEP-WB01-SECTION-SCHEMA, owner_ref: SECTION_SCHEMA_SET, requirement: REQUIRED}
+- {dependency_uid: DEP-WB01-READ-MODEL, owner_ref: DASHBOARD_READ_MODEL, requirement: REQUIRED}
+- {dependency_uid: DEP-WB01-SECTION-OPEN, owner_ref: SECTION_OPEN_CONTROLS, requirement: REQUIRED}
+status: CURRENT
