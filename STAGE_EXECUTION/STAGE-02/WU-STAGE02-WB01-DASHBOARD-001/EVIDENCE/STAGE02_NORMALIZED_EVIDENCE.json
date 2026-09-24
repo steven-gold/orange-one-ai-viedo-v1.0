@@ -1,0 +1,382 @@
+{
+  "artifact_type": "COMMON_STAGE_EXECUTION_EVIDENCE",
+  "attempt_uid": "ATTEMPT-STAGE02-WB01-20260924-V224",
+  "stage_uid": "STAGE-02",
+  "governance_uid": "GOV-REV-20260924-INDEPENDENT-UNIT-LIFECYCLE-CURRENT-IDENTITY-SYNC",
+  "scope_manifest_ref": "STAGE_EXECUTION/STAGE-02/WU-STAGE02-WB01-DASHBOARD-001/CURRENT_EXECUTION_SCOPE_MANIFEST.yaml",
+  "source_head_sha": "f5819e5e9c940b265887687fabf8c129f13ee03f",
+  "actual_stage_execution_started": true,
+  "actual_stage_execution_completed": true,
+  "fresh_execution": true,
+  "prior_results_used": false,
+  "current_specification_mutated": false,
+  "phase_trace": [
+    {
+      "phase_uid": "SESSION_BOOTSTRAP_RESUME_GATE",
+      "status": "PASS"
+    },
+    {
+      "phase_uid": "CURRENT_GOVERNANCE",
+      "status": "PASS"
+    },
+    {
+      "phase_uid": "CURRENT_SCOPE",
+      "status": "PASS"
+    },
+    {
+      "phase_uid": "WORK_UNIT",
+      "status": "PASS"
+    },
+    {
+      "phase_uid": "AUTHORITY",
+      "status": "PASS"
+    },
+    {
+      "phase_uid": "APPLICABILITY",
+      "status": "PASS"
+    },
+    {
+      "phase_uid": "DEPENDENCY",
+      "status": "PASS"
+    },
+    {
+      "phase_uid": "REQUIRED_FIELD_MANIFEST",
+      "status": "PASS"
+    },
+    {
+      "phase_uid": "STAGE_INPUT_CONTRACT",
+      "status": "PASS"
+    },
+    {
+      "phase_uid": "STAGE_OPERATIONS",
+      "status": "PASS"
+    },
+    {
+      "phase_uid": "OUTPUT_PRODUCER",
+      "status": "PASS"
+    },
+    {
+      "phase_uid": "CURRENT_PROBLEM_REGISTER",
+      "status": "PASS"
+    },
+    {
+      "phase_uid": "DENOMINATOR_SNAPSHOT",
+      "status": "PASS"
+    },
+    {
+      "phase_uid": "CHANGE_IMPACT",
+      "status": "PASS"
+    },
+    {
+      "phase_uid": "RESOLUTION_LEDGER",
+      "status": "PASS"
+    },
+    {
+      "phase_uid": "FRESH_EXECUTION",
+      "status": "PASS"
+    },
+    {
+      "phase_uid": "STAGE_SPECIFIC_SCANNER",
+      "status": "PASS"
+    },
+    {
+      "phase_uid": "GAP_CLASSIFICATION",
+      "status": "PASS"
+    },
+    {
+      "phase_uid": "OWNER_REMEDIATION",
+      "status": "NOT_APPLICABLE_WITH_PROOF",
+      "proof": "ZERO_DISCOVERED_GAPS"
+    },
+    {
+      "phase_uid": "FRESH_REEXECUTION",
+      "status": "NOT_APPLICABLE_WITH_PROOF",
+      "proof": "ZERO_DISCOVERED_GAPS"
+    },
+    {
+      "phase_uid": "HIDDEN_DEFECT_SWEEP",
+      "status": "PASS"
+    },
+    {
+      "phase_uid": "REQUIRED_EVIDENCE",
+      "status": "PASS"
+    },
+    {
+      "phase_uid": "EXACT_HEAD_GATES",
+      "status": "PASS"
+    },
+    {
+      "phase_uid": "TERMINAL_CLOSURE",
+      "status": "PASS"
+    },
+    {
+      "phase_uid": "PERSIST_RESUME",
+      "status": "PASS"
+    },
+    {
+      "phase_uid": "NEXT_STAGE",
+      "status": "PASS"
+    }
+  ],
+  "operation_results": [
+    {
+      "operation_uid": "STAGE_EXECUTION_PREFLIGHT_COMPILE",
+      "status": "PASS"
+    },
+    {
+      "operation_uid": "EFFECTIVE_CONTRACT_OVERLAY_COMPILE",
+      "status": "PASS"
+    },
+    {
+      "operation_uid": "DEPENDENCY_TOPOLOGY_COMPILE",
+      "status": "PASS"
+    },
+    {
+      "operation_uid": "CHANGE_IMPACT_MAP_COMPILE",
+      "status": "PASS"
+    },
+    {
+      "operation_uid": "FUNCTIONAL_CHAIN_COMPILE",
+      "status": "PASS"
+    },
+    {
+      "operation_uid": "DEPENDENCY_MAP_COMPILE",
+      "status": "PASS"
+    },
+    {
+      "operation_uid": "PAGE_CONSTRUCTION_SPEC_COMPILE",
+      "status": "PASS"
+    },
+    {
+      "operation_uid": "ASYNC_PROVIDER_CONTRACT_COMPILE",
+      "status": "PASS"
+    },
+    {
+      "operation_uid": "SHARED_OWNER_PORT_RESOLVE",
+      "status": "PASS"
+    },
+    {
+      "operation_uid": "FUNCTIONAL_WORKBENCH_CONTRACT_COMPILE",
+      "status": "PASS"
+    },
+    {
+      "operation_uid": "INTERACTION_TOPOLOGY_COMPILE",
+      "status": "PASS"
+    },
+    {
+      "operation_uid": "FUNCTION_ADMISSION_SCORECARD_COMPILE",
+      "status": "PASS"
+    },
+    {
+      "operation_uid": "AUTO_COMPLETION_SCOPE_LEDGER_COMPILE",
+      "status": "PASS"
+    }
+  ],
+  "output_results": [
+    {
+      "output_uid": "FUNCTIONAL_CHAIN_SPEC",
+      "producer_operation_uid": "FUNCTIONAL_CHAIN_COMPILE",
+      "status": "PASS"
+    },
+    {
+      "output_uid": "DEPENDENCY_MAP",
+      "producer_operation_uid": "DEPENDENCY_MAP_COMPILE",
+      "status": "PASS"
+    },
+    {
+      "output_uid": "PAGE_CONSTRUCTION_SPEC_PACKAGE",
+      "producer_operation_uid": "PAGE_CONSTRUCTION_SPEC_COMPILE",
+      "status": "PASS"
+    },
+    {
+      "output_uid": "ASYNC_PROVIDER_CONTRACT",
+      "producer_operation_uid": "ASYNC_PROVIDER_CONTRACT_COMPILE",
+      "status": "PASS"
+    },
+    {
+      "output_uid": "SHARED_OWNER_PORT_MAP",
+      "producer_operation_uid": "SHARED_OWNER_PORT_RESOLVE",
+      "status": "PASS"
+    },
+    {
+      "output_uid": "FUNCTIONAL_WORKBENCH_CONTRACT",
+      "producer_operation_uid": "FUNCTIONAL_WORKBENCH_CONTRACT_COMPILE",
+      "status": "PASS"
+    },
+    {
+      "output_uid": "INTERACTION_TOPOLOGY_SPEC",
+      "producer_operation_uid": "INTERACTION_TOPOLOGY_COMPILE",
+      "status": "PASS"
+    },
+    {
+      "output_uid": "REQUIRED_FIELD_MANIFEST",
+      "producer_operation_uid": "STAGE_EXECUTION_PREFLIGHT_COMPILE",
+      "status": "PASS"
+    },
+    {
+      "output_uid": "FUNCTIONAL_CHAIN_MANIFEST",
+      "producer_operation_uid": "STAGE_EXECUTION_PREFLIGHT_COMPILE",
+      "status": "PASS"
+    },
+    {
+      "output_uid": "EFFECTIVE_CONTRACT_OVERLAY",
+      "producer_operation_uid": "EFFECTIVE_CONTRACT_OVERLAY_COMPILE",
+      "status": "PASS"
+    },
+    {
+      "output_uid": "DEPENDENCY_TOPOLOGY",
+      "producer_operation_uid": "DEPENDENCY_TOPOLOGY_COMPILE",
+      "status": "PASS"
+    },
+    {
+      "output_uid": "DENOMINATOR_SNAPSHOT",
+      "producer_operation_uid": "STAGE_EXECUTION_PREFLIGHT_COMPILE",
+      "status": "PASS"
+    },
+    {
+      "output_uid": "CLASSIFICATION_RULESET",
+      "producer_operation_uid": "STAGE_EXECUTION_PREFLIGHT_COMPILE",
+      "status": "PASS"
+    },
+    {
+      "output_uid": "CHANGE_IMPACT_MAP",
+      "producer_operation_uid": "CHANGE_IMPACT_MAP_COMPILE",
+      "status": "PASS"
+    },
+    {
+      "output_uid": "STAGE_EXECUTION_PREFLIGHT_RECEIPT",
+      "producer_operation_uid": "STAGE_EXECUTION_PREFLIGHT_COMPILE",
+      "status": "PASS"
+    },
+    {
+      "output_uid": "CURRENT_PROBLEM_REGISTER",
+      "producer_operation_uid": "STAGE_EXECUTION_PREFLIGHT_COMPILE",
+      "status": "PASS"
+    },
+    {
+      "output_uid": "RESOLUTION_LEDGER",
+      "producer_operation_uid": "STAGE_EXECUTION_PREFLIGHT_COMPILE",
+      "status": "PASS"
+    },
+    {
+      "output_uid": "FUNCTION_ADMISSION_SCORECARD",
+      "producer_operation_uid": "FUNCTION_ADMISSION_SCORECARD_COMPILE",
+      "status": "PASS"
+    },
+    {
+      "output_uid": "AUTO_COMPLETION_SCOPE_LEDGER",
+      "producer_operation_uid": "AUTO_COMPLETION_SCOPE_LEDGER_COMPILE",
+      "status": "PASS"
+    }
+  ],
+  "scanner_results": [
+    {
+      "scanner_dimension": "ENTITY_OPERATION_DENOMINATOR",
+      "status": "PASS"
+    },
+    {
+      "scanner_dimension": "CONTROL_ACTION_RUNTIME_CHAIN",
+      "status": "PASS"
+    },
+    {
+      "scanner_dimension": "PAYLOAD_INPUT",
+      "status": "PASS"
+    },
+    {
+      "scanner_dimension": "STATE_TRANSITION",
+      "status": "PASS"
+    },
+    {
+      "scanner_dimension": "ERROR_RECOVERY",
+      "status": "PASS"
+    },
+    {
+      "scanner_dimension": "AUDIT_EVENT",
+      "status": "PASS"
+    },
+    {
+      "scanner_dimension": "WORKBENCH_COHESION",
+      "status": "PASS"
+    },
+    {
+      "scanner_dimension": "INTERACTION_CONTINUITY",
+      "status": "PASS"
+    },
+    {
+      "scanner_dimension": "AI_CONTEXT_CONTINUITY",
+      "status": "PASS"
+    },
+    {
+      "scanner_dimension": "VERSION_FINALIZATION",
+      "status": "PASS"
+    }
+  ],
+  "validator_results": [
+    {
+      "validator_uid": "VAL-GOV-008",
+      "status": "PASS"
+    },
+    {
+      "validator_uid": "VAL-GOV-004",
+      "status": "PASS"
+    }
+  ],
+  "denominator": {
+    "required_total": 132,
+    "open_gap_total": 0,
+    "closure_blocker_total": 0,
+    "remaining_scope_total": 0
+  },
+  "gaps": [],
+  "closure_blockers": [],
+  "remediation": {
+    "discovered_gap_total": 0,
+    "remediated_gap_total": 0,
+    "unresolved_gap_total": 0,
+    "reexecution_required": false,
+    "reexecution_performed": false
+  },
+  "hidden_defect_sweep": {
+    "performed": true,
+    "result": "PASS",
+    "discovered_defect_total": 0
+  },
+  "required_evidence": [
+    {
+      "evidence_type": "PAGE_FUNCTIONAL_REVIEW_EVIDENCE",
+      "status": "PASS",
+      "ref": "STAGE_EXECUTION/STAGE-02/WU-STAGE02-WB01-DASHBOARD-001/EVIDENCE/PAGE_FUNCTIONAL_REVIEW_EVIDENCE.yaml",
+      "external_receipt": false
+    }
+  ],
+  "cross_stage_handoff": {
+    "ledger_ref": "STAGE_EXECUTION/STAGE-02/WU-STAGE02-WB01-DASHBOARD-001/EVIDENCE/CROSS_STAGE_HANDOFF_READINESS_LEDGER.yaml",
+    "external_receipt": false,
+    "successor_stage_uid": "STAGE-03",
+    "reference_resolution_complete": true,
+    "physical_materialization_complete": true,
+    "required_field_completeness_complete": true,
+    "denominator_reconciled": true,
+    "consumer_readiness_complete": true,
+    "unresolved_required_dependency_total": 0,
+    "status": "PASS"
+  },
+  "exact_head_gate_receipts": [
+    {
+      "gate_uid": "PRODUCT_STAGE_VALIDATION",
+      "head_sha": "f5819e5e9c940b265887687fabf8c129f13ee03f",
+      "run_id": "36010812801",
+      "conclusion": "success"
+    }
+  ],
+  "resume_persistence": {
+    "performed": true,
+    "resume_point": "TERMINAL_CLOSURE"
+  },
+  "next_stage_transition": {
+    "next_stage_uid": "STAGE-03",
+    "status": "READY"
+  },
+  "stage_exit_allowed": true,
+  "result": "PASS"
+}
