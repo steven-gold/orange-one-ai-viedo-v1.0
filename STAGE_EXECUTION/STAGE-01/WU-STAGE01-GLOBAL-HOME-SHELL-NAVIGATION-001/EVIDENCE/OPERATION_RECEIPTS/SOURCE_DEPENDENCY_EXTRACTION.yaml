@@ -1,0 +1,29 @@
+artifact_uid: OPREC-WU-STAGE01-GLOBAL-HOME-SHELL-NAVIGATION-001-SOURCE_DEPENDENCY_EXTRACTION-20260924
+artifact_type: OPERATION_STEP_RECEIPT
+stage_uid: STAGE-01
+operation_uid: SOURCE_DEPENDENCY_EXTRACTION
+work_unit_uid: WU-STAGE01-GLOBAL-HOME-SHELL-NAVIGATION-001
+source_lineage:
+  source_uid: SRC-DOCX-334A4679600F092B733B
+  projection_uid: PROJ-SRC-DOCX-334A4679600F092B733B
+owner_uid: SOURCE_BOUND_STAGE01_OWNER:SRC-DOCX-334A4679600F092B733B
+input_refs:
+- 00_SOURCE_INTAKE/SOURCE_CONTEXT_MANIFEST.yaml
+- 00_SOURCE_INTAKE/CONTENT_SUPERSESSION_CONFLICT_LEDGER.yaml
+output_refs:
+- 00_SOURCE_INTAKE/SOURCE_DEPENDENCY_MAP.yaml
+denominator:
+  source_dependency_edges: 1
+  valid_source_dependency_edges: 1
+  unresolved_authority_gaps: 0
+completeness_and_pass_condition:
+  invalid_dependency_edge_count: 0
+  invented_dependency_count: 0
+  unresolved_required_gap_count: 0
+validators_and_evidence:
+- FRESH_SOURCE_DEPENDENCY_SCHEMA_AND_OWNER_RECONCILIATION
+- STAGE_EXECUTION/STAGE-01/CURRENT_EXECUTION_SCOPE_MANIFEST.yaml
+result: PASS
+legal_successor: RESPONSIBILITY_CLASSIFICATION
+status: PASS
+content_hash: 768ddf796beadf5930335a6a94513d052fe9e9bc71c3cea4ff74b3ac3d077d63
