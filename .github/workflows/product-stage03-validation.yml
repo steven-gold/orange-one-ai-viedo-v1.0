@@ -63,11 +63,27 @@ jobs:
         p=y('VISUAL_PREVIEW_EVIDENCE.yaml')
         if p.get('structural_only') is not False: raise SystemExit('BLOCK:STRUCTURAL_ONLY_PREVIEW')
         r=y('EVIDENCE/VISUAL_REVIEW_EVIDENCE.yaml')
-        if r.get('decision')!='PENDING_HUMAN_REVIEW': raise SystemExit('BLOCK:UNEXPECTED_REVIEW_STATE')
+        decision=r.get('decision')
+        if decision=='PENDING_HUMAN_REVIEW':
+          if r.get('visual_approved') is not False or int(r.get('stage_exit_credit') or 0)!=0:
+            raise SystemExit('BLOCK:PENDING_REVIEW_STATE_INVALID')
+          review_state='PENDING_HUMAN_REVIEW'
+        elif decision=='VISUAL_APPROVED':
+          if r.get('visual_approved') is not True:
+            raise SystemExit('BLOCK:APPROVED_REVIEW_WITHOUT_VISUAL_APPROVAL')
+          if not r.get('reviewer') or not r.get('reviewed_at'):
+            raise SystemExit('BLOCK:APPROVED_REVIEW_IDENTITY_OR_TIME_MISSING')
+          if int(r.get('stage_exit_credit') or 0)!=0:
+            raise SystemExit('BLOCK:HUMAN_REVIEW_MUST_NOT_GRANT_STAGE_EXIT_CREDIT')
+          if r.get('status')!='REVIEW_COMPLETE_PENDING_STAGE03_CLOSURE':
+            raise SystemExit('BLOCK:APPROVED_REVIEW_STATUS_INVALID')
+          review_state='VISUAL_APPROVED_PENDING_STAGE03_CLOSURE'
+        else:
+          raise SystemExit('BLOCK:UNEXPECTED_REVIEW_STATE:'+str(decision))
         print('PASS: 9/9 Stage03 outputs physical')
         print('PASS: non-empty visual anchors')
         print('PASS: required visual scenarios independently materialized')
         print('PASS: functional topology preserved')
         print('PASS: preview is non-structural-only')
-        print('PASS: correctly stopped at human visual review boundary')
+        print('PASS: visual review checkpoint='+review_state)
         PY
