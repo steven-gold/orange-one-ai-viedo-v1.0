@@ -20,9 +20,17 @@ entries:
 - ordinal: 3
   issue_uid: STAGE01-CANONICAL-PREFLIGHT-CHRONOLOGY-001
   classification: EXECUTION_CONTROL_EVIDENCE_DEFECT
-  resolution: PREVIOUS_STAGE_EXIT_CREDIT_INVALIDATED_CANONICAL_PREFLIGHT_ESTABLISHED_BEFORE_REPLAY
-  closure_credit: NONE_UNTIL_FRESH_REPLAY
-  status: REPLAY_REQUIRED
-unresolved_stage01_owned_entry_total: 1
-status: REPLAY_PENDING
-artifact_hash: 8961a993c343eb3b6818d07148b35f62b9c6f764abb52cba8af28ee7bf5c1cd4
+  resolution: CANONICAL_PREFLIGHT_ESTABLISHED_THEN_FRESH_REPLAY_COMPLETED_31_OF_31
+  closure_credit: ELIGIBLE_FOR_EXACT_HEAD_GATE
+  status: RESOLVED
+  replay_run_id: 35958357915
+  replay_head: 11caac7865b7070dbe319db92c68d30477312a20
+- ordinal: 4
+  action: EXECUTION_BRANCH_LOCKED_TO_0921ACPOS
+  execution_branch: 0921acpos
+  historical_transport_branch: tmp-word-binary-handoff-20260923
+  historical_transport_branch_disposition: RETIRED_NO_EXECUTION_AUTHORITY
+  status: RESOLVED
+unresolved_stage01_owned_entry_total: 0
+status: PASS
+artifact_hash: 9bd551ba9b667221d4fa9121d49636da584aa54c33b37b8e4ec7e4487c711bab

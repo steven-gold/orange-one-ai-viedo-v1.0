@@ -26,16 +26,9 @@ closure_control_artifacts:
 - STAGE_EXECUTION/STAGE-01/CLOSURE/STAGE01_FULL_DENOMINATOR_AUDIT.yaml
 - STAGE_EXECUTION/STAGE-01/CLOSURE/STAGE_EXECUTION_PREFLIGHT_RECEIPT.yaml
 exact_head_gate_required: true
-exact_head_gate_status: INVALIDATED_REPLAY_REQUIRED
+exact_head_gate_status: PENDING
 stage_exit_authorized: false
-status: REOPENED_CANONICAL_PREFLIGHT_REPLAY_REQUIRED
-artifact_hash: c4cbc81a0b43c2e2c7c2cd743cde2fb2b4871a610db307966553e37eecd175bd
-legal_next_transition: STAGE01_FRESH_REPLAY_AFTER_CANONICAL_PREFLIGHT
-historical_invalidated_exact_head_gate_receipt:
-  provider: github_actions
-  repository_or_project: steven-gold/orange-one-ai-viedo-v1.0
-  head_sha: 69813e47c4d3ff93b590f5f537840a8277bc512e
-  run_id: 35957876502
-  job_denominator:
-  - stage01-exact-head-closure-gate/gate
-  conclusion: success
+status: PENDING_EXACT_HEAD_CLOSURE_GATE
+artifact_hash: 21b4652dc36f630e308b291058724fe5ed901fc60898dc9dd282503bd96728a4
+legal_next_transition: STAGE01_EXACT_HEAD_CLOSURE_GATE
+fresh_replay_summary_ref: STAGE_EXECUTION/STAGE-01/CLOSURE/STAGE01_PREFLIGHT_FRESH_REPLAY_SUMMARY.yaml

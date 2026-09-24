@@ -3,30 +3,21 @@ artifact_type: STAGE_EXECUTION_RESUME
 stage_uid: STAGE-01
 primary_task_layer: PRODUCT_STAGE_EXECUTION
 governance_head: c411687bcd94ba2f0c8016de63c3d8b4dc3d3209
-resume_base_product_head: 58b39dae9f53a1d729cbf4626add957a08a988cf
+resume_base_product_head: 4e8e6cbfb1bece17a79c4c90918e22c5713422ea
 total_required_source_count: 31
 closed_pass_source_count: 31
 last_closed_work_unit_uid: WU-STAGE01-WORKSPACE-STR-01-6ED5CADB
 last_closed_source_uid: SRC-DOCX-3230C6B995176ED5CADB
 next_source_uid: null
 next_page_uid: null
-resume_point: STAGE01_FRESH_REPLAY_AFTER_CANONICAL_PREFLIGHT
+resume_point: STAGE01_EXACT_HEAD_CLOSURE_GATE
 stage_exit_authorized: false
 closure_candidate_ref: STAGE_EXECUTION/STAGE-01/CLOSURE/STAGE01_CLOSURE_CANDIDATE.yaml
-checkpoint_reason: PREVIOUS_STAGE01_EXIT_CREDIT_INVALIDATED_CANONICAL_PREFLIGHT_CHRONOLOGY_REPLAY_REQUIRED
+checkpoint_reason: CANONICAL_PREFLIGHT_FRESH_REPLAY_31_OF_31_PASS_AWAITING_EXACT_HEAD_GATE
 historical_runner_disposition: RETIRED_NO_RESUME_AUTHORITY
 status: CURRENT_RESUME
-previous_exit_gate_disposition: HISTORICAL_NON_CURRENT_REPLAY_REQUIRED
-historical_invalidated_exit_gate_receipt:
-  provider: github_actions
-  repository_or_project: steven-gold/orange-one-ai-viedo-v1.0
-  head_sha: 69813e47c4d3ff93b590f5f537840a8277bc512e
-  run_id: 35957876502
-  job_denominator:
-  - stage01-exact-head-closure-gate/gate
-  conclusion: success
-
 execution_branch: 0921acpos
 historical_transport_branch: tmp-word-binary-handoff-20260923
 historical_transport_branch_disposition: RETIRED_NO_EXECUTION_AUTHORITY
 execution_branch_lock: ONLY_0921ACPOS_MAY_MUTATE_CURRENT_PRODUCT_STATE
+content_hash: 66baf7f3883238749cf3d89cbaf17bef21ce11c4cf7d008ad6140b9c2eeff60f
