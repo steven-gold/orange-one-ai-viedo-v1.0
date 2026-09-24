@@ -1,0 +1,63 @@
+artifact_uid: WUDEF-STAGE01-WB01-DASHBOARD-001
+artifact_type: WORK_UNIT_DEFINITION
+work_unit_uid: WU-STAGE01-WB01-DASHBOARD-001
+canonical_name: WB-01 Dashboard Stage-01
+primary_task_layer: PRODUCT_STAGE_EXECUTION
+stage_uid: STAGE-01
+governance_identity:
+  governance_uid: GOV-REV-20260923-WORD-PROJECTION-NEXTSTEP-CONSUMER-SYNC-HARDENING
+  display_version: v2.2.22
+  governance_head: 40469342b2632d8453986d5800c9ccb9233208d5
+scope:
+  source_uid: SRC-DOCX-2B1908530B5BD312A392
+  page_uid: workspace:WB-01
+  scope_uid: WB01-DASHBOARD
+  source_file: ACPOS_WB-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx
+  requested_focus_order:
+  - DASHBOARD_PAGE
+  source_atomicity: COMPLETE_FROZEN_SOURCE_MUST_BE_PRESERVED
+out_of_scope:
+- ALL_OTHER_29_STAGE01_SCOPES
+- GLOBAL_HOME_ALREADY_CLOSED
+- STAGE-02_AND_LATER
+- WEBSITE_CONSTRUCTION
+- DEPLOYMENT
+canonical_owner_refs:
+- 00_SOURCE_INTAKE/SOURCE_PROJECTIONS/SRC-DOCX-2B1908530B5BD312A392/CANONICAL_SOURCE_PROJECTION.yaml
+- 00_SOURCE_INTAKE/SOURCE_PROJECTIONS/SRC-DOCX-2B1908530B5BD312A392/SOURCE_PROJECTION_FREEZE_RECEIPT.yaml
+dependencies:
+- type: PREDECESSOR_WORK_UNIT
+  work_unit_uid: WU-STAGE01-GLOBAL-HOME-SHELL-NAVIGATION-001
+  terminal_disposition: CLOSED_PASS
+- type: FROZEN_SOURCE_PAIR
+  source_uid: SRC-DOCX-2B1908530B5BD312A392
+  pair_hash: 140f9e5e90c83f4050b621e83563304aaff10603d26cdda1895f6b4d9af675ff
+- type: CURRENT_GOVERNANCE
+  governance_uid: GOV-REV-20260923-WORD-PROJECTION-NEXTSTEP-CONSUMER-SYNC-HARDENING
+  head_sha: 40469342b2632d8453986d5800c9ccb9233208d5
+start_condition:
+  content_readiness_pass: true
+  raw_capture_locked: true
+  reconciliation_pass: true
+  source_pair_frozen: true
+  predecessor_work_unit_closed_pass: true
+  entry_gate: GOVERNANCE_PREFORMAL_READY
+definition_of_done:
+  registered_stage01_operations_pass: 9
+  projection_source_node_disposition_coverage_percent: 100
+  missing_required_source_node_count: 0
+  unresolved_stage01_owned_gap_count: 0
+  stage1_guard_result: PASS
+required_audit_items:
+- SOURCE_ENUMERATION_EVIDENCE
+- CONFLICT_DECISION_EVIDENCE
+- STAGE1_SOURCE_PIPELINE_GUARD
+required_tests:
+- VAL-GOV-026
+- VAL-GOV-025
+required_evidence:
+- OPERATION_RECEIPTS
+- WORK_UNIT_TERMINAL_RECEIPT
+current_status: ACTIVE
+resume_point: SOURCE_STRUCTURE_ENUMERATION
+content_hash: 07204c1e978ebaee3d15313f4a58045ba1f2a0ceb80d799092a7603ff55cf7c4
