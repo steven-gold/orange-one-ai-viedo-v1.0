@@ -1,0 +1,47 @@
+artifact_uid: CL-SRC-DOCX-C10A7D8D218E26651374-NAVIGATION_REQUIREMENT
+page_uid: SRC-DOCX-C10A7D8D218E26651374
+planning_domain: PAGE_CONSTRUCTION
+responsibility_uid: NAVIGATION_REQUIREMENT
+responsibility_class: NAVIGATION_REQUIREMENT
+responsibilities:
+- NAVIGATION_REQUIREMENT
+canonical_owner_uid: OWNER-SOURCE-SRC-DOCX-C10A7D8D218E26651374
+target_path: 01_CLASSIFIED/SRC-DOCX-C10A7D8D218E26651374/PAGE/NAVIGATION_REQUIREMENT.yaml
+lifecycle_uid: LC-STAGE01-NAVIGATION_REQUIREMENT
+approval_scope_uid: AP-STAGE01-SRC-DOCX-C10A7D8D218E26651374
+version_scope_uid: VER-54b02843a7c9
+test_scope_uid: TEST-STAGE01-NAVIGATION_REQUIREMENT
+source_lineage:
+- source_uid: SRC-DOCX-C10A7D8D218E26651374
+  source_segment_uids:
+  - SEG-SN-60D6829A301F11BC1FBC0768
+  - SEG-SN-603FA752BA034A1740CEF63B
+  - SEG-SN-11046B7C3E073DC046C8F232
+  - SEG-SN-7FDDA5EA4D802C0318B17BDB
+  - SEG-SN-EE3DAE17B46E5C5FE265C040
+  - SEG-SN-25E269837937DCA7264DEBCF
+  - SEG-SN-19AAFDE75F2A9578ED45E723
+facts:
+- source_node_uid: SN-60D6829A301F11BC1FBC0768
+  document_order_index: 3652
+  source_text: RESOLVE_IDENTITY / LINK_EXISTING / CREATE_MASTER
+- source_node_uid: SN-603FA752BA034A1740CEF63B
+  document_order_index: 4174
+  source_text: LINK_COST / LINK_REVENUE / COMPUTE_REF
+- source_node_uid: SN-11046B7C3E073DC046C8F232
+  document_order_index: 11684
+  source_text: link existing master
+- source_node_uid: SN-7FDDA5EA4D802C0318B17BDB
+  document_order_index: 19182
+  source_text: Must link/merge; duplicate Company Master creation blocked.
+- source_node_uid: SN-EE3DAE17B46E5C5FE265C040
+  document_order_index: 21184
+  source_text: Then enrich/link existing company; do not create duplicate.
+- source_node_uid: SN-25E269837937DCA7264DEBCF
+  document_order_index: 23168
+  source_text: Then route to AI07; no internal duplicate social publisher is created.
+- source_node_uid: SN-19AAFDE75F2A9578ED45E723
+  document_order_index: 31900
+  source_text: Must resolve the applicable existing QCP profile by artifact type; if no applicable profile exists, BLOCK and route a governed profile request to SG-02 rather than inventing a generic score.
+status: CURRENT_CLASSIFICATION
+content_hash: 379617f316c3b03122ba8d1abd8d673b00d8b271b41624256bd6a0b3c70c6865
