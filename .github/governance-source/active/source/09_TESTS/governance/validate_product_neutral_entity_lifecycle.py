@@ -218,7 +218,10 @@ def validate(root=ROOT):
         allowed=(bool(path) and path[0]=='provenance') or (profile_identity_allowed and path==('profile_uid',))
         if has_marker and not allowed:
             failures.append('product_marker_outside_allowed_profile_or_provenance:'+('.'.join(path)))
-    if prov.get('empirical_source_role')!='DEFECT_DISCOVERY_INPUT_NOT_CURRENT_CONSTRUCTION_AUTHORITY': failures.append('empirical_product_provenance_role_invalid')
+    if prov.get('role')!='GENERALIZED_GOVERNANCE_RULE_LINEAGE': failures.append('provenance_role_invalid')
+    if prov.get('product_specific_execution_evidence_is_current_authority') is not False: failures.append('product_evidence_current_authority_leak')
+    if prov.get('product_specific_marker_in_rule_definition')!='FORBIDDEN': failures.append('product_marker_rule_definition_not_forbidden')
+    if prov.get('generalization_rule')!='REPEATABLE_DEFECT_MUST_BE_REPAIRED_AT_COMMON_INVARIANT_LAYER': failures.append('provenance_generalization_rule_invalid')
     # Generic governance runtime must not require legacy product-named environment variables.
     runtime_text=(root/'09_TESTS/governance/validate_governance.py').read_text(encoding='utf-8')
     hp_text=(root/'09_TESTS/governance/test_high_pressure_hardening.py').read_text(encoding='utf-8')
