@@ -1,0 +1,71 @@
+artifact_uid: CL-SRC-DOCX-351B4DFC83936B56E4B1-NAVIGATION_REQUIREMENT
+page_uid: SRC-DOCX-351B4DFC83936B56E4B1
+planning_domain: PAGE_CONSTRUCTION
+responsibility_uid: NAVIGATION_REQUIREMENT
+responsibility_class: NAVIGATION_REQUIREMENT
+responsibilities:
+- NAVIGATION_REQUIREMENT
+canonical_owner_uid: OWNER-SOURCE-SRC-DOCX-351B4DFC83936B56E4B1
+target_path: 01_CLASSIFIED/SRC-DOCX-351B4DFC83936B56E4B1/PAGE/NAVIGATION_REQUIREMENT.yaml
+lifecycle_uid: LC-STAGE01-NAVIGATION_REQUIREMENT
+approval_scope_uid: AP-STAGE01-SRC-DOCX-351B4DFC83936B56E4B1
+version_scope_uid: VER-b0cff03dbcf7
+test_scope_uid: TEST-STAGE01-NAVIGATION_REQUIREMENT
+source_lineage:
+- source_uid: SRC-DOCX-351B4DFC83936B56E4B1
+  source_segment_uids:
+  - SEG-SN-75ADD9012E3A4DEB9B604B13
+  - SEG-SN-A937289A6639482C407F830D
+  - SEG-SN-B0FDEF2904D8D8240AC65ED4
+  - SEG-SN-6EF140CE29DF69A7F21433AA
+  - SEG-SN-0451641845296261687A7CE1
+  - SEG-SN-F0F42C2C375C301AE7697366
+  - SEG-SN-79B63C1E94E72EDF6CC6D99F
+  - SEG-SN-CCF674E074841CFAE636AD0A
+  - SEG-SN-C48F8555FCAD5FF80A3BCBEF
+  - SEG-SN-5F91FC94DFEBD6409A8E394E
+  - SEG-SN-230DA0A90B444E1BFA442795
+  - SEG-SN-3BCD01150932662EB3BBC807
+  - SEG-SN-ACEAFF725BF4AD9D13A180CE
+facts:
+- source_node_uid: SN-75ADD9012E3A4DEB9B604B13
+  document_order_index: 4499
+  source_text: T3；immutable evidence-linked
+- source_node_uid: SN-A937289A6639482C407F830D
+  document_order_index: 6707
+  source_text: Evidence-linked experience
+- source_node_uid: SN-B0FDEF2904D8D8240AC65ED4
+  document_order_index: 10120
+  source_text: MUST link real execution/outcome evidence.
+- source_node_uid: SN-6EF140CE29DF69A7F21433AA
+  document_order_index: 12413
+  source_text: Exact value/provenance equivalent → DEDUPE / link same evidence.
+- source_node_uid: SN-0451641845296261687A7CE1
+  document_order_index: 14364
+  source_text: DEDUPE；保留一個 canonical evidence link。
+- source_node_uid: SN-F0F42C2C375C301AE7697366
+  document_order_index: 21443
+  source_text: Non-derivative link/reference
+- source_node_uid: SN-79B63C1E94E72EDF6CC6D99F
+  document_order_index: 26428
+  source_text: Links request/job/event/audit.
+- source_node_uid: SN-CCF674E074841CFAE636AD0A
+  document_order_index: 32724
+  source_text: 繼續搜尋 Registry/Code/Route/Data refs。
+- source_node_uid: SN-C48F8555FCAD5FF80A3BCBEF
+  document_order_index: 34383
+  source_text: Experience/Learning candidate storage + review route
+- source_node_uid: SN-5F91FC94DFEBD6409A8E394E
+  document_order_index: 37513
+  source_text: Second-system guard must reject/route to shared acquisition.
+- source_node_uid: SN-230DA0A90B444E1BFA442795
+  document_order_index: 38437
+  source_text: Given approved T1 decision but T0 execution differs；When observability reconciles；Then create divergence，保留 both refs，route correction/review。
+- source_node_uid: SN-3BCD01150932662EB3BBC807
+  document_order_index: 38589
+  source_text: Given design requires event transport/idempotency store but Current implementation owner unresolved；When construction attempts effectful implementation；Then BLOCK/REQUIRE_EXACT_BINDING，不得猜 table/route。
+- source_node_uid: SN-ACEAFF725BF4AD9D13A180CE
+  document_order_index: 56070
+  source_text: Owner / Repair Route
+status: CURRENT_CLASSIFICATION
+content_hash: 3eb7a6476ba16c505734ea7e0aa2fed24db41966ed63a4f0107e57c1de167efe
