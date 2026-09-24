@@ -128,9 +128,12 @@ block_work('missing_operation_binding',lambda x:x['operation_bindings'].pop(next
 block_work('missing_scanner_binding',lambda x:x['scanner_bindings'].pop(next(iter(x['scanner_bindings']))))
 block_work('operation_executor_owner_missing',lambda x:x['operation_bindings'][next(iter(x['operation_bindings']))].pop('executor_owner'))
 block_work('scanner_owner_missing',lambda x:x['scanner_bindings'][next(iter(x['scanner_bindings']))].pop('scanner_owner'))
-wrapper=(ROOT/'governance/ci/compile_stage_execution_preflight.py').read_text(encoding='utf-8')
-assert 'compatibility_main' in wrapper
-assert 'UNSUPPORTED_STAGE_UNTIL_MATCHING_CURRENT_EVIDENCE_EXISTS' not in wrapper
+assert not (ROOT/'governance/ci/compile_stage_execution_preflight.py').exists()
+assert not (ROOT/'governance/ci/stage_execution_adapters/stage02_functional_contract.py').exists()
+s2=adapters['stages']['STAGE-02']
+assert s2.get('scanner_mode')=='NORMALIZED_COMMON_EVIDENCE_CONTRACT'
+for forbidden in ('python_compatibility_module','compatibility_current_execution_authority','compatibility_may_resolve_current_scope','compatibility_state_source'):
+    assert forbidden not in s2, f'LEGACY_STAGE02_COMPATIBILITY_FIELD_STILL_PRESENT:{forbidden}'
 common=(ROOT/'governance/ci/stage_execution_engine.py').read_text(encoding='utf-8')
 tree=ast.parse(common)
 for node in ast.walk(tree):
@@ -147,7 +150,7 @@ for node in ast.walk(tree):
             if isinstance(arg,ast.Constant) and isinstance(arg.value,str) and arg.value.startswith('UNSUPPORTED_STAGE_UNTIL_MATCHING_CURRENT_EVIDENCE_EXISTS'):
                 raise AssertionError('COMMON_ENGINE_STAGE02_ONLY_REJECTION')
 print(f'PASS: common Stage Execution Engine negative regression {cases}/39')
-print('PASS: Stage-02 entrypoint is compatibility-only; common engine has no Stage-02-only execution rejection')
+print('PASS: Stage-02 current execution has no historical compatibility module or test-state scope resolver')
 
 
 # Full selected-profile multidirectional audit: 9 modes x all 11 stages.
