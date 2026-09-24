@@ -24,7 +24,7 @@ topology:
   - STAGE-02
   - STAGE-03
   - STAGE-04
-  foundation_barrier_mode: ALL_REQUIRED_PAGES
+  foundation_barrier_mode: PER_GOVERNED_UNIT
   vertical_stages:
   - STAGE-05
   - STAGE-06
@@ -66,7 +66,7 @@ universal_stage_stepwise_execution_contract:
 stages:
 - stage_uid: STAGE-01
   name: SOURCE_INTAKE_AND_BASE_BLUEPRINT
-  scope_mode: ALL_REQUIRED_PAGES
+  scope_mode: CURRENT_GOVERNED_UNIT
   entry_gate: GOVERNANCE_PREFORMAL_READY
   inputs:
   - RAW_SOURCE_SET
@@ -110,7 +110,7 @@ stages:
   required_evidence:
   - SOURCE_ENUMERATION_EVIDENCE
   - CONFLICT_DECISION_EVIDENCE
-  exit_gate: ALL_REQUIRED_PAGES_STAGE1_CLOSED
+  exit_gate: CURRENT_GOVERNED_UNIT_STAGE1_CLOSED
   next_stage_uid: STAGE-02
   required_normative_section_uids:
   - WEB-GOV-01-S040A
@@ -278,8 +278,8 @@ stages:
     binary_visual_source_hash_verification_required: true
 - stage_uid: STAGE-02
   name: PAGE_FUNCTIONAL_CONTRACT
-  scope_mode: ALL_REQUIRED_PAGES
-  entry_gate: ALL_REQUIRED_PAGES_STAGE1_CLOSED
+  scope_mode: CURRENT_GOVERNED_UNIT
+  entry_gate: CURRENT_GOVERNED_UNIT_STAGE1_CLOSED
   inputs:
   - PAGE_BASE_BLUEPRINT
   - SOURCE_CONTEXT_MANIFEST
@@ -349,7 +349,7 @@ stages:
   - VAL-GOV-004
   required_evidence:
   - PAGE_FUNCTIONAL_REVIEW_EVIDENCE
-  exit_gate: ALL_REQUIRED_PAGES_STAGE2_CLOSED
+  exit_gate: CURRENT_GOVERNED_UNIT_STAGE2_CLOSED
   next_stage_uid: STAGE-03
   required_normative_section_uids:
   - WEB-GOV-01-S040C
@@ -527,8 +527,8 @@ stages:
     missing_successor_required_input: BLOCK_AND_REENTER_OWNER
 - stage_uid: STAGE-03
   name: VISUAL_DESIGN
-  scope_mode: ALL_REQUIRED_PAGES
-  entry_gate: ALL_REQUIRED_PAGES_STAGE2_CLOSED
+  scope_mode: CURRENT_GOVERNED_UNIT
+  entry_gate: CURRENT_GOVERNED_UNIT_STAGE2_CLOSED
   inputs:
   - VISUAL_BASE_BLUEPRINT
   - PAGE_CONSTRUCTION_SPEC_PACKAGE
@@ -574,7 +574,7 @@ stages:
   - VAL-GOV-030
   required_evidence:
   - VISUAL_REVIEW_EVIDENCE
-  exit_gate: ALL_REQUIRED_PAGES_STAGE3_CLOSED
+  exit_gate: CURRENT_GOVERNED_UNIT_STAGE3_CLOSED
   next_stage_uid: STAGE-04
   required_normative_section_uids:
   - WEB-GOV-01-S016
@@ -732,8 +732,8 @@ stages:
     runtime_capture_credit: 0
 - stage_uid: STAGE-04
   name: FOUNDATION_FREEZE
-  scope_mode: ALL_REQUIRED_PAGES
-  entry_gate: ALL_REQUIRED_PAGES_STAGE3_CLOSED
+  scope_mode: CURRENT_GOVERNED_UNIT
+  entry_gate: CURRENT_GOVERNED_UNIT_STAGE3_CLOSED
   inputs:
   - PAGE_CONSTRUCTION_SPEC_PACKAGE
   - VISUAL_DESIGN_SPEC_PACKAGE
@@ -762,7 +762,7 @@ stages:
   - VAL-GOV-001
   required_evidence:
   - DESIGN_APPROVAL_EVIDENCE
-  exit_gate: ALL_REQUIRED_PAGES_FOUNDATION_FROZEN
+  exit_gate: CURRENT_GOVERNED_UNIT_FOUNDATION_FROZEN
   next_stage_uid: STAGE-05
   required_normative_section_uids:
   - WEB-GOV-01-S034
@@ -874,7 +874,7 @@ stages:
 - stage_uid: STAGE-05
   name: IMPLEMENTATION
   scope_mode: SINGLE_PAGE_VERTICAL
-  entry_gate: ALL_REQUIRED_PAGES_FOUNDATION_FROZEN_AND_PREDECESSOR_PAGE_CLOSED
+  entry_gate: CURRENT_GOVERNED_UNIT_FOUNDATION_FROZEN_AND_PREDECESSOR_STAGE_CLOSED
   inputs:
   - DESIGN_FREEZE_PACKAGE
   - ACCEPTANCE_AUDIT_BLUEPRINT
