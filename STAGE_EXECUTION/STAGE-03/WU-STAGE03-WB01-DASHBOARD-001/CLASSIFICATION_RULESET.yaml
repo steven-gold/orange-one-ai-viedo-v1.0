@@ -1,0 +1,14 @@
+artifact_uid: CLASS-STAGE03-WB01-001
+artifact_type: CLASSIFICATION_RULESET
+stage_uid: STAGE-03
+rules:
+  functional_topology_change: BLOCK_REOPEN_STAGE02
+  visual_authority_change: AUTHORIZED_CHANGESET_REQUIRED
+  generated_preview_as_authority: FORBIDDEN
+  shared_visual_owner_override: FORBIDDEN_WITHOUT_AUTHORITY
+  read_projection_action_uid: LEGITIMATE_NA_WHEN_AUTHORITY_PROVES_READ_PROJECTION
+  not_applicable: EXPLICIT_AUTHORITY_EVIDENCE_REQUIRED
+  structural_only_preview: BLOCK_HUMAN_VISUAL_REVIEW
+  missing_required_anchor_or_scenario: BLOCK_HUMAN_VISUAL_REVIEW
+  human_review_stage_exit_credit: ZERO_UNTIL_TERMINAL_CLOSURE
+status: CURRENT
