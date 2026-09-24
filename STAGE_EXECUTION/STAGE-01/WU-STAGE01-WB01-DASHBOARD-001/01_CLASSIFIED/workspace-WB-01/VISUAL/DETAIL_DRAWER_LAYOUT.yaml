@@ -1,0 +1,80 @@
+artifact_uid: CL-SRC-DOCX-2B1908530B5BD312A392-DETAIL_DRAWER_LAYOUT
+page_uid: workspace:WB-01
+planning_domain: VISUAL_CONSTRUCTION
+responsibility_uid: DETAIL_DRAWER_LAYOUT
+responsibility_class: DETAIL_DRAWER_LAYOUT
+responsibilities:
+- DETAIL_DRAWER_LAYOUT
+canonical_owner_uid: OWNER-SOURCE-SRC-DOCX-2B1908530B5BD312A392
+target_path: 01_CLASSIFIED/workspace-WB-01/VISUAL/DETAIL_DRAWER_LAYOUT.yaml
+lifecycle_uid: LC-STAGE01-DETAIL_DRAWER_LAYOUT
+approval_scope_uid: AP-STAGE01-workspace-WB-01
+version_scope_uid: VER-e9c5560eb754
+test_scope_uid: TEST-STAGE01-DETAIL_DRAWER_LAYOUT
+source_lineage:
+- source_uid: SRC-DOCX-2B1908530B5BD312A392
+  source_segment_uids:
+  - SEG-SN-67AB237D70852AD40B530AA6
+  - SEG-SN-7A7BACE3B53FA588A1344DA2
+  - SEG-SN-48809D84BAC9A386E9FAE250
+  - SEG-SN-10B7523DDC172F29F87750F6
+  - SEG-SN-C276A80C61E5583D50AF392D
+  - SEG-SN-7A5EB0C6AABB620E24265B94
+  - SEG-SN-3D7C28040A7983687F142274
+  - SEG-SN-EE9760B947DB120D2685E044
+  - SEG-SN-57C010B0715858F84C4AD94C
+  - SEG-SN-ACAF2770742248D88B8547B9
+  - SEG-SN-F7C2EA24B903D3A67AFED7C0
+  - SEG-SN-B888701728148B87FE5E5F33
+  - SEG-SN-9D476EE0588EEAC0C4B57D8B
+  - SEG-SN-0FC064A120FBB2D62D9544F4
+  - SEG-SN-D27735545F173E472A79CCAE
+facts:
+- source_node_uid: SN-67AB237D70852AD40B530AA6
+  document_order_index: 2041
+  source_text: 14 個 canonical sections；每 section 唯一可見觸發面為卡片 Header 右側「查看」；Drawer 只顯示該 section render schema。
+- source_node_uid: SN-7A7BACE3B53FA588A1344DA2
+  document_order_index: 2245
+  source_text: Section Open = 同一 registered READ_ONLY operation；Drawer = 對應 section 的 read projection；Missing value = —。
+- source_node_uid: SN-48809D84BAC9A386E9FAE250
+  document_order_index: 4551
+  source_text: 進入儀表板 → 讀取授權 Projection → 掃描 14 個摘要 → 需要細節時按該 section「查看」→ Drawer 檢視 → 關閉 / 導向對應部門頁
+- source_node_uid: SN-10B7523DDC172F29F87750F6
+  document_order_index: 4602
+  source_text: ATOMIC_WORKBENCH（單一 Dashboard Main Workspace）；Drawer = SAME_SURFACE_CLUSTER
+- source_node_uid: SN-C276A80C61E5583D50AF392D
+  document_order_index: 4704
+  source_text: Page read → render visible sections → section open → drawer read/refresh → close
+- source_node_uid: SN-7A5EB0C6AABB620E24265B94
+  document_order_index: 5444
+  source_text: Drawer projection
+- source_node_uid: SN-3D7C28040A7983687F142274
+  document_order_index: 5469
+  source_text: Right Drawer
+- source_node_uid: SN-EE9760B947DB120D2685E044
+  document_order_index: 5697
+  source_text: Business Intent → identity/page permission → page entry → GET read model → section/field visibility gate → render schema validation → response → card projection → optional SECTION_OPEN → Drawer projection →
+    audit/correlation → close / registered next destination。沒有 API write、runtime mutation 或 business state transition。
+- source_node_uid: SN-57C010B0715858F84C4AD94C
+  document_order_index: 6619
+  source_text: 7.3 Actual UI Visual Candidate — Drawer Interaction
+- source_node_uid: SN-ACAF2770742248D88B8547B9
+  document_order_index: 6629
+  source_text: 每個 section 唯一觸發點為 Header 右側「查看」；Drawer 只呈現對應 render schema 與 read-model metadata，不暴露其他 department payload。
+- source_node_uid: SN-F7C2EA24B903D3A67AFED7C0
+  document_order_index: 6663
+  source_text: Figure WB01-VIS-CANDIDATE-D • Section projection drawer
+- source_node_uid: SN-B888701728148B87FE5E5F33
+  document_order_index: 14297
+  source_text: Drawer
+- source_node_uid: SN-9D476EE0588EEAC0C4B57D8B
+  document_order_index: 14347
+  source_text: 520px right drawer default
+- source_node_uid: SN-0FC064A120FBB2D62D9544F4
+  document_order_index: 14372
+  source_text: Global Visual + WB-01 Drawer contract
+- source_node_uid: SN-D27735545F173E472A79CCAE
+  document_order_index: 16077
+  source_text: 15/15 components resolved (14 cards + 1 drawer)
+status: CURRENT_CLASSIFICATION
+content_hash: 3eafa7ed1697728bfe55521cea60f47ca557e8535857886e109dafef195287c3
