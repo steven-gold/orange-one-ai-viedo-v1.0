@@ -1,0 +1,67 @@
+artifact_uid: CL-SRC-DOCX-BC95845574B815540FBE-NAVIGATION_REQUIREMENT
+page_uid: admin:DB-01
+planning_domain: PAGE_CONSTRUCTION
+responsibility_uid: NAVIGATION_REQUIREMENT
+responsibility_class: NAVIGATION_REQUIREMENT
+responsibilities:
+- NAVIGATION_REQUIREMENT
+canonical_owner_uid: OWNER-SOURCE-SRC-DOCX-BC95845574B815540FBE
+target_path: 01_CLASSIFIED/admin-DB-01/PAGE/NAVIGATION_REQUIREMENT.yaml
+lifecycle_uid: LC-STAGE01-NAVIGATION_REQUIREMENT
+approval_scope_uid: AP-STAGE01-admin-DB-01
+version_scope_uid: VER-c14d223e951c
+test_scope_uid: TEST-STAGE01-NAVIGATION_REQUIREMENT
+source_lineage:
+- source_uid: SRC-DOCX-BC95845574B815540FBE
+  source_segment_uids:
+  - SEG-SN-D311E689B152B0403F7B6013
+  - SEG-SN-B823A1E3257AFE8B400350F6
+  - SEG-SN-BE527F73133099A00F58E833
+  - SEG-SN-36D761A245FB5AF048A7B7B1
+  - SEG-SN-E4B2CD4B56CC1A9D5F0D4303
+  - SEG-SN-929145AFAE7A81940AE94EFE
+  - SEG-SN-B31A3ADA6A6B979A4A9C10EF
+  - SEG-SN-5A549C99CFB4CCA881D5F0BC
+  - SEG-SN-947BA6773E791E262D468421
+  - SEG-SN-3E340E24906CC54B9F6A8450
+  - SEG-SN-DCFC297DBA84EE735BB28BE1
+  - SEG-SN-5DF6598C24E3CEA9EB87610B
+facts:
+- source_node_uid: SN-D311E689B152B0403F7B6013
+  document_order_index: 2453
+  source_text: UI navigation only; NO DB mutation
+- source_node_uid: SN-B823A1E3257AFE8B400350F6
+  document_order_index: 2875
+  source_text: Broken/orphan/mismatch detail + repair owner route
+- source_node_uid: SN-BE527F73133099A00F58E833
+  document_order_index: 3269
+  source_text: Audit / Route Change
+- source_node_uid: SN-36D761A245FB5AF048A7B7B1
+  document_order_index: 3811
+  source_text: Query / Route
+- source_node_uid: SN-E4B2CD4B56CC1A9D5F0D4303
+  document_order_index: 5176
+  source_text: UI_NAVIGATION_ONLY
+- source_node_uid: SN-929145AFAE7A81940AE94EFE
+  document_order_index: 10622
+  source_text: READONLY / Owner / Repair Route
+- source_node_uid: SN-B31A3ADA6A6B979A4A9C10EF
+  document_order_index: 13707
+  source_text: Schema mutation/change route
+- source_node_uid: SN-5A549C99CFB4CCA881D5F0BC
+  document_order_index: 13737
+  source_text: UI_NAVIGATION_ONLY
+- source_node_uid: SN-947BA6773E791E262D468421
+  document_order_index: 14263
+  source_text: Finding type/list/detail/owner route
+- source_node_uid: SN-3E340E24906CC54B9F6A8450
+  document_order_index: 15535
+  source_text: Mutations route to governed change workflow
+- source_node_uid: SN-DCFC297DBA84EE735BB28BE1
+  document_order_index: 18228
+  source_text: Owner / Repair Route
+- source_node_uid: SN-5DF6598C24E3CEA9EB87610B
+  document_order_index: 24770
+  source_text: Navigation Region
+status: CURRENT_CLASSIFICATION
+content_hash: 2b1fa3ef8f11c4b3a6793e348ce1bc65ee8e9b7601684e2fbcfc652c80e4e47b
