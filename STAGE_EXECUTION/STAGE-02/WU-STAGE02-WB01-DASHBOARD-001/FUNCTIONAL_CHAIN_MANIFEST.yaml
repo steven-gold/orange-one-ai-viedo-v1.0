@@ -1,0 +1,30 @@
+artifact_uid: FCM-STAGE02-WB01-001
+artifact_type: FUNCTIONAL_CHAIN_MANIFEST
+stage_uid: STAGE-02
+governed_unit_uid: workspace:WB-01
+chain_dimensions:
+- BUSINESS_INTENT
+- PRECONDITION
+- ENTRY
+- INPUT_SOURCE
+- CONTROL_OR_SYSTEM_TRIGGER
+- GATE
+- PERMISSION
+- ACTION
+- VALIDATION
+- PAYLOAD
+- RUNTIME_OWNER
+- STATE_TRANSITION
+- AUDIT_EVENT
+- FEEDBACK
+- ERROR_RECOVERY
+- NEXT_STEP
+authority_model:
+  workflow: READ_ONLY
+  expected_business_write_actions: 0
+  section_operation: SECTION_OPEN
+  success_states: [READ_ONLY, EMPTY]
+  failure_state: ERROR
+  recovery: SAME_REGISTERED_READ_REINVOCATION
+  new_retry_control: FORBIDDEN
+status: CURRENT
