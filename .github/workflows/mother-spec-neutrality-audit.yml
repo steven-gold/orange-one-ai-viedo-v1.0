@@ -1,8 +1,9 @@
+# candidate-validation-replay-20260924-r2
 name: Mother Spec Neutrality Audit
 
 on:
   push:
-    branches: [rebuild-v2.1.1]
+    branches: [rebuild-v2.1.1, governance-v2.2.23-unit-lifecycle]
     paths:
       - '.github/governance-source/active/source/12_DOCS/mother-spec/**'
       - 'governance/specifications/current/**'

@@ -150,7 +150,10 @@ def validate_definition_data(profile,adapters):
         for k in ('one_current_problem_register_required','append_only_resolution_ledger_required','dependency_ordered_batches_required','incremental_impact_validation_required','checkpoint_full_sweep_required','engine_defect_requires_common_engine_repair_and_replay','explicit_stage_binding_required'):
             if opt.get(k) is not True: fail(f'CANONICAL_EXECUTION_FLAG_MISSING:{uid}:{k}')
         if st.get('work_unit_scope_source')!='CURRENT_EXECUTION_SCOPE_MANIFEST': fail(f'WORK_UNIT_SCOPE_SOURCE_DRIFT:{uid}')
-        if st.get('stage_exit_scope_source')!='DECLARED_STAGE_REQUIRED_UNIVERSE_RECONCILIATION': fail(f'STAGE_EXIT_SCOPE_SOURCE_DRIFT:{uid}')
+        if st.get('stage_exit_scope_source')!='CURRENT_GOVERNED_UNIT_STAGE_REQUIRED_UNIVERSE_RECONCILIATION': fail(f'STAGE_EXIT_SCOPE_SOURCE_DRIFT:{uid}')
+        if st.get('lifecycle_owner_granularity')!='PAGE_OR_SYSTEM_LOGIC_UNIT': fail(f'LIFECYCLE_OWNER_GRANULARITY_DRIFT:{uid}')
+        if st.get('unrelated_same_stage_units_may_block_current_unit_exit') is not False: fail(f'UNRELATED_SAME_STAGE_UNIT_BARRIER_DRIFT:{uid}')
+        if st.get('cross_unit_blocking_requires_explicit_required_dependency_edge') is not True: fail(f'CROSS_UNIT_DEPENDENCY_EDGE_RULE_DRIFT:{uid}')
         if st.get('partial_work_unit_closure_may_grant_stage_exit') is not False: fail(f'PARTIAL_STAGE_EXIT_CREDIT_NOT_BLOCKED:{uid}')
         ad=ads[uid]
         if ad.get('profile_name')!=st.get('name'): fail(f'ADAPTER_PROFILE_NAME_DRIFT:{uid}')

@@ -1235,7 +1235,7 @@ After mutation, the executor MUST verify the exact intended structural delta, re
 <!-- SECTION_UID: WEB-GOV-03-S071 -->
 ## 71. 跨階段實體交接 / Consumer Readiness / 回退控制 / Cross-Stage Materialized Handoff, Consumer Readiness and Re-entry Control
 
-Every governed Stage exit MUST execute the following order before the next Stage may be admitted:
+Every governed Stage exit MUST be evaluated per Current governed Page or System-Logic Unit, never as an implicit project-wide same-Stage barrier. Before the next Stage may be admitted for that Unit, the following order MUST execute:
 
 1. Enumerate the complete applicable successor-required input universe from the Current lifecycle/profile/Authority.
 2. Reconcile each required input to exactly one legal predecessor output, persisted foundation artifact, Current Authority/shared owner, or registered external evidence source.
