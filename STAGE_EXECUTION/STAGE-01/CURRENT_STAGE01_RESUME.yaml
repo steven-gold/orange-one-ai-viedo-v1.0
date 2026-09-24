@@ -13,9 +13,9 @@ next_page_uid: null
 resume_point: STAGE02_WORK_UNIT_RESOLUTION_GATE
 stage_exit_authorized: true
 closure_candidate_ref: STAGE_EXECUTION/STAGE-01/CLOSURE/STAGE01_CLOSURE_CANDIDATE.yaml
-checkpoint_reason: CANONICAL_PREFLIGHT_FRESH_REPLAY_CLOSED_ON_0921
+checkpoint_reason: STAGE01_CLOSED_STAGE02_SCOPE_REQUIRES_DYNAMIC_RESOLUTION_NO_STALE_CORE01_ASSUMPTION
 historical_runner_disposition: RETIRED_NO_RESUME_AUTHORITY
-status: STAGE01_CLOSED_STAGE02_READY
+status: STAGE01_CLOSED_STAGE02_SCOPE_RESOLUTION_PENDING
 execution_branch: 0921acpos
 historical_transport_branch: tmp-word-binary-handoff-20260923
 historical_transport_branch_disposition: RETIRED_NO_EXECUTION_AUTHORITY
@@ -31,3 +31,5 @@ stage01_exit_gate_receipt:
   - stage01-reclose-stage02-entry-0921/exact_head_gate
   conclusion: success
 next_stage_uid: STAGE-02
+stage02_selected_work_unit_uid: null
+stage02_selected_page_uid: null
