@@ -4,13 +4,13 @@ stage_uid: STAGE-01
 scope_uid: WB01-DASHBOARD
 scope_kind: PAGE_STAGE01_SOURCE_SCOPE
 work_unit_uid: WU-STAGE01-WB01-DASHBOARD-001
+governed_unit_type: PAGE
 included_units:
 - SRC-DOCX-2B1908530B5BD312A392
-excluded_units:
-- ALL_OTHER_CAPTURED_SOURCES
+excluded_units: []
 remaining_units: []
 scope_selection_authority:
-- EXPLICIT_USER_DIRECTIVE_20260924_STAGE01_RESTART_TWO_SCOPES
+- EXPLICIT_USER_DIRECTIVE_20260924_INDEPENDENT_PAGE_SYSTEM_LIFECYCLE
 - SOURCE_PROJECTION_FREEZE_RECEIPT:FREEZE-SRC-DOCX-2B1908530B5BD312A392
 owning_capability: SOURCE_INTAKE_BASE_BLUEPRINT
 dependency_closure_refs:
@@ -18,7 +18,8 @@ dependency_closure_refs:
 denominator_source_refs:
 - 00_SOURCE_INTAKE/SOURCE_PROJECTIONS/SRC-DOCX-2B1908530B5BD312A392/CANONICAL_SOURCE_PROJECTION.yaml
 - 00_SOURCE_INTAKE/SOURCE_PROJECTIONS/SRC-DOCX-2B1908530B5BD312A392/SOURCE_PROJECTION_FREEZE_RECEIPT.yaml
-partial_scope: true
-stage_exit_credit_allowed: false
+partial_scope: false
+stage_exit_credit_allowed: true
+stage02_eligible: true
 status: COMPLETE
-content_hash: a2cf34117ac942c039e913c588fcda6257bf2b570228aa671e5f6c703d81ce00
+content_hash: 1842c9717c5bcd581d9b26502f955486991114711555031334747b2c3b1a351c
