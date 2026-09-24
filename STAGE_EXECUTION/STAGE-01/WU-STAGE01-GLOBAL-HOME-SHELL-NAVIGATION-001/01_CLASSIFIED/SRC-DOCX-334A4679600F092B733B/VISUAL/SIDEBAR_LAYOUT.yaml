@@ -1,0 +1,63 @@
+artifact_uid: CL-SRC-DOCX-334A4679600F092B733B-SIDEBAR_LAYOUT
+page_uid: SRC-DOCX-334A4679600F092B733B
+planning_domain: VISUAL_CONSTRUCTION
+responsibility_uid: SIDEBAR_LAYOUT
+responsibility_class: SIDEBAR_LAYOUT
+responsibilities:
+- SIDEBAR_LAYOUT
+canonical_owner_uid: OWNER-SOURCE-SRC-DOCX-334A4679600F092B733B
+target_path: 01_CLASSIFIED/SRC-DOCX-334A4679600F092B733B/VISUAL/SIDEBAR_LAYOUT.yaml
+lifecycle_uid: LC-STAGE01-SIDEBAR_LAYOUT
+approval_scope_uid: AP-STAGE01-SRC-DOCX-334A4679600F092B733B
+version_scope_uid: VER-6c63701919cc
+test_scope_uid: TEST-STAGE01-SIDEBAR_LAYOUT
+source_lineage:
+- source_uid: SRC-DOCX-334A4679600F092B733B
+  source_segment_uids:
+  - SEG-SN-AF66DA25E2D48ED93E215AED
+  - SEG-SN-B72C00BE0501EF2228B80E23
+  - SEG-SN-1E40A44EF2FA2CBE2172CE94
+  - SEG-SN-FD57512C523D16B87A2C91D5
+  - SEG-SN-5E0D16F5F6BA189844733C08
+  - SEG-SN-95ADC0FC69B75FBEB799EC82
+  - SEG-SN-323F221CF9D0CC52842630F4
+  - SEG-SN-050B5EB0CB4231655BB2D32E
+  - SEG-SN-6EF140CE29DF69A7F21433AA
+  - SEG-SN-BD683E7D528EBA4502D03D63
+  - SEG-SN-A04E1BD723E4BD97370D84B1
+facts:
+- source_node_uid: SN-AF66DA25E2D48ED93E215AED
+  document_order_index: 79
+  source_text: 左側菜單與工作區屬同一個 Shell Layout。菜單展開時，工作區同步右移並縮窄；菜單收合時，工作區同步左移並放大。禁止 Sidebar 以 Overlay 方式遮住 Workspace。
+- source_node_uid: SN-B72C00BE0501EF2228B80E23
+  document_order_index: 321
+  source_text: 依 Sidebar 寬度自適應；不得被 Sidebar 遮住
+- source_node_uid: SN-1E40A44EF2FA2CBE2172CE94
+  document_order_index: 435
+  source_text: 圖 1　Sidebar 收合與展開時，Workspace 必須同步調整位置與可用寬度。
+- source_node_uid: SN-FD57512C523D16B87A2C91D5
+  document_order_index: 722
+  source_text: 工作區同步縮窄／右移；菜單完整顯示 Label
+- source_node_uid: SN-5E0D16F5F6BA189844733C08
+  document_order_index: 810
+  source_text: Sidebar 與 Workspace 使用同一 transition duration；不得先蓋住再跳位
+- source_node_uid: SN-95ADC0FC69B75FBEB799EC82
+  document_order_index: 1221
+  source_text: Popover / Language Menu 使用高於 Workspace 的 z-index，但不得改變 Sidebar/Workspace Geometry。
+- source_node_uid: SN-323F221CF9D0CC52842630F4
+  document_order_index: 3193
+  source_text: Expanded Sidebar 仍固定 top=58px / bottom=0，但不是浮在 Workspace 上方；它是 Shell Grid 的第一欄。
+- source_node_uid: SN-050B5EB0CB4231655BB2D32E
+  document_order_index: 3199
+  source_text: Workspace 自己的 horizontal overflow 只能處理 Page 內部 min-width；不得用 Sidebar Overlay 造成額外 occlusion。
+- source_node_uid: SN-6EF140CE29DF69A7F21433AA
+  document_order_index: 4691
+  source_text: Sidebar 展開時 Workspace 不被覆蓋；兩者同一 Layout reflow。
+- source_node_uid: SN-BD683E7D528EBA4502D03D63
+  document_order_index: 5036
+  source_text: 1.  把 Sidebar width 變成 Shell 單一狀態來源，移除 overlay-only workspace 固定 left 規則。
+- source_node_uid: SN-A04E1BD723E4BD97370D84B1
+  document_order_index: 5042
+  source_text: 2.  讓 Workspace left / width 或 grid column 與 Sidebar width 同步 transition。
+status: CURRENT_CLASSIFICATION
+content_hash: 448c0de813f3c8d05d05e915ddc3d36a7221be6c74e6acb04d9cd64ac323f8fc

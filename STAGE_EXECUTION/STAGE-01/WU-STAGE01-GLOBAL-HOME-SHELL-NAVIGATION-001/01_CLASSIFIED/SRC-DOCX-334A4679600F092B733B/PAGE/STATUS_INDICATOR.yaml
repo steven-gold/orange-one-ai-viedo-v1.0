@@ -1,0 +1,67 @@
+artifact_uid: CL-SRC-DOCX-334A4679600F092B733B-STATUS_INDICATOR
+page_uid: SRC-DOCX-334A4679600F092B733B
+planning_domain: PAGE_CONSTRUCTION
+responsibility_uid: STATUS_INDICATOR
+responsibility_class: STATUS_INDICATOR
+responsibilities:
+- STATUS_INDICATOR
+canonical_owner_uid: OWNER-SOURCE-SRC-DOCX-334A4679600F092B733B
+target_path: 01_CLASSIFIED/SRC-DOCX-334A4679600F092B733B/PAGE/STATUS_INDICATOR.yaml
+lifecycle_uid: LC-STAGE01-STATUS_INDICATOR
+approval_scope_uid: AP-STAGE01-SRC-DOCX-334A4679600F092B733B
+version_scope_uid: VER-6c63701919cc
+test_scope_uid: TEST-STAGE01-STATUS_INDICATOR
+source_lineage:
+- source_uid: SRC-DOCX-334A4679600F092B733B
+  source_segment_uids:
+  - SEG-SN-F1ABF411E7612611425DF135
+  - SEG-SN-3C2594D0FCC40F0AB16BC537
+  - SEG-SN-E6DE1A0D793EF739007817FE
+  - SEG-SN-EE409B42747BF6DBE0BC5DDF
+  - SEG-SN-F3D4C3A8F4F34188A154CD96
+  - SEG-SN-286D80A1781C3F76926C832D
+  - SEG-SN-208D22910A8ECCF5843F0E38
+  - SEG-SN-8637680F51ABB970D0C8B57F
+  - SEG-SN-2A681CEFC3809BB649D029A4
+  - SEG-SN-09C92DBB1F3527F6E93A0D76
+  - SEG-SN-D37C6AB2F545F3FDEC01456A
+  - SEG-SN-3690B7921C7516F43CB48ED4
+facts:
+- source_node_uid: SN-F1ABF411E7612611425DF135
+  document_order_index: 470
+  source_text: 狀態
+- source_node_uid: SN-3C2594D0FCC40F0AB16BC537
+  document_order_index: 1000
+  source_text: Quick Status
+- source_node_uid: SN-E6DE1A0D793EF739007817FE
+  document_order_index: 1034
+  source_text: 只讀真實狀態；無 Runtime 時顯示受控 Disabled，不可假數據
+- source_node_uid: SN-EE409B42747BF6DBE0BC5DDF
+  document_order_index: 2481
+  source_text: AI API
+- source_node_uid: SN-F3D4C3A8F4F34188A154CD96
+  document_order_index: 2498
+  source_text: admin:AIAPI-01
+- source_node_uid: SN-286D80A1781C3F76926C832D
+  document_order_index: 2515
+  source_text: /admin/aiapi
+- source_node_uid: SN-208D22910A8ECCF5843F0E38
+  document_order_index: 2787
+  source_text: 前狀態
+- source_node_uid: SN-8637680F51ABB970D0C8B57F
+  document_order_index: 2806
+  source_text: 後狀態
+- source_node_uid: SN-2A681CEFC3809BB649D029A4
+  document_order_index: 4239
+  source_text: 支援 zh-TW / zh-CN / en；ORANGE ONE、ACPOS、AI、API、QA 等固定術語依全域規則處理。
+- source_node_uid: SN-09C92DBB1F3527F6E93A0D76
+  document_order_index: 4509
+  source_text: Quick status unavailable
+- source_node_uid: SN-D37C6AB2F545F3FDEC01456A
+  document_order_index: 4913
+  source_text: 所有頁在 collapsed / expanded 兩種殼層狀態均無遮蓋、控制可操作。
+- source_node_uid: SN-3690B7921C7516F43CB48ED4
+  document_order_index: 5086
+  source_text: 本節為 0921acpos Current Word package 的正式缺口閉合內容。只定義 Basic Design / authority contract；若缺 Runtime / Production evidence，狀態仍必須維持 NOT_EXECUTED / IMPLEMENTATION_REQUIRED，不得因文件定義完成而宣告 Runtime 完成。
+status: CURRENT_CLASSIFICATION
+content_hash: aea96177bbcc90c2d5ea1145e62e74e3c2e146f960274d2541fcc4b7c6d0abc6

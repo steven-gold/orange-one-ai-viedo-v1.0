@@ -1,0 +1,39 @@
+artifact_uid: CL-SRC-DOCX-334A4679600F092B733B-HEADER_LAYOUT
+page_uid: SRC-DOCX-334A4679600F092B733B
+planning_domain: VISUAL_CONSTRUCTION
+responsibility_uid: HEADER_LAYOUT
+responsibility_class: HEADER_LAYOUT
+responsibilities:
+- HEADER_LAYOUT
+canonical_owner_uid: OWNER-SOURCE-SRC-DOCX-334A4679600F092B733B
+target_path: 01_CLASSIFIED/SRC-DOCX-334A4679600F092B733B/VISUAL/HEADER_LAYOUT.yaml
+lifecycle_uid: LC-STAGE01-HEADER_LAYOUT
+approval_scope_uid: AP-STAGE01-SRC-DOCX-334A4679600F092B733B
+version_scope_uid: VER-6c63701919cc
+test_scope_uid: TEST-STAGE01-HEADER_LAYOUT
+source_lineage:
+- source_uid: SRC-DOCX-334A4679600F092B733B
+  source_segment_uids:
+  - SEG-SN-EF53A33F2898EA11368ED5C4
+  - SEG-SN-0AD0C1945E784EBB89331A52
+  - SEG-SN-DF91803FE170B5BB99F27CBB
+  - SEG-SN-404ADA08814186486CC05B96
+  - SEG-SN-511929B7E204DDD695586B96
+facts:
+- source_node_uid: SN-EF53A33F2898EA11368ED5C4
+  document_order_index: 26
+  source_text: 首頁外框／上欄／自適應伸縮菜單
+- source_node_uid: SN-0AD0C1945E784EBB89331A52
+  document_order_index: 43
+  source_text: 全站共用 Layout、Header、Front/Admin Navigation 與 Workspace Mount 施工基準
+- source_node_uid: SN-DF91803FE170B5BB99F27CBB
+  document_order_index: 846
+  source_text: 建議由 Shell 根節點以 CSS Grid 或單一共享 `--sidebar-width` 變數驅動：Header 跨全欄；Sidebar 與 Workspace 為同一 Layout 的相鄰 Column。禁止維持 `workspace left=78px` 同時把 Sidebar 展開至 221px。
+- source_node_uid: SN-404ADA08814186486CC05B96
+  document_order_index: 1203
+  source_text: Header 永遠固定於 viewport top；工作區 top = 68px，保留 10px vertical gutter。
+- source_node_uid: SN-511929B7E204DDD695586B96
+  document_order_index: 4765
+  source_text: Header 58px 固定；Workspace top 68px；右 16、下 16。
+status: CURRENT_CLASSIFICATION
+content_hash: 62375e49af363dab7b3b4b1c106f23fea69cb0f8c76231d8a8e0ca85260c9055

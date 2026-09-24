@@ -1,0 +1,43 @@
+artifact_uid: CL-SRC-DOCX-334A4679600F092B733B-ROUTE_BINDING
+page_uid: SRC-DOCX-334A4679600F092B733B
+planning_domain: PAGE_CONSTRUCTION
+responsibility_uid: ROUTE_BINDING
+responsibility_class: ROUTE_BINDING
+responsibilities:
+- ROUTE_BINDING
+canonical_owner_uid: OWNER-SOURCE-SRC-DOCX-334A4679600F092B733B
+target_path: 01_CLASSIFIED/SRC-DOCX-334A4679600F092B733B/PAGE/ROUTE_BINDING.yaml
+lifecycle_uid: LC-STAGE01-ROUTE_BINDING
+approval_scope_uid: AP-STAGE01-SRC-DOCX-334A4679600F092B733B
+version_scope_uid: VER-6c63701919cc
+test_scope_uid: TEST-STAGE01-ROUTE_BINDING
+source_lineage:
+- source_uid: SRC-DOCX-334A4679600F092B733B
+  source_segment_uids:
+  - SEG-SN-7E6BFDD670FC08551D4BC122
+  - SEG-SN-C15B354CB11350C5AC336C7A
+  - SEG-SN-8DF92B5457F600607170D125
+  - SEG-SN-2055F22FA90D3399C93BA70F
+  - SEG-SN-C74A5974BAFA3DF57F3F3696
+  - SEG-SN-027A1DF847745ADE50935D3A
+facts:
+- source_node_uid: SN-7E6BFDD670FC08551D4BC122
+  document_order_index: 1317
+  source_text: Route
+- source_node_uid: SN-C15B354CB11350C5AC336C7A
+  document_order_index: 2089
+  source_text: Route
+- source_node_uid: SN-8DF92B5457F600607170D125
+  document_order_index: 2987
+  source_text: Route completed
+- source_node_uid: SN-2055F22FA90D3399C93BA70F
+  document_order_index: 3880
+  source_text: Active Front Item 由 canonical page ancestry 決定；Active Admin Item 由 exact admin page UID 決定；禁止用 URL 字串猜測。
+- source_node_uid: SN-C74A5974BAFA3DF57F3F3696
+  document_order_index: 4435
+  source_text: 猜 route
+- source_node_uid: SN-027A1DF847745ADE50935D3A
+  document_order_index: 4802
+  source_text: Front 9、Admin 9 的 UID / route / order 正確。
+status: CURRENT_CLASSIFICATION
+content_hash: eafa02cea4645b02a20ac8b0d105cd4459f8909ac11a0b43d352c0ebeac2fa9f
