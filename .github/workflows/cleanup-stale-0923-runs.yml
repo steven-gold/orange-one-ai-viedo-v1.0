@@ -1,0 +1,52 @@
+name: cleanup-stale-0923-runs
+on:
+  push:
+    branches: [0921acpos]
+    paths:
+      - .github/workflows/cleanup-stale-0923-runs.yml
+permissions:
+  contents: write
+  actions: write
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+      - name: Cancel and delete stale 0923 runs
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          for id in 35956120438 35955642802; do
+            gh api --method POST "repos/${GITHUB_REPOSITORY}/actions/runs/$id/cancel" || true
+          done
+          for n in {1..12}; do
+            left=0
+            for id in 35956120438 35955642802; do
+              status="$(gh api "repos/${GITHUB_REPOSITORY}/actions/runs/$id" --jq '.status' 2>/dev/null || echo deleted)"
+              if [ "$status" = "in_progress" ] || [ "$status" = "queued" ] || [ "$status" = "requested" ] || [ "$status" = "waiting" ]; then
+                left=1
+              fi
+            done
+            [ "$left" = "0" ] && break
+            sleep 5
+          done
+          for id in 35956120438 35955642802; do
+            gh api --method DELETE "repos/${GITHUB_REPOSITORY}/actions/runs/$id" || true
+          done
+      - name: Remove temporary cleanup workflow
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm .github/workflows/cleanup-stale-0923-runs.yml
+          git config user.name acpos-governance-bot
+          git config user.email actions@users.noreply.github.com
+          git add -A .github/workflows/cleanup-stale-0923-runs.yml
+          CURRENT="$(git ls-remote origin refs/heads/0921acpos | awk '{print $1}')"
+          test "$CURRENT" = "${GITHUB_SHA}"
+          git commit -m "chore(0921): remove stale run cleanup workflow"
+          git push origin HEAD:0921acpos
