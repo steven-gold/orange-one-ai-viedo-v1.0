@@ -1,0 +1,177 @@
+artifact_uid: CL-SRC-DOCX-81DDB7B678E0DCFAFCD4-AUTHORITY_PERMISSION_REQUIREMENT
+page_uid: SRC-DOCX-81DDB7B678E0DCFAFCD4
+planning_domain: PAGE_CONSTRUCTION
+responsibility_uid: AUTHORITY_PERMISSION_REQUIREMENT
+responsibility_class: AUTHORITY_PERMISSION_REQUIREMENT
+responsibilities:
+- AUTHORITY_PERMISSION_REQUIREMENT
+canonical_owner_uid: OWNER-SOURCE-SRC-DOCX-81DDB7B678E0DCFAFCD4
+target_path: 01_CLASSIFIED/SRC-DOCX-81DDB7B678E0DCFAFCD4/PAGE/AUTHORITY_PERMISSION_REQUIREMENT.yaml
+lifecycle_uid: LC-STAGE01-AUTHORITY_PERMISSION_REQUIREMENT
+approval_scope_uid: AP-STAGE01-SRC-DOCX-81DDB7B678E0DCFAFCD4
+version_scope_uid: VER-bbee70c9a8d0
+test_scope_uid: TEST-STAGE01-AUTHORITY_PERMISSION_REQUIREMENT
+source_lineage:
+- source_uid: SRC-DOCX-81DDB7B678E0DCFAFCD4
+  source_segment_uids:
+  - SEG-SN-D877C4AE6F4C2949CBEEAD27
+  - SEG-SN-F49C510C7744753523BDCA64
+  - SEG-SN-D88D6D4301E145F3D39272ED
+  - SEG-SN-90B3F8DFB5E7C81BE88A3D14
+  - SEG-SN-21173710C86C0DDFC28DF397
+  - SEG-SN-375EB50703AA68CA076420EA
+  - SEG-SN-C4707E0780B356701B261763
+  - SEG-SN-E35085D48AF20CF22998D8A4
+  - SEG-SN-F6CBC20DB606C3BB075E73D9
+  - SEG-SN-621DEBEA0CB9B9CBF3E417F2
+  - SEG-SN-0BD6244F805AAA7F1B58157E
+  - SEG-SN-356FC3DEDD91C4FA299E8A62
+  - SEG-SN-610746F3CB9265F1AFD79293
+  - SEG-SN-5DA8E83332ED0749C1CF8777
+  - SEG-SN-DD176CB61CE479EC4162E777
+  - SEG-SN-A2466E0F54947239EFC0E135
+  - SEG-SN-763FF0377794D2CBFEE2E30C
+  - SEG-SN-C178E8B57C38C37B710A1B92
+  - SEG-SN-2A19B4B287FE8BD21E445EE0
+  - SEG-SN-691EED29D0A0FEB3053ED771
+  - SEG-SN-F784F98F7C9A18EFE1F4765A
+  - SEG-SN-95640A7F2F2A324021439C21
+  - SEG-SN-9263F6D9C95EBC7FA9104590
+  - SEG-SN-1A5C3D5C3A4D64BB2EE2E31A
+  - SEG-SN-AE85DBE9D82618F6C6E10008
+  - SEG-SN-9D67346CC08C6BC727F16F68
+  - SEG-SN-78B5D1AA3CE9AECF34BFE9F6
+  - SEG-SN-27BB37142100968C471C0E71
+  - SEG-SN-C10762CCF5F7B6A8FABECCCE
+  - SEG-SN-0DE26EC83E9D012034CCA083
+  - SEG-SN-8F30D822CA1ECFFE1A2FCACD
+  - SEG-SN-EFC878744AE49E68428CDC53
+  - SEG-SN-A5F3AFAD1515FE4E6619AC4A
+  - SEG-SN-DE64157171D8D65D99D1A8F9
+  - SEG-SN-C02CE50C9825B521F310223A
+  - SEG-SN-CB63D84318E40371EE87BE2B
+  - SEG-SN-1F9B41A83344EBE65FE4561B
+  - SEG-SN-0E1918D0CB3F3784AB9D800A
+facts:
+- source_node_uid: SN-D877C4AE6F4C2949CBEEAD27
+  document_order_index: 510
+  source_text: 本文件是設計契約，不是 Runtime 實證。凡 exact API / DB / Permission / Queue / Provider / Secret / Route / TTL / Threshold 未由 Current Authority 精確綁定者，MUST 留為 REQUIRE_EXACT_BINDING，不得自行發明。
+- source_node_uid: SN-F49C510C7744753523BDCA64
+  document_order_index: 2689
+  source_text: Canonical role
+- source_node_uid: SN-D88D6D4301E145F3D39272ED
+  document_order_index: 9506
+  source_text: Exact binding gaps for API/DB/permission/event/queue/runtime MUST be marked REQUIRE_EXACT_BINDING.
+- source_node_uid: SN-90B3F8DFB5E7C81BE88A3D14
+  document_order_index: 10237
+  source_text: exact identity, current permission, not inferred from UI selection alone
+- source_node_uid: SN-21173710C86C0DDFC28DF397
+  document_order_index: 15385
+  source_text: track/source version, start/end, gain/fade, motif/role, rights
+- source_node_uid: SN-375EB50703AA68CA076420EA
+  document_order_index: 17595
+  source_text: all required refs/hash/schema/rights/permission valid
+- source_node_uid: SN-C4707E0780B356701B261763
+  document_order_index: 17742
+  source_text: missing/mismatch/rights/permission/consumer readiness fail
+- source_node_uid: SN-E35085D48AF20CF22998D8A4
+  document_order_index: 19212
+  source_text: expected predecessor version/hash + permission
+- source_node_uid: SN-F6CBC20DB606C3BB075E73D9
+  document_order_index: 26743
+  source_text: Permission
+- source_node_uid: SN-621DEBEA0CB9B9CBF3E417F2
+  document_order_index: 26920
+  source_text: actor, role/service identity, work unit, source versions, request/correlation/idempotency IDs, result, reason
+- source_node_uid: SN-0BD6244F805AAA7F1B58157E
+  document_order_index: 27898
+  source_text: Permission resource UIDs
+- source_node_uid: SN-356FC3DEDD91C4FA299E8A62
+  document_order_index: 38113
+  source_text: entity operations + permission/gate/effect classification
+- source_node_uid: SN-610746F3CB9265F1AFD79293
+  document_order_index: 38521
+  source_text: all unresolved API/DB/permission/runtime identities
+- source_node_uid: SN-5DA8E83332ED0749C1CF8777
+  document_order_index: 38660
+  source_text: 後續工程若遇到文件未綁定的 exact implementation identity，只能回到 Exact Binding Ledger / Current Authority 補綁，不得在程式或頁面內自行發明第二套 UID、API、Table、Permission、Queue、Provider 或狀態。
+- source_node_uid: SN-DD176CB61CE479EC4162E777
+  document_order_index: 38713
+  source_text: QA role is review/request/recheck/gate, never upstream editor or publisher.
+- source_node_uid: SN-A2466E0F54947239EFC0E135
+  document_order_index: 39269
+  source_text: Permission / Auth Resource
+- source_node_uid: SN-763FF0377794D2CBFEE2E30C
+  document_order_index: 47208
+  source_text: ASSET Script Role / Section / Hash
+- source_node_uid: SN-C178E8B57C38C37B710A1B92
+  document_order_index: 48345
+  source_text: Permission / Auth Resource
+- source_node_uid: SN-2A19B4B287FE8BD21E445EE0
+  document_order_index: 55829
+  source_text: VIDEO Script Role / Section / Hash
+- source_node_uid: SN-691EED29D0A0FEB3053ED771
+  document_order_index: 57495
+  source_text: Permission / Auth Resource
+- source_node_uid: SN-F784F98F7C9A18EFE1F4765A
+  document_order_index: 74334
+  source_text: 'Construction denominator is the actual Current registry: 160 Controls / 124 Actions / 22 Integration Ports / 20 unique port operations. The older derived_validation 15 ports / 13 operations is stale diagnostic
+    material and MUST NOT be used as the Current denominator. This closure does not invent a replacement registry; it binds the existing controls_fields + action_to_permission_gate_effect + integration_ports.'
+- source_node_uid: SN-95640A7F2F2A324021439C21
+  document_order_index: 74555
+  source_text: Permission / Auth Resource
+- source_node_uid: SN-9263F6D9C95EBC7FA9104590
+  document_order_index: 83899
+  source_text: Permission / Auth Resource
+- source_node_uid: SN-1A5C3D5C3A4D64BB2EE2E31A
+  document_order_index: 85252
+  source_text: '施工 AI MUST resolve UI behavior from this order: page machine authority → exact control row → action/gate/permission → payload/schema → operation/method/path → runtime/persistence owner → source runtime status.
+    If a row is SPEC_EXACT_RUNTIME_BLOCKED or SPEC_EXACT_RUNTIME_NOT_EXECUTED, the UI definition is known but effectful enablement is forbidden until implementation evidence closes. If a quantitative value is SOURCE_NOT_DEFINED,
+    do not choose a “reasonable” number.'
+- source_node_uid: SN-AE85DBE9D82618F6C6E10008
+  document_order_index: 86719
+  source_text: 本節只補齊既有 Current source 已可證明的設計契約。既有 Control / Action / Gate / Permission / Owner / Operation / Route 優先；SOURCE_NOT_DEFINED、NO_PUBLIC_API_ID_IN_CURRENT_AUTHORITY、SPEC_EXACT_RUNTIME_BLOCKED 不得由 Word 自行發明或升格為 Runtime
+    完成。
+- source_node_uid: SN-9D67346CC08C6BC727F16F68
+  document_order_index: 86775
+  source_text: Permission
+- source_node_uid: SN-78B5D1AA3CE9AECF34BFE9F6
+  document_order_index: 87507
+  source_text: command_id = existing Action UID; control_uid + gate + permission + owner must be preserved.
+- source_node_uid: SN-27BB37142100968C471C0E71
+  document_order_index: 87558
+  source_text: Existing permission must be checked before owner dispatch; UI visibility is not authorization.
+- source_node_uid: SN-C10762CCF5F7B6A8FABECCCE
+  document_order_index: 87828
+  source_text: Existing Permission
+- source_node_uid: SN-0DE26EC83E9D012034CCA083
+  document_order_index: 100771
+  source_text: For EDIT controls with Runtime Status=LOCAL_WORKING_DRAFT_EXACT, Method/Path=NO_PUBLIC_API_BY_AUTHORITY, an existing exact Action UID/Gate/Permission, and a non-empty local Runtime Owner, the interaction is
+    a local working-draft command handled inside that owner boundary. No independent registered Operation is applicable. Operation MUST remain '—'; no public or synthetic Operation ID may be invented.
+- source_node_uid: SN-8F30D822CA1ECFFE1A2FCACD
+  document_order_index: 106615
+  source_text: Candidate Preview and Final Preview are READ_EXACT projection panels. Their registered read Operation, Gate, Permission and Runtime Owner already define acquisition/visibility. The panel itself does not own
+    a separate Action UID. Action is non-applicable and MUST remain '—'.
+- source_node_uid: SN-EFC878744AE49E68428CDC53
+  document_order_index: 106674
+  source_text: Permission
+- source_node_uid: SN-A5F3AFAD1515FE4E6619AC4A
+  document_order_index: 106909
+  source_text: Permission
+- source_node_uid: SN-DE64157171D8D65D99D1A8F9
+  document_order_index: 111498
+  source_text: Role
+- source_node_uid: SN-C02CE50C9825B521F310223A
+  document_order_index: 111725
+  source_text: UI Permission
+- source_node_uid: SN-CB63D84318E40371EE87BE2B
+  document_order_index: 111766
+  source_text: Runtime Permission
+- source_node_uid: SN-1F9B41A83344EBE65FE4561B
+  document_order_index: 111796
+  source_text: Selected port MUST authorize this permission server-side.
+- source_node_uid: SN-0E1918D0CB3F3784AB9D800A
+  document_order_index: 111978
+  source_text: Runtime Permission
+status: CURRENT_CLASSIFICATION
+content_hash: 6f1c7bb24e7c4b25a2fafd9a3f5cf34b83f3da0db8dd8d94a9ad2f91f86a4f6a
