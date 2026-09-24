@@ -1,0 +1,91 @@
+artifact_uid: CL-SRC-DOCX-BAB362BA82086F3A3F21-QA_AUDIT_REQUIREMENT
+page_uid: SRC-DOCX-BAB362BA82086F3A3F21
+planning_domain: PAGE_CONSTRUCTION
+responsibility_uid: QA_AUDIT_REQUIREMENT
+responsibility_class: QA_AUDIT_REQUIREMENT
+responsibilities:
+- QA_AUDIT_REQUIREMENT
+canonical_owner_uid: OWNER-SOURCE-SRC-DOCX-BAB362BA82086F3A3F21
+target_path: 01_CLASSIFIED/SRC-DOCX-BAB362BA82086F3A3F21/PAGE/QA_AUDIT_REQUIREMENT.yaml
+lifecycle_uid: LC-STAGE01-QA_AUDIT_REQUIREMENT
+approval_scope_uid: AP-STAGE01-SRC-DOCX-BAB362BA82086F3A3F21
+version_scope_uid: VER-f38cf3717cbd
+test_scope_uid: TEST-STAGE01-QA_AUDIT_REQUIREMENT
+source_lineage:
+- source_uid: SRC-DOCX-BAB362BA82086F3A3F21
+  source_segment_uids:
+  - SEG-SN-9C5FAC6AAFBFB729AD3131A6
+  - SEG-SN-F10CA4C14A7B89E8567EF845
+  - SEG-SN-1E6FC10DE0227DEA8AF4CC76
+  - SEG-SN-58B215AFF5F26F4AEADCDC97
+  - SEG-SN-9BAA0509246118C370DD541E
+  - SEG-SN-F92E17DE67C8D69191B2058D
+  - SEG-SN-79C407D0243102BB3496AC61
+  - SEG-SN-D64FAAF86ED85D5977E66CAD
+  - SEG-SN-FC7803751E1832417E243890
+  - SEG-SN-B5F30A3072AC5961B78FE551
+  - SEG-SN-F168965668B00769CB878746
+  - SEG-SN-CEDBFBDFA42D689FAB4468B8
+  - SEG-SN-676495695BD3AC4C8D3C398A
+  - SEG-SN-11248C5526AEE26C28748167
+  - SEG-SN-870790C1B871389261134588
+  - SEG-SN-416BAEA57B46BE5721353734
+  - SEG-SN-5AFD54B78E438CD03E707484
+  - SEG-SN-EAD476669178372195D85B04
+facts:
+- source_node_uid: SN-9C5FAC6AAFBFB729AD3131A6
+  document_order_index: 25
+  source_text: Current HEAD：MUST be resolved fresh from GitHub branch 0921acpos at audit/execution time. Historical SHA references are evidence only and MUST NOT be treated as Current Truth.
+- source_node_uid: SN-F10CA4C14A7B89E8567EF845
+  document_order_index: 145
+  source_text: RESOLVE_FRESH_AT_AUDIT_TIME
+- source_node_uid: SN-1E6FC10DE0227DEA8AF4CC76
+  document_order_index: 1932
+  source_text: Audit Baseline
+- source_node_uid: SN-58B215AFF5F26F4AEADCDC97
+  document_order_index: 2709
+  source_text: QA-01
+- source_node_uid: SN-9BAA0509246118C370DD541E
+  document_order_index: 2724
+  source_text: QA 審查工作區
+- source_node_uid: SN-F92E17DE67C8D69191B2058D
+  document_order_index: 2754
+  source_text: authority/pages/workspace/QA-01/ACPOS_QA-01_FINAL_LOCKED_ENCODING_DEDUP_CLEAN.yaml
+- source_node_uid: SN-79C407D0243102BB3496AC61
+  document_order_index: 2784
+  source_text: ACPOS_QA-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx
+- source_node_uid: SN-D64FAAF86ED85D5977E66CAD
+  document_order_index: 3749
+  source_text: QA 審查項目／品質標準治理
+- source_node_uid: SN-FC7803751E1832417E243890
+  document_order_index: 3779
+  source_text: authority/pages/admin/SG-02/ACPOS_SG-02_QA_REVIEW_STANDARD_FINAL_LOCKED_ENCODING.yaml
+- source_node_uid: SN-B5F30A3072AC5961B78FE551
+  document_order_index: 3809
+  source_text: ACPOS_SG-02_QA審查項目名單_Mother_Basic_Design_OPTIMIZED.docx
+- source_node_uid: SN-F168965668B00769CB878746
+  document_order_index: 4240
+  source_text: 這一包是「最完整方向的 Basic Design Draft」，不是施工證據。每頁均已建立完整 artifacts 與 8 種視覺候選，但正式 DESIGN_FROZEN 仍需 Human Visual/Functional Review，並在核准後把變更 materialize 回既有 Current Authority owner。未經該步驟，不得直接施工。
+- source_node_uid: SN-CEDBFBDFA42D689FAB4468B8
+  document_order_index: 4532
+  source_text: QA-01
+- source_node_uid: SN-676495695BD3AC4C8D3C398A
+  document_order_index: 5052
+  source_text: IMPLEMENTATION_EXECUTION_EVIDENCE
+- source_node_uid: SN-11248C5526AEE26C28748167
+  document_order_index: 5222
+  source_text: QA-01
+- source_node_uid: SN-870790C1B871389261134588
+  document_order_index: 5283
+  source_text: Other pages audited
+- source_node_uid: SN-416BAEA57B46BE5721353734
+  document_order_index: 5442
+  source_text: Dynamic. Resolve fresh from GitHub before audit, batch execution, validation and completion declaration; do not hard-code a historical SHA as Current Truth.
+- source_node_uid: SN-5AFD54B78E438CD03E707484
+  document_order_index: 5468
+  source_text: Evidence
+- source_node_uid: SN-EAD476669178372195D85B04
+  document_order_index: 5493
+  source_text: Any embedded branch/SHA/count that conflicts with the fresh physical scan is historical evidence only, not Current package authority.
+status: CURRENT_CLASSIFICATION
+content_hash: 567ab49c8069c5cc037d02506527552607e340382c4d6311a46b3fff4f50c66d

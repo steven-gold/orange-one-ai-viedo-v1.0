@@ -1,0 +1,91 @@
+artifact_uid: CL-SRC-DOCX-BAB362BA82086F3A3F21-RUNTIME_DATA_DEPENDENCY_REQUIREMENT
+page_uid: SRC-DOCX-BAB362BA82086F3A3F21
+planning_domain: PAGE_CONSTRUCTION
+responsibility_uid: RUNTIME_DATA_DEPENDENCY_REQUIREMENT
+responsibility_class: RUNTIME_DATA_DEPENDENCY_REQUIREMENT
+responsibilities:
+- RUNTIME_DATA_DEPENDENCY_REQUIREMENT
+canonical_owner_uid: OWNER-SOURCE-SRC-DOCX-BAB362BA82086F3A3F21
+target_path: 01_CLASSIFIED/SRC-DOCX-BAB362BA82086F3A3F21/PAGE/RUNTIME_DATA_DEPENDENCY_REQUIREMENT.yaml
+lifecycle_uid: LC-STAGE01-RUNTIME_DATA_DEPENDENCY_REQUIREMENT
+approval_scope_uid: AP-STAGE01-SRC-DOCX-BAB362BA82086F3A3F21
+version_scope_uid: VER-f38cf3717cbd
+test_scope_uid: TEST-STAGE01-RUNTIME_DATA_DEPENDENCY_REQUIREMENT
+source_lineage:
+- source_uid: SRC-DOCX-BAB362BA82086F3A3F21
+  source_segment_uids:
+  - SEG-SN-5A9B5BC84C7581E73AA71447
+  - SEG-SN-BDF4FF317126A1EB8E67C288
+  - SEG-SN-EABF42844B926114BE29315B
+  - SEG-SN-660D8E55C340C6CE1928777D
+  - SEG-SN-F32DFE7A536AF3FC9FE583A6
+  - SEG-SN-2A6CC0B023FBFC467CBDD298
+  - SEG-SN-EF28B5DF06A67C75C7A1F2F4
+  - SEG-SN-B2A1FF00BEC01507AA27CE4B
+  - SEG-SN-431D6D307ACB71B47ABE9818
+  - SEG-SN-852DEFD1F1DCA9E8617E3C6E
+  - SEG-SN-7A3E951B59FAC37A82FE6B4F
+  - SEG-SN-BF5FB09E11C79B175B30676D
+  - SEG-SN-717C9FB5BEB4B3A6A03836ED
+  - SEG-SN-978833FA184C8BE249917369
+  - SEG-SN-6389239DF789150B0489589C
+  - SEG-SN-7FD30D897211A3A5F1B94A44
+  - SEG-SN-ED08CD65B50E6A30ECCF1FEC
+  - SEG-SN-169F2B32DE46184B94FB0FD3
+facts:
+- source_node_uid: SN-5A9B5BC84C7581E73AA71447
+  document_order_index: 2827
+  source_text: 資料庫／資料血緣工作區
+- source_node_uid: SN-BDF4FF317126A1EB8E67C288
+  document_order_index: 2959
+  source_text: authority/pages/workspace/STR-01/ACPOS_STR-01_FINAL_LOCKED_ENCODING_PROVIDER_BOUND.yaml
+- source_node_uid: SN-EABF42844B926114BE29315B
+  document_order_index: 3633
+  source_text: AIAPI-01
+- source_node_uid: SN-660D8E55C340C6CE1928777D
+  document_order_index: 3647
+  source_text: AI API 管理
+- source_node_uid: SN-F32DFE7A536AF3FC9FE583A6
+  document_order_index: 3675
+  source_text: authority/pages/admin/AIAPI-01/ACPOS_AIAPI-01_FINAL_LOCKED_ENCODING.yaml
+- source_node_uid: SN-2A6CC0B023FBFC467CBDD298
+  document_order_index: 3703
+  source_text: ACPOS_AIAPI-01_AI_API管理_Mother_Basic_Design_OPTIMIZED.docx
+- source_node_uid: SN-EF28B5DF06A67C75C7A1F2F4
+  document_order_index: 4085
+  source_text: authority/global/ACPOS_SYSTEM_AUTHORITY_FINAL_LOCKED_CURRENT.yaml + production identity runtime
+- source_node_uid: SN-B2A1FF00BEC01507AA27CE4B
+  document_order_index: 4159
+  source_text: 全站系統邏輯與共享 Runtime/AI Continuity
+- source_node_uid: SN-431D6D307ACB71B47ABE9818
+  document_order_index: 4318
+  source_text: True Runtime / Governance Status
+- source_node_uid: SN-852DEFD1F1DCA9E8617E3C6E
+  document_order_index: 4901
+  source_text: AIAPI-01
+- source_node_uid: SN-7A3E951B59FAC37A82FE6B4F
+  document_order_index: 4970
+  source_text: RUNTIME_BINDING_VALIDATION
+- source_node_uid: SN-BF5FB09E11C79B175B30676D
+  document_order_index: 5011
+  source_text: RUNTIME_IMPLEMENTATION_BLOCKED; RUNTIME_IMPLEMENTATION_BLOCKED; RUNTIME_IMPLEMENTATION_BLOCKED; RUNTIME_IMPLEMENTATION_BLOCKED; RUNTIME_IMPLEMENTATION_BLOCKED; RUNTIME_IMPLEMENTATION_BLOCKED; PARTIAL_RUNTIME_MATERIALIZATION
+- source_node_uid: SN-717C9FB5BEB4B3A6A03836ED
+  document_order_index: 5055
+  source_text: This index records construction definition status only. Human Visual Review / Design Freeze and Production runtime acceptance remain independent gates.
+- source_node_uid: SN-978833FA184C8BE249917369
+  document_order_index: 5309
+  source_text: 'No same defect: fixed schemas/sections/entities are concrete; runtime records are intentionally dynamic.'
+- source_node_uid: SN-6389239DF789150B0489589C
+  document_order_index: 5318
+  source_text: DEV-01 / SOC-01 / ERP-01 / AIAPI-01
+- source_node_uid: SN-7FD30D897211A3A5F1B94A44
+  document_order_index: 5326
+  source_text: 'No same defect: business entities, stages/contracts/fields are concrete; values/providers/amounts remain real-data-only.'
+- source_node_uid: SN-ED08CD65B50E6A30ECCF1FEC
+  document_order_index: 5362
+  source_text: 本節為 0921acpos Current Word package 的正式缺口閉合內容。只定義 Basic Design / authority contract；若缺 Runtime / Production evidence，狀態仍必須維持 NOT_EXECUTED / IMPLEMENTATION_REQUIRED，不得因文件定義完成而宣告 Runtime 完成。
+- source_node_uid: SN-169F2B32DE46184B94FB0FD3
+  document_order_index: 5574
+  source_text: 03_ACPOS_AI_Execution_Script_Compiler_Tool_AIAPI_Runtime_Mother_Basic_Logic_Design_Normative_Contract_v1.0.docx
+status: CURRENT_CLASSIFICATION
+content_hash: 57b60fee4595e6c11702b9e0f79efef1cca1f219686809e7fa0f56a75735f352
