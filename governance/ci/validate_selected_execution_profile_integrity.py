@@ -117,4 +117,4 @@ for forbidden in ('ACTIVE_WORK_UNIT', 'CURRENT_EXECUTION_SCOPE', 'PRODUCT_EXECUT
 print(f"PASS: selected execution profile {profile.get('profile_uid')} resolves from Current Registry as non-global execution profile")
 print(f'PASS: selected profile local denominator={len(stages)} structural contracts complete')
 print('PASS: Current product scope/run-state ownership is isolated to product execution workline')
-print('PASS: governance branch does not require legacy GOVERNANCE_CURRENT.yaml or governance/test ACTIVE_STATE')
+print('PASS: governance branch resolves Current exclusively from Registry and contains no product run-state root')
