@@ -1,0 +1,37 @@
+name: Current Governance Cleanup Validation
+
+on:
+  push:
+    branches:
+      - rebuild-v2.1.1
+    paths:
+      - .github/workflows/current-governance-cleanup-validation.yml
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python -m pip install --disable-pip-version-check PyYAML==6.0.2
+      - name: Validate current governance only
+        run: |
+          set -euo pipefail
+          python governance/ci/stage_execution_engine.py --definition-audit-all
+          python governance/ci/test_stage_execution_engine.py
+          python governance/ci/validate_selected_execution_profile_integrity.py
+          python governance/ci/validate_active_consumer_reference_integrity.py
+          python governance/ci/validate_governance_layout.py
+          python .github/governance-source/active/source/09_TESTS/governance/validate_stage_execution_invariants.py
+          python .github/governance-source/active/source/09_TESTS/governance/validate_product_neutral_entity_lifecycle.py
+          test ! -e governance/ci/compile_stage_execution_preflight.py
+          test ! -e governance/ci/stage_execution_adapters/stage02_functional_contract.py
+          ! grep -R "HISTORICAL_GOVERNANCE_TEST_STATE_ONLY" governance/ci .github/workflows
+          ! grep -R "stage_execution_adapters.stage02_functional_contract" governance/ci .github/workflows
