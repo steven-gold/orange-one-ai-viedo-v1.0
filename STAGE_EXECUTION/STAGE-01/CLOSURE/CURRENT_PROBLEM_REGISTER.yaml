@@ -2,7 +2,7 @@ artifact_uid: STAGE01-CURRENT-PROBLEM-REGISTER
 artifact_type: CURRENT_PROBLEM_REGISTER
 stage_uid: STAGE-01
 stage01_owned_open_gap_total: 0
-closure_blocker_total: 0
+closure_blocker_total: 1
 carried_external_authority_dependency_total: 2339
 carried_external_authority_dependencies:
 - work_unit_uid: WU-STAGE01-ADMIN-AIAPI-01-8372B374
@@ -16379,5 +16379,13 @@ carried_external_authority_dependencies:
   authority_evidence_ref: EVIDENCE/SOURCE_ENUMERATION_EVIDENCE.yaml
   stage01_disposition: PRESERVED_CARRY_FORWARD_NON_STAGE01_BLOCKER
 carry_forward_policy: PRESERVE_EXACT_TUPLE_NO_STAGE01_FALSE_RESOLUTION
-status: ZERO_STAGE01_OWNED_OPEN_GAPS
-artifact_hash: e67f7a1325396eea9a5b1e5ec849534171858fac310baf5744fbf2cdd4a5e251
+status: BLOCKED_PENDING_FRESH_REPLAY
+artifact_hash: cf2da09a5a5696268d8c328cd3eb5ee44cac119e55f798f7c666623cce7a0156
+execution_control_problems:
+- problem_uid: STAGE01-CANONICAL-PREFLIGHT-CHRONOLOGY-001
+  classification: EXECUTION_CONTROL_EVIDENCE_DEFECT
+  product_blocker_credit: false
+  description: Canonical Stage execution preflight was materialized after original Stage-01 effectful execution; original exit credit is invalid until a fresh replay occurs after preflight.
+  disposition: FRESH_REPLAY_REQUIRED
+  affected_work_unit_count: 31
+  status: OPEN

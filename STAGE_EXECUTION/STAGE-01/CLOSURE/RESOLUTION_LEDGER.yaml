@@ -17,6 +17,12 @@ entries:
   fresh_revalidation_run_id: 35956120539
   fresh_revalidation_head: 9b658d142b9a97277237cc8dac2ae865b83e1c06
   status: RESOLVED_FOR_CLOSURE_CANDIDATE
-unresolved_stage01_owned_entry_total: 0
-status: PASS
-artifact_hash: 7397eece163a249295af07003fb66394847a5677ed7cb1d19e9c501c9701cf9f
+- ordinal: 3
+  issue_uid: STAGE01-CANONICAL-PREFLIGHT-CHRONOLOGY-001
+  classification: EXECUTION_CONTROL_EVIDENCE_DEFECT
+  resolution: PREVIOUS_STAGE_EXIT_CREDIT_INVALIDATED_CANONICAL_PREFLIGHT_ESTABLISHED_BEFORE_REPLAY
+  closure_credit: NONE_UNTIL_FRESH_REPLAY
+  status: REPLAY_REQUIRED
+unresolved_stage01_owned_entry_total: 1
+status: REPLAY_PENDING
+artifact_hash: 8961a993c343eb3b6818d07148b35f62b9c6f764abb52cba8af28ee7bf5c1cd4
