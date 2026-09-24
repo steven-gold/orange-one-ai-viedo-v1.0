@@ -31,7 +31,6 @@ FORBIDDEN_CURRENT_RUNTIME_TOKENS = (
     "compile_stage_execution_preflight.py",
     "governance/test/ACTIVE_STATE.yaml",
     "governance/test/CURRENT_EXECUTION_SCOPE_MANIFEST.yaml",
-    "governance/test/stage02/STAGE02_CURRENT_FINDINGS.yaml",
 )
 RETIRED_PATHS = (
     "governance/ci/compile_stage_execution_preflight.py",
@@ -205,8 +204,8 @@ def main() -> int:
     print(f"PASS: Current workflows scanned={len(workflows)}")
     print(f"PASS: active/transitive executable targets={len(visited)} all resolve")
     print("PASS: governance/test product run-state root absent")
-    print("PASS: retired Stage-02 compatibility wrapper/module absent")
-    print("PASS: Stage-02 scope source is Product Current Scope/Resume only")
+    print("PASS: retired profile compatibility wrapper/module absent")
+    print("PASS: profile-specific scope schema is delegated to selected-profile validation")
     print("PASS: Governance branch has no product effectful execute mode")
     print("PASS: no stale fixed product run root or retired compatibility token in active consumers")
     print("PASS: ACTIVE_CONSUMER_REFERENCE_INTEGRITY_CURRENT_ONLY")
