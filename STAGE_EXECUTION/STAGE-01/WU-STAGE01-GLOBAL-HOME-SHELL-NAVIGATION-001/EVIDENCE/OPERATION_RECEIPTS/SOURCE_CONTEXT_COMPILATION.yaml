@@ -1,0 +1,30 @@
+artifact_uid: OPREC-WU-STAGE01-GLOBAL-HOME-SHELL-NAVIGATION-001-SOURCE_CONTEXT_COMPILATION-20260924
+artifact_type: OPERATION_STEP_RECEIPT
+stage_uid: STAGE-01
+operation_uid: SOURCE_CONTEXT_COMPILATION
+work_unit_uid: WU-STAGE01-GLOBAL-HOME-SHELL-NAVIGATION-001
+source_lineage:
+  source_uid: SRC-DOCX-334A4679600F092B733B
+  projection_uid: PROJ-SRC-DOCX-334A4679600F092B733B
+  projection_content_hash: 22e4cd330d19cd576b1f5534d288c2aadb62ec785db361a6af4ef54b99cdfe57
+owner_uid: SOURCE_BOUND_STAGE01_OWNER:SRC-DOCX-334A4679600F092B733B
+input_refs:
+- 00_SOURCE_INTAKE/SOURCE_SEGMENT_MAP.yaml
+output_refs:
+- 00_SOURCE_INTAKE/SOURCE_CONTEXT_MANIFEST.yaml
+denominator:
+  required_semantic_source_nodes: 416
+  context_source_nodes: 416
+  context_edges: 415
+completeness_and_pass_condition:
+  denominator_coverage_percent: 100
+  missing_required_item_count: 0
+  duplicate_node_count: 0
+  invalid_context_edge_count: 0
+  unresolved_required_gap_count: 0
+validators_and_evidence:
+- FRESH_CONTEXT_NODE_AND_EDGE_RECONCILIATION
+result: PASS
+legal_successor: SOURCE_SUPERSESSION_CONFLICT_RESOLUTION
+status: PASS
+content_hash: fc17f21945d053c96e921e1775ce78ffc03e3226d707b59c0583b187a0fb268b

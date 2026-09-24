@@ -3,9 +3,9 @@ artifact_type: WORK_UNIT_EXECUTION_STATE
 stage_uid: STAGE-01
 work_unit_uid: WU-STAGE01-GLOBAL-HOME-SHELL-NAVIGATION-001
 primary_task_layer: PRODUCT_STAGE_EXECUTION
-current_operation: SOURCE_CONTEXT_COMPILATION
+current_operation: SOURCE_SUPERSESSION_CONFLICT_RESOLUTION
 source_segment_mapping_completed: true
-source_fact_materialization_started: false
+source_fact_materialization_started: true
 source_fact_materialization_completed: false
 responsibility_classification_started: false
 responsibility_classification_completed: false
@@ -18,10 +18,11 @@ blueprint_binding_completed: false
 completed_operations:
 - SOURCE_STRUCTURE_ENUMERATION
 - SOURCE_SEGMENT_MAPPING
-next_operation: SOURCE_CONTEXT_COMPILATION
+- SOURCE_CONTEXT_COMPILATION
+next_operation: SOURCE_SUPERSESSION_CONFLICT_RESOLUTION
 source_uid: SRC-DOCX-334A4679600F092B733B
 pair_hash: 2e552f2c87ed524a3cd2960ddf3be6b951c3069eb74adec973202741a4e752c0
-last_effectful_action: SOURCE_SEGMENT_MAPPING
-last_effectful_head: e10f5861666ba1af52a6b41de5bd7fe0746ff7f9
+last_effectful_action: SOURCE_CONTEXT_COMPILATION
+last_effectful_head: bd04f45986e5609a54ed82c771dd0f0e4a502d7b
 status: ACTIVE
-content_hash: a1c7bef810eda5a7262b7770737fdf0fed0d2a0c920cd9c7090062847d74cf6f
+content_hash: e89391f5df9a3a24a44eb64f0f8b1b56cc4bf905a94e2cf47d8c63e112eaf070
