@@ -1,0 +1,17 @@
+artifact_uid: CIM-STAGE04-HOME-001
+artifact_type: CHANGE_IMPACT_MAP
+stage_uid: STAGE-04
+work_unit_uid: WU-STAGE04-GLOBAL-HOME-SHELL-NAVIGATION-001
+reentry_owner: STAGE-03
+impacted_stage03_artifacts:
+- VISUAL_DESIGN_SPEC_PACKAGE.yaml
+- VISUAL_REFERENCE_ANNOTATION.yaml
+- VISUAL_INHERITANCE_MATRIX.yaml
+- VISUAL_GEOMETRY_CONTRACT.yaml
+preserve_if_hash_unchanged:
+- VISUAL_SCENARIO_EVIDENCE_SET.yaml
+- VISUAL_PREVIEW_EVIDENCE.yaml
+human_visual_review_reuse: REVERIFY_AFTER_REVERSE_DEPENDENCY_ANALYSIS
+stage04_descendant_status: REVERIFY_REQUIRED
+stage05_admission: BLOCKED
+status: CURRENT
