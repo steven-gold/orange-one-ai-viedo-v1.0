@@ -1,0 +1,139 @@
+artifact_uid: CL-SRC-DOCX-82E99BA9D0AC21650AF7-ERROR_RECOVERY_REQUIREMENT
+page_uid: SRC-DOCX-82E99BA9D0AC21650AF7
+planning_domain: PAGE_CONSTRUCTION
+responsibility_uid: ERROR_RECOVERY_REQUIREMENT
+responsibility_class: ERROR_RECOVERY_REQUIREMENT
+responsibilities:
+- ERROR_RECOVERY_REQUIREMENT
+canonical_owner_uid: OWNER-SOURCE-SRC-DOCX-82E99BA9D0AC21650AF7
+target_path: 01_CLASSIFIED/SRC-DOCX-82E99BA9D0AC21650AF7/PAGE/ERROR_RECOVERY_REQUIREMENT.yaml
+lifecycle_uid: LC-STAGE01-ERROR_RECOVERY_REQUIREMENT
+approval_scope_uid: AP-STAGE01-SRC-DOCX-82E99BA9D0AC21650AF7
+version_scope_uid: VER-8197ba594b76
+test_scope_uid: TEST-STAGE01-ERROR_RECOVERY_REQUIREMENT
+source_lineage:
+- source_uid: SRC-DOCX-82E99BA9D0AC21650AF7
+  source_segment_uids:
+  - SEG-SN-CAA75E09B0CA2D73049E928B
+  - SEG-SN-31BB28EC1EF24150E768D318
+  - SEG-SN-0EA0AFF5C7AF81D44218430E
+  - SEG-SN-73D66FE456CC62873F95470A
+  - SEG-SN-92CEF233C0758EFC700D35A2
+  - SEG-SN-3E120D38F20B2D0F0C225423
+  - SEG-SN-84F09F49C51F2CF64EC60600
+  - SEG-SN-46894EBD0151889F74451E40
+  - SEG-SN-E7B39CEED001365DACD3C43D
+  - SEG-SN-C417E87E269B00E715C6F2FA
+  - SEG-SN-08826885304F1EE10F0CF662
+  - SEG-SN-0F4DFDFFEFD5AFDB41087E63
+  - SEG-SN-41F0BDB81BBAC3B56320BE87
+  - SEG-SN-88A1362F46E39A03BE77563A
+  - SEG-SN-67DEFDF36984F0C88BBD9E62
+  - SEG-SN-B00F13CBA65CDE331398EF18
+  - SEG-SN-82AF0B67022B1C92EBAC54EA
+  - SEG-SN-DA20A60056E1B7ADDA83BDCF
+  - SEG-SN-4484B5246D9F7A7C4C34CCA7
+  - SEG-SN-C42F33EEAA83E455BA5FE577
+  - SEG-SN-F6CFF5633E22CC7AF447C8C1
+  - SEG-SN-7F4194106515A547A6010211
+  - SEG-SN-1E1A916D52637C8D29E4B283
+  - SEG-SN-DF70A4DE5564FF902CFC1122
+  - SEG-SN-130BF1D8F6C00C770CAB2026
+  - SEG-SN-A748F61D480E166D66D40E05
+  - SEG-SN-FC6F557EA0D2E6347F2A8743
+  - SEG-SN-BE480B4DC411686913B1E502
+  - SEG-SN-D392309DB63ADDB39A389BFE
+  - SEG-SN-17260E6B0CF4CD864F49C619
+facts:
+- source_node_uid: SN-CAA75E09B0CA2D73049E928B
+  document_order_index: 4458
+  source_text: 已驗證成效與失敗經驗。
+- source_node_uid: SN-31BB28EC1EF24150E768D318
+  document_order_index: 5579
+  source_text: Retry 產生新 Attempt，不覆寫舊 Attempt。
+- source_node_uid: SN-0EA0AFF5C7AF81D44218430E
+  document_order_index: 7049
+  source_text: DISPATCH / RETRY / TERMINATE
+- source_node_uid: SN-73D66FE456CC62873F95470A
+  document_order_index: 10949
+  source_text: Policy review state REVIEW_REQUIRED MUST NOT be coerced to PASS by retry.
+- source_node_uid: SN-92CEF233C0758EFC700D35A2
+  document_order_index: 11819
+  source_text: Retry MUST create a new PublishAttempt under the same PublishRequest; attempts are append-only.
+- source_node_uid: SN-3E120D38F20B2D0F0C225423
+  document_order_index: 12167
+  source_text: If external state is unknown and duplicate risk exists, automatic retry MUST be blocked pending reconciliation.
+- source_node_uid: SN-84F09F49C51F2CF64EC60600
+  document_order_index: 14429
+  source_text: Metric collection failure MUST NOT invalidate already verified POSTED truth.
+- source_node_uid: SN-46894EBD0151889F74451E40
+  document_order_index: 18751
+  source_text: FAILED_RETRYABLE
+- source_node_uid: SN-E7B39CEED001365DACD3C43D
+  document_order_index: 18779
+  source_text: 允許受控 retry。
+- source_node_uid: SN-C417E87E269B00E715C6F2FA
+  document_order_index: 18838
+  source_text: 不可自動 retry。
+- source_node_uid: SN-08826885304F1EE10F0CF662
+  document_order_index: 21139
+  source_text: do not retry blindly if duplicate effect possible; reconcile first。
+- source_node_uid: SN-0F4DFDFFEFD5AFDB41087E63
+  document_order_index: 21308
+  source_text: Failure / Recovery
+- source_node_uid: SN-41F0BDB81BBAC3B56320BE87
+  document_order_index: 22483
+  source_text: DISPATCHING → FAILED_RETRYABLE
+- source_node_uid: SN-88A1362F46E39A03BE77563A
+  document_order_index: 22539
+  source_text: classified retryable failure
+- source_node_uid: SN-67DEFDF36984F0C88BBD9E62
+  document_order_index: 22595
+  source_text: non-retryable → FAILED_FINAL
+- source_node_uid: SN-B00F13CBA65CDE331398EF18
+  document_order_index: 22710
+  source_text: stop blind retry + reconcile
+- source_node_uid: SN-82AF0B67022B1C92EBAC54EA
+  document_order_index: 23461
+  source_text: 17. Concurrency / Idempotency / Retry / Circuit Contract
+- source_node_uid: SN-DA20A60056E1B7ADDA83BDCF
+  document_order_index: 23799
+  source_text: Retry
+- source_node_uid: SN-4484B5246D9F7A7C4C34CCA7
+  document_order_index: 23886
+  source_text: platform/policy/rate class determines delay; do not retry outside allowed PostingWindow。
+- source_node_uid: SN-C42F33EEAA83E455BA5FE577
+  document_order_index: 24063
+  source_text: highest duplicate-risk state; blind retry prohibited。
+- source_node_uid: SN-F6CFF5633E22CC7AF447C8C1
+  document_order_index: 27164
+  source_text: Retry/Incident
+- source_node_uid: SN-7F4194106515A547A6010211
+  document_order_index: 27192
+  source_text: failure class + attempt
+- source_node_uid: SN-1E1A916D52637C8D29E4B283
+  document_order_index: 34751
+  source_text: Retry creates new Attempt; old attempt remains immutable.
+- source_node_uid: SN-DF70A4DE5564FF902CFC1122
+  document_order_index: 34925
+  source_text: Unknown external state blocks blind retry when duplicate risk exists.
+- source_node_uid: SN-130BF1D8F6C00C770CAB2026
+  document_order_index: 36251
+  source_text: Mutation / Failure Injection
+- source_node_uid: SN-A748F61D480E166D66D40E05
+  document_order_index: 37905
+  source_text: Retry overwrites prior attempt instead of new attempt
+- source_node_uid: SN-FC6F557EA0D2E6347F2A8743
+  document_order_index: 38079
+  source_text: Unknown external state triggers blind retry with duplicate risk
+- source_node_uid: SN-BE480B4DC411686913B1E502
+  document_order_index: 42258
+  source_text: Given a retryable failure
+- source_node_uid: SN-D392309DB63ADDB39A389BFE
+  document_order_index: 42286
+  source_text: When retry runs
+- source_node_uid: SN-17260E6B0CF4CD864F49C619
+  document_order_index: 42659
+  source_text: Then enter UNKNOWN_EXTERNAL_STATE and reconcile before retry.
+status: CURRENT_CLASSIFICATION
+content_hash: 7a8cb423e86f7953adcfa305837f211f86fb1d9f410e6614179895c4381c26a2
