@@ -8,8 +8,21 @@ governance_uid: GOV-REV-20260924-INDEPENDENT-UNIT-LIFECYCLE-CURRENT-IDENTITY-SYN
 included_units:
 - workspace:WB-01
 excluded_units: []
-remaining_units:
-- workspace:WB-01
+remaining_units: []
 partial_scope: false
-stage_exit_credit_allowed: false
-status: ACTIVE
+stage_exit_credit_allowed: true
+scope_selection_authority: WORK_UNIT_RESOLUTION_GATE.yaml
+owning_capability: VISUAL_DESIGN
+dependency_closure_refs:
+- WU-STAGE02-WB01-DASHBOARD-001
+- WU-STAGE03-GLOBAL-HOME-SHELL-NAVIGATION-001
+denominator_sources:
+- DENOMINATOR_SNAPSHOT.yaml
+- VISUAL_INTERACTION_TOPOLOGY_BINDING.yaml
+- VISUAL_GEOMETRY_CONTRACT.yaml
+closure_validation:
+  head_sha: 38a3d1c186e30e5601788c53f97df8923b85fc59
+  workflow_run_id: 36052760705
+  workflow_job_id: 107812140193
+  result: PASS
+status: CLOSURE_CANDIDATE
