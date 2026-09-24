@@ -1,0 +1,147 @@
+artifact_uid: CL-SRC-DOCX-B857D9A2F1BD30827290-ENTITY_SCOPE_REQUIREMENT
+page_uid: SRC-DOCX-B857D9A2F1BD30827290
+planning_domain: PAGE_CONSTRUCTION
+responsibility_uid: ENTITY_SCOPE_REQUIREMENT
+responsibility_class: ENTITY_SCOPE_REQUIREMENT
+responsibilities:
+- ENTITY_SCOPE_REQUIREMENT
+canonical_owner_uid: OWNER-SOURCE-SRC-DOCX-B857D9A2F1BD30827290
+target_path: 01_CLASSIFIED/SRC-DOCX-B857D9A2F1BD30827290/PAGE/ENTITY_SCOPE_REQUIREMENT.yaml
+lifecycle_uid: LC-STAGE01-ENTITY_SCOPE_REQUIREMENT
+approval_scope_uid: AP-STAGE01-SRC-DOCX-B857D9A2F1BD30827290
+version_scope_uid: VER-11733f4d16fc
+test_scope_uid: TEST-STAGE01-ENTITY_SCOPE_REQUIREMENT
+source_lineage:
+- source_uid: SRC-DOCX-B857D9A2F1BD30827290
+  source_segment_uids:
+  - SEG-SN-404ADA08814186486CC05B96
+  - SEG-SN-64BAB94C6A4434E0F748F8C6
+  - SEG-SN-630A91B70D4F74EC6293D3E3
+  - SEG-SN-DF1D4495D3CEFE5FD1B38F89
+  - SEG-SN-72CE858DBB572CE0AAF4DC52
+  - SEG-SN-55F65FBF7ACEFF836A6A4BA0
+  - SEG-SN-E13C2E73069FB1AC95B0D12D
+  - SEG-SN-EE1402ABC1C5D7A0F700C846
+  - SEG-SN-8E4DD1FB969FA15313B31F28
+  - SEG-SN-C6BC7B837A83D12B01368F04
+  - SEG-SN-1068B0607358107C0571E3BD
+  - SEG-SN-A4AD489AA53FD0ECC0269CB5
+  - SEG-SN-BA94D782AE748C97E3F07A21
+  - SEG-SN-132A33479C8EB34ECA5F0180
+  - SEG-SN-DDF63D78CCBEDBF631C4BDE7
+  - SEG-SN-77AF4A47C01874E84D4466DD
+  - SEG-SN-CE3AD05763F910D9A715D9D0
+  - SEG-SN-9F5BFAB963D7A8CF82542D27
+  - SEG-SN-14AC982BAFFF193AFB317E86
+  - SEG-SN-ABA94A85C3B43ABECB53795B
+  - SEG-SN-B8C7CC2D599261E16ECE2D52
+  - SEG-SN-E449CEF7EA5BB4E0960C6124
+  - SEG-SN-D9BD9AF9461D6E49128126C2
+  - SEG-SN-1CA363797A85D4A8AF46F781
+  - SEG-SN-BBBD00792A9F88F848AFCD7B
+  - SEG-SN-3D6F6359E45F697AC9AB4111
+  - SEG-SN-C867224FC051EB54BA28E423
+  - SEG-SN-F332E95140E454FC268EDDFA
+  - SEG-SN-2FBC7C8ED1A2BCE140F06F6F
+  - SEG-SN-97C1A4C8D6C582C19D04A0A3
+  - SEG-SN-B1E0366ADA55413A714CCFD4
+  - SEG-SN-6D3540C5877115E4CEAB9134
+facts:
+- source_node_uid: SN-404ADA08814186486CC05B96
+  document_order_index: 259
+  source_text: 1. Design Identity / 設計身份、目的與邊界
+- source_node_uid: SN-64BAB94C6A4434E0F748F8C6
+  document_order_index: 2379
+  source_text: 5. Core Entity Inventory / 核心實體與唯一責任
+- source_node_uid: SN-630A91B70D4F74EC6293D3E3
+  document_order_index: 2416
+  source_text: Entity
+- source_node_uid: SN-DF1D4495D3CEFE5FD1B38F89
+  document_order_index: 3719
+  source_text: 5.1 Entity Relationship / Ownership Matrix
+- source_node_uid: SN-72CE858DBB572CE0AAF4DC52
+  document_order_index: 4783
+  source_text: 6. Business Entity × Operation Matrix / 實體 × 操作
+- source_node_uid: SN-55F65FBF7ACEFF836A6A4BA0
+  document_order_index: 4822
+  source_text: Entity
+- source_node_uid: SN-E13C2E73069FB1AC95B0D12D
+  document_order_index: 6506
+  source_text: verify before success projection
+- source_node_uid: SN-EE1402ABC1C5D7A0F700C846
+  document_order_index: 10669
+  source_text: Same key + same payload MAY return/recover existing execution identity; MUST NOT duplicate side effect.
+- source_node_uid: SN-8E4DD1FB969FA15313B31F28
+  document_order_index: 11600
+  source_text: ExecutionJob identity MUST be stable across retries; Attempt identity MUST be unique.
+- source_node_uid: SN-C6BC7B837A83D12B01368F04
+  document_order_index: 12549
+  source_text: Identity
+- source_node_uid: SN-1068B0607358107C0571E3BD
+  document_order_index: 12860
+  source_text: target entity/output scope / intended operation
+- source_node_uid: SN-A4AD489AA53FD0ECC0269CB5
+  document_order_index: 16439
+  source_text: external identity
+- source_node_uid: SN-BA94D782AE748C97E3F07A21
+  document_order_index: 19495
+  source_text: historical read-only projection
+- source_node_uid: SN-132A33479C8EB34ECA5F0180
+  document_order_index: 21634
+  source_text: no success projection
+- source_node_uid: SN-DDF63D78CCBEDBF631C4BDE7
+  document_order_index: 22057
+  source_text: archive projection
+- source_node_uid: SN-77AF4A47C01874E84D4466DD
+  document_order_index: 22198
+  source_text: archive projection
+- source_node_uid: SN-CE3AD05763F910D9A715D9D0
+  document_order_index: 22408
+  source_text: stable parent identity
+- source_node_uid: SN-9F5BFAB963D7A8CF82542D27
+  document_order_index: 24610
+  source_text: dedupe by external result identity
+- source_node_uid: SN-14AC982BAFFF193AFB317E86
+  document_order_index: 25132
+  source_text: scope = canonical source intent + target + operation + client/request identity
+- source_node_uid: SN-ABA94A85C3B43ABECB53795B
+  document_order_index: 25420
+  source_text: attempt + artifact identity/checksum
+- source_node_uid: SN-B8C7CC2D599261E16ECE2D52
+  document_order_index: 25492
+  source_text: attempt + cost source/event identity
+- source_node_uid: SN-E449CEF7EA5BB4E0960C6124
+  document_order_index: 29087
+  source_text: Cross-project scope
+- source_node_uid: SN-D9BD9AF9461D6E49128126C2
+  document_order_index: 29701
+  source_text: Health projection
+- source_node_uid: SN-1CA363797A85D4A8AF46F781
+  document_order_index: 31631
+  source_text: tool identity + args hash
+- source_node_uid: SN-BBBD00792A9F88F848AFCD7B
+  document_order_index: 31752
+  source_text: budget/finance projection
+- source_node_uid: SN-3D6F6359E45F697AC9AB4111
+  document_order_index: 32849
+  source_text: tool identity/schema/args hash/result hash
+- source_node_uid: SN-C867224FC051EB54BA28E423
+  document_order_index: 34092
+  source_text: InstructionCompiler implementation path/service identity
+- source_node_uid: SN-F332E95140E454FC268EDDFA
+  document_order_index: 34956
+  source_text: Event bus/topic exact names and schemas
+- source_node_uid: SN-2FBC7C8ED1A2BCE140F06F6F
+  document_order_index: 37229
+  source_text: cost cannot rewrite task contract
+- source_node_uid: SN-97C1A4C8D6C582C19D04A0A3
+  document_order_index: 42570
+  source_text: Then explicit budget block; task unchanged
+- source_node_uid: SN-B1E0366ADA55413A714CCFD4
+  document_order_index: 44413
+  source_text: Entity operations
+- source_node_uid: SN-6D3540C5877115E4CEAB9134
+  document_order_index: 45961
+  source_text: duplicate identity different payload
+status: CURRENT_CLASSIFICATION
+content_hash: 46dc7ea5111dc1df5abcda99cb570fc17d01b80541b9cf7a49111fd10d1208c2
