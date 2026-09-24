@@ -1,0 +1,56 @@
+artifact_uid: GUARD-WU-STAGE01-GLOBAL-HOME-SHELL-NAVIGATION-001-20260924
+artifact_type: STAGE1_SOURCE_PIPELINE_GUARD_RESULT
+validator_uid: VAL-GOV-026
+validator_name: STAGE1_SOURCE_PIPELINE_GUARD
+validation_mode: CURRENT_REVISION_BOUNDARY_RECONCILIATION
+direct_script_reexecution: false
+direct_script_reexecution_disposition: NOT_REQUIRED_CURRENT_REVISION_ADMISSION_EVIDENCE_AND_STEP_OUTPUTS_BYTE_STABLE
+governance_uid: GOV-REV-20260923-WORD-PROJECTION-NEXTSTEP-CONSUMER-SYNC-HARDENING
+governance_head: 40469342b2632d8453986d5800c9ccb9233208d5
+product_head_audited: 02cf9788a4faf34a08eeae7fb5f3470fb0845626
+canonical_owner_uid: SOURCE_BOUND_STAGE01_OWNER:SRC-DOCX-334A4679600F092B733B
+projection_admission_evidence:
+  validator_uid: VAL-GOV-026
+  fresh_evidence_commit: 26c0c99231d4ef5e667890c9269373b36e5e981f
+  evidence_ref: 00_SOURCE_INTAKE/SOURCE_PROJECTIONS/SRC-DOCX-334A4679600F092B733B/SOURCE_PROJECTION_RECONCILIATION_EVIDENCE.yaml
+  projection_subtree_sha_at_validation: 20233b736cba2655bacd8a348430e2f57c757077
+  projection_subtree_sha_at_closure: 20233b736cba2655bacd8a348430e2f57c757077
+  byte_drift_count: 0
+  zero_loss_mismatch_count: 0
+  reverse_trace: COMPLETE
+  unsupported_count: 0
+  result: PASS
+source_fact_contract_guard:
+  validator_uid: VAL-GOV-025
+  canonical_name: SOURCE_FACT_CONTRACT_GUARD
+  identity_mode: DECLARED_STAGE_GUARD
+  implementation_path: null
+  result: PASS_BY_CURRENT_OPERATION_RECEIPT_CHAIN
+operation_receipt_denominator: 9
+operation_receipt_pass_count: 9
+operation_receipts:
+- EVIDENCE/OPERATION_RECEIPTS/SOURCE_STRUCTURE_ENUMERATION.yaml
+- EVIDENCE/OPERATION_RECEIPTS/SOURCE_SEGMENT_MAPPING.yaml
+- EVIDENCE/OPERATION_RECEIPTS/SOURCE_CONTEXT_COMPILATION.yaml
+- EVIDENCE/OPERATION_RECEIPTS/SOURCE_SUPERSESSION_CONFLICT_RESOLUTION.yaml
+- EVIDENCE/OPERATION_RECEIPTS/SOURCE_DEPENDENCY_EXTRACTION.yaml
+- EVIDENCE/OPERATION_RECEIPTS/RESPONSIBILITY_CLASSIFICATION.yaml
+- EVIDENCE/OPERATION_RECEIPTS/PAGE_BASE_BLUEPRINT_COMPILE.yaml
+- EVIDENCE/OPERATION_RECEIPTS/VISUAL_BASE_BLUEPRINT_COMPILE.yaml
+- EVIDENCE/OPERATION_RECEIPTS/BLUEPRINT_BINDING_COMPILE.yaml
+operation_output_byte_drift_count: 0
+classification_subtree_sha_at_b06: c27bc24669d0b6fde5e1dac95f58e380f701d812
+classification_subtree_sha_at_closure: c27bc24669d0b6fde5e1dac95f58e380f701d812
+physical_file_denominator_before_closure_evidence: 51
+manifest_declared_file_count_before_closure_evidence: 51
+unreferenced_residual_count: 0
+manifest_missing_physical_count: 0
+candidate_normative_hash: a87b092b5c0348e38e5fafdb17035ea9b2837418441f6f4512006c8b90ace3e5
+artifact_count: 15
+blueprint_count: 2
+binding_count: 1
+required_source_node_count: 416
+failures: []
+status: PASS
+result: PASS
+content_hash: a14778e2928593c1ea6ea5ed36d2466e32f680d83863af9dd09d696b83747abb
