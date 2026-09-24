@@ -54,6 +54,62 @@ jobs:
       - name: Validate active Stage-02 admission
         run: |
           python governance/ci/stage_execution_engine.py --admission-check --stage STAGE-02
+      - name: Validate current Stage-02 product contract semantics
+        shell: bash
+        run: |
+          python - <<'PY'
+          import os, yaml
+          from pathlib import Path
+          root=Path('.')
+          wu=Path(os.environ['ACPOS_ACTIVE_WORK_UNIT']).parent
+          def y(name):
+              p=wu/name
+              if not p.is_file(): raise SystemExit(f'BLOCK:MISSING_STAGE02_ARTIFACT:{name}')
+              obj=yaml.safe_load(p.read_text()) or {}
+              if not isinstance(obj,dict): raise SystemExit(f'BLOCK:INVALID_MAPPING:{name}')
+              return obj
+          inv=y('BUSINESS_ENTITY_INVENTORY.yaml')
+          mat=y('BUSINESS_ENTITY_OPERATION_MATRIX.yaml')
+          hier=y('ENTITY_HIERARCHY_MATRIX.yaml')
+          pkg=y('PAGE_CONSTRUCTION_SPEC_PACKAGE.yaml')
+          ports=y('SHARED_OWNER_PORT_MAP.yaml')
+          chain=y('FUNCTIONAL_CHAIN_SPEC.yaml')
+          topo=y('INTERACTION_TOPOLOGY_SPEC.yaml')
+          wb=y('FUNCTIONAL_WORKBENCH_CONTRACT.yaml')
+          enum=mat.get('operation_contract',{}).get('required_enum') or []
+          if len(enum)!=23 or len(set(enum))!=23: raise SystemExit('BLOCK:OPERATION_ENUM_DENOMINATOR_INVALID')
+          entities=inv.get('entities') or []
+          rows=mat.get('rows') or []
+          if len(rows)!=len(entities): raise SystemExit('BLOCK:ENTITY_OPERATION_ROW_DENOMINATOR_DRIFT')
+          eids={x.get('entity_uid') for x in entities}
+          if {x.get('entity_uid') for x in rows}!=eids: raise SystemExit('BLOCK:ENTITY_OPERATION_IDENTITY_DRIFT')
+          eset=set(enum)
+          for row in rows:
+              req=row.get('required') or []; na=row.get('not_applicable') or []
+              if set(req)&set(na): raise SystemExit('BLOCK:OPERATION_REQUIRED_NA_OVERLAP:'+str(row.get('entity_uid')))
+              if set(req)|set(na)!=eset: raise SystemExit('BLOCK:OPERATION_COVERAGE_DRIFT:'+str(row.get('entity_uid')))
+              if na and not row.get('na_authority_ref'): raise SystemExit('BLOCK:NA_AUTHORITY_MISSING:'+str(row.get('entity_uid')))
+          if len(hier.get('edges') or []) != int(hier.get('required_edge_count') or -1): raise SystemExit('BLOCK:HIERARCHY_DENOMINATOR_DRIFT')
+          included=pkg.get('included_artifacts') or []
+          for rel in included:
+              if not (wu/rel).is_file(): raise SystemExit('BLOCK:PACKAGE_ARTIFACT_MISSING:'+rel)
+          for b in ports.get('bindings') or []:
+              if not b.get('owner_uid') or not b.get('operation_port_uid'): raise SystemExit('BLOCK:SHARED_OWNER_EXACT_BINDING_MISSING')
+          if not chain.get('chains'): raise SystemExit('BLOCK:FUNCTIONAL_CHAIN_EMPTY')
+          if not topo.get('edges'): raise SystemExit('BLOCK:INTERACTION_TOPOLOGY_EMPTY')
+          if not wb.get('workbench_regions'): raise SystemExit('BLOCK:FUNCTIONAL_WORKBENCH_EMPTY')
+          scope=yaml.safe_load((wu/'CURRENT_EXECUTION_SCOPE_MANIFEST.yaml').read_text()) or {}
+          if scope.get('partial_scope') is not False: raise SystemExit('BLOCK:PARTIAL_SCOPE_NOT_ALLOWED_FOR_UNIT_EXIT')
+          predecessor=Path('STAGE_EXECUTION/STAGE-01/WU-STAGE01-GLOBAL-HOME-SHELL-NAVIGATION-001/02_BASE_BLUEPRINT/SRC-DOCX-334A4679600F092B733B/VISUAL_BASE_BLUEPRINT.yaml')
+          if not predecessor.is_file(): raise SystemExit('BLOCK:STAGE03_VISUAL_BLUEPRINT_INPUT_MISSING')
+          for rel in ['PAGE_CONSTRUCTION_SPEC_PACKAGE.yaml','FUNCTIONAL_WORKBENCH_CONTRACT.yaml','INTERACTION_TOPOLOGY_SPEC.yaml']:
+              if not (wu/rel).is_file(): raise SystemExit('BLOCK:STAGE03_SUCCESSOR_INPUT_MISSING:'+rel)
+          print(f'PASS: entity operation denominator entities={len(entities)} operations_per_entity={len(enum)}')
+          print(f'PASS: required hierarchy edges={len(hier.get("edges") or [])}')
+          print(f'PASS: package artifacts={len(included)} all physical')
+          print('PASS: exact shared owner/port identities materialized')
+          print('PASS: Stage-03 successor required inputs materialized')
+          PY
       - name: Validate normalized Stage-02 evidence when materialized
         shell: bash
         run: |
