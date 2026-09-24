@@ -1,0 +1,9 @@
+artifact_uid: FVIM-STAGE02-WB01-001
+artifact_type: FUNCTION_VISUAL_IMPACT_MATRIX
+stage_uid: STAGE-02
+governed_unit_uid: workspace:WB-01
+rows:
+- {function_uid: FC-WB01-DASHBOARD-READ, visual_targets: [KPI_GROUP, DASHBOARD_SECTIONS]}
+- {function_uid: FC-WB01-SECTION-OPEN, visual_targets: [SECTION_CONTROL, DETAIL_OR_DESTINATION_CONTEXT]}
+- {function_uid: FC-WB01-STATE-RECOVERY, visual_targets: [LOADING_STATE, EMPTY_STATE, ERROR_STATE, READ_ONLY_STATE]}
+status: CURRENT
