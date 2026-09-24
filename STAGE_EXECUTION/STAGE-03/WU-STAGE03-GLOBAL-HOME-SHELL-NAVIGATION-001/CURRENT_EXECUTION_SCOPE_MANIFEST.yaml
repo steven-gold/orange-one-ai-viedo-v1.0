@@ -8,8 +8,20 @@ governance_uid: GOV-REV-20260924-INDEPENDENT-UNIT-LIFECYCLE-CURRENT-IDENTITY-SYN
 included_units:
 - GLOBAL-HOME-SHELL-NAVIGATION
 excluded_units: []
-remaining_units:
-- GLOBAL-HOME-SHELL-NAVIGATION
+remaining_units: []
 partial_scope: false
-stage_exit_credit_allowed: false
-status: ACTIVE
+stage_exit_credit_allowed: true
+scope_selection_authority: WORK_UNIT_RESOLUTION_GATE.yaml
+owning_capability: VISUAL_DESIGN
+dependency_closure_refs:
+- WU-STAGE02-GLOBAL-HOME-SHELL-NAVIGATION-001
+denominator_sources:
+- DENOMINATOR_SNAPSHOT.yaml
+- VISUAL_INTERACTION_TOPOLOGY_BINDING.yaml
+- VISUAL_GEOMETRY_CONTRACT.yaml
+closure_validation:
+  head_sha: e5564984caf2fb35b575108fb48d02e241b0bfd0
+  workflow_run_id: 36028726148
+  workflow_job_id: 107731759661
+  result: PASS
+status: CLOSURE_CANDIDATE
