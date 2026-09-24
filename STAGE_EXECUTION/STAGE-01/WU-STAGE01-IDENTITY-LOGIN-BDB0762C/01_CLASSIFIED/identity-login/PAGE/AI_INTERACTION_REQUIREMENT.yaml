@@ -1,0 +1,51 @@
+artifact_uid: CL-SRC-DOCX-D8FDE21A6A68BDB0762C-AI_INTERACTION_REQUIREMENT
+page_uid: identity:login
+planning_domain: PAGE_CONSTRUCTION
+responsibility_uid: AI_INTERACTION_REQUIREMENT
+responsibility_class: AI_INTERACTION_REQUIREMENT
+responsibilities:
+- AI_INTERACTION_REQUIREMENT
+canonical_owner_uid: OWNER-SOURCE-SRC-DOCX-D8FDE21A6A68BDB0762C
+target_path: 01_CLASSIFIED/identity-login/PAGE/AI_INTERACTION_REQUIREMENT.yaml
+lifecycle_uid: LC-STAGE01-AI_INTERACTION_REQUIREMENT
+approval_scope_uid: AP-STAGE01-identity-login
+version_scope_uid: VER-7446ab3f83f9
+test_scope_uid: TEST-STAGE01-AI_INTERACTION_REQUIREMENT
+source_lineage:
+- source_uid: SRC-DOCX-D8FDE21A6A68BDB0762C
+  source_segment_uids:
+  - SEG-SN-551633FDFE77C36596034354
+  - SEG-SN-404ADA08814186486CC05B96
+  - SEG-SN-AD46021DFB609C1573B48DB2
+  - SEG-SN-872CBE43134C8300DB66FDCB
+  - SEG-SN-1932C7DA210A3B2710923BB6
+  - SEG-SN-13EF1C741B874965C1F602C8
+  - SEG-SN-65054F3274779D3AB9735C52
+  - SEG-SN-BD7B53D064F9E553EF51DE68
+facts:
+- source_node_uid: SN-551633FDFE77C36596034354
+  document_order_index: 1001
+  source_text: email
+- source_node_uid: SN-404ADA08814186486CC05B96
+  document_order_index: 1273
+  source_text: 4. Login Functional Chain
+- source_node_uid: SN-AD46021DFB609C1573B48DB2
+  document_order_index: 1488
+  source_text: Canonical human actor；user_id / email / display_name / disabled_at
+- source_node_uid: SN-872CBE43134C8300DB66FDCB
+  document_order_index: 1919
+  source_text: APP_USERS_EMAIL_JOIN_NOT_FOUND
+- source_node_uid: SN-1932C7DA210A3B2710923BB6
+  document_order_index: 1973
+  source_text: IDENTITY_SESSION_CREATE_FAILED
+- source_node_uid: SN-13EF1C741B874965C1F602C8
+  document_order_index: 2121
+  source_text: Focus Ring 必須可見，不能只依紫色差異；Tab order：語言 → email → password → login。
+- source_node_uid: SN-65054F3274779D3AB9735C52
+  document_order_index: 2414
+  source_text: Raw password / token / secret 不進 UI、log、audit 或 DB plaintext。
+- source_node_uid: SN-BD7B53D064F9E553EF51DE68
+  document_order_index: 2598
+  source_text: 5.  檢查 Cookie flags、session expiry、logout delete、invalid/expired token fail-closed。
+status: CURRENT_CLASSIFICATION
+content_hash: 8fe973ae87a05f87c3f4d2bc985afe2338eb4c6a5d62c0cefce33d59473c13bb

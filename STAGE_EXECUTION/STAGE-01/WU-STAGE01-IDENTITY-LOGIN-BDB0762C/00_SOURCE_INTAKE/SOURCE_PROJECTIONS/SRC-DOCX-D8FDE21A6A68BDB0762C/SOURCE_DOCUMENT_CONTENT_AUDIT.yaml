@@ -1,0 +1,61 @@
+schema_version: 1
+artifact_uid: CONTENT-AUDIT-SRC-DOCX-D8FDE21A6A68BDB0762C
+artifact_type: SOURCE_DOCUMENT_CONTENT_AUDIT
+source_uid: SRC-DOCX-D8FDE21A6A68BDB0762C
+source_sha256: d8fde21a6a68bdb0762c10e6181c5e6ecf09b882e3082d563caf74276e20b972
+page_uid: identity:login
+audit_standard_uid: WEB-GOV-01-S090
+required_design_domain_uids:
+- ACTION_PERMISSION_GATE
+- API_RUNTIME_DEPENDENCY
+- ARCHITECTURE_BOUNDARY
+- DENOMINATOR_RECONCILIATION
+- ERROR_FAILURE_RECOVERY
+- FUNCTION_OPERATION
+- FUNCTION_VISUAL_TRACE
+- HANDOFF_NEXT_PREVIOUS
+- INPUT_PAYLOAD_PARAMETER_CONSTRAINT
+- JOURNEY_WORKBENCH_INTERACTION
+- PAGE_CONTROL_FIELD
+- QA_ACCEPTANCE_EVIDENCE
+- REQUIREMENT_SCOPE
+- STATE_STATUS_LIFECYCLE
+- VISUAL_LAYOUT_COMPONENT
+observed_design_domain_uids:
+- ACTION_PERMISSION_GATE
+- API_RUNTIME_DEPENDENCY
+- ARCHITECTURE_BOUNDARY
+- DENOMINATOR_RECONCILIATION
+- ERROR_FAILURE_RECOVERY
+- FUNCTION_OPERATION
+- FUNCTION_VISUAL_TRACE
+- HANDOFF_NEXT_PREVIOUS
+- INPUT_PAYLOAD_PARAMETER_CONSTRAINT
+- JOURNEY_WORKBENCH_INTERACTION
+- PAGE_CONTROL_FIELD
+- QA_ACCEPTANCE_EVIDENCE
+- REQUIREMENT_SCOPE
+- STATE_STATUS_LIFECYCLE
+- VISUAL_LAYOUT_COMPONENT
+missing_required_design_domain_uids: []
+matrix_integrity:
+  status: PASS
+  coverage_percent: 100
+  external_audit_run_id: 35888160986
+  external_audit_artifact_id: 10764320853
+  external_audit_artifact_sha256: e65edfab82807c7465d959e849155595be8ddf138279bdeaafbdd3cc59dc6fa0
+  governance_head: c411687bcd94ba2f0c8016de63c3d8b4dc3d3209
+  product_head: 5086b483da190a9e59ce645d2e9dea41917db6f3
+visual_source_integrity:
+  status: PASS
+  reason: null
+render_integrity:
+  status: PASS
+  pdf_page_count: 6
+  pdf_sha256: 4c59f5cf1f6d5cf73b1df77fbd3d35882139f8ff756d6f35a5d2a7ed63dbe676
+  extracted_text_char_count: 6430
+open_downstream_states: {}
+unresolved_required_gap_count: 0
+contradiction_count: 0
+result: PASS
+evidence_content_hash: a95a986c5850198ecece91cdeb686f6f6336cb12d6f7a745894bc56003b0da54

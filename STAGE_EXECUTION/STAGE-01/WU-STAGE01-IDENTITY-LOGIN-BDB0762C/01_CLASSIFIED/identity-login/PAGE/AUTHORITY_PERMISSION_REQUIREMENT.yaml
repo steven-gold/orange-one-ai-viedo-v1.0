@@ -1,0 +1,59 @@
+artifact_uid: CL-SRC-DOCX-D8FDE21A6A68BDB0762C-AUTHORITY_PERMISSION_REQUIREMENT
+page_uid: identity:login
+planning_domain: PAGE_CONSTRUCTION
+responsibility_uid: AUTHORITY_PERMISSION_REQUIREMENT
+responsibility_class: AUTHORITY_PERMISSION_REQUIREMENT
+responsibilities:
+- AUTHORITY_PERMISSION_REQUIREMENT
+canonical_owner_uid: OWNER-SOURCE-SRC-DOCX-D8FDE21A6A68BDB0762C
+target_path: 01_CLASSIFIED/identity-login/PAGE/AUTHORITY_PERMISSION_REQUIREMENT.yaml
+lifecycle_uid: LC-STAGE01-AUTHORITY_PERMISSION_REQUIREMENT
+approval_scope_uid: AP-STAGE01-identity-login
+version_scope_uid: VER-7446ab3f83f9
+test_scope_uid: TEST-STAGE01-AUTHORITY_PERMISSION_REQUIREMENT
+source_lineage:
+- source_uid: SRC-DOCX-D8FDE21A6A68BDB0762C
+  source_segment_uids:
+  - SEG-SN-DA29916DCA1589377F01233D
+  - SEG-SN-06B29E2143F86A5D8688CA02
+  - SEG-SN-7D22C6CD15AF7247ABEEE827
+  - SEG-SN-996D4D0193834A978D0701A2
+  - SEG-SN-72CE858DBB572CE0AAF4DC52
+  - SEG-SN-8087B6E22766C69B602972FE
+  - SEG-SN-BD683E7D528EBA4502D03D63
+  - SEG-SN-5E642B3423800D547E490F17
+  - SEG-SN-F917EF79BA16D41BA3B39158
+  - SEG-SN-B13E357674CA619C161894D1
+facts:
+- source_node_uid: SN-DA29916DCA1589377F01233D
+  document_order_index: 432
+  source_text: 登入 Session 本身不屬 Account Permission Catalog；進站後各 Page 再做 page/action permission gate
+- source_node_uid: SN-06B29E2143F86A5D8688CA02
+  document_order_index: 1160
+  source_text: 只顯示合法 reason / 友善映射；role=alert
+- source_node_uid: SN-7D22C6CD15AF7247ABEEE827
+  document_order_index: 1285
+  source_text: 2.  Locale Provider 載入目前語言；登入頁不需要 Page Permission。
+- source_node_uid: SN-996D4D0193834A978D0701A2
+  document_order_index: 1562
+  source_text: 登入後帳戶與權限管理；不得搬進 Login 頁
+- source_node_uid: SN-72CE858DBB572CE0AAF4DC52
+  document_order_index: 2109
+  source_text: Email / Password 使用正式 `<label>`；錯誤區 `role=alert`。
+- source_node_uid: SN-8087B6E22766C69B602972FE
+  document_order_index: 2525
+  source_text: 登入完成只建立 Identity；Page Permission 仍由進站後各頁 Gate 判定。
+- source_node_uid: SN-BD683E7D528EBA4502D03D63
+  document_order_index: 2617
+  source_text: 本附錄只補規劃／基本設計規範缺口；原頁面既有功能、Owner、Operation、Permission、Entity、Visual 與跨頁 Authority 仍為同一 Canonical Owner。不得由本附錄發明 Runtime/API/DB/Provider 行為，也不得建立第二套平行規範。
+- source_node_uid: SN-5E642B3423800D547E490F17
+  document_order_index: 2659
+  source_text: ACPOS_IAM-01_帳戶與權限_Mother_Basic_Design_OPTIMIZED.docx owns Account / Identity / Permission design truth referenced by Login.
+- source_node_uid: SN-F917EF79BA16D41BA3B39158
+  document_order_index: 2685
+  source_text: Login does not duplicate IAM permission models or Home navigation registry. It only owns the identity-entry surface and its local states.
+- source_node_uid: SN-B13E357674CA619C161894D1
+  document_order_index: 2724
+  source_text: IAM identity/permission contract or Home entry/navigation changes require Login design reference revalidation before design freeze.
+status: CURRENT_CLASSIFICATION
+content_hash: 3f3a12d7ed7922a9413178c876eb2e40546a5b2f583bb1112d07c81f24c4a460

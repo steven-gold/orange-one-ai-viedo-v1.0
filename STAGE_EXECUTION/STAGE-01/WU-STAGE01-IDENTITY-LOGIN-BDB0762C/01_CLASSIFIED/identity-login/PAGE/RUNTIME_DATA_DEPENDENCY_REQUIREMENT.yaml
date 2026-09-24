@@ -1,0 +1,75 @@
+artifact_uid: CL-SRC-DOCX-D8FDE21A6A68BDB0762C-RUNTIME_DATA_DEPENDENCY_REQUIREMENT
+page_uid: identity:login
+planning_domain: PAGE_CONSTRUCTION
+responsibility_uid: RUNTIME_DATA_DEPENDENCY_REQUIREMENT
+responsibility_class: RUNTIME_DATA_DEPENDENCY_REQUIREMENT
+responsibilities:
+- RUNTIME_DATA_DEPENDENCY_REQUIREMENT
+canonical_owner_uid: OWNER-SOURCE-SRC-DOCX-D8FDE21A6A68BDB0762C
+target_path: 01_CLASSIFIED/identity-login/PAGE/RUNTIME_DATA_DEPENDENCY_REQUIREMENT.yaml
+lifecycle_uid: LC-STAGE01-RUNTIME_DATA_DEPENDENCY_REQUIREMENT
+approval_scope_uid: AP-STAGE01-identity-login
+version_scope_uid: VER-7446ab3f83f9
+test_scope_uid: TEST-STAGE01-RUNTIME_DATA_DEPENDENCY_REQUIREMENT
+source_lineage:
+- source_uid: SRC-DOCX-D8FDE21A6A68BDB0762C
+  source_segment_uids:
+  - SEG-SN-AF66DA25E2D48ED93E215AED
+  - SEG-SN-F9894DBE17D0A41E3CE3546C
+  - SEG-SN-62C5E16868D84A7AF1007231
+  - SEG-SN-DE3B6CF7A9B491021558ACFD
+  - SEG-SN-0476F9FF929B0727B32DCF1F
+  - SEG-SN-A6404B9F0B82AB3ADD45EDC9
+  - SEG-SN-A380F03CDF3F0E12F57252D6
+  - SEG-SN-C4F29054690657F468248251
+  - SEG-SN-9E39547768A90F573508998A
+  - SEG-SN-06A5709B0396EAA36F759A7E
+  - SEG-SN-920D04DCD87E416DA10DEFE8
+  - SEG-SN-7030DCDAE7BE722AFB50C07C
+  - SEG-SN-23EA373544AB46A2CD2F2198
+  - SEG-SN-9A4C14B069F60C612ACFEBA8
+facts:
+- source_node_uid: SN-AF66DA25E2D48ED93E215AED
+  document_order_index: 79
+  source_text: Login 是未登入入口，不使用登入後 Global Shell 的 Header／Sidebar。成功登入後建立內部 Cookie Session，並導向 `/` 儀表板；不得在登入頁引入 IAM 管理、Provider、專案或其他業務功能。
+- source_node_uid: SN-F9894DBE17D0A41E3CE3546C
+  document_order_index: 1018
+  source_text: required；autocomplete=username；Trim；送出後由 Runtime 驗證
+- source_node_uid: SN-62C5E16868D84A7AF1007231
+  document_order_index: 1297
+  source_text: 4.  Server 以 email 尋找 READY runtime account；密碼使用 scrypt 驗證。
+- source_node_uid: SN-DE3B6CF7A9B491021558ACFD
+  document_order_index: 1303
+  source_text: 5.  建立 32-byte random session token；資料庫只保存 SHA-256 token hash。
+- source_node_uid: SN-0476F9FF929B0727B32DCF1F
+  document_order_index: 1309
+  source_text: 6.  以 session 對 runtime account → app_users 做 email join；app_users 必須 `disabled_at IS NULL`。
+- source_node_uid: SN-A6404B9F0B82AB3ADD45EDC9
+  document_order_index: 1397
+  source_text: acpos_runtime.accounts
+- source_node_uid: SN-A380F03CDF3F0E12F57252D6
+  document_order_index: 1414
+  source_text: 登入憑證與 READY runtime account 狀態
+- source_node_uid: SN-C4F29054690657F468248251
+  document_order_index: 1434
+  source_text: acpos_runtime.sessions
+- source_node_uid: SN-9E39547768A90F573508998A
+  document_order_index: 1508
+  source_text: Identity Runtime
+- source_node_uid: SN-06A5709B0396EAA36F759A7E
+  document_order_index: 1583
+  source_text: Database 永遠只保存 session token 的 SHA-256 hash，不保存 raw token。
+- source_node_uid: SN-920D04DCD87E416DA10DEFE8
+  document_order_index: 1607
+  source_text: Runtime account 必須 READY，且可映射至 non-disabled app_users；否則 fail-closed。
+- source_node_uid: SN-7030DCDAE7BE722AFB50C07C
+  document_order_index: 1865
+  source_text: DATABASE_RUNTIME_NOT_BOUND
+- source_node_uid: SN-23EA373544AB46A2CD2F2198
+  document_order_index: 2562
+  source_text: Login Design 完成不等於 Production Identity Runtime 已重新施工／驗收。
+- source_node_uid: SN-9A4C14B069F60C612ACFEBA8
+  document_order_index: 2586
+  source_text: 3.  加入明確 submitting / error focus 管理，但不得改變 Identity Runtime contract。
+status: CURRENT_CLASSIFICATION
+content_hash: 23d389b12196801caa74049204534196e880672858d9708fcbffb2059ff418bc
