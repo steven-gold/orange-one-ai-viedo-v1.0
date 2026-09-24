@@ -1,0 +1,30 @@
+artifact_uid: VDSP-STAGE03-HOME-001
+artifact_type: VISUAL_DESIGN_SPEC_PACKAGE
+stage_uid: STAGE-03
+governed_unit_uid: GLOBAL-HOME-SHELL-NAVIGATION
+visual_style: TECHNOLOGY_PURPLE_GLOBAL_VISUAL
+color_authority:
+  token_ref: GLOBAL_VISUAL_PURPLE_TOKEN
+  exact_hex_status: UNRESOLVED_IN_CURRENT_ADMISSIBLE_SOURCE
+  generated_preview_may_not_create_authority: true
+regions:
+- {uid: HEADER, position: VIEWPORT_TOP, height_px: 58, lock: LOCKED}
+- {uid: SIDEBAR, top_px: 58, collapsed_width_px: 64, expanded_width_px: 221, lock: LOCKED}
+- {uid: WORKSPACE, top_px: 68, collapsed_left_px: 78, expanded_left_px: 235, right_px: 16, bottom_px: 16, lock: COUPLED_REFLOW}
+interaction_states:
+- SIDEBAR_COLLAPSED
+- SIDEBAR_EXPANDED
+- NAV_ITEM_ACTIVE
+- NAV_ITEM_FOCUS
+- NAV_ITEM_DISABLED_WITH_REASON
+- LANGUAGE_POPOVER
+- QUICK_STATUS_AVAILABLE
+- QUICK_STATUS_CONTROLLED_DISABLED
+transition:
+  shared_duration_ms: 180
+  allowed_range_ms: [160,200]
+  reduced_motion: NEAR_IMMEDIATE
+authority_refs:
+- STAGE_EXECUTION/STAGE-01/WU-STAGE01-GLOBAL-HOME-SHELL-NAVIGATION-001/02_BASE_BLUEPRINT/SRC-DOCX-334A4679600F092B733B/VISUAL_BASE_BLUEPRINT.yaml
+- STAGE_EXECUTION/STAGE-02/WU-STAGE02-GLOBAL-HOME-SHELL-NAVIGATION-001/FUNCTIONAL_WORKBENCH_CONTRACT.yaml
+status: VISUAL_CANDIDATE
