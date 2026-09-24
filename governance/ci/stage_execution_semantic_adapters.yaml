@@ -232,6 +232,10 @@ stages:
     business_entity_gate_required: true
     scanner_mode: SPECIALIZED_COMPATIBILITY_PLUS_NORMALIZED_COMMON
     python_compatibility_module: stage_execution_adapters.stage02_functional_contract
+    compatibility_current_execution_authority: false
+    compatibility_may_resolve_current_scope: false
+    compatibility_state_source: HISTORICAL_GOVERNANCE_TEST_STATE_ONLY
+    current_execution_state_source: PRODUCT_STAGE_EXECUTION_CURRENT_SCOPE_AND_RESUME
     packaged_required_artifact_contract:
       owner_output: PAGE_CONSTRUCTION_SPEC_PACKAGE
       materializer_owner: governance/ci/materialize_current_stage2_closure_artifacts.py
