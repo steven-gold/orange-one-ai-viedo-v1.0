@@ -1,0 +1,33 @@
+artifact_uid: SF-DEPENDENCY-WU-STAGE01-ADMIN-SOC-01-51A4B43F
+artifact_type: SOURCE_DEPENDENCY_MAP
+page_uids:
+- admin:SOC-01
+page_uid_or_scope_uid: admin:SOC-01
+status: CURRENT_SOURCE_FACT
+edges:
+- edge_uid: DEP-SEQUENCE-SRC-DOCX-5950B577ECCD51A4B43F
+  producer_source_uid: SRC-DOCX-5950B577ECCD51A4B43F
+  consumer_source_uid: SRC-DOCX-5950B577ECCD51A4B43F
+  dependency_type: SEQUENCE
+  authority_evidence_ref: EVIDENCE/SOURCE_ENUMERATION_EVIDENCE.yaml
+unresolved_authority_gaps:
+- gap_uid: UAG-SRC-DOCX-5950B577ECCD51A4B43F-ACPOS-20260922-BATCH-47-SYSTEM07
+  authority_ref: ACPOS-20260922-BATCH-47-SYSTEM07
+  consumer_source_uids:
+  - SRC-DOCX-5950B577ECCD51A4B43F
+  disposition: UNRESOLVED_AUTHORITY_GAP
+  authority_evidence_ref: EVIDENCE/SOURCE_ENUMERATION_EVIDENCE.yaml
+- gap_uid: UAG-SRC-DOCX-5950B577ECCD51A4B43F-SHA-256
+  authority_ref: SHA-256
+  consumer_source_uids:
+  - SRC-DOCX-5950B577ECCD51A4B43F
+  disposition: UNRESOLVED_AUTHORITY_GAP
+  authority_evidence_ref: EVIDENCE/SOURCE_ENUMERATION_EVIDENCE.yaml
+- gap_uid: UAG-SRC-DOCX-5950B577ECCD51A4B43F-SOC-01
+  authority_ref: SOC-01
+  consumer_source_uids:
+  - SRC-DOCX-5950B577ECCD51A4B43F
+  disposition: UNRESOLVED_AUTHORITY_GAP
+  authority_evidence_ref: EVIDENCE/SOURCE_ENUMERATION_EVIDENCE.yaml
+invented_dependency_count: 0
+content_hash: 20d349ced94b83ef490ae35364f2e359f5b64bb5b8e751db1c36d058f9f81cdd

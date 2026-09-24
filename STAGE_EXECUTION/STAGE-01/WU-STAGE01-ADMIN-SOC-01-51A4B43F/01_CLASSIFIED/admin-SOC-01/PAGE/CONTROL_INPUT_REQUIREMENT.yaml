@@ -1,0 +1,175 @@
+artifact_uid: CL-SRC-DOCX-5950B577ECCD51A4B43F-CONTROL_INPUT_REQUIREMENT
+page_uid: admin:SOC-01
+planning_domain: PAGE_CONSTRUCTION
+responsibility_uid: CONTROL_INPUT_REQUIREMENT
+responsibility_class: CONTROL_INPUT_REQUIREMENT
+responsibilities:
+- CONTROL_INPUT_REQUIREMENT
+canonical_owner_uid: OWNER-SOURCE-SRC-DOCX-5950B577ECCD51A4B43F
+target_path: 01_CLASSIFIED/admin-SOC-01/PAGE/CONTROL_INPUT_REQUIREMENT.yaml
+lifecycle_uid: LC-STAGE01-CONTROL_INPUT_REQUIREMENT
+approval_scope_uid: AP-STAGE01-admin-SOC-01
+version_scope_uid: VER-e58891cfed6b
+test_scope_uid: TEST-STAGE01-CONTROL_INPUT_REQUIREMENT
+source_lineage:
+- source_uid: SRC-DOCX-5950B577ECCD51A4B43F
+  source_segment_uids:
+  - SEG-SN-F4AB635CDB412F2E090CDE37
+  - SEG-SN-6065B5BEDAEA2DCA42F20297
+  - SEG-SN-6E0D1678521D746EE0E35D81
+  - SEG-SN-DAF6602812CFD840599F9A10
+  - SEG-SN-698C94B11F54BCACAEF1BC22
+  - SEG-SN-AF3C8B6EC75708B59780E391
+  - SEG-SN-DF1263C12C5E14094DB8EDDB
+  - SEG-SN-BBA2F6402F86BC201C4019CB
+  - SEG-SN-3498F7D52991E8444CA01A9B
+  - SEG-SN-CE249B319399D7DC556912C9
+  - SEG-SN-24F73885B9DB4E36BE00F2CF
+  - SEG-SN-3EF6512518F8222ACD956B39
+  - SEG-SN-097FADADD09C144EEFC51FB1
+  - SEG-SN-D0B1DAC9CB6B1F6A3AFA4FBD
+  - SEG-SN-C3C03708635B0AD4977FA802
+  - SEG-SN-FFBAE01F4CFABA8F3B0C93F1
+  - SEG-SN-20AC6F3938F157B81AAB8971
+  - SEG-SN-AE3864609AE80E662F1579D9
+  - SEG-SN-F5F05537C27989D6545B100D
+  - SEG-SN-1D3E56B0357B76B9971B0985
+  - SEG-SN-FF2761BD0E9BFC643845D178
+  - SEG-SN-164D8B7ED431336DEC7308EA
+  - SEG-SN-74FF76880B24A2B5DC57E912
+  - SEG-SN-66E5B833D5C4FE3495AB4491
+  - SEG-SN-A01672E1040D07ED3E15F242
+  - SEG-SN-365099D9E420399632C34D65
+  - SEG-SN-D36D9E2DFE7DDC44209C5443
+  - SEG-SN-43D3563957D454559D1963F0
+  - SEG-SN-67AD24F24FEE01B384B6E401
+  - SEG-SN-7C0892688DBFE2CBD67BD024
+  - SEG-SN-C463DCA8954F76C7014D9F8A
+  - SEG-SN-25248F3D08C296FAF045E213
+  - SEG-SN-C7587C53E7A0A4137F2D4892
+  - SEG-SN-E6485AE411992FE5F1A43F79
+  - SEG-SN-C85FBFBA840348832DBA4BC5
+  - SEG-SN-E00656312448BF3D0BCB2CD1
+  - SEG-SN-631CBE12A1D7217B14756030
+  - SEG-SN-4CAD35A243E345D446C5D8BB
+  - SEG-SN-2C1B2919D3A6CB3138CB72DF
+facts:
+- source_node_uid: SN-F4AB635CDB412F2E090CDE37
+  document_order_index: 2803
+  source_text: 52px；5 個 equal-width compact segmented controls；切換只改 UI context。
+- source_node_uid: SN-6065B5BEDAEA2DCA42F20297
+  document_order_index: 2980
+  source_text: Controls
+- source_node_uid: SN-6E0D1678521D746EE0E35D81
+  document_order_index: 2998
+  source_text: 標準高 40px；compact 32px；button radius 10px；touch target 至少 44×44。
+- source_node_uid: SN-DAF6602812CFD840599F9A10
+  document_order_index: 4272
+  source_text: 10. Form / Input Contract / 欄位規格
+- source_node_uid: SN-698C94B11F54BCACAEF1BC22
+  document_order_index: 4327
+  source_text: Fields
+- source_node_uid: SN-AF3C8B6EC75708B59780E391
+  document_order_index: 4405
+  source_text: credential_value 為 input-only secret，不可回填成一般欄位。
+- source_node_uid: SN-DF1263C12C5E14094DB8EDDB
+  document_order_index: 4462
+  source_text: Required fields 保留主表單；optional advanced fields 可收進 Drawer。
+- source_node_uid: SN-BBA2F6402F86BC201C4019CB
+  document_order_index: 4589
+  source_text: 11. Control Registry / 控制分母與顯示策略
+- source_node_uid: SN-3498F7D52991E8444CA01A9B
+  document_order_index: 4684
+  source_text: 代表控制
+- source_node_uid: SN-CE249B319399D7DC556912C9
+  document_order_index: 5005
+  source_text: No Send button
+- source_node_uid: SN-24F73885B9DB4E36BE00F2CF
+  document_order_index: 7691
+  source_text: Stage segmented controls、search、buttons、drawer 必須可 Tab/Shift+Tab；focus visible。
+- source_node_uid: SN-3EF6512518F8222ACD956B39
+  document_order_index: 7730
+  source_text: Focus 不可只靠顏色；Disabled effectful control 必須提供原因。
+- source_node_uid: SN-097FADADD09C144EEFC51FB1
+  document_order_index: 8109
+  source_text: Exact discovery fields + CONTINUOUS/SINGLE_RUN；Source/capability/policy/rights 必須成立。
+- source_node_uid: SN-D0B1DAC9CB6B1F6A3AFA4FBD
+  document_order_index: 8533
+  source_text: Withdrawal 沒有正式 mutation 時保持 read-only，不新增 Withdraw button。
+- source_node_uid: SN-C3C03708635B0AD4977FA802
+  document_order_index: 9163
+  source_text: Expected Control Denominator
+- source_node_uid: SN-FFBAE01F4CFABA8F3B0C93F1
+  document_order_index: 9180
+  source_text: Unique Control Rows
+- source_node_uid: SN-20AC6F3938F157B81AAB8971
+  document_order_index: 9236
+  source_text: Control UID
+- source_node_uid: SN-AE3864609AE80E662F1579D9
+  document_order_index: 9377
+  source_text: BUTTON
+- source_node_uid: SN-F5F05537C27989D6545B100D
+  document_order_index: 9478
+  source_text: BUTTON
+- source_node_uid: SN-1D3E56B0357B76B9971B0985
+  document_order_index: 9579
+  source_text: BUTTON
+- source_node_uid: SN-FF2761BD0E9BFC643845D178
+  document_order_index: 9682
+  source_text: BUTTON
+- source_node_uid: SN-164D8B7ED431336DEC7308EA
+  document_order_index: 9783
+  source_text: BUTTON
+- source_node_uid: SN-74FF76880B24A2B5DC57E912
+  document_order_index: 9884
+  source_text: BUTTON
+- source_node_uid: SN-66E5B833D5C4FE3495AB4491
+  document_order_index: 9989
+  source_text: BUTTON
+- source_node_uid: SN-A01672E1040D07ED3E15F242
+  document_order_index: 10090
+  source_text: BUTTON
+- source_node_uid: SN-365099D9E420399632C34D65
+  document_order_index: 10191
+  source_text: BUTTON
+- source_node_uid: SN-D36D9E2DFE7DDC44209C5443
+  document_order_index: 10292
+  source_text: BUTTON
+- source_node_uid: SN-43D3563957D454559D1963F0
+  document_order_index: 10393
+  source_text: PRIMARY_BUTTON
+- source_node_uid: SN-67AD24F24FEE01B384B6E401
+  document_order_index: 10494
+  source_text: BUTTON
+- source_node_uid: SN-7C0892688DBFE2CBD67BD024
+  document_order_index: 10595
+  source_text: BUTTON
+- source_node_uid: SN-C463DCA8954F76C7014D9F8A
+  document_order_index: 10696
+  source_text: BUTTON
+- source_node_uid: SN-25248F3D08C296FAF045E213
+  document_order_index: 16753
+  source_text: Control UID
+- source_node_uid: SN-C7587C53E7A0A4137F2D4892
+  document_order_index: 25233
+  source_text: Every registered Section remains within its current Workspace region; sticky/fixed/overlay areas MUST NOT occlude required controls.
+- source_node_uid: SN-E6485AE411992FE5F1A43F79
+  document_order_index: 25240
+  source_text: Component / Control / Field Width / Height Rules
+- source_node_uid: SN-C85FBFBA840348832DBA4BC5
+  document_order_index: 25259
+  source_text: Inherit current exact values where present; otherwise shared component minimums apply. Required input/button content may not compress below its registered usable size.
+- source_node_uid: SN-E00656312448BF3D0BCB2CD1
+  document_order_index: 25298
+  source_text: No hidden overflow for actionable content. Long technical values use existing ellipsis + tooltip/drawer rule; large tables may use the current controlled horizontal-scroll rule.
+- source_node_uid: SN-631CBE12A1D7217B14756030
+  document_order_index: 25389
+  source_text: Detect overlap, clipping, horizontal overflow, unapproved scroll, control compression, unexpected wrap/stack, aspect drift, misalignment, sticky/fixed occlusion and header/sidebar/workspace collision.
+- source_node_uid: SN-4CAD35A243E345D446C5D8BB
+  document_order_index: 25873
+  source_text: Control / Field Mapping
+- source_node_uid: SN-2C1B2919D3A6CB3138CB72DF
+  document_order_index: 25931
+  source_text: REQUIRED before a new candidate is generated; fields are defined by the Visual contract in this annex.
+status: CURRENT_CLASSIFICATION
+content_hash: c0a34bf9c5692fcac68b390fdb4d68edff56c1b0eb077d9f7f1108dbbe1d9827
