@@ -43,5 +43,7 @@ required_tests:
 required_evidence:
 - OPERATION_RECEIPTS
 - WORK_UNIT_TERMINAL_RECEIPT
-current_status: ACTIVE_PRIMARY_WORK_UNIT
-resume_point: SOURCE_STRUCTURE_ENUMERATION
+current_status: CLOSED_PASS
+resume_point: WORK_UNIT_RESOLUTION_GATE
+terminal_receipt_ref: WORK_UNIT_TERMINAL_RECEIPT.yaml
+next_authorized_work_unit_uid: WU-STAGE01-WB01-DASHBOARD-001
