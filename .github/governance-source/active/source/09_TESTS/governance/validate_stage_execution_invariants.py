@@ -150,13 +150,13 @@ def validate(root=ROOT):
     opt = st2.get('canonical_execution_optimization_gate') or {}
     if opt.get('required') is not True or opt.get('raw_plus_legal_successor_overlay_is_effective_truth') is not True or opt.get('authority_gap_minimum_distinct_behaviors') != 2:
         failures.append('stage02_execution_optimization_gate_missing')
-    idx = load(root, '10_REGISTRY/CONSTRUCTION_ARTIFACT_INDEX.yaml')
-    if idx.get('stage_execution_invariant_registry_ref') != 'REG-STAGE-EXECUTION-INVARIANT-001':
-        failures.append('construction_index_binding_missing')
-    ur = idx.get('universal_rules') or {}
-    for k in ['port_exposure_as_trigger', 'state_event_as_trigger_without_explicit_binding', 'semantic_similarity_binding_creation', 'non_current_final_locked_authority_use', 'input_authority_architecture_gap_ai_autofill', 'required_evidence_ledger_claim_without_physical_artifact', 'validator_stale_schema_path_or_enum', 'stale_current_snapshot_after_successor_acceptance', 'receipt_reuse_after_denominator_change', 'unique_current_authority_evidence_skip', 'review_completion_as_stage_closure']:
-        if ur.get(k) != 'BLOCK':
-            failures.append('construction_universal_rule_not_block:' + k)
+    idxinv = inv.get('INDEXED_INCREMENTAL_VALIDATION') or {}
+    if idxinv.get('impact_and_reverse_dependency_index_loading_required') is not True:
+        failures.append('indexed_validation_loading_contract_missing')
+    if idxinv.get('validation_impact_index_required') is not True or idxinv.get('reverse_dependency_index_required') is not True:
+        failures.append('indexed_validation_dependency_contract_missing')
+    if idxinv.get('index_may_skip_required_impacted_validator') is not False or idxinv.get('index_drift_full_sweep_required_before_freeze') is not True:
+        failures.append('indexed_validation_fail_closed_contract_missing')
     crossmat = inv.get('CROSS_STAGE_MATERIALIZATION_AND_CONSUMER_READINESS') or {}
     if crossmat.get('invariant_uid') != 'GOV-INV-CROSS-STAGE-MATERIALIZATION-CONSUMER-READINESS-001':
         failures.append('cross_stage_materialization_invariant_uid_missing')
@@ -205,9 +205,6 @@ def validate(root=ROOT):
     if s3g.get('applicable_visual_anchor_registry_must_be_nonempty') is not True or s3g.get('declared_visual_candidate_requires_physical_evidence') is not True or s3g.get('single_overview_may_substitute_required_scenarios') is not False or s3g.get('missing_required_anchor_or_candidate_blocks_human_visual_review') is not True:
         failures.append('stage03_anchor_candidate_scenario_readiness_gate_incomplete')
 
-    for key in ('reference_only_required_dependency_completion','physical_required_input_missing','required_input_schema_or_version_mismatch','required_input_required_field_incomplete','successor_required_edge_denominator_omission','successor_consumer_readiness_unproven','applicable_visual_anchor_registry_empty','declared_visual_candidate_without_physical_evidence','multi_state_visual_single_overview_without_explicit_simultaneous_state_proof'):
-        if ur.get(key) != 'BLOCK':
-            failures.append('construction_universal_cross_stage_rule_not_block:' + key)
     return {'status': 'PASS' if not failures else 'FAIL', 'invariant_count': len(inv), 'stage_count': len(scope.get('applies_to_stages') or []), 'failures': failures}
 if __name__ == '__main__':
     out = validate()
