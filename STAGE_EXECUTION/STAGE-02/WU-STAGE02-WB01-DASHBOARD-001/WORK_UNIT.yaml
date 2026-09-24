@@ -39,3 +39,29 @@ dependencies:
 - STAGE_EXECUTION/STAGE-01/WU-STAGE01-WB01-DASHBOARD-001/00_SOURCE_INTAKE/CONTENT_SUPERSESSION_CONFLICT_LEDGER.yaml
 - STAGE_EXECUTION/STAGE-01/WU-STAGE01-WB01-DASHBOARD-001/00_SOURCE_INTAKE/SOURCE_DEPENDENCY_MAP.yaml
 current_status: ACTIVE
+
+operation_bindings:
+  FUNCTIONAL_CHAIN_COMPILE: {executor_owner: governance/ci/materialize_current_stage2_closure_artifacts.py, result_owner: STAGE_EXECUTION/STAGE-02/WU-STAGE02-WB01-DASHBOARD-001/FUNCTIONAL_CHAIN_SPEC.yaml}
+  DEPENDENCY_MAP_COMPILE: {executor_owner: governance/ci/materialize_current_stage2_closure_artifacts.py, result_owner: STAGE_EXECUTION/STAGE-02/WU-STAGE02-WB01-DASHBOARD-001/DEPENDENCY_MAP.yaml}
+  PAGE_CONSTRUCTION_SPEC_COMPILE: {executor_owner: governance/ci/materialize_current_stage2_closure_artifacts.py, result_owner: STAGE_EXECUTION/STAGE-02/WU-STAGE02-WB01-DASHBOARD-001/PAGE_CONSTRUCTION_SPEC_PACKAGE.yaml}
+  ASYNC_PROVIDER_CONTRACT_COMPILE: {executor_owner: governance/ci/materialize_current_stage2_closure_artifacts.py, result_owner: STAGE_EXECUTION/STAGE-02/WU-STAGE02-WB01-DASHBOARD-001/ASYNC_PROVIDER_CONTRACT.yaml}
+  SHARED_OWNER_PORT_RESOLVE: {executor_owner: governance/ci/materialize_current_stage2_closure_artifacts.py, result_owner: STAGE_EXECUTION/STAGE-02/WU-STAGE02-WB01-DASHBOARD-001/SHARED_OWNER_PORT_MAP.yaml}
+  FUNCTIONAL_WORKBENCH_CONTRACT_COMPILE: {executor_owner: governance/ci/materialize_current_stage2_closure_artifacts.py, result_owner: STAGE_EXECUTION/STAGE-02/WU-STAGE02-WB01-DASHBOARD-001/FUNCTIONAL_WORKBENCH_CONTRACT.yaml}
+  INTERACTION_TOPOLOGY_COMPILE: {executor_owner: governance/ci/materialize_current_stage2_closure_artifacts.py, result_owner: STAGE_EXECUTION/STAGE-02/WU-STAGE02-WB01-DASHBOARD-001/INTERACTION_TOPOLOGY_SPEC.yaml}
+  STAGE_EXECUTION_PREFLIGHT_COMPILE: {executor_owner: governance/ci/materialize_current_stage2_closure_artifacts.py, result_owner: STAGE_EXECUTION/STAGE-02/WU-STAGE02-WB01-DASHBOARD-001/REQUIRED_FIELD_MANIFEST.yaml}
+  EFFECTIVE_CONTRACT_OVERLAY_COMPILE: {executor_owner: governance/ci/materialize_current_stage2_closure_artifacts.py, result_owner: STAGE_EXECUTION/STAGE-02/WU-STAGE02-WB01-DASHBOARD-001/EFFECTIVE_CONTRACT_OVERLAY.yaml}
+  DEPENDENCY_TOPOLOGY_COMPILE: {executor_owner: governance/ci/materialize_current_stage2_closure_artifacts.py, result_owner: STAGE_EXECUTION/STAGE-02/WU-STAGE02-WB01-DASHBOARD-001/DEPENDENCY_TOPOLOGY.yaml}
+  CHANGE_IMPACT_MAP_COMPILE: {executor_owner: governance/ci/materialize_current_stage2_closure_artifacts.py, result_owner: STAGE_EXECUTION/STAGE-02/WU-STAGE02-WB01-DASHBOARD-001/CHANGE_IMPACT_MAP.yaml}
+  FUNCTION_ADMISSION_SCORECARD_COMPILE: {executor_owner: governance/ci/materialize_current_stage2_closure_artifacts.py, result_owner: STAGE_EXECUTION/STAGE-02/WU-STAGE02-WB01-DASHBOARD-001/FUNCTION_ADMISSION_SCORECARD.yaml}
+  AUTO_COMPLETION_SCOPE_LEDGER_COMPILE: {executor_owner: governance/ci/materialize_current_stage2_closure_artifacts.py, result_owner: STAGE_EXECUTION/STAGE-02/WU-STAGE02-WB01-DASHBOARD-001/AUTO_COMPLETION_SCOPE_LEDGER.yaml}
+scanner_bindings:
+  ENTITY_OPERATION_DENOMINATOR: {scanner_owner: governance/ci/stage_execution_engine.py, result_owner: STAGE_EXECUTION/STAGE-02/WU-STAGE02-WB01-DASHBOARD-001/EVIDENCE/STAGE02_NORMALIZED_EVIDENCE.json}
+  CONTROL_ACTION_RUNTIME_CHAIN: {scanner_owner: governance/ci/stage_execution_engine.py, result_owner: STAGE_EXECUTION/STAGE-02/WU-STAGE02-WB01-DASHBOARD-001/EVIDENCE/STAGE02_NORMALIZED_EVIDENCE.json}
+  PAYLOAD_INPUT: {scanner_owner: governance/ci/stage_execution_engine.py, result_owner: STAGE_EXECUTION/STAGE-02/WU-STAGE02-WB01-DASHBOARD-001/EVIDENCE/STAGE02_NORMALIZED_EVIDENCE.json}
+  STATE_TRANSITION: {scanner_owner: governance/ci/stage_execution_engine.py, result_owner: STAGE_EXECUTION/STAGE-02/WU-STAGE02-WB01-DASHBOARD-001/EVIDENCE/STAGE02_NORMALIZED_EVIDENCE.json}
+  ERROR_RECOVERY: {scanner_owner: governance/ci/stage_execution_engine.py, result_owner: STAGE_EXECUTION/STAGE-02/WU-STAGE02-WB01-DASHBOARD-001/EVIDENCE/STAGE02_NORMALIZED_EVIDENCE.json}
+  AUDIT_EVENT: {scanner_owner: governance/ci/stage_execution_engine.py, result_owner: STAGE_EXECUTION/STAGE-02/WU-STAGE02-WB01-DASHBOARD-001/EVIDENCE/STAGE02_NORMALIZED_EVIDENCE.json}
+  WORKBENCH_COHESION: {scanner_owner: governance/ci/stage_execution_engine.py, result_owner: STAGE_EXECUTION/STAGE-02/WU-STAGE02-WB01-DASHBOARD-001/EVIDENCE/STAGE02_NORMALIZED_EVIDENCE.json}
+  INTERACTION_CONTINUITY: {scanner_owner: governance/ci/stage_execution_engine.py, result_owner: STAGE_EXECUTION/STAGE-02/WU-STAGE02-WB01-DASHBOARD-001/EVIDENCE/STAGE02_NORMALIZED_EVIDENCE.json}
+  AI_CONTEXT_CONTINUITY: {scanner_owner: governance/ci/stage_execution_engine.py, result_owner: STAGE_EXECUTION/STAGE-02/WU-STAGE02-WB01-DASHBOARD-001/EVIDENCE/STAGE02_NORMALIZED_EVIDENCE.json}
+  VERSION_FINALIZATION: {scanner_owner: governance/ci/stage_execution_engine.py, result_owner: STAGE_EXECUTION/STAGE-02/WU-STAGE02-WB01-DASHBOARD-001/EVIDENCE/STAGE02_NORMALIZED_EVIDENCE.json}
