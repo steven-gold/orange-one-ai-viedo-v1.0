@@ -1,0 +1,39 @@
+artifact_uid: OPREC-WU-STAGE01-WB01-DASHBOARD-001-SOURCE_STRUCTURE_ENUMERATION-20260924
+artifact_type: OPERATION_STEP_RECEIPT
+stage_uid: STAGE-01
+operation_uid: SOURCE_STRUCTURE_ENUMERATION
+work_unit_uid: WU-STAGE01-WB01-DASHBOARD-001
+governance_uid: GOV-REV-20260923-WORD-PROJECTION-NEXTSTEP-CONSUMER-SYNC-HARDENING
+governance_head: 40469342b2632d8453986d5800c9ccb9233208d5
+source_lineage:
+  source_uid: SRC-DOCX-2B1908530B5BD312A392
+  projection_uid: PROJ-SRC-DOCX-2B1908530B5BD312A392
+  projection_content_hash: dde5eb0c8eb8bf57b6cd498b260fe66e70b709c92d6d89ecfc7b6fa12a04db52
+  pair_hash: 140f9e5e90c83f4050b621e83563304aaff10603d26cdda1895f6b4d9af675ff
+owner_uid: SOURCE_BOUND_STAGE01_OWNER:SRC-DOCX-2B1908530B5BD312A392
+input_refs:
+- 00_SOURCE_INTAKE/SOURCE_PROJECTIONS/SRC-DOCX-2B1908530B5BD312A392/CANONICAL_SOURCE_PROJECTION.yaml
+- 00_SOURCE_INTAKE/SOURCE_PROJECTIONS/SRC-DOCX-2B1908530B5BD312A392/SOURCE_PROJECTION_FREEZE_RECEIPT.yaml
+output_refs:
+- 00_SOURCE_INTAKE/SOURCE_STRUCTURE_MANIFEST.yaml
+- EVIDENCE/SOURCE_ENUMERATION_EVIDENCE.yaml
+denominator:
+  projection_source_nodes: 42178
+  disposed_projection_source_nodes: 42178
+  semantic_source_nodes: 1272
+  structural_support_projection_nodes: 40906
+completeness_and_pass_condition:
+  denominator_coverage_percent: 100
+  duplicate_disposition_uid_count: 0
+  missing_required_item_count: 0
+  unresolved_required_gap_count: 0
+  unresolved_conflict_count: 0
+  undeclared_output_count: 0
+  future_operation_output_count: 0
+validators_and_evidence:
+- FRESH_PROJECTION_NODE_DENOMINATOR_RECONCILIATION
+- INPUT_IDENTITY_AND_COMPLETE_NODE_DENOMINATOR_EQUIVALENCE
+- EVIDENCE/SOURCE_ENUMERATION_EVIDENCE.yaml
+result: PASS
+legal_successor: SOURCE_SEGMENT_MAPPING
+status: PASS
