@@ -44,7 +44,7 @@ for ph in eng.EXPECTED_PHASES:
         phase_trace.append({'phase_uid':ph,'status':'PASS'})
 sample={
  'artifact_type':'NORMALIZED_STAGE_EXECUTION_EVIDENCE','governance_uid':gov,'stage_uid':stage_uid,'attempt_uid':'SYNTHETIC-NEGATIVE-TEST',
- 'scope_manifest_ref':'governance/test/CURRENT_EXECUTION_SCOPE_MANIFEST.yaml','actual_stage_execution_started':True,'actual_stage_execution_completed':True,
+ 'scope_manifest_ref':'STAGE_EXECUTION/<STAGE_UID>/<WORK_UNIT_UID>/CURRENT_EXECUTION_SCOPE_MANIFEST.yaml','actual_stage_execution_started':True,'actual_stage_execution_completed':True,
  'fresh_execution':True,'prior_results_used':False,'current_specification_mutated':False,'source_head_sha':head,
  'denominator':{'required_total':len(st['operations']),'open_gap_total':0,'closure_blocker_total':0,'remaining_scope_total':0},
  'gaps':[],'closure_blockers':[],'phase_trace':phase_trace,
@@ -182,7 +182,7 @@ def synthetic_evidence(stage_uid,result):
     return {
       'artifact_type':'NORMALIZED_STAGE_EXECUTION_EVIDENCE',
       'governance_uid':gov,'stage_uid':stage_uid,'attempt_uid':f'SYNTH-{stage_uid}',
-      'scope_manifest_ref':'governance/test/CURRENT_EXECUTION_SCOPE_MANIFEST.yaml',
+      'scope_manifest_ref':'STAGE_EXECUTION/<STAGE_UID>/<WORK_UNIT_UID>/CURRENT_EXECUTION_SCOPE_MANIFEST.yaml',
       'actual_stage_execution_started':True,'actual_stage_execution_completed':True,
       'fresh_execution':True,'prior_results_used':False,'current_specification_mutated':False,
       'source_head_sha':head,
@@ -321,15 +321,19 @@ for uid,st in stage_rows.items():
         if unbound:
             audit_error('DENOMINATOR_APPLICABILITY',f'REQUIRED_ARTIFACT_HAS_NO_TOP_LEVEL_OR_PACKAGE_OWNER:{uid}:{applicability_key}:{unbound}')
 
-# Mode 5: State / Resume / Projector.
-active_state=eng.y(eng.STATE)
-profile_state=active_state.get('selected_execution_profile_state') or {}
-if profile_state.get('owner_ref')!='GOVERNANCE_CURRENT.yaml':
-    audit_error('STATE_RESUME_PROJECTOR','PROFILE_STATE_OWNER_DRIFT')
-if active_state.get('specification_uid')!=gov:
-    audit_error('STATE_RESUME_PROJECTOR','ACTIVE_STATE_GOVERNANCE_UID_DRIFT')
-if not isinstance(active_state.get('resume_control'),dict) or not active_state['resume_control'].get('current_resume_point'):
-    audit_error('STATE_RESUME_PROJECTOR','CURRENT_RESUME_POINT_MISSING')
+# Mode 5: Product run-state ownership / scope locator contract.
+scope_contract=profile.get('execution_scope_contract') or {}
+if scope_contract.get('current_scope_artifact')!='PRODUCT_STAGE_EXECUTION_CURRENT_SCOPE_MANIFEST':
+    audit_error('STATE_RESUME_PROJECTOR','CURRENT_SCOPE_ARTIFACT_NOT_PRODUCT_OWNED')
+if scope_contract.get('current_scope_owner_layer')!='PRODUCT_EXECUTION_WORKLINE':
+    audit_error('STATE_RESUME_PROJECTOR','CURRENT_SCOPE_OWNER_LAYER_DRIFT')
+if scope_contract.get('governance_branch_may_persist_current_product_scope') is not False:
+    audit_error('STATE_RESUME_PROJECTOR','GOVERNANCE_BRANCH_PRODUCT_SCOPE_PERSISTENCE_NOT_BLOCKED')
+if reg.get('product_execution_branch')!='0921acpos':
+    audit_error('STATE_RESUME_PROJECTOR','PRODUCT_EXECUTION_BRANCH_DRIFT')
+for legacy in ('GOVERNANCE_CURRENT.yaml','governance/test/ACTIVE_STATE.yaml','governance/test/CURRENT_EXECUTION_SCOPE_MANIFEST.yaml'):
+    if (ROOT/legacy).exists():
+        audit_error('STATE_RESUME_PROJECTOR','LEGACY_PRODUCT_STATE_STILL_PERSISTED:'+legacy)
 
 # Mode 6: Negative Fail-Closed.
 if all_stage_negative_cases!=11:
@@ -345,11 +349,15 @@ for wf in ('governance-selected-profile-integrity.yml','governance-full-line-sys
         audit_error('RESIDUAL_STALE_CONSUMER',f'ACTIVE_CONSUMER_GATE_NOT_WIRED:{wf}')
 
 # Mode 8: Source-Truth Contamination.
-registry_sep=reg.get('test_layer_separation') or {}
-if registry_sep.get('test_state_may_be_normative_authority') is not False:
-    audit_error('SOURCE_TRUTH_CONTAMINATION','TEST_STATE_NORMATIVE_AUTHORITY_NOT_BLOCKED')
-if registry_sep.get('temporary_test_artifact_may_be_normative_authority') is not False:
-    audit_error('SOURCE_TRUTH_CONTAMINATION','TEMP_TEST_NORMATIVE_AUTHORITY_NOT_BLOCKED')
+forbidden=set(reg.get('forbidden_in_ruleset_branch') or [])
+for required in ('ACTIVE_WORK_UNIT','CURRENT_EXECUTION_SCOPE','PRODUCT_EXECUTION_EVIDENCE','PREEXECUTION_RECEIPT','PRODUCT_HISTORY'):
+    if required not in forbidden:
+        audit_error('SOURCE_TRUTH_CONTAMINATION','RULESET_BRANCH_FORBIDDEN_STATE_MISSING:'+required)
+mutation=reg.get('mutation_policy') or {}
+if mutation.get('product_execution_on_rebuild')!='FORBIDDEN':
+    audit_error('SOURCE_TRUTH_CONTAMINATION','PRODUCT_EXECUTION_ON_RULESET_BRANCH_NOT_BLOCKED')
+if mutation.get('product_execution_target')!='0921acpos':
+    audit_error('SOURCE_TRUTH_CONTAMINATION','PRODUCT_EXECUTION_TARGET_DRIFT')
 mother1=(ROOT/'.github/governance-source/active/source/12_DOCS/mother-spec/01_BLUEPRINT_DESIGN_GOVERNANCE.md').read_text(encoding='utf-8')
 for required_token in ('Generated Content','SOURCE_CAPTURE_GAP','跨階段來源實體化與後繼可用性 Gate'):
     if required_token not in mother1:
