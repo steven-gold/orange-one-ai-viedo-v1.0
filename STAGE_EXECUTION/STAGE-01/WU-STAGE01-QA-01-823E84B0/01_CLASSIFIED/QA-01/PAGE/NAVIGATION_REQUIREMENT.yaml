@@ -1,0 +1,51 @@
+artifact_uid: CL-SRC-DOCX-B212A3F1C4FF823E84B0-NAVIGATION_REQUIREMENT
+page_uid: QA-01
+planning_domain: PAGE_CONSTRUCTION
+responsibility_uid: NAVIGATION_REQUIREMENT
+responsibility_class: NAVIGATION_REQUIREMENT
+responsibilities:
+- NAVIGATION_REQUIREMENT
+canonical_owner_uid: OWNER-SOURCE-SRC-DOCX-B212A3F1C4FF823E84B0
+target_path: 01_CLASSIFIED/QA-01/PAGE/NAVIGATION_REQUIREMENT.yaml
+lifecycle_uid: LC-STAGE01-NAVIGATION_REQUIREMENT
+approval_scope_uid: AP-STAGE01-QA-01
+version_scope_uid: VER-a10d52858138
+test_scope_uid: TEST-STAGE01-NAVIGATION_REQUIREMENT
+source_lineage:
+- source_uid: SRC-DOCX-B212A3F1C4FF823E84B0
+  source_segment_uids:
+  - SEG-SN-C341244C80D7CFC26309729F
+  - SEG-SN-7A7DA68235EE79F39D14A783
+  - SEG-SN-C7CE853AA1E26275AC217DD3
+  - SEG-SN-370C86E5ED22D256927B9B88
+  - SEG-SN-66492ADE5BE638E95E24220B
+  - SEG-SN-F00B5277435192097A635217
+  - SEG-SN-DC9430C496676026AE515239
+  - SEG-SN-39CBA805D38341C0F8567BD6
+facts:
+- source_node_uid: SN-C341244C80D7CFC26309729F
+  document_order_index: 23482
+  source_text: Verified NEW exact output + correction linkage
+- source_node_uid: SN-7A7DA68235EE79F39D14A783
+  document_order_index: 36744
+  source_text: CorrectionRequest routes to the original canonical owner with exact source + required delta/evidence. QA does not directly edit upstream output.
+- source_node_uid: SN-C7CE853AA1E26275AC217DD3
+  document_order_index: 43095
+  source_text: Route
+- source_node_uid: SN-370C86E5ED22D256927B9B88
+  document_order_index: 43105
+  source_text: SHARED_OWNER_REFERENCE → ACPOS_GLOBAL_HOME_SHELL_NAVIGATION_Mother_Basic_Design_OPTIMIZED.docx resolves the current route for this Page UID; this page MUST NOT duplicate or invent a second route literal.
+- source_node_uid: SN-66492ADE5BE638E95E24220B
+  document_order_index: 43128
+  source_text: REFERENCE_ONLY → current Index / Global Navigation module mapping for this Page UID.
+- source_node_uid: SN-F00B5277435192097A635217
+  document_order_index: 43174
+  source_text: REFERENCE_ONLY → current Global Navigation parent mapping.
+- source_node_uid: SN-DC9430C496676026AE515239
+  document_order_index: 43438
+  source_text: Navigation Region
+- source_node_uid: SN-39CBA805D38341C0F8567BD6
+  document_order_index: 44347
+  source_text: Any layout/asset/typography/color/component/navigation/dimension/information-hierarchy change outside the approved Change Set is VISUAL_DRIFT_FAIL.
+status: CURRENT_CLASSIFICATION
+content_hash: 0e0876877dbf1940122dad6f71393761baf880043515f79f4c18cdd12d8d0c29
