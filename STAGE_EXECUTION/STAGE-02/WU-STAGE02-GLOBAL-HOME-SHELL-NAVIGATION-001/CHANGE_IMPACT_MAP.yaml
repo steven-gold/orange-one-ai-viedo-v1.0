@@ -1,0 +1,26 @@
+artifact_uid: IMPACT-STAGE02-GLOBAL-HOME-SHELL-001
+artifact_type: CHANGE_IMPACT_MAP
+stage_uid: STAGE-02
+governed_unit_uid: GLOBAL-HOME-SHELL-NAVIGATION
+impact_edges:
+- authority: ACCOUNT_PERMISSION_ASSIGNMENT
+  affected_contracts:
+  - NAVIGATION_ITEM_VISIBILITY
+  - SURFACE_SWITCH_VISIBILITY
+- authority: CANONICAL_NAVIGATION_AUTHORITY
+  affected_contracts:
+  - NAVIGATION_ITEM_IDENTITY
+  - ROUTE_BINDING
+  - ACTIVE_ITEM_RESOLUTION
+- authority: LANGUAGE_SELECTION
+  affected_contracts:
+  - SHELL_I18N_PRESENTATION
+- authority: QUICK_STATUS_PROJECTION
+  affected_contracts:
+  - QUICK_STATUS_READ_MODEL
+- authority: WORKSPACE_MOUNT
+  affected_contracts:
+  - NAVIGATION_TARGET_MOUNT
+  - COLLAPSED_EXPANDED_WORKSPACE_SYNC
+revalidation_required_on_upstream_change: true
+status: CURRENT
