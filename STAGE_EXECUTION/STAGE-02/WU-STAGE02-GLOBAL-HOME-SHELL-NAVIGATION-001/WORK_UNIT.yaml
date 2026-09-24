@@ -12,7 +12,7 @@ current_display_version: v2.2.24
 primary_task_layer: PRODUCT_STAGE_EXECUTION
 owner_capability: PAGE_FUNCTIONAL_CONTRACT
 entry_gate: CURRENT_GOVERNED_UNIT_STAGE1_CLOSED
-status: ACTIVE
+status: CLOSED_PASS
 
 required_outputs:
 - FUNCTIONAL_CHAIN_SPEC
@@ -64,3 +64,6 @@ scanner_bindings:
   INTERACTION_CONTINUITY: {scanner_owner: governance/ci/stage_execution_engine.py, result_owner: STAGE_EXECUTION/STAGE-02/WU-STAGE02-GLOBAL-HOME-SHELL-NAVIGATION-001/EVIDENCE/STAGE02_NORMALIZED_EVIDENCE.json}
   AI_CONTEXT_CONTINUITY: {scanner_owner: governance/ci/stage_execution_engine.py, result_owner: STAGE_EXECUTION/STAGE-02/WU-STAGE02-GLOBAL-HOME-SHELL-NAVIGATION-001/EVIDENCE/STAGE02_NORMALIZED_EVIDENCE.json}
   VERSION_FINALIZATION: {scanner_owner: governance/ci/stage_execution_engine.py, result_owner: STAGE_EXECUTION/STAGE-02/WU-STAGE02-GLOBAL-HOME-SHELL-NAVIGATION-001/EVIDENCE/STAGE02_NORMALIZED_EVIDENCE.json}
+
+stage_exit_authorized: true
+next_stage_uid: STAGE-03
