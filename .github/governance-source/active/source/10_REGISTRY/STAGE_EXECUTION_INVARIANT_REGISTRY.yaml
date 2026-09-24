@@ -165,6 +165,10 @@ invariants:
     review_completion_is_evidence_of_review_only: true
     review_completion_may_override_open_blockers: false
     stage_exit_requires_exit_gate_and_required_evidence_and_zero_unwaived_blockers: true
+    stage_exit_owner_granularity: PAGE_OR_SYSTEM_LOGIC_UNIT
+    same_stage_uid_does_not_create_cross_unit_exit_barrier: true
+    unrelated_page_or_system_unit_may_block_stage_exit: false
+    cross_unit_blocking_requires_explicit_required_dependency_edge: true
   TEST_DEFECT_FEEDBACK_AND_SPEC_EVOLUTION:
     required_for_every_stage_test: true
     defect_and_gap_record_required_during_execution: true
@@ -1100,6 +1104,8 @@ invariants:
     denominator_inclusion_required: true
     successor_consumer_readiness_required: true
     successor_required_input_universe_reconciliation_before_stage_exit: true
+    successor_input_universe_scope: CURRENT_GOVERNED_UNIT
+    cross_unit_successor_input_requires_explicit_required_dependency_edge: true
     historical_or_reference_only_completion_credit: 0
     unresolved_required_dependency: BLOCK_OR_REENTER_EARLIEST_OWNER
     downstream_discovered_upstream_gap: STOP_REENTER_EARLIEST_OWNER_MARK_DESCENDANTS_REVERIFY_REQUIRED
