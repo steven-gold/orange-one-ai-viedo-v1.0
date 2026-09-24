@@ -1,0 +1,167 @@
+artifact_uid: CL-SRC-DOCX-8A62738464742F6C4F04-ERROR_RECOVERY_REQUIREMENT
+page_uid: SRC-DOCX-8A62738464742F6C4F04
+planning_domain: PAGE_CONSTRUCTION
+responsibility_uid: ERROR_RECOVERY_REQUIREMENT
+responsibility_class: ERROR_RECOVERY_REQUIREMENT
+responsibilities:
+- ERROR_RECOVERY_REQUIREMENT
+canonical_owner_uid: OWNER-SOURCE-SRC-DOCX-8A62738464742F6C4F04
+target_path: 01_CLASSIFIED/SRC-DOCX-8A62738464742F6C4F04/PAGE/ERROR_RECOVERY_REQUIREMENT.yaml
+lifecycle_uid: LC-STAGE01-ERROR_RECOVERY_REQUIREMENT
+approval_scope_uid: AP-STAGE01-SRC-DOCX-8A62738464742F6C4F04
+version_scope_uid: VER-a3141bc3de97
+test_scope_uid: TEST-STAGE01-ERROR_RECOVERY_REQUIREMENT
+source_lineage:
+- source_uid: SRC-DOCX-8A62738464742F6C4F04
+  source_segment_uids:
+  - SEG-SN-2F7A4BAA5821B508A34E709A
+  - SEG-SN-1D597A9DDC1A09B634367E23
+  - SEG-SN-DABCD11181A339215A5E468D
+  - SEG-SN-B814966AFC749749D2CEB071
+  - SEG-SN-11998799A7BFFC973F9A3994
+  - SEG-SN-25E7E45D5F905DA4D955E84F
+  - SEG-SN-E3274F67FE2B7F920BBFE74B
+  - SEG-SN-CCF98840B557A66DF3D13B5F
+  - SEG-SN-BF67CEF0D9B431CC45EE94CA
+  - SEG-SN-EF51BECBA05E4982309C7A65
+  - SEG-SN-6ED2D8DAD558A6954FAE40D5
+  - SEG-SN-5F2F0CD2319D51556019965C
+  - SEG-SN-4B00E9C408D4A82E066CEA67
+  - SEG-SN-52C4FFB425D01026582EC000
+  - SEG-SN-CB7C3D4A4D653EB0370F4BA8
+  - SEG-SN-4B2412C63CBBC1D45AF390A6
+  - SEG-SN-495970AC6B5F60FFE566A21A
+  - SEG-SN-4855B87EB853E020A1F78BD4
+  - SEG-SN-8B458BEA790B02F24290F320
+  - SEG-SN-DF3A662D5DD8F9DEB8F94643
+  - SEG-SN-929AE8DAE8377A28835A8F89
+  - SEG-SN-9DB3D60FA22E5AC5171B0BFA
+  - SEG-SN-4E46AED2A316BEAFD19B09D0
+  - SEG-SN-2EBFD121929CB1EA2EED9BBC
+  - SEG-SN-35BFAF6B97BEBCEB35F195E1
+  - SEG-SN-DCC251CB3264B6472DC6F848
+  - SEG-SN-193A8234792BAE26DE404C03
+  - SEG-SN-02E9C59397680D5F90CA5A6F
+  - SEG-SN-7C0B25FB1A24476BB71F1293
+  - SEG-SN-EF9E2F7E279CC9F947A39424
+  - SEG-SN-AD8AC4D684536DE5D32D175C
+  - SEG-SN-C1CADFB556B07D2979F86C55
+  - SEG-SN-AA5DB848503349DB9C8C7190
+  - SEG-SN-ED208D61216DB91377C9AB7B
+  - SEG-SN-F42C934A0B20F53487BCA0B1
+  - SEG-SN-97DE741554E06B5F07545787
+  - SEG-SN-64DEE307311BEDA80CF7F3BA
+facts:
+- source_node_uid: SN-2F7A4BAA5821B508A34E709A
+  document_order_index: 2230
+  source_text: 失敗復原、checkpoint、incident experience candidate
+- source_node_uid: SN-1D597A9DDC1A09B634367E23
+  document_order_index: 3488
+  source_text: correlation + status/error mapping
+- source_node_uid: SN-DABCD11181A339215A5E468D
+  document_order_index: 12037
+  source_text: Unknown external state MUST block blind retry where duplicate effect is possible。
+- source_node_uid: SN-B814966AFC749749D2CEB071
+  document_order_index: 12709
+  source_text: 測試/validator 本身錯誤
+- source_node_uid: SN-11998799A7BFFC973F9A3994
+  document_order_index: 12726
+  source_text: expected semantics + harness failure
+- source_node_uid: SN-25E7E45D5F905DA4D955E84F
+  document_order_index: 13341
+  source_text: Failure rule
+- source_node_uid: SN-E3274F67FE2B7F920BBFE74B
+  document_order_index: 13396
+  source_text: 不可把 UI error 文案當 root cause
+- source_node_uid: SN-CCF98840B557A66DF3D13B5F
+  document_order_index: 17299
+  source_text: fatal regression / security incident / deployment failure / incorrect effect / operator decision
+- source_node_uid: SN-BF67CEF0D9B431CC45EE94CA
+  document_order_index: 20648
+  source_text: Failure/Recovery
+- source_node_uid: SN-EF51BECBA05E4982309C7A65
+  document_order_index: 22238
+  source_text: ROLLBACK_REQUIRED on fatal failure
+- source_node_uid: SN-6ED2D8DAD558A6954FAE40D5
+  document_order_index: 23508
+  source_text: Retry after unknown effect
+- source_node_uid: SN-5F2F0CD2319D51556019965C
+  document_order_index: 23525
+  source_text: 先 reconcile actual external/current state；不得 blind retry。
+- source_node_uid: SN-4B00E9C408D4A82E066CEA67
+  document_order_index: 25062
+  source_text: 29. Retry / Backoff / Circuit / Failure Classes
+- source_node_uid: SN-52C4FFB425D01026582EC000
+  document_order_index: 25103
+  source_text: Failure class
+- source_node_uid: SN-CB7C3D4A4D653EB0370F4BA8
+  document_order_index: 25121
+  source_text: Retry?
+- source_node_uid: SN-4B2412C63CBBC1D45AF390A6
+  document_order_index: 25160
+  source_text: RETRYABLE_TRANSIENT
+- source_node_uid: SN-495970AC6B5F60FFE566A21A
+  document_order_index: 25194
+  source_text: network/temporary runner error; exponential backoff + max attempts
+- source_node_uid: SN-4855B87EB853E020A1F78BD4
+  document_order_index: 25215
+  source_text: NON_RETRYABLE_CONTRACT
+- source_node_uid: SN-8B458BEA790B02F24290F320
+  document_order_index: 25287
+  source_text: NO direct retry
+- source_node_uid: SN-DF3A662D5DD8F9DEB8F94643
+  document_order_index: 25452
+  source_text: NO blind retry
+- source_node_uid: SN-929AE8DAE8377A28835A8F89
+  document_order_index: 25634
+  source_text: if read-only retry; if effectful require idempotency/reconciliation
+- source_node_uid: SN-9DB3D60FA22E5AC5171B0BFA
+  document_order_index: 25714
+  source_text: • AI-09 MUST NOT emit raw secrets/tokens/credentials into prompt, log, finding, evidence, error, export or Word。
+- source_node_uid: SN-4E46AED2A316BEAFD19B09D0
+  document_order_index: 25943
+  source_text: effectful orchestration 必須 crash-safe / retry-safe。
+- source_node_uid: SN-2EBFD121929CB1EA2EED9BBC
+  document_order_index: 26057
+  source_text: run/step/status/duration/error/correlation/current head/gov UID 可查。
+- source_node_uid: SN-35BFAF6B97BEBCEB35F195E1
+  document_order_index: 31138
+  source_text: Retry effectful operation without idempotency/reconcile
+- source_node_uid: SN-DCC251CB3264B6472DC6F848
+  document_order_index: 31468
+  source_text: AI weakens validator to pass current failure
+- source_node_uid: SN-193A8234792BAE26DE404C03
+  document_order_index: 32663
+  source_text: Given effectful attempt times out with unknown external state; When retry considered; Then reconcile real state before retry.
+- source_node_uid: SN-02E9C59397680D5F90CA5A6F
+  document_order_index: 33081
+  source_text: Given secret appears in raw error; When Finding evidence materializes; Then secret is redacted and reference retained.
+- source_node_uid: SN-7C0B25FB1A24476BB71F1293
+  document_order_index: 44659
+  source_text: KB-01-CTL-INGEST-RETRY
+- source_node_uid: SN-EF9E2F7E279CC9F947A39424
+  document_order_index: 44675
+  source_text: 重試
+- source_node_uid: SN-AD8AC4D684536DE5D32D175C
+  document_order_index: 44691
+  source_text: KB-01-ACT-INGEST-RETRY
+- source_node_uid: SN-C1CADFB556B07D2979F86C55
+  document_order_index: 44699
+  source_text: KB-01-GATE-INGEST-RETRY
+- source_node_uid: SN-AA5DB848503349DB9C8C7190
+  document_order_index: 44715
+  source_text: RetryAcquisitionJobRequest
+- source_node_uid: SN-ED208D61216DB91377C9AB7B
+  document_order_index: 44723
+  source_text: retryAcquisitionJob
+- source_node_uid: SN-F42C934A0B20F53487BCA0B1
+  document_order_index: 44731
+  source_text: POST /v1/acpos/acquisition/jobs/{jobId}/retry
+- source_node_uid: SN-97DE741554E06B5F07545787
+  document_order_index: 50593
+  source_text: Failure classification
+- source_node_uid: SN-64DEE307311BEDA80CF7F3BA
+  document_order_index: 54683
+  source_text: Precondition / Failure Semantics
+status: CURRENT_CLASSIFICATION
+content_hash: aa4aee618d496f4a1848e52818ea9a3eec623a2dca9d6e6f4d28fb440467178d
