@@ -1,0 +1,22 @@
+artifact_uid: PORT-STAGE02-GLOBAL-HOME-SHELL-001
+artifact_type: SHARED_OWNER_PORT_MAP
+stage_uid: STAGE-02
+governed_unit_uid: GLOBAL-HOME-SHELL-NAVIGATION
+bindings:
+- responsibility: NAVIGATION_IDENTITY_AND_ROUTE
+  owner_ref: CANONICAL_NAVIGATION_AUTHORITY
+  binding_mode: SHARED_OWNER_REFERENCE
+- responsibility: AUTHORIZATION_AND_VISIBILITY
+  owner_ref: ACCOUNT_PERMISSION_ASSIGNMENT
+  binding_mode: SHARED_OWNER_REFERENCE
+- responsibility: LANGUAGE_SELECTION
+  owner_ref: LANGUAGE_THEME
+  binding_mode: SHARED_OWNER_REFERENCE
+- responsibility: QUICK_STATUS_READ_MODEL
+  owner_ref: QUICK_STATUS_PROJECTION
+  binding_mode: SHARED_OWNER_REFERENCE
+- responsibility: WORKSPACE_MOUNT_TARGET
+  owner_ref: WORKSPACE_MOUNT
+  binding_mode: SHARED_OWNER_REFERENCE
+duplicate_page_local_runtime_created: false
+status: CURRENT
