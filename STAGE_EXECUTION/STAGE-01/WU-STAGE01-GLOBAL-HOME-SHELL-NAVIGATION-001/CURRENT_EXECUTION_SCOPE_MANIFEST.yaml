@@ -4,14 +4,13 @@ stage_uid: STAGE-01
 scope_uid: GLOBAL-HOME-SHELL-NAVIGATION
 scope_kind: SHARED_GLOBAL_SHELL_STAGE01_SOURCE_SCOPE
 work_unit_uid: WU-STAGE01-GLOBAL-HOME-SHELL-NAVIGATION-001
+governed_unit_type: SYSTEM_LOGIC_UNIT
 included_units:
 - SRC-DOCX-334A4679600F092B733B
-excluded_units:
-- ALL_OTHER_CAPTURED_SOURCES
-remaining_units:
-- SRC-DOCX-334A4679600F092B733B
+excluded_units: []
+remaining_units: []
 scope_selection_authority:
-- EXPLICIT_USER_DIRECTIVE_20260924_STAGE01_RESTART_TWO_SCOPES
+- EXPLICIT_USER_DIRECTIVE_20260924_INDEPENDENT_PAGE_SYSTEM_LIFECYCLE
 - SOURCE_PROJECTION_FREEZE_RECEIPT:FREEZE-SRC-DOCX-334A4679600F092B733B
 owning_capability: SOURCE_INTAKE_BASE_BLUEPRINT
 dependency_closure_refs:
@@ -19,7 +18,8 @@ dependency_closure_refs:
 denominator_source_refs:
 - 00_SOURCE_INTAKE/SOURCE_PROJECTIONS/SRC-DOCX-334A4679600F092B733B/CANONICAL_SOURCE_PROJECTION.yaml
 - 00_SOURCE_INTAKE/SOURCE_PROJECTIONS/SRC-DOCX-334A4679600F092B733B/SOURCE_PROJECTION_FREEZE_RECEIPT.yaml
-partial_scope: true
-stage_exit_credit_allowed: false
-status: ACTIVE
-content_hash: 06b8421f433eb17682de1436ad2dc8d70e8d4b9cec77ac71582a8de04d5fbe61
+partial_scope: false
+stage_exit_credit_allowed: true
+stage02_eligible: true
+status: COMPLETE
+content_hash: 2731b1b69e5c48eb11ef1055c94df76b57c061cdebd7bd8bfe6f54b610dd35f5
