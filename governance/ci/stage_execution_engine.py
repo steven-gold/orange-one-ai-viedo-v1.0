@@ -433,7 +433,12 @@ def execute_active(stage_uid):
 def compatibility_main(stage_uid):
     _,_,_,_,adapters,stages=validate_definition()
     if stage_uid not in stages: fail(f'UNKNOWN_STAGE:{stage_uid}')
-    module_name=(adapters['stages'][stage_uid]).get('python_compatibility_module')
+    adapter=(adapters['stages'][stage_uid])
+    if adapter.get('compatibility_current_execution_authority') is False:
+        fail('LEGACY_COMPATIBILITY_MODULE_HAS_NO_CURRENT_EXECUTION_AUTHORITY:'+stage_uid)
+    if adapter.get('compatibility_may_resolve_current_scope') is False:
+        fail('LEGACY_COMPATIBILITY_MODULE_MAY_NOT_RESOLVE_CURRENT_SCOPE:'+stage_uid)
+    module_name=adapter.get('python_compatibility_module')
     if not module_name: fail(f'NO_COMPATIBILITY_MODULE_REGISTERED:{stage_uid}')
     mod=importlib.import_module(str(module_name))
     if not hasattr(mod,'main'): fail('COMPATIBILITY_MODULE_MAIN_MISSING')
