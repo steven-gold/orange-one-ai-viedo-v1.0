@@ -1,0 +1,176 @@
+artifact_uid: CL-SRC-DOCX-023EC50EAAC1B9DE6214-AI_INTERACTION_REQUIREMENT
+page_uid: admin:KB-01
+planning_domain: PAGE_CONSTRUCTION
+responsibility_uid: AI_INTERACTION_REQUIREMENT
+responsibility_class: AI_INTERACTION_REQUIREMENT
+responsibilities:
+- AI_INTERACTION_REQUIREMENT
+canonical_owner_uid: OWNER-SOURCE-SRC-DOCX-023EC50EAAC1B9DE6214
+target_path: 01_CLASSIFIED/admin-KB-01/PAGE/AI_INTERACTION_REQUIREMENT.yaml
+lifecycle_uid: LC-STAGE01-AI_INTERACTION_REQUIREMENT
+approval_scope_uid: AP-STAGE01-admin-KB-01
+version_scope_uid: VER-dd91263444f3
+test_scope_uid: TEST-STAGE01-AI_INTERACTION_REQUIREMENT
+source_lineage:
+- source_uid: SRC-DOCX-023EC50EAAC1B9DE6214
+  source_segment_uids:
+  - SEG-SN-8F6E9A90373541FBBCB3C7EC
+  - SEG-SN-11342ACCA498EFFC42B0AB87
+  - SEG-SN-E8AFA3AA4077CC13B9BDABC6
+  - SEG-SN-B2D9FE86E3877C12735A02FC
+  - SEG-SN-A988C2C64F54C112D273581A
+  - SEG-SN-F0102D266EA0C547754F10D2
+  - SEG-SN-2C239E2099550E29D9983268
+  - SEG-SN-71FFD8265C962B2F129E0CA1
+  - SEG-SN-5B82DD1FB511FDEA4059BC83
+  - SEG-SN-0CA5DAC2B4072E576A4A9FCF
+  - SEG-SN-1758A2EF5006FDC8FDB457D0
+  - SEG-SN-050B5EB0CB4231655BB2D32E
+  - SEG-SN-9ABBBA85B95768EBFB163C1A
+  - SEG-SN-CFA08DE16C13862A446A07C9
+  - SEG-SN-FB70D885EACEEC5029438530
+  - SEG-SN-DB8AF2E57C731BF76CA0A596
+  - SEG-SN-DC459174520DBCD05B93CA2A
+  - SEG-SN-12ADC5DB6C807A64B2ABD80A
+  - SEG-SN-0B52A1013A2C912F617F421F
+  - SEG-SN-14B3F2321AF466D2B540B22B
+  - SEG-SN-D2454118215830DDEBC1F869
+  - SEG-SN-A0B5ADBCF917B44BAA8684D3
+  - SEG-SN-2F9B97C31CFECECDF04A4382
+  - SEG-SN-38BC5241032A98F4CAFE1532
+  - SEG-SN-CBF2DD95FA370FD2070091E6
+  - SEG-SN-CC7261E12B62E36363D381DE
+  - SEG-SN-D3512CDEC41C65B9B61B2A36
+  - SEG-SN-3AE34A1BC5D137D919AAA3F4
+  - SEG-SN-E91B8CA574B6AD3E9242D055
+  - SEG-SN-F87E964E1ED326EA47793A28
+  - SEG-SN-BFDFCB4E7D8702F05FA3B987
+  - SEG-SN-01CDD05D2AD866A705690260
+  - SEG-SN-D3F1F67676DF8660FCD475A6
+  - SEG-SN-BFBB06AD015ABE75610D3736
+  - SEG-SN-9D05710270BB955D8A88DF17
+  - SEG-SN-02130C5CC7B43D592E4DD70F
+  - SEG-SN-10B46ADD8D4CA4C1CC05A050
+  - SEG-SN-328BFBEA251878CD40C479A6
+  - SEG-SN-051B92E700F153144EF1EAFF
+facts:
+- source_node_uid: SN-8F6E9A90373541FBBCB3C7EC
+  document_order_index: 464
+  source_text: Real data only；缺值 = —；Conversation 不等於 Approved Knowledge
+- source_node_uid: SN-11342ACCA498EFFC42B0AB87
+  document_order_index: 562
+  source_text: Conversation 訊息、AI 回覆、未驗證搜索結果、未完成 Outcome 不可直接標成 Approved Knowledge。
+- source_node_uid: SN-E8AFA3AA4077CC13B9BDABC6
+  document_order_index: 2316
+  source_text: Consumer-domain adopt
+- source_node_uid: SN-B2D9FE86E3877C12735A02FC
+  document_order_index: 3385
+  source_text: selected_refs + evidence_refs + context_fingerprint；建立後交由 Consumer Domain 採用
+- source_node_uid: SN-A988C2C64F54C112D273581A
+  document_order_index: 3845
+  source_text: knowledge.source.read + knowledge.ingestion.execute + authorized scope/rights/classification; fail closed.
+- source_node_uid: SN-F0102D266EA0C547754F10D2
+  document_order_index: 3930
+  source_text: knowledge.experience.read + knowledge.learning.create; exact scope/evidence gate; fail closed.
+- source_node_uid: SN-2C239E2099550E29D9983268
+  document_order_index: 3954
+  source_text: NO_CASCADE — Experience remains immutable; Learning Candidate may be superseded/rejected by its owner.
+- source_node_uid: SN-71FFD8265C962B2F129E0CA1
+  document_order_index: 5021
+  source_text: Detail Drawer
+- source_node_uid: SN-5B82DD1FB511FDEA4059BC83
+  document_order_index: 5046
+  source_text: 500–560px；read detail 用 Drawer，effectful action 用 Modal
+- source_node_uid: SN-0CA5DAC2B4072E576A4A9FCF
+  document_order_index: 5659
+  source_text: Consumer-domain governance owns adoption
+- source_node_uid: SN-1758A2EF5006FDC8FDB457D0
+  document_order_index: 5918
+  source_text: Knowledge auto-approve from AI/chat
+- source_node_uid: SN-050B5EB0CB4231655BB2D32E
+  document_order_index: 6208
+  source_text: 8. Functional Chain / 端到端主流程
+- source_node_uid: SN-9ABBBA85B95768EBFB163C1A
+  document_order_index: 7535
+  source_text: raw_secret / credential_plaintext
+- source_node_uid: SN-CFA08DE16C13862A446A07C9
+  document_order_index: 7819
+  source_text: seed/domain/path/depth/pages/sitemap/js/content/language/schedule/recrawl/rate profile
+- source_node_uid: SN-FB70D885EACEEC5029438530
+  document_order_index: 9768
+  source_text: ACTIVE source + rights/config + no prohibited duplicate run + connector available
+- source_node_uid: SN-DB8AF2E57C731BF76CA0A596
+  document_order_index: 10425
+  source_text: ADOPT/REJECT 屬 Consumer Domain Governance
+- source_node_uid: SN-DC459174520DBCD05B93CA2A
+  document_order_index: 12010
+  source_text: 對話紀錄 ≠ Experience
+- source_node_uid: SN-12ADC5DB6C807A64B2ABD80A
+  document_order_index: 12290
+  source_text: 任何 factual claim 進入 Approved Knowledge 前必須具有可追溯 Citation/Source 或 validated governed outcome；Inference 必須標明為 inference，不得因 AI 生成或多人討論而自動升格。
+- source_node_uid: SN-0B52A1013A2C912F617F421F
+  document_order_index: 13301
+  source_text: Long value ellipsis + detail drawer；不得讓 UID/hash/URL 壓破容器
+- source_node_uid: SN-14B3F2321AF466D2B540B22B
+  document_order_index: 14032
+  source_text: 不得將 Conversation / AI Response / Search Result 直接寫成 Approved Knowledge。
+- source_node_uid: SN-D2454118215830DDEBC1F869
+  document_order_index: 14050
+  source_text: 不得讓 Context Candidate 在 KB-01 直接變成 Consumer Domain 的 Adopted Context。
+- source_node_uid: SN-A0B5ADBCF917B44BAA8684D3
+  document_order_index: 14898
+  source_text: Source-grounded only. Existing Current source wins; missing source values remain blocked/decision-required. This closure supersedes the prior generic 2026-09-21 V1/V3 annex only, not the original domain logic
+    or human visual review gates.
+- source_node_uid: SN-2F9B97C31CFECECDF04A4382
+  document_order_index: 18092
+  source_text: '[ACPOS-20260921-BATCH-17-REMAINING-DEFINITION-CLOSURE-V1::PAGE::KB-01]'
+- source_node_uid: SN-38BC5241032A98F4CAFE1532
+  document_order_index: 18094
+  source_text: Action and Gate remain '—' for the exact five local tabs. knowledge.read remains the read access boundary; no execution endpoint or transition gate is synthesized.
+- source_node_uid: SN-CBF2DD95FA370FD2070091E6
+  document_order_index: 23252
+  source_text: SHARED_OWNER_REFERENCE → current Global Home / Shell Design System tech-purple token set; existing page-local approved override, if any, remains authoritative.
+- source_node_uid: SN-CC7261E12B62E36363D381DE
+  document_order_index: 23278
+  source_text: Use registered gap/padding/spacing tokens; existing exact page gaps remain authoritative; no ad-hoc pixel drift.
+- source_node_uid: SN-D3512CDEC41C65B9B61B2A36
+  document_order_index: 23317
+  source_text: Global Header and collapsible/overlay Sidebar remain shared shell regions; page Workspace starts in the registered content region.
+- source_node_uid: SN-3AE34A1BC5D137D919AAA3F4
+  document_order_index: 23330
+  source_text: Use the current page responsive rule and shared shell breakpoint owner; semantic order and functional topology MUST remain stable across reflow.
+- source_node_uid: SN-E91B8CA574B6AD3E9242D055
+  document_order_index: 23392
+  source_text: Container Width / Min / Max
+- source_node_uid: SN-F87E964E1ED326EA47793A28
+  document_order_index: 23398
+  source_text: Retain current Global Shell + page Primary Grid width contract. No page-local implicit width may override an existing exact dimension.
+- source_node_uid: SN-BFDFCB4E7D8702F05FA3B987
+  document_order_index: 23476
+  source_text: NOT_APPLICABLE unless the current page declares an image/video/preview ratio; when declared, the exact current ratio remains authoritative.
+- source_node_uid: SN-01CDD05D2AD866A705690260
+  document_order_index: 23515
+  source_text: Global Header / Sidebar overlay / Dialog / Drawer layers remain above Workspace without blocking required content; overlay expansion MUST NOT reflow the primary Workspace unless explicitly specified.
+- source_node_uid: SN-D3F1F67676DF8660FCD475A6
+  document_order_index: 23674
+  source_text: Fixed left rail under shared shell header
+- source_node_uid: SN-BFBB06AD015ABE75610D3736
+  document_order_index: 23705
+  source_text: Current page primary content region below Header / beside resting rail
+- source_node_uid: SN-9D05710270BB955D8A88DF17
+  document_order_index: 23885
+  source_text: REFERENCE_ONLY / CONDITIONAL. Existing page-owned formal Asset UID rows, if present, remain authoritative; this annex creates no duplicate Asset UID.
+- source_node_uid: SN-02130C5CC7B43D592E4DD70F
+  document_order_index: 23950
+  source_text: When a page has no page-owned formal visual asset, page-local Asset Binding is NOT_APPLICABLE with this reason; shared assets remain referenced from their existing canonical owner.
+- source_node_uid: SN-10B46ADD8D4CA4C1CC05A050
+  document_order_index: 24031
+  source_text: This current Word remains the single page design Canonical Owner.
+- source_node_uid: SN-328BFBEA251878CD40C479A6
+  document_order_index: 24451
+  source_text: Creates a governed Context Candidate from authorized Knowledge/Fact/Evidence refs. Candidate remains READY_FOR_CONSUMER_REVIEW and does not self-adopt or duplicate source Authority payload.
+- source_node_uid: SN-051B92E700F153144EF1EAFF
+  document_order_index: 24478
+  source_text: Creates a governed Learning Candidate only from complete real Experience/outcome lineage. Candidate remains non-authoritative until separate governed review/adoption and may not self-write Canon/Criteria/Policy.
+status: CURRENT_CLASSIFICATION
+content_hash: 2356e09c5aae497b646b96d4d87b2d9796dfe7e52d080311bc50d13e875f7da6

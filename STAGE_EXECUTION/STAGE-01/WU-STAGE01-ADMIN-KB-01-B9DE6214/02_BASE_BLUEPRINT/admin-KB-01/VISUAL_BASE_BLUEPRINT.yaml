@@ -1,0 +1,34 @@
+blueprint_uid: BP-SRC-DOCX-023EC50EAAC1B9DE6214-VISUAL
+page_uid: admin:KB-01
+blueprint_type: VISUAL_BASE_BLUEPRINT
+planning_domain: VISUAL_CONSTRUCTION
+target_path: 02_BASE_BLUEPRINT/admin-KB-01/VISUAL_BASE_BLUEPRINT.yaml
+input_artifacts:
+- artifact_uid: CL-SRC-DOCX-023EC50EAAC1B9DE6214-PAGE_GEOMETRY
+  content_hash: 7a4df107414df1ed75a3925a3dfa967d8955d6ad57cce25cfc9506ca40a04b0a
+- artifact_uid: CL-SRC-DOCX-023EC50EAAC1B9DE6214-VISUAL_ASSET_OR_DRAWING_REFERENCE
+  content_hash: 93b129c97afd0669b44be9c683e72c479ec03e29d3e1a016c8a3c89cc5c6a0e1
+required_responsibility_uids:
+- PAGE_GEOMETRY
+- VISUAL_ASSET_OR_DRAWING_REFERENCE
+shared_refs: []
+source_fact_refs:
+- artifact_uid: SF-CONTEXT-WU-STAGE01-ADMIN-KB-01-B9DE6214
+  content_hash: bb4096c3ab9c3b3a57ce098a3fa12eff9748f64d460cf58255b936bf8c2f627e
+- artifact_uid: SF-CONFLICT-WU-STAGE01-ADMIN-KB-01-B9DE6214
+  content_hash: c894c3bb5e81e4850f43ff7e1676b1d6706f01ed303ec3bab0fd5d8fd4eb6017
+- artifact_uid: SF-DEPENDENCY-WU-STAGE01-ADMIN-KB-01-B9DE6214
+  content_hash: e6627e3f3c53d8c869b936735a1bed0eb4dce7b2ac5b221196b93eba90685052
+raw_source_inputs: []
+embedded_classification_payloads: []
+unresolved_external_authority_refs:
+- gap_uid: UAG-SRC-DOCX-023EC50EAAC1B9DE6214-KB-01
+  authority_ref: KB-01
+  disposition: UNRESOLVED_AUTHORITY_GAP
+  authority_evidence_ref: EVIDENCE/SOURCE_ENUMERATION_EVIDENCE.yaml
+- gap_uid: UAG-SRC-DOCX-023EC50EAAC1B9DE6214-SHA-256
+  authority_ref: SHA-256
+  disposition: UNRESOLVED_AUTHORITY_GAP
+  authority_evidence_ref: EVIDENCE/SOURCE_ENUMERATION_EVIDENCE.yaml
+status: CURRENT_BASE_BLUEPRINT
+blueprint_hash: 87d6c15fbd93ff8e63f5aaa9f85a9ffb4c44f81fc714014348a09de86c37e97c

@@ -1,0 +1,155 @@
+artifact_uid: CL-SRC-DOCX-023EC50EAAC1B9DE6214-ERROR_RECOVERY_REQUIREMENT
+page_uid: admin:KB-01
+planning_domain: PAGE_CONSTRUCTION
+responsibility_uid: ERROR_RECOVERY_REQUIREMENT
+responsibility_class: ERROR_RECOVERY_REQUIREMENT
+responsibilities:
+- ERROR_RECOVERY_REQUIREMENT
+canonical_owner_uid: OWNER-SOURCE-SRC-DOCX-023EC50EAAC1B9DE6214
+target_path: 01_CLASSIFIED/admin-KB-01/PAGE/ERROR_RECOVERY_REQUIREMENT.yaml
+lifecycle_uid: LC-STAGE01-ERROR_RECOVERY_REQUIREMENT
+approval_scope_uid: AP-STAGE01-admin-KB-01
+version_scope_uid: VER-dd91263444f3
+test_scope_uid: TEST-STAGE01-ERROR_RECOVERY_REQUIREMENT
+source_lineage:
+- source_uid: SRC-DOCX-023EC50EAAC1B9DE6214
+  source_segment_uids:
+  - SEG-SN-40AAE4404A98CA915A692EE3
+  - SEG-SN-178BAA1211F4CC74EB3D238E
+  - SEG-SN-E313677CAF9CA94703C7DD5D
+  - SEG-SN-EE6EF886D3AF2ACC9F8F929E
+  - SEG-SN-C8DF8EB6192C0D438250702C
+  - SEG-SN-75FDB95DD87780DCC62579C4
+  - SEG-SN-DB93694FFA998A4D6F1F5926
+  - SEG-SN-182258BE25F1C7BBC9D6262F
+  - SEG-SN-E6410924F83A319476F424DC
+  - SEG-SN-39CEBC1D30EDD707BC68D3F4
+  - SEG-SN-F9FD1776A4EF479D4F208B50
+  - SEG-SN-6750829BA00C4A4690B077D2
+  - SEG-SN-796D021951F1BE6BF171843D
+  - SEG-SN-9C6B876B517A30C1E6ACA3FD
+  - SEG-SN-6A714A657F420E2525F2861E
+  - SEG-SN-A2FC9A83ADA7B8FAE974AD4C
+  - SEG-SN-C546E1E9CCA9F57D4E34937B
+  - SEG-SN-81642D12DB7A2321E0179764
+  - SEG-SN-3658E1F17E918496CF69B839
+  - SEG-SN-A8EC6C54480F233C7399B04A
+  - SEG-SN-8B84F8CD9E0EC8CB5F25CE72
+  - SEG-SN-48CF400258D86A1A15F657D7
+  - SEG-SN-842007A632582CC677533B5B
+  - SEG-SN-CDCD4841A33DAF288AE4C868
+  - SEG-SN-2F5148D176105A7B76AA66CE
+  - SEG-SN-21BCFB4D12CE2CC2ED4E2E5A
+  - SEG-SN-9D0ED29A5A7D7A4D04AC6B7D
+  - SEG-SN-CDAE913829FEEFD76C45BB71
+  - SEG-SN-D6794B5AEAB62EDCCD4C14AA
+  - SEG-SN-C913FF0A3DCFC8246A0B4E0B
+  - SEG-SN-C83148EABBE3259D848595DA
+  - SEG-SN-E6DD8C77C6F0B64E400CD207
+  - SEG-SN-FFADACF485E7B20D2FDE7693
+  - SEG-SN-162D6699C2C6AEC1B00A67F1
+facts:
+- source_node_uid: SN-40AAE4404A98CA915A692EE3
+  document_order_index: 1910
+  source_text: RETRY eligible only
+- source_node_uid: SN-178BAA1211F4CC74EB3D238E
+  document_order_index: 5506
+  source_text: Ingestion start/retry
+- source_node_uid: SN-E313677CAF9CA94703C7DD5D
+  document_order_index: 6688
+  source_text: createAcquisitionJob; retryAcquisitionJob
+- source_node_uid: SN-EE6EF886D3AF2ACC9F8F929E
+  document_order_index: 6713
+  source_text: CREATE_JOB/RETRY
+- source_node_uid: SN-C8DF8EB6192C0D438250702C
+  document_order_index: 9214
+  source_text: 啟動/重試蒐集
+- source_node_uid: SN-75FDB95DD87780DCC62579C4
+  document_order_index: 9796
+  source_text: INGEST RETRY
+- source_node_uid: SN-DB93694FFA998A4D6F1F5926
+  document_order_index: 9821
+  source_text: FAILED + retry_eligible + policy allows
+- source_node_uid: SN-182258BE25F1C7BBC9D6262F
+  document_order_index: 10322
+  source_text: PENDING → RUNNING → NORMALIZING → COMPLETED / FAILED → RETRY_ELIGIBLE → PENDING
+- source_node_uid: SN-E6410924F83A319476F424DC
+  document_order_index: 10347
+  source_text: Retry 只針對 policy 允許的 failure
+- source_node_uid: SN-39CEBC1D30EDD707BC68D3F4
+  document_order_index: 10705
+  source_text: 14. Error / Recovery Contract
+- source_node_uid: SN-F9FD1776A4EF479D4F208B50
+  document_order_index: 10746
+  source_text: Error
+- source_node_uid: SN-6750829BA00C4A4690B077D2
+  document_order_index: 10773
+  source_text: Recovery
+- source_node_uid: SN-796D021951F1BE6BF171843D
+  document_order_index: 11066
+  source_text: KB_INGESTION_NOT_RETRYABLE
+- source_node_uid: SN-9C6B876B517A30C1E6ACA3FD
+  document_order_index: 11091
+  source_text: 開啟 Failure Detail，先處理根因
+- source_node_uid: SN-6A714A657F420E2525F2861E
+  document_order_index: 13484
+  source_text: 16 Sections / 22 Components / 127 Field Definitions / 27 Controls / 21 Actions / 17 Gates / 14 Errors 保持可追溯。
+- source_node_uid: SN-A2FC9A83ADA7B8FAE974AD4C
+  document_order_index: 13936
+  source_text: Recovery
+- source_node_uid: SN-C546E1E9CCA9F57D4E34937B
+  document_order_index: 13961
+  source_text: Version/rights/citation/outcome/lineage/conflict 錯誤都有明確 Recovery，不使用 silent fallback。
+- source_node_uid: SN-81642D12DB7A2321E0179764
+  document_order_index: 14727
+  source_text: Audit / Error / i18n / a11y / regression / sandbox / E2E
+- source_node_uid: SN-3658E1F17E918496CF69B839
+  document_order_index: 16442
+  source_text: KB-01-CTL-INGEST-RETRY
+- source_node_uid: SN-A8EC6C54480F233C7399B04A
+  document_order_index: 16458
+  source_text: 重試
+- source_node_uid: SN-8B84F8CD9E0EC8CB5F25CE72
+  document_order_index: 16474
+  source_text: KB-01-ACT-INGEST-RETRY
+- source_node_uid: SN-48CF400258D86A1A15F657D7
+  document_order_index: 16482
+  source_text: KB-01-GATE-INGEST-RETRY
+- source_node_uid: SN-842007A632582CC677533B5B
+  document_order_index: 16498
+  source_text: RetryAcquisitionJobRequest
+- source_node_uid: SN-CDCD4841A33DAF288AE4C868
+  document_order_index: 16506
+  source_text: retryAcquisitionJob
+- source_node_uid: SN-2F5148D176105A7B76AA66CE
+  document_order_index: 16514
+  source_text: POST /v1/acpos/acquisition/jobs/{jobId}/retry
+- source_node_uid: SN-21BCFB4D12CE2CC2ED4E2E5A
+  document_order_index: 18913
+  source_text: ERROR_RECOVERY
+- source_node_uid: SN-9D0ED29A5A7D7A4D04AC6B7D
+  document_order_index: 19856
+  source_text: ERROR_RECOVERY
+- source_node_uid: SN-CDAE913829FEEFD76C45BB71
+  document_order_index: 20799
+  source_text: ERROR_RECOVERY
+- source_node_uid: SN-D6794B5AEAB62EDCCD4C14AA
+  document_order_index: 21742
+  source_text: ERROR_RECOVERY
+- source_node_uid: SN-C913FF0A3DCFC8246A0B4E0B
+  document_order_index: 22685
+  source_text: ERROR_RECOVERY
+- source_node_uid: SN-C83148EABBE3259D848595DA
+  document_order_index: 23291
+  source_text: Default / Hover / Focus / Active / Loading / Disabled / Success / Error MUST NOT change the approved component footprint unless the current component contract explicitly allows it.
+- source_node_uid: SN-E6DD8C77C6F0B64E400CD207
+  document_order_index: 23528
+  source_text: Required labels/status/error text may not be clipped. Long IDs/technical values use controlled ellipsis with recoverable full value; no silent semantic truncation.
+- source_node_uid: SN-FFADACF485E7B20D2FDE7693
+  document_order_index: 23574
+  source_text: Geometry Failure Set
+- source_node_uid: SN-162D6699C2C6AEC1B00A67F1
+  document_order_index: 24406
+  source_text: KB-01-CTL-INGEST-RETRY
+status: CURRENT_CLASSIFICATION
+content_hash: 4b78e5a87887dc92ed50bc92bdc1577a6be87ecd535de0900d690226d9d522c5
