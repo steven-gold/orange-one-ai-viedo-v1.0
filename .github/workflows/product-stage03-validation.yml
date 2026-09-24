@@ -1,0 +1,73 @@
+name: Product Stage03 Validation
+on:
+  push:
+    branches: [0921acpos]
+    paths:
+      - 'STAGE_EXECUTION/STAGE-03/**'
+      - '.github/workflows/product-stage03-validation.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  validate-stage03:
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        wu:
+        - WU-STAGE03-GLOBAL-HOME-SHELL-NAVIGATION-001
+        - WU-STAGE03-WB01-DASHBOARD-001
+    steps:
+    - uses: actions/checkout@v4
+      with: {ref: 0921acpos, fetch-depth: 0}
+    - uses: actions/checkout@v4
+      with:
+        repository: steven-gold/orange-one-ai-viedo-v1.0
+        ref: 25c4736940efb786aa567c83283bfbaa0773dc1b
+        path: _governance_authority
+        fetch-depth: 1
+    - run: |
+        rm -rf governance .github/governance-source
+        cp -R _governance_authority/governance ./governance
+        mkdir -p .github
+        cp -R _governance_authority/.github/governance-source .github/governance-source
+        python -m pip install --disable-pip-version-check 'PyYAML==6.0.2'
+    - name: Validate admission
+      env:
+        ACPOS_PRODUCT_ROOT: ${{ github.workspace }}
+        ACPOS_ACTIVE_WORK_UNIT: STAGE_EXECUTION/STAGE-03/${{ matrix.wu }}/WORK_UNIT.yaml
+        ACPOS_CURRENT_SCOPE: STAGE_EXECUTION/STAGE-03/${{ matrix.wu }}/CURRENT_EXECUTION_SCOPE_MANIFEST.yaml
+      run: python governance/ci/stage_execution_engine.py --admission-check --stage STAGE-03
+    - name: Validate Stage03 materialization
+      env:
+        WU: ${{ matrix.wu }}
+      run: |
+        python - <<'PY'
+        import os,yaml
+        from pathlib import Path
+        b=Path('STAGE_EXECUTION/STAGE-03')/os.environ['WU']
+        def y(n):
+          p=b/n
+          if not p.is_file(): raise SystemExit('BLOCK:MISSING:'+n)
+          return yaml.safe_load(p.read_text()) or {}
+        outputs=['VISUAL_DESIGN_SPEC_PACKAGE.yaml','VISUAL_GEOMETRY_CONTRACT.yaml','VISUAL_PREVIEW_EVIDENCE.yaml','VISUAL_CHANGESET.yaml','VISUAL_INTERACTION_TOPOLOGY_BINDING.yaml','FUNCTIONAL_WORKBENCH_LAYOUT_CONTRACT.yaml','VISUAL_REFERENCE_ANNOTATION.yaml','VISUAL_INHERITANCE_MATRIX.yaml','VISUAL_SCENARIO_EVIDENCE_SET.yaml']
+        for n in outputs:y(n)
+        g=y('VISUAL_GEOMETRY_CONTRACT.yaml')
+        if not g.get('visual_anchors') or int(g.get('visual_anchor_count') or 0)<=0: raise SystemExit('BLOCK:VISUAL_ANCHORS_EMPTY')
+        s=y('VISUAL_SCENARIO_EVIDENCE_SET.yaml')
+        if int(s.get('required_scenario_count') or -1)!=int(s.get('materialized_scenario_count') or -2): raise SystemExit('BLOCK:SCENARIO_DENOMINATOR_DRIFT')
+        for x in s.get('scenarios') or []:
+          if not (b/x['evidence_ref']).is_file(): raise SystemExit('BLOCK:SCENARIO_PHYSICAL_EVIDENCE_MISSING:'+x['evidence_ref'])
+        t=y('VISUAL_INTERACTION_TOPOLOGY_BINDING.yaml')
+        if t.get('functional_topology_redefined') is not False: raise SystemExit('BLOCK:FUNCTIONAL_TOPOLOGY_REDEFINED')
+        p=y('VISUAL_PREVIEW_EVIDENCE.yaml')
+        if p.get('structural_only') is not False: raise SystemExit('BLOCK:STRUCTURAL_ONLY_PREVIEW')
+        r=y('EVIDENCE/VISUAL_REVIEW_EVIDENCE.yaml')
+        if r.get('decision')!='PENDING_HUMAN_REVIEW': raise SystemExit('BLOCK:UNEXPECTED_REVIEW_STATE')
+        print('PASS: 9/9 Stage03 outputs physical')
+        print('PASS: non-empty visual anchors')
+        print('PASS: required visual scenarios independently materialized')
+        print('PASS: functional topology preserved')
+        print('PASS: preview is non-structural-only')
+        print('PASS: correctly stopped at human visual review boundary')
+        PY
