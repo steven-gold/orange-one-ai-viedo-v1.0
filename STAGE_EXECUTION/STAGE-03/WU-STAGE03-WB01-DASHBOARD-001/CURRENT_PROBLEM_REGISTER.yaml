@@ -19,6 +19,13 @@ problems:
   exact_registered_route: GET /v1/dashboard/read-model
   exact_runtime_status: READ_EXACT
   status: RESOLVED_FALSE_POSITIVE
-open_problem_total: 0
-closure_blocker_total: 0
-status: CURRENT_ZERO_OPEN_BLOCKERS
+- problem_uid: GAP-STAGE03-WB01-CANONICAL-PREFLIGHT-001
+  class: EXECUTION_EVIDENCE_GAP
+  finding: CANONICAL_STAGE_EXECUTION_PREFLIGHT_NOT_MATERIALIZED_BEFORE_CLOSURE_VALIDATION
+  owner: STAGE03_EXECUTION_EVIDENCE
+  product_completion_credit: 0
+  required_disposition: MATERIALIZE_CURRENT_CYCLE_PREFLIGHT_AND_REPLAY_BEFORE_STAGE_EXIT
+  status: OPEN
+open_problem_total: 1
+closure_blocker_total: 1
+status: CURRENT_OPEN_BLOCKER
