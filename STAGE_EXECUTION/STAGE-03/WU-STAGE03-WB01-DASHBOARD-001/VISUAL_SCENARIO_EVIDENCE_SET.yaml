@@ -1,0 +1,16 @@
+artifact_uid: VSES-STAGE03-WB01-001
+artifact_type: VISUAL_SCENARIO_EVIDENCE_SET
+stage_uid: STAGE-03
+governed_unit_uid: workspace:WB-01
+scenarios:
+- {scenario_uid: WB01-1440-MAIN, class: RESPONSIVE_MAIN, evidence_ref: EVIDENCE/VISUAL_SCENARIOS/WB01-1440-MAIN.svg}
+- {scenario_uid: WB01-1280-MAIN, class: RESPONSIVE_REFLOW, evidence_ref: EVIDENCE/VISUAL_SCENARIOS/WB01-1280-MAIN.svg}
+- {scenario_uid: WB01-LT1280-SCROLL, class: RESPONSIVE_OVERFLOW, evidence_ref: EVIDENCE/VISUAL_SCENARIOS/WB01-LT1280-SCROLL.svg}
+- {scenario_uid: WB01-DRAWER, class: SECTION_OPEN, evidence_ref: EVIDENCE/VISUAL_SCENARIOS/WB01-DRAWER.svg}
+- {scenario_uid: WB01-LOADING, class: STATE_FEEDBACK, evidence_ref: EVIDENCE/VISUAL_SCENARIOS/WB01-LOADING.svg}
+- {scenario_uid: WB01-EMPTY, class: STATE_FEEDBACK, evidence_ref: EVIDENCE/VISUAL_SCENARIOS/WB01-EMPTY.svg}
+- {scenario_uid: WB01-ERROR, class: STATE_FEEDBACK, evidence_ref: EVIDENCE/VISUAL_SCENARIOS/WB01-ERROR.svg}
+required_scenario_count: 7
+materialized_scenario_count: 7
+remaining_scenarios: []
+status: COMPLETE_PENDING_VISUAL_REVIEW
