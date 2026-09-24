@@ -1,0 +1,103 @@
+artifact_uid: CL-SRC-DOCX-81BF5DEC243133524211-ERROR_RECOVERY_REQUIREMENT
+page_uid: admin:SYS-01
+planning_domain: PAGE_CONSTRUCTION
+responsibility_uid: ERROR_RECOVERY_REQUIREMENT
+responsibility_class: ERROR_RECOVERY_REQUIREMENT
+responsibilities:
+- ERROR_RECOVERY_REQUIREMENT
+canonical_owner_uid: OWNER-SOURCE-SRC-DOCX-81BF5DEC243133524211
+target_path: 01_CLASSIFIED/admin-SYS-01/PAGE/ERROR_RECOVERY_REQUIREMENT.yaml
+lifecycle_uid: LC-STAGE01-ERROR_RECOVERY_REQUIREMENT
+approval_scope_uid: AP-STAGE01-admin-SYS-01
+version_scope_uid: VER-256a2a286f36
+test_scope_uid: TEST-STAGE01-ERROR_RECOVERY_REQUIREMENT
+source_lineage:
+- source_uid: SRC-DOCX-81BF5DEC243133524211
+  source_segment_uids:
+  - SEG-SN-9C5FAC6AAFBFB729AD3131A6
+  - SEG-SN-721D686476506646B69ADA28
+  - SEG-SN-79CD7F4FFBEDE8378927EFAA
+  - SEG-SN-B0088082C0E37DD2DA86125E
+  - SEG-SN-EA5C975C09CE8602FAA95CBA
+  - SEG-SN-4F5454590B4395A1DD51CD79
+  - SEG-SN-A0E5224116569DDD4E42ED0B
+  - SEG-SN-B807D37F1CE09CF0D45FCE5A
+  - SEG-SN-B097A8398967EEC33DE005CF
+  - SEG-SN-417EC9DAE6BCF83F22E00F07
+  - SEG-SN-2007F3AE23CC22AD4C517827
+  - SEG-SN-598A270ED498ED2A828124CF
+  - SEG-SN-A616E8EA8E23D3A427ED7278
+  - SEG-SN-FEF6F195F8C6F1EEB4C9F1F7
+  - SEG-SN-4720D6DC34144B5DB2543889
+  - SEG-SN-360044BECFC56B45B0E8EDB9
+  - SEG-SN-621D0983BE540F60B37F5DE9
+  - SEG-SN-2CF06372A42F4AC6AD673AE7
+  - SEG-SN-51B416D2478801917A32817B
+  - SEG-SN-371401A8BAEDE8A332F53A44
+  - SEG-SN-053365739D1D42868C8AF0CC
+facts:
+- source_node_uid: SN-9C5FAC6AAFBFB729AD3131A6
+  document_order_index: 64
+  source_text: 本版沿用既有 SYS-01 功能規劃，依 Mother 規範補齊缺失的功能完整性、Business Entity × Operation、功能鏈、互動拓撲、AI 對話連續性、視覺幾何、欄位／控制／狀態／錯誤／驗收規格；不重建第二套系統，也不把非必要功能塞進主畫面。
+- source_node_uid: SN-721D686476506646B69ADA28
+  document_order_index: 7042
+  source_text: Error Recovery
+- source_node_uid: SN-79CD7F4FFBEDE8378927EFAA
+  document_order_index: 18514
+  source_text: Invariant / Recovery
+- source_node_uid: SN-B0088082C0E37DD2DA86125E
+  document_order_index: 19859
+  source_text: 共同互動狀態：Default / Hover / Focus / Active / Loading / Disabled / Success / Error。Effectful control 的 Disabled 必須顯示原因；Focus 不得只靠顏色；任何按鈕不得縮到低於 44×44px 可觸控範圍。
+- source_node_uid: SN-EA5C975C09CE8602FAA95CBA
+  document_order_index: 23146
+  source_text: AI response / error
+- source_node_uid: SN-4F5454590B4395A1DD51CD79
+  document_order_index: 23560
+  source_text: candidate / error
+- source_node_uid: SN-A0E5224116569DDD4E42ED0B
+  document_order_index: 23698
+  source_text: CR / error
+- source_node_uid: SN-B807D37F1CE09CF0D45FCE5A
+  document_order_index: 25251
+  source_text: Message Sent → AI response / error
+- source_node_uid: SN-B097A8398967EEC33DE005CF
+  document_order_index: 26686
+  source_text: 20. Error / Edge / Recovery Matrix
+- source_node_uid: SN-417EC9DAE6BCF83F22E00F07
+  document_order_index: 26783
+  source_text: Recovery
+- source_node_uid: SN-2007F3AE23CC22AD4C517827
+  document_order_index: 27005
+  source_text: retry after route/capability recovers
+- source_node_uid: SN-598A270ED498ED2A828124CF
+  document_order_index: 27671
+  source_text: handoff to existing rollback/recovery owner
+- source_node_uid: SN-A616E8EA8E23D3A427ED7278
+  document_order_index: 28431
+  source_text: Pass / Warning / Error / Processing
+- source_node_uid: SN-FEF6F195F8C6F1EEB4C9F1F7
+  document_order_index: 29536
+  source_text: 錯誤訊息與 validation status 必須可由 screen reader 感知；loading / processing 使用 live region 或等效狀態。
+- source_node_uid: SN-4720D6DC34144B5DB2543889
+  document_order_index: 30771
+  source_text: happy path / fail / retry / cancel / side effect
+- source_node_uid: SN-360044BECFC56B45B0E8EDB9
+  document_order_index: 31050
+  source_text: 每個 failure 有 recovery / preserve rule。
+- source_node_uid: SN-621D0983BE540F60B37F5DE9
+  document_order_index: 35551
+  source_text: Recovery evidence
+- source_node_uid: SN-2CF06372A42F4AC6AD673AE7
+  document_order_index: 37828
+  source_text: ERROR_RECOVERY
+- source_node_uid: SN-51B416D2478801917A32817B
+  document_order_index: 38771
+  source_text: ERROR_RECOVERY
+- source_node_uid: SN-371401A8BAEDE8A332F53A44
+  document_order_index: 39714
+  source_text: ERROR_RECOVERY
+- source_node_uid: SN-053365739D1D42868C8AF0CC
+  document_order_index: 40657
+  source_text: ERROR_RECOVERY
+status: CURRENT_CLASSIFICATION
+content_hash: d5d1d43d51a992a583d737ef238a3c6cf4ee2b85b154299fad316530e87753d8

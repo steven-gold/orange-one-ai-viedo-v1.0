@@ -1,0 +1,79 @@
+artifact_uid: CL-SRC-DOCX-81BF5DEC243133524211-WORKFLOW_HANDOFF_REQUIREMENT
+page_uid: admin:SYS-01
+planning_domain: PAGE_CONSTRUCTION
+responsibility_uid: WORKFLOW_HANDOFF_REQUIREMENT
+responsibility_class: WORKFLOW_HANDOFF_REQUIREMENT
+responsibilities:
+- WORKFLOW_HANDOFF_REQUIREMENT
+canonical_owner_uid: OWNER-SOURCE-SRC-DOCX-81BF5DEC243133524211
+target_path: 01_CLASSIFIED/admin-SYS-01/PAGE/WORKFLOW_HANDOFF_REQUIREMENT.yaml
+lifecycle_uid: LC-STAGE01-WORKFLOW_HANDOFF_REQUIREMENT
+approval_scope_uid: AP-STAGE01-admin-SYS-01
+version_scope_uid: VER-256a2a286f36
+test_scope_uid: TEST-STAGE01-WORKFLOW_HANDOFF_REQUIREMENT
+source_lineage:
+- source_uid: SRC-DOCX-81BF5DEC243133524211
+  source_segment_uids:
+  - SEG-SN-E23B696300FF442DB8FA0465
+  - SEG-SN-4B315D02E2D6BB513D166462
+  - SEG-SN-040F36BB2DE5F67F1E375C51
+  - SEG-SN-381A483CAFDA6C188987DCE5
+  - SEG-SN-7A48468FA450455CAD8F35C4
+  - SEG-SN-CD0F41FEA036A0FC1762A959
+  - SEG-SN-891B6F9784B87372EC6124AF
+  - SEG-SN-076FD989E56B9C7F82C009FB
+  - SEG-SN-7CCA7FCC3AF35636A2E6EED9
+  - SEG-SN-402F8CAC9A1E990DE20EE2FA
+  - SEG-SN-8A4065FD738C401E529AC91C
+  - SEG-SN-4BF8B6594ECE41DE3B772F2D
+  - SEG-SN-90417103E360AD2EEB988976
+  - SEG-SN-890DAABD0A564BB2DF2DD87C
+  - SEG-SN-3270268051DDF68FEC89B7F3
+facts:
+- source_node_uid: SN-E23B696300FF442DB8FA0465
+  document_order_index: 7234
+  source_text: Next Step
+- source_node_uid: SN-4B315D02E2D6BB513D166462
+  document_order_index: 9431
+  source_text: SYS-01 顯示 readiness / handoff，不提供繞過 release owner 的 direct deploy。
+- source_node_uid: SN-040F36BB2DE5F67F1E375C51
+  document_order_index: 10098
+  source_text: Validation PASS → Human Approval → Release handoff
+- source_node_uid: SN-381A483CAFDA6C188987DCE5
+  document_order_index: 11579
+  source_text: 發布 handoff
+- source_node_uid: SN-7A48468FA450455CAD8F35C4
+  document_order_index: 11828
+  source_text: 解除 blocker → 返回原流程
+- source_node_uid: SN-CD0F41FEA036A0FC1762A959
+  document_order_index: 12353
+  source_text: 次要 metadata 收進 drawer；主流程不重排。
+- source_node_uid: SN-891B6F9784B87372EC6124AF
+  document_order_index: 19486
+  source_text: Primary only when it is next step
+- source_node_uid: SN-076FD989E56B9C7F82C009FB
+  document_order_index: 22772
+  source_text: Release Handoff
+- source_node_uid: SN-7CCA7FCC3AF35636A2E6EED9
+  document_order_index: 22853
+  source_text: contextual handoff
+- source_node_uid: SN-402F8CAC9A1E990DE20EE2FA
+  document_order_index: 24031
+  source_text: Release Handoff
+- source_node_uid: SN-8A4065FD738C401E529AC91C
+  document_order_index: 24987
+  source_text: Release Handoff
+- source_node_uid: SN-4BF8B6594ECE41DE3B772F2D
+  document_order_index: 25701
+  source_text: Release Handoff
+- source_node_uid: SN-90417103E360AD2EEB988976
+  document_order_index: 26617
+  source_text: Freeze / Approval / Release Handoff
+- source_node_uid: SN-890DAABD0A564BB2DF2DD87C
+  document_order_index: 30966
+  source_text: 必要功能存在且不切碎連續流程。
+- source_node_uid: SN-3270268051DDF68FEC89B7F3
+  document_order_index: 32960
+  source_text: Design Freeze 後建立完整 Implementation Package，再進入正式施工；普通子步驟不得反覆停在「下一步」。
+status: CURRENT_CLASSIFICATION
+content_hash: ec18eb6ab02d1a8badc2e0944ba023389dddd410beb10f759f4e294392fc9fe1
