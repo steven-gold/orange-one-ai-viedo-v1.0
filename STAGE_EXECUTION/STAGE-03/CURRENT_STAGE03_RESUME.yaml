@@ -6,8 +6,8 @@ execution_branch: 0921acpos
 current_governance_uid: GOV-REV-20260924-INDEPENDENT-UNIT-LIFECYCLE-CURRENT-IDENTITY-SYNC
 current_governance_head: 25c4736940efb786aa567c83283bfbaa0773dc1b
 current_display_version: v2.2.24
-active_work_unit_uid: WU-STAGE03-GLOBAL-HOME-SHELL-NAVIGATION-001
-resume_point: STAGE_EXECUTION_PREFLIGHT_COMPILE
+active_work_unit_uid: null
+resume_point: HUMAN_VISUAL_REVIEW
 eligible_units:
 - GLOBAL-HOME-SHELL-NAVIGATION
 - workspace:WB-01
@@ -16,4 +16,12 @@ remaining_stage03_units:
 - GLOBAL-HOME-SHELL-NAVIGATION
 - workspace:WB-01
 stage_transition_semantics: PER_GOVERNED_PAGE_OR_SYSTEM_LOGIC_UNIT
-status: ACTIVE
+status: PENDING_HUMAN_VISUAL_REVIEW
+
+pending_visual_review_units:
+- GLOBAL-HOME-SHELL-NAVIGATION
+- workspace:WB-01
+materialization_validation_run_id: 36015610533
+materialization_validation_head: 50340ec5f5a1b7e844c34911049b45e61de5d2b5
+stage_exit_authorized: false
+next_stage_uid: STAGE-04
