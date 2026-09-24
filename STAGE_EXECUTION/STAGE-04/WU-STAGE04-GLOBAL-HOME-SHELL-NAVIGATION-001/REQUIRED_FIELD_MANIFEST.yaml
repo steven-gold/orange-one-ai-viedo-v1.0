@@ -1,0 +1,28 @@
+artifact_uid: RFM-STAGE04-HOME-001
+artifact_type: REQUIRED_FIELD_MANIFEST
+stage_uid: STAGE-04
+work_unit_uid: WU-STAGE04-GLOBAL-HOME-SHELL-NAVIGATION-001
+governed_unit_uid: GLOBAL-HOME-SHELL-NAVIGATION
+input_contract:
+- artifact_type: PAGE_CONSTRUCTION_SPEC_PACKAGE
+  ref: STAGE_EXECUTION/STAGE-02/WU-STAGE02-GLOBAL-HOME-SHELL-NAVIGATION-001/PAGE_CONSTRUCTION_SPEC_PACKAGE.yaml
+  reference_resolution: PASS
+- artifact_type: VISUAL_DESIGN_SPEC_PACKAGE
+  ref: STAGE_EXECUTION/STAGE-03/WU-STAGE03-GLOBAL-HOME-SHELL-NAVIGATION-001/VISUAL_DESIGN_SPEC_PACKAGE.yaml
+  reference_resolution: PASS
+  required_transitive_freeze_bindings:
+  - VISUAL_INHERITANCE_MATRIX
+  - VISUAL_STYLE_DEFINITION_OR_CURRENT_STYLE_AUTHORITY
+  - VISUAL_REFERENCE_ANNOTATION
+  - VISUAL_SCENARIO_EVIDENCE_SET
+  - VISUAL_GEOMETRY_CONTRACT
+  required_field_completeness: BLOCKED
+- artifact_type: DEPENDENCY_MAP
+  ref: STAGE_EXECUTION/STAGE-02/WU-STAGE02-GLOBAL-HOME-SHELL-NAVIGATION-001/DEPENDENCY_MAP.yaml
+  reference_resolution: PASS
+missing_required_projection_fields:
+- {owner_artifact: VISUAL_DESIGN_SPEC_PACKAGE, missing_count: 7, required_by: WEB-GOV-01-S076}
+- {owner_artifact: VISUAL_REFERENCE_ANNOTATION, missing_count: 20, required_by: WEB-GOV-01-S079}
+- {owner_artifact: VISUAL_INHERITANCE_MATRIX, missing_count: 11, required_by: WEB-GOV-01-S080}
+- {owner_artifact: VISUAL_GEOMETRY_CONTRACT, missing_count: 14, required_by: WEB-GOV-01-S089}
+status: BLOCKED_OWNER_REENTRY_REQUIRED
