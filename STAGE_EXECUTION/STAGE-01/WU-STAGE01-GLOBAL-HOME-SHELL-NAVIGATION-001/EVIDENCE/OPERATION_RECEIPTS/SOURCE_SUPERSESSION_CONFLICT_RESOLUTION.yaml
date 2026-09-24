@@ -1,0 +1,27 @@
+artifact_uid: OPREC-WU-STAGE01-GLOBAL-HOME-SHELL-NAVIGATION-001-SOURCE_SUPERSESSION_CONFLICT_RESOLUTION-20260924
+artifact_type: OPERATION_STEP_RECEIPT
+stage_uid: STAGE-01
+operation_uid: SOURCE_SUPERSESSION_CONFLICT_RESOLUTION
+work_unit_uid: WU-STAGE01-GLOBAL-HOME-SHELL-NAVIGATION-001
+source_lineage:
+  source_uid: SRC-DOCX-334A4679600F092B733B
+  projection_uid: PROJ-SRC-DOCX-334A4679600F092B733B
+owner_uid: SOURCE_BOUND_STAGE01_OWNER:SRC-DOCX-334A4679600F092B733B
+input_refs:
+- 00_SOURCE_INTAKE/SOURCE_CONTEXT_MANIFEST.yaml
+output_refs:
+- 00_SOURCE_INTAKE/CONTENT_SUPERSESSION_CONFLICT_LEDGER.yaml
+- EVIDENCE/CONFLICT_DECISION_EVIDENCE.yaml
+denominator:
+  current_positive_shell_geometry_authorities: 1
+  conflict_items: 0
+completeness_and_pass_condition:
+  unresolved_current_authority_conflict_count: 0
+  stale_current_owner_residual_count: 0
+validators_and_evidence:
+- FRESH_CURRENT_SOURCE_CONFLICT_REVIEW
+- EVIDENCE/CONFLICT_DECISION_EVIDENCE.yaml
+result: PASS
+legal_successor: SOURCE_DEPENDENCY_EXTRACTION
+status: PASS
+content_hash: 13ffa84afee77e5f9e8ff26cfa64888f61ad02650b665d77f00bd0402f50711a
