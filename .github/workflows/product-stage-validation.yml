@@ -1,0 +1,64 @@
+name: Product Stage Validation
+
+on:
+  push:
+    branches: [0921acpos]
+    paths:
+      - 'STAGE_EXECUTION/**'
+      - '.github/workflows/product-stage-validation.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate-stage:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout product workline
+        uses: actions/checkout@v4
+        with:
+          ref: 0921acpos
+          fetch-depth: 0
+      - name: Checkout frozen governance authority
+        uses: actions/checkout@v4
+        with:
+          repository: steven-gold/orange-one-ai-viedo-v1.0
+          ref: governance-v2.2.23-unit-lifecycle
+          path: _governance_authority
+          fetch-depth: 1
+      - name: Load frozen governance consumers without mutating product tree
+        run: |
+          rm -rf governance .github/governance-source
+          cp -R _governance_authority/governance ./governance
+          mkdir -p .github
+          cp -R _governance_authority/.github/governance-source .github/governance-source
+      - name: Install verifier dependency
+        run: python -m pip install --disable-pip-version-check 'PyYAML==6.0.2'
+      - name: Resolve active Stage-02 work unit
+        shell: bash
+        run: |
+          python - <<'PY' >> "$GITHUB_ENV"
+          import yaml
+          from pathlib import Path
+          r=yaml.safe_load(Path('STAGE_EXECUTION/STAGE-02/CURRENT_STAGE02_RESUME.yaml').read_text())
+          wu=r['active_work_unit_uid']
+          print(f'ACPOS_ACTIVE_WORK_UNIT=STAGE_EXECUTION/STAGE-02/{wu}/WORK_UNIT.yaml')
+          print(f'ACPOS_CURRENT_SCOPE=STAGE_EXECUTION/STAGE-02/{wu}/CURRENT_EXECUTION_SCOPE_MANIFEST.yaml')
+          print(f'ACPOS_EVIDENCE_PATH=STAGE_EXECUTION/STAGE-02/{wu}/EVIDENCE/STAGE02_NORMALIZED_EVIDENCE.json')
+          PY
+          echo "ACPOS_PRODUCT_ROOT=$GITHUB_WORKSPACE" >> "$GITHUB_ENV"
+      - name: Validate frozen governance definition
+        run: |
+          python governance/ci/stage_execution_engine.py --definition-audit-all
+      - name: Validate active Stage-02 admission
+        run: |
+          python governance/ci/stage_execution_engine.py --admission-check --stage STAGE-02
+      - name: Validate normalized Stage-02 evidence when materialized
+        shell: bash
+        run: |
+          if [ -f "$ACPOS_EVIDENCE_PATH" ]; then
+            python governance/ci/stage_execution_engine.py --validate-evidence --stage STAGE-02 --evidence "$ACPOS_EVIDENCE_PATH"
+          else
+            echo "EVIDENCE_NOT_YET_MATERIALIZED"
+          fi
