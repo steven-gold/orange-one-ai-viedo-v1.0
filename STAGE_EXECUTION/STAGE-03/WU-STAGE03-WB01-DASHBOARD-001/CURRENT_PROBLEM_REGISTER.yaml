@@ -1,0 +1,23 @@
+artifact_uid: CPR-STAGE03-WB01-001
+artifact_type: CURRENT_PROBLEM_REGISTER
+stage_uid: STAGE-03
+work_unit_uid: WU-STAGE03-WB01-DASHBOARD-001
+governed_unit_uid: workspace:WB-01
+problems:
+- problem_uid: GAP-WB01-EXACT-CONTROL-ACTION-GATE-BINDING-001
+  class: UPSTREAM_FUNCTIONAL_BINDING_MATERIALIZATION_GAP
+  earliest_owner_stage: STAGE-02
+  evidence:
+  - STAGE_EXECUTION/STAGE-01/WU-STAGE01-WB01-DASHBOARD-001/01_CLASSIFIED/workspace-WB-01/PAGE/SECTION_NAVIGATION.yaml
+  - STAGE_EXECUTION/STAGE-02/WU-STAGE02-WB01-DASHBOARD-001/INTERACTION_TOPOLOGY_SPEC.yaml
+  - STAGE_EXECUTION/STAGE-02/WU-STAGE02-WB01-DASHBOARD-001/FUNCTIONAL_CHAIN_SPEC.yaml
+  finding: "14 canonical section controls and SECTION_OPEN behavior are source-supported, but Stage-02 materializes only the aggregate SECTION_OPEN_CONTROLS node and does not expose exact per-control Control UID -> Action UID/Gate UID bindings required by Stage-03 component/control identity binding."
+  forbidden_remediation: "Stage-03 MUST NOT invent Action UID, Gate UID, Runtime UID, API, or control identity."
+  required_disposition: REENTER_EARLIEST_OWNER_AND_MARK_DESCENDANTS_REVERIFY_REQUIRED
+  affected_descendants:
+  - STAGE-02:workspace:WB-01
+  - STAGE-03:workspace:WB-01
+  status: OPEN_BLOCKER
+open_problem_total: 1
+closure_blocker_total: 1
+status: BLOCKED_PENDING_UPSTREAM_REMEDIATION
