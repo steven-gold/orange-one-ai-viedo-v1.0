@@ -6,24 +6,24 @@ execution_branch: 0921acpos
 current_governance_uid: GOV-REV-20260924-INDEPENDENT-UNIT-LIFECYCLE-CURRENT-IDENTITY-SYNC
 current_governance_head: 25c4736940efb786aa567c83283bfbaa0773dc1b
 current_display_version: v2.2.24
-active_work_unit_uid: WU-STAGE03-WB01-DASHBOARD-001
-resume_point: CANONICAL_PREFLIGHT_REPLAY
+active_work_unit_uid: null
+resume_point: STAGE04_UNIT_RESOLUTION_GATE
 eligible_units:
 - GLOBAL-HOME-SHELL-NAVIGATION
 - workspace:WB-01
 completed_stage03_units:
 - GLOBAL-HOME-SHELL-NAVIGATION
-remaining_stage03_units:
 - workspace:WB-01
+remaining_stage03_units: []
 stage_transition_semantics: PER_GOVERNED_PAGE_OR_SYSTEM_LOGIC_UNIT
-status: STAGE03_CLOSURE_IN_PROGRESS
+status: STAGE03_COMPLETE_STAGE04_ELIGIBLE
 pending_visual_review_units: []
 materialization_validation_run_id: 36015610533
 materialization_validation_head: 50340ec5f5a1b7e844c34911049b45e61de5d2b5
 post_review_validation_run_id: 36028726148
 post_review_validation_head: e5564984caf2fb35b575108fb48d02e241b0bfd0
-last_closed_work_unit_uid: WU-STAGE03-GLOBAL-HOME-SHELL-NAVIGATION-001
-last_terminal_validation_run_id: 36029115482
-last_terminal_validation_head: af16dad81adca977da8a8aecf1084331cd3f653e
-stage_exit_authorized: false
+last_closed_work_unit_uid: WU-STAGE03-WB01-DASHBOARD-001
+last_terminal_validation_run_id: 36053005947
+last_terminal_validation_head: 17e599775f2390587256f0e939b2c4cd4c12faef
+stage_exit_authorized: true
 next_stage_uid: STAGE-04
