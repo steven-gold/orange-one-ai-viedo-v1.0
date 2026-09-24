@@ -1,0 +1,107 @@
+artifact_uid: CL-SRC-DOCX-824515A6509D11C975A3-ERROR_RECOVERY_REQUIREMENT
+page_uid: CORE-01
+planning_domain: PAGE_CONSTRUCTION
+responsibility_uid: ERROR_RECOVERY_REQUIREMENT
+responsibility_class: ERROR_RECOVERY_REQUIREMENT
+responsibilities:
+- ERROR_RECOVERY_REQUIREMENT
+canonical_owner_uid: OWNER-SOURCE-SRC-DOCX-824515A6509D11C975A3
+target_path: 01_CLASSIFIED/CORE-01/PAGE/ERROR_RECOVERY_REQUIREMENT.yaml
+lifecycle_uid: LC-STAGE01-ERROR_RECOVERY_REQUIREMENT
+approval_scope_uid: AP-STAGE01-CORE-01
+version_scope_uid: VER-7a02d2242a76
+test_scope_uid: TEST-STAGE01-ERROR_RECOVERY_REQUIREMENT
+source_lineage:
+- source_uid: SRC-DOCX-824515A6509D11C975A3
+  source_segment_uids:
+  - SEG-SN-2C604F3C40715E6A235ACE5F
+  - SEG-SN-34A84F0140A6BAA0EB715F20
+  - SEG-SN-D7B1C29ECEBCDC93AB426468
+  - SEG-SN-653C0295956AB977B091E82A
+  - SEG-SN-D6E26E3AD99C937058839141
+  - SEG-SN-A767E6BB78D3EBDC09E44104
+  - SEG-SN-E07FEA02BC3D487045BA0384
+  - SEG-SN-5F992E0769781B36F418C81E
+  - SEG-SN-516B55E5529C53BA1BD1699B
+  - SEG-SN-267C9CBE3CD8D9A16279BE0A
+  - SEG-SN-F3F244D636859426A07AFF65
+  - SEG-SN-7BDA3AE306CE93A197FDCA54
+  - SEG-SN-7E829D1AFB69BE636097DFCE
+  - SEG-SN-5769824C7DA99D92E827159A
+  - SEG-SN-2EAA12854C9F13E9948E0650
+  - SEG-SN-C387F72CC611403B0F9CCB70
+  - SEG-SN-6BD7820F12D16779783CEA25
+  - SEG-SN-09CEC3B87E0BA5418502EC5A
+  - SEG-SN-4632769FDB2E5824923230BF
+  - SEG-SN-1775794CA90D3C1C13C439C4
+  - SEG-SN-7605A53A7F33AF444B070203
+  - SEG-SN-375640DE38E884B9F9F2B86E
+facts:
+- source_node_uid: SN-2C604F3C40715E6A235ACE5F
+  document_order_index: 22515
+  source_text: 17. State / Recovery Design
+- source_node_uid: SN-34A84F0140A6BAA0EB715F20
+  document_order_index: 23196
+  source_text: CORE-01-ST-ERROR
+- source_node_uid: SN-D7B1C29ECEBCDC93AB426468
+  document_order_index: 23219
+  source_text: ERROR/BLOCKED
+- source_node_uid: SN-653C0295956AB977B091E82A
+  document_order_index: 23248
+  source_text: 17.2 Error / Recovery
+- source_node_uid: SN-D6E26E3AD99C937058839141
+  document_order_index: 23287
+  source_text: Error UID
+- source_node_uid: SN-A767E6BB78D3EBDC09E44104
+  document_order_index: 23339
+  source_text: Recovery
+- source_node_uid: SN-E07FEA02BC3D487045BA0384
+  document_order_index: 23759
+  source_text: Preserve thread/draft; show real error/retry eligibility
+- source_node_uid: SN-5F992E0769781B36F418C81E
+  document_order_index: 41285
+  source_text: ERROR_RECOVERY
+- source_node_uid: SN-516B55E5529C53BA1BD1699B
+  document_order_index: 42228
+  source_text: ERROR_RECOVERY
+- source_node_uid: SN-267C9CBE3CD8D9A16279BE0A
+  document_order_index: 43171
+  source_text: ERROR_RECOVERY
+- source_node_uid: SN-F3F244D636859426A07AFF65
+  document_order_index: 44114
+  source_text: ERROR_RECOVERY
+- source_node_uid: SN-7BDA3AE306CE93A197FDCA54
+  document_order_index: 45057
+  source_text: ERROR_RECOVERY
+- source_node_uid: SN-7E829D1AFB69BE636097DFCE
+  document_order_index: 46000
+  source_text: ERROR_RECOVERY
+- source_node_uid: SN-5769824C7DA99D92E827159A
+  document_order_index: 46943
+  source_text: ERROR_RECOVERY
+- source_node_uid: SN-2EAA12854C9F13E9948E0650
+  document_order_index: 47886
+  source_text: ERROR_RECOVERY
+- source_node_uid: SN-C387F72CC611403B0F9CCB70
+  document_order_index: 48846
+  source_text: Default / Hover / Focus / Active / Loading / Disabled / Success / Error MUST NOT change the approved component footprint unless the current component contract explicitly allows it.
+- source_node_uid: SN-6BD7820F12D16779783CEA25
+  document_order_index: 49258
+  source_text: Required labels/status/error text may not be clipped. Long IDs/technical values use controlled ellipsis with recoverable full value; no silent semantic truncation.
+- source_node_uid: SN-09CEC3B87E0BA5418502EC5A
+  document_order_index: 49340
+  source_text: Geometry Failure Set
+- source_node_uid: SN-4632769FDB2E5824923230BF
+  document_order_index: 49881
+  source_text: Icon-only controls require accessible name/label; form fields bind visible label, validation/error description and required state.
+- source_node_uid: SN-1775794CA90D3C1C13C439C4
+  document_order_index: 49940
+  source_text: Error / Validation
+- source_node_uid: SN-7605A53A7F33AF444B070203
+  document_order_index: 49950
+  source_text: Error state is announced/associated with its control or field; failure does not erase user input unless the current design explicitly requires reset.
+- source_node_uid: SN-375640DE38E884B9F9F2B86E
+  document_order_index: 49973
+  source_text: zh-TW / zh-CN / en are design-supported language contexts. Labels/help/error/status text must use localization-owned copy rather than page-local semantic duplication.
+status: CURRENT_CLASSIFICATION
+content_hash: 9a9759b3088d045ab26c96457822ded1eef0c4259693773877050a153837bb2e
