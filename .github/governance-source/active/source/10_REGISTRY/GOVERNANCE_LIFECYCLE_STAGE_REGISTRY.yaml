@@ -218,8 +218,11 @@ stages:
     invariant_uid: GOV-INV-CANONICAL-STAGE-EXECUTION-OPTIMIZATION-001
     explicit_stage_binding_required: true
   work_unit_scope_source: CURRENT_EXECUTION_SCOPE_MANIFEST
-  stage_exit_scope_source: DECLARED_STAGE_REQUIRED_UNIVERSE_RECONCILIATION
+  stage_exit_scope_source: CURRENT_GOVERNED_UNIT_STAGE_REQUIRED_UNIVERSE_RECONCILIATION
   partial_work_unit_closure_may_grant_stage_exit: false
+  unrelated_same_stage_units_may_block_current_unit_exit: false
+  cross_unit_blocking_requires_explicit_required_dependency_edge: true
+  lifecycle_owner_granularity: PAGE_OR_SYSTEM_LOGIC_UNIT
   capability_ownership_boundary:
     owns:
     - SOURCE_CAPTURE
@@ -486,8 +489,11 @@ stages:
     - FUNCTION_ADMISSION_SCORECARD
     - AUTO_COMPLETION_SCOPE_LEDGER
   work_unit_scope_source: CURRENT_EXECUTION_SCOPE_MANIFEST
-  stage_exit_scope_source: DECLARED_STAGE_REQUIRED_UNIVERSE_RECONCILIATION
+  stage_exit_scope_source: CURRENT_GOVERNED_UNIT_STAGE_REQUIRED_UNIVERSE_RECONCILIATION
   partial_work_unit_closure_may_grant_stage_exit: false
+  unrelated_same_stage_units_may_block_current_unit_exit: false
+  cross_unit_blocking_requires_explicit_required_dependency_edge: true
+  lifecycle_owner_granularity: PAGE_OR_SYSTEM_LOGIC_UNIT
   functional_contract_ownership:
   - BUSINESS_ENTITY_LIFECYCLE
   - OPERATION_HIERARCHY
@@ -672,8 +678,11 @@ stages:
     invariant_uid: GOV-INV-CANONICAL-STAGE-EXECUTION-OPTIMIZATION-001
     explicit_stage_binding_required: true
   work_unit_scope_source: CURRENT_EXECUTION_SCOPE_MANIFEST
-  stage_exit_scope_source: DECLARED_STAGE_REQUIRED_UNIVERSE_RECONCILIATION
+  stage_exit_scope_source: CURRENT_GOVERNED_UNIT_STAGE_REQUIRED_UNIVERSE_RECONCILIATION
   partial_work_unit_closure_may_grant_stage_exit: false
+  unrelated_same_stage_units_may_block_current_unit_exit: false
+  cross_unit_blocking_requires_explicit_required_dependency_edge: true
+  lifecycle_owner_granularity: PAGE_OR_SYSTEM_LOGIC_UNIT
   functional_topology_redefinition: BLOCK_REOPEN_STAGE02
   required_output_applicability:
     always_for_target_scope:
@@ -840,8 +849,11 @@ stages:
     invariant_uid: GOV-INV-CANONICAL-STAGE-EXECUTION-OPTIMIZATION-001
     explicit_stage_binding_required: true
   work_unit_scope_source: CURRENT_EXECUTION_SCOPE_MANIFEST
-  stage_exit_scope_source: DECLARED_STAGE_REQUIRED_UNIVERSE_RECONCILIATION
+  stage_exit_scope_source: CURRENT_GOVERNED_UNIT_STAGE_REQUIRED_UNIVERSE_RECONCILIATION
   partial_work_unit_closure_may_grant_stage_exit: false
+  unrelated_same_stage_units_may_block_current_unit_exit: false
+  cross_unit_blocking_requires_explicit_required_dependency_edge: true
+  lifecycle_owner_granularity: PAGE_OR_SYSTEM_LOGIC_UNIT
   upstream_contract_or_visual_change_after_freeze: INVALIDATE_IMPACTED_FREEZE_AND_REVERIFY
   cross_stage_materialization_gate:
     required: true
@@ -995,8 +1007,11 @@ stages:
     invariant_uid: GOV-INV-CANONICAL-STAGE-EXECUTION-OPTIMIZATION-001
     explicit_stage_binding_required: true
   work_unit_scope_source: CURRENT_EXECUTION_SCOPE_MANIFEST
-  stage_exit_scope_source: DECLARED_STAGE_REQUIRED_UNIVERSE_RECONCILIATION
+  stage_exit_scope_source: CURRENT_GOVERNED_UNIT_STAGE_REQUIRED_UNIVERSE_RECONCILIATION
   partial_work_unit_closure_may_grant_stage_exit: false
+  unrelated_same_stage_units_may_block_current_unit_exit: false
+  cross_unit_blocking_requires_explicit_required_dependency_edge: true
+  lifecycle_owner_granularity: PAGE_OR_SYSTEM_LOGIC_UNIT
   upstream_owned_gap_discovered: STOP_AND_REENTER_CAPABILITY_REENTRY_MAP
   cross_stage_materialization_gate:
     required: true
@@ -1139,8 +1154,11 @@ stages:
     invariant_uid: GOV-INV-CANONICAL-STAGE-EXECUTION-OPTIMIZATION-001
     explicit_stage_binding_required: true
   work_unit_scope_source: CURRENT_EXECUTION_SCOPE_MANIFEST
-  stage_exit_scope_source: DECLARED_STAGE_REQUIRED_UNIVERSE_RECONCILIATION
+  stage_exit_scope_source: CURRENT_GOVERNED_UNIT_STAGE_REQUIRED_UNIVERSE_RECONCILIATION
   partial_work_unit_closure_may_grant_stage_exit: false
+  unrelated_same_stage_units_may_block_current_unit_exit: false
+  cross_unit_blocking_requires_explicit_required_dependency_edge: true
+  lifecycle_owner_granularity: PAGE_OR_SYSTEM_LOGIC_UNIT
   upstream_owned_gap_discovered: STOP_AND_REENTER_CAPABILITY_REENTRY_MAP
   cross_stage_materialization_gate:
     required: true
@@ -1257,8 +1275,11 @@ stages:
     invariant_uid: GOV-INV-CANONICAL-STAGE-EXECUTION-OPTIMIZATION-001
     explicit_stage_binding_required: true
   work_unit_scope_source: CURRENT_EXECUTION_SCOPE_MANIFEST
-  stage_exit_scope_source: DECLARED_STAGE_REQUIRED_UNIVERSE_RECONCILIATION
+  stage_exit_scope_source: CURRENT_GOVERNED_UNIT_STAGE_REQUIRED_UNIVERSE_RECONCILIATION
   partial_work_unit_closure_may_grant_stage_exit: false
+  unrelated_same_stage_units_may_block_current_unit_exit: false
+  cross_unit_blocking_requires_explicit_required_dependency_edge: true
+  lifecycle_owner_granularity: PAGE_OR_SYSTEM_LOGIC_UNIT
   upstream_owned_gap_discovered: STOP_AND_REENTER_CAPABILITY_REENTRY_MAP
   cross_stage_materialization_gate:
     required: true
@@ -1358,8 +1379,11 @@ stages:
     invariant_uid: GOV-INV-CANONICAL-STAGE-EXECUTION-OPTIMIZATION-001
     explicit_stage_binding_required: true
   work_unit_scope_source: CURRENT_EXECUTION_SCOPE_MANIFEST
-  stage_exit_scope_source: DECLARED_STAGE_REQUIRED_UNIVERSE_RECONCILIATION
+  stage_exit_scope_source: CURRENT_GOVERNED_UNIT_STAGE_REQUIRED_UNIVERSE_RECONCILIATION
   partial_work_unit_closure_may_grant_stage_exit: false
+  unrelated_same_stage_units_may_block_current_unit_exit: false
+  cross_unit_blocking_requires_explicit_required_dependency_edge: true
+  lifecycle_owner_granularity: PAGE_OR_SYSTEM_LOGIC_UNIT
   upstream_owned_gap_discovered: STOP_AND_REENTER_CAPABILITY_REENTRY_MAP
   cross_stage_materialization_gate:
     required: true
@@ -1464,8 +1488,11 @@ stages:
     invariant_uid: GOV-INV-CANONICAL-STAGE-EXECUTION-OPTIMIZATION-001
     explicit_stage_binding_required: true
   work_unit_scope_source: CURRENT_EXECUTION_SCOPE_MANIFEST
-  stage_exit_scope_source: DECLARED_STAGE_REQUIRED_UNIVERSE_RECONCILIATION
+  stage_exit_scope_source: CURRENT_GOVERNED_UNIT_STAGE_REQUIRED_UNIVERSE_RECONCILIATION
   partial_work_unit_closure_may_grant_stage_exit: false
+  unrelated_same_stage_units_may_block_current_unit_exit: false
+  cross_unit_blocking_requires_explicit_required_dependency_edge: true
+  lifecycle_owner_granularity: PAGE_OR_SYSTEM_LOGIC_UNIT
   upstream_owned_gap_discovered: STOP_AND_REENTER_CAPABILITY_REENTRY_MAP
   cross_stage_materialization_gate:
     required: true
@@ -1599,8 +1626,11 @@ stages:
     invariant_uid: GOV-INV-CANONICAL-STAGE-EXECUTION-OPTIMIZATION-001
     explicit_stage_binding_required: true
   work_unit_scope_source: CURRENT_EXECUTION_SCOPE_MANIFEST
-  stage_exit_scope_source: DECLARED_STAGE_REQUIRED_UNIVERSE_RECONCILIATION
+  stage_exit_scope_source: CURRENT_GOVERNED_UNIT_STAGE_REQUIRED_UNIVERSE_RECONCILIATION
   partial_work_unit_closure_may_grant_stage_exit: false
+  unrelated_same_stage_units_may_block_current_unit_exit: false
+  cross_unit_blocking_requires_explicit_required_dependency_edge: true
+  lifecycle_owner_granularity: PAGE_OR_SYSTEM_LOGIC_UNIT
   upstream_owned_gap_discovered: STOP_AND_REENTER_CAPABILITY_REENTRY_MAP
   cross_stage_materialization_gate:
     required: true
@@ -1719,8 +1749,11 @@ stages:
     invariant_uid: GOV-INV-CANONICAL-STAGE-EXECUTION-OPTIMIZATION-001
     explicit_stage_binding_required: true
   work_unit_scope_source: CURRENT_EXECUTION_SCOPE_MANIFEST
-  stage_exit_scope_source: DECLARED_STAGE_REQUIRED_UNIVERSE_RECONCILIATION
+  stage_exit_scope_source: CURRENT_GOVERNED_UNIT_STAGE_REQUIRED_UNIVERSE_RECONCILIATION
   partial_work_unit_closure_may_grant_stage_exit: false
+  unrelated_same_stage_units_may_block_current_unit_exit: false
+  cross_unit_blocking_requires_explicit_required_dependency_edge: true
+  lifecycle_owner_granularity: PAGE_OR_SYSTEM_LOGIC_UNIT
   upstream_owned_gap_discovered: STOP_AND_REENTER_CAPABILITY_REENTRY_MAP
   cross_stage_materialization_gate:
     required: true
@@ -2184,9 +2217,12 @@ execution_scope_contract:
   product_scope_locator_contract: STAGE_EXECUTION/<STAGE_UID>/<WORK_UNIT_UID>/CURRENT_EXECUTION_SCOPE_MANIFEST.yaml
   scope_source: CURRENT_AUTHORITY_PROFILE_APPLICABILITY_DEPENDENCY_AND_PERSISTED_PRODUCT_STATE
   work_unit_scope_source: EXECUTION_SCOPE_MANIFEST
-  stage_exit_scope_source: DECLARED_STAGE_REQUIRED_UNIVERSE_RECONCILIATION
+  stage_exit_scope_source: CURRENT_GOVERNED_UNIT_STAGE_REQUIRED_UNIVERSE_RECONCILIATION
   governance_branch_may_persist_current_product_scope: false
   partial_work_unit_closure_may_grant_stage_exit: false
+  unrelated_same_stage_units_may_block_current_unit_exit: false
+  cross_unit_blocking_requires_explicit_required_dependency_edge: true
+  lifecycle_owner_granularity: PAGE_OR_SYSTEM_LOGIC_UNIT
   remaining_scope_persistence_required: true
   reusable_consumer_literal_product_scope_or_denominator: BLOCK
 capability_reentry_map:
