@@ -1,0 +1,13 @@
+artifact_uid: VIM-STAGE03-WB01-001
+artifact_type: VISUAL_INHERITANCE_MATRIX
+stage_uid: STAGE-03
+governed_unit_uid: workspace:WB-01
+rows:
+- {visual_region: GLOBAL_HEADER, owner: GLOBAL-HOME-SHELL-NAVIGATION, inheritance: SHARED_VISUAL_OWNER}
+- {visual_region: GLOBAL_SIDEBAR, owner: GLOBAL-HOME-SHELL-NAVIGATION, inheritance: SHARED_VISUAL_OWNER, forbidden_local_override: OVERLAY_NO_REFLOW}
+- {visual_region: WORKSPACE_MOUNT_GEOMETRY, owner: GLOBAL-HOME-SHELL-NAVIGATION, inheritance: SHARED_VISUAL_OWNER}
+- {visual_region: DASHBOARD_14_SECTIONS, owner: workspace:WB-01, inheritance: DIRECT_OWNER}
+- {visual_region: DASHBOARD_DETAIL_DRAWER, owner: workspace:WB-01, inheritance: DIRECT_OWNER}
+duplicate_visual_owner_count: 0
+legacy_overlay_shell_disposition: SUPERSEDED_BY_SHARED_GLOBAL_SHELL_OWNER
+status: CURRENT
