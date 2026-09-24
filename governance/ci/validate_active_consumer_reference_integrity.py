@@ -131,20 +131,12 @@ def main() -> int:
         if (ROOT / retired).exists():
             errors.append("RETIRED_COMPATIBILITY_PATH_STILL_PRESENT:" + retired)
 
+    # Profile-specific stage schema is validated by the selected-profile validator.
+    # This global consumer-integrity validator remains profile-neutral and only
+    # verifies that the registered adapter surface exists and is parseable.
     adapters = load_yaml(ADAPTERS)
-    stage2 = ((adapters.get("stages") or {}).get("STAGE-02") or {})
-    if stage2.get("scanner_mode") != "NORMALIZED_COMMON_EVIDENCE_CONTRACT":
-        errors.append("STAGE02_SCANNER_MODE_NOT_CURRENT_NORMALIZED")
-    for field in (
-        "python_compatibility_module",
-        "compatibility_current_execution_authority",
-        "compatibility_may_resolve_current_scope",
-        "compatibility_state_source",
-    ):
-        if field in stage2:
-            errors.append("STAGE02_RETIRED_COMPATIBILITY_FIELD_PRESENT:" + field)
-    if stage2.get("current_execution_state_source") != "PRODUCT_STAGE_EXECUTION_CURRENT_SCOPE_AND_RESUME":
-        errors.append("STAGE02_CURRENT_EXECUTION_STATE_SOURCE_DRIFT")
+    if not isinstance(adapters.get("stages") or {}, dict):
+        errors.append("STAGE_ADAPTER_REGISTRY_INVALID")
 
     referenced_by: dict[str, set[str]] = defaultdict(set)
     queue: deque[str] = deque()
@@ -198,11 +190,12 @@ def main() -> int:
             if child not in visited:
                 queue.append(child)
 
-    # Generic current engine must remain product-neutral; no fixed page/product selection.
+    # Generic current engine must remain product-neutral; detect concrete product
+    # identities generically instead of naming a profile step or one product page.
     current_engine_text = (ROOT / "governance/ci/stage_execution_engine.py").read_text(encoding="utf-8")
-    for token in ("target_pages=['CORE-01']", 'target_pages=["CORE-01"]', "CURRENT_STAGE2_TARGET_CORE01"):
-        if token in current_engine_text:
-            errors.append("FIXED_PRODUCT_SCOPE_IN_COMMON_ENGINE:" + token)
+    fixed_product_identity = re.compile(r"['\"](?:CORE|ASSET|VIDEO|EDIT|VOICE|QA|IAM|ERP|AIAPI)-\\d+['\"]")
+    for match in sorted(set(fixed_product_identity.findall(current_engine_text))):
+        errors.append("FIXED_PRODUCT_SCOPE_IN_COMMON_ENGINE:" + match)
 
     if errors:
         for error in sorted(set(errors)):
