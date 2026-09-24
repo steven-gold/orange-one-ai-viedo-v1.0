@@ -1,0 +1,28 @@
+artifact_uid: SCAN-STAGE02-GLOBAL-HOME-SHELL-001
+artifact_type: STAGE02_SCANNER_RESULT
+stage_uid: STAGE-02
+work_unit_uid: WU-STAGE02-GLOBAL-HOME-SHELL-NAVIGATION-001
+denominator:
+  business_entity_total: 6
+  operation_enum_total_per_entity: 23
+  applicable_required_operation_total: 39
+  required_hierarchy_edge_total: 3
+  required_total: 42
+scanner_results:
+- {scanner_dimension: ENTITY_OPERATION_DENOMINATOR, status: PASS}
+- {scanner_dimension: CONTROL_ACTION_RUNTIME_CHAIN, status: PASS}
+- {scanner_dimension: PAYLOAD_INPUT, status: PASS}
+- {scanner_dimension: STATE_TRANSITION, status: PASS}
+- {scanner_dimension: ERROR_RECOVERY, status: PASS}
+- {scanner_dimension: AUDIT_EVENT, status: PASS}
+- {scanner_dimension: WORKBENCH_COHESION, status: PASS}
+- {scanner_dimension: INTERACTION_CONTINUITY, status: PASS}
+- {scanner_dimension: AI_CONTEXT_CONTINUITY, status: PASS, proof: AI_INTERACTION_PROFILE_NOT_APPLICABLE_TO_GLOBAL_SHELL_SCOPE}
+- {scanner_dimension: VERSION_FINALIZATION, status: PASS, proof: NO_USER_MUTABLE_VERSIONED_ENTITY_IN_SCOPE}
+open_gap_total: 0
+closure_blocker_total: 0
+result: PASS
+evidence_gate:
+  head_sha: 0ff6c3401b202af14a07016180a61541ac747993
+  run_id: 36007564221
+  conclusion: success
