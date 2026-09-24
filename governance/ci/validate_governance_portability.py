@@ -8,7 +8,7 @@ from canonical_rule_registry import load_registry, scan_policy_text
 ROOT=Path(__file__).resolve().parents[2]
 CUR=ROOT/'governance/specifications/current'
 MOTHER=ROOT/'.github/governance-source/active/source/12_DOCS/mother-spec'
-CURRENT_ENTRY=ROOT/'GOVERNANCE_CURRENT.yaml'
+REGISTRY=ROOT/'governance/specifications/REGISTRY.yaml'
 failures=[]
 try:
     canonical=load_registry()
@@ -53,9 +53,8 @@ old={'STAGE_EXECUTION_OPTIMIZATION.yaml','STAGE_TEST_REMEDIATION_CLOSURE_PROTOCO
 if old & set(files): failures.append('superseded_stage_test_component_still_manifested')
 if any((CUR/x).exists() for x in old): failures.append('superseded_stage_test_component_residual')
 
-entry=yaml.safe_load(CURRENT_ENTRY.read_text(encoding='utf-8')) or {}
-selected=entry.get('selected_execution_profile') or {}
-profile_ref=selected.get('registry')
+registry=yaml.safe_load(REGISTRY.read_text(encoding='utf-8')) or {}
+profile_ref=registry.get('lifecycle_registry')
 if not profile_ref:
     failures.append('selected_profile_registry_missing')
     prof={}
@@ -67,19 +66,22 @@ else:
     else:
         prof=yaml.safe_load(profile_path.read_text(encoding='utf-8')) or {}
 
-if selected.get('layer_classification')!='EXECUTION_PROFILE' or selected.get('global_normative_authority') is not False:
-    failures.append('current_selected_profile_classification_invalid')
 if prof.get('artifact_type')!='EXECUTION_PROFILE_REGISTRY':
     failures.append('profile_registry_type_invalid')
 if prof.get('layer_classification')!='EXECUTION_PROFILE' or prof.get('global_normative_authority') is not False:
     failures.append('profile_layer_classification_invalid')
-if prof.get('profile_uid') != selected.get('profile_uid'):
-    failures.append('selected_profile_uid_drift')
+if prof.get('profile_may_weaken_common_policy') is not False:
+    failures.append('selected_profile_may_weaken_common_policy')
 profile_steps=prof.get('stages') or []
 if int(prof.get('profile_local_denominator') or -1)!=len(profile_steps):
     failures.append('profile_local_denominator_drift')
-if int(selected.get('profile_local_denominator') or -1)!=len(profile_steps):
-    failures.append('current_selected_profile_denominator_drift')
+scope_contract=prof.get('execution_scope_contract') or {}
+if scope_contract.get('current_scope_artifact')!='PRODUCT_STAGE_EXECUTION_CURRENT_SCOPE_MANIFEST':
+    failures.append('profile_current_scope_not_product_owned')
+if scope_contract.get('governance_branch_may_persist_current_product_scope') is not False:
+    failures.append('profile_governance_branch_product_scope_not_blocked')
+if registry.get('product_execution_branch')!='0921acpos':
+    failures.append('product_execution_branch_drift')
 
 synthetic=[
     {'uid':'SYNTH-A','steps':['discover','design','ship']},
@@ -100,8 +102,6 @@ global_surfaces=[
     ROOT/'governance/ci/validate_authoring_reference_governance_coverage.py',
     ROOT/'governance/ci/validate_validation_remediation_closure_protocol.py',
     ROOT/'governance/ci/validate_selected_execution_profile_integrity.py',
-    ROOT/'.github/workflows/governance-selected-profile-integrity.yml',
-    ROOT/'.github/workflows/governance-full-line-system-gate.yml',
 ]
 fixed_step=re.compile(r'\bSTAGE-\d{2}\b', re.IGNORECASE)
 fixed_schema=re.compile(r'\bstage0?[1-9]\b', re.IGNORECASE)
@@ -119,10 +119,8 @@ for surface in global_surfaces:
 scope_neutral_surfaces=[
     ROOT/'governance/ci/content_integrity_engine.py',
     ROOT/'governance/ci/validate_typography_metrics_evidence.py',
-    ROOT/'governance/ci/run_current_stage2_actual_test.py',
-    ROOT/'governance/ci/validate_current_stage2_materialized_closure.py',
-    ROOT/'governance/ci/validate_stage02_state_integrity.py',
-    ROOT/'governance/ci/validate_stage02_successor_integrity.py',
+    ROOT/'governance/ci/stage_execution_engine.py',
+    ROOT/'governance/ci/materialize_current_stage2_closure_artifacts.py',
 ]
 literal_product_identity=re.compile(r"['\"](?:CORE|ASSET|VIDEO|EDIT|VOICE|QA|IAM|ERP|AIAPI)-\d+['\"]")
 for surface in scope_neutral_surfaces:
@@ -204,7 +202,7 @@ out={
     'canonical_registry_digest':canonical.get('registry_digest'),
     'mother_files':len(list(MOTHER.glob('*.md'))),
     'current_components':len(files),
-    'selected_profile_uid':selected.get('profile_uid'),
+    'selected_profile_uid':prof.get('profile_uid'),
     'selected_profile_steps':len(profile_steps),
     'synthetic_profile_denominators':[len(x['steps']) for x in synthetic],
     'global_machine_surfaces_checked':len(global_surfaces),
