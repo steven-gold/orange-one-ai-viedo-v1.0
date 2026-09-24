@@ -485,7 +485,7 @@ invariants:
     visual_and_logic_state_feedback_must_remain_synchronized: true
   INDEXED_INCREMENTAL_VALIDATION:
     purpose: REDUCE_REPEAT_FULL_PACKAGE_SCAN_WITHOUT_REDUCING_VALIDATION_COVERAGE
-    construction_index_first_loading_required: true
+    impact_and_reverse_dependency_index_loading_required: true
     validation_impact_index_required: true
     reverse_dependency_index_required: true
     cache_key_fields:
