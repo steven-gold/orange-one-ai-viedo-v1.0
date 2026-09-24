@@ -1,0 +1,17 @@
+artifact_uid: VSES-STAGE03-HOME-001
+artifact_type: VISUAL_SCENARIO_EVIDENCE_SET
+stage_uid: STAGE-03
+governed_unit_uid: GLOBAL-HOME-SHELL-NAVIGATION
+scenarios:
+- {scenario_uid: HOME-1920-COLLAPSED, viewport_px: 1920, sidebar_state: COLLAPSED, evidence_ref: VISUAL_PREVIEW.svg#collapsed}
+- {scenario_uid: HOME-1920-EXPANDED, viewport_px: 1920, sidebar_state: EXPANDED, evidence_ref: VISUAL_PREVIEW.svg#expanded}
+- {scenario_uid: HOME-1440-COLLAPSED, viewport_px: 1440, sidebar_state: COLLAPSED, evidence_ref: VISUAL_PREVIEW.svg#collapsed}
+- {scenario_uid: HOME-1440-EXPANDED, viewport_px: 1440, sidebar_state: EXPANDED, evidence_ref: VISUAL_PREVIEW.svg#expanded}
+- {scenario_uid: HOME-1280-COLLAPSED, viewport_px: 1280, sidebar_state: COLLAPSED, evidence_ref: VISUAL_PREVIEW.svg#collapsed}
+- {scenario_uid: HOME-1280-EXPANDED, viewport_px: 1280, sidebar_state: EXPANDED, evidence_ref: VISUAL_PREVIEW.svg#expanded}
+- {scenario_uid: HOME-1024-COLLAPSED, viewport_px: 1024, sidebar_state: COLLAPSED, evidence_ref: VISUAL_PREVIEW.svg#collapsed}
+- {scenario_uid: HOME-1024-EXPANDED, viewport_px: 1024, sidebar_state: EXPANDED, evidence_ref: VISUAL_PREVIEW.svg#expanded}
+required_scenario_count: 10
+materialized_scenario_count: 8
+remaining_scenarios: [HOME-1536-COLLAPSED, HOME-1536-EXPANDED]
+status: INCOMPLETE
