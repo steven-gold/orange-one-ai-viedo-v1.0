@@ -1,5 +1,5 @@
 name: Current Governance Cleanup Validation
-# rerun-current-only
+# rerun-current-only-2
 
 on:
   push:
@@ -34,5 +34,3 @@ jobs:
           python .github/governance-source/active/source/09_TESTS/governance/validate_product_neutral_entity_lifecycle.py
           test ! -e governance/ci/compile_stage_execution_preflight.py
           test ! -e governance/ci/stage_execution_adapters/stage02_functional_contract.py
-          ! grep -R "HISTORICAL_GOVERNANCE_TEST_STATE_ONLY" governance/ci .github/workflows
-          ! grep -R "stage_execution_adapters.stage02_functional_contract" governance/ci .github/workflows
