@@ -1,0 +1,199 @@
+artifact_uid: CL-SRC-DOCX-03BC0445C97E04BB085F-STATE_LIFECYCLE_REQUIREMENT
+page_uid: admin:IAM-01
+planning_domain: PAGE_CONSTRUCTION
+responsibility_uid: STATE_LIFECYCLE_REQUIREMENT
+responsibility_class: STATE_LIFECYCLE_REQUIREMENT
+responsibilities:
+- STATE_LIFECYCLE_REQUIREMENT
+canonical_owner_uid: OWNER-SOURCE-SRC-DOCX-03BC0445C97E04BB085F
+target_path: 01_CLASSIFIED/admin-IAM-01/PAGE/STATE_LIFECYCLE_REQUIREMENT.yaml
+lifecycle_uid: LC-STAGE01-STATE_LIFECYCLE_REQUIREMENT
+approval_scope_uid: AP-STAGE01-admin-IAM-01
+version_scope_uid: VER-68926ae08a56
+test_scope_uid: TEST-STAGE01-STATE_LIFECYCLE_REQUIREMENT
+source_lineage:
+- source_uid: SRC-DOCX-03BC0445C97E04BB085F
+  source_segment_uids:
+  - SEG-SN-EBEB7875131EE01AE6BCFE2D
+  - SEG-SN-24E5D33FD1B4ABB42DB51453
+  - SEG-SN-DA29916DCA1589377F01233D
+  - SEG-SN-C8563E3C5915687A20699137
+  - SEG-SN-BB6617119A6A7B03EA8562BD
+  - SEG-SN-4E046293C87D9C39DE8C0B1B
+  - SEG-SN-AD3DE571DE058955BC09F830
+  - SEG-SN-10B19ACDF954FB770203D0AE
+  - SEG-SN-EFE84DD0F5478C27640C8F4A
+  - SEG-SN-CFC7DB26478267B1CF47B510
+  - SEG-SN-73BADB1D0005268D66346128
+  - SEG-SN-617ECFBB8FCB9A8DAFF457F4
+  - SEG-SN-914EED5512C762EF7687AE14
+  - SEG-SN-63DAC914385DBE837BCAAF48
+  - SEG-SN-08F02AB5F0C4932582A28206
+  - SEG-SN-7726AD275F59903ED5A7C772
+  - SEG-SN-0FF53D85E1B4E27A96056FE9
+  - SEG-SN-4A2B6F43A848634EA302E501
+  - SEG-SN-DCDBE6E3E2614A36E33B7F45
+  - SEG-SN-7705C48BD9682720691F23D7
+  - SEG-SN-2423F943A42C101B84CB9980
+  - SEG-SN-7DE3D5C291F55DD9D9B69980
+  - SEG-SN-FDB25C3D37787FFF542F1B91
+  - SEG-SN-87C63BCFAE2EDCAF05DA94CF
+  - SEG-SN-4EA4929B452AC5E140F67412
+  - SEG-SN-04ACFE04039A7DB0F80FE708
+  - SEG-SN-559CCAA5C6807CFDA486409B
+  - SEG-SN-7EB9B790008E908AA006FD96
+  - SEG-SN-F5A07CA06EBE4B3BF7D3E72B
+  - SEG-SN-E789398B4510EC8EDEF7B1D0
+  - SEG-SN-C5BBB7CB9F0C28EFD3A97FB6
+  - SEG-SN-302CE293FF5B1D0A7BD5C9E1
+  - SEG-SN-BC9BE9056E51AC82B039669F
+  - SEG-SN-A85772AE68DBAECD787AEF5E
+  - SEG-SN-06DD42DD2191AADFE35F862D
+  - SEG-SN-0AA7BAF004E477491EE31B0E
+  - SEG-SN-74A000DC008614D94F317490
+  - SEG-SN-7D696F5810E26A767CFD4871
+  - SEG-SN-5C24AC99CE5A4D79CE53F86E
+  - SEG-SN-B4617499080184D83A2A31AC
+  - SEG-SN-C806DA67856F150CB55ACC25
+  - SEG-SN-14782B18282603D4A8DD0845
+  - SEG-SN-461A2853AA75BB5D17E6D16E
+  - SEG-SN-35AA61EB0B7B8EC8F5EFD1C1
+  - SEG-SN-83A2BE407D9B4A794C595FCB
+facts:
+- source_node_uid: SN-EBEB7875131EE01AE6BCFE2D
+  document_order_index: 625
+  source_text: Visual Status
+- source_node_uid: SN-24E5D33FD1B4ABB42DB51453
+  document_order_index: 682
+  source_text: Implementation Status
+- source_node_uid: SN-DA29916DCA1589377F01233D
+  document_order_index: 1250
+  source_text: Keyboard、Focus、表單標籤、Disabled reason、狀態不只靠顏色；Touch target ≥44×44px。
+- source_node_uid: SN-C8563E3C5915687A20699137
+  document_order_index: 1533
+  source_text: 帳號生命週期與 Identity 連結
+- source_node_uid: SN-BB6617119A6A7B03EA8562BD
+  document_order_index: 1809
+  source_text: Basic Data + L1 selection + validation state
+- source_node_uid: SN-4E046293C87D9C39DE8C0B1B
+  document_order_index: 2586
+  source_text: Identity 負責「誰是誰」；Account 負責帳號管理狀態。
+- source_node_uid: SN-AD3DE571DE058955BC09F830
+  document_order_index: 3075
+  source_text: State Dependency
+- source_node_uid: SN-10B19ACDF954FB770203D0AE
+  document_order_index: 3081
+  source_text: Version Dependency
+- source_node_uid: SN-EFE84DD0F5478C27640C8F4A
+  document_order_index: 3166
+  source_text: Exact account/draft context; apply requires fresh preview + expected_version + idempotency/state guard.
+- source_node_uid: SN-CFC7DB26478267B1CF47B510
+  document_order_index: 3227
+  source_text: accountId + exact resource/action + expected_version + idempotency + actor/correlation + delta
+- source_node_uid: SN-73BADB1D0005268D66346128
+  document_order_index: 3245
+  source_text: Fresh Preview, no blocker, explicit confirm, exact account state; Assignment is effective only after successful apply.
+- source_node_uid: SN-617ECFBB8FCB9A8DAFF457F4
+  document_order_index: 5679
+  source_text: Version Check
+- source_node_uid: SN-914EED5512C762EF7687AE14
+  document_order_index: 7510
+  source_text: Status/MFA/Risk/Session/History 不應搶占主工作區。
+- source_node_uid: SN-63DAC914385DBE837BCAAF48
+  document_order_index: 8181
+  source_text: 所有 required operations、version、idempotency、approval、audit 成功。
+- source_node_uid: SN-08F02AB5F0C4932582A28206
+  document_order_index: 9304
+  source_text: Title / status / Add
+- source_node_uid: SN-7726AD275F59903ED5A7C772
+  document_order_index: 10192
+  source_text: Title + Add + current operation state
+- source_node_uid: SN-0FF53D85E1B4E27A96056FE9
+  document_order_index: 14405
+  source_text: 9 fixed current choices；至少一個 Intentional selection state 才可進 Preview。
+- source_node_uid: SN-4A2B6F43A848634EA302E501
+  document_order_index: 14681
+  source_text: Preview fresh + no blocker + expected_version。
+- source_node_uid: SN-DCDBE6E3E2614A36E33B7F45
+  document_order_index: 17053
+  source_text: 7. Additions 使用 assign；Removals 使用 revoke；帶 expected_version / correlation / idempotency / audit。
+- source_node_uid: SN-7705C48BD9682720691F23D7
+  document_order_index: 18594
+  source_text: Draft / schema / state validation。
+- source_node_uid: SN-2423F943A42C101B84CB9980
+  document_order_index: 19014
+  source_text: Approval required where lifecycle demands。
+- source_node_uid: SN-7DE3D5C291F55DD9D9B69980
+  document_order_index: 19456
+  source_text: 19. State Machine / 狀態、Transition 與 Resume
+- source_node_uid: SN-FDB25C3D37787FFF542F1B91
+  document_order_index: 19499
+  source_text: State
+- source_node_uid: SN-87C63BCFAE2EDCAF05DA94CF
+  document_order_index: 19612
+  source_text: 帳號目錄；未選帳號時 detail 使用 neutral empty state。
+- source_node_uid: SN-4EA4929B452AC5E140F67412
+  document_order_index: 21241
+  source_text: IAM-01-ERR-VERSION
+- source_node_uid: SN-04ACFE04039A7DB0F80FE708
+  document_order_index: 21268
+  source_text: Expected version conflict
+- source_node_uid: SN-559CCAA5C6807CFDA486409B
+  document_order_index: 21295
+  source_text: Reload current state；要求重新 Preview。
+- source_node_uid: SN-7EB9B790008E908AA006FD96
+  document_order_index: 21635
+  source_text: Actor Status
+- source_node_uid: SN-F5A07CA06EBE4B3BF7D3E72B
+  document_order_index: 22779
+  source_text: 真實帳號數與 Operation state 可更新。
+- source_node_uid: SN-E789398B4510EC8EDEF7B1D0
+  document_order_index: 22863
+  source_text: 內容可隨 state 改變但不可造成 layout drift。
+- source_node_uid: SN-C5BBB7CB9F0C28EFD3A97FB6
+  document_order_index: 22947
+  source_text: 真實 row data / filter state 可變。
+- source_node_uid: SN-302CE293FF5B1D0A7BD5C9E1
+  document_order_index: 23115
+  source_text: selected state 可變。
+- source_node_uid: SN-BC9BE9056E51AC82B039669F
+  document_order_index: 24651
+  source_text: Unauthorized / wrong scope / wrong version / double submit / deep link / partial apply cases 都需驗。
+- source_node_uid: SN-A85772AE68DBAECD787AEF5E
+  document_order_index: 24852
+  source_text: Truthful State
+- source_node_uid: SN-06DD42DD2191AADFE35F862D
+  document_order_index: 25245
+  source_text: Search/list/status/identity/MFA/risk/audit projection 可用，無假資料。
+- source_node_uid: SN-0AA7BAF004E477491EE31B0E
+  document_order_index: 26495
+  source_text: State
+- source_node_uid: SN-74A000DC008614D94F317490
+  document_order_index: 26522
+  source_text: IAM page local + governed draft state
+- source_node_uid: SN-7D696F5810E26A767CFD4871
+  document_order_index: 27251
+  source_text: UID Status
+- source_node_uid: SN-5C24AC99CE5A4D79CE53F86E
+  document_order_index: 29088
+  source_text: Status
+- source_node_uid: SN-B4617499080184D83A2A31AC
+  document_order_index: 30506
+  source_text: VERSION
+- source_node_uid: SN-C806DA67856F150CB55ACC25
+  document_order_index: 31449
+  source_text: VERSION
+- source_node_uid: SN-14782B18282603D4A8DD0845
+  document_order_index: 32392
+  source_text: VERSION
+- source_node_uid: SN-461A2853AA75BB5D17E6D16E
+  document_order_index: 32643
+  source_text: Design Version
+- source_node_uid: SN-35AA61EB0B7B8EC8F5EFD1C1
+  document_order_index: 32649
+  source_text: Use this Word's current version metadata / exact repository revision; this annex MUST NOT invent a parallel design version.
+- source_node_uid: SN-83A2BE407D9B4A794C595FCB
+  document_order_index: 32656
+  source_text: Freeze Status
+status: CURRENT_CLASSIFICATION
+content_hash: dc9c1f746affcca487ceea6e718eee7088bb760ff4ee4852bea842e0e56b10f5

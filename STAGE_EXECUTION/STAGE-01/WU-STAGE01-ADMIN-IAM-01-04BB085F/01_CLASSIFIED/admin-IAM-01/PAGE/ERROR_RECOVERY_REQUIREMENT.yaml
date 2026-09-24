@@ -1,0 +1,123 @@
+artifact_uid: CL-SRC-DOCX-03BC0445C97E04BB085F-ERROR_RECOVERY_REQUIREMENT
+page_uid: admin:IAM-01
+planning_domain: PAGE_CONSTRUCTION
+responsibility_uid: ERROR_RECOVERY_REQUIREMENT
+responsibility_class: ERROR_RECOVERY_REQUIREMENT
+responsibilities:
+- ERROR_RECOVERY_REQUIREMENT
+canonical_owner_uid: OWNER-SOURCE-SRC-DOCX-03BC0445C97E04BB085F
+target_path: 01_CLASSIFIED/admin-IAM-01/PAGE/ERROR_RECOVERY_REQUIREMENT.yaml
+lifecycle_uid: LC-STAGE01-ERROR_RECOVERY_REQUIREMENT
+approval_scope_uid: AP-STAGE01-admin-IAM-01
+version_scope_uid: VER-68926ae08a56
+test_scope_uid: TEST-STAGE01-ERROR_RECOVERY_REQUIREMENT
+source_lineage:
+- source_uid: SRC-DOCX-03BC0445C97E04BB085F
+  source_segment_uids:
+  - SEG-SN-C53ABE53224561318AE7BE0B
+  - SEG-SN-04F5162A08A53D625D628679
+  - SEG-SN-721D686476506646B69ADA28
+  - SEG-SN-C4EA14556788E4816FA5E6F2
+  - SEG-SN-57C010B0715858F84C4AD94C
+  - SEG-SN-75FB67C403C801314D8500EA
+  - SEG-SN-8EAF4571EFA37C0C0F59867B
+  - SEG-SN-A96C52E80BCCC3EA27162275
+  - SEG-SN-E1D0F762FC9D1583A1A81F37
+  - SEG-SN-319EF51E3F6CF7A1A1F70614
+  - SEG-SN-3761E12F7295E5B6D09C295B
+  - SEG-SN-218013E4F57CF41B5C3CE484
+  - SEG-SN-2427DCE9BEF5161D61C06620
+  - SEG-SN-1F3A05FF83E70E47EDB10829
+  - SEG-SN-3EDFEB95A46839FA25A66730
+  - SEG-SN-0FF06016F40D79D82732035B
+  - SEG-SN-0948A637021166E812DF4DC0
+  - SEG-SN-C28FB90602A5A3BA99B6CF6F
+  - SEG-SN-BC1E5B364A165C520C46EBA0
+  - SEG-SN-D976C4117C829A9A94159848
+  - SEG-SN-A8A46E7A8D0772DC50279B6F
+  - SEG-SN-BCA9E25C3042A6132FBFC44C
+  - SEG-SN-79B63C1E94E72EDF6CC6D99F
+  - SEG-SN-F602695B2E03F2C68ED4AAAB
+  - SEG-SN-29C7782487E82C5EFC308C6A
+  - SEG-SN-90041BA2CB6477DA0F337B3A
+facts:
+- source_node_uid: SN-C53ABE53224561318AE7BE0B
+  document_order_index: 1136
+  source_text: Partial Apply 不得顯示 COMPLETE；保留 Draft / correlation，僅重試缺失 delta。
+- source_node_uid: SN-04F5162A08A53D625D628679
+  document_order_index: 5871
+  source_text: Resume/Retry
+- source_node_uid: SN-721D686476506646B69ADA28
+  document_order_index: 6255
+  source_text: Error Recovery
+- source_node_uid: SN-C4EA14556788E4816FA5E6F2
+  document_order_index: 8208
+  source_text: 任何部分失敗 → Non-final + 真實 partial delta + correlation retry。
+- source_node_uid: SN-57C010B0715858F84C4AD94C
+  document_order_index: 13876
+  source_text: 所有 Effectful Control 必須具有 Default / Hover / Focus / Loading / Disabled(reason) / Success / Error 狀態；Disabled 不可只有降透明度而沒有可讀原因。
+- source_node_uid: SN-75FB67C403C801314D8500EA
+  document_order_index: 19156
+  source_text: Intent → Identity/Page Gate → Search input → Search action → /v1/search → Projection → Result list → empty/error feedback。
+- source_node_uid: SN-8EAF4571EFA37C0C0F59867B
+  document_order_index: 19384
+  source_text: Fresh Preview → explicit confirmation → expected_version/idempotency/state guard → assign/revoke/configure/approve → audit → COMPLETE or PARTIAL/ERROR。
+- source_node_uid: SN-A96C52E80BCCC3EA27162275
+  document_order_index: 19975
+  source_text: COMPLETE / BLOCKED / ERROR
+- source_node_uid: SN-E1D0F762FC9D1583A1A81F37
+  document_order_index: 20173
+  source_text: ERROR
+- source_node_uid: SN-319EF51E3F6CF7A1A1F70614
+  document_order_index: 20227
+  source_text: Idempotent retry / reload / return
+- source_node_uid: SN-3761E12F7295E5B6D09C295B
+  document_order_index: 20341
+  source_text: Failure Behavior
+- source_node_uid: SN-218013E4F57CF41B5C3CE484
+  document_order_index: 20776
+  source_text: 21. Error / Recovery Contract
+- source_node_uid: SN-2427DCE9BEF5161D61C06620
+  document_order_index: 20819
+  source_text: Error UID
+- source_node_uid: SN-1F3A05FF83E70E47EDB10829
+  document_order_index: 20875
+  source_text: Recovery
+- source_node_uid: SN-3EDFEB95A46839FA25A66730
+  document_order_index: 21352
+  source_text: 部分 assignment 成功、部分失敗
+- source_node_uid: SN-0FF06016F40D79D82732035B
+  document_order_index: 21379
+  source_text: Non-final；顯示成功/失敗 delta；只重試缺失 delta。
+- source_node_uid: SN-0948A637021166E812DF4DC0
+  document_order_index: 21947
+  source_text: Effectful operation 必須保存 correlation / actor / target / delta / result / failure。
+- source_node_uid: SN-C28FB90602A5A3BA99B6CF6F
+  document_order_index: 23599
+  source_text: Error
+- source_node_uid: SN-BC1E5B364A165C520C46EBA0
+  document_order_index: 23626
+  source_text: 錯誤需能定位到 Step / Field Group / L1 / Operation，並保留 Draft。
+- source_node_uid: SN-D976C4117C829A9A94159848
+  document_order_index: 24480
+  source_text: 6 Sections / 10 Components / 14 Controls / 13 Unique Actions / 5 Gates / 7 Errors / 9 Ports。
+- source_node_uid: SN-A8A46E7A8D0772DC50279B6F
+  document_order_index: 26085
+  source_text: Partial failure 絕不顯示 COMPLETE。
+- source_node_uid: SN-BCA9E25C3042A6132FBFC44C
+  document_order_index: 26549
+  source_text: Draft / Step / Preview freshness / applying lock / error correlation。
+- source_node_uid: SN-79B63C1E94E72EDF6CC6D99F
+  document_order_index: 26969
+  source_text: Partial failure 也要完整記錄。
+- source_node_uid: SN-F602695B2E03F2C68ED4AAAB
+  document_order_index: 30014
+  source_text: ERROR_RECOVERY
+- source_node_uid: SN-29C7782487E82C5EFC308C6A
+  document_order_index: 30957
+  source_text: ERROR_RECOVERY
+- source_node_uid: SN-90041BA2CB6477DA0F337B3A
+  document_order_index: 31900
+  source_text: ERROR_RECOVERY
+status: CURRENT_CLASSIFICATION
+content_hash: cae302fa83d73bf12c2a03519a9b15fb0f87a63815b932680d59b880d558cdda
