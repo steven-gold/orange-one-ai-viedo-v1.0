@@ -1,0 +1,32 @@
+artifact_uid: VGC-STAGE03-HOME-001
+artifact_type: VISUAL_GEOMETRY_CONTRACT
+stage_uid: STAGE-03
+governed_unit_uid: GLOBAL-HOME-SHELL-NAVIGATION
+layout_uid: GHS-LAYOUT-ADAPTIVE-COUPLED-SHELL
+geometry:
+  header: {top_px: 0, height_px: 58, width: FULL_VIEWPORT}
+  sidebar_collapsed: {top_px: 58, bottom_px: 0, width_px: 64}
+  sidebar_expanded: {top_px: 58, bottom_px: 0, width_px: 221}
+  workspace_collapsed: {top_px: 68, left_px: 78, right_px: 16, bottom_px: 16}
+  workspace_expanded: {top_px: 68, left_px: 235, right_px: 16, bottom_px: 16}
+  overlay_sidebar_over_workspace: FORBIDDEN
+viewport_state_denominator:
+- {viewport_px: 1024, states: [COLLAPSED, EXPANDED]}
+- {viewport_px: 1280, states: [COLLAPSED, EXPANDED]}
+- {viewport_px: 1440, states: [COLLAPSED, EXPANDED]}
+- {viewport_px: 1536, states: [COLLAPSED, EXPANDED]}
+- {viewport_px: 1920, states: [COLLAPSED, EXPANDED]}
+overflow_rule: PAGE_MIN_WIDTH_OVERFLOW_ONLY_INSIDE_WORKSPACE
+typography_expected_baseline:
+  font_family: "Inter / system-ui / -apple-system / BlinkMacSystemFont / Segoe UI / Noto Sans TC / PingFang TC / sans-serif"
+  computed_metrics_phase: EXPECTED_BASELINE
+  runtime_capture_credit: 0
+  tolerance_css_px: 1
+  rendered_line_tolerance: 1
+  semantic_overflow_tolerance: 0
+visual_anchors:
+- {anchor_uid: VA-HOME-HEADER-TOP, position_rule: "top=0", dimension_rule: "height=58px; width=viewport", relationship_rule: "above sidebar and workspace", lock_status: LOCKED}
+- {anchor_uid: VA-HOME-SIDEBAR-COLUMN, position_rule: "top=58px; left=0", dimension_rule: "64px collapsed / 221px expanded", relationship_rule: "adjacent to workspace; never overlay", lock_status: LOCKED}
+- {anchor_uid: VA-HOME-WORKSPACE-ORIGIN, position_rule: "top=68px; left=78/235px", dimension_rule: "right=16px; bottom=16px", relationship_rule: "left tracks sidebar width + 14px", lock_status: LOCKED}
+visual_anchor_count: 3
+status: EXPECTED_BASELINE
