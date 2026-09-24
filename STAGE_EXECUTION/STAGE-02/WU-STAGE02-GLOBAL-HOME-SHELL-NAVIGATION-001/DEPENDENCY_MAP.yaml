@@ -1,0 +1,33 @@
+artifact_uid: DEP-STAGE02-GLOBAL-HOME-SHELL-001
+artifact_type: DEPENDENCY_MAP
+stage_uid: STAGE-02
+governed_unit_uid: GLOBAL-HOME-SHELL-NAVIGATION
+dependencies:
+- dependency_uid: DEP-NAV-AUTHORITY
+  owner_ref: CANONICAL_NAVIGATION_AUTHORITY
+  requirement: REQUIRED
+  consumers:
+  - FC-NAV-ITEM-OPEN
+- dependency_uid: DEP-ACCOUNT-PERMISSION
+  owner_ref: ACCOUNT_PERMISSION_ASSIGNMENT
+  requirement: REQUIRED
+  consumers:
+  - FC-NAV-VISIBILITY
+  - FC-NAV-ITEM-OPEN
+- dependency_uid: DEP-LANGUAGE-THEME
+  owner_ref: LANGUAGE_THEME
+  requirement: REQUIRED
+  consumers:
+  - FC-LANGUAGE-SELECT
+- dependency_uid: DEP-QUICK-STATUS
+  owner_ref: QUICK_STATUS_PROJECTION
+  requirement: REQUIRED
+  consumers:
+  - FC-QUICK-STATUS
+- dependency_uid: DEP-WORKSPACE-MOUNT
+  owner_ref: WORKSPACE_MOUNT
+  requirement: REQUIRED
+  consumers:
+  - FC-NAV-ITEM-OPEN
+  - FC-WORKSPACE-SYNC
+status: CURRENT
