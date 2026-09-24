@@ -5,11 +5,13 @@ from pathlib import Path
 import yaml
 
 ROOT=Path(__file__).resolve().parents[2]
-CURRENT=ROOT/'GOVERNANCE_CURRENT.yaml'
 REGISTRY=ROOT/'governance/specifications/REGISTRY.yaml'
-STATE=ROOT/'governance/test/ACTIVE_STATE.yaml'
-SCOPE=ROOT/'governance/test/CURRENT_EXECUTION_SCOPE_MANIFEST.yaml'
 LIFECYCLE=ROOT/'.github/governance-source/active/source/10_REGISTRY/GOVERNANCE_LIFECYCLE_STAGE_REGISTRY.yaml'
+ADAPTERS=ROOT/'governance/ci/stage_execution_semantic_adapters.yaml'
+LEGACY_WRAPPER=ROOT/'governance/ci/compile_stage_execution_preflight.py'
+PRODUCT_ROOT_ENV='ACPOS_PRODUCT_ROOT'
+ACTIVE_WORK_UNIT_ENV='ACPOS_ACTIVE_WORK_UNIT'
+CURRENT_SCOPE_ENV='ACPOS_CURRENT_SCOPE'
 ADAPTERS=ROOT/'governance/ci/stage_execution_semantic_adapters.yaml'
 LEGACY_WRAPPER=ROOT/'governance/ci/compile_stage_execution_preflight.py'
 
@@ -38,14 +40,41 @@ def j(path):
     if not isinstance(obj,dict): fail(f'MAPPING_REQUIRED:{path.relative_to(ROOT)}')
     return obj
 def identity():
-    entry,reg=y(CURRENT),y(REGISTRY)
-    gov=(reg.get('active_specification') or {}).get('governance_uid')
-    if not gov or entry.get('active_governance_uid')!=gov: fail('CURRENT_GOVERNANCE_UID_DRIFT')
-    if (entry.get('selected_execution_profile') or {}).get('registry')!=str(LIFECYCLE.relative_to(ROOT)): fail('SELECTED_PROFILE_REGISTRY_DRIFT')
-    return entry,reg,str(gov)
+    reg=y(REGISTRY)
+    spec_root=str(reg.get('rules_root') or '')
+    if not spec_root: fail('REGISTRY_RULES_ROOT_MISSING')
+    manifest_path=ROOT/spec_root/'SPECIFICATION_MANIFEST.yaml'
+    manifest=y(manifest_path)
+    gov=str(manifest.get('artifact_uid') or '')
+    if not gov: fail('CURRENT_GOVERNANCE_UID_MISSING')
+    if reg.get('lifecycle_registry')!=str(LIFECYCLE.relative_to(ROOT)): fail('SELECTED_PROFILE_REGISTRY_DRIFT')
+    if (manifest.get('resolution_contract') or {}).get('canonical_root')!=spec_root: fail('CURRENT_SPECIFICATION_ROOT_DRIFT')
+    return manifest,reg,gov
 def data():
     entry,reg,gov=identity()
     return entry,reg,gov,y(LIFECYCLE),y(ADAPTERS)
+
+def _external_yaml(path,label):
+    if not path.is_file(): fail(label+'_MISSING:'+str(path))
+    obj=yaml.safe_load(path.read_text(encoding='utf-8'))
+    if not isinstance(obj,dict): fail(label+'_MAPPING_REQUIRED')
+    return obj
+
+def product_execution_context():
+    root_raw=os.environ.get(PRODUCT_ROOT_ENV,'').strip()
+    work_rel=os.environ.get(ACTIVE_WORK_UNIT_ENV,'').strip()
+    scope_rel=os.environ.get(CURRENT_SCOPE_ENV,'').strip()
+    if not root_raw or not work_rel or not scope_rel:
+        fail('PRODUCT_EXECUTION_CONTEXT_ENV_REQUIRED')
+    product_root=Path(root_raw).resolve()
+    if not product_root.is_dir(): fail('PRODUCT_EXECUTION_ROOT_MISSING')
+    def resolve_rel(rel,label):
+        p=Path(rel)
+        if p.is_absolute() or '..' in p.parts: fail(label+'_PATH_INVALID')
+        return product_root/p
+    work_path=resolve_rel(work_rel,'ACTIVE_WORK_UNIT')
+    scope_path=resolve_rel(scope_rel,'CURRENT_SCOPE')
+    return product_root,_external_yaml(work_path,'ACTIVE_WORK_UNIT'),_external_yaml(scope_path,'CURRENT_SCOPE'),work_rel,scope_rel
 def stage_map(profile):
     rows=profile.get('stages') or []
     if not isinstance(rows,list) or not rows: fail('PROFILE_STAGES_EMPTY')
@@ -229,15 +258,20 @@ def validate_work_unit_bindings(stage_uid,work,stages,adapters):
 
 def active_product(stage_uid):
     entry,reg,gov,profile,adapters,stages=validate_definition()
-    state,scope=y(STATE),y(SCOPE)
-    if state.get('current_primary_task_layer')!='PRODUCT_STAGE_EXECUTION': fail('PRODUCT_EXECUTION_REQUIRES_PRODUCT_STAGE_PRIMARY_TASK')
-    work=state.get('active_work_unit')
+    product_root,work,scope,work_rel,scope_rel=product_execution_context()
     validate_work_unit_bindings(stage_uid,work,stages,adapters)
-    if scope.get('governance_uid')!=gov or not scope.get('included_units'): fail('CURRENT_SCOPE_INVALID')
+    if scope.get('stage_uid')!=stage_uid or scope.get('work_unit_uid')!=work.get('work_unit_uid'):
+        fail('CURRENT_SCOPE_WORK_UNIT_BINDING_DRIFT')
+    if scope.get('governance_uid') not in {None,gov}: fail('CURRENT_SCOPE_GOVERNANCE_UID_DRIFT')
     deps=work.get('dependencies') or []
     if not isinstance(deps,list) or not deps: fail('ACTIVE_PRODUCT_WORK_UNIT_DEPENDENCY_CLOSURE_MISSING')
-    for rel in deps:
-        if isinstance(rel,str) and '/' in rel and not (ROOT/rel).exists(): fail(f'ACTIVE_PRODUCT_WORK_UNIT_DEPENDENCY_MISSING:{rel}')
+    for dep in deps:
+        if isinstance(dep,str) and '/' in dep and not (product_root/dep).exists():
+            fail(f'ACTIVE_PRODUCT_WORK_UNIT_DEPENDENCY_MISSING:{dep}')
+        if isinstance(dep,dict):
+            ref=dep.get('ref') or dep.get('path') or dep.get('source_ref')
+            if isinstance(ref,str) and '/' in ref and not (product_root/ref).exists():
+                fail(f'ACTIVE_PRODUCT_WORK_UNIT_DEPENDENCY_MISSING:{ref}')
     return work
 
 def admission(stage_uid):
@@ -264,7 +298,9 @@ def validate_evidence_data(stage_uid,e):
     missing=sorted(EVIDENCE_FIELDS-set(e))
     if missing: fail(f'NORMALIZED_EVIDENCE_FIELD_MISSING:{missing}')
     if e.get('governance_uid')!=gov or e.get('stage_uid')!=stage_uid: fail('EVIDENCE_IDENTITY_DRIFT')
-    if e.get('scope_manifest_ref')!=str(SCOPE.relative_to(ROOT)): fail('EVIDENCE_SCOPE_MANIFEST_REF_DRIFT')
+    scope_ref=str(e.get('scope_manifest_ref') or '')
+    if not scope_ref: fail('EVIDENCE_SCOPE_MANIFEST_REF_MISSING')
+    if scope_ref.startswith('governance/test/'): fail('LEGACY_GOVERNANCE_TEST_SCOPE_REF_FORBIDDEN')
     if e.get('actual_stage_execution_started') is not True or e.get('actual_stage_execution_completed') is not True: fail('EVIDENCE_ACTUAL_EXECUTION_NOT_COMPLETE')
     if e.get('fresh_execution') is not True or e.get('prior_results_used') is not False: fail('EVIDENCE_FRESH_EXECUTION_PROVENANCE_INVALID')
     if e.get('current_specification_mutated') is not False: fail('EVIDENCE_CURRENT_SPECIFICATION_MUTATION_FORBIDDEN')
