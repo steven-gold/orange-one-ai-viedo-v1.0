@@ -5,19 +5,20 @@ work_unit_uid: WU-STAGE03-WB01-DASHBOARD-001
 governed_unit_uid: workspace:WB-01
 problems:
 - problem_uid: GAP-WB01-EXACT-CONTROL-ACTION-GATE-BINDING-001
-  class: UPSTREAM_FUNCTIONAL_BINDING_MATERIALIZATION_GAP
-  earliest_owner_stage: STAGE-02
-  evidence:
-  - STAGE_EXECUTION/STAGE-01/WU-STAGE01-WB01-DASHBOARD-001/01_CLASSIFIED/workspace-WB-01/PAGE/SECTION_NAVIGATION.yaml
-  - STAGE_EXECUTION/STAGE-02/WU-STAGE02-WB01-DASHBOARD-001/INTERACTION_TOPOLOGY_SPEC.yaml
-  - STAGE_EXECUTION/STAGE-02/WU-STAGE02-WB01-DASHBOARD-001/FUNCTIONAL_CHAIN_SPEC.yaml
-  finding: "14 canonical section controls and SECTION_OPEN behavior are source-supported, but Stage-02 materializes only the aggregate SECTION_OPEN_CONTROLS node and does not expose exact per-control Control UID -> Action UID/Gate UID bindings required by Stage-03 component/control identity binding."
-  forbidden_remediation: "Stage-03 MUST NOT invent Action UID, Gate UID, Runtime UID, API, or control identity."
-  required_disposition: REENTER_EARLIEST_OWNER_AND_MARK_DESCENDANTS_REVERIFY_REQUIRED
-  affected_descendants:
-  - STAGE-02:workspace:WB-01
-  - STAGE-03:workspace:WB-01
-  status: OPEN_BLOCKER
-open_problem_total: 1
-closure_blocker_total: 1
-status: BLOCKED_PENDING_UPSTREAM_REMEDIATION
+  class: FALSE_POSITIVE_AUTHORITY_INTERPRETATION
+  original_finding: "Action UID appeared absent in classified projection."
+  resolution_evidence:
+  - source: ACPOS_WB-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx
+  - workflow_run_id: 36014961434
+  - workflow_job_id: 107684989985
+  - extracted_control_rows: 14
+  - authority_disposition: LEGITIMATE_NA_READ_PROJECTION_ACTION
+  - explicit_rule: DO_NOT_INVENT_ACTION_UID
+  exact_registered_gate: PAGE_READ
+  exact_registered_operation: getDashboardReadModel
+  exact_registered_route: GET /v1/dashboard/read-model
+  exact_runtime_status: READ_EXACT
+  status: RESOLVED_FALSE_POSITIVE
+open_problem_total: 0
+closure_blocker_total: 0
+status: CURRENT_ZERO_OPEN_BLOCKERS
