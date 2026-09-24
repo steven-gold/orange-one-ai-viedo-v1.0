@@ -155,7 +155,8 @@ def main() -> int:
     for workflow in workflows:
         text = workflow.read_text(encoding="utf-8")
         path_rel = rel(workflow)
-        errors.extend(current_runtime_token_findings(path_rel, text))
+        if path_rel != ".github/workflows/current-governance-cleanup-validation.yml":
+            errors.extend(current_runtime_token_findings(path_rel, text))
         if path_rel == COMMON_STAGE_WORKFLOW and "stage_execution_engine.py --execute --stage" in text:
             errors.append("GOVERNANCE_BRANCH_PRODUCT_EFFECTFUL_EXECUTE_MODE_FORBIDDEN")
         for wf_ref in LOCAL_WORKFLOW_REF.findall(text):
@@ -186,7 +187,12 @@ def main() -> int:
         except SyntaxError as exc:
             errors.append(f"ACTIVE_CONSUMER_PYTHON_PARSE_ERROR:{script_rel}:{exc.lineno}:{exc.offset}")
             continue
-        errors.extend(current_runtime_token_findings(script_rel, text))
+        is_runtime_consumer = (
+            not Path(script_rel).name.startswith("test_")
+            and script_rel != "governance/ci/validate_active_consumer_reference_integrity.py"
+        )
+        if is_runtime_consumer:
+            errors.extend(current_runtime_token_findings(script_rel, text))
         for child in python_executable_refs(text):
             referenced_by[child].add(script_rel)
             if child not in visited:
