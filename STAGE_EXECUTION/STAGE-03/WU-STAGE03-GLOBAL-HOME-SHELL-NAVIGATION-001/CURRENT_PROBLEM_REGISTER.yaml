@@ -10,7 +10,22 @@ problems:
   owner: STAGE03_EXECUTION_EVIDENCE
   product_completion_credit: 0
   required_disposition: MATERIALIZE_CURRENT_CYCLE_PREFLIGHT_AND_REPLAY_BEFORE_STAGE_EXIT
-  status: OPEN
-open_problem_total: 1
-closure_blocker_total: 1
-status: CURRENT_OPEN_BLOCKER
+  resolution_evidence:
+  - head_sha: e5564984caf2fb35b575108fb48d02e241b0bfd0
+  - workflow_run_id: 36028726148
+  - workflow_job_id: 107731759661
+  - replay_result: PASS
+  status: RESOLVED_REPLAY_PASS
+- problem_uid: GAP-STAGE03-HOME-WORK-UNIT-RESOLUTION-001
+  class: EXECUTION_EVIDENCE_GAP
+  finding: WORK_UNIT_RESOLUTION_GATE_MISSING_AT_POST_REVIEW_RESUME
+  owner: STAGE03_EXECUTION_STATE
+  product_completion_credit: 0
+  required_disposition: MATERIALIZE_WORK_UNIT_RESOLUTION_GATE_BEFORE_EFFECTFUL_TERMINAL_CLOSURE
+  resolution_evidence:
+  - ref: WORK_UNIT_RESOLUTION_GATE.yaml
+  - commit_sha: 9af38d69a32b24505c70edc3aa499968bdf0ad2b
+  status: RESOLVED
+open_problem_total: 0
+closure_blocker_total: 0
+status: CURRENT_ZERO_OPEN_BLOCKERS
