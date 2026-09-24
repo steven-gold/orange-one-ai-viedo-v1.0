@@ -1,0 +1,16 @@
+artifact_uid: FVIM-STAGE02-GLOBAL-HOME-SHELL-001
+artifact_type: FUNCTION_VISUAL_IMPACT_MATRIX
+stage_uid: STAGE-02
+governed_unit_uid: GLOBAL-HOME-SHELL-NAVIGATION
+rows:
+- function_uid: FC-NAV-ITEM-OPEN
+  visual_targets: [NAVIGATION_ITEM, WORKSPACE_MOUNT]
+- function_uid: FC-NAV-VISIBILITY
+  visual_targets: [NAVIGATION_ITEM, SURFACE_SWITCH]
+- function_uid: FC-LANGUAGE-SELECT
+  visual_targets: [HEADER_TOPBAR, ADAPTIVE_NAVIGATION]
+- function_uid: FC-QUICK-STATUS
+  visual_targets: [QUICK_STATUS]
+- function_uid: FC-WORKSPACE-SYNC
+  visual_targets: [ADAPTIVE_NAVIGATION, WORKSPACE_MOUNT]
+status: CURRENT
