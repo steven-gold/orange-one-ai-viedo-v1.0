@@ -2,7 +2,7 @@ artifact_uid: EXECSTATE-WU-STAGE01-WB01-DASHBOARD-001
 artifact_type: WORK_UNIT_EXECUTION_STATE
 stage_uid: STAGE-01
 work_unit_uid: WU-STAGE01-WB01-DASHBOARD-001
-current_operation: SOURCE_STRUCTURE_ENUMERATION
+current_operation: SOURCE_SEGMENT_MAPPING
 source_segment_mapping_completed: false
 source_fact_materialization_started: false
 source_fact_materialization_completed: false
@@ -17,10 +17,12 @@ visual_base_blueprint_completed: false
 visual_base_blueprint_gate_passed: false
 blueprint_binding_started: false
 blueprint_binding_completed: false
-completed_operations: []
-next_operation: SOURCE_STRUCTURE_ENUMERATION
+completed_operations:
+- SOURCE_STRUCTURE_ENUMERATION
+next_operation: SOURCE_SEGMENT_MAPPING
 source_uid: SRC-DOCX-2B1908530B5BD312A392
-last_effectful_action: WORK_UNIT_RESOLUTION_GATE
+last_effectful_action: SOURCE_STRUCTURE_ENUMERATION
+last_effectful_commit: c0d1d941d2d873fc91ba5a865ba23c726c28fbcc
 stage1_guard_result: NOT_VERIFIED
 status: ACTIVE
-content_hash: 3f40ab4faa45358a486f241a539b4f0df4fe5d590fe71981fbb18a44925f06d9
+content_hash: 240b8c6cd8b8d9bbfdd5ead4ddf5e389b3f5d4f991c8d470c84a28778274894f
