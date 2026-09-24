@@ -1,0 +1,12 @@
+artifact_uid: PORT-STAGE02-WB01-001
+artifact_type: SHARED_OWNER_PORT_MAP
+stage_uid: STAGE-02
+governed_unit_uid: workspace:WB-01
+bindings:
+- {responsibility: AUTHORIZATION, owner_uid: OWNER-ACCOUNT-PERMISSION-ASSIGNMENT, owner_ref: ACCOUNT_PERMISSION_ASSIGNMENT, operation_port_uid: PORT-WB01-PERMISSION-RESOLVE, runtime_implementation_state: NOT_EXECUTED}
+- {responsibility: SECTION_IDENTITY, owner_uid: OWNER-SECTION-SCHEMA-SET, owner_ref: SECTION_SCHEMA_SET, operation_port_uid: PORT-WB01-SECTION-SCHEMA-READ, runtime_implementation_state: NOT_EXECUTED}
+- {responsibility: DASHBOARD_READ, owner_uid: OWNER-DASHBOARD-READ-MODEL, owner_ref: DASHBOARD_READ_MODEL, operation_port_uid: PORT-WB01-DASHBOARD-READ, runtime_implementation_state: NOT_EXECUTED}
+- {responsibility: SECTION_OPEN, owner_uid: OWNER-SECTION-OPEN, owner_ref: SECTION_OPEN_CONTROLS, operation_port_uid: PORT-WB01-SECTION-OPEN, runtime_implementation_state: NOT_EXECUTED}
+duplicate_page_local_runtime_created: false
+runtime_completion_claim: false
+status: CURRENT
