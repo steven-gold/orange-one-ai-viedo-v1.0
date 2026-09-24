@@ -9,11 +9,18 @@ current_governance_head: 40469342b2632d8453986d5800c9ccb9233208d5
 current_display_version: v2.2.22
 scope_manifest_ref: STAGE_EXECUTION/STAGE-01/CURRENT_EXECUTION_SCOPE_MANIFEST.yaml
 active_work_unit_uid: null
-resume_point: WORK_UNIT_RESOLUTION_GATE
-last_effectful_action: WORK_UNIT_STAGE01_SCOPE_CLOSURE
+resume_point: STAGE02_UNIT_RESOLUTION_GATE
+last_effectful_action: INDEPENDENT_UNIT_STAGE01_CLOSURE_RECONCILIATION
 last_effectful_commit: 5ee9cf2d98d8346ca8fc5a68fc7ff37fb18714db
-stage_exit_authorized: false
+stage_exit_authorized: true
+stage_transition_semantics: PER_GOVERNED_PAGE_OR_SYSTEM_LOGIC_UNIT
+completed_stage01_units:
+- WU-STAGE01-GLOBAL-HOME-SHELL-NAVIGATION-001
+- WU-STAGE01-WB01-DASHBOARD-001
+stage02_eligible_units:
+- WU-STAGE01-GLOBAL-HOME-SHELL-NAVIGATION-001
+- WU-STAGE01-WB01-DASHBOARD-001
 remaining_requested_work_units: []
-historical_stage02_scope_audit_disposition: STALE_NO_CURRENT_COMPLETION_CREDIT_AFTER_STAGE01_RESET
-status: PARTIAL_SCOPE_COMPLETE_STAGE_EXIT_NOT_AUTHORIZED
-content_hash: dd7e4e281501ef2158c1e600337d51c2ff31c9f9f1e81e84789ad414fe91c09a
+historical_stage02_scope_audit_disposition: REMOVED_FROM_CURRENT_SURFACE
+status: STAGE01_COMPLETE_STAGE02_ELIGIBLE
+content_hash: 82406d9553184016746096a7a9ff72e8fc160e9adb978fc637c9fbb39301d3ac
