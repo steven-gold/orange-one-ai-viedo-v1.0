@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 from __future__ import annotations
-import argparse, importlib, json, os, subprocess, sys
+import argparse, json, os, subprocess, sys
 from pathlib import Path
 import yaml
 
@@ -8,12 +8,9 @@ ROOT=Path(__file__).resolve().parents[2]
 REGISTRY=ROOT/'governance/specifications/REGISTRY.yaml'
 LIFECYCLE=ROOT/'.github/governance-source/active/source/10_REGISTRY/GOVERNANCE_LIFECYCLE_STAGE_REGISTRY.yaml'
 ADAPTERS=ROOT/'governance/ci/stage_execution_semantic_adapters.yaml'
-LEGACY_WRAPPER=ROOT/'governance/ci/compile_stage_execution_preflight.py'
 PRODUCT_ROOT_ENV='ACPOS_PRODUCT_ROOT'
 ACTIVE_WORK_UNIT_ENV='ACPOS_ACTIVE_WORK_UNIT'
 CURRENT_SCOPE_ENV='ACPOS_CURRENT_SCOPE'
-ADAPTERS=ROOT/'governance/ci/stage_execution_semantic_adapters.yaml'
-LEGACY_WRAPPER=ROOT/'governance/ci/compile_stage_execution_preflight.py'
 
 EXPECTED_PHASES=[
 'SESSION_BOOTSTRAP_RESUME_GATE','CURRENT_GOVERNANCE','CURRENT_SCOPE','WORK_UNIT','AUTHORITY','APPLICABILITY','DEPENDENCY',
@@ -189,9 +186,6 @@ def validate_definition_data(profile,adapters):
 def validate_definition():
     entry,reg,gov,profile,adapters=data()
     stages=validate_definition_data(profile,adapters)
-    wrapper=LEGACY_WRAPPER.read_text(encoding='utf-8')
-    if 'UNSUPPORTED_STAGE_UNTIL_MATCHING_CURRENT_EVIDENCE_EXISTS' in wrapper or "STAGE='STAGE-02'" in wrapper: fail('LEGACY_STAGE02_COMMON_ENGINE_LOGIC_STILL_IN_WRAPPER')
-    if 'compatibility_main' not in wrapper: fail('STAGE02_COMPATIBILITY_WRAPPER_NOT_DELEGATING')
     return entry,reg,gov,profile,adapters,stages
 
 def plan(stage_uid):
@@ -465,20 +459,6 @@ def execute_active(stage_uid):
     if stepwise.get('successor_requires_operation_pass') is not True: fail('ACTIVE_STAGE_SUCCESSOR_OPERATION_PASS_NOT_REQUIRED:'+stage_uid)
     fail('ACTIVE_STAGE_EFFECTFUL_ADAPTER_REQUIRES_OPERATION_LEVEL_ENGINE_MIGRATION:'+stage_uid)
 
-
-def compatibility_main(stage_uid):
-    _,_,_,_,adapters,stages=validate_definition()
-    if stage_uid not in stages: fail(f'UNKNOWN_STAGE:{stage_uid}')
-    adapter=(adapters['stages'][stage_uid])
-    if adapter.get('compatibility_current_execution_authority') is False:
-        fail('LEGACY_COMPATIBILITY_MODULE_HAS_NO_CURRENT_EXECUTION_AUTHORITY:'+stage_uid)
-    if adapter.get('compatibility_may_resolve_current_scope') is False:
-        fail('LEGACY_COMPATIBILITY_MODULE_MAY_NOT_RESOLVE_CURRENT_SCOPE:'+stage_uid)
-    module_name=adapter.get('python_compatibility_module')
-    if not module_name: fail(f'NO_COMPATIBILITY_MODULE_REGISTERED:{stage_uid}')
-    mod=importlib.import_module(str(module_name))
-    if not hasattr(mod,'main'): fail('COMPATIBILITY_MODULE_MAIN_MISSING')
-    mod.main()
 
 def main():
     p=argparse.ArgumentParser(); g=p.add_mutually_exclusive_group(required=True)
