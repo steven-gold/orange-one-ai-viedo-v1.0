@@ -1,0 +1,37 @@
+artifact_uid: VGC-STAGE03-WB01-001
+artifact_type: VISUAL_GEOMETRY_CONTRACT
+stage_uid: STAGE-03
+governed_unit_uid: workspace:WB-01
+inherited_shell_geometry_ref: STAGE_EXECUTION/STAGE-03/WU-STAGE03-GLOBAL-HOME-SHELL-NAVIGATION-001/VISUAL_GEOMETRY_CONTRACT.yaml
+page_geometry:
+  grid_columns: 12
+  grid_gap_px: 16
+  content_padding_px: 16
+  card_radius_px: 12
+  card_padding_px: 16
+  card_header_px: 40
+  view_control_px: 40
+  drawer_width_px: 520
+row_groups:
+- {uid: KPI_ROW, layout_ge_1440: "6 x span2", layout_1280_1439: "3+3"}
+- {uid: PROGRESS_ROW, layout: "8+4"}
+- {uid: PRODUCTION_ROW, layout: "8+4"}
+- {uid: INFORMATION_ROW, layout: "4+4+4"}
+- {uid: RECENT_ROW, layout: "span12"}
+responsive:
+  ge_1440: TWELVE_COLUMN_EXACT
+  from_1280_to_1439: FIXED_REFLOW
+  lt_1280: MIN_WIDTH_1280_WORKSPACE_HORIZONTAL_SCROLL
+visual_anchors:
+- {anchor_uid: VA-WB01-KPI-ROW, position_rule: FIRST_PAGE_ROW_GROUP, dimension_rule: "6xspan2 >=1440; 3+3 at 1280-1439", relationship_rule: CANONICAL_FIRST_GROUP, lock_status: LOCKED}
+- {anchor_uid: VA-WB01-PROGRESS-ROW, position_rule: AFTER_KPI_ROW, dimension_rule: "8+4", relationship_rule: CANONICAL_SECOND_GROUP, lock_status: LOCKED}
+- {anchor_uid: VA-WB01-PRODUCTION-ROW, position_rule: AFTER_PROGRESS_ROW, dimension_rule: "8+4", relationship_rule: CANONICAL_THIRD_GROUP, lock_status: LOCKED}
+- {anchor_uid: VA-WB01-INFORMATION-ROW, position_rule: AFTER_PRODUCTION_ROW, dimension_rule: "4+4+4", relationship_rule: CANONICAL_FOURTH_GROUP, lock_status: LOCKED}
+- {anchor_uid: VA-WB01-RECENT-ROW, position_rule: AFTER_INFORMATION_ROW, dimension_rule: "span12", relationship_rule: CANONICAL_FIFTH_GROUP, lock_status: LOCKED}
+- {anchor_uid: VA-WB01-DRAWER, position_rule: RIGHT_EDGE, dimension_rule: "width=520px", relationship_rule: SAME_SURFACE_CLUSTER, lock_status: LOCKED}
+visual_anchor_count: 6
+typography_expected_baseline:
+  inherited_font_stack: GLOBAL_HOME_VISUAL_GEOMETRY_CONTRACT
+  computed_metrics_phase: EXPECTED_BASELINE
+  runtime_capture_credit: 0
+status: EXPECTED_BASELINE
