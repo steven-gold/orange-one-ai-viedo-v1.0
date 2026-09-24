@@ -1,0 +1,168 @@
+artifact_uid: CL-SRC-DOCX-A6D969B26E0F8372B374-AI_INTERACTION_REQUIREMENT
+page_uid: admin:AIAPI-01
+planning_domain: PAGE_CONSTRUCTION
+responsibility_uid: AI_INTERACTION_REQUIREMENT
+responsibility_class: AI_INTERACTION_REQUIREMENT
+responsibilities:
+- AI_INTERACTION_REQUIREMENT
+canonical_owner_uid: OWNER-SOURCE-SRC-DOCX-A6D969B26E0F8372B374
+target_path: 01_CLASSIFIED/admin-AIAPI-01/PAGE/AI_INTERACTION_REQUIREMENT.yaml
+lifecycle_uid: LC-STAGE01-AI_INTERACTION_REQUIREMENT
+approval_scope_uid: AP-STAGE01-admin-AIAPI-01
+version_scope_uid: VER-eec05f5f9f24
+test_scope_uid: TEST-STAGE01-AI_INTERACTION_REQUIREMENT
+source_lineage:
+- source_uid: SRC-DOCX-A6D969B26E0F8372B374
+  source_segment_uids:
+  - SEG-SN-7C47AF2AFFB2C12FD2C5A935
+  - SEG-SN-79B1B664E187B20033826D0A
+  - SEG-SN-4F5C1A2392731615F015EDDC
+  - SEG-SN-C217FC892A7A182FEBD03BBE
+  - SEG-SN-B1F9062B3A98883020B88823
+  - SEG-SN-97569DB54CF3F33B708B831B
+  - SEG-SN-4DC1E8754D88BF59A795F1CA
+  - SEG-SN-8E053B057387F3DB2B4FBC3F
+  - SEG-SN-97CC6D9FABFD93D79D7C4270
+  - SEG-SN-1E3E85B2AE2E6E7806C86A1B
+  - SEG-SN-D3E6920FB26D8C07F4B2F519
+  - SEG-SN-5AD8F394ABA4CAB508A08ECE
+  - SEG-SN-A04E1BD723E4BD97370D84B1
+  - SEG-SN-1DE972F95B09FAAB19A508BE
+  - SEG-SN-F9D897DE6E72772E3B0F306C
+  - SEG-SN-CEE78D42F2ADA9B119590063
+  - SEG-SN-AA1CD9218B026D5A5952548C
+  - SEG-SN-1D0F2EEF554EA124DEAE4297
+  - SEG-SN-EB53A4665CB5921709630A94
+  - SEG-SN-E65226E838E063D39481376E
+  - SEG-SN-AA9631D451F12F4841A9451D
+  - SEG-SN-2440D41E609AEA43869A4953
+  - SEG-SN-762687A387A482C2EFAB534A
+  - SEG-SN-CE2A206F330D657A45ABFB92
+  - SEG-SN-483573F1D10D4CA6DEC27625
+  - SEG-SN-9F4ADAD20FA69737157A3B55
+  - SEG-SN-5EF812EA9A8DB3A9A0C84609
+  - SEG-SN-AE61777619CF419DF177DEC4
+  - SEG-SN-5EE5CF637CF2FEE51DA63EBB
+  - SEG-SN-915DAD6132742AB62621E8AF
+  - SEG-SN-778F6161850CD9B9D6A48C1D
+  - SEG-SN-B15E2F278C9B174AECD3FE62
+  - SEG-SN-EAED2983197ED8FA3A37A5DC
+  - SEG-SN-B9209684F30D1AE585B7DFAC
+  - SEG-SN-135C3CE15BB9D1E3DB9032BE
+  - SEG-SN-C6AA7E350293796A2E2B5ABA
+  - SEG-SN-23BC2F6A2F48EB9474AC28A9
+facts:
+- source_node_uid: SN-7C47AF2AFFB2C12FD2C5A935
+  document_order_index: 1246
+  source_text: 實際選擇 Profile、理由、constraint result
+- source_node_uid: SN-79B1B664E187B20033826D0A
+  document_order_index: 6511
+  source_text: 約 64px icon rail
+- source_node_uid: SN-4F5C1A2392731615F015EDDC
+  document_order_index: 6639
+  source_text: Main 68% / Professional Panel 32%，gap 16px
+- source_node_uid: SN-C217FC892A7A182FEBD03BBE
+  document_order_index: 6724
+  source_text: 低頻 detail 轉 drawer。
+- source_node_uid: SN-B1F9062B3A98883020B88823
+  document_order_index: 6746
+  source_text: Detail Drawer
+- source_node_uid: SN-97569DB54CF3F33B708B831B
+  document_order_index: 7499
+  source_text: Governance Rail / Detail Drawer
+- source_node_uid: SN-4DC1E8754D88BF59A795F1CA
+  document_order_index: 9396
+  source_text: Validation / Constraint
+- source_node_uid: SN-8E053B057387F3DB2B4FBC3F
+  document_order_index: 9716
+  source_text: Data classification hard gate；不得跨 domain 猜值。
+- source_node_uid: SN-97CC6D9FABFD93D79D7C4270
+  document_order_index: 9952
+  source_text: Plaintext Export
+- source_node_uid: SN-1E3E85B2AE2E6E7806C86A1B
+  document_order_index: 9973
+  source_text: Export projection 必須排除 credential plaintext
+- source_node_uid: SN-D3E6920FB26D8C07F4B2F519
+  document_order_index: 9995
+  source_text: Plaintext Log / Audit
+- source_node_uid: SN-5AD8F394ABA4CAB508A08ECE
+  document_order_index: 10038
+  source_text: Plaintext DB Persistence
+- source_node_uid: SN-A04E1BD723E4BD97370D84B1
+  document_order_index: 11677
+  source_text: 18. Functional Chain Contracts
+- source_node_uid: SN-1DE972F95B09FAAB19A508BE
+  document_order_index: 11736
+  source_text: Complete Chain
+- source_node_uid: SN-F9D897DE6E72772E3B0F306C
+  document_order_index: 14026
+  source_text: Operations Rail
+- source_node_uid: SN-CEE78D42F2ADA9B119590063
+  document_order_index: 14068
+  source_text: records / filters / detail drawer
+- source_node_uid: SN-AA1CD9218B026D5A5952548C
+  document_order_index: 15550
+  source_text: Source-grounded only. Existing Current source wins; missing source values remain blocked/decision-required. This closure supersedes the prior generic 2026-09-21 V1/V3 annex only, not the original domain logic
+    or human visual review gates.
+- source_node_uid: SN-1D0F2EEF554EA124DEAE4297
+  document_order_index: 16962
+  source_text: ACPOS-AI-03 Sandbox Evidence / Audit Lineage
+- source_node_uid: SN-EB53A4665CB5921709630A94
+  document_order_index: 18707
+  source_text: ACPOS-AI-03 Sandbox Evidence / Audit Lineage
+- source_node_uid: SN-E65226E838E063D39481376E
+  document_order_index: 18717
+  source_text: Sandbox may persist isolated test evidence and lineage only; Production secret/output writes and Production-pass claims remain forbidden.
+- source_node_uid: SN-AA9631D451F12F4841A9451D
+  document_order_index: 32079
+  source_text: SHARED_OWNER_REFERENCE → current Global Home / Shell Design System tech-purple token set; existing page-local approved override, if any, remains authoritative.
+- source_node_uid: SN-2440D41E609AEA43869A4953
+  document_order_index: 32105
+  source_text: Use registered gap/padding/spacing tokens; existing exact page gaps remain authoritative; no ad-hoc pixel drift.
+- source_node_uid: SN-762687A387A482C2EFAB534A
+  document_order_index: 32144
+  source_text: Global Header and collapsible/overlay Sidebar remain shared shell regions; page Workspace starts in the registered content region.
+- source_node_uid: SN-CE2A206F330D657A45ABFB92
+  document_order_index: 32157
+  source_text: Use the current page responsive rule and shared shell breakpoint owner; semantic order and functional topology MUST remain stable across reflow.
+- source_node_uid: SN-483573F1D10D4CA6DEC27625
+  document_order_index: 32219
+  source_text: Container Width / Min / Max
+- source_node_uid: SN-9F4ADAD20FA69737157A3B55
+  document_order_index: 32225
+  source_text: Retain current Global Shell + page Primary Grid width contract. No page-local implicit width may override an existing exact dimension.
+- source_node_uid: SN-5EF812EA9A8DB3A9A0C84609
+  document_order_index: 32303
+  source_text: NOT_APPLICABLE unless the current page declares an image/video/preview ratio; when declared, the exact current ratio remains authoritative.
+- source_node_uid: SN-AE61777619CF419DF177DEC4
+  document_order_index: 32342
+  source_text: Global Header / Sidebar overlay / Dialog / Drawer layers remain above Workspace without blocking required content; overlay expansion MUST NOT reflow the primary Workspace unless explicitly specified.
+- source_node_uid: SN-5EE5CF637CF2FEE51DA63EBB
+  document_order_index: 32501
+  source_text: Fixed left rail under shared shell header
+- source_node_uid: SN-915DAD6132742AB62621E8AF
+  document_order_index: 32532
+  source_text: Current page primary content region below Header / beside resting rail
+- source_node_uid: SN-778F6161850CD9B9D6A48C1D
+  document_order_index: 32712
+  source_text: REFERENCE_ONLY / CONDITIONAL. Existing page-owned formal Asset UID rows, if present, remain authoritative; this annex creates no duplicate Asset UID.
+- source_node_uid: SN-B15E2F278C9B174AECD3FE62
+  document_order_index: 32777
+  source_text: When a page has no page-owned formal visual asset, page-local Asset Binding is NOT_APPLICABLE with this reason; shared assets remain referenced from their existing canonical owner.
+- source_node_uid: SN-EAED2983197ED8FA3A37A5DC
+  document_order_index: 32897
+  source_text: Every item is classified REQUIRED / OPTIONAL / NOT_APPLICABLE with owner/evidence. REQUIRED may not be downgraded merely to obtain PASS.
+- source_node_uid: SN-B9209684F30D1AE585B7DFAC
+  document_order_index: 32923
+  source_text: Only explicitly OPTIONAL or justified NOT_APPLICABLE design items remain; no REQUIRED item is missing.
+- source_node_uid: SN-135C3CE15BB9D1E3DB9032BE
+  document_order_index: 32930
+  source_text: FAIL Condition
+- source_node_uid: SN-C6AA7E350293796A2E2B5ABA
+  document_order_index: 32949
+  source_text: Current Word is self-contained enough for authorized construction handoff, while unresolved product choices remain explicitly blocked rather than invented.
+- source_node_uid: SN-23BC2F6A2F48EB9474AC28A9
+  document_order_index: 33030
+  source_text: This current Word remains the single page design Canonical Owner.
+status: CURRENT_CLASSIFICATION
+content_hash: 3ca6ce44920f28dd463a71e5f15738452dabd06a44b1017a59cfcad8b85c1896
