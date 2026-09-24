@@ -1,0 +1,191 @@
+artifact_uid: CL-SRC-DOCX-E4814E8C8DD81F2F56C9-WORKFLOW_HANDOFF_REQUIREMENT
+page_uid: SRC-DOCX-E4814E8C8DD81F2F56C9
+planning_domain: PAGE_CONSTRUCTION
+responsibility_uid: WORKFLOW_HANDOFF_REQUIREMENT
+responsibility_class: WORKFLOW_HANDOFF_REQUIREMENT
+responsibilities:
+- WORKFLOW_HANDOFF_REQUIREMENT
+canonical_owner_uid: OWNER-SOURCE-SRC-DOCX-E4814E8C8DD81F2F56C9
+target_path: 01_CLASSIFIED/SRC-DOCX-E4814E8C8DD81F2F56C9/PAGE/WORKFLOW_HANDOFF_REQUIREMENT.yaml
+lifecycle_uid: LC-STAGE01-WORKFLOW_HANDOFF_REQUIREMENT
+approval_scope_uid: AP-STAGE01-SRC-DOCX-E4814E8C8DD81F2F56C9
+version_scope_uid: VER-2db1fd958b2e
+test_scope_uid: TEST-STAGE01-WORKFLOW_HANDOFF_REQUIREMENT
+source_lineage:
+- source_uid: SRC-DOCX-E4814E8C8DD81F2F56C9
+  source_segment_uids:
+  - SEG-SN-0C2F011D1831243ABCE90288
+  - SEG-SN-F03154402E91DF3C6336EAAA
+  - SEG-SN-B32271EF85F7A9B288C62511
+  - SEG-SN-D702DB898A7B612EF9E3A041
+  - SEG-SN-9A332BA9DE3252AAB312D8C3
+  - SEG-SN-CBC7A77AA670A94A290D0651
+  - SEG-SN-F591F5A3C069A20AE75CE1B0
+  - SEG-SN-5BD70FF037A49751111EFE84
+  - SEG-SN-1BFD7B73EE0410C31AA25A72
+  - SEG-SN-8576F6BBF3D75517B1CB3E34
+  - SEG-SN-BA88A8DA113767960CE2C385
+  - SEG-SN-14A2CFBBC992B57AFE4985B6
+  - SEG-SN-9202B9129DAE529D24851B37
+  - SEG-SN-171C6BEE87B2279437A0A0FB
+  - SEG-SN-8BC7087F69B3D98745CC8849
+  - SEG-SN-CFEEA60BB6AFFDB19E497691
+  - SEG-SN-8C9C85028E6F4823330424BA
+  - SEG-SN-89C6B43B08087044E10217A9
+  - SEG-SN-250ABAB91033C4D95AE42DF7
+  - SEG-SN-A866F5F5D822733D994D7FDB
+  - SEG-SN-542E50634C88F36D9D0BBC3E
+  - SEG-SN-560E0F662F259FF5AC74EA81
+  - SEG-SN-04482308100C3FF56723F47C
+  - SEG-SN-DB6BAAE85E2123F01F58BCFA
+  - SEG-SN-8A6F2FA0E65DCD80EC4C0A93
+  - SEG-SN-4A041D96F1B72DC9F9F59F89
+  - SEG-SN-ECF05BD748E87A6F4C381031
+  - SEG-SN-33763BB1C15658EC2913C811
+  - SEG-SN-3464533D8E051FD9F7EB0D56
+  - SEG-SN-18B61A467B55B1EE33073B8C
+  - SEG-SN-1C17775BF441617D536DD6C8
+  - SEG-SN-8669DE622BF3E8558841953A
+  - SEG-SN-7A63F698AF62E8BE1736082E
+  - SEG-SN-9F920589873C464091CB182F
+  - SEG-SN-D905EC8639AB8454A15FFA15
+  - SEG-SN-E8B5F008430F929932655C7A
+  - SEG-SN-DBE7AD70EFBA368E47454582
+  - SEG-SN-79C9B6178975DAD0FB3E039C
+  - SEG-SN-A5EB06165C28EE35FCC581E8
+  - SEG-SN-76D728512C53A0E03A8E2B1B
+  - SEG-SN-25134BC51B7A2F2BEE9FCAC0
+  - SEG-SN-54CD866C35CE142CD77C6855
+  - SEG-SN-9F5BFAB963D7A8CF82542D27
+facts:
+- source_node_uid: SN-0C2F011D1831243ABCE90288
+  document_order_index: 2481
+  source_text: ExecutionHandoff
+- source_node_uid: SN-F03154402E91DF3C6336EAAA
+  document_order_index: 2496
+  source_text: 決策到 Owner Module 的交接 reference
+- source_node_uid: SN-B32271EF85F7A9B288C62511
+  document_order_index: 3329
+  source_text: ExecutionHandoff
+- source_node_uid: SN-D702DB898A7B612EF9E3A041
+  document_order_index: 4373
+  source_text: ExecutionHandoff
+- source_node_uid: SN-9A332BA9DE3252AAB312D8C3
+  document_order_index: 4403
+  source_text: handoff 不等於 owner execution。
+- source_node_uid: SN-CBC7A77AA670A94A290D0651
+  document_order_index: 7208
+  source_text: Budget/workflow/governance/production action MUST 留在 owning module。
+- source_node_uid: SN-F591F5A3C069A20AE75CE1B0
+  document_order_index: 7304
+  source_text: Owner execution handoff MUST 指向 exact DecisionLedgerEntry。
+- source_node_uid: SN-5BD70FF037A49751111EFE84
+  document_order_index: 7352
+  source_text: Handoff ACK MUST_NOT 被當成 execution success。
+- source_node_uid: SN-1BFD7B73EE0410C31AA25A72
+  document_order_index: 7784
+  source_text: 每個 effectful owner handoff MUST 有 idempotency key 或 owner-side equivalent。
+- source_node_uid: SN-8576F6BBF3D75517B1CB3E34
+  document_order_index: 12009
+  source_text: 只提案；Finance/Workflow/Governance 批准。
+- source_node_uid: SN-BA88A8DA113767960CE2C385
+  document_order_index: 12096
+  source_text: 同一輸出不可同時兼任正式 Decision / Budget Approval / Workflow Command / Production Action。
+- source_node_uid: SN-14A2CFBBC992B57AFE4985B6
+  document_order_index: 12985
+  source_text: HANDOFF_PENDING
+- source_node_uid: SN-9202B9129DAE529D24851B37
+  document_order_index: 13018
+  source_text: HANDOFF_ACKED
+- source_node_uid: SN-171C6BEE87B2279437A0A0FB
+  document_order_index: 14177
+  source_text: DECISION_APPROVED→HANDOFF_PENDING
+- source_node_uid: SN-8BC7087F69B3D98745CC8849
+  document_order_index: 14192
+  source_text: handoff to owner
+- source_node_uid: SN-CFEEA60BB6AFFDB19E497691
+  document_order_index: 14222
+  source_text: create handoff
+- source_node_uid: SN-8C9C85028E6F4823330424BA
+  document_order_index: 14255
+  source_text: HANDOFF_PENDING→HANDOFF_ACKED
+- source_node_uid: SN-89C6B43B08087044E10217A9
+  document_order_index: 14285
+  source_text: handoff id + owner actor
+- source_node_uid: SN-250ABAB91033C4D95AE42DF7
+  document_order_index: 14333
+  source_text: HANDOFF_ACKED→OUTCOME_VERIFIED
+- source_node_uid: SN-A866F5F5D822733D994D7FDB
+  document_order_index: 15692
+  source_text: Ledger/Handoff
+- source_node_uid: SN-542E50634C88F36D9D0BBC3E
+  document_order_index: 15788
+  source_text: strategy.handoff.created
+- source_node_uid: SN-560E0F662F259FF5AC74EA81
+  document_order_index: 15851
+  source_text: strategy.handoff.acked
+- source_node_uid: SN-04482308100C3FF56723F47C
+  document_order_index: 15896
+  source_text: handoff_ref, actor
+- source_node_uid: SN-DB6BAAE85E2123F01F58BCFA
+  document_order_index: 16993
+  source_text: Handoff, expected impact, feedback cycle
+- source_node_uid: SN-8A6F2FA0E65DCD80EC4C0A93
+  document_order_index: 17653
+  source_text: BLOCK handoff; REQUIRE_EXACT_BINDING
+- source_node_uid: SN-4A041D96F1B72DC9F9F59F89
+  document_order_index: 19004
+  source_text: Owner Handoff event/transport
+- source_node_uid: SN-ECF05BD748E87A6F4C381031
+  document_order_index: 19100
+  source_text: Workflow execution binding
+- source_node_uid: SN-33763BB1C15658EC2913C811
+  document_order_index: 19115
+  source_text: OWNER_WORKFLOW_REFERENCE
+- source_node_uid: SN-3464533D8E051FD9F7EB0D56
+  document_order_index: 19148
+  source_text: Production/Department handoff
+- source_node_uid: SN-18B61A467B55B1EE33073B8C
+  document_order_index: 19697
+  source_text: Automatic Workflow Priority Change
+- source_node_uid: SN-1C17775BF441617D536DD6C8
+  document_order_index: 21221
+  source_text: Owner Handoff
+- source_node_uid: SN-8669DE622BF3E8558841953A
+  document_order_index: 21236
+  source_text: decision→owner module exact handoff，不假裝執行成功。
+- source_node_uid: SN-7A63F698AF62E8BE1736082E
+  document_order_index: 21269
+  source_text: ERP/Workflow Boundary
+- source_node_uid: SN-9F920589873C464091CB182F
+  document_order_index: 21893
+  source_text: Construction Handoff
+- source_node_uid: SN-D905EC8639AB8454A15FFA15
+  document_order_index: 22490
+  source_text: Strategy Alert 直接 pause workflow
+- source_node_uid: SN-E8B5F008430F929932655C7A
+  document_order_index: 23402
+  source_text: Handoff ACK 當 execution success
+- source_node_uid: SN-DBE7AD70EFBA368E47454582
+  document_order_index: 24469
+  source_text: 只形成 decision/handoff，不直接改 Finance
+- source_node_uid: SN-79C9B6178975DAD0FB3E039C
+  document_order_index: 25132
+  source_text: Owner module ACK handoff
+- source_node_uid: SN-A5EB06165C28EE35FCC581E8
+  document_order_index: 25162
+  source_text: HANDOFF_ACKED，不等於 execution success
+- source_node_uid: SN-76D728512C53A0E03A8E2B1B
+  document_order_index: 25863
+  source_text: 28. Construction Handoff / 工程移交
+- source_node_uid: SN-25134BC51B7A2F2BEE9FCAC0
+  document_order_index: 25954
+  source_text: Handoff Artifact
+- source_node_uid: SN-54CD866C35CE142CD77C6855
+  document_order_index: 26102
+  source_text: candidate/review/ledger/handoff identities and transitions
+- source_node_uid: SN-9F5BFAB963D7A8CF82542D27
+  document_order_index: 26135
+  source_text: source→derived→candidate→decision→handoff→feedback dependency closure
+status: CURRENT_CLASSIFICATION
+content_hash: ca19bf7c900426be0c127ec0d5c5b19722984fef04c56079387a31deb87eb3f8
