@@ -1,0 +1,107 @@
+artifact_uid: CL-SRC-DOCX-AA00684B11FAD2B498C7-ERROR_RECOVERY_REQUIREMENT
+page_uid: admin:DEV-01
+planning_domain: PAGE_CONSTRUCTION
+responsibility_uid: ERROR_RECOVERY_REQUIREMENT
+responsibility_class: ERROR_RECOVERY_REQUIREMENT
+responsibilities:
+- ERROR_RECOVERY_REQUIREMENT
+canonical_owner_uid: OWNER-SOURCE-SRC-DOCX-AA00684B11FAD2B498C7
+target_path: 01_CLASSIFIED/admin-DEV-01/PAGE/ERROR_RECOVERY_REQUIREMENT.yaml
+lifecycle_uid: LC-STAGE01-ERROR_RECOVERY_REQUIREMENT
+approval_scope_uid: AP-STAGE01-admin-DEV-01
+version_scope_uid: VER-c9b7fe981f97
+test_scope_uid: TEST-STAGE01-ERROR_RECOVERY_REQUIREMENT
+source_lineage:
+- source_uid: SRC-DOCX-AA00684B11FAD2B498C7
+  source_segment_uids:
+  - SEG-SN-5F2B869D809AE5C906CEF83A
+  - SEG-SN-FB18A4FBEAA50349A855C26A
+  - SEG-SN-B627870BA26DD2A575CD798C
+  - SEG-SN-1411C689E7C15C24DD454AEA
+  - SEG-SN-8533622184EDD28D4D4659DF
+  - SEG-SN-B7AC4A49E71879FA3CC9E961
+  - SEG-SN-5DA3E88F014EEBCBE8A206D3
+  - SEG-SN-EA73A7201E16C17E78A875D7
+  - SEG-SN-9DBF8FD10E35E5D605AC1DCC
+  - SEG-SN-A04759C28E63613D09D798E0
+  - SEG-SN-7A5AF01F4AEF9AE399398C96
+  - SEG-SN-2BF98ABAD48860044EC6FEB4
+  - SEG-SN-2823B0C20DBF952027B02472
+  - SEG-SN-E1035081886B6017B4B4E11F
+  - SEG-SN-C92E95EE0178A124704D7F12
+  - SEG-SN-DCB4E337FFC077EE561550E2
+  - SEG-SN-08E0763F84BBFF1942ED6A26
+  - SEG-SN-5F132C9C8520C1A44A54C97E
+  - SEG-SN-9543F5690A60AB611C931C9D
+  - SEG-SN-95D67EE7B9A781C75069A2A5
+  - SEG-SN-CD9B4EA870B0C237EF125AA8
+  - SEG-SN-2F61854369F6F6B7AA17DF48
+facts:
+- source_node_uid: SN-5F2B869D809AE5C906CEF83A
+  document_order_index: 6042
+  source_text: Evidence / Audit / Version / Error
+- source_node_uid: SN-FB18A4FBEAA50349A855C26A
+  document_order_index: 10340
+  source_text: 回覆、退信、失敗與 suppression 進既有 delivery/result lineage。
+- source_node_uid: SN-B627870BA26DD2A575CD798C
+  document_order_index: 10367
+  source_text: Partial failure 不能顯示 COMPLETE；只能重試尚未合法完成的 delta。
+- source_node_uid: SN-1411C689E7C15C24DD454AEA
+  document_order_index: 11164
+  source_text: LOADING / READY / EMPTY / ERROR / POLICY_BLOCKED / VERSION_CONFLICT / REVIEW_REQUIRED / EXTERNAL_PENDING / READ_ONLY / ARCHIVED
+- source_node_uid: SN-8533622184EDD28D4D4659DF
+  document_order_index: 13057
+  source_text: 16. Data / Lineage / Security / Error Recovery
+- source_node_uid: SN-B7AC4A49E71879FA3CC9E961
+  document_order_index: 13412
+  source_text: 多步操作部分成功時保持 non-final，呈現 succeeded/blocked/failed；只對未完成合法 work 做 idempotent retry。
+- source_node_uid: SN-5DA3E88F014EEBCBE8A206D3
+  document_order_index: 13442
+  source_text: Connector Failure
+- source_node_uid: SN-EA73A7201E16C17E78A875D7
+  document_order_index: 13469
+  source_text: 標記 EXTERNAL_PENDING/ERROR；不得生成假結果；只依正式 retry policy。
+- source_node_uid: SN-9DBF8FD10E35E5D605AC1DCC
+  document_order_index: 13953
+  source_text: Default/Hover/Focus/Disabled/Loading/Success/Error 不改變 width / height / padding，避免 layout jump。
+- source_node_uid: SN-A04759C28E63613D09D798E0
+  document_order_index: 18414
+  source_text: Delivery Gate / Failure Semantics
+- source_node_uid: SN-7A5AF01F4AEF9AE399398C96
+  document_order_index: 20113
+  source_text: Start creates/binds a DiscoveryJob from an authorized active profile and allowed source scope; connector absence remains BLOCK/RETRY, not simulated success.
+- source_node_uid: SN-2BF98ABAD48860044EC6FEB4
+  document_order_index: 20965
+  source_text: ERROR_RECOVERY
+- source_node_uid: SN-2823B0C20DBF952027B02472
+  document_order_index: 21908
+  source_text: ERROR_RECOVERY
+- source_node_uid: SN-E1035081886B6017B4B4E11F
+  document_order_index: 22851
+  source_text: ERROR_RECOVERY
+- source_node_uid: SN-C92E95EE0178A124704D7F12
+  document_order_index: 23794
+  source_text: ERROR_RECOVERY
+- source_node_uid: SN-DCB4E337FFC077EE561550E2
+  document_order_index: 24737
+  source_text: ERROR_RECOVERY
+- source_node_uid: SN-08E0763F84BBFF1942ED6A26
+  document_order_index: 25680
+  source_text: ERROR_RECOVERY
+- source_node_uid: SN-5F132C9C8520C1A44A54C97E
+  document_order_index: 26623
+  source_text: ERROR_RECOVERY
+- source_node_uid: SN-9543F5690A60AB611C931C9D
+  document_order_index: 27566
+  source_text: ERROR_RECOVERY
+- source_node_uid: SN-95D67EE7B9A781C75069A2A5
+  document_order_index: 28509
+  source_text: ERROR_RECOVERY
+- source_node_uid: SN-CD9B4EA870B0C237EF125AA8
+  document_order_index: 29219
+  source_text: Required labels/status/error text may not be clipped. Long IDs/technical values use controlled ellipsis with recoverable full value; no silent semantic truncation.
+- source_node_uid: SN-2F61854369F6F6B7AA17DF48
+  document_order_index: 29265
+  source_text: Geometry Failure Set
+status: CURRENT_CLASSIFICATION
+content_hash: 5f371144111ddcdefcc6a4e922d94355718a06e8a925aa0931bf0b6c2cf9fc64

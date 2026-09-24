@@ -1,0 +1,35 @@
+artifact_uid: CL-SRC-DOCX-AA00684B11FAD2B498C7-NAVIGATION_REQUIREMENT
+page_uid: admin:DEV-01
+planning_domain: PAGE_CONSTRUCTION
+responsibility_uid: NAVIGATION_REQUIREMENT
+responsibility_class: NAVIGATION_REQUIREMENT
+responsibilities:
+- NAVIGATION_REQUIREMENT
+canonical_owner_uid: OWNER-SOURCE-SRC-DOCX-AA00684B11FAD2B498C7
+target_path: 01_CLASSIFIED/admin-DEV-01/PAGE/NAVIGATION_REQUIREMENT.yaml
+lifecycle_uid: LC-STAGE01-NAVIGATION_REQUIREMENT
+approval_scope_uid: AP-STAGE01-admin-DEV-01
+version_scope_uid: VER-c9b7fe981f97
+test_scope_uid: TEST-STAGE01-NAVIGATION_REQUIREMENT
+source_lineage:
+- source_uid: SRC-DOCX-AA00684B11FAD2B498C7
+  source_segment_uids:
+  - SEG-SN-832491EA376D23D5022FA58A
+  - SEG-SN-16F759F175B94DAC91D1653C
+  - SEG-SN-67E968D931FBC28007165B17
+  - SEG-SN-665E1C367EEE3AB9E87A26FF
+facts:
+- source_node_uid: SN-832491EA376D23D5022FA58A
+  document_order_index: 318
+  source_text: Route
+- source_node_uid: SN-16F759F175B94DAC91D1653C
+  document_order_index: 12076
+  source_text: Method / Route
+- source_node_uid: SN-67E968D931FBC28007165B17
+  document_order_index: 13028
+  source_text: 施工前必須解析唯一 owner / route；未解析不得自行新增平行 endpoint
+- source_node_uid: SN-665E1C367EEE3AB9E87A26FF
+  document_order_index: 29534
+  source_text: Any layout/asset/typography/color/component/navigation/dimension/information-hierarchy change outside the approved Change Set is VISUAL_DRIFT_FAIL.
+status: CURRENT_CLASSIFICATION
+content_hash: 7f24ce1c6c7c1b154f84abc447fe447172b9cadf65f87c825d6da4e5e7041223
