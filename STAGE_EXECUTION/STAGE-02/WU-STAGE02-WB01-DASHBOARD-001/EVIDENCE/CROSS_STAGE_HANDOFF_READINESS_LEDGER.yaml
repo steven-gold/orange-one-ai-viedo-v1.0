@@ -1,0 +1,25 @@
+artifact_uid: HANDOFF-STAGE02-TO-STAGE03-WB01-001
+artifact_type: CROSS_STAGE_HANDOFF_READINESS_LEDGER
+from_stage_uid: STAGE-02
+to_stage_uid: STAGE-03
+governed_unit_uid: workspace:WB-01
+required_inputs:
+- ref: STAGE_EXECUTION/STAGE-01/WU-STAGE01-WB01-DASHBOARD-001/02_BASE_BLUEPRINT/workspace-WB-01/VISUAL_BASE_BLUEPRINT.yaml
+  input_uid: VISUAL_BASE_BLUEPRINT
+  status: PASS
+- ref: STAGE_EXECUTION/STAGE-02/WU-STAGE02-WB01-DASHBOARD-001/PAGE_CONSTRUCTION_SPEC_PACKAGE.yaml
+  input_uid: PAGE_CONSTRUCTION_SPEC_PACKAGE
+  status: PASS
+- ref: STAGE_EXECUTION/STAGE-02/WU-STAGE02-WB01-DASHBOARD-001/FUNCTIONAL_WORKBENCH_CONTRACT.yaml
+  input_uid: FUNCTIONAL_WORKBENCH_CONTRACT
+  status: PASS
+- ref: STAGE_EXECUTION/STAGE-02/WU-STAGE02-WB01-DASHBOARD-001/INTERACTION_TOPOLOGY_SPEC.yaml
+  input_uid: INTERACTION_TOPOLOGY_SPEC
+  status: PASS
+reference_resolution_complete: true
+physical_materialization_complete: true
+required_field_completeness_complete: true
+denominator_reconciled: true
+consumer_readiness_complete: true
+unresolved_required_dependency_total: 0
+status: PASS
