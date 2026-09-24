@@ -1,0 +1,87 @@
+artifact_uid: CL-SRC-DOCX-334A4679600F092B733B-NAVIGATION_STRUCTURE
+page_uid: SRC-DOCX-334A4679600F092B733B
+planning_domain: PAGE_CONSTRUCTION
+responsibility_uid: NAVIGATION_STRUCTURE
+responsibility_class: NAVIGATION_STRUCTURE
+responsibilities:
+- NAVIGATION_STRUCTURE
+canonical_owner_uid: OWNER-SOURCE-SRC-DOCX-334A4679600F092B733B
+target_path: 01_CLASSIFIED/SRC-DOCX-334A4679600F092B733B/PAGE/NAVIGATION_STRUCTURE.yaml
+lifecycle_uid: LC-STAGE01-NAVIGATION_STRUCTURE
+approval_scope_uid: AP-STAGE01-SRC-DOCX-334A4679600F092B733B
+version_scope_uid: VER-6c63701919cc
+test_scope_uid: TEST-STAGE01-NAVIGATION_STRUCTURE
+source_lineage:
+- source_uid: SRC-DOCX-334A4679600F092B733B
+  source_segment_uids:
+  - SEG-SN-7FC17BB837B8912B2A2FDFF1
+  - SEG-SN-24EE197265FCD9D99E27D5C2
+  - SEG-SN-49B9CCF0681BAA37055CC048
+  - SEG-SN-62C5E16868D84A7AF1007231
+  - SEG-SN-27E908750D3E1B8639F7B3E7
+  - SEG-SN-FCD71D3FEA99EA722DDB10C1
+  - SEG-SN-34449E42E85EB7CE0B6B4731
+  - SEG-SN-C37415C733099A79E363A624
+  - SEG-SN-442724133FED6B891AE21F2F
+  - SEG-SN-9FC083CF816B02BACBFE31B6
+  - SEG-SN-E18726DA69DE039D15AF3BD8
+  - SEG-SN-25EB89ACBA3DC11F65D6DD04
+  - SEG-SN-72CE858DBB572CE0AAF4DC52
+  - SEG-SN-D3B8EB799F20C0AEB2E6B364
+  - SEG-SN-8B76364309F2B83AA4FBC27E
+  - SEG-SN-59E397EAE41B5081562BC5B9
+  - SEG-SN-B295A2ADA1841DF6E129EFFA
+facts:
+- source_node_uid: SN-7FC17BB837B8912B2A2FDFF1
+  document_order_index: 35
+  source_text: Global Home / Shell / Adaptive Navigation
+- source_node_uid: SN-24EE197265FCD9D99E27D5C2
+  document_order_index: 267
+  source_text: Sidebar
+- source_node_uid: SN-49B9CCF0681BAA37055CC048
+  document_order_index: 489
+  source_text: Sidebar
+- source_node_uid: SN-62C5E16868D84A7AF1007231
+  document_order_index: 1226
+  source_text: 4. Front Navigation / 前台 9 個 L1
+- source_node_uid: SN-27E908750D3E1B8639F7B3E7
+  document_order_index: 1987
+  source_text: Flat L1
+- source_node_uid: SN-FCD71D3FEA99EA722DDB10C1
+  document_order_index: 1992
+  source_text: Front 9 項全部為直接 L1 Leaf；禁止子選單、第二行 subtitle、chevron 與 page-local global menu。
+- source_node_uid: SN-34449E42E85EB7CE0B6B4731
+  document_order_index: 1998
+  source_text: 5. Admin Navigation / 後台 9 個 L1
+- source_node_uid: SN-C37415C733099A79E363A624
+  document_order_index: 2734
+  source_text: 6. Sidebar Interaction State Machine
+- source_node_uid: SN-442724133FED6B891AE21F2F
+  document_order_index: 3038
+  source_text: 導航後立即收合並恢復最大 Workspace
+- source_node_uid: SN-9FC083CF816B02BACBFE31B6
+  document_order_index: 3129
+  source_text: Keyboard Tab 進入 Sidebar
+- source_node_uid: SN-E18726DA69DE039D15AF3BD8
+  document_order_index: 3392
+  source_text: Sidebar gap
+- source_node_uid: SN-25EB89ACBA3DC11F65D6DD04
+  document_order_index: 3779
+  source_text: Sidebar 仍可收合/展開
+- source_node_uid: SN-72CE858DBB572CE0AAF4DC52
+  document_order_index: 3862
+  source_text: Navigation 顯示只依 Account Permission Assignment 與 Canonical Navigation Authority。
+- source_node_uid: SN-D3B8EB799F20C0AEB2E6B364
+  document_order_index: 4251
+  source_text: 收合 Sidebar 時 Nav Label 可視上隱藏，但 Icon 必須具有完整 aria-label。
+- source_node_uid: SN-8B76364309F2B83AA4FBC27E
+  document_order_index: 4401
+  source_text: Navigation target 不可解析
+- source_node_uid: SN-59E397EAE41B5081562BC5B9
+  document_order_index: 4876
+  source_text: Sidebar keyboard focus 展開時，內容同步縮放，不遮住焦點控制。
+- source_node_uid: SN-B295A2ADA1841DF6E129EFFA
+  document_order_index: 5060
+  source_text: 5.  重跑 Navigation visibility、Keyboard、Reduced Motion、Header overflow、Frontend/Admin switch。
+status: CURRENT_CLASSIFICATION
+content_hash: 6303353127dd9b45908e7d1321b2ee3af67fabb7b6cde3b561c8629433ce46cb
