@@ -1,0 +1,47 @@
+artifact_uid: STAGE01-REQUIRED-FIELD-MANIFEST
+artifact_type: REQUIRED_FIELD_MANIFEST
+stage_uid: STAGE-01
+governance_head: c411687bcd94ba2f0c8016de63c3d8b4dc3d3209
+required_work_unit_fields:
+- work_unit_uid
+- primary_task_layer
+- stage_uid
+- scope
+- dependencies
+- definition_of_done
+- current_status
+- terminal_receipt_ref
+required_terminal_receipt_fields:
+- artifact_uid
+- artifact_type
+- work_unit_uid
+- stage_uid
+- source_uid
+- pair_hash
+- operation_receipt_count
+- operation_receipts
+- stage1_guard_result
+- result
+required_stage_outputs:
+- SOURCE_STRUCTURE_MANIFEST
+- SOURCE_SEGMENT_MAP
+- SOURCE_CONTEXT_MANIFEST
+- CONTENT_SUPERSESSION_CONFLICT_LEDGER
+- SOURCE_DEPENDENCY_MAP
+- CLASSIFIED_ARTIFACT_SET
+- PAGE_BASE_BLUEPRINT
+- VISUAL_BASE_BLUEPRINT
+- BLUEPRINT_BINDING_MANIFEST
+required_operation_receipt_fields:
+- artifact_uid
+- artifact_type
+- stage_uid
+- operation_uid
+- work_unit_uid
+- input_refs
+- output_refs
+- denominator
+- result
+- legal_successor
+status: PASS
+artifact_hash: eeef1ec833b01c1521ed54131af6ad20553417ba212b0fb4dfbae033de10498e

@@ -1,0 +1,21 @@
+artifact_uid: STAGE01-STAGE-EXECUTION-PREFLIGHT-RECEIPT
+artifact_type: STAGE_EXECUTION_PREFLIGHT_RECEIPT
+stage_uid: STAGE-01
+governance_head: c411687bcd94ba2f0c8016de63c3d8b4dc3d3209
+product_head_before_materialization: 9b658d142b9a97277237cc8dac2ae865b83e1c06
+manifest_refs:
+- STAGE_EXECUTION/STAGE-01/CLOSURE/REQUIRED_FIELD_MANIFEST.yaml
+- STAGE_EXECUTION/STAGE-01/CLOSURE/FUNCTIONAL_CHAIN_MANIFEST.yaml
+- STAGE_EXECUTION/STAGE-01/CLOSURE/EFFECTIVE_CONTRACT_OVERLAY.yaml
+- STAGE_EXECUTION/STAGE-01/CLOSURE/DEPENDENCY_TOPOLOGY.yaml
+- STAGE_EXECUTION/STAGE-01/CLOSURE/DENOMINATOR_SNAPSHOT.yaml
+- STAGE_EXECUTION/STAGE-01/CLOSURE/CLASSIFICATION_RULESET.yaml
+- STAGE_EXECUTION/STAGE-01/CLOSURE/CHANGE_IMPACT_MAP.yaml
+one_current_problem_register_required: true
+append_only_resolution_ledger_required: true
+dependency_ordered_batches_proven: true
+incremental_impact_validation_proven: true
+checkpoint_full_sweep_run_id: 35956120539
+current_stage_binding: STAGE-01
+result: PASS
+artifact_hash: 0505f3ace0e0b5a6b690f5b48efc82e5d21fb576c560f6f7ddd6891900ea4c4b
