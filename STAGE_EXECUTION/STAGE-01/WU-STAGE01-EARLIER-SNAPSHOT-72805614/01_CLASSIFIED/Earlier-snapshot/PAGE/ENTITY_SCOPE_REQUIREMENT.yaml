@@ -1,0 +1,59 @@
+artifact_uid: CL-SRC-DOCX-4709E92A27CC72805614-ENTITY_SCOPE_REQUIREMENT
+page_uid: Earlier snapshot
+planning_domain: PAGE_CONSTRUCTION
+responsibility_uid: ENTITY_SCOPE_REQUIREMENT
+responsibility_class: ENTITY_SCOPE_REQUIREMENT
+responsibilities:
+- ENTITY_SCOPE_REQUIREMENT
+canonical_owner_uid: OWNER-SOURCE-SRC-DOCX-4709E92A27CC72805614
+target_path: 01_CLASSIFIED/Earlier-snapshot/PAGE/ENTITY_SCOPE_REQUIREMENT.yaml
+lifecycle_uid: LC-STAGE01-ENTITY_SCOPE_REQUIREMENT
+approval_scope_uid: AP-STAGE01-Earlier-snapshot
+version_scope_uid: VER-e3e5044cd58d
+test_scope_uid: TEST-STAGE01-ENTITY_SCOPE_REQUIREMENT
+source_lineage:
+- source_uid: SRC-DOCX-4709E92A27CC72805614
+  source_segment_uids:
+  - SEG-SN-C8563E3C5915687A20699137
+  - SEG-SN-49C6EA9C530CA1E09009FC86
+  - SEG-SN-5E29EB0226A235D77D3CC016
+  - SEG-SN-D5E4EC47EAC3700EE2CF15C5
+  - SEG-SN-1C505CBFEB6B4BC783CBC225
+  - SEG-SN-58C6E01E04FF29AF33E741CE
+  - SEG-SN-9A1F8C622E1130792620510F
+  - SEG-SN-53D7448A2447A95318E6EB2C
+  - SEG-SN-DE36B8C5A1862DF1B8AD689B
+  - SEG-SN-944F1A86F9D01FC9C5240700
+facts:
+- source_node_uid: SN-C8563E3C5915687A20699137
+  document_order_index: 286
+  source_text: 公司級 read projection / summary
+- source_node_uid: SN-49C6EA9C530CA1E09009FC86
+  document_order_index: 340
+  source_text: 專案 / 專題
+- source_node_uid: SN-5E29EB0226A235D77D3CC016
+  document_order_index: 357
+  source_text: Project/Topic Core、Blueprint、DNA、Canonical Script
+- source_node_uid: SN-D5E4EC47EAC3700EE2CF15C5
+  document_order_index: 2440
+  source_text: Project / Topic / Context / Decisions
+- source_node_uid: SN-1C505CBFEB6B4BC783CBC225
+  document_order_index: 4467
+  source_text: IDENTITY / AUTH
+- source_node_uid: SN-58C6E01E04FF29AF33E741CE
+  document_order_index: 6307
+  source_text: Entity Contract
+- source_node_uid: SN-9A1F8C622E1130792620510F
+  document_order_index: 11639
+  source_text: Time-bearing systems exchange exact CanonicalTimePoint rational values + explicit timebase identity; float seconds alone are forbidden as cross-system authority.
+- source_node_uid: SN-53D7448A2447A95318E6EB2C
+  document_order_index: 11652
+  source_text: Frame, millisecond, subframe and sample are UI/operation projections over the same canonical value; switching projection cannot mutate time.
+- source_node_uid: SN-DE36B8C5A1862DF1B8AD689B
+  document_order_index: 11659
+  source_text: Source identity
+- source_node_uid: SN-944F1A86F9D01FC9C5240700
+  document_order_index: 11704
+  source_text: Sample-level operations require exact sample-rate authority; millisecond operation is legal as a rational projection and may require deterministic quantization only at a sample-bound commit.
+status: CURRENT_CLASSIFICATION
+content_hash: 20e3b03c69a7641d99de1cc3d11460b1422d80fa6f571f11e2f67af7e89bec21

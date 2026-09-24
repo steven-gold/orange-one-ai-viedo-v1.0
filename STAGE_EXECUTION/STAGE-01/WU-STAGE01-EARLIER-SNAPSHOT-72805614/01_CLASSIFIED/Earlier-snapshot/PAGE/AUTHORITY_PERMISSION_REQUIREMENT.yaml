@@ -1,0 +1,128 @@
+artifact_uid: CL-SRC-DOCX-4709E92A27CC72805614-AUTHORITY_PERMISSION_REQUIREMENT
+page_uid: Earlier snapshot
+planning_domain: PAGE_CONSTRUCTION
+responsibility_uid: AUTHORITY_PERMISSION_REQUIREMENT
+responsibility_class: AUTHORITY_PERMISSION_REQUIREMENT
+responsibilities:
+- AUTHORITY_PERMISSION_REQUIREMENT
+canonical_owner_uid: OWNER-SOURCE-SRC-DOCX-4709E92A27CC72805614
+target_path: 01_CLASSIFIED/Earlier-snapshot/PAGE/AUTHORITY_PERMISSION_REQUIREMENT.yaml
+lifecycle_uid: LC-STAGE01-AUTHORITY_PERMISSION_REQUIREMENT
+approval_scope_uid: AP-STAGE01-Earlier-snapshot
+version_scope_uid: VER-e3e5044cd58d
+test_scope_uid: TEST-STAGE01-AUTHORITY_PERMISSION_REQUIREMENT
+source_lineage:
+- source_uid: SRC-DOCX-4709E92A27CC72805614
+  source_segment_uids:
+  - SEG-SN-0AD0C1945E784EBB89331A52
+  - SEG-SN-4CEDC971186E804B0A10972E
+  - SEG-SN-7B7658C94CEE3B92D1AF8C9B
+  - SEG-SN-112D759A0BE9C34DA1665E36
+  - SEG-SN-95737F3EB894B7647992D513
+  - SEG-SN-0684B100D6AD38A478587F30
+  - SEG-SN-DAB06A3885753D8B07138ACE
+  - SEG-SN-145BE78A9EC99E4280C54277
+  - SEG-SN-323F221CF9D0CC52842630F4
+  - SEG-SN-759AFBD752FAA03F485B0C9A
+  - SEG-SN-2DBEC05B3F12C1BA1AF0181F
+  - SEG-SN-EDC188F889B0F15D9BA641C9
+  - SEG-SN-D010D1A92D748BDD175CA8FB
+  - SEG-SN-499E339C330A64A30B3ABD6C
+  - SEG-SN-87E12A127431A45FAC30D22B
+  - SEG-SN-03041BE8CFC8BEDBE55497B1
+  - SEG-SN-CC041E8F17805B208EB03761
+  - SEG-SN-06034579C5869F7C396879EE
+  - SEG-SN-E8A7E34B2CBE6DD5CEA5ADDF
+  - SEG-SN-9FC0790814EFAA86C8DCC3B5
+  - SEG-SN-4A73B211F9B2B1453FED6C4E
+  - SEG-SN-CF4FE34981DAD2467D49888E
+  - SEG-SN-DB61B39C44C0EDB6BC6DA37A
+  - SEG-SN-E5754A9BA99B5951E9555C39
+  - SEG-SN-E0A08FDEFE77501DF9609964
+  - SEG-SN-050AE8C575DDEBACAE34A8CF
+  - SEG-SN-79BDC0C87315ABCCCC139A7F
+facts:
+- source_node_uid: SN-0AD0C1945E784EBB89331A52
+  document_order_index: 43
+  source_text: 18 頁、中央大腦、Identity／Permission／Data／AI／Queue／Audit 的單一整合契約
+- source_node_uid: SN-4CEDC971186E804B0A10972E
+  document_order_index: 979
+  source_text: 帳戶與權限
+- source_node_uid: SN-7B7658C94CEE3B92D1AF8C9B
+  document_order_index: 996
+  source_text: Account Permission Assignment
+- source_node_uid: SN-112D759A0BE9C34DA1665E36
+  document_order_index: 2218
+  source_text: Permission / Policy / Classification / Audit / Error / Health / Truthful State
+- source_node_uid: SN-95737F3EB894B7647992D513
+  document_order_index: 2289
+  source_text: 任何無 owner、無 exact version、無 permission、無 registered operation、無 required evidence 的跨頁行為，不得用 AI 推測補值；必須 BLOCK + REPORT_AUTHORITY_GAP。
+- source_node_uid: SN-0684B100D6AD38A478587F30
+  document_order_index: 2771
+  source_text: 6. Identity → Permission → Page Gate
+- source_node_uid: SN-DAB06A3885753D8B07138ACE
+  document_order_index: 2789
+  source_text: 3.  Shell 取得 `visible_page_uids`，只顯示授權 Front/Admin L1。
+- source_node_uid: SN-145BE78A9EC99E4280C54277
+  document_order_index: 2795
+  source_text: 4.  進入 Page 時再執行 exact page / section / action / control / API / field permission + scope + state gate。
+- source_node_uid: SN-323F221CF9D0CC52842630F4
+  document_order_index: 2807
+  source_text: 6.  Permission denied = HIDDEN；authorized but state blocked = DISABLED + reason。
+- source_node_uid: SN-759AFBD752FAA03F485B0C9A
+  document_order_index: 3011
+  source_text: 依 operation 確定 required capability；硬性 permission/policy/rights/classification/health 先過 Gate
+- source_node_uid: SN-2DBEC05B3F12C1BA1AF0181F
+  document_order_index: 3611
+  source_text: Canonical data owner per domain；RLS / permission 不可由前端取代
+- source_node_uid: SN-EDC188F889B0F15D9BA641C9
+  document_order_index: 4390
+  source_text: capability/permission/route lineage + normalized result
+- source_node_uid: SN-D010D1A92D748BDD175CA8FB
+  document_order_index: 4484
+  source_text: Fail-closed；未授權內容/控制不顯示；不可 client bypass
+- source_node_uid: SN-499E339C330A64A30B3ABD6C
+  document_order_index: 4837
+  source_text: 18 個 Current Page 都有唯一 owner / route / permission / integration role。
+- source_node_uid: SN-87E12A127431A45FAC30D22B
+  document_order_index: 4911
+  source_text: Identity → Permission → Page Gate → Operation Gate 順序不可繞過。
+- source_node_uid: SN-03041BE8CFC8BEDBE55497B1
+  document_order_index: 5197
+  source_text: 3.  逐頁對接 Page Authority → Control → Action → Permission → API → Runtime → DB / Provider。
+- source_node_uid: SN-CC041E8F17805B208EB03761
+  document_order_index: 5221
+  source_text: 7.  跑全站 permission-denied / version-conflict / missing-authority / provider-failure / queue-failure / stale-data negative tests。
+- source_node_uid: SN-06034579C5869F7C396879EE
+  document_order_index: 5394
+  source_text: Identity、Permission、Scope、State Guard、Version、Idempotency、Audit 均由 Server 執行，不能只靠前端。
+- source_node_uid: SN-E8A7E34B2CBE6DD5CEA5ADDF
+  document_order_index: 5896
+  source_text: Permission / role / scope check.
+- source_node_uid: SN-9FC0790814EFAA86C8DCC3B5
+  document_order_index: 6407
+  source_text: Authorization/Permission
+- source_node_uid: SN-4A73B211F9B2B1453FED6C4E
+  document_order_index: 6882
+  source_text: Permission/RLS Boundary
+- source_node_uid: SN-CF4FE34981DAD2467D49888E
+  document_order_index: 7226
+  source_text: Permission context portable
+- source_node_uid: SN-DB61B39C44C0EDB6BC6DA37A
+  document_order_index: 7607
+  source_text: Missing Action/Gate/Permission/Operation/Runtime Owner counts are raw source diagnostics. They are not automatically defects when the runtime status makes the field legitimately N/A; remediation must classify
+    them against current authority.
+- source_node_uid: SN-E5754A9BA99B5951E9555C39
+  document_order_index: 7821
+  source_text: Missing Permission
+- source_node_uid: SN-E0A08FDEFE77501DF9609964
+  document_order_index: 9214
+  source_text: ACPOS_IAM-01_帳戶與權限_Mother_Basic_Design_OPTIMIZED.docx
+- source_node_uid: SN-050AE8C575DDEBACAE34A8CF
+  document_order_index: 11460
+  source_text: Raw missing Permission
+- source_node_uid: SN-79BDC0C87315ABCCCC139A7F
+  document_order_index: 11579
+  source_text: MACHINE_LEDGER_JSON={"marker":"ACPOS-20260921-BATCH-03-EXHAUSTIVE-DENOMINATOR-LEDGER-V1","pages":[{"H":"NO","L":"NO","S":"NO","TY":"NO","blob_sha":"ef610d7f6f2bcc72890f1ba563c063f737cae60e","control_registry_sha256":"bed6aacd5baed927d0e554827fccefaba3a3d4dc75aed8b0169c07bdafe1f4a9","design_frozen":"NO_FALSE_FLAG","effectful_like":14,"file":"ACPOS_AIAPI-01_AI_API管理_Mother_Basic_Design_OPTIMIZED.docx","missing_action":16,"missing_gate":0,"missing_operation":0,"missing_permission":2,"missing_runtime_owner":0,"no_public_route":0,"page_uid":"AIAPI-01","runtime_blocked":0,"source_not_defined":0,"source_tables":"T31","unique_controls":17,"visual_review":"NO_FLAG"},{"H":"NO","L":"NO","S":"NO","TY":"NO","blob_sha":"71c6c4b8b734a51db5f83b73fc76d455973b8775","control_registry_sha256":"401c53ebea713505ed2a9b4995fcbf3bbfa87745cdee76de79507dd9813dfe13","design_frozen":"NO_FALSE_FLAG","effectful_like":23,"file":"ACPOS_ASSET-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx","missing_action":0,"missing_gate":0,"missing_operation":18,"missing_permission":0,"missing_runtime_owner":18,"no_public_route":0,"page_uid":"ASSET-01","runtime_blocked":0,"source_not_defined":0,"source_tables":"T11,T26","unique_controls":85,"visual_review":"HUMAN_REVIEW"},{"H":"NO","L":"NO","S":"NO","TY":"NO","blob_sha":"a140edcba1d76d5d38b088ec856f6c2bd4692978","control_registry_sha256":"8640488ef9755a7b1c3ff63cdfd0b31e27a254e7fc1c4d8da2dd5878c7af3b44","design_frozen":"FALSE","effectful_like":24,"file":"ACPOS_CORE-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx","missing_action":0,"missing_gate":0,"missing_operation":24,"missing_permission":0,"missing_runtime_owner":0,"no_public_route":0,"page_uid":"CORE-01","runtime_blocked":0,"source_not_defined":0,"source_tables":"T11,T28","unique_controls":50,"visual_review":"HUMAN_REVIEW"},{"H":"NO","L":"NO","S":"NO","TY":"NO","blob_sha":"741bd95a20b44252725732c0158d2439364cb83e","control_registry_sha256":"8556bdde50e3a937583fb79f1a389743f1138ef21d1758567f1b56675a2c8256","design_frozen":"NO_FALSE_FLAG","effectful_like":0,"file":"ACPOS_DB-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx","missing_action":0,"missing_gate":0,"missing_operation":8,"missing_permission":0,"missing_runtime_owner":0,"no_public_route":0,"page_uid":"DB-01","runtime_blocked":0,"source_not_defined":0,"source_tables":"T14,T27","unique_controls":49,"visual_review":"HUMAN_REVIEW"},{"H":"NO","L":"NO","S":"NO","TY":"NO","blob_sha":"a98a7eedabcf27af1ecb7015591b2a7c85ecb8de","control_registry_sha256":"f25778325204a00c77a8d979cc07ba4f94e7b3da70e5daa9087f6bdfa6362968","design_frozen":"NO_FALSE_FLAG","effectful_like":17,"file":"ACPOS_DEV-01_企業自動開發系統_Mother_Basic_Design_OPTIMIZED.docx","missing_action":0,"missing_gate":0,"missing_operation":0,"missing_permission":5,"missing_runtime_owner":11,"no_public_route":0,"page_uid":"DEV-01","runtime_blocked":0,"source_not_defined":0,"source_tables":"T23","unique_controls":22,"visual_review":"NO_FLAG"},{"H":"NO","L":"NO","S":"NO","TY":"NO","blob_sha":"f478bbe5e80b4b26b73e131536db740724364003","control_registry_sha256":"c219aa92ea9b4b4eedece8cf0aa8cdd3ce8cebbe05f391cbd0f1eef0b6cbcba9","design_frozen":"FALSE","effectful_like":22,"file":"ACPOS_EDIT-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx","missing_action":21,"missing_gate":0,"missing_operation":43,"missing_permission":0,"missing_runtime_owner":0,"no_public_route":10,"page_uid":"EDIT-01","runtime_blocked":0,"source_not_defined":0,"source_tables":"T28,T33","unique_controls":160,"visual_review":"HUMAN_REVIEW"},{"H":"NO","L":"NO","S":"NO","TY":"NO","blob_sha":"87e3086adc0f705a8e13ac9c73dabb2b30cafa33","control_registry_sha256":"8b52bf8f48e4aa0c1aaca02760e443248c27be0b4055bc02daafa057392b7c3e","design_frozen":"NO_FALSE_FLAG","effectful_like":8,"file":"ACPOS_ERP-01_ERP與財務_Mother_Basic_Design_OPTIMIZED.docx","missing_action":0,"missing_gate":0,"missing_operation":20,"missing_permission":0,"missing_runtime_owner":0,"no_public_route":0,"page_uid":"ERP-01","runtime_blocked":0,"source_not_defined":0,"source_tables":"T21","unique_controls":42,"visual_review":"NO_FLAG"},{"H":"NO","L":"NO","S":"NO","TY":"NO","blob_sha":"e1845f6997cd87abf4f38a24a247a30d41cd065b","control_registry_sha256":"eb60f624cd8bce6c17fccc452a59fc18dc083e6da4a50241b592553cb60f3352","design_frozen":"NO_FALSE_FLAG","effectful_like":4,"file":"ACPOS_IAM-01_帳戶與權限_Mother_Basic_Design_OPTIMIZED.docx","missing_action":0,"missing_gate":0,"missing_operation":1,"missing_permission":0,"missing_runtime_owner":1,"no_public_route":0,"page_uid":"IAM-01","runtime_blocked":0,"source_not_defined":0,"source_tables":"T13,T33","unique_controls":14,"visual_review":"NO_FLAG"},{"H":"NO","L":"NO","S":"NO","TY":"NO","blob_sha":"9c8af306b835c49d7216824c82f420c0c4d8e5b1","control_registry_sha256":"ecb51c6a11dc46414c3b5665cb6fed480364eaa7ca814b2923f9515f18021d18","design_frozen":"NO_FALSE_FLAG","effectful_like":5,"file":"ACPOS_INFO-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx","missing_action":0,"missing_gate":0,"missing_operation":0,"missing_permission":0,"missing_runtime_owner":0,"no_public_route":0,"page_uid":"INFO-01","runtime_blocked":0,"source_not_defined":0,"source_tables":"T13,T27","unique_controls":66,"visual_review":"HUMAN_REVIEW"},{"H":"NO","L":"NO","S":"NO","TY":"NO","blob_sha":"e46ef542a5be7249f3b5f60ff308bdfd8e26bacb","control_registry_sha256":"9bf2aad25a5207f4a11f7e18db5861a9456477cfd2c724789b9e2a8ad64429f1","design_frozen":"NO_FALSE_FLAG","effectful_like":18,"file":"ACPOS_KB-01_知識庫_Mother_Basic_Design_OPTIMIZED.docx","missing_action":5,"missing_gate":5,"missing_operation":0,"missing_permission":0,"missing_runtime_owner":0,"no_public_route":0,"page_uid":"KB-01","runtime_blocked":18,"source_not_defined":0,"source_tables":"T29","unique_controls":27,"visual_review":"NO_FLAG"},{"H":"NO","L":"NO","S":"NO","TY":"NO","blob_sha":"dd5533f7ab0ffec491f2d6ab16c86c84cead8a7c","control_registry_sha256":"56cffe132eb5cd1bd9ac1d18f7e2f654fffebce0479954f9bdc046fdb3dc750a","design_frozen":"NO_FALSE_FLAG","effectful_like":11,"file":"ACPOS_QA-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx","missing_action":0,"missing_gate":0,"missing_operation":3,"missing_permission":0,"missing_runtime_owner":0,"no_public_route":0,"page_uid":"QA-01","runtime_blocked":0,"source_not_defined":0,"source_tables":"T9,T24","unique_controls":87,"visual_review":"HUMAN_REVIEW"},{"H":"NO","L":"NO","S":"NO","TY":"NO","blob_sha":"dc21e0b85a0058953d127b0f9b42c9b500fd19ba","control_registry_sha256":"20f871e38adc89f38d2637ea66a3bb876e84f1b7c8d943129ecb8a38e784110a","design_frozen":"NO_FALSE_FLAG","effectful_like":2,"file":"ACPOS_SG-02_QA審查項目名單_Mother_Basic_Design_OPTIMIZED.docx","missing_action":8,"missing_gate":0,"missing_operation":0,"missing_permission":0,"missing_runtime_owner":0,"no_public_route":0,"page_uid":"SG-02","runtime_blocked":2,"source_not_defined":0,"source_tables":"T19","unique_controls":12,"visual_review":"NO_FLAG"},{"H":"NO","L":"NO","S":"NO","TY":"NO","blob_sha":"82112c2a3759b4d5b3ebce4e1ed184198ac0d0b2","control_registry_sha256":"d6ec202647ea885135fd696504f28f533a726ad7a78cec5f9e6f206289ce0950","design_frozen":"NO_FALSE_FLAG","effectful_like":15,"file":"ACPOS_SOC-01_社群發布_Mother_Basic_Design_OPTIMIZED.docx","missing_action":0,"missing_gate":0,"missing_operation":0,"missing_permission":0,"missing_runtime_owner":0,"no_public_route":0,"page_uid":"SOC-01","runtime_blocked":0,"source_not_defined":0,"source_tables":"T20","unique_controls":67,"visual_review":"NO_FLAG"},{"H":"NO","L":"NO","S":"NO","TY":"NO","blob_sha":"2273aa79858e3a0b4bb7c9ff99cd192d54220bc4","control_registry_sha256":"a4d731dfcd2c98f1a429011e021adac78af14b32af372cf864fc390494bda9aa","design_frozen":"NO_FALSE_FLAG","effectful_like":7,"file":"ACPOS_STR-01_WORKSPACE_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx","missing_action":0,"missing_gate":0,"missing_operation":0,"missing_permission":0,"missing_runtime_owner":0,"no_public_route":0,"page_uid":"STR-01","runtime_blocked":0,"source_not_defined":0,"source_tables":"T16,T29","unique_controls":57,"visual_review":"HUMAN_REVIEW"},{"H":"NO","L":"NO","S":"NO","TY":"NO","blob_sha":"e2be8ed3fec0eed66fa53135d5bad5b4a963ff7a","control_registry_sha256":"8ab21cb406cf431e40e4c18d5b7acbbfb7355b4fc545b69d57ca5a6e319a3e6c","design_frozen":"NO_FALSE_FLAG","effectful_like":6,"file":"ACPOS_SYS-01_系統維護與生命週期工作區_Mother_Basic_Design_OPTIMIZED.docx","missing_action":0,"missing_gate":4,"missing_operation":1,"missing_permission":0,"missing_runtime_owner":5,"no_public_route":0,"page_uid":"SYS-01","runtime_blocked":0,"source_not_defined":0,"source_tables":"T16,T17,T35","unique_controls":12,"visual_review":"NO_FLAG"},{"H":"NO","L":"NO","S":"NO","TY":"NO","blob_sha":"5c524d869b8e255b1706fbc3faa05918d0ab9524","control_registry_sha256":"b95f808d0f282da3ff37f296ad5c8a25f9f0347b8d2893f9faa96924694ea3f0","design_frozen":"FALSE","effectful_like":10,"file":"ACPOS_VIDEO-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx","missing_action":0,"missing_gate":0,"missing_operation":7,"missing_permission":0,"missing_runtime_owner":0,"no_public_route":0,"page_uid":"VIDEO-01","runtime_blocked":0,"source_not_defined":0,"source_tables":"T9,T24","unique_controls":85,"visual_review":"HUMAN_REVIEW"},{"H":"NO","L":"NO","S":"NO","TY":"NO","blob_sha":"d262022d97d3138dae98b0c45c59bd859f3600fd","control_registry_sha256":"39ef323e53551b9554f6e5e111c220df3fb5ee83a30db97235a6f2a06cbc37e5","design_frozen":"FALSE","effectful_like":0,"file":"ACPOS_WB-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx","missing_action":28,"missing_gate":14,"missing_operation":0,"missing_permission":0,"missing_runtime_owner":0,"no_public_route":0,"page_uid":"WB-01","runtime_blocked":0,"source_not_defined":0,"source_tables":"T15,T26","unique_controls":28,"visual_review":"HUMAN_REVIEW"},{"H":"NO","L":"NO","S":"NO","TY":"NO","blob_sha":"b1102528b53aa1a9230f610ac386fd208df0a916","control_registry_sha256":"6362989444ce993f15fbe740dba0ad3398f7e81ff0eaea76fb31f45607bc7d0c","design_frozen":"NO_FALSE_FLAG","effectful_like":13,"file":"ACPOS_admin_STR-01_戰略中心後台_Mother_Basic_Design_OPTIMIZED.docx","missing_action":0,"missing_gate":0,"missing_operation":0,"missing_permission":0,"missing_runtime_owner":4,"no_public_route":0,"page_uid":"ADMIN-STR-01","runtime_blocked":6,"source_not_defined":0,"source_tables":"T22,T24","unique_controls":19,"visual_review":"NO_FLAG"}],"totals":{"blocked":26,"effectful":199,"missing_action":78,"missing_gate":23,"missing_operation":125,"missing_permission":7,"missing_runtime_owner":39,"no_route":10,"pages":18,"source_not_defined":0,"unique_controls":899}}
+status: CURRENT_CLASSIFICATION
+content_hash: 668d0f9af4d8c9616499b9d33ac11f1774d229589d53b64176f66d4245debc5f
