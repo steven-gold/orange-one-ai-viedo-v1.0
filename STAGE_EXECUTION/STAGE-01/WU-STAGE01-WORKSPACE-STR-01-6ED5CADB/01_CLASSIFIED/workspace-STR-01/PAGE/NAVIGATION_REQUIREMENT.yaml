@@ -1,0 +1,53 @@
+artifact_uid: CL-SRC-DOCX-3230C6B995176ED5CADB-NAVIGATION_REQUIREMENT
+page_uid: workspace:STR-01
+planning_domain: PAGE_CONSTRUCTION
+responsibility_uid: NAVIGATION_REQUIREMENT
+responsibility_class: NAVIGATION_REQUIREMENT
+responsibilities:
+- NAVIGATION_REQUIREMENT
+canonical_owner_uid: OWNER-SOURCE-SRC-DOCX-3230C6B995176ED5CADB
+target_path: 01_CLASSIFIED/workspace-STR-01/PAGE/NAVIGATION_REQUIREMENT.yaml
+lifecycle_uid: LC-STAGE01-NAVIGATION_REQUIREMENT
+approval_scope_uid: AP-STAGE01-workspace-STR-01
+version_scope_uid: VER-c2ce8d7224ed
+test_scope_uid: TEST-STAGE01-NAVIGATION_REQUIREMENT
+source_lineage:
+- source_uid: SRC-DOCX-3230C6B995176ED5CADB
+  source_segment_uids:
+  - SEG-SN-751750A7B88EC15CB0878B69
+  - SEG-SN-26A06A61934161F5DBAE4909
+  - SEG-SN-B77FE111F8519CF6F0090F5B
+  - SEG-SN-E51C42486CD5DD0E51DAC652
+  - SEG-SN-3D46B51AD490AAD200ABD233
+  - SEG-SN-ADE7634B11CF9B6A1FB57AD1
+  - SEG-SN-5DF6598C24E3CEA9EB87610B
+  - SEG-SN-16BA454FE09CAF4A0BCC5DF0
+facts:
+- source_node_uid: SN-751750A7B88EC15CB0878B69
+  document_order_index: 5729
+  source_text: UI_NAVIGATION
+- source_node_uid: SN-26A06A61934161F5DBAE4909
+  document_order_index: 14916
+  source_text: Candidate / Review / Decision Ledger / Owner link
+- source_node_uid: SN-B77FE111F8519CF6F0090F5B
+  document_order_index: 17159
+  source_text: AI-01 Context Owner / Governed Strategy Context Adoption Link + System 08 Audit
+- source_node_uid: SN-E51C42486CD5DD0E51DAC652
+  document_order_index: 24213
+  source_text: Review submission is a governed request to enter REVIEW_REQUIRED, never an approval. Context adoption requires prior human review and persists through AI-01 Context authority plus System 08 audit linkage; Strategy
+    does not create a second Context Engine.
+- source_node_uid: SN-3D46B51AD490AAD200ABD233
+  document_order_index: 24406
+  source_text: AI-01 Context Owner / Governed Strategy Context Adoption Link + System 08 Audit
+- source_node_uid: SN-ADE7634B11CF9B6A1FB57AD1
+  document_order_index: 24416
+  source_text: Adopt-as-context occurs only after human review/decision evidence and does not execute an owner module. Context authority remains AI-01; System 08 preserves candidate/decision/audit linkage without creating
+    a second Context Engine.
+- source_node_uid: SN-5DF6598C24E3CEA9EB87610B
+  document_order_index: 26804
+  source_text: Navigation Region
+- source_node_uid: SN-16BA454FE09CAF4A0BCC5DF0
+  document_order_index: 27713
+  source_text: Any layout/asset/typography/color/component/navigation/dimension/information-hierarchy change outside the approved Change Set is VISUAL_DRIFT_FAIL.
+status: CURRENT_CLASSIFICATION
+content_hash: 709731a3511ddfdb903f67f1ce6423793ff7593a7af91e2f48622f078ab20b78
