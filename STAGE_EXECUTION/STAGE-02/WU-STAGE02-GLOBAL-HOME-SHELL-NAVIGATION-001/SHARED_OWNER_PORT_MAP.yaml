@@ -4,19 +4,36 @@ stage_uid: STAGE-02
 governed_unit_uid: GLOBAL-HOME-SHELL-NAVIGATION
 bindings:
 - responsibility: NAVIGATION_IDENTITY_AND_ROUTE
+  owner_uid: OWNER-CANONICAL-NAVIGATION-AUTHORITY
   owner_ref: CANONICAL_NAVIGATION_AUTHORITY
+  operation_port_uid: PORT-NAVIGATION-RESOLVE-TARGET
   binding_mode: SHARED_OWNER_REFERENCE
+  runtime_implementation_state: NOT_EXECUTED
 - responsibility: AUTHORIZATION_AND_VISIBILITY
+  owner_uid: OWNER-ACCOUNT-PERMISSION-ASSIGNMENT
   owner_ref: ACCOUNT_PERMISSION_ASSIGNMENT
+  operation_port_uid: PORT-PERMISSION-RESOLVE-NAV-VISIBILITY
   binding_mode: SHARED_OWNER_REFERENCE
+  runtime_implementation_state: NOT_EXECUTED
 - responsibility: LANGUAGE_SELECTION
+  owner_uid: OWNER-LANGUAGE-THEME
   owner_ref: LANGUAGE_THEME
+  operation_port_uid: PORT-LANGUAGE-APPLY-SELECTION
   binding_mode: SHARED_OWNER_REFERENCE
+  runtime_implementation_state: NOT_EXECUTED
 - responsibility: QUICK_STATUS_READ_MODEL
+  owner_uid: OWNER-QUICK-STATUS-PROJECTION
   owner_ref: QUICK_STATUS_PROJECTION
+  operation_port_uid: PORT-QUICK-STATUS-READ
   binding_mode: SHARED_OWNER_REFERENCE
+  runtime_implementation_state: NOT_EXECUTED
 - responsibility: WORKSPACE_MOUNT_TARGET
+  owner_uid: OWNER-WORKSPACE-MOUNT
   owner_ref: WORKSPACE_MOUNT
+  operation_port_uid: PORT-WORKSPACE-MOUNT-TARGET
   binding_mode: SHARED_OWNER_REFERENCE
+  runtime_implementation_state: NOT_EXECUTED
+identity_derivation: CURRENT_STAGE01_AUTHORITY_TERMS_NORMALIZED_TO_STAGE02_CONTRACT_UIDS
 duplicate_page_local_runtime_created: false
+runtime_completion_claim: false
 status: CURRENT
