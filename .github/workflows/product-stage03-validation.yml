@@ -87,3 +87,105 @@ jobs:
         print('PASS: preview is non-structural-only')
         print('PASS: visual review checkpoint='+review_state)
         PY
+
+    - name: Validate Stage03 canonical preflight and Stage04 handoff
+      env:
+        WU: ${{ matrix.wu }}
+      run: |
+        python - <<'PY'
+        import os,yaml
+        from pathlib import Path
+        b=Path('STAGE_EXECUTION/STAGE-03')/os.environ['WU']
+        def y(n):
+          p=b/n
+          if not p.is_file(): raise SystemExit('BLOCK:MISSING:'+n)
+          obj=yaml.safe_load(p.read_text()) or {}
+          if not isinstance(obj,dict): raise SystemExit('BLOCK:INVALID_MAPPING:'+n)
+          return obj
+        manifest_set=['REQUIRED_FIELD_MANIFEST.yaml','FUNCTIONAL_CHAIN_MANIFEST.yaml','EFFECTIVE_CONTRACT_OVERLAY.yaml','DEPENDENCY_TOPOLOGY.yaml','DENOMINATOR_SNAPSHOT.yaml','CLASSIFICATION_RULESET.yaml','CHANGE_IMPACT_MAP.yaml','STAGE_EXECUTION_PREFLIGHT_RECEIPT.yaml']
+        for n in manifest_set: y(n)
+        pf=y('STAGE_EXECUTION_PREFLIGHT_RECEIPT.yaml')
+        if set(pf.get('required_manifest_set') or [])!=set(manifest_set):
+          raise SystemExit('BLOCK:PREFLIGHT_MANIFEST_SET_DRIFT')
+        if pf.get('shared_manifest_set_complete') is not True or pf.get('result')!='PASS':
+          raise SystemExit('BLOCK:PREFLIGHT_RECEIPT_NOT_PASS')
+        if pf.get('historical_product_values_used') is not False:
+          raise SystemExit('BLOCK:HISTORICAL_PRODUCT_VALUE_FALLBACK')
+        pr=y('CURRENT_PROBLEM_REGISTER.yaml')
+        open_total=int(pr.get('open_problem_total') or 0)
+        blocker_total=int(pr.get('closure_blocker_total') or 0)
+        if open_total!=blocker_total:
+          raise SystemExit('BLOCK:PROBLEM_BLOCKER_DENOMINATOR_DRIFT')
+        if open_total not in (0,1):
+          raise SystemExit('BLOCK:UNEXPECTED_OPEN_PROBLEM_TOTAL:'+str(open_total))
+        if open_total==1:
+          rows=[x for x in (pr.get('problems') or []) if isinstance(x,dict) and x.get('status')=='OPEN']
+          if len(rows)!=1 or rows[0].get('finding')!='CANONICAL_STAGE_EXECUTION_PREFLIGHT_NOT_MATERIALIZED_BEFORE_CLOSURE_VALIDATION':
+            raise SystemExit('BLOCK:UNEXPECTED_OPEN_PROBLEM')
+        rl=y('RESOLUTION_LEDGER.yaml')
+        if rl.get('append_only') is not True:
+          raise SystemExit('BLOCK:RESOLUTION_LEDGER_NOT_APPEND_ONLY')
+        d=y('DENOMINATOR_SNAPSHOT.yaml')
+        t=y('VISUAL_INTERACTION_TOPOLOGY_BINDING.yaml')
+        g=y('VISUAL_GEOMETRY_CONTRACT.yaml')
+        bindings=t.get('bindings') or []
+        actual_binding_ids=[]
+        for row in bindings:
+          uid=row.get('control_uid') or row.get('operation')
+          if not uid: raise SystemExit('BLOCK:VISUAL_BINDING_ID_MISSING')
+          actual_binding_ids.append(uid)
+        actual_anchor_ids=[x.get('anchor_uid') for x in (g.get('visual_anchors') or [])]
+        if any(not x for x in actual_anchor_ids): raise SystemExit('BLOCK:VISUAL_ANCHOR_ID_MISSING')
+        if set(d.get('required_visual_bindings') or [])!=set(actual_binding_ids):
+          raise SystemExit('BLOCK:VISUAL_BINDING_DENOMINATOR_DRIFT')
+        if set(d.get('geometry_units') or [])!=set(actual_anchor_ids):
+          raise SystemExit('BLOCK:GEOMETRY_DENOMINATOR_DRIFT')
+        if int(d.get('required_visual_binding_total') or -1)!=len(actual_binding_ids):
+          raise SystemExit('BLOCK:VISUAL_BINDING_TOTAL_DRIFT')
+        if int(d.get('geometry_unit_total') or -1)!=len(actual_anchor_ids):
+          raise SystemExit('BLOCK:GEOMETRY_TOTAL_DRIFT')
+        if int(d.get('required_total') or -1)!=(len(actual_binding_ids)+len(actual_anchor_ids)):
+          raise SystemExit('BLOCK:STAGE03_REQUIRED_TOTAL_DRIFT')
+        h=y('EVIDENCE/CROSS_STAGE_HANDOFF_READINESS_LEDGER.yaml')
+        if h.get('consumer_stage_uid')!='STAGE-04':
+          raise SystemExit('BLOCK:HANDOFF_SUCCESSOR_DRIFT')
+        required={'PAGE_CONSTRUCTION_SPEC_PACKAGE','VISUAL_DESIGN_SPEC_PACKAGE','DEPENDENCY_MAP'}
+        rows=h.get('required_inputs') or []
+        if {x.get('input_uid') for x in rows}!=required:
+          raise SystemExit('BLOCK:STAGE04_HANDOFF_DENOMINATOR_DRIFT')
+        for row in rows:
+          for k in ('reference_resolution_status','physical_materialization_status','required_field_completeness','consumer_readiness_status'):
+            if row.get(k)!='PASS': raise SystemExit('BLOCK:STAGE04_HANDOFF_NOT_READY:'+str(row.get('input_uid'))+':'+k)
+          ref=str(row.get('ref') or '')
+          if not ref or not Path(ref).is_file():
+            raise SystemExit('BLOCK:STAGE04_HANDOFF_PHYSICAL_REF_MISSING:'+ref)
+        for k in ('reference_resolution_complete','physical_materialization_complete','required_field_completeness_complete','denominator_reconciled','consumer_readiness_complete'):
+          if h.get(k) is not True: raise SystemExit('BLOCK:STAGE04_HANDOFF_SUMMARY_NOT_READY:'+k)
+        if int(h.get('unresolved_required_dependency_total') or 0)!=0 or h.get('status')!='PASS':
+          raise SystemExit('BLOCK:STAGE04_HANDOFF_UNRESOLVED')
+        if os.environ['WU']=='WU-STAGE03-WB01-DASHBOARD-001':
+          topo=y('DEPENDENCY_TOPOLOGY.yaml')
+          deps=topo.get('cross_unit_required_dependencies') or []
+          if len(deps)!=1 or deps[0].get('governed_unit_uid')!='GLOBAL-HOME-SHELL-NAVIGATION':
+            raise SystemExit('BLOCK:WB01_SHARED_SHELL_DEPENDENCY_MISSING')
+          ref=str(deps[0].get('ref') or '')
+          if not ref or not Path(ref).is_file():
+            raise SystemExit('BLOCK:WB01_SHARED_SHELL_DEPENDENCY_REF_MISSING')
+        print(f'PASS: canonical Stage03 preflight manifest set={len(manifest_set)}/8')
+        print(f'PASS: physical Stage03 denominator bindings={len(actual_binding_ids)} geometry={len(actual_anchor_ids)} total={len(actual_binding_ids)+len(actual_anchor_ids)}')
+        print('PASS: Stage04 handoff required inputs=3/3 ready')
+        print(f'PASS: current problem register open={open_total} (preflight replay reconciliation boundary)')
+        PY
+    - name: Validate normalized Stage03 evidence when materialized
+      env:
+        ACPOS_PRODUCT_ROOT: ${{ github.workspace }}
+        ACPOS_ACTIVE_WORK_UNIT: STAGE_EXECUTION/STAGE-03/${{ matrix.wu }}/WORK_UNIT.yaml
+        ACPOS_CURRENT_SCOPE: STAGE_EXECUTION/STAGE-03/${{ matrix.wu }}/CURRENT_EXECUTION_SCOPE_MANIFEST.yaml
+        WU: ${{ matrix.wu }}
+      run: |
+        EVIDENCE_PATH="STAGE_EXECUTION/STAGE-03/$WU/EVIDENCE/STAGE03_NORMALIZED_EVIDENCE.json"
+        if [ -f "$EVIDENCE_PATH" ]; then
+          python governance/ci/stage_execution_engine.py --validate-evidence --stage STAGE-03 --evidence "$EVIDENCE_PATH"
+        else
+          echo "STAGE03_NORMALIZED_EVIDENCE_NOT_YET_MATERIALIZED"
+        fi
