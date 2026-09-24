@@ -1,0 +1,40 @@
+schema_version: 1
+artifact_uid: RECON-SRC-DOCX-AA00684B11FAD2B498C7
+artifact_type: SOURCE_PROJECTION_RECONCILIATION_EVIDENCE
+validator_uid: VAL-GOV-026
+source_uid: SRC-DOCX-AA00684B11FAD2B498C7
+raw_source_sha256: aa00684b11fad2b498c7a5b3b7a8a8f08ebf57cadbfbf2d6a86fe0fe298a3af1
+projection_uid: PROJ-SRC-DOCX-AA00684B11FAD2B498C7
+projection_content_hash: 92cf4b7cd1b06a2660970c8035d4b7f6f4165faf2e4723dfe662f34cc980b900
+projection_schema_uid: SCHEMA-DOCX-CANONICAL-SOURCE-PROJECTION-001
+projection_schema_revision: 1
+source_inventory_hashes:
+  package_parts_hash: d47d44cc768162a90d38fe37dd8a85c8f30becf969b99827f34883c70a7fdbef
+  relationships_hash: c54ffb75cd50c4312cec2b85a05d48946b98deb66cdcdaf4dd09a084c780e981
+  source_nodes_hash: 1f3a7b93023f30d89a4e7c6db0e43cf10cc90238b5caf348cb32f3efdf488c73
+zero_loss_counts:
+  missing_package_parts: 0
+  duplicate_package_parts: 0
+  package_hash_mismatch: 0
+  missing_relationships: 0
+  duplicate_relationships: 0
+  relationship_mismatch: 0
+  missing_source_nodes: 0
+  duplicate_source_nodes: 0
+  source_node_content_mismatch: 0
+  source_node_order_mismatch: 0
+  untraceable_projection_nodes: 0
+  invented_projection_nodes: 0
+  unsupported_silent_drop: 0
+  schema_field_order_mismatch: 0
+  raw_source_hash_mismatch: 0
+  projection_hash_mismatch: 0
+  unresolved_required_source_nodes: 0
+  missing_frozen_binary_parts: 0
+  unexpected_frozen_binary_parts: 0
+  frozen_binary_hash_mismatch: 0
+  frozen_binary_path_mismatch: 0
+reverse_trace: COMPLETE
+unsupported_count: 0
+result: PASS
+evidence_content_hash: 930b97df171256aa4618fbee79851f709b4772121e8ed9f4cac9d1a7074be44c
