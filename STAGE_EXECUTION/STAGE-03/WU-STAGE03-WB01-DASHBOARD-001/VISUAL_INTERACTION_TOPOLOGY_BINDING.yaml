@@ -1,0 +1,206 @@
+artifact_uid: VITB-STAGE03-WB01-001
+artifact_type: VISUAL_INTERACTION_TOPOLOGY_BINDING
+stage_uid: STAGE-03
+governed_unit_uid: workspace:WB-01
+bindings:
+- control_uid: CTRL-WORKSPACE-WB-01-COMPANY-PROJECT-COUNT-OPEN
+  control_type: SECTION_OPEN
+  action_uid: null
+  action_uid_disposition: LEGITIMATE_NA_READ_PROJECTION_ACTION
+  gate_uid: PAGE_READ
+  permission: workspace.dashboard.view
+  operation_uid: getDashboardReadModel
+  api: GET /v1/dashboard/read-model
+  runtime_owner: DASHBOARD_READ_MODEL
+  visual_entry: CARD_HEADER_TRAILING_VIEW
+  card_body_clickable: false
+  success_feedback: DRAWER_READ_PROJECTION
+  error_feedback: PRESERVE_GEOMETRY_AND_REAL_REASON
+  recovery_feedback: SAME_CONTROL_REINVOCATION
+- control_uid: CTRL-WORKSPACE-WB-01-COMPANY-RUNNING-PROJECT-COUNT-OPEN
+  control_type: SECTION_OPEN
+  action_uid: null
+  action_uid_disposition: LEGITIMATE_NA_READ_PROJECTION_ACTION
+  gate_uid: PAGE_READ
+  permission: workspace.dashboard.view
+  operation_uid: getDashboardReadModel
+  api: GET /v1/dashboard/read-model
+  runtime_owner: DASHBOARD_READ_MODEL
+  visual_entry: CARD_HEADER_TRAILING_VIEW
+  card_body_clickable: false
+  success_feedback: DRAWER_READ_PROJECTION
+  error_feedback: PRESERVE_GEOMETRY_AND_REAL_REASON
+  recovery_feedback: SAME_CONTROL_REINVOCATION
+- control_uid: CTRL-WORKSPACE-WB-01-COMPANY-PENDING-ACTION-COUNT-OPEN
+  control_type: SECTION_OPEN
+  action_uid: null
+  action_uid_disposition: LEGITIMATE_NA_READ_PROJECTION_ACTION
+  gate_uid: PAGE_READ
+  permission: workspace.dashboard.view
+  operation_uid: getDashboardReadModel
+  api: GET /v1/dashboard/read-model
+  runtime_owner: DASHBOARD_READ_MODEL
+  visual_entry: CARD_HEADER_TRAILING_VIEW
+  card_body_clickable: false
+  success_feedback: DRAWER_READ_PROJECTION
+  error_feedback: PRESERVE_GEOMETRY_AND_REAL_REASON
+  recovery_feedback: SAME_CONTROL_REINVOCATION
+- control_uid: CTRL-WORKSPACE-WB-01-COMPANY-PENDING-REVIEW-COUNT-OPEN
+  control_type: SECTION_OPEN
+  action_uid: null
+  action_uid_disposition: LEGITIMATE_NA_READ_PROJECTION_ACTION
+  gate_uid: PAGE_READ
+  permission: workspace.dashboard.view
+  operation_uid: getDashboardReadModel
+  api: GET /v1/dashboard/read-model
+  runtime_owner: DASHBOARD_READ_MODEL
+  visual_entry: CARD_HEADER_TRAILING_VIEW
+  card_body_clickable: false
+  success_feedback: DRAWER_READ_PROJECTION
+  error_feedback: PRESERVE_GEOMETRY_AND_REAL_REASON
+  recovery_feedback: SAME_CONTROL_REINVOCATION
+- control_uid: CTRL-WORKSPACE-WB-01-COMPANY-COMPLETED-PROJECT-COUNT-OPEN
+  control_type: SECTION_OPEN
+  action_uid: null
+  action_uid_disposition: LEGITIMATE_NA_READ_PROJECTION_ACTION
+  gate_uid: PAGE_READ
+  permission: workspace.dashboard.view
+  operation_uid: getDashboardReadModel
+  api: GET /v1/dashboard/read-model
+  runtime_owner: DASHBOARD_READ_MODEL
+  visual_entry: CARD_HEADER_TRAILING_VIEW
+  card_body_clickable: false
+  success_feedback: DRAWER_READ_PROJECTION
+  error_feedback: PRESERVE_GEOMETRY_AND_REAL_REASON
+  recovery_feedback: SAME_CONTROL_REINVOCATION
+- control_uid: CTRL-WORKSPACE-WB-01-COMPANY-AVERAGE-PROGRESS-OPEN
+  control_type: SECTION_OPEN
+  action_uid: null
+  action_uid_disposition: LEGITIMATE_NA_READ_PROJECTION_ACTION
+  gate_uid: PAGE_READ
+  permission: workspace.dashboard.view
+  operation_uid: getDashboardReadModel
+  api: GET /v1/dashboard/read-model
+  runtime_owner: DASHBOARD_READ_MODEL
+  visual_entry: CARD_HEADER_TRAILING_VIEW
+  card_body_clickable: false
+  success_feedback: DRAWER_READ_PROJECTION
+  error_feedback: PRESERVE_GEOMETRY_AND_REAL_REASON
+  recovery_feedback: SAME_CONTROL_REINVOCATION
+- control_uid: CTRL-WORKSPACE-WB-01-PROJECT-PROGRESS-OVERVIEW-OPEN
+  control_type: SECTION_OPEN
+  action_uid: null
+  action_uid_disposition: LEGITIMATE_NA_READ_PROJECTION_ACTION
+  gate_uid: PAGE_READ
+  permission: workspace.dashboard.view
+  operation_uid: getDashboardReadModel
+  api: GET /v1/dashboard/read-model
+  runtime_owner: DASHBOARD_READ_MODEL
+  visual_entry: CARD_HEADER_TRAILING_VIEW
+  card_body_clickable: false
+  success_feedback: DRAWER_READ_PROJECTION
+  error_feedback: PRESERVE_GEOMETRY_AND_REAL_REASON
+  recovery_feedback: SAME_CONTROL_REINVOCATION
+- control_uid: CTRL-WORKSPACE-WB-01-COMPANY-PROGRESS-SUMMARY-OPEN
+  control_type: SECTION_OPEN
+  action_uid: null
+  action_uid_disposition: LEGITIMATE_NA_READ_PROJECTION_ACTION
+  gate_uid: PAGE_READ
+  permission: workspace.dashboard.view
+  operation_uid: getDashboardReadModel
+  api: GET /v1/dashboard/read-model
+  runtime_owner: DASHBOARD_READ_MODEL
+  visual_entry: CARD_HEADER_TRAILING_VIEW
+  card_body_clickable: false
+  success_feedback: DRAWER_READ_PROJECTION
+  error_feedback: PRESERVE_GEOMETRY_AND_REAL_REASON
+  recovery_feedback: SAME_CONTROL_REINVOCATION
+- control_uid: CTRL-WORKSPACE-WB-01-PRODUCTION-SUMMARY-OPEN
+  control_type: SECTION_OPEN
+  action_uid: null
+  action_uid_disposition: LEGITIMATE_NA_READ_PROJECTION_ACTION
+  gate_uid: PAGE_READ
+  permission: workspace.dashboard.view
+  operation_uid: getDashboardReadModel
+  api: GET /v1/dashboard/read-model
+  runtime_owner: DASHBOARD_READ_MODEL
+  visual_entry: CARD_HEADER_TRAILING_VIEW
+  card_body_clickable: false
+  success_feedback: DRAWER_READ_PROJECTION
+  error_feedback: PRESERVE_GEOMETRY_AND_REAL_REASON
+  recovery_feedback: SAME_CONTROL_REINVOCATION
+- control_uid: CTRL-WORKSPACE-WB-01-NOTIFICATIONS-OPEN
+  control_type: SECTION_OPEN
+  action_uid: null
+  action_uid_disposition: LEGITIMATE_NA_READ_PROJECTION_ACTION
+  gate_uid: PAGE_READ
+  permission: workspace.dashboard.view
+  operation_uid: getDashboardReadModel
+  api: GET /v1/dashboard/read-model
+  runtime_owner: DASHBOARD_READ_MODEL
+  visual_entry: CARD_HEADER_TRAILING_VIEW
+  card_body_clickable: false
+  success_feedback: DRAWER_READ_PROJECTION
+  error_feedback: PRESERVE_GEOMETRY_AND_REAL_REASON
+  recovery_feedback: SAME_CONTROL_REINVOCATION
+- control_uid: CTRL-WORKSPACE-WB-01-COMPANY-ANNOUNCEMENTS-OPEN
+  control_type: SECTION_OPEN
+  action_uid: null
+  action_uid_disposition: LEGITIMATE_NA_READ_PROJECTION_ACTION
+  gate_uid: PAGE_READ
+  permission: workspace.dashboard.view
+  operation_uid: getDashboardReadModel
+  api: GET /v1/dashboard/read-model
+  runtime_owner: DASHBOARD_READ_MODEL
+  visual_entry: CARD_HEADER_TRAILING_VIEW
+  card_body_clickable: false
+  success_feedback: DRAWER_READ_PROJECTION
+  error_feedback: PRESERVE_GEOMETRY_AND_REAL_REASON
+  recovery_feedback: SAME_CONTROL_REINVOCATION
+- control_uid: CTRL-WORKSPACE-WB-01-INDUSTRY-NEWS-OPEN
+  control_type: SECTION_OPEN
+  action_uid: null
+  action_uid_disposition: LEGITIMATE_NA_READ_PROJECTION_ACTION
+  gate_uid: PAGE_READ
+  permission: workspace.dashboard.view
+  operation_uid: getDashboardReadModel
+  api: GET /v1/dashboard/read-model
+  runtime_owner: DASHBOARD_READ_MODEL
+  visual_entry: CARD_HEADER_TRAILING_VIEW
+  card_body_clickable: false
+  success_feedback: DRAWER_READ_PROJECTION
+  error_feedback: PRESERVE_GEOMETRY_AND_REAL_REASON
+  recovery_feedback: SAME_CONTROL_REINVOCATION
+- control_uid: CTRL-WORKSPACE-WB-01-SYSTEM-STATUS-SUMMARY-OPEN
+  control_type: SECTION_OPEN
+  action_uid: null
+  action_uid_disposition: LEGITIMATE_NA_READ_PROJECTION_ACTION
+  gate_uid: PAGE_READ
+  permission: workspace.dashboard.view
+  operation_uid: getDashboardReadModel
+  api: GET /v1/dashboard/read-model
+  runtime_owner: DASHBOARD_READ_MODEL
+  visual_entry: CARD_HEADER_TRAILING_VIEW
+  card_body_clickable: false
+  success_feedback: DRAWER_READ_PROJECTION
+  error_feedback: PRESERVE_GEOMETRY_AND_REAL_REASON
+  recovery_feedback: SAME_CONTROL_REINVOCATION
+- control_uid: CTRL-WORKSPACE-WB-01-RECENT-COMPLETIONS-OPEN
+  control_type: SECTION_OPEN
+  action_uid: null
+  action_uid_disposition: LEGITIMATE_NA_READ_PROJECTION_ACTION
+  gate_uid: PAGE_READ
+  permission: workspace.dashboard.view
+  operation_uid: getDashboardReadModel
+  api: GET /v1/dashboard/read-model
+  runtime_owner: DASHBOARD_READ_MODEL
+  visual_entry: CARD_HEADER_TRAILING_VIEW
+  card_body_clickable: false
+  success_feedback: DRAWER_READ_PROJECTION
+  error_feedback: PRESERVE_GEOMETRY_AND_REAL_REASON
+  recovery_feedback: SAME_CONTROL_REINVOCATION
+authority_evidence:
+  source_word: ACPOS_WB-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx
+  extraction_run_id: 36014961434
+functional_topology_redefined: false
+status: CURRENT
