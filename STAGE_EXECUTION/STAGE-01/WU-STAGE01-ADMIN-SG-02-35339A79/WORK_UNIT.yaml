@@ -1,0 +1,47 @@
+work_unit_uid: WU-STAGE01-ADMIN-SG-02-35339A79
+canonical_name: admin:SG-02 Stage-01
+primary_task_layer: PRODUCT_STAGE_EXECUTION
+stage_uid: STAGE-01
+scope:
+  source_uid: SRC-DOCX-CAC5184D817C35339A79
+  page_uid: admin:SG-02
+  source_file: ACPOS_SG-02_QA審查項目名單_Mother_Basic_Design_OPTIMIZED.docx
+  source_atomicity: COMPLETE_FROZEN_SOURCE_MUST_BE_PRESERVED
+out_of_scope:
+- OTHER_SOURCE_WORK_UNITS
+- STAGE-02_AND_LATER
+- WEBSITE_CONSTRUCTION
+- DEPLOYMENT
+owner_files:
+- 00_SOURCE_INTAKE/SOURCE_PROJECTIONS/SRC-DOCX-CAC5184D817C35339A79/CANONICAL_SOURCE_PROJECTION.yaml
+- 00_SOURCE_INTAKE/SOURCE_PROJECTIONS/SRC-DOCX-CAC5184D817C35339A79/SOURCE_PROJECTION_FREEZE_RECEIPT.yaml
+dependencies:
+- type: FROZEN_SOURCE_PAIR
+  source_uid: SRC-DOCX-CAC5184D817C35339A79
+  pair_hash: 9fb2ec8e374e6840303157a36c4f0473959da2e00d59b7bc7b60be54c9b9351f
+- type: CURRENT_GOVERNANCE
+  head_sha: c411687bcd94ba2f0c8016de63c3d8b4dc3d3209
+start_condition:
+  word_yaml_closed: true
+  source_pair_frozen: true
+  content_readiness_pass: true
+  entry_gate: GOVERNANCE_PREFORMAL_READY
+definition_of_done:
+  registered_stage01_operations_pass: 9
+  projection_source_node_disposition_coverage_percent: 100
+  missing_required_source_node_count: 0
+  stage1_guard_result: PASS
+  source_fact_contract_required_fields: PASS
+required_audit_items:
+- SOURCE_ENUMERATION_EVIDENCE
+- CONFLICT_DECISION_EVIDENCE
+- STAGE1_SOURCE_PIPELINE_GUARD
+required_tests:
+- VAL-GOV-026
+- VAL-GOV-025
+required_evidence:
+- OPERATION_RECEIPTS
+- WORK_UNIT_TERMINAL_RECEIPT
+current_status: CLOSED_PASS
+resume_point: WORK_UNIT_RESOLUTION_GATE
+terminal_receipt_ref: WORK_UNIT_TERMINAL_RECEIPT.yaml

@@ -1,0 +1,151 @@
+artifact_uid: CL-SRC-DOCX-CAC5184D817C35339A79-RUNTIME_DATA_DEPENDENCY_REQUIREMENT
+page_uid: admin:SG-02
+planning_domain: PAGE_CONSTRUCTION
+responsibility_uid: RUNTIME_DATA_DEPENDENCY_REQUIREMENT
+responsibility_class: RUNTIME_DATA_DEPENDENCY_REQUIREMENT
+responsibilities:
+- RUNTIME_DATA_DEPENDENCY_REQUIREMENT
+canonical_owner_uid: OWNER-SOURCE-SRC-DOCX-CAC5184D817C35339A79
+target_path: 01_CLASSIFIED/admin-SG-02/PAGE/RUNTIME_DATA_DEPENDENCY_REQUIREMENT.yaml
+lifecycle_uid: LC-STAGE01-RUNTIME_DATA_DEPENDENCY_REQUIREMENT
+approval_scope_uid: AP-STAGE01-admin-SG-02
+version_scope_uid: VER-0539b09ed3b5
+test_scope_uid: TEST-STAGE01-RUNTIME_DATA_DEPENDENCY_REQUIREMENT
+source_lineage:
+- source_uid: SRC-DOCX-CAC5184D817C35339A79
+  source_segment_uids:
+  - SEG-SN-D9A995F351B17AA424F96FBE
+  - SEG-SN-11342ACCA498EFFC42B0AB87
+  - SEG-SN-1980CA7FD733B8DE49FC88A2
+  - SEG-SN-7DE3D5C291F55DD9D9B69980
+  - SEG-SN-1021007BEC82374071DDD908
+  - SEG-SN-2AB1D254FB2C92D218DA0488
+  - SEG-SN-7C8B59BD09B11BB7E859C198
+  - SEG-SN-3EEB8EBABE11385CE9CF47E6
+  - SEG-SN-452F669E98EC211ED824DCFD
+  - SEG-SN-9DB3D60FA22E5AC5171B0BFA
+  - SEG-SN-35E79D1C8702F8B75DBA27C4
+  - SEG-SN-981858F9A5EECE7A85CBD97A
+  - SEG-SN-4BBD4ED047AF21CF49C9C006
+  - SEG-SN-A9C73FE320EE75974E4D359A
+  - SEG-SN-33F4FD38E2D321634B549012
+  - SEG-SN-466AFD128E4F015A2E0F33E0
+  - SEG-SN-281B97D5AD544CCA4ED97777
+  - SEG-SN-6604A1BEE1D12182E329CE97
+  - SEG-SN-C3488A70393A2B5B7EFBE36A
+  - SEG-SN-D7B979CEF21435F5FC69C2AE
+  - SEG-SN-A08C2BB522336922A4593452
+  - SEG-SN-8570CD99AE5C8F9AD98A2A67
+  - SEG-SN-AA1CD9218B026D5A5952548C
+  - SEG-SN-47760A78C5260CF8E346DF95
+  - SEG-SN-998F6FFA342711F7E96617B1
+  - SEG-SN-ED4E2918AAEE9BE6AEFA1298
+  - SEG-SN-0373A96932C9E9CCB28D1220
+  - SEG-SN-C287201CD4BC3BCA3C3FEB1C
+  - SEG-SN-C646669E754CBB101D2E6E04
+  - SEG-SN-09402A4B9E098B806D91AAE7
+  - SEG-SN-009BC7CABC9CA28D4778F137
+  - SEG-SN-6A852D826F87C648391E0B05
+facts:
+- source_node_uid: SN-D9A995F351B17AA424F96FBE
+  document_order_index: 615
+  source_text: SG-02 只治理「審查標準」；專案、任務、影片、素材的實際 QA 執行仍由 QA Runtime / QA-01 負責。
+- source_node_uid: SN-11342ACCA498EFFC42B0AB87
+  document_order_index: 626
+  source_text: Threshold 不得硬編碼在 UI、前端常數或 QA 執行頁；QA Runtime 必須讀取被正式綁定的 Criteria Version / Gate Policy。
+- source_node_uid: SN-1980CA7FD733B8DE49FC88A2
+  document_order_index: 823
+  source_text: Pending QA Queue、單一任務評分、Finding / Correction Request、素材或影片重新生成、未註冊 Criteria CRUD、任意 Search / Filter / Export。
+- source_node_uid: SN-7DE3D5C291F55DD9D9B69980
+  document_order_index: 11541
+  source_text: Criteria 版本升級不得自動替換進行中的 Review Session。是否重啟／revalidate 必須由 Impact + Runtime Contract 明確決定。
+- source_node_uid: SN-1021007BEC82374071DDD908
+  document_order_index: 11552
+  source_text: 如果下游工作類型找不到可用 Criteria Mapping，QA Runtime 應 fail closed，顯示「未綁定 QA 標準」而非選一個最新版本。
+- source_node_uid: SN-2AB1D254FB2C92D218DA0488
+  document_order_index: 12283
+  source_text: 未註冊 CRUD / Search / Filter / Export / API
+- source_node_uid: SN-7C8B59BD09B11BB7E859C198
+  document_order_index: 12967
+  source_text: 頁面明確不是 Pending QA Queue / runtime QA workspace
+- source_node_uid: SN-3EEB8EBABE11385CE9CF47E6
+  document_order_index: 13303
+  source_text: Threshold / Gate Policy 不 hardcode 於前端或 QA Runtime
+- source_node_uid: SN-452F669E98EC211ED824DCFD
+  document_order_index: 13695
+  source_text: 設計文件完成不等於 Runtime / E2E / Production 完成
+- source_node_uid: SN-9DB3D60FA22E5AC5171B0BFA
+  document_order_index: 13749
+  source_text: 任何實際施工發現未註冊功能（例如 Clone / Search / Export / Activate / Retire command），不得從本文件猜 API；必須回到 Current Authority 走正式補權威流程。
+- source_node_uid: SN-35E79D1C8702F8B75DBA27C4
+  document_order_index: 13771
+  source_text: SG-02 的設計目標不是「做一張 QA 標準表」，而是把 Criteria 的版本治理、Impact、Approval、歷史可重現性與 QA Runtime 綁定做成完整閉環；UI 保持單頁、低頻細節 Drawer 化、效應操作 Modal 化。
+- source_node_uid: SN-981858F9A5EECE7A85CBD97A
+  document_order_index: 14046
+  source_text: Runtime Owner
+- source_node_uid: SN-4BBD4ED047AF21CF49C9C006
+  document_order_index: 14064
+  source_text: Runtime Status
+- source_node_uid: SN-A9C73FE320EE75974E4D359A
+  document_order_index: 14961
+  source_text: IAM_RUNTIME
+- source_node_uid: SN-33F4FD38E2D321634B549012
+  document_order_index: 14977
+  source_text: SPEC_EXACT_RUNTIME_NOT_EXECUTED
+- source_node_uid: SN-466AFD128E4F015A2E0F33E0
+  document_order_index: 15066
+  source_text: IAM_RUNTIME
+- source_node_uid: SN-281B97D5AD544CCA4ED97777
+  document_order_index: 15082
+  source_text: SPEC_EXACT_RUNTIME_NOT_EXECUTED
+- source_node_uid: SN-6604A1BEE1D12182E329CE97
+  document_order_index: 15252
+  source_text: Quality Governance Runtime
+- source_node_uid: SN-C3488A70393A2B5B7EFBE36A
+  document_order_index: 15264
+  source_text: NEW_AUTHORITY_RUNTIME_IMPLEMENTATION_REQUIRED
+- source_node_uid: SN-D7B979CEF21435F5FC69C2AE
+  document_order_index: 15269
+  source_text: SG-02 · Truthful Remaining Runtime / Governance Status
+- source_node_uid: SN-A08C2BB522336922A4593452
+  document_order_index: 15307
+  source_text: RUNTIME_BINDING_VALIDATION
+- source_node_uid: SN-8570CD99AE5C8F9AD98A2A67
+  document_order_index: 15313
+  source_text: '{"status": "SOURCE_TESTS_6/6_PASS; PRODUCTION_READONLY_9/9_PASS; EFFECTFUL_PENDING_FORMAL_CRITERIA_MATERIALIZATION_AND_SUBMIT_REVIEW_RUNTIME"}'
+- source_node_uid: SN-AA1CD9218B026D5A5952548C
+  document_order_index: 15318
+  source_text: SG-02 Runtime Truth
+- source_node_uid: SN-47760A78C5260CF8E346DF95
+  document_order_index: 15321
+  source_text: The 12-control design binding is exact. Machine authority still records runtime_binding_validation = NOT_EXECUTED / effectful_runtime_ready = false. Construction may implement only the exact registered operations;
+    it MUST NOT claim runtime acceptance until execution evidence exists.
+- source_node_uid: SN-998F6FFA342711F7E96617B1
+  document_order_index: 15329
+  source_text: The exact control denominator above is the only construction denominator for this page. Components/fields/visual IDs are not counted as additional controls. Existing source UIDs are preserved. A control classified
+    UI_LOCAL_EXACT MUST NOT create a server write. A control classified SPEC_EXACT_RUNTIME_BLOCKED / NOT_EXECUTED MUST remain disabled or fail-closed until its runtime evidence exists.
+- source_node_uid: SN-ED4E2918AAEE9BE6AEFA1298
+  document_order_index: 15351
+  source_text: SG-02 不再只管理抽象 Dimension。以下 6 個 baseline profiles 與其 dimensions 是本次新增的正式施工 Authority；Runtime 仍需依 DRAFT→REVIEW→APPROVED lifecycle materialize CriteriaVersion，文件定義不等於 Production 已核准。
+- source_node_uid: SN-0373A96932C9E9CCB28D1220
+  document_order_index: 21203
+  source_text: Source/runtime release tests
+- source_node_uid: SN-C287201CD4BC3BCA3C3FEB1C
+  document_order_index: 30445
+  source_text: Provider logos, thumbnails, output previews, evidence images or other runtime/business data are NOT automatically design assets; they remain data/projection unless current page explicitly registers an Asset
+    UID.
+- source_node_uid: SN-C646669E754CBB101D2E6E04
+  document_order_index: 30732
+  source_text: '[ACPOS-SG02-PERSISTENCE-OWNER-CLOSURE-V1] This annex closes the two SG-02 governance mutation Persistence Owner gaps. QualityGovernance remains the canonical page/domain owner; IAM_RUNTIME remains the shared
+    governance ingress, not the business persistence owner.'
+- source_node_uid: SN-09402A4B9E098B806D91AAE7
+  document_order_index: 30866
+  source_text: Shared route/runtime/identity ingress does not transfer business data authority. The target resource/entity decides canonical persistence.
+- source_node_uid: SN-009BC7CABC9CA28D4778F137
+  document_order_index: 30920
+  source_text: Runtime evidence separation
+- source_node_uid: SN-6A852D826F87C648391E0B05
+  document_order_index: 30926
+  source_text: A complete design Persistence Owner does not claim application/API/DB/Production execution. Runtime status remains separately evidenced and may remain NOT_EXECUTED where the current Word says so.
+status: CURRENT_CLASSIFICATION
+content_hash: 8eb80ec6f8c32c8a19db9ec2721dda5e0f49c71e428f7349d4a7a5bf25664e31
