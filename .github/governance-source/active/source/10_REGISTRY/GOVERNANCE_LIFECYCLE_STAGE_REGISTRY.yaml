@@ -2178,10 +2178,14 @@ policy_inheritance:
 - GOV-COMP-EVIDENCE-FEEDBACK-ARTIFACT-LIFECYCLE
 - GOV-COMP-LAYER-SEPARATION-PORTABILITY
 execution_scope_contract:
-  current_scope_artifact: governance/test/CURRENT_EXECUTION_SCOPE_MANIFEST.yaml
-  scope_source: CURRENT_AUTHORITY_PROFILE_APPLICABILITY_DEPENDENCY_AND_PERSISTED_STATE
+  current_scope_artifact: PRODUCT_STAGE_EXECUTION_CURRENT_SCOPE_MANIFEST
+  current_scope_owner_layer: PRODUCT_EXECUTION_WORKLINE
+  product_execution_branch_source: governance/specifications/REGISTRY.yaml#product_execution_branch
+  product_scope_locator_contract: STAGE_EXECUTION/<STAGE_UID>/<WORK_UNIT_UID>/CURRENT_EXECUTION_SCOPE_MANIFEST.yaml
+  scope_source: CURRENT_AUTHORITY_PROFILE_APPLICABILITY_DEPENDENCY_AND_PERSISTED_PRODUCT_STATE
   work_unit_scope_source: EXECUTION_SCOPE_MANIFEST
   stage_exit_scope_source: DECLARED_STAGE_REQUIRED_UNIVERSE_RECONCILIATION
+  governance_branch_may_persist_current_product_scope: false
   partial_work_unit_closure_may_grant_stage_exit: false
   remaining_scope_persistence_required: true
   reusable_consumer_literal_product_scope_or_denominator: BLOCK
