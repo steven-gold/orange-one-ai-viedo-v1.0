@@ -21,16 +21,19 @@ denominator_sources:
 - VISUAL_INTERACTION_TOPOLOGY_BINDING.yaml
 - VISUAL_GEOMETRY_CONTRACT.yaml
 current_closure_validation:
-  result: REVERIFY_REQUIRED
+  result: TECHNICAL_REVERIFY_PASS_PENDING_HUMAN_VISUAL_REVIEW
   stage_exit_credit: 0
+  head_sha: eb63c59c2a4ef384691d9e7ad4a67b1dcdcb7c92
+  workflow_run_id: 36087796821
+  conclusion: success
 prior_closure_validation:
   head_sha: 17e599775f2390587256f0e939b2c4cd4c12faef
   workflow_run_id: 36053005947
   workflow_job_id: 107812994252
   result: PASS
 prior_terminal_receipt_ref: null
-status: REVERIFY_REQUIRED
+status: PENDING_HUMAN_VISUAL_REVIEW
 governance_head: 335d8a01d6d3eb6f0ed951ffc40216029b19d4e3
-current_reverify_required: true
+current_reverify_required: false
 current_normative_execution_matrix_ref: STAGE_EXECUTION/STAGE-03/WU-STAGE03-WB01-DASHBOARD-001/NORMATIVE_EXECUTION_MATRIX.yaml
 prior_terminal_receipt_disposition: HISTORICAL_PREDECESSOR_EVIDENCE_ONLY
