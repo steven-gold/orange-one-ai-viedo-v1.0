@@ -17,26 +17,47 @@ jobs:
       run: |
         python - <<'PY'
         from pathlib import Path
-        import json,re
+        import json,yaml
         root=Path('STAGE_EXECUTION/STAGE-03')
         old_uid='GOV-REV-20260924-INDEPENDENT-UNIT-LIFECYCLE-CURRENT-IDENTITY-SYNC'
         old_head='25c4736940efb786aa567c83283bfbaa0773dc1b'
         current_uid='GOV-REV-20260925-NORMATIVE-EXECUTION-MATRIX'
         current_head='335d8a01d6d3eb6f0ed951ffc40216029b19d4e3'
         findings=[]
+        current_uid_keys={'governance_uid','current_governance_uid'}
+        current_head_keys={'governance_head','current_governance_head'}
+        current_receipt_keys={'terminal_receipt_ref','current_terminal_receipt_ref'}
+        def walk(obj,path=''):
+          if isinstance(obj,dict):
+            for k,v in obj.items():
+              kp=f'{path}.{k}' if path else str(k)
+              if k in current_uid_keys and v==old_uid:
+                findings.append({'class':'STALE_GOVERNANCE_UID','field':kp})
+              if k in current_head_keys and v==old_head:
+                findings.append({'class':'STALE_GOVERNANCE_HEAD','field':kp})
+              if k in current_receipt_keys and isinstance(v,str) and v.endswith('WORK_UNIT_TERMINAL_RECEIPT.yaml') and '/HISTORY/' not in v:
+                findings.append({'class':'STALE_TERMINAL_RECEIPT_CURRENT_REF','field':kp,'value':v})
+              if k=='prior_terminal_receipt_ref' and isinstance(v,str) and v.endswith('WORK_UNIT_TERMINAL_RECEIPT.yaml') and '/HISTORY/' not in v:
+                findings.append({'class':'PRIOR_TERMINAL_RECEIPT_NOT_HISTORY_BOUND','field':kp,'value':v})
+              walk(v,kp)
+          elif isinstance(obj,list):
+            for i,v in enumerate(obj): walk(v,f'{path}[{i}]')
         for p in root.rglob('*'):
           if not p.is_file(): continue
           rel=p.as_posix()
           if '/HISTORY/' in rel or '/EVIDENCE/HISTORY/' in rel: continue
-          if p.suffix.lower() not in {'.yaml','.yml','.json','.md'}: continue
-          try: s=p.read_text(encoding='utf-8')
-          except UnicodeDecodeError: continue
-          if old_uid in s: findings.append({'class':'STALE_GOVERNANCE_UID','path':rel})
-          if old_head in s: findings.append({'class':'STALE_GOVERNANCE_HEAD','path':rel})
-          if 'WORK_UNIT_TERMINAL_RECEIPT.yaml' in s and 'prior_terminal_receipt_ref: HISTORY/V224/WORK_UNIT_TERMINAL_RECEIPT.yaml' not in s and p.name!='WORK_UNIT_TERMINAL_RECEIPT.yaml':
-            findings.append({'class':'POSSIBLE_STALE_TERMINAL_RECEIPT_CURRENT_REF','path':rel})
+          if p.suffix.lower() not in {'.yaml','.yml','.json'}: continue
+          try:
+            raw=p.read_text(encoding='utf-8')
+            obj=json.loads(raw) if p.suffix.lower()=='.json' else (yaml.safe_load(raw) or {})
+          except (UnicodeDecodeError,ValueError,yaml.YAMLError):
+            findings.append({'class':'CURRENT_STRUCTURED_ARTIFACT_PARSE_FAILURE','path':rel})
+            continue
+          before=len(findings)
+          walk(obj)
+          for row in findings[before:]: row['path']=rel
           if p.name=='STAGE_EXECUTION_PREFLIGHT_RECEIPT.yaml':
-            if current_uid not in s or current_head not in s:
+            if not isinstance(obj,dict) or obj.get('governance_uid')!=current_uid or obj.get('governance_head')!=current_head:
               findings.append({'class':'PREFLIGHT_NOT_CURRENT_V225','path':rel})
         print(json.dumps({'finding_total':len(findings),'findings':findings},ensure_ascii=False,indent=2))
         if findings: raise SystemExit(3)
