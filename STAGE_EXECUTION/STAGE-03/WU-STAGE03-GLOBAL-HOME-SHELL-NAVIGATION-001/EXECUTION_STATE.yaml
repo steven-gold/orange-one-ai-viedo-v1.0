@@ -12,8 +12,8 @@ completed_operations:
 - VISUAL_REFERENCE_ANNOTATION_COMPILE
 - VISUAL_INHERITANCE_MATRIX_COMPILE
 - VISUAL_SCENARIO_EVIDENCE_COMPILE
-current_operation: TERMINAL_EVIDENCE_MATERIALIZATION
-stage3_guard_result: PASS_TECHNICAL_REVERIFY_PENDING_CURRENT_TERMINAL_EVIDENCE
+current_operation: COMPLETE
+stage3_guard_result: PASS
 prior_technical_reverify_validation:
   run_id: 36089650487
   job_id: 107929110169
@@ -26,4 +26,13 @@ prior_closure_validation_head: af16dad81adca977da8a8aecf1084331cd3f653e
 prior_terminal_receipt_ref: HISTORY/V224/WORK_UNIT_TERMINAL_RECEIPT.yaml
 prior_terminal_receipt_disposition: HISTORICAL_PREDECESSOR_EVIDENCE_ONLY
 reentry_gate_ref: WORK_UNIT_REENTRY_RESOLUTION_GATE.yaml
-status: CLOSURE_CANDIDATE_PENDING_CURRENT_EVIDENCE
+status: CLOSED
+
+current_terminal_validation:
+  run_id: 36089903985
+  job_id: 107929922934
+  head_sha: 2446a864769726ba66b01ca68142813395f0219a
+  conclusion: success
+  governance_uid: GOV-REV-20260925-NORMATIVE-EXECUTION-MATRIX
+  governance_head: 22b8d6845ce31014ba10b4c1f8f7a3ec9dcceb20
+terminal_receipt_ref: WORK_UNIT_TERMINAL_RECEIPT.yaml
