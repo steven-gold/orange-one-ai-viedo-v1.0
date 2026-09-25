@@ -19,6 +19,9 @@ required_visual_bindings:
 - CTRL-WORKSPACE-WB-01-SYSTEM-STATUS-SUMMARY-OPEN
 - CTRL-WORKSPACE-WB-01-RECENT-COMPLETIONS-OPEN
 geometry_units:
+- VA-HOME-HEADER-TOP
+- VA-HOME-SIDEBAR-COLUMN
+- VA-HOME-WORKSPACE-ORIGIN
 - VA-WB01-KPI-ROW
 - VA-WB01-PROGRESS-ROW
 - VA-WB01-PRODUCTION-ROW
@@ -26,6 +29,11 @@ geometry_units:
 - VA-WB01-RECENT-ROW
 - VA-WB01-DRAWER
 required_visual_binding_total: 14
-geometry_unit_total: 6
-required_total: 20
-status: FROZEN_FOR_CURRENT_WORK_UNIT
+geometry_unit_total: 9
+required_total: 23
+denominator_sync_basis:
+  geometry_owner_ref: VISUAL_GEOMETRY_CONTRACT.yaml
+  shared_owner_ref: STAGE_EXECUTION/STAGE-03/WU-STAGE03-GLOBAL-HOME-SHELL-NAVIGATION-001/VISUAL_GEOMETRY_CONTRACT.yaml
+  inherited_shared_anchor_total: 3
+  page_local_anchor_total: 6
+status: CURRENT_REVERIFY_DENOMINATOR
