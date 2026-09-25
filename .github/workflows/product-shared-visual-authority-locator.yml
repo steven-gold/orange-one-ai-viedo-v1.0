@@ -1,0 +1,48 @@
+name: Product Shared Visual Authority Locator
+on:
+  push:
+    branches: [0921acpos]
+    paths: ['.github/workflows/product-shared-visual-authority-locator.yml']
+permissions: {contents: read}
+jobs:
+  locate:
+    runs-on: ubuntu-24.04
+    steps:
+    - uses: actions/checkout@v4
+      with: {ref: 0921acpos, fetch-depth: 1}
+    - run: |
+        python - <<'PY'
+        from pathlib import Path
+        import zipfile, xml.etree.ElementTree as ET, hashlib
+        W='{http://schemas.openxmlformats.org/wordprocessingml/2006/main}'
+        terms=('GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY','Global Visual','Violet Token','Primary Purple','Canonical font stack')
+        def txt(n): return ''.join((t.text or '') for t in n.iter(W+'t')).strip()
+        for path in sorted(Path('.').rglob('*.docx')):
+          if 'STAGE_EXECUTION/STAGE-01' in path.as_posix(): continue
+          try:
+            with zipfile.ZipFile(path) as z: root=ET.fromstring(z.read('word/document.xml'))
+          except Exception:
+            continue
+          rec=[]
+          body=root.find(W+'body')
+          for child in list(body):
+            if child.tag==W+'p':
+              s=txt(child)
+              if s: rec.append(('P',s))
+            elif child.tag==W+'tbl':
+              for tr in child.findall(W+'tr'):
+                row=' | '.join(txt(tc) for tc in tr.findall(W+'tc')).strip()
+                if row: rec.append(('T',row))
+          hits=[(i,k,s) for i,(k,s) in enumerate(rec) if any(t.casefold() in s.casefold() for t in terms)]
+          if hits:
+            print('===DOCX',path.as_posix(),'sha256',hashlib.sha256(path.read_bytes()).hexdigest(),'hits',len(hits),'===')
+            shown=set()
+            for i,k,s in hits[:80]:
+              lo=max(0,i-2);hi=min(len(rec),i+3)
+              key=(lo,hi)
+              if key in shown: continue
+              shown.add(key)
+              print('---',i,'---')
+              for j in range(lo,hi):
+                print(j,rec[j][0],rec[j][1][:2200])
+        PY
