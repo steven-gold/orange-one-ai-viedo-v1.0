@@ -7,7 +7,7 @@ on:
 permissions:
   contents: write
 concurrency:
-  group: stage03-v225-semantic-remediation
+  group: stage03-v225-semantic-remediation-current-v2
   cancel-in-progress: true
 jobs:
   remediate:
@@ -551,7 +551,12 @@ jobs:
         python - <<'PY'
         from pathlib import Path
         import yaml, re, xml.etree.ElementTree as ET
-        def y(p): return yaml.safe_load(Path(p).read_text()) or {}
+        _cache={}
+        def y(p):
+          key=str(Path(p))
+          if key not in _cache:
+            _cache[key]=yaml.safe_load(Path(p).read_text()) or {}
+          return _cache[key]
         def get(o,path):
           cur=o
           for k in path:
