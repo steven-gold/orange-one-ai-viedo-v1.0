@@ -6,24 +6,31 @@ execution_branch: 0921acpos
 current_governance_uid: GOV-REV-20260924-INDEPENDENT-UNIT-LIFECYCLE-CURRENT-IDENTITY-SYNC
 current_governance_head: 25c4736940efb786aa567c83283bfbaa0773dc1b
 current_display_version: v2.2.24
-active_work_unit_uid: null
-resume_point: STAGE04_UNIT_RESOLUTION_GATE
+active_work_unit_uid: WU-STAGE03-GLOBAL-HOME-SHELL-NAVIGATION-001
+resume_point: VISUAL_SPEC_COMPILE
 eligible_units:
 - GLOBAL-HOME-SHELL-NAVIGATION
 - workspace:WB-01
-completed_stage03_units:
+completed_stage03_units: []
+remaining_stage03_units:
 - GLOBAL-HOME-SHELL-NAVIGATION
 - workspace:WB-01
-remaining_stage03_units: []
+reverify_required_stage03_units:
+- GLOBAL-HOME-SHELL-NAVIGATION
+- workspace:WB-01
 stage_transition_semantics: PER_GOVERNED_PAGE_OR_SYSTEM_LOGIC_UNIT
-status: STAGE03_COMPLETE_STAGE04_ELIGIBLE
+status: STAGE03_REVERIFY_IN_PROGRESS
 pending_visual_review_units: []
-materialization_validation_run_id: 36015610533
-materialization_validation_head: 50340ec5f5a1b7e844c34911049b45e61de5d2b5
-post_review_validation_run_id: 36028726148
-post_review_validation_head: e5564984caf2fb35b575108fb48d02e241b0bfd0
-last_closed_work_unit_uid: WU-STAGE03-WB01-DASHBOARD-001
-last_terminal_validation_run_id: 36053005947
-last_terminal_validation_head: 17e599775f2390587256f0e939b2c4cd4c12faef
-stage_exit_authorized: true
+prior_materialization_validation_run_id: 36015610533
+prior_materialization_validation_head: 50340ec5f5a1b7e844c34911049b45e61de5d2b5
+prior_post_review_validation_run_id: 36028726148
+prior_post_review_validation_head: e5564984caf2fb35b575108fb48d02e241b0bfd0
+prior_last_terminal_validation_run_id: 36053005947
+prior_last_terminal_validation_head: 17e599775f2390587256f0e939b2c4cd4c12faef
+prior_terminal_results_disposition: HISTORICAL_PREDECESSOR_EVIDENCE_ONLY
+reentry_source:
+  stage_uid: STAGE-04
+  work_unit_uid: WU-STAGE04-GLOBAL-HOME-SHELL-NAVIGATION-001
+  problem_register_ref: STAGE_EXECUTION/STAGE-04/WU-STAGE04-GLOBAL-HOME-SHELL-NAVIGATION-001/CURRENT_PROBLEM_REGISTER.yaml
+stage_exit_authorized: false
 next_stage_uid: STAGE-04
