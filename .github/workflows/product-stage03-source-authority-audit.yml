@@ -4,7 +4,6 @@ on:
     branches: [0921acpos]
     paths:
       - '.github/workflows/product-stage03-source-authority-audit.yml'
-  workflow_dispatch:
 permissions:
   contents: read
 jobs:
@@ -13,35 +12,34 @@ jobs:
     steps:
     - uses: actions/checkout@v4
       with: {ref: 0921acpos, fetch-depth: 1}
-    - name: Extract exact immutable DOCX authority ranges
+    - name: Extract exact source authority tables
       run: |
         python - <<'PY'
         from pathlib import Path
-        import zipfile, xml.etree.ElementTree as ET, hashlib
+        import zipfile, xml.etree.ElementTree as ET
         W='{http://schemas.openxmlformats.org/wordprocessingml/2006/main}'
         files={
-          'HOME':(Path('STAGE_EXECUTION/STAGE-01/WU-STAGE01-GLOBAL-HOME-SHELL-NAVIGATION-001/00_SOURCE_INTAKE/RAW_SOURCE/SRC-DOCX-334A4679600F092B733B/ACPOS_GLOBAL_HOME_SHELL_NAVIGATION_Mother_Basic_Design_OPTIMIZED.docx'),[(0,118),(118,160)]),
-          'WB01':(Path('STAGE_EXECUTION/STAGE-01/WU-STAGE01-WB01-DASHBOARD-001/00_SOURCE_INTAKE/RAW_SOURCE/SRC-DOCX-2B1908530B5BD312A392/ACPOS_WB-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx'),[(0,28),(28,80),(80,108),(108,180),(180,222),(222,250),(250,343)])
+          'HOME':Path('STAGE_EXECUTION/STAGE-01/WU-STAGE01-GLOBAL-HOME-SHELL-NAVIGATION-001/00_SOURCE_INTAKE/RAW_SOURCE/SRC-DOCX-334A4679600F092B733B/ACPOS_GLOBAL_HOME_SHELL_NAVIGATION_Mother_Basic_Design_OPTIMIZED.docx'),
+          'WB01':Path('STAGE_EXECUTION/STAGE-01/WU-STAGE01-WB01-DASHBOARD-001/00_SOURCE_INTAKE/RAW_SOURCE/SRC-DOCX-2B1908530B5BD312A392/ACPOS_WB-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx'),
         }
         def txt(node): return ''.join((t.text or '') for t in node.iter(W+'t')).strip()
-        for label,(path,ranges) in files.items():
-          raw=path.read_bytes()
-          print('===SOURCE_FILE',label,'sha256',hashlib.sha256(raw).hexdigest(),'size',len(raw),'===')
+        for label,path in files.items():
           with zipfile.ZipFile(path) as z: root=ET.fromstring(z.read('word/document.xml'))
-          body=root.find(W+'body'); rec=[]
+          body=root.find(W+'body')
+          tables=[]
           for child in list(body):
-            if child.tag==W+'p':
-              s=txt(child)
-              if s: rec.append(('P',s))
-            elif child.tag==W+'tbl':
-              for tr in child.findall(W+'tr'):
-                cells=[txt(tc) for tc in tr.findall(W+'tc')]
-                row=' | '.join(cells).strip()
-                if row: rec.append(('T',row))
-          print('===RECORD_COUNT',label,len(rec),'===')
-          for lo,hi in ranges:
-            print(f'===RANGE {label} {lo}:{hi}===')
-            for i in range(lo,min(hi,len(rec))):
-              kind,s=rec[i]
-              print(f'{i:04d} {kind} {s}')
+            if child.tag!=W+'tbl': continue
+            rows=[]
+            for tr in child.findall(W+'tr'):
+              rows.append([txt(tc) for tc in tr.findall(W+'tc')])
+            if rows: tables.append(rows)
+          print('===',label,'TABLES',len(tables),'===')
+          for ti,rows in enumerate(tables):
+            joined=' '.join(' | '.join(r) for r in rows).casefold()
+            if label=='HOME' and ('font size' in joined or 'ty01' in joined or 'typography' in joined):
+              print('TABLE',ti)
+              for r in rows: print('ROW',' | '.join(r))
+            if label=='WB01' and (('token / geometry' in joined) or ('page bg' in joined) or ('breakpoints' in joined) or ('global visual' in joined)):
+              print('TABLE',ti)
+              for r in rows: print('ROW',' | '.join(r))
         PY
