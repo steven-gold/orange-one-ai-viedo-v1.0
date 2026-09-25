@@ -38,7 +38,7 @@ required_outputs:
 - VISUAL_REFERENCE_ANNOTATION
 - VISUAL_INHERITANCE_MATRIX
 - VISUAL_SCENARIO_EVIDENCE_SET
-status: CLOSED_PASS
+status: REVERIFY_REQUIRED_PENDING
 
 operation_bindings:
   VISUAL_SPEC_COMPILE: {executor_owner: governance/ci/stage_execution_engine.py, result_owner: STAGE_EXECUTION/STAGE-03/WU-STAGE03-WB01-DASHBOARD-001/VISUAL_DESIGN_SPEC_PACKAGE.yaml}
@@ -58,3 +58,7 @@ scanner_bindings:
   ATOMIC_WORKBENCH_COHESION: {scanner_owner: governance/ci/stage_execution_engine.py, result_owner: STAGE_EXECUTION/STAGE-03/WU-STAGE03-WB01-DASHBOARD-001/EVIDENCE/STAGE03_NORMALIZED_EVIDENCE.json}
   TOPOLOGY_EQUIVALENCE: {scanner_owner: governance/ci/stage_execution_engine.py, result_owner: STAGE_EXECUTION/STAGE-03/WU-STAGE03-WB01-DASHBOARD-001/EVIDENCE/STAGE03_NORMALIZED_EVIDENCE.json}
   RESPONSIVE_ORDER: {scanner_owner: governance/ci/stage_execution_engine.py, result_owner: STAGE_EXECUTION/STAGE-03/WU-STAGE03-WB01-DASHBOARD-001/EVIDENCE/STAGE03_NORMALIZED_EVIDENCE.json}
+
+reverify_reason: COMMON_STAGE03_VALIDATOR_COVERAGE_UNDERENFORCED
+prior_terminal_receipt_ref: WORK_UNIT_TERMINAL_RECEIPT.yaml
+prior_terminal_receipt_disposition: HISTORICAL_PREDECESSOR_EVIDENCE_ONLY
