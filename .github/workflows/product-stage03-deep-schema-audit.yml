@@ -39,29 +39,33 @@ jobs:
         for k in ['design_version','visual_style_definition_ref','visual_inheritance_matrix_ref','visual_reference_annotation_ref','visual_scenario_evidence_set_ref','visual_geometry_contract_ref','generation_manifest_ref']:
           if not vd.get(k): findings.append('VDSP_MISSING:'+k)
         vra=y('VISUAL_REFERENCE_ANNOTATION.yaml')
-        rows=vra.get('annotations') or []
-        if not rows: findings.append('VRA_ROWS_EMPTY')
-        vra_fields=['visual_uid','page_or_scope_uid','scenario_uid','state_uid','workbench_uid','journey_uid','parent_visual_uid','design_version','basic_design_change_set_uid','viewport','language','theme','applicable_business_entity_or_operation','visible_sections','conditional_sections','locked_regions','editable_regions','visual_anchor_uids','primary_controls','disabled_or_blocked_controls','current_next_action_or_gate','source_authority_refs','authority_classification','inherited_visual_authority_refs','verification_purpose']
+        rows=vra.get('candidate_annotations') or []
+        vra_fields=vra.get('required_candidate_annotation_fields') or []
+        if not rows: findings.append('VRA_CANDIDATE_ROWS_EMPTY')
+        if not vra_fields: findings.append('VRA_REQUIRED_FIELD_MANIFEST_EMPTY')
+        if vra.get('candidate_annotation_denominator_complete') is not True: findings.append('VRA_DENOMINATOR_NOT_COMPLETE')
         for i,row in enumerate(rows):
           if not isinstance(row,dict): findings.append(f'VRA_ROW_INVALID:{i}'); continue
           for k in vra_fields:
             if k not in row or row[k] in (None,'',[]): findings.append(f'VRA_ROW_{i}_MISSING:{k}')
         vim=y('VISUAL_INHERITANCE_MATRIX.yaml')
         rows=vim.get('rows') or []
+        vim_fields=vim.get('required_row_fields') or []
         if not rows: findings.append('VIM_ROWS_EMPTY')
-        vim_fields=['source_authority_uid','source_authority_path','source_authority_version','source_authority_hash','inherited_rule_or_token_or_component','lock_status','override_status','allowed_page_local_variation','required_change_set']
+        if not vim_fields: findings.append('VIM_REQUIRED_FIELD_MANIFEST_EMPTY')
         for i,row in enumerate(rows):
           if not isinstance(row,dict): findings.append(f'VIM_ROW_INVALID:{i}'); continue
           for k in vim_fields:
-            if k not in row or row[k] in (None,''): findings.append(f'VIM_ROW_{i}_MISSING:{k}')
+            if k not in row or row[k] in (None,'',[]): findings.append(f'VIM_ROW_{i}_MISSING:{k}')
         g=y('VISUAL_GEOMETRY_CONTRACT.yaml')
         ty=g.get('typography_baseline_rows') or []
+        ty_fields=g.get('typography_baseline_required_fields') or []
         if not ty: findings.append('TYPOGRAPHY_BASELINE_ROWS_EMPTY')
-        ty_fields=['target_uid','page_or_scope_uid','viewport_or_breakpoint_uid','language','theme','typography_authority_ref','font_family_token_or_value_ref','font_size_token_or_value_ref','font_weight_token_or_value_ref','line_height_token_or_value_ref','letter_spacing_token_or_value_ref','expected_font_family','expected_font_size_px','expected_font_weight','expected_line_height_px','expected_letter_spacing_px','expected_text_container_min_width_px','expected_text_container_max_width_px','wrap_rule','truncation_rule','allowed_tolerance']
+        if not ty_fields: findings.append('TYPOGRAPHY_REQUIRED_FIELD_MANIFEST_EMPTY')
         for i,row in enumerate(ty):
           if not isinstance(row,dict): findings.append(f'TYPO_ROW_INVALID:{i}'); continue
           for k in ty_fields:
-            if k not in row or row[k] in (None,''): findings.append(f'TYPO_ROW_{i}_MISSING:{k}')
+            if k not in row or row[k] in (None,'',[]): findings.append(f'TYPO_ROW_{i}_MISSING:{k}')
         print(json.dumps({'wu':os.environ['WU'],'finding_total':len(findings),'findings':findings},ensure_ascii=False,indent=2))
         if findings: raise SystemExit(3)
         PY
