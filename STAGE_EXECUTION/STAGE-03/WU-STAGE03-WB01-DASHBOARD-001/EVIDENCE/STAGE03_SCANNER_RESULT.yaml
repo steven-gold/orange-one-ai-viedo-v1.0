@@ -2,10 +2,12 @@ artifact_uid: SCAN-STAGE03-WB01-001
 artifact_type: STAGE03_SCANNER_RESULT
 stage_uid: STAGE-03
 work_unit_uid: WU-STAGE03-WB01-DASHBOARD-001
+governance_uid: GOV-REV-20260925-NORMATIVE-EXECUTION-MATRIX
+governance_head: 335d8a01d6d3eb6f0ed951ffc40216029b19d4e3
 denominator:
   required_visual_binding_total: 14
-  geometry_unit_total: 6
-  required_total: 20
+  geometry_unit_total: 9
+  required_total: 23
 scanner_results:
 - {scanner_dimension: VISUAL_DOMAIN, status: PASS}
 - {scanner_dimension: GEOMETRY, status: PASS}
@@ -18,14 +20,19 @@ validator_results:
 - {validator_uid: VAL-GOV-029, status: PASS}
 - {validator_uid: VAL-GOV-030, status: PASS}
 remediation:
-  discovered_gap_total: 2
-  remediated_gap_total: 2
+  discovered_gap_total: 12
+  remediated_gap_total: 12
   unresolved_gap_total: 0
 open_gap_total: 0
-closure_blocker_total: 0
-result: PASS
+closure_blocker_total: 1
+non_problem_closure_gates:
+- gate_uid: HUMAN_VISUAL_REVIEW
+  candidate_uid: VIS-CANDIDATE-WB01-002
+  status: PENDING_HUMAN_REVIEW
+  stage_exit_credit: 0
+result: PASS_TECHNICAL_REVERIFY_PENDING_HUMAN_REVIEW
 evidence_gate:
-  head_sha: 38a3d1c186e30e5601788c53f97df8923b85fc59
-  run_id: 36052760705
-  job_id: 107812140193
+  head_sha: eb63c59c2a4ef384691d9e7ad4a67b1dcdcb7c92
+  run_id: 36087796821
+  job_id: 107923436305
   conclusion: success
