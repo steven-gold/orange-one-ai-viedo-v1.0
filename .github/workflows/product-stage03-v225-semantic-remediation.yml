@@ -157,7 +157,7 @@ jobs:
                   'state_uid':str(state),
                   'workbench_uid':cfg['workbench'],
                   'journey_uid':cfg['journey'],
-                  'parent_visual_uid':parent,
+                  'parent_visual_uid':parent or 'NOT_APPLICABLE_ROOT_VISUAL',
                   'design_version':'STAGE03-V2.2.25-REVERIFY',
                   'basic_design_change_set_uid':vcs.get('artifact_uid'),
                   'viewport':viewport,
@@ -166,12 +166,12 @@ jobs:
                   'business_entity_uids':cfg['entity_uids'],
                   'operation_uids':cfg['ops'],
                   'visible_sections':visible_sections,
-                  'conditional_sections':conditional,
+                  'conditional_sections':conditional or ['NOT_APPLICABLE_NO_CONDITIONAL_SECTION'],
                   'locked_regions':cfg['locked'],
                   'editable_regions':cfg['editable'],
                   'visual_anchor_uids':anchor_uids,
                   'primary_controls_or_system_triggers':controls,
-                  'disabled_or_blocked_controls':[],
+                  'disabled_or_blocked_controls':[{'control_uid':'NOT_APPLICABLE','applicability':'NOT_APPLICABLE_WITH_AUTHORITY','reason_source':'CURRENT_PERMISSION_OR_STATE_AUTHORITY'}],
                   'disabled_reason_source':'CURRENT_PERMISSION_OR_STATE_AUTHORITY',
                   'current_next_action':next_action,
                   'current_next_gate':next_gate,
@@ -270,8 +270,8 @@ jobs:
                   'denominator_inclusion_status':'PASS',
                   'consumer_admission_readiness_result':'PASS',
                   'unresolved_dependency_count':0,
-                  'blocking_owner':None,
-                  'reentry_target':None,
+                  'blocking_owner':'NOT_APPLICABLE_NO_BLOCKER',
+                  'reentry_target':'NOT_APPLICABLE_NO_REENTRY',
                   'current_evidence_ref':str(path),
                 })
             hand['required_edge_fields']=[
@@ -386,7 +386,6 @@ jobs:
             for ri,r in enumerate(vr['candidate_annotations']):
                 for fld in vr['required_candidate_annotation_fields']:
                     app='REQUIRED'
-                    if fld in ('parent_visual_uid',) and r[fld] is None: app='NOT_APPLICABLE_WITH_AUTHORITY'
                     add('WEB-GOV-01-S079',f'ANNOTATION:{fld}','VISUAL_REFERENCE_ANNOTATION',b/'VISUAL_REFERENCE_ANNOTATION.yaml','candidate_annotations',r['scenario_uid'],['candidate_annotations',ri,fld],f'ANNOTATION:{fld}',app)
             vv=load(b/'VISUAL_INHERITANCE_MATRIX.yaml')
             for ri,r in enumerate(vv.get('rows') or []):
@@ -401,7 +400,6 @@ jobs:
             for ri,r in enumerate(hh['required_edges']):
                 for fld in hh['required_edge_fields']:
                     app='REQUIRED'
-                    if fld in ('blocking_owner','reentry_target') and r[fld] is None: app='NOT_APPLICABLE_WITH_AUTHORITY'
                     for sec in ['WEB-GOV-02-S075','WEB-GOV-03-S071','WEB-GOV-04-S085','WEB-GOV-01-S088']:
                         add(sec,f'HANDOFF:{fld}','CROSS_STAGE_HANDOFF_READINESS_LEDGER',handoff_path,'required_edges',r['edge_uid'],['required_edges',ri,fld],f'HANDOFF:{fld}',app)
 
