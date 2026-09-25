@@ -40,5 +40,7 @@ jobs:
           python governance/ci/validate_structured_mutation_safety.py
           python .github/governance-source/active/source/09_TESTS/governance/validate_stage_execution_invariants.py
           python .github/governance-source/active/source/09_TESTS/governance/validate_product_neutral_entity_lifecycle.py
+          python governance/ci/audit_closure_engine.py --self-test
+          python governance/ci/audit_closure_engine.py
           test ! -e governance/ci/compile_stage_execution_preflight.py
           test ! -e governance/ci/stage_execution_adapters/stage02_functional_contract.py
