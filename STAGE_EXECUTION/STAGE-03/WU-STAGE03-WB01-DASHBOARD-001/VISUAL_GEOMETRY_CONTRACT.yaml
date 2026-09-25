@@ -2,7 +2,27 @@ artifact_uid: VGC-STAGE03-WB01-001
 artifact_type: VISUAL_GEOMETRY_CONTRACT
 stage_uid: STAGE-03
 governed_unit_uid: workspace:WB-01
+source_authority:
+  path: ACPOS_WB-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx
+  sha256: 2b1908530b5bd312a3928f80b422d0f65d7e9932ace90730df9b038666621262
+  page_geometry_record_range: "84-127"
+  control_field_record_range: "128-176"
+  visual_anchor_record_range: "188-211"
 inherited_shell_geometry_ref: STAGE_EXECUTION/STAGE-03/WU-STAGE03-GLOBAL-HOME-SHELL-NAVIGATION-001/VISUAL_GEOMETRY_CONTRACT.yaml
+shared_visual_authority_ref: STAGE_EXECUTION/SHARED_AUTHORITY/GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY.yaml
+shell_authority_resolution:
+  canonical_owner: GLOBAL-HOME-SHELL-NAVIGATION
+  canonical_rule: COUPLED_REFLOW
+  collapsed_sidebar_width_px: 64
+  expanded_sidebar_width_px: 221
+  collapsed_workspace_left_px: 78
+  expanded_workspace_left_px: 235
+  overlay_sidebar_over_workspace: FORBIDDEN
+  wb01_source_overlay_rows_disposition: SUPERSEDED_BY_SHARED_GLOBAL_SHELL_OWNER
+  superseded_source_rows:
+  - "WB01 record 93: 221px overlay expanded; no workspace reflow"
+  - "WB01 record 103: workspace x=78 unchanged; no reflow"
+  - "WB01 records 180-181: overlay/no-reflow visual trace"
 page_geometry:
   grid_columns: 12
   grid_gap_px: 16
@@ -12,26 +32,1531 @@ page_geometry:
   card_header_px: 40
   view_control_px: 40
   drawer_width_px: 520
+  page_bg_tokens: [PAGE_BG_PRIMARY, PAGE_BG_SECONDARY]
+  surface_tokens: [SURFACE_PRIMARY, SURFACE_SECONDARY]
+  primary_token: PRIMARY_PURPLE
+  secondary_token: SECONDARY_PURPLE
+  highlight_token: HIGHLIGHT_PURPLE
 row_groups:
 - {uid: KPI_ROW, layout_ge_1440: "6 x span2", layout_1280_1439: "3+3"}
 - {uid: PROGRESS_ROW, layout: "8+4"}
 - {uid: PRODUCTION_ROW, layout: "8+4"}
 - {uid: INFORMATION_ROW, layout: "4+4+4"}
 - {uid: RECENT_ROW, layout: "span12"}
+section_geometry_rows:
+- section_uid: COMPANY-PROJECT-COUNT
+  label: "專案總數"
+  component_uid: WB-01-CMP-KPI-PROJECT-COUNT
+  row_group: KPI_ROW
+  span_ge_1440: span2
+  height_px: 136
+  control_uid: CTRL-WORKSPACE-WB-01-COMPANY-PROJECT-COUNT-OPEN
+  field_identity: company_project_count.company_project_count
+  field_uid_disposition: EXACT_PERSISTENCE_BINDING_USED_AS_VISUAL_FIELD_IDENTITY
+  render_schema_uid: WB-01-SCHEMA-KPI-INTEGER-01
+  canonical_order_locked: true
+- section_uid: COMPANY-RUNNING-PROJECT-COUNT
+  label: "執行中"
+  component_uid: WB-01-CMP-KPI-RUNNING
+  row_group: KPI_ROW
+  span_ge_1440: span2
+  height_px: 136
+  control_uid: CTRL-WORKSPACE-WB-01-COMPANY-RUNNING-PROJECT-COUNT-OPEN
+  field_identity: company_running_project_count.company_running_project_count
+  field_uid_disposition: EXACT_PERSISTENCE_BINDING_USED_AS_VISUAL_FIELD_IDENTITY
+  render_schema_uid: WB-01-SCHEMA-KPI-INTEGER-02
+  canonical_order_locked: true
+- section_uid: COMPANY-PENDING-ACTION-COUNT
+  label: "待處理"
+  component_uid: WB-01-CMP-KPI-PENDING-ACTION
+  row_group: KPI_ROW
+  span_ge_1440: span2
+  height_px: 136
+  control_uid: CTRL-WORKSPACE-WB-01-COMPANY-PENDING-ACTION-COUNT-OPEN
+  field_identity: company_pending_action_count.company_pending_action_count
+  field_uid_disposition: EXACT_PERSISTENCE_BINDING_USED_AS_VISUAL_FIELD_IDENTITY
+  render_schema_uid: WB-01-SCHEMA-KPI-INTEGER-03
+  canonical_order_locked: true
+- section_uid: COMPANY-PENDING-REVIEW-COUNT
+  label: "待審查"
+  component_uid: WB-01-CMP-KPI-PENDING-REVIEW
+  row_group: KPI_ROW
+  span_ge_1440: span2
+  height_px: 136
+  control_uid: CTRL-WORKSPACE-WB-01-COMPANY-PENDING-REVIEW-COUNT-OPEN
+  field_identity: company_pending_review_count.company_pending_review_count
+  field_uid_disposition: EXACT_PERSISTENCE_BINDING_USED_AS_VISUAL_FIELD_IDENTITY
+  render_schema_uid: WB-01-SCHEMA-KPI-INTEGER-04
+  canonical_order_locked: true
+- section_uid: COMPANY-COMPLETED-PROJECT-COUNT
+  label: "已完成"
+  component_uid: WB-01-CMP-KPI-COMPLETED
+  row_group: KPI_ROW
+  span_ge_1440: span2
+  height_px: 136
+  control_uid: CTRL-WORKSPACE-WB-01-COMPANY-COMPLETED-PROJECT-COUNT-OPEN
+  field_identity: company_completed_project_count.company_completed_project_count
+  field_uid_disposition: EXACT_PERSISTENCE_BINDING_USED_AS_VISUAL_FIELD_IDENTITY
+  render_schema_uid: WB-01-SCHEMA-KPI-INTEGER-05
+  canonical_order_locked: true
+- section_uid: COMPANY-AVERAGE-PROGRESS
+  label: "平均進度"
+  component_uid: WB-01-CMP-KPI-AVERAGE-PROGRESS
+  row_group: KPI_ROW
+  span_ge_1440: span2
+  height_px: 136
+  control_uid: CTRL-WORKSPACE-WB-01-COMPANY-AVERAGE-PROGRESS-OPEN
+  field_identity: company_average_progress.company_average_progress
+  field_uid_disposition: EXACT_PERSISTENCE_BINDING_USED_AS_VISUAL_FIELD_IDENTITY
+  render_schema_uid: WB-01-SCHEMA-KPI-PERCENT-01
+  canonical_order_locked: true
+- section_uid: PROJECT-PROGRESS-OVERVIEW
+  label: "專案進度"
+  component_uid: WB-01-CMP-PROJECT-PROGRESS
+  row_group: PROGRESS_ROW
+  span_ge_1440: span8
+  height_px: 320
+  control_uid: CTRL-WORKSPACE-WB-01-PROJECT-PROGRESS-OVERVIEW-OPEN
+  field_identity: project_progress_overview.project_progress_overview
+  field_uid_disposition: EXACT_PERSISTENCE_BINDING_USED_AS_VISUAL_FIELD_IDENTITY
+  render_schema_uid: WB-01-SCHEMA-PROJECT-TOPIC-TASK-01
+  canonical_order_locked: true
+- section_uid: COMPANY-PROGRESS-SUMMARY
+  label: "公司整體進度"
+  component_uid: WB-01-CMP-COMPANY-PROGRESS
+  row_group: PROGRESS_ROW
+  span_ge_1440: span4
+  height_px: 320
+  control_uid: CTRL-WORKSPACE-WB-01-COMPANY-PROGRESS-SUMMARY-OPEN
+  field_identity: company_progress_summary.company_progress_summary
+  field_uid_disposition: EXACT_PERSISTENCE_BINDING_USED_AS_VISUAL_FIELD_IDENTITY
+  render_schema_uid: WB-01-SCHEMA-COMPANY-PROGRESS-01
+  canonical_order_locked: true
+- section_uid: PRODUCTION-SUMMARY
+  label: "生產總覽"
+  component_uid: WB-01-CMP-PRODUCTION-SUMMARY
+  row_group: PRODUCTION_ROW
+  span_ge_1440: span8
+  height_px: 280
+  control_uid: CTRL-WORKSPACE-WB-01-PRODUCTION-SUMMARY-OPEN
+  field_identity: production_summary.production_summary
+  field_uid_disposition: EXACT_PERSISTENCE_BINDING_USED_AS_VISUAL_FIELD_IDENTITY
+  render_schema_uid: WB-01-SCHEMA-PRODUCTION-SUMMARY-01
+  canonical_order_locked: true
+- section_uid: NOTIFICATIONS
+  label: "通知"
+  component_uid: WB-01-CMP-NOTIFICATIONS
+  row_group: PRODUCTION_ROW
+  span_ge_1440: span4
+  height_px: 280
+  control_uid: CTRL-WORKSPACE-WB-01-NOTIFICATIONS-OPEN
+  field_identity: notifications.notifications
+  field_uid_disposition: EXACT_PERSISTENCE_BINDING_USED_AS_VISUAL_FIELD_IDENTITY
+  render_schema_uid: WB-01-SCHEMA-NOTIFICATIONS-01
+  canonical_order_locked: true
+- section_uid: COMPANY-ANNOUNCEMENTS
+  label: "公司公告"
+  component_uid: WB-01-CMP-ANNOUNCEMENTS
+  row_group: INFORMATION_ROW
+  span_ge_1440: span4
+  height_px: 240
+  control_uid: CTRL-WORKSPACE-WB-01-COMPANY-ANNOUNCEMENTS-OPEN
+  field_identity: company_announcements.company_announcements
+  field_uid_disposition: EXACT_PERSISTENCE_BINDING_USED_AS_VISUAL_FIELD_IDENTITY
+  render_schema_uid: WB-01-SCHEMA-ANNOUNCEMENTS-01
+  canonical_order_locked: true
+- section_uid: INDUSTRY-NEWS
+  label: "AI / 產業新聞"
+  component_uid: WB-01-CMP-INDUSTRY-NEWS
+  row_group: INFORMATION_ROW
+  span_ge_1440: span4
+  height_px: 240
+  control_uid: CTRL-WORKSPACE-WB-01-INDUSTRY-NEWS-OPEN
+  field_identity: industry_news.industry_news
+  field_uid_disposition: EXACT_PERSISTENCE_BINDING_USED_AS_VISUAL_FIELD_IDENTITY
+  render_schema_uid: WB-01-SCHEMA-INDUSTRY-NEWS-01
+  canonical_order_locked: true
+- section_uid: SYSTEM-STATUS-SUMMARY
+  label: "系統狀態"
+  component_uid: WB-01-CMP-SYSTEM-STATUS
+  row_group: INFORMATION_ROW
+  span_ge_1440: span4
+  height_px: 240
+  control_uid: CTRL-WORKSPACE-WB-01-SYSTEM-STATUS-SUMMARY-OPEN
+  field_identity: system_status_summary.system_status_summary
+  field_uid_disposition: EXACT_PERSISTENCE_BINDING_USED_AS_VISUAL_FIELD_IDENTITY
+  render_schema_uid: WB-01-SCHEMA-SYSTEM-STATUS-01
+  canonical_order_locked: true
+- section_uid: RECENT-COMPLETIONS
+  label: "近期完成"
+  component_uid: WB-01-CMP-RECENT-COMPLETIONS
+  row_group: RECENT_ROW
+  span_ge_1440: span12
+  height_px: 220
+  control_uid: CTRL-WORKSPACE-WB-01-RECENT-COMPLETIONS-OPEN
+  field_identity: recent_completions.recent_completions
+  field_uid_disposition: EXACT_PERSISTENCE_BINDING_USED_AS_VISUAL_FIELD_IDENTITY
+  render_schema_uid: WB-01-SCHEMA-RECENT-COMPLETIONS-01
+  canonical_order_locked: true
+section_geometry_total: 14
+control_visual_rows:
+- section_uid: COMPANY-PROJECT-COUNT
+  control_uid: CTRL-WORKSPACE-WB-01-COMPANY-PROJECT-COUNT-OPEN
+  control_type: SECTION_OPEN
+  visible_label: "查看"
+  trigger_location: CARD_HEADER_TRAILING
+  card_body_clickable: false
+  permission: workspace.dashboard.view
+  gate_uid: PAGE_READ
+  operation_uid: getDashboardReadModel
+  api: GET /v1/dashboard/read-model
+  runtime_owner: DASHBOARD_READ_MODEL
+  persistence_owner: company_project_count.company_project_count
+  render_schema_uid: WB-01-SCHEMA-KPI-INTEGER-01
+  action_uid_disposition: LEGITIMATE_NA_READ_PROJECTION_ACTION
+- section_uid: COMPANY-RUNNING-PROJECT-COUNT
+  control_uid: CTRL-WORKSPACE-WB-01-COMPANY-RUNNING-PROJECT-COUNT-OPEN
+  control_type: SECTION_OPEN
+  visible_label: "查看"
+  trigger_location: CARD_HEADER_TRAILING
+  card_body_clickable: false
+  permission: workspace.dashboard.view
+  gate_uid: PAGE_READ
+  operation_uid: getDashboardReadModel
+  api: GET /v1/dashboard/read-model
+  runtime_owner: DASHBOARD_READ_MODEL
+  persistence_owner: company_running_project_count.company_running_project_count
+  render_schema_uid: WB-01-SCHEMA-KPI-INTEGER-02
+  action_uid_disposition: LEGITIMATE_NA_READ_PROJECTION_ACTION
+- section_uid: COMPANY-PENDING-ACTION-COUNT
+  control_uid: CTRL-WORKSPACE-WB-01-COMPANY-PENDING-ACTION-COUNT-OPEN
+  control_type: SECTION_OPEN
+  visible_label: "查看"
+  trigger_location: CARD_HEADER_TRAILING
+  card_body_clickable: false
+  permission: workspace.dashboard.view
+  gate_uid: PAGE_READ
+  operation_uid: getDashboardReadModel
+  api: GET /v1/dashboard/read-model
+  runtime_owner: DASHBOARD_READ_MODEL
+  persistence_owner: company_pending_action_count.company_pending_action_count
+  render_schema_uid: WB-01-SCHEMA-KPI-INTEGER-03
+  action_uid_disposition: LEGITIMATE_NA_READ_PROJECTION_ACTION
+- section_uid: COMPANY-PENDING-REVIEW-COUNT
+  control_uid: CTRL-WORKSPACE-WB-01-COMPANY-PENDING-REVIEW-COUNT-OPEN
+  control_type: SECTION_OPEN
+  visible_label: "查看"
+  trigger_location: CARD_HEADER_TRAILING
+  card_body_clickable: false
+  permission: workspace.dashboard.view
+  gate_uid: PAGE_READ
+  operation_uid: getDashboardReadModel
+  api: GET /v1/dashboard/read-model
+  runtime_owner: DASHBOARD_READ_MODEL
+  persistence_owner: company_pending_review_count.company_pending_review_count
+  render_schema_uid: WB-01-SCHEMA-KPI-INTEGER-04
+  action_uid_disposition: LEGITIMATE_NA_READ_PROJECTION_ACTION
+- section_uid: COMPANY-COMPLETED-PROJECT-COUNT
+  control_uid: CTRL-WORKSPACE-WB-01-COMPANY-COMPLETED-PROJECT-COUNT-OPEN
+  control_type: SECTION_OPEN
+  visible_label: "查看"
+  trigger_location: CARD_HEADER_TRAILING
+  card_body_clickable: false
+  permission: workspace.dashboard.view
+  gate_uid: PAGE_READ
+  operation_uid: getDashboardReadModel
+  api: GET /v1/dashboard/read-model
+  runtime_owner: DASHBOARD_READ_MODEL
+  persistence_owner: company_completed_project_count.company_completed_project_count
+  render_schema_uid: WB-01-SCHEMA-KPI-INTEGER-05
+  action_uid_disposition: LEGITIMATE_NA_READ_PROJECTION_ACTION
+- section_uid: COMPANY-AVERAGE-PROGRESS
+  control_uid: CTRL-WORKSPACE-WB-01-COMPANY-AVERAGE-PROGRESS-OPEN
+  control_type: SECTION_OPEN
+  visible_label: "查看"
+  trigger_location: CARD_HEADER_TRAILING
+  card_body_clickable: false
+  permission: workspace.dashboard.view
+  gate_uid: PAGE_READ
+  operation_uid: getDashboardReadModel
+  api: GET /v1/dashboard/read-model
+  runtime_owner: DASHBOARD_READ_MODEL
+  persistence_owner: company_average_progress.company_average_progress
+  render_schema_uid: WB-01-SCHEMA-KPI-PERCENT-01
+  action_uid_disposition: LEGITIMATE_NA_READ_PROJECTION_ACTION
+- section_uid: PROJECT-PROGRESS-OVERVIEW
+  control_uid: CTRL-WORKSPACE-WB-01-PROJECT-PROGRESS-OVERVIEW-OPEN
+  control_type: SECTION_OPEN
+  visible_label: "查看"
+  trigger_location: CARD_HEADER_TRAILING
+  card_body_clickable: false
+  permission: workspace.dashboard.view
+  gate_uid: PAGE_READ
+  operation_uid: getDashboardReadModel
+  api: GET /v1/dashboard/read-model
+  runtime_owner: DASHBOARD_READ_MODEL
+  persistence_owner: project_progress_overview.project_progress_overview
+  render_schema_uid: WB-01-SCHEMA-PROJECT-TOPIC-TASK-01
+  action_uid_disposition: LEGITIMATE_NA_READ_PROJECTION_ACTION
+- section_uid: COMPANY-PROGRESS-SUMMARY
+  control_uid: CTRL-WORKSPACE-WB-01-COMPANY-PROGRESS-SUMMARY-OPEN
+  control_type: SECTION_OPEN
+  visible_label: "查看"
+  trigger_location: CARD_HEADER_TRAILING
+  card_body_clickable: false
+  permission: workspace.dashboard.view
+  gate_uid: PAGE_READ
+  operation_uid: getDashboardReadModel
+  api: GET /v1/dashboard/read-model
+  runtime_owner: DASHBOARD_READ_MODEL
+  persistence_owner: company_progress_summary.company_progress_summary
+  render_schema_uid: WB-01-SCHEMA-COMPANY-PROGRESS-01
+  action_uid_disposition: LEGITIMATE_NA_READ_PROJECTION_ACTION
+- section_uid: PRODUCTION-SUMMARY
+  control_uid: CTRL-WORKSPACE-WB-01-PRODUCTION-SUMMARY-OPEN
+  control_type: SECTION_OPEN
+  visible_label: "查看"
+  trigger_location: CARD_HEADER_TRAILING
+  card_body_clickable: false
+  permission: workspace.dashboard.view
+  gate_uid: PAGE_READ
+  operation_uid: getDashboardReadModel
+  api: GET /v1/dashboard/read-model
+  runtime_owner: DASHBOARD_READ_MODEL
+  persistence_owner: production_summary.production_summary
+  render_schema_uid: WB-01-SCHEMA-PRODUCTION-SUMMARY-01
+  action_uid_disposition: LEGITIMATE_NA_READ_PROJECTION_ACTION
+- section_uid: NOTIFICATIONS
+  control_uid: CTRL-WORKSPACE-WB-01-NOTIFICATIONS-OPEN
+  control_type: SECTION_OPEN
+  visible_label: "查看"
+  trigger_location: CARD_HEADER_TRAILING
+  card_body_clickable: false
+  permission: workspace.dashboard.view
+  gate_uid: PAGE_READ
+  operation_uid: getDashboardReadModel
+  api: GET /v1/dashboard/read-model
+  runtime_owner: DASHBOARD_READ_MODEL
+  persistence_owner: notifications.notifications
+  render_schema_uid: WB-01-SCHEMA-NOTIFICATIONS-01
+  action_uid_disposition: LEGITIMATE_NA_READ_PROJECTION_ACTION
+- section_uid: COMPANY-ANNOUNCEMENTS
+  control_uid: CTRL-WORKSPACE-WB-01-COMPANY-ANNOUNCEMENTS-OPEN
+  control_type: SECTION_OPEN
+  visible_label: "查看"
+  trigger_location: CARD_HEADER_TRAILING
+  card_body_clickable: false
+  permission: workspace.dashboard.view
+  gate_uid: PAGE_READ
+  operation_uid: getDashboardReadModel
+  api: GET /v1/dashboard/read-model
+  runtime_owner: DASHBOARD_READ_MODEL
+  persistence_owner: company_announcements.company_announcements
+  render_schema_uid: WB-01-SCHEMA-ANNOUNCEMENTS-01
+  action_uid_disposition: LEGITIMATE_NA_READ_PROJECTION_ACTION
+- section_uid: INDUSTRY-NEWS
+  control_uid: CTRL-WORKSPACE-WB-01-INDUSTRY-NEWS-OPEN
+  control_type: SECTION_OPEN
+  visible_label: "查看"
+  trigger_location: CARD_HEADER_TRAILING
+  card_body_clickable: false
+  permission: workspace.dashboard.view
+  gate_uid: PAGE_READ
+  operation_uid: getDashboardReadModel
+  api: GET /v1/dashboard/read-model
+  runtime_owner: DASHBOARD_READ_MODEL
+  persistence_owner: industry_news.industry_news
+  render_schema_uid: WB-01-SCHEMA-INDUSTRY-NEWS-01
+  action_uid_disposition: LEGITIMATE_NA_READ_PROJECTION_ACTION
+- section_uid: SYSTEM-STATUS-SUMMARY
+  control_uid: CTRL-WORKSPACE-WB-01-SYSTEM-STATUS-SUMMARY-OPEN
+  control_type: SECTION_OPEN
+  visible_label: "查看"
+  trigger_location: CARD_HEADER_TRAILING
+  card_body_clickable: false
+  permission: workspace.dashboard.view
+  gate_uid: PAGE_READ
+  operation_uid: getDashboardReadModel
+  api: GET /v1/dashboard/read-model
+  runtime_owner: DASHBOARD_READ_MODEL
+  persistence_owner: system_status_summary.system_status_summary
+  render_schema_uid: WB-01-SCHEMA-SYSTEM-STATUS-01
+  action_uid_disposition: LEGITIMATE_NA_READ_PROJECTION_ACTION
+- section_uid: RECENT-COMPLETIONS
+  control_uid: CTRL-WORKSPACE-WB-01-RECENT-COMPLETIONS-OPEN
+  control_type: SECTION_OPEN
+  visible_label: "查看"
+  trigger_location: CARD_HEADER_TRAILING
+  card_body_clickable: false
+  permission: workspace.dashboard.view
+  gate_uid: PAGE_READ
+  operation_uid: getDashboardReadModel
+  api: GET /v1/dashboard/read-model
+  runtime_owner: DASHBOARD_READ_MODEL
+  persistence_owner: recent_completions.recent_completions
+  render_schema_uid: WB-01-SCHEMA-RECENT-COMPLETIONS-01
+  action_uid_disposition: LEGITIMATE_NA_READ_PROJECTION_ACTION
+control_visual_total: 14
 responsive:
   ge_1440: TWELVE_COLUMN_EXACT
   from_1280_to_1439: FIXED_REFLOW
   lt_1280: MIN_WIDTH_1280_WORKSPACE_HORIZONTAL_SCROLL
-visual_anchors:
-- {anchor_uid: VA-WB01-KPI-ROW, position_rule: FIRST_PAGE_ROW_GROUP, dimension_rule: "6xspan2 >=1440; 3+3 at 1280-1439", relationship_rule: CANONICAL_FIRST_GROUP, lock_status: LOCKED}
-- {anchor_uid: VA-WB01-PROGRESS-ROW, position_rule: AFTER_KPI_ROW, dimension_rule: "8+4", relationship_rule: CANONICAL_SECOND_GROUP, lock_status: LOCKED}
-- {anchor_uid: VA-WB01-PRODUCTION-ROW, position_rule: AFTER_PROGRESS_ROW, dimension_rule: "8+4", relationship_rule: CANONICAL_THIRD_GROUP, lock_status: LOCKED}
-- {anchor_uid: VA-WB01-INFORMATION-ROW, position_rule: AFTER_PRODUCTION_ROW, dimension_rule: "4+4+4", relationship_rule: CANONICAL_FOURTH_GROUP, lock_status: LOCKED}
-- {anchor_uid: VA-WB01-RECENT-ROW, position_rule: AFTER_INFORMATION_ROW, dimension_rule: "span12", relationship_rule: CANONICAL_FIFTH_GROUP, lock_status: LOCKED}
-- {anchor_uid: VA-WB01-DRAWER, position_rule: RIGHT_EDGE, dimension_rule: "width=520px", relationship_rule: SAME_SURFACE_CLUSTER, lock_status: LOCKED}
-visual_anchor_count: 6
-typography_expected_baseline:
-  inherited_font_stack: GLOBAL_HOME_VISUAL_GEOMETRY_CONTRACT
-  computed_metrics_phase: EXPECTED_BASELINE
+  shell_states_required_per_breakpoint: [COLLAPSED, EXPANDED]
+required_scenario_classes:
+- WB01-GE1440-COLLAPSED
+- WB01-GE1440-EXPANDED
+- WB01-1280-COLLAPSED
+- WB01-1280-EXPANDED
+- WB01-LT1280-COLLAPSED
+- WB01-LT1280-EXPANDED
+- WB01-DRAWER
+- WB01-LOADING
+- WB01-EMPTY
+- WB01-ERROR
+typography_authority:
+  authority_uid: GLOBAL_TYPOGRAPHY_AUTHORITY_TY01_TY15
+  authority_ref: STAGE_EXECUTION/SHARED_AUTHORITY/GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY.yaml#typography_authority
+  target_denominator_rule: EVERY_VISIBLE_GOVERNED_TEXT_TARGET_ROLE
+  representative_sample_credit: 0
   runtime_capture_credit: 0
-status: EXPECTED_BASELINE
+typography_baseline_required_fields:
+- target_uid
+- page_or_scope_uid
+- viewport_or_breakpoint_uid
+- language
+- theme
+- typography_authority_ref
+- font_family_token_or_value_ref
+- font_size_token_or_value_ref
+- font_weight_token_or_value_ref
+- line_height_token_or_value_ref
+- letter_spacing_token_or_value_ref
+- expected_font_family
+- expected_font_size_px
+- expected_font_weight
+- expected_line_height_px
+- expected_letter_spacing_px
+- expected_text_container_min_width_px
+- expected_text_container_max_width_px
+- wrap_rule
+- truncation_rule
+- expected_line_count_rule
+- allowed_tolerance
+typography_baseline_rows:
+  - target_uid: TYPO-WB01-PAGE-TITLE
+    target_role: WB01_PAGE_TITLE
+    page_or_scope_uid: workspace:WB-01
+    viewport_or_breakpoint_uid: [WB01-GE-1440, WB01-1280-1439, WB01-LT-1280-SCROLL]
+    language: [zh-TW, zh-CN, en]
+    theme: DARK_TECH_PURPLE
+    state_scope: ALL_PAGE_STATES
+    typography_authority_ref: STAGE_EXECUTION/SHARED_AUTHORITY/GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY.yaml#typography_authority
+    font_family_token_or_value_ref: GLOBAL_TYPOGRAPHY_AUTHORITY_TY01_TY15.canonical_font_stack
+    font_size_token_or_value_ref: display-xl.font_size_px
+    font_weight_token_or_value_ref: display-xl.font_weight
+    line_height_token_or_value_ref: display-xl.line_height_ratio
+    letter_spacing_token_or_value_ref: display-xl.letter_spacing_em
+    expected_font_family: "Inter / system-ui / -apple-system / BlinkMacSystemFont / 'Segoe UI' / 'Noto Sans TC' / 'PingFang TC' / sans-serif"
+    expected_font_size_px: 32
+    expected_font_weight: 700
+    expected_line_height_px: 38.4
+    expected_letter_spacing_px: -0.64
+    expected_text_container_min_width_px: 200
+    expected_text_container_max_width_px: 680
+    wrap_rule: NO_WRAP
+    truncation_rule: ELLIPSIS
+    expected_line_count_rule: ONE_LINE
+    allowed_tolerance: {geometry_css_px: 1, rendered_line_count: 1, semantic_overflow_or_clipping: 0}
+  - target_uid: TYPO-WB01-DRAWER-TITLE
+    target_role: WB01_DRAWER_TITLE
+    page_or_scope_uid: workspace:WB-01
+    viewport_or_breakpoint_uid: [WB01-GE-1440, WB01-1280-1439, WB01-LT-1280-SCROLL]
+    language: [zh-TW, zh-CN, en]
+    theme: DARK_TECH_PURPLE
+    state_scope: DRAWER_OPEN
+    typography_authority_ref: STAGE_EXECUTION/SHARED_AUTHORITY/GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY.yaml#typography_authority
+    font_family_token_or_value_ref: GLOBAL_TYPOGRAPHY_AUTHORITY_TY01_TY15.canonical_font_stack
+    font_size_token_or_value_ref: heading-lg.font_size_px
+    font_weight_token_or_value_ref: heading-lg.font_weight
+    line_height_token_or_value_ref: heading-lg.line_height_ratio
+    letter_spacing_token_or_value_ref: heading-lg.letter_spacing_em
+    expected_font_family: "Inter / system-ui / -apple-system / BlinkMacSystemFont / 'Segoe UI' / 'Noto Sans TC' / 'PingFang TC' / sans-serif"
+    expected_font_size_px: 24
+    expected_font_weight: 700
+    expected_line_height_px: 30
+    expected_letter_spacing_px: -0.24
+    expected_text_container_min_width_px: 160
+    expected_text_container_max_width_px: 480
+    wrap_rule: NO_WRAP
+    truncation_rule: ELLIPSIS
+    expected_line_count_rule: ONE_LINE
+    allowed_tolerance: {geometry_css_px: 1, rendered_line_count: 1, semantic_overflow_or_clipping: 0}
+  - target_uid: TYPO-WB01-DRAWER-METADATA
+    target_role: WB01_DRAWER_METADATA
+    page_or_scope_uid: workspace:WB-01
+    viewport_or_breakpoint_uid: [WB01-GE-1440, WB01-1280-1439, WB01-LT-1280-SCROLL]
+    language: [zh-TW, zh-CN, en]
+    theme: DARK_TECH_PURPLE
+    state_scope: DRAWER_OPEN
+    typography_authority_ref: STAGE_EXECUTION/SHARED_AUTHORITY/GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY.yaml#typography_authority
+    font_family_token_or_value_ref: GLOBAL_TYPOGRAPHY_AUTHORITY_TY01_TY15.canonical_font_stack
+    font_size_token_or_value_ref: body-sm.font_size_px
+    font_weight_token_or_value_ref: body-sm.font_weight
+    line_height_token_or_value_ref: body-sm.line_height_ratio
+    letter_spacing_token_or_value_ref: body-sm.letter_spacing_em
+    expected_font_family: "Inter / system-ui / -apple-system / BlinkMacSystemFont / 'Segoe UI' / 'Noto Sans TC' / 'PingFang TC' / sans-serif"
+    expected_font_size_px: 12
+    expected_font_weight: 400
+    expected_line_height_px: 18
+    expected_letter_spacing_px: 0
+    expected_text_container_min_width_px: 160
+    expected_text_container_max_width_px: 488
+    wrap_rule: WRAP_MAX_2_LINES
+    truncation_rule: NO_TRUNCATION
+    expected_line_count_rule: ONE_TO_TWO_LINES
+    allowed_tolerance: {geometry_css_px: 1, rendered_line_count: 1, semantic_overflow_or_clipping: 0}
+  - target_uid: TYPO-WB01-STATE-MESSAGE
+    target_role: WB01_LOADING_EMPTY_ERROR_MESSAGE
+    page_or_scope_uid: workspace:WB-01
+    viewport_or_breakpoint_uid: [WB01-GE-1440, WB01-1280-1439, WB01-LT-1280-SCROLL]
+    language: [zh-TW, zh-CN, en]
+    theme: DARK_TECH_PURPLE
+    state_scope: LOADING_EMPTY_ERROR
+    typography_authority_ref: STAGE_EXECUTION/SHARED_AUTHORITY/GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY.yaml#typography_authority
+    font_family_token_or_value_ref: GLOBAL_TYPOGRAPHY_AUTHORITY_TY01_TY15.canonical_font_stack
+    font_size_token_or_value_ref: body-sm.font_size_px
+    font_weight_token_or_value_ref: body-sm.font_weight
+    line_height_token_or_value_ref: body-sm.line_height_ratio
+    letter_spacing_token_or_value_ref: body-sm.letter_spacing_em
+    expected_font_family: "Inter / system-ui / -apple-system / BlinkMacSystemFont / 'Segoe UI' / 'Noto Sans TC' / 'PingFang TC' / sans-serif"
+    expected_font_size_px: 12
+    expected_font_weight: 400
+    expected_line_height_px: 18
+    expected_letter_spacing_px: 0
+    expected_text_container_min_width_px: 120
+    expected_text_container_max_width_px: 520
+    wrap_rule: WRAP_MAX_2_LINES
+    truncation_rule: NO_TRUNCATION
+    expected_line_count_rule: ONE_TO_TWO_LINES
+    allowed_tolerance: {geometry_css_px: 1, rendered_line_count: 1, semantic_overflow_or_clipping: 0}
+  - target_uid: TYPO-WB01-COMPANY-PROJECT-COUNT-HEADING
+    target_role: COMPANY-PROJECT-COUNT_SECTION_HEADING
+    page_or_scope_uid: workspace:WB-01
+    viewport_or_breakpoint_uid: [WB01-GE-1440, WB01-1280-1439, WB01-LT-1280-SCROLL]
+    language: [zh-TW, zh-CN, en]
+    theme: DARK_TECH_PURPLE
+    state_scope: ALL_PAGE_STATES
+    typography_authority_ref: STAGE_EXECUTION/SHARED_AUTHORITY/GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY.yaml#typography_authority
+    font_family_token_or_value_ref: GLOBAL_TYPOGRAPHY_AUTHORITY_TY01_TY15.canonical_font_stack
+    font_size_token_or_value_ref: heading-md.font_size_px
+    font_weight_token_or_value_ref: heading-md.font_weight
+    line_height_token_or_value_ref: heading-md.line_height_ratio
+    letter_spacing_token_or_value_ref: heading-md.letter_spacing_em
+    expected_font_family: "Inter / system-ui / -apple-system / BlinkMacSystemFont / 'Segoe UI' / 'Noto Sans TC' / 'PingFang TC' / sans-serif"
+    expected_font_size_px: 20
+    expected_font_weight: 600
+    expected_line_height_px: 26
+    expected_letter_spacing_px: 0
+    expected_text_container_min_width_px: 80
+    expected_text_container_max_width_px: 520
+    wrap_rule: NO_WRAP
+    truncation_rule: ELLIPSIS
+    expected_line_count_rule: ONE_LINE
+    allowed_tolerance: {geometry_css_px: 1, rendered_line_count: 1, semantic_overflow_or_clipping: 0}
+  - target_uid: TYPO-WB01-COMPANY-PROJECT-COUNT-VALUE
+    target_role: COMPANY-PROJECT-COUNT_FIELD_VALUE
+    page_or_scope_uid: workspace:WB-01
+    viewport_or_breakpoint_uid: [WB01-GE-1440, WB01-1280-1439, WB01-LT-1280-SCROLL]
+    language: [zh-TW, zh-CN, en]
+    theme: DARK_TECH_PURPLE
+    state_scope: ALL_PAGE_STATES
+    typography_authority_ref: STAGE_EXECUTION/SHARED_AUTHORITY/GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY.yaml#typography_authority
+    font_family_token_or_value_ref: GLOBAL_TYPOGRAPHY_AUTHORITY_TY01_TY15.canonical_font_stack
+    font_size_token_or_value_ref: display-xl.font_size_px
+    font_weight_token_or_value_ref: display-xl.font_weight
+    line_height_token_or_value_ref: display-xl.line_height_ratio
+    letter_spacing_token_or_value_ref: display-xl.letter_spacing_em
+    expected_font_family: "Inter / system-ui / -apple-system / BlinkMacSystemFont / 'Segoe UI' / 'Noto Sans TC' / 'PingFang TC' / sans-serif"
+    expected_font_size_px: 32
+    expected_font_weight: 700
+    expected_line_height_px: 38.4
+    expected_letter_spacing_px: -0.64
+    expected_text_container_min_width_px: 60
+    expected_text_container_max_width_px: 520
+    wrap_rule: NO_WRAP
+    truncation_rule: ELLIPSIS
+    expected_line_count_rule: ONE_LINE
+    allowed_tolerance: {geometry_css_px: 1, rendered_line_count: 1, semantic_overflow_or_clipping: 0}
+  - target_uid: TYPO-WB01-COMPANY-PROJECT-COUNT-OPEN
+    target_role: COMPANY-PROJECT-COUNT_SECTION_OPEN_CONTROL
+    page_or_scope_uid: workspace:WB-01
+    viewport_or_breakpoint_uid: [WB01-GE-1440, WB01-1280-1439, WB01-LT-1280-SCROLL]
+    language: [zh-TW, zh-CN, en]
+    theme: DARK_TECH_PURPLE
+    state_scope: ALL_PAGE_STATES
+    typography_authority_ref: STAGE_EXECUTION/SHARED_AUTHORITY/GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY.yaml#typography_authority
+    font_family_token_or_value_ref: GLOBAL_TYPOGRAPHY_AUTHORITY_TY01_TY15.canonical_font_stack
+    font_size_token_or_value_ref: button-md.font_size_px
+    font_weight_token_or_value_ref: button-md.font_weight
+    line_height_token_or_value_ref: button-md.line_height_ratio
+    letter_spacing_token_or_value_ref: button-md.letter_spacing_em
+    expected_font_family: "Inter / system-ui / -apple-system / BlinkMacSystemFont / 'Segoe UI' / 'Noto Sans TC' / 'PingFang TC' / sans-serif"
+    expected_font_size_px: 14
+    expected_font_weight: 600
+    expected_line_height_px: 14
+    expected_letter_spacing_px: 0
+    expected_text_container_min_width_px: 40
+    expected_text_container_max_width_px: 96
+    wrap_rule: NO_WRAP
+    truncation_rule: NO_TRUNCATION
+    expected_line_count_rule: ONE_LINE
+    allowed_tolerance: {geometry_css_px: 1, rendered_line_count: 1, semantic_overflow_or_clipping: 0}
+  - target_uid: TYPO-WB01-COMPANY-RUNNING-PROJECT-COUNT-HEADING
+    target_role: COMPANY-RUNNING-PROJECT-COUNT_SECTION_HEADING
+    page_or_scope_uid: workspace:WB-01
+    viewport_or_breakpoint_uid: [WB01-GE-1440, WB01-1280-1439, WB01-LT-1280-SCROLL]
+    language: [zh-TW, zh-CN, en]
+    theme: DARK_TECH_PURPLE
+    state_scope: ALL_PAGE_STATES
+    typography_authority_ref: STAGE_EXECUTION/SHARED_AUTHORITY/GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY.yaml#typography_authority
+    font_family_token_or_value_ref: GLOBAL_TYPOGRAPHY_AUTHORITY_TY01_TY15.canonical_font_stack
+    font_size_token_or_value_ref: heading-md.font_size_px
+    font_weight_token_or_value_ref: heading-md.font_weight
+    line_height_token_or_value_ref: heading-md.line_height_ratio
+    letter_spacing_token_or_value_ref: heading-md.letter_spacing_em
+    expected_font_family: "Inter / system-ui / -apple-system / BlinkMacSystemFont / 'Segoe UI' / 'Noto Sans TC' / 'PingFang TC' / sans-serif"
+    expected_font_size_px: 20
+    expected_font_weight: 600
+    expected_line_height_px: 26
+    expected_letter_spacing_px: 0
+    expected_text_container_min_width_px: 80
+    expected_text_container_max_width_px: 520
+    wrap_rule: NO_WRAP
+    truncation_rule: ELLIPSIS
+    expected_line_count_rule: ONE_LINE
+    allowed_tolerance: {geometry_css_px: 1, rendered_line_count: 1, semantic_overflow_or_clipping: 0}
+  - target_uid: TYPO-WB01-COMPANY-RUNNING-PROJECT-COUNT-VALUE
+    target_role: COMPANY-RUNNING-PROJECT-COUNT_FIELD_VALUE
+    page_or_scope_uid: workspace:WB-01
+    viewport_or_breakpoint_uid: [WB01-GE-1440, WB01-1280-1439, WB01-LT-1280-SCROLL]
+    language: [zh-TW, zh-CN, en]
+    theme: DARK_TECH_PURPLE
+    state_scope: ALL_PAGE_STATES
+    typography_authority_ref: STAGE_EXECUTION/SHARED_AUTHORITY/GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY.yaml#typography_authority
+    font_family_token_or_value_ref: GLOBAL_TYPOGRAPHY_AUTHORITY_TY01_TY15.canonical_font_stack
+    font_size_token_or_value_ref: display-xl.font_size_px
+    font_weight_token_or_value_ref: display-xl.font_weight
+    line_height_token_or_value_ref: display-xl.line_height_ratio
+    letter_spacing_token_or_value_ref: display-xl.letter_spacing_em
+    expected_font_family: "Inter / system-ui / -apple-system / BlinkMacSystemFont / 'Segoe UI' / 'Noto Sans TC' / 'PingFang TC' / sans-serif"
+    expected_font_size_px: 32
+    expected_font_weight: 700
+    expected_line_height_px: 38.4
+    expected_letter_spacing_px: -0.64
+    expected_text_container_min_width_px: 60
+    expected_text_container_max_width_px: 520
+    wrap_rule: NO_WRAP
+    truncation_rule: ELLIPSIS
+    expected_line_count_rule: ONE_LINE
+    allowed_tolerance: {geometry_css_px: 1, rendered_line_count: 1, semantic_overflow_or_clipping: 0}
+  - target_uid: TYPO-WB01-COMPANY-RUNNING-PROJECT-COUNT-OPEN
+    target_role: COMPANY-RUNNING-PROJECT-COUNT_SECTION_OPEN_CONTROL
+    page_or_scope_uid: workspace:WB-01
+    viewport_or_breakpoint_uid: [WB01-GE-1440, WB01-1280-1439, WB01-LT-1280-SCROLL]
+    language: [zh-TW, zh-CN, en]
+    theme: DARK_TECH_PURPLE
+    state_scope: ALL_PAGE_STATES
+    typography_authority_ref: STAGE_EXECUTION/SHARED_AUTHORITY/GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY.yaml#typography_authority
+    font_family_token_or_value_ref: GLOBAL_TYPOGRAPHY_AUTHORITY_TY01_TY15.canonical_font_stack
+    font_size_token_or_value_ref: button-md.font_size_px
+    font_weight_token_or_value_ref: button-md.font_weight
+    line_height_token_or_value_ref: button-md.line_height_ratio
+    letter_spacing_token_or_value_ref: button-md.letter_spacing_em
+    expected_font_family: "Inter / system-ui / -apple-system / BlinkMacSystemFont / 'Segoe UI' / 'Noto Sans TC' / 'PingFang TC' / sans-serif"
+    expected_font_size_px: 14
+    expected_font_weight: 600
+    expected_line_height_px: 14
+    expected_letter_spacing_px: 0
+    expected_text_container_min_width_px: 40
+    expected_text_container_max_width_px: 96
+    wrap_rule: NO_WRAP
+    truncation_rule: NO_TRUNCATION
+    expected_line_count_rule: ONE_LINE
+    allowed_tolerance: {geometry_css_px: 1, rendered_line_count: 1, semantic_overflow_or_clipping: 0}
+  - target_uid: TYPO-WB01-COMPANY-PENDING-ACTION-COUNT-HEADING
+    target_role: COMPANY-PENDING-ACTION-COUNT_SECTION_HEADING
+    page_or_scope_uid: workspace:WB-01
+    viewport_or_breakpoint_uid: [WB01-GE-1440, WB01-1280-1439, WB01-LT-1280-SCROLL]
+    language: [zh-TW, zh-CN, en]
+    theme: DARK_TECH_PURPLE
+    state_scope: ALL_PAGE_STATES
+    typography_authority_ref: STAGE_EXECUTION/SHARED_AUTHORITY/GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY.yaml#typography_authority
+    font_family_token_or_value_ref: GLOBAL_TYPOGRAPHY_AUTHORITY_TY01_TY15.canonical_font_stack
+    font_size_token_or_value_ref: heading-md.font_size_px
+    font_weight_token_or_value_ref: heading-md.font_weight
+    line_height_token_or_value_ref: heading-md.line_height_ratio
+    letter_spacing_token_or_value_ref: heading-md.letter_spacing_em
+    expected_font_family: "Inter / system-ui / -apple-system / BlinkMacSystemFont / 'Segoe UI' / 'Noto Sans TC' / 'PingFang TC' / sans-serif"
+    expected_font_size_px: 20
+    expected_font_weight: 600
+    expected_line_height_px: 26
+    expected_letter_spacing_px: 0
+    expected_text_container_min_width_px: 80
+    expected_text_container_max_width_px: 520
+    wrap_rule: NO_WRAP
+    truncation_rule: ELLIPSIS
+    expected_line_count_rule: ONE_LINE
+    allowed_tolerance: {geometry_css_px: 1, rendered_line_count: 1, semantic_overflow_or_clipping: 0}
+  - target_uid: TYPO-WB01-COMPANY-PENDING-ACTION-COUNT-VALUE
+    target_role: COMPANY-PENDING-ACTION-COUNT_FIELD_VALUE
+    page_or_scope_uid: workspace:WB-01
+    viewport_or_breakpoint_uid: [WB01-GE-1440, WB01-1280-1439, WB01-LT-1280-SCROLL]
+    language: [zh-TW, zh-CN, en]
+    theme: DARK_TECH_PURPLE
+    state_scope: ALL_PAGE_STATES
+    typography_authority_ref: STAGE_EXECUTION/SHARED_AUTHORITY/GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY.yaml#typography_authority
+    font_family_token_or_value_ref: GLOBAL_TYPOGRAPHY_AUTHORITY_TY01_TY15.canonical_font_stack
+    font_size_token_or_value_ref: display-xl.font_size_px
+    font_weight_token_or_value_ref: display-xl.font_weight
+    line_height_token_or_value_ref: display-xl.line_height_ratio
+    letter_spacing_token_or_value_ref: display-xl.letter_spacing_em
+    expected_font_family: "Inter / system-ui / -apple-system / BlinkMacSystemFont / 'Segoe UI' / 'Noto Sans TC' / 'PingFang TC' / sans-serif"
+    expected_font_size_px: 32
+    expected_font_weight: 700
+    expected_line_height_px: 38.4
+    expected_letter_spacing_px: -0.64
+    expected_text_container_min_width_px: 60
+    expected_text_container_max_width_px: 520
+    wrap_rule: NO_WRAP
+    truncation_rule: ELLIPSIS
+    expected_line_count_rule: ONE_LINE
+    allowed_tolerance: {geometry_css_px: 1, rendered_line_count: 1, semantic_overflow_or_clipping: 0}
+  - target_uid: TYPO-WB01-COMPANY-PENDING-ACTION-COUNT-OPEN
+    target_role: COMPANY-PENDING-ACTION-COUNT_SECTION_OPEN_CONTROL
+    page_or_scope_uid: workspace:WB-01
+    viewport_or_breakpoint_uid: [WB01-GE-1440, WB01-1280-1439, WB01-LT-1280-SCROLL]
+    language: [zh-TW, zh-CN, en]
+    theme: DARK_TECH_PURPLE
+    state_scope: ALL_PAGE_STATES
+    typography_authority_ref: STAGE_EXECUTION/SHARED_AUTHORITY/GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY.yaml#typography_authority
+    font_family_token_or_value_ref: GLOBAL_TYPOGRAPHY_AUTHORITY_TY01_TY15.canonical_font_stack
+    font_size_token_or_value_ref: button-md.font_size_px
+    font_weight_token_or_value_ref: button-md.font_weight
+    line_height_token_or_value_ref: button-md.line_height_ratio
+    letter_spacing_token_or_value_ref: button-md.letter_spacing_em
+    expected_font_family: "Inter / system-ui / -apple-system / BlinkMacSystemFont / 'Segoe UI' / 'Noto Sans TC' / 'PingFang TC' / sans-serif"
+    expected_font_size_px: 14
+    expected_font_weight: 600
+    expected_line_height_px: 14
+    expected_letter_spacing_px: 0
+    expected_text_container_min_width_px: 40
+    expected_text_container_max_width_px: 96
+    wrap_rule: NO_WRAP
+    truncation_rule: NO_TRUNCATION
+    expected_line_count_rule: ONE_LINE
+    allowed_tolerance: {geometry_css_px: 1, rendered_line_count: 1, semantic_overflow_or_clipping: 0}
+  - target_uid: TYPO-WB01-COMPANY-PENDING-REVIEW-COUNT-HEADING
+    target_role: COMPANY-PENDING-REVIEW-COUNT_SECTION_HEADING
+    page_or_scope_uid: workspace:WB-01
+    viewport_or_breakpoint_uid: [WB01-GE-1440, WB01-1280-1439, WB01-LT-1280-SCROLL]
+    language: [zh-TW, zh-CN, en]
+    theme: DARK_TECH_PURPLE
+    state_scope: ALL_PAGE_STATES
+    typography_authority_ref: STAGE_EXECUTION/SHARED_AUTHORITY/GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY.yaml#typography_authority
+    font_family_token_or_value_ref: GLOBAL_TYPOGRAPHY_AUTHORITY_TY01_TY15.canonical_font_stack
+    font_size_token_or_value_ref: heading-md.font_size_px
+    font_weight_token_or_value_ref: heading-md.font_weight
+    line_height_token_or_value_ref: heading-md.line_height_ratio
+    letter_spacing_token_or_value_ref: heading-md.letter_spacing_em
+    expected_font_family: "Inter / system-ui / -apple-system / BlinkMacSystemFont / 'Segoe UI' / 'Noto Sans TC' / 'PingFang TC' / sans-serif"
+    expected_font_size_px: 20
+    expected_font_weight: 600
+    expected_line_height_px: 26
+    expected_letter_spacing_px: 0
+    expected_text_container_min_width_px: 80
+    expected_text_container_max_width_px: 520
+    wrap_rule: NO_WRAP
+    truncation_rule: ELLIPSIS
+    expected_line_count_rule: ONE_LINE
+    allowed_tolerance: {geometry_css_px: 1, rendered_line_count: 1, semantic_overflow_or_clipping: 0}
+  - target_uid: TYPO-WB01-COMPANY-PENDING-REVIEW-COUNT-VALUE
+    target_role: COMPANY-PENDING-REVIEW-COUNT_FIELD_VALUE
+    page_or_scope_uid: workspace:WB-01
+    viewport_or_breakpoint_uid: [WB01-GE-1440, WB01-1280-1439, WB01-LT-1280-SCROLL]
+    language: [zh-TW, zh-CN, en]
+    theme: DARK_TECH_PURPLE
+    state_scope: ALL_PAGE_STATES
+    typography_authority_ref: STAGE_EXECUTION/SHARED_AUTHORITY/GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY.yaml#typography_authority
+    font_family_token_or_value_ref: GLOBAL_TYPOGRAPHY_AUTHORITY_TY01_TY15.canonical_font_stack
+    font_size_token_or_value_ref: display-xl.font_size_px
+    font_weight_token_or_value_ref: display-xl.font_weight
+    line_height_token_or_value_ref: display-xl.line_height_ratio
+    letter_spacing_token_or_value_ref: display-xl.letter_spacing_em
+    expected_font_family: "Inter / system-ui / -apple-system / BlinkMacSystemFont / 'Segoe UI' / 'Noto Sans TC' / 'PingFang TC' / sans-serif"
+    expected_font_size_px: 32
+    expected_font_weight: 700
+    expected_line_height_px: 38.4
+    expected_letter_spacing_px: -0.64
+    expected_text_container_min_width_px: 60
+    expected_text_container_max_width_px: 520
+    wrap_rule: NO_WRAP
+    truncation_rule: ELLIPSIS
+    expected_line_count_rule: ONE_LINE
+    allowed_tolerance: {geometry_css_px: 1, rendered_line_count: 1, semantic_overflow_or_clipping: 0}
+  - target_uid: TYPO-WB01-COMPANY-PENDING-REVIEW-COUNT-OPEN
+    target_role: COMPANY-PENDING-REVIEW-COUNT_SECTION_OPEN_CONTROL
+    page_or_scope_uid: workspace:WB-01
+    viewport_or_breakpoint_uid: [WB01-GE-1440, WB01-1280-1439, WB01-LT-1280-SCROLL]
+    language: [zh-TW, zh-CN, en]
+    theme: DARK_TECH_PURPLE
+    state_scope: ALL_PAGE_STATES
+    typography_authority_ref: STAGE_EXECUTION/SHARED_AUTHORITY/GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY.yaml#typography_authority
+    font_family_token_or_value_ref: GLOBAL_TYPOGRAPHY_AUTHORITY_TY01_TY15.canonical_font_stack
+    font_size_token_or_value_ref: button-md.font_size_px
+    font_weight_token_or_value_ref: button-md.font_weight
+    line_height_token_or_value_ref: button-md.line_height_ratio
+    letter_spacing_token_or_value_ref: button-md.letter_spacing_em
+    expected_font_family: "Inter / system-ui / -apple-system / BlinkMacSystemFont / 'Segoe UI' / 'Noto Sans TC' / 'PingFang TC' / sans-serif"
+    expected_font_size_px: 14
+    expected_font_weight: 600
+    expected_line_height_px: 14
+    expected_letter_spacing_px: 0
+    expected_text_container_min_width_px: 40
+    expected_text_container_max_width_px: 96
+    wrap_rule: NO_WRAP
+    truncation_rule: NO_TRUNCATION
+    expected_line_count_rule: ONE_LINE
+    allowed_tolerance: {geometry_css_px: 1, rendered_line_count: 1, semantic_overflow_or_clipping: 0}
+  - target_uid: TYPO-WB01-COMPANY-COMPLETED-PROJECT-COUNT-HEADING
+    target_role: COMPANY-COMPLETED-PROJECT-COUNT_SECTION_HEADING
+    page_or_scope_uid: workspace:WB-01
+    viewport_or_breakpoint_uid: [WB01-GE-1440, WB01-1280-1439, WB01-LT-1280-SCROLL]
+    language: [zh-TW, zh-CN, en]
+    theme: DARK_TECH_PURPLE
+    state_scope: ALL_PAGE_STATES
+    typography_authority_ref: STAGE_EXECUTION/SHARED_AUTHORITY/GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY.yaml#typography_authority
+    font_family_token_or_value_ref: GLOBAL_TYPOGRAPHY_AUTHORITY_TY01_TY15.canonical_font_stack
+    font_size_token_or_value_ref: heading-md.font_size_px
+    font_weight_token_or_value_ref: heading-md.font_weight
+    line_height_token_or_value_ref: heading-md.line_height_ratio
+    letter_spacing_token_or_value_ref: heading-md.letter_spacing_em
+    expected_font_family: "Inter / system-ui / -apple-system / BlinkMacSystemFont / 'Segoe UI' / 'Noto Sans TC' / 'PingFang TC' / sans-serif"
+    expected_font_size_px: 20
+    expected_font_weight: 600
+    expected_line_height_px: 26
+    expected_letter_spacing_px: 0
+    expected_text_container_min_width_px: 80
+    expected_text_container_max_width_px: 520
+    wrap_rule: NO_WRAP
+    truncation_rule: ELLIPSIS
+    expected_line_count_rule: ONE_LINE
+    allowed_tolerance: {geometry_css_px: 1, rendered_line_count: 1, semantic_overflow_or_clipping: 0}
+  - target_uid: TYPO-WB01-COMPANY-COMPLETED-PROJECT-COUNT-VALUE
+    target_role: COMPANY-COMPLETED-PROJECT-COUNT_FIELD_VALUE
+    page_or_scope_uid: workspace:WB-01
+    viewport_or_breakpoint_uid: [WB01-GE-1440, WB01-1280-1439, WB01-LT-1280-SCROLL]
+    language: [zh-TW, zh-CN, en]
+    theme: DARK_TECH_PURPLE
+    state_scope: ALL_PAGE_STATES
+    typography_authority_ref: STAGE_EXECUTION/SHARED_AUTHORITY/GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY.yaml#typography_authority
+    font_family_token_or_value_ref: GLOBAL_TYPOGRAPHY_AUTHORITY_TY01_TY15.canonical_font_stack
+    font_size_token_or_value_ref: display-xl.font_size_px
+    font_weight_token_or_value_ref: display-xl.font_weight
+    line_height_token_or_value_ref: display-xl.line_height_ratio
+    letter_spacing_token_or_value_ref: display-xl.letter_spacing_em
+    expected_font_family: "Inter / system-ui / -apple-system / BlinkMacSystemFont / 'Segoe UI' / 'Noto Sans TC' / 'PingFang TC' / sans-serif"
+    expected_font_size_px: 32
+    expected_font_weight: 700
+    expected_line_height_px: 38.4
+    expected_letter_spacing_px: -0.64
+    expected_text_container_min_width_px: 60
+    expected_text_container_max_width_px: 520
+    wrap_rule: NO_WRAP
+    truncation_rule: ELLIPSIS
+    expected_line_count_rule: ONE_LINE
+    allowed_tolerance: {geometry_css_px: 1, rendered_line_count: 1, semantic_overflow_or_clipping: 0}
+  - target_uid: TYPO-WB01-COMPANY-COMPLETED-PROJECT-COUNT-OPEN
+    target_role: COMPANY-COMPLETED-PROJECT-COUNT_SECTION_OPEN_CONTROL
+    page_or_scope_uid: workspace:WB-01
+    viewport_or_breakpoint_uid: [WB01-GE-1440, WB01-1280-1439, WB01-LT-1280-SCROLL]
+    language: [zh-TW, zh-CN, en]
+    theme: DARK_TECH_PURPLE
+    state_scope: ALL_PAGE_STATES
+    typography_authority_ref: STAGE_EXECUTION/SHARED_AUTHORITY/GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY.yaml#typography_authority
+    font_family_token_or_value_ref: GLOBAL_TYPOGRAPHY_AUTHORITY_TY01_TY15.canonical_font_stack
+    font_size_token_or_value_ref: button-md.font_size_px
+    font_weight_token_or_value_ref: button-md.font_weight
+    line_height_token_or_value_ref: button-md.line_height_ratio
+    letter_spacing_token_or_value_ref: button-md.letter_spacing_em
+    expected_font_family: "Inter / system-ui / -apple-system / BlinkMacSystemFont / 'Segoe UI' / 'Noto Sans TC' / 'PingFang TC' / sans-serif"
+    expected_font_size_px: 14
+    expected_font_weight: 600
+    expected_line_height_px: 14
+    expected_letter_spacing_px: 0
+    expected_text_container_min_width_px: 40
+    expected_text_container_max_width_px: 96
+    wrap_rule: NO_WRAP
+    truncation_rule: NO_TRUNCATION
+    expected_line_count_rule: ONE_LINE
+    allowed_tolerance: {geometry_css_px: 1, rendered_line_count: 1, semantic_overflow_or_clipping: 0}
+  - target_uid: TYPO-WB01-COMPANY-AVERAGE-PROGRESS-HEADING
+    target_role: COMPANY-AVERAGE-PROGRESS_SECTION_HEADING
+    page_or_scope_uid: workspace:WB-01
+    viewport_or_breakpoint_uid: [WB01-GE-1440, WB01-1280-1439, WB01-LT-1280-SCROLL]
+    language: [zh-TW, zh-CN, en]
+    theme: DARK_TECH_PURPLE
+    state_scope: ALL_PAGE_STATES
+    typography_authority_ref: STAGE_EXECUTION/SHARED_AUTHORITY/GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY.yaml#typography_authority
+    font_family_token_or_value_ref: GLOBAL_TYPOGRAPHY_AUTHORITY_TY01_TY15.canonical_font_stack
+    font_size_token_or_value_ref: heading-md.font_size_px
+    font_weight_token_or_value_ref: heading-md.font_weight
+    line_height_token_or_value_ref: heading-md.line_height_ratio
+    letter_spacing_token_or_value_ref: heading-md.letter_spacing_em
+    expected_font_family: "Inter / system-ui / -apple-system / BlinkMacSystemFont / 'Segoe UI' / 'Noto Sans TC' / 'PingFang TC' / sans-serif"
+    expected_font_size_px: 20
+    expected_font_weight: 600
+    expected_line_height_px: 26
+    expected_letter_spacing_px: 0
+    expected_text_container_min_width_px: 80
+    expected_text_container_max_width_px: 520
+    wrap_rule: NO_WRAP
+    truncation_rule: ELLIPSIS
+    expected_line_count_rule: ONE_LINE
+    allowed_tolerance: {geometry_css_px: 1, rendered_line_count: 1, semantic_overflow_or_clipping: 0}
+  - target_uid: TYPO-WB01-COMPANY-AVERAGE-PROGRESS-VALUE
+    target_role: COMPANY-AVERAGE-PROGRESS_FIELD_VALUE
+    page_or_scope_uid: workspace:WB-01
+    viewport_or_breakpoint_uid: [WB01-GE-1440, WB01-1280-1439, WB01-LT-1280-SCROLL]
+    language: [zh-TW, zh-CN, en]
+    theme: DARK_TECH_PURPLE
+    state_scope: ALL_PAGE_STATES
+    typography_authority_ref: STAGE_EXECUTION/SHARED_AUTHORITY/GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY.yaml#typography_authority
+    font_family_token_or_value_ref: GLOBAL_TYPOGRAPHY_AUTHORITY_TY01_TY15.canonical_font_stack
+    font_size_token_or_value_ref: display-xl.font_size_px
+    font_weight_token_or_value_ref: display-xl.font_weight
+    line_height_token_or_value_ref: display-xl.line_height_ratio
+    letter_spacing_token_or_value_ref: display-xl.letter_spacing_em
+    expected_font_family: "Inter / system-ui / -apple-system / BlinkMacSystemFont / 'Segoe UI' / 'Noto Sans TC' / 'PingFang TC' / sans-serif"
+    expected_font_size_px: 32
+    expected_font_weight: 700
+    expected_line_height_px: 38.4
+    expected_letter_spacing_px: -0.64
+    expected_text_container_min_width_px: 60
+    expected_text_container_max_width_px: 520
+    wrap_rule: NO_WRAP
+    truncation_rule: ELLIPSIS
+    expected_line_count_rule: ONE_LINE
+    allowed_tolerance: {geometry_css_px: 1, rendered_line_count: 1, semantic_overflow_or_clipping: 0}
+  - target_uid: TYPO-WB01-COMPANY-AVERAGE-PROGRESS-OPEN
+    target_role: COMPANY-AVERAGE-PROGRESS_SECTION_OPEN_CONTROL
+    page_or_scope_uid: workspace:WB-01
+    viewport_or_breakpoint_uid: [WB01-GE-1440, WB01-1280-1439, WB01-LT-1280-SCROLL]
+    language: [zh-TW, zh-CN, en]
+    theme: DARK_TECH_PURPLE
+    state_scope: ALL_PAGE_STATES
+    typography_authority_ref: STAGE_EXECUTION/SHARED_AUTHORITY/GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY.yaml#typography_authority
+    font_family_token_or_value_ref: GLOBAL_TYPOGRAPHY_AUTHORITY_TY01_TY15.canonical_font_stack
+    font_size_token_or_value_ref: button-md.font_size_px
+    font_weight_token_or_value_ref: button-md.font_weight
+    line_height_token_or_value_ref: button-md.line_height_ratio
+    letter_spacing_token_or_value_ref: button-md.letter_spacing_em
+    expected_font_family: "Inter / system-ui / -apple-system / BlinkMacSystemFont / 'Segoe UI' / 'Noto Sans TC' / 'PingFang TC' / sans-serif"
+    expected_font_size_px: 14
+    expected_font_weight: 600
+    expected_line_height_px: 14
+    expected_letter_spacing_px: 0
+    expected_text_container_min_width_px: 40
+    expected_text_container_max_width_px: 96
+    wrap_rule: NO_WRAP
+    truncation_rule: NO_TRUNCATION
+    expected_line_count_rule: ONE_LINE
+    allowed_tolerance: {geometry_css_px: 1, rendered_line_count: 1, semantic_overflow_or_clipping: 0}
+  - target_uid: TYPO-WB01-PROJECT-PROGRESS-OVERVIEW-HEADING
+    target_role: PROJECT-PROGRESS-OVERVIEW_SECTION_HEADING
+    page_or_scope_uid: workspace:WB-01
+    viewport_or_breakpoint_uid: [WB01-GE-1440, WB01-1280-1439, WB01-LT-1280-SCROLL]
+    language: [zh-TW, zh-CN, en]
+    theme: DARK_TECH_PURPLE
+    state_scope: ALL_PAGE_STATES
+    typography_authority_ref: STAGE_EXECUTION/SHARED_AUTHORITY/GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY.yaml#typography_authority
+    font_family_token_or_value_ref: GLOBAL_TYPOGRAPHY_AUTHORITY_TY01_TY15.canonical_font_stack
+    font_size_token_or_value_ref: heading-md.font_size_px
+    font_weight_token_or_value_ref: heading-md.font_weight
+    line_height_token_or_value_ref: heading-md.line_height_ratio
+    letter_spacing_token_or_value_ref: heading-md.letter_spacing_em
+    expected_font_family: "Inter / system-ui / -apple-system / BlinkMacSystemFont / 'Segoe UI' / 'Noto Sans TC' / 'PingFang TC' / sans-serif"
+    expected_font_size_px: 20
+    expected_font_weight: 600
+    expected_line_height_px: 26
+    expected_letter_spacing_px: 0
+    expected_text_container_min_width_px: 80
+    expected_text_container_max_width_px: 520
+    wrap_rule: WRAP_MAX_2_LINES
+    truncation_rule: NO_TRUNCATION
+    expected_line_count_rule: ONE_TO_TWO_LINES
+    allowed_tolerance: {geometry_css_px: 1, rendered_line_count: 1, semantic_overflow_or_clipping: 0}
+  - target_uid: TYPO-WB01-PROJECT-PROGRESS-OVERVIEW-VALUE
+    target_role: PROJECT-PROGRESS-OVERVIEW_FIELD_VALUE
+    page_or_scope_uid: workspace:WB-01
+    viewport_or_breakpoint_uid: [WB01-GE-1440, WB01-1280-1439, WB01-LT-1280-SCROLL]
+    language: [zh-TW, zh-CN, en]
+    theme: DARK_TECH_PURPLE
+    state_scope: ALL_PAGE_STATES
+    typography_authority_ref: STAGE_EXECUTION/SHARED_AUTHORITY/GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY.yaml#typography_authority
+    font_family_token_or_value_ref: GLOBAL_TYPOGRAPHY_AUTHORITY_TY01_TY15.canonical_font_stack
+    font_size_token_or_value_ref: body-md.font_size_px
+    font_weight_token_or_value_ref: body-md.font_weight
+    line_height_token_or_value_ref: body-md.line_height_ratio
+    letter_spacing_token_or_value_ref: body-md.letter_spacing_em
+    expected_font_family: "Inter / system-ui / -apple-system / BlinkMacSystemFont / 'Segoe UI' / 'Noto Sans TC' / 'PingFang TC' / sans-serif"
+    expected_font_size_px: 14
+    expected_font_weight: 400
+    expected_line_height_px: 21.7
+    expected_letter_spacing_px: 0
+    expected_text_container_min_width_px: 60
+    expected_text_container_max_width_px: 520
+    wrap_rule: WRAP_MAX_2_LINES
+    truncation_rule: NO_TRUNCATION
+    expected_line_count_rule: ONE_TO_TWO_LINES
+    allowed_tolerance: {geometry_css_px: 1, rendered_line_count: 1, semantic_overflow_or_clipping: 0}
+  - target_uid: TYPO-WB01-PROJECT-PROGRESS-OVERVIEW-OPEN
+    target_role: PROJECT-PROGRESS-OVERVIEW_SECTION_OPEN_CONTROL
+    page_or_scope_uid: workspace:WB-01
+    viewport_or_breakpoint_uid: [WB01-GE-1440, WB01-1280-1439, WB01-LT-1280-SCROLL]
+    language: [zh-TW, zh-CN, en]
+    theme: DARK_TECH_PURPLE
+    state_scope: ALL_PAGE_STATES
+    typography_authority_ref: STAGE_EXECUTION/SHARED_AUTHORITY/GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY.yaml#typography_authority
+    font_family_token_or_value_ref: GLOBAL_TYPOGRAPHY_AUTHORITY_TY01_TY15.canonical_font_stack
+    font_size_token_or_value_ref: button-md.font_size_px
+    font_weight_token_or_value_ref: button-md.font_weight
+    line_height_token_or_value_ref: button-md.line_height_ratio
+    letter_spacing_token_or_value_ref: button-md.letter_spacing_em
+    expected_font_family: "Inter / system-ui / -apple-system / BlinkMacSystemFont / 'Segoe UI' / 'Noto Sans TC' / 'PingFang TC' / sans-serif"
+    expected_font_size_px: 14
+    expected_font_weight: 600
+    expected_line_height_px: 14
+    expected_letter_spacing_px: 0
+    expected_text_container_min_width_px: 40
+    expected_text_container_max_width_px: 96
+    wrap_rule: NO_WRAP
+    truncation_rule: NO_TRUNCATION
+    expected_line_count_rule: ONE_LINE
+    allowed_tolerance: {geometry_css_px: 1, rendered_line_count: 1, semantic_overflow_or_clipping: 0}
+  - target_uid: TYPO-WB01-COMPANY-PROGRESS-SUMMARY-HEADING
+    target_role: COMPANY-PROGRESS-SUMMARY_SECTION_HEADING
+    page_or_scope_uid: workspace:WB-01
+    viewport_or_breakpoint_uid: [WB01-GE-1440, WB01-1280-1439, WB01-LT-1280-SCROLL]
+    language: [zh-TW, zh-CN, en]
+    theme: DARK_TECH_PURPLE
+    state_scope: ALL_PAGE_STATES
+    typography_authority_ref: STAGE_EXECUTION/SHARED_AUTHORITY/GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY.yaml#typography_authority
+    font_family_token_or_value_ref: GLOBAL_TYPOGRAPHY_AUTHORITY_TY01_TY15.canonical_font_stack
+    font_size_token_or_value_ref: heading-md.font_size_px
+    font_weight_token_or_value_ref: heading-md.font_weight
+    line_height_token_or_value_ref: heading-md.line_height_ratio
+    letter_spacing_token_or_value_ref: heading-md.letter_spacing_em
+    expected_font_family: "Inter / system-ui / -apple-system / BlinkMacSystemFont / 'Segoe UI' / 'Noto Sans TC' / 'PingFang TC' / sans-serif"
+    expected_font_size_px: 20
+    expected_font_weight: 600
+    expected_line_height_px: 26
+    expected_letter_spacing_px: 0
+    expected_text_container_min_width_px: 80
+    expected_text_container_max_width_px: 520
+    wrap_rule: WRAP_MAX_2_LINES
+    truncation_rule: NO_TRUNCATION
+    expected_line_count_rule: ONE_TO_TWO_LINES
+    allowed_tolerance: {geometry_css_px: 1, rendered_line_count: 1, semantic_overflow_or_clipping: 0}
+  - target_uid: TYPO-WB01-COMPANY-PROGRESS-SUMMARY-VALUE
+    target_role: COMPANY-PROGRESS-SUMMARY_FIELD_VALUE
+    page_or_scope_uid: workspace:WB-01
+    viewport_or_breakpoint_uid: [WB01-GE-1440, WB01-1280-1439, WB01-LT-1280-SCROLL]
+    language: [zh-TW, zh-CN, en]
+    theme: DARK_TECH_PURPLE
+    state_scope: ALL_PAGE_STATES
+    typography_authority_ref: STAGE_EXECUTION/SHARED_AUTHORITY/GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY.yaml#typography_authority
+    font_family_token_or_value_ref: GLOBAL_TYPOGRAPHY_AUTHORITY_TY01_TY15.canonical_font_stack
+    font_size_token_or_value_ref: body-md.font_size_px
+    font_weight_token_or_value_ref: body-md.font_weight
+    line_height_token_or_value_ref: body-md.line_height_ratio
+    letter_spacing_token_or_value_ref: body-md.letter_spacing_em
+    expected_font_family: "Inter / system-ui / -apple-system / BlinkMacSystemFont / 'Segoe UI' / 'Noto Sans TC' / 'PingFang TC' / sans-serif"
+    expected_font_size_px: 14
+    expected_font_weight: 400
+    expected_line_height_px: 21.7
+    expected_letter_spacing_px: 0
+    expected_text_container_min_width_px: 60
+    expected_text_container_max_width_px: 520
+    wrap_rule: WRAP_MAX_2_LINES
+    truncation_rule: NO_TRUNCATION
+    expected_line_count_rule: ONE_TO_TWO_LINES
+    allowed_tolerance: {geometry_css_px: 1, rendered_line_count: 1, semantic_overflow_or_clipping: 0}
+  - target_uid: TYPO-WB01-COMPANY-PROGRESS-SUMMARY-OPEN
+    target_role: COMPANY-PROGRESS-SUMMARY_SECTION_OPEN_CONTROL
+    page_or_scope_uid: workspace:WB-01
+    viewport_or_breakpoint_uid: [WB01-GE-1440, WB01-1280-1439, WB01-LT-1280-SCROLL]
+    language: [zh-TW, zh-CN, en]
+    theme: DARK_TECH_PURPLE
+    state_scope: ALL_PAGE_STATES
+    typography_authority_ref: STAGE_EXECUTION/SHARED_AUTHORITY/GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY.yaml#typography_authority
+    font_family_token_or_value_ref: GLOBAL_TYPOGRAPHY_AUTHORITY_TY01_TY15.canonical_font_stack
+    font_size_token_or_value_ref: button-md.font_size_px
+    font_weight_token_or_value_ref: button-md.font_weight
+    line_height_token_or_value_ref: button-md.line_height_ratio
+    letter_spacing_token_or_value_ref: button-md.letter_spacing_em
+    expected_font_family: "Inter / system-ui / -apple-system / BlinkMacSystemFont / 'Segoe UI' / 'Noto Sans TC' / 'PingFang TC' / sans-serif"
+    expected_font_size_px: 14
+    expected_font_weight: 600
+    expected_line_height_px: 14
+    expected_letter_spacing_px: 0
+    expected_text_container_min_width_px: 40
+    expected_text_container_max_width_px: 96
+    wrap_rule: NO_WRAP
+    truncation_rule: NO_TRUNCATION
+    expected_line_count_rule: ONE_LINE
+    allowed_tolerance: {geometry_css_px: 1, rendered_line_count: 1, semantic_overflow_or_clipping: 0}
+  - target_uid: TYPO-WB01-PRODUCTION-SUMMARY-HEADING
+    target_role: PRODUCTION-SUMMARY_SECTION_HEADING
+    page_or_scope_uid: workspace:WB-01
+    viewport_or_breakpoint_uid: [WB01-GE-1440, WB01-1280-1439, WB01-LT-1280-SCROLL]
+    language: [zh-TW, zh-CN, en]
+    theme: DARK_TECH_PURPLE
+    state_scope: ALL_PAGE_STATES
+    typography_authority_ref: STAGE_EXECUTION/SHARED_AUTHORITY/GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY.yaml#typography_authority
+    font_family_token_or_value_ref: GLOBAL_TYPOGRAPHY_AUTHORITY_TY01_TY15.canonical_font_stack
+    font_size_token_or_value_ref: heading-md.font_size_px
+    font_weight_token_or_value_ref: heading-md.font_weight
+    line_height_token_or_value_ref: heading-md.line_height_ratio
+    letter_spacing_token_or_value_ref: heading-md.letter_spacing_em
+    expected_font_family: "Inter / system-ui / -apple-system / BlinkMacSystemFont / 'Segoe UI' / 'Noto Sans TC' / 'PingFang TC' / sans-serif"
+    expected_font_size_px: 20
+    expected_font_weight: 600
+    expected_line_height_px: 26
+    expected_letter_spacing_px: 0
+    expected_text_container_min_width_px: 80
+    expected_text_container_max_width_px: 520
+    wrap_rule: WRAP_MAX_2_LINES
+    truncation_rule: NO_TRUNCATION
+    expected_line_count_rule: ONE_TO_TWO_LINES
+    allowed_tolerance: {geometry_css_px: 1, rendered_line_count: 1, semantic_overflow_or_clipping: 0}
+  - target_uid: TYPO-WB01-PRODUCTION-SUMMARY-VALUE
+    target_role: PRODUCTION-SUMMARY_FIELD_VALUE
+    page_or_scope_uid: workspace:WB-01
+    viewport_or_breakpoint_uid: [WB01-GE-1440, WB01-1280-1439, WB01-LT-1280-SCROLL]
+    language: [zh-TW, zh-CN, en]
+    theme: DARK_TECH_PURPLE
+    state_scope: ALL_PAGE_STATES
+    typography_authority_ref: STAGE_EXECUTION/SHARED_AUTHORITY/GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY.yaml#typography_authority
+    font_family_token_or_value_ref: GLOBAL_TYPOGRAPHY_AUTHORITY_TY01_TY15.canonical_font_stack
+    font_size_token_or_value_ref: body-md.font_size_px
+    font_weight_token_or_value_ref: body-md.font_weight
+    line_height_token_or_value_ref: body-md.line_height_ratio
+    letter_spacing_token_or_value_ref: body-md.letter_spacing_em
+    expected_font_family: "Inter / system-ui / -apple-system / BlinkMacSystemFont / 'Segoe UI' / 'Noto Sans TC' / 'PingFang TC' / sans-serif"
+    expected_font_size_px: 14
+    expected_font_weight: 400
+    expected_line_height_px: 21.7
+    expected_letter_spacing_px: 0
+    expected_text_container_min_width_px: 60
+    expected_text_container_max_width_px: 520
+    wrap_rule: WRAP_MAX_2_LINES
+    truncation_rule: NO_TRUNCATION
+    expected_line_count_rule: ONE_TO_TWO_LINES
+    allowed_tolerance: {geometry_css_px: 1, rendered_line_count: 1, semantic_overflow_or_clipping: 0}
+  - target_uid: TYPO-WB01-PRODUCTION-SUMMARY-OPEN
+    target_role: PRODUCTION-SUMMARY_SECTION_OPEN_CONTROL
+    page_or_scope_uid: workspace:WB-01
+    viewport_or_breakpoint_uid: [WB01-GE-1440, WB01-1280-1439, WB01-LT-1280-SCROLL]
+    language: [zh-TW, zh-CN, en]
+    theme: DARK_TECH_PURPLE
+    state_scope: ALL_PAGE_STATES
+    typography_authority_ref: STAGE_EXECUTION/SHARED_AUTHORITY/GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY.yaml#typography_authority
+    font_family_token_or_value_ref: GLOBAL_TYPOGRAPHY_AUTHORITY_TY01_TY15.canonical_font_stack
+    font_size_token_or_value_ref: button-md.font_size_px
+    font_weight_token_or_value_ref: button-md.font_weight
+    line_height_token_or_value_ref: button-md.line_height_ratio
+    letter_spacing_token_or_value_ref: button-md.letter_spacing_em
+    expected_font_family: "Inter / system-ui / -apple-system / BlinkMacSystemFont / 'Segoe UI' / 'Noto Sans TC' / 'PingFang TC' / sans-serif"
+    expected_font_size_px: 14
+    expected_font_weight: 600
+    expected_line_height_px: 14
+    expected_letter_spacing_px: 0
+    expected_text_container_min_width_px: 40
+    expected_text_container_max_width_px: 96
+    wrap_rule: NO_WRAP
+    truncation_rule: NO_TRUNCATION
+    expected_line_count_rule: ONE_LINE
+    allowed_tolerance: {geometry_css_px: 1, rendered_line_count: 1, semantic_overflow_or_clipping: 0}
+  - target_uid: TYPO-WB01-NOTIFICATIONS-HEADING
+    target_role: NOTIFICATIONS_SECTION_HEADING
+    page_or_scope_uid: workspace:WB-01
+    viewport_or_breakpoint_uid: [WB01-GE-1440, WB01-1280-1439, WB01-LT-1280-SCROLL]
+    language: [zh-TW, zh-CN, en]
+    theme: DARK_TECH_PURPLE
+    state_scope: ALL_PAGE_STATES
+    typography_authority_ref: STAGE_EXECUTION/SHARED_AUTHORITY/GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY.yaml#typography_authority
+    font_family_token_or_value_ref: GLOBAL_TYPOGRAPHY_AUTHORITY_TY01_TY15.canonical_font_stack
+    font_size_token_or_value_ref: heading-md.font_size_px
+    font_weight_token_or_value_ref: heading-md.font_weight
+    line_height_token_or_value_ref: heading-md.line_height_ratio
+    letter_spacing_token_or_value_ref: heading-md.letter_spacing_em
+    expected_font_family: "Inter / system-ui / -apple-system / BlinkMacSystemFont / 'Segoe UI' / 'Noto Sans TC' / 'PingFang TC' / sans-serif"
+    expected_font_size_px: 20
+    expected_font_weight: 600
+    expected_line_height_px: 26
+    expected_letter_spacing_px: 0
+    expected_text_container_min_width_px: 80
+    expected_text_container_max_width_px: 520
+    wrap_rule: WRAP_MAX_2_LINES
+    truncation_rule: NO_TRUNCATION
+    expected_line_count_rule: ONE_TO_TWO_LINES
+    allowed_tolerance: {geometry_css_px: 1, rendered_line_count: 1, semantic_overflow_or_clipping: 0}
+  - target_uid: TYPO-WB01-NOTIFICATIONS-VALUE
+    target_role: NOTIFICATIONS_FIELD_VALUE
+    page_or_scope_uid: workspace:WB-01
+    viewport_or_breakpoint_uid: [WB01-GE-1440, WB01-1280-1439, WB01-LT-1280-SCROLL]
+    language: [zh-TW, zh-CN, en]
+    theme: DARK_TECH_PURPLE
+    state_scope: ALL_PAGE_STATES
+    typography_authority_ref: STAGE_EXECUTION/SHARED_AUTHORITY/GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY.yaml#typography_authority
+    font_family_token_or_value_ref: GLOBAL_TYPOGRAPHY_AUTHORITY_TY01_TY15.canonical_font_stack
+    font_size_token_or_value_ref: body-md.font_size_px
+    font_weight_token_or_value_ref: body-md.font_weight
+    line_height_token_or_value_ref: body-md.line_height_ratio
+    letter_spacing_token_or_value_ref: body-md.letter_spacing_em
+    expected_font_family: "Inter / system-ui / -apple-system / BlinkMacSystemFont / 'Segoe UI' / 'Noto Sans TC' / 'PingFang TC' / sans-serif"
+    expected_font_size_px: 14
+    expected_font_weight: 400
+    expected_line_height_px: 21.7
+    expected_letter_spacing_px: 0
+    expected_text_container_min_width_px: 60
+    expected_text_container_max_width_px: 520
+    wrap_rule: WRAP_MAX_2_LINES
+    truncation_rule: NO_TRUNCATION
+    expected_line_count_rule: ONE_TO_TWO_LINES
+    allowed_tolerance: {geometry_css_px: 1, rendered_line_count: 1, semantic_overflow_or_clipping: 0}
+  - target_uid: TYPO-WB01-NOTIFICATIONS-OPEN
+    target_role: NOTIFICATIONS_SECTION_OPEN_CONTROL
+    page_or_scope_uid: workspace:WB-01
+    viewport_or_breakpoint_uid: [WB01-GE-1440, WB01-1280-1439, WB01-LT-1280-SCROLL]
+    language: [zh-TW, zh-CN, en]
+    theme: DARK_TECH_PURPLE
+    state_scope: ALL_PAGE_STATES
+    typography_authority_ref: STAGE_EXECUTION/SHARED_AUTHORITY/GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY.yaml#typography_authority
+    font_family_token_or_value_ref: GLOBAL_TYPOGRAPHY_AUTHORITY_TY01_TY15.canonical_font_stack
+    font_size_token_or_value_ref: button-md.font_size_px
+    font_weight_token_or_value_ref: button-md.font_weight
+    line_height_token_or_value_ref: button-md.line_height_ratio
+    letter_spacing_token_or_value_ref: button-md.letter_spacing_em
+    expected_font_family: "Inter / system-ui / -apple-system / BlinkMacSystemFont / 'Segoe UI' / 'Noto Sans TC' / 'PingFang TC' / sans-serif"
+    expected_font_size_px: 14
+    expected_font_weight: 600
+    expected_line_height_px: 14
+    expected_letter_spacing_px: 0
+    expected_text_container_min_width_px: 40
+    expected_text_container_max_width_px: 96
+    wrap_rule: NO_WRAP
+    truncation_rule: NO_TRUNCATION
+    expected_line_count_rule: ONE_LINE
+    allowed_tolerance: {geometry_css_px: 1, rendered_line_count: 1, semantic_overflow_or_clipping: 0}
+  - target_uid: TYPO-WB01-COMPANY-ANNOUNCEMENTS-HEADING
+    target_role: COMPANY-ANNOUNCEMENTS_SECTION_HEADING
+    page_or_scope_uid: workspace:WB-01
+    viewport_or_breakpoint_uid: [WB01-GE-1440, WB01-1280-1439, WB01-LT-1280-SCROLL]
+    language: [zh-TW, zh-CN, en]
+    theme: DARK_TECH_PURPLE
+    state_scope: ALL_PAGE_STATES
+    typography_authority_ref: STAGE_EXECUTION/SHARED_AUTHORITY/GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY.yaml#typography_authority
+    font_family_token_or_value_ref: GLOBAL_TYPOGRAPHY_AUTHORITY_TY01_TY15.canonical_font_stack
+    font_size_token_or_value_ref: heading-md.font_size_px
+    font_weight_token_or_value_ref: heading-md.font_weight
+    line_height_token_or_value_ref: heading-md.line_height_ratio
+    letter_spacing_token_or_value_ref: heading-md.letter_spacing_em
+    expected_font_family: "Inter / system-ui / -apple-system / BlinkMacSystemFont / 'Segoe UI' / 'Noto Sans TC' / 'PingFang TC' / sans-serif"
+    expected_font_size_px: 20
+    expected_font_weight: 600
+    expected_line_height_px: 26
+    expected_letter_spacing_px: 0
+    expected_text_container_min_width_px: 80
+    expected_text_container_max_width_px: 520
+    wrap_rule: WRAP_MAX_2_LINES
+    truncation_rule: NO_TRUNCATION
+    expected_line_count_rule: ONE_TO_TWO_LINES
+    allowed_tolerance: {geometry_css_px: 1, rendered_line_count: 1, semantic_overflow_or_clipping: 0}
+  - target_uid: TYPO-WB01-COMPANY-ANNOUNCEMENTS-VALUE
+    target_role: COMPANY-ANNOUNCEMENTS_FIELD_VALUE
+    page_or_scope_uid: workspace:WB-01
+    viewport_or_breakpoint_uid: [WB01-GE-1440, WB01-1280-1439, WB01-LT-1280-SCROLL]
+    language: [zh-TW, zh-CN, en]
+    theme: DARK_TECH_PURPLE
+    state_scope: ALL_PAGE_STATES
+    typography_authority_ref: STAGE_EXECUTION/SHARED_AUTHORITY/GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY.yaml#typography_authority
+    font_family_token_or_value_ref: GLOBAL_TYPOGRAPHY_AUTHORITY_TY01_TY15.canonical_font_stack
+    font_size_token_or_value_ref: body-md.font_size_px
+    font_weight_token_or_value_ref: body-md.font_weight
+    line_height_token_or_value_ref: body-md.line_height_ratio
+    letter_spacing_token_or_value_ref: body-md.letter_spacing_em
+    expected_font_family: "Inter / system-ui / -apple-system / BlinkMacSystemFont / 'Segoe UI' / 'Noto Sans TC' / 'PingFang TC' / sans-serif"
+    expected_font_size_px: 14
+    expected_font_weight: 400
+    expected_line_height_px: 21.7
+    expected_letter_spacing_px: 0
+    expected_text_container_min_width_px: 60
+    expected_text_container_max_width_px: 520
+    wrap_rule: WRAP_MAX_2_LINES
+    truncation_rule: NO_TRUNCATION
+    expected_line_count_rule: ONE_TO_TWO_LINES
+    allowed_tolerance: {geometry_css_px: 1, rendered_line_count: 1, semantic_overflow_or_clipping: 0}
+  - target_uid: TYPO-WB01-COMPANY-ANNOUNCEMENTS-OPEN
+    target_role: COMPANY-ANNOUNCEMENTS_SECTION_OPEN_CONTROL
+    page_or_scope_uid: workspace:WB-01
+    viewport_or_breakpoint_uid: [WB01-GE-1440, WB01-1280-1439, WB01-LT-1280-SCROLL]
+    language: [zh-TW, zh-CN, en]
+    theme: DARK_TECH_PURPLE
+    state_scope: ALL_PAGE_STATES
+    typography_authority_ref: STAGE_EXECUTION/SHARED_AUTHORITY/GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY.yaml#typography_authority
+    font_family_token_or_value_ref: GLOBAL_TYPOGRAPHY_AUTHORITY_TY01_TY15.canonical_font_stack
+    font_size_token_or_value_ref: button-md.font_size_px
+    font_weight_token_or_value_ref: button-md.font_weight
+    line_height_token_or_value_ref: button-md.line_height_ratio
+    letter_spacing_token_or_value_ref: button-md.letter_spacing_em
+    expected_font_family: "Inter / system-ui / -apple-system / BlinkMacSystemFont / 'Segoe UI' / 'Noto Sans TC' / 'PingFang TC' / sans-serif"
+    expected_font_size_px: 14
+    expected_font_weight: 600
+    expected_line_height_px: 14
+    expected_letter_spacing_px: 0
+    expected_text_container_min_width_px: 40
+    expected_text_container_max_width_px: 96
+    wrap_rule: NO_WRAP
+    truncation_rule: NO_TRUNCATION
+    expected_line_count_rule: ONE_LINE
+    allowed_tolerance: {geometry_css_px: 1, rendered_line_count: 1, semantic_overflow_or_clipping: 0}
+  - target_uid: TYPO-WB01-INDUSTRY-NEWS-HEADING
+    target_role: INDUSTRY-NEWS_SECTION_HEADING
+    page_or_scope_uid: workspace:WB-01
+    viewport_or_breakpoint_uid: [WB01-GE-1440, WB01-1280-1439, WB01-LT-1280-SCROLL]
+    language: [zh-TW, zh-CN, en]
+    theme: DARK_TECH_PURPLE
+    state_scope: ALL_PAGE_STATES
+    typography_authority_ref: STAGE_EXECUTION/SHARED_AUTHORITY/GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY.yaml#typography_authority
+    font_family_token_or_value_ref: GLOBAL_TYPOGRAPHY_AUTHORITY_TY01_TY15.canonical_font_stack
+    font_size_token_or_value_ref: heading-md.font_size_px
+    font_weight_token_or_value_ref: heading-md.font_weight
+    line_height_token_or_value_ref: heading-md.line_height_ratio
+    letter_spacing_token_or_value_ref: heading-md.letter_spacing_em
+    expected_font_family: "Inter / system-ui / -apple-system / BlinkMacSystemFont / 'Segoe UI' / 'Noto Sans TC' / 'PingFang TC' / sans-serif"
+    expected_font_size_px: 20
+    expected_font_weight: 600
+    expected_line_height_px: 26
+    expected_letter_spacing_px: 0
+    expected_text_container_min_width_px: 80
+    expected_text_container_max_width_px: 520
+    wrap_rule: WRAP_MAX_2_LINES
+    truncation_rule: NO_TRUNCATION
+    expected_line_count_rule: ONE_TO_TWO_LINES
+    allowed_tolerance: {geometry_css_px: 1, rendered_line_count: 1, semantic_overflow_or_clipping: 0}
+  - target_uid: TYPO-WB01-INDUSTRY-NEWS-VALUE
+    target_role: INDUSTRY-NEWS_FIELD_VALUE
+    page_or_scope_uid: workspace:WB-01
+    viewport_or_breakpoint_uid: [WB01-GE-1440, WB01-1280-1439, WB01-LT-1280-SCROLL]
+    language: [zh-TW, zh-CN, en]
+    theme: DARK_TECH_PURPLE
+    state_scope: ALL_PAGE_STATES
+    typography_authority_ref: STAGE_EXECUTION/SHARED_AUTHORITY/GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY.yaml#typography_authority
+    font_family_token_or_value_ref: GLOBAL_TYPOGRAPHY_AUTHORITY_TY01_TY15.canonical_font_stack
+    font_size_token_or_value_ref: body-md.font_size_px
+    font_weight_token_or_value_ref: body-md.font_weight
+    line_height_token_or_value_ref: body-md.line_height_ratio
+    letter_spacing_token_or_value_ref: body-md.letter_spacing_em
+    expected_font_family: "Inter / system-ui / -apple-system / BlinkMacSystemFont / 'Segoe UI' / 'Noto Sans TC' / 'PingFang TC' / sans-serif"
+    expected_font_size_px: 14
+    expected_font_weight: 400
+    expected_line_height_px: 21.7
+    expected_letter_spacing_px: 0
+    expected_text_container_min_width_px: 60
+    expected_text_container_max_width_px: 520
+    wrap_rule: WRAP_MAX_2_LINES
+    truncation_rule: NO_TRUNCATION
+    expected_line_count_rule: ONE_TO_TWO_LINES
+    allowed_tolerance: {geometry_css_px: 1, rendered_line_count: 1, semantic_overflow_or_clipping: 0}
+  - target_uid: TYPO-WB01-INDUSTRY-NEWS-OPEN
+    target_role: INDUSTRY-NEWS_SECTION_OPEN_CONTROL
+    page_or_scope_uid: workspace:WB-01
+    viewport_or_breakpoint_uid: [WB01-GE-1440, WB01-1280-1439, WB01-LT-1280-SCROLL]
+    language: [zh-TW, zh-CN, en]
+    theme: DARK_TECH_PURPLE
+    state_scope: ALL_PAGE_STATES
+    typography_authority_ref: STAGE_EXECUTION/SHARED_AUTHORITY/GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY.yaml#typography_authority
+    font_family_token_or_value_ref: GLOBAL_TYPOGRAPHY_AUTHORITY_TY01_TY15.canonical_font_stack
+    font_size_token_or_value_ref: button-md.font_size_px
+    font_weight_token_or_value_ref: button-md.font_weight
+    line_height_token_or_value_ref: button-md.line_height_ratio
+    letter_spacing_token_or_value_ref: button-md.letter_spacing_em
+    expected_font_family: "Inter / system-ui / -apple-system / BlinkMacSystemFont / 'Segoe UI' / 'Noto Sans TC' / 'PingFang TC' / sans-serif"
+    expected_font_size_px: 14
+    expected_font_weight: 600
+    expected_line_height_px: 14
+    expected_letter_spacing_px: 0
+    expected_text_container_min_width_px: 40
+    expected_text_container_max_width_px: 96
+    wrap_rule: NO_WRAP
+    truncation_rule: NO_TRUNCATION
+    expected_line_count_rule: ONE_LINE
+    allowed_tolerance: {geometry_css_px: 1, rendered_line_count: 1, semantic_overflow_or_clipping: 0}
+  - target_uid: TYPO-WB01-SYSTEM-STATUS-SUMMARY-HEADING
+    target_role: SYSTEM-STATUS-SUMMARY_SECTION_HEADING
+    page_or_scope_uid: workspace:WB-01
+    viewport_or_breakpoint_uid: [WB01-GE-1440, WB01-1280-1439, WB01-LT-1280-SCROLL]
+    language: [zh-TW, zh-CN, en]
+    theme: DARK_TECH_PURPLE
+    state_scope: ALL_PAGE_STATES
+    typography_authority_ref: STAGE_EXECUTION/SHARED_AUTHORITY/GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY.yaml#typography_authority
+    font_family_token_or_value_ref: GLOBAL_TYPOGRAPHY_AUTHORITY_TY01_TY15.canonical_font_stack
+    font_size_token_or_value_ref: heading-md.font_size_px
+    font_weight_token_or_value_ref: heading-md.font_weight
+    line_height_token_or_value_ref: heading-md.line_height_ratio
+    letter_spacing_token_or_value_ref: heading-md.letter_spacing_em
+    expected_font_family: "Inter / system-ui / -apple-system / BlinkMacSystemFont / 'Segoe UI' / 'Noto Sans TC' / 'PingFang TC' / sans-serif"
+    expected_font_size_px: 20
+    expected_font_weight: 600
+    expected_line_height_px: 26
+    expected_letter_spacing_px: 0
+    expected_text_container_min_width_px: 80
+    expected_text_container_max_width_px: 520
+    wrap_rule: WRAP_MAX_2_LINES
+    truncation_rule: NO_TRUNCATION
+    expected_line_count_rule: ONE_TO_TWO_LINES
+    allowed_tolerance: {geometry_css_px: 1, rendered_line_count: 1, semantic_overflow_or_clipping: 0}
+  - target_uid: TYPO-WB01-SYSTEM-STATUS-SUMMARY-VALUE
+    target_role: SYSTEM-STATUS-SUMMARY_FIELD_VALUE
+    page_or_scope_uid: workspace:WB-01
+    viewport_or_breakpoint_uid: [WB01-GE-1440, WB01-1280-1439, WB01-LT-1280-SCROLL]
+    language: [zh-TW, zh-CN, en]
+    theme: DARK_TECH_PURPLE
+    state_scope: ALL_PAGE_STATES
+    typography_authority_ref: STAGE_EXECUTION/SHARED_AUTHORITY/GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY.yaml#typography_authority
+    font_family_token_or_value_ref: GLOBAL_TYPOGRAPHY_AUTHORITY_TY01_TY15.canonical_font_stack
+    font_size_token_or_value_ref: body-md.font_size_px
+    font_weight_token_or_value_ref: body-md.font_weight
+    line_height_token_or_value_ref: body-md.line_height_ratio
+    letter_spacing_token_or_value_ref: body-md.letter_spacing_em
+    expected_font_family: "Inter / system-ui / -apple-system / BlinkMacSystemFont / 'Segoe UI' / 'Noto Sans TC' / 'PingFang TC' / sans-serif"
+    expected_font_size_px: 14
+    expected_font_weight: 400
+    expected_line_height_px: 21.7
+    expected_letter_spacing_px: 0
+    expected_text_container_min_width_px: 60
+    expected_text_container_max_width_px: 520
+    wrap_rule: WRAP_MAX_2_LINES
+    truncation_rule: NO_TRUNCATION
+    expected_line_count_rule: ONE_TO_TWO_LINES
+    allowed_tolerance: {geometry_css_px: 1, rendered_line_count: 1, semantic_overflow_or_clipping: 0}
+  - target_uid: TYPO-WB01-SYSTEM-STATUS-SUMMARY-OPEN
+    target_role: SYSTEM-STATUS-SUMMARY_SECTION_OPEN_CONTROL
+    page_or_scope_uid: workspace:WB-01
+    viewport_or_breakpoint_uid: [WB01-GE-1440, WB01-1280-1439, WB01-LT-1280-SCROLL]
+    language: [zh-TW, zh-CN, en]
+    theme: DARK_TECH_PURPLE
+    state_scope: ALL_PAGE_STATES
+    typography_authority_ref: STAGE_EXECUTION/SHARED_AUTHORITY/GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY.yaml#typography_authority
+    font_family_token_or_value_ref: GLOBAL_TYPOGRAPHY_AUTHORITY_TY01_TY15.canonical_font_stack
+    font_size_token_or_value_ref: button-md.font_size_px
+    font_weight_token_or_value_ref: button-md.font_weight
+    line_height_token_or_value_ref: button-md.line_height_ratio
+    letter_spacing_token_or_value_ref: button-md.letter_spacing_em
+    expected_font_family: "Inter / system-ui / -apple-system / BlinkMacSystemFont / 'Segoe UI' / 'Noto Sans TC' / 'PingFang TC' / sans-serif"
+    expected_font_size_px: 14
+    expected_font_weight: 600
+    expected_line_height_px: 14
+    expected_letter_spacing_px: 0
+    expected_text_container_min_width_px: 40
+    expected_text_container_max_width_px: 96
+    wrap_rule: NO_WRAP
+    truncation_rule: NO_TRUNCATION
+    expected_line_count_rule: ONE_LINE
+    allowed_tolerance: {geometry_css_px: 1, rendered_line_count: 1, semantic_overflow_or_clipping: 0}
+  - target_uid: TYPO-WB01-RECENT-COMPLETIONS-HEADING
+    target_role: RECENT-COMPLETIONS_SECTION_HEADING
+    page_or_scope_uid: workspace:WB-01
+    viewport_or_breakpoint_uid: [WB01-GE-1440, WB01-1280-1439, WB01-LT-1280-SCROLL]
+    language: [zh-TW, zh-CN, en]
+    theme: DARK_TECH_PURPLE
+    state_scope: ALL_PAGE_STATES
+    typography_authority_ref: STAGE_EXECUTION/SHARED_AUTHORITY/GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY.yaml#typography_authority
+    font_family_token_or_value_ref: GLOBAL_TYPOGRAPHY_AUTHORITY_TY01_TY15.canonical_font_stack
+    font_size_token_or_value_ref: heading-md.font_size_px
+    font_weight_token_or_value_ref: heading-md.font_weight
+    line_height_token_or_value_ref: heading-md.line_height_ratio
+    letter_spacing_token_or_value_ref: heading-md.letter_spacing_em
+    expected_font_family: "Inter / system-ui / -apple-system / BlinkMacSystemFont / 'Segoe UI' / 'Noto Sans TC' / 'PingFang TC' / sans-serif"
+    expected_font_size_px: 20
+    expected_font_weight: 600
+    expected_line_height_px: 26
+    expected_letter_spacing_px: 0
+    expected_text_container_min_width_px: 80
+    expected_text_container_max_width_px: 520
+    wrap_rule: WRAP_MAX_2_LINES
+    truncation_rule: NO_TRUNCATION
+    expected_line_count_rule: ONE_TO_TWO_LINES
+    allowed_tolerance: {geometry_css_px: 1, rendered_line_count: 1, semantic_overflow_or_clipping: 0}
+  - target_uid: TYPO-WB01-RECENT-COMPLETIONS-VALUE
+    target_role: RECENT-COMPLETIONS_FIELD_VALUE
+    page_or_scope_uid: workspace:WB-01
+    viewport_or_breakpoint_uid: [WB01-GE-1440, WB01-1280-1439, WB01-LT-1280-SCROLL]
+    language: [zh-TW, zh-CN, en]
+    theme: DARK_TECH_PURPLE
+    state_scope: ALL_PAGE_STATES
+    typography_authority_ref: STAGE_EXECUTION/SHARED_AUTHORITY/GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY.yaml#typography_authority
+    font_family_token_or_value_ref: GLOBAL_TYPOGRAPHY_AUTHORITY_TY01_TY15.canonical_font_stack
+    font_size_token_or_value_ref: body-md.font_size_px
+    font_weight_token_or_value_ref: body-md.font_weight
+    line_height_token_or_value_ref: body-md.line_height_ratio
+    letter_spacing_token_or_value_ref: body-md.letter_spacing_em
+    expected_font_family: "Inter / system-ui / -apple-system / BlinkMacSystemFont / 'Segoe UI' / 'Noto Sans TC' / 'PingFang TC' / sans-serif"
+    expected_font_size_px: 14
+    expected_font_weight: 400
+    expected_line_height_px: 21.7
+    expected_letter_spacing_px: 0
+    expected_text_container_min_width_px: 60
+    expected_text_container_max_width_px: 520
+    wrap_rule: WRAP_MAX_2_LINES
+    truncation_rule: NO_TRUNCATION
+    expected_line_count_rule: ONE_TO_TWO_LINES
+    allowed_tolerance: {geometry_css_px: 1, rendered_line_count: 1, semantic_overflow_or_clipping: 0}
+  - target_uid: TYPO-WB01-RECENT-COMPLETIONS-OPEN
+    target_role: RECENT-COMPLETIONS_SECTION_OPEN_CONTROL
+    page_or_scope_uid: workspace:WB-01
+    viewport_or_breakpoint_uid: [WB01-GE-1440, WB01-1280-1439, WB01-LT-1280-SCROLL]
+    language: [zh-TW, zh-CN, en]
+    theme: DARK_TECH_PURPLE
+    state_scope: ALL_PAGE_STATES
+    typography_authority_ref: STAGE_EXECUTION/SHARED_AUTHORITY/GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY.yaml#typography_authority
+    font_family_token_or_value_ref: GLOBAL_TYPOGRAPHY_AUTHORITY_TY01_TY15.canonical_font_stack
+    font_size_token_or_value_ref: button-md.font_size_px
+    font_weight_token_or_value_ref: button-md.font_weight
+    line_height_token_or_value_ref: button-md.line_height_ratio
+    letter_spacing_token_or_value_ref: button-md.letter_spacing_em
+    expected_font_family: "Inter / system-ui / -apple-system / BlinkMacSystemFont / 'Segoe UI' / 'Noto Sans TC' / 'PingFang TC' / sans-serif"
+    expected_font_size_px: 14
+    expected_font_weight: 600
+    expected_line_height_px: 14
+    expected_letter_spacing_px: 0
+    expected_text_container_min_width_px: 40
+    expected_text_container_max_width_px: 96
+    wrap_rule: NO_WRAP
+    truncation_rule: NO_TRUNCATION
+    expected_line_count_rule: ONE_LINE
+    allowed_tolerance: {geometry_css_px: 1, rendered_line_count: 1, semantic_overflow_or_clipping: 0}
+typography_baseline_target_total: 46
+visual_anchors:
+- {anchor_uid: VA-HOME-HEADER-TOP, owner: GLOBAL-HOME-SHELL-NAVIGATION, inheritance: SHARED_VISUAL_OWNER, position_rule: "top=0", dimension_rule: "height=58px; width=viewport", relationship_rule: ABOVE_PAGE_WORKSPACE, lock_status: LOCKED}
+- {anchor_uid: VA-HOME-SIDEBAR-COLUMN, owner: GLOBAL-HOME-SHELL-NAVIGATION, inheritance: SHARED_VISUAL_OWNER, position_rule: "top=58px; left=0", dimension_rule: "64px collapsed / 221px expanded", relationship_rule: COUPLED_REFLOW_WITH_WORKSPACE, lock_status: LOCKED}
+- {anchor_uid: VA-HOME-WORKSPACE-ORIGIN, owner: GLOBAL-HOME-SHELL-NAVIGATION, inheritance: SHARED_VISUAL_OWNER, position_rule: "top=68px; left=78/235px", dimension_rule: "right=16px; bottom=16px", relationship_rule: PAGE_MOUNT_ORIGIN, lock_status: LOCKED}
+- {anchor_uid: VA-WB01-KPI-ROW, owner: workspace:WB-01, position_rule: FIRST_PAGE_ROW_GROUP, dimension_rule: "6xspan2 >=1440; 3+3 at 1280-1439", relationship_rule: CANONICAL_FIRST_GROUP, lock_status: LOCKED}
+- {anchor_uid: VA-WB01-PROGRESS-ROW, owner: workspace:WB-01, position_rule: AFTER_KPI_ROW, dimension_rule: "8+4", relationship_rule: CANONICAL_SECOND_GROUP, lock_status: LOCKED}
+- {anchor_uid: VA-WB01-PRODUCTION-ROW, owner: workspace:WB-01, position_rule: AFTER_PROGRESS_ROW, dimension_rule: "8+4", relationship_rule: CANONICAL_THIRD_GROUP, lock_status: LOCKED}
+- {anchor_uid: VA-WB01-INFORMATION-ROW, owner: workspace:WB-01, position_rule: AFTER_PRODUCTION_ROW, dimension_rule: "4+4+4", relationship_rule: CANONICAL_FOURTH_GROUP, lock_status: LOCKED}
+- {anchor_uid: VA-WB01-RECENT-ROW, owner: workspace:WB-01, position_rule: AFTER_INFORMATION_ROW, dimension_rule: "span12", relationship_rule: CANONICAL_FIFTH_GROUP, lock_status: LOCKED}
+- {anchor_uid: VA-WB01-DRAWER, owner: workspace:WB-01, position_rule: RIGHT_EDGE, dimension_rule: "width=520px", relationship_rule: SAME_SURFACE_CLUSTER, lock_status: LOCKED}
+visual_anchor_count: 9
+status: CURRENT_REVERIFY_MATERIALIZED
