@@ -10,6 +10,12 @@ entries:
   owner_stage_uid: STAGE-03
   required_disposition: STOP_STAGE04_REENTER_STAGE03_REPAIR_REVERIFY_RETURN_TO_STAGE04_INPUT_READINESS
   product_completion_credit: 0
-  status: REQUIRED
+  resolution_evidence:
+    stage03_terminal_closure_run_id: 36106579203
+    stage03_terminal_closure_head_sha: fca69a786208613176664fb1f2cead8c3f582ae7
+    predecessor_receipts:
+    - STAGE_EXECUTION/STAGE-03/WU-STAGE03-GLOBAL-HOME-SHELL-NAVIGATION-001/WORK_UNIT_TERMINAL_RECEIPT.yaml
+    - STAGE_EXECUTION/STAGE-03/WU-STAGE03-WB01-DASHBOARD-001/WORK_UNIT_TERMINAL_RECEIPT.yaml
+  status: RESOLVED
 append_only: true
-status: CURRENT
+status: CURRENT_RESOLVED

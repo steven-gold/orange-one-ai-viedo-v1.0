@@ -2,8 +2,8 @@ artifact_uid: PREFLIGHT-STAGE04-HOME-001
 artifact_type: STAGE_EXECUTION_PREFLIGHT_RECEIPT
 stage_uid: STAGE-04
 work_unit_uid: WU-STAGE04-GLOBAL-HOME-SHELL-NAVIGATION-001
-governance_uid: GOV-REV-20260924-INDEPENDENT-UNIT-LIFECYCLE-CURRENT-IDENTITY-SYNC
-governance_head: 25c4736940efb786aa567c83283bfbaa0773dc1b
+governance_uid: GOV-REV-20260925-NORMATIVE-EXECUTION-MATRIX
+governance_head: 22b8d6845ce31014ba10b4c1f8f7a3ec9dcceb20
 required_manifest_set:
 - REQUIRED_FIELD_MANIFEST.yaml
 - FUNCTIONAL_CHAIN_MANIFEST.yaml
@@ -18,7 +18,14 @@ applicability_resolved_before_blocker_count: true
 current_problem_register_ref: CURRENT_PROBLEM_REGISTER.yaml
 resolution_ledger_ref: RESOLUTION_LEDGER.yaml
 historical_product_values_used: false
-stage04_effectful_operation_admitted: false
-blocking_owner_capability: VISUAL_DESIGN
-blocking_stage_uid: STAGE-03
-result: BLOCKED_OWNER_REENTRY_REQUIRED
+stage04_effectful_operation_admitted: true
+blocking_owner_capability: null
+blocking_stage_uid: null
+stage03_input_reconciliation:
+  result: PASS
+  stage03_terminal_closure_run_id: 36106579203
+  stage03_terminal_closure_head_sha: fca69a786208613176664fb1f2cead8c3f582ae7
+  predecessor_receipts:
+  - STAGE_EXECUTION/STAGE-03/WU-STAGE03-GLOBAL-HOME-SHELL-NAVIGATION-001/WORK_UNIT_TERMINAL_RECEIPT.yaml
+  - STAGE_EXECUTION/STAGE-03/WU-STAGE03-WB01-DASHBOARD-001/WORK_UNIT_TERMINAL_RECEIPT.yaml
+result: PASS

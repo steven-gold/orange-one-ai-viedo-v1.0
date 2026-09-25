@@ -17,7 +17,7 @@ problems:
     matrix_ref: STAGE_EXECUTION/STAGE-03/WU-STAGE03-GLOBAL-HOME-SHELL-NAVIGATION-001/NORMATIVE_EXECUTION_MATRIX.yaml
     matrix_rows: 90
     transitive_binding_validation: PASS
-  status: RESOLVED_BY_STAGE03_REVERIFY
+  status: RESOLVED_BY_STAGE03_TERMINAL_CLOSURE
 - problem_uid: GAP-STAGE04-HOME-VRA-SCHEMA-001
   class: UPSTREAM_VISUAL_DESIGN_PROJECTION_GAP
   finding: VISUAL_REFERENCE_ANNOTATION_REQUIRED_FIELDS_UNMATERIALIZED
@@ -28,7 +28,7 @@ problems:
     stage03_validation_job_id: 107929110169
     annotation_row_total: 10
     required_field_validation: PASS
-  status: RESOLVED_BY_STAGE03_REVERIFY
+  status: RESOLVED_BY_STAGE03_TERMINAL_CLOSURE
 - problem_uid: GAP-STAGE04-HOME-VIM-SCHEMA-001
   class: UPSTREAM_VISUAL_DESIGN_PROJECTION_GAP
   finding: VISUAL_INHERITANCE_MATRIX_REQUIRED_FIELDS_UNMATERIALIZED
@@ -41,7 +41,7 @@ problems:
     duplicate_visual_owner_count: 0
     unresolved_visual_authority_count: 0
     required_field_validation: PASS
-  status: RESOLVED_BY_STAGE03_REVERIFY
+  status: RESOLVED_BY_STAGE03_TERMINAL_CLOSURE
 - problem_uid: GAP-STAGE04-HOME-TYPOGRAPHY-001
   class: UPSTREAM_VISUAL_DESIGN_PROJECTION_GAP
   finding: TYPOGRAPHY_EXPECTED_BASELINE_TARGET_DENOMINATOR_UNMATERIALIZED
@@ -53,12 +53,17 @@ problems:
     typography_target_total: 27
     typography_required_field_schema_total: 22
     denominator_reconciliation: PASS
-  status: RESOLVED_BY_STAGE03_REVERIFY
+  status: RESOLVED_BY_STAGE03_TERMINAL_CLOSURE
 open_problem_total: 0
-closure_blocker_total: 1
+closure_blocker_total: 0
 non_problem_closure_gates:
 - gate_uid: CURRENT_GOVERNED_UNIT_STAGE3_CLOSED
   governed_unit_uid: GLOBAL-HOME-SHELL-NAVIGATION
-  status: PENDING_CURRENT_TERMINAL_CLOSURE
+  status: RESOLVED_CURRENT_TERMINAL_CLOSURE
   stage_exit_credit: 0
-status: UPSTREAM_GAPS_RESOLVED_PENDING_STAGE03_TERMINAL_CLOSURE
+  resolved_by:
+  - STAGE_EXECUTION/STAGE-03/WU-STAGE03-GLOBAL-HOME-SHELL-NAVIGATION-001/WORK_UNIT_TERMINAL_RECEIPT.yaml
+  - STAGE_EXECUTION/STAGE-03/WU-STAGE03-WB01-DASHBOARD-001/WORK_UNIT_TERMINAL_RECEIPT.yaml
+  stage03_terminal_closure_run_id: 36106579203
+  stage03_terminal_closure_head_sha: fca69a786208613176664fb1f2cead8c3f582ae7
+status: UPSTREAM_DEPENDENCY_RESOLVED_READY_FOR_EXECUTION

@@ -3,9 +3,12 @@ artifact_type: WORK_UNIT_EXECUTION_STATE
 stage_uid: STAGE-04
 work_unit_uid: WU-STAGE04-GLOBAL-HOME-SHELL-NAVIGATION-001
 completed_operations: []
-current_operation: UPSTREAM_OWNER_REENTRY
-stage4_guard_result: NOT_EXECUTED
-blocking_owner_capability: VISUAL_DESIGN
-blocking_stage_uid: STAGE-03
+current_operation: STAGE04_INPUT_READINESS
+stage4_guard_result: INPUT_READINESS_PENDING
 resume_after_reentry: STAGE04_INPUT_READINESS
-status: SUSPENDED_UPSTREAM_REENTRY_REQUIRED
+prior_suspension_resolution:
+  blocking_owner_capability: VISUAL_DESIGN
+  blocking_stage_uid: STAGE-03
+  stage03_terminal_closure_run_id: 36106579203
+  stage03_terminal_closure_head_sha: fca69a786208613176664fb1f2cead8c3f582ae7
+status: READY_FOR_EXECUTION
