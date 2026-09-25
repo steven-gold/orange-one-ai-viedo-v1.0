@@ -3,9 +3,26 @@ artifact_type: VISUAL_REFERENCE_ANNOTATION
 stage_uid: STAGE-03
 governed_unit_uid: GLOBAL-HOME-SHELL-NAVIGATION
 candidate_uid: VIS-CANDIDATE-HOME-001
+annotation_resolution_rule: PHYSICAL_FILE_AND_FRAGMENT_MUST_EXIST
 annotations:
-- {anchor_uid: VA-HOME-HEADER-TOP, target: VISUAL_PREVIEW.svg#header}
-- {anchor_uid: VA-HOME-SIDEBAR-COLUMN, target: VISUAL_PREVIEW.svg#sidebar}
-- {anchor_uid: VA-HOME-WORKSPACE-ORIGIN, target: VISUAL_PREVIEW.svg#workspace}
+- anchor_uid: VA-HOME-HEADER-TOP
+  targets:
+  - EVIDENCE/VISUAL_SCENARIOS/HOME-1440-COLLAPSED.svg#header
+  - EVIDENCE/VISUAL_SCENARIOS/HOME-1440-EXPANDED.svg#header
+  shared_owner: GLOBAL-HOME-SHELL-NAVIGATION
+  status: PHYSICALLY_RESOLVABLE
+- anchor_uid: VA-HOME-SIDEBAR-COLUMN
+  targets:
+  - EVIDENCE/VISUAL_SCENARIOS/HOME-1440-COLLAPSED.svg#sidebar
+  - EVIDENCE/VISUAL_SCENARIOS/HOME-1440-EXPANDED.svg#sidebar
+  shared_owner: GLOBAL-HOME-SHELL-NAVIGATION
+  status: PHYSICALLY_RESOLVABLE
+- anchor_uid: VA-HOME-WORKSPACE-ORIGIN
+  targets:
+  - EVIDENCE/VISUAL_SCENARIOS/HOME-1440-COLLAPSED.svg#workspace
+  - EVIDENCE/VISUAL_SCENARIOS/HOME-1440-EXPANDED.svg#workspace
+  shared_owner: GLOBAL-HOME-SHELL-NAVIGATION
+  status: PHYSICALLY_RESOLVABLE
 shared_visual_annotation_unambiguous: true
-status: CURRENT
+physical_fragment_resolution_complete: true
+status: CURRENT_REVERIFY_MATERIALIZED
