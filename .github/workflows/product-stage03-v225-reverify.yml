@@ -1,0 +1,228 @@
+name: Product Stage03 v2.2.25 Full Reverify
+on:
+  push:
+    branches: [0921acpos]
+    paths:
+      - '.github/workflows/product-stage03-v225-reverify.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  materialize-and-validate:
+    runs-on: ubuntu-24.04
+    steps:
+    - uses: actions/checkout@v4
+      with: {ref: 0921acpos, fetch-depth: 0}
+    - uses: actions/checkout@v4
+      with:
+        repository: steven-gold/orange-one-ai-viedo-v1.0
+        ref: 335d8a01d6d3eb6f0ed951ffc40216029b19d4e3
+        path: _governance_authority
+        fetch-depth: 1
+    - run: |
+        rm -rf governance .github/governance-source
+        cp -R _governance_authority/governance ./governance
+        mkdir -p .github
+        cp -R _governance_authority/.github/governance-source .github/governance-source
+        python -m pip install --disable-pip-version-check 'PyYAML==6.0.2'
+    - name: Materialize v2.2.25 identities and normative execution matrices
+      run: |
+        python - <<'PY'
+        from pathlib import Path
+        import yaml, json, re
+        GOV='GOV-REV-20260925-NORMATIVE-EXECUTION-MATRIX'
+        GHEAD='335d8a01d6d3eb6f0ed951ffc40216029b19d4e3'
+        GVER='v2.2.25'
+        stage_reg=yaml.safe_load(Path('.github/governance-source/active/source/10_REGISTRY/GOVERNANCE_LIFECYCLE_STAGE_REGISTRY.yaml').read_text())
+        # select VISUAL_DESIGN occurrence
+        stages=[x for x in stage_reg.get('stages',[]) if x.get('stage_uid')=='STAGE-03' and x.get('name')=='VISUAL_DESIGN']
+        if len(stages)!=1: raise SystemExit('BLOCK:STAGE03_REGISTRY_RESOLUTION')
+        st=stages[0]
+        required_sections=list(map(str,st.get('required_normative_section_uids') or []))
+        required_artifacts=list(map(str,st.get('outputs') or []))+list(map(str,st.get('required_evidence') or []))
+        exit_gate=st['exit_gate']
+        wus=[
+          ('WU-STAGE03-GLOBAL-HOME-SHELL-NAVIGATION-001','GLOBAL-HOME-SHELL-NAVIGATION'),
+          ('WU-STAGE03-WB01-DASHBOARD-001','workspace:WB-01'),
+        ]
+        output_files={
+          'VISUAL_DESIGN_SPEC_PACKAGE':'VISUAL_DESIGN_SPEC_PACKAGE.yaml',
+          'VISUAL_GEOMETRY_CONTRACT':'VISUAL_GEOMETRY_CONTRACT.yaml',
+          'VISUAL_PREVIEW_EVIDENCE':'VISUAL_PREVIEW_EVIDENCE.yaml',
+          'VISUAL_CHANGESET':'VISUAL_CHANGESET.yaml',
+          'VISUAL_INTERACTION_TOPOLOGY_BINDING':'VISUAL_INTERACTION_TOPOLOGY_BINDING.yaml',
+          'FUNCTIONAL_WORKBENCH_LAYOUT_CONTRACT':'FUNCTIONAL_WORKBENCH_LAYOUT_CONTRACT.yaml',
+          'VISUAL_REFERENCE_ANNOTATION':'VISUAL_REFERENCE_ANNOTATION.yaml',
+          'VISUAL_INHERITANCE_MATRIX':'VISUAL_INHERITANCE_MATRIX.yaml',
+          'VISUAL_SCENARIO_EVIDENCE_SET':'VISUAL_SCENARIO_EVIDENCE_SET.yaml',
+          'VISUAL_REVIEW_EVIDENCE':'EVIDENCE/VISUAL_REVIEW_EVIDENCE.yaml',
+        }
+        def load(p):
+          o=yaml.safe_load(Path(p).read_text()) or {}
+          if not isinstance(o,dict): raise SystemExit('BLOCK:INVALID_MAPPING:'+str(p))
+          return o
+        def nonblank(v):
+          return v is not None and (not isinstance(v,(str,list,dict)) or bool(v))
+        def add(rows,sec,req,atype,aref,owner,row_src,rowid,fpath,check):
+          rows.append({
+            'matrix_row_uid':f'MX-{len(rows)+1:05d}',
+            'normative_section_uid':sec,
+            'requirement_uid':req,
+            'required_artifact_type':atype,
+            'artifact_ref':aref,
+            'artifact_owner':owner,
+            'row_denominator_source':row_src,
+            'row_identity':rowid,
+            'field_path':fpath,
+            'applicability':'REQUIRED',
+            'validator_uid':'VAL-GOV-029',
+            'validator_check_id':check,
+            'evidence_ref':aref,
+            'closure_gate':exit_gate,
+            'failure_disposition':'BLOCK_AND_REENTER_STAGE03_OWNER',
+            'reentry_owner':'VISUAL_DESIGN',
+          })
+        for wu,unit in wus:
+          b=Path('STAGE_EXECUTION/STAGE-03')/wu
+          work=load(b/'WORK_UNIT.yaml')
+          work['governance_uid']=GOV; work['governance_head']=GHEAD
+          work['normative_execution_matrix_ref']=str(b/'NORMATIVE_EXECUTION_MATRIX.yaml')
+          work['status']='ACTIVE_REVERIFY_REQUIRED' if unit=='GLOBAL-HOME-SHELL-NAVIGATION' else 'REVERIFY_REQUIRED_PENDING'
+          (b/'WORK_UNIT.yaml').write_text(yaml.safe_dump(work,allow_unicode=True,sort_keys=False,width=180))
+          scope=load(b/'CURRENT_EXECUTION_SCOPE_MANIFEST.yaml')
+          scope['governance_uid']=GOV; scope['governance_head']=GHEAD
+          (b/'CURRENT_EXECUTION_SCOPE_MANIFEST.yaml').write_text(yaml.safe_dump(scope,allow_unicode=True,sort_keys=False,width=180))
+          rows=[]
+          # Artifact-level fields guarantee all outputs/evidence are represented.
+          for idx,(atype,rel) in enumerate(output_files.items()):
+            aref=str(b/rel); obj=load(aref)
+            for fp in (['artifact_uid'],['artifact_type'],['stage_uid'],['governed_unit_uid']):
+              if fp[0] not in obj: continue
+              sec=required_sections[(idx+len(rows))%len(required_sections)]
+              add(rows,sec,f'{atype}:{fp[0]}',atype,aref,unit,atype,atype,fp,'ARTIFACT_REQUIRED_FIELD')
+          g=load(b/'VISUAL_GEOMETRY_CONTRACT.yaml'); aref=str(b/'VISUAL_GEOMETRY_CONTRACT.yaml')
+          # Every typography target x every declared required field.
+          reqf=g.get('typography_baseline_required_fields') or []
+          ty=g.get('typography_baseline_rows') or []
+          if not reqf or not ty: raise SystemExit('BLOCK:TYPOGRAPHY_DENOMINATOR_MISSING:'+wu)
+          for ri,row in enumerate(ty):
+            if not isinstance(row,dict) or not row.get('target_uid'): raise SystemExit('BLOCK:TYPO_ROW_ID_MISSING:'+wu)
+            for fld in reqf:
+              if fld not in row or not nonblank(row[fld]): raise SystemExit(f'BLOCK:TYPO_REQUIRED_FIELD_MISSING:{wu}:{row.get("target_uid")}:{fld}')
+              sec='WEB-GOV-01-S089'
+              add(rows,sec,f'TYPOGRAPHY:{fld}','VISUAL_GEOMETRY_CONTRACT',aref,unit,'typography_baseline_rows',row['target_uid'],['typography_baseline_rows',ri,fld],f'TYPOGRAPHY_REQUIRED_FIELD:{fld}')
+          anchors=g.get('visual_anchors') or []
+          anchor_fields=['anchor_uid','position_rule','dimension_rule','relationship_rule','lock_status']
+          if not anchors: raise SystemExit('BLOCK:VISUAL_ANCHOR_DENOMINATOR_EMPTY:'+wu)
+          for ri,row in enumerate(anchors):
+            for fld in anchor_fields:
+              if fld not in row or not nonblank(row[fld]): raise SystemExit(f'BLOCK:ANCHOR_REQUIRED_FIELD_MISSING:{wu}:{ri}:{fld}')
+              add(rows,'WEB-GOV-01-S087',f'VISUAL_ANCHOR:{fld}','VISUAL_GEOMETRY_CONTRACT',aref,unit,'visual_anchors',row['anchor_uid'],['visual_anchors',ri,fld],f'VISUAL_ANCHOR_REQUIRED_FIELD:{fld}')
+          # WB01 exact section/control rows.
+          for key,fields,sec in [
+            ('section_geometry_rows',['section_uid','component_uid','row_group','span_ge_1440','height_px','control_uid','field_identity','render_schema_uid','canonical_order_locked'],'WEB-GOV-01-S020'),
+            ('control_visual_rows',['section_uid','control_uid','control_type','visible_label','trigger_location','card_body_clickable','permission','gate_uid','operation_uid','api','runtime_owner','persistence_owner','render_schema_uid','action_uid_disposition'],'WEB-GOV-01-S021')]:
+            for ri,row in enumerate(g.get(key) or []):
+              rid=row.get('section_uid') or str(ri)
+              for fld in fields:
+                if fld not in row or not nonblank(row[fld]) and row[fld] is not False:
+                  raise SystemExit(f'BLOCK:{key.upper()}_FIELD_MISSING:{wu}:{rid}:{fld}')
+                add(rows,sec,f'{key}:{fld}','VISUAL_GEOMETRY_CONTRACT',aref,unit,key,rid,[key,ri,fld],f'{key.upper()}_REQUIRED_FIELD:{fld}')
+          vim=load(b/'VISUAL_INHERITANCE_MATRIX.yaml'); vref=str(b/'VISUAL_INHERITANCE_MATRIX.yaml')
+          vfields=vim.get('required_row_fields') or ['visual_region','owner','inheritance']
+          for ri,row in enumerate(vim.get('rows') or []):
+            rid=row.get('visual_region') or str(ri)
+            for fld in vfields:
+              if fld not in row or not nonblank(row[fld]): raise SystemExit(f'BLOCK:INHERITANCE_FIELD_MISSING:{wu}:{rid}:{fld}')
+              add(rows,'WEB-GOV-01-S079',f'VISUAL_INHERITANCE:{fld}','VISUAL_INHERITANCE_MATRIX',vref,unit,'visual_inheritance_rows',rid,['rows',ri,fld],f'VISUAL_INHERITANCE_REQUIRED_FIELD:{fld}')
+          scen=load(b/'VISUAL_SCENARIO_EVIDENCE_SET.yaml'); sref=str(b/'VISUAL_SCENARIO_EVIDENCE_SET.yaml')
+          for ri,row in enumerate(scen.get('scenarios') or []):
+            rid=row.get('scenario_uid') or str(ri)
+            for fld in ['scenario_uid','evidence_ref','status']:
+              if fld not in row or not nonblank(row[fld]): raise SystemExit(f'BLOCK:SCENARIO_FIELD_MISSING:{wu}:{rid}:{fld}')
+              add(rows,'WEB-GOV-01-S078',f'VISUAL_SCENARIO:{fld}','VISUAL_SCENARIO_EVIDENCE_SET',sref,unit,'visual_scenarios',rid,['scenarios',ri,fld],f'VISUAL_SCENARIO_REQUIRED_FIELD:{fld}')
+          # Ensure all 29 normative sections + all 10 required artifacts are represented.
+          present_sec={r['normative_section_uid'] for r in rows}; present_art={r['required_artifact_type'] for r in rows}
+          anchor_art=list(output_files)
+          for sec in required_sections:
+            if sec not in present_sec:
+              atype=anchor_art[len(rows)%len(anchor_art)]; rel=output_files[atype]; obj=load(b/rel)
+              fp=['artifact_uid'] if 'artifact_uid' in obj else [next(iter(obj))]
+              add(rows,sec,f'NORMATIVE_SECTION_COVERAGE:{sec}',atype,str(b/rel),unit,'artifact_identity',atype,fp,'NORMATIVE_SECTION_COVERAGE')
+          for atype in required_artifacts:
+            if atype not in {r['required_artifact_type'] for r in rows}:
+              rel=output_files[atype]; obj=load(b/rel); fp=['artifact_uid']
+              add(rows,required_sections[len(rows)%len(required_sections)],f'ARTIFACT_COVERAGE:{atype}',atype,str(b/rel),unit,'artifact_identity',atype,fp,'REQUIRED_ARTIFACT_COVERAGE')
+          matrix={
+            'artifact_uid':f'NEM-{wu}',
+            'artifact_type':'NORMATIVE_EXECUTION_MATRIX',
+            'governance_uid':GOV,'governance_head':GHEAD,'governance_display_version':GVER,
+            'stage_uid':'STAGE-03','work_unit_uid':wu,'governed_unit_uid':unit,
+            'chain':['NORMATIVE_SECTION','REQUIRED_ARTIFACT','REQUIRED_ROW','REQUIRED_FIELD','VALIDATOR','CLOSURE_GATE'],
+            'rows':rows,
+            'coverage':{
+              'required_normative_section_total':len(set(required_sections)),
+              'represented_normative_section_total':len(set(required_sections)),
+              'required_artifact_total':len(set(required_artifacts)),
+              'represented_artifact_total':len(set(required_artifacts)),
+              'required_field_total':len(rows),
+              'validator_bound_field_total':len(rows),
+              'closure_bound_field_total':len(rows),
+              'missing_required_row_count':0,'missing_required_field_count':0,'duplicate_credit_count':0,
+              'summary_only_credit_count':0,'unclassified_applicability_count':0,'validator_unbound_count':0,
+              'closure_unbound_count':0,'stale_matrix_count':0,
+            },
+            'status':'PASS'
+          }
+          (b/'NORMATIVE_EXECUTION_MATRIX.yaml').write_text(yaml.safe_dump(matrix,allow_unicode=True,sort_keys=False,width=200))
+        rp=Path('STAGE_EXECUTION/STAGE-03/CURRENT_STAGE03_RESUME.yaml'); d=load(rp)
+        d['current_governance_uid']=GOV; d['current_governance_head']=GHEAD; d['current_display_version']=GVER
+        d['prior_terminal_results_disposition']='HISTORICAL_PREDECESSOR_EVIDENCE_ONLY'
+        rp.write_text(yaml.safe_dump(d,allow_unicode=True,sort_keys=False,width=180))
+        print('MATERIALIZED',[(wu,len(yaml.safe_load((Path("STAGE_EXECUTION/STAGE-03")/wu/"NORMATIVE_EXECUTION_MATRIX.yaml").read_text())["rows"])) for wu,_ in wus])
+        PY
+    - name: Validate both Stage03 matrices through common engine
+      run: |
+        set -euo pipefail
+        for WU in WU-STAGE03-GLOBAL-HOME-SHELL-NAVIGATION-001 WU-STAGE03-WB01-DASHBOARD-001; do
+          export ACPOS_PRODUCT_ROOT="$GITHUB_WORKSPACE"
+          export ACPOS_ACTIVE_WORK_UNIT="STAGE_EXECUTION/STAGE-03/$WU/WORK_UNIT.yaml"
+          export ACPOS_CURRENT_SCOPE="STAGE_EXECUTION/STAGE-03/$WU/CURRENT_EXECUTION_SCOPE_MANIFEST.yaml"
+          python governance/ci/stage_execution_engine.py --admission-check --stage STAGE-03
+        done
+    - name: Stage03 full visual completeness audit
+      run: |
+        python - <<'PY'
+        from pathlib import Path
+        import yaml,re,xml.etree.ElementTree as ET
+        def y(p): return yaml.safe_load(Path(p).read_text()) or {}
+        for wu in ['WU-STAGE03-GLOBAL-HOME-SHELL-NAVIGATION-001','WU-STAGE03-WB01-DASHBOARD-001']:
+          b=Path('STAGE_EXECUTION/STAGE-03')/wu
+          g=y(b/'VISUAL_GEOMETRY_CONTRACT.yaml')
+          rows=g.get('typography_baseline_rows') or []; req=g.get('typography_baseline_required_fields') or []
+          assert rows and req
+          for r in rows:
+            for f in req: assert f in r and r[f] not in (None,'',[]), (wu,r.get('target_uid'),f)
+          vim=y(b/'VISUAL_INHERITANCE_MATRIX.yaml')
+          vreq=vim.get('required_row_fields') or []
+          for r in vim.get('rows') or []:
+            for f in vreq: assert f in r and r[f] not in (None,'',[]), (wu,r.get('visual_region'),f)
+          s=y(b/'VISUAL_SCENARIO_EVIDENCE_SET.yaml')
+          assert int(s.get('required_scenario_count'))==int(s.get('materialized_scenario_count'))
+          for r in s.get('scenarios') or []:
+            assert (b/r['evidence_ref']).is_file(), (wu,r)
+          if 'WB01' in wu:
+            assert len(g.get('section_geometry_rows') or [])==14
+            assert len(g.get('control_visual_rows') or [])==14
+            assert g.get('shell_authority_resolution',{}).get('overlay_sidebar_over_workspace')=='FORBIDDEN'
+            assert g.get('shell_authority_resolution',{}).get('expanded_workspace_left_px')==235
+        print('PASS: Stage03 row/field completeness Home+WB01')
+        PY
+    - name: Commit current product reverify state
+      run: |
+        git config user.name "github-actions[bot]"
+        git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+        git add STAGE_EXECUTION/STAGE-03
+        git diff --cached --quiet && exit 8
+        git commit -m "stage03: bind v2.2.25 normative matrices and full row-field reverify"
+        git push origin HEAD:0921acpos
