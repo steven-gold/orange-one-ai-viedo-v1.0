@@ -12,8 +12,8 @@ completed_operations:
 - VISUAL_REFERENCE_ANNOTATION_COMPILE
 - VISUAL_INHERITANCE_MATRIX_COMPILE
 - VISUAL_SCENARIO_EVIDENCE_COMPILE
-current_operation: HUMAN_VISUAL_REVIEW
-stage3_guard_result: PASS_TECHNICAL_REVERIFY_PENDING_HUMAN_VISUAL_REVIEW
+current_operation: TERMINAL_EVIDENCE_MATERIALIZATION
+stage3_guard_result: PASS
 prior_technical_reverify_validation:
   run_id: 36089650487
   job_id: 107929110331
@@ -25,4 +25,4 @@ prior_closure_validation_run_id: 36053005947
 prior_closure_validation_head: 17e599775f2390587256f0e939b2c4cd4c12faef
 prior_terminal_receipt_ref: HISTORY/V224/WORK_UNIT_TERMINAL_RECEIPT.yaml
 prior_terminal_receipt_disposition: HISTORICAL_PREDECESSOR_EVIDENCE_ONLY
-status: PENDING_HUMAN_VISUAL_REVIEW
+status: CLOSURE_CANDIDATE_PENDING_CURRENT_EVIDENCE
