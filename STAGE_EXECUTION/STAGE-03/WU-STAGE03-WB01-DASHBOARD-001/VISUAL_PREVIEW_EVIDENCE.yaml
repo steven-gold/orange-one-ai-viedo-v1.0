@@ -2,12 +2,27 @@ artifact_uid: VPE-STAGE03-WB01-001
 artifact_type: VISUAL_PREVIEW_EVIDENCE
 stage_uid: STAGE-03
 governed_unit_uid: workspace:WB-01
-candidate_uid: VIS-CANDIDATE-WB01-001
+candidate_uid: VIS-CANDIDATE-WB01-002
+predecessor_candidate_uid: VIS-CANDIDATE-WB01-001
 scenario_manifest_ref: VISUAL_SCENARIO_EVIDENCE_SET.yaml
-physical_candidate_count: 7
-visual_anchor_uids: [VA-WB01-KPI-ROW, VA-WB01-PROGRESS-ROW, VA-WB01-PRODUCTION-ROW, VA-WB01-INFORMATION-ROW, VA-WB01-RECENT-ROW, VA-WB01-DRAWER]
+physical_candidate_count: 10
+visual_anchor_uids:
+- VA-HOME-HEADER-TOP
+- VA-HOME-SIDEBAR-COLUMN
+- VA-HOME-WORKSPACE-ORIGIN
+- VA-WB01-KPI-ROW
+- VA-WB01-PROGRESS-ROW
+- VA-WB01-PRODUCTION-ROW
+- VA-WB01-INFORMATION-ROW
+- VA-WB01-RECENT-ROW
+- VA-WB01-DRAWER
+visual_anchor_count: 9
 structural_only: false
 exact_control_binding_count: 14
 functional_visual_binding_ref: VISUAL_INTERACTION_TOPOLOGY_BINDING.yaml
 workbench_layout_ref: FUNCTIONAL_WORKBENCH_LAYOUT_CONTRACT.yaml
+visual_reference_annotation_ref: VISUAL_REFERENCE_ANNOTATION.yaml
+visual_inheritance_matrix_ref: VISUAL_INHERITANCE_MATRIX.yaml
+material_change: SHELL_OVERLAY_TO_COUPLED_REFLOW_AND_RESPONSIVE_SHELL_STATE_COMPLETION
+human_re_review_required: true
 status: MATERIALIZED_PENDING_HUMAN_REVIEW
