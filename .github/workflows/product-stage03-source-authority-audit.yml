@@ -13,50 +13,35 @@ jobs:
     steps:
     - uses: actions/checkout@v4
       with: {ref: 0921acpos, fetch-depth: 1}
-    - name: Extract immutable DOCX visual-authority facts
+    - name: Extract exact immutable DOCX authority ranges
       run: |
         python - <<'PY'
         from pathlib import Path
-        import zipfile, xml.etree.ElementTree as ET
+        import zipfile, xml.etree.ElementTree as ET, hashlib
         W='{http://schemas.openxmlformats.org/wordprocessingml/2006/main}'
         files={
-          'HOME':Path('STAGE_EXECUTION/STAGE-01/WU-STAGE01-GLOBAL-HOME-SHELL-NAVIGATION-001/00_SOURCE_INTAKE/RAW_SOURCE/SRC-DOCX-334A4679600F092B733B/ACPOS_GLOBAL_HOME_SHELL_NAVIGATION_Mother_Basic_Design_OPTIMIZED.docx'),
-          'WB01':Path('STAGE_EXECUTION/STAGE-01/WU-STAGE01-WB01-DASHBOARD-001/00_SOURCE_INTAKE/RAW_SOURCE/SRC-DOCX-2B1908530B5BD312A392/ACPOS_WB-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx'),
+          'HOME':(Path('STAGE_EXECUTION/STAGE-01/WU-STAGE01-GLOBAL-HOME-SHELL-NAVIGATION-001/00_SOURCE_INTAKE/RAW_SOURCE/SRC-DOCX-334A4679600F092B733B/ACPOS_GLOBAL_HOME_SHELL_NAVIGATION_Mother_Basic_Design_OPTIMIZED.docx'),[(0,40),(118,160)]),
+          'WB01':(Path('STAGE_EXECUTION/STAGE-01/WU-STAGE01-WB01-DASHBOARD-001/00_SOURCE_INTAKE/RAW_SOURCE/SRC-DOCX-2B1908530B5BD312A392/ACPOS_WB-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx'),[(0,28),(80,108),(180,222),(232,250)])
         }
-        terms=('typography','font','字型','字體','字級','line height','line-height','行高','letter spacing','letter-spacing','token','color','顏色','色彩','紫','visual authority','design system','global visual','global_web_visual','style definition','visual style')
-        def txt(node):
-          return ''.join((t.text or '') for t in node.iter(W+'t')).strip()
-        for label,path in files.items():
-          if not path.is_file(): raise SystemExit('MISSING_RAW_DOCX:'+str(path))
-          with zipfile.ZipFile(path) as z:
-            root=ET.fromstring(z.read('word/document.xml'))
-          body=root.find(W+'body')
-          records=[]
+        def txt(node): return ''.join((t.text or '') for t in node.iter(W+'t')).strip()
+        for label,(path,ranges) in files.items():
+          raw=path.read_bytes()
+          print('===SOURCE_FILE',label,'sha256',hashlib.sha256(raw).hexdigest(),'size',len(raw),'===')
+          with zipfile.ZipFile(path) as z: root=ET.fromstring(z.read('word/document.xml'))
+          body=root.find(W+'body'); rec=[]
           for child in list(body):
             if child.tag==W+'p':
               s=txt(child)
-              if s: records.append(('P',s))
+              if s: rec.append(('P',s))
             elif child.tag==W+'tbl':
               for tr in child.findall(W+'tr'):
-                cells=[]
-                for tc in tr.findall(W+'tc'):
-                  s=txt(tc)
-                  cells.append(s)
+                cells=[txt(tc) for tc in tr.findall(W+'tc')]
                 row=' | '.join(cells).strip()
-                if row: records.append(('T',row))
-          hits=[]
-          for i,(kind,s) in enumerate(records):
-            low=s.casefold()
-            if any(term.casefold() in low for term in terms):
-              lo=max(0,i-2); hi=min(len(records),i+3)
-              hits.append((i,records[lo:hi]))
-          print('===SOURCE_AUTHORITY_AUDIT',label,'records',len(records),'hits',len(hits),'===')
-          shown=set()
-          for i,ctx in hits[:180]:
-            key=tuple(ctx)
-            if key in shown: continue
-            shown.add(key)
-            print('---MATCH_INDEX',i,'---')
-            for kind,s in ctx:
-              print(kind, s[:1800])
+                if row: rec.append(('T',row))
+          print('===RECORD_COUNT',label,len(rec),'===')
+          for lo,hi in ranges:
+            print(f'===RANGE {label} {lo}:{hi}===')
+            for i in range(lo,min(hi,len(rec))):
+              kind,s=rec[i]
+              print(f'{i:04d} {kind} {s}')
         PY
