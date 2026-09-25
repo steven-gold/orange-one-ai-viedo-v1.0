@@ -10,7 +10,7 @@ included_units:
 excluded_units: []
 remaining_units: []
 partial_scope: false
-stage_exit_credit_allowed: false
+stage_exit_credit_allowed: true
 scope_selection_authority: WORK_UNIT_RESOLUTION_GATE.yaml
 owning_capability: VISUAL_DESIGN
 dependency_closure_refs:
@@ -20,16 +20,24 @@ denominator_sources:
 - VISUAL_INTERACTION_TOPOLOGY_BINDING.yaml
 - VISUAL_GEOMETRY_CONTRACT.yaml
 current_closure_validation:
-  result: PENDING_FINAL_EXACT_HEAD_REVALIDATION
-  stage_exit_credit: 0
+  result: PASS
+  stage_exit_credit: 1
+  head_sha: 2446a864769726ba66b01ca68142813395f0219a
+  workflow_run_id: 36089903985
+  workflow_job_id: 107929922934
+  conclusion: success
+  governance_uid: GOV-REV-20260925-NORMATIVE-EXECUTION-MATRIX
+  governance_head: 22b8d6845ce31014ba10b4c1f8f7a3ec9dcceb20
 prior_closure_validation:
   head_sha: af16dad81adca977da8a8aecf1084331cd3f653e
   workflow_run_id: 36029115482
   workflow_job_id: 107733061922
   result: PASS
 prior_terminal_receipt_ref: null
-status: CLOSURE_CANDIDATE_PENDING_CURRENT_EVIDENCE
+status: COMPLETE
 governance_head: 22b8d6845ce31014ba10b4c1f8f7a3ec9dcceb20
 current_reverify_required: false
 current_normative_execution_matrix_ref: STAGE_EXECUTION/STAGE-03/WU-STAGE03-GLOBAL-HOME-SHELL-NAVIGATION-001/NORMATIVE_EXECUTION_MATRIX.yaml
 prior_terminal_receipt_disposition: HISTORICAL_PREDECESSOR_EVIDENCE_ONLY
+
+terminal_receipt_ref: WORK_UNIT_TERMINAL_RECEIPT.yaml
