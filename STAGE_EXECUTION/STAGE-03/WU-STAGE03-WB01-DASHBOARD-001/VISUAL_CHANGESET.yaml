@@ -2,9 +2,21 @@ artifact_uid: VCS-STAGE03-WB01-001
 artifact_type: VISUAL_CHANGESET
 stage_uid: STAGE-03
 governed_unit_uid: workspace:WB-01
-change_class: INITIAL_STAGE03_MATERIALIZATION
+change_class: STAGE03_REVERIFY_MATERIAL_VISUAL_CORRECTION
+predecessor_candidate_uid: VIS-CANDIDATE-WB01-001
+successor_candidate_uid: VIS-CANDIDATE-WB01-002
+change_reasons:
+- SUPERSEDE_PAGE_LOCAL_OVERLAY_NO_REFLOW_WITH_GLOBAL_HOME_COUPLED_REFLOW
+- COMPLETE_RESPONSIVE_SHELL_STATE_SCENARIO_DENOMINATOR
+- MATERIALIZE_PHYSICAL_VISUAL_REFERENCE_FRAGMENT_IDS
+- COMPLETE_VISUAL_INHERITANCE_AND_TYPOGRAPHY_REQUIRED_FIELDS
 allowed_regions: [DASHBOARD_WORKSPACE, DETAIL_DRAWER]
 inherited_locked_regions: [GLOBAL_HEADER, GLOBAL_SIDEBAR, GLOBAL_WORKSPACE_MOUNT_GEOMETRY]
+inherited_geometry_change:
+  owner: GLOBAL-HOME-SHELL-NAVIGATION
+  local_override_removed: OVERLAY_NO_REFLOW
+  current_inherited_mode: COUPLED_REFLOW
 functional_topology_change: false
 new_visual_pattern: false
-status: CURRENT
+human_re_review_required: true
+status: CURRENT_REVERIFY_MATERIALIZED
