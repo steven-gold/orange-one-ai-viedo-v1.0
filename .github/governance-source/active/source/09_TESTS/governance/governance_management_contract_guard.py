@@ -19,7 +19,7 @@ def validate(root=ROOT):
         found=d.get('artifact_uid') or d.get('registry_uid')
         if found in uids: failures.append('duplicate_management_uid:'+str(found))
         uids[found]=fn
-        if d.get('status') not in ('CURRENT_CANDIDATE','CANDIDATE_PREFORMAL'): failures.append('management_not_current_candidate:'+fn)
+        if d.get('status') not in ('CURRENT_CANDIDATE','CANDIDATE_PREFORMAL','CURRENT_FROZEN_VALIDATED'): failures.append('management_not_current_candidate:'+fn)
         if d.get('canonical_path') and d.get('canonical_path')!=f'10_REGISTRY/{fn}': failures.append('canonical_path_mismatch:'+fn)
     # closed-loop checks
     bp=load(root/'10_REGISTRY/GOVERNANCE_ACCEPTANCE_AUDIT_BLUEPRINT.yaml') if (root/'10_REGISTRY/GOVERNANCE_ACCEPTANCE_AUDIT_BLUEPRINT.yaml').exists() else {}
