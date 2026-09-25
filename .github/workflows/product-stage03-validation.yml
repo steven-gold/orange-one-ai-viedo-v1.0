@@ -1,5 +1,5 @@
 name: Product Stage03 Validation
-# independent-rerun-marker: 2026-09-25-v225-normative-matrix
+# independent-rerun-marker: 2026-09-25-v225-dynamic-current-state-v2
 on:
   push:
     branches: [0921acpos]
@@ -113,16 +113,32 @@ jobs:
         if pf.get('historical_product_values_used') is not False:
           raise SystemExit('BLOCK:HISTORICAL_PRODUCT_VALUE_FALLBACK')
         pr=y('CURRENT_PROBLEM_REGISTER.yaml')
+        problems=[x for x in (pr.get('problems') or []) if isinstance(x,dict)]
+        open_rows=[x for x in problems if str(x.get('status') or '').startswith('OPEN')]
         open_total=int(pr.get('open_problem_total') or 0)
         blocker_total=int(pr.get('closure_blocker_total') or 0)
-        if open_total!=blocker_total:
-          raise SystemExit('BLOCK:PROBLEM_BLOCKER_DENOMINATOR_DRIFT')
-        if open_total not in (0,1):
-          raise SystemExit('BLOCK:UNEXPECTED_OPEN_PROBLEM_TOTAL:'+str(open_total))
-        if open_total==1:
-          rows=[x for x in (pr.get('problems') or []) if isinstance(x,dict) and x.get('status')=='OPEN']
-          if len(rows)!=1 or rows[0].get('finding')!='CANONICAL_STAGE_EXECUTION_PREFLIGHT_NOT_MATERIALIZED_BEFORE_CLOSURE_VALIDATION':
-            raise SystemExit('BLOCK:UNEXPECTED_OPEN_PROBLEM')
+        if open_total!=len(open_rows):
+          raise SystemExit(f'BLOCK:PROBLEM_OPEN_DENOMINATOR_DRIFT:declared={open_total}:actual={len(open_rows)}')
+        if blocker_total<0 or blocker_total>open_total:
+          raise SystemExit(f'BLOCK:PROBLEM_BLOCKER_DENOMINATOR_DRIFT:open={open_total}:blockers={blocker_total}')
+        if blocker_total!=0:
+          raise SystemExit('BLOCK:CURRENT_PROBLEM_REGISTER_HAS_CLOSURE_BLOCKERS:'+str(blocker_total))
+        scope=y('CURRENT_EXECUTION_SCOPE_MANIFEST.yaml')
+        state=y('EXECUTION_STATE.yaml')
+        resume=y('RESUME_POINT.yaml')
+        reverify=('REVERIFY_REQUIRED' in str(state.get('status') or '')
+                  or state.get('stage3_guard_result')=='REVERIFY_REQUIRED'
+                  or 'REVERIFY_REQUIRED' in str(resume.get('status') or ''))
+        if reverify:
+          if scope.get('stage_exit_credit_allowed') is not False:
+            raise SystemExit('BLOCK:REVERIFY_SCOPE_STILL_ALLOWS_STAGE_EXIT_CREDIT')
+          current_closure=scope.get('current_closure_validation') or {}
+          if current_closure.get('result')!='REVERIFY_REQUIRED' or int(current_closure.get('stage_exit_credit') or 0)!=0:
+            raise SystemExit('BLOCK:REVERIFY_SCOPE_CURRENT_CLOSURE_STATE_DRIFT')
+          if scope.get('terminal_receipt_ref') not in (None,''):
+            raise SystemExit('BLOCK:REVERIFY_SCOPE_CURRENT_TERMINAL_RECEIPT_MUST_BE_EMPTY')
+          if resume.get('stage_exit_authorized') is not False:
+            raise SystemExit('BLOCK:REVERIFY_RESUME_STILL_AUTHORIZES_STAGE_EXIT')
         rl=y('RESOLUTION_LEDGER.yaml')
         if rl.get('append_only') is not True:
           raise SystemExit('BLOCK:RESOLUTION_LEDGER_NOT_APPEND_ONLY')
