@@ -3,12 +3,14 @@ artifact_type: VISUAL_REFERENCE_ANNOTATION
 stage_uid: STAGE-03
 governed_unit_uid: workspace:WB-01
 candidate_uid: VIS-CANDIDATE-WB01-001
+annotation_resolution_rule: PHYSICAL_FILE_AND_FRAGMENT_MUST_EXIST
 annotations:
-- {anchor_uid: VA-WB01-KPI-ROW, target: EVIDENCE/VISUAL_SCENARIOS/WB01-1440-MAIN.svg#kpi}
-- {anchor_uid: VA-WB01-PROGRESS-ROW, target: EVIDENCE/VISUAL_SCENARIOS/WB01-1440-MAIN.svg#progress}
-- {anchor_uid: VA-WB01-PRODUCTION-ROW, target: EVIDENCE/VISUAL_SCENARIOS/WB01-1440-MAIN.svg#production}
-- {anchor_uid: VA-WB01-INFORMATION-ROW, target: EVIDENCE/VISUAL_SCENARIOS/WB01-1440-MAIN.svg#information}
-- {anchor_uid: VA-WB01-RECENT-ROW, target: EVIDENCE/VISUAL_SCENARIOS/WB01-1440-MAIN.svg#recent}
-- {anchor_uid: VA-WB01-DRAWER, target: EVIDENCE/VISUAL_SCENARIOS/WB01-DRAWER.svg#drawer}
+- {anchor_uid: VA-WB01-KPI-ROW, target: EVIDENCE/VISUAL_SCENARIOS/WB01-1440-MAIN.svg#kpi, status: PHYSICALLY_RESOLVABLE}
+- {anchor_uid: VA-WB01-PROGRESS-ROW, target: EVIDENCE/VISUAL_SCENARIOS/WB01-1440-MAIN.svg#progress, status: PHYSICALLY_RESOLVABLE}
+- {anchor_uid: VA-WB01-PRODUCTION-ROW, target: EVIDENCE/VISUAL_SCENARIOS/WB01-1440-MAIN.svg#production, status: PHYSICALLY_RESOLVABLE}
+- {anchor_uid: VA-WB01-INFORMATION-ROW, target: EVIDENCE/VISUAL_SCENARIOS/WB01-1440-MAIN.svg#information, status: PHYSICALLY_RESOLVABLE}
+- {anchor_uid: VA-WB01-RECENT-ROW, target: EVIDENCE/VISUAL_SCENARIOS/WB01-1440-MAIN.svg#recent, status: PHYSICALLY_RESOLVABLE}
+- {anchor_uid: VA-WB01-DRAWER, target: EVIDENCE/VISUAL_SCENARIOS/WB01-DRAWER.svg#drawer, status: PHYSICALLY_RESOLVABLE}
 shared_visual_annotation_unambiguous: true
-status: CURRENT
+physical_fragment_resolution_complete: true
+status: CURRENT_REVERIFY_MATERIALIZED
