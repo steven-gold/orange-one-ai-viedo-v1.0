@@ -2,11 +2,17 @@ artifact_uid: VRE-STAGE03-WB01-001
 artifact_type: VISUAL_REVIEW_EVIDENCE
 stage_uid: STAGE-03
 governed_unit_uid: workspace:WB-01
-candidate_uid: VIS-CANDIDATE-WB01-001
+candidate_uid: VIS-CANDIDATE-WB01-002
+predecessor_candidate_uid: VIS-CANDIDATE-WB01-001
+prior_review:
+  reviewer: AUTHORIZED_HUMAN_USER
+  reviewed_at: "2026-09-25T00:02:00+08:00"
+  decision: VISUAL_APPROVED
+  disposition: INVALIDATED_BY_MATERIAL_VISUAL_CHANGE
 review_required: true
-reviewer: AUTHORIZED_HUMAN_USER
-reviewed_at: "2026-09-25T00:02:00+08:00"
-decision: VISUAL_APPROVED
-visual_approved: true
+reviewer: null
+reviewed_at: null
+decision: PENDING_HUMAN_REVIEW
+visual_approved: false
 stage_exit_credit: 0
-status: REVIEW_COMPLETE_PENDING_STAGE03_CLOSURE
+status: PENDING_HUMAN_REVIEW
