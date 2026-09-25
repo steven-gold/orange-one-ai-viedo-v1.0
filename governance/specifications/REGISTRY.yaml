@@ -1,3 +1,4 @@
+# consolidated-current-governance-v2.2.25-20260925
 schema_version: 1
 registry_uid: GOV-RULESET-REGISTRY-IMMUTABLE
 registry_role: IMMUTABLE_GOVERNANCE_DEFINITION_ENTRYPOINT
@@ -5,10 +6,10 @@ status: LOCKED
 branch: rebuild-v2.1.1
 product_execution_branch: 0921acpos
 normative_mother_order:
-  - .github/governance-source/active/source/12_DOCS/mother-spec/01_BLUEPRINT_DESIGN_GOVERNANCE.md
-  - .github/governance-source/active/source/12_DOCS/mother-spec/02_IMPLEMENTATION_DELIVERY_STANDARD.md
-  - .github/governance-source/active/source/12_DOCS/mother-spec/03_EXECUTION_CONTROL_STANDARD.md
-  - .github/governance-source/active/source/12_DOCS/mother-spec/04_AUDIT_PROGRESS_STANDARD.md
+- .github/governance-source/active/source/12_DOCS/mother-spec/01_BLUEPRINT_DESIGN_GOVERNANCE.md
+- .github/governance-source/active/source/12_DOCS/mother-spec/02_IMPLEMENTATION_DELIVERY_STANDARD.md
+- .github/governance-source/active/source/12_DOCS/mother-spec/03_EXECUTION_CONTROL_STANDARD.md
+- .github/governance-source/active/source/12_DOCS/mother-spec/04_AUDIT_PROGRESS_STANDARD.md
 lifecycle_registry: .github/governance-source/active/source/10_REGISTRY/GOVERNANCE_LIFECYCLE_STAGE_REGISTRY.yaml
 stage_invariant_registry: .github/governance-source/active/source/10_REGISTRY/STAGE_EXECUTION_INVARIANT_REGISTRY.yaml
 rules_root: governance/specifications/current
@@ -16,23 +17,21 @@ branch_role_contract:
   rebuild-v2.1.1: IMMUTABLE_GOVERNANCE_RULESET
   0921acpos: PRODUCT_EXECUTION_WORKLINE
 forbidden_in_ruleset_branch:
-  - PRODUCT_SOURCE_DOCUMENT
-  - PRODUCT_SOURCE_PROJECTION
-  - PRODUCT_RUNTIME
-  - PRODUCT_STAGE_RUNNER
-  - ACTIVE_WORK_UNIT
-  - CURRENT_EXECUTION_SCOPE
-  - PRODUCT_EXECUTION_EVIDENCE
-  - PREEXECUTION_RECEIPT
-  - PRODUCT_HISTORY
-  - PRODUCT_AUTHORITY
+- PRODUCT_SOURCE_DOCUMENT
+- PRODUCT_SOURCE_PROJECTION
+- PRODUCT_RUNTIME
+- PRODUCT_STAGE_RUNNER
+- ACTIVE_WORK_UNIT
+- CURRENT_EXECUTION_SCOPE
+- PRODUCT_EXECUTION_EVIDENCE
+- PREEXECUTION_RECEIPT
+- PRODUCT_HISTORY
+- PRODUCT_AUTHORITY
 mutation_policy:
   rebuild_v2_1_1_after_freeze: FORBIDDEN
   new_file_after_freeze: FORBIDDEN
   product_execution_on_rebuild: FORBIDDEN
   product_execution_target: 0921acpos
-
-
 execution_domain_entrypoints:
   selection_required_before_rule_read: true
   recursive_governance_tree_scan: FORBIDDEN

@@ -25,15 +25,12 @@ STALE_PRODUCT_RUN_ROOT_LITERAL = re.compile(
     r"00_SOURCE_INTAKE/(?:fresh_run_\d+|run_[A-Za-z0-9]+_[0-9a-f]{8,}(?:_[A-Za-z0-9-]+)?)"
 )
 
-_RETIRED_COMPAT_STAGE_DIR = "stage" + "02"
-
 FORBIDDEN_CURRENT_RUNTIME_TOKENS = (
     "HISTORICAL_GOVERNANCE_TEST_STATE_ONLY",
-    "stage_execution_adapters." + _RETIRED_COMPAT_STAGE_DIR + "_functional_contract",
+    "stage_execution_adapters.stage02_functional_contract",
     "compile_stage_execution_preflight.py",
     "governance/test/ACTIVE_STATE.yaml",
     "governance/test/CURRENT_EXECUTION_SCOPE_MANIFEST.yaml",
-    "governance/test/" + _RETIRED_COMPAT_STAGE_DIR + "/STAGE02_CURRENT_FINDINGS.yaml",
 )
 RETIRED_PATHS = (
     "governance/ci/compile_stage_execution_preflight.py",
@@ -107,15 +104,16 @@ def main() -> int:
     errors: list[str] = []
     registry = load_yaml(REGISTRY)
 
-    if registry.get("branch") != "rebuild-v2.1.1":
-        errors.append("GOVERNANCE_BRANCH_IDENTITY_DRIFT")
-    if registry.get("product_execution_branch") != "0921acpos":
-        errors.append("PRODUCT_EXECUTION_BRANCH_DRIFT")
     roles = registry.get("branch_role_contract") or {}
-    if roles.get("rebuild-v2.1.1") != "IMMUTABLE_GOVERNANCE_RULESET":
-        errors.append("GOVERNANCE_BRANCH_ROLE_DRIFT")
-    if roles.get("0921acpos") != "PRODUCT_EXECUTION_WORKLINE":
-        errors.append("PRODUCT_BRANCH_ROLE_DRIFT")
+    governance_branch = str(registry.get("branch") or "")
+    governance_role = roles.get(governance_branch)
+    if governance_role not in {"IMMUTABLE_GOVERNANCE_RULESET", "GOVERNANCE_REVISION_CANDIDATE"}:
+        errors.append("GOVERNANCE_BRANCH_IDENTITY_OR_ROLE_DRIFT")
+    product_branch = str(registry.get("product_execution_branch") or "")
+    if not product_branch or roles.get(product_branch) != "PRODUCT_EXECUTION_WORKLINE":
+        errors.append("PRODUCT_EXECUTION_BRANCH_IDENTITY_OR_ROLE_DRIFT")
+    if governance_branch == product_branch:
+        errors.append("GOVERNANCE_AND_PRODUCT_BRANCH_MUST_BE_DISTINCT")
 
     forbidden_branch_items = set(registry.get("forbidden_in_ruleset_branch") or [])
     required_forbidden = {
@@ -133,23 +131,12 @@ def main() -> int:
         if (ROOT / retired).exists():
             errors.append("RETIRED_COMPATIBILITY_PATH_STILL_PRESENT:" + retired)
 
+    # Profile-specific stage schema is validated by the selected-profile validator.
+    # This global consumer-integrity validator remains profile-neutral and only
+    # verifies that the registered adapter surface exists and is parseable.
     adapters = load_yaml(ADAPTERS)
-    stage_contracts = adapters.get("stages") or {}
-    for stage_uid, stage_contract in stage_contracts.items():
-        stage_contract = stage_contract or {}
-        if stage_contract.get("scanner_mode") != "NORMALIZED_COMMON_EVIDENCE_CONTRACT":
-            errors.append("STAGE_SCANNER_MODE_NOT_CURRENT_NORMALIZED:" + str(stage_uid))
-        for field in (
-            "python_compatibility_module",
-            "compatibility_current_execution_authority",
-            "compatibility_may_resolve_current_scope",
-            "compatibility_state_source",
-        ):
-            if field in stage_contract:
-                errors.append("STAGE_RETIRED_COMPATIBILITY_FIELD_PRESENT:" + str(stage_uid) + ":" + field)
-        declared_source = stage_contract.get("current_execution_state_source")
-        if declared_source is not None and declared_source != "PRODUCT_STAGE_EXECUTION_CURRENT_SCOPE_AND_RESUME":
-            errors.append("STAGE_CURRENT_EXECUTION_STATE_SOURCE_DRIFT:" + str(stage_uid))
+    if not isinstance(adapters.get("stages") or {}, dict):
+        errors.append("STAGE_ADAPTER_REGISTRY_INVALID")
 
     referenced_by: dict[str, set[str]] = defaultdict(set)
     queue: deque[str] = deque()
@@ -203,11 +190,12 @@ def main() -> int:
             if child not in visited:
                 queue.append(child)
 
-    # Generic current engine must remain product-neutral; no fixed page/product selection.
+    # Generic current engine must remain product-neutral; detect concrete product
+    # identities generically instead of naming a profile step or one product page.
     current_engine_text = (ROOT / "governance/ci/stage_execution_engine.py").read_text(encoding="utf-8")
-    for token in ("target_pages=['CORE-01']", 'target_pages=["CORE-01"]', "CURRENT_STAGE2_TARGET_CORE01"):
-        if token in current_engine_text:
-            errors.append("FIXED_PRODUCT_SCOPE_IN_COMMON_ENGINE:" + token)
+    fixed_product_identity = re.compile(r"['\"](?:CORE|ASSET|VIDEO|EDIT|VOICE|QA|IAM|ERP|AIAPI)-\\d+['\"]")
+    for match in sorted(set(fixed_product_identity.findall(current_engine_text))):
+        errors.append("FIXED_PRODUCT_SCOPE_IN_COMMON_ENGINE:" + match)
 
     if errors:
         for error in sorted(set(errors)):
@@ -217,8 +205,8 @@ def main() -> int:
     print(f"PASS: Current workflows scanned={len(workflows)}")
     print(f"PASS: active/transitive executable targets={len(visited)} all resolve")
     print("PASS: governance/test product run-state root absent")
-    print("PASS: retired compatibility wrapper/module absent")
-    print("PASS: stage scope source is Product Current Scope/Resume only")
+    print("PASS: retired profile compatibility wrapper/module absent")
+    print("PASS: profile-specific scope schema is delegated to selected-profile validation")
     print("PASS: Governance branch has no product effectful execute mode")
     print("PASS: no stale fixed product run root or retired compatibility token in active consumers")
     print("PASS: ACTIVE_CONSUMER_REFERENCE_INTEGRITY_CURRENT_ONLY")

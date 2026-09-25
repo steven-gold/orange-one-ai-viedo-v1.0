@@ -1080,6 +1080,51 @@ The four canonical process layers are ordered and non-overlapping:
 
 Cross-layer handoff requires an explicit PASS receipt and exact identity/hash binding. A later layer MUST_NOT repair an earlier layer by invention.
 
+
+### Mandatory Normative Execution Matrix / 規範執行矩陣前置 Gate
+
+Before the first effectful operation of every governed Stage, capability, remediation cycle, audit-and-fix cycle, verification cycle, deployment-preparation cycle, or equivalent governed execution unit, the executor MUST materialize exactly one Current `NORMATIVE_EXECUTION_MATRIX` for the active Work Unit.
+
+The matrix is the executable bridge from normative policy to closure and MUST expand the complete applicable chain:
+
+`Normative Section -> Required Artifact -> Required Row -> Required Field -> Validator -> Closure Gate`.
+
+The matrix MUST be derived from the Current Governance UID, lifecycle/profile registry, required normative section UIDs, invariant registry, Current Authority, applicability, exact Work Unit scope, and successor-input requirements. It MUST NOT be authored from chat memory, historical outputs, a validator-local hard-coded subset, or a representative sample.
+
+Every applicable matrix row MUST identify at least:
+
+- matrix row UID;
+- normative section UID and exact requirement identity;
+- required artifact type and canonical/current physical artifact reference;
+- artifact owner;
+- row denominator source and exact governed row identity;
+- required field path and field applicability;
+- validator UID and exact validator check identity;
+- evidence/checkpoint reference;
+- closure gate receiving credit;
+- failure disposition and earliest owning re-entry target.
+
+A REQUIRED field MUST resolve to a physically materialized parseable value in the exact Current artifact/row. A field that is truly not applicable MUST be `NOT_APPLICABLE_WITH_AUTHORITY` and carry exact Authority evidence. Blank, omitted, implicit, summary-only, file-presence-only, path-presence-only, inferred, or historical values receive zero completeness credit.
+
+Before effectful execution begins, the matrix MUST prove all of the following:
+
+1. Every applicable `required_normative_section_uid` for the Stage/capability is represented.
+2. Every REQUIRED artifact and required evidence type is represented.
+3. Every applicable governed row in the Current denominator is represented.
+4. Every REQUIRED field for every represented row is bound to at least one executable validator check.
+5. Every validator check is bound to the closure gate whose credit it controls.
+6. Matrix denominator totals equal the Current classified applicable denominator; missing-row, missing-field, duplicate-credit, summary-only-credit, unclassified-applicability, validator-unbound, and closure-unbound counts are all zero.
+7. Validators, scanners, classifiers, materializers, and closure consumers read the same persisted matrix or a mechanically derived immutable projection of it. Consumer-local subsets are forbidden.
+8. A destructive regression must prove that deleting or blanking one REQUIRED field causes the intended validator to fail before closure credit is available.
+
+No Stage/capability may start its first effectful operation, resume after a material schema change, or close when the Current matrix is missing, stale, incomplete, bound to another governance/work-unit identity, or not consumed by the applicable validator/closure path.
+
+If a downstream Stage discovers that an earlier Stage passed without complete matrix coverage, the downstream Stage MUST stop; the earliest owning Stage/capability becomes `REVERIFY_REQUIRED`; impacted descendants lose closure credit until the owner is repaired and freshly revalidated.
+
+`ARTIFACT_EXISTS != REQUIRED_FIELDS_COMPLETE`.
+
+`VALIDATOR_PASS_WITHOUT_COMPLETE_MATRIX_COVERAGE != STAGE_PASS`.
+
 <!-- SECTION_UID: WEB-GOV-03-S063 -->
 ## 63. Mandatory Session Bootstrap / Resume Gate
 
@@ -1235,7 +1280,7 @@ After mutation, the executor MUST verify the exact intended structural delta, re
 <!-- SECTION_UID: WEB-GOV-03-S071 -->
 ## 71. 跨階段實體交接 / Consumer Readiness / 回退控制 / Cross-Stage Materialized Handoff, Consumer Readiness and Re-entry Control
 
-Every governed Stage exit MUST execute the following order before the next Stage may be admitted:
+Every governed Stage exit MUST be evaluated per Current governed Page or System-Logic Unit, never as an implicit project-wide same-Stage barrier. Before the next Stage may be admitted for that Unit, the following order MUST execute:
 
 1. Enumerate the complete applicable successor-required input universe from the Current lifecycle/profile/Authority.
 2. Reconcile each required input to exactly one legal predecessor output, persisted foundation artifact, Current Authority/shared owner, or registered external evidence source.

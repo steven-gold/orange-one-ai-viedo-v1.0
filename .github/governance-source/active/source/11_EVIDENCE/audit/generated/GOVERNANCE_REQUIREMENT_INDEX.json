@@ -5,7 +5,7 @@
     {
       "document_id": "WEB-GOV-01",
       "path": "12_DOCS/mother-spec/01_BLUEPRINT_DESIGN_GOVERNANCE.md",
-      "sha256": "6f024f1db40f0359e20d26666d32e0815d7a1343534785d799286357077399a0",
+      "sha256": "c49ec48ea3d8a7644bb726b9f7b68dd41528cb577b75758ba3d7b8a09ca82b8b",
       "version": "2.2.3",
       "status": "normative",
       "permanent_inheritance": true
@@ -21,7 +21,7 @@
     {
       "document_id": "WEB-GOV-03",
       "path": "12_DOCS/mother-spec/03_EXECUTION_CONTROL_STANDARD.md",
-      "sha256": "b567a486cc492783a7854e6eba5a82e2f7a8c2c08d588a1259cb5d7cefb55ba2",
+      "sha256": "26c596fd382b03eb6797843c59f09a6bd82ab2b5ee7c3259aa3262d061a210b7",
       "version": "2.2.3",
       "status": "normative",
       "permanent_inheritance": true
@@ -29,18 +29,18 @@
     {
       "document_id": "WEB-GOV-04",
       "path": "12_DOCS/mother-spec/04_AUDIT_PROGRESS_STANDARD.md",
-      "sha256": "4eae8db47886a9888b5f484e2edaf89e1cf4d8debde34e976d787dd28babd3a2",
+      "sha256": "224311d63191278cb51472a32a4513061e333f5eaa3d8a4878462cdc41ccc71b",
       "version": "2.2.3",
       "status": "normative",
       "permanent_inheritance": true
     }
   ],
   "counts": {
-    "total": 847,
-    "must": 663,
-    "must_not": 184,
-    "auto": 506,
-    "manual_evidence": 341
+    "total": 862,
+    "must": 675,
+    "must_not": 187,
+    "auto": 517,
+    "manual_evidence": 345
   },
   "requirements": [
     {
@@ -3250,13 +3250,27 @@
       "blocking": true
     },
     {
+      "requirement_id": "GOV01-MUST_NOT-064",
+      "source": "WEB-GOV-01",
+      "section": "75. Execution Scope Authority / Capability Ownership / Upstream Re-entry",
+      "line": 1528,
+      "modality": "MUST_NOT",
+      "clause_hash": "0d2a13d1849a6d51681922ae62b6470c5a2ccf7ee587b49b68c9833d9ab4e095",
+      "clause_excerpt": "Each governed Page or System-Logic Unit owns an independent Stage lifecycle. Work Unit closure and that governed Unit's Stage/capability closure are different decisions, but Stage ",
+      "list_item_count": 0,
+      "list_hash": null,
+      "validator_id": "authority_manifest_guard",
+      "automation": "AUTO",
+      "blocking": true
+    },
+    {
       "requirement_id": "GOV01-MUST-167",
       "source": "WEB-GOV-01",
       "section": "75. Execution Scope Authority / Capability Ownership / Upstream Re-entry",
       "line": 1528,
       "modality": "MUST",
-      "clause_hash": "f01784a9b40069188bf1ddea6c618b442f15c0f15d1ab7bbdf279db4467b9d37",
-      "clause_excerpt": "Work Unit closure and Stage/capability closure are different decisions. A partial Work Unit MAY close when its exact included scope satisfies its Definition of Done, but it MUST pe",
+      "clause_hash": "0d2a13d1849a6d51681922ae62b6470c5a2ccf7ee587b49b68c9833d9ab4e095",
+      "clause_excerpt": "Each governed Page or System-Logic Unit owns an independent Stage lifecycle. Work Unit closure and that governed Unit's Stage/capability closure are different decisions, but Stage ",
       "list_item_count": 0,
       "list_hash": null,
       "validator_id": "authority_manifest_guard",
@@ -3334,7 +3348,7 @@
       "blocking": true
     },
     {
-      "requirement_id": "GOV01-MUST_NOT-064",
+      "requirement_id": "GOV01-MUST_NOT-065",
       "source": "WEB-GOV-01",
       "section": "76. 基本設計包完整度 Gate / Basic Design Package Completeness",
       "line": 1559,
@@ -3432,7 +3446,7 @@
       "blocking": true
     },
     {
-      "requirement_id": "GOV01-MUST_NOT-065",
+      "requirement_id": "GOV01-MUST_NOT-066",
       "source": "WEB-GOV-01",
       "section": "78. 強制完整視覺設計與多情境圖面 Gate / Mandatory Complete Visual Design and Multi-State Evidence",
       "line": 1593,
@@ -3474,7 +3488,7 @@
       "blocking": true
     },
     {
-      "requirement_id": "GOV01-MUST_NOT-066",
+      "requirement_id": "GOV01-MUST_NOT-067",
       "source": "WEB-GOV-01",
       "section": "79. 視覺參考註解合約 / Visual Reference Annotation Contract",
       "line": 1612,
@@ -3502,7 +3516,7 @@
       "blocking": true
     },
     {
-      "requirement_id": "GOV01-MUST_NOT-067",
+      "requirement_id": "GOV01-MUST_NOT-068",
       "source": "WEB-GOV-01",
       "section": "80. 視覺規範繼承與風格定義 Gate / Visual Authority Inheritance and Style Definition",
       "line": 1619,
@@ -3614,7 +3628,7 @@
       "blocking": true
     },
     {
-      "requirement_id": "GOV01-MUST_NOT-068",
+      "requirement_id": "GOV01-MUST_NOT-069",
       "source": "WEB-GOV-01",
       "section": "82. 量化 Basic Design Freeze 完整度 Gate / Quantitative Basic Design Freeze Completeness",
       "line": 1676,
@@ -3628,7 +3642,7 @@
       "blocking": true
     },
     {
-      "requirement_id": "GOV01-MUST_NOT-069",
+      "requirement_id": "GOV01-MUST_NOT-070",
       "source": "WEB-GOV-01",
       "section": "83. 設計文件圖面嵌入與自足性交付合約 / Design Document Embedded Visuals and Self-Contained Delivery Contract",
       "line": 1681,
@@ -3740,7 +3754,7 @@
       "blocking": true
     },
     {
-      "requirement_id": "GOV01-MUST_NOT-070",
+      "requirement_id": "GOV01-MUST_NOT-071",
       "source": "WEB-GOV-01",
       "section": "84. 基本設計原子化實體化與禁止摘要替代 Gate / Atomic Basic Design Materialization and No-Summary Substitution",
       "line": 1713,
@@ -3782,7 +3796,7 @@
       "blocking": true
     },
     {
-      "requirement_id": "GOV01-MUST_NOT-071",
+      "requirement_id": "GOV01-MUST_NOT-072",
       "source": "WEB-GOV-01",
       "section": "84. 基本設計原子化實體化與禁止摘要替代 Gate / Atomic Basic Design Materialization and No-Summary Substitution",
       "line": 1717,
@@ -3810,7 +3824,7 @@
       "blocking": true
     },
     {
-      "requirement_id": "GOV01-MUST_NOT-072",
+      "requirement_id": "GOV01-MUST_NOT-073",
       "source": "WEB-GOV-01",
       "section": "84. 基本設計原子化實體化與禁止摘要替代 Gate / Atomic Basic Design Materialization and No-Summary Substitution",
       "line": 1719,
@@ -3880,7 +3894,7 @@
       "blocking": true
     },
     {
-      "requirement_id": "GOV01-MUST_NOT-073",
+      "requirement_id": "GOV01-MUST_NOT-074",
       "source": "WEB-GOV-01",
       "section": "85. 基本設計分母完整性與交付物對帳 Gate / Basic Design Denominator Integrity and Deliverable Reconciliation",
       "line": 1732,
@@ -3964,7 +3978,7 @@
       "blocking": true
     },
     {
-      "requirement_id": "GOV01-MUST_NOT-074",
+      "requirement_id": "GOV01-MUST_NOT-075",
       "source": "WEB-GOV-01",
       "section": "86. 基本設計執行細節完整度 Gate / Basic Design Execution-Detail Completeness",
       "line": 1750,
@@ -3992,7 +4006,7 @@
       "blocking": true
     },
     {
-      "requirement_id": "GOV01-MUST_NOT-075",
+      "requirement_id": "GOV01-MUST_NOT-076",
       "source": "WEB-GOV-01",
       "section": "87. 視覺設計 Profile 實體化與分母對帳 Gate / Visual Design Profile Materialization and Denominator Reconciliation",
       "line": 1757,
@@ -4020,7 +4034,7 @@
       "blocking": true
     },
     {
-      "requirement_id": "GOV01-MUST_NOT-076",
+      "requirement_id": "GOV01-MUST_NOT-077",
       "source": "WEB-GOV-01",
       "section": "87. 視覺設計 Profile 實體化與分母對帳 Gate / Visual Design Profile Materialization and Denominator Reconciliation",
       "line": 1759,
@@ -4048,7 +4062,7 @@
       "blocking": true
     },
     {
-      "requirement_id": "GOV01-MUST_NOT-077",
+      "requirement_id": "GOV01-MUST_NOT-078",
       "source": "WEB-GOV-01",
       "section": "87. 視覺設計 Profile 實體化與分母對帳 Gate / Visual Design Profile Materialization and Denominator Reconciliation",
       "line": 1761,
@@ -4090,7 +4104,7 @@
       "blocking": true
     },
     {
-      "requirement_id": "GOV01-MUST_NOT-078",
+      "requirement_id": "GOV01-MUST_NOT-079",
       "source": "WEB-GOV-01",
       "section": "87. 視覺設計 Profile 實體化與分母對帳 Gate / Visual Design Profile Materialization and Denominator Reconciliation",
       "line": 1765,
@@ -4118,7 +4132,7 @@
       "blocking": true
     },
     {
-      "requirement_id": "GOV01-MUST_NOT-079",
+      "requirement_id": "GOV01-MUST_NOT-080",
       "source": "WEB-GOV-01",
       "section": "87. 視覺設計 Profile 實體化與分母對帳 Gate / Visual Design Profile Materialization and Denominator Reconciliation",
       "line": 1767,
@@ -4230,7 +4244,7 @@
       "blocking": true
     },
     {
-      "requirement_id": "GOV01-MUST_NOT-080",
+      "requirement_id": "GOV01-MUST_NOT-081",
       "source": "WEB-GOV-01",
       "section": "89. Typography Computed Metrics Baseline Gate / 字體計算值基準 Gate",
       "line": 1787,
@@ -8992,8 +9006,106 @@
     {
       "requirement_id": "GOV03-MUST-112",
       "source": "WEB-GOV-03",
-      "section": "63. Mandatory Session Bootstrap / Resume Gate",
+      "section": "Mandatory Normative Execution Matrix / 規範執行矩陣前置 Gate",
       "line": 1086,
+      "modality": "MUST",
+      "clause_hash": "60adf6e5efffdd060561a5cb978649f011bd32a742b80242811b47486660ae2c",
+      "clause_excerpt": "Before the first effectful operation of every governed Stage, capability, remediation cycle, audit-and-fix cycle, verification cycle, deployment-preparation cycle, or equivalent go",
+      "list_item_count": 0,
+      "list_hash": null,
+      "validator_id": "current_state_ledger_guard",
+      "automation": "AUTO",
+      "blocking": true
+    },
+    {
+      "requirement_id": "GOV03-MUST-113",
+      "source": "WEB-GOV-03",
+      "section": "Mandatory Normative Execution Matrix / 規範執行矩陣前置 Gate",
+      "line": 1088,
+      "modality": "MUST",
+      "clause_hash": "e93c7c781b20576247a94451973603a11bc9ce265b79d66fa3202e3db9977124",
+      "clause_excerpt": "The matrix is the executable bridge from normative policy to closure and MUST expand the complete applicable chain:",
+      "list_item_count": 0,
+      "list_hash": null,
+      "validator_id": "manual_semantic_guard",
+      "automation": "MANUAL_EVIDENCE",
+      "blocking": true
+    },
+    {
+      "requirement_id": "GOV03-MUST-114",
+      "source": "WEB-GOV-03",
+      "section": "Mandatory Normative Execution Matrix / 規範執行矩陣前置 Gate",
+      "line": 1092,
+      "modality": "MUST",
+      "clause_hash": "0eeb47329fc7538ea180f45aba522306716d14f75ee67b272db0fef7751cd898",
+      "clause_excerpt": "The matrix MUST be derived from the Current Governance UID, lifecycle/profile registry, required normative section UIDs, invariant registry, Current Authority, applicability, exact",
+      "list_item_count": 0,
+      "list_hash": null,
+      "validator_id": "authority_manifest_guard",
+      "automation": "AUTO",
+      "blocking": true
+    },
+    {
+      "requirement_id": "GOV03-MUST-115",
+      "source": "WEB-GOV-03",
+      "section": "Mandatory Normative Execution Matrix / 規範執行矩陣前置 Gate",
+      "line": 1094,
+      "modality": "MUST",
+      "clause_hash": "d91eea8b2d3ca241cacdcb7c62862c0c3bf5259348465b105282ac26fed20a17",
+      "clause_excerpt": "Every applicable matrix row MUST identify at least:",
+      "list_item_count": 10,
+      "list_hash": "2842a49154cede7b44c29ed9633c87f5cc4d12fa8d47de6e73276dca5c2a898d",
+      "validator_id": "manual_semantic_guard",
+      "automation": "MANUAL_EVIDENCE",
+      "blocking": true
+    },
+    {
+      "requirement_id": "GOV03-MUST-116",
+      "source": "WEB-GOV-03",
+      "section": "Mandatory Normative Execution Matrix / 規範執行矩陣前置 Gate",
+      "line": 1107,
+      "modality": "MUST",
+      "clause_hash": "4d1b5d2e3037810a183aee4d4c86c5a1be65c267e5d81b53c250277cd11cd612",
+      "clause_excerpt": "A REQUIRED field MUST resolve to a physically materialized parseable value in the exact Current artifact/row. A field that is truly not applicable MUST be `NOT_APPLICABLE_WITH_AUTH",
+      "list_item_count": 0,
+      "list_hash": null,
+      "validator_id": "audit_binding_guard",
+      "automation": "AUTO",
+      "blocking": true
+    },
+    {
+      "requirement_id": "GOV03-MUST-117",
+      "source": "WEB-GOV-03",
+      "section": "Mandatory Normative Execution Matrix / 規範執行矩陣前置 Gate",
+      "line": 1109,
+      "modality": "MUST",
+      "clause_hash": "3bb2db94dada63005483fd39c8ef1422d1adb837ff2efe2806426c9dc6ccc102",
+      "clause_excerpt": "Before effectful execution begins, the matrix MUST prove all of the following:",
+      "list_item_count": 8,
+      "list_hash": "efc1b28f64e44db00a94bd3f61387fd7db194daad511858232c518ae0f5653d1",
+      "validator_id": "manual_semantic_guard",
+      "automation": "MANUAL_EVIDENCE",
+      "blocking": true
+    },
+    {
+      "requirement_id": "GOV03-MUST-118",
+      "source": "WEB-GOV-03",
+      "section": "Mandatory Normative Execution Matrix / 規範執行矩陣前置 Gate",
+      "line": 1122,
+      "modality": "MUST",
+      "clause_hash": "8c871a9e28744fa6ef5b5e982884e1be1f95c5e9666fc7afdfb13ad03390c57b",
+      "clause_excerpt": "If a downstream Stage discovers that an earlier Stage passed without complete matrix coverage, the downstream Stage MUST stop; the earliest owning Stage/capability becomes `REVERIF",
+      "list_item_count": 0,
+      "list_hash": null,
+      "validator_id": "current_revision_guard",
+      "automation": "AUTO",
+      "blocking": true
+    },
+    {
+      "requirement_id": "GOV03-MUST-119",
+      "source": "WEB-GOV-03",
+      "section": "63. Mandatory Session Bootstrap / Resume Gate",
+      "line": 1131,
       "modality": "MUST",
       "clause_hash": "74f88425714fc7da6ae41d0d5baafcfcfb42767b4215637019dfd1744b3a2d1f",
       "clause_excerpt": "Before any Current State judgment, planning, mutation, test, commit, workflow execution, deployment decision, closure claim, or continuation decision, the executor MUST complete on",
@@ -9007,7 +9119,7 @@
       "requirement_id": "GOV03-MUST_NOT-043",
       "source": "WEB-GOV-03",
       "section": "63. Mandatory Session Bootstrap / Resume Gate",
-      "line": 1089,
+      "line": 1134,
       "modality": "MUST_NOT",
       "clause_hash": "fcc2857651b9e88bf8e335355bb5951bc28034653298aefb5b8d3aa95adb08ba",
       "clause_excerpt": "2. Resolve the formal Registry / Current Governance entry and immutable Current Governance UID; chat memory, historical summaries, Stage labels, profile labels, and run labels MUST",
@@ -9018,10 +9130,10 @@
       "blocking": true
     },
     {
-      "requirement_id": "GOV03-MUST-113",
+      "requirement_id": "GOV03-MUST-120",
       "source": "WEB-GOV-03",
       "section": "63. Mandatory Session Bootstrap / Resume Gate",
-      "line": 1097,
+      "line": 1142,
       "modality": "MUST",
       "clause_hash": "68c8e52fe8f059d7a57b86f5c1c8c5d8c300ed49bcc96d136ee69186a6d2a25e",
       "clause_excerpt": "10. Resolve the selected Execution Profile only when applicable; profile-local Stage/step identity MUST remain subordinate to the Current Primary Task Layer and common Mother Polic",
@@ -9032,10 +9144,10 @@
       "blocking": true
     },
     {
-      "requirement_id": "GOV03-MUST-114",
+      "requirement_id": "GOV03-MUST-121",
       "source": "WEB-GOV-03",
       "section": "63. Mandatory Session Bootstrap / Resume Gate",
-      "line": 1101,
+      "line": 1146,
       "modality": "MUST",
       "clause_hash": "3a1da32a52b27d5b8ebc132f9165bb60320043842cf8c6f98993c27cf78036dd",
       "clause_excerpt": "The gate MUST fail closed when any required Current identity, Authority, task layer, Work Unit, owner, Resume Point, evidence identity, dependency, reference, revision, or transiti",
@@ -9046,10 +9158,10 @@
       "blocking": true
     },
     {
-      "requirement_id": "GOV03-MUST-115",
+      "requirement_id": "GOV03-MUST-122",
       "source": "WEB-GOV-03",
       "section": "64. Task Layer Classification / Primary Task Lock",
-      "line": 1108,
+      "line": 1153,
       "modality": "MUST",
       "clause_hash": "5575ba9a36b42fde1327c94c1c6070356abb3c723aecc80d52406e32bc5119d6",
       "clause_excerpt": "Every governed request MUST be classified before Work Unit execution into exactly one Current Primary Task Layer:",
@@ -9063,7 +9175,7 @@
       "requirement_id": "GOV03-MUST_NOT-044",
       "source": "WEB-GOV-03",
       "section": "64. Task Layer Classification / Primary Task Lock",
-      "line": 1116,
+      "line": 1161,
       "modality": "MUST_NOT",
       "clause_hash": "5c33dbede7c1ba3a283f8ffc366e1ccd5cf44c6831e8f32ffe9e8b91a98c6c68",
       "clause_excerpt": "The classification MUST derive from the explicit user directive, Current Authority, authorized Change Request, Current Work Unit/Resume state, and applicable dependency/impact evid",
@@ -9074,10 +9186,10 @@
       "blocking": true
     },
     {
-      "requirement_id": "GOV03-MUST-116",
+      "requirement_id": "GOV03-MUST-123",
       "source": "WEB-GOV-03",
       "section": "64. Task Layer Classification / Primary Task Lock",
-      "line": 1116,
+      "line": 1161,
       "modality": "MUST",
       "clause_hash": "5c33dbede7c1ba3a283f8ffc366e1ccd5cf44c6831e8f32ffe9e8b91a98c6c68",
       "clause_excerpt": "The classification MUST derive from the explicit user directive, Current Authority, authorized Change Request, Current Work Unit/Resume state, and applicable dependency/impact evid",
@@ -9091,7 +9203,7 @@
       "requirement_id": "GOV03-MUST_NOT-045",
       "source": "WEB-GOV-03",
       "section": "64. Task Layer Classification / Primary Task Lock",
-      "line": 1118,
+      "line": 1163,
       "modality": "MUST_NOT",
       "clause_hash": "dd1b0ca40f9f3bfa86b70dd72053fa594e1ecccb34b83e406f923f0d7c77d63a",
       "clause_excerpt": "When `GOVERNANCE_MAINTENANCE` is primary, product Stage artifacts MAY be read only as evidence, regression provenance, dependency context, or impacted-consumer context unless a sep",
@@ -9102,10 +9214,10 @@
       "blocking": true
     },
     {
-      "requirement_id": "GOV03-MUST-117",
+      "requirement_id": "GOV03-MUST-124",
       "source": "WEB-GOV-03",
       "section": "64. Task Layer Classification / Primary Task Lock",
-      "line": 1120,
+      "line": 1165,
       "modality": "MUST",
       "clause_hash": "3324c82979e6cbe07448f3831e488dcd9a4d482c062681360e8c473518c8a5ac",
       "clause_excerpt": "Task-layer changes MUST be explicit, evidence-backed, recorded in Resume/Current State, and re-run the full Session Bootstrap / Resume Gate before effectful work continues.",
@@ -9116,10 +9228,10 @@
       "blocking": true
     },
     {
-      "requirement_id": "GOV03-MUST-118",
+      "requirement_id": "GOV03-MUST-125",
       "source": "WEB-GOV-03",
       "section": "65. Work Unit Resolution Gate",
-      "line": 1125,
+      "line": 1170,
       "modality": "MUST",
       "clause_hash": "95b127832c38093d9f35777fdfaa40e17dd5d7dc6168a087f1e5921d245eeb8a",
       "clause_excerpt": "If the Current Primary Task Layer has no legal Active Primary Work Unit, execution MUST enter `WORK_UNIT_RESOLUTION_GATE`; absence of an Active Work Unit is not permission for AI t",
@@ -9130,10 +9242,10 @@
       "blocking": true
     },
     {
-      "requirement_id": "GOV03-MUST-119",
+      "requirement_id": "GOV03-MUST-126",
       "source": "WEB-GOV-03",
       "section": "65. Work Unit Resolution Gate",
-      "line": 1129,
+      "line": 1174,
       "modality": "MUST",
       "clause_hash": "f7cbbe4e961769fc882105aff3d5acc4e8f0a4b99a513b0b70cc1f9d11b52a6f",
       "clause_excerpt": "The resolution MUST prove:",
@@ -9147,7 +9259,7 @@
       "requirement_id": "GOV03-MUST_NOT-046",
       "source": "WEB-GOV-03",
       "section": "65. Work Unit Resolution Gate",
-      "line": 1140,
+      "line": 1185,
       "modality": "MUST_NOT",
       "clause_hash": "fe6ca063694dfa24799b914cd6e11b883db15bccbf6fe898c02dc49c40ab99b2",
       "clause_excerpt": "If two or more materially distinct successor Work Units remain legal without Authority selecting one, the result is `WORK_UNIT_RESOLUTION_AMBIGUOUS` and effectful execution MUST BL",
@@ -9158,10 +9270,10 @@
       "blocking": true
     },
     {
-      "requirement_id": "GOV03-MUST-120",
+      "requirement_id": "GOV03-MUST-127",
       "source": "WEB-GOV-03",
       "section": "65. Work Unit Resolution Gate",
-      "line": 1140,
+      "line": 1185,
       "modality": "MUST",
       "clause_hash": "fe6ca063694dfa24799b914cd6e11b883db15bccbf6fe898c02dc49c40ab99b2",
       "clause_excerpt": "If two or more materially distinct successor Work Units remain legal without Authority selecting one, the result is `WORK_UNIT_RESOLUTION_AMBIGUOUS` and effectful execution MUST BL",
@@ -9172,10 +9284,10 @@
       "blocking": true
     },
     {
-      "requirement_id": "GOV03-MUST-121",
+      "requirement_id": "GOV03-MUST-128",
       "source": "WEB-GOV-03",
       "section": "66. Governance Maintenance Credit Isolation",
-      "line": 1145,
+      "line": 1190,
       "modality": "MUST",
       "clause_hash": "30f361ae770c38fe196fb4441a931cda0888bc11882674ea1cf1ca226a13492b",
       "clause_excerpt": "Governance maintenance and product completion are different accounting domains. The following work MAY repair governance correctness but MUST receive zero product-stage gap-reducti",
@@ -9189,7 +9301,7 @@
       "requirement_id": "GOV03-MUST_NOT-047",
       "source": "WEB-GOV-03",
       "section": "66. Governance Maintenance Credit Isolation",
-      "line": 1156,
+      "line": 1201,
       "modality": "MUST_NOT",
       "clause_hash": "4e8d9aa685151c3d002d2dbbf2bc9811f9eb2e5313de471d81ac023bc01f028c",
       "clause_excerpt": "A governance Work Unit MUST record its own closure evidence and MUST_NOT decrement product blocker/gap denominators solely because the governance machinery became correct. Product ",
@@ -9200,10 +9312,10 @@
       "blocking": true
     },
     {
-      "requirement_id": "GOV03-MUST-122",
+      "requirement_id": "GOV03-MUST-129",
       "source": "WEB-GOV-03",
       "section": "66. Governance Maintenance Credit Isolation",
-      "line": 1156,
+      "line": 1201,
       "modality": "MUST",
       "clause_hash": "4e8d9aa685151c3d002d2dbbf2bc9811f9eb2e5313de471d81ac023bc01f028c",
       "clause_excerpt": "A governance Work Unit MUST record its own closure evidence and MUST_NOT decrement product blocker/gap denominators solely because the governance machinery became correct. Product ",
@@ -9217,7 +9329,7 @@
       "requirement_id": "GOV03-MUST_NOT-048",
       "source": "WEB-GOV-03",
       "section": "67. Terminal Closure Observation / Context Continuity Gate",
-      "line": 1161,
+      "line": 1206,
       "modality": "MUST_NOT",
       "clause_hash": "e04ed2b0d522977e0febf149b2c0a06fc7c161d183c9263a413bb9b516174b97",
       "clause_excerpt": "A Work Unit, validation cycle, promotion, cleanup transaction, workflow-backed Gate, or release Gate MUST_NOT receive terminal closure credit from an inner step, job subset, genera",
@@ -9228,10 +9340,10 @@
       "blocking": true
     },
     {
-      "requirement_id": "GOV03-MUST-123",
+      "requirement_id": "GOV03-MUST-130",
       "source": "WEB-GOV-03",
       "section": "67. Terminal Closure Observation / Context Continuity Gate",
-      "line": 1165,
+      "line": 1210,
       "modality": "MUST",
       "clause_hash": "d8231e5c5ffe953827a469a7cf63d85bf0875d4e333eca9a7025b747334173e3",
       "clause_excerpt": "Before moving to a new Primary Task Layer or Work Unit, the executor MUST persist the terminal disposition, exact evidence refs, unresolved blockers, Current Resume Point, and lega",
@@ -9245,7 +9357,7 @@
       "requirement_id": "GOV03-MUST_NOT-049",
       "source": "WEB-GOV-03",
       "section": "68. Semantic Residual Classification / Disposition Gate",
-      "line": 1170,
+      "line": 1215,
       "modality": "MUST_NOT",
       "clause_hash": "9fb0e48acef53f3ccfa00e7421b9eae760106b1ba8b4d822fd7b555189c7144e",
       "clause_excerpt": "Before any Current artifact, validator, runner, workflow helper, generated projector, temporary file, backup, intermediate, superseded implementation, or other residual content may",
@@ -9256,10 +9368,10 @@
       "blocking": true
     },
     {
-      "requirement_id": "GOV03-MUST-124",
+      "requirement_id": "GOV03-MUST-131",
       "source": "WEB-GOV-03",
       "section": "68. Semantic Residual Classification / Disposition Gate",
-      "line": 1170,
+      "line": 1215,
       "modality": "MUST",
       "clause_hash": "9fb0e48acef53f3ccfa00e7421b9eae760106b1ba8b4d822fd7b555189c7144e",
       "clause_excerpt": "Before any Current artifact, validator, runner, workflow helper, generated projector, temporary file, backup, intermediate, superseded implementation, or other residual content may",
@@ -9270,10 +9382,10 @@
       "blocking": true
     },
     {
-      "requirement_id": "GOV03-MUST-125",
+      "requirement_id": "GOV03-MUST-132",
       "source": "WEB-GOV-03",
       "section": "68. Semantic Residual Classification / Disposition Gate",
-      "line": 1172,
+      "line": 1217,
       "modality": "MUST",
       "clause_hash": "91290e90c84943f408a63a8277c8a80936cb1515940ecf7493e4d2f6c4b65ae2",
       "clause_excerpt": "Every residual classification MUST evaluate all six dimensions:",
@@ -9287,7 +9399,7 @@
       "requirement_id": "GOV03-MUST_NOT-050",
       "source": "WEB-GOV-03",
       "section": "68. Semantic Residual Classification / Disposition Gate",
-      "line": 1191,
+      "line": 1236,
       "modality": "MUST_NOT",
       "clause_hash": "67700520fb72aa8c58d0cac07d05c815de2f65fe4f3f7c11a9c162c2e75fcf84",
       "clause_excerpt": "UNKNOWN is fail-closed. AI MUST_NOT silently convert uncertainty into REMOVE, KEEP, SATISFIED, or product completion.",
@@ -9298,10 +9410,10 @@
       "blocking": true
     },
     {
-      "requirement_id": "GOV03-MUST-126",
+      "requirement_id": "GOV03-MUST-133",
       "source": "WEB-GOV-03",
       "section": "68. Semantic Residual Classification / Disposition Gate",
-      "line": 1195,
+      "line": 1240,
       "modality": "MUST",
       "clause_hash": "7e1b3995dbf4a0f32d15fc1230e4d6b7d9a89aa54f2ace8f0b18d8d7718b4d84",
       "clause_excerpt": "A removable cohort SHOULD be mutated atomically when the files share one proven disposition and dependency closure. The transaction MUST preserve required Authority machinery, Curr",
@@ -9312,10 +9424,10 @@
       "blocking": true
     },
     {
-      "requirement_id": "GOV03-MUST-127",
+      "requirement_id": "GOV03-MUST-134",
       "source": "WEB-GOV-03",
       "section": "69. Execution Scope Manifest / Dynamic Denominator / Capability Re-entry Control",
-      "line": 1204,
+      "line": 1249,
       "modality": "MUST",
       "clause_hash": "9d43bce9ef645124ed9dc96c6c4479d332b00386e45a8d5501b9c7b0b514e259",
       "clause_excerpt": "Every governed execution iteration MUST use this order:",
@@ -9326,10 +9438,10 @@
       "blocking": true
     },
     {
-      "requirement_id": "GOV03-MUST-128",
+      "requirement_id": "GOV03-MUST-135",
       "source": "WEB-GOV-03",
       "section": "69. Execution Scope Manifest / Dynamic Denominator / Capability Re-entry Control",
-      "line": 1216,
+      "line": 1261,
       "modality": "MUST",
       "clause_hash": "6e616285a5608d55117ef695086daa6399c7e8a92fb4ef98d5e456705325009c",
       "clause_excerpt": "Reusable validators/scanners/classifiers/remediation executors MUST be scope-parametric. Product IDs, page IDs, provider IDs, fixed page combinations, blocker counts, gap counts, w",
@@ -9340,10 +9452,10 @@
       "blocking": true
     },
     {
-      "requirement_id": "GOV03-MUST-129",
+      "requirement_id": "GOV03-MUST-136",
       "source": "WEB-GOV-03",
       "section": "69. Execution Scope Manifest / Dynamic Denominator / Capability Re-entry Control",
-      "line": 1218,
+      "line": 1263,
       "modality": "MUST",
       "clause_hash": "1b17a28f92f9d79990fbe42e8ead250ef37b52d1b19183ce91fa1a92ad08032b",
       "clause_excerpt": "The current denominator for an execution cycle MUST be computed from Current scope plus physical scan and legal successor reconciliation. Raw discovery count, effective open count,",
@@ -9354,10 +9466,10 @@
       "blocking": true
     },
     {
-      "requirement_id": "GOV03-MUST-130",
+      "requirement_id": "GOV03-MUST-137",
       "source": "WEB-GOV-03",
       "section": "69. Execution Scope Manifest / Dynamic Denominator / Capability Re-entry Control",
-      "line": 1220,
+      "line": 1265,
       "modality": "MUST",
       "clause_hash": "c8d34b59397846e4c08288f522a8a0a15996a0afd7fa626f3a30ac8627a56414",
       "clause_excerpt": "Temporary cycles MUST declare temporary roots and cleanup boundaries. Temporary residuals may block a formal cleanliness gate, but this classification is TEMPORARY_LIFECYCLE_RESIDU",
@@ -9368,10 +9480,10 @@
       "blocking": true
     },
     {
-      "requirement_id": "GOV03-MUST-131",
+      "requirement_id": "GOV03-MUST-138",
       "source": "WEB-GOV-03",
       "section": "69. Execution Scope Manifest / Dynamic Denominator / Capability Re-entry Control",
-      "line": 1222,
+      "line": 1267,
       "modality": "MUST",
       "clause_hash": "99e20b5bac5d41a5be25db6af11fa56bac9f42191109941f3b7971f14f82e072",
       "clause_excerpt": "Capability re-entry is owner-based, not stage-number-based Mother Policy. A selected Execution Profile MAY map source intake, functional contract, visual design, freeze, implementa",
@@ -9382,10 +9494,10 @@
       "blocking": true
     },
     {
-      "requirement_id": "GOV03-MUST-132",
+      "requirement_id": "GOV03-MUST-139",
       "source": "WEB-GOV-03",
       "section": "70. Structured Mutation Selector / Bounded Write-Set Safety",
-      "line": 1227,
+      "line": 1272,
       "modality": "MUST",
       "clause_hash": "d357ece33b01cc2d6ba98a1f73047c1cd924e89f926ada843ddd6edbd60e9ca1",
       "clause_excerpt": "Any mutation of a structured governance artifact, run-state artifact, registry, manifest, evidence record, structured Product/Project source, or executable source MUST resolve a bo",
@@ -9399,7 +9511,7 @@
       "requirement_id": "GOV03-MUST_NOT-051",
       "source": "WEB-GOV-03",
       "section": "70. Structured Mutation Selector / Bounded Write-Set Safety",
-      "line": 1229,
+      "line": 1274,
       "modality": "MUST_NOT",
       "clause_hash": "881989046d754e1ef6f3740949b47ede3c77fbea7aadafd7a16953574943c751",
       "clause_excerpt": "Whole-document raw text search, replacement, occurrence count, regular-expression match, or lexical token equality MAY be used only as a secondary diagnostic or precondition. It MU",
@@ -9410,10 +9522,10 @@
       "blocking": true
     },
     {
-      "requirement_id": "GOV03-MUST-133",
+      "requirement_id": "GOV03-MUST-140",
       "source": "WEB-GOV-03",
       "section": "70. Structured Mutation Selector / Bounded Write-Set Safety",
-      "line": 1229,
+      "line": 1274,
       "modality": "MUST",
       "clause_hash": "881989046d754e1ef6f3740949b47ede3c77fbea7aadafd7a16953574943c751",
       "clause_excerpt": "Whole-document raw text search, replacement, occurrence count, regular-expression match, or lexical token equality MAY be used only as a secondary diagnostic or precondition. It MU",
@@ -9427,7 +9539,7 @@
       "requirement_id": "GOV03-MUST_NOT-052",
       "source": "WEB-GOV-03",
       "section": "70. Structured Mutation Selector / Bounded Write-Set Safety",
-      "line": 1231,
+      "line": 1276,
       "modality": "MUST_NOT",
       "clause_hash": "86f9ae308ac5162583d4ef6403f668ccf034bb5cba14887ba2b4385bcc98ec56",
       "clause_excerpt": "Structured documents MUST be parsed successfully before mutation and reparsed after mutation. The executor MUST verify the selected node identity, required parent/sibling context, ",
@@ -9438,10 +9550,10 @@
       "blocking": true
     },
     {
-      "requirement_id": "GOV03-MUST-134",
+      "requirement_id": "GOV03-MUST-141",
       "source": "WEB-GOV-03",
       "section": "70. Structured Mutation Selector / Bounded Write-Set Safety",
-      "line": 1231,
+      "line": 1276,
       "modality": "MUST",
       "clause_hash": "86f9ae308ac5162583d4ef6403f668ccf034bb5cba14887ba2b4385bcc98ec56",
       "clause_excerpt": "Structured documents MUST be parsed successfully before mutation and reparsed after mutation. The executor MUST verify the selected node identity, required parent/sibling context, ",
@@ -9452,10 +9564,10 @@
       "blocking": true
     },
     {
-      "requirement_id": "GOV03-MUST-135",
+      "requirement_id": "GOV03-MUST-142",
       "source": "WEB-GOV-03",
       "section": "70. Structured Mutation Selector / Bounded Write-Set Safety",
-      "line": 1233,
+      "line": 1278,
       "modality": "MUST",
       "clause_hash": "83482189aa01e1db5fc96e8f2a400eae8c417635106edcf891fcca8c5c08bafd",
       "clause_excerpt": "After mutation, the executor MUST verify the exact intended structural delta, rerun affected reverse consumers, and prove that no unrelated Current owner, sibling node, denominator",
@@ -9466,13 +9578,13 @@
       "blocking": true
     },
     {
-      "requirement_id": "GOV03-MUST-136",
+      "requirement_id": "GOV03-MUST-143",
       "source": "WEB-GOV-03",
       "section": "71. 跨階段實體交接 / Consumer Readiness / 回退控制 / Cross-Stage Materialized Handoff, Consumer Readiness and Re-entry Control",
-      "line": 1238,
+      "line": 1283,
       "modality": "MUST",
-      "clause_hash": "0d04b3730a3e57d3954276ce8e26b9afe8db706743fd95a02036ae4eeedbd587",
-      "clause_excerpt": "Every governed Stage exit MUST execute the following order before the next Stage may be admitted:",
+      "clause_hash": "d90300666c1e562e2e8850ef105673a14a53cebb1c19aab96731a1d8e67934a0",
+      "clause_excerpt": "Every governed Stage exit MUST be evaluated per Current governed Page or System-Logic Unit, never as an implicit project-wide same-Stage barrier. Before the next Stage may be admit",
       "list_item_count": 8,
       "list_hash": "57b23e22c4dcb40dde9aca4c6e46d64c0ee1438b7ea45eac01e363469e50c8d3",
       "validator_id": "manual_semantic_guard",
@@ -9480,10 +9592,10 @@
       "blocking": true
     },
     {
-      "requirement_id": "GOV03-MUST-137",
+      "requirement_id": "GOV03-MUST-144",
       "source": "WEB-GOV-03",
       "section": "71. 跨階段實體交接 / Consumer Readiness / 回退控制 / Cross-Stage Materialized Handoff, Consumer Readiness and Re-entry Control",
-      "line": 1244,
+      "line": 1289,
       "modality": "MUST",
       "clause_hash": "68a231ff77cc02948f3d312abf6ea3c4070a2c375f9e00b2e44ea2278f3fddb1",
       "clause_excerpt": "5. Reconcile each required edge into the current denominator; zero-gap claims MUST include required handoff edges rather than omit them.",
@@ -9494,10 +9606,10 @@
       "blocking": true
     },
     {
-      "requirement_id": "GOV03-MUST-138",
+      "requirement_id": "GOV03-MUST-145",
       "source": "WEB-GOV-03",
       "section": "71. 跨階段實體交接 / Consumer Readiness / 回退控制 / Cross-Stage Materialized Handoff, Consumer Readiness and Re-entry Control",
-      "line": 1251,
+      "line": 1296,
       "modality": "MUST",
       "clause_hash": "82cd449c005429dc499c5adf8fa1ad8c407a58a12a86f1058a23bb72dc1b3a7f",
       "clause_excerpt": "If a downstream capability discovers an upstream-owned handoff defect, downstream mutation MUST stop. Execution MUST reopen the earliest owning capability, mark affected descendant",
@@ -9508,10 +9620,10 @@
       "blocking": true
     },
     {
-      "requirement_id": "GOV03-MUST-139",
+      "requirement_id": "GOV03-MUST-146",
       "source": "WEB-GOV-03",
       "section": "71. 跨階段實體交接 / Consumer Readiness / 回退控制 / Cross-Stage Materialized Handoff, Consumer Readiness and Re-entry Control",
-      "line": 1253,
+      "line": 1298,
       "modality": "MUST",
       "clause_hash": "daa0c6b140013d872384257b34ef8d620951d9787e7cb3e809ed3332577c582b",
       "clause_excerpt": "This control applies to every registered lifecycle Stage. Stage-local success, functional-gap-zero, visual-review-ready, implementation-complete, test-pass, build-pass, staging-pas",
@@ -9522,10 +9634,10 @@
       "blocking": true
     },
     {
-      "requirement_id": "GOV03-MUST-140",
+      "requirement_id": "GOV03-MUST-147",
       "source": "WEB-GOV-03",
       "section": "72. Source Projection Freeze, Mutation Invalidation and Re-entry Control / 來源投影鎖定、變更失效與重入控制",
-      "line": 1258,
+      "line": 1303,
       "modality": "MUST",
       "clause_hash": "e6539fc21cce3c2777958041cd06ba8a6f1941ba7c81b46347b7b430e04b75e2",
       "clause_excerpt": "Structured-document source control is fail-closed. Raw capture closure creates an immutable content-addressed source identity. Projection and reconciliation occur outside Product S",
@@ -9536,10 +9648,10 @@
       "blocking": true
     },
     {
-      "requirement_id": "GOV03-MUST-141",
+      "requirement_id": "GOV03-MUST-148",
       "source": "WEB-GOV-03",
       "section": "72. Source Projection Freeze, Mutation Invalidation and Re-entry Control / 來源投影鎖定、變更失效與重入控制",
-      "line": 1266,
+      "line": 1311,
       "modality": "MUST",
       "clause_hash": "7beaa9f85da4ea73a3b88be9cd572d78ec9ccfe4d118c468d579d65d95be1884",
       "clause_excerpt": "A selected source-intake/base-blueprint execution active Work Unit MUST carry the complete applicable freeze-receipt binding set. The common execution engine MUST fail admission fo",
@@ -9550,10 +9662,10 @@
       "blocking": true
     },
     {
-      "requirement_id": "GOV03-MUST-142",
+      "requirement_id": "GOV03-MUST-149",
       "source": "WEB-GOV-03",
       "section": "72. Source Projection Freeze, Mutation Invalidation and Re-entry Control / 來源投影鎖定、變更失效與重入控制",
-      "line": 1268,
+      "line": 1313,
       "modality": "MUST",
       "clause_hash": "1bdb817f10a3d148a43ebb17cc7a7b4b5da388b2c9f33d5a193670b399781e6b",
       "clause_excerpt": "The Canonical Projection schema is a single owner. Consumers MUST read the registered schema fields and MUST NOT maintain local alternate field-name maps, permissive alias fallback",
@@ -9564,10 +9676,10 @@
       "blocking": true
     },
     {
-      "requirement_id": "GOV03-MUST-143",
+      "requirement_id": "GOV03-MUST-150",
       "source": "WEB-GOV-03",
       "section": "Frozen Binary Part Admission and Mutation Invalidation / 凍結二進位來源准入與失效",
-      "line": 1276,
+      "line": 1321,
       "modality": "MUST",
       "clause_hash": "0c43fcf959aebd8f9fdfd03ca75b10dfa7661cee799844616f39ce46126e8fb9",
       "clause_excerpt": "At reconciliation and selected source-intake/base-blueprint admission, every expected non-XML binary package part MUST exist at the deterministic frozen-binary location and its byt",
@@ -11330,8 +11442,78 @@
     {
       "requirement_id": "GOV04-MUST-108",
       "source": "WEB-GOV-04",
-      "section": "79. Session Bootstrap / Current Primary Task Audit",
+      "section": "Normative Execution Matrix Audit / 規範執行矩陣稽核",
       "line": 1466,
+      "modality": "MUST",
+      "clause_hash": "4aca46535e2f81acdb6ecc23a5c6941c169abbdbd70f72fdecf10429d4a0b9ce",
+      "clause_excerpt": "For every governed execution cycle, Audit MUST verify that one Current `NORMATIVE_EXECUTION_MATRIX` existed before the first effectful operation and was bound to the exact Current ",
+      "list_item_count": 0,
+      "list_hash": null,
+      "validator_id": "execution_cycle_guard",
+      "automation": "AUTO",
+      "blocking": true
+    },
+    {
+      "requirement_id": "GOV04-MUST-109",
+      "source": "WEB-GOV-04",
+      "section": "Normative Execution Matrix Audit / 規範執行矩陣稽核",
+      "line": 1468,
+      "modality": "MUST",
+      "clause_hash": "99950076a4a923272e671801c85ce237f5b7781c37583dd83c07feb2bd957903",
+      "clause_excerpt": "Audit MUST independently reconstruct and compare the chain:",
+      "list_item_count": 0,
+      "list_hash": null,
+      "validator_id": "manual_semantic_guard",
+      "automation": "MANUAL_EVIDENCE",
+      "blocking": true
+    },
+    {
+      "requirement_id": "GOV04-MUST-110",
+      "source": "WEB-GOV-04",
+      "section": "Normative Execution Matrix Audit / 規範執行矩陣稽核",
+      "line": 1472,
+      "modality": "MUST",
+      "clause_hash": "ca0a15f318dcc4908d792dd9fa1e61d888bb4523f2bf597a0776824942776772",
+      "clause_excerpt": "The audit denominator MUST report at least: applicable normative section total; represented section total; required artifact total; represented artifact total; required governed ro",
+      "list_item_count": 0,
+      "list_hash": null,
+      "validator_id": "duplicate_guard",
+      "automation": "AUTO",
+      "blocking": true
+    },
+    {
+      "requirement_id": "GOV04-MUST-111",
+      "source": "WEB-GOV-04",
+      "section": "Normative Execution Matrix Audit / 規範執行矩陣稽核",
+      "line": 1474,
+      "modality": "MUST",
+      "clause_hash": "531054d5e6d9989d98bb7d80476c27c40df88d31f78f220539bdb1b3bc27c73f",
+      "clause_excerpt": "Audit MUST FAIL when:",
+      "list_item_count": 6,
+      "list_hash": "b096fa725306c7017171d7426cb7e73df6d929294320fdd8904fbc7824cf804c",
+      "validator_id": "manual_semantic_guard",
+      "automation": "MANUAL_EVIDENCE",
+      "blocking": true
+    },
+    {
+      "requirement_id": "GOV04-MUST-112",
+      "source": "WEB-GOV-04",
+      "section": "Normative Execution Matrix Audit / 規範執行矩陣稽核",
+      "line": 1482,
+      "modality": "MUST",
+      "clause_hash": "e5a6d24041a16d7d6229d46c88b408adc8a37b40a041941e1cd1f16e08cfa80e",
+      "clause_excerpt": "Destructive regression MUST remove or blank at least one REQUIRED field from an otherwise valid fixture and prove that the intended validator blocks before closure. A checksum fail",
+      "list_item_count": 0,
+      "list_hash": null,
+      "validator_id": "parser_guard",
+      "automation": "AUTO",
+      "blocking": true
+    },
+    {
+      "requirement_id": "GOV04-MUST-113",
+      "source": "WEB-GOV-04",
+      "section": "79. Session Bootstrap / Current Primary Task Audit",
+      "line": 1489,
       "modality": "MUST",
       "clause_hash": "48e355996efe76e669b2d86632b8a176e5651511f0104e7c115c4557af0c26b6",
       "clause_excerpt": "Every `PRE_WORK_AUDIT` and every resumed execution MUST verify the complete `SESSION_BOOTSTRAP_RESUME_GATE` defined by WEB-GOV-03-S063 before accepting Current State. Audit MUST re",
@@ -11342,10 +11524,10 @@
       "blocking": true
     },
     {
-      "requirement_id": "GOV04-MUST-109",
+      "requirement_id": "GOV04-MUST-114",
       "source": "WEB-GOV-04",
       "section": "79. Session Bootstrap / Current Primary Task Audit",
-      "line": 1468,
+      "line": 1491,
       "modality": "MUST",
       "clause_hash": "2b361e0b52beb0056b18979accfb06ed0afb64d670d8fdf70756cc684ad0cdb8",
       "clause_excerpt": "Audit MUST FAIL when Current State was selected from chat memory, a historical summary, Stage/profile/run identity, stale evidence, or a superseded/deleted reference instead of the",
@@ -11356,10 +11538,10 @@
       "blocking": true
     },
     {
-      "requirement_id": "GOV04-MUST-110",
+      "requirement_id": "GOV04-MUST-115",
       "source": "WEB-GOV-04",
       "section": "80. Work Unit Resolution / Task-Layer Credit Isolation Audit",
-      "line": 1473,
+      "line": 1496,
       "modality": "MUST",
       "clause_hash": "ceac3a176c9bae7a8b27baacfd7461e54c09ad2fe2dece4c6658bd2fd47a2502",
       "clause_excerpt": "Audit MUST prove the Active Work Unit belongs to the locked Current Primary Task Layer. When no Active Work Unit existed, Audit MUST require a persisted `WORK_UNIT_RESOLUTION_GATE`",
@@ -11373,7 +11555,7 @@
       "requirement_id": "GOV04-MUST_NOT-019",
       "source": "WEB-GOV-04",
       "section": "80. Work Unit Resolution / Task-Layer Credit Isolation Audit",
-      "line": 1475,
+      "line": 1498,
       "modality": "MUST_NOT",
       "clause_hash": "2e1121f93ccd816315dec394aa7ad256d2263c59c186bac71188a7455e9c30ee",
       "clause_excerpt": "For governance, test/harness, evidence/state, reference, residual, CI, or gate maintenance, Audit MUST separately report governance-maintenance closure and product-stage status. Pr",
@@ -11384,10 +11566,10 @@
       "blocking": true
     },
     {
-      "requirement_id": "GOV04-MUST-111",
+      "requirement_id": "GOV04-MUST-116",
       "source": "WEB-GOV-04",
       "section": "80. Work Unit Resolution / Task-Layer Credit Isolation Audit",
-      "line": 1475,
+      "line": 1498,
       "modality": "MUST",
       "clause_hash": "2e1121f93ccd816315dec394aa7ad256d2263c59c186bac71188a7455e9c30ee",
       "clause_excerpt": "For governance, test/harness, evidence/state, reference, residual, CI, or gate maintenance, Audit MUST separately report governance-maintenance closure and product-stage status. Pr",
@@ -11398,10 +11580,10 @@
       "blocking": true
     },
     {
-      "requirement_id": "GOV04-MUST-112",
+      "requirement_id": "GOV04-MUST-117",
       "source": "WEB-GOV-04",
       "section": "81. Outer Terminal Conclusion / Resume Continuity Audit",
-      "line": 1480,
+      "line": 1503,
       "modality": "MUST",
       "clause_hash": "c93543bcb631816f1b23a80feaa93436d765b02313c974b5cb87a659bf54f46d",
       "clause_excerpt": "Terminal Audit MUST distinguish inner-step/job success from the outer terminal execution result. Closure credit requires the exact terminal conclusion and required denominator for ",
@@ -11412,10 +11594,10 @@
       "blocking": true
     },
     {
-      "requirement_id": "GOV04-MUST-113",
+      "requirement_id": "GOV04-MUST-118",
       "source": "WEB-GOV-04",
       "section": "81. Outer Terminal Conclusion / Resume Continuity Audit",
-      "line": 1482,
+      "line": 1505,
       "modality": "MUST",
       "clause_hash": "258999418d537d1458c333004703fba880869b5b28d9abd40e966170bab7736c",
       "clause_excerpt": "Audit MUST prove closure state, evidence references, unresolved blockers, exact Resume Point, and legal next transition were persisted before task-layer or Work Unit movement. A re",
@@ -11426,10 +11608,10 @@
       "blocking": true
     },
     {
-      "requirement_id": "GOV04-MUST-114",
+      "requirement_id": "GOV04-MUST-119",
       "source": "WEB-GOV-04",
       "section": "82. Semantic Residual Classification / Cleanup Cohort Audit",
-      "line": 1487,
+      "line": 1510,
       "modality": "MUST",
       "clause_hash": "03be1a0c510bb1849738752507f0dfe061198b63df822146c8ef41a650129d46",
       "clause_excerpt": "Audit MUST verify that every residual keep/migrate/delete decision has evidence for all six WEB-GOV-03-S068 classification dimensions: Canonical Owner, forward reference, reverse r",
@@ -11440,10 +11622,10 @@
       "blocking": true
     },
     {
-      "requirement_id": "GOV04-MUST-115",
+      "requirement_id": "GOV04-MUST-120",
       "source": "WEB-GOV-04",
       "section": "82. Semantic Residual Classification / Cleanup Cohort Audit",
-      "line": 1489,
+      "line": 1512,
       "modality": "MUST",
       "clause_hash": "6f94e7c933c61fef3e034b1d258b49715189ad746441762129f8b08864cd6422",
       "clause_excerpt": "Audit MUST reject deletion justified only by filename, version-looking name, directory location, file age, builder disappearance, missing output, file-count reduction, or a partial",
@@ -11454,10 +11636,10 @@
       "blocking": true
     },
     {
-      "requirement_id": "GOV04-MUST-116",
+      "requirement_id": "GOV04-MUST-121",
       "source": "WEB-GOV-04",
       "section": "82. Semantic Residual Classification / Cleanup Cohort Audit",
-      "line": 1491,
+      "line": 1514,
       "modality": "MUST",
       "clause_hash": "b461bc11a2ecd4beb4f12104d2495d3680e68e44800c0528998969f9cdb833f2",
       "clause_excerpt": "For each removed executable/validator/runner cohort, Audit MUST prove:",
@@ -11471,7 +11653,7 @@
       "requirement_id": "GOV04-MUST_NOT-020",
       "source": "WEB-GOV-04",
       "section": "82. Semantic Residual Classification / Cleanup Cohort Audit",
-      "line": 1501,
+      "line": 1524,
       "modality": "MUST_NOT",
       "clause_hash": "b894da39f35180819330a9e296b438120fbf2816bd6648dac5ab7a5e22a2378d",
       "clause_excerpt": "A cleanup cohort PASS is governance-maintenance evidence only. Audit MUST_NOT convert it into product-stage gap reduction, product completion, Stage exit, or Authority satisfaction",
@@ -11482,10 +11664,10 @@
       "blocking": true
     },
     {
-      "requirement_id": "GOV04-MUST-117",
+      "requirement_id": "GOV04-MUST-122",
       "source": "WEB-GOV-04",
       "section": "83. Dynamic Scope / Ownership / Re-entry / Consumer Portability Audit",
-      "line": 1508,
+      "line": 1531,
       "modality": "MUST",
       "clause_hash": "e8add7236171b9160f78dac56000f1975a674897f9a18b6ff144104ae021d22f",
       "clause_excerpt": "Audit MUST verify one exact EXECUTION_SCOPE_MANIFEST for every governed Work Unit/cycle and prove its included, excluded, remaining, dependency, denominator, partial-scope, and Sta",
@@ -11496,10 +11678,10 @@
       "blocking": true
     },
     {
-      "requirement_id": "GOV04-MUST-118",
+      "requirement_id": "GOV04-MUST-123",
       "source": "WEB-GOV-04",
       "section": "83. Dynamic Scope / Ownership / Re-entry / Consumer Portability Audit",
-      "line": 1510,
+      "line": 1533,
       "modality": "MUST",
       "clause_hash": "d0cfb3554a659018332777782e5531b67e7473d50ff06b7f763b708a2f4930e2",
       "clause_excerpt": "For every reusable validator, scanner, classifier, remediation executor, projector, or common workflow helper, Audit MUST prove that concrete product page/module identities, fixed ",
@@ -11510,13 +11692,13 @@
       "blocking": true
     },
     {
-      "requirement_id": "GOV04-MUST-119",
+      "requirement_id": "GOV04-MUST_NOT-021",
       "source": "WEB-GOV-04",
       "section": "83. Dynamic Scope / Ownership / Re-entry / Consumer Portability Audit",
-      "line": 1512,
-      "modality": "MUST",
-      "clause_hash": "cd0fca2b06f6994629f89f97569f5cf9b151e32c953b741a73081edb998c594c",
-      "clause_excerpt": "Audit MUST distinguish Work Unit closure from Stage/capability closure. A partial-scope PASS with remaining required units MUST have zero Stage-exit credit. Remaining scope MUST be",
+      "line": 1535,
+      "modality": "MUST_NOT",
+      "clause_hash": "5e46740070a0af9cfd155f9cc8b541cb25cc4b221385d56dd3cc19f86219afd0",
+      "clause_excerpt": "Audit MUST distinguish Work Unit closure from Stage/capability closure and MUST bind both to one Current governed Page or System-Logic Unit. A partial-scope PASS with remaining REQ",
       "list_item_count": 0,
       "list_hash": null,
       "validator_id": "audit_binding_guard",
@@ -11524,10 +11706,24 @@
       "blocking": true
     },
     {
-      "requirement_id": "GOV04-MUST-120",
+      "requirement_id": "GOV04-MUST-124",
       "source": "WEB-GOV-04",
       "section": "83. Dynamic Scope / Ownership / Re-entry / Consumer Portability Audit",
-      "line": 1514,
+      "line": 1535,
+      "modality": "MUST",
+      "clause_hash": "5e46740070a0af9cfd155f9cc8b541cb25cc4b221385d56dd3cc19f86219afd0",
+      "clause_excerpt": "Audit MUST distinguish Work Unit closure from Stage/capability closure and MUST bind both to one Current governed Page or System-Logic Unit. A partial-scope PASS with remaining REQ",
+      "list_item_count": 0,
+      "list_hash": null,
+      "validator_id": "audit_binding_guard",
+      "automation": "AUTO",
+      "blocking": true
+    },
+    {
+      "requirement_id": "GOV04-MUST-125",
+      "source": "WEB-GOV-04",
+      "section": "83. Dynamic Scope / Ownership / Re-entry / Consumer Portability Audit",
+      "line": 1537,
       "modality": "MUST",
       "clause_hash": "c2292361aaebd18ed8276b5d6e63cf32c03a76012282dc38a862e2d92286f20d",
       "clause_excerpt": "Audit MUST prove each discovered gap was routed to its owning capability. Re-running an earlier capability without a defect/change in that owner MUST NOT be credited as repairing a",
@@ -11538,10 +11734,10 @@
       "blocking": true
     },
     {
-      "requirement_id": "GOV04-MUST-121",
+      "requirement_id": "GOV04-MUST-126",
       "source": "WEB-GOV-04",
       "section": "83. Dynamic Scope / Ownership / Re-entry / Consumer Portability Audit",
-      "line": 1516,
+      "line": 1539,
       "modality": "MUST",
       "clause_hash": "dbbbd9c79b4f3189e5a5c60dba48345169d77ba5eda7e790a9ad423fbaa1405f",
       "clause_excerpt": "For missing required functional/contract behavior, Audit MUST require FUNCTION_ADMISSION_SCORECARD and AUTO_COMPLETION_SCOPE_LEDGER before completion/remediation routing. NO_AUTO_C",
@@ -11552,10 +11748,10 @@
       "blocking": true
     },
     {
-      "requirement_id": "GOV04-MUST-122",
+      "requirement_id": "GOV04-MUST-127",
       "source": "WEB-GOV-04",
       "section": "83. Dynamic Scope / Ownership / Re-entry / Consumer Portability Audit",
-      "line": 1518,
+      "line": 1541,
       "modality": "MUST",
       "clause_hash": "ca840a0f1e07096a58feba0199fa42f45f8643b685c56a265cdb2cf6a2f89206",
       "clause_excerpt": "Audit MUST independently report candidate semantic result and temporary/formal package cleanliness. A TEMPORARY_LIFECYCLE_RESIDUAL may block Full-Line or formal closure, but MUST N",
@@ -11566,10 +11762,10 @@
       "blocking": true
     },
     {
-      "requirement_id": "GOV04-MUST-123",
+      "requirement_id": "GOV04-MUST-128",
       "source": "WEB-GOV-04",
       "section": "83. Dynamic Scope / Ownership / Re-entry / Consumer Portability Audit",
-      "line": 1520,
+      "line": 1543,
       "modality": "MUST",
       "clause_hash": "d638bf46e49b03e9bab68fea5e4d7a970d9955dc04479ed595f53e78b2a8364e",
       "clause_excerpt": "Portability audit MUST substitute materially different product/profile scope identities and denominators without changing common Mother Policy. If reusable policy or reusable execu",
@@ -11580,10 +11776,10 @@
       "blocking": true
     },
     {
-      "requirement_id": "GOV04-MUST-124",
+      "requirement_id": "GOV04-MUST-129",
       "source": "WEB-GOV-04",
       "section": "84. Structured Mutation Selector / Write-Set Integrity Audit",
-      "line": 1525,
+      "line": 1548,
       "modality": "MUST",
       "clause_hash": "7761555bf7dfc105d4b3f47022bfe2de19232780dcdfae0b9ec5ad25bf8b801c",
       "clause_excerpt": "Audit MUST prove every structured mutation selected its write target through a bounded structural identity rather than an unscoped whole-document lexical assumption. If uniqueness ",
@@ -11594,10 +11790,10 @@
       "blocking": true
     },
     {
-      "requirement_id": "GOV04-MUST-125",
+      "requirement_id": "GOV04-MUST-130",
       "source": "WEB-GOV-04",
       "section": "84. Structured Mutation Selector / Write-Set Integrity Audit",
-      "line": 1527,
+      "line": 1550,
       "modality": "MUST",
       "clause_hash": "09e3264bf02cfaf9741bf67f0a6430aec5ac0b9d0224259206ee49bc23e012e0",
       "clause_excerpt": "Audit MUST verify successful parse before mutation and reparse after mutation; exact selected node identity and parent context; expected pre-write identity/hash when applicable; ex",
@@ -11608,10 +11804,10 @@
       "blocking": true
     },
     {
-      "requirement_id": "GOV04-MUST-126",
+      "requirement_id": "GOV04-MUST-131",
       "source": "WEB-GOV-04",
       "section": "84. Structured Mutation Selector / Write-Set Integrity Audit",
-      "line": 1529,
+      "line": 1552,
       "modality": "MUST",
       "clause_hash": "65be495f4c769ebd9eafecd37400547aa7d5be08116ce8a16ed9b5b28c565949",
       "clause_excerpt": "For executable-source semantic mutation, Audit MUST require syntax-tree, concrete-syntax-tree, parser-backed, or equivalently bounded semantic selection and MUST reject raw source ",
@@ -11622,10 +11818,10 @@
       "blocking": true
     },
     {
-      "requirement_id": "GOV04-MUST-127",
+      "requirement_id": "GOV04-MUST-132",
       "source": "WEB-GOV-04",
       "section": "85. 跨階段實體化 / 後繼可用性 / 假完成稽核 / Cross-Stage Materialization, Successor Readiness and False-Completion Audit",
-      "line": 1536,
+      "line": 1559,
       "modality": "MUST",
       "clause_hash": "423dd06ef1d31c15b51b425e92bd9814e01577c989e71fad68d65ea21a140b83",
       "clause_excerpt": "Audit MUST independently reconstruct every REQUIRED predecessor-output to successor-input edge for the audited scope and verify the CROSS_STAGE_HANDOFF_READINESS_LEDGER against Cur",
@@ -11636,10 +11832,10 @@
       "blocking": true
     },
     {
-      "requirement_id": "GOV04-MUST-128",
+      "requirement_id": "GOV04-MUST-133",
       "source": "WEB-GOV-04",
       "section": "85. 跨階段實體化 / 後繼可用性 / 假完成稽核 / Cross-Stage Materialization, Successor Readiness and False-Completion Audit",
-      "line": 1538,
+      "line": 1561,
       "modality": "MUST",
       "clause_hash": "dccad0872b8c9b37df7af758cca2e83d3be0dc206567c857e50e385cf0939d11",
       "clause_excerpt": "The audit denominator MUST separately report: required edge total; reference-resolved total; physically materialized total; parse/schema-valid total; required-field-complete total;",
@@ -11650,10 +11846,10 @@
       "blocking": true
     },
     {
-      "requirement_id": "GOV04-MUST-129",
+      "requirement_id": "GOV04-MUST-134",
       "source": "WEB-GOV-04",
       "section": "85. 跨階段實體化 / 後繼可用性 / 假完成稽核 / Cross-Stage Materialization, Successor Readiness and False-Completion Audit",
-      "line": 1540,
+      "line": 1563,
       "modality": "MUST",
       "clause_hash": "f4ccb3f25358f347de314419eec6a226cc58a4a7552b6a3a5415ce12f4ff2eba",
       "clause_excerpt": "Path presence, UID presence, Registry presence, ledger presence, historical evidence, a prior successful run, or a producer PASS MUST NOT substitute for physical parseable complete",
@@ -11664,10 +11860,10 @@
       "blocking": true
     },
     {
-      "requirement_id": "GOV04-MUST-130",
+      "requirement_id": "GOV04-MUST-135",
       "source": "WEB-GOV-04",
       "section": "85. 跨階段實體化 / 後繼可用性 / 假完成稽核 / Cross-Stage Materialization, Successor Readiness and False-Completion Audit",
-      "line": 1542,
+      "line": 1565,
       "modality": "MUST",
       "clause_hash": "d1753100cfa40127918886b1c36420a7eb7f0e4e990e0bd86f8f931966761719",
       "clause_excerpt": "Audit regression MUST include destructive or mutation cases for at least: reference-only dependency with missing bytes; physical artifact with missing required fields; schema/versi",
@@ -11678,24 +11874,38 @@
       "blocking": true
     },
     {
-      "requirement_id": "GOV04-MUST-131",
+      "requirement_id": "GOV04-MUST_NOT-022",
       "source": "WEB-GOV-04",
       "section": "85. 跨階段實體化 / 後繼可用性 / 假完成稽核 / Cross-Stage Materialization, Successor Readiness and False-Completion Audit",
-      "line": 1544,
-      "modality": "MUST",
-      "clause_hash": "577a76fcfae4770fa17d655370983b018eb075550e45e8dbf66008b8357fd39d",
-      "clause_excerpt": "Stage closure requires zero unresolved REQUIRED handoff edges, zero denominator omissions, zero unproven consumer-ready edges, and zero incorrectly preserved downstream closure cre",
+      "line": 1567,
+      "modality": "MUST_NOT",
+      "clause_hash": "9e2b47a835239c0dc3fafc0154ab9e136d271035fca541656f3fe9d61ea6b59c",
+      "clause_excerpt": "Stage closure for the Current governed Page or System-Logic Unit requires zero unresolved REQUIRED handoff edges of that Unit, zero denominator omissions of that Unit, zero unprove",
       "list_item_count": 0,
       "list_hash": null,
-      "validator_id": "manual_semantic_guard",
-      "automation": "MANUAL_EVIDENCE",
+      "validator_id": "cross_page_flow_guard",
+      "automation": "AUTO",
       "blocking": true
     },
     {
-      "requirement_id": "GOV04-MUST-132",
+      "requirement_id": "GOV04-MUST-136",
       "source": "WEB-GOV-04",
       "section": "85. 跨階段實體化 / 後繼可用性 / 假完成稽核 / Cross-Stage Materialization, Successor Readiness and False-Completion Audit",
-      "line": 1546,
+      "line": 1567,
+      "modality": "MUST",
+      "clause_hash": "9e2b47a835239c0dc3fafc0154ab9e136d271035fca541656f3fe9d61ea6b59c",
+      "clause_excerpt": "Stage closure for the Current governed Page or System-Logic Unit requires zero unresolved REQUIRED handoff edges of that Unit, zero denominator omissions of that Unit, zero unprove",
+      "list_item_count": 0,
+      "list_hash": null,
+      "validator_id": "cross_page_flow_guard",
+      "automation": "AUTO",
+      "blocking": true
+    },
+    {
+      "requirement_id": "GOV04-MUST-137",
+      "source": "WEB-GOV-04",
+      "section": "85. 跨階段實體化 / 後繼可用性 / 假完成稽核 / Cross-Stage Materialization, Successor Readiness and False-Completion Audit",
+      "line": 1569,
       "modality": "MUST",
       "clause_hash": "26c68ccff43d79e09bd064a96aebe1fb342200472ed2346a78c36774ce89cc38",
       "clause_excerpt": "Every governed denominator, regression expectation, and required-universe count MUST have exactly one canonical owner. Consumer-local hardcoded denominator copies, mirrored histori",
@@ -11706,10 +11916,10 @@
       "blocking": true
     },
     {
-      "requirement_id": "GOV04-MUST-133",
+      "requirement_id": "GOV04-MUST-138",
       "source": "WEB-GOV-04",
       "section": "86. Typography Computed Metrics Evidence Audit / 字體計算值證據稽核",
-      "line": 1551,
+      "line": 1574,
       "modality": "MUST",
       "clause_hash": "b7af3626b0fd90a81e3941c1eaa5fb9113d6f084cf72c035d0542f7dbddb9769",
       "clause_excerpt": "Typography audit MUST reconcile the complete applicable text-bearing target denominator from frozen Design Authority to runtime evidence. The audit denominator is UID-based and MUS",
@@ -11720,10 +11930,10 @@
       "blocking": true
     },
     {
-      "requirement_id": "GOV04-MUST_NOT-021",
+      "requirement_id": "GOV04-MUST_NOT-023",
       "source": "WEB-GOV-04",
       "section": "86. Typography Computed Metrics Evidence Audit / 字體計算值證據稽核",
-      "line": 1553,
+      "line": 1576,
       "modality": "MUST_NOT",
       "clause_hash": "212a761ef866b6eaa62ec11cfe9405d19b06df0e62cadb38074a39059de5239d",
       "clause_excerpt": "Each evidence row MUST preserve the exact expected metrics, actual computed metrics, viewport/language/theme context, tolerance, capture source, and reconciliation result. Browser ",
@@ -11734,10 +11944,10 @@
       "blocking": true
     },
     {
-      "requirement_id": "GOV04-MUST-134",
+      "requirement_id": "GOV04-MUST-139",
       "source": "WEB-GOV-04",
       "section": "86. Typography Computed Metrics Evidence Audit / 字體計算值證據稽核",
-      "line": 1553,
+      "line": 1576,
       "modality": "MUST",
       "clause_hash": "212a761ef866b6eaa62ec11cfe9405d19b06df0e62cadb38074a39059de5239d",
       "clause_excerpt": "Each evidence row MUST preserve the exact expected metrics, actual computed metrics, viewport/language/theme context, tolerance, capture source, and reconciliation result. Browser ",
@@ -11748,10 +11958,10 @@
       "blocking": true
     },
     {
-      "requirement_id": "GOV04-MUST_NOT-022",
+      "requirement_id": "GOV04-MUST_NOT-024",
       "source": "WEB-GOV-04",
       "section": "86. Typography Computed Metrics Evidence Audit / 字體計算值證據稽核",
-      "line": 1555,
+      "line": 1578,
       "modality": "MUST_NOT",
       "clause_hash": "da8f0ec8a7e635cbb9e25248d33ac7cb3734e5a318247c6177f368275d00e675",
       "clause_excerpt": "Audit MUST fail for any REQUIRED target with missing baseline, missing runtime capture, missing computed metric, duplicate credit, unresolved typography Authority, font-family/weig",
@@ -11762,10 +11972,10 @@
       "blocking": true
     },
     {
-      "requirement_id": "GOV04-MUST-135",
+      "requirement_id": "GOV04-MUST-140",
       "source": "WEB-GOV-04",
       "section": "86. Typography Computed Metrics Evidence Audit / 字體計算值證據稽核",
-      "line": 1555,
+      "line": 1578,
       "modality": "MUST",
       "clause_hash": "da8f0ec8a7e635cbb9e25248d33ac7cb3734e5a318247c6177f368275d00e675",
       "clause_excerpt": "Audit MUST fail for any REQUIRED target with missing baseline, missing runtime capture, missing computed metric, duplicate credit, unresolved typography Authority, font-family/weig",
@@ -11776,10 +11986,10 @@
       "blocking": true
     },
     {
-      "requirement_id": "GOV04-MUST-136",
+      "requirement_id": "GOV04-MUST-141",
       "source": "WEB-GOV-04",
       "section": "86. Typography Computed Metrics Evidence Audit / 字體計算值證據稽核",
-      "line": 1557,
+      "line": 1580,
       "modality": "MUST",
       "clause_hash": "51f1373cef8d745e10d226333d7edaff023e4c1f17ae3105faf7ea935805d770",
       "clause_excerpt": "Typography evidence MUST remain traceable to the same Current Canonical Visual/Geometry baseline and exact deployed/source revision used by the surrounding Visual Geometry and Prod",
@@ -11790,10 +12000,10 @@
       "blocking": true
     },
     {
-      "requirement_id": "GOV04-MUST-137",
+      "requirement_id": "GOV04-MUST-142",
       "source": "WEB-GOV-04",
       "section": "87. Word/DOCX to Canonical YAML Zero-Loss Reconciliation Audit / Word-DOCX 與 Canonical YAML 零損失對帳稽核",
-      "line": 1562,
+      "line": 1585,
       "modality": "MUST",
       "clause_hash": "73c5b2b75600d523d18d22e7e5d3e52f5a2e200f84e6c68cc5b5ad36cca833ef",
       "clause_excerpt": "The source-fidelity audit MUST independently reconstruct the applicable DOCX package/source denominator from the immutable raw bytes and compare it with the Canonical Source Projec",
@@ -11804,10 +12014,10 @@
       "blocking": true
     },
     {
-      "requirement_id": "GOV04-MUST-138",
+      "requirement_id": "GOV04-MUST-143",
       "source": "WEB-GOV-04",
       "section": "87. Word/DOCX to Canonical YAML Zero-Loss Reconciliation Audit / Word-DOCX 與 Canonical YAML 零損失對帳稽核",
-      "line": 1564,
+      "line": 1587,
       "modality": "MUST",
       "clause_hash": "d3cfeebf634aac00e57928f7e86444abe0980d97c8f805e043c2453b3f678272",
       "clause_excerpt": "The audit MUST reconcile, UID/identity by UID/identity and in canonical order, at least: package-part path/content type/size/hash; relationship-part identity, relationship ID/type/",
@@ -11818,10 +12028,10 @@
       "blocking": true
     },
     {
-      "requirement_id": "GOV04-MUST-139",
+      "requirement_id": "GOV04-MUST-144",
       "source": "WEB-GOV-04",
       "section": "87. Word/DOCX to Canonical YAML Zero-Loss Reconciliation Audit / Word-DOCX 與 Canonical YAML 零損失對帳稽核",
-      "line": 1566,
+      "line": 1589,
       "modality": "MUST",
       "clause_hash": "e26cc0bfe1fd3c03e58ab6a96775894de90d52c64dcf43beb406b7e1b951371c",
       "clause_excerpt": "Before SOURCE_PAIR_FROZEN and selected source-intake/base-blueprint execution eligibility, all of the following MUST be zero: missing package parts; duplicate package parts; packag",
@@ -11832,10 +12042,10 @@
       "blocking": true
     },
     {
-      "requirement_id": "GOV04-MUST-140",
+      "requirement_id": "GOV04-MUST-145",
       "source": "WEB-GOV-04",
       "section": "87. Word/DOCX to Canonical YAML Zero-Loss Reconciliation Audit / Word-DOCX 與 Canonical YAML 零損失對帳稽核",
-      "line": 1568,
+      "line": 1591,
       "modality": "MUST",
       "clause_hash": "c21248b48eb3451baed65b3e1e7311e4c9377236d14a5b4df6834ca8ff5c4220",
       "clause_excerpt": "The audit MUST verify that the projection contains no product-semantic interpretation fields and that every selected source-intake/base-blueprint execution source-structure disposi",
@@ -11846,10 +12056,10 @@
       "blocking": true
     },
     {
-      "requirement_id": "GOV04-MUST-141",
+      "requirement_id": "GOV04-MUST-146",
       "source": "WEB-GOV-04",
       "section": "87. Word/DOCX to Canonical YAML Zero-Loss Reconciliation Audit / Word-DOCX 與 Canonical YAML 零損失對帳稽核",
-      "line": 1570,
+      "line": 1593,
       "modality": "MUST",
       "clause_hash": "43e8c48e04bc9831d15cf55592d5856d0130844e9275b9452d79c5e5c19de8c5",
       "clause_excerpt": "Negative regression MUST include at least: Word byte mutation after lock; missing projection row; duplicate row; row-order drift; extra/unregistered field; missing required field; ",
@@ -11860,10 +12070,10 @@
       "blocking": true
     },
     {
-      "requirement_id": "GOV04-MUST-142",
+      "requirement_id": "GOV04-MUST-147",
       "source": "WEB-GOV-04",
       "section": "Content Readiness and Frozen Binary Source Audit / 內容就緒與凍結二進位來源稽核",
-      "line": 1576,
+      "line": 1599,
       "modality": "MUST",
       "clause_hash": "786481c7edde8bdb246d939b3501a390683ed08815f1481bd853d00f26655e61",
       "clause_excerpt": "Audit MUST verify that the exact Word selected for projection has a PASS Source Document Content Readiness Audit bound to the same source UID/hash, with zero unresolved REQUIRED de",
@@ -11874,10 +12084,10 @@
       "blocking": true
     },
     {
-      "requirement_id": "GOV04-MUST-143",
+      "requirement_id": "GOV04-MUST-148",
       "source": "WEB-GOV-04",
       "section": "Content Readiness and Frozen Binary Source Audit / 內容就緒與凍結二進位來源稽核",
-      "line": 1578,
+      "line": 1601,
       "modality": "MUST",
       "clause_hash": "16aee743f263ea2255c57d7fa2d42d02c8c7e6312bb7112f2e204fc2a1b568d7",
       "clause_excerpt": "For every non-XML binary package part independently observed in the raw DOCX package, Audit MUST verify exactly one frozen binary file at the deterministic content-addressed path, ",
@@ -11888,10 +12098,10 @@
       "blocking": true
     },
     {
-      "requirement_id": "GOV04-MUST-144",
+      "requirement_id": "GOV04-MUST-149",
       "source": "WEB-GOV-04",
       "section": "Content Readiness and Frozen Binary Source Audit / 內容就緒與凍結二進位來源稽核",
-      "line": 1580,
+      "line": 1603,
       "modality": "MUST",
       "clause_hash": "f59af32c6e0a72e6e0a2c3c273472723e452abf6430ac66d74119646407d8522",
       "clause_excerpt": "Destructive regression MUST include missing content-readiness audit and missing or hash-mismatched frozen binary source part. A source-fidelity PASS with unavailable pixels/bytes f",
