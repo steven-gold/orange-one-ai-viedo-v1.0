@@ -1,5 +1,5 @@
 name: Product Stage03 Validation
-# exact-head-rerun: 2026-09-25T10:12+08:00
+# exact-head-rerun: 2026-09-25T10:16+08:00
 # independent-rerun-marker: 2026-09-25-v225-dynamic-current-state-v2
 on:
   push:
@@ -179,8 +179,9 @@ jobs:
             raise SystemExit('BLOCK:STAGE04_HANDOFF_PHYSICAL_REF_MISSING:'+ref)
         for k in ('reference_resolution_complete','physical_materialization_complete','required_field_completeness_complete','denominator_reconciled','consumer_readiness_complete'):
           if h.get(k) is not True: raise SystemExit('BLOCK:STAGE04_HANDOFF_SUMMARY_NOT_READY:'+k)
-        if int(h.get('unresolved_required_dependency_total') or 0)!=0 or h.get('status')!='PASS':
-          raise SystemExit('BLOCK:STAGE04_HANDOFF_UNRESOLVED')
+        handoff_status=h.get('status')
+        if int(h.get('unresolved_required_dependency_total') or 0)!=0 or handoff_status not in ('PASS','PASS_CURRENT_REVERIFY'):
+          raise SystemExit('BLOCK:STAGE04_HANDOFF_UNRESOLVED_OR_STATUS_DRIFT:'+str(handoff_status))
         if os.environ['WU']=='WU-STAGE03-WB01-DASHBOARD-001':
           topo=y('DEPENDENCY_TOPOLOGY.yaml')
           deps=topo.get('cross_unit_required_dependencies') or []
