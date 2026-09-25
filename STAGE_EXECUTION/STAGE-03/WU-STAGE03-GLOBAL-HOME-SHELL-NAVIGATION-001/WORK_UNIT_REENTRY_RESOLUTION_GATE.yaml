@@ -1,0 +1,25 @@
+artifact_uid: WUR-STAGE03-GLOBAL-HOME-SHELL-NAVIGATION-REENTRY-20260925-001
+artifact_type: WORK_UNIT_RESOLUTION_GATE
+stage_uid: STAGE-03
+result: EXECUTABLE
+primary_task_layer: PRODUCT_STAGE_EXECUTION
+explicit_authorization: EXPLICIT_USER_DIRECTIVE_20260925_STAGE03_FULL_REAUDIT_AND_REPAIR
+reentry_trigger:
+  downstream_stage_uid: STAGE-04
+  downstream_work_unit_uid: WU-STAGE04-GLOBAL-HOME-SHELL-NAVIGATION-001
+  problem_register_ref: STAGE_EXECUTION/STAGE-04/WU-STAGE04-GLOBAL-HOME-SHELL-NAVIGATION-001/CURRENT_PROBLEM_REGISTER.yaml
+  disposition: DOWNSTREAM_DISCOVERED_UPSTREAM_GAP
+predecessor: WU-STAGE03-GLOBAL-HOME-SHELL-NAVIGATION-001
+resolved_work_unit_uid: WU-STAGE03-GLOBAL-HOME-SHELL-NAVIGATION-001
+canonical_owner: GOVERNED_UNIT:GLOBAL-HOME-SHELL-NAVIGATION
+owning_capability: VISUAL_DESIGN
+dependency_legality: PASS
+reverse_dependency_disposition: IMPACTED_DESCENDANTS_REVERIFY_REQUIRED
+applicability: REQUIRED
+entry_conditions: PASS
+duplicate_parallel_work_unit_count: 0
+resume_point: VISUAL_SPEC_COMPILE
+current_governance_uid: GOV-REV-20260924-INDEPENDENT-UNIT-LIFECYCLE-CURRENT-IDENTITY-SYNC
+current_governance_head: 25c4736940efb786aa567c83283bfbaa0773dc1b
+prior_terminal_receipt_disposition: HISTORICAL_PREDECESSOR_EVIDENCE_ONLY
+status: PASS
