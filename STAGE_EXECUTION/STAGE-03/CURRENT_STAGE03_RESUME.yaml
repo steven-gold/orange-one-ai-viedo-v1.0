@@ -6,18 +6,18 @@ execution_branch: 0921acpos
 current_governance_uid: GOV-REV-20260925-NORMATIVE-EXECUTION-MATRIX
 current_governance_head: 22b8d6845ce31014ba10b4c1f8f7a3ec9dcceb20
 current_display_version: v2.2.25
-active_work_unit_uid: WU-STAGE03-WB01-DASHBOARD-001
-resume_point: TERMINAL_EVIDENCE_MATERIALIZATION
+active_work_unit_uid: null
+resume_point: STAGE04_UNIT_RESOLUTION_GATE
 eligible_units:
 - GLOBAL-HOME-SHELL-NAVIGATION
 - workspace:WB-01
 completed_stage03_units:
 - GLOBAL-HOME-SHELL-NAVIGATION
-remaining_stage03_units:
 - workspace:WB-01
+remaining_stage03_units: []
 reverify_required_stage03_units: []
 stage_transition_semantics: PER_GOVERNED_PAGE_OR_SYSTEM_LOGIC_UNIT
-status: CLOSURE_CANDIDATE_PENDING_CURRENT_EVIDENCE
+status: COMPLETE
 pending_visual_review_units: []
 prior_materialization_validation_run_id: 36015610533
 prior_materialization_validation_head: 50340ec5f5a1b7e844c34911049b45e61de5d2b5
@@ -26,12 +26,12 @@ prior_post_review_validation_head: e5564984caf2fb35b575108fb48d02e241b0bfd0
 prior_last_terminal_validation_run_id: 36053005947
 prior_last_terminal_validation_head: 17e599775f2390587256f0e939b2c4cd4c12faef
 prior_terminal_results_disposition: HISTORICAL_PREDECESSOR_EVIDENCE_ONLY
-last_closed_work_unit_uid: WU-STAGE03-GLOBAL-HOME-SHELL-NAVIGATION-001
-last_terminal_validation_run_id: 36089903985
-last_terminal_validation_head: 2446a864769726ba66b01ca68142813395f0219a
+last_closed_work_unit_uid: WU-STAGE03-WB01-DASHBOARD-001
+last_terminal_validation_run_id: 36106441831
+last_terminal_validation_head: df2bf7c9d4b1eaacccb7ab52c7cc83a9bf5d7308
 reentry_source:
   stage_uid: STAGE-04
   work_unit_uid: WU-STAGE04-GLOBAL-HOME-SHELL-NAVIGATION-001
   problem_register_ref: STAGE_EXECUTION/STAGE-04/WU-STAGE04-GLOBAL-HOME-SHELL-NAVIGATION-001/CURRENT_PROBLEM_REGISTER.yaml
-stage_exit_authorized: false
+stage_exit_authorized: true
 next_stage_uid: STAGE-04
