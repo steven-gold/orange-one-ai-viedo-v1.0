@@ -10,7 +10,7 @@ included_units:
 excluded_units: []
 remaining_units: []
 partial_scope: false
-stage_exit_credit_allowed: true
+stage_exit_credit_allowed: false
 scope_selection_authority: WORK_UNIT_RESOLUTION_GATE.yaml
 owning_capability: VISUAL_DESIGN
 dependency_closure_refs:
@@ -20,11 +20,15 @@ denominator_sources:
 - DENOMINATOR_SNAPSHOT.yaml
 - VISUAL_INTERACTION_TOPOLOGY_BINDING.yaml
 - VISUAL_GEOMETRY_CONTRACT.yaml
-closure_validation:
+current_closure_validation:
+  result: REVERIFY_REQUIRED
+  stage_exit_credit: 0
+prior_closure_validation:
   head_sha: 17e599775f2390587256f0e939b2c4cd4c12faef
   workflow_run_id: 36053005947
   workflow_job_id: 107812994252
   result: PASS
-terminal_receipt_ref: WORK_UNIT_TERMINAL_RECEIPT.yaml
-status: COMPLETE
+prior_terminal_receipt_ref: HISTORY/V224/WORK_UNIT_TERMINAL_RECEIPT.yaml
+terminal_receipt_ref: null
+status: REVERIFY_REQUIRED
 governance_head: 335d8a01d6d3eb6f0ed951ffc40216029b19d4e3
