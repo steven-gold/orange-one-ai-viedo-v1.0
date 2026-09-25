@@ -180,16 +180,19 @@ jobs:
                   'theme':'DARK_TECH_PURPLE',
                   'business_entity_uids':cfg['entity_uids'],
                   'operation_uids':cfg['ops'],
+                  'applicable_business_entity_or_operation':cfg['entity_uids']+cfg['ops'],
                   'visible_sections':visible_sections,
                   'conditional_sections':conditional or ['NOT_APPLICABLE_NO_CONDITIONAL_SECTION'],
                   'locked_regions':cfg['locked'],
                   'editable_regions':cfg['editable'],
                   'visual_anchor_uids':anchor_uids,
                   'primary_controls_or_system_triggers':controls,
+                  'primary_controls':controls,
                   'disabled_or_blocked_controls':[{'control_uid':'NOT_APPLICABLE','applicability':'NOT_APPLICABLE_WITH_AUTHORITY','reason_source':'CURRENT_PERMISSION_OR_STATE_AUTHORITY'}],
                   'disabled_reason_source':'CURRENT_PERMISSION_OR_STATE_AUTHORITY',
                   'current_next_action':next_action,
                   'current_next_gate':next_gate,
+                  'current_next_action_or_gate':{'action_uid':next_action,'gate_uid':next_gate},
                   'source_authority_refs':source_refs,
                   'authority_classification':'CURRENT_SOURCE_GROUNDED_VISUAL_PROJECTION',
                   'inherited_visual_authority_refs':[
@@ -198,20 +201,28 @@ jobs:
                   ],
                   'verification_purpose':f'Prove {suid} preserves current workbench, operation/state ownership, visual anchors, inherited style and semantic order.',
                   'design_review_item_uids':[f'DR-{suid}-GEOMETRY',f'DR-{suid}-TOPOLOGY',f'DR-{suid}-STATE'],
+                  'evidence_ref':sc['evidence_ref'],
+                  'annotation_status':'CURRENT_REVERIFY_MATERIALIZED',
                   'status':'CURRENT_REVERIFY_MATERIALIZED',
                 })
             vra['candidate_uid']=cfg['candidate']
-            vra['required_candidate_annotation_fields']=[
+            vra['annotation_granularity']='ONE_ROW_PER_REQUIRED_VISUAL_SCENARIO'
+            vra['required_row_fields']=[
               'visual_uid','page_or_scope_uid','scenario_uid','state_uid','workbench_uid','journey_uid',
               'parent_visual_uid','design_version','basic_design_change_set_uid','viewport','language','theme',
-              'business_entity_uids','operation_uids','visible_sections','conditional_sections','locked_regions',
-              'editable_regions','visual_anchor_uids','primary_controls_or_system_triggers','disabled_or_blocked_controls',
-              'disabled_reason_source','current_next_action','current_next_gate','source_authority_refs',
-              'authority_classification','inherited_visual_authority_refs','verification_purpose','design_review_item_uids','status'
+              'applicable_business_entity_or_operation','visible_sections','conditional_sections','locked_regions',
+              'editable_regions','visual_anchor_uids','primary_controls','disabled_or_blocked_controls',
+              'current_next_action_or_gate','source_authority_refs','authority_classification',
+              'inherited_visual_authority_refs','verification_purpose'
             ]
-            vra['candidate_annotations']=cand_ann
-            vra['candidate_annotation_count']=len(cand_ann)
-            vra['candidate_annotation_denominator_complete']=len(cand_ann)==len(vses.get('scenarios',[]))
+            vra['annotations']=cand_ann
+            vra['annotation_count']=len(cand_ann)
+            vra['required_scenario_count']=len(vses.get('scenarios',[]))
+            vra['scenario_annotation_coverage_complete']=len(cand_ann)==vra['required_scenario_count']
+            vra.pop('candidate_annotations',None)
+            vra.pop('required_candidate_annotation_fields',None)
+            vra.pop('candidate_annotation_count',None)
+            vra.pop('candidate_annotation_denominator_complete',None)
             vra['status']='CURRENT_REVERIFY_MATERIALIZED'
             dump(b/'VISUAL_REFERENCE_ANNOTATION.yaml',vra)
 
@@ -321,7 +332,7 @@ jobs:
               {'row_class':'TYPOGRAPHY_BASELINE','artifact_ref':str(b/'VISUAL_GEOMETRY_CONTRACT.yaml'),'denominator_path':['typography_baseline_rows'],'row_identity_field':'target_uid','required_fields':geom.get('typography_baseline_required_fields') or []},
               {'row_class':'VISUAL_ANCHOR','artifact_ref':str(b/'VISUAL_GEOMETRY_CONTRACT.yaml'),'denominator_path':['visual_anchors'],'row_identity_field':'anchor_uid','required_fields':['anchor_uid','position_rule','dimension_rule','relationship_rule','lock_status']},
               {'row_class':'VISUAL_INHERITANCE','artifact_ref':str(b/'VISUAL_INHERITANCE_MATRIX.yaml'),'denominator_path':['rows'],'row_identity_field':'visual_region','required_fields':vim.get('required_row_fields') or []},
-              {'row_class':'VISUAL_CANDIDATE_ANNOTATION','artifact_ref':str(b/'VISUAL_REFERENCE_ANNOTATION.yaml'),'denominator_path':['candidate_annotations'],'row_identity_field':'scenario_uid','required_fields':vra['required_candidate_annotation_fields']},
+              {'row_class':'VISUAL_CANDIDATE_ANNOTATION','artifact_ref':str(b/'VISUAL_REFERENCE_ANNOTATION.yaml'),'denominator_path':['annotations'],'row_identity_field':'scenario_uid','required_fields':vra['required_row_fields']},
               {'row_class':'VISUAL_SCENARIO_COVERAGE','artifact_ref':str(b/'VISUAL_SCENARIO_EVIDENCE_SET.yaml'),'denominator_path':['scenarios'],'row_identity_field':'scenario_uid','required_fields':vses['required_scenario_row_fields']},
               {'row_class':'CROSS_STAGE_HANDOFF','artifact_ref':str(handoff_path),'denominator_path':['required_edges'],'row_identity_field':'edge_uid','required_fields':hand['required_edge_fields']},
             ]
@@ -404,10 +415,10 @@ jobs:
                 add('WEB-GOV-01-S023','PAGE_FIELD_SCHEMA_NOT_APPLICABLE_TO_SYSTEM_LOGIC_UNIT','WORK_UNIT',b/'WORK_UNIT.yaml','governed_unit_type','GLOBAL-HOME-SHELL-NAVIGATION',['governed_unit_type'],'FIELD_NA','NOT_APPLICABLE_WITH_AUTHORITY',authority_ev=str(b/'WORK_UNIT.yaml'))
 
             vr=load(b/'VISUAL_REFERENCE_ANNOTATION.yaml')
-            for ri,r in enumerate(vr['candidate_annotations']):
-                for fld in vr['required_candidate_annotation_fields']:
+            for ri,r in enumerate(vr['annotations']):
+                for fld in vr['required_row_fields']:
                     app='REQUIRED'
-                    add('WEB-GOV-01-S079',f'ANNOTATION:{fld}','VISUAL_REFERENCE_ANNOTATION',b/'VISUAL_REFERENCE_ANNOTATION.yaml','candidate_annotations',r['scenario_uid'],['candidate_annotations',ri,fld],f'ANNOTATION:{fld}',app)
+                    add('WEB-GOV-01-S079',f'ANNOTATION:{fld}','VISUAL_REFERENCE_ANNOTATION',b/'VISUAL_REFERENCE_ANNOTATION.yaml','annotations',r['scenario_uid'],['annotations',ri,fld],f'ANNOTATION:{fld}',app)
             vv=load(b/'VISUAL_INHERITANCE_MATRIX.yaml')
             for ri,r in enumerate(vv.get('rows') or []):
                 for fld in vv.get('required_row_fields') or []:
@@ -441,7 +452,7 @@ jobs:
               ('WEB-GOV-04-S083','SCOPE_AUDIT_STAGE_EXIT_POLICY','CURRENT_EXECUTION_SCOPE_MANIFEST',b/'CURRENT_EXECUTION_SCOPE_MANIFEST.yaml',['stage_exit_credit_allowed']),
               ('WEB-GOV-01-S077','BIDIRECTIONAL_FUNCTION_VISUAL_TRACE','VISUAL_INTERACTION_TOPOLOGY_BINDING',b/'VISUAL_INTERACTION_TOPOLOGY_BINDING.yaml',['bindings']),
               ('WEB-GOV-01-S084','ATOMIC_ROW_FIELD_MATERIALIZATION','REQUIRED_FIELD_MANIFEST',b/'REQUIRED_FIELD_MANIFEST.yaml',['row_contracts']),
-              ('WEB-GOV-01-S087','PROFILE_VISUAL_MATERIALIZATION','VISUAL_REFERENCE_ANNOTATION',b/'VISUAL_REFERENCE_ANNOTATION.yaml',['candidate_annotation_denominator_complete']),
+              ('WEB-GOV-01-S087','PROFILE_VISUAL_MATERIALIZATION','VISUAL_REFERENCE_ANNOTATION',b/'VISUAL_REFERENCE_ANNOTATION.yaml',['scenario_annotation_coverage_complete']),
             ]
             for sec,req,atype,path,fp in semantic:
                 add(sec,req,atype,path,'semantic_contract',req,fp,'SEMANTIC_EXACT_BINDING')
@@ -579,10 +590,11 @@ jobs:
           assert rf['manifest_semantics']=='EXACT_ROW_AND_REQUIRED_FIELD_CONTRACT'
           assert len(rf['row_contracts'])>=6
           vr=y(b/'VISUAL_REFERENCE_ANNOTATION.yaml')
-          assert vr['candidate_annotation_denominator_complete'] is True
-          for row in vr['candidate_annotations']:
-            for f in vr['required_candidate_annotation_fields']:
-              assert f in row
+          assert vr['scenario_annotation_coverage_complete'] is True
+          assert len(vr['annotations'])==int(vr['required_scenario_count'])
+          for row in vr['annotations']:
+            for f in vr['required_row_fields']:
+              assert f in row and row[f] not in (None,'',[])
           ss=y(b/'VISUAL_SCENARIO_EVIDENCE_SET.yaml')
           assert ss['scenario_to_function_coverage_complete'] is True
           for row in ss['scenarios']:
@@ -594,16 +606,13 @@ jobs:
           for row in hh['required_edges']:
             for f in hh['required_edge_fields']:
               assert f in row
-          # physical fragment existence for anchor annotations
+          # physical evidence existence for every Mother-79 scenario annotation
           vra=y(b/'VISUAL_REFERENCE_ANNOTATION.yaml')
           for ar in vra.get('annotations',[]):
-            targets=ar.get('targets') or ([ar['target']] if ar.get('target') else [])
-            for target in targets:
-              path,frag=target.split('#',1)
-              pp=Path(path) if path.startswith('STAGE_EXECUTION/') else b/path
-              assert pp.is_file(), (wu,target)
-              txt=pp.read_text()
-              assert re.search(r'\bid=["\']'+re.escape(frag)+r'["\']',txt), (wu,target)
+            ev=str(ar.get('evidence_ref') or '')
+            assert ev, (wu,'ANNOTATION_EVIDENCE_REF_MISSING',ar.get('scenario_uid'))
+            pp=Path(ev) if ev.startswith('STAGE_EXECUTION/') else b/ev
+            assert pp.is_file(), (wu,ev)
         print('PASS: Stage03 semantic/physical row-field audit Home+WB01')
         PY
         for WU in WU-STAGE03-GLOBAL-HOME-SHELL-NAVIGATION-001 WU-STAGE03-WB01-DASHBOARD-001; do
