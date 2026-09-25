@@ -1,0 +1,32 @@
+artifact_uid: SCOPE-WU-STAGE04-WB01-DASHBOARD-001
+artifact_type: WORK_UNIT_SCOPE_MANIFEST
+stage_uid: STAGE-04
+work_unit_uid: WU-STAGE04-WB01-DASHBOARD-001
+governed_unit_uid: workspace:WB-01
+governed_unit_type: PAGE
+governance_uid: GOV-REV-20260925-NORMATIVE-EXECUTION-MATRIX
+included_units:
+- workspace:WB-01
+excluded_units: []
+remaining_units:
+- workspace:WB-01
+partial_scope: false
+stage_exit_credit_allowed: false
+scope_selection_authority: WORK_UNIT_RESOLUTION_GATE.yaml
+owning_capability: FOUNDATION_FREEZE
+predecessor_closure_refs:
+- STAGE_EXECUTION/STAGE-03/WU-STAGE03-WB01-DASHBOARD-001/WORK_UNIT_TERMINAL_RECEIPT.yaml
+- STAGE_EXECUTION/STAGE-03/WU-STAGE03-GLOBAL-HOME-SHELL-NAVIGATION-001/WORK_UNIT_TERMINAL_RECEIPT.yaml
+predecessor_closure_validation:
+  result: PASS
+  stage03_terminal_closure_run_id: 36106441831
+  stage03_terminal_closure_head_sha: df2bf7c9d4b1eaacccb7ab52c7cc83a9bf5d7308
+input_identity:
+- {artifact_type: PAGE_CONSTRUCTION_SPEC_PACKAGE, ref: STAGE_EXECUTION/STAGE-02/WU-STAGE02-WB01-DASHBOARD-001/PAGE_CONSTRUCTION_SPEC_PACKAGE.yaml, git_blob_sha: 5ccd09bb7065109f40a03161f9a7677d97e94b9a}
+- {artifact_type: VISUAL_DESIGN_SPEC_PACKAGE, ref: STAGE_EXECUTION/STAGE-03/WU-STAGE03-WB01-DASHBOARD-001/VISUAL_DESIGN_SPEC_PACKAGE.yaml, git_blob_sha: 9defff8329eff68ef73b8098634a4290adca7c5a}
+- {artifact_type: DEPENDENCY_MAP, ref: STAGE_EXECUTION/STAGE-02/WU-STAGE02-WB01-DASHBOARD-001/DEPENDENCY_MAP.yaml, git_blob_sha: e7c0a724c8e10c868bf20ca4d42740549f34642c}
+denominator_sources:
+- PAGE_CONSTRUCTION_SPEC_PACKAGE
+- VISUAL_DESIGN_SPEC_PACKAGE
+- DEPENDENCY_MAP
+status: READY_FOR_EXECUTION

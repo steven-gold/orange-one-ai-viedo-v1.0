@@ -1,0 +1,14 @@
+artifact_uid: DTOPO-STAGE04-WB01-001
+artifact_type: DEPENDENCY_TOPOLOGY
+stage_uid: STAGE-04
+work_unit_uid: WU-STAGE04-WB01-DASHBOARD-001
+governed_unit_uid: workspace:WB-01
+required_predecessors:
+- {stage_uid: STAGE-02, work_unit_uid: WU-STAGE02-WB01-DASHBOARD-001, status: CLOSED}
+- {stage_uid: STAGE-03, work_unit_uid: WU-STAGE03-WB01-DASHBOARD-001, status: CLOSED}
+cross_unit_required_dependencies:
+- governed_unit_uid: GLOBAL-HOME-SHELL-NAVIGATION
+  ref: STAGE_EXECUTION/STAGE-03/WU-STAGE03-GLOBAL-HOME-SHELL-NAVIGATION-001/VISUAL_GEOMETRY_CONTRACT.yaml
+  reason: SHARED_GLOBAL_SHELL_GEOMETRY_INHERITANCE
+cross_unit_blocking_rule: EXPLICIT_REQUIRED_DEPENDENCY_EDGE_ONLY
+status: CURRENT

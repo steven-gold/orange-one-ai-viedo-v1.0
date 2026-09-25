@@ -1,0 +1,30 @@
+artifact_uid: PREFLIGHT-STAGE04-WB01-001
+artifact_type: STAGE_EXECUTION_PREFLIGHT_RECEIPT
+stage_uid: STAGE-04
+work_unit_uid: WU-STAGE04-WB01-DASHBOARD-001
+governance_uid: GOV-REV-20260925-NORMATIVE-EXECUTION-MATRIX
+governance_head: 22b8d6845ce31014ba10b4c1f8f7a3ec9dcceb20
+required_manifest_set:
+- REQUIRED_FIELD_MANIFEST.yaml
+- FUNCTIONAL_CHAIN_MANIFEST.yaml
+- EFFECTIVE_CONTRACT_OVERLAY.yaml
+- DEPENDENCY_TOPOLOGY.yaml
+- DENOMINATOR_SNAPSHOT.yaml
+- CLASSIFICATION_RULESET.yaml
+- CHANGE_IMPACT_MAP.yaml
+- STAGE_EXECUTION_PREFLIGHT_RECEIPT.yaml
+shared_manifest_set_complete: true
+applicability_resolved_before_blocker_count: true
+current_problem_register_ref: CURRENT_PROBLEM_REGISTER.yaml
+resolution_ledger_ref: RESOLUTION_LEDGER.yaml
+historical_product_values_used: false
+stage03_input_reconciliation:
+  result: PASS
+  stage03_work_unit_terminal_closure_run_id: 36106441831
+  stage03_work_unit_terminal_closure_head_sha: df2bf7c9d4b1eaacccb7ab52c7cc83a9bf5d7308
+  shared_shell_terminal_closure_run_id: 36089903985
+  shared_shell_terminal_closure_head_sha: 2446a864769726ba66b01ca68142813395f0219a
+  predecessor_receipts:
+  - STAGE_EXECUTION/STAGE-03/WU-STAGE03-WB01-DASHBOARD-001/WORK_UNIT_TERMINAL_RECEIPT.yaml
+  - STAGE_EXECUTION/STAGE-03/WU-STAGE03-GLOBAL-HOME-SHELL-NAVIGATION-001/WORK_UNIT_TERMINAL_RECEIPT.yaml
+result: PASS

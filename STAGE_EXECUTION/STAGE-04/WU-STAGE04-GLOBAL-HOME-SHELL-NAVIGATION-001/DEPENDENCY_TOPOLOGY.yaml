@@ -5,10 +5,13 @@ work_unit_uid: WU-STAGE04-GLOBAL-HOME-SHELL-NAVIGATION-001
 governed_unit_uid: GLOBAL-HOME-SHELL-NAVIGATION
 required_predecessors:
 - {stage_uid: STAGE-02, work_unit_uid: WU-STAGE02-GLOBAL-HOME-SHELL-NAVIGATION-001, status: CLOSED}
-- {stage_uid: STAGE-03, work_unit_uid: WU-STAGE03-GLOBAL-HOME-SHELL-NAVIGATION-001, status: CLOSED_BUT_REVERIFY_REQUIRED}
+- {stage_uid: STAGE-03, work_unit_uid: WU-STAGE03-GLOBAL-HOME-SHELL-NAVIGATION-001, status: CLOSED}
 cross_unit_required_dependencies: []
-reentry_target:
+prior_reentry_target:
   capability: VISUAL_DESIGN
   stage_uid: STAGE-03
   reason: STAGE04_INPUT_REQUIRED_FIELD_COMPLETENESS_FAILED
-status: OWNER_REENTRY_REQUIRED
+  disposition: RESOLVED_BY_STAGE03_TERMINAL_CLOSURE
+  resolution_run_id: 36106579203
+  resolution_head_sha: fca69a786208613176664fb1f2cead8c3f582ae7
+status: CURRENT

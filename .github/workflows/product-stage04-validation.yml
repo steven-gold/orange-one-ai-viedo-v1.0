@@ -17,6 +17,7 @@ jobs:
       matrix:
         wu:
         - WU-STAGE04-GLOBAL-HOME-SHELL-NAVIGATION-001
+        - WU-STAGE04-WB01-DASHBOARD-001
     steps:
     - uses: actions/checkout@v4
       with: {ref: 0921acpos, fetch-depth: 0}

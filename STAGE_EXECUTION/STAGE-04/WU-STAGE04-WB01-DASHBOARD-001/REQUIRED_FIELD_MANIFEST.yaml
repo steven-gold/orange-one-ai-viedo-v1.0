@@ -1,0 +1,29 @@
+artifact_uid: RFM-STAGE04-WB01-001
+artifact_type: REQUIRED_FIELD_MANIFEST
+stage_uid: STAGE-04
+work_unit_uid: WU-STAGE04-WB01-DASHBOARD-001
+governed_unit_uid: workspace:WB-01
+input_contract:
+- artifact_type: PAGE_CONSTRUCTION_SPEC_PACKAGE
+  ref: STAGE_EXECUTION/STAGE-02/WU-STAGE02-WB01-DASHBOARD-001/PAGE_CONSTRUCTION_SPEC_PACKAGE.yaml
+  reference_resolution: PASS
+- artifact_type: VISUAL_DESIGN_SPEC_PACKAGE
+  ref: STAGE_EXECUTION/STAGE-03/WU-STAGE03-WB01-DASHBOARD-001/VISUAL_DESIGN_SPEC_PACKAGE.yaml
+  reference_resolution: PASS
+  required_transitive_freeze_bindings:
+  - VISUAL_INHERITANCE_MATRIX
+  - VISUAL_STYLE_DEFINITION_OR_CURRENT_STYLE_AUTHORITY
+  - VISUAL_REFERENCE_ANNOTATION
+  - VISUAL_SCENARIO_EVIDENCE_SET
+  - VISUAL_GEOMETRY_CONTRACT
+  required_field_completeness: COMPLETE
+  required_field_resolution:
+    resolved_by: STAGE03_TERMINAL_CLOSURE
+    stage03_terminal_closure_run_id: 36106441831
+    stage03_terminal_closure_head_sha: df2bf7c9d4b1eaacccb7ab52c7cc83a9bf5d7308
+    work_unit_terminal_receipt_ref: STAGE_EXECUTION/STAGE-03/WU-STAGE03-WB01-DASHBOARD-001/WORK_UNIT_TERMINAL_RECEIPT.yaml
+    shared_shell_terminal_receipt_ref: STAGE_EXECUTION/STAGE-03/WU-STAGE03-GLOBAL-HOME-SHELL-NAVIGATION-001/WORK_UNIT_TERMINAL_RECEIPT.yaml
+- artifact_type: DEPENDENCY_MAP
+  ref: STAGE_EXECUTION/STAGE-02/WU-STAGE02-WB01-DASHBOARD-001/DEPENDENCY_MAP.yaml
+  reference_resolution: PASS
+status: READY_FOR_EXECUTION
