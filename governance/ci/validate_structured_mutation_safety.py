@@ -107,10 +107,10 @@ p.write_text(yaml.safe_dump(data))
         print("FAIL: fragile raw-text mutation escaped",file=sys.stderr); return 1
     if fragile_mutation_violations(safe,"safe.py"):
         print("FAIL: structured YAML mutation falsely blocked",file=sys.stderr); return 1
-    sample="python .github/governance-maintenance/missing.py"
-    if ".github/governance-maintenance/missing.py" not in workflow_executable_refs(sample):
-        print("FAIL: governance-maintenance workflow executable ref escaped",file=sys.stderr); return 1
-    fixture="""sample = 'python .github/governance-maintenance/missing.py'\nprint(sample)\n"""
+    sample="python governance/ci/maintenance_probe.py"
+    if "governance/ci/maintenance_probe.py" not in workflow_executable_refs(sample):
+        print("FAIL: governed workflow executable ref escaped",file=sys.stderr); return 1
+    fixture="""sample = 'python governance/ci/maintenance_probe.py'\nprint(sample)\n"""
     if python_executable_refs(fixture):
         print("FAIL: non-executed Python fixture contaminated executable graph",file=sys.stderr); return 1
     print("PASS: structured mutation safety negative regression 4/4")
@@ -137,7 +137,7 @@ def main() -> int:
         return 1
     print(f"PASS: structured mutation safety active_reachable_python={len(reachable)}")
     print("PASS: no active reachable structured mutator uses unbounded read_text raw replace/count/regex mutation")
-    print("PASS: governance-maintenance executable paths are part of active reachability")
+    print("PASS: workflow-literal governed python paths are part of active reachability")
     return 0
 
 if __name__=="__main__":

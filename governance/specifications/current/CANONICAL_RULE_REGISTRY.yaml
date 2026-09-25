@@ -200,7 +200,7 @@ binding_contract:
   - GOV-RULE-ANTI-DRIFT-009
   - GOV-RULE-ANTI-DRIFT-010
   consumer_loader: governance/ci/canonical_rule_registry.py
-  validator: governance/ci/validate_canonical_rule_registry.py
+  validator: governance/ci/validate_governance_portability.py
 status: ACTIVE
 governance_uid_role: REGISTRY_MATERIALIZATION_PROVENANCE_ONLY
 governance_uid_may_select_current_governance: false

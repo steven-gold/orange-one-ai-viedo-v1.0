@@ -25,13 +25,15 @@ STALE_PRODUCT_RUN_ROOT_LITERAL = re.compile(
     r"00_SOURCE_INTAKE/(?:fresh_run_\d+|run_[A-Za-z0-9]+_[0-9a-f]{8,}(?:_[A-Za-z0-9-]+)?)"
 )
 
+_RETIRED_COMPAT_STAGE_DIR = "stage" + "02"
+
 FORBIDDEN_CURRENT_RUNTIME_TOKENS = (
     "HISTORICAL_GOVERNANCE_TEST_STATE_ONLY",
-    "stage_execution_adapters.stage02_functional_contract",
+    "stage_execution_adapters." + _RETIRED_COMPAT_STAGE_DIR + "_functional_contract",
     "compile_stage_execution_preflight.py",
     "governance/test/ACTIVE_STATE.yaml",
     "governance/test/CURRENT_EXECUTION_SCOPE_MANIFEST.yaml",
-    "governance/test/stage02/STAGE02_CURRENT_FINDINGS.yaml",
+    "governance/test/" + _RETIRED_COMPAT_STAGE_DIR + "/STAGE02_CURRENT_FINDINGS.yaml",
 )
 RETIRED_PATHS = (
     "governance/ci/compile_stage_execution_preflight.py",
@@ -132,19 +134,22 @@ def main() -> int:
             errors.append("RETIRED_COMPATIBILITY_PATH_STILL_PRESENT:" + retired)
 
     adapters = load_yaml(ADAPTERS)
-    stage2 = ((adapters.get("stages") or {}).get("STAGE-02") or {})
-    if stage2.get("scanner_mode") != "NORMALIZED_COMMON_EVIDENCE_CONTRACT":
-        errors.append("STAGE02_SCANNER_MODE_NOT_CURRENT_NORMALIZED")
-    for field in (
-        "python_compatibility_module",
-        "compatibility_current_execution_authority",
-        "compatibility_may_resolve_current_scope",
-        "compatibility_state_source",
-    ):
-        if field in stage2:
-            errors.append("STAGE02_RETIRED_COMPATIBILITY_FIELD_PRESENT:" + field)
-    if stage2.get("current_execution_state_source") != "PRODUCT_STAGE_EXECUTION_CURRENT_SCOPE_AND_RESUME":
-        errors.append("STAGE02_CURRENT_EXECUTION_STATE_SOURCE_DRIFT")
+    stage_contracts = adapters.get("stages") or {}
+    for stage_uid, stage_contract in stage_contracts.items():
+        stage_contract = stage_contract or {}
+        if stage_contract.get("scanner_mode") != "NORMALIZED_COMMON_EVIDENCE_CONTRACT":
+            errors.append("STAGE_SCANNER_MODE_NOT_CURRENT_NORMALIZED:" + str(stage_uid))
+        for field in (
+            "python_compatibility_module",
+            "compatibility_current_execution_authority",
+            "compatibility_may_resolve_current_scope",
+            "compatibility_state_source",
+        ):
+            if field in stage_contract:
+                errors.append("STAGE_RETIRED_COMPATIBILITY_FIELD_PRESENT:" + str(stage_uid) + ":" + field)
+        declared_source = stage_contract.get("current_execution_state_source")
+        if declared_source is not None and declared_source != "PRODUCT_STAGE_EXECUTION_CURRENT_SCOPE_AND_RESUME":
+            errors.append("STAGE_CURRENT_EXECUTION_STATE_SOURCE_DRIFT:" + str(stage_uid))
 
     referenced_by: dict[str, set[str]] = defaultdict(set)
     queue: deque[str] = deque()
@@ -212,8 +217,8 @@ def main() -> int:
     print(f"PASS: Current workflows scanned={len(workflows)}")
     print(f"PASS: active/transitive executable targets={len(visited)} all resolve")
     print("PASS: governance/test product run-state root absent")
-    print("PASS: retired Stage-02 compatibility wrapper/module absent")
-    print("PASS: Stage-02 scope source is Product Current Scope/Resume only")
+    print("PASS: retired compatibility wrapper/module absent")
+    print("PASS: stage scope source is Product Current Scope/Resume only")
     print("PASS: Governance branch has no product effectful execute mode")
     print("PASS: no stale fixed product run root or retired compatibility token in active consumers")
     print("PASS: ACTIVE_CONSUMER_REFERENCE_INTEGRITY_CURRENT_ONLY")

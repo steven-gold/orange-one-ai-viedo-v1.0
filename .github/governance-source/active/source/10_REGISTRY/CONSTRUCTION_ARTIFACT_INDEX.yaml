@@ -1,0 +1,479 @@
+schema_version: 1
+artifact_uid: REG-CONSTRUCTION-ARTIFACT-001
+registry_uid: REG-CONSTRUCTION-ARTIFACT-001
+artifact_type: CONSTRUCTION_ARTIFACT_INDEX
+status: CURRENT_CANDIDATE
+canonical_path: 10_REGISTRY/CONSTRUCTION_ARTIFACT_INDEX.yaml
+owner_uid: OWNER-GOVERNANCE-MANAGEMENT
+governance_revision: v2.2.22-word-projection-nextstep-consumer-sync-hardening
+reference_rule_registry_ref: REG-REFERENCE-RULE-001
+semantic_authority_baseline_ref: REG-SEMANTIC-AUTHORITY-BASELINE-001
+typed_identity_authority_registry_ref: REG-PROGRAM-IDENTITY-AUTHORITY-001
+layer_classification: POLICY
+policy_scope: PRODUCT_SYSTEM_AND_EXECUTION_PROFILE_NEUTRAL
+ai_invention_of_missing_product_behavior: FORBIDDEN
+content_denominator: DYNAMIC_FROM_EACH_IMMUTABLE_RAW_SOURCE
+fixed_product_page_uid_enum: FORBIDDEN
+
+universal_rules:
+  governance_load_receipt_required_before_execution: true
+  common_plus_specific_normative_load_required: true
+  typed_uid_resolution_required: true
+  normative_section_uid_read_only: true
+  write_target_exact_binding_required: true
+  register_before_generation: true
+  program_artifact_instance_authority_required: true
+  semantic_authority_baseline_required: true
+  implementation_manifest_runtime_enforcement_required: true
+  governance_receipt_evidence_required: true
+  dependency_closure_evidence_required: true
+  current_physical_hash_verification_required: true
+  profile_mandatory_contract_runtime_enforcement_required: true
+  typed_runtime_reference_authority_resolution_required: true
+  manifest_program_artifact_uid_uniqueness_required: true
+  framework_reserved_filename_preregistration_required: true
+  profile_file_class_enforcement_required: true
+  stale_governance_load_receipt: BLOCK
+  undeclared_normative_reference_in_execution: BLOCK
+  unregistered_artifact_creation: BLOCK
+  stage_test_without_defect_gap_record: BLOCK
+  test_without_production_conformance_review: BLOCK
+  unclassified_defect_scope_before_governance_patch: BLOCK
+  global_shared_defect_patched_only_at_observed_stage: BLOCK
+  stage_local_defect_generalized_without_recurrence_evidence: BLOCK
+  governance_version_promotion_without_multidirection_high_pressure_pass: BLOCK
+  predecessor_backtrace_omitted_after_governance_version_promotion: BLOCK
+  freeze_without_full_current_rule_revalidation: BLOCK
+  source_control_multiple_current_governance_versions: BLOCK
+  source_control_current_promotion_before_backtrace_and_full_revalidation: BLOCK
+  next_stage_before_governance_freeze: BLOCK
+  source_control_current_entry_must_be_adapter_declared: true
+  github_adapter_current_spec_path: docs/governance/CURRENT_GOVERNANCE_SPEC.yaml
+
+program_artifact_contract:
+  required_fields:
+  - program_artifact_uid
+  - work_unit_uid
+  - page_uid_or_scope_uid
+  - construction_profile
+  - canonical_name
+  - canonical_path
+  - canonical_filename
+  - owner_uid
+  - producer_stage_uid
+  - acceptance_audit_blueprint_ref
+  - current_hash
+  - governance_load_receipt_ref
+  - write_target_binding_ref
+  - profile_contracts
+  uid_pattern: 'PA-[A-Z0-9]+(?:-[A-Z0-9]+)*-[0-9]{3}'
+  canonical_name_pattern: '^[A-Z][A-Z0-9_]*$'
+  status_values:
+  - PLANNED
+  - CURRENT
+  - SUPERSEDED
+  - RETIRED
+  register_before_generation: BLOCK
+  unregistered_artifact_creation: BLOCK
+
+implementation_manifest_contract:
+  required_before_code_write: true
+  required_fields:
+  - work_unit_uid
+  - governance_revision
+  - design_freeze_ref
+  - program_artifacts
+  - dependency_closure_ref
+  - acceptance_audit_blueprint_ref
+  - naming_registry_ref
+  - section_registry_ref
+  - protected_current_artifact_registry_ref
+  - common_normative_bundle_refs
+  - stage_normative_section_uids
+  - item_specific_normative_section_uids
+  - governance_load_receipt_ref
+  - write_target_bindings
+  - governance_load_receipt
+  - dependency_closure
+  - typed_identity_registry_ref
+  manifest_before_code_write: BLOCK
+  duplicate_program_artifact_uid: BLOCK
+
+governance_load_receipt_contract:
+  required_before_any_stage_operation: true
+  required_before_code_write: true
+  must_precede_execution_timestamp: true
+  invalidate_on_governance_revision_change: true
+  invalidate_on_root_manifest_hash_change: true
+  invalidate_on_section_registry_hash_change: true
+  invalidate_on_target_manifest_change: true
+  required_fields:
+  - receipt_uid
+  - execution_uid
+  - run_uid
+  - work_unit_or_stage_operation_uid
+  - governance_revision
+  - root_manifest_hash
+  - section_registry_hash
+  - target_manifest_hash
+  - common_bundle_uids
+  - stage_normative_section_uids
+  - profile_normative_section_uids
+  - artifact_specific_normative_section_uids
+  - dependency_normative_section_uids
+  - effective_normative_set_hash
+  - resolved_section_receipts
+  - acceptance_audit_blueprint_ref
+  - loaded_at
+  - status
+  deterministic_receipt_uid_required: true
+
+effective_normative_set_contract:
+  all_layers_required: true
+  layers:
+  - COMMON_BUNDLE
+  - STAGE
+  - PROFILE
+  - ITEM_SPECIFIC
+  - DEPENDENCY
+  missing_common_bundle: BLOCK
+  missing_stage_ref: BLOCK
+  missing_profile_ref: BLOCK
+  missing_item_specific_ref: BLOCK
+  missing_dependency_ref: BLOCK
+  merged_effective_set_is_runtime_authority: true
+
+typed_uid_resolution_contract:
+  exactly_one_resolution_required: true
+  free_text_or_fuzzy_fallback: BLOCK
+  legal_uid_is_not_sufficient: true
+  semantic_binding_must_match_registered_rule: true
+  uid_types:
+    NORMATIVE_SECTION_UID:
+      resolution_source: SECTION_NUMBER_REGISTRY
+      write_target: false
+      read_only: true
+    PROGRAM_ARTIFACT:
+      resolution_source: PROGRAM_IDENTITY_AUTHORITY_REGISTRY
+      write_target: true
+    WORK_UNIT:
+      resolution_source: PROGRAM_IDENTITY_AUTHORITY_REGISTRY
+      write_target: false
+    PAGE_OR_SCOPE:
+      resolution_source: PROGRAM_IDENTITY_AUTHORITY_REGISTRY
+      write_target: false
+    OWNER:
+      resolution_source: PROGRAM_IDENTITY_AUTHORITY_REGISTRY
+      write_target: false
+    TEST:
+      resolution_source: PROGRAM_IDENTITY_AUTHORITY_REGISTRY
+      write_target: false
+    INPUT_ARTIFACT:
+      resolution_source: PROGRAM_IDENTITY_AUTHORITY_REGISTRY
+      write_target: false
+
+write_target_lock_contract:
+  actual_target_must_equal_registered_canonical_target: true
+  valid_other_registered_artifact_is_not_valid_target: true
+  prewrite_hash_required: true
+  normative_document_write_during_construction: BLOCK
+  governance_registry_write_during_construction: BLOCK
+  unregistered_write_target: BLOCK
+  prewrite_hash_mismatch: BLOCK
+
+continuity_contract:
+  required_edge_fields:
+  - edge_uid
+  - from_artifact_uid
+  - to_artifact_uid
+  - relation_type
+  - required
+  forward_and_reverse_edge_required: true
+  reverse_dependency_must_be_explicit: true
+  unresolved_required_edge: BLOCK
+  unresolved_optional_edge: WARN
+  cycle_policy: ALLOW_IF_DECLARED_AND_RESOLVED
+
+supersession_cleanup_transaction:
+  atomic: true
+  partial_application: BLOCK
+  ordered_steps:
+  - REGISTER_REPLACEMENT
+  - BIND_REPLACEMENT
+  - MIGRATE_FORWARD_DEPENDENCIES
+  - MIGRATE_REVERSE_DEPENDENCIES
+  - MARK_PREDECESSOR_SUPERSEDED
+  - APPEND_CLEANUP_LEDGER_EVENT
+  - POST_DELETE_RESIDUAL_SCAN_IF_DELETE
+
+canonical_path_policy:
+  relative_only: true
+  forbidden_path_patterns:
+  - '..'
+  - //
+  - '\\'
+  - '~'
+  absolute_path: BLOCK
+  traversal: BLOCK
+  backslash_separator: BLOCK
+  filename_must_match_basename: true
+
+forbidden_filename_tokens:
+- package
+- tsconfig
+- lock
+- secret
+- credential
+- private_key
+- env
+
+framework_reserved_filename_policy:
+  preregistration_required: true
+  examples:
+  - page.tsx
+  - layout.tsx
+  - route.ts
+  - middleware.ts
+  - not-found.tsx
+
+profile_file_class_policy:
+  profile_root_prefix_required: true
+  root_prefixes:
+    TEST_IMPLEMENTATION: tests/
+    DATABASE_MIGRATION: migrations/
+    DEFAULT: src/
+  extension_must_be_profile_allowed: true
+
+program_construction_profiles:
+  UI_COMPONENT:
+    rule_uid: REFRULE-PROFILE-01
+    required_normative_section_uids:
+    - WEB-GOV-01-S005
+    - WEB-GOV-02-S011
+    - WEB-GOV-02-S057
+    mandatory_contracts:
+    - input_contract
+    - output_contract
+    - state_mutation_contract
+    - error_contract
+    - audit_contract
+    - retry_or_recovery
+    - test_contract
+    allowed_file_extensions:
+    - .tsx
+    - .jsx
+    - .vue
+    - .svelte
+    - .css
+    - .scss
+    - .ts
+    - .js
+  CONTROL_HANDLER:
+    rule_uid: REFRULE-PROFILE-02
+    required_normative_section_uids:
+    - WEB-GOV-02-S009
+    - WEB-GOV-02-S057
+    - WEB-GOV-02-S012
+    mandatory_contracts:
+    - input_contract
+    - output_contract
+    - state_mutation_contract
+    - error_contract
+    - audit_contract
+    - retry_or_recovery
+    - test_contract
+    allowed_file_extensions:
+    - .ts
+    - .js
+  API_ENTRY:
+    rule_uid: REFRULE-PROFILE-03
+    required_normative_section_uids:
+    - WEB-GOV-02-S009
+    - WEB-GOV-02-S057
+    - WEB-GOV-02-S022
+    mandatory_contracts:
+    - input_contract
+    - output_contract
+    - state_mutation_contract
+    - error_contract
+    - audit_contract
+    - retry_or_recovery
+    - test_contract
+    allowed_file_extensions:
+    - .ts
+    - .js
+  RUNTIME_SERVICE:
+    rule_uid: REFRULE-PROFILE-04
+    required_normative_section_uids:
+    - WEB-GOV-02-S008
+    - WEB-GOV-02-S009
+    - WEB-GOV-02-S057
+    - WEB-GOV-02-S014
+    mandatory_contracts:
+    - input_contract
+    - output_contract
+    - state_mutation_contract
+    - error_contract
+    - audit_contract
+    - retry_or_recovery
+    - test_contract
+    allowed_file_extensions:
+    - .ts
+    - .js
+  REPOSITORY_DATA_ACCESS:
+    rule_uid: REFRULE-PROFILE-05
+    required_normative_section_uids:
+    - WEB-GOV-02-S010
+    - WEB-GOV-02-S057
+    - WEB-GOV-02-S015
+    mandatory_contracts:
+    - input_contract
+    - output_contract
+    - state_mutation_contract
+    - error_contract
+    - audit_contract
+    - retry_or_recovery
+    - test_contract
+    allowed_file_extensions:
+    - .ts
+    - .js
+    - .sql
+  DATABASE_MIGRATION:
+    rule_uid: REFRULE-PROFILE-06
+    required_normative_section_uids:
+    - WEB-GOV-02-S017
+    - WEB-GOV-02-S054D
+    - WEB-GOV-02-S057
+    - WEB-GOV-02-S016
+    mandatory_contracts:
+    - input_contract
+    - output_contract
+    - state_mutation_contract
+    - error_contract
+    - audit_contract
+    - retry_or_recovery
+    - test_contract
+    allowed_file_extensions:
+    - .sql
+    - .ts
+    - .js
+  ASYNC_WORKER:
+    rule_uid: REFRULE-PROFILE-07
+    required_normative_section_uids:
+    - WEB-GOV-02-S025
+    - WEB-GOV-02-S057
+    mandatory_contracts:
+    - input_contract
+    - output_contract
+    - state_mutation_contract
+    - error_contract
+    - audit_contract
+    - retry_or_recovery
+    - test_contract
+    allowed_file_extensions:
+    - .ts
+    - .js
+  EXTERNAL_ADAPTER:
+    rule_uid: REFRULE-PROFILE-08
+    required_normative_section_uids:
+    - WEB-GOV-02-S023
+    - WEB-GOV-02-S057
+    mandatory_contracts:
+    - input_contract
+    - output_contract
+    - state_mutation_contract
+    - error_contract
+    - audit_contract
+    - retry_or_recovery
+    - test_contract
+    allowed_file_extensions:
+    - .ts
+    - .js
+  TEST_IMPLEMENTATION:
+    rule_uid: REFRULE-PROFILE-09
+    required_normative_section_uids:
+    - WEB-GOV-03-S046
+    - WEB-GOV-04-S073
+    - WEB-GOV-02-S027
+    - WEB-GOV-02-S028
+    - WEB-GOV-02-S057
+    mandatory_contracts:
+    - input_contract
+    - output_contract
+    - state_mutation_contract
+    - error_contract
+    - audit_contract
+    - retry_or_recovery
+    - test_contract
+    allowed_file_extensions:
+    - .ts
+    - .js
+    - .tsx
+    - .jsx
+    - .py
+
+mandatory_common_normative_bundles:
+  BUNDLE-GOV-COMMON-CORE:
+    rule_uid: REFRULE-BUNDLE-01
+    section_uids:
+    - WEB-GOV-01-S002
+    - WEB-GOV-01-S003
+    - WEB-GOV-01-S003A
+    - WEB-GOV-01-S004
+    - WEB-GOV-01-S005
+    - WEB-GOV-01-S008
+    - WEB-GOV-04-S001
+    - WEB-GOV-04-S002
+    - WEB-GOV-04-S003
+    - WEB-GOV-03-S052
+    - WEB-GOV-03-S058
+    - WEB-GOV-01-S071
+    - WEB-GOV-01-S072
+  BUNDLE-GOV-CONSTRUCTION-BASE:
+    rule_uid: REFRULE-BUNDLE-02
+    section_uids:
+    - WEB-GOV-01-S066
+    - WEB-GOV-01-S067
+    - WEB-GOV-01-S068
+    - WEB-GOV-02-S001
+    - WEB-GOV-02-S002
+    - WEB-GOV-02-S057
+    - WEB-GOV-02-S058
+    - WEB-GOV-02-S066
+    - WEB-GOV-02-S070
+    - WEB-GOV-03-S001
+    - WEB-GOV-03-S020
+    - WEB-GOV-03-S043
+    - WEB-GOV-03-S053
+    - WEB-GOV-03-S054
+    - WEB-GOV-03-S055
+    - WEB-GOV-03-S056
+    - WEB-GOV-03-S057
+    - WEB-GOV-02-S071
+    - WEB-GOV-03-S060
+    - WEB-GOV-02-S072
+    - WEB-GOV-03-S061
+    - WEB-GOV-03-S070
+    - WEB-GOV-01-S088
+    - WEB-GOV-02-S075
+    - WEB-GOV-03-S071
+    - WEB-GOV-01-S089
+    - WEB-GOV-02-S076
+    - WEB-GOV-01-S090
+    - WEB-GOV-02-S077
+    - WEB-GOV-03-S072
+  BUNDLE-GOV-AUDIT-BASE:
+    rule_uid: REFRULE-BUNDLE-03
+    section_uids:
+    - WEB-GOV-04-S006
+    - WEB-GOV-04-S011
+    - WEB-GOV-04-S012
+    - WEB-GOV-04-S064
+    - WEB-GOV-04-S065
+    - WEB-GOV-04-S074
+    - WEB-GOV-04-S076
+    - WEB-GOV-04-S077
+    - WEB-GOV-04-S084
+    - WEB-GOV-04-S085
+    - WEB-GOV-04-S086
+    - WEB-GOV-04-S087

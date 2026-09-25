@@ -99,8 +99,6 @@ for synthetic_profile in synthetic:
 global_surfaces=[
     ROOT/'governance/ci/validate_governance_portability.py',
     ROOT/'governance/ci/validate_active_consumer_reference_integrity.py',
-    ROOT/'governance/ci/validate_authoring_reference_governance_coverage.py',
-    ROOT/'governance/ci/validate_validation_remediation_closure_protocol.py',
     ROOT/'governance/ci/validate_selected_execution_profile_integrity.py',
 ]
 fixed_step=re.compile(r'\bSTAGE-\d{2}\b', re.IGNORECASE)

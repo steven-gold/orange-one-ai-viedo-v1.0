@@ -934,7 +934,7 @@ stages:
   - WEB-GOV-04-S085
   pre_execution_gate: GOVERNANCE_LOAD_RECEIPT_PASS
   validator_names:
-  - CONSTRUCTION_ARTIFACT_INDEX_GUARD
+  - INDEXED_INCREMENTAL_VALIDATION_GUARD
   - IMPLEMENTATION_CONTRACT_GUARD
   semantic_granularity_gate:
     mode: REQUIRED

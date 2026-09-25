@@ -30,6 +30,8 @@ jobs:
           python governance/ci/validate_selected_execution_profile_integrity.py
           python governance/ci/validate_active_consumer_reference_integrity.py
           python governance/ci/validate_governance_layout.py
+          python governance/ci/validate_structured_mutation_safety.py --self-test
+          python governance/ci/validate_structured_mutation_safety.py
           python .github/governance-source/active/source/09_TESTS/governance/validate_stage_execution_invariants.py
           python .github/governance-source/active/source/09_TESTS/governance/validate_product_neutral_entity_lifecycle.py
           test ! -e governance/ci/compile_stage_execution_preflight.py
