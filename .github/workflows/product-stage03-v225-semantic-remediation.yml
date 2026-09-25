@@ -115,6 +115,25 @@ jobs:
             vitb=load(b/'VISUAL_INTERACTION_TOPOLOGY_BINDING.yaml')
             fwlc=load(b/'FUNCTIONAL_WORKBENCH_LAYOUT_CONTRACT.yaml')
             vses=load(b/'VISUAL_SCENARIO_EVIDENCE_SET.yaml')
+            # ---- Complete VDSP transitive bindings consumed by Stage04 Freeze ----
+            generation_source = (
+              'STAGE_EXECUTION/STAGE-01/WU-STAGE01-GLOBAL-HOME-SHELL-NAVIGATION-001/00_SOURCE_INTAKE/RAW_SOURCE/SRC-DOCX-334A4679600F092B733B/ACPOS_GLOBAL_HOME_SHELL_NAVIGATION_Mother_Basic_Design_OPTIMIZED.docx'
+              if key=='HOME' else
+              'STAGE_EXECUTION/STAGE-01/WU-STAGE01-WB01-DASHBOARD-001/00_SOURCE_INTAKE/RAW_SOURCE/SRC-DOCX-2B1908530B5BD312A392/ACPOS_WB-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx'
+            )
+            if not Path(generation_source).is_file():
+                raise SystemExit(f'BLOCK:GENERATION_MANIFEST_SOURCE_MISSING:{cfg["wu"]}:{generation_source}')
+            vds['design_version']='STAGE03-V2.2.25-REVERIFY'
+            vds['visual_style_definition_ref']='STAGE_EXECUTION/SHARED_AUTHORITY/GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY.yaml'
+            vds['visual_inheritance_matrix_ref']=str(b/'VISUAL_INHERITANCE_MATRIX.yaml')
+            vds['visual_reference_annotation_ref']=str(b/'VISUAL_REFERENCE_ANNOTATION.yaml')
+            vds['visual_scenario_evidence_set_ref']=str(b/'VISUAL_SCENARIO_EVIDENCE_SET.yaml')
+            vds['visual_geometry_contract_ref']=str(b/'VISUAL_GEOMETRY_CONTRACT.yaml')
+            vds['generation_manifest_ref']=generation_source
+            vds['generation_manifest_source_section']='Visual Anchors / Locked Regions / Generation Manifest'
+            vds['transitive_binding_status']='CURRENT_PHYSICAL_OWNER_BOUND'
+            dump(b/'VISUAL_DESIGN_SPEC_PACKAGE.yaml',vds)
+
             vra=load(b/'VISUAL_REFERENCE_ANNOTATION.yaml')
 
             # ---- S079: complete per-scenario candidate annotation ----
@@ -337,13 +356,13 @@ jobs:
                 if not pp.is_file(): raise SystemExit(f'BLOCK:REQUIRED_ARTIFACT_MISSING:{pp}')
 
             rows=[]
-            def add(sec,req,atype,aref,row_src,rowid,field_path,check,app='REQUIRED',ev=None):
+            def add(sec,req,atype,aref,row_src,rowid,field_path,check,app='REQUIRED',ev=None,authority_ev=None):
                 obj=load(aref)
                 try: val=field_get(obj,field_path)
                 except KeyError: raise SystemExit(f'BLOCK:MATRIX_FIELD_PATH_MISSING:{cfg["wu"]}:{sec}:{aref}:{field_path}')
                 if app=='REQUIRED' and not present(val) and val is not False:
                     raise SystemExit(f'BLOCK:MATRIX_REQUIRED_VALUE_EMPTY:{cfg["wu"]}:{sec}:{aref}:{field_path}')
-                rows.append({
+                row={
                   'matrix_row_uid':f'MX-{len(rows)+1:05d}',
                   'normative_section_uid':sec,
                   'requirement_uid':req,
@@ -360,7 +379,10 @@ jobs:
                   'closure_gate':EXIT,
                   'failure_disposition':'BLOCK_AND_REENTER_STAGE03_OWNER',
                   'reentry_owner':'VISUAL_DESIGN',
-                })
+                }
+                if app=='NOT_APPLICABLE_WITH_AUTHORITY':
+                    row['authority_evidence_ref']=authority_ev or str(aref)
+                rows.append(row)
 
             # Full row/field expansions.
             g=load(b/'VISUAL_GEOMETRY_CONTRACT.yaml')
@@ -381,9 +403,9 @@ jobs:
             else:
                 # SYSTEM_LOGIC_UNIT exposes system-trigger visual regions but has no Page Section/Control/Field canonical registry.
                 # Do not invent SEC/CTRL/FIELD UIDs at Stage-03; bind explicit N/A to Current Work Unit type.
-                add('WEB-GOV-01-S021','PAGE_SECTION_SCHEMA_NOT_APPLICABLE_TO_SYSTEM_LOGIC_UNIT','WORK_UNIT',b/'WORK_UNIT.yaml','governed_unit_type','GLOBAL-HOME-SHELL-NAVIGATION',['governed_unit_type'],'SECTION_NA','NOT_APPLICABLE_WITH_AUTHORITY')
-                add('WEB-GOV-01-S022','PAGE_CONTROL_SCHEMA_NOT_APPLICABLE_TO_SYSTEM_LOGIC_UNIT','WORK_UNIT',b/'WORK_UNIT.yaml','governed_unit_type','GLOBAL-HOME-SHELL-NAVIGATION',['governed_unit_type'],'CONTROL_NA','NOT_APPLICABLE_WITH_AUTHORITY')
-                add('WEB-GOV-01-S023','PAGE_FIELD_SCHEMA_NOT_APPLICABLE_TO_SYSTEM_LOGIC_UNIT','WORK_UNIT',b/'WORK_UNIT.yaml','governed_unit_type','GLOBAL-HOME-SHELL-NAVIGATION',['governed_unit_type'],'FIELD_NA','NOT_APPLICABLE_WITH_AUTHORITY')
+                add('WEB-GOV-01-S021','PAGE_SECTION_SCHEMA_NOT_APPLICABLE_TO_SYSTEM_LOGIC_UNIT','WORK_UNIT',b/'WORK_UNIT.yaml','governed_unit_type','GLOBAL-HOME-SHELL-NAVIGATION',['governed_unit_type'],'SECTION_NA','NOT_APPLICABLE_WITH_AUTHORITY',authority_ev=str(b/'WORK_UNIT.yaml'))
+                add('WEB-GOV-01-S022','PAGE_CONTROL_SCHEMA_NOT_APPLICABLE_TO_SYSTEM_LOGIC_UNIT','WORK_UNIT',b/'WORK_UNIT.yaml','governed_unit_type','GLOBAL-HOME-SHELL-NAVIGATION',['governed_unit_type'],'CONTROL_NA','NOT_APPLICABLE_WITH_AUTHORITY',authority_ev=str(b/'WORK_UNIT.yaml'))
+                add('WEB-GOV-01-S023','PAGE_FIELD_SCHEMA_NOT_APPLICABLE_TO_SYSTEM_LOGIC_UNIT','WORK_UNIT',b/'WORK_UNIT.yaml','governed_unit_type','GLOBAL-HOME-SHELL-NAVIGATION',['governed_unit_type'],'FIELD_NA','NOT_APPLICABLE_WITH_AUTHORITY',authority_ev=str(b/'WORK_UNIT.yaml'))
 
             vr=load(b/'VISUAL_REFERENCE_ANNOTATION.yaml')
             for ri,r in enumerate(vr['candidate_annotations']):
@@ -436,6 +458,7 @@ jobs:
             present_secs={r['normative_section_uid'] for r in rows}
             missing=[s for s in required_sections if s not in present_secs]
             if missing: raise SystemExit('BLOCK:MATRIX_NORMATIVE_SECTION_MISSING:'+','.join(missing))
+            required_rows=[r for r in rows if r.get('applicability')=='REQUIRED']
             matrix={
               'artifact_uid':f'NEM-{cfg["wu"]}',
               'artifact_type':'NORMATIVE_EXECUTION_MATRIX',
@@ -448,15 +471,15 @@ jobs:
                 'represented_normative_section_total':len(present_secs),
                 'required_artifact_total':len(outputs),
                 'represented_artifact_total':len({r['required_artifact_type'] for r in rows if r['required_artifact_type'] in outputs}),
-                'required_field_total':len(rows),
-                'validator_bound_field_total':len(rows),
-                'closure_bound_field_total':len(rows),
+                'required_field_total':len(required_rows),
+                'validator_bound_field_total':sum(1 for r in required_rows if r.get('validator_uid') and r.get('validator_check_id')),
+                'closure_bound_field_total':sum(1 for r in required_rows if r.get('closure_gate')==EXIT),
                 'missing_required_row_count':0,'missing_required_field_count':0,'duplicate_credit_count':0,
                 'summary_only_credit_count':0,'unclassified_applicability_count':0,'validator_unbound_count':0,
                 'closure_unbound_count':0,'stale_matrix_count':0,
                 'arbitrary_normative_section_fallback_count':0,
               },
-              'status':'PASS_CURRENT_REVERIFY'
+              'status':'PASS'
             }
             dump(b/'NORMATIVE_EXECUTION_MATRIX.yaml',matrix)
 
