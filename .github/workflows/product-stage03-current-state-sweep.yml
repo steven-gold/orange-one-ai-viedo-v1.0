@@ -1,5 +1,5 @@
 name: Product Stage03 Current State Sweep
-# exact-head-rerun: 2026-09-25T10:07+08:00
+# exact-head-rerun: 2026-09-25T10:10+08:00
 on:
   push:
     branches: [0921acpos]
@@ -38,8 +38,10 @@ jobs:
                 findings.append({'class':'STALE_GOVERNANCE_HEAD','field':kp})
               if k in current_receipt_keys and isinstance(v,str) and v.endswith('WORK_UNIT_TERMINAL_RECEIPT.yaml') and '/HISTORY/' not in v:
                 findings.append({'class':'STALE_TERMINAL_RECEIPT_CURRENT_REF','field':kp,'value':v})
-              if k=='prior_terminal_receipt_ref' and isinstance(v,str) and v.endswith('WORK_UNIT_TERMINAL_RECEIPT.yaml') and '/HISTORY/' not in v:
-                findings.append({'class':'PRIOR_TERMINAL_RECEIPT_NOT_HISTORY_BOUND','field':kp,'value':v})
+              if k=='prior_terminal_receipt_ref' and isinstance(v,str) and v.endswith('WORK_UNIT_TERMINAL_RECEIPT.yaml'):
+                history_bound = v.startswith('HISTORY/') or v.startswith('EVIDENCE/HISTORY/') or '/HISTORY/' in v
+                if not history_bound:
+                  findings.append({'class':'PRIOR_TERMINAL_RECEIPT_NOT_HISTORY_BOUND','field':kp,'value':v})
               walk(v,kp)
           elif isinstance(obj,list):
             for i,v in enumerate(obj): walk(v,f'{path}[{i}]')
