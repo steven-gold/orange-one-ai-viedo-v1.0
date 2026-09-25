@@ -19,10 +19,15 @@ if not REGISTRY.is_file():
     errors.append('CURRENT_REGISTRY_MISSING')
 else:
     reg=yaml.safe_load(REGISTRY.read_text(encoding='utf-8')) or {}
-    if reg.get('branch')!='rebuild-v2.1.1':
-        errors.append('CURRENT_REGISTRY_BRANCH_DRIFT')
-    if reg.get('product_execution_branch')!='0921acpos':
-        errors.append('CURRENT_PRODUCT_EXECUTION_BRANCH_DRIFT')
+    roles=reg.get('branch_role_contract') or {}
+    governance_branch=str(reg.get('branch') or '')
+    if roles.get(governance_branch) not in {'IMMUTABLE_GOVERNANCE_RULESET','GOVERNANCE_REVISION_CANDIDATE'}:
+        errors.append('CURRENT_REGISTRY_BRANCH_OR_ROLE_DRIFT')
+    product_branch=str(reg.get('product_execution_branch') or '')
+    if not product_branch or roles.get(product_branch)!='PRODUCT_EXECUTION_WORKLINE':
+        errors.append('CURRENT_PRODUCT_EXECUTION_BRANCH_OR_ROLE_DRIFT')
+    if governance_branch==product_branch:
+        errors.append('CURRENT_GOVERNANCE_PRODUCT_BRANCH_COLLISION')
     if reg.get('rules_root')!='governance/specifications/current':
         errors.append('CURRENT_RULES_ROOT_DRIFT')
 

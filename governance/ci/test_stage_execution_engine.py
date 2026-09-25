@@ -3,6 +3,8 @@ from copy import deepcopy
 from pathlib import Path
 import ast
 import importlib.util
+import tempfile
+import yaml
 import sys
 ROOT=Path(__file__).resolve().parents[2]
 sys.path.insert(0,str(ROOT/'governance/ci'))
@@ -128,6 +130,77 @@ block_work('missing_operation_binding',lambda x:x['operation_bindings'].pop(next
 block_work('missing_scanner_binding',lambda x:x['scanner_bindings'].pop(next(iter(x['scanner_bindings']))))
 block_work('operation_executor_owner_missing',lambda x:x['operation_bindings'][next(iter(x['operation_bindings']))].pop('executor_owner'))
 block_work('scanner_owner_missing',lambda x:x['scanner_bindings'][next(iter(x['scanner_bindings']))].pop('scanner_owner'))
+
+# Normative execution matrix admission + destructive required-field regression.
+with tempfile.TemporaryDirectory() as td:
+    product_root=Path(td)
+    matrix_stage='STAGE-03'
+    matrix_st=eng.stage_map(profile)[matrix_stage]
+    required_sections=list(map(str,matrix_st.get('required_normative_section_uids') or []))
+    required_artifacts=list(map(str,matrix_st.get('outputs') or []))+list(map(str,matrix_st.get('required_evidence') or []))
+    row_total=max(len(required_sections),len(required_artifacts))
+    payload={'fields':{f'f{i}':f'VALUE-{i}' for i in range(row_total)}}
+    (product_root/'synthetic.yaml').write_text(yaml.safe_dump(payload,sort_keys=False),encoding='utf-8')
+    rows=[]
+    for i in range(row_total):
+        rows.append({
+          'matrix_row_uid':f'MATRIX-ROW-{i+1:03d}',
+          'normative_section_uid':required_sections[i % len(required_sections)],
+          'requirement_uid':f'REQ-{i+1:03d}',
+          'required_artifact_type':required_artifacts[i % len(required_artifacts)],
+          'artifact_ref':'synthetic.yaml',
+          'artifact_owner':'SYNTHETIC-OWNER',
+          'row_denominator_source':'SYNTHETIC-DENOMINATOR',
+          'row_identity':f'SYNTHETIC-ROW-{i+1:03d}',
+          'field_path':['fields',f'f{i}'],
+          'applicability':'REQUIRED',
+          'validator_uid':matrix_st['validators'][0],
+          'validator_check_id':f'MATRIX-FIELD-CHECK-{i+1:03d}',
+          'evidence_ref':'synthetic://matrix-evidence',
+          'closure_gate':matrix_st['exit_gate'],
+          'failure_disposition':'BLOCK',
+          'reentry_owner':'SYNTHETIC-OWNER',
+        })
+    matrix={
+      'artifact_uid':'SYNTHETIC-NORMATIVE-EXECUTION-MATRIX',
+      'artifact_type':'NORMATIVE_EXECUTION_MATRIX',
+      'governance_uid':gov,
+      'stage_uid':matrix_stage,
+      'work_unit_uid':'SYNTHETIC-WU-MATRIX',
+      'rows':rows,
+      'coverage':{
+        'required_normative_section_total':len(required_sections),
+        'represented_normative_section_total':len(required_sections),
+        'required_artifact_total':len(set(required_artifacts)),
+        'represented_artifact_total':len(set(required_artifacts)),
+        'required_field_total':row_total,
+        'validator_bound_field_total':row_total,
+        'closure_bound_field_total':row_total,
+        'missing_required_row_count':0,
+        'missing_required_field_count':0,
+        'duplicate_credit_count':0,
+        'summary_only_credit_count':0,
+        'unclassified_applicability_count':0,
+        'validator_unbound_count':0,
+        'closure_unbound_count':0,
+        'stale_matrix_count':0,
+      },
+      'status':'PASS',
+    }
+    (product_root/'NORMATIVE_EXECUTION_MATRIX.yaml').write_text(yaml.safe_dump(matrix,sort_keys=False),encoding='utf-8')
+    matrix_work={'work_unit_uid':'SYNTHETIC-WU-MATRIX','normative_execution_matrix_ref':'NORMATIVE_EXECUTION_MATRIX.yaml'}
+    eng.validate_normative_execution_matrix(matrix_stage,product_root,matrix_work,matrix_st,gov)
+    broken=deepcopy(payload)
+    del broken['fields']['f0']
+    (product_root/'synthetic.yaml').write_text(yaml.safe_dump(broken,sort_keys=False),encoding='utf-8')
+    try:
+        eng.validate_normative_execution_matrix(matrix_stage,product_root,matrix_work,matrix_st,gov)
+    except eng.StageEngineError as exc:
+        if 'NORMATIVE_MATRIX_REQUIRED_FIELD_MISSING' not in str(exc):
+            raise
+        cases+=1
+    else:
+        raise SystemExit('FAIL_EXPECTED_MATRIX-DESTRUCTIVE-REQUIRED-FIELD')
 assert not (ROOT/'governance/ci/compile_stage_execution_preflight.py').exists()
 assert not (ROOT/'governance/ci/stage_execution_adapters/stage02_functional_contract.py').exists()
 s2=adapters['stages']['STAGE-02']
@@ -149,7 +222,7 @@ for node in ast.walk(tree):
         for arg in node.args:
             if isinstance(arg,ast.Constant) and isinstance(arg.value,str) and arg.value.startswith('UNSUPPORTED_STAGE_UNTIL_MATCHING_CURRENT_EVIDENCE_EXISTS'):
                 raise AssertionError('COMMON_ENGINE_STAGE02_ONLY_REJECTION')
-print(f'PASS: common Stage Execution Engine negative regression {cases}/39')
+print(f'PASS: common Stage Execution Engine negative regression cases={cases}; matrix_destructive_required_field=PASS')
 print('PASS: Stage-02 current execution has no historical compatibility module or test-state scope resolver')
 
 

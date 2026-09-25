@@ -1,5 +1,5 @@
+# consolidated-current-governance-v2.2.25-20260925
 name: Current Governance Cleanup Validation
-# rerun-current-only-final
 
 on:
   push:
@@ -7,6 +7,12 @@ on:
       - rebuild-v2.1.1
     paths:
       - .github/workflows/current-governance-cleanup-validation.yml
+      - '.github/governance-source/active/source/12_DOCS/mother-spec/**'
+      - '.github/governance-source/active/source/10_REGISTRY/**'
+      - '.github/governance-source/active/source/09_TESTS/governance/**'
+      - 'governance/ci/**'
+      - 'governance/execution-domains/**'
+      - 'governance/specifications/**'
 
 permissions:
   contents: read

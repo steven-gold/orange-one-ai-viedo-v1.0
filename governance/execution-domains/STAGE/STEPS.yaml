@@ -34,6 +34,38 @@ operation_contract:
     reentry: EARLIEST_OWNING_OPERATION
     checkpoint: CURRENT_OPERATION_CHECKPOINT
     next_step: EXACT_NEXT_REGISTERED_OPERATION_OR_STAGE_CLOSURE
+normative_execution_matrix_contract:
+  step_uid: ST-{stage_uid}-NORMATIVE-EXECUTION-MATRIX
+  purpose: Materialize the complete executable bridge from Current normative requirements to Stage closure before any effectful Stage operation.
+  prerequisites: [SESSION_BOOTSTRAP_RESUME_GATE_PASS, CURRENT_WORK_UNIT_RESOLVED, CURRENT_SCOPE_RESOLVED]
+  entry_gate: PRE_EFFECTFUL_STAGE_ADMISSION
+  inputs: [CURRENT_GOVERNANCE, REGISTERED_REQUIRED_NORMATIVE_SECTIONS, CURRENT_WORK_UNIT_BINDING, CURRENT_SCOPE, CURRENT_AUTHORITY, SUCCESSOR_INPUT_REQUIREMENTS]
+  input_required_fields: [governance_uid, stage_uid, work_unit_uid, required_normative_section_uids, output_denominator, evidence_denominator, exit_gate]
+  operations: [ENUMERATE_NORMATIVE_REQUIREMENTS, EXPAND_ARTIFACT_ROWS_FIELDS, BIND_VALIDATORS, BIND_CLOSURE_GATES, RECONCILE_MATRIX_DENOMINATOR]
+  outputs: [NORMATIVE_EXECUTION_MATRIX]
+  output_required_fields: [artifact_uid, artifact_type, governance_uid, stage_uid, work_unit_uid, rows, coverage, status]
+  denominator: COMPLETE_APPLICABLE_NORMATIVE_ARTIFACT_ROW_FIELD_UNIVERSE
+  completeness_and_pass_condition:
+    required_normative_section_coverage_percent: 100
+    required_artifact_coverage_percent: 100
+    required_row_coverage_percent: 100
+    required_field_coverage_percent: 100
+    validator_binding_coverage_percent: 100
+    closure_gate_binding_coverage_percent: 100
+    missing_required_row_count: 0
+    missing_required_field_count: 0
+    duplicate_credit_count: 0
+    summary_only_credit_count: 0
+    unclassified_applicability_count: 0
+    validator_unbound_count: 0
+    closure_unbound_count: 0
+  validators_and_evidence: [NORMATIVE_EXECUTION_MATRIX_GUARD, DOMAIN_AUDIT_PROFILE, MATRIX_ADMISSION_RECEIPT]
+  failure_reentry_checkpoint_next_step:
+    failure: STOP_BEFORE_EFFECTFUL_STAGE_OPERATION
+    reentry: EARLIEST_OWNING_NORMATIVE_OR_PRODUCT_CAPABILITY
+    checkpoint: NORMATIVE_EXECUTION_MATRIX_CHECKPOINT
+    next_step: FIRST_REGISTERED_STAGE_OPERATION_ONLY_AFTER_MATRIX_PASS
+
 stage_closure_contract:
   step_uid: ST-{stage_uid}-CLOSURE
   purpose: Close one Stage only after every applicable operation receipt and Stage denominator pass.
@@ -58,6 +90,10 @@ stage_closure_contract:
     checkpoint: STAGE_CLOSURE_CHECKPOINT
     next_step: REGISTERED_NEXT_STAGE_ENTRY_OR_LIFECYCLE_CLOSURE
 execution_rules:
+  normative_execution_matrix_required_before_first_effectful_operation: true
+  normative_execution_matrix_required_before_stage_closure: true
+  validators_must_consume_current_matrix_truth: true
+  validator_local_required_field_subset: FORBIDDEN
   expand_operations_from_lifecycle_registry: true
   every_registered_operation_must_instantiate_operation_contract: true
   operation_order_must_match_registry: true

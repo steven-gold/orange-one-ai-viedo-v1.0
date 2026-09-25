@@ -29,7 +29,7 @@ def validate(root=ROOT):
         failures.append('stage_scope_not_all_11')
     if scope.get('stage_specific_exception_without_registered_authority') != 'BLOCK':
         failures.append('unregistered_stage_exception_not_blocked')
-    required = ['RELATION_SEMANTIC_SEPARATION', 'GAP_REMEDIATION_ADMISSIBILITY', 'CURRENT_AUTHORITY_ADMISSIBILITY', 'REQUIRED_EVIDENCE_MATERIALIZATION', 'VALIDATOR_SCHEMA_SEMANTICS', 'UNRESOLVED_PRESERVATION', 'SUCCESSOR_CURRENT_ATOMIC_PROJECTION', 'BLOCKER_DENOMINATOR_AND_RECEIPT', 'AUTHORITY_EVIDENCE_CONSUMPTION', 'FUNCTIONAL_CONTRACT_COMPLETENESS', 'STAGE_ENTRY_PRECHECK', 'IMPLEMENTATION_DEVIATION_FEEDBACK', 'REVIEW_VS_CLOSURE_SEPARATION', 'CANONICAL_STAGE_EXECUTION_PREFLIGHT', 'EFFECTIVE_CONTRACT_OVERLAY', 'ROLE_SAFE_FUNCTIONAL_CLOSURE', 'DEPENDENCY_ORDERED_INCREMENTAL_RECONCILIATION', 'COMMON_ENGINE_DEFECT_INTERRUPT', 'GENERATED_OUTPUT_PERSISTENCE', 'CONTROL_VS_SYSTEM_TRIGGER_RESOLUTION', 'PRODUCER_CONSUMER_SCHEMA_IDENTITY', 'NO_HISTORY_PRODUCT_VALUE_FALLBACK', 'TASK_LAYER_EFFECTFUL_TRANSITION_ORDER', 'VISUAL_DESIGN_PROFILE_MATERIALIZATION_COMPLETENESS']
+    required = ['RELATION_SEMANTIC_SEPARATION', 'GAP_REMEDIATION_ADMISSIBILITY', 'CURRENT_AUTHORITY_ADMISSIBILITY', 'REQUIRED_EVIDENCE_MATERIALIZATION', 'VALIDATOR_SCHEMA_SEMANTICS', 'UNRESOLVED_PRESERVATION', 'SUCCESSOR_CURRENT_ATOMIC_PROJECTION', 'BLOCKER_DENOMINATOR_AND_RECEIPT', 'AUTHORITY_EVIDENCE_CONSUMPTION', 'FUNCTIONAL_CONTRACT_COMPLETENESS', 'STAGE_ENTRY_PRECHECK', 'IMPLEMENTATION_DEVIATION_FEEDBACK', 'REVIEW_VS_CLOSURE_SEPARATION', 'CANONICAL_STAGE_EXECUTION_PREFLIGHT', 'EFFECTIVE_CONTRACT_OVERLAY', 'ROLE_SAFE_FUNCTIONAL_CLOSURE', 'DEPENDENCY_ORDERED_INCREMENTAL_RECONCILIATION', 'COMMON_ENGINE_DEFECT_INTERRUPT', 'GENERATED_OUTPUT_PERSISTENCE', 'CONTROL_VS_SYSTEM_TRIGGER_RESOLUTION', 'PRODUCER_CONSUMER_SCHEMA_IDENTITY', 'NO_HISTORY_PRODUCT_VALUE_FALLBACK', 'TASK_LAYER_EFFECTFUL_TRANSITION_ORDER', 'VISUAL_DESIGN_PROFILE_MATERIALIZATION_COMPLETENESS', 'NORMATIVE_EXECUTION_MATRIX']
     for k in required:
         if k not in inv:
             failures.append('missing_invariant:' + k)
@@ -106,6 +106,29 @@ def validate(root=ROOT):
     order = inv.get('TASK_LAYER_EFFECTFUL_TRANSITION_ORDER') or {}
     if order.get('materializer_or_environment_may_force_primary_task_layer') is not False or order.get('nearby_stage_or_retry_may_skip_resolution') is not False or len(order.get('required_order') or []) != 6:
         failures.append('task_layer_effectful_transition_order_incomplete')
+    matrix = inv.get('NORMATIVE_EXECUTION_MATRIX') or {}
+    matrix_chain={'NORMATIVE_SECTION','REQUIRED_ARTIFACT','REQUIRED_ROW','REQUIRED_FIELD','VALIDATOR','CLOSURE_GATE'}
+    matrix_fields={'matrix_row_uid','normative_section_uid','requirement_uid','required_artifact_type','artifact_ref','artifact_owner','row_denominator_source','row_identity','field_path','applicability','validator_uid','validator_check_id','evidence_ref','closure_gate','failure_disposition','reentry_owner'}
+    if matrix.get('invariant_uid')!='GOV-INV-NORMATIVE-EXECUTION-MATRIX-001' or matrix.get('required_before_first_effectful_operation') is not True or matrix.get('required_for_stage_or_capability_closure') is not True:
+        failures.append('normative_execution_matrix_core_contract_missing')
+    if set(matrix.get('chain') or [])!=matrix_chain or set(matrix.get('matrix_row_required_fields') or [])!=matrix_fields:
+        failures.append('normative_execution_matrix_schema_incomplete')
+    for key in ('every_required_normative_section_must_be_represented','every_required_artifact_must_be_represented','every_required_evidence_type_must_be_represented','every_applicable_governed_row_must_be_represented','every_required_field_requires_validator_binding','every_validator_check_requires_closure_gate_binding','validators_scanners_classifiers_materializers_and_closure_consumers_share_matrix_truth','destructive_missing_field_regression_required'):
+        if matrix.get(key) is not True:
+            failures.append('normative_execution_matrix_flag_missing:'+key)
+    if matrix.get('validator_local_required_field_subset')!='BLOCK' or matrix.get('downstream_discovered_matrix_undercoverage_disposition')!='STOP_REENTER_EARLIEST_OWNER_MARK_DESCENDANTS_REVERIFY_REQUIRED':
+        failures.append('normative_execution_matrix_fail_closed_disposition_missing')
+    steps_path = root.parents[3] / 'governance/execution-domains/STAGE/STEPS.yaml'
+    steps = yaml.safe_load(steps_path.read_text(encoding='utf-8')) or {}
+    mc = steps.get('normative_execution_matrix_contract') or {}
+    if mc.get('outputs')!=['NORMATIVE_EXECUTION_MATRIX'] or mc.get('denominator')!='COMPLETE_APPLICABLE_NORMATIVE_ARTIFACT_ROW_FIELD_UNIVERSE':
+        failures.append('stage_steps_normative_execution_matrix_contract_missing')
+    er = steps.get('execution_rules') or {}
+    for key in ('normative_execution_matrix_required_before_first_effectful_operation','normative_execution_matrix_required_before_stage_closure','validators_must_consume_current_matrix_truth'):
+        if er.get(key) is not True:
+            failures.append('stage_steps_matrix_rule_missing:'+key)
+    if er.get('validator_local_required_field_subset')!='FORBIDDEN':
+        failures.append('stage_steps_local_subset_not_forbidden')
     vm = inv.get('VISUAL_DESIGN_PROFILE_MATERIALIZATION_COMPLETENESS') or {}
     vm_req = {'VISUAL_DESIGN_SPEC_PACKAGE', 'VISUAL_GEOMETRY_CONTRACT', 'VISUAL_PREVIEW_EVIDENCE', 'VISUAL_CHANGESET', 'VISUAL_INTERACTION_TOPOLOGY_BINDING', 'FUNCTIONAL_WORKBENCH_LAYOUT_CONTRACT', 'VISUAL_REFERENCE_ANNOTATION', 'VISUAL_INHERITANCE_MATRIX', 'VISUAL_SCENARIO_EVIDENCE_SET'}
     if set(vm.get('required_stage03_outputs') or []) != vm_req or vm.get('every_required_output_has_explicit_producer') is not True or vm.get('mother_required_output_may_be_omitted_by_profile') is not False or (vm.get('structural_only_preview_may_satisfy_human_visual_review') is not False) or (vm.get('atomic_workbench_visual_binding_required') is not True) or (vm.get('unresolved_authority_is_authority_absent') is not False) or (vm.get('unresolved_applicable_visual_authority_in_denominator_required') is not True) or (vm.get('profile_materialization_undercoverage') != 'BLOCK'):
@@ -113,6 +136,12 @@ def validate(root=ROOT):
     rv = inv.get('REVIEW_VS_CLOSURE_SEPARATION') or {}
     if rv.get('review_completion_is_evidence_of_review_only') is not True or rv.get('review_completion_may_override_open_blockers') is not False:
         failures.append('review_closure_separation_incomplete')
+    if rv.get('stage_exit_owner_granularity') != 'PAGE_OR_SYSTEM_LOGIC_UNIT' or rv.get('same_stage_uid_does_not_create_cross_unit_exit_barrier') is not True or rv.get('unrelated_page_or_system_unit_may_block_stage_exit') is not False or rv.get('cross_unit_blocking_requires_explicit_required_dependency_edge') is not True:
+        failures.append('independent_governed_unit_stage_exit_invariant_incomplete')
+    handoff = inv.get('CROSS_STAGE_MATERIALIZED_HANDOFF') or {}
+    if handoff:
+        if handoff.get('successor_input_universe_scope') != 'CURRENT_GOVERNED_UNIT' or handoff.get('cross_unit_successor_input_requires_explicit_required_dependency_edge') is not True:
+            failures.append('cross_stage_handoff_scope_not_current_governed_unit')
     bp = load(root, '10_REGISTRY/GOVERNANCE_ACCEPTANCE_AUDIT_BLUEPRINT.yaml')
     bc = bp.get('stage_execution_invariant_contract') or {}
     if bc.get('registry_uid') != 'REG-STAGE-EXECUTION-INVARIANT-001' or bc.get('validator_uid') != 'VAL-GOV-035' or bc.get('observed_stage_does_not_limit_scope') is not True:

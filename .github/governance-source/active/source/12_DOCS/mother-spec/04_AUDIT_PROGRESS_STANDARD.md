@@ -1460,6 +1460,29 @@ Audit MUST verify CONTROL_VS_SYSTEM_TRIGGER_RESOLUTION occurred before any no-Co
 
 Audit MUST also verify exact Producer/Consumer Schema Identity for every generated-to-consumer edge, including canonical field names/types/schema versions and owners. Alias fallback that hides schema drift is blocking. Reusable Stage consumers MUST contain no fixed product/page identity or historical run default as their implicit Current scope. Historical product values may not satisfy Current missing data. Task-layer activation must follow persisted terminal/resume/WUR order and may not be overridden by executor-local environment state.
 
+
+### Normative Execution Matrix Audit / 規範執行矩陣稽核
+
+For every governed execution cycle, Audit MUST verify that one Current `NORMATIVE_EXECUTION_MATRIX` existed before the first effectful operation and was bound to the exact Current Governance UID, Work Unit, scope, lifecycle/profile Stage identity, and immutable/current input set.
+
+Audit MUST independently reconstruct and compare the chain:
+
+`Normative Section -> Required Artifact -> Required Row -> Required Field -> Validator -> Closure Gate`.
+
+The audit denominator MUST report at least: applicable normative section total; represented section total; required artifact total; represented artifact total; required governed row total; represented row total; required field total; physically complete field total; validator-bound field total; closure-bound field total; NOT_APPLICABLE-with-Authority total; missing-row total; missing-field total; duplicate-credit total; summary-only-credit total; unclassified-applicability total; validator-unbound total; closure-unbound total; and stale-matrix total.
+
+Audit MUST FAIL when:
+- a Stage/capability validator checks only artifact/file presence while Current normative policy requires row/field completeness;
+- a validator uses a local hard-coded subset rather than the persisted Current matrix/derived immutable projection;
+- any applicable required normative section, artifact, row, or field is omitted from the matrix denominator;
+- any matrix row lacks an executable validator binding or closure-gate binding;
+- a PASS/closure claim predates the matrix or belongs to a different governance/work-unit identity;
+- a downstream Stage discovers an upstream required-field omission while the upstream Stage remains CLOSED without `REVERIFY_REQUIRED`.
+
+Destructive regression MUST remove or blank at least one REQUIRED field from an otherwise valid fixture and prove that the intended validator blocks before closure. A checksum failure, unrelated parser failure, or another guard catching the mutation does not prove the required-field validator works.
+
+A matrix Audit PASS is required for Stage/capability closure credit and for successor-input readiness.
+
 <!-- SECTION_UID: WEB-GOV-04-S079 -->
 ## 79. Session Bootstrap / Current Primary Task Audit
 
@@ -1509,7 +1532,7 @@ Audit MUST verify one exact EXECUTION_SCOPE_MANIFEST for every governed Work Uni
 
 For every reusable validator, scanner, classifier, remediation executor, projector, or common workflow helper, Audit MUST prove that concrete product page/module identities, fixed product page combinations, blocker/gap counts, and historical run denominators do not define the common scope or expected completion denominator. Product/profile adapters may contain concrete identities only when their local-adapter role is explicit and the values are checked against the Current scope/identity authority.
 
-Audit MUST distinguish Work Unit closure from Stage/capability closure. A partial-scope PASS with remaining required units MUST have zero Stage-exit credit. Remaining scope MUST be persisted and recoverable through Resume/Work Unit Resolution.
+Audit MUST distinguish Work Unit closure from Stage/capability closure and MUST bind both to one Current governed Page or System-Logic Unit. A partial-scope PASS with remaining REQUIRED items of that same governed Unit MUST have zero Stage-exit credit. Other Pages, other System-Logic Units, unrelated captured sources, or project-wide same-Stage cohorts MUST_NOT be treated as remaining scope for this Unit. Remaining scope of the Unit MUST be persisted and recoverable through Resume/Work Unit Resolution.
 
 Audit MUST prove each discovered gap was routed to its owning capability. Re-running an earlier capability without a defect/change in that owner MUST NOT be credited as repairing a later-owned semantic gap. Downstream discovery of an upstream-owned defect MUST show: downstream stop, owner re-entry, impacted reverse-dependency set, REVERIFY_REQUIRED descendants, preserved unaffected evidence where proven, owner remediation, and fresh successor verification.
 
@@ -1541,7 +1564,7 @@ Path presence, UID presence, Registry presence, ledger presence, historical evid
 
 Audit regression MUST include destructive or mutation cases for at least: reference-only dependency with missing bytes; physical artifact with missing required fields; schema/version drift; required edge omitted from denominator; successor consumer unable to parse/admit; downstream discovery of an upstream-owned defect; and multi-state visual evidence falsely represented by one shared overview without explicit simultaneous/unambiguous state proof.
 
-Stage closure requires zero unresolved REQUIRED handoff edges, zero denominator omissions, zero unproven consumer-ready edges, and zero incorrectly preserved downstream closure credit after an upstream defect. Any mismatch is CROSS_STAGE_HANDOFF_FALSE_COMPLETION and MUST block closure.
+Stage closure for the Current governed Page or System-Logic Unit requires zero unresolved REQUIRED handoff edges of that Unit, zero denominator omissions of that Unit, zero unproven consumer-ready edges required by that Unit's successor Stage, and zero incorrectly preserved downstream closure credit after an upstream defect. Cross-page or cross-system dependencies block only when an explicit REQUIRED dependency edge binds them to the Current Unit. Unrelated units sharing the same Stage UID MUST_NOT block closure. Any mismatch is CROSS_STAGE_HANDOFF_FALSE_COMPLETION and MUST block that Unit's closure.
 
 Every governed denominator, regression expectation, and required-universe count MUST have exactly one canonical owner. Consumer-local hardcoded denominator copies, mirrored historical expected counts presented as Current, or multiple independently editable denominator authorities are forbidden. Historical evidence MUST bind an immutable predecessor denominator snapshot; Current execution MUST read the Current canonical denominator owner.
 

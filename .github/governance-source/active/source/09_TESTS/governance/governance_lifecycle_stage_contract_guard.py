@@ -96,9 +96,16 @@ def validate(root=ROOT):
         if g.get('mode')!='REQUIRED' or g.get('invariant_uid')!='GOV-INV-CLOSURE-EVIDENCE-CONTINUITY-001' or g.get('normative_section_uid')!='WEB-GOV-03-S058': failures.append('closure_continuity_stage_gate_missing:'+str(st.get('stage_uid')))
 
     top=d.get('topology') or {}
-    if top.get('foundation_stages')!=expected[:4] or top.get('foundation_barrier_mode')!='ALL_REQUIRED_PAGES': failures.append('foundation_barrier_invalid')
+    if top.get('foundation_stages')!=expected[:4] or top.get('foundation_barrier_mode')!='PER_GOVERNED_UNIT': failures.append('foundation_barrier_invalid')
     if top.get('vertical_stages')!=expected[4:] or top.get('vertical_concurrency')!=1: failures.append('vertical_topology_invalid')
     if top.get('page_uid_sticky_from_stage')!='STAGE-05' or top.get('page_uid_sticky_through_stage')!='STAGE-11': failures.append('page_uid_sticky_contract_invalid')
+    if any((x.get('scope_mode')=='ALL_REQUIRED_PAGES' for x in stages)): failures.append('all_required_pages_scope_mode_forbidden')
+    if any(('ALL_REQUIRED_PAGES' in str(x.get('entry_gate') or '') or 'ALL_REQUIRED_PAGES' in str(x.get('exit_gate') or '') for x in stages)): failures.append('all_required_pages_stage_gate_forbidden')
+    for x in stages:
+        if x.get('stage_exit_scope_source')!='CURRENT_GOVERNED_UNIT_STAGE_REQUIRED_UNIVERSE_RECONCILIATION': failures.append('stage_exit_scope_not_current_governed_unit:'+str(x.get('stage_uid')))
+        if x.get('unrelated_same_stage_units_may_block_current_unit_exit') is not False: failures.append('unrelated_same_stage_unit_block_not_forbidden:'+str(x.get('stage_uid')))
+        if x.get('cross_unit_blocking_requires_explicit_required_dependency_edge') is not True: failures.append('cross_unit_dependency_edge_rule_missing:'+str(x.get('stage_uid')))
+        if x.get('lifecycle_owner_granularity')!='PAGE_OR_SYSTEM_LOGIC_UNIT': failures.append('lifecycle_owner_granularity_invalid:'+str(x.get('stage_uid')))
     binds=d.get('delivery_step_bindings') or []
     nums=[x.get('step') for x in binds]
     if nums!=list(range(1,55)): failures.append('delivery_steps_not_exact_1_54')

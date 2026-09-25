@@ -8,6 +8,7 @@ ROOT=Path(__file__).resolve().parents[2]
 REGISTRY=ROOT/'governance/specifications/REGISTRY.yaml'
 LIFECYCLE=ROOT/'.github/governance-source/active/source/10_REGISTRY/GOVERNANCE_LIFECYCLE_STAGE_REGISTRY.yaml'
 ADAPTERS=ROOT/'governance/ci/stage_execution_semantic_adapters.yaml'
+INVARIANTS=ROOT/'.github/governance-source/active/source/10_REGISTRY/STAGE_EXECUTION_INVARIANT_REGISTRY.yaml'
 PRODUCT_ROOT_ENV='ACPOS_PRODUCT_ROOT'
 ACTIVE_WORK_UNIT_ENV='ACPOS_ACTIVE_WORK_UNIT'
 CURRENT_SCOPE_ENV='ACPOS_CURRENT_SCOPE'
@@ -150,7 +151,10 @@ def validate_definition_data(profile,adapters):
         for k in ('one_current_problem_register_required','append_only_resolution_ledger_required','dependency_ordered_batches_required','incremental_impact_validation_required','checkpoint_full_sweep_required','engine_defect_requires_common_engine_repair_and_replay','explicit_stage_binding_required'):
             if opt.get(k) is not True: fail(f'CANONICAL_EXECUTION_FLAG_MISSING:{uid}:{k}')
         if st.get('work_unit_scope_source')!='CURRENT_EXECUTION_SCOPE_MANIFEST': fail(f'WORK_UNIT_SCOPE_SOURCE_DRIFT:{uid}')
-        if st.get('stage_exit_scope_source')!='DECLARED_STAGE_REQUIRED_UNIVERSE_RECONCILIATION': fail(f'STAGE_EXIT_SCOPE_SOURCE_DRIFT:{uid}')
+        if st.get('stage_exit_scope_source')!='CURRENT_GOVERNED_UNIT_STAGE_REQUIRED_UNIVERSE_RECONCILIATION': fail(f'STAGE_EXIT_SCOPE_SOURCE_DRIFT:{uid}')
+        if st.get('lifecycle_owner_granularity')!='PAGE_OR_SYSTEM_LOGIC_UNIT': fail(f'LIFECYCLE_OWNER_GRANULARITY_DRIFT:{uid}')
+        if st.get('unrelated_same_stage_units_may_block_current_unit_exit') is not False: fail(f'UNRELATED_SAME_STAGE_UNIT_BARRIER_DRIFT:{uid}')
+        if st.get('cross_unit_blocking_requires_explicit_required_dependency_edge') is not True: fail(f'CROSS_UNIT_DEPENDENCY_EDGE_RULE_DRIFT:{uid}')
         if st.get('partial_work_unit_closure_may_grant_stage_exit') is not False: fail(f'PARTIAL_STAGE_EXIT_CREDIT_NOT_BLOCKED:{uid}')
         ad=ads[uid]
         if ad.get('profile_name')!=st.get('name'): fail(f'ADAPTER_PROFILE_NAME_DRIFT:{uid}')
@@ -250,6 +254,105 @@ def validate_work_unit_bindings(stage_uid,work,stages,adapters):
             fail(f'ACTIVE_WORK_UNIT_SCANNER_BINDING_INVALID:{uid}')
     return True
 
+def _matrix_get(value,path_tokens):
+    cur=value
+    for tok in path_tokens:
+        if isinstance(cur,dict):
+            if tok not in cur: fail('NORMATIVE_MATRIX_REQUIRED_FIELD_MISSING:'+str(tok))
+            cur=cur[tok]
+        elif isinstance(cur,list):
+            if not isinstance(tok,int) or tok<0 or tok>=len(cur): fail('NORMATIVE_MATRIX_FIELD_PATH_INDEX_INVALID:'+str(tok))
+            cur=cur[tok]
+        else:
+            fail('NORMATIVE_MATRIX_FIELD_PATH_UNRESOLVABLE:'+str(tok))
+    return cur
+
+def _matrix_nonblank(value):
+    if value is None: return False
+    if isinstance(value,str): return bool(value.strip())
+    if isinstance(value,(list,dict)): return len(value)>0
+    return True
+
+def validate_normative_execution_matrix(stage_uid,product_root,work,stage,gov):
+    inv=y(INVARIANTS)
+    policy=((inv.get('invariants') or {}).get('NORMATIVE_EXECUTION_MATRIX') or {})
+    if policy.get('required_before_first_effectful_operation') is not True or policy.get('required_for_stage_or_capability_closure') is not True:
+        fail('NORMATIVE_EXECUTION_MATRIX_POLICY_MISSING')
+    rel=str(work.get('normative_execution_matrix_ref') or '')
+    if not rel: fail('NORMATIVE_EXECUTION_MATRIX_REF_MISSING')
+    rp=Path(rel)
+    if rp.is_absolute() or '..' in rp.parts: fail('NORMATIVE_EXECUTION_MATRIX_REF_INVALID')
+    path=product_root/rp
+    matrix=_external_yaml(path,'NORMATIVE_EXECUTION_MATRIX')
+    if matrix.get('artifact_type')!='NORMATIVE_EXECUTION_MATRIX': fail('NORMATIVE_EXECUTION_MATRIX_TYPE_INVALID')
+    if matrix.get('stage_uid')!=stage_uid or matrix.get('work_unit_uid')!=work.get('work_unit_uid') or matrix.get('governance_uid')!=gov:
+        fail('NORMATIVE_EXECUTION_MATRIX_IDENTITY_DRIFT')
+    if matrix.get('status')!='PASS': fail('NORMATIVE_EXECUTION_MATRIX_NOT_PASS')
+    rows=matrix.get('rows')
+    if not isinstance(rows,list) or not rows: fail('NORMATIVE_EXECUTION_MATRIX_ROWS_EMPTY')
+    required_row_fields=set(map(str,policy.get('matrix_row_required_fields') or []))
+    seen=set(); section_uids=set(); artifact_types=set(); required_count=0; validator_bound=0; closure_bound=0
+    for idx,row in enumerate(rows):
+        if not isinstance(row,dict): fail(f'NORMATIVE_EXECUTION_MATRIX_ROW_INVALID:{idx}')
+        missing=sorted(required_row_fields-set(row))
+        if missing: fail(f'NORMATIVE_EXECUTION_MATRIX_ROW_FIELDS_MISSING:{idx}:{missing}')
+        uid=str(row.get('matrix_row_uid') or '')
+        if not uid or uid in seen: fail('NORMATIVE_EXECUTION_MATRIX_ROW_UID_INVALID:'+uid)
+        seen.add(uid)
+        section_uids.add(str(row.get('normative_section_uid') or ''))
+        artifact_types.add(str(row.get('required_artifact_type') or ''))
+        applicability=row.get('applicability')
+        if applicability=='NOT_APPLICABLE_WITH_AUTHORITY':
+            if not row.get('authority_evidence_ref'): fail('NORMATIVE_EXECUTION_MATRIX_NA_AUTHORITY_MISSING:'+uid)
+            continue
+        if applicability!='REQUIRED': fail('NORMATIVE_EXECUTION_MATRIX_APPLICABILITY_INVALID:'+uid)
+        required_count+=1
+        if row.get('validator_uid') and row.get('validator_check_id'): validator_bound+=1
+        if row.get('closure_gate')==stage.get('exit_gate'): closure_bound+=1
+        aref=str(row.get('artifact_ref') or '')
+        ap=Path(aref)
+        if not aref or ap.is_absolute() or '..' in ap.parts: fail('NORMATIVE_EXECUTION_MATRIX_ARTIFACT_REF_INVALID:'+uid)
+        full=product_root/ap
+        if not full.is_file(): fail('NORMATIVE_EXECUTION_MATRIX_ARTIFACT_MISSING:'+uid+':'+aref)
+        if full.suffix.lower()=='.json':
+            obj=json.loads(full.read_text(encoding='utf-8'))
+        else:
+            obj=yaml.safe_load(full.read_text(encoding='utf-8'))
+        if not isinstance(obj,dict): fail('NORMATIVE_EXECUTION_MATRIX_ARTIFACT_MAPPING_REQUIRED:'+uid)
+        fpath=row.get('field_path')
+        if not isinstance(fpath,list) or not fpath: fail('NORMATIVE_EXECUTION_MATRIX_FIELD_PATH_INVALID:'+uid)
+        val=_matrix_get(obj,fpath)
+        if not _matrix_nonblank(val): fail('NORMATIVE_EXECUTION_MATRIX_REQUIRED_FIELD_BLANK:'+uid)
+    required_sections=set(map(str,stage.get('required_normative_section_uids') or []))
+    missing_sections=sorted(required_sections-section_uids)
+    if missing_sections: fail('NORMATIVE_EXECUTION_MATRIX_SECTION_COVERAGE_MISSING:'+repr(missing_sections))
+    required_artifacts=set(map(str,stage.get('outputs') or []))|set(map(str,stage.get('required_evidence') or []))
+    missing_artifacts=sorted(required_artifacts-artifact_types)
+    if missing_artifacts: fail('NORMATIVE_EXECUTION_MATRIX_ARTIFACT_COVERAGE_MISSING:'+repr(missing_artifacts))
+    cov=matrix.get('coverage')
+    if not isinstance(cov,dict): fail('NORMATIVE_EXECUTION_MATRIX_COVERAGE_MISSING')
+    expected={
+      'required_normative_section_total':len(required_sections),
+      'represented_normative_section_total':len(required_sections & section_uids),
+      'required_artifact_total':len(required_artifacts),
+      'represented_artifact_total':len(required_artifacts & artifact_types),
+      'required_field_total':required_count,
+      'validator_bound_field_total':validator_bound,
+      'closure_bound_field_total':closure_bound,
+      'missing_required_row_count':0,
+      'missing_required_field_count':0,
+      'duplicate_credit_count':0,
+      'summary_only_credit_count':0,
+      'unclassified_applicability_count':0,
+      'validator_unbound_count':0,
+      'closure_unbound_count':0,
+      'stale_matrix_count':0}
+    for k,v in expected.items():
+        if cov.get(k)!=v: fail(f'NORMATIVE_EXECUTION_MATRIX_COVERAGE_DRIFT:{k}:expected={v}:actual={cov.get(k)}')
+    if required_count!=validator_bound or required_count!=closure_bound:
+        fail('NORMATIVE_EXECUTION_MATRIX_BINDING_COVERAGE_INCOMPLETE')
+    return True
+
 def active_product(stage_uid):
     entry,reg,gov,profile,adapters,stages=validate_definition()
     product_root,work,scope,work_rel,scope_rel=product_execution_context()
@@ -266,6 +369,7 @@ def active_product(stage_uid):
             ref=dep.get('ref') or dep.get('path') or dep.get('source_ref')
             if isinstance(ref,str) and '/' in ref and not (product_root/ref).exists():
                 fail(f'ACTIVE_PRODUCT_WORK_UNIT_DEPENDENCY_MISSING:{ref}')
+    validate_normative_execution_matrix(stage_uid,product_root,work,stages[stage_uid],gov)
     return work
 
 def admission(stage_uid):

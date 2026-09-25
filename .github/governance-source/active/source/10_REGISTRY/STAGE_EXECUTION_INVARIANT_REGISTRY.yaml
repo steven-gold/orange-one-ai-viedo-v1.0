@@ -4,7 +4,7 @@ artifact_type: STAGE_EXECUTION_INVARIANT_REGISTRY
 status: CURRENT_CANDIDATE
 canonical_path: 10_REGISTRY/STAGE_EXECUTION_INVARIANT_REGISTRY.yaml
 owner_uid: OWNER-GOVERNANCE-STAGE-EXECUTION-INVARIANT
-governance_revision: v2.2.22-word-projection-nextstep-consumer-sync-hardening
+governance_revision: v2.2.25-normative-execution-matrix
 scope:
   applies_to_stages:
   - STAGE-01
@@ -146,6 +146,69 @@ invariants:
     create_additional_required_fields:
     - creation_mode
     - created_entity_or_output_identity
+  NORMATIVE_EXECUTION_MATRIX:
+    invariant_uid: GOV-INV-NORMATIVE-EXECUTION-MATRIX-001
+    required_before_first_effectful_operation: true
+    required_after_material_schema_or_normative_change_before_resume: true
+    required_for_stage_or_capability_closure: true
+    required_artifact: NORMATIVE_EXECUTION_MATRIX
+    chain:
+    - NORMATIVE_SECTION
+    - REQUIRED_ARTIFACT
+    - REQUIRED_ROW
+    - REQUIRED_FIELD
+    - VALIDATOR
+    - CLOSURE_GATE
+    matrix_row_required_fields:
+    - matrix_row_uid
+    - normative_section_uid
+    - requirement_uid
+    - required_artifact_type
+    - artifact_ref
+    - artifact_owner
+    - row_denominator_source
+    - row_identity
+    - field_path
+    - applicability
+    - validator_uid
+    - validator_check_id
+    - evidence_ref
+    - closure_gate
+    - failure_disposition
+    - reentry_owner
+    applicability_values:
+    - REQUIRED
+    - NOT_APPLICABLE_WITH_AUTHORITY
+    not_applicable_requires_authority_evidence: true
+    required_field_requires_physical_parseable_current_value: true
+    artifact_presence_only_completion_credit: 0
+    summary_only_completion_credit: 0
+    historical_value_completion_credit: 0
+    implicit_or_blank_required_field_completion_credit: 0
+    representative_sample_completion_credit: 0
+    validator_local_required_field_subset: BLOCK
+    every_required_normative_section_must_be_represented: true
+    every_required_artifact_must_be_represented: true
+    every_required_evidence_type_must_be_represented: true
+    every_applicable_governed_row_must_be_represented: true
+    every_required_field_requires_validator_binding: true
+    every_validator_check_requires_closure_gate_binding: true
+    validators_scanners_classifiers_materializers_and_closure_consumers_share_matrix_truth: true
+    destructive_missing_field_regression_required: true
+    destructive_regression_must_fail_intended_required_field_validator: true
+    closure_requires_zero:
+    - MISSING_REQUIRED_NORMATIVE_SECTION
+    - MISSING_REQUIRED_ARTIFACT
+    - MISSING_REQUIRED_ROW
+    - MISSING_REQUIRED_FIELD
+    - DUPLICATE_CREDIT
+    - SUMMARY_ONLY_CREDIT
+    - UNCLASSIFIED_APPLICABILITY
+    - VALIDATOR_UNBOUND_FIELD
+    - CLOSURE_UNBOUND_VALIDATOR
+    - STALE_MATRIX
+    downstream_discovered_matrix_undercoverage_disposition: STOP_REENTER_EARLIEST_OWNER_MARK_DESCENDANTS_REVERIFY_REQUIRED
+    invariant_failure: BLOCK
   STAGE_ENTRY_PRECHECK:
     current_authority_admissibility_verified: true
     required_inputs_physically_materialized: true
@@ -165,6 +228,10 @@ invariants:
     review_completion_is_evidence_of_review_only: true
     review_completion_may_override_open_blockers: false
     stage_exit_requires_exit_gate_and_required_evidence_and_zero_unwaived_blockers: true
+    stage_exit_owner_granularity: PAGE_OR_SYSTEM_LOGIC_UNIT
+    same_stage_uid_does_not_create_cross_unit_exit_barrier: true
+    unrelated_page_or_system_unit_may_block_stage_exit: false
+    cross_unit_blocking_requires_explicit_required_dependency_edge: true
   TEST_DEFECT_FEEDBACK_AND_SPEC_EVOLUTION:
     required_for_every_stage_test: true
     defect_and_gap_record_required_during_execution: true
@@ -1100,6 +1167,8 @@ invariants:
     denominator_inclusion_required: true
     successor_consumer_readiness_required: true
     successor_required_input_universe_reconciliation_before_stage_exit: true
+    successor_input_universe_scope: CURRENT_GOVERNED_UNIT
+    cross_unit_successor_input_requires_explicit_required_dependency_edge: true
     historical_or_reference_only_completion_credit: 0
     unresolved_required_dependency: BLOCK_OR_REENTER_EARLIEST_OWNER
     downstream_discovered_upstream_gap: STOP_REENTER_EARLIEST_OWNER_MARK_DESCENDANTS_REVERIFY_REQUIRED
