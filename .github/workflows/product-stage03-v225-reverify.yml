@@ -1,5 +1,5 @@
 name: Product Stage03 v2.2.25 Full Reverify
-# rerun-marker: 2026-09-25-stage03-full-reverify-v3
+# rerun-marker: 2026-09-25-stage03-full-reverify-v4
 on:
   push:
     branches: [0921acpos]
@@ -226,4 +226,14 @@ jobs:
         git add STAGE_EXECUTION/STAGE-03
         git diff --cached --quiet && exit 8
         git commit -m "stage03: bind v2.2.25 normative matrices and full row-field reverify"
-        git push origin HEAD:0921acpos
+        for attempt in 1 2 3 4; do
+          git fetch origin 0921acpos
+          git rebase origin/0921acpos || { git rebase --abort || true; echo "BLOCK:REBASE_CONFLICT"; exit 21; }
+          if git push origin HEAD:0921acpos; then
+            exit 0
+          fi
+          echo "RETRY_PUSH_ATTEMPT=$attempt"
+          sleep 2
+        done
+        echo "BLOCK:REMOTE_ADVANCED_AFTER_RETRY_BUDGET"
+        exit 22
