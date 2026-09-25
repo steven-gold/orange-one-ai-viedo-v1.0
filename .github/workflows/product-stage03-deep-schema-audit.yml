@@ -1,6 +1,7 @@
 name: Product Stage03 Deep Schema Audit
 # rerun-marker: 2026-09-25-v225-post-vra-atomic
 # exact-head-rerun: 2026-09-25T10:01+08:00
+# schema-contract-rerun: 2026-09-25-vra-artifact-native
 on:
   push:
     branches: [0921acpos]
@@ -45,11 +46,15 @@ jobs:
         elif vd.get('visual_style_definition_ref'):
           findings.append('VDSP_UNAUTHORIZED_STYLE_DEFINITION_WHEN_EXISTING_AUTHORITY_APPLIES')
         vra=y('VISUAL_REFERENCE_ANNOTATION.yaml')
-        rows=vra.get('candidate_annotations') or []
-        vra_fields=vra.get('required_candidate_annotation_fields') or []
-        if not rows: findings.append('VRA_CANDIDATE_ROWS_EMPTY')
+        rows=vra.get('annotations') or []
+        vra_fields=vra.get('required_row_fields') or []
+        if not rows: findings.append('VRA_ROWS_EMPTY')
         if not vra_fields: findings.append('VRA_REQUIRED_FIELD_MANIFEST_EMPTY')
-        if vra.get('candidate_annotation_denominator_complete') is not True: findings.append('VRA_DENOMINATOR_NOT_COMPLETE')
+        required_scenario_count=int(vra.get('required_scenario_count') or 0)
+        if required_scenario_count<=0 or int(vra.get('annotation_count') or -1)!=required_scenario_count or len(rows)!=required_scenario_count:
+          findings.append('VRA_DENOMINATOR_NOT_COMPLETE')
+        if vra.get('scenario_annotation_coverage_complete') is not True:
+          findings.append('VRA_SCENARIO_COVERAGE_NOT_COMPLETE')
         for i,row in enumerate(rows):
           if not isinstance(row,dict): findings.append(f'VRA_ROW_INVALID:{i}'); continue
           for k in vra_fields:
