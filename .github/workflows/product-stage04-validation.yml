@@ -1,0 +1,124 @@
+name: Product Stage04 Validation
+# stage04-external-receipt: exact-head run that can bind the STAGE-04 terminal closure receipt
+on:
+  push:
+    branches: [0921acpos]
+    paths:
+      - 'STAGE_EXECUTION/STAGE-04/**'
+      - '.github/workflows/product-stage04-validation.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  validate-stage04:
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        wu:
+        - WU-STAGE04-GLOBAL-HOME-SHELL-NAVIGATION-001
+    steps:
+    - uses: actions/checkout@v4
+      with: {ref: 0921acpos, fetch-depth: 0}
+    - uses: actions/checkout@v4
+      with:
+        repository: steven-gold/orange-one-ai-viedo-v1.0
+        ref: 22b8d6845ce31014ba10b4c1f8f7a3ec9dcceb20
+        path: _governance_authority
+        fetch-depth: 1
+    - run: |
+        rm -rf governance .github/governance-source
+        cp -R _governance_authority/governance ./governance
+        mkdir -p .github
+        cp -R _governance_authority/.github/governance-source .github/governance-source
+        python -m pip install --disable-pip-version-check 'PyYAML==6.0.2'
+    - name: Validate Stage04 entry-gate resolution and input readiness
+      env:
+        WU: ${{ matrix.wu }}
+      run: |
+        python - <<'PY'
+        import json,os,yaml
+        from pathlib import Path
+        b=Path('STAGE_EXECUTION/STAGE-04')/os.environ['WU']
+        def y(n):
+          p=b/n
+          if not p.is_file(): raise SystemExit('BLOCK:MISSING:'+n)
+          obj=yaml.safe_load(p.read_text()) or {}
+          if not isinstance(obj,dict): raise SystemExit('BLOCK:INVALID_MAPPING:'+n)
+          return obj
+        pf=y('STAGE_EXECUTION_PREFLIGHT_RECEIPT.yaml')
+        if pf.get('result')!='PASS': raise SystemExit('BLOCK:PREFLIGHT_NOT_PASS')
+        if pf.get('historical_product_values_used') is not False: raise SystemExit('BLOCK:HISTORICAL_PRODUCT_VALUE_FALLBACK')
+        recon=pf.get('stage03_input_reconciliation') or {}
+        if recon.get('result')!='PASS': raise SystemExit('BLOCK:STAGE03_INPUT_RECONCILIATION_NOT_PASS')
+        pr=y('CURRENT_PROBLEM_REGISTER.yaml')
+        if int(pr.get('open_problem_total') or 0)!=0: raise SystemExit('BLOCK:OPEN_PROBLEMS_PRESENT')
+        if int(pr.get('closure_blocker_total') or 0)!=0: raise SystemExit('BLOCK:CLOSURE_BLOCKERS_PRESENT')
+        gates=[g for g in (pr.get('non_problem_closure_gates') or []) if isinstance(g,dict)]
+        entry=[g for g in gates if g.get('gate_uid')=='CURRENT_GOVERNED_UNIT_STAGE3_CLOSED']
+        if len(entry)!=1: raise SystemExit('BLOCK:STAGE3_CLOSED_GATE_IDENTITY_DRIFT')
+        if not str(entry[0].get('status') or '').startswith('RESOLVED'): raise SystemExit('BLOCK:STAGE3_CLOSED_GATE_UNRESOLVED')
+        if int(entry[0].get('stage_exit_credit') or 0)!=0: raise SystemExit('BLOCK:ENTRY_GATE_MUST_NOT_GRANT_CREDIT')
+        for ref in entry[0].get('resolved_by') or []:
+          if not Path(ref).is_file(): raise SystemExit('BLOCK:PREDECESSOR_RECEIPT_MISSING:'+str(ref))
+        d=y('DENOMINATOR_SNAPSHOT.yaml')
+        if int(d.get('open_input_gap_total') or 0)!=0 or int(d.get('closure_blocker_total') or 0)!=0:
+          raise SystemExit('BLOCK:INPUT_DENOMINATOR_NOT_CLEARED')
+        rl=y('RESOLUTION_LEDGER.yaml')
+        if rl.get('append_only') is not True: raise SystemExit('BLOCK:RESOLUTION_LEDGER_NOT_APPEND_ONLY')
+        w=y('WORK_UNIT.yaml')
+        if str(w.get('entry_gate') or '')!='CURRENT_GOVERNED_UNIT_STAGE3_CLOSED': raise SystemExit('BLOCK:WORK_UNIT_ENTRY_GATE_DRIFT')
+        for n in ('operation_bindings','scanner_bindings'):
+          if not isinstance(w.get(n),dict) or not w.get(n): raise SystemExit('BLOCK:WORK_UNIT_BINDING_MISSING:'+n)
+        print('PASS: Stage04 entry gate resolved by Stage03 terminal closure')
+        print('PASS: Stage04 input denominator cleared gap=0 blocker=0')
+        print('PASS: Stage04 ready-state structure valid')
+        ev=b/'EVIDENCE/STAGE04_NORMALIZED_EVIDENCE.json'
+        if ev.is_file():
+          e=json.loads(ev.read_text())
+          items=[x for x in (e.get('required_evidence') or []) if isinstance(x,dict)]
+          approval=[x for x in items if x.get('evidence_type')=='DESIGN_APPROVAL_EVIDENCE']
+          if len(approval)!=1 or approval[0].get('status')!='PASS' or not (approval[0].get('ref') or approval[0].get('external_receipt')):
+            raise SystemExit('BLOCK:DESIGN_APPROVAL_EVIDENCE_NOT_HUMAN_CERTIFIED')
+          print('PASS: human DESIGN_APPROVAL_EVIDENCE present and certified')
+        else:
+          print('PASS: design approval gate pending (no fabricated evidence)')
+        PY
+    - name: Validate Stage04 admission when normative matrix materialized
+      env:
+        ACPOS_PRODUCT_ROOT: ${{ github.workspace }}
+        ACPOS_ACTIVE_WORK_UNIT: STAGE_EXECUTION/STAGE-04/${{ matrix.wu }}/WORK_UNIT.yaml
+        ACPOS_CURRENT_SCOPE: STAGE_EXECUTION/STAGE-04/${{ matrix.wu }}/CURRENT_EXECUTION_SCOPE_MANIFEST.yaml
+      run: |
+        if [ -f "STAGE_EXECUTION/STAGE-04/${{ matrix.wu }}/NORMATIVE_EXECUTION_MATRIX.yaml" ]; then
+          python governance/ci/stage_execution_engine.py --admission-check --stage STAGE-04
+        else
+          echo "STAGE04_NORMATIVE_EXECUTION_MATRIX_NOT_YET_MATERIALIZED"
+        fi
+    - name: Validate normalized Stage04 evidence when materialized
+      env:
+        ACPOS_PRODUCT_ROOT: ${{ github.workspace }}
+        ACPOS_ACTIVE_WORK_UNIT: STAGE_EXECUTION/STAGE-04/${{ matrix.wu }}/WORK_UNIT.yaml
+        ACPOS_CURRENT_SCOPE: STAGE_EXECUTION/STAGE-04/${{ matrix.wu }}/CURRENT_EXECUTION_SCOPE_MANIFEST.yaml
+        WU: ${{ matrix.wu }}
+      run: |
+        EVIDENCE_PATH="STAGE_EXECUTION/STAGE-04/$WU/EVIDENCE/STAGE04_NORMALIZED_EVIDENCE.json"
+        if [ -f "$EVIDENCE_PATH" ]; then
+          python governance/ci/stage_execution_engine.py --validate-evidence --stage STAGE-04 --evidence "$EVIDENCE_PATH"
+        else
+          echo "STAGE04_NORMALIZED_EVIDENCE_NOT_YET_MATERIALIZED"
+        fi
+    - name: Validate Stage04 terminal receipt when materialized
+      env:
+        ACPOS_PRODUCT_ROOT: ${{ github.workspace }}
+        ACPOS_ACTIVE_WORK_UNIT: STAGE_EXECUTION/STAGE-04/${{ matrix.wu }}/WORK_UNIT.yaml
+        ACPOS_CURRENT_SCOPE: STAGE_EXECUTION/STAGE-04/${{ matrix.wu }}/CURRENT_EXECUTION_SCOPE_MANIFEST.yaml
+        WU: ${{ matrix.wu }}
+      run: |
+        EVIDENCE_PATH="STAGE_EXECUTION/STAGE-04/$WU/EVIDENCE/STAGE04_NORMALIZED_EVIDENCE.json"
+        RECEIPT_PATH="STAGE_EXECUTION/STAGE-04/$WU/WORK_UNIT_TERMINAL_RECEIPT.yaml"
+        if [ -f "$EVIDENCE_PATH" ] && [ -f "$RECEIPT_PATH" ]; then
+          python governance/ci/stage_execution_engine.py --validate-terminal-receipt --stage STAGE-04 --evidence "$EVIDENCE_PATH" --receipt "$RECEIPT_PATH"
+        else
+          echo "STAGE04_TERMINAL_RECEIPT_NOT_YET_MATERIALIZED"
+        fi
