@@ -37,7 +37,7 @@ problems:
   - governance_head: 335d8a01d6d3eb6f0ed951ffc40216029b19d4e3
   - matrix_ref: NORMATIVE_EXECUTION_MATRIX.yaml
   - matrix_required_field_rows: 720
-  status: REMEDIATED_PENDING_FRESH_REVERIFY
+  status: RESOLVED_CURRENT_HEAD_VALIDATED
 - problem_uid: GAP-STAGE03-HOME-V225-STALE-CURRENT-EVIDENCE-001
   class: CURRENT_PROJECTION_STALE_EVIDENCE
   finding: V224_NORMALIZED_EVIDENCE_AND_TERMINAL_RECEIPT_REMAINED_IN_CURRENT_PROJECTION
@@ -49,7 +49,7 @@ problems:
   - terminal_receipt_history_ref: HISTORY/V224/WORK_UNIT_TERMINAL_RECEIPT.yaml
   - normalized_evidence_current_removal_commit: 8554cabe485bfde007649fbcdddb245d8ac30173
   - terminal_receipt_current_removal_commit: 67b0446cf9ff3ad21dc7f3a150285093dc2248cc
-  status: REMEDIATED_PENDING_FRESH_REVERIFY
+  status: RESOLVED_CURRENT_HEAD_VALIDATED
 - problem_uid: GAP-STAGE03-HOME-V225-STALE-CLOSURE-STATE-001
   class: CURRENT_STATE_DRIFT
   finding: REVERIFY_SCOPE_RETAINED_PRIOR_COMPLETE_STATUS_AND_STAGE_EXIT_CREDIT
@@ -59,7 +59,7 @@ problems:
   remediation_evidence:
   - scope_manifest_ref: CURRENT_EXECUTION_SCOPE_MANIFEST.yaml
   - remediation_commit: 97802f5618ac955e72661a7583ce1130de2cc2d0
-  status: REMEDIATED_PENDING_FRESH_REVERIFY
+  status: RESOLVED_CURRENT_HEAD_VALIDATED
 - problem_uid: GAP-STAGE03-HOME-NORMATIVE_MATRIX_SEMANTIC_UNDERCOVERAGE-20260925
   class: STAGE03_MATERIALIZATION_UNDERCOVERAGE
   finding: NORMATIVE_EXECUTION_MATRIX used artifact-presence/summary coverage instead of exact semantic row-field binding.
@@ -70,7 +70,7 @@ problems:
   - governance_uid: GOV-REV-20260925-NORMATIVE-EXECUTION-MATRIX
   - governance_head: 335d8a01d6d3eb6f0ed951ffc40216029b19d4e3
   - normative_execution_matrix_ref: STAGE_EXECUTION/STAGE-03/WU-STAGE03-GLOBAL-HOME-SHELL-NAVIGATION-001/NORMATIVE_EXECUTION_MATRIX.yaml
-  status: RESOLVED_PENDING_CURRENT_HEAD_VALIDATION
+  status: RESOLVED_CURRENT_HEAD_VALIDATED
 - problem_uid: GAP-STAGE03-HOME-REQUIRED_FIELD_MANIFEST_SUMMARY_ONLY-20260925
   class: STAGE03_MATERIALIZATION_UNDERCOVERAGE
   finding: REQUIRED_FIELD_MANIFEST listed dimensions but did not define row denominators and required field schemas.
@@ -81,7 +81,7 @@ problems:
   - governance_uid: GOV-REV-20260925-NORMATIVE-EXECUTION-MATRIX
   - governance_head: 335d8a01d6d3eb6f0ed951ffc40216029b19d4e3
   - normative_execution_matrix_ref: STAGE_EXECUTION/STAGE-03/WU-STAGE03-GLOBAL-HOME-SHELL-NAVIGATION-001/NORMATIVE_EXECUTION_MATRIX.yaml
-  status: RESOLVED_PENDING_CURRENT_HEAD_VALIDATION
+  status: RESOLVED_CURRENT_HEAD_VALIDATED
 - problem_uid: GAP-STAGE03-HOME-VISUAL_REFERENCE_ANNOTATION_UNDERCOVERAGE-20260925
   class: STAGE03_MATERIALIZATION_UNDERCOVERAGE
   finding: Visual reference annotation lacked the complete S079 candidate/scenario annotation contract.
@@ -92,7 +92,7 @@ problems:
   - governance_uid: GOV-REV-20260925-NORMATIVE-EXECUTION-MATRIX
   - governance_head: 335d8a01d6d3eb6f0ed951ffc40216029b19d4e3
   - normative_execution_matrix_ref: STAGE_EXECUTION/STAGE-03/WU-STAGE03-GLOBAL-HOME-SHELL-NAVIGATION-001/NORMATIVE_EXECUTION_MATRIX.yaml
-  status: RESOLVED_PENDING_CURRENT_HEAD_VALIDATION
+  status: RESOLVED_CURRENT_HEAD_VALIDATED
 - problem_uid: GAP-STAGE03-HOME-SCENARIO_FUNCTION_VISUAL_COVERAGE_UNDERCOVERAGE-20260925
   class: STAGE03_MATERIALIZATION_UNDERCOVERAGE
   finding: Scenario evidence lacked exact Workbench/operation/state/control/anchor/style/review bindings.
@@ -103,7 +103,7 @@ problems:
   - governance_uid: GOV-REV-20260925-NORMATIVE-EXECUTION-MATRIX
   - governance_head: 335d8a01d6d3eb6f0ed951ffc40216029b19d4e3
   - normative_execution_matrix_ref: STAGE_EXECUTION/STAGE-03/WU-STAGE03-GLOBAL-HOME-SHELL-NAVIGATION-001/NORMATIVE_EXECUTION_MATRIX.yaml
-  status: RESOLVED_PENDING_CURRENT_HEAD_VALIDATION
+  status: RESOLVED_CURRENT_HEAD_VALIDATED
 - problem_uid: GAP-STAGE03-HOME-CROSS_STAGE_HANDOFF_ROW_FIELD_UNDERCOVERAGE-20260925
   class: STAGE03_MATERIALIZATION_UNDERCOVERAGE
   finding: Handoff ledger used summary readiness fields and omitted S075/S071/S085 required edge fields.
@@ -114,7 +114,14 @@ problems:
   - governance_uid: GOV-REV-20260925-NORMATIVE-EXECUTION-MATRIX
   - governance_head: 335d8a01d6d3eb6f0ed951ffc40216029b19d4e3
   - normative_execution_matrix_ref: STAGE_EXECUTION/STAGE-03/WU-STAGE03-GLOBAL-HOME-SHELL-NAVIGATION-001/NORMATIVE_EXECUTION_MATRIX.yaml
-  status: RESOLVED_PENDING_CURRENT_HEAD_VALIDATION
+  status: RESOLVED_CURRENT_HEAD_VALIDATED
 open_problem_total: 0
 closure_blocker_total: 0
-status: TECHNICAL_GAPS_RESOLVED_PENDING_CURRENT_HEAD_VALIDATION
+status: TECHNICAL_GAPS_RESOLVED_CURRENT_HEAD_VALIDATED
+current_head_validation:
+  head_sha: eb63c59c2a4ef384691d9e7ad4a67b1dcdcb7c92
+  workflow_run_id: 36087796821
+  workflow_job_id: 107923436071
+  conclusion: success
+  governance_uid: GOV-REV-20260925-NORMATIVE-EXECUTION-MATRIX
+  governance_head: 335d8a01d6d3eb6f0ed951ffc40216029b19d4e3
