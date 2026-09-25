@@ -49,9 +49,9 @@ problems:
   required_disposition: ENFORCE_NORMATIVE_EXECUTION_MATRIX_AND_FRESH_REVERIFY
   remediation_evidence:
   - governance_uid: GOV-REV-20260925-NORMATIVE-EXECUTION-MATRIX
-  - governance_head: 335d8a01d6d3eb6f0ed951ffc40216029b19d4e3
+  - governance_head: 22b8d6845ce31014ba10b4c1f8f7a3ec9dcceb20
   - matrix_ref: NORMATIVE_EXECUTION_MATRIX.yaml
-  - matrix_required_field_rows: 1506
+  - matrix_required_field_rows: 140
   status: RESOLVED_CURRENT_HEAD_VALIDATED
 - problem_uid: GAP-STAGE03-WB01-V225-GEOMETRY-DENOMINATOR-DRIFT-001
   class: DENOMINATOR_DRIFT
@@ -96,7 +96,7 @@ problems:
   required_disposition: RESOLVED_BY_EXACT_SEMANTIC_MATRIX
   resolution_evidence:
   - governance_uid: GOV-REV-20260925-NORMATIVE-EXECUTION-MATRIX
-  - governance_head: 335d8a01d6d3eb6f0ed951ffc40216029b19d4e3
+  - governance_head: 22b8d6845ce31014ba10b4c1f8f7a3ec9dcceb20
   - normative_execution_matrix_ref: STAGE_EXECUTION/STAGE-03/WU-STAGE03-WB01-DASHBOARD-001/NORMATIVE_EXECUTION_MATRIX.yaml
   status: RESOLVED_CURRENT_HEAD_VALIDATED
 - problem_uid: GAP-STAGE03-WB-REQUIRED_FIELD_MANIFEST_SUMMARY_ONLY-20260925
@@ -107,7 +107,7 @@ problems:
   required_disposition: RESOLVED_BY_ROW_CONTRACT_MANIFEST
   resolution_evidence:
   - governance_uid: GOV-REV-20260925-NORMATIVE-EXECUTION-MATRIX
-  - governance_head: 335d8a01d6d3eb6f0ed951ffc40216029b19d4e3
+  - governance_head: 22b8d6845ce31014ba10b4c1f8f7a3ec9dcceb20
   - normative_execution_matrix_ref: STAGE_EXECUTION/STAGE-03/WU-STAGE03-WB01-DASHBOARD-001/NORMATIVE_EXECUTION_MATRIX.yaml
   status: RESOLVED_CURRENT_HEAD_VALIDATED
 - problem_uid: GAP-STAGE03-WB-VISUAL_REFERENCE_ANNOTATION_UNDERCOVERAGE-20260925
@@ -118,7 +118,7 @@ problems:
   required_disposition: RESOLVED_BY_PER_SCENARIO_ANNOTATION
   resolution_evidence:
   - governance_uid: GOV-REV-20260925-NORMATIVE-EXECUTION-MATRIX
-  - governance_head: 335d8a01d6d3eb6f0ed951ffc40216029b19d4e3
+  - governance_head: 22b8d6845ce31014ba10b4c1f8f7a3ec9dcceb20
   - normative_execution_matrix_ref: STAGE_EXECUTION/STAGE-03/WU-STAGE03-WB01-DASHBOARD-001/NORMATIVE_EXECUTION_MATRIX.yaml
   status: RESOLVED_CURRENT_HEAD_VALIDATED
 - problem_uid: GAP-STAGE03-WB-SCENARIO_FUNCTION_VISUAL_COVERAGE_UNDERCOVERAGE-20260925
@@ -129,7 +129,7 @@ problems:
   required_disposition: RESOLVED_BY_SCENARIO_FUNCTION_COVERAGE
   resolution_evidence:
   - governance_uid: GOV-REV-20260925-NORMATIVE-EXECUTION-MATRIX
-  - governance_head: 335d8a01d6d3eb6f0ed951ffc40216029b19d4e3
+  - governance_head: 22b8d6845ce31014ba10b4c1f8f7a3ec9dcceb20
   - normative_execution_matrix_ref: STAGE_EXECUTION/STAGE-03/WU-STAGE03-WB01-DASHBOARD-001/NORMATIVE_EXECUTION_MATRIX.yaml
   status: RESOLVED_CURRENT_HEAD_VALIDATED
 - problem_uid: GAP-STAGE03-WB-CROSS_STAGE_HANDOFF_ROW_FIELD_UNDERCOVERAGE-20260925
@@ -140,7 +140,7 @@ problems:
   required_disposition: RESOLVED_BY_COMPLETE_HANDOFF_EDGE_ROWS
   resolution_evidence:
   - governance_uid: GOV-REV-20260925-NORMATIVE-EXECUTION-MATRIX
-  - governance_head: 335d8a01d6d3eb6f0ed951ffc40216029b19d4e3
+  - governance_head: 22b8d6845ce31014ba10b4c1f8f7a3ec9dcceb20
   - normative_execution_matrix_ref: STAGE_EXECUTION/STAGE-03/WU-STAGE03-WB01-DASHBOARD-001/NORMATIVE_EXECUTION_MATRIX.yaml
   status: RESOLVED_CURRENT_HEAD_VALIDATED
 open_problem_total: 0
@@ -151,10 +151,10 @@ non_problem_closure_gates:
   candidate_uid: VIS-CANDIDATE-WB01-002
   status: PENDING_HUMAN_REVIEW
   stage_exit_credit: 0
-current_head_validation:
+prior_technical_reverify_validation:
   head_sha: eb63c59c2a4ef384691d9e7ad4a67b1dcdcb7c92
   workflow_run_id: 36087796821
   workflow_job_id: 107923436305
   conclusion: success
   governance_uid: GOV-REV-20260925-NORMATIVE-EXECUTION-MATRIX
-  governance_head: 335d8a01d6d3eb6f0ed951ffc40216029b19d4e3
+  governance_head: 22b8d6845ce31014ba10b4c1f8f7a3ec9dcceb20
