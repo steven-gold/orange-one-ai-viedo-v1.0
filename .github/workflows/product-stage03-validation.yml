@@ -1,5 +1,5 @@
 name: Product Stage03 Validation
-# exact-head-rerun: 2026-09-25T10:16+08:00
+# exact-head-rerun: 2026-09-25T10:20+08:00
 # independent-rerun-marker: 2026-09-25-v225-dynamic-current-state-v2
 on:
   push:
@@ -120,10 +120,25 @@ jobs:
         blocker_total=int(pr.get('closure_blocker_total') or 0)
         if open_total!=len(open_rows):
           raise SystemExit(f'BLOCK:PROBLEM_OPEN_DENOMINATOR_DRIFT:declared={open_total}:actual={len(open_rows)}')
-        if blocker_total<0 or blocker_total>open_total:
-          raise SystemExit(f'BLOCK:PROBLEM_BLOCKER_DENOMINATOR_DRIFT:open={open_total}:blockers={blocker_total}')
-        if blocker_total!=0:
-          raise SystemExit('BLOCK:CURRENT_PROBLEM_REGISTER_HAS_CLOSURE_BLOCKERS:'+str(blocker_total))
+        if open_total!=0:
+          raise SystemExit('BLOCK:CURRENT_PROBLEM_REGISTER_HAS_OPEN_TECHNICAL_PROBLEMS:'+str(open_total))
+        review_gates=[x for x in (pr.get('non_problem_closure_gates') or []) if isinstance(x,dict)]
+        pending_non_problem=0
+        for gate in review_gates:
+          if gate.get('gate_uid')!='HUMAN_VISUAL_REVIEW':
+            raise SystemExit('BLOCK:UNREGISTERED_NON_PROBLEM_CLOSURE_GATE:'+str(gate.get('gate_uid')))
+          status=str(gate.get('status') or '')
+          credit=int(gate.get('stage_exit_credit') or 0)
+          if status=='PENDING_HUMAN_REVIEW':
+            if credit!=0: raise SystemExit('BLOCK:PENDING_HUMAN_REVIEW_WITH_STAGE_EXIT_CREDIT')
+            pending_non_problem+=1
+          elif status in ('VISUAL_APPROVED','REVIEW_COMPLETE_PENDING_STAGE03_CLOSURE'):
+            if credit!=0: raise SystemExit('BLOCK:HUMAN_REVIEW_MUST_NOT_GRANT_STAGE_EXIT_CREDIT')
+          else:
+            raise SystemExit('BLOCK:HUMAN_VISUAL_REVIEW_GATE_STATE_INVALID:'+status)
+        expected_blockers=open_total+pending_non_problem
+        if blocker_total!=expected_blockers:
+          raise SystemExit(f'BLOCK:CLOSURE_BLOCKER_DENOMINATOR_DRIFT:declared={blocker_total}:expected={expected_blockers}')
         scope=y('CURRENT_EXECUTION_SCOPE_MANIFEST.yaml')
         state=y('EXECUTION_STATE.yaml')
         resume=y('RESUME_POINT.yaml')
