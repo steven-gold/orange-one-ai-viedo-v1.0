@@ -115,22 +115,18 @@ jobs:
             vitb=load(b/'VISUAL_INTERACTION_TOPOLOGY_BINDING.yaml')
             fwlc=load(b/'FUNCTIONAL_WORKBENCH_LAYOUT_CONTRACT.yaml')
             vses=load(b/'VISUAL_SCENARIO_EVIDENCE_SET.yaml')
-            # ---- Complete VDSP transitive bindings consumed by Stage04 Freeze ----
-            generation_source = (
-              'STAGE_EXECUTION/STAGE-01/WU-STAGE01-GLOBAL-HOME-SHELL-NAVIGATION-001/00_SOURCE_INTAKE/RAW_SOURCE/SRC-DOCX-334A4679600F092B733B/ACPOS_GLOBAL_HOME_SHELL_NAVIGATION_Mother_Basic_Design_OPTIMIZED.docx'
-              if key=='HOME' else
-              'STAGE_EXECUTION/STAGE-01/WU-STAGE01-WB01-DASHBOARD-001/00_SOURCE_INTAKE/RAW_SOURCE/SRC-DOCX-2B1908530B5BD312A392/ACPOS_WB-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx'
-            )
-            if not Path(generation_source).is_file():
-                raise SystemExit(f'BLOCK:GENERATION_MANIFEST_SOURCE_MISSING:{cfg["wu"]}:{generation_source}')
+            # ---- Complete Stage03 VDSP bindings with Mother applicability ----
             vds['design_version']='STAGE03-V2.2.25-REVERIFY'
-            vds['visual_style_definition_ref']='STAGE_EXECUTION/SHARED_AUTHORITY/GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY.yaml'
+            vds.pop('visual_style_definition_ref',None)
+            vds['visual_style_definition_applicability']='NOT_APPLICABLE_EXISTING_CURRENT_VISUAL_AUTHORITY'
             vds['visual_inheritance_matrix_ref']=str(b/'VISUAL_INHERITANCE_MATRIX.yaml')
             vds['visual_reference_annotation_ref']=str(b/'VISUAL_REFERENCE_ANNOTATION.yaml')
             vds['visual_scenario_evidence_set_ref']=str(b/'VISUAL_SCENARIO_EVIDENCE_SET.yaml')
             vds['visual_geometry_contract_ref']=str(b/'VISUAL_GEOMETRY_CONTRACT.yaml')
-            vds['generation_manifest_ref']=generation_source
-            vds['generation_manifest_source_section']='Visual Anchors / Locked Regions / Generation Manifest'
+            vds['visual_change_set_ref']=str(b/'VISUAL_CHANGESET.yaml')
+            vds.pop('generation_manifest_ref',None)
+            vds.pop('generation_manifest_source_section',None)
+            vds['generation_manifest_applicability']='NOT_STAGE03_REQUIRED_OUTPUT_CURRENT_LIFECYCLE'
             vds['transitive_binding_status']='CURRENT_PHYSICAL_OWNER_BOUND'
             dump(b/'VISUAL_DESIGN_SPEC_PACKAGE.yaml',vds)
 
