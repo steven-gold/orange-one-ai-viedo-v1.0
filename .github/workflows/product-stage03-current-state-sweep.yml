@@ -1,0 +1,43 @@
+name: Product Stage03 Current State Sweep
+on:
+  push:
+    branches: [0921acpos]
+    paths:
+      - '.github/workflows/product-stage03-current-state-sweep.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  sweep:
+    runs-on: ubuntu-24.04
+    steps:
+    - uses: actions/checkout@v4
+      with: {ref: 0921acpos, fetch-depth: 1}
+    - name: Sweep stale current Stage03 identity and closure evidence
+      run: |
+        python - <<'PY'
+        from pathlib import Path
+        import json,re
+        root=Path('STAGE_EXECUTION/STAGE-03')
+        old_uid='GOV-REV-20260924-INDEPENDENT-UNIT-LIFECYCLE-CURRENT-IDENTITY-SYNC'
+        old_head='25c4736940efb786aa567c83283bfbaa0773dc1b'
+        current_uid='GOV-REV-20260925-NORMATIVE-EXECUTION-MATRIX'
+        current_head='335d8a01d6d3eb6f0ed951ffc40216029b19d4e3'
+        findings=[]
+        for p in root.rglob('*'):
+          if not p.is_file(): continue
+          rel=p.as_posix()
+          if '/HISTORY/' in rel or '/EVIDENCE/HISTORY/' in rel: continue
+          if p.suffix.lower() not in {'.yaml','.yml','.json','.md'}: continue
+          try: s=p.read_text(encoding='utf-8')
+          except UnicodeDecodeError: continue
+          if old_uid in s: findings.append({'class':'STALE_GOVERNANCE_UID','path':rel})
+          if old_head in s: findings.append({'class':'STALE_GOVERNANCE_HEAD','path':rel})
+          if 'WORK_UNIT_TERMINAL_RECEIPT.yaml' in s and 'prior_terminal_receipt_ref: HISTORY/V224/WORK_UNIT_TERMINAL_RECEIPT.yaml' not in s and p.name!='WORK_UNIT_TERMINAL_RECEIPT.yaml':
+            findings.append({'class':'POSSIBLE_STALE_TERMINAL_RECEIPT_CURRENT_REF','path':rel})
+          if p.name=='STAGE_EXECUTION_PREFLIGHT_RECEIPT.yaml':
+            if current_uid not in s or current_head not in s:
+              findings.append({'class':'PREFLIGHT_NOT_CURRENT_V225','path':rel})
+        print(json.dumps({'finding_total':len(findings),'findings':findings},ensure_ascii=False,indent=2))
+        if findings: raise SystemExit(3)
+        PY
