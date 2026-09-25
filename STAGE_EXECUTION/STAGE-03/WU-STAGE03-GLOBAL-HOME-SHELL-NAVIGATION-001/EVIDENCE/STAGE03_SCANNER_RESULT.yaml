@@ -2,6 +2,8 @@ artifact_uid: SCAN-STAGE03-HOME-001
 artifact_type: STAGE03_SCANNER_RESULT
 stage_uid: STAGE-03
 work_unit_uid: WU-STAGE03-GLOBAL-HOME-SHELL-NAVIGATION-001
+governance_uid: GOV-REV-20260925-NORMATIVE-EXECUTION-MATRIX
+governance_head: 335d8a01d6d3eb6f0ed951ffc40216029b19d4e3
 denominator:
   required_visual_binding_total: 5
   geometry_unit_total: 3
@@ -18,14 +20,14 @@ validator_results:
 - {validator_uid: VAL-GOV-029, status: PASS}
 - {validator_uid: VAL-GOV-030, status: PASS}
 remediation:
-  discovered_gap_total: 2
-  remediated_gap_total: 2
+  discovered_gap_total: 10
+  remediated_gap_total: 10
   unresolved_gap_total: 0
 open_gap_total: 0
 closure_blocker_total: 0
-result: PASS
+result: PASS_CURRENT_REVERIFY
 evidence_gate:
-  head_sha: af16dad81adca977da8a8aecf1084331cd3f653e
-  run_id: 36029115482
-  job_id: 107733061922
+  head_sha: eb63c59c2a4ef384691d9e7ad4a67b1dcdcb7c92
+  run_id: 36087796821
+  job_id: 107923436071
   conclusion: success
