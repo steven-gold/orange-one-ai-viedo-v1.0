@@ -11,350 +11,687 @@ annotations:
   state_uid: COLLAPSED
   workbench_uid: GHS-SHELL-WORKBENCH
   journey_uid: AUTHORIZED_NAVIGATION_TO_WORKSPACE
-  parent_visual_uid: NOT_APPLICABLE_WITH_AUTHORITY:ROOT_VISUAL_CANDIDATE
-  design_version: VIS-CANDIDATE-HOME-001
+  parent_visual_uid: NOT_APPLICABLE_ROOT_VISUAL
+  design_version: STAGE03-V2.2.25-REVERIFY
   basic_design_change_set_uid: VCS-STAGE03-HOME-001
   viewport: 1024
-  language: zh-TW
-  theme: dark-purple
-  applicable_business_entity_or_operation: &id002
+  language:
+  - zh-TW
+  - zh-CN
+  - en
+  theme: DARK_TECH_PURPLE
+  business_entity_uids: &id002
+  - NAVIGATION_SURFACE
+  - NAVIGATION_ITEM
+  - ACCOUNT_PERMISSION_ASSIGNMENT
+  - LANGUAGE_SELECTION
+  - QUICK_STATUS_PROJECTION
+  - WORKSPACE_MOUNT
+  operation_uids: &id003
+  - OPEN_CANONICAL_TARGET
+  - RESOLVE_NAVIGATION_VISIBILITY
+  - APPLY_LANGUAGE_SELECTION
+  - READ_STATUS_PROJECTION
+  - SYNCHRONIZE_WORKSPACE_LAYOUT
+  applicable_business_entity_or_operation:
+  - NAVIGATION_SURFACE
+  - NAVIGATION_ITEM
+  - ACCOUNT_PERMISSION_ASSIGNMENT
+  - LANGUAGE_SELECTION
+  - QUICK_STATUS_PROJECTION
+  - WORKSPACE_MOUNT
   - OPEN_CANONICAL_TARGET
   - RESOLVE_NAVIGATION_VISIBILITY
   - APPLY_LANGUAGE_SELECTION
   - READ_STATUS_PROJECTION
   - SYNCHRONIZE_WORKSPACE_LAYOUT
   visible_sections:
-  - HEADER
-  - SIDEBAR
-  - WORKSPACE
+  - HEADER_TOPBAR
+  - ADAPTIVE_NAVIGATION
+  - WORKSPACE_MOUNT
   conditional_sections:
-  - NOT_APPLICABLE_WITH_AUTHORITY:NO_ADDITIONAL_CONDITIONAL_SECTION_IN_THIS_SCENARIO
-  locked_regions: &id003
-  - HEADER
-  - SIDEBAR
+  - FRONT_NAVIGATION_SURFACE
+  - ADMIN_NAVIGATION_SURFACE
+  - QUICK_STATUS
+  - ACCOUNT_CLUSTER
+  locked_regions: &id004
+  - GLOBAL_HEADER
+  - GLOBAL_SIDEBAR
   - WORKSPACE_MOUNT_GEOMETRY
-  editable_regions: &id004
+  editable_regions: &id005
   - PRESENTATION_MICRO_DETAIL_INSIDE_CURRENT_TOKENS_ONLY
-  visual_anchor_uids: &id005
+  visual_anchor_uids: &id006
   - VA-HOME-HEADER-TOP
   - VA-HOME-SIDEBAR-COLUMN
   - VA-HOME-WORKSPACE-ORIGIN
-  primary_controls: &id006
+  primary_controls_or_system_triggers: &id001
   - NAVIGATION_ITEM
-  - NAVIGATION_SURFACE
-  - LANGUAGE_POPOVER
+  - LANGUAGE_SELECTION
   - QUICK_STATUS
-  - SIDEBAR_STATE
+  - SURFACE_SWITCH
+  - ACCOUNT_CLUSTER
+  primary_controls: *id001
   disabled_or_blocked_controls:
-  - NOT_APPLICABLE_WITH_AUTHORITY:NO_ADDITIONAL_DISABLED_OR_BLOCKED_CONTROL_IN_THIS_SCENARIO
-  current_next_action_or_gate: HUMAN_VISUAL_REVIEW
-  source_authority_refs: &id001
+  - control_uid: NOT_APPLICABLE
+    applicability: NOT_APPLICABLE_WITH_AUTHORITY
+    reason_source: CURRENT_PERMISSION_OR_STATE_AUTHORITY
+  disabled_reason_source: CURRENT_PERMISSION_OR_STATE_AUTHORITY
+  current_next_action: OPEN_CANONICAL_TARGET
+  current_next_gate: ACCOUNT_PERMISSION_ASSIGNMENT
+  current_next_action_or_gate:
+    action_uid: OPEN_CANONICAL_TARGET
+    gate_uid: ACCOUNT_PERMISSION_ASSIGNMENT
+  source_authority_refs: &id007
+  - STAGE_EXECUTION/STAGE-03/WU-STAGE03-GLOBAL-HOME-SHELL-NAVIGATION-001/VISUAL_GEOMETRY_CONTRACT.yaml
+  - STAGE_EXECUTION/STAGE-03/WU-STAGE03-GLOBAL-HOME-SHELL-NAVIGATION-001/VISUAL_INTERACTION_TOPOLOGY_BINDING.yaml
+  - STAGE_EXECUTION/STAGE-03/WU-STAGE03-GLOBAL-HOME-SHELL-NAVIGATION-001/FUNCTIONAL_WORKBENCH_LAYOUT_CONTRACT.yaml
   - STAGE_EXECUTION/SHARED_AUTHORITY/GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY.yaml
-  - STAGE_EXECUTION/SHARED_AUTHORITY/GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY.yaml#typography_authority
-  - ACPOS_GLOBAL_HOME_SHELL_NAVIGATION_Mother_Basic_Design_OPTIMIZED.docx
-  authority_classification: CURRENT_AUTHORITY_BOUND
-  inherited_visual_authority_refs: *id001
-  verification_purpose: Prove GLOBAL-HOME-SHELL-NAVIGATION scenario HOME-1024-COLLAPSED preserves Current visual geometry, semantic order, authority inheritance, and observable state
-    without unauthorized topology change.
+  authority_classification: CURRENT_SOURCE_GROUNDED_VISUAL_PROJECTION
+  inherited_visual_authority_refs:
+  - STAGE_EXECUTION/SHARED_AUTHORITY/GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY.yaml
+  - STAGE_EXECUTION/STAGE-03/WU-STAGE03-GLOBAL-HOME-SHELL-NAVIGATION-001/VISUAL_GEOMETRY_CONTRACT.yaml
+  verification_purpose: Prove HOME-1024-COLLAPSED preserves current workbench, operation/state ownership, visual anchors, inherited style and semantic order.
+  design_review_item_uids:
+  - DR-HOME-1024-COLLAPSED-GEOMETRY
+  - DR-HOME-1024-COLLAPSED-TOPOLOGY
+  - DR-HOME-1024-COLLAPSED-STATE
   evidence_ref: EVIDENCE/VISUAL_SCENARIOS/HOME-1024-COLLAPSED.svg
   annotation_status: CURRENT_REVERIFY_MATERIALIZED
+  status: CURRENT_REVERIFY_MATERIALIZED
 - visual_uid: VIS-CANDIDATE-HOME-001
   page_or_scope_uid: GLOBAL-HOME-SHELL-NAVIGATION
   scenario_uid: HOME-1024-EXPANDED
   state_uid: EXPANDED
   workbench_uid: GHS-SHELL-WORKBENCH
   journey_uid: AUTHORIZED_NAVIGATION_TO_WORKSPACE
-  parent_visual_uid: NOT_APPLICABLE_WITH_AUTHORITY:ROOT_VISUAL_CANDIDATE
-  design_version: VIS-CANDIDATE-HOME-001
+  parent_visual_uid: NOT_APPLICABLE_ROOT_VISUAL
+  design_version: STAGE03-V2.2.25-REVERIFY
   basic_design_change_set_uid: VCS-STAGE03-HOME-001
   viewport: 1024
-  language: zh-TW
-  theme: dark-purple
-  applicable_business_entity_or_operation: *id002
+  language:
+  - zh-TW
+  - zh-CN
+  - en
+  theme: DARK_TECH_PURPLE
+  business_entity_uids: *id002
+  operation_uids: *id003
+  applicable_business_entity_or_operation:
+  - NAVIGATION_SURFACE
+  - NAVIGATION_ITEM
+  - ACCOUNT_PERMISSION_ASSIGNMENT
+  - LANGUAGE_SELECTION
+  - QUICK_STATUS_PROJECTION
+  - WORKSPACE_MOUNT
+  - OPEN_CANONICAL_TARGET
+  - RESOLVE_NAVIGATION_VISIBILITY
+  - APPLY_LANGUAGE_SELECTION
+  - READ_STATUS_PROJECTION
+  - SYNCHRONIZE_WORKSPACE_LAYOUT
   visible_sections:
-  - HEADER
-  - SIDEBAR
-  - WORKSPACE
+  - HEADER_TOPBAR
+  - ADAPTIVE_NAVIGATION
+  - WORKSPACE_MOUNT
   conditional_sections:
-  - NOT_APPLICABLE_WITH_AUTHORITY:NO_ADDITIONAL_CONDITIONAL_SECTION_IN_THIS_SCENARIO
-  locked_regions: *id003
-  editable_regions: *id004
-  visual_anchor_uids: *id005
-  primary_controls: *id006
+  - FRONT_NAVIGATION_SURFACE
+  - ADMIN_NAVIGATION_SURFACE
+  - QUICK_STATUS
+  - ACCOUNT_CLUSTER
+  locked_regions: *id004
+  editable_regions: *id005
+  visual_anchor_uids: *id006
+  primary_controls_or_system_triggers: *id001
+  primary_controls: *id001
   disabled_or_blocked_controls:
-  - NOT_APPLICABLE_WITH_AUTHORITY:NO_ADDITIONAL_DISABLED_OR_BLOCKED_CONTROL_IN_THIS_SCENARIO
-  current_next_action_or_gate: HUMAN_VISUAL_REVIEW
-  source_authority_refs: *id001
-  authority_classification: CURRENT_AUTHORITY_BOUND
-  inherited_visual_authority_refs: *id001
-  verification_purpose: Prove GLOBAL-HOME-SHELL-NAVIGATION scenario HOME-1024-EXPANDED preserves Current visual geometry, semantic order, authority inheritance, and observable state
-    without unauthorized topology change.
+  - control_uid: NOT_APPLICABLE
+    applicability: NOT_APPLICABLE_WITH_AUTHORITY
+    reason_source: CURRENT_PERMISSION_OR_STATE_AUTHORITY
+  disabled_reason_source: CURRENT_PERMISSION_OR_STATE_AUTHORITY
+  current_next_action: OPEN_CANONICAL_TARGET
+  current_next_gate: ACCOUNT_PERMISSION_ASSIGNMENT
+  current_next_action_or_gate:
+    action_uid: OPEN_CANONICAL_TARGET
+    gate_uid: ACCOUNT_PERMISSION_ASSIGNMENT
+  source_authority_refs: *id007
+  authority_classification: CURRENT_SOURCE_GROUNDED_VISUAL_PROJECTION
+  inherited_visual_authority_refs:
+  - STAGE_EXECUTION/SHARED_AUTHORITY/GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY.yaml
+  - STAGE_EXECUTION/STAGE-03/WU-STAGE03-GLOBAL-HOME-SHELL-NAVIGATION-001/VISUAL_GEOMETRY_CONTRACT.yaml
+  verification_purpose: Prove HOME-1024-EXPANDED preserves current workbench, operation/state ownership, visual anchors, inherited style and semantic order.
+  design_review_item_uids:
+  - DR-HOME-1024-EXPANDED-GEOMETRY
+  - DR-HOME-1024-EXPANDED-TOPOLOGY
+  - DR-HOME-1024-EXPANDED-STATE
   evidence_ref: EVIDENCE/VISUAL_SCENARIOS/HOME-1024-EXPANDED.svg
   annotation_status: CURRENT_REVERIFY_MATERIALIZED
+  status: CURRENT_REVERIFY_MATERIALIZED
 - visual_uid: VIS-CANDIDATE-HOME-001
   page_or_scope_uid: GLOBAL-HOME-SHELL-NAVIGATION
   scenario_uid: HOME-1280-COLLAPSED
   state_uid: COLLAPSED
   workbench_uid: GHS-SHELL-WORKBENCH
   journey_uid: AUTHORIZED_NAVIGATION_TO_WORKSPACE
-  parent_visual_uid: NOT_APPLICABLE_WITH_AUTHORITY:ROOT_VISUAL_CANDIDATE
-  design_version: VIS-CANDIDATE-HOME-001
+  parent_visual_uid: NOT_APPLICABLE_ROOT_VISUAL
+  design_version: STAGE03-V2.2.25-REVERIFY
   basic_design_change_set_uid: VCS-STAGE03-HOME-001
   viewport: 1280
-  language: zh-TW
-  theme: dark-purple
-  applicable_business_entity_or_operation: *id002
+  language:
+  - zh-TW
+  - zh-CN
+  - en
+  theme: DARK_TECH_PURPLE
+  business_entity_uids: *id002
+  operation_uids: *id003
+  applicable_business_entity_or_operation:
+  - NAVIGATION_SURFACE
+  - NAVIGATION_ITEM
+  - ACCOUNT_PERMISSION_ASSIGNMENT
+  - LANGUAGE_SELECTION
+  - QUICK_STATUS_PROJECTION
+  - WORKSPACE_MOUNT
+  - OPEN_CANONICAL_TARGET
+  - RESOLVE_NAVIGATION_VISIBILITY
+  - APPLY_LANGUAGE_SELECTION
+  - READ_STATUS_PROJECTION
+  - SYNCHRONIZE_WORKSPACE_LAYOUT
   visible_sections:
-  - HEADER
-  - SIDEBAR
-  - WORKSPACE
+  - HEADER_TOPBAR
+  - ADAPTIVE_NAVIGATION
+  - WORKSPACE_MOUNT
   conditional_sections:
-  - NOT_APPLICABLE_WITH_AUTHORITY:NO_ADDITIONAL_CONDITIONAL_SECTION_IN_THIS_SCENARIO
-  locked_regions: *id003
-  editable_regions: *id004
-  visual_anchor_uids: *id005
-  primary_controls: *id006
+  - FRONT_NAVIGATION_SURFACE
+  - ADMIN_NAVIGATION_SURFACE
+  - QUICK_STATUS
+  - ACCOUNT_CLUSTER
+  locked_regions: *id004
+  editable_regions: *id005
+  visual_anchor_uids: *id006
+  primary_controls_or_system_triggers: *id001
+  primary_controls: *id001
   disabled_or_blocked_controls:
-  - NOT_APPLICABLE_WITH_AUTHORITY:NO_ADDITIONAL_DISABLED_OR_BLOCKED_CONTROL_IN_THIS_SCENARIO
-  current_next_action_or_gate: HUMAN_VISUAL_REVIEW
-  source_authority_refs: *id001
-  authority_classification: CURRENT_AUTHORITY_BOUND
-  inherited_visual_authority_refs: *id001
-  verification_purpose: Prove GLOBAL-HOME-SHELL-NAVIGATION scenario HOME-1280-COLLAPSED preserves Current visual geometry, semantic order, authority inheritance, and observable state
-    without unauthorized topology change.
+  - control_uid: NOT_APPLICABLE
+    applicability: NOT_APPLICABLE_WITH_AUTHORITY
+    reason_source: CURRENT_PERMISSION_OR_STATE_AUTHORITY
+  disabled_reason_source: CURRENT_PERMISSION_OR_STATE_AUTHORITY
+  current_next_action: OPEN_CANONICAL_TARGET
+  current_next_gate: ACCOUNT_PERMISSION_ASSIGNMENT
+  current_next_action_or_gate:
+    action_uid: OPEN_CANONICAL_TARGET
+    gate_uid: ACCOUNT_PERMISSION_ASSIGNMENT
+  source_authority_refs: *id007
+  authority_classification: CURRENT_SOURCE_GROUNDED_VISUAL_PROJECTION
+  inherited_visual_authority_refs:
+  - STAGE_EXECUTION/SHARED_AUTHORITY/GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY.yaml
+  - STAGE_EXECUTION/STAGE-03/WU-STAGE03-GLOBAL-HOME-SHELL-NAVIGATION-001/VISUAL_GEOMETRY_CONTRACT.yaml
+  verification_purpose: Prove HOME-1280-COLLAPSED preserves current workbench, operation/state ownership, visual anchors, inherited style and semantic order.
+  design_review_item_uids:
+  - DR-HOME-1280-COLLAPSED-GEOMETRY
+  - DR-HOME-1280-COLLAPSED-TOPOLOGY
+  - DR-HOME-1280-COLLAPSED-STATE
   evidence_ref: EVIDENCE/VISUAL_SCENARIOS/HOME-1280-COLLAPSED.svg
   annotation_status: CURRENT_REVERIFY_MATERIALIZED
+  status: CURRENT_REVERIFY_MATERIALIZED
 - visual_uid: VIS-CANDIDATE-HOME-001
   page_or_scope_uid: GLOBAL-HOME-SHELL-NAVIGATION
   scenario_uid: HOME-1280-EXPANDED
   state_uid: EXPANDED
   workbench_uid: GHS-SHELL-WORKBENCH
   journey_uid: AUTHORIZED_NAVIGATION_TO_WORKSPACE
-  parent_visual_uid: NOT_APPLICABLE_WITH_AUTHORITY:ROOT_VISUAL_CANDIDATE
-  design_version: VIS-CANDIDATE-HOME-001
+  parent_visual_uid: NOT_APPLICABLE_ROOT_VISUAL
+  design_version: STAGE03-V2.2.25-REVERIFY
   basic_design_change_set_uid: VCS-STAGE03-HOME-001
   viewport: 1280
-  language: zh-TW
-  theme: dark-purple
-  applicable_business_entity_or_operation: *id002
+  language:
+  - zh-TW
+  - zh-CN
+  - en
+  theme: DARK_TECH_PURPLE
+  business_entity_uids: *id002
+  operation_uids: *id003
+  applicable_business_entity_or_operation:
+  - NAVIGATION_SURFACE
+  - NAVIGATION_ITEM
+  - ACCOUNT_PERMISSION_ASSIGNMENT
+  - LANGUAGE_SELECTION
+  - QUICK_STATUS_PROJECTION
+  - WORKSPACE_MOUNT
+  - OPEN_CANONICAL_TARGET
+  - RESOLVE_NAVIGATION_VISIBILITY
+  - APPLY_LANGUAGE_SELECTION
+  - READ_STATUS_PROJECTION
+  - SYNCHRONIZE_WORKSPACE_LAYOUT
   visible_sections:
-  - HEADER
-  - SIDEBAR
-  - WORKSPACE
+  - HEADER_TOPBAR
+  - ADAPTIVE_NAVIGATION
+  - WORKSPACE_MOUNT
   conditional_sections:
-  - NOT_APPLICABLE_WITH_AUTHORITY:NO_ADDITIONAL_CONDITIONAL_SECTION_IN_THIS_SCENARIO
-  locked_regions: *id003
-  editable_regions: *id004
-  visual_anchor_uids: *id005
-  primary_controls: *id006
+  - FRONT_NAVIGATION_SURFACE
+  - ADMIN_NAVIGATION_SURFACE
+  - QUICK_STATUS
+  - ACCOUNT_CLUSTER
+  locked_regions: *id004
+  editable_regions: *id005
+  visual_anchor_uids: *id006
+  primary_controls_or_system_triggers: *id001
+  primary_controls: *id001
   disabled_or_blocked_controls:
-  - NOT_APPLICABLE_WITH_AUTHORITY:NO_ADDITIONAL_DISABLED_OR_BLOCKED_CONTROL_IN_THIS_SCENARIO
-  current_next_action_or_gate: HUMAN_VISUAL_REVIEW
-  source_authority_refs: *id001
-  authority_classification: CURRENT_AUTHORITY_BOUND
-  inherited_visual_authority_refs: *id001
-  verification_purpose: Prove GLOBAL-HOME-SHELL-NAVIGATION scenario HOME-1280-EXPANDED preserves Current visual geometry, semantic order, authority inheritance, and observable state
-    without unauthorized topology change.
+  - control_uid: NOT_APPLICABLE
+    applicability: NOT_APPLICABLE_WITH_AUTHORITY
+    reason_source: CURRENT_PERMISSION_OR_STATE_AUTHORITY
+  disabled_reason_source: CURRENT_PERMISSION_OR_STATE_AUTHORITY
+  current_next_action: OPEN_CANONICAL_TARGET
+  current_next_gate: ACCOUNT_PERMISSION_ASSIGNMENT
+  current_next_action_or_gate:
+    action_uid: OPEN_CANONICAL_TARGET
+    gate_uid: ACCOUNT_PERMISSION_ASSIGNMENT
+  source_authority_refs: *id007
+  authority_classification: CURRENT_SOURCE_GROUNDED_VISUAL_PROJECTION
+  inherited_visual_authority_refs:
+  - STAGE_EXECUTION/SHARED_AUTHORITY/GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY.yaml
+  - STAGE_EXECUTION/STAGE-03/WU-STAGE03-GLOBAL-HOME-SHELL-NAVIGATION-001/VISUAL_GEOMETRY_CONTRACT.yaml
+  verification_purpose: Prove HOME-1280-EXPANDED preserves current workbench, operation/state ownership, visual anchors, inherited style and semantic order.
+  design_review_item_uids:
+  - DR-HOME-1280-EXPANDED-GEOMETRY
+  - DR-HOME-1280-EXPANDED-TOPOLOGY
+  - DR-HOME-1280-EXPANDED-STATE
   evidence_ref: EVIDENCE/VISUAL_SCENARIOS/HOME-1280-EXPANDED.svg
   annotation_status: CURRENT_REVERIFY_MATERIALIZED
+  status: CURRENT_REVERIFY_MATERIALIZED
 - visual_uid: VIS-CANDIDATE-HOME-001
   page_or_scope_uid: GLOBAL-HOME-SHELL-NAVIGATION
   scenario_uid: HOME-1440-COLLAPSED
   state_uid: COLLAPSED
   workbench_uid: GHS-SHELL-WORKBENCH
   journey_uid: AUTHORIZED_NAVIGATION_TO_WORKSPACE
-  parent_visual_uid: NOT_APPLICABLE_WITH_AUTHORITY:ROOT_VISUAL_CANDIDATE
-  design_version: VIS-CANDIDATE-HOME-001
+  parent_visual_uid: NOT_APPLICABLE_ROOT_VISUAL
+  design_version: STAGE03-V2.2.25-REVERIFY
   basic_design_change_set_uid: VCS-STAGE03-HOME-001
   viewport: 1440
-  language: zh-TW
-  theme: dark-purple
-  applicable_business_entity_or_operation: *id002
+  language:
+  - zh-TW
+  - zh-CN
+  - en
+  theme: DARK_TECH_PURPLE
+  business_entity_uids: *id002
+  operation_uids: *id003
+  applicable_business_entity_or_operation:
+  - NAVIGATION_SURFACE
+  - NAVIGATION_ITEM
+  - ACCOUNT_PERMISSION_ASSIGNMENT
+  - LANGUAGE_SELECTION
+  - QUICK_STATUS_PROJECTION
+  - WORKSPACE_MOUNT
+  - OPEN_CANONICAL_TARGET
+  - RESOLVE_NAVIGATION_VISIBILITY
+  - APPLY_LANGUAGE_SELECTION
+  - READ_STATUS_PROJECTION
+  - SYNCHRONIZE_WORKSPACE_LAYOUT
   visible_sections:
-  - HEADER
-  - SIDEBAR
-  - WORKSPACE
+  - HEADER_TOPBAR
+  - ADAPTIVE_NAVIGATION
+  - WORKSPACE_MOUNT
   conditional_sections:
-  - NOT_APPLICABLE_WITH_AUTHORITY:NO_ADDITIONAL_CONDITIONAL_SECTION_IN_THIS_SCENARIO
-  locked_regions: *id003
-  editable_regions: *id004
-  visual_anchor_uids: *id005
-  primary_controls: *id006
+  - FRONT_NAVIGATION_SURFACE
+  - ADMIN_NAVIGATION_SURFACE
+  - QUICK_STATUS
+  - ACCOUNT_CLUSTER
+  locked_regions: *id004
+  editable_regions: *id005
+  visual_anchor_uids: *id006
+  primary_controls_or_system_triggers: *id001
+  primary_controls: *id001
   disabled_or_blocked_controls:
-  - NOT_APPLICABLE_WITH_AUTHORITY:NO_ADDITIONAL_DISABLED_OR_BLOCKED_CONTROL_IN_THIS_SCENARIO
-  current_next_action_or_gate: HUMAN_VISUAL_REVIEW
-  source_authority_refs: *id001
-  authority_classification: CURRENT_AUTHORITY_BOUND
-  inherited_visual_authority_refs: *id001
-  verification_purpose: Prove GLOBAL-HOME-SHELL-NAVIGATION scenario HOME-1440-COLLAPSED preserves Current visual geometry, semantic order, authority inheritance, and observable state
-    without unauthorized topology change.
+  - control_uid: NOT_APPLICABLE
+    applicability: NOT_APPLICABLE_WITH_AUTHORITY
+    reason_source: CURRENT_PERMISSION_OR_STATE_AUTHORITY
+  disabled_reason_source: CURRENT_PERMISSION_OR_STATE_AUTHORITY
+  current_next_action: OPEN_CANONICAL_TARGET
+  current_next_gate: ACCOUNT_PERMISSION_ASSIGNMENT
+  current_next_action_or_gate:
+    action_uid: OPEN_CANONICAL_TARGET
+    gate_uid: ACCOUNT_PERMISSION_ASSIGNMENT
+  source_authority_refs: *id007
+  authority_classification: CURRENT_SOURCE_GROUNDED_VISUAL_PROJECTION
+  inherited_visual_authority_refs:
+  - STAGE_EXECUTION/SHARED_AUTHORITY/GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY.yaml
+  - STAGE_EXECUTION/STAGE-03/WU-STAGE03-GLOBAL-HOME-SHELL-NAVIGATION-001/VISUAL_GEOMETRY_CONTRACT.yaml
+  verification_purpose: Prove HOME-1440-COLLAPSED preserves current workbench, operation/state ownership, visual anchors, inherited style and semantic order.
+  design_review_item_uids:
+  - DR-HOME-1440-COLLAPSED-GEOMETRY
+  - DR-HOME-1440-COLLAPSED-TOPOLOGY
+  - DR-HOME-1440-COLLAPSED-STATE
   evidence_ref: EVIDENCE/VISUAL_SCENARIOS/HOME-1440-COLLAPSED.svg
   annotation_status: CURRENT_REVERIFY_MATERIALIZED
+  status: CURRENT_REVERIFY_MATERIALIZED
 - visual_uid: VIS-CANDIDATE-HOME-001
   page_or_scope_uid: GLOBAL-HOME-SHELL-NAVIGATION
   scenario_uid: HOME-1440-EXPANDED
   state_uid: EXPANDED
   workbench_uid: GHS-SHELL-WORKBENCH
   journey_uid: AUTHORIZED_NAVIGATION_TO_WORKSPACE
-  parent_visual_uid: NOT_APPLICABLE_WITH_AUTHORITY:ROOT_VISUAL_CANDIDATE
-  design_version: VIS-CANDIDATE-HOME-001
+  parent_visual_uid: NOT_APPLICABLE_ROOT_VISUAL
+  design_version: STAGE03-V2.2.25-REVERIFY
   basic_design_change_set_uid: VCS-STAGE03-HOME-001
   viewport: 1440
-  language: zh-TW
-  theme: dark-purple
-  applicable_business_entity_or_operation: *id002
+  language:
+  - zh-TW
+  - zh-CN
+  - en
+  theme: DARK_TECH_PURPLE
+  business_entity_uids: *id002
+  operation_uids: *id003
+  applicable_business_entity_or_operation:
+  - NAVIGATION_SURFACE
+  - NAVIGATION_ITEM
+  - ACCOUNT_PERMISSION_ASSIGNMENT
+  - LANGUAGE_SELECTION
+  - QUICK_STATUS_PROJECTION
+  - WORKSPACE_MOUNT
+  - OPEN_CANONICAL_TARGET
+  - RESOLVE_NAVIGATION_VISIBILITY
+  - APPLY_LANGUAGE_SELECTION
+  - READ_STATUS_PROJECTION
+  - SYNCHRONIZE_WORKSPACE_LAYOUT
   visible_sections:
-  - HEADER
-  - SIDEBAR
-  - WORKSPACE
+  - HEADER_TOPBAR
+  - ADAPTIVE_NAVIGATION
+  - WORKSPACE_MOUNT
   conditional_sections:
-  - NOT_APPLICABLE_WITH_AUTHORITY:NO_ADDITIONAL_CONDITIONAL_SECTION_IN_THIS_SCENARIO
-  locked_regions: *id003
-  editable_regions: *id004
-  visual_anchor_uids: *id005
-  primary_controls: *id006
+  - FRONT_NAVIGATION_SURFACE
+  - ADMIN_NAVIGATION_SURFACE
+  - QUICK_STATUS
+  - ACCOUNT_CLUSTER
+  locked_regions: *id004
+  editable_regions: *id005
+  visual_anchor_uids: *id006
+  primary_controls_or_system_triggers: *id001
+  primary_controls: *id001
   disabled_or_blocked_controls:
-  - NOT_APPLICABLE_WITH_AUTHORITY:NO_ADDITIONAL_DISABLED_OR_BLOCKED_CONTROL_IN_THIS_SCENARIO
-  current_next_action_or_gate: HUMAN_VISUAL_REVIEW
-  source_authority_refs: *id001
-  authority_classification: CURRENT_AUTHORITY_BOUND
-  inherited_visual_authority_refs: *id001
-  verification_purpose: Prove GLOBAL-HOME-SHELL-NAVIGATION scenario HOME-1440-EXPANDED preserves Current visual geometry, semantic order, authority inheritance, and observable state
-    without unauthorized topology change.
+  - control_uid: NOT_APPLICABLE
+    applicability: NOT_APPLICABLE_WITH_AUTHORITY
+    reason_source: CURRENT_PERMISSION_OR_STATE_AUTHORITY
+  disabled_reason_source: CURRENT_PERMISSION_OR_STATE_AUTHORITY
+  current_next_action: OPEN_CANONICAL_TARGET
+  current_next_gate: ACCOUNT_PERMISSION_ASSIGNMENT
+  current_next_action_or_gate:
+    action_uid: OPEN_CANONICAL_TARGET
+    gate_uid: ACCOUNT_PERMISSION_ASSIGNMENT
+  source_authority_refs: *id007
+  authority_classification: CURRENT_SOURCE_GROUNDED_VISUAL_PROJECTION
+  inherited_visual_authority_refs:
+  - STAGE_EXECUTION/SHARED_AUTHORITY/GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY.yaml
+  - STAGE_EXECUTION/STAGE-03/WU-STAGE03-GLOBAL-HOME-SHELL-NAVIGATION-001/VISUAL_GEOMETRY_CONTRACT.yaml
+  verification_purpose: Prove HOME-1440-EXPANDED preserves current workbench, operation/state ownership, visual anchors, inherited style and semantic order.
+  design_review_item_uids:
+  - DR-HOME-1440-EXPANDED-GEOMETRY
+  - DR-HOME-1440-EXPANDED-TOPOLOGY
+  - DR-HOME-1440-EXPANDED-STATE
   evidence_ref: EVIDENCE/VISUAL_SCENARIOS/HOME-1440-EXPANDED.svg
   annotation_status: CURRENT_REVERIFY_MATERIALIZED
+  status: CURRENT_REVERIFY_MATERIALIZED
 - visual_uid: VIS-CANDIDATE-HOME-001
   page_or_scope_uid: GLOBAL-HOME-SHELL-NAVIGATION
   scenario_uid: HOME-1536-COLLAPSED
   state_uid: COLLAPSED
   workbench_uid: GHS-SHELL-WORKBENCH
   journey_uid: AUTHORIZED_NAVIGATION_TO_WORKSPACE
-  parent_visual_uid: NOT_APPLICABLE_WITH_AUTHORITY:ROOT_VISUAL_CANDIDATE
-  design_version: VIS-CANDIDATE-HOME-001
+  parent_visual_uid: NOT_APPLICABLE_ROOT_VISUAL
+  design_version: STAGE03-V2.2.25-REVERIFY
   basic_design_change_set_uid: VCS-STAGE03-HOME-001
   viewport: 1536
-  language: zh-TW
-  theme: dark-purple
-  applicable_business_entity_or_operation: *id002
+  language:
+  - zh-TW
+  - zh-CN
+  - en
+  theme: DARK_TECH_PURPLE
+  business_entity_uids: *id002
+  operation_uids: *id003
+  applicable_business_entity_or_operation:
+  - NAVIGATION_SURFACE
+  - NAVIGATION_ITEM
+  - ACCOUNT_PERMISSION_ASSIGNMENT
+  - LANGUAGE_SELECTION
+  - QUICK_STATUS_PROJECTION
+  - WORKSPACE_MOUNT
+  - OPEN_CANONICAL_TARGET
+  - RESOLVE_NAVIGATION_VISIBILITY
+  - APPLY_LANGUAGE_SELECTION
+  - READ_STATUS_PROJECTION
+  - SYNCHRONIZE_WORKSPACE_LAYOUT
   visible_sections:
-  - HEADER
-  - SIDEBAR
-  - WORKSPACE
+  - HEADER_TOPBAR
+  - ADAPTIVE_NAVIGATION
+  - WORKSPACE_MOUNT
   conditional_sections:
-  - NOT_APPLICABLE_WITH_AUTHORITY:NO_ADDITIONAL_CONDITIONAL_SECTION_IN_THIS_SCENARIO
-  locked_regions: *id003
-  editable_regions: *id004
-  visual_anchor_uids: *id005
-  primary_controls: *id006
+  - FRONT_NAVIGATION_SURFACE
+  - ADMIN_NAVIGATION_SURFACE
+  - QUICK_STATUS
+  - ACCOUNT_CLUSTER
+  locked_regions: *id004
+  editable_regions: *id005
+  visual_anchor_uids: *id006
+  primary_controls_or_system_triggers: *id001
+  primary_controls: *id001
   disabled_or_blocked_controls:
-  - NOT_APPLICABLE_WITH_AUTHORITY:NO_ADDITIONAL_DISABLED_OR_BLOCKED_CONTROL_IN_THIS_SCENARIO
-  current_next_action_or_gate: HUMAN_VISUAL_REVIEW
-  source_authority_refs: *id001
-  authority_classification: CURRENT_AUTHORITY_BOUND
-  inherited_visual_authority_refs: *id001
-  verification_purpose: Prove GLOBAL-HOME-SHELL-NAVIGATION scenario HOME-1536-COLLAPSED preserves Current visual geometry, semantic order, authority inheritance, and observable state
-    without unauthorized topology change.
+  - control_uid: NOT_APPLICABLE
+    applicability: NOT_APPLICABLE_WITH_AUTHORITY
+    reason_source: CURRENT_PERMISSION_OR_STATE_AUTHORITY
+  disabled_reason_source: CURRENT_PERMISSION_OR_STATE_AUTHORITY
+  current_next_action: OPEN_CANONICAL_TARGET
+  current_next_gate: ACCOUNT_PERMISSION_ASSIGNMENT
+  current_next_action_or_gate:
+    action_uid: OPEN_CANONICAL_TARGET
+    gate_uid: ACCOUNT_PERMISSION_ASSIGNMENT
+  source_authority_refs: *id007
+  authority_classification: CURRENT_SOURCE_GROUNDED_VISUAL_PROJECTION
+  inherited_visual_authority_refs:
+  - STAGE_EXECUTION/SHARED_AUTHORITY/GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY.yaml
+  - STAGE_EXECUTION/STAGE-03/WU-STAGE03-GLOBAL-HOME-SHELL-NAVIGATION-001/VISUAL_GEOMETRY_CONTRACT.yaml
+  verification_purpose: Prove HOME-1536-COLLAPSED preserves current workbench, operation/state ownership, visual anchors, inherited style and semantic order.
+  design_review_item_uids:
+  - DR-HOME-1536-COLLAPSED-GEOMETRY
+  - DR-HOME-1536-COLLAPSED-TOPOLOGY
+  - DR-HOME-1536-COLLAPSED-STATE
   evidence_ref: EVIDENCE/VISUAL_SCENARIOS/HOME-1536-COLLAPSED.svg
   annotation_status: CURRENT_REVERIFY_MATERIALIZED
+  status: CURRENT_REVERIFY_MATERIALIZED
 - visual_uid: VIS-CANDIDATE-HOME-001
   page_or_scope_uid: GLOBAL-HOME-SHELL-NAVIGATION
   scenario_uid: HOME-1536-EXPANDED
   state_uid: EXPANDED
   workbench_uid: GHS-SHELL-WORKBENCH
   journey_uid: AUTHORIZED_NAVIGATION_TO_WORKSPACE
-  parent_visual_uid: NOT_APPLICABLE_WITH_AUTHORITY:ROOT_VISUAL_CANDIDATE
-  design_version: VIS-CANDIDATE-HOME-001
+  parent_visual_uid: NOT_APPLICABLE_ROOT_VISUAL
+  design_version: STAGE03-V2.2.25-REVERIFY
   basic_design_change_set_uid: VCS-STAGE03-HOME-001
   viewport: 1536
-  language: zh-TW
-  theme: dark-purple
-  applicable_business_entity_or_operation: *id002
+  language:
+  - zh-TW
+  - zh-CN
+  - en
+  theme: DARK_TECH_PURPLE
+  business_entity_uids: *id002
+  operation_uids: *id003
+  applicable_business_entity_or_operation:
+  - NAVIGATION_SURFACE
+  - NAVIGATION_ITEM
+  - ACCOUNT_PERMISSION_ASSIGNMENT
+  - LANGUAGE_SELECTION
+  - QUICK_STATUS_PROJECTION
+  - WORKSPACE_MOUNT
+  - OPEN_CANONICAL_TARGET
+  - RESOLVE_NAVIGATION_VISIBILITY
+  - APPLY_LANGUAGE_SELECTION
+  - READ_STATUS_PROJECTION
+  - SYNCHRONIZE_WORKSPACE_LAYOUT
   visible_sections:
-  - HEADER
-  - SIDEBAR
-  - WORKSPACE
+  - HEADER_TOPBAR
+  - ADAPTIVE_NAVIGATION
+  - WORKSPACE_MOUNT
   conditional_sections:
-  - NOT_APPLICABLE_WITH_AUTHORITY:NO_ADDITIONAL_CONDITIONAL_SECTION_IN_THIS_SCENARIO
-  locked_regions: *id003
-  editable_regions: *id004
-  visual_anchor_uids: *id005
-  primary_controls: *id006
+  - FRONT_NAVIGATION_SURFACE
+  - ADMIN_NAVIGATION_SURFACE
+  - QUICK_STATUS
+  - ACCOUNT_CLUSTER
+  locked_regions: *id004
+  editable_regions: *id005
+  visual_anchor_uids: *id006
+  primary_controls_or_system_triggers: *id001
+  primary_controls: *id001
   disabled_or_blocked_controls:
-  - NOT_APPLICABLE_WITH_AUTHORITY:NO_ADDITIONAL_DISABLED_OR_BLOCKED_CONTROL_IN_THIS_SCENARIO
-  current_next_action_or_gate: HUMAN_VISUAL_REVIEW
-  source_authority_refs: *id001
-  authority_classification: CURRENT_AUTHORITY_BOUND
-  inherited_visual_authority_refs: *id001
-  verification_purpose: Prove GLOBAL-HOME-SHELL-NAVIGATION scenario HOME-1536-EXPANDED preserves Current visual geometry, semantic order, authority inheritance, and observable state
-    without unauthorized topology change.
+  - control_uid: NOT_APPLICABLE
+    applicability: NOT_APPLICABLE_WITH_AUTHORITY
+    reason_source: CURRENT_PERMISSION_OR_STATE_AUTHORITY
+  disabled_reason_source: CURRENT_PERMISSION_OR_STATE_AUTHORITY
+  current_next_action: OPEN_CANONICAL_TARGET
+  current_next_gate: ACCOUNT_PERMISSION_ASSIGNMENT
+  current_next_action_or_gate:
+    action_uid: OPEN_CANONICAL_TARGET
+    gate_uid: ACCOUNT_PERMISSION_ASSIGNMENT
+  source_authority_refs: *id007
+  authority_classification: CURRENT_SOURCE_GROUNDED_VISUAL_PROJECTION
+  inherited_visual_authority_refs:
+  - STAGE_EXECUTION/SHARED_AUTHORITY/GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY.yaml
+  - STAGE_EXECUTION/STAGE-03/WU-STAGE03-GLOBAL-HOME-SHELL-NAVIGATION-001/VISUAL_GEOMETRY_CONTRACT.yaml
+  verification_purpose: Prove HOME-1536-EXPANDED preserves current workbench, operation/state ownership, visual anchors, inherited style and semantic order.
+  design_review_item_uids:
+  - DR-HOME-1536-EXPANDED-GEOMETRY
+  - DR-HOME-1536-EXPANDED-TOPOLOGY
+  - DR-HOME-1536-EXPANDED-STATE
   evidence_ref: EVIDENCE/VISUAL_SCENARIOS/HOME-1536-EXPANDED.svg
   annotation_status: CURRENT_REVERIFY_MATERIALIZED
+  status: CURRENT_REVERIFY_MATERIALIZED
 - visual_uid: VIS-CANDIDATE-HOME-001
   page_or_scope_uid: GLOBAL-HOME-SHELL-NAVIGATION
   scenario_uid: HOME-1920-COLLAPSED
   state_uid: COLLAPSED
   workbench_uid: GHS-SHELL-WORKBENCH
   journey_uid: AUTHORIZED_NAVIGATION_TO_WORKSPACE
-  parent_visual_uid: NOT_APPLICABLE_WITH_AUTHORITY:ROOT_VISUAL_CANDIDATE
-  design_version: VIS-CANDIDATE-HOME-001
+  parent_visual_uid: NOT_APPLICABLE_ROOT_VISUAL
+  design_version: STAGE03-V2.2.25-REVERIFY
   basic_design_change_set_uid: VCS-STAGE03-HOME-001
   viewport: 1920
-  language: zh-TW
-  theme: dark-purple
-  applicable_business_entity_or_operation: *id002
+  language:
+  - zh-TW
+  - zh-CN
+  - en
+  theme: DARK_TECH_PURPLE
+  business_entity_uids: *id002
+  operation_uids: *id003
+  applicable_business_entity_or_operation:
+  - NAVIGATION_SURFACE
+  - NAVIGATION_ITEM
+  - ACCOUNT_PERMISSION_ASSIGNMENT
+  - LANGUAGE_SELECTION
+  - QUICK_STATUS_PROJECTION
+  - WORKSPACE_MOUNT
+  - OPEN_CANONICAL_TARGET
+  - RESOLVE_NAVIGATION_VISIBILITY
+  - APPLY_LANGUAGE_SELECTION
+  - READ_STATUS_PROJECTION
+  - SYNCHRONIZE_WORKSPACE_LAYOUT
   visible_sections:
-  - HEADER
-  - SIDEBAR
-  - WORKSPACE
+  - HEADER_TOPBAR
+  - ADAPTIVE_NAVIGATION
+  - WORKSPACE_MOUNT
   conditional_sections:
-  - NOT_APPLICABLE_WITH_AUTHORITY:NO_ADDITIONAL_CONDITIONAL_SECTION_IN_THIS_SCENARIO
-  locked_regions: *id003
-  editable_regions: *id004
-  visual_anchor_uids: *id005
-  primary_controls: *id006
+  - FRONT_NAVIGATION_SURFACE
+  - ADMIN_NAVIGATION_SURFACE
+  - QUICK_STATUS
+  - ACCOUNT_CLUSTER
+  locked_regions: *id004
+  editable_regions: *id005
+  visual_anchor_uids: *id006
+  primary_controls_or_system_triggers: *id001
+  primary_controls: *id001
   disabled_or_blocked_controls:
-  - NOT_APPLICABLE_WITH_AUTHORITY:NO_ADDITIONAL_DISABLED_OR_BLOCKED_CONTROL_IN_THIS_SCENARIO
-  current_next_action_or_gate: HUMAN_VISUAL_REVIEW
-  source_authority_refs: *id001
-  authority_classification: CURRENT_AUTHORITY_BOUND
-  inherited_visual_authority_refs: *id001
-  verification_purpose: Prove GLOBAL-HOME-SHELL-NAVIGATION scenario HOME-1920-COLLAPSED preserves Current visual geometry, semantic order, authority inheritance, and observable state
-    without unauthorized topology change.
+  - control_uid: NOT_APPLICABLE
+    applicability: NOT_APPLICABLE_WITH_AUTHORITY
+    reason_source: CURRENT_PERMISSION_OR_STATE_AUTHORITY
+  disabled_reason_source: CURRENT_PERMISSION_OR_STATE_AUTHORITY
+  current_next_action: OPEN_CANONICAL_TARGET
+  current_next_gate: ACCOUNT_PERMISSION_ASSIGNMENT
+  current_next_action_or_gate:
+    action_uid: OPEN_CANONICAL_TARGET
+    gate_uid: ACCOUNT_PERMISSION_ASSIGNMENT
+  source_authority_refs: *id007
+  authority_classification: CURRENT_SOURCE_GROUNDED_VISUAL_PROJECTION
+  inherited_visual_authority_refs:
+  - STAGE_EXECUTION/SHARED_AUTHORITY/GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY.yaml
+  - STAGE_EXECUTION/STAGE-03/WU-STAGE03-GLOBAL-HOME-SHELL-NAVIGATION-001/VISUAL_GEOMETRY_CONTRACT.yaml
+  verification_purpose: Prove HOME-1920-COLLAPSED preserves current workbench, operation/state ownership, visual anchors, inherited style and semantic order.
+  design_review_item_uids:
+  - DR-HOME-1920-COLLAPSED-GEOMETRY
+  - DR-HOME-1920-COLLAPSED-TOPOLOGY
+  - DR-HOME-1920-COLLAPSED-STATE
   evidence_ref: EVIDENCE/VISUAL_SCENARIOS/HOME-1920-COLLAPSED.svg
   annotation_status: CURRENT_REVERIFY_MATERIALIZED
+  status: CURRENT_REVERIFY_MATERIALIZED
 - visual_uid: VIS-CANDIDATE-HOME-001
   page_or_scope_uid: GLOBAL-HOME-SHELL-NAVIGATION
   scenario_uid: HOME-1920-EXPANDED
   state_uid: EXPANDED
   workbench_uid: GHS-SHELL-WORKBENCH
   journey_uid: AUTHORIZED_NAVIGATION_TO_WORKSPACE
-  parent_visual_uid: NOT_APPLICABLE_WITH_AUTHORITY:ROOT_VISUAL_CANDIDATE
-  design_version: VIS-CANDIDATE-HOME-001
+  parent_visual_uid: NOT_APPLICABLE_ROOT_VISUAL
+  design_version: STAGE03-V2.2.25-REVERIFY
   basic_design_change_set_uid: VCS-STAGE03-HOME-001
   viewport: 1920
-  language: zh-TW
-  theme: dark-purple
-  applicable_business_entity_or_operation: *id002
+  language:
+  - zh-TW
+  - zh-CN
+  - en
+  theme: DARK_TECH_PURPLE
+  business_entity_uids: *id002
+  operation_uids: *id003
+  applicable_business_entity_or_operation:
+  - NAVIGATION_SURFACE
+  - NAVIGATION_ITEM
+  - ACCOUNT_PERMISSION_ASSIGNMENT
+  - LANGUAGE_SELECTION
+  - QUICK_STATUS_PROJECTION
+  - WORKSPACE_MOUNT
+  - OPEN_CANONICAL_TARGET
+  - RESOLVE_NAVIGATION_VISIBILITY
+  - APPLY_LANGUAGE_SELECTION
+  - READ_STATUS_PROJECTION
+  - SYNCHRONIZE_WORKSPACE_LAYOUT
   visible_sections:
-  - HEADER
-  - SIDEBAR
-  - WORKSPACE
+  - HEADER_TOPBAR
+  - ADAPTIVE_NAVIGATION
+  - WORKSPACE_MOUNT
   conditional_sections:
-  - NOT_APPLICABLE_WITH_AUTHORITY:NO_ADDITIONAL_CONDITIONAL_SECTION_IN_THIS_SCENARIO
-  locked_regions: *id003
-  editable_regions: *id004
-  visual_anchor_uids: *id005
-  primary_controls: *id006
+  - FRONT_NAVIGATION_SURFACE
+  - ADMIN_NAVIGATION_SURFACE
+  - QUICK_STATUS
+  - ACCOUNT_CLUSTER
+  locked_regions: *id004
+  editable_regions: *id005
+  visual_anchor_uids: *id006
+  primary_controls_or_system_triggers: *id001
+  primary_controls: *id001
   disabled_or_blocked_controls:
-  - NOT_APPLICABLE_WITH_AUTHORITY:NO_ADDITIONAL_DISABLED_OR_BLOCKED_CONTROL_IN_THIS_SCENARIO
-  current_next_action_or_gate: HUMAN_VISUAL_REVIEW
-  source_authority_refs: *id001
-  authority_classification: CURRENT_AUTHORITY_BOUND
-  inherited_visual_authority_refs: *id001
-  verification_purpose: Prove GLOBAL-HOME-SHELL-NAVIGATION scenario HOME-1920-EXPANDED preserves Current visual geometry, semantic order, authority inheritance, and observable state
-    without unauthorized topology change.
+  - control_uid: NOT_APPLICABLE
+    applicability: NOT_APPLICABLE_WITH_AUTHORITY
+    reason_source: CURRENT_PERMISSION_OR_STATE_AUTHORITY
+  disabled_reason_source: CURRENT_PERMISSION_OR_STATE_AUTHORITY
+  current_next_action: OPEN_CANONICAL_TARGET
+  current_next_gate: ACCOUNT_PERMISSION_ASSIGNMENT
+  current_next_action_or_gate:
+    action_uid: OPEN_CANONICAL_TARGET
+    gate_uid: ACCOUNT_PERMISSION_ASSIGNMENT
+  source_authority_refs: *id007
+  authority_classification: CURRENT_SOURCE_GROUNDED_VISUAL_PROJECTION
+  inherited_visual_authority_refs:
+  - STAGE_EXECUTION/SHARED_AUTHORITY/GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY.yaml
+  - STAGE_EXECUTION/STAGE-03/WU-STAGE03-GLOBAL-HOME-SHELL-NAVIGATION-001/VISUAL_GEOMETRY_CONTRACT.yaml
+  verification_purpose: Prove HOME-1920-EXPANDED preserves current workbench, operation/state ownership, visual anchors, inherited style and semantic order.
+  design_review_item_uids:
+  - DR-HOME-1920-EXPANDED-GEOMETRY
+  - DR-HOME-1920-EXPANDED-TOPOLOGY
+  - DR-HOME-1920-EXPANDED-STATE
   evidence_ref: EVIDENCE/VISUAL_SCENARIOS/HOME-1920-EXPANDED.svg
   annotation_status: CURRENT_REVERIFY_MATERIALIZED
+  status: CURRENT_REVERIFY_MATERIALIZED
 shared_visual_annotation_unambiguous: true
 physical_fragment_resolution_complete: true
 status: CURRENT_REVERIFY_MATERIALIZED

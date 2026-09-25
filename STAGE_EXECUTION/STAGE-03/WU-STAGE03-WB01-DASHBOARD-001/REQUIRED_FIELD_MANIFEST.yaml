@@ -21,4 +21,185 @@ source_responsibilities:
 - DASHBOARD_DETAIL_DRAWER
 - SHARED_GLOBAL_SHELL
 - PAGE_READ_TO_14_SECTION_SUMMARY_TO_OPTIONAL_DRAWER
-status: CURRENT
+status: CURRENT_REVERIFY_MATERIALIZED
+governance_uid: GOV-REV-20260925-NORMATIVE-EXECUTION-MATRIX
+governance_head: 335d8a01d6d3eb6f0ed951ffc40216029b19d4e3
+normative_execution_matrix_ref: STAGE_EXECUTION/STAGE-03/WU-STAGE03-WB01-DASHBOARD-001/NORMATIVE_EXECUTION_MATRIX.yaml
+row_contracts:
+- row_class: TYPOGRAPHY_BASELINE
+  artifact_ref: STAGE_EXECUTION/STAGE-03/WU-STAGE03-WB01-DASHBOARD-001/VISUAL_GEOMETRY_CONTRACT.yaml
+  denominator_path:
+  - typography_baseline_rows
+  row_identity_field: target_uid
+  required_fields:
+  - target_uid
+  - page_or_scope_uid
+  - viewport_or_breakpoint_uid
+  - language
+  - theme
+  - typography_authority_ref
+  - font_family_token_or_value_ref
+  - font_size_token_or_value_ref
+  - font_weight_token_or_value_ref
+  - line_height_token_or_value_ref
+  - letter_spacing_token_or_value_ref
+  - expected_font_family
+  - expected_font_size_px
+  - expected_font_weight
+  - expected_line_height_px
+  - expected_letter_spacing_px
+  - expected_text_container_min_width_px
+  - expected_text_container_max_width_px
+  - wrap_rule
+  - truncation_rule
+  - expected_line_count_rule
+  - allowed_tolerance
+- row_class: VISUAL_ANCHOR
+  artifact_ref: STAGE_EXECUTION/STAGE-03/WU-STAGE03-WB01-DASHBOARD-001/VISUAL_GEOMETRY_CONTRACT.yaml
+  denominator_path:
+  - visual_anchors
+  row_identity_field: anchor_uid
+  required_fields:
+  - anchor_uid
+  - position_rule
+  - dimension_rule
+  - relationship_rule
+  - lock_status
+- row_class: VISUAL_INHERITANCE
+  artifact_ref: STAGE_EXECUTION/STAGE-03/WU-STAGE03-WB01-DASHBOARD-001/VISUAL_INHERITANCE_MATRIX.yaml
+  denominator_path:
+  - rows
+  row_identity_field: visual_region
+  required_fields:
+  - source_authority_uid
+  - source_authority_path
+  - source_authority_version
+  - source_authority_hash
+  - inherited_rule_or_token
+  - lock_override_status
+  - allowed_page_local_variation
+  - required_change_set_when_deviation
+- row_class: VISUAL_CANDIDATE_ANNOTATION
+  artifact_ref: STAGE_EXECUTION/STAGE-03/WU-STAGE03-WB01-DASHBOARD-001/VISUAL_REFERENCE_ANNOTATION.yaml
+  denominator_path:
+  - annotations
+  row_identity_field: scenario_uid
+  required_fields:
+  - visual_uid
+  - page_or_scope_uid
+  - scenario_uid
+  - state_uid
+  - workbench_uid
+  - journey_uid
+  - parent_visual_uid
+  - design_version
+  - basic_design_change_set_uid
+  - viewport
+  - language
+  - theme
+  - applicable_business_entity_or_operation
+  - visible_sections
+  - conditional_sections
+  - locked_regions
+  - editable_regions
+  - visual_anchor_uids
+  - primary_controls
+  - disabled_or_blocked_controls
+  - current_next_action_or_gate
+  - source_authority_refs
+  - authority_classification
+  - inherited_visual_authority_refs
+  - verification_purpose
+- row_class: VISUAL_SCENARIO_COVERAGE
+  artifact_ref: STAGE_EXECUTION/STAGE-03/WU-STAGE03-WB01-DASHBOARD-001/VISUAL_SCENARIO_EVIDENCE_SET.yaml
+  denominator_path:
+  - scenarios
+  row_identity_field: scenario_uid
+  required_fields:
+  - scenario_uid
+  - evidence_ref
+  - status
+  - workbench_uid
+  - journey_uid
+  - function_or_operation_uids
+  - state_uids
+  - control_or_system_trigger_uids
+  - visual_anchor_uids
+  - visual_style_ref
+  - visual_inheritance_ref
+  - visual_reference_annotation_ref
+  - design_review_item_uids
+  - semantic_order_ref
+  - functional_topology_ref
+  - coverage_status
+- row_class: CROSS_STAGE_HANDOFF
+  artifact_ref: STAGE_EXECUTION/STAGE-03/WU-STAGE03-WB01-DASHBOARD-001/EVIDENCE/CROSS_STAGE_HANDOFF_READINESS_LEDGER.yaml
+  denominator_path:
+  - required_edges
+  row_identity_field: edge_uid
+  required_fields:
+  - edge_uid
+  - producer_stage_uid
+  - producer_capability
+  - producer_output_uid
+  - producer_output_type
+  - producer_owner_path
+  - producer_evidence_ref
+  - producer_sha256
+  - producer_version
+  - producer_schema
+  - consumer_stage_uid
+  - consumer_capability
+  - consumer_input_uid
+  - consumer_input_type
+  - consumer_owner
+  - consumer_schema
+  - applicability
+  - reference_resolution_status
+  - physical_materialization_status
+  - parse_schema_status
+  - required_field_completeness_status
+  - denominator_inclusion_status
+  - consumer_admission_readiness_result
+  - unresolved_dependency_count
+  - blocking_owner
+  - reentry_target
+  - current_evidence_ref
+- row_class: PAGE_SECTION_GEOMETRY
+  artifact_ref: STAGE_EXECUTION/STAGE-03/WU-STAGE03-WB01-DASHBOARD-001/VISUAL_GEOMETRY_CONTRACT.yaml
+  denominator_path:
+  - section_geometry_rows
+  row_identity_field: section_uid
+  required_fields:
+  - section_uid
+  - label
+  - component_uid
+  - row_group
+  - span_ge_1440
+  - height_px
+  - control_uid
+  - field_identity
+  - render_schema_uid
+  - canonical_order_locked
+- row_class: CONTROL_VISUAL_BINDING
+  artifact_ref: STAGE_EXECUTION/STAGE-03/WU-STAGE03-WB01-DASHBOARD-001/VISUAL_GEOMETRY_CONTRACT.yaml
+  denominator_path:
+  - control_visual_rows
+  row_identity_field: control_uid
+  required_fields:
+  - section_uid
+  - control_uid
+  - control_type
+  - visible_label
+  - trigger_location
+  - card_body_clickable
+  - permission
+  - gate_uid
+  - operation_uid
+  - api
+  - runtime_owner
+  - persistence_owner
+  - render_schema_uid
+  - action_uid_disposition
+manifest_semantics: EXACT_ROW_AND_REQUIRED_FIELD_CONTRACT
+summary_only_completion_credit: 0

@@ -28,4 +28,123 @@ required_field_completeness_complete: true
 denominator_reconciled: true
 consumer_readiness_complete: true
 unresolved_required_dependency_total: 0
-status: PASS
+status: PASS_CURRENT_REVERIFY
+required_edge_fields:
+- edge_uid
+- producer_stage_uid
+- producer_capability
+- producer_output_uid
+- producer_output_type
+- producer_owner_path
+- producer_evidence_ref
+- producer_sha256
+- producer_version
+- producer_schema
+- consumer_stage_uid
+- consumer_capability
+- consumer_input_uid
+- consumer_input_type
+- consumer_owner
+- consumer_schema
+- applicability
+- reference_resolution_status
+- physical_materialization_status
+- parse_schema_status
+- required_field_completeness_status
+- denominator_inclusion_status
+- consumer_admission_readiness_result
+- unresolved_dependency_count
+- blocking_owner
+- reentry_target
+- current_evidence_ref
+required_edges:
+- edge_uid: workspace:WB-01:STAGE-02:PAGE_CONSTRUCTION_SPEC_PACKAGE:TO:STAGE-04
+  producer_stage_uid: STAGE-02
+  producer_capability: FUNCTIONAL_CONTRACT
+  producer_output_uid: PCSP-STAGE02-WB01-001
+  producer_output_type: PAGE_CONSTRUCTION_SPEC_PACKAGE
+  producer_owner_path: STAGE_EXECUTION/STAGE-02/WU-STAGE02-WB01-DASHBOARD-001/PAGE_CONSTRUCTION_SPEC_PACKAGE.yaml
+  producer_evidence_ref: STAGE_EXECUTION/STAGE-02/WU-STAGE02-WB01-DASHBOARD-001/PAGE_CONSTRUCTION_SPEC_PACKAGE.yaml
+  producer_sha256: 78fb97199c515ed5b9320556f0bfe0d83040bb00e4722be83b00ef2b96fca3da
+  producer_version: NOT_SEPARATELY_VERSIONED_CURRENT_ARTIFACT
+  producer_schema: PAGE_CONSTRUCTION_SPEC_PACKAGE@STAGE-02
+  consumer_stage_uid: STAGE-04
+  consumer_capability: FOUNDATION_FREEZE
+  consumer_input_uid: PAGE_CONSTRUCTION_SPEC_PACKAGE
+  consumer_input_type: PAGE_CONSTRUCTION_SPEC_PACKAGE
+  consumer_owner: STAGE04_FOUNDATION_FREEZE
+  consumer_schema: PAGE_CONSTRUCTION_SPEC_PACKAGE
+  applicability: REQUIRED
+  reference_resolution_status: PASS
+  physical_materialization_status: PASS
+  parse_schema_status: PASS
+  required_field_completeness_status: PASS
+  denominator_inclusion_status: PASS
+  consumer_admission_readiness_result: PASS
+  unresolved_dependency_count: 0
+  blocking_owner: NOT_APPLICABLE_NO_BLOCKER
+  reentry_target: NOT_APPLICABLE_NO_REENTRY
+  current_evidence_ref: STAGE_EXECUTION/STAGE-02/WU-STAGE02-WB01-DASHBOARD-001/PAGE_CONSTRUCTION_SPEC_PACKAGE.yaml
+- edge_uid: workspace:WB-01:STAGE-03:VISUAL_DESIGN_SPEC_PACKAGE:TO:STAGE-04
+  producer_stage_uid: STAGE-03
+  producer_capability: VISUAL_DESIGN
+  producer_output_uid: VDSP-STAGE03-WB01-001
+  producer_output_type: VISUAL_DESIGN_SPEC_PACKAGE
+  producer_owner_path: STAGE_EXECUTION/STAGE-03/WU-STAGE03-WB01-DASHBOARD-001/VISUAL_DESIGN_SPEC_PACKAGE.yaml
+  producer_evidence_ref: STAGE_EXECUTION/STAGE-03/WU-STAGE03-WB01-DASHBOARD-001/VISUAL_DESIGN_SPEC_PACKAGE.yaml
+  producer_sha256: 0f4c53d5f480db187b84591e58eb83cd4f5e7a0b6157bc646429de8e6fa0f308
+  producer_version: NOT_SEPARATELY_VERSIONED_CURRENT_ARTIFACT
+  producer_schema: VISUAL_DESIGN_SPEC_PACKAGE@STAGE-03
+  consumer_stage_uid: STAGE-04
+  consumer_capability: FOUNDATION_FREEZE
+  consumer_input_uid: VISUAL_DESIGN_SPEC_PACKAGE
+  consumer_input_type: VISUAL_DESIGN_SPEC_PACKAGE
+  consumer_owner: STAGE04_FOUNDATION_FREEZE
+  consumer_schema: VISUAL_DESIGN_SPEC_PACKAGE
+  applicability: REQUIRED
+  reference_resolution_status: PASS
+  physical_materialization_status: PASS
+  parse_schema_status: PASS
+  required_field_completeness_status: PASS
+  denominator_inclusion_status: PASS
+  consumer_admission_readiness_result: PASS
+  unresolved_dependency_count: 0
+  blocking_owner: NOT_APPLICABLE_NO_BLOCKER
+  reentry_target: NOT_APPLICABLE_NO_REENTRY
+  current_evidence_ref: STAGE_EXECUTION/STAGE-03/WU-STAGE03-WB01-DASHBOARD-001/VISUAL_DESIGN_SPEC_PACKAGE.yaml
+- edge_uid: workspace:WB-01:STAGE-02:DEPENDENCY_MAP:TO:STAGE-04
+  producer_stage_uid: STAGE-02
+  producer_capability: FUNCTIONAL_CONTRACT
+  producer_output_uid: DEP-STAGE02-WB01-001
+  producer_output_type: DEPENDENCY_MAP
+  producer_owner_path: STAGE_EXECUTION/STAGE-02/WU-STAGE02-WB01-DASHBOARD-001/DEPENDENCY_MAP.yaml
+  producer_evidence_ref: STAGE_EXECUTION/STAGE-02/WU-STAGE02-WB01-DASHBOARD-001/DEPENDENCY_MAP.yaml
+  producer_sha256: 85e286820f2360e121b7b23b10ed1ed8f2643f181efccec1beb7886efc04e96c
+  producer_version: NOT_SEPARATELY_VERSIONED_CURRENT_ARTIFACT
+  producer_schema: DEPENDENCY_MAP@STAGE-02
+  consumer_stage_uid: STAGE-04
+  consumer_capability: FOUNDATION_FREEZE
+  consumer_input_uid: DEPENDENCY_MAP
+  consumer_input_type: DEPENDENCY_MAP
+  consumer_owner: STAGE04_FOUNDATION_FREEZE
+  consumer_schema: DEPENDENCY_MAP
+  applicability: REQUIRED
+  reference_resolution_status: PASS
+  physical_materialization_status: PASS
+  parse_schema_status: PASS
+  required_field_completeness_status: PASS
+  denominator_inclusion_status: PASS
+  consumer_admission_readiness_result: PASS
+  unresolved_dependency_count: 0
+  blocking_owner: NOT_APPLICABLE_NO_BLOCKER
+  reentry_target: NOT_APPLICABLE_NO_REENTRY
+  current_evidence_ref: STAGE_EXECUTION/STAGE-02/WU-STAGE02-WB01-DASHBOARD-001/DEPENDENCY_MAP.yaml
+required_edge_total: 3
+reference_resolved_total: 3
+physically_materialized_total: 3
+parse_schema_valid_total: 3
+required_field_complete_total: 3
+denominator_included_total: 3
+consumer_ready_total: 3
+reentry_required_total: 0
+impacted_reverify_required_consumer_total: 0

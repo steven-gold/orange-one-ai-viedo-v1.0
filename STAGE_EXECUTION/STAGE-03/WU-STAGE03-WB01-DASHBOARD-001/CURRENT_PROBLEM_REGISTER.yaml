@@ -6,7 +6,7 @@ governed_unit_uid: workspace:WB-01
 problems:
 - problem_uid: GAP-WB01-EXACT-CONTROL-ACTION-GATE-BINDING-001
   class: FALSE_POSITIVE_AUTHORITY_INTERPRETATION
-  original_finding: "Action UID appeared absent in classified projection."
+  original_finding: Action UID appeared absent in classified projection.
   resolution_evidence:
   - source: ACPOS_WB-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx
   - workflow_run_id: 36014961434
@@ -88,6 +88,66 @@ problems:
   - scope_manifest_ref: CURRENT_EXECUTION_SCOPE_MANIFEST.yaml
   - remediation_commit: 67b15116c92573953ce0e02590cc72f3561d5f38
   status: REMEDIATED_PENDING_FRESH_REVERIFY
+- problem_uid: GAP-STAGE03-WB-NORMATIVE_MATRIX_SEMANTIC_UNDERCOVERAGE-20260925
+  class: STAGE03_MATERIALIZATION_UNDERCOVERAGE
+  finding: NORMATIVE_EXECUTION_MATRIX used artifact-presence/summary coverage instead of exact semantic row-field binding.
+  owner: VISUAL_DESIGN
+  product_completion_credit: 0
+  required_disposition: RESOLVED_BY_EXACT_SEMANTIC_MATRIX
+  resolution_evidence:
+  - governance_uid: GOV-REV-20260925-NORMATIVE-EXECUTION-MATRIX
+  - governance_head: 335d8a01d6d3eb6f0ed951ffc40216029b19d4e3
+  - normative_execution_matrix_ref: STAGE_EXECUTION/STAGE-03/WU-STAGE03-WB01-DASHBOARD-001/NORMATIVE_EXECUTION_MATRIX.yaml
+  status: RESOLVED_PENDING_CURRENT_HEAD_VALIDATION
+- problem_uid: GAP-STAGE03-WB-REQUIRED_FIELD_MANIFEST_SUMMARY_ONLY-20260925
+  class: STAGE03_MATERIALIZATION_UNDERCOVERAGE
+  finding: REQUIRED_FIELD_MANIFEST listed dimensions but did not define row denominators and required field schemas.
+  owner: VISUAL_DESIGN
+  product_completion_credit: 0
+  required_disposition: RESOLVED_BY_ROW_CONTRACT_MANIFEST
+  resolution_evidence:
+  - governance_uid: GOV-REV-20260925-NORMATIVE-EXECUTION-MATRIX
+  - governance_head: 335d8a01d6d3eb6f0ed951ffc40216029b19d4e3
+  - normative_execution_matrix_ref: STAGE_EXECUTION/STAGE-03/WU-STAGE03-WB01-DASHBOARD-001/NORMATIVE_EXECUTION_MATRIX.yaml
+  status: RESOLVED_PENDING_CURRENT_HEAD_VALIDATION
+- problem_uid: GAP-STAGE03-WB-VISUAL_REFERENCE_ANNOTATION_UNDERCOVERAGE-20260925
+  class: STAGE03_MATERIALIZATION_UNDERCOVERAGE
+  finding: Visual reference annotation lacked the complete S079 candidate/scenario annotation contract.
+  owner: VISUAL_DESIGN
+  product_completion_credit: 0
+  required_disposition: RESOLVED_BY_PER_SCENARIO_ANNOTATION
+  resolution_evidence:
+  - governance_uid: GOV-REV-20260925-NORMATIVE-EXECUTION-MATRIX
+  - governance_head: 335d8a01d6d3eb6f0ed951ffc40216029b19d4e3
+  - normative_execution_matrix_ref: STAGE_EXECUTION/STAGE-03/WU-STAGE03-WB01-DASHBOARD-001/NORMATIVE_EXECUTION_MATRIX.yaml
+  status: RESOLVED_PENDING_CURRENT_HEAD_VALIDATION
+- problem_uid: GAP-STAGE03-WB-SCENARIO_FUNCTION_VISUAL_COVERAGE_UNDERCOVERAGE-20260925
+  class: STAGE03_MATERIALIZATION_UNDERCOVERAGE
+  finding: Scenario evidence lacked exact Workbench/operation/state/control/anchor/style/review bindings.
+  owner: VISUAL_DESIGN
+  product_completion_credit: 0
+  required_disposition: RESOLVED_BY_SCENARIO_FUNCTION_COVERAGE
+  resolution_evidence:
+  - governance_uid: GOV-REV-20260925-NORMATIVE-EXECUTION-MATRIX
+  - governance_head: 335d8a01d6d3eb6f0ed951ffc40216029b19d4e3
+  - normative_execution_matrix_ref: STAGE_EXECUTION/STAGE-03/WU-STAGE03-WB01-DASHBOARD-001/NORMATIVE_EXECUTION_MATRIX.yaml
+  status: RESOLVED_PENDING_CURRENT_HEAD_VALIDATION
+- problem_uid: GAP-STAGE03-WB-CROSS_STAGE_HANDOFF_ROW_FIELD_UNDERCOVERAGE-20260925
+  class: STAGE03_MATERIALIZATION_UNDERCOVERAGE
+  finding: Handoff ledger used summary readiness fields and omitted S075/S071/S085 required edge fields.
+  owner: VISUAL_DESIGN
+  product_completion_credit: 0
+  required_disposition: RESOLVED_BY_COMPLETE_HANDOFF_EDGE_ROWS
+  resolution_evidence:
+  - governance_uid: GOV-REV-20260925-NORMATIVE-EXECUTION-MATRIX
+  - governance_head: 335d8a01d6d3eb6f0ed951ffc40216029b19d4e3
+  - normative_execution_matrix_ref: STAGE_EXECUTION/STAGE-03/WU-STAGE03-WB01-DASHBOARD-001/NORMATIVE_EXECUTION_MATRIX.yaml
+  status: RESOLVED_PENDING_CURRENT_HEAD_VALIDATION
 open_problem_total: 0
-closure_blocker_total: 0
-status: CURRENT_REMEDIATED_PENDING_FRESH_REVERIFY
+closure_blocker_total: 1
+status: TECHNICAL_GAPS_RESOLVED_PENDING_HUMAN_VISUAL_REVIEW
+non_problem_closure_gates:
+- gate_uid: HUMAN_VISUAL_REVIEW
+  candidate_uid: VIS-CANDIDATE-WB01-002
+  status: PENDING_HUMAN_REVIEW
+  stage_exit_credit: 0

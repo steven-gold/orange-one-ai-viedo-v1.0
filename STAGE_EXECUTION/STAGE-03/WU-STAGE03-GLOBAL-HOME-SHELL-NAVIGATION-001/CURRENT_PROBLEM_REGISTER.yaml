@@ -60,6 +60,61 @@ problems:
   - scope_manifest_ref: CURRENT_EXECUTION_SCOPE_MANIFEST.yaml
   - remediation_commit: 97802f5618ac955e72661a7583ce1130de2cc2d0
   status: REMEDIATED_PENDING_FRESH_REVERIFY
+- problem_uid: GAP-STAGE03-HOME-NORMATIVE_MATRIX_SEMANTIC_UNDERCOVERAGE-20260925
+  class: STAGE03_MATERIALIZATION_UNDERCOVERAGE
+  finding: NORMATIVE_EXECUTION_MATRIX used artifact-presence/summary coverage instead of exact semantic row-field binding.
+  owner: VISUAL_DESIGN
+  product_completion_credit: 0
+  required_disposition: RESOLVED_BY_EXACT_SEMANTIC_MATRIX
+  resolution_evidence:
+  - governance_uid: GOV-REV-20260925-NORMATIVE-EXECUTION-MATRIX
+  - governance_head: 335d8a01d6d3eb6f0ed951ffc40216029b19d4e3
+  - normative_execution_matrix_ref: STAGE_EXECUTION/STAGE-03/WU-STAGE03-GLOBAL-HOME-SHELL-NAVIGATION-001/NORMATIVE_EXECUTION_MATRIX.yaml
+  status: RESOLVED_PENDING_CURRENT_HEAD_VALIDATION
+- problem_uid: GAP-STAGE03-HOME-REQUIRED_FIELD_MANIFEST_SUMMARY_ONLY-20260925
+  class: STAGE03_MATERIALIZATION_UNDERCOVERAGE
+  finding: REQUIRED_FIELD_MANIFEST listed dimensions but did not define row denominators and required field schemas.
+  owner: VISUAL_DESIGN
+  product_completion_credit: 0
+  required_disposition: RESOLVED_BY_ROW_CONTRACT_MANIFEST
+  resolution_evidence:
+  - governance_uid: GOV-REV-20260925-NORMATIVE-EXECUTION-MATRIX
+  - governance_head: 335d8a01d6d3eb6f0ed951ffc40216029b19d4e3
+  - normative_execution_matrix_ref: STAGE_EXECUTION/STAGE-03/WU-STAGE03-GLOBAL-HOME-SHELL-NAVIGATION-001/NORMATIVE_EXECUTION_MATRIX.yaml
+  status: RESOLVED_PENDING_CURRENT_HEAD_VALIDATION
+- problem_uid: GAP-STAGE03-HOME-VISUAL_REFERENCE_ANNOTATION_UNDERCOVERAGE-20260925
+  class: STAGE03_MATERIALIZATION_UNDERCOVERAGE
+  finding: Visual reference annotation lacked the complete S079 candidate/scenario annotation contract.
+  owner: VISUAL_DESIGN
+  product_completion_credit: 0
+  required_disposition: RESOLVED_BY_PER_SCENARIO_ANNOTATION
+  resolution_evidence:
+  - governance_uid: GOV-REV-20260925-NORMATIVE-EXECUTION-MATRIX
+  - governance_head: 335d8a01d6d3eb6f0ed951ffc40216029b19d4e3
+  - normative_execution_matrix_ref: STAGE_EXECUTION/STAGE-03/WU-STAGE03-GLOBAL-HOME-SHELL-NAVIGATION-001/NORMATIVE_EXECUTION_MATRIX.yaml
+  status: RESOLVED_PENDING_CURRENT_HEAD_VALIDATION
+- problem_uid: GAP-STAGE03-HOME-SCENARIO_FUNCTION_VISUAL_COVERAGE_UNDERCOVERAGE-20260925
+  class: STAGE03_MATERIALIZATION_UNDERCOVERAGE
+  finding: Scenario evidence lacked exact Workbench/operation/state/control/anchor/style/review bindings.
+  owner: VISUAL_DESIGN
+  product_completion_credit: 0
+  required_disposition: RESOLVED_BY_SCENARIO_FUNCTION_COVERAGE
+  resolution_evidence:
+  - governance_uid: GOV-REV-20260925-NORMATIVE-EXECUTION-MATRIX
+  - governance_head: 335d8a01d6d3eb6f0ed951ffc40216029b19d4e3
+  - normative_execution_matrix_ref: STAGE_EXECUTION/STAGE-03/WU-STAGE03-GLOBAL-HOME-SHELL-NAVIGATION-001/NORMATIVE_EXECUTION_MATRIX.yaml
+  status: RESOLVED_PENDING_CURRENT_HEAD_VALIDATION
+- problem_uid: GAP-STAGE03-HOME-CROSS_STAGE_HANDOFF_ROW_FIELD_UNDERCOVERAGE-20260925
+  class: STAGE03_MATERIALIZATION_UNDERCOVERAGE
+  finding: Handoff ledger used summary readiness fields and omitted S075/S071/S085 required edge fields.
+  owner: VISUAL_DESIGN
+  product_completion_credit: 0
+  required_disposition: RESOLVED_BY_COMPLETE_HANDOFF_EDGE_ROWS
+  resolution_evidence:
+  - governance_uid: GOV-REV-20260925-NORMATIVE-EXECUTION-MATRIX
+  - governance_head: 335d8a01d6d3eb6f0ed951ffc40216029b19d4e3
+  - normative_execution_matrix_ref: STAGE_EXECUTION/STAGE-03/WU-STAGE03-GLOBAL-HOME-SHELL-NAVIGATION-001/NORMATIVE_EXECUTION_MATRIX.yaml
+  status: RESOLVED_PENDING_CURRENT_HEAD_VALIDATION
 open_problem_total: 0
 closure_blocker_total: 0
-status: CURRENT_REMEDIATED_PENDING_FRESH_REVERIFY
+status: TECHNICAL_GAPS_RESOLVED_PENDING_CURRENT_HEAD_VALIDATION
