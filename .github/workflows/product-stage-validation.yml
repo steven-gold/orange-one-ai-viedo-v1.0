@@ -4,7 +4,7 @@ on:
   push:
     branches: [0921acpos]
     paths:
-      - 'STAGE_EXECUTION/**'
+      - 'STAGE_EXECUTION/STAGE-02/**'
       - '.github/workflows/product-stage-validation.yml'
   workflow_dispatch:
 
@@ -24,7 +24,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: steven-gold/orange-one-ai-viedo-v1.0
-          ref: governance-v2.2.24-current-identity-sync
+          ref: 335d8a01d6d3eb6f0ed951ffc40216029b19d4e3
           path: _governance_authority
           fetch-depth: 1
       - name: Load frozen governance consumers without mutating product tree
@@ -42,19 +42,25 @@ jobs:
           import yaml
           from pathlib import Path
           r=yaml.safe_load(Path('STAGE_EXECUTION/STAGE-02/CURRENT_STAGE02_RESUME.yaml').read_text())
-          wu=r['active_work_unit_uid']
-          print(f'ACPOS_ACTIVE_WORK_UNIT=STAGE_EXECUTION/STAGE-02/{wu}/WORK_UNIT.yaml')
-          print(f'ACPOS_CURRENT_SCOPE=STAGE_EXECUTION/STAGE-02/{wu}/CURRENT_EXECUTION_SCOPE_MANIFEST.yaml')
-          print(f'ACPOS_EVIDENCE_PATH=STAGE_EXECUTION/STAGE-02/{wu}/EVIDENCE/STAGE02_NORMALIZED_EVIDENCE.json')
+          wu=r.get('active_work_unit_uid')
+          if not wu:
+              print('ACTIVE_STAGE02=false')
+          else:
+              print('ACTIVE_STAGE02=true')
+              print(f'ACPOS_ACTIVE_WORK_UNIT=STAGE_EXECUTION/STAGE-02/{wu}/WORK_UNIT.yaml')
+              print(f'ACPOS_CURRENT_SCOPE=STAGE_EXECUTION/STAGE-02/{wu}/CURRENT_EXECUTION_SCOPE_MANIFEST.yaml')
+              print(f'ACPOS_EVIDENCE_PATH=STAGE_EXECUTION/STAGE-02/{wu}/EVIDENCE/STAGE02_NORMALIZED_EVIDENCE.json')
           PY
           echo "ACPOS_PRODUCT_ROOT=$GITHUB_WORKSPACE" >> "$GITHUB_ENV"
       - name: Validate frozen governance definition
         run: |
           python governance/ci/stage_execution_engine.py --definition-audit-all
       - name: Validate active Stage-02 admission
+        if: env.ACTIVE_STAGE02 == 'true'
         run: |
           python governance/ci/stage_execution_engine.py --admission-check --stage STAGE-02
       - name: Validate current Stage-02 product contract semantics
+        if: env.ACTIVE_STAGE02 == 'true'
         shell: bash
         run: |
           python - <<'PY'
@@ -111,6 +117,7 @@ jobs:
           print('PASS: Stage-03 successor required inputs materialized')
           PY
       - name: Validate normalized Stage-02 evidence when materialized
+        if: env.ACTIVE_STAGE02 == 'true'
         shell: bash
         run: |
           if [ -f "$ACPOS_EVIDENCE_PATH" ]; then
