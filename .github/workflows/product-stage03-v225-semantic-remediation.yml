@@ -8,7 +8,7 @@ permissions:
   contents: write
 concurrency:
   group: stage03-v225-semantic-remediation
-  cancel-in-progress: false
+  cancel-in-progress: true
 jobs:
   remediate:
     runs-on: ubuntu-24.04
