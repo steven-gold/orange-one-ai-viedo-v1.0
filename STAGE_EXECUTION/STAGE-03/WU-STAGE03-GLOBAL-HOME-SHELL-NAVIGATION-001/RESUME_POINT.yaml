@@ -2,7 +2,7 @@ artifact_uid: RESUME-WU-STAGE03-GLOBAL-HOME-SHELL-NAVIGATION-001
 artifact_type: WORK_UNIT_RESUME_POINT
 stage_uid: STAGE-03
 work_unit_uid: WU-STAGE03-GLOBAL-HOME-SHELL-NAVIGATION-001
-resume_point: TERMINAL_EVIDENCE_MATERIALIZATION
+resume_point: STAGE04_UNIT_RESOLUTION_GATE
 completed_operations:
 - VISUAL_SPEC_COMPILE
 - GEOMETRY_CONTRACT_COMPILE
@@ -14,9 +14,11 @@ completed_operations:
 - VISUAL_INHERITANCE_MATRIX_COMPILE
 - VISUAL_SCENARIO_EVIDENCE_COMPILE
 stage3_guard_result: PASS
-stage_exit_authorized: false
+stage_exit_authorized: true
 next_stage_uid: STAGE-04
 reentry_gate_ref: WORK_UNIT_REENTRY_RESOLUTION_GATE.yaml
 prior_terminal_receipt_ref: HISTORY/V224/WORK_UNIT_TERMINAL_RECEIPT.yaml
 prior_terminal_receipt_disposition: HISTORICAL_PREDECESSOR_EVIDENCE_ONLY
-status: CLOSURE_CANDIDATE_PENDING_CURRENT_EVIDENCE
+status: CLOSED
+
+terminal_receipt_ref: WORK_UNIT_TERMINAL_RECEIPT.yaml
