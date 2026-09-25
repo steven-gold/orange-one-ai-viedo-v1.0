@@ -379,8 +379,11 @@ jobs:
                         add('WEB-GOV-01-S022',f'CONTROL:{fld}','VISUAL_GEOMETRY_CONTRACT',b/'VISUAL_GEOMETRY_CONTRACT.yaml','control_visual_rows',r['control_uid'],['control_visual_rows',ri,fld],f'CONTROL:{fld}')
                     add('WEB-GOV-01-S023','FIELD:PERSISTENCE_IDENTITY','VISUAL_GEOMETRY_CONTRACT',b/'VISUAL_GEOMETRY_CONTRACT.yaml','control_visual_rows',r['control_uid'],['control_visual_rows',ri,'persistence_owner'],'FIELD_IDENTITY')
             else:
-                # System-logic unit has no Page Field rows; explicit authority-backed N/A.
-                add('WEB-GOV-01-S023','FIELD_SCHEMA_NOT_APPLICABLE_TO_SYSTEM_LOGIC_UNIT','VISUAL_DESIGN_SPEC_PACKAGE',b/'VISUAL_DESIGN_SPEC_PACKAGE.yaml','governed_unit_type','GLOBAL-HOME-SHELL-NAVIGATION',['governed_unit_uid'],'FIELD_NA','NOT_APPLICABLE_WITH_AUTHORITY')
+                # SYSTEM_LOGIC_UNIT exposes system-trigger visual regions but has no Page Section/Control/Field canonical registry.
+                # Do not invent SEC/CTRL/FIELD UIDs at Stage-03; bind explicit N/A to Current Work Unit type.
+                add('WEB-GOV-01-S021','PAGE_SECTION_SCHEMA_NOT_APPLICABLE_TO_SYSTEM_LOGIC_UNIT','WORK_UNIT',b/'WORK_UNIT.yaml','governed_unit_type','GLOBAL-HOME-SHELL-NAVIGATION',['governed_unit_type'],'SECTION_NA','NOT_APPLICABLE_WITH_AUTHORITY')
+                add('WEB-GOV-01-S022','PAGE_CONTROL_SCHEMA_NOT_APPLICABLE_TO_SYSTEM_LOGIC_UNIT','WORK_UNIT',b/'WORK_UNIT.yaml','governed_unit_type','GLOBAL-HOME-SHELL-NAVIGATION',['governed_unit_type'],'CONTROL_NA','NOT_APPLICABLE_WITH_AUTHORITY')
+                add('WEB-GOV-01-S023','PAGE_FIELD_SCHEMA_NOT_APPLICABLE_TO_SYSTEM_LOGIC_UNIT','WORK_UNIT',b/'WORK_UNIT.yaml','governed_unit_type','GLOBAL-HOME-SHELL-NAVIGATION',['governed_unit_type'],'FIELD_NA','NOT_APPLICABLE_WITH_AUTHORITY')
 
             vr=load(b/'VISUAL_REFERENCE_ANNOTATION.yaml')
             for ri,r in enumerate(vr['candidate_annotations']):
