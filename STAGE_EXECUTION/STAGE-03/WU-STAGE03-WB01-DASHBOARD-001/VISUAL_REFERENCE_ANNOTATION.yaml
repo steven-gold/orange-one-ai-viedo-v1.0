@@ -5,32 +5,509 @@ governed_unit_uid: workspace:WB-01
 candidate_uid: VIS-CANDIDATE-WB01-002
 annotation_resolution_rule: PHYSICAL_FILE_AND_FRAGMENT_MUST_EXIST
 annotations:
-- anchor_uid: VA-HOME-HEADER-TOP
-  target: STAGE_EXECUTION/STAGE-03/WU-STAGE03-GLOBAL-HOME-SHELL-NAVIGATION-001/EVIDENCE/VISUAL_SCENARIOS/HOME-1440-COLLAPSED.svg#header
-  annotation_scope: INHERITED_SHARED_OWNER
-  owner_uid: GLOBAL-HOME-SHELL-NAVIGATION
-  status: PHYSICALLY_RESOLVABLE
-- anchor_uid: VA-HOME-SIDEBAR-COLUMN
-  targets:
-  - STAGE_EXECUTION/STAGE-03/WU-STAGE03-GLOBAL-HOME-SHELL-NAVIGATION-001/EVIDENCE/VISUAL_SCENARIOS/HOME-1440-COLLAPSED.svg#sidebar
-  - STAGE_EXECUTION/STAGE-03/WU-STAGE03-GLOBAL-HOME-SHELL-NAVIGATION-001/EVIDENCE/VISUAL_SCENARIOS/HOME-1440-EXPANDED.svg#sidebar
-  annotation_scope: INHERITED_SHARED_OWNER
-  owner_uid: GLOBAL-HOME-SHELL-NAVIGATION
-  status: PHYSICALLY_RESOLVABLE
-- anchor_uid: VA-HOME-WORKSPACE-ORIGIN
-  targets:
-  - STAGE_EXECUTION/STAGE-03/WU-STAGE03-GLOBAL-HOME-SHELL-NAVIGATION-001/EVIDENCE/VISUAL_SCENARIOS/HOME-1440-COLLAPSED.svg#workspace
-  - STAGE_EXECUTION/STAGE-03/WU-STAGE03-GLOBAL-HOME-SHELL-NAVIGATION-001/EVIDENCE/VISUAL_SCENARIOS/HOME-1440-EXPANDED.svg#workspace
-  annotation_scope: INHERITED_SHARED_OWNER
-  owner_uid: GLOBAL-HOME-SHELL-NAVIGATION
-  status: PHYSICALLY_RESOLVABLE
-- {anchor_uid: VA-WB01-KPI-ROW, target: EVIDENCE/VISUAL_SCENARIOS/WB01-1440-MAIN.svg#kpi, annotation_scope: DIRECT_PAGE_OWNER, owner_uid: "workspace:WB-01", status: PHYSICALLY_RESOLVABLE}
-- {anchor_uid: VA-WB01-PROGRESS-ROW, target: EVIDENCE/VISUAL_SCENARIOS/WB01-1440-MAIN.svg#progress, annotation_scope: DIRECT_PAGE_OWNER, owner_uid: "workspace:WB-01", status: PHYSICALLY_RESOLVABLE}
-- {anchor_uid: VA-WB01-PRODUCTION-ROW, target: EVIDENCE/VISUAL_SCENARIOS/WB01-1440-MAIN.svg#production, annotation_scope: DIRECT_PAGE_OWNER, owner_uid: "workspace:WB-01", status: PHYSICALLY_RESOLVABLE}
-- {anchor_uid: VA-WB01-INFORMATION-ROW, target: EVIDENCE/VISUAL_SCENARIOS/WB01-1440-MAIN.svg#information, annotation_scope: DIRECT_PAGE_OWNER, owner_uid: "workspace:WB-01", status: PHYSICALLY_RESOLVABLE}
-- {anchor_uid: VA-WB01-RECENT-ROW, target: EVIDENCE/VISUAL_SCENARIOS/WB01-1440-MAIN.svg#recent, annotation_scope: DIRECT_PAGE_OWNER, owner_uid: "workspace:WB-01", status: PHYSICALLY_RESOLVABLE}
-- {anchor_uid: VA-WB01-DRAWER, target: EVIDENCE/VISUAL_SCENARIOS/WB01-DRAWER.svg#drawer, annotation_scope: DIRECT_PAGE_OWNER, owner_uid: "workspace:WB-01", status: PHYSICALLY_RESOLVABLE}
-annotation_count: 9
+- visual_uid: VIS-CANDIDATE-WB01-002
+  page_or_scope_uid: workspace:WB-01
+  scenario_uid: WB01-GE1440-COLLAPSED
+  state_uid: COLLAPSED
+  workbench_uid: WB01-DASHBOARD-MAIN
+  journey_uid: PAGE_READ_TO_14_SECTION_SUMMARY_TO_OPTIONAL_DRAWER
+  parent_visual_uid: NOT_APPLICABLE_WITH_AUTHORITY:ROOT_VISUAL_CANDIDATE
+  design_version: DESIGN-CANDIDATE-2026-09-20.1
+  basic_design_change_set_uid: VCS-STAGE03-WB01-001
+  viewport: '>=1440'
+  language: zh-TW
+  theme: dark-purple
+  applicable_business_entity_or_operation: &id002
+  - getDashboardReadModel
+  visible_sections:
+  - COMPANY-PROJECT-COUNT
+  - COMPANY-RUNNING-PROJECT-COUNT
+  - COMPANY-PENDING-ACTION-COUNT
+  - COMPANY-PENDING-REVIEW-COUNT
+  - COMPANY-COMPLETED-PROJECT-COUNT
+  - COMPANY-AVERAGE-PROGRESS
+  - PROJECT-PROGRESS-OVERVIEW
+  - COMPANY-PROGRESS-SUMMARY
+  - PRODUCTION-SUMMARY
+  - NOTIFICATIONS
+  - COMPANY-ANNOUNCEMENTS
+  - INDUSTRY-NEWS
+  - SYSTEM-STATUS-SUMMARY
+  - RECENT-COMPLETIONS
+  conditional_sections:
+  - NOT_APPLICABLE_WITH_AUTHORITY:NO_ADDITIONAL_CONDITIONAL_SECTION_IN_THIS_SCENARIO
+  locked_regions: &id003
+  - GLOBAL_HEADER
+  - GLOBAL_SIDEBAR
+  - GLOBAL_WORKSPACE_MOUNT_GEOMETRY
+  editable_regions: &id004
+  - DASHBOARD_WORKSPACE
+  - DETAIL_DRAWER
+  visual_anchor_uids: &id005
+  - VA-HOME-HEADER-TOP
+  - VA-HOME-SIDEBAR-COLUMN
+  - VA-HOME-WORKSPACE-ORIGIN
+  - VA-WB01-KPI-ROW
+  - VA-WB01-PROGRESS-ROW
+  - VA-WB01-PRODUCTION-ROW
+  - VA-WB01-INFORMATION-ROW
+  - VA-WB01-RECENT-ROW
+  - VA-WB01-DRAWER
+  primary_controls: &id006
+  - CTRL-WORKSPACE-WB-01-COMPANY-PROJECT-COUNT-OPEN
+  - CTRL-WORKSPACE-WB-01-COMPANY-RUNNING-PROJECT-COUNT-OPEN
+  - CTRL-WORKSPACE-WB-01-COMPANY-PENDING-ACTION-COUNT-OPEN
+  - CTRL-WORKSPACE-WB-01-COMPANY-PENDING-REVIEW-COUNT-OPEN
+  - CTRL-WORKSPACE-WB-01-COMPANY-COMPLETED-PROJECT-COUNT-OPEN
+  - CTRL-WORKSPACE-WB-01-COMPANY-AVERAGE-PROGRESS-OPEN
+  - CTRL-WORKSPACE-WB-01-PROJECT-PROGRESS-OVERVIEW-OPEN
+  - CTRL-WORKSPACE-WB-01-COMPANY-PROGRESS-SUMMARY-OPEN
+  - CTRL-WORKSPACE-WB-01-PRODUCTION-SUMMARY-OPEN
+  - CTRL-WORKSPACE-WB-01-NOTIFICATIONS-OPEN
+  - CTRL-WORKSPACE-WB-01-COMPANY-ANNOUNCEMENTS-OPEN
+  - CTRL-WORKSPACE-WB-01-INDUSTRY-NEWS-OPEN
+  - CTRL-WORKSPACE-WB-01-SYSTEM-STATUS-SUMMARY-OPEN
+  - CTRL-WORKSPACE-WB-01-RECENT-COMPLETIONS-OPEN
+  disabled_or_blocked_controls:
+  - NOT_APPLICABLE_WITH_AUTHORITY:NO_ADDITIONAL_DISABLED_OR_BLOCKED_CONTROL_IN_THIS_SCENARIO
+  current_next_action_or_gate: HUMAN_VISUAL_REVIEW
+  source_authority_refs: &id001
+  - STAGE_EXECUTION/SHARED_AUTHORITY/GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY.yaml
+  - STAGE_EXECUTION/SHARED_AUTHORITY/GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY.yaml#typography_authority
+  - STAGE_EXECUTION/STAGE-03/WU-STAGE03-GLOBAL-HOME-SHELL-NAVIGATION-001/VISUAL_GEOMETRY_CONTRACT.yaml
+  - ACPOS_WB-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx
+  authority_classification: CURRENT_AUTHORITY_BOUND
+  inherited_visual_authority_refs: *id001
+  verification_purpose: Prove workspace:WB-01 scenario WB01-GE1440-COLLAPSED preserves Current visual geometry, semantic order, authority inheritance, and observable state without unauthorized
+    topology change.
+  evidence_ref: EVIDENCE/VISUAL_SCENARIOS/WB01-1440-MAIN.svg
+  annotation_status: CURRENT_REVERIFY_MATERIALIZED
+- visual_uid: VIS-CANDIDATE-WB01-002
+  page_or_scope_uid: workspace:WB-01
+  scenario_uid: WB01-GE1440-EXPANDED
+  state_uid: EXPANDED
+  workbench_uid: WB01-DASHBOARD-MAIN
+  journey_uid: PAGE_READ_TO_14_SECTION_SUMMARY_TO_OPTIONAL_DRAWER
+  parent_visual_uid: NOT_APPLICABLE_WITH_AUTHORITY:ROOT_VISUAL_CANDIDATE
+  design_version: DESIGN-CANDIDATE-2026-09-20.1
+  basic_design_change_set_uid: VCS-STAGE03-WB01-001
+  viewport: '>=1440'
+  language: zh-TW
+  theme: dark-purple
+  applicable_business_entity_or_operation: *id002
+  visible_sections:
+  - COMPANY-PROJECT-COUNT
+  - COMPANY-RUNNING-PROJECT-COUNT
+  - COMPANY-PENDING-ACTION-COUNT
+  - COMPANY-PENDING-REVIEW-COUNT
+  - COMPANY-COMPLETED-PROJECT-COUNT
+  - COMPANY-AVERAGE-PROGRESS
+  - PROJECT-PROGRESS-OVERVIEW
+  - COMPANY-PROGRESS-SUMMARY
+  - PRODUCTION-SUMMARY
+  - NOTIFICATIONS
+  - COMPANY-ANNOUNCEMENTS
+  - INDUSTRY-NEWS
+  - SYSTEM-STATUS-SUMMARY
+  - RECENT-COMPLETIONS
+  conditional_sections:
+  - NOT_APPLICABLE_WITH_AUTHORITY:NO_ADDITIONAL_CONDITIONAL_SECTION_IN_THIS_SCENARIO
+  locked_regions: *id003
+  editable_regions: *id004
+  visual_anchor_uids: *id005
+  primary_controls: *id006
+  disabled_or_blocked_controls:
+  - NOT_APPLICABLE_WITH_AUTHORITY:NO_ADDITIONAL_DISABLED_OR_BLOCKED_CONTROL_IN_THIS_SCENARIO
+  current_next_action_or_gate: HUMAN_VISUAL_REVIEW
+  source_authority_refs: *id001
+  authority_classification: CURRENT_AUTHORITY_BOUND
+  inherited_visual_authority_refs: *id001
+  verification_purpose: Prove workspace:WB-01 scenario WB01-GE1440-EXPANDED preserves Current visual geometry, semantic order, authority inheritance, and observable state without unauthorized
+    topology change.
+  evidence_ref: EVIDENCE/VISUAL_SCENARIOS/WB01-1440-EXPANDED.svg
+  annotation_status: CURRENT_REVERIFY_MATERIALIZED
+- visual_uid: VIS-CANDIDATE-WB01-002
+  page_or_scope_uid: workspace:WB-01
+  scenario_uid: WB01-1280-COLLAPSED
+  state_uid: COLLAPSED
+  workbench_uid: WB01-DASHBOARD-MAIN
+  journey_uid: PAGE_READ_TO_14_SECTION_SUMMARY_TO_OPTIONAL_DRAWER
+  parent_visual_uid: NOT_APPLICABLE_WITH_AUTHORITY:ROOT_VISUAL_CANDIDATE
+  design_version: DESIGN-CANDIDATE-2026-09-20.1
+  basic_design_change_set_uid: VCS-STAGE03-WB01-001
+  viewport: 1280-1439
+  language: zh-TW
+  theme: dark-purple
+  applicable_business_entity_or_operation: *id002
+  visible_sections:
+  - COMPANY-PROJECT-COUNT
+  - COMPANY-RUNNING-PROJECT-COUNT
+  - COMPANY-PENDING-ACTION-COUNT
+  - COMPANY-PENDING-REVIEW-COUNT
+  - COMPANY-COMPLETED-PROJECT-COUNT
+  - COMPANY-AVERAGE-PROGRESS
+  - PROJECT-PROGRESS-OVERVIEW
+  - COMPANY-PROGRESS-SUMMARY
+  - PRODUCTION-SUMMARY
+  - NOTIFICATIONS
+  - COMPANY-ANNOUNCEMENTS
+  - INDUSTRY-NEWS
+  - SYSTEM-STATUS-SUMMARY
+  - RECENT-COMPLETIONS
+  conditional_sections:
+  - NOT_APPLICABLE_WITH_AUTHORITY:NO_ADDITIONAL_CONDITIONAL_SECTION_IN_THIS_SCENARIO
+  locked_regions: *id003
+  editable_regions: *id004
+  visual_anchor_uids: *id005
+  primary_controls: *id006
+  disabled_or_blocked_controls:
+  - NOT_APPLICABLE_WITH_AUTHORITY:NO_ADDITIONAL_DISABLED_OR_BLOCKED_CONTROL_IN_THIS_SCENARIO
+  current_next_action_or_gate: HUMAN_VISUAL_REVIEW
+  source_authority_refs: *id001
+  authority_classification: CURRENT_AUTHORITY_BOUND
+  inherited_visual_authority_refs: *id001
+  verification_purpose: Prove workspace:WB-01 scenario WB01-1280-COLLAPSED preserves Current visual geometry, semantic order, authority inheritance, and observable state without unauthorized
+    topology change.
+  evidence_ref: EVIDENCE/VISUAL_SCENARIOS/WB01-1280-MAIN.svg
+  annotation_status: CURRENT_REVERIFY_MATERIALIZED
+- visual_uid: VIS-CANDIDATE-WB01-002
+  page_or_scope_uid: workspace:WB-01
+  scenario_uid: WB01-1280-EXPANDED
+  state_uid: EXPANDED
+  workbench_uid: WB01-DASHBOARD-MAIN
+  journey_uid: PAGE_READ_TO_14_SECTION_SUMMARY_TO_OPTIONAL_DRAWER
+  parent_visual_uid: NOT_APPLICABLE_WITH_AUTHORITY:ROOT_VISUAL_CANDIDATE
+  design_version: DESIGN-CANDIDATE-2026-09-20.1
+  basic_design_change_set_uid: VCS-STAGE03-WB01-001
+  viewport: 1280-1439
+  language: zh-TW
+  theme: dark-purple
+  applicable_business_entity_or_operation: *id002
+  visible_sections:
+  - COMPANY-PROJECT-COUNT
+  - COMPANY-RUNNING-PROJECT-COUNT
+  - COMPANY-PENDING-ACTION-COUNT
+  - COMPANY-PENDING-REVIEW-COUNT
+  - COMPANY-COMPLETED-PROJECT-COUNT
+  - COMPANY-AVERAGE-PROGRESS
+  - PROJECT-PROGRESS-OVERVIEW
+  - COMPANY-PROGRESS-SUMMARY
+  - PRODUCTION-SUMMARY
+  - NOTIFICATIONS
+  - COMPANY-ANNOUNCEMENTS
+  - INDUSTRY-NEWS
+  - SYSTEM-STATUS-SUMMARY
+  - RECENT-COMPLETIONS
+  conditional_sections:
+  - NOT_APPLICABLE_WITH_AUTHORITY:NO_ADDITIONAL_CONDITIONAL_SECTION_IN_THIS_SCENARIO
+  locked_regions: *id003
+  editable_regions: *id004
+  visual_anchor_uids: *id005
+  primary_controls: *id006
+  disabled_or_blocked_controls:
+  - NOT_APPLICABLE_WITH_AUTHORITY:NO_ADDITIONAL_DISABLED_OR_BLOCKED_CONTROL_IN_THIS_SCENARIO
+  current_next_action_or_gate: HUMAN_VISUAL_REVIEW
+  source_authority_refs: *id001
+  authority_classification: CURRENT_AUTHORITY_BOUND
+  inherited_visual_authority_refs: *id001
+  verification_purpose: Prove workspace:WB-01 scenario WB01-1280-EXPANDED preserves Current visual geometry, semantic order, authority inheritance, and observable state without unauthorized
+    topology change.
+  evidence_ref: EVIDENCE/VISUAL_SCENARIOS/WB01-1280-EXPANDED.svg
+  annotation_status: CURRENT_REVERIFY_MATERIALIZED
+- visual_uid: VIS-CANDIDATE-WB01-002
+  page_or_scope_uid: workspace:WB-01
+  scenario_uid: WB01-LT1280-COLLAPSED
+  state_uid: COLLAPSED
+  workbench_uid: WB01-DASHBOARD-MAIN
+  journey_uid: PAGE_READ_TO_14_SECTION_SUMMARY_TO_OPTIONAL_DRAWER
+  parent_visual_uid: NOT_APPLICABLE_WITH_AUTHORITY:ROOT_VISUAL_CANDIDATE
+  design_version: DESIGN-CANDIDATE-2026-09-20.1
+  basic_design_change_set_uid: VCS-STAGE03-WB01-001
+  viewport: 1280-1439
+  language: zh-TW
+  theme: dark-purple
+  applicable_business_entity_or_operation: *id002
+  visible_sections:
+  - COMPANY-PROJECT-COUNT
+  - COMPANY-RUNNING-PROJECT-COUNT
+  - COMPANY-PENDING-ACTION-COUNT
+  - COMPANY-PENDING-REVIEW-COUNT
+  - COMPANY-COMPLETED-PROJECT-COUNT
+  - COMPANY-AVERAGE-PROGRESS
+  - PROJECT-PROGRESS-OVERVIEW
+  - COMPANY-PROGRESS-SUMMARY
+  - PRODUCTION-SUMMARY
+  - NOTIFICATIONS
+  - COMPANY-ANNOUNCEMENTS
+  - INDUSTRY-NEWS
+  - SYSTEM-STATUS-SUMMARY
+  - RECENT-COMPLETIONS
+  conditional_sections:
+  - NOT_APPLICABLE_WITH_AUTHORITY:NO_ADDITIONAL_CONDITIONAL_SECTION_IN_THIS_SCENARIO
+  locked_regions: *id003
+  editable_regions: *id004
+  visual_anchor_uids: *id005
+  primary_controls: *id006
+  disabled_or_blocked_controls:
+  - NOT_APPLICABLE_WITH_AUTHORITY:NO_ADDITIONAL_DISABLED_OR_BLOCKED_CONTROL_IN_THIS_SCENARIO
+  current_next_action_or_gate: HUMAN_VISUAL_REVIEW
+  source_authority_refs: *id001
+  authority_classification: CURRENT_AUTHORITY_BOUND
+  inherited_visual_authority_refs: *id001
+  verification_purpose: Prove workspace:WB-01 scenario WB01-LT1280-COLLAPSED preserves Current visual geometry, semantic order, authority inheritance, and observable state without unauthorized
+    topology change.
+  evidence_ref: EVIDENCE/VISUAL_SCENARIOS/WB01-LT1280-SCROLL.svg
+  annotation_status: CURRENT_REVERIFY_MATERIALIZED
+- visual_uid: VIS-CANDIDATE-WB01-002
+  page_or_scope_uid: workspace:WB-01
+  scenario_uid: WB01-LT1280-EXPANDED
+  state_uid: EXPANDED
+  workbench_uid: WB01-DASHBOARD-MAIN
+  journey_uid: PAGE_READ_TO_14_SECTION_SUMMARY_TO_OPTIONAL_DRAWER
+  parent_visual_uid: NOT_APPLICABLE_WITH_AUTHORITY:ROOT_VISUAL_CANDIDATE
+  design_version: DESIGN-CANDIDATE-2026-09-20.1
+  basic_design_change_set_uid: VCS-STAGE03-WB01-001
+  viewport: 1280-1439
+  language: zh-TW
+  theme: dark-purple
+  applicable_business_entity_or_operation: *id002
+  visible_sections:
+  - COMPANY-PROJECT-COUNT
+  - COMPANY-RUNNING-PROJECT-COUNT
+  - COMPANY-PENDING-ACTION-COUNT
+  - COMPANY-PENDING-REVIEW-COUNT
+  - COMPANY-COMPLETED-PROJECT-COUNT
+  - COMPANY-AVERAGE-PROGRESS
+  - PROJECT-PROGRESS-OVERVIEW
+  - COMPANY-PROGRESS-SUMMARY
+  - PRODUCTION-SUMMARY
+  - NOTIFICATIONS
+  - COMPANY-ANNOUNCEMENTS
+  - INDUSTRY-NEWS
+  - SYSTEM-STATUS-SUMMARY
+  - RECENT-COMPLETIONS
+  conditional_sections:
+  - NOT_APPLICABLE_WITH_AUTHORITY:NO_ADDITIONAL_CONDITIONAL_SECTION_IN_THIS_SCENARIO
+  locked_regions: *id003
+  editable_regions: *id004
+  visual_anchor_uids: *id005
+  primary_controls: *id006
+  disabled_or_blocked_controls:
+  - NOT_APPLICABLE_WITH_AUTHORITY:NO_ADDITIONAL_DISABLED_OR_BLOCKED_CONTROL_IN_THIS_SCENARIO
+  current_next_action_or_gate: HUMAN_VISUAL_REVIEW
+  source_authority_refs: *id001
+  authority_classification: CURRENT_AUTHORITY_BOUND
+  inherited_visual_authority_refs: *id001
+  verification_purpose: Prove workspace:WB-01 scenario WB01-LT1280-EXPANDED preserves Current visual geometry, semantic order, authority inheritance, and observable state without unauthorized
+    topology change.
+  evidence_ref: EVIDENCE/VISUAL_SCENARIOS/WB01-LT1280-EXPANDED.svg
+  annotation_status: CURRENT_REVERIFY_MATERIALIZED
+- visual_uid: VIS-CANDIDATE-WB01-002
+  page_or_scope_uid: workspace:WB-01
+  scenario_uid: WB01-DRAWER
+  state_uid: INHERITED
+  workbench_uid: WB01-DASHBOARD-MAIN
+  journey_uid: PAGE_READ_TO_14_SECTION_SUMMARY_TO_OPTIONAL_DRAWER
+  parent_visual_uid: NOT_APPLICABLE_WITH_AUTHORITY:ROOT_VISUAL_CANDIDATE
+  design_version: DESIGN-CANDIDATE-2026-09-20.1
+  basic_design_change_set_uid: VCS-STAGE03-WB01-001
+  viewport: INHERITED_FROM_CURRENT_RESPONSIVE_BASELINE
+  language: zh-TW
+  theme: dark-purple
+  applicable_business_entity_or_operation: *id002
+  visible_sections:
+  - COMPANY-PROJECT-COUNT
+  - COMPANY-RUNNING-PROJECT-COUNT
+  - COMPANY-PENDING-ACTION-COUNT
+  - COMPANY-PENDING-REVIEW-COUNT
+  - COMPANY-COMPLETED-PROJECT-COUNT
+  - COMPANY-AVERAGE-PROGRESS
+  - PROJECT-PROGRESS-OVERVIEW
+  - COMPANY-PROGRESS-SUMMARY
+  - PRODUCTION-SUMMARY
+  - NOTIFICATIONS
+  - COMPANY-ANNOUNCEMENTS
+  - INDUSTRY-NEWS
+  - SYSTEM-STATUS-SUMMARY
+  - RECENT-COMPLETIONS
+  conditional_sections:
+  - NOT_APPLICABLE_WITH_AUTHORITY:NO_ADDITIONAL_CONDITIONAL_SECTION_IN_THIS_SCENARIO
+  locked_regions: *id003
+  editable_regions: *id004
+  visual_anchor_uids: *id005
+  primary_controls: *id006
+  disabled_or_blocked_controls:
+  - NOT_APPLICABLE_WITH_AUTHORITY:NO_ADDITIONAL_DISABLED_OR_BLOCKED_CONTROL_IN_THIS_SCENARIO
+  current_next_action_or_gate: HUMAN_VISUAL_REVIEW
+  source_authority_refs: *id001
+  authority_classification: CURRENT_AUTHORITY_BOUND
+  inherited_visual_authority_refs: *id001
+  verification_purpose: Prove workspace:WB-01 scenario WB01-DRAWER preserves Current visual geometry, semantic order, authority inheritance, and observable state without unauthorized
+    topology change.
+  evidence_ref: EVIDENCE/VISUAL_SCENARIOS/WB01-DRAWER.svg
+  annotation_status: CURRENT_REVERIFY_MATERIALIZED
+- visual_uid: VIS-CANDIDATE-WB01-002
+  page_or_scope_uid: workspace:WB-01
+  scenario_uid: WB01-LOADING
+  state_uid: INHERITED
+  workbench_uid: WB01-DASHBOARD-MAIN
+  journey_uid: PAGE_READ_TO_14_SECTION_SUMMARY_TO_OPTIONAL_DRAWER
+  parent_visual_uid: NOT_APPLICABLE_WITH_AUTHORITY:ROOT_VISUAL_CANDIDATE
+  design_version: DESIGN-CANDIDATE-2026-09-20.1
+  basic_design_change_set_uid: VCS-STAGE03-WB01-001
+  viewport: INHERITED_FROM_CURRENT_RESPONSIVE_BASELINE
+  language: zh-TW
+  theme: dark-purple
+  applicable_business_entity_or_operation: *id002
+  visible_sections:
+  - COMPANY-PROJECT-COUNT
+  - COMPANY-RUNNING-PROJECT-COUNT
+  - COMPANY-PENDING-ACTION-COUNT
+  - COMPANY-PENDING-REVIEW-COUNT
+  - COMPANY-COMPLETED-PROJECT-COUNT
+  - COMPANY-AVERAGE-PROGRESS
+  - PROJECT-PROGRESS-OVERVIEW
+  - COMPANY-PROGRESS-SUMMARY
+  - PRODUCTION-SUMMARY
+  - NOTIFICATIONS
+  - COMPANY-ANNOUNCEMENTS
+  - INDUSTRY-NEWS
+  - SYSTEM-STATUS-SUMMARY
+  - RECENT-COMPLETIONS
+  conditional_sections:
+  - NOT_APPLICABLE_WITH_AUTHORITY:NO_ADDITIONAL_CONDITIONAL_SECTION_IN_THIS_SCENARIO
+  locked_regions: *id003
+  editable_regions: *id004
+  visual_anchor_uids: *id005
+  primary_controls: *id006
+  disabled_or_blocked_controls:
+  - NOT_APPLICABLE_WITH_AUTHORITY:NO_ADDITIONAL_DISABLED_OR_BLOCKED_CONTROL_IN_THIS_SCENARIO
+  current_next_action_or_gate: HUMAN_VISUAL_REVIEW
+  source_authority_refs: *id001
+  authority_classification: CURRENT_AUTHORITY_BOUND
+  inherited_visual_authority_refs: *id001
+  verification_purpose: Prove workspace:WB-01 scenario WB01-LOADING preserves Current visual geometry, semantic order, authority inheritance, and observable state without unauthorized
+    topology change.
+  evidence_ref: EVIDENCE/VISUAL_SCENARIOS/WB01-LOADING.svg
+  annotation_status: CURRENT_REVERIFY_MATERIALIZED
+- visual_uid: VIS-CANDIDATE-WB01-002
+  page_or_scope_uid: workspace:WB-01
+  scenario_uid: WB01-EMPTY
+  state_uid: INHERITED
+  workbench_uid: WB01-DASHBOARD-MAIN
+  journey_uid: PAGE_READ_TO_14_SECTION_SUMMARY_TO_OPTIONAL_DRAWER
+  parent_visual_uid: NOT_APPLICABLE_WITH_AUTHORITY:ROOT_VISUAL_CANDIDATE
+  design_version: DESIGN-CANDIDATE-2026-09-20.1
+  basic_design_change_set_uid: VCS-STAGE03-WB01-001
+  viewport: INHERITED_FROM_CURRENT_RESPONSIVE_BASELINE
+  language: zh-TW
+  theme: dark-purple
+  applicable_business_entity_or_operation: *id002
+  visible_sections:
+  - COMPANY-PROJECT-COUNT
+  - COMPANY-RUNNING-PROJECT-COUNT
+  - COMPANY-PENDING-ACTION-COUNT
+  - COMPANY-PENDING-REVIEW-COUNT
+  - COMPANY-COMPLETED-PROJECT-COUNT
+  - COMPANY-AVERAGE-PROGRESS
+  - PROJECT-PROGRESS-OVERVIEW
+  - COMPANY-PROGRESS-SUMMARY
+  - PRODUCTION-SUMMARY
+  - NOTIFICATIONS
+  - COMPANY-ANNOUNCEMENTS
+  - INDUSTRY-NEWS
+  - SYSTEM-STATUS-SUMMARY
+  - RECENT-COMPLETIONS
+  conditional_sections:
+  - NOT_APPLICABLE_WITH_AUTHORITY:NO_ADDITIONAL_CONDITIONAL_SECTION_IN_THIS_SCENARIO
+  locked_regions: *id003
+  editable_regions: *id004
+  visual_anchor_uids: *id005
+  primary_controls: *id006
+  disabled_or_blocked_controls:
+  - NOT_APPLICABLE_WITH_AUTHORITY:NO_ADDITIONAL_DISABLED_OR_BLOCKED_CONTROL_IN_THIS_SCENARIO
+  current_next_action_or_gate: HUMAN_VISUAL_REVIEW
+  source_authority_refs: *id001
+  authority_classification: CURRENT_AUTHORITY_BOUND
+  inherited_visual_authority_refs: *id001
+  verification_purpose: Prove workspace:WB-01 scenario WB01-EMPTY preserves Current visual geometry, semantic order, authority inheritance, and observable state without unauthorized
+    topology change.
+  evidence_ref: EVIDENCE/VISUAL_SCENARIOS/WB01-EMPTY.svg
+  annotation_status: CURRENT_REVERIFY_MATERIALIZED
+- visual_uid: VIS-CANDIDATE-WB01-002
+  page_or_scope_uid: workspace:WB-01
+  scenario_uid: WB01-ERROR
+  state_uid: INHERITED
+  workbench_uid: WB01-DASHBOARD-MAIN
+  journey_uid: PAGE_READ_TO_14_SECTION_SUMMARY_TO_OPTIONAL_DRAWER
+  parent_visual_uid: NOT_APPLICABLE_WITH_AUTHORITY:ROOT_VISUAL_CANDIDATE
+  design_version: DESIGN-CANDIDATE-2026-09-20.1
+  basic_design_change_set_uid: VCS-STAGE03-WB01-001
+  viewport: INHERITED_FROM_CURRENT_RESPONSIVE_BASELINE
+  language: zh-TW
+  theme: dark-purple
+  applicable_business_entity_or_operation: *id002
+  visible_sections:
+  - COMPANY-PROJECT-COUNT
+  - COMPANY-RUNNING-PROJECT-COUNT
+  - COMPANY-PENDING-ACTION-COUNT
+  - COMPANY-PENDING-REVIEW-COUNT
+  - COMPANY-COMPLETED-PROJECT-COUNT
+  - COMPANY-AVERAGE-PROGRESS
+  - PROJECT-PROGRESS-OVERVIEW
+  - COMPANY-PROGRESS-SUMMARY
+  - PRODUCTION-SUMMARY
+  - NOTIFICATIONS
+  - COMPANY-ANNOUNCEMENTS
+  - INDUSTRY-NEWS
+  - SYSTEM-STATUS-SUMMARY
+  - RECENT-COMPLETIONS
+  conditional_sections:
+  - NOT_APPLICABLE_WITH_AUTHORITY:NO_ADDITIONAL_CONDITIONAL_SECTION_IN_THIS_SCENARIO
+  locked_regions: *id003
+  editable_regions: *id004
+  visual_anchor_uids: *id005
+  primary_controls: *id006
+  disabled_or_blocked_controls:
+  - NOT_APPLICABLE_WITH_AUTHORITY:NO_ADDITIONAL_DISABLED_OR_BLOCKED_CONTROL_IN_THIS_SCENARIO
+  current_next_action_or_gate: HUMAN_VISUAL_REVIEW
+  source_authority_refs: *id001
+  authority_classification: CURRENT_AUTHORITY_BOUND
+  inherited_visual_authority_refs: *id001
+  verification_purpose: Prove workspace:WB-01 scenario WB01-ERROR preserves Current visual geometry, semantic order, authority inheritance, and observable state without unauthorized
+    topology change.
+  evidence_ref: EVIDENCE/VISUAL_SCENARIOS/WB01-ERROR.svg
+  annotation_status: CURRENT_REVERIFY_MATERIALIZED
+annotation_count: 10
 shared_visual_annotation_unambiguous: true
 physical_fragment_resolution_complete: true
 status: CURRENT_REVERIFY_MATERIALIZED
+annotation_granularity: ONE_ROW_PER_REQUIRED_VISUAL_SCENARIO
+required_row_fields:
+- visual_uid
+- page_or_scope_uid
+- scenario_uid
+- state_uid
+- workbench_uid
+- journey_uid
+- parent_visual_uid
+- design_version
+- basic_design_change_set_uid
+- viewport
+- language
+- theme
+- applicable_business_entity_or_operation
+- visible_sections
+- conditional_sections
+- locked_regions
+- editable_regions
+- visual_anchor_uids
+- primary_controls
+- disabled_or_blocked_controls
+- current_next_action_or_gate
+- source_authority_refs
+- authority_classification
+- inherited_visual_authority_refs
+- verification_purpose
+required_scenario_count: 10
+scenario_annotation_coverage_complete: true

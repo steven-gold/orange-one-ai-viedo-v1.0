@@ -26,10 +26,12 @@ canonical_section_count: 14
 canonical_control_count: 14
 canonical_kpi_count: 6
 responsive_contract:
-  ge_1440: "6 KPI single row + canonical 8/4,8/4,4/4/4,12 groups"
-  from_1280_to_1439: "KPI 3+3; remaining canonical group order preserved"
-  lt_1280: "workspace min-width=1280; horizontal scroll inside workspace only"
-  shell_states_required: [COLLAPSED, EXPANDED]
+  ge_1440: 6 KPI single row + canonical 8/4,8/4,4/4/4,12 groups
+  from_1280_to_1439: KPI 3+3; remaining canonical group order preserved
+  lt_1280: workspace min-width=1280; horizontal scroll inside workspace only
+  shell_states_required:
+  - COLLAPSED
+  - EXPANDED
   required_responsive_shell_scenarios: 6
 state_scenarios_required:
 - DRAWER
@@ -51,3 +53,11 @@ forbidden_visual_additions:
 source_overlay_no_reflow_disposition: SUPERSEDED_BY_GLOBAL_HOME_SHELL_OWNER
 functional_topology_redefined: false
 status: CURRENT_REVERIFY_MATERIALIZED
+design_version: DESIGN-CANDIDATE-2026-09-20.1
+visual_inheritance_matrix_ref: VISUAL_INHERITANCE_MATRIX.yaml
+visual_reference_annotation_ref: VISUAL_REFERENCE_ANNOTATION.yaml
+visual_scenario_evidence_set_ref: VISUAL_SCENARIO_EVIDENCE_SET.yaml
+visual_geometry_contract_ref: VISUAL_GEOMETRY_CONTRACT.yaml
+visual_change_set_ref: VISUAL_CHANGESET.yaml
+visual_style_definition_applicability: NOT_APPLICABLE_EXISTING_CURRENT_VISUAL_AUTHORITY
+generation_manifest_applicability: NOT_STAGE03_REQUIRED_OUTPUT_CURRENT_LIFECYCLE
