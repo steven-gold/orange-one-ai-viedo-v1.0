@@ -3,7 +3,17 @@ artifact_type: VISUAL_DESIGN_SPEC_PACKAGE
 stage_uid: STAGE-03
 governed_unit_uid: workspace:WB-01
 visual_style: TECHNOLOGY_PURPLE_GLOBAL_VISUAL
-shell_inheritance: GLOBAL-HOME-SHELL-NAVIGATION
+shared_visual_authority_ref: STAGE_EXECUTION/SHARED_AUTHORITY/GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY.yaml
+typography_authority_ref: STAGE_EXECUTION/SHARED_AUTHORITY/GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY.yaml#typography_authority
+shell_inheritance:
+  owner_uid: GLOBAL-HOME-SHELL-NAVIGATION
+  geometry_ref: STAGE_EXECUTION/STAGE-03/WU-STAGE03-GLOBAL-HOME-SHELL-NAVIGATION-001/VISUAL_GEOMETRY_CONTRACT.yaml
+  mode: COUPLED_REFLOW
+  collapsed_sidebar_width_px: 64
+  expanded_sidebar_width_px: 221
+  collapsed_workspace_left_px: 78
+  expanded_workspace_left_px: 235
+  overlay_sidebar_over_workspace: FORBIDDEN
 page_regions:
 - KPI_GROUP
 - PROJECT_PROGRESS_ROW
@@ -15,5 +25,29 @@ page_regions:
 canonical_section_count: 14
 canonical_control_count: 14
 canonical_kpi_count: 6
-forbidden_visual_additions: [QUICK_ACTION, ANALYTICS_CHART, PROVIDER_CARD, SEARCH_FILTER, AI_CHAT, APPROVAL_BLOCK, CORRECTION_RATE_KPI, SYSTEM_HEALTH_MAIN_KPI, MONTHLY_SPEND, RAW_COST_TREND]
-status: VISUAL_CANDIDATE
+responsive_contract:
+  ge_1440: "6 KPI single row + canonical 8/4,8/4,4/4/4,12 groups"
+  from_1280_to_1439: "KPI 3+3; remaining canonical group order preserved"
+  lt_1280: "workspace min-width=1280; horizontal scroll inside workspace only"
+  shell_states_required: [COLLAPSED, EXPANDED]
+  required_responsive_shell_scenarios: 6
+state_scenarios_required:
+- DRAWER
+- LOADING
+- EMPTY
+- ERROR
+total_required_visual_scenarios: 10
+forbidden_visual_additions:
+- QUICK_ACTION
+- ANALYTICS_CHART
+- PROVIDER_CARD
+- SEARCH_FILTER
+- AI_CHAT
+- APPROVAL_BLOCK
+- CORRECTION_RATE_KPI
+- SYSTEM_HEALTH_MAIN_KPI
+- MONTHLY_SPEND
+- RAW_COST_TREND
+source_overlay_no_reflow_disposition: SUPERSEDED_BY_GLOBAL_HOME_SHELL_OWNER
+functional_topology_redefined: false
+status: CURRENT_REVERIFY_MATERIALIZED
