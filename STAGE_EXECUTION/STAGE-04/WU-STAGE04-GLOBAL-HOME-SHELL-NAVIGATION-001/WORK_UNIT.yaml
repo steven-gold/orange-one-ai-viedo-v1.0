@@ -25,7 +25,13 @@ required_outputs:
 - ACCEPTANCE_AUDIT_BLUEPRINT
 - DESIGN_FREEZE_PACKAGE
 - FOUNDATION_BARRIER_RECORD
-status: ACTIVE
+status: SUSPENDED_UPSTREAM_REENTRY_REQUIRED
+suspension:
+  blocking_owner_capability: VISUAL_DESIGN
+  blocking_stage_uid: STAGE-03
+  blocker_ref: CURRENT_PROBLEM_REGISTER.yaml
+  required_return_point: STAGE04_INPUT_READINESS
+  completed_effectful_operation_total: 0
 operation_bindings:
   BASIC_DESIGN_PACKAGE_COMPILE: {executor_owner: governance/ci/stage_execution_engine.py, result_owner: STAGE_EXECUTION/STAGE-04/WU-STAGE04-GLOBAL-HOME-SHELL-NAVIGATION-001/BASIC_DESIGN_PACKAGE.yaml}
   DESIGN_FREEZE_VALIDATE: {executor_owner: governance/ci/stage_execution_engine.py, result_owner: STAGE_EXECUTION/STAGE-04/WU-STAGE04-GLOBAL-HOME-SHELL-NAVIGATION-001/FOUNDATION_BARRIER_RECORD.yaml}
