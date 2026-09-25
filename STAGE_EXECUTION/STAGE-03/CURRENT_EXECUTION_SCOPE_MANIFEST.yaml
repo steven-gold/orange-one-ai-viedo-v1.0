@@ -1,7 +1,7 @@
-artifact_uid: SCOPE-STAGE03-20260924
+artifact_uid: SCOPE-STAGE03-20260925-V225
 artifact_type: EXECUTION_SCOPE_MANIFEST
 stage_uid: STAGE-03
-scope_uid: STAGE03-INDEPENDENT-GOVERNED-UNITS-20260924
+scope_uid: STAGE03-INDEPENDENT-GOVERNED-UNITS-V225-REVERIFY
 scope_kind: INDEPENDENT_GOVERNED_UNIT_STAGE03_EXECUTION_SET
 included_units:
 - WU-STAGE03-GLOBAL-HOME-SHELL-NAVIGATION-001
@@ -11,15 +11,18 @@ completed_units: []
 remaining_units:
 - WU-STAGE03-GLOBAL-HOME-SHELL-NAVIGATION-001
 - WU-STAGE03-WB01-DASHBOARD-001
-current_active_work_unit_uid: null
-governance_uid: GOV-REV-20260924-INDEPENDENT-UNIT-LIFECYCLE-CURRENT-IDENTITY-SYNC
-governance_head: 25c4736940efb786aa567c83283bfbaa0773dc1b
+current_active_work_unit_uid: WU-STAGE03-GLOBAL-HOME-SHELL-NAVIGATION-001
+governance_uid: GOV-REV-20260925-NORMATIVE-EXECUTION-MATRIX
+governance_head: 335d8a01d6d3eb6f0ed951ffc40216029b19d4e3
+governance_display_version: v2.2.25
 lifecycle_semantics: EACH_PAGE_OR_SYSTEM_LOGIC_UNIT_OWNS_ITS_OWN_STAGE_LIFECYCLE
 stage_exit_scope_source: CURRENT_GOVERNED_UNIT_STAGE_REQUIRED_UNIVERSE_RECONCILIATION
 product_stage_execution_allowed: true
-status: PENDING_HUMAN_VISUAL_REVIEW
-
-pending_visual_review_units:
+reverify_required_units:
 - WU-STAGE03-GLOBAL-HOME-SHELL-NAVIGATION-001
 - WU-STAGE03-WB01-DASHBOARD-001
-validated_materialization_head: 50340ec5f5a1b7e844c34911049b45e61de5d2b5
+pending_visual_review_units:
+- WU-STAGE03-WB01-DASHBOARD-001
+prior_validated_materialization_head: 50340ec5f5a1b7e844c34911049b45e61de5d2b5
+prior_validated_materialization_disposition: HISTORICAL_PREDECESSOR_EVIDENCE_ONLY
+status: STAGE03_REVERIFY_IN_PROGRESS
