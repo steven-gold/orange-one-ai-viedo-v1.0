@@ -6,20 +6,19 @@ execution_branch: 0921acpos
 current_governance_uid: GOV-REV-20260925-NORMATIVE-EXECUTION-MATRIX
 current_governance_head: 22b8d6845ce31014ba10b4c1f8f7a3ec9dcceb20
 current_display_version: v2.2.25
-active_work_unit_uid: WU-STAGE03-GLOBAL-HOME-SHELL-NAVIGATION-001
-resume_point: CURRENT_HEAD_SEMANTIC_REVERIFY
+active_work_unit_uid: WU-STAGE03-WB01-DASHBOARD-001
+resume_point: HUMAN_VISUAL_REVIEW
 eligible_units:
 - GLOBAL-HOME-SHELL-NAVIGATION
 - workspace:WB-01
-completed_stage03_units: []
-remaining_stage03_units:
+completed_stage03_units:
 - GLOBAL-HOME-SHELL-NAVIGATION
+remaining_stage03_units:
 - workspace:WB-01
 reverify_required_stage03_units:
-- GLOBAL-HOME-SHELL-NAVIGATION
 - workspace:WB-01
 stage_transition_semantics: PER_GOVERNED_PAGE_OR_SYSTEM_LOGIC_UNIT
-status: STAGE03_SEMANTIC_REVERIFY_IN_PROGRESS
+status: PENDING_HUMAN_VISUAL_REVIEW
 pending_visual_review_units:
 - workspace:WB-01
 prior_materialization_validation_run_id: 36015610533
@@ -29,6 +28,9 @@ prior_post_review_validation_head: e5564984caf2fb35b575108fb48d02e241b0bfd0
 prior_last_terminal_validation_run_id: 36053005947
 prior_last_terminal_validation_head: 17e599775f2390587256f0e939b2c4cd4c12faef
 prior_terminal_results_disposition: HISTORICAL_PREDECESSOR_EVIDENCE_ONLY
+last_closed_work_unit_uid: WU-STAGE03-GLOBAL-HOME-SHELL-NAVIGATION-001
+last_terminal_validation_run_id: 36089903985
+last_terminal_validation_head: 2446a864769726ba66b01ca68142813395f0219a
 reentry_source:
   stage_uid: STAGE-04
   work_unit_uid: WU-STAGE04-GLOBAL-HOME-SHELL-NAVIGATION-001
