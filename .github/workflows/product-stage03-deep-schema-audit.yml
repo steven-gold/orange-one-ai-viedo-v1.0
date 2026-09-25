@@ -1,5 +1,5 @@
 name: Product Stage03 Deep Schema Audit
-# rerun-marker: 2026-09-25-v225-final-schema-reverify
+# rerun-marker: 2026-09-25-v225-authority-aligned-schema-v2
 # exact-head-rerun: 2026-09-25T10:01+08:00
 on:
   push:
@@ -36,8 +36,14 @@ jobs:
           return o if isinstance(o,dict) else {}
         findings=[]
         vd=y('VISUAL_DESIGN_SPEC_PACKAGE.yaml')
-        for k in ['design_version','visual_style_definition_ref','visual_inheritance_matrix_ref','visual_reference_annotation_ref','visual_scenario_evidence_set_ref','visual_geometry_contract_ref','generation_manifest_ref']:
+        for k in ['design_version','visual_inheritance_matrix_ref','visual_reference_annotation_ref','visual_scenario_evidence_set_ref','visual_geometry_contract_ref']:
           if not vd.get(k): findings.append('VDSP_MISSING:'+k)
+        existing_visual_authority=vd.get('visual_authority_ref') or vd.get('shared_visual_authority_ref')
+        if not existing_visual_authority:
+          if not vd.get('visual_style_definition_ref'):
+            findings.append('VDSP_MISSING_CONDITIONAL_VISUAL_STYLE_DEFINITION_REF')
+        elif vd.get('visual_style_definition_ref'):
+          findings.append('VDSP_UNAUTHORIZED_STYLE_DEFINITION_WHEN_EXISTING_AUTHORITY_APPLIES')
         vra=y('VISUAL_REFERENCE_ANNOTATION.yaml')
         rows=vra.get('candidate_annotations') or []
         vra_fields=vra.get('required_candidate_annotation_fields') or []
