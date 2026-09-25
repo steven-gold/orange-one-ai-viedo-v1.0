@@ -39,7 +39,7 @@ entries:
   matrix_ref: NORMATIVE_EXECUTION_MATRIX.yaml
   matrix_required_field_rows: 720
   product_completion_credit: 0
-  status: REMEDIATED_PENDING_FRESH_REVERIFY
+  status: RESOLVED_CURRENT_HEAD_VALIDATED
 - resolution_uid: RES-STAGE03-HOME-V225-STALE-CURRENT-EVIDENCE-001
   class: CURRENT_PROJECTION_STALE_EVIDENCE
   finding: V224_NORMALIZED_EVIDENCE_AND_TERMINAL_RECEIPT_REMAINED_IN_CURRENT_PROJECTION
@@ -47,7 +47,7 @@ entries:
   normalized_evidence_history_ref: EVIDENCE/HISTORY/V224/STAGE03_NORMALIZED_EVIDENCE.json
   terminal_receipt_history_ref: HISTORY/V224/WORK_UNIT_TERMINAL_RECEIPT.yaml
   product_completion_credit: 0
-  status: REMEDIATED_PENDING_FRESH_REVERIFY
+  status: RESOLVED_CURRENT_HEAD_VALIDATED
 - resolution_uid: RES-STAGE03-HOME-V225-STALE-CLOSURE-STATE-001
   class: CURRENT_STATE_DRIFT
   finding: REVERIFY_SCOPE_RETAINED_PRIOR_COMPLETE_STATUS_AND_STAGE_EXIT_CREDIT
@@ -55,6 +55,12 @@ entries:
   scope_manifest_ref: CURRENT_EXECUTION_SCOPE_MANIFEST.yaml
   remediation_commit: 97802f5618ac955e72661a7583ce1130de2cc2d0
   product_completion_credit: 0
-  status: REMEDIATED_PENDING_FRESH_REVERIFY
+  status: RESOLVED_CURRENT_HEAD_VALIDATED
 append_only: true
-status: CURRENT_REMEDIATED_PENDING_FRESH_REVERIFY
+status: CURRENT_RESOLVED_CURRENT_HEAD_VALIDATED
+current_reverify_validation:
+  head_sha: eb63c59c2a4ef384691d9e7ad4a67b1dcdcb7c92
+  workflow_run_id: 36087796821
+  workflow_job_id: 107923436071
+  conclusion: success
+  governance_uid: GOV-REV-20260925-NORMATIVE-EXECUTION-MATRIX
