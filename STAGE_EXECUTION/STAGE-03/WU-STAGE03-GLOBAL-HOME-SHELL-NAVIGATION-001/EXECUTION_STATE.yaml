@@ -13,10 +13,14 @@ completed_operations:
 - VISUAL_INHERITANCE_MATRIX_COMPILE
 - VISUAL_SCENARIO_EVIDENCE_COMPILE
 current_operation: TERMINAL_EVIDENCE_MATERIALIZATION
-stage3_guard_result: PASS
-current_validation_run_id: 36087796821
-current_validation_job_id: 107923436071
-current_validation_head: eb63c59c2a4ef384691d9e7ad4a67b1dcdcb7c92
+stage3_guard_result: PASS_TECHNICAL_REVERIFY_PENDING_CURRENT_TERMINAL_EVIDENCE
+prior_technical_reverify_validation:
+  run_id: 36089650487
+  job_id: 107929110169
+  head_sha: 8a11d1e9c128bdfc70763d6c70eaadc1177b3312
+  conclusion: success
+  governance_uid: GOV-REV-20260925-NORMATIVE-EXECUTION-MATRIX
+  governance_head: 22b8d6845ce31014ba10b4c1f8f7a3ec9dcceb20
 prior_closure_validation_run_id: 36029115482
 prior_closure_validation_head: af16dad81adca977da8a8aecf1084331cd3f653e
 prior_terminal_receipt_ref: HISTORY/V224/WORK_UNIT_TERMINAL_RECEIPT.yaml
