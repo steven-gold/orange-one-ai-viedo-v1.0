@@ -2,9 +2,61 @@ artifact_uid: VIM-STAGE03-HOME-001
 artifact_type: VISUAL_INHERITANCE_MATRIX
 stage_uid: STAGE-03
 governed_unit_uid: GLOBAL-HOME-SHELL-NAVIGATION
+required_row_fields:
+- source_authority_uid
+- source_authority_path
+- source_authority_version
+- source_authority_hash
+- inherited_rule_or_token
+- lock_override_status
+- allowed_page_local_variation
+- required_change_set_when_deviation
 rows:
-- {visual_region: HEADER, owner: GLOBAL-HOME-SHELL-NAVIGATION, inheritance: DIRECT_OWNER}
-- {visual_region: SIDEBAR, owner: GLOBAL-HOME-SHELL-NAVIGATION, inheritance: DIRECT_OWNER}
-- {visual_region: WORKSPACE_MOUNT_GEOMETRY, owner: GLOBAL-HOME-SHELL-NAVIGATION, inheritance: DIRECT_OWNER}
+- visual_region: GLOBAL_VISUAL_STYLE
+  source_authority_uid: GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY
+  source_authority_path: STAGE_EXECUTION/SHARED_AUTHORITY/GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY.yaml
+  source_authority_version: V1.0
+  source_authority_hash: c9a2ce44628e74db9453f7eef7c70b6c5fb70b0e
+  inherited_rule_or_token: [PAGE_BG_PRIMARY, PAGE_BG_SECONDARY, SURFACE_PRIMARY, SURFACE_SECONDARY, PRIMARY_PURPLE, SECONDARY_PURPLE, HIGHLIGHT_PURPLE]
+  lock_override_status: INHERITED_LOCKED
+  allowed_page_local_variation: PRESENTATION_MICRO_DETAIL_INSIDE_CURRENT_TOKENS_ONLY
+  required_change_set_when_deviation: REQUIRED
+- visual_region: GLOBAL_TYPOGRAPHY
+  source_authority_uid: GLOBAL_TYPOGRAPHY_AUTHORITY_TY01_TY15
+  source_authority_path: STAGE_EXECUTION/SHARED_AUTHORITY/GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY.yaml#typography_authority
+  source_authority_version: CURRENT_HOME_SOURCE_TY01_TY15
+  source_authority_hash: 334a4679600f092b733bfd8d41a3bc44fe9078b14be2e1bc27a2bc5f4232e15e
+  inherited_rule_or_token: [display-xl, heading-lg, heading-md, body-md, body-sm, label-md, button-md, mono-sm]
+  lock_override_status: INHERITED_LOCKED
+  allowed_page_local_variation: TOKEN_ASSIGNMENT_BY_TARGET_ROLE_ONLY
+  required_change_set_when_deviation: REQUIRED
+- visual_region: HEADER
+  source_authority_uid: GLOBAL-HOME-SHELL-NAVIGATION
+  source_authority_path: ACPOS_GLOBAL_HOME_SHELL_NAVIGATION_Mother_Basic_Design_OPTIMIZED.docx
+  source_authority_version: CURRENT_0921ACPOS
+  source_authority_hash: 334a4679600f092b733bfd8d41a3bc44fe9078b14be2e1bc27a2bc5f4232e15e
+  inherited_rule_or_token: "top=0; height=58px; full width"
+  lock_override_status: DIRECT_OWNER_LOCKED
+  allowed_page_local_variation: NONE
+  required_change_set_when_deviation: REQUIRED
+- visual_region: SIDEBAR
+  source_authority_uid: GLOBAL-HOME-SHELL-NAVIGATION
+  source_authority_path: ACPOS_GLOBAL_HOME_SHELL_NAVIGATION_Mother_Basic_Design_OPTIMIZED.docx
+  source_authority_version: CURRENT_0921ACPOS
+  source_authority_hash: 334a4679600f092b733bfd8d41a3bc44fe9078b14be2e1bc27a2bc5f4232e15e
+  inherited_rule_or_token: "64px collapsed / 221px expanded; coupled reflow; overlay forbidden"
+  lock_override_status: DIRECT_OWNER_LOCKED
+  allowed_page_local_variation: NONE
+  required_change_set_when_deviation: REQUIRED
+- visual_region: WORKSPACE_MOUNT_GEOMETRY
+  source_authority_uid: GLOBAL-HOME-SHELL-NAVIGATION
+  source_authority_path: ACPOS_GLOBAL_HOME_SHELL_NAVIGATION_Mother_Basic_Design_OPTIMIZED.docx
+  source_authority_version: CURRENT_0921ACPOS
+  source_authority_hash: 334a4679600f092b733bfd8d41a3bc44fe9078b14be2e1bc27a2bc5f4232e15e
+  inherited_rule_or_token: "top=68px; left=78px collapsed / 235px expanded; right=16px; bottom=16px"
+  lock_override_status: DIRECT_OWNER_LOCKED
+  allowed_page_local_variation: PAGE_CONTENT_INSIDE_WORKSPACE_ONLY
+  required_change_set_when_deviation: REQUIRED
 duplicate_visual_owner_count: 0
-status: CURRENT
+unresolved_visual_authority_count: 0
+status: CURRENT_REVERIFY_MATERIALIZED
