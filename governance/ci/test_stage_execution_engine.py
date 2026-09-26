@@ -6,6 +6,7 @@ import importlib.util
 import tempfile
 import yaml
 import sys
+import os
 ROOT=Path(__file__).resolve().parents[2]
 sys.path.insert(0,str(ROOT/'governance/ci'))
 import stage_execution_engine as eng
@@ -62,11 +63,12 @@ sample={
  'next_stage_transition':{'next_stage_uid':st['next_stage_uid'],'status':'READY'},
  'result':'PASS','stage_exit_allowed':True
 }
-_orig_root=eng.ROOT
+_orig_product_root=os.environ.get(eng.PRODUCT_ROOT_ENV)
 _sample_tmp=tempfile.TemporaryDirectory()
-eng.ROOT=Path(_sample_tmp.name)
+_sample_root=Path(_sample_tmp.name)
+os.environ[eng.PRODUCT_ROOT_ENV]=str(_sample_root)
 _synthetic_wu='SYNTHETIC-WU-STAGE01'
-_synthetic_dir=eng.ROOT/'STAGE_EXECUTION'/'STAGE-01'/_synthetic_wu
+_synthetic_dir=_sample_root/'STAGE_EXECUTION'/'STAGE-01'/_synthetic_wu
 _synthetic_dir.mkdir(parents=True)
 _scope_rel=f'STAGE_EXECUTION/STAGE-01/{_synthetic_wu}/CURRENT_EXECUTION_SCOPE_MANIFEST.yaml'
 _matrix_rel=f'STAGE_EXECUTION/STAGE-01/{_synthetic_wu}/NORMATIVE_EXECUTION_MATRIX.yaml'
@@ -168,7 +170,10 @@ block_evidence('handoff_required_field_completeness_false',lambda x:x['cross_sta
 block_evidence('handoff_denominator_not_reconciled',lambda x:x['cross_stage_handoff'].__setitem__('denominator_reconciled',False))
 block_evidence('handoff_consumer_not_ready',lambda x:x['cross_stage_handoff'].__setitem__('consumer_readiness_complete',False))
 block_evidence('handoff_unresolved_required_dependency',lambda x:x['cross_stage_handoff'].__setitem__('unresolved_required_dependency_total',1))
-eng.ROOT=_orig_root
+if _orig_product_root is None:
+    os.environ.pop(eng.PRODUCT_ROOT_ENV,None)
+else:
+    os.environ[eng.PRODUCT_ROOT_ENV]=_orig_product_root
 _sample_tmp.cleanup()
 plans=[eng.plan(uid) for uid in eng.stage_map(profile)]
 assert len(plans)==11
