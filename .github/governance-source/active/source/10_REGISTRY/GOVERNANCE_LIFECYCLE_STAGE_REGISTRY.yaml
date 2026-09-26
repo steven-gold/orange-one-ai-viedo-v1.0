@@ -19,7 +19,49 @@ normative_section_uids:
 - WEB-GOV-03-S069
 - WEB-GOV-04-S083
 topology:
-  foundation_stages:
+  foundation_explicit_stage_range_execution_contract:
+  invariant_uid: GOV-INV-EXPLICIT-STAGE-RANGE-EXECUTION-001
+  applies_to_all_registered_stages: true
+  request_authority: EXPLICIT_USER_OR_GOVERNED_CALLER_STAGE_RANGE
+  range_source: CURRENT_LIFECYCLE_REGISTRY_ORDER
+  range_is_inclusive: true
+  single_stage_request_means_exact_single_stage_only: true
+  multi_stage_request_means_every_registered_stage_in_requested_inclusive_range: true
+  system_may_expand_requested_range: false
+  system_may_shrink_requested_range: false
+  system_may_skip_registered_stage_inside_requested_range: false
+  system_may_split_requested_range_into_new_user_authorization_batches: false
+  stage_pass_within_requested_range_requires_automatic_successor_continuation: true
+  normal_stage_boundary_requires_user_continue_prompt: false
+  checkpoint_after_each_operation: true
+  checkpoint_after_each_stage: true
+  resume_must_preserve_original_requested_range: true
+  resume_requires_new_range_instruction: false
+  stop_conditions:
+  - FORMAL_HUMAN_APPROVAL_REQUIRED
+  - USER_DECISION_REQUIRED
+  - BLOCKED
+  - CURRENT_STATE_CONFLICT
+  - REVERIFY_REQUIRED
+  - SNAPSHOT_INVALIDATED
+  - EXECUTION_FAILURE
+  user_decision_required_only_when_materially_distinct_legal_alternative_count_gte: 2
+  unregistered_start_stage: RANGE_START_NOT_REGISTERED
+  unregistered_end_stage: RANGE_END_NOT_REGISTERED
+  reversed_range: RANGE_ORDER_INVALID
+  silent_clamp_to_registered_range: FORBIDDEN
+  silent_truncation_at_last_registered_stage: FORBIDDEN
+  execution_mode_separation:
+    STAGE_VALIDATION_MODE:
+      purpose: VERIFY_STAGE_RULES_OR_EVIDENCE_ONLY
+      product_execution_credit: 0
+      may_redefine_requested_execution_range: false
+    PAGE_LIFECYCLE_EXECUTION_MODE:
+      purpose: EXECUTE_EXACT_REQUESTED_STAGE_RANGE_FOR_ONE_GOVERNED_UNIT
+      stage_boundary_behavior: AUTO_CONTINUE_ON_PASS
+      user_continue_prompt_after_normal_stage_pass: FORBIDDEN
+      range_completion_condition: EVERY_REGISTERED_STAGE_IN_REQUESTED_RANGE_TERMINAL_PASS
+stages:
   - STAGE-01
   - STAGE-02
   - STAGE-03
