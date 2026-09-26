@@ -2,10 +2,6 @@ name: Product Stage02 Materialize
 # stage02-materialize-closure: emits Stage-02 normalized evidence, scanner result,
 # exact-head gate receipt and terminal receipt in CI, bound to one exact head.
 on:
-  push:
-    branches: [0921acpos]
-    paths:
-      - '.github/workflows/product-stage02-materialize.yml'
   workflow_dispatch:
 permissions:
   contents: write
@@ -20,7 +16,7 @@ jobs:
     steps:
       - name: Checkout product workline
         uses: actions/checkout@v4
-        with: {ref: 0921acpos, fetch-depth: 0}
+        with: {ref: ${{ github.sha }}, fetch-depth: 0}
       - name: Checkout current governance authority
         uses: actions/checkout@v4
         with:
