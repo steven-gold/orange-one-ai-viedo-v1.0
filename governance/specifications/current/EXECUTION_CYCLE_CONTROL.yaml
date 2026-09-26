@@ -5,6 +5,11 @@ normative_status: ACTIVE_CURRENT_GOVERNANCE_COMPONENT
 formal_current_authority: true
 layer_classification: POLICY
 common_scope: ALL_GOVERNED_EXECUTION_CYCLES
+canonical_rule_registry_ref: governance/specifications/current/CANONICAL_RULE_REGISTRY.yaml
+canonical_rule_refs:
+- GOV-RULE-CURRENT-GOVERNANCE-IDENTITY-001
+- GOV-RULE-NEGATIVE-TEST-TRACEABILITY-001
+- GOV-RULE-AUDITOR-INDEPENDENCE-001
 execution_context_lock:
   required_before_any_mutating_execution: true
   resolver_only_not_second_authority: true

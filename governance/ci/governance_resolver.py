@@ -43,6 +43,8 @@ def resolve():
         raise RuntimeError("specification root missing: " + spec_root_rel)
     manifest = spec_root / "SPECIFICATION_MANIFEST.yaml"
     manifest_doc = load_yaml(manifest)
+    canonical_rule_path=spec_root/"CANONICAL_RULE_REGISTRY.yaml"
+    canonical_rule_doc=load_yaml(canonical_rule_path)
     if manifest_doc.get("current_governance_identity_source") != "governance/specifications/REGISTRY.yaml":
         raise RuntimeError("specification manifest current identity source drift")
     if manifest_doc.get("artifact_uid_may_select_current_governance") is not False:
@@ -51,6 +53,15 @@ def resolve():
         raise RuntimeError("specification manifest display version still selects current governance")
     if (manifest_doc.get("resolution_contract") or {}).get("canonical_root") != spec_root_rel:
         raise RuntimeError("manifest canonical_root does not match registry rules_root")
+    expected_rule_uid=str(identity.get("canonical_rule_registry_uid") or "")
+    expected_rule_digest=str(identity.get("canonical_rule_registry_digest") or "")
+    if not expected_rule_uid or not expected_rule_digest:
+        raise RuntimeError("registry canonical rule identity missing")
+    if canonical_rule_doc.get("registry_uid")!=expected_rule_uid or canonical_rule_doc.get("registry_digest")!=expected_rule_digest:
+        raise RuntimeError("canonical rule registry identity drift")
+    manifest_resolution=manifest_doc.get("resolution_contract") or {}
+    if manifest_resolution.get("canonical_rule_registry_uid")!=expected_rule_uid or manifest_resolution.get("canonical_rule_registry_digest")!=expected_rule_digest:
+        raise RuntimeError("manifest canonical rule binding drift")
 
     if governance_role == "GOVERNANCE_REVISION_CANDIDATE":
         if identity.get("status") != "CANDIDATE":
@@ -129,6 +140,8 @@ def resolve():
         "runtime_bundle_digest_algorithm": identity.get("specification_bundle_digest_algorithm"),
         "candidate_identity_state": identity.get("identity_state"),
         "released_immutable_identity": identity.get("released_immutable_identity"),
+        "canonical_rule_registry_uid": expected_rule_uid,
+        "canonical_rule_registry_digest": expected_rule_digest,
         "component_files": files,
         "lifecycle_registry": registry.get("lifecycle_registry"),
         "stage_invariant_registry": registry.get("stage_invariant_registry"),

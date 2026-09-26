@@ -4,14 +4,14 @@ artifact_type: CANONICAL_RULE_REGISTRY
 normative_status: ACTIVE_CURRENT_GOVERNANCE_SUPPORT_AUTHORITY
 formal_current_authority: true
 layer_classification: POLICY_SUPPORT
-governance_uid: GOV-REV-20260916-CONTEXT-LOCK-FINDING-CLOSURE
+governance_uid: GOV-REV-20260927-GOVERNANCE-IDENTITY-NEGATIVE-TRACE-AUDITOR-INDEPENDENCE-HARDENING
 registry_uid: GOV-CANONICAL-RULE-REGISTRY-001
 registry_digest_algorithm: SHA256_CANONICAL_JSON_V1
 registry_digest_scope:
 - semantic_types
 - canonical_rules
 - consumer_contract
-registry_digest: edeefffe7ebdfd1b626c8b3b3e12a2d27e69c94eaf0e84ea4ede913c2d7bc196
+registry_digest: df8514146962a8a649dd98b8e1759e643ff9b7063e6b22789987f54f62b27d42
 semantic_types:
   FIXED_WORK_UNIT_ID:
     allowed_layers:
@@ -79,6 +79,48 @@ semantic_types:
     - POLICY
     lexical_hints:
     - (?i)\b(?:workflow|job|validator|tool)[_ -]?(?:id|uid|name)\b
+  CANONICAL_RULE_OWNERSHIP:
+    allowed_layers:
+    - POLICY
+    - VALIDATOR
+    - NORMALIZER
+    - PROMOTION_TOOL
+    - ACTIVE_WORKFLOW
+    forbidden_layers: []
+    lexical_hints: []
+  CURRENT_GOVERNANCE_IDENTITY:
+    allowed_layers:
+    - POLICY
+    - VALIDATOR
+    - NORMALIZER
+    - PROMOTION_TOOL
+    - ACTIVE_WORKFLOW
+    forbidden_layers: []
+    lexical_hints: []
+  REQUIRED_NEGATIVE_TEST_CLASS_TRACEABILITY:
+    allowed_layers:
+    - POLICY
+    - VALIDATOR
+    - TEST_IMPLEMENTATION
+    - ACTIVE_WORKFLOW
+    forbidden_layers: []
+    lexical_hints: []
+  AUDITOR_IMPLEMENTATION_INDEPENDENCE:
+    allowed_layers:
+    - POLICY
+    - VALIDATOR
+    - AUDIT_IMPLEMENTATION
+    - PROMOTION_TOOL
+    forbidden_layers: []
+    lexical_hints: []
+  GOVERNANCE_SUCCESSOR_CANDIDATE_BOOTSTRAP:
+    allowed_layers:
+    - POLICY
+    - VALIDATOR
+    - PROMOTION_TOOL
+    - ACTIVE_WORKFLOW
+    forbidden_layers: []
+    lexical_hints: []
 canonical_rules:
   GOV-RULE-ANTI-DRIFT-001:
     canonical_key: POLICY_MUST_NOT_BIND_FIXED_WORK_UNIT_ID
@@ -158,6 +200,43 @@ canonical_rules:
     - PROMOTION_TOOL
     - ACTIVE_WORKFLOW
     constraint: REQUIRE_UID_DIGEST_MATCH
+  GOV-RULE-CURRENT-GOVERNANCE-IDENTITY-001:
+    canonical_key: SINGLE_CURRENT_GOVERNANCE_IDENTITY_SOURCE_REQUIRED
+    semantic_type: CURRENT_GOVERNANCE_IDENTITY
+    applicability:
+    - POLICY
+    - VALIDATOR
+    - NORMALIZER
+    - PROMOTION_TOOL
+    - ACTIVE_WORKFLOW
+    constraint: REQUIRE_REGISTRY_SINGLE_SOURCE_AND_FAIL_CLOSED_DRIFT
+  GOV-RULE-NEGATIVE-TEST-TRACEABILITY-001:
+    canonical_key: REQUIRED_NEGATIVE_TEST_CLASS_EXACT_EXECUTION_TRACE_REQUIRED
+    semantic_type: REQUIRED_NEGATIVE_TEST_CLASS_TRACEABILITY
+    applicability:
+    - POLICY
+    - VALIDATOR
+    - TEST_IMPLEMENTATION
+    - ACTIVE_WORKFLOW
+    constraint: REQUIRE_EXACT_CLASS_MUTATION_EXPECTED_BLOCK_OBSERVED_BLOCK_AND_RESULT
+  GOV-RULE-AUDITOR-INDEPENDENCE-001:
+    canonical_key: FORMAL_AUDITOR_INDEPENDENCE_REQUIRES_DISTINCT_IMPLEMENTATIONS
+    semantic_type: AUDITOR_IMPLEMENTATION_INDEPENDENCE
+    applicability:
+    - POLICY
+    - VALIDATOR
+    - AUDIT_IMPLEMENTATION
+    - PROMOTION_TOOL
+    constraint: REQUIRE_DISTINCT_PHYSICAL_IMPLEMENTATIONS_SAME_SNAPSHOT_AND_IDENTICAL_RESULT
+  GOV-RULE-GOVERNANCE-CANDIDATE-BOOTSTRAP-001:
+    canonical_key: SUCCESSOR_GOVERNANCE_CANDIDATE_REQUIRES_PREEXISTING_EXACT_SCOPE_AUTHORIZATION
+    semantic_type: GOVERNANCE_SUCCESSOR_CANDIDATE_BOOTSTRAP
+    applicability:
+    - POLICY
+    - VALIDATOR
+    - PROMOTION_TOOL
+    - ACTIVE_WORKFLOW
+    constraint: REQUIRE_IMMUTABLE_PREDECESSOR_PREEXISTING_AUTHORIZATION_EXACT_SCOPE_AND_EXACT_HEAD_VALIDATION
 consumer_contract:
   primary_enforcement:
   - RULE_UID
@@ -199,6 +278,10 @@ binding_contract:
   - GOV-RULE-ANTI-DRIFT-008
   - GOV-RULE-ANTI-DRIFT-009
   - GOV-RULE-ANTI-DRIFT-010
+  - GOV-RULE-CURRENT-GOVERNANCE-IDENTITY-001
+  - GOV-RULE-NEGATIVE-TEST-TRACEABILITY-001
+  - GOV-RULE-AUDITOR-INDEPENDENCE-001
+  - GOV-RULE-GOVERNANCE-CANDIDATE-BOOTSTRAP-001
   consumer_loader: governance/ci/canonical_rule_registry.py
   validator: governance/ci/validate_governance_portability.py
 status: ACTIVE

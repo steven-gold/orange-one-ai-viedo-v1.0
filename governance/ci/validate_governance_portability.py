@@ -38,6 +38,19 @@ for p in sorted(MOTHER.glob('*.md')):
             failures.append('mother_policy_literal_contamination:'+p.name+':'+kind+':'+m.group(0))
 
 manifest=yaml.safe_load((CUR/'SPECIFICATION_MANIFEST.yaml').read_text()) or {}
+_canonical_rules=canonical.get('canonical_rules') or {}
+_required_rules=set(map(str,(canonical.get('binding_contract') or {}).get('required_rule_uids') or []))
+if set(map(str,_canonical_rules))!=_required_rules:
+    failures.append('canonical_rule_required_denominator_drift')
+_support=[x for x in (manifest.get('support_authorities') or []) if isinstance(x,dict) and x.get('uid')=='GOV-CANONICAL-RULE-REGISTRY-001']
+if len(_support)!=1:
+    failures.append('canonical_rule_manifest_support_authority_denominator_drift')
+elif _support[0].get('digest')!=canonical.get('registry_digest') or _support[0].get('digest_algorithm')!='SHA256_CANONICAL_JSON_V1':
+    failures.append('canonical_rule_manifest_support_digest_drift')
+_resolution=manifest.get('resolution_contract') or {}
+if _resolution.get('canonical_rule_registry_uid')!=canonical.get('registry_uid') or _resolution.get('canonical_rule_registry_digest')!=canonical.get('registry_digest'):
+    failures.append('canonical_rule_manifest_resolution_binding_drift')
+_rule_owners={}
 files=[]
 for rec in manifest.get('components') or []:
     fn=rec.get('file'); p=CUR/fn; files.append(fn)
@@ -46,9 +59,22 @@ for rec in manifest.get('components') or []:
     if d.get('formal_current_authority') is not True: failures.append('current_component_not_formal:'+str(fn))
     if d.get('layer_classification')!='POLICY': failures.append('current_component_not_policy:'+str(fn))
     if 'TEST_SPECIFICATION' in str(d.get('normative_status','')): failures.append('test_component_in_current:'+str(fn))
+    for rule_uid in map(str,d.get('canonical_rule_refs') or []):
+        if rule_uid not in _canonical_rules:
+            failures.append('component_unknown_canonical_rule_ref:'+str(fn)+':'+rule_uid)
+        _rule_owners.setdefault(rule_uid,[]).append(str(fn))
     for finding in scan_policy_text(p.read_text(encoding='utf-8')):
         failures.append('current_policy_semantic_leak:'+str(fn)+':'+finding['semantic_type']+':'+finding['match'])
 
+_expected_rule_owners={
+  'GOV-RULE-CURRENT-GOVERNANCE-IDENTITY-001':['EXECUTION_CYCLE_CONTROL.yaml'],
+  'GOV-RULE-NEGATIVE-TEST-TRACEABILITY-001':['EXECUTION_CYCLE_CONTROL.yaml'],
+  'GOV-RULE-AUDITOR-INDEPENDENCE-001':['EXECUTION_CYCLE_CONTROL.yaml'],
+  'GOV-RULE-GOVERNANCE-CANDIDATE-BOOTSTRAP-001':['SPECIFICATION_MUTATION_CONTROL.yaml'],
+}
+for _rule_uid,_owners in _expected_rule_owners.items():
+    if _rule_owners.get(_rule_uid)!=_owners:
+        failures.append('canonical_rule_owner_binding_drift:'+_rule_uid+':'+repr(_rule_owners.get(_rule_uid)))
 old={'STAGE_EXECUTION_OPTIMIZATION.yaml','STAGE_TEST_REMEDIATION_CLOSURE_PROTOCOL.yaml','TEST_FEEDBACK_TEMPORARY_ARTIFACT_LIFECYCLE.yaml'}
 if old & set(files): failures.append('superseded_stage_test_component_still_manifested')
 if any((CUR/x).exists() for x in old): failures.append('superseded_stage_test_component_residual')

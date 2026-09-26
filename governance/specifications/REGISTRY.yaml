@@ -14,7 +14,9 @@ governance_identity:
   released_immutable_identity: false
   immutable_release_identity_assigned_only_at_explicit_promotion: true
   specification_bundle_digest_algorithm: SHA256_RELATIVE_PATH_NUL_BYTES_NUL_SORTED_V1
-  specification_bundle_sha256: 6f658960af521275a5e4581a83b14190f682e05d9d641e9f7871a48c92cd48aa
+  specification_bundle_sha256: 6aaac64cd4600e55ac059253fd6aba05d57a0106e07f645329fa8f42ab5b293b
+  canonical_rule_registry_uid: GOV-CANONICAL-RULE-REGISTRY-001
+  canonical_rule_registry_digest: df8514146962a8a649dd98b8e1759e643ff9b7063e6b22789987f54f62b27d42
   predecessor_branch: rebuild-v2.1.1
   predecessor_head_sha: c336a76c22a5db65080f749f26875edfa5169457
   predecessor_root_manifest_ref: .github/governance-source/active/source/10_REGISTRY/GOVERNANCE_ROOT_MANIFEST.yaml
@@ -76,7 +78,10 @@ candidate_validation_contract:
   candidate_identity_may_be_reported_as_released_immutable: false
   immutable_release_identity_must_be_assigned_during_explicit_promotion: true
   specification_bundle_digest_algorithm: SHA256_RELATIVE_PATH_NUL_BYTES_NUL_SORTED_V1
-  specification_bundle_sha256: 6f658960af521275a5e4581a83b14190f682e05d9d641e9f7871a48c92cd48aa
+  specification_bundle_sha256: 6aaac64cd4600e55ac059253fd6aba05d57a0106e07f645329fa8f42ab5b293b
+  canonical_rule_registry_uid: GOV-CANONICAL-RULE-REGISTRY-001
+  canonical_rule_registry_digest: df8514146962a8a649dd98b8e1759e643ff9b7063e6b22789987f54f62b27d42
+  canonical_rule_binding_validator: governance/ci/validate_governance_portability.py
   current_cleanup_required_commands:
   - python governance/ci/stage_execution_engine.py --definition-audit-all
   - python governance/ci/test_stage_execution_engine.py
