@@ -164,6 +164,13 @@ execution_driver_contract:
   unregistered_scanner_execution: BLOCK
   missing_operation_binding: BLOCK
   missing_scanner_binding: BLOCK
+  operation_executor_protocol_required: true
+  allowed_operation_executor_protocols: [PYTHON_STAGE_OPERATION_V1]
+  operation_receipt_ref_required_per_operation: true
+  operation_receipt_status_required: PASS
+  operation_execution_unit: ONE_OPERATION_PER_ENGINE_INVOCATION
+  operation_checkpoint_after_pass_required: true
+  stage_closure_may_be_auto_claimed_by_operation_executor: false
 stepwise_execution_defaults:
   authority_ref: WEB-GOV-03-S062A
   mode: OPERATION_BY_OPERATION
