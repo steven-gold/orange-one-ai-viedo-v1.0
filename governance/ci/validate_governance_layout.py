@@ -121,6 +121,15 @@ if manifest.get('artifact_uid_may_select_current_governance') is not False:
     errors.append('SPECIFICATION_MANIFEST_ARTIFACT_UID_CURRENT_AUTHORITY_LEAK')
 if manifest.get('display_version_may_select_current_governance') is not False:
     errors.append('SPECIFICATION_MANIFEST_DISPLAY_VERSION_CURRENT_AUTHORITY_LEAK')
+if (reg.get('branch_role_contract') or {}).get(str(reg.get('branch') or ''))=='GOVERNANCE_REVISION_CANDIDATE':
+    if manifest.get('branch_release_state')!='CANDIDATE_NOT_PROMOTED':
+        errors.append('CANDIDATE_RULE_BUNDLE_RELEASE_STATE_DRIFT')
+    if manifest.get('released_current_authority') is not False:
+        errors.append('CANDIDATE_RULE_BUNDLE_RELEASED_AUTHORITY_LEAK')
+    if manifest.get('release_state_authority')!='governance/specifications/REGISTRY.yaml':
+        errors.append('CANDIDATE_RULE_BUNDLE_RELEASE_STATE_AUTHORITY_DRIFT')
+    if resolved.get('governance_release_state')!='CANDIDATE_NOT_PROMOTED' or resolved.get('released_current_authority') is not False:
+        errors.append('CANDIDATE_RESOLVER_RELEASE_STATE_DRIFT')
 
 verify_candidate_authorization(reg,resolved)
 

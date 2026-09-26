@@ -176,6 +176,17 @@ def main() -> int:
             errors.append("CANDIDATE_EXACT_HEAD_WORKFLOW_SUCCESS_NOT_REQUIRED")
         if validation_contract.get("formal_promotion_requires_independent_auditor_evidence") is not True:
             errors.append("CANDIDATE_FORMAL_AUDITOR_EVIDENCE_NOT_REQUIRED")
+        readiness=str(validation_contract.get("promotion_readiness_validator") or "")
+        if not readiness or not (ROOT/readiness).is_file():
+            errors.append("CANDIDATE_PROMOTION_READINESS_VALIDATOR_MISSING:"+readiness)
+        if validation_contract.get("promotion_readiness_mode")!="READ_ONLY_FAIL_CLOSED":
+            errors.append("CANDIDATE_PROMOTION_READINESS_MODE_DRIFT")
+        if validation_contract.get("promotion_readiness_may_mutate_or_promote") is not False:
+            errors.append("CANDIDATE_PROMOTION_READINESS_MUTATION_NOT_BLOCKED")
+        if validation_contract.get("candidate_rule_bundle_release_state")!="CANDIDATE_NOT_PROMOTED":
+            errors.append("CANDIDATE_REGISTRY_RELEASE_STATE_DRIFT")
+        if validation_contract.get("candidate_rule_bundle_released_current_authority") is not False:
+            errors.append("CANDIDATE_REGISTRY_RELEASE_AUTHORITY_LEAK")
 
     for workflow in workflows:
         text = workflow.read_text(encoding="utf-8")

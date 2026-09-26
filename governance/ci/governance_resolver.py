@@ -62,6 +62,12 @@ def resolve():
         root_manifest = load_yaml(ROOT / str(identity["predecessor_root_manifest_ref"]))
         if root_manifest.get("governance_revision") != identity.get("predecessor_governance_revision"):
             raise RuntimeError("candidate predecessor root revision drift")
+        if manifest_doc.get("branch_release_state") != "CANDIDATE_NOT_PROMOTED":
+            raise RuntimeError("candidate specification manifest release state drift")
+        if manifest_doc.get("released_current_authority") is not False:
+            raise RuntimeError("candidate specification manifest released authority leak")
+        if manifest_doc.get("release_state_authority") != "governance/specifications/REGISTRY.yaml":
+            raise RuntimeError("candidate specification manifest release-state authority drift")
 
     digest = hashlib.sha256()
     files = []
@@ -85,6 +91,8 @@ def resolve():
         "identity_authority": identity.get("identity_authority"),
         "authorization_record_url": identity.get("authorization_record_url"),
         "authorized_scope": identity.get("authorized_scope"),
+        "governance_release_state": manifest_doc.get("branch_release_state") if governance_role == "GOVERNANCE_REVISION_CANDIDATE" else "RELEASED_CURRENT",
+        "released_current_authority": manifest_doc.get("released_current_authority") if governance_role == "GOVERNANCE_REVISION_CANDIDATE" else True,
         "specification_root": spec_root_rel,
         "specification_manifest": str(manifest.relative_to(ROOT)),
         "specification_bundle_uid": manifest_doc.get("artifact_uid"),

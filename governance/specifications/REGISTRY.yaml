@@ -78,6 +78,7 @@ candidate_validation_contract:
   - python .github/governance-source/active/source/09_TESTS/governance/validate_product_neutral_entity_lifecycle.py
   - python governance/ci/audit_closure_engine.py --self-test
   - python governance/ci/audit_closure_engine.py
+  - python governance/ci/validate_governance_candidate_promotion_readiness.py --self-test
   full_preformal_regression_denominator_source: .github/governance-source/active/source/10_REGISTRY/SEMANTIC_AUTHORITY_BASELINE.yaml#mandatory_regression_assets
   mother_neutrality_and_portability_required: true
   active_consumer_reverse_validation_required: true
@@ -86,6 +87,12 @@ candidate_validation_contract:
   core_validation_pass_may_substitute_full_preformal_regression: false
   formal_promotion_requires_all_required_workflows_exact_head_success: true
   formal_promotion_requires_independent_auditor_evidence: true
+  promotion_readiness_validator: governance/ci/validate_governance_candidate_promotion_readiness.py
+  promotion_readiness_mode: READ_ONLY_FAIL_CLOSED
+  promotion_readiness_may_mutate_or_promote: false
+  candidate_rule_bundle_release_state: CANDIDATE_NOT_PROMOTED
+  candidate_rule_bundle_released_current_authority: false
+  explicit_promotion_action_required_after_readiness: true
   product_completion_credit: 0
 execution_domain_entrypoints:
   selection_required_before_rule_read: true
