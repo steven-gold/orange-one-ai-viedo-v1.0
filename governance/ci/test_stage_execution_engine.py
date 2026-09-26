@@ -62,7 +62,71 @@ sample={
  'next_stage_transition':{'next_stage_uid':st['next_stage_uid'],'status':'READY'},
  'result':'PASS','stage_exit_allowed':True
 }
-sample['cross_stage_handoff']={'ledger_ref':'synthetic://external','external_receipt':True,'successor_stage_uid':st['next_stage_uid'],'reference_resolution_complete':True,'physical_materialization_complete':True,'required_field_completeness_complete':True,'denominator_reconciled':True,'consumer_readiness_complete':True,'unresolved_required_dependency_total':0,'status':'PASS'}
+_orig_root=eng.ROOT
+_sample_tmp=tempfile.TemporaryDirectory()
+eng.ROOT=Path(_sample_tmp.name)
+_synthetic_wu='SYNTHETIC-WU-STAGE01'
+_synthetic_dir=eng.ROOT/'STAGE_EXECUTION'/'STAGE-01'/_synthetic_wu
+_synthetic_dir.mkdir(parents=True)
+_scope_rel=f'STAGE_EXECUTION/STAGE-01/{_synthetic_wu}/CURRENT_EXECUTION_SCOPE_MANIFEST.yaml'
+_matrix_rel=f'STAGE_EXECUTION/STAGE-01/{_synthetic_wu}/NORMATIVE_EXECUTION_MATRIX.yaml'
+_handoff_rel=f'STAGE_EXECUTION/STAGE-01/{_synthetic_wu}/CROSS_STAGE_HANDOFF_READINESS_LEDGER.yaml'
+sample['scope_manifest_ref']=_scope_rel
+sample['cross_stage_handoff']={
+ 'ledger_ref':_handoff_rel,'external_receipt':False,'successor_stage_uid':st['next_stage_uid'],
+ 'reference_resolution_complete':True,'physical_materialization_complete':True,'required_field_completeness_complete':True,
+ 'denominator_reconciled':True,'consumer_readiness_complete':True,
+ 'successor_execution_binding_total':0,'successor_execution_binding_ready_total':0,'successor_execution_binding_unresolved_total':0,
+ 'current_matrix_valid':True,'current_state_consistent':True,'unresolved_required_dependency_total':0,'status':'PASS'
+}
+yaml.safe_dump({'artifact_type':'EXECUTION_SCOPE_MANIFEST','stage_uid':stage_uid,'work_unit_uid':_synthetic_wu,'governance_uid':gov},(_synthetic_dir/'CURRENT_EXECUTION_SCOPE_MANIFEST.yaml').open('w',encoding='utf-8'),sort_keys=False)
+yaml.safe_dump({
+ 'artifact_type':'WORK_UNIT','work_unit_uid':_synthetic_wu,'stage_uid':stage_uid,'primary_task_layer':'PRODUCT_STAGE_EXECUTION',
+ 'status':'CLOSED','current_status':'CLOSED','normative_execution_matrix_ref':_matrix_rel,
+ 'required_outputs':list(st['outputs']),
+ 'operation_bindings':{x:{'executor_owner':'synthetic.executor','result_owner':'synthetic.result'} for x in st['operations']},
+ 'scanner_bindings':{x:{'scanner_owner':'synthetic.scanner','result_owner':'synthetic.scan'} for x in ad['scanner_dimensions']}
+},(_synthetic_dir/'WORK_UNIT.yaml').open('w',encoding='utf-8'),sort_keys=False)
+yaml.safe_dump({
+ 'artifact_type':'WORK_UNIT_EXECUTION_STATE','stage_uid':stage_uid,'work_unit_uid':_synthetic_wu,
+ 'completed_operations':list(st['operations']),'current_operation':'COMPLETE','status':'CLOSED'
+},(_synthetic_dir/'EXECUTION_STATE.yaml').open('w',encoding='utf-8'),sort_keys=False)
+_required_sections=list(map(str,st.get('required_normative_section_uids') or []))
+_required_artifacts=list(map(str,st.get('outputs') or []))+list(map(str,st.get('required_evidence') or []))
+_row_total=max(len(_required_sections),len(_required_artifacts))
+_synth_payload={'fields':{f'f{i}':f'VALUE-{i}' for i in range(_row_total)}}
+yaml.safe_dump(_synth_payload,(_synthetic_dir/'synthetic-artifact.yaml').open('w',encoding='utf-8'),sort_keys=False)
+_matrix_rows=[]
+for i in range(_row_total):
+    _matrix_rows.append({
+      'matrix_row_uid':f'S1-MATRIX-ROW-{i+1:03d}','normative_section_uid':_required_sections[i % len(_required_sections)],
+      'requirement_uid':f'S1-REQ-{i+1:03d}','required_artifact_type':_required_artifacts[i % len(_required_artifacts)],
+      'artifact_ref':f'STAGE_EXECUTION/STAGE-01/{_synthetic_wu}/synthetic-artifact.yaml','artifact_owner':'SYNTHETIC-OWNER',
+      'row_denominator_source':'SYNTHETIC-DENOMINATOR','row_identity':f'S1-SYNTHETIC-ROW-{i+1:03d}','field_path':['fields',f'f{i}'],
+      'applicability':'REQUIRED','validator_uid':st['validators'][0],'validator_check_id':f'S1-MATRIX-FIELD-{i+1:03d}',
+      'evidence_ref':'synthetic://matrix-evidence','closure_gate':st['exit_gate'],'failure_disposition':'BLOCK','reentry_owner':'SYNTHETIC-OWNER'
+    })
+yaml.safe_dump({
+ 'artifact_uid':'SYNTHETIC-NEM-STAGE01','artifact_type':'NORMATIVE_EXECUTION_MATRIX','governance_uid':gov,'stage_uid':stage_uid,
+ 'work_unit_uid':_synthetic_wu,'rows':_matrix_rows,'coverage':{
+   'required_normative_section_total':len(_required_sections),'represented_normative_section_total':len(_required_sections),
+   'required_artifact_total':len(set(_required_artifacts)),'represented_artifact_total':len(set(_required_artifacts)),
+   'required_field_total':_row_total,'validator_bound_field_total':_row_total,'closure_bound_field_total':_row_total,
+   'missing_required_row_count':0,'missing_required_field_count':0,'duplicate_credit_count':0,'summary_only_credit_count':0,
+   'unclassified_applicability_count':0,'validator_unbound_count':0,'closure_unbound_count':0,'stale_matrix_count':0},
+ 'status':'PASS'
+},(_synthetic_dir/'NORMATIVE_EXECUTION_MATRIX.yaml').open('w',encoding='utf-8'),sort_keys=False)
+_successor=eng.stage_map(profile)[st['next_stage_uid']]
+yaml.safe_dump({
+ 'artifact_uid':'SYNTHETIC-HANDOFF-STAGE01','artifact_type':'CROSS_STAGE_HANDOFF_READINESS_LEDGER','stage_uid':stage_uid,
+ 'work_unit_uid':_synthetic_wu,'successor_stage_uid':st['next_stage_uid'],
+ 'successor_required_inputs':[{'input_uid':x,'status':'MATERIALIZED'} for x in _successor.get('inputs') or []],
+ 'successor_execution_bindings':[],
+ 'successor_execution_binding_total':0,'successor_execution_binding_ready_total':0,'successor_execution_binding_unresolved_total':0,
+ 'reference_resolution_complete':True,'physical_materialization_complete':True,'required_field_completeness_complete':True,
+ 'denominator_reconciled':True,'consumer_readiness_complete':True,'current_matrix_valid':True,'current_state_consistent':True,
+ 'unresolved_required_dependency_total':0,'status':'PASS'
+},(_synthetic_dir/'CROSS_STAGE_HANDOFF_READINESS_LEDGER.yaml').open('w',encoding='utf-8'),sort_keys=False)
 eng.validate_evidence_data(stage_uid,deepcopy(sample))
 blocked_sample=deepcopy(sample)
 blocked_sample['denominator']={'required_total':len(st['operations']),'open_gap_total':1,'closure_blocker_total':1,'remaining_scope_total':1}
@@ -104,6 +168,8 @@ block_evidence('handoff_required_field_completeness_false',lambda x:x['cross_sta
 block_evidence('handoff_denominator_not_reconciled',lambda x:x['cross_stage_handoff'].__setitem__('denominator_reconciled',False))
 block_evidence('handoff_consumer_not_ready',lambda x:x['cross_stage_handoff'].__setitem__('consumer_readiness_complete',False))
 block_evidence('handoff_unresolved_required_dependency',lambda x:x['cross_stage_handoff'].__setitem__('unresolved_required_dependency_total',1))
+eng.ROOT=_orig_root
+_sample_tmp.cleanup()
 plans=[eng.plan(uid) for uid in eng.stage_map(profile)]
 assert len(plans)==11
 assert all(len(x['phases'])==26 for x in plans)
