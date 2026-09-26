@@ -113,8 +113,20 @@ res.append(case('stage_range_contract_exact_user_authority', range_inv.get('requ
 res.append(case('stage_interaction_contracts_cover_all_11', set(interaction_contracts)=={f'STAGE-{i:02d}' for i in range(1,12)}))
 res.append(case('stage04_formal_approval_not_choice_menu', (interaction_contracts.get('STAGE-04') or {}).get('default_mode')=='FORMAL_APPROVAL' and (interaction_contracts.get('STAGE-04') or {}).get('alternative_execution_path_allowed') is False and (interaction_contracts.get('STAGE-04') or {}).get('approval_consumption_operation')=='DESIGN_FREEZE_VALIDATE'))
 res.append(case('stage11_next_page_not_ai_invented', (interaction_contracts.get('STAGE-11') or {}).get('next_page_eligibility_must_come_from_registered_operation') is True and (interaction_contracts.get('STAGE-11') or {}).get('project_completion_may_be_ai_invented') is False))
+crossmat=(invdoc.get('invariants') or {}).get('CROSS_STAGE_MATERIALIZATION_AND_CONSUMER_READINESS') or {}
+binding_req=crossmat.get('successor_execution_binding_requirements') or {}
+binding_map=crossmat.get('successor_execution_binding_operation_map') or {}
+det_contract=(invdoc.get('invariants') or {}).get('DETERMINISTIC_STAGE_AUDIT') or {}
+state_contract=det_contract.get('current_state_conflict_contract') or {}
+matrix_contract=det_contract.get('normative_execution_matrix_contract') or {}
+res.append(case('handoff_single_canonical_ledger_no_parallel_system', crossmat.get('single_canonical_handoff_artifact_only') is True and crossmat.get('parallel_readiness_ledger_or_stage_local_substitute')=='BLOCK'))
+res.append(case('stage05_execution_binding_denominator_not_artifact_presence_only', {'REPOSITORY_TARGET','APPLICATION_ROOT','IMPLEMENTATION_OWNER','FRONTEND_RUNTIME_TARGET','BACKEND_RUNTIME_TARGET','DATABASE_TARGET','AUTHENTICATION_TARGET','AUTHORIZATION_TARGET'}.issubset(set(binding_req.get('STAGE-05') or []))))
+res.append(case('stage07_to_stage11_execution_targets_registered', all(binding_req.get(s) for s in ('STAGE-07','STAGE-08','STAGE-09','STAGE-10','STAGE-11'))))
+res.append(case('successor_binding_classes_map_to_consuming_operations', set(binding_map.get('STAGE-05') or {})==set(binding_req.get('STAGE-05') or []) and set(binding_map.get('STAGE-11') or {})==set(binding_req.get('STAGE-11') or [])))
+res.append(case('current_state_conflict_cannot_be_overridden_by_terminal_success', state_contract.get('pass_requires_completed_operation_set_exact_registered_stage_operations') is True and state_contract.get('terminal_receipt_or_outer_run_success_may_override_conflict') is False))
+res.append(case('terminal_closure_revalidates_nonempty_current_matrix', matrix_contract.get('matrix_file_must_be_nonempty_parseable_mapping') is True and matrix_contract.get('matrix_rows_must_be_nonempty') is True and matrix_contract.get('matrix_validation_must_run_again_at_terminal_closure') is True and matrix_contract.get('terminal_receipt_or_outer_run_success_may_override_invalid_matrix') is False))
 out=v213.validate(PKG)
 res.append(case('package_stage_execution_invariant_contract_valid', out['status']=='PASS',out))
 out={'suite':'v2.1.13 universal Stage execution invariant multidirection regression','total':len(res),'passed_expectations':sum(x['ok'] for x in res),'results':res}
 print(json.dumps(out,ensure_ascii=False,indent=2))
-raise SystemExit(0 if out['total']==46 and out['passed_expectations']==46 else 1)
+raise SystemExit(0 if out['total']==52 and out['passed_expectations']==52 else 1)
