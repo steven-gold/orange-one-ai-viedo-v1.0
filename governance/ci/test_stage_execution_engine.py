@@ -15,6 +15,17 @@ import stage_execution_engine as eng
 entry,reg,gov,profile,adapters=eng.data()
 eng.validate_definition_data(profile,adapters)
 cases=0
+def expect_stage_engine_block(label, fn, expected_prefix=None):
+    global cases
+    try:
+        fn()
+    except eng.StageEngineError as exc:
+        if expected_prefix and expected_prefix not in str(exc):
+            raise SystemExit(f'FAIL_WRONG_BLOCK:{label}:{exc}')
+        cases += 1
+        return
+    raise SystemExit('FAIL_EXPECTED_STAGE_ENGINE_BLOCK:'+label)
+
 def block(label,mutator):
     global cases
     p=deepcopy(profile); a=deepcopy(adapters); mutator(p,a)
@@ -315,17 +326,6 @@ with tempfile.TemporaryDirectory() as td:
 
 # Stage-01..11 governance pressure tests using the real common validators.
 # Synthetic fixtures live only in a temporary product root and grant zero product completion credit.
-def expect_stage_engine_block(label, fn, expected_prefix=None):
-    global cases
-    try:
-        fn()
-    except eng.StageEngineError as exc:
-        if expected_prefix and expected_prefix not in str(exc):
-            raise SystemExit(f'FAIL_WRONG_BLOCK:{label}:{exc}')
-        cases += 1
-        return
-    raise SystemExit('FAIL_EXPECTED_STAGE_ENGINE_BLOCK:'+label)
-
 with tempfile.TemporaryDirectory() as td:
     pressure_root=Path(td)
     old_root=os.environ.get(eng.PRODUCT_ROOT_ENV)
