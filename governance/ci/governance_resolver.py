@@ -68,6 +68,17 @@ def resolve():
             raise RuntimeError("candidate specification manifest released authority leak")
         if manifest_doc.get("release_state_authority") != "governance/specifications/REGISTRY.yaml":
             raise RuntimeError("candidate specification manifest release-state authority drift")
+        if manifest_doc.get("artifact_uid") != identity.get("governance_uid"):
+            raise RuntimeError("candidate specification manifest governance uid projection drift")
+        if manifest_doc.get("display_version") != identity.get("display_version"):
+            raise RuntimeError("candidate specification manifest display version projection drift")
+        lineage=manifest_doc.get("source_lineage") or {}
+        if lineage.get("promotion_authorization_ref") != identity.get("authorization_record_url"):
+            raise RuntimeError("candidate specification manifest authorization projection drift")
+        if lineage.get("candidate_predecessor_head_sha") != identity.get("predecessor_head_sha"):
+            raise RuntimeError("candidate specification manifest predecessor head projection drift")
+        if lineage.get("source_bytes_changed_by_this_successor") is not False or lineage.get("source_identity_reused_only_because_source_bytes_are_unchanged") is not True:
+            raise RuntimeError("candidate specification manifest source lineage drift")
 
     digest = hashlib.sha256()
     files = []

@@ -130,6 +130,23 @@ if (reg.get('branch_role_contract') or {}).get(str(reg.get('branch') or ''))=='G
         errors.append('CANDIDATE_RULE_BUNDLE_RELEASE_STATE_AUTHORITY_DRIFT')
     if resolved.get('governance_release_state')!='CANDIDATE_NOT_PROMOTED' or resolved.get('released_current_authority') is not False:
         errors.append('CANDIDATE_RESOLVER_RELEASE_STATE_DRIFT')
+    identity=reg.get('governance_identity') or {}
+    if manifest.get('artifact_uid')!=identity.get('governance_uid'):
+        errors.append('CANDIDATE_MANIFEST_GOVERNANCE_UID_PROJECTION_DRIFT')
+    if manifest.get('display_version')!=identity.get('display_version'):
+        errors.append('CANDIDATE_MANIFEST_DISPLAY_VERSION_PROJECTION_DRIFT')
+    lineage=manifest.get('source_lineage') or {}
+    if lineage.get('promotion_authorization_ref')!=identity.get('authorization_record_url'):
+        errors.append('CANDIDATE_MANIFEST_AUTHORIZATION_PROJECTION_DRIFT')
+    if lineage.get('candidate_predecessor_head_sha')!=identity.get('predecessor_head_sha'):
+        errors.append('CANDIDATE_MANIFEST_PREDECESSOR_HEAD_PROJECTION_DRIFT')
+    if lineage.get('source_bytes_changed_by_this_successor') is not False or lineage.get('source_identity_reused_only_because_source_bytes_are_unchanged') is not True:
+        errors.append('CANDIDATE_MANIFEST_SOURCE_LINEAGE_DRIFT')
+    vc=reg.get('candidate_validation_contract') or {}
+    if vc.get('candidate_manifest_projection_must_match_registry_identity') is not True:
+        errors.append('CANDIDATE_MANIFEST_PROJECTION_BINDING_NOT_REQUIRED')
+    if vc.get('candidate_manifest_artifact_uid_expected')!=identity.get('governance_uid') or vc.get('candidate_manifest_display_version_expected')!=identity.get('display_version'):
+        errors.append('CANDIDATE_MANIFEST_EXPECTED_IDENTITY_DRIFT')
 
 verify_candidate_authorization(reg,resolved)
 
