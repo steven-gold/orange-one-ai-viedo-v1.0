@@ -26,7 +26,7 @@ required_outputs:
 - ACCEPTANCE_AUDIT_BLUEPRINT
 - DESIGN_FREEZE_PACKAGE
 - FOUNDATION_BARRIER_RECORD
-status: CLOSED
+status: BLOCKED
 operation_bindings:
   BASIC_DESIGN_PACKAGE_COMPILE:
     executor_owner: governance/ci/stage_execution_engine.py
@@ -57,8 +57,8 @@ scanner_bindings:
     scanner_owner: governance/ci/stage_execution_engine.py
     result_owner: STAGE_EXECUTION/STAGE-04/WU-STAGE04-WB01-DASHBOARD-001/EVIDENCE/STAGE04_NORMALIZED_EVIDENCE.json
 normative_execution_matrix_ref: STAGE_EXECUTION/STAGE-04/WU-STAGE04-WB01-DASHBOARD-001/NORMATIVE_EXECUTION_MATRIX.yaml
-current_status: CLOSED
+current_status: BLOCKED
 current_governance_uid: GOV-REV-20260925-NORMATIVE-EXECUTION-MATRIX
-current_governance_head: 1451256c6b74ca283467f2a607ca2215aac89996
-current_display_version: v2.2.25
+current_governance_head: c336a76c22a5db65080f749f26875edfa5169457
+current_display_version: v2.2.32
 resume_point: TERMINAL_CLOSURE
