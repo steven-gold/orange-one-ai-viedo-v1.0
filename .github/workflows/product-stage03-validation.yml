@@ -44,7 +44,12 @@ jobs:
         ACPOS_PRODUCT_ROOT: ${{ github.workspace }}
         ACPOS_ACTIVE_WORK_UNIT: STAGE_EXECUTION/STAGE-03/${{ matrix.wu }}/WORK_UNIT.yaml
         ACPOS_CURRENT_SCOPE: STAGE_EXECUTION/STAGE-03/${{ matrix.wu }}/CURRENT_EXECUTION_SCOPE_MANIFEST.yaml
-      run: python governance/ci/stage_execution_engine.py --admission-check --stage STAGE-03
+      run: |
+        STATUS="$(python -c "import yaml; d=yaml.safe_load(open('STAGE_EXECUTION/STAGE-03/${{ matrix.wu }}/WORK_UNIT.yaml')); print(d.get('current_status') or d.get('status') or '')")"
+        case "$STATUS" in
+          CLOSED*) echo "SKIP effectful admission for already-closed ${{ matrix.wu }}; continue Current closure revalidation"; exit 0 ;;
+        esac
+        python governance/ci/stage_execution_engine.py --admission-check --stage STAGE-03
     - name: Validate Stage03 materialization
       env:
         WU: ${{ matrix.wu }}
