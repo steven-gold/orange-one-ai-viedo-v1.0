@@ -1,20 +1,27 @@
-name: Product Stage04 Materialize
-# LEGACY SUPPORT ONLY. Fresh Stage-04 execution MUST use the common one-operation protocol.
-# The bulk seal path is fail-closed and may not authorize Stage closure.
-# stage04-materialize: preapproval phase compiles BASIC_DESIGN_PACKAGE for both
-# Stage-04 governed units (the only operation allowed before human approval).
-# When a governed FORMAL_APPROVAL disposition exists, the same run materializes
-# DESIGN_APPROVAL_EVIDENCE and the blocked freeze outputs, then converges Stage-04
-# closure so CURRENT_GOVERNED_UNIT_FOUNDATION_FROZEN is authorized.
+name: Product Stage04 Execute
+# One-operation Stage-04 execution under the common engine authority.
+# Each `stage_execution_engine.py --execute` invocation runs exactly one
+# governed operation (PYTHON_STAGE_OPERATION_V1); the closure step runs only
+# after all four operations of a governed unit have passed and materializes the
+# handoff readiness ledger, normalized evidence and terminal receipt.
+#
+# This workflow intentionally keeps the historically registered workflow file
+# so it stays dispatchable; the legacy bulk seal path is gone (it is fail-closed
+# in the engine).
 on:
   workflow_dispatch:
+    inputs:
+      reason:
+        description: Operator note for this Stage-04 one-operation run
+        required: false
+        default: manual
 permissions:
   contents: write
 concurrency:
-  group: product-stage04-materialize
+  group: product-stage04-execute
   cancel-in-progress: false
 jobs:
-  materialize:
+  execute:
     runs-on: ubuntu-24.04
     steps:
       - name: Checkout product workline
@@ -45,76 +52,53 @@ jobs:
           echo "ACPOS_GOVERNANCE_UID=$GOV_UID" >> "$GITHUB_ENV"
           echo "ACPOS_GOVERNANCE_VERSION=$GOV_VER" >> "$GITHUB_ENV"
           python -m pip install --disable-pip-version-check 'PyYAML==6.0.2'
-      - name: Stage04 admission check for not-yet-closed governed units
-        env:
-          ACPOS_PRODUCT_ROOT: ${{ github.workspace }}
-        run: |
-          set -euo pipefail
-          for WU in WU-STAGE04-GLOBAL-HOME-SHELL-NAVIGATION-001 WU-STAGE04-WB01-DASHBOARD-001; do
-            STATUS="$(python -c "import yaml; d=yaml.safe_load(open('STAGE_EXECUTION/STAGE-04/$WU/WORK_UNIT.yaml')); print(d.get('current_status') or d.get('status') or '')")"
-            case "$STATUS" in
-              CLOSED*) echo "SKIP admission for already-closed $WU"; continue ;;
-            esac
-            export ACPOS_ACTIVE_WORK_UNIT="STAGE_EXECUTION/STAGE-04/${WU}/WORK_UNIT.yaml"
-            export ACPOS_CURRENT_SCOPE="STAGE_EXECUTION/STAGE-04/${WU}/CURRENT_EXECUTION_SCOPE_MANIFEST.yaml"
-            python governance/ci/stage_execution_engine.py --admission-check --stage STAGE-04
-          done
-      - name: Compile BASIC_DESIGN_PACKAGE (preapproval-allowed operation)
+      - name: Execute Stage04 operations and closure
         env:
           HEAD_SHA: ${{ github.sha }}
-        run: |
-          python .github/scripts/stage04_materialize.py \
-            --root "$GITHUB_WORKSPACE" \
-            --phase compile \
-            --head "$HEAD_SHA" \
-            --gov "$ACPOS_GOVERNANCE_UID" \
-            --gver "$ACPOS_GOVERNANCE_VERSION"
-      - name: Materialize freeze outputs from recorded governed human approval
-        env:
           RUN_ID: ${{ github.run_id }}
-          HEAD_SHA: ${{ github.sha }}
         run: |
           set -euo pipefail
-          RECORDED=1
+
           for WU in WU-STAGE04-GLOBAL-HOME-SHELL-NAVIGATION-001 WU-STAGE04-WB01-DASHBOARD-001; do
-            S3E="${WU/STAGE04/STAGE03}"
-            DISP="STAGE_EXECUTION/STAGE-03/${S3E}/EVIDENCE/FORMAL_HUMAN_APPROVAL_DISPOSITION.yaml"
-            if [ ! -f "$DISP" ]; then RECORDED=0; fi
+            WUDIR="STAGE_EXECUTION/STAGE-04/${WU}"
+            STATUS="$(python -c "import yaml; d=yaml.safe_load(open('$WUDIR/WORK_UNIT.yaml')); print(d.get('current_status') or d.get('status') or '')")"
+            case "$STATUS" in
+              CLOSED*) echo "SKIP already-closed $WU"; continue ;;
+            esac
+
+            export ACPOS_PRODUCT_ROOT="$GITHUB_WORKSPACE"
+            export ACPOS_ACTIVE_WORK_UNIT="${WUDIR}/WORK_UNIT.yaml"
+            export ACPOS_CURRENT_SCOPE="${WUDIR}/CURRENT_EXECUTION_SCOPE_MANIFEST.yaml"
+
+            python governance/ci/stage_execution_engine.py --admission-check --stage STAGE-04
+
+            for STEP in 1 2 3 4; do
+              DONE="$(python -c "import yaml; d=yaml.safe_load(open('$WUDIR/EXECUTION_STATE.yaml')); print(len(d.get('completed_operations') or []))")"
+              if [ "$DONE" -ge 4 ]; then break; fi
+              python governance/ci/stage_execution_engine.py --execute --stage STAGE-04
+            done
+
+            python .github/scripts/stage04_closure.py \
+              --stage STAGE-04 \
+              --work-unit "$WUDIR" \
+              --product-root "$GITHUB_WORKSPACE" \
+              --head-sha "$HEAD_SHA" \
+              --run-id "$RUN_ID" \
+              --gov "$ACPOS_GOVERNANCE_UID" \
+              --gver "$ACPOS_GOVERNANCE_VERSION"
+
+            EVIDENCE="${WUDIR}/EVIDENCE/STAGE04_NORMALIZED_EVIDENCE.json"
+            RECEIPT="${WUDIR}/WORK_UNIT_TERMINAL_RECEIPT.yaml"
+            python governance/ci/stage_execution_engine.py --validate-evidence --stage STAGE-04 --evidence "$EVIDENCE"
+            python governance/ci/stage_execution_engine.py --validate-terminal-receipt --stage STAGE-04 --evidence "$EVIDENCE" --receipt "$RECEIPT"
           done
-          if [ "$RECORDED" != "1" ]; then
-            echo "STAGE04_RECORDED_HUMAN_DESIGN_APPROVAL_ABSENT (BASIC_DESIGN_PACKAGE compiled, freeze outputs blocked)"
-            exit 0
-          fi
-          python .github/scripts/stage04_materialize.py \
-            --root "$GITHUB_WORKSPACE" \
-            --phase seal \
-            --head "$HEAD_SHA" \
-            --run "$RUN_ID" \
-            --gate PRODUCT_STAGE04_VALIDATION \
-            --gov "$ACPOS_GOVERNANCE_UID" \
-            --gver "$ACPOS_GOVERNANCE_VERSION"
-      - name: Validate materialized Stage04 evidence and terminal receipts
-        env:
-          ACPOS_PRODUCT_ROOT: ${{ github.workspace }}
-        run: |
-          set -euo pipefail
-          for WU in WU-STAGE04-GLOBAL-HOME-SHELL-NAVIGATION-001 WU-STAGE04-WB01-DASHBOARD-001; do
-            EVIDENCE="STAGE_EXECUTION/STAGE-04/${WU}/EVIDENCE/STAGE04_NORMALIZED_EVIDENCE.json"
-            RECEIPT="STAGE_EXECUTION/STAGE-04/${WU}/WORK_UNIT_TERMINAL_RECEIPT.yaml"
-            if [ -f "$EVIDENCE" ]; then
-              export ACPOS_ACTIVE_WORK_UNIT="STAGE_EXECUTION/STAGE-04/${WU}/WORK_UNIT.yaml"
-              export ACPOS_CURRENT_SCOPE="STAGE_EXECUTION/STAGE-04/${WU}/CURRENT_EXECUTION_SCOPE_MANIFEST.yaml"
-              python governance/ci/stage_execution_engine.py --validate-evidence --stage STAGE-04 --evidence "$EVIDENCE"
-              python governance/ci/stage_execution_engine.py --validate-terminal-receipt --stage STAGE-04 --evidence "$EVIDENCE" --receipt "$RECEIPT"
-            fi
-          done
-      - name: Commit materialized Stage04 artifacts
+      - name: Commit Stage04 one-operation results
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add STAGE_EXECUTION/STAGE-04
           git diff --cached --quiet && exit 0
-          git commit -m "stage04: materialize basic design package and foundation freeze"
+          git commit -m "stage04: execute one-operation foundation freeze and bind terminal receipts"
           for attempt in 1 2 3 4; do
             git fetch origin 0921acpos
             git rebase origin/0921acpos || { git rebase --abort || true; echo "BLOCK:REBASE_CONFLICT"; exit 21; }
