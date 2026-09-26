@@ -127,8 +127,21 @@ res.append(case('stage07_to_stage11_execution_targets_registered', all(binding_r
 res.append(case('successor_binding_classes_map_to_consuming_operations', set(binding_map.get('STAGE-05') or {})==set(binding_req.get('STAGE-05') or []) and set(binding_map.get('STAGE-11') or {})==set(binding_req.get('STAGE-11') or [])))
 res.append(case('current_state_conflict_cannot_be_overridden_by_terminal_success', state_contract.get('pass_requires_completed_operation_set_exact_registered_stage_operations') is True and state_contract.get('terminal_receipt_or_outer_run_success_may_override_conflict') is False))
 res.append(case('terminal_closure_revalidates_nonempty_current_matrix', matrix_contract.get('matrix_file_must_be_nonempty_parseable_mapping') is True and matrix_contract.get('matrix_rows_must_be_nonempty') is True and matrix_contract.get('matrix_validation_must_run_again_at_terminal_closure') is True and matrix_contract.get('terminal_receipt_or_outer_run_success_may_override_invalid_matrix') is False))
+stage_steps_doc=yaml.safe_load((PKG.parents[2]/'governance/execution-domains/STAGE/STEPS.yaml').read_text(encoding='utf-8')) or {}
+closure_contract=stage_steps_doc.get('stage_closure_contract') or {}
+audit_catalog_doc=yaml.safe_load((PKG/'10_REGISTRY/AUDIT_CATALOG.yaml').read_text(encoding='utf-8')) or {}
+audit14=next((x for x in audit_catalog_doc.get('items') or [] if x.get('audit_item_uid')=='AUD-GOV-014'),{})
+root_manifest_doc=yaml.safe_load((PKG/'10_REGISTRY/GOVERNANCE_ROOT_MANIFEST.yaml').read_text(encoding='utf-8')) or {}
+life_doc=yaml.safe_load((PKG/'10_REGISTRY/GOVERNANCE_LIFECYCLE_STAGE_REGISTRY.yaml').read_text(encoding='utf-8')) or {}
+bp_doc=yaml.safe_load((PKG/'10_REGISTRY/GOVERNANCE_ACCEPTANCE_AUDIT_BLUEPRINT.yaml').read_text(encoding='utf-8')) or {}
+required_aud14={'SUCCESSOR_EFFECTFUL_OPERATION_BINDING_DENOMINATOR','SUCCESSOR_EXECUTION_TARGET_AUTHORITY','IMPLEMENTATION_STACK_AUTHORITY','CURRENT_NORMATIVE_EXECUTION_MATRIX_VALIDITY','CURRENT_STATE_EVIDENCE_TERMINAL_CONSISTENCY','AUTHORIZED_NOT_APPLICABLE_AUTHORITY','SUCCESSOR_OPERATION_READINESS'}
+res.append(case('audit_catalog_projects_current_cross_stage_audit_dimensions', required_aud14.issubset(set(audit14.get('coverage_extensions') or []))))
+res.append(case('stage_closure_explicitly_consumes_matrix_state_handoff_and_bindings', {'CURRENT_NORMATIVE_EXECUTION_MATRIX','CURRENT_EXECUTION_STATE','NORMALIZED_STAGE_EVIDENCE','CROSS_STAGE_HANDOFF_READINESS_LEDGER','SUCCESSOR_EXECUTION_BINDING_SET'}.issubset(set(closure_contract.get('inputs') or []))))
+res.append(case('stage_closure_explicitly_validates_matrix_state_and_effectful_bindings', {'VERIFY_CURRENT_NORMATIVE_EXECUTION_MATRIX','VERIFY_CURRENT_STATE_EVIDENCE_TERMINAL_CONSISTENCY','VERIFY_SUCCESSOR_EFFECTFUL_OPERATION_BINDINGS'}.issubset(set(closure_contract.get('operations') or []))))
+_current_rev=root_manifest_doc.get('governance_revision')
+res.append(case('current_governance_projection_revision_aligned', bool(_current_rev) and all(x.get('governance_revision')==_current_rev for x in (invdoc,life_doc,bp_doc,audit_catalog_doc))))
 out=v213.validate(PKG)
 res.append(case('package_stage_execution_invariant_contract_valid', out['status']=='PASS',out))
 out={'suite':'v2.1.13 universal Stage execution invariant multidirection regression','total':len(res),'passed_expectations':sum(x['ok'] for x in res),'results':res}
 print(json.dumps(out,ensure_ascii=False,indent=2))
-raise SystemExit(0 if out['total']==54 and out['passed_expectations']==54 else 1)
+raise SystemExit(0 if out['total']==58 and out['passed_expectations']==58 else 1)
