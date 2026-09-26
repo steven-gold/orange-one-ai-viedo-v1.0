@@ -5,6 +5,8 @@ import ast
 import importlib.util
 import tempfile
 import yaml
+import json
+import subprocess
 import sys
 import os
 ROOT=Path(__file__).resolve().parents[2]
@@ -170,6 +172,44 @@ block_evidence('handoff_required_field_completeness_false',lambda x:x['cross_sta
 block_evidence('handoff_denominator_not_reconciled',lambda x:x['cross_stage_handoff'].__setitem__('denominator_reconciled',False))
 block_evidence('handoff_consumer_not_ready',lambda x:x['cross_stage_handoff'].__setitem__('consumer_readiness_complete',False))
 block_evidence('handoff_unresolved_required_dependency',lambda x:x['cross_stage_handoff'].__setitem__('unresolved_required_dependency_total',1))
+
+# Terminal receipt pressure: missing receipt, wrong exact HEAD, and failed conclusion must never close a PASS stage.
+_sample_evidence_path=_synthetic_dir/'SYNTHETIC_NORMALIZED_EVIDENCE.json'
+_sample_receipt_path=_synthetic_dir/'SYNTHETIC_TERMINAL_RECEIPT.json'
+_sample_evidence_path.write_text(json.dumps(sample,ensure_ascii=False,indent=2),encoding='utf-8')
+_current_git_head=subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip()
+_valid_receipt={
+  'provider':'github-actions',
+  'repository_or_project':'synthetic/repository',
+  'head_sha':_current_git_head,
+  'run_id':'SYNTHETIC-RUN',
+  'job_denominator':['synthetic-job'],
+  'conclusion':'success',
+  'governance_uid':gov,
+  'stage_uid':stage_uid
+}
+_sample_receipt_path.write_text(json.dumps(_valid_receipt,ensure_ascii=False,indent=2),encoding='utf-8')
+eng.validate_terminal(stage_uid,_sample_evidence_path,_sample_receipt_path)
+_sample_receipt_path.unlink()
+expect_stage_engine_block(
+  'terminal_receipt_missing',
+  lambda:eng.validate_terminal(stage_uid,_sample_evidence_path,_sample_receipt_path),
+  'MISSING_FILE'
+)
+_wrong_head=deepcopy(_valid_receipt); _wrong_head['head_sha']='0'*40
+_sample_receipt_path.write_text(json.dumps(_wrong_head,ensure_ascii=False,indent=2),encoding='utf-8')
+expect_stage_engine_block(
+  'terminal_receipt_wrong_head',
+  lambda:eng.validate_terminal(stage_uid,_sample_evidence_path,_sample_receipt_path),
+  'TERMINAL_RECEIPT_HEAD_MISMATCH'
+)
+_wrong_result=deepcopy(_valid_receipt); _wrong_result['conclusion']='failure'
+_sample_receipt_path.write_text(json.dumps(_wrong_result,ensure_ascii=False,indent=2),encoding='utf-8')
+expect_stage_engine_block(
+  'terminal_receipt_wrong_conclusion',
+  lambda:eng.validate_terminal(stage_uid,_sample_evidence_path,_sample_receipt_path),
+  'TERMINAL_RECEIPT_IDENTITY_OR_RESULT_DRIFT'
+)
 if _orig_product_root is None:
     os.environ.pop(eng.PRODUCT_ROOT_ENV,None)
 else:
