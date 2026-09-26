@@ -121,6 +121,8 @@ state_contract=det_contract.get('current_state_conflict_contract') or {}
 matrix_contract=det_contract.get('normative_execution_matrix_contract') or {}
 res.append(case('handoff_single_canonical_ledger_no_parallel_system', crossmat.get('single_canonical_handoff_artifact_only') is True and crossmat.get('parallel_readiness_ledger_or_stage_local_substitute')=='BLOCK'))
 res.append(case('stage05_execution_binding_denominator_not_artifact_presence_only', {'REPOSITORY_TARGET','APPLICATION_ROOT','IMPLEMENTATION_OWNER','FRONTEND_RUNTIME_TARGET','BACKEND_RUNTIME_TARGET','DATABASE_TARGET','AUTHENTICATION_TARGET','AUTHORIZATION_TARGET'}.issubset(set(binding_req.get('STAGE-05') or []))))
+res.append(case('stage05_stack_authority_cannot_be_ai_selected', {'IMPLEMENTATION_LANGUAGE_AUTHORITY','FRONTEND_FRAMEWORK_AUTHORITY','BACKEND_FRAMEWORK_AUTHORITY','PACKAGE_MANAGER_AUTHORITY'}.issubset(set(binding_req.get('STAGE-05') or [])) and crossmat.get('technology_stack_recommendation_may_create_execution_authority') is False and crossmat.get('implementation_language_framework_or_package_manager_may_be_ai_selected_when_unbound') is False))
+res.append(case('effectful_operation_additional_prerequisites_remain_in_same_dynamic_handoff_denominator', crossmat.get('successor_effectful_operation_prerequisite_binding_must_be_derived_from_current_authority') is True and crossmat.get('enumerated_binding_classes_are_minimum_not_exhaustive_when_registered_operation_has_additional_authorized_prerequisites') is True))
 res.append(case('stage07_to_stage11_execution_targets_registered', all(binding_req.get(s) for s in ('STAGE-07','STAGE-08','STAGE-09','STAGE-10','STAGE-11'))))
 res.append(case('successor_binding_classes_map_to_consuming_operations', set(binding_map.get('STAGE-05') or {})==set(binding_req.get('STAGE-05') or []) and set(binding_map.get('STAGE-11') or {})==set(binding_req.get('STAGE-11') or [])))
 res.append(case('current_state_conflict_cannot_be_overridden_by_terminal_success', state_contract.get('pass_requires_completed_operation_set_exact_registered_stage_operations') is True and state_contract.get('terminal_receipt_or_outer_run_success_may_override_conflict') is False))
@@ -129,4 +131,4 @@ out=v213.validate(PKG)
 res.append(case('package_stage_execution_invariant_contract_valid', out['status']=='PASS',out))
 out={'suite':'v2.1.13 universal Stage execution invariant multidirection regression','total':len(res),'passed_expectations':sum(x['ok'] for x in res),'results':res}
 print(json.dumps(out,ensure_ascii=False,indent=2))
-raise SystemExit(0 if out['total']==52 and out['passed_expectations']==52 else 1)
+raise SystemExit(0 if out['total']==54 and out['passed_expectations']==54 else 1)
