@@ -640,9 +640,15 @@ def main():
             print(f"PASS: BASIC_DESIGN_PACKAGE compiled for {wu}")
         return
 
-    for wu, facts in UNITS.items():
-        materialize_seal(root, wu, facts, a.head, a.run, a.gate, a.gov, a.gver)
-    converge_stage(root, a.head, a.gov, a.gver)
+    # Legacy bulk seal used to materialize DESIGN_FREEZE_VALIDATE,
+    # ACCEPTANCE_AUDIT_BLUEPRINT_COMPILE, DESIGN_FREEZE_PACKAGE_BIND and
+    # terminal closure in one invocation. Current governance requires
+    # ONE_OPERATION_PER_ENGINE_INVOCATION and forbids future-operation
+    # preproduction / executor-owned Stage closure.
+    raise SystemExit(
+        "BLOCK:STAGE04_LEGACY_BULK_SEAL_FORBIDDEN:"
+        "PYTHON_STAGE_OPERATION_V1_REQUIRED"
+    )
 
 
 if __name__ == "__main__":
