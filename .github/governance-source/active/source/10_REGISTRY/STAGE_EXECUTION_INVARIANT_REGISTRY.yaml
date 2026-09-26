@@ -1138,6 +1138,8 @@ invariants:
     invariant_uid: GOV-INV-CROSS-STAGE-MATERIALIZATION-CONSUMER-READINESS-001
     required_artifact: CROSS_STAGE_HANDOFF_READINESS_LEDGER
     applies_to_all_registered_stages: true
+    single_canonical_handoff_artifact_only: true
+    parallel_readiness_ledger_or_stage_local_substitute: BLOCK
     required_row_fields:
     - producer_stage_or_capability
     - producer_output_uid_or_type
@@ -1157,6 +1159,17 @@ invariants:
     - unresolved_required_dependency_total
     - blocking_owner_or_reentry_target
     - current_evidence_ref
+    successor_execution_binding_required_row_fields:
+    - binding_uid
+    - consuming_operation_uid
+    - binding_class
+    - applicability
+    - canonical_owner_or_authority_ref
+    - authority_evidence_ref
+    - target_identity
+    - resolution_status
+    - denominator_inclusion_status
+    - consumer_readiness_status
     reference_resolution_required: true
     reference_presence_is_materialization: false
     physical_materialization_required: true
@@ -1167,13 +1180,92 @@ invariants:
     denominator_inclusion_required: true
     successor_consumer_readiness_required: true
     successor_required_input_universe_reconciliation_before_stage_exit: true
+    successor_effectful_operation_binding_universe_reconciliation_required: true
+    successor_execution_binding_universe_source: CURRENT_SUCCESSOR_LIFECYCLE_OPERATIONS_PLUS_CURRENT_AUTHORITY_AND_APPLICABILITY
+    successor_execution_binding_may_be_invented_by_consumer: false
+    successor_execution_binding_may_be_inferred_from_product_need_alone: false
+    stub_placeholder_or_recommended_target_may_receive_readiness_credit: false
+    authorized_not_applicable_token: AUTHORIZED_NOT_APPLICABLE
+    authorized_not_applicable_requires_authority_evidence: true
     successor_input_universe_scope: CURRENT_GOVERNED_UNIT
     cross_unit_successor_input_requires_explicit_required_dependency_edge: true
+    current_normative_execution_matrix_nonempty_and_valid_before_exit: true
+    current_state_evidence_terminal_consistency_required_before_exit: true
+    terminal_receipt_or_outer_run_success_may_override_matrix_or_state_conflict: false
     historical_or_reference_only_completion_credit: 0
     unresolved_required_dependency: BLOCK_OR_REENTER_EARLIEST_OWNER
+    unresolved_required_execution_binding: BLOCK_OR_REENTER_EARLIEST_OWNER
     downstream_discovered_upstream_gap: STOP_REENTER_EARLIEST_OWNER_MARK_DESCENDANTS_REVERIFY_REQUIRED
     unaffected_evidence_preservation_requires_reverse_dependency_proof: true
     product_stage_credit_from_governance_validation: 0
+    successor_execution_binding_requirements:
+      STAGE-02: []
+      STAGE-03:
+      - VISUAL_AUTHORITY_TARGET
+      STAGE-04:
+      - FORMAL_DESIGN_APPROVAL_AUTHORITY
+      STAGE-05:
+      - REPOSITORY_TARGET
+      - APPLICATION_ROOT
+      - IMPLEMENTATION_OWNER
+      - FRONTEND_RUNTIME_TARGET
+      - BACKEND_RUNTIME_TARGET
+      - DATA_ACCESS_TARGET
+      - DATABASE_TARGET
+      - AUTHENTICATION_TARGET
+      - AUTHORIZATION_TARGET
+      - DATA_SECURITY_TARGET
+      - AUDIT_LOGGING_TARGET
+      - EXTERNAL_INTEGRATION_TARGET
+      - ASYNC_RUNTIME_TARGET
+      - STORAGE_RUNTIME_TARGET
+      STAGE-06:
+      - PROGRAM_ARTIFACT_TARGET
+      - TEST_HARNESS_TARGET
+      - DATABASE_TEST_TARGET
+      - PERMISSION_TEST_TARGET
+      - BROWSER_E2E_TARGET
+      - VISUAL_BASELINE_TARGET
+      - LOCALIZATION_TARGET
+      - ACCESSIBILITY_TARGET
+      - SECURITY_TEST_TARGET
+      STAGE-07:
+      - BUILD_ROOT
+      - BUILD_TOOLCHAIN
+      - BUILD_COMMAND
+      - BUILD_ARTIFACT_TARGET
+      - MIGRATION_COMPATIBILITY_TARGET
+      STAGE-08:
+      - STAGING_APPLICABILITY_AUTHORITY
+      - STAGING_PROVIDER_PROJECT
+      - STAGING_ENVIRONMENT
+      - STAGING_DEPLOYMENT_TARGET
+      - STAGING_ACCEPTANCE_TARGET
+      STAGE-09:
+      - PRODUCTION_PROVIDER_PROJECT
+      - PRODUCTION_ENVIRONMENT
+      - PRODUCTION_CONFIGURATION_AUTHORITY
+      - PRODUCTION_MIGRATION_TARGET
+      - PRODUCTION_DEPLOYMENT_TARGET
+      - PRODUCTION_SMOKE_TARGET
+      - ROLLBACK_TARGET
+      STAGE-10:
+      - CURRENT_PRODUCTION_RUNTIME_TARGET
+      - PRODUCTION_PAGE_TARGET
+      - PRODUCTION_DATABASE_TARGET
+      - PRODUCTION_PERMISSION_TARGET
+      - PRODUCTION_EXTERNAL_INTEGRATION_TARGET
+      - PRODUCTION_ASYNC_RUNTIME_TARGET
+      - PRODUCTION_VISUAL_ACCEPTANCE_TARGET
+      STAGE-11:
+      - MONITORING_TARGET
+      - BACKUP_TARGET
+      - ROLLBACK_TARGET
+      - OPERATIONS_OWNER
+    next_page_successor_binding_requirements:
+    - NEXT_PAGE_ELIGIBILITY_RESULT
+    - NEXT_GOVERNED_UNIT_IDENTITY_WHEN_NEXT_PAGE_READY
+    - NEXT_GOVERNED_UNIT_LEGAL_STAGE_ADMISSION_TARGET_WHEN_NEXT_PAGE_READY
   TYPOGRAPHY_COMPUTED_METRICS:
     invariant_uid: GOV-INV-TYPOGRAPHY-COMPUTED-METRICS-001
     target_denominator: EVERY_APPLICABLE_TEXT_BEARING_TARGET_FROM_CURRENT_DESIGN_AUTHORITY
@@ -1433,6 +1525,11 @@ invariants:
       stage_pass_allowed: false
       closure_pass_allowed: false
       conflict_fields: [active, completed, remaining, blocked, reverify_required, current_operation, stage_status, stage_exit_authorized, next_stage_uid, governance_uid, governance_revision, head_sha, denominator, terminal_state]
+      pass_requires_completed_operation_set_exact_registered_stage_operations: true
+      pass_requires_current_execution_state_closed: true
+      pass_with_pending_or_pre_execution_current_operation: BLOCK
+      normalized_evidence_operation_set_must_equal_current_execution_state_completed_operation_set: true
+      terminal_receipt_or_outer_run_success_may_override_conflict: false
     audit_denominator_contract:
       freeze_before_validation: true
       required_classes: [GOVERNED_UNITS, OPERATIONS, INPUTS, OUTPUTS, ARTIFACTS, REQUIRED_FIELDS, VALIDATORS, EVIDENCE, STATE_RECORDS, CLOSURE_RECORDS, SUCCESSOR_BINDINGS, CURRENT_GOVERNANCE_BINDINGS]
@@ -1472,6 +1569,11 @@ invariants:
     normative_execution_matrix_contract:
       current_matrix_required_before_first_effectful_operation: true
       current_matrix_required_before_stage_closure: true
+      matrix_file_must_be_nonempty_parseable_mapping: true
+      matrix_rows_must_be_nonempty: true
+      matrix_identity_must_match_current_governance_stage_work_unit: true
+      matrix_validation_must_run_again_at_terminal_closure: true
+      terminal_receipt_or_outer_run_success_may_override_invalid_matrix: false
       coverage_percent_required: 100
       required_zero_counters: [MISSING_REQUIRED_NORMATIVE_SECTION, MISSING_REQUIRED_ARTIFACT, MISSING_REQUIRED_ROW, MISSING_REQUIRED_FIELD, DUPLICATE_CREDIT, SUMMARY_ONLY_CREDIT, UNCLASSIFIED_APPLICABILITY, VALIDATOR_UNBOUND_FIELD, CLOSURE_UNBOUND_VALIDATOR, STALE_MATRIX]
     canonical_finding_severity:
@@ -1510,6 +1612,9 @@ invariants:
       STALE_GOVERNANCE_BINDING: S2_MAJOR
       HISTORICAL_PASS_NOT_REVERIFIED: S2_MAJOR
       AUTHORITY_BINDING_MISSING: S2_MAJOR
+      SUCCESSOR_EXECUTION_BINDING_MISSING: S1_BLOCKER
+      SUCCESSOR_EXECUTION_TARGET_UNRESOLVED: S1_BLOCKER
+      SUCCESSOR_EXECUTION_BINDING_UNAUTHORIZED_NA: S1_BLOCKER
       SUCCESSOR_BINDING_INVALID: S2_MAJOR
       REENTRY_REQUIRED: S2_MAJOR
     severity_vocabulary: [S0_FATAL, S1_BLOCKER, S2_MAJOR, S3_MINOR, S4_INFO]
