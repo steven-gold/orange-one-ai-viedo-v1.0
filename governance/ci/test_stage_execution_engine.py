@@ -615,11 +615,11 @@ _bad_vertical=deepcopy(_vertical_records); _bad_vertical['STAGE-09']['release_id
 expect_stage_engine_block('vertical_release_identity_drift',lambda:eng.validate_vertical_scope_identity(_bad_vertical),'VERTICAL_SCOPE_IDENTITY_DRIFT')
 
 _closed={uid:'CLOSED_PASS' for uid in _all_stage_uids}
-assert eng.validate_full_lifecycle_closure(_closed,0,'PROJECT_COMPLETE') is True
+assert eng.validate_full_lifecycle_closure(_closed,0,{'operation_uid':'NEXT_PAGE_ELIGIBILITY_EVALUATE','result':'SYNTHETIC-REGISTERED-ELIGIBILITY'}) is True
 _bad_closed=deepcopy(_closed); _bad_closed['STAGE-08']='REVERIFY_REQUIRED'
-expect_stage_engine_block('full_lifecycle_requires_all_stage_closed_pass',lambda:eng.validate_full_lifecycle_closure(_bad_closed,0,'PROJECT_COMPLETE'),'FULL_LIFECYCLE_STAGE_NOT_CLOSED_PASS')
-expect_stage_engine_block('full_lifecycle_requires_zero_impacted_reverify',lambda:eng.validate_full_lifecycle_closure(_closed,1,'PROJECT_COMPLETE'),'FULL_LIFECYCLE_IMPACTED_REVERIFY_NONZERO')
-expect_stage_engine_block('full_lifecycle_requires_registered_stage11_eligibility',lambda:eng.validate_full_lifecycle_closure(_closed,0,'AI_SELECTED_NEXT'),'FULL_LIFECYCLE_STAGE11_ELIGIBILITY_INVALID')
+expect_stage_engine_block('full_lifecycle_requires_all_stage_closed_pass',lambda:eng.validate_full_lifecycle_closure(_bad_closed,0,{'operation_uid':'NEXT_PAGE_ELIGIBILITY_EVALUATE','result':'SYNTHETIC-REGISTERED-ELIGIBILITY'}),'FULL_LIFECYCLE_STAGE_NOT_CLOSED_PASS')
+expect_stage_engine_block('full_lifecycle_requires_zero_impacted_reverify',lambda:eng.validate_full_lifecycle_closure(_closed,1,{'operation_uid':'NEXT_PAGE_ELIGIBILITY_EVALUATE','result':'SYNTHETIC-REGISTERED-ELIGIBILITY'}),'FULL_LIFECYCLE_IMPACTED_REVERIFY_NONZERO')
+expect_stage_engine_block('full_lifecycle_requires_registered_stage11_eligibility',lambda:eng.validate_full_lifecycle_closure(_closed,0,{'operation_uid':'AI_SELECTED_OPERATION','result':'SYNTHETIC'}),'FULL_LIFECYCLE_STAGE11_ELIGIBILITY_OPERATION_INVALID')
 
 _range_plan=eng.plan_range('STAGE-01','STAGE-05')
 assert _range_plan['selected_stage_count']==5

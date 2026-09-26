@@ -340,8 +340,12 @@ def validate_full_lifecycle_closure(stage_statuses,impacted_reverify_count,stage
     if int(impacted_reverify_count)!=required_reverify:
         fail('FULL_LIFECYCLE_IMPACTED_REVERIFY_NONZERO:'+str(impacted_reverify_count))
     if contract.get('next_page_or_project_completion_requires_registered_stage11_eligibility') is True:
-        if str(stage11_eligibility or '') not in {'NEXT_PAGE_STAGE05','PROJECT_COMPLETE'}:
-            fail('FULL_LIFECYCLE_STAGE11_ELIGIBILITY_INVALID:'+str(stage11_eligibility or ''))
+        if not isinstance(stage11_eligibility,dict):
+            fail('FULL_LIFECYCLE_STAGE11_ELIGIBILITY_RECORD_REQUIRED')
+        if str(stage11_eligibility.get('operation_uid') or '')!='NEXT_PAGE_ELIGIBILITY_EVALUATE':
+            fail('FULL_LIFECYCLE_STAGE11_ELIGIBILITY_OPERATION_INVALID')
+        if not str(stage11_eligibility.get('result') or '').strip():
+            fail('FULL_LIFECYCLE_STAGE11_ELIGIBILITY_RESULT_MISSING')
     return True
 
 def plan(stage_uid):
