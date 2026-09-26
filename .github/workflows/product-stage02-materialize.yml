@@ -25,7 +25,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: steven-gold/orange-one-ai-viedo-v1.0
-          ref: 93a595d034b06bcc28285f064f312587b63f4f9a
+          ref: rebuild-v2.1.1
           path: _governance_authority
           fetch-depth: 1
       - name: Load current governance authority
@@ -34,6 +34,18 @@ jobs:
           cp -R _governance_authority/governance ./governance
           mkdir -p .github
           cp -R _governance_authority/.github/governance-source .github/governance-source
+          GOV_HEAD="$(git -C _governance_authority rev-parse HEAD)"
+          GOV_UID="$(python - <<'PY'
+import yaml
+from pathlib import Path
+m=yaml.safe_load(Path('_governance_authority/governance/specifications/current/SPECIFICATION_MANIFEST.yaml').read_text()) or {}
+print(m.get('artifact_uid') or '')
+PY
+)"
+          test -n "$GOV_HEAD"
+          test -n "$GOV_UID"
+          echo "ACPOS_GOVERNANCE_HEAD=$GOV_HEAD" >> "$GITHUB_ENV"
+          echo "ACPOS_GOVERNANCE_UID=$GOV_UID" >> "$GITHUB_ENV"
           python -m pip install --disable-pip-version-check 'PyYAML==6.0.2'
       - name: Stage02 semantic scan and normalized evidence materialization
         env:
@@ -55,7 +67,7 @@ jobs:
           HEAD_SHA = os.environ["HEAD_SHA"]
 
           STAGE = "STAGE-02"
-          GOV_UID = "GOV-REV-20260925-NORMATIVE-EXECUTION-MATRIX"
+          GOV_UID = os.environ["ACPOS_GOVERNANCE_UID"]
           NEXT_STAGE = "STAGE-03"
           GATE_UID = "PRODUCT_STAGE_VALIDATION"
 
