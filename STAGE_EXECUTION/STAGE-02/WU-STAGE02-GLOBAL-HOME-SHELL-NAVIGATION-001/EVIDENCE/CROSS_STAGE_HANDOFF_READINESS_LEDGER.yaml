@@ -1,33 +1,24 @@
-artifact_uid: HANDOFF-STAGE02-TO-STAGE03-GLOBAL-HOME-SHELL-001
+artifact_uid: HANDOFF-STAGE-02-GLOBAL-HOME-SHELL-001
 artifact_type: CROSS_STAGE_HANDOFF_READINESS_LEDGER
-producer_stage_uid: STAGE-02
-consumer_stage_uid: STAGE-03
+stage_uid: STAGE-02
+work_unit_uid: WU-STAGE02-GLOBAL-HOME-SHELL-NAVIGATION-001
 governed_unit_uid: GLOBAL-HOME-SHELL-NAVIGATION
-required_inputs:
-- input_uid: VISUAL_BASE_BLUEPRINT
-  ref: STAGE_EXECUTION/STAGE-01/WU-STAGE01-GLOBAL-HOME-SHELL-NAVIGATION-001/02_BASE_BLUEPRINT/SRC-DOCX-334A4679600F092B733B/VISUAL_BASE_BLUEPRINT.yaml
-  reference_resolution_status: PASS
-  physical_materialization_status: PASS
-  required_field_completeness: PASS
-  consumer_readiness_status: PASS
+successor_stage_uid: STAGE-03
+successor_required_inputs:
+- input_uid: FUNCTIONAL_CHAIN_SPEC
+  status: MATERIALIZED
+- input_uid: DEPENDENCY_MAP
+  status: MATERIALIZED
 - input_uid: PAGE_CONSTRUCTION_SPEC_PACKAGE
-  ref: STAGE_EXECUTION/STAGE-02/WU-STAGE02-GLOBAL-HOME-SHELL-NAVIGATION-001/PAGE_CONSTRUCTION_SPEC_PACKAGE.yaml
-  reference_resolution_status: PASS
-  physical_materialization_status: PASS
-  required_field_completeness: PASS
-  consumer_readiness_status: PASS
+  status: MATERIALIZED
+- input_uid: ASYNC_PROVIDER_CONTRACT
+  status: MATERIALIZED
+- input_uid: SHARED_OWNER_PORT_MAP
+  status: MATERIALIZED
 - input_uid: FUNCTIONAL_WORKBENCH_CONTRACT
-  ref: STAGE_EXECUTION/STAGE-02/WU-STAGE02-GLOBAL-HOME-SHELL-NAVIGATION-001/FUNCTIONAL_WORKBENCH_CONTRACT.yaml
-  reference_resolution_status: PASS
-  physical_materialization_status: PASS
-  required_field_completeness: PASS
-  consumer_readiness_status: PASS
+  status: MATERIALIZED
 - input_uid: INTERACTION_TOPOLOGY_SPEC
-  ref: STAGE_EXECUTION/STAGE-02/WU-STAGE02-GLOBAL-HOME-SHELL-NAVIGATION-001/INTERACTION_TOPOLOGY_SPEC.yaml
-  reference_resolution_status: PASS
-  physical_materialization_status: PASS
-  required_field_completeness: PASS
-  consumer_readiness_status: PASS
+  status: MATERIALIZED
 reference_resolution_complete: true
 physical_materialization_complete: true
 required_field_completeness_complete: true

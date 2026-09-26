@@ -9,22 +9,20 @@ governed_unit_type: PAGE
 included_units:
 - workspace:WB-01
 excluded_units: []
-remaining_units:
-- STAGE_EXECUTION_PREFLIGHT_COMPILE
-- EFFECTIVE_CONTRACT_OVERLAY_COMPILE
-- DEPENDENCY_TOPOLOGY_COMPILE
-- CHANGE_IMPACT_MAP_COMPILE
-- FUNCTIONAL_CHAIN_COMPILE
-- DEPENDENCY_MAP_COMPILE
-- PAGE_CONSTRUCTION_SPEC_COMPILE
-- ASYNC_PROVIDER_CONTRACT_COMPILE
-- SHARED_OWNER_PORT_RESOLVE
-- FUNCTIONAL_WORKBENCH_CONTRACT_COMPILE
-- INTERACTION_TOPOLOGY_COMPILE
-- FUNCTION_ADMISSION_SCORECARD_COMPILE
-- AUTO_COMPLETION_SCOPE_LEDGER_COMPILE
+remaining_units: []
 partial_scope: false
-stage_exit_credit_allowed: false
+stage_exit_credit_allowed: true
 denominator_kind: BUSINESS_ENTITY_X_APPLICABLE_REQUIRED_OPERATION_PLUS_REQUIRED_HIERARCHY_EDGES
 product_stage_execution_allowed: true
-status: ACTIVE
+status: CLOSED
+governance_head: e06ade46f8ff118deae62d164ee23d6f14008f71
+current_reverify_required: false
+current_closure_validation:
+  result: PASS
+  stage_exit_credit: 1
+  head_sha: e06ade46f8ff118deae62d164ee23d6f14008f71
+  workflow_run_id: '36232882563'
+  conclusion: success
+  governance_uid: GOV-REV-20260925-NORMATIVE-EXECUTION-MATRIX
+  governance_head: e06ade46f8ff118deae62d164ee23d6f14008f71
+prior_terminal_receipt_ref: WORK_UNIT_TERMINAL_RECEIPT.yaml

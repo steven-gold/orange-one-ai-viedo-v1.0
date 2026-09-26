@@ -1,16 +1,18 @@
-provider: GitHub Actions
-repository_or_project: steven-gold/orange-one-ai-viedo-v1.0
-head_sha: f919cc91a47b13e28cc1683cc93f8004a981a4a6
-run_id: "36008659470"
-job_denominator:
-- validate-stage
-- common-stage-definition
-- stage02-admission
-- stage02-semantic-scan
-- stage02-normalized-evidence
-conclusion: success
-governance_uid: GOV-REV-20260924-INDEPENDENT-UNIT-LIFECYCLE-CURRENT-IDENTITY-SYNC
-stage_uid: STAGE-02
-work_unit_uid: WU-STAGE02-GLOBAL-HOME-SHELL-NAVIGATION-001
-evidence_ref: STAGE_EXECUTION/STAGE-02/WU-STAGE02-GLOBAL-HOME-SHELL-NAVIGATION-001/EVIDENCE/STAGE02_NORMALIZED_EVIDENCE.json
-receipt_role: EXTERNAL_IMMUTABLE_TERMINAL_VALIDATION_RECEIPT
+{
+  "provider": "GitHub Actions",
+  "repository_or_project": "steven-gold/orange-one-ai-viedo-v1.0",
+  "head_sha": "e06ade46f8ff118deae62d164ee23d6f14008f71",
+  "run_id": "36232882563",
+  "job_denominator": [
+    "materialize",
+    "stage02-admission-check",
+    "stage02-normalized-evidence",
+    "stage02-terminal-receipt"
+  ],
+  "conclusion": "success",
+  "governance_uid": "GOV-REV-20260925-NORMATIVE-EXECUTION-MATRIX",
+  "stage_uid": "STAGE-02",
+  "work_unit_uid": "WU-STAGE02-GLOBAL-HOME-SHELL-NAVIGATION-001",
+  "evidence_ref": "STAGE_EXECUTION/STAGE-02/WU-STAGE02-GLOBAL-HOME-SHELL-NAVIGATION-001/EVIDENCE/STAGE02_NORMALIZED_EVIDENCE.json",
+  "receipt_role": "EXTERNAL_IMMUTABLE_TERMINAL_VALIDATION_RECEIPT"
+}
