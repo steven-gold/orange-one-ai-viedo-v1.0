@@ -23,7 +23,7 @@ jobs:
         - WU-STAGE03-WB01-DASHBOARD-001
     steps:
     - uses: actions/checkout@v4
-      with: {ref: 0921acpos, fetch-depth: 0}
+      with: {ref: ${{ github.sha }}, fetch-depth: 0}
     - uses: actions/checkout@v4
       with:
         repository: steven-gold/orange-one-ai-viedo-v1.0
