@@ -118,6 +118,32 @@ def validate(root=ROOT):
             failures.append('normative_execution_matrix_flag_missing:'+key)
     if matrix.get('validator_local_required_field_subset')!='BLOCK' or matrix.get('downstream_discovered_matrix_undercoverage_disposition')!='STOP_REENTER_EARLIEST_OWNER_MARK_DESCENDANTS_REVERIFY_REQUIRED':
         failures.append('normative_execution_matrix_fail_closed_disposition_missing')
+    rng = inv.get('EXPLICIT_STAGE_RANGE_EXECUTION') or {}
+    if rng.get('invariant_uid') != 'GOV-INV-EXPLICIT-STAGE-RANGE-EXECUTION-001' or rng.get('requested_range_is_execution_authority') is not True or rng.get('range_is_inclusive') is not True:
+        failures.append('explicit_stage_range_execution_core_contract_missing')
+    for key in ('single_stage_request_executes_only_that_stage','multi_stage_request_executes_every_registered_stage_in_range','normal_pass_auto_continues_within_requested_range','checkpoint_does_not_require_new_user_instruction','page_lifecycle_execution_mode_preserves_one_governed_unit_identity_across_requested_range'):
+        if rng.get(key) is not True:
+            failures.append('explicit_stage_range_execution_flag_missing:' + key)
+    if rng.get('system_selected_batch_size') != 'FORBIDDEN' or rng.get('system_expand_range') != 'BLOCK' or rng.get('system_shrink_range') != 'BLOCK' or rng.get('system_skip_in_range_stage') != 'BLOCK' or rng.get('system_split_range_and_reprompt_between_normal_stages') != 'BLOCK':
+        failures.append('explicit_stage_range_execution_scope_control_incomplete')
+    if rng.get('unregistered_range_endpoint_may_be_silently_clamped') is not False or rng.get('stage_boundary_manual_continue_prompt') != 'FORBIDDEN':
+        failures.append('explicit_stage_range_execution_silent_clamp_or_reprompt_not_blocked')
+    hix = inv.get('DETERMINISTIC_HUMAN_INTERACTION_BOUNDARY') or {}
+    if hix.get('invariant_uid') != 'GOV-INV-DETERMINISTIC-HUMAN-INTERACTION-001' or hix.get('same_current_state_same_user_facing_action_set') is not True:
+        failures.append('deterministic_human_interaction_core_contract_missing')
+    if hix.get('formal_approval_is_user_decision_required') is not False or hix.get('deterministic_successor_may_be_presented_as_user_choice') is not False or hix.get('deterministic_reentry_may_be_presented_as_user_choice') is not False:
+        failures.append('approval_decision_reentry_separation_incomplete')
+    if hix.get('user_choice_allowed_only_when_materially_distinct_legal_alternative_count_gte') != 2 or hix.get('ai_may_offer_gate_bypass') is not False or hix.get('ai_may_offer_future_stage_preproduction') is not False:
+        failures.append('deterministic_user_choice_guard_incomplete')
+    interactions = hix.get('stage_interaction_contracts') or {}
+    if set(interactions) != set(expected):
+        failures.append('stage_interaction_contract_set_not_all_11')
+    else:
+        s4 = interactions.get('STAGE-04') or {}
+        if s4.get('default_mode') != 'FORMAL_APPROVAL' or s4.get('evidence_type') != 'DESIGN_APPROVAL_EVIDENCE' or s4.get('approval_consumption_operation') != 'DESIGN_FREEZE_VALIDATE' or s4.get('next_stage_after_closure') != 'STAGE-05' or s4.get('alternative_execution_path_allowed') is not False:
+            failures.append('stage04_formal_approval_boundary_incomplete')
+        if set(s4.get('formal_review_actions') or []) != {'APPROVE','REJECT','REQUEST_CHANGES'}:
+            failures.append('stage04_formal_approval_action_set_drift')
     det = inv.get('DETERMINISTIC_STAGE_AUDIT') or {}
     expected_statuses = {'NOT_STARTED','READY_FOR_EXECUTION','IN_PROGRESS','BLOCKED','REVERIFY_REQUIRED','CURRENT_STATE_CONFLICT','EXECUTION_COMPLETE_CLOSURE_PENDING','CLOSED_PASS','CLOSED_FAIL','SNAPSHOT_INVALIDATED'}
     snapshot_required = {'repository','branch','exact_head_sha','tree_sha','governance_branch','governance_head_sha','governance_uid','governance_revision','registry_revision','lifecycle_registry_revision','stage_uid','work_unit_uid','governed_unit_uid','source_authority_uid','audit_scope','audit_started_at','denominator_hash','authority_set_hash','evidence_set_hash','validator_set_hash','audit_engine_version','audit_contract_version'}
@@ -170,6 +196,11 @@ def validate(root=ROOT):
     mc = steps.get('normative_execution_matrix_contract') or {}
     if mc.get('outputs')!=['NORMATIVE_EXECUTION_MATRIX'] or mc.get('denominator')!='COMPLETE_APPLICABLE_NORMATIVE_ARTIFACT_ROW_FIELD_UNIVERSE':
         failures.append('stage_steps_normative_execution_matrix_contract_missing')
+    rc = steps.get('stage_range_execution_contract') or {}
+    if rc.get('invariant_ref') != 'GOV-INV-EXPLICIT-STAGE-RANGE-EXECUTION-001' or rc.get('interaction_invariant_ref') != 'GOV-INV-DETERMINISTIC-HUMAN-INTERACTION-001' or rc.get('range_is_inclusive') is not True:
+        failures.append('stage_steps_range_execution_contract_missing')
+    if rc.get('execution_scope_may_be_system_selected') is not False or rc.get('normal_stage_boundary_user_prompt') != 'FORBIDDEN' or rc.get('normal_stage_pass_behavior') != 'AUTO_CONTINUE_TO_NEXT_STAGE_WITHIN_REQUESTED_RANGE':
+        failures.append('stage_steps_range_execution_behavior_drift')
     er = steps.get('execution_rules') or {}
     for key in ('normative_execution_matrix_required_before_first_effectful_operation','normative_execution_matrix_required_before_stage_closure','validators_must_consume_current_matrix_truth'):
         if er.get(key) is not True:
