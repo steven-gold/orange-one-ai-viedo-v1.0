@@ -360,6 +360,10 @@ cross_stage_materialization_consumer_readiness_contract:
   parse_schema_required_field_validation_required: true
   denominator_inclusion_required: true
   successor_consumer_readiness_required: true
+  successor_effectful_operation_binding_denominator_required: true
+  artifact_input_presence_alone_may_grant_consumer_readiness: false
+  implementation_stack_authority_required_when_materially_constraining_program_artifacts: true
+  ai_recommended_framework_or_toolchain_may_receive_readiness_credit: false
   zero_unresolved_required_handoff_edges_at_exit: true
   downstream_discovered_upstream_gap_reentry_required: true
 structured_document_source_projection_audit_contract:
