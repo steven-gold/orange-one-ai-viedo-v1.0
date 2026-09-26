@@ -2,27 +2,37 @@ artifact_uid: HANDOFF-STAGE-02-GLOBAL-HOME-SHELL-001
 artifact_type: CROSS_STAGE_HANDOFF_READINESS_LEDGER
 stage_uid: STAGE-02
 work_unit_uid: WU-STAGE02-GLOBAL-HOME-SHELL-NAVIGATION-001
-governed_unit_uid: GLOBAL-HOME-SHELL-NAVIGATION
+governed_unit_uid: 'GLOBAL-HOME-SHELL-NAVIGATION'
 successor_stage_uid: STAGE-03
 successor_required_inputs:
-- input_uid: FUNCTIONAL_CHAIN_SPEC
-  status: MATERIALIZED
-- input_uid: DEPENDENCY_MAP
+- input_uid: VISUAL_BASE_BLUEPRINT
   status: MATERIALIZED
 - input_uid: PAGE_CONSTRUCTION_SPEC_PACKAGE
-  status: MATERIALIZED
-- input_uid: ASYNC_PROVIDER_CONTRACT
-  status: MATERIALIZED
-- input_uid: SHARED_OWNER_PORT_MAP
   status: MATERIALIZED
 - input_uid: FUNCTIONAL_WORKBENCH_CONTRACT
   status: MATERIALIZED
 - input_uid: INTERACTION_TOPOLOGY_SPEC
   status: MATERIALIZED
+successor_execution_bindings:
+- binding_uid: 'WU-STAGE02-GLOBAL-HOME-SHELL-NAVIGATION-001:VISUAL_AUTHORITY_TARGET'
+  consuming_operation_uid: VISUAL_SPEC_COMPILE
+  binding_class: VISUAL_AUTHORITY_TARGET
+  applicability: REQUIRED
+  canonical_owner_or_authority_ref: 'STAGE_EXECUTION/SHARED_AUTHORITY/GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY.yaml'
+  authority_evidence_ref: 'STAGE_EXECUTION/SHARED_AUTHORITY/GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY.yaml'
+  target_identity: 'GLOBAL_WEB_VISUAL_SYSTEM_AUTHORITY'
+  resolution_status: BOUND
+  denominator_inclusion_status: INCLUDED
+  consumer_readiness_status: READY
+successor_execution_binding_total: 1
+successor_execution_binding_ready_total: 1
+successor_execution_binding_unresolved_total: 0
 reference_resolution_complete: true
 physical_materialization_complete: true
 required_field_completeness_complete: true
 denominator_reconciled: true
 consumer_readiness_complete: true
+current_matrix_valid: true
+current_state_consistent: true
 unresolved_required_dependency_total: 0
 status: PASS
