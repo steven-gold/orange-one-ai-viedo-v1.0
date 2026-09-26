@@ -107,7 +107,7 @@
     },
     {
       "phase_uid": "TERMINAL_CLOSURE",
-      "status": "PASS"
+      "status": "BLOCKED"
     },
     {
       "phase_uid": "PERSIST_RESUME",
@@ -115,7 +115,7 @@
     },
     {
       "phase_uid": "NEXT_STAGE",
-      "status": "PASS"
+      "status": "NOT_EXECUTED_AFTER_BLOCK"
     }
   ],
   "operation_results": [
@@ -193,11 +193,19 @@
   "denominator": {
     "required_total": 22,
     "open_gap_total": 0,
-    "closure_blocker_total": 0,
+    "closure_blocker_total": 1,
     "remaining_scope_total": 0
   },
   "gaps": [],
-  "closure_blockers": [],
+  "closure_blockers": [
+    {
+      "finding_code": "SUCCESSOR_EXECUTION_TARGET_UNRESOLVED",
+      "canonical_owner_uid": "AUTHORITY_OWNER",
+      "earliest_legal_reentry": "STAGE-04",
+      "successor_stage_uid": "STAGE-05",
+      "unresolved_execution_binding_total": 18
+    }
+  ],
   "remediation": {
     "discovered_gap_total": 0,
     "remediated_gap_total": 0,
@@ -226,9 +234,14 @@
     "physical_materialization_complete": true,
     "required_field_completeness_complete": true,
     "denominator_reconciled": true,
-    "consumer_readiness_complete": true,
+    "consumer_readiness_complete": false,
+    "successor_execution_binding_total": 18,
+    "successor_execution_binding_ready_total": 0,
+    "successor_execution_binding_unresolved_total": 18,
+    "current_matrix_valid": true,
+    "current_state_consistent": true,
     "unresolved_required_dependency_total": 0,
-    "status": "PASS"
+    "status": "BLOCKED"
   },
   "exact_head_gate_receipts": [
     {
@@ -244,8 +257,8 @@
   },
   "next_stage_transition": {
     "next_stage_uid": "STAGE-05",
-    "status": "READY"
+    "status": "BLOCKED"
   },
-  "stage_exit_allowed": true,
-  "result": "PASS"
+  "stage_exit_allowed": false,
+  "result": "BLOCKED"
 }
