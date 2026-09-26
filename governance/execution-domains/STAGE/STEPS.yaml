@@ -68,12 +68,12 @@ normative_execution_matrix_contract:
 
 stage_closure_contract:
   step_uid: ST-{stage_uid}-CLOSURE
-  purpose: Close one Stage only after every applicable operation receipt and Stage denominator pass.
+  purpose: Close one Stage only after every applicable operation receipt, Current matrix/state truth, cross-stage readiness and Stage denominator pass.
   prerequisites: [ALL_APPLICABLE_STAGE_OPERATION_RECEIPTS_PASS]
   entry_gate: ALL_REGISTERED_STAGE_OPERATIONS_TERMINAL
-  inputs: [ALL_STAGE_OPERATION_RECEIPTS, REGISTERED_STAGE_OUTPUTS, REQUIRED_STAGE_EVIDENCE]
-  input_required_fields: [stage_uid, operation_receipts, output_hashes, evidence_refs]
-  operations: [RECONCILE_STAGE_OUTPUT_DENOMINATOR, VERIFY_REQUIRED_EVIDENCE, VERIFY_INVARIANTS, VERIFY_SUCCESSOR_INPUT_READINESS]
+  inputs: [ALL_STAGE_OPERATION_RECEIPTS, REGISTERED_STAGE_OUTPUTS, REQUIRED_STAGE_EVIDENCE, CURRENT_NORMATIVE_EXECUTION_MATRIX, CURRENT_EXECUTION_STATE, NORMALIZED_STAGE_EVIDENCE, CROSS_STAGE_HANDOFF_READINESS_LEDGER, SUCCESSOR_EXECUTION_BINDING_SET]
+  input_required_fields: [stage_uid, operation_receipts, output_hashes, evidence_refs, current_matrix_ref, current_execution_state_ref, normalized_stage_evidence_ref, cross_stage_handoff_readiness_ref, successor_execution_binding_set_ref]
+  operations: [RECONCILE_STAGE_OUTPUT_DENOMINATOR, VERIFY_REQUIRED_EVIDENCE, VERIFY_CURRENT_NORMATIVE_EXECUTION_MATRIX, VERIFY_CURRENT_STATE_EVIDENCE_TERMINAL_CONSISTENCY, VERIFY_INVARIANTS, VERIFY_SUCCESSOR_INPUT_READINESS, VERIFY_SUCCESSOR_EFFECTFUL_OPERATION_BINDINGS]
   outputs: [REGISTERED_STAGE_TERMINAL_RECEIPT]
   output_required_fields: [stage_uid, denominator_hash, operation_receipt_chain, evidence_refs, result, next_stage_uid]
   denominator: COMPLETE_REGISTERED_APPLICABLE_STAGE_UNIVERSE
