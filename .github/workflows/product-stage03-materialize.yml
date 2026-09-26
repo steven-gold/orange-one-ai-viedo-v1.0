@@ -15,7 +15,9 @@ jobs:
     steps:
       - name: Checkout product workline
         uses: actions/checkout@v4
-        with: {ref: ${{ github.sha }}, fetch-depth: 0}
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
       - name: Checkout current governance authority
         uses: actions/checkout@v4
         with:
