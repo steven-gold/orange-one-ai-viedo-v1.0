@@ -118,3 +118,29 @@ deterministic_stage_audit_binding:
   terminal_receipt_required_for_closure: true
   successor_requires_predecessor_terminal_pass_and_handoff_readiness: true
   deterministic_result_fields: [finding_codes, severity, canonical_status, canonical_owner_uid, earliest_reentry_stage, stage_pass]
+
+stage_range_execution_contract:
+  invariant_ref: GOV-INV-EXPLICIT-STAGE-RANGE-EXECUTION-001
+  interaction_invariant_ref: GOV-INV-DETERMINISTIC-HUMAN-INTERACTION-001
+  requested_range_source: EXPLICIT_USER_OR_GOVERNED_CALLER_STAGE_RANGE
+  range_order_source: CURRENT_LIFECYCLE_REGISTRY
+  range_is_inclusive: true
+  execution_scope_may_be_system_selected: false
+  normal_stage_pass_behavior: AUTO_CONTINUE_TO_NEXT_STAGE_WITHIN_REQUESTED_RANGE
+  normal_stage_boundary_user_prompt: FORBIDDEN
+  checkpoint_after_each_stage: REQUIRED
+  checkpoint_resume_preserves_original_requested_range: true
+  stop_conditions: [FORMAL_HUMAN_APPROVAL_REQUIRED, USER_DECISION_REQUIRED, BLOCKED, CURRENT_STATE_CONFLICT, REVERIFY_REQUIRED, SNAPSHOT_INVALIDATED, EXECUTION_FAILURE]
+  invalid_endpoint_disposition: FAIL_CLOSED_WITH_EXACT_RANGE_ERROR
+  silent_range_clamp: FORBIDDEN
+  stage_validation_mode:
+    product_execution_credit: 0
+    may_change_requested_execution_range: false
+  page_lifecycle_execution_mode:
+    governed_unit_identity_sticky: true
+    completes_only_when_every_stage_in_requested_range_terminal_pass: true
+    successor_outside_requested_range_may_execute: false
+  formal_approval_boundary:
+    user_actions: [APPROVE, REJECT, REQUEST_CHANGES]
+    alternate_execution_path_menu: FORBIDDEN
+    evidence_materialization_owner: SYSTEM
