@@ -1,4 +1,5 @@
 name: Product Stage01 Materialize
+# LEGACY CLOSURE REVALIDATION ONLY. This workflow is NOT a fresh Stage executor.
 # stage01-materialize-closure: backfills the canonical execution preflight
 # manifests and mints current-governance normalized evidence + terminal receipts
 # for both Stage-01 governed units, then converges Stage-01 closure state so the
@@ -6,10 +7,6 @@ name: Product Stage01 Materialize
 # governance. Runs only when the units are not already closed.
 on:
   workflow_dispatch:
-  push:
-    branches: [0921acpos]
-    paths:
-      - '.github/workflows/product-stage01-materialize.yml'
 permissions:
   contents: write
 concurrency:
