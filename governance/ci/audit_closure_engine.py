@@ -400,6 +400,34 @@ def closure_failures(receipt: dict) -> list[str]:
     return failures
 
 
+def validate_audit_snapshot(snapshot: dict, ctx: dict, frozen_snapshot: dict | None = None) -> dict:
+    det=(ctx.get('stage_invariants') or {}).get('DETERMINISTIC_STAGE_AUDIT') or {}
+    contract=det.get('audit_snapshot_contract') or {}
+    required=list(map(str,contract.get('required_fields') or []))
+    if not required:
+        return {'status':'FAIL','reason':'AUDIT_SNAPSHOT_REQUIRED_FIELD_DENOMINATOR_EMPTY'}
+    if not isinstance(snapshot,dict):
+        return {'status':'FAIL','reason':'AUDIT_SNAPSHOT_INVALID'}
+    missing=[field for field in required if snapshot.get(field) in (None,'',[])]
+    if missing:
+        return {'status':'FAIL','reason':'AUDIT_SNAPSHOT_INVALID','missing_fields':missing}
+    if contract.get('freeze_before_audit') is not True:
+        return {'status':'FAIL','reason':'AUDIT_SNAPSHOT_FREEZE_CONTRACT_MISSING'}
+    if frozen_snapshot is not None:
+        if not isinstance(frozen_snapshot,dict):
+            return {'status':'FAIL','reason':'AUDIT_SNAPSHOT_INVALID'}
+        immutable_fields=(
+            'repository','branch','exact_head_sha','tree_sha','governance_branch','governance_head_sha',
+            'governance_uid','governance_revision','registry_revision','lifecycle_registry_revision',
+            'stage_uid','work_unit_uid','governed_unit_uid','source_authority_uid','audit_scope',
+            'denominator_hash','authority_set_hash','evidence_set_hash','validator_set_hash',
+            'audit_engine_version','audit_contract_version'
+        )
+        drift=[field for field in immutable_fields if snapshot.get(field)!=frozen_snapshot.get(field)]
+        if drift:
+            return {'status':'FAIL','reason':'SNAPSHOT_INVALIDATED','drift_fields':drift}
+    return {'status':'PASS','required_field_count':len(required)}
+
 def validate_determinism_acceptance(ctx: dict) -> dict:
     det=(ctx.get('stage_invariants') or {}).get('DETERMINISTIC_STAGE_AUDIT') or {}
     indep=det.get('auditor_independence_acceptance') or {}
@@ -435,6 +463,35 @@ def run_self_test() -> int:
         print("FAIL: baseline closure did not pass", file=sys.stderr)
         return 1
     cases.append("baseline_pass")
+
+    snapshot_required=((base.get('stage_invariants') or {}).get('DETERMINISTIC_STAGE_AUDIT') or {}).get('audit_snapshot_contract',{}).get('required_fields') or []
+    synthetic_snapshot={field:'SYNTHETIC-'+field for field in snapshot_required}
+    snap_ok=validate_audit_snapshot(synthetic_snapshot,base)
+    if snap_ok.get('status')!='PASS':
+        print('FAIL: audit snapshot baseline invalid: '+json.dumps(snap_ok,sort_keys=True),file=sys.stderr)
+        return 1
+    cases.append('audit_snapshot_required_fields_pass')
+    missing_snapshot=copy.deepcopy(synthetic_snapshot)
+    missing_snapshot.pop('denominator_hash',None)
+    if validate_audit_snapshot(missing_snapshot,base).get('status')=='PASS':
+        print('FAIL: missing audit snapshot field escaped validation',file=sys.stderr)
+        return 1
+    cases.append('audit_snapshot_missing_field_blocked')
+    drift_snapshot=copy.deepcopy(synthetic_snapshot)
+    drift_snapshot['exact_head_sha']='SYNTHETIC-HEAD-DRIFT'
+    drift_result=validate_audit_snapshot(drift_snapshot,base,synthetic_snapshot)
+    if drift_result.get('reason')!='SNAPSHOT_INVALIDATED':
+        print('FAIL: audit snapshot head drift did not invalidate snapshot',file=sys.stderr)
+        return 1
+    cases.append('audit_snapshot_head_drift_invalidated')
+    denominator_drift=copy.deepcopy(synthetic_snapshot)
+    denominator_drift['denominator_hash']='SYNTHETIC-DENOMINATOR-DRIFT'
+    denominator_result=validate_audit_snapshot(denominator_drift,base,synthetic_snapshot)
+    if denominator_result.get('reason')!='SNAPSHOT_INVALIDATED':
+        print('FAIL: audit denominator drift did not invalidate snapshot',file=sys.stderr)
+        return 1
+    cases.append('audit_snapshot_denominator_drift_invalidated')
+
 
     first = run_closure(base)
     second = run_closure(copy.deepcopy(base))
