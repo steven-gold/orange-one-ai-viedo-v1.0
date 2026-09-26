@@ -93,6 +93,10 @@ jobs:
         ACPOS_ACTIVE_WORK_UNIT: STAGE_EXECUTION/STAGE-04/${{ matrix.wu }}/WORK_UNIT.yaml
         ACPOS_CURRENT_SCOPE: STAGE_EXECUTION/STAGE-04/${{ matrix.wu }}/CURRENT_EXECUTION_SCOPE_MANIFEST.yaml
       run: |
+        STATUS="$(python -c "import yaml; d=yaml.safe_load(open('STAGE_EXECUTION/STAGE-04/${{ matrix.wu }}/WORK_UNIT.yaml')); print(d.get('current_status') or d.get('status') or '')")"
+        case "$STATUS" in
+          CLOSED*) echo "SKIP admission for already-closed ${{ matrix.wu }}"; exit 0 ;;
+        esac
         if [ -f "STAGE_EXECUTION/STAGE-04/${{ matrix.wu }}/NORMATIVE_EXECUTION_MATRIX.yaml" ]; then
           python governance/ci/stage_execution_engine.py --admission-check --stage STAGE-04
         else

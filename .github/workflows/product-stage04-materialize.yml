@@ -1,0 +1,127 @@
+name: Product Stage04 Materialize
+# stage04-materialize: preapproval phase compiles BASIC_DESIGN_PACKAGE for both
+# Stage-04 governed units (the only operation allowed before human approval).
+# When a governed FORMAL_APPROVAL disposition exists, the same run materializes
+# DESIGN_APPROVAL_EVIDENCE and the blocked freeze outputs, then converges Stage-04
+# closure so CURRENT_GOVERNED_UNIT_FOUNDATION_FROZEN is authorized.
+on:
+  workflow_dispatch:
+  push:
+    branches: [0921acpos]
+    paths:
+      - '.github/workflows/product-stage04-materialize.yml'
+permissions:
+  contents: write
+concurrency:
+  group: product-stage04-materialize
+  cancel-in-progress: false
+jobs:
+  materialize:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout product workline
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+      - name: Checkout current governance authority
+        uses: actions/checkout@v4
+        with:
+          repository: steven-gold/orange-one-ai-viedo-v1.0
+          ref: rebuild-v2.1.1
+          path: _governance_authority
+          fetch-depth: 1
+      - name: Load current governance authority
+        run: |
+          rm -rf governance .github/governance-source
+          cp -R _governance_authority/governance ./governance
+          mkdir -p .github
+          cp -R _governance_authority/.github/governance-source .github/governance-source
+          GOV_HEAD="$(git -C _governance_authority rev-parse HEAD)"
+          GOV_UID="$(python -c "import yaml; from pathlib import Path; m=yaml.safe_load(Path('_governance_authority/governance/specifications/current/SPECIFICATION_MANIFEST.yaml').read_text()) or {}; print(m.get('artifact_uid') or '')")"
+          GOV_VER="$(python -c "import yaml; from pathlib import Path; m=yaml.safe_load(Path('_governance_authority/governance/specifications/current/SPECIFICATION_MANIFEST.yaml').read_text()) or {}; print(m.get('display_version') or '')")"
+          test -n "$GOV_HEAD"
+          test -n "$GOV_UID"
+          test -n "$GOV_VER"
+          echo "ACPOS_GOVERNANCE_HEAD=$GOV_HEAD" >> "$GITHUB_ENV"
+          echo "ACPOS_GOVERNANCE_UID=$GOV_UID" >> "$GITHUB_ENV"
+          echo "ACPOS_GOVERNANCE_VERSION=$GOV_VER" >> "$GITHUB_ENV"
+          python -m pip install --disable-pip-version-check 'PyYAML==6.0.2'
+      - name: Stage04 admission check for not-yet-closed governed units
+        env:
+          ACPOS_PRODUCT_ROOT: ${{ github.workspace }}
+        run: |
+          set -euo pipefail
+          for WU in WU-STAGE04-GLOBAL-HOME-SHELL-NAVIGATION-001 WU-STAGE04-WB01-DASHBOARD-001; do
+            STATUS="$(python -c "import yaml; d=yaml.safe_load(open('STAGE_EXECUTION/STAGE-04/$WU/WORK_UNIT.yaml')); print(d.get('current_status') or d.get('status') or '')")"
+            case "$STATUS" in
+              CLOSED*) echo "SKIP admission for already-closed $WU"; continue ;;
+            esac
+            export ACPOS_ACTIVE_WORK_UNIT="STAGE_EXECUTION/STAGE-04/${WU}/WORK_UNIT.yaml"
+            export ACPOS_CURRENT_SCOPE="STAGE_EXECUTION/STAGE-04/${WU}/CURRENT_EXECUTION_SCOPE_MANIFEST.yaml"
+            python governance/ci/stage_execution_engine.py --admission-check --stage STAGE-04
+          done
+      - name: Compile BASIC_DESIGN_PACKAGE (preapproval-allowed operation)
+        env:
+          HEAD_SHA: ${{ github.sha }}
+        run: |
+          python .github/scripts/stage04_materialize.py \
+            --root "$GITHUB_WORKSPACE" \
+            --phase compile \
+            --head "$HEAD_SHA" \
+            --gov "$ACPOS_GOVERNANCE_UID" \
+            --gver "$ACPOS_GOVERNANCE_VERSION"
+      - name: Materialize freeze outputs when governed human approval exists
+        env:
+          RUN_ID: ${{ github.run_id }}
+          HEAD_SHA: ${{ github.sha }}
+        run: |
+          set -euo pipefail
+          APPROVED=1
+          for WU in WU-STAGE04-GLOBAL-HOME-SHELL-NAVIGATION-001 WU-STAGE04-WB01-DASHBOARD-001; do
+            DISP="STAGE_EXECUTION/STAGE-04/${WU}/EVIDENCE/FORMAL_HUMAN_APPROVAL_DISPOSITION.yaml"
+            if [ ! -f "$DISP" ]; then APPROVED=0; fi
+          done
+          if [ "$APPROVED" != "1" ]; then
+            echo "STAGE04_DESIGN_APPROVAL_GATE_PENDING (BASIC_DESIGN_PACKAGE compiled, freeze outputs blocked)"
+            exit 0
+          fi
+          python .github/scripts/stage04_materialize.py \
+            --root "$GITHUB_WORKSPACE" \
+            --phase seal \
+            --head "$HEAD_SHA" \
+            --run "$RUN_ID" \
+            --gate PRODUCT_STAGE04_VALIDATION \
+            --gov "$ACPOS_GOVERNANCE_UID" \
+            --gver "$ACPOS_GOVERNANCE_VERSION"
+      - name: Validate materialized Stage04 evidence and terminal receipts
+        env:
+          ACPOS_PRODUCT_ROOT: ${{ github.workspace }}
+        run: |
+          set -euo pipefail
+          for WU in WU-STAGE04-GLOBAL-HOME-SHELL-NAVIGATION-001 WU-STAGE04-WB01-DASHBOARD-001; do
+            EVIDENCE="STAGE_EXECUTION/STAGE-04/${WU}/EVIDENCE/STAGE04_NORMALIZED_EVIDENCE.json"
+            RECEIPT="STAGE_EXECUTION/STAGE-04/${WU}/WORK_UNIT_TERMINAL_RECEIPT.yaml"
+            if [ -f "$EVIDENCE" ]; then
+              export ACPOS_ACTIVE_WORK_UNIT="STAGE_EXECUTION/STAGE-04/${WU}/WORK_UNIT.yaml"
+              export ACPOS_CURRENT_SCOPE="STAGE_EXECUTION/STAGE-04/${WU}/CURRENT_EXECUTION_SCOPE_MANIFEST.yaml"
+              python governance/ci/stage_execution_engine.py --validate-evidence --stage STAGE-04 --evidence "$EVIDENCE"
+              python governance/ci/stage_execution_engine.py --validate-terminal-receipt --stage STAGE-04 --evidence "$EVIDENCE" --receipt "$RECEIPT"
+            fi
+          done
+      - name: Commit materialized Stage04 artifacts
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add STAGE_EXECUTION/STAGE-04
+          git diff --cached --quiet && exit 0
+          git commit -m "stage04: materialize basic design package and foundation freeze"
+          for attempt in 1 2 3 4; do
+            git fetch origin 0921acpos
+            git rebase origin/0921acpos || { git rebase --abort || true; echo "BLOCK:REBASE_CONFLICT"; exit 21; }
+            if git push origin HEAD:0921acpos; then exit 0; fi
+            echo "RETRY_PUSH_ATTEMPT=$attempt"
+            sleep 2
+          done
+          echo "BLOCK:REMOTE_ADVANCED_AFTER_RETRY_BUDGET"
+          exit 22
