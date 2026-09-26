@@ -208,6 +208,16 @@ def validate(root=ROOT):
     mc = steps.get('normative_execution_matrix_contract') or {}
     if mc.get('outputs')!=['NORMATIVE_EXECUTION_MATRIX'] or mc.get('denominator')!='COMPLETE_APPLICABLE_NORMATIVE_ARTIFACT_ROW_FIELD_UNIVERSE':
         failures.append('stage_steps_normative_execution_matrix_contract_missing')
+    closure = steps.get('stage_closure_contract') or {}
+    required_closure_inputs={'ALL_STAGE_OPERATION_RECEIPTS','REGISTERED_STAGE_OUTPUTS','REQUIRED_STAGE_EVIDENCE','CURRENT_NORMATIVE_EXECUTION_MATRIX','CURRENT_EXECUTION_STATE','NORMALIZED_STAGE_EVIDENCE','CROSS_STAGE_HANDOFF_READINESS_LEDGER','SUCCESSOR_EXECUTION_BINDING_SET'}
+    required_closure_fields={'stage_uid','operation_receipts','output_hashes','evidence_refs','current_matrix_ref','current_execution_state_ref','normalized_stage_evidence_ref','cross_stage_handoff_readiness_ref','successor_execution_binding_set_ref'}
+    required_closure_ops={'RECONCILE_STAGE_OUTPUT_DENOMINATOR','VERIFY_REQUIRED_EVIDENCE','VERIFY_CURRENT_NORMATIVE_EXECUTION_MATRIX','VERIFY_CURRENT_STATE_EVIDENCE_TERMINAL_CONSISTENCY','VERIFY_INVARIANTS','VERIFY_SUCCESSOR_INPUT_READINESS','VERIFY_SUCCESSOR_EFFECTFUL_OPERATION_BINDINGS'}
+    if not required_closure_inputs.issubset(set(closure.get('inputs') or [])):
+        failures.append('stage_closure_explicit_input_projection_incomplete')
+    if not required_closure_fields.issubset(set(closure.get('input_required_fields') or [])):
+        failures.append('stage_closure_explicit_input_field_projection_incomplete')
+    if not required_closure_ops.issubset(set(closure.get('operations') or [])):
+        failures.append('stage_closure_explicit_validation_operation_projection_incomplete')
     rc = steps.get('stage_range_execution_contract') or {}
     if rc.get('invariant_ref') != 'GOV-INV-EXPLICIT-STAGE-RANGE-EXECUTION-001' or rc.get('interaction_invariant_ref') != 'GOV-INV-DETERMINISTIC-HUMAN-INTERACTION-001' or rc.get('range_is_inclusive') is not True:
         failures.append('stage_steps_range_execution_contract_missing')
@@ -342,9 +352,20 @@ def validate(root=ROOT):
     if bcross.get('successor_effectful_operation_binding_denominator_required') is not True or bcross.get('artifact_input_presence_alone_may_grant_consumer_readiness') is not False or bcross.get('implementation_stack_authority_required_when_materially_constraining_program_artifacts') is not True or bcross.get('ai_recommended_framework_or_toolchain_may_receive_readiness_credit') is not False:
         failures.append('acceptance_cross_stage_effectful_binding_authority_incomplete')
     catalog = load(root, '10_REGISTRY/AUDIT_CATALOG.yaml')
+    if any(str(x.get('governance_revision') or '') != root_rev for x in (life, d, bp, catalog)):
+        failures.append('current_governance_artifact_revision_projection_drift')
     aud14 = next((x for x in catalog.get('items') or [] if x.get('audit_item_uid') == 'AUD-GOV-014'), None)
     if not isinstance(aud14, dict) or aud14.get('audit_type') != 'CROSS_STAGE_MATERIALIZATION_AND_CONSUMER_READINESS' or aud14.get('validator_uid') != 'VAL-GOV-035':
         failures.append('audit_catalog_cross_stage_item_missing')
+    aud14_required_coverage={
+        'REFERENCE_RESOLUTION','PHYSICAL_MATERIALIZATION','PARSE_SCHEMA_REQUIRED_FIELDS','DENOMINATOR_INCLUSION',
+        'SUCCESSOR_CONSUMER_READINESS','SUCCESSOR_EFFECTFUL_OPERATION_BINDING_DENOMINATOR',
+        'SUCCESSOR_EXECUTION_TARGET_AUTHORITY','IMPLEMENTATION_STACK_AUTHORITY',
+        'CURRENT_NORMATIVE_EXECUTION_MATRIX_VALIDITY','CURRENT_STATE_EVIDENCE_TERMINAL_CONSISTENCY',
+        'AUTHORIZED_NOT_APPLICABLE_AUTHORITY','SUCCESSOR_OPERATION_READINESS','UPSTREAM_REENTRY'
+    }
+    if not aud14_required_coverage.issubset(set((aud14 or {}).get('coverage_extensions') or [])):
+        failures.append('audit_catalog_cross_stage_coverage_projection_incomplete')
 
     for sid, stage in stage_map.items():
         gate = stage.get('cross_stage_materialization_gate') or {}
