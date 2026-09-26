@@ -46,7 +46,7 @@ else:
         if resolved.get(key)!=identity.get(key):
             errors.append('REGISTRY_RESOLVER_IDENTITY_DRIFT:'+key)
     if governance_role=='GOVERNANCE_REVISION_CANDIDATE':
-        required=('predecessor_branch','predecessor_head_sha','predecessor_governance_revision','authorization_record_url','authorized_scope')
+        required=('predecessor_branch','predecessor_head_sha','predecessor_governance_revision','authorization_record_url','authorized_scope','specification_bundle_sha256','specification_bundle_digest_algorithm')
         for key in required:
             if identity.get(key) in (None,'',[]):
                 errors.append('CANDIDATE_BOOTSTRAP_FIELD_MISSING:'+key)
@@ -54,6 +54,16 @@ else:
             errors.append('CANDIDATE_PREDECESSOR_BRANCH_COLLISION')
         if not str(identity.get('authorization_record_url') or '').startswith('https://github.com/'):
             errors.append('CANDIDATE_AUTHORIZATION_RECORD_NOT_PERSISTED_GITHUB_RECORD')
+        if identity.get('identity_state')!='PROVISIONAL_EXACT_HEAD_AND_BUNDLE_DIGEST_BOUND':
+            errors.append('CANDIDATE_IDENTITY_STATE_DRIFT')
+        if identity.get('released_immutable_identity') is not False:
+            errors.append('CANDIDATE_IDENTITY_PREMATURELY_RELEASED')
+        if identity.get('immutable_release_identity_assigned_only_at_explicit_promotion') is not True:
+            errors.append('CANDIDATE_IMMUTABLE_RELEASE_IDENTITY_TIMING_DRIFT')
+        if identity.get('specification_bundle_digest_algorithm')!='SHA256_RELATIVE_PATH_NUL_BYTES_NUL_SORTED_V1':
+            errors.append('CANDIDATE_SPECIFICATION_BUNDLE_DIGEST_ALGORITHM_DRIFT')
+        if resolved.get('runtime_bundle_sha256')!=identity.get('specification_bundle_sha256'):
+            errors.append('CANDIDATE_SPECIFICATION_BUNDLE_DIGEST_DRIFT')
 
 def verify_candidate_authorization(reg, resolved):
     roles=reg.get('branch_role_contract') or {}
@@ -147,6 +157,14 @@ if (reg.get('branch_role_contract') or {}).get(str(reg.get('branch') or ''))=='G
         errors.append('CANDIDATE_MANIFEST_PROJECTION_BINDING_NOT_REQUIRED')
     if vc.get('candidate_manifest_artifact_uid_expected')!=identity.get('governance_uid') or vc.get('candidate_manifest_display_version_expected')!=identity.get('display_version'):
         errors.append('CANDIDATE_MANIFEST_EXPECTED_IDENTITY_DRIFT')
+    if vc.get('candidate_identity_binding_mode')!='PROVISIONAL_EXACT_HEAD_AND_BUNDLE_DIGEST_BOUND':
+        errors.append('CANDIDATE_IDENTITY_BINDING_MODE_DRIFT')
+    if vc.get('candidate_identity_may_be_reported_as_released_immutable') is not False:
+        errors.append('CANDIDATE_RELEASED_IDENTITY_OVERCLAIM_NOT_BLOCKED')
+    if vc.get('immutable_release_identity_must_be_assigned_during_explicit_promotion') is not True:
+        errors.append('CANDIDATE_EXPLICIT_PROMOTION_RELEASE_IDENTITY_NOT_REQUIRED')
+    if vc.get('specification_bundle_digest_algorithm')!=identity.get('specification_bundle_digest_algorithm') or vc.get('specification_bundle_sha256')!=identity.get('specification_bundle_sha256'):
+        errors.append('CANDIDATE_VALIDATION_BUNDLE_DIGEST_PROJECTION_DRIFT')
 
 verify_candidate_authorization(reg,resolved)
 

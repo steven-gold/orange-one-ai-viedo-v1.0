@@ -91,6 +91,22 @@ def resolve():
         digest.update(b"\0")
         files.append(rel)
 
+    actual_bundle_sha256=digest.hexdigest()
+    expected_bundle_sha256=str(identity.get("specification_bundle_sha256") or "")
+    if not expected_bundle_sha256:
+        raise RuntimeError("registry specification bundle digest missing")
+    if str(identity.get("specification_bundle_digest_algorithm") or "")!="SHA256_RELATIVE_PATH_NUL_BYTES_NUL_SORTED_V1":
+        raise RuntimeError("registry specification bundle digest algorithm drift")
+    if actual_bundle_sha256!=expected_bundle_sha256:
+        raise RuntimeError("CURRENT_SPECIFICATION_BUNDLE_DIGEST_DRIFT expected="+expected_bundle_sha256+" actual="+actual_bundle_sha256)
+    if governance_role=="GOVERNANCE_REVISION_CANDIDATE":
+        if identity.get("identity_state")!="PROVISIONAL_EXACT_HEAD_AND_BUNDLE_DIGEST_BOUND":
+            raise RuntimeError("candidate governance identity state drift")
+        if identity.get("released_immutable_identity") is not False:
+            raise RuntimeError("candidate governance identity prematurely released")
+        if identity.get("immutable_release_identity_assigned_only_at_explicit_promotion") is not True:
+            raise RuntimeError("candidate immutable release identity timing drift")
+
     return {
         "registry": str(REGISTRY.relative_to(ROOT)),
         "registry_uid": registry.get("registry_uid"),
@@ -108,7 +124,11 @@ def resolve():
         "specification_manifest": str(manifest.relative_to(ROOT)),
         "specification_bundle_uid": manifest_doc.get("artifact_uid"),
         "specification_bundle_display_version": manifest_doc.get("display_version"),
-        "runtime_bundle_sha256": digest.hexdigest(),
+        "runtime_bundle_sha256": actual_bundle_sha256,
+        "expected_runtime_bundle_sha256": expected_bundle_sha256,
+        "runtime_bundle_digest_algorithm": identity.get("specification_bundle_digest_algorithm"),
+        "candidate_identity_state": identity.get("identity_state"),
+        "released_immutable_identity": identity.get("released_immutable_identity"),
         "component_files": files,
         "lifecycle_registry": registry.get("lifecycle_registry"),
         "stage_invariant_registry": registry.get("stage_invariant_registry"),

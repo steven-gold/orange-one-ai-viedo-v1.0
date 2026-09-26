@@ -10,6 +10,11 @@ governance_identity:
   display_version: v2.2.33
   identity_authority: governance/specifications/REGISTRY.yaml
   status: CANDIDATE
+  identity_state: PROVISIONAL_EXACT_HEAD_AND_BUNDLE_DIGEST_BOUND
+  released_immutable_identity: false
+  immutable_release_identity_assigned_only_at_explicit_promotion: true
+  specification_bundle_digest_algorithm: SHA256_RELATIVE_PATH_NUL_BYTES_NUL_SORTED_V1
+  specification_bundle_sha256: 6f658960af521275a5e4581a83b14190f682e05d9d641e9f7871a48c92cd48aa
   predecessor_branch: rebuild-v2.1.1
   predecessor_head_sha: c336a76c22a5db65080f749f26875edfa5169457
   predecessor_root_manifest_ref: .github/governance-source/active/source/10_REGISTRY/GOVERNANCE_ROOT_MANIFEST.yaml
@@ -67,6 +72,11 @@ candidate_validation_contract:
   candidate_required_workflow_path_filter: FORBIDDEN
   live_branch_head_must_equal_validation_head: true
   live_branch_head_recheck_after_evidence_validation_required: true
+  candidate_identity_binding_mode: PROVISIONAL_EXACT_HEAD_AND_BUNDLE_DIGEST_BOUND
+  candidate_identity_may_be_reported_as_released_immutable: false
+  immutable_release_identity_must_be_assigned_during_explicit_promotion: true
+  specification_bundle_digest_algorithm: SHA256_RELATIVE_PATH_NUL_BYTES_NUL_SORTED_V1
+  specification_bundle_sha256: 6f658960af521275a5e4581a83b14190f682e05d9d641e9f7871a48c92cd48aa
   current_cleanup_required_commands:
   - python governance/ci/stage_execution_engine.py --definition-audit-all
   - python governance/ci/test_stage_execution_engine.py
