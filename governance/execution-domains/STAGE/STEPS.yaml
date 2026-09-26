@@ -104,3 +104,17 @@ execution_rules:
   merge_multiple_effectful_operations_into_one_execution: FORBIDDEN
   future_stage_preproduction: FORBIDDEN
   whole_stage_adapter_as_single_effectful_step: FORBIDDEN
+
+deterministic_stage_audit_binding:
+  invariant_ref: GOV-INV-DETERMINISTIC-STAGE-AUDIT-001
+  applies_to_stage_denominator: DYNAMIC_REGISTERED_APPLICABLE_STAGES
+  lifecycle_registry_is_stage_denominator_source: true
+  same_complete_input_same_complete_result: true
+  snapshot_must_freeze_before_audit: true
+  current_state_conflict_blocks_stage_pass: true
+  historical_pass_may_not_be_current_pass: true
+  stage_pass_requires_all_mandatory_dimensions: true
+  current_matrix_required_before_effectful_operation_and_closure: true
+  terminal_receipt_required_for_closure: true
+  successor_requires_predecessor_terminal_pass_and_handoff_readiness: true
+  deterministic_result_fields: [finding_codes, severity, canonical_status, canonical_owner_uid, earliest_reentry_stage, stage_pass]

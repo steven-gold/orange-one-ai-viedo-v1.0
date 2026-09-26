@@ -27,3 +27,16 @@ pass_rule:
   missing_required_evidence_count: 0
   not_applicable_requires_evidence: true
 successor_admission_results: [PASS]
+
+stage_deterministic_audit_invariant_ref: GOV-INV-DETERMINISTIC-STAGE-AUDIT-001
+stage_canonical_statuses: [NOT_STARTED, READY_FOR_EXECUTION, IN_PROGRESS, BLOCKED, REVERIFY_REQUIRED, CURRENT_STATE_CONFLICT, EXECUTION_COMPLETE_CLOSURE_PENDING, CLOSED_PASS, CLOSED_FAIL, SNAPSHOT_INVALIDATED]
+stage_structure_dimensions: [WORK_UNIT_SKELETON_PASS, ARTIFACT_STRUCTURE_PASS, OPERATION_STRUCTURE_PASS, EVIDENCE_STRUCTURE_PASS, CLOSURE_STRUCTURE_PASS, FULL_STAGE_STRUCTURE_PASS]
+deterministic_stage_pass_rule:
+  same_complete_input_same_complete_result: true
+  all_mandatory_dimensions_pass: true
+  current_state_conflict_count: 0
+  stale_binding_count: 0
+  missing_required_evidence_count: 0
+  unresolved_required_gap_count: 0
+  terminal_receipt_required: true
+  successor_binding_required: true

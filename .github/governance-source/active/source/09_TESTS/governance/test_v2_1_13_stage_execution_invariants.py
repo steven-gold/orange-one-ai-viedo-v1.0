@@ -19,6 +19,17 @@ def receipt_valid_for_successor(old_den,new_den,new_receipt=False): return bool(
 def review_closes_stage(review_complete,blockers,required_evidence,exit_gate): return bool(review_complete and blockers==0 and required_evidence and exit_gate)
 def successor_projection_ok(successor_id,current_ids): return bool(current_ids and all(x==successor_id for x in current_ids))
 def gap_autofill_allowed(gap_class, unique_current=False): return gap_class in ('AUTO_REMEDIABLE','IMPLEMENTATION_GAP') and unique_current
+CANON_STAGE_STATUSES={'NOT_STARTED','READY_FOR_EXECUTION','IN_PROGRESS','BLOCKED','REVERIFY_REQUIRED','CURRENT_STATE_CONFLICT','EXECUTION_COMPLETE_CLOSURE_PENDING','CLOSED_PASS','CLOSED_FAIL','SNAPSHOT_INVALIDATED'}
+def deterministic_stage_status(total_ops,completed_ops,snapshot_valid=True,current_state_conflict=False,reverify=False,blocked=False,closure_pass=False):
+    if not snapshot_valid: return 'SNAPSHOT_INVALIDATED'
+    if current_state_conflict: return 'CURRENT_STATE_CONFLICT'
+    if reverify: return 'REVERIFY_REQUIRED'
+    if blocked: return 'BLOCKED'
+    if total_ops > 0 and completed_ops == 0: return 'READY_FOR_EXECUTION'
+    if completed_ops < total_ops: return 'IN_PROGRESS'
+    if completed_ops == total_ops and not closure_pass: return 'EXECUTION_COMPLETE_CLOSURE_PENDING'
+    return 'CLOSED_PASS' if closure_pass else 'CLOSED_FAIL'
+def same_complete_input_same_result(left,right): return left == right
 res=[]
 # Relationship semantics: observational adjacency is not a binding.
 res.append(case('port_exposure_is_not_trigger', not binding_allowed(exposure=True)))
@@ -82,8 +93,14 @@ res.append(case('successor_consumer_not_ready_blocks_handoff', not handoff_ready
 res.append(case('unresolved_required_dependency_blocks_handoff', not handoff_ready(unresolved=1)))
 res.append(case('complete_materialized_consumer_ready_handoff_passes', handoff_ready()))
 
+res.append(case('deterministic_same_input_same_result', same_complete_input_same_result({'status':'CLOSED_PASS','finding_codes':[]},{'status':'CLOSED_PASS','finding_codes':[]})))
+res.append(case('deterministic_current_state_conflict', deterministic_stage_status(9,9,current_state_conflict=True)=='CURRENT_STATE_CONFLICT'))
+res.append(case('deterministic_zero_operations_ready', deterministic_stage_status(4,0)=='READY_FOR_EXECUTION'))
+res.append(case('deterministic_all_operations_without_closure_pending', deterministic_stage_status(4,4,closure_pass=False)=='EXECUTION_COMPLETE_CLOSURE_PENDING'))
+res.append(case('deterministic_closed_pass', deterministic_stage_status(4,4,closure_pass=True)=='CLOSED_PASS'))
+res.append(case('deterministic_snapshot_invalidation_precedence', deterministic_stage_status(4,4,snapshot_valid=False,closure_pass=True)=='SNAPSHOT_INVALIDATED'))
 out=v213.validate(PKG)
 res.append(case('package_stage_execution_invariant_contract_valid', out['status']=='PASS',out))
 out={'suite':'v2.1.13 universal Stage execution invariant multidirection regression','total':len(res),'passed_expectations':sum(x['ok'] for x in res),'results':res}
 print(json.dumps(out,ensure_ascii=False,indent=2))
-raise SystemExit(0 if out['total']==32 and out['passed_expectations']==32 else 1)
+raise SystemExit(0 if out['total']==38 and out['passed_expectations']==38 else 1)

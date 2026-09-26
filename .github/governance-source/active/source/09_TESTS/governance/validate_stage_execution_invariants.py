@@ -29,7 +29,7 @@ def validate(root=ROOT):
         failures.append('stage_scope_not_all_11')
     if scope.get('stage_specific_exception_without_registered_authority') != 'BLOCK':
         failures.append('unregistered_stage_exception_not_blocked')
-    required = ['RELATION_SEMANTIC_SEPARATION', 'GAP_REMEDIATION_ADMISSIBILITY', 'CURRENT_AUTHORITY_ADMISSIBILITY', 'REQUIRED_EVIDENCE_MATERIALIZATION', 'VALIDATOR_SCHEMA_SEMANTICS', 'UNRESOLVED_PRESERVATION', 'SUCCESSOR_CURRENT_ATOMIC_PROJECTION', 'BLOCKER_DENOMINATOR_AND_RECEIPT', 'AUTHORITY_EVIDENCE_CONSUMPTION', 'FUNCTIONAL_CONTRACT_COMPLETENESS', 'STAGE_ENTRY_PRECHECK', 'IMPLEMENTATION_DEVIATION_FEEDBACK', 'REVIEW_VS_CLOSURE_SEPARATION', 'CANONICAL_STAGE_EXECUTION_PREFLIGHT', 'EFFECTIVE_CONTRACT_OVERLAY', 'ROLE_SAFE_FUNCTIONAL_CLOSURE', 'DEPENDENCY_ORDERED_INCREMENTAL_RECONCILIATION', 'COMMON_ENGINE_DEFECT_INTERRUPT', 'GENERATED_OUTPUT_PERSISTENCE', 'CONTROL_VS_SYSTEM_TRIGGER_RESOLUTION', 'PRODUCER_CONSUMER_SCHEMA_IDENTITY', 'NO_HISTORY_PRODUCT_VALUE_FALLBACK', 'TASK_LAYER_EFFECTFUL_TRANSITION_ORDER', 'VISUAL_DESIGN_PROFILE_MATERIALIZATION_COMPLETENESS', 'NORMATIVE_EXECUTION_MATRIX']
+    required = ['RELATION_SEMANTIC_SEPARATION', 'GAP_REMEDIATION_ADMISSIBILITY', 'CURRENT_AUTHORITY_ADMISSIBILITY', 'REQUIRED_EVIDENCE_MATERIALIZATION', 'VALIDATOR_SCHEMA_SEMANTICS', 'UNRESOLVED_PRESERVATION', 'SUCCESSOR_CURRENT_ATOMIC_PROJECTION', 'BLOCKER_DENOMINATOR_AND_RECEIPT', 'AUTHORITY_EVIDENCE_CONSUMPTION', 'FUNCTIONAL_CONTRACT_COMPLETENESS', 'STAGE_ENTRY_PRECHECK', 'IMPLEMENTATION_DEVIATION_FEEDBACK', 'REVIEW_VS_CLOSURE_SEPARATION', 'CANONICAL_STAGE_EXECUTION_PREFLIGHT', 'EFFECTIVE_CONTRACT_OVERLAY', 'ROLE_SAFE_FUNCTIONAL_CLOSURE', 'DEPENDENCY_ORDERED_INCREMENTAL_RECONCILIATION', 'COMMON_ENGINE_DEFECT_INTERRUPT', 'GENERATED_OUTPUT_PERSISTENCE', 'CONTROL_VS_SYSTEM_TRIGGER_RESOLUTION', 'PRODUCER_CONSUMER_SCHEMA_IDENTITY', 'NO_HISTORY_PRODUCT_VALUE_FALLBACK', 'TASK_LAYER_EFFECTFUL_TRANSITION_ORDER', 'VISUAL_DESIGN_PROFILE_MATERIALIZATION_COMPLETENESS', 'NORMATIVE_EXECUTION_MATRIX', 'DETERMINISTIC_STAGE_AUDIT']
     for k in required:
         if k not in inv:
             failures.append('missing_invariant:' + k)
@@ -118,6 +118,43 @@ def validate(root=ROOT):
             failures.append('normative_execution_matrix_flag_missing:'+key)
     if matrix.get('validator_local_required_field_subset')!='BLOCK' or matrix.get('downstream_discovered_matrix_undercoverage_disposition')!='STOP_REENTER_EARLIEST_OWNER_MARK_DESCENDANTS_REVERIFY_REQUIRED':
         failures.append('normative_execution_matrix_fail_closed_disposition_missing')
+    det = inv.get('DETERMINISTIC_STAGE_AUDIT') or {}
+    expected_statuses = {'NOT_STARTED','READY_FOR_EXECUTION','IN_PROGRESS','BLOCKED','REVERIFY_REQUIRED','CURRENT_STATE_CONFLICT','EXECUTION_COMPLETE_CLOSURE_PENDING','CLOSED_PASS','CLOSED_FAIL','SNAPSHOT_INVALIDATED'}
+    snapshot_required = {'repository','branch','exact_head_sha','tree_sha','governance_branch','governance_head_sha','governance_uid','governance_revision','registry_revision','lifecycle_registry_revision','stage_uid','work_unit_uid','governed_unit_uid','source_authority_uid','audit_scope','audit_started_at','denominator_hash','authority_set_hash','evidence_set_hash','validator_set_hash','audit_engine_version','audit_contract_version'}
+    if det.get('invariant_uid') != 'GOV-INV-DETERMINISTIC-STAGE-AUDIT-001' or det.get('applies_to_all_registered_stages') is not True or det.get('same_complete_input_same_complete_result') is not True:
+        failures.append('deterministic_stage_audit_core_contract_missing')
+    if set((det.get('audit_snapshot_contract') or {}).get('required_fields') or []) != snapshot_required:
+        failures.append('deterministic_stage_audit_snapshot_schema_incomplete')
+    if set(det.get('canonical_stage_statuses') or []) != expected_statuses:
+        failures.append('deterministic_stage_status_vocabulary_drift')
+    if (det.get('current_state_conflict_contract') or {}).get('stage_pass_allowed') is not False or (det.get('historical_evidence_contract') or {}).get('historical_pass_is_current_pass') is not False:
+        failures.append('deterministic_conflict_or_history_rule_incomplete')
+    if (det.get('lifecycle_resolution_contract') or {}).get('stage_denominator_source') != 'CURRENT_LIFECYCLE_REGISTRY' or (det.get('lifecycle_resolution_contract') or {}).get('hardcoded_operation_count_as_reusable_policy') != 'BLOCK':
+        failures.append('deterministic_dynamic_lifecycle_resolution_missing')
+    stage_contracts = det.get('stage_contracts') or {}
+    if set(stage_contracts) != set(expected):
+        failures.append('deterministic_stage_contract_set_not_all_11')
+    else:
+        for sid in expected:
+            if (stage_contracts.get(sid) or {}).get('lifecycle_registry_is_denominator_source') is not True:
+                failures.append('deterministic_stage_denominator_binding_missing:' + sid)
+    indep = det.get('auditor_independence_acceptance') or {}
+    if indep.get('independent_evaluator_count') != 3 or indep.get('identical_finding_set_percent') != 100 or indep.get('identical_stage_status_percent') != 100 or indep.get('different_result_disposition') != 'AUDIT_DETERMINISM_CONTRACT_FAILURE':
+        failures.append('auditor_independence_acceptance_incomplete')
+    repeat = det.get('repeatability_acceptance') or {}
+    if repeat.get('same_evaluator_repeat_count') != 3 or repeat.get('identical_result_required') is not True:
+        failures.append('audit_repeatability_contract_incomplete')
+    if len(det.get('required_negative_test_classes') or []) < 12:
+        failures.append('deterministic_negative_test_denominator_incomplete')
+    audit_steps_path = root.parents[3] / 'governance/execution-domains/AUDIT/STEPS.yaml'
+    audit_steps_doc = yaml.safe_load(audit_steps_path.read_text(encoding='utf-8')) or {}
+    dac = audit_steps_doc.get('deterministic_audit_contract') or {}
+    if dac.get('invariant_ref') != 'GOV-INV-DETERMINISTIC-STAGE-AUDIT-001' or dac.get('same_complete_input_same_complete_result') is not True or dac.get('canonical_owner_required_for_every_non_pass') is not True or dac.get('earliest_legal_reentry_required_for_every_non_pass') is not True:
+        failures.append('audit_steps_deterministic_contract_missing')
+    audit_profile_path = root.parents[3] / 'governance/execution-domains/AUDIT_PROFILE.yaml'
+    audit_profile = yaml.safe_load(audit_profile_path.read_text(encoding='utf-8')) or {}
+    if audit_profile.get('stage_deterministic_audit_invariant_ref') != 'GOV-INV-DETERMINISTIC-STAGE-AUDIT-001' or set(audit_profile.get('stage_canonical_statuses') or []) != expected_statuses:
+        failures.append('audit_profile_deterministic_contract_missing')
     steps_path = root.parents[3] / 'governance/execution-domains/STAGE/STEPS.yaml'
     steps = yaml.safe_load(steps_path.read_text(encoding='utf-8')) or {}
     mc = steps.get('normative_execution_matrix_contract') or {}

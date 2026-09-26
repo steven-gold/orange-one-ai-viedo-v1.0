@@ -1256,6 +1256,317 @@ invariants:
     frozen_binary_bytes_exact_hash_required: true
     stage01_direct_docx_binary_reextract: BLOCK
     stage01_binary_access: PROJECTION_RESOLVED_FROZEN_BINARY_ONLY
+  DETERMINISTIC_STAGE_AUDIT:
+    invariant_uid: GOV-INV-DETERMINISTIC-STAGE-AUDIT-001
+    purpose: SAME_COMPLETE_AUDIT_INPUT_MUST_PRODUCE_SAME_COMPLETE_AUDIT_RESULT
+    applies_to_all_registered_stages: true
+    reusable_product_neutral_contract: true
+    same_complete_input_same_complete_result: true
+    auditor_model_or_identity_may_change_result: false
+    chat_context_may_change_result: false
+    scan_order_may_change_result: false
+    file_read_order_may_change_result: false
+    lifecycle_resolution_contract:
+      stage_denominator_source: CURRENT_LIFECYCLE_REGISTRY
+      operation_denominator_source: CURRENT_LIFECYCLE_REGISTRY_OPERATIONS
+      hardcoded_stage_count_as_reusable_policy: BLOCK
+      hardcoded_operation_count_as_reusable_policy: BLOCK
+      current_profile_counts_are_reference_only: true
+    audit_snapshot_contract:
+      required_fields:
+      - repository
+      - branch
+      - exact_head_sha
+      - tree_sha
+      - governance_branch
+      - governance_head_sha
+      - governance_uid
+      - governance_revision
+      - registry_revision
+      - lifecycle_registry_revision
+      - stage_uid
+      - work_unit_uid
+      - governed_unit_uid
+      - source_authority_uid
+      - audit_scope
+      - audit_started_at
+      - denominator_hash
+      - authority_set_hash
+      - evidence_set_hash
+      - validator_set_hash
+      - audit_engine_version
+      - audit_contract_version
+      freeze_before_audit: true
+      mixed_head_or_revision_evidence: BLOCK
+      head_change_during_audit: SNAPSHOT_INVALIDATED
+      denominator_change_during_audit: SNAPSHOT_INVALIDATED
+    current_truth_precedence:
+    - CURRENT_GOVERNANCE_REGISTRY
+    - CURRENT_MOTHER_STANDARD
+    - CURRENT_LIFECYCLE_AND_INVARIANT_REGISTRIES
+    - CURRENT_CANONICAL_AUTHORITY
+    - CURRENT_EXECUTION_SCOPE_MANIFEST
+    - CURRENT_WORK_UNIT_DEFINITION
+    - CURRENT_EXECUTION_STATE
+    - CURRENT_RESUME_POINT
+    - OPERATION_RECEIPTS
+    - REQUIRED_OUTPUTS
+    - VALIDATION_EVIDENCE
+    - TERMINAL_RECEIPT
+    - SUCCESSOR_ADMISSION_RECORD
+    - HISTORICAL_EVIDENCE
+    same_rank_current_state_conflict_must_not_be_precedence_overridden: true
+    current_state_conflict_contract:
+      canonical_finding: CURRENT_STATE_CONFLICT
+      stage_pass_allowed: false
+      closure_pass_allowed: false
+      conflict_fields: [active, completed, remaining, blocked, reverify_required, current_operation, stage_status, stage_exit_authorized, next_stage_uid, governance_uid, governance_revision, head_sha, denominator, terminal_state]
+    audit_denominator_contract:
+      freeze_before_validation: true
+      required_classes: [GOVERNED_UNITS, OPERATIONS, INPUTS, OUTPUTS, ARTIFACTS, REQUIRED_FIELDS, VALIDATORS, EVIDENCE, STATE_RECORDS, CLOSURE_RECORDS, SUCCESSOR_BINDINGS, CURRENT_GOVERNANCE_BINDINGS]
+      counters_required: [expected_count, observed_count, missing_count, duplicate_count, invalid_count, stale_count, conflicted_count]
+      denominator_shrink_during_audit: BLOCK
+    mandatory_result_dimensions: [SOURCE_PASS, AUTHORITY_PASS, STRUCTURE_PASS, INPUT_PASS, OPERATION_PASS, OUTPUT_PASS, VALIDATOR_PASS, EVIDENCE_PASS, STATE_PASS, CLOSURE_PASS, SUCCESSOR_PASS, CURRENT_GOVERNANCE_PASS]
+    structure_dimensions: [WORK_UNIT_SKELETON_PASS, ARTIFACT_STRUCTURE_PASS, OPERATION_STRUCTURE_PASS, EVIDENCE_STRUCTURE_PASS, CLOSURE_STRUCTURE_PASS, FULL_STAGE_STRUCTURE_PASS]
+    work_unit_skeleton_pass_may_imply_full_stage_structure_pass: false
+    artifact_presence_may_imply_stage_pass: false
+    complete_status_string_may_imply_stage_pass: false
+    canonical_stage_statuses: [NOT_STARTED, READY_FOR_EXECUTION, IN_PROGRESS, BLOCKED, REVERIFY_REQUIRED, CURRENT_STATE_CONFLICT, EXECUTION_COMPLETE_CLOSURE_PENDING, CLOSED_PASS, CLOSED_FAIL, SNAPSHOT_INVALIDATED]
+    stage_pass_formula:
+      snapshot_valid: true
+      governance_current: true
+      denominator_complete: true
+      authority_valid: true
+      required_inputs_complete: true
+      required_operations_complete: true
+      required_operation_receipts_complete: true
+      required_outputs_complete: true
+      validators_pass: true
+      evidence_complete: true
+      current_state_consistent: true
+      terminal_receipt_valid: true
+      closure_gate_pass: true
+      successor_binding_valid: true
+      unresolved_gap_count: 0
+      current_state_conflict_count: 0
+      stale_governance_binding_count: 0
+      missing_required_evidence_count: 0
+    final_stage_pass_requires_all_mandatory_dimensions_pass: true
+    historical_evidence_contract:
+      historical_evidence_role: HISTORICAL_REFERENCE_ONLY
+      historical_pass_is_current_pass: false
+      governance_authority_schema_validator_closure_or_denominator_change_disposition: REVERIFY_REQUIRED
+      stale_evidence_may_satisfy_current_required_evidence: false
+    normative_execution_matrix_contract:
+      current_matrix_required_before_first_effectful_operation: true
+      current_matrix_required_before_stage_closure: true
+      coverage_percent_required: 100
+      required_zero_counters: [MISSING_REQUIRED_NORMATIVE_SECTION, MISSING_REQUIRED_ARTIFACT, MISSING_REQUIRED_ROW, MISSING_REQUIRED_FIELD, DUPLICATE_CREDIT, SUMMARY_ONLY_CREDIT, UNCLASSIFIED_APPLICABILITY, VALIDATOR_UNBOUND_FIELD, CLOSURE_UNBOUND_VALIDATOR, STALE_MATRIX]
+    canonical_finding_severity:
+      AUDIT_DETERMINISM_CONTRACT_FAILURE: S0_FATAL
+      GOVERNANCE_REVISION_RESOLUTION_CONFLICT: S0_FATAL
+      AUDIT_SNAPSHOT_INVALID: S1_BLOCKER
+      DENOMINATOR_INCOMPLETE: S1_BLOCKER
+      CURRENT_STATE_CONFLICT: S1_BLOCKER
+      CURRENT_MATRIX_MISSING: S1_BLOCKER
+      CURRENT_MATRIX_INCOMPLETE: S1_BLOCKER
+      REQUIRED_INPUT_MISSING: S1_BLOCKER
+      REQUIRED_OPERATION_MISSING: S1_BLOCKER
+      OPERATION_ORDER_INVALID: S1_BLOCKER
+      OPERATION_RECEIPT_MISSING: S1_BLOCKER
+      REQUIRED_OUTPUT_MISSING: S1_BLOCKER
+      VALIDATOR_NOT_EXECUTED: S1_BLOCKER
+      VALIDATOR_FAILED: S1_BLOCKER
+      EVIDENCE_MISSING: S1_BLOCKER
+      TERMINAL_RECEIPT_MISSING: S1_BLOCKER
+      TERMINAL_RECEIPT_SCHEMA_INVALID: S1_BLOCKER
+      CLOSURE_NOT_AUTHORIZED: S1_BLOCKER
+      SUCCESSOR_STAGE_EXECUTED_BEFORE_PREDECESSOR_CLOSURE: S1_BLOCKER
+      VERTICAL_SCOPE_IDENTITY_DRIFT: S1_BLOCKER
+      RELEASE_IDENTITY_DRIFT: S1_BLOCKER
+      PRODUCTION_RELEASE_IDENTITY_MISMATCH: S1_BLOCKER
+      RELEASE_IDENTITY_CONTINUITY_BROKEN: S1_BLOCKER
+      CURRENT_LEDGER_SYNCHRONIZATION_DRIFT: S1_BLOCKER
+      UNVERIFIED_REQUIRED_DENOMINATOR: S1_BLOCKER
+      CONTROL_IMPLEMENTATION_INCOMPLETE: S1_BLOCKER
+      ACTION_OWNER_UNRESOLVED: S1_BLOCKER
+      RUNTIME_BINDING_MISSING: S1_BLOCKER
+      DATABASE_MIGRATION_NOT_MATERIALIZED: S1_BLOCKER
+      AUTHORIZATION_RUNTIME_MISSING: S1_BLOCKER
+      EXTERNAL_INTEGRATION_RUNTIME_INCOMPLETE: S1_BLOCKER
+      ASYNC_RUNTIME_INCOMPLETE: S1_BLOCKER
+      STALE_GOVERNANCE_BINDING: S2_MAJOR
+      HISTORICAL_PASS_NOT_REVERIFIED: S2_MAJOR
+      AUTHORITY_BINDING_MISSING: S2_MAJOR
+      SUCCESSOR_BINDING_INVALID: S2_MAJOR
+      REENTRY_REQUIRED: S2_MAJOR
+    severity_vocabulary: [S0_FATAL, S1_BLOCKER, S2_MAJOR, S3_MINOR, S4_INFO]
+    finding_name_may_be_freely_reworded: false
+    finding_severity_may_be_auditor_selected: false
+    audit_output_required_fields: [audit_run_uid, snapshot_uid, repository, branch, head_sha, governance_uid, governance_revision, stage_uid, work_unit_uid, governed_unit_uid, denominator_hash, source_pass, authority_pass, structure_pass, input_pass, operation_pass, output_pass, validator_pass, evidence_pass, state_pass, closure_pass, successor_pass, current_governance_pass, stage_pass, canonical_status, expected_operation_count, completed_operation_count, expected_output_count, valid_output_count, unresolved_gap_count, blocker_count, current_state_conflict_count, stale_binding_count, reverify_required, earliest_reentry_stage, canonical_owner_uid, finding_codes, evidence_refs]
+    deterministic_decision_table:
+      artifact_complete_operation_receipt_incomplete: CLOSED_FAIL
+      operations_complete_terminal_receipt_missing: CLOSED_FAIL
+      historical_pass_current_governance_impacted: REVERIFY_REQUIRED
+      current_scope_resume_conflict: CURRENT_STATE_CONFLICT
+      work_unit_ready_zero_operations: READY_FOR_EXECUTION
+      matrix_missing_before_effectful_execution: BLOCKED
+      source_document_pass_stage_execution_incomplete: STAGE_NOT_PASS
+      all_mandatory_dimensions_pass: CLOSED_PASS
+    source_document_vs_stage_compliance_separation:
+      source_content_pass_may_imply_stage_execution_pass: false
+      source_integrity_dimensions: [source_sha256, package_part_hashes, relationship_denominator, xml_node_denominator, source_token_coverage, reverse_trace, silent_drop, invented_content, duplicate_content, contradiction, required_design_domain_coverage]
+    stage_contracts:
+      STAGE-01:
+        capability: SOURCE_INTAKE_AND_BASE_BLUEPRINT
+        lifecycle_registry_is_denominator_source: true
+        source_disposition_coverage_percent: 100
+        silent_source_drop_allowed: false
+        page_and_visual_blueprints_required: true
+        reverse_trace_to_raw_source_required: true
+        impacted_old_governance_closure_disposition: REVERIFY_REQUIRED
+      STAGE-02:
+        capability: PAGE_FUNCTIONAL_CONTRACT
+        lifecycle_registry_is_denominator_source: true
+        functional_contract_exact_denominator_reconciliation_required: true
+        ui_mock_placeholder_or_future_note_may_receive_execution_credit: false
+        closed_state_requires_terminal_receipt: true
+        closed_without_terminal_receipt_finding: TERMINAL_RECEIPT_MISSING
+        closed_vs_active_state_conflict_finding: CURRENT_STATE_CONFLICT
+        impacted_old_governance_closure_disposition: REVERIFY_REQUIRED
+      STAGE-03:
+        capability: VISUAL_DESIGN
+        lifecycle_registry_is_denominator_source: true
+        physical_visual_candidates_required: true
+        visual_anchors_required: true
+        functional_bindings_required: true
+        geometry_evidence_required: true
+        required_scenarios_may_be_replaced_by_single_overview: false
+        human_review_required_when_registered: true
+        current_scope_resume_conflict_finding: CURRENT_STATE_CONFLICT
+        stale_reentry_governance_binding_finding: STALE_GOVERNANCE_BINDING
+      STAGE-04:
+        capability: FOUNDATION_FREEZE
+        lifecycle_registry_is_denominator_source: true
+        work_unit_skeleton_ready_equals_stage_pass: false
+        zero_completed_operations_when_operations_required_status: READY_FOR_EXECUTION
+        freeze_requires_design_validation_and_approval_and_outputs_and_matrix_and_terminal_receipt: true
+        successor_admission_requires_foundation_frozen: true
+      STAGE-05:
+        capability: IMPLEMENTATION
+        lifecycle_registry_is_denominator_source: true
+        design_freeze_inputs_must_be_current_and_consumer_ready: true
+        frontend_presence_alone_may_pass: false
+        control_materialization_required_when_applicable: true
+        action_owner_required_when_applicable: true
+        backend_runtime_required_when_applicable: true
+        database_migration_required_when_applicable: true
+        backend_authorization_required_when_applicable: true
+        external_integration_runtime_required_when_applicable: true
+        async_runtime_required_when_applicable: true
+        implementation_diff_exact_trace_required: true
+      STAGE-06:
+        capability: VERIFICATION
+        lifecycle_registry_is_denominator_source: true
+        test_denominator_derived_from_current_implementation_and_acceptance_blueprint: true
+        representative_sampling_may_close_stage: false
+        each_applicable_test_dimension_requires_individual_result: true
+        allowed_test_results: [PASS, FAIL, BLOCKED, AUTHORIZED_NA]
+        audit_matrix_bidirectional_reconciliation_required: true
+        required_item_untested_finding: UNVERIFIED_REQUIRED_DENOMINATOR
+      STAGE-07:
+        capability: BUILD_RELEASE
+        lifecycle_registry_is_denominator_source: true
+        release_candidate_exact_source_build_artifact_migration_security_evidence_binding_required: true
+        verified_build_may_differ_from_deployed_candidate: false
+        mismatch_finding: RELEASE_IDENTITY_DRIFT
+      STAGE-08:
+        capability: STAGING
+        lifecycle_registry_is_denominator_source: true
+        staging_skip_requires_formal_na_authority: true
+        legal_na_result: AUTHORIZED_NOT_APPLICABLE
+        assumed_na_result: BLOCKED
+        deployment_success_equals_acceptance_pass: false
+        closure_reconciliation_required: true
+      STAGE-09:
+        capability: PRODUCTION_CUTOVER
+        lifecycle_registry_is_denominator_source: true
+        production_artifact_must_match_build_identity: true
+        identity_mismatch_finding: PRODUCTION_RELEASE_IDENTITY_MISMATCH
+        production_deployment_success_equals_smoke_pass: false
+        smoke_must_run_on_current_production_release: true
+      STAGE-10:
+        capability: PRODUCTION_ACCEPTANCE
+        lifecycle_registry_is_denominator_source: true
+        production_evidence_must_bind_current_release_identity: true
+        local_test_may_substitute_production_evidence: false
+        staging_may_substitute_production_evidence: false
+        mock_may_substitute_production_evidence: false
+        static_screenshot_may_substitute_runtime_acceptance: false
+        all_applicable_acceptance_dimensions_required: true
+        effectful_acceptance_chain: [INPUT, ACTION, API, PERMISSION, DB_OR_RUNTIME, RESPONSE, STATE_MUTATION, AUDIT_LOG, UI_RESULT]
+      STAGE-11:
+        capability: CLOSURE_OPERATIONS
+        lifecycle_registry_is_denominator_source: true
+        monitoring_configuration_presence_equals_verification_pass: false
+        backup_policy_presence_equals_backup_verification: false
+        rollback_plan_presence_equals_rollback_verification: false
+        final_audit_matrix_must_backtrace_all_registered_predecessor_stages: true
+        final_closure_requires_zero_unresolved_gap_or_stale_authority_or_missing_receipt_or_orphan_evidence_or_denominator_shrink_or_invalidated_predecessor_or_unreverified_descendant: true
+        next_page_or_project_completion_must_come_from_registered_eligibility_result: true
+    vertical_lifecycle_contract:
+      applies_from_stage: STAGE-05
+      applies_through_stage: STAGE-11
+      sticky_identity_fields: [page_uid, governed_unit_uid, work_unit_owner, source_authority, product_target, release_identity]
+      drift_finding: VERTICAL_SCOPE_IDENTITY_DRIFT
+      concurrency: 1
+      successor_before_predecessor_closure_finding: SUCCESSOR_STAGE_EXECUTED_BEFORE_PREDECESSOR_CLOSURE
+    cross_stage_handoff_contract:
+      predecessor_terminal_pass_required: true
+      cross_stage_handoff_readiness_pass_required: true
+      successor_input_materialization_pass_required: true
+      successor_entry_gate_pass_required: true
+      reference_resolution_required: true
+      physical_artifact_required: true
+      required_field_completeness_required: true
+      successor_consumer_readiness_required: true
+    reverify_propagation_contract:
+      impacted_predecessor_reverify_propagates_to_descendants: true
+      allowed_descendant_dispositions: [REVERIFY_REQUIRED, BLOCKED, INVALIDATED]
+      downstream_unconditional_current_pass_after_impacted_predecessor_reverify: BLOCK
+      earliest_legal_reentry_owner_required: true
+    release_identity_continuity:
+      required_chain: [VERIFIED_SOURCE_REVISION, BUILD_IDENTITY_MANIFEST, RELEASE_CANDIDATE, STAGING_CLOSURE_RECORD, PRODUCTION_DEPLOYMENT_RECORD, CURRENT_RELEASE_IDENTITY, PRODUCTION_ACCEPTANCE_RESULT, FINAL_PRODUCTION_ACCEPTANCE_RESULT]
+      broken_chain_finding: RELEASE_IDENTITY_CONTINUITY_BROKEN
+    environment_evidence_separation:
+      environments: [LOCAL, TEST, PREVIEW, STAGING, PRODUCTION]
+      cross_environment_substitution: BLOCK
+      production_redeploy_invalidates_prior_release_acceptance: REVERIFY_REQUIRED
+    current_ledger_synchronization:
+      ledgers: [EXECUTION_STATE, RUN_MANIFEST, ARTIFACT_PLAN, GOVERNANCE_CURRENT, BRANCH_BASELINE, GOVERNANCE_STAGE_LOCK, STAGE_EVIDENCE, DEPENDENCY_INDEX, REVERSE_DEPENDENCY_INDEX]
+      disagreement_finding: CURRENT_LEDGER_SYNCHRONIZATION_DRIFT
+    terminal_receipt_contract:
+      required_for_stage_closure: true
+      external_immutable_receipt_required_fields: [provider, repository_or_project, head_sha, run_id, job_denominator, conclusion]
+      closure_projection_must_prove: [stage_uid, governed_unit_uid, denominator_identity, operation_receipt_chain, evidence_refs, result, successor_eligibility]
+      alias_substitution: BLOCK
+    auditor_independence_acceptance:
+      independent_evaluator_count: 3
+      identical_finding_set_percent: 100
+      identical_severity_set_percent: 100
+      identical_stage_status_percent: 100
+      identical_reentry_percent: 100
+      identical_owner_percent: 100
+      identical_pass_fail_percent: 100
+      different_result_disposition: AUDIT_DETERMINISM_CONTRACT_FAILURE
+    repeatability_acceptance:
+      same_evaluator_repeat_count: 3
+      identical_result_required: true
+    required_negative_test_classes: [REMOVE_TERMINAL_RECEIPT, CHANGE_GOVERNANCE_UID, CHANGE_HEAD_SHA, CLOSED_TO_ACTIVE_STATE_CONFLICT, REMOVE_OPERATION_RECEIPT, REMOVE_REQUIRED_OUTPUT, CREATE_SCOPE_RESUME_CONFLICT, INSERT_STALE_EVIDENCE, INSERT_DUPLICATE_EVIDENCE, INSERT_HISTORICAL_PASS, REMOVE_CURRENT_MATRIX, CHANGE_DENOMINATOR]
+    full_lifecycle_closure_contract:
+      all_registered_stages_must_close_under_current_governance: true
+      impacted_reverify_count_required: 0
+      next_page_or_project_completion_requires_registered_stage11_eligibility: true
 stage02_observed_defect_mapping:
 - finding: PORT_EXPOSURE_WITHOUT_TRIGGER
   mapped_invariant: RELATION_SEMANTIC_SEPARATION

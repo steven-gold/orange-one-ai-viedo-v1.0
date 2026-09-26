@@ -34,6 +34,7 @@ DOMAIN_PATH = DOMAINS / "AUDIT" / "DOMAIN.yaml"
 PROFILE_PATH = DOMAINS / "AUDIT_PROFILE.yaml"
 BINDINGS_PATH = DOMAINS / "AUTHORITY_BINDINGS.yaml"
 SCHEMA_PATH = DOMAINS / "STEP_CONTRACT_SCHEMA.yaml"
+INVARIANT_PATH = SOURCE / "10_REGISTRY" / "STAGE_EXECUTION_INVARIANT_REGISTRY.yaml"
 
 AUDIT_TARGET_UID = "GOVERNANCE_PACKAGE"
 GOVERNANCE_RESOLVABLE_EVIDENCE = {"VALIDATOR_RESULT"}
@@ -84,6 +85,7 @@ def load_context() -> dict:
     profile = load_yaml(PROFILE_PATH)
     bindings = load_yaml(BINDINGS_PATH)
     schema = load_yaml(SCHEMA_PATH)
+    invariant_registry = load_yaml(INVARIANT_PATH)
 
     validators = {}
     for rec in rules.get("validator_identities") or []:
@@ -102,7 +104,27 @@ def load_context() -> dict:
         "required_step_fields": schema.get("required_step_fields") or [],
         "validators": validators,
         "audit_types": audit_types,
+        "stage_invariants": invariant_registry.get("invariants") or {},
     }
+
+
+def deterministic_contract_ok(ctx: dict) -> bool:
+    det = (ctx.get("stage_invariants") or {}).get("DETERMINISTIC_STAGE_AUDIT") or {}
+    statuses = set(det.get("canonical_stage_statuses") or [])
+    required_statuses = {
+        "NOT_STARTED", "READY_FOR_EXECUTION", "IN_PROGRESS", "BLOCKED",
+        "REVERIFY_REQUIRED", "CURRENT_STATE_CONFLICT",
+        "EXECUTION_COMPLETE_CLOSURE_PENDING", "CLOSED_PASS", "CLOSED_FAIL",
+        "SNAPSHOT_INVALIDATED",
+    }
+    return bool(
+        det.get("invariant_uid") == "GOV-INV-DETERMINISTIC-STAGE-AUDIT-001"
+        and det.get("applies_to_all_registered_stages") is True
+        and det.get("same_complete_input_same_complete_result") is True
+        and statuses == required_statuses
+        and (det.get("current_state_conflict_contract") or {}).get("stage_pass_allowed") is False
+        and (det.get("historical_evidence_contract") or {}).get("historical_pass_is_current_pass") is False
+    )
 
 
 def resolve_implementation(rec: dict) -> dict:
@@ -310,6 +332,9 @@ def run_closure(ctx: dict) -> dict:
     resolved = [resolve_item(item, ctx) for item in denominator]
     results = [evaluate_item(r, ctx, dimensions) for r in resolved]
     step_receipts, failed_steps = run_steps(ctx, denominator)
+    deterministic_ok = deterministic_contract_ok(ctx)
+    if not deterministic_ok:
+        failed_steps.append("DETERMINISTIC_STAGE_AUDIT_CONTRACT")
 
     pass_count = sum(1 for r in results if r["result"] == "PASS")
     fail_count = sum(1 for r in results if r["result"] == "FAIL")
@@ -350,6 +375,7 @@ def run_closure(ctx: dict) -> dict:
         "denominator_policy": ctx["catalog"].get("denominator_policy"),
         "dimension_denominator": len(dimensions),
         "steps": step_receipts,
+        "determinism_contract": {"invariant_uid": "GOV-INV-DETERMINISTIC-STAGE-AUDIT-001", "status": "PASS" if deterministic_ok else "FAIL"},
         "items": results,
         "reconciliation": reconciliation,
         "result": result,
@@ -381,6 +407,20 @@ def run_self_test() -> int:
         print("FAIL: baseline closure did not pass", file=sys.stderr)
         return 1
     cases.append("baseline_pass")
+
+    first = run_closure(base)
+    second = run_closure(copy.deepcopy(base))
+    if json.dumps(first, sort_keys=True) != json.dumps(second, sort_keys=True):
+        print("FAIL: same complete audit input produced different result", file=sys.stderr)
+        return 1
+    cases.append("same_input_same_result")
+
+    no_det = copy.deepcopy(base)
+    no_det["stage_invariants"]["DETERMINISTIC_STAGE_AUDIT"]["same_complete_input_same_complete_result"] = False
+    if run_closure(no_det)["result"] == "PASS":
+        print("FAIL: invalid deterministic audit contract escaped closure", file=sys.stderr)
+        return 1
+    cases.append("determinism_contract_blocked")
 
     dup = copy.deepcopy(base)
     dup["catalog"]["items"].append(copy.deepcopy(dup["catalog"]["items"][0]))
