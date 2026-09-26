@@ -1185,6 +1185,10 @@ invariants:
     successor_execution_binding_may_be_invented_by_consumer: false
     successor_execution_binding_may_be_inferred_from_product_need_alone: false
     stub_placeholder_or_recommended_target_may_receive_readiness_credit: false
+    technology_stack_recommendation_may_create_execution_authority: false
+    implementation_language_framework_or_package_manager_may_be_ai_selected_when_unbound: false
+    successor_effectful_operation_prerequisite_binding_must_be_derived_from_current_authority: true
+    enumerated_binding_classes_are_minimum_not_exhaustive_when_registered_operation_has_additional_authorized_prerequisites: true
     authorized_not_applicable_token: AUTHORIZED_NOT_APPLICABLE
     authorized_not_applicable_requires_authority_evidence: true
     successor_input_universe_scope: CURRENT_GOVERNED_UNIT
@@ -1208,6 +1212,10 @@ invariants:
       - REPOSITORY_TARGET
       - APPLICATION_ROOT
       - IMPLEMENTATION_OWNER
+      - IMPLEMENTATION_LANGUAGE_AUTHORITY
+      - FRONTEND_FRAMEWORK_AUTHORITY
+      - BACKEND_FRAMEWORK_AUTHORITY
+      - PACKAGE_MANAGER_AUTHORITY
       - FRONTEND_RUNTIME_TARGET
       - BACKEND_RUNTIME_TARGET
       - DATA_ACCESS_TARGET
@@ -1274,6 +1282,10 @@ invariants:
         REPOSITORY_TARGET: OP-08-REPOSITORY_OWNER_RESOLUTION
         APPLICATION_ROOT: OP-08-REPOSITORY_OWNER_RESOLUTION
         IMPLEMENTATION_OWNER: OP-08-REPOSITORY_OWNER_RESOLUTION
+        IMPLEMENTATION_LANGUAGE_AUTHORITY: OP-08-REPOSITORY_OWNER_RESOLUTION
+        FRONTEND_FRAMEWORK_AUTHORITY: OP-10-FRONTEND_IMPLEMENTATION
+        BACKEND_FRAMEWORK_AUTHORITY: OP-13-BACKEND_RUNTIME
+        PACKAGE_MANAGER_AUTHORITY: OP-08-REPOSITORY_OWNER_RESOLUTION
         FRONTEND_RUNTIME_TARGET: OP-10-FRONTEND_IMPLEMENTATION
         BACKEND_RUNTIME_TARGET: OP-13-BACKEND_RUNTIME
         DATA_ACCESS_TARGET: OP-14-REPOSITORY_DATA_ACCESS_LAYER
