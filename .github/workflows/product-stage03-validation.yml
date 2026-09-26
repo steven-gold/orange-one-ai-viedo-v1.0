@@ -1,5 +1,5 @@
 name: Product Stage03 Validation
-# revalidates Stage-03 after the v2.2.25 semantic remediation materialization
+# revalidates Stage-03 against the Current rebuild-v2.1.1 governance snapshot
 # exact-head-rerun: 2026-09-25T11:03+08:00-v225-matrix-final
 # independent-rerun-marker: 2026-09-25-v225-dynamic-current-state-v2
 # revalidates Stage-03 current-head closure after stage03 materialize (run 36227587296)
@@ -27,7 +27,7 @@ jobs:
     - uses: actions/checkout@v4
       with:
         repository: steven-gold/orange-one-ai-viedo-v1.0
-        ref: 93a595d034b06bcc28285f064f312587b63f4f9a
+        ref: rebuild-v2.1.1
         path: _governance_authority
         fetch-depth: 1
     - run: |
