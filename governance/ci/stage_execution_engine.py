@@ -131,7 +131,14 @@ def validate_definition_data(profile,adapters):
       'exact_scanner_binding_coverage_required':True,'executor_owner_required_per_operation':True,'result_owner_required_per_operation':True,
       'scanner_owner_required_per_dimension':True,'arbitrary_shell_command_from_adapter':'FORBIDDEN',
       'unregistered_operation_execution':'BLOCK','unregistered_scanner_execution':'BLOCK',
-      'missing_operation_binding':'BLOCK','missing_scanner_binding':'BLOCK'}
+      'missing_operation_binding':'BLOCK','missing_scanner_binding':'BLOCK',
+      'operation_executor_protocol_required':True,
+      'allowed_operation_executor_protocols':['PYTHON_STAGE_OPERATION_V1'],
+      'operation_receipt_ref_required_per_operation':True,
+      'operation_receipt_status_required':'PASS',
+      'operation_execution_unit':'ONE_OPERATION_PER_ENGINE_INVOCATION',
+      'operation_checkpoint_after_pass_required':True,
+      'stage_closure_may_be_auto_claimed_by_operation_executor':False}
     for k,v in expected_driver.items():
         if driver.get(k)!=v: fail(f'EXECUTION_DRIVER_CONTRACT_DRIFT:{k}')
     ads=adapters.get('stages') or {}
@@ -412,9 +419,17 @@ def validate_work_unit_bindings(stage_uid,work,stages,adapters):
     expected_ops=set(map(str,stages[stage_uid].get('operations') or []))
     if not isinstance(op_bindings,dict) or set(map(str,op_bindings))!=expected_ops:
         fail(f'ACTIVE_WORK_UNIT_OPERATION_BINDING_COVERAGE_INVALID:{stage_uid}')
+    driver=adapters.get('execution_driver_contract') or {}
+    allowed_protocols=set(map(str,driver.get('allowed_operation_executor_protocols') or []))
     for uid,binding in op_bindings.items():
-        if not isinstance(binding,dict) or not binding.get('executor_owner') or not binding.get('result_owner'):
+        if not isinstance(binding,dict) or not binding.get('executor_owner') or not binding.get('result_owner') or not binding.get('executor_protocol') or not binding.get('operation_receipt_ref'):
             fail(f'ACTIVE_WORK_UNIT_OPERATION_BINDING_INVALID:{uid}')
+        if str(binding.get('executor_protocol')) not in allowed_protocols:
+            fail(f'ACTIVE_WORK_UNIT_OPERATION_EXECUTOR_PROTOCOL_INVALID:{uid}')
+        for field,label in (('executor_owner','EXECUTOR_OWNER'),('operation_receipt_ref','OPERATION_RECEIPT_REF')):
+            rel=Path(str(binding.get(field) or ''))
+            if rel.is_absolute() or '..' in rel.parts:
+                fail(f'ACTIVE_WORK_UNIT_{label}_PATH_INVALID:{uid}')
     scan_bindings=work.get('scanner_bindings')
     expected_scans=set(map(str,(adapters['stages'][stage_uid]).get('scanner_dimensions') or []))
     if not isinstance(scan_bindings,dict) or set(map(str,scan_bindings))!=expected_scans:
@@ -904,36 +919,148 @@ def validate_terminal(stage_uid,evidence,receipt):
     if r.get('head_sha')!=head: fail('TERMINAL_RECEIPT_HEAD_MISMATCH')
     print(f'PASS: terminal receipt exact-head closure valid for {stage_uid} governed_unit={governed_scope} head={head}')
 
+def _load_operation_receipt(path):
+    if not path.is_file():
+        fail('ACTIVE_OPERATION_RECEIPT_MISSING:'+_display_path(path))
+    try:
+        if path.suffix.lower()=='.json':
+            obj=json.loads(path.read_text(encoding='utf-8'))
+        else:
+            obj=yaml.safe_load(path.read_text(encoding='utf-8'))
+    except Exception as exc:
+        fail('ACTIVE_OPERATION_RECEIPT_PARSE_FAILED:'+type(exc).__name__)
+    if not isinstance(obj,dict):
+        fail('ACTIVE_OPERATION_RECEIPT_MAPPING_REQUIRED')
+    return obj
+
+def _atomic_yaml_write(path,obj):
+    tmp=path.with_name(path.name+'.tmp')
+    tmp.write_text(yaml.safe_dump(obj,sort_keys=False,allow_unicode=True),encoding='utf-8')
+    tmp.replace(path)
+
 def execute_active(stage_uid):
-    _,_,_,_,adapters,stages=validate_definition()
+    _,_,gov,_,adapters,stages=validate_definition()
     work=active_product(stage_uid)
-    state=y(STATE); scope=y(SCOPE)
+    product_root,work_ctx,scope,work_rel,scope_rel=product_execution_context()
+    if work_ctx.get('work_unit_uid')!=work.get('work_unit_uid'):
+        fail('ACTIVE_STAGE_WORK_UNIT_CONTEXT_DRIFT')
+    work_path=(product_root/Path(work_rel)).resolve()
+    work_dir=work_path.parent
+    state_path=work_dir/'EXECUTION_STATE.yaml'
+    state=_external_yaml(state_path,'CURRENT_EXECUTION_STATE')
     if (work.get('pre_execution_gate_status')!='PASS'
         or scope.get('product_stage_execution_allowed') is not True
         or (state.get('resume_control') or {}).get('product_execution_allowed') is not True):
         fail('ACTIVE_STAGE_EXECUTION_NOT_ADMITTED')
     bindings=work.get('operation_bindings') or {}
-    owners=sorted({str(v.get('executor_owner') or '') for v in bindings.values() if isinstance(v,dict)})
-    if not owners or any(not x for x in owners): fail('ACTIVE_STAGE_EXECUTOR_OWNER_SET_INVALID')
-    if len(owners)!=1: fail('ACTIVE_STAGE_MULTIPLE_EFFECTFUL_EXECUTOR_OWNERS_FORBIDDEN:'+repr(owners))
-    owner=owners[0]
+    expected_ops=list(map(str,stages[stage_uid].get('operations') or []))
+    if set(map(str,bindings))!=set(expected_ops):
+        fail('ACTIVE_STAGE_OPERATION_BINDING_COVERAGE_INVALID:'+stage_uid)
+    completed=state.get('completed_operations')
+    if not isinstance(completed,list):
+        fail('ACTIVE_STAGE_COMPLETED_OPERATIONS_INVALID')
+    completed=list(map(str,completed))
+    if len(completed)!=len(set(completed)) or completed!=expected_ops[:len(completed)]:
+        fail('ACTIVE_STAGE_COMPLETED_OPERATION_PREFIX_INVALID:'+repr(completed))
+    if len(completed)>=len(expected_ops):
+        if str(state.get('current_operation') or '')!='COMPLETE':
+            fail('ACTIVE_STAGE_COMPLETE_STATE_OPERATION_DRIFT')
+        fail('ACTIVE_STAGE_OPERATIONS_ALREADY_COMPLETE:'+stage_uid)
+    operation_uid=expected_ops[len(completed)]
+    if str(state.get('current_operation') or '')!=operation_uid:
+        fail('ACTIVE_STAGE_CURRENT_OPERATION_DRIFT:expected='+operation_uid+':actual='+str(state.get('current_operation')))
+    binding=bindings.get(operation_uid)
+    if not isinstance(binding,dict):
+        fail('ACTIVE_STAGE_CURRENT_OPERATION_BINDING_MISSING:'+operation_uid)
+    owner=str(binding.get('executor_owner') or '')
+    protocol=str(binding.get('executor_protocol') or '')
+    result_owner=str(binding.get('result_owner') or '')
+    receipt_ref=str(binding.get('operation_receipt_ref') or '')
+    driver=adapters.get('execution_driver_contract') or {}
+    if protocol not in set(map(str,driver.get('allowed_operation_executor_protocols') or [])):
+        fail('ACTIVE_STAGE_EXECUTOR_PROTOCOL_FORBIDDEN:'+protocol)
+    if protocol!='PYTHON_STAGE_OPERATION_V1':
+        fail('ACTIVE_STAGE_EXECUTOR_PROTOCOL_UNSUPPORTED:'+protocol)
     rel=Path(owner)
-    if rel.is_absolute() or '..' in rel.parts: fail('ACTIVE_STAGE_EXECUTOR_OWNER_PATH_INVALID')
-    path=ROOT/rel
-    if not path.is_file(): fail('ACTIVE_STAGE_EXECUTOR_OWNER_MISSING:'+owner)
-    if path.resolve()==Path(__file__).resolve(): fail('COMMON_ENGINE_RECURSIVE_EXECUTOR_FORBIDDEN')
+    if rel.is_absolute() or '..' in rel.parts or rel.suffix.lower()!='.py':
+        fail('ACTIVE_STAGE_EXECUTOR_OWNER_PATH_INVALID')
+    executor=(product_root/rel).resolve()
+    try:
+        executor.relative_to(product_root)
+    except ValueError:
+        fail('ACTIVE_STAGE_EXECUTOR_OUTSIDE_PRODUCT_ROOT')
+    if not executor.is_file():
+        fail('ACTIVE_STAGE_EXECUTOR_OWNER_MISSING:'+owner)
+    if executor.resolve()==Path(__file__).resolve():
+        fail('COMMON_ENGINE_RECURSIVE_EXECUTOR_FORBIDDEN')
+    receipt_rel=Path(receipt_ref)
+    if receipt_rel.is_absolute() or '..' in receipt_rel.parts:
+        fail('ACTIVE_STAGE_OPERATION_RECEIPT_REF_INVALID:'+operation_uid)
+    receipt_path=(product_root/receipt_rel).resolve()
+    try:
+        receipt_path.relative_to(work_dir.resolve())
+    except ValueError:
+        fail('ACTIVE_STAGE_OPERATION_RECEIPT_OUTSIDE_WORK_UNIT:'+operation_uid)
+    if receipt_path.exists():
+        fail('ACTIVE_STAGE_OPERATION_RECEIPT_ALREADY_EXISTS:'+receipt_ref)
     adapter=(adapters.get('stages') or {}).get(stage_uid) or {}
     if adapter.get('effectful_executor_owner_resolution')!='CURRENT_WORK_UNIT_OPERATION_BINDING_ONLY':
         fail('ACTIVE_STAGE_EXECUTOR_OWNER_RESOLUTION_POLICY_INVALID:'+stage_uid)
     ref=str(adapter.get('stepwise_execution_contract_ref') or '')
-    if ref!='stepwise_execution_defaults': fail('ACTIVE_STAGE_STEPWISE_EXECUTION_CONTRACT_REF_INVALID:'+stage_uid)
+    if ref!='stepwise_execution_defaults':
+        fail('ACTIVE_STAGE_STEPWISE_EXECUTION_CONTRACT_REF_INVALID:'+stage_uid)
     stepwise=adapters.get('stepwise_execution_defaults')
-    if not isinstance(stepwise,dict): fail('ACTIVE_STAGE_STEPWISE_EXECUTION_CONTRACT_MISSING:'+stage_uid)
-    if stepwise.get('mode')!='OPERATION_BY_OPERATION': fail('ACTIVE_STAGE_STEPWISE_EXECUTION_MODE_INVALID:'+stage_uid)
-    if stepwise.get('bulk_stage_materialization')!='FORBIDDEN': fail('ACTIVE_STAGE_BULK_MATERIALIZATION_NOT_FORBIDDEN:'+stage_uid)
-    if stepwise.get('checkpoint_after_each_operation') is not True: fail('ACTIVE_STAGE_OPERATION_CHECKPOINT_NOT_REQUIRED:'+stage_uid)
-    if stepwise.get('successor_requires_operation_pass') is not True: fail('ACTIVE_STAGE_SUCCESSOR_OPERATION_PASS_NOT_REQUIRED:'+stage_uid)
-    fail('ACTIVE_STAGE_EFFECTFUL_ADAPTER_REQUIRES_OPERATION_LEVEL_ENGINE_MIGRATION:'+stage_uid)
+    if not isinstance(stepwise,dict):
+        fail('ACTIVE_STAGE_STEPWISE_EXECUTION_CONTRACT_MISSING:'+stage_uid)
+    if stepwise.get('mode')!='OPERATION_BY_OPERATION':
+        fail('ACTIVE_STAGE_STEPWISE_EXECUTION_MODE_INVALID:'+stage_uid)
+    if stepwise.get('bulk_stage_materialization')!='FORBIDDEN':
+        fail('ACTIVE_STAGE_BULK_MATERIALIZATION_NOT_FORBIDDEN:'+stage_uid)
+    if stepwise.get('checkpoint_after_each_operation') is not True:
+        fail('ACTIVE_STAGE_OPERATION_CHECKPOINT_NOT_REQUIRED:'+stage_uid)
+    if stepwise.get('successor_requires_operation_pass') is not True:
+        fail('ACTIVE_STAGE_SUCCESSOR_OPERATION_PASS_NOT_REQUIRED:'+stage_uid)
+    cmd=[sys.executable,str(executor),'--stage',stage_uid,'--operation',operation_uid,'--work-unit',work_rel,'--product-root',str(product_root)]
+    proc=subprocess.run(cmd,cwd=product_root,text=True,capture_output=True)
+    if proc.returncode!=0:
+        msg=(proc.stderr or proc.stdout or '').strip().replace('\n',' ')[:800]
+        fail('ACTIVE_STAGE_OPERATION_EXECUTOR_FAILED:'+operation_uid+':'+str(proc.returncode)+':'+msg)
+    receipt=_load_operation_receipt(receipt_path)
+    expected_receipt={
+      'artifact_type':'OPERATION_EXECUTION_RECEIPT',
+      'stage_uid':stage_uid,
+      'work_unit_uid':str(work.get('work_unit_uid') or ''),
+      'operation_uid':operation_uid,
+      'governance_uid':gov,
+      'status':str(driver.get('operation_receipt_status_required') or 'PASS'),
+      'executor_owner':owner,
+      'executor_protocol':protocol,
+      'result_owner':result_owner
+    }
+    for key,val in expected_receipt.items():
+        if receipt.get(key)!=val:
+            fail('ACTIVE_STAGE_OPERATION_RECEIPT_IDENTITY_DRIFT:'+operation_uid+':'+key)
+    completed.append(operation_uid)
+    next_op=expected_ops[len(completed)] if len(completed)<len(expected_ops) else 'COMPLETE'
+    state['completed_operations']=completed
+    state['current_operation']=next_op
+    state['status']='IN_PROGRESS' if next_op!='COMPLETE' else 'EXECUTION_COMPLETE_CLOSURE_PENDING'
+    if 'current_status' in state:
+        state['current_status']=state['status']
+    state['last_operation_uid']=operation_uid
+    state['last_operation_receipt_ref']=receipt_ref
+    _atomic_yaml_write(state_path,state)
+    print(json.dumps({
+      'result':'PASS',
+      'stage_uid':stage_uid,
+      'work_unit_uid':work.get('work_unit_uid'),
+      'operation_uid':operation_uid,
+      'operation_receipt_ref':receipt_ref,
+      'next_operation':next_op,
+      'stage_status':state['status'],
+      'stage_closure_claimed':False
+    },ensure_ascii=False))
+    return True
 
 
 def main():
