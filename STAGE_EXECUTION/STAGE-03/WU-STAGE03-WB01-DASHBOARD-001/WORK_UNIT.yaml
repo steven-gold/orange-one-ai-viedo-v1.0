@@ -6,7 +6,7 @@ primary_task_layer: PRODUCT_STAGE_EXECUTION
 governed_unit_uid: workspace:WB-01
 governed_unit_type: PAGE
 governance_uid: GOV-REV-20260925-NORMATIVE-EXECUTION-MATRIX
-governance_head: 22b8d6845ce31014ba10b4c1f8f7a3ec9dcceb20
+governance_head: 335d8a01d6d3eb6f0ed951ffc40216029b19d4e3
 entry_gate: CURRENT_GOVERNED_UNIT_STAGE2_CLOSED
 required_inputs:
 - STAGE_EXECUTION/STAGE-01/WU-STAGE01-WB01-DASHBOARD-001/02_BASE_BLUEPRINT/workspace-WB-01/VISUAL_BASE_BLUEPRINT.yaml
@@ -38,7 +38,7 @@ required_outputs:
 - VISUAL_REFERENCE_ANNOTATION
 - VISUAL_INHERITANCE_MATRIX
 - VISUAL_SCENARIO_EVIDENCE_SET
-status: CLOSED_PASS
+status: REVERIFY_REQUIRED_PENDING
 operation_bindings:
   VISUAL_SPEC_COMPILE:
     executor_owner: governance/ci/stage_execution_engine.py
