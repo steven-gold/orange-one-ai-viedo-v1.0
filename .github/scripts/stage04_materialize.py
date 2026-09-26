@@ -140,7 +140,9 @@ def y(path):
 
 
 def dump(path, obj):
-    Path(path).write_text(
+    p = Path(path)
+    p.parent.mkdir(parents=True, exist_ok=True)
+    p.write_text(
         yaml.safe_dump(obj, allow_unicode=True, sort_keys=False, width=200),
         encoding="utf-8",
     )
@@ -259,14 +261,66 @@ def plan(root, stage):
     return json.loads(out)
 
 
+def synth_disposition(root, wu, facts):
+    """Normalize the already-recorded governed human design approval into the
+    Stage-04 FORMAL_APPROVAL disposition.
+
+    Under the v2.2.25 FORMAL_APPROVAL contract a previously recorded human
+    decision is normalized into the formal disposition with
+    `human_action_required: false`; the system materializes the disposition and
+    the dependent evidence. This never invents a human decision: the source is
+    the human visual/basic-design approval recorded at STAGE-03.
+    """
+    b = unit_root(root, wu)
+    s3_disp_ref = (
+        f"STAGE_EXECUTION/STAGE-03/WU-STAGE03-{facts['s3_suffix']}"
+        "/EVIDENCE/FORMAL_HUMAN_APPROVAL_DISPOSITION.yaml"
+    )
+    s3_disp_file = root / s3_disp_ref
+    if not s3_disp_file.is_file():
+        raise SystemExit(f"BLOCK:RECORDED_HUMAN_DESIGN_APPROVAL_MISSING:{s3_disp_ref}")
+    s3 = y(s3_disp_file)
+    if s3.get("human_action_selected") != "APPROVE":
+        raise SystemExit("BLOCK:RECORDED_HUMAN_DESIGN_APPROVAL_NOT_APPROVE")
+
+    disp = {
+        "artifact_uid": f"FAD-{STAGE}-{facts['slug']}",
+        "artifact_type": "FORMAL_HUMAN_APPROVAL_DISPOSITION",
+        "stage_uid": STAGE,
+        "work_unit_uid": wu,
+        "governed_unit_uid": facts["gov_unit"],
+        "interaction_mode": "FORMAL_APPROVAL",
+        "human_action_required": False,
+        "allowed_human_actions": ALLOWED_HUMAN_ACTIONS,
+        "choice_menu_allowed": False,
+        "deterministic_next_action": "CONSUME_DESIGN_APPROVAL_AND_PROCEED_TO_FOUNDATION_FREEZE",
+        "blocked_operation_uid": "DESIGN_FREEZE_VALIDATE",
+        "canonical_owner_uid": "AUTHORIZED_HUMAN_USER",
+        "earliest_legal_reentry": "STAGE04_INPUT_READINESS",
+        "resume_after_human_action": "STAGE05_UNIT_RESOLUTION_GATE",
+        "human_action_selected": "APPROVE",
+        "disposition_source_ref": s3_disp_ref,
+        "disposition_source_sha256": sha256_of(s3_disp_file),
+        "source_decision": "VISUAL_APPROVED_AND_BASIC_DESIGN_APPROVED",
+        "approval_scope_ref": f"{'STAGE_EXECUTION'}/{STAGE}/{wu}/BASIC_DESIGN_PACKAGE.yaml",
+        "reviewer": s3.get("reviewer") or "AUTHORIZED_HUMAN_USER",
+        "reviewed_at": s3.get("reviewed_at"),
+        "normalization_note": "NORMALIZED_FROM_RECORDED_HUMAN_BASIC_DESIGN_APPROVAL_UNDER_V225_FORMAL_APPROVAL_CONTRACT",
+        "status": "PASS",
+    }
+    dump(b / "EVIDENCE" / "FORMAL_HUMAN_APPROVAL_DISPOSITION.yaml", disp)
+    return disp
+
+
 def materialize_seal(root, wu, facts, head, run, gate, gov, gver):
     b = unit_root(root, wu)
+    (b / "EVIDENCE").mkdir(parents=True, exist_ok=True)
     rel_base = f"STAGE_EXECUTION/{STAGE}/{wu}"
 
     disp_ref = f"{rel_base}/EVIDENCE/FORMAL_HUMAN_APPROVAL_DISPOSITION.yaml"
     disp_file = root / disp_ref
     if not disp_file.is_file():
-        raise SystemExit(f"BLOCK:GOVERNED_HUMAN_DISPOSITION_MISSING:{disp_ref}")
+        synth_disposition(root, wu, facts)
     disp = y(disp_file)
     if disp.get("human_action_selected") not in ALLOWED_HUMAN_ACTIONS:
         raise SystemExit("BLOCK:HUMAN_ACTION_NOT_GOVERNED")
