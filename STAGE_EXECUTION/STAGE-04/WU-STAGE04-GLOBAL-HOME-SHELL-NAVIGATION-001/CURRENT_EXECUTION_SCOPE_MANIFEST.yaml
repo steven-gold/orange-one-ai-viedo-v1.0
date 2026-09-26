@@ -10,7 +10,7 @@ included_units:
 excluded_units: []
 remaining_units: []
 partial_scope: false
-stage_exit_credit_allowed: true
+stage_exit_credit_allowed: false
 scope_selection_authority: WORK_UNIT_RESOLUTION_GATE.yaml
 owning_capability: FOUNDATION_FREEZE
 predecessor_closure_refs:
@@ -33,15 +33,15 @@ denominator_sources:
 - PAGE_CONSTRUCTION_SPEC_PACKAGE
 - VISUAL_DESIGN_SPEC_PACKAGE
 - DEPENDENCY_MAP
-status: CLOSED
-governance_head: 1451256c6b74ca283467f2a607ca2215aac89996
+status: BLOCKED
+governance_head: c336a76c22a5db65080f749f26875edfa5169457
 current_reverify_required: false
 current_closure_validation:
-  result: PASS
-  stage_exit_credit: 1
-  head_sha: 1451256c6b74ca283467f2a607ca2215aac89996
-  workflow_run_id: '36235782338'
-  conclusion: success
+  result: BLOCKED
+  stage_exit_credit: 0
+  head_sha: bb0bfe4a027527608f6f0d8b6aba0b611f0db045
+  workflow_run_id: CURRENT_RECONCILIATION
+  conclusion: blocked
   governance_uid: GOV-REV-20260925-NORMATIVE-EXECUTION-MATRIX
-  governance_head: 1451256c6b74ca283467f2a607ca2215aac89996
+  governance_head: c336a76c22a5db65080f749f26875edfa5169457
 prior_terminal_receipt_ref: WORK_UNIT_TERMINAL_RECEIPT.yaml
