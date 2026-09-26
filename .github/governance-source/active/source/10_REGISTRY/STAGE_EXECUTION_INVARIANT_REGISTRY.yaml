@@ -1256,6 +1256,118 @@ invariants:
     frozen_binary_bytes_exact_hash_required: true
     stage01_direct_docx_binary_reextract: BLOCK
     stage01_binary_access: PROJECTION_RESOLVED_FROZEN_BINARY_ONLY
+  EXPLICIT_STAGE_RANGE_EXECUTION:
+    invariant_uid: GOV-INV-EXPLICIT-STAGE-RANGE-EXECUTION-001
+    applies_to_all_registered_stages: true
+    requested_range_is_execution_authority: true
+    range_order_source: CURRENT_LIFECYCLE_REGISTRY
+    range_is_inclusive: true
+    single_stage_request_executes_only_that_stage: true
+    multi_stage_request_executes_every_registered_stage_in_range: true
+    system_selected_batch_size: FORBIDDEN
+    system_expand_range: BLOCK
+    system_shrink_range: BLOCK
+    system_skip_in_range_stage: BLOCK
+    system_split_range_and_reprompt_between_normal_stages: BLOCK
+    normal_pass_auto_continues_within_requested_range: true
+    checkpoint_does_not_require_new_user_instruction: true
+    stop_only_on:
+    - FORMAL_HUMAN_APPROVAL_REQUIRED
+    - USER_DECISION_REQUIRED
+    - BLOCKED
+    - CURRENT_STATE_CONFLICT
+    - REVERIFY_REQUIRED
+    - SNAPSHOT_INVALIDATED
+    - EXECUTION_FAILURE
+    invalid_range_must_fail_closed: true
+    unregistered_range_endpoint_may_be_silently_clamped: false
+    current_profile_end_stage_is_dynamic_from_lifecycle_registry: true
+    stage_validation_mode_is_not_product_execution_mode: true
+    page_lifecycle_execution_mode_preserves_one_governed_unit_identity_across_requested_range: true
+    stage_boundary_manual_continue_prompt: FORBIDDEN
+  DETERMINISTIC_HUMAN_INTERACTION_BOUNDARY:
+    invariant_uid: GOV-INV-DETERMINISTIC-HUMAN-INTERACTION-001
+    applies_to_all_registered_stages: true
+    same_current_state_same_user_facing_action_set: true
+    formal_approval_is_user_decision_required: false
+    approval_is_execution_path_selection: false
+    deterministic_successor_may_be_presented_as_user_choice: false
+    user_choice_allowed_only_when_materially_distinct_legal_alternative_count_gte: 2
+    user_choice_requires_authority_ambiguity_evidence: true
+    deterministic_reentry_may_be_presented_as_user_choice: false
+    ai_may_offer_gate_bypass: false
+    ai_may_offer_future_stage_preproduction: false
+    ai_may_offer_arbitrary_earlier_stage_reentry: false
+    ai_may_require_user_to_handcraft_system_evidence: false
+    system_must_materialize_evidence_from_governed_human_disposition: true
+    formal_approval_actions:
+    - APPROVE
+    - REJECT
+    - REQUEST_CHANGES
+    interaction_modes:
+    - NONE
+    - FORMAL_APPROVAL
+    - USER_DECISION_REQUIRED
+    - BLOCKED_REENTRY
+    required_interaction_output_fields:
+    - interaction_mode
+    - human_action_required
+    - allowed_human_actions
+    - choice_menu_allowed
+    - deterministic_next_action
+    - blocked_operation_uid
+    - canonical_owner_uid
+    - earliest_legal_reentry
+    - resume_after_human_action
+    stage_interaction_contracts:
+      STAGE-01:
+        default_mode: NONE
+        authority_ambiguity_mode: USER_DECISION_REQUIRED
+        ambiguity_threshold_materially_distinct_legal_alternatives: 2
+      STAGE-02:
+        default_mode: NONE
+        authority_ambiguity_mode: USER_DECISION_REQUIRED
+        ambiguity_threshold_materially_distinct_legal_alternatives: 2
+      STAGE-03:
+        default_mode: NONE
+        registered_human_visual_review_mode: FORMAL_APPROVAL
+        formal_review_actions: [APPROVE, REJECT, REQUEST_CHANGES]
+      STAGE-04:
+        default_mode: FORMAL_APPROVAL
+        evidence_type: DESIGN_APPROVAL_EVIDENCE
+        approval_consumption_operation: DESIGN_FREEZE_VALIDATE
+        preapproval_operation_allowed: BASIC_DESIGN_PACKAGE_COMPILE
+        downstream_operation_before_approval: BLOCK
+        blocked_outputs_before_approval:
+        - FOUNDATION_BARRIER_RECORD
+        - ACCEPTANCE_AUDIT_BLUEPRINT
+        - DESIGN_FREEZE_PACKAGE
+        formal_review_actions: [APPROVE, REJECT, REQUEST_CHANGES]
+        alternative_execution_path_allowed: false
+        next_stage_after_closure: STAGE-05
+      STAGE-05:
+        default_mode: NONE
+        authority_ambiguity_mode: USER_DECISION_REQUIRED
+      STAGE-06:
+        default_mode: NONE
+        failed_test_mode: BLOCKED_REENTRY
+      STAGE-07:
+        default_mode: NONE
+        staging_applicability_ambiguity_mode: USER_DECISION_REQUIRED
+      STAGE-08:
+        default_mode: NONE
+        not_applicable_requires_authority_evidence: true
+        missing_na_authority_mode: BLOCKED_REENTRY
+      STAGE-09:
+        default_mode: NONE
+        production_cutover_failure_mode: BLOCKED_REENTRY
+      STAGE-10:
+        default_mode: NONE
+        production_acceptance_failure_mode: BLOCKED_REENTRY
+      STAGE-11:
+        default_mode: NONE
+        next_page_eligibility_must_come_from_registered_operation: true
+        project_completion_may_be_ai_invented: false
   DETERMINISTIC_STAGE_AUDIT:
     invariant_uid: GOV-INV-DETERMINISTIC-STAGE-AUDIT-001
     purpose: SAME_COMPLETE_AUDIT_INPUT_MUST_PRODUCE_SAME_COMPLETE_AUDIT_RESULT
