@@ -557,6 +557,152 @@ with tempfile.TemporaryDirectory() as td:
     else:
         os.environ[eng.PRODUCT_ROOT_ENV]=old_root
 
+
+# Operation-level effectful dispatch migration pressure test.
+# Uses only a temporary product root and a synthetic registered Python executor.
+with tempfile.TemporaryDirectory() as _exec_td:
+    _exec_root=Path(_exec_td)
+    _entry,_reg,_gov,_profile,_adapters,_stages=eng.validate_definition()
+    _sid='STAGE-05'
+    _st=_stages[_sid]
+    _wu='SYNTHETIC-EFFECTFUL-STAGE05'
+    _wd=_exec_root/'STAGE_EXECUTION'/_sid/_wu
+    (_wd/'EVIDENCE'/'OPERATION_RECEIPTS').mkdir(parents=True,exist_ok=True)
+    (_exec_root/'tools').mkdir(parents=True,exist_ok=True)
+    (_exec_root/'dependency.yaml').write_text('status: PASS\n',encoding='utf-8')
+
+    _sections=list(map(str,_st.get('required_normative_section_uids') or []))
+    _arts=list(map(str,_st.get('outputs') or []))+list(map(str,_st.get('required_evidence') or []))
+    _total=max(len(_sections),len(_arts))
+    _payload={'fields':{f'f{i}':f'VALUE-{i}' for i in range(_total)}}
+    (_wd/'payload.yaml').write_text(yaml.safe_dump(_payload,sort_keys=False),encoding='utf-8')
+    _rows=[]
+    for _i in range(_total):
+        _rows.append({
+          'matrix_row_uid':f'EXEC-MATRIX-{_i+1:03d}','normative_section_uid':_sections[_i % len(_sections)],
+          'requirement_uid':f'EXEC-REQ-{_i+1:03d}','required_artifact_type':_arts[_i % len(_arts)],
+          'artifact_ref':f'STAGE_EXECUTION/{_sid}/{_wu}/payload.yaml','artifact_owner':'SYNTHETIC-OWNER',
+          'row_denominator_source':'SYNTHETIC-EFFECTFUL','row_identity':f'EXEC-ROW-{_i+1:03d}',
+          'field_path':['fields',f'f{_i}'],'applicability':'REQUIRED','validator_uid':_st['validators'][0],
+          'validator_check_id':f'EXEC-CHECK-{_i+1:03d}','evidence_ref':'synthetic://effectful',
+          'closure_gate':_st['exit_gate'],'failure_disposition':'BLOCK','reentry_owner':'SYNTHETIC-OWNER'
+        })
+    _matrix={
+      'artifact_uid':'SYNTHETIC-EFFECTFUL-NEM','artifact_type':'NORMATIVE_EXECUTION_MATRIX','governance_uid':_gov,
+      'stage_uid':_sid,'work_unit_uid':_wu,'rows':_rows,'coverage':{
+        'required_normative_section_total':len(_sections),'represented_normative_section_total':len(_sections),
+        'required_artifact_total':len(set(_arts)),'represented_artifact_total':len(set(_arts)),
+        'required_field_total':_total,'validator_bound_field_total':_total,'closure_bound_field_total':_total,
+        'missing_required_row_count':0,'missing_required_field_count':0,'duplicate_credit_count':0,'summary_only_credit_count':0,
+        'unclassified_applicability_count':0,'validator_unbound_count':0,'closure_unbound_count':0,'stale_matrix_count':0},
+      'status':'PASS'
+    }
+    _matrix_rel=f'STAGE_EXECUTION/{_sid}/{_wu}/NORMATIVE_EXECUTION_MATRIX.yaml'
+    (_wd/'NORMATIVE_EXECUTION_MATRIX.yaml').write_text(yaml.safe_dump(_matrix,sort_keys=False),encoding='utf-8')
+
+    _executor_rel='tools/synthetic_stage_executor.py'
+    _executor_code='''#!/usr/bin/env python3
+import argparse
+from pathlib import Path
+import yaml
+p=argparse.ArgumentParser()
+p.add_argument("--stage",required=True); p.add_argument("--operation",required=True)
+p.add_argument("--work-unit",required=True); p.add_argument("--product-root",required=True)
+a=p.parse_args()
+root=Path(a.product_root)
+work=yaml.safe_load((root/a.work_unit).read_text(encoding="utf-8")) or {}
+binding=(work.get("operation_bindings") or {}).get(a.operation) or {}
+receipt=root/str(binding.get("operation_receipt_ref") or "")
+receipt.parent.mkdir(parents=True,exist_ok=True)
+obj={
+ "artifact_type":"OPERATION_EXECUTION_RECEIPT",
+ "stage_uid":a.stage,
+ "work_unit_uid":work.get("work_unit_uid"),
+ "operation_uid":a.operation,
+ "governance_uid":work.get("governance_uid"),
+ "status":"PASS",
+ "executor_owner":binding.get("executor_owner"),
+ "executor_protocol":binding.get("executor_protocol"),
+ "result_owner":binding.get("result_owner")
+}
+receipt.write_text(yaml.safe_dump(obj,sort_keys=False),encoding="utf-8")
+'''
+    (_exec_root/_executor_rel).write_text(_executor_code,encoding='utf-8')
+
+    _ops=list(map(str,_st.get('operations') or []))
+    _operation_bindings={}
+    for _op in _ops:
+        _operation_bindings[_op]={
+          'executor_owner':_executor_rel,
+          'result_owner':'SYNTHETIC_RESULT_OWNER',
+          'executor_protocol':'PYTHON_STAGE_OPERATION_V1',
+          'operation_receipt_ref':f'STAGE_EXECUTION/{_sid}/{_wu}/EVIDENCE/OPERATION_RECEIPTS/{_op}.yaml'
+        }
+    _scanner_bindings={
+      str(_dim):{'scanner_owner':'SYNTHETIC_SCANNER_OWNER','result_owner':'SYNTHETIC_RESULT_OWNER'}
+      for _dim in (_adapters['stages'][_sid].get('scanner_dimensions') or [])
+    }
+    _work={
+      'artifact_type':'WORK_UNIT','work_unit_uid':_wu,'governance_uid':_gov,
+      'primary_task_layer':'PRODUCT_STAGE_EXECUTION','stage_uid':_sid,'current_status':'ACTIVE',
+      'pre_execution_gate_status':'PASS','required_outputs':list(_st.get('outputs') or []),
+      'dependencies':['dependency.yaml'],'normative_execution_matrix_ref':_matrix_rel,
+      'operation_bindings':_operation_bindings,'scanner_bindings':_scanner_bindings
+    }
+    _work_rel=f'STAGE_EXECUTION/{_sid}/{_wu}/WORK_UNIT.yaml'
+    (_wd/'WORK_UNIT.yaml').write_text(yaml.safe_dump(_work,sort_keys=False),encoding='utf-8')
+    _scope={
+      'artifact_type':'EXECUTION_SCOPE_MANIFEST','stage_uid':_sid,'work_unit_uid':_wu,
+      'governance_uid':_gov,'product_stage_execution_allowed':True
+    }
+    _scope_rel=f'STAGE_EXECUTION/{_sid}/{_wu}/CURRENT_EXECUTION_SCOPE_MANIFEST.yaml'
+    (_wd/'CURRENT_EXECUTION_SCOPE_MANIFEST.yaml').write_text(yaml.safe_dump(_scope,sort_keys=False),encoding='utf-8')
+    _state={
+      'artifact_type':'WORK_UNIT_EXECUTION_STATE','stage_uid':_sid,'work_unit_uid':_wu,
+      'completed_operations':[],'current_operation':_ops[0],'status':'IN_PROGRESS',
+      'resume_control':{'product_execution_allowed':True}
+    }
+    (_wd/'EXECUTION_STATE.yaml').write_text(yaml.safe_dump(_state,sort_keys=False),encoding='utf-8')
+
+    _old_root=os.environ.get(eng.PRODUCT_ROOT_ENV)
+    _old_work=os.environ.get(eng.ACTIVE_WORK_UNIT_ENV)
+    _old_scope=os.environ.get(eng.CURRENT_SCOPE_ENV)
+    os.environ[eng.PRODUCT_ROOT_ENV]=str(_exec_root)
+    os.environ[eng.ACTIVE_WORK_UNIT_ENV]=_work_rel
+    os.environ[eng.CURRENT_SCOPE_ENV]=_scope_rel
+    try:
+        _bad=deepcopy(_work)
+        _bad['operation_bindings'][_ops[0]]['executor_protocol']='SHELL'
+        (_wd/'WORK_UNIT.yaml').write_text(yaml.safe_dump(_bad,sort_keys=False),encoding='utf-8')
+        expect_stage_engine_block('effectful_executor_protocol_forbidden',lambda:eng.execute_active(_sid),'ACTIVE_WORK_UNIT_OPERATION_EXECUTOR_PROTOCOL_INVALID')
+
+        _bad=deepcopy(_work)
+        _bad['operation_bindings'][_ops[0]]['executor_owner']='tools/missing_executor.py'
+        (_wd/'WORK_UNIT.yaml').write_text(yaml.safe_dump(_bad,sort_keys=False),encoding='utf-8')
+        expect_stage_engine_block('effectful_executor_missing',lambda:eng.execute_active(_sid),'ACTIVE_STAGE_EXECUTOR_OWNER_MISSING')
+
+        _bad=deepcopy(_work)
+        _bad['operation_bindings'][_ops[0]]['operation_receipt_ref']='outside-receipt.yaml'
+        (_wd/'WORK_UNIT.yaml').write_text(yaml.safe_dump(_bad,sort_keys=False),encoding='utf-8')
+        expect_stage_engine_block('effectful_receipt_outside_work_unit',lambda:eng.execute_active(_sid),'ACTIVE_STAGE_OPERATION_RECEIPT_OUTSIDE_WORK_UNIT')
+
+        (_wd/'WORK_UNIT.yaml').write_text(yaml.safe_dump(_work,sort_keys=False),encoding='utf-8')
+        assert eng.execute_active(_sid) is True
+        _state_after=yaml.safe_load((_wd/'EXECUTION_STATE.yaml').read_text(encoding='utf-8')) or {}
+        assert _state_after.get('completed_operations')==[_ops[0]]
+        assert _state_after.get('current_operation')==_ops[1]
+        assert _state_after.get('status')=='IN_PROGRESS'
+        assert _state_after.get('last_operation_uid')==_ops[0]
+        assert _state_after.get('last_operation_receipt_ref')==_operation_bindings[_ops[0]]['operation_receipt_ref']
+        assert (_exec_root/_operation_bindings[_ops[0]]['operation_receipt_ref']).is_file()
+        assert not (_exec_root/_operation_bindings[_ops[1]]['operation_receipt_ref']).exists()
+    finally:
+        for _key,_value in (
+            (eng.PRODUCT_ROOT_ENV,_old_root),(eng.ACTIVE_WORK_UNIT_ENV,_old_work),(eng.CURRENT_SCOPE_ENV,_old_scope)
+        ):
+            if _value is None: os.environ.pop(_key,None)
+            else: os.environ[_key]=_value
+
 assert not (ROOT/'governance/ci/compile_stage_execution_preflight.py').exists()
 assert not (ROOT/'governance/ci/stage_execution_adapters/stage02_functional_contract.py').exists()
 s2=adapters['stages']['STAGE-02']
