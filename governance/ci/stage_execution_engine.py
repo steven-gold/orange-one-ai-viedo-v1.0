@@ -176,6 +176,8 @@ def validate_definition_data(profile,adapters):
         if st.get('partial_work_unit_closure_may_grant_stage_exit') is not False: fail(f'PARTIAL_STAGE_EXIT_CREDIT_NOT_BLOCKED:{uid}')
         ad=ads[uid]
         if ad.get('profile_name')!=st.get('name'): fail(f'ADAPTER_PROFILE_NAME_DRIFT:{uid}')
+        if ad.get('effectful_executor_owner_resolution')!='CURRENT_WORK_UNIT_OPERATION_BINDING_ONLY':
+            fail(f'ADAPTER_EFFECTFUL_EXECUTOR_OWNER_RESOLUTION_DRIFT:{uid}')
         for f in ('semantic_dimensions','scanner_dimensions'):
             vals=ad.get(f)
             if not isinstance(vals,list) or not vals or len(vals)!=len(set(map(str,vals))): fail(f'ADAPTER_DIMENSIONS_INVALID:{uid}:{f}')
