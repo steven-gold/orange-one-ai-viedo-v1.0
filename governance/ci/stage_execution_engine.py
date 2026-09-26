@@ -848,13 +848,47 @@ def validate_terminal(stage_uid,evidence,receipt):
     e=validate_evidence(stage_uid,evidence)
     if e.get('result')!='PASS': fail('TERMINAL_CLOSURE_REQUIRES_PASS_EVIDENCE')
     r=j(receipt)
-    for k in ('provider','repository_or_project','head_sha','run_id','job_denominator','conclusion','governance_uid','stage_uid'):
+    for k in ('provider','repository_or_project','head_sha','run_id','job_denominator','conclusion','governance_uid','stage_uid','evidence_ref'):
         if r.get(k) in (None,'',[]): fail(f'TERMINAL_RECEIPT_FIELD_MISSING:{k}')
     if r.get('governance_uid')!=e.get('governance_uid') or r.get('stage_uid')!=stage_uid or r.get('conclusion')!='success': fail('TERMINAL_RECEIPT_IDENTITY_OR_RESULT_DRIFT')
     if not isinstance(r.get('job_denominator'),list) or not r['job_denominator']: fail('TERMINAL_RECEIPT_JOB_DENOMINATOR_INVALID')
+    product_root=_product_artifact_root()
+    evidence_ref=Path(str(r.get('evidence_ref') or ''))
+    if evidence_ref.is_absolute() or '..' in evidence_ref.parts: fail('TERMINAL_RECEIPT_EVIDENCE_REF_INVALID')
+    if (product_root/evidence_ref).resolve()!=Path(evidence).resolve():
+        fail('TERMINAL_RECEIPT_EVIDENCE_REF_DRIFT')
+    _,_,gov,_,_,stages=validate_definition()
+    st=stages[stage_uid]
+    scope_ref=Path(str(e.get('scope_manifest_ref') or ''))
+    scope=_external_yaml(product_root/scope_ref,'CURRENT_EXECUTION_SCOPE')
+    work_dir=(product_root/scope_ref).parent
+    work=_external_yaml(work_dir/'WORK_UNIT.yaml','CURRENT_WORK_UNIT')
+    governed_scope=str(scope.get('governed_unit_uid') or '').strip()
+    governed_work=str(work.get('governed_unit_uid') or '').strip()
+    if not governed_scope or not governed_work or governed_scope!=governed_work:
+        fail('TERMINAL_CLOSURE_GOVERNED_UNIT_IDENTITY_DRIFT')
+    denominator=e.get('denominator') or {}
+    expected_ops=list(map(str,st.get('operations') or []))
+    if denominator.get('required_total')!=len(expected_ops):
+        fail('TERMINAL_CLOSURE_DENOMINATOR_IDENTITY_DRIFT')
+    op_rows=e.get('operation_results') or []
+    if [str(x.get('operation_uid') or '') for x in op_rows]!=expected_ops:
+        fail('TERMINAL_CLOSURE_OPERATION_RECEIPT_CHAIN_DRIFT')
+    evidence_rows=e.get('required_evidence') or []
+    if not evidence_rows or any(not str(x.get('ref') or '').strip() for x in evidence_rows):
+        fail('TERMINAL_CLOSURE_EVIDENCE_REFS_INCOMPLETE')
+    successor=e.get('next_stage_transition')
+    if not isinstance(successor,dict) or successor.get('next_stage_uid')!=st.get('next_stage_uid') or not successor.get('status'):
+        fail('TERMINAL_CLOSURE_SUCCESSOR_ELIGIBILITY_INVALID')
+    contract=_deterministic_stage_audit_contract().get('terminal_receipt_contract') or {}
+    expected_projection={'stage_uid','governed_unit_uid','denominator_identity','operation_receipt_chain','evidence_refs','result','successor_eligibility'}
+    if set(map(str,contract.get('closure_projection_must_prove') or []))!=expected_projection:
+        fail('TERMINAL_CLOSURE_PROJECTION_CONTRACT_DRIFT')
+    if gov!=e.get('governance_uid'):
+        fail('TERMINAL_CLOSURE_CURRENT_GOVERNANCE_DRIFT')
     head=subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip()
     if r.get('head_sha')!=head: fail('TERMINAL_RECEIPT_HEAD_MISMATCH')
-    print(f'PASS: terminal receipt exact-head closure valid for {stage_uid} head={head}')
+    print(f'PASS: terminal receipt exact-head closure valid for {stage_uid} governed_unit={governed_scope} head={head}')
 
 def execute_active(stage_uid):
     _,_,_,_,adapters,stages=validate_definition()

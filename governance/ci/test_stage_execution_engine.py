@@ -94,9 +94,9 @@ sample['cross_stage_handoff']={
  'successor_execution_binding_total':0,'successor_execution_binding_ready_total':0,'successor_execution_binding_unresolved_total':0,
  'current_matrix_valid':True,'current_state_consistent':True,'unresolved_required_dependency_total':0,'status':'PASS'
 }
-yaml.safe_dump({'artifact_type':'EXECUTION_SCOPE_MANIFEST','stage_uid':stage_uid,'work_unit_uid':_synthetic_wu,'governance_uid':gov},(_synthetic_dir/'CURRENT_EXECUTION_SCOPE_MANIFEST.yaml').open('w',encoding='utf-8'),sort_keys=False)
+yaml.safe_dump({'artifact_type':'EXECUTION_SCOPE_MANIFEST','stage_uid':stage_uid,'work_unit_uid':_synthetic_wu,'governed_unit_uid':'synthetic:STAGE01','governance_uid':gov},(_synthetic_dir/'CURRENT_EXECUTION_SCOPE_MANIFEST.yaml').open('w',encoding='utf-8'),sort_keys=False)
 yaml.safe_dump({
- 'artifact_type':'WORK_UNIT','work_unit_uid':_synthetic_wu,'stage_uid':stage_uid,'primary_task_layer':'PRODUCT_STAGE_EXECUTION',
+ 'artifact_type':'WORK_UNIT','work_unit_uid':_synthetic_wu,'stage_uid':stage_uid,'governed_unit_uid':'synthetic:STAGE01','primary_task_layer':'PRODUCT_STAGE_EXECUTION',
  'status':'CLOSED','current_status':'CLOSED','normative_execution_matrix_ref':_matrix_rel,
  'required_outputs':list(st['outputs']),
  'operation_bindings':{x:{'executor_owner':'synthetic.executor','result_owner':'synthetic.result'} for x in st['operations']},
@@ -197,10 +197,35 @@ _valid_receipt={
   'job_denominator':['synthetic-job'],
   'conclusion':'success',
   'governance_uid':gov,
-  'stage_uid':stage_uid
+  'stage_uid':stage_uid,
+  'evidence_ref':str(_sample_evidence_path.relative_to(_sample_root))
 }
 _sample_receipt_path.write_text(json.dumps(_valid_receipt,ensure_ascii=False,indent=2),encoding='utf-8')
 eng.validate_terminal(stage_uid,_sample_evidence_path,_sample_receipt_path)
+_missing_evidence_ref=deepcopy(_valid_receipt); _missing_evidence_ref.pop('evidence_ref')
+_sample_receipt_path.write_text(json.dumps(_missing_evidence_ref,ensure_ascii=False,indent=2),encoding='utf-8')
+expect_stage_engine_block(
+  'terminal_receipt_evidence_ref_missing',
+  lambda:eng.validate_terminal(stage_uid,_sample_evidence_path,_sample_receipt_path),
+  'TERMINAL_RECEIPT_FIELD_MISSING:evidence_ref'
+)
+_wrong_evidence_ref=deepcopy(_valid_receipt); _wrong_evidence_ref['evidence_ref']='STAGE_EXECUTION/STAGE-01/WRONG/EVIDENCE.json'
+_sample_receipt_path.write_text(json.dumps(_wrong_evidence_ref,ensure_ascii=False,indent=2),encoding='utf-8')
+expect_stage_engine_block(
+  'terminal_receipt_evidence_ref_drift',
+  lambda:eng.validate_terminal(stage_uid,_sample_evidence_path,_sample_receipt_path),
+  'TERMINAL_RECEIPT_EVIDENCE_REF_DRIFT'
+)
+_sample_receipt_path.write_text(json.dumps(_valid_receipt,ensure_ascii=False,indent=2),encoding='utf-8')
+_bad_denominator_evidence=deepcopy(sample)
+_bad_denominator_evidence['denominator']['required_total']+=1
+_sample_evidence_path.write_text(json.dumps(_bad_denominator_evidence,ensure_ascii=False,indent=2),encoding='utf-8')
+expect_stage_engine_block(
+  'terminal_closure_denominator_identity_drift',
+  lambda:eng.validate_terminal(stage_uid,_sample_evidence_path,_sample_receipt_path),
+  'TERMINAL_CLOSURE_DENOMINATOR_IDENTITY_DRIFT'
+)
+_sample_evidence_path.write_text(json.dumps(sample,ensure_ascii=False,indent=2),encoding='utf-8')
 _sample_receipt_path.unlink()
 expect_stage_engine_block(
   'terminal_receipt_missing',
