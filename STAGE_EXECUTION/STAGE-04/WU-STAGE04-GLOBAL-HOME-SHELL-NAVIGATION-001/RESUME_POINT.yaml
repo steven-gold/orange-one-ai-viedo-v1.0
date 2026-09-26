@@ -2,10 +2,14 @@ artifact_uid: RESUME-WU-STAGE04-GLOBAL-HOME-SHELL-NAVIGATION-001
 artifact_type: WORK_UNIT_RESUME_POINT
 stage_uid: STAGE-04
 work_unit_uid: WU-STAGE04-GLOBAL-HOME-SHELL-NAVIGATION-001
-resume_point: STAGE05_UNIT_RESOLUTION_GATE
-completed_operations: []
-stage_exit_authorized: true
-return_gate: STAGE04_INPUT_READINESS
+resume_point: TERMINAL_CLOSURE
+completed_operations:
+- BASIC_DESIGN_PACKAGE_COMPILE
+- DESIGN_FREEZE_VALIDATE
+- ACCEPTANCE_AUDIT_BLUEPRINT_COMPILE
+- DESIGN_FREEZE_PACKAGE_BIND
+stage_exit_authorized: false
+return_gate: TERMINAL_CLOSURE
 next_stage_uid: STAGE-05
-status: CLOSED
-terminal_receipt_ref: WORK_UNIT_TERMINAL_RECEIPT.yaml
+status: BLOCKED
+prior_terminal_receipt_ref: WORK_UNIT_TERMINAL_RECEIPT.yaml
