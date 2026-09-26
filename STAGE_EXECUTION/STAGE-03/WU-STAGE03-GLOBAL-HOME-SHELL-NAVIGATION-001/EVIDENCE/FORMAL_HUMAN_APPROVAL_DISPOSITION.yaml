@@ -1,0 +1,25 @@
+artifact_uid: FAD-STAGE03-HOME-001
+artifact_type: FORMAL_HUMAN_APPROVAL_DISPOSITION
+stage_uid: STAGE-03
+work_unit_uid: WU-STAGE03-GLOBAL-HOME-SHELL-NAVIGATION-001
+governed_unit_uid: GLOBAL-HOME-SHELL-NAVIGATION
+interaction_mode: FORMAL_APPROVAL
+human_action_required: false
+allowed_human_actions:
+- APPROVE
+- REJECT
+- REQUEST_CHANGES
+choice_menu_allowed: false
+deterministic_next_action: CONSUME_FORMAL_APPROVAL_AND_PROCEED_TO_STAGE04_ELIGIBILITY
+blocked_operation_uid: null
+canonical_owner_uid: AUTHORIZED_HUMAN_USER
+earliest_legal_reentry: STAGE03_RETAINED_APPROVAL_REENTRY
+resume_after_human_action: STAGE04_UNIT_RESOLUTION_GATE
+human_action_selected: APPROVE
+disposition_source_ref: EVIDENCE/VISUAL_REVIEW_EVIDENCE.yaml
+source_decision: VISUAL_APPROVED
+reviewer: AUTHORIZED_HUMAN_USER
+reviewed_at: '2026-09-25T00:02:00+08:00'
+stage_exit_credit: 0
+normalization_note: NORMALIZED_FROM_RECORDED_HUMAN_VISUAL_REVIEW_UNDER_V225_FORMAL_APPROVAL_CONTRACT
+status: PASS
