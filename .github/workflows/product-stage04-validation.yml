@@ -121,18 +121,7 @@ jobs:
       run: |
         RECEIPT_PATH="STAGE_EXECUTION/STAGE-04/$WU/WORK_UNIT_TERMINAL_RECEIPT.yaml"
         if [ -f "$RECEIPT_PATH" ]; then
-          python - <<'PY'
-          import json, os, yaml
-          from pathlib import Path
-          p = Path('STAGE_EXECUTION/STAGE-04')/os.environ['WU']/'WORK_UNIT_TERMINAL_RECEIPT.yaml'
-          r = json.loads(p.read_text())
-          for k in ('provider','repository_or_project','head_sha','run_id','job_denominator','conclusion','governance_uid','stage_uid'):
-              if r.get(k) in (None,'',[]): raise SystemExit('BLOCK:TERMINAL_RECEIPT_FIELD_MISSING:'+k)
-          if r.get('conclusion') != 'success' or r.get('stage_uid') != 'STAGE-04':
-              raise SystemExit('BLOCK:TERMINAL_RECEIPT_IDENTITY_OR_RESULT_DRIFT')
-          # terminal receipt is anchored to the materialize run head (parent of the seal commit)
-          print('PASS: terminal receipt structurally valid, run_id=%s head=%s' % (r['run_id'], r['head_sha'][:8]))
-          PY
+          python3 -c "import json,os; from pathlib import Path; p=Path('STAGE_EXECUTION/STAGE-04')/os.environ['WU']/'WORK_UNIT_TERMINAL_RECEIPT.yaml'; r=json.loads(p.read_text()); ks=('provider','repository_or_project','head_sha','run_id','job_denominator','conclusion','governance_uid','stage_uid'); m=[k for k in ks if r.get(k) in (None,'',[])]; assert not m, 'BLOCK:TERMINAL_RECEIPT_FIELD_MISSING:'+','.join(m); assert r.get('conclusion')=='success' and r.get('stage_uid')=='STAGE-04', 'BLOCK:TERMINAL_RECEIPT_IDENTITY_OR_RESULT_DRIFT'; print('PASS: terminal receipt structurally valid, run_id=%s head=%s' % (r['run_id'], r['head_sha'][:8]))"
         else
           echo "STAGE04_TERMINAL_RECEIPT_NOT_YET_MATERIALIZED"
         fi
