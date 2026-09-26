@@ -169,6 +169,7 @@ block_evidence('hidden_defect_on_pass',lambda x:x.__setitem__('hidden_defect_swe
 block_evidence('next_stage_drift',lambda x:x['next_stage_transition'].__setitem__('next_stage_uid','WRONG-STAGE'))
 block('driver_contract_missing',lambda p,a:a.pop('execution_driver_contract'))
 block('driver_operation_coverage_disabled',lambda p,a:a['execution_driver_contract'].__setitem__('exact_operation_binding_coverage_required',False))
+block('adapter_executor_owner_resolution_missing',lambda p,a:a['stages']['STAGE-11'].pop('effectful_executor_owner_resolution'))
 block_evidence('output_producer_result_drift',lambda x:x['output_results'][0].__setitem__('producer_operation_uid','WRONG'))
 block_evidence('validator_coverage_drift',lambda x:x['validator_results'].pop())
 block_evidence('required_evidence_missing',lambda x:x['required_evidence'].clear())
