@@ -348,7 +348,7 @@ def synthetic_evidence(stage_uid,result):
     return {
       'artifact_type':'NORMALIZED_STAGE_EXECUTION_EVIDENCE',
       'governance_uid':gov,'stage_uid':stage_uid,'attempt_uid':f'SYNTH-{stage_uid}',
-      'scope_manifest_ref':'STAGE_EXECUTION/<STAGE_UID>/<WORK_UNIT_UID>/CURRENT_EXECUTION_SCOPE_MANIFEST.yaml',
+      'scope_manifest_ref':f'STAGE_EXECUTION/{stage_uid}/SYNTH-WU-{stage_uid}/CURRENT_EXECUTION_SCOPE_MANIFEST.yaml',
       'actual_stage_execution_started':True,'actual_stage_execution_completed':True,
       'fresh_execution':True,'prior_results_used':False,'current_specification_mutated':False,
       'source_head_sha':head,
@@ -373,14 +373,19 @@ def synthetic_evidence(stage_uid,result):
       'hidden_defect_sweep':{'performed':True,'result':'PASS','discovered_defect_total':0},
       'required_evidence':[{'evidence_type':x,'status':'PASS','ref':'synthetic://external','external_receipt':True} for x in st['required_evidence']],
       'cross_stage_handoff':{
-        'ledger_ref':'synthetic://external','external_receipt':True,
+        'ledger_ref':f'STAGE_EXECUTION/{stage_uid}/SYNTH-WU-{stage_uid}/CROSS_STAGE_HANDOFF_READINESS_LEDGER.yaml','external_receipt':False,
         'successor_stage_uid':st['next_stage_uid'],
-        'reference_resolution_complete':True,
+        'reference_resolution_complete':not blocked,
         'physical_materialization_complete':not blocked,
         'required_field_completeness_complete':not blocked,
         'denominator_reconciled':True,
         'consumer_readiness_complete':not blocked,
-        'unresolved_required_dependency_total':1 if blocked else 0,
+        'successor_execution_binding_total':0,
+        'successor_execution_binding_ready_total':0,
+        'successor_execution_binding_unresolved_total':0,
+        'current_matrix_valid':True,
+        'current_state_consistent':True,
+        'unresolved_required_dependency_total':0,
         'status':'BLOCKED' if blocked else 'PASS',
       },
       'exact_head_gate_receipts':[{'gate_uid':'SYNTHETIC-GATE','head_sha':head,'run_id':'1','conclusion':'success'}],
@@ -389,10 +394,145 @@ def synthetic_evidence(stage_uid,result):
       'result':result,'stage_exit_allowed':not blocked,
     }
 
+_allstage_orig_product_root=os.environ.get(eng.PRODUCT_ROOT_ENV)
+_allstage_tmp=tempfile.TemporaryDirectory()
+_allstage_root=Path(_allstage_tmp.name)
+os.environ[eng.PRODUCT_ROOT_ENV]=str(_allstage_root)
+_cross_policy=((eng.y(eng.INVARIANTS).get('invariants') or {}).get('CROSS_STAGE_MATERIALIZATION_AND_CONSUMER_READINESS') or {})
+_cross_requirements=_cross_policy.get('successor_execution_binding_requirements') or {}
+_cross_operation_map=_cross_policy.get('successor_execution_binding_operation_map') or {}
+_next_requirements=list(map(str,_cross_policy.get('next_page_successor_binding_requirements') or []))
+
+def materialize_synthetic_stage_context(stage_uid,evidence,result):
+    st=stage_rows[stage_uid]
+    ad=adapters['stages'][stage_uid]
+    wu=f'SYNTH-WU-{stage_uid}'
+    wd=_allstage_root/'STAGE_EXECUTION'/stage_uid/wu
+    wd.mkdir(parents=True,exist_ok=True)
+    scope_rel=f'STAGE_EXECUTION/{stage_uid}/{wu}/CURRENT_EXECUTION_SCOPE_MANIFEST.yaml'
+    matrix_rel=f'STAGE_EXECUTION/{stage_uid}/{wu}/NORMATIVE_EXECUTION_MATRIX.yaml'
+    ledger_rel=f'STAGE_EXECUTION/{stage_uid}/{wu}/CROSS_STAGE_HANDOFF_READINESS_LEDGER.yaml'
+    evidence['scope_manifest_ref']=scope_rel
+    evidence['cross_stage_handoff']['ledger_ref']=ledger_rel
+
+    yaml.safe_dump({
+      'artifact_type':'EXECUTION_SCOPE_MANIFEST','stage_uid':stage_uid,'work_unit_uid':wu,
+      'governance_uid':gov,'status':'CLOSED' if result=='PASS' else 'BLOCKED'
+    },(wd/'CURRENT_EXECUTION_SCOPE_MANIFEST.yaml').open('w',encoding='utf-8'),sort_keys=False)
+    yaml.safe_dump({
+      'artifact_type':'WORK_UNIT','work_unit_uid':wu,'stage_uid':stage_uid,'primary_task_layer':'PRODUCT_STAGE_EXECUTION',
+      'status':'CLOSED' if result=='PASS' else 'BLOCKED','current_status':'CLOSED' if result=='PASS' else 'BLOCKED',
+      'normative_execution_matrix_ref':matrix_rel,'required_outputs':list(st['outputs']),
+      'operation_bindings':{x:{'executor_owner':'synthetic.executor','result_owner':'synthetic.result'} for x in st['operations']},
+      'scanner_bindings':{x:{'scanner_owner':'synthetic.scanner','result_owner':'synthetic.scan'} for x in ad['scanner_dimensions']}
+    },(wd/'WORK_UNIT.yaml').open('w',encoding='utf-8'),sort_keys=False)
+    yaml.safe_dump({
+      'artifact_type':'WORK_UNIT_EXECUTION_STATE','stage_uid':stage_uid,'work_unit_uid':wu,
+      'completed_operations':list(st['operations']) if result=='PASS' else [],
+      'current_operation':'COMPLETE' if result=='PASS' else 'BLOCKED_HANDOFF',
+      'status':'CLOSED' if result=='PASS' else 'BLOCKED'
+    },(wd/'EXECUTION_STATE.yaml').open('w',encoding='utf-8'),sort_keys=False)
+
+    sections=list(map(str,st.get('required_normative_section_uids') or []))
+    artifacts=list(map(str,st.get('outputs') or []))+list(map(str,st.get('required_evidence') or []))
+    row_total=max(len(sections),len(artifacts))
+    payload={'fields':{f'f{i}':f'VALUE-{stage_uid}-{i}' for i in range(row_total)}}
+    artifact_rel=f'STAGE_EXECUTION/{stage_uid}/{wu}/synthetic-artifact.yaml'
+    yaml.safe_dump(payload,(wd/'synthetic-artifact.yaml').open('w',encoding='utf-8'),sort_keys=False)
+    rows=[]
+    for i in range(row_total):
+        rows.append({
+          'matrix_row_uid':f'{stage_uid}-MATRIX-{i+1:03d}',
+          'normative_section_uid':sections[i % len(sections)],
+          'requirement_uid':f'{stage_uid}-REQ-{i+1:03d}',
+          'required_artifact_type':artifacts[i % len(artifacts)],
+          'artifact_ref':artifact_rel,'artifact_owner':'SYNTHETIC-OWNER',
+          'row_denominator_source':'SYNTHETIC-DENOMINATOR','row_identity':f'{stage_uid}-ROW-{i+1:03d}',
+          'field_path':['fields',f'f{i}'],'applicability':'REQUIRED',
+          'validator_uid':st['validators'][0],'validator_check_id':f'{stage_uid}-FIELD-{i+1:03d}',
+          'evidence_ref':'synthetic://matrix-evidence','closure_gate':st['exit_gate'],
+          'failure_disposition':'BLOCK','reentry_owner':'SYNTHETIC-OWNER'
+        })
+    yaml.safe_dump({
+      'artifact_uid':f'SYNTHETIC-NEM-{stage_uid}','artifact_type':'NORMATIVE_EXECUTION_MATRIX',
+      'governance_uid':gov,'stage_uid':stage_uid,'work_unit_uid':wu,'rows':rows,
+      'coverage':{
+        'required_normative_section_total':len(sections),'represented_normative_section_total':len(sections),
+        'required_artifact_total':len(set(artifacts)),'represented_artifact_total':len(set(artifacts)),
+        'required_field_total':row_total,'validator_bound_field_total':row_total,'closure_bound_field_total':row_total,
+        'missing_required_row_count':0,'missing_required_field_count':0,'duplicate_credit_count':0,
+        'summary_only_credit_count':0,'unclassified_applicability_count':0,'validator_unbound_count':0,
+        'closure_unbound_count':0,'stale_matrix_count':0},
+      'status':'PASS'
+    },(wd/'NORMATIVE_EXECUTION_MATRIX.yaml').open('w',encoding='utf-8'),sort_keys=False)
+
+    successor_uid=str(st['next_stage_uid'])
+    if successor_uid in stage_rows:
+        successor_inputs=list(map(str,stage_rows[successor_uid].get('inputs') or []))
+        binding_classes=list(map(str,_cross_requirements.get(successor_uid) or []))
+        opmap=_cross_operation_map.get(successor_uid) or {}
+    else:
+        successor_inputs=[]
+        binding_classes=list(_next_requirements)
+        opmap={}
+    input_rows=[{'input_uid':x,'status':'MATERIALIZED'} for x in successor_inputs]
+    binding_rows=[]
+    unresolved_bindings=0
+    unresolved_inputs=0
+    blocked=result=='BLOCKED'
+    block_by_binding=blocked and bool(binding_classes)
+    if blocked and not block_by_binding and input_rows:
+        input_rows[0]['status']='UNRESOLVED'
+        unresolved_inputs=1
+    for idx,cls in enumerate(binding_classes):
+        is_blocked=block_by_binding and idx==0
+        binding_rows.append({
+          'binding_uid':f'SYNTH-{stage_uid}-{cls}',
+          'consuming_operation_uid':str(opmap.get(cls) or 'NEXT_PAGE_ELIGIBILITY_EVALUATE'),
+          'binding_class':cls,'applicability':'REQUIRED',
+          'canonical_owner_or_authority_ref':'' if is_blocked else 'SYNTHETIC-CURRENT-AUTHORITY',
+          'authority_evidence_ref':'' if is_blocked else 'synthetic://authority',
+          'target_identity':'' if is_blocked else f'SYNTHETIC-TARGET:{cls}',
+          'resolution_status':'UNRESOLVED' if is_blocked else 'BOUND',
+          'denominator_inclusion_status':'INCLUDED',
+          'consumer_readiness_status':'BLOCKED' if is_blocked else 'READY'
+        })
+        if is_blocked: unresolved_bindings+=1
+    ready_bindings=len(binding_rows)-unresolved_bindings
+    core_ready=not blocked
+    ledger={
+      'artifact_uid':f'SYNTH-HANDOFF-{stage_uid}','artifact_type':'CROSS_STAGE_HANDOFF_READINESS_LEDGER',
+      'stage_uid':stage_uid,'work_unit_uid':wu,'successor_stage_uid':successor_uid,
+      'successor_required_inputs':input_rows,'successor_execution_bindings':binding_rows,
+      'successor_execution_binding_total':len(binding_rows),
+      'successor_execution_binding_ready_total':ready_bindings,
+      'successor_execution_binding_unresolved_total':unresolved_bindings,
+      'reference_resolution_complete':core_ready,'physical_materialization_complete':core_ready,
+      'required_field_completeness_complete':core_ready,'denominator_reconciled':True,
+      'consumer_readiness_complete':core_ready,'current_matrix_valid':True,'current_state_consistent':True,
+      'unresolved_required_dependency_total':unresolved_inputs,
+      'status':'BLOCKED' if blocked else 'PASS'
+    }
+    yaml.safe_dump(ledger,(wd/'CROSS_STAGE_HANDOFF_READINESS_LEDGER.yaml').open('w',encoding='utf-8'),sort_keys=False)
+    evidence['cross_stage_handoff'].update({
+      'external_receipt':False,'reference_resolution_complete':core_ready,
+      'physical_materialization_complete':core_ready,'required_field_completeness_complete':core_ready,
+      'denominator_reconciled':True,'consumer_readiness_complete':core_ready,
+      'successor_execution_binding_total':len(binding_rows),
+      'successor_execution_binding_ready_total':ready_bindings,
+      'successor_execution_binding_unresolved_total':unresolved_bindings,
+      'current_matrix_valid':True,'current_state_consistent':True,
+      'unresolved_required_dependency_total':unresolved_inputs,
+      'status':'BLOCKED' if blocked else 'PASS'
+    })
+    return evidence
+
 for uid in expected_stage_uids:
     pass_ev=synthetic_evidence(uid,'PASS')
     blocked_ev=synthetic_evidence(uid,'BLOCKED')
+    pass_ev=materialize_synthetic_stage_context(uid,pass_ev,'PASS')
     eng.validate_evidence_data(uid,deepcopy(pass_ev))
+    blocked_ev=materialize_synthetic_stage_context(uid,blocked_ev,'BLOCKED')
     eng.validate_evidence_data(uid,deepcopy(blocked_ev))
     all_stage_evidence_cases+=2
     bad=deepcopy(pass_ev)
@@ -403,6 +543,12 @@ for uid in expected_stage_uids:
         all_stage_negative_cases+=1
     else:
         raise SystemExit('FAIL_EXPECTED_ALL_STAGE_HANDOFF_BLOCK:'+uid)
+
+if _allstage_orig_product_root is None:
+    os.environ.pop(eng.PRODUCT_ROOT_ENV,None)
+else:
+    os.environ[eng.PRODUCT_ROOT_ENV]=_allstage_orig_product_root
+_allstage_tmp.cleanup()
 
 # Modes 1-9: aggregate every defect before failing so one run exposes the complete profile denominator.
 audit_errors=[]
