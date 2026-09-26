@@ -1,14 +1,11 @@
 name: Product Stage02 Materialize
+# LEGACY CLOSURE REVALIDATION ONLY. This workflow is NOT a fresh Stage executor.
 # stage02-materialize-closure: re-mints current-governance normalized evidence and
 # terminal receipts for both Stage-02 governed units, then converges Stage-02
 # closure state so the CURRENT_GOVERNED_UNIT_STAGE2_CLOSED exit gate is authorized
 # under Current governance. Runs only when the units are not already closed.
 on:
   workflow_dispatch:
-  push:
-    branches: [0921acpos]
-    paths:
-      - '.github/workflows/product-stage02-materialize.yml'
 permissions:
   contents: write
 concurrency:
