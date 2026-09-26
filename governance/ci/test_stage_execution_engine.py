@@ -17,6 +17,7 @@ eng.validate_definition_data(profile,adapters)
 assert eng.validate_current_ledger_synchronization_contract() is True
 cases=0
 executed_negative_labels=set()
+executed_negative_results={}
 def expect_stage_engine_block(label, fn, expected_prefix=None):
     global cases
     try:
@@ -26,6 +27,7 @@ def expect_stage_engine_block(label, fn, expected_prefix=None):
             raise SystemExit(f'FAIL_WRONG_BLOCK:{label}:{exc}')
         cases += 1
         executed_negative_labels.add(label)
+        executed_negative_results[label]=str(exc)
         return
     raise SystemExit('FAIL_EXPECTED_STAGE_ENGINE_BLOCK:'+label)
 
@@ -158,13 +160,16 @@ blocked_sample['next_stage_transition']={'next_stage_uid':st['next_stage_uid'],'
 blocked_sample['result']='BLOCKED'
 blocked_sample['stage_exit_allowed']=False
 eng.validate_evidence_data(stage_uid,blocked_sample)
-def block_evidence(label,mutator):
+def block_evidence(label,mutator,expected=None):
     global cases
     x=deepcopy(sample); mutator(x)
     try: eng.validate_evidence_data(stage_uid,x)
-    except eng.StageEngineError:
+    except eng.StageEngineError as exc:
+        if expected is not None and not str(exc).startswith(expected):
+            raise SystemExit('FAIL_WRONG_EVIDENCE_BLOCK:'+label+':'+str(exc))
         cases+=1
         executed_negative_labels.add(label)
+        executed_negative_results[label]=str(exc)
         return
     raise SystemExit('FAIL_EXPECTED_EVIDENCE_BLOCK:'+label)
 block_evidence('phase_order_drift',lambda x:x['phase_trace'].__setitem__(0,{'phase_uid':'CURRENT_GOVERNANCE','status':'PASS'}))
@@ -192,14 +197,14 @@ block_evidence('handoff_denominator_not_reconciled',lambda x:x['cross_stage_hand
 block_evidence('handoff_consumer_not_ready',lambda x:x['cross_stage_handoff'].__setitem__('consumer_readiness_complete',False))
 block_evidence('handoff_unresolved_required_dependency',lambda x:x['cross_stage_handoff'].__setitem__('unresolved_required_dependency_total',1))
 
-block_evidence('required_class_change_governance_uid',lambda x:x.__setitem__('governance_uid','GOVERNANCE-UID-DRIFT'))
-block_evidence('required_class_remove_required_output',lambda x:x['output_results'].pop())
-block_evidence('required_class_insert_stale_evidence',lambda x:x.__setitem__('source_head_sha','3'*40))
-block_evidence('required_class_insert_duplicate_evidence',lambda x:x['required_evidence'].append(deepcopy(x['required_evidence'][0])))
+block_evidence('required_class_change_governance_uid',lambda x:x.__setitem__('governance_uid','GOVERNANCE-UID-DRIFT'),'EVIDENCE_IDENTITY_DRIFT')
+block_evidence('required_class_remove_required_output',lambda x:x['output_results'].pop(),'OUTPUT_RESULT_COVERAGE_DRIFT')
+block_evidence('required_class_insert_stale_evidence',lambda x:x.__setitem__('source_head_sha','3'*40),'EXACT_HEAD_GATE_RECEIPT_INVALID')
+block_evidence('required_class_insert_duplicate_evidence',lambda x:x['required_evidence'].append(deepcopy(x['required_evidence'][0])),'REQUIRED_EVIDENCE_DUPLICATE')
 def _historical_pass_mutation(x):
     x['fresh_execution']=False
     x['prior_results_used']=True
-block_evidence('required_class_insert_historical_pass',_historical_pass_mutation)
+block_evidence('required_class_insert_historical_pass',_historical_pass_mutation,'EVIDENCE_FRESH_EXECUTION_PROVENANCE_INVALID')
 
 _scope_path=_synthetic_dir/'CURRENT_EXECUTION_SCOPE_MANIFEST.yaml'
 _scope_original=yaml.safe_load(_scope_path.read_text(encoding='utf-8')) or {}
@@ -786,25 +791,90 @@ for node in ast.walk(tree):
                 raise AssertionError('COMMON_ENGINE_STAGE02_ONLY_REJECTION')
 _required_negative_classes=list(map(str,(eng._deterministic_stage_audit_contract().get('required_negative_test_classes') or [])))
 _required_negative_trace={
-  'REMOVE_TERMINAL_RECEIPT':'terminal_receipt_missing',
-  'CHANGE_GOVERNANCE_UID':'required_class_change_governance_uid',
-  'CHANGE_HEAD_SHA':'terminal_receipt_wrong_head',
-  'CLOSED_TO_ACTIVE_STATE_CONFLICT':'state_pass_but_in_progress',
-  'REMOVE_OPERATION_RECEIPT':'required_class_remove_operation_receipt',
-  'REMOVE_REQUIRED_OUTPUT':'required_class_remove_required_output',
-  'CREATE_SCOPE_RESUME_CONFLICT':'required_class_create_scope_resume_conflict',
-  'INSERT_STALE_EVIDENCE':'required_class_insert_stale_evidence',
-  'INSERT_DUPLICATE_EVIDENCE':'required_class_insert_duplicate_evidence',
-  'INSERT_HISTORICAL_PASS':'required_class_insert_historical_pass',
-  'REMOVE_CURRENT_MATRIX':'required_class_remove_current_matrix',
-  'CHANGE_DENOMINATOR':'terminal_closure_denominator_identity_drift',
+  'REMOVE_TERMINAL_RECEIPT':{
+    'executed_test_label':'terminal_receipt_missing',
+    'injected_mutation':'DELETE_TERMINAL_RECEIPT_ARTIFACT',
+    'expected_blocking_semantics':'MISSING_FILE',
+  },
+  'CHANGE_GOVERNANCE_UID':{
+    'executed_test_label':'required_class_change_governance_uid',
+    'injected_mutation':'MUTATE_NORMALIZED_EVIDENCE_GOVERNANCE_UID',
+    'expected_blocking_semantics':'EVIDENCE_IDENTITY_DRIFT',
+  },
+  'CHANGE_HEAD_SHA':{
+    'executed_test_label':'terminal_receipt_wrong_head',
+    'injected_mutation':'MUTATE_TERMINAL_RECEIPT_HEAD_SHA',
+    'expected_blocking_semantics':'TERMINAL_RECEIPT_HEAD_MISMATCH',
+  },
+  'CLOSED_TO_ACTIVE_STATE_CONFLICT':{
+    'executed_test_label':'state_pass_but_in_progress',
+    'injected_mutation':'SET_CURRENT_EXECUTION_STATE_IN_PROGRESS_WHILE_EVIDENCE_PASS',
+    'expected_blocking_semantics':'CURRENT_STATE_STATUS_CONFLICT',
+  },
+  'REMOVE_OPERATION_RECEIPT':{
+    'executed_test_label':'required_class_remove_operation_receipt',
+    'injected_mutation':'EXECUTOR_RETURNS_ZERO_WITHOUT_OPERATION_RECEIPT',
+    'expected_blocking_semantics':'ACTIVE_OPERATION_RECEIPT_MISSING',
+  },
+  'REMOVE_REQUIRED_OUTPUT':{
+    'executed_test_label':'required_class_remove_required_output',
+    'injected_mutation':'REMOVE_ONE_REGISTERED_OUTPUT_RESULT',
+    'expected_blocking_semantics':'OUTPUT_RESULT_COVERAGE_DRIFT',
+  },
+  'CREATE_SCOPE_RESUME_CONFLICT':{
+    'executed_test_label':'required_class_create_scope_resume_conflict',
+    'injected_mutation':'MUTATE_SCOPE_WORK_UNIT_UID_AGAINST_WORK_AND_STATE',
+    'expected_blocking_semantics':'CURRENT_SCOPE_WORK_STATE_IDENTITY_DRIFT',
+  },
+  'INSERT_STALE_EVIDENCE':{
+    'executed_test_label':'required_class_insert_stale_evidence',
+    'injected_mutation':'MUTATE_EVIDENCE_SOURCE_HEAD_WITHOUT_MATCHING_GATE_RECEIPT',
+    'expected_blocking_semantics':'EXACT_HEAD_GATE_RECEIPT_INVALID',
+  },
+  'INSERT_DUPLICATE_EVIDENCE':{
+    'executed_test_label':'required_class_insert_duplicate_evidence',
+    'injected_mutation':'DUPLICATE_REQUIRED_EVIDENCE_ROW',
+    'expected_blocking_semantics':'REQUIRED_EVIDENCE_DUPLICATE',
+  },
+  'INSERT_HISTORICAL_PASS':{
+    'executed_test_label':'required_class_insert_historical_pass',
+    'injected_mutation':'MARK_PRIOR_RESULT_AS_CURRENT_WITHOUT_FRESH_EXECUTION',
+    'expected_blocking_semantics':'EVIDENCE_FRESH_EXECUTION_PROVENANCE_INVALID',
+  },
+  'REMOVE_CURRENT_MATRIX':{
+    'executed_test_label':'required_class_remove_current_matrix',
+    'injected_mutation':'DELETE_CURRENT_NORMATIVE_EXECUTION_MATRIX',
+    'expected_blocking_semantics':'NORMATIVE_EXECUTION_MATRIX_MISSING',
+  },
+  'CHANGE_DENOMINATOR':{
+    'executed_test_label':'terminal_closure_denominator_identity_drift',
+    'injected_mutation':'CHANGE_REQUIRED_TOTAL_AFTER_TERMINAL_RECEIPT',
+    'expected_blocking_semantics':'TERMINAL_CLOSURE_DENOMINATOR_IDENTITY_DRIFT',
+  },
 }
 if set(_required_negative_trace)!=set(_required_negative_classes):
     raise SystemExit('FAIL_REQUIRED_NEGATIVE_CLASS_TRACEABILITY_DENOMINATOR:required='+repr(sorted(_required_negative_classes))+':mapped='+repr(sorted(_required_negative_trace)))
-_missing_required_negative=[cls for cls,label in _required_negative_trace.items() if label not in executed_negative_labels]
-if _missing_required_negative:
-    raise SystemExit('FAIL_REQUIRED_NEGATIVE_CLASS_NOT_EXECUTED:'+repr(_missing_required_negative))
-print(f'PASS: required negative test classes {len(_required_negative_classes)}/{len(_required_negative_classes)} exact canonical traceability')
+_trace_rows=[]
+for _class in _required_negative_classes:
+    _row=deepcopy(_required_negative_trace[_class])
+    _label=_row['executed_test_label']
+    _observed=executed_negative_results.get(_label,'')
+    if _label not in executed_negative_labels:
+        raise SystemExit('FAIL_REQUIRED_NEGATIVE_CLASS_NOT_EXECUTED:'+_class+':'+_label)
+    if not _observed.startswith(_row['expected_blocking_semantics']):
+        raise SystemExit('FAIL_REQUIRED_NEGATIVE_CLASS_WRONG_BLOCK:'+_class+':'+_observed)
+    _row['canonical_class']=_class
+    _row['observed_blocking_semantics']=_observed
+    _row['executed_result']='PASS'
+    _trace_rows.append(_row)
+print(json.dumps({
+  'artifact_type':'REQUIRED_NEGATIVE_TEST_CLASS_TRACEABILITY',
+  'denominator':len(_required_negative_classes),
+  'pass_count':len(_trace_rows),
+  'result':'PASS',
+  'rows':_trace_rows,
+},ensure_ascii=False,sort_keys=True))
+print(f'PASS: required negative test classes {len(_trace_rows)}/{len(_required_negative_classes)} exact canonical traceability')
 print(f'PASS: common Stage Execution Engine negative regression cases={cases}; matrix_destructive_required_field=PASS')
 print('PASS: Stage-02 current execution has no historical compatibility module or test-state scope resolver')
 

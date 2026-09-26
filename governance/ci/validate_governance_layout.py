@@ -1,7 +1,12 @@
 #!/usr/bin/env python3
 from pathlib import Path
+from datetime import datetime, timezone
+import json
+import os
 import re
+import subprocess
 import sys
+import urllib.request
 import yaml
 from governance_resolver import resolve
 
@@ -50,6 +55,65 @@ else:
         if not str(identity.get('authorization_record_url') or '').startswith('https://github.com/'):
             errors.append('CANDIDATE_AUTHORIZATION_RECORD_NOT_PERSISTED_GITHUB_RECORD')
 
+def verify_candidate_authorization(reg, resolved):
+    roles=reg.get('branch_role_contract') or {}
+    branch=str(reg.get('branch') or '')
+    if roles.get(branch)!='GOVERNANCE_REVISION_CANDIDATE':
+        return
+    identity=reg.get('governance_identity') or {}
+    url=str(identity.get('authorization_record_url') or '')
+    match=re.fullmatch(r'https://github\.com/([^/]+)/([^/]+)/issues/(\d+)',url)
+    if not match:
+        errors.append('CANDIDATE_AUTHORIZATION_URL_INVALID')
+        return
+    owner,repo_name,issue_number=match.groups()
+    api=f'https://api.github.com/repos/{owner}/{repo_name}/issues/{issue_number}'
+    headers={'Accept':'application/vnd.github+json','User-Agent':'ACPOS-Governance-Validator'}
+    token=os.environ.get('GITHUB_TOKEN','').strip()
+    if token:
+        headers['Authorization']='Bearer '+token
+    try:
+        with urllib.request.urlopen(urllib.request.Request(api,headers=headers),timeout=20) as response:
+            issue=json.loads(response.read().decode('utf-8'))
+    except Exception as exc:
+        errors.append('CANDIDATE_AUTHORIZATION_RECORD_UNVERIFIABLE:'+type(exc).__name__)
+        return
+    if str((issue.get('user') or {}).get('login') or '')!=owner:
+        errors.append('CANDIDATE_AUTHORIZATION_ACTOR_MISMATCH')
+    body=str(issue.get('body') or '')
+    required_body=[
+      'Predecessor immutable governance branch: '+str(identity.get('predecessor_branch') or ''),
+      'Predecessor exact HEAD: '+str(identity.get('predecessor_head_sha') or ''),
+      'Successor candidate branch: '+branch,
+    ]+list(map(str,identity.get('authorized_scope') or []))
+    for token_text in required_body:
+        if token_text not in body:
+            errors.append('CANDIDATE_AUTHORIZATION_SCOPE_OR_IDENTITY_MISSING:'+token_text)
+    predecessor=str(identity.get('predecessor_head_sha') or '')
+    try:
+        subprocess.check_call(['git','merge-base','--is-ancestor',predecessor,'HEAD'],cwd=ROOT,stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL)
+        commits=subprocess.check_output(['git','rev-list','--reverse',predecessor+'..HEAD'],cwd=ROOT,text=True).splitlines()
+    except Exception:
+        errors.append('CANDIDATE_PREDECESSOR_ANCESTRY_UNVERIFIABLE')
+        return
+    if not commits:
+        errors.append('CANDIDATE_MUTATION_COMMIT_SET_EMPTY')
+        return
+    first_commit=commits[0].strip()
+    first_time_text=subprocess.check_output(['git','show','-s','--format=%cI',first_commit],cwd=ROOT,text=True).strip()
+    try:
+        first_time=datetime.fromisoformat(first_time_text.replace('Z','+00:00')).astimezone(timezone.utc)
+        created=datetime.fromisoformat(str(issue.get('created_at') or '').replace('Z','+00:00')).astimezone(timezone.utc)
+        updated=datetime.fromisoformat(str(issue.get('updated_at') or '').replace('Z','+00:00')).astimezone(timezone.utc)
+    except Exception:
+        errors.append('CANDIDATE_AUTHORIZATION_TIMESTAMP_INVALID')
+        return
+    if not (created < first_time and updated < first_time):
+        errors.append('CANDIDATE_AUTHORIZATION_NOT_IMMUTABLY_PREEXISTING')
+    ref_name=os.environ.get('GITHUB_REF_NAME','').strip()
+    if ref_name and ref_name!=branch:
+        errors.append('CANDIDATE_REGISTRY_BRANCH_RUNTIME_REF_MISMATCH:'+ref_name+'!='+branch)
+
 manifest=yaml.safe_load((ROOT/'governance/specifications/current/SPECIFICATION_MANIFEST.yaml').read_text(encoding='utf-8')) or {}
 if manifest.get('current_governance_identity_source')!='governance/specifications/REGISTRY.yaml':
     errors.append('SPECIFICATION_MANIFEST_IDENTITY_SOURCE_DRIFT')
@@ -57,6 +121,21 @@ if manifest.get('artifact_uid_may_select_current_governance') is not False:
     errors.append('SPECIFICATION_MANIFEST_ARTIFACT_UID_CURRENT_AUTHORITY_LEAK')
 if manifest.get('display_version_may_select_current_governance') is not False:
     errors.append('SPECIFICATION_MANIFEST_DISPLAY_VERSION_CURRENT_AUTHORITY_LEAK')
+
+verify_candidate_authorization(reg,resolved)
+
+try:
+    import stage_execution_engine as _stage_engine
+    _stage_identity=_stage_engine.identity()[2]
+    if _stage_identity!=resolved.get('governance_uid'):
+        errors.append('STAGE_ENGINE_CURRENT_GOVERNANCE_IDENTITY_DRIFT')
+    import audit_closure_engine as _audit_engine
+    _audit_receipt=_audit_engine.run_closure(_audit_engine.load_context())
+    for _key in ('governance_uid','governance_revision','display_version'):
+        if _audit_receipt.get(_key)!=resolved.get(_key):
+            errors.append('AUDIT_ENGINE_CURRENT_GOVERNANCE_IDENTITY_DRIFT:'+_key)
+except Exception as exc:
+    errors.append('CURRENT_IDENTITY_CONSUMER_RUNTIME_VALIDATION_FAILED:'+type(exc).__name__+':'+str(exc))
 
 required_roots=('governance/specifications/current',)
 for rel in required_roots:

@@ -417,12 +417,23 @@ auditor_implementation_independence:
   formal_independent_evaluator_required_fields:
   - evaluator_uid
   - implementation_owner_uid
-  - implementation_hash
+  - decision_engine_uid
+  - implementation_ref
+  - implementation_sha256
+  - execution_receipt_ref
+  - audit_snapshot_hash
   - result_fingerprint
   distinct_evaluator_uid_required: true
   distinct_implementation_owner_uid_required: true
+  distinct_decision_engine_uid_required: true
+  distinct_implementation_ref_required: true
   distinct_implementation_hash_required: true
+  identical_audit_snapshot_hash_required: true
   identical_result_fingerprint_required: true
+  physical_implementation_required: true
+  implementation_hash_recompute_required: true
+  execution_receipt_required: true
+  execution_receipt_must_bind_evaluator_implementation_snapshot_and_result: true
   same_implementation_with_three_runtime_identity_labels_formal_credit: 0
   formal_independence_without_three_distinct_implementations: NOT_VERIFIED
   formal_promotion_requires_verified_independent_implementation_evidence: true
