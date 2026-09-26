@@ -6,9 +6,9 @@ stage_name: PAGE_FUNCTIONAL_CONTRACT
 governed_unit_uid: workspace:WB-01
 governed_unit_type: PAGE
 predecessor_work_unit_uid: WU-STAGE01-WB01-DASHBOARD-001
-current_governance_uid: GOV-REV-20260924-INDEPENDENT-UNIT-LIFECYCLE-CURRENT-IDENTITY-SYNC
-current_governance_head: 25c4736940efb786aa567c83283bfbaa0773dc1b
-current_display_version: v2.2.24
+current_governance_uid: GOV-REV-20260925-NORMATIVE-EXECUTION-MATRIX
+current_governance_head: ff256d4f07e35eee897cd2b81ab99ea68d7ba30e
+current_display_version: v2.2.25
 primary_task_layer: PRODUCT_STAGE_EXECUTION
 owner_capability: PAGE_FUNCTIONAL_CONTRACT
 entry_gate: CURRENT_GOVERNED_UNIT_STAGE1_CLOSED
@@ -65,3 +65,4 @@ scanner_bindings:
   INTERACTION_CONTINUITY: {scanner_owner: governance/ci/stage_execution_engine.py, result_owner: STAGE_EXECUTION/STAGE-02/WU-STAGE02-WB01-DASHBOARD-001/EVIDENCE/STAGE02_NORMALIZED_EVIDENCE.json}
   AI_CONTEXT_CONTINUITY: {scanner_owner: governance/ci/stage_execution_engine.py, result_owner: STAGE_EXECUTION/STAGE-02/WU-STAGE02-WB01-DASHBOARD-001/EVIDENCE/STAGE02_NORMALIZED_EVIDENCE.json}
   VERSION_FINALIZATION: {scanner_owner: governance/ci/stage_execution_engine.py, result_owner: STAGE_EXECUTION/STAGE-02/WU-STAGE02-WB01-DASHBOARD-001/EVIDENCE/STAGE02_NORMALIZED_EVIDENCE.json}
+normative_execution_matrix_ref: STAGE_EXECUTION/STAGE-02/WU-STAGE02-WB01-DASHBOARD-001/NORMATIVE_EXECUTION_MATRIX.yaml
