@@ -3,10 +3,6 @@ name: Product Stage03 Materialize
 # terminal receipts for both governed units, binds fresh closure state, and clears
 # the CURRENT_HEAD_SEMANTIC_REVERIFY boundary so Stage-03 stage-exit is authorized.
 on:
-  push:
-    branches: [0921acpos]
-    paths:
-      - '.github/workflows/product-stage03-materialize.yml'
   workflow_dispatch:
 permissions:
   contents: write
@@ -19,7 +15,7 @@ jobs:
     steps:
       - name: Checkout product workline
         uses: actions/checkout@v4
-        with: {ref: 0921acpos, fetch-depth: 0}
+        with: {ref: ${{ github.sha }}, fetch-depth: 0}
       - name: Checkout current governance authority
         uses: actions/checkout@v4
         with:
