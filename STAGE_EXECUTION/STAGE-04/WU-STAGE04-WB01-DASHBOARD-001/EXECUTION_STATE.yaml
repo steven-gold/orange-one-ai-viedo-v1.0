@@ -13,11 +13,11 @@ resume_after_reentry: TERMINAL_CLOSURE
 predecessor_closure_binding:
   stage03_work_unit_terminal_receipt_ref: STAGE_EXECUTION/STAGE-03/WU-STAGE03-WB01-DASHBOARD-001/WORK_UNIT_TERMINAL_RECEIPT.yaml
   shared_shell_terminal_receipt_ref: STAGE_EXECUTION/STAGE-03/WU-STAGE03-GLOBAL-HOME-SHELL-NAVIGATION-001/WORK_UNIT_TERMINAL_RECEIPT.yaml
-status: CLOSED
-current_terminal_validation:
+status: BLOCKED
+prior_terminal_validation:
   run_id: '36235782338'
   head_sha: 1451256c6b74ca283467f2a607ca2215aac89996
   conclusion: success
   governance_uid: GOV-REV-20260925-NORMATIVE-EXECUTION-MATRIX
   governance_head: 1451256c6b74ca283467f2a607ca2215aac89996
-terminal_receipt_ref: WORK_UNIT_TERMINAL_RECEIPT.yaml
+prior_terminal_receipt_ref: WORK_UNIT_TERMINAL_RECEIPT.yaml
