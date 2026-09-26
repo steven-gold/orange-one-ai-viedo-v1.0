@@ -1,40 +1,18 @@
-artifact_uid: TERMINAL-WU-STAGE01-GLOBAL-HOME-SHELL-NAVIGATION-001-20260924
-artifact_type: WORK_UNIT_TERMINAL_RECEIPT
-work_unit_uid: WU-STAGE01-GLOBAL-HOME-SHELL-NAVIGATION-001
-stage_uid: STAGE-01
-governance_uid: GOV-REV-20260923-WORD-PROJECTION-NEXTSTEP-CONSUMER-SYNC-HARDENING
-governance_head: 40469342b2632d8453986d5800c9ccb9233208d5
-product_head_audited: 02cf9788a4faf34a08eeae7fb5f3470fb0845626
-canonical_owner_uid: SOURCE_BOUND_STAGE01_OWNER:SRC-DOCX-334A4679600F092B733B
-source_uid: SRC-DOCX-334A4679600F092B733B
-pair_hash: 2e552f2c87ed524a3cd2960ddf3be6b951c3069eb74adec973202741a4e752c0
-operation_receipt_count: 9
-operation_receipts:
-- EVIDENCE/OPERATION_RECEIPTS/SOURCE_STRUCTURE_ENUMERATION.yaml
-- EVIDENCE/OPERATION_RECEIPTS/SOURCE_SEGMENT_MAPPING.yaml
-- EVIDENCE/OPERATION_RECEIPTS/SOURCE_CONTEXT_COMPILATION.yaml
-- EVIDENCE/OPERATION_RECEIPTS/SOURCE_SUPERSESSION_CONFLICT_RESOLUTION.yaml
-- EVIDENCE/OPERATION_RECEIPTS/SOURCE_DEPENDENCY_EXTRACTION.yaml
-- EVIDENCE/OPERATION_RECEIPTS/RESPONSIBILITY_CLASSIFICATION.yaml
-- EVIDENCE/OPERATION_RECEIPTS/PAGE_BASE_BLUEPRINT_COMPILE.yaml
-- EVIDENCE/OPERATION_RECEIPTS/VISUAL_BASE_BLUEPRINT_COMPILE.yaml
-- EVIDENCE/OPERATION_RECEIPTS/BLUEPRINT_BINDING_COMPILE.yaml
-required_source_node_count: 416
-projection_source_node_disposition_coverage_percent: 100
-missing_required_source_node_count: 0
-unresolved_stage01_owned_gap_count: 0
-classification_artifact_count: 15
-blueprint_count: 2
-binding_count: 1
-stage1_guard_result: PASS
-stage1_guard_evidence_ref: EVIDENCE/STAGE1_SOURCE_PIPELINE_GUARD_RESULT.yaml
-closure_file_manifest_reconciliation: PASS
-closure_unreferenced_residual_count: 0
-closure_manifest_missing_physical_count: 0
-result: PASS
-terminal_disposition: CLOSED_PASS
-stage_exit_authorized: false
-stage_exit_reason: PARTIAL_USER_DIRECTED_SCOPE_GLOBAL_HOME_CLOSURE_DOES_NOT_GRANT_STAGE_EXIT
-legal_next_transition: WORK_UNIT_RESOLUTION_GATE
-authorized_next_work_unit_uid: WU-STAGE01-WB01-DASHBOARD-001
-content_hash: 3c927f9348814617de5077287c2947da2731a989ace7a245d9096f918618cfb6
+{
+  "provider": "GitHub Actions",
+  "repository_or_project": "steven-gold/orange-one-ai-viedo-v1.0",
+  "head_sha": "62e892413ec36062f440a882e3e0ff1c218e763a",
+  "run_id": "36232570555",
+  "job_denominator": [
+    "materialize",
+    "stage01-admission-check",
+    "stage01-normalized-evidence",
+    "stage01-terminal-receipt"
+  ],
+  "conclusion": "success",
+  "governance_uid": "GOV-REV-20260925-NORMATIVE-EXECUTION-MATRIX",
+  "stage_uid": "STAGE-01",
+  "work_unit_uid": "WU-STAGE01-GLOBAL-HOME-SHELL-NAVIGATION-001",
+  "evidence_ref": "STAGE_EXECUTION/STAGE-01/WU-STAGE01-GLOBAL-HOME-SHELL-NAVIGATION-001/EVIDENCE/STAGE01_NORMALIZED_EVIDENCE.json",
+  "receipt_role": "EXTERNAL_IMMUTABLE_TERMINAL_VALIDATION_RECEIPT"
+}

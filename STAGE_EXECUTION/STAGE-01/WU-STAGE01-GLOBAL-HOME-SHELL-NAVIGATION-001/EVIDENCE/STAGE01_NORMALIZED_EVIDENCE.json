@@ -1,0 +1,306 @@
+{
+  "artifact_type": "COMMON_STAGE_EXECUTION_EVIDENCE",
+  "attempt_uid": "ATTEMPT-STAGE-01-GLOBAL-HOME-SHELL-NAVIGATION-001-20260926-CURRENT-REVERIFY",
+  "stage_uid": "STAGE-01",
+  "governance_uid": "GOV-REV-20260925-NORMATIVE-EXECUTION-MATRIX",
+  "scope_manifest_ref": "STAGE_EXECUTION/STAGE-01/WU-STAGE01-GLOBAL-HOME-SHELL-NAVIGATION-001/CURRENT_EXECUTION_SCOPE_MANIFEST.yaml",
+  "source_head_sha": "62e892413ec36062f440a882e3e0ff1c218e763a",
+  "actual_stage_execution_started": true,
+  "actual_stage_execution_completed": true,
+  "fresh_execution": true,
+  "prior_results_used": false,
+  "current_specification_mutated": false,
+  "phase_trace": [
+    {
+      "phase_uid": "SESSION_BOOTSTRAP_RESUME_GATE",
+      "status": "PASS"
+    },
+    {
+      "phase_uid": "CURRENT_GOVERNANCE",
+      "status": "PASS"
+    },
+    {
+      "phase_uid": "CURRENT_SCOPE",
+      "status": "PASS"
+    },
+    {
+      "phase_uid": "WORK_UNIT",
+      "status": "PASS"
+    },
+    {
+      "phase_uid": "AUTHORITY",
+      "status": "PASS"
+    },
+    {
+      "phase_uid": "APPLICABILITY",
+      "status": "PASS"
+    },
+    {
+      "phase_uid": "DEPENDENCY",
+      "status": "PASS"
+    },
+    {
+      "phase_uid": "REQUIRED_FIELD_MANIFEST",
+      "status": "PASS"
+    },
+    {
+      "phase_uid": "STAGE_INPUT_CONTRACT",
+      "status": "PASS"
+    },
+    {
+      "phase_uid": "STAGE_OPERATIONS",
+      "status": "PASS"
+    },
+    {
+      "phase_uid": "OUTPUT_PRODUCER",
+      "status": "PASS"
+    },
+    {
+      "phase_uid": "CURRENT_PROBLEM_REGISTER",
+      "status": "PASS"
+    },
+    {
+      "phase_uid": "DENOMINATOR_SNAPSHOT",
+      "status": "PASS"
+    },
+    {
+      "phase_uid": "CHANGE_IMPACT",
+      "status": "PASS"
+    },
+    {
+      "phase_uid": "RESOLUTION_LEDGER",
+      "status": "PASS"
+    },
+    {
+      "phase_uid": "FRESH_EXECUTION",
+      "status": "PASS"
+    },
+    {
+      "phase_uid": "STAGE_SPECIFIC_SCANNER",
+      "status": "PASS"
+    },
+    {
+      "phase_uid": "GAP_CLASSIFICATION",
+      "status": "PASS"
+    },
+    {
+      "phase_uid": "OWNER_REMEDIATION",
+      "status": "NOT_APPLICABLE_WITH_PROOF",
+      "proof": "ZERO_DISCOVERED_GAPS"
+    },
+    {
+      "phase_uid": "FRESH_REEXECUTION",
+      "status": "NOT_APPLICABLE_WITH_PROOF",
+      "proof": "ZERO_DISCOVERED_GAPS"
+    },
+    {
+      "phase_uid": "HIDDEN_DEFECT_SWEEP",
+      "status": "PASS"
+    },
+    {
+      "phase_uid": "REQUIRED_EVIDENCE",
+      "status": "PASS"
+    },
+    {
+      "phase_uid": "EXACT_HEAD_GATES",
+      "status": "PASS"
+    },
+    {
+      "phase_uid": "TERMINAL_CLOSURE",
+      "status": "PASS"
+    },
+    {
+      "phase_uid": "PERSIST_RESUME",
+      "status": "PASS"
+    },
+    {
+      "phase_uid": "NEXT_STAGE",
+      "status": "PASS"
+    }
+  ],
+  "operation_results": [
+    {
+      "operation_uid": "SOURCE_STRUCTURE_ENUMERATION",
+      "status": "PASS"
+    },
+    {
+      "operation_uid": "SOURCE_SEGMENT_MAPPING",
+      "status": "PASS"
+    },
+    {
+      "operation_uid": "SOURCE_CONTEXT_COMPILATION",
+      "status": "PASS"
+    },
+    {
+      "operation_uid": "SOURCE_SUPERSESSION_CONFLICT_RESOLUTION",
+      "status": "PASS"
+    },
+    {
+      "operation_uid": "SOURCE_DEPENDENCY_EXTRACTION",
+      "status": "PASS"
+    },
+    {
+      "operation_uid": "RESPONSIBILITY_CLASSIFICATION",
+      "status": "PASS"
+    },
+    {
+      "operation_uid": "PAGE_BASE_BLUEPRINT_COMPILE",
+      "status": "PASS"
+    },
+    {
+      "operation_uid": "VISUAL_BASE_BLUEPRINT_COMPILE",
+      "status": "PASS"
+    },
+    {
+      "operation_uid": "BLUEPRINT_BINDING_COMPILE",
+      "status": "PASS"
+    }
+  ],
+  "output_results": [
+    {
+      "output_uid": "SOURCE_STRUCTURE_MANIFEST",
+      "producer_operation_uid": "SOURCE_STRUCTURE_ENUMERATION",
+      "status": "PASS"
+    },
+    {
+      "output_uid": "SOURCE_SEGMENT_MAP",
+      "producer_operation_uid": "SOURCE_SEGMENT_MAPPING",
+      "status": "PASS"
+    },
+    {
+      "output_uid": "SOURCE_CONTEXT_MANIFEST",
+      "producer_operation_uid": "SOURCE_CONTEXT_COMPILATION",
+      "status": "PASS"
+    },
+    {
+      "output_uid": "CONTENT_SUPERSESSION_CONFLICT_LEDGER",
+      "producer_operation_uid": "SOURCE_SUPERSESSION_CONFLICT_RESOLUTION",
+      "status": "PASS"
+    },
+    {
+      "output_uid": "SOURCE_DEPENDENCY_MAP",
+      "producer_operation_uid": "SOURCE_DEPENDENCY_EXTRACTION",
+      "status": "PASS"
+    },
+    {
+      "output_uid": "CLASSIFIED_ARTIFACT_SET",
+      "producer_operation_uid": "RESPONSIBILITY_CLASSIFICATION",
+      "status": "PASS"
+    },
+    {
+      "output_uid": "PAGE_BASE_BLUEPRINT",
+      "producer_operation_uid": "PAGE_BASE_BLUEPRINT_COMPILE",
+      "status": "PASS"
+    },
+    {
+      "output_uid": "VISUAL_BASE_BLUEPRINT",
+      "producer_operation_uid": "VISUAL_BASE_BLUEPRINT_COMPILE",
+      "status": "PASS"
+    },
+    {
+      "output_uid": "BLUEPRINT_BINDING_MANIFEST",
+      "producer_operation_uid": "BLUEPRINT_BINDING_COMPILE",
+      "status": "PASS"
+    }
+  ],
+  "scanner_results": [
+    {
+      "scanner_dimension": "SOURCE_COMPLETENESS",
+      "status": "PASS"
+    },
+    {
+      "scanner_dimension": "SOURCE_IDENTITY",
+      "status": "PASS"
+    },
+    {
+      "scanner_dimension": "CLASSIFICATION_COMPLETENESS",
+      "status": "PASS"
+    },
+    {
+      "scanner_dimension": "BLUEPRINT_BINDING",
+      "status": "PASS"
+    },
+    {
+      "scanner_dimension": "UNRESOLVED_AUTHORITY_PRESERVATION",
+      "status": "PASS"
+    },
+    {
+      "scanner_dimension": "SOURCE_PROJECTION_LOCK",
+      "status": "PASS"
+    }
+  ],
+  "validator_results": [
+    {
+      "validator_uid": "VAL-GOV-026",
+      "status": "PASS"
+    },
+    {
+      "validator_uid": "VAL-GOV-025",
+      "status": "PASS"
+    }
+  ],
+  "denominator": {
+    "required_total": 416,
+    "open_gap_total": 0,
+    "closure_blocker_total": 0,
+    "remaining_scope_total": 0
+  },
+  "gaps": [],
+  "closure_blockers": [],
+  "remediation": {
+    "discovered_gap_total": 0,
+    "remediated_gap_total": 0,
+    "unresolved_gap_total": 0,
+    "reexecution_required": false,
+    "reexecution_performed": false
+  },
+  "hidden_defect_sweep": {
+    "performed": true,
+    "result": "PASS",
+    "discovered_defect_total": 0
+  },
+  "required_evidence": [
+    {
+      "evidence_type": "SOURCE_ENUMERATION_EVIDENCE",
+      "status": "PASS",
+      "ref": "STAGE_EXECUTION/STAGE-01/WU-STAGE01-GLOBAL-HOME-SHELL-NAVIGATION-001/EVIDENCE/SOURCE_ENUMERATION_EVIDENCE.yaml",
+      "external_receipt": false
+    },
+    {
+      "evidence_type": "CONFLICT_DECISION_EVIDENCE",
+      "status": "PASS",
+      "ref": "STAGE_EXECUTION/STAGE-01/WU-STAGE01-GLOBAL-HOME-SHELL-NAVIGATION-001/EVIDENCE/CONFLICT_DECISION_EVIDENCE.yaml",
+      "external_receipt": false
+    }
+  ],
+  "cross_stage_handoff": {
+    "ledger_ref": "STAGE_EXECUTION/STAGE-01/WU-STAGE01-GLOBAL-HOME-SHELL-NAVIGATION-001/EVIDENCE/CROSS_STAGE_HANDOFF_READINESS_LEDGER.yaml",
+    "external_receipt": false,
+    "successor_stage_uid": "STAGE-02",
+    "reference_resolution_complete": true,
+    "physical_materialization_complete": true,
+    "required_field_completeness_complete": true,
+    "denominator_reconciled": true,
+    "consumer_readiness_complete": true,
+    "unresolved_required_dependency_total": 0,
+    "status": "PASS"
+  },
+  "exact_head_gate_receipts": [
+    {
+      "gate_uid": "PRODUCT_STAGE01_VALIDATION",
+      "head_sha": "62e892413ec36062f440a882e3e0ff1c218e763a",
+      "run_id": "36232570555",
+      "conclusion": "success"
+    }
+  ],
+  "resume_persistence": {
+    "performed": true,
+    "resume_point": "TERMINAL_CLOSURE"
+  },
+  "next_stage_transition": {
+    "next_stage_uid": "STAGE-02",
+    "status": "READY"
+  },
+  "stage_exit_allowed": true,
+  "result": "PASS"
+}

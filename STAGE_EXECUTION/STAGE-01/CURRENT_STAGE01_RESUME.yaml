@@ -4,9 +4,9 @@ stage_uid: STAGE-01
 primary_task_layer: PRODUCT_STAGE_EXECUTION
 execution_branch: 0921acpos
 execution_head_before_activation: f0fd13943647adacc963d96f75159c7acc99bef7
-current_governance_uid: GOV-REV-20260924-INDEPENDENT-GOVERNED-UNIT-STAGE-LIFECYCLE
-current_governance_head: 49b713728c6c7f38d691a816e848d6daafc8d117
-current_display_version: v2.2.23
+current_governance_uid: GOV-REV-20260925-NORMATIVE-EXECUTION-MATRIX
+current_governance_head: 62e892413ec36062f440a882e3e0ff1c218e763a
+current_display_version: v2.2.25
 scope_manifest_ref: STAGE_EXECUTION/STAGE-01/CURRENT_EXECUTION_SCOPE_MANIFEST.yaml
 active_work_unit_uid: null
 resume_point: STAGE02_UNIT_RESOLUTION_GATE
@@ -15,8 +15,8 @@ last_effectful_commit: 5ee9cf2d98d8346ca8fc5a68fc7ff37fb18714db
 stage_exit_authorized: true
 stage_transition_semantics: PER_GOVERNED_PAGE_OR_SYSTEM_LOGIC_UNIT
 completed_stage01_units:
-- WU-STAGE01-GLOBAL-HOME-SHELL-NAVIGATION-001
-- WU-STAGE01-WB01-DASHBOARD-001
+- GLOBAL-HOME-SHELL-NAVIGATION
+- workspace:WB-01
 stage02_eligible_units:
 - WU-STAGE01-GLOBAL-HOME-SHELL-NAVIGATION-001
 - WU-STAGE01-WB01-DASHBOARD-001
@@ -24,3 +24,5 @@ remaining_requested_work_units: []
 historical_stage02_scope_audit_disposition: REMOVED_FROM_CURRENT_SURFACE
 status: STAGE01_COMPLETE_STAGE02_ELIGIBLE
 content_hash: 82406d9553184016746096a7a9ff72e8fc160e9adb978fc637c9fbb39301d3ac
+active_stage_uid: STAGE-02
+next_stage_uid: STAGE-02
