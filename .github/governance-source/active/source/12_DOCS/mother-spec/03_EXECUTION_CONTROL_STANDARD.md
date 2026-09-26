@@ -1280,23 +1280,39 @@ After mutation, the executor MUST verify the exact intended structural delta, re
 <!-- SECTION_UID: WEB-GOV-03-S071 -->
 ## 71. 跨階段實體交接 / Consumer Readiness / 回退控制 / Cross-Stage Materialized Handoff, Consumer Readiness and Re-entry Control
 
-Every governed Stage exit MUST be evaluated per Current governed Page or System-Logic Unit, never as an implicit project-wide same-Stage barrier. Before the next Stage may be admitted for that Unit, the following order MUST execute:
+Every governed Stage exit MUST be evaluated per Current governed Page or System-Logic Unit, never as an implicit project-wide same-Stage barrier. `CROSS_STAGE_HANDOFF_READINESS_LEDGER` remains the single canonical cross-Stage handoff artifact; no parallel readiness ledger, alternate successor schema, or Stage-specific substitute may grant successor admission.
 
-1. Enumerate the complete applicable successor-required input universe from the Current lifecycle/profile/Authority.
-2. Reconcile each required input to exactly one legal predecessor output, persisted foundation artifact, Current Authority/shared owner, or registered external evidence source.
-3. Prove the referenced owner/evidence is physically available in the Current execution context or is a valid external receipt.
-4. Parse and validate artifact type, schema/version, canonical identity, digest when registered, and every REQUIRED field.
-5. Reconcile each required edge into the current denominator; zero-gap claims MUST include required handoff edges rather than omit them.
-6. Run the successor consumer admission/readiness check using the same exact inputs that will be consumed downstream.
-7. Persist CROSS_STAGE_HANDOFF_READINESS_LEDGER and affected reverse-dependency dispositions.
-8. Only then evaluate Stage exit and next-Stage transition.
+Before the next Stage may be admitted for that Unit, the following order MUST execute:
 
-The closed failure-class vocabulary includes REFERENCE_ONLY_UNMATERIALIZED, PHYSICAL_REQUIRED_INPUT_MISSING, SCHEMA_OR_VERSION_MISMATCH, REQUIRED_FIELD_INCOMPLETE, DENOMINATOR_OMISSION, CONSUMER_NOT_READY, and DOWNSTREAM_DISCOVERED_UPSTREAM_GAP. These are blocking states unless Current Authority explicitly proves non-applicability.
+1. Enumerate the complete applicable successor-required **artifact input universe** from the Current lifecycle/profile/Authority.
+2. Enumerate the complete applicable successor **effectful-operation execution-binding universe** from the registered successor operations plus Current Authority and applicability. This universe includes every target, owner, runtime/environment identity, external/provider binding, data/security binding, verification target, release/deployment target, or operations target that the successor needs to execute without invention.
+3. Reconcile every artifact input and every execution binding to exactly one legal predecessor output, persisted foundation artifact, Current Authority/shared owner, registered external evidence source, or Authority-proven `AUTHORIZED_NOT_APPLICABLE`.
+4. Prove every referenced owner/evidence is physically available in the Current execution context or is a valid external receipt.
+5. Parse and validate artifact type, schema/version, canonical identity, digest when registered, and every REQUIRED field.
+6. For every successor execution binding, prove the exact binding class, consuming operation UID, applicability, canonical owner/Authority reference, evidence reference, resolution state, and—when applicable—target identity needed by the effectful operation. A blank, guessed, recommended, stubbed, placeholder, locally invented, or inferred target is not ready.
+7. Reconcile every required artifact edge and every required execution-binding edge into the Current denominator. Zero-gap claims MUST include both sets rather than omit the execution bindings.
+8. Run the successor consumer admission/readiness check using the same exact artifacts and bindings that will be consumed downstream.
+9. Reconcile predecessor `NORMATIVE_EXECUTION_MATRIX`, `WORK_UNIT`, `CURRENT_EXECUTION_STATE`, normalized execution evidence, closure gate state, and terminal receipt. A terminal receipt or successful outer run MUST NOT override an empty/invalid Current matrix or a Current State conflict.
+10. Persist `CROSS_STAGE_HANDOFF_READINESS_LEDGER` and affected reverse-dependency dispositions.
+11. Only then evaluate Stage exit and next-Stage transition.
 
-If a downstream capability discovers an upstream-owned handoff defect, downstream mutation MUST stop. Execution MUST reopen the earliest owning capability, mark affected descendants REVERIFY_REQUIRED, preserve only reverse-dependency-proven unaffected evidence, and resume from the earliest impacted successor boundary. A downstream patch MUST NOT manufacture the missing upstream artifact or claim the predecessor was complete.
+The successor execution-binding denominator MUST be mechanically derived from the Current lifecycle operation set and Current Authority/applicability; it MUST NOT be a consumer-local hardcoded product stack. A requirement MAY resolve as `AUTHORIZED_NOT_APPLICABLE` only with exact Authority evidence. Technology, repository, runtime, database, authentication, authorization, provider, environment, test, build, deployment, monitoring, backup, rollback, or next-unit target values MUST NOT be created merely because the downstream Stage needs them.
 
-This control applies to every registered lifecycle Stage. Stage-local success, functional-gap-zero, visual-review-ready, implementation-complete, test-pass, build-pass, staging-pass, deployment-pass, or production-pass MUST NOT bypass materialized handoff and consumer readiness.
+For the standard lifecycle, the existing handoff gate MUST at minimum reconcile these capability classes when applicable:
+- implementation admission: repository/application target and owner, frontend/runtime, backend/runtime, data-access/database, authentication/authorization/security/audit, external integration, async runtime and storage;
+- verification admission: executable program/source target plus each applicable test/runtime target required by the registered verification operations;
+- build/release admission: build root/toolchain/command, artifact output identity and migration-compatibility target;
+- staging admission: staging applicability plus provider/project/environment/deployment/acceptance targets when applicable;
+- production cutover admission: production provider/project/environment/configuration/migration/deployment/smoke and rollback targets;
+- production acceptance admission: exact Current release/runtime endpoint plus every applicable browser/page/control/database/effectful/external/async/visual acceptance target;
+- closure/operations admission: monitoring, backup, rollback and operations-owner targets;
+- next-page/project successor resolution: exact registered eligibility result and, when `NEXT_PAGE_READY`, the exact next governed unit identity and legal Stage admission target.
 
+The closed failure-class vocabulary includes `REFERENCE_ONLY_UNMATERIALIZED`, `PHYSICAL_REQUIRED_INPUT_MISSING`, `SCHEMA_OR_VERSION_MISMATCH`, `REQUIRED_FIELD_INCOMPLETE`, `DENOMINATOR_OMISSION`, `SUCCESSOR_EXECUTION_BINDING_MISSING`, `SUCCESSOR_EXECUTION_TARGET_UNRESOLVED`, `SUCCESSOR_EXECUTION_BINDING_UNAUTHORIZED_NA`, `CONSUMER_NOT_READY`, `CURRENT_MATRIX_INVALID`, `CURRENT_STATE_CONFLICT`, and `DOWNSTREAM_DISCOVERED_UPSTREAM_GAP`. These are blocking states unless Current Authority explicitly proves non-applicability.
+
+If a downstream capability discovers an upstream-owned handoff defect, downstream mutation MUST stop. Execution MUST reopen the earliest owning capability, mark affected descendants `REVERIFY_REQUIRED`, preserve only reverse-dependency-proven unaffected evidence, and resume from the earliest impacted successor boundary. A downstream patch MUST NOT manufacture the missing upstream artifact, target, owner, environment, runtime identity, Authority binding, or claim the predecessor was complete.
+
+This control applies to every registered lifecycle Stage. Stage-local success, functional-gap-zero, visual-review-ready, implementation-complete, test-pass, build-pass, staging-pass, deployment-pass, production-pass, artifact presence, or terminal-run success MUST NOT bypass materialized handoff, execution-binding readiness, Current matrix validity, or Current State consistency.
 <!-- SECTION_UID: WEB-GOV-03-S072 -->
 ## 72. Source Projection Freeze, Mutation Invalidation and Re-entry Control / 來源投影鎖定、變更失效與重入控制
 
