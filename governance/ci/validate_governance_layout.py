@@ -21,7 +21,8 @@ else:
     reg=yaml.safe_load(REGISTRY.read_text(encoding='utf-8')) or {}
     roles=reg.get('branch_role_contract') or {}
     governance_branch=str(reg.get('branch') or '')
-    if roles.get(governance_branch) not in {'IMMUTABLE_GOVERNANCE_RULESET','GOVERNANCE_REVISION_CANDIDATE'}:
+    governance_role=str(roles.get(governance_branch) or '')
+    if governance_role not in {'IMMUTABLE_GOVERNANCE_RULESET','GOVERNANCE_REVISION_CANDIDATE'}:
         errors.append('CURRENT_REGISTRY_BRANCH_OR_ROLE_DRIFT')
     product_branch=str(reg.get('product_execution_branch') or '')
     if not product_branch or roles.get(product_branch)!='PRODUCT_EXECUTION_WORKLINE':
@@ -30,6 +31,32 @@ else:
         errors.append('CURRENT_GOVERNANCE_PRODUCT_BRANCH_COLLISION')
     if reg.get('rules_root')!='governance/specifications/current':
         errors.append('CURRENT_RULES_ROOT_DRIFT')
+    identity=reg.get('governance_identity') or {}
+    for key in ('governance_uid','governance_revision','display_version','identity_authority'):
+        if not identity.get(key):
+            errors.append('CURRENT_GOVERNANCE_IDENTITY_FIELD_MISSING:'+key)
+    if identity.get('identity_authority')!='governance/specifications/REGISTRY.yaml':
+        errors.append('CURRENT_GOVERNANCE_IDENTITY_AUTHORITY_DRIFT')
+    for key in ('governance_uid','governance_revision','display_version','identity_authority'):
+        if resolved.get(key)!=identity.get(key):
+            errors.append('REGISTRY_RESOLVER_IDENTITY_DRIFT:'+key)
+    if governance_role=='GOVERNANCE_REVISION_CANDIDATE':
+        required=('predecessor_branch','predecessor_head_sha','predecessor_governance_revision','authorization_record_url','authorized_scope')
+        for key in required:
+            if identity.get(key) in (None,'',[]):
+                errors.append('CANDIDATE_BOOTSTRAP_FIELD_MISSING:'+key)
+        if identity.get('predecessor_branch')==governance_branch:
+            errors.append('CANDIDATE_PREDECESSOR_BRANCH_COLLISION')
+        if not str(identity.get('authorization_record_url') or '').startswith('https://github.com/'):
+            errors.append('CANDIDATE_AUTHORIZATION_RECORD_NOT_PERSISTED_GITHUB_RECORD')
+
+manifest=yaml.safe_load((ROOT/'governance/specifications/current/SPECIFICATION_MANIFEST.yaml').read_text(encoding='utf-8')) or {}
+if manifest.get('current_governance_identity_source')!='governance/specifications/REGISTRY.yaml':
+    errors.append('SPECIFICATION_MANIFEST_IDENTITY_SOURCE_DRIFT')
+if manifest.get('artifact_uid_may_select_current_governance') is not False:
+    errors.append('SPECIFICATION_MANIFEST_ARTIFACT_UID_CURRENT_AUTHORITY_LEAK')
+if manifest.get('display_version_may_select_current_governance') is not False:
+    errors.append('SPECIFICATION_MANIFEST_DISPLAY_VERSION_CURRENT_AUTHORITY_LEAK')
 
 required_roots=('governance/specifications/current',)
 for rel in required_roots:
@@ -49,6 +76,7 @@ for rel in (
 
 current_consumers=(
     '.github/workflows/common-stage-execution-engine.yml',
+    'governance/ci/governance_resolver.py',
     'governance/ci/stage_execution_engine.py',
     'governance/ci/validate_selected_execution_profile_integrity.py',
     'governance/ci/validate_active_consumer_reference_integrity.py',
@@ -69,8 +97,9 @@ if errors:
         print('BLOCK:',e,file=sys.stderr)
     raise SystemExit(1)
 
-print('PASS: REGISTRY.yaml is the single Current governance entrypoint')
+print('PASS: REGISTRY.yaml is the single Current governance identity and rule entrypoint')
+print('PASS: resolver identity equals Registry identity for governance_uid/revision/display_version')
+print('PASS: successor candidate bootstrap binds predecessor and pre-existing authorization record')
 print('PASS: governance/specifications/current is the only Current rule root')
 print('PASS: governance branch contains no product run-state/test-state root')
-print('PASS: no GOVERNANCE_CURRENT shim or version-named Current path is required')
 print('PASS: runtime specification digest='+resolved['runtime_bundle_sha256'])

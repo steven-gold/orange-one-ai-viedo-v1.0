@@ -1,9 +1,27 @@
-# governance-revision-v2.2.32-governance-projection-alignment-20260926
+# governance-candidate-v2.2.33-governance-identity-negative-trace-auditor-independence-hardening-20260927
 schema_version: 1
 registry_uid: GOV-RULESET-REGISTRY-IMMUTABLE
-registry_role: IMMUTABLE_GOVERNANCE_DEFINITION_ENTRYPOINT
-status: LOCKED
-branch: rebuild-v2.1.1
+registry_role: GOVERNANCE_REVISION_CANDIDATE_ENTRYPOINT
+status: CANDIDATE_VALIDATION
+branch: governance-v2.2.33-candidate
+governance_identity:
+  governance_uid: GOV-REV-20260927-GOVERNANCE-IDENTITY-NEGATIVE-TRACE-AUDITOR-INDEPENDENCE-HARDENING
+  governance_revision: v2.2.33-governance-identity-negative-trace-auditor-independence-hardening-20260927
+  display_version: v2.2.33
+  identity_authority: governance/specifications/REGISTRY.yaml
+  status: CANDIDATE
+  predecessor_branch: rebuild-v2.1.1
+  predecessor_head_sha: c336a76c22a5db65080f749f26875edfa5169457
+  predecessor_root_manifest_ref: .github/governance-source/active/source/10_REGISTRY/GOVERNANCE_ROOT_MANIFEST.yaml
+  predecessor_governance_revision: v2.2.32-governance-projection-alignment-20260926
+  authorization_record_url: https://github.com/steven-gold/orange-one-ai-viedo-v1.0/issues/51
+  authorization_record_kind: GITHUB_GOVERNANCE_CHANGE_RECORD
+  authorization_preexists_normative_mutation: true
+  authorized_scope:
+  - CURRENT_GOVERNANCE_IDENTITY_SINGLE_SOURCE
+  - REQUIRED_NEGATIVE_TEST_CLASS_TRACEABILITY
+  - AUDITOR_IMPLEMENTATION_INDEPENDENCE
+  - GOVERNANCE_SUCCESSOR_CANDIDATE_BOOTSTRAP
 product_execution_branch: 0921acpos
 normative_mother_order:
 - .github/governance-source/active/source/12_DOCS/mother-spec/01_BLUEPRINT_DESIGN_GOVERNANCE.md
@@ -15,6 +33,7 @@ stage_invariant_registry: .github/governance-source/active/source/10_REGISTRY/ST
 rules_root: governance/specifications/current
 branch_role_contract:
   rebuild-v2.1.1: IMMUTABLE_GOVERNANCE_RULESET
+  governance-v2.2.33-candidate: GOVERNANCE_REVISION_CANDIDATE
   0921acpos: PRODUCT_EXECUTION_WORKLINE
 forbidden_in_ruleset_branch:
 - PRODUCT_SOURCE_DOCUMENT
@@ -32,6 +51,13 @@ mutation_policy:
   new_file_after_freeze: FORBIDDEN
   product_execution_on_rebuild: FORBIDDEN
   product_execution_target: 0921acpos
+  successor_candidate_branch: governance-v2.2.33-candidate
+  successor_candidate_exact_scope_only: true
+  successor_candidate_authorization_record: https://github.com/steven-gold/orange-one-ai-viedo-v1.0/issues/51
+  successor_candidate_may_mutate_reusable_policy: true
+  successor_candidate_product_execution: FORBIDDEN
+  successor_candidate_product_completion_credit: 0
+  predecessor_history_must_remain_immutable: true
 execution_domain_entrypoints:
   selection_required_before_rule_read: true
   recursive_governance_tree_scan: FORBIDDEN

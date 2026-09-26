@@ -517,14 +517,14 @@ def validate_determinism_acceptance(ctx: dict) -> dict:
         return {'status':'FAIL','reason':'DETERMINISM_ACCEPTANCE_DENOMINATOR_DRIFT'}
     baseline=run_closure(copy.deepcopy(ctx))
     canonical=json.dumps(baseline,sort_keys=True,separators=(',',':'))
-    evaluator_results=[]
+    identity_variants=[]
     for idx in range(evaluator_count):
         candidate=copy.deepcopy(ctx)
         candidate['runtime_auditor_identity']=f'SYNTHETIC-EVALUATOR-{idx+1}'
         result=run_closure(candidate)
-        evaluator_results.append(json.dumps(result,sort_keys=True,separators=(',',':')))
-    if any(value!=canonical for value in evaluator_results):
-        return {'status':'FAIL','reason':'AUDIT_DETERMINISM_CONTRACT_FAILURE','dimension':'AUDITOR_INDEPENDENCE'}
+        identity_variants.append(json.dumps(result,sort_keys=True,separators=(',',':')))
+    if any(value!=canonical for value in identity_variants):
+        return {'status':'FAIL','reason':'AUDIT_DETERMINISM_CONTRACT_FAILURE','dimension':'SYNTHETIC_EVALUATOR_IDENTITY_INVARIANCE'}
     repeat_results=[]
     for _ in range(repeat_count):
         candidate=copy.deepcopy(ctx)
@@ -533,7 +533,32 @@ def validate_determinism_acceptance(ctx: dict) -> dict:
         repeat_results.append(json.dumps(result,sort_keys=True,separators=(',',':')))
     if any(value!=canonical for value in repeat_results):
         return {'status':'FAIL','reason':'AUDIT_DETERMINISM_CONTRACT_FAILURE','dimension':'REPEATABILITY'}
-    return {'status':'PASS','independent_evaluator_count':evaluator_count,'repeat_count':repeat_count}
+    return {
+        'status':'PASS',
+        'synthetic_identity_invariance_count':evaluator_count,
+        'repeat_count':repeat_count,
+        'formal_independent_implementation_credit':0,
+        'formal_independent_implementation_status':'NOT_VERIFIED_BY_SYNTHETIC_IDENTITY_VARIATION',
+    }
+
+def validate_independent_evaluator_implementations(records: list[dict]) -> dict:
+    if not isinstance(records,list) or len(records)!=3:
+        return {'status':'FAIL','reason':'AUDITOR_INDEPENDENT_IMPLEMENTATION_DENOMINATOR_DRIFT'}
+    required=('evaluator_uid','implementation_owner_uid','implementation_hash','result_fingerprint')
+    for idx,record in enumerate(records):
+        if not isinstance(record,dict):
+            return {'status':'FAIL','reason':'AUDITOR_INDEPENDENT_IMPLEMENTATION_RECORD_INVALID','index':idx}
+        missing=[key for key in required if not str(record.get(key) or '').strip()]
+        if missing:
+            return {'status':'FAIL','reason':'AUDITOR_INDEPENDENT_IMPLEMENTATION_FIELD_MISSING','index':idx,'fields':missing}
+    for key in ('evaluator_uid','implementation_owner_uid','implementation_hash'):
+        values=[str(record[key]) for record in records]
+        if len(set(values))!=3:
+            return {'status':'FAIL','reason':'AUDITOR_IMPLEMENTATION_INDEPENDENCE_NOT_PROVEN','field':key}
+    fingerprints=[str(record['result_fingerprint']) for record in records]
+    if len(set(fingerprints))!=1:
+        return {'status':'FAIL','reason':'AUDIT_DETERMINISM_CONTRACT_FAILURE','dimension':'INDEPENDENT_IMPLEMENTATION_RESULT_MISMATCH'}
+    return {'status':'PASS','independent_implementation_count':3,'result_fingerprint':fingerprints[0]}
 
 def run_self_test() -> int:
     base = load_context()
@@ -631,8 +656,24 @@ def run_self_test() -> int:
     if det_accept.get('status')!='PASS':
         print('FAIL: deterministic auditor independence or repeatability failed: '+json.dumps(det_accept,sort_keys=True),file=sys.stderr)
         return 1
-    cases.append('auditor_independence_3of3')
+    cases.append('synthetic_evaluator_identity_invariance_3of3')
     cases.append('same_evaluator_repeatability_3of3')
+    _same_impl=[
+      {'evaluator_uid':f'EVAL-{i}','implementation_owner_uid':'OWNER-SAME','implementation_hash':'HASH-SAME','result_fingerprint':'RESULT-1'}
+      for i in range(1,4)
+    ]
+    if validate_independent_evaluator_implementations(_same_impl).get('status')=='PASS':
+        print('FAIL: same implementation incorrectly received formal auditor-independence credit',file=sys.stderr)
+        return 1
+    cases.append('formal_independence_same_implementation_blocked')
+    _distinct_impl=[
+      {'evaluator_uid':f'EVAL-{i}','implementation_owner_uid':f'OWNER-{i}','implementation_hash':f'HASH-{i}','result_fingerprint':'RESULT-1'}
+      for i in range(1,4)
+    ]
+    if validate_independent_evaluator_implementations(_distinct_impl).get('status')!='PASS':
+        print('FAIL: distinct evaluator implementation contract fixture did not pass',file=sys.stderr)
+        return 1
+    cases.append('formal_independent_evaluator_contract_fixture_3of3')
 
 
     no_det = copy.deepcopy(base)

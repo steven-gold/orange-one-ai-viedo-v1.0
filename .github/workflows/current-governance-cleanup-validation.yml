@@ -1,10 +1,11 @@
-# consolidated-current-governance-v2.2.32-20260926-projection-alignment
+# governance-candidate-v2.2.33-identity-negative-trace-auditor-independence-hardening
 name: Current Governance Cleanup Validation
 
 on:
   push:
     branches:
       - rebuild-v2.1.1
+      - governance-v2.2.33-candidate
     paths:
       - .github/workflows/current-governance-cleanup-validation.yml
       - '.github/governance-source/active/source/12_DOCS/mother-spec/**'

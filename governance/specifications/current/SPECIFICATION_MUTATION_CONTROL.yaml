@@ -56,6 +56,32 @@ finding_intake:
   finding_is_normative_change: false
   finding_may_auto_promote: false
   candidate_may_be_active_rule_before_authorized_promotion: false
+successor_candidate_bootstrap_control:
+  released_predecessor_mutation: FORBIDDEN
+  candidate_branch_role: GOVERNANCE_REVISION_CANDIDATE
+  candidate_branch_must_be_distinct_from_predecessor: true
+  candidate_branch_must_descend_from_exact_predecessor_head: true
+  preexisting_authorization_record_required: true
+  allowed_authorization_record_kinds:
+  - EXTERNAL_EXPLICIT_USER_DIRECTIVE
+  - GITHUB_GOVERNANCE_CHANGE_RECORD
+  authorization_record_required_fields:
+  - authority_source
+  - authorized_scope
+  - predecessor_branch
+  - predecessor_head_sha
+  - candidate_branch
+  - created_before_normative_mutation
+  candidate_registry_must_bind_authorization_record: true
+  candidate_registry_must_bind_exact_predecessor_head: true
+  candidate_registry_must_expose_candidate_governance_identity: true
+  candidate_scope_must_be_subset_of_authorized_scope: true
+  authorization_record_may_document_preexisting_external_directive: true
+  authorization_record_may_create_new_authority_in_same_normative_commit: false
+  released_predecessor_history_preservation_required: true
+  candidate_product_execution: FORBIDDEN
+  candidate_product_completion_credit: 0
+  missing_or_unverifiable_bootstrap_evidence: BLOCK
 consolidated_promotion_control:
   explicit_user_directive_required: true
   preexisting_authorization_required: true

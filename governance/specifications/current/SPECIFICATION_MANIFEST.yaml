@@ -4,7 +4,11 @@ artifact_type: STABLE_CURRENT_SPECIFICATION_MANIFEST
 normative_status: ACTIVE_CURRENT_GOVERNANCE
 display_version: v2.2.25
 version_label_is_identity: false
-version_role: CURRENT_GOVERNANCE_DISPLAY_VERSION
+version_role: SPECIFICATION_BUNDLE_DISPLAY_VERSION
+artifact_uid_role: SPECIFICATION_BUNDLE_REVISION_PROVENANCE_ONLY
+current_governance_identity_source: governance/specifications/REGISTRY.yaml
+artifact_uid_may_select_current_governance: false
+display_version_may_select_current_governance: false
 policy_scope: PRODUCT_SYSTEM_AND_EXECUTION_PROFILE_NEUTRAL
 components:
 - uid: GOV-COMP-BOUNDED-FUNCTIONAL-COMPLETION

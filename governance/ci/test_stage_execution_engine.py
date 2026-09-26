@@ -16,6 +16,7 @@ entry,reg,gov,profile,adapters=eng.data()
 eng.validate_definition_data(profile,adapters)
 assert eng.validate_current_ledger_synchronization_contract() is True
 cases=0
+executed_negative_labels=set()
 def expect_stage_engine_block(label, fn, expected_prefix=None):
     global cases
     try:
@@ -24,6 +25,7 @@ def expect_stage_engine_block(label, fn, expected_prefix=None):
         if expected_prefix and expected_prefix not in str(exc):
             raise SystemExit(f'FAIL_WRONG_BLOCK:{label}:{exc}')
         cases += 1
+        executed_negative_labels.add(label)
         return
     raise SystemExit('FAIL_EXPECTED_STAGE_ENGINE_BLOCK:'+label)
 
@@ -32,7 +34,9 @@ def block(label,mutator):
     p=deepcopy(profile); a=deepcopy(adapters); mutator(p,a)
     try: eng.validate_definition_data(p,a)
     except eng.StageEngineError:
-        cases+=1; return
+        cases+=1
+        executed_negative_labels.add(label)
+        return
     raise SystemExit('FAIL_EXPECTED_BLOCK:'+label)
 block('missing_adapter',lambda p,a:a['stages'].pop(next(iter(a['stages']))))
 block('missing_phase',lambda p,a:a['common_execution_skeleton']['phases'].pop())
@@ -159,7 +163,9 @@ def block_evidence(label,mutator):
     x=deepcopy(sample); mutator(x)
     try: eng.validate_evidence_data(stage_uid,x)
     except eng.StageEngineError:
-        cases+=1; return
+        cases+=1
+        executed_negative_labels.add(label)
+        return
     raise SystemExit('FAIL_EXPECTED_EVIDENCE_BLOCK:'+label)
 block_evidence('phase_order_drift',lambda x:x['phase_trace'].__setitem__(0,{'phase_uid':'CURRENT_GOVERNANCE','status':'PASS'}))
 block_evidence('operation_coverage_drift',lambda x:x['operation_results'].pop())
@@ -185,6 +191,27 @@ block_evidence('handoff_required_field_completeness_false',lambda x:x['cross_sta
 block_evidence('handoff_denominator_not_reconciled',lambda x:x['cross_stage_handoff'].__setitem__('denominator_reconciled',False))
 block_evidence('handoff_consumer_not_ready',lambda x:x['cross_stage_handoff'].__setitem__('consumer_readiness_complete',False))
 block_evidence('handoff_unresolved_required_dependency',lambda x:x['cross_stage_handoff'].__setitem__('unresolved_required_dependency_total',1))
+
+block_evidence('required_class_change_governance_uid',lambda x:x.__setitem__('governance_uid','GOVERNANCE-UID-DRIFT'))
+block_evidence('required_class_remove_required_output',lambda x:x['output_results'].pop())
+block_evidence('required_class_insert_stale_evidence',lambda x:x.__setitem__('source_head_sha','3'*40))
+block_evidence('required_class_insert_duplicate_evidence',lambda x:x['required_evidence'].append(deepcopy(x['required_evidence'][0])))
+def _historical_pass_mutation(x):
+    x['fresh_execution']=False
+    x['prior_results_used']=True
+block_evidence('required_class_insert_historical_pass',_historical_pass_mutation)
+
+_scope_path=_synthetic_dir/'CURRENT_EXECUTION_SCOPE_MANIFEST.yaml'
+_scope_original=yaml.safe_load(_scope_path.read_text(encoding='utf-8')) or {}
+_scope_conflict=deepcopy(_scope_original)
+_scope_conflict['work_unit_uid']='SYNTHETIC-SCOPE-RESUME-CONFLICT'
+_scope_path.write_text(yaml.safe_dump(_scope_conflict,sort_keys=False),encoding='utf-8')
+expect_stage_engine_block(
+  'required_class_create_scope_resume_conflict',
+  lambda:eng.validate_evidence_data(stage_uid,deepcopy(sample)),
+  'CURRENT_SCOPE_WORK_STATE_IDENTITY_DRIFT'
+)
+_scope_path.write_text(yaml.safe_dump(_scope_original,sort_keys=False),encoding='utf-8')
 
 # Terminal receipt pressure: missing receipt, wrong exact HEAD, and failed conclusion must never close a PASS stage.
 _sample_evidence_path=_synthetic_dir/'SYNTHETIC_NORMALIZED_EVIDENCE.json'
@@ -278,7 +305,9 @@ def block_work(label,mutator):
     x=deepcopy(work); mutator(x)
     try: eng.validate_work_unit_bindings(wstage,x,eng.stage_map(profile),adapters)
     except eng.StageEngineError:
-        cases+=1; return
+        cases+=1
+        executed_negative_labels.add(label)
+        return
     raise SystemExit('FAIL_EXPECTED_WORK_UNIT_BLOCK:'+label)
 block_work('missing_operation_binding',lambda x:x['operation_bindings'].pop(next(iter(x['operation_bindings']))))
 block_work('missing_scanner_binding',lambda x:x['scanner_bindings'].pop(next(iter(x['scanner_bindings']))))
@@ -346,6 +375,15 @@ with tempfile.TemporaryDirectory() as td:
     (product_root/'NORMATIVE_EXECUTION_MATRIX.yaml').write_text(yaml.safe_dump(matrix,sort_keys=False),encoding='utf-8')
     matrix_work={'work_unit_uid':'SYNTHETIC-WU-MATRIX','normative_execution_matrix_ref':'NORMATIVE_EXECUTION_MATRIX.yaml'}
     eng.validate_normative_execution_matrix(matrix_stage,product_root,matrix_work,matrix_st,gov)
+    _matrix_path=product_root/'NORMATIVE_EXECUTION_MATRIX.yaml'
+    _matrix_original=_matrix_path.read_text(encoding='utf-8')
+    _matrix_path.unlink()
+    expect_stage_engine_block(
+        'required_class_remove_current_matrix',
+        lambda:eng.validate_normative_execution_matrix(matrix_stage,product_root,matrix_work,matrix_st,gov),
+        'NORMATIVE_EXECUTION_MATRIX_MISSING'
+    )
+    _matrix_path.write_text(_matrix_original,encoding='utf-8')
     broken=deepcopy(payload)
     del broken['fields']['f0']
     (product_root/'synthetic.yaml').write_text(yaml.safe_dump(broken,sort_keys=False),encoding='utf-8')
@@ -695,6 +733,20 @@ receipt.write_text(yaml.safe_dump(obj,sort_keys=False),encoding="utf-8")
         expect_stage_engine_block('effectful_receipt_outside_work_unit',lambda:eng.execute_active(_sid),'ACTIVE_STAGE_OPERATION_RECEIPT_OUTSIDE_WORK_UNIT')
 
         (_wd/'WORK_UNIT.yaml').write_text(yaml.safe_dump(_work,sort_keys=False),encoding='utf-8')
+        _no_receipt_code='''#!/usr/bin/env python3
+import argparse
+p=argparse.ArgumentParser()
+p.add_argument("--stage",required=True); p.add_argument("--operation",required=True)
+p.add_argument("--work-unit",required=True); p.add_argument("--product-root",required=True)
+p.parse_args()
+'''
+        (_exec_root/_executor_rel).write_text(_no_receipt_code,encoding='utf-8')
+        expect_stage_engine_block(
+            'required_class_remove_operation_receipt',
+            lambda:eng.execute_active(_sid),
+            'ACTIVE_OPERATION_RECEIPT_MISSING'
+        )
+        (_exec_root/_executor_rel).write_text(_executor_code,encoding='utf-8')
         assert eng.execute_active(_sid) is True
         _state_after=yaml.safe_load((_wd/'EXECUTION_STATE.yaml').read_text(encoding='utf-8')) or {}
         assert _state_after.get('completed_operations')==[_ops[0]]
@@ -732,6 +784,27 @@ for node in ast.walk(tree):
         for arg in node.args:
             if isinstance(arg,ast.Constant) and isinstance(arg.value,str) and arg.value.startswith('UNSUPPORTED_STAGE_UNTIL_MATCHING_CURRENT_EVIDENCE_EXISTS'):
                 raise AssertionError('COMMON_ENGINE_STAGE02_ONLY_REJECTION')
+_required_negative_classes=list(map(str,(eng._deterministic_stage_audit_contract().get('required_negative_test_classes') or [])))
+_required_negative_trace={
+  'REMOVE_TERMINAL_RECEIPT':'terminal_receipt_missing',
+  'CHANGE_GOVERNANCE_UID':'required_class_change_governance_uid',
+  'CHANGE_HEAD_SHA':'terminal_receipt_wrong_head',
+  'CLOSED_TO_ACTIVE_STATE_CONFLICT':'state_pass_but_in_progress',
+  'REMOVE_OPERATION_RECEIPT':'required_class_remove_operation_receipt',
+  'REMOVE_REQUIRED_OUTPUT':'required_class_remove_required_output',
+  'CREATE_SCOPE_RESUME_CONFLICT':'required_class_create_scope_resume_conflict',
+  'INSERT_STALE_EVIDENCE':'required_class_insert_stale_evidence',
+  'INSERT_DUPLICATE_EVIDENCE':'required_class_insert_duplicate_evidence',
+  'INSERT_HISTORICAL_PASS':'required_class_insert_historical_pass',
+  'REMOVE_CURRENT_MATRIX':'required_class_remove_current_matrix',
+  'CHANGE_DENOMINATOR':'terminal_closure_denominator_identity_drift',
+}
+if set(_required_negative_trace)!=set(_required_negative_classes):
+    raise SystemExit('FAIL_REQUIRED_NEGATIVE_CLASS_TRACEABILITY_DENOMINATOR:required='+repr(sorted(_required_negative_classes))+':mapped='+repr(sorted(_required_negative_trace)))
+_missing_required_negative=[cls for cls,label in _required_negative_trace.items() if label not in executed_negative_labels]
+if _missing_required_negative:
+    raise SystemExit('FAIL_REQUIRED_NEGATIVE_CLASS_NOT_EXECUTED:'+repr(_missing_required_negative))
+print(f'PASS: required negative test classes {len(_required_negative_classes)}/{len(_required_negative_classes)} exact canonical traceability')
 print(f'PASS: common Stage Execution Engine negative regression cases={cases}; matrix_destructive_required_field=PASS')
 print('PASS: Stage-02 current execution has no historical compatibility module or test-state scope resolver')
 
