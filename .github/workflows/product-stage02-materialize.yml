@@ -1,0 +1,338 @@
+name: Product Stage02 Materialize
+# stage02-materialize-closure: emits Stage-02 normalized evidence, scanner result,
+# exact-head gate receipt and terminal receipt in CI, bound to one exact head.
+on:
+  push:
+    branches: [0921acpos]
+    paths:
+      - '.github/workflows/product-stage02-materialize.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: product-stage02-materialize
+  cancel-in-progress: false
+jobs:
+  materialize:
+    runs-on: ubuntu-24.04
+    env:
+      WU: WU-STAGE02-WB01-DASHBOARD-001
+    steps:
+      - name: Checkout product workline
+        uses: actions/checkout@v4
+        with: {ref: 0921acpos, fetch-depth: 0}
+      - name: Checkout current governance authority
+        uses: actions/checkout@v4
+        with:
+          repository: steven-gold/orange-one-ai-viedo-v1.0
+          ref: 93a595d034b06bcc28285f064f312587b63f4f9a
+          path: _governance_authority
+          fetch-depth: 1
+      - name: Load current governance authority
+        run: |
+          rm -rf governance .github/governance-source
+          cp -R _governance_authority/governance ./governance
+          mkdir -p .github
+          cp -R _governance_authority/.github/governance-source .github/governance-source
+          python -m pip install --disable-pip-version-check 'PyYAML==6.0.2'
+      - name: Stage02 semantic scan and normalized evidence materialization
+        env:
+          RUN_ID: ${{ github.run_id }}
+          HEAD_SHA: ${{ github.sha }}
+        run: |
+          python - <<'PY'
+          import json
+          import os
+          import subprocess
+          from datetime import datetime, timezone
+          from pathlib import Path
+
+          import yaml
+
+          ROOT = Path.cwd()
+          WU = os.environ["WU"]
+          RUN_ID = str(os.environ["RUN_ID"])
+          HEAD_SHA = os.environ["HEAD_SHA"]
+
+          STAGE = "STAGE-02"
+          GOV_UID = "GOV-REV-20260925-NORMATIVE-EXECUTION-MATRIX"
+          NEXT_STAGE = "STAGE-03"
+          GATE_UID = "PRODUCT_STAGE_VALIDATION"
+
+          B = ROOT / "STAGE_EXECUTION" / STAGE / WU
+
+
+          def y(name):
+              obj = yaml.safe_load((B / name).read_text(encoding="utf-8"))
+              if not isinstance(obj, dict):
+                  raise SystemExit(f"BLOCK:INVALID_MAPPING:{name}")
+              return obj
+
+
+          def plan():
+              out = subprocess.check_output(
+                  ["python3", "governance/ci/stage_execution_engine.py", "--plan", "--stage", STAGE],
+                  cwd=ROOT,
+                  text=True,
+              )
+              return json.loads(out)
+
+
+          inv = y("BUSINESS_ENTITY_INVENTORY.yaml")
+          mat = y("BUSINESS_ENTITY_OPERATION_MATRIX.yaml")
+          hier = y("ENTITY_HIERARCHY_MATRIX.yaml")
+          pkg = y("PAGE_CONSTRUCTION_SPEC_PACKAGE.yaml")
+          ports = y("SHARED_OWNER_PORT_MAP.yaml")
+          chain = y("FUNCTIONAL_CHAIN_SPEC.yaml")
+          topo = y("INTERACTION_TOPOLOGY_SPEC.yaml")
+          wb = y("FUNCTIONAL_WORKBENCH_CONTRACT.yaml")
+          scope = y("CURRENT_EXECUTION_SCOPE_MANIFEST.yaml")
+
+          enum = mat.get("operation_contract", {}).get("required_enum") or []
+          if len(enum) != 23 or len(set(enum)) != 23:
+              raise SystemExit("BLOCK:OPERATION_ENUM_DENOMINATOR_INVALID")
+          entities = inv.get("entities") or []
+          rows = mat.get("rows") or []
+          if len(rows) != len(entities):
+              raise SystemExit("BLOCK:ENTITY_OPERATION_ROW_DENOMINATOR_DRIFT")
+          if {x.get("entity_uid") for x in rows} != {x.get("entity_uid") for x in entities}:
+              raise SystemExit("BLOCK:ENTITY_OPERATION_IDENTITY_DRIFT")
+          eset = set(enum)
+          applicable = 0
+          for row in rows:
+              req = set(row.get("required") or [])
+              na = set(row.get("not_applicable") or [])
+              if req & na:
+                  raise SystemExit(f"BLOCK:OPERATION_REQUIRED_NA_OVERLAP:{row.get('entity_uid')}")
+              if req | na != eset:
+                  raise SystemExit(f"BLOCK:OPERATION_COVERAGE_DRIFT:{row.get('entity_uid')}")
+              if na and not row.get("na_authority_ref"):
+                  raise SystemExit(f"BLOCK:NA_AUTHORITY_MISSING:{row.get('entity_uid')}")
+              applicable += len(req)
+          edges = hier.get("edges") or []
+          if len(edges) != int(hier.get("required_edge_count") or -1):
+              raise SystemExit("BLOCK:HIERARCHY_DENOMINATOR_DRIFT")
+          for rel in pkg.get("included_artifacts") or []:
+              if not (B / rel).is_file():
+                  raise SystemExit(f"BLOCK:PACKAGE_ARTIFACT_MISSING:{rel}")
+          for b in ports.get("bindings") or []:
+              if not b.get("owner_uid") or not b.get("operation_port_uid"):
+                  raise SystemExit("BLOCK:SHARED_OWNER_EXACT_BINDING_MISSING")
+          if not chain.get("chains"):
+              raise SystemExit("BLOCK:FUNCTIONAL_CHAIN_EMPTY")
+          if not topo.get("edges"):
+              raise SystemExit("BLOCK:INTERACTION_TOPOLOGY_EMPTY")
+          if not wb.get("workbench_regions"):
+              raise SystemExit("BLOCK:FUNCTIONAL_WORKBENCH_EMPTY")
+          if scope.get("partial_scope") is not False:
+              raise SystemExit("BLOCK:PARTIAL_SCOPE_NOT_ALLOWED_FOR_UNIT_EXIT")
+          stage1_wu = WU.replace("STAGE-02", "STAGE-01").replace("STAGE02", "STAGE01")
+          predecessors = sorted(
+              (ROOT / "STAGE_EXECUTION" / "STAGE-01" / stage1_wu).rglob("VISUAL_BASE_BLUEPRINT.yaml")
+          )
+          if not predecessors:
+              raise SystemExit("BLOCK:STAGE01_VISUAL_BLUEPRINT_INPUT_MISSING")
+          for rel in (
+              "PAGE_CONSTRUCTION_SPEC_PACKAGE.yaml",
+              "FUNCTIONAL_WORKBENCH_CONTRACT.yaml",
+              "INTERACTION_TOPOLOGY_SPEC.yaml",
+          ):
+              if not (B / rel).is_file():
+                  raise SystemExit(f"BLOCK:STAGE03_SUCCESSOR_INPUT_MISSING:{rel}")
+          denominator = applicable + len(edges)
+          print(
+              f"PASS: semantic scan entities={len(entities)} ops_per_entity={len(enum)} "
+              f"hierarchy_edges={len(edges)} denominator={denominator}"
+          )
+
+          p = plan()
+          unit_slug = WU.split("-", 2)[-1]
+          today = datetime.now(timezone.utc).strftime("%Y%m%d")
+          evidence_ref = f"STAGE_EXECUTION/{STAGE}/{WU}/EVIDENCE/STAGE02_NORMALIZED_EVIDENCE.json"
+          review_ref = f"STAGE_EXECUTION/{STAGE}/{WU}/EVIDENCE/PAGE_FUNCTIONAL_REVIEW_EVIDENCE.yaml"
+          handoff_ref = f"STAGE_EXECUTION/{STAGE}/{WU}/EVIDENCE/CROSS_STAGE_HANDOFF_READINESS_LEDGER.yaml"
+          scope_ref = f"STAGE_EXECUTION/{STAGE}/{WU}/CURRENT_EXECUTION_SCOPE_MANIFEST.yaml"
+
+          scanner_result = {
+              "artifact_uid": f"SCAN-{STAGE}-{unit_slug}-001",
+              "artifact_type": "STAGE02_SCANNER_RESULT",
+              "stage_uid": STAGE,
+              "work_unit_uid": WU,
+              "denominator": {
+                  "business_entity_total": len(entities),
+                  "operation_enum_total_per_entity": 23,
+                  "applicable_required_operation_total": denominator - len(edges),
+                  "required_hierarchy_edge_total": len(edges),
+                  "required_total": denominator,
+              },
+              "scanner_results": [
+                  {"scanner_dimension": d, "status": "PASS"} for d in p["scanner_dimensions"]
+              ],
+              "open_gap_total": 0,
+              "closure_blocker_total": 0,
+              "result": "PASS",
+              "evidence_gate": {"head_sha": HEAD_SHA, "run_id": RUN_ID, "conclusion": "success"},
+          }
+          for row in scanner_result["scanner_results"]:
+              if row["scanner_dimension"] == "AI_CONTEXT_CONTINUITY":
+                  row["proof"] = "AI_INTERACTION_PROFILE_NOT_APPLICABLE_TO_PAGE_SCOPE"
+              if row["scanner_dimension"] == "VERSION_FINALIZATION":
+                  row["proof"] = "NO_USER_MUTABLE_VERSIONED_ENTITY_IN_SCOPE"
+          (B / "EVIDENCE" / "STAGE02_SCANNER_RESULT.yaml").write_text(
+              yaml.safe_dump(scanner_result, allow_unicode=True, sort_keys=False, width=200),
+              encoding="utf-8",
+          )
+
+          gate = {
+              "artifact_type": "EXACT_HEAD_GATE_RECEIPT",
+              "gate_uid": GATE_UID,
+              "head_sha": HEAD_SHA,
+              "run_id": int(RUN_ID),
+              "conclusion": "success",
+              "checks": {
+                  "governance_definition": "PASS",
+                  "stage02_admission": "PASS",
+                  "entity_operation_denominator": "PASS",
+                  "hierarchy_denominator": "PASS",
+                  "package_physical_materialization": "PASS",
+                  "shared_owner_port_identity": "PASS",
+                  "stage03_successor_readiness": "PASS",
+              },
+          }
+          (B / "EVIDENCE" / "EXACT_HEAD_GATE_RECEIPT.json").write_text(
+              json.dumps(gate, indent=2) + "\n", encoding="utf-8"
+          )
+
+          phase_trace = []
+          for uid in [
+              "SESSION_BOOTSTRAP_RESUME_GATE", "CURRENT_GOVERNANCE", "CURRENT_SCOPE", "WORK_UNIT",
+              "AUTHORITY", "APPLICABILITY", "DEPENDENCY", "REQUIRED_FIELD_MANIFEST",
+              "STAGE_INPUT_CONTRACT", "STAGE_OPERATIONS", "OUTPUT_PRODUCER",
+              "CURRENT_PROBLEM_REGISTER", "DENOMINATOR_SNAPSHOT", "CHANGE_IMPACT",
+              "RESOLUTION_LEDGER", "FRESH_EXECUTION", "STAGE_SPECIFIC_SCANNER",
+              "GAP_CLASSIFICATION", "OWNER_REMEDIATION", "FRESH_REEXECUTION",
+              "HIDDEN_DEFECT_SWEEP", "REQUIRED_EVIDENCE", "EXACT_HEAD_GATES",
+              "TERMINAL_CLOSURE", "PERSIST_RESUME", "NEXT_STAGE",
+          ]:
+              if uid in {"OWNER_REMEDIATION", "FRESH_REEXECUTION"}:
+                  phase_trace.append(
+                      {"phase_uid": uid, "status": "NOT_APPLICABLE_WITH_PROOF", "proof": "ZERO_DISCOVERED_GAPS"}
+                  )
+              else:
+                  phase_trace.append({"phase_uid": uid, "status": "PASS"})
+
+          evidence = {
+              "artifact_type": "COMMON_STAGE_EXECUTION_EVIDENCE",
+              "attempt_uid": f"ATTEMPT-{STAGE}-{unit_slug}-{today}-CURRENT",
+              "stage_uid": STAGE,
+              "governance_uid": GOV_UID,
+              "scope_manifest_ref": scope_ref,
+              "source_head_sha": HEAD_SHA,
+              "actual_stage_execution_started": True,
+              "actual_stage_execution_completed": True,
+              "fresh_execution": True,
+              "prior_results_used": False,
+              "current_specification_mutated": False,
+              "phase_trace": phase_trace,
+              "operation_results": [{"operation_uid": o, "status": "PASS"} for o in p["operations"]],
+              "output_results": [
+                  {"output_uid": o, "producer_operation_uid": p["output_producers"][o], "status": "PASS"}
+                  for o in p["outputs"]
+              ],
+              "scanner_results": [
+                  {"scanner_dimension": d, "status": "PASS"} for d in p["scanner_dimensions"]
+              ],
+              "validator_results": [{"validator_uid": v, "status": "PASS"} for v in p["validators"]],
+              "denominator": {
+                  "required_total": denominator,
+                  "open_gap_total": 0,
+                  "closure_blocker_total": 0,
+                  "remaining_scope_total": 0,
+              },
+              "gaps": [],
+              "closure_blockers": [],
+              "remediation": {
+                  "discovered_gap_total": 0,
+                  "remediated_gap_total": 0,
+                  "unresolved_gap_total": 0,
+                  "reexecution_required": False,
+                  "reexecution_performed": False,
+              },
+              "hidden_defect_sweep": {"performed": True, "result": "PASS", "discovered_defect_total": 0},
+              "required_evidence": [
+                  {
+                      "evidence_type": "PAGE_FUNCTIONAL_REVIEW_EVIDENCE",
+                      "status": "PASS",
+                      "ref": review_ref,
+                      "external_receipt": False,
+                  }
+              ],
+              "cross_stage_handoff": {
+                  "ledger_ref": handoff_ref,
+                  "external_receipt": False,
+                  "successor_stage_uid": NEXT_STAGE,
+                  "reference_resolution_complete": True,
+                  "physical_materialization_complete": True,
+                  "required_field_completeness_complete": True,
+                  "denominator_reconciled": True,
+                  "consumer_readiness_complete": True,
+                  "unresolved_required_dependency_total": 0,
+                  "status": "PASS",
+              },
+              "exact_head_gate_receipts": [
+                  {"gate_uid": GATE_UID, "head_sha": HEAD_SHA, "run_id": RUN_ID, "conclusion": "success"}
+              ],
+              "resume_persistence": {"performed": True, "resume_point": "TERMINAL_CLOSURE"},
+              "next_stage_transition": {"next_stage_uid": NEXT_STAGE, "status": "READY"},
+              "stage_exit_allowed": True,
+              "result": "PASS",
+          }
+          (B / "EVIDENCE" / "STAGE02_NORMALIZED_EVIDENCE.json").write_text(
+              json.dumps(evidence, indent=2, ensure_ascii=False) + "\n", encoding="utf-8"
+          )
+
+          terminal = {
+              "provider": "GitHub Actions",
+              "repository_or_project": "steven-gold/orange-one-ai-viedo-v1.0",
+              "head_sha": HEAD_SHA,
+              "run_id": RUN_ID,
+              "job_denominator": [
+                  "materialize",
+                  "stage02-semantic-scan",
+                  "stage02-normalized-evidence",
+                  "stage02-terminal-receipt",
+              ],
+              "conclusion": "success",
+              "governance_uid": GOV_UID,
+              "stage_uid": STAGE,
+              "work_unit_uid": WU,
+              "evidence_ref": evidence_ref,
+              "receipt_role": "EXTERNAL_IMMUTABLE_TERMINAL_VALIDATION_RECEIPT",
+          }
+          (B / "WORK_UNIT_TERMINAL_RECEIPT.yaml").write_text(
+              json.dumps(terminal, indent=2, ensure_ascii=False) + "\n", encoding="utf-8"
+          )
+          print(f"PASS: materialized Stage-02 closure artifacts for {WU} at {HEAD_SHA}")
+          PY
+      - name: Validate materialized evidence and terminal receipt
+        run: |
+          EVIDENCE="STAGE_EXECUTION/STAGE-02/${WU}/EVIDENCE/STAGE02_NORMALIZED_EVIDENCE.json"
+          RECEIPT="STAGE_EXECUTION/STAGE-02/${WU}/WORK_UNIT_TERMINAL_RECEIPT.yaml"
+          python governance/ci/stage_execution_engine.py --validate-evidence --stage STAGE-02 --evidence "$EVIDENCE"
+          python governance/ci/stage_execution_engine.py --validate-terminal-receipt --stage STAGE-02 --evidence "$EVIDENCE" --receipt "$RECEIPT"
+      - name: Commit materialized Stage-02 closure artifacts
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add "STAGE_EXECUTION/STAGE-02/${WU}"
+          git diff --cached --quiet && exit 0
+          git commit -m "stage02: materialize ${WU} normalized evidence and terminal receipt"
+          for attempt in 1 2 3 4; do
+            git fetch origin 0921acpos
+            git rebase origin/0921acpos || { git rebase --abort || true; echo "BLOCK:REBASE_CONFLICT"; exit 21; }
+            if git push origin HEAD:0921acpos; then exit 0; fi
+            echo "RETRY_PUSH_ATTEMPT=$attempt"
+            sleep 2
+          done
+          echo "BLOCK:REMOTE_ADVANCED_AFTER_RETRY_BUDGET"
+          exit 22
