@@ -1411,11 +1411,20 @@ invariants:
       current_scope_resume_conflict: CURRENT_STATE_CONFLICT
       work_unit_ready_zero_operations: READY_FOR_EXECUTION
       matrix_missing_before_effectful_execution: BLOCKED
-      source_document_pass_stage_execution_incomplete: STAGE_NOT_PASS
+      source_document_pass_does_not_imply_stage_pass: true
       all_mandatory_dimensions_pass: CLOSED_PASS
     source_document_vs_stage_compliance_separation:
       source_content_pass_may_imply_stage_execution_pass: false
       source_integrity_dimensions: [source_sha256, package_part_hashes, relationship_denominator, xml_node_denominator, source_token_coverage, reverse_trace, silent_drop, invented_content, duplicate_content, contradiction, required_design_domain_coverage]
+    canonical_terminology_contract:
+      stage_capability_must_equal_lifecycle_registry_name: true
+      authorized_not_applicable_token: AUTHORIZED_NOT_APPLICABLE
+      forbidden_aliases:
+      - STAGE_NOT_PASS
+      - AUTHORIZED_NA
+      - VERIFICATION
+      - BUILD_RELEASE
+      noncanonical_stage_status_or_capability_name: BLOCK
     stage_contracts:
       STAGE-01:
         capability: SOURCE_INTAKE_AND_BASE_BLUEPRINT
@@ -1466,16 +1475,16 @@ invariants:
         async_runtime_required_when_applicable: true
         implementation_diff_exact_trace_required: true
       STAGE-06:
-        capability: VERIFICATION
+        capability: VERIFICATION_QA
         lifecycle_registry_is_denominator_source: true
         test_denominator_derived_from_current_implementation_and_acceptance_blueprint: true
         representative_sampling_may_close_stage: false
         each_applicable_test_dimension_requires_individual_result: true
-        allowed_test_results: [PASS, FAIL, BLOCKED, AUTHORIZED_NA]
+        allowed_test_results: [PASS, FAIL, BLOCKED, AUTHORIZED_NOT_APPLICABLE]
         audit_matrix_bidirectional_reconciliation_required: true
         required_item_untested_finding: UNVERIFIED_REQUIRED_DENOMINATOR
       STAGE-07:
-        capability: BUILD_RELEASE
+        capability: BUILD_RELEASE_CANDIDATE
         lifecycle_registry_is_denominator_source: true
         release_candidate_exact_source_build_artifact_migration_security_evidence_binding_required: true
         verified_build_may_differ_from_deployed_candidate: false
