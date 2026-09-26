@@ -25,7 +25,7 @@ required_outputs:
 - ACCEPTANCE_AUDIT_BLUEPRINT
 - DESIGN_FREEZE_PACKAGE
 - FOUNDATION_BARRIER_RECORD
-status: BLOCKED
+status: IN_PROGRESS
 prior_suspension:
   blocking_owner_capability: VISUAL_DESIGN
   blocking_stage_uid: STAGE-03
@@ -37,17 +37,25 @@ prior_suspension:
   resolution_head_sha: b7dc362faf195e5645871dff583fc92ef8cfeab2
 operation_bindings:
   BASIC_DESIGN_PACKAGE_COMPILE:
-    executor_owner: governance/ci/stage_execution_engine.py
+    executor_owner: .github/scripts/stage04_op_01_basic_design_package_compile.py
     result_owner: STAGE_EXECUTION/STAGE-04/WU-STAGE04-GLOBAL-HOME-SHELL-NAVIGATION-001/BASIC_DESIGN_PACKAGE.yaml
+    executor_protocol: PYTHON_STAGE_OPERATION_V1
+    operation_receipt_ref: STAGE_EXECUTION/STAGE-04/WU-STAGE04-GLOBAL-HOME-SHELL-NAVIGATION-001/EVIDENCE/OPERATION_RECEIPTS/BASIC_DESIGN_PACKAGE_COMPILE.yaml
   DESIGN_FREEZE_VALIDATE:
-    executor_owner: governance/ci/stage_execution_engine.py
+    executor_owner: .github/scripts/stage04_op_02_design_freeze_validate.py
     result_owner: STAGE_EXECUTION/STAGE-04/WU-STAGE04-GLOBAL-HOME-SHELL-NAVIGATION-001/FOUNDATION_BARRIER_RECORD.yaml
+    executor_protocol: PYTHON_STAGE_OPERATION_V1
+    operation_receipt_ref: STAGE_EXECUTION/STAGE-04/WU-STAGE04-GLOBAL-HOME-SHELL-NAVIGATION-001/EVIDENCE/OPERATION_RECEIPTS/DESIGN_FREEZE_VALIDATE.yaml
   ACCEPTANCE_AUDIT_BLUEPRINT_COMPILE:
-    executor_owner: governance/ci/stage_execution_engine.py
+    executor_owner: .github/scripts/stage04_op_03_acceptance_audit_blueprint_compile.py
     result_owner: STAGE_EXECUTION/STAGE-04/WU-STAGE04-GLOBAL-HOME-SHELL-NAVIGATION-001/ACCEPTANCE_AUDIT_BLUEPRINT.yaml
+    executor_protocol: PYTHON_STAGE_OPERATION_V1
+    operation_receipt_ref: STAGE_EXECUTION/STAGE-04/WU-STAGE04-GLOBAL-HOME-SHELL-NAVIGATION-001/EVIDENCE/OPERATION_RECEIPTS/ACCEPTANCE_AUDIT_BLUEPRINT_COMPILE.yaml
   DESIGN_FREEZE_PACKAGE_BIND:
-    executor_owner: governance/ci/stage_execution_engine.py
+    executor_owner: .github/scripts/stage04_op_04_design_freeze_package_bind.py
     result_owner: STAGE_EXECUTION/STAGE-04/WU-STAGE04-GLOBAL-HOME-SHELL-NAVIGATION-001/DESIGN_FREEZE_PACKAGE.yaml
+    executor_protocol: PYTHON_STAGE_OPERATION_V1
+    operation_receipt_ref: STAGE_EXECUTION/STAGE-04/WU-STAGE04-GLOBAL-HOME-SHELL-NAVIGATION-001/EVIDENCE/OPERATION_RECEIPTS/DESIGN_FREEZE_PACKAGE_BIND.yaml
 scanner_bindings:
   FREEZE_COMPLETENESS:
     scanner_owner: governance/ci/stage_execution_engine.py
@@ -65,8 +73,9 @@ scanner_bindings:
     scanner_owner: governance/ci/stage_execution_engine.py
     result_owner: STAGE_EXECUTION/STAGE-04/WU-STAGE04-GLOBAL-HOME-SHELL-NAVIGATION-001/EVIDENCE/STAGE04_NORMALIZED_EVIDENCE.json
 normative_execution_matrix_ref: STAGE_EXECUTION/STAGE-04/WU-STAGE04-GLOBAL-HOME-SHELL-NAVIGATION-001/NORMATIVE_EXECUTION_MATRIX.yaml
-current_status: BLOCKED
+current_status: IN_PROGRESS
 current_governance_uid: GOV-REV-20260925-NORMATIVE-EXECUTION-MATRIX
 current_governance_head: c336a76c22a5db65080f749f26875edfa5169457
 current_display_version: v2.2.32
 resume_point: TERMINAL_CLOSURE
+pre_execution_gate_status: PASS
