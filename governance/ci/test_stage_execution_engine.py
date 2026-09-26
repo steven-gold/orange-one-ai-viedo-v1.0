@@ -14,6 +14,7 @@ sys.path.insert(0,str(ROOT/'governance/ci'))
 import stage_execution_engine as eng
 entry,reg,gov,profile,adapters=eng.data()
 eng.validate_definition_data(profile,adapters)
+assert eng.validate_current_ledger_synchronization_contract() is True
 cases=0
 def expect_stage_engine_block(label, fn, expected_prefix=None):
     global cases

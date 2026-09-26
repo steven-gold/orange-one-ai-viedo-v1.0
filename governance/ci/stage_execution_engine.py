@@ -201,6 +201,7 @@ def validate_definition_data(profile,adapters):
 def validate_definition():
     entry,reg,gov,profile,adapters=data()
     stages=validate_definition_data(profile,adapters)
+    validate_current_ledger_synchronization_contract()
     return entry,reg,gov,profile,adapters,stages
 
 def resolve_stage_range(start_stage_uid,end_stage_uid):
@@ -238,6 +239,19 @@ def _deterministic_stage_audit_contract():
     if inv.get('invariant_uid')!='GOV-INV-DETERMINISTIC-STAGE-AUDIT-001':
         fail('DETERMINISTIC_STAGE_AUDIT_CONTRACT_MISSING')
     return inv
+
+def validate_current_ledger_synchronization_contract():
+    contract=_deterministic_stage_audit_contract().get('current_ledger_synchronization') or {}
+    expected={
+      'EXECUTION_STATE','RUN_MANIFEST','ARTIFACT_PLAN','GOVERNANCE_CURRENT','BRANCH_BASELINE',
+      'GOVERNANCE_STAGE_LOCK','STAGE_EVIDENCE','DEPENDENCY_INDEX','REVERSE_DEPENDENCY_INDEX'
+    }
+    actual=set(map(str,contract.get('ledgers') or []))
+    if actual!=expected:
+        fail('CURRENT_LEDGER_SYNCHRONIZATION_LEDGER_DENOMINATOR_DRIFT:expected='+repr(sorted(expected))+':actual='+repr(sorted(actual)))
+    if str(contract.get('disagreement_finding') or '')!='CURRENT_LEDGER_SYNCHRONIZATION_DRIFT':
+        fail('CURRENT_LEDGER_SYNCHRONIZATION_FINDING_DRIFT')
+    return True
 
 def validate_release_identity_continuity(records):
     contract=_deterministic_stage_audit_contract().get('release_identity_continuity') or {}
