@@ -58,6 +58,12 @@ def _external_yaml(path,label):
     if not isinstance(obj,dict): fail(label+'_MAPPING_REQUIRED')
     return obj
 
+def _product_artifact_root():
+    raw=os.environ.get(PRODUCT_ROOT_ENV,'').strip()
+    root=Path(raw).resolve() if raw else ROOT
+    if not root.is_dir(): fail('PRODUCT_EXECUTION_ROOT_MISSING')
+    return root
+
 def product_execution_context():
     root_raw=os.environ.get(PRODUCT_ROOT_ENV,'').strip()
     work_rel=os.environ.get(ACTIVE_WORK_UNIT_ENV,'').strip()
@@ -424,7 +430,8 @@ def _validate_current_stage_state_bundle(stage_uid,e,stage,gov):
     rp=Path(scope_ref)
     if not scope_ref or rp.is_absolute() or '..' in rp.parts:
         fail('EVIDENCE_SCOPE_MANIFEST_REF_INVALID')
-    scope_path=ROOT/rp
+    product_root=_product_artifact_root()
+    scope_path=product_root/rp
     scope=_external_yaml(scope_path,'CURRENT_EXECUTION_SCOPE')
     if scope.get('stage_uid')!=stage_uid:
         fail('CURRENT_SCOPE_STAGE_IDENTITY_DRIFT')
@@ -435,7 +442,7 @@ def _validate_current_stage_state_bundle(stage_uid,e,stage,gov):
         fail('CURRENT_WORK_OR_STATE_STAGE_IDENTITY_DRIFT')
     if scope.get('work_unit_uid')!=work.get('work_unit_uid') or state.get('work_unit_uid')!=work.get('work_unit_uid'):
         fail('CURRENT_SCOPE_WORK_STATE_IDENTITY_DRIFT')
-    validate_normative_execution_matrix(stage_uid,ROOT,work,stage,gov)
+    validate_normative_execution_matrix(stage_uid,product_root,work,stage,gov)
     if e.get('result')=='PASS':
         expected=list(map(str,stage.get('operations') or []))
         completed=state.get('completed_operations')
@@ -456,6 +463,7 @@ def _validate_current_stage_state_bundle(stage_uid,e,stage,gov):
 
 def _validate_cross_stage_handoff_ledger(stage_uid,e,stage,stages):
     inv=y(INVARIANTS)
+    product_root=_product_artifact_root()
     policy=((inv.get('invariants') or {}).get('CROSS_STAGE_MATERIALIZATION_AND_CONSUMER_READINESS') or {})
     handoff=e.get('cross_stage_handoff') or {}
     ref=str(handoff.get('ledger_ref') or '')
@@ -464,7 +472,7 @@ def _validate_cross_stage_handoff_ledger(stage_uid,e,stage,stages):
     rp=Path(ref)
     if not ref or rp.is_absolute() or '..' in rp.parts:
         fail('CROSS_STAGE_HANDOFF_LEDGER_REF_INVALID')
-    ledger=_external_yaml(ROOT/rp,'CROSS_STAGE_HANDOFF_READINESS_LEDGER')
+    ledger=_external_yaml(product_root/rp,'CROSS_STAGE_HANDOFF_READINESS_LEDGER')
     if ledger.get('artifact_type')!='CROSS_STAGE_HANDOFF_READINESS_LEDGER':
         fail('CROSS_STAGE_HANDOFF_LEDGER_TYPE_INVALID')
     if ledger.get('stage_uid')!=stage_uid or ledger.get('successor_stage_uid')!=stage.get('next_stage_uid'):
@@ -627,7 +635,7 @@ def validate_evidence_data(stage_uid,e):
     if not req.issubset(got): fail(f'REQUIRED_EVIDENCE_TYPE_MISSING:{sorted(req-got)}')
     for item in items:
         if not isinstance(item,dict) or item.get('status')!='PASS' or not item.get('ref'): fail('REQUIRED_EVIDENCE_ITEM_INVALID')
-        if not item.get('external_receipt') and not (ROOT/str(item['ref'])).is_file(): fail(f'REQUIRED_EVIDENCE_PHYSICAL_REF_MISSING:{item["ref"]}')
+        if not item.get('external_receipt') and not (_product_artifact_root()/str(item['ref'])).is_file(): fail(f'REQUIRED_EVIDENCE_PHYSICAL_REF_MISSING:{item["ref"]}')
 
     handoff=e.get('cross_stage_handoff')
     if not isinstance(handoff,dict):
@@ -643,7 +651,7 @@ def validate_evidence_data(stage_uid,e):
         fail('CROSS_STAGE_HANDOFF_UNRESOLVED_COUNT_INVALID')
     if not handoff.get('external_receipt'):
         ref=str(handoff.get('ledger_ref') or '')
-        if not ref or not (ROOT/ref).is_file():
+        if not ref or not (_product_artifact_root()/ref).is_file():
             fail('CROSS_STAGE_HANDOFF_LEDGER_PHYSICAL_REF_MISSING')
     _validate_cross_stage_handoff_ledger(stage_uid,e,st,stages)
     if e.get('result')=='PASS':
