@@ -1,0 +1,97 @@
+name: Product Stage01 Materialize
+# stage01-materialize-closure: backfills the canonical execution preflight
+# manifests and mints current-governance normalized evidence + terminal receipts
+# for both Stage-01 governed units, then converges Stage-01 closure state so the
+# CURRENT_GOVERNED_UNIT_STAGE1_CLOSED exit gate is authorized under Current
+# governance. Runs only when the units are not already closed.
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: product-stage01-materialize
+  cancel-in-progress: false
+jobs:
+  materialize:
+    runs-on: ubuntu-24.04
+    env:
+      ACPOS_PRODUCT_ROOT: ${{ github.workspace }}
+    steps:
+      - name: Checkout product workline
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+      - name: Checkout current governance authority
+        uses: actions/checkout@v4
+        with:
+          repository: steven-gold/orange-one-ai-viedo-v1.0
+          ref: rebuild-v2.1.1
+          path: _governance_authority
+          fetch-depth: 1
+      - name: Load current governance authority
+        run: |
+          rm -rf governance .github/governance-source
+          cp -R _governance_authority/governance ./governance
+          mkdir -p .github
+          cp -R _governance_authority/.github/governance-source .github/governance-source
+          GOV_HEAD="$(git -C _governance_authority rev-parse HEAD)"
+          GOV_UID="$(python -c "import yaml; from pathlib import Path; m=yaml.safe_load(Path('_governance_authority/governance/specifications/current/SPECIFICATION_MANIFEST.yaml').read_text()) or {}; print(m.get('artifact_uid') or '')")"
+          GOV_VER="$(python -c "import yaml; from pathlib import Path; m=yaml.safe_load(Path('_governance_authority/governance/specifications/current/SPECIFICATION_MANIFEST.yaml').read_text()) or {}; print(m.get('display_version') or '')")"
+          test -n "$GOV_HEAD"
+          test -n "$GOV_UID"
+          test -n "$GOV_VER"
+          echo "ACPOS_GOVERNANCE_HEAD=$GOV_HEAD" >> "$GITHUB_ENV"
+          echo "ACPOS_GOVERNANCE_UID=$GOV_UID" >> "$GITHUB_ENV"
+          echo "ACPOS_GOVERNANCE_VERSION=$GOV_VER" >> "$GITHUB_ENV"
+          python -m pip install --disable-pip-version-check 'PyYAML==6.0.2'
+      - name: Stage01 admission check for not-yet-closed governed units
+        run: |
+          set -euo pipefail
+          for WU in WU-STAGE01-GLOBAL-HOME-SHELL-NAVIGATION-001 WU-STAGE01-WB01-DASHBOARD-001; do
+            STATUS="$(python -c "import yaml,sys; print(yaml.safe_load(open('STAGE_EXECUTION/STAGE-01/$WU/WORK_UNIT.yaml')).get('current_status',''))")"
+            if [ "$STATUS" = "CLOSED" ]; then
+              echo "SKIP admission for already-closed $WU"
+              continue
+            fi
+            export ACPOS_ACTIVE_WORK_UNIT="STAGE_EXECUTION/STAGE-01/${WU}/WORK_UNIT.yaml"
+            export ACPOS_CURRENT_SCOPE="STAGE_EXECUTION/STAGE-01/${WU}/CURRENT_EXECUTION_SCOPE_MANIFEST.yaml"
+            python governance/ci/stage_execution_engine.py --admission-check --stage STAGE-01
+          done
+      - name: Materialize Stage01 current-head evidence and closure state
+        env:
+          RUN_ID: ${{ github.run_id }}
+          HEAD_SHA: ${{ github.sha }}
+        run: |
+          python .github/scripts/stage01_materialize.py \
+            --root "$GITHUB_WORKSPACE" \
+            --head "$HEAD_SHA" \
+            --run "$RUN_ID" \
+            --gate PRODUCT_STAGE01_VALIDATION \
+            --gov "$ACPOS_GOVERNANCE_UID" \
+            --gver "$ACPOS_GOVERNANCE_VERSION"
+      - name: Validate materialized Stage01 evidence and terminal receipts
+        run: |
+          set -euo pipefail
+          for WU in WU-STAGE01-GLOBAL-HOME-SHELL-NAVIGATION-001 WU-STAGE01-WB01-DASHBOARD-001; do
+            EVIDENCE="STAGE_EXECUTION/STAGE-01/${WU}/EVIDENCE/STAGE01_NORMALIZED_EVIDENCE.json"
+            RECEIPT="STAGE_EXECUTION/STAGE-01/${WU}/WORK_UNIT_TERMINAL_RECEIPT.yaml"
+            python governance/ci/stage_execution_engine.py --validate-evidence --stage STAGE-01 --evidence "$EVIDENCE"
+            python governance/ci/stage_execution_engine.py --validate-terminal-receipt --stage STAGE-01 --evidence "$EVIDENCE" --receipt "$RECEIPT"
+          done
+      - name: Commit materialized Stage01 closure artifacts
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add STAGE_EXECUTION/STAGE-01
+          git diff --cached --quiet && exit 0
+          git commit -m "stage01: seal current-governance closure and bind terminal receipts"
+          for attempt in 1 2 3 4; do
+            git fetch origin 0921acpos
+            git rebase origin/0921acpos || { git rebase --abort || true; echo "BLOCK:REBASE_CONFLICT"; exit 21; }
+            if git push origin HEAD:0921acpos; then exit 0; fi
+            echo "RETRY_PUSH_ATTEMPT=$attempt"
+            sleep 2
+          done
+          echo "BLOCK:REMOTE_ADVANCED_AFTER_RETRY_BUDGET"
+          exit 22
