@@ -268,6 +268,9 @@ def validate(root=ROOT):
     if (st2.get('stage_execution_invariant_gate') or {}).get('required') is not True:
         failures.append('stage02_empirical_gate_binding_missing')
     expected_stage_ids = {f'STAGE-{i:02d}' for i in range(1, 12)}
+    crossmat = inv.get('CROSS_STAGE_MATERIALIZATION_AND_CONSUMER_READINESS') or {}
+    binding_requirements = crossmat.get('successor_execution_binding_requirements') or {}
+    binding_maps = crossmat.get('successor_execution_binding_operation_map') or {}
     stage_map = {s.get('stage_uid'): s for s in life.get('stages') or []}
     lifecycle_canonical_names = {s.get('stage_uid'): s.get('name') for s in life.get('stages') or []}
     for sid in expected:
@@ -307,7 +310,6 @@ def validate(root=ROOT):
         failures.append('indexed_validation_dependency_contract_missing')
     if idxinv.get('index_may_skip_required_impacted_validator') is not False or idxinv.get('index_drift_full_sweep_required_before_freeze') is not True:
         failures.append('indexed_validation_fail_closed_contract_missing')
-    crossmat = inv.get('CROSS_STAGE_MATERIALIZATION_AND_CONSUMER_READINESS') or {}
     if crossmat.get('invariant_uid') != 'GOV-INV-CROSS-STAGE-MATERIALIZATION-CONSUMER-READINESS-001':
         failures.append('cross_stage_materialization_invariant_uid_missing')
     if crossmat.get('required_artifact') != 'CROSS_STAGE_HANDOFF_READINESS_LEDGER' or crossmat.get('applies_to_all_registered_stages') is not True:
@@ -330,8 +332,6 @@ def validate(root=ROOT):
     binding_fields={'binding_uid','consuming_operation_uid','binding_class','applicability','canonical_owner_or_authority_ref','authority_evidence_ref','target_identity','resolution_status','denominator_inclusion_status','consumer_readiness_status'}
     if set(crossmat.get('successor_execution_binding_required_row_fields') or []) != binding_fields:
         failures.append('cross_stage_execution_binding_row_schema_drift')
-    binding_requirements=crossmat.get('successor_execution_binding_requirements') or {}
-    binding_maps=crossmat.get('successor_execution_binding_operation_map') or {}
     if set(binding_requirements) != {f'STAGE-{i:02d}' for i in range(2,12)}:
         failures.append('cross_stage_execution_binding_stage_requirement_set_drift')
     if set(binding_maps) != {f'STAGE-{i:02d}' for i in range(3,12)}:
