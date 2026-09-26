@@ -58,6 +58,35 @@ mutation_policy:
   successor_candidate_product_execution: FORBIDDEN
   successor_candidate_product_completion_credit: 0
   predecessor_history_must_remain_immutable: true
+candidate_validation_contract:
+  exact_candidate_head_required: true
+  required_workflow_names:
+  - Current Governance Cleanup Validation
+  - Mother Spec Neutrality Audit
+  current_cleanup_required_commands:
+  - python governance/ci/stage_execution_engine.py --definition-audit-all
+  - python governance/ci/test_stage_execution_engine.py
+  - python governance/ci/validate_selected_execution_profile_integrity.py
+  - python governance/ci/validate_active_consumer_reference_integrity.py
+  - python governance/ci/validate_governance_layout.py
+  - python governance/ci/validate_structured_mutation_safety.py --self-test
+  - python governance/ci/validate_structured_mutation_safety.py
+  - python governance/ci/validate_governance_portability.py
+  - python governance/ci/validate_execution_domain_isolation.py
+  - python .github/governance-source/active/source/09_TESTS/governance/validate_governance.py --mode PRE_FORMAL_DEFINITION_AUDIT
+  - python .github/governance-source/active/source/09_TESTS/governance/validate_stage_execution_invariants.py
+  - python .github/governance-source/active/source/09_TESTS/governance/validate_product_neutral_entity_lifecycle.py
+  - python governance/ci/audit_closure_engine.py --self-test
+  - python governance/ci/audit_closure_engine.py
+  full_preformal_regression_denominator_source: .github/governance-source/active/source/10_REGISTRY/SEMANTIC_AUTHORITY_BASELINE.yaml#mandatory_regression_assets
+  mother_neutrality_and_portability_required: true
+  active_consumer_reverse_validation_required: true
+  cancelled_or_in_progress_run_may_grant_candidate_validation_credit: false
+  historical_head_run_may_grant_candidate_validation_credit: false
+  core_validation_pass_may_substitute_full_preformal_regression: false
+  formal_promotion_requires_all_required_workflows_exact_head_success: true
+  formal_promotion_requires_independent_auditor_evidence: true
+  product_completion_credit: 0
 execution_domain_entrypoints:
   selection_required_before_rule_read: true
   recursive_governance_tree_scan: FORBIDDEN

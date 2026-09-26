@@ -144,6 +144,39 @@ def main() -> int:
     if not workflows:
         errors.append("CURRENT_WORKFLOW_SET_EMPTY")
 
+    validation_contract = registry.get("candidate_validation_contract") or {}
+    if governance_role == "GOVERNANCE_REVISION_CANDIDATE":
+        required_workflow_names=set(map(str,validation_contract.get("required_workflow_names") or []))
+        workflow_by_name={}
+        for workflow in workflows:
+            workflow_text=workflow.read_text(encoding="utf-8")
+            m=re.search(r"(?m)^name:\s*(.+?)\s*$",workflow_text)
+            if m:
+                workflow_by_name[m.group(1).strip()]=(workflow,workflow_text)
+        missing_names=sorted(required_workflow_names-set(workflow_by_name))
+        for name in missing_names:
+            errors.append("CANDIDATE_REQUIRED_WORKFLOW_MISSING:"+name)
+        for name in required_workflow_names & set(workflow_by_name):
+            wf,wf_text=workflow_by_name[name]
+            if governance_branch not in wf_text:
+                errors.append("CANDIDATE_REQUIRED_WORKFLOW_BRANCH_NOT_WIRED:"+name+":"+governance_branch)
+        cleanup=workflow_by_name.get("Current Governance Cleanup Validation")
+        if cleanup:
+            _,cleanup_text=cleanup
+            for command in map(str,validation_contract.get("current_cleanup_required_commands") or []):
+                if command not in cleanup_text:
+                    errors.append("CANDIDATE_CURRENT_CLEANUP_REQUIRED_COMMAND_MISSING:"+command)
+        if validation_contract.get("mother_neutrality_and_portability_required") is not True:
+            errors.append("CANDIDATE_MOTHER_NEUTRALITY_PORTABILITY_NOT_REQUIRED")
+        if validation_contract.get("active_consumer_reverse_validation_required") is not True:
+            errors.append("CANDIDATE_ACTIVE_CONSUMER_REVERSE_VALIDATION_NOT_REQUIRED")
+        if validation_contract.get("core_validation_pass_may_substitute_full_preformal_regression") is not False:
+            errors.append("CANDIDATE_FULL_PREFORMAL_SUBSTITUTION_NOT_BLOCKED")
+        if validation_contract.get("formal_promotion_requires_all_required_workflows_exact_head_success") is not True:
+            errors.append("CANDIDATE_EXACT_HEAD_WORKFLOW_SUCCESS_NOT_REQUIRED")
+        if validation_contract.get("formal_promotion_requires_independent_auditor_evidence") is not True:
+            errors.append("CANDIDATE_FORMAL_AUDITOR_EVIDENCE_NOT_REQUIRED")
+
     for workflow in workflows:
         text = workflow.read_text(encoding="utf-8")
         path_rel = rel(workflow)
@@ -209,6 +242,8 @@ def main() -> int:
     print("PASS: profile-specific scope schema is delegated to selected-profile validation")
     print("PASS: Governance branch has no product effectful execute mode")
     print("PASS: no stale fixed product run root or retired compatibility token in active consumers")
+    if governance_role == "GOVERNANCE_REVISION_CANDIDATE":
+        print("PASS: candidate validation workflow denominator and full preformal regression wiring complete")
     print("PASS: ACTIVE_CONSUMER_REFERENCE_INTEGRITY_CURRENT_ONLY")
     return 0
 
