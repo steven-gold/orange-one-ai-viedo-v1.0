@@ -233,6 +233,67 @@ def plan_range(start_stage_uid,end_stage_uid):
       'product_execution_credit':0
     }
 
+def _deterministic_stage_audit_contract():
+    inv=(y(INVARIANTS).get('invariants') or {}).get('DETERMINISTIC_STAGE_AUDIT') or {}
+    if inv.get('invariant_uid')!='GOV-INV-DETERMINISTIC-STAGE-AUDIT-001':
+        fail('DETERMINISTIC_STAGE_AUDIT_CONTRACT_MISSING')
+    return inv
+
+def validate_release_identity_continuity(records):
+    contract=_deterministic_stage_audit_contract().get('release_identity_continuity') or {}
+    required=list(map(str,contract.get('required_chain') or []))
+    finding=str(contract.get('broken_chain_finding') or 'RELEASE_IDENTITY_CONTINUITY_BROKEN')
+    if not required: fail('RELEASE_IDENTITY_CONTINUITY_CONTRACT_EMPTY')
+    if not isinstance(records,dict): fail(finding+':CHAIN_MAPPING_REQUIRED')
+    missing=[uid for uid in required if uid not in records]
+    if missing: fail(finding+':MISSING:'+','.join(missing))
+    identities=[]
+    for uid in required:
+        rec=records.get(uid)
+        if not isinstance(rec,dict): fail(finding+':RECORD_MAPPING_REQUIRED:'+uid)
+        rid=str(rec.get('release_identity') or '').strip()
+        if not rid: fail(finding+':RELEASE_IDENTITY_MISSING:'+uid)
+        identities.append(rid)
+    if len(set(identities))!=1:
+        fail(finding+':IDENTITY_DRIFT')
+    return identities[0]
+
+def validate_environment_evidence(evidence,required_environment):
+    contract=_deterministic_stage_audit_contract().get('environment_evidence_separation') or {}
+    allowed=set(map(str,contract.get('environments') or []))
+    required=str(required_environment or '').strip()
+    if required not in allowed: fail('ENVIRONMENT_REQUIREMENT_INVALID:'+required)
+    if not isinstance(evidence,dict): fail('ENVIRONMENT_EVIDENCE_MAPPING_REQUIRED')
+    observed=str(evidence.get('environment') or '').strip()
+    if observed not in allowed: fail('ENVIRONMENT_EVIDENCE_IDENTITY_INVALID:'+observed)
+    if observed!=required:
+        fail('CROSS_ENVIRONMENT_SUBSTITUTION_BLOCKED:'+observed+'->'+required)
+    return True
+
+def validate_production_release_acceptance(deployment_record,acceptance_record):
+    validate_environment_evidence(deployment_record,'PRODUCTION')
+    validate_environment_evidence(acceptance_record,'PRODUCTION')
+    deployed=str(deployment_record.get('release_identity') or '').strip()
+    accepted=str(acceptance_record.get('release_identity') or '').strip()
+    if not deployed or not accepted or deployed!=accepted:
+        fail('PRODUCTION_RELEASE_IDENTITY_MISMATCH')
+    return True
+
+def validate_reverify_propagation(stage_statuses,impacted_predecessor_uid):
+    contract=_deterministic_stage_audit_contract().get('reverify_propagation_contract') or {}
+    allowed=set(map(str,contract.get('allowed_descendant_dispositions') or []))
+    if not allowed: fail('REVERIFY_PROPAGATION_ALLOWED_DISPOSITIONS_EMPTY')
+    _,_,_,_,_,stages=validate_definition()
+    order=list(stages)
+    impacted=str(impacted_predecessor_uid or '')
+    if impacted not in stages: fail('REVERIFY_PROPAGATION_PREDECESSOR_NOT_REGISTERED:'+impacted)
+    if not isinstance(stage_statuses,dict): fail('REVERIFY_PROPAGATION_STATUS_MAPPING_REQUIRED')
+    for sid in order[order.index(impacted)+1:]:
+        status=str(stage_statuses.get(sid) or '').strip()
+        if status not in allowed:
+            fail('DOWNSTREAM_UNCONDITIONAL_CURRENT_PASS_AFTER_IMPACTED_PREDECESSOR_REVERIFY:'+sid+':'+status)
+    return True
+
 def plan(stage_uid):
     entry,reg,gov,profile,adapters,stages=validate_definition()
     if stage_uid not in stages: fail(f'UNKNOWN_STAGE:{stage_uid}')

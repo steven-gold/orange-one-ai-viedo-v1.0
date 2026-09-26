@@ -400,6 +400,34 @@ def closure_failures(receipt: dict) -> list[str]:
     return failures
 
 
+def validate_determinism_acceptance(ctx: dict) -> dict:
+    det=(ctx.get('stage_invariants') or {}).get('DETERMINISTIC_STAGE_AUDIT') or {}
+    indep=det.get('auditor_independence_acceptance') or {}
+    repeat=det.get('repeatability_acceptance') or {}
+    evaluator_count=int(indep.get('independent_evaluator_count') or 0)
+    repeat_count=int(repeat.get('same_evaluator_repeat_count') or 0)
+    if evaluator_count!=3 or repeat_count!=3:
+        return {'status':'FAIL','reason':'DETERMINISM_ACCEPTANCE_DENOMINATOR_DRIFT'}
+    baseline=run_closure(copy.deepcopy(ctx))
+    canonical=json.dumps(baseline,sort_keys=True,separators=(',',':'))
+    evaluator_results=[]
+    for idx in range(evaluator_count):
+        candidate=copy.deepcopy(ctx)
+        candidate['runtime_auditor_identity']=f'SYNTHETIC-EVALUATOR-{idx+1}'
+        result=run_closure(candidate)
+        evaluator_results.append(json.dumps(result,sort_keys=True,separators=(',',':')))
+    if any(value!=canonical for value in evaluator_results):
+        return {'status':'FAIL','reason':'AUDIT_DETERMINISM_CONTRACT_FAILURE','dimension':'AUDITOR_INDEPENDENCE'}
+    repeat_results=[]
+    for _ in range(repeat_count):
+        candidate=copy.deepcopy(ctx)
+        candidate['runtime_auditor_identity']='SYNTHETIC-EVALUATOR-REPEAT'
+        result=run_closure(candidate)
+        repeat_results.append(json.dumps(result,sort_keys=True,separators=(',',':')))
+    if any(value!=canonical for value in repeat_results):
+        return {'status':'FAIL','reason':'AUDIT_DETERMINISM_CONTRACT_FAILURE','dimension':'REPEATABILITY'}
+    return {'status':'PASS','independent_evaluator_count':evaluator_count,'repeat_count':repeat_count}
+
 def run_self_test() -> int:
     base = load_context()
     cases = []
@@ -414,6 +442,14 @@ def run_self_test() -> int:
         print("FAIL: same complete audit input produced different result", file=sys.stderr)
         return 1
     cases.append("same_input_same_result")
+
+    det_accept=validate_determinism_acceptance(base)
+    if det_accept.get('status')!='PASS':
+        print('FAIL: deterministic auditor independence or repeatability failed: '+json.dumps(det_accept,sort_keys=True),file=sys.stderr)
+        return 1
+    cases.append('auditor_independence_3of3')
+    cases.append('same_evaluator_repeatability_3of3')
+
 
     no_det = copy.deepcopy(base)
     no_det["stage_invariants"]["DETERMINISTIC_STAGE_AUDIT"]["same_complete_input_same_complete_result"] = False

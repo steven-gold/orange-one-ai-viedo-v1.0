@@ -561,6 +561,42 @@ print('PASS: Stage-02 current execution has no historical compatibility module o
 assert eng.resolve_stage_range('STAGE-01','STAGE-01') == ['STAGE-01']
 assert eng.resolve_stage_range('STAGE-01','STAGE-05') == ['STAGE-01','STAGE-02','STAGE-03','STAGE-04','STAGE-05']
 assert eng.resolve_stage_range('STAGE-03','STAGE-08') == ['STAGE-03','STAGE-04','STAGE-05','STAGE-06','STAGE-07','STAGE-08']
+# High-level lifecycle runtime pressure tests that require no product deployment.
+_release_chain=(eng._deterministic_stage_audit_contract().get('release_identity_continuity') or {}).get('required_chain') or []
+_release_records={uid:{'release_identity':'REL-SYNTHETIC-001'} for uid in _release_chain}
+assert eng.validate_release_identity_continuity(_release_records)=='REL-SYNTHETIC-001'
+_bad_release=deepcopy(_release_records)
+_bad_release['CURRENT_RELEASE_IDENTITY']['release_identity']='REL-SYNTHETIC-DRIFT'
+expect_stage_engine_block('release_identity_chain_drift',lambda:eng.validate_release_identity_continuity(_bad_release),'RELEASE_IDENTITY_CONTINUITY_BROKEN')
+_missing_release=deepcopy(_release_records); _missing_release.pop('STAGING_CLOSURE_RECORD')
+expect_stage_engine_block('release_identity_chain_missing_artifact',lambda:eng.validate_release_identity_continuity(_missing_release),'RELEASE_IDENTITY_CONTINUITY_BROKEN')
+
+assert eng.validate_environment_evidence({'environment':'PRODUCTION'},'PRODUCTION') is True
+expect_stage_engine_block('staging_evidence_cannot_substitute_production',lambda:eng.validate_environment_evidence({'environment':'STAGING'},'PRODUCTION'),'CROSS_ENVIRONMENT_SUBSTITUTION_BLOCKED')
+expect_stage_engine_block('unknown_environment_evidence',lambda:eng.validate_environment_evidence({'environment':'SYNTHETIC'},'PRODUCTION'),'ENVIRONMENT_EVIDENCE_IDENTITY_INVALID')
+assert eng.validate_production_release_acceptance(
+    {'environment':'PRODUCTION','release_identity':'REL-PROD-001'},
+    {'environment':'PRODUCTION','release_identity':'REL-PROD-001'}
+) is True
+expect_stage_engine_block(
+    'production_acceptance_release_identity_mismatch',
+    lambda:eng.validate_production_release_acceptance(
+        {'environment':'PRODUCTION','release_identity':'REL-PROD-001'},
+        {'environment':'PRODUCTION','release_identity':'REL-PROD-002'}
+    ),
+    'PRODUCTION_RELEASE_IDENTITY_MISMATCH'
+)
+
+_all_stage_uids=list(eng.stage_map(profile))
+_reverify_statuses={uid:('REVERIFY_REQUIRED' if uid!='STAGE-01' else 'CLOSED_PASS') for uid in _all_stage_uids}
+assert eng.validate_reverify_propagation(_reverify_statuses,'STAGE-01') is True
+_bad_reverify=deepcopy(_reverify_statuses); _bad_reverify['STAGE-07']='CLOSED_PASS'
+expect_stage_engine_block(
+    'impacted_predecessor_cannot_leave_descendant_current_pass',
+    lambda:eng.validate_reverify_propagation(_bad_reverify,'STAGE-01'),
+    'DOWNSTREAM_UNCONDITIONAL_CURRENT_PASS_AFTER_IMPACTED_PREDECESSOR_REVERIFY'
+)
+
 _range_plan=eng.plan_range('STAGE-01','STAGE-05')
 assert _range_plan['selected_stage_count']==5
 assert _range_plan['normal_stage_boundary_user_prompt']=='FORBIDDEN'
