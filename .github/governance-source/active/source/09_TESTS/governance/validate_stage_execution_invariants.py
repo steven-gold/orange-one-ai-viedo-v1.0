@@ -138,6 +138,16 @@ def validate(root=ROOT):
         for sid in expected:
             if (stage_contracts.get(sid) or {}).get('lifecycle_registry_is_denominator_source') is not True:
                 failures.append('deterministic_stage_denominator_binding_missing:' + sid)
+    term = det.get('canonical_terminology_contract') or {}
+    if term.get('stage_capability_must_equal_lifecycle_registry_name') is not True or term.get('authorized_not_applicable_token') != 'AUTHORIZED_NOT_APPLICABLE' or term.get('noncanonical_stage_status_or_capability_name') != 'BLOCK':
+        failures.append('deterministic_canonical_terminology_contract_incomplete')
+    forbidden_aliases = set(term.get('forbidden_aliases') or [])
+    if forbidden_aliases != {'STAGE_NOT_PASS','AUTHORIZED_NA','VERIFICATION','BUILD_RELEASE'}:
+        failures.append('deterministic_forbidden_alias_registry_drift')
+    if (det.get('deterministic_decision_table') or {}).get('source_document_pass_does_not_imply_stage_pass') is not True:
+        failures.append('source_document_stage_pass_separation_missing')
+    if set((stage_contracts.get('STAGE-06') or {}).get('allowed_test_results') or []) != {'PASS','FAIL','BLOCKED','AUTHORIZED_NOT_APPLICABLE'}:
+        failures.append('stage06_authorized_not_applicable_token_drift')
     indep = det.get('auditor_independence_acceptance') or {}
     if indep.get('independent_evaluator_count') != 3 or indep.get('identical_finding_set_percent') != 100 or indep.get('identical_stage_status_percent') != 100 or indep.get('different_result_disposition') != 'AUDIT_DETERMINISM_CONTRACT_FAILURE':
         failures.append('auditor_independence_acceptance_incomplete')
@@ -206,6 +216,11 @@ def validate(root=ROOT):
         failures.append('stage02_empirical_gate_binding_missing')
     expected_stage_ids = {f'STAGE-{i:02d}' for i in range(1, 12)}
     stage_map = {s.get('stage_uid'): s for s in life.get('stages') or []}
+    lifecycle_canonical_names = {s.get('stage_uid'): s.get('name') for s in life.get('stages') or []}
+    for sid in expected:
+        contract_name = (stage_contracts.get(sid) or {}).get('capability')
+        if contract_name != lifecycle_canonical_names.get(sid):
+            failures.append('deterministic_stage_capability_name_drift:' + sid)
     if set(stage_map) != expected_stage_ids:
         failures.append('stage_execution_optimization_stage_set_drift')
     else:
