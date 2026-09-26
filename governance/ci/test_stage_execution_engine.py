@@ -348,7 +348,7 @@ def synthetic_evidence(stage_uid,result):
     return {
       'artifact_type':'NORMALIZED_STAGE_EXECUTION_EVIDENCE',
       'governance_uid':gov,'stage_uid':stage_uid,'attempt_uid':f'SYNTH-{stage_uid}',
-      'scope_manifest_ref':f'STAGE_EXECUTION/{stage_uid}/SYNTH-WU-{stage_uid}/CURRENT_EXECUTION_SCOPE_MANIFEST.yaml',
+      'scope_manifest_ref':f'STAGE_EXECUTION/{stage_uid}/SYNTH-WU-{stage_uid}-{result}/CURRENT_EXECUTION_SCOPE_MANIFEST.yaml',
       'actual_stage_execution_started':True,'actual_stage_execution_completed':True,
       'fresh_execution':True,'prior_results_used':False,'current_specification_mutated':False,
       'source_head_sha':head,
@@ -373,7 +373,7 @@ def synthetic_evidence(stage_uid,result):
       'hidden_defect_sweep':{'performed':True,'result':'PASS','discovered_defect_total':0},
       'required_evidence':[{'evidence_type':x,'status':'PASS','ref':'synthetic://external','external_receipt':True} for x in st['required_evidence']],
       'cross_stage_handoff':{
-        'ledger_ref':f'STAGE_EXECUTION/{stage_uid}/SYNTH-WU-{stage_uid}/CROSS_STAGE_HANDOFF_READINESS_LEDGER.yaml','external_receipt':False,
+        'ledger_ref':f'STAGE_EXECUTION/{stage_uid}/SYNTH-WU-{stage_uid}-{result}/CROSS_STAGE_HANDOFF_READINESS_LEDGER.yaml','external_receipt':False,
         'successor_stage_uid':st['next_stage_uid'],
         'reference_resolution_complete':not blocked,
         'physical_materialization_complete':not blocked,
@@ -406,7 +406,7 @@ _next_requirements=list(map(str,_cross_policy.get('next_page_successor_binding_r
 def materialize_synthetic_stage_context(stage_uid,evidence,result):
     st=stage_rows[stage_uid]
     ad=adapters['stages'][stage_uid]
-    wu=f'SYNTH-WU-{stage_uid}'
+    wu=f'SYNTH-WU-{stage_uid}-{result}'
     wd=_allstage_root/'STAGE_EXECUTION'/stage_uid/wu
     wd.mkdir(parents=True,exist_ok=True)
     scope_rel=f'STAGE_EXECUTION/{stage_uid}/{wu}/CURRENT_EXECUTION_SCOPE_MANIFEST.yaml'
@@ -544,11 +544,8 @@ for uid in expected_stage_uids:
     else:
         raise SystemExit('FAIL_EXPECTED_ALL_STAGE_HANDOFF_BLOCK:'+uid)
 
-if _allstage_orig_product_root is None:
-    os.environ.pop(eng.PRODUCT_ROOT_ENV,None)
-else:
-    os.environ[eng.PRODUCT_ROOT_ENV]=_allstage_orig_product_root
-_allstage_tmp.cleanup()
+# Keep the same physical synthetic product contexts alive for the later high-volume
+# generic-flow evidence regressions. They are one reusable test context, not a second execution system.
 
 # Modes 1-9: aggregate every defect before failing so one run exposes the complete profile denominator.
 audit_errors=[]
@@ -905,6 +902,12 @@ eng.validate_definition = _original_validate_definition
 
 if _phase_block_cases != 286 or _phase_na_proof_cases != 286:
     raise SystemExit(f'FAIL_COMMON_PHASE_NEGATIVE_DENOMINATOR:{_phase_block_cases}/286:{_phase_na_proof_cases}/286')
+
+if _allstage_orig_product_root is None:
+    os.environ.pop(eng.PRODUCT_ROOT_ENV,None)
+else:
+    os.environ[eng.PRODUCT_ROOT_ENV]=_allstage_orig_product_root
+_allstage_tmp.cleanup()
 
 # Plans and reusable engine surfaces must not leak concrete ACPOS page identities.
 for _uid in expected_stage_uids:
