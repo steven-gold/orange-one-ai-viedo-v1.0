@@ -263,7 +263,12 @@ wad=adapters['stages'][wstage]
 work={
  'work_unit_uid':'SYNTHETIC-WU','primary_task_layer':'PRODUCT_STAGE_EXECUTION','stage_uid':wstage,'current_status':'ACTIVE_PREEXECUTION',
  'required_outputs':list(wst['outputs']),
- 'operation_bindings':{x:{'executor_owner':'synthetic.executor','result_owner':'synthetic.results'} for x in wst['operations']},
+ 'operation_bindings':{x:{
+    'executor_owner':'synthetic.executor',
+    'result_owner':'synthetic.results',
+    'executor_protocol':'PYTHON_STAGE_OPERATION_V1',
+    'operation_receipt_ref':f'STAGE_EXECUTION/{wstage}/SYNTHETIC-WU/EVIDENCE/OPERATION_RECEIPTS/{x}.yaml'
+  } for x in wst['operations']},
  'scanner_bindings':{x:{'scanner_owner':'synthetic.scanner','result_owner':'synthetic.scan.results'} for x in wad['scanner_dimensions']},
 }
 eng.validate_work_unit_bindings(wstage,deepcopy(work),eng.stage_map(profile),adapters)
@@ -277,6 +282,8 @@ def block_work(label,mutator):
 block_work('missing_operation_binding',lambda x:x['operation_bindings'].pop(next(iter(x['operation_bindings']))))
 block_work('missing_scanner_binding',lambda x:x['scanner_bindings'].pop(next(iter(x['scanner_bindings']))))
 block_work('operation_executor_owner_missing',lambda x:x['operation_bindings'][next(iter(x['operation_bindings']))].pop('executor_owner'))
+block_work('operation_executor_protocol_missing',lambda x:x['operation_bindings'][next(iter(x['operation_bindings']))].pop('executor_protocol'))
+block_work('operation_receipt_ref_missing',lambda x:x['operation_bindings'][next(iter(x['operation_bindings']))].pop('operation_receipt_ref'))
 block_work('scanner_owner_missing',lambda x:x['scanner_bindings'][next(iter(x['scanner_bindings']))].pop('scanner_owner'))
 
 # Normative execution matrix admission + destructive required-field regression.
