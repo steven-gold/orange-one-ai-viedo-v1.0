@@ -227,6 +227,25 @@ print('PASS: Stage-02 current execution has no historical compatibility module o
 
 
 # Full selected-profile multidirectional audit: 9 modes x all 11 stages.
+# Exact user-controlled Stage range semantics.
+assert eng.resolve_stage_range('STAGE-01','STAGE-01') == ['STAGE-01']
+assert eng.resolve_stage_range('STAGE-01','STAGE-05') == ['STAGE-01','STAGE-02','STAGE-03','STAGE-04','STAGE-05']
+assert eng.resolve_stage_range('STAGE-03','STAGE-08') == ['STAGE-03','STAGE-04','STAGE-05','STAGE-06','STAGE-07','STAGE-08']
+_range_plan=eng.plan_range('STAGE-01','STAGE-05')
+assert _range_plan['selected_stage_count']==5
+assert _range_plan['normal_stage_boundary_user_prompt']=='FORBIDDEN'
+assert _range_plan['system_selected_batch_size'] is False
+for _label,_a,_b in [
+    ('range_start_not_registered','STAGE-00','STAGE-01'),
+    ('range_end_not_registered','STAGE-01','STAGE-18'),
+    ('range_order_invalid','STAGE-05','STAGE-01'),
+]:
+    try:
+        eng.resolve_stage_range(_a,_b)
+    except eng.StageEngineError:
+        pass
+    else:
+        raise SystemExit('FAIL_EXPECTED_'+_label.upper())
 stage_rows=eng.stage_map(profile)
 expected_stage_uids=[f'STAGE-{i:02d}' for i in range(1,12)]
 assert list(stage_rows)==expected_stage_uids, f'STAGE_PROFILE_ORDER_DRIFT:{list(stage_rows)}'
