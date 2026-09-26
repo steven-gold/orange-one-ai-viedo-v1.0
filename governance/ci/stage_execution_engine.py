@@ -583,8 +583,10 @@ def _validate_cross_stage_handoff_ledger(stage_uid,e,stage,stages):
         if unresolved_binding_total!=0 or unresolved_input_total!=0 or ledger.get('status')!='PASS':
             fail('CROSS_STAGE_HANDOFF_PASS_WITH_UNRESOLVED')
     else:
-        if ledger.get('status')!='BLOCKED':
-            fail('CROSS_STAGE_HANDOFF_BLOCKED_STATUS_REQUIRED')
+        handoff_blocked=(unresolved_binding_total>0 or unresolved_input_total>0 or any(ledger.get(k) is not True for k in ('reference_resolution_complete','physical_materialization_complete','required_field_completeness_complete','consumer_readiness_complete')))
+        expected_status='BLOCKED' if handoff_blocked else 'PASS'
+        if ledger.get('status')!=expected_status:
+            fail('CROSS_STAGE_HANDOFF_STATUS_RESULT_DRIFT:expected='+expected_status+':actual='+str(ledger.get('status')))
     return True
 
 def validate_evidence_data(stage_uid,e):
