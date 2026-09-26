@@ -160,6 +160,12 @@ def main() -> int:
             wf,wf_text=workflow_by_name[name]
             if governance_branch not in wf_text:
                 errors.append("CANDIDATE_REQUIRED_WORKFLOW_BRANCH_NOT_WIRED:"+name+":"+governance_branch)
+            if validation_contract.get("required_workflows_run_on_every_candidate_push") is not True:
+                errors.append("CANDIDATE_REQUIRED_WORKFLOW_EVERY_PUSH_POLICY_MISSING")
+            if validation_contract.get("candidate_required_workflow_path_filter")!="FORBIDDEN":
+                errors.append("CANDIDATE_REQUIRED_WORKFLOW_PATH_FILTER_POLICY_DRIFT")
+            if re.search(r"(?m)^\s+paths(?:-ignore)?:\s*$",wf_text):
+                errors.append("CANDIDATE_REQUIRED_WORKFLOW_PATH_FILTER_PRESENT:"+name)
         cleanup=workflow_by_name.get("Current Governance Cleanup Validation")
         if cleanup:
             _,cleanup_text=cleanup
@@ -187,6 +193,10 @@ def main() -> int:
             errors.append("CANDIDATE_REGISTRY_RELEASE_STATE_DRIFT")
         if validation_contract.get("candidate_rule_bundle_released_current_authority") is not False:
             errors.append("CANDIDATE_REGISTRY_RELEASE_AUTHORITY_LEAK")
+        if validation_contract.get("live_branch_head_must_equal_validation_head") is not True:
+            errors.append("CANDIDATE_LIVE_BRANCH_HEAD_BINDING_NOT_REQUIRED")
+        if validation_contract.get("live_branch_head_recheck_after_evidence_validation_required") is not True:
+            errors.append("CANDIDATE_LIVE_BRANCH_HEAD_RECHECK_NOT_REQUIRED")
 
     for workflow in workflows:
         text = workflow.read_text(encoding="utf-8")

@@ -58,8 +58,21 @@ def evaluate_workflow_readiness(required_names:list[str], head_sha:str, runs:lis
     }
 
 
-def fetch_runs(repository:str, branch:str, token:str|None) -> list[dict]:
-    query=urllib.parse.urlencode({'branch':branch,'per_page':100})
+def fetch_live_branch_head(repository:str, branch:str, token:str|None) -> str:
+    url=f'https://api.github.com/repos/{repository}/branches/{urllib.parse.quote(branch,safe="")}'
+    headers={'Accept':'application/vnd.github+json','User-Agent':'ACPOS-Governance-Promotion-Readiness'}
+    if token:
+        headers['Authorization']='Bearer '+token
+    with urllib.request.urlopen(urllib.request.Request(url,headers=headers),timeout=30) as response:
+        payload=json.loads(response.read().decode('utf-8'))
+    head=str(((payload.get('commit') or {}).get('sha')) or '')
+    if len(head)!=40:
+        raise RuntimeError('LIVE_BRANCH_HEAD_INVALID')
+    return head
+
+
+def fetch_runs(repository:str, branch:str, head_sha:str, token:str|None) -> list[dict]:
+    query=urllib.parse.urlencode({'branch':branch,'head_sha':head_sha,'per_page':100})
     url=f'https://api.github.com/repos/{repository}/actions/runs?{query}'
     headers={'Accept':'application/vnd.github+json','User-Agent':'ACPOS-Governance-Promotion-Readiness'}
     if token:
@@ -108,6 +121,15 @@ def self_test() -> int:
       {'id':1,'name':names[0],'head_sha':head,'status':'completed','conclusion':'success','created_at':'2026-01-01T00:00:00Z'},
       {'id':2,'name':names[1],'head_sha':head,'status':'completed','conclusion':'success','created_at':'2026-01-01T00:00:00Z'}
     ],'PASS')
+    live_head_cases=[
+      {'case':'local_equals_live_before_and_after','local':head,'before':head,'after':head,'expected':True},
+      {'case':'historical_local_head_blocked','local':head,'before':'b'*40,'after':'b'*40,'expected':False},
+      {'case':'branch_moves_during_validation_blocked','local':head,'before':head,'after':'c'*40,'expected':False},
+    ]
+    for row in live_head_cases:
+        row['actual']=(row['local']==row['before']==row['after'])
+        row['ok']=row['actual']==row['expected']
+    cases.extend(live_head_cases)
     ok=all(x['ok'] for x in cases)
     print(json.dumps({'self_test':'PASS' if ok else 'FAIL','cases':cases},ensure_ascii=False,sort_keys=True))
     return 0 if ok else 1
@@ -145,7 +167,15 @@ def main() -> int:
         print(json.dumps({'status':'BLOCKED','reason':'GITHUB_REPOSITORY_REQUIRED'},ensure_ascii=False))
         return 1
     try:
-        runs=fetch_runs(repository,branch,token)
+        live_head_before=fetch_live_branch_head(repository,branch,token)
+    except Exception as exc:
+        print(json.dumps({'status':'BLOCKED','reason':'LIVE_BRANCH_HEAD_QUERY_FAILED','detail':type(exc).__name__+':'+str(exc)},ensure_ascii=False))
+        return 1
+    if live_head_before!=head:
+        print(json.dumps({'status':'BLOCKED','reason':'VALIDATION_HEAD_IS_NOT_LIVE_BRANCH_HEAD','local_head':head,'live_branch_head':live_head_before},ensure_ascii=False))
+        return 1
+    try:
+        runs=fetch_runs(repository,branch,head,token)
     except Exception as exc:
         print(json.dumps({'status':'BLOCKED','reason':'WORKFLOW_RUN_QUERY_FAILED','detail':type(exc).__name__+':'+str(exc)},ensure_ascii=False))
         return 1
@@ -157,6 +187,15 @@ def main() -> int:
     except Exception as exc:
         auditor_result={'status':'FAIL','reason':'INDEPENDENT_AUDITOR_EVIDENCE_INVALID','detail':type(exc).__name__+':'+str(exc)}
 
+    try:
+        live_head_after=fetch_live_branch_head(repository,branch,token)
+    except Exception as exc:
+        print(json.dumps({'status':'BLOCKED','reason':'LIVE_BRANCH_HEAD_RECHECK_FAILED','detail':type(exc).__name__+':'+str(exc)},ensure_ascii=False))
+        return 1
+    if live_head_after!=head or live_head_after!=live_head_before:
+        print(json.dumps({'status':'BLOCKED','reason':'SNAPSHOT_INVALIDATED_BY_BRANCH_HEAD_CHANGE','local_head':head,'live_head_before':live_head_before,'live_head_after':live_head_after},ensure_ascii=False))
+        return 1
+
     ready=workflow_result.get('status')=='PASS' and auditor_result.get('status')=='PASS'
     result={
       'artifact_type':'GOVERNANCE_CANDIDATE_PROMOTION_READINESS',
@@ -164,6 +203,8 @@ def main() -> int:
       'mutation_or_promotion_performed':False,
       'candidate_branch':branch,
       'candidate_head_sha':head,
+      'live_branch_head_before':live_head_before,
+      'live_branch_head_after':live_head_after,
       'governance_uid':resolved.get('governance_uid'),
       'governance_revision':resolved.get('governance_revision'),
       'workflow_validation':workflow_result,

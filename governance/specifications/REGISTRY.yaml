@@ -63,6 +63,10 @@ candidate_validation_contract:
   required_workflow_names:
   - Current Governance Cleanup Validation
   - Mother Spec Neutrality Audit
+  required_workflows_run_on_every_candidate_push: true
+  candidate_required_workflow_path_filter: FORBIDDEN
+  live_branch_head_must_equal_validation_head: true
+  live_branch_head_recheck_after_evidence_validation_required: true
   current_cleanup_required_commands:
   - python governance/ci/stage_execution_engine.py --definition-audit-all
   - python governance/ci/test_stage_execution_engine.py
