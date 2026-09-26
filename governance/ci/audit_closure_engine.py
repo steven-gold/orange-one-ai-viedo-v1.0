@@ -108,6 +108,80 @@ def load_context() -> dict:
     }
 
 
+def validate_current_truth_precedence_contract(ctx: dict) -> dict:
+    det=(ctx.get('stage_invariants') or {}).get('DETERMINISTIC_STAGE_AUDIT') or {}
+    expected=[
+        'CURRENT_GOVERNANCE_REGISTRY','CURRENT_MOTHER_STANDARD','CURRENT_LIFECYCLE_AND_INVARIANT_REGISTRIES',
+        'CURRENT_CANONICAL_AUTHORITY','CURRENT_EXECUTION_SCOPE_MANIFEST','CURRENT_WORK_UNIT_DEFINITION',
+        'CURRENT_EXECUTION_STATE','CURRENT_RESUME_POINT','OPERATION_RECEIPTS','REQUIRED_OUTPUTS',
+        'VALIDATION_EVIDENCE','TERMINAL_RECEIPT','SUCCESSOR_ADMISSION_RECORD','HISTORICAL_EVIDENCE'
+    ]
+    actual=list(map(str,det.get('current_truth_precedence') or []))
+    if actual!=expected:
+        return {'status':'FAIL','reason':'CURRENT_TRUTH_PRECEDENCE_DRIFT','expected':expected,'actual':actual}
+    if det.get('same_rank_current_state_conflict_must_not_be_precedence_overridden') is not True:
+        return {'status':'FAIL','reason':'CURRENT_STATE_CONFLICT_PRECEDENCE_OVERRIDE_NOT_BLOCKED'}
+    return {'status':'PASS','precedence_count':len(actual)}
+
+def validate_audit_denominator_contract(ctx: dict, items: list[dict] | None = None, frozen_item_uids: list[str] | None = None) -> dict:
+    det=(ctx.get('stage_invariants') or {}).get('DETERMINISTIC_STAGE_AUDIT') or {}
+    contract=det.get('audit_denominator_contract') or {}
+    expected_classes={
+        'GOVERNED_UNITS','OPERATIONS','INPUTS','OUTPUTS','ARTIFACTS','REQUIRED_FIELDS','VALIDATORS',
+        'EVIDENCE','STATE_RECORDS','CLOSURE_RECORDS','SUCCESSOR_BINDINGS','CURRENT_GOVERNANCE_BINDINGS'
+    }
+    expected_counters={'expected_count','observed_count','missing_count','duplicate_count','invalid_count','stale_count','conflicted_count'}
+    if contract.get('freeze_before_validation') is not True:
+        return {'status':'FAIL','reason':'AUDIT_DENOMINATOR_FREEZE_CONTRACT_MISSING'}
+    if set(map(str,contract.get('required_classes') or []))!=expected_classes:
+        return {'status':'FAIL','reason':'AUDIT_DENOMINATOR_CLASS_DRIFT'}
+    if set(map(str,contract.get('counters_required') or []))!=expected_counters:
+        return {'status':'FAIL','reason':'AUDIT_DENOMINATOR_COUNTER_DRIFT'}
+    if str(contract.get('denominator_shrink_during_audit') or '')!='BLOCK':
+        return {'status':'FAIL','reason':'AUDIT_DENOMINATOR_SHRINK_NOT_BLOCKED'}
+    if items is not None:
+        uids=[str(x.get('audit_item_uid') or '') for x in items]
+        if any(not x for x in uids) or len(uids)!=len(set(uids)):
+            return {'status':'FAIL','reason':'AUDIT_DENOMINATOR_ITEM_IDENTITY_INVALID'}
+        if frozen_item_uids is not None:
+            frozen=list(map(str,frozen_item_uids))
+            if len(uids)<len(frozen):
+                return {'status':'FAIL','reason':'AUDIT_DENOMINATOR_SHRINK_BLOCKED'}
+            if set(uids)!=set(frozen):
+                return {'status':'FAIL','reason':'AUDIT_DENOMINATOR_CHANGED_AFTER_FREEZE'}
+    return {'status':'PASS','item_count':len(items or [])}
+
+def canonical_finding_severity(ctx: dict, finding_code: str) -> dict:
+    det=(ctx.get('stage_invariants') or {}).get('DETERMINISTIC_STAGE_AUDIT') or {}
+    if det.get('finding_name_may_be_freely_reworded') is not False:
+        return {'status':'FAIL','reason':'CANONICAL_FINDING_NAME_POLICY_DRIFT'}
+    if det.get('finding_severity_may_be_auditor_selected') is not False:
+        return {'status':'FAIL','reason':'CANONICAL_FINDING_SEVERITY_POLICY_DRIFT'}
+    mapping=det.get('canonical_finding_severity') or {}
+    vocabulary=set(map(str,det.get('severity_vocabulary') or []))
+    code=str(finding_code or '')
+    if code not in mapping:
+        return {'status':'FAIL','reason':'CANONICAL_FINDING_UNREGISTERED','finding_code':code}
+    severity=str(mapping.get(code) or '')
+    if severity not in vocabulary:
+        return {'status':'FAIL','reason':'CANONICAL_FINDING_SEVERITY_INVALID','finding_code':code,'severity':severity}
+    return {'status':'PASS','finding_code':code,'severity':severity}
+
+def validate_canonical_terminology_contract(ctx: dict) -> dict:
+    det=(ctx.get('stage_invariants') or {}).get('DETERMINISTIC_STAGE_AUDIT') or {}
+    contract=det.get('canonical_terminology_contract') or {}
+    aliases=set(map(str,contract.get('forbidden_aliases') or []))
+    expected_aliases={'STAGE_NOT_PASS','AUTHORIZED_NA','VERIFICATION','BUILD_RELEASE'}
+    if contract.get('stage_capability_must_equal_lifecycle_registry_name') is not True:
+        return {'status':'FAIL','reason':'CANONICAL_STAGE_CAPABILITY_BINDING_DRIFT'}
+    if str(contract.get('authorized_not_applicable_token') or '')!='AUTHORIZED_NOT_APPLICABLE':
+        return {'status':'FAIL','reason':'CANONICAL_NA_TOKEN_DRIFT'}
+    if aliases!=expected_aliases:
+        return {'status':'FAIL','reason':'CANONICAL_FORBIDDEN_ALIAS_DRIFT'}
+    if str(contract.get('noncanonical_stage_status_or_capability_name') or '')!='BLOCK':
+        return {'status':'FAIL','reason':'NONCANONICAL_TERMINOLOGY_NOT_BLOCKED'}
+    return {'status':'PASS'}
+
 def deterministic_contract_ok(ctx: dict) -> bool:
     det = (ctx.get("stage_invariants") or {}).get("DETERMINISTIC_STAGE_AUDIT") or {}
     statuses = set(det.get("canonical_stage_statuses") or [])
@@ -117,6 +191,10 @@ def deterministic_contract_ok(ctx: dict) -> bool:
         "EXECUTION_COMPLETE_CLOSURE_PENDING", "CLOSED_PASS", "CLOSED_FAIL",
         "SNAPSHOT_INVALIDATED",
     }
+    truth_ok=validate_current_truth_precedence_contract(ctx).get('status')=='PASS'
+    denominator_ok=validate_audit_denominator_contract(ctx).get('status')=='PASS'
+    terminology_ok=validate_canonical_terminology_contract(ctx).get('status')=='PASS'
+    severity_ok=canonical_finding_severity(ctx,'CURRENT_STATE_CONFLICT').get('severity')=='S1_BLOCKER'
     return bool(
         det.get("invariant_uid") == "GOV-INV-DETERMINISTIC-STAGE-AUDIT-001"
         and det.get("applies_to_all_registered_stages") is True
@@ -124,6 +202,7 @@ def deterministic_contract_ok(ctx: dict) -> bool:
         and statuses == required_statuses
         and (det.get("current_state_conflict_contract") or {}).get("stage_pass_allowed") is False
         and (det.get("historical_evidence_contract") or {}).get("historical_pass_is_current_pass") is False
+        and truth_ok and denominator_ok and terminology_ok and severity_ok
     )
 
 
@@ -491,6 +570,54 @@ def run_self_test() -> int:
         print('FAIL: audit denominator drift did not invalidate snapshot',file=sys.stderr)
         return 1
     cases.append('audit_snapshot_denominator_drift_invalidated')
+
+    truth_ok=validate_current_truth_precedence_contract(base)
+    if truth_ok.get('status')!='PASS':
+        print('FAIL: current truth precedence baseline invalid: '+json.dumps(truth_ok,sort_keys=True),file=sys.stderr)
+        return 1
+    cases.append('current_truth_precedence_pass')
+    truth_drift=copy.deepcopy(base)
+    precedence=truth_drift['stage_invariants']['DETERMINISTIC_STAGE_AUDIT']['current_truth_precedence']
+    precedence[0],precedence[1]=precedence[1],precedence[0]
+    if validate_current_truth_precedence_contract(truth_drift).get('status')=='PASS':
+        print('FAIL: current truth precedence drift escaped validation',file=sys.stderr)
+        return 1
+    cases.append('current_truth_precedence_drift_blocked')
+
+    denominator=build_denominator(base)
+    frozen=[str(x.get('audit_item_uid') or '') for x in denominator]
+    denom_ok=validate_audit_denominator_contract(base,denominator,frozen)
+    if denom_ok.get('status')!='PASS':
+        print('FAIL: audit denominator baseline invalid: '+json.dumps(denom_ok,sort_keys=True),file=sys.stderr)
+        return 1
+    cases.append('audit_denominator_freeze_pass')
+    if validate_audit_denominator_contract(base,denominator[:-1],frozen).get('reason')!='AUDIT_DENOMINATOR_SHRINK_BLOCKED':
+        print('FAIL: audit denominator shrink escaped validation',file=sys.stderr)
+        return 1
+    cases.append('audit_denominator_shrink_blocked')
+
+    severity=canonical_finding_severity(base,'CURRENT_STATE_CONFLICT')
+    if severity.get('severity')!='S1_BLOCKER':
+        print('FAIL: canonical finding severity drift',file=sys.stderr)
+        return 1
+    cases.append('canonical_finding_severity_pass')
+    if canonical_finding_severity(base,'SYNTHETIC_UNREGISTERED_FINDING').get('status')=='PASS':
+        print('FAIL: unregistered canonical finding escaped validation',file=sys.stderr)
+        return 1
+    cases.append('unregistered_finding_blocked')
+
+    term_ok=validate_canonical_terminology_contract(base)
+    if term_ok.get('status')!='PASS':
+        print('FAIL: canonical terminology baseline invalid: '+json.dumps(term_ok,sort_keys=True),file=sys.stderr)
+        return 1
+    cases.append('canonical_terminology_pass')
+    term_drift=copy.deepcopy(base)
+    term_drift['stage_invariants']['DETERMINISTIC_STAGE_AUDIT']['canonical_terminology_contract']['authorized_not_applicable_token']='AUTHORIZED_NA'
+    if validate_canonical_terminology_contract(term_drift).get('status')=='PASS':
+        print('FAIL: canonical terminology drift escaped validation',file=sys.stderr)
+        return 1
+    cases.append('canonical_terminology_drift_blocked')
+
 
 
     first = run_closure(base)
