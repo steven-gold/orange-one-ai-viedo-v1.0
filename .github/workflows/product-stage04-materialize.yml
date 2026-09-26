@@ -1,4 +1,6 @@
 name: Product Stage04 Materialize
+# LEGACY SUPPORT ONLY. Fresh Stage-04 execution MUST use the common one-operation protocol.
+# The bulk seal path is fail-closed and may not authorize Stage closure.
 # stage04-materialize: preapproval phase compiles BASIC_DESIGN_PACKAGE for both
 # Stage-04 governed units (the only operation allowed before human approval).
 # When a governed FORMAL_APPROVAL disposition exists, the same run materializes
@@ -6,10 +8,6 @@ name: Product Stage04 Materialize
 # closure so CURRENT_GOVERNED_UNIT_FOUNDATION_FROZEN is authorized.
 on:
   workflow_dispatch:
-  push:
-    branches: [0921acpos]
-    paths:
-      - '.github/workflows/product-stage04-materialize.yml'
 permissions:
   contents: write
 concurrency:
