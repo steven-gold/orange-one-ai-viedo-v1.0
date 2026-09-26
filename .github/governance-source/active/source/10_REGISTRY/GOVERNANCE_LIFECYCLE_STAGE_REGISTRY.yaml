@@ -19,7 +19,25 @@ normative_section_uids:
 - WEB-GOV-03-S069
 - WEB-GOV-04-S083
 topology:
-  foundation_explicit_stage_range_execution_contract:
+  foundation_stages:
+  - STAGE-01
+  - STAGE-02
+  - STAGE-03
+  - STAGE-04
+  foundation_barrier_mode: PER_GOVERNED_UNIT
+  vertical_stages:
+  - STAGE-05
+  - STAGE-06
+  - STAGE-07
+  - STAGE-08
+  - STAGE-09
+  - STAGE-10
+  - STAGE-11
+  vertical_concurrency: 1
+  page_uid_sticky_from_stage: STAGE-05
+  page_uid_sticky_through_stage: STAGE-11
+
+explicit_stage_range_execution_contract:
   invariant_uid: GOV-INV-EXPLICIT-STAGE-RANGE-EXECUTION-001
   applies_to_all_registered_stages: true
   request_authority: EXPLICIT_USER_OR_GOVERNED_CALLER_STAGE_RANGE
@@ -61,23 +79,7 @@ topology:
       stage_boundary_behavior: AUTO_CONTINUE_ON_PASS
       user_continue_prompt_after_normal_stage_pass: FORBIDDEN
       range_completion_condition: EVERY_REGISTERED_STAGE_IN_REQUESTED_RANGE_TERMINAL_PASS
-stages:
-  - STAGE-01
-  - STAGE-02
-  - STAGE-03
-  - STAGE-04
-  foundation_barrier_mode: PER_GOVERNED_UNIT
-  vertical_stages:
-  - STAGE-05
-  - STAGE-06
-  - STAGE-07
-  - STAGE-08
-  - STAGE-09
-  - STAGE-10
-  - STAGE-11
-  vertical_concurrency: 1
-  page_uid_sticky_from_stage: STAGE-05
-  page_uid_sticky_through_stage: STAGE-11
+
 universal_stage_stepwise_execution_contract:
   authority_ref: WEB-GOV-03-S062A
   applies_to_all_registered_stages: true
