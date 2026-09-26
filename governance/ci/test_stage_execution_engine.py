@@ -272,6 +272,225 @@ with tempfile.TemporaryDirectory() as td:
         cases+=1
     else:
         raise SystemExit('FAIL_EXPECTED_MATRIX-DESTRUCTIVE-REQUIRED-FIELD')
+
+# Stage-01..11 governance pressure tests using the real common validators.
+# Synthetic fixtures live only in a temporary product root and grant zero product completion credit.
+def expect_stage_engine_block(label, fn, expected_prefix=None):
+    global cases
+    try:
+        fn()
+    except eng.StageEngineError as exc:
+        if expected_prefix and expected_prefix not in str(exc):
+            raise SystemExit(f'FAIL_WRONG_BLOCK:{label}:{exc}')
+        cases += 1
+        return
+    raise SystemExit('FAIL_EXPECTED_STAGE_ENGINE_BLOCK:'+label)
+
+with tempfile.TemporaryDirectory() as td:
+    pressure_root=Path(td)
+    old_root=os.environ.get(eng.PRODUCT_ROOT_ENV)
+    os.environ[eng.PRODUCT_ROOT_ENV]=str(pressure_root)
+    stages=eng.stage_map(profile)
+    invdoc=eng.y(eng.INVARIANTS)
+    cross_policy=((invdoc.get('invariants') or {}).get('CROSS_STAGE_MATERIALIZATION_AND_CONSUMER_READINESS') or {})
+    binding_requirements=cross_policy.get('successor_execution_binding_requirements') or {}
+    binding_maps=cross_policy.get('successor_execution_binding_operation_map') or {}
+    binding_fields=list(map(str,cross_policy.get('successor_execution_binding_required_row_fields') or []))
+
+    def _binding_row(binding_class, consuming_operation_uid):
+        row={k:'SYNTHETIC' for k in binding_fields}
+        row.update({
+          'binding_class':binding_class,
+          'consuming_operation_uid':consuming_operation_uid,
+          'canonical_owner_or_authority_ref':'SYNTHETIC-CURRENT-AUTHORITY',
+          'applicability':'REQUIRED',
+          'resolution_status':'BOUND',
+          'authority_evidence_ref':'synthetic://authority',
+          'target_identity':'synthetic://target/'+binding_class.lower(),
+          'denominator_inclusion_status':'INCLUDED',
+          'consumer_readiness_status':'READY',
+          'failure_disposition':'BLOCK_AND_REENTER_OWNER',
+          'reentry_owner':'SYNTHETIC-CURRENT-AUTHORITY',
+        })
+        return row
+
+    def _write_valid_handoff(predecessor_uid):
+        predecessor=stages[predecessor_uid]
+        successor_uid=str(predecessor.get('next_stage_uid') or '')
+        if successor_uid in stages:
+            successor=stages[successor_uid]
+            required_inputs=[{'input_uid':x,'status':'MATERIALIZED'} for x in successor.get('inputs') or []]
+            classes=list(map(str,binding_requirements.get(successor_uid) or []))
+            op_map=binding_maps.get(successor_uid) or {}
+            rows=[_binding_row(cls,str(op_map.get(cls) or successor['operations'][0])) for cls in classes]
+        else:
+            required_inputs=[]
+            classes=list(map(str,cross_policy.get('next_page_successor_binding_requirements') or []))
+            rows=[_binding_row(cls,'NEXT_PAGE_ELIGIBILITY_EVALUATE') for cls in classes]
+        rel=f'{predecessor_uid}-handoff.yaml'
+        ledger={
+          'artifact_uid':'SYNTHETIC-'+predecessor_uid+'-HANDOFF',
+          'artifact_type':'CROSS_STAGE_HANDOFF_READINESS_LEDGER',
+          'stage_uid':predecessor_uid,
+          'work_unit_uid':'SYNTHETIC-'+predecessor_uid+'-WU',
+          'successor_stage_uid':successor_uid,
+          'successor_required_inputs':required_inputs,
+          'successor_execution_bindings':rows,
+          'successor_execution_binding_total':len(classes),
+          'successor_execution_binding_ready_total':len(classes),
+          'successor_execution_binding_unresolved_total':0,
+          'reference_resolution_complete':True,
+          'physical_materialization_complete':True,
+          'required_field_completeness_complete':True,
+          'denominator_reconciled':True,
+          'consumer_readiness_complete':True,
+          'current_matrix_valid':True,
+          'current_state_consistent':True,
+          'unresolved_required_dependency_total':0,
+          'status':'PASS',
+        }
+        (pressure_root/rel).write_text(yaml.safe_dump(ledger,sort_keys=False),encoding='utf-8')
+        evidence={'result':'PASS','cross_stage_handoff':{'ledger_ref':rel,'external_receipt':False}}
+        return predecessor,successor_uid,rel,ledger,evidence
+
+    # Every downstream handoff STAGE-04..11 must accept a complete denominator,
+    # then reject a missing binding class. This proves the validator is not artifact-presence-only.
+    for predecessor_uid in [f'STAGE-{i:02d}' for i in range(4,12)]:
+        predecessor,successor_uid,rel,ledger,evidence=_write_valid_handoff(predecessor_uid)
+        eng._validate_cross_stage_handoff_ledger(predecessor_uid,deepcopy(evidence),predecessor,stages)
+        if ledger['successor_execution_bindings']:
+            broken=deepcopy(ledger)
+            removed=broken['successor_execution_bindings'].pop()
+            broken['successor_execution_binding_total']-=1
+            broken['successor_execution_binding_ready_total']-=1
+            (pressure_root/rel).write_text(yaml.safe_dump(broken,sort_keys=False),encoding='utf-8')
+            expect_stage_engine_block(
+              f'{predecessor_uid}_missing_successor_binding_{removed["binding_class"]}',
+              lambda p=predecessor_uid,e=deepcopy(evidence),st=predecessor: eng._validate_cross_stage_handoff_ledger(p,e,st,stages),
+              'CROSS_STAGE_SUCCESSOR_EXECUTION_BINDING_DENOMINATOR_DRIFT'
+            )
+            (pressure_root/rel).write_text(yaml.safe_dump(ledger,sort_keys=False),encoding='utf-8')
+
+    # STAGE-04 -> STAGE-05: technology stack must be Current Authority, never an AI recommendation.
+    predecessor,successor_uid,rel,ledger,evidence=_write_valid_handoff('STAGE-04')
+    for cls in ('IMPLEMENTATION_LANGUAGE_AUTHORITY','FRONTEND_FRAMEWORK_AUTHORITY','BACKEND_FRAMEWORK_AUTHORITY','PACKAGE_MANAGER_AUTHORITY','DATABASE_TARGET','AUTHENTICATION_TARGET','AUTHORIZATION_TARGET'):
+        broken=deepcopy(ledger)
+        row=next(x for x in broken['successor_execution_bindings'] if x['binding_class']==cls)
+        row['resolution_status']='UNRESOLVED'
+        row['canonical_owner_or_authority_ref']=''
+        row['authority_evidence_ref']=''
+        row['target_identity']=''
+        row['consumer_readiness_status']='NOT_READY'
+        broken['successor_execution_binding_ready_total']-=1
+        broken['successor_execution_binding_unresolved_total']=1
+        (pressure_root/rel).write_text(yaml.safe_dump(broken,sort_keys=False),encoding='utf-8')
+        expect_stage_engine_block(
+          'stage05_unbound_'+cls.lower(),
+          lambda e=deepcopy(evidence),st=predecessor: eng._validate_cross_stage_handoff_ledger('STAGE-04',e,st,stages),
+          'CROSS_STAGE_SUCCESSOR_EXECUTION_BINDING_NOT_READY'
+        )
+    (pressure_root/rel).write_text(yaml.safe_dump(ledger,sort_keys=False),encoding='utf-8')
+
+    # AUTHORIZED_NOT_APPLICABLE is legal only with exact authority evidence.
+    broken=deepcopy(ledger)
+    row=next(x for x in broken['successor_execution_bindings'] if x['binding_class']=='EXTERNAL_INTEGRATION_TARGET')
+    row.update({
+      'applicability':'AUTHORIZED_NOT_APPLICABLE',
+      'resolution_status':'AUTHORIZED_NOT_APPLICABLE',
+      'authority_evidence_ref':'',
+      'target_identity':'',
+      'consumer_readiness_status':'NOT_APPLICABLE_WITH_AUTHORITY'
+    })
+    (pressure_root/rel).write_text(yaml.safe_dump(broken,sort_keys=False),encoding='utf-8')
+    expect_stage_engine_block(
+      'stage05_na_without_authority',
+      lambda e=deepcopy(evidence),st=predecessor: eng._validate_cross_stage_handoff_ledger('STAGE-04',e,st,stages),
+      'CROSS_STAGE_SUCCESSOR_EXECUTION_BINDING_NA_AUTHORITY_MISSING'
+    )
+
+    # A PASS handoff can never mask invalid Matrix or Current State.
+    for field in ('current_matrix_valid','current_state_consistent'):
+        broken=deepcopy(ledger)
+        broken[field]=False
+        (pressure_root/rel).write_text(yaml.safe_dump(broken,sort_keys=False),encoding='utf-8')
+        expect_stage_engine_block(
+          'stage04_pass_masks_'+field,
+          lambda e=deepcopy(evidence),st=predecessor: eng._validate_cross_stage_handoff_ledger('STAGE-04',e,st,stages),
+          'CROSS_STAGE_HANDOFF_LEDGER_CORE_INTEGRITY_INVALID'
+        )
+    (pressure_root/rel).write_text(yaml.safe_dump(ledger,sort_keys=False),encoding='utf-8')
+
+    # Matrix pressure: empty row set and stale status must both fail closed.
+    matrix_stage='STAGE-05'
+    matrix_st=stages[matrix_stage]
+    wu='SYNTHETIC-PRESSURE-STAGE05'
+    wd=pressure_root/'STAGE_EXECUTION'/matrix_stage/wu
+    wd.mkdir(parents=True,exist_ok=True)
+    sections=list(map(str,matrix_st.get('required_normative_section_uids') or []))
+    arts=list(map(str,matrix_st.get('outputs') or []))+list(map(str,matrix_st.get('required_evidence') or []))
+    total=max(len(sections),len(arts))
+    payload={'fields':{f'f{i}':f'VALUE-{i}' for i in range(total)}}
+    (wd/'payload.yaml').write_text(yaml.safe_dump(payload,sort_keys=False),encoding='utf-8')
+    rows=[]
+    for i in range(total):
+        rows.append({
+          'matrix_row_uid':f'PRESSURE-MATRIX-{i+1:03d}','normative_section_uid':sections[i % len(sections)],
+          'requirement_uid':f'PRESSURE-REQ-{i+1:03d}','required_artifact_type':arts[i % len(arts)],
+          'artifact_ref':f'STAGE_EXECUTION/{matrix_stage}/{wu}/payload.yaml','artifact_owner':'SYNTHETIC-OWNER',
+          'row_denominator_source':'SYNTHETIC-PRESSURE','row_identity':f'PRESSURE-ROW-{i+1:03d}',
+          'field_path':['fields',f'f{i}'],'applicability':'REQUIRED','validator_uid':matrix_st['validators'][0],
+          'validator_check_id':f'PRESSURE-CHECK-{i+1:03d}','evidence_ref':'synthetic://pressure',
+          'closure_gate':matrix_st['exit_gate'],'failure_disposition':'BLOCK','reentry_owner':'SYNTHETIC-OWNER'
+        })
+    matrix={
+      'artifact_uid':'SYNTHETIC-PRESSURE-NEM','artifact_type':'NORMATIVE_EXECUTION_MATRIX','governance_uid':gov,
+      'stage_uid':matrix_stage,'work_unit_uid':wu,'rows':rows,'coverage':{
+        'required_normative_section_total':len(sections),'represented_normative_section_total':len(sections),
+        'required_artifact_total':len(set(arts)),'represented_artifact_total':len(set(arts)),
+        'required_field_total':total,'validator_bound_field_total':total,'closure_bound_field_total':total,
+        'missing_required_row_count':0,'missing_required_field_count':0,'duplicate_credit_count':0,'summary_only_credit_count':0,
+        'unclassified_applicability_count':0,'validator_unbound_count':0,'closure_unbound_count':0,'stale_matrix_count':0},
+      'status':'PASS'
+    }
+    mpath=wd/'NORMATIVE_EXECUTION_MATRIX.yaml'
+    mpath.write_text(yaml.safe_dump(matrix,sort_keys=False),encoding='utf-8')
+    mwork={'work_unit_uid':wu,'normative_execution_matrix_ref':f'STAGE_EXECUTION/{matrix_stage}/{wu}/NORMATIVE_EXECUTION_MATRIX.yaml'}
+    eng.validate_normative_execution_matrix(matrix_stage,pressure_root,mwork,matrix_st,gov)
+    empty=deepcopy(matrix); empty['rows']=[]
+    mpath.write_text(yaml.safe_dump(empty,sort_keys=False),encoding='utf-8')
+    expect_stage_engine_block('matrix_rows_empty',lambda:eng.validate_normative_execution_matrix(matrix_stage,pressure_root,mwork,matrix_st,gov),'NORMATIVE_EXECUTION_MATRIX_ROWS_EMPTY')
+    stale=deepcopy(matrix); stale['coverage']['stale_matrix_count']=1
+    mpath.write_text(yaml.safe_dump(stale,sort_keys=False),encoding='utf-8')
+    expect_stage_engine_block('matrix_stale_count',lambda:eng.validate_normative_execution_matrix(matrix_stage,pressure_root,mwork,matrix_st,gov),'NORMATIVE_EXECUTION_MATRIX_COVERAGE_DRIFT')
+    mpath.write_text(yaml.safe_dump(matrix,sort_keys=False),encoding='utf-8')
+
+    # Current-state pressure: a PASS stage cannot be CLOSED while operations are incomplete
+    # or while current_operation still points at readiness/pending work.
+    scope_rel=f'STAGE_EXECUTION/{matrix_stage}/{wu}/CURRENT_EXECUTION_SCOPE_MANIFEST.yaml'
+    yaml.safe_dump({'artifact_type':'EXECUTION_SCOPE_MANIFEST','stage_uid':matrix_stage,'work_unit_uid':wu,'governance_uid':gov},(wd/'CURRENT_EXECUTION_SCOPE_MANIFEST.yaml').open('w',encoding='utf-8'),sort_keys=False)
+    yaml.safe_dump({
+      'artifact_type':'WORK_UNIT','work_unit_uid':wu,'stage_uid':matrix_stage,'status':'CLOSED','current_status':'CLOSED',
+      'normative_execution_matrix_ref':mwork['normative_execution_matrix_ref']
+    },(wd/'WORK_UNIT.yaml').open('w',encoding='utf-8'),sort_keys=False)
+    valid_state={'artifact_type':'WORK_UNIT_EXECUTION_STATE','stage_uid':matrix_stage,'work_unit_uid':wu,'completed_operations':list(matrix_st['operations']),'current_operation':'COMPLETE','status':'CLOSED'}
+    yaml.safe_dump(valid_state,(wd/'EXECUTION_STATE.yaml').open('w',encoding='utf-8'),sort_keys=False)
+    state_e={'scope_manifest_ref':scope_rel,'result':'PASS'}
+    eng._validate_current_stage_state_bundle(matrix_stage,state_e,matrix_st,gov)
+    incomplete=deepcopy(valid_state); incomplete['completed_operations']=incomplete['completed_operations'][:-1]
+    yaml.safe_dump(incomplete,(wd/'EXECUTION_STATE.yaml').open('w',encoding='utf-8'),sort_keys=False)
+    expect_stage_engine_block('state_closed_incomplete_operations',lambda:eng._validate_current_stage_state_bundle(matrix_stage,state_e,matrix_st,gov),'CURRENT_STATE_OPERATION_SET_CONFLICT')
+    pending=deepcopy(valid_state); pending['current_operation']='STAGE05_INPUT_READINESS_PENDING'
+    yaml.safe_dump(pending,(wd/'EXECUTION_STATE.yaml').open('w',encoding='utf-8'),sort_keys=False)
+    expect_stage_engine_block('state_closed_but_readiness_pending',lambda:eng._validate_current_stage_state_bundle(matrix_stage,state_e,matrix_st,gov),'CURRENT_STATE_CURRENT_OPERATION_CONFLICT')
+    badstatus=deepcopy(valid_state); badstatus['status']='IN_PROGRESS'
+    yaml.safe_dump(badstatus,(wd/'EXECUTION_STATE.yaml').open('w',encoding='utf-8'),sort_keys=False)
+    expect_stage_engine_block('state_pass_but_in_progress',lambda:eng._validate_current_stage_state_bundle(matrix_stage,state_e,matrix_st,gov),'CURRENT_STATE_STATUS_CONFLICT')
+
+    if old_root is None:
+        os.environ.pop(eng.PRODUCT_ROOT_ENV,None)
+    else:
+        os.environ[eng.PRODUCT_ROOT_ENV]=old_root
+
 assert not (ROOT/'governance/ci/compile_stage_execution_preflight.py').exists()
 assert not (ROOT/'governance/ci/stage_execution_adapters/stage02_functional_contract.py').exists()
 s2=adapters['stages']['STAGE-02']
