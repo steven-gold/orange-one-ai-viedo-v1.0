@@ -311,6 +311,8 @@ def validate(root=ROOT):
         failures.append('cross_stage_single_canonical_handoff_contract_missing')
     if crossmat.get('successor_execution_binding_universe_source') != 'CURRENT_SUCCESSOR_LIFECYCLE_OPERATIONS_PLUS_CURRENT_AUTHORITY_AND_APPLICABILITY' or crossmat.get('successor_execution_binding_may_be_invented_by_consumer') is not False or crossmat.get('successor_execution_binding_may_be_inferred_from_product_need_alone') is not False or crossmat.get('stub_placeholder_or_recommended_target_may_receive_readiness_credit') is not False:
         failures.append('cross_stage_execution_binding_authority_contract_incomplete')
+    if crossmat.get('technology_stack_recommendation_may_create_execution_authority') is not False or crossmat.get('implementation_language_framework_or_package_manager_may_be_ai_selected_when_unbound') is not False or crossmat.get('successor_effectful_operation_prerequisite_binding_must_be_derived_from_current_authority') is not True or crossmat.get('enumerated_binding_classes_are_minimum_not_exhaustive_when_registered_operation_has_additional_authorized_prerequisites') is not True:
+        failures.append('cross_stage_dynamic_prerequisite_authority_contract_incomplete')
     if crossmat.get('authorized_not_applicable_token') != 'AUTHORIZED_NOT_APPLICABLE' or crossmat.get('terminal_receipt_or_outer_run_success_may_override_matrix_or_state_conflict') is not False:
         failures.append('cross_stage_na_or_override_contract_incomplete')
     if set(crossmat.get('required_row_fields') or []) != set(HANDOFF_REQUIRED_FIELDS_FOR_VALIDATOR):
@@ -324,6 +326,11 @@ def validate(root=ROOT):
         failures.append('cross_stage_execution_binding_stage_requirement_set_drift')
     if set(binding_maps) != {f'STAGE-{i:02d}' for i in range(3,12)}:
         failures.append('cross_stage_execution_binding_operation_map_stage_set_drift')
+    stage05_stack_required={'IMPLEMENTATION_LANGUAGE_AUTHORITY','FRONTEND_FRAMEWORK_AUTHORITY','BACKEND_FRAMEWORK_AUTHORITY','PACKAGE_MANAGER_AUTHORITY'}
+    if not stage05_stack_required.issubset(set(binding_requirements.get('STAGE-05') or [])):
+        failures.append('stage05_implementation_stack_authority_denominator_incomplete')
+    if not stage05_stack_required.issubset(set((binding_maps.get('STAGE-05') or {}).keys())):
+        failures.append('stage05_implementation_stack_operation_binding_map_incomplete')
     if crossmat.get('historical_or_reference_only_completion_credit') != 0:
         failures.append('reference_only_completion_credit_leak')
     if crossmat.get('downstream_discovered_upstream_gap') != 'STOP_REENTER_EARLIEST_OWNER_MARK_DESCENDANTS_REVERIFY_REQUIRED':
@@ -332,6 +339,8 @@ def validate(root=ROOT):
     bcross = bp.get('cross_stage_materialization_consumer_readiness_contract') or {}
     if bcross.get('required') is not True or bcross.get('audit_item_uid') != 'AUD-GOV-014' or bcross.get('validator_uid') != 'VAL-GOV-035':
         failures.append('acceptance_cross_stage_readiness_binding_missing')
+    if bcross.get('successor_effectful_operation_binding_denominator_required') is not True or bcross.get('artifact_input_presence_alone_may_grant_consumer_readiness') is not False or bcross.get('implementation_stack_authority_required_when_materially_constraining_program_artifacts') is not True or bcross.get('ai_recommended_framework_or_toolchain_may_receive_readiness_credit') is not False:
+        failures.append('acceptance_cross_stage_effectful_binding_authority_incomplete')
     catalog = load(root, '10_REGISTRY/AUDIT_CATALOG.yaml')
     aud14 = next((x for x in catalog.get('items') or [] if x.get('audit_item_uid') == 'AUD-GOV-014'), None)
     if not isinstance(aud14, dict) or aud14.get('audit_type') != 'CROSS_STAGE_MATERIALIZATION_AND_CONSUMER_READINESS' or aud14.get('validator_uid') != 'VAL-GOV-035':
