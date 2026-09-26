@@ -268,6 +268,7 @@ def validate(root=ROOT):
     if (st2.get('stage_execution_invariant_gate') or {}).get('required') is not True:
         failures.append('stage02_empirical_gate_binding_missing')
     expected_stage_ids = {f'STAGE-{i:02d}' for i in range(1, 12)}
+    # Initialize canonical cross-stage binding denominator before lifecycle checks.
     crossmat = inv.get('CROSS_STAGE_MATERIALIZATION_AND_CONSUMER_READINESS') or {}
     binding_requirements = crossmat.get('successor_execution_binding_requirements') or {}
     binding_maps = crossmat.get('successor_execution_binding_operation_map') or {}
