@@ -294,6 +294,56 @@ def validate_reverify_propagation(stage_statuses,impacted_predecessor_uid):
             fail('DOWNSTREAM_UNCONDITIONAL_CURRENT_PASS_AFTER_IMPACTED_PREDECESSOR_REVERIFY:'+sid+':'+status)
     return True
 
+def production_redeploy_acceptance_disposition(current_deployment_record,prior_acceptance_record):
+    validate_environment_evidence(current_deployment_record,'PRODUCTION')
+    validate_environment_evidence(prior_acceptance_record,'PRODUCTION')
+    current=str(current_deployment_record.get('release_identity') or '').strip()
+    prior=str(prior_acceptance_record.get('release_identity') or '').strip()
+    if not current or not prior: fail('PRODUCTION_RELEASE_IDENTITY_MISSING')
+    if current!=prior:
+        contract=_deterministic_stage_audit_contract().get('environment_evidence_separation') or {}
+        return str(contract.get('production_redeploy_invalidates_prior_release_acceptance') or 'REVERIFY_REQUIRED')
+    return 'CURRENT'
+
+def validate_vertical_scope_identity(stage_records):
+    contract=_deterministic_stage_audit_contract().get('vertical_lifecycle_contract') or {}
+    fields=list(map(str,contract.get('sticky_identity_fields') or []))
+    finding=str(contract.get('drift_finding') or 'VERTICAL_SCOPE_IDENTITY_DRIFT')
+    start=str(contract.get('applies_from_stage') or 'STAGE-05')
+    end_stage=str(contract.get('applies_through_stage') or 'STAGE-11')
+    _,_,_,_,_,stages=validate_definition()
+    order=list(stages)
+    if start not in stages or end_stage not in stages: fail('VERTICAL_SCOPE_STAGE_RANGE_INVALID')
+    selected=order[order.index(start):order.index(end_stage)+1]
+    if not isinstance(stage_records,dict): fail(finding+':STAGE_RECORD_MAPPING_REQUIRED')
+    for sid in selected:
+        if sid not in stage_records or not isinstance(stage_records[sid],dict):
+            fail(finding+':STAGE_RECORD_MISSING:'+sid)
+    for field in fields:
+        values=[]
+        for sid in selected:
+            value=str(stage_records[sid].get(field) or '').strip()
+            if not value: fail(finding+':FIELD_MISSING:'+sid+':'+field)
+            values.append(value)
+        if len(set(values))!=1: fail(finding+':'+field)
+    return True
+
+def validate_full_lifecycle_closure(stage_statuses,impacted_reverify_count,stage11_eligibility):
+    contract=_deterministic_stage_audit_contract().get('full_lifecycle_closure_contract') or {}
+    _,_,_,_,_,stages=validate_definition()
+    if not isinstance(stage_statuses,dict): fail('FULL_LIFECYCLE_STAGE_STATUS_MAPPING_REQUIRED')
+    if contract.get('all_registered_stages_must_close_under_current_governance') is True:
+        for sid in stages:
+            if str(stage_statuses.get(sid) or '')!='CLOSED_PASS':
+                fail('FULL_LIFECYCLE_STAGE_NOT_CLOSED_PASS:'+sid+':'+str(stage_statuses.get(sid) or ''))
+    required_reverify=int(contract.get('impacted_reverify_count_required') or 0)
+    if int(impacted_reverify_count)!=required_reverify:
+        fail('FULL_LIFECYCLE_IMPACTED_REVERIFY_NONZERO:'+str(impacted_reverify_count))
+    if contract.get('next_page_or_project_completion_requires_registered_stage11_eligibility') is True:
+        if str(stage11_eligibility or '') not in {'NEXT_PAGE_STAGE05','PROJECT_COMPLETE'}:
+            fail('FULL_LIFECYCLE_STAGE11_ELIGIBILITY_INVALID:'+str(stage11_eligibility or ''))
+    return True
+
 def plan(stage_uid):
     entry,reg,gov,profile,adapters,stages=validate_definition()
     if stage_uid not in stages: fail(f'UNKNOWN_STAGE:{stage_uid}')

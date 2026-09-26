@@ -597,6 +597,30 @@ expect_stage_engine_block(
     'DOWNSTREAM_UNCONDITIONAL_CURRENT_PASS_AFTER_IMPACTED_PREDECESSOR_REVERIFY'
 )
 
+assert eng.production_redeploy_acceptance_disposition(
+    {'environment':'PRODUCTION','release_identity':'REL-PROD-002'},
+    {'environment':'PRODUCTION','release_identity':'REL-PROD-001'}
+)=='REVERIFY_REQUIRED'
+assert eng.production_redeploy_acceptance_disposition(
+    {'environment':'PRODUCTION','release_identity':'REL-PROD-001'},
+    {'environment':'PRODUCTION','release_identity':'REL-PROD-001'}
+)=='CURRENT'
+
+_sticky_fields=(eng._deterministic_stage_audit_contract().get('vertical_lifecycle_contract') or {}).get('sticky_identity_fields') or []
+_vertical_records={}
+for _sid in [f'STAGE-{i:02d}' for i in range(5,12)]:
+    _vertical_records[_sid]={field:'SYNTHETIC-STICKY-'+field for field in _sticky_fields}
+assert eng.validate_vertical_scope_identity(_vertical_records) is True
+_bad_vertical=deepcopy(_vertical_records); _bad_vertical['STAGE-09']['release_identity']='SYNTHETIC-DRIFT'
+expect_stage_engine_block('vertical_release_identity_drift',lambda:eng.validate_vertical_scope_identity(_bad_vertical),'VERTICAL_SCOPE_IDENTITY_DRIFT')
+
+_closed={uid:'CLOSED_PASS' for uid in _all_stage_uids}
+assert eng.validate_full_lifecycle_closure(_closed,0,'PROJECT_COMPLETE') is True
+_bad_closed=deepcopy(_closed); _bad_closed['STAGE-08']='REVERIFY_REQUIRED'
+expect_stage_engine_block('full_lifecycle_requires_all_stage_closed_pass',lambda:eng.validate_full_lifecycle_closure(_bad_closed,0,'PROJECT_COMPLETE'),'FULL_LIFECYCLE_STAGE_NOT_CLOSED_PASS')
+expect_stage_engine_block('full_lifecycle_requires_zero_impacted_reverify',lambda:eng.validate_full_lifecycle_closure(_closed,1,'PROJECT_COMPLETE'),'FULL_LIFECYCLE_IMPACTED_REVERIFY_NONZERO')
+expect_stage_engine_block('full_lifecycle_requires_registered_stage11_eligibility',lambda:eng.validate_full_lifecycle_closure(_closed,0,'AI_SELECTED_NEXT'),'FULL_LIFECYCLE_STAGE11_ELIGIBILITY_INVALID')
+
 _range_plan=eng.plan_range('STAGE-01','STAGE-05')
 assert _range_plan['selected_stage_count']==5
 assert _range_plan['normal_stage_boundary_user_prompt']=='FORBIDDEN'
