@@ -4,10 +4,10 @@ stage_uid: STAGE-03
 primary_task_layer: PRODUCT_STAGE_EXECUTION
 execution_branch: 0921acpos
 current_governance_uid: GOV-REV-20260925-NORMATIVE-EXECUTION-MATRIX
-current_governance_head: 335d8a01d6d3eb6f0ed951ffc40216029b19d4e3
-current_display_version: v2.2.25
-active_work_unit_uid: WU-STAGE03-GLOBAL-HOME-SHELL-NAVIGATION-001
-resume_point: CURRENT_HEAD_SEMANTIC_REVERIFY
+current_governance_head: 93a595d034b06bcc28285f064f312587b63f4f9a
+current_display_version: v2.2.27
+active_work_unit_uid: null
+resume_point: STAGE04_UNIT_RESOLUTION_GATE
 eligible_units:
 - GLOBAL-HOME-SHELL-NAVIGATION
 - workspace:WB-01
@@ -17,9 +17,8 @@ completed_stage03_units:
 remaining_stage03_units: []
 reverify_required_stage03_units: []
 stage_transition_semantics: PER_GOVERNED_PAGE_OR_SYSTEM_LOGIC_UNIT
-status: STAGE03_SEMANTIC_REVERIFY_IN_PROGRESS
-pending_visual_review_units:
-- workspace:WB-01
+status: STAGE03_COMPLETE_STAGE04_ELIGIBLE
+pending_visual_review_units: []
 prior_materialization_validation_run_id: 36015610533
 prior_materialization_validation_head: 50340ec5f5a1b7e844c34911049b45e61de5d2b5
 prior_post_review_validation_run_id: 36028726148
@@ -34,5 +33,5 @@ reentry_source:
   stage_uid: STAGE-04
   work_unit_uid: WU-STAGE04-GLOBAL-HOME-SHELL-NAVIGATION-001
   problem_register_ref: STAGE_EXECUTION/STAGE-04/WU-STAGE04-GLOBAL-HOME-SHELL-NAVIGATION-001/CURRENT_PROBLEM_REGISTER.yaml
-stage_exit_authorized: false
+stage_exit_authorized: true
 next_stage_uid: STAGE-04

@@ -1,14 +1,18 @@
-provider: GitHub Actions
-repository_or_project: steven-gold/orange-one-ai-viedo-v1.0
-head_sha: df2bf7c9d4b1eaacccb7ab52c7cc83a9bf5d7308
-run_id: "36106441831"
-job_denominator:
-- validate-stage03 (WU-STAGE03-WB01-DASHBOARD-001)
-conclusion: success
-governance_uid: GOV-REV-20260925-NORMATIVE-EXECUTION-MATRIX
-governance_head: 22b8d6845ce31014ba10b4c1f8f7a3ec9dcceb20
-stage_uid: STAGE-03
-work_unit_uid: WU-STAGE03-WB01-DASHBOARD-001
-evidence_ref: STAGE_EXECUTION/STAGE-03/WU-STAGE03-WB01-DASHBOARD-001/EVIDENCE/STAGE03_NORMALIZED_EVIDENCE.json
-normative_execution_matrix_ref: STAGE_EXECUTION/STAGE-03/WU-STAGE03-WB01-DASHBOARD-001/NORMATIVE_EXECUTION_MATRIX.yaml
-receipt_role: EXTERNAL_IMMUTABLE_TERMINAL_VALIDATION_RECEIPT
+{
+  "provider": "GitHub Actions",
+  "repository_or_project": "steven-gold/orange-one-ai-viedo-v1.0",
+  "head_sha": "b7dc362faf195e5645871dff583fc92ef8cfeab2",
+  "run_id": "36227587296",
+  "job_denominator": [
+    "materialize",
+    "stage03-admission-check",
+    "stage03-normalized-evidence",
+    "stage03-terminal-receipt"
+  ],
+  "conclusion": "success",
+  "governance_uid": "GOV-REV-20260925-NORMATIVE-EXECUTION-MATRIX",
+  "stage_uid": "STAGE-03",
+  "work_unit_uid": "WU-STAGE03-WB01-DASHBOARD-001",
+  "evidence_ref": "STAGE_EXECUTION/STAGE-03/WU-STAGE03-WB01-DASHBOARD-001/EVIDENCE/STAGE03_NORMALIZED_EVIDENCE.json",
+  "receipt_role": "EXTERNAL_IMMUTABLE_TERMINAL_VALIDATION_RECEIPT"
+}

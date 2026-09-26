@@ -1,10 +1,10 @@
 {
   "artifact_type": "COMMON_STAGE_EXECUTION_EVIDENCE",
-  "attempt_uid": "ATTEMPT-STAGE03-GLOBAL-HOME-SHELL-20260925-V225-REVERIFY",
+  "attempt_uid": "ATTEMPT-STAGE-03-GLOBAL-HOME-SHELL-NAVIGATION-001-20260926-CURRENT-REVERIFY",
   "stage_uid": "STAGE-03",
   "governance_uid": "GOV-REV-20260925-NORMATIVE-EXECUTION-MATRIX",
   "scope_manifest_ref": "STAGE_EXECUTION/STAGE-03/WU-STAGE03-GLOBAL-HOME-SHELL-NAVIGATION-001/CURRENT_EXECUTION_SCOPE_MANIFEST.yaml",
-  "source_head_sha": "8a11d1e9c128bdfc70763d6c70eaadc1177b3312",
+  "source_head_sha": "b7dc362faf195e5645871dff583fc92ef8cfeab2",
   "actual_stage_execution_started": true,
   "actual_stage_execution_completed": true,
   "fresh_execution": true,
@@ -85,11 +85,13 @@
     },
     {
       "phase_uid": "OWNER_REMEDIATION",
-      "status": "PASS"
+      "status": "NOT_APPLICABLE_WITH_PROOF",
+      "proof": "ZERO_DISCOVERED_GAPS"
     },
     {
       "phase_uid": "FRESH_REEXECUTION",
-      "status": "PASS"
+      "status": "NOT_APPLICABLE_WITH_PROOF",
+      "proof": "ZERO_DISCOVERED_GAPS"
     },
     {
       "phase_uid": "HIDDEN_DEFECT_SWEEP",
@@ -250,11 +252,11 @@
   "gaps": [],
   "closure_blockers": [],
   "remediation": {
-    "discovered_gap_total": 10,
-    "remediated_gap_total": 10,
+    "discovered_gap_total": 0,
+    "remediated_gap_total": 0,
     "unresolved_gap_total": 0,
-    "reexecution_required": true,
-    "reexecution_performed": true
+    "reexecution_required": false,
+    "reexecution_performed": false
   },
   "hidden_defect_sweep": {
     "performed": true,
@@ -284,8 +286,8 @@
   "exact_head_gate_receipts": [
     {
       "gate_uid": "PRODUCT_STAGE03_VALIDATION",
-      "head_sha": "8a11d1e9c128bdfc70763d6c70eaadc1177b3312",
-      "run_id": "36089650487",
+      "head_sha": "b7dc362faf195e5645871dff583fc92ef8cfeab2",
+      "run_id": "36227587296",
       "conclusion": "success"
     }
   ],
