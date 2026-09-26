@@ -106,8 +106,15 @@ res.append(case('canonical_stage06_name_exact', (contracts.get('STAGE-06') or {}
 res.append(case('canonical_stage07_name_exact', (contracts.get('STAGE-07') or {}).get('capability')=='BUILD_RELEASE_CANDIDATE'))
 res.append(case('canonical_authorized_not_applicable_token_exact', set((contracts.get('STAGE-06') or {}).get('allowed_test_results') or [])=={'PASS','FAIL','BLOCKED','AUTHORIZED_NOT_APPLICABLE'} and (contracts.get('STAGE-08') or {}).get('legal_na_result')=='AUTHORIZED_NOT_APPLICABLE'))
 res.append(case('noncanonical_stage_not_pass_is_forbidden_alias_only', (det.get('deterministic_decision_table') or {}).get('source_document_pass_does_not_imply_stage_pass') is True and 'STAGE_NOT_PASS' in set((det.get('canonical_terminology_contract') or {}).get('forbidden_aliases') or [])))
+range_inv=(invdoc.get('invariants') or {}).get('EXPLICIT_STAGE_RANGE_EXECUTION') or {}
+interaction_inv=(invdoc.get('invariants') or {}).get('DETERMINISTIC_HUMAN_INTERACTION_BOUNDARY') or {}
+interaction_contracts=interaction_inv.get('stage_interaction_contracts') or {}
+res.append(case('stage_range_contract_exact_user_authority', range_inv.get('requested_range_is_execution_authority') is True and range_inv.get('system_selected_batch_size')=='FORBIDDEN' and range_inv.get('stage_boundary_manual_continue_prompt')=='FORBIDDEN'))
+res.append(case('stage_interaction_contracts_cover_all_11', set(interaction_contracts)=={f'STAGE-{i:02d}' for i in range(1,12)}))
+res.append(case('stage04_formal_approval_not_choice_menu', (interaction_contracts.get('STAGE-04') or {}).get('default_mode')=='FORMAL_APPROVAL' and (interaction_contracts.get('STAGE-04') or {}).get('alternative_execution_path_allowed') is False and (interaction_contracts.get('STAGE-04') or {}).get('approval_consumption_operation')=='DESIGN_FREEZE_VALIDATE'))
+res.append(case('stage11_next_page_not_ai_invented', (interaction_contracts.get('STAGE-11') or {}).get('next_page_eligibility_must_come_from_registered_operation') is True and (interaction_contracts.get('STAGE-11') or {}).get('project_completion_may_be_ai_invented') is False))
 out=v213.validate(PKG)
 res.append(case('package_stage_execution_invariant_contract_valid', out['status']=='PASS',out))
 out={'suite':'v2.1.13 universal Stage execution invariant multidirection regression','total':len(res),'passed_expectations':sum(x['ok'] for x in res),'results':res}
 print(json.dumps(out,ensure_ascii=False,indent=2))
-raise SystemExit(0 if out['total']==42 and out['passed_expectations']==42 else 1)
+raise SystemExit(0 if out['total']==46 and out['passed_expectations']==46 else 1)
