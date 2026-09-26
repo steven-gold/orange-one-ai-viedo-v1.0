@@ -35,13 +35,7 @@ jobs:
           mkdir -p .github
           cp -R _governance_authority/.github/governance-source .github/governance-source
           GOV_HEAD="$(git -C _governance_authority rev-parse HEAD)"
-          GOV_UID="$(python - <<'PY'
-import yaml
-from pathlib import Path
-m=yaml.safe_load(Path('_governance_authority/governance/specifications/current/SPECIFICATION_MANIFEST.yaml').read_text()) or {}
-print(m.get('artifact_uid') or '')
-PY
-)"
+          GOV_UID="$(python -c "import yaml; from pathlib import Path; m=yaml.safe_load(Path('_governance_authority/governance/specifications/current/SPECIFICATION_MANIFEST.yaml').read_text()) or {}; print(m.get('artifact_uid') or '')")"
           test -n "$GOV_HEAD"
           test -n "$GOV_UID"
           echo "ACPOS_GOVERNANCE_HEAD=$GOV_HEAD" >> "$GITHUB_ENV"
