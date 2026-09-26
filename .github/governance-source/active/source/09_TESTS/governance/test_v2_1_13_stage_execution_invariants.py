@@ -99,8 +99,15 @@ res.append(case('deterministic_zero_operations_ready', deterministic_stage_statu
 res.append(case('deterministic_all_operations_without_closure_pending', deterministic_stage_status(4,4,closure_pass=False)=='EXECUTION_COMPLETE_CLOSURE_PENDING'))
 res.append(case('deterministic_closed_pass', deterministic_stage_status(4,4,closure_pass=True)=='CLOSED_PASS'))
 res.append(case('deterministic_snapshot_invalidation_precedence', deterministic_stage_status(4,4,snapshot_valid=False,closure_pass=True)=='SNAPSHOT_INVALIDATED'))
+invdoc=yaml.safe_load((PKG/'10_REGISTRY/STAGE_EXECUTION_INVARIANT_REGISTRY.yaml').read_text(encoding='utf-8')) or {}
+det=(invdoc.get('invariants') or {}).get('DETERMINISTIC_STAGE_AUDIT') or {}
+contracts=det.get('stage_contracts') or {}
+res.append(case('canonical_stage06_name_exact', (contracts.get('STAGE-06') or {}).get('capability')=='VERIFICATION_QA'))
+res.append(case('canonical_stage07_name_exact', (contracts.get('STAGE-07') or {}).get('capability')=='BUILD_RELEASE_CANDIDATE'))
+res.append(case('canonical_authorized_not_applicable_token_exact', set((contracts.get('STAGE-06') or {}).get('allowed_test_results') or [])=={'PASS','FAIL','BLOCKED','AUTHORIZED_NOT_APPLICABLE'} and (contracts.get('STAGE-08') or {}).get('legal_na_result')=='AUTHORIZED_NOT_APPLICABLE'))
+res.append(case('noncanonical_stage_not_pass_removed', 'STAGE_NOT_PASS' not in json.dumps(det,ensure_ascii=False)))
 out=v213.validate(PKG)
 res.append(case('package_stage_execution_invariant_contract_valid', out['status']=='PASS',out))
 out={'suite':'v2.1.13 universal Stage execution invariant multidirection regression','total':len(res),'passed_expectations':sum(x['ok'] for x in res),'results':res}
 print(json.dumps(out,ensure_ascii=False,indent=2))
-raise SystemExit(0 if out['total']==38 and out['passed_expectations']==38 else 1)
+raise SystemExit(0 if out['total']==42 and out['passed_expectations']==42 else 1)
