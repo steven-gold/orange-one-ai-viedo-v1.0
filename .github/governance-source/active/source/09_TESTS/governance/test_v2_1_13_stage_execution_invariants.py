@@ -105,7 +105,7 @@ contracts=det.get('stage_contracts') or {}
 res.append(case('canonical_stage06_name_exact', (contracts.get('STAGE-06') or {}).get('capability')=='VERIFICATION_QA'))
 res.append(case('canonical_stage07_name_exact', (contracts.get('STAGE-07') or {}).get('capability')=='BUILD_RELEASE_CANDIDATE'))
 res.append(case('canonical_authorized_not_applicable_token_exact', set((contracts.get('STAGE-06') or {}).get('allowed_test_results') or [])=={'PASS','FAIL','BLOCKED','AUTHORIZED_NOT_APPLICABLE'} and (contracts.get('STAGE-08') or {}).get('legal_na_result')=='AUTHORIZED_NOT_APPLICABLE'))
-res.append(case('noncanonical_stage_not_pass_removed', 'STAGE_NOT_PASS' not in json.dumps(det,ensure_ascii=False)))
+res.append(case('noncanonical_stage_not_pass_is_forbidden_alias_only', (det.get('deterministic_decision_table') or {}).get('source_document_pass_does_not_imply_stage_pass') is True and 'STAGE_NOT_PASS' in set((det.get('canonical_terminology_contract') or {}).get('forbidden_aliases') or [])))
 out=v213.validate(PKG)
 res.append(case('package_stage_execution_invariant_contract_valid', out['status']=='PASS',out))
 out={'suite':'v2.1.13 universal Stage execution invariant multidirection regression','total':len(res),'passed_expectations':sum(x['ok'] for x in res),'results':res}
