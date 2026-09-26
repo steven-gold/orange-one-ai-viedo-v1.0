@@ -1,0 +1,58 @@
+name: Product Stage02 Validation
+# Independently revalidates Stage-02 closure evidence after materialization.
+on:
+  push:
+    branches: [0921acpos]
+    paths:
+      - 'STAGE_EXECUTION/STAGE-02/**'
+      - '.github/workflows/product-stage02-validation.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  validate-stage02:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout product workline
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+      - name: Checkout current governance authority
+        uses: actions/checkout@v4
+        with:
+          repository: steven-gold/orange-one-ai-viedo-v1.0
+          ref: rebuild-v2.1.1
+          path: _governance_authority
+          fetch-depth: 1
+      - name: Load current governance authority
+        run: |
+          rm -rf governance .github/governance-source
+          cp -R _governance_authority/governance ./governance
+          mkdir -p .github
+          cp -R _governance_authority/.github/governance-source .github/governance-source
+          python -m pip install --disable-pip-version-check 'PyYAML==6.0.2'
+      - name: Validate current governance definition
+        run: |
+          python governance/ci/stage_execution_engine.py --definition-audit-all
+      - name: Validate Stage02 closure evidence and handoff ledgers
+        run: |
+          set -euo pipefail
+          for WU in WU-STAGE02-GLOBAL-HOME-SHELL-NAVIGATION-001 WU-STAGE02-WB01-DASHBOARD-001; do
+            B="STAGE_EXECUTION/STAGE-02/${WU}"
+            test -f "$B/EVIDENCE/PAGE_FUNCTIONAL_REVIEW_EVIDENCE.yaml" || { echo "BLOCK:STAGE02_REQUIRED_EVIDENCE_MISSING:$WU"; exit 1; }
+            test -f "$B/EVIDENCE/CROSS_STAGE_HANDOFF_READINESS_LEDGER.yaml" || { echo "BLOCK:STAGE02_HANDOFF_LEDGER_MISSING:$WU"; exit 1; }
+            python governance/ci/stage_execution_engine.py --validate-evidence --stage STAGE-02 --evidence "$B/EVIDENCE/STAGE02_NORMALIZED_EVIDENCE.json"
+          done
+      - name: Assert Stage02 stage-exit authorized
+        run: |
+          python - <<'PY'
+          import yaml
+          from pathlib import Path
+          r = yaml.safe_load(Path('STAGE_EXECUTION/STAGE-02/CURRENT_STAGE02_RESUME.yaml').read_text()) or {}
+          if r.get('stage_exit_authorized') is not True:
+              raise SystemExit('BLOCK:STAGE02_STAGE_EXIT_NOT_AUTHORIZED')
+          if r.get('status') != 'STAGE02_COMPLETE_STAGE03_ELIGIBLE':
+              raise SystemExit('BLOCK:STAGE02_RESUME_STATUS_DRIFT')
+          print('PASS: Stage-02 stage exit authorized and Stage-03 eligible')
+          PY
