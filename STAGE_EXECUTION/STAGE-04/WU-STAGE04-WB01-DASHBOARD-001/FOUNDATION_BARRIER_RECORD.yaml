@@ -1,0 +1,18 @@
+artifact_uid: FBR-STAGE-04-WB01-001
+artifact_type: FOUNDATION_BARRIER_RECORD
+stage_uid: STAGE-04
+work_unit_uid: WU-STAGE04-WB01-DASHBOARD-001
+governed_unit_uid: workspace:WB-01
+required_predecessors:
+- stage_uid: STAGE-02
+  work_unit_uid: WU-STAGE02-WB01-DASHBOARD-001
+  status: CLOSED
+- stage_uid: STAGE-03
+  work_unit_uid: WU-STAGE03-WB01-DASHBOARD-001
+  status: CLOSED
+predecessor_closure_status: ALL_CLOSED
+foundation_barrier_state: FROZEN
+frozen_design_package_ref: STAGE_EXECUTION/STAGE-04/WU-STAGE04-WB01-DASHBOARD-001/BASIC_DESIGN_PACKAGE.yaml
+frozen_design_package_sha256: b25d78b49bc852830c624902a0d5e1b31e52a6e062da462a3c7f6f7bc68670c9
+approval_evidence_ref: STAGE_EXECUTION/STAGE-04/WU-STAGE04-WB01-DASHBOARD-001/DESIGN_APPROVAL_EVIDENCE.yaml
+status: PASS

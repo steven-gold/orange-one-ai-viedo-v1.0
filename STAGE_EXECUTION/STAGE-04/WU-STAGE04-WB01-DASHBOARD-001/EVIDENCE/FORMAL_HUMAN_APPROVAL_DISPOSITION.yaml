@@ -1,0 +1,26 @@
+artifact_uid: FAD-STAGE-04-WB01-001
+artifact_type: FORMAL_HUMAN_APPROVAL_DISPOSITION
+stage_uid: STAGE-04
+work_unit_uid: WU-STAGE04-WB01-DASHBOARD-001
+governed_unit_uid: workspace:WB-01
+interaction_mode: FORMAL_APPROVAL
+human_action_required: false
+allowed_human_actions:
+- APPROVE
+- REJECT
+- REQUEST_CHANGES
+choice_menu_allowed: false
+deterministic_next_action: CONSUME_DESIGN_APPROVAL_AND_PROCEED_TO_FOUNDATION_FREEZE
+blocked_operation_uid: DESIGN_FREEZE_VALIDATE
+canonical_owner_uid: AUTHORIZED_HUMAN_USER
+earliest_legal_reentry: STAGE04_INPUT_READINESS
+resume_after_human_action: STAGE05_UNIT_RESOLUTION_GATE
+human_action_selected: APPROVE
+disposition_source_ref: STAGE_EXECUTION/STAGE-03/WU-STAGE03-WB01-DASHBOARD-001/EVIDENCE/FORMAL_HUMAN_APPROVAL_DISPOSITION.yaml
+disposition_source_sha256: 9ce20bb9ea6cb3014fb79fc968c699bc520ac35c68d3b19031ac3725830fc503
+source_decision: VISUAL_APPROVED_AND_BASIC_DESIGN_APPROVED
+approval_scope_ref: STAGE_EXECUTION/STAGE-04/WU-STAGE04-WB01-DASHBOARD-001/BASIC_DESIGN_PACKAGE.yaml
+reviewer: AUTHORIZED_HUMAN_USER
+reviewed_at: '2026-09-25T14:53:09+08:00'
+normalization_note: NORMALIZED_FROM_RECORDED_HUMAN_BASIC_DESIGN_APPROVAL_UNDER_V225_FORMAL_APPROVAL_CONTRACT
+status: PASS

@@ -1,0 +1,18 @@
+artifact_uid: FBR-STAGE-04-HOME-001
+artifact_type: FOUNDATION_BARRIER_RECORD
+stage_uid: STAGE-04
+work_unit_uid: WU-STAGE04-GLOBAL-HOME-SHELL-NAVIGATION-001
+governed_unit_uid: GLOBAL-HOME-SHELL-NAVIGATION
+required_predecessors:
+- stage_uid: STAGE-02
+  work_unit_uid: WU-STAGE02-GLOBAL-HOME-SHELL-NAVIGATION-001
+  status: CLOSED
+- stage_uid: STAGE-03
+  work_unit_uid: WU-STAGE03-GLOBAL-HOME-SHELL-NAVIGATION-001
+  status: CLOSED
+predecessor_closure_status: ALL_CLOSED
+foundation_barrier_state: FROZEN
+frozen_design_package_ref: STAGE_EXECUTION/STAGE-04/WU-STAGE04-GLOBAL-HOME-SHELL-NAVIGATION-001/BASIC_DESIGN_PACKAGE.yaml
+frozen_design_package_sha256: a0be921b3f2187c3ebc26655086dee23f42060885e33e87fdb4048d1821c4aa0
+approval_evidence_ref: STAGE_EXECUTION/STAGE-04/WU-STAGE04-GLOBAL-HOME-SHELL-NAVIGATION-001/DESIGN_APPROVAL_EVIDENCE.yaml
+status: PASS

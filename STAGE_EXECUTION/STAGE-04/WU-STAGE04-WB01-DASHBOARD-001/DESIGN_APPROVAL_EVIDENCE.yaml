@@ -1,0 +1,21 @@
+artifact_uid: DAE-STAGE-04-WB01-001
+artifact_type: DESIGN_APPROVAL_EVIDENCE
+stage_uid: STAGE-04
+work_unit_uid: WU-STAGE04-WB01-DASHBOARD-001
+governed_unit_uid: workspace:WB-01
+result: APPROVE
+approved_by_human: true
+materialization_source: GOVERNED_HUMAN_DISPOSITION
+materialized_by: SYSTEM
+interaction_mode: FORMAL_APPROVAL
+approval_consumption_operation: DESIGN_FREEZE_VALIDATE
+allowed_human_actions:
+- APPROVE
+- REJECT
+- REQUEST_CHANGES
+disposition_ref: STAGE_EXECUTION/STAGE-04/WU-STAGE04-WB01-DASHBOARD-001/EVIDENCE/FORMAL_HUMAN_APPROVAL_DISPOSITION.yaml
+disposition_sha256: 14ae3056cdebf8b8782940aa47678412580a3a25510fd94f9e171b21c41acb7b
+approved_design_package_ref: STAGE_EXECUTION/STAGE-04/WU-STAGE04-WB01-DASHBOARD-001/BASIC_DESIGN_PACKAGE.yaml
+approved_design_package_sha256: b25d78b49bc852830c624902a0d5e1b31e52a6e062da462a3c7f6f7bc68670c9
+source_head_sha: 1451256c6b74ca283467f2a607ca2215aac89996
+status: PASS

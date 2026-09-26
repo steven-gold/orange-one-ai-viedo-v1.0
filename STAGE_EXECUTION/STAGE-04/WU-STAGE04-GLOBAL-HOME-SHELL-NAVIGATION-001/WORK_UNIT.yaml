@@ -25,7 +25,7 @@ required_outputs:
 - ACCEPTANCE_AUDIT_BLUEPRINT
 - DESIGN_FREEZE_PACKAGE
 - FOUNDATION_BARRIER_RECORD
-status: READY_FOR_EXECUTION
+status: CLOSED
 prior_suspension:
   blocking_owner_capability: VISUAL_DESIGN
   blocking_stage_uid: STAGE-03
@@ -36,14 +36,37 @@ prior_suspension:
   resolution_run_id: 36227587296
   resolution_head_sha: b7dc362faf195e5645871dff583fc92ef8cfeab2
 operation_bindings:
-  BASIC_DESIGN_PACKAGE_COMPILE: {executor_owner: governance/ci/stage_execution_engine.py, result_owner: STAGE_EXECUTION/STAGE-04/WU-STAGE04-GLOBAL-HOME-SHELL-NAVIGATION-001/BASIC_DESIGN_PACKAGE.yaml}
-  DESIGN_FREEZE_VALIDATE: {executor_owner: governance/ci/stage_execution_engine.py, result_owner: STAGE_EXECUTION/STAGE-04/WU-STAGE04-GLOBAL-HOME-SHELL-NAVIGATION-001/FOUNDATION_BARRIER_RECORD.yaml}
-  ACCEPTANCE_AUDIT_BLUEPRINT_COMPILE: {executor_owner: governance/ci/stage_execution_engine.py, result_owner: STAGE_EXECUTION/STAGE-04/WU-STAGE04-GLOBAL-HOME-SHELL-NAVIGATION-001/ACCEPTANCE_AUDIT_BLUEPRINT.yaml}
-  DESIGN_FREEZE_PACKAGE_BIND: {executor_owner: governance/ci/stage_execution_engine.py, result_owner: STAGE_EXECUTION/STAGE-04/WU-STAGE04-GLOBAL-HOME-SHELL-NAVIGATION-001/DESIGN_FREEZE_PACKAGE.yaml}
+  BASIC_DESIGN_PACKAGE_COMPILE:
+    executor_owner: governance/ci/stage_execution_engine.py
+    result_owner: STAGE_EXECUTION/STAGE-04/WU-STAGE04-GLOBAL-HOME-SHELL-NAVIGATION-001/BASIC_DESIGN_PACKAGE.yaml
+  DESIGN_FREEZE_VALIDATE:
+    executor_owner: governance/ci/stage_execution_engine.py
+    result_owner: STAGE_EXECUTION/STAGE-04/WU-STAGE04-GLOBAL-HOME-SHELL-NAVIGATION-001/FOUNDATION_BARRIER_RECORD.yaml
+  ACCEPTANCE_AUDIT_BLUEPRINT_COMPILE:
+    executor_owner: governance/ci/stage_execution_engine.py
+    result_owner: STAGE_EXECUTION/STAGE-04/WU-STAGE04-GLOBAL-HOME-SHELL-NAVIGATION-001/ACCEPTANCE_AUDIT_BLUEPRINT.yaml
+  DESIGN_FREEZE_PACKAGE_BIND:
+    executor_owner: governance/ci/stage_execution_engine.py
+    result_owner: STAGE_EXECUTION/STAGE-04/WU-STAGE04-GLOBAL-HOME-SHELL-NAVIGATION-001/DESIGN_FREEZE_PACKAGE.yaml
 scanner_bindings:
-  FREEZE_COMPLETENESS: {scanner_owner: governance/ci/stage_execution_engine.py, result_owner: STAGE_EXECUTION/STAGE-04/WU-STAGE04-GLOBAL-HOME-SHELL-NAVIGATION-001/EVIDENCE/STAGE04_NORMALIZED_EVIDENCE.json}
-  ACCEPTANCE_BLUEPRINT: {scanner_owner: governance/ci/stage_execution_engine.py, result_owner: STAGE_EXECUTION/STAGE-04/WU-STAGE04-GLOBAL-HOME-SHELL-NAVIGATION-001/EVIDENCE/STAGE04_NORMALIZED_EVIDENCE.json}
-  DENOMINATOR_IDENTITY: {scanner_owner: governance/ci/stage_execution_engine.py, result_owner: STAGE_EXECUTION/STAGE-04/WU-STAGE04-GLOBAL-HOME-SHELL-NAVIGATION-001/EVIDENCE/STAGE04_NORMALIZED_EVIDENCE.json}
-  IMMUTABILITY: {scanner_owner: governance/ci/stage_execution_engine.py, result_owner: STAGE_EXECUTION/STAGE-04/WU-STAGE04-GLOBAL-HOME-SHELL-NAVIGATION-001/EVIDENCE/STAGE04_NORMALIZED_EVIDENCE.json}
-  UPSTREAM_CHANGE_INVALIDATION: {scanner_owner: governance/ci/stage_execution_engine.py, result_owner: STAGE_EXECUTION/STAGE-04/WU-STAGE04-GLOBAL-HOME-SHELL-NAVIGATION-001/EVIDENCE/STAGE04_NORMALIZED_EVIDENCE.json}
+  FREEZE_COMPLETENESS:
+    scanner_owner: governance/ci/stage_execution_engine.py
+    result_owner: STAGE_EXECUTION/STAGE-04/WU-STAGE04-GLOBAL-HOME-SHELL-NAVIGATION-001/EVIDENCE/STAGE04_NORMALIZED_EVIDENCE.json
+  ACCEPTANCE_BLUEPRINT:
+    scanner_owner: governance/ci/stage_execution_engine.py
+    result_owner: STAGE_EXECUTION/STAGE-04/WU-STAGE04-GLOBAL-HOME-SHELL-NAVIGATION-001/EVIDENCE/STAGE04_NORMALIZED_EVIDENCE.json
+  DENOMINATOR_IDENTITY:
+    scanner_owner: governance/ci/stage_execution_engine.py
+    result_owner: STAGE_EXECUTION/STAGE-04/WU-STAGE04-GLOBAL-HOME-SHELL-NAVIGATION-001/EVIDENCE/STAGE04_NORMALIZED_EVIDENCE.json
+  IMMUTABILITY:
+    scanner_owner: governance/ci/stage_execution_engine.py
+    result_owner: STAGE_EXECUTION/STAGE-04/WU-STAGE04-GLOBAL-HOME-SHELL-NAVIGATION-001/EVIDENCE/STAGE04_NORMALIZED_EVIDENCE.json
+  UPSTREAM_CHANGE_INVALIDATION:
+    scanner_owner: governance/ci/stage_execution_engine.py
+    result_owner: STAGE_EXECUTION/STAGE-04/WU-STAGE04-GLOBAL-HOME-SHELL-NAVIGATION-001/EVIDENCE/STAGE04_NORMALIZED_EVIDENCE.json
 normative_execution_matrix_ref: STAGE_EXECUTION/STAGE-04/WU-STAGE04-GLOBAL-HOME-SHELL-NAVIGATION-001/NORMATIVE_EXECUTION_MATRIX.yaml
+current_status: CLOSED
+current_governance_uid: GOV-REV-20260925-NORMATIVE-EXECUTION-MATRIX
+current_governance_head: 1451256c6b74ca283467f2a607ca2215aac89996
+current_display_version: v2.2.25
+resume_point: TERMINAL_CLOSURE

@@ -5,25 +5,26 @@ stage_name: FOUNDATION_FREEZE
 primary_task_layer: PRODUCT_STAGE_EXECUTION
 execution_branch: 0921acpos
 current_governance_uid: GOV-REV-20260925-NORMATIVE-EXECUTION-MATRIX
-current_governance_head: 22b8d6845ce31014ba10b4c1f8f7a3ec9dcceb20
+current_governance_head: 1451256c6b74ca283467f2a607ca2215aac89996
 current_display_version: v2.2.25
 active_work_unit_uid: null
 suspended_work_unit_uid: null
-resume_point: STAGE04_UNIT_RESOLUTION_GATE
+resume_point: STAGE05_UNIT_RESOLUTION_GATE
 eligible_units:
 - GLOBAL-HOME-SHELL-NAVIGATION
 - workspace:WB-01
-completed_stage04_units: []
-remaining_stage04_units:
+completed_stage04_units:
 - GLOBAL-HOME-SHELL-NAVIGATION
 - workspace:WB-01
+remaining_stage04_units: []
 stage_transition_semantics: PER_GOVERNED_PAGE_OR_SYSTEM_LOGIC_UNIT
 return_gate: STAGE04_INPUT_READINESS
-status: READY_FOR_EXECUTION
-stage_exit_authorized: false
+status: STAGE04_COMPLETE_STAGE05_ELIGIBLE
+stage_exit_authorized: true
 next_stage_uid: STAGE-05
 prior_suspension_resolution:
   blocking_owner_capability: VISUAL_DESIGN
   blocking_stage_uid: STAGE-03
   stage03_terminal_closure_run_id: 36227587296
   stage03_terminal_closure_head_sha: b7dc362faf195e5645871dff583fc92ef8cfeab2
+active_stage_uid: STAGE-05

@@ -8,10 +8,9 @@ governance_uid: GOV-REV-20260925-NORMATIVE-EXECUTION-MATRIX
 included_units:
 - GLOBAL-HOME-SHELL-NAVIGATION
 excluded_units: []
-remaining_units:
-- GLOBAL-HOME-SHELL-NAVIGATION
+remaining_units: []
 partial_scope: false
-stage_exit_credit_allowed: false
+stage_exit_credit_allowed: true
 scope_selection_authority: WORK_UNIT_RESOLUTION_GATE.yaml
 owning_capability: FOUNDATION_FREEZE
 predecessor_closure_refs:
@@ -21,11 +20,28 @@ predecessor_closure_validation:
   stage03_terminal_closure_run_id: 36227587296
   stage03_terminal_closure_head_sha: b7dc362faf195e5645871dff583fc92ef8cfeab2
 input_identity:
-- {artifact_type: PAGE_CONSTRUCTION_SPEC_PACKAGE, ref: STAGE_EXECUTION/STAGE-02/WU-STAGE02-GLOBAL-HOME-SHELL-NAVIGATION-001/PAGE_CONSTRUCTION_SPEC_PACKAGE.yaml, git_blob_sha: ab809c8e459296fd1640e4d2c731b79cd55d36d9}
-- {artifact_type: VISUAL_DESIGN_SPEC_PACKAGE, ref: STAGE_EXECUTION/STAGE-03/WU-STAGE03-GLOBAL-HOME-SHELL-NAVIGATION-001/VISUAL_DESIGN_SPEC_PACKAGE.yaml, git_blob_sha: cc1a4bda3f9a77333468759167e1ca4809566f97}
-- {artifact_type: DEPENDENCY_MAP, ref: STAGE_EXECUTION/STAGE-02/WU-STAGE02-GLOBAL-HOME-SHELL-NAVIGATION-001/DEPENDENCY_MAP.yaml, git_blob_sha: 1bc9e294559c50fe19cd463d0d57023d50ed3c98}
+- artifact_type: PAGE_CONSTRUCTION_SPEC_PACKAGE
+  ref: STAGE_EXECUTION/STAGE-02/WU-STAGE02-GLOBAL-HOME-SHELL-NAVIGATION-001/PAGE_CONSTRUCTION_SPEC_PACKAGE.yaml
+  git_blob_sha: ab809c8e459296fd1640e4d2c731b79cd55d36d9
+- artifact_type: VISUAL_DESIGN_SPEC_PACKAGE
+  ref: STAGE_EXECUTION/STAGE-03/WU-STAGE03-GLOBAL-HOME-SHELL-NAVIGATION-001/VISUAL_DESIGN_SPEC_PACKAGE.yaml
+  git_blob_sha: cc1a4bda3f9a77333468759167e1ca4809566f97
+- artifact_type: DEPENDENCY_MAP
+  ref: STAGE_EXECUTION/STAGE-02/WU-STAGE02-GLOBAL-HOME-SHELL-NAVIGATION-001/DEPENDENCY_MAP.yaml
+  git_blob_sha: 1bc9e294559c50fe19cd463d0d57023d50ed3c98
 denominator_sources:
 - PAGE_CONSTRUCTION_SPEC_PACKAGE
 - VISUAL_DESIGN_SPEC_PACKAGE
 - DEPENDENCY_MAP
-status: READY_FOR_EXECUTION
+status: CLOSED
+governance_head: 1451256c6b74ca283467f2a607ca2215aac89996
+current_reverify_required: false
+current_closure_validation:
+  result: PASS
+  stage_exit_credit: 1
+  head_sha: 1451256c6b74ca283467f2a607ca2215aac89996
+  workflow_run_id: '36235782338'
+  conclusion: success
+  governance_uid: GOV-REV-20260925-NORMATIVE-EXECUTION-MATRIX
+  governance_head: 1451256c6b74ca283467f2a607ca2215aac89996
+prior_terminal_receipt_ref: WORK_UNIT_TERMINAL_RECEIPT.yaml
