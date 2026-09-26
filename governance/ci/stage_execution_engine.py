@@ -192,6 +192,36 @@ def validate_definition():
     stages=validate_definition_data(profile,adapters)
     return entry,reg,gov,profile,adapters,stages
 
+def resolve_stage_range(start_stage_uid,end_stage_uid):
+    _,_,_,_,_,stages=validate_definition()
+    order=list(stages)
+    if start_stage_uid not in stages: fail('RANGE_START_NOT_REGISTERED:'+str(start_stage_uid))
+    if end_stage_uid not in stages: fail('RANGE_END_NOT_REGISTERED:'+str(end_stage_uid))
+    start=order.index(start_stage_uid); end=order.index(end_stage_uid)
+    if start>end: fail('RANGE_ORDER_INVALID:'+str(start_stage_uid)+'>'+str(end_stage_uid))
+    selected=order[start:end+1]
+    if not selected: fail('RANGE_EMPTY')
+    return selected
+
+def plan_range(start_stage_uid,end_stage_uid):
+    selected=resolve_stage_range(start_stage_uid,end_stage_uid)
+    plans=[plan(uid) for uid in selected]
+    return {
+      'artifact_type':'COMMON_STAGE_RANGE_EXECUTION_PLAN',
+      'normative_authority':False,
+      'requested_start_stage_uid':start_stage_uid,
+      'requested_end_stage_uid':end_stage_uid,
+      'range_is_inclusive':True,
+      'selected_stage_uids':selected,
+      'selected_stage_count':len(selected),
+      'system_selected_batch_size':False,
+      'normal_stage_pass_behavior':'AUTO_CONTINUE_WITHIN_REQUESTED_RANGE',
+      'normal_stage_boundary_user_prompt':'FORBIDDEN',
+      'stop_conditions':['FORMAL_HUMAN_APPROVAL_REQUIRED','USER_DECISION_REQUIRED','BLOCKED','CURRENT_STATE_CONFLICT','REVERIFY_REQUIRED','SNAPSHOT_INVALIDATED','EXECUTION_FAILURE'],
+      'plans':plans,
+      'product_execution_credit':0
+    }
+
 def plan(stage_uid):
     entry,reg,gov,profile,adapters,stages=validate_definition()
     if stage_uid not in stages: fail(f'UNKNOWN_STAGE:{stage_uid}')
@@ -566,12 +596,15 @@ def execute_active(stage_uid):
 
 def main():
     p=argparse.ArgumentParser(); g=p.add_mutually_exclusive_group(required=True)
-    g.add_argument('--definition-audit-all',action='store_true'); g.add_argument('--plan',action='store_true'); g.add_argument('--admission-check',action='store_true'); g.add_argument('--validate-evidence',action='store_true'); g.add_argument('--validate-terminal-receipt',action='store_true'); g.add_argument('--execute',action='store_true')
-    p.add_argument('--stage'); p.add_argument('--evidence'); p.add_argument('--receipt'); a=p.parse_args()
+    g.add_argument('--definition-audit-all',action='store_true'); g.add_argument('--plan',action='store_true'); g.add_argument('--plan-range',action='store_true'); g.add_argument('--admission-check',action='store_true'); g.add_argument('--validate-evidence',action='store_true'); g.add_argument('--validate-terminal-receipt',action='store_true'); g.add_argument('--execute',action='store_true')
+    p.add_argument('--stage'); p.add_argument('--start-stage'); p.add_argument('--end-stage'); p.add_argument('--evidence'); p.add_argument('--receipt'); a=p.parse_args()
     try:
         if a.execute:
             if not a.stage: fail('STAGE_REQUIRED')
             execute_active(a.stage); return
+        if a.plan_range:
+            if not a.start_stage or not a.end_stage: fail('RANGE_ENDPOINTS_REQUIRED')
+            print(json.dumps(plan_range(a.start_stage,a.end_stage),ensure_ascii=False,indent=2)); return
         if a.definition_audit_all:
             _,_,_,profile,_,stages=validate_definition()
             print(f'PASS: common Stage Execution Engine definition audit stages={len(stages)}/{profile.get("profile_local_denominator")} phases={len(EXPECTED_PHASES)}/{len(EXPECTED_PHASES)}')
