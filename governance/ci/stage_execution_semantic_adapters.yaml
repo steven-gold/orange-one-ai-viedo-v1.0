@@ -277,6 +277,7 @@ stages:
     product_completion_credit_from_definition_audit: 0
   STAGE-04:
     stepwise_execution_contract_ref: stepwise_execution_defaults
+    effectful_executor_owner_resolution: CURRENT_WORK_UNIT_OPERATION_BINDING_ONLY
     profile_name: FOUNDATION_FREEZE
     semantic_dimensions:
     - DESIGN_FREEZE
@@ -296,6 +297,7 @@ stages:
     product_completion_credit_from_definition_audit: 0
   STAGE-05:
     stepwise_execution_contract_ref: stepwise_execution_defaults
+    effectful_executor_owner_resolution: CURRENT_WORK_UNIT_OPERATION_BINDING_ONLY
     profile_name: IMPLEMENTATION
     semantic_dimensions:
     - FRONTEND
@@ -332,6 +334,7 @@ stages:
     product_completion_credit_from_definition_audit: 0
   STAGE-06:
     stepwise_execution_contract_ref: stepwise_execution_defaults
+    effectful_executor_owner_resolution: CURRENT_WORK_UNIT_OPERATION_BINDING_ONLY
     profile_name: VERIFICATION_QA
     semantic_dimensions:
     - UNIT
@@ -359,6 +362,7 @@ stages:
     product_completion_credit_from_definition_audit: 0
   STAGE-07:
     stepwise_execution_contract_ref: stepwise_execution_defaults
+    effectful_executor_owner_resolution: CURRENT_WORK_UNIT_OPERATION_BINDING_ONLY
     profile_name: BUILD_RELEASE_CANDIDATE
     semantic_dimensions:
     - PRODUCTION_BUILD
@@ -379,6 +383,7 @@ stages:
     product_completion_credit_from_definition_audit: 0
   STAGE-08:
     stepwise_execution_contract_ref: stepwise_execution_defaults
+    effectful_executor_owner_resolution: CURRENT_WORK_UNIT_OPERATION_BINDING_ONLY
     profile_name: STAGING
     semantic_dimensions:
     - STAGING_DEPLOYMENT
@@ -396,6 +401,7 @@ stages:
     product_completion_credit_from_definition_audit: 0
   STAGE-09:
     stepwise_execution_contract_ref: stepwise_execution_defaults
+    effectful_executor_owner_resolution: CURRENT_WORK_UNIT_OPERATION_BINDING_ONLY
     profile_name: PRODUCTION_CUTOVER
     semantic_dimensions:
     - PRODUCTION_CONFIGURATION
@@ -415,6 +421,7 @@ stages:
     product_completion_credit_from_definition_audit: 0
   STAGE-10:
     stepwise_execution_contract_ref: stepwise_execution_defaults
+    effectful_executor_owner_resolution: CURRENT_WORK_UNIT_OPERATION_BINDING_ONLY
     profile_name: PRODUCTION_ACCEPTANCE
     semantic_dimensions:
     - PRODUCTION_BROWSER
@@ -444,6 +451,7 @@ stages:
     product_completion_credit_from_definition_audit: 0
   STAGE-11:
     stepwise_execution_contract_ref: stepwise_execution_defaults
+    effectful_executor_owner_resolution: CURRENT_WORK_UNIT_OPERATION_BINDING_ONLY
     profile_name: CLOSURE_OPERATIONS
     semantic_dimensions:
     - MONITORING
