@@ -6,6 +6,10 @@ name: Product Stage01 Materialize
 # governance. Runs only when the units are not already closed.
 on:
   workflow_dispatch:
+  push:
+    branches: [0921acpos]
+    paths:
+      - '.github/workflows/product-stage01-materialize.yml'
 permissions:
   contents: write
 concurrency:
