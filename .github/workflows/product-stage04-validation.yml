@@ -94,8 +94,15 @@ jobs:
         ACPOS_CURRENT_SCOPE: STAGE_EXECUTION/STAGE-04/${{ matrix.wu }}/CURRENT_EXECUTION_SCOPE_MANIFEST.yaml
       run: |
         STATUS="$(python -c "import yaml; d=yaml.safe_load(open('STAGE_EXECUTION/STAGE-04/${{ matrix.wu }}/WORK_UNIT.yaml')); print(d.get('current_status') or d.get('status') or '')")"
+        CURRENT_OP="$(python -c "import yaml; d=yaml.safe_load(open('STAGE_EXECUTION/STAGE-04/${{ matrix.wu }}/EXECUTION_STATE.yaml')); print(d.get('current_operation') or '')")"
         case "$STATUS" in
-          CLOSED*) echo "SKIP admission for already-closed ${{ matrix.wu }}"; exit 0 ;;
+          CLOSED*) echo "SKIP effectful admission for already-closed ${{ matrix.wu }}"; exit 0 ;;
+          BLOCKED)
+            if [ "$CURRENT_OP" = "COMPLETE" ]; then
+              echo "SKIP effectful admission for closure-blocked ${{ matrix.wu }}; validate Current evidence instead"
+              exit 0
+            fi
+            ;;
         esac
         if [ -f "STAGE_EXECUTION/STAGE-04/${{ matrix.wu }}/NORMATIVE_EXECUTION_MATRIX.yaml" ]; then
           python governance/ci/stage_execution_engine.py --admission-check --stage STAGE-04
@@ -119,6 +126,11 @@ jobs:
       env:
         WU: ${{ matrix.wu }}
       run: |
+        STATUS="$(python -c "import yaml; d=yaml.safe_load(open('STAGE_EXECUTION/STAGE-04/$WU/WORK_UNIT.yaml')); print(d.get('current_status') or d.get('status') or '')")"
+        if [ "$STATUS" = "BLOCKED" ]; then
+          echo "SKIP Current terminal closure for BLOCKED $WU; any persisted terminal receipt is historical-only"
+          exit 0
+        fi
         RECEIPT_PATH="STAGE_EXECUTION/STAGE-04/$WU/WORK_UNIT_TERMINAL_RECEIPT.yaml"
         if [ -f "$RECEIPT_PATH" ]; then
           python3 -c "import json,os; from pathlib import Path; p=Path('STAGE_EXECUTION/STAGE-04')/os.environ['WU']/'WORK_UNIT_TERMINAL_RECEIPT.yaml'; r=json.loads(p.read_text()); ks=('provider','repository_or_project','head_sha','run_id','job_denominator','conclusion','governance_uid','stage_uid'); m=[k for k in ks if r.get(k) in (None,'',[])]; assert not m, 'BLOCK:TERMINAL_RECEIPT_FIELD_MISSING:'+','.join(m); assert r.get('conclusion')=='success' and r.get('stage_uid')=='STAGE-04', 'BLOCK:TERMINAL_RECEIPT_IDENTITY_OR_RESULT_DRIFT'; print('PASS: terminal receipt structurally valid, run_id=%s head=%s' % (r['run_id'], r['head_sha'][:8]))"
