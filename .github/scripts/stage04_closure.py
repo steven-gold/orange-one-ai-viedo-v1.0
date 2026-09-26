@@ -283,6 +283,8 @@ def converge_work_unit(root, wu, head, run, gov, gver):
     state = y(b / "EXECUTION_STATE.yaml")
     state["status"] = "CLOSED"
     state["current_operation"] = "COMPLETE"
+    if "current_status" in state:
+        state["current_status"] = state["status"]
     state["current_terminal_validation"] = {
         "run_id": run, "head_sha": head, "conclusion": "success",
         "governance_uid": gov, "governance_head": head,
