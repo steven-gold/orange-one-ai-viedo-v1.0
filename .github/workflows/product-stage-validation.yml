@@ -19,7 +19,7 @@ jobs:
       - name: Checkout product workline
         uses: actions/checkout@v4
         with:
-          ref: 0921acpos
+          ref: ${{ github.sha }}
           fetch-depth: 0
       - name: Checkout frozen governance authority
         uses: actions/checkout@v4
