@@ -27,15 +27,20 @@ RESULT_TERMINAL_STATUSES={'PASS','BLOCKED','NOT_APPLICABLE_WITH_PROOF'}
 
 class StageEngineError(RuntimeError): pass
 def fail(msg): raise StageEngineError(msg)
+def _display_path(path):
+    try:
+        return str(path.relative_to(ROOT))
+    except ValueError:
+        return str(path)
 def y(path):
-    if not path.is_file(): fail(f'MISSING_FILE:{path.relative_to(ROOT)}')
+    if not path.is_file(): fail(f'MISSING_FILE:{_display_path(path)}')
     obj=yaml.safe_load(path.read_text(encoding='utf-8'))
-    if not isinstance(obj,dict): fail(f'MAPPING_REQUIRED:{path.relative_to(ROOT)}')
+    if not isinstance(obj,dict): fail(f'MAPPING_REQUIRED:{_display_path(path)}')
     return obj
 def j(path):
-    if not path.is_file(): fail(f'MISSING_FILE:{path.relative_to(ROOT)}')
+    if not path.is_file(): fail(f'MISSING_FILE:{_display_path(path)}')
     obj=json.loads(path.read_text(encoding='utf-8'))
-    if not isinstance(obj,dict): fail(f'MAPPING_REQUIRED:{path.relative_to(ROOT)}')
+    if not isinstance(obj,dict): fail(f'MAPPING_REQUIRED:{_display_path(path)}')
     return obj
 def identity():
     reg=y(REGISTRY)
