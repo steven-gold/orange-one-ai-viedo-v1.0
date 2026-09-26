@@ -4,8 +4,18 @@ on:
   workflow_dispatch:
     inputs:
       stage_uid:
-        description: Selected-profile Stage
-        required: true
+        description: Single selected-profile Stage for single-stage validation modes
+        required: false
+        type: choice
+        options: [STAGE-01, STAGE-02, STAGE-03, STAGE-04, STAGE-05, STAGE-06, STAGE-07, STAGE-08, STAGE-09, STAGE-10, STAGE-11]
+      start_stage_uid:
+        description: Exact inclusive range start for range-plan mode
+        required: false
+        type: choice
+        options: [STAGE-01, STAGE-02, STAGE-03, STAGE-04, STAGE-05, STAGE-06, STAGE-07, STAGE-08, STAGE-09, STAGE-10, STAGE-11]
+      end_stage_uid:
+        description: Exact inclusive range end for range-plan mode
+        required: false
         type: choice
         options: [STAGE-01, STAGE-02, STAGE-03, STAGE-04, STAGE-05, STAGE-06, STAGE-07, STAGE-08, STAGE-09, STAGE-10, STAGE-11]
       mode:
@@ -13,7 +23,7 @@ on:
         required: true
         default: plan
         type: choice
-        options: [plan, admission-check, validate-evidence, validate-terminal]
+        options: [plan, plan-range, admission-check, validate-evidence, validate-terminal]
       evidence_path:
         description: Repo-relative normalized evidence path for validation modes
         required: false
@@ -47,6 +57,8 @@ jobs:
       - name: Run selected common-engine mode
         env:
           STAGE_UID: ${{ inputs.stage_uid }}
+          START_STAGE_UID: ${{ inputs.start_stage_uid }}
+          END_STAGE_UID: ${{ inputs.end_stage_uid }}
           MODE: ${{ inputs.mode }}
           EVIDENCE_PATH: ${{ inputs.evidence_path }}
           RECEIPT_PATH: ${{ inputs.receipt_path }}
@@ -54,7 +66,13 @@ jobs:
           set -euo pipefail
           case "$MODE" in
             plan)
+              test -n "$STAGE_UID"
               python governance/ci/stage_execution_engine.py --plan --stage "$STAGE_UID"
+              ;;
+            plan-range)
+              test -n "$START_STAGE_UID"
+              test -n "$END_STAGE_UID"
+              python governance/ci/stage_execution_engine.py --plan-range --start-stage "$START_STAGE_UID" --end-stage "$END_STAGE_UID"
               ;;
             admission-check)
               python governance/ci/stage_execution_engine.py --admission-check --stage "$STAGE_UID"
