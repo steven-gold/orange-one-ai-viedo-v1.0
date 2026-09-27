@@ -72,7 +72,7 @@ explicit_stage_range_execution_contract:
   execution_mode_separation:
     STAGE_VALIDATION_MODE:
       purpose: VERIFY_STAGE_RULES_OR_EVIDENCE_ONLY
-      product_execution_credit: 0
+      effectful_execution_credit: 0
       may_redefine_requested_execution_range: false
     PAGE_LIFECYCLE_EXECUTION_MODE:
       purpose: EXECUTE_EXACT_REQUESTED_STAGE_RANGE_FOR_ONE_GOVERNED_UNIT
@@ -108,7 +108,7 @@ universal_stage_stepwise_execution_contract:
   - SUCCESSOR_INPUT_MATERIALIZATION_PASS
   - SUCCESSOR_EFFECTFUL_OPERATION_BINDING_READINESS_PASS
   - SUCCESSOR_ENTRY_GATE_PASS
-  historical_product_output_as_missing_current_input: FORBIDDEN
+  historical_execution_output_as_missing_current_input: FORBIDDEN
 
 stages:
 - stage_uid: STAGE-01
@@ -307,7 +307,7 @@ stages:
   pre_stage_source_projection_admission_gate:
     required: true
     applicability: STRUCTURED_DOCUMENT_REQUIRING_MACHINE_PROJECTION_OR_AUTHORITY_NA
-    evaluation_boundary: BEFORE_PRODUCT_STAGE01_WORK_UNIT_ACTIVATION
+    evaluation_boundary: BEFORE_PROFILE_FIRST_STAGE_WORK_UNIT_ACTIVATION
     validator_uid: VAL-GOV-026
     reconciliation_gate: WORD_YAML_SOURCE_FIDELITY_GATE
     reconciliation_result: PASS
@@ -2257,8 +2257,8 @@ cross_stage_invariants:
     source_control_current_promotion_before_backtrace_and_revalidation: BLOCK
     next_stage_before_governance_freeze: BLOCK
     source_control_provider_is_common_semantic_dependency: false
-    product_neutral_common_governance_required: true
-    product_specific_common_rule_binding: BLOCK
+    execution_context_neutral_common_governance_required: true
+    execution_context_specific_common_rule_binding: BLOCK
     business_entity_inventory_required_for_governed_interaction_scopes: true
     business_entity_operation_matrix_required: true
     entity_hierarchy_matrix_required: true
@@ -2327,7 +2327,7 @@ cross_stage_invariants:
     raw_plus_legal_successor_overlay_is_effective_truth: true
     dependency_ordered_batches: true
     incremental_then_checkpoint_full_sweep: true
-    common_engine_fix_before_affected_product_remediation: true
+    common_engine_fix_before_affected_execution_remediation: true
     single_current_problem_register: true
     append_only_resolution_ledger: true
     explicit_stage_registry_binding_required: true
@@ -2353,7 +2353,7 @@ execution_scope_contract:
   current_scope_owner_layer: EXECUTION_WORKLINE
   execution_context_source: EXTERNAL_EXECUTION_CONTEXT
   execution_scope_locator_contract: <EXECUTION_ROOT>/STAGE_EXECUTION/<STAGE_UID>/<WORK_UNIT_UID>/CURRENT_EXECUTION_SCOPE_MANIFEST.yaml
-  scope_source: CURRENT_AUTHORITY_PROFILE_APPLICABILITY_DEPENDENCY_AND_PERSISTED_PRODUCT_STATE
+  scope_source: CURRENT_AUTHORITY_PROFILE_APPLICABILITY_DEPENDENCY_AND_PERSISTED_EXECUTION_STATE
   work_unit_scope_source: EXECUTION_SCOPE_MANIFEST
   stage_exit_scope_source: CURRENT_GOVERNED_UNIT_STAGE_REQUIRED_UNIVERSE_RECONCILIATION
   governance_workline_may_persist_execution_scope: false

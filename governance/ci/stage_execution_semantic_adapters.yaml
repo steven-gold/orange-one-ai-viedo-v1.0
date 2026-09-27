@@ -238,7 +238,7 @@ stages:
     denominator_kind: BUSINESS_ENTITY_X_APPLICABLE_REQUIRED_OPERATION_PLUS_REQUIRED_HIERARCHY_EDGES
     business_entity_gate_required: true
     scanner_mode: NORMALIZED_COMMON_EVIDENCE_CONTRACT
-    current_execution_state_source: PRODUCT_STAGE_EXECUTION_CURRENT_SCOPE_AND_RESUME
+    current_execution_state_source: EXECUTION_WORKLINE_CURRENT_SCOPE_AND_RESUME
     packaged_required_artifact_contract:
       owner_output: PAGE_CONSTRUCTION_SPEC_PACKAGE
       materializer_owner: governance/ci/materialize_current_stage2_closure_artifacts.py
