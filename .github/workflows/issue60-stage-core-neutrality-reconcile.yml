@@ -10,6 +10,9 @@ on:
       - 'governance/ci/test_stage_execution_engine.py'
       - 'governance/ci/validate_selected_execution_profile_integrity.py'
       - 'governance/ci/validate_governance_portability.py'
+      - 'governance/ci/validate_governance_layout.py'
+      - 'governance/ci/validate_successor_governance_preformal.py'
+      - 'governance/ci/validate_source_package_candidate.py'
       - 'governance/ci/materialize_current_stage2_closure_artifacts.py'
       - 'governance/ci/external_execution_admission.py'
       - 'governance/ci/test_external_execution_admission.py'
@@ -22,6 +25,10 @@ on:
       - '.github/workflows/common-stage-execution-engine.yml'
       - '.github/workflows/current-governance-cleanup-validation.yml'
       - '.github/workflows/issue60-stage-core-neutrality-reconcile.yml'
+
+concurrency:
+  group: issue60-stage-core-neutrality-reconcile-${{ github.ref }}
+  cancel-in-progress: true
 
 permissions:
   contents: write
