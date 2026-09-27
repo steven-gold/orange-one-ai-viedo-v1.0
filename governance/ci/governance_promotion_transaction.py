@@ -67,7 +67,7 @@ def contract_ok(reg):
       'promotion_transaction_product_completion_credit':0,
     }
     bad=[k for k,v in exact.items() if c.get(k)!=v]
-    for k in ['promotion_transaction_requires_explicit_promotion_authorization','promotion_transaction_requires_fresh_readiness','promotion_transaction_requires_integrated_source_validation','promotion_transaction_requires_independent_auditor_evidence','promotion_transaction_requires_new_release_uid','promotion_transaction_execution_authorization_must_be_distinct_from_implementation_authorization','promotion_transaction_post_write_reconciliation_required','promotion_transaction_release_delta_exact','promotion_transaction_fresh_reverify_handoff_required','promotion_transaction_post_promotion_same_branch_reverify_supported']:
+    for k in ['promotion_transaction_requires_explicit_promotion_authorization','promotion_transaction_requires_fresh_readiness','promotion_transaction_requires_integrated_source_validation','promotion_transaction_requires_independent_auditor_evidence','promotion_transaction_requires_new_release_uid','promotion_transaction_execution_authorization_must_be_distinct_from_implementation_authorization','promotion_transaction_pre_publish_reconciliation_required','promotion_transaction_post_write_reconciliation_required','promotion_transaction_release_delta_exact','promotion_transaction_fresh_reverify_handoff_required','promotion_transaction_post_promotion_same_branch_reverify_supported']:
         if c.get(k) is not True: bad.append(k)
     if c.get('promotion_transaction_requires_source_external_trust') is not False:
         bad.append('promotion_transaction_requires_source_external_trust')
@@ -155,8 +155,8 @@ def existing_in_place_release(repo,token,branch,head,uid,authref):
     bad=[k for k,v in exp.items() if str(d.get(k) or '')!=v]
     return {'status':'ALREADY_PROMOTED_IDEMPOTENT','head':h} if not bad else {'status':'BLOCKED','reason':'EXISTING_RELEASE_BRANCH_IDENTITY_MISMATCH','fields':bad}
 
-def postcheck(repo,token,candidate_head,rbranch,rhead,uid,rev,authref):
-    if ref(repo,token,rbranch)!=rhead:
+def reconcile_release_projection(repo,token,candidate_head,rbranch,rhead,uid,rev,authref,require_persisted_ref:bool):
+    if require_persisted_ref and ref(repo,token,rbranch)!=rhead:
         return {'status':'BLOCKED','reason':'RELEASE_HEAD_NOT_PERSISTED'}
     o,r=parts(repo)
     cmp=api(f'https://api.github.com/repos/{o}/{r}/compare/{candidate_head}...{rhead}',token)
@@ -172,7 +172,7 @@ def postcheck(repo,token,candidate_head,rbranch,rhead,uid,rev,authref):
     docs={}
     try:
         for path in expected:
-            raw=file_at(repo,token,rbranch,path)
+            raw=file_at(repo,token,rhead,path)
             doc=yaml.safe_load(raw or '') or {}
             if not isinstance(doc,dict): raise RuntimeError('MAPPING_REQUIRED:'+path)
             docs[path]=doc
@@ -196,7 +196,20 @@ def postcheck(repo,token,candidate_head,rbranch,rhead,uid,rev,authref):
       'handoff_binding':str(hand.get('released_governance_uid') or '')==uid and str(hand.get('release_branch') or '')==rbranch and hand.get('status')=='REVERIFY_REQUIRED' and hand.get('product_execution_authorized') is False,
     }
     bad=sorted(k for k,v in checks.items() if not v)
-    return {'status':'PASS' if not bad else 'BLOCKED','reason':None if not bad else 'RELEASE_POST_WRITE_PROJECTION_MISMATCH','failed_checks':bad,'release_delta_paths':sorted(got),'release_head_sha':rhead}
+    return {
+      'status':'PASS' if not bad else 'BLOCKED',
+      'reason':None if not bad else 'RELEASE_PROJECTION_MISMATCH',
+      'phase':'POST_WRITE' if require_persisted_ref else 'PRE_PUBLISH',
+      'failed_checks':bad,
+      'release_delta_paths':sorted(got),
+      'release_head_sha':rhead,
+    }
+
+def prepublish_check(repo,token,candidate_head,rbranch,rhead,uid,rev,authref):
+    return reconcile_release_projection(repo,token,candidate_head,rbranch,rhead,uid,rev,authref,False)
+
+def postcheck(repo,token,candidate_head,rbranch,rhead,uid,rev,authref):
+    return reconcile_release_projection(repo,token,candidate_head,rbranch,rhead,uid,rev,authref,True)
 
 def selftest():
     i={'state':'open','user':{'login':'a'},'body':' '.join([MARK,'b'*40,'r','U','V'])}; a=auth_ok(i,'a','b'*40,'r','U','V')
@@ -244,8 +257,11 @@ def main():
     if rr.get('status')!='PASS' or str((rr.get('readiness') or {}).get('candidate_head_sha') or '')!=a.candidate_head:print(json.dumps(rr));return 2
     if branch_head(a.repository,cbranch,token)!=a.candidate_head:print(json.dumps({'status':'BLOCKED','reason':'CANDIDATE_HEAD_MOVED_AFTER_READINESS'}));return 2
     base=git('rev-parse','HEAD^{tree}'); files=docs(reg,ly(MAN),lock,a.candidate_head,base,release_branch,a.release_governance_uid,a.release_governance_revision,a.promotion_authorization_ref,a.independent_evaluator_evidence_ref,rr['readiness']); tr=tree(a.repository,token,base,files); cm=commit(a.repository,token,tr,a.candidate_head,f'promote(governance): release {a.release_governance_revision} in-place from {a.candidate_head}')
+    pre=prepublish_check(a.repository,token,a.candidate_head,cbranch,cm,a.release_governance_uid,a.release_governance_revision,a.promotion_authorization_ref)
+    if pre.get('status')!='PASS':
+        print(json.dumps({'status':'BLOCKED_PRE_PUBLISH_RECONCILIATION','candidate_head_sha':a.candidate_head,'unpublished_release_commit_sha':cm,'pre_publish_reconciliation':pre,'branch_ref_mutated':False,'product_completion_credit':0},sort_keys=True));return 2
     if branch_head(a.repository,cbranch,token)!=a.candidate_head:
-        print(json.dumps({'status':'BLOCKED','reason':'SNAPSHOT_INVALIDATED_BEFORE_ATOMIC_PROMOTION'}));return 2
+        print(json.dumps({'status':'BLOCKED','reason':'SNAPSHOT_INVALIDATED_BEFORE_ATOMIC_PROMOTION','branch_ref_mutated':False}));return 2
     update_ref(a.repository,token,cbranch,cm); created=ref(a.repository,token,cbranch)
     if created!=cm:print(json.dumps({'status':'BLOCKED','reason':'ACTIVE_GOVERNANCE_REF_POST_WRITE_MISMATCH'}));return 2
     pc=postcheck(a.repository,token,a.candidate_head,cbranch,cm,a.release_governance_uid,a.release_governance_revision,a.promotion_authorization_ref)
