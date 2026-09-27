@@ -229,7 +229,7 @@ stages:
     mode: REQUIRED
     invariant_uid: GOV-INV-CLOSURE-EVIDENCE-CONTINUITY-001
     normative_section_uid: WEB-GOV-03-S058
-  business_entity_completeness_gate:
+  governed_entity_completeness_gate:
     applicability: CONDITIONAL_BY_CURRENT_AUTHORITY_AND_GOVERNED_UNIT_SEMANTICS
     required_when_applicable: true
     not_applicable_requires_authority_evidence: true
@@ -461,7 +461,7 @@ stages:
     required: true
     review_completion_does_not_imply_stage_closure: true
     unresolved_gap_fill_without_current_authority: BLOCK
-  business_entity_completeness_gate:
+  governed_entity_completeness_gate:
     applicability: CONDITIONAL_BY_CURRENT_AUTHORITY_AND_GOVERNED_UNIT_SEMANTICS
     required_when_applicable: true
     not_applicable_requires_authority_evidence: true
@@ -533,9 +533,9 @@ stages:
     - STAGE_EXECUTION_PREFLIGHT_RECEIPT
     - CURRENT_PROBLEM_REGISTER
     - RESOLUTION_LEDGER
-    when_governed_business_entity_scope_present:
-    - BUSINESS_ENTITY_INVENTORY
-    - BUSINESS_ENTITY_OPERATION_MATRIX
+    when_governed_governed_entity_scope_present:
+    - GOVERNED_ENTITY_INVENTORY
+    - GOVERNED_ENTITY_OPERATION_MATRIX
     when_entity_hierarchy_applies:
     - ENTITY_HIERARCHY_MATRIX
     when_continuous_work_unit_applies:
@@ -555,7 +555,7 @@ stages:
   cross_unit_blocking_requires_explicit_required_dependency_edge: true
   lifecycle_owner_granularity: GOVERNED_UNIT
   functional_contract_ownership:
-  - BUSINESS_ENTITY_LIFECYCLE
+  - GOVERNED_ENTITY_LIFECYCLE
   - OPERATION_HIERARCHY
   - FIELD_DATA_ACTION_BOUNDARY
   - PAYLOAD_INPUT
@@ -697,7 +697,7 @@ stages:
     mode: REQUIRED
     invariant_uid: GOV-INV-CLOSURE-EVIDENCE-CONTINUITY-001
     normative_section_uid: WEB-GOV-03-S058
-  business_entity_completeness_gate:
+  governed_entity_completeness_gate:
     applicability: CONDITIONAL_BY_CURRENT_AUTHORITY_AND_GOVERNED_UNIT_SEMANTICS
     required_when_applicable: true
     not_applicable_requires_authority_evidence: true
@@ -893,7 +893,7 @@ stages:
     mode: REQUIRED
     invariant_uid: GOV-INV-CLOSURE-EVIDENCE-CONTINUITY-001
     normative_section_uid: WEB-GOV-03-S058
-  business_entity_completeness_gate:
+  governed_entity_completeness_gate:
     applicability: CONDITIONAL_BY_CURRENT_AUTHORITY_AND_GOVERNED_UNIT_SEMANTICS
     required_when_applicable: true
     not_applicable_requires_authority_evidence: true
@@ -1056,7 +1056,7 @@ stages:
     mode: REQUIRED
     invariant_uid: GOV-INV-CLOSURE-EVIDENCE-CONTINUITY-001
     normative_section_uid: WEB-GOV-03-S058
-  business_entity_completeness_gate:
+  governed_entity_completeness_gate:
     applicability: CONDITIONAL_BY_CURRENT_AUTHORITY_AND_GOVERNED_UNIT_SEMANTICS
     required_when_applicable: true
     not_applicable_requires_authority_evidence: true
@@ -1215,7 +1215,7 @@ stages:
     mode: REQUIRED
     invariant_uid: GOV-INV-CLOSURE-EVIDENCE-CONTINUITY-001
     normative_section_uid: WEB-GOV-03-S058
-  business_entity_completeness_gate:
+  governed_entity_completeness_gate:
     applicability: CONDITIONAL_BY_CURRENT_AUTHORITY_AND_GOVERNED_UNIT_SEMANTICS
     required_when_applicable: true
     not_applicable_requires_authority_evidence: true
@@ -1721,7 +1721,7 @@ stages:
     mode: REQUIRED
     invariant_uid: GOV-INV-CLOSURE-EVIDENCE-CONTINUITY-001
     normative_section_uid: WEB-GOV-03-S058
-  business_entity_completeness_gate:
+  governed_entity_completeness_gate:
     applicability: CONDITIONAL_BY_CURRENT_AUTHORITY_AND_GOVERNED_UNIT_SEMANTICS
     required_when_applicable: true
     not_applicable_requires_authority_evidence: true
@@ -2273,10 +2273,10 @@ cross_stage_invariants:
     source_control_provider_is_common_semantic_dependency: false
     execution_context_neutral_common_governance_required: true
     execution_context_specific_common_rule_binding: BLOCK
-    business_entity_inventory_required_for_governed_interaction_scopes: true
-    business_entity_operation_matrix_required: true
-    entity_hierarchy_matrix_required: true
-    entity_operation_completeness_denominator_required: true
+    governed_entity_inventory_required_when_declared_by_current_authority: true
+    governed_entity_operation_matrix_required_when_applicable: true
+    governed_entity_hierarchy_matrix_required_when_applicable: true
+    governed_entity_operation_completeness_denominator_required_when_applicable: true
     count_surrogate_for_functional_completeness: BLOCK
     operation_to_ui_runtime_bidirectional_coverage_required: true
     function_admission_scorecard_required: true

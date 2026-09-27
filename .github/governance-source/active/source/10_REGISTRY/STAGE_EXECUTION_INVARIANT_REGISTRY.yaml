@@ -33,7 +33,7 @@ scope:
   - LEDGER
   - RECEIPT
   - AUTHORITY
-  - BUSINESS_ENTITY
+  - GOVERNED_ENTITY
   - ENTITY_RELATIONSHIP
   - LIFECYCLE_OPERATION
   - UI_OPERATION_BINDING
@@ -314,9 +314,11 @@ invariants:
     product_profile_can_replace_common_invariant: false
     binding_substitution_test_required: true
     binding_substitution_failure: GOVERNANCE_DEFECT
-  BUSINESS_ENTITY_INVENTORY_COMPLETENESS:
-    required_for_every_governed_interaction_scope: true
-    required_artifact: BUSINESS_ENTITY_INVENTORY
+  GOVERNED_ENTITY_INVENTORY_COMPLETENESS:
+    applicability: CONDITIONAL_BY_CURRENT_AUTHORITY_AND_GOVERNED_UNIT_SEMANTICS
+    required_when_applicable: true
+    not_applicable_requires_authority_evidence: true
+    required_artifact: GOVERNED_ENTITY_INVENTORY
     user_manageable_child_is_entity_when_identity_state_order_parent_edit_or_lifecycle_exists: true
     list_or_selector_presence_proves_entity_completeness: false
     entity_kinds_examples_are_non_exhaustive:
@@ -333,8 +335,11 @@ invariants:
     - RULE
     - PACKAGE
     missing_required_entity: BLOCK
-  BUSINESS_ENTITY_LIFECYCLE_COMPLETENESS:
-    required_artifact: BUSINESS_ENTITY_OPERATION_MATRIX
+  GOVERNED_ENTITY_LIFECYCLE_COMPLETENESS:
+    applicability: CONDITIONAL_BY_CURRENT_AUTHORITY_AND_GOVERNED_UNIT_SEMANTICS
+    required_when_applicable: true
+    not_applicable_requires_authority_evidence: true
+    required_artifact: GOVERNED_ENTITY_OPERATION_MATRIX
     operation_universe:
     - DISCOVER_OR_LIST
     - SELECT_OR_OPEN
@@ -407,7 +412,7 @@ invariants:
     category_or_group_relation_without_management_contract: BLOCK
   OPERATION_TO_UI_RUNTIME_BIDIRECTIONAL_COVERAGE:
     required_operation_forward_chain:
-    - BUSINESS_ENTITY_OPERATION
+    - GOVERNED_ENTITY_OPERATION
     - UI_CONTROL_OR_SYSTEM_TRIGGER
     - ACTION
     - INPUT_OR_PAYLOAD
@@ -422,7 +427,7 @@ invariants:
     runtime_endpoint_without_operation: BLOCK
     implementation_may_invent_missing_upstream_contract: false
   BUSINESS_CAPABILITY_COMPLETENESS_DENOMINATOR:
-    authoritative_denominator_formula: BUSINESS_ENTITY_X_APPLICABLE_REQUIRED_OPERATION_PLUS_REQUIRED_HIERARCHY_EDGES
+    authoritative_denominator_formula: GOVERNED_ENTITY_X_APPLICABLE_REQUIRED_OPERATION_PLUS_REQUIRED_HIERARCHY_EDGES
     page_count_is_completeness_denominator: false
     control_count_is_completeness_denominator: false
     action_count_is_completeness_denominator: false
@@ -526,7 +531,7 @@ invariants:
     required_artifact: FUNCTION_VISUAL_IMPACT_MATRIX
     applies_to_user_visible_or_user_observable_required_operations: true
     required_visual_binding_fields:
-    - business_entity_or_scope
+    - governed_entity_or_scope
     - operation_uid
     - visual_section_or_surface
     - component_or_control_identity
@@ -795,7 +800,7 @@ invariants:
     exact_output_path_persistence_proof_required: true
   FUNCTION_VISUAL_BIDIRECTIONAL_TRACEABILITY:
     required_forward_trace:
-    - BUSINESS_ENTITY
+    - GOVERNED_ENTITY
     - OPERATION
     - JOURNEY
     - FUNCTIONAL_WORKBENCH
@@ -888,7 +893,7 @@ invariants:
     required_domains:
     - REQUIREMENTS
     - ARCHITECTURE
-    - BUSINESS_ENTITY_AND_OPERATION
+    - GOVERNED_ENTITY_AND_OPERATION
     - JOURNEY_WORKBENCH_TOPOLOGY
     - PAGE_SURFACE_DESIGN
     - VISUAL_ARCHITECTURE
@@ -929,7 +934,7 @@ invariants:
   BASIC_DESIGN_FREEZE_QUANTITATIVE_COMPLETENESS:
     required_percent_fields:
       requirement_architecture_coverage: 100
-      business_entity_operation_coverage: 100
+      governed_entity_operation_coverage: 100
       journey_workbench_topology_coverage: 100
       functional_chain_design_coverage: 100
       function_to_visual_binding_coverage: 100

@@ -20,7 +20,7 @@ def op_complete(status,contract=None,na_authority=None):
 def hierarchy_complete(parent,child,fields): return bool(parent and child and fields>=14)
 def coverage(required,entry,action,runtime): return (not required) or bool(entry and action and runtime)
 def generic_substitution(common_rule,product_profile_a,product_profile_b): return common_rule(product_profile_a)==common_rule(product_profile_b)
-def common_rule(_profile): return 'BUSINESS_ENTITY_X_APPLICABLE_REQUIRED_OPERATION_PLUS_REQUIRED_HIERARCHY_EDGES'
+def common_rule(_profile): return 'GOVERNED_ENTITY_X_APPLICABLE_REQUIRED_OPERATION_PLUS_REQUIRED_HIERARCHY_EDGES'
 def auto_admit(score,authority_gap=False,scope_ambiguity=False,unique_dependency=True,duplicate=False):
     return score>=70 and not authority_gap and not scope_ambiguity and unique_dependency and not duplicate
 def bounded_expand(seed_registered,in_frozen_closure,independent_proof,cycle=False,closed=False):

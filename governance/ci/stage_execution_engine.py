@@ -234,7 +234,7 @@ def validate_definition_data(profile,adapters):
         if ad.get('scanner_mode') not in {'NORMALIZED_COMMON_EVIDENCE_CONTRACT','SPECIALIZED_COMPATIBILITY_PLUS_NORMALIZED_COMMON'}: fail(f'ADAPTER_SCANNER_MODE_INVALID:{uid}')
         if ad.get('execution_completion_credit_from_definition_audit')!=0: fail(f'DEFINITION_AUDIT_EXECUTION_CREDIT_LEAK:{uid}')
         if ad.get('governed_entity_gate_mode')!='CONDITIONAL_BY_CURRENT_AUTHORITY_AND_APPLICABILITY': fail(f'GOVERNED_ENTITY_GATE_MODE_DRIFT:{uid}')
-        entity_gate=st.get('business_entity_completeness_gate')
+        entity_gate=st.get('governed_entity_completeness_gate')
         if isinstance(entity_gate,dict):
             if entity_gate.get('applicability')!='CONDITIONAL_BY_CURRENT_AUTHORITY_AND_GOVERNED_UNIT_SEMANTICS' or entity_gate.get('required_when_applicable') is not True or entity_gate.get('not_applicable_requires_authority_evidence') is not True:
                 fail(f'GOVERNED_ENTITY_GATE_APPLICABILITY_CONTRACT_DRIFT:{uid}')

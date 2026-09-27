@@ -34,13 +34,14 @@ def validate(root=ROOT):
     if pna.get('binding_substitution_test_required') is not True or pna.get('binding_substitution_failure')!='GOVERNANCE_DEFECT': failures.append('binding_substitution_contract_invalid')
     if set(pna.get('product_specific_material_allowed_contexts') or [])!={'EMPIRICAL_PROVENANCE','SYNTHETIC_TEST_FIXTURE','COMPATIBILITY_ALIAS','PRODUCT_PROFILE_EXTENSION'}: failures.append('product_specific_allowed_contexts_invalid')
 
-    ei=inv.get('BUSINESS_ENTITY_INVENTORY_COMPLETENESS') or {}
-    if ei.get('required_for_every_governed_interaction_scope') is not True or ei.get('required_artifact')!='BUSINESS_ENTITY_INVENTORY': failures.append('entity_inventory_contract_missing')
+    ei=inv.get('GOVERNED_ENTITY_INVENTORY_COMPLETENESS') or {}
+    if ei.get('applicability')!='CONDITIONAL_BY_CURRENT_AUTHORITY_AND_GOVERNED_UNIT_SEMANTICS' or ei.get('required_when_applicable') is not True or ei.get('not_applicable_requires_authority_evidence') is not True or ei.get('required_artifact')!='GOVERNED_ENTITY_INVENTORY': failures.append('entity_inventory_contract_missing')
     if ei.get('list_or_selector_presence_proves_entity_completeness') is not False or ei.get('missing_required_entity')!='BLOCK': failures.append('entity_inventory_fail_closed_missing')
     required_examples={'ITEM','CATEGORY','CHAPTER','SECTION','ENTRY','TASK','VERSION','ASSET','RECORD','CONFIGURATION','RULE','PACKAGE'}
     if not required_examples.issubset(set(ei.get('entity_kinds_examples_are_non_exhaustive') or [])): failures.append('entity_child_examples_incomplete')
 
-    lc=inv.get('BUSINESS_ENTITY_LIFECYCLE_COMPLETENESS') or {}
+    lc=inv.get('GOVERNED_ENTITY_LIFECYCLE_COMPLETENESS') or {}
+    if lc.get('applicability')!='CONDITIONAL_BY_CURRENT_AUTHORITY_AND_GOVERNED_UNIT_SEMANTICS' or lc.get('required_when_applicable') is not True or lc.get('not_applicable_requires_authority_evidence') is not True: failures.append('entity_lifecycle_applicability_contract_missing')
     expected_ops={'DISCOVER_OR_LIST','SELECT_OR_OPEN','CREATE','CREATION_MODE','PARENT_BIND','CATEGORY_OR_GROUP_BIND','DRAFT','RESUME','EDIT','SAVE','VALIDATE','CONFIRM_OR_APPROVE','VERSION','REVISE','LOCK_OR_UNLOCK','REORDER','MOVE_OR_REPARENT','ARCHIVE_OR_DELETE','RESTORE','DEPENDENCY_IMPACT','AUDIT','ERROR_RECOVERY','NEXT_STEP'}
     if set(lc.get('operation_universe') or [])!=expected_ops: failures.append('entity_operation_universe_incomplete')
     if set(lc.get('allowed_applicability_status') or [])!={'REQUIRED','OPTIONAL','NOT_APPLICABLE'}: failures.append('entity_operation_status_universe_invalid')
@@ -56,7 +57,7 @@ def validate(root=ROOT):
         if hi.get(k)!='BLOCK': failures.append('entity_hierarchy_fail_closed_missing:'+k)
 
     bi=inv.get('OPERATION_TO_UI_RUNTIME_BIDIRECTIONAL_COVERAGE') or {}
-    expected_chain=['BUSINESS_ENTITY_OPERATION','UI_CONTROL_OR_SYSTEM_TRIGGER','ACTION','INPUT_OR_PAYLOAD','API_OR_COMMAND','RUNTIME_OWNER','PERSISTENCE_OR_STATE_TRANSITION','FEEDBACK_OR_AUDIT']
+    expected_chain=['GOVERNED_ENTITY_OPERATION','UI_CONTROL_OR_SYSTEM_TRIGGER','ACTION','INPUT_OR_PAYLOAD','API_OR_COMMAND','RUNTIME_OWNER','PERSISTENCE_OR_STATE_TRANSITION','FEEDBACK_OR_AUDIT']
     if bi.get('required_operation_forward_chain')!=expected_chain: failures.append('operation_forward_chain_invalid')
     for k in ['required_operation_without_entry','visible_control_without_allowed_operation','action_without_operation','runtime_endpoint_without_operation']:
         if bi.get(k)!='BLOCK': failures.append('bidirectional_fail_closed_missing:'+k)
@@ -83,7 +84,7 @@ def validate(root=ROOT):
     if bfc.get('denominator_growth_without_authority_trace')!='UNAUTHORIZED_SCOPE_EXPANSION' or bfc.get('completion_may_expand_product_scope') is not False: failures.append('bounded_completion_denominator_scope_guard_invalid')
 
     vis=inv.get('FUNCTION_VISUAL_SYNCHRONIZED_COMPLETION') or {}
-    visual_fields={'business_entity_or_scope','operation_uid','visual_section_or_surface','component_or_control_identity','interaction_entry','state_binding','loading_or_pending_state','permission_or_disabled_state','success_feedback','error_feedback','recovery_feedback','version_or_revision_visibility_when_applicable','responsive_or_overflow_behavior','i18n_label_ref_when_applicable','accessibility_semantics','visual_authority_ref'}
+    visual_fields={'governed_entity_or_scope','operation_uid','visual_section_or_surface','component_or_control_identity','interaction_entry','state_binding','loading_or_pending_state','permission_or_disabled_state','success_feedback','error_feedback','recovery_feedback','version_or_revision_visibility_when_applicable','responsive_or_overflow_behavior','i18n_label_ref_when_applicable','accessibility_semantics','visual_authority_ref'}
     if vis.get('required_artifact')!='FUNCTION_VISUAL_IMPACT_MATRIX' or set(vis.get('required_visual_binding_fields') or [])!=visual_fields: failures.append('function_visual_impact_contract_incomplete')
     for k in ['logic_addition_without_visual_impact_classification','user_visible_operation_without_visual_binding','visual_control_without_allowed_operation','new_visual_pattern_without_stage03_design_authority']:
         if vis.get(k)!='BLOCK': failures.append('function_visual_fail_closed_missing:'+k)
@@ -141,7 +142,7 @@ def validate(root=ROOT):
     if set(iv.get('performance_receipt_fields') or [])!=perf: failures.append('indexed_validation_performance_receipt_incomplete')
 
     den=inv.get('BUSINESS_CAPABILITY_COMPLETENESS_DENOMINATOR') or {}
-    if den.get('authoritative_denominator_formula')!='BUSINESS_ENTITY_X_APPLICABLE_REQUIRED_OPERATION_PLUS_REQUIRED_HIERARCHY_EDGES': failures.append('business_denominator_formula_invalid')
+    if den.get('authoritative_denominator_formula')!='GOVERNED_ENTITY_X_APPLICABLE_REQUIRED_OPERATION_PLUS_REQUIRED_HIERARCHY_EDGES': failures.append('business_denominator_formula_invalid')
     for k in ['page_count_is_completeness_denominator','control_count_is_completeness_denominator','action_count_is_completeness_denominator','api_or_port_count_is_completeness_denominator']:
         if den.get(k) is not False: failures.append('count_surrogate_not_forbidden:'+k)
     for k in ['missing_entity_count_must_equal_zero_for_stage02_close','missing_required_operation_count_must_equal_zero_for_stage02_close','unresolved_hierarchy_edge_count_must_equal_zero_for_stage02_close','orphan_control_action_runtime_count_must_equal_zero_for_relevant_stage_close']:
@@ -157,23 +158,23 @@ def validate(root=ROOT):
     # Cross-artifact binding
     bp=load(root,'10_REGISTRY/GOVERNANCE_ACCEPTANCE_AUDIT_BLUEPRINT.yaml'); c=bp.get('product_neutral_entity_lifecycle_contract') or {}
     if c.get('required') is not True or c.get('validator_uid')!='VAL-GOV-037' or c.get('validator_path')!='09_TESTS/governance/validate_product_neutral_entity_lifecycle.py': failures.append('acceptance_product_neutral_contract_missing')
-    if c.get('completeness_denominator')!='BUSINESS_ENTITY_X_APPLICABLE_REQUIRED_OPERATION_PLUS_REQUIRED_HIERARCHY_EDGES': failures.append('acceptance_business_denominator_invalid')
+    if c.get('completeness_denominator')!='GOVERNED_ENTITY_X_APPLICABLE_REQUIRED_OPERATION_PLUS_REQUIRED_HIERARCHY_EDGES': failures.append('acceptance_business_denominator_invalid')
     for k in ['function_admission_scorecard_required','score_cannot_override_authority_gap','bounded_functional_completion_required','minimal_closure_set_required','out_of_frozen_closure_discovery_reopens_design','auto_completion_scope_ledger_required','function_visual_impact_matrix_required','logic_visual_synchronized_completion_required','indexed_incremental_validation_required','index_drift_full_sweep_required_before_freeze','functional_workbench_contract_required','interaction_topology_matrix_required','functional_to_visual_topology_equivalence_required','responsive_reflow_semantic_order_preservation_required','ai_interaction_continuity_matrix_required_when_profile_active','conversation_identity_continuity_required_when_applicable','multi_agent_context_equivalence_required_when_applicable','revision_context_continuity_required_when_applicable','branch_context_isolation_and_explicit_adoption_required_when_applicable']:
         if c.get(k) is not True: failures.append('acceptance_bounded_visual_index_rule_missing:'+k)
     if c.get('user_visible_required_operation_without_visual_binding')!='BLOCK' or c.get('new_visual_pattern_without_design_authority')!='BLOCK' or c.get('index_may_skip_impacted_validator') is not False or c.get('atomic_workbench_fragmentation')!='BLOCK' or c.get('cross_surface_without_context_handoff')!='BLOCK' or c.get('raw_ai_output_direct_authoritative_promotion')!='BLOCK': failures.append('acceptance_bounded_visual_index_topology_fail_closed_invalid')
     life=load(root,'10_REGISTRY/GOVERNANCE_LIFECYCLE_STAGE_REGISTRY.yaml')
     cs=(life.get('cross_stage_invariants') or {}).get('stage_execution_invariant_hardening') or {}
-    for k in ['product_neutral_common_governance_required','business_entity_inventory_required_for_governed_interaction_scopes','business_entity_operation_matrix_required','entity_hierarchy_matrix_required','entity_operation_completeness_denominator_required','operation_to_ui_runtime_bidirectional_coverage_required','function_admission_scorecard_required','bounded_functional_completion_required','function_visual_impact_matrix_required','logic_visual_synchronized_completion_required','indexed_incremental_validation_required','functional_workbench_cohesion_required','interaction_topology_binding_required','functional_to_visual_topology_equivalence_required','ai_interaction_continuity_profile_required_when_declared','conversation_identity_continuity_required_when_applicable','multi_agent_context_equivalence_required_when_applicable','revision_context_continuity_required_when_applicable','branch_context_isolation_and_explicit_adoption_required_when_applicable']:
+    for k in ['product_neutral_common_governance_required','governed_entity_inventory_required_when_declared_by_current_authority','governed_entity_operation_matrix_required_when_applicable','governed_entity_hierarchy_matrix_required_when_applicable','governed_entity_operation_completeness_denominator_required_when_applicable','operation_to_ui_runtime_bidirectional_coverage_required','function_admission_scorecard_required','bounded_functional_completion_required','function_visual_impact_matrix_required','logic_visual_synchronized_completion_required','indexed_incremental_validation_required','functional_workbench_cohesion_required','interaction_topology_binding_required','functional_to_visual_topology_equivalence_required','ai_interaction_continuity_profile_required_when_declared','conversation_identity_continuity_required_when_applicable','multi_agent_context_equivalence_required_when_applicable','revision_context_continuity_required_when_applicable','branch_context_isolation_and_explicit_adoption_required_when_applicable']:
         if cs.get(k) is not True: failures.append('lifecycle_cross_stage_rule_missing:'+k)
     if cs.get('product_specific_common_rule_binding')!='BLOCK' or cs.get('count_surrogate_for_functional_completeness')!='BLOCK': failures.append('lifecycle_product_or_count_binding_not_blocked')
     if cs.get('auto_completion_outside_frozen_dependency_closure')!='BLOCK_AND_REOPEN_DESIGN' or cs.get('index_may_skip_impacted_validator') is not False or cs.get('atomic_workbench_fragmentation')!='BLOCK' or cs.get('cross_surface_without_context_handoff')!='BLOCK' or cs.get('raw_ai_output_direct_authoritative_promotion')!='BLOCK': failures.append('lifecycle_bounded_index_topology_guard_invalid')
     stage_map={s.get('stage_uid'):s for s in life.get('stages') or []}
     for uid in ['STAGE-01','STAGE-02','STAGE-03','STAGE-04','STAGE-05','STAGE-06','STAGE-10']:
-        g=(stage_map.get(uid) or {}).get('business_entity_completeness_gate') or {}
-        if g.get('required') is not True or g.get('validator_uid')!='VAL-GOV-037': failures.append('stage_business_entity_gate_missing:'+uid)
-    if not ((stage_map.get('STAGE-02') or {}).get('business_entity_completeness_gate') or {}).get('zero_missing_required_entity_operation_hierarchy_before_exit') is True: failures.append('stage02_zero_missing_business_gate_missing')
+        g=(stage_map.get(uid) or {}).get('governed_entity_completeness_gate') or {}
+        if g.get('required') is not True or g.get('validator_uid')!='VAL-GOV-037': failures.append('stage_governed_entity_gate_missing:'+uid)
+    if not ((stage_map.get('STAGE-02') or {}).get('governed_entity_completeness_gate') or {}).get('zero_missing_required_entity_operation_hierarchy_before_exit') is True: failures.append('stage02_zero_missing_business_gate_missing')
     s2stage=(stage_map.get('STAGE-02') or {})
-    s2=s2stage.get('business_entity_completeness_gate') or {}
+    s2=s2stage.get('governed_entity_completeness_gate') or {}
     for k in ['function_admission_scorecard_required','bounded_minimal_closure_plan_required','frozen_dependency_closure_required_before_exit','function_visual_impact_classification_required','functional_workbench_contract_required','interaction_topology_matrix_required','workbench_classification_required','ai_interaction_continuity_contract_required_when_profile_active']:
         if s2.get(k) is not True: failures.append('stage02_bounded_completion_gate_missing:'+k)
     aiop=(s2stage.get('conditional_operations') or {}).get('AI_INTERACTION_CONTINUITY_COMPILE') or {}
@@ -182,11 +183,11 @@ def validate(root=ROOT):
     if set(aiop.get('when_scope_kind_in') or [])!=expected_ai_scopes or aiop.get('required') is not True: failures.append('stage02_ai_continuity_operation_not_conditional')
     if set(aiout.get('when_scope_kind_in') or [])!=expected_ai_scopes or aiout.get('required') is not True or aiout.get('producer')!='AI_INTERACTION_CONTINUITY_COMPILE': failures.append('stage02_ai_continuity_output_not_conditional')
     s3stage=(stage_map.get('STAGE-03') or {})
-    s3=s3stage.get('business_entity_completeness_gate') or {}
+    s3=s3stage.get('governed_entity_completeness_gate') or {}
     if s3.get('required_function_visual_binding_required') is not True or s3.get('new_visual_pattern_requires_design_authority') is not True or s3.get('functional_workbench_visual_cohesion_required') is not True or s3.get('functional_to_visual_topology_equivalence_required') is not True or s3.get('atomic_workbench_fragmentation')!='BLOCK': failures.append('stage03_visual_topology_completion_gate_missing')
     aiin=(s3stage.get('conditional_inputs') or {}).get('AI_INTERACTION_CONTINUITY_CONTRACT') or {}
     if set(aiin.get('when_scope_kind_in') or [])!=expected_ai_scopes or aiin.get('required') is not True or aiin.get('origin')!='STAGE-02_IMMUTABLE_REFERENCE_ONLY': failures.append('stage03_ai_continuity_input_not_conditional')
-    s5=(stage_map.get('STAGE-05') or {}).get('business_entity_completeness_gate') or {}
+    s5=(stage_map.get('STAGE-05') or {}).get('governed_entity_completeness_gate') or {}
     if s5.get('auto_completion_within_frozen_dependency_closure_only') is not True or s5.get('out_of_closure_discovery_reopens_design') is not True or s5.get('logic_visual_sync_required') is not True or s5.get('implement_frozen_interaction_topology_without_fragmentation') is not True or s5.get('preserve_context_handoff_and_identity_continuity') is not True: failures.append('stage05_bounded_visual_topology_gate_missing')
 
     # Current indexed validation is owned by STAGE_EXECUTION_INVARIANT_REGISTRY; no retired construction index dependency.
