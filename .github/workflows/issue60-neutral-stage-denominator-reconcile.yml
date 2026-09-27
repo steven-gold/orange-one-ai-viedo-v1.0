@@ -49,29 +49,37 @@ jobs:
           sem.write_text(yaml.safe_dump(s,allow_unicode=True,sort_keys=False,width=180),encoding='utf-8')
           PY
           python governance/source-successor/materialize_derived_source_package.py
-          VAL_BLOB="$(git hash-object .github/governance-source/active/source/09_TESTS/governance/validate_reference_semantics.py)"
-          VAL_BLOB="$VAL_BLOB" python - <<'PY'
+          python - <<'PY'
           from pathlib import Path
-          import os,yaml
+          import re, subprocess, yaml
           p=Path('governance/specifications/REGISTRY.yaml')
           text=p.read_text(encoding='utf-8')
           doc=yaml.safe_load(text) or {}
-          key='.github/governance-source/active/source/09_TESTS/governance/validate_reference_semantics.py'
-          block=((doc.get('candidate_validation_contract') or {}).get('source_package_validation_toolchain_blob_bindings') or {})
-          if key not in block:
-              raise SystemExit('REFERENCE_SEMANTICS_TOOLCHAIN_BINDING_KEY_MISSING')
+          bindings=((doc.get('candidate_validation_contract') or {}).get('source_package_validation_toolchain_blob_bindings') or {})
+          if not isinstance(bindings,dict) or not bindings:
+              raise SystemExit('TOOLCHAIN_BINDING_BLOCK_MISSING')
           ls=text.splitlines()
           start=[i for i,x in enumerate(ls) if x=='  source_package_validation_toolchain_blob_bindings:']
           if len(start)!=1:
               raise SystemExit('TOOLCHAIN_BINDING_BLOCK_COUNT='+str(len(start)))
           lo=start[0]+1
           hi=next((i for i in range(lo,len(ls)) if ls[i] and not ls[i].startswith('    ')),len(ls))
-          needle='    "'+key+'":'
-          rows=[i for i in range(lo,hi) if ls[i].startswith(needle)]
-          if len(rows)!=1:
-              raise SystemExit('REFERENCE_SEMANTICS_TOOLCHAIN_ROW_COUNT='+str(len(rows)))
-          ls[rows[0]]=needle+' '+os.environ['VAL_BLOB']
+          changed=0
+          for key in sorted(bindings):
+              path=Path(key)
+              if not path.is_file():
+                  raise SystemExit('REGISTERED_TOOLCHAIN_PATH_MISSING:'+key)
+              blob=subprocess.run(['git','hash-object',key],check=True,text=True,capture_output=True).stdout.strip()
+              needle='    "'+key+'":'
+              rows=[i for i in range(lo,hi) if ls[i].startswith(needle)]
+              if len(rows)!=1:
+                  raise SystemExit('TOOLCHAIN_BINDING_ROW_COUNT:'+key+':'+str(len(rows)))
+              current=ls[rows[0]].split(':',1)[1].strip()
+              if current!=blob:
+                  ls[rows[0]]=needle+' '+blob
+                  changed+=1
           p.write_text('\n'.join(ls)+'\n',encoding='utf-8')
+          print('PASS: toolchain blob bindings reconciled changed='+str(changed))
           PY
           python governance/source-successor/materialize_derived_source_package.py --check
           find . -type d -name __pycache__ -prune -exec rm -rf {} +

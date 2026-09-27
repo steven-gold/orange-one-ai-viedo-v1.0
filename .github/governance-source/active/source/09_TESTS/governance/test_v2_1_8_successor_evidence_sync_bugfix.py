@@ -18,7 +18,7 @@ def successor_migration_contract():
     mutation=yaml.safe_load((REPO/'governance/specifications/current/SPECIFICATION_MUTATION_CONTROL.yaml').read_text(encoding='utf-8')) or {}
     cycle=yaml.safe_load((REPO/'governance/specifications/current/EXECUTION_CYCLE_CONTROL.yaml').read_text(encoding='utf-8')) or {}
     candidate=yaml.safe_load((REPO/'governance/source-successor/SOURCE_PACKAGE_CANDIDATE.yaml').read_text(encoding='utf-8')) or {}
-    m=mutation.get('predecessor_evidence_consumer_migration_control') or {}
+    m=mutation.get('retired_evidence_consumer_migration_control') or {}
     s=cycle.get('successor_candidate_state_resolution') or {}
     return {'migration':m,'state':s,'candidate':candidate}
 
