@@ -51,6 +51,41 @@ def evaluate_workflow_readiness(required_bindings:dict, head_sha:str, branch:str
         rows.append({'workflow_name':name,'workflow_path':row.get('path'),'event':row.get('event'),'head_branch':row.get('head_branch'),'run_id':row.get('id'),'head_sha':row.get('head_sha'),'status':row.get('status'),'conclusion':row.get('conclusion'),'ready':ready})
     return {'required_workflow_count':len(required_bindings),'ready_workflow_count':sum(1 for r in rows if r.get('ready') is True),'rows':rows,'status':'PASS' if rows and all(r.get('ready') is True for r in rows) else 'BLOCKED'}
 
+def evaluate_integrated_source_readiness(contract:dict, head_sha:str, branch:str, runs:list[dict]) -> dict:
+    if contract.get('source_package_integration_mode')!='SINGLE_BRANCH_INTEGRATED':
+        return {'status':'BLOCKED','reason':'INTEGRATED_SOURCE_MODE_NOT_ACTIVE'}
+    if contract.get('source_package_successor_required') is not False:
+        return {'status':'BLOCKED','reason':'SEPARATE_SOURCE_SUCCESSOR_STILL_REQUIRED'}
+    if str(contract.get('source_package_integrated_branch') or '')!=branch:
+        return {'status':'BLOCKED','reason':'INTEGRATED_SOURCE_BRANCH_DRIFT'}
+    name=str(contract.get('source_package_successor_workflow_name') or '')
+    path=str(contract.get('source_package_successor_workflow_path') or '')
+    allowed=set(map(str,contract.get('source_package_successor_workflow_allowed_events') or []))
+    matches=[r for r in runs
+      if str(r.get('name') or '')==name
+      and str(r.get('path') or '')==path
+      and str(r.get('head_branch') or '')==branch
+      and str(r.get('head_sha') or '')==head_sha
+      and str(r.get('event') or '') in allowed]
+    matches.sort(key=lambda r:str(r.get('created_at') or ''),reverse=True)
+    if not matches:
+        return {'status':'BLOCKED','reason':'INTEGRATED_SOURCE_EXACT_HEAD_RUN_MISSING','workflow_name':name,'workflow_path':path}
+    row=matches[0]
+    ready=str(row.get('status') or '')=='completed' and str(row.get('conclusion') or '')=='success'
+    return {
+      'status':'PASS' if ready else 'BLOCKED',
+      'mode':'SINGLE_BRANCH_INTEGRATED',
+      'workflow_name':name,
+      'workflow_path':str(row.get('path') or ''),
+      'event':str(row.get('event') or ''),
+      'head_branch':str(row.get('head_branch') or ''),
+      'head_sha':str(row.get('head_sha') or ''),
+      'run_id':row.get('id'),
+      'run_status':row.get('status'),
+      'run_conclusion':row.get('conclusion'),
+      'promotion_credit':1 if ready else 0,
+    }
+
 def fetch_live_branch_head(repository:str, branch:str, token:str|None) -> str:
     url=f'https://api.github.com/repos/{repository}/branches/{urllib.parse.quote(branch,safe="")}'
     headers={'Accept':'application/vnd.github+json','User-Agent':'ACPOS-Governance-Promotion-Readiness'}
@@ -153,20 +188,34 @@ def candidate_mutation_actors(repository:str,base:str,head:str,token:str|None)->
 def canonical_candidate_audit_snapshot(registry:dict,repository:str,candidate_head:str)->tuple[str,dict]:
     ident=registry.get('governance_identity') or {}
     vc=registry.get('candidate_validation_contract') or {}
-    receipt_rel=str(vc.get('source_package_successor_admission_receipt') or '')
-    receipt=load_yaml(ROOT/receipt_rel)
+    branch=str(registry.get('branch') or '')
     snapshot={
       'repository':repository,
-      'candidate_branch':str(registry.get('branch') or ''),
+      'candidate_branch':branch,
       'candidate_head_sha':candidate_head,
       'governance_uid':str(ident.get('governance_uid') or ''),
       'governance_revision':str(ident.get('governance_revision') or ''),
       'specification_bundle_sha256':str(ident.get('specification_bundle_sha256') or ''),
       'canonical_rule_registry_digest':str(ident.get('canonical_rule_registry_digest') or ''),
-      'source_package_branch':str(receipt.get('candidate_source_branch') or ''),
-      'source_package_head_sha':str(receipt.get('source_head_sha') or ''),
-      'source_package_manifest_blob_sha':str(receipt.get('source_candidate_manifest_blob_sha') or ''),
     }
+    if vc.get('source_package_integration_mode')=='SINGLE_BRANCH_INTEGRATED':
+        snapshot.update({
+          'source_package_mode':'SINGLE_BRANCH_INTEGRATED',
+          'source_package_branch':str(vc.get('source_package_integrated_branch') or ''),
+          'source_package_head_sha':candidate_head,
+          'source_package_validator':str(vc.get('source_package_integrated_validator') or ''),
+        })
+        if snapshot['source_package_branch']!=branch:
+            raise RuntimeError('INTEGRATED_SOURCE_BRANCH_DRIFT')
+    else:
+        receipt_rel=str(vc.get('source_package_successor_admission_receipt') or '')
+        receipt=load_yaml(ROOT/receipt_rel)
+        snapshot.update({
+          'source_package_mode':'SEPARATE_SUCCESSOR',
+          'source_package_branch':str(receipt.get('candidate_source_branch') or ''),
+          'source_package_head_sha':str(receipt.get('source_head_sha') or ''),
+          'source_package_manifest_blob_sha':str(receipt.get('source_candidate_manifest_blob_sha') or ''),
+        })
     if any(not value for value in snapshot.values()):
         raise RuntimeError('CANONICAL_AUDIT_SNAPSHOT_FIELD_MISSING')
     canonical=json.dumps(snapshot,sort_keys=True,separators=(',',':'),ensure_ascii=False).encode('utf-8')
@@ -365,6 +414,12 @@ def self_test() -> int:
     add('historical_head_cannot_substitute',[run(1,names[0],'b'*40),run(2,names[1],'b'*40)],'BLOCKED')
     add('in_progress_cannot_substitute_terminal',[run(1,names[0],status='in_progress',conclusion=None),run(2,names[1])],'BLOCKED')
     add('exact_head_terminal_success',[run(1,names[0]),run(2,names[1])],'PASS')
+    integrated_contract={'source_package_integration_mode':'SINGLE_BRANCH_INTEGRATED','source_package_successor_required':False,'source_package_integrated_branch':branch,'source_package_successor_workflow_name':'Integrated Source Package Validation','source_package_successor_workflow_path':'.github/workflows/source-package-successor-validation.yml','source_package_successor_workflow_allowed_events':['push','workflow_dispatch']}
+    integrated_run={'id':9,'name':'Integrated Source Package Validation','path':'.github/workflows/source-package-successor-validation.yml','event':'push','head_branch':branch,'head_sha':head,'status':'completed','conclusion':'success','created_at':'2026-01-01T00:00:00Z'}
+    ir=evaluate_integrated_source_readiness(integrated_contract,head,branch,[integrated_run])
+    cases.append({'case':'single_branch_integrated_source_exact_head_success','expected':'PASS','actual':ir.get('status'),'ok':ir.get('status')=='PASS'})
+    irm=evaluate_integrated_source_readiness(integrated_contract,head,branch,[])
+    cases.append({'case':'single_branch_integrated_source_missing_run_blocked','expected':'BLOCKED','actual':irm.get('status'),'ok':irm.get('status')=='BLOCKED'})
     add('same_name_wrong_workflow_path_blocked',[run(1,names[0],path='.github/workflows/fake.yml'),run(2,names[1])],'BLOCKED')
     add('manual_dispatch_cannot_substitute_push_gate',[run(1,names[0],event='workflow_dispatch'),run(2,names[1])],'BLOCKED')
     add('wrong_head_branch_cannot_substitute_candidate_run',[run(1,names[0],head_branch='other'),run(2,names[1])],'BLOCKED')
@@ -479,9 +534,12 @@ def main() -> int:
         auditor_result={'status':'FAIL','reason':'INDEPENDENT_AUDITOR_EVIDENCE_INVALID','detail':type(exc).__name__+':'+str(exc)}
 
     try:
-        source_result=validate_source_successor(repository,token,contract,require_external_trust=True)
+        if contract.get('source_package_integration_mode')=='SINGLE_BRANCH_INTEGRATED':
+            source_result=evaluate_integrated_source_readiness(contract,head,branch,runs)
+        else:
+            source_result=validate_source_successor(repository,token,contract,require_external_trust=True)
     except Exception as exc:
-        source_result={'status':'BLOCKED','failures':['SOURCE_SUCCESSOR_PROMOTION_GATE_EXCEPTION:'+type(exc).__name__+':'+str(exc)]}
+        source_result={'status':'BLOCKED','failures':['SOURCE_PROMOTION_GATE_EXCEPTION:'+type(exc).__name__+':'+str(exc)]}
 
     try:
         live_head_after=fetch_live_branch_head(repository,branch,token)
