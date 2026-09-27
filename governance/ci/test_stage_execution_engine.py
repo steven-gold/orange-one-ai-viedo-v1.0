@@ -866,7 +866,7 @@ receipt.write_text(yaml.safe_dump(obj,sort_keys=False),encoding="utf-8")
         _bad=deepcopy(_work)
         _bad['operation_bindings'][_ops[0]].pop('applicability',None)
         (_wd/'WORK_UNIT.yaml').write_text(yaml.safe_dump(_bad,sort_keys=False),encoding='utf-8')
-        expect_stage_engine_block('effectful_operation_applicability_missing',lambda:eng.execute_active(_sid),'ACTIVE_STAGE_OPERATION_APPLICABILITY_INVALID')
+        expect_stage_engine_block('effectful_operation_applicability_missing',lambda:eng.execute_active(_sid),'ACTIVE_WORK_UNIT_OPERATION_APPLICABILITY_INVALID')
 
         _bad=deepcopy(_work)
         _bad['operation_bindings'][_ops[0]]['applicability']='AUTHORIZED_NOT_APPLICABLE'
