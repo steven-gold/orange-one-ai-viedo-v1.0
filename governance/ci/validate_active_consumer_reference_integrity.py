@@ -340,6 +340,25 @@ def main() -> int:
                 if tok in txt:
                     errors.append("EXTERNAL_ADMISSION_TOKEN_IN_STAGE_CORE:"+path_rel+":"+tok)
 
+    # Derived profile projection and common-invariant history neutrality guards.
+    baseline_path=ROOT/'.github/governance-source/active/source/10_REGISTRY/SEMANTIC_AUTHORITY_BASELINE.yaml'
+    lifecycle_path=ROOT/'.github/governance-source/active/source/10_REGISTRY/GOVERNANCE_LIFECYCLE_STAGE_REGISTRY.yaml'
+    invariant_path=ROOT/'.github/governance-source/active/source/10_REGISTRY/STAGE_EXECUTION_INVARIANT_REGISTRY.yaml'
+    if baseline_path.is_file() and lifecycle_path.is_file():
+        baseline_doc=yaml.safe_load(baseline_path.read_text(encoding='utf-8')) or {}
+        lifecycle_doc=yaml.safe_load(lifecycle_path.read_text(encoding='utf-8')) or {}
+        if baseline_doc.get('selected_profile_uid')!=lifecycle_doc.get('profile_uid'):
+            errors.append('DERIVED_SELECTED_PROFILE_UID_DRIFT')
+    if invariant_path.is_file():
+        invariant_doc=yaml.safe_load(invariant_path.read_text(encoding='utf-8')) or {}
+        for key in invariant_doc:
+            if str(key).lower().endswith('_observed_defect_mapping'):
+                errors.append('HISTORICAL_OBSERVED_DEFECT_MAPPING_IN_COMMON_INVARIANT:'+str(key))
+        pcs=((invariant_doc.get('invariants') or {}).get('PRODUCER_CONSUMER_SCHEMA_IDENTITY') or {})
+        stage_specific_bug_keys=[str(k) for k in pcs if re.match(r'^stage\d+_',str(k),re.I)]
+        if stage_specific_bug_keys:
+            errors.append('STAGE_SPECIFIC_BUG_EXAMPLE_IN_COMMON_SCHEMA_INVARIANT:'+','.join(sorted(stage_specific_bug_keys)))
+
     if errors:
         for error in sorted(set(errors)):
             print("BLOCK:", error, file=sys.stderr)

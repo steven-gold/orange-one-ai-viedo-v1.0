@@ -104,7 +104,7 @@ def validate(root=ROOT):
     if trig.get('required_before_no_control_action_gap_escalation') is not True or trig.get('port_exposure_or_state_event_alone_is_trigger') is not False or trig.get('deterministic_system_owned_outcome') != 'SYSTEM_TRIGGER_BINDING_MISSING_AUTO_REMEDIABLE' or (trig.get('explicit_system_trigger_materialization_required') is not True) or (trig.get('new_visual_control_for_system_only_operation') is not False) or (trig.get('authority_gap_minimum_materially_distinct_viable_behaviors') != 2) or (trig.get('missing_trigger_syntax_alone_is_authority_gap') is not False):
         failures.append('control_vs_system_trigger_resolution_incomplete')
     pcs = inv.get('PRODUCER_CONSUMER_SCHEMA_IDENTITY') or {}
-    if pcs.get('canonical_field_name_exact') is not True or pcs.get('field_type_exact') is not True or pcs.get('alias_or_legacy_field_fallback') is not False or (pcs.get('mismatch') != 'PRODUCER_CONSUMER_SCHEMA_MISMATCH') or (pcs.get('stage02_audit_event_canonical_field') != 'audit_event_uid') or (pcs.get('stage02_audit_event_legacy_alias_forbidden') != 'event_uid'):
+    if pcs.get('canonical_field_name_exact') is not True or pcs.get('field_type_exact') is not True or pcs.get('alias_or_legacy_field_fallback') is not False or (pcs.get('mismatch') != 'PRODUCER_CONSUMER_SCHEMA_MISMATCH') or pcs.get('observed_bug_field_examples_may_define_common_schema') is not False or pcs.get('stage_specific_field_alias_examples_may_define_common_schema') is not False:
         failures.append('producer_consumer_schema_identity_incomplete')
     hist = inv.get('NO_HISTORY_PRODUCT_VALUE_FALLBACK') or {}
     if hist.get('historical_commit_or_generated_output_may_fill_current_product_value') is not False or hist.get('historical_stage_result_may_receive_current_completion_credit') is not False or hist.get('fresh_replay_source') != 'REGISTERED_IMMUTABLE_INPUTS_PLUS_CURRENT_AUTHORITY':
@@ -272,7 +272,7 @@ def validate(root=ROOT):
         failures.append('stage03_visual_materialization_gate_incomplete')
     st2 = next((x for x in life.get('stages') or [] if x.get('stage_uid') == 'STAGE-02'), {})
     if (st2.get('stage_execution_invariant_gate') or {}).get('required') is not True:
-        failures.append('stage02_empirical_gate_binding_missing')
+        failures.append('stage02_invariant_gate_binding_missing')
     expected_stage_ids = {f'STAGE-{i:02d}' for i in range(1, 12)}
     # Initialize canonical cross-stage binding denominator before lifecycle checks.
     crossmat = inv.get('CROSS_STAGE_MATERIALIZATION_AND_CONSUMER_READINESS') or {}

@@ -1085,8 +1085,8 @@ invariants:
     consumer_owner_required: true
     alias_or_legacy_field_fallback: false
     mismatch: PRODUCER_CONSUMER_SCHEMA_MISMATCH
-    stage02_audit_event_canonical_field: audit_event_uid
-    stage02_audit_event_legacy_alias_forbidden: event_uid
+    observed_bug_field_examples_may_define_common_schema: false
+    stage_specific_field_alias_examples_may_define_common_schema: false
     producer_output_physical_materialization_required: true
     consumer_input_physical_resolution_required: true
     required_field_completeness_required: true
@@ -1959,57 +1959,6 @@ invariants:
       all_registered_stages_must_close_under_current_governance: true
       impacted_reverify_count_required: 0
       next_governed_unit_or_scope_completion_requires_registered_stage11_eligibility: true
-stage02_observed_defect_mapping:
-- finding: PORT_EXPOSURE_WITHOUT_TRIGGER
-  mapped_invariant: RELATION_SEMANTIC_SEPARATION
-- finding: STATE_EVENT_WITHOUT_TRIGGER_BINDING
-  mapped_invariant: RELATION_SEMANTIC_SEPARATION
-- finding: ERROR_REGISTRY_WITHOUT_ACTION_ERROR_BINDING
-  mapped_invariant: RELATION_SEMANTIC_SEPARATION
-- finding: ARCHITECTURE_INPUT_AUTHORITY_GAP_AI_FILL_RISK
-  mapped_invariant: GAP_REMEDIATION_ADMISSIBILITY
-- finding: REQUIRED_EVIDENCE_LEDGER_CLAIM_WITHOUT_PHYSICAL_FILE
-  mapped_invariant: REQUIRED_EVIDENCE_MATERIALIZATION
-- finding: VALIDATOR_WRONG_SCHEMA_PATH
-  mapped_invariant: VALIDATOR_SCHEMA_SEMANTICS
-- finding: VALIDATOR_STALE_ENUM_CONSTANT
-  mapped_invariant: VALIDATOR_SCHEMA_SEMANTICS
-- finding: SPARSE_ZERO_CLASS_FALSE_FAILURE
-  mapped_invariant: VALIDATOR_SCHEMA_SEMANTICS
-- finding: UNRESOLVED_SHARED_OWNER_FIELDS_MUST_REMAIN_NULL
-  mapped_invariant: UNRESOLVED_PRESERVATION
-- finding: SUCCESSOR_VERIFIED_BUT_CURRENT_LEDGER_STALE
-  mapped_invariant: SUCCESSOR_CURRENT_ATOMIC_PROJECTION
-- finding: BLOCKER_DENOMINATOR_CHANGED_BUT_OLD_RECEIPT_REUSED
-  mapped_invariant: BLOCKER_DENOMINATOR_AND_RECEIPT
-- finding: CURRENT_AUTHORITY_EVIDENCE_SKIPPED_GAP006
-  mapped_invariant: AUTHORITY_EVIDENCE_CONSUMPTION
-- finding: FINAL_LOCKED_NON_CURRENT_PAYLOAD_REGISTRY_INADMISSIBLE
-  mapped_invariant: CURRENT_AUTHORITY_ADMISSIBILITY
-- finding: FUNCTIONAL_AND_ASYNC_CONTRACT_FIELDS_GENUINELY_MISSING
-  mapped_invariant: FUNCTIONAL_CONTRACT_COMPLETENESS
-- finding: REVIEW_COMPLETE_BUT_STAGE_EXIT_BLOCKED
-  mapped_invariant: REVIEW_VS_CLOSURE_SEPARATION
-- finding: EXACT_VALUE_ABSENCE_CIRCULAR_AUTHORITY_CLASSIFICATION
-  mapped_invariant: ROLE_SAFE_FUNCTIONAL_CLOSURE
-- finding: ACTION_RUNTIME_OWNER_PROMOTED_TO_TRANSITION_MUTATION_OWNER
-  mapped_invariant: ROLE_SAFE_FUNCTIONAL_CLOSURE
-- finding: RESULT_OR_STATE_SIGNAL_PROMOTED_TO_VALIDATION_CONTRACT
-  mapped_invariant: ROLE_SAFE_FUNCTIONAL_CLOSURE
-- finding: NON_EFFECTFUL_FAILURE_RECOVERY_APPLICABILITY_OVERREACH
-  mapped_invariant: CANONICAL_STAGE_EXECUTION_PREFLIGHT
-- finding: RAW_MISSING_COUNTED_DESPITE_LEGAL_SUCCESSOR
-  mapped_invariant: EFFECTIVE_CONTRACT_OVERLAY
-- finding: PARTIAL_REQUIRED_FIELD_LIST_DIVERGED_FROM_CANONICAL_SCANNER
-  mapped_invariant: CANONICAL_STAGE_EXECUTION_PREFLIGHT
-- finding: STALE_INTERMEDIATE_DENOMINATOR_OR_REGISTER_DRIFT
-  mapped_invariant: DEPENDENCY_ORDERED_INCREMENTAL_RECONCILIATION
-- finding: UNTRACKED_GENERATED_EVIDENCE_NOT_PERSISTED
-  mapped_invariant: GENERATED_OUTPUT_PERSISTENCE
-- finding: VALIDATOR_OR_PARSER_ROLE_CONFUSION
-  mapped_invariant: COMMON_ENGINE_DEFECT_INTERRUPT
-- finding: REPEATED_FULL_REGISTER_REBUILD_AFTER_SMALL_BATCH
-  mapped_invariant: DEPENDENCY_ORDERED_INCREMENTAL_RECONCILIATION
 acceptance:
   validator_uid: VAL-GOV-035
   validator_path: 09_TESTS/governance/validate_stage_execution_invariants.py
