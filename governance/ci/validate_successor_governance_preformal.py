@@ -74,6 +74,21 @@ def exact_head_validation_contract_check(registry:dict)->dict:
     required=set(map(str,vc.get('required_workflow_names') or []))
     if required!={'Current Governance Cleanup Validation','Mother Spec Neutrality Audit'}:
         failures.append('REQUIRED_WORKFLOW_DENOMINATOR_DRIFT')
+    bindings=vc.get('required_workflow_bindings') or {}
+    if set(bindings)!=required:
+        failures.append('REQUIRED_WORKFLOW_BINDING_SET_DRIFT')
+    for name,path in {'Current Governance Cleanup Validation':'.github/workflows/current-governance-cleanup-validation.yml','Mother Spec Neutrality Audit':'.github/workflows/mother-spec-neutrality-audit.yml'}.items():
+        row=bindings.get(name) or {}
+        if row.get('path')!=path or row.get('event')!='push':
+            failures.append('REQUIRED_WORKFLOW_BINDING_DRIFT:'+name)
+    if vc.get('workflow_name_only_may_grant_validation_credit') is not False or vc.get('workflow_path_event_head_branch_binding_required') is not True:
+        failures.append('REQUIRED_WORKFLOW_IDENTITY_HARDENING_MISSING')
+    if vc.get('independent_auditor_external_provenance_required') is not True:
+        failures.append('INDEPENDENT_AUDITOR_EXTERNAL_PROVENANCE_NOT_REQUIRED')
+    if set(map(str,vc.get('independent_auditor_required_provenance_fields') or []))!={'implementation_provenance_ref','execution_receipt_provenance_ref','evaluator_authority_ref'}:
+        failures.append('INDEPENDENT_AUDITOR_PROVENANCE_FIELD_DENOMINATOR_DRIFT')
+    if int(vc.get('independent_auditor_provenance_actor_count') or 0)!=3 or vc.get('candidate_mutation_actor_may_be_formal_independent_auditor') is not False or vc.get('same_external_actor_may_supply_multiple_formal_independent_evaluators') is not False:
+        failures.append('INDEPENDENT_AUDITOR_PROVENANCE_INDEPENDENCE_DRIFT')
     return {
       'check_id':'exact_head_validation_contract',
       'status':'PASS' if not failures else 'FAIL',

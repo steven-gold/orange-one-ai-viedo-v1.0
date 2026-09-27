@@ -92,6 +92,15 @@ candidate_validation_contract:
   required_workflow_names:
   - Current Governance Cleanup Validation
   - Mother Spec Neutrality Audit
+  required_workflow_bindings:
+    Current Governance Cleanup Validation:
+      path: .github/workflows/current-governance-cleanup-validation.yml
+      event: push
+    Mother Spec Neutrality Audit:
+      path: .github/workflows/mother-spec-neutrality-audit.yml
+      event: push
+  workflow_name_only_may_grant_validation_credit: false
+  workflow_path_event_head_branch_binding_required: true
   required_workflows_run_on_every_candidate_push: true
   candidate_required_workflow_path_filter: FORBIDDEN
   live_branch_head_must_equal_validation_head: true
@@ -161,6 +170,16 @@ candidate_validation_contract:
   core_validation_pass_may_substitute_full_preformal_regression: false
   formal_promotion_requires_all_required_workflows_exact_head_success: true
   formal_promotion_requires_independent_auditor_evidence: true
+  independent_auditor_external_provenance_required: true
+  independent_auditor_required_provenance_fields:
+  - implementation_provenance_ref
+  - execution_receipt_provenance_ref
+  - evaluator_authority_ref
+  independent_auditor_provenance_ref_mode: COMMIT_PINNED_GITHUB_BLOB
+  independent_auditor_authority_ref_mode: GITHUB_ISSUE_FROM_PRIMARY_GOVERNANCE_AUTHORITY_ACTOR
+  independent_auditor_provenance_actor_count: 3
+  candidate_mutation_actor_may_be_formal_independent_auditor: false
+  same_external_actor_may_supply_multiple_formal_independent_evaluators: false
   promotion_readiness_validator: governance/ci/validate_governance_candidate_promotion_readiness.py
   promotion_readiness_mode: READ_ONLY_FAIL_CLOSED
   promotion_readiness_may_mutate_or_promote: false

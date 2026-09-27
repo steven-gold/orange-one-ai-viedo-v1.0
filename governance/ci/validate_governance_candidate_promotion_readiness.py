@@ -2,7 +2,10 @@
 from __future__ import annotations
 
 import argparse
+import base64
+import hashlib
 import json
+import re
 import os
 import subprocess
 import sys
@@ -31,33 +34,21 @@ def current_head() -> str:
     return subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip()
 
 
-def evaluate_workflow_readiness(required_names:list[str], head_sha:str, runs:list[dict]) -> dict:
+def evaluate_workflow_readiness(required_bindings:dict, head_sha:str, branch:str, runs:list[dict]) -> dict:
     rows=[]
-    for name in required_names:
-        matches=[r for r in runs if str(r.get('name') or '')==name and str(r.get('head_sha') or '')==head_sha]
+    for name,binding in required_bindings.items():
+        binding=binding if isinstance(binding,dict) else {}
+        expected_path=str(binding.get('path') or '')
+        expected_event=str(binding.get('event') or '')
+        matches=[r for r in runs if str(r.get('name') or '')==name and str(r.get('head_sha') or '')==head_sha and str(r.get('head_branch') or '')==branch and str(r.get('path') or '')==expected_path and str(r.get('event') or '')==expected_event]
         matches.sort(key=lambda r:str(r.get('created_at') or ''),reverse=True)
         if not matches:
-            rows.append({'workflow_name':name,'status':'MISSING_EXACT_HEAD_RUN'})
+            rows.append({'workflow_name':name,'workflow_path':expected_path,'event':expected_event,'status':'MISSING_EXACT_BOUND_WORKFLOW_RUN'})
             continue
         row=matches[0]
-        status=str(row.get('status') or '')
-        conclusion=str(row.get('conclusion') or '')
-        ready=status=='completed' and conclusion=='success'
-        rows.append({
-          'workflow_name':name,
-          'run_id':row.get('id'),
-          'head_sha':row.get('head_sha'),
-          'status':status,
-          'conclusion':conclusion,
-          'ready':ready,
-        })
-    return {
-      'required_workflow_count':len(required_names),
-      'ready_workflow_count':sum(1 for r in rows if r.get('ready') is True),
-      'rows':rows,
-      'status':'PASS' if rows and all(r.get('ready') is True for r in rows) else 'BLOCKED',
-    }
-
+        ready=str(row.get('status') or '')=='completed' and str(row.get('conclusion') or '')=='success'
+        rows.append({'workflow_name':name,'workflow_path':row.get('path'),'event':row.get('event'),'head_branch':row.get('head_branch'),'run_id':row.get('id'),'head_sha':row.get('head_sha'),'status':row.get('status'),'conclusion':row.get('conclusion'),'ready':ready})
+    return {'required_workflow_count':len(required_bindings),'ready_workflow_count':sum(1 for r in rows if r.get('ready') is True),'rows':rows,'status':'PASS' if rows and all(r.get('ready') is True for r in rows) else 'BLOCKED'}
 
 def fetch_live_branch_head(repository:str, branch:str, token:str|None) -> str:
     url=f'https://api.github.com/repos/{repository}/branches/{urllib.parse.quote(branch,safe="")}'
@@ -86,7 +77,76 @@ def fetch_runs(repository:str, branch:str, head_sha:str, token:str|None) -> list
     return runs
 
 
-def evaluate_independent_auditors(evidence_path:Path|None) -> dict:
+def api_json(url:str,token:str|None)->dict:
+    headers={'Accept':'application/vnd.github+json','User-Agent':'ACPOS-Governance-Promotion-Readiness'}
+    if token: headers['Authorization']='Bearer '+token
+    with urllib.request.urlopen(urllib.request.Request(url,headers=headers),timeout=30) as response:
+        value=json.loads(response.read().decode('utf-8'))
+    if not isinstance(value,dict): raise RuntimeError('GITHUB_API_MAPPING_REQUIRED')
+    return value
+
+def parse_pinned_blob(ref:str)->tuple[str,str,str,str]:
+    m=re.fullmatch(r'https://github\.com/([^/]+)/([^/]+)/blob/([0-9a-fA-F]{40})/(.+)',str(ref or ''))
+    if not m: raise RuntimeError('PROVENANCE_REF_MUST_BE_COMMIT_PINNED_GITHUB_BLOB')
+    return m.group(1),m.group(2),m.group(3),m.group(4)
+
+def fetch_pinned_blob(ref:str,token:str|None)->tuple[bytes,str]:
+    owner,repo_name,sha,path=parse_pinned_blob(ref)
+    q=urllib.parse.urlencode({'ref':sha})
+    payload=api_json(f'https://api.github.com/repos/{owner}/{repo_name}/contents/{urllib.parse.quote(path,safe="/")}?{q}',token)
+    raw=base64.b64decode(str(payload.get('content') or '').replace('\n',''))
+    commit=api_json(f'https://api.github.com/repos/{owner}/{repo_name}/commits/{sha}',token)
+    actor=str(((commit.get('author') or {}).get('login')) or ((commit.get('committer') or {}).get('login')) or '').strip()
+    if not raw or not actor: raise RuntimeError('PROVENANCE_BLOB_OR_ACTOR_MISSING')
+    return raw,actor
+
+def fetch_issue(ref:str,token:str|None)->dict:
+    m=re.fullmatch(r'https://github\.com/([^/]+)/([^/]+)/issues/(\d+)',str(ref or ''))
+    if not m: raise RuntimeError('AUTHORITY_REF_MUST_BE_GITHUB_ISSUE')
+    return api_json(f'https://api.github.com/repos/{m.group(1)}/{m.group(2)}/issues/{m.group(3)}',token)
+
+def candidate_mutation_actors(repository:str,base:str,head:str,token:str|None)->set[str]:
+    payload=api_json(f'https://api.github.com/repos/{repository}/compare/{base}...{head}?per_page=100',token)
+    actors=set()
+    for c in payload.get('commits') or []:
+        for k in ('author','committer'):
+            x=str(((c.get(k) or {}).get('login')) or '').strip()
+            if x: actors.add(x)
+    if not actors: raise RuntimeError('CANDIDATE_MUTATION_ACTOR_SET_EMPTY')
+    return actors
+
+def validate_independent_auditor_provenance(records,repository,token,registry,candidate_head):
+    vc=registry.get('candidate_validation_contract') or {}
+    req=set(map(str,vc.get('independent_auditor_required_provenance_fields') or []))
+    if vc.get('independent_auditor_external_provenance_required') is not True or req!={'implementation_provenance_ref','execution_receipt_provenance_ref','evaluator_authority_ref'}:
+        return {'status':'FAIL','reason':'INDEPENDENT_AUDITOR_PROVENANCE_CONTRACT_DRIFT'}
+    ident=registry.get('governance_identity') or {}
+    primary=fetch_issue(str(ident.get('authorization_record_url') or ''),token)
+    primary_actor=str(((primary.get('user') or {}).get('login')) or '')
+    mutations=candidate_mutation_actors(repository,str(ident.get('predecessor_head_sha') or ''),candidate_head,token)
+    actors=[]
+    for i,r in enumerate(records):
+        miss=[f for f in req if not str(r.get(f) or '').strip()]
+        if miss: return {'status':'FAIL','reason':'INDEPENDENT_AUDITOR_PROVENANCE_FIELD_MISSING','index':i,'fields':miss}
+        impl,ia=fetch_pinned_blob(str(r['implementation_provenance_ref']),token)
+        rec,ra=fetch_pinned_blob(str(r['execution_receipt_provenance_ref']),token)
+        if ia!=ra: return {'status':'FAIL','reason':'INDEPENDENT_AUDITOR_IMPLEMENTATION_RECEIPT_ACTOR_MISMATCH','index':i}
+        if ia in mutations: return {'status':'FAIL','reason':'CANDIDATE_MUTATION_ACTOR_CANNOT_BE_FORMAL_INDEPENDENT_AUDITOR','index':i,'actor':ia}
+        if hashlib.sha256(impl).hexdigest()!=str(r.get('implementation_sha256') or ''): return {'status':'FAIL','reason':'INDEPENDENT_AUDITOR_PROVENANCE_IMPLEMENTATION_HASH_MISMATCH','index':i}
+        rd=yaml.safe_load(rec.decode('utf-8')) or {}
+        for k in ('evaluator_uid','implementation_sha256','audit_snapshot_hash','result_fingerprint'):
+            if str(rd.get(k) or '')!=str(r.get(k) or ''): return {'status':'FAIL','reason':'INDEPENDENT_AUDITOR_RECEIPT_BINDING_MISMATCH','index':i,'field':k}
+        if str(rd.get('status') or '')!='PASS': return {'status':'FAIL','reason':'INDEPENDENT_AUDITOR_RECEIPT_NOT_PASS','index':i}
+        auth=fetch_issue(str(r['evaluator_authority_ref']),token)
+        body=str(auth.get('body') or '')
+        if str(((auth.get('user') or {}).get('login')) or '')!=primary_actor: return {'status':'FAIL','reason':'INDEPENDENT_AUDITOR_AUTHORITY_ACTOR_MISMATCH','index':i}
+        for tok in (str(r.get('evaluator_uid') or ''),ia,str(ident.get('governance_uid') or ''),str(r.get('audit_snapshot_hash') or '')):
+            if tok not in body: return {'status':'FAIL','reason':'INDEPENDENT_AUDITOR_AUTHORITY_SCOPE_MISSING','index':i}
+        actors.append(ia)
+    if len(set(actors))!=3: return {'status':'FAIL','reason':'INDEPENDENT_AUDITOR_PROVENANCE_ACTORS_NOT_DISTINCT','actors':actors}
+    return {'status':'PASS','independent_provenance_actor_count':3,'actors':actors}
+
+def evaluate_independent_auditors(evidence_path:Path|None,repository=None,token=None,registry=None,candidate_head=None) -> dict:
     ctx=audit_engine.load_context()
     if evidence_path is None:
         return {
@@ -96,81 +156,53 @@ def evaluate_independent_auditors(evidence_path:Path|None) -> dict:
         }
     p=evidence_path.resolve()
     records=audit_engine.load_independent_evaluator_evidence(p)
-    return audit_engine.validate_independent_evaluator_implementations(ctx,records,p.parent)
+    base=audit_engine.validate_independent_evaluator_implementations(ctx,records,p.parent)
+    if base.get('status')!='PASS': return base
+    if not repository or registry is None or not candidate_head: return {'status':'FAIL','reason':'INDEPENDENT_AUDITOR_PROVENANCE_CONTEXT_REQUIRED'}
+    prov=validate_independent_auditor_provenance(records,repository,token,registry,candidate_head)
+    return {'status':'PASS','base_validation':base,'provenance_validation':prov} if prov.get('status')=='PASS' else prov
 
 
 def self_test() -> int:
-    head='a'*40
-    names=['Current Governance Cleanup Validation','Mother Spec Neutrality Audit']
-    cases=[]
+    head='a'*40; branch='candidate'
+    bindings={
+      'Current Governance Cleanup Validation':{'path':'.github/workflows/current-governance-cleanup-validation.yml','event':'push'},
+      'Mother Spec Neutrality Audit':{'path':'.github/workflows/mother-spec-neutrality-audit.yml','event':'push'},
+    }
+    names=list(bindings); cases=[]
+    def run(i,name,sha=head,status='completed',conclusion='success',path=None,event='push',head_branch=branch):
+        return {'id':i,'name':name,'head_sha':sha,'status':status,'conclusion':conclusion,'created_at':'2026-01-01T00:00:00Z','path':path or bindings[name]['path'],'event':event,'head_branch':head_branch}
     def add(name,runs,expected):
-        result=evaluate_workflow_readiness(names,head,runs)
-        ok=result['status']==expected
-        cases.append({'case':name,'expected':expected,'actual':result['status'],'ok':ok})
-    add('missing_one_workflow',[
-      {'id':1,'name':names[0],'head_sha':head,'status':'completed','conclusion':'success','created_at':'2026-01-01T00:00:00Z'}
-    ],'BLOCKED')
-    add('historical_head_cannot_substitute',[
-      {'id':1,'name':names[0],'head_sha':'b'*40,'status':'completed','conclusion':'success','created_at':'2026-01-01T00:00:00Z'},
-      {'id':2,'name':names[1],'head_sha':'b'*40,'status':'completed','conclusion':'success','created_at':'2026-01-01T00:00:00Z'}
-    ],'BLOCKED')
-    add('in_progress_cannot_substitute_terminal',[
-      {'id':1,'name':names[0],'head_sha':head,'status':'in_progress','conclusion':None,'created_at':'2026-01-01T00:00:00Z'},
-      {'id':2,'name':names[1],'head_sha':head,'status':'completed','conclusion':'success','created_at':'2026-01-01T00:00:00Z'}
-    ],'BLOCKED')
-    add('exact_head_terminal_success',[
-      {'id':1,'name':names[0],'head_sha':head,'status':'completed','conclusion':'success','created_at':'2026-01-01T00:00:00Z'},
-      {'id':2,'name':names[1],'head_sha':head,'status':'completed','conclusion':'success','created_at':'2026-01-01T00:00:00Z'}
-    ],'PASS')
-    live_head_cases=[
+        result=evaluate_workflow_readiness(bindings,head,branch,runs)
+        cases.append({'case':name,'expected':expected,'actual':result['status'],'ok':result['status']==expected})
+    add('missing_one_workflow',[run(1,names[0])],'BLOCKED')
+    add('historical_head_cannot_substitute',[run(1,names[0],'b'*40),run(2,names[1],'b'*40)],'BLOCKED')
+    add('in_progress_cannot_substitute_terminal',[run(1,names[0],status='in_progress',conclusion=None),run(2,names[1])],'BLOCKED')
+    add('exact_head_terminal_success',[run(1,names[0]),run(2,names[1])],'PASS')
+    add('same_name_wrong_workflow_path_blocked',[run(1,names[0],path='.github/workflows/fake.yml'),run(2,names[1])],'BLOCKED')
+    add('manual_dispatch_cannot_substitute_push_gate',[run(1,names[0],event='workflow_dispatch'),run(2,names[1])],'BLOCKED')
+    add('wrong_head_branch_cannot_substitute_candidate_run',[run(1,names[0],head_branch='other'),run(2,names[1])],'BLOCKED')
+    for row in [
       {'case':'local_equals_live_before_and_after','local':head,'before':head,'after':head,'expected':True},
       {'case':'historical_local_head_blocked','local':head,'before':'b'*40,'after':'b'*40,'expected':False},
       {'case':'branch_moves_during_validation_blocked','local':head,'before':head,'after':'c'*40,'expected':False},
-    ]
-    for row in live_head_cases:
-        row['actual']=(row['local']==row['before']==row['after'])
-        row['ok']=row['actual']==row['expected']
-    cases.extend(live_head_cases)
-    synthetic_receipt={
-      'candidate_source_branch':'source-candidate','source_head_sha':head,
-      'source_validation_workflow_name':'Source Package Successor Validation',
-      'source_validation_run_id':77,'source_validation_status':'completed',
-      'source_validation_conclusion':'success','source_internal_status':'PASS_INTERNAL_UNSIGNED',
-      'source_candidate_manifest_blob_sha':'blob1','released_current_authority':False,
-      'external_trust_status':'NOT_SIGNED','external_trust_evidence_ref':None,
-    }
-    synthetic_manifest={
-      'status':'UNSIGNED_NOT_CURRENT','current_authority':False,
-      'external_trust':{'status':'NOT_SIGNED','candidate_self_sign':'FORBIDDEN'}
-    }
+    ]:
+        row['actual']=(row['local']==row['before']==row['after']); row['ok']=row['actual']==row['expected']; cases.append(row)
+    synthetic_receipt={'candidate_source_branch':'source-candidate','source_head_sha':head,'source_validation_workflow_name':'Source Package Successor Validation','source_validation_run_id':77,'source_validation_status':'completed','source_validation_conclusion':'success','source_internal_status':'PASS_INTERNAL_UNSIGNED','source_candidate_manifest_blob_sha':'blob1','released_current_authority':False,'external_trust_status':'NOT_SIGNED','external_trust_evidence_ref':None}
+    synthetic_manifest={'status':'UNSIGNED_NOT_CURRENT','current_authority':False,'external_trust':{'status':'NOT_SIGNED','candidate_self_sign':'FORBIDDEN'}}
     synthetic_run={'id':77,'name':'Source Package Successor Validation','head_sha':head,'status':'completed','conclusion':'success'}
     internal=evaluate_snapshot(synthetic_receipt,synthetic_manifest,'blob1',synthetic_run,head,head,False)
     cases.append({'case':'source_internal_unsigned_valid_for_candidate_validation','expected':'PASS_INTERNAL_UNSIGNED','actual':internal.get('status'),'ok':internal.get('status')=='PASS_INTERNAL_UNSIGNED'})
     promotion=evaluate_snapshot(synthetic_receipt,synthetic_manifest,'blob1',synthetic_run,head,head,True)
     cases.append({'case':'source_unsigned_blocks_promotion','expected':'BLOCKED','actual':promotion.get('status'),'ok':promotion.get('status')=='BLOCKED'})
-    signed_receipt=dict(synthetic_receipt)
-    signed_receipt.update({'source_internal_status':'PASS_INTERNAL_SIGNED','external_trust_status':'SIGNED_PASS','external_trust_evidence_ref':'external://receipt'})
-    signed_manifest={
-      'status':'UNSIGNED_NOT_CURRENT','current_authority':False,
-      'external_trust':{
-        'status':'NOT_SIGNED','candidate_self_sign':'FORBIDDEN',
-        'signer_identity':None,'signer_authority_ref':None,
-        'signature_or_immutable_receipt_ref':None
-      }
-    }
-    signed_unverified=evaluate_snapshot(signed_receipt,signed_manifest,'blob1',synthetic_run,head,head,True)
-    cases.append({'case':'source_signed_self_declaration_without_machine_verification_blocked','expected':'BLOCKED','actual':signed_unverified.get('status'),'ok':signed_unverified.get('status')=='BLOCKED'})
-    signed=evaluate_snapshot(
-      signed_receipt,signed_manifest,'blob1',synthetic_run,head,head,True,
-      {'status':'PASS','signer_identity':'SIGNER-1','mutation_actor_count':2,'failures':[]}
-    )
-    cases.append({'case':'external_trust_envelope_allows_frozen_unsigned_source_content_without_self_mutation','expected':'PASS','actual':signed.get('status'),'ok':signed.get('status')=='PASS'})
+    signed_receipt=dict(synthetic_receipt); signed_receipt.update({'source_internal_status':'PASS_INTERNAL_SIGNED','external_trust_status':'SIGNED_PASS','external_trust_evidence_ref':'external://receipt'})
+    signed=evaluate_snapshot(signed_receipt,synthetic_manifest,'blob1',synthetic_run,head,head,True,{'status':'PASS','signer_identity':'SIGNER-1','mutation_actor_count':2,'failures':[]})
+    cases.append({'case':'external_trust_envelope_allows_frozen_source_content','expected':'PASS','actual':signed.get('status'),'ok':signed.get('status')=='PASS'})
     moved=evaluate_snapshot(synthetic_receipt,synthetic_manifest,'blob1',synthetic_run,head,'c'*40,False)
     cases.append({'case':'source_branch_move_invalidates_source_snapshot','expected':'BLOCKED','actual':moved.get('status'),'ok':moved.get('status')=='BLOCKED'})
     ok=all(x['ok'] for x in cases)
     print(json.dumps({'self_test':'PASS' if ok else 'FAIL','cases':cases},ensure_ascii=False,sort_keys=True))
     return 0 if ok else 1
-
 
 def main() -> int:
     ap=argparse.ArgumentParser()
@@ -216,11 +248,15 @@ def main() -> int:
     except Exception as exc:
         print(json.dumps({'status':'BLOCKED','reason':'WORKFLOW_RUN_QUERY_FAILED','detail':type(exc).__name__+':'+str(exc)},ensure_ascii=False))
         return 1
-    workflow_result=evaluate_workflow_readiness(list(map(str,contract.get('required_workflow_names') or [])),head,runs)
+    required_names=list(map(str,contract.get('required_workflow_names') or []))
+    required_bindings=contract.get('required_workflow_bindings') or {}
+    if set(required_bindings)!=set(required_names):
+        print(json.dumps({'status':'BLOCKED','reason':'REQUIRED_WORKFLOW_BINDING_DENOMINATOR_DRIFT'},ensure_ascii=False)); return 1
+    workflow_result=evaluate_workflow_readiness(required_bindings,head,branch,runs)
 
     evidence_arg=args.independent_evaluator_evidence or os.environ.get('INDEPENDENT_AUDITOR_EVIDENCE','').strip()
     try:
-        auditor_result=evaluate_independent_auditors(Path(evidence_arg) if evidence_arg else None)
+        auditor_result=evaluate_independent_auditors(Path(evidence_arg) if evidence_arg else None,repository=repository,token=token,registry=registry,candidate_head=head)
     except Exception as exc:
         auditor_result={'status':'FAIL','reason':'INDEPENDENT_AUDITOR_EVIDENCE_INVALID','detail':type(exc).__name__+':'+str(exc)}
 
