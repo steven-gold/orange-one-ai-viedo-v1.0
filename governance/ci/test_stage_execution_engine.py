@@ -401,10 +401,66 @@ with tempfile.TemporaryDirectory() as td:
     else:
         raise SystemExit('FAIL_EXPECTED_MATRIX-DESTRUCTIVE-REQUIRED-FIELD')
 
+def _init_synthetic_product_git(root):
+    (root/'targets').mkdir(parents=True,exist_ok=True)
+    (root/'targets'/'seed.txt').write_text('synthetic tracked product target\n',encoding='utf-8')
+    subprocess.run(['git','init','-b','0921acpos'],cwd=root,check=True,text=True,capture_output=True)
+    subprocess.run(['git','config','user.email','synthetic@example.invalid'],cwd=root,check=True)
+    subprocess.run(['git','config','user.name','Synthetic Stage Test'],cwd=root,check=True)
+    subprocess.run(['git','remote','add','origin','https://github.com/steven-gold/orange-one-ai-viedo-v1.0.git'],cwd=root,check=True)
+    subprocess.run(['git','add','targets/seed.txt'],cwd=root,check=True)
+    subprocess.run(['git','commit','-m','synthetic product target seed'],cwd=root,check=True,text=True,capture_output=True)
+    return eng._current_product_git_context(root)
+
+def _write_synthetic_target_resolution(root,base_rel,work_unit_uid,successor_uid,row,cross_policy,git_ctx):
+    stage_key=successor_uid if successor_uid else 'NEXT_GOVERNED_UNIT'
+    required=set(map(str,cross_policy.get('successor_execution_target_resolution_required_stage_uids') or []))
+    must_resolve=(successor_uid in required) or (not successor_uid and cross_policy.get('successor_execution_target_resolution_required_for_next_unit') is True)
+    if not must_resolve:
+        row['target_resolution_ref']=''
+        row['target_resolution_kind']=''
+        return
+    allowed=list(map(str,((cross_policy.get('successor_execution_binding_resolution_kind_policy') or {}).get(stage_key) or {}).get(row['binding_class']) or []))
+    if not allowed:
+        raise SystemExit('FAIL_SYNTHETIC_TARGET_POLICY_MISSING:'+stage_key+':'+row['binding_class'])
+    kind=allowed[0]
+    safe=row['binding_class'].lower().replace('/','_')
+    rel=(Path(base_rel)/('TARGET_RESOLUTION_'+safe+'.yaml')).as_posix()
+    row['target_resolution_ref']=rel
+    row['target_resolution_kind']=kind
+    receipt={
+      'artifact_type':'EXECUTION_TARGET_RESOLUTION_RECEIPT',
+      'binding_uid':row['binding_uid'],'consuming_operation_uid':row['consuming_operation_uid'],
+      'binding_class':row['binding_class'],'target_identity':row['target_identity'],
+      'canonical_owner_or_authority_ref':row['canonical_owner_or_authority_ref'],
+      'authority_evidence_ref':row['authority_evidence_ref'],'work_unit_uid':work_unit_uid,
+      'successor_stage_uid':stage_key,'resolution_kind':kind,'resolution_status':'PASS',
+      'current_execution_repository':git_ctx['repository'],'current_execution_branch':git_ctx['branch'],
+      'current_execution_head_sha':git_ctx['head'],'current_execution_tree_sha':git_ctx['tree'],
+      'current_context_match':True
+    }
+    if kind in {'CURRENT_REPOSITORY','CURRENT_REPOSITORY_PATH'}:
+        receipt.update({'repository_identity':git_ctx['repository'],'branch_ref_head_sha':git_ctx['head']})
+    if kind=='CURRENT_REPOSITORY_PATH':
+        receipt.update({'target_path':'targets','target_path_exists':True,'target_path_tracked_at_head':True})
+    elif kind=='EXTERNAL_CURRENT_TARGET':
+        receipt.update({
+          'provider_or_system':'SYNTHETIC-PROVIDER','project_or_resource_identity':'SYNTHETIC-PROJECT',
+          'environment_or_scope_identity':'SYNTHETIC-ENV','external_resource_identity':row['target_identity'],
+          'external_evidence_ref':'synthetic://external-evidence/'+safe,'external_current_identity_match':True,
+          'verifier_uid':'SYNTHETIC-EXTERNAL-VERIFIER','verification_status':'PASS'
+        })
+    elif kind=='AUTHORITY_VALUE':
+        receipt.update({'authority_value':row['target_identity'],'authority_current_identity_match':True})
+    path=root/rel
+    path.parent.mkdir(parents=True,exist_ok=True)
+    path.write_text(yaml.safe_dump(receipt,sort_keys=False),encoding='utf-8')
+
 # Stage-01..11 governance pressure tests using the real common validators.
 # Synthetic fixtures live only in a temporary product root and grant zero product completion credit.
 with tempfile.TemporaryDirectory() as td:
     pressure_root=Path(td)
+    pressure_git_ctx=_init_synthetic_product_git(pressure_root)
     old_root=os.environ.get(eng.PRODUCT_ROOT_ENV)
     os.environ[eng.PRODUCT_ROOT_ENV]=str(pressure_root)
     stages=eng.stage_map(profile)
@@ -417,6 +473,7 @@ with tempfile.TemporaryDirectory() as td:
     def _binding_row(binding_class, consuming_operation_uid):
         row={k:'SYNTHETIC' for k in binding_fields}
         row.update({
+          'binding_uid':'SYNTH-'+binding_class,
           'binding_class':binding_class,
           'consuming_operation_uid':consuming_operation_uid,
           'canonical_owner_or_authority_ref':'SYNTHETIC-CURRENT-AUTHORITY',
@@ -444,12 +501,15 @@ with tempfile.TemporaryDirectory() as td:
             required_inputs=[]
             classes=list(map(str,cross_policy.get('next_page_successor_binding_requirements') or []))
             rows=[_binding_row(cls,'NEXT_PAGE_ELIGIBILITY_EVALUATE') for cls in classes]
+        work_unit_uid='SYNTHETIC-'+predecessor_uid+'-WU'
+        for row in rows:
+            _write_synthetic_target_resolution(pressure_root,'target-resolution/'+predecessor_uid,work_unit_uid,successor_uid,row,cross_policy,pressure_git_ctx)
         rel=f'{predecessor_uid}-handoff.yaml'
         ledger={
           'artifact_uid':'SYNTHETIC-'+predecessor_uid+'-HANDOFF',
           'artifact_type':'CROSS_STAGE_HANDOFF_READINESS_LEDGER',
           'stage_uid':predecessor_uid,
-          'work_unit_uid':'SYNTHETIC-'+predecessor_uid+'-WU',
+          'work_unit_uid':work_unit_uid,
           'successor_stage_uid':successor_uid,
           'successor_required_inputs':required_inputs,
           'successor_execution_bindings':rows,
@@ -507,6 +567,48 @@ with tempfile.TemporaryDirectory() as td:
           'CROSS_STAGE_SUCCESSOR_EXECUTION_BINDING_NOT_READY'
         )
     (pressure_root/rel).write_text(yaml.safe_dump(ledger,sort_keys=False),encoding='utf-8')
+
+    # A target string/READY flag can never substitute for Current physical target resolution.
+    predecessor,successor_uid,rel,ledger,evidence=_write_valid_handoff('STAGE-04')
+    app_row=next(x for x in ledger['successor_execution_bindings'] if x['binding_class']=='APPLICATION_ROOT')
+    app_receipt_path=pressure_root/app_row['target_resolution_ref']
+    app_receipt=yaml.safe_load(app_receipt_path.read_text(encoding='utf-8'))
+    def _target_receipt_case(label,mutator,expected):
+        original=deepcopy(app_receipt)
+        broken=deepcopy(original); mutator(broken)
+        app_receipt_path.write_text(yaml.safe_dump(broken,sort_keys=False),encoding='utf-8')
+        try:
+            expect_stage_engine_block(label,lambda:eng._validate_cross_stage_handoff_ledger('STAGE-04',deepcopy(evidence),predecessor,stages),expected)
+        finally:
+            app_receipt_path.write_text(yaml.safe_dump(original,sort_keys=False),encoding='utf-8')
+    _target_receipt_case('stage05_target_wrong_branch',lambda r:r.__setitem__('current_execution_branch','new'),'TARGET_RESOLUTION_BRANCH_MISMATCH')
+    _target_receipt_case('stage05_target_stale_head',lambda r:r.__setitem__('current_execution_head_sha','0'*40),'TARGET_RESOLUTION_HEAD_MISMATCH')
+    _target_receipt_case('stage05_target_stale_tree',lambda r:r.__setitem__('current_execution_tree_sha','1'*40),'TARGET_RESOLUTION_TREE_MISMATCH')
+    _target_receipt_case('stage05_application_root_missing',lambda r:r.update({'target_path':'missing-app-root','target_path_exists':True,'target_path_tracked_at_head':True}),'TARGET_RESOLUTION_PATH_MISSING')
+    _target_receipt_case('stage05_application_root_untracked',lambda r:r.update({'target_path':'target-resolution','target_path_exists':True,'target_path_tracked_at_head':True}),'TARGET_RESOLUTION_PATH_NOT_TRACKED_AT_HEAD')
+    broken=deepcopy(ledger)
+    row=next(x for x in broken['successor_execution_bindings'] if x['binding_class']=='APPLICATION_ROOT')
+    row['target_identity']='synthetic://target/wrong-app-root'
+    (pressure_root/rel).write_text(yaml.safe_dump(broken,sort_keys=False),encoding='utf-8')
+    expect_stage_engine_block('stage05_target_identity_receipt_mismatch',lambda:eng._validate_cross_stage_handoff_ledger('STAGE-04',deepcopy(evidence),predecessor,stages),'TARGET_RESOLUTION_RECEIPT_BINDING_MISMATCH')
+    (pressure_root/rel).write_text(yaml.safe_dump(ledger,sort_keys=False),encoding='utf-8')
+    broken=deepcopy(ledger)
+    row=next(x for x in broken['successor_execution_bindings'] if x['binding_class']=='APPLICATION_ROOT')
+    row['target_resolution_ref']=''
+    (pressure_root/rel).write_text(yaml.safe_dump(broken,sort_keys=False),encoding='utf-8')
+    expect_stage_engine_block('stage05_target_resolution_receipt_missing_even_when_physical_flag_true',lambda:eng._validate_cross_stage_handoff_ledger('STAGE-04',deepcopy(evidence),predecessor,stages),'TARGET_RESOLUTION_REF_OR_KIND_MISSING')
+    (pressure_root/rel).write_text(yaml.safe_dump(ledger,sort_keys=False),encoding='utf-8')
+
+    predecessor8,successor8,rel8,ledger8,evidence8=_write_valid_handoff('STAGE-07')
+    ext_row=next(x for x in ledger8['successor_execution_bindings'] if x['binding_class']=='STAGING_DEPLOYMENT_TARGET')
+    ext_path=pressure_root/ext_row['target_resolution_ref']
+    ext_original=yaml.safe_load(ext_path.read_text(encoding='utf-8'))
+    ext_broken=deepcopy(ext_original); ext_broken['external_current_identity_match']=False
+    ext_path.write_text(yaml.safe_dump(ext_broken,sort_keys=False),encoding='utf-8')
+    try:
+        expect_stage_engine_block('stage08_external_target_identity_not_current',lambda:eng._validate_cross_stage_handoff_ledger('STAGE-07',deepcopy(evidence8),predecessor8,stages),'TARGET_RESOLUTION_EXTERNAL_CURRENT_IDENTITY_NOT_PROVEN')
+    finally:
+        ext_path.write_text(yaml.safe_dump(ext_original,sort_keys=False),encoding='utf-8')
 
     # AUTHORIZED_NOT_APPLICABLE is legal only with exact authority evidence.
     broken=deepcopy(ledger)
@@ -1039,6 +1141,7 @@ def synthetic_evidence(stage_uid,result):
 _allstage_orig_product_root=os.environ.get(eng.PRODUCT_ROOT_ENV)
 _allstage_tmp=tempfile.TemporaryDirectory()
 _allstage_root=Path(_allstage_tmp.name)
+_allstage_git_ctx=_init_synthetic_product_git(_allstage_root)
 os.environ[eng.PRODUCT_ROOT_ENV]=str(_allstage_root)
 _cross_policy=((eng.y(eng.INVARIANTS).get('invariants') or {}).get('CROSS_STAGE_MATERIALIZATION_AND_CONSUMER_READINESS') or {})
 _cross_requirements=_cross_policy.get('successor_execution_binding_requirements') or {}
@@ -1135,11 +1238,15 @@ def materialize_synthetic_stage_context(stage_uid,evidence,result):
           'canonical_owner_or_authority_ref':'' if is_blocked else 'SYNTHETIC-CURRENT-AUTHORITY',
           'authority_evidence_ref':'' if is_blocked else 'synthetic://authority',
           'target_identity':'' if is_blocked else f'SYNTHETIC-TARGET:{cls}',
+          'target_resolution_ref':'','target_resolution_kind':'',
           'resolution_status':'UNRESOLVED' if is_blocked else 'BOUND',
           'denominator_inclusion_status':'INCLUDED',
           'consumer_readiness_status':'BLOCKED' if is_blocked else 'READY'
         })
         if is_blocked: unresolved_bindings+=1
+    for row in binding_rows:
+        if row['resolution_status']=='BOUND':
+            _write_synthetic_target_resolution(_allstage_root,Path('STAGE_EXECUTION')/stage_uid/wu,wu,successor_uid,row,_cross_policy,_allstage_git_ctx)
     ready_bindings=len(binding_rows)-unresolved_bindings
     core_ready=not blocked
     ledger={

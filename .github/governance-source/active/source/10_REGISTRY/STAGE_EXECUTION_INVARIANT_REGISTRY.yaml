@@ -1167,9 +1167,102 @@ invariants:
     - canonical_owner_or_authority_ref
     - authority_evidence_ref
     - target_identity
+    - target_resolution_ref
+    - target_resolution_kind
     - resolution_status
     - denominator_inclusion_status
     - consumer_readiness_status
+    successor_execution_target_resolution_receipt_type: EXECUTION_TARGET_RESOLUTION_RECEIPT
+    successor_execution_target_resolution_required_stage_uids:
+    - STAGE-05
+    - STAGE-06
+    - STAGE-07
+    - STAGE-08
+    - STAGE-09
+    - STAGE-10
+    - STAGE-11
+    successor_execution_target_resolution_required_for_next_unit: true
+    successor_execution_target_resolution_required_for_bound: true
+    successor_execution_target_resolution_current_context_match_required: true
+    successor_execution_target_resolution_ref_must_be_product_root_relative: true
+    successor_execution_target_resolution_repository_branch_source: governance/specifications/REGISTRY.yaml#product_execution_branch
+    successor_execution_target_resolution_repository_head_tree_must_match_current_product_root: true
+    successor_execution_target_resolution_repository_path_must_exist_and_be_tracked_at_head: true
+    successor_execution_target_resolution_external_verifier_required: true
+    successor_execution_target_resolution_authority_value_must_match_target_identity: true
+    self_asserted_physical_materialization_complete_may_override_failed_target_resolution: false
+    successor_execution_target_resolution_allowed_kinds: [CURRENT_REPOSITORY, CURRENT_REPOSITORY_PATH, EXTERNAL_CURRENT_TARGET, AUTHORITY_VALUE]
+    successor_execution_target_resolution_common_required_fields: [artifact_type, binding_uid, consuming_operation_uid, binding_class, target_identity, canonical_owner_or_authority_ref, authority_evidence_ref, work_unit_uid, successor_stage_uid, resolution_kind, resolution_status, current_execution_repository, current_execution_branch, current_execution_head_sha, current_execution_tree_sha, current_context_match]
+    successor_execution_target_resolution_repository_required_fields: [repository_identity, branch_ref_head_sha]
+    successor_execution_target_resolution_repository_path_required_fields: [target_path, target_path_exists, target_path_tracked_at_head]
+    successor_execution_target_resolution_external_required_fields: [provider_or_system, project_or_resource_identity, environment_or_scope_identity, external_resource_identity, external_evidence_ref, external_current_identity_match, verifier_uid, verification_status]
+    successor_execution_target_resolution_authority_value_required_fields: [authority_value, authority_current_identity_match]
+    successor_execution_binding_resolution_kind_policy:
+      STAGE-05:
+        REPOSITORY_TARGET: [CURRENT_REPOSITORY]
+        APPLICATION_ROOT: [CURRENT_REPOSITORY_PATH]
+        IMPLEMENTATION_OWNER: [AUTHORITY_VALUE]
+        IMPLEMENTATION_LANGUAGE_AUTHORITY: [AUTHORITY_VALUE]
+        FRONTEND_FRAMEWORK_AUTHORITY: [AUTHORITY_VALUE]
+        BACKEND_FRAMEWORK_AUTHORITY: [AUTHORITY_VALUE]
+        PACKAGE_MANAGER_AUTHORITY: [AUTHORITY_VALUE]
+        FRONTEND_RUNTIME_TARGET: [CURRENT_REPOSITORY_PATH, EXTERNAL_CURRENT_TARGET]
+        BACKEND_RUNTIME_TARGET: [CURRENT_REPOSITORY_PATH, EXTERNAL_CURRENT_TARGET]
+        DATA_ACCESS_TARGET: [CURRENT_REPOSITORY_PATH, EXTERNAL_CURRENT_TARGET]
+        DATABASE_TARGET: [CURRENT_REPOSITORY_PATH, EXTERNAL_CURRENT_TARGET]
+        AUTHENTICATION_TARGET: [CURRENT_REPOSITORY_PATH, EXTERNAL_CURRENT_TARGET]
+        AUTHORIZATION_TARGET: [CURRENT_REPOSITORY_PATH, EXTERNAL_CURRENT_TARGET]
+        DATA_SECURITY_TARGET: [CURRENT_REPOSITORY_PATH, EXTERNAL_CURRENT_TARGET]
+        AUDIT_LOGGING_TARGET: [CURRENT_REPOSITORY_PATH, EXTERNAL_CURRENT_TARGET]
+        EXTERNAL_INTEGRATION_TARGET: [CURRENT_REPOSITORY_PATH, EXTERNAL_CURRENT_TARGET]
+        ASYNC_RUNTIME_TARGET: [CURRENT_REPOSITORY_PATH, EXTERNAL_CURRENT_TARGET]
+        STORAGE_RUNTIME_TARGET: [CURRENT_REPOSITORY_PATH, EXTERNAL_CURRENT_TARGET]
+      STAGE-06:
+        PROGRAM_ARTIFACT_TARGET: [CURRENT_REPOSITORY_PATH]
+        TEST_HARNESS_TARGET: [CURRENT_REPOSITORY_PATH]
+        DATABASE_TEST_TARGET: [CURRENT_REPOSITORY_PATH, EXTERNAL_CURRENT_TARGET]
+        PERMISSION_TEST_TARGET: [CURRENT_REPOSITORY_PATH, EXTERNAL_CURRENT_TARGET]
+        BROWSER_E2E_TARGET: [CURRENT_REPOSITORY_PATH, EXTERNAL_CURRENT_TARGET]
+        VISUAL_BASELINE_TARGET: [CURRENT_REPOSITORY_PATH]
+        LOCALIZATION_TARGET: [CURRENT_REPOSITORY_PATH]
+        ACCESSIBILITY_TARGET: [CURRENT_REPOSITORY_PATH]
+        SECURITY_TEST_TARGET: [CURRENT_REPOSITORY_PATH, EXTERNAL_CURRENT_TARGET]
+      STAGE-07:
+        BUILD_ROOT: [CURRENT_REPOSITORY_PATH]
+        BUILD_TOOLCHAIN: [CURRENT_REPOSITORY_PATH, AUTHORITY_VALUE]
+        BUILD_COMMAND: [AUTHORITY_VALUE]
+        BUILD_ARTIFACT_TARGET: [AUTHORITY_VALUE]
+        MIGRATION_COMPATIBILITY_TARGET: [CURRENT_REPOSITORY_PATH, EXTERNAL_CURRENT_TARGET]
+      STAGE-08:
+        STAGING_PROVIDER_PROJECT: [EXTERNAL_CURRENT_TARGET]
+        STAGING_ENVIRONMENT: [EXTERNAL_CURRENT_TARGET]
+        STAGING_DEPLOYMENT_TARGET: [EXTERNAL_CURRENT_TARGET]
+        STAGING_ACCEPTANCE_TARGET: [EXTERNAL_CURRENT_TARGET]
+      STAGE-09:
+        PRODUCTION_PROVIDER_PROJECT: [EXTERNAL_CURRENT_TARGET]
+        PRODUCTION_ENVIRONMENT: [EXTERNAL_CURRENT_TARGET]
+        PRODUCTION_CONFIGURATION_AUTHORITY: [AUTHORITY_VALUE]
+        PRODUCTION_MIGRATION_TARGET: [EXTERNAL_CURRENT_TARGET]
+        PRODUCTION_DEPLOYMENT_TARGET: [EXTERNAL_CURRENT_TARGET]
+        PRODUCTION_SMOKE_TARGET: [EXTERNAL_CURRENT_TARGET]
+        ROLLBACK_TARGET: [EXTERNAL_CURRENT_TARGET]
+      STAGE-10:
+        CURRENT_PRODUCTION_RUNTIME_TARGET: [EXTERNAL_CURRENT_TARGET]
+        PRODUCTION_PAGE_TARGET: [EXTERNAL_CURRENT_TARGET]
+        PRODUCTION_DATABASE_TARGET: [EXTERNAL_CURRENT_TARGET]
+        PRODUCTION_PERMISSION_TARGET: [EXTERNAL_CURRENT_TARGET]
+        PRODUCTION_EXTERNAL_INTEGRATION_TARGET: [EXTERNAL_CURRENT_TARGET]
+        PRODUCTION_ASYNC_RUNTIME_TARGET: [EXTERNAL_CURRENT_TARGET]
+        PRODUCTION_VISUAL_ACCEPTANCE_TARGET: [EXTERNAL_CURRENT_TARGET]
+      STAGE-11:
+        MONITORING_TARGET: [EXTERNAL_CURRENT_TARGET]
+        BACKUP_TARGET: [EXTERNAL_CURRENT_TARGET]
+        ROLLBACK_TARGET: [EXTERNAL_CURRENT_TARGET]
+        OPERATIONS_OWNER: [AUTHORITY_VALUE]
+      NEXT_GOVERNED_UNIT:
+        NEXT_PAGE_ELIGIBILITY_RESULT: [AUTHORITY_VALUE]
+        NEXT_GOVERNED_UNIT_IDENTITY_WHEN_NEXT_PAGE_READY: [AUTHORITY_VALUE]
+        NEXT_GOVERNED_UNIT_LEGAL_STAGE_ADMISSION_TARGET_WHEN_NEXT_PAGE_READY: [AUTHORITY_VALUE]
     reference_resolution_required: true
     reference_presence_is_materialization: false
     physical_materialization_required: true

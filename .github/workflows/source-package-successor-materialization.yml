@@ -1,6 +1,12 @@
 name: Integrated Source Package Materialization
 on:
   workflow_dispatch:
+  push:
+    branches: [rebuild-v2.1.1]
+    paths:
+      - '.github/governance-source/active/source/**'
+      - 'governance/source-successor/materialize_derived_source_package.py'
+      - 'governance/source-successor/refresh_source_checksums.py'
 permissions:
   contents: write
 concurrency:

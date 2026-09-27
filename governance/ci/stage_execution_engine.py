@@ -619,6 +619,163 @@ def _validate_current_stage_state_bundle(stage_uid,e,stage,gov):
             fail('CURRENT_WORK_UNIT_STATUS_CONFLICT:'+work_status)
     return scope,work,state,work_dir
 
+def _git_optional(root,*args):
+    cp=subprocess.run(['git','-C',str(root),*args],text=True,capture_output=True)
+    return cp.stdout.strip() if cp.returncode==0 else ''
+
+def _git_required(root,label,*args):
+    cp=subprocess.run(['git','-C',str(root),*args],text=True,capture_output=True)
+    if cp.returncode!=0 or not cp.stdout.strip():
+        fail(label+':'+(cp.stderr or cp.stdout or 'git lookup failed').strip()[-300:])
+    return cp.stdout.strip()
+
+def _canonical_repository_identity(raw):
+    s=str(raw or '').strip().replace('\\','/')
+    if not s:
+        return ''
+    if s.startswith('git@') and ':' in s:
+        s=s.split(':',1)[1]
+    elif '://' in s:
+        s=s.split('://',1)[1]
+        s=s.split('/',1)[1] if '/' in s else s
+    s=s.rstrip('/')
+    if s.endswith('.git'):
+        s=s[:-4]
+    parts=[x for x in s.split('/') if x]
+    return '/'.join(parts[-2:]) if len(parts)>=2 else s
+
+def _current_product_git_context(product_root):
+    reg=y(REGISTRY)
+    expected_branch=str(reg.get('product_execution_branch') or '')
+    if not expected_branch:
+        fail('PRODUCT_EXECUTION_BRANCH_MISSING')
+    head=_git_required(product_root,'PRODUCT_EXECUTION_HEAD_UNRESOLVED','rev-parse','HEAD')
+    tree=_git_required(product_root,'PRODUCT_EXECUTION_TREE_UNRESOLVED','rev-parse','HEAD^{tree}')
+    ref_heads=[]
+    for ref in (f'refs/heads/{expected_branch}',f'refs/remotes/origin/{expected_branch}'):
+        value=_git_optional(product_root,'show-ref','--verify','--hash',ref)
+        if value:
+            ref_heads.append(value)
+    env_branch=str(os.environ.get('GITHUB_REF_NAME') or '')
+    env_sha=str(os.environ.get('GITHUB_SHA') or '')
+    if product_root.resolve()==ROOT.resolve() and env_branch==expected_branch and env_sha==head:
+        ref_heads.append(head)
+    if head not in ref_heads:
+        fail('PRODUCT_EXECUTION_BRANCH_HEAD_MISMATCH:expected_branch='+expected_branch+':head='+head+':refs='+repr(ref_heads))
+    remote=_git_required(product_root,'PRODUCT_EXECUTION_REPOSITORY_UNRESOLVED','config','--get','remote.origin.url')
+    repository=_canonical_repository_identity(remote)
+    if not repository:
+        fail('PRODUCT_EXECUTION_REPOSITORY_IDENTITY_UNRESOLVED')
+    return {'repository':repository,'branch':expected_branch,'head':head,'tree':tree}
+
+def _tracked_path_at_head(product_root,head,rel):
+    cp=subprocess.run(['git','-C',str(product_root),'ls-tree','-r','--name-only',head,'--',rel],text=True,capture_output=True)
+    if cp.returncode!=0:
+        fail('TARGET_RESOLUTION_GIT_TREE_LOOKUP_FAILED:'+str(rel))
+    rel_norm=str(Path(rel).as_posix()).rstrip('/')
+    rows=[x.strip() for x in cp.stdout.splitlines() if x.strip()]
+    return any(x==rel_norm or x.startswith(rel_norm+'/') for x in rows)
+
+def _validate_execution_target_resolution(product_root,ledger,successor_uid,row,policy,git_context):
+    stage_key=successor_uid if successor_uid else 'NEXT_GOVERNED_UNIT'
+    kind_policy=(policy.get('successor_execution_binding_resolution_kind_policy') or {}).get(stage_key) or {}
+    cls=str(row.get('binding_class') or '')
+    allowed=set(map(str,kind_policy.get(cls) or []))
+    if not allowed:
+        fail('TARGET_RESOLUTION_POLICY_MISSING:'+stage_key+':'+cls)
+    ref=str(row.get('target_resolution_ref') or '').strip()
+    kind=str(row.get('target_resolution_kind') or '').strip()
+    if not ref or not kind:
+        fail('TARGET_RESOLUTION_REF_OR_KIND_MISSING:'+cls)
+    if kind not in allowed:
+        fail('TARGET_RESOLUTION_KIND_NOT_ALLOWED:'+cls+':'+kind)
+    rp=Path(ref)
+    if rp.is_absolute() or '..' in rp.parts:
+        fail('TARGET_RESOLUTION_REF_INVALID:'+cls)
+    receipt=_external_yaml(product_root/rp,'EXECUTION_TARGET_RESOLUTION_RECEIPT')
+    common=set(map(str,policy.get('successor_execution_target_resolution_common_required_fields') or []))
+    missing=sorted(common-set(receipt))
+    if missing:
+        fail('TARGET_RESOLUTION_RECEIPT_FIELDS_MISSING:'+cls+':'+repr(missing))
+    expected_successor=successor_uid if successor_uid else 'NEXT_GOVERNED_UNIT'
+    expected={
+      'artifact_type':str(policy.get('successor_execution_target_resolution_receipt_type') or ''),
+      'binding_uid':str(row.get('binding_uid') or ''),
+      'consuming_operation_uid':str(row.get('consuming_operation_uid') or ''),
+      'binding_class':cls,
+      'target_identity':str(row.get('target_identity') or ''),
+      'canonical_owner_or_authority_ref':str(row.get('canonical_owner_or_authority_ref') or ''),
+      'authority_evidence_ref':str(row.get('authority_evidence_ref') or ''),
+      'work_unit_uid':str(ledger.get('work_unit_uid') or ''),
+      'successor_stage_uid':expected_successor,
+      'resolution_kind':kind,
+      'resolution_status':'PASS',
+    }
+    for key,value in expected.items():
+        if not value or str(receipt.get(key) or '')!=value:
+            fail('TARGET_RESOLUTION_RECEIPT_BINDING_MISMATCH:'+cls+':'+key)
+    if receipt.get('current_context_match') is not True:
+        fail('TARGET_RESOLUTION_CURRENT_CONTEXT_NOT_PROVEN:'+cls)
+    if git_context is None:
+        git_context=_current_product_git_context(product_root)
+    context_expected={
+      'current_execution_repository':git_context['repository'],
+      'current_execution_branch':git_context['branch'],
+      'current_execution_head_sha':git_context['head'],
+      'current_execution_tree_sha':git_context['tree'],
+    }
+    for key,value in context_expected.items():
+        if str(receipt.get(key) or '')!=value:
+            suffix={'current_execution_branch':'BRANCH','current_execution_head_sha':'HEAD','current_execution_tree_sha':'TREE','current_execution_repository':'REPOSITORY'}[key]
+            fail('TARGET_RESOLUTION_'+suffix+'_MISMATCH:'+cls)
+    if kind in {'CURRENT_REPOSITORY','CURRENT_REPOSITORY_PATH'}:
+        required=set(map(str,policy.get('successor_execution_target_resolution_repository_required_fields') or []))
+        missing=sorted(required-set(receipt))
+        if missing:
+            fail('TARGET_RESOLUTION_REPOSITORY_FIELDS_MISSING:'+cls+':'+repr(missing))
+        if _canonical_repository_identity(receipt.get('repository_identity'))!=git_context['repository']:
+            fail('TARGET_RESOLUTION_REPOSITORY_MISMATCH:'+cls)
+        if str(receipt.get('branch_ref_head_sha') or '')!=git_context['head']:
+            fail('TARGET_RESOLUTION_BRANCH_REF_HEAD_MISMATCH:'+cls)
+    if kind=='CURRENT_REPOSITORY_PATH':
+        required=set(map(str,policy.get('successor_execution_target_resolution_repository_path_required_fields') or []))
+        missing=sorted(required-set(receipt))
+        if missing:
+            fail('TARGET_RESOLUTION_REPOSITORY_PATH_FIELDS_MISSING:'+cls+':'+repr(missing))
+        target_path=str(receipt.get('target_path') or '').strip()
+        tp=Path(target_path)
+        if not target_path or tp.is_absolute() or '..' in tp.parts:
+            fail('TARGET_RESOLUTION_PATH_INVALID:'+cls)
+        physical=product_root/tp
+        if receipt.get('target_path_exists') is not True or not physical.exists():
+            fail('TARGET_RESOLUTION_PATH_MISSING:'+cls)
+        tracked=_tracked_path_at_head(product_root,git_context['head'],target_path)
+        if receipt.get('target_path_tracked_at_head') is not True or not tracked:
+            fail('TARGET_RESOLUTION_PATH_NOT_TRACKED_AT_HEAD:'+cls)
+    elif kind=='EXTERNAL_CURRENT_TARGET':
+        required=set(map(str,policy.get('successor_execution_target_resolution_external_required_fields') or []))
+        missing=sorted(required-set(receipt))
+        if missing:
+            fail('TARGET_RESOLUTION_EXTERNAL_FIELDS_MISSING:'+cls+':'+repr(missing))
+        if str(receipt.get('external_resource_identity') or '')!=str(row.get('target_identity') or ''):
+            fail('TARGET_RESOLUTION_EXTERNAL_IDENTITY_MISMATCH:'+cls)
+        if receipt.get('external_current_identity_match') is not True:
+            fail('TARGET_RESOLUTION_EXTERNAL_CURRENT_IDENTITY_NOT_PROVEN:'+cls)
+        if not str(receipt.get('external_evidence_ref') or '').strip() or not str(receipt.get('verifier_uid') or '').strip() or str(receipt.get('verification_status') or '')!='PASS':
+            fail('TARGET_RESOLUTION_EXTERNAL_VERIFICATION_INVALID:'+cls)
+    elif kind=='AUTHORITY_VALUE':
+        required=set(map(str,policy.get('successor_execution_target_resolution_authority_value_required_fields') or []))
+        missing=sorted(required-set(receipt))
+        if missing:
+            fail('TARGET_RESOLUTION_AUTHORITY_FIELDS_MISSING:'+cls+':'+repr(missing))
+        if str(receipt.get('authority_value') or '')!=str(row.get('target_identity') or ''):
+            fail('TARGET_RESOLUTION_AUTHORITY_VALUE_MISMATCH:'+cls)
+        if receipt.get('authority_current_identity_match') is not True:
+            fail('TARGET_RESOLUTION_AUTHORITY_CURRENT_IDENTITY_NOT_PROVEN:'+cls)
+    else:
+        fail('TARGET_RESOLUTION_KIND_UNSUPPORTED:'+cls+':'+kind)
+    return git_context
+
 def _validate_cross_stage_handoff_ledger(stage_uid,e,stage,stages):
     inv=y(INVARIANTS)
     product_root=_product_artifact_root()
@@ -672,6 +829,9 @@ def _validate_cross_stage_handoff_ledger(stage_uid,e,stage,stages):
 
     requirements=(policy.get('successor_execution_binding_requirements') or {})
     operation_map=(policy.get('successor_execution_binding_operation_map') or {})
+    target_resolution_required_stages=set(map(str,policy.get('successor_execution_target_resolution_required_stage_uids') or []))
+    target_resolution_next_required=policy.get('successor_execution_target_resolution_required_for_next_unit') is True
+    target_resolution_git_context=None
     if successor_uid in stages:
         expected_classes=list(map(str,requirements.get(successor_uid) or []))
         expected_map=operation_map.get(successor_uid) or {}
@@ -712,6 +872,9 @@ def _validate_cross_stage_handoff_ledger(stage_uid,e,stage,stages):
                         fail('CROSS_STAGE_SUCCESSOR_EXECUTION_BINDING_REQUIRED_VALUE_MISSING:'+cls+':'+key)
                 if row.get('denominator_inclusion_status')!='INCLUDED' or row.get('consumer_readiness_status')!='READY':
                     fail('CROSS_STAGE_SUCCESSOR_EXECUTION_BINDING_NOT_READY:'+cls)
+                target_resolution_required=(successor_uid in target_resolution_required_stages) or (not successor_uid and target_resolution_next_required)
+                if target_resolution_required:
+                    target_resolution_git_context=_validate_execution_target_resolution(product_root,ledger,successor_uid,row,policy,target_resolution_git_context)
                 ready+=1
             elif not pass_result and resolution in {'UNRESOLVED','BLOCKED','MISSING'}:
                 if row.get('denominator_inclusion_status')!='INCLUDED' or row.get('consumer_readiness_status') not in {'BLOCKED','NOT_READY'}:
