@@ -33,12 +33,30 @@ def validate(root=ROOT):
     for k in required:
         if k not in inv:
             failures.append('missing_invariant:' + k)
-    external = d.get('external_execution_admission_contracts') or {}
-    if set(external) != {'PRODUCT_GOVERNANCE_RELEASE_SELECTION_AND_APPLICATION_BASELINE'}:
-        failures.append('external_execution_admission_contract_set_drift')
-    pgra = external.get('PRODUCT_GOVERNANCE_RELEASE_SELECTION_AND_APPLICATION_BASELINE') or {}
-    if pgra.get('scope_class')!='EXTERNAL_PRODUCT_EXECUTION_ENVIRONMENT_ADMISSION' or pgra.get('reusable_page_stage_normative_denominator_inclusion')!='EXCLUDED' or pgra.get('reusable_page_stage_definition_credit')!=0 or pgra.get('reusable_page_stage_completion_credit')!=0:
+    if 'external_execution_admission_contracts' in d or 'product_execution_admission_contracts' in d:
+        failures.append('external_product_admission_embedded_in_stage_registry')
+    admission_rel = '10_REGISTRY/PRODUCT_EXECUTION_ENVIRONMENT_ADMISSION_REGISTRY.yaml'
+    admission_path = root / admission_rel
+    if not admission_path.exists():
+        failures.append('product_execution_environment_admission_registry_missing')
+        admission = {}
+    else:
+        admission = load(root, admission_rel)
+    if admission.get('artifact_uid')!='REG-PRODUCT-EXECUTION-ENVIRONMENT-ADMISSION-001' or admission.get('artifact_type')!='PRODUCT_EXECUTION_ENVIRONMENT_ADMISSION_REGISTRY':
+        failures.append('product_execution_environment_admission_registry_identity_invalid')
+    admission_scope=admission.get('scope') or {}
+    if admission_scope.get('layer_classification')!='EXTERNAL_PRODUCT_EXECUTION_ENVIRONMENT_ADMISSION' or admission_scope.get('reusable_page_stage_normative_denominator_inclusion')!='EXCLUDED' or admission_scope.get('reusable_page_stage_definition_credit')!=0 or admission_scope.get('reusable_page_stage_completion_credit')!=0:
         failures.append('external_product_admission_scope_isolation_missing')
+    contracts = admission.get('product_execution_admission_contracts') or {}
+    if set(contracts) != {'PRODUCT_GOVERNANCE_RELEASE_SELECTION_AND_APPLICATION_BASELINE'}:
+        failures.append('product_execution_admission_contract_set_drift')
+    pgra = contracts.get('PRODUCT_GOVERNANCE_RELEASE_SELECTION_AND_APPLICATION_BASELINE') or {}
+    if pgra.get('contract_uid')!='GOV-ADMISSION-PRODUCT-GOVERNANCE-RELEASE-APPLICATION-BASELINE-001':
+        failures.append('product_execution_admission_contract_uid_invalid')
+    if set(map(str,pgra.get('normative_section_uids') or []))!={'WEB-EXT-ADMISSION-01-S001','WEB-EXT-ADMISSION-01-S002','WEB-EXT-ADMISSION-01-S003','WEB-EXT-ADMISSION-01-S004'}:
+        failures.append('product_execution_admission_normative_section_set_drift')
+    if pgra.get('scope_class')!='EXTERNAL_PRODUCT_EXECUTION_ENVIRONMENT_ADMISSION' or pgra.get('reusable_page_stage_normative_denominator_inclusion')!='EXCLUDED' or pgra.get('reusable_page_stage_definition_credit')!=0 or pgra.get('reusable_page_stage_completion_credit')!=0:
+        failures.append('external_product_admission_contract_scope_isolation_missing')
     if pgra.get('application_baseline_is_universal_page_stage_requirement') is not False or pgra.get('product_specific_branch_repository_or_framework_may_enter_common_stage_semantics') is not False:
         failures.append('external_product_admission_leaks_into_page_stage_semantics')
     if pgra.get('selected_governance_release_artifact_type')!='PRODUCT_SELECTED_GOVERNANCE_RELEASE' or pgra.get('selected_governance_release_status')!='SELECTED_VERIFIED_RELEASE':

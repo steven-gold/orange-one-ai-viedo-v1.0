@@ -9,6 +9,7 @@ REGISTRY=ROOT/'governance/specifications/REGISTRY.yaml'
 LIFECYCLE=ROOT/'.github/governance-source/active/source/10_REGISTRY/GOVERNANCE_LIFECYCLE_STAGE_REGISTRY.yaml'
 ADAPTERS=ROOT/'governance/ci/stage_execution_semantic_adapters.yaml'
 INVARIANTS=ROOT/'.github/governance-source/active/source/10_REGISTRY/STAGE_EXECUTION_INVARIANT_REGISTRY.yaml'
+PRODUCT_ADMISSION=ROOT/'.github/governance-source/active/source/10_REGISTRY/PRODUCT_EXECUTION_ENVIRONMENT_ADMISSION_REGISTRY.yaml'
 PRODUCT_ROOT_ENV='ACPOS_PRODUCT_ROOT'
 ACTIVE_WORK_UNIT_ENV='ACPOS_ACTIVE_WORK_UNIT'
 CURRENT_SCOPE_ENV='ACPOS_CURRENT_SCOPE'
@@ -79,9 +80,9 @@ def _product_artifact_root():
 
 
 def _selection_policy():
-    inv=y(INVARIANTS)
-    policy=(inv.get('external_execution_admission_contracts') or {}).get('PRODUCT_GOVERNANCE_RELEASE_SELECTION_AND_APPLICATION_BASELINE') or {}
-    if not policy or policy.get('invariant_uid')!='GOV-INV-PRODUCT-GOVERNANCE-RELEASE-APPLICATION-BASELINE-001':
+    admission=y(PRODUCT_ADMISSION)
+    policy=(admission.get('product_execution_admission_contracts') or {}).get('PRODUCT_GOVERNANCE_RELEASE_SELECTION_AND_APPLICATION_BASELINE') or {}
+    if not policy or policy.get('contract_uid')!='GOV-ADMISSION-PRODUCT-GOVERNANCE-RELEASE-APPLICATION-BASELINE-001':
         fail('PRODUCT_GOVERNANCE_SELECTION_POLICY_MISSING')
     if policy.get('scope_class')!='EXTERNAL_PRODUCT_EXECUTION_ENVIRONMENT_ADMISSION' or policy.get('reusable_page_stage_normative_denominator_inclusion')!='EXCLUDED':
         fail('PRODUCT_GOVERNANCE_SELECTION_SCOPE_ISOLATION_INVALID')

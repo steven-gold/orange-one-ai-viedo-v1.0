@@ -98,6 +98,8 @@ normative_mother_order:
 - .github/governance-source/active/source/12_DOCS/mother-spec/04_AUDIT_PROGRESS_STANDARD.md
 lifecycle_registry: .github/governance-source/active/source/10_REGISTRY/GOVERNANCE_LIFECYCLE_STAGE_REGISTRY.yaml
 stage_invariant_registry: .github/governance-source/active/source/10_REGISTRY/STAGE_EXECUTION_INVARIANT_REGISTRY.yaml
+product_execution_admission_registry: .github/governance-source/active/source/10_REGISTRY/PRODUCT_EXECUTION_ENVIRONMENT_ADMISSION_REGISTRY.yaml
+product_execution_admission_standard: .github/governance-source/active/source/12_DOCS/external-admission/PRODUCT_EXECUTION_ENVIRONMENT_ADMISSION_STANDARD.md
 rules_root: governance/specifications/current
 branch_role_contract:
   rebuild-v2.1.1: GOVERNANCE_REVISION_CANDIDATE
@@ -165,7 +167,7 @@ candidate_validation_contract:
   - REGRESSION_EXPECTATION_OWNER
   semantic_reference_transaction_partial_sync: BLOCK
   reusable_page_stage_core_excludes_external_product_admission: true
-  external_product_admission_contract_container: STAGE_EXECUTION_INVARIANT_REGISTRY.external_execution_admission_contracts
+  external_product_admission_contract_container: PRODUCT_EXECUTION_ENVIRONMENT_ADMISSION_REGISTRY.product_execution_admission_contracts
   product_specific_branch_repository_or_framework_may_enter_page_stage_semantics: false
   required_workflow_names:
   - Current Governance Cleanup Validation
