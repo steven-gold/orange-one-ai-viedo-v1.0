@@ -34,11 +34,11 @@ def validate(root=ROOT):
             if op in all_ops: failures.append(f'duplicate_operation_uid:{op}')
             all_ops[op]=sid
     stage1=stages[0] if stages else {}
-    expected_stage1_prefix=['SOURCE_STRUCTURE_ENUMERATION','SOURCE_SEGMENT_MAPPING','SOURCE_CONTEXT_COMPILATION','SOURCE_SUPERSESSION_CONFLICT_RESOLUTION','SOURCE_DEPENDENCY_EXTRACTION','RESPONSIBILITY_CLASSIFICATION','PAGE_BASE_BLUEPRINT_COMPILE','VISUAL_BASE_BLUEPRINT_COMPILE','BLUEPRINT_BINDING_COMPILE']
+    expected_stage1_prefix=['SOURCE_STRUCTURE_ENUMERATION','SOURCE_SEGMENT_MAPPING','SOURCE_CONTEXT_COMPILATION','SOURCE_SUPERSESSION_CONFLICT_RESOLUTION','SOURCE_DEPENDENCY_EXTRACTION','RESPONSIBILITY_CLASSIFICATION','GOVERNED_UNIT_BASE_BLUEPRINT_COMPILE','VISUAL_BASE_BLUEPRINT_COMPILE','BLUEPRINT_BINDING_COMPILE']
     if stage1.get('operations')!=expected_stage1_prefix: failures.append('stage1_operation_order_invalid')
     if 'SOURCE_SEGMENT_MAP' not in (stage1.get('outputs') or []) or (stage1.get('output_producers') or {}).get('SOURCE_SEGMENT_MAP')!='SOURCE_SEGMENT_MAPPING': failures.append('stage1_segment_mapping_not_registered')
     pb=stage1.get('stage1_phase_boundary_contract') or {}
-    if pb.get('phase_order')!=['SOURCE_STRUCTURE_ENUMERATION','SOURCE_SEGMENT_MAPPING','SOURCE_FACT_MATERIALIZATION','RESPONSIBILITY_CLASSIFICATION','PAGE_BASE_BLUEPRINT_COMPILE','VISUAL_BASE_BLUEPRINT_COMPILE','BLUEPRINT_BINDING_COMPILE']: failures.append('stage1_phase_order_invalid')
+    if pb.get('phase_order')!=['SOURCE_STRUCTURE_ENUMERATION','SOURCE_SEGMENT_MAPPING','SOURCE_FACT_MATERIALIZATION','RESPONSIBILITY_CLASSIFICATION','GOVERNED_UNIT_BASE_BLUEPRINT_COMPILE','VISUAL_BASE_BLUEPRINT_COMPILE','BLUEPRINT_BINDING_COMPILE']: failures.append('stage1_phase_order_invalid')
     if pb.get('source_fact_materialization_operations')!=['SOURCE_CONTEXT_COMPILATION','SOURCE_SUPERSESSION_CONFLICT_RESOLUTION','SOURCE_DEPENDENCY_EXTRACTION']: failures.append('stage1_source_fact_phase_operations_invalid')
     for k,v in [('segment_mapping_to_source_fact_transition','LEGAL'),('source_fact_start_before_segment_mapping_close','BLOCK'),('classification_or_blueprint_before_source_fact_close','BLOCK'),('website_or_deployment_in_stage_01','BLOCK')]:
         if pb.get(k)!=v: failures.append('stage1_phase_boundary_rule_invalid:'+k)
@@ -105,7 +105,7 @@ def validate(root=ROOT):
         if x.get('stage_exit_scope_source')!='CURRENT_GOVERNED_UNIT_STAGE_REQUIRED_UNIVERSE_RECONCILIATION': failures.append('stage_exit_scope_not_current_governed_unit:'+str(x.get('stage_uid')))
         if x.get('unrelated_same_stage_units_may_block_current_unit_exit') is not False: failures.append('unrelated_same_stage_unit_block_not_forbidden:'+str(x.get('stage_uid')))
         if x.get('cross_unit_blocking_requires_explicit_required_dependency_edge') is not True: failures.append('cross_unit_dependency_edge_rule_missing:'+str(x.get('stage_uid')))
-        if x.get('lifecycle_owner_granularity')!='PAGE_OR_SYSTEM_LOGIC_UNIT': failures.append('lifecycle_owner_granularity_invalid:'+str(x.get('stage_uid')))
+        if x.get('lifecycle_owner_granularity')!='GOVERNED_UNIT': failures.append('lifecycle_owner_granularity_invalid:'+str(x.get('stage_uid')))
     binds=d.get('delivery_step_bindings') or []
     nums=[x.get('step') for x in binds]
     if nums!=list(range(1,55)): failures.append('delivery_steps_not_exact_1_54')

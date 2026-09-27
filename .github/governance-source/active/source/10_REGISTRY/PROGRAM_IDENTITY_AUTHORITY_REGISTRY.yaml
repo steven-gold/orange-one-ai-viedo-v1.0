@@ -15,26 +15,26 @@ policy:
   product_neutral_reference_identity_required: true
   product_specific_identity_in_common_registry: BLOCK
 identities:
-- uid: PA-DEMO-PAGE-RUNTIME-001
+- uid: PA-DEMO-GOVERNED-UNIT-RUNTIME-001
   identity_type: PROGRAM_ARTIFACT
   status: PLANNED
   canonical_name: EXAMPLE_RUNTIME_SERVICE
-  canonical_path: implementation/example/DEMO-PAGE-001/runtime-service.impl
+  canonical_path: implementation/example/DEMO-GOVERNED-UNIT-001/runtime-service.impl
   canonical_filename: runtime-service.impl
   construction_profile: RUNTIME_SERVICE
   toolchain_authority_ref: AUTHORITY-DEMO-TOOLCHAIN
-  work_unit_uid: WU-DEMO-PAGE-001
-  page_uid_or_scope_uid: DEMO-PAGE-001
+  work_unit_uid: WU-DEMO-GOVERNED-UNIT-001
+  governed_unit_uid_or_scope_uid: DEMO-GOVERNED-UNIT-001
   owner_uid: OWNER-DEMO-RUNTIME
   producer_stage_uid: STAGE-05
   toolchain_reserved_filename_authorized: false
   example_fixture_role: PRODUCT_NEUTRAL_REFERENCE_IDENTITY
-- uid: WU-DEMO-PAGE-001
+- uid: WU-DEMO-GOVERNED-UNIT-001
   identity_type: WORK_UNIT
   status: CURRENT
   example_fixture_role: PRODUCT_NEUTRAL_REFERENCE_IDENTITY
-- uid: DEMO-PAGE-001
-  identity_type: PAGE_OR_SCOPE
+- uid: DEMO-GOVERNED-UNIT-001
+  identity_type: GOVERNED_UNIT_OR_SCOPE
   status: CURRENT
   example_fixture_role: PRODUCT_NEUTRAL_REFERENCE_IDENTITY
 - uid: OWNER-DEMO-RUNTIME

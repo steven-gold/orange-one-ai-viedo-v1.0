@@ -242,7 +242,7 @@ def validate(root=ROOT):
     rv = inv.get('REVIEW_VS_CLOSURE_SEPARATION') or {}
     if rv.get('review_completion_is_evidence_of_review_only') is not True or rv.get('review_completion_may_override_open_blockers') is not False:
         failures.append('review_closure_separation_incomplete')
-    if rv.get('stage_exit_owner_granularity') != 'PAGE_OR_SYSTEM_LOGIC_UNIT' or rv.get('same_stage_uid_does_not_create_cross_unit_exit_barrier') is not True or rv.get('unrelated_page_or_system_unit_may_block_stage_exit') is not False or rv.get('cross_unit_blocking_requires_explicit_required_dependency_edge') is not True:
+    if rv.get('stage_exit_owner_granularity') != 'GOVERNED_UNIT' or rv.get('same_stage_uid_does_not_create_cross_unit_exit_barrier') is not True or rv.get('unrelated_page_or_system_unit_may_block_stage_exit') is not False or rv.get('cross_unit_blocking_requires_explicit_required_dependency_edge') is not True:
         failures.append('independent_governed_unit_stage_exit_invariant_incomplete')
     handoff = inv.get('CROSS_STAGE_MATERIALIZED_HANDOFF') or {}
     if handoff:

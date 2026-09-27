@@ -33,8 +33,8 @@ def build_valid_runtime_fixture():
     life=load(ROOT/'10_REGISTRY/GOVERNANCE_LIFECYCLE_STAGE_REGISTRY.yaml')
     st5=[s for s in life['stages'] if s['stage_uid']=='STAGE-05'][0]
     pa={
-      'program_artifact_uid':'PA-DEMO-PAGE-RUNTIME-001','work_unit_uid':'WU-DEMO-PAGE-001','page_uid_or_scope_uid':'DEMO-PAGE-001',
-      'construction_profile':'RUNTIME_SERVICE','toolchain_authority_ref':'AUTHORITY-DEMO-TOOLCHAIN','canonical_name':'EXAMPLE_RUNTIME_SERVICE','canonical_path':'implementation/example/DEMO-PAGE-001/runtime-service.impl',
+      'program_artifact_uid':'PA-DEMO-GOVERNED-UNIT-RUNTIME-001','work_unit_uid':'WU-DEMO-GOVERNED-UNIT-001','governed_unit_uid_or_scope_uid':'DEMO-GOVERNED-UNIT-001',
+      'construction_profile':'RUNTIME_SERVICE','toolchain_authority_ref':'AUTHORITY-DEMO-TOOLCHAIN','canonical_name':'EXAMPLE_RUNTIME_SERVICE','canonical_path':'implementation/example/DEMO-GOVERNED-UNIT-001/runtime-service.impl',
       'canonical_filename':'runtime-service.impl','owner_uid':'OWNER-DEMO-RUNTIME','producer_stage_uid':'STAGE-05','input_artifact_refs':[],
       'required_normative_section_uids':['WEB-GOV-02-S014'],'dependency_refs':[],'reverse_dependency_refs':[],
       'acceptance_audit_blueprint_ref':'BP-GOVERNANCE-ACCEPTANCE-001','required_test_refs':['TEST-DEMO-RUNTIME-001'],
@@ -47,8 +47,8 @@ def build_valid_runtime_fixture():
     pa['governance_load_receipt_ref']=inst.expected_receipt_uid(pa['work_unit_uid'],rm['governance_revision'],inst_norm_hash)
     pa['write_target_binding_ref']=inst.expected_binding_uid(pa['program_artifact_uid'],pa['work_unit_uid'],pa['canonical_path'],pa['current_hash'])
     manifest={
-      'work_unit_uid':'WU-DEMO-PAGE-001','governance_revision':rm['governance_revision'],
-      'design_freeze_ref':'DF-DEMO-PAGE-001','program_artifacts':['PA-DEMO-PAGE-RUNTIME-001'],'dependency_closure_ref':'DEP-CLOSURE-001',
+      'work_unit_uid':'WU-DEMO-GOVERNED-UNIT-001','governance_revision':rm['governance_revision'],
+      'design_freeze_ref':'DF-DEMO-GOVERNED-UNIT-001','program_artifacts':['PA-DEMO-GOVERNED-UNIT-RUNTIME-001'],'dependency_closure_ref':'DEP-CLOSURE-001',
       'acceptance_audit_blueprint_ref':'BP-GOVERNANCE-ACCEPTANCE-001','naming_registry_ref':'REG-NAMING-001','section_registry_ref':'REG-NORMATIVE-SECTION-001',
       'protected_current_artifact_registry_ref':'REG-PROTECTED-CURRENT-ARTIFACT-001','typed_identity_registry_ref':'REG-PROGRAM-IDENTITY-AUTHORITY-001',
       'common_normative_bundle_refs':bundles,
@@ -57,7 +57,7 @@ def build_valid_runtime_fixture():
       'governance_load_receipt':{'receipt_uid':pa['governance_load_receipt_ref'],'status':'PASS','work_unit_uid':pa['work_unit_uid'],'governance_revision':rm['governance_revision'],'semantic_baseline_content_hash':inst.SEMANTIC_BASELINE_CONTENT_HASH,'effective_normative_set_hash':inst_norm_hash},
       'dependency_closure':{'closure_uid':'DEP-CLOSURE-001','program_artifact_uid':pa['program_artifact_uid'],'dependency_refs':[],'reverse_dependency_refs':[],'status':'PASS'},
       'write_target_bindings':[{
-        'binding_uid':pa['write_target_binding_ref'],'program_artifact_uid':pa['program_artifact_uid'],'work_unit_uid':pa['work_unit_uid'],'page_uid_or_scope_uid':pa['page_uid_or_scope_uid'],
+        'binding_uid':pa['write_target_binding_ref'],'program_artifact_uid':pa['program_artifact_uid'],'work_unit_uid':pa['work_unit_uid'],'governed_unit_uid_or_scope_uid':pa['governed_unit_uid_or_scope_uid'],
         'owner_uid':pa['owner_uid'],'construction_profile':pa['construction_profile'],'canonical_path':pa['canonical_path'],
         'canonical_filename':pa['canonical_filename'],'expected_current_hash':pa['current_hash'],'producer_stage_uid':pa['producer_stage_uid']}]
     }
@@ -71,7 +71,7 @@ def build_valid_runtime_fixture():
         rr,e=v.resolve_section(ROOT,uid,sections)
         assert not e,e; resolved.append(rr)
     receipt={
-      'receipt_uid':pa['governance_load_receipt_ref'],'execution_uid':'EXEC-001','run_uid':'RUN-001','work_unit_or_stage_operation_uid':'WU-DEMO-PAGE-001',
+      'receipt_uid':pa['governance_load_receipt_ref'],'execution_uid':'EXEC-001','run_uid':'RUN-001','work_unit_or_stage_operation_uid':'WU-DEMO-GOVERNED-UNIT-001',
       'governance_revision':load(ROOT/'10_REGISTRY/GOVERNANCE_ROOT_MANIFEST.yaml')['governance_revision'],
       'root_manifest_hash':sha(ROOT/'10_REGISTRY/GOVERNANCE_ROOT_MANIFEST.yaml'),'section_registry_hash':sha(ROOT/'10_REGISTRY/SECTION_NUMBER_REGISTRY.yaml'),
       'target_manifest_hash':hash_obj(manifest),'common_bundle_uids':manifest['common_normative_bundle_refs'],
@@ -103,7 +103,7 @@ cases += [
  runtime_case('missing_common_bundle_runtime',lambda r,m,p:m.__setitem__('common_normative_bundle_refs',m['common_normative_bundle_refs'][1:])),
  runtime_case('stale_root_manifest_receipt',lambda r,m,p:r.__setitem__('root_manifest_hash','0'*64)),
  runtime_case('wrong_section_resolution_receipt',lambda r,m,p:r['resolved_section_receipts'][0].__setitem__('canonical_path','wrong.md')),
- runtime_case('write_target_points_to_other_artifact',lambda r,m,p:m['write_target_bindings'][0].__setitem__('canonical_path','implementation/example/DEMO-PAGE-001/other-valid.impl')),
+ runtime_case('write_target_points_to_other_artifact',lambda r,m,p:m['write_target_bindings'][0].__setitem__('canonical_path','implementation/example/DEMO-GOVERNED-UNIT-001/other-valid.impl')),
  runtime_case('effective_set_hash_stale',lambda r,m,p:r.__setitem__('effective_normative_set_hash','0'*64)),
 ]
 out={'suite':'execution governance load / common+specific / typed UID / write-target guard','total':len(cases),'passed_expectations':sum(c['ok'] for c in cases),'results':cases}

@@ -74,7 +74,7 @@ explicit_stage_range_execution_contract:
       purpose: VERIFY_STAGE_RULES_OR_EVIDENCE_ONLY
       effectful_execution_credit: 0
       may_redefine_requested_execution_range: false
-    PAGE_LIFECYCLE_EXECUTION_MODE:
+    GOVERNED_UNIT_LIFECYCLE_EXECUTION_MODE:
       purpose: EXECUTE_EXACT_REQUESTED_STAGE_RANGE_FOR_ONE_GOVERNED_UNIT
       stage_boundary_behavior: AUTO_CONTINUE_ON_PASS
       user_continue_prompt_after_normal_stage_pass: FORBIDDEN
@@ -128,7 +128,7 @@ stages:
   - SOURCE_SUPERSESSION_CONFLICT_RESOLUTION
   - SOURCE_DEPENDENCY_EXTRACTION
   - RESPONSIBILITY_CLASSIFICATION
-  - PAGE_BASE_BLUEPRINT_COMPILE
+  - GOVERNED_UNIT_BASE_BLUEPRINT_COMPILE
   - VISUAL_BASE_BLUEPRINT_COMPILE
   - BLUEPRINT_BINDING_COMPILE
   outputs:
@@ -138,7 +138,7 @@ stages:
   - CONTENT_SUPERSESSION_CONFLICT_LEDGER
   - SOURCE_DEPENDENCY_MAP
   - CLASSIFIED_ARTIFACT_SET
-  - PAGE_BASE_BLUEPRINT
+  - GOVERNED_UNIT_BASE_BLUEPRINT
   - VISUAL_BASE_BLUEPRINT
   - BLUEPRINT_BINDING_MANIFEST
   output_producers:
@@ -147,7 +147,7 @@ stages:
     CONTENT_SUPERSESSION_CONFLICT_LEDGER: SOURCE_SUPERSESSION_CONFLICT_RESOLUTION
     SOURCE_DEPENDENCY_MAP: SOURCE_DEPENDENCY_EXTRACTION
     CLASSIFIED_ARTIFACT_SET: RESPONSIBILITY_CLASSIFICATION
-    PAGE_BASE_BLUEPRINT: PAGE_BASE_BLUEPRINT_COMPILE
+    GOVERNED_UNIT_BASE_BLUEPRINT: GOVERNED_UNIT_BASE_BLUEPRINT_COMPILE
     VISUAL_BASE_BLUEPRINT: VISUAL_BASE_BLUEPRINT_COMPILE
     BLUEPRINT_BINDING_MANIFEST: BLUEPRINT_BINDING_COMPILE
     SOURCE_SEGMENT_MAP: SOURCE_SEGMENT_MAPPING
@@ -206,7 +206,7 @@ stages:
     - SOURCE_SEGMENT_MAPPING
     - SOURCE_FACT_MATERIALIZATION
     - RESPONSIBILITY_CLASSIFICATION
-    - PAGE_BASE_BLUEPRINT_COMPILE
+    - GOVERNED_UNIT_BASE_BLUEPRINT_COMPILE
     - VISUAL_BASE_BLUEPRINT_COMPILE
     - BLUEPRINT_BINDING_COMPILE
     source_fact_materialization_operations:
@@ -271,7 +271,7 @@ stages:
   partial_work_unit_closure_may_grant_stage_exit: false
   unrelated_same_stage_units_may_block_current_unit_exit: false
   cross_unit_blocking_requires_explicit_required_dependency_edge: true
-  lifecycle_owner_granularity: PAGE_OR_SYSTEM_LOGIC_UNIT
+  lifecycle_owner_granularity: GOVERNED_UNIT
   capability_ownership_boundary:
     owns:
     - SOURCE_CAPTURE
@@ -334,16 +334,16 @@ stages:
     binary_visual_semantics_source: FROZEN_BINARY_PART_RESOLVED_FROM_PROJECTION
     binary_visual_source_hash_verification_required: true
 - stage_uid: STAGE-02
-  name: PAGE_FUNCTIONAL_CONTRACT
+  name: GOVERNED_UNIT_FUNCTIONAL_CONTRACT
   scope_mode: CURRENT_GOVERNED_UNIT
   entry_gate: CURRENT_GOVERNED_UNIT_STAGE1_CLOSED
   inputs:
-  - PAGE_BASE_BLUEPRINT
+  - GOVERNED_UNIT_BASE_BLUEPRINT
   - SOURCE_CONTEXT_MANIFEST
   - CONTENT_SUPERSESSION_CONFLICT_LEDGER
   - SOURCE_DEPENDENCY_MAP
   input_origins:
-    PAGE_BASE_BLUEPRINT: STAGE-01
+    GOVERNED_UNIT_BASE_BLUEPRINT: STAGE-01
     SOURCE_CONTEXT_MANIFEST: STAGE-01
     CONTENT_SUPERSESSION_CONFLICT_LEDGER: STAGE-01
     SOURCE_DEPENDENCY_MAP: STAGE-01
@@ -354,7 +354,7 @@ stages:
   - CHANGE_IMPACT_MAP_COMPILE
   - FUNCTIONAL_CHAIN_COMPILE
   - DEPENDENCY_MAP_COMPILE
-  - PAGE_CONSTRUCTION_SPEC_COMPILE
+  - GOVERNED_UNIT_CONSTRUCTION_SPEC_COMPILE
   - ASYNC_PROVIDER_CONTRACT_COMPILE
   - SHARED_OWNER_PORT_RESOLVE
   - FUNCTIONAL_WORKBENCH_CONTRACT_COMPILE
@@ -364,7 +364,7 @@ stages:
   outputs:
   - FUNCTIONAL_CHAIN_SPEC
   - DEPENDENCY_MAP
-  - PAGE_CONSTRUCTION_SPEC_PACKAGE
+  - GOVERNED_UNIT_CONSTRUCTION_SPEC_PACKAGE
   - ASYNC_PROVIDER_CONTRACT
   - SHARED_OWNER_PORT_MAP
   - FUNCTIONAL_WORKBENCH_CONTRACT
@@ -384,7 +384,7 @@ stages:
   output_producers:
     FUNCTIONAL_CHAIN_SPEC: FUNCTIONAL_CHAIN_COMPILE
     DEPENDENCY_MAP: DEPENDENCY_MAP_COMPILE
-    PAGE_CONSTRUCTION_SPEC_PACKAGE: PAGE_CONSTRUCTION_SPEC_COMPILE
+    GOVERNED_UNIT_CONSTRUCTION_SPEC_PACKAGE: GOVERNED_UNIT_CONSTRUCTION_SPEC_COMPILE
     ASYNC_PROVIDER_CONTRACT: ASYNC_PROVIDER_CONTRACT_COMPILE
     SHARED_OWNER_PORT_MAP: SHARED_OWNER_PORT_RESOLVE
     FUNCTIONAL_WORKBENCH_CONTRACT: FUNCTIONAL_WORKBENCH_CONTRACT_COMPILE
@@ -405,7 +405,7 @@ stages:
   - VAL-GOV-008
   - VAL-GOV-004
   required_evidence:
-  - PAGE_FUNCTIONAL_REVIEW_EVIDENCE
+  - GOVERNED_UNIT_FUNCTIONAL_REVIEW_EVIDENCE
   exit_gate: CURRENT_GOVERNED_UNIT_STAGE2_CLOSED
   next_stage_uid: STAGE-03
   required_normative_section_uids:
@@ -522,7 +522,7 @@ stages:
   required_output_applicability:
     always_for_target_scope:
     - FUNCTIONAL_CHAIN_SPEC
-    - PAGE_CONSTRUCTION_SPEC_PACKAGE
+    - GOVERNED_UNIT_CONSTRUCTION_SPEC_PACKAGE
     - REQUIRED_FIELD_MANIFEST
     - FUNCTIONAL_CHAIN_MANIFEST
     - EFFECTIVE_CONTRACT_OVERLAY
@@ -553,7 +553,7 @@ stages:
   partial_work_unit_closure_may_grant_stage_exit: false
   unrelated_same_stage_units_may_block_current_unit_exit: false
   cross_unit_blocking_requires_explicit_required_dependency_edge: true
-  lifecycle_owner_granularity: PAGE_OR_SYSTEM_LOGIC_UNIT
+  lifecycle_owner_granularity: GOVERNED_UNIT
   functional_contract_ownership:
   - BUSINESS_ENTITY_LIFECYCLE
   - OPERATION_HIERARCHY
@@ -599,12 +599,12 @@ stages:
   entry_gate: CURRENT_GOVERNED_UNIT_STAGE2_CLOSED
   inputs:
   - VISUAL_BASE_BLUEPRINT
-  - PAGE_CONSTRUCTION_SPEC_PACKAGE
+  - GOVERNED_UNIT_CONSTRUCTION_SPEC_PACKAGE
   - FUNCTIONAL_WORKBENCH_CONTRACT
   - INTERACTION_TOPOLOGY_SPEC
   input_origins:
     VISUAL_BASE_BLUEPRINT: STAGE-01
-    PAGE_CONSTRUCTION_SPEC_PACKAGE: STAGE-02_IMMUTABLE_REFERENCE_ONLY
+    GOVERNED_UNIT_CONSTRUCTION_SPEC_PACKAGE: STAGE-02_IMMUTABLE_REFERENCE_ONLY
     FUNCTIONAL_WORKBENCH_CONTRACT: STAGE-02_IMMUTABLE_REFERENCE_ONLY
     INTERACTION_TOPOLOGY_SPEC: STAGE-02_IMMUTABLE_REFERENCE_ONLY
   operations:
@@ -753,7 +753,7 @@ stages:
   partial_work_unit_closure_may_grant_stage_exit: false
   unrelated_same_stage_units_may_block_current_unit_exit: false
   cross_unit_blocking_requires_explicit_required_dependency_edge: true
-  lifecycle_owner_granularity: PAGE_OR_SYSTEM_LOGIC_UNIT
+  lifecycle_owner_granularity: GOVERNED_UNIT
   functional_topology_redefinition: BLOCK_REOPEN_STAGE02
   required_output_applicability:
     always_for_target_scope:
@@ -814,11 +814,11 @@ stages:
   scope_mode: CURRENT_GOVERNED_UNIT
   entry_gate: CURRENT_GOVERNED_UNIT_STAGE3_CLOSED
   inputs:
-  - PAGE_CONSTRUCTION_SPEC_PACKAGE
+  - GOVERNED_UNIT_CONSTRUCTION_SPEC_PACKAGE
   - VISUAL_DESIGN_SPEC_PACKAGE
   - DEPENDENCY_MAP
   input_origins:
-    PAGE_CONSTRUCTION_SPEC_PACKAGE: STAGE-02_IMMUTABLE_REFERENCE_ONLY
+    GOVERNED_UNIT_CONSTRUCTION_SPEC_PACKAGE: STAGE-02_IMMUTABLE_REFERENCE_ONLY
     VISUAL_DESIGN_SPEC_PACKAGE: STAGE-03_IMMUTABLE_REFERENCE_ONLY
     DEPENDENCY_MAP: STAGE-02
   operations:
@@ -935,7 +935,7 @@ stages:
   partial_work_unit_closure_may_grant_stage_exit: false
   unrelated_same_stage_units_may_block_current_unit_exit: false
   cross_unit_blocking_requires_explicit_required_dependency_edge: true
-  lifecycle_owner_granularity: PAGE_OR_SYSTEM_LOGIC_UNIT
+  lifecycle_owner_granularity: GOVERNED_UNIT
   upstream_contract_or_visual_change_after_freeze: INVALIDATE_IMPACTED_FREEZE_AND_REVERIFY
   cross_stage_materialization_gate:
     required: true
@@ -963,7 +963,7 @@ stages:
     freeze_expected_baseline_required: true
 - stage_uid: STAGE-05
   name: IMPLEMENTATION
-  scope_mode: SINGLE_PAGE_VERTICAL
+  scope_mode: SINGLE_GOVERNED_UNIT_VERTICAL
   entry_gate: CURRENT_GOVERNED_UNIT_FOUNDATION_FROZEN_AND_PREDECESSOR_STAGE_CLOSED
   inputs:
   - DESIGN_FREEZE_PACKAGE
@@ -1012,7 +1012,7 @@ stages:
   - VAL-GOV-010
   required_evidence:
   - IMPLEMENTATION_DIFF_EVIDENCE
-  exit_gate: PAGE_IMPLEMENTATION_COMPLETE
+  exit_gate: GOVERNED_UNIT_IMPLEMENTATION_COMPLETE
   next_stage_uid: STAGE-06
   required_normative_section_uids:
   - WEB-GOV-02-S005
@@ -1103,7 +1103,7 @@ stages:
   partial_work_unit_closure_may_grant_stage_exit: false
   unrelated_same_stage_units_may_block_current_unit_exit: false
   cross_unit_blocking_requires_explicit_required_dependency_edge: true
-  lifecycle_owner_granularity: PAGE_OR_SYSTEM_LOGIC_UNIT
+  lifecycle_owner_granularity: GOVERNED_UNIT
   upstream_owned_gap_discovered: STOP_AND_REENTER_CAPABILITY_REENTRY_MAP
   cross_stage_materialization_gate:
     required: true
@@ -1126,8 +1126,8 @@ stages:
     downstream_upstream_gap_disposition: REENTER_EARLIEST_OWNER_AND_MARK_DESCENDANTS_REVERIFY_REQUIRED
 - stage_uid: STAGE-06
   name: VERIFICATION_QA
-  scope_mode: SAME_SELECTED_PAGE
-  entry_gate: PAGE_IMPLEMENTATION_COMPLETE
+  scope_mode: SAME_SELECTED_GOVERNED_UNIT
+  entry_gate: GOVERNED_UNIT_IMPLEMENTATION_COMPLETE
   inputs:
   - IMPLEMENTATION_MANIFEST
   - PROGRAM_ARTIFACT_SET
@@ -1260,7 +1260,7 @@ stages:
   partial_work_unit_closure_may_grant_stage_exit: false
   unrelated_same_stage_units_may_block_current_unit_exit: false
   cross_unit_blocking_requires_explicit_required_dependency_edge: true
-  lifecycle_owner_granularity: PAGE_OR_SYSTEM_LOGIC_UNIT
+  lifecycle_owner_granularity: GOVERNED_UNIT
   upstream_owned_gap_discovered: STOP_AND_REENTER_CAPABILITY_REENTRY_MAP
   cross_stage_materialization_gate:
     required: true
@@ -1290,7 +1290,7 @@ stages:
     all_required_viewports_languages_themes: true
 - stage_uid: STAGE-07
   name: BUILD_RELEASE_CANDIDATE
-  scope_mode: SAME_SELECTED_PAGE
+  scope_mode: SAME_SELECTED_GOVERNED_UNIT
   entry_gate: PRE_RELEASE_VERIFICATION_CLOSED
   inputs:
   - VERIFIED_SOURCE_REVISION
@@ -1389,7 +1389,7 @@ stages:
   partial_work_unit_closure_may_grant_stage_exit: false
   unrelated_same_stage_units_may_block_current_unit_exit: false
   cross_unit_blocking_requires_explicit_required_dependency_edge: true
-  lifecycle_owner_granularity: PAGE_OR_SYSTEM_LOGIC_UNIT
+  lifecycle_owner_granularity: GOVERNED_UNIT
   upstream_owned_gap_discovered: STOP_AND_REENTER_CAPABILITY_REENTRY_MAP
   cross_stage_materialization_gate:
     required: true
@@ -1412,7 +1412,7 @@ stages:
     downstream_upstream_gap_disposition: REENTER_EARLIEST_OWNER_AND_MARK_DESCENDANTS_REVERIFY_REQUIRED
 - stage_uid: STAGE-08
   name: STAGING
-  scope_mode: SAME_SELECTED_PAGE
+  scope_mode: SAME_SELECTED_GOVERNED_UNIT
   entry_gate: RELEASE_CANDIDATE_ACCEPTED
   inputs:
   - RELEASE_CANDIDATE
@@ -1501,7 +1501,7 @@ stages:
   partial_work_unit_closure_may_grant_stage_exit: false
   unrelated_same_stage_units_may_block_current_unit_exit: false
   cross_unit_blocking_requires_explicit_required_dependency_edge: true
-  lifecycle_owner_granularity: PAGE_OR_SYSTEM_LOGIC_UNIT
+  lifecycle_owner_granularity: GOVERNED_UNIT
   upstream_owned_gap_discovered: STOP_AND_REENTER_CAPABILITY_REENTRY_MAP
   cross_stage_materialization_gate:
     required: true
@@ -1524,7 +1524,7 @@ stages:
     downstream_upstream_gap_disposition: REENTER_EARLIEST_OWNER_AND_MARK_DESCENDANTS_REVERIFY_REQUIRED
 - stage_uid: STAGE-09
   name: PRODUCTION_CUTOVER
-  scope_mode: SAME_SELECTED_PAGE
+  scope_mode: SAME_SELECTED_GOVERNED_UNIT
   entry_gate: STAGING_CLOSED_ACCEPTED_OR_AUTHORITY_PROVEN_NOT_APPLICABLE
   inputs:
   - STAGING_CLOSURE_RECORD
@@ -1618,7 +1618,7 @@ stages:
   partial_work_unit_closure_may_grant_stage_exit: false
   unrelated_same_stage_units_may_block_current_unit_exit: false
   cross_unit_blocking_requires_explicit_required_dependency_edge: true
-  lifecycle_owner_granularity: PAGE_OR_SYSTEM_LOGIC_UNIT
+  lifecycle_owner_granularity: GOVERNED_UNIT
   upstream_owned_gap_discovered: STOP_AND_REENTER_CAPABILITY_REENTRY_MAP
   cross_stage_materialization_gate:
     required: true
@@ -1641,7 +1641,7 @@ stages:
     downstream_upstream_gap_disposition: REENTER_EARLIEST_OWNER_AND_MARK_DESCENDANTS_REVERIFY_REQUIRED
 - stage_uid: STAGE-10
   name: PRODUCTION_ACCEPTANCE
-  scope_mode: SAME_SELECTED_PAGE
+  scope_mode: SAME_SELECTED_GOVERNED_UNIT
   entry_gate: PRODUCTION_CUTOVER_CLOSED
   inputs:
   - CURRENT_RELEASE_IDENTITY
@@ -1651,7 +1651,7 @@ stages:
     ACCEPTANCE_AUDIT_BLUEPRINT: STAGE-04_PERSISTED
   operations:
   - OP-43-PRODUCTION_BROWSER_ACCEPTANCE
-  - OP-44-PRODUCTION_PAGE_ACCEPTANCE
+  - OP-44-PRODUCTION_GOVERNED_UNIT_ACCEPTANCE
   - OP-45-PRODUCTION_CONTROL_ACCEPTANCE
   - OP-46-PRODUCTION_DATABASE_ACCEPTANCE
   - OP-47-PRODUCTION_EFFECTFUL_ACCEPTANCE
@@ -1659,7 +1659,7 @@ stages:
   - OP-49-ASYNC_RUNTIME_ACCEPTANCE
   - PRODUCTION_VISUAL_GEOMETRY_ACCEPTANCE
   - PRODUCTION_STALE_RENDER_ACCEPTANCE
-  - PRODUCTION_CROSS_PAGE_SLICE_ACCEPTANCE
+  - PRODUCTION_CROSS_GOVERNED_UNIT_SLICE_ACCEPTANCE
   - PRODUCTION_ACCEPTANCE_RECONCILIATION
   outputs:
   - PRODUCTION_ACCEPTANCE_RESULT
@@ -1766,7 +1766,7 @@ stages:
   partial_work_unit_closure_may_grant_stage_exit: false
   unrelated_same_stage_units_may_block_current_unit_exit: false
   cross_unit_blocking_requires_explicit_required_dependency_edge: true
-  lifecycle_owner_granularity: PAGE_OR_SYSTEM_LOGIC_UNIT
+  lifecycle_owner_granularity: GOVERNED_UNIT
   upstream_owned_gap_discovered: STOP_AND_REENTER_CAPABILITY_REENTRY_MAP
   cross_stage_materialization_gate:
     required: true
@@ -1795,7 +1795,7 @@ stages:
     deployed_revision_binding_required: true
 - stage_uid: STAGE-11
   name: CLOSURE_OPERATIONS
-  scope_mode: SAME_SELECTED_PAGE
+  scope_mode: SAME_SELECTED_GOVERNED_UNIT
   entry_gate: PRODUCTION_ACCEPTANCE_EVIDENCE_CLOSED
   inputs:
   - PRODUCTION_ACCEPTANCE_RESULT
@@ -1897,7 +1897,7 @@ stages:
   partial_work_unit_closure_may_grant_stage_exit: false
   unrelated_same_stage_units_may_block_current_unit_exit: false
   cross_unit_blocking_requires_explicit_required_dependency_edge: true
-  lifecycle_owner_granularity: PAGE_OR_SYSTEM_LOGIC_UNIT
+  lifecycle_owner_granularity: GOVERNED_UNIT
   upstream_owned_gap_discovered: STOP_AND_REENTER_CAPABILITY_REENTRY_MAP
   cross_stage_materialization_gate:
     required: true
@@ -2049,7 +2049,7 @@ delivery_step_bindings:
   operation_uid: OP-43-PRODUCTION_BROWSER_ACCEPTANCE
   stage_uid: STAGE-10
 - step: 44
-  operation_uid: OP-44-PRODUCTION_PAGE_ACCEPTANCE
+  operation_uid: OP-44-PRODUCTION_GOVERNED_UNIT_ACCEPTANCE
   stage_uid: STAGE-10
 - step: 45
   operation_uid: OP-45-PRODUCTION_CONTROL_ACCEPTANCE
@@ -2348,8 +2348,8 @@ cross_stage_invariants:
     explicit_stage_binding_denominator: 11
 stage_execution_invariant_ref: REG-STAGE-EXECUTION-INVARIANT-001
 layer_classification: EXECUTION_PROFILE
-profile_uid: REUSABLE-PAGE-SYSTEM-LIFECYCLE-PROFILE-11
-profile_scope: REUSABLE_PAGE_AND_SYSTEM_UNIT
+profile_uid: REUSABLE-GOVERNED-UNIT-LIFECYCLE-PROFILE-11
+profile_scope: REUSABLE_GOVERNED_UNIT
 global_normative_authority: false
 profile_may_weaken_common_policy: false
 profile_local_denominator: 11
@@ -2374,7 +2374,7 @@ execution_scope_contract:
   partial_work_unit_closure_may_grant_stage_exit: false
   unrelated_same_stage_units_may_block_current_unit_exit: false
   cross_unit_blocking_requires_explicit_required_dependency_edge: true
-  lifecycle_owner_granularity: PAGE_OR_SYSTEM_LOGIC_UNIT
+  lifecycle_owner_granularity: GOVERNED_UNIT
   remaining_scope_persistence_required: true
   reusable_consumer_literal_execution_identity_or_denominator: BLOCK
 capability_reentry_map:

@@ -228,7 +228,7 @@ invariants:
     review_completion_is_evidence_of_review_only: true
     review_completion_may_override_open_blockers: false
     stage_exit_requires_exit_gate_and_required_evidence_and_zero_unwaived_blockers: true
-    stage_exit_owner_granularity: PAGE_OR_SYSTEM_LOGIC_UNIT
+    stage_exit_owner_granularity: GOVERNED_UNIT
     same_stage_uid_does_not_create_cross_unit_exit_barrier: true
     unrelated_page_or_system_unit_may_block_stage_exit: false
     cross_unit_blocking_requires_explicit_required_dependency_edge: true
@@ -768,7 +768,7 @@ invariants:
     - CONTRACT_PRIMITIVES
     - RUNTIME_TRANSPORT_STATE_CONTRACTS
     - DEPENDENT_BUSINESS_OPERATIONS
-    - LEAF_PAGE_CONTROL_BEHAVIOR
+    - LEAF_GOVERNED_UNIT_BEHAVIOR
     - VISUAL_INTERACTION_BINDING
     local_reverse_dependency_validation_after_each_batch: true
     checkpoint_full_sweep_required_after:
@@ -1421,7 +1421,7 @@ invariants:
         ROLLBACK_TARGET: OP-41-PRODUCTION_DEPLOYMENT
       STAGE-10:
         CURRENT_PRODUCTION_RUNTIME_TARGET: OP-43-PRODUCTION_BROWSER_ACCEPTANCE
-        PRODUCTION_PAGE_TARGET: OP-44-PRODUCTION_PAGE_ACCEPTANCE
+        PRODUCTION_PAGE_TARGET: OP-44-PRODUCTION_GOVERNED_UNIT_ACCEPTANCE
         PRODUCTION_DATABASE_TARGET: OP-46-PRODUCTION_DATABASE_ACCEPTANCE
         PRODUCTION_PERMISSION_TARGET: OP-47-PRODUCTION_EFFECTFUL_ACCEPTANCE
         PRODUCTION_EXTERNAL_INTEGRATION_TARGET: OP-48-EXTERNAL_INTEGRATION_ACCEPTANCE
@@ -1624,7 +1624,7 @@ invariants:
         production_acceptance_failure_mode: BLOCKED_REENTRY
       STAGE-11:
         default_mode: NONE
-        next_page_eligibility_must_come_from_registered_operation: true
+        next_governed_unit_eligibility_must_come_from_registered_operation: true
         project_completion_may_be_ai_invented: false
   DETERMINISTIC_STAGE_AUDIT:
     invariant_uid: GOV-INV-DETERMINISTIC-STAGE-AUDIT-001
@@ -1818,7 +1818,7 @@ invariants:
         reverse_trace_to_raw_source_required: true
         impacted_old_governance_closure_disposition: REVERIFY_REQUIRED
       STAGE-02:
-        capability: PAGE_FUNCTIONAL_CONTRACT
+        capability: GOVERNED_UNIT_FUNCTIONAL_CONTRACT
         lifecycle_registry_is_denominator_source: true
         functional_contract_exact_denominator_reconciliation_required: true
         ui_mock_placeholder_or_future_note_may_receive_execution_credit: false

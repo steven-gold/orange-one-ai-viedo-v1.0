@@ -1,7 +1,7 @@
 schema_version: 1
 artifact_type: STAGE_EXECUTION_SEMANTIC_ADAPTER_REGISTRY
 normative_authority: false
-derived_from_profile_uid: REUSABLE-PAGE-SYSTEM-LIFECYCLE-PROFILE-11
+derived_from_profile_uid: REUSABLE-GOVERNED-UNIT-LIFECYCLE-PROFILE-11
 authority_refs:
 - .github/governance-source/active/source/10_REGISTRY/GOVERNANCE_LIFECYCLE_STAGE_REGISTRY.yaml
 - .github/governance-source/active/source/10_REGISTRY/STAGE_EXECUTION_INVARIANT_REGISTRY.yaml
@@ -207,7 +207,7 @@ stages:
   STAGE-02:
     stepwise_execution_contract_ref: stepwise_execution_defaults
     effectful_executor_owner_resolution: CURRENT_WORK_UNIT_OPERATION_BINDING_ONLY
-    profile_name: PAGE_FUNCTIONAL_CONTRACT
+    profile_name: GOVERNED_UNIT_FUNCTIONAL_CONTRACT
     semantic_dimensions:
     - FUNCTION
     - BUSINESS_ENTITY
@@ -240,7 +240,7 @@ stages:
     scanner_mode: NORMALIZED_COMMON_EVIDENCE_CONTRACT
     current_execution_state_source: EXECUTION_WORKLINE_CURRENT_SCOPE_AND_RESUME
     packaged_required_artifact_contract:
-      owner_output: PAGE_CONSTRUCTION_SPEC_PACKAGE
+      owner_output: GOVERNED_UNIT_CONSTRUCTION_SPEC_PACKAGE
       materializer_owner: governance/ci/materialize_current_stage2_closure_artifacts.py
       package_manifest_field: included_artifacts
       artifacts:
@@ -459,8 +459,8 @@ stages:
     - ROLLBACK
     - FINAL_AUDIT
     - FINAL_PRODUCTION_ACCEPTANCE
-    - PAGE_CLOSURE
-    - NEXT_PAGE_ELIGIBILITY
+    - GOVERNED_UNIT_CLOSURE
+    - NEXT_GOVERNED_UNIT_ELIGIBILITY
     scanner_dimensions:
     - OPERATIONS_READINESS
     - MONITORING
@@ -469,7 +469,7 @@ stages:
     - FINAL_AUDIT_RECONCILIATION
     - FINAL_ACCEPTANCE
     - CLOSURE_CONTINUITY
-    - NEXT_PAGE_TRANSITION
+    - NEXT_GOVERNED_UNIT_TRANSITION
     denominator_kind: PRODUCTION_ACCEPTED_SCOPE_X_CLOSURE_OPERATION
     governed_entity_gate_mode: CONDITIONAL_BY_CURRENT_AUTHORITY_AND_APPLICABILITY
     scanner_mode: NORMALIZED_COMMON_EVIDENCE_CONTRACT

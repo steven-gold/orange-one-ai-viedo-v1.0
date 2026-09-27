@@ -82,7 +82,7 @@ def validate_instance(program_artifact, manifest, root=ROOT):
     pa_req=(idx.get('program_artifact_contract') or {}).get('required_fields') or []
     for f in pa_req:
         if f not in pa: failures.append('program_artifact_field_missing:'+f)
-    scalar_required=['program_artifact_uid','work_unit_uid','page_uid_or_scope_uid','construction_profile','toolchain_authority_ref','canonical_name','canonical_path','canonical_filename','owner_uid','producer_stage_uid','acceptance_audit_blueprint_ref','current_hash','status','governance_load_receipt_ref','write_target_binding_ref']
+    scalar_required=['program_artifact_uid','work_unit_uid','governed_unit_uid_or_scope_uid','construction_profile','toolchain_authority_ref','canonical_name','canonical_path','canonical_filename','owner_uid','producer_stage_uid','acceptance_audit_blueprint_ref','current_hash','status','governance_load_receipt_ref','write_target_binding_ref']
     for f in scalar_required:
         if not _nonempty(pa.get(f)): failures.append('program_artifact_field_empty:'+f)
     for f in ['input_artifact_refs','required_normative_section_uids','dependency_refs','reverse_dependency_refs','required_test_refs']:
@@ -93,7 +93,7 @@ def validate_instance(program_artifact, manifest, root=ROOT):
     if not re.fullmatch(r'PA-[A-Z0-9]+(?:-[A-Z0-9]+)*-[0-9]{3}',str(uid)): failures.append('program_artifact_uid_format_invalid')
     if not re.fullmatch(r'[A-Z][A-Z0-9_]*',str(name)): failures.append('canonical_name_not_upper_snake_case')
     if not re.fullmatch(r'[A-Z0-9][A-Z0-9._:-]*',str(pa.get('work_unit_uid',''))): failures.append('work_unit_uid_invalid')
-    if not re.fullmatch(r'[A-Z0-9][A-Z0-9._:-]*',str(pa.get('page_uid_or_scope_uid',''))): failures.append('page_uid_or_scope_uid_invalid')
+    if not re.fullmatch(r'[A-Z0-9][A-Z0-9._:-]*',str(pa.get('governed_unit_uid_or_scope_uid',''))): failures.append('governed_unit_uid_or_scope_uid_invalid')
     if not isinstance(path,str) or not path or '..' in path or path.startswith('/') or '//' in path or '\\' in path: failures.append('canonical_path_unsafe')
     if Path(path).name!=fn: failures.append('canonical_filename_path_basename_mismatch')
     tokens=set(re.split(r'[^a-z0-9]+',str(fn).lower()))
@@ -127,14 +127,14 @@ def validate_instance(program_artifact, manifest, root=ROOT):
     # Authoritative typed identity resolution. Program artifact registration is the write-target authority.
     pa_auth=_resolve(identity_map,uid,'PROGRAM_ARTIFACT',failures,'program_artifact_uid') if uid else None
     _resolve(identity_map,pa.get('work_unit_uid'),'WORK_UNIT',failures,'work_unit_uid')
-    _resolve(identity_map,pa.get('page_uid_or_scope_uid'),'PAGE_OR_SCOPE',failures,'page_uid_or_scope_uid')
+    _resolve(identity_map,pa.get('governed_unit_uid_or_scope_uid'),'GOVERNED_UNIT_OR_SCOPE',failures,'governed_unit_uid_or_scope_uid')
     _resolve(identity_map,pa.get('owner_uid'),'OWNER',failures,'owner_uid')
     for x in pa.get('dependency_refs') or []: _resolve(identity_map,x,'PROGRAM_ARTIFACT',failures,'dependency_refs')
     for x in pa.get('reverse_dependency_refs') or []: _resolve(identity_map,x,'PROGRAM_ARTIFACT',failures,'reverse_dependency_refs')
     for x in pa.get('required_test_refs') or []: _resolve(identity_map,x,'TEST',failures,'required_test_refs')
     for x in pa.get('input_artifact_refs') or []: _resolve(identity_map,x,['INPUT_ARTIFACT','PROGRAM_ARTIFACT'],failures,'input_artifact_refs')
     if pa_auth:
-        for k in ['canonical_name','canonical_path','canonical_filename','construction_profile','toolchain_authority_ref','work_unit_uid','page_uid_or_scope_uid','owner_uid','producer_stage_uid']:
+        for k in ['canonical_name','canonical_path','canonical_filename','construction_profile','toolchain_authority_ref','work_unit_uid','governed_unit_uid_or_scope_uid','owner_uid','producer_stage_uid']:
             if pa_auth.get(k)!=pa.get(k): failures.append('program_artifact_preregistration_binding_mismatch:'+k)
 
     # Artifact-specific refs must be independently anchored by immutable profile minima.
@@ -202,7 +202,7 @@ def validate_instance(program_artifact, manifest, root=ROOT):
         if not re.fullmatch(r'WTB-[A-Z0-9][A-Z0-9-]*',str(pa.get('write_target_binding_ref') or '')): failures.append('write_target_binding_ref_invalid')
         deterministic_binding=expected_binding_uid(pa.get('program_artifact_uid'),pa.get('work_unit_uid'),pa.get('canonical_path'),pa.get('current_hash'))
         if pa.get('write_target_binding_ref')!=deterministic_binding: failures.append('write_target_binding_uid_not_deterministically_bound')
-        for k in ['program_artifact_uid','work_unit_uid','page_uid_or_scope_uid','owner_uid','construction_profile','canonical_path','canonical_filename','producer_stage_uid']:
+        for k in ['program_artifact_uid','work_unit_uid','governed_unit_uid_or_scope_uid','owner_uid','construction_profile','canonical_path','canonical_filename','producer_stage_uid']:
             if b.get(k)!=pa.get(k): failures.append('write_target_binding_mismatch:'+k)
         if b.get('expected_current_hash')!=pa.get('current_hash'): failures.append('write_target_binding_mismatch:expected_current_hash')
 
@@ -230,7 +230,7 @@ def validate_definition(root=ROOT):
     for key in ['program_artifact_instance_authority_required','semantic_authority_baseline_required','implementation_manifest_runtime_enforcement_required','governance_receipt_evidence_required','dependency_closure_evidence_required','current_physical_hash_verification_required','profile_mandatory_contract_runtime_enforcement_required','typed_runtime_reference_authority_resolution_required','manifest_program_artifact_uid_uniqueness_required','toolchain_path_and_file_class_authority_required']:
         if ur.get(key) is not True: failures.append('required_universal_rule_not_true:'+key)
     pac=idx.get('program_artifact_contract') or {}; imc=idx.get('implementation_manifest_contract') or {}
-    for f in ['program_artifact_uid','work_unit_uid','page_uid_or_scope_uid','construction_profile','toolchain_authority_ref','canonical_name','canonical_path','canonical_filename','owner_uid','producer_stage_uid','acceptance_audit_blueprint_ref','current_hash','governance_load_receipt_ref','write_target_binding_ref','profile_contracts']:
+    for f in ['program_artifact_uid','work_unit_uid','governed_unit_uid_or_scope_uid','construction_profile','toolchain_authority_ref','canonical_name','canonical_path','canonical_filename','owner_uid','producer_stage_uid','acceptance_audit_blueprint_ref','current_hash','governance_load_receipt_ref','write_target_binding_ref','profile_contracts']:
         if f not in (pac.get('required_fields') or []): failures.append('instance_required_field_not_declared:'+f)
     for f in ['work_unit_uid','governance_revision','design_freeze_ref','program_artifacts','dependency_closure_ref','acceptance_audit_blueprint_ref','naming_registry_ref','section_registry_ref','protected_current_artifact_registry_ref','common_normative_bundle_refs','stage_normative_section_uids','item_specific_normative_section_uids','governance_load_receipt_ref','write_target_bindings','governance_load_receipt','dependency_closure','typed_identity_registry_ref']:
         if f not in (imc.get('required_fields') or []): failures.append('manifest_required_field_not_declared:'+f)

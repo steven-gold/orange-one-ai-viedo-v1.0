@@ -52,7 +52,7 @@ EXPECTED_CLEANUP_STEPS=[
  'MARK_PREDECESSOR_SUPERSEDED','APPEND_CLEANUP_LEDGER_EVENT','POST_DELETE_RESIDUAL_SCAN_IF_DELETE',
 ]
 EXPECTED_ARTIFACT_FIELDS=[
- 'program_artifact_uid','work_unit_uid','page_uid_or_scope_uid','construction_profile','canonical_name',
+ 'program_artifact_uid','work_unit_uid','governed_unit_uid_or_scope_uid','construction_profile','canonical_name',
  'canonical_path','canonical_filename','toolchain_authority_ref','owner_uid','producer_stage_uid','acceptance_audit_blueprint_ref',
  'current_hash','governance_load_receipt_ref','write_target_binding_ref','profile_contracts',
 ]
