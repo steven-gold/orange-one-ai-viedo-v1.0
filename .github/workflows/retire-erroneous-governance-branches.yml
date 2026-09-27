@@ -1,0 +1,42 @@
+name: Retire Erroneous Governance Branches
+
+on:
+  push:
+    branches:
+      - rebuild-v2.1.1
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: retire-erroneous-governance-branches
+  cancel-in-progress: false
+
+jobs:
+  retire:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          fetch-depth: 0
+      - name: Delete only the two explicitly retired governance refs
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$GITHUB_REF_NAME" = "rebuild-v2.1.1"
+          branches=(
+            "governance-v2.2.33-candidate"
+            "governance-source-v2.2.33-candidate"
+          )
+          for branch in "${branches[@]}"; do
+            test "$branch" != "$GITHUB_REF_NAME"
+            if git ls-remote --exit-code --heads origin "refs/heads/$branch" >/dev/null 2>&1; then
+              git push origin --delete "$branch"
+            fi
+            if git ls-remote --heads origin "refs/heads/$branch" | grep -q .; then
+              echo "BLOCK: retired branch still exists: $branch" >&2
+              exit 1
+            fi
+            echo "PASS: retired branch absent: $branch"
+          done
