@@ -23,5 +23,6 @@ jobs:
         run: |
           set -euo pipefail
           test "$(python -c "import yaml; d=yaml.safe_load(open('governance/source-successor/SOURCE_PACKAGE_CANDIDATE.yaml')) or {}; print(d.get('status'))")" = "UNSIGNED_NOT_CURRENT"
+          python governance/source-successor/materialize_derived_source_package.py --check
           python governance/source-successor/refresh_source_checksums.py --check
           python governance/ci/validate_source_package_candidate.py

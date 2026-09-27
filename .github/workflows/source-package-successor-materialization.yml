@@ -1,0 +1,36 @@
+name: Source Package Successor Materialization
+on:
+  push:
+    branches:
+      - governance-source-v2.2.33-candidate
+permissions:
+  contents: write
+concurrency:
+  group: source-package-successor-materialization-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  materialize:
+    runs-on: ubuntu-latest
+    if: github.actor != 'github-actions[bot]'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: governance-source-v2.2.33-candidate
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python -m pip install --disable-pip-version-check PyYAML==6.0.2
+      - name: Materialize internal derived source artifacts
+        run: |
+          set -euo pipefail
+          python governance/source-successor/materialize_derived_source_package.py
+          if git diff --quiet; then
+            echo "No derived changes"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add             .github/governance-source/active/source/10_REGISTRY/SEMANTIC_AUTHORITY_BASELINE.yaml             .github/governance-source/active/source/09_TESTS/governance/validate_reference_semantics.py             .github/governance-source/active/source/11_EVIDENCE/audit/AUDIT_BASELINE.yaml             .github/governance-source/active/source/11_EVIDENCE/audit/generated/GOVERNANCE_REQUIREMENT_INDEX.json             .github/governance-source/active/source/10_REGISTRY/GOVERNANCE_ROOT_MANIFEST.yaml             .github/governance-source/active/source/CHECKSUMS.sha256
+          git commit -m "chore(source-candidate): materialize derived source package"
+          git push origin HEAD:governance-source-v2.2.33-candidate

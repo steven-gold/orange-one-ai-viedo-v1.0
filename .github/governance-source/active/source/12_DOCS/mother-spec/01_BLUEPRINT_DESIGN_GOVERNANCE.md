@@ -1697,7 +1697,7 @@ The human-readable design deliverable MUST be self-contained enough for a review
 
 This contract governs Basic Design documentation only. It does not require or define source code, construction delta, implementation manifest, runtime verification, deployment, or production evidence.
 
-<!-- SECTION_UID: WEB-GOV-01-S084 -->
+<!-- SECTION_UID: WEB-GOV-01-S083A -->
 ## 83A. Basic Design Stepwise Authoring and Review Flow
 
 Basic Design execution MUST use the universal stepwise contract in WEB-GOV-03-S062A. A page/system design MUST NOT be produced as one bulk artifact and then treated as complete because the final document exists.
@@ -1706,6 +1706,7 @@ For each applicable Basic Design domain, execution MUST resolve the denominator 
 
 The final human-readable Word/DOCX is the reviewed source deliverable, not a substitute for missing domain-level validation. Before Word/DOCX source freeze, every applicable Basic Design domain and the final denominator reconciliation MUST PASS. Missing fields or bindings MUST be repaired at their owning Basic Design step, not deferred to Word/YAML projection or a Product Stage.
 
+<!-- SECTION_UID: WEB-GOV-01-S084 -->
 ## 84. 基本設計原子化實體化與禁止摘要替代 Gate / Atomic Basic Design Materialization and No-Summary Substitution
 
 Basic Design completeness is measured by executable-detail coverage of the complete applicable denominator, not by document page count, prose length, visual attractiveness, section count, or a high-level declaration that an area is covered.

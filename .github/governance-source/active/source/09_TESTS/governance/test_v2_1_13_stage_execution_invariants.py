@@ -127,7 +127,7 @@ res.append(case('stage07_to_stage11_execution_targets_registered', all(binding_r
 res.append(case('successor_binding_classes_map_to_consuming_operations', set(binding_map.get('STAGE-05') or {})==set(binding_req.get('STAGE-05') or []) and set(binding_map.get('STAGE-11') or {})==set(binding_req.get('STAGE-11') or [])))
 res.append(case('current_state_conflict_cannot_be_overridden_by_terminal_success', state_contract.get('pass_requires_completed_operation_set_exact_registered_stage_operations') is True and state_contract.get('terminal_receipt_or_outer_run_success_may_override_conflict') is False))
 res.append(case('terminal_closure_revalidates_nonempty_current_matrix', matrix_contract.get('matrix_file_must_be_nonempty_parseable_mapping') is True and matrix_contract.get('matrix_rows_must_be_nonempty') is True and matrix_contract.get('matrix_validation_must_run_again_at_terminal_closure') is True and matrix_contract.get('terminal_receipt_or_outer_run_success_may_override_invalid_matrix') is False))
-stage_steps_doc=yaml.safe_load((PKG.parents[2]/'governance/execution-domains/STAGE/STEPS.yaml').read_text(encoding='utf-8')) or {}
+stage_steps_doc=yaml.safe_load((PKG.parents[3]/'governance/execution-domains/STAGE/STEPS.yaml').read_text(encoding='utf-8')) or {}
 closure_contract=stage_steps_doc.get('stage_closure_contract') or {}
 audit_catalog_doc=yaml.safe_load((PKG/'10_REGISTRY/AUDIT_CATALOG.yaml').read_text(encoding='utf-8')) or {}
 audit14=next((x for x in audit_catalog_doc.get('items') or [] if x.get('audit_item_uid')=='AUD-GOV-014'),{})
