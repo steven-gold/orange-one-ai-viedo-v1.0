@@ -113,7 +113,7 @@ with tempfile.TemporaryDirectory() as td:
     ev={'NOT_PROTECTED_CURRENT':{'recomputed':True},'NOT_IMMUTABLE_RAW_SOURCE':{'recomputed':True},'ZERO_CURRENT_OWNER_REFERENCE':{'recomputed':True},'ZERO_UNMIGRATED_REVERSE_DEPENDENCY':{'recomputed':True},'REPLACEMENT_VALID_IF_SUPERSEDED':{'not_applicable':True},'CLEANUP_LEDGER_ENTRY':{'event_uid':'CLEANUP-TEST-VALID-001'},'POST_DELETE_RESIDUAL_SCAN':{'required_after_delete':True,'validator':'validate_cleanup_protection.py'}}
     results.append(case('cleanup_evidence_backed_valid_authorization',clean.validate(r,[{'path':target,'proof_evidence':ev}])['status']=='PASS'))
 
-for target in ['10_REGISTRY/REFERENCE_RULE_REGISTRY.yaml','09_TESTS/governance/validate_reference_semantics.py','09_TESTS/governance/test_v2_1_0_regressions.py','11_EVIDENCE/audit/AUDIT_BASELINE.yaml']:
+for target in ['10_REGISTRY/REFERENCE_RULE_REGISTRY.yaml','09_TESTS/governance/validate_reference_semantics.py','09_TESTS/governance/test_v2_1_0_regressions.py','10_REGISTRY/GOVERNANCE_ACCEPTANCE_AUDIT_BLUEPRINT.yaml']:
     with tempfile.TemporaryDirectory() as td:
         r=Path(td)/'pkg'; shutil.copytree(PKG,r); d=load(r/'10_REGISTRY/GOVERNANCE_ROOT_MANIFEST.yaml')
         for g in ['current_artifacts','validators']: d[g]=[x for x in d[g] if x.get('path')!=target]
