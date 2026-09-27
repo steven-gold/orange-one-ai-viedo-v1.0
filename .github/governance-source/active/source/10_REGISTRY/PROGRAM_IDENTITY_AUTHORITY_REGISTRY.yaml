@@ -12,8 +12,8 @@ policy:
   cross_type_substitution: BLOCK
   registered_program_artifact_fields_are_write_target_authority: true
   framework_reserved_filename_requires_explicit_allowance: true
-  product_neutral_reference_identity_required: true
-  product_specific_identity_in_common_registry: BLOCK
+  governed_unit_neutral_reference_identity_required: true
+  execution_target_specific_identity_in_common_registry: BLOCK
 identities:
 - uid: PA-DEMO-GOVERNED-UNIT-RUNTIME-001
   identity_type: PROGRAM_ARTIFACT
@@ -28,20 +28,20 @@ identities:
   owner_uid: OWNER-DEMO-RUNTIME
   producer_stage_uid: STAGE-05
   toolchain_reserved_filename_authorized: false
-  example_fixture_role: PRODUCT_NEUTRAL_REFERENCE_IDENTITY
+  example_fixture_role: GOVERNED_UNIT_NEUTRAL_REFERENCE_IDENTITY
 - uid: WU-DEMO-GOVERNED-UNIT-001
   identity_type: WORK_UNIT
   status: CURRENT
-  example_fixture_role: PRODUCT_NEUTRAL_REFERENCE_IDENTITY
+  example_fixture_role: GOVERNED_UNIT_NEUTRAL_REFERENCE_IDENTITY
 - uid: DEMO-GOVERNED-UNIT-001
   identity_type: GOVERNED_UNIT_OR_SCOPE
   status: CURRENT
-  example_fixture_role: PRODUCT_NEUTRAL_REFERENCE_IDENTITY
+  example_fixture_role: GOVERNED_UNIT_NEUTRAL_REFERENCE_IDENTITY
 - uid: OWNER-DEMO-RUNTIME
   identity_type: OWNER
   status: CURRENT
-  example_fixture_role: PRODUCT_NEUTRAL_REFERENCE_IDENTITY
+  example_fixture_role: GOVERNED_UNIT_NEUTRAL_REFERENCE_IDENTITY
 - uid: TEST-DEMO-RUNTIME-001
   identity_type: TEST
   status: PLANNED
-  example_fixture_role: PRODUCT_NEUTRAL_REFERENCE_IDENTITY
+  example_fixture_role: GOVERNED_UNIT_NEUTRAL_REFERENCE_IDENTITY

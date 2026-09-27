@@ -37,12 +37,12 @@ scope:
   - ENTITY_RELATIONSHIP
   - LIFECYCLE_OPERATION
   - UI_OPERATION_BINDING
-  - PRODUCT_PROFILE
+  - EXECUTION_PROFILE
   stage_specific_exception_without_registered_authority: BLOCK
 provenance:
   role: GENERALIZED_GOVERNANCE_RULE_LINEAGE
-  product_specific_execution_evidence_is_current_authority: false
-  product_specific_marker_in_rule_definition: FORBIDDEN
+  execution_target_specific_evidence_is_current_authority: false
+  execution_target_specific_marker_in_rule_definition: FORBIDDEN
   generalization_rule: REPEATABLE_DEFECT_MUST_BE_REPAIRED_AT_COMMON_INVARIANT_LAYER
 invariants:
   RELATION_SEMANTIC_SEPARATION:
@@ -299,19 +299,19 @@ invariants:
     common_semantic_dependency: false
     inherits_common_invariant: SOURCE_CONTROL_SINGLE_SPEC_AUTHORITY
     non_github_equivalent_single_authority_adapter_allowed: true
-  PRODUCT_NEUTRAL_APPLICABILITY:
-    common_rule_may_require_product_name: false
-    common_rule_may_require_product_page_uid_or_route: false
-    common_rule_may_require_product_repository: false
-    common_rule_may_require_product_provider_or_database_schema: false
-    product_specific_material_allowed_contexts:
+  COMMON_APPLICABILITY_NEUTRALITY:
+    common_rule_may_require_execution_target_name: false
+    common_rule_may_require_execution_target_governed_unit_uid_or_route: false
+    common_rule_may_require_execution_target_repository: false
+    common_rule_may_require_execution_target_provider_or_data_schema: false
+    execution_target_specific_material_allowed_contexts:
     - EMPIRICAL_PROVENANCE
     - SYNTHETIC_TEST_FIXTURE
     - COMPATIBILITY_ALIAS
-    - PRODUCT_PROFILE_EXTENSION
-    product_profile_can_add_stricter_rules: true
-    product_profile_can_weaken_common_rule: false
-    product_profile_can_replace_common_invariant: false
+    - EXECUTION_PROFILE_EXTENSION
+    execution_profile_can_add_stricter_rules: true
+    execution_profile_can_weaken_common_rule: false
+    execution_profile_can_replace_common_invariant: false
     binding_substitution_test_required: true
     binding_substitution_failure: GOVERNANCE_DEFECT
   GOVERNED_ENTITY_INVENTORY_COMPLETENESS:
@@ -488,7 +488,7 @@ invariants:
         score_range: 0_TO_39_OR_DUPLICATE_OR_UNSUPPORTED_SCOPE
         auto_add: false
     score_may_override_authority_gap: false
-    score_may_create_new_product_scope: false
+    score_may_create_new_governed_scope: false
     high_utility_without_required_authority_is_auto_add: false
     duplicate_or_existing_equivalent_capability: REUSE_OR_REJECT
     missing_evidence_or_unscored_candidate: BLOCK_AUTO_COMPLETION
@@ -526,7 +526,7 @@ invariants:
       new_out_of_closure_dependency: 0
     continue_after_stop_condition: BLOCK
     denominator_growth_without_authority_trace: UNAUTHORIZED_SCOPE_EXPANSION
-    completion_may_expand_product_scope: false
+    completion_may_expand_governed_scope: false
   FUNCTION_VISUAL_SYNCHRONIZED_COMPLETION:
     required_artifact: FUNCTION_VISUAL_IMPACT_MATRIX
     applies_to_user_visible_or_user_observable_required_operations: true
@@ -1061,7 +1061,7 @@ invariants:
     permission_enabled_disabled_hidden_reason_semantics_required_when_applicable: true
     cross_governed_unit_exit_identity_trigger_entry_failure_resume_back_required_when_applicable: true
     undefined_required_detail_is_design_gap: true
-    ai_may_invent_missing_product_decision: false
+    ai_may_invent_missing_authority_decision: false
     downstream_evidence_may_retroactively_close_incomplete_basic_design: false
   CONTROL_VS_SYSTEM_TRIGGER_RESOLUTION:
     required_before_no_control_action_gap_escalation: true
@@ -1100,7 +1100,7 @@ invariants:
     history_role:
     - PROVENANCE
     - NEGATIVE_REGRESSION
-    historical_commit_or_generated_output_may_fill_current_product_value: false
+    historical_commit_or_generated_output_may_fill_current_authority_value: false
     historical_stage_result_may_receive_current_completion_credit: false
     fresh_replay_source: REGISTERED_IMMUTABLE_INPUTS_PLUS_CURRENT_AUTHORITY
     missing_current_input: EXPOSE_OWNING_GAP_NOT_HISTORY_FALLBACK
@@ -1639,7 +1639,7 @@ invariants:
     invariant_uid: GOV-INV-DETERMINISTIC-STAGE-AUDIT-001
     purpose: SAME_COMPLETE_AUDIT_INPUT_MUST_PRODUCE_SAME_COMPLETE_AUDIT_RESULT
     applies_to_all_registered_stages: true
-    reusable_product_neutral_contract: true
+    reusable_governed_unit_neutral_contract: true
     same_complete_input_same_complete_result: true
     auditor_model_or_identity_may_change_result: false
     chat_context_may_change_result: false
@@ -1974,7 +1974,7 @@ acceptance:
   regression_asset: 09_TESTS/governance/test_v2_1_13_stage_execution_invariants.py
   fail_closed: true
 applicability:
-  common_spec_is_product_neutral: true
+  common_spec_is_governed_unit_neutral: true
   supported_adoption_scope:
   - WEBSITE
   - WEB_APPLICATION
@@ -1982,13 +1982,13 @@ applicability:
   - INFORMATION_SYSTEM
   - WORKFLOW_PLATFORM
   - COMPARABLE_SOFTWARE_SYSTEM
-  specific_product_identity_required_to_interpret_common_rules: false
-  product_profile_extension_allowed: true
-  product_profile_may_weaken_common_invariants: false
-  product_specific_examples_role: EMPIRICAL_PROVENANCE_OR_FIXTURE_ONLY
-  product_specific_binding_in_common_normative_rule: BLOCK
+  specific_execution_target_identity_required_to_interpret_common_rules: false
+  execution_profile_extension_allowed: true
+  execution_profile_may_weaken_common_invariants: false
+  execution_target_specific_examples_role: EMPIRICAL_PROVENANCE_OR_FIXTURE_ONLY
+  execution_target_specific_binding_in_common_normative_rule: BLOCK
   binding_substitution_audit_required_before_freeze: true
   bounded_functional_completion_is_common_rule: true
   visual_sync_is_common_rule: true
   interaction_topology_is_common_rule: true
-  ai_interaction_profile_is_conditional_not_product_requirement: true
+  ai_interaction_profile_is_conditional_not_universal_requirement: true

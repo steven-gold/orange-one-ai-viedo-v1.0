@@ -107,7 +107,7 @@ def validate(root=ROOT):
     if pcs.get('canonical_field_name_exact') is not True or pcs.get('field_type_exact') is not True or pcs.get('alias_or_legacy_field_fallback') is not False or (pcs.get('mismatch') != 'PRODUCER_CONSUMER_SCHEMA_MISMATCH') or pcs.get('observed_bug_field_examples_may_define_common_schema') is not False or pcs.get('stage_specific_field_alias_examples_may_define_common_schema') is not False:
         failures.append('producer_consumer_schema_identity_incomplete')
     hist = inv.get('NO_HISTORY_PRODUCT_VALUE_FALLBACK') or {}
-    if hist.get('historical_commit_or_generated_output_may_fill_current_product_value') is not False or hist.get('historical_stage_result_may_receive_current_completion_credit') is not False or hist.get('fresh_replay_source') != 'REGISTERED_IMMUTABLE_INPUTS_PLUS_CURRENT_AUTHORITY':
+    if hist.get('historical_commit_or_generated_output_may_fill_current_authority_value') is not False or hist.get('historical_stage_result_may_receive_current_completion_credit') is not False or hist.get('fresh_replay_source') != 'REGISTERED_IMMUTABLE_INPUTS_PLUS_CURRENT_AUTHORITY':
         failures.append('no_history_product_value_fallback_incomplete')
     order = inv.get('TASK_LAYER_EFFECTFUL_TRANSITION_ORDER') or {}
     if order.get('materializer_or_environment_may_force_primary_task_layer') is not False or order.get('nearby_stage_or_retry_may_skip_resolution') is not False or len(order.get('required_order') or []) != 6:

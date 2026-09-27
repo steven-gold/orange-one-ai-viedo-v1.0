@@ -23,16 +23,16 @@ def validate(root=ROOT):
     reg=load(root,'10_REGISTRY/STAGE_EXECUTION_INVARIANT_REGISTRY.yaml')
     inv=reg.get('invariants') or {}
     app=reg.get('applicability') or {}
-    if app.get('common_spec_is_product_neutral') is not True: failures.append('common_spec_not_declared_product_neutral')
-    if app.get('specific_product_identity_required_to_interpret_common_rules') is not False: failures.append('specific_product_identity_still_required')
-    if app.get('product_profile_may_weaken_common_invariants') is not False: failures.append('product_profile_can_weaken_common_invariants')
-    if app.get('product_specific_binding_in_common_normative_rule')!='BLOCK': failures.append('common_product_binding_not_blocked')
+    if app.get('common_spec_is_governed_unit_neutral') is not True: failures.append('common_spec_not_declared_product_neutral')
+    if app.get('specific_execution_target_identity_required_to_interpret_common_rules') is not False: failures.append('specific_product_identity_still_required')
+    if app.get('execution_profile_may_weaken_common_invariants') is not False: failures.append('product_profile_can_weaken_common_invariants')
+    if app.get('execution_target_specific_binding_in_common_normative_rule')!='BLOCK': failures.append('common_product_binding_not_blocked')
     if app.get('binding_substitution_audit_required_before_freeze') is not True: failures.append('binding_substitution_audit_not_required')
-    pna=inv.get('PRODUCT_NEUTRAL_APPLICABILITY') or {}
-    for k in ['common_rule_may_require_product_name','common_rule_may_require_product_page_uid_or_route','common_rule_may_require_product_repository','common_rule_may_require_product_provider_or_database_schema','product_profile_can_weaken_common_rule','product_profile_can_replace_common_invariant']:
+    pna=inv.get('COMMON_APPLICABILITY_NEUTRALITY') or {}
+    for k in ['common_rule_may_require_execution_target_name','common_rule_may_require_execution_target_governed_unit_uid_or_route','common_rule_may_require_execution_target_repository','common_rule_may_require_execution_target_provider_or_data_schema','execution_profile_can_weaken_common_rule','execution_profile_can_replace_common_invariant']:
         if pna.get(k) is not False: failures.append('product_neutral_rule_not_false:'+k)
     if pna.get('binding_substitution_test_required') is not True or pna.get('binding_substitution_failure')!='GOVERNANCE_DEFECT': failures.append('binding_substitution_contract_invalid')
-    if set(pna.get('product_specific_material_allowed_contexts') or [])!={'EMPIRICAL_PROVENANCE','SYNTHETIC_TEST_FIXTURE','COMPATIBILITY_ALIAS','PRODUCT_PROFILE_EXTENSION'}: failures.append('product_specific_allowed_contexts_invalid')
+    if set(pna.get('execution_target_specific_material_allowed_contexts') or [])!={'EMPIRICAL_PROVENANCE','SYNTHETIC_TEST_FIXTURE','COMPATIBILITY_ALIAS','EXECUTION_PROFILE_EXTENSION'}: failures.append('product_specific_allowed_contexts_invalid')
 
     ei=inv.get('GOVERNED_ENTITY_INVENTORY_COMPLETENESS') or {}
     if ei.get('applicability')!='CONDITIONAL_BY_CURRENT_AUTHORITY_AND_GOVERNED_UNIT_SEMANTICS' or ei.get('required_when_applicable') is not True or ei.get('not_applicable_requires_authority_evidence') is not True or ei.get('required_artifact')!='GOVERNED_ENTITY_INVENTORY': failures.append('entity_inventory_contract_missing')
@@ -65,7 +65,7 @@ def validate(root=ROOT):
 
     fa=inv.get('FUNCTION_ADMISSION_NECESSITY_AND_UTILITY') or {}
     if fa.get('required_artifact')!='FUNCTION_ADMISSION_SCORECARD' or fa.get('required_for_every_auto_or_ai_proposed_functional_addition') is not True: failures.append('function_admission_scorecard_contract_missing')
-    if fa.get('score_scale')!='0_TO_100_DIAGNOSTIC_NOT_AUTHORITY' or fa.get('score_may_override_authority_gap') is not False or fa.get('score_may_create_new_product_scope') is not False: failures.append('function_admission_score_authority_guard_invalid')
+    if fa.get('score_scale')!='0_TO_100_DIAGNOSTIC_NOT_AUTHORITY' or fa.get('score_may_override_authority_gap') is not False or fa.get('score_may_create_new_governed_scope') is not False: failures.append('function_admission_score_authority_guard_invalid')
     dims=fa.get('score_dimensions') or {}
     if sum(int((v or {}).get('max',0)) for v in dims.values())!=100: failures.append('function_admission_score_not_100')
     for k in ['AUTHORITY_NECESSITY','TASK_COMPLETION_CRITICALITY','DEPENDENCY_BLOCKING_IMPACT','ERROR_RISK_REDUCTION','USER_REACH_OR_FREQUENCY','REUSE_ACROSS_REQUIRED_FLOWS','ACCESSIBILITY_OR_RECOVERY_IMPACT']:
@@ -81,7 +81,7 @@ def validate(root=ROOT):
     for k in ['generic_crud_symmetry_expansion','sibling_feature_symmetry_expansion','nice_to_have_or_best_practice_only_expansion']:
         if bfc.get(k)!='BLOCK': failures.append('bounded_completion_expansion_not_blocked:'+k)
     if bfc.get('recursive_cycle_detection_required') is not True or bfc.get('dependency_cycle')!='BLOCK_AND_ESCALATE' or bfc.get('continue_after_stop_condition')!='BLOCK': failures.append('bounded_completion_cycle_or_stop_guard_invalid')
-    if bfc.get('denominator_growth_without_authority_trace')!='UNAUTHORIZED_SCOPE_EXPANSION' or bfc.get('completion_may_expand_product_scope') is not False: failures.append('bounded_completion_denominator_scope_guard_invalid')
+    if bfc.get('denominator_growth_without_authority_trace')!='UNAUTHORIZED_SCOPE_EXPANSION' or bfc.get('completion_may_expand_governed_scope') is not False: failures.append('bounded_completion_denominator_scope_guard_invalid')
 
     vis=inv.get('FUNCTION_VISUAL_SYNCHRONIZED_COMPLETION') or {}
     visual_fields={'governed_entity_or_scope','operation_uid','visual_section_or_surface','component_or_control_identity','interaction_entry','state_binding','loading_or_pending_state','permission_or_disabled_state','success_feedback','error_feedback','recovery_feedback','version_or_revision_visibility_when_applicable','responsive_or_overflow_behavior','i18n_label_ref_when_applicable','accessibility_semantics','visual_authority_ref'}
@@ -208,7 +208,7 @@ def validate(root=ROOT):
             if marker in text: failures.append('provider_binding_in_common_mother_spec:'+rel+':'+marker)
     # Common program identity registry must use neutral example identities.
     pr=load(root,'10_REGISTRY/PROGRAM_IDENTITY_AUTHORITY_REGISTRY.yaml'); pt=(root/'10_REGISTRY/PROGRAM_IDENTITY_AUTHORITY_REGISTRY.yaml').read_text(encoding='utf-8')
-    if (pr.get('policy') or {}).get('product_neutral_reference_identity_required') is not True or (pr.get('policy') or {}).get('product_specific_identity_in_common_registry')!='BLOCK': failures.append('program_identity_product_neutral_policy_missing')
+    if (pr.get('policy') or {}).get('governed_unit_neutral_reference_identity_required') is not True or (pr.get('policy') or {}).get('execution_target_specific_identity_in_common_registry')!='BLOCK': failures.append('program_identity_product_neutral_policy_missing')
     for marker in forbidden_markers:
         if marker in pt: failures.append('product_binding_in_program_identity_registry:'+marker)
     # Product-specific material is legal only in explicit provenance or an explicitly
@@ -220,8 +220,8 @@ def validate(root=ROOT):
         if has_marker and not allowed:
             failures.append('product_marker_outside_allowed_profile_or_provenance:'+('.'.join(path)))
     if prov.get('role')!='GENERALIZED_GOVERNANCE_RULE_LINEAGE': failures.append('provenance_role_invalid')
-    if prov.get('product_specific_execution_evidence_is_current_authority') is not False: failures.append('product_evidence_current_authority_leak')
-    if prov.get('product_specific_marker_in_rule_definition')!='FORBIDDEN': failures.append('product_marker_rule_definition_not_forbidden')
+    if prov.get('execution_target_specific_evidence_is_current_authority') is not False: failures.append('product_evidence_current_authority_leak')
+    if prov.get('execution_target_specific_marker_in_rule_definition')!='FORBIDDEN': failures.append('product_marker_rule_definition_not_forbidden')
     if prov.get('generalization_rule')!='REPEATABLE_DEFECT_MUST_BE_REPAIRED_AT_COMMON_INVARIANT_LAYER': failures.append('provenance_generalization_rule_invalid')
     # Generic governance runtime must not require legacy product-named environment variables.
     runtime_text=(root/'09_TESTS/governance/validate_governance.py').read_text(encoding='utf-8')
@@ -260,7 +260,7 @@ def validate(root=ROOT):
     dr=inv.get('BASIC_DESIGN_DENOMINATOR_RECONCILIATION') or {}
     if set(dr.get('required_artifacts') or [])!={'BASIC_DESIGN_DENOMINATOR_SNAPSHOT','BASIC_DESIGN_DELIVERABLE_RECONCILIATION'} or dr.get('machine_and_human_denominator_identity_required') is not True or dr.get('uid_level_reconciliation_required') is not True or any(int(dr.get(k,-1))!=0 for k in ['missing_required_uid_count','duplicate_credit_count','summary_only_credit_count','representative_sample_credit_count','human_machine_denominator_mismatch_count','unclassified_applicability_count']) or dr.get('mismatch')!='BLOCK': failures.append('basic_design_denominator_reconciliation_invalid')
     ed=inv.get('BASIC_DESIGN_EXECUTION_DETAIL_COMPLETENESS') or {}
-    if len(ed.get('required_chain') or [])<20 or ed.get('undefined_required_detail_is_design_gap') is not True or ed.get('ai_may_invent_missing_product_decision') is not False or ed.get('downstream_evidence_may_retroactively_close_incomplete_basic_design') is not False: failures.append('basic_design_execution_detail_completeness_invalid')
+    if len(ed.get('required_chain') or [])<20 or ed.get('undefined_required_detail_is_design_gap') is not True or ed.get('ai_may_invent_missing_authority_decision') is not False or ed.get('downstream_evidence_may_retroactively_close_incomplete_basic_design') is not False: failures.append('basic_design_execution_detail_completeness_invalid')
     for k in ['atomic_basic_design_materialization_required','complete_denominator_enumeration_required','row_level_design_binding_required','basic_design_denominator_snapshot_required','human_machine_design_deliverable_reconciliation_required','no_summary_substitution_required','no_representative_sample_credit_required','execution_detail_chain_complete_required','zero_silent_omission_required','zero_summary_only_credit_required','zero_representative_sample_credit_required','zero_human_machine_denominator_mismatch_required','zero_unclassified_applicability_required']:
         if c.get(k) is not True: failures.append('acceptance_atomic_design_rule_missing:'+k)
     if c.get('missing_atomic_design_row')!='BLOCK' or c.get('missing_required_design_binding')!='BLOCK' or c.get('summary_only_design_completion_claim')!='BLOCK': failures.append('acceptance_atomic_design_fail_closed_invalid')

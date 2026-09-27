@@ -305,7 +305,7 @@ else:
     _required_generic={
       'fixed_scope':'SCHEMA_KEYS_TYPES_ORDER_AND_FIDELITY_INVARIANTS_ONLY',
       'content_denominator':'DYNAMIC_FROM_EACH_IMMUTABLE_RAW_SOURCE',
-      'fixed_product_page_uid_enum':'FORBIDDEN',
+      'fixed_governed_unit_uid_enum':'FORBIDDEN',
       'fixed_page_type_enum':'FORBIDDEN',
       'fixed_business_entity_or_function_enum':'FORBIDDEN',
       'fixed_control_field_or_visual_value_enum':'FORBIDDEN',
