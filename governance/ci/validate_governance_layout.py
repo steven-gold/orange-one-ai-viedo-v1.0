@@ -124,6 +124,58 @@ def verify_candidate_authorization(reg, resolved):
     if ref_name and ref_name!=branch:
         errors.append('CANDIDATE_REGISTRY_BRANCH_RUNTIME_REF_MISMATCH:'+ref_name+'!='+branch)
 
+def verify_supplemental_authorizations(reg):
+    roles=reg.get('branch_role_contract') or {}
+    branch=str(reg.get('branch') or '')
+    if roles.get(branch)!='GOVERNANCE_REVISION_CANDIDATE':
+        return
+    identity=reg.get('governance_identity') or {}
+    records=identity.get('supplemental_authorization_records') or []
+    if not isinstance(records,list):
+        errors.append('SUPPLEMENTAL_AUTHORIZATION_RECORDS_INVALID')
+        return
+    token=os.environ.get('GITHUB_TOKEN','').strip()
+    headers={'Accept':'application/vnd.github+json','User-Agent':'ACPOS-Governance-Validator'}
+    if token:
+        headers['Authorization']='Bearer '+token
+    for idx,record in enumerate(records):
+        if not isinstance(record,dict):
+            errors.append('SUPPLEMENTAL_AUTHORIZATION_RECORD_INVALID:'+str(idx)); continue
+        url=str(record.get('record_url') or '')
+        match=re.fullmatch(r'https://github\.com/([^/]+)/([^/]+)/issues/(\d+)',url)
+        if not match:
+            errors.append('SUPPLEMENTAL_AUTHORIZATION_URL_INVALID:'+str(idx)); continue
+        owner,repo_name,issue_number=match.groups()
+        try:
+            with urllib.request.urlopen(urllib.request.Request(f'https://api.github.com/repos/{owner}/{repo_name}/issues/{issue_number}',headers=headers),timeout=20) as response:
+                issue=json.loads(response.read().decode('utf-8'))
+        except Exception as exc:
+            errors.append('SUPPLEMENTAL_AUTHORIZATION_UNVERIFIABLE:'+str(idx)+':'+type(exc).__name__); continue
+        if str((issue.get('user') or {}).get('login') or '')!=owner:
+            errors.append('SUPPLEMENTAL_AUTHORIZATION_ACTOR_MISMATCH:'+str(idx))
+        body=str(issue.get('body') or '')
+        if str(record.get('candidate_branch') or '')!=branch:
+            errors.append('SUPPLEMENTAL_AUTHORIZATION_BRANCH_DRIFT:'+str(idx))
+        for scope in map(str,record.get('authorized_scope') or []):
+            if scope not in body:
+                errors.append('SUPPLEMENTAL_AUTHORIZATION_SCOPE_MISSING:'+str(idx)+':'+scope)
+        base=str(record.get('authorization_base_head') or '')
+        if len(base)!=40:
+            errors.append('SUPPLEMENTAL_AUTHORIZATION_BASE_HEAD_INVALID:'+str(idx)); continue
+        try:
+            subprocess.check_call(['git','merge-base','--is-ancestor',base,'HEAD'],cwd=ROOT,stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL)
+            commits=subprocess.check_output(['git','rev-list','--reverse',base+'..HEAD'],cwd=ROOT,text=True).splitlines()
+            created=datetime.fromisoformat(str(issue.get('created_at') or '').replace('Z','+00:00')).astimezone(timezone.utc)
+            updated=datetime.fromisoformat(str(issue.get('updated_at') or '').replace('Z','+00:00')).astimezone(timezone.utc)
+        except Exception:
+            errors.append('SUPPLEMENTAL_AUTHORIZATION_ANCESTRY_OR_TIME_INVALID:'+str(idx)); continue
+        if not commits:
+            errors.append('SUPPLEMENTAL_AUTHORIZATION_MUTATION_COMMIT_SET_EMPTY:'+str(idx)); continue
+        first_time_text=subprocess.check_output(['git','show','-s','--format=%cI',commits[0]],cwd=ROOT,text=True).strip()
+        first_time=datetime.fromisoformat(first_time_text.replace('Z','+00:00')).astimezone(timezone.utc)
+        if not (created < first_time and updated < first_time):
+            errors.append('SUPPLEMENTAL_AUTHORIZATION_NOT_PREEXISTING:'+str(idx))
+
 manifest=yaml.safe_load((ROOT/'governance/specifications/current/SPECIFICATION_MANIFEST.yaml').read_text(encoding='utf-8')) or {}
 if manifest.get('current_governance_identity_source')!='governance/specifications/REGISTRY.yaml':
     errors.append('SPECIFICATION_MANIFEST_IDENTITY_SOURCE_DRIFT')
@@ -167,6 +219,7 @@ if (reg.get('branch_role_contract') or {}).get(str(reg.get('branch') or ''))=='G
         errors.append('CANDIDATE_VALIDATION_BUNDLE_DIGEST_PROJECTION_DRIFT')
 
 verify_candidate_authorization(reg,resolved)
+verify_supplemental_authorizations(reg)
 
 try:
     import stage_execution_engine as _stage_engine

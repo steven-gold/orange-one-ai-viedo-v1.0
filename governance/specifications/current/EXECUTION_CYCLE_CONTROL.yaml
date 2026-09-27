@@ -443,3 +443,31 @@ auditor_implementation_independence:
   formal_independence_without_three_distinct_implementations: NOT_VERIFIED
   formal_promotion_requires_verified_independent_implementation_evidence: true
   mismatch_disposition: AUDIT_DETERMINISM_CONTRACT_FAILURE
+immutable_source_package_defect_reentry:
+  canonical_rule_uid: GOV-RULE-GOVERNANCE-CANDIDATE-BOOTSTRAP-001
+  authorization_record: https://github.com/steven-gold/orange-one-ai-viedo-v1.0/issues/52
+  trigger: CURRENT_VALIDATION_PROVES_DEFECT_IN_EXTERNALLY_TRUSTED_IMMUTABLE_PREDECESSOR_SOURCE
+  defect_may_be_reclassified_as_generic_regression_failure_only: false
+  required_classification: SOURCE_PACKAGE_DEFECT
+  canonical_owner: SOURCE_PACKAGE_SUCCESSOR
+  required_state: BLOCKED_SOURCE_PACKAGE_SUCCESSOR_REQUIRED
+  earliest_legal_reentry: SOURCE_PACKAGE_SUCCESSOR_MATERIALIZATION
+  predecessor_mutation: FORBIDDEN
+  candidate_overlay_may_claim_source_defect_fixed_without_successor_source_bytes: false
+  independent_resign_required_before_current_admission: true
+  current_validation_must_preserve_exact_defect_identity: true
+  product_stage_execution_before_resolution: BLOCK
+  governance_promotion_before_resolution: BLOCK
+
+successor_candidate_state_resolution:
+  canonical_rule_uid: GOV-RULE-GOVERNANCE-CANDIDATE-BOOTSTRAP-001
+  current_candidate_identity_source: governance/specifications/REGISTRY.yaml
+  current_validation_truth_source: EXACT_HEAD_REQUIRED_WORKFLOW_RECEIPTS
+  current_promotion_readiness_source: governance/ci/validate_governance_candidate_promotion_readiness.py
+  retired_predecessor_candidate_state_file_is_current_source: false
+  retired_predecessor_run_ids_are_current_evidence: false
+  deleted_historical_evidence_must_be_restored_for_current_validation: false
+  predecessor_history_when_needed_for_regression: ISOLATED_NON_AUTHORITY_FIXTURE
+  current_consumer_reference_to_removed_predecessor_state: BLOCK_AND_MIGRATE_CONSUMER
+  historical_fixture_current_completion_credit: 0
+  exact_head_external_receipt_current_completion_credit: GOVERNED_BY_PROMOTION_READINESS_ONLY
