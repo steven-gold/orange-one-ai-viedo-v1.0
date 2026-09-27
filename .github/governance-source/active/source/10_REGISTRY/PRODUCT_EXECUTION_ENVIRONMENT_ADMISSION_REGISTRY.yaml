@@ -54,10 +54,10 @@ product_execution_admission_contracts:
     moving_governance_branch_ref_may_grant_product_execution_credit: false
     candidate_governance_formal_product_execution_credit: 0
     product_stage_workflow_governance_checkout_mode: EXACT_SELECTED_RELEASE_COMMIT_ONLY
-    governance_load_receipt_artifact_type: GOVERNANCE_LOAD_RECEIPT
-    governance_load_receipt_filename: GOVERNANCE_LOAD_RECEIPT.yaml
-    governance_load_receipt_required_fields: [artifact_type, status, stage_uid, work_unit_uid, selected_governance_ref, governance_uid, governance_revision, governance_commit_sha, governance_tree_sha, governance_root_manifest_sha256, effective_normative_set_sha256, loader_uid, loaded_at]
-    governance_load_receipt_status: PASS
+    product_released_governance_load_receipt_artifact_type: PRODUCT_RELEASED_GOVERNANCE_LOAD_RECEIPT
+    product_released_governance_load_receipt_filename: PRODUCT_RELEASED_PRODUCT_RELEASED_GOVERNANCE_LOAD_RECEIPT.yaml
+    product_released_governance_load_receipt_required_fields: [artifact_type, status, stage_uid, work_unit_uid, selected_governance_ref, governance_uid, governance_revision, governance_commit_sha, governance_tree_sha, governance_root_manifest_sha256, effective_normative_set_sha256, loader_uid, loaded_at]
+    product_released_governance_load_receipt_status: PASS
     governance_revision_transition_receipt_type: GOVERNANCE_REVISION_TRANSITION_RECEIPT
     governance_revision_transition_receipt_path: STAGE_EXECUTION/SHARED_AUTHORITY/GOVERNANCE_REVISION_TRANSITION_RECEIPT.yaml
     governance_revision_transition_required_fields: [artifact_type, status, from_governance_uid, to_governance_uid, selected_governance_ref, affected_work_unit_uids, invalidated_artifact_classes, preserved_artifact_refs, earliest_reentry_stage_uid, reverse_dependency_evidence_ref, transition_authority_ref]

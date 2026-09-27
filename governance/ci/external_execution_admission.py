@@ -63,13 +63,13 @@ def validate_product_governance_selection(product_root,work_dir,work,stage_uid,c
     if _sha256_file(receipt_path)!=str(selection.get('release_receipt_sha256') or ''): fail('PRODUCT_SELECTED_GOVERNANCE_RELEASE_RECEIPT_HASH_MISMATCH')
     root_hash=_sha256_file(source_root/'.github/governance-source/active/source/10_REGISTRY/GOVERNANCE_ROOT_MANIFEST.yaml')
     _validate_selected_governance_release_data(selection,source_reg,release_receipt,source_ctx,current_governance_uid,root_hash)
-    load=_external_yaml(work_dir/str(policy.get('governance_load_receipt_filename') or 'GOVERNANCE_LOAD_RECEIPT.yaml'),'GOVERNANCE_LOAD_RECEIPT')
-    missing=sorted(set(map(str,policy.get('governance_load_receipt_required_fields') or []))-set(load))
-    if missing: fail('GOVERNANCE_LOAD_RECEIPT_FIELDS_MISSING:'+repr(missing))
-    expected={'artifact_type':str(policy.get('governance_load_receipt_artifact_type') or ''),'status':str(policy.get('governance_load_receipt_status') or 'PASS'),'stage_uid':stage_uid,'work_unit_uid':str(work.get('work_unit_uid') or ''),'selected_governance_ref':rel,'governance_uid':str(selection.get('governance_uid') or ''),'governance_revision':str(selection.get('governance_revision') or ''),'governance_commit_sha':source_head,'governance_tree_sha':source_tree,'governance_root_manifest_sha256':root_hash}
+    load=_external_yaml(work_dir/str(policy.get('product_released_governance_load_receipt_filename') or 'PRODUCT_RELEASED_GOVERNANCE_LOAD_RECEIPT.yaml'),'PRODUCT_RELEASED_GOVERNANCE_LOAD_RECEIPT')
+    missing=sorted(set(map(str,policy.get('product_released_governance_load_receipt_required_fields') or []))-set(load))
+    if missing: fail('PRODUCT_RELEASED_GOVERNANCE_LOAD_RECEIPT_FIELDS_MISSING:'+repr(missing))
+    expected={'artifact_type':str(policy.get('product_released_governance_load_receipt_artifact_type') or ''),'status':str(policy.get('product_released_governance_load_receipt_status') or 'PASS'),'stage_uid':stage_uid,'work_unit_uid':str(work.get('work_unit_uid') or ''),'selected_governance_ref':rel,'governance_uid':str(selection.get('governance_uid') or ''),'governance_revision':str(selection.get('governance_revision') or ''),'governance_commit_sha':source_head,'governance_tree_sha':source_tree,'governance_root_manifest_sha256':root_hash}
     for key,value in expected.items():
-        if not value or str(load.get(key) or '')!=str(value): fail('GOVERNANCE_LOAD_RECEIPT_BINDING_MISMATCH:'+key)
-    if not str(load.get('effective_normative_set_sha256') or '').strip() or not str(load.get('loader_uid') or '').strip() or not str(load.get('loaded_at') or '').strip(): fail('GOVERNANCE_LOAD_RECEIPT_PROVENANCE_INCOMPLETE')
+        if not value or str(load.get(key) or '')!=str(value): fail('PRODUCT_RELEASED_GOVERNANCE_LOAD_RECEIPT_BINDING_MISMATCH:'+key)
+    if not str(load.get('effective_normative_set_sha256') or '').strip() or not str(load.get('loader_uid') or '').strip() or not str(load.get('loaded_at') or '').strip(): fail('PRODUCT_RELEASED_GOVERNANCE_LOAD_RECEIPT_PROVENANCE_INCOMPLETE')
     return selection
 
 def _block_for_governance_revision_transition(product_root,work,stage_uid,from_uid,to_uid):

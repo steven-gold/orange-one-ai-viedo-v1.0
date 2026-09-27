@@ -17,7 +17,7 @@ expect_block('candidate_cannot_drive_formal_execution',lambda:ext._validate_sele
 _bad=deepcopy(_release_sel); _bad['governance_commit_sha']='e'*40
 expect_block('selected_exact_commit_mismatch',lambda:ext._validate_selected_governance_release_data(_bad,_release_reg,_release_receipt,{'repository':'owner/repo','head':'a'*40,'tree':'b'*40},'GOV-RELEASE-TEST','d'*64),'PRODUCT_SELECTED_GOVERNANCE_BINDING_MISMATCH:governance_commit_sha')
 core_text=(ext.ROOT/'governance/ci/stage_execution_engine.py').read_text(encoding='utf-8')
-for token in ('PRODUCT_SELECTED_GOVERNANCE_RELEASE','GOVERNANCE_REVISION_TRANSITION_RECEIPT','APPLICATION_BASELINE_SNAPSHOT','PRODUCT_EXECUTION_ENVIRONMENT_ADMISSION_REGISTRY'):
+for token in ('PRODUCT_SELECTED_GOVERNANCE_RELEASE','PRODUCT_RELEASED_GOVERNANCE_LOAD_RECEIPT','GOVERNANCE_REVISION_TRANSITION_RECEIPT','APPLICATION_BASELINE_SNAPSHOT','PRODUCT_EXECUTION_ENVIRONMENT_ADMISSION_REGISTRY'):
     if token in core_text: raise SystemExit('STAGE_CORE_EXTERNAL_SEMANTIC_LEAK:'+token)
 binding=yaml.safe_load((ext.ROOT/'governance/environment/EXECUTION_WORKLINE_BINDING.yaml').read_text(encoding='utf-8')) or {}
 for group in ('governance_workline','execution_workline'):
