@@ -186,11 +186,13 @@ def verify_external_trust(
         )
         signed_commit_time=str(((trust_commit.get('commit') or {}).get('committer') or {}).get('date') or '')
         authority_created=str(signer_auth.get('created_at') or '')
+        authority_updated=str(signer_auth.get('updated_at') or '')
         signed_at=str(trust_doc.get('signed_at') or '')
-        auth_dt=datetime.fromisoformat(authority_created.replace('Z','+00:00')).astimezone(timezone.utc)
+        auth_created_dt=datetime.fromisoformat(authority_created.replace('Z','+00:00')).astimezone(timezone.utc)
+        auth_updated_dt=datetime.fromisoformat(authority_updated.replace('Z','+00:00')).astimezone(timezone.utc)
         signed_dt=datetime.fromisoformat(signed_at.replace('Z','+00:00')).astimezone(timezone.utc)
         commit_dt=datetime.fromisoformat(signed_commit_time.replace('Z','+00:00')).astimezone(timezone.utc)
-        if not (auth_dt < signed_dt <= commit_dt):
+        if not (auth_created_dt < signed_dt <= commit_dt and auth_updated_dt < signed_dt):
             failures.append('SOURCE_EXTERNAL_TRUST_TEMPORAL_ORDER_INVALID')
     except Exception as exc:
         failures.append('SOURCE_EXTERNAL_TRUST_AUTHORITY_UNVERIFIABLE:'+type(exc).__name__+':'+str(exc))

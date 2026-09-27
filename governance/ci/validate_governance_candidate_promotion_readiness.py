@@ -199,15 +199,16 @@ def validate_independent_auditor_provenance(records,repository,token,registry,ca
             if tok not in body:
                 return {'status':'FAIL','reason':'INDEPENDENT_AUDITOR_AUTHORITY_SCOPE_MISSING','index':i,'token':tok}
         try:
-            auth_dt=datetime.fromisoformat(str(auth.get('created_at') or '').replace('Z','+00:00')).astimezone(timezone.utc)
+            auth_created_dt=datetime.fromisoformat(str(auth.get('created_at') or '').replace('Z','+00:00')).astimezone(timezone.utc)
+            auth_updated_dt=datetime.fromisoformat(str(auth.get('updated_at') or '').replace('Z','+00:00')).astimezone(timezone.utc)
             first_evidence_dt=min(
               datetime.fromisoformat(t.replace('Z','+00:00')).astimezone(timezone.utc)
               for t in (impl_time,receipt_time,result_time)
             )
         except Exception:
             return {'status':'FAIL','reason':'INDEPENDENT_AUDITOR_AUTHORITY_TIME_INVALID','index':i}
-        if not auth_dt < first_evidence_dt:
-            return {'status':'FAIL','reason':'INDEPENDENT_AUDITOR_AUTHORITY_NOT_PREEXISTING_EVIDENCE','index':i}
+        if not (auth_created_dt < first_evidence_dt and auth_updated_dt < first_evidence_dt):
+            return {'status':'FAIL','reason':'INDEPENDENT_AUDITOR_AUTHORITY_NOT_IMMUTABLY_PREEXISTING_EVIDENCE','index':i}
         actors.append(ia); result_fingerprints.append(actual_result_fp)
         rows.append({'evaluator_uid':r.get('evaluator_uid'),'provenance_actor':ia,'implementation_sha256':impl_hash,'audit_snapshot_hash':expected_snapshot_hash,'result_fingerprint':actual_result_fp})
     if len(set(actors))!=3:
