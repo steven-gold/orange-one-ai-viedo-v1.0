@@ -81,6 +81,43 @@ def _sha256_file(path):
     if not path.is_file(): fail('HASH_TARGET_MISSING:'+str(path))
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
+def execution_compatibility_adapter():
+    reg=y(REGISTRY)
+    rel=str(reg.get('execution_environment_binding') or '')
+    if not rel:
+        fail('EXECUTION_ENVIRONMENT_BINDING_MISSING')
+    p=Path(rel)
+    if p.is_absolute() or '..' in p.parts:
+        fail('EXECUTION_ENVIRONMENT_BINDING_PATH_INVALID')
+    binding=y(ROOT/p)
+    if binding.get('artifact_type')!='EXECUTION_ENVIRONMENT_BINDING' or binding.get('normative_authority') is not False:
+        fail('EXECUTION_ENVIRONMENT_BINDING_AUTHORITY_INVALID')
+    if binding.get('common_stage_definition_credit')!=0 or binding.get('common_stage_completion_credit')!=0:
+        fail('EXECUTION_ENVIRONMENT_BINDING_COMMON_STAGE_CREDIT_NONZERO')
+    rules=binding.get('rules') or {}
+    if (rules.get('values_may_enter_reusable_stage_semantics') is not False
+        or rules.get('values_may_define_common_stage_denominator') is not False
+        or rules.get('compatibility_adapter_is_external_runtime_only') is not True
+        or rules.get('compatibility_adapter_values_may_enter_reusable_stage_semantics') is not False
+        or rules.get('compatibility_adapter_values_may_define_common_stage_denominator') is not False):
+        fail('EXECUTION_ENVIRONMENT_BINDING_STAGE_ISOLATION_INVALID')
+    compat=binding.get('execution_compatibility_adapter') or {}
+    required=(
+      'active_work_unit_task_layer_field','active_work_unit_task_layer_value',
+      'scope_execution_allowed_field','resume_control_field',
+      'resume_execution_allowed_field','operation_executor_execution_root_argument'
+    )
+    if set(compat)!=set(required):
+        fail('EXECUTION_COMPATIBILITY_ADAPTER_SCHEMA_DRIFT')
+    for key in required:
+        value=compat.get(key)
+        if not isinstance(value,str) or not value.strip():
+            fail('EXECUTION_COMPATIBILITY_ADAPTER_VALUE_INVALID:'+key)
+    arg=str(compat.get('operation_executor_execution_root_argument'))
+    if not re.fullmatch(r'--[a-z0-9][a-z0-9-]*',arg):
+        fail('EXECUTION_COMPATIBILITY_ADAPTER_ROOT_ARGUMENT_INVALID')
+    return compat
+
 def execution_context():
     root_raw=os.environ.get(EXECUTION_ROOT_ENV,'').strip()
     work_rel=os.environ.get(ACTIVE_WORK_UNIT_ENV,'').strip()
@@ -422,11 +459,14 @@ def validate_stage01_source_projection_admission(work,stage):
 
 def validate_work_unit_bindings(stage_uid,work,stages,adapters):
     if stage_uid not in stages: fail(f'UNKNOWN_STAGE:{stage_uid}')
-    if not isinstance(work,dict): fail('ACTIVE_PRODUCT_WORK_UNIT_MISSING')
-    if work.get('primary_task_layer')!='PRODUCT_STAGE_EXECUTION': fail('ACTIVE_WORK_UNIT_NOT_PRODUCT_STAGE_EXECUTION')
+    if not isinstance(work,dict): fail('ACTIVE_WORK_UNIT_MISSING')
+    compat=execution_compatibility_adapter()
+    layer_field=str(compat['active_work_unit_task_layer_field'])
+    layer_value=str(compat['active_work_unit_task_layer_value'])
+    if work.get(layer_field)!=layer_value: fail('ACTIVE_WORK_UNIT_TASK_LAYER_MISMATCH')
     if work.get('stage_uid')!=stage_uid: fail('ACTIVE_WORK_UNIT_STAGE_MISMATCH')
     if stage_uid=='STAGE-01': validate_stage01_source_projection_admission(work,stages[stage_uid])
-    if str(work.get('current_status') or '').startswith('CLOSED'): fail('ACTIVE_PRODUCT_WORK_UNIT_ALREADY_CLOSED')
+    if str(work.get('current_status') or '').startswith('CLOSED'): fail('ACTIVE_WORK_UNIT_ALREADY_CLOSED')
     req=set(map(str,work.get('required_outputs') or [])); prof=set(map(str,stages[stage_uid].get('outputs') or []))
     if req and not prof.issubset(req): fail('ACTIVE_WORK_UNIT_OUTPUT_DENOMINATOR_INCOMPLETE')
     op_bindings=work.get('operation_bindings')
@@ -560,14 +600,14 @@ def active_execution(stage_uid):
     if scope.get('stage_uid')!=stage_uid or scope.get('work_unit_uid')!=work.get('work_unit_uid'):
         fail('CURRENT_SCOPE_WORK_UNIT_BINDING_DRIFT')
     deps=work.get('dependencies') or []
-    if not isinstance(deps,list) or not deps: fail('ACTIVE_PRODUCT_WORK_UNIT_DEPENDENCY_CLOSURE_MISSING')
+    if not isinstance(deps,list) or not deps: fail('ACTIVE_WORK_UNIT_DEPENDENCY_CLOSURE_MISSING')
     for dep in deps:
         if isinstance(dep,str) and '/' in dep and not (execution_root/dep).exists():
-            fail(f'ACTIVE_PRODUCT_WORK_UNIT_DEPENDENCY_MISSING:{dep}')
+            fail(f'ACTIVE_WORK_UNIT_DEPENDENCY_MISSING:{dep}')
         if isinstance(dep,dict):
             ref=dep.get('ref') or dep.get('path') or dep.get('source_ref')
             if isinstance(ref,str) and '/' in ref and not (execution_root/ref).exists():
-                fail(f'ACTIVE_PRODUCT_WORK_UNIT_DEPENDENCY_MISSING:{ref}')
+                fail(f'ACTIVE_WORK_UNIT_DEPENDENCY_MISSING:{ref}')
     validate_normative_execution_matrix(stage_uid,execution_root,work,stages[stage_uid],gov)
     return work
 
@@ -575,7 +615,7 @@ def admission(stage_uid):
     work=active_execution(stage_uid); pl=plan(stage_uid)
     print(f"PASS: common Stage-core admission context resolved for {stage_uid} work_unit={work.get('work_unit_uid')}")
     print(f"PASS: common execution skeleton phases={len(pl['phases'])}/{len(EXPECTED_PHASES)}")
-    print('PASS: admission check performs no product execution and grants zero completion credit')
+    print('PASS: admission check performs no effectful execution and grants zero completion credit')
 
 def _result_map(rows,key,label):
     if not isinstance(rows,list): fail(f'{label}_INVALID')
@@ -1132,9 +1172,15 @@ def execute_active(stage_uid):
     work_dir=work_path.parent
     state_path=work_dir/'EXECUTION_STATE.yaml'
     state=_external_yaml(state_path,'CURRENT_EXECUTION_STATE')
+    compat=execution_compatibility_adapter()
+    scope_allowed_field=str(compat['scope_execution_allowed_field'])
+    resume_control_field=str(compat['resume_control_field'])
+    resume_allowed_field=str(compat['resume_execution_allowed_field'])
+    resume_control=state.get(resume_control_field) or {}
     if (work.get('pre_execution_gate_status')!='PASS'
-        or scope.get('product_stage_execution_allowed') is not True
-        or (state.get('resume_control') or {}).get('product_execution_allowed') is not True):
+        or scope.get(scope_allowed_field) is not True
+        or not isinstance(resume_control,dict)
+        or resume_control.get(resume_allowed_field) is not True):
         fail('ACTIVE_STAGE_EXECUTION_NOT_ADMITTED')
     bindings=work.get('operation_bindings') or {}
     expected_ops=list(map(str,stages[stage_uid].get('operations') or []))
@@ -1172,7 +1218,7 @@ def execute_active(stage_uid):
     try:
         executor.relative_to(execution_root)
     except ValueError:
-        fail('ACTIVE_STAGE_EXECUTOR_OUTSIDE_PRODUCT_ROOT')
+        fail('ACTIVE_STAGE_EXECUTOR_OUTSIDE_EXECUTION_ROOT')
     if not executor.is_file():
         fail('ACTIVE_STAGE_EXECUTOR_OWNER_MISSING:'+owner)
     if executor.resolve()==Path(__file__).resolve():
@@ -1204,7 +1250,8 @@ def execute_active(stage_uid):
         fail('ACTIVE_STAGE_OPERATION_CHECKPOINT_NOT_REQUIRED:'+stage_uid)
     if stepwise.get('successor_requires_operation_pass') is not True:
         fail('ACTIVE_STAGE_SUCCESSOR_OPERATION_PASS_NOT_REQUIRED:'+stage_uid)
-    cmd=[sys.executable,str(executor),'--stage',stage_uid,'--operation',operation_uid,'--work-unit',work_rel,'--product-root',str(execution_root)]
+    execution_root_arg=str(compat['operation_executor_execution_root_argument'])
+    cmd=[sys.executable,str(executor),'--stage',stage_uid,'--operation',operation_uid,'--work-unit',work_rel,execution_root_arg,str(execution_root)]
     proc=subprocess.run(cmd,cwd=execution_root,text=True,capture_output=True)
     if proc.returncode!=0:
         msg=(proc.stderr or proc.stdout or '').strip().replace('\n',' ')[:800]
@@ -1262,7 +1309,7 @@ def main():
             _,_,_,profile,_,stages=validate_definition()
             print(f'PASS: common Stage Execution Engine definition audit stages={len(stages)}/{profile.get("profile_local_denominator")} phases={len(EXPECTED_PHASES)}/{len(EXPECTED_PHASES)}')
             print('PASS: all profile stages have semantic adapters, scanner dimensions, denominator, operations, outputs, evidence and closure contracts')
-            print('PASS: definition audit product_stage_credit=0; product PASS requires fresh evidence and exact-head terminal receipt')
+            print('PASS: definition audit effectful_execution_credit=0; execution PASS requires fresh evidence and exact-head terminal receipt')
             return
         if not a.stage: fail('STAGE_REQUIRED')
         if a.plan: print(json.dumps(plan(a.stage),ensure_ascii=False,indent=2)); return

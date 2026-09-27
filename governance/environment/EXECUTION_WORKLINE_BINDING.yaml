@@ -11,7 +11,17 @@ governance_workline:
 execution_workline:
   repository: steven-gold/orange-one-ai-viedo-v1.0
   branch: 0921acpos
+execution_compatibility_adapter:
+  active_work_unit_task_layer_field: primary_task_layer
+  active_work_unit_task_layer_value: PRODUCT_STAGE_EXECUTION
+  scope_execution_allowed_field: product_stage_execution_allowed
+  resume_control_field: resume_control
+  resume_execution_allowed_field: product_execution_allowed
+  operation_executor_execution_root_argument: --product-root
 rules:
   values_may_enter_reusable_stage_semantics: false
   values_may_define_common_stage_denominator: false
   values_require_explicit_environment_resolution_before_effectful_execution: true
+  compatibility_adapter_is_external_runtime_only: true
+  compatibility_adapter_values_may_enter_reusable_stage_semantics: false
+  compatibility_adapter_values_may_define_common_stage_denominator: false
