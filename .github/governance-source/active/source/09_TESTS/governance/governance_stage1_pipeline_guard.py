@@ -48,15 +48,15 @@ def validate_stage1_phase_boundary_state(state:dict):
     sf_done=state.get('source_fact_materialization_completed') is True
     cls_started=state.get('responsibility_classification_started') is True
     cls_done=state.get('responsibility_classification_completed') is True
-    page_started=state.get('governed_unit_base_blueprint_started') is True
-    page_done=state.get('governed_unit_base_blueprint_completed') is True
+    unit_started=state.get('governed_unit_base_blueprint_started') is True
+    unit_done=state.get('governed_unit_base_blueprint_completed') is True
     visual_started=state.get('visual_base_blueprint_started') is True
     visual_done=state.get('visual_base_blueprint_completed') is True
     binding_started=state.get('blueprint_binding_started') is True
     binding_done=state.get('blueprint_binding_completed') is True
     ci=state.get('github_ci') or {}
     class_gate=ci.get('current_classification_gate')=='SUCCESS' or state.get('classification_gate_passed') is True
-    page_gate=ci.get('current_governed_unit_blueprint_gate')=='SUCCESS' or state.get('governed_unit_base_blueprint_gate_passed') is True
+    unit_gate=ci.get('current_governed_unit_blueprint_gate')=='SUCCESS' or state.get('governed_unit_base_blueprint_gate_passed') is True
     visual_gate=ci.get('current_visual_blueprint_gate')=='SUCCESS' or state.get('visual_base_blueprint_gate_passed') is True
     if sf_started and not segment_done: failures.append('source_fact_started_before_segment_mapping_closed')
     if sf_done and not sf_started: failures.append('source_fact_completed_without_start')
@@ -65,12 +65,12 @@ def validate_stage1_phase_boundary_state(state:dict):
         for k in early_before_sf:
             if state.get(k) is True: failures.append('downstream_started_before_source_fact_closed:'+k)
     if cls_done and not cls_started: failures.append('classification_completed_without_start')
-    if page_done and not page_started: failures.append('governed_unit_blueprint_completed_without_start')
+    if unit_done and not unit_started: failures.append('governed_unit_blueprint_completed_without_start')
     if visual_done and not visual_started: failures.append('visual_blueprint_completed_without_start')
     if binding_done and not binding_started: failures.append('blueprint_binding_completed_without_start')
-    if page_started and not (cls_done and class_gate): failures.append('governed_unit_blueprint_started_without_classification_gate')
-    if visual_started and not (page_done and page_gate): failures.append('visual_blueprint_started_without_governed_unit_blueprint_gate')
-    if binding_started and not (page_done and page_gate and visual_done and visual_gate): failures.append('blueprint_binding_started_without_page_and_visual_gates')
+    if unit_started and not (cls_done and class_gate): failures.append('governed_unit_blueprint_started_without_classification_gate')
+    if visual_started and not (unit_done and unit_gate): failures.append('visual_blueprint_started_without_governed_unit_blueprint_gate')
+    if binding_started and not (unit_done and unit_gate and visual_done and visual_gate): failures.append('blueprint_binding_started_without_governed_unit_and_visual_gates')
     for k in ['website_construction_started','deployment_started']:
         if state.get(k) is True: failures.append('stage1_forbidden_phase_started:'+k)
     return failures
@@ -575,9 +575,9 @@ def validate(package_root:Path,workspace:Path):
         if d.get('artifact_type')!=ftype: failures.append(f'source_fact_type_mismatch:{ftype}')
         if d.get('status')!='CURRENT_SOURCE_FACT': failures.append(f'source_fact_not_current:{ftype}')
         if d.get('content_hash')!=content_hash(d): failures.append(f'source_fact_hash_mismatch:{ftype}')
-        pages_sf=set(d.get('governed_unit_uids') or ([d.get('governed_unit_uid')] if d.get('governed_unit_uid') else []))
-        raw_pages={x.get('governed_unit_uid') for x in raw_sources.values()}
-        if not raw_pages.issubset(pages_sf): failures.append(f'source_fact_page_scope_incomplete:{ftype}')
+        governed_units_sf=set(d.get('governed_unit_uids') or ([d.get('governed_unit_uid')] if d.get('governed_unit_uid') else []))
+        raw_governed_units={x.get('governed_unit_uid') for x in raw_sources.values()}
+        if not raw_governed_units.issubset(governed_units_sf): failures.append(f'source_fact_governed_unit_scope_incomplete:{ftype}')
 
     dep_doc=source_facts.get('SOURCE_DEPENDENCY_MAP') or {}
     failures.extend(validate_unresolved_authority_gaps(dep_doc,set(raw_sources)))
@@ -613,7 +613,7 @@ def validate(package_root:Path,workspace:Path):
             for seg in segs:
                 if seg not in seg_by_uid: failures.append(f'artifact_unknown_segment:{uid}:{seg}')
                 else:
-                    if seg_by_uid[seg].get('planning_domain')!=d.get('planning_domain'): failures.append(f'page_visual_cross_contamination:{uid}:{seg}')
+                    if seg_by_uid[seg].get('planning_domain')!=d.get('planning_domain'): failures.append(f'governed_unit_visual_cross_contamination:{uid}:{seg}')
                     if seg_by_uid[seg].get('governed_unit_uid')!=d.get('governed_unit_uid'): failures.append(f'artifact_governed_unit_uid_segment_mismatch:{uid}:{seg}')
                     if rec.get('source_uid')!=seg_by_uid[seg].get('source_uid'): failures.append(f'artifact_lineage_source_mismatch:{uid}:{seg}')
         if d.get('content_hash')!=content_hash(d): failures.append(f'artifact_hash_mismatch:{uid}')

@@ -33,8 +33,8 @@ def build(root):
     write(root/'00_SOURCE_INTAKE/evidence/E1.yaml',{'evidence_uid':'E1','source_uid':'RAW1','status':'OBSERVED'})
     write(root/'00_SOURCE_INTAKE/SOURCE_STRUCTURE_MANIFEST.yaml',{'sources':[src]})
     segs=[
-      {'segment_uid':'S-P1','source_uid':'RAW1','source_node_uid':'N-P1','governed_unit_uid':'GOVERNED-UNIT-A','planning_domain':'GOVERNED_UNIT_CONSTRUCTION','responsibility_uid':'PAGE_IDENTITY','required':True,'disposition':'CLASSIFIED','target_artifact_uids':['A-P1']},
-      {'segment_uid':'S-P2','source_uid':'RAW1','source_node_uid':'N-P2','governed_unit_uid':'GOVERNED-UNIT-A','planning_domain':'GOVERNED_UNIT_CONSTRUCTION','responsibility_uid':'PAGE_STRUCTURE','required':True,'disposition':'CLASSIFIED','target_artifact_uids':['A-P2']},
+      {'segment_uid':'S-P1','source_uid':'RAW1','source_node_uid':'N-P1','governed_unit_uid':'GOVERNED-UNIT-A','planning_domain':'GOVERNED_UNIT_CONSTRUCTION','responsibility_uid':'GOVERNED_UNIT_IDENTITY','required':True,'disposition':'CLASSIFIED','target_artifact_uids':['A-P1']},
+      {'segment_uid':'S-P2','source_uid':'RAW1','source_node_uid':'N-P2','governed_unit_uid':'GOVERNED-UNIT-A','planning_domain':'GOVERNED_UNIT_CONSTRUCTION','responsibility_uid':'GOVERNED_UNIT_STRUCTURE','required':True,'disposition':'CLASSIFIED','target_artifact_uids':['A-P2']},
       {'segment_uid':'S-V1','source_uid':'RAW1','source_node_uid':'N-V1','governed_unit_uid':'GOVERNED-UNIT-A','planning_domain':'VISUAL_CONSTRUCTION','responsibility_uid':'LAYOUT_GEOMETRY','required':True,'disposition':'CLASSIFIED','target_artifact_uids':['A-V1']},]
     sm={'raw_sources':raw,'source_segments':segs,'status':'PASS'}; write(root/'00_SOURCE_INTAKE/SOURCE_SEGMENT_MAP.yaml',sm)
     source_facts=[]
@@ -46,12 +46,12 @@ def build(root):
         d['content_hash']=g.content_hash(d); source_facts.append(d); write(root/f'00_SOURCE_INTAKE/{ftype}.yaml',d)
     arts=[]
     for uid,domain,resp,seg,path in [
-      ('A-P1','GOVERNED_UNIT_CONSTRUCTION','PAGE_IDENTITY','S-P1','01_CLASSIFIED/GOVERNED-UNIT-A/PAGE/PAGE_IDENTITY.yaml'),
-      ('A-P2','GOVERNED_UNIT_CONSTRUCTION','PAGE_STRUCTURE','S-P2','01_CLASSIFIED/GOVERNED-UNIT-A/PAGE/PAGE_STRUCTURE.yaml'),
+      ('A-P1','GOVERNED_UNIT_CONSTRUCTION','GOVERNED_UNIT_IDENTITY','S-P1','01_CLASSIFIED/GOVERNED-UNIT-A/GOVERNED_UNIT/GOVERNED_UNIT_IDENTITY.yaml'),
+      ('A-P2','GOVERNED_UNIT_CONSTRUCTION','GOVERNED_UNIT_STRUCTURE','S-P2','01_CLASSIFIED/GOVERNED-UNIT-A/GOVERNED_UNIT/GOVERNED_UNIT_STRUCTURE.yaml'),
       ('A-V1','VISUAL_CONSTRUCTION','LAYOUT_GEOMETRY','S-V1','01_CLASSIFIED/GOVERNED-UNIT-A/VISUAL/LAYOUT_GEOMETRY.yaml')]:
         d={'artifact_uid':uid,'governed_unit_uid':'GOVERNED-UNIT-A','planning_domain':domain,'responsibility_uid':resp,'responsibility_class':resp,'responsibilities':[resp],'canonical_owner_uid':'OWNER-'+uid,'target_path':path,'lifecycle_uid':'LC-'+resp,'approval_scope_uid':'AP-'+resp,'version_scope_uid':'VER-'+resp,'test_scope_uid':'TEST-'+resp,'source_lineage':[{'source_uid':'RAW1','source_segment_uids':[seg]}],'facts':[{'k':resp,'v':'x'}],'status':'CURRENT_CLASSIFICATION'}
         d=finalize(d,'content_hash'); arts.append(d); write(root/path,d)
-    bp_page={'blueprint_uid':'BP-P','governed_unit_uid':'GOVERNED-UNIT-A','blueprint_type':'GOVERNED_UNIT_BASE_BLUEPRINT','planning_domain':'GOVERNED_UNIT_CONSTRUCTION','target_path':'02_BASE_BLUEPRINT/GOVERNED-UNIT-A/GOVERNED_UNIT_BASE_BLUEPRINT.yaml','input_artifacts':[{'artifact_uid':a['artifact_uid'],'content_hash':a['content_hash']} for a in arts if a['planning_domain']=='GOVERNED_UNIT_CONSTRUCTION'],'required_responsibility_uids':['PAGE_IDENTITY','PAGE_STRUCTURE'],'shared_refs':[],'source_fact_refs':[{'artifact_uid':x['artifact_uid'],'content_hash':x['content_hash']} for x in source_facts],'raw_source_inputs':[],'embedded_classification_payloads':[],'status':'CURRENT_BASE_BLUEPRINT'}
+    bp_page={'blueprint_uid':'BP-P','governed_unit_uid':'GOVERNED-UNIT-A','blueprint_type':'GOVERNED_UNIT_BASE_BLUEPRINT','planning_domain':'GOVERNED_UNIT_CONSTRUCTION','target_path':'02_BASE_BLUEPRINT/GOVERNED-UNIT-A/GOVERNED_UNIT_BASE_BLUEPRINT.yaml','input_artifacts':[{'artifact_uid':a['artifact_uid'],'content_hash':a['content_hash']} for a in arts if a['planning_domain']=='GOVERNED_UNIT_CONSTRUCTION'],'required_responsibility_uids':['GOVERNED_UNIT_IDENTITY','GOVERNED_UNIT_STRUCTURE'],'shared_refs':[],'source_fact_refs':[{'artifact_uid':x['artifact_uid'],'content_hash':x['content_hash']} for x in source_facts],'raw_source_inputs':[],'embedded_classification_payloads':[],'status':'CURRENT_BASE_BLUEPRINT'}
     bp_page=finalize(bp_page,'blueprint_hash'); write(root/bp_page['target_path'],bp_page)
     bp_vis={'blueprint_uid':'BP-V','governed_unit_uid':'GOVERNED-UNIT-A','blueprint_type':'VISUAL_BASE_BLUEPRINT','planning_domain':'VISUAL_CONSTRUCTION','target_path':'02_BASE_BLUEPRINT/GOVERNED-UNIT-A/VISUAL_BASE_BLUEPRINT.yaml','input_artifacts':[{'artifact_uid':'A-V1','content_hash':[a for a in arts if a['artifact_uid']=='A-V1'][0]['content_hash']}],'required_responsibility_uids':['LAYOUT_GEOMETRY'],'shared_refs':[],'source_fact_refs':[{'artifact_uid':x['artifact_uid'],'content_hash':x['content_hash']} for x in source_facts],'raw_source_inputs':[],'embedded_classification_payloads':[],'status':'CURRENT_BASE_BLUEPRINT'}
     bp_vis=finalize(bp_vis,'blueprint_hash'); write(root/bp_vis['target_path'],bp_vis)
@@ -89,7 +89,7 @@ def domain_only(r,f):
 c('domain_level_only_without_classification',run(domain_only),'FAIL')
 
 def mixed_no_proof(r,f):
-    p=r/f['arts'][0]['target_path']; d=yaml.safe_load(p.read_text()); d['responsibilities']=['PAGE_IDENTITY','PAGE_STRUCTURE']; d['content_hash']=g.content_hash(d); write(p,d)
+    p=r/f['arts'][0]['target_path']; d=yaml.safe_load(p.read_text()); d['responsibilities']=['GOVERNED_UNIT_IDENTITY','GOVERNED_UNIT_STRUCTURE']; d['content_hash']=g.content_hash(d); write(p,d)
 c('multiple_responsibilities_without_scope_proof',run(mixed_no_proof),'FAIL')
 
 def cross_domain_artifact(r,f):
@@ -100,11 +100,11 @@ def combined_blueprint(r,f):
     # replace two legal blueprints by one combined editable blueprint
     for p in list((r/'02_BASE_BLUEPRINT/GOVERNED-UNIT-A').glob('*.yaml')): p.unlink()
     d={'blueprint_uid':'BP-COMB','governed_unit_uid':'GOVERNED-UNIT-A','blueprint_type':'BASE_BLUEPRINT','planning_domain':'MIXED','target_path':'02_BASE_BLUEPRINT/GOVERNED-UNIT-A/BASE_BLUEPRINT.yaml','input_artifacts':[],'required_responsibility_uids':[],'raw_source_inputs':[],'embedded_classification_payloads':[],'status':'CURRENT_BASE_BLUEPRINT'}; d['blueprint_hash']=g.content_hash(d); write(r/d['target_path'],d)
-c('combined_page_visual_blueprint_forbidden',run(combined_blueprint),'FAIL')
+c('combined_governed_unit_visual_blueprint_forbidden',run(combined_blueprint),'FAIL')
 
-def page_consumes_visual(r,f):
+def governed_unit_consumes_visual(r,f):
     p=r/f['bp_page']['target_path']; d=yaml.safe_load(p.read_text()); av=[a for a in f['arts'] if a['artifact_uid']=='A-V1'][0]; d['input_artifacts'].append({'artifact_uid':'A-V1','content_hash':av['content_hash']}); d['required_responsibility_uids'].append('LAYOUT_GEOMETRY'); d['blueprint_hash']=g.content_hash(d); write(p,d)
-c('governed_unit_blueprint_cannot_consume_visual_artifact',run(page_consumes_visual),'FAIL')
+c('governed_unit_blueprint_cannot_consume_visual_artifact',run(governed_unit_consumes_visual),'FAIL')
 
 def raw_input(r,f):
     p=r/f['bp_page']['target_path']; d=yaml.safe_load(p.read_text()); d['raw_source_inputs']=['RAW1']; d['blueprint_hash']=g.content_hash(d); write(p,d)
@@ -122,11 +122,11 @@ def norm_mismatch(r,f):
     p=r/'RUN_CONTEXT.yaml'; d=yaml.safe_load(p.read_text()); d['candidate_normative_hash']='f'*64; write(p,d)
 c('candidate_hash_mismatch_detected',run(norm_mismatch),'FAIL')
 
-def residual(r,f): write(r/'01_CLASSIFIED/GOVERNED-UNIT-A/PAGE/old-copy.bak','garbage')
+def residual(r,f): write(r/'01_CLASSIFIED/GOVERNED-UNIT-A/GOVERNED_UNIT/old-copy.bak','garbage')
 c('residual_garbage_detected',run(residual,True),'FAIL')
 
 def mixed_allowed(r,f):
-    p=r/f['arts'][0]['target_path']; d=yaml.safe_load(p.read_text()); d['responsibilities']=['PAGE_IDENTITY','PAGE_IDENTITY_ALIAS']; d['mixed_allowed']=True; d['mixed_allowed_proof']={'same_owner':True,'same_lifecycle':True,'same_approval':True,'same_version':True,'same_test_scope':True}; d['content_hash']=g.content_hash(d); write(p,d)
+    p=r/f['arts'][0]['target_path']; d=yaml.safe_load(p.read_text()); d['responsibilities']=['GOVERNED_UNIT_IDENTITY','GOVERNED_UNIT_IDENTITY_ALIAS']; d['mixed_allowed']=True; d['mixed_allowed_proof']={'same_owner':True,'same_lifecycle':True,'same_approval':True,'same_version':True,'same_test_scope':True}; d['content_hash']=g.content_hash(d); write(p,d)
     bp=r/f['bp_page']['target_path']; b=yaml.safe_load(bp.read_text());
     for rec in b['input_artifacts']:
         if rec['artifact_uid']==d['artifact_uid']: rec['content_hash']=d['content_hash']
@@ -173,7 +173,7 @@ def evidence_not_physical(r,f):
 c('source_enumeration_evidence_physicality_detected',run(evidence_not_physical),'FAIL')
 
 def manifested_old_copy(r,f):
-    write(r/'01_CLASSIFIED/GOVERNED-UNIT-A/PAGE/PAGE_IDENTITY_old-copy.yaml',yaml.safe_load((r/f['arts'][0]['target_path']).read_text()))
+    write(r/'01_CLASSIFIED/GOVERNED-UNIT-A/GOVERNED_UNIT/GOVERNED_UNIT_IDENTITY_old-copy.yaml',yaml.safe_load((r/f['arts'][0]['target_path']).read_text()))
 c('manifested_old_copy_filename_detected',run(manifested_old_copy),'FAIL')
 
 def raw_source_missing_governed_unit_uid(r,f):
@@ -193,9 +193,9 @@ def raw_capture_wrong_next_step_alias(r,f):
 c('raw_capture_next_step_must_be_exact_enumeration_identity',run(raw_capture_wrong_next_step_alias),'FAIL')
 
 def mixed_source_biased_role(r,f):
-    p=r/'00_SOURCE_INTAKE/RAW_SOURCE_REFERENCE_MANIFEST.yaml'; d=yaml.safe_load(p.read_text()); d['records'][0]['source_role']='PAGE_SOURCE_INPUT'; write(p,d)
-    sp=r/'00_SOURCE_INTAKE/SOURCE_SEGMENT_MAP.yaml'; sd=yaml.safe_load(sp.read_text()); sd['raw_sources'][0]['source_role']='PAGE_SOURCE_INPUT'; write(sp,sd)
-c('mixed_page_visual_source_role_must_be_neutral',run(mixed_source_biased_role),'FAIL')
+    p=r/'00_SOURCE_INTAKE/RAW_SOURCE_REFERENCE_MANIFEST.yaml'; d=yaml.safe_load(p.read_text()); d['records'][0]['source_role']='GOVERNED_UNIT_SOURCE_INPUT'; write(p,d)
+    sp=r/'00_SOURCE_INTAKE/SOURCE_SEGMENT_MAP.yaml'; sd=yaml.safe_load(sp.read_text()); sd['raw_sources'][0]['source_role']='GOVERNED_UNIT_SOURCE_INPUT'; write(sp,sd)
+c('mixed_governed_unit_visual_source_role_must_be_neutral',run(mixed_source_biased_role),'FAIL')
 
 def raw_source_directory_metadata_pollution(r,f):
     write(r/'00_SOURCE_INTAKE/RAW_SOURCE/README.md','control metadata must not be here')
@@ -225,7 +225,7 @@ def _projection_fixture(root):
     capstate={'run_uid':'PROJ1','state':'CAPTURE_CLOSED','next_step':'SOURCE_DOCUMENT_CONTENT_AUDIT','recapture_allowed':False}
     contract=g._projection_contract(PKG); rc=contract['raw_source_lock']; pc=contract['projection']; ac=contract['reconciliation']; fc=contract['pair_freeze']; base=f"00_SOURCE_INTAKE/SOURCE_PROJECTIONS/{suid}"
     contentc=contract['source_document_content_readiness_audit']; binaryc=contract['frozen_binary_source_part_materialization']
-    ca={'schema_version':1,'artifact_uid':'CONTENT-AUDIT-DOCX1','artifact_type':'SOURCE_DOCUMENT_CONTENT_AUDIT','source_uid':suid,'source_sha256':rawsha,'governed_unit_uid':'SYNTH-PAGE-A','audit_standard_uid':'WEB-GOV-01-S090','required_design_domain_uids':['PAGE_IDENTITY'],'observed_design_domain_uids':['PAGE_IDENTITY'],'missing_required_design_domain_uids':[],'matrix_integrity':{'required_rows':1,'complete_rows':1,'missing_rows':0,'duplicate_uid_count':0},'visual_source_integrity':{'embedded_visual_count':0,'missing_visual_count':0},'render_integrity':{'render_required':False,'render_result':'NOT_APPLICABLE_SYNTHETIC_FIXTURE'},'open_downstream_states':[],'unresolved_required_gap_count':0,'contradiction_count':0,'result':'PASS'}
+    ca={'schema_version':1,'artifact_uid':'CONTENT-AUDIT-DOCX1','artifact_type':'SOURCE_DOCUMENT_CONTENT_AUDIT','source_uid':suid,'source_sha256':rawsha,'governed_unit_uid':'SYNTH-GOVERNED-UNIT-A','audit_standard_uid':'WEB-GOV-01-S090','required_design_domain_uids':['GOVERNED_UNIT_IDENTITY'],'observed_design_domain_uids':['GOVERNED_UNIT_IDENTITY'],'missing_required_design_domain_uids':[],'matrix_integrity':{'required_rows':1,'complete_rows':1,'missing_rows':0,'duplicate_uid_count':0},'visual_source_integrity':{'embedded_visual_count':0,'missing_visual_count':0},'render_integrity':{'render_required':False,'render_result':'NOT_APPLICABLE_SYNTHETIC_FIXTURE'},'open_downstream_states':[],'unresolved_required_gap_count':0,'contradiction_count':0,'result':'PASS'}
     ca['evidence_content_hash']=g._hash_without(ca,'evidence_content_hash'); write(root/f'{base}/SOURCE_DOCUMENT_CONTENT_AUDIT.yaml',ca)
     lock={'schema_version':1,'artifact_uid':'LOCK-DOCX1','artifact_type':'RAW_SOURCE_IMMUTABILITY_RECEIPT','source_uid':suid,'source_path':rawrel,'source_git_blob_sha':blob,'source_sha256':rawsha,'content_readiness_audit_uid':ca['artifact_uid'],'lock_state':'RAW_CAPTURE_LOCKED','writable':False,'mutation_policy':'NEW_SOURCE_REVISION_NEW_PROJECTION_NEW_RECONCILIATION'}
     lock['content_hash']=g._hash_without(lock,'content_hash'); write(root/f'{base}/RAW_SOURCE_IMMUTABILITY_RECEIPT.yaml',lock)

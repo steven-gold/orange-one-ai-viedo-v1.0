@@ -311,7 +311,7 @@ else:
       'fixed_control_field_or_visual_value_enum':'FORBIDDEN',
       'fixed_source_content_count':'FORBIDDEN',
       'fixed_source_heading_value_enum':'FORBIDDEN',
-      'page_or_product_specific_projection_schema':'FORBIDDEN',
+      'non_generic_projection_schema':'FORBIDDEN',
     }
     for _k,_v in _required_generic.items():
         if _projection.get(_k)!=_v:

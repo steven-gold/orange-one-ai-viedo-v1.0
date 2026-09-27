@@ -83,7 +83,7 @@ contracts:
     invented_dependency: BLOCK
     unknown_dependency_disposition: UNRESOLVED_AUTHORITY_GAP
 base_blueprint_binding_rule:
-  page_and_visual_blueprints_must_reference_all_three_current_source_fact_hashes: true
+  governed_unit_and_visual_blueprints_must_reference_all_three_current_source_fact_hashes: true
   editable_payload_duplication_forbidden: true
   unresolved_external_authority_refs_must_be_carried_forward: true
   unresolved_external_authority_must_not_be_treated_as_satisfied: true
@@ -98,7 +98,7 @@ raw_source_capture_contract:
   raw_source_directory_source_bytes_only: true
   metadata_inside_raw_source_directory: BLOCK
   physical_file_set_must_exactly_equal_registered_target_paths: true
-  mixed_page_visual_source_role: MIXED_GOVERNED_UNIT_VISUAL_SOURCE_INPUT
+  mixed_governed_unit_visual_source_role: MIXED_GOVERNED_UNIT_VISUAL_SOURCE_INPUT
   biased_role_for_mixed_source: BLOCK
   raw_source_immutable_on_capture: true
   content_addressed_identity_required: true
@@ -141,8 +141,8 @@ phase_boundary_contract:
     DOMAIN_EXTRACTION: ALLOW_BY_NEXT_GATE
     RESPONSIBILITY_CLASSIFICATION: ALLOW_BY_NEXT_GATE
     GOVERNED_UNIT_BASE_BLUEPRINT_COMPILE: ALLOW_ONLY_AFTER_CLASSIFICATION_GATE
-    VISUAL_BASE_BLUEPRINT_COMPILE: ALLOW_ONLY_AFTER_PAGE_BLUEPRINT_GATE
-    BLUEPRINT_BINDING_COMPILE: ALLOW_ONLY_AFTER_PAGE_AND_VISUAL_BLUEPRINT_GATES
+    VISUAL_BASE_BLUEPRINT_COMPILE: ALLOW_ONLY_AFTER_GOVERNED_UNIT_BLUEPRINT_GATE
+    BLUEPRINT_BINDING_COMPILE: ALLOW_ONLY_AFTER_GOVERNED_UNIT_AND_VISUAL_BLUEPRINT_GATES
     WEBSITE_CONSTRUCTION: BLOCK_IN_STAGE_01
     DEPLOYMENT: BLOCK_IN_STAGE_01
   successor_gate_chain:
@@ -157,7 +157,7 @@ phase_boundary_contract:
     required_gate: GOVERNED_UNIT_BASE_BLUEPRINT_GATE_PASS
   - predecessor: VISUAL_BASE_BLUEPRINT_COMPILE
     successor: BLUEPRINT_BINDING_COMPILE
-    required_gate: PAGE_AND_VISUAL_BLUEPRINT_GATES_PASS
+    required_gate: GOVERNED_UNIT_AND_VISUAL_BLUEPRINT_GATES_PASS
   predecessor_validator_successor_policy:
     legal_successor_presence: ALLOW
     retroactive_predecessor_invalidation: FORBIDDEN
@@ -332,13 +332,13 @@ structured_document_source_projection_contract:
     manual_summary_or_rewrite: BLOCK
     fixed_scope: SCHEMA_KEYS_TYPES_ORDER_AND_FIDELITY_INVARIANTS_ONLY
     content_denominator: DYNAMIC_FROM_EACH_IMMUTABLE_RAW_SOURCE
-    fixed_product_governed_unit_uid_enum: FORBIDDEN
+    fixed_governed_unit_uid_enum: FORBIDDEN
     fixed_governed_unit_type_enum: FORBIDDEN
     fixed_business_entity_or_function_enum: FORBIDDEN
     fixed_control_field_or_visual_value_enum: FORBIDDEN
     fixed_source_content_count: FORBIDDEN
     fixed_source_heading_value_enum: FORBIDDEN
-    page_or_product_specific_projection_schema: FORBIDDEN
+    non_generic_projection_schema: FORBIDDEN
     unknown_or_extra_field: BLOCK
     missing_required_field: BLOCK
     mapping_key_order_drift: BLOCK
