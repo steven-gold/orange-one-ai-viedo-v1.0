@@ -2334,8 +2334,8 @@ cross_stage_invariants:
     explicit_stage_binding_denominator: 11
 stage_execution_invariant_ref: REG-STAGE-EXECUTION-INVARIANT-001
 layer_classification: EXECUTION_PROFILE
-profile_uid: ACPOS-WEB-DELIVERY-PROFILE-11
-profile_scope: ACPOS_PROJECT
+profile_uid: REUSABLE-PAGE-SYSTEM-LIFECYCLE-PROFILE-11
+profile_scope: REUSABLE_PAGE_AND_SYSTEM_UNIT
 global_normative_authority: false
 profile_may_weaken_common_policy: false
 profile_local_denominator: 11
@@ -2349,20 +2349,20 @@ policy_inheritance:
 - GOV-COMP-EVIDENCE-FEEDBACK-ARTIFACT-LIFECYCLE
 - GOV-COMP-LAYER-SEPARATION-PORTABILITY
 execution_scope_contract:
-  current_scope_artifact: PRODUCT_STAGE_EXECUTION_CURRENT_SCOPE_MANIFEST
-  current_scope_owner_layer: PRODUCT_EXECUTION_WORKLINE
-  product_execution_branch_source: governance/specifications/REGISTRY.yaml#product_execution_branch
-  product_scope_locator_contract: STAGE_EXECUTION/<STAGE_UID>/<WORK_UNIT_UID>/CURRENT_EXECUTION_SCOPE_MANIFEST.yaml
+  current_scope_artifact: STAGE_EXECUTION_CURRENT_SCOPE_MANIFEST
+  current_scope_owner_layer: EXECUTION_WORKLINE
+  execution_context_source: EXTERNAL_EXECUTION_CONTEXT
+  execution_scope_locator_contract: <EXECUTION_ROOT>/STAGE_EXECUTION/<STAGE_UID>/<WORK_UNIT_UID>/CURRENT_EXECUTION_SCOPE_MANIFEST.yaml
   scope_source: CURRENT_AUTHORITY_PROFILE_APPLICABILITY_DEPENDENCY_AND_PERSISTED_PRODUCT_STATE
   work_unit_scope_source: EXECUTION_SCOPE_MANIFEST
   stage_exit_scope_source: CURRENT_GOVERNED_UNIT_STAGE_REQUIRED_UNIVERSE_RECONCILIATION
-  governance_branch_may_persist_current_product_scope: false
+  governance_workline_may_persist_execution_scope: false
   partial_work_unit_closure_may_grant_stage_exit: false
   unrelated_same_stage_units_may_block_current_unit_exit: false
   cross_unit_blocking_requires_explicit_required_dependency_edge: true
   lifecycle_owner_granularity: PAGE_OR_SYSTEM_LOGIC_UNIT
   remaining_scope_persistence_required: true
-  reusable_consumer_literal_product_scope_or_denominator: BLOCK
+  reusable_consumer_literal_execution_identity_or_denominator: BLOCK
 capability_reentry_map:
   SOURCE_INTAKE_BASE_BLUEPRINT: STAGE-01
   FUNCTIONAL_CONTRACT: STAGE-02

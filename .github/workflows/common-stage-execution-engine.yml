@@ -24,6 +24,18 @@ on:
         default: plan
         type: choice
         options: [plan, plan-range, admission-check, validate-evidence, validate-terminal]
+      execution_root:
+        description: Execution-workline root for context-dependent modes
+        required: false
+        type: string
+      active_work_unit:
+        description: Execution-root-relative active Work Unit artifact
+        required: false
+        type: string
+      current_scope:
+        description: Execution-root-relative Current Scope artifact
+        required: false
+        type: string
       evidence_path:
         description: Repo-relative normalized evidence path for validation modes
         required: false
@@ -63,6 +75,9 @@ jobs:
           START_STAGE_UID: ${{ inputs.start_stage_uid }}
           END_STAGE_UID: ${{ inputs.end_stage_uid }}
           MODE: ${{ inputs.mode }}
+          STAGE_EXECUTION_ROOT: ${{ inputs.execution_root }}
+          STAGE_ACTIVE_WORK_UNIT: ${{ inputs.active_work_unit }}
+          STAGE_CURRENT_SCOPE: ${{ inputs.current_scope }}
           EVIDENCE_PATH: ${{ inputs.evidence_path }}
           RECEIPT_PATH: ${{ inputs.receipt_path }}
         run: |

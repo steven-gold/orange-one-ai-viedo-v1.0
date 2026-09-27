@@ -1,7 +1,7 @@
 schema_version: 1
 artifact_type: STAGE_EXECUTION_SEMANTIC_ADAPTER_REGISTRY
 normative_authority: false
-derived_from_profile_uid: ACPOS-WEB-DELIVERY-PROFILE-11
+derived_from_profile_uid: REUSABLE-PAGE-SYSTEM-LIFECYCLE-PROFILE-11
 authority_refs:
 - .github/governance-source/active/source/10_REGISTRY/GOVERNANCE_LIFECYCLE_STAGE_REGISTRY.yaml
 - .github/governance-source/active/source/10_REGISTRY/STAGE_EXECUTION_INVARIANT_REGISTRY.yaml
@@ -117,7 +117,7 @@ common_execution_skeleton:
 common_requirements:
   definition_audit_may_claim_product_completion: false
   governance_maintenance_product_stage_credit: 0
-  actual_product_execution_requires_active_product_work_unit: true
+  actual_execution_requires_active_work_unit: true
   fresh_execution_required: true
   prior_result_may_replace_fresh_execution: false
   fresh_reexecution_after_remediation_required: true

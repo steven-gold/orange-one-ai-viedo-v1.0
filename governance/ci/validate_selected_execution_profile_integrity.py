@@ -102,19 +102,19 @@ for step in stages:
             die(f'SELECTED_PROFILE_SUCCESSOR_GATE_MISMATCH:{uid}->{nxt}:{predecessor_exit}:{successor_entry}')
 
 scope_contract = profile.get('execution_scope_contract') or {}
-if scope_contract.get('current_scope_artifact') != 'PRODUCT_STAGE_EXECUTION_CURRENT_SCOPE_MANIFEST':
-    die('CURRENT_SCOPE_ARTIFACT_NOT_PRODUCT_OWNED')
-if scope_contract.get('current_scope_owner_layer') != 'PRODUCT_EXECUTION_WORKLINE':
+if scope_contract.get('current_scope_artifact') != 'STAGE_EXECUTION_CURRENT_SCOPE_MANIFEST':
+    die('CURRENT_SCOPE_ARTIFACT_NOT_GENERIC')
+if scope_contract.get('current_scope_owner_layer') != 'EXECUTION_WORKLINE':
     die('CURRENT_SCOPE_OWNER_LAYER_DRIFT')
-if scope_contract.get('governance_branch_may_persist_current_product_scope') is not False:
-    die('GOVERNANCE_BRANCH_PRODUCT_SCOPE_PERSISTENCE_NOT_BLOCKED')
-if registry.get('product_execution_branch') != '0921acpos':
-    die('PRODUCT_EXECUTION_BRANCH_DRIFT')
+if scope_contract.get('governance_workline_may_persist_execution_scope') is not False:
+    die('GOVERNANCE_WORKLINE_EXECUTION_SCOPE_PERSISTENCE_NOT_BLOCKED')
+if scope_contract.get('execution_context_source') != 'EXTERNAL_EXECUTION_CONTEXT':
+    die('EXECUTION_CONTEXT_SOURCE_NOT_EXTERNAL')
 for forbidden in ('ACTIVE_WORK_UNIT', 'CURRENT_EXECUTION_SCOPE', 'PRODUCT_EXECUTION_EVIDENCE', 'PREEXECUTION_RECEIPT'):
     if forbidden not in (registry.get('forbidden_in_ruleset_branch') or []):
         die('RULESET_BRANCH_FORBIDDEN_PRODUCT_STATE_MISSING:' + forbidden)
 
 print(f"PASS: selected execution profile {profile.get('profile_uid')} resolves from Current Registry as non-global execution profile")
 print(f'PASS: selected profile local denominator={len(stages)} structural contracts complete')
-print('PASS: Current product scope/run-state ownership is isolated to product execution workline')
+print('PASS: Current execution scope/run-state ownership is isolated from the governance workline')
 print('PASS: governance branch resolves Current exclusively from Registry and contains no product run-state root')

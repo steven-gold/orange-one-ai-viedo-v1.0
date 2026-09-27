@@ -1,0 +1,17 @@
+schema_version: 1
+artifact_type: EXECUTION_ENVIRONMENT_BINDING
+status: CURRENT_CONTEXT
+normative_authority: false
+common_stage_definition_credit: 0
+common_stage_completion_credit: 0
+binding_role: EXTERNAL_CURRENT_ENVIRONMENT_CONFIGURATION
+governance_workline:
+  repository: steven-gold/orange-one-ai-viedo-v1.0
+  branch: rebuild-v2.1.1
+execution_workline:
+  repository: steven-gold/orange-one-ai-viedo-v1.0
+  branch: 0921acpos
+rules:
+  values_may_enter_reusable_stage_semantics: false
+  values_may_define_common_stage_denominator: false
+  values_require_explicit_environment_resolution_before_effectful_execution: true

@@ -77,3 +77,7 @@ jobs:
 
       - name: Gate 09 - Full high-pressure Stage regression
         run: python governance/ci/test_stage_execution_engine.py
+      - name: Gate 10 - External admission layer isolation
+        run: |
+          python .github/governance-source/active/source/09_TESTS/governance/validate_external_execution_admission.py
+          python governance/ci/test_external_execution_admission.py

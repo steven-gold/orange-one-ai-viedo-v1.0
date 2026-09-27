@@ -83,10 +83,10 @@ sample={
  'next_stage_transition':{'next_stage_uid':st['next_stage_uid'],'status':'READY'},
  'result':'PASS','stage_exit_allowed':True
 }
-_orig_product_root=os.environ.get(eng.PRODUCT_ROOT_ENV)
+_orig_product_root=os.environ.get(eng.EXECUTION_ROOT_ENV)
 _sample_tmp=tempfile.TemporaryDirectory()
 _sample_root=Path(_sample_tmp.name)
-os.environ[eng.PRODUCT_ROOT_ENV]=str(_sample_root)
+os.environ[eng.EXECUTION_ROOT_ENV]=str(_sample_root)
 _synthetic_wu='SYNTHETIC-WU-STAGE01'
 _synthetic_dir=_sample_root/'STAGE_EXECUTION'/'STAGE-01'/_synthetic_wu
 _synthetic_dir.mkdir(parents=True)
@@ -281,9 +281,9 @@ expect_stage_engine_block(
   'TERMINAL_RECEIPT_IDENTITY_OR_RESULT_DRIFT'
 )
 if _orig_product_root is None:
-    os.environ.pop(eng.PRODUCT_ROOT_ENV,None)
+    os.environ.pop(eng.EXECUTION_ROOT_ENV,None)
 else:
-    os.environ[eng.PRODUCT_ROOT_ENV]=_orig_product_root
+    os.environ[eng.EXECUTION_ROOT_ENV]=_orig_product_root
 _sample_tmp.cleanup()
 plans=[eng.plan(uid) for uid in eng.stage_map(profile)]
 assert len(plans)==11
@@ -404,13 +404,13 @@ with tempfile.TemporaryDirectory() as td:
 def _init_synthetic_product_git(root):
     (root/'targets').mkdir(parents=True,exist_ok=True)
     (root/'targets'/'seed.txt').write_text('synthetic tracked product target\n',encoding='utf-8')
-    subprocess.run(['git','init','-b','0921acpos'],cwd=root,check=True,text=True,capture_output=True)
+    subprocess.run(['git','init','-b','execution-workline'],cwd=root,check=True,text=True,capture_output=True)
     subprocess.run(['git','config','user.email','synthetic@example.invalid'],cwd=root,check=True)
     subprocess.run(['git','config','user.name','Synthetic Stage Test'],cwd=root,check=True)
-    subprocess.run(['git','remote','add','origin','https://github.com/steven-gold/orange-one-ai-viedo-v1.0.git'],cwd=root,check=True)
+    subprocess.run(['git','remote','add','origin','https://example.invalid/example/repository.git'],cwd=root,check=True)
     subprocess.run(['git','add','targets/seed.txt'],cwd=root,check=True)
     subprocess.run(['git','commit','-m','synthetic product target seed'],cwd=root,check=True,text=True,capture_output=True)
-    return eng._current_product_git_context(root)
+    return eng._current_execution_git_context(root)
 
 def _write_synthetic_target_resolution(root,base_rel,work_unit_uid,successor_uid,row,cross_policy,git_ctx):
     stage_key=successor_uid if successor_uid else 'NEXT_GOVERNED_UNIT'
@@ -443,12 +443,6 @@ def _write_synthetic_target_resolution(root,base_rel,work_unit_uid,successor_uid
         receipt.update({'repository_identity':git_ctx['repository'],'branch_ref_head_sha':git_ctx['head']})
     if kind=='CURRENT_REPOSITORY_PATH':
         receipt.update({'target_path':'targets','target_path_exists':True,'target_path_tracked_at_head':True})
-        if row['binding_class']=='APPLICATION_ROOT':
-            baseline_rel=(Path(base_rel)/'APPLICATION_BASELINE_SNAPSHOT.yaml').as_posix()
-            obj=subprocess.run(['git','-C',str(root),'rev-parse',git_ctx['head']+':targets/seed.txt'],check=True,text=True,capture_output=True).stdout.strip()
-            baseline={'artifact_type':'APPLICATION_BASELINE_SNAPSHOT','status':'PASS','product_repository':git_ctx['repository'],'product_branch':git_ctx['branch'],'application_root':'targets','baseline_commit_sha':git_ctx['head'],'baseline_source_kind':'PREEXISTING_CURRENT_BASELINE','baseline_authority_ref':'synthetic://baseline-authority','tracked_path_set':[{'path':'targets/seed.txt','git_object_sha':obj}],'implementation_diff_anchor':True}
-            bp=root/baseline_rel; bp.parent.mkdir(parents=True,exist_ok=True); bp.write_text(yaml.safe_dump(baseline,sort_keys=False),encoding='utf-8')
-            receipt['application_baseline_snapshot_ref']=baseline_rel
     elif kind=='EXTERNAL_CURRENT_TARGET':
         receipt.update({
           'provider_or_system':'SYNTHETIC-PROVIDER','project_or_resource_identity':'SYNTHETIC-PROJECT',
@@ -467,8 +461,8 @@ def _write_synthetic_target_resolution(root,base_rel,work_unit_uid,successor_uid
 with tempfile.TemporaryDirectory() as td:
     pressure_root=Path(td)
     pressure_git_ctx=_init_synthetic_product_git(pressure_root)
-    old_root=os.environ.get(eng.PRODUCT_ROOT_ENV)
-    os.environ[eng.PRODUCT_ROOT_ENV]=str(pressure_root)
+    old_root=os.environ.get(eng.EXECUTION_ROOT_ENV)
+    os.environ[eng.EXECUTION_ROOT_ENV]=str(pressure_root)
     stages=eng.stage_map(profile)
     invdoc=eng.y(eng.INVARIANTS)
     cross_policy=((invdoc.get('invariants') or {}).get('CROSS_STAGE_MATERIALIZATION_AND_CONSUMER_READINESS') or {})
@@ -587,20 +581,11 @@ with tempfile.TemporaryDirectory() as td:
             expect_stage_engine_block(label,lambda:eng._validate_cross_stage_handoff_ledger('STAGE-04',deepcopy(evidence),predecessor,stages),expected)
         finally:
             app_receipt_path.write_text(yaml.safe_dump(original,sort_keys=False),encoding='utf-8')
-    _target_receipt_case('stage05_target_wrong_branch',lambda r:r.__setitem__('current_execution_branch','new'),'TARGET_RESOLUTION_BRANCH_MISMATCH')
+    _target_receipt_case('stage05_target_wrong_branch',lambda r:r.__setitem__('current_execution_branch','different-workline'),'TARGET_RESOLUTION_BRANCH_MISMATCH')
     _target_receipt_case('stage05_target_stale_head',lambda r:r.__setitem__('current_execution_head_sha','0'*40),'TARGET_RESOLUTION_HEAD_MISMATCH')
     _target_receipt_case('stage05_target_stale_tree',lambda r:r.__setitem__('current_execution_tree_sha','1'*40),'TARGET_RESOLUTION_TREE_MISMATCH')
     _target_receipt_case('stage05_application_root_missing',lambda r:r.update({'target_path':'missing-app-root','target_path_exists':True,'target_path_tracked_at_head':True}),'TARGET_RESOLUTION_PATH_MISSING')
     _target_receipt_case('stage05_application_root_untracked',lambda r:r.update({'target_path':'target-resolution','target_path_exists':True,'target_path_tracked_at_head':True}),'TARGET_RESOLUTION_PATH_NOT_TRACKED_AT_HEAD')
-    _target_receipt_case('stage05_application_baseline_snapshot_missing',lambda r:r.__setitem__('application_baseline_snapshot_ref',''),'APPLICATION_BASELINE_SNAPSHOT_REF_MISSING')
-    _baseline_path=pressure_root/app_receipt['application_baseline_snapshot_ref']
-    _baseline_original=yaml.safe_load(_baseline_path.read_text(encoding='utf-8'))
-    _baseline_broken=deepcopy(_baseline_original); _baseline_broken['tracked_path_set'][0]['git_object_sha']='0'*40
-    _baseline_path.write_text(yaml.safe_dump(_baseline_broken,sort_keys=False),encoding='utf-8')
-    try:
-        expect_stage_engine_block('stage05_application_baseline_object_mismatch',lambda:eng._validate_cross_stage_handoff_ledger('STAGE-04',deepcopy(evidence),predecessor,stages),'APPLICATION_BASELINE_PATH_OBJECT_MISMATCH')
-    finally:
-        _baseline_path.write_text(yaml.safe_dump(_baseline_original,sort_keys=False),encoding='utf-8')
     broken=deepcopy(ledger)
     row=next(x for x in broken['successor_execution_bindings'] if x['binding_class']=='APPLICATION_ROOT')
     row['target_identity']='synthetic://target/wrong-app-root'
@@ -721,25 +706,13 @@ with tempfile.TemporaryDirectory() as td:
     expect_stage_engine_block('state_pass_but_in_progress',lambda:eng._validate_current_stage_state_bundle(matrix_stage,state_e,matrix_st,gov),'CURRENT_STATE_STATUS_CONFLICT')
 
     if old_root is None:
-        os.environ.pop(eng.PRODUCT_ROOT_ENV,None)
+        os.environ.pop(eng.EXECUTION_ROOT_ENV,None)
     else:
-        os.environ[eng.PRODUCT_ROOT_ENV]=old_root
+        os.environ[eng.EXECUTION_ROOT_ENV]=old_root
 
-
-# Formal Product Stage governance authority must be one exact immutable released selection.
-_release_reg={'status':'CURRENT_RELEASED','branch':'rebuild-v2.1.1','branch_role_contract':{'rebuild-v2.1.1':'IMMUTABLE_GOVERNANCE_RULESET'},'governance_identity':{'governance_uid':'GOV-RELEASE-TEST','governance_revision':'vTEST','display_version':'vTEST','status':'RELEASED','identity_state':'IMMUTABLE_RELEASED','released_immutable_identity':True}}
-_release_sel={'artifact_type':'PRODUCT_SELECTED_GOVERNANCE_RELEASE','status':'SELECTED_VERIFIED_RELEASE','governance_repository':'owner/repo','governance_commit_sha':'a'*40,'governance_tree_sha':'b'*40,'governance_uid':'GOV-RELEASE-TEST','governance_revision':'vTEST','display_version':'vTEST','release_receipt_ref':'governance/release/RELEASE_RECEIPT.yaml','release_receipt_sha256':'c'*64,'root_manifest_sha256':'d'*64,'fresh_reverify_status':'PASS','fresh_reverify_evidence_ref':'external://fresh-reverify','selection_authority_ref':'issue://selection'}
-_release_receipt={'artifact_type':'GOVERNANCE_RELEASE_RECEIPT','released_governance_uid':'GOV-RELEASE-TEST','released_governance_revision':'vTEST'}
-assert eng._validate_selected_governance_release_data(_release_sel,_release_reg,_release_receipt,{'repository':'owner/repo','head':'a'*40,'tree':'b'*40},'GOV-RELEASE-TEST','d'*64) is True
-_candidate_reg=deepcopy(_release_reg); _candidate_reg['status']='ACTIVE_SINGLE_BRANCH_VALIDATION'; _candidate_reg['branch_role_contract']['rebuild-v2.1.1']='GOVERNANCE_REVISION_CANDIDATE'
-expect_stage_engine_block('product_candidate_governance_cannot_drive_formal_stage',lambda:eng._validate_selected_governance_release_data(_release_sel,_candidate_reg,_release_receipt,{'repository':'owner/repo','head':'a'*40,'tree':'b'*40},'GOV-RELEASE-TEST','d'*64),'PRODUCT_SELECTED_GOVERNANCE_NOT_RELEASED')
-_bad_sel=deepcopy(_release_sel); _bad_sel['governance_commit_sha']='e'*40
-expect_stage_engine_block('product_selected_governance_exact_commit_mismatch',lambda:eng._validate_selected_governance_release_data(_bad_sel,_release_reg,_release_receipt,{'repository':'owner/repo','head':'a'*40,'tree':'b'*40},'GOV-RELEASE-TEST','d'*64),'PRODUCT_SELECTED_GOVERNANCE_BINDING_MISMATCH:governance_commit_sha')
 
 # Operation-level effectful dispatch migration pressure test.
 # Uses only a temporary product root and a synthetic registered Python executor.
-_original_product_governance_selection=eng.validate_product_governance_selection
-eng.validate_product_governance_selection=lambda *args,**kwargs: True
 with tempfile.TemporaryDirectory() as _exec_td:
     _exec_root=Path(_exec_td)
     _entry,_reg,_gov,_profile,_adapters,_stages=eng.validate_definition()
@@ -844,10 +817,10 @@ receipt.write_text(yaml.safe_dump(obj,sort_keys=False),encoding="utf-8")
     }
     (_wd/'EXECUTION_STATE.yaml').write_text(yaml.safe_dump(_state,sort_keys=False),encoding='utf-8')
 
-    _old_root=os.environ.get(eng.PRODUCT_ROOT_ENV)
+    _old_root=os.environ.get(eng.EXECUTION_ROOT_ENV)
     _old_work=os.environ.get(eng.ACTIVE_WORK_UNIT_ENV)
     _old_scope=os.environ.get(eng.CURRENT_SCOPE_ENV)
-    os.environ[eng.PRODUCT_ROOT_ENV]=str(_exec_root)
+    os.environ[eng.EXECUTION_ROOT_ENV]=str(_exec_root)
     os.environ[eng.ACTIVE_WORK_UNIT_ENV]=_work_rel
     os.environ[eng.CURRENT_SCOPE_ENV]=_scope_rel
     try:
@@ -892,12 +865,11 @@ p.parse_args()
         assert not (_exec_root/_operation_bindings[_ops[1]]['operation_receipt_ref']).exists()
     finally:
         for _key,_value in (
-            (eng.PRODUCT_ROOT_ENV,_old_root),(eng.ACTIVE_WORK_UNIT_ENV,_old_work),(eng.CURRENT_SCOPE_ENV,_old_scope)
+            (eng.EXECUTION_ROOT_ENV,_old_root),(eng.ACTIVE_WORK_UNIT_ENV,_old_work),(eng.CURRENT_SCOPE_ENV,_old_scope)
         ):
             if _value is None: os.environ.pop(_key,None)
             else: os.environ[_key]=_value
 
-eng.validate_product_governance_selection=_original_product_governance_selection
 
 assert not (ROOT/'governance/ci/compile_stage_execution_preflight.py').exists()
 assert not (ROOT/'governance/ci/stage_execution_adapters/stage02_functional_contract.py').exists()
@@ -1167,11 +1139,11 @@ def synthetic_evidence(stage_uid,result):
       'result':result,'stage_exit_allowed':not blocked,
     }
 
-_allstage_orig_product_root=os.environ.get(eng.PRODUCT_ROOT_ENV)
+_allstage_orig_product_root=os.environ.get(eng.EXECUTION_ROOT_ENV)
 _allstage_tmp=tempfile.TemporaryDirectory()
 _allstage_root=Path(_allstage_tmp.name)
 _allstage_git_ctx=_init_synthetic_product_git(_allstage_root)
-os.environ[eng.PRODUCT_ROOT_ENV]=str(_allstage_root)
+os.environ[eng.EXECUTION_ROOT_ENV]=str(_allstage_root)
 _cross_policy=((eng.y(eng.INVARIANTS).get('invariants') or {}).get('CROSS_STAGE_MATERIALIZATION_AND_CONSUMER_READINESS') or {})
 _cross_requirements=_cross_policy.get('successor_execution_binding_requirements') or {}
 _cross_operation_map=_cross_policy.get('successor_execution_binding_operation_map') or {}
@@ -1410,14 +1382,14 @@ for uid,st in stage_rows.items():
 
 # Mode 5: Product run-state ownership / scope locator contract.
 scope_contract=profile.get('execution_scope_contract') or {}
-if scope_contract.get('current_scope_artifact')!='PRODUCT_STAGE_EXECUTION_CURRENT_SCOPE_MANIFEST':
-    audit_error('STATE_RESUME_PROJECTOR','CURRENT_SCOPE_ARTIFACT_NOT_PRODUCT_OWNED')
-if scope_contract.get('current_scope_owner_layer')!='PRODUCT_EXECUTION_WORKLINE':
+if scope_contract.get('current_scope_artifact')!='STAGE_EXECUTION_CURRENT_SCOPE_MANIFEST':
+    audit_error('STATE_RESUME_PROJECTOR','CURRENT_SCOPE_ARTIFACT_NOT_GENERIC')
+if scope_contract.get('current_scope_owner_layer')!='EXECUTION_WORKLINE':
     audit_error('STATE_RESUME_PROJECTOR','CURRENT_SCOPE_OWNER_LAYER_DRIFT')
-if scope_contract.get('governance_branch_may_persist_current_product_scope') is not False:
-    audit_error('STATE_RESUME_PROJECTOR','GOVERNANCE_BRANCH_PRODUCT_SCOPE_PERSISTENCE_NOT_BLOCKED')
-if reg.get('product_execution_branch')!='0921acpos':
-    audit_error('STATE_RESUME_PROJECTOR','PRODUCT_EXECUTION_BRANCH_DRIFT')
+if scope_contract.get('governance_workline_may_persist_execution_scope') is not False:
+    audit_error('STATE_RESUME_PROJECTOR','GOVERNANCE_WORKLINE_EXECUTION_SCOPE_PERSISTENCE_NOT_BLOCKED')
+if scope_contract.get('execution_context_source')!='EXTERNAL_EXECUTION_CONTEXT':
+    audit_error('STATE_RESUME_PROJECTOR','EXECUTION_CONTEXT_SOURCE_NOT_EXTERNAL')
 for legacy in ('GOVERNANCE_CURRENT.yaml','governance/test/ACTIVE_STATE.yaml','governance/test/CURRENT_EXECUTION_SCOPE_MANIFEST.yaml'):
     if (ROOT/legacy).exists():
         audit_error('STATE_RESUME_PROJECTOR','LEGACY_PRODUCT_STATE_STILL_PERSISTED:'+legacy)
@@ -1448,10 +1420,8 @@ for required in ('ACTIVE_WORK_UNIT','CURRENT_EXECUTION_SCOPE','PRODUCT_EXECUTION
     if required not in forbidden:
         audit_error('SOURCE_TRUTH_CONTAMINATION','RULESET_BRANCH_FORBIDDEN_STATE_MISSING:'+required)
 mutation=reg.get('mutation_policy') or {}
-if mutation.get('product_execution_on_rebuild')!='FORBIDDEN':
-    audit_error('SOURCE_TRUTH_CONTAMINATION','PRODUCT_EXECUTION_ON_RULESET_BRANCH_NOT_BLOCKED')
-if mutation.get('product_execution_target')!='0921acpos':
-    audit_error('SOURCE_TRUTH_CONTAMINATION','PRODUCT_EXECUTION_TARGET_DRIFT')
+if mutation.get('execution_on_governance_workline')!='FORBIDDEN':
+    audit_error('SOURCE_TRUTH_CONTAMINATION','EXECUTION_ON_GOVERNANCE_WORKLINE_NOT_BLOCKED')
 mother1=(ROOT/'.github/governance-source/active/source/12_DOCS/mother-spec/01_BLUEPRINT_DESIGN_GOVERNANCE.md').read_text(encoding='utf-8')
 for required_token in ('Generated Content','SOURCE_CAPTURE_GAP','跨階段來源實體化與後繼可用性 Gate'):
     if required_token not in mother1:
@@ -1682,12 +1652,12 @@ if _phase_block_cases != 286 or _phase_na_proof_cases != 286:
     raise SystemExit(f'FAIL_COMMON_PHASE_NEGATIVE_DENOMINATOR:{_phase_block_cases}/286:{_phase_na_proof_cases}/286')
 
 if _allstage_orig_product_root is None:
-    os.environ.pop(eng.PRODUCT_ROOT_ENV,None)
+    os.environ.pop(eng.EXECUTION_ROOT_ENV,None)
 else:
-    os.environ[eng.PRODUCT_ROOT_ENV]=_allstage_orig_product_root
+    os.environ[eng.EXECUTION_ROOT_ENV]=_allstage_orig_product_root
 _allstage_tmp.cleanup()
 
-# Plans and reusable engine surfaces must not leak concrete ACPOS page identities.
+# Plans and reusable engine surfaces must not leak concrete product page identities.
 for _uid in expected_stage_uids:
     _plan_blob=_json.dumps(eng.plan(_uid),ensure_ascii=False,sort_keys=True)
     if _forbidden_product_literal.search(_plan_blob):

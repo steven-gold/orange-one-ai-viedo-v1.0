@@ -35,50 +35,10 @@ def validate(root=ROOT):
             failures.append('missing_invariant:' + k)
     if 'external_execution_admission_contracts' in d or 'product_execution_admission_contracts' in d:
         failures.append('external_product_admission_embedded_in_stage_registry')
-    admission_rel = '10_REGISTRY/PRODUCT_EXECUTION_ENVIRONMENT_ADMISSION_REGISTRY.yaml'
-    admission_path = root / admission_rel
-    if not admission_path.exists():
-        failures.append('product_execution_environment_admission_registry_missing')
-        admission = {}
-    else:
-        admission = load(root, admission_rel)
-    if admission.get('artifact_uid')!='REG-PRODUCT-EXECUTION-ENVIRONMENT-ADMISSION-001' or admission.get('artifact_type')!='PRODUCT_EXECUTION_ENVIRONMENT_ADMISSION_REGISTRY':
-        failures.append('product_execution_environment_admission_registry_identity_invalid')
-    admission_scope=admission.get('scope') or {}
-    if admission_scope.get('layer_classification')!='EXTERNAL_PRODUCT_EXECUTION_ENVIRONMENT_ADMISSION' or admission_scope.get('reusable_page_stage_normative_denominator_inclusion')!='EXCLUDED' or admission_scope.get('reusable_page_stage_definition_credit')!=0 or admission_scope.get('reusable_page_stage_completion_credit')!=0:
-        failures.append('external_product_admission_scope_isolation_missing')
-    contracts = admission.get('product_execution_admission_contracts') or {}
-    if set(contracts) != {'PRODUCT_GOVERNANCE_RELEASE_SELECTION_AND_APPLICATION_BASELINE'}:
-        failures.append('product_execution_admission_contract_set_drift')
-    pgra = contracts.get('PRODUCT_GOVERNANCE_RELEASE_SELECTION_AND_APPLICATION_BASELINE') or {}
-    if pgra.get('contract_uid')!='GOV-ADMISSION-PRODUCT-GOVERNANCE-RELEASE-APPLICATION-BASELINE-001':
-        failures.append('product_execution_admission_contract_uid_invalid')
-    if set(map(str,pgra.get('normative_section_uids') or []))!={'WEB-EXT-ADMISSION-01-S001','WEB-EXT-ADMISSION-01-S002','WEB-EXT-ADMISSION-01-S003','WEB-EXT-ADMISSION-01-S004'}:
-        failures.append('product_execution_admission_normative_section_set_drift')
-    if pgra.get('scope_class')!='EXTERNAL_PRODUCT_EXECUTION_ENVIRONMENT_ADMISSION' or pgra.get('reusable_page_stage_normative_denominator_inclusion')!='EXCLUDED' or pgra.get('reusable_page_stage_definition_credit')!=0 or pgra.get('reusable_page_stage_completion_credit')!=0:
-        failures.append('external_product_admission_contract_scope_isolation_missing')
-    if pgra.get('application_baseline_is_universal_page_stage_requirement') is not False or pgra.get('product_specific_branch_repository_or_framework_may_enter_common_stage_semantics') is not False:
-        failures.append('external_product_admission_leaks_into_page_stage_semantics')
-    if pgra.get('selected_governance_release_artifact_type')!='PRODUCT_SELECTED_GOVERNANCE_RELEASE' or pgra.get('selected_governance_release_status')!='SELECTED_VERIFIED_RELEASE':
-        failures.append('product_selected_governance_release_contract_missing')
-    if pgra.get('product_stage_workflow_governance_checkout_mode')!='EXACT_SELECTED_RELEASE_COMMIT_ONLY' or pgra.get('moving_governance_branch_ref_may_grant_product_execution_credit') is not False or pgra.get('candidate_governance_formal_product_execution_credit')!=0:
-        failures.append('product_governance_exact_release_checkout_contract_missing')
-    if pgra.get('governance_load_receipt_artifact_type')!='GOVERNANCE_LOAD_RECEIPT' or pgra.get('governance_revision_transition_receipt_type')!='GOVERNANCE_REVISION_TRANSITION_RECEIPT':
-        failures.append('product_governance_load_transition_receipt_contract_missing')
-    if pgra.get('old_uid_without_transition_receipt')!='BLOCK' or pgra.get('impacted_old_governance_closure_disposition')!='REVERIFY_REQUIRED' or pgra.get('old_execution_evidence_may_be_relabelled_to_new_uid') is not False:
-        failures.append('product_governance_transition_fail_closed_missing')
-    if pgra.get('application_baseline_admission_manifest_type')!='APPLICATION_BASELINE_ADMISSION_MANIFEST' or pgra.get('application_baseline_materialization_receipt_type')!='APPLICATION_BASELINE_MATERIALIZATION_RECEIPT' or pgra.get('application_baseline_snapshot_type')!='APPLICATION_BASELINE_SNAPSHOT':
-        failures.append('application_baseline_admission_contract_missing')
-    if pgra.get('noncurrent_branch_application_source_role')!='PROVENANCE_ONLY' or pgra.get('noncurrent_branch_application_source_may_be_current_target') is not False or pgra.get('application_baseline_source_branch_may_be_auto_selected') is not False:
-        failures.append('application_baseline_noncurrent_branch_target_not_blocked')
-    if pgra.get('current_application_root_absence_disposition')!='APPLICATION_BASELINE_ADMISSION_REQUIRED' or pgra.get('application_baseline_snapshot_ref_required_on_stage05_application_root_resolution') is not True:
-        failures.append('application_baseline_stage05_recovery_contract_missing')
-    if pgra.get('implementation_diff_baseline_snapshot_required') is not True:
-        failures.append('implementation_diff_baseline_snapshot_not_required')
-    expected_impl_ops={f'OP-{i:02d}' for i in range(10,24)}
-    actual_impl_ops={'-'.join(str(x).split('-')[:2]) for x in (pgra.get('implementation_diff_required_operation_uids') or [])}
-    if actual_impl_ops!=expected_impl_ops:
-        failures.append('implementation_diff_operation_denominator_drift')
+    stage_blob=yaml.safe_dump(d,sort_keys=False)
+    for token in ('PRODUCT_SELECTED_GOVERNANCE_RELEASE','GOVERNANCE_REVISION_TRANSITION_RECEIPT','APPLICATION_BASELINE_ADMISSION_MANIFEST','APPLICATION_BASELINE_MATERIALIZATION_RECEIPT','APPLICATION_BASELINE_SNAPSHOT','WEB-EXT-ADMISSION'):
+        if token in stage_blob:
+            failures.append('external_admission_semantic_leak:'+token)
     r = inv.get('RELATION_SEMANTIC_SEPARATION') or {}
     if any((r.get(k) is not False for k in ['port_exposure_is_trigger', 'state_event_is_trigger_without_explicit_binding', 'registry_membership_is_action_binding', 'semantic_similarity_may_create_binding'])):
         failures.append('relation_inference_not_forbidden')

@@ -9,11 +9,9 @@ REGISTRY=ROOT/'governance/specifications/REGISTRY.yaml'
 LIFECYCLE=ROOT/'.github/governance-source/active/source/10_REGISTRY/GOVERNANCE_LIFECYCLE_STAGE_REGISTRY.yaml'
 ADAPTERS=ROOT/'governance/ci/stage_execution_semantic_adapters.yaml'
 INVARIANTS=ROOT/'.github/governance-source/active/source/10_REGISTRY/STAGE_EXECUTION_INVARIANT_REGISTRY.yaml'
-PRODUCT_ADMISSION=ROOT/'.github/governance-source/active/source/10_REGISTRY/PRODUCT_EXECUTION_ENVIRONMENT_ADMISSION_REGISTRY.yaml'
-PRODUCT_ROOT_ENV='ACPOS_PRODUCT_ROOT'
-ACTIVE_WORK_UNIT_ENV='ACPOS_ACTIVE_WORK_UNIT'
-CURRENT_SCOPE_ENV='ACPOS_CURRENT_SCOPE'
-GOVERNANCE_SOURCE_ROOT_ENV='ACPOS_GOVERNANCE_SOURCE_ROOT'
+EXECUTION_ROOT_ENV='STAGE_EXECUTION_ROOT'
+ACTIVE_WORK_UNIT_ENV='STAGE_ACTIVE_WORK_UNIT'
+CURRENT_SCOPE_ENV='STAGE_CURRENT_SCOPE'
 
 EXPECTED_PHASES=[
 'SESSION_BOOTSTRAP_RESUME_GATE','CURRENT_GOVERNANCE','CURRENT_SCOPE','WORK_UNIT','AUTHORITY','APPLICABILITY','DEPENDENCY',
@@ -72,102 +70,32 @@ def _external_yaml(path,label):
     if not isinstance(obj,dict): fail(label+'_MAPPING_REQUIRED')
     return obj
 
-def _product_artifact_root():
-    raw=os.environ.get(PRODUCT_ROOT_ENV,'').strip()
+def _execution_artifact_root():
+    raw=os.environ.get(EXECUTION_ROOT_ENV,'').strip()
     root=Path(raw).resolve() if raw else ROOT
-    if not root.is_dir(): fail('PRODUCT_EXECUTION_ROOT_MISSING')
+    if not root.is_dir(): fail('EXECUTION_ROOT_MISSING')
     return root
 
-
-def _selection_policy():
-    admission=y(PRODUCT_ADMISSION)
-    policy=(admission.get('product_execution_admission_contracts') or {}).get('PRODUCT_GOVERNANCE_RELEASE_SELECTION_AND_APPLICATION_BASELINE') or {}
-    if not policy or policy.get('contract_uid')!='GOV-ADMISSION-PRODUCT-GOVERNANCE-RELEASE-APPLICATION-BASELINE-001':
-        fail('PRODUCT_GOVERNANCE_SELECTION_POLICY_MISSING')
-    if policy.get('scope_class')!='EXTERNAL_PRODUCT_EXECUTION_ENVIRONMENT_ADMISSION' or policy.get('reusable_page_stage_normative_denominator_inclusion')!='EXCLUDED':
-        fail('PRODUCT_GOVERNANCE_SELECTION_SCOPE_ISOLATION_INVALID')
-    return policy
 
 def _sha256_file(path):
     if not path.is_file(): fail('HASH_TARGET_MISSING:'+str(path))
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
-def _validate_selected_governance_release_data(selection,source_reg,release_receipt,source_ctx,current_governance_uid,root_manifest_sha256):
-    policy=_selection_policy()
-    missing=sorted(set(map(str,policy.get('selected_governance_release_required_fields') or []))-set(selection))
-    if missing: fail('PRODUCT_SELECTED_GOVERNANCE_FIELDS_MISSING:'+repr(missing))
-    if selection.get('artifact_type')!=policy.get('selected_governance_release_artifact_type') or selection.get('status')!=policy.get('selected_governance_release_status'): fail('PRODUCT_SELECTED_GOVERNANCE_ARTIFACT_INVALID')
-    ident=source_reg.get('governance_identity') or {}; branch=str(source_reg.get('branch') or ''); roles=source_reg.get('branch_role_contract') or {}
-    if source_reg.get('status')!=policy.get('selected_release_registry_status') or roles.get(branch)!=policy.get('selected_release_branch_role'): fail('PRODUCT_SELECTED_GOVERNANCE_NOT_RELEASED')
-    if ident.get('status')!=policy.get('selected_release_identity_status') or ident.get('identity_state')!=policy.get('selected_release_identity_state') or ident.get('released_immutable_identity') is not True: fail('PRODUCT_SELECTED_GOVERNANCE_IDENTITY_NOT_IMMUTABLE_RELEASED')
-    expected={'governance_repository':source_ctx.get('repository'),'governance_commit_sha':source_ctx.get('head'),'governance_tree_sha':source_ctx.get('tree'),'governance_uid':str(ident.get('governance_uid') or ''),'governance_revision':str(ident.get('governance_revision') or ''),'display_version':str(ident.get('display_version') or ''),'root_manifest_sha256':root_manifest_sha256}
-    for key,value in expected.items():
-        if not value or str(selection.get(key) or '')!=str(value): fail('PRODUCT_SELECTED_GOVERNANCE_BINDING_MISMATCH:'+key)
-    if str(selection.get('governance_uid') or '')!=str(current_governance_uid or ''): fail('PRODUCT_SELECTED_GOVERNANCE_CURRENT_UID_MISMATCH')
-    if selection.get('fresh_reverify_status')!=policy.get('selected_release_fresh_reverify_status') or not str(selection.get('fresh_reverify_evidence_ref') or '').strip(): fail('PRODUCT_SELECTED_GOVERNANCE_FRESH_REVERIFY_MISSING')
-    if release_receipt.get('artifact_type')!='GOVERNANCE_RELEASE_RECEIPT' or str(release_receipt.get('released_governance_uid') or '')!=str(selection.get('governance_uid') or '') or str(release_receipt.get('released_governance_revision') or '')!=str(selection.get('governance_revision') or ''): fail('PRODUCT_SELECTED_GOVERNANCE_RELEASE_RECEIPT_MISMATCH')
-    return True
-
-def validate_product_governance_selection(product_root,work_dir,work,stage_uid,current_governance_uid):
-    policy=_selection_policy(); rel=str(policy.get('selected_governance_release_path') or ''); rp=Path(rel)
-    if not rel or rp.is_absolute() or '..' in rp.parts: fail('PRODUCT_SELECTED_GOVERNANCE_REF_INVALID')
-    selection=_external_yaml(product_root/rp,'PRODUCT_SELECTED_GOVERNANCE_RELEASE')
-    raw=os.environ.get(str(policy.get('governance_source_root_env') or GOVERNANCE_SOURCE_ROOT_ENV),'').strip()
-    if not raw: fail('PRODUCT_GOVERNANCE_SOURCE_ROOT_REQUIRED')
-    source_root=Path(raw); source_root=(source_root if source_root.is_absolute() else product_root/source_root).resolve()
-    if not source_root.is_dir(): fail('PRODUCT_GOVERNANCE_SOURCE_ROOT_MISSING')
-    source_reg_path=source_root/'governance/specifications/REGISTRY.yaml'; source_reg=_external_yaml(source_reg_path,'SELECTED_GOVERNANCE_REGISTRY')
-    if REGISTRY.read_bytes()!=source_reg_path.read_bytes(): fail('LOADED_GOVERNANCE_REGISTRY_DIFFERS_FROM_SELECTED_CHECKOUT')
-    source_head=_git_required(source_root,'SELECTED_GOVERNANCE_HEAD_UNRESOLVED','rev-parse','HEAD'); source_tree=_git_required(source_root,'SELECTED_GOVERNANCE_TREE_UNRESOLVED','rev-parse','HEAD^{tree}')
-    remote=_git_required(source_root,'SELECTED_GOVERNANCE_REPOSITORY_UNRESOLVED','config','--get','remote.origin.url')
-    source_ctx={'repository':_canonical_repository_identity(remote),'head':source_head,'tree':source_tree}
-    receipt_path=source_root/str(selection.get('release_receipt_ref') or ''); release_receipt=_external_yaml(receipt_path,'SELECTED_GOVERNANCE_RELEASE_RECEIPT')
-    if _sha256_file(receipt_path)!=str(selection.get('release_receipt_sha256') or ''): fail('PRODUCT_SELECTED_GOVERNANCE_RELEASE_RECEIPT_HASH_MISMATCH')
-    root_hash=_sha256_file(source_root/'.github/governance-source/active/source/10_REGISTRY/GOVERNANCE_ROOT_MANIFEST.yaml')
-    _validate_selected_governance_release_data(selection,source_reg,release_receipt,source_ctx,current_governance_uid,root_hash)
-    load=_external_yaml(work_dir/str(policy.get('governance_load_receipt_filename') or 'GOVERNANCE_LOAD_RECEIPT.yaml'),'GOVERNANCE_LOAD_RECEIPT')
-    missing=sorted(set(map(str,policy.get('governance_load_receipt_required_fields') or []))-set(load))
-    if missing: fail('GOVERNANCE_LOAD_RECEIPT_FIELDS_MISSING:'+repr(missing))
-    expected={'artifact_type':str(policy.get('governance_load_receipt_artifact_type') or ''),'status':str(policy.get('governance_load_receipt_status') or 'PASS'),'stage_uid':stage_uid,'work_unit_uid':str(work.get('work_unit_uid') or ''),'selected_governance_ref':rel,'governance_uid':str(selection.get('governance_uid') or ''),'governance_revision':str(selection.get('governance_revision') or ''),'governance_commit_sha':source_head,'governance_tree_sha':source_tree,'governance_root_manifest_sha256':root_hash}
-    for key,value in expected.items():
-        if not value or str(load.get(key) or '')!=str(value): fail('GOVERNANCE_LOAD_RECEIPT_BINDING_MISMATCH:'+key)
-    if not str(load.get('effective_normative_set_sha256') or '').strip() or not str(load.get('loader_uid') or '').strip() or not str(load.get('loaded_at') or '').strip(): fail('GOVERNANCE_LOAD_RECEIPT_PROVENANCE_INCOMPLETE')
-    return selection
-
-def _block_for_governance_revision_transition(product_root,work,stage_uid,from_uid,to_uid):
-    policy=_selection_policy(); rel=str(policy.get('governance_revision_transition_receipt_path') or ''); rp=Path(rel)
-    if not rel or rp.is_absolute() or '..' in rp.parts or not (product_root/rp).is_file(): fail('GOVERNANCE_REVISION_TRANSITION_REQUIRED:'+str(from_uid)+'->'+str(to_uid))
-    receipt=_external_yaml(product_root/rp,'GOVERNANCE_REVISION_TRANSITION_RECEIPT')
-    missing=sorted(set(map(str,policy.get('governance_revision_transition_required_fields') or []))-set(receipt))
-    if missing: fail('GOVERNANCE_REVISION_TRANSITION_FIELDS_MISSING:'+repr(missing))
-    if receipt.get('artifact_type')!=policy.get('governance_revision_transition_receipt_type') or receipt.get('status')!=policy.get('governance_revision_transition_status_when_old_uid_present'): fail('GOVERNANCE_REVISION_TRANSITION_RECEIPT_INVALID')
-    if str(receipt.get('from_governance_uid') or '')!=str(from_uid) or str(receipt.get('to_governance_uid') or '')!=str(to_uid): fail('GOVERNANCE_REVISION_TRANSITION_UID_MISMATCH')
-    if str(receipt.get('selected_governance_ref') or '')!=str(policy.get('selected_governance_release_path') or ''): fail('GOVERNANCE_REVISION_TRANSITION_SELECTED_RELEASE_REF_MISMATCH')
-    affected=receipt.get('affected_work_unit_uids'); invalidated=receipt.get('invalidated_artifact_classes'); preserved=receipt.get('preserved_artifact_refs')
-    if not isinstance(affected,list) or not affected: fail('GOVERNANCE_REVISION_TRANSITION_AFFECTED_WORK_UNITS_INVALID')
-    if not isinstance(invalidated,list): fail('GOVERNANCE_REVISION_TRANSITION_INVALIDATED_ARTIFACT_CLASSES_INVALID')
-    if not isinstance(preserved,list): fail('GOVERNANCE_REVISION_TRANSITION_PRESERVED_ARTIFACT_REFS_INVALID')
-    if not str(receipt.get('reverse_dependency_evidence_ref') or '').strip() or not str(receipt.get('transition_authority_ref') or '').strip(): fail('GOVERNANCE_REVISION_TRANSITION_PROVENANCE_INCOMPLETE')
-    if str(work.get('work_unit_uid') or '') not in list(map(str,affected)): fail('GOVERNANCE_REVISION_TRANSITION_WORK_UNIT_NOT_CLASSIFIED')
-    earliest=str(receipt.get('earliest_reentry_stage_uid') or '')
-    if not re.fullmatch(r'STAGE-(?:0[1-9]|1[01])',earliest): fail('GOVERNANCE_REVISION_TRANSITION_REENTRY_STAGE_INVALID')
-    fail('GOVERNANCE_REVISION_TRANSITION_REENTRY_REQUIRED:'+earliest)
-
-def product_execution_context():
-    root_raw=os.environ.get(PRODUCT_ROOT_ENV,'').strip()
+def execution_context():
+    root_raw=os.environ.get(EXECUTION_ROOT_ENV,'').strip()
     work_rel=os.environ.get(ACTIVE_WORK_UNIT_ENV,'').strip()
     scope_rel=os.environ.get(CURRENT_SCOPE_ENV,'').strip()
     if not root_raw or not work_rel or not scope_rel:
-        fail('PRODUCT_EXECUTION_CONTEXT_ENV_REQUIRED')
-    product_root=Path(root_raw).resolve()
-    if not product_root.is_dir(): fail('PRODUCT_EXECUTION_ROOT_MISSING')
+        fail('EXECUTION_CONTEXT_ENV_REQUIRED')
+    execution_root=Path(root_raw).resolve()
+    if not execution_root.is_dir(): fail('EXECUTION_ROOT_MISSING')
     def resolve_rel(rel,label):
         p=Path(rel)
         if p.is_absolute() or '..' in p.parts: fail(label+'_PATH_INVALID')
-        return product_root/p
+        return execution_root/p
     work_path=resolve_rel(work_rel,'ACTIVE_WORK_UNIT')
     scope_path=resolve_rel(scope_rel,'CURRENT_SCOPE')
-    return product_root,_external_yaml(work_path,'ACTIVE_WORK_UNIT'),_external_yaml(scope_path,'CURRENT_SCOPE'),work_rel,scope_rel
+    return execution_root,_external_yaml(work_path,'ACTIVE_WORK_UNIT'),_external_yaml(scope_path,'CURRENT_SCOPE'),work_rel,scope_rel
 def stage_map(profile):
     rows=profile.get('stages') or []
     if not isinstance(rows,list) or not rows: fail('PROFILE_STAGES_EMPTY')
@@ -193,7 +121,7 @@ def validate_definition_data(profile,adapters):
     req=adapters.get('common_requirements') or {}
     expected={
       'definition_audit_may_claim_product_completion':False,'governance_maintenance_product_stage_credit':0,
-      'actual_product_execution_requires_active_product_work_unit':True,'fresh_execution_required':True,
+      'actual_product_execution_requires_active_execution_work_unit':True,'fresh_execution_required':True,
       'prior_result_may_replace_fresh_execution':False,'fresh_reexecution_after_remediation_required':True,
       'hidden_defect_sweep_required':True,'required_evidence_presence_only_is_pass':False,
       'exact_head_outer_terminal_conclusion_required':True,'stage_exit_requires_zero_open_gap_zero_blocker_zero_remaining_scope':True,
@@ -544,7 +472,7 @@ def _matrix_nonblank(value):
     if isinstance(value,(list,dict)): return len(value)>0
     return True
 
-def validate_normative_execution_matrix(stage_uid,product_root,work,stage,gov):
+def validate_normative_execution_matrix(stage_uid,execution_root,work,stage,gov):
     inv=y(INVARIANTS)
     policy=((inv.get('invariants') or {}).get('NORMATIVE_EXECUTION_MATRIX') or {})
     if policy.get('required_before_first_effectful_operation') is not True or policy.get('required_for_stage_or_capability_closure') is not True:
@@ -553,7 +481,7 @@ def validate_normative_execution_matrix(stage_uid,product_root,work,stage,gov):
     if not rel: fail('NORMATIVE_EXECUTION_MATRIX_REF_MISSING')
     rp=Path(rel)
     if rp.is_absolute() or '..' in rp.parts: fail('NORMATIVE_EXECUTION_MATRIX_REF_INVALID')
-    path=product_root/rp
+    path=execution_root/rp
     matrix=_external_yaml(path,'NORMATIVE_EXECUTION_MATRIX')
     if matrix.get('artifact_type')!='NORMATIVE_EXECUTION_MATRIX': fail('NORMATIVE_EXECUTION_MATRIX_TYPE_INVALID')
     if matrix.get('stage_uid')!=stage_uid or matrix.get('work_unit_uid')!=work.get('work_unit_uid') or matrix.get('governance_uid')!=gov:
@@ -583,7 +511,7 @@ def validate_normative_execution_matrix(stage_uid,product_root,work,stage,gov):
         aref=str(row.get('artifact_ref') or '')
         ap=Path(aref)
         if not aref or ap.is_absolute() or '..' in ap.parts: fail('NORMATIVE_EXECUTION_MATRIX_ARTIFACT_REF_INVALID:'+uid)
-        full=product_root/ap
+        full=execution_root/ap
         if not full.is_file(): fail('NORMATIVE_EXECUTION_MATRIX_ARTIFACT_MISSING:'+uid+':'+aref)
         if full.suffix.lower()=='.json':
             obj=json.loads(full.read_text(encoding='utf-8'))
@@ -624,31 +552,28 @@ def validate_normative_execution_matrix(stage_uid,product_root,work,stage,gov):
         fail('NORMATIVE_EXECUTION_MATRIX_BINDING_COVERAGE_INCOMPLETE')
     return True
 
-def active_product(stage_uid):
+def active_execution(stage_uid):
     entry,reg,gov,profile,adapters,stages=validate_definition()
-    product_root,work,scope,work_rel,scope_rel=product_execution_context()
-    work_dir=(product_root/Path(work_rel)).resolve().parent
-    validate_product_governance_selection(product_root,work_dir,work,stage_uid,gov)
+    execution_root,work,scope,work_rel,scope_rel=execution_context()
+    work_dir=(execution_root/Path(work_rel)).resolve().parent
     validate_work_unit_bindings(stage_uid,work,stages,adapters)
     if scope.get('stage_uid')!=stage_uid or scope.get('work_unit_uid')!=work.get('work_unit_uid'):
         fail('CURRENT_SCOPE_WORK_UNIT_BINDING_DRIFT')
-    if scope.get('governance_uid') not in {None,gov}:
-        _block_for_governance_revision_transition(product_root,work,stage_uid,scope.get('governance_uid'),gov)
     deps=work.get('dependencies') or []
     if not isinstance(deps,list) or not deps: fail('ACTIVE_PRODUCT_WORK_UNIT_DEPENDENCY_CLOSURE_MISSING')
     for dep in deps:
-        if isinstance(dep,str) and '/' in dep and not (product_root/dep).exists():
+        if isinstance(dep,str) and '/' in dep and not (execution_root/dep).exists():
             fail(f'ACTIVE_PRODUCT_WORK_UNIT_DEPENDENCY_MISSING:{dep}')
         if isinstance(dep,dict):
             ref=dep.get('ref') or dep.get('path') or dep.get('source_ref')
-            if isinstance(ref,str) and '/' in ref and not (product_root/ref).exists():
+            if isinstance(ref,str) and '/' in ref and not (execution_root/ref).exists():
                 fail(f'ACTIVE_PRODUCT_WORK_UNIT_DEPENDENCY_MISSING:{ref}')
-    validate_normative_execution_matrix(stage_uid,product_root,work,stages[stage_uid],gov)
+    validate_normative_execution_matrix(stage_uid,execution_root,work,stages[stage_uid],gov)
     return work
 
 def admission(stage_uid):
-    work=active_product(stage_uid); pl=plan(stage_uid)
-    print(f"PASS: common engine admission context resolved for {stage_uid} work_unit={work.get('work_unit_uid')}")
+    work=active_execution(stage_uid); pl=plan(stage_uid)
+    print(f"PASS: common Stage-core admission context resolved for {stage_uid} work_unit={work.get('work_unit_uid')}")
     print(f"PASS: common execution skeleton phases={len(pl['phases'])}/{len(EXPECTED_PHASES)}")
     print('PASS: admission check performs no product execution and grants zero completion credit')
 
@@ -668,8 +593,8 @@ def _validate_current_stage_state_bundle(stage_uid,e,stage,gov):
     rp=Path(scope_ref)
     if not scope_ref or rp.is_absolute() or '..' in rp.parts:
         fail('EVIDENCE_SCOPE_MANIFEST_REF_INVALID')
-    product_root=_product_artifact_root()
-    scope_path=product_root/rp
+    execution_root=_execution_artifact_root()
+    scope_path=execution_root/rp
     scope=_external_yaml(scope_path,'CURRENT_EXECUTION_SCOPE')
     if scope.get('stage_uid')!=stage_uid:
         fail('CURRENT_SCOPE_STAGE_IDENTITY_DRIFT')
@@ -680,7 +605,7 @@ def _validate_current_stage_state_bundle(stage_uid,e,stage,gov):
         fail('CURRENT_WORK_OR_STATE_STAGE_IDENTITY_DRIFT')
     if scope.get('work_unit_uid')!=work.get('work_unit_uid') or state.get('work_unit_uid')!=work.get('work_unit_uid'):
         fail('CURRENT_SCOPE_WORK_STATE_IDENTITY_DRIFT')
-    validate_normative_execution_matrix(stage_uid,product_root,work,stage,gov)
+    validate_normative_execution_matrix(stage_uid,execution_root,work,stage,gov)
     if e.get('result')=='PASS':
         expected=list(map(str,stage.get('operations') or []))
         completed=state.get('completed_operations')
@@ -724,106 +649,37 @@ def _canonical_repository_identity(raw):
     parts=[x for x in s.split('/') if x]
     return '/'.join(parts[-2:]) if len(parts)>=2 else s
 
-def _current_product_git_context(product_root):
-    reg=y(REGISTRY)
-    expected_branch=str(reg.get('product_execution_branch') or '')
-    if not expected_branch:
-        fail('PRODUCT_EXECUTION_BRANCH_MISSING')
-    head=_git_required(product_root,'PRODUCT_EXECUTION_HEAD_UNRESOLVED','rev-parse','HEAD')
-    tree=_git_required(product_root,'PRODUCT_EXECUTION_TREE_UNRESOLVED','rev-parse','HEAD^{tree}')
-    ref_heads=[]
-    for ref in (f'refs/heads/{expected_branch}',f'refs/remotes/origin/{expected_branch}'):
-        value=_git_optional(product_root,'show-ref','--verify','--hash',ref)
-        if value:
-            ref_heads.append(value)
-    env_branch=str(os.environ.get('GITHUB_REF_NAME') or '')
-    env_sha=str(os.environ.get('GITHUB_SHA') or '')
-    if product_root.resolve()==ROOT.resolve() and env_branch==expected_branch and env_sha==head:
-        ref_heads.append(head)
-    if head not in ref_heads:
-        fail('PRODUCT_EXECUTION_BRANCH_HEAD_MISMATCH:expected_branch='+expected_branch+':head='+head+':refs='+repr(ref_heads))
-    remote=_git_required(product_root,'PRODUCT_EXECUTION_REPOSITORY_UNRESOLVED','config','--get','remote.origin.url')
+def _current_execution_git_context(execution_root):
+    head=_git_required(execution_root,'EXECUTION_HEAD_UNRESOLVED','rev-parse','HEAD')
+    tree=_git_required(execution_root,'EXECUTION_TREE_UNRESOLVED','rev-parse','HEAD^{tree}')
+    branch=_git_optional(execution_root,'symbolic-ref','--short','HEAD') or str(os.environ.get('GITHUB_REF_NAME') or '').strip()
+    if not branch:
+        fail('EXECUTION_BRANCH_UNRESOLVED')
+    env_sha=str(os.environ.get('GITHUB_SHA') or '').strip()
+    if execution_root.resolve()==ROOT.resolve() and env_sha and env_sha!=head:
+        fail('EXECUTION_HEAD_ENV_MISMATCH')
+    remote=_git_required(execution_root,'EXECUTION_REPOSITORY_UNRESOLVED','config','--get','remote.origin.url')
     repository=_canonical_repository_identity(remote)
     if not repository:
-        fail('PRODUCT_EXECUTION_REPOSITORY_IDENTITY_UNRESOLVED')
-    return {'repository':repository,'branch':expected_branch,'head':head,'tree':tree}
+        fail('EXECUTION_REPOSITORY_IDENTITY_UNRESOLVED')
+    return {'repository':repository,'branch':branch,'head':head,'tree':tree}
 
-def _tracked_path_at_head(product_root,head,rel):
+def _tracked_path_at_head(execution_root,head,rel):
     rel_norm=str(Path(rel).as_posix()).rstrip('/')
-    if rel_norm in {'','.'}: return bool(_git_optional(product_root,'rev-parse',head+'^{tree}'))
-    cp=subprocess.run(['git','-C',str(product_root),'ls-tree','-r','--name-only',head,'--',rel],text=True,capture_output=True)
+    if rel_norm in {'','.'}: return bool(_git_optional(execution_root,'rev-parse',head+'^{tree}'))
+    cp=subprocess.run(['git','-C',str(execution_root),'ls-tree','-r','--name-only',head,'--',rel],text=True,capture_output=True)
     if cp.returncode!=0: fail('TARGET_RESOLUTION_GIT_TREE_LOOKUP_FAILED:'+str(rel))
     rows=[x.strip() for x in cp.stdout.splitlines() if x.strip()]
     return any(x==rel_norm or x.startswith(rel_norm+'/') for x in rows)
 
-def _git_object_at_commit(product_root,commit_sha,rel):
+def _git_object_at_commit(execution_root,commit_sha,rel):
     rel_norm=str(Path(rel).as_posix()).strip('/')
-    return _git_optional(product_root,'rev-parse',commit_sha+'^{tree}' if rel_norm in {'','.'} else commit_sha+':'+rel_norm)
+    return _git_optional(execution_root,'rev-parse',commit_sha+'^{tree}' if rel_norm in {'','.'} else commit_sha+':'+rel_norm)
 
-def _git_is_ancestor(product_root,ancestor,descendant):
-    return subprocess.run(['git','-C',str(product_root),'merge-base','--is-ancestor',ancestor,descendant],text=True,capture_output=True).returncode==0
+def _git_is_ancestor(execution_root,ancestor,descendant):
+    return subprocess.run(['git','-C',str(execution_root),'merge-base','--is-ancestor',ancestor,descendant],text=True,capture_output=True).returncode==0
 
-def _validate_application_baseline_snapshot(product_root,git_context,target_path,receipt):
-    policy=_selection_policy(); ref=str(receipt.get('application_baseline_snapshot_ref') or '').strip()
-    if not ref: fail('APPLICATION_BASELINE_SNAPSHOT_REF_MISSING')
-    rp=Path(ref)
-    if rp.is_absolute() or '..' in rp.parts: fail('APPLICATION_BASELINE_SNAPSHOT_REF_INVALID')
-    snap=_external_yaml(product_root/rp,'APPLICATION_BASELINE_SNAPSHOT')
-    missing=sorted(set(map(str,policy.get('application_baseline_snapshot_required_fields') or []))-set(snap))
-    if missing: fail('APPLICATION_BASELINE_SNAPSHOT_FIELDS_MISSING:'+repr(missing))
-    if snap.get('artifact_type')!=policy.get('application_baseline_snapshot_type') or snap.get('status')!=policy.get('application_baseline_snapshot_status'): fail('APPLICATION_BASELINE_SNAPSHOT_INVALID')
-    if _canonical_repository_identity(snap.get('product_repository'))!=git_context['repository'] or str(snap.get('product_branch') or '')!=git_context['branch']: fail('APPLICATION_BASELINE_SNAPSHOT_PRODUCT_CONTEXT_MISMATCH')
-    if str(snap.get('application_root') or '')!=str(target_path): fail('APPLICATION_BASELINE_SNAPSHOT_ROOT_MISMATCH')
-    baseline=str(snap.get('baseline_commit_sha') or '')
-    if len(baseline)!=40 or not _git_is_ancestor(product_root,baseline,git_context['head']): fail('APPLICATION_BASELINE_COMMIT_NOT_ANCESTOR')
-    rows=snap.get('tracked_path_set')
-    if not isinstance(rows,list) or not rows: fail('APPLICATION_BASELINE_TRACKED_PATH_SET_EMPTY')
-    req=set(map(str,policy.get('application_baseline_snapshot_path_row_required_fields') or [])); seen=set()
-    for row in rows:
-        if not isinstance(row,dict) or not req.issubset(row): fail('APPLICATION_BASELINE_PATH_ROW_INVALID')
-        p=str(row.get('path') or '').strip(); pp=Path(p)
-        if not p or pp.is_absolute() or '..' in pp.parts or p in seen: fail('APPLICATION_BASELINE_PATH_IDENTITY_INVALID:'+p)
-        seen.add(p); obj=_git_object_at_commit(product_root,git_context['head'],p)
-        if not obj or obj!=str(row.get('git_object_sha') or ''): fail('APPLICATION_BASELINE_PATH_OBJECT_MISMATCH:'+p)
-    kind=str(snap.get('baseline_source_kind') or '')
-    if kind not in set(map(str,policy.get('application_baseline_allowed_source_kinds') or [])): fail('APPLICATION_BASELINE_SOURCE_KIND_INVALID:'+kind)
-    if snap.get('implementation_diff_anchor') is not True or not str(snap.get('baseline_authority_ref') or '').strip(): fail('APPLICATION_BASELINE_DIFF_ANCHOR_OR_AUTHORITY_MISSING')
-    if kind=='AUTHORIZED_MIGRATION':
-        mr=str(snap.get('application_baseline_materialization_ref') or '').strip(); mp=Path(mr)
-        if not mr: fail('APPLICATION_BASELINE_MATERIALIZATION_REF_MISSING')
-        if mp.is_absolute() or '..' in mp.parts: fail('APPLICATION_BASELINE_MATERIALIZATION_REF_INVALID')
-        mat=_external_yaml(product_root/mp,'APPLICATION_BASELINE_MATERIALIZATION_RECEIPT')
-        mm=sorted(set(map(str,policy.get('application_baseline_materialization_receipt_required_fields') or []))-set(mat))
-        if mm: fail('APPLICATION_BASELINE_MATERIALIZATION_FIELDS_MISSING:'+repr(mm))
-        if mat.get('artifact_type')!=policy.get('application_baseline_materialization_receipt_type') or mat.get('status')!=policy.get('application_baseline_materialization_status') or mat.get('conflict_result')!=policy.get('application_baseline_conflict_result'): fail('APPLICATION_BASELINE_MATERIALIZATION_NOT_PASS')
-        if _canonical_repository_identity(mat.get('target_repository'))!=git_context['repository'] or str(mat.get('target_branch') or '')!=git_context['branch'] or str(mat.get('application_root') or '')!=str(target_path): fail('APPLICATION_BASELINE_MATERIALIZATION_TARGET_MISMATCH')
-        mc=str(mat.get('materialization_commit_sha') or '')
-        if len(mc)!=40 or not _git_is_ancestor(product_root,mc,git_context['head']): fail('APPLICATION_BASELINE_MATERIALIZATION_COMMIT_NOT_ANCESTOR')
-        ar=str(mat.get('admission_manifest_ref') or '').strip(); ap=Path(ar)
-        if not ar or ap.is_absolute() or '..' in ap.parts: fail('APPLICATION_BASELINE_ADMISSION_MANIFEST_REF_INVALID')
-        man=_external_yaml(product_root/ap,'APPLICATION_BASELINE_ADMISSION_MANIFEST')
-        am=sorted(set(map(str,policy.get('application_baseline_admission_manifest_required_fields') or []))-set(man))
-        if am: fail('APPLICATION_BASELINE_ADMISSION_MANIFEST_FIELDS_MISSING:'+repr(am))
-        if man.get('artifact_type')!=policy.get('application_baseline_admission_manifest_type') or man.get('status')!='APPROVED': fail('APPLICATION_BASELINE_ADMISSION_MANIFEST_NOT_APPROVED')
-        if _canonical_repository_identity(man.get('target_repository'))!=git_context['repository'] or str(man.get('target_branch') or '')!=git_context['branch'] or str(man.get('application_root') or '')!=str(target_path): fail('APPLICATION_BASELINE_ADMISSION_TARGET_MISMATCH')
-        for k in ('source_repository','source_branch','source_head_sha','source_tree_sha'):
-            if str(man.get(k) or '')!=str(mat.get(k) or ''): fail('APPLICATION_BASELINE_SOURCE_PROVENANCE_MISMATCH:'+k)
-        parent=str(mat.get('target_parent_head_sha') or '')
-        if str(man.get('target_expected_head_sha') or '')!=parent: fail('APPLICATION_BASELINE_TARGET_PREWRITE_HEAD_MISMATCH')
-        if len(parent)!=40 or not _git_is_ancestor(product_root,parent,mc): fail('APPLICATION_BASELINE_TARGET_PARENT_NOT_ANCESTOR_OF_MATERIALIZATION')
-        for k in ('source_path_set','include_path_set','allowed_write_path_set','preserve_path_set'):
-            if not isinstance(man.get(k),list) or not man.get(k): fail('APPLICATION_BASELINE_ADMISSION_PATH_SET_INVALID:'+k)
-        if not isinstance(man.get('exclude_path_set'),list): fail('APPLICATION_BASELINE_ADMISSION_PATH_SET_INVALID:exclude_path_set')
-        if not str(man.get('conflict_policy') or '').strip() or not str(man.get('transition_authority_ref') or '').strip(): fail('APPLICATION_BASELINE_ADMISSION_POLICY_OR_AUTHORITY_MISSING')
-        result_rows=mat.get('resulting_path_object_set')
-        if not isinstance(result_rows,list) or not result_rows: fail('APPLICATION_BASELINE_MATERIALIZATION_RESULT_SET_EMPTY')
-        result_map={str(x.get('path') or ''):str(x.get('git_object_sha') or '') for x in result_rows if isinstance(x,dict)}
-        if not result_map or len(result_map)!=len(result_rows): fail('APPLICATION_BASELINE_MATERIALIZATION_RESULT_SET_INVALID')
-        snapshot_map={str(x.get('path') or ''):str(x.get('git_object_sha') or '') for x in rows if isinstance(x,dict)}
-        if result_map!=snapshot_map: fail('APPLICATION_BASELINE_MATERIALIZATION_SNAPSHOT_OBJECT_SET_MISMATCH')
-    return True
-
-def _validate_execution_target_resolution(product_root,ledger,successor_uid,row,policy,git_context):
+def _validate_execution_target_resolution(execution_root,ledger,successor_uid,row,policy,git_context):
     stage_key=successor_uid if successor_uid else 'NEXT_GOVERNED_UNIT'
     kind_policy=(policy.get('successor_execution_binding_resolution_kind_policy') or {}).get(stage_key) or {}
     cls=str(row.get('binding_class') or '')
@@ -839,7 +695,7 @@ def _validate_execution_target_resolution(product_root,ledger,successor_uid,row,
     rp=Path(ref)
     if rp.is_absolute() or '..' in rp.parts:
         fail('TARGET_RESOLUTION_REF_INVALID:'+cls)
-    receipt=_external_yaml(product_root/rp,'EXECUTION_TARGET_RESOLUTION_RECEIPT')
+    receipt=_external_yaml(execution_root/rp,'EXECUTION_TARGET_RESOLUTION_RECEIPT')
     common=set(map(str,policy.get('successor_execution_target_resolution_common_required_fields') or []))
     missing=sorted(common-set(receipt))
     if missing:
@@ -864,7 +720,7 @@ def _validate_execution_target_resolution(product_root,ledger,successor_uid,row,
     if receipt.get('current_context_match') is not True:
         fail('TARGET_RESOLUTION_CURRENT_CONTEXT_NOT_PROVEN:'+cls)
     if git_context is None:
-        git_context=_current_product_git_context(product_root)
+        git_context=_current_execution_git_context(execution_root)
     context_expected={
       'current_execution_repository':git_context['repository'],
       'current_execution_branch':git_context['branch'],
@@ -893,14 +749,12 @@ def _validate_execution_target_resolution(product_root,ledger,successor_uid,row,
         tp=Path(target_path)
         if not target_path or tp.is_absolute() or '..' in tp.parts:
             fail('TARGET_RESOLUTION_PATH_INVALID:'+cls)
-        physical=product_root/tp
+        physical=execution_root/tp
         if receipt.get('target_path_exists') is not True or not physical.exists():
             fail('TARGET_RESOLUTION_PATH_MISSING:'+cls)
-        tracked=_tracked_path_at_head(product_root,git_context['head'],target_path)
+        tracked=_tracked_path_at_head(execution_root,git_context['head'],target_path)
         if receipt.get('target_path_tracked_at_head') is not True or not tracked:
             fail('TARGET_RESOLUTION_PATH_NOT_TRACKED_AT_HEAD:'+cls)
-        if cls=='APPLICATION_ROOT':
-            _validate_application_baseline_snapshot(product_root,git_context,target_path,receipt)
     elif kind=='CURRENT_REPOSITORY':
         pass
     elif kind=='EXTERNAL_CURRENT_TARGET':
@@ -929,7 +783,7 @@ def _validate_execution_target_resolution(product_root,ledger,successor_uid,row,
 
 def _validate_cross_stage_handoff_ledger(stage_uid,e,stage,stages):
     inv=y(INVARIANTS)
-    product_root=_product_artifact_root()
+    execution_root=_execution_artifact_root()
     policy=((inv.get('invariants') or {}).get('CROSS_STAGE_MATERIALIZATION_AND_CONSUMER_READINESS') or {})
     handoff=e.get('cross_stage_handoff') or {}
     ref=str(handoff.get('ledger_ref') or '')
@@ -938,7 +792,7 @@ def _validate_cross_stage_handoff_ledger(stage_uid,e,stage,stages):
     rp=Path(ref)
     if not ref or rp.is_absolute() or '..' in rp.parts:
         fail('CROSS_STAGE_HANDOFF_LEDGER_REF_INVALID')
-    ledger=_external_yaml(product_root/rp,'CROSS_STAGE_HANDOFF_READINESS_LEDGER')
+    ledger=_external_yaml(execution_root/rp,'CROSS_STAGE_HANDOFF_READINESS_LEDGER')
     if ledger.get('artifact_type')!='CROSS_STAGE_HANDOFF_READINESS_LEDGER':
         fail('CROSS_STAGE_HANDOFF_LEDGER_TYPE_INVALID')
     if ledger.get('stage_uid')!=stage_uid or ledger.get('successor_stage_uid')!=stage.get('next_stage_uid'):
@@ -1025,7 +879,7 @@ def _validate_cross_stage_handoff_ledger(stage_uid,e,stage,stages):
                     fail('CROSS_STAGE_SUCCESSOR_EXECUTION_BINDING_NOT_READY:'+cls)
                 target_resolution_required=(successor_uid in target_resolution_required_stages) or (not successor_uid and target_resolution_next_required)
                 if target_resolution_required:
-                    target_resolution_git_context=_validate_execution_target_resolution(product_root,ledger,successor_uid,row,policy,target_resolution_git_context)
+                    target_resolution_git_context=_validate_execution_target_resolution(execution_root,ledger,successor_uid,row,policy,target_resolution_git_context)
                 ready+=1
             elif not pass_result and resolution in {'UNRESOLVED','BLOCKED','MISSING'}:
                 if row.get('denominator_inclusion_status')!='INCLUDED' or row.get('consumer_readiness_status') not in {'BLOCKED','NOT_READY'}:
@@ -1142,7 +996,7 @@ def validate_evidence_data(stage_uid,e):
     if not req.issubset(got): fail(f'REQUIRED_EVIDENCE_TYPE_MISSING:{sorted(req-got)}')
     for item in items:
         if not isinstance(item,dict) or item.get('status')!='PASS' or not item.get('ref'): fail('REQUIRED_EVIDENCE_ITEM_INVALID')
-        if not item.get('external_receipt') and not (_product_artifact_root()/str(item['ref'])).is_file(): fail(f'REQUIRED_EVIDENCE_PHYSICAL_REF_MISSING:{item["ref"]}')
+        if not item.get('external_receipt') and not (_execution_artifact_root()/str(item['ref'])).is_file(): fail(f'REQUIRED_EVIDENCE_PHYSICAL_REF_MISSING:{item["ref"]}')
 
     handoff=e.get('cross_stage_handoff')
     if not isinstance(handoff,dict):
@@ -1158,7 +1012,7 @@ def validate_evidence_data(stage_uid,e):
         fail('CROSS_STAGE_HANDOFF_UNRESOLVED_COUNT_INVALID')
     if not handoff.get('external_receipt'):
         ref=str(handoff.get('ledger_ref') or '')
-        if not ref or not (_product_artifact_root()/ref).is_file():
+        if not ref or not (_execution_artifact_root()/ref).is_file():
             fail('CROSS_STAGE_HANDOFF_LEDGER_PHYSICAL_REF_MISSING')
     _validate_cross_stage_handoff_ledger(stage_uid,e,st,stages)
     if e.get('result')=='PASS':
@@ -1211,16 +1065,16 @@ def validate_terminal(stage_uid,evidence,receipt):
         if r.get(k) in (None,'',[]): fail(f'TERMINAL_RECEIPT_FIELD_MISSING:{k}')
     if r.get('governance_uid')!=e.get('governance_uid') or r.get('stage_uid')!=stage_uid or r.get('conclusion')!='success': fail('TERMINAL_RECEIPT_IDENTITY_OR_RESULT_DRIFT')
     if not isinstance(r.get('job_denominator'),list) or not r['job_denominator']: fail('TERMINAL_RECEIPT_JOB_DENOMINATOR_INVALID')
-    product_root=_product_artifact_root()
+    execution_root=_execution_artifact_root()
     evidence_ref=Path(str(r.get('evidence_ref') or ''))
     if evidence_ref.is_absolute() or '..' in evidence_ref.parts: fail('TERMINAL_RECEIPT_EVIDENCE_REF_INVALID')
-    if (product_root/evidence_ref).resolve()!=Path(evidence).resolve():
+    if (execution_root/evidence_ref).resolve()!=Path(evidence).resolve():
         fail('TERMINAL_RECEIPT_EVIDENCE_REF_DRIFT')
     _,_,gov,_,_,stages=validate_definition()
     st=stages[stage_uid]
     scope_ref=Path(str(e.get('scope_manifest_ref') or ''))
-    scope=_external_yaml(product_root/scope_ref,'CURRENT_EXECUTION_SCOPE')
-    work_dir=(product_root/scope_ref).parent
+    scope=_external_yaml(execution_root/scope_ref,'CURRENT_EXECUTION_SCOPE')
+    work_dir=(execution_root/scope_ref).parent
     work=_external_yaml(work_dir/'WORK_UNIT.yaml','CURRENT_WORK_UNIT')
     governed_scope=str(scope.get('governed_unit_uid') or '').strip()
     governed_work=str(work.get('governed_unit_uid') or '').strip()
@@ -1270,11 +1124,11 @@ def _atomic_yaml_write(path,obj):
 
 def execute_active(stage_uid):
     _,_,gov,_,adapters,stages=validate_definition()
-    work=active_product(stage_uid)
-    product_root,work_ctx,scope,work_rel,scope_rel=product_execution_context()
+    work=active_execution(stage_uid)
+    execution_root,work_ctx,scope,work_rel,scope_rel=execution_context()
     if work_ctx.get('work_unit_uid')!=work.get('work_unit_uid'):
         fail('ACTIVE_STAGE_WORK_UNIT_CONTEXT_DRIFT')
-    work_path=(product_root/Path(work_rel)).resolve()
+    work_path=(execution_root/Path(work_rel)).resolve()
     work_dir=work_path.parent
     state_path=work_dir/'EXECUTION_STATE.yaml'
     state=_external_yaml(state_path,'CURRENT_EXECUTION_STATE')
@@ -1314,9 +1168,9 @@ def execute_active(stage_uid):
     rel=Path(owner)
     if rel.is_absolute() or '..' in rel.parts or rel.suffix.lower()!='.py':
         fail('ACTIVE_STAGE_EXECUTOR_OWNER_PATH_INVALID')
-    executor=(product_root/rel).resolve()
+    executor=(execution_root/rel).resolve()
     try:
-        executor.relative_to(product_root)
+        executor.relative_to(execution_root)
     except ValueError:
         fail('ACTIVE_STAGE_EXECUTOR_OUTSIDE_PRODUCT_ROOT')
     if not executor.is_file():
@@ -1326,7 +1180,7 @@ def execute_active(stage_uid):
     receipt_rel=Path(receipt_ref)
     if receipt_rel.is_absolute() or '..' in receipt_rel.parts:
         fail('ACTIVE_STAGE_OPERATION_RECEIPT_REF_INVALID:'+operation_uid)
-    receipt_path=(product_root/receipt_rel).resolve()
+    receipt_path=(execution_root/receipt_rel).resolve()
     try:
         receipt_path.relative_to(work_dir.resolve())
     except ValueError:
@@ -1350,8 +1204,8 @@ def execute_active(stage_uid):
         fail('ACTIVE_STAGE_OPERATION_CHECKPOINT_NOT_REQUIRED:'+stage_uid)
     if stepwise.get('successor_requires_operation_pass') is not True:
         fail('ACTIVE_STAGE_SUCCESSOR_OPERATION_PASS_NOT_REQUIRED:'+stage_uid)
-    cmd=[sys.executable,str(executor),'--stage',stage_uid,'--operation',operation_uid,'--work-unit',work_rel,'--product-root',str(product_root)]
-    proc=subprocess.run(cmd,cwd=product_root,text=True,capture_output=True)
+    cmd=[sys.executable,str(executor),'--stage',stage_uid,'--operation',operation_uid,'--work-unit',work_rel,'--product-root',str(execution_root)]
+    proc=subprocess.run(cmd,cwd=execution_root,text=True,capture_output=True)
     if proc.returncode!=0:
         msg=(proc.stderr or proc.stdout or '').strip().replace('\n',' ')[:800]
         fail('ACTIVE_STAGE_OPERATION_EXECUTOR_FAILED:'+operation_uid+':'+str(proc.returncode)+':'+msg)
