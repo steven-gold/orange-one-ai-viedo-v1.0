@@ -223,10 +223,6 @@ def main():
     release_branch=cbranch
     if a.release_branch and a.release_branch!=cbranch:
         print(json.dumps({'status':'BLOCKED','reason':'BRANCH_FANOUT_FORBIDDEN','required_branch':cbranch,'requested_branch':a.release_branch}));return 2
-    if a.release_governance_uid==str(ident.get('governance_uid') or '') or a.release_governance_revision==str(ident.get('governance_revision') or ''):
-        print(json.dumps({'status':'BLOCKED','reason':'RELEASE_IDENTITY_NOT_NEW'}));return 2
-    co=contract_ok(reg)
-    if co.get('status')!='PASS':print(json.dumps({'status':'BLOCKED','reason':'PROMOTION_TRANSACTION_CONTRACT_DRIFT','detail':co}));return 2
     live_now=branch_head(a.repository,cbranch,token)
     if live_now!=a.candidate_head:
         ex=existing_in_place_release(a.repository,token,cbranch,a.candidate_head,a.release_governance_uid,a.promotion_authorization_ref)
@@ -234,6 +230,10 @@ def main():
             pc=postcheck(a.repository,token,a.candidate_head,cbranch,str(ex.get('head') or ''),a.release_governance_uid,a.release_governance_revision,a.promotion_authorization_ref)
             out=dict(ex);out['post_write_reconciliation']=pc;print(json.dumps(out,sort_keys=True));return 0 if pc.get('status')=='PASS' else 2
         print(json.dumps({'status':'BLOCKED','reason':'CANDIDATE_HEAD_DRIFT','candidate_head':a.candidate_head,'live_head':live_now,'existing_release':ex}));return 2
+    if a.release_governance_uid==str(ident.get('governance_uid') or '') or a.release_governance_revision==str(ident.get('governance_revision') or ''):
+        print(json.dumps({'status':'BLOCKED','reason':'RELEASE_IDENTITY_NOT_NEW'}));return 2
+    co=contract_ok(reg)
+    if co.get('status')!='PASS':print(json.dumps({'status':'BLOCKED','reason':'PROMOTION_TRANSACTION_CONTRACT_DRIFT','detail':co}));return 2
     if roles.get(cbranch)!='GOVERNANCE_REVISION_CANDIDATE':print(json.dumps({'status':'BLOCKED','reason':'NOT_GOVERNANCE_REVISION_CANDIDATE'}));return 2
     local=git('rev-parse','HEAD')
     if local!=a.candidate_head:print(json.dumps({'status':'BLOCKED','reason':'LOCAL_CANDIDATE_HEAD_DRIFT','local_head':local,'candidate_head':a.candidate_head}));return 2
