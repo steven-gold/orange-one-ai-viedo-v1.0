@@ -872,7 +872,7 @@ receipt.write_text(yaml.safe_dump(obj,sort_keys=False),encoding="utf-8")
         _bad['operation_bindings'][_ops[0]]['applicability']='AUTHORIZED_NOT_APPLICABLE'
         _bad['operation_bindings'][_ops[0]].pop('authority_evidence_ref',None)
         (_wd/'WORK_UNIT.yaml').write_text(yaml.safe_dump(_bad,sort_keys=False),encoding='utf-8')
-        expect_stage_engine_block('na_operation_without_authority_blocked',lambda:eng.execute_active(_sid),'ACTIVE_STAGE_OPERATION_NA_AUTHORITY_MISSING')
+        expect_stage_engine_block('na_operation_without_authority_blocked',lambda:eng.execute_active(_sid),'ACTIVE_WORK_UNIT_OPERATION_NA_AUTHORITY_MISSING')
 
         _na_work=deepcopy(_work)
         _na_binding=_na_work['operation_bindings'][_ops[0]]
