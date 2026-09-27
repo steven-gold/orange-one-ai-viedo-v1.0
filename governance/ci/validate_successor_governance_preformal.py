@@ -19,15 +19,16 @@ def main():
     vc=registry.get('candidate_validation_contract') or {}
     mutation=registry.get('mutation_policy') or {}
     failures=[]
+    current_branch=str(registry.get('branch') or '')
     role=str(resolved.get('governance_role') or '')
-    if registry.get('branch')!='rebuild-v2.1.1' or role not in {'GOVERNANCE_REVISION_CANDIDATE','IMMUTABLE_GOVERNANCE_RULESET'}:
+    if not current_branch or role not in {'GOVERNANCE_REVISION_CANDIDATE','IMMUTABLE_GOVERNANCE_RULESET'}:
         failures.append('SINGLE_BRANCH_CURRENT_IDENTITY_DRIFT')
     release_reverify=(role=='IMMUTABLE_GOVERNANCE_RULESET')
     if release_reverify:
         ident=registry.get('governance_identity') or {}
         manifest=load_yaml(ROOT/'governance/specifications/current/SPECIFICATION_MANIFEST.yaml')
         lock=load_yaml(ROOT/'governance/BRANCH_AUTHORITY_LOCK.yaml')
-        branch_lock=(lock.get('branches') or {}).get('rebuild-v2.1.1') or {}
+        branch_lock=(lock.get('branches') or {}).get(current_branch) or {}
         if registry.get('status')!='CURRENT_RELEASED':
             failures.append('RELEASE_REVERIFY_REGISTRY_STATUS_DRIFT')
         if ident.get('status')!='RELEASED' or ident.get('identity_state')!='IMMUTABLE_RELEASED' or ident.get('released_immutable_identity') is not True:
@@ -36,7 +37,7 @@ def main():
             failures.append('RELEASE_REVERIFY_MANIFEST_STATE_DRIFT')
         if branch_lock.get('role')!='IMMUTABLE_GOVERNANCE_RULESET' or branch_lock.get('gpt_write_policy')!='FORBIDDEN':
             failures.append('RELEASE_REVERIFY_BRANCH_LOCK_DRIFT')
-    if mutation.get('single_branch_consolidation_mode') is not True or mutation.get('single_active_governance_branch')!='rebuild-v2.1.1':
+    if mutation.get('single_branch_consolidation_mode') is not True or str(mutation.get('single_active_governance_branch') or '')!=current_branch:
         failures.append('SINGLE_BRANCH_CONSOLIDATION_CONTRACT_DRIFT')
     if mutation.get('branch_fanout_without_explicit_user_authorization')!='FORBIDDEN':
         failures.append('SINGLE_BRANCH_FANOUT_GUARD_MISSING')
@@ -58,10 +59,10 @@ def main():
     if owners!={'REFERENCE_RULE_REGISTRY','SEMANTIC_AUTHORITY_BASELINE','REFERENCE_SEMANTICS_VALIDATOR_BINDING','GOVERNANCE_ROOT_MANIFEST','CHECKSUMS','AUDIT_BASELINE','GOVERNANCE_REQUIREMENT_INDEX','REGRESSION_EXPECTATION_OWNER'} or vc.get('semantic_reference_transaction_partial_sync')!='BLOCK': failures.append('SEMANTIC_REFERENCE_TRANSACTION_CONTRACT_DRIFT')
     if vc.get('source_package_successor_required') is not False:
         failures.append('SEPARATE_SOURCE_SUCCESSOR_NOT_RETIRED')
-    if vc.get('source_package_integration_mode')!='SINGLE_BRANCH_INTEGRATED' or vc.get('source_package_integrated_branch')!='rebuild-v2.1.1':
+    if vc.get('source_package_integration_mode')!='SINGLE_BRANCH_INTEGRATED' or str(vc.get('source_package_integrated_branch') or '')!=current_branch:
         failures.append('SOURCE_PACKAGE_INTEGRATION_MODE_DRIFT')
     meta=load_yaml(ROOT/'governance/source-successor/SOURCE_PACKAGE_CANDIDATE.yaml')
-    if meta.get('status')!='INTEGRATED_CURRENT_WORKLINE' or meta.get('current_authority') is not True or meta.get('branch')!='rebuild-v2.1.1':
+    if meta.get('status')!='INTEGRATED_CURRENT_WORKLINE' or meta.get('current_authority') is not True or str(meta.get('branch') or '')!=current_branch:
         failures.append('SOURCE_INTEGRATION_RECORD_DRIFT')
     retired=[SOURCE/'11_EVIDENCE/audit/GOVERNANCE_CANDIDATE_STATE.yaml',SOURCE/'11_EVIDENCE/audit/GITHUB_REPLAY_CLOSURE_RESULT.yaml',SOURCE/'11_EVIDENCE/audit/GOVERNANCE_DEFECT_LEDGER.yaml',SOURCE/'11_EVIDENCE/audit/HIGH_PRESSURE_HARDENING_RESULT.yaml',SOURCE/'11_EVIDENCE/audit/REFERENCE_SEMANTIC_REPAIR_RESULT.yaml']
     present=[p.relative_to(SOURCE).as_posix() for p in retired if p.exists()]
