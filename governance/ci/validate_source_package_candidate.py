@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 from __future__ import annotations
-import importlib.util, json, subprocess, sys
+import contextlib, importlib.util, io, json, subprocess, sys
 from pathlib import Path
 import yaml
 ROOT=Path(__file__).resolve().parents[2]
@@ -11,11 +11,24 @@ sys.path.insert(0,str(TESTS))
 def imp(name):
     p=TESTS/f'{name}.py'; spec=importlib.util.spec_from_file_location('sp_'+name,p)
     if spec is None or spec.loader is None: raise RuntimeError('IMPORT_FAILED:'+name)
-    m=importlib.util.module_from_spec(spec); spec.loader.exec_module(m); return m
+    m=importlib.util.module_from_spec(spec)
+    out=io.StringIO(); err=io.StringIO()
+    with contextlib.redirect_stdout(out), contextlib.redirect_stderr(err):
+        spec.loader.exec_module(m)
+    return m
+
 def check(name,fn):
+    out_buf=io.StringIO(); err_buf=io.StringIO()
     try:
-        out=fn(SOURCE); return {'check_id':name,**out}
-    except Exception as exc: return {'check_id':name,'status':'FAIL','failures':['exception:'+repr(exc)]}
+        with contextlib.redirect_stdout(out_buf), contextlib.redirect_stderr(err_buf):
+            out=fn(SOURCE)
+        row={'check_id':name,**out}
+    except Exception as exc:
+        row={'check_id':name,'status':'FAIL','failures':['exception:'+repr(exc)]}
+    diagnostics=(out_buf.getvalue()+err_buf.getvalue()).strip()
+    if diagnostics:
+        row['diagnostics']=diagnostics[-4000:]
+    return row
 def main():
     meta=yaml.safe_load(META.read_text(encoding='utf-8')) or {}
     failures=[]
@@ -41,7 +54,11 @@ def main():
       check('root_manifest',gov.root_manifest_guard),
       check('mandatory_regression_and_package_integrity',gov.mandatory_regression_guard),
     ])
-    if subprocess.run([sys.executable,str(ROOT/'governance/source-successor/refresh_source_checksums.py'),'--check'],cwd=ROOT).returncode!=0:
+    checksum_proc=subprocess.run(
+      [sys.executable,str(ROOT/'governance/source-successor/refresh_source_checksums.py'),'--check'],
+      cwd=ROOT,text=True,capture_output=True
+    )
+    if checksum_proc.returncode!=0:
         failures.append('SOURCE_CHECKSUM_LEDGER_STALE')
     bad=[x for x in checks if x.get('status')!='PASS']
     result={
@@ -56,6 +73,8 @@ def main():
       'pass_count':len(checks)-len(bad),
       'failures':failures,
       'checks':checks,
+      'stdout_contract':'SINGLE_JSON_OBJECT_ONLY',
+      'checksum_validator_diagnostics':(checksum_proc.stdout+checksum_proc.stderr).strip()[-4000:],
     }
     print(json.dumps(result,ensure_ascii=False,indent=2,sort_keys=True))
     return 0 if result['status']=='PASS_INTEGRATED_SOURCE' else 1
