@@ -81,6 +81,12 @@ jobs:
               raise SystemExit('REFERENCE_SEMANTICS_TOOLCHAIN_BINDING_VERIFY_FAILED')
           PY
           python governance/source-successor/materialize_derived_source_package.py --check
+          find . -type d -name __pycache__ -prune -exec rm -rf {} +
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add .github/governance-source/active/source/10_REGISTRY/SEMANTIC_AUTHORITY_BASELINE.yaml                   .github/governance-source/active/source/09_TESTS/governance/validate_reference_semantics.py                   .github/governance-source/active/source/11_EVIDENCE/audit/AUDIT_BASELINE.yaml                   .github/governance-source/active/source/11_EVIDENCE/audit/generated/GOVERNANCE_REQUIREMENT_INDEX.json                   .github/governance-source/active/source/10_REGISTRY/GOVERNANCE_ROOT_MANIFEST.yaml                   .github/governance-source/active/source/CHECKSUMS.sha256                   governance/specifications/REGISTRY.yaml
+          git diff --cached --quiet && { echo "NO_DERIVED_RECONCILIATION_CHANGES"; exit 1; }
+          git commit -m "chore(governance): reconcile issue60 Stage specification derivatives"
           python .github/governance-source/active/source/09_TESTS/governance/validate_section_registry.py
           python .github/governance-source/active/source/09_TESTS/governance/validate_reference_semantics.py
           python .github/governance-source/active/source/09_TESTS/governance/validate_stage_execution_invariants.py
@@ -89,11 +95,5 @@ jobs:
           python governance/ci/validate_governance_candidate_promotion_readiness.py --self-test
           python governance/ci/validate_structured_mutation_safety.py
           python governance/ci/test_stage_execution_engine.py
-          find . -type d -name __pycache__ -prune -exec rm -rf {} +
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add .github/governance-source/active/source/10_REGISTRY/SEMANTIC_AUTHORITY_BASELINE.yaml                   .github/governance-source/active/source/09_TESTS/governance/validate_reference_semantics.py                   .github/governance-source/active/source/11_EVIDENCE/audit/AUDIT_BASELINE.yaml                   .github/governance-source/active/source/11_EVIDENCE/audit/generated/GOVERNANCE_REQUIREMENT_INDEX.json                   .github/governance-source/active/source/10_REGISTRY/GOVERNANCE_ROOT_MANIFEST.yaml                   .github/governance-source/active/source/CHECKSUMS.sha256                   governance/specifications/REGISTRY.yaml
-          git diff --cached --quiet && { echo "NO_DERIVED_RECONCILIATION_CHANGES"; exit 1; }
-          git commit -m "chore(governance): reconcile issue60 Stage specification derivatives"
           test "$(git ls-remote origin refs/heads/rebuild-v2.1.1 | awk '{print $1}')" = "$BASE_HEAD"
           git push origin HEAD:rebuild-v2.1.1
