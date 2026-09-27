@@ -101,6 +101,14 @@ candidate_validation_contract:
       event: push
   workflow_name_only_may_grant_validation_credit: false
   workflow_path_event_head_branch_binding_required: true
+  workflow_external_action_ref_mode: FULL_40_HEX_COMMIT_SHA_ONLY
+  workflow_external_action_mutable_ref: BLOCK
+  workflow_action_pinning_authorization_record: https://github.com/steven-gold/orange-one-ai-viedo-v1.0/issues/55
+  workflow_action_pinning_required_paths:
+  - .github/workflows/current-governance-cleanup-validation.yml
+  - .github/workflows/mother-spec-neutrality-audit.yml
+  - .github/workflows/common-stage-execution-engine.yml
+  source_successor_workflow_action_pinning_required: true
   required_workflows_run_on_every_candidate_push: true
   candidate_required_workflow_path_filter: FORBIDDEN
   live_branch_head_must_equal_validation_head: true
@@ -146,9 +154,10 @@ candidate_validation_contract:
   - workflow_dispatch
   source_package_successor_workflow_identity_requires_name_path_allowed_event_branch_head: true
   source_package_validation_toolchain_binding_mode: GIT_BLOB_SHA1_EXACT_SET_V1
-  source_package_validation_toolchain_exact_file_count: 42
+  source_package_validation_toolchain_exact_file_count: 43
   source_package_validation_toolchain_exact_paths:
   - .github/workflows/source-package-successor-validation.yml
+  - .github/workflows/source-package-successor-materialization.yml
   - governance/ci/validate_source_package_candidate.py
   - governance/source-successor/materialize_derived_source_package.py
   - governance/source-successor/refresh_source_checksums.py
@@ -193,7 +202,8 @@ candidate_validation_contract:
     ".github/governance-source/active/source/09_TESTS/governance/validate_section_registry.py": 2680069f9e718b11104b2573e8cf6bc5c7d2f27c
     ".github/governance-source/active/source/09_TESTS/governance/validate_stage_execution_invariants.py": b2ee330b02a7fd2c8f534196723374a2ba684d66
     ".github/governance-source/active/source/09_TESTS/governance/validate_test_feedback_spec_evolution.py": c5af8cabf744e4983509904d9f38f28d5aa373c5
-    ".github/workflows/source-package-successor-validation.yml": d42b5a3684a6c92d29c646544cc9e4c4e7bfc888
+    ".github/workflows/source-package-successor-validation.yml": b1e9b99357d4967ea8eb8d1c27a689553fea52a9
+    ".github/workflows/source-package-successor-materialization.yml": adcc8dccaff3d9715d5b1acf3b3b747a7404623d
     "governance/ci/validate_source_package_candidate.py": c8ab90bc3825113b72bdf0a9a7762cadc94dddb8
     "governance/source-successor/materialize_derived_source_package.py": c574c2121f3a0d3b863bb1c44fcce5556caf2ec6
     "governance/source-successor/refresh_source_checksums.py": b2e3f4359236e1fd09160b57d5b3d5a8e11cf641

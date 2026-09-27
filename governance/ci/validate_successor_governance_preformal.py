@@ -81,7 +81,7 @@ def exact_head_validation_contract_check(registry:dict)->dict:
     if vc.get('source_package_validation_toolchain_binding_mode')!='GIT_BLOB_SHA1_EXACT_SET_V1':
         failures.append('SOURCE_VALIDATION_TOOLCHAIN_BINDING_MODE_DRIFT')
     toolchain_bindings=vc.get('source_package_validation_toolchain_blob_bindings') or {}
-    if not isinstance(toolchain_bindings,dict) or len(toolchain_bindings)!=42 or int(vc.get('source_package_validation_toolchain_exact_file_count') or 0)!=42:
+    if not isinstance(toolchain_bindings,dict) or len(toolchain_bindings)!=43 or int(vc.get('source_package_validation_toolchain_exact_file_count') or 0)!=43:
         failures.append('SOURCE_VALIDATION_TOOLCHAIN_DENOMINATOR_DRIFT')
     if vc.get('source_package_validation_toolchain_missing_extra_or_blob_drift')!='BLOCK':
         failures.append('SOURCE_VALIDATION_TOOLCHAIN_FAIL_CLOSED_MISSING')
@@ -99,6 +99,16 @@ def exact_head_validation_contract_check(registry:dict)->dict:
             failures.append('REQUIRED_WORKFLOW_BINDING_DRIFT:'+name)
     if vc.get('workflow_name_only_may_grant_validation_credit') is not False or vc.get('workflow_path_event_head_branch_binding_required') is not True:
         failures.append('REQUIRED_WORKFLOW_IDENTITY_HARDENING_MISSING')
+    if vc.get('workflow_external_action_ref_mode')!='FULL_40_HEX_COMMIT_SHA_ONLY' or vc.get('workflow_external_action_mutable_ref')!='BLOCK':
+        failures.append('WORKFLOW_EXTERNAL_ACTION_PINNING_CONTRACT_DRIFT')
+    if set(map(str,vc.get('workflow_action_pinning_required_paths') or []))!={
+        '.github/workflows/current-governance-cleanup-validation.yml',
+        '.github/workflows/mother-spec-neutrality-audit.yml',
+        '.github/workflows/common-stage-execution-engine.yml',
+    }:
+        failures.append('WORKFLOW_ACTION_PINNING_PATH_DENOMINATOR_DRIFT')
+    if vc.get('source_successor_workflow_action_pinning_required') is not True:
+        failures.append('SOURCE_SUCCESSOR_WORKFLOW_ACTION_PINNING_GATE_MISSING')
     if vc.get('independent_auditor_external_provenance_required') is not True:
         failures.append('INDEPENDENT_AUDITOR_EXTERNAL_PROVENANCE_NOT_REQUIRED')
     if set(map(str,vc.get('independent_auditor_required_provenance_fields') or []))!={'implementation_provenance_ref','execution_receipt_provenance_ref','result_artifact_provenance_ref','evaluator_authority_ref'}:

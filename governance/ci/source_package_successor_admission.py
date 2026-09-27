@@ -451,6 +451,16 @@ def validate_source_successor(repository:str,token:str|None,contract:dict,requir
         return {'status':'BLOCKED','failures':['SOURCE_RECEIPT_BRANCH_CONTRACT_DRIFT']}
     if receipt.get('source_validation_workflow_name')!=workflow:
         return {'status':'BLOCKED','failures':['SOURCE_RECEIPT_WORKFLOW_CONTRACT_DRIFT']}
+    if receipt.get('source_validation_workflow_path')!=workflow_path:
+        return {'status':'BLOCKED','failures':['SOURCE_RECEIPT_WORKFLOW_PATH_CONTRACT_DRIFT']}
+    if str(receipt.get('source_validation_event') or '') not in set(workflow_events):
+        return {'status':'BLOCKED','failures':['SOURCE_RECEIPT_WORKFLOW_EVENT_CONTRACT_DRIFT']}
+    if receipt.get('source_validation_head_branch')!=branch:
+        return {'status':'BLOCKED','failures':['SOURCE_RECEIPT_HEAD_BRANCH_CONTRACT_DRIFT']}
+    if receipt.get('source_validation_toolchain_binding_mode')!=contract.get('source_package_validation_toolchain_binding_mode'):
+        return {'status':'BLOCKED','failures':['SOURCE_RECEIPT_TOOLCHAIN_BINDING_MODE_DRIFT']}
+    if int(receipt.get('source_validation_toolchain_file_count') or 0)!=int(contract.get('source_package_validation_toolchain_exact_file_count') or 0):
+        return {'status':'BLOCKED','failures':['SOURCE_RECEIPT_TOOLCHAIN_COUNT_DRIFT']}
     if receipt.get('source_candidate_manifest_path')!=manifest_path:
         return {'status':'BLOCKED','failures':['SOURCE_RECEIPT_MANIFEST_PATH_DRIFT']}
 
