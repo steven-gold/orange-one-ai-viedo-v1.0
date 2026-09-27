@@ -127,7 +127,7 @@ def validate(root=ROOT):
     rng = inv.get('EXPLICIT_STAGE_RANGE_EXECUTION') or {}
     if rng.get('invariant_uid') != 'GOV-INV-EXPLICIT-STAGE-RANGE-EXECUTION-001' or rng.get('requested_range_is_execution_authority') is not True or rng.get('range_is_inclusive') is not True:
         failures.append('explicit_stage_range_execution_core_contract_missing')
-    for key in ('single_stage_request_executes_only_that_stage','multi_stage_request_executes_every_registered_stage_in_range','normal_pass_auto_continues_within_requested_range','checkpoint_does_not_require_new_user_instruction','page_lifecycle_execution_mode_preserves_one_governed_unit_identity_across_requested_range'):
+    for key in ('single_stage_request_executes_only_that_stage','multi_stage_request_executes_every_registered_stage_in_range','normal_pass_auto_continues_within_requested_range','checkpoint_does_not_require_new_user_instruction','governed_unit_lifecycle_execution_mode_preserves_one_governed_unit_identity_across_requested_range'):
         if rng.get(key) is not True:
             failures.append('explicit_stage_range_execution_flag_missing:' + key)
     if rng.get('system_selected_batch_size') != 'FORBIDDEN' or rng.get('system_expand_range') != 'BLOCK' or rng.get('system_shrink_range') != 'BLOCK' or rng.get('system_skip_in_range_stage') != 'BLOCK' or rng.get('system_split_range_and_reprompt_between_normal_stages') != 'BLOCK':
@@ -242,7 +242,7 @@ def validate(root=ROOT):
     rv = inv.get('REVIEW_VS_CLOSURE_SEPARATION') or {}
     if rv.get('review_completion_is_evidence_of_review_only') is not True or rv.get('review_completion_may_override_open_blockers') is not False:
         failures.append('review_closure_separation_incomplete')
-    if rv.get('stage_exit_owner_granularity') != 'GOVERNED_UNIT' or rv.get('same_stage_uid_does_not_create_cross_unit_exit_barrier') is not True or rv.get('unrelated_page_or_system_unit_may_block_stage_exit') is not False or rv.get('cross_unit_blocking_requires_explicit_required_dependency_edge') is not True:
+    if rv.get('stage_exit_owner_granularity') != 'GOVERNED_UNIT' or rv.get('same_stage_uid_does_not_create_cross_unit_exit_barrier') is not True or rv.get('unrelated_governed_unit_may_block_stage_exit') is not False or rv.get('cross_unit_blocking_requires_explicit_required_dependency_edge') is not True:
         failures.append('independent_governed_unit_stage_exit_invariant_incomplete')
     handoff = inv.get('CROSS_STAGE_MATERIALIZED_HANDOFF') or {}
     if handoff:

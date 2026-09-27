@@ -19,7 +19,7 @@ scope:
   - STAGE-10
   - STAGE-11
   applies_to:
-  - PAGE
+  - GOVERNED_UNIT
   - ACTION
   - CONTROL
   - TRIGGER
@@ -230,7 +230,7 @@ invariants:
     stage_exit_requires_exit_gate_and_required_evidence_and_zero_unwaived_blockers: true
     stage_exit_owner_granularity: GOVERNED_UNIT
     same_stage_uid_does_not_create_cross_unit_exit_barrier: true
-    unrelated_page_or_system_unit_may_block_stage_exit: false
+    unrelated_governed_unit_may_block_stage_exit: false
     cross_unit_blocking_requires_explicit_required_dependency_edge: true
   TEST_DEFECT_FEEDBACK_AND_SPEC_EVOLUTION:
     required_for_every_stage_test: true
@@ -832,7 +832,7 @@ invariants:
     - COMPLEX_OR_CONDITIONAL_STATE
     - FINALIZATION_OR_CONFIRMATION_STATE
     - ERROR_BLOCKED_RECOVERY_STATE
-    - CROSS_PAGE_RELATION_DIAGRAM
+    - CROSS_GOVERNED_UNIT_RELATION_DIAGRAM
     - RESPONSIVE_VARIANT
     applicability_required: true
     missing_required_scenario: BLOCK
@@ -845,7 +845,7 @@ invariants:
     required_artifact: VISUAL_REFERENCE_ANNOTATION
     required_fields:
     - visual_uid
-    - page_or_scope_uid
+    - governed_unit_or_scope_uid
     - scenario_uid
     - state_uid
     - workbench_uid
@@ -895,7 +895,7 @@ invariants:
     - ARCHITECTURE
     - GOVERNED_ENTITY_AND_OPERATION
     - JOURNEY_WORKBENCH_TOPOLOGY
-    - PAGE_SURFACE_DESIGN
+    - GOVERNED_SURFACE_DESIGN
     - VISUAL_ARCHITECTURE
     - VISUAL_INHERITANCE_MATRIX
     - VISUAL_STYLE_DEFINITION
@@ -929,7 +929,7 @@ invariants:
     - ACCESSIBILITY
     - LOCALIZATION
     - THEME_BRAND_CONSTRAINTS
-    page_local_specialization_requires_authority_open_slot: true
+    governed_surface_local_specialization_requires_authority_open_slot: true
     material_style_deviation_requires_basic_design_change_set: true
   BASIC_DESIGN_FREEZE_QUANTITATIVE_COMPLETENESS:
     required_percent_fields:
@@ -942,7 +942,7 @@ invariants:
       visual_authority_inheritance_classification: 100
       visual_style_definition_category_coverage: 100
       required_state_scenario_visual_coverage: 100
-      cross_page_design_relation_coverage_when_applicable: 100
+      cross_governed_unit_design_relation_coverage_when_applicable: 100
       required_design_review_item_definition: 100
       human_readable_embedded_figure_coverage: 100
     required_zero_fields:
@@ -969,16 +969,16 @@ invariants:
     - ARCHITECTURE_OR_MODULE_RELATION
     - ENTITY_OR_HIERARCHY_WHEN_MATERIAL
     - JOURNEY_WORKBENCH_INTERACTION_TOPOLOGY
-    - HIGH_FIDELITY_PAGE_OR_WORKSPACE
+    - HIGH_FIDELITY_GOVERNED_SURFACE_OR_WORKSPACE
     - VISUAL_STYLE_BOARD_OR_DESIGN_SYSTEM_REFERENCE
     - MULTI_STATE_VISUALS
-    - CROSS_PAGE_RELATION_WHEN_APPLICABLE
+    - CROSS_GOVERNED_UNIT_RELATION_WHEN_APPLICABLE
     - RESPONSIVE_VARIANT_WHEN_APPLICABLE
     required_caption_fields:
     - figure_or_visual_uid
     - title
     - design_purpose
-    - page_or_scope
+    - governed_unit_or_scope
     - scenario_or_state
     - source_or_inherited_visual_authority_refs
     - design_version_or_change_set
@@ -1054,12 +1054,12 @@ invariants:
     - NEXT_STEP
     - ERROR_OR_BLOCKED_CONDITION
     - RECOVERY
-    - CROSS_PAGE_OR_HANDOFF_WHEN_APPLICABLE
+    - CROSS_GOVERNED_UNIT_OR_HANDOFF_WHEN_APPLICABLE
     - ACCEPTANCE
     legal_and_blocked_transitions_required_when_state_bearing: true
     async_pending_success_failure_retry_semantics_required_when_applicable: true
     permission_enabled_disabled_hidden_reason_semantics_required_when_applicable: true
-    cross_page_exit_identity_trigger_entry_failure_resume_back_required_when_applicable: true
+    cross_governed_unit_exit_identity_trigger_entry_failure_resume_back_required_when_applicable: true
     undefined_required_detail_is_design_gap: true
     ai_may_invent_missing_product_decision: false
     downstream_evidence_may_retroactively_close_incomplete_basic_design: false
@@ -1253,7 +1253,7 @@ invariants:
         ROLLBACK_TARGET: [EXTERNAL_CURRENT_TARGET]
       STAGE-10:
         CURRENT_PRODUCTION_RUNTIME_TARGET: [EXTERNAL_CURRENT_TARGET]
-        PRODUCTION_PAGE_TARGET: [EXTERNAL_CURRENT_TARGET]
+        PRODUCTION_GOVERNED_UNIT_TARGET: [EXTERNAL_CURRENT_TARGET]
         PRODUCTION_DATABASE_TARGET: [EXTERNAL_CURRENT_TARGET]
         PRODUCTION_PERMISSION_TARGET: [EXTERNAL_CURRENT_TARGET]
         PRODUCTION_EXTERNAL_INTEGRATION_TARGET: [EXTERNAL_CURRENT_TARGET]
@@ -1356,7 +1356,7 @@ invariants:
       - ROLLBACK_TARGET
       STAGE-10:
       - CURRENT_PRODUCTION_RUNTIME_TARGET
-      - PRODUCTION_PAGE_TARGET
+      - PRODUCTION_GOVERNED_UNIT_TARGET
       - PRODUCTION_DATABASE_TARGET
       - PRODUCTION_PERMISSION_TARGET
       - PRODUCTION_EXTERNAL_INTEGRATION_TARGET
@@ -1426,7 +1426,7 @@ invariants:
         ROLLBACK_TARGET: OP-41-PRODUCTION_DEPLOYMENT
       STAGE-10:
         CURRENT_PRODUCTION_RUNTIME_TARGET: OP-43-PRODUCTION_BROWSER_ACCEPTANCE
-        PRODUCTION_PAGE_TARGET: OP-44-PRODUCTION_GOVERNED_UNIT_ACCEPTANCE
+        PRODUCTION_GOVERNED_UNIT_TARGET: OP-44-PRODUCTION_GOVERNED_UNIT_ACCEPTANCE
         PRODUCTION_DATABASE_TARGET: OP-46-PRODUCTION_DATABASE_ACCEPTANCE
         PRODUCTION_PERMISSION_TARGET: OP-47-PRODUCTION_EFFECTFUL_ACCEPTANCE
         PRODUCTION_EXTERNAL_INTEGRATION_TARGET: OP-48-EXTERNAL_INTEGRATION_ACCEPTANCE
@@ -1446,7 +1446,7 @@ invariants:
     runtime_evidence_artifact_type: TYPOGRAPHY_COMPUTED_METRICS_EVIDENCE
     required_context_fields:
     - target_uid
-    - page_or_scope_uid
+    - governed_unit_or_scope_uid
     - viewport_uid
     - language
     - theme
@@ -1509,10 +1509,10 @@ invariants:
     silent_source_omission: BLOCK
     source_pair_mutation_disposition: INVALIDATE_AND_REENTER_PRE_STAGE_PROJECTION
     fixed_projection_scope: SCHEMA_KEYS_TYPES_ORDER_AND_FIDELITY_INVARIANTS_ONLY
-    page_product_content: DYNAMIC_FROM_EACH_IMMUTABLE_RAW_SOURCE
-    fixed_page_uid_or_page_type: BLOCK
+    governed_unit_content: DYNAMIC_FROM_EACH_IMMUTABLE_RAW_SOURCE
+    fixed_governed_unit_uid_or_type: BLOCK
     fixed_product_function_control_or_source_content_count: BLOCK
-    cross_page_content_shape_portability_required: true
+    cross_governed_unit_content_shape_portability_required: true
     content_readiness_audit_before_raw_lock: true
     content_readiness_required_gap_count: 0
     frozen_binary_source_parts_required_when_present: true
@@ -1546,7 +1546,7 @@ invariants:
     unregistered_range_endpoint_may_be_silently_clamped: false
     current_profile_end_stage_is_dynamic_from_lifecycle_registry: true
     stage_validation_mode_is_not_product_execution_mode: true
-    page_lifecycle_execution_mode_preserves_one_governed_unit_identity_across_requested_range: true
+    governed_unit_lifecycle_execution_mode_preserves_one_governed_unit_identity_across_requested_range: true
     stage_boundary_manual_continue_prompt: FORBIDDEN
   DETERMINISTIC_HUMAN_INTERACTION_BOUNDARY:
     invariant_uid: GOV-INV-DETERMINISTIC-HUMAN-INTERACTION-001
@@ -1819,7 +1819,7 @@ invariants:
         lifecycle_registry_is_denominator_source: true
         source_disposition_coverage_percent: 100
         silent_source_drop_allowed: false
-        page_and_visual_blueprints_required: true
+        governed_unit_and_visual_blueprints_required: true
         reverse_trace_to_raw_source_required: true
         impacted_old_governance_closure_disposition: REVERIFY_REQUIRED
       STAGE-02:
