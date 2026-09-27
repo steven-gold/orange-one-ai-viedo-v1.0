@@ -195,7 +195,7 @@ Implementation MUST 使用既定正式目錄與 Owner File。
 MUST_NOT：
 
 - 建立同義第二資料夾。
-- 以 `new`、`final`、`fix`、`copy` 等名稱建立平行正式版本。
+- 以 `draft-copy`、`final`、`fix`、`copy` 等名稱建立平行正式版本。
 - 因修改方便另開第二 Runtime。
 - 將不同 Domain 的大量 Business Logic 塞進同一巨型檔案。
 - 修改 Generated Artifact 當作正式 Source。

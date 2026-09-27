@@ -196,7 +196,7 @@ TYPE_PREFIX MUST 從正式 Registry 選用，至少包括：
 
 MUST_NOT 使用以下版本式或模糊命名：
 
-- `new`
+- `draft-copy`
 - `final`
 - `latest`
 - `fixed`
@@ -1410,7 +1410,7 @@ Every program artifact MUST be registered with at least: Program Artifact UID, W
 
 A framework-reserved filename such as `page.tsx`, `layout.tsx`, `route.ts`, `loading.tsx`, `error.tsx`, or `not-found.tsx` is permitted only as a controlled filename exception. The filename itself MUST_NOT become identity; the registered Canonical Path + Program Artifact UID + Owner UID remain authoritative.
 
-Program filenames MUST_NOT be invented during implementation. `new`, `final`, `latest`, `fixed`, `backup`, `copy`, `temp`, and equivalent unmanaged suffixes are forbidden for Current construction artifacts.
+Program filenames MUST_NOT be invented during implementation. `draft-copy`, `final`, `latest`, `fixed`, `backup`, `copy`, `temp`, and equivalent unmanaged suffixes are forbidden for Current construction artifacts.
 
 <!-- SECTION_UID: WEB-GOV-01-S067 -->
 ## 67. Index-First Construction Loading
