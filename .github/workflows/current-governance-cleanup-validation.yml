@@ -31,6 +31,7 @@ jobs:
           GITHUB_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
+          python governance/ci/governance_promotion_transaction.py --self-test
           python governance/ci/stage_execution_engine.py --definition-audit-all
           python governance/ci/test_stage_execution_engine.py
           python governance/ci/validate_selected_execution_profile_integrity.py

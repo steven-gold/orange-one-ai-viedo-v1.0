@@ -39,6 +39,17 @@ governance_identity:
     - IMMUTABLE_SOURCE_PACKAGE_SUCCESSOR_RESIGN
     - PREDECESSOR_EVIDENCE_CONSUMER_MIGRATION
     - SOURCE_PACKAGE_DEFECT_REENTRY
+  - record_url: https://github.com/steven-gold/orange-one-ai-viedo-v1.0/issues/54
+    record_kind: GITHUB_GOVERNANCE_CHANGE_RECORD
+    authorization_base_head: d26ad48739c49158548dcccf95f28653185862a6
+    preexists_normative_mutation_after_base: true
+    candidate_branch: governance-v2.2.33-candidate
+    authorized_scope:
+    - GOVERNANCE_PROMOTION_TRANSACTION_MATERIALIZATION
+    - PROMOTION_EXACT_HEAD_AND_EVIDENCE_BINDING
+    - RELEASE_IDENTITY_MATERIALIZATION
+    - POST_PROMOTION_RECONCILIATION_AND_REVERIFY_HANDOFF
+    - PROMOTION_ABORT_AND_IDEMPOTENCY
 product_execution_branch: 0921acpos
 normative_mother_order:
 - .github/governance-source/active/source/12_DOCS/mother-spec/01_BLUEPRINT_DESIGN_GOVERNANCE.md
@@ -146,6 +157,7 @@ candidate_validation_contract:
   - python governance/ci/audit_closure_engine.py --self-test
   - python governance/ci/audit_closure_engine.py
   - python governance/ci/validate_governance_candidate_promotion_readiness.py --self-test
+  - python governance/ci/governance_promotion_transaction.py --self-test
   successor_preformal_validator: governance/ci/validate_successor_governance_preformal.py
   predecessor_direct_preformal_current_candidate_use: FORBIDDEN
   retired_current_state_checks_replaced_by:
@@ -286,6 +298,21 @@ candidate_validation_contract:
   candidate_manifest_artifact_uid_expected: GOV-REV-20260927-GOVERNANCE-IDENTITY-NEGATIVE-TRACE-AUDITOR-INDEPENDENCE-HARDENING
   candidate_manifest_display_version_expected: v2.2.33
   explicit_promotion_action_required_after_readiness: true
+  promotion_transaction_implementation_authorization_record: https://github.com/steven-gold/orange-one-ai-viedo-v1.0/issues/54
+  promotion_transaction_executor: governance/ci/governance_promotion_transaction.py
+  promotion_transaction_mode: RELEASE_BRANCH_CREATE_ONLY_AFTER_READY
+  promotion_transaction_candidate_branch_mutation: FORBIDDEN
+  promotion_transaction_predecessor_branch_mutation: FORBIDDEN
+  promotion_transaction_atomic_visibility_point: RELEASE_REF_CREATION
+  promotion_transaction_release_receipt_path: governance/release/RELEASE_RECEIPT.yaml
+  promotion_transaction_reverify_handoff_path: governance/release/FRESH_REVERIFY_HANDOFF.yaml
+  promotion_transaction_product_completion_credit: 0
+  promotion_transaction_requires_explicit_promotion_authorization: true
+  promotion_transaction_requires_fresh_readiness: true
+  promotion_transaction_requires_source_external_trust: true
+  promotion_transaction_requires_independent_auditor_evidence: true
+  promotion_transaction_requires_new_release_uid: true
+  promotion_transaction_execution_authorization_must_be_distinct_from_implementation_authorization: true
   product_completion_credit: 0
 execution_domain_entrypoints:
   selection_required_before_rule_read: true
