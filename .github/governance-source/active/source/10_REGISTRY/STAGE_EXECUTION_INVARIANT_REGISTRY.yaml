@@ -1439,26 +1439,16 @@ invariants:
     - WEB-GOV-03-S074
     - WEB-GOV-04-S088
     - WEB-GOV-04-S089
-    applies_to_stages:
-    - STAGE-01
-    - STAGE-02
-    - STAGE-03
-    - STAGE-04
-    - STAGE-05
-    - STAGE-06
-    - STAGE-07
-    - STAGE-08
-    - STAGE-09
-    - STAGE-10
-    - STAGE-11
-    product_governance_selection_scope: ALL_FORMAL_PRODUCT_STAGES
-    application_baseline_transition_boundary: STAGE-04_TO_STAGE-05
-    application_baseline_predecessor_stage_scope:
-    - STAGE-04
-    application_baseline_consumer_stage_scope:
-    - STAGE-05
+    scope_class: EXTERNAL_PRODUCT_EXECUTION_ENVIRONMENT_ADMISSION
+    reusable_page_stage_normative_denominator_inclusion: EXCLUDED
+    reusable_page_stage_definition_credit: 0
+    reusable_page_stage_completion_credit: 0
+    product_governance_selection_applicability: CONDITIONAL_WHEN_PRODUCT_EXECUTION_CONSUMES_RELEASED_GOVERNANCE
+    application_baseline_applicability: CONDITIONAL_WHEN_CURRENT_APPLICATION_BASELINE_IS_ABSENT
+    application_baseline_is_universal_page_stage_requirement: false
+    product_specific_branch_repository_or_framework_may_enter_common_stage_semantics: false
     candidate_validation_terminalization_authority_ref: governance/specifications/REGISTRY.yaml#candidate_validation_contract
-    applies_to_formal_product_stage_execution: true
+    applies_to_formal_product_stage_execution_as_external_precondition: true
     selected_governance_release_artifact_type: PRODUCT_SELECTED_GOVERNANCE_RELEASE
     selected_governance_release_path: STAGE_EXECUTION/SHARED_AUTHORITY/PRODUCT_SELECTED_GOVERNANCE_RELEASE.yaml
     selected_governance_release_required_fields: [artifact_type, status, governance_repository, governance_commit_sha, governance_tree_sha, governance_uid, governance_revision, display_version, release_receipt_ref, release_receipt_sha256, root_manifest_sha256, fresh_reverify_status, fresh_reverify_evidence_ref, selection_authority_ref]

@@ -1346,6 +1346,10 @@ Audit MUST distinguish immutable released policy, mutable authorized successor c
 
 A new defect after release creates a new defect record and successor candidate; affected prior evidence becomes `REVERIFY_REQUIRED`. Website construction MUST remain blocked until the selected governance release and execution profile, when applicable, satisfy their release gates.
 
+Audit MUST verify governance-candidate successor-head terminalization. When a governance remediation or materializer creates a new candidate HEAD, required validation evidence MUST belong to that exact successor HEAD; producer-workflow success, parent-head results, prior-head results, or zero required workflow runs/checks are non-credit. A successor HEAD without the Registry-required fresh terminal workflow set is `CANDIDATE_EXACT_HEAD_VALIDATION_MISSING` and MUST remain blocked.
+
+For any authorized Stage normative-reference change, Audit MUST reconstruct one synchronization transaction covering the canonical reference rules, semantic authority baseline/snapshot, validator binding, Root Manifest/checksums, generated requirement index and regression expectations. A legal Mother/Reference Rule expansion with stale semantic/regression consumers is not a Stage-spec closure; it is `STAGE_NORMATIVE_REFERENCE_TRANSACTION_INCOMPLETE`.
+
 <!-- SECTION_UID: WEB-GOV-04-S069 -->
 ## 69. Classified Extraction / Base Blueprint Audit
 
@@ -1616,18 +1620,19 @@ Destructive regression MUST include missing content-readiness audit and missing 
 <!-- SECTION_UID: WEB-GOV-04-S088 -->
 ## 88. Product Governance Release Selection and Transition Audit / 產品治理發布選擇與轉移稽核
 
+**Scope isolation:** This audit applies only to an external Product Execution Environment that consumes a released governance revision. It is excluded from the reusable Page Stage normative denominator and cannot grant or withhold generic Page Stage definition completeness by itself.
+
 Audit MUST prove that every formal Product Stage execution used one product-owned `PRODUCT_SELECTED_GOVERNANCE_RELEASE` bound to an exact immutable released governance commit/tree/UID/revision and fresh post-promotion reverification evidence. A workflow checkout of a moving governance branch/tag, a candidate governance identity, a selected SHA different from the actually loaded checkout, or a missing/invalid `GOVERNANCE_LOAD_RECEIPT` is a blocker and receives zero Product Stage credit.
 
 For a selected-governance change, Audit MUST reconstruct the `GOVERNANCE_REVISION_TRANSITION_RECEIPT` and verify old/new selection identities, impacted Work Units and reverse dependencies, preserved immutable facts, invalidated execution/evidence classes, earliest legal re-entry owner, fresh matrix/handoff/evidence regeneration and terminal verification. Relabeling an old-UID closure to a new UID without fresh transition evidence is false completion. A governance branch tip advancing by itself MUST NOT change Product Current Governance.
 
 Negative regression MUST include at least: selected SHA differs from loaded governance checkout; selected identity is candidate/not released; selected release lacks fresh reverification evidence; old-governance scope/evidence reused without transition receipt; transition receipt bound to another Work Unit; and impacted closure retained as PASS instead of `REVERIFY_REQUIRED`.
 
-Audit MUST verify governance-candidate successor-head terminalization. When a governance remediation or materializer creates a new candidate HEAD, required validation evidence MUST belong to that exact successor HEAD; producer-workflow success, parent-head results, prior-head results, or zero required workflow runs/checks are non-credit. A successor HEAD without the Registry-required fresh terminal workflow set is `CANDIDATE_EXACT_HEAD_VALIDATION_MISSING` and MUST remain blocked.
-
-For any authorized Stage normative-reference change, Audit MUST reconstruct one synchronization transaction covering the canonical reference rules, semantic authority baseline/snapshot, validator binding, Root Manifest/checksums, generated requirement index and regression expectations. A legal Mother/Reference Rule expansion with stale semantic/regression consumers is not a Stage-spec closure; it is `STAGE_NORMATIVE_REFERENCE_TRANSACTION_INCOMPLETE`.
 
 <!-- SECTION_UID: WEB-GOV-04-S089 -->
 ## 89. Application Baseline Admission and Materialization Audit / 應用基線准入與實體化稽核
+
+**Scope isolation:** This audit is conditional on an external Product/Application baseline-admission transaction. It is not a universal Page Stage audit dimension and MUST_NOT make a repository branch, application framework, or source-migration path part of common Page Stage semantics.
 
 Audit MUST distinguish source provenance from Current implementation target. When an application baseline originates from a non-Current branch/repository snapshot, Audit MUST require a pre-existing `APPLICATION_BASELINE_ADMISSION_MANIFEST`, bounded materialization transaction and `APPLICATION_BASELINE_MATERIALIZATION_RECEIPT` before that content can satisfy the Current `APPLICATION_ROOT`.
 
