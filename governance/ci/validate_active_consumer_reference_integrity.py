@@ -197,6 +197,16 @@ def main() -> int:
             errors.append("CANDIDATE_LIVE_BRANCH_HEAD_BINDING_NOT_REQUIRED")
         if validation_contract.get("live_branch_head_recheck_after_evidence_validation_required") is not True:
             errors.append("CANDIDATE_LIVE_BRANCH_HEAD_RECHECK_NOT_REQUIRED")
+        successor_preformal=str(validation_contract.get("successor_preformal_validator") or "")
+        if not successor_preformal or not (ROOT/successor_preformal).is_file():
+            errors.append("CANDIDATE_SUCCESSOR_PREFORMAL_VALIDATOR_MISSING:"+successor_preformal)
+        if validation_contract.get("predecessor_direct_preformal_current_candidate_use")!="FORBIDDEN":
+            errors.append("CANDIDATE_PREDECESSOR_DIRECT_PREFORMAL_NOT_FORBIDDEN")
+        replacements=set(map(str,validation_contract.get("retired_current_state_checks_replaced_by") or []))
+        if replacements!={'CURRENT_CANDIDATE_IDENTITY','EXACT_HEAD_VALIDATION_CONTRACT','SOURCE_PACKAGE_DEFECT_REENTRY'}:
+            errors.append("CANDIDATE_RETIRED_CURRENT_STATE_REPLACEMENT_DENOMINATOR_DRIFT")
+        if validation_contract.get("immutable_source_checks_and_mandatory_regression_denominator_preserved") is not True:
+            errors.append("CANDIDATE_SOURCE_CHECK_OR_REGRESSION_DENOMINATOR_NOT_PRESERVED")
         trust_materializer=str(validation_contract.get("predecessor_source_trust_materializer") or "")
         if not trust_materializer or not (ROOT/trust_materializer).is_file():
             errors.append("CANDIDATE_PREDECESSOR_TRUST_MATERIALIZER_MISSING:"+trust_materializer)

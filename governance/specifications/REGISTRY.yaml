@@ -103,12 +103,19 @@ candidate_validation_contract:
   - python governance/ci/validate_governance_portability.py
   - python governance/ci/validate_execution_domain_isolation.py
   - python governance/ci/materialize_predecessor_source_trust_root.py --out /tmp/acpos-predecessor-source-trust-root.json
-  - python .github/governance-source/active/source/09_TESTS/governance/validate_governance.py --mode PRE_FORMAL_DEFINITION_AUDIT
+  - python governance/ci/validate_successor_governance_preformal.py
   - python .github/governance-source/active/source/09_TESTS/governance/validate_stage_execution_invariants.py
   - python .github/governance-source/active/source/09_TESTS/governance/validate_product_neutral_entity_lifecycle.py
   - python governance/ci/audit_closure_engine.py --self-test
   - python governance/ci/audit_closure_engine.py
   - python governance/ci/validate_governance_candidate_promotion_readiness.py --self-test
+  successor_preformal_validator: governance/ci/validate_successor_governance_preformal.py
+  predecessor_direct_preformal_current_candidate_use: FORBIDDEN
+  retired_current_state_checks_replaced_by:
+  - CURRENT_CANDIDATE_IDENTITY
+  - EXACT_HEAD_VALIDATION_CONTRACT
+  - SOURCE_PACKAGE_DEFECT_REENTRY
+  immutable_source_checks_and_mandatory_regression_denominator_preserved: true
   predecessor_source_trust_materializer: governance/ci/materialize_predecessor_source_trust_root.py
   predecessor_source_expected_hash_source: .github/governance-source/active/source/CHECKSUMS.sha256
   predecessor_source_trust_generation_from_current_bytes: FORBIDDEN

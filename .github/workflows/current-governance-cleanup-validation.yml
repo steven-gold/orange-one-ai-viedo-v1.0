@@ -42,7 +42,7 @@ jobs:
           python governance/ci/materialize_predecessor_source_trust_root.py --out /tmp/acpos-predecessor-source-trust-root.json
           echo "WEB_GOVERNANCE_TRUST_ROOT=/tmp/acpos-predecessor-source-trust-root.json" >> "$GITHUB_ENV"
           export WEB_GOVERNANCE_TRUST_ROOT=/tmp/acpos-predecessor-source-trust-root.json
-          python .github/governance-source/active/source/09_TESTS/governance/validate_governance.py --mode PRE_FORMAL_DEFINITION_AUDIT
+          python governance/ci/validate_successor_governance_preformal.py
           python .github/governance-source/active/source/09_TESTS/governance/validate_stage_execution_invariants.py
           python .github/governance-source/active/source/09_TESTS/governance/validate_product_neutral_entity_lifecycle.py
           python governance/ci/audit_closure_engine.py --self-test
