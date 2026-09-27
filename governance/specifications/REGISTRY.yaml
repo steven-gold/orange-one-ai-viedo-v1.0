@@ -125,6 +125,8 @@ candidate_validation_contract:
   - .github/workflows/current-governance-cleanup-validation.yml
   - .github/workflows/mother-spec-neutrality-audit.yml
   - .github/workflows/common-stage-execution-engine.yml
+  - .github/workflows/source-package-successor-materialization.yml
+  - .github/workflows/source-package-successor-validation.yml
   source_successor_workflow_action_pinning_required: true
   governance_ci_environment_authorization_record: https://github.com/steven-gold/orange-one-ai-viedo-v1.0/issues/56
   governance_ci_runner_label: ubuntu-24.04
@@ -134,6 +136,12 @@ candidate_validation_contract:
   governance_ci_pyyaml_version: 6.0.2
   governance_ci_pyyaml_sha256: 3ad2a3decf9aaba3d29c8f537ac4b243e36bef957511b4766cb0057d32b0be85
   governance_ci_environment_drift: BLOCK
+  common_stage_workflow_contents_permission: read
+  source_materialization_workflow_contents_permission: write
+  source_materialization_workflow_candidate_only: true
+  source_materialization_workflow_dispatch_ref_must_equal_active_governance_branch: true
+  source_materialization_workflow_remote_head_cas_required: true
+  source_materialization_workflow_forbidden_when_released: true
   required_workflows_run_on_every_candidate_push: true
   candidate_required_workflow_path_filter: FORBIDDEN
   live_branch_head_must_equal_validation_head: true
