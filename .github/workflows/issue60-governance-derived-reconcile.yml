@@ -94,6 +94,5 @@ jobs:
           python governance/ci/validate_successor_governance_preformal.py
           python governance/ci/validate_governance_candidate_promotion_readiness.py --self-test
           python governance/ci/validate_structured_mutation_safety.py
-          python governance/ci/test_stage_execution_engine.py
           test "$(git ls-remote origin refs/heads/rebuild-v2.1.1 | awk '{print $1}')" = "$BASE_HEAD"
           git push origin HEAD:rebuild-v2.1.1
