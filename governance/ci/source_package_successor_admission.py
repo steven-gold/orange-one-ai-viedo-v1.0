@@ -55,40 +55,69 @@ def fetch_runs(repository:str,branch:str,head_sha:str,token:str|None)->list[dict
     return runs
 
 
-def fetch_compare_mutation_actors(repository:str,base_sha:str,head_sha:str,token:str|None)->set[str]:
+def fetch_compare_commits(repository:str,base_sha:str,head_sha:str,token:str|None)->list[dict]:
     if len(base_sha)!=40 or len(head_sha)!=40:
         raise RuntimeError('SOURCE_MUTATION_RANGE_SHA_INVALID')
-    url=f'https://api.github.com/repos/{repository}/compare/{base_sha}...{head_sha}?per_page=100'
-    payload=_api_json(url,token)
-    commits=payload.get('commits') or []
-    if not isinstance(commits,list):
-        raise RuntimeError('SOURCE_MUTATION_COMMIT_LIST_INVALID')
+    commits=[]
+    seen=set()
+    expected_total=None
+    page=1
+    while True:
+        query=urllib.parse.urlencode({'per_page':100,'page':page})
+        payload=_api_json(f'https://api.github.com/repos/{repository}/compare/{base_sha}...{head_sha}?{query}',token)
+        total=int(payload.get('total_commits') or 0)
+        batch=payload.get('commits') or []
+        if not isinstance(batch,list):
+            raise RuntimeError('SOURCE_MUTATION_COMMIT_LIST_INVALID')
+        if expected_total is None:
+            expected_total=total
+        elif total!=expected_total:
+            raise RuntimeError('SOURCE_MUTATION_COMPARE_DENOMINATOR_DRIFT')
+        for commit in batch:
+            sha=str((commit or {}).get('sha') or '')
+            if not sha or sha in seen:
+                raise RuntimeError('SOURCE_MUTATION_COMMIT_DUPLICATE_OR_MISSING_SHA')
+            seen.add(sha)
+            commits.append(commit)
+        if len(commits)>=expected_total:
+            break
+        if not batch:
+            raise RuntimeError('SOURCE_MUTATION_COMPARE_PAGINATION_INCOMPLETE')
+        page+=1
+        if page>1000:
+            raise RuntimeError('SOURCE_MUTATION_COMPARE_PAGINATION_LIMIT')
+    if expected_total<=0 or len(commits)!=expected_total:
+        raise RuntimeError(f'SOURCE_MUTATION_COMPARE_COUNT_MISMATCH:{len(commits)}!={expected_total}')
+    return commits
+
+
+def fetch_compare_mutation_actors(repository:str,base_sha:str,head_sha:str,token:str|None)->set[str]:
+    commits=fetch_compare_commits(repository,base_sha,head_sha,token)
     actors=set()
     for commit in commits:
-        if not isinstance(commit,dict):
-            continue
         for key in ('author','committer'):
             login=str(((commit.get(key) or {}).get('login')) or '').strip()
             if login:
                 actors.add(login)
-    if not commits:
-        raise RuntimeError('SOURCE_MUTATION_COMMIT_SET_EMPTY')
+    if not actors:
+        raise RuntimeError('SOURCE_MUTATION_ACTOR_SET_EMPTY')
     return actors
 
 
-def fetch_commit_tree_and_actor(repository:str,commit_sha:str,token:str|None)->tuple[str,str]:
+def fetch_commit_tree_and_actor(repository:str,commit_sha:str,token:str|None)->tuple[str,str,str]:
     payload=_api_json(f'https://api.github.com/repos/{repository}/commits/{commit_sha}',token)
     tree_sha=str((((payload.get('commit') or {}).get('tree') or {}).get('sha')) or '')
     actor=str(((payload.get('author') or {}).get('login')) or ((payload.get('committer') or {}).get('login')) or '').strip()
-    if not tree_sha or not actor:
-        raise RuntimeError('COMMIT_TREE_OR_ACTOR_UNRESOLVED')
-    return tree_sha,actor
+    committed_at=str((((payload.get('commit') or {}).get('committer') or {}).get('date')) or '')
+    if not tree_sha or not actor or not committed_at:
+        raise RuntimeError('COMMIT_TREE_ACTOR_OR_TIME_UNRESOLVED')
+    return tree_sha,actor,committed_at
 
 
-def fetch_github_blob_receipt(ref:str,token:str|None)->tuple[dict,str,str]:
+def fetch_github_blob_receipt(ref:str,token:str|None)->tuple[dict,str,str,str]:
     match=re.fullmatch(r'https://github\.com/([^/]+)/([^/]+)/blob/([0-9a-fA-F]{40})/(.+)',str(ref or ''))
     if not match:
-        raise RuntimeError('EXTERNAL_TRUST_RECEIPT_MUST_BE_COMMIT_PINNED_GITHUB_BLOB')
+        raise RuntimeError('EXTERNAL_TRUST_ARTIFACT_MUST_BE_COMMIT_PINNED_GITHUB_BLOB')
     owner,repo_name,commit_sha,path=match.groups()
     repository=f'{owner}/{repo_name}'
     quoted=urllib.parse.quote(path,safe='/')
@@ -96,16 +125,16 @@ def fetch_github_blob_receipt(ref:str,token:str|None)->tuple[dict,str,str]:
     payload=_api_json(f'https://api.github.com/repos/{repository}/contents/{quoted}?{query}',token)
     encoded=str(payload.get('content') or '').replace('\n','')
     if not encoded:
-        raise RuntimeError('EXTERNAL_TRUST_RECEIPT_CONTENT_MISSING')
+        raise RuntimeError('EXTERNAL_TRUST_ARTIFACT_CONTENT_MISSING')
     raw=base64.b64decode(encoded).decode('utf-8')
     try:
         doc=yaml.safe_load(raw) or {}
     except Exception as exc:
-        raise RuntimeError('EXTERNAL_TRUST_RECEIPT_PARSE_FAILED:'+type(exc).__name__)
+        raise RuntimeError('EXTERNAL_TRUST_ARTIFACT_PARSE_FAILED:'+type(exc).__name__)
     if not isinstance(doc,dict):
-        raise RuntimeError('EXTERNAL_TRUST_RECEIPT_MAPPING_REQUIRED')
-    _tree,actor=fetch_commit_tree_and_actor(repository,commit_sha,token)
-    return doc,actor,commit_sha
+        raise RuntimeError('EXTERNAL_TRUST_ARTIFACT_MAPPING_REQUIRED')
+    _tree,actor,committed_at=fetch_commit_tree_and_actor(repository,commit_sha,token)
+    return doc,actor,commit_sha,committed_at
 
 
 def fetch_github_issue(ref:str,token:str|None)->dict:
@@ -114,6 +143,19 @@ def fetch_github_issue(ref:str,token:str|None)->dict:
         raise RuntimeError('SIGNER_AUTHORITY_REF_MUST_BE_GITHUB_ISSUE')
     owner,repo_name,number=match.groups()
     return _api_json(f'https://api.github.com/repos/{owner}/{repo_name}/issues/{number}',token)
+
+
+def canonical_detached_signature_payload(fields:dict)->str:
+    keys=(
+      'signer_identity','signer_authority_ref','source_package_identity','source_package_head_sha',
+      'source_package_content_hash','predecessor_trust_identity','signed_at'
+    )
+    payload={key:str(fields.get(key) or '') for key in keys}
+    if any(not value for value in payload.values()):
+        raise RuntimeError('SOURCE_DETACHED_SIGNATURE_PAYLOAD_FIELD_MISSING')
+    raw=json.dumps(payload,sort_keys=True,separators=(',',':'),ensure_ascii=False).encode('utf-8')
+    import hashlib
+    return hashlib.sha256(raw).hexdigest()
 
 
 def verify_external_trust(
@@ -130,21 +172,24 @@ def verify_external_trust(
     if not receipt_ref:
         return {'status':'NOT_VERIFIED','failures':['SOURCE_EXTERNAL_TRUST_EVIDENCE_REF_MISSING']}
     try:
-        trust_doc,commit_actor,trust_commit_sha=fetch_github_blob_receipt(receipt_ref,token)
+        trust_doc,receipt_actor,trust_commit_sha,receipt_commit_time=fetch_github_blob_receipt(receipt_ref,token)
     except Exception as exc:
         return {'status':'NOT_VERIFIED','failures':['SOURCE_EXTERNAL_TRUST_RECEIPT_UNVERIFIABLE:'+type(exc).__name__+':'+str(exc)]}
 
     signer=str(trust_doc.get('signer_identity') or '').strip()
     authority_ref=str(trust_doc.get('signer_authority_ref') or '').strip()
-    if signer!=commit_actor:
-        failures.append('SOURCE_EXTERNAL_TRUST_SIGNER_COMMIT_ACTOR_MISMATCH')
-    if signer in mutation_actors or commit_actor in mutation_actors:
+    signature_ref=str(trust_doc.get('signature_or_immutable_receipt_ref') or '').strip()
+    if signer!=receipt_actor:
+        failures.append('SOURCE_EXTERNAL_TRUST_SIGNER_RECEIPT_ACTOR_MISMATCH')
+    if signer in mutation_actors or receipt_actor in mutation_actors:
         failures.append('SOURCE_EXTERNAL_TRUST_SELF_SIGN_OR_MUTATION_ACTOR_COLLISION')
+    if not signature_ref or signature_ref==receipt_ref:
+        failures.append('SOURCE_EXTERNAL_TRUST_DETACHED_SIGNATURE_REQUIRED')
 
     required=(
       'artifact_type','status','signer_identity','signer_authority_ref','source_package_identity',
       'source_package_head_sha','source_package_content_hash','predecessor_trust_identity',
-      'signed_at','signature_or_immutable_receipt_ref'
+      'signed_at','signature_payload_sha256','signature_or_immutable_receipt_ref'
     )
     missing=[key for key in required if trust_doc.get(key) in (None,'',[])]
     if missing:
@@ -162,15 +207,36 @@ def verify_external_trust(
       'source_package_head_sha':source_head_sha,
       'source_package_content_hash':expected_content_hash,
       'predecessor_trust_identity':expected_predecessor,
-      'signature_or_immutable_receipt_ref':receipt_ref,
     }
     for key,value in expected.items():
         if str(trust_doc.get(key) or '')!=str(value):
             failures.append('SOURCE_EXTERNAL_TRUST_RECEIPT_BINDING_MISMATCH:'+key)
 
-    # Authority must come from the same explicit governance authority actor that authorized
-    # the source-successor scope, and must pre-exist signing.
     try:
+        expected_payload_hash=canonical_detached_signature_payload(trust_doc)
+        if str(trust_doc.get('signature_payload_sha256') or '')!=expected_payload_hash:
+            failures.append('SOURCE_EXTERNAL_TRUST_PAYLOAD_HASH_MISMATCH')
+        signature_doc,signature_actor,signature_commit_sha,signature_commit_time=fetch_github_blob_receipt(signature_ref,token)
+        if signature_actor!=signer:
+            failures.append('SOURCE_DETACHED_SIGNATURE_ACTOR_MISMATCH')
+        if signature_actor in mutation_actors:
+            failures.append('SOURCE_DETACHED_SIGNATURE_MUTATION_ACTOR_COLLISION')
+        signature_expected={
+          'artifact_type':'GOVERNANCE_SOURCE_DETACHED_TRUST_SIGNATURE',
+          'status':'SIGNED_PASS',
+          'signer_identity':signer,
+          'signer_authority_ref':authority_ref,
+          'source_package_identity':expected_identity,
+          'source_package_head_sha':source_head_sha,
+          'source_package_content_hash':expected_content_hash,
+          'predecessor_trust_identity':expected_predecessor,
+          'signed_at':str(trust_doc.get('signed_at') or ''),
+          'signature_payload_sha256':expected_payload_hash,
+        }
+        for key,value in signature_expected.items():
+            if str(signature_doc.get(key) or '')!=str(value):
+                failures.append('SOURCE_DETACHED_SIGNATURE_BINDING_MISMATCH:'+key)
+
         source_auth=fetch_github_issue(str(source_manifest.get('authorization_record') or ''),token)
         source_auth_actor=str(((source_auth.get('user') or {}).get('login')) or '')
         signer_auth=fetch_github_issue(authority_ref,token)
@@ -178,29 +244,25 @@ def verify_external_trust(
         authority_body=str(signer_auth.get('body') or '')
         if not source_auth_actor or signer_auth_actor!=source_auth_actor:
             failures.append('SOURCE_EXTERNAL_TRUST_AUTHORITY_ACTOR_MISMATCH')
-        if signer not in authority_body or expected_identity not in authority_body or source_head_sha not in authority_body or expected_content_hash not in authority_body:
-            failures.append('SOURCE_EXTERNAL_TRUST_AUTHORITY_SCOPE_MISSING')
-        trust_commit=_api_json(
-          'https://api.github.com/repos/'+receipt_ref.split('/')[3]+'/'+receipt_ref.split('/')[4]+'/commits/'+trust_commit_sha,
-          token
-        )
-        signed_commit_time=str(((trust_commit.get('commit') or {}).get('committer') or {}).get('date') or '')
-        authority_created=str(signer_auth.get('created_at') or '')
-        authority_updated=str(signer_auth.get('updated_at') or '')
-        signed_at=str(trust_doc.get('signed_at') or '')
-        auth_created_dt=datetime.fromisoformat(authority_created.replace('Z','+00:00')).astimezone(timezone.utc)
-        auth_updated_dt=datetime.fromisoformat(authority_updated.replace('Z','+00:00')).astimezone(timezone.utc)
-        signed_dt=datetime.fromisoformat(signed_at.replace('Z','+00:00')).astimezone(timezone.utc)
-        commit_dt=datetime.fromisoformat(signed_commit_time.replace('Z','+00:00')).astimezone(timezone.utc)
-        if not (auth_created_dt < signed_dt <= commit_dt and auth_updated_dt < signed_dt):
+        for token_text in (signer,expected_identity,source_head_sha,expected_content_hash):
+            if token_text not in authority_body:
+                failures.append('SOURCE_EXTERNAL_TRUST_AUTHORITY_SCOPE_MISSING:'+token_text)
+
+        auth_created_dt=datetime.fromisoformat(str(signer_auth.get('created_at') or '').replace('Z','+00:00')).astimezone(timezone.utc)
+        auth_updated_dt=datetime.fromisoformat(str(signer_auth.get('updated_at') or '').replace('Z','+00:00')).astimezone(timezone.utc)
+        signed_dt=datetime.fromisoformat(str(trust_doc.get('signed_at') or '').replace('Z','+00:00')).astimezone(timezone.utc)
+        signature_commit_dt=datetime.fromisoformat(signature_commit_time.replace('Z','+00:00')).astimezone(timezone.utc)
+        receipt_commit_dt=datetime.fromisoformat(receipt_commit_time.replace('Z','+00:00')).astimezone(timezone.utc)
+        if not (auth_created_dt < signed_dt and auth_updated_dt < signed_dt <= signature_commit_dt <= receipt_commit_dt):
             failures.append('SOURCE_EXTERNAL_TRUST_TEMPORAL_ORDER_INVALID')
     except Exception as exc:
-        failures.append('SOURCE_EXTERNAL_TRUST_AUTHORITY_UNVERIFIABLE:'+type(exc).__name__+':'+str(exc))
+        failures.append('SOURCE_EXTERNAL_TRUST_DETACHED_SIGNATURE_OR_AUTHORITY_UNVERIFIABLE:'+type(exc).__name__+':'+str(exc))
 
     return {
       'status':'PASS' if not failures else 'NOT_VERIFIED',
       'signer_identity':signer,
       'trust_commit_sha':trust_commit_sha,
+      'detached_signature_ref':signature_ref,
       'source_package_content_hash':expected_content_hash,
       'source_package_head_sha':source_head_sha,
       'mutation_actor_count':len(mutation_actors),

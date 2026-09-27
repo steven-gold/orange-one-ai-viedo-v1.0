@@ -93,6 +93,19 @@ def exact_head_validation_contract_check(registry:dict)->dict:
         failures.append('INDEPENDENT_AUDITOR_RESULT_ARTIFACT_CONTRACT_DRIFT')
     if vc.get('independent_auditor_authority_must_preexist_evidence_commit') is not True:
         failures.append('INDEPENDENT_AUDITOR_AUTHORITY_TEMPORAL_GATE_MISSING')
+    if vc.get('independent_auditor_formal_evidence_transport')!='COMMIT_PINNED_EXTERNAL_MANIFEST':
+        failures.append('INDEPENDENT_AUDITOR_FORMAL_EVIDENCE_TRANSPORT_DRIFT')
+    if int(vc.get('independent_auditor_local_evidence_formal_credit') or 0)!=0:
+        failures.append('LOCAL_AUDITOR_EVIDENCE_FORMAL_CREDIT_LEAK')
+    if vc.get('independent_auditor_external_manifest_artifact_type')!='GOVERNANCE_INDEPENDENT_AUDITOR_EVIDENCE_MANIFEST':
+        failures.append('INDEPENDENT_AUDITOR_EXTERNAL_MANIFEST_TYPE_DRIFT')
+    for key in ('independent_auditor_external_manifest_must_bind_candidate_head','independent_auditor_external_manifest_actor_must_equal_primary_authority_actor','independent_auditor_external_manifest_commit_must_follow_all_evaluator_evidence','mutation_actor_inventory_pagination_complete_required','mutation_actor_inventory_count_must_match_compare_total'):
+        if vc.get(key) is not True:
+            failures.append('CANDIDATE_VALIDATION_FLAG_MISSING:'+key)
+    if vc.get('source_external_trust_mode')!='DETACHED_SIGNATURE_ENVELOPE':
+        failures.append('SOURCE_EXTERNAL_TRUST_MODE_DRIFT')
+    if vc.get('source_external_trust_receipt_self_reference')!='FORBIDDEN':
+        failures.append('SOURCE_EXTERNAL_TRUST_SELF_REFERENCE_NOT_FORBIDDEN')
     if int(vc.get('independent_auditor_provenance_actor_count') or 0)!=3 or vc.get('candidate_mutation_actor_may_be_formal_independent_auditor') is not False or vc.get('same_external_actor_may_supply_multiple_formal_independent_evaluators') is not False:
         failures.append('INDEPENDENT_AUDITOR_PROVENANCE_INDEPENDENCE_DRIFT')
     return {
