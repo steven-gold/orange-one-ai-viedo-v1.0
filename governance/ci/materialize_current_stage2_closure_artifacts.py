@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 PACKAGED_ARTIFACT_CONTRACT = {
-    "owner_output": "PAGE_CONSTRUCTION_SPEC_PACKAGE",
+    "owner_output": "GOVERNED_UNIT_CONSTRUCTION_SPEC_PACKAGE",
     "package_manifest_field": "included_artifacts",
     "artifacts": {
         "BUSINESS_ENTITY_INVENTORY": "BUSINESS_ENTITY_INVENTORY.yaml",

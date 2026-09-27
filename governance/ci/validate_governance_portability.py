@@ -208,12 +208,12 @@ if _driver.get('authorized_not_applicable_requires_authority_evidence') is not T
 if set(map(str,_driver.get('operation_receipt_terminal_statuses') or []))!={'PASS','NOT_APPLICABLE_WITH_PROOF'}:
     failures.append('stage_driver_operation_receipt_terminal_status_drift')
 
-_stage05=next((x for x in profile_steps if str(x.get('stage_uid'))=='STAGE-05'),{})
-if _stage05:
-    if 'IMPLEMENTATION_EVIDENCE_COMPILE' not in set(map(str,_stage05.get('operations') or [])):
-        failures.append('stage05_generic_implementation_evidence_compiler_missing')
-    if (_stage05.get('output_producers') or {}).get('IMPLEMENTATION_EVIDENCE')!='IMPLEMENTATION_EVIDENCE_COMPILE':
-        failures.append('stage05_implementation_evidence_bound_to_optional_capability')
+_implementation_stage=next((x for x in profile_steps if str(x.get('name') or '')=='IMPLEMENTATION'),{})
+if _implementation_stage:
+    if 'IMPLEMENTATION_EVIDENCE_COMPILE' not in set(map(str,_implementation_stage.get('operations') or [])):
+        failures.append('implementation_generic_evidence_compiler_missing')
+    if (_implementation_stage.get('output_producers') or {}).get('IMPLEMENTATION_EVIDENCE')!='IMPLEMENTATION_EVIDENCE_COMPILE':
+        failures.append('implementation_evidence_bound_to_optional_capability')
 
 synthetic=[
     {'uid':'SYNTH-A','steps':['discover','design','ship']},
