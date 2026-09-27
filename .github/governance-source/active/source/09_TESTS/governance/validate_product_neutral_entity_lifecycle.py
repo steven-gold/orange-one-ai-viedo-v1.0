@@ -23,16 +23,22 @@ def validate(root=ROOT):
     reg=load(root,'10_REGISTRY/STAGE_EXECUTION_INVARIANT_REGISTRY.yaml')
     inv=reg.get('invariants') or {}
     app=reg.get('applicability') or {}
-    if app.get('common_spec_is_governed_unit_neutral') is not True: failures.append('common_spec_not_declared_product_neutral')
-    if app.get('specific_execution_target_identity_required_to_interpret_common_rules') is not False: failures.append('specific_product_identity_still_required')
-    if app.get('execution_profile_may_weaken_common_invariants') is not False: failures.append('product_profile_can_weaken_common_invariants')
-    if app.get('execution_target_specific_binding_in_common_normative_rule')!='BLOCK': failures.append('common_product_binding_not_blocked')
+    if app.get('common_spec_is_governed_unit_neutral') is not True: failures.append('common_spec_not_declared_governed_unit_neutral')
+    if app.get('specific_execution_target_identity_required_to_interpret_common_rules') is not False: failures.append('specific_execution_target_identity_still_required')
+    if app.get('execution_profile_may_weaken_common_invariants') is not False: failures.append('execution_profile_can_weaken_common_invariants')
+    if app.get('execution_target_specific_binding_in_common_normative_rule')!='BLOCK': failures.append('common_execution_target_binding_not_blocked')
     if app.get('binding_substitution_audit_required_before_freeze') is not True: failures.append('binding_substitution_audit_not_required')
     pna=inv.get('COMMON_APPLICABILITY_NEUTRALITY') or {}
     for k in ['common_rule_may_require_execution_target_name','common_rule_may_require_execution_target_governed_unit_uid_or_route','common_rule_may_require_execution_target_repository','common_rule_may_require_execution_target_provider_or_data_schema','execution_profile_can_weaken_common_rule','execution_profile_can_replace_common_invariant']:
-        if pna.get(k) is not False: failures.append('product_neutral_rule_not_false:'+k)
+        if pna.get(k) is not False: failures.append('common_neutral_rule_not_false:'+k)
+    if pna.get('domain_specific_normative_reference_does_not_imply_applicability') is not True: failures.append('domain_reference_improperly_implies_applicability')
+    if pna.get('domain_specific_requirement_enters_required_denominator_only_when')!='CURRENT_AUTHORITY_RESOLVES_REQUIRED': failures.append('domain_required_denominator_authority_contract_drift')
+    if pna.get('domain_specific_not_applicable_disposition')!='AUTHORIZED_NOT_APPLICABLE' or pna.get('domain_specific_not_applicable_requires_authority_evidence') is not True or pna.get('domain_specific_not_applicable_may_receive_completion_credit') is not False:
+        failures.append('domain_not_applicable_fail_closed_contract_incomplete')
+    required_capability_classes={'VISUAL_SURFACE','USER_INTERACTION','DATA_PERSISTENCE','IDENTITY_AND_ACCESS','EXTERNAL_INTEGRATION','ASYNC_PROCESSING','STORAGE','BUILD','STAGING','PRODUCTION_DEPLOYMENT','PRODUCTION_ACCEPTANCE','OPERATIONS'}
+    if set(map(str,pna.get('domain_specific_capability_classes') or []))!=required_capability_classes: failures.append('domain_capability_class_universe_drift')
     if pna.get('binding_substitution_test_required') is not True or pna.get('binding_substitution_failure')!='GOVERNANCE_DEFECT': failures.append('binding_substitution_contract_invalid')
-    if set(pna.get('execution_target_specific_material_allowed_contexts') or [])!={'EMPIRICAL_PROVENANCE','SYNTHETIC_TEST_FIXTURE','COMPATIBILITY_ALIAS','EXECUTION_PROFILE_EXTENSION'}: failures.append('product_specific_allowed_contexts_invalid')
+    if set(pna.get('execution_target_specific_material_allowed_contexts') or [])!={'EMPIRICAL_PROVENANCE','SYNTHETIC_TEST_FIXTURE','COMPATIBILITY_ALIAS','EXECUTION_PROFILE_EXTENSION'}: failures.append('execution_target_specific_allowed_contexts_invalid')
 
     ei=inv.get('GOVERNED_ENTITY_INVENTORY_COMPLETENESS') or {}
     if ei.get('applicability')!='CONDITIONAL_BY_CURRENT_AUTHORITY_AND_GOVERNED_UNIT_SEMANTICS' or ei.get('required_when_applicable') is not True or ei.get('not_applicable_requires_authority_evidence') is not True or ei.get('required_artifact')!='GOVERNED_ENTITY_INVENTORY': failures.append('entity_inventory_contract_missing')

@@ -312,6 +312,24 @@ invariants:
     execution_profile_can_add_stricter_rules: true
     execution_profile_can_weaken_common_rule: false
     execution_profile_can_replace_common_invariant: false
+    domain_specific_normative_reference_does_not_imply_applicability: true
+    domain_specific_requirement_enters_required_denominator_only_when: CURRENT_AUTHORITY_RESOLVES_REQUIRED
+    domain_specific_not_applicable_disposition: AUTHORIZED_NOT_APPLICABLE
+    domain_specific_not_applicable_requires_authority_evidence: true
+    domain_specific_not_applicable_may_receive_completion_credit: false
+    domain_specific_capability_classes:
+    - VISUAL_SURFACE
+    - USER_INTERACTION
+    - DATA_PERSISTENCE
+    - IDENTITY_AND_ACCESS
+    - EXTERNAL_INTEGRATION
+    - ASYNC_PROCESSING
+    - STORAGE
+    - BUILD
+    - STAGING
+    - PRODUCTION_DEPLOYMENT
+    - PRODUCTION_ACCEPTANCE
+    - OPERATIONS
     binding_substitution_test_required: true
     binding_substitution_failure: GOVERNANCE_DEFECT
   GOVERNED_ENTITY_INVENTORY_COMPLETENESS:
