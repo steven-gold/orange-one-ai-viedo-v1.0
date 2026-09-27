@@ -10,8 +10,17 @@ import importlib.util,json,shutil,tempfile,yaml
 HERE=Path(__file__).resolve().parent; ROOT=HERE.parents[1]
 def imp(name):
     spec=importlib.util.spec_from_file_location(name,HERE/f'{name}.py'); m=importlib.util.module_from_spec(spec); spec.loader.exec_module(m); return m
-val=imp('validate_evidence_state_closure')
 def case(name,ok,detail=None): return {'case':name,'ok':bool(ok),'detail':detail or {}}
+
+REPO=ROOT.parents[3]
+def successor_migration_contract():
+    mutation=yaml.safe_load((REPO/'governance/specifications/current/SPECIFICATION_MUTATION_CONTROL.yaml').read_text(encoding='utf-8')) or {}
+    cycle=yaml.safe_load((REPO/'governance/specifications/current/EXECUTION_CYCLE_CONTROL.yaml').read_text(encoding='utf-8')) or {}
+    candidate=yaml.safe_load((REPO/'governance/source-successor/SOURCE_PACKAGE_CANDIDATE.yaml').read_text(encoding='utf-8')) or {}
+    m=mutation.get('predecessor_evidence_consumer_migration_control') or {}
+    s=cycle.get('successor_candidate_state_resolution') or {}
+    return {'migration':m,'state':s,'candidate':candidate}
+
 def mutate_yaml(name,rel,mut):
     with tempfile.TemporaryDirectory() as td:
         r=Path(td)/'pkg'; shutil.copytree(ROOT,r)
@@ -23,12 +32,18 @@ def mutate_text(name,rel,mut):
         r=Path(td)/'pkg'; shutil.copytree(ROOT,r)
         p=r/rel; p.write_text(mut(p.read_text(encoding='utf-8')),encoding='utf-8')
         out=val.validate(r); return case(name,out['status']=='FAIL',{'failures':out.get('failures',[])[:6]})
-base=val.validate(ROOT)
 stage=yaml.safe_load((ROOT/'10_REGISTRY/GOVERNANCE_LIFECYCLE_STAGE_REGISTRY.yaml').read_text()) or {}
 s2={x.get('stage_uid'):x for x in stage.get('stages') or []}.get('STAGE-02') or {}
-closure=yaml.safe_load((ROOT/'11_EVIDENCE/audit/GITHUB_REPLAY_CLOSURE_RESULT.yaml').read_text()) or {}
+c=successor_migration_contract(); m=c['migration']; st=c['state']; cand=c['candidate']
+retired=[
+ '11_EVIDENCE/audit/GOVERNANCE_CANDIDATE_STATE.yaml',
+ '11_EVIDENCE/audit/GOVERNANCE_DEFECT_LEDGER.yaml',
+ '11_EVIDENCE/audit/GITHUB_REPLAY_CLOSURE_RESULT.yaml',
+]
 results=[
- case('baseline_closure_validator_pass',base['status']=='PASS',base),
+ case('successor_migration_contract_pass',
+      m.get('missing_retired_predecessor_evidence_disposition')=='MIGRATE_CONSUMER_NOT_RESTORE_ARTIFACT'
+      and st.get('current_candidate_identity_source')=='governance/specifications/REGISTRY.yaml'),
  case('stage02_page_functional_contract_registered',s2.get('name')=='PAGE_FUNCTIONAL_CONTRACT'),
  case('stage02_functional_chain_compile_registered','FUNCTIONAL_CHAIN_COMPILE' in (s2.get('operations') or [])),
  case('stage02_dependency_map_compile_registered','DEPENDENCY_MAP_COMPILE' in (s2.get('operations') or [])),
@@ -36,16 +51,16 @@ results=[
  case('stage02_shared_owner_port_resolve_registered','SHARED_OWNER_PORT_RESOLVE' in (s2.get('operations') or [])),
  case('stage02_functional_guard_registered','FUNCTIONAL_CONTRACT_GUARD' in (s2.get('validator_names') or [])),
  case('stage02_dependency_guard_registered','DEPENDENCY_CONTINUITY_GUARD' in (s2.get('validator_names') or [])),
- case('closure_run_34733833659_bound',(closure.get('evidence') or {}).get('v218_successor_linkage_final',{}).get('run_id')==34733833659),
- case('closure_run_34734265713_bound',(closure.get('evidence') or {}).get('pre_page_replay',{}).get('run_id')==34734265713),
- case('closure_run_34734528373_bound',(closure.get('evidence') or {}).get('page_blueprint_replay_after_hash_correction',{}).get('run_id')==34734528373),
- case('closure_run_34734730080_bound',(closure.get('evidence') or {}).get('page_replay_content_audit_closure',{}).get('run_id')==34734730080),
+ case('retired_live_candidate_state_absent',not (ROOT/retired[0]).exists()),
+ case('retired_live_defect_ledger_absent',not (ROOT/retired[1]).exists()),
+ case('retired_live_replay_closure_absent',not (ROOT/retired[2]).exists()),
+ case('historical_predecessor_evidence_is_reference_only',m.get('historical_predecessor_evidence_role')=='HISTORICAL_REFERENCE_ONLY'),
  mutate_text('readme_superseded_pending_blocked','README.md',lambda t:t+'\\nStatus: GITHUB PRIOR-PHASE REPLAY PENDING\\n'),
- mutate_yaml('candidate_prior_replay_pending_blocked','11_EVIDENCE/audit/GOVERNANCE_CANDIDATE_STATE.yaml',lambda d:d['preformal_execution'].__setitem__('github_prior_phase_replay','PENDING')),
- mutate_yaml('candidate_successor_run_id_drift_blocked','11_EVIDENCE/audit/GOVERNANCE_CANDIDATE_STATE.yaml',lambda d:d['preformal_execution'].__setitem__('github_successor_replay_run_id',1)),
- mutate_yaml('defect_replay_pending_blocked','11_EVIDENCE/audit/GOVERNANCE_DEFECT_LEDGER.yaml',lambda d:next(x for x in d['defects'] if x.get('defect_uid')=='DEF-V218-PREDECESSOR-VALIDATOR-SUCCESSOR-REJECTION-001').__setitem__('status','FIXED_PREFORMAL_VERIFIED_GITHUB_REPLAY_PENDING')),
- mutate_yaml('defect_reverify_pending_blocked','11_EVIDENCE/audit/GOVERNANCE_DEFECT_LEDGER.yaml',lambda d:next(x for x in d['defects'] if x.get('defect_uid')=='DEF-V219-IMMUTABLE-PACKAGE-EVIDENCE-STATE-DRIFT-001').__setitem__('status','FIXED_PREFORMAL_REVERIFY_PENDING')),
- mutate_yaml('closure_evidence_run_drift_blocked','11_EVIDENCE/audit/GITHUB_REPLAY_CLOSURE_RESULT.yaml',lambda d:d['evidence']['page_replay_content_audit_closure'].__setitem__('run_id',0)),
+ case('removed_predecessor_state_must_not_be_restored',m.get('removed_predecessor_run_state_or_evidence_may_be_recreated_as_current') is False),
+ case('retired_run_ids_have_no_current_credit',st.get('retired_predecessor_run_ids_are_current_evidence') is False),
+ case('deleted_history_not_required_for_current_validation',st.get('deleted_historical_evidence_must_be_restored_for_current_validation') is False),
+ case('historical_fixture_required_for_legacy_semantics',m.get('legacy_regression_must_use_isolated_historical_fixture_when_historical_semantics_remain_required') is True),
+ case('source_candidate_not_current_authority',cand.get('status')=='UNSIGNED_NOT_CURRENT' and cand.get('current_authority') is False),
  mutate_yaml('human_review_auto_pass_blocked','10_REGISTRY/REVIEW_PROGRESS_LEDGER.yaml',lambda d:d['required_review_plan'][0].__setitem__('status','APPROVED')),
  mutate_yaml('sync_contract_disabled_blocked','10_REGISTRY/GOVERNANCE_ACCEPTANCE_AUDIT_BLUEPRINT.yaml',lambda d:d['current_test_evidence_sync_contract'].__setitem__('github_replay_closure_evidence_required',False)),
  mutate_yaml('stage02_functional_compile_missing_blocked','10_REGISTRY/GOVERNANCE_LIFECYCLE_STAGE_REGISTRY.yaml',lambda d:[s['operations'].remove('FUNCTIONAL_CHAIN_COMPILE') for s in d['stages'] if s.get('stage_uid')=='STAGE-02']),

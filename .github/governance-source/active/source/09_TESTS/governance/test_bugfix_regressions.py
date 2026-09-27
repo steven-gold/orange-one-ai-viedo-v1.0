@@ -71,5 +71,16 @@ trust_base=gov.external_trust_anchor_guard(PKG)
 with tempfile.TemporaryDirectory() as td:
     r=Path(td)/'pkg'; shutil.copytree(PKG,r); (r/'README.md').write_text((r/'README.md').read_text(encoding='utf-8')+'\nTAMPER\n',encoding='utf-8'); tout=gov.external_trust_anchor_guard(r); results.append(case('external_trust_root_blocks_candidate_self_resign',trust_base['status']=='PASS' and tout['status']=='FAIL',{'base':trust_base.get('status'),'tamper_failures':tout.get('failures',[])[:4]}))
 
+sec_doc=load(PKG/'10_REGISTRY/SECTION_NUMBER_REGISTRY.yaml')
+sec_map={x.get('section_uid'):x for d in sec_doc.get('documents') or [] for x in d.get('sections') or []}
+results.append(case(
+  'section_62A_registered_with_exact_heading',
+  (sec_map.get('WEB-GOV-03-S062A') or {}).get('heading')=='## 62A. Universal Stepwise Execution / No Bulk Preproduction Contract'
+))
+results.append(case(
+  'audit_4A_and_5_have_distinct_registered_identities',
+  (sec_map.get('WEB-GOV-04-S004A') or {}).get('heading')=='## 4A. Interleaved Step Audit / No End-Only Audit'
+  and (sec_map.get('WEB-GOV-04-S005') or {}).get('heading')=='## 5. Audit Classification'
+))
 out={'suite':'v2.1.6 cross-lifecycle semantic granularity bugfix regression','total':len(results),'passed_expectations':sum(x['ok'] for x in results),'results':results}
 print(json.dumps(out,ensure_ascii=False,indent=2)); raise SystemExit(0 if out['passed_expectations']==out['total'] else 1)

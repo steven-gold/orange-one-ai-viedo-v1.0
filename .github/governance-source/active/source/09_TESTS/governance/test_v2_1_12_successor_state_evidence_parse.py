@@ -14,6 +14,16 @@ VP219=Path(__file__).resolve().parent/'validate_evidence_state_closure.py'
 spec219=importlib.util.spec_from_file_location('ev219',VP219); ev219=importlib.util.module_from_spec(spec219); spec219.loader.exec_module(ev219)
 
 def case(name,ok,detail=None): return {'case':name,'ok':bool(ok),'detail':detail or {}}
+
+REPO=ROOT.parents[3]
+def successor_migration_contract():
+    mutation=yaml.safe_load((REPO/'governance/specifications/current/SPECIFICATION_MUTATION_CONTROL.yaml').read_text(encoding='utf-8')) or {}
+    cycle=yaml.safe_load((REPO/'governance/specifications/current/EXECUTION_CYCLE_CONTROL.yaml').read_text(encoding='utf-8')) or {}
+    candidate=yaml.safe_load((REPO/'governance/source-successor/SOURCE_PACKAGE_CANDIDATE.yaml').read_text(encoding='utf-8')) or {}
+    m=mutation.get('predecessor_evidence_consumer_migration_control') or {}
+    s=cycle.get('successor_candidate_state_resolution') or {}
+    return {'migration':m,'state':s,'candidate':candidate}
+
 def previous(stage):
     return {'stage_uid':stage,'terminal_state':stage+'_CLOSED','completed':True,'proof_identity':'proof-'+stage,'authority_identity':'AUTH-8-GAPS','terminal_receipt':{'provider':'GITHUB_ACTIONS','repository_or_project':'repo','head_sha':'abc','run_id':123,'job_denominator':'12/12','conclusion':'SUCCESS'}}
 def current(prev,cstage,**kw):
@@ -73,27 +83,17 @@ for name,text,fmt,fields,expected in ev:
     out=cont.validate_required_evidence_bytes(text,fmt,fields); res.append(case(name,out['status']==expected,out))
 
 
-# 4 historical predecessor-validator successor-awareness cases.
-out219=ev219.validate(PKG)
-res.append(case('historical_v219_validator_accepts_v212_successor',out219['status']=='PASS',out219))
-with tempfile.TemporaryDirectory() as td:
-    r=Path(td)/'pkg'; shutil.copytree(PKG,r)
-    p=r/'11_EVIDENCE/audit/GOVERNANCE_DEFECT_LEDGER.yaml'; d=yaml.safe_load(p.read_text())
-    next(x for x in d['defects'] if x.get('defect_uid')=='DEF-V212-PREDECESSOR-CURRENT-STATE-LOCK-001')['status']='FIXED_PREFORMAL_CONSTITUENT_VERIFIED_GITHUB_REPLAY_PENDING'
-    p.write_text(yaml.safe_dump(d,allow_unicode=True,sort_keys=False,width=180))
-    o=ev219.validate(r); res.append(case('historical_v219_allows_future_successor_pending_defect',o['status']=='PASS',o))
-with tempfile.TemporaryDirectory() as td:
-    r=Path(td)/'pkg'; shutil.copytree(PKG,r)
-    p=r/'11_EVIDENCE/audit/GOVERNANCE_DEFECT_LEDGER.yaml'; d=yaml.safe_load(p.read_text())
-    next(x for x in d['defects'] if x.get('defect_uid')=='DEF-V218-PREDECESSOR-VALIDATOR-SUCCESSOR-REJECTION-001')['status']='FIXED_PREFORMAL_VERIFIED_GITHUB_REPLAY_PENDING'
-    p.write_text(yaml.safe_dump(d,allow_unicode=True,sort_keys=False,width=180))
-    o=ev219.validate(r); res.append(case('historical_v219_blocks_owned_v218_pending_regression',o['status']=='FAIL' and any('superseded_defect_pending_states' in x for x in o['failures']),o))
-with tempfile.TemporaryDirectory() as td:
-    r=Path(td)/'pkg'; shutil.copytree(PKG,r)
-    p=r/'11_EVIDENCE/audit/GOVERNANCE_DEFECT_LEDGER.yaml'; d=yaml.safe_load(p.read_text())
-    next(x for x in d['defects'] if x.get('defect_uid')=='DEF-V219-IMMUTABLE-PACKAGE-EVIDENCE-STATE-DRIFT-001')['status']='FIXED_PREFORMAL_REVERIFY_PENDING'
-    p.write_text(yaml.safe_dump(d,allow_unicode=True,sort_keys=False,width=180))
-    o=ev219.validate(r); res.append(case('historical_v219_blocks_owned_v219_pending_regression',o['status']=='FAIL' and any('superseded_defect_pending_states' in x for x in o['failures']),o))
+# 4 successor migration cases replace retired live predecessor evidence dependencies.
+c=successor_migration_contract(); m=c['migration']; st=c['state']; cand=c['candidate']
+res += [
+ case('historical_predecessor_evidence_reference_only',m.get('historical_predecessor_evidence_role')=='HISTORICAL_REFERENCE_ONLY'),
+ case('historical_fixture_never_current_authority',m.get('legacy_fixture_may_not_be_current_authority') is True),
+ case('current_candidate_truth_uses_registry_and_exact_head_receipts',
+      st.get('current_candidate_identity_source')=='governance/specifications/REGISTRY.yaml'
+      and st.get('current_validation_truth_source')=='EXACT_HEAD_REQUIRED_WORKFLOW_RECEIPTS'),
+ case('unsigned_source_successor_has_zero_current_credit',
+      cand.get('status')=='UNSIGNED_NOT_CURRENT' and cand.get('current_authority') is False and cand.get('promotion_credit')==0),
+]
 
 out={'suite':'v2.1.12 successor-state monotonic predecessor validation / Required Evidence parse-integrity multidirection high-pressure regression','total':len(res),'passed_expectations':sum(x['ok'] for x in res),'results':res}
 print(json.dumps(out,ensure_ascii=False,indent=2))

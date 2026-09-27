@@ -106,6 +106,15 @@ cases += [
  runtime_case('write_target_points_to_other_artifact',lambda r,m,p:m['write_target_bindings'][0].__setitem__('canonical_path','src/example/DEMO-PAGE-001/other-valid.ts')),
  runtime_case('effective_set_hash_stale',lambda r,m,p:r.__setitem__('effective_normative_set_hash','0'*64)),
 ]
+life_now=load(ROOT/'10_REGISTRY/GOVERNANCE_LIFECYCLE_STAGE_REGISTRY.yaml')
+stage_map={x.get('stage_uid'):x for x in life_now.get('stages') or []}
+required_83a={'STAGE-02','STAGE-03','STAGE-04'}
+cases.append({
+  'case':'basic_design_stepwise_section_bound_to_stage02_03_04',
+  'actual':'PASS' if all('WEB-GOV-01-S083A' in (stage_map[s].get('required_normative_section_uids') or []) for s in required_83a) else 'FAIL',
+  'expected':'PASS',
+  'ok':all('WEB-GOV-01-S083A' in (stage_map[s].get('required_normative_section_uids') or []) for s in required_83a)
+})
 out={'suite':'execution governance load / common+specific / typed UID / write-target guard','total':len(cases),'passed_expectations':sum(c['ok'] for c in cases),'results':cases}
 print(json.dumps(out,ensure_ascii=False,indent=2))
 raise SystemExit(0 if out['passed_expectations']==out['total'] else 1)

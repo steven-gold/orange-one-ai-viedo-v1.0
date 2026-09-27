@@ -7,6 +7,7 @@ ROOT=Path(__file__).resolve().parents[2]
 SOURCE=ROOT/'.github/governance-source/active/source'
 META=ROOT/'governance/source-successor/SOURCE_PACKAGE_CANDIDATE.yaml'
 TESTS=SOURCE/'09_TESTS/governance'
+sys.path.insert(0,str(TESTS))
 def imp(name):
     p=TESTS/f'{name}.py'; spec=importlib.util.spec_from_file_location('sp_'+name,p)
     if spec is None or spec.loader is None: raise RuntimeError('IMPORT_FAILED:'+name)

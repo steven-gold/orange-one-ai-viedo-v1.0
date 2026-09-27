@@ -32,6 +32,7 @@ def official_refresh(root):
         if cp.returncode!=0: return False,script+':'+cp.stderr[-500:]
     checksums(root); return True,''
 def case(name,ok,details=None): return {'case':name,'ok':bool(ok),'details':details or {}}
+REPO=PKG.parents[3]
 
 def joint_mutations(root):
     ref=load(root/'10_REGISTRY/REFERENCE_RULE_REGISTRY.yaml'); idx=load(root/'10_REGISTRY/CONSTRUCTION_ARTIFACT_INDEX.yaml'); life=load(root/'10_REGISTRY/GOVERNANCE_LIFECYCLE_STAGE_REGISTRY.yaml')
@@ -124,5 +125,14 @@ with tempfile.TemporaryDirectory() as td:
     cp=subprocess.run([sys.executable,str(govdir/'compile_governance_baseline.py')],cwd=str(govdir),capture_output=True,text=True,timeout=45); garbage=list(govdir.rglob('*.pyc'))+list(govdir.rglob('__pycache__'))
     results.append(case('compiler_no_package_bytecode_pollution',cp.returncode==0 and not garbage,{'garbage':[str(x.relative_to(r)) for x in garbage]}))
 
+meta=load(REPO/'governance/source-successor/SOURCE_PACKAGE_CANDIDATE.yaml')
+results.append(case(
+    'unsigned_source_successor_cannot_be_current_or_self_signed',
+    meta.get('status')=='UNSIGNED_NOT_CURRENT'
+    and meta.get('current_authority') is False
+    and (meta.get('external_trust') or {}).get('status')=='NOT_SIGNED'
+    and (meta.get('external_trust') or {}).get('candidate_self_sign')=='FORBIDDEN',
+    {'status':meta.get('status'),'external_trust':meta.get('external_trust')}
+))
 out={'suite':'v2.1.8 high pressure hardening regression','total':len(results),'passed_expectations':sum(x['ok'] for x in results),'results':results}
 print(json.dumps(out,ensure_ascii=False,indent=2)); raise SystemExit(0 if out['passed_expectations']==out['total'] else 1)
