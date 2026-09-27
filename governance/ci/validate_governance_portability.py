@@ -142,6 +142,68 @@ if _binding:
             if _literal in _body:
                 failures.append('execution_environment_literal_leaked_into_stage_core:'+_surface.relative_to(ROOT).as_posix()+':'+_literal)
 
+# Reusable Stage-core canonical vocabulary must remain governed-unit neutral.
+_stage_core_surfaces=[
+    profile_path,
+    ROOT/'.github/governance-source/active/source/10_REGISTRY/STAGE_EXECUTION_INVARIANT_REGISTRY.yaml',
+    ROOT/'.github/governance-source/active/source/10_REGISTRY/PROGRAM_IDENTITY_AUTHORITY_REGISTRY.yaml',
+    ROOT/'.github/governance-source/active/source/10_REGISTRY/CONSTRUCTION_ARTIFACT_INDEX.yaml',
+    ROOT/'governance/ci/stage_execution_semantic_adapters.yaml',
+    ROOT/'governance/ci/stage_execution_engine.py',
+]
+_stage_core_forbidden_legacy_tokens={
+    'PAGE_LIFECYCLE_EXECUTION_MODE','PAGE_FUNCTIONAL_CONTRACT','PAGE_CONSTRUCTION_SPEC',
+    'PAGE_IMPLEMENTATION_COMPLETE','SINGLE_PAGE_VERTICAL','SAME_SELECTED_PAGE',
+    'NEXT_PAGE_','PAGE_OR_SYSTEM_LOGIC_UNIT','DEMO-PAGE','page_uid_or_scope_uid',
+    'BUSINESS_ENTITY_','business_entity_','stage02_audit_event_canonical_field',
+    'PRODUCTION_PAGE_TARGET','CROSS_PAGE_','PAGE_SURFACE_DESIGN','PAGE_CLOSURE',
+    'LEAF_PAGE_CONTROL_BEHAVIOR',
+}
+for _surface in _stage_core_surfaces:
+    if not _surface.is_file():
+        failures.append('stage_core_neutrality_surface_missing:'+_surface.relative_to(ROOT).as_posix())
+        continue
+    _body=_surface.read_text(encoding='utf-8')
+    for _token in sorted(_stage_core_forbidden_legacy_tokens):
+        if _token in _body:
+            failures.append('stage_core_legacy_semantic_pollution:'+_surface.relative_to(ROOT).as_posix()+':'+_token)
+
+_stepwise=prof.get('universal_stage_stepwise_execution_contract') or {}
+_opden=_stepwise.get('operation_denominator_contract') or {}
+if _opden.get('registered_operation_universe_is_capability_catalog_not_required_denominator') is not True:
+    failures.append('stage_operation_catalog_still_required_denominator')
+if _opden.get('required_denominator_source')!='CURRENT_STAGE_REGISTERED_OPERATIONS_FILTERED_BY_CURRENT_AUTHORITY_AND_APPLICABILITY':
+    failures.append('stage_operation_required_denominator_source_drift')
+if _opden.get('every_operation_binding_requires_explicit_applicability') is not True:
+    failures.append('stage_operation_applicability_not_explicit')
+if set(map(str,_opden.get('allowed_applicability') or []))!={'REQUIRED','AUTHORIZED_NOT_APPLICABLE'}:
+    failures.append('stage_operation_applicability_universe_drift')
+if _opden.get('authorized_not_applicable_requires_authority_evidence') is not True or _opden.get('not_applicable_operation_must_not_invoke_effectful_executor') is not True:
+    failures.append('stage_operation_na_fail_closed_contract_incomplete')
+if _opden.get('omitted_or_unclassified_applicability')!='BLOCK':
+    failures.append('stage_operation_unclassified_applicability_not_blocked')
+
+_adapter_path=ROOT/'governance/ci/stage_execution_semantic_adapters.yaml'
+_adapter=yaml.safe_load(_adapter_path.read_text(encoding='utf-8')) or {}
+_driver=_adapter.get('execution_driver_contract') or {}
+if _driver.get('operation_universe_source')!='SELECTED_PROFILE_STAGE_OPERATIONS_FILTERED_BY_CURRENT_AUTHORITY_AND_APPLICABILITY':
+    failures.append('stage_driver_operation_universe_not_applicability_filtered')
+if _driver.get('operation_applicability_field')!='applicability':
+    failures.append('stage_driver_operation_applicability_field_drift')
+if set(map(str,_driver.get('allowed_operation_applicability') or []))!={'REQUIRED','AUTHORIZED_NOT_APPLICABLE'}:
+    failures.append('stage_driver_operation_applicability_universe_drift')
+if _driver.get('authorized_not_applicable_requires_authority_evidence') is not True or _driver.get('authorized_not_applicable_invokes_executor') is not False:
+    failures.append('stage_driver_na_execution_isolation_invalid')
+if set(map(str,_driver.get('operation_receipt_terminal_statuses') or []))!={'PASS','NOT_APPLICABLE_WITH_PROOF'}:
+    failures.append('stage_driver_operation_receipt_terminal_status_drift')
+
+_stage05=next((x for x in profile_steps if str(x.get('stage_uid'))=='STAGE-05'),{})
+if _stage05:
+    if 'IMPLEMENTATION_EVIDENCE_COMPILE' not in set(map(str,_stage05.get('operations') or [])):
+        failures.append('stage05_generic_implementation_evidence_compiler_missing')
+    if (_stage05.get('output_producers') or {}).get('IMPLEMENTATION_EVIDENCE')!='IMPLEMENTATION_EVIDENCE_COMPILE':
+        failures.append('stage05_implementation_evidence_bound_to_optional_capability')
+
 synthetic=[
     {'uid':'SYNTH-A','steps':['discover','design','ship']},
     {'uid':'SYNTH-B','steps':['intake','contract','visual','build','verify','release','operate']},
