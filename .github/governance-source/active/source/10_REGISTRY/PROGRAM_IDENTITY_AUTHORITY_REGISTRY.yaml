@@ -19,14 +19,15 @@ identities:
   identity_type: PROGRAM_ARTIFACT
   status: PLANNED
   canonical_name: EXAMPLE_RUNTIME_SERVICE
-  canonical_path: src/example/DEMO-PAGE-001/runtime-service.ts
-  canonical_filename: runtime-service.ts
+  canonical_path: implementation/example/DEMO-PAGE-001/runtime-service.impl
+  canonical_filename: runtime-service.impl
   construction_profile: RUNTIME_SERVICE
+  toolchain_authority_ref: AUTHORITY-DEMO-TOOLCHAIN
   work_unit_uid: WU-DEMO-PAGE-001
   page_uid_or_scope_uid: DEMO-PAGE-001
   owner_uid: OWNER-DEMO-RUNTIME
   producer_stage_uid: STAGE-05
-  framework_reserved_filename_allowed: false
+  toolchain_reserved_filename_authorized: false
   example_fixture_role: PRODUCT_NEUTRAL_REFERENCE_IDENTITY
 - uid: WU-DEMO-PAGE-001
   identity_type: WORK_UNIT

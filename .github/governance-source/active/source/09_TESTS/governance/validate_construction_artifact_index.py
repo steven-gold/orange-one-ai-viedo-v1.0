@@ -20,11 +20,10 @@ UNIVERSAL_TRUE=[
  'implementation_manifest_runtime_enforcement_required','governance_receipt_evidence_required',
  'dependency_closure_evidence_required','current_physical_hash_verification_required',
  'profile_mandatory_contract_runtime_enforcement_required','typed_runtime_reference_authority_resolution_required',
- 'manifest_program_artifact_uid_uniqueness_required','framework_reserved_filename_preregistration_required',
- 'profile_file_class_enforcement_required',
+ 'manifest_program_artifact_uid_uniqueness_required','toolchain_path_and_file_class_authority_required',
 ]
 UNIVERSAL_BLOCK=[
- 'stale_governance_load_receipt','undeclared_normative_reference_in_execution','unregistered_artifact_creation',
+ 'stale_governance_load_receipt','undeclared_normative_reference_in_execution','unregistered_artifact_creation','common_policy_literal_toolchain_path_or_extension',
 ]
 EXPECTED_UNIVERSAL={k:True for k in UNIVERSAL_TRUE}
 EXPECTED_UNIVERSAL.update({k:'BLOCK' for k in UNIVERSAL_BLOCK})
@@ -54,7 +53,7 @@ EXPECTED_CLEANUP_STEPS=[
 ]
 EXPECTED_ARTIFACT_FIELDS=[
  'program_artifact_uid','work_unit_uid','page_uid_or_scope_uid','construction_profile','canonical_name',
- 'canonical_path','canonical_filename','owner_uid','producer_stage_uid','acceptance_audit_blueprint_ref',
+ 'canonical_path','canonical_filename','toolchain_authority_ref','owner_uid','producer_stage_uid','acceptance_audit_blueprint_ref',
  'current_hash','governance_load_receipt_ref','write_target_binding_ref','profile_contracts',
 ]
 EXPECTED_MANIFEST_FIELDS=[
@@ -103,7 +102,7 @@ def validate(root=ROOT):
         for uid in actual:
             if uid not in known: failures.append('profile_semantic_section_unresolved:'+str(name)+':'+str(uid))
         if not p.get('mandatory_contracts'): failures.append('profile_mandatory_contracts_empty:'+str(name))
-        if not p.get('allowed_file_extensions'): failures.append('profile_allowed_file_extensions_empty:'+str(name))
+        if p.get('allowed_file_extensions_source')!='CURRENT_TOOLCHAIN_AUTHORITY': failures.append('profile_toolchain_extension_authority_missing:'+str(name))
 
     brules=snap.get('common_bundle_reference_rules') or {}
     bundles=idx.get('mandatory_common_normative_bundles') or {}
@@ -171,9 +170,13 @@ def validate(root=ROOT):
 
     if not idx.get('forbidden_filename_tokens'): failures.append('forbidden_filename_tokens_empty')
 
-    frfp=idx.get('framework_reserved_filename_policy') or {}
-    if frfp.get('preregistration_required') is not True: failures.append('framework_reserved_preregistration_not_required')
-    if not frfp.get('examples'): failures.append('framework_reserved_examples_empty')
+    tfp=idx.get('toolchain_filename_policy') or {}
+    if tfp.get('authority_source')!='CURRENT_TOOLCHAIN_AUTHORITY': failures.append('toolchain_filename_authority_source_invalid')
+    if tfp.get('preregistration_required') is not True: failures.append('toolchain_filename_preregistration_not_required')
+    if tfp.get('literal_framework_filename_examples_in_common_policy')!='FORBIDDEN': failures.append('literal_framework_filename_examples_not_blocked')
+    pfp=idx.get('profile_file_class_policy') or {}
+    if pfp.get('root_prefix_source')!='CURRENT_TOOLCHAIN_AUTHORITY' or pfp.get('extension_allowlist_source')!='CURRENT_TOOLCHAIN_AUTHORITY': failures.append('profile_file_class_authority_source_invalid')
+    if pfp.get('common_policy_literal_root_prefixes')!='FORBIDDEN' or pfp.get('common_policy_literal_extension_allowlist')!='FORBIDDEN': failures.append('common_toolchain_literal_policy_not_blocked')
 
     return {'status':'PASS' if not failures else 'FAIL','profiles':len(profiles),'bundles':len(bundles),'failures':failures}
 

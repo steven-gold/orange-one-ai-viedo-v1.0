@@ -34,8 +34,8 @@ def build_valid_runtime_fixture():
     st5=[s for s in life['stages'] if s['stage_uid']=='STAGE-05'][0]
     pa={
       'program_artifact_uid':'PA-DEMO-PAGE-RUNTIME-001','work_unit_uid':'WU-DEMO-PAGE-001','page_uid_or_scope_uid':'DEMO-PAGE-001',
-      'construction_profile':'RUNTIME_SERVICE','canonical_name':'EXAMPLE_RUNTIME_SERVICE','canonical_path':'src/example/DEMO-PAGE-001/runtime-service.ts',
-      'canonical_filename':'runtime-service.ts','owner_uid':'OWNER-DEMO-RUNTIME','producer_stage_uid':'STAGE-05','input_artifact_refs':[],
+      'construction_profile':'RUNTIME_SERVICE','toolchain_authority_ref':'AUTHORITY-DEMO-TOOLCHAIN','canonical_name':'EXAMPLE_RUNTIME_SERVICE','canonical_path':'implementation/example/DEMO-PAGE-001/runtime-service.impl',
+      'canonical_filename':'runtime-service.impl','owner_uid':'OWNER-DEMO-RUNTIME','producer_stage_uid':'STAGE-05','input_artifact_refs':[],
       'required_normative_section_uids':['WEB-GOV-02-S014'],'dependency_refs':[],'reverse_dependency_refs':[],
       'acceptance_audit_blueprint_ref':'BP-GOVERNANCE-ACCEPTANCE-001','required_test_refs':['TEST-DEMO-RUNTIME-001'],
       'current_hash':'0'*64,'status':'PLANNED'
@@ -103,7 +103,7 @@ cases += [
  runtime_case('missing_common_bundle_runtime',lambda r,m,p:m.__setitem__('common_normative_bundle_refs',m['common_normative_bundle_refs'][1:])),
  runtime_case('stale_root_manifest_receipt',lambda r,m,p:r.__setitem__('root_manifest_hash','0'*64)),
  runtime_case('wrong_section_resolution_receipt',lambda r,m,p:r['resolved_section_receipts'][0].__setitem__('canonical_path','wrong.md')),
- runtime_case('write_target_points_to_other_artifact',lambda r,m,p:m['write_target_bindings'][0].__setitem__('canonical_path','src/example/DEMO-PAGE-001/other-valid.ts')),
+ runtime_case('write_target_points_to_other_artifact',lambda r,m,p:m['write_target_bindings'][0].__setitem__('canonical_path','implementation/example/DEMO-PAGE-001/other-valid.impl')),
  runtime_case('effective_set_hash_stale',lambda r,m,p:r.__setitem__('effective_normative_set_hash','0'*64)),
 ]
 out={'suite':'execution governance load / common+specific / typed UID / write-target guard','total':len(cases),'passed_expectations':sum(c['ok'] for c in cases),'results':cases}

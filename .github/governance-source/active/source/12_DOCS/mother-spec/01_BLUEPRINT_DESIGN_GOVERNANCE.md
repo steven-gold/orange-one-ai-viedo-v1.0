@@ -1408,7 +1408,7 @@ Program source files are governed construction artifacts. Their names and paths 
 
 Every program artifact MUST be registered with at least: Program Artifact UID, Work Unit UID, Page/Scope UID, Construction Profile, Canonical Name, Canonical Path, Canonical Filename, Owner UID, Producer Profile Step UID, Input Artifact Refs, Required Normative Refs, Dependency Refs, Reverse Dependency Refs, Acceptance Audit Blueprint Ref, Required Test Refs, Current Hash, and Status.
 
-A framework-reserved filename such as `page.tsx`, `layout.tsx`, `route.ts`, `loading.tsx`, `error.tsx`, or `not-found.tsx` is permitted only as a controlled filename exception. The filename itself MUST_NOT become identity; the registered Canonical Path + Program Artifact UID + Owner UID remain authoritative.
+A toolchain-reserved filename is permitted only when the Current Toolchain Authority explicitly identifies it and the artifact is preregistered as a controlled filename exception. Common policy MUST_NOT enumerate framework-specific reserved filenames, extensions, or source-root conventions. The filename itself MUST_NOT become identity; the registered Canonical Path + Program Artifact UID + Owner UID remain authoritative.
 
 Program filenames MUST_NOT be invented during implementation. `draft-copy`, `final`, `latest`, `fixed`, `backup`, `copy`, `temp`, and equivalent unmanaged suffixes are forbidden for Current construction artifacts.
 

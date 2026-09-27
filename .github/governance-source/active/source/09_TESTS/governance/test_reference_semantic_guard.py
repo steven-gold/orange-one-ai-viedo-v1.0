@@ -27,7 +27,7 @@ def valid_fixture(root=PKG):
     idx=load(root/'10_REGISTRY/CONSTRUCTION_ARTIFACT_INDEX.yaml'); ref=load(root/'10_REGISTRY/REFERENCE_RULE_REGISTRY.yaml'); rm=load(root/'10_REGISTRY/GOVERNANCE_ROOT_MANIFEST.yaml')
     pa={
       'program_artifact_uid':'PA-DEMO-PAGE-RUNTIME-001','work_unit_uid':'WU-DEMO-PAGE-001','page_uid_or_scope_uid':'DEMO-PAGE-001','construction_profile':'RUNTIME_SERVICE',
-      'canonical_name':'EXAMPLE_RUNTIME_SERVICE','canonical_path':'src/example/DEMO-PAGE-001/runtime-service.ts','canonical_filename':'runtime-service.ts','owner_uid':'OWNER-DEMO-RUNTIME',
+      'canonical_name':'EXAMPLE_RUNTIME_SERVICE','canonical_path':'implementation/example/DEMO-PAGE-001/runtime-service.impl','canonical_filename':'runtime-service.impl','owner_uid':'OWNER-DEMO-RUNTIME',
       'producer_stage_uid':'STAGE-05','input_artifact_refs':[],'required_normative_section_uids':['WEB-GOV-02-S014'],'dependency_refs':[],'reverse_dependency_refs':[],
       'acceptance_audit_blueprint_ref':'BP-GOVERNANCE-ACCEPTANCE-001','required_test_refs':['TEST-DEMO-RUNTIME-001'],'current_hash':'0'*64,'status':'PLANNED'}
     pa['profile_contracts']={'input_contract':'CoreRuntimeInputV1','output_contract':'CoreRuntimeOutputV1','state_mutation_contract':'GOVERNED_MUTATION_ONLY','error_contract':'FAIL_CLOSED_ERROR_CONTRACT','audit_contract':'AUDIT_EVENT_REQUIRED','retry_or_recovery':'IDEMPOTENT_RETRY_OR_MANUAL_RECOVERY','test_contract':'TEST-DEMO-RUNTIME-001'}
@@ -87,7 +87,7 @@ def wrong_doc_category(root):
 neg.append(sem_case('normative_document_wrong_category',wrong_doc_category))
 # 17-23 independent Program Artifact Instance negatives
 neg += [
- inst_case('artifact_unsafe_path',lambda p,m:(p.__setitem__('canonical_path','../outside/evil.ts'),m['write_target_bindings'][0].__setitem__('canonical_path','../outside/evil.ts'))),
+ inst_case('artifact_unsafe_path',lambda p,m:(p.__setitem__('canonical_path','../outside/evil.impl'),m['write_target_bindings'][0].__setitem__('canonical_path','../outside/evil.impl'))),
  inst_case('artifact_unknown_profile',lambda p,m:(p.__setitem__('construction_profile','UNKNOWN_PROFILE'),m['write_target_bindings'][0].__setitem__('construction_profile','UNKNOWN_PROFILE'))),
  inst_case('artifact_unknown_stage',lambda p,m:(p.__setitem__('producer_stage_uid','STAGE-99'),m['write_target_bindings'][0].__setitem__('producer_stage_uid','STAGE-99'),m.__setitem__('stage_normative_section_uids',[]))),
  inst_case('artifact_unknown_blueprint',lambda p,m:(p.__setitem__('acceptance_audit_blueprint_ref','BP-UNKNOWN'),m.__setitem__('acceptance_audit_blueprint_ref','BP-UNKNOWN'))),

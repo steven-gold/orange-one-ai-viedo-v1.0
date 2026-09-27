@@ -31,8 +31,8 @@ universal_rules:
   profile_mandatory_contract_runtime_enforcement_required: true
   typed_runtime_reference_authority_resolution_required: true
   manifest_program_artifact_uid_uniqueness_required: true
-  framework_reserved_filename_preregistration_required: true
-  profile_file_class_enforcement_required: true
+  toolchain_path_and_file_class_authority_required: true
+  common_policy_literal_toolchain_path_or_extension: BLOCK
   stale_governance_load_receipt: BLOCK
   undeclared_normative_reference_in_execution: BLOCK
   unregistered_artifact_creation: BLOCK
@@ -48,7 +48,7 @@ universal_rules:
   source_control_current_promotion_before_backtrace_and_full_revalidation: BLOCK
   next_stage_before_governance_freeze: BLOCK
   source_control_current_entry_must_be_adapter_declared: true
-  github_adapter_current_spec_path: docs/governance/CURRENT_GOVERNANCE_SPEC.yaml
+  source_control_adapter_binding_source: CURRENT_SOURCE_CONTROL_ADAPTER
 
 program_artifact_contract:
   required_fields:
@@ -56,6 +56,7 @@ program_artifact_contract:
   - work_unit_uid
   - page_uid_or_scope_uid
   - construction_profile
+  - toolchain_authority_ref
   - canonical_name
   - canonical_path
   - canonical_filename
@@ -219,30 +220,21 @@ canonical_path_policy:
   filename_must_match_basename: true
 
 forbidden_filename_tokens:
-- package
-- tsconfig
-- lock
 - secret
 - credential
 - private_key
 - env
 
-framework_reserved_filename_policy:
+toolchain_filename_policy:
+  authority_source: CURRENT_TOOLCHAIN_AUTHORITY
   preregistration_required: true
-  examples:
-  - page.tsx
-  - layout.tsx
-  - route.ts
-  - middleware.ts
-  - not-found.tsx
+  literal_framework_filename_examples_in_common_policy: FORBIDDEN
 
 profile_file_class_policy:
-  profile_root_prefix_required: true
-  root_prefixes:
-    TEST_IMPLEMENTATION: tests/
-    DATABASE_MIGRATION: migrations/
-    DEFAULT: src/
-  extension_must_be_profile_allowed: true
+  root_prefix_source: CURRENT_TOOLCHAIN_AUTHORITY
+  extension_allowlist_source: CURRENT_TOOLCHAIN_AUTHORITY
+  common_policy_literal_root_prefixes: FORBIDDEN
+  common_policy_literal_extension_allowlist: FORBIDDEN
 
 program_construction_profiles:
   UI_COMPONENT:
@@ -259,15 +251,7 @@ program_construction_profiles:
     - audit_contract
     - retry_or_recovery
     - test_contract
-    allowed_file_extensions:
-    - .tsx
-    - .jsx
-    - .vue
-    - .svelte
-    - .css
-    - .scss
-    - .ts
-    - .js
+    allowed_file_extensions_source: CURRENT_TOOLCHAIN_AUTHORITY
   CONTROL_HANDLER:
     rule_uid: REFRULE-PROFILE-02
     required_normative_section_uids:
@@ -282,9 +266,7 @@ program_construction_profiles:
     - audit_contract
     - retry_or_recovery
     - test_contract
-    allowed_file_extensions:
-    - .ts
-    - .js
+    allowed_file_extensions_source: CURRENT_TOOLCHAIN_AUTHORITY
   API_ENTRY:
     rule_uid: REFRULE-PROFILE-03
     required_normative_section_uids:
@@ -299,9 +281,7 @@ program_construction_profiles:
     - audit_contract
     - retry_or_recovery
     - test_contract
-    allowed_file_extensions:
-    - .ts
-    - .js
+    allowed_file_extensions_source: CURRENT_TOOLCHAIN_AUTHORITY
   RUNTIME_SERVICE:
     rule_uid: REFRULE-PROFILE-04
     required_normative_section_uids:
@@ -317,9 +297,7 @@ program_construction_profiles:
     - audit_contract
     - retry_or_recovery
     - test_contract
-    allowed_file_extensions:
-    - .ts
-    - .js
+    allowed_file_extensions_source: CURRENT_TOOLCHAIN_AUTHORITY
   REPOSITORY_DATA_ACCESS:
     rule_uid: REFRULE-PROFILE-05
     required_normative_section_uids:
@@ -334,10 +312,7 @@ program_construction_profiles:
     - audit_contract
     - retry_or_recovery
     - test_contract
-    allowed_file_extensions:
-    - .ts
-    - .js
-    - .sql
+    allowed_file_extensions_source: CURRENT_TOOLCHAIN_AUTHORITY
   DATABASE_MIGRATION:
     rule_uid: REFRULE-PROFILE-06
     required_normative_section_uids:
@@ -353,10 +328,7 @@ program_construction_profiles:
     - audit_contract
     - retry_or_recovery
     - test_contract
-    allowed_file_extensions:
-    - .sql
-    - .ts
-    - .js
+    allowed_file_extensions_source: CURRENT_TOOLCHAIN_AUTHORITY
   ASYNC_WORKER:
     rule_uid: REFRULE-PROFILE-07
     required_normative_section_uids:
@@ -370,9 +342,7 @@ program_construction_profiles:
     - audit_contract
     - retry_or_recovery
     - test_contract
-    allowed_file_extensions:
-    - .ts
-    - .js
+    allowed_file_extensions_source: CURRENT_TOOLCHAIN_AUTHORITY
   EXTERNAL_ADAPTER:
     rule_uid: REFRULE-PROFILE-08
     required_normative_section_uids:
@@ -386,9 +356,7 @@ program_construction_profiles:
     - audit_contract
     - retry_or_recovery
     - test_contract
-    allowed_file_extensions:
-    - .ts
-    - .js
+    allowed_file_extensions_source: CURRENT_TOOLCHAIN_AUTHORITY
   TEST_IMPLEMENTATION:
     rule_uid: REFRULE-PROFILE-09
     required_normative_section_uids:
@@ -405,12 +373,7 @@ program_construction_profiles:
     - audit_contract
     - retry_or_recovery
     - test_contract
-    allowed_file_extensions:
-    - .ts
-    - .js
-    - .tsx
-    - .jsx
-    - .py
+    allowed_file_extensions_source: CURRENT_TOOLCHAIN_AUTHORITY
 
 mandatory_common_normative_bundles:
   BUNDLE-GOV-COMMON-CORE:

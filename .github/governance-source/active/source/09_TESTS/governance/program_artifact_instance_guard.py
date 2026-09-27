@@ -82,7 +82,7 @@ def validate_instance(program_artifact, manifest, root=ROOT):
     pa_req=(idx.get('program_artifact_contract') or {}).get('required_fields') or []
     for f in pa_req:
         if f not in pa: failures.append('program_artifact_field_missing:'+f)
-    scalar_required=['program_artifact_uid','work_unit_uid','page_uid_or_scope_uid','construction_profile','canonical_name','canonical_path','canonical_filename','owner_uid','producer_stage_uid','acceptance_audit_blueprint_ref','current_hash','status','governance_load_receipt_ref','write_target_binding_ref']
+    scalar_required=['program_artifact_uid','work_unit_uid','page_uid_or_scope_uid','construction_profile','toolchain_authority_ref','canonical_name','canonical_path','canonical_filename','owner_uid','producer_stage_uid','acceptance_audit_blueprint_ref','current_hash','status','governance_load_receipt_ref','write_target_binding_ref']
     for f in scalar_required:
         if not _nonempty(pa.get(f)): failures.append('program_artifact_field_empty:'+f)
     for f in ['input_artifact_refs','required_normative_section_uids','dependency_refs','reverse_dependency_refs','required_test_refs']:
@@ -101,20 +101,19 @@ def validate_instance(program_artifact, manifest, root=ROOT):
 
     profiles=idx.get('program_construction_profiles') or {}
     prof=profiles.get(profile)
-    if not prof: failures.append('construction_profile_unknown')
+    if not prof:
+        failures.append('construction_profile_unknown')
     else:
-        if profile=='TEST_IMPLEMENTATION' and not str(path).startswith('tests/'): failures.append('canonical_path_profile_root_mismatch')
-        elif profile=='DATABASE_MIGRATION' and not str(path).startswith('migrations/'): failures.append('canonical_path_profile_root_mismatch')
-        elif profile not in ('TEST_IMPLEMENTATION','DATABASE_MIGRATION') and not str(path).startswith('src/'): failures.append('canonical_path_profile_root_mismatch')
-        ext=Path(str(fn)).suffix.lower()
-        allowed=set(prof.get('allowed_file_extensions') or [])
-        if not allowed or ext not in allowed: failures.append('profile_file_class_not_allowed:'+str(profile)+':'+ext)
+        if prof.get('allowed_file_extensions_source')!='CURRENT_TOOLCHAIN_AUTHORITY':
+            failures.append('profile_toolchain_extension_authority_missing:'+str(profile))
         contracts=pa.get('profile_contracts') if isinstance(pa.get('profile_contracts'),dict) else {}
         for c in prof.get('mandatory_contracts') or []:
             if c in pa:
-                continue  # explicit top-level governed contract such as dependency_refs
+                continue
             if c not in contracts: failures.append('profile_mandatory_contract_missing:'+str(profile)+':'+str(c))
             elif contracts.get(c) in (None,'',[],{}): failures.append('profile_mandatory_contract_empty:'+str(profile)+':'+str(c))
+    if not _nonempty(pa.get('toolchain_authority_ref')):
+        failures.append('toolchain_authority_ref_missing')
 
     stages={s.get('stage_uid') for s in life.get('stages') or []}
     if pa.get('producer_stage_uid') not in stages: failures.append('producer_stage_uid_unknown')
@@ -135,11 +134,8 @@ def validate_instance(program_artifact, manifest, root=ROOT):
     for x in pa.get('required_test_refs') or []: _resolve(identity_map,x,'TEST',failures,'required_test_refs')
     for x in pa.get('input_artifact_refs') or []: _resolve(identity_map,x,['INPUT_ARTIFACT','PROGRAM_ARTIFACT'],failures,'input_artifact_refs')
     if pa_auth:
-        for k in ['canonical_name','canonical_path','canonical_filename','construction_profile','work_unit_uid','page_uid_or_scope_uid','owner_uid','producer_stage_uid']:
+        for k in ['canonical_name','canonical_path','canonical_filename','construction_profile','toolchain_authority_ref','work_unit_uid','page_uid_or_scope_uid','owner_uid','producer_stage_uid']:
             if pa_auth.get(k)!=pa.get(k): failures.append('program_artifact_preregistration_binding_mismatch:'+k)
-        reserved=set((idx.get('framework_reserved_filename_policy') or {}).get('examples') or [])
-        if fn in reserved and pa_auth.get('framework_reserved_filename_allowed') is not True:
-            failures.append('framework_reserved_filename_not_explicitly_preregistered:'+str(fn))
 
     # Artifact-specific refs must be independently anchored by immutable profile minima.
     sec=load(root/'10_REGISTRY/SECTION_NUMBER_REGISTRY.yaml'); sections=set()
@@ -231,16 +227,16 @@ def validate_definition(root=ROOT):
     if idx.get('typed_identity_authority_registry_ref')!=IDENTITY_REGISTRY_UID: failures.append('construction_index_typed_identity_registry_binding_invalid')
     rows,id_fail=_identity_records(root); failures += id_fail
     ur=idx.get('universal_rules') or {}
-    for key in ['program_artifact_instance_authority_required','semantic_authority_baseline_required','implementation_manifest_runtime_enforcement_required','governance_receipt_evidence_required','dependency_closure_evidence_required','current_physical_hash_verification_required','profile_mandatory_contract_runtime_enforcement_required','typed_runtime_reference_authority_resolution_required','manifest_program_artifact_uid_uniqueness_required','framework_reserved_filename_preregistration_required','profile_file_class_enforcement_required']:
+    for key in ['program_artifact_instance_authority_required','semantic_authority_baseline_required','implementation_manifest_runtime_enforcement_required','governance_receipt_evidence_required','dependency_closure_evidence_required','current_physical_hash_verification_required','profile_mandatory_contract_runtime_enforcement_required','typed_runtime_reference_authority_resolution_required','manifest_program_artifact_uid_uniqueness_required','toolchain_path_and_file_class_authority_required']:
         if ur.get(key) is not True: failures.append('required_universal_rule_not_true:'+key)
     pac=idx.get('program_artifact_contract') or {}; imc=idx.get('implementation_manifest_contract') or {}
-    for f in ['program_artifact_uid','work_unit_uid','page_uid_or_scope_uid','construction_profile','canonical_name','canonical_path','canonical_filename','owner_uid','producer_stage_uid','acceptance_audit_blueprint_ref','current_hash','governance_load_receipt_ref','write_target_binding_ref','profile_contracts']:
+    for f in ['program_artifact_uid','work_unit_uid','page_uid_or_scope_uid','construction_profile','toolchain_authority_ref','canonical_name','canonical_path','canonical_filename','owner_uid','producer_stage_uid','acceptance_audit_blueprint_ref','current_hash','governance_load_receipt_ref','write_target_binding_ref','profile_contracts']:
         if f not in (pac.get('required_fields') or []): failures.append('instance_required_field_not_declared:'+f)
     for f in ['work_unit_uid','governance_revision','design_freeze_ref','program_artifacts','dependency_closure_ref','acceptance_audit_blueprint_ref','naming_registry_ref','section_registry_ref','protected_current_artifact_registry_ref','common_normative_bundle_refs','stage_normative_section_uids','item_specific_normative_section_uids','governance_load_receipt_ref','write_target_bindings','governance_load_receipt','dependency_closure','typed_identity_registry_ref']:
         if f not in (imc.get('required_fields') or []): failures.append('manifest_required_field_not_declared:'+f)
     for name,p in (idx.get('program_construction_profiles') or {}).items():
         if not p.get('mandatory_contracts'): failures.append('profile_mandatory_contracts_empty:'+name)
-        if not p.get('allowed_file_extensions'): failures.append('profile_allowed_file_extensions_empty:'+name)
+        if p.get('allowed_file_extensions_source')!='CURRENT_TOOLCHAIN_AUTHORITY': failures.append('profile_toolchain_extension_authority_missing:'+name)
     return {'status':'PASS' if not failures else 'FAIL','identity_count':len(rows),'failures':failures}
 
 if __name__=='__main__':
