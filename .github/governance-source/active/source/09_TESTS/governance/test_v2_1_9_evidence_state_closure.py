@@ -34,7 +34,7 @@ def validate_successor_static(root):
     human=review.get('required_review_plan') or []
     if len(human)!=1 or human[0].get('status')!='PENDING': failures.append('human_formal_review_not_pending')
     sync=bp.get('current_test_evidence_sync_contract') or {}
-    if sync.get('github_replay_closure_evidence_required') is not True: failures.append('evidence_state_closure_contract_missing')
+    if sync.get('exact_head_required_workflow_receipts_required') is not True or sync.get('current_validation_truth_source')!='EXACT_HEAD_REQUIRED_WORKFLOW_RECEIPTS': failures.append('evidence_state_closure_contract_missing')
     stages={x.get('stage_uid'):x for x in stage.get('stages') or []}
     s2=stages.get('STAGE-02') or {}
     if 'FUNCTIONAL_CHAIN_COMPILE' not in (s2.get('operations') or []): failures.append('stage02_logic_operations_incomplete')
@@ -84,7 +84,7 @@ results=[
  case('historical_fixture_required_for_legacy_semantics',m.get('legacy_regression_must_use_isolated_historical_fixture_when_historical_semantics_remain_required') is True),
  case('source_package_single_branch_current_authority',cand.get('status')=='INTEGRATED_CURRENT_WORKLINE' and cand.get('current_authority') is True and (cand.get('integration') or {}).get('mode')=='SINGLE_BRANCH_INTEGRATED'),
  mutate_yaml('human_review_auto_pass_blocked','10_REGISTRY/REVIEW_PROGRESS_LEDGER.yaml',lambda d:d['required_review_plan'][0].__setitem__('status','APPROVED')),
- mutate_yaml('sync_contract_disabled_blocked','10_REGISTRY/GOVERNANCE_ACCEPTANCE_AUDIT_BLUEPRINT.yaml',lambda d:d['current_test_evidence_sync_contract'].__setitem__('github_replay_closure_evidence_required',False)),
+ mutate_yaml('sync_contract_disabled_blocked','10_REGISTRY/GOVERNANCE_ACCEPTANCE_AUDIT_BLUEPRINT.yaml',lambda d:d['current_test_evidence_sync_contract'].__setitem__('exact_head_required_workflow_receipts_required',False)),
  mutate_yaml('stage02_functional_compile_missing_blocked','10_REGISTRY/GOVERNANCE_LIFECYCLE_STAGE_REGISTRY.yaml',lambda d:[s['operations'].remove('FUNCTIONAL_CHAIN_COMPILE') for s in d['stages'] if s.get('stage_uid')=='STAGE-02']),
  mutate_text('functional_chain_runtime_owner_missing_blocked','12_DOCS/mother-spec/01_BLUEPRINT_DESIGN_GOVERNANCE.md',lambda t:t.replace(' -> Runtime Owner -> ',' -> ')),
  mutate_text('cross_page_system_slice_missing_blocked','12_DOCS/mother-spec/02_IMPLEMENTATION_DELIVERY_STANDARD.md',lambda t:t.replace('Cross-page / System Logic Slice Test','Cross-page Slice')),

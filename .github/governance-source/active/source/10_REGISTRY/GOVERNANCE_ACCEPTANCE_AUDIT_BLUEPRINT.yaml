@@ -69,7 +69,10 @@ current_test_evidence_sync_contract:
   review_machine_sync_required: true
   human_formal_approval_must_not_be_auto_claimed: true
   superseded_pending_state_drift: BLOCK
-  github_replay_closure_evidence_required: true
+  exact_head_required_workflow_receipts_required: true
+  current_validation_truth_source: EXACT_HEAD_REQUIRED_WORKFLOW_RECEIPTS
+  retired_candidate_state_required_for_current_validation: false
+  retired_github_replay_closure_required_for_current_validation: false
   monolithic_preformal_wrapper_pass_requires_successful_wrapper_result: true
   constituent_success_must_not_substitute_monolithic_wrapper_pass: true
   wrapper_timeout_evidence_status: BLOCKED_TOOL_TIMEOUT
@@ -79,7 +82,7 @@ current_test_evidence_sync_contract:
   fresh_successor_revalidation_required_after_revision_change: true
   registered_predecessor_revision_identity_required: true
   current_mandatory_denominator_source: SEMANTIC_AUTHORITY_BASELINE.mandatory_regression_assets
-  predecessor_evidence_denominator_source: GOVERNANCE_CANDIDATE_STATE.fresh_revalidation.predecessor_mandatory_regression_assets
+  historical_predecessor_denominator_role: HISTORICAL_REFERENCE_ONLY
   hardcoded_historical_suite_denominator_in_consumer: BLOCK
   denominator_change_requires_snapshot_and_reverify: true
 closure_evidence_continuity_contract:
