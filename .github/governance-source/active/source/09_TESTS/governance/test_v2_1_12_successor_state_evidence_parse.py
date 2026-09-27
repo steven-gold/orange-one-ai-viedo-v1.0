@@ -15,7 +15,7 @@ spec219=importlib.util.spec_from_file_location('ev219',VP219); ev219=importlib.u
 
 def case(name,ok,detail=None): return {'case':name,'ok':bool(ok),'detail':detail or {}}
 
-REPO=ROOT.parents[3]
+REPO=PKG.parents[3]
 def successor_migration_contract():
     mutation=yaml.safe_load((REPO/'governance/specifications/current/SPECIFICATION_MUTATION_CONTROL.yaml').read_text(encoding='utf-8')) or {}
     cycle=yaml.safe_load((REPO/'governance/specifications/current/EXECUTION_CYCLE_CONTROL.yaml').read_text(encoding='utf-8')) or {}

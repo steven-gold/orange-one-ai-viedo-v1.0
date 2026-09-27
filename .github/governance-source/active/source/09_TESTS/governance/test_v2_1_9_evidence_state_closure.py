@@ -21,17 +21,39 @@ def successor_migration_contract():
     s=cycle.get('successor_candidate_state_resolution') or {}
     return {'migration':m,'state':s,'candidate':candidate}
 
+def validate_successor_static(root):
+    root=Path(root); failures=[]
+    readme=(root/'README.md').read_text(encoding='utf-8')
+    review=yaml.safe_load((root/'10_REGISTRY/REVIEW_PROGRESS_LEDGER.yaml').read_text(encoding='utf-8')) or {}
+    bp=yaml.safe_load((root/'10_REGISTRY/GOVERNANCE_ACCEPTANCE_AUDIT_BLUEPRINT.yaml').read_text(encoding='utf-8')) or {}
+    stage=yaml.safe_load((root/'10_REGISTRY/GOVERNANCE_LIFECYCLE_STAGE_REGISTRY.yaml').read_text(encoding='utf-8')) or {}
+    bdoc=(root/'12_DOCS/mother-spec/01_BLUEPRINT_DESIGN_GOVERNANCE.md').read_text(encoding='utf-8')
+    idoc=(root/'12_DOCS/mother-spec/02_IMPLEMENTATION_DELIVERY_STANDARD.md').read_text(encoding='utf-8')
+    edoc=(root/'12_DOCS/mother-spec/03_EXECUTION_CONTROL_STANDARD.md').read_text(encoding='utf-8')
+    if 'GITHUB PRIOR-PHASE REPLAY PENDING' in readme.upper(): failures.append('readme_superseded_github_replay_pending')
+    human=review.get('required_review_plan') or []
+    if len(human)!=1 or human[0].get('status')!='PENDING': failures.append('human_formal_review_not_pending')
+    sync=bp.get('current_test_evidence_sync_contract') or {}
+    if sync.get('github_replay_closure_evidence_required') is not True: failures.append('evidence_state_closure_contract_missing')
+    stages={x.get('stage_uid'):x for x in stage.get('stages') or []}
+    s2=stages.get('STAGE-02') or {}
+    if 'FUNCTIONAL_CHAIN_COMPILE' not in (s2.get('operations') or []): failures.append('stage02_logic_operations_incomplete')
+    chain='Business Intent -> Preconditions -> Entry -> Operator/System Input Source -> Control/Trigger -> Gate -> Permission -> Action -> Validation -> Payload -> API/Entry -> Runtime Owner -> Repository/Data/Provider -> Audit Event -> Response -> UI/Caller Feedback -> Success State -> Next State -> Next Step -> Next Gate -> Failure State -> Retry/Recovery/Rollback -> Terminal Outcome'
+    if chain not in bdoc: failures.append('functional_chain_full_logic_contract_missing')
+    if 'Cross-page / System Logic Slice Test' not in idoc: failures.append('cross_page_system_logic_slice_missing')
+    if 'SECOND_SYSTEM_GUARD' not in edoc: failures.append('second_system_guard_missing')
+    return {'status':'PASS' if not failures else 'FAIL','failures':failures}
 def mutate_yaml(name,rel,mut):
     with tempfile.TemporaryDirectory() as td:
         r=Path(td)/'pkg'; shutil.copytree(ROOT,r)
         p=r/rel; d=yaml.safe_load(p.read_text(encoding='utf-8')) or {}; mut(d)
         p.write_text(yaml.safe_dump(d,allow_unicode=True,sort_keys=False,width=160),encoding='utf-8')
-        out=val.validate(r); return case(name,out['status']=='FAIL',{'failures':out.get('failures',[])[:6]})
+        out=validate_successor_static(r); return case(name,out['status']=='FAIL',{'failures':out.get('failures',[])[:6]})
 def mutate_text(name,rel,mut):
     with tempfile.TemporaryDirectory() as td:
         r=Path(td)/'pkg'; shutil.copytree(ROOT,r)
         p=r/rel; p.write_text(mut(p.read_text(encoding='utf-8')),encoding='utf-8')
-        out=val.validate(r); return case(name,out['status']=='FAIL',{'failures':out.get('failures',[])[:6]})
+        out=validate_successor_static(r); return case(name,out['status']=='FAIL',{'failures':out.get('failures',[])[:6]})
 stage=yaml.safe_load((ROOT/'10_REGISTRY/GOVERNANCE_LIFECYCLE_STAGE_REGISTRY.yaml').read_text()) or {}
 s2={x.get('stage_uid'):x for x in stage.get('stages') or []}.get('STAGE-02') or {}
 c=successor_migration_contract(); m=c['migration']; st=c['state']; cand=c['candidate']

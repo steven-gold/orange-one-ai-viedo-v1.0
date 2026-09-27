@@ -74,5 +74,6 @@ results += [
  case('source_successor_remains_unsigned_not_current',cand.get('status')=='UNSIGNED_NOT_CURRENT' and cand.get('current_authority') is False),
  case('machine_review_registry_still_present',(ROOT/'10_REGISTRY/REVIEW_PROGRESS_LEDGER.yaml').is_file()),
  case('acceptance_blueprint_sync_contract_still_present',bool((yaml.safe_load((ROOT/'10_REGISTRY/GOVERNANCE_ACCEPTANCE_AUDIT_BLUEPRINT.yaml').read_text(encoding='utf-8')) or {}).get('current_test_evidence_sync_contract'))),
+]
 out={'suite':'v2.1.8 successor-aware phase linkage and Current Evidence synchronization regression','total':len(results),'passed_expectations':sum(x['ok'] for x in results),'results':results}
 print(json.dumps(out,ensure_ascii=False,indent=2)); raise SystemExit(0 if out['passed_expectations']==out['total'] else 1)
