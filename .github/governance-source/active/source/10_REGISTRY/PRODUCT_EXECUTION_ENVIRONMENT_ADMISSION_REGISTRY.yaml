@@ -37,12 +37,13 @@ product_execution_admission_contracts:
     application_baseline_is_universal_page_stage_requirement: false
     product_specific_branch_repository_or_framework_may_enter_common_stage_semantics: false
     candidate_validation_terminalization_authority_ref: governance/specifications/REGISTRY.yaml#candidate_validation_contract
-    applies_to_formal_product_stage_execution_as_external_precondition: true
+    external_precondition_applicability: CONDITIONAL_WHEN_PRODUCT_EXECUTION_EXPLICITLY_SELECTS_RELEASED_GOVERNANCE_MODE
+    common_stage_execution_outside_released_governance_mode_blocked_by_this_contract: false
     selected_governance_release_artifact_type: PRODUCT_SELECTED_GOVERNANCE_RELEASE
     selected_governance_release_path: STAGE_EXECUTION/SHARED_AUTHORITY/PRODUCT_SELECTED_GOVERNANCE_RELEASE.yaml
     selected_governance_release_required_fields: [artifact_type, status, governance_repository, governance_commit_sha, governance_tree_sha, governance_uid, governance_revision, display_version, release_receipt_ref, release_receipt_sha256, root_manifest_sha256, fresh_reverify_status, fresh_reverify_evidence_ref, selection_authority_ref]
     selected_governance_release_status: SELECTED_VERIFIED_RELEASE
-    governance_source_root_env: ACPOS_GOVERNANCE_SOURCE_ROOT
+    governance_source_root_env: GOVERNANCE_SOURCE_ROOT
     governance_source_checkout_exact_commit_required: true
     loaded_governance_registry_must_equal_selected_checkout_registry: true
     selected_release_registry_status: CURRENT_RELEASED
