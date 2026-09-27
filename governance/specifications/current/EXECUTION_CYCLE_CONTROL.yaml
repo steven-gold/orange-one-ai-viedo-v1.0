@@ -311,7 +311,8 @@ producer_consumer_schema_identity:
   - accepted_schema_revision
   alias_fallback: false
   mismatch: PRODUCER_CONSUMER_SCHEMA_MISMATCH
-  audit_event_canonical_field: audit_event_uid
+  audit_event_canonical_field_source: CURRENT_ARTIFACT_SCHEMA_OWNER
+  hard_coded_audit_event_field_name: FORBIDDEN
 no_history_product_value_fallback:
   historical_values_are_current_product_inputs: false
   fresh_replay_source: REGISTERED_IMMUTABLE_INPUTS_PLUS_CURRENT_AUTHORITY
