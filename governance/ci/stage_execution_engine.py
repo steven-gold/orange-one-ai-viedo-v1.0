@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 from __future__ import annotations
-import argparse, hashlib, json, os, subprocess, sys
+import argparse, hashlib, json, os, re, subprocess, sys
 from pathlib import Path
 import yaml
 
@@ -80,9 +80,11 @@ def _product_artifact_root():
 
 def _selection_policy():
     inv=y(INVARIANTS)
-    policy=(inv.get('invariants') or {}).get('PRODUCT_GOVERNANCE_RELEASE_SELECTION_AND_APPLICATION_BASELINE') or {}
+    policy=(inv.get('external_execution_admission_contracts') or {}).get('PRODUCT_GOVERNANCE_RELEASE_SELECTION_AND_APPLICATION_BASELINE') or {}
     if not policy or policy.get('invariant_uid')!='GOV-INV-PRODUCT-GOVERNANCE-RELEASE-APPLICATION-BASELINE-001':
         fail('PRODUCT_GOVERNANCE_SELECTION_POLICY_MISSING')
+    if policy.get('scope_class')!='EXTERNAL_PRODUCT_EXECUTION_ENVIRONMENT_ADMISSION' or policy.get('reusable_page_stage_normative_denominator_inclusion')!='EXCLUDED':
+        fail('PRODUCT_GOVERNANCE_SELECTION_SCOPE_ISOLATION_INVALID')
     return policy
 
 def _sha256_file(path):
@@ -139,9 +141,15 @@ def _block_for_governance_revision_transition(product_root,work,stage_uid,from_u
     if missing: fail('GOVERNANCE_REVISION_TRANSITION_FIELDS_MISSING:'+repr(missing))
     if receipt.get('artifact_type')!=policy.get('governance_revision_transition_receipt_type') or receipt.get('status')!=policy.get('governance_revision_transition_status_when_old_uid_present'): fail('GOVERNANCE_REVISION_TRANSITION_RECEIPT_INVALID')
     if str(receipt.get('from_governance_uid') or '')!=str(from_uid) or str(receipt.get('to_governance_uid') or '')!=str(to_uid): fail('GOVERNANCE_REVISION_TRANSITION_UID_MISMATCH')
-    if str(work.get('work_unit_uid') or '') not in list(map(str,receipt.get('affected_work_unit_uids') or [])): fail('GOVERNANCE_REVISION_TRANSITION_WORK_UNIT_NOT_CLASSIFIED')
+    if str(receipt.get('selected_governance_ref') or '')!=str(policy.get('selected_governance_release_path') or ''): fail('GOVERNANCE_REVISION_TRANSITION_SELECTED_RELEASE_REF_MISMATCH')
+    affected=receipt.get('affected_work_unit_uids'); invalidated=receipt.get('invalidated_artifact_classes'); preserved=receipt.get('preserved_artifact_refs')
+    if not isinstance(affected,list) or not affected: fail('GOVERNANCE_REVISION_TRANSITION_AFFECTED_WORK_UNITS_INVALID')
+    if not isinstance(invalidated,list): fail('GOVERNANCE_REVISION_TRANSITION_INVALIDATED_ARTIFACT_CLASSES_INVALID')
+    if not isinstance(preserved,list): fail('GOVERNANCE_REVISION_TRANSITION_PRESERVED_ARTIFACT_REFS_INVALID')
+    if not str(receipt.get('reverse_dependency_evidence_ref') or '').strip() or not str(receipt.get('transition_authority_ref') or '').strip(): fail('GOVERNANCE_REVISION_TRANSITION_PROVENANCE_INCOMPLETE')
+    if str(work.get('work_unit_uid') or '') not in list(map(str,affected)): fail('GOVERNANCE_REVISION_TRANSITION_WORK_UNIT_NOT_CLASSIFIED')
     earliest=str(receipt.get('earliest_reentry_stage_uid') or '')
-    if not earliest: fail('GOVERNANCE_REVISION_TRANSITION_REENTRY_STAGE_MISSING')
+    if not re.fullmatch(r'STAGE-(?:0[1-9]|1[01])',earliest): fail('GOVERNANCE_REVISION_TRANSITION_REENTRY_STAGE_INVALID')
     fail('GOVERNANCE_REVISION_TRANSITION_REENTRY_REQUIRED:'+earliest)
 
 def product_execution_context():
@@ -799,6 +807,19 @@ def _validate_application_baseline_snapshot(product_root,git_context,target_path
         if _canonical_repository_identity(man.get('target_repository'))!=git_context['repository'] or str(man.get('target_branch') or '')!=git_context['branch'] or str(man.get('application_root') or '')!=str(target_path): fail('APPLICATION_BASELINE_ADMISSION_TARGET_MISMATCH')
         for k in ('source_repository','source_branch','source_head_sha','source_tree_sha'):
             if str(man.get(k) or '')!=str(mat.get(k) or ''): fail('APPLICATION_BASELINE_SOURCE_PROVENANCE_MISMATCH:'+k)
+        parent=str(mat.get('target_parent_head_sha') or '')
+        if str(man.get('target_expected_head_sha') or '')!=parent: fail('APPLICATION_BASELINE_TARGET_PREWRITE_HEAD_MISMATCH')
+        if len(parent)!=40 or not _git_is_ancestor(product_root,parent,mc): fail('APPLICATION_BASELINE_TARGET_PARENT_NOT_ANCESTOR_OF_MATERIALIZATION')
+        for k in ('source_path_set','include_path_set','allowed_write_path_set','preserve_path_set'):
+            if not isinstance(man.get(k),list) or not man.get(k): fail('APPLICATION_BASELINE_ADMISSION_PATH_SET_INVALID:'+k)
+        if not isinstance(man.get('exclude_path_set'),list): fail('APPLICATION_BASELINE_ADMISSION_PATH_SET_INVALID:exclude_path_set')
+        if not str(man.get('conflict_policy') or '').strip() or not str(man.get('transition_authority_ref') or '').strip(): fail('APPLICATION_BASELINE_ADMISSION_POLICY_OR_AUTHORITY_MISSING')
+        result_rows=mat.get('resulting_path_object_set')
+        if not isinstance(result_rows,list) or not result_rows: fail('APPLICATION_BASELINE_MATERIALIZATION_RESULT_SET_EMPTY')
+        result_map={str(x.get('path') or ''):str(x.get('git_object_sha') or '') for x in result_rows if isinstance(x,dict)}
+        if not result_map or len(result_map)!=len(result_rows): fail('APPLICATION_BASELINE_MATERIALIZATION_RESULT_SET_INVALID')
+        snapshot_map={str(x.get('path') or ''):str(x.get('git_object_sha') or '') for x in rows if isinstance(x,dict)}
+        if result_map!=snapshot_map: fail('APPLICATION_BASELINE_MATERIALIZATION_SNAPSHOT_OBJECT_SET_MISMATCH')
     return True
 
 def _validate_execution_target_resolution(product_root,ledger,successor_uid,row,policy,git_context):

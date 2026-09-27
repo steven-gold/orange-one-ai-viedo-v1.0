@@ -29,11 +29,18 @@ def validate(root=ROOT):
         failures.append('stage_scope_not_all_11')
     if scope.get('stage_specific_exception_without_registered_authority') != 'BLOCK':
         failures.append('unregistered_stage_exception_not_blocked')
-    required = ['RELATION_SEMANTIC_SEPARATION', 'GAP_REMEDIATION_ADMISSIBILITY', 'CURRENT_AUTHORITY_ADMISSIBILITY', 'REQUIRED_EVIDENCE_MATERIALIZATION', 'VALIDATOR_SCHEMA_SEMANTICS', 'UNRESOLVED_PRESERVATION', 'SUCCESSOR_CURRENT_ATOMIC_PROJECTION', 'BLOCKER_DENOMINATOR_AND_RECEIPT', 'AUTHORITY_EVIDENCE_CONSUMPTION', 'FUNCTIONAL_CONTRACT_COMPLETENESS', 'STAGE_ENTRY_PRECHECK', 'IMPLEMENTATION_DEVIATION_FEEDBACK', 'REVIEW_VS_CLOSURE_SEPARATION', 'CANONICAL_STAGE_EXECUTION_PREFLIGHT', 'EFFECTIVE_CONTRACT_OVERLAY', 'ROLE_SAFE_FUNCTIONAL_CLOSURE', 'DEPENDENCY_ORDERED_INCREMENTAL_RECONCILIATION', 'COMMON_ENGINE_DEFECT_INTERRUPT', 'GENERATED_OUTPUT_PERSISTENCE', 'CONTROL_VS_SYSTEM_TRIGGER_RESOLUTION', 'PRODUCER_CONSUMER_SCHEMA_IDENTITY', 'NO_HISTORY_PRODUCT_VALUE_FALLBACK', 'TASK_LAYER_EFFECTFUL_TRANSITION_ORDER', 'VISUAL_DESIGN_PROFILE_MATERIALIZATION_COMPLETENESS', 'NORMATIVE_EXECUTION_MATRIX', 'CROSS_STAGE_MATERIALIZATION_AND_CONSUMER_READINESS', 'PRODUCT_GOVERNANCE_RELEASE_SELECTION_AND_APPLICATION_BASELINE', 'DETERMINISTIC_STAGE_AUDIT']
+    required = ['RELATION_SEMANTIC_SEPARATION', 'GAP_REMEDIATION_ADMISSIBILITY', 'CURRENT_AUTHORITY_ADMISSIBILITY', 'REQUIRED_EVIDENCE_MATERIALIZATION', 'VALIDATOR_SCHEMA_SEMANTICS', 'UNRESOLVED_PRESERVATION', 'SUCCESSOR_CURRENT_ATOMIC_PROJECTION', 'BLOCKER_DENOMINATOR_AND_RECEIPT', 'AUTHORITY_EVIDENCE_CONSUMPTION', 'FUNCTIONAL_CONTRACT_COMPLETENESS', 'STAGE_ENTRY_PRECHECK', 'IMPLEMENTATION_DEVIATION_FEEDBACK', 'REVIEW_VS_CLOSURE_SEPARATION', 'CANONICAL_STAGE_EXECUTION_PREFLIGHT', 'EFFECTIVE_CONTRACT_OVERLAY', 'ROLE_SAFE_FUNCTIONAL_CLOSURE', 'DEPENDENCY_ORDERED_INCREMENTAL_RECONCILIATION', 'COMMON_ENGINE_DEFECT_INTERRUPT', 'GENERATED_OUTPUT_PERSISTENCE', 'CONTROL_VS_SYSTEM_TRIGGER_RESOLUTION', 'PRODUCER_CONSUMER_SCHEMA_IDENTITY', 'NO_HISTORY_PRODUCT_VALUE_FALLBACK', 'TASK_LAYER_EFFECTFUL_TRANSITION_ORDER', 'VISUAL_DESIGN_PROFILE_MATERIALIZATION_COMPLETENESS', 'NORMATIVE_EXECUTION_MATRIX', 'CROSS_STAGE_MATERIALIZATION_AND_CONSUMER_READINESS', 'DETERMINISTIC_STAGE_AUDIT']
     for k in required:
         if k not in inv:
             failures.append('missing_invariant:' + k)
-    pgra = inv.get('PRODUCT_GOVERNANCE_RELEASE_SELECTION_AND_APPLICATION_BASELINE') or {}
+    external = d.get('external_execution_admission_contracts') or {}
+    if set(external) != {'PRODUCT_GOVERNANCE_RELEASE_SELECTION_AND_APPLICATION_BASELINE'}:
+        failures.append('external_execution_admission_contract_set_drift')
+    pgra = external.get('PRODUCT_GOVERNANCE_RELEASE_SELECTION_AND_APPLICATION_BASELINE') or {}
+    if pgra.get('scope_class')!='EXTERNAL_PRODUCT_EXECUTION_ENVIRONMENT_ADMISSION' or pgra.get('reusable_page_stage_normative_denominator_inclusion')!='EXCLUDED' or pgra.get('reusable_page_stage_definition_credit')!=0 or pgra.get('reusable_page_stage_completion_credit')!=0:
+        failures.append('external_product_admission_scope_isolation_missing')
+    if pgra.get('application_baseline_is_universal_page_stage_requirement') is not False or pgra.get('product_specific_branch_repository_or_framework_may_enter_common_stage_semantics') is not False:
+        failures.append('external_product_admission_leaks_into_page_stage_semantics')
     if pgra.get('selected_governance_release_artifact_type')!='PRODUCT_SELECTED_GOVERNANCE_RELEASE' or pgra.get('selected_governance_release_status')!='SELECTED_VERIFIED_RELEASE':
         failures.append('product_selected_governance_release_contract_missing')
     if pgra.get('product_stage_workflow_governance_checkout_mode')!='EXACT_SELECTED_RELEASE_COMMIT_ONLY' or pgra.get('moving_governance_branch_ref_may_grant_product_execution_credit') is not False or pgra.get('candidate_governance_formal_product_execution_credit')!=0:

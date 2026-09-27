@@ -164,6 +164,9 @@ candidate_validation_contract:
   - GOVERNANCE_REQUIREMENT_INDEX
   - REGRESSION_EXPECTATION_OWNER
   semantic_reference_transaction_partial_sync: BLOCK
+  reusable_page_stage_core_excludes_external_product_admission: true
+  external_product_admission_contract_container: STAGE_EXECUTION_INVARIANT_REGISTRY.external_execution_admission_contracts
+  product_specific_branch_repository_or_framework_may_enter_page_stage_semantics: false
   required_workflow_names:
   - Current Governance Cleanup Validation
   - Mother Spec Neutrality Audit

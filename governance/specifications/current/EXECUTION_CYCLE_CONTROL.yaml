@@ -443,19 +443,20 @@ auditor_implementation_independence:
   formal_independence_without_three_distinct_implementations: NOT_VERIFIED
   formal_promotion_requires_verified_independent_implementation_evidence: true
   mismatch_disposition: AUDIT_DETERMINISM_CONTRACT_FAILURE
-immutable_source_package_defect_reentry:
+integrated_governance_source_defect_reentry:
   canonical_rule_uid: GOV-RULE-GOVERNANCE-CANDIDATE-BOOTSTRAP-001
-  authorization_record: https://github.com/steven-gold/orange-one-ai-viedo-v1.0/issues/52
-  trigger: CURRENT_VALIDATION_PROVES_DEFECT_IN_EXTERNALLY_TRUSTED_IMMUTABLE_PREDECESSOR_SOURCE
+  activation: CURRENT_VALIDATION_PROVES_DEFECT_IN_CURRENT_INTEGRATED_GOVERNANCE_SOURCE
+  authority_source: governance/specifications/REGISTRY.yaml#governance_identity.supplemental_authorization_records
   defect_may_be_reclassified_as_generic_regression_failure_only: false
-  required_classification: SOURCE_PACKAGE_DEFECT
-  canonical_owner: SOURCE_PACKAGE_SUCCESSOR
-  required_state: BLOCKED_SOURCE_PACKAGE_SUCCESSOR_REQUIRED
-  earliest_legal_reentry: SOURCE_PACKAGE_SUCCESSOR_MATERIALIZATION
-  predecessor_mutation: FORBIDDEN
-  candidate_overlay_may_claim_source_defect_fixed_without_successor_source_bytes: false
-  independent_resign_required_before_current_admission: true
-  current_validation_must_preserve_exact_defect_identity: true
+  required_classification: CURRENT_GOVERNANCE_SOURCE_DEFECT
+  canonical_owner: CURRENT_GOVERNANCE_SOURCE_OWNER
+  required_state: GOVERNANCE_SOURCE_REMEDIATION_REQUIRED
+  earliest_legal_reentry: GOVERNANCE_SPECIFICATION_REMEDIATION
+  released_predecessor_mutation: FORBIDDEN
+  current_candidate_mutation: ALLOWED_ONLY_WITH_EXACT_SCOPE_PREEXISTING_AUTHORIZATION
+  derived_artifact_reconciliation_required: true
+  fresh_exact_head_validation_required_after_remediation: true
+  producer_transaction_success_may_validate_successor_head: false
   product_stage_execution_before_resolution: BLOCK
   governance_promotion_before_resolution: BLOCK
 

@@ -48,8 +48,14 @@ def main():
         row=bindings.get(name) or {}
         if row.get('path')!=path or row.get('event')!='push':
             failures.append('REQUIRED_WORKFLOW_BINDING_DRIFT:'+name)
-    for key in ('exact_candidate_head_required','required_workflows_run_on_every_candidate_push','live_branch_head_must_equal_validation_head','live_branch_head_recheck_after_evidence_validation_required','formal_promotion_requires_all_required_workflows_exact_head_success','formal_promotion_requires_independent_auditor_evidence'):
+    for key in ('exact_candidate_head_required','required_workflows_run_on_every_candidate_push','live_branch_head_must_equal_validation_head','live_branch_head_recheck_after_evidence_validation_required','formal_promotion_requires_all_required_workflows_exact_head_success','formal_promotion_requires_independent_auditor_evidence','remediation_generated_successor_head_requires_fresh_exact_head_validation','remediation_producer_success_is_not_successor_head_validation','self_mutating_governance_workflow_must_declare_successor_validation_terminalization','semantic_reference_change_transaction_required'):
         if vc.get(key) is not True: failures.append('CURRENT_VALIDATION_FLAG_MISSING:'+key)
+    if vc.get('prior_head_workflow_result_may_credit_successor_head') is not False: failures.append('PRIOR_HEAD_SUCCESSOR_CREDIT_NOT_BLOCKED')
+    if vc.get('zero_required_workflow_runs_on_successor_head')!='BLOCK': failures.append('ZERO_RUN_SUCCESSOR_HEAD_NOT_BLOCKED')
+    allowed=set(map(str,vc.get('successor_validation_terminalization_allowed_mechanisms') or []))
+    if allowed!={'AUTHORIZED_COMMIT_OR_REF_UPDATE_THAT_TRIGGERS_REGISTERED_REQUIRED_PUSH_WORKFLOWS','EXPLICIT_EXACT_HEAD_VALIDATION_DISPATCH_WHEN_WORKFLOW_AND_REGISTRY_ALLOW_IT'}: failures.append('SUCCESSOR_VALIDATION_TERMINALIZATION_MECHANISM_DRIFT')
+    owners=set(map(str,vc.get('semantic_reference_transaction_required_owners') or []))
+    if owners!={'REFERENCE_RULE_REGISTRY','SEMANTIC_AUTHORITY_BASELINE','REFERENCE_SEMANTICS_VALIDATOR_BINDING','GOVERNANCE_ROOT_MANIFEST','CHECKSUMS','AUDIT_BASELINE','GOVERNANCE_REQUIREMENT_INDEX','REGRESSION_EXPECTATION_OWNER'} or vc.get('semantic_reference_transaction_partial_sync')!='BLOCK': failures.append('SEMANTIC_REFERENCE_TRANSACTION_CONTRACT_DRIFT')
     if vc.get('source_package_successor_required') is not False:
         failures.append('SEPARATE_SOURCE_SUCCESSOR_NOT_RETIRED')
     if vc.get('source_package_integration_mode')!='SINGLE_BRANCH_INTEGRATED' or vc.get('source_package_integrated_branch')!='rebuild-v2.1.1':

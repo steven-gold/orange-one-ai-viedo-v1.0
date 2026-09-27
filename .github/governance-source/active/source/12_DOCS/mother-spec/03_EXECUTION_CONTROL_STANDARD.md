@@ -864,7 +864,7 @@ AI MUST 依序定位：
 <!-- SECTION_UID: WEB-GOV-03-S047 -->
 ## 47. v2.1.0 No Midstream Pilot Rule
 
-用來驗證治理規範本身的正式 Pilot MUST 從 Source Intake / Classification / Repository Placement 開始，不得從已完成 Blueprint、現有 React Page 或 Runtime 中段開始後宣稱完整生命週期 PASS。
+用來驗證治理規範本身的正式 Pilot MUST 從 Source Intake / Classification / Repository Placement 開始，不得從已完成 Blueprint、既有實作頁面或 Runtime 中段開始後宣稱完整生命週期 PASS。
 
 Pilot MUST 保存每一 Gate 的輸入、輸出、Evidence、`run_uid` 與 Exact Next Action。
 
