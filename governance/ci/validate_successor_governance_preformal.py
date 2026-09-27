@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 from __future__ import annotations
 
-import importlib.util
 import json
 import os
 import sys
@@ -10,19 +9,9 @@ import yaml
 
 ROOT=Path(__file__).resolve().parents[2]
 SOURCE=ROOT/'.github/governance-source/active/source'
-GOV_TESTS=SOURCE/'09_TESTS/governance'
 sys.path.insert(0,str(ROOT/'governance/ci'))
 from governance_resolver import resolve as resolve_governance
-
-
-def import_source(name:str):
-    path=GOV_TESTS/f'{name}.py'
-    spec=importlib.util.spec_from_file_location('source_'+name,path)
-    if spec is None or spec.loader is None:
-        raise RuntimeError('SOURCE_VALIDATOR_IMPORT_FAILED:'+name)
-    module=importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(module)
-    return module
+from source_package_successor_admission import validate_source_successor
 
 
 def load_yaml(path:Path)->dict:
@@ -32,7 +21,7 @@ def load_yaml(path:Path)->dict:
     return value
 
 
-def candidate_identity_check(_root:Path)->dict:
+def candidate_identity_check()->dict:
     failures=[]
     resolved=resolve_governance()
     if resolved.get('governance_role')!='GOVERNANCE_REVISION_CANDIDATE':
@@ -52,6 +41,7 @@ def candidate_identity_check(_root:Path)->dict:
     if present:
         failures.append('RETIRED_PREDECESSOR_STATE_REAPPEARED_AS_LIVE_SOURCE:'+repr(present))
     return {
+      'check_id':'current_candidate_identity',
       'status':'PASS' if not failures else 'FAIL',
       'current_truth_source':'governance/specifications/REGISTRY.yaml',
       'retired_predecessor_state_live_count':len(present),
@@ -59,31 +49,40 @@ def candidate_identity_check(_root:Path)->dict:
     }
 
 
-def exact_head_validation_contract_check(_root:Path)->dict:
+def exact_head_validation_contract_check(registry:dict)->dict:
     failures=[]
-    registry=load_yaml(ROOT/'governance/specifications/REGISTRY.yaml')
     vc=registry.get('candidate_validation_contract') or {}
-    if vc.get('exact_candidate_head_required') is not True:
-        failures.append('EXACT_CANDIDATE_HEAD_NOT_REQUIRED')
-    if vc.get('required_workflows_run_on_every_candidate_push') is not True:
-        failures.append('REQUIRED_WORKFLOWS_EVERY_PUSH_NOT_REQUIRED')
+    expected_true=(
+      'exact_candidate_head_required','required_workflows_run_on_every_candidate_push',
+      'live_branch_head_must_equal_validation_head','live_branch_head_recheck_after_evidence_validation_required',
+      'formal_promotion_requires_all_required_workflows_exact_head_success',
+      'formal_promotion_requires_independent_auditor_evidence',
+      'source_package_successor_required','source_package_successor_internal_exact_head_success_required',
+      'source_package_successor_live_head_must_equal_receipt_head','source_package_successor_live_head_recheck_required',
+      'source_package_successor_external_trust_required_for_promotion','source_package_successor_unsigned_blocks_promotion',
+      'source_internal_pass_may_satisfy_candidate_validation_without_promotion_credit',
+    )
+    for key in expected_true:
+        if vc.get(key) is not True:
+            failures.append('CANDIDATE_VALIDATION_FLAG_MISSING:'+key)
     if vc.get('candidate_required_workflow_path_filter')!='FORBIDDEN':
         failures.append('REQUIRED_WORKFLOW_PATH_FILTER_NOT_FORBIDDEN')
-    if vc.get('live_branch_head_must_equal_validation_head') is not True:
-        failures.append('LIVE_BRANCH_HEAD_BINDING_NOT_REQUIRED')
-    if vc.get('live_branch_head_recheck_after_evidence_validation_required') is not True:
-        failures.append('LIVE_BRANCH_HEAD_RECHECK_NOT_REQUIRED')
-    if vc.get('formal_promotion_requires_all_required_workflows_exact_head_success') is not True:
-        failures.append('EXACT_HEAD_WORKFLOW_SUCCESS_NOT_REQUIRED')
-    if vc.get('formal_promotion_requires_independent_auditor_evidence') is not True:
-        failures.append('INDEPENDENT_AUDITOR_EVIDENCE_NOT_REQUIRED')
+    if vc.get('source_internal_pass_may_imply_current_source_admission') is not False:
+        failures.append('SOURCE_INTERNAL_PASS_CURRENT_ADMISSION_LEAK')
+    if vc.get('source_internal_pass_may_imply_governance_promotion') is not False:
+        failures.append('SOURCE_INTERNAL_PASS_PROMOTION_LEAK')
     required=set(map(str,vc.get('required_workflow_names') or []))
     if required!={'Current Governance Cleanup Validation','Mother Spec Neutrality Audit'}:
         failures.append('REQUIRED_WORKFLOW_DENOMINATOR_DRIFT')
-    return {'status':'PASS' if not failures else 'FAIL','required_workflow_count':len(required),'failures':failures}
+    return {
+      'check_id':'exact_head_validation_contract',
+      'status':'PASS' if not failures else 'FAIL',
+      'required_workflow_count':len(required),
+      'failures':failures,
+    }
 
 
-def source_package_reentry_check(_root:Path)->dict:
+def source_package_reentry_check()->dict:
     failures=[]
     mutation=load_yaml(ROOT/'governance/specifications/current/SPECIFICATION_MUTATION_CONTROL.yaml')
     cycle=load_yaml(ROOT/'governance/specifications/current/EXECUTION_CYCLE_CONTROL.yaml')
@@ -114,6 +113,7 @@ def source_package_reentry_check(_root:Path)->dict:
     if state.get('current_candidate_identity_source')!='governance/specifications/REGISTRY.yaml':
         failures.append('CURRENT_CANDIDATE_IDENTITY_SOURCE_DRIFT')
     return {
+      'check_id':'source_package_defect_reentry',
       'status':'PASS' if not failures else 'FAIL',
       'canonical_owner':'SOURCE_PACKAGE_SUCCESSOR',
       'earliest_legal_reentry':'SOURCE_PACKAGE_SUCCESSOR_MATERIALIZATION',
@@ -121,74 +121,38 @@ def source_package_reentry_check(_root:Path)->dict:
     }
 
 
-def classify_source_block(check:dict)->dict:
-    if check.get('status')=='PASS':
-        return check
-    cid=str(check.get('check_id') or '')
-    source_owned={
-      'section_registry','execution_governance_load','acceptance_blueprint_compiled_baseline',
-      'mandatory_regression_and_package_integrity','root_manifest'
-    }
-    if cid in source_owned:
-        check=dict(check)
-        check['canonical_owner']='SOURCE_PACKAGE_SUCCESSOR'
-        check['failure_class']='SOURCE_PACKAGE_DEFECT'
-        check['disposition']='BLOCKED_SOURCE_PACKAGE_SUCCESSOR_REQUIRED'
-        check['earliest_legal_reentry']='SOURCE_PACKAGE_SUCCESSOR_MATERIALIZATION'
-        check['promotion_credit']=0
-    return check
-
-
 def main()->int:
-    gov=import_source('validate_governance')
-    checks=[]
-    def run(cid,fn):
+    registry=load_yaml(ROOT/'governance/specifications/REGISTRY.yaml')
+    repository=os.environ.get('GITHUB_REPOSITORY','').strip()
+    token=os.environ.get('GITHUB_TOKEN','').strip() or None
+    checks=[candidate_identity_check(),exact_head_validation_contract_check(registry),source_package_reentry_check()]
+    if not repository:
+        source_result={'status':'BLOCKED','failures':['GITHUB_REPOSITORY_REQUIRED_FOR_SOURCE_SUCCESSOR_ADMISSION']}
+    else:
         try:
-            out=fn(SOURCE)
-            row={'check_id':cid,**out}
+            source_result=validate_source_successor(
+              repository,token,registry.get('candidate_validation_contract') or {},require_external_trust=False
+            )
         except Exception as exc:
-            row={'check_id':cid,'status':'FAIL','failures':['exception:'+repr(exc)]}
-        checks.append(classify_source_block(row))
+            source_result={'status':'BLOCKED','failures':['SOURCE_SUCCESSOR_ADMISSION_EXCEPTION:'+type(exc).__name__+':'+str(exc)]}
+    checks.append({'check_id':'source_package_successor_internal_validation',**source_result})
 
-    # Preserve every immutable-source definition/package check that remains applicable.
-    run('external_trust_root',gov.external_trust_anchor_guard)
-    run('parser_hygiene',gov.parser_hygiene)
-    run('section_registry',import_source('validate_section_registry').validate)
-    run('construction_artifact_index',import_source('validate_construction_artifact_index').validate)
-    run('execution_governance_load',import_source('validate_execution_governance_load').validate_definition)
-    run('cleanup_protection',import_source('validate_cleanup_protection').validate)
-    run('lifecycle_stage_contract',import_source('governance_lifecycle_stage_contract_guard').validate)
-    run('management_contract',import_source('governance_management_contract_guard').validate)
-    run('reference_semantics',import_source('validate_reference_semantics').validate)
-    run('program_artifact_instance_guard',import_source('program_artifact_instance_guard').validate_definition)
-
-    # Successor Current-state checks replace retired predecessor live-state consumers.
-    run('current_candidate_identity',candidate_identity_check)
-    run('exact_head_validation_contract',exact_head_validation_contract_check)
-    run('source_package_defect_reentry',source_package_reentry_check)
-
-    run('closure_evidence_continuity',import_source('validate_closure_evidence_continuity').validate)
-    run('stage_execution_invariants',import_source('validate_stage_execution_invariants').validate)
-    run('test_feedback_spec_evolution',import_source('validate_test_feedback_spec_evolution').validate)
-    run('product_neutral_entity_lifecycle',import_source('validate_product_neutral_entity_lifecycle').validate)
-    run('acceptance_blueprint_compiled_baseline',gov.baseline_guard)
-    run('root_manifest',gov.root_manifest_guard)
-    run('mandatory_regression_and_package_integrity',gov.mandatory_regression_guard)
-
-    failures=[x for x in checks if x.get('status')!='PASS']
-    source_failures=[x for x in failures if x.get('failure_class')=='SOURCE_PACKAGE_DEFECT']
+    failures=[x for x in checks if x.get('status') not in {'PASS','PASS_INTERNAL_UNSIGNED'}]
+    source_internal_ok=source_result.get('internal_exact_head_validation')=='PASS'
+    external_ready=source_result.get('external_trust_validation')=='PASS'
     result={
       'mode':'SUCCESSOR_GOVERNANCE_PREFORMAL',
-      'status':'PASS' if not failures else 'FAIL',
+      'status':'PASS' if not failures and source_internal_ok else 'FAIL',
       'checks_total':len(checks),
-      'pass_count':len(checks)-len(failures),
+      'pass_count':sum(1 for x in checks if x.get('status') in {'PASS','PASS_INTERNAL_UNSIGNED'}),
       'blocking_failures':len(failures),
-      'source_package_blocker_count':len(source_failures),
+      'source_package_successor_internal_validation':source_result,
+      'source_package_internal_exact_head_pass':source_internal_ok,
+      'source_package_external_trust_status':source_result.get('external_trust_status'),
+      'source_current_admission':'READY' if external_ready else 'BLOCKED_PENDING_INDEPENDENT_EXTERNAL_TRUST',
+      'mandatory_regression_denominator_preserved':source_internal_ok,
       'retired_predecessor_current_state_consumer_count':0,
-      'mandatory_regression_denominator_preserved':True,
-      'source_package_mutation_performed':False,
       'historical_current_credit':0,
-      'checks':checks,
       'formal_freeze_allowed':False,
       'formal_test_allowed':False,
       'governance_promotion_allowed':False,

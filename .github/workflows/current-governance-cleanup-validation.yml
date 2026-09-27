@@ -9,6 +9,7 @@ on:
 permissions:
   contents: read
   issues: read
+  actions: read
 
 concurrency:
   group: current-governance-cleanup-validation-${{ github.ref }}

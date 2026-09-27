@@ -17,6 +17,7 @@ REGISTRY=ROOT/'governance/specifications/REGISTRY.yaml'
 sys.path.insert(0,str(ROOT/'governance/ci'))
 from governance_resolver import resolve as resolve_governance
 import audit_closure_engine as audit_engine
+from source_package_successor_admission import evaluate_snapshot, validate_source_successor
 
 
 def load_yaml(path: Path) -> dict:
@@ -130,6 +131,37 @@ def self_test() -> int:
         row['actual']=(row['local']==row['before']==row['after'])
         row['ok']=row['actual']==row['expected']
     cases.extend(live_head_cases)
+    synthetic_receipt={
+      'candidate_source_branch':'source-candidate','source_head_sha':head,
+      'source_validation_workflow_name':'Source Package Successor Validation',
+      'source_validation_run_id':77,'source_validation_status':'completed',
+      'source_validation_conclusion':'success','source_internal_status':'PASS_INTERNAL_UNSIGNED',
+      'source_candidate_manifest_blob_sha':'blob1','released_current_authority':False,
+      'external_trust_status':'NOT_SIGNED','external_trust_evidence_ref':None,
+    }
+    synthetic_manifest={
+      'status':'UNSIGNED_NOT_CURRENT','current_authority':False,
+      'external_trust':{'status':'NOT_SIGNED','candidate_self_sign':'FORBIDDEN'}
+    }
+    synthetic_run={'id':77,'name':'Source Package Successor Validation','head_sha':head,'status':'completed','conclusion':'success'}
+    internal=evaluate_snapshot(synthetic_receipt,synthetic_manifest,'blob1',synthetic_run,head,head,False)
+    cases.append({'case':'source_internal_unsigned_valid_for_candidate_validation','expected':'PASS_INTERNAL_UNSIGNED','actual':internal.get('status'),'ok':internal.get('status')=='PASS_INTERNAL_UNSIGNED'})
+    promotion=evaluate_snapshot(synthetic_receipt,synthetic_manifest,'blob1',synthetic_run,head,head,True)
+    cases.append({'case':'source_unsigned_blocks_promotion','expected':'BLOCKED','actual':promotion.get('status'),'ok':promotion.get('status')=='BLOCKED'})
+    signed_receipt=dict(synthetic_receipt)
+    signed_receipt.update({'source_internal_status':'PASS_INTERNAL_SIGNED','external_trust_status':'SIGNED_PASS','external_trust_evidence_ref':'external://receipt'})
+    signed_manifest={
+      'status':'SIGNED_NOT_CURRENT','current_authority':False,
+      'external_trust':{
+        'status':'SIGNED_PASS','candidate_self_sign':'FORBIDDEN',
+        'signer_identity':'SIGNER-1','signer_authority_ref':'AUTH-1',
+        'signature_or_immutable_receipt_ref':'external://receipt'
+      }
+    }
+    signed=evaluate_snapshot(signed_receipt,signed_manifest,'blob1',synthetic_run,head,head,True)
+    cases.append({'case':'source_signed_exact_head_satisfies_source_promotion_gate','expected':'PASS','actual':signed.get('status'),'ok':signed.get('status')=='PASS'})
+    moved=evaluate_snapshot(synthetic_receipt,synthetic_manifest,'blob1',synthetic_run,head,'c'*40,False)
+    cases.append({'case':'source_branch_move_invalidates_source_snapshot','expected':'BLOCKED','actual':moved.get('status'),'ok':moved.get('status')=='BLOCKED'})
     ok=all(x['ok'] for x in cases)
     print(json.dumps({'self_test':'PASS' if ok else 'FAIL','cases':cases},ensure_ascii=False,sort_keys=True))
     return 0 if ok else 1
@@ -188,6 +220,11 @@ def main() -> int:
         auditor_result={'status':'FAIL','reason':'INDEPENDENT_AUDITOR_EVIDENCE_INVALID','detail':type(exc).__name__+':'+str(exc)}
 
     try:
+        source_result=validate_source_successor(repository,token,contract,require_external_trust=True)
+    except Exception as exc:
+        source_result={'status':'BLOCKED','failures':['SOURCE_SUCCESSOR_PROMOTION_GATE_EXCEPTION:'+type(exc).__name__+':'+str(exc)]}
+
+    try:
         live_head_after=fetch_live_branch_head(repository,branch,token)
     except Exception as exc:
         print(json.dumps({'status':'BLOCKED','reason':'LIVE_BRANCH_HEAD_RECHECK_FAILED','detail':type(exc).__name__+':'+str(exc)},ensure_ascii=False))
@@ -196,7 +233,11 @@ def main() -> int:
         print(json.dumps({'status':'BLOCKED','reason':'SNAPSHOT_INVALIDATED_BY_BRANCH_HEAD_CHANGE','local_head':head,'live_head_before':live_head_before,'live_head_after':live_head_after},ensure_ascii=False))
         return 1
 
-    ready=workflow_result.get('status')=='PASS' and auditor_result.get('status')=='PASS'
+    ready=(
+      workflow_result.get('status')=='PASS'
+      and auditor_result.get('status')=='PASS'
+      and source_result.get('status')=='PASS'
+    )
     result={
       'artifact_type':'GOVERNANCE_CANDIDATE_PROMOTION_READINESS',
       'read_only':True,
@@ -209,6 +250,7 @@ def main() -> int:
       'governance_revision':resolved.get('governance_revision'),
       'workflow_validation':workflow_result,
       'independent_auditor_validation':auditor_result,
+      'source_package_successor_validation':source_result,
       'status':'READY_FOR_EXPLICIT_PROMOTION' if ready else 'BLOCKED',
       'explicit_promotion_still_required':True,
       'product_completion_credit':0,

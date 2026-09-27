@@ -128,6 +128,22 @@ candidate_validation_contract:
   - EXACT_HEAD_VALIDATION_CONTRACT
   - SOURCE_PACKAGE_DEFECT_REENTRY
   immutable_source_checks_and_mandatory_regression_denominator_preserved: true
+  source_package_successor_required: true
+  source_package_successor_branch: governance-source-v2.2.33-candidate
+  source_package_successor_workflow_name: Source Package Successor Validation
+  source_package_successor_admission_receipt: governance/source-successor/SOURCE_PACKAGE_SUCCESSOR_ADMISSION.yaml
+  source_package_successor_admission_validator: governance/ci/source_package_successor_admission.py
+  source_package_successor_manifest_path: governance/source-successor/SOURCE_PACKAGE_CANDIDATE.yaml
+  source_package_successor_internal_exact_head_success_required: true
+  source_package_successor_live_head_must_equal_receipt_head: true
+  source_package_successor_live_head_recheck_required: true
+  source_package_successor_external_trust_required_for_promotion: true
+  source_package_successor_unsigned_blocks_promotion: true
+  source_package_successor_signed_status: SIGNED_NOT_CURRENT
+  source_package_successor_signed_external_trust_status: SIGNED_PASS
+  source_internal_pass_may_satisfy_candidate_validation_without_promotion_credit: true
+  source_internal_pass_may_imply_current_source_admission: false
+  source_internal_pass_may_imply_governance_promotion: false
   predecessor_source_trust_materializer: governance/ci/materialize_predecessor_source_trust_root.py
   predecessor_source_expected_hash_source: .github/governance-source/active/source/CHECKSUMS.sha256
   predecessor_source_trust_generation_from_current_bytes: FORBIDDEN

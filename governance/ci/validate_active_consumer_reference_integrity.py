@@ -207,6 +207,28 @@ def main() -> int:
             errors.append("CANDIDATE_RETIRED_CURRENT_STATE_REPLACEMENT_DENOMINATOR_DRIFT")
         if validation_contract.get("immutable_source_checks_and_mandatory_regression_denominator_preserved") is not True:
             errors.append("CANDIDATE_SOURCE_CHECK_OR_REGRESSION_DENOMINATOR_NOT_PRESERVED")
+        if validation_contract.get("source_package_successor_required") is not True:
+            errors.append("CANDIDATE_SOURCE_SUCCESSOR_NOT_REQUIRED")
+        source_receipt=str(validation_contract.get("source_package_successor_admission_receipt") or "")
+        source_validator=str(validation_contract.get("source_package_successor_admission_validator") or "")
+        if not source_receipt or not (ROOT/source_receipt).is_file():
+            errors.append("CANDIDATE_SOURCE_SUCCESSOR_RECEIPT_MISSING:"+source_receipt)
+        if not source_validator or not (ROOT/source_validator).is_file():
+            errors.append("CANDIDATE_SOURCE_SUCCESSOR_ADMISSION_VALIDATOR_MISSING:"+source_validator)
+        for key in (
+            "source_package_successor_internal_exact_head_success_required",
+            "source_package_successor_live_head_must_equal_receipt_head",
+            "source_package_successor_live_head_recheck_required",
+            "source_package_successor_external_trust_required_for_promotion",
+            "source_package_successor_unsigned_blocks_promotion",
+            "source_internal_pass_may_satisfy_candidate_validation_without_promotion_credit",
+        ):
+            if validation_contract.get(key) is not True:
+                errors.append("CANDIDATE_SOURCE_SUCCESSOR_GATE_FLAG_MISSING:"+key)
+        if validation_contract.get("source_internal_pass_may_imply_current_source_admission") is not False:
+            errors.append("CANDIDATE_SOURCE_INTERNAL_PASS_CURRENT_ADMISSION_LEAK")
+        if validation_contract.get("source_internal_pass_may_imply_governance_promotion") is not False:
+            errors.append("CANDIDATE_SOURCE_INTERNAL_PASS_PROMOTION_LEAK")
         trust_materializer=str(validation_contract.get("predecessor_source_trust_materializer") or "")
         if not trust_materializer or not (ROOT/trust_materializer).is_file():
             errors.append("CANDIDATE_PREDECESSOR_TRUST_MATERIALIZER_MISSING:"+trust_materializer)
