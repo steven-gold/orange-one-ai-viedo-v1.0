@@ -86,7 +86,7 @@ def verify_candidate_authorization(reg, resolved):
         return
     owner,repo_name,issue_number=match.groups()
     api=f'https://api.github.com/repos/{owner}/{repo_name}/issues/{issue_number}'
-    headers={'Accept':'application/vnd.github+json','User-Agent':'ACPOS-Governance-Validator'}
+    headers={'Accept':'application/vnd.github+json','User-Agent':'Governance-Validator'}
     token=os.environ.get('GITHUB_TOKEN','').strip()
     if token:
         headers['Authorization']='Bearer '+token
@@ -148,7 +148,7 @@ def verify_supplemental_authorizations(reg):
         errors.append('SUPPLEMENTAL_AUTHORIZATION_RECORDS_INVALID')
         return
     token=os.environ.get('GITHUB_TOKEN','').strip()
-    headers={'Accept':'application/vnd.github+json','User-Agent':'ACPOS-Governance-Validator'}
+    headers={'Accept':'application/vnd.github+json','User-Agent':'Governance-Validator'}
     if token:
         headers['Authorization']='Bearer '+token
     for idx,record in enumerate(records):
@@ -282,17 +282,18 @@ if re.search(r'(?m)^\s*actions:\s*write\s*$',_materialize_text):
     errors.append('SOURCE_MATERIALIZATION_ACTIONS_WRITE_PERMISSION_FORBIDDEN')
 if 'gh workflow run' in _materialize_text:
     errors.append('SOURCE_MATERIALIZATION_DUPLICATE_MANUAL_VALIDATION_TRIGGER_FORBIDDEN')
+_active_branch=str(registry_doc.get('branch') or '')
 _guard_tokens=(
-    "github.ref_name == 'rebuild-v2.1.1'",
+    "github.ref_name == '"+_active_branch+"'",
     "roles.get(branch)!='GOVERNANCE_REVISION_CANDIDATE'",
     "d.get('status')!='ACTIVE_SINGLE_BRANCH_VALIDATION'",
-    "mutation.get('single_active_governance_branch')!='rebuild-v2.1.1'",
+    "mutation.get('single_active_governance_branch')!='"+_active_branch+"'",
     "contract.get('source_package_integration_mode')!='SINGLE_BRANCH_INTEGRATED'",
-    'REMOTE_HEAD="$(git ls-remote origin refs/heads/rebuild-v2.1.1',
-    'REMOTE_HEAD_BEFORE_PUSH="$(git ls-remote origin refs/heads/rebuild-v2.1.1',
+    'REMOTE_HEAD="$(git ls-remote origin refs/heads/'+_active_branch,
+    'REMOTE_HEAD_BEFORE_PUSH="$(git ls-remote origin refs/heads/'+_active_branch,
     'test "$REMOTE_HEAD" = "$BASE_HEAD"',
     'test "$REMOTE_HEAD_BEFORE_PUSH" = "$BASE_HEAD"',
-    'git push origin HEAD:rebuild-v2.1.1',
+    'git push origin HEAD:'+_active_branch,
 )
 for _tok in _guard_tokens:
     if _tok not in _materialize_text:
