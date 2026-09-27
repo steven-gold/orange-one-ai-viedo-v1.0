@@ -1622,6 +1622,10 @@ For a selected-governance change, Audit MUST reconstruct the `GOVERNANCE_REVISIO
 
 Negative regression MUST include at least: selected SHA differs from loaded governance checkout; selected identity is candidate/not released; selected release lacks fresh reverification evidence; old-governance scope/evidence reused without transition receipt; transition receipt bound to another Work Unit; and impacted closure retained as PASS instead of `REVERIFY_REQUIRED`.
 
+Audit MUST verify governance-candidate successor-head terminalization. When a governance remediation or materializer creates a new candidate HEAD, required validation evidence MUST belong to that exact successor HEAD; producer-workflow success, parent-head results, prior-head results, or zero required workflow runs/checks are non-credit. A successor HEAD without the Registry-required fresh terminal workflow set is `CANDIDATE_EXACT_HEAD_VALIDATION_MISSING` and MUST remain blocked.
+
+For any authorized Stage normative-reference change, Audit MUST reconstruct one synchronization transaction covering the canonical reference rules, semantic authority baseline/snapshot, validator binding, Root Manifest/checksums, generated requirement index and regression expectations. A legal Mother/Reference Rule expansion with stale semantic/regression consumers is not a Stage-spec closure; it is `STAGE_NORMATIVE_REFERENCE_TRANSACTION_INCOMPLETE`.
+
 <!-- SECTION_UID: WEB-GOV-04-S089 -->
 ## 89. Application Baseline Admission and Materialization Audit / 應用基線准入與實體化稽核
 

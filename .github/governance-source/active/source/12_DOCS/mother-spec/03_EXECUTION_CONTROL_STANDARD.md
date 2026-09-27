@@ -1359,6 +1359,12 @@ A change of the product-owned selected governance release MUST be a separate Pro
 
 When the Current Product scope/matrix/evidence is still bound to an older governance UID and no valid transition receipt exists, execution MUST fail as `GOVERNANCE_REVISION_TRANSITION_REQUIRED`. When a valid transition receipt exists but the affected Work Unit has not yet been freshly rebound/reverified, execution MUST fail as `GOVERNANCE_REVISION_TRANSITION_REENTRY_REQUIRED` at the receipt's earliest owner. The transition transaction occurs before normal Stage execution and grants zero Product completion credit by itself.
 
+A governance-remediation transaction that creates a successor governance-candidate HEAD MUST NOT treat the producer transaction's own success as validation of that successor HEAD. The successor HEAD remains `CANDIDATE_UNVALIDATED` until every Registry-required governance validation workflow has a fresh terminal result bound to that exact successor HEAD, branch, registered workflow path and allowed event. Parent-head PASS/FAIL, prior-head validation, producer-job success, or a zero-run/check state MUST_NOT receive successor-head validation credit.
+
+A self-mutating governance workflow MUST declare a successor-head validation terminalization path before mutation. The terminalization path MUST either end on an authorized commit/ref update that deterministically triggers the Registry-required validations, or use an explicitly Registry-authorized exact-head validation dispatch mechanism supported by both the workflow and validation contract. Token/event recursion suppression, bot-authored push behavior, or an assumed downstream trigger MUST_NOT be treated as evidence that validation occurred.
+
+Any authorized change to a Stage normative-reference set MUST be synchronized as one bounded governance transaction across the canonical reference owner, semantic authority snapshot/baseline, validator hash/binding, Root Manifest/checksum projections, generated audit requirement index and registered regression expectations. Partial synchronization, consumer-local expected-count repair, or a semantic baseline that still represents the predecessor Stage reference set is `STAGE_NORMATIVE_REFERENCE_TRANSACTION_INCOMPLETE` and blocks candidate closure.
+
 <!-- SECTION_UID: WEB-GOV-03-S074 -->
 ## 74. Application Baseline Admission and Current-Workline Materialization / 應用基線准入與目前工作線實體化
 

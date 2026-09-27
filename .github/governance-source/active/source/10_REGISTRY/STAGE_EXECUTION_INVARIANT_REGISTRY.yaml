@@ -1434,6 +1434,30 @@ invariants:
         OPERATIONS_OWNER: OP-53-FINAL_AUDIT_MATRIX_RECONCILIATION
   PRODUCT_GOVERNANCE_RELEASE_SELECTION_AND_APPLICATION_BASELINE:
     invariant_uid: GOV-INV-PRODUCT-GOVERNANCE-RELEASE-APPLICATION-BASELINE-001
+    normative_section_uids:
+    - WEB-GOV-03-S073
+    - WEB-GOV-03-S074
+    - WEB-GOV-04-S088
+    - WEB-GOV-04-S089
+    applies_to_stages:
+    - STAGE-01
+    - STAGE-02
+    - STAGE-03
+    - STAGE-04
+    - STAGE-05
+    - STAGE-06
+    - STAGE-07
+    - STAGE-08
+    - STAGE-09
+    - STAGE-10
+    - STAGE-11
+    product_governance_selection_scope: ALL_FORMAL_PRODUCT_STAGES
+    application_baseline_transition_boundary: STAGE-04_TO_STAGE-05
+    application_baseline_predecessor_stage_scope:
+    - STAGE-04
+    application_baseline_consumer_stage_scope:
+    - STAGE-05
+    candidate_validation_terminalization_authority_ref: governance/specifications/REGISTRY.yaml#candidate_validation_contract
     applies_to_formal_product_stage_execution: true
     selected_governance_release_artifact_type: PRODUCT_SELECTED_GOVERNANCE_RELEASE
     selected_governance_release_path: STAGE_EXECUTION/SHARED_AUTHORITY/PRODUCT_SELECTED_GOVERNANCE_RELEASE.yaml

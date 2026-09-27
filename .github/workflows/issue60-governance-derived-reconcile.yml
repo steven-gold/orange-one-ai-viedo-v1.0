@@ -1,0 +1,99 @@
+name: Issue60 Governance Derived Reconcile
+on:
+  push:
+    branches:
+      - rebuild-v2.1.1
+    paths:
+      - '.github/workflows/issue60-governance-derived-reconcile.yml'
+      - '.github/governance-source/active/source/12_DOCS/mother-spec/03_EXECUTION_CONTROL_STANDARD.md'
+      - '.github/governance-source/active/source/12_DOCS/mother-spec/04_AUDIT_PROGRESS_STANDARD.md'
+      - '.github/governance-source/active/source/10_REGISTRY/REFERENCE_RULE_REGISTRY.yaml'
+      - '.github/governance-source/active/source/10_REGISTRY/GOVERNANCE_LIFECYCLE_STAGE_REGISTRY.yaml'
+      - '.github/governance-source/active/source/10_REGISTRY/STAGE_EXECUTION_INVARIANT_REGISTRY.yaml'
+      - 'governance/specifications/REGISTRY.yaml'
+permissions:
+  contents: write
+jobs:
+  reconcile:
+    if: github.actor != 'github-actions[bot]' && github.ref_name == 'rebuild-v2.1.1'
+    runs-on: ubuntu-24.04
+    env:
+      PYTHONDONTWRITEBYTECODE: '1'
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          fetch-depth: 0
+          ref: rebuild-v2.1.1
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with:
+          python-version: '3.11.16'
+      - run: python -m pip install --disable-pip-version-check --require-hashes -r governance/ci/requirements-governance.lock
+      - name: Reconcile semantic snapshot and derived governance source
+        run: |
+          set -euo pipefail
+          BASE_HEAD="$(git rev-parse HEAD)"
+          test "$(git ls-remote origin refs/heads/rebuild-v2.1.1 | awk '{print $1}')" = "$BASE_HEAD"
+          python - <<'PY'
+          from pathlib import Path
+          import yaml
+          sem=Path('.github/governance-source/active/source/10_REGISTRY/SEMANTIC_AUTHORITY_BASELINE.yaml')
+          ref=Path('.github/governance-source/active/source/10_REGISTRY/REFERENCE_RULE_REGISTRY.yaml')
+          s=yaml.safe_load(sem.read_text(encoding='utf-8')) or {}
+          r=yaml.safe_load(ref.read_text(encoding='utf-8')) or {}
+          snap=s.get('semantic_snapshot')
+          if not isinstance(snap,dict):
+              raise SystemExit('SEMANTIC_SNAPSHOT_MAPPING_REQUIRED')
+          rules=r.get('stage_reference_rules')
+          if not isinstance(rules,dict) or not rules:
+              raise SystemExit('STAGE_REFERENCE_RULES_MAPPING_REQUIRED')
+          snap['stage_reference_rules']=rules
+          s['semantic_snapshot']=snap
+          sem.write_text(yaml.safe_dump(s,allow_unicode=True,sort_keys=False,width=180),encoding='utf-8')
+          PY
+          python governance/source-successor/materialize_derived_source_package.py
+          VAL_BLOB="$(git hash-object .github/governance-source/active/source/09_TESTS/governance/validate_reference_semantics.py)"
+          VAL_BLOB="$VAL_BLOB" python - <<'PY'
+          from pathlib import Path
+          import os,yaml
+          p=Path('governance/specifications/REGISTRY.yaml')
+          text=p.read_text(encoding='utf-8')
+          doc=yaml.safe_load(text) or {}
+          block=((doc.get('candidate_validation_contract') or {}).get('source_package_validation_toolchain_blob_bindings') or {})
+          key='.github/governance-source/active/source/09_TESTS/governance/validate_reference_semantics.py'
+          if key not in block:
+              raise SystemExit('REFERENCE_SEMANTICS_TOOLCHAIN_BINDING_KEY_MISSING')
+          new=os.environ['VAL_BLOB']
+          ls=text.splitlines()
+          start=[i for i,x in enumerate(ls) if x=='  source_package_validation_toolchain_blob_bindings:']
+          if len(start)!=1:
+              raise SystemExit('TOOLCHAIN_BINDING_BLOCK_COUNT='+str(len(start)))
+          lo=start[0]+1
+          hi=next((i for i in range(lo,len(ls)) if ls[i] and not ls[i].startswith('    ')),len(ls))
+          needle='    "'+key+'":'
+          rows=[i for i in range(lo,hi) if ls[i].startswith(needle)]
+          if len(rows)!=1:
+              raise SystemExit('REFERENCE_SEMANTICS_TOOLCHAIN_ROW_COUNT='+str(len(rows)))
+          ls[rows[0]]=needle+' '+new
+          p.write_text('\n'.join(ls)+'\n',encoding='utf-8')
+          check=yaml.safe_load(p.read_text(encoding='utf-8')) or {}
+          got=((check.get('candidate_validation_contract') or {}).get('source_package_validation_toolchain_blob_bindings') or {}).get(key)
+          if got!=new:
+              raise SystemExit('REFERENCE_SEMANTICS_TOOLCHAIN_BINDING_VERIFY_FAILED')
+          PY
+          python governance/source-successor/materialize_derived_source_package.py --check
+          python .github/governance-source/active/source/09_TESTS/governance/validate_section_registry.py
+          python .github/governance-source/active/source/09_TESTS/governance/validate_reference_semantics.py
+          python .github/governance-source/active/source/09_TESTS/governance/validate_stage_execution_invariants.py
+          python governance/ci/stage_execution_engine.py --definition-audit-all
+          python governance/ci/validate_successor_governance_preformal.py
+          python governance/ci/validate_governance_candidate_promotion_readiness.py --self-test
+          python governance/ci/validate_structured_mutation_safety.py
+          python governance/ci/test_stage_execution_engine.py
+          find . -type d -name __pycache__ -prune -exec rm -rf {} +
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add .github/governance-source/active/source/10_REGISTRY/SEMANTIC_AUTHORITY_BASELINE.yaml                   .github/governance-source/active/source/09_TESTS/governance/validate_reference_semantics.py                   .github/governance-source/active/source/11_EVIDENCE/audit/AUDIT_BASELINE.yaml                   .github/governance-source/active/source/11_EVIDENCE/audit/generated/GOVERNANCE_REQUIREMENT_INDEX.json                   .github/governance-source/active/source/10_REGISTRY/GOVERNANCE_ROOT_MANIFEST.yaml                   .github/governance-source/active/source/CHECKSUMS.sha256                   governance/specifications/REGISTRY.yaml
+          git diff --cached --quiet && { echo "NO_DERIVED_RECONCILIATION_CHANGES"; exit 1; }
+          git commit -m "chore(governance): reconcile issue60 Stage specification derivatives"
+          test "$(git ls-remote origin refs/heads/rebuild-v2.1.1 | awk '{print $1}')" = "$BASE_HEAD"
+          git push origin HEAD:rebuild-v2.1.1

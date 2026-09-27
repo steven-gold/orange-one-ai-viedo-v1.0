@@ -64,6 +64,18 @@ governance_identity:
     - APPLICATION_BASELINE_MATERIALIZATION_RECEIPT
     - STAGE04_TO_STAGE05_REENTRY
     - WORKFLOW_BINDING_REGRESSION
+  - record_url: https://github.com/steven-gold/orange-one-ai-viedo-v1.0/issues/60
+    record_kind: GITHUB_GOVERNANCE_CHANGE_RECORD
+    authorization_base_head: 66a77b1697c16593e6c0fc4bd755afc81b5b6101
+    preexists_normative_mutation_after_base: true
+    candidate_branch: rebuild-v2.1.1
+    authorized_scope:
+    - STAGE_SPECIFICATION_COMPLETENESS
+    - STAGE_INVARIANT_NORMATIVE_BINDING
+    - GOVERNANCE_SUCCESSOR_HEAD_VALIDATION_TERMINALIZATION
+    - STAGE_NORMATIVE_REFERENCE_TRANSACTION_CLOSURE
+    - GOVERNANCE_ONLY_NEGATIVE_REGRESSION
+    - NO_PRODUCT_STAGE_EXECUTION
 product_execution_branch: 0921acpos
 product_stage_governance_authority:
   mode: EXACT_SELECTED_VERIFIED_RELEASE_COMMIT_ONLY
@@ -130,6 +142,25 @@ mutation_policy:
   source_package_successor_may_touch_product_execution_branch: false
 candidate_validation_contract:
   exact_candidate_head_required: true
+  remediation_generated_successor_head_requires_fresh_exact_head_validation: true
+  remediation_producer_success_is_not_successor_head_validation: true
+  prior_head_workflow_result_may_credit_successor_head: false
+  zero_required_workflow_runs_on_successor_head: BLOCK
+  self_mutating_governance_workflow_must_declare_successor_validation_terminalization: true
+  successor_validation_terminalization_allowed_mechanisms:
+  - AUTHORIZED_COMMIT_OR_REF_UPDATE_THAT_TRIGGERS_REGISTERED_REQUIRED_PUSH_WORKFLOWS
+  - EXPLICIT_EXACT_HEAD_VALIDATION_DISPATCH_WHEN_WORKFLOW_AND_REGISTRY_ALLOW_IT
+  semantic_reference_change_transaction_required: true
+  semantic_reference_transaction_required_owners:
+  - REFERENCE_RULE_REGISTRY
+  - SEMANTIC_AUTHORITY_BASELINE
+  - REFERENCE_SEMANTICS_VALIDATOR_BINDING
+  - GOVERNANCE_ROOT_MANIFEST
+  - CHECKSUMS
+  - AUDIT_BASELINE
+  - GOVERNANCE_REQUIREMENT_INDEX
+  - REGRESSION_EXPECTATION_OWNER
+  semantic_reference_transaction_partial_sync: BLOCK
   required_workflow_names:
   - Current Governance Cleanup Validation
   - Mother Spec Neutrality Audit
