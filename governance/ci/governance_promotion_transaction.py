@@ -67,7 +67,7 @@ def contract_ok(reg):
       'promotion_transaction_product_completion_credit':0,
     }
     bad=[k for k,v in exact.items() if c.get(k)!=v]
-    for k in ['promotion_transaction_requires_explicit_promotion_authorization','promotion_transaction_requires_fresh_readiness','promotion_transaction_requires_integrated_source_validation','promotion_transaction_requires_independent_auditor_evidence','promotion_transaction_requires_new_release_uid','promotion_transaction_execution_authorization_must_be_distinct_from_implementation_authorization','promotion_transaction_post_write_reconciliation_required','promotion_transaction_release_delta_exact','promotion_transaction_fresh_reverify_handoff_required']:
+    for k in ['promotion_transaction_requires_explicit_promotion_authorization','promotion_transaction_requires_fresh_readiness','promotion_transaction_requires_integrated_source_validation','promotion_transaction_requires_independent_auditor_evidence','promotion_transaction_requires_new_release_uid','promotion_transaction_execution_authorization_must_be_distinct_from_implementation_authorization','promotion_transaction_post_write_reconciliation_required','promotion_transaction_release_delta_exact','promotion_transaction_fresh_reverify_handoff_required','promotion_transaction_post_promotion_same_branch_reverify_supported']:
         if c.get(k) is not True: bad.append(k)
     if c.get('promotion_transaction_requires_source_external_trust') is not False:
         bad.append('promotion_transaction_requires_source_external_trust')

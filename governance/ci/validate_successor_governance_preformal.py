@@ -19,8 +19,23 @@ def main():
     vc=registry.get('candidate_validation_contract') or {}
     mutation=registry.get('mutation_policy') or {}
     failures=[]
-    if registry.get('branch')!='rebuild-v2.1.1' or resolved.get('governance_role')!='GOVERNANCE_REVISION_CANDIDATE':
+    role=str(resolved.get('governance_role') or '')
+    if registry.get('branch')!='rebuild-v2.1.1' or role not in {'GOVERNANCE_REVISION_CANDIDATE','IMMUTABLE_GOVERNANCE_RULESET'}:
         failures.append('SINGLE_BRANCH_CURRENT_IDENTITY_DRIFT')
+    release_reverify=(role=='IMMUTABLE_GOVERNANCE_RULESET')
+    if release_reverify:
+        ident=registry.get('governance_identity') or {}
+        manifest=load_yaml(ROOT/'governance/specifications/current/SPECIFICATION_MANIFEST.yaml')
+        lock=load_yaml(ROOT/'governance/BRANCH_AUTHORITY_LOCK.yaml')
+        branch_lock=(lock.get('branches') or {}).get('rebuild-v2.1.1') or {}
+        if registry.get('status')!='CURRENT_RELEASED':
+            failures.append('RELEASE_REVERIFY_REGISTRY_STATUS_DRIFT')
+        if ident.get('status')!='RELEASED' or ident.get('identity_state')!='IMMUTABLE_RELEASED' or ident.get('released_immutable_identity') is not True:
+            failures.append('RELEASE_REVERIFY_IDENTITY_DRIFT')
+        if manifest.get('branch_release_state')!='RELEASED_CURRENT' or manifest.get('released_current_authority') is not True:
+            failures.append('RELEASE_REVERIFY_MANIFEST_STATE_DRIFT')
+        if branch_lock.get('role')!='IMMUTABLE_GOVERNANCE_RULESET' or branch_lock.get('gpt_write_policy')!='FORBIDDEN':
+            failures.append('RELEASE_REVERIFY_BRANCH_LOCK_DRIFT')
     if mutation.get('single_branch_consolidation_mode') is not True or mutation.get('single_active_governance_branch')!='rebuild-v2.1.1':
         failures.append('SINGLE_BRANCH_CONSOLIDATION_CONTRACT_DRIFT')
     if mutation.get('branch_fanout_without_explicit_user_authorization')!='FORBIDDEN':
@@ -51,7 +66,7 @@ def main():
     except Exception: src={'status':'FAIL','failures':['INTEGRATED_SOURCE_VALIDATOR_OUTPUT_UNPARSEABLE'],'stderr':proc.stderr[-3000:]}
     if proc.returncode!=0 or src.get('status')!='PASS_INTEGRATED_SOURCE':
         failures.append('INTEGRATED_SOURCE_VALIDATION_FAILED')
-    result={'mode':'SINGLE_BRANCH_GOVERNANCE_PREFORMAL','status':'PASS' if not failures else 'FAIL','blocking_failures':len(failures),'failures':failures,'source_package_successor_internal_validation':src,'source_package_internal_exact_head_pass':src.get('status')=='PASS_INTEGRATED_SOURCE','source_package_external_trust_status':'NOT_REQUIRED_SINGLE_BRANCH_CONSOLIDATION','source_current_admission':'INTEGRATED_CURRENT_WORKLINE' if src.get('status')=='PASS_INTEGRATED_SOURCE' else 'BLOCKED','mandatory_regression_denominator_preserved':src.get('status')=='PASS_INTEGRATED_SOURCE','historical_current_credit':0,'formal_freeze_allowed':False,'formal_test_allowed':False,'governance_promotion_allowed':False,'product_completion_credit':0}
+    result={'mode':'SINGLE_BRANCH_RELEASE_REVERIFY' if release_reverify else 'SINGLE_BRANCH_GOVERNANCE_PREFORMAL','release_reverify':release_reverify,'status':'PASS' if not failures else 'FAIL','blocking_failures':len(failures),'failures':failures,'source_package_successor_internal_validation':src,'source_package_internal_exact_head_pass':src.get('status')=='PASS_INTEGRATED_SOURCE','source_package_external_trust_status':'NOT_REQUIRED_SINGLE_BRANCH_CONSOLIDATION','source_current_admission':'INTEGRATED_CURRENT_WORKLINE' if src.get('status')=='PASS_INTEGRATED_SOURCE' else 'BLOCKED','mandatory_regression_denominator_preserved':src.get('status')=='PASS_INTEGRATED_SOURCE','historical_current_credit':0,'formal_freeze_allowed':False,'formal_test_allowed':False,'governance_promotion_allowed':False,'product_completion_credit':0}
     print(json.dumps(result,ensure_ascii=False,indent=2,sort_keys=True))
     return 0 if result['status']=='PASS' else 1
 if __name__=='__main__': raise SystemExit(main())
