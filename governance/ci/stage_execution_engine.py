@@ -483,15 +483,30 @@ def validate_work_unit_bindings(stage_uid,work,stages,adapters):
         fail(f'ACTIVE_WORK_UNIT_OPERATION_BINDING_COVERAGE_INVALID:{stage_uid}')
     driver=adapters.get('execution_driver_contract') or {}
     allowed_protocols=set(map(str,driver.get('allowed_operation_executor_protocols') or []))
+    allowed_applicability=set(map(str,driver.get('allowed_operation_applicability') or []))
+    applicability_field=str(driver.get('operation_applicability_field') or 'applicability')
     for uid,binding in op_bindings.items():
-        if not isinstance(binding,dict) or not binding.get('executor_owner') or not binding.get('result_owner') or not binding.get('executor_protocol') or not binding.get('operation_receipt_ref'):
+        if not isinstance(binding,dict) or not binding.get('result_owner') or not binding.get('operation_receipt_ref'):
+            fail(f'ACTIVE_WORK_UNIT_OPERATION_BINDING_INVALID:{uid}')
+        applicability=str(binding.get(applicability_field) or '')
+        if applicability not in allowed_applicability:
+            fail(f'ACTIVE_WORK_UNIT_OPERATION_APPLICABILITY_INVALID:{uid}')
+        receipt_rel=Path(str(binding.get('operation_receipt_ref') or ''))
+        if receipt_rel.is_absolute() or '..' in receipt_rel.parts:
+            fail(f'ACTIVE_WORK_UNIT_OPERATION_RECEIPT_REF_PATH_INVALID:{uid}')
+        if applicability=='AUTHORIZED_NOT_APPLICABLE':
+            if driver.get('authorized_not_applicable_requires_authority_evidence') is not True or not str(binding.get('authority_evidence_ref') or '').strip():
+                fail(f'ACTIVE_WORK_UNIT_OPERATION_NA_AUTHORITY_MISSING:{uid}')
+            if binding.get('executor_owner') or binding.get('executor_protocol'):
+                fail(f'ACTIVE_WORK_UNIT_OPERATION_NA_EFFECTFUL_EXECUTOR_FORBIDDEN:{uid}')
+            continue
+        if not binding.get('executor_owner') or not binding.get('executor_protocol'):
             fail(f'ACTIVE_WORK_UNIT_OPERATION_BINDING_INVALID:{uid}')
         if str(binding.get('executor_protocol')) not in allowed_protocols:
             fail(f'ACTIVE_WORK_UNIT_OPERATION_EXECUTOR_PROTOCOL_INVALID:{uid}')
-        for field,label in (('executor_owner','EXECUTOR_OWNER'),('operation_receipt_ref','OPERATION_RECEIPT_REF')):
-            rel=Path(str(binding.get(field) or ''))
-            if rel.is_absolute() or '..' in rel.parts:
-                fail(f'ACTIVE_WORK_UNIT_{label}_PATH_INVALID:{uid}')
+        rel=Path(str(binding.get('executor_owner') or ''))
+        if rel.is_absolute() or '..' in rel.parts:
+            fail(f'ACTIVE_WORK_UNIT_EXECUTOR_OWNER_PATH_INVALID:{uid}')
     scan_bindings=work.get('scanner_bindings')
     expected_scans=set(map(str,(adapters['stages'][stage_uid]).get('scanner_dimensions') or []))
     if not isinstance(scan_bindings,dict) or set(map(str,scan_bindings))!=expected_scans:
