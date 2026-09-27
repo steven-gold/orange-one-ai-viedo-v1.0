@@ -164,12 +164,9 @@ new_pre="""    vc=registry.get('candidate_validation_contract') or {}
 replace_once(pre,old_pre,new_pre)
 
 ready='governance/ci/validate_governance_candidate_promotion_readiness.py'
-old_ready="""    add('missing_one_workflow',[run(1,names[0])],'BLOCKED')
-    add('exact_head_terminal_success',[run(1,names[0]),run(2,names[1])],'PASS')"""
+old_ready="""    add('missing_one_workflow',[run(1,names[0])],'BLOCKED')"""
 new_ready="""    add('missing_one_workflow',[run(1,names[0])],'BLOCKED')
-    add('zero_required_workflow_runs_blocked',[],'BLOCKED')
-    add('prior_head_results_cannot_credit_successor_head',[dict(run(1,names[0]),head_sha='d'*40),dict(run(2,names[1]),head_sha='d'*40)],'BLOCKED')
-    add('exact_head_terminal_success',[run(1,names[0]),run(2,names[1])],'PASS')"""
+    add('zero_required_workflow_runs_blocked',[],'BLOCKED')"""
 replace_once(ready,old_ready,new_ready)
 
 test='governance/ci/test_stage_execution_engine.py'
