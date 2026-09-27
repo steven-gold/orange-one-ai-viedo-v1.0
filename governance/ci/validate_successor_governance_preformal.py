@@ -81,7 +81,7 @@ def exact_head_validation_contract_check(registry:dict)->dict:
     if vc.get('source_package_validation_toolchain_binding_mode')!='GIT_BLOB_SHA1_EXACT_SET_V1':
         failures.append('SOURCE_VALIDATION_TOOLCHAIN_BINDING_MODE_DRIFT')
     toolchain_bindings=vc.get('source_package_validation_toolchain_blob_bindings') or {}
-    if not isinstance(toolchain_bindings,dict) or len(toolchain_bindings)!=43 or int(vc.get('source_package_validation_toolchain_exact_file_count') or 0)!=43:
+    if not isinstance(toolchain_bindings,dict) or len(toolchain_bindings)!=44 or int(vc.get('source_package_validation_toolchain_exact_file_count') or 0)!=44:
         failures.append('SOURCE_VALIDATION_TOOLCHAIN_DENOMINATOR_DRIFT')
     if vc.get('source_package_validation_toolchain_missing_extra_or_blob_drift')!='BLOCK':
         failures.append('SOURCE_VALIDATION_TOOLCHAIN_FAIL_CLOSED_MISSING')
@@ -109,6 +109,18 @@ def exact_head_validation_contract_check(registry:dict)->dict:
         failures.append('WORKFLOW_ACTION_PINNING_PATH_DENOMINATOR_DRIFT')
     if vc.get('source_successor_workflow_action_pinning_required') is not True:
         failures.append('SOURCE_SUCCESSOR_WORKFLOW_ACTION_PINNING_GATE_MISSING')
+    if vc.get('governance_ci_runner_label')!='ubuntu-24.04':
+        failures.append('GOVERNANCE_CI_RUNNER_LABEL_DRIFT')
+    if vc.get('governance_ci_python_version')!='3.11.16':
+        failures.append('GOVERNANCE_CI_PYTHON_VERSION_DRIFT')
+    if vc.get('governance_ci_dependency_lock_path')!='governance/ci/requirements-governance.lock':
+        failures.append('GOVERNANCE_CI_DEPENDENCY_LOCK_PATH_DRIFT')
+    if vc.get('governance_ci_dependency_install_mode')!='PIP_REQUIRE_HASHES':
+        failures.append('GOVERNANCE_CI_DEPENDENCY_INSTALL_MODE_DRIFT')
+    if vc.get('governance_ci_pyyaml_version')!='6.0.2' or vc.get('governance_ci_pyyaml_sha256')!='3ad2a3decf9aaba3d29c8f537ac4b243e36bef957511b4766cb0057d32b0be85':
+        failures.append('GOVERNANCE_CI_DEPENDENCY_IDENTITY_DRIFT')
+    if vc.get('governance_ci_environment_drift')!='BLOCK':
+        failures.append('GOVERNANCE_CI_ENVIRONMENT_FAIL_CLOSED_MISSING')
     if vc.get('independent_auditor_external_provenance_required') is not True:
         failures.append('INDEPENDENT_AUDITOR_EXTERNAL_PROVENANCE_NOT_REQUIRED')
     if set(map(str,vc.get('independent_auditor_required_provenance_fields') or []))!={'implementation_provenance_ref','execution_receipt_provenance_ref','result_artifact_provenance_ref','evaluator_authority_ref'}:

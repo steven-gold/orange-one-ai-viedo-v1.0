@@ -190,7 +190,52 @@ if set(_action_paths)!={
 }:
     errors.append('WORKFLOW_ACTION_PINNING_PATH_DENOMINATOR_DRIFT')
 _action_ref_re=re.compile(r'^\s*(?:-\s*)?uses:\s*([^\s#]+)',re.M)
-_full_sha_ref_re=re.compile(r'^[^@\s]+@[0-9a-fA-F]{40}
+_full_sha_ref_re=re.compile(r'^[^@\s]+@[0-9a-fA-F]{40}$')
+for _rel in _action_paths:
+    _wf=ROOT/_rel
+    if not _wf.is_file():
+        errors.append('WORKFLOW_ACTION_PINNING_TARGET_MISSING:'+_rel)
+        continue
+    _text=_wf.read_text(encoding='utf-8')
+    for _ref in _action_ref_re.findall(_text):
+        if _ref.startswith('./'):
+            continue
+        if not _full_sha_ref_re.fullmatch(_ref):
+            errors.append('WORKFLOW_EXTERNAL_ACTION_MUTABLE_REF:'+_rel+':'+_ref)
+
+_runner=str(_candidate_contract.get('governance_ci_runner_label') or '')
+_python=str(_candidate_contract.get('governance_ci_python_version') or '')
+_lock=str(_candidate_contract.get('governance_ci_dependency_lock_path') or '')
+_hash=str(_candidate_contract.get('governance_ci_pyyaml_sha256') or '')
+if _runner!='ubuntu-24.04':
+    errors.append('GOVERNANCE_CI_RUNNER_LABEL_DRIFT')
+if _python!='3.11.16':
+    errors.append('GOVERNANCE_CI_PYTHON_VERSION_DRIFT')
+if _lock!='governance/ci/requirements-governance.lock':
+    errors.append('GOVERNANCE_CI_DEPENDENCY_LOCK_PATH_DRIFT')
+if _candidate_contract.get('governance_ci_dependency_install_mode')!='PIP_REQUIRE_HASHES':
+    errors.append('GOVERNANCE_CI_DEPENDENCY_INSTALL_MODE_DRIFT')
+if _candidate_contract.get('governance_ci_pyyaml_version')!='6.0.2' or _hash!='3ad2a3decf9aaba3d29c8f537ac4b243e36bef957511b4766cb0057d32b0be85':
+    errors.append('GOVERNANCE_CI_DEPENDENCY_IDENTITY_DRIFT')
+_lock_path=ROOT/_lock
+if not _lock_path.is_file():
+    errors.append('GOVERNANCE_CI_DEPENDENCY_LOCK_MISSING')
+else:
+    _lock_text=_lock_path.read_text(encoding='utf-8')
+    if 'PyYAML==6.0.2 --hash=sha256:'+_hash not in _lock_text:
+        errors.append('GOVERNANCE_CI_DEPENDENCY_LOCK_CONTENT_DRIFT')
+for _rel in _action_paths:
+    _wf=ROOT/_rel
+    if not _wf.is_file():
+        continue
+    _text=_wf.read_text(encoding='utf-8')
+    if 'runs-on: '+_runner not in _text:
+        errors.append('GOVERNANCE_CI_RUNNER_NOT_LOCKED:'+_rel)
+    if "python-version: '"+_python+"'" not in _text:
+        errors.append('GOVERNANCE_CI_PYTHON_NOT_LOCKED:'+_rel)
+    if '--require-hashes -r '+_lock not in _text:
+        errors.append('GOVERNANCE_CI_DEPENDENCY_HASH_LOCK_NOT_USED:'+_rel)
+
 if manifest.get('current_governance_identity_source')!='governance/specifications/REGISTRY.yaml':
     errors.append('SPECIFICATION_MANIFEST_IDENTITY_SOURCE_DRIFT')
 if manifest.get('artifact_uid_may_select_current_governance') is not False:
