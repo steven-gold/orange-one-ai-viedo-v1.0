@@ -344,7 +344,11 @@ def evaluate_snapshot(receipt:dict,source_manifest:dict,manifest_blob_sha:str,ru
         failures.extend([x for x in (external_check.get('failures') or []) if x not in failures])
 
     return {
-      'status':'PASS' if not failures else ('PASS_INTERNAL_UNSIGNED' if internal_ok and not require_external_trust and manifest_trust=='NOT_SIGNED' else 'BLOCKED'),
+      'status':(
+        'PASS_INTERNAL_UNSIGNED'
+        if internal_ok and not require_external_trust and source_status=='UNSIGNED_NOT_CURRENT' and manifest_trust=='NOT_SIGNED' and not failures
+        else ('PASS' if not failures and external_ready else 'BLOCKED')
+      ),
       'internal_exact_head_validation': 'PASS' if internal_ok else 'BLOCKED',
       'external_trust_validation': 'PASS' if external_ready else 'NOT_VERIFIED',
       'source_branch':expected_branch,
