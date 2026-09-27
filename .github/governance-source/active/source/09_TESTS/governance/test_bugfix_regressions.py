@@ -71,12 +71,13 @@ REPO=PKG.parents[3]
 source_candidate=load(REPO/'governance/source-successor/SOURCE_PACKAGE_CANDIDATE.yaml')
 external=source_candidate.get('external_trust') or {}
 results.append(case(
-    'external_trust_root_blocks_candidate_self_resign',
-    source_candidate.get('status')=='UNSIGNED_NOT_CURRENT'
-    and source_candidate.get('current_authority') is False
-    and external.get('status')=='NOT_SIGNED'
+    'single_branch_integrated_source_blocks_self_sign',
+    source_candidate.get('status')=='INTEGRATED_CURRENT_WORKLINE'
+    and source_candidate.get('current_authority') is True
+    and (source_candidate.get('integration') or {}).get('mode')=='SINGLE_BRANCH_INTEGRATED'
+    and external.get('status')=='RETIRED_BY_SINGLE_BRANCH_CONSOLIDATION'
     and external.get('candidate_self_sign')=='FORBIDDEN',
-    {'candidate_status':source_candidate.get('status'),'external_trust':external}
+    {'candidate_status':source_candidate.get('status'),'integration':source_candidate.get('integration'),'external_trust':external}
 ))
 
 out={'suite':'v2.1.6 cross-lifecycle semantic granularity bugfix regression','total':len(results),'passed_expectations':sum(x['ok'] for x in results),'results':results}

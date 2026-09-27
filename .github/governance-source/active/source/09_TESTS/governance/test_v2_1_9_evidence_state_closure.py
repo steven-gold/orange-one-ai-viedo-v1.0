@@ -82,7 +82,7 @@ results=[
  case('retired_run_ids_have_no_current_credit',st.get('retired_predecessor_run_ids_are_current_evidence') is False),
  case('deleted_history_not_required_for_current_validation',st.get('deleted_historical_evidence_must_be_restored_for_current_validation') is False),
  case('historical_fixture_required_for_legacy_semantics',m.get('legacy_regression_must_use_isolated_historical_fixture_when_historical_semantics_remain_required') is True),
- case('source_candidate_not_current_authority',cand.get('status')=='UNSIGNED_NOT_CURRENT' and cand.get('current_authority') is False),
+ case('source_package_single_branch_current_authority',cand.get('status')=='INTEGRATED_CURRENT_WORKLINE' and cand.get('current_authority') is True and (cand.get('integration') or {}).get('mode')=='SINGLE_BRANCH_INTEGRATED'),
  mutate_yaml('human_review_auto_pass_blocked','10_REGISTRY/REVIEW_PROGRESS_LEDGER.yaml',lambda d:d['required_review_plan'][0].__setitem__('status','APPROVED')),
  mutate_yaml('sync_contract_disabled_blocked','10_REGISTRY/GOVERNANCE_ACCEPTANCE_AUDIT_BLUEPRINT.yaml',lambda d:d['current_test_evidence_sync_contract'].__setitem__('github_replay_closure_evidence_required',False)),
  mutate_yaml('stage02_functional_compile_missing_blocked','10_REGISTRY/GOVERNANCE_LIFECYCLE_STAGE_REGISTRY.yaml',lambda d:[s['operations'].remove('FUNCTIONAL_CHAIN_COMPILE') for s in d['stages'] if s.get('stage_uid')=='STAGE-02']),

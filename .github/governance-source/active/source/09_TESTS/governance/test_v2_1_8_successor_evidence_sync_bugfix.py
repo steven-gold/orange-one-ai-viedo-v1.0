@@ -49,7 +49,9 @@ results += [
         and c['migration'].get('historical_predecessor_evidence_role')=='HISTORICAL_REFERENCE_ONLY'
         and c['migration'].get('missing_retired_predecessor_evidence_disposition')=='MIGRATE_CONSUMER_NOT_RESTORE_ARTIFACT'
         and c['state'].get('current_candidate_identity_source')=='governance/specifications/REGISTRY.yaml'
-        and c['candidate'].get('status')=='UNSIGNED_NOT_CURRENT'
+        and c['candidate'].get('status')=='INTEGRATED_CURRENT_WORKLINE'
+        and c['candidate'].get('current_authority') is True
+        and (c['candidate'].get('integration') or {}).get('mode')=='SINGLE_BRANCH_INTEGRATED'
       )(successor_migration_contract())),
 ]
 c=successor_migration_contract()
@@ -71,7 +73,7 @@ results += [
  case('current_candidate_identity_from_registry',st.get('current_candidate_identity_source')=='governance/specifications/REGISTRY.yaml'),
  case('current_validation_truth_external_exact_head',st.get('current_validation_truth_source')=='EXACT_HEAD_REQUIRED_WORKFLOW_RECEIPTS'),
  case('retired_run_ids_not_current_evidence',st.get('retired_predecessor_run_ids_are_current_evidence') is False),
- case('source_successor_remains_unsigned_not_current',cand.get('status')=='UNSIGNED_NOT_CURRENT' and cand.get('current_authority') is False),
+ case('source_package_is_single_branch_integrated_current',cand.get('status')=='INTEGRATED_CURRENT_WORKLINE' and cand.get('current_authority') is True and (cand.get('integration') or {}).get('mode')=='SINGLE_BRANCH_INTEGRATED'),
  case('machine_review_registry_still_present',(ROOT/'10_REGISTRY/REVIEW_PROGRESS_LEDGER.yaml').is_file()),
  case('acceptance_blueprint_sync_contract_still_present',bool((yaml.safe_load((ROOT/'10_REGISTRY/GOVERNANCE_ACCEPTANCE_AUDIT_BLUEPRINT.yaml').read_text(encoding='utf-8')) or {}).get('current_test_evidence_sync_contract'))),
 ]

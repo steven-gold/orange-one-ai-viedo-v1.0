@@ -91,8 +91,11 @@ res += [
  case('current_candidate_truth_uses_registry_and_exact_head_receipts',
       st.get('current_candidate_identity_source')=='governance/specifications/REGISTRY.yaml'
       and st.get('current_validation_truth_source')=='EXACT_HEAD_REQUIRED_WORKFLOW_RECEIPTS'),
- case('unsigned_source_successor_has_zero_current_credit',
-      cand.get('status')=='UNSIGNED_NOT_CURRENT' and cand.get('current_authority') is False and cand.get('promotion_credit')==0),
+ case('integrated_source_has_current_authority_but_zero_promotion_credit',
+      cand.get('status')=='INTEGRATED_CURRENT_WORKLINE'
+      and cand.get('current_authority') is True
+      and (cand.get('integration') or {}).get('mode')=='SINGLE_BRANCH_INTEGRATED'
+      and cand.get('promotion_credit')==0),
 ]
 
 out={'suite':'v2.1.12 successor-state monotonic predecessor validation / Required Evidence parse-integrity multidirection high-pressure regression','total':len(res),'passed_expectations':sum(x['ok'] for x in res),'results':res}
