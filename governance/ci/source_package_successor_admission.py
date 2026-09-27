@@ -285,7 +285,7 @@ def fetch_source_manifest(repository:str,path:str,head_sha:str,token:str|None)->
     return blob_sha,doc
 
 
-def evaluate_snapshot(receipt:dict,source_manifest:dict,manifest_blob_sha:str,run:dict,live_before:str,live_after:str,require_external_trust:bool,external_trust_verification:dict|None=None)->dict:
+def evaluate_snapshot(receipt:dict,source_manifest:dict,manifest_blob_sha:str,run:dict,live_before:str,live_after:str,require_external_trust:bool,external_trust_verification:dict|None=None,expected_workflow_path:str|None=None,expected_workflow_event:str|None=None)->dict:
     failures=[]
     expected_head=str(receipt.get('source_head_sha') or '')
     expected_branch=str(receipt.get('candidate_source_branch') or '')
@@ -299,6 +299,12 @@ def evaluate_snapshot(receipt:dict,source_manifest:dict,manifest_blob_sha:str,ru
         failures.append('SOURCE_VALIDATION_RUN_HEAD_DRIFT')
     if str(run.get('name') or '')!=str(receipt.get('source_validation_workflow_name') or ''):
         failures.append('SOURCE_VALIDATION_WORKFLOW_DRIFT')
+    if expected_workflow_path and str(run.get('path') or '')!=expected_workflow_path:
+        failures.append('SOURCE_VALIDATION_WORKFLOW_PATH_DRIFT')
+    if expected_workflow_event and str(run.get('event') or '')!=expected_workflow_event:
+        failures.append('SOURCE_VALIDATION_WORKFLOW_EVENT_DRIFT')
+    if str(run.get('head_branch') or '')!=expected_branch:
+        failures.append('SOURCE_VALIDATION_HEAD_BRANCH_DRIFT')
     if int(run.get('id') or 0)!=int(receipt.get('source_validation_run_id') or 0):
         failures.append('SOURCE_VALIDATION_RUN_ID_DRIFT')
     if str(run.get('status') or '')!='completed' or str(run.get('conclusion') or '')!='success':
@@ -323,7 +329,9 @@ def evaluate_snapshot(receipt:dict,source_manifest:dict,manifest_blob_sha:str,ru
       str(receipt.get('source_internal_status') or '')=='PASS_INTERNAL_UNSIGNED'
       and not any(x in failures for x in (
         'SOURCE_SUCCESSOR_LIVE_HEAD_DRIFT','SOURCE_VALIDATION_RUN_HEAD_DRIFT',
-        'SOURCE_VALIDATION_WORKFLOW_DRIFT','SOURCE_VALIDATION_RUN_ID_DRIFT',
+        'SOURCE_VALIDATION_WORKFLOW_DRIFT','SOURCE_VALIDATION_WORKFLOW_PATH_DRIFT',
+        'SOURCE_VALIDATION_WORKFLOW_EVENT_DRIFT','SOURCE_VALIDATION_HEAD_BRANCH_DRIFT',
+        'SOURCE_VALIDATION_RUN_ID_DRIFT',
         'SOURCE_VALIDATION_NOT_TERMINAL_SUCCESS','SOURCE_RECEIPT_VALIDATION_RESULT_DRIFT',
         'SOURCE_MANIFEST_BLOB_DRIFT'
       ))
@@ -373,7 +381,11 @@ def validate_source_successor(repository:str,token:str|None,contract:dict,requir
     receipt=load_yaml(receipt_path)
     branch=str(contract.get('source_package_successor_branch') or '')
     workflow=str(contract.get('source_package_successor_workflow_name') or '')
+    workflow_path=str(contract.get('source_package_successor_workflow_path') or '')
+    workflow_event=str(contract.get('source_package_successor_workflow_event') or '')
     manifest_path=str(contract.get('source_package_successor_manifest_path') or '')
+    if not workflow_path or not workflow_event or contract.get('source_package_successor_workflow_identity_requires_name_path_event_branch_head') is not True:
+        return {'status':'BLOCKED','failures':['SOURCE_WORKFLOW_IDENTITY_CONTRACT_INCOMPLETE']}
     if receipt.get('candidate_source_branch')!=branch:
         return {'status':'BLOCKED','failures':['SOURCE_RECEIPT_BRANCH_CONTRACT_DRIFT']}
     if receipt.get('source_validation_workflow_name')!=workflow:
@@ -386,6 +398,9 @@ def validate_source_successor(repository:str,token:str|None,contract:dict,requir
     matching=[
       r for r in runs
       if str(r.get('name') or '')==workflow
+      and str(r.get('path') or '')==workflow_path
+      and str(r.get('event') or '')==workflow_event
+      and str(r.get('head_branch') or '')==branch
       and str(r.get('head_sha') or '')==live_before
       and int(r.get('id') or 0)==int(receipt.get('source_validation_run_id') or 0)
     ]
@@ -410,5 +425,6 @@ def validate_source_successor(repository:str,token:str|None,contract:dict,requir
         except Exception as exc:
             external_check={'status':'NOT_VERIFIED','failures':['SOURCE_EXTERNAL_TRUST_MACHINE_VERIFICATION_EXCEPTION:'+type(exc).__name__+':'+str(exc)]}
     return evaluate_snapshot(
-      receipt,manifest,manifest_blob,matching[0],live_before,live_after,require_external_trust,external_check
+      receipt,manifest,manifest_blob,matching[0],live_before,live_after,require_external_trust,external_check,
+      expected_workflow_path=workflow_path,expected_workflow_event=workflow_event
     )

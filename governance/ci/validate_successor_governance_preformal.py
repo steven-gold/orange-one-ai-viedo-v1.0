@@ -61,6 +61,7 @@ def exact_head_validation_contract_check(registry:dict)->dict:
       'source_package_successor_live_head_must_equal_receipt_head','source_package_successor_live_head_recheck_required',
       'source_package_successor_external_trust_required_for_promotion','source_package_successor_unsigned_blocks_promotion',
       'source_internal_pass_may_satisfy_candidate_validation_without_promotion_credit',
+      'source_package_successor_workflow_identity_requires_name_path_event_branch_head',
     )
     for key in expected_true:
         if vc.get(key) is not True:
@@ -71,6 +72,12 @@ def exact_head_validation_contract_check(registry:dict)->dict:
         failures.append('SOURCE_INTERNAL_PASS_CURRENT_ADMISSION_LEAK')
     if vc.get('source_internal_pass_may_imply_governance_promotion') is not False:
         failures.append('SOURCE_INTERNAL_PASS_PROMOTION_LEAK')
+    if vc.get('source_package_successor_workflow_path')!='.github/workflows/source-package-successor-validation.yml':
+        failures.append('SOURCE_SUCCESSOR_WORKFLOW_PATH_DRIFT')
+    if vc.get('source_package_successor_workflow_event')!='push':
+        failures.append('SOURCE_SUCCESSOR_WORKFLOW_EVENT_DRIFT')
+    if vc.get('source_package_successor_workflow_identity_requires_name_path_event_branch_head') is not True:
+        failures.append('SOURCE_SUCCESSOR_WORKFLOW_IDENTITY_GATE_MISSING')
     required=set(map(str,vc.get('required_workflow_names') or []))
     if required!={'Current Governance Cleanup Validation','Mother Spec Neutrality Audit'}:
         failures.append('REQUIRED_WORKFLOW_DENOMINATOR_DRIFT')

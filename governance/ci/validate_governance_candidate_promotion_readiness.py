@@ -376,15 +376,24 @@ def self_test() -> int:
         row['actual']=(row['local']==row['before']==row['after']); row['ok']=row['actual']==row['expected']; cases.append(row)
     synthetic_receipt={'candidate_source_branch':'source-candidate','source_head_sha':head,'source_validation_workflow_name':'Source Package Successor Validation','source_validation_run_id':77,'source_validation_status':'completed','source_validation_conclusion':'success','source_internal_status':'PASS_INTERNAL_UNSIGNED','source_candidate_manifest_blob_sha':'blob1','released_current_authority':False,'external_trust_status':'NOT_SIGNED','external_trust_evidence_ref':None}
     synthetic_manifest={'status':'UNSIGNED_NOT_CURRENT','current_authority':False,'external_trust':{'status':'NOT_SIGNED','candidate_self_sign':'FORBIDDEN'}}
-    synthetic_run={'id':77,'name':'Source Package Successor Validation','head_sha':head,'status':'completed','conclusion':'success'}
-    internal=evaluate_snapshot(synthetic_receipt,synthetic_manifest,'blob1',synthetic_run,head,head,False)
+    synthetic_run={'id':77,'name':'Source Package Successor Validation','path':'.github/workflows/source-package-successor-validation.yml','event':'push','head_branch':'source-candidate','head_sha':head,'status':'completed','conclusion':'success'}
+    internal=evaluate_snapshot(synthetic_receipt,synthetic_manifest,'blob1',synthetic_run,head,head,False,expected_workflow_path='.github/workflows/source-package-successor-validation.yml',expected_workflow_event='push')
     cases.append({'case':'source_internal_unsigned_valid_for_candidate_validation','expected':'PASS_INTERNAL_UNSIGNED','actual':internal.get('status'),'ok':internal.get('status')=='PASS_INTERNAL_UNSIGNED'})
-    promotion=evaluate_snapshot(synthetic_receipt,synthetic_manifest,'blob1',synthetic_run,head,head,True)
+    promotion=evaluate_snapshot(synthetic_receipt,synthetic_manifest,'blob1',synthetic_run,head,head,True,expected_workflow_path='.github/workflows/source-package-successor-validation.yml',expected_workflow_event='push')
     cases.append({'case':'source_unsigned_blocks_promotion','expected':'BLOCKED','actual':promotion.get('status'),'ok':promotion.get('status')=='BLOCKED'})
     signed_receipt=dict(synthetic_receipt); signed_receipt.update({'source_internal_status':'PASS_INTERNAL_UNSIGNED','external_trust_status':'SIGNED_PASS','external_trust_evidence_ref':'external://receipt'})
-    signed=evaluate_snapshot(signed_receipt,synthetic_manifest,'blob1',synthetic_run,head,head,True,{'status':'PASS','signer_identity':'SIGNER-1','mutation_actor_count':2,'failures':[]})
+    signed=evaluate_snapshot(signed_receipt,synthetic_manifest,'blob1',synthetic_run,head,head,True,{'status':'PASS','signer_identity':'SIGNER-1','mutation_actor_count':2,'failures':[]},expected_workflow_path='.github/workflows/source-package-successor-validation.yml',expected_workflow_event='push')
     cases.append({'case':'external_trust_envelope_allows_frozen_source_content','expected':'PASS','actual':signed.get('status'),'ok':signed.get('status')=='PASS'})
-    moved=evaluate_snapshot(synthetic_receipt,synthetic_manifest,'blob1',synthetic_run,head,'c'*40,False)
+    wrong_source_path=dict(synthetic_run); wrong_source_path['path']='.github/workflows/fake-source.yml'
+    wrong_path=evaluate_snapshot(synthetic_receipt,synthetic_manifest,'blob1',wrong_source_path,head,head,False,expected_workflow_path='.github/workflows/source-package-successor-validation.yml',expected_workflow_event='push')
+    cases.append({'case':'source_same_name_wrong_workflow_path_blocked','expected':'BLOCKED','actual':wrong_path.get('status'),'ok':wrong_path.get('status')=='BLOCKED'})
+    wrong_source_event=dict(synthetic_run); wrong_source_event['event']='workflow_dispatch'
+    wrong_event=evaluate_snapshot(synthetic_receipt,synthetic_manifest,'blob1',wrong_source_event,head,head,False,expected_workflow_path='.github/workflows/source-package-successor-validation.yml',expected_workflow_event='push')
+    cases.append({'case':'source_manual_dispatch_cannot_substitute_push_gate','expected':'BLOCKED','actual':wrong_event.get('status'),'ok':wrong_event.get('status')=='BLOCKED'})
+    wrong_source_branch=dict(synthetic_run); wrong_source_branch['head_branch']='other'
+    wrong_branch=evaluate_snapshot(synthetic_receipt,synthetic_manifest,'blob1',wrong_source_branch,head,head,False,expected_workflow_path='.github/workflows/source-package-successor-validation.yml',expected_workflow_event='push')
+    cases.append({'case':'source_wrong_branch_cannot_substitute_candidate_run','expected':'BLOCKED','actual':wrong_branch.get('status'),'ok':wrong_branch.get('status')=='BLOCKED'})
+    moved=evaluate_snapshot(synthetic_receipt,synthetic_manifest,'blob1',synthetic_run,head,'c'*40,False,expected_workflow_path='.github/workflows/source-package-successor-validation.yml',expected_workflow_event='push')
     cases.append({'case':'source_branch_move_invalidates_source_snapshot','expected':'BLOCKED','actual':moved.get('status'),'ok':moved.get('status')=='BLOCKED'})
     ok=all(x['ok'] for x in cases)
     print(json.dumps({'self_test':'PASS' if ok else 'FAIL','cases':cases},ensure_ascii=False,sort_keys=True))
