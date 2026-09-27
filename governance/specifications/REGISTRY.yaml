@@ -309,10 +309,10 @@ candidate_validation_contract:
   explicit_promotion_action_required_after_readiness: true
   promotion_transaction_implementation_authorization_record: https://github.com/steven-gold/orange-one-ai-viedo-v1.0/issues/54
   promotion_transaction_executor: governance/ci/governance_promotion_transaction.py
-  promotion_transaction_mode: RELEASE_BRANCH_CREATE_ONLY_AFTER_READY
-  promotion_transaction_candidate_branch_mutation: FORBIDDEN
-  promotion_transaction_predecessor_branch_mutation: FORBIDDEN
-  promotion_transaction_atomic_visibility_point: RELEASE_REF_CREATION
+  promotion_transaction_mode: SAME_BRANCH_ATOMIC_PROMOTION_COMMIT
+  promotion_transaction_candidate_branch_mutation: ALLOWED_ONLY_AT_ATOMIC_PROMOTION_COMMIT
+  promotion_transaction_predecessor_history_mutation: FORBIDDEN
+  promotion_transaction_atomic_visibility_point: ACTIVE_GOVERNANCE_REF_FAST_FORWARD
   promotion_transaction_release_receipt_path: governance/release/RELEASE_RECEIPT.yaml
   promotion_transaction_reverify_handoff_path: governance/release/FRESH_REVERIFY_HANDOFF.yaml
   promotion_transaction_product_completion_credit: 0
@@ -326,6 +326,9 @@ candidate_validation_contract:
   promotion_transaction_post_write_reconciliation_required: true
   promotion_transaction_release_delta_exact: true
   promotion_transaction_fresh_reverify_handoff_required: true
+  promotion_transaction_branch_fanout: FORBIDDEN
+  promotion_transaction_in_place_branch: rebuild-v2.1.1
+  promotion_transaction_single_branch_authorization_record: https://github.com/steven-gold/orange-one-ai-viedo-v1.0/issues/57
   product_completion_credit: 0
 execution_domain_entrypoints:
   selection_required_before_rule_read: true

@@ -58,10 +58,10 @@ def contract_ok(reg):
     c=reg.get('candidate_validation_contract') or {}
     exact={
       'promotion_transaction_executor':SELF,
-      'promotion_transaction_mode':'RELEASE_BRANCH_CREATE_ONLY_AFTER_READY',
-      'promotion_transaction_candidate_branch_mutation':'FORBIDDEN',
-      'promotion_transaction_predecessor_branch_mutation':'FORBIDDEN',
-      'promotion_transaction_atomic_visibility_point':'RELEASE_REF_CREATION',
+      'promotion_transaction_mode':'SAME_BRANCH_ATOMIC_PROMOTION_COMMIT',
+      'promotion_transaction_candidate_branch_mutation':'ALLOWED_ONLY_AT_ATOMIC_PROMOTION_COMMIT',
+      'promotion_transaction_predecessor_history_mutation':'FORBIDDEN',
+      'promotion_transaction_atomic_visibility_point':'ACTIVE_GOVERNANCE_REF_FAST_FORWARD',
       'promotion_transaction_release_receipt_path':RECEIPT,
       'promotion_transaction_reverify_handoff_path':HANDOFF,
       'promotion_transaction_product_completion_credit':0,
@@ -73,6 +73,12 @@ def contract_ok(reg):
         bad.append('promotion_transaction_requires_source_external_trust')
     if c.get('source_package_integration_mode')!='SINGLE_BRANCH_INTEGRATED' or c.get('source_package_successor_required') is not False:
         bad.append('single_branch_integrated_source_contract')
+    if c.get('promotion_transaction_branch_fanout')!='FORBIDDEN':
+        bad.append('promotion_transaction_branch_fanout')
+    if c.get('promotion_transaction_in_place_branch')!=str(reg.get('branch') or ''):
+        bad.append('promotion_transaction_in_place_branch')
+    if c.get('promotion_transaction_single_branch_authorization_record')!='https://github.com/steven-gold/orange-one-ai-viedo-v1.0/issues/57':
+        bad.append('promotion_transaction_single_branch_authorization_record')
     if not re.fullmatch(r'https://github\.com/[^/]+/[^/]+/issues/\d+',str(c.get('promotion_transaction_implementation_authorization_record') or '')): bad.append('promotion_transaction_implementation_authorization_record')
     return {'status':'PASS' if not bad else 'BLOCKED','failures':sorted(set(bad))}
 
@@ -99,7 +105,7 @@ def docs(reg,man,lock,head,tree,rbranch,uid,rev,authref,audref,rd):
     man.update({'artifact_uid':uid,'branch_release_state':'RELEASED_CURRENT','released_current_authority':True,'candidate_branch_local_current_rule_bundle':False,'version_role':'RELEASED_GOVERNANCE_DISPLAY_VERSION'})
     sl=man.setdefault('source_lineage',{});sl.update({'promotion_authorization_ref':authref,'promotion_candidate_branch':cbranch,'promotion_candidate_head_sha':head,'promotion_candidate_tree_sha':tree,'post_promotion_projector_sync_authorization_uid':'PROMOTION_TRANSACTION','post_promotion_projector_sync_authorization_state':'REVERIFY_REQUIRED'})
     mt=dy(man); ident['specification_bundle_sha256']=digest(mt); cv['specification_bundle_sha256']=ident['specification_bundle_sha256'];cv['candidate_manifest_artifact_uid_expected']=uid;cv['candidate_manifest_display_version_expected']=disp
-    lock.setdefault('branches',{})[rbranch]={'role':'IMMUTABLE_GOVERNANCE_RULESET','preserve':True,'gpt_write_policy':'FORBIDDEN','product_execution':'FORBIDDEN','additions':'FORBIDDEN','modifications':'FORBIDDEN','deletions':'FORBIDDEN','source_candidate_branch':cbranch,'source_candidate_head_sha':head,'promotion_authorization_record':authref}
+    lock.setdefault('branches',{})[rbranch]={'role':'IMMUTABLE_GOVERNANCE_RULESET','preserve':True,'gpt_write_policy':'FORBIDDEN','product_execution':'FORBIDDEN','additions':'FORBIDDEN','modifications':'FORBIDDEN','deletions':'FORBIDDEN','single_branch_release':True,'promotion_candidate_head_sha':head,'promotion_authorization_record':authref}
     rec={'schema_version':1,'artifact_type':'GOVERNANCE_RELEASE_RECEIPT','status':'PROMOTED_PENDING_FRESH_REVERIFY','authority':False,'candidate_branch':cbranch,'candidate_head_sha':head,'candidate_tree_sha':tree,'candidate_governance_uid':cuid,'release_branch':rbranch,'released_governance_uid':uid,'released_governance_revision':rev,'display_version':disp,'canonical_rule_registry_uid':str(ident.get('canonical_rule_registry_uid') or ''),'canonical_rule_registry_digest':str(ident.get('canonical_rule_registry_digest') or ''),'promotion_authorization_ref':authref,'independent_auditor_evidence_ref':audref,'workflow_validation':rd.get('workflow_validation') or {},'source_package_successor_validation':rd.get('source_package_successor_validation') or {},'integrated_source_validation':rd.get('source_package_successor_validation') or {},'independent_auditor_validation':rd.get('independent_auditor_validation') or {},'self_commit_reference_forbidden':True,'product_completion_credit':0,'fresh_reverification_required':True}
     hand={'schema_version':1,'artifact_type':'GOVERNANCE_POST_PROMOTION_REVERIFY_HANDOFF','status':'REVERIFY_REQUIRED','released_governance_uid':uid,'released_governance_revision':rev,'release_branch':rbranch,'source_candidate_head_sha':head,'reason':'GOVERNANCE_PROMOTION_INVALIDATES_AFFECTED_OLD_CLOSURE_EVIDENCE','required_next_actions':['VERIFY_PERSISTED_RELEASE_BRANCH_HEAD','VERIFY_ACTIVE_CONSUMER_PROJECTIONS','RUN_CONTAMINATION_CONTRADICTION_PORTABILITY_GATES','RUN_GOVERNANCE_REGRESSION_AND_STRESS_GATES','FRESHLY_REVERIFY_AFFECTED_EXECUTION_SCOPE'],'product_execution_authorized':False,'product_completion_credit':0}
     return {'governance/specifications/REGISTRY.yaml':dy(reg),'governance/specifications/current/SPECIFICATION_MANIFEST.yaml':mt,'governance/BRANCH_AUTHORITY_LOCK.yaml':dy(lock),RECEIPT:dy(rec),HANDOFF:dy(hand)}
@@ -128,8 +134,9 @@ def ref(repo,token,branch):
         raise
     s=str(((d.get('object') or {}).get('sha')) or '');return s if re.fullmatch(r'[0-9a-f]{40}',s) else None
 
-def create_ref(repo,token,branch,sha):
-    o,r=parts(repo);api(f'https://api.github.com/repos/{o}/{r}/git/refs',token,'POST',{'ref':'refs/heads/'+branch,'sha':sha})
+def update_ref(repo,token,branch,sha):
+    o,r=parts(repo);b=urllib.parse.quote(branch,safe='')
+    api(f'https://api.github.com/repos/{o}/{r}/git/refs/heads/{b}',token,'PATCH',{'sha':sha,'force':False})
 
 def file_at(repo,token,branch,path):
     o,r=parts(repo);p='/'.join(urllib.parse.quote(x,safe='') for x in path.split('/'));q=urllib.parse.urlencode({'ref':branch})
@@ -139,7 +146,7 @@ def file_at(repo,token,branch,path):
         raise
     return base64.b64decode(str(d.get('content') or '')).decode()
 
-def existing(repo,token,branch,head,uid,authref):
+def existing_in_place_release(repo,token,branch,head,uid,authref):
     h=ref(repo,token,branch)
     if not h:return {'status':'ABSENT'}
     txt=file_at(repo,token,branch,RECEIPT)
@@ -194,6 +201,13 @@ def postcheck(repo,token,candidate_head,rbranch,rhead,uid,rev,authref):
 def selftest():
     i={'state':'open','user':{'login':'a'},'body':' '.join([MARK,'b'*40,'r','U','V'])}; a=auth_ok(i,'a','b'*40,'r','U','V')
     cases=[a.get('status')=='PASS',auth_ok(i,'x','b'*40,'r','U','V').get('status')=='BLOCKED',not RECEIPT.startswith('governance/specifications/current/')]
+    if REG.is_file():
+        reg=ly(REG); c=reg.get('candidate_validation_contract') or {}
+        cases.extend([
+          c.get('promotion_transaction_branch_fanout')=='FORBIDDEN',
+          c.get('promotion_transaction_in_place_branch')==str(reg.get('branch') or ''),
+          c.get('promotion_transaction_mode')=='SAME_BRANCH_ATOMIC_PROMOTION_COMMIT',
+        ])
     if REG.is_file():cases.append(contract_ok(ly(REG)).get('status')=='PASS')
     print(json.dumps({'self_test':'PASS' if all(cases) else 'FAIL','cases':cases}));return 0 if all(cases) else 1
 
@@ -201,34 +215,41 @@ def main():
     p=argparse.ArgumentParser();p.add_argument('--self-test',action='store_true');p.add_argument('--execute',action='store_true');p.add_argument('--repository',default=os.environ.get('GITHUB_REPOSITORY',''));p.add_argument('--candidate-head',default='');p.add_argument('--release-branch',default='');p.add_argument('--release-governance-uid',default='');p.add_argument('--release-governance-revision',default='');p.add_argument('--promotion-authorization-ref',default='');p.add_argument('--independent-evaluator-evidence-ref',default='');a=p.parse_args()
     if a.self_test:return selftest()
     if not a.execute:print(json.dumps({'status':'BLOCKED','reason':'EXPLICIT_EXECUTE_FLAG_REQUIRED'}));return 2
-    token=os.environ.get('GITHUB_TOKEN','').strip(); vals=vars(a); miss=[k for k in ['repository','candidate_head','release_branch','release_governance_uid','release_governance_revision','promotion_authorization_ref','independent_evaluator_evidence_ref'] if not str(vals[k] or '').strip()]
+    token=os.environ.get('GITHUB_TOKEN','').strip(); vals=vars(a); miss=[k for k in ['repository','candidate_head','release_governance_uid','release_governance_revision','promotion_authorization_ref','independent_evaluator_evidence_ref'] if not str(vals[k] or '').strip()]
     if not token or miss:print(json.dumps({'status':'BLOCKED','reason':'GITHUB_TOKEN_OR_INPUT_MISSING','fields':miss}));return 2
     if not re.fullmatch(r'[0-9a-f]{40}',a.candidate_head):print(json.dumps({'status':'BLOCKED','reason':'CANDIDATE_HEAD_INVALID'}));return 2
-    reg=ly(REG); lock=ly(LOCK); ident=reg.get('governance_identity') or {}; protected=set((reg.get('branch_role_contract') or {}))|set((lock.get('branches') or {}))
-    if a.release_branch in protected or a.release_governance_uid==str(ident.get('governance_uid') or '') or a.release_governance_revision==str(ident.get('governance_revision') or ''):print(json.dumps({'status':'BLOCKED','reason':'RELEASE_IDENTITY_OR_BRANCH_NOT_NEW'}));return 2
+    reg=ly(REG); lock=ly(LOCK); ident=reg.get('governance_identity') or {}
+    cbranch=str(reg.get('branch') or ''); roles=reg.get('branch_role_contract') or {}
+    release_branch=cbranch
+    if a.release_branch and a.release_branch!=cbranch:
+        print(json.dumps({'status':'BLOCKED','reason':'BRANCH_FANOUT_FORBIDDEN','required_branch':cbranch,'requested_branch':a.release_branch}));return 2
+    if a.release_governance_uid==str(ident.get('governance_uid') or '') or a.release_governance_revision==str(ident.get('governance_revision') or ''):
+        print(json.dumps({'status':'BLOCKED','reason':'RELEASE_IDENTITY_NOT_NEW'}));return 2
     co=contract_ok(reg)
     if co.get('status')!='PASS':print(json.dumps({'status':'BLOCKED','reason':'PROMOTION_TRANSACTION_CONTRACT_DRIFT','detail':co}));return 2
-    cbranch=str(reg.get('branch') or ''); roles=reg.get('branch_role_contract') or {}
+    live_now=branch_head(a.repository,cbranch,token)
+    if live_now!=a.candidate_head:
+        ex=existing_in_place_release(a.repository,token,cbranch,a.candidate_head,a.release_governance_uid,a.promotion_authorization_ref)
+        if ex.get('status')=='ALREADY_PROMOTED_IDEMPOTENT':
+            pc=postcheck(a.repository,token,a.candidate_head,cbranch,str(ex.get('head') or ''),a.release_governance_uid,a.release_governance_revision,a.promotion_authorization_ref)
+            out=dict(ex);out['post_write_reconciliation']=pc;print(json.dumps(out,sort_keys=True));return 0 if pc.get('status')=='PASS' else 2
+        print(json.dumps({'status':'BLOCKED','reason':'CANDIDATE_HEAD_DRIFT','candidate_head':a.candidate_head,'live_head':live_now,'existing_release':ex}));return 2
     if roles.get(cbranch)!='GOVERNANCE_REVISION_CANDIDATE':print(json.dumps({'status':'BLOCKED','reason':'NOT_GOVERNANCE_REVISION_CANDIDATE'}));return 2
     local=git('rev-parse','HEAD')
-    if local!=a.candidate_head or branch_head(a.repository,cbranch,token)!=local:print(json.dumps({'status':'BLOCKED','reason':'CANDIDATE_HEAD_DRIFT'}));return 2
+    if local!=a.candidate_head:print(json.dumps({'status':'BLOCKED','reason':'LOCAL_CANDIDATE_HEAD_DRIFT','local_head':local,'candidate_head':a.candidate_head}));return 2
     primary=issue(str(ident.get('authorization_record_url') or ''),token,a.repository); actor=str(((primary.get('user') or {}).get('login')) or '')
-    au=auth_ok(issue(a.promotion_authorization_ref,token,a.repository),actor,a.candidate_head,a.release_branch,a.release_governance_uid,a.release_governance_revision)
+    au=auth_ok(issue(a.promotion_authorization_ref,token,a.repository),actor,a.candidate_head,release_branch,a.release_governance_uid,a.release_governance_revision)
     if au.get('status')!='PASS':print(json.dumps(au));return 2
-    ex=existing(a.repository,token,a.release_branch,a.candidate_head,a.release_governance_uid,a.promotion_authorization_ref)
-    if ex.get('status')=='ALREADY_PROMOTED_IDEMPOTENT':
-        pc=postcheck(a.repository,token,a.candidate_head,a.release_branch,str(ex.get('head') or ''),a.release_governance_uid,a.release_governance_revision,a.promotion_authorization_ref)
-        out=dict(ex);out['post_write_reconciliation']=pc;print(json.dumps(out,sort_keys=True));return 0 if pc.get('status')=='PASS' else 2
-    if ex.get('status')!='ABSENT':print(json.dumps(ex));return 2
     rr=readiness(a.independent_evaluator_evidence_ref,token)
     if rr.get('status')!='PASS' or str((rr.get('readiness') or {}).get('candidate_head_sha') or '')!=a.candidate_head:print(json.dumps(rr));return 2
     if branch_head(a.repository,cbranch,token)!=a.candidate_head:print(json.dumps({'status':'BLOCKED','reason':'CANDIDATE_HEAD_MOVED_AFTER_READINESS'}));return 2
-    base=git('rev-parse','HEAD^{tree}'); files=docs(reg,ly(MAN),lock,a.candidate_head,base,a.release_branch,a.release_governance_uid,a.release_governance_revision,a.promotion_authorization_ref,a.independent_evaluator_evidence_ref,rr['readiness']); tr=tree(a.repository,token,base,files); cm=commit(a.repository,token,tr,a.candidate_head,f'promote(governance): release {a.release_governance_revision} from {a.candidate_head}')
-    if branch_head(a.repository,cbranch,token)!=a.candidate_head or ref(a.repository,token,a.release_branch):print(json.dumps({'status':'BLOCKED','reason':'SNAPSHOT_INVALIDATED_BEFORE_RELEASE_REF'}));return 2
-    create_ref(a.repository,token,a.release_branch,cm); created=ref(a.repository,token,a.release_branch)
-    if created!=cm:print(json.dumps({'status':'BLOCKED','reason':'RELEASE_REF_POST_WRITE_MISMATCH'}));return 2
-    pc=postcheck(a.repository,token,a.candidate_head,a.release_branch,cm,a.release_governance_uid,a.release_governance_revision,a.promotion_authorization_ref)
+    base=git('rev-parse','HEAD^{tree}'); files=docs(reg,ly(MAN),lock,a.candidate_head,base,release_branch,a.release_governance_uid,a.release_governance_revision,a.promotion_authorization_ref,a.independent_evaluator_evidence_ref,rr['readiness']); tr=tree(a.repository,token,base,files); cm=commit(a.repository,token,tr,a.candidate_head,f'promote(governance): release {a.release_governance_revision} in-place from {a.candidate_head}')
+    if branch_head(a.repository,cbranch,token)!=a.candidate_head:
+        print(json.dumps({'status':'BLOCKED','reason':'SNAPSHOT_INVALIDATED_BEFORE_ATOMIC_PROMOTION'}));return 2
+    update_ref(a.repository,token,cbranch,cm); created=ref(a.repository,token,cbranch)
+    if created!=cm:print(json.dumps({'status':'BLOCKED','reason':'ACTIVE_GOVERNANCE_REF_POST_WRITE_MISMATCH'}));return 2
+    pc=postcheck(a.repository,token,a.candidate_head,cbranch,cm,a.release_governance_uid,a.release_governance_revision,a.promotion_authorization_ref)
     if pc.get('status')!='PASS':
-        print(json.dumps({'status':'BLOCKED_POST_WRITE_RECONCILIATION','release_branch':a.release_branch,'release_head_sha':cm,'post_write_reconciliation':pc,'product_completion_credit':0},sort_keys=True));return 2
-    print(json.dumps({'status':'PROMOTED_PENDING_FRESH_REVERIFY','candidate_head_sha':a.candidate_head,'release_branch':a.release_branch,'release_head_sha':cm,'released_governance_uid':a.release_governance_uid,'released_governance_revision':a.release_governance_revision,'post_write_reconciliation':pc,'product_completion_credit':0,'fresh_reverification_required':True},sort_keys=True));return 0
+        print(json.dumps({'status':'BLOCKED_POST_WRITE_RECONCILIATION','release_branch':cbranch,'release_head_sha':cm,'post_write_reconciliation':pc,'product_completion_credit':0},sort_keys=True));return 2
+    print(json.dumps({'status':'PROMOTED_PENDING_FRESH_REVERIFY','candidate_head_sha':a.candidate_head,'release_branch':cbranch,'release_head_sha':cm,'released_governance_uid':a.release_governance_uid,'released_governance_revision':a.release_governance_revision,'branch_fanout_performed':False,'post_write_reconciliation':pc,'product_completion_credit':0,'fresh_reverification_required':True},sort_keys=True));return 0
 if __name__=='__main__':raise SystemExit(main())
