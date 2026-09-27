@@ -1596,12 +1596,16 @@ invariants:
         registered_human_visual_review_mode: FORMAL_APPROVAL
         formal_review_actions: [APPROVE, REJECT, REQUEST_CHANGES]
       STAGE-04:
-        default_mode: FORMAL_APPROVAL
+        default_mode: NONE
+        registered_foundation_approval_mode: FORMAL_APPROVAL
+        formal_approval_applicability: CONDITIONAL_BY_CURRENT_AUTHORITY_AND_GOVERNED_UNIT_SEMANTICS
+        approval_required_when_applicable: true
+        not_applicable_requires_authority_evidence: true
         evidence_type: DESIGN_APPROVAL_EVIDENCE
         approval_consumption_operation: DESIGN_FREEZE_VALIDATE
-        preapproval_operation_allowed: BASIC_DESIGN_PACKAGE_COMPILE
-        downstream_operation_before_approval: BLOCK
-        blocked_outputs_before_approval:
+        preapproval_operation_allowed_when_approval_applicable: BASIC_DESIGN_PACKAGE_COMPILE
+        downstream_operation_before_required_approval: BLOCK
+        blocked_outputs_before_required_approval:
         - FOUNDATION_BARRIER_RECORD
         - ACCEPTANCE_AUDIT_BLUEPRINT
         - DESIGN_FREEZE_PACKAGE

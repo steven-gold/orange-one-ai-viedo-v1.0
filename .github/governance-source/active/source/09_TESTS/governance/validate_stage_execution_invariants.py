@@ -146,8 +146,16 @@ def validate(root=ROOT):
         failures.append('stage_interaction_contract_set_not_all_11')
     else:
         s4 = interactions.get('STAGE-04') or {}
-        if s4.get('default_mode') != 'FORMAL_APPROVAL' or s4.get('evidence_type') != 'DESIGN_APPROVAL_EVIDENCE' or s4.get('approval_consumption_operation') != 'DESIGN_FREEZE_VALIDATE' or s4.get('next_stage_after_closure') != 'STAGE-05' or s4.get('alternative_execution_path_allowed') is not False:
-            failures.append('stage04_formal_approval_boundary_incomplete')
+        if (s4.get('default_mode') != 'NONE'
+            or s4.get('registered_foundation_approval_mode') != 'FORMAL_APPROVAL'
+            or s4.get('formal_approval_applicability') != 'CONDITIONAL_BY_CURRENT_AUTHORITY_AND_GOVERNED_UNIT_SEMANTICS'
+            or s4.get('approval_required_when_applicable') is not True
+            or s4.get('not_applicable_requires_authority_evidence') is not True
+            or s4.get('evidence_type') != 'DESIGN_APPROVAL_EVIDENCE'
+            or s4.get('approval_consumption_operation') != 'DESIGN_FREEZE_VALIDATE'
+            or s4.get('next_stage_after_closure') != 'STAGE-05'
+            or s4.get('alternative_execution_path_allowed') is not False):
+            failures.append('stage04_formal_approval_applicability_contract_drift')
         if set(s4.get('formal_review_actions') or []) != {'APPROVE','REJECT','REQUEST_CHANGES'}:
             failures.append('stage04_formal_approval_action_set_drift')
     det = inv.get('DETERMINISTIC_STAGE_AUDIT') or {}
