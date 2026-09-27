@@ -9,6 +9,7 @@ on:
       - 'governance/ci/stage_execution_semantic_adapters.yaml'
       - 'governance/ci/test_stage_execution_engine.py'
       - 'governance/ci/validate_selected_execution_profile_integrity.py'
+      - 'governance/ci/validate_governance_portability.py'
       - 'governance/ci/external_execution_admission.py'
       - 'governance/ci/test_external_execution_admission.py'
       - 'governance/specifications/REGISTRY.yaml'
@@ -97,6 +98,7 @@ jobs:
           fi
           python governance/ci/stage_execution_engine.py --definition-audit-all
           python governance/ci/validate_selected_execution_profile_integrity.py
+          python governance/ci/validate_governance_portability.py
           python .github/governance-source/active/source/09_TESTS/governance/validate_stage_execution_invariants.py
           python .github/governance-source/active/source/09_TESTS/governance/validate_external_execution_admission.py
           python governance/ci/test_stage_execution_engine.py
