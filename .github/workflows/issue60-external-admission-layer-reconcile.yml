@@ -92,7 +92,7 @@ jobs:
           python .github/governance-source/active/source/09_TESTS/governance/validate_section_registry.py
           python .github/governance-source/active/source/09_TESTS/governance/validate_reference_semantics.py
           python .github/governance-source/active/source/09_TESTS/governance/validate_stage_execution_invariants.py
-          python .github/governance-source/active/source/09_TESTS/governance/validate_governance.py
+          python governance/ci/validate_source_package_candidate.py
           python governance/ci/stage_execution_engine.py --definition-audit-all
           python governance/ci/validate_successor_governance_preformal.py
           python governance/ci/validate_structured_mutation_safety.py
