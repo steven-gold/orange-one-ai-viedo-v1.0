@@ -109,11 +109,22 @@ def main() -> int:
     governance_role = roles.get(governance_branch)
     if governance_role not in {"IMMUTABLE_GOVERNANCE_RULESET", "GOVERNANCE_REVISION_CANDIDATE"}:
         errors.append("GOVERNANCE_BRANCH_IDENTITY_OR_ROLE_DRIFT")
-    product_branch = str(registry.get("product_execution_branch") or "")
-    if not product_branch or roles.get(product_branch) != "PRODUCT_EXECUTION_WORKLINE":
-        errors.append("PRODUCT_EXECUTION_BRANCH_IDENTITY_OR_ROLE_DRIFT")
-    if governance_branch == product_branch:
-        errors.append("GOVERNANCE_AND_PRODUCT_BRANCH_MUST_BE_DISTINCT")
+    binding_rel = str(registry.get("execution_environment_binding") or "")
+    if not binding_rel:
+        errors.append("EXECUTION_ENVIRONMENT_BINDING_MISSING")
+    else:
+        binding_path = ROOT / binding_rel
+        if not binding_path.is_file():
+            errors.append("EXECUTION_ENVIRONMENT_BINDING_TARGET_MISSING:" + binding_rel)
+        else:
+            binding = load_yaml(binding_path)
+            if binding.get("artifact_type") != "EXECUTION_ENVIRONMENT_BINDING" or binding.get("normative_authority") is not False:
+                errors.append("EXECUTION_ENVIRONMENT_BINDING_AUTHORITY_INVALID")
+            if binding.get("common_stage_definition_credit") != 0 or binding.get("common_stage_completion_credit") != 0:
+                errors.append("EXECUTION_ENVIRONMENT_BINDING_COMMON_STAGE_CREDIT_NONZERO")
+            ruleset = binding.get("rules") or {}
+            if ruleset.get("values_may_enter_reusable_stage_semantics") is not False or ruleset.get("values_may_define_common_stage_denominator") is not False:
+                errors.append("EXECUTION_ENVIRONMENT_BINDING_STAGE_ISOLATION_INVALID")
 
     forbidden_branch_items = set(registry.get("forbidden_in_ruleset_branch") or [])
     required_forbidden = {

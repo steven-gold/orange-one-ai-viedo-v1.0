@@ -29,11 +29,19 @@ else:
     governance_role=str(roles.get(governance_branch) or '')
     if governance_role not in {'IMMUTABLE_GOVERNANCE_RULESET','GOVERNANCE_REVISION_CANDIDATE'}:
         errors.append('CURRENT_REGISTRY_BRANCH_OR_ROLE_DRIFT')
-    product_branch=str(reg.get('product_execution_branch') or '')
-    if not product_branch or roles.get(product_branch)!='PRODUCT_EXECUTION_WORKLINE':
-        errors.append('CURRENT_PRODUCT_EXECUTION_BRANCH_OR_ROLE_DRIFT')
-    if governance_branch==product_branch:
-        errors.append('CURRENT_GOVERNANCE_PRODUCT_BRANCH_COLLISION')
+    binding_rel=str(reg.get('execution_environment_binding') or '')
+    if not binding_rel:
+        errors.append('CURRENT_EXECUTION_ENVIRONMENT_BINDING_MISSING')
+    else:
+        binding_path=ROOT/binding_rel
+        if not binding_path.is_file():
+            errors.append('CURRENT_EXECUTION_ENVIRONMENT_BINDING_TARGET_MISSING')
+        else:
+            binding=yaml.safe_load(binding_path.read_text(encoding='utf-8')) or {}
+            if binding.get('artifact_type')!='EXECUTION_ENVIRONMENT_BINDING' or binding.get('normative_authority') is not False:
+                errors.append('CURRENT_EXECUTION_ENVIRONMENT_BINDING_AUTHORITY_INVALID')
+            if binding.get('common_stage_definition_credit')!=0 or binding.get('common_stage_completion_credit')!=0:
+                errors.append('CURRENT_EXECUTION_ENVIRONMENT_BINDING_COMMON_STAGE_CREDIT_NONZERO')
     if reg.get('rules_root')!='governance/specifications/current':
         errors.append('CURRENT_RULES_ROOT_DRIFT')
     identity=reg.get('governance_identity') or {}

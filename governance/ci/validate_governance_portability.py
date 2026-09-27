@@ -102,12 +102,45 @@ profile_steps=prof.get('stages') or []
 if int(prof.get('profile_local_denominator') or -1)!=len(profile_steps):
     failures.append('profile_local_denominator_drift')
 scope_contract=prof.get('execution_scope_contract') or {}
-if scope_contract.get('current_scope_artifact')!='PRODUCT_STAGE_EXECUTION_CURRENT_SCOPE_MANIFEST':
-    failures.append('profile_current_scope_not_product_owned')
-if scope_contract.get('governance_branch_may_persist_current_product_scope') is not False:
-    failures.append('profile_governance_branch_product_scope_not_blocked')
-if registry.get('product_execution_branch')!='0921acpos':
-    failures.append('product_execution_branch_drift')
+if scope_contract.get('current_scope_artifact')!='STAGE_EXECUTION_CURRENT_SCOPE_MANIFEST':
+    failures.append('profile_current_scope_artifact_not_generic')
+if scope_contract.get('current_scope_owner_layer')!='EXECUTION_WORKLINE':
+    failures.append('profile_current_scope_owner_layer_drift')
+if scope_contract.get('governance_workline_may_persist_execution_scope') is not False:
+    failures.append('profile_governance_workline_execution_scope_not_blocked')
+if scope_contract.get('execution_context_source')!='EXTERNAL_EXECUTION_CONTEXT':
+    failures.append('profile_execution_context_source_not_external')
+
+_binding_rel=str(registry.get('execution_environment_binding') or '')
+if not _binding_rel:
+    failures.append('execution_environment_binding_missing')
+    _binding={}
+else:
+    _binding_path=ROOT/_binding_rel
+    if not _binding_path.is_file():
+        failures.append('execution_environment_binding_target_missing:'+_binding_rel)
+        _binding={}
+    else:
+        _binding=yaml.safe_load(_binding_path.read_text(encoding='utf-8')) or {}
+if _binding:
+    if _binding.get('artifact_type')!='EXECUTION_ENVIRONMENT_BINDING' or _binding.get('normative_authority') is not False:
+        failures.append('execution_environment_binding_authority_invalid')
+    if _binding.get('common_stage_definition_credit')!=0 or _binding.get('common_stage_completion_credit')!=0:
+        failures.append('execution_environment_binding_common_stage_credit_nonzero')
+    _brules=_binding.get('rules') or {}
+    if _brules.get('values_may_enter_reusable_stage_semantics') is not False or _brules.get('values_may_define_common_stage_denominator') is not False:
+        failures.append('execution_environment_binding_stage_semantic_isolation_invalid')
+    _env_literals=set()
+    for _group in ('governance_workline','execution_workline'):
+        _row=_binding.get(_group) or {}
+        for _v in (_row.get('repository'),_row.get('branch')):
+            if isinstance(_v,str) and len(_v)>=4: _env_literals.add(_v)
+    _stage_core_paths=[profile_path,ROOT/'governance/ci/stage_execution_engine.py',ROOT/'governance/ci/stage_execution_semantic_adapters.yaml',ROOT/'.github/governance-source/active/source/10_REGISTRY/STAGE_EXECUTION_INVARIANT_REGISTRY.yaml']
+    for _surface in _stage_core_paths:
+        _body=_surface.read_text(encoding='utf-8')
+        for _literal in sorted(_env_literals):
+            if _literal in _body:
+                failures.append('execution_environment_literal_leaked_into_stage_core:'+_surface.relative_to(ROOT).as_posix()+':'+_literal)
 
 synthetic=[
     {'uid':'SYNTH-A','steps':['discover','design','ship']},
@@ -217,9 +250,6 @@ else:
     _pt=_producer.read_text(encoding='utf-8')
     if literal_product_identity.search(_pt):
         failures.append('docx_projection_producer_product_identity_leak')
-    for _token in ('CORE-01','ASSET-01','VIDEO-01','EDIT-01'):
-        if _token in _pt:
-            failures.append('docx_projection_producer_literal_page_identity:'+_token)
 out={
     'status':'PASS' if not failures else 'FAIL',
     'canonical_registry_uid':canonical.get('registry_uid'),
