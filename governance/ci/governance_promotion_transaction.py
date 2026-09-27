@@ -67,7 +67,7 @@ def contract_ok(reg):
       'promotion_transaction_product_completion_credit':0,
     }
     bad=[k for k,v in exact.items() if c.get(k)!=v]
-    for k in ['promotion_transaction_requires_explicit_promotion_authorization','promotion_transaction_requires_fresh_readiness','promotion_transaction_requires_source_external_trust','promotion_transaction_requires_independent_auditor_evidence','promotion_transaction_requires_new_release_uid','promotion_transaction_execution_authorization_must_be_distinct_from_implementation_authorization']:
+    for k in ['promotion_transaction_requires_explicit_promotion_authorization','promotion_transaction_requires_fresh_readiness','promotion_transaction_requires_source_external_trust','promotion_transaction_requires_independent_auditor_evidence','promotion_transaction_requires_new_release_uid','promotion_transaction_execution_authorization_must_be_distinct_from_implementation_authorization','promotion_transaction_post_write_reconciliation_required','promotion_transaction_release_delta_exact','promotion_transaction_fresh_reverify_handoff_required']:
         if c.get(k) is not True: bad.append(k)
     if not re.fullmatch(r'https://github\.com/[^/]+/[^/]+/issues/\d+',str(c.get('promotion_transaction_implementation_authorization_record') or '')): bad.append('promotion_transaction_implementation_authorization_record')
     return {'status':'PASS' if not bad else 'BLOCKED','failures':sorted(set(bad))}
@@ -144,6 +144,49 @@ def existing(repo,token,branch,head,uid,authref):
     bad=[k for k,v in exp.items() if str(d.get(k) or '')!=v]
     return {'status':'ALREADY_PROMOTED_IDEMPOTENT','head':h} if not bad else {'status':'BLOCKED','reason':'EXISTING_RELEASE_BRANCH_IDENTITY_MISMATCH','fields':bad}
 
+def postcheck(repo,token,candidate_head,rbranch,rhead,uid,rev,authref):
+    if ref(repo,token,rbranch)!=rhead:
+        return {'status':'BLOCKED','reason':'RELEASE_HEAD_NOT_PERSISTED'}
+    o,r=parts(repo)
+    cmp=api(f'https://api.github.com/repos/{o}/{r}/compare/{candidate_head}...{rhead}',token)
+    expected={
+      'governance/specifications/REGISTRY.yaml',
+      'governance/specifications/current/SPECIFICATION_MANIFEST.yaml',
+      'governance/BRANCH_AUTHORITY_LOCK.yaml',
+      RECEIPT,HANDOFF,
+    }
+    got=set(str(x.get('filename') or '') for x in (cmp.get('files') or []))
+    if str(cmp.get('status') or '')!='ahead' or int(cmp.get('total_commits') or 0)!=1 or got!=expected:
+        return {'status':'BLOCKED','reason':'RELEASE_DELTA_NOT_EXACT','expected':sorted(expected),'actual':sorted(got),'total_commits':cmp.get('total_commits'),'compare_status':cmp.get('status')}
+    docs={}
+    try:
+        for path in expected:
+            raw=file_at(repo,token,rbranch,path)
+            doc=yaml.safe_load(raw or '') or {}
+            if not isinstance(doc,dict): raise RuntimeError('MAPPING_REQUIRED:'+path)
+            docs[path]=doc
+    except Exception as exc:
+        return {'status':'BLOCKED','reason':'RELEASE_PROJECTION_READ_FAILED','detail':type(exc).__name__+':'+str(exc)}
+    rg=docs['governance/specifications/REGISTRY.yaml']; ident=rg.get('governance_identity') or {}
+    man=docs['governance/specifications/current/SPECIFICATION_MANIFEST.yaml']
+    lock=docs['governance/BRANCH_AUTHORITY_LOCK.yaml']; lr=(lock.get('branches') or {}).get(rbranch) or {}
+    rec=docs[RECEIPT]; hand=docs[HANDOFF]
+    checks={
+      'registry_branch':str(rg.get('branch') or '')==rbranch,
+      'registry_role':str((rg.get('branch_role_contract') or {}).get(rbranch) or '')=='IMMUTABLE_GOVERNANCE_RULESET',
+      'registry_status':str(rg.get('status') or '')=='CURRENT_RELEASED',
+      'identity_uid':str(ident.get('governance_uid') or '')==uid,
+      'identity_revision':str(ident.get('governance_revision') or '')==rev,
+      'identity_state':str(ident.get('identity_state') or '')=='IMMUTABLE_RELEASED' and ident.get('released_immutable_identity') is True,
+      'manifest_uid':str(man.get('artifact_uid') or '')==uid,
+      'manifest_release':str(man.get('branch_release_state') or '')=='RELEASED_CURRENT' and man.get('released_current_authority') is True,
+      'branch_lock':str(lr.get('role') or '')=='IMMUTABLE_GOVERNANCE_RULESET' and lr.get('gpt_write_policy')=='FORBIDDEN' and lr.get('modifications')=='FORBIDDEN',
+      'receipt_binding':str(rec.get('candidate_head_sha') or '')==candidate_head and str(rec.get('released_governance_uid') or '')==uid and str(rec.get('promotion_authorization_ref') or '')==authref and rec.get('fresh_reverification_required') is True,
+      'handoff_binding':str(hand.get('released_governance_uid') or '')==uid and str(hand.get('release_branch') or '')==rbranch and hand.get('status')=='REVERIFY_REQUIRED' and hand.get('product_execution_authorized') is False,
+    }
+    bad=sorted(k for k,v in checks.items() if not v)
+    return {'status':'PASS' if not bad else 'BLOCKED','reason':None if not bad else 'RELEASE_POST_WRITE_PROJECTION_MISMATCH','failed_checks':bad,'release_delta_paths':sorted(got),'release_head_sha':rhead}
+
 def selftest():
     i={'state':'open','user':{'login':'a'},'body':' '.join([MARK,'b'*40,'r','U','V'])}; a=auth_ok(i,'a','b'*40,'r','U','V')
     cases=[a.get('status')=='PASS',auth_ok(i,'x','b'*40,'r','U','V').get('status')=='BLOCKED',not RECEIPT.startswith('governance/specifications/current/')]
@@ -169,7 +212,9 @@ def main():
     au=auth_ok(issue(a.promotion_authorization_ref,token,a.repository),actor,a.candidate_head,a.release_branch,a.release_governance_uid,a.release_governance_revision)
     if au.get('status')!='PASS':print(json.dumps(au));return 2
     ex=existing(a.repository,token,a.release_branch,a.candidate_head,a.release_governance_uid,a.promotion_authorization_ref)
-    if ex.get('status')=='ALREADY_PROMOTED_IDEMPOTENT':print(json.dumps(ex));return 0
+    if ex.get('status')=='ALREADY_PROMOTED_IDEMPOTENT':
+        pc=postcheck(a.repository,token,a.candidate_head,a.release_branch,str(ex.get('head') or ''),a.release_governance_uid,a.release_governance_revision,a.promotion_authorization_ref)
+        out=dict(ex);out['post_write_reconciliation']=pc;print(json.dumps(out,sort_keys=True));return 0 if pc.get('status')=='PASS' else 2
     if ex.get('status')!='ABSENT':print(json.dumps(ex));return 2
     rr=readiness(a.independent_evaluator_evidence_ref,token)
     if rr.get('status')!='PASS' or str((rr.get('readiness') or {}).get('candidate_head_sha') or '')!=a.candidate_head:print(json.dumps(rr));return 2
@@ -178,5 +223,8 @@ def main():
     if branch_head(a.repository,cbranch,token)!=a.candidate_head or ref(a.repository,token,a.release_branch):print(json.dumps({'status':'BLOCKED','reason':'SNAPSHOT_INVALIDATED_BEFORE_RELEASE_REF'}));return 2
     create_ref(a.repository,token,a.release_branch,cm); created=ref(a.repository,token,a.release_branch)
     if created!=cm:print(json.dumps({'status':'BLOCKED','reason':'RELEASE_REF_POST_WRITE_MISMATCH'}));return 2
-    print(json.dumps({'status':'PROMOTED_PENDING_FRESH_REVERIFY','candidate_head_sha':a.candidate_head,'release_branch':a.release_branch,'release_head_sha':cm,'released_governance_uid':a.release_governance_uid,'released_governance_revision':a.release_governance_revision,'product_completion_credit':0,'fresh_reverification_required':True},sort_keys=True));return 0
+    pc=postcheck(a.repository,token,a.candidate_head,a.release_branch,cm,a.release_governance_uid,a.release_governance_revision,a.promotion_authorization_ref)
+    if pc.get('status')!='PASS':
+        print(json.dumps({'status':'BLOCKED_POST_WRITE_RECONCILIATION','release_branch':a.release_branch,'release_head_sha':cm,'post_write_reconciliation':pc,'product_completion_credit':0},sort_keys=True));return 2
+    print(json.dumps({'status':'PROMOTED_PENDING_FRESH_REVERIFY','candidate_head_sha':a.candidate_head,'release_branch':a.release_branch,'release_head_sha':cm,'released_governance_uid':a.release_governance_uid,'released_governance_revision':a.release_governance_revision,'post_write_reconciliation':pc,'product_completion_credit':0,'fresh_reverification_required':True},sort_keys=True));return 0
 if __name__=='__main__':raise SystemExit(main())
