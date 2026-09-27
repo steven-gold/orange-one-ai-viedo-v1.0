@@ -3,7 +3,6 @@ on:
   workflow_dispatch:
 permissions:
   contents: write
-  actions: write
 concurrency:
   group: source-package-successor-materialization-${{ github.ref }}
   cancel-in-progress: true
@@ -21,8 +20,6 @@ jobs:
           python-version: '3.11.16'
       - run: python -m pip install --disable-pip-version-check --require-hashes -r governance/ci/requirements-governance.lock
       - name: Materialize internal derived source artifacts
-        env:
-          GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
           BASE_HEAD="$(git rev-parse HEAD)"
@@ -70,4 +67,3 @@ jobs:
           REMOTE_HEAD_BEFORE_PUSH="$(git ls-remote origin refs/heads/rebuild-v2.1.1 | awk '{print $1}')"
           test "$REMOTE_HEAD_BEFORE_PUSH" = "$BASE_HEAD"
           git push origin HEAD:rebuild-v2.1.1
-          gh workflow run source-package-successor-validation.yml --ref rebuild-v2.1.1

@@ -138,6 +138,8 @@ candidate_validation_contract:
   governance_ci_environment_drift: BLOCK
   common_stage_workflow_contents_permission: read
   source_materialization_workflow_contents_permission: write
+  source_materialization_workflow_actions_permission: none
+  source_materialization_validation_trigger_mode: PUSH_EVENT_ONLY
   source_materialization_workflow_candidate_only: true
   source_materialization_workflow_dispatch_ref_must_equal_active_governance_branch: true
   source_materialization_workflow_remote_head_cas_required: true
