@@ -111,6 +111,9 @@ def verify_candidate_authorization(reg, resolved):
                 errors.append('CANDIDATE_MUTATION_COMMIT_SET_EMPTY')
                 return
             first_time_text=subprocess.check_output(['git','show','-s','--format=%cI',commits[0].strip()],cwd=ROOT,text=True).strip()
+    except Exception:
+        errors.append('CANDIDATE_PREDECESSOR_ANCESTRY_UNVERIFIABLE')
+        return
     try:
         first_time=datetime.fromisoformat(first_time_text.replace('Z','+00:00')).astimezone(timezone.utc)
         created=datetime.fromisoformat(str(issue.get('created_at') or '').replace('Z','+00:00')).astimezone(timezone.utc)
