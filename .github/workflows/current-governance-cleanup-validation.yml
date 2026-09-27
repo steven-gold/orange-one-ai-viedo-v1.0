@@ -30,9 +30,9 @@ jobs:
           GITHUB_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
+          # Fast-fail current-governance contracts first; validation denominator is unchanged.
           python governance/ci/governance_promotion_transaction.py --self-test
           python governance/ci/stage_execution_engine.py --definition-audit-all
-          python governance/ci/test_stage_execution_engine.py
           python governance/ci/validate_selected_execution_profile_integrity.py
           python governance/ci/validate_active_consumer_reference_integrity.py
           python governance/ci/validate_governance_layout.py
@@ -48,3 +48,5 @@ jobs:
           python governance/ci/validate_governance_candidate_promotion_readiness.py --self-test
           test ! -e governance/ci/compile_stage_execution_preflight.py
           test ! -e governance/ci/stage_execution_adapters/stage02_functional_contract.py
+          # Full high-pressure Stage regression remains mandatory, but runs after fast-fail gates.
+          python governance/ci/test_stage_execution_engine.py

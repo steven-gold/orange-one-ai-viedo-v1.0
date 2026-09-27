@@ -147,8 +147,8 @@ candidate_validation_contract:
   canonical_rule_registry_digest: df8514146962a8a649dd98b8e1759e643ff9b7063e6b22789987f54f62b27d42
   canonical_rule_binding_validator: governance/ci/validate_governance_portability.py
   current_cleanup_required_commands:
+  - python governance/ci/governance_promotion_transaction.py --self-test
   - python governance/ci/stage_execution_engine.py --definition-audit-all
-  - python governance/ci/test_stage_execution_engine.py
   - python governance/ci/validate_selected_execution_profile_integrity.py
   - python governance/ci/validate_active_consumer_reference_integrity.py
   - python governance/ci/validate_governance_layout.py
@@ -162,7 +162,7 @@ candidate_validation_contract:
   - python governance/ci/audit_closure_engine.py --self-test
   - python governance/ci/audit_closure_engine.py
   - python governance/ci/validate_governance_candidate_promotion_readiness.py --self-test
-  - python governance/ci/governance_promotion_transaction.py --self-test
+  - python governance/ci/test_stage_execution_engine.py
   successor_preformal_validator: governance/ci/validate_successor_governance_preformal.py
   predecessor_direct_preformal_current_candidate_use: FORBIDDEN
   retired_current_state_checks_replaced_by:
