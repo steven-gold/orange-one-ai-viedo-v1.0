@@ -752,6 +752,8 @@ def _validate_execution_target_resolution(product_root,ledger,successor_uid,row,
         tracked=_tracked_path_at_head(product_root,git_context['head'],target_path)
         if receipt.get('target_path_tracked_at_head') is not True or not tracked:
             fail('TARGET_RESOLUTION_PATH_NOT_TRACKED_AT_HEAD:'+cls)
+    elif kind=='CURRENT_REPOSITORY':
+        pass
     elif kind=='EXTERNAL_CURRENT_TARGET':
         required=set(map(str,policy.get('successor_execution_target_resolution_external_required_fields') or []))
         missing=sorted(required-set(receipt))
