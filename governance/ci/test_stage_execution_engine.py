@@ -506,8 +506,8 @@ with tempfile.TemporaryDirectory() as td:
             rows=[_binding_row(cls,str(op_map.get(cls) or successor['operations'][0])) for cls in classes]
         else:
             required_inputs=[]
-            classes=list(map(str,cross_policy.get('next_page_successor_binding_requirements') or []))
-            rows=[_binding_row(cls,'NEXT_PAGE_ELIGIBILITY_EVALUATE') for cls in classes]
+            classes=list(map(str,cross_policy.get('next_governed_unit_successor_binding_requirements') or []))
+            rows=[_binding_row(cls,'NEXT_GOVERNED_UNIT_ELIGIBILITY_EVALUATE') for cls in classes]
         work_unit_uid='SYNTHETIC-'+predecessor_uid+'-WU'
         for row in rows:
             _write_synthetic_target_resolution(pressure_root,'target-resolution/'+predecessor_uid,work_unit_uid,successor_uid,row,cross_policy,pressure_git_ctx)
@@ -555,25 +555,26 @@ with tempfile.TemporaryDirectory() as td:
             )
             (pressure_root/rel).write_text(yaml.safe_dump(ledger,sort_keys=False),encoding='utf-8')
 
-    # STAGE-04 -> STAGE-05: technology stack must be Current Authority, never an AI recommendation.
-    predecessor,successor_uid,rel,ledger,evidence=_write_valid_handoff('STAGE-04')
-    for cls in ('IMPLEMENTATION_LANGUAGE_AUTHORITY','FRONTEND_FRAMEWORK_AUTHORITY','BACKEND_FRAMEWORK_AUTHORITY','PACKAGE_MANAGER_AUTHORITY','DATABASE_TARGET','AUTHENTICATION_TARGET','AUTHORIZATION_TARGET'):
-        broken=deepcopy(ledger)
-        row=next(x for x in broken['successor_execution_bindings'] if x['binding_class']==cls)
-        row['resolution_status']='UNRESOLVED'
-        row['canonical_owner_or_authority_ref']=''
-        row['authority_evidence_ref']=''
-        row['target_identity']=''
-        row['consumer_readiness_status']='NOT_READY'
-        broken['successor_execution_binding_ready_total']-=1
-        broken['successor_execution_binding_unresolved_total']=1
-        (pressure_root/rel).write_text(yaml.safe_dump(broken,sort_keys=False),encoding='utf-8')
-        expect_stage_engine_block(
-          'stage05_unbound_'+cls.lower(),
-          lambda e=deepcopy(evidence),st=predecessor: eng._validate_cross_stage_handoff_ledger('STAGE-04',e,st,stages),
-          'CROSS_STAGE_SUCCESSOR_EXECUTION_BINDING_NOT_READY'
-        )
-    (pressure_root/rel).write_text(yaml.safe_dump(ledger,sort_keys=False),encoding='utf-8')
+    # Every declared successor binding class is Authority/applicability-driven; no technology class is universally privileged.
+    for predecessor_uid in [sid for sid,row in stages.items() if str(row.get('next_stage_uid') or '') in stages]:
+        predecessor,successor_uid,rel,ledger,evidence=_write_valid_handoff(predecessor_uid)
+        for source_row in list(ledger['successor_execution_bindings']):
+            broken=deepcopy(ledger)
+            row=next(x for x in broken['successor_execution_bindings'] if x['binding_class']==source_row['binding_class'])
+            row['resolution_status']='UNRESOLVED'
+            row['canonical_owner_or_authority_ref']=''
+            row['authority_evidence_ref']=''
+            row['target_identity']=''
+            row['consumer_readiness_status']='NOT_READY'
+            broken['successor_execution_binding_ready_total']-=1
+            broken['successor_execution_binding_unresolved_total']=1
+            (pressure_root/rel).write_text(yaml.safe_dump(broken,sort_keys=False),encoding='utf-8')
+            expect_stage_engine_block(
+              predecessor_uid+'_unbound_'+source_row['binding_class'].lower(),
+              lambda p=predecessor_uid,e=deepcopy(evidence),st=predecessor: eng._validate_cross_stage_handoff_ledger(p,e,st,stages),
+              'CROSS_STAGE_SUCCESSOR_EXECUTION_BINDING_NOT_READY'
+            )
+        (pressure_root/rel).write_text(yaml.safe_dump(ledger,sort_keys=False),encoding='utf-8')
 
     # A target string/READY flag can never substitute for Current physical target resolution.
     predecessor,successor_uid,rel,ledger,evidence=_write_valid_handoff('STAGE-04')
@@ -647,7 +648,7 @@ with tempfile.TemporaryDirectory() as td:
     (pressure_root/rel).write_text(yaml.safe_dump(ledger,sort_keys=False),encoding='utf-8')
 
     # Matrix pressure: empty row set and stale status must both fail closed.
-    matrix_stage='STAGE-05'
+    matrix_stage=next(iter(eng.stage_map(profile)))
     matrix_st=stages[matrix_stage]
     wu='SYNTHETIC-PRESSURE-STAGE05'
     wd=pressure_root/'STAGE_EXECUTION'/matrix_stage/wu
@@ -723,9 +724,9 @@ with tempfile.TemporaryDirectory() as td:
 with tempfile.TemporaryDirectory() as _exec_td:
     _exec_root=Path(_exec_td)
     _entry,_reg,_gov,_profile,_adapters,_stages=eng.validate_definition()
-    _sid='STAGE-05'
+    _sid=next(sid for sid,row in _stages.items() if row.get('operations') and (_adapters.get('stages') or {}).get(sid,{}).get('effectful_executor_owner_resolution')=='CURRENT_WORK_UNIT_OPERATION_BINDING_ONLY')
     _st=_stages[_sid]
-    _wu='SYNTHETIC-EFFECTFUL-STAGE05'
+    _wu='SYNTHETIC-EFFECTFUL-'+_sid
     _wd=_exec_root/'STAGE_EXECUTION'/_sid/_wu
     (_wd/'EVIDENCE'/'OPERATION_RECEIPTS').mkdir(parents=True,exist_ok=True)
     (_exec_root/'tools').mkdir(parents=True,exist_ok=True)
@@ -766,7 +767,7 @@ import argparse
 from pathlib import Path
 import yaml
 p=argparse.ArgumentParser()
-p.add_argument("--stage",required=True); p.add_argument("--operation",required=True)
+p.add_argument("--stage",required=True); p.add_argument("--operation",required=True); p.add_argument("--work-unit",required=True)
 p.add_argument(__EXECUTION_ROOT_ARG__,dest="execution_root",required=True)
 a=p.parse_args()
 root=Path(a.execution_root)
@@ -850,7 +851,7 @@ receipt.write_text(yaml.safe_dump(obj,sort_keys=False),encoding="utf-8")
         _no_receipt_code='''#!/usr/bin/env python3
 import argparse
 p=argparse.ArgumentParser()
-p.add_argument("--stage",required=True); p.add_argument("--operation",required=True)
+p.add_argument("--stage",required=True); p.add_argument("--operation",required=True); p.add_argument("--work-unit",required=True)
 p.add_argument(__EXECUTION_ROOT_ARG__,dest="execution_root",required=True)
 p.parse_args()
 '''.replace('__EXECUTION_ROOT_ARG__',repr(EXECUTION_ROOT_ARG))
@@ -1048,10 +1049,10 @@ _bad_vertical=deepcopy(_vertical_records); _bad_vertical['STAGE-09']['release_id
 expect_stage_engine_block('vertical_release_identity_drift',lambda:eng.validate_vertical_scope_identity(_bad_vertical),'VERTICAL_SCOPE_IDENTITY_DRIFT')
 
 _closed={uid:'CLOSED_PASS' for uid in _all_stage_uids}
-assert eng.validate_full_lifecycle_closure(_closed,0,{'operation_uid':'NEXT_PAGE_ELIGIBILITY_EVALUATE','result':'SYNTHETIC-REGISTERED-ELIGIBILITY'}) is True
+assert eng.validate_full_lifecycle_closure(_closed,0,{'operation_uid':'NEXT_GOVERNED_UNIT_ELIGIBILITY_EVALUATE','result':'SYNTHETIC-REGISTERED-ELIGIBILITY'}) is True
 _bad_closed=deepcopy(_closed); _bad_closed['STAGE-08']='REVERIFY_REQUIRED'
-expect_stage_engine_block('full_lifecycle_requires_all_stage_closed_pass',lambda:eng.validate_full_lifecycle_closure(_bad_closed,0,{'operation_uid':'NEXT_PAGE_ELIGIBILITY_EVALUATE','result':'SYNTHETIC-REGISTERED-ELIGIBILITY'}),'FULL_LIFECYCLE_STAGE_NOT_CLOSED_PASS')
-expect_stage_engine_block('full_lifecycle_requires_zero_impacted_reverify',lambda:eng.validate_full_lifecycle_closure(_closed,1,{'operation_uid':'NEXT_PAGE_ELIGIBILITY_EVALUATE','result':'SYNTHETIC-REGISTERED-ELIGIBILITY'}),'FULL_LIFECYCLE_IMPACTED_REVERIFY_NONZERO')
+expect_stage_engine_block('full_lifecycle_requires_all_stage_closed_pass',lambda:eng.validate_full_lifecycle_closure(_bad_closed,0,{'operation_uid':'NEXT_GOVERNED_UNIT_ELIGIBILITY_EVALUATE','result':'SYNTHETIC-REGISTERED-ELIGIBILITY'}),'FULL_LIFECYCLE_STAGE_NOT_CLOSED_PASS')
+expect_stage_engine_block('full_lifecycle_requires_zero_impacted_reverify',lambda:eng.validate_full_lifecycle_closure(_closed,1,{'operation_uid':'NEXT_GOVERNED_UNIT_ELIGIBILITY_EVALUATE','result':'SYNTHETIC-REGISTERED-ELIGIBILITY'}),'FULL_LIFECYCLE_IMPACTED_REVERIFY_NONZERO')
 expect_stage_engine_block('full_lifecycle_requires_registered_stage11_eligibility',lambda:eng.validate_full_lifecycle_closure(_closed,0,{'operation_uid':'AI_SELECTED_OPERATION','result':'SYNTHETIC'}),'FULL_LIFECYCLE_STAGE11_ELIGIBILITY_OPERATION_INVALID')
 
 _range_plan=eng.plan_range('STAGE-01','STAGE-05')
@@ -1154,7 +1155,7 @@ os.environ[eng.EXECUTION_ROOT_ENV]=str(_allstage_root)
 _cross_policy=((eng.y(eng.INVARIANTS).get('invariants') or {}).get('CROSS_STAGE_MATERIALIZATION_AND_CONSUMER_READINESS') or {})
 _cross_requirements=_cross_policy.get('successor_execution_binding_requirements') or {}
 _cross_operation_map=_cross_policy.get('successor_execution_binding_operation_map') or {}
-_next_requirements=list(map(str,_cross_policy.get('next_page_successor_binding_requirements') or []))
+_next_requirements=list(map(str,_cross_policy.get('next_governed_unit_successor_binding_requirements') or []))
 
 def materialize_synthetic_stage_context(stage_uid,evidence,result):
     st=stage_rows[stage_uid]
@@ -1241,7 +1242,7 @@ def materialize_synthetic_stage_context(stage_uid,evidence,result):
         is_blocked=block_by_binding and idx==0
         binding_rows.append({
           'binding_uid':f'SYNTH-{stage_uid}-{cls}',
-          'consuming_operation_uid':str(opmap.get(cls) or 'NEXT_PAGE_ELIGIBILITY_EVALUATE'),
+          'consuming_operation_uid':str(opmap.get(cls) or 'NEXT_GOVERNED_UNIT_ELIGIBILITY_EVALUATE'),
           'binding_class':cls,'applicability':'REQUIRED',
           'canonical_owner_or_authority_ref':'' if is_blocked else 'SYNTHETIC-CURRENT-AUTHORITY',
           'authority_evidence_ref':'' if is_blocked else 'synthetic://authority',

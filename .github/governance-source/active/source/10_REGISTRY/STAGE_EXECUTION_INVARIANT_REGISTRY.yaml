@@ -1260,9 +1260,9 @@ invariants:
         ROLLBACK_TARGET: [EXTERNAL_CURRENT_TARGET]
         OPERATIONS_OWNER: [AUTHORITY_VALUE]
       NEXT_GOVERNED_UNIT:
-        NEXT_PAGE_ELIGIBILITY_RESULT: [AUTHORITY_VALUE]
-        NEXT_GOVERNED_UNIT_IDENTITY_WHEN_NEXT_PAGE_READY: [AUTHORITY_VALUE]
-        NEXT_GOVERNED_UNIT_LEGAL_STAGE_ADMISSION_TARGET_WHEN_NEXT_PAGE_READY: [AUTHORITY_VALUE]
+        NEXT_GOVERNED_UNIT_ELIGIBILITY_RESULT: [AUTHORITY_VALUE]
+        NEXT_GOVERNED_UNIT_IDENTITY_WHEN_READY: [AUTHORITY_VALUE]
+        NEXT_GOVERNED_UNIT_LEGAL_STAGE_ADMISSION_TARGET_WHEN_READY: [AUTHORITY_VALUE]
     reference_resolution_required: true
     reference_presence_is_materialization: false
     physical_materialization_required: true
@@ -1276,7 +1276,7 @@ invariants:
     successor_effectful_operation_binding_universe_reconciliation_required: true
     successor_execution_binding_universe_source: CURRENT_SUCCESSOR_LIFECYCLE_OPERATIONS_PLUS_CURRENT_AUTHORITY_AND_APPLICABILITY
     successor_execution_binding_may_be_invented_by_consumer: false
-    successor_execution_binding_may_be_inferred_from_product_need_alone: false
+    successor_execution_binding_may_be_inferred_from_governed_context_need_alone: false
     stub_placeholder_or_recommended_target_may_receive_readiness_credit: false
     technology_stack_recommendation_may_create_execution_authority: false
     implementation_language_framework_or_package_manager_may_be_ai_selected_when_unbound: false
@@ -1294,7 +1294,7 @@ invariants:
     unresolved_required_execution_binding: BLOCK_OR_REENTER_EARLIEST_OWNER
     downstream_discovered_upstream_gap: STOP_REENTER_EARLIEST_OWNER_MARK_DESCENDANTS_REVERIFY_REQUIRED
     unaffected_evidence_preservation_requires_reverse_dependency_proof: true
-    product_stage_credit_from_governance_validation: 0
+    execution_stage_credit_from_governance_validation: 0
     successor_execution_binding_requirements:
       STAGE-02: []
       STAGE-03:
@@ -1362,10 +1362,10 @@ invariants:
       - BACKUP_TARGET
       - ROLLBACK_TARGET
       - OPERATIONS_OWNER
-    next_page_successor_binding_requirements:
-    - NEXT_PAGE_ELIGIBILITY_RESULT
-    - NEXT_GOVERNED_UNIT_IDENTITY_WHEN_NEXT_PAGE_READY
-    - NEXT_GOVERNED_UNIT_LEGAL_STAGE_ADMISSION_TARGET_WHEN_NEXT_PAGE_READY
+    next_governed_unit_successor_binding_requirements:
+    - NEXT_GOVERNED_UNIT_ELIGIBILITY_RESULT
+    - NEXT_GOVERNED_UNIT_IDENTITY_WHEN_READY
+    - NEXT_GOVERNED_UNIT_LEGAL_STAGE_ADMISSION_TARGET_WHEN_READY
     successor_execution_binding_operation_map:
       STAGE-03:
         VISUAL_AUTHORITY_TARGET: VISUAL_SPEC_COMPILE
@@ -1905,11 +1905,11 @@ invariants:
         rollback_plan_presence_equals_rollback_verification: false
         final_audit_matrix_must_backtrace_all_registered_predecessor_stages: true
         final_closure_requires_zero_unresolved_gap_or_stale_authority_or_missing_receipt_or_orphan_evidence_or_denominator_shrink_or_invalidated_predecessor_or_unreverified_descendant: true
-        next_page_or_project_completion_must_come_from_registered_eligibility_result: true
+        next_governed_unit_or_scope_completion_must_come_from_registered_eligibility_result: true
     vertical_lifecycle_contract:
       applies_from_stage: STAGE-05
       applies_through_stage: STAGE-11
-      sticky_identity_fields: [page_uid, governed_unit_uid, work_unit_owner, source_authority, product_target, release_identity]
+      sticky_identity_fields: [governed_unit_uid, work_unit_owner, source_authority, execution_target, release_identity]
       drift_finding: VERTICAL_SCOPE_IDENTITY_DRIFT
       concurrency: 1
       successor_before_predecessor_closure_finding: SUCCESSOR_STAGE_EXECUTED_BEFORE_PREDECESSOR_CLOSURE
@@ -1958,7 +1958,7 @@ invariants:
     full_lifecycle_closure_contract:
       all_registered_stages_must_close_under_current_governance: true
       impacted_reverify_count_required: 0
-      next_page_or_project_completion_requires_registered_stage11_eligibility: true
+      next_governed_unit_or_scope_completion_requires_registered_stage11_eligibility: true
 stage02_observed_defect_mapping:
 - finding: PORT_EXPOSURE_WITHOUT_TRIGGER
   mapped_invariant: RELATION_SEMANTIC_SEPARATION

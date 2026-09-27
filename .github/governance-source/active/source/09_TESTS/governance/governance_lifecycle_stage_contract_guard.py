@@ -48,7 +48,7 @@ def validate(root=ROOT):
     if eag.get('source_fact_disposition')!='UNRESOLVED_AUTHORITY_GAP' or eag.get('source_fact_closure_with_preserved_unresolved_refs')!='ALLOW' or eag.get('ai_auto_fill_or_inference')!='BLOCK' or eag.get('drop_ignore_or_false_resolution')!='BLOCK': failures.append('stage1_external_authority_fail_closed_contract_invalid')
 
     inv=((d.get('cross_stage_invariants') or {}).get('semantic_granularity') or {})
-    expected_units={'STAGE-01':'SOURCE_STRUCTURE_OR_SEGMENT_UNIT','STAGE-02':'FUNCTIONAL_CONTRACT_OR_DEPENDENCY_UNIT','STAGE-03':'VISUAL_SPEC_OR_GEOMETRY_UNIT','STAGE-04':'FOUNDATION_FREEZE_OR_ACCEPTANCE_UNIT','STAGE-05':'PROGRAM_ARTIFACT_OR_WORK_UNIT','STAGE-06':'VERIFICATION_OR_ACCEPTANCE_MATRIX_UNIT','STAGE-07':'BUILD_OR_RELEASE_CANDIDATE_UNIT','STAGE-08':'STAGING_APPLICABILITY_OR_ACCEPTANCE_UNIT','STAGE-09':'CUTOVER_MIGRATION_DEPLOYMENT_OR_ROLLBACK_UNIT','STAGE-10':'PRODUCTION_ACCEPTANCE_DIMENSION_UNIT','STAGE-11':'CLOSURE_OPERATIONS_OR_NEXT_PAGE_ELIGIBILITY_UNIT'}
+    expected_units={'STAGE-01':'SOURCE_STRUCTURE_OR_SEGMENT_UNIT','STAGE-02':'FUNCTIONAL_CONTRACT_OR_DEPENDENCY_UNIT','STAGE-03':'VISUAL_SPEC_OR_GEOMETRY_UNIT','STAGE-04':'FOUNDATION_FREEZE_OR_ACCEPTANCE_UNIT','STAGE-05':'PROGRAM_ARTIFACT_OR_WORK_UNIT','STAGE-06':'VERIFICATION_OR_ACCEPTANCE_MATRIX_UNIT','STAGE-07':'BUILD_OR_RELEASE_CANDIDATE_UNIT','STAGE-08':'STAGING_APPLICABILITY_OR_ACCEPTANCE_UNIT','STAGE-09':'CUTOVER_MIGRATION_DEPLOYMENT_OR_ROLLBACK_UNIT','STAGE-10':'PRODUCTION_ACCEPTANCE_DIMENSION_UNIT','STAGE-11':'CLOSURE_OPERATIONS_OR_NEXT_GOVERNED_UNIT_ELIGIBILITY_UNIT'}
     if inv.get('invariant_uid')!='GOV-INV-SEMANTIC-GRANULARITY-001': failures.append('semantic_granularity_invariant_missing_or_wrong')
     if inv.get('normative_section_uid')!='WEB-GOV-03-S052': failures.append('semantic_granularity_normative_section_wrong')
     if inv.get('applies_to_stages')!=expected: failures.append('semantic_granularity_not_all_stages')
@@ -98,7 +98,7 @@ def validate(root=ROOT):
     top=d.get('topology') or {}
     if top.get('foundation_stages')!=expected[:4] or top.get('foundation_barrier_mode')!='PER_GOVERNED_UNIT': failures.append('foundation_barrier_invalid')
     if top.get('vertical_stages')!=expected[4:] or top.get('vertical_concurrency')!=1: failures.append('vertical_topology_invalid')
-    if top.get('page_uid_sticky_from_stage')!='STAGE-05' or top.get('page_uid_sticky_through_stage')!='STAGE-11': failures.append('page_uid_sticky_contract_invalid')
+    if top.get('governed_unit_uid_sticky_from_stage')!='STAGE-05' or top.get('governed_unit_uid_sticky_through_stage')!='STAGE-11': failures.append('governed_unit_uid_sticky_contract_invalid')
     if any((x.get('scope_mode')=='ALL_REQUIRED_PAGES' for x in stages)): failures.append('all_required_pages_scope_mode_forbidden')
     if any(('ALL_REQUIRED_PAGES' in str(x.get('entry_gate') or '') or 'ALL_REQUIRED_PAGES' in str(x.get('exit_gate') or '') for x in stages)): failures.append('all_required_pages_stage_gate_forbidden')
     for x in stages:

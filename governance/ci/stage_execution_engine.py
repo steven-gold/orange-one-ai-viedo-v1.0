@@ -233,7 +233,13 @@ def validate_definition_data(profile,adapters):
         if not ad.get('denominator_kind'): fail(f'ADAPTER_DENOMINATOR_KIND_MISSING:{uid}')
         if ad.get('scanner_mode') not in {'NORMALIZED_COMMON_EVIDENCE_CONTRACT','SPECIALIZED_COMPATIBILITY_PLUS_NORMALIZED_COMMON'}: fail(f'ADAPTER_SCANNER_MODE_INVALID:{uid}')
         if ad.get('execution_completion_credit_from_definition_audit')!=0: fail(f'DEFINITION_AUDIT_EXECUTION_CREDIT_LEAK:{uid}')
-        if ad.get('business_entity_gate_required') is True and not isinstance(st.get('business_entity_completeness_gate'),dict): fail(f'BUSINESS_ENTITY_GATE_REQUIRED_BUT_MISSING:{uid}')
+        if ad.get('governed_entity_gate_mode')!='CONDITIONAL_BY_CURRENT_AUTHORITY_AND_APPLICABILITY': fail(f'GOVERNED_ENTITY_GATE_MODE_DRIFT:{uid}')
+        entity_gate=st.get('business_entity_completeness_gate')
+        if isinstance(entity_gate,dict):
+            if entity_gate.get('applicability')!='CONDITIONAL_BY_CURRENT_AUTHORITY_AND_GOVERNED_UNIT_SEMANTICS' or entity_gate.get('required_when_applicable') is not True or entity_gate.get('not_applicable_requires_authority_evidence') is not True:
+                fail(f'GOVERNED_ENTITY_GATE_APPLICABILITY_CONTRACT_DRIFT:{uid}')
+            if entity_gate.get('required') is True:
+                fail(f'GOVERNED_ENTITY_GATE_UNIVERSALLY_REQUIRED:{uid}')
     for _sid,_stage in stages.items():
         _gate=_stage.get('cross_stage_materialization_gate') or {}
         if _gate.get('required') is not True or _gate.get('invariant_uid')!='GOV-INV-CROSS-STAGE-MATERIALIZATION-CONSUMER-READINESS-001':
@@ -414,7 +420,7 @@ def validate_full_lifecycle_closure(stage_statuses,impacted_reverify_count,stage
     if contract.get('next_page_or_project_completion_requires_registered_stage11_eligibility') is True:
         if not isinstance(stage11_eligibility,dict):
             fail('FULL_LIFECYCLE_STAGE11_ELIGIBILITY_RECORD_REQUIRED')
-        if str(stage11_eligibility.get('operation_uid') or '')!='NEXT_PAGE_ELIGIBILITY_EVALUATE':
+        if str(stage11_eligibility.get('operation_uid') or '')!='NEXT_GOVERNED_UNIT_ELIGIBILITY_EVALUATE':
             fail('FULL_LIFECYCLE_STAGE11_ELIGIBILITY_OPERATION_INVALID')
         if not str(stage11_eligibility.get('result') or '').strip():
             fail('FULL_LIFECYCLE_STAGE11_ELIGIBILITY_RESULT_MISSING')
@@ -882,7 +888,7 @@ def _validate_cross_stage_handoff_ledger(stage_uid,e,stage,stages):
         expected_map=operation_map.get(successor_uid) or {}
         successor_ops=set(map(str,stages[successor_uid].get('operations') or []))
     else:
-        expected_classes=list(map(str,policy.get('next_page_successor_binding_requirements') or []))
+        expected_classes=list(map(str,policy.get('next_governed_unit_successor_binding_requirements') or []))
         expected_map={}
         successor_ops=set()
     rows=ledger.get('successor_execution_bindings')
@@ -1077,7 +1083,7 @@ def validate_evidence_data(stage_uid,e):
     if e.get('result') not in {'PASS','BLOCKED'}: fail('EVIDENCE_RESULT_INVALID')
     if e.get('result')=='BLOCKED':
         if nxt.get('status')!='BLOCKED': fail('BLOCKED_EVIDENCE_NEXT_STAGE_TRANSITION_NOT_BLOCKED')
-    elif nxt.get('status') not in {'READY','PROJECT_COMPLETE','NEXT_PAGE_READY'}:
+    elif nxt.get('status') not in {'READY','SCOPE_COMPLETE','NEXT_GOVERNED_UNIT_READY'}:
         fail('PASS_EVIDENCE_NEXT_STAGE_TRANSITION_INVALID')
 
     if e['result']=='PASS':

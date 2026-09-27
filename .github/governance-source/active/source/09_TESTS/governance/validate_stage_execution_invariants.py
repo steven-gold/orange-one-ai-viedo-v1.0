@@ -328,7 +328,7 @@ def validate(root=ROOT):
             failures.append('cross_stage_readiness_flag_missing:' + key)
     if crossmat.get('single_canonical_handoff_artifact_only') is not True or crossmat.get('parallel_readiness_ledger_or_stage_local_substitute') != 'BLOCK':
         failures.append('cross_stage_single_canonical_handoff_contract_missing')
-    if crossmat.get('successor_execution_binding_universe_source') != 'CURRENT_SUCCESSOR_LIFECYCLE_OPERATIONS_PLUS_CURRENT_AUTHORITY_AND_APPLICABILITY' or crossmat.get('successor_execution_binding_may_be_invented_by_consumer') is not False or crossmat.get('successor_execution_binding_may_be_inferred_from_product_need_alone') is not False or crossmat.get('stub_placeholder_or_recommended_target_may_receive_readiness_credit') is not False:
+    if crossmat.get('successor_execution_binding_universe_source') != 'CURRENT_SUCCESSOR_LIFECYCLE_OPERATIONS_PLUS_CURRENT_AUTHORITY_AND_APPLICABILITY' or crossmat.get('successor_execution_binding_may_be_invented_by_consumer') is not False or crossmat.get('successor_execution_binding_may_be_inferred_from_governed_context_need_alone') is not False or crossmat.get('stub_placeholder_or_recommended_target_may_receive_readiness_credit') is not False:
         failures.append('cross_stage_execution_binding_authority_contract_incomplete')
     if crossmat.get('technology_stack_recommendation_may_create_execution_authority') is not False or crossmat.get('implementation_language_framework_or_package_manager_may_be_ai_selected_when_unbound') is not False or crossmat.get('successor_effectful_operation_prerequisite_binding_must_be_derived_from_current_authority') is not True or crossmat.get('enumerated_binding_classes_are_minimum_not_exhaustive_when_registered_operation_has_additional_authorized_prerequisites') is not True:
         failures.append('cross_stage_dynamic_prerequisite_authority_contract_incomplete')
@@ -343,11 +343,9 @@ def validate(root=ROOT):
         failures.append('cross_stage_execution_binding_stage_requirement_set_drift')
     if set(binding_maps) != {f'STAGE-{i:02d}' for i in range(3,12)}:
         failures.append('cross_stage_execution_binding_operation_map_stage_set_drift')
-    stage05_stack_required={'IMPLEMENTATION_LANGUAGE_AUTHORITY','FRONTEND_FRAMEWORK_AUTHORITY','BACKEND_FRAMEWORK_AUTHORITY','PACKAGE_MANAGER_AUTHORITY'}
-    if not stage05_stack_required.issubset(set(binding_requirements.get('STAGE-05') or [])):
-        failures.append('stage05_implementation_stack_authority_denominator_incomplete')
-    if not stage05_stack_required.issubset(set((binding_maps.get('STAGE-05') or {}).keys())):
-        failures.append('stage05_implementation_stack_operation_binding_map_incomplete')
+    for sid in sorted(set(binding_maps)):
+        if set((binding_maps.get(sid) or {}).keys()) != set(binding_requirements.get(sid) or []):
+            failures.append('successor_binding_operation_map_catalog_drift:'+sid)
     target_required={f'STAGE-{i:02d}' for i in range(5,12)}
     if set(crossmat.get('successor_execution_target_resolution_required_stage_uids') or []) != target_required:
         failures.append('execution_target_resolution_stage_denominator_drift')
@@ -366,7 +364,7 @@ def validate(root=ROOT):
     for sid in sorted(target_required):
         if set((kind_policy.get(sid) or {}).keys()) != set(binding_requirements.get(sid) or []):
             failures.append('execution_target_resolution_policy_binding_denominator_drift:'+sid)
-    if set((kind_policy.get('NEXT_GOVERNED_UNIT') or {}).keys()) != set(crossmat.get('next_page_successor_binding_requirements') or []):
+    if set((kind_policy.get('NEXT_GOVERNED_UNIT') or {}).keys()) != set(crossmat.get('next_governed_unit_successor_binding_requirements') or []):
         failures.append('execution_target_resolution_policy_next_unit_denominator_drift')
     for sid,rows in kind_policy.items():
         for cls,kinds in (rows or {}).items():

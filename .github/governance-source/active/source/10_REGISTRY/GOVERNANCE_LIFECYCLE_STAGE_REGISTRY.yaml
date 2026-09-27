@@ -34,8 +34,8 @@ topology:
   - STAGE-10
   - STAGE-11
   vertical_concurrency: 1
-  page_uid_sticky_from_stage: STAGE-05
-  page_uid_sticky_through_stage: STAGE-11
+  governed_unit_uid_sticky_from_stage: STAGE-05
+  governed_unit_uid_sticky_through_stage: STAGE-11
 
 explicit_stage_range_execution_contract:
   invariant_uid: GOV-INV-EXPLICIT-STAGE-RANGE-EXECUTION-001
@@ -230,7 +230,9 @@ stages:
     invariant_uid: GOV-INV-CLOSURE-EVIDENCE-CONTINUITY-001
     normative_section_uid: WEB-GOV-03-S058
   business_entity_completeness_gate:
-    required: true
+    applicability: CONDITIONAL_BY_CURRENT_AUTHORITY_AND_GOVERNED_UNIT_SEMANTICS
+    required_when_applicable: true
+    not_applicable_requires_authority_evidence: true
     common_registry_ref: REG-STAGE-EXECUTION-INVARIANT-001
     validator_uid: VAL-GOV-037
     responsibility: EXTRACT_ENTITY_AND_HIERARCHY_CANDIDATES_FROM_SOURCE
@@ -460,7 +462,9 @@ stages:
     review_completion_does_not_imply_stage_closure: true
     unresolved_gap_fill_without_current_authority: BLOCK
   business_entity_completeness_gate:
-    required: true
+    applicability: CONDITIONAL_BY_CURRENT_AUTHORITY_AND_GOVERNED_UNIT_SEMANTICS
+    required_when_applicable: true
+    not_applicable_requires_authority_evidence: true
     common_registry_ref: REG-STAGE-EXECUTION-INVARIANT-001
     validator_uid: VAL-GOV-037
     responsibility: MATERIALIZE_ENTITY_INVENTORY_OPERATION_MATRIX_HIERARCHY_AND_FUNCTIONAL_CONTRACTS
@@ -694,7 +698,9 @@ stages:
     invariant_uid: GOV-INV-CLOSURE-EVIDENCE-CONTINUITY-001
     normative_section_uid: WEB-GOV-03-S058
   business_entity_completeness_gate:
-    required: true
+    applicability: CONDITIONAL_BY_CURRENT_AUTHORITY_AND_GOVERNED_UNIT_SEMANTICS
+    required_when_applicable: true
+    not_applicable_requires_authority_evidence: true
     common_registry_ref: REG-STAGE-EXECUTION-INVARIANT-001
     validator_uid: VAL-GOV-037
     responsibility: BIND_REQUIRED_OPERATIONS_TO_APPROVED_UI_OR_SYSTEM_ENTRY
@@ -888,7 +894,9 @@ stages:
     invariant_uid: GOV-INV-CLOSURE-EVIDENCE-CONTINUITY-001
     normative_section_uid: WEB-GOV-03-S058
   business_entity_completeness_gate:
-    required: true
+    applicability: CONDITIONAL_BY_CURRENT_AUTHORITY_AND_GOVERNED_UNIT_SEMANTICS
+    required_when_applicable: true
+    not_applicable_requires_authority_evidence: true
     common_registry_ref: REG-STAGE-EXECUTION-INVARIANT-001
     validator_uid: VAL-GOV-037
     responsibility: FREEZE_ENTITY_OPERATION_HIERARCHY_UI_ACCEPTANCE_DENOMINATOR
@@ -1049,7 +1057,9 @@ stages:
     invariant_uid: GOV-INV-CLOSURE-EVIDENCE-CONTINUITY-001
     normative_section_uid: WEB-GOV-03-S058
   business_entity_completeness_gate:
-    required: true
+    applicability: CONDITIONAL_BY_CURRENT_AUTHORITY_AND_GOVERNED_UNIT_SEMANTICS
+    required_when_applicable: true
+    not_applicable_requires_authority_evidence: true
     common_registry_ref: REG-STAGE-EXECUTION-INVARIANT-001
     validator_uid: VAL-GOV-037
     responsibility: IMPLEMENT_FROZEN_OPERATION_MATRIX_WITHOUT_INVENTION_OR_OMISSION
@@ -1206,7 +1216,9 @@ stages:
     invariant_uid: GOV-INV-CLOSURE-EVIDENCE-CONTINUITY-001
     normative_section_uid: WEB-GOV-03-S058
   business_entity_completeness_gate:
-    required: true
+    applicability: CONDITIONAL_BY_CURRENT_AUTHORITY_AND_GOVERNED_UNIT_SEMANTICS
+    required_when_applicable: true
+    not_applicable_requires_authority_evidence: true
     common_registry_ref: REG-STAGE-EXECUTION-INVARIANT-001
     validator_uid: VAL-GOV-037
     responsibility: E2E_TEST_EVERY_REQUIRED_ENTITY_OPERATION
@@ -1710,7 +1722,9 @@ stages:
     invariant_uid: GOV-INV-CLOSURE-EVIDENCE-CONTINUITY-001
     normative_section_uid: WEB-GOV-03-S058
   business_entity_completeness_gate:
-    required: true
+    applicability: CONDITIONAL_BY_CURRENT_AUTHORITY_AND_GOVERNED_UNIT_SEMANTICS
+    required_when_applicable: true
+    not_applicable_requires_authority_evidence: true
     common_registry_ref: REG-STAGE-EXECUTION-INVARIANT-001
     validator_uid: VAL-GOV-037
     responsibility: PRODUCTION_ACCEPTANCE_FOR_APPLICABLE_EFFECTFUL_ENTITY_LIFECYCLES
@@ -1795,24 +1809,24 @@ stages:
   - OP-52-ROLLBACK_VERIFICATION
   - OP-53-FINAL_AUDIT_MATRIX_RECONCILIATION
   - OP-54-FINAL_PRODUCTION_ACCEPTANCE
-  - PRODUCTION_PAGE_CLOSURE
-  - NEXT_PAGE_ELIGIBILITY_EVALUATE
+  - GOVERNED_UNIT_CLOSURE
+  - NEXT_GOVERNED_UNIT_ELIGIBILITY_EVALUATE
   outputs:
   - FINAL_PRODUCTION_ACCEPTANCE_RESULT
-  - PRODUCTION_PAGE_CLOSED
-  - NEXT_PAGE_ELIGIBILITY
+  - GOVERNED_UNIT_CLOSED
+  - NEXT_GOVERNED_UNIT_ELIGIBILITY
   output_producers:
     FINAL_PRODUCTION_ACCEPTANCE_RESULT: OP-54-FINAL_PRODUCTION_ACCEPTANCE
-    PRODUCTION_PAGE_CLOSED: PRODUCTION_PAGE_CLOSURE
-    NEXT_PAGE_ELIGIBILITY: NEXT_PAGE_ELIGIBILITY_EVALUATE
+    GOVERNED_UNIT_CLOSED: GOVERNED_UNIT_CLOSURE
+    NEXT_GOVERNED_UNIT_ELIGIBILITY: NEXT_GOVERNED_UNIT_ELIGIBILITY_EVALUATE
   validators:
   - VAL-GOV-007
   - VAL-GOV-016
   required_evidence:
   - FINAL_AUDIT_EVIDENCE
   - OPERATIONS_EVIDENCE
-  exit_gate: PRODUCTION_PAGE_CLOSED
-  next_stage_uid: NEXT_PAGE_STAGE05_OR_PROJECT_COMPLETE
+  exit_gate: GOVERNED_UNIT_CLOSED
+  next_stage_uid: NEXT_GOVERNED_UNIT_STAGE05_OR_SCOPE_COMPLETE
   required_normative_section_uids:
   - WEB-GOV-02-S047
   - WEB-GOV-02-S048
@@ -1830,10 +1844,10 @@ stages:
   pre_execution_gate: GOVERNANCE_LOAD_RECEIPT_PASS
   validator_names:
   - FINAL_PRODUCTION_ACCEPTANCE_GUARD
-  - PRODUCTION_PAGE_CLOSURE_GUARD
+  - GOVERNED_UNIT_CLOSURE_GUARD
   semantic_granularity_gate:
     mode: REQUIRED
-    terminal_unit_type: CLOSURE_OPERATIONS_OR_NEXT_PAGE_ELIGIBILITY_UNIT
+    terminal_unit_type: CLOSURE_OPERATIONS_OR_NEXT_GOVERNED_UNIT_ELIGIBILITY_UNIT
     mixed_terminal_unit: BLOCK
     unresolved_container_unit: BLOCK
     recursive_decomposition_required: true

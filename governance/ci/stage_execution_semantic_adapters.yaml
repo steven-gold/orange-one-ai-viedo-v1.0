@@ -201,7 +201,7 @@ stages:
     - UNRESOLVED_AUTHORITY_PRESERVATION
     - SOURCE_PROJECTION_LOCK
     denominator_kind: REQUIRED_SOURCE_UNIT_X_REQUIRED_BASE_BLUEPRINT_OUTPUT
-    business_entity_gate_required: true
+    governed_entity_gate_mode: CONDITIONAL_BY_CURRENT_AUTHORITY_AND_APPLICABILITY
     scanner_mode: NORMALIZED_COMMON_EVIDENCE_CONTRACT
     execution_completion_credit_from_definition_audit: 0
   STAGE-02:
@@ -236,7 +236,7 @@ stages:
     - AI_CONTEXT_CONTINUITY
     - VERSION_FINALIZATION
     denominator_kind: BUSINESS_ENTITY_X_APPLICABLE_REQUIRED_OPERATION_PLUS_REQUIRED_HIERARCHY_EDGES
-    business_entity_gate_required: true
+    governed_entity_gate_mode: CONDITIONAL_BY_CURRENT_AUTHORITY_AND_APPLICABILITY
     scanner_mode: NORMALIZED_COMMON_EVIDENCE_CONTRACT
     current_execution_state_source: EXECUTION_WORKLINE_CURRENT_SCOPE_AND_RESUME
     packaged_required_artifact_contract:
@@ -272,7 +272,7 @@ stages:
     - TOPOLOGY_EQUIVALENCE
     - RESPONSIVE_ORDER
     denominator_kind: REQUIRED_FUNCTIONAL_OPERATION_X_REQUIRED_VISUAL_BINDING_PLUS_GEOMETRY_UNITS
-    business_entity_gate_required: true
+    governed_entity_gate_mode: CONDITIONAL_BY_CURRENT_AUTHORITY_AND_APPLICABILITY
     scanner_mode: NORMALIZED_COMMON_EVIDENCE_CONTRACT
     execution_completion_credit_from_definition_audit: 0
   STAGE-04:
@@ -292,7 +292,7 @@ stages:
     - IMMUTABILITY
     - UPSTREAM_CHANGE_INVALIDATION
     denominator_kind: ACCEPTED_FUNCTION_LOGIC_VISUAL_DENOMINATOR
-    business_entity_gate_required: true
+    governed_entity_gate_mode: CONDITIONAL_BY_CURRENT_AUTHORITY_AND_APPLICABILITY
     scanner_mode: NORMALIZED_COMMON_EVIDENCE_CONTRACT
     execution_completion_credit_from_definition_audit: 0
   STAGE-05:
@@ -329,7 +329,7 @@ stages:
     - STORAGE
     - VISUAL_LOGIC_SYNC
     denominator_kind: FROZEN_REQUIRED_OPERATION_X_IMPLEMENTATION_CHAIN
-    business_entity_gate_required: true
+    governed_entity_gate_mode: CONDITIONAL_BY_CURRENT_AUTHORITY_AND_APPLICABILITY
     scanner_mode: NORMALIZED_COMMON_EVIDENCE_CONTRACT
     execution_completion_credit_from_definition_audit: 0
   STAGE-06:
@@ -357,7 +357,7 @@ stages:
     - AI_CONTINUITY_WHEN_APPLICABLE
     - VISUAL_RESPONSIVE_I18N_A11Y_SECURITY
     denominator_kind: FROZEN_ACCEPTANCE_UNIT_X_REQUIRED_VERIFICATION_DIMENSION
-    business_entity_gate_required: true
+    governed_entity_gate_mode: CONDITIONAL_BY_CURRENT_AUTHORITY_AND_APPLICABILITY
     scanner_mode: NORMALIZED_COMMON_EVIDENCE_CONTRACT
     execution_completion_credit_from_definition_audit: 0
   STAGE-07:
@@ -378,7 +378,7 @@ stages:
     - SECURITY_FRESHNESS
     - STAGING_APPLICABILITY
     denominator_kind: VERIFIED_SOURCE_X_RELEASE_REQUIREMENT
-    business_entity_gate_required: false
+    governed_entity_gate_mode: CONDITIONAL_BY_CURRENT_AUTHORITY_AND_APPLICABILITY
     scanner_mode: NORMALIZED_COMMON_EVIDENCE_CONTRACT
     execution_completion_credit_from_definition_audit: 0
   STAGE-08:
@@ -396,7 +396,7 @@ stages:
     - STAGING_ACCEPTANCE_OR_AUTHORITY_NA
     - STAGING_CLOSURE
     denominator_kind: RELEASE_CANDIDATE_X_APPLICABLE_STAGING_ACCEPTANCE
-    business_entity_gate_required: false
+    governed_entity_gate_mode: CONDITIONAL_BY_CURRENT_AUTHORITY_AND_APPLICABILITY
     scanner_mode: NORMALIZED_COMMON_EVIDENCE_CONTRACT
     execution_completion_credit_from_definition_audit: 0
   STAGE-09:
@@ -416,7 +416,7 @@ stages:
     - PRODUCTION_SMOKE
     - RELEASE_IDENTITY
     denominator_kind: ACCEPTED_RELEASE_X_CUTOVER_REQUIREMENT
-    business_entity_gate_required: false
+    governed_entity_gate_mode: CONDITIONAL_BY_CURRENT_AUTHORITY_AND_APPLICABILITY
     scanner_mode: NORMALIZED_COMMON_EVIDENCE_CONTRACT
     execution_completion_credit_from_definition_audit: 0
   STAGE-10:
@@ -446,7 +446,7 @@ stages:
     - CONTEXT_HANDOFF
     - AUDIT_EVIDENCE
     denominator_kind: APPLICABLE_PRODUCTION_JOURNEY_X_ACCEPTANCE_DIMENSION
-    business_entity_gate_required: true
+    governed_entity_gate_mode: CONDITIONAL_BY_CURRENT_AUTHORITY_AND_APPLICABILITY
     scanner_mode: NORMALIZED_COMMON_EVIDENCE_CONTRACT
     execution_completion_credit_from_definition_audit: 0
   STAGE-11:
@@ -471,6 +471,6 @@ stages:
     - CLOSURE_CONTINUITY
     - NEXT_PAGE_TRANSITION
     denominator_kind: PRODUCTION_ACCEPTED_SCOPE_X_CLOSURE_OPERATION
-    business_entity_gate_required: false
+    governed_entity_gate_mode: CONDITIONAL_BY_CURRENT_AUTHORITY_AND_APPLICABILITY
     scanner_mode: NORMALIZED_COMMON_EVIDENCE_CONTRACT
     execution_completion_credit_from_definition_audit: 0
