@@ -21,9 +21,9 @@ def dep_fixture():
 def depcase(name,mut,expect_pass,exact=False):
     d=dep_fixture(); expected={x['authority_ref'] for x in d['unresolved_authority_gaps']} if exact else None; mut(d); f=g.validate_unresolved_authority_gaps(d,{'RAW1','RAW2'},expected); return case(name,(not f)==expect_pass,{'failures':f})
 def bp_fixture(dep=None):
-    dep=dep or dep_fixture(); raw={'RAW1':{'page_uid':'CORE-01'},'RAW2':{'page_uid':'ASSET-01'}}
+    dep=dep or dep_fixture(); raw={'RAW1':{'page_uid':'GOVERNED-UNIT-A'},'RAW2':{'page_uid':'GOVERNED-UNIT-B'}}
     carry=[{'gap_uid':x['gap_uid'],'authority_ref':x['authority_ref'],'disposition':'UNRESOLVED_AUTHORITY_GAP'} for x in dep['unresolved_authority_gaps'] if 'RAW1' in x['consumer_source_uids']]
-    return {'blueprint_uid':'BP-CORE-PAGE','page_uid':'CORE-01','unresolved_external_authority_refs':carry},raw
+    return {'blueprint_uid':'BP-UNIT-A-PAGE','page_uid':'GOVERNED-UNIT-A','unresolved_external_authority_refs':carry},raw
 def bpcase(name,mut,expect_pass):
     d=dep_fixture(); bp,raw=bp_fixture(d); mut(bp,d,raw); f=g.validate_blueprint_external_authority_carry(bp,d,raw); return case(name,(not f)==expect_pass,{'failures':f})
 

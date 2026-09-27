@@ -1097,7 +1097,7 @@ def synthetic_evidence(stage_uid,result):
         phase_trace.append(row)
     gap=[{'problem_uid':f'SYNTH-{stage_uid}-BLOCKER'}] if blocked else []
     closure=[f'SYNTH-{stage_uid}-BLOCKER'] if blocked else []
-    next_status='BLOCKED' if blocked else ('PROJECT_COMPLETE' if stage_uid=='STAGE-11' else 'READY')
+    next_status='BLOCKED' if blocked else ('NEXT_GOVERNED_UNIT_READY' if stage_uid=='STAGE-11' else 'READY')
     return {
       'artifact_type':'NORMALIZED_STAGE_EXECUTION_EVIDENCE',
       'governance_uid':gov,'stage_uid':stage_uid,'attempt_uid':f'SYNTH-{stage_uid}',

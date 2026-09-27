@@ -17,13 +17,13 @@ def finalize(d,key):
 def build(root):
     nh=g.normative_hash(PKG)
     write(root/'RUN_CONTEXT.yaml',{'run_uid':'MC2','stage_uid':'STAGE-01','candidate_normative_hash':nh,'clean_start_verified':True,'website_reconstruction':False})
-    raw_path='00_SOURCE_INTAKE/RAW_SOURCE/CORE-01/SOURCE.yaml'
+    raw_path='00_SOURCE_INTAKE/RAW_SOURCE/GOVERNED-UNIT-A/SOURCE.yaml'
     write(root/raw_path,'fixture raw page+visual source\n')
     raw_sha=g.git_blob_sha(root/raw_path)
-    raw=[{'source_uid':'RAW1','page_uid':'CORE-01','source_role':'MIXED_PAGE_VISUAL_SOURCE_INPUT','source_domain_scope':'MIXED_PAGE_VISUAL','current_owner':False}]
+    raw=[{'source_uid':'RAW1','page_uid':'GOVERNED-UNIT-A','source_role':'MIXED_PAGE_VISUAL_SOURCE_INPUT','source_domain_scope':'MIXED_PAGE_VISUAL','current_owner':False}]
     write(root/'00_SOURCE_INTAKE/RAW_SOURCE_REFERENCE_MANIFEST.yaml',{
       'artifact_uid':'RAW-CAPTURE-MC2','artifact_type':'RAW_SOURCE_REFERENCE_MANIFEST','status':'CURRENT_RAW_SOURCE_CAPTURE','capture_root':'00_SOURCE_INTAKE/RAW_SOURCE','records':[
-        {'source_uid':'RAW1','page_uid':'CORE-01','source_role':'MIXED_PAGE_VISUAL_SOURCE_INPUT','source_domain_scope':'MIXED_PAGE_VISUAL','source_path':'fixture://raw1','target_path':raw_path,'source_git_blob_sha':raw_sha,'target_git_blob_sha':raw_sha,'content_mutated':False}]})
+        {'source_uid':'RAW1','page_uid':'GOVERNED-UNIT-A','source_role':'MIXED_PAGE_VISUAL_SOURCE_INPUT','source_domain_scope':'MIXED_PAGE_VISUAL','source_path':'fixture://raw1','target_path':raw_path,'source_git_blob_sha':raw_sha,'target_git_blob_sha':raw_sha,'content_mutated':False}]})
     write(root/'00_SOURCE_INTAKE/RAW_SOURCE_CAPTURE_STATE.yaml',{'run_uid':'MC2','state':'CAPTURE_CLOSED','next_step':'SOURCE_STRUCTURE_ENUMERATION','recapture_allowed':False})
     src={'source_uid':'RAW1','source_identity':'fixture://raw1','enumeration_method':'fixture-observed-structure','evidence_ref':'00_SOURCE_INTAKE/evidence/E1.yaml','enumeration_state':'FULL_SOURCE_ENUMERATION_PROVEN','observed_nodes':[
       {'source_node_uid':'N-P1','source_ref':'§1','governance_relevance':'REQUIRED','terminality_state':'TERMINAL_HOMOGENEOUS','semantic_responsibility_count':1,'unresolved_child_responsibility_count':0},
@@ -33,29 +33,29 @@ def build(root):
     write(root/'00_SOURCE_INTAKE/evidence/E1.yaml',{'evidence_uid':'E1','source_uid':'RAW1','status':'OBSERVED'})
     write(root/'00_SOURCE_INTAKE/SOURCE_STRUCTURE_MANIFEST.yaml',{'sources':[src]})
     segs=[
-      {'segment_uid':'S-P1','source_uid':'RAW1','source_node_uid':'N-P1','page_uid':'CORE-01','planning_domain':'PAGE_CONSTRUCTION','responsibility_uid':'PAGE_IDENTITY','required':True,'disposition':'CLASSIFIED','target_artifact_uids':['A-P1']},
-      {'segment_uid':'S-P2','source_uid':'RAW1','source_node_uid':'N-P2','page_uid':'CORE-01','planning_domain':'PAGE_CONSTRUCTION','responsibility_uid':'PAGE_STRUCTURE','required':True,'disposition':'CLASSIFIED','target_artifact_uids':['A-P2']},
-      {'segment_uid':'S-V1','source_uid':'RAW1','source_node_uid':'N-V1','page_uid':'CORE-01','planning_domain':'VISUAL_CONSTRUCTION','responsibility_uid':'LAYOUT_GEOMETRY','required':True,'disposition':'CLASSIFIED','target_artifact_uids':['A-V1']},]
+      {'segment_uid':'S-P1','source_uid':'RAW1','source_node_uid':'N-P1','page_uid':'GOVERNED-UNIT-A','planning_domain':'PAGE_CONSTRUCTION','responsibility_uid':'PAGE_IDENTITY','required':True,'disposition':'CLASSIFIED','target_artifact_uids':['A-P1']},
+      {'segment_uid':'S-P2','source_uid':'RAW1','source_node_uid':'N-P2','page_uid':'GOVERNED-UNIT-A','planning_domain':'PAGE_CONSTRUCTION','responsibility_uid':'PAGE_STRUCTURE','required':True,'disposition':'CLASSIFIED','target_artifact_uids':['A-P2']},
+      {'segment_uid':'S-V1','source_uid':'RAW1','source_node_uid':'N-V1','page_uid':'GOVERNED-UNIT-A','planning_domain':'VISUAL_CONSTRUCTION','responsibility_uid':'LAYOUT_GEOMETRY','required':True,'disposition':'CLASSIFIED','target_artifact_uids':['A-V1']},]
     sm={'raw_sources':raw,'source_segments':segs,'status':'PASS'}; write(root/'00_SOURCE_INTAKE/SOURCE_SEGMENT_MAP.yaml',sm)
     source_facts=[]
     for ftype,uid,extra in [
       ('SOURCE_CONTEXT_MANIFEST','SF-CONTEXT',{'context_edges':[{'edge_uid':'CTX-1','from_source_node_uid':'N-P1','to_source_node_uid':'N-P2','relation_type':'PREVIOUS_NEXT','source_evidence_ref':'00_SOURCE_INTAKE/evidence/E1.yaml'}]}),
       ('CONTENT_SUPERSESSION_CONFLICT_LEDGER','SF-CONFLICT',{'items':[]}),
       ('SOURCE_DEPENDENCY_MAP','SF-DEPENDENCY',{'edges':[{'edge_uid':'DEP-1','producer_source_uid':'RAW1','consumer_source_uid':'RAW1','dependency_type':'SEQUENCE','authority_evidence_ref':'00_SOURCE_INTAKE/evidence/E1.yaml'}],'unresolved_authority_gaps':[]})]:
-        d={'artifact_uid':uid,'artifact_type':ftype,'page_uids':['CORE-01'],'status':'CURRENT_SOURCE_FACT',**extra}
+        d={'artifact_uid':uid,'artifact_type':ftype,'page_uids':['GOVERNED-UNIT-A'],'status':'CURRENT_SOURCE_FACT',**extra}
         d['content_hash']=g.content_hash(d); source_facts.append(d); write(root/f'00_SOURCE_INTAKE/{ftype}.yaml',d)
     arts=[]
     for uid,domain,resp,seg,path in [
-      ('A-P1','PAGE_CONSTRUCTION','PAGE_IDENTITY','S-P1','01_CLASSIFIED/CORE-01/PAGE/PAGE_IDENTITY.yaml'),
-      ('A-P2','PAGE_CONSTRUCTION','PAGE_STRUCTURE','S-P2','01_CLASSIFIED/CORE-01/PAGE/PAGE_STRUCTURE.yaml'),
-      ('A-V1','VISUAL_CONSTRUCTION','LAYOUT_GEOMETRY','S-V1','01_CLASSIFIED/CORE-01/VISUAL/LAYOUT_GEOMETRY.yaml')]:
-        d={'artifact_uid':uid,'page_uid':'CORE-01','planning_domain':domain,'responsibility_uid':resp,'responsibility_class':resp,'responsibilities':[resp],'canonical_owner_uid':'OWNER-'+uid,'target_path':path,'lifecycle_uid':'LC-'+resp,'approval_scope_uid':'AP-'+resp,'version_scope_uid':'VER-'+resp,'test_scope_uid':'TEST-'+resp,'source_lineage':[{'source_uid':'RAW1','source_segment_uids':[seg]}],'facts':[{'k':resp,'v':'x'}],'status':'CURRENT_CLASSIFICATION'}
+      ('A-P1','PAGE_CONSTRUCTION','PAGE_IDENTITY','S-P1','01_CLASSIFIED/GOVERNED-UNIT-A/PAGE/PAGE_IDENTITY.yaml'),
+      ('A-P2','PAGE_CONSTRUCTION','PAGE_STRUCTURE','S-P2','01_CLASSIFIED/GOVERNED-UNIT-A/PAGE/PAGE_STRUCTURE.yaml'),
+      ('A-V1','VISUAL_CONSTRUCTION','LAYOUT_GEOMETRY','S-V1','01_CLASSIFIED/GOVERNED-UNIT-A/VISUAL/LAYOUT_GEOMETRY.yaml')]:
+        d={'artifact_uid':uid,'page_uid':'GOVERNED-UNIT-A','planning_domain':domain,'responsibility_uid':resp,'responsibility_class':resp,'responsibilities':[resp],'canonical_owner_uid':'OWNER-'+uid,'target_path':path,'lifecycle_uid':'LC-'+resp,'approval_scope_uid':'AP-'+resp,'version_scope_uid':'VER-'+resp,'test_scope_uid':'TEST-'+resp,'source_lineage':[{'source_uid':'RAW1','source_segment_uids':[seg]}],'facts':[{'k':resp,'v':'x'}],'status':'CURRENT_CLASSIFICATION'}
         d=finalize(d,'content_hash'); arts.append(d); write(root/path,d)
-    bp_page={'blueprint_uid':'BP-P','page_uid':'CORE-01','blueprint_type':'PAGE_BASE_BLUEPRINT','planning_domain':'PAGE_CONSTRUCTION','target_path':'02_BASE_BLUEPRINT/CORE-01/PAGE_BASE_BLUEPRINT.yaml','input_artifacts':[{'artifact_uid':a['artifact_uid'],'content_hash':a['content_hash']} for a in arts if a['planning_domain']=='PAGE_CONSTRUCTION'],'required_responsibility_uids':['PAGE_IDENTITY','PAGE_STRUCTURE'],'shared_refs':[],'source_fact_refs':[{'artifact_uid':x['artifact_uid'],'content_hash':x['content_hash']} for x in source_facts],'raw_source_inputs':[],'embedded_classification_payloads':[],'status':'CURRENT_BASE_BLUEPRINT'}
+    bp_page={'blueprint_uid':'BP-P','page_uid':'GOVERNED-UNIT-A','blueprint_type':'PAGE_BASE_BLUEPRINT','planning_domain':'PAGE_CONSTRUCTION','target_path':'02_BASE_BLUEPRINT/GOVERNED-UNIT-A/PAGE_BASE_BLUEPRINT.yaml','input_artifacts':[{'artifact_uid':a['artifact_uid'],'content_hash':a['content_hash']} for a in arts if a['planning_domain']=='PAGE_CONSTRUCTION'],'required_responsibility_uids':['PAGE_IDENTITY','PAGE_STRUCTURE'],'shared_refs':[],'source_fact_refs':[{'artifact_uid':x['artifact_uid'],'content_hash':x['content_hash']} for x in source_facts],'raw_source_inputs':[],'embedded_classification_payloads':[],'status':'CURRENT_BASE_BLUEPRINT'}
     bp_page=finalize(bp_page,'blueprint_hash'); write(root/bp_page['target_path'],bp_page)
-    bp_vis={'blueprint_uid':'BP-V','page_uid':'CORE-01','blueprint_type':'VISUAL_BASE_BLUEPRINT','planning_domain':'VISUAL_CONSTRUCTION','target_path':'02_BASE_BLUEPRINT/CORE-01/VISUAL_BASE_BLUEPRINT.yaml','input_artifacts':[{'artifact_uid':'A-V1','content_hash':[a for a in arts if a['artifact_uid']=='A-V1'][0]['content_hash']}],'required_responsibility_uids':['LAYOUT_GEOMETRY'],'shared_refs':[],'source_fact_refs':[{'artifact_uid':x['artifact_uid'],'content_hash':x['content_hash']} for x in source_facts],'raw_source_inputs':[],'embedded_classification_payloads':[],'status':'CURRENT_BASE_BLUEPRINT'}
+    bp_vis={'blueprint_uid':'BP-V','page_uid':'GOVERNED-UNIT-A','blueprint_type':'VISUAL_BASE_BLUEPRINT','planning_domain':'VISUAL_CONSTRUCTION','target_path':'02_BASE_BLUEPRINT/GOVERNED-UNIT-A/VISUAL_BASE_BLUEPRINT.yaml','input_artifacts':[{'artifact_uid':'A-V1','content_hash':[a for a in arts if a['artifact_uid']=='A-V1'][0]['content_hash']}],'required_responsibility_uids':['LAYOUT_GEOMETRY'],'shared_refs':[],'source_fact_refs':[{'artifact_uid':x['artifact_uid'],'content_hash':x['content_hash']} for x in source_facts],'raw_source_inputs':[],'embedded_classification_payloads':[],'status':'CURRENT_BASE_BLUEPRINT'}
     bp_vis=finalize(bp_vis,'blueprint_hash'); write(root/bp_vis['target_path'],bp_vis)
-    bind={'binding_uid':'BIND-CORE','page_uid':'CORE-01','target_path':'03_BLUEPRINT_BINDING/CORE-01/BLUEPRINT_BINDING_MANIFEST.yaml','page_blueprint':{'blueprint_uid':'BP-P','blueprint_hash':bp_page['blueprint_hash']},'visual_blueprint':{'blueprint_uid':'BP-V','blueprint_hash':bp_vis['blueprint_hash']},'embedded_blueprint_payloads':[],'status':'CURRENT_BLUEPRINT_BINDING'}
+    bind={'binding_uid':'BIND-UNIT-A','page_uid':'GOVERNED-UNIT-A','target_path':'03_BLUEPRINT_BINDING/GOVERNED-UNIT-A/BLUEPRINT_BINDING_MANIFEST.yaml','page_blueprint':{'blueprint_uid':'BP-P','blueprint_hash':bp_page['blueprint_hash']},'visual_blueprint':{'blueprint_uid':'BP-V','blueprint_hash':bp_vis['blueprint_hash']},'embedded_blueprint_payloads':[],'status':'CURRENT_BLUEPRINT_BINDING'}
     bind=finalize(bind,'binding_hash'); write(root/bind['target_path'],bind)
     files=sorted(p.relative_to(root).as_posix() for p in root.rglob('*') if p.is_file()); files.append('CURRENT_RUN_MANIFEST.yaml'); files=sorted(set(files)); write(root/'CURRENT_RUN_MANIFEST.yaml',{'run_uid':'MC2','current_files':files})
     return {'src':src,'sm':sm,'source_facts':source_facts,'arts':arts,'bp_page':bp_page,'bp_vis':bp_vis,'bind':bind}
@@ -98,8 +98,8 @@ c('classification_cross_domain_detected',run(cross_domain_artifact),'FAIL')
 
 def combined_blueprint(r,f):
     # replace two legal blueprints by one combined editable blueprint
-    for p in list((r/'02_BASE_BLUEPRINT/CORE-01').glob('*.yaml')): p.unlink()
-    d={'blueprint_uid':'BP-COMB','page_uid':'CORE-01','blueprint_type':'BASE_BLUEPRINT','planning_domain':'MIXED','target_path':'02_BASE_BLUEPRINT/CORE-01/BASE_BLUEPRINT.yaml','input_artifacts':[],'required_responsibility_uids':[],'raw_source_inputs':[],'embedded_classification_payloads':[],'status':'CURRENT_BASE_BLUEPRINT'}; d['blueprint_hash']=g.content_hash(d); write(r/d['target_path'],d)
+    for p in list((r/'02_BASE_BLUEPRINT/GOVERNED-UNIT-A').glob('*.yaml')): p.unlink()
+    d={'blueprint_uid':'BP-COMB','page_uid':'GOVERNED-UNIT-A','blueprint_type':'BASE_BLUEPRINT','planning_domain':'MIXED','target_path':'02_BASE_BLUEPRINT/GOVERNED-UNIT-A/BASE_BLUEPRINT.yaml','input_artifacts':[],'required_responsibility_uids':[],'raw_source_inputs':[],'embedded_classification_payloads':[],'status':'CURRENT_BASE_BLUEPRINT'}; d['blueprint_hash']=g.content_hash(d); write(r/d['target_path'],d)
 c('combined_page_visual_blueprint_forbidden',run(combined_blueprint),'FAIL')
 
 def page_consumes_visual(r,f):
@@ -122,7 +122,7 @@ def norm_mismatch(r,f):
     p=r/'RUN_CONTEXT.yaml'; d=yaml.safe_load(p.read_text()); d['candidate_normative_hash']='f'*64; write(p,d)
 c('candidate_hash_mismatch_detected',run(norm_mismatch),'FAIL')
 
-def residual(r,f): write(r/'01_CLASSIFIED/CORE-01/PAGE/old-copy.bak','garbage')
+def residual(r,f): write(r/'01_CLASSIFIED/GOVERNED-UNIT-A/PAGE/old-copy.bak','garbage')
 c('residual_garbage_detected',run(residual,True),'FAIL')
 
 def mixed_allowed(r,f):
@@ -141,7 +141,7 @@ c('partial_enumeration_cannot_claim_full_source_closure',run(partial_cannot_clai
 
 
 def classification_page_uid_drift(r,f):
-    p=r/f['arts'][0]['target_path']; d=yaml.safe_load(p.read_text()); d['page_uid']='ASSET-01'; d['content_hash']=g.content_hash(d); write(p,d)
+    p=r/f['arts'][0]['target_path']; d=yaml.safe_load(p.read_text()); d['page_uid']='GOVERNED-UNIT-B'; d['content_hash']=g.content_hash(d); write(p,d)
 c('classification_page_uid_drift_detected',run(classification_page_uid_drift),'FAIL')
 
 def lineage_unknown_source(r,f):
@@ -173,7 +173,7 @@ def evidence_not_physical(r,f):
 c('source_enumeration_evidence_physicality_detected',run(evidence_not_physical),'FAIL')
 
 def manifested_old_copy(r,f):
-    write(r/'01_CLASSIFIED/CORE-01/PAGE/PAGE_IDENTITY_old-copy.yaml',yaml.safe_load((r/f['arts'][0]['target_path']).read_text()))
+    write(r/'01_CLASSIFIED/GOVERNED-UNIT-A/PAGE/PAGE_IDENTITY_old-copy.yaml',yaml.safe_load((r/f['arts'][0]['target_path']).read_text()))
 c('manifested_old_copy_filename_detected',run(manifested_old_copy),'FAIL')
 
 def raw_source_missing_page_uid(r,f):
@@ -219,9 +219,9 @@ def _make_minimal_docx(path):
         z.writestr('[Content_Types].xml',ct); z.writestr('_rels/.rels',rootrels); z.writestr('word/document.xml',doc); z.writestr('docProps/thumbnail.png',b'\x89PNG\r\n\x1a\nTEST_BINARY_SOURCE_PART')
 
 def _projection_fixture(root):
-    rawrel='00_SOURCE_INTAKE/RAW_SOURCE/CORE-01/SOURCE.docx'; raw=root/rawrel; _make_minimal_docx(raw)
+    rawrel='00_SOURCE_INTAKE/RAW_SOURCE/GOVERNED-UNIT-A/SOURCE.docx'; raw=root/rawrel; _make_minimal_docx(raw)
     rawsha=g.file_sha(raw); blob=g.git_blob_sha(raw); suid='DOCX1'
-    rawcap={'artifact_uid':'RAW-CAP-DOCX','artifact_type':'RAW_SOURCE_REFERENCE_MANIFEST','status':'CURRENT_RAW_SOURCE_CAPTURE','capture_root':'00_SOURCE_INTAKE/RAW_SOURCE','records':[{'source_uid':suid,'source_format':'DOCX','projection_required':True,'page_uid':'CORE-01','source_role':'MIXED_PAGE_VISUAL_SOURCE_INPUT','source_domain_scope':'MIXED_PAGE_VISUAL','source_path':'fixture://docx1','target_path':rawrel,'source_git_blob_sha':blob,'target_git_blob_sha':blob,'content_mutated':False}]}
+    rawcap={'artifact_uid':'RAW-CAP-DOCX','artifact_type':'RAW_SOURCE_REFERENCE_MANIFEST','status':'CURRENT_RAW_SOURCE_CAPTURE','capture_root':'00_SOURCE_INTAKE/RAW_SOURCE','records':[{'source_uid':suid,'source_format':'DOCX','projection_required':True,'page_uid':'GOVERNED-UNIT-A','source_role':'MIXED_PAGE_VISUAL_SOURCE_INPUT','source_domain_scope':'MIXED_PAGE_VISUAL','source_path':'fixture://docx1','target_path':rawrel,'source_git_blob_sha':blob,'target_git_blob_sha':blob,'content_mutated':False}]}
     capstate={'run_uid':'PROJ1','state':'CAPTURE_CLOSED','next_step':'SOURCE_DOCUMENT_CONTENT_AUDIT','recapture_allowed':False}
     contract=g._projection_contract(PKG); rc=contract['raw_source_lock']; pc=contract['projection']; ac=contract['reconciliation']; fc=contract['pair_freeze']; base=f"00_SOURCE_INTAKE/SOURCE_PROJECTIONS/{suid}"
     contentc=contract['source_document_content_readiness_audit']; binaryc=contract['frozen_binary_source_part_materialization']
