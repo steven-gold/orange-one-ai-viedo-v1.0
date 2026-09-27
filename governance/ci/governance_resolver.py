@@ -84,10 +84,15 @@ def resolve():
         if manifest_doc.get("display_version") != identity.get("display_version"):
             raise RuntimeError("candidate specification manifest display version projection drift")
         lineage=manifest_doc.get("source_lineage") or {}
-        if lineage.get("promotion_authorization_ref") != identity.get("authorization_record_url"):
-            raise RuntimeError("candidate specification manifest authorization projection drift")
-        if lineage.get("candidate_predecessor_head_sha") != identity.get("predecessor_head_sha"):
-            raise RuntimeError("candidate specification manifest predecessor head projection drift")
+        if lineage.get("lineage_authority_source") != "governance/specifications/REGISTRY.yaml#governance_identity":
+            raise RuntimeError("candidate specification manifest lineage authority drift")
+        if lineage.get("lineage_projection_role") != "NON_NORMATIVE_PROVENANCE_ONLY":
+            raise RuntimeError("candidate specification manifest lineage role drift")
+        if lineage.get("concrete_repository_branch_head_or_issue_reference_may_define_common_policy") is not False:
+            raise RuntimeError("candidate specification manifest concrete workline identity leak")
+        for forbidden_key in ("promotion_authorization_ref","candidate_predecessor_branch","candidate_predecessor_head_sha","promotion_candidate_branch","promotion_candidate_head_sha","promotion_candidate_tree_sha"):
+            if forbidden_key in lineage:
+                raise RuntimeError("candidate specification manifest concrete lineage field forbidden: " + forbidden_key)
         if lineage.get("source_bytes_changed_by_this_successor") is not False or lineage.get("source_identity_reused_only_because_source_bytes_are_unchanged") is not True:
             raise RuntimeError("candidate specification manifest source lineage drift")
 

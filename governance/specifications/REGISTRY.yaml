@@ -80,6 +80,23 @@ governance_identity:
     - GOVERNANCE_SELF_VALIDATION_SCOPE_SEPARATION
     - NO_PRODUCT_STAGE_EXECUTION
 execution_environment_binding: governance/environment/EXECUTION_WORKLINE_BINDING.yaml
+stage_core_neutrality_contract:
+  status: REQUIRED
+  common_stage_identity: GOVERNED_UNIT
+  rules_root_concrete_repository_branch_or_issue_reference: BLOCK
+  bound_environment_identity_in_reusable_stage_semantics: BLOCK
+  fixed_governed_unit_instance_uid_in_common_stage_semantics: BLOCK
+  page_only_sticky_identity_in_common_lifecycle: BLOCK
+  universal_business_entity_gate: BLOCK
+  next_page_only_terminal_semantics: BLOCK
+  external_admission_artifact_in_stage_denominator: BLOCK
+  environment_identity_source: governance/environment/EXECUTION_WORKLINE_BINDING.yaml
+  reusable_stage_semantic_paths:
+  - governance/ci/stage_execution_engine.py
+  - governance/ci/stage_execution_semantic_adapters.yaml
+  - .github/governance-source/active/source/10_REGISTRY/GOVERNANCE_LIFECYCLE_STAGE_REGISTRY.yaml
+  - .github/governance-source/active/source/10_REGISTRY/STAGE_EXECUTION_INVARIANT_REGISTRY.yaml
+  - .github/governance-source/active/source/10_REGISTRY/REFERENCE_RULE_REGISTRY.yaml
 normative_mother_order:
 - .github/governance-source/active/source/12_DOCS/mother-spec/01_BLUEPRINT_DESIGN_GOVERNANCE.md
 - .github/governance-source/active/source/12_DOCS/mother-spec/02_IMPLEMENTATION_DELIVERY_STANDARD.md

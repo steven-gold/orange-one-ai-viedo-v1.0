@@ -37,7 +37,7 @@ manifest = load_yaml(ROOT / rules_root / 'SPECIFICATION_MANIFEST.yaml')
 profile_path = ROOT / lifecycle_rel
 profile = load_yaml(profile_path)
 
-if manifest.get('policy_scope') != 'PRODUCT_SYSTEM_AND_EXECUTION_PROFILE_NEUTRAL':
+if manifest.get('policy_scope') != 'GOVERNED_UNIT_AND_EXECUTION_PROFILE_NEUTRAL':
     die('CURRENT_POLICY_SCOPE_NOT_PROFILE_NEUTRAL')
 if profile.get('artifact_type') != 'EXECUTION_PROFILE_REGISTRY':
     die('SELECTED_PROFILE_REGISTRY_TYPE_INVALID')

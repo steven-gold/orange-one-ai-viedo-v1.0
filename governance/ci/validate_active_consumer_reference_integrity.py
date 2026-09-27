@@ -292,6 +292,54 @@ def main() -> int:
         if literal in current_engine_text:
             errors.append("BOUND_ENVIRONMENT_IDENTITY_IN_COMMON_ENGINE:" + literal)
 
+    neutrality = registry.get("stage_core_neutrality_contract") or {}
+    if neutrality.get("status") != "REQUIRED":
+        errors.append("STAGE_CORE_NEUTRALITY_CONTRACT_MISSING")
+    semantic_paths=set(map(str,neutrality.get("reusable_stage_semantic_paths") or []))
+    rules_root_rel=str(registry.get("rules_root") or "")
+    rules_root=ROOT/rules_root_rel if rules_root_rel else None
+    if rules_root and rules_root.is_dir():
+        semantic_paths.update(rel(p) for p in rules_root.glob("*.yaml") if p.is_file())
+    instance_uid=re.compile(r"(?<![A-Z0-9_])(?:CORE|ASSET|VIDEO|EDIT|VOICE|QA|IAM|ERP|AIAPI|WB)-\d+(?![A-Z0-9_])")
+    forbidden_stage_tokens=(
+        "page_uid_sticky_from_stage","page_uid_sticky_through_stage",
+        "business_entity_gate_required:",
+        "NEXT_PAGE_ELIGIBILITY","NEXT_PAGE_STAGE05_OR_PROJECT_COMPLETE",
+        "PRODUCTION_PAGE_CLOSURE","PRODUCTION_PAGE_CLOSED",
+    )
+    external_admission_tokens=(
+        "PRODUCT_SELECTED_GOVERNANCE_RELEASE","GOVERNANCE_REVISION_TRANSITION_RECEIPT",
+        "APPLICATION_BASELINE_ADMISSION_MANIFEST","APPLICATION_BASELINE_MATERIALIZATION_RECEIPT",
+        "APPLICATION_BASELINE_SNAPSHOT","WEB-EXT-ADMISSION",
+    )
+    stage_denominator_paths={
+        ".github/governance-source/active/source/10_REGISTRY/GOVERNANCE_LIFECYCLE_STAGE_REGISTRY.yaml",
+        ".github/governance-source/active/source/10_REGISTRY/STAGE_EXECUTION_INVARIANT_REGISTRY.yaml",
+        ".github/governance-source/active/source/10_REGISTRY/REFERENCE_RULE_REGISTRY.yaml",
+        "governance/ci/stage_execution_semantic_adapters.yaml",
+        "governance/ci/stage_execution_engine.py",
+    }
+    for path_rel in sorted(semantic_paths):
+        path=ROOT/path_rel
+        if not path.is_file():
+            errors.append("STAGE_CORE_NEUTRALITY_PATH_MISSING:"+path_rel)
+            continue
+        txt=path.read_text(encoding="utf-8")
+        for literal in sorted(environment_literals):
+            if literal and literal in txt:
+                errors.append("BOUND_ENVIRONMENT_IDENTITY_IN_REUSABLE_SEMANTICS:"+path_rel+":"+literal)
+        if path_rel.startswith("governance/specifications/current/") and "https://github.com/" in txt:
+            errors.append("CONCRETE_GITHUB_AUTHORITY_REF_IN_CURRENT_RULESET:"+path_rel)
+        for m in sorted(set(instance_uid.findall(txt))):
+            errors.append("FIXED_GOVERNED_UNIT_INSTANCE_IN_REUSABLE_SEMANTICS:"+path_rel+":"+m)
+        if path_rel in stage_denominator_paths:
+            for tok in forbidden_stage_tokens:
+                if tok in txt:
+                    errors.append("NON_NEUTRAL_STAGE_TOKEN:"+path_rel+":"+tok)
+            for tok in external_admission_tokens:
+                if tok in txt:
+                    errors.append("EXTERNAL_ADMISSION_TOKEN_IN_STAGE_CORE:"+path_rel+":"+tok)
+
     if errors:
         for error in sorted(set(errors)):
             print("BLOCK:", error, file=sys.stderr)

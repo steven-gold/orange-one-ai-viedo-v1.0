@@ -15,7 +15,7 @@ artifact_uid_role: CANDIDATE_SPECIFICATION_BUNDLE_REVISION_PROVENANCE_ONLY
 current_governance_identity_source: governance/specifications/REGISTRY.yaml
 artifact_uid_may_select_current_governance: false
 display_version_may_select_current_governance: false
-policy_scope: PRODUCT_SYSTEM_AND_EXECUTION_PROFILE_NEUTRAL
+policy_scope: GOVERNED_UNIT_AND_EXECUTION_PROFILE_NEUTRAL
 components:
 - uid: GOV-COMP-BOUNDED-FUNCTIONAL-COMPLETION
   file: BOUNDED_FUNCTIONAL_COMPLETION.yaml
@@ -47,10 +47,9 @@ source_lineage:
   full_source_root: .github/governance-source/active/source
   predecessor_governance_uid: GOV-REV-20260924-INDEPENDENT-UNIT-LIFECYCLE-CURRENT-IDENTITY-SYNC
   predecessor_root_revision: v2.2.24-independent-unit-lifecycle-current-identity-sync
-  promotion_authorization_uid: GITHUB-ISSUE-51-GOVERNANCE-V2.2.33-EXACT-SCOPE
-  promotion_authorization_ref: https://github.com/steven-gold/orange-one-ai-viedo-v1.0/issues/57
-  candidate_predecessor_branch: rebuild-v2.1.1
-  candidate_predecessor_head_sha: c336a76c22a5db65080f749f26875edfa5169457
+  lineage_authority_source: governance/specifications/REGISTRY.yaml#governance_identity
+  lineage_projection_role: NON_NORMATIVE_PROVENANCE_ONLY
+  concrete_repository_branch_head_or_issue_reference_may_define_common_policy: false
   candidate_predecessor_source_package_revision: v2.2.32-governance-projection-alignment-20260926
   current_source_package_trust_anchor_ref: .github/governance-source/active/source/10_REGISTRY/GOVERNANCE_ROOT_MANIFEST.yaml
   source_bytes_changed_by_this_successor: false
@@ -86,7 +85,7 @@ closure_policy:
   applicability_must_be_proven_before_missing_output_is_blocker: true
   missing_applicable_required_output: BLOCK
   authority_gap: BLOCK
-  ai_invention_of_missing_product_behavior: FORBIDDEN
+  ai_invention_of_missing_governed_behavior: FORBIDDEN
   successful_audit_with_reproducible_remediable_gap: NOT_CLOSURE
   hidden_defect_sweep_required_before_closure: true
   one_closure_may_mix_governance_uids: false
