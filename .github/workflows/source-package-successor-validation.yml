@@ -1,0 +1,32 @@
+name: Source Package Successor Validation
+on:
+  push:
+    branches:
+      - governance-source-v2.2.33-candidate
+permissions:
+  contents: read
+concurrency:
+  group: source-package-successor-validation-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python -m pip install --disable-pip-version-check PyYAML==6.0.2
+      - name: Validate unsigned source-package successor
+        run: |
+          set -euo pipefail
+          test "$(python - <<'PY'
+import yaml
+d=yaml.safe_load(open('governance/source-successor/SOURCE_PACKAGE_CANDIDATE.yaml')) or {}
+print(d.get('status'))
+PY
+)" = "UNSIGNED_NOT_CURRENT"
+          python governance/source-successor/refresh_source_checksums.py --check
+          python governance/ci/validate_source_package_candidate.py

@@ -1,0 +1,41 @@
+schema_version: 1
+artifact_uid: GOV-SOURCE-PACKAGE-CANDIDATE-20260927-001
+artifact_type: GOVERNANCE_SOURCE_PACKAGE_CANDIDATE
+status: UNSIGNED_NOT_CURRENT
+current_authority: false
+promotion_credit: 0
+product_completion_credit: 0
+branch: governance-source-v2.2.33-candidate
+authorization_record: https://github.com/steven-gold/orange-one-ai-viedo-v1.0/issues/52
+defect_record: https://github.com/steven-gold/orange-one-ai-viedo-v1.0/issues/53
+parent_governance_candidate_branch: governance-v2.2.33-candidate
+parent_governance_candidate_head_at_branch_creation: ccb2cbe4229f11491245b7f48cf7c4f3b0abd6fe
+predecessor_governance_branch: rebuild-v2.1.1
+predecessor_governance_head: c336a76c22a5db65080f749f26875edfa5169457
+predecessor_source_revision: v2.2.32-governance-projection-alignment-20260926
+predecessor_root_manifest_uid: REG-GOVERNANCE-ROOT-MANIFEST-001
+predecessor_semantic_authority_uid: REG-SEMANTIC-AUTHORITY-BASELINE-001
+source_root: .github/governance-source/active/source
+allowed_remediation_scope:
+- WEB-GOV-01-S083A_SECTION_REGISTRATION
+- WEB-GOV-01-S084_REBIND
+- BASIC_DESIGN_STEPWISE_STAGE_REFERENCE_BINDING
+- COMPILED_BASELINE_REGENERATION
+- INTERNAL_ROOT_MANIFEST_RECONCILIATION
+- INTERNAL_CHECKSUM_RECONCILIATION
+- RETIRED_PREDECESSOR_EVIDENCE_REGRESSION_MIGRATION
+- LEGACY_REGRESSION_PATH_AND_DENOMINATOR_RECONCILIATION
+external_trust:
+  status: NOT_SIGNED
+  independent_signer_required: true
+  candidate_self_sign: FORBIDDEN
+  signer_identity: null
+  signer_authority_ref: null
+  signature_or_immutable_receipt_ref: null
+admission:
+  internal_validation_required: true
+  external_trust_required_for_current: true
+  external_trust_required_for_promotion: true
+  unsigned_candidate_may_replace_current_source: false
+  exact_head_validation_required: true
+  predecessor_must_remain_immutable: true
