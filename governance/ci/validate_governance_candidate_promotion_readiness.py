@@ -21,7 +21,7 @@ REGISTRY=ROOT/'governance/specifications/REGISTRY.yaml'
 sys.path.insert(0,str(ROOT/'governance/ci'))
 from governance_resolver import resolve as resolve_governance
 import audit_closure_engine as audit_engine
-from source_package_successor_admission import evaluate_snapshot, validate_source_successor
+from source_package_successor_admission import evaluate_snapshot, evaluate_validation_toolchain_bindings, validate_source_successor
 
 
 def load_yaml(path: Path) -> dict:
@@ -368,6 +368,21 @@ def self_test() -> int:
     add('same_name_wrong_workflow_path_blocked',[run(1,names[0],path='.github/workflows/fake.yml'),run(2,names[1])],'BLOCKED')
     add('manual_dispatch_cannot_substitute_push_gate',[run(1,names[0],event='workflow_dispatch'),run(2,names[1])],'BLOCKED')
     add('wrong_head_branch_cannot_substitute_candidate_run',[run(1,names[0],head_branch='other'),run(2,names[1])],'BLOCKED')
+    _tc_contract={
+      'source_package_validation_toolchain_binding_mode':'GIT_BLOB_SHA1_EXACT_SET_V1',
+      'source_package_validation_toolchain_exact_file_count':2,
+      'source_package_validation_toolchain_exact_paths':['a.py'],
+      'source_package_validation_toolchain_subtree_prefixes':['tests/'],
+      'source_package_validation_toolchain_blob_bindings':{'a.py':'sha-a','tests/b.py':'sha-b'},
+    }
+    _tc_exact=evaluate_validation_toolchain_bindings(_tc_contract,{'a.py':'sha-a','tests/b.py':'sha-b','other.txt':'ignored'})
+    cases.append({'case':'source_validation_toolchain_exact_binding_pass','expected':'PASS','actual':_tc_exact.get('status'),'ok':_tc_exact.get('status')=='PASS'})
+    _tc_missing=evaluate_validation_toolchain_bindings(_tc_contract,{'a.py':'sha-a'})
+    cases.append({'case':'source_validation_toolchain_missing_blocked','expected':'BLOCKED','actual':_tc_missing.get('status'),'ok':_tc_missing.get('status')=='BLOCKED'})
+    _tc_extra=evaluate_validation_toolchain_bindings(_tc_contract,{'a.py':'sha-a','tests/b.py':'sha-b','tests/c.py':'sha-c'})
+    cases.append({'case':'source_validation_toolchain_extra_blocked','expected':'BLOCKED','actual':_tc_extra.get('status'),'ok':_tc_extra.get('status')=='BLOCKED'})
+    _tc_drift=evaluate_validation_toolchain_bindings(_tc_contract,{'a.py':'sha-a','tests/b.py':'sha-X'})
+    cases.append({'case':'source_validation_toolchain_blob_drift_blocked','expected':'BLOCKED','actual':_tc_drift.get('status'),'ok':_tc_drift.get('status')=='BLOCKED'})
     for row in [
       {'case':'local_equals_live_before_and_after','local':head,'before':head,'after':head,'expected':True},
       {'case':'historical_local_head_blocked','local':head,'before':'b'*40,'after':'b'*40,'expected':False},

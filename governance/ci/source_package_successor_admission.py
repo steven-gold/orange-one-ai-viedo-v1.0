@@ -114,6 +114,66 @@ def fetch_commit_tree_and_actor(repository:str,commit_sha:str,token:str|None)->t
     return tree_sha,actor,committed_at
 
 
+def fetch_commit_tree_blobs(repository:str,commit_sha:str,token:str|None)->dict[str,str]:
+    payload=_api_json(f'https://api.github.com/repos/{repository}/commits/{commit_sha}',token)
+    tree_sha=str((((payload.get('commit') or {}).get('tree') or {}).get('sha')) or '')
+    if len(tree_sha)!=40:
+        raise RuntimeError('SOURCE_TOOLCHAIN_TREE_SHA_INVALID')
+    tree=_api_json(f'https://api.github.com/repos/{repository}/git/trees/{tree_sha}?recursive=1',token)
+    if tree.get('truncated') is True:
+        raise RuntimeError('SOURCE_TOOLCHAIN_TREE_TRUNCATED')
+    rows=tree.get('tree') or []
+    if not isinstance(rows,list):
+        raise RuntimeError('SOURCE_TOOLCHAIN_TREE_ROWS_INVALID')
+    out={}
+    for row in rows:
+        if isinstance(row,dict) and row.get('type')=='blob':
+            path=str(row.get('path') or '')
+            sha=str(row.get('sha') or '')
+            if path and sha:
+                out[path]=sha
+    return out
+
+
+def evaluate_validation_toolchain_bindings(contract:dict,all_blobs:dict[str,str])->dict:
+    if contract.get('source_package_validation_toolchain_binding_mode')!='GIT_BLOB_SHA1_EXACT_SET_V1':
+        return {'status':'BLOCKED','failures':['SOURCE_VALIDATION_TOOLCHAIN_BINDING_MODE_DRIFT']}
+    expected=contract.get('source_package_validation_toolchain_blob_bindings') or {}
+    if not isinstance(expected,dict) or not expected:
+        return {'status':'BLOCKED','failures':['SOURCE_VALIDATION_TOOLCHAIN_BINDINGS_MISSING']}
+    expected={str(k):str(v) for k,v in expected.items()}
+    exact_paths=set(map(str,contract.get('source_package_validation_toolchain_exact_paths') or []))
+    prefixes=tuple(map(str,contract.get('source_package_validation_toolchain_subtree_prefixes') or []))
+    expected_count=int(contract.get('source_package_validation_toolchain_exact_file_count') or 0)
+    observed={
+      path:sha for path,sha in all_blobs.items()
+      if path in exact_paths or any(path.startswith(prefix) for prefix in prefixes)
+    }
+    failures=[]
+    if expected_count!=len(expected):
+        failures.append(f'SOURCE_VALIDATION_TOOLCHAIN_REGISTERED_COUNT_DRIFT:{len(expected)}!={expected_count}')
+    if len(observed)!=expected_count:
+        failures.append(f'SOURCE_VALIDATION_TOOLCHAIN_OBSERVED_COUNT_DRIFT:{len(observed)}!={expected_count}')
+    missing=sorted(set(expected)-set(observed))
+    extra=sorted(set(observed)-set(expected))
+    drift=sorted(path for path in set(expected)&set(observed) if expected[path]!=observed[path])
+    if missing:
+        failures.append('SOURCE_VALIDATION_TOOLCHAIN_MISSING:'+','.join(missing))
+    if extra:
+        failures.append('SOURCE_VALIDATION_TOOLCHAIN_EXTRA:'+','.join(extra))
+    if drift:
+        failures.append('SOURCE_VALIDATION_TOOLCHAIN_BLOB_DRIFT:'+','.join(drift))
+    return {
+      'status':'PASS' if not failures else 'BLOCKED',
+      'expected_count':expected_count,
+      'observed_count':len(observed),
+      'missing':missing,
+      'extra':extra,
+      'blob_drift':drift,
+      'failures':failures,
+    }
+
+
 def fetch_github_blob_receipt(ref:str,token:str|None)->tuple[dict,str,str,str]:
     match=re.fullmatch(r'https://github\.com/([^/]+)/([^/]+)/blob/([0-9a-fA-F]{40})/(.+)',str(ref or ''))
     if not match:
@@ -395,6 +455,13 @@ def validate_source_successor(repository:str,token:str|None,contract:dict,requir
         return {'status':'BLOCKED','failures':['SOURCE_RECEIPT_MANIFEST_PATH_DRIFT']}
 
     live_before=fetch_live_head(repository,branch,token)
+    try:
+        all_blobs=fetch_commit_tree_blobs(repository,live_before,token)
+        toolchain=evaluate_validation_toolchain_bindings(contract,all_blobs)
+    except Exception as exc:
+        return {'status':'BLOCKED','source_branch':branch,'source_head_sha':live_before,'failures':['SOURCE_VALIDATION_TOOLCHAIN_QUERY_FAILED:'+type(exc).__name__+':'+str(exc)]}
+    if toolchain.get('status')!='PASS':
+        return {'status':'BLOCKED','source_branch':branch,'source_head_sha':live_before,'validation_toolchain':toolchain,'failures':toolchain.get('failures') or ['SOURCE_VALIDATION_TOOLCHAIN_NOT_PROVEN']}
     runs=fetch_runs(repository,branch,live_before,token)
     matching=[
       r for r in runs
@@ -425,7 +492,9 @@ def validate_source_successor(repository:str,token:str|None,contract:dict,requir
             )
         except Exception as exc:
             external_check={'status':'NOT_VERIFIED','failures':['SOURCE_EXTERNAL_TRUST_MACHINE_VERIFICATION_EXCEPTION:'+type(exc).__name__+':'+str(exc)]}
-    return evaluate_snapshot(
+    result=evaluate_snapshot(
       receipt,manifest,manifest_blob,matching[0],live_before,live_after,require_external_trust,external_check,
       expected_workflow_path=workflow_path,allowed_workflow_events=workflow_events
     )
+    result['validation_toolchain']=toolchain
+    return result

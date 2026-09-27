@@ -145,6 +145,60 @@ candidate_validation_contract:
   - push
   - workflow_dispatch
   source_package_successor_workflow_identity_requires_name_path_allowed_event_branch_head: true
+  source_package_validation_toolchain_binding_mode: GIT_BLOB_SHA1_EXACT_SET_V1
+  source_package_validation_toolchain_exact_file_count: 42
+  source_package_validation_toolchain_exact_paths:
+  - .github/workflows/source-package-successor-validation.yml
+  - governance/ci/validate_source_package_candidate.py
+  - governance/source-successor/materialize_derived_source_package.py
+  - governance/source-successor/refresh_source_checksums.py
+  source_package_validation_toolchain_subtree_prefixes:
+  - .github/governance-source/active/source/09_TESTS/governance/
+  source_package_validation_toolchain_blob_bindings:
+    ".github/governance-source/active/source/09_TESTS/governance/compile_governance_baseline.py": a67aaacac87010c22464b52ab4aa8779e138bb9a
+    ".github/governance-source/active/source/09_TESTS/governance/governance_common.py": 3d235b41512bf54c9cce3800f81de7ad434fd560
+    ".github/governance-source/active/source/09_TESTS/governance/governance_lifecycle_stage_contract_guard.py": ae6e98e55481dca9f00882d840849f3601f6f933
+    ".github/governance-source/active/source/09_TESTS/governance/governance_management_contract_guard.py": 7aa3c3bdd62893da56a4ddca230730d778e9d78e
+    ".github/governance-source/active/source/09_TESTS/governance/governance_stage1_pipeline_guard.py": cbf6b5456be3171332dc7d425ad8c0423d33665a
+    ".github/governance-source/active/source/09_TESTS/governance/program_artifact_instance_guard.py": a5683c30ee67d706615df5f95f7325cb5a9f84e9
+    ".github/governance-source/active/source/09_TESTS/governance/refresh_governance_root_manifest.py": 34835494400ce0f8c1e2d9bc218d531ad163d8b2
+    ".github/governance-source/active/source/09_TESTS/governance/test_bugfix_regressions.py": 8ff04688652a8e885cf325449ffdb251e4eccda3
+    ".github/governance-source/active/source/09_TESTS/governance/test_execution_load_guard.py": 5d6729ccd142013b916193e770f064328d32489e
+    ".github/governance-source/active/source/09_TESTS/governance/test_high_pressure_hardening.py": 7f18d00742f4f1e6af87d754fe81b92e1cde5069
+    ".github/governance-source/active/source/09_TESTS/governance/test_prefomal_stress_repairs.py": 35c1264a6bdd66fe246f9c1c912dff027e865220
+    ".github/governance-source/active/source/09_TESTS/governance/test_pytest_collection_contract.py": c06ac9b2f30d336ef5b01dfa531454dece45b723
+    ".github/governance-source/active/source/09_TESTS/governance/test_reference_semantic_guard.py": 0a84b8a7022e62e711ce0e4397722d33b23226ae
+    ".github/governance-source/active/source/09_TESTS/governance/test_stage1_source_to_blueprint_minimal_control.py": bd623785ed32f2dcf588b6ed3698d28914c361d9
+    ".github/governance-source/active/source/09_TESTS/governance/test_v2_1_0_post_v1_8_regressions.py": baaabe1939ea5c0562ceafe9c3d605188b8bbaad
+    ".github/governance-source/active/source/09_TESTS/governance/test_v2_1_0_regressions.py": d1f7b3c08bc6bf96f131a968b65615da9ddb0ee9
+    ".github/governance-source/active/source/09_TESTS/governance/test_v2_1_10_closure_evidence_continuity.py": 814bf1382194d5cf96027d665370802a954a4ae0
+    ".github/governance-source/active/source/09_TESTS/governance/test_v2_1_11_binding_authority_receipt_schema.py": abd5ab4d86e231a39ad9ee4a01a1ad27ec7ffa53
+    ".github/governance-source/active/source/09_TESTS/governance/test_v2_1_12_successor_state_evidence_parse.py": c3557de94c89b91a00ab2f62eedf8e7deb2bed1b
+    ".github/governance-source/active/source/09_TESTS/governance/test_v2_1_13_stage_execution_invariants.py": 71cc74a358db569f812b76725c6e5bd4ab669f6c
+    ".github/governance-source/active/source/09_TESTS/governance/test_v2_1_14_product_neutral_entity_lifecycle.py": 62defe3b1f210a7890b8c531fdb7a0e332183273
+    ".github/governance-source/active/source/09_TESTS/governance/test_v2_1_14_test_feedback_spec_evolution.py": 3ebab940412a600578627b347e234a85ffaae1f5
+    ".github/governance-source/active/source/09_TESTS/governance/test_v2_1_7_phase_authority_bugfix.py": 042a93fca282dca529074226e6e5cf292f59a123
+    ".github/governance-source/active/source/09_TESTS/governance/test_v2_1_8_successor_evidence_sync_bugfix.py": c456c95021633df238ec64bf8bb02553bb419aec
+    ".github/governance-source/active/source/09_TESTS/governance/test_v2_1_9_evidence_state_closure.py": 77dc3dd99455335c5761baf005e01b80e37b5d18
+    ".github/governance-source/active/source/09_TESTS/governance/validate_cleanup_protection.py": 315a98a74a584b903307fa7d0c066b4f33bd5622
+    ".github/governance-source/active/source/09_TESTS/governance/validate_closure_evidence_continuity.py": f71899d5087e73ae6ed796ee041573bc04ca2bf6
+    ".github/governance-source/active/source/09_TESTS/governance/validate_construction_artifact_index.py": 92938702f78f0d7e777e555016100e1d7ae54b48
+    ".github/governance-source/active/source/09_TESTS/governance/validate_current_test_evidence.py": d74dccbb1235fc3d8b68c937d2f4e890aeecfc6c
+    ".github/governance-source/active/source/09_TESTS/governance/validate_evidence_state_closure.py": deb045a809564e407ced1c0926544e0c497c49b0
+    ".github/governance-source/active/source/09_TESTS/governance/validate_execution_governance_load.py": 0ac966e21fc35ee6bac435cd80affce14f01a544
+    ".github/governance-source/active/source/09_TESTS/governance/validate_governance.py": 4c5381fd188733d820eca73e50852f69507bfb7f
+    ".github/governance-source/active/source/09_TESTS/governance/validate_indexed_incremental_validation.py": 461599c67e63f6f295fcb81bef90744cb38a5d45
+    ".github/governance-source/active/source/09_TESTS/governance/validate_product_neutral_entity_lifecycle.py": f5e3f0f047eea74e2c75ed5e118e9be0df8d61ec
+    ".github/governance-source/active/source/09_TESTS/governance/validate_reference_semantics.py": 441e9f3f7e7193ca9062e632ffc381114ee6a2d1
+    ".github/governance-source/active/source/09_TESTS/governance/validate_section_registry.py": 2680069f9e718b11104b2573e8cf6bc5c7d2f27c
+    ".github/governance-source/active/source/09_TESTS/governance/validate_stage_execution_invariants.py": b2ee330b02a7fd2c8f534196723374a2ba684d66
+    ".github/governance-source/active/source/09_TESTS/governance/validate_test_feedback_spec_evolution.py": c5af8cabf744e4983509904d9f38f28d5aa373c5
+    ".github/workflows/source-package-successor-validation.yml": d42b5a3684a6c92d29c646544cc9e4c4e7bfc888
+    "governance/ci/validate_source_package_candidate.py": c8ab90bc3825113b72bdf0a9a7762cadc94dddb8
+    "governance/source-successor/materialize_derived_source_package.py": c574c2121f3a0d3b863bb1c44fcce5556caf2ec6
+    "governance/source-successor/refresh_source_checksums.py": b2e3f4359236e1fd09160b57d5b3d5a8e11cf641
+  source_package_validation_toolchain_missing_extra_or_blob_drift: BLOCK
+  source_package_validation_toolchain_rebind_requires_governance_candidate_review: true
   source_package_successor_admission_receipt: governance/source-successor/SOURCE_PACKAGE_SUCCESSOR_ADMISSION.yaml
   source_package_successor_admission_validator: governance/ci/source_package_successor_admission.py
   source_package_successor_manifest_path: governance/source-successor/SOURCE_PACKAGE_CANDIDATE.yaml

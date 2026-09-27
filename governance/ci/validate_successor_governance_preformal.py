@@ -78,6 +78,15 @@ def exact_head_validation_contract_check(registry:dict)->dict:
         failures.append('SOURCE_SUCCESSOR_WORKFLOW_ALLOWED_EVENTS_DRIFT')
     if vc.get('source_package_successor_workflow_identity_requires_name_path_allowed_event_branch_head') is not True:
         failures.append('SOURCE_SUCCESSOR_WORKFLOW_IDENTITY_GATE_MISSING')
+    if vc.get('source_package_validation_toolchain_binding_mode')!='GIT_BLOB_SHA1_EXACT_SET_V1':
+        failures.append('SOURCE_VALIDATION_TOOLCHAIN_BINDING_MODE_DRIFT')
+    toolchain_bindings=vc.get('source_package_validation_toolchain_blob_bindings') or {}
+    if not isinstance(toolchain_bindings,dict) or len(toolchain_bindings)!=42 or int(vc.get('source_package_validation_toolchain_exact_file_count') or 0)!=42:
+        failures.append('SOURCE_VALIDATION_TOOLCHAIN_DENOMINATOR_DRIFT')
+    if vc.get('source_package_validation_toolchain_missing_extra_or_blob_drift')!='BLOCK':
+        failures.append('SOURCE_VALIDATION_TOOLCHAIN_FAIL_CLOSED_MISSING')
+    if vc.get('source_package_validation_toolchain_rebind_requires_governance_candidate_review') is not True:
+        failures.append('SOURCE_VALIDATION_TOOLCHAIN_REBIND_GATE_MISSING')
     required=set(map(str,vc.get('required_workflow_names') or []))
     if required!={'Current Governance Cleanup Validation','Mother Spec Neutrality Audit'}:
         failures.append('REQUIRED_WORKFLOW_DENOMINATOR_DRIFT')
