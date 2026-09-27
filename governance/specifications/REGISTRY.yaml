@@ -88,20 +88,20 @@ mutation_policy:
   product_execution_target: 0921acpos
   successor_candidate_branch: rebuild-v2.1.1
   successor_candidate_exact_scope_only: true
-  successor_candidate_authorization_record: https://github.com/steven-gold/orange-one-ai-viedo-v1.0/issues/51
+  successor_candidate_authorization_record: https://github.com/steven-gold/orange-one-ai-viedo-v1.0/issues/57
   successor_candidate_may_mutate_reusable_policy: true
   successor_candidate_product_execution: FORBIDDEN
   successor_candidate_product_completion_credit: 0
   predecessor_history_must_remain_immutable: true
   source_package_successor_branch: rebuild-v2.1.1
-  source_package_successor_role: GOVERNANCE_SOURCE_PACKAGE_CANDIDATE
-  source_package_successor_authorization_record: https://github.com/steven-gold/orange-one-ai-viedo-v1.0/issues/52
+  source_package_successor_role: SINGLE_BRANCH_INTEGRATED_SOURCE
+  source_package_successor_authorization_record: https://github.com/steven-gold/orange-one-ai-viedo-v1.0/issues/57
   source_package_successor_allowed_scope:
   - .github/governance-source/active/source/**
   - governance/source-successor/**
   - .github/workflows/source-package-successor-validation.yml
   source_package_successor_status_before_external_resign: RETIRED_BY_SINGLE_BRANCH_CONSOLIDATION
-  source_package_successor_may_be_current_before_external_resign: false
+  source_package_successor_may_be_current_before_external_resign: true
   source_package_successor_may_mutate_predecessor_branch: false
   source_package_successor_may_touch_product_execution_branch: false
 candidate_validation_contract:
@@ -176,7 +176,7 @@ candidate_validation_contract:
   source_package_integrated_validator: governance/ci/validate_source_package_candidate.py
   source_package_integration_authorization_record: https://github.com/steven-gold/orange-one-ai-viedo-v1.0/issues/57
   source_package_successor_branch: rebuild-v2.1.1
-  source_package_successor_workflow_name: Source Package Successor Validation
+  source_package_successor_workflow_name: Integrated Source Package Validation
   source_package_successor_workflow_path: .github/workflows/source-package-successor-validation.yml
   source_package_successor_workflow_allowed_events:
   - push
@@ -250,7 +250,7 @@ candidate_validation_contract:
   source_package_successor_unsigned_blocks_promotion: false
   source_package_successor_content_status: INTEGRATED_CURRENT_WORKLINE
   source_package_successor_self_trust_status: NOT_APPLICABLE_SINGLE_BRANCH_INTEGRATED
-  source_package_successor_external_trust_projection_status: SIGNED_PASS
+  source_package_successor_external_trust_projection_status: NOT_REQUIRED_SINGLE_BRANCH_CONSOLIDATION
   source_package_external_trust_projection_owner: GOVERNANCE_CANDIDATE_ADMISSION_RECEIPT
   source_package_external_trust_must_not_mutate_source_branch: true
   source_package_external_trust_receipt_must_bind_frozen_source_head_and_tree: true
