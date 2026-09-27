@@ -1,17 +1,31 @@
 schema_version: 2
 artifact_uid: ACPOS-REPOSITORY-BRANCH-AUTHORITY-LOCK-20260923
-status: FINAL_LOCKED
+status: ACTIVE_SINGLE_BRANCH_LOCK
 scope: steven-gold/orange-one-ai-viedo-v1.0
-authority: EXPLICIT_USER_DECISION_20260923
+authority: EXPLICIT_USER_DECISION_20260927_SINGLE_BRANCH_CONSOLIDATION
 branches:
   rebuild-v2.1.1:
-    role: IMMUTABLE_GOVERNANCE_RULESET
+    role: GOVERNANCE_REVISION_CANDIDATE
     preserve: true
-    gpt_write_policy: FORBIDDEN
+    gpt_write_policy: ALLOWED_ONLY_FOR_EXPLICIT_USER_AUTHORIZED_GOVERNANCE_REMEDIATION
+    authorization_record: https://github.com/steven-gold/orange-one-ai-viedo-v1.0/issues/57
+    predecessor_head_sha: c336a76c22a5db65080f749f26875edfa5169457
+    single_active_governance_workline: true
+    branch_fanout: FORBIDDEN_UNLESS_USER_EXPLICITLY_AUTHORIZES
     product_execution: FORBIDDEN
-    additions: FORBIDDEN
-    modifications: FORBIDDEN
-    deletions: FORBIDDEN
+    product_authority_mutation: FORBIDDEN
+    governance_definition_mutation: ALLOWED_WITHIN_EXPLICIT_USER_AUTHORIZED_SCOPE
+    source_package_integration: ALLOWED_WITHIN_EXPLICIT_USER_AUTHORIZED_SCOPE
+    additions: ALLOWED_WITHIN_EXPLICIT_USER_AUTHORIZED_SCOPE
+    modifications: ALLOWED_WITHIN_EXPLICIT_USER_AUTHORIZED_SCOPE
+    deletions: ALLOWED_WITHIN_EXPLICIT_USER_AUTHORIZED_SCOPE
+    imported_history_heads:
+    - 56191289531709421e02b0c9d75eccb9314c2c03
+    - 362347c901761566eb9e3296e36703ea4f33f14a
+    retired_erroneous_branches:
+    - governance-v2.2.33-candidate
+    - governance-source-v2.2.33-candidate
+    fresh_exact_head_validation_required_for_closure: true
   0921acpos:
     role: PRODUCT_EXECUTION_WORKLINE
     preserve: true

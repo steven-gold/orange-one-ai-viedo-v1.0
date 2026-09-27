@@ -18,9 +18,11 @@ import copy
 import hashlib
 import json
 import sys
+import tempfile
 from pathlib import Path
 
 import yaml
+from governance_resolver import resolve as resolve_governance
 
 sys.dont_write_bytecode = True
 
@@ -35,6 +37,7 @@ PROFILE_PATH = DOMAINS / "AUDIT_PROFILE.yaml"
 BINDINGS_PATH = DOMAINS / "AUTHORITY_BINDINGS.yaml"
 SCHEMA_PATH = DOMAINS / "STEP_CONTRACT_SCHEMA.yaml"
 INVARIANT_PATH = SOURCE / "10_REGISTRY" / "STAGE_EXECUTION_INVARIANT_REGISTRY.yaml"
+CURRENT_POLICY_PATH = ROOT / "governance" / "specifications" / "current" / "EXECUTION_CYCLE_CONTROL.yaml"
 
 AUDIT_TARGET_UID = "GOVERNANCE_PACKAGE"
 GOVERNANCE_RESOLVABLE_EVIDENCE = {"VALIDATOR_RESULT"}
@@ -86,6 +89,8 @@ def load_context() -> dict:
     bindings = load_yaml(BINDINGS_PATH)
     schema = load_yaml(SCHEMA_PATH)
     invariant_registry = load_yaml(INVARIANT_PATH)
+    current_policy = load_yaml(CURRENT_POLICY_PATH)
+    current_identity = resolve_governance()
 
     validators = {}
     for rec in rules.get("validator_identities") or []:
@@ -105,6 +110,9 @@ def load_context() -> dict:
         "validators": validators,
         "audit_types": audit_types,
         "stage_invariants": invariant_registry.get("invariants") or {},
+        "current_policy": current_policy,
+        "current_identity": current_identity,
+        "independent_evaluator_records": [],
     }
 
 
@@ -444,22 +452,29 @@ def run_closure(ctx: dict) -> dict:
         "duplicate_item_count": len(item_uids) - len(set(item_uids)),
     }
 
+    current_identity=ctx.get("current_identity") or {}
+    formal_independence=validate_independent_evaluator_implementations(ctx,ctx.get("independent_evaluator_records") or [],ctx.get("independent_evaluator_evidence_root"))
+    promotion_authorized=(result=="PASS" and formal_independence.get("status")=="PASS")
     return {
         "schema_version": 1,
         "audit_uid": "AUDIT-CLOSURE-GOVERNANCE-PACKAGE-001",
         "target_uid": AUDIT_TARGET_UID,
         "domain_uid": ctx["domain"].get("domain_uid"),
-        "governance_revision": ctx["catalog"].get("governance_revision"),
+        "governance_uid": current_identity.get("governance_uid"),
+        "governance_revision": current_identity.get("governance_revision"),
+        "display_version": current_identity.get("display_version"),
+        "source_catalog_governance_revision": ctx["catalog"].get("governance_revision"),
         "source_revision": file_sha(CATALOG_PATH),
         "denominator_policy": ctx["catalog"].get("denominator_policy"),
         "dimension_denominator": len(dimensions),
         "steps": step_receipts,
         "determinism_contract": {"invariant_uid": "GOV-INV-DETERMINISTIC-STAGE-AUDIT-001", "status": "PASS" if deterministic_ok else "FAIL"},
+        "formal_auditor_independence": formal_independence,
         "items": results,
         "reconciliation": reconciliation,
         "result": result,
-        "successor_authorization": "AUTHORIZED" if result == "PASS" else "BLOCKED",
-        "next_step_uid": "REGISTERED_SUCCESSOR_IF_PASS_ELSE_NONE",
+        "successor_authorization": "AUTHORIZED" if promotion_authorized else ("BLOCKED_FORMAL_PROMOTION_PENDING_INDEPENDENT_AUDITOR_EVIDENCE" if result=="PASS" else "BLOCKED"),
+        "next_step_uid": "REGISTERED_SUCCESSOR_IF_PASS_ELSE_NONE" if promotion_authorized else "REGISTER_INDEPENDENT_AUDITOR_EVIDENCE",
     }
 
 
@@ -517,14 +532,14 @@ def validate_determinism_acceptance(ctx: dict) -> dict:
         return {'status':'FAIL','reason':'DETERMINISM_ACCEPTANCE_DENOMINATOR_DRIFT'}
     baseline=run_closure(copy.deepcopy(ctx))
     canonical=json.dumps(baseline,sort_keys=True,separators=(',',':'))
-    evaluator_results=[]
+    identity_variants=[]
     for idx in range(evaluator_count):
         candidate=copy.deepcopy(ctx)
         candidate['runtime_auditor_identity']=f'SYNTHETIC-EVALUATOR-{idx+1}'
         result=run_closure(candidate)
-        evaluator_results.append(json.dumps(result,sort_keys=True,separators=(',',':')))
-    if any(value!=canonical for value in evaluator_results):
-        return {'status':'FAIL','reason':'AUDIT_DETERMINISM_CONTRACT_FAILURE','dimension':'AUDITOR_INDEPENDENCE'}
+        identity_variants.append(json.dumps(result,sort_keys=True,separators=(',',':')))
+    if any(value!=canonical for value in identity_variants):
+        return {'status':'FAIL','reason':'AUDIT_DETERMINISM_CONTRACT_FAILURE','dimension':'SYNTHETIC_EVALUATOR_IDENTITY_INVARIANCE'}
     repeat_results=[]
     for _ in range(repeat_count):
         candidate=copy.deepcopy(ctx)
@@ -533,7 +548,94 @@ def validate_determinism_acceptance(ctx: dict) -> dict:
         repeat_results.append(json.dumps(result,sort_keys=True,separators=(',',':')))
     if any(value!=canonical for value in repeat_results):
         return {'status':'FAIL','reason':'AUDIT_DETERMINISM_CONTRACT_FAILURE','dimension':'REPEATABILITY'}
-    return {'status':'PASS','independent_evaluator_count':evaluator_count,'repeat_count':repeat_count}
+    return {
+        'status':'PASS',
+        'synthetic_identity_invariance_count':evaluator_count,
+        'repeat_count':repeat_count,
+        'formal_independent_implementation_credit':0,
+        'formal_independent_implementation_status':'NOT_VERIFIED_BY_SYNTHETIC_IDENTITY_VARIATION',
+    }
+
+def validate_independent_evaluator_implementations(ctx: dict, records: list[dict], evidence_root: Path | None = None) -> dict:
+    contract=(ctx.get('current_policy') or {}).get('auditor_implementation_independence') or {}
+    required_count=int(contract.get('formal_independent_evaluator_required_count') or 0)
+    required=tuple(map(str,contract.get('formal_independent_evaluator_required_fields') or []))
+    expected_fields={
+      'evaluator_uid','implementation_owner_uid','decision_engine_uid','implementation_ref',
+      'implementation_sha256','execution_receipt_ref','audit_snapshot_hash','result_fingerprint'
+    }
+    if contract.get('synthetic_evaluator_identity_invariance_is_formal_independence') is not False:
+        return {'status':'FAIL','reason':'AUDITOR_INDEPENDENCE_POLICY_SYNTHETIC_CREDIT_DRIFT'}
+    if required_count!=3 or set(required)!=expected_fields:
+        return {'status':'FAIL','reason':'AUDITOR_INDEPENDENCE_POLICY_DENOMINATOR_DRIFT'}
+    if not isinstance(records,list) or len(records)!=required_count:
+        return {'status':'NOT_VERIFIED','reason':'AUDITOR_INDEPENDENT_IMPLEMENTATION_EVIDENCE_MISSING_OR_INCOMPLETE','required_count':required_count,'observed_count':len(records) if isinstance(records,list) else 0}
+    root=(evidence_root or ROOT).resolve()
+    normalized=[]
+    for idx,record in enumerate(records):
+        if not isinstance(record,dict):
+            return {'status':'FAIL','reason':'AUDITOR_INDEPENDENT_IMPLEMENTATION_RECORD_INVALID','index':idx}
+        missing=[key for key in required if not str(record.get(key) or '').strip()]
+        if missing:
+            return {'status':'FAIL','reason':'AUDITOR_INDEPENDENT_IMPLEMENTATION_FIELD_MISSING','index':idx,'fields':missing}
+        impl_rel=Path(str(record['implementation_ref']))
+        receipt_rel=Path(str(record['execution_receipt_ref']))
+        if impl_rel.is_absolute() or receipt_rel.is_absolute() or '..' in impl_rel.parts or '..' in receipt_rel.parts:
+            return {'status':'FAIL','reason':'AUDITOR_INDEPENDENT_EVIDENCE_PATH_INVALID','index':idx}
+        impl=(root/impl_rel).resolve()
+        receipt=(root/receipt_rel).resolve()
+        try:
+            impl.relative_to(root); receipt.relative_to(root)
+        except ValueError:
+            return {'status':'FAIL','reason':'AUDITOR_INDEPENDENT_EVIDENCE_OUTSIDE_ROOT','index':idx}
+        if not impl.is_file() or not receipt.is_file():
+            return {'status':'NOT_VERIFIED','reason':'AUDITOR_INDEPENDENT_PHYSICAL_EVIDENCE_MISSING','index':idx}
+        actual_hash=file_sha(impl)
+        if actual_hash!=str(record['implementation_sha256']):
+            return {'status':'FAIL','reason':'AUDITOR_INDEPENDENT_IMPLEMENTATION_HASH_MISMATCH','index':idx}
+        receipt_obj=load_yaml(receipt)
+        expected_receipt={
+          'evaluator_uid':str(record['evaluator_uid']),
+          'implementation_sha256':str(record['implementation_sha256']),
+          'audit_snapshot_hash':str(record['audit_snapshot_hash']),
+          'result_fingerprint':str(record['result_fingerprint']),
+          'status':'PASS',
+        }
+        for key,value in expected_receipt.items():
+            if str(receipt_obj.get(key) or '')!=value:
+                return {'status':'FAIL','reason':'AUDITOR_INDEPENDENT_EXECUTION_RECEIPT_BINDING_MISMATCH','index':idx,'field':key}
+        normalized.append(record)
+    for key,flag in (
+        ('evaluator_uid','distinct_evaluator_uid_required'),
+        ('implementation_owner_uid','distinct_implementation_owner_uid_required'),
+        ('decision_engine_uid','distinct_decision_engine_uid_required'),
+        ('implementation_ref','distinct_implementation_ref_required'),
+        ('implementation_sha256','distinct_implementation_hash_required'),
+    ):
+        values=[str(record[key]) for record in normalized]
+        if contract.get(flag) is not True or len(set(values))!=required_count:
+            return {'status':'FAIL','reason':'AUDITOR_IMPLEMENTATION_INDEPENDENCE_NOT_PROVEN','field':key}
+    snapshots=[str(record['audit_snapshot_hash']) for record in normalized]
+    if contract.get('identical_audit_snapshot_hash_required') is not True or len(set(snapshots))!=1:
+        return {'status':'FAIL','reason':'AUDITOR_INDEPENDENT_SNAPSHOT_MISMATCH'}
+    fingerprints=[str(record['result_fingerprint']) for record in normalized]
+    if contract.get('identical_result_fingerprint_required') is not True or len(set(fingerprints))!=1:
+        return {'status':'FAIL','reason':'AUDIT_DETERMINISM_CONTRACT_FAILURE','dimension':'INDEPENDENT_IMPLEMENTATION_RESULT_MISMATCH'}
+    return {
+      'status':'PASS',
+      'independent_implementation_count':required_count,
+      'audit_snapshot_hash':snapshots[0],
+      'result_fingerprint':fingerprints[0],
+    }
+
+def load_independent_evaluator_evidence(path: Path) -> list[dict]:
+    if not path.is_file():
+        raise ValueError('AUDITOR_INDEPENDENCE_EVIDENCE_FILE_MISSING:'+str(path))
+    data=yaml.safe_load(path.read_text(encoding='utf-8'))
+    records=(data.get('evaluators') if isinstance(data,dict) else data)
+    if not isinstance(records,list):
+        raise ValueError('AUDITOR_INDEPENDENCE_EVIDENCE_LIST_REQUIRED')
+    return records
 
 def run_self_test() -> int:
     base = load_context()
@@ -631,9 +733,63 @@ def run_self_test() -> int:
     if det_accept.get('status')!='PASS':
         print('FAIL: deterministic auditor independence or repeatability failed: '+json.dumps(det_accept,sort_keys=True),file=sys.stderr)
         return 1
-    cases.append('auditor_independence_3of3')
+    cases.append('synthetic_evaluator_identity_invariance_3of3')
     cases.append('same_evaluator_repeatability_3of3')
-
+    _same_impl=[
+      {
+        'evaluator_uid':f'EVAL-{i}','implementation_owner_uid':'OWNER-SAME','decision_engine_uid':'ENGINE-SAME',
+        'implementation_ref':'missing.py','implementation_sha256':'HASH-SAME','execution_receipt_ref':'missing.yaml',
+        'audit_snapshot_hash':'SNAPSHOT-1','result_fingerprint':'RESULT-1'
+      }
+      for i in range(1,4)
+    ]
+    if validate_independent_evaluator_implementations(base,_same_impl).get('status')=='PASS':
+        print('FAIL: same implementation incorrectly received formal auditor-independence credit',file=sys.stderr)
+        return 1
+    cases.append('formal_independence_same_implementation_blocked')
+    with tempfile.TemporaryDirectory() as _audit_td:
+        _audit_root=Path(_audit_td)
+        _distinct_impl=[]
+        for i in range(1,4):
+            _impl_rel=Path(f'evaluator-{i}.py')
+            _impl_path=_audit_root/_impl_rel
+            _impl_path.write_text(f'# independent synthetic evaluator fixture {i}\nRESULT={i}\n',encoding='utf-8')
+            _impl_hash=file_sha(_impl_path)
+            _receipt_rel=Path(f'evaluator-{i}-receipt.yaml')
+            _receipt={
+              'evaluator_uid':f'EVAL-{i}',
+              'implementation_sha256':_impl_hash,
+              'audit_snapshot_hash':'SNAPSHOT-1',
+              'result_fingerprint':'RESULT-1',
+              'status':'PASS',
+            }
+            (_audit_root/_receipt_rel).write_text(yaml.safe_dump(_receipt,sort_keys=False),encoding='utf-8')
+            _distinct_impl.append({
+              'evaluator_uid':f'EVAL-{i}',
+              'implementation_owner_uid':f'OWNER-{i}',
+              'decision_engine_uid':f'ENGINE-{i}',
+              'implementation_ref':_impl_rel.as_posix(),
+              'implementation_sha256':_impl_hash,
+              'execution_receipt_ref':_receipt_rel.as_posix(),
+              'audit_snapshot_hash':'SNAPSHOT-1',
+              'result_fingerprint':'RESULT-1',
+            })
+        if validate_independent_evaluator_implementations(base,_distinct_impl,_audit_root).get('status')!='PASS':
+            print('FAIL: distinct evaluator implementation contract fixture did not pass',file=sys.stderr)
+            return 1
+        cases.append('formal_independent_evaluator_contract_fixture_3of3')
+        _authorized_ctx=copy.deepcopy(base)
+        _authorized_ctx['independent_evaluator_records']=_distinct_impl
+        _authorized_ctx['independent_evaluator_evidence_root']=_audit_root
+        if run_closure(_authorized_ctx).get('successor_authorization')!='AUTHORIZED':
+            print('FAIL: valid independent evaluator evidence did not authorize successor',file=sys.stderr)
+            return 1
+        cases.append('formal_promotion_authorized_with_independent_evidence')
+    _baseline_promotion=run_closure(base)
+    if _baseline_promotion.get('successor_authorization')!='BLOCKED_FORMAL_PROMOTION_PENDING_INDEPENDENT_AUDITOR_EVIDENCE':
+        print('FAIL: governance promotion was authorized without independent evaluator evidence',file=sys.stderr)
+        return 1
+    cases.append('formal_promotion_blocked_without_independent_evidence')
 
     no_det = copy.deepcopy(base)
     no_det["stage_invariants"]["DETERMINISTIC_STAGE_AUDIT"]["same_complete_input_same_complete_result"] = False
@@ -678,11 +834,17 @@ def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--self-test", action="store_true")
     ap.add_argument("--receipt-out")
+    ap.add_argument("--independent-evaluator-evidence")
     args = ap.parse_args()
     if args.self_test:
         return run_self_test()
 
-    receipt = run_closure(load_context())
+    ctx=load_context()
+    if args.independent_evaluator_evidence:
+        _evidence_path=Path(args.independent_evaluator_evidence).resolve()
+        ctx['independent_evaluator_records']=load_independent_evaluator_evidence(_evidence_path)
+        ctx['independent_evaluator_evidence_root']=_evidence_path.parent
+    receipt = run_closure(ctx)
     if args.receipt_out:
         Path(args.receipt_out).write_text(
             json.dumps(receipt, ensure_ascii=False, indent=2, sort_keys=True),

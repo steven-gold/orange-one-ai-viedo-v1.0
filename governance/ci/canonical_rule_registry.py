@@ -41,6 +41,22 @@ def load_registry() -> dict:
         raise RuntimeError('LEXICAL_HINT_ROLE_DRIFT')
     if data.get('consumer_contract', {}).get('local_regex_or_synonym_taxonomy') != 'FORBIDDEN_WHEN_DUPLICATING_REGISTRY':
         raise RuntimeError('LOCAL_RULE_FORK_POLICY_DRIFT')
+    semantic_types=set(map(str,(data.get('semantic_types') or {}).keys()))
+    canonical_rules=data.get('canonical_rules') or {}
+    if not isinstance(canonical_rules,dict) or not canonical_rules:
+        raise RuntimeError('CANONICAL_RULE_UNIVERSE_EMPTY')
+    for rule_uid,record in canonical_rules.items():
+        if not isinstance(record,dict):
+            raise RuntimeError('CANONICAL_RULE_RECORD_INVALID:'+str(rule_uid))
+        semantic_type=str(record.get('semantic_type') or '')
+        if not semantic_type or semantic_type not in semantic_types:
+            raise RuntimeError('CANONICAL_RULE_SEMANTIC_TYPE_UNREGISTERED:'+str(rule_uid)+':'+semantic_type)
+        if not record.get('canonical_key') or not record.get('constraint') or not isinstance(record.get('applicability'),list) or not record.get('applicability'):
+            raise RuntimeError('CANONICAL_RULE_CONTRACT_INCOMPLETE:'+str(rule_uid))
+    required=set(map(str,(data.get('binding_contract') or {}).get('required_rule_uids') or []))
+    universe=set(map(str,canonical_rules))
+    if required!=universe:
+        raise RuntimeError('CANONICAL_RULE_REQUIRED_DENOMINATOR_DRIFT:missing='+repr(sorted(universe-required))+':extra='+repr(sorted(required-universe)))
     return data
 
 

@@ -10,6 +10,7 @@ canonical_rule_refs:
 - GOV-RULE-ANTI-DRIFT-008
 - GOV-RULE-ANTI-DRIFT-009
 - GOV-RULE-ANTI-DRIFT-010
+- GOV-RULE-GOVERNANCE-CANDIDATE-BOOTSTRAP-001
 purpose:
   statement: Current reusable policy is immutable throughout a governed execution/validation cycle. Ordinary defects are repaired at their owning layer. Normative change requires explicit
     exact-scope authorization and atomic successor promotion.
@@ -56,6 +57,92 @@ finding_intake:
   finding_is_normative_change: false
   finding_may_auto_promote: false
   candidate_may_be_active_rule_before_authorized_promotion: false
+successor_candidate_bootstrap_control:
+  released_predecessor_mutation: FORBIDDEN
+  candidate_branch_role: GOVERNANCE_REVISION_CANDIDATE
+  candidate_branch_must_be_distinct_from_predecessor: true
+  candidate_branch_must_descend_from_exact_predecessor_head: true
+  preexisting_authorization_record_required: true
+  allowed_authorization_record_kinds:
+  - EXTERNAL_EXPLICIT_USER_DIRECTIVE
+  - GITHUB_GOVERNANCE_CHANGE_RECORD
+  authorization_record_required_fields:
+  - authority_source
+  - authorized_scope
+  - predecessor_branch
+  - predecessor_head_sha
+  - candidate_branch
+  - created_before_normative_mutation
+  candidate_registry_must_bind_authorization_record: true
+  candidate_registry_must_bind_exact_predecessor_head: true
+  candidate_registry_must_expose_candidate_governance_identity: true
+  candidate_scope_must_be_subset_of_authorized_scope: true
+  authorization_record_may_document_preexisting_external_directive: true
+  authorization_record_may_create_new_authority_in_same_normative_commit: false
+  released_predecessor_history_preservation_required: true
+  candidate_product_execution: FORBIDDEN
+  candidate_product_completion_credit: 0
+  missing_or_unverifiable_bootstrap_evidence: BLOCK
+immutable_source_package_successor_control:
+  canonical_rule_uid: GOV-RULE-GOVERNANCE-CANDIDATE-BOOTSTRAP-001
+  activation: PROVEN_DEFECT_IN_EXTERNALLY_TRUSTED_IMMUTABLE_PREDECESSOR_SOURCE_PACKAGE
+  authorization_record: https://github.com/steven-gold/orange-one-ai-viedo-v1.0/issues/52
+  predecessor_source_package_mutation: FORBIDDEN
+  predecessor_external_trust_root_mutation: FORBIDDEN
+  candidate_self_refresh_external_trust_root: FORBIDDEN
+  successor_source_package_required: true
+  successor_source_package_must_have_distinct_identity: true
+  successor_source_package_must_bind_predecessor_identity_and_defect_set: true
+  successor_source_package_write_set_must_be_exact_scope_authorized: true
+  successor_source_package_compiled_artifacts_must_be_regenerated_from_successor_sources: true
+  successor_source_package_all_hash_carriers_must_be_reconciled: true
+  independent_external_trust_signer_required: true
+  trust_signer_must_be_distinct_from_candidate_mutation_actor: true
+  trust_signing_evidence_required_fields:
+  - signer_identity
+  - signer_authority_ref
+  - source_package_identity
+  - source_package_content_hash
+  - predecessor_trust_identity
+  - signed_at
+  - signature_or_immutable_receipt_ref
+  candidate_generated_hash_list_is_external_trust_evidence: false
+  same_actor_candidate_mutation_and_external_trust_signing: BLOCK
+  unsigned_successor_source_package_may_be_current: false
+  unsigned_successor_source_package_promotion: BLOCK
+  source_defect_before_independent_resign:
+    current_candidate_disposition: BLOCKED_SOURCE_PACKAGE_SUCCESSOR_REQUIRED
+    earliest_legal_reentry: SOURCE_PACKAGE_SUCCESSOR_MATERIALIZATION
+    product_execution_credit: 0
+    governance_promotion_credit: 0
+  source_package_successor_promotion_requires:
+  - EXACT_SUCCESSOR_SOURCE_PACKAGE_IDENTITY
+  - COMPLETE_DEFECT_REMEDIATION_SET
+  - REGENERATED_COMPILED_ARTIFACTS
+  - RECONCILED_HASH_CARRIERS
+  - INDEPENDENT_EXTERNAL_TRUST_EVIDENCE
+  - FRESH_FULL_PREFORMAL_VALIDATION
+  - EXACT_HEAD_REQUIRED_WORKFLOW_SUCCESS
+  historical_predecessor_source_remains_immutable: true
+
+predecessor_evidence_consumer_migration_control:
+  canonical_rule_uid: GOV-RULE-GOVERNANCE-CANDIDATE-BOOTSTRAP-001
+  authorization_record: https://github.com/steven-gold/orange-one-ai-viedo-v1.0/issues/52
+  removed_predecessor_run_state_or_evidence_may_be_recreated_as_current: false
+  historical_predecessor_evidence_role: HISTORICAL_REFERENCE_ONLY
+  historical_predecessor_pass_current_credit: 0
+  current_candidate_identity_source: governance/specifications/REGISTRY.yaml
+  current_candidate_validation_source: EXACT_HEAD_EXTERNAL_WORKFLOW_RECEIPTS
+  current_candidate_promotion_source: GOVERNANCE_CANDIDATE_PROMOTION_READINESS
+  missing_retired_predecessor_evidence_disposition: MIGRATE_CONSUMER_NOT_RESTORE_ARTIFACT
+  consumer_must_not_require_removed_predecessor_run_ids: true
+  consumer_must_not_require_removed_predecessor_candidate_state_file: true
+  successor_consumer_contract_must_be_current_identity_bound: true
+  legacy_regression_must_use_isolated_historical_fixture_when_historical_semantics_remain_required: true
+  legacy_fixture_may_not_be_current_authority: true
+  denominator_reduction_to_hide_migration_failure: BLOCK
+  migration_completion_requires_zero_current_consumer_reference_to_retired_predecessor_state: true
+
 consolidated_promotion_control:
   explicit_user_directive_required: true
   preexisting_authorization_required: true

@@ -5,6 +5,11 @@ normative_status: ACTIVE_CURRENT_GOVERNANCE_COMPONENT
 formal_current_authority: true
 layer_classification: POLICY
 common_scope: ALL_GOVERNED_EXECUTION_CYCLES
+canonical_rule_registry_ref: governance/specifications/current/CANONICAL_RULE_REGISTRY.yaml
+canonical_rule_refs:
+- GOV-RULE-CURRENT-GOVERNANCE-IDENTITY-001
+- GOV-RULE-NEGATIVE-TEST-TRACEABILITY-001
+- GOV-RULE-AUDITOR-INDEPENDENCE-001
 execution_context_lock:
   required_before_any_mutating_execution: true
   resolver_only_not_second_authority: true
@@ -371,3 +376,98 @@ pre_stage_source_projection_admission:
   stage01_binary_source_access: PROJECTION_RESOLVED_FROZEN_BINARY_ONLY
   direct_docx_binary_reextract: BLOCK
   projection_producer_ref: governance/ci/build_docx_source_projection.py
+current_governance_identity_single_source:
+  canonical_owner: governance/specifications/REGISTRY.yaml
+  required_identity_fields:
+  - governance_uid
+  - governance_revision
+  - display_version
+  - identity_authority
+  specification_manifest_identity_role: PROVENANCE_ONLY
+  specification_manifest_may_select_current_governance: false
+  root_manifest_role_during_successor_candidate: PREDECESSOR_SOURCE_PACKAGE_TRUST_ANCHOR
+  resolver_must_consume_registry_identity_only: true
+  every_current_consumer_must_match_resolver_identity: true
+  evidence_or_state_with_different_governance_identity: BLOCK_OR_REVERIFY_REQUIRED
+  registry_resolver_projection_drift: BLOCK
+  multiple_current_identity_sources: BLOCK
+  candidate_identity_requires:
+  - predecessor_branch
+  - predecessor_head_sha
+  - predecessor_governance_revision
+  - authorization_record_url
+  - authorized_scope
+
+required_negative_test_class_traceability:
+  class_denominator_source: STAGE_EXECUTION_INVARIANT_REGISTRY.DETERMINISTIC_STAGE_AUDIT.required_negative_test_classes
+  exact_class_set_required: true
+  every_required_class_requires:
+  - canonical_class
+  - executed_test_label
+  - injected_mutation
+  - expected_blocking_semantics
+  - executed_result
+  equivalent_but_unmapped_case_may_satisfy_required_class: false
+  duplicate_class_credit: BLOCK
+  missing_class_mapping: BLOCK
+  mapped_test_not_executed: BLOCK
+  run_summary_must_report_required_class_pass_count: true
+  required_class_pass_count_must_equal_denominator: true
+  product_completion_credit: 0
+
+auditor_implementation_independence:
+  synthetic_evaluator_identity_invariance_is_formal_independence: false
+  same_evaluator_repeatability_required_count: 3
+  formal_independent_evaluator_required_count: 3
+  formal_independent_evaluator_required_fields:
+  - evaluator_uid
+  - implementation_owner_uid
+  - decision_engine_uid
+  - implementation_ref
+  - implementation_sha256
+  - execution_receipt_ref
+  - audit_snapshot_hash
+  - result_fingerprint
+  distinct_evaluator_uid_required: true
+  distinct_implementation_owner_uid_required: true
+  distinct_decision_engine_uid_required: true
+  distinct_implementation_ref_required: true
+  distinct_implementation_hash_required: true
+  identical_audit_snapshot_hash_required: true
+  identical_result_fingerprint_required: true
+  physical_implementation_required: true
+  implementation_hash_recompute_required: true
+  execution_receipt_required: true
+  execution_receipt_must_bind_evaluator_implementation_snapshot_and_result: true
+  same_implementation_with_three_runtime_identity_labels_formal_credit: 0
+  formal_independence_without_three_distinct_implementations: NOT_VERIFIED
+  formal_promotion_requires_verified_independent_implementation_evidence: true
+  mismatch_disposition: AUDIT_DETERMINISM_CONTRACT_FAILURE
+immutable_source_package_defect_reentry:
+  canonical_rule_uid: GOV-RULE-GOVERNANCE-CANDIDATE-BOOTSTRAP-001
+  authorization_record: https://github.com/steven-gold/orange-one-ai-viedo-v1.0/issues/52
+  trigger: CURRENT_VALIDATION_PROVES_DEFECT_IN_EXTERNALLY_TRUSTED_IMMUTABLE_PREDECESSOR_SOURCE
+  defect_may_be_reclassified_as_generic_regression_failure_only: false
+  required_classification: SOURCE_PACKAGE_DEFECT
+  canonical_owner: SOURCE_PACKAGE_SUCCESSOR
+  required_state: BLOCKED_SOURCE_PACKAGE_SUCCESSOR_REQUIRED
+  earliest_legal_reentry: SOURCE_PACKAGE_SUCCESSOR_MATERIALIZATION
+  predecessor_mutation: FORBIDDEN
+  candidate_overlay_may_claim_source_defect_fixed_without_successor_source_bytes: false
+  independent_resign_required_before_current_admission: true
+  current_validation_must_preserve_exact_defect_identity: true
+  product_stage_execution_before_resolution: BLOCK
+  governance_promotion_before_resolution: BLOCK
+
+successor_candidate_state_resolution:
+  canonical_rule_uid: GOV-RULE-GOVERNANCE-CANDIDATE-BOOTSTRAP-001
+  current_candidate_identity_source: governance/specifications/REGISTRY.yaml
+  current_validation_truth_source: EXACT_HEAD_REQUIRED_WORKFLOW_RECEIPTS
+  current_promotion_readiness_source: governance/ci/validate_governance_candidate_promotion_readiness.py
+  retired_predecessor_candidate_state_file_is_current_source: false
+  retired_predecessor_run_ids_are_current_evidence: false
+  deleted_historical_evidence_must_be_restored_for_current_validation: false
+  predecessor_history_when_needed_for_regression: ISOLATED_NON_AUTHORITY_FIXTURE
+  current_consumer_reference_to_removed_predecessor_state: BLOCK_AND_MIGRATE_CONSUMER
+  historical_fixture_current_completion_credit: 0
+  exact_head_external_receipt_current_completion_credit: GOVERNED_BY_PROMOTION_READINESS_ONLY

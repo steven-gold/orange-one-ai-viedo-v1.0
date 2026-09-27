@@ -48,8 +48,15 @@ def identity():
     if not spec_root: fail('REGISTRY_RULES_ROOT_MISSING')
     manifest_path=ROOT/spec_root/'SPECIFICATION_MANIFEST.yaml'
     manifest=y(manifest_path)
-    gov=str(manifest.get('artifact_uid') or '')
+    try:
+        from governance_resolver import resolve as resolve_governance
+        resolved=resolve_governance()
+    except Exception as exc:
+        fail('CURRENT_GOVERNANCE_RESOLUTION_FAILED:'+str(exc))
+    gov=str(resolved.get('governance_uid') or '')
     if not gov: fail('CURRENT_GOVERNANCE_UID_MISSING')
+    if resolved.get('identity_authority')!='governance/specifications/REGISTRY.yaml':
+        fail('CURRENT_GOVERNANCE_IDENTITY_AUTHORITY_DRIFT')
     if reg.get('lifecycle_registry')!=str(LIFECYCLE.relative_to(ROOT)): fail('SELECTED_PROFILE_REGISTRY_DRIFT')
     if (manifest.get('resolution_contract') or {}).get('canonical_root')!=spec_root: fail('CURRENT_SPECIFICATION_ROOT_DRIFT')
     return manifest,reg,gov
@@ -810,7 +817,14 @@ def validate_evidence_data(stage_uid,e):
 
     req=set(map(str,st.get('required_evidence') or [])); items=e.get('required_evidence')
     if not isinstance(items,list): fail('REQUIRED_EVIDENCE_LEDGER_INVALID')
-    got={str(x.get('evidence_type')) for x in items if isinstance(x,dict)}
+    evidence_types=[]
+    for item in items:
+        if not isinstance(item,dict) or not str(item.get('evidence_type') or '').strip():
+            fail('REQUIRED_EVIDENCE_ITEM_INVALID')
+        evidence_types.append(str(item['evidence_type']))
+    if len(evidence_types)!=len(set(evidence_types)):
+        fail('REQUIRED_EVIDENCE_DUPLICATE')
+    got=set(evidence_types)
     if not req.issubset(got): fail(f'REQUIRED_EVIDENCE_TYPE_MISSING:{sorted(req-got)}')
     for item in items:
         if not isinstance(item,dict) or item.get('status')!='PASS' or not item.get('ref'): fail('REQUIRED_EVIDENCE_ITEM_INVALID')
