@@ -51,7 +51,31 @@ governance_identity:
     - RELEASE_IDENTITY_MATERIALIZATION
     - POST_PROMOTION_RECONCILIATION_AND_REVERIFY_HANDOFF
     - PROMOTION_ABORT_AND_IDEMPOTENCY
+  - record_url: https://github.com/steven-gold/orange-one-ai-viedo-v1.0/issues/59
+    record_kind: GITHUB_GOVERNANCE_CHANGE_RECORD
+    authorization_base_head: 794ba435e1acdcb957fa5716d9ad8a9b9fac10b7
+    preexists_normative_mutation_after_base: true
+    candidate_branch: rebuild-v2.1.1
+    authorized_scope:
+    - PRODUCT_SELECTED_GOVERNANCE_RELEASE
+    - GOVERNANCE_REVISION_TRANSITION_RECEIPT
+    - CANDIDATE_GOVERNANCE_NO_PRODUCT_EXECUTION
+    - APPLICATION_BASELINE_ADMISSION_MANIFEST
+    - APPLICATION_BASELINE_MATERIALIZATION_RECEIPT
+    - STAGE04_TO_STAGE05_REENTRY
+    - WORKFLOW_BINDING_REGRESSION
 product_execution_branch: 0921acpos
+product_stage_governance_authority:
+  mode: EXACT_SELECTED_VERIFIED_RELEASE_COMMIT_ONLY
+  selection_artifact_path: STAGE_EXECUTION/SHARED_AUTHORITY/PRODUCT_SELECTED_GOVERNANCE_RELEASE.yaml
+  governance_source_root_env: ACPOS_GOVERNANCE_SOURCE_ROOT
+  moving_governance_branch_ref_for_product_execution: FORBIDDEN
+  candidate_governance_formal_product_execution_credit: 0
+  governance_load_receipt_required: true
+  governance_revision_transition_receipt_path: STAGE_EXECUTION/SHARED_AUTHORITY/GOVERNANCE_REVISION_TRANSITION_RECEIPT.yaml
+  application_baseline_snapshot_required_before_stage05: true
+  application_baseline_noncurrent_branch_source_role: PROVENANCE_ONLY
+  application_baseline_noncurrent_branch_may_be_current_target: false
 normative_mother_order:
 - .github/governance-source/active/source/12_DOCS/mother-spec/01_BLUEPRINT_DESIGN_GOVERNANCE.md
 - .github/governance-source/active/source/12_DOCS/mother-spec/02_IMPLEMENTATION_DELIVERY_STANDARD.md
@@ -240,7 +264,7 @@ candidate_validation_contract:
     ".github/governance-source/active/source/09_TESTS/governance/validate_product_neutral_entity_lifecycle.py": f5e3f0f047eea74e2c75ed5e118e9be0df8d61ec
     ".github/governance-source/active/source/09_TESTS/governance/validate_reference_semantics.py": 441e9f3f7e7193ca9062e632ffc381114ee6a2d1
     ".github/governance-source/active/source/09_TESTS/governance/validate_section_registry.py": 2680069f9e718b11104b2573e8cf6bc5c7d2f27c
-    ".github/governance-source/active/source/09_TESTS/governance/validate_stage_execution_invariants.py": 6da75a219c05858d37d51b8b445d6b1d7d75a013
+    ".github/governance-source/active/source/09_TESTS/governance/validate_stage_execution_invariants.py": b29033cb68b9b0f13d3ab58807676988f29863f1
     ".github/governance-source/active/source/09_TESTS/governance/validate_test_feedback_spec_evolution.py": c5af8cabf744e4983509904d9f38f28d5aa373c5
     ".github/workflows/source-package-successor-validation.yml": 57766b13f419077d98f17d33aeb782310c4b5bb5
     ".github/workflows/source-package-successor-materialization.yml": 5bb34230a532c0f400b63b363cf2a10bca0178b3

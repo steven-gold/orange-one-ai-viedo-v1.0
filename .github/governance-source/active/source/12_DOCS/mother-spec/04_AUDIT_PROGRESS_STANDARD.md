@@ -1612,3 +1612,23 @@ Audit MUST verify that the exact Word selected for projection has a PASS Source 
 For every non-XML binary package part independently observed in the raw DOCX package, Audit MUST verify exactly one frozen binary file at the deterministic content-addressed path, byte length equality, SHA-256 equality, and continued traceability through package part + relationship + XML source-node evidence where applicable. Absence of relationship/source-node use is not permission to drop the binary package part; semantic disposition occurs later.
 
 Destructive regression MUST include missing content-readiness audit and missing or hash-mismatched frozen binary source part. A source-fidelity PASS with unavailable pixels/bytes for an embedded visual is false completion and MUST be blocked.
+
+<!-- SECTION_UID: WEB-GOV-04-S088 -->
+## 88. Product Governance Release Selection and Transition Audit / 產品治理發布選擇與轉移稽核
+
+Audit MUST prove that every formal Product Stage execution used one product-owned `PRODUCT_SELECTED_GOVERNANCE_RELEASE` bound to an exact immutable released governance commit/tree/UID/revision and fresh post-promotion reverification evidence. A workflow checkout of a moving governance branch/tag, a candidate governance identity, a selected SHA different from the actually loaded checkout, or a missing/invalid `GOVERNANCE_LOAD_RECEIPT` is a blocker and receives zero Product Stage credit.
+
+For a selected-governance change, Audit MUST reconstruct the `GOVERNANCE_REVISION_TRANSITION_RECEIPT` and verify old/new selection identities, impacted Work Units and reverse dependencies, preserved immutable facts, invalidated execution/evidence classes, earliest legal re-entry owner, fresh matrix/handoff/evidence regeneration and terminal verification. Relabeling an old-UID closure to a new UID without fresh transition evidence is false completion. A governance branch tip advancing by itself MUST NOT change Product Current Governance.
+
+Negative regression MUST include at least: selected SHA differs from loaded governance checkout; selected identity is candidate/not released; selected release lacks fresh reverification evidence; old-governance scope/evidence reused without transition receipt; transition receipt bound to another Work Unit; and impacted closure retained as PASS instead of `REVERIFY_REQUIRED`.
+
+<!-- SECTION_UID: WEB-GOV-04-S089 -->
+## 89. Application Baseline Admission and Materialization Audit / 應用基線准入與實體化稽核
+
+Audit MUST distinguish source provenance from Current implementation target. When an application baseline originates from a non-Current branch/repository snapshot, Audit MUST require a pre-existing `APPLICATION_BASELINE_ADMISSION_MANIFEST`, bounded materialization transaction and `APPLICATION_BASELINE_MATERIALIZATION_RECEIPT` before that content can satisfy the Current `APPLICATION_ROOT`.
+
+Audit MUST verify exact source repository/branch/head/tree/path set, target repository/Registry-selected Product Execution Branch and pre-write HEAD, bounded include/exclude/write set, preservation set, conflict policy/result, authorization, materialization commit ancestry, canonical application root and resulting application object identities. Source-branch presence alone, manual copy, unbounded merge, latest-tip import or silent overwrite is not admission evidence.
+
+Before Stage-05 admission, Audit MUST independently validate `APPLICATION_BASELINE_SNAPSHOT`: its baseline commit is an ancestor of the Current Product execution head, its canonical application root is physically present/tracked, every governed application path/object identity still matches Current Git state, and its source kind/provenance is valid. For migrated baselines the snapshot MUST trace to the admitted materialization receipt.
+
+Stage-05 implementation-diff audit MUST use that snapshot as the before-state denominator for OP-10..OP-23. Every applicable operation MUST either carry exact Program Artifact/path/owner/profile before-after-diff trace or explicit Authority-backed no-source-diff evidence. Missing baseline, missing operation coverage, stale baseline object, source-branch-as-target substitution, materialization receipt mismatch, unresolved import conflict or application root absent after claimed migration MUST block Stage-05 admission/closure.

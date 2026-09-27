@@ -443,6 +443,12 @@ def _write_synthetic_target_resolution(root,base_rel,work_unit_uid,successor_uid
         receipt.update({'repository_identity':git_ctx['repository'],'branch_ref_head_sha':git_ctx['head']})
     if kind=='CURRENT_REPOSITORY_PATH':
         receipt.update({'target_path':'targets','target_path_exists':True,'target_path_tracked_at_head':True})
+        if row['binding_class']=='APPLICATION_ROOT':
+            baseline_rel=(Path(base_rel)/'APPLICATION_BASELINE_SNAPSHOT.yaml').as_posix()
+            obj=subprocess.run(['git','-C',str(root),'rev-parse',git_ctx['head']+':targets/seed.txt'],check=True,text=True,capture_output=True).stdout.strip()
+            baseline={'artifact_type':'APPLICATION_BASELINE_SNAPSHOT','status':'PASS','product_repository':git_ctx['repository'],'product_branch':git_ctx['branch'],'application_root':'targets','baseline_commit_sha':git_ctx['head'],'baseline_source_kind':'PREEXISTING_CURRENT_BASELINE','baseline_authority_ref':'synthetic://baseline-authority','tracked_path_set':[{'path':'targets/seed.txt','git_object_sha':obj}],'implementation_diff_anchor':True}
+            bp=root/baseline_rel; bp.parent.mkdir(parents=True,exist_ok=True); bp.write_text(yaml.safe_dump(baseline,sort_keys=False),encoding='utf-8')
+            receipt['application_baseline_snapshot_ref']=baseline_rel
     elif kind=='EXTERNAL_CURRENT_TARGET':
         receipt.update({
           'provider_or_system':'SYNTHETIC-PROVIDER','project_or_resource_identity':'SYNTHETIC-PROJECT',
@@ -586,6 +592,15 @@ with tempfile.TemporaryDirectory() as td:
     _target_receipt_case('stage05_target_stale_tree',lambda r:r.__setitem__('current_execution_tree_sha','1'*40),'TARGET_RESOLUTION_TREE_MISMATCH')
     _target_receipt_case('stage05_application_root_missing',lambda r:r.update({'target_path':'missing-app-root','target_path_exists':True,'target_path_tracked_at_head':True}),'TARGET_RESOLUTION_PATH_MISSING')
     _target_receipt_case('stage05_application_root_untracked',lambda r:r.update({'target_path':'target-resolution','target_path_exists':True,'target_path_tracked_at_head':True}),'TARGET_RESOLUTION_PATH_NOT_TRACKED_AT_HEAD')
+    _target_receipt_case('stage05_application_baseline_snapshot_missing',lambda r:r.__setitem__('application_baseline_snapshot_ref',''),'APPLICATION_BASELINE_SNAPSHOT_REF_MISSING')
+    _baseline_path=pressure_root/app_receipt['application_baseline_snapshot_ref']
+    _baseline_original=yaml.safe_load(_baseline_path.read_text(encoding='utf-8'))
+    _baseline_broken=deepcopy(_baseline_original); _baseline_broken['tracked_path_set'][0]['git_object_sha']='0'*40
+    _baseline_path.write_text(yaml.safe_dump(_baseline_broken,sort_keys=False),encoding='utf-8')
+    try:
+        expect_stage_engine_block('stage05_application_baseline_object_mismatch',lambda:eng._validate_cross_stage_handoff_ledger('STAGE-04',deepcopy(evidence),predecessor,stages),'APPLICATION_BASELINE_PATH_OBJECT_MISMATCH')
+    finally:
+        _baseline_path.write_text(yaml.safe_dump(_baseline_original,sort_keys=False),encoding='utf-8')
     broken=deepcopy(ledger)
     row=next(x for x in broken['successor_execution_bindings'] if x['binding_class']=='APPLICATION_ROOT')
     row['target_identity']='synthetic://target/wrong-app-root'
@@ -711,8 +726,20 @@ with tempfile.TemporaryDirectory() as td:
         os.environ[eng.PRODUCT_ROOT_ENV]=old_root
 
 
+# Formal Product Stage governance authority must be one exact immutable released selection.
+_release_reg={'status':'CURRENT_RELEASED','branch':'rebuild-v2.1.1','branch_role_contract':{'rebuild-v2.1.1':'IMMUTABLE_GOVERNANCE_RULESET'},'governance_identity':{'governance_uid':'GOV-RELEASE-TEST','governance_revision':'vTEST','display_version':'vTEST','status':'RELEASED','identity_state':'IMMUTABLE_RELEASED','released_immutable_identity':True}}
+_release_sel={'artifact_type':'PRODUCT_SELECTED_GOVERNANCE_RELEASE','status':'SELECTED_VERIFIED_RELEASE','governance_repository':'owner/repo','governance_commit_sha':'a'*40,'governance_tree_sha':'b'*40,'governance_uid':'GOV-RELEASE-TEST','governance_revision':'vTEST','display_version':'vTEST','release_receipt_ref':'governance/release/RELEASE_RECEIPT.yaml','release_receipt_sha256':'c'*64,'root_manifest_sha256':'d'*64,'fresh_reverify_status':'PASS','fresh_reverify_evidence_ref':'external://fresh-reverify','selection_authority_ref':'issue://selection'}
+_release_receipt={'artifact_type':'GOVERNANCE_RELEASE_RECEIPT','released_governance_uid':'GOV-RELEASE-TEST','released_governance_revision':'vTEST'}
+assert eng._validate_selected_governance_release_data(_release_sel,_release_reg,_release_receipt,{'repository':'owner/repo','head':'a'*40,'tree':'b'*40},'GOV-RELEASE-TEST','d'*64) is True
+_candidate_reg=deepcopy(_release_reg); _candidate_reg['status']='ACTIVE_SINGLE_BRANCH_VALIDATION'; _candidate_reg['branch_role_contract']['rebuild-v2.1.1']='GOVERNANCE_REVISION_CANDIDATE'
+expect_stage_engine_block('product_candidate_governance_cannot_drive_formal_stage',lambda:eng._validate_selected_governance_release_data(_release_sel,_candidate_reg,_release_receipt,{'repository':'owner/repo','head':'a'*40,'tree':'b'*40},'GOV-RELEASE-TEST','d'*64),'PRODUCT_SELECTED_GOVERNANCE_NOT_RELEASED')
+_bad_sel=deepcopy(_release_sel); _bad_sel['governance_commit_sha']='e'*40
+expect_stage_engine_block('product_selected_governance_exact_commit_mismatch',lambda:eng._validate_selected_governance_release_data(_bad_sel,_release_reg,_release_receipt,{'repository':'owner/repo','head':'a'*40,'tree':'b'*40},'GOV-RELEASE-TEST','d'*64),'PRODUCT_SELECTED_GOVERNANCE_BINDING_MISMATCH:governance_commit_sha')
+
 # Operation-level effectful dispatch migration pressure test.
 # Uses only a temporary product root and a synthetic registered Python executor.
+_original_product_governance_selection=eng.validate_product_governance_selection
+eng.validate_product_governance_selection=lambda *args,**kwargs: True
 with tempfile.TemporaryDirectory() as _exec_td:
     _exec_root=Path(_exec_td)
     _entry,_reg,_gov,_profile,_adapters,_stages=eng.validate_definition()
@@ -869,6 +896,8 @@ p.parse_args()
         ):
             if _value is None: os.environ.pop(_key,None)
             else: os.environ[_key]=_value
+
+eng.validate_product_governance_selection=_original_product_governance_selection
 
 assert not (ROOT/'governance/ci/compile_stage_execution_preflight.py').exists()
 assert not (ROOT/'governance/ci/stage_execution_adapters/stage02_functional_contract.py').exists()

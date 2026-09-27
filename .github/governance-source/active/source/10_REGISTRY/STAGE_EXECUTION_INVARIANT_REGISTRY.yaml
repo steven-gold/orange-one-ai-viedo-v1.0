@@ -1432,6 +1432,60 @@ invariants:
         BACKUP_TARGET: OP-51-BACKUP_VERIFICATION
         ROLLBACK_TARGET: OP-52-ROLLBACK_VERIFICATION
         OPERATIONS_OWNER: OP-53-FINAL_AUDIT_MATRIX_RECONCILIATION
+  PRODUCT_GOVERNANCE_RELEASE_SELECTION_AND_APPLICATION_BASELINE:
+    invariant_uid: GOV-INV-PRODUCT-GOVERNANCE-RELEASE-APPLICATION-BASELINE-001
+    applies_to_formal_product_stage_execution: true
+    selected_governance_release_artifact_type: PRODUCT_SELECTED_GOVERNANCE_RELEASE
+    selected_governance_release_path: STAGE_EXECUTION/SHARED_AUTHORITY/PRODUCT_SELECTED_GOVERNANCE_RELEASE.yaml
+    selected_governance_release_required_fields: [artifact_type, status, governance_repository, governance_commit_sha, governance_tree_sha, governance_uid, governance_revision, display_version, release_receipt_ref, release_receipt_sha256, root_manifest_sha256, fresh_reverify_status, fresh_reverify_evidence_ref, selection_authority_ref]
+    selected_governance_release_status: SELECTED_VERIFIED_RELEASE
+    governance_source_root_env: ACPOS_GOVERNANCE_SOURCE_ROOT
+    governance_source_checkout_exact_commit_required: true
+    loaded_governance_registry_must_equal_selected_checkout_registry: true
+    selected_release_registry_status: CURRENT_RELEASED
+    selected_release_branch_role: IMMUTABLE_GOVERNANCE_RULESET
+    selected_release_identity_status: RELEASED
+    selected_release_identity_state: IMMUTABLE_RELEASED
+    selected_release_released_immutable_identity_required: true
+    selected_release_fresh_reverify_status: PASS
+    moving_governance_branch_ref_may_grant_product_execution_credit: false
+    candidate_governance_formal_product_execution_credit: 0
+    product_stage_workflow_governance_checkout_mode: EXACT_SELECTED_RELEASE_COMMIT_ONLY
+    governance_load_receipt_artifact_type: GOVERNANCE_LOAD_RECEIPT
+    governance_load_receipt_filename: GOVERNANCE_LOAD_RECEIPT.yaml
+    governance_load_receipt_required_fields: [artifact_type, status, stage_uid, work_unit_uid, selected_governance_ref, governance_uid, governance_revision, governance_commit_sha, governance_tree_sha, governance_root_manifest_sha256, effective_normative_set_sha256, loader_uid, loaded_at]
+    governance_load_receipt_status: PASS
+    governance_revision_transition_receipt_type: GOVERNANCE_REVISION_TRANSITION_RECEIPT
+    governance_revision_transition_receipt_path: STAGE_EXECUTION/SHARED_AUTHORITY/GOVERNANCE_REVISION_TRANSITION_RECEIPT.yaml
+    governance_revision_transition_required_fields: [artifact_type, status, from_governance_uid, to_governance_uid, selected_governance_ref, affected_work_unit_uids, invalidated_artifact_classes, preserved_artifact_refs, earliest_reentry_stage_uid, reverse_dependency_evidence_ref, transition_authority_ref]
+    governance_revision_transition_status_when_old_uid_present: REVERIFY_REQUIRED
+    old_uid_without_transition_receipt: BLOCK
+    impacted_old_governance_closure_disposition: REVERIFY_REQUIRED
+    unaffected_evidence_preservation_requires_reverse_dependency_proof: true
+    old_execution_evidence_may_be_relabelled_to_new_uid: false
+    application_baseline_admission_required_when_current_application_root_absent: true
+    application_baseline_admission_owner: PRODUCT_APPLICATION_BASELINE_FOUNDATION
+    application_baseline_admission_manifest_type: APPLICATION_BASELINE_ADMISSION_MANIFEST
+    application_baseline_admission_manifest_required_fields: [artifact_type, status, source_repository, source_branch, source_head_sha, source_tree_sha, source_path_set, source_authority_ref, target_repository, target_branch, target_expected_head_sha, application_root, include_path_set, exclude_path_set, allowed_write_path_set, preserve_path_set, conflict_policy, transition_authority_ref]
+    application_baseline_materialization_receipt_type: APPLICATION_BASELINE_MATERIALIZATION_RECEIPT
+    application_baseline_materialization_receipt_required_fields: [artifact_type, status, admission_manifest_ref, source_repository, source_branch, source_head_sha, source_tree_sha, target_repository, target_branch, target_parent_head_sha, materialization_commit_sha, application_root, conflict_result, materialization_evidence_ref]
+    application_baseline_materialization_status: PASS
+    application_baseline_conflict_result: PASS_ZERO_UNRESOLVED
+    application_baseline_snapshot_type: APPLICATION_BASELINE_SNAPSHOT
+    application_baseline_snapshot_required_fields: [artifact_type, status, product_repository, product_branch, application_root, baseline_commit_sha, baseline_source_kind, baseline_authority_ref, tracked_path_set, implementation_diff_anchor]
+    application_baseline_snapshot_path_row_required_fields: [path, git_object_sha]
+    application_baseline_snapshot_status: PASS
+    application_baseline_allowed_source_kinds: [PREEXISTING_CURRENT_BASELINE, AUTHORIZED_MIGRATION]
+    application_baseline_snapshot_ref_required_on_stage05_application_root_resolution: true
+    application_baseline_materialization_ref_required_for_migrated_source: true
+    noncurrent_branch_application_source_role: PROVENANCE_ONLY
+    noncurrent_branch_application_source_may_be_current_target: false
+    application_baseline_source_branch_may_be_auto_selected: false
+    current_application_root_absence_disposition: APPLICATION_BASELINE_ADMISSION_REQUIRED
+    application_baseline_materialization_product_stage_completion_credit: 0
+    implementation_diff_baseline_snapshot_required: true
+    implementation_diff_required_operation_uids: [OP-10-FRONTEND_IMPLEMENTATION, OP-11-CONTROL_FIELD_IMPLEMENTATION, OP-12-ACTION_LAYER, OP-13-BACKEND_RUNTIME, OP-14-REPOSITORY_DATA_ACCESS_LAYER, OP-15-DATABASE_SCHEMA_MIGRATION, OP-16-AUTHENTICATION, OP-17-AUTHORIZATION, OP-18-DATA_SECURITY, OP-19-AUDIT_LOGGING, OP-20-ERROR_CONTRACT, OP-21-EXTERNAL_INTEGRATION, OP-22-ASYNC_RUNTIME, OP-23-STORAGE_RUNTIME]
+    applicable_operation_without_source_diff_requires_authority_evidence: true
   TYPOGRAPHY_COMPUTED_METRICS:
     invariant_uid: GOV-INV-TYPOGRAPHY-COMPUTED-METRICS-001
     target_denominator: EVERY_APPLICABLE_TEXT_BEARING_TARGET_FROM_CURRENT_DESIGN_AUTHORITY
