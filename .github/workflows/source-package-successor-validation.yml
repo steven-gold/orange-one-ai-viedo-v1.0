@@ -27,3 +27,7 @@ jobs:
           python governance/source-successor/materialize_derived_source_package.py --check
           python governance/source-successor/refresh_source_checksums.py --check
           python governance/ci/validate_source_package_candidate.py
+      - name: Diagnose mandatory regression failures
+        if: failure()
+        run: |
+          python .github/governance-source/active/source/09_TESTS/governance/test_high_pressure_hardening.py || true
