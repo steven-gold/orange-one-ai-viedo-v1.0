@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import argparse
 import base64
+from datetime import datetime, timezone
 import hashlib
 import json
 import re
@@ -90,15 +91,16 @@ def parse_pinned_blob(ref:str)->tuple[str,str,str,str]:
     if not m: raise RuntimeError('PROVENANCE_REF_MUST_BE_COMMIT_PINNED_GITHUB_BLOB')
     return m.group(1),m.group(2),m.group(3),m.group(4)
 
-def fetch_pinned_blob(ref:str,token:str|None)->tuple[bytes,str]:
+def fetch_pinned_blob(ref:str,token:str|None)->tuple[bytes,str,str]:
     owner,repo_name,sha,path=parse_pinned_blob(ref)
     q=urllib.parse.urlencode({'ref':sha})
     payload=api_json(f'https://api.github.com/repos/{owner}/{repo_name}/contents/{urllib.parse.quote(path,safe="/")}?{q}',token)
     raw=base64.b64decode(str(payload.get('content') or '').replace('\n',''))
     commit=api_json(f'https://api.github.com/repos/{owner}/{repo_name}/commits/{sha}',token)
     actor=str(((commit.get('author') or {}).get('login')) or ((commit.get('committer') or {}).get('login')) or '').strip()
-    if not raw or not actor: raise RuntimeError('PROVENANCE_BLOB_OR_ACTOR_MISSING')
-    return raw,actor
+    committed_at=str(((commit.get('commit') or {}).get('committer') or {}).get('date') or '')
+    if not raw or not actor or not committed_at: raise RuntimeError('PROVENANCE_BLOB_ACTOR_OR_TIME_MISSING')
+    return raw,actor,committed_at
 
 def fetch_issue(ref:str,token:str|None)->dict:
     m=re.fullmatch(r'https://github\.com/([^/]+)/([^/]+)/issues/(\d+)',str(ref or ''))
@@ -115,36 +117,104 @@ def candidate_mutation_actors(repository:str,base:str,head:str,token:str|None)->
     if not actors: raise RuntimeError('CANDIDATE_MUTATION_ACTOR_SET_EMPTY')
     return actors
 
+def canonical_candidate_audit_snapshot(registry:dict,repository:str,candidate_head:str)->tuple[str,dict]:
+    ident=registry.get('governance_identity') or {}
+    vc=registry.get('candidate_validation_contract') or {}
+    receipt_rel=str(vc.get('source_package_successor_admission_receipt') or '')
+    receipt=load_yaml(ROOT/receipt_rel)
+    snapshot={
+      'repository':repository,
+      'candidate_branch':str(registry.get('branch') or ''),
+      'candidate_head_sha':candidate_head,
+      'governance_uid':str(ident.get('governance_uid') or ''),
+      'governance_revision':str(ident.get('governance_revision') or ''),
+      'specification_bundle_sha256':str(ident.get('specification_bundle_sha256') or ''),
+      'canonical_rule_registry_digest':str(ident.get('canonical_rule_registry_digest') or ''),
+      'source_package_branch':str(receipt.get('candidate_source_branch') or ''),
+      'source_package_head_sha':str(receipt.get('source_head_sha') or ''),
+      'source_package_manifest_blob_sha':str(receipt.get('source_candidate_manifest_blob_sha') or ''),
+    }
+    if any(not value for value in snapshot.values()):
+        raise RuntimeError('CANONICAL_AUDIT_SNAPSHOT_FIELD_MISSING')
+    canonical=json.dumps(snapshot,sort_keys=True,separators=(',',':'),ensure_ascii=False).encode('utf-8')
+    return hashlib.sha256(canonical).hexdigest(),snapshot
+
+def canonical_result_fingerprint(result_doc:dict)->str:
+    canonical_result=result_doc.get('canonical_result')
+    if not isinstance(canonical_result,dict) or not canonical_result:
+        raise RuntimeError('INDEPENDENT_AUDITOR_CANONICAL_RESULT_REQUIRED')
+    raw=json.dumps(canonical_result,sort_keys=True,separators=(',',':'),ensure_ascii=False).encode('utf-8')
+    return hashlib.sha256(raw).hexdigest()
+
 def validate_independent_auditor_provenance(records,repository,token,registry,candidate_head):
     vc=registry.get('candidate_validation_contract') or {}
     req=set(map(str,vc.get('independent_auditor_required_provenance_fields') or []))
-    if vc.get('independent_auditor_external_provenance_required') is not True or req!={'implementation_provenance_ref','execution_receipt_provenance_ref','evaluator_authority_ref'}:
+    expected_req={'implementation_provenance_ref','execution_receipt_provenance_ref','result_artifact_provenance_ref','evaluator_authority_ref'}
+    if vc.get('independent_auditor_external_provenance_required') is not True or req!=expected_req:
         return {'status':'FAIL','reason':'INDEPENDENT_AUDITOR_PROVENANCE_CONTRACT_DRIFT'}
+    if vc.get('independent_auditor_snapshot_hash_mode')!='SHA256_CANONICAL_JSON_CURRENT_CANDIDATE_SOURCE_SNAPSHOT_V1':
+        return {'status':'FAIL','reason':'INDEPENDENT_AUDITOR_SNAPSHOT_HASH_MODE_DRIFT'}
+    if vc.get('independent_auditor_result_fingerprint_mode')!='SHA256_CANONICAL_JSON_CANONICAL_RESULT_V1':
+        return {'status':'FAIL','reason':'INDEPENDENT_AUDITOR_RESULT_FINGERPRINT_MODE_DRIFT'}
     ident=registry.get('governance_identity') or {}
     primary=fetch_issue(str(ident.get('authorization_record_url') or ''),token)
     primary_actor=str(((primary.get('user') or {}).get('login')) or '')
     mutations=candidate_mutation_actors(repository,str(ident.get('predecessor_head_sha') or ''),candidate_head,token)
-    actors=[]
+    expected_snapshot_hash,snapshot=canonical_candidate_audit_snapshot(registry,repository,candidate_head)
+    actors=[]; result_fingerprints=[]; rows=[]
     for i,r in enumerate(records):
         miss=[f for f in req if not str(r.get(f) or '').strip()]
         if miss: return {'status':'FAIL','reason':'INDEPENDENT_AUDITOR_PROVENANCE_FIELD_MISSING','index':i,'fields':miss}
-        impl,ia=fetch_pinned_blob(str(r['implementation_provenance_ref']),token)
-        rec,ra=fetch_pinned_blob(str(r['execution_receipt_provenance_ref']),token)
-        if ia!=ra: return {'status':'FAIL','reason':'INDEPENDENT_AUDITOR_IMPLEMENTATION_RECEIPT_ACTOR_MISMATCH','index':i}
-        if ia in mutations: return {'status':'FAIL','reason':'CANDIDATE_MUTATION_ACTOR_CANNOT_BE_FORMAL_INDEPENDENT_AUDITOR','index':i,'actor':ia}
-        if hashlib.sha256(impl).hexdigest()!=str(r.get('implementation_sha256') or ''): return {'status':'FAIL','reason':'INDEPENDENT_AUDITOR_PROVENANCE_IMPLEMENTATION_HASH_MISMATCH','index':i}
+        impl,ia,impl_time=fetch_pinned_blob(str(r['implementation_provenance_ref']),token)
+        rec,ra,receipt_time=fetch_pinned_blob(str(r['execution_receipt_provenance_ref']),token)
+        result_raw,result_actor,result_time=fetch_pinned_blob(str(r['result_artifact_provenance_ref']),token)
+        if len({ia,ra,result_actor})!=1:
+            return {'status':'FAIL','reason':'INDEPENDENT_AUDITOR_PROVENANCE_ACTOR_CHAIN_MISMATCH','index':i}
+        if ia in mutations:
+            return {'status':'FAIL','reason':'CANDIDATE_MUTATION_ACTOR_CANNOT_BE_FORMAL_INDEPENDENT_AUDITOR','index':i,'actor':ia}
+        impl_hash=hashlib.sha256(impl).hexdigest()
+        if impl_hash!=str(r.get('implementation_sha256') or ''):
+            return {'status':'FAIL','reason':'INDEPENDENT_AUDITOR_PROVENANCE_IMPLEMENTATION_HASH_MISMATCH','index':i}
+        if str(r.get('audit_snapshot_hash') or '')!=expected_snapshot_hash:
+            return {'status':'FAIL','reason':'INDEPENDENT_AUDITOR_SNAPSHOT_HASH_MISMATCH','index':i,'expected':expected_snapshot_hash,'actual':r.get('audit_snapshot_hash')}
         rd=yaml.safe_load(rec.decode('utf-8')) or {}
+        result_doc=yaml.safe_load(result_raw.decode('utf-8')) or {}
+        if not isinstance(rd,dict) or not isinstance(result_doc,dict):
+            return {'status':'FAIL','reason':'INDEPENDENT_AUDITOR_PROVENANCE_MAPPING_REQUIRED','index':i}
+        actual_result_fp=canonical_result_fingerprint(result_doc)
+        if actual_result_fp!=str(r.get('result_fingerprint') or ''):
+            return {'status':'FAIL','reason':'INDEPENDENT_AUDITOR_RESULT_FINGERPRINT_MISMATCH','index':i}
         for k in ('evaluator_uid','implementation_sha256','audit_snapshot_hash','result_fingerprint'):
-            if str(rd.get(k) or '')!=str(r.get(k) or ''): return {'status':'FAIL','reason':'INDEPENDENT_AUDITOR_RECEIPT_BINDING_MISMATCH','index':i,'field':k}
-        if str(rd.get('status') or '')!='PASS': return {'status':'FAIL','reason':'INDEPENDENT_AUDITOR_RECEIPT_NOT_PASS','index':i}
+            if str(rd.get(k) or '')!=str(r.get(k) or ''):
+                return {'status':'FAIL','reason':'INDEPENDENT_AUDITOR_RECEIPT_BINDING_MISMATCH','index':i,'field':k}
+        if str(rd.get('status') or '')!='PASS':
+            return {'status':'FAIL','reason':'INDEPENDENT_AUDITOR_RECEIPT_NOT_PASS','index':i}
+        if str(result_doc.get('evaluator_uid') or '')!=str(r.get('evaluator_uid') or '') or str(result_doc.get('audit_snapshot_hash') or '')!=expected_snapshot_hash:
+            return {'status':'FAIL','reason':'INDEPENDENT_AUDITOR_RESULT_ARTIFACT_BINDING_MISMATCH','index':i}
         auth=fetch_issue(str(r['evaluator_authority_ref']),token)
         body=str(auth.get('body') or '')
-        if str(((auth.get('user') or {}).get('login')) or '')!=primary_actor: return {'status':'FAIL','reason':'INDEPENDENT_AUDITOR_AUTHORITY_ACTOR_MISMATCH','index':i}
-        for tok in (str(r.get('evaluator_uid') or ''),ia,str(ident.get('governance_uid') or ''),str(r.get('audit_snapshot_hash') or '')):
-            if tok not in body: return {'status':'FAIL','reason':'INDEPENDENT_AUDITOR_AUTHORITY_SCOPE_MISSING','index':i}
-        actors.append(ia)
-    if len(set(actors))!=3: return {'status':'FAIL','reason':'INDEPENDENT_AUDITOR_PROVENANCE_ACTORS_NOT_DISTINCT','actors':actors}
-    return {'status':'PASS','independent_provenance_actor_count':3,'actors':actors}
+        if str(((auth.get('user') or {}).get('login')) or '')!=primary_actor:
+            return {'status':'FAIL','reason':'INDEPENDENT_AUDITOR_AUTHORITY_ACTOR_MISMATCH','index':i}
+        for tok in (str(r.get('evaluator_uid') or ''),ia,str(ident.get('governance_uid') or ''),expected_snapshot_hash):
+            if tok not in body:
+                return {'status':'FAIL','reason':'INDEPENDENT_AUDITOR_AUTHORITY_SCOPE_MISSING','index':i,'token':tok}
+        try:
+            auth_dt=datetime.fromisoformat(str(auth.get('created_at') or '').replace('Z','+00:00')).astimezone(timezone.utc)
+            first_evidence_dt=min(
+              datetime.fromisoformat(t.replace('Z','+00:00')).astimezone(timezone.utc)
+              for t in (impl_time,receipt_time,result_time)
+            )
+        except Exception:
+            return {'status':'FAIL','reason':'INDEPENDENT_AUDITOR_AUTHORITY_TIME_INVALID','index':i}
+        if not auth_dt < first_evidence_dt:
+            return {'status':'FAIL','reason':'INDEPENDENT_AUDITOR_AUTHORITY_NOT_PREEXISTING_EVIDENCE','index':i}
+        actors.append(ia); result_fingerprints.append(actual_result_fp)
+        rows.append({'evaluator_uid':r.get('evaluator_uid'),'provenance_actor':ia,'implementation_sha256':impl_hash,'audit_snapshot_hash':expected_snapshot_hash,'result_fingerprint':actual_result_fp})
+    if len(set(actors))!=3:
+        return {'status':'FAIL','reason':'INDEPENDENT_AUDITOR_PROVENANCE_ACTORS_NOT_DISTINCT','actors':actors}
+    if len(set(result_fingerprints))!=1:
+        return {'status':'FAIL','reason':'INDEPENDENT_AUDITOR_RESULT_ARTIFACTS_NOT_IDENTICAL','fingerprints':result_fingerprints}
+    return {'status':'PASS','independent_provenance_actor_count':3,'audit_snapshot_hash':expected_snapshot_hash,'canonical_snapshot':snapshot,'result_fingerprint':result_fingerprints[0],'rows':rows}
 
 def evaluate_independent_auditors(evidence_path:Path|None,repository=None,token=None,registry=None,candidate_head=None) -> dict:
     ctx=audit_engine.load_context()

@@ -174,7 +174,12 @@ candidate_validation_contract:
   independent_auditor_required_provenance_fields:
   - implementation_provenance_ref
   - execution_receipt_provenance_ref
+  - result_artifact_provenance_ref
   - evaluator_authority_ref
+  independent_auditor_snapshot_hash_mode: SHA256_CANONICAL_JSON_CURRENT_CANDIDATE_SOURCE_SNAPSHOT_V1
+  independent_auditor_result_fingerprint_mode: SHA256_CANONICAL_JSON_CANONICAL_RESULT_V1
+  independent_auditor_result_artifact_required: true
+  independent_auditor_authority_must_preexist_evidence_commit: true
   independent_auditor_provenance_ref_mode: COMMIT_PINNED_GITHUB_BLOB
   independent_auditor_authority_ref_mode: GITHUB_ISSUE_FROM_PRIMARY_GOVERNANCE_AUTHORITY_ACTOR
   independent_auditor_provenance_actor_count: 3

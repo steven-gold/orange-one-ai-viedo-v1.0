@@ -85,8 +85,14 @@ def exact_head_validation_contract_check(registry:dict)->dict:
         failures.append('REQUIRED_WORKFLOW_IDENTITY_HARDENING_MISSING')
     if vc.get('independent_auditor_external_provenance_required') is not True:
         failures.append('INDEPENDENT_AUDITOR_EXTERNAL_PROVENANCE_NOT_REQUIRED')
-    if set(map(str,vc.get('independent_auditor_required_provenance_fields') or []))!={'implementation_provenance_ref','execution_receipt_provenance_ref','evaluator_authority_ref'}:
+    if set(map(str,vc.get('independent_auditor_required_provenance_fields') or []))!={'implementation_provenance_ref','execution_receipt_provenance_ref','result_artifact_provenance_ref','evaluator_authority_ref'}:
         failures.append('INDEPENDENT_AUDITOR_PROVENANCE_FIELD_DENOMINATOR_DRIFT')
+    if vc.get('independent_auditor_snapshot_hash_mode')!='SHA256_CANONICAL_JSON_CURRENT_CANDIDATE_SOURCE_SNAPSHOT_V1':
+        failures.append('INDEPENDENT_AUDITOR_SNAPSHOT_HASH_MODE_DRIFT')
+    if vc.get('independent_auditor_result_fingerprint_mode')!='SHA256_CANONICAL_JSON_CANONICAL_RESULT_V1' or vc.get('independent_auditor_result_artifact_required') is not True:
+        failures.append('INDEPENDENT_AUDITOR_RESULT_ARTIFACT_CONTRACT_DRIFT')
+    if vc.get('independent_auditor_authority_must_preexist_evidence_commit') is not True:
+        failures.append('INDEPENDENT_AUDITOR_AUTHORITY_TEMPORAL_GATE_MISSING')
     if int(vc.get('independent_auditor_provenance_actor_count') or 0)!=3 or vc.get('candidate_mutation_actor_may_be_formal_independent_auditor') is not False or vc.get('same_external_actor_may_supply_multiple_formal_independent_evaluators') is not False:
         failures.append('INDEPENDENT_AUDITOR_PROVENANCE_INDEPENDENCE_DRIFT')
     return {
