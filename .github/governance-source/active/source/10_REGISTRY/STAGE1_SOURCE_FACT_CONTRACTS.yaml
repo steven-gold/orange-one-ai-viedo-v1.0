@@ -15,7 +15,7 @@ contracts:
   SOURCE_CONTEXT_MANIFEST:
     required_fields:
     - artifact_uid
-    - page_uid_or_scope_uid
+    - governed_unit_uid_or_scope_uid
     - source_nodes
     - context_edges
     - source_lineage_refs
@@ -31,14 +31,14 @@ contracts:
     - PARENT_CHILD
     - PREVIOUS_NEXT
     - CROSS_FILE_REFERENCE
-    - PAGE_SCOPE
+    - GOVERNED_UNIT_SCOPE
     - MODULE_SCOPE
     - SHARED_CONTEXT
     unresolved_reference: BLOCK
   CONTENT_SUPERSESSION_CONFLICT_LEDGER:
     required_fields:
     - artifact_uid
-    - page_uid_or_scope_uid
+    - governed_unit_uid_or_scope_uid
     - items
     - content_hash
     - status
@@ -61,7 +61,7 @@ contracts:
   SOURCE_DEPENDENCY_MAP:
     required_fields:
     - artifact_uid
-    - page_uid_or_scope_uid
+    - governed_unit_uid_or_scope_uid
     - edges
     - unresolved_authority_gaps
     - content_hash
@@ -98,7 +98,7 @@ raw_source_capture_contract:
   raw_source_directory_source_bytes_only: true
   metadata_inside_raw_source_directory: BLOCK
   physical_file_set_must_exactly_equal_registered_target_paths: true
-  mixed_page_visual_source_role: MIXED_PAGE_VISUAL_SOURCE_INPUT
+  mixed_page_visual_source_role: MIXED_GOVERNED_UNIT_VISUAL_SOURCE_INPUT
   biased_role_for_mixed_source: BLOCK
   raw_source_immutable_on_capture: true
   content_addressed_identity_required: true
@@ -132,7 +132,7 @@ phase_boundary_contract:
   before_source_fact_close:
     DOMAIN_EXTRACTION: BLOCK
     RESPONSIBILITY_CLASSIFICATION: BLOCK
-    PAGE_BASE_BLUEPRINT_COMPILE: BLOCK
+    GOVERNED_UNIT_BASE_BLUEPRINT_COMPILE: BLOCK
     VISUAL_BASE_BLUEPRINT_COMPILE: BLOCK
     BLUEPRINT_BINDING_COMPILE: BLOCK
     WEBSITE_CONSTRUCTION: BLOCK
@@ -140,7 +140,7 @@ phase_boundary_contract:
   after_source_fact_close:
     DOMAIN_EXTRACTION: ALLOW_BY_NEXT_GATE
     RESPONSIBILITY_CLASSIFICATION: ALLOW_BY_NEXT_GATE
-    PAGE_BASE_BLUEPRINT_COMPILE: ALLOW_ONLY_AFTER_CLASSIFICATION_GATE
+    GOVERNED_UNIT_BASE_BLUEPRINT_COMPILE: ALLOW_ONLY_AFTER_CLASSIFICATION_GATE
     VISUAL_BASE_BLUEPRINT_COMPILE: ALLOW_ONLY_AFTER_PAGE_BLUEPRINT_GATE
     BLUEPRINT_BINDING_COMPILE: ALLOW_ONLY_AFTER_PAGE_AND_VISUAL_BLUEPRINT_GATES
     WEBSITE_CONSTRUCTION: BLOCK_IN_STAGE_01
@@ -150,11 +150,11 @@ phase_boundary_contract:
     successor: RESPONSIBILITY_CLASSIFICATION
     required_gate: SOURCE_FACT_GATE_PASS
   - predecessor: RESPONSIBILITY_CLASSIFICATION
-    successor: PAGE_BASE_BLUEPRINT_COMPILE
+    successor: GOVERNED_UNIT_BASE_BLUEPRINT_COMPILE
     required_gate: CLASSIFICATION_GATE_PASS
-  - predecessor: PAGE_BASE_BLUEPRINT_COMPILE
+  - predecessor: GOVERNED_UNIT_BASE_BLUEPRINT_COMPILE
     successor: VISUAL_BASE_BLUEPRINT_COMPILE
-    required_gate: PAGE_BASE_BLUEPRINT_GATE_PASS
+    required_gate: GOVERNED_UNIT_BASE_BLUEPRINT_GATE_PASS
   - predecessor: VISUAL_BASE_BLUEPRINT_COMPILE
     successor: BLUEPRINT_BINDING_COMPILE
     required_gate: PAGE_AND_VISUAL_BLUEPRINT_GATES_PASS
@@ -216,7 +216,7 @@ closure_evidence_continuity_contract:
   applies_through:
   - SOURCE_FACT_MATERIALIZATION
   - RESPONSIBILITY_CLASSIFICATION
-  - PAGE_BASE_BLUEPRINT_COMPILE
+  - GOVERNED_UNIT_BASE_BLUEPRINT_COMPILE
   - VISUAL_BASE_BLUEPRINT_COMPILE
   - BLUEPRINT_BINDING_COMPILE
   predecessor_started_completed_proofs_monotonic: true
@@ -332,8 +332,8 @@ structured_document_source_projection_contract:
     manual_summary_or_rewrite: BLOCK
     fixed_scope: SCHEMA_KEYS_TYPES_ORDER_AND_FIDELITY_INVARIANTS_ONLY
     content_denominator: DYNAMIC_FROM_EACH_IMMUTABLE_RAW_SOURCE
-    fixed_product_page_uid_enum: FORBIDDEN
-    fixed_page_type_enum: FORBIDDEN
+    fixed_product_governed_unit_uid_enum: FORBIDDEN
+    fixed_governed_unit_type_enum: FORBIDDEN
     fixed_business_entity_or_function_enum: FORBIDDEN
     fixed_control_field_or_visual_value_enum: FORBIDDEN
     fixed_source_content_count: FORBIDDEN
@@ -549,7 +549,7 @@ structured_document_source_projection_contract:
     - artifact_type
     - source_uid
     - source_sha256
-    - page_uid
+    - governed_unit_uid
     - audit_standard_uid
     - required_design_domain_uids
     - observed_design_domain_uids

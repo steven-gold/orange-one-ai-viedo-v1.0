@@ -8,14 +8,14 @@ FORBIDDEN_PARTS={"__pycache__",".next","dist","build","coverage","playwright-rep
 FORBIDDEN_SUFFIXES={".pyc",".pyo",".tmp",".bak",".swp"}
 FORBIDDEN_FILENAME_TOKENS={"new","final","latest","fixed","backup","copy","temp","old"}
 REQUIRED_SOURCE_FACT_FILES={"SOURCE_CONTEXT_MANIFEST":"00_SOURCE_INTAKE/SOURCE_CONTEXT_MANIFEST.yaml","CONTENT_SUPERSESSION_CONFLICT_LEDGER":"00_SOURCE_INTAKE/CONTENT_SUPERSESSION_CONFLICT_LEDGER.yaml","SOURCE_DEPENDENCY_MAP":"00_SOURCE_INTAKE/SOURCE_DEPENDENCY_MAP.yaml"}
-DOMAINS={"PAGE_CONSTRUCTION","VISUAL_CONSTRUCTION"}
+DOMAINS={"GOVERNED_UNIT_CONSTRUCTION","VISUAL_CONSTRUCTION"}
 LEGAL_DISPOSITIONS={"CLASSIFIED","SHARED_FACT_REFERENCE","REFERENCE_ONLY","NOT_APPLICABLE"}
-BLUEPRINT_BY_DOMAIN={"PAGE_CONSTRUCTION":"PAGE_BASE_BLUEPRINT","VISUAL_CONSTRUCTION":"VISUAL_BASE_BLUEPRINT"}
+BLUEPRINT_BY_DOMAIN={"GOVERNED_UNIT_CONSTRUCTION":"GOVERNED_UNIT_BASE_BLUEPRINT","VISUAL_CONSTRUCTION":"VISUAL_BASE_BLUEPRINT"}
 RAW_CAPTURE_MANIFEST='00_SOURCE_INTAKE/RAW_SOURCE_REFERENCE_MANIFEST.yaml'
 RAW_CAPTURE_STATE='00_SOURCE_INTAKE/RAW_SOURCE_CAPTURE_STATE.yaml'
 RAW_SOURCE_ROOT='00_SOURCE_INTAKE/RAW_SOURCE'
-MIXED_SOURCE_SCOPE='MIXED_PAGE_VISUAL'
-MIXED_SOURCE_ROLE='MIXED_PAGE_VISUAL_SOURCE_INPUT'
+MIXED_SOURCE_SCOPE='MIXED_GOVERNED_UNIT_VISUAL'
+MIXED_SOURCE_ROLE='MIXED_GOVERNED_UNIT_VISUAL_SOURCE_INPUT'
 
 def load_yaml(p:Path): return yaml.safe_load(p.read_text(encoding='utf-8')) or {}
 def sha256_bytes(b:bytes)->str: return hashlib.sha256(b).hexdigest()
@@ -48,28 +48,28 @@ def validate_stage1_phase_boundary_state(state:dict):
     sf_done=state.get('source_fact_materialization_completed') is True
     cls_started=state.get('responsibility_classification_started') is True
     cls_done=state.get('responsibility_classification_completed') is True
-    page_started=state.get('page_base_blueprint_started') is True
-    page_done=state.get('page_base_blueprint_completed') is True
+    page_started=state.get('governed_unit_base_blueprint_started') is True
+    page_done=state.get('governed_unit_base_blueprint_completed') is True
     visual_started=state.get('visual_base_blueprint_started') is True
     visual_done=state.get('visual_base_blueprint_completed') is True
     binding_started=state.get('blueprint_binding_started') is True
     binding_done=state.get('blueprint_binding_completed') is True
     ci=state.get('github_ci') or {}
     class_gate=ci.get('current_classification_gate')=='SUCCESS' or state.get('classification_gate_passed') is True
-    page_gate=ci.get('current_page_blueprint_gate')=='SUCCESS' or state.get('page_base_blueprint_gate_passed') is True
+    page_gate=ci.get('current_governed_unit_blueprint_gate')=='SUCCESS' or state.get('governed_unit_base_blueprint_gate_passed') is True
     visual_gate=ci.get('current_visual_blueprint_gate')=='SUCCESS' or state.get('visual_base_blueprint_gate_passed') is True
     if sf_started and not segment_done: failures.append('source_fact_started_before_segment_mapping_closed')
     if sf_done and not sf_started: failures.append('source_fact_completed_without_start')
-    early_before_sf=['domain_extraction_started','responsibility_classification_started','page_base_blueprint_started','visual_base_blueprint_started','blueprint_materialization_started','blueprint_binding_started']
+    early_before_sf=['domain_extraction_started','responsibility_classification_started','governed_unit_base_blueprint_started','visual_base_blueprint_started','blueprint_materialization_started','blueprint_binding_started']
     if not sf_done:
         for k in early_before_sf:
             if state.get(k) is True: failures.append('downstream_started_before_source_fact_closed:'+k)
     if cls_done and not cls_started: failures.append('classification_completed_without_start')
-    if page_done and not page_started: failures.append('page_blueprint_completed_without_start')
+    if page_done and not page_started: failures.append('governed_unit_blueprint_completed_without_start')
     if visual_done and not visual_started: failures.append('visual_blueprint_completed_without_start')
     if binding_done and not binding_started: failures.append('blueprint_binding_completed_without_start')
-    if page_started and not (cls_done and class_gate): failures.append('page_blueprint_started_without_classification_gate')
-    if visual_started and not (page_done and page_gate): failures.append('visual_blueprint_started_without_page_blueprint_gate')
+    if page_started and not (cls_done and class_gate): failures.append('governed_unit_blueprint_started_without_classification_gate')
+    if visual_started and not (page_done and page_gate): failures.append('visual_blueprint_started_without_governed_unit_blueprint_gate')
     if binding_started and not (page_done and page_gate and visual_done and visual_gate): failures.append('blueprint_binding_started_without_page_and_visual_gates')
     for k in ['website_construction_started','deployment_started']:
         if state.get(k) is True: failures.append('stage1_forbidden_phase_started:'+k)
@@ -97,10 +97,10 @@ def validate_unresolved_authority_gaps(dep:dict, raw_source_uids:set[str]|None=N
     return failures
 
 def validate_blueprint_external_authority_carry(blueprint:dict, dep:dict, raw_sources:dict):
-    failures=[]; page=blueprint.get('page_uid')
+    failures=[]; page=blueprint.get('governed_unit_uid')
     relevant=[]
     for g in dep.get('unresolved_authority_gaps') or []:
-        if any((raw_sources.get(suid) or {}).get('page_uid')==page for suid in (g.get('consumer_source_uids') or [])):
+        if any((raw_sources.get(suid) or {}).get('governed_unit_uid')==page for suid in (g.get('consumer_source_uids') or [])):
             relevant.append(g)
     expected={(g.get('gap_uid'),g.get('authority_ref'),'UNRESOLVED_AUTHORITY_GAP') for g in relevant}
     carry=blueprint.get('unresolved_external_authority_refs') or []
@@ -516,10 +516,10 @@ def validate(package_root:Path,workspace:Path):
         cap_by_uid={x.get('source_uid'):x for x in (rawcap.get('records') or []) if x.get('source_uid')}
         if set(cap_by_uid)!=set(raw_sources): failures.append('raw_capture_segment_map_source_set_mismatch')
     for suid,rs in raw_sources.items():
-        if not rs.get('page_uid'): failures.append(f'raw_source_page_uid_missing:{suid}')
+        if not rs.get('governed_unit_uid'): failures.append(f'raw_source_governed_unit_uid_missing:{suid}')
         if rawcap and suid in cap_by_uid:
             rec=cap_by_uid[suid]
-            for key in ('page_uid','source_role','source_domain_scope'):
+            for key in ('governed_unit_uid','source_role','source_domain_scope'):
                 if rs.get(key)!=rec.get(key): failures.append(f'raw_source_capture_segment_metadata_mismatch:{suid}:{key}')
     structure_sources={s.get('source_uid'):s for s in (struct.get('sources') or []) if s.get('source_uid')}
     if set(raw_sources)!=set(structure_sources): failures.append('raw_source_structure_source_set_mismatch')
@@ -552,7 +552,7 @@ def validate(package_root:Path,workspace:Path):
         if s.get('planning_domain') not in DOMAINS: failures.append(f'invalid_segment_domain:{uid}')
         if s.get('source_uid') not in raw_sources: failures.append(f'unknown_segment_source:{uid}')
         else:
-            if s.get('page_uid')!=raw_sources[s.get('source_uid')].get('page_uid'): failures.append(f'segment_page_uid_source_mismatch:{uid}')
+            if s.get('governed_unit_uid')!=raw_sources[s.get('source_uid')].get('governed_unit_uid'): failures.append(f'segment_governed_unit_uid_source_mismatch:{uid}')
         if node in all_nodes and all_nodes[node][0]!=s.get('source_uid'): failures.append(f'source_node_source_mismatch:{uid}')
         disp=s.get('disposition')
         if disp not in LEGAL_DISPOSITIONS: failures.append(f'illegal_segment_disposition:{uid}')
@@ -575,8 +575,8 @@ def validate(package_root:Path,workspace:Path):
         if d.get('artifact_type')!=ftype: failures.append(f'source_fact_type_mismatch:{ftype}')
         if d.get('status')!='CURRENT_SOURCE_FACT': failures.append(f'source_fact_not_current:{ftype}')
         if d.get('content_hash')!=content_hash(d): failures.append(f'source_fact_hash_mismatch:{ftype}')
-        pages_sf=set(d.get('page_uids') or ([d.get('page_uid')] if d.get('page_uid') else []))
-        raw_pages={x.get('page_uid') for x in raw_sources.values()}
+        pages_sf=set(d.get('governed_unit_uids') or ([d.get('governed_unit_uid')] if d.get('governed_unit_uid') else []))
+        raw_pages={x.get('governed_unit_uid') for x in raw_sources.values()}
         if not raw_pages.issubset(pages_sf): failures.append(f'source_fact_page_scope_incomplete:{ftype}')
 
     dep_doc=source_facts.get('SOURCE_DEPENDENCY_MAP') or {}
@@ -603,7 +603,7 @@ def validate(package_root:Path,workspace:Path):
         if len(resp)>1:
             proof=d.get('mixed_allowed_proof') or {}
             if d.get('mixed_allowed') is not True or not all(proof.get(k) is True for k in ['same_owner','same_lifecycle','same_approval','same_version','same_test_scope']): failures.append(f'unresolved_mixed_responsibility:{uid}')
-        for r in resp: owner_resp.setdefault((d.get('page_uid'),r),[]).append(d.get('canonical_owner_uid'))
+        for r in resp: owner_resp.setdefault((d.get('governed_unit_uid'),r),[]).append(d.get('canonical_owner_uid'))
         lin=d.get('source_lineage') or []
         if not lin: failures.append(f'artifact_lineage_missing:{uid}')
         for rec in lin:
@@ -614,7 +614,7 @@ def validate(package_root:Path,workspace:Path):
                 if seg not in seg_by_uid: failures.append(f'artifact_unknown_segment:{uid}:{seg}')
                 else:
                     if seg_by_uid[seg].get('planning_domain')!=d.get('planning_domain'): failures.append(f'page_visual_cross_contamination:{uid}:{seg}')
-                    if seg_by_uid[seg].get('page_uid')!=d.get('page_uid'): failures.append(f'artifact_page_uid_segment_mismatch:{uid}:{seg}')
+                    if seg_by_uid[seg].get('governed_unit_uid')!=d.get('governed_unit_uid'): failures.append(f'artifact_governed_unit_uid_segment_mismatch:{uid}:{seg}')
                     if rec.get('source_uid')!=seg_by_uid[seg].get('source_uid'): failures.append(f'artifact_lineage_source_mismatch:{uid}:{seg}')
         if d.get('content_hash')!=content_hash(d): failures.append(f'artifact_hash_mismatch:{uid}')
         duplicate_payload.setdefault(content_hash(d),[]).append(uid)
@@ -636,7 +636,7 @@ def validate(package_root:Path,workspace:Path):
     for suid,s in seg_by_uid.items():
         if s.get('required') is True and s.get('disposition')=='CLASSIFIED' and sorted(seg_targets.get(suid,[]))!=sorted(s.get('target_artifact_uids') or []): failures.append(f'segment_mapping_physical_mismatch:{suid}')
 
-    blueprints={}; by_page_type={}
+    blueprints={}; by_governed_unit_type={}
     bproot=workspace/'02_BASE_BLUEPRINT'
     for p in sorted(bproot.rglob('*.yaml')) if bproot.exists() else []:
         d=load_yaml(p); fail_if_expectation_keys(d,p.name,failures); uid=d.get('blueprint_uid'); rel=p.relative_to(workspace).as_posix(); btype=d.get('blueprint_type'); domain=d.get('planning_domain')
@@ -671,31 +671,31 @@ def validate(package_root:Path,workspace:Path):
         for r in sorted(required-covered): failures.append(f'blueprint_missing_responsibility:{uid}:{r}')
         for r in sorted(covered-required): failures.append(f'blueprint_unexpected_responsibility:{uid}:{r}')
         if d.get('blueprint_hash')!=content_hash(d): failures.append(f'blueprint_hash_mismatch:{uid}')
-        by_page_type.setdefault((d.get('page_uid'),btype),[]).append(uid)
-    pages=set(s.get('page_uid') for s in segments if s.get('page_uid'))
+        by_governed_unit_type.setdefault((d.get('governed_unit_uid'),btype),[]).append(uid)
+    pages=set(s.get('governed_unit_uid') for s in segments if s.get('governed_unit_uid'))
     for page in pages:
         for btype in BLUEPRINT_BY_DOMAIN.values():
-            c=len(by_page_type.get((page,btype),[]))
+            c=len(by_governed_unit_type.get((page,btype),[]))
             if c!=1: failures.append(f'base_blueprint_count:{page}:{btype}:{c}')
 
     bindings={}; bindroot=workspace/'03_BLUEPRINT_BINDING'
     for p in sorted(bindroot.rglob('*.yaml')) if bindroot.exists() else []:
-        d=load_yaml(p); uid=d.get('binding_uid'); page=d.get('page_uid'); rel=p.relative_to(workspace).as_posix()
+        d=load_yaml(p); uid=d.get('binding_uid'); page=d.get('governed_unit_uid'); rel=p.relative_to(workspace).as_posix()
         if not uid or uid in bindings: failures.append(f'duplicate_or_missing_binding_uid:{uid}')
         else: bindings[uid]=d
         if d.get('target_path')!=rel: failures.append(f'binding_target_path_mismatch:{uid}')
         if d.get('status')!='CURRENT_BLUEPRINT_BINDING': failures.append(f'binding_not_current:{uid}')
         if d.get('embedded_blueprint_payloads'): failures.append(f'binding_embeds_payload:{uid}')
-        for key,btype in [('page_blueprint','PAGE_BASE_BLUEPRINT'),('visual_blueprint','VISUAL_BASE_BLUEPRINT')]:
+        for key,btype in [('governed_unit_blueprint','GOVERNED_UNIT_BASE_BLUEPRINT'),('visual_blueprint','VISUAL_BASE_BLUEPRINT')]:
             rec=d.get(key) or {}; buid=rec.get('blueprint_uid')
             if buid not in blueprints: failures.append(f'binding_unknown_blueprint:{uid}:{key}:{buid}')
             else:
                 b=blueprints[buid]
-                if b.get('page_uid')!=page or b.get('blueprint_type')!=btype: failures.append(f'binding_wrong_blueprint:{uid}:{key}')
+                if b.get('governed_unit_uid')!=page or b.get('blueprint_type')!=btype: failures.append(f'binding_wrong_blueprint:{uid}:{key}')
                 if rec.get('blueprint_hash')!=b.get('blueprint_hash'): failures.append(f'binding_stale_blueprint_hash:{uid}:{key}')
         if d.get('binding_hash')!=content_hash(d): failures.append(f'binding_hash_mismatch:{uid}')
     for page in pages:
-        c=sum(1 for d in bindings.values() if d.get('page_uid')==page)
+        c=sum(1 for d in bindings.values() if d.get('governed_unit_uid')==page)
         if c!=1: failures.append(f'blueprint_binding_count:{page}:{c}')
     return {'status':'PASS' if not failures else 'FAIL','failures':failures,'candidate_normative_hash':nh,'artifact_count':len(artifacts),'blueprint_count':len(blueprints),'binding_count':len(bindings),'required_source_node_count':len(required_nodes)}
 

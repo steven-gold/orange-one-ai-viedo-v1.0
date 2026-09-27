@@ -19,7 +19,7 @@ def main():
     ap.add_argument('--workspace',required=True)
     ap.add_argument('--source-rel',required=True)
     ap.add_argument('--source-uid',required=True)
-    ap.add_argument('--page-uid',required=True)
+    ap.add_argument('--governed-unit-uid',required=True)
     ap.add_argument('--source-origin',required=True)
     args=ap.parse_args()
     w=Path(args.workspace).resolve(); raw=w/args.source_rel; suid=args.source_uid; source_origin=str(args.source_origin).strip()
@@ -32,7 +32,7 @@ def main():
     if not capath.is_file(): raise SystemExit('content readiness audit missing')
     ca=g.load_yaml(capath); rawsha=g.file_sha(raw); blob=g.git_blob_sha(raw)
     if ca.get('source_uid')!=suid or ca.get('source_sha256')!=rawsha or ca.get('result')!='PASS' or ca.get('unresolved_required_gap_count')!=0 or ca.get('contradiction_count')!=0: raise SystemExit('content readiness audit not PASS for exact source')
-    rawcap={'artifact_uid':'RAW-CAP-'+suid,'artifact_type':'RAW_SOURCE_REFERENCE_MANIFEST','status':'CURRENT_RAW_SOURCE_CAPTURE','capture_root':'00_SOURCE_INTAKE/RAW_SOURCE','records':[{'source_uid':suid,'source_format':'DOCX','projection_required':True,'page_uid':args.page_uid,'source_role':'MIXED_PAGE_VISUAL_SOURCE_INPUT','source_domain_scope':'MIXED_PAGE_VISUAL','source_path':source_origin,'target_path':args.source_rel,'source_git_blob_sha':blob,'target_git_blob_sha':blob,'content_mutated':False}]}
+    rawcap={'artifact_uid':'RAW-CAP-'+suid,'artifact_type':'RAW_SOURCE_REFERENCE_MANIFEST','status':'CURRENT_RAW_SOURCE_CAPTURE','capture_root':'00_SOURCE_INTAKE/RAW_SOURCE','records':[{'source_uid':suid,'source_format':'DOCX','projection_required':True,'governed_unit_uid':args.governed_unit_uid,'source_role':'MIXED_GOVERNED_UNIT_VISUAL_SOURCE_INPUT','source_domain_scope':'MIXED_GOVERNED_UNIT_VISUAL','source_path':source_origin,'target_path':args.source_rel,'source_git_blob_sha':blob,'target_git_blob_sha':blob,'content_mutated':False}]}
     capstate={'run_uid':'PROJECTION-RUN-'+rawsha[:16].upper(),'state':'CAPTURE_CLOSED','next_step':'SOURCE_DOCUMENT_CONTENT_AUDIT','recapture_allowed':False}
     write(w/'00_SOURCE_INTAKE/RAW_SOURCE_REFERENCE_MANIFEST.yaml',rawcap); write(w/'00_SOURCE_INTAKE/RAW_SOURCE_CAPTURE_STATE.yaml',capstate)
     lock={'schema_version':1,'artifact_uid':'LOCK-'+suid,'artifact_type':'RAW_SOURCE_IMMUTABILITY_RECEIPT','source_uid':suid,'source_path':source_origin,'source_git_blob_sha':blob,'source_sha256':rawsha,'content_readiness_audit_uid':ca['artifact_uid'],'lock_state':'RAW_CAPTURE_LOCKED','writable':False,'mutation_policy':'NEW_SOURCE_REVISION_NEW_PROJECTION_NEW_RECONCILIATION'}

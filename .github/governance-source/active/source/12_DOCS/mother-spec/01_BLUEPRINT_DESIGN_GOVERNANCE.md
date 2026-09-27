@@ -1238,7 +1238,7 @@ Raw Source remains immutable evidence. Derived classifications, manifests, bluep
 
 Every classified responsibility MUST resolve to one Canonical Owner, one current lineage, and one legal downstream consumer set before Base Blueprint materialization.
 
-Page and Visual responsibilities MUST have independent editable owners. Their materialized blueprints MAY share registered references, but one blueprint MUST_NOT silently absorb the other's responsibility or become a second Authority copy.
+Governed Unit and Visual responsibilities MUST have independent editable owners. Their materialized blueprints MAY share registered references, but one blueprint MUST_NOT silently absorb the other's responsibility or become a second Authority copy.
 
 Base Blueprint compilation MUST consume current classified artifacts and registered shared references only. Required responsibility loss, duplicate ownership, unresolved mixed responsibility, stale source hash, or direct post-classification Raw Source bypass MUST block closure.
 
@@ -1247,7 +1247,7 @@ Base Blueprint compilation MUST consume current classified artifacts and registe
 
 Source Intake MUST perform two independent decomposition levels before a Base Blueprint may close:
 
-1. **Planning-domain split** — mixed Raw Source is separated into `PAGE_CONSTRUCTION` and `VISUAL_CONSTRUCTION` extraction domains.
+1. **Planning-domain split** — mixed Raw Source is separated into `GOVERNED_UNIT_CONSTRUCTION` and `VISUAL_CONSTRUCTION` extraction domains.
 2. **Governed-responsibility split** — each domain is further materialized into responsibility-scoped Canonical Classification Artifacts.
 
 A domain-level extraction file that still contains multiple independently governed responsibilities MUST be treated as an intermediate extraction container, not as the final classified owner.
@@ -1264,7 +1264,7 @@ Every extracted source segment MUST be mapped to exactly one of:
 Each classification artifact MUST declare at least:
 
 - `artifact_uid`
-- `page_uid`
+- `governed_unit_uid`
 - `planning_domain`
 - `responsibility_uid`
 - `responsibility_class`
@@ -1296,7 +1296,7 @@ The extraction/classification ledger MUST allow the validator to recompute, from
 - `DUPLICATE_CANONICAL_OWNER = 0`
 - `UNRESOLVED_MIXED_RESPONSIBILITY = 0`
 - `BROKEN_REFERENCE = 0`
-- `PAGE_VISUAL_CROSS_CONTAMINATION = 0`
+- `GOVERNED_UNIT_VISUAL_CROSS_CONTAMINATION = 0`
 
 Self-declared PASS, COMPLETE, zero-count summaries, or precomputed blocker totals MUST_NOT satisfy this gate.
 
@@ -1308,7 +1308,7 @@ A Base Blueprint MUST be a composition/index artifact compiled from approved Can
 A Base Blueprint MUST declare:
 
 - `blueprint_uid`
-- `page_uid`
+- `governed_unit_uid`
 - `blueprint_type: BASE_BLUEPRINT`
 - exact input artifact UIDs and hashes
 - required responsibility coverage
@@ -1340,9 +1340,9 @@ Reset MUST remove replaceable execution residue while preserving immutable sourc
 <!-- SECTION_UID: WEB-GOV-01-S065 -->
 ## 65. Source Enumeration Completeness / Blueprint Domain Separation
 
-Source enumeration MUST be independently provable before classification. The enumerated source denominator MUST be preserved through mapping, source-fact materialization, responsibility classification, Page Base Blueprint, Visual Base Blueprint, and binding so that downstream processing cannot silently shrink the source universe.
+Source enumeration MUST be independently provable before classification. The enumerated source denominator MUST be preserved through mapping, source-fact materialization, responsibility classification, Governed Unit Base Blueprint, Visual Base Blueprint, and binding so that downstream processing cannot silently shrink the source universe.
 
-Page and Visual blueprint compilation MUST remain separate work units with explicit inputs, outputs, hashes, owners, and a binding artifact. A combined editable Page+Visual owner, unexplained source loss, or downstream denominator shrink is blocking.
+Governed Unit and Visual blueprint compilation MUST remain separate work units with explicit inputs, outputs, hashes, owners, and a binding artifact. A combined editable Governed-Unit+Visual owner, unexplained source loss, or downstream denominator shrink is blocking.
 
 <!-- SECTION_UID: WEB-GOV-01-S065-01 -->
 ### 65.1 Independent source-structure enumeration
@@ -1370,9 +1370,9 @@ If the source bytes/complete machine parse are unavailable, the run MUST be mark
 <!-- SECTION_UID: WEB-GOV-01-S065-02 -->
 ### 65.2 Page and Visual Base Blueprints remain independent
 
-For every Page, SOURCE_INTAKE_CAPABILITY MUST materialize exactly two independent Base Blueprints:
+For every governed unit, SOURCE_INTAKE_CAPABILITY MUST materialize exactly two independent Base Blueprints:
 
-- `PAGE_BASE_BLUEPRINT` — consumes only current `PAGE_CONSTRUCTION` classification artifacts and permitted Shared Fact References.
+- `GOVERNED_UNIT_BASE_BLUEPRINT` — consumes only current `GOVERNED_UNIT_CONSTRUCTION` classification artifacts and permitted Shared Fact References.
 - `VISUAL_BASE_BLUEPRINT` — consumes only current `VISUAL_CONSTRUCTION` classification artifacts and permitted Shared Fact References.
 
 They MUST have different Blueprint UIDs, different physical target paths, different editable owners, independent hashes, and independent required-responsibility coverage.
@@ -1381,7 +1381,7 @@ A combined editable Base Blueprint that owns both Page and Visual payloads is FO
 
 A non-owning `BLUEPRINT_BINDING_MANIFEST` MAY be required to bind the two blueprints by UID/hash for downstream coordination. The binding manifest MUST_NOT duplicate either blueprint payload and MUST_NOT become a third editable planning authority.
 
-A Page Base Blueprint MUST_NOT consume Visual classification artifacts. A Visual Base Blueprint MUST_NOT consume Page classification artifacts. Any cross-domain dependency is expressed only by UID/reference.
+A Governed Unit Base Blueprint MUST_NOT consume Visual classification artifacts. A Visual Base Blueprint MUST_NOT consume Governed Unit classification artifacts. Any cross-domain dependency is expressed only by UID/reference.
 
 <!-- SECTION_UID: WEB-GOV-01-S065-03 -->
 ### 65.3 Retry closure
@@ -1392,7 +1392,7 @@ A SOURCE_INTAKE_CAPABILITY retry may close only when all of the following are in
 - all required source nodes legally disposed;
 - responsibility-scoped classification complete;
 - Page/Visual classified ownership remains separate;
-- one Page Base Blueprint and one Visual Base Blueprint exist per Page;
+- one Governed Unit Base Blueprint and one Visual Base Blueprint exist per Page;
 - binding hashes are current;
 - no direct Raw Source input after classification closure;
 - no unexplained current-output residuals;

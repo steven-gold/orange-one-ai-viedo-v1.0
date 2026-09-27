@@ -1370,7 +1370,7 @@ Audit MUST distinguish:
 
 Only the first may satisfy full Source Intake closure.
 
-For each Page, Audit MUST find exactly one current `PAGE_BASE_BLUEPRINT`, exactly one current `VISUAL_BASE_BLUEPRINT`, and one current binding manifest that references both current hashes. A combined Page+Visual editable blueprint MUST fail the ownership audit.
+For each governed unit, Audit MUST find exactly one current `GOVERNED_UNIT_BASE_BLUEPRINT`, exactly one current `VISUAL_BASE_BLUEPRINT`, and one current binding manifest that references both current hashes. A combined Governed-Unit+Visual editable blueprint MUST fail the ownership audit.
 
 
 

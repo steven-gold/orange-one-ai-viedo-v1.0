@@ -154,7 +154,7 @@ _stage_core_surfaces=[
 _stage_core_forbidden_legacy_tokens={
     'PAGE_LIFECYCLE_EXECUTION_MODE','PAGE_FUNCTIONAL_CONTRACT','PAGE_CONSTRUCTION_SPEC',
     'PAGE_IMPLEMENTATION_COMPLETE','SINGLE_PAGE_VERTICAL','SAME_SELECTED_PAGE',
-    'NEXT_PAGE_','PAGE_OR_SYSTEM_LOGIC_UNIT','DEMO-PAGE','page_uid_or_scope_uid',
+    'NEXT_PAGE_','PAGE_OR_SYSTEM_LOGIC_UNIT','DEMO-PAGE','page_uid_or_scope_uid','fixed_product_page_uid_enum','PAGE_CONSTRUCTION','PAGE_BASE_BLUEPRINT',
     'BUSINESS_ENTITY_','business_entity_','stage02_audit_event_canonical_field',
     'PRODUCTION_PAGE_TARGET','CROSS_PAGE_','PAGE_SURFACE_DESIGN','PAGE_CLOSURE',
     'LEAF_PAGE_CONTROL_BEHAVIOR',
@@ -289,7 +289,7 @@ else:
     _projection_blob=json.dumps(_projection_root,ensure_ascii=False,sort_keys=True)
     if literal_product_identity.search(_projection_blob):
         failures.append('source_projection_common_schema_product_identity_leak')
-    _fixed_semantic_fields={'page_uid','page_type','business_entity_uid','function_uid','operation_uid','control_uid','field_uid','visual_style_uid','required_heading_text'}
+    _fixed_semantic_fields={'governed_unit_uid','governed_unit_type','business_entity_uid','function_uid','operation_uid','control_uid','field_uid','visual_style_uid','required_heading_text'}
     _schema_lists=[
       _projection.get('canonical_top_level_field_order') or [],
       _projection.get('source_identity_field_order') or [],
@@ -306,7 +306,7 @@ else:
       'fixed_scope':'SCHEMA_KEYS_TYPES_ORDER_AND_FIDELITY_INVARIANTS_ONLY',
       'content_denominator':'DYNAMIC_FROM_EACH_IMMUTABLE_RAW_SOURCE',
       'fixed_governed_unit_uid_enum':'FORBIDDEN',
-      'fixed_page_type_enum':'FORBIDDEN',
+      'fixed_governed_unit_type_enum':'FORBIDDEN',
       'fixed_business_entity_or_function_enum':'FORBIDDEN',
       'fixed_control_field_or_visual_value_enum':'FORBIDDEN',
       'fixed_source_content_count':'FORBIDDEN',
