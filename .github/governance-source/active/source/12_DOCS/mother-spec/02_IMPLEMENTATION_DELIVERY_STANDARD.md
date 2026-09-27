@@ -1153,7 +1153,7 @@ COMMON_STAGE12_PRODUCER_CONSUMER_SCHEMA_IDENTITY
 
 Every generated or materialized Stage output consumed by another registered operation MUST satisfy an exact Producer/Consumer Schema Identity contract before the consumer may mutate Current product state. The contract MUST bind artifact_type, schema_version, canonical field names, required/optional status, field types, producer owner, consumer owner, and accepted schema revision.
 
-A consumer MUST_NOT silently accept a renamed, legacy, approximate, or alias field when the canonical producer field is missing. Such drift is PRODUCER_CONSUMER_SCHEMA_MISMATCH and MUST block before materialization. For the functional-contract audit-event binding role, audit_event_uid is the canonical field identity; event_uid MUST_NOT be used as a compatibility fallback for that field role.
+A consumer MUST_NOT silently accept a renamed, legacy, approximate, or alias field when the canonical producer field is missing. Such drift is PRODUCER_CONSUMER_SCHEMA_MISMATCH and MUST block before materialization. For any functional-contract audit-event binding role, the canonical field identity MUST be resolved from the Current Artifact Schema / Canonical Schema Owner for that artifact revision. Common governance MUST_NOT hard-code one historical field name, and a consumer MUST_NOT use a legacy, alias, renamed, or approximate field as a compatibility fallback when the schema-owned canonical field is missing.
 
 <!-- SECTION_UID: WEB-GOV-02-S070 -->
 ## 70. Pre-Execution Governance Load Gate
