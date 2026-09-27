@@ -101,16 +101,6 @@ _scope_rel=f'STAGE_EXECUTION/STAGE-01/{_synthetic_wu}/CURRENT_EXECUTION_SCOPE_MA
 _matrix_rel=f'STAGE_EXECUTION/STAGE-01/{_synthetic_wu}/NORMATIVE_EXECUTION_MATRIX.yaml'
 _handoff_rel=f'STAGE_EXECUTION/STAGE-01/{_synthetic_wu}/CROSS_STAGE_HANDOFF_READINESS_LEDGER.yaml'
 sample['scope_manifest_ref']=_scope_rel
-# Registered evidence types are a catalog: N/A is legal only with explicit authority proof.
-_sample_required_evidence=sample.get('required_evidence') or []
-if _sample_required_evidence:
-    _na=deepcopy(sample)
-    _na_item=_na['required_evidence'][0]
-    _na_item['status']='NOT_APPLICABLE_WITH_PROOF'
-    _na_item.pop('ref',None)
-    _na_item['authority_evidence_ref']='AUTH-SYNTHETIC-NA-001'
-    # Full evidence validation is exercised later after the synthetic physical execution context is materialized.
-
 sample['cross_stage_handoff']={
  'ledger_ref':_handoff_rel,'external_receipt':False,'successor_stage_uid':st['next_stage_uid'],
  'reference_resolution_complete':True,'physical_materialization_complete':True,'required_field_completeness_complete':True,
@@ -167,6 +157,13 @@ yaml.safe_dump({
  'unresolved_required_dependency_total':0,'status':'PASS'
 },(_synthetic_dir/'CROSS_STAGE_HANDOFF_READINESS_LEDGER.yaml').open('w',encoding='utf-8'),sort_keys=False)
 eng.validate_evidence_data(stage_uid,deepcopy(sample))
+if sample.get('required_evidence'):
+    _na_evidence=deepcopy(sample)
+    _na_item=_na_evidence['required_evidence'][0]
+    _na_item['status']='NOT_APPLICABLE_WITH_PROOF'
+    _na_item.pop('ref',None)
+    _na_item['authority_evidence_ref']='AUTH-SYNTHETIC-EVIDENCE-NA-001'
+    eng.validate_evidence_data(stage_uid,_na_evidence)
 blocked_sample=deepcopy(sample)
 blocked_sample['denominator']={'required_total':len(st['operations']),'open_gap_total':1,'closure_blocker_total':1,'remaining_scope_total':1}
 blocked_sample['gaps']=[{'problem_uid':'SYNTHETIC-REVIEW-PENDING'}]
@@ -201,6 +198,13 @@ block('adapter_executor_owner_resolution_missing',lambda p,a:a['stages']['STAGE-
 block_evidence('output_producer_result_drift',lambda x:x['output_results'][0].__setitem__('producer_operation_uid','WRONG'))
 block_evidence('validator_coverage_drift',lambda x:x['validator_results'].pop())
 block_evidence('required_evidence_missing',lambda x:x['required_evidence'].clear())
+if sample.get('required_evidence'):
+    def _na_evidence_without_authority(x):
+        x['required_evidence'][0]['status']='NOT_APPLICABLE_WITH_PROOF'
+        x['required_evidence'][0].pop('ref',None)
+        x['required_evidence'][0].pop('authority_evidence_ref',None)
+        x['required_evidence'][0].pop('proof',None)
+    block_evidence('required_evidence_na_without_authority',_na_evidence_without_authority,'REQUIRED_EVIDENCE_NA_AUTHORITY_MISSING')
 block_evidence('exact_head_gate_drift',lambda x:x['exact_head_gate_receipts'][0].__setitem__('head_sha','2'*40))
 block_evidence('resume_persistence_missing',lambda x:x.__setitem__('resume_persistence',{'performed':False,'resume_point':None}))
 block_evidence('pass_nonzero_denominator',lambda x:x['denominator'].__setitem__('remaining_scope_total',1))
@@ -870,6 +874,21 @@ receipt.write_text(yaml.safe_dump(obj,sort_keys=False),encoding="utf-8")
         (_wd/'WORK_UNIT.yaml').write_text(yaml.safe_dump(_bad,sort_keys=False),encoding='utf-8')
         expect_stage_engine_block('na_operation_without_authority_blocked',lambda:eng.execute_active(_sid),'ACTIVE_STAGE_OPERATION_NA_AUTHORITY_MISSING')
 
+        _na_work=deepcopy(_work)
+        _na_binding=_na_work['operation_bindings'][_ops[0]]
+        _na_binding['applicability']='AUTHORIZED_NOT_APPLICABLE'
+        _na_binding['authority_evidence_ref']='AUTH-SYNTHETIC-OPERATION-NA-001'
+        _na_binding.pop('executor_owner',None)
+        _na_binding.pop('executor_protocol',None)
+        (_wd/'WORK_UNIT.yaml').write_text(yaml.safe_dump(_na_work,sort_keys=False),encoding='utf-8')
+        assert eng.execute_active(_sid) is True
+        _na_receipt_path=_exec_root/_operation_bindings[_ops[0]]['operation_receipt_ref']
+        _na_receipt=yaml.safe_load(_na_receipt_path.read_text(encoding='utf-8')) or {}
+        assert _na_receipt.get('status')=='NOT_APPLICABLE_WITH_PROOF'
+        assert _na_receipt.get('authority_evidence_ref')=='AUTH-SYNTHETIC-OPERATION-NA-001'
+        assert _na_receipt.get('proof')=='AUTH-SYNTHETIC-OPERATION-NA-001'
+        _na_receipt_path.unlink()
+        (_wd/'EXECUTION_STATE.yaml').write_text(yaml.safe_dump(_state,sort_keys=False),encoding='utf-8')
         (_wd/'WORK_UNIT.yaml').write_text(yaml.safe_dump(_work,sort_keys=False),encoding='utf-8')
         _no_receipt_code='''#!/usr/bin/env python3
 import argparse
