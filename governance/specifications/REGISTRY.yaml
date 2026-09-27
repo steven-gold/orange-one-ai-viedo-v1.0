@@ -92,12 +92,18 @@ candidate_validation_contract:
   - python governance/ci/validate_structured_mutation_safety.py
   - python governance/ci/validate_governance_portability.py
   - python governance/ci/validate_execution_domain_isolation.py
+  - python governance/ci/materialize_predecessor_source_trust_root.py --out /tmp/acpos-predecessor-source-trust-root.json
   - python .github/governance-source/active/source/09_TESTS/governance/validate_governance.py --mode PRE_FORMAL_DEFINITION_AUDIT
   - python .github/governance-source/active/source/09_TESTS/governance/validate_stage_execution_invariants.py
   - python .github/governance-source/active/source/09_TESTS/governance/validate_product_neutral_entity_lifecycle.py
   - python governance/ci/audit_closure_engine.py --self-test
   - python governance/ci/audit_closure_engine.py
   - python governance/ci/validate_governance_candidate_promotion_readiness.py --self-test
+  predecessor_source_trust_materializer: governance/ci/materialize_predecessor_source_trust_root.py
+  predecessor_source_expected_hash_source: .github/governance-source/active/source/CHECKSUMS.sha256
+  predecessor_source_trust_generation_from_current_bytes: FORBIDDEN
+  predecessor_checksum_mismatch: BLOCK
+  predecessor_source_extra_or_missing_file: BLOCK
   full_preformal_regression_denominator_source: .github/governance-source/active/source/10_REGISTRY/SEMANTIC_AUTHORITY_BASELINE.yaml#mandatory_regression_assets
   mother_neutrality_and_portability_required: true
   active_consumer_reverse_validation_required: true

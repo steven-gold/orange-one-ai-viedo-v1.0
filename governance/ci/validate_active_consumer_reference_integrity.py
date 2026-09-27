@@ -197,6 +197,17 @@ def main() -> int:
             errors.append("CANDIDATE_LIVE_BRANCH_HEAD_BINDING_NOT_REQUIRED")
         if validation_contract.get("live_branch_head_recheck_after_evidence_validation_required") is not True:
             errors.append("CANDIDATE_LIVE_BRANCH_HEAD_RECHECK_NOT_REQUIRED")
+        trust_materializer=str(validation_contract.get("predecessor_source_trust_materializer") or "")
+        if not trust_materializer or not (ROOT/trust_materializer).is_file():
+            errors.append("CANDIDATE_PREDECESSOR_TRUST_MATERIALIZER_MISSING:"+trust_materializer)
+        if validation_contract.get("predecessor_source_trust_generation_from_current_bytes")!="FORBIDDEN":
+            errors.append("CANDIDATE_CURRENT_SELF_SIGN_TRUST_NOT_FORBIDDEN")
+        if cleanup:
+            _,cleanup_text=cleanup
+            if trust_materializer and trust_materializer not in cleanup_text:
+                errors.append("CANDIDATE_PREDECESSOR_TRUST_MATERIALIZER_NOT_WIRED")
+            if "WEB_GOVERNANCE_TRUST_ROOT" not in cleanup_text:
+                errors.append("CANDIDATE_EXTERNAL_TRUST_ENV_NOT_WIRED")
 
     for workflow in workflows:
         text = workflow.read_text(encoding="utf-8")
