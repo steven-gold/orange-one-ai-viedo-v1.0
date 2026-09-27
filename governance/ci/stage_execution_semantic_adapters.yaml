@@ -115,8 +115,8 @@ common_execution_skeleton:
       required_artifact: NEXT_STAGE_TRANSITION_RECORD
       pass_condition: LEGAL_PROFILE_SUCCESSOR_ONLY
 common_requirements:
-  definition_audit_may_claim_product_completion: false
-  governance_maintenance_product_stage_credit: 0
+  definition_audit_may_claim_execution_completion: false
+  governance_maintenance_execution_credit: 0
   actual_execution_requires_active_work_unit: true
   fresh_execution_required: true
   prior_result_may_replace_fresh_execution: false
@@ -127,7 +127,7 @@ common_requirements:
   stage_exit_requires_zero_open_gap_zero_blocker_zero_remaining_scope: true
   missing_stage_specific_scanner_contract: BLOCK
   missing_semantic_adapter: BLOCK
-  missing_product_evidence_in_execution_mode: BLOCK
+  missing_execution_evidence_in_execution_mode: BLOCK
   downstream_owned_gap_requires_owner_reentry: true
   phase_trace_exact_order_required: true
   phase_trace_terminal_status_required: true
@@ -144,7 +144,7 @@ common_requirements:
 owner_remediation_routes:
   GOVERNANCE_DEFECT: GOVERNANCE_MAINTENANCE
   AUTHORITY_GAP: AUTHORITY_OWNER
-  PRODUCT_CONTRACT_GAP: CURRENT_STAGE_CAPABILITY
+  EXECUTION_CONTRACT_GAP: CURRENT_STAGE_CAPABILITY
   RUNTIME_IMPLEMENTATION_GAP: IMPLEMENTATION_CAPABILITY
   EVIDENCE_STATE_GAP: EVIDENCE_OR_STATE_OWNER
   EXTERNAL_AUTHORITY_GAP: EXTERNAL_OR_SHARED_AUTHORITY
@@ -203,7 +203,7 @@ stages:
     denominator_kind: REQUIRED_SOURCE_UNIT_X_REQUIRED_BASE_BLUEPRINT_OUTPUT
     business_entity_gate_required: true
     scanner_mode: NORMALIZED_COMMON_EVIDENCE_CONTRACT
-    product_completion_credit_from_definition_audit: 0
+    execution_completion_credit_from_definition_audit: 0
   STAGE-02:
     stepwise_execution_contract_ref: stepwise_execution_defaults
     effectful_executor_owner_resolution: CURRENT_WORK_UNIT_OPERATION_BINDING_ONLY
@@ -249,7 +249,7 @@ stages:
         ENTITY_HIERARCHY_MATRIX: ENTITY_HIERARCHY_MATRIX.yaml
         INTERACTION_TOPOLOGY_MATRIX: INTERACTION_TOPOLOGY_SPEC.yaml
         FUNCTION_VISUAL_IMPACT_MATRIX: FUNCTION_VISUAL_IMPACT_MATRIX.yaml
-    product_completion_credit_from_definition_audit: 0
+    execution_completion_credit_from_definition_audit: 0
   STAGE-03:
     stepwise_execution_contract_ref: stepwise_execution_defaults
     effectful_executor_owner_resolution: CURRENT_WORK_UNIT_OPERATION_BINDING_ONLY
@@ -274,7 +274,7 @@ stages:
     denominator_kind: REQUIRED_FUNCTIONAL_OPERATION_X_REQUIRED_VISUAL_BINDING_PLUS_GEOMETRY_UNITS
     business_entity_gate_required: true
     scanner_mode: NORMALIZED_COMMON_EVIDENCE_CONTRACT
-    product_completion_credit_from_definition_audit: 0
+    execution_completion_credit_from_definition_audit: 0
   STAGE-04:
     stepwise_execution_contract_ref: stepwise_execution_defaults
     effectful_executor_owner_resolution: CURRENT_WORK_UNIT_OPERATION_BINDING_ONLY
@@ -294,7 +294,7 @@ stages:
     denominator_kind: ACCEPTED_FUNCTION_LOGIC_VISUAL_DENOMINATOR
     business_entity_gate_required: true
     scanner_mode: NORMALIZED_COMMON_EVIDENCE_CONTRACT
-    product_completion_credit_from_definition_audit: 0
+    execution_completion_credit_from_definition_audit: 0
   STAGE-05:
     stepwise_execution_contract_ref: stepwise_execution_defaults
     effectful_executor_owner_resolution: CURRENT_WORK_UNIT_OPERATION_BINDING_ONLY
@@ -331,7 +331,7 @@ stages:
     denominator_kind: FROZEN_REQUIRED_OPERATION_X_IMPLEMENTATION_CHAIN
     business_entity_gate_required: true
     scanner_mode: NORMALIZED_COMMON_EVIDENCE_CONTRACT
-    product_completion_credit_from_definition_audit: 0
+    execution_completion_credit_from_definition_audit: 0
   STAGE-06:
     stepwise_execution_contract_ref: stepwise_execution_defaults
     effectful_executor_owner_resolution: CURRENT_WORK_UNIT_OPERATION_BINDING_ONLY
@@ -359,7 +359,7 @@ stages:
     denominator_kind: FROZEN_ACCEPTANCE_UNIT_X_REQUIRED_VERIFICATION_DIMENSION
     business_entity_gate_required: true
     scanner_mode: NORMALIZED_COMMON_EVIDENCE_CONTRACT
-    product_completion_credit_from_definition_audit: 0
+    execution_completion_credit_from_definition_audit: 0
   STAGE-07:
     stepwise_execution_contract_ref: stepwise_execution_defaults
     effectful_executor_owner_resolution: CURRENT_WORK_UNIT_OPERATION_BINDING_ONLY
@@ -380,7 +380,7 @@ stages:
     denominator_kind: VERIFIED_SOURCE_X_RELEASE_REQUIREMENT
     business_entity_gate_required: false
     scanner_mode: NORMALIZED_COMMON_EVIDENCE_CONTRACT
-    product_completion_credit_from_definition_audit: 0
+    execution_completion_credit_from_definition_audit: 0
   STAGE-08:
     stepwise_execution_contract_ref: stepwise_execution_defaults
     effectful_executor_owner_resolution: CURRENT_WORK_UNIT_OPERATION_BINDING_ONLY
@@ -398,7 +398,7 @@ stages:
     denominator_kind: RELEASE_CANDIDATE_X_APPLICABLE_STAGING_ACCEPTANCE
     business_entity_gate_required: false
     scanner_mode: NORMALIZED_COMMON_EVIDENCE_CONTRACT
-    product_completion_credit_from_definition_audit: 0
+    execution_completion_credit_from_definition_audit: 0
   STAGE-09:
     stepwise_execution_contract_ref: stepwise_execution_defaults
     effectful_executor_owner_resolution: CURRENT_WORK_UNIT_OPERATION_BINDING_ONLY
@@ -418,7 +418,7 @@ stages:
     denominator_kind: ACCEPTED_RELEASE_X_CUTOVER_REQUIREMENT
     business_entity_gate_required: false
     scanner_mode: NORMALIZED_COMMON_EVIDENCE_CONTRACT
-    product_completion_credit_from_definition_audit: 0
+    execution_completion_credit_from_definition_audit: 0
   STAGE-10:
     stepwise_execution_contract_ref: stepwise_execution_defaults
     effectful_executor_owner_resolution: CURRENT_WORK_UNIT_OPERATION_BINDING_ONLY
@@ -448,7 +448,7 @@ stages:
     denominator_kind: APPLICABLE_PRODUCTION_JOURNEY_X_ACCEPTANCE_DIMENSION
     business_entity_gate_required: true
     scanner_mode: NORMALIZED_COMMON_EVIDENCE_CONTRACT
-    product_completion_credit_from_definition_audit: 0
+    execution_completion_credit_from_definition_audit: 0
   STAGE-11:
     stepwise_execution_contract_ref: stepwise_execution_defaults
     effectful_executor_owner_resolution: CURRENT_WORK_UNIT_OPERATION_BINDING_ONLY
@@ -473,4 +473,4 @@ stages:
     denominator_kind: PRODUCTION_ACCEPTED_SCOPE_X_CLOSURE_OPERATION
     business_entity_gate_required: false
     scanner_mode: NORMALIZED_COMMON_EVIDENCE_CONTRACT
-    product_completion_credit_from_definition_audit: 0
+    execution_completion_credit_from_definition_audit: 0

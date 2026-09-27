@@ -20,7 +20,7 @@ EXPECTED_PHASES=[
 'OWNER_REMEDIATION','FRESH_REEXECUTION','HIDDEN_DEFECT_SWEEP','REQUIRED_EVIDENCE','EXACT_HEAD_GATES','TERMINAL_CLOSURE',
 'PERSIST_RESUME','NEXT_STAGE']
 REQUIRED_PREFLIGHT={'REQUIRED_FIELD_MANIFEST','FUNCTIONAL_CHAIN_MANIFEST','EFFECTIVE_CONTRACT_OVERLAY','DEPENDENCY_TOPOLOGY','DENOMINATOR_SNAPSHOT','CLASSIFICATION_RULESET','CHANGE_IMPACT_MAP','STAGE_EXECUTION_PREFLIGHT_RECEIPT'}
-ROUTE_KEYS={'GOVERNANCE_DEFECT','AUTHORITY_GAP','PRODUCT_CONTRACT_GAP','RUNTIME_IMPLEMENTATION_GAP','EVIDENCE_STATE_GAP','EXTERNAL_AUTHORITY_GAP'}
+ROUTE_KEYS={'GOVERNANCE_DEFECT','AUTHORITY_GAP','EXECUTION_CONTRACT_GAP','RUNTIME_IMPLEMENTATION_GAP','EVIDENCE_STATE_GAP','EXTERNAL_AUTHORITY_GAP'}
 EVIDENCE_FIELDS={'actual_stage_execution_completed','actual_stage_execution_started','artifact_type','attempt_uid','closure_blockers','cross_stage_handoff','current_specification_mutated','denominator','exact_head_gate_receipts','fresh_execution','gaps','governance_uid','hidden_defect_sweep','next_stage_transition','operation_results','output_results','phase_trace','prior_results_used','remediation','required_evidence','result','resume_persistence','scanner_results','scope_manifest_ref','source_head_sha','stage_exit_allowed','stage_uid','validator_results'}
 PHASE_TERMINAL_STATUSES={'PASS','BLOCKED','NOT_APPLICABLE_WITH_PROOF','NOT_EXECUTED_AFTER_BLOCK'}
 RESULT_TERMINAL_STATUSES={'PASS','BLOCKED','NOT_APPLICABLE_WITH_PROOF'}
@@ -120,12 +120,12 @@ def validate_definition_data(profile,adapters):
             fail(f'COMMON_PHASE_CONTRACT_INVALID:{ph}')
     req=adapters.get('common_requirements') or {}
     expected={
-      'definition_audit_may_claim_product_completion':False,'governance_maintenance_product_stage_credit':0,
+      'definition_audit_may_claim_execution_completion':False,'governance_maintenance_execution_credit':0,
       'actual_execution_requires_active_work_unit':True,'fresh_execution_required':True,
       'prior_result_may_replace_fresh_execution':False,'fresh_reexecution_after_remediation_required':True,
       'hidden_defect_sweep_required':True,'required_evidence_presence_only_is_pass':False,
       'exact_head_outer_terminal_conclusion_required':True,'stage_exit_requires_zero_open_gap_zero_blocker_zero_remaining_scope':True,
-      'missing_stage_specific_scanner_contract':'BLOCK','missing_semantic_adapter':'BLOCK','missing_product_evidence_in_execution_mode':'BLOCK',
+      'missing_stage_specific_scanner_contract':'BLOCK','missing_semantic_adapter':'BLOCK','missing_execution_evidence_in_execution_mode':'BLOCK',
       'downstream_owned_gap_requires_owner_reentry':True,'phase_trace_exact_order_required':True,
       'phase_trace_terminal_status_required':True,'operation_result_coverage_required':True,'output_result_coverage_required':True,
       'scanner_result_coverage_required':True,'validator_result_coverage_required':True,
@@ -172,7 +172,7 @@ def validate_definition_data(profile,adapters):
         if st.get('pre_execution_gate')!='GOVERNANCE_LOAD_RECEIPT_PASS': fail(f'STAGE_PREEXECUTION_GATE_DRIFT:{uid}')
         if uid=='STAGE-01':
             pg=st.get('pre_stage_source_projection_admission_gate') or {}
-            if pg.get('required') is not True or pg.get('evaluation_boundary')!='BEFORE_PRODUCT_STAGE01_WORK_UNIT_ACTIVATION' or pg.get('freeze_state')!='SOURCE_PAIR_FROZEN' or pg.get('validator_uid')!='VAL-GOV-026':
+            if pg.get('required') is not True or pg.get('evaluation_boundary')!='BEFORE_PROFILE_FIRST_STAGE_WORK_UNIT_ACTIVATION' or pg.get('freeze_state')!='SOURCE_PAIR_FROZEN' or pg.get('validator_uid')!='VAL-GOV-026':
                 fail('PRE_STAGE_SOURCE_PROJECTION_GATE_INVALID')
         if (st.get('semantic_granularity_gate') or {}).get('mode')!='REQUIRED': fail(f'SEMANTIC_GRANULARITY_GATE_MISSING:{uid}')
         if (st.get('closure_evidence_continuity_gate') or {}).get('mode')!='REQUIRED': fail(f'CLOSURE_EVIDENCE_CONTINUITY_GATE_MISSING:{uid}')
@@ -195,7 +195,7 @@ def validate_definition_data(profile,adapters):
             if not isinstance(vals,list) or not vals or len(vals)!=len(set(map(str,vals))): fail(f'ADAPTER_DIMENSIONS_INVALID:{uid}:{f}')
         if not ad.get('denominator_kind'): fail(f'ADAPTER_DENOMINATOR_KIND_MISSING:{uid}')
         if ad.get('scanner_mode') not in {'NORMALIZED_COMMON_EVIDENCE_CONTRACT','SPECIALIZED_COMPATIBILITY_PLUS_NORMALIZED_COMMON'}: fail(f'ADAPTER_SCANNER_MODE_INVALID:{uid}')
-        if ad.get('product_completion_credit_from_definition_audit')!=0: fail(f'DEFINITION_AUDIT_PRODUCT_CREDIT_LEAK:{uid}')
+        if ad.get('execution_completion_credit_from_definition_audit')!=0: fail(f'DEFINITION_AUDIT_EXECUTION_CREDIT_LEAK:{uid}')
         if ad.get('business_entity_gate_required') is True and not isinstance(st.get('business_entity_completeness_gate'),dict): fail(f'BUSINESS_ENTITY_GATE_REQUIRED_BUT_MISSING:{uid}')
     for _sid,_stage in stages.items():
         _gate=_stage.get('cross_stage_materialization_gate') or {}
@@ -252,7 +252,7 @@ def plan_range(start_stage_uid,end_stage_uid):
       'normal_stage_boundary_user_prompt':'FORBIDDEN',
       'stop_conditions':['FORMAL_HUMAN_APPROVAL_REQUIRED','USER_DECISION_REQUIRED','BLOCKED','CURRENT_STATE_CONFLICT','REVERIFY_REQUIRED','SNAPSHOT_INVALIDATED','EXECUTION_FAILURE'],
       'plans':plans,
-      'product_execution_credit':0
+      'effectful_execution_credit':0
     }
 
 def _deterministic_stage_audit_contract():
@@ -389,7 +389,7 @@ def plan(stage_uid):
     st,ad=stages[stage_uid],adapters['stages'][stage_uid]
     semantic_phases={'AUTHORITY','APPLICABILITY','REQUIRED_FIELD_MANIFEST','STAGE_INPUT_CONTRACT','STAGE_OPERATIONS','OUTPUT_PRODUCER','STAGE_SPECIFIC_SCANNER','GAP_CLASSIFICATION','OWNER_REMEDIATION','REQUIRED_EVIDENCE'}
     contracts=(adapters.get('common_execution_skeleton') or {}).get('phase_contracts') or {}
-    return {'artifact_type':'COMMON_STAGE_EXECUTION_PLAN','normative_authority':False,'governance_uid':gov,'selected_profile_uid':profile.get('profile_uid'),'stage_uid':stage_uid,'stage_name':st.get('name'),'scope_mode':st.get('scope_mode'),'entry_gate':st.get('entry_gate'),'exit_gate':st.get('exit_gate'),'next_stage_uid':st.get('next_stage_uid'),'semantic_dimensions':ad.get('semantic_dimensions'),'scanner_dimensions':ad.get('scanner_dimensions'),'denominator_kind':ad.get('denominator_kind'),'operations':st.get('operations'),'outputs':st.get('outputs'),'output_producers':st.get('output_producers'),'validators':st.get('validators'),'required_evidence_types':st.get('required_evidence'),'phases':[{'ordinal':i+1,'phase_uid':ph,'executor_owner':'COMMON_STAGE_EXECUTION_ENGINE','semantic_owner':'STAGE_SEMANTIC_ADAPTER' if ph in semantic_phases else 'COMMON_STAGE_EXECUTION_ENGINE','required_artifact':contracts[ph]['required_artifact'],'pass_condition':contracts[ph]['pass_condition'],'definition_status':'BOUND'} for i,ph in enumerate(EXPECTED_PHASES)],'definition_audit_product_completion_credit':0}
+    return {'artifact_type':'COMMON_STAGE_EXECUTION_PLAN','normative_authority':False,'governance_uid':gov,'selected_profile_uid':profile.get('profile_uid'),'stage_uid':stage_uid,'stage_name':st.get('name'),'scope_mode':st.get('scope_mode'),'entry_gate':st.get('entry_gate'),'exit_gate':st.get('exit_gate'),'next_stage_uid':st.get('next_stage_uid'),'semantic_dimensions':ad.get('semantic_dimensions'),'scanner_dimensions':ad.get('scanner_dimensions'),'denominator_kind':ad.get('denominator_kind'),'operations':st.get('operations'),'outputs':st.get('outputs'),'output_producers':st.get('output_producers'),'validators':st.get('validators'),'required_evidence_types':st.get('required_evidence'),'phases':[{'ordinal':i+1,'phase_uid':ph,'executor_owner':'COMMON_STAGE_EXECUTION_ENGINE','semantic_owner':'STAGE_SEMANTIC_ADAPTER' if ph in semantic_phases else 'COMMON_STAGE_EXECUTION_ENGINE','required_artifact':contracts[ph]['required_artifact'],'pass_condition':contracts[ph]['pass_condition'],'definition_status':'BOUND'} for i,ph in enumerate(EXPECTED_PHASES)],'definition_audit_execution_completion_credit':0}
 
 def validate_stage01_source_projection_admission(work,stage):
     gate=stage.get('pre_stage_source_projection_admission_gate') or {}
