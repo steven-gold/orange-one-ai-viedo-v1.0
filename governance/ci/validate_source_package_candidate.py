@@ -82,11 +82,14 @@ def validate_toolchain_bindings():
       'failures':failures,
     }
 def main():
+    registry=yaml.safe_load(REGISTRY.read_text(encoding='utf-8')) or {}
+    current_branch=str(registry.get('branch') or '')
     meta=yaml.safe_load(META.read_text(encoding='utf-8')) or {}
     failures=[]
+    if not current_branch: failures.append('CURRENT_GOVERNANCE_BRANCH_MISSING')
     if meta.get('status')!='INTEGRATED_CURRENT_WORKLINE': failures.append('SOURCE_INTEGRATION_STATUS_DRIFT')
     if meta.get('current_authority') is not True: failures.append('INTEGRATED_SOURCE_CURRENT_AUTHORITY_MISSING')
-    if meta.get('branch')!='rebuild-v2.1.1': failures.append('INTEGRATED_SOURCE_BRANCH_DRIFT')
+    if str(meta.get('branch') or '')!=current_branch: failures.append('INTEGRATED_SOURCE_BRANCH_DRIFT')
     if ((meta.get('integration') or {}).get('mode'))!='SINGLE_BRANCH_INTEGRATED': failures.append('SOURCE_INTEGRATION_MODE_DRIFT')
     if ((meta.get('external_trust') or {}).get('status'))!='RETIRED_BY_SINGLE_BRANCH_CONSOLIDATION': failures.append('SOURCE_EXTERNAL_TRUST_RETIREMENT_DRIFT')
     if ((meta.get('external_trust') or {}).get('candidate_self_sign'))!='FORBIDDEN': failures.append('SOURCE_CANDIDATE_SELF_SIGN_NOT_FORBIDDEN')
