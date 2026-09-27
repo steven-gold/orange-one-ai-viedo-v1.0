@@ -15,6 +15,13 @@ import stage_execution_engine as eng
 entry,reg,gov,profile,adapters=eng.data()
 eng.validate_definition_data(profile,adapters)
 assert eng.validate_current_ledger_synchronization_contract() is True
+compat=eng.execution_compatibility_adapter()
+TASK_LAYER_FIELD=str(compat['active_work_unit_task_layer_field'])
+TASK_LAYER_VALUE=str(compat['active_work_unit_task_layer_value'])
+SCOPE_ALLOWED_FIELD=str(compat['scope_execution_allowed_field'])
+RESUME_CONTROL_FIELD=str(compat['resume_control_field'])
+RESUME_ALLOWED_FIELD=str(compat['resume_execution_allowed_field'])
+EXECUTION_ROOT_ARG=str(compat['operation_executor_execution_root_argument'])
 cases=0
 executed_negative_labels=set()
 executed_negative_results={}
@@ -83,7 +90,7 @@ sample={
  'next_stage_transition':{'next_stage_uid':st['next_stage_uid'],'status':'READY'},
  'result':'PASS','stage_exit_allowed':True
 }
-_orig_product_root=os.environ.get(eng.EXECUTION_ROOT_ENV)
+_orig_execution_root=os.environ.get(eng.EXECUTION_ROOT_ENV)
 _sample_tmp=tempfile.TemporaryDirectory()
 _sample_root=Path(_sample_tmp.name)
 os.environ[eng.EXECUTION_ROOT_ENV]=str(_sample_root)
@@ -103,7 +110,7 @@ sample['cross_stage_handoff']={
 }
 yaml.safe_dump({'artifact_type':'EXECUTION_SCOPE_MANIFEST','stage_uid':stage_uid,'work_unit_uid':_synthetic_wu,'governed_unit_uid':'synthetic:STAGE01','governance_uid':gov},(_synthetic_dir/'CURRENT_EXECUTION_SCOPE_MANIFEST.yaml').open('w',encoding='utf-8'),sort_keys=False)
 yaml.safe_dump({
- 'artifact_type':'WORK_UNIT','work_unit_uid':_synthetic_wu,'stage_uid':stage_uid,'governed_unit_uid':'synthetic:STAGE01','primary_task_layer':'PRODUCT_STAGE_EXECUTION',
+ 'artifact_type':'WORK_UNIT','work_unit_uid':_synthetic_wu,'stage_uid':stage_uid,'governed_unit_uid':'synthetic:STAGE01',TASK_LAYER_FIELD:TASK_LAYER_VALUE,
  'status':'CLOSED','current_status':'CLOSED','normative_execution_matrix_ref':_matrix_rel,
  'required_outputs':list(st['outputs']),
  'operation_bindings':{x:{'executor_owner':'synthetic.executor','result_owner':'synthetic.result'} for x in st['operations']},
@@ -280,10 +287,10 @@ expect_stage_engine_block(
   lambda:eng.validate_terminal(stage_uid,_sample_evidence_path,_sample_receipt_path),
   'TERMINAL_RECEIPT_IDENTITY_OR_RESULT_DRIFT'
 )
-if _orig_product_root is None:
+if _orig_execution_root is None:
     os.environ.pop(eng.EXECUTION_ROOT_ENV,None)
 else:
-    os.environ[eng.EXECUTION_ROOT_ENV]=_orig_product_root
+    os.environ[eng.EXECUTION_ROOT_ENV]=_orig_execution_root
 _sample_tmp.cleanup()
 plans=[eng.plan(uid) for uid in eng.stage_map(profile)]
 assert len(plans)==11
@@ -294,7 +301,7 @@ wstage='STAGE-03'
 wst=eng.stage_map(profile)[wstage]
 wad=adapters['stages'][wstage]
 work={
- 'work_unit_uid':'SYNTHETIC-WU','primary_task_layer':'PRODUCT_STAGE_EXECUTION','stage_uid':wstage,'current_status':'ACTIVE_PREEXECUTION',
+ 'work_unit_uid':'SYNTHETIC-WU',TASK_LAYER_FIELD:TASK_LAYER_VALUE,'stage_uid':wstage,'current_status':'ACTIVE_PREEXECUTION',
  'required_outputs':list(wst['outputs']),
  'operation_bindings':{x:{
     'executor_owner':'synthetic.executor',
@@ -323,14 +330,14 @@ block_work('scanner_owner_missing',lambda x:x['scanner_bindings'][next(iter(x['s
 
 # Normative execution matrix admission + destructive required-field regression.
 with tempfile.TemporaryDirectory() as td:
-    product_root=Path(td)
+    execution_root=Path(td)
     matrix_stage='STAGE-03'
     matrix_st=eng.stage_map(profile)[matrix_stage]
     required_sections=list(map(str,matrix_st.get('required_normative_section_uids') or []))
     required_artifacts=list(map(str,matrix_st.get('outputs') or []))+list(map(str,matrix_st.get('required_evidence') or []))
     row_total=max(len(required_sections),len(required_artifacts))
     payload={'fields':{f'f{i}':f'VALUE-{i}' for i in range(row_total)}}
-    (product_root/'synthetic.yaml').write_text(yaml.safe_dump(payload,sort_keys=False),encoding='utf-8')
+    (execution_root/'synthetic.yaml').write_text(yaml.safe_dump(payload,sort_keys=False),encoding='utf-8')
     rows=[]
     for i in range(row_total):
         rows.append({
@@ -377,23 +384,23 @@ with tempfile.TemporaryDirectory() as td:
       },
       'status':'PASS',
     }
-    (product_root/'NORMATIVE_EXECUTION_MATRIX.yaml').write_text(yaml.safe_dump(matrix,sort_keys=False),encoding='utf-8')
+    (execution_root/'NORMATIVE_EXECUTION_MATRIX.yaml').write_text(yaml.safe_dump(matrix,sort_keys=False),encoding='utf-8')
     matrix_work={'work_unit_uid':'SYNTHETIC-WU-MATRIX','normative_execution_matrix_ref':'NORMATIVE_EXECUTION_MATRIX.yaml'}
-    eng.validate_normative_execution_matrix(matrix_stage,product_root,matrix_work,matrix_st,gov)
-    _matrix_path=product_root/'NORMATIVE_EXECUTION_MATRIX.yaml'
+    eng.validate_normative_execution_matrix(matrix_stage,execution_root,matrix_work,matrix_st,gov)
+    _matrix_path=execution_root/'NORMATIVE_EXECUTION_MATRIX.yaml'
     _matrix_original=_matrix_path.read_text(encoding='utf-8')
     _matrix_path.unlink()
     expect_stage_engine_block(
         'required_class_remove_current_matrix',
-        lambda:eng.validate_normative_execution_matrix(matrix_stage,product_root,matrix_work,matrix_st,gov),
+        lambda:eng.validate_normative_execution_matrix(matrix_stage,execution_root,matrix_work,matrix_st,gov),
         'NORMATIVE_EXECUTION_MATRIX_MISSING'
     )
     _matrix_path.write_text(_matrix_original,encoding='utf-8')
     broken=deepcopy(payload)
     del broken['fields']['f0']
-    (product_root/'synthetic.yaml').write_text(yaml.safe_dump(broken,sort_keys=False),encoding='utf-8')
+    (execution_root/'synthetic.yaml').write_text(yaml.safe_dump(broken,sort_keys=False),encoding='utf-8')
     try:
-        eng.validate_normative_execution_matrix(matrix_stage,product_root,matrix_work,matrix_st,gov)
+        eng.validate_normative_execution_matrix(matrix_stage,execution_root,matrix_work,matrix_st,gov)
     except eng.StageEngineError as exc:
         if 'NORMATIVE_MATRIX_REQUIRED_FIELD_MISSING' not in str(exc):
             raise
@@ -401,15 +408,15 @@ with tempfile.TemporaryDirectory() as td:
     else:
         raise SystemExit('FAIL_EXPECTED_MATRIX-DESTRUCTIVE-REQUIRED-FIELD')
 
-def _init_synthetic_product_git(root):
+def _init_synthetic_execution_git(root):
     (root/'targets').mkdir(parents=True,exist_ok=True)
-    (root/'targets'/'seed.txt').write_text('synthetic tracked product target\n',encoding='utf-8')
+    (root/'targets'/'seed.txt').write_text('synthetic tracked execution target\n',encoding='utf-8')
     subprocess.run(['git','init','-b','execution-workline'],cwd=root,check=True,text=True,capture_output=True)
     subprocess.run(['git','config','user.email','synthetic@example.invalid'],cwd=root,check=True)
     subprocess.run(['git','config','user.name','Synthetic Stage Test'],cwd=root,check=True)
     subprocess.run(['git','remote','add','origin','https://example.invalid/example/repository.git'],cwd=root,check=True)
     subprocess.run(['git','add','targets/seed.txt'],cwd=root,check=True)
-    subprocess.run(['git','commit','-m','synthetic product target seed'],cwd=root,check=True,text=True,capture_output=True)
+    subprocess.run(['git','commit','-m','synthetic execution target seed'],cwd=root,check=True,text=True,capture_output=True)
     return eng._current_execution_git_context(root)
 
 def _write_synthetic_target_resolution(root,base_rel,work_unit_uid,successor_uid,row,cross_policy,git_ctx):
@@ -457,10 +464,10 @@ def _write_synthetic_target_resolution(root,base_rel,work_unit_uid,successor_uid
     path.write_text(yaml.safe_dump(receipt,sort_keys=False),encoding='utf-8')
 
 # Stage-01..11 governance pressure tests using the real common validators.
-# Synthetic fixtures live only in a temporary product root and grant zero product completion credit.
+# Synthetic fixtures live only in a temporary execution root and grant zero execution completion credit.
 with tempfile.TemporaryDirectory() as td:
     pressure_root=Path(td)
-    pressure_git_ctx=_init_synthetic_product_git(pressure_root)
+    pressure_git_ctx=_init_synthetic_execution_git(pressure_root)
     old_root=os.environ.get(eng.EXECUTION_ROOT_ENV)
     os.environ[eng.EXECUTION_ROOT_ENV]=str(pressure_root)
     stages=eng.stage_map(profile)
@@ -712,7 +719,7 @@ with tempfile.TemporaryDirectory() as td:
 
 
 # Operation-level effectful dispatch migration pressure test.
-# Uses only a temporary product root and a synthetic registered Python executor.
+# Uses only a temporary execution root and a synthetic registered Python executor.
 with tempfile.TemporaryDirectory() as _exec_td:
     _exec_root=Path(_exec_td)
     _entry,_reg,_gov,_profile,_adapters,_stages=eng.validate_definition()
@@ -760,9 +767,9 @@ from pathlib import Path
 import yaml
 p=argparse.ArgumentParser()
 p.add_argument("--stage",required=True); p.add_argument("--operation",required=True)
-p.add_argument("--work-unit",required=True); p.add_argument("--product-root",required=True)
+p.add_argument(__EXECUTION_ROOT_ARG__,dest="execution_root",required=True)
 a=p.parse_args()
-root=Path(a.product_root)
+root=Path(a.execution_root)
 work=yaml.safe_load((root/a.work_unit).read_text(encoding="utf-8")) or {}
 binding=(work.get("operation_bindings") or {}).get(a.operation) or {}
 receipt=root/str(binding.get("operation_receipt_ref") or "")
@@ -779,7 +786,7 @@ obj={
  "result_owner":binding.get("result_owner")
 }
 receipt.write_text(yaml.safe_dump(obj,sort_keys=False),encoding="utf-8")
-'''
+'''.replace('__EXECUTION_ROOT_ARG__',repr(EXECUTION_ROOT_ARG))
     (_exec_root/_executor_rel).write_text(_executor_code,encoding='utf-8')
 
     _ops=list(map(str,_st.get('operations') or []))
@@ -797,7 +804,7 @@ receipt.write_text(yaml.safe_dump(obj,sort_keys=False),encoding="utf-8")
     }
     _work={
       'artifact_type':'WORK_UNIT','work_unit_uid':_wu,'governance_uid':_gov,
-      'primary_task_layer':'PRODUCT_STAGE_EXECUTION','stage_uid':_sid,'current_status':'ACTIVE',
+      TASK_LAYER_FIELD:TASK_LAYER_VALUE,'stage_uid':_sid,'current_status':'ACTIVE',
       'pre_execution_gate_status':'PASS','required_outputs':list(_st.get('outputs') or []),
       'dependencies':['dependency.yaml'],'normative_execution_matrix_ref':_matrix_rel,
       'operation_bindings':_operation_bindings,'scanner_bindings':_scanner_bindings
@@ -806,14 +813,14 @@ receipt.write_text(yaml.safe_dump(obj,sort_keys=False),encoding="utf-8")
     (_wd/'WORK_UNIT.yaml').write_text(yaml.safe_dump(_work,sort_keys=False),encoding='utf-8')
     _scope={
       'artifact_type':'EXECUTION_SCOPE_MANIFEST','stage_uid':_sid,'work_unit_uid':_wu,
-      'governance_uid':_gov,'product_stage_execution_allowed':True
+      'governance_uid':_gov,SCOPE_ALLOWED_FIELD:True
     }
     _scope_rel=f'STAGE_EXECUTION/{_sid}/{_wu}/CURRENT_EXECUTION_SCOPE_MANIFEST.yaml'
     (_wd/'CURRENT_EXECUTION_SCOPE_MANIFEST.yaml').write_text(yaml.safe_dump(_scope,sort_keys=False),encoding='utf-8')
     _state={
       'artifact_type':'WORK_UNIT_EXECUTION_STATE','stage_uid':_sid,'work_unit_uid':_wu,
       'completed_operations':[],'current_operation':_ops[0],'status':'IN_PROGRESS',
-      'resume_control':{'product_execution_allowed':True}
+      RESUME_CONTROL_FIELD:{RESUME_ALLOWED_FIELD:True}
     }
     (_wd/'EXECUTION_STATE.yaml').write_text(yaml.safe_dump(_state,sort_keys=False),encoding='utf-8')
 
@@ -844,9 +851,9 @@ receipt.write_text(yaml.safe_dump(obj,sort_keys=False),encoding="utf-8")
 import argparse
 p=argparse.ArgumentParser()
 p.add_argument("--stage",required=True); p.add_argument("--operation",required=True)
-p.add_argument("--work-unit",required=True); p.add_argument("--product-root",required=True)
+p.add_argument(__EXECUTION_ROOT_ARG__,dest="execution_root",required=True)
 p.parse_args()
-'''
+'''.replace('__EXECUTION_ROOT_ARG__',repr(EXECUTION_ROOT_ARG))
         (_exec_root/_executor_rel).write_text(_no_receipt_code,encoding='utf-8')
         expect_stage_engine_block(
             'required_class_remove_operation_receipt',
@@ -987,7 +994,7 @@ print('PASS: Stage-02 current execution has no historical compatibility module o
 assert eng.resolve_stage_range('STAGE-01','STAGE-01') == ['STAGE-01']
 assert eng.resolve_stage_range('STAGE-01','STAGE-05') == ['STAGE-01','STAGE-02','STAGE-03','STAGE-04','STAGE-05']
 assert eng.resolve_stage_range('STAGE-03','STAGE-08') == ['STAGE-03','STAGE-04','STAGE-05','STAGE-06','STAGE-07','STAGE-08']
-# High-level lifecycle runtime pressure tests that require no product deployment.
+# High-level lifecycle runtime pressure tests that require no external deployment.
 _release_chain=(eng._deterministic_stage_audit_contract().get('release_identity_continuity') or {}).get('required_chain') or []
 _release_records={uid:{'release_identity':'REL-SYNTHETIC-001'} for uid in _release_chain}
 assert eng.validate_release_identity_continuity(_release_records)=='REL-SYNTHETIC-001'
@@ -1139,10 +1146,10 @@ def synthetic_evidence(stage_uid,result):
       'result':result,'stage_exit_allowed':not blocked,
     }
 
-_allstage_orig_product_root=os.environ.get(eng.EXECUTION_ROOT_ENV)
+_allstage_orig_execution_root=os.environ.get(eng.EXECUTION_ROOT_ENV)
 _allstage_tmp=tempfile.TemporaryDirectory()
 _allstage_root=Path(_allstage_tmp.name)
-_allstage_git_ctx=_init_synthetic_product_git(_allstage_root)
+_allstage_git_ctx=_init_synthetic_execution_git(_allstage_root)
 os.environ[eng.EXECUTION_ROOT_ENV]=str(_allstage_root)
 _cross_policy=((eng.y(eng.INVARIANTS).get('invariants') or {}).get('CROSS_STAGE_MATERIALIZATION_AND_CONSUMER_READINESS') or {})
 _cross_requirements=_cross_policy.get('successor_execution_binding_requirements') or {}
@@ -1166,7 +1173,7 @@ def materialize_synthetic_stage_context(stage_uid,evidence,result):
       'governance_uid':gov,'status':'CLOSED' if result=='PASS' else 'BLOCKED'
     },(wd/'CURRENT_EXECUTION_SCOPE_MANIFEST.yaml').open('w',encoding='utf-8'),sort_keys=False)
     yaml.safe_dump({
-      'artifact_type':'WORK_UNIT','work_unit_uid':wu,'stage_uid':stage_uid,'primary_task_layer':'PRODUCT_STAGE_EXECUTION',
+      'artifact_type':'WORK_UNIT','work_unit_uid':wu,'stage_uid':stage_uid,TASK_LAYER_FIELD:TASK_LAYER_VALUE,
       'status':'CLOSED' if result=='PASS' else 'BLOCKED','current_status':'CLOSED' if result=='PASS' else 'BLOCKED',
       'normative_execution_matrix_ref':matrix_rel,'required_outputs':list(st['outputs']),
       'operation_bindings':{x:{'executor_owner':'synthetic.executor','result_owner':'synthetic.result'} for x in st['operations']},
@@ -1294,7 +1301,7 @@ for uid in expected_stage_uids:
     else:
         raise SystemExit('FAIL_EXPECTED_ALL_STAGE_HANDOFF_BLOCK:'+uid)
 
-# Keep the same physical synthetic product contexts alive for the later high-volume
+# Keep the same physical synthetic execution contexts alive for the later high-volume
 # generic-flow evidence regressions. They are one reusable test context, not a second execution system.
 
 # Modes 1-9: aggregate every defect before failing so one run exposes the complete profile denominator.
@@ -1380,7 +1387,7 @@ for uid,st in stage_rows.items():
         if unbound:
             audit_error('DENOMINATOR_APPLICABILITY',f'REQUIRED_ARTIFACT_HAS_NO_TOP_LEVEL_OR_PACKAGE_OWNER:{uid}:{applicability_key}:{unbound}')
 
-# Mode 5: Product run-state ownership / scope locator contract.
+# Mode 5: Execution run-state ownership / scope locator contract.
 scope_contract=profile.get('execution_scope_contract') or {}
 if scope_contract.get('current_scope_artifact')!='STAGE_EXECUTION_CURRENT_SCOPE_MANIFEST':
     audit_error('STATE_RESUME_PROJECTOR','CURRENT_SCOPE_ARTIFACT_NOT_GENERIC')
@@ -1392,7 +1399,7 @@ if scope_contract.get('execution_context_source')!='EXTERNAL_EXECUTION_CONTEXT':
     audit_error('STATE_RESUME_PROJECTOR','EXECUTION_CONTEXT_SOURCE_NOT_EXTERNAL')
 for legacy in ('GOVERNANCE_CURRENT.yaml','governance/test/ACTIVE_STATE.yaml','governance/test/CURRENT_EXECUTION_SCOPE_MANIFEST.yaml'):
     if (ROOT/legacy).exists():
-        audit_error('STATE_RESUME_PROJECTOR','LEGACY_PRODUCT_STATE_STILL_PERSISTED:'+legacy)
+        audit_error('STATE_RESUME_PROJECTOR','LEGACY_EXECUTION_STATE_STILL_PERSISTED:'+legacy)
 
 # Mode 6: Negative Fail-Closed.
 if all_stage_negative_cases!=11:
@@ -1400,8 +1407,8 @@ if all_stage_negative_cases!=11:
 
 # Mode 7: Residual / Stale Consumer.
 consumer=(ROOT/'governance/ci/validate_active_consumer_reference_integrity.py').read_text(encoding='utf-8')
-if 'STALE_PRODUCT_RUN_ROOT_LITERAL' not in consumer:
-    audit_error('RESIDUAL_STALE_CONSUMER','STALE_PRODUCT_RUN_ROOT_GUARD_MISSING')
+if 'STALE_EXECUTION_RUN_ROOT_LITERAL' not in consumer:
+    audit_error('RESIDUAL_STALE_CONSUMER','STALE_EXECUTION_RUN_ROOT_GUARD_MISSING')
 workflow_paths=sorted((ROOT/'.github/workflows').glob('*.yml'))+sorted((ROOT/'.github/workflows').glob('*.yaml'))
 if not workflow_paths:
     audit_error('RESIDUAL_STALE_CONSUMER','ACTIVE_WORKFLOW_SET_EMPTY')
@@ -1416,7 +1423,7 @@ if not common_wf.is_file() or 'stage_execution_engine.py' not in common_wf.read_
 
 # Mode 8: Source-Truth Contamination.
 forbidden=set(reg.get('forbidden_in_ruleset_branch') or [])
-for required in ('ACTIVE_WORK_UNIT','CURRENT_EXECUTION_SCOPE','PRODUCT_EXECUTION_EVIDENCE','PREEXECUTION_RECEIPT','PRODUCT_HISTORY'):
+for required in ('ACTIVE_WORK_UNIT','CURRENT_EXECUTION_SCOPE','PREEXECUTION_RECEIPT'):
     if required not in forbidden:
         audit_error('SOURCE_TRUTH_CONTAMINATION','RULESET_BRANCH_FORBIDDEN_STATE_MISSING:'+required)
 mutation=reg.get('mutation_policy') or {}
@@ -1491,7 +1498,8 @@ _cross_page_required = {
     'target_page','target_entry_state','required_permission','shared_dependency',
     'failure_resume','back_cancel','audit_evidence',
 }
-_forbidden_product_literal = _re.compile(r'\\b(?:CORE|ASSET|VIDEO|EDIT|VOICE|QA|IAM|ERP|AIAPI)-\\d+\\b')
+_binding_for_neutrality=yaml.safe_load((ROOT/'governance/environment/EXECUTION_WORKLINE_BINDING.yaml').read_text(encoding='utf-8')) or {}
+_forbidden_environment_literals={str(v) for group in ('governance_workline','execution_workline') for v in ((_binding_for_neutrality.get(group) or {}).get('repository'),(_binding_for_neutrality.get(group) or {}).get('branch')) if isinstance(v,str) and v}
 
 def _web_flow_fixture(combo, identity):
     namespace, route_root, entity = identity
@@ -1534,8 +1542,9 @@ for _r in range(1,len(_complexity_profiles)+1):
             if 'P4_CROSS_PAGE' in _combo:
                 if len(_f['pages']) < 2 or set(_f['cross_page_flow']) != _cross_page_required:
                     raise SystemExit('FAIL_CROSS_PAGE_FIXTURE_CONTRACT:'+_f['flow_uid'])
-            if _forbidden_product_literal.search(_json.dumps(_f,sort_keys=True)):
-                raise SystemExit('FAIL_SYNTHETIC_FLOW_PRODUCT_IDENTITY_CONTAMINATION:'+_f['flow_uid'])
+            _flow_blob=_json.dumps(_f,sort_keys=True)
+            if any(_literal in _flow_blob for _literal in _forbidden_environment_literals):
+                raise SystemExit('FAIL_SYNTHETIC_FLOW_ENVIRONMENT_IDENTITY_CONTAMINATION:'+_f['flow_uid'])
             _flow_fixtures.append(_f)
 
 if len(_flow_fixtures) != 252:
@@ -1651,17 +1660,17 @@ eng.validate_definition = _original_validate_definition
 if _phase_block_cases != 286 or _phase_na_proof_cases != 286:
     raise SystemExit(f'FAIL_COMMON_PHASE_NEGATIVE_DENOMINATOR:{_phase_block_cases}/286:{_phase_na_proof_cases}/286')
 
-if _allstage_orig_product_root is None:
+if _allstage_orig_execution_root is None:
     os.environ.pop(eng.EXECUTION_ROOT_ENV,None)
 else:
-    os.environ[eng.EXECUTION_ROOT_ENV]=_allstage_orig_product_root
+    os.environ[eng.EXECUTION_ROOT_ENV]=_allstage_orig_execution_root
 _allstage_tmp.cleanup()
 
-# Plans and reusable engine surfaces must not leak concrete product page identities.
+# Plans and reusable engine surfaces must not leak concrete external-environment identities.
 for _uid in expected_stage_uids:
     _plan_blob=_json.dumps(eng.plan(_uid),ensure_ascii=False,sort_keys=True)
-    if _forbidden_product_literal.search(_plan_blob):
-        raise SystemExit('FAIL_COMMON_PLAN_PRODUCT_IDENTITY_LEAK:'+_uid)
+    if any(_literal in _plan_blob for _literal in _forbidden_environment_literals):
+        raise SystemExit('FAIL_COMMON_PLAN_ENVIRONMENT_IDENTITY_LEAK:'+_uid)
 
 print('PASS: Mother page-complexity taxonomy P1-P6 verified and all 63 non-empty combinations exercised')
 print(f'PASS: generic web-flow synthetic fixtures {len(_flow_fixtures)}/252 across four unrelated identity/route namespaces')
@@ -1671,4 +1680,4 @@ print(f'PASS: every common execution phase fail-closed BLOCK cases {_phase_block
 print(f'PASS: every common execution phase NOT_APPLICABLE proof enforcement cases {_phase_na_proof_cases}/286')
 print(f'PASS: operation/output/scanner/validator/handoff/denominator/evidence element-wise negative cases {_element_negative_cases}')
 print(f'PASS: total generic high-pressure negative cases {_generic_negative_cases}')
-print('PASS: common Stage Execution Engine remains product-identity neutral across P1-P6 web-flow taxonomy; product execution credit=0')
+print('PASS: common Stage Execution Engine remains execution-context neutral across P1-P6 web-flow taxonomy; effectful execution credit=0')

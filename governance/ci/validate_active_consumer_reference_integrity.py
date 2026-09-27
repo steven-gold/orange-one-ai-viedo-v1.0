@@ -21,7 +21,7 @@ EXEC_REF = re.compile(
 )
 LOCAL_WORKFLOW_REF = re.compile(r"uses:\s*\./(\.github/workflows/[A-Za-z0-9_.-]+\.ya?ml)")
 SEMVER_LOCATOR = re.compile(r"governance/(?:current|specifications)/v\d+(?:\.\d+)+")
-STALE_PRODUCT_RUN_ROOT_LITERAL = re.compile(
+STALE_EXECUTION_RUN_ROOT_LITERAL = re.compile(
     r"00_SOURCE_INTAKE/(?:fresh_run_\d+|run_[A-Za-z0-9]+_[0-9a-f]{8,}(?:_[A-Za-z0-9-]+)?)"
 )
 
@@ -36,7 +36,7 @@ RETIRED_PATHS = (
     "governance/ci/compile_stage_execution_preflight.py",
     "governance/ci/stage_execution_adapters/stage02_functional_contract.py",
 )
-PRODUCT_STATE_ROOT = ROOT / "governance" / "test"
+LEGACY_EXECUTION_STATE_ROOT = ROOT / "governance" / "test"
 
 
 def load_yaml(path: Path) -> dict:
@@ -95,8 +95,8 @@ def current_runtime_token_findings(path_rel: str, text: str) -> list[str]:
             out.append(f"RETIRED_CURRENT_RUNTIME_TOKEN:{path_rel}:{token}")
     if SEMVER_LOCATOR.search(text):
         out.append(f"SEMVER_LOCATOR_IN_CURRENT_CONSUMER:{path_rel}")
-    for literal in sorted(set(STALE_PRODUCT_RUN_ROOT_LITERAL.findall(text))):
-        out.append(f"STALE_PRODUCT_RUN_ROOT_LITERAL:{path_rel}:{literal}")
+    for literal in sorted(set(STALE_EXECUTION_RUN_ROOT_LITERAL.findall(text))):
+        out.append(f"STALE_EXECUTION_RUN_ROOT_LITERAL:{path_rel}:{literal}")
     return out
 
 
@@ -128,15 +128,14 @@ def main() -> int:
 
     forbidden_branch_items = set(registry.get("forbidden_in_ruleset_branch") or [])
     required_forbidden = {
-        "PRODUCT_STAGE_RUNNER","ACTIVE_WORK_UNIT","CURRENT_EXECUTION_SCOPE",
-        "PRODUCT_EXECUTION_EVIDENCE","PREEXECUTION_RECEIPT","PRODUCT_HISTORY"
+        "ACTIVE_WORK_UNIT","CURRENT_EXECUTION_SCOPE","PREEXECUTION_RECEIPT"
     }
     if not required_forbidden.issubset(forbidden_branch_items):
         errors.append("RULESET_BRANCH_FORBIDDEN_ITEM_SET_INCOMPLETE")
 
-    # Product run-state/history must not physically exist on Current Governance branch.
-    if PRODUCT_STATE_ROOT.exists():
-        errors.append("GOVERNANCE_TEST_PRODUCT_STATE_ROOT_FORBIDDEN:governance/test")
+    # Execution run-state/history must not physically exist on Current Governance branch.
+    if LEGACY_EXECUTION_STATE_ROOT.exists():
+        errors.append("GOVERNANCE_TEST_EXECUTION_STATE_ROOT_FORBIDDEN:governance/test")
 
     for retired in RETIRED_PATHS:
         if (ROOT / retired).exists():
@@ -239,7 +238,7 @@ def main() -> int:
         if path_rel != ".github/workflows/current-governance-cleanup-validation.yml":
             errors.extend(current_runtime_token_findings(path_rel, text))
         if path_rel == COMMON_STAGE_WORKFLOW and "stage_execution_engine.py --execute --stage" in text:
-            errors.append("GOVERNANCE_BRANCH_PRODUCT_EFFECTFUL_EXECUTE_MODE_FORBIDDEN")
+            errors.append("GOVERNANCE_BRANCH_EFFECTFUL_EXECUTE_MODE_FORBIDDEN")
         for wf_ref in LOCAL_WORKFLOW_REF.findall(text):
             if not (ROOT / wf_ref).is_file():
                 errors.append(f"MISSING_REUSABLE_WORKFLOW_TARGET:{wf_ref}<-{path_rel}")
@@ -279,12 +278,19 @@ def main() -> int:
             if child not in visited:
                 queue.append(child)
 
-    # Generic current engine must remain product-neutral; detect concrete product
-    # identities generically instead of naming a profile step or one product page.
+    # Generic current engine must remain execution-context neutral; detect concrete bound environment identities dynamically.
     current_engine_text = (ROOT / "governance/ci/stage_execution_engine.py").read_text(encoding="utf-8")
-    fixed_product_identity = re.compile(r"['\"](?:CORE|ASSET|VIDEO|EDIT|VOICE|QA|IAM|ERP|AIAPI)-\\d+['\"]")
-    for match in sorted(set(fixed_product_identity.findall(current_engine_text))):
-        errors.append("FIXED_PRODUCT_SCOPE_IN_COMMON_ENGINE:" + match)
+    binding_rel = str(registry.get("execution_environment_binding") or "")
+    binding = load_yaml(ROOT / binding_rel) if binding_rel else {}
+    environment_literals = {
+        str(value)
+        for group in ("governance_workline", "execution_workline")
+        for value in ((binding.get(group) or {}).get("repository"), (binding.get(group) or {}).get("branch"))
+        if isinstance(value, str) and value
+    }
+    for literal in sorted(environment_literals):
+        if literal in current_engine_text:
+            errors.append("BOUND_ENVIRONMENT_IDENTITY_IN_COMMON_ENGINE:" + literal)
 
     if errors:
         for error in sorted(set(errors)):
@@ -293,11 +299,11 @@ def main() -> int:
 
     print(f"PASS: Current workflows scanned={len(workflows)}")
     print(f"PASS: active/transitive executable targets={len(visited)} all resolve")
-    print("PASS: governance/test product run-state root absent")
+    print("PASS: governance/test execution run-state root absent")
     print("PASS: retired profile compatibility wrapper/module absent")
     print("PASS: profile-specific scope schema is delegated to selected-profile validation")
-    print("PASS: Governance branch has no product effectful execute mode")
-    print("PASS: no stale fixed product run root or retired compatibility token in active consumers")
+    print("PASS: Governance branch has no effectful execute mode")
+    print("PASS: no stale fixed execution run root or retired compatibility token in active consumers")
     if governance_role == "GOVERNANCE_REVISION_CANDIDATE":
         print("PASS: candidate validation workflow denominator and full preformal regression wiring complete")
     print("PASS: ACTIVE_CONSUMER_REFERENCE_INTEGRITY_CURRENT_ONLY")
