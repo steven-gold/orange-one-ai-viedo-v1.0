@@ -724,7 +724,7 @@ with tempfile.TemporaryDirectory() as td:
 with tempfile.TemporaryDirectory() as _exec_td:
     _exec_root=Path(_exec_td)
     _entry,_reg,_gov,_profile,_adapters,_stages=eng.validate_definition()
-    _sid=next(sid for sid,row in _stages.items() if row.get('operations') and (_adapters.get('stages') or {}).get(sid,{}).get('effectful_executor_owner_resolution')=='CURRENT_WORK_UNIT_OPERATION_BINDING_ONLY')
+    _sid=next(sid for sid,row in _stages.items() if row.get('operations') and not row.get('pre_stage_source_projection_admission_gate') and (_adapters.get('stages') or {}).get(sid,{}).get('effectful_executor_owner_resolution')=='CURRENT_WORK_UNIT_OPERATION_BINDING_ONLY')
     _st=_stages[_sid]
     _wu='SYNTHETIC-EFFECTFUL-'+_sid
     _wd=_exec_root/'STAGE_EXECUTION'/_sid/_wu
