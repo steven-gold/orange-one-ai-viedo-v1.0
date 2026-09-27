@@ -243,12 +243,18 @@ candidate_validation_contract:
   - workflow_dispatch
   source_package_successor_workflow_identity_requires_name_path_allowed_event_branch_head: true
   source_package_validation_toolchain_binding_mode: GIT_BLOB_SHA1_EXACT_SET_V1
-  source_package_validation_toolchain_exact_file_count: 44
+  source_package_validation_toolchain_exact_file_count: 0
   source_package_validation_toolchain_exact_paths:
   - .github/workflows/source-package-successor-validation.yml
   - .github/workflows/source-package-successor-materialization.yml
   - governance/ci/requirements-governance.lock
   - governance/ci/validate_source_package_candidate.py
+  - governance/ci/stage_execution_engine.py
+  - governance/ci/stage_execution_semantic_adapters.yaml
+  - governance/ci/test_stage_execution_engine.py
+  - governance/ci/validate_selected_execution_profile_integrity.py
+  - governance/ci/external_execution_admission.py
+  - governance/ci/test_external_execution_admission.py
   - governance/source-successor/materialize_derived_source_package.py
   - governance/source-successor/refresh_source_checksums.py
   source_package_validation_toolchain_subtree_prefixes:

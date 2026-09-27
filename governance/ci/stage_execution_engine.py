@@ -121,7 +121,7 @@ def validate_definition_data(profile,adapters):
     req=adapters.get('common_requirements') or {}
     expected={
       'definition_audit_may_claim_product_completion':False,'governance_maintenance_product_stage_credit':0,
-      'actual_product_execution_requires_active_execution_work_unit':True,'fresh_execution_required':True,
+      'actual_execution_requires_active_work_unit':True,'fresh_execution_required':True,
       'prior_result_may_replace_fresh_execution':False,'fresh_reexecution_after_remediation_required':True,
       'hidden_defect_sweep_required':True,'required_evidence_presence_only_is_pass':False,
       'exact_head_outer_terminal_conclusion_required':True,'stage_exit_requires_zero_open_gap_zero_blocker_zero_remaining_scope':True,
