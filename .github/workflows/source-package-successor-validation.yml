@@ -3,6 +3,7 @@ on:
   push:
     branches:
       - governance-source-v2.2.33-candidate
+  workflow_dispatch:
 permissions:
   contents: read
 concurrency:
