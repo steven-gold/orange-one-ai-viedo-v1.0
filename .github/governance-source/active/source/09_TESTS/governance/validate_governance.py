@@ -183,14 +183,34 @@ def mandatory_regression_guard(root):
     return {'status':'PASS' if not failures else 'FAIL','suites':compact,'suite_count':len(specs),'checksum_entries':c.get('entries'),'failures':failures}
 
 def candidate_truth_guard(root):
-    failures=[]; p=root/'11_EVIDENCE/audit/GOVERNANCE_CANDIDATE_STATE.yaml'
-    if not p.exists(): return {'status':'FAIL','failures':['candidate_state_missing']}
-    d=load_yaml(p)
-    if d.get('website_construction_allowed') is not False: failures.append('website_construction_not_blocked')
-    if d.get('github_upload_allowed') is not False: failures.append('github_upload_not_blocked')
-    if d.get('formal_test_started') is not False: failures.append('formal_test_started_during_prefomal')
-    if 'FORMAL_FREEZE' in str(d.get('completion_claim','')).upper() and 'NOT_STARTED' not in str(d.get('completion_claim','')).upper(): failures.append('candidate_state_overclaims_freeze')
-    return {'status':'PASS' if not failures else 'FAIL','failures':failures}
+    failures=[]
+    retired=root/'11_EVIDENCE/audit/GOVERNANCE_CANDIDATE_STATE.yaml'
+    if retired.exists():
+        failures.append('retired_candidate_state_reappeared_as_current_authority')
+    repo=root.parents[3]
+    rp=repo/'governance/specifications/REGISTRY.yaml'
+    if not rp.is_file():
+        return {'status':'FAIL','failures':failures+['current_registry_missing']}
+    reg=load_yaml(rp)
+    ident=reg.get('governance_identity') or {}
+    vc=reg.get('candidate_validation_contract') or {}
+    mut=reg.get('mutation_policy') or {}
+    if reg.get('registry_role')!='GOVERNANCE_REVISION_CANDIDATE_ENTRYPOINT' or reg.get('status')!='ACTIVE_SINGLE_BRANCH_VALIDATION':
+        failures.append('candidate_registry_role_or_status_invalid')
+    if ident.get('status')!='CANDIDATE' or ident.get('identity_state')!='PROVISIONAL_EXACT_HEAD_AND_BUNDLE_DIGEST_BOUND' or ident.get('released_immutable_identity') is not False:
+        failures.append('candidate_identity_state_invalid')
+    if ident.get('identity_authority')!='governance/specifications/REGISTRY.yaml':
+        failures.append('candidate_identity_authority_drift')
+    if not str(ident.get('governance_uid') or '').strip() or not str(ident.get('governance_revision') or '').strip() or not str(ident.get('specification_bundle_sha256') or '').strip():
+        failures.append('candidate_identity_binding_incomplete')
+    for key in ('exact_candidate_head_required','required_workflows_run_on_every_candidate_push','live_branch_head_must_equal_validation_head','live_branch_head_recheck_after_evidence_validation_required','formal_promotion_requires_all_required_workflows_exact_head_success'):
+        if vc.get(key) is not True:
+            failures.append('candidate_validation_contract_missing:'+key)
+    if vc.get('prior_head_workflow_result_may_credit_successor_head') is not False or vc.get('zero_required_workflow_runs_on_successor_head')!='BLOCK':
+        failures.append('candidate_exact_head_credit_guard_incomplete')
+    if mut.get('product_execution_on_rebuild')!='FORBIDDEN' or mut.get('successor_candidate_product_execution')!='FORBIDDEN' or mut.get('successor_candidate_product_completion_credit')!=0:
+        failures.append('candidate_product_execution_isolation_incomplete')
+    return {'status':'PASS' if not failures else 'FAIL','failures':failures,'truth_source':'governance/specifications/REGISTRY.yaml','retired_state_present':retired.exists()}
 
 def preformal(root):
     checks=[]
