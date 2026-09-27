@@ -141,8 +141,10 @@ candidate_validation_contract:
   source_package_successor_branch: governance-source-v2.2.33-candidate
   source_package_successor_workflow_name: Source Package Successor Validation
   source_package_successor_workflow_path: .github/workflows/source-package-successor-validation.yml
-  source_package_successor_workflow_event: push
-  source_package_successor_workflow_identity_requires_name_path_event_branch_head: true
+  source_package_successor_workflow_allowed_events:
+  - push
+  - workflow_dispatch
+  source_package_successor_workflow_identity_requires_name_path_allowed_event_branch_head: true
   source_package_successor_admission_receipt: governance/source-successor/SOURCE_PACKAGE_SUCCESSOR_ADMISSION.yaml
   source_package_successor_admission_validator: governance/ci/source_package_successor_admission.py
   source_package_successor_manifest_path: governance/source-successor/SOURCE_PACKAGE_CANDIDATE.yaml

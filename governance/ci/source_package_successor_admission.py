@@ -285,7 +285,7 @@ def fetch_source_manifest(repository:str,path:str,head_sha:str,token:str|None)->
     return blob_sha,doc
 
 
-def evaluate_snapshot(receipt:dict,source_manifest:dict,manifest_blob_sha:str,run:dict,live_before:str,live_after:str,require_external_trust:bool,external_trust_verification:dict|None=None,expected_workflow_path:str|None=None,expected_workflow_event:str|None=None)->dict:
+def evaluate_snapshot(receipt:dict,source_manifest:dict,manifest_blob_sha:str,run:dict,live_before:str,live_after:str,require_external_trust:bool,external_trust_verification:dict|None=None,expected_workflow_path:str|None=None,allowed_workflow_events:list[str]|None=None)->dict:
     failures=[]
     expected_head=str(receipt.get('source_head_sha') or '')
     expected_branch=str(receipt.get('candidate_source_branch') or '')
@@ -301,7 +301,8 @@ def evaluate_snapshot(receipt:dict,source_manifest:dict,manifest_blob_sha:str,ru
         failures.append('SOURCE_VALIDATION_WORKFLOW_DRIFT')
     if expected_workflow_path and str(run.get('path') or '')!=expected_workflow_path:
         failures.append('SOURCE_VALIDATION_WORKFLOW_PATH_DRIFT')
-    if expected_workflow_event and str(run.get('event') or '')!=expected_workflow_event:
+    allowed_events=set(map(str,allowed_workflow_events or []))
+    if allowed_events and str(run.get('event') or '') not in allowed_events:
         failures.append('SOURCE_VALIDATION_WORKFLOW_EVENT_DRIFT')
     if str(run.get('head_branch') or '')!=expected_branch:
         failures.append('SOURCE_VALIDATION_HEAD_BRANCH_DRIFT')
@@ -382,9 +383,9 @@ def validate_source_successor(repository:str,token:str|None,contract:dict,requir
     branch=str(contract.get('source_package_successor_branch') or '')
     workflow=str(contract.get('source_package_successor_workflow_name') or '')
     workflow_path=str(contract.get('source_package_successor_workflow_path') or '')
-    workflow_event=str(contract.get('source_package_successor_workflow_event') or '')
+    workflow_events=list(map(str,contract.get('source_package_successor_workflow_allowed_events') or []))
     manifest_path=str(contract.get('source_package_successor_manifest_path') or '')
-    if not workflow_path or not workflow_event or contract.get('source_package_successor_workflow_identity_requires_name_path_event_branch_head') is not True:
+    if not workflow_path or set(workflow_events)!={'push','workflow_dispatch'} or contract.get('source_package_successor_workflow_identity_requires_name_path_allowed_event_branch_head') is not True:
         return {'status':'BLOCKED','failures':['SOURCE_WORKFLOW_IDENTITY_CONTRACT_INCOMPLETE']}
     if receipt.get('candidate_source_branch')!=branch:
         return {'status':'BLOCKED','failures':['SOURCE_RECEIPT_BRANCH_CONTRACT_DRIFT']}
@@ -399,7 +400,7 @@ def validate_source_successor(repository:str,token:str|None,contract:dict,requir
       r for r in runs
       if str(r.get('name') or '')==workflow
       and str(r.get('path') or '')==workflow_path
-      and str(r.get('event') or '')==workflow_event
+      and str(r.get('event') or '') in set(workflow_events)
       and str(r.get('head_branch') or '')==branch
       and str(r.get('head_sha') or '')==live_before
       and int(r.get('id') or 0)==int(receipt.get('source_validation_run_id') or 0)
@@ -426,5 +427,5 @@ def validate_source_successor(repository:str,token:str|None,contract:dict,requir
             external_check={'status':'NOT_VERIFIED','failures':['SOURCE_EXTERNAL_TRUST_MACHINE_VERIFICATION_EXCEPTION:'+type(exc).__name__+':'+str(exc)]}
     return evaluate_snapshot(
       receipt,manifest,manifest_blob,matching[0],live_before,live_after,require_external_trust,external_check,
-      expected_workflow_path=workflow_path,expected_workflow_event=workflow_event
+      expected_workflow_path=workflow_path,allowed_workflow_events=workflow_events
     )
