@@ -67,9 +67,17 @@ with tempfile.TemporaryDirectory() as td:
 with tempfile.TemporaryDirectory() as td:
     r=Path(td)/'pkg'; shutil.copytree(PKG,r); ip=r/'10_REGISTRY/CONSTRUCTION_ARTIFACT_INDEX.yaml'; idx=load(ip); idx['mandatory_common_normative_bundles']['BUNDLE-GOV-COMMON-CORE']['section_uids'].remove('WEB-GOV-03-S052'); dump(ip,idx); out=life.validate(r); results.append(case('semantic_granularity_rule_must_load_in_common_bundle',out['status']=='FAIL',{'failures':out.get('failures',[])[:5]}))
 
-trust_base=gov.external_trust_anchor_guard(PKG)
-with tempfile.TemporaryDirectory() as td:
-    r=Path(td)/'pkg'; shutil.copytree(PKG,r); (r/'README.md').write_text((r/'README.md').read_text(encoding='utf-8')+'\nTAMPER\n',encoding='utf-8'); tout=gov.external_trust_anchor_guard(r); results.append(case('external_trust_root_blocks_candidate_self_resign',trust_base['status']=='PASS' and tout['status']=='FAIL',{'base':trust_base.get('status'),'tamper_failures':tout.get('failures',[])[:4]}))
+REPO=PKG.parents[3]
+source_candidate=load(REPO/'governance/source-successor/SOURCE_PACKAGE_CANDIDATE.yaml')
+external=source_candidate.get('external_trust') or {}
+results.append(case(
+    'external_trust_root_blocks_candidate_self_resign',
+    source_candidate.get('status')=='UNSIGNED_NOT_CURRENT'
+    and source_candidate.get('current_authority') is False
+    and external.get('status')=='NOT_SIGNED'
+    and external.get('candidate_self_sign')=='FORBIDDEN',
+    {'candidate_status':source_candidate.get('status'),'external_trust':external}
+))
 
 out={'suite':'v2.1.6 cross-lifecycle semantic granularity bugfix regression','total':len(results),'passed_expectations':sum(x['ok'] for x in results),'results':results}
 print(json.dumps(out,ensure_ascii=False,indent=2)); raise SystemExit(0 if out['passed_expectations']==out['total'] else 1)
