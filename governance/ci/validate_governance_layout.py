@@ -325,7 +325,9 @@ if (reg.get('branch_role_contract') or {}).get(str(reg.get('branch') or ''))=='G
         errors.append('CANDIDATE_MANIFEST_AUTHORIZATION_PROJECTION_DRIFT')
     if lineage.get('candidate_predecessor_head_sha')!=identity.get('predecessor_head_sha'):
         errors.append('CANDIDATE_MANIFEST_PREDECESSOR_HEAD_PROJECTION_DRIFT')
-    if lineage.get('source_bytes_changed_by_this_successor') is not False or lineage.get('source_identity_reused_only_because_source_bytes_are_unchanged') is not True:
+    source_changed=lineage.get('source_bytes_changed_by_this_successor')
+    source_reused=lineage.get('source_identity_reused_only_because_source_bytes_are_unchanged')
+    if not isinstance(source_changed,bool) or not isinstance(source_reused,bool) or source_reused is source_changed:
         errors.append('CANDIDATE_MANIFEST_SOURCE_LINEAGE_DRIFT')
     vc=reg.get('candidate_validation_contract') or {}
     if vc.get('candidate_manifest_projection_must_match_registry_identity') is not True:
