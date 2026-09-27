@@ -10,7 +10,7 @@ concurrency:
 jobs:
   materialize:
     runs-on: ubuntu-24.04
-    if: github.actor != 'github-actions[bot]'
+    if: github.actor != 'github-actions[bot]' && github.ref_name == 'rebuild-v2.1.1'
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
@@ -25,6 +25,39 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
+          BASE_HEAD="$(git rev-parse HEAD)"
+          python - <<'PY'
+          from pathlib import Path
+          import sys,yaml
+          p=Path('governance/specifications/REGISTRY.yaml')
+          d=yaml.safe_load(p.read_text(encoding='utf-8')) or {}
+          roles=d.get('branch_role_contract') or {}
+          mutation=d.get('mutation_policy') or {}
+          contract=d.get('candidate_validation_contract') or {}
+          branch=str(d.get('branch') or '')
+          errors=[]
+          if branch!='rebuild-v2.1.1':
+              errors.append('CURRENT_GOVERNANCE_BRANCH_DRIFT')
+          if roles.get(branch)!='GOVERNANCE_REVISION_CANDIDATE':
+              errors.append('SOURCE_MATERIALIZATION_REQUIRES_CANDIDATE_ROLE')
+          if d.get('status')!='ACTIVE_SINGLE_BRANCH_VALIDATION':
+              errors.append('SOURCE_MATERIALIZATION_REQUIRES_ACTIVE_SINGLE_BRANCH_VALIDATION')
+          if mutation.get('single_branch_consolidation_mode') is not True:
+              errors.append('SINGLE_BRANCH_CONSOLIDATION_MODE_REQUIRED')
+          if mutation.get('single_active_governance_branch')!='rebuild-v2.1.1':
+              errors.append('SINGLE_ACTIVE_GOVERNANCE_BRANCH_DRIFT')
+          if contract.get('source_package_integration_mode')!='SINGLE_BRANCH_INTEGRATED':
+              errors.append('SOURCE_PACKAGE_INTEGRATION_MODE_DRIFT')
+          if contract.get('source_package_integrated_branch')!='rebuild-v2.1.1':
+              errors.append('SOURCE_PACKAGE_INTEGRATED_BRANCH_DRIFT')
+          if errors:
+              print('BLOCK: '+','.join(errors),file=sys.stderr)
+              raise SystemExit(1)
+          print('PASS: source materialization candidate-only single-branch gate')
+          PY
+          REMOTE_HEAD="$(git ls-remote origin refs/heads/rebuild-v2.1.1 | awk '{print $1}')"
+          test -n "$REMOTE_HEAD"
+          test "$REMOTE_HEAD" = "$BASE_HEAD"
           python governance/source-successor/materialize_derived_source_package.py
           if git diff --quiet; then
             echo "No derived changes"
@@ -34,5 +67,7 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add             .github/governance-source/active/source/10_REGISTRY/SEMANTIC_AUTHORITY_BASELINE.yaml             .github/governance-source/active/source/09_TESTS/governance/validate_reference_semantics.py             .github/governance-source/active/source/11_EVIDENCE/audit/AUDIT_BASELINE.yaml             .github/governance-source/active/source/11_EVIDENCE/audit/generated/GOVERNANCE_REQUIREMENT_INDEX.json             .github/governance-source/active/source/10_REGISTRY/GOVERNANCE_ROOT_MANIFEST.yaml             .github/governance-source/active/source/CHECKSUMS.sha256
           git commit -m "chore(source-candidate): materialize derived source package"
+          REMOTE_HEAD_BEFORE_PUSH="$(git ls-remote origin refs/heads/rebuild-v2.1.1 | awk '{print $1}')"
+          test "$REMOTE_HEAD_BEFORE_PUSH" = "$BASE_HEAD"
           git push origin HEAD:rebuild-v2.1.1
           gh workflow run source-package-successor-validation.yml --ref rebuild-v2.1.1
