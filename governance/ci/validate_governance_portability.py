@@ -182,6 +182,17 @@ if _opden.get('authorized_not_applicable_requires_authority_evidence') is not Tr
     failures.append('stage_operation_na_fail_closed_contract_incomplete')
 if _opden.get('omitted_or_unclassified_applicability')!='BLOCK':
     failures.append('stage_operation_unclassified_applicability_not_blocked')
+_evden=_stepwise.get('evidence_denominator_contract') or {}
+if _evden.get('registered_required_evidence_is_catalog_not_universal_required_denominator') is not True:
+    failures.append('stage_required_evidence_catalog_still_universal_denominator')
+if _evden.get('every_registered_evidence_type_must_have_terminal_disposition') is not True:
+    failures.append('stage_required_evidence_terminal_disposition_missing')
+if set(map(str,_evden.get('allowed_terminal_dispositions') or []))!={'PASS','NOT_APPLICABLE_WITH_PROOF'}:
+    failures.append('stage_required_evidence_terminal_disposition_universe_drift')
+if _evden.get('not_applicable_requires_authority_evidence') is not True or _evden.get('not_applicable_may_not_receive_pass_credit') is not True:
+    failures.append('stage_required_evidence_na_fail_closed_contract_incomplete')
+if _evden.get('omitted_or_unclassified_evidence_disposition')!='BLOCK':
+    failures.append('stage_required_evidence_unclassified_not_blocked')
 
 _adapter_path=ROOT/'governance/ci/stage_execution_semantic_adapters.yaml'
 _adapter=yaml.safe_load(_adapter_path.read_text(encoding='utf-8')) or {}

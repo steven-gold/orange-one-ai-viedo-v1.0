@@ -98,6 +98,13 @@ universal_stage_stepwise_execution_contract:
     not_applicable_operation_must_not_invoke_effectful_executor: true
     not_applicable_operation_receipt_status: NOT_APPLICABLE_WITH_PROOF
     omitted_or_unclassified_applicability: BLOCK
+  evidence_denominator_contract:
+    registered_required_evidence_is_catalog_not_universal_required_denominator: true
+    every_registered_evidence_type_must_have_terminal_disposition: true
+    allowed_terminal_dispositions: [PASS, NOT_APPLICABLE_WITH_PROOF]
+    not_applicable_requires_authority_evidence: true
+    not_applicable_may_not_receive_pass_credit: true
+    omitted_or_unclassified_evidence_disposition: BLOCK
   operation_sequence:
   - RESOLVE_OPERATION
   - VERIFY_OPERATION_INPUTS

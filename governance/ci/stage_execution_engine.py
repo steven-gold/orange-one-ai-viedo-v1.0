@@ -1058,10 +1058,22 @@ def validate_evidence_data(stage_uid,e):
     if len(evidence_types)!=len(set(evidence_types)):
         fail('REQUIRED_EVIDENCE_DUPLICATE')
     got=set(evidence_types)
-    if not req.issubset(got): fail(f'REQUIRED_EVIDENCE_TYPE_MISSING:{sorted(req-got)}')
+    if got!=req:
+        fail(f'REQUIRED_EVIDENCE_DENOMINATOR_DRIFT:expected={sorted(req)} actual={sorted(got)}')
     for item in items:
-        if not isinstance(item,dict) or item.get('status')!='PASS' or not item.get('ref'): fail('REQUIRED_EVIDENCE_ITEM_INVALID')
-        if not item.get('external_receipt') and not (_execution_artifact_root()/str(item['ref'])).is_file(): fail(f'REQUIRED_EVIDENCE_PHYSICAL_REF_MISSING:{item["ref"]}')
+        status=str(item.get('status') or '')
+        if status=='PASS':
+            if not item.get('ref'): fail('REQUIRED_EVIDENCE_PASS_REF_MISSING:'+str(item.get('evidence_type')))
+            if not item.get('external_receipt') and not (_execution_artifact_root()/str(item['ref'])).is_file():
+                fail(f'REQUIRED_EVIDENCE_PHYSICAL_REF_MISSING:{item["ref"]}')
+        elif status=='NOT_APPLICABLE_WITH_PROOF':
+            proof=str(item.get('authority_evidence_ref') or item.get('proof') or '')
+            if not proof:
+                fail('REQUIRED_EVIDENCE_NA_AUTHORITY_MISSING:'+str(item.get('evidence_type')))
+            if item.get('ref') and not item.get('external_receipt') and not (_execution_artifact_root()/str(item['ref'])).is_file():
+                fail(f'REQUIRED_EVIDENCE_NA_REF_STALE:{item["ref"]}')
+        else:
+            fail('REQUIRED_EVIDENCE_TERMINAL_DISPOSITION_INVALID:'+str(item.get('evidence_type'))+':'+status)
 
     handoff=e.get('cross_stage_handoff')
     if not isinstance(handoff,dict):

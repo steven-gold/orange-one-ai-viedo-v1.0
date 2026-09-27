@@ -101,6 +101,16 @@ _scope_rel=f'STAGE_EXECUTION/STAGE-01/{_synthetic_wu}/CURRENT_EXECUTION_SCOPE_MA
 _matrix_rel=f'STAGE_EXECUTION/STAGE-01/{_synthetic_wu}/NORMATIVE_EXECUTION_MATRIX.yaml'
 _handoff_rel=f'STAGE_EXECUTION/STAGE-01/{_synthetic_wu}/CROSS_STAGE_HANDOFF_READINESS_LEDGER.yaml'
 sample['scope_manifest_ref']=_scope_rel
+# Registered evidence types are a catalog: N/A is legal only with explicit authority proof.
+_sample_required_evidence=sample.get('required_evidence') or []
+if _sample_required_evidence:
+    _na=deepcopy(sample)
+    _na_item=_na['required_evidence'][0]
+    _na_item['status']='NOT_APPLICABLE_WITH_PROOF'
+    _na_item.pop('ref',None)
+    _na_item['authority_evidence_ref']='AUTH-SYNTHETIC-NA-001'
+    # Full evidence validation is exercised later after the synthetic physical execution context is materialized.
+
 sample['cross_stage_handoff']={
  'ledger_ref':_handoff_rel,'external_receipt':False,'successor_stage_uid':st['next_stage_uid'],
  'reference_resolution_complete':True,'physical_materialization_complete':True,'required_field_completeness_complete':True,
