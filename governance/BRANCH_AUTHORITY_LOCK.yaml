@@ -23,6 +23,22 @@ branches:
     product_authority_mutation: FORBIDDEN
     governance_definition_mutation: ALLOWED_WITHIN_AUTHORIZED_SUCCESSOR_SCOPE
     promotion_to_current: FORBIDDEN_UNTIL_FULL_VALIDATION_AND_EXPLICIT_PROMOTION
+  governance-source-v2.2.33-candidate:
+    role: GOVERNANCE_SOURCE_PACKAGE_CANDIDATE
+    preserve: true
+    gpt_write_policy: ALLOWED_ONLY_FOR_ISSUE_52_SOURCE_PACKAGE_SUCCESSOR_SCOPE
+    authorization_record: https://github.com/steven-gold/orange-one-ai-viedo-v1.0/issues/52
+    parent_governance_candidate_branch: governance-v2.2.33-candidate
+    product_execution: FORBIDDEN
+    product_authority_mutation: FORBIDDEN
+    governance_current_promotion: FORBIDDEN
+    predecessor_branch_mutation: FORBIDDEN
+    external_trust_self_sign: FORBIDDEN
+    allowed_path_scope:
+    - .github/governance-source/active/source/**
+    - governance/source-successor/**
+    - .github/workflows/source-package-successor-validation.yml
+    required_status_before_independent_external_resign: UNSIGNED_NOT_CURRENT
   0921acpos:
     role: PRODUCT_EXECUTION_WORKLINE
     preserve: true

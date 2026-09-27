@@ -51,6 +51,7 @@ rules_root: governance/specifications/current
 branch_role_contract:
   rebuild-v2.1.1: IMMUTABLE_GOVERNANCE_RULESET
   governance-v2.2.33-candidate: GOVERNANCE_REVISION_CANDIDATE
+  governance-source-v2.2.33-candidate: GOVERNANCE_SOURCE_PACKAGE_CANDIDATE
   0921acpos: PRODUCT_EXECUTION_WORKLINE
 forbidden_in_ruleset_branch:
 - PRODUCT_SOURCE_DOCUMENT
@@ -75,6 +76,17 @@ mutation_policy:
   successor_candidate_product_execution: FORBIDDEN
   successor_candidate_product_completion_credit: 0
   predecessor_history_must_remain_immutable: true
+  source_package_successor_branch: governance-source-v2.2.33-candidate
+  source_package_successor_role: GOVERNANCE_SOURCE_PACKAGE_CANDIDATE
+  source_package_successor_authorization_record: https://github.com/steven-gold/orange-one-ai-viedo-v1.0/issues/52
+  source_package_successor_allowed_scope:
+  - .github/governance-source/active/source/**
+  - governance/source-successor/**
+  - .github/workflows/source-package-successor-validation.yml
+  source_package_successor_status_before_external_resign: UNSIGNED_NOT_CURRENT
+  source_package_successor_may_be_current_before_external_resign: false
+  source_package_successor_may_mutate_predecessor_branch: false
+  source_package_successor_may_touch_product_execution_branch: false
 candidate_validation_contract:
   exact_candidate_head_required: true
   required_workflow_names:
