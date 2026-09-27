@@ -158,8 +158,13 @@ def self_test() -> int:
         'signature_or_immutable_receipt_ref':'external://receipt'
       }
     }
-    signed=evaluate_snapshot(signed_receipt,signed_manifest,'blob1',synthetic_run,head,head,True)
-    cases.append({'case':'source_signed_exact_head_satisfies_source_promotion_gate','expected':'PASS','actual':signed.get('status'),'ok':signed.get('status')=='PASS'})
+    signed_unverified=evaluate_snapshot(signed_receipt,signed_manifest,'blob1',synthetic_run,head,head,True)
+    cases.append({'case':'source_signed_self_declaration_without_machine_verification_blocked','expected':'BLOCKED','actual':signed_unverified.get('status'),'ok':signed_unverified.get('status')=='BLOCKED'})
+    signed=evaluate_snapshot(
+      signed_receipt,signed_manifest,'blob1',synthetic_run,head,head,True,
+      {'status':'PASS','signer_identity':'SIGNER-1','mutation_actor_count':2,'failures':[]}
+    )
+    cases.append({'case':'source_signed_exact_head_with_machine_verified_independent_trust_satisfies_source_gate','expected':'PASS','actual':signed.get('status'),'ok':signed.get('status')=='PASS'})
     moved=evaluate_snapshot(synthetic_receipt,synthetic_manifest,'blob1',synthetic_run,head,'c'*40,False)
     cases.append({'case':'source_branch_move_invalidates_source_snapshot','expected':'BLOCKED','actual':moved.get('status'),'ok':moved.get('status')=='BLOCKED'})
     ok=all(x['ok'] for x in cases)

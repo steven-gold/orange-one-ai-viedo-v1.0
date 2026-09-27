@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import base64
 import json
+import re
 import urllib.parse
 import urllib.request
 from pathlib import Path
@@ -53,6 +54,146 @@ def fetch_runs(repository:str,branch:str,head_sha:str,token:str|None)->list[dict
     return runs
 
 
+def fetch_compare_mutation_actors(repository:str,base_sha:str,head_sha:str,token:str|None)->set[str]:
+    if len(base_sha)!=40 or len(head_sha)!=40:
+        raise RuntimeError('SOURCE_MUTATION_RANGE_SHA_INVALID')
+    url=f'https://api.github.com/repos/{repository}/compare/{base_sha}...{head_sha}?per_page=100'
+    payload=_api_json(url,token)
+    commits=payload.get('commits') or []
+    if not isinstance(commits,list):
+        raise RuntimeError('SOURCE_MUTATION_COMMIT_LIST_INVALID')
+    actors=set()
+    for commit in commits:
+        if not isinstance(commit,dict):
+            continue
+        for key in ('author','committer'):
+            login=str(((commit.get(key) or {}).get('login')) or '').strip()
+            if login:
+                actors.add(login)
+    if not commits:
+        raise RuntimeError('SOURCE_MUTATION_COMMIT_SET_EMPTY')
+    return actors
+
+
+def fetch_commit_tree_and_actor(repository:str,commit_sha:str,token:str|None)->tuple[str,str]:
+    payload=_api_json(f'https://api.github.com/repos/{repository}/commits/{commit_sha}',token)
+    tree_sha=str((((payload.get('commit') or {}).get('tree') or {}).get('sha')) or '')
+    actor=str(((payload.get('author') or {}).get('login')) or ((payload.get('committer') or {}).get('login')) or '').strip()
+    if not tree_sha or not actor:
+        raise RuntimeError('COMMIT_TREE_OR_ACTOR_UNRESOLVED')
+    return tree_sha,actor
+
+
+def fetch_github_blob_receipt(ref:str,token:str|None)->tuple[dict,str,str]:
+    match=re.fullmatch(r'https://github\.com/([^/]+)/([^/]+)/blob/([0-9a-fA-F]{40})/(.+)',str(ref or ''))
+    if not match:
+        raise RuntimeError('EXTERNAL_TRUST_RECEIPT_MUST_BE_COMMIT_PINNED_GITHUB_BLOB')
+    owner,repo_name,commit_sha,path=match.groups()
+    repository=f'{owner}/{repo_name}'
+    quoted=urllib.parse.quote(path,safe='/')
+    query=urllib.parse.urlencode({'ref':commit_sha})
+    payload=_api_json(f'https://api.github.com/repos/{repository}/contents/{quoted}?{query}',token)
+    encoded=str(payload.get('content') or '').replace('\n','')
+    if not encoded:
+        raise RuntimeError('EXTERNAL_TRUST_RECEIPT_CONTENT_MISSING')
+    raw=base64.b64decode(encoded).decode('utf-8')
+    try:
+        doc=yaml.safe_load(raw) or {}
+    except Exception as exc:
+        raise RuntimeError('EXTERNAL_TRUST_RECEIPT_PARSE_FAILED:'+type(exc).__name__)
+    if not isinstance(doc,dict):
+        raise RuntimeError('EXTERNAL_TRUST_RECEIPT_MAPPING_REQUIRED')
+    _tree,actor=fetch_commit_tree_and_actor(repository,commit_sha,token)
+    return doc,actor,commit_sha
+
+
+def fetch_github_issue(ref:str,token:str|None)->dict:
+    match=re.fullmatch(r'https://github\.com/([^/]+)/([^/]+)/issues/(\d+)',str(ref or ''))
+    if not match:
+        raise RuntimeError('SIGNER_AUTHORITY_REF_MUST_BE_GITHUB_ISSUE')
+    owner,repo_name,number=match.groups()
+    return _api_json(f'https://api.github.com/repos/{owner}/{repo_name}/issues/{number}',token)
+
+
+def verify_external_trust(
+    repository:str,
+    token:str|None,
+    source_manifest:dict,
+    receipt:dict,
+    source_head_sha:str,
+    source_tree_sha:str,
+    mutation_actors:set[str],
+)->dict:
+    trust=source_manifest.get('external_trust') or {}
+    signer=str(trust.get('signer_identity') or '').strip()
+    authority_ref=str(trust.get('signer_authority_ref') or '').strip()
+    immutable_ref=str(trust.get('signature_or_immutable_receipt_ref') or '').strip()
+    receipt_ref=str(receipt.get('external_trust_evidence_ref') or '').strip()
+    failures=[]
+    if immutable_ref!=receipt_ref or not immutable_ref:
+        failures.append('SOURCE_EXTERNAL_TRUST_REFERENCE_DRIFT')
+        return {'status':'NOT_VERIFIED','failures':failures}
+    try:
+        trust_doc,commit_actor,trust_commit_sha=fetch_github_blob_receipt(immutable_ref,token)
+    except Exception as exc:
+        return {'status':'NOT_VERIFIED','failures':['SOURCE_EXTERNAL_TRUST_RECEIPT_UNVERIFIABLE:'+type(exc).__name__+':'+str(exc)]}
+    if signer!=commit_actor:
+        failures.append('SOURCE_EXTERNAL_TRUST_SIGNER_COMMIT_ACTOR_MISMATCH')
+    if signer in mutation_actors or commit_actor in mutation_actors:
+        failures.append('SOURCE_EXTERNAL_TRUST_SELF_SIGN_OR_MUTATION_ACTOR_COLLISION')
+    required=(
+      'artifact_type','status','signer_identity','signer_authority_ref','source_package_identity',
+      'source_package_head_sha','source_package_content_hash','predecessor_trust_identity',
+      'signed_at','signature_or_immutable_receipt_ref'
+    )
+    missing=[key for key in required if trust_doc.get(key) in (None,'',[])]
+    if missing:
+        failures.append('SOURCE_EXTERNAL_TRUST_RECEIPT_FIELD_MISSING:'+','.join(missing))
+    expected_identity=str(source_manifest.get('artifact_uid') or '')
+    expected_content_hash='git-tree-sha1:'+source_tree_sha
+    expected_predecessor=str(source_manifest.get('predecessor_root_manifest_uid') or '')+'@'+str(source_manifest.get('predecessor_governance_head') or '')
+    expected={
+      'artifact_type':'GOVERNANCE_SOURCE_EXTERNAL_TRUST_RECEIPT',
+      'status':'SIGNED_PASS',
+      'signer_identity':signer,
+      'signer_authority_ref':authority_ref,
+      'source_package_identity':expected_identity,
+      'source_package_head_sha':source_head_sha,
+      'source_package_content_hash':expected_content_hash,
+      'predecessor_trust_identity':expected_predecessor,
+      'signature_or_immutable_receipt_ref':immutable_ref,
+    }
+    for key,value in expected.items():
+        if str(trust_doc.get(key) or '')!=str(value):
+            failures.append('SOURCE_EXTERNAL_TRUST_RECEIPT_BINDING_MISMATCH:'+key)
+    try:
+        authority=fetch_github_issue(authority_ref,token)
+        authority_body=str(authority.get('body') or '')
+        authority_actor=str(((authority.get('user') or {}).get('login')) or '')
+        if not authority_actor:
+            failures.append('SOURCE_EXTERNAL_TRUST_AUTHORITY_ACTOR_MISSING')
+        if signer not in authority_body or expected_identity not in authority_body:
+            failures.append('SOURCE_EXTERNAL_TRUST_AUTHORITY_SCOPE_MISSING')
+        authority_created=str(authority.get('created_at') or '')
+        trust_commit=_api_json(
+          'https://api.github.com/repos/'+immutable_ref.split('/')[3]+'/'+immutable_ref.split('/')[4]+'/commits/'+trust_commit_sha,
+          token
+        )
+        signed_commit_time=str(((trust_commit.get('commit') or {}).get('committer') or {}).get('date') or '')
+        if not authority_created or not signed_commit_time or authority_created>=signed_commit_time:
+            failures.append('SOURCE_EXTERNAL_TRUST_AUTHORITY_NOT_PREEXISTING_SIGNING')
+    except Exception as exc:
+        failures.append('SOURCE_EXTERNAL_TRUST_AUTHORITY_UNVERIFIABLE:'+type(exc).__name__+':'+str(exc))
+    return {
+      'status':'PASS' if not failures else 'NOT_VERIFIED',
+      'signer_identity':signer,
+      'trust_commit_sha':trust_commit_sha,
+      'source_package_content_hash':expected_content_hash,
+      'mutation_actor_count':len(mutation_actors),
+      'failures':failures,
+    }
+
+
 def fetch_source_manifest(repository:str,path:str,head_sha:str,token:str|None)->tuple[str,dict]:
     quoted=urllib.parse.quote(path,safe='/')
     query=urllib.parse.urlencode({'ref':head_sha})
@@ -68,7 +209,7 @@ def fetch_source_manifest(repository:str,path:str,head_sha:str,token:str|None)->
     return blob_sha,doc
 
 
-def evaluate_snapshot(receipt:dict,source_manifest:dict,manifest_blob_sha:str,run:dict,live_before:str,live_after:str,require_external_trust:bool)->dict:
+def evaluate_snapshot(receipt:dict,source_manifest:dict,manifest_blob_sha:str,run:dict,live_before:str,live_after:str,require_external_trust:bool,external_trust_verification:dict|None=None)->dict:
     failures=[]
     expected_head=str(receipt.get('source_head_sha') or '')
     expected_branch=str(receipt.get('candidate_source_branch') or '')
@@ -112,6 +253,7 @@ def evaluate_snapshot(receipt:dict,source_manifest:dict,manifest_blob_sha:str,ru
     if not internal_ok:
         failures.append('SOURCE_INTERNAL_EXACT_HEAD_VALIDATION_NOT_PROVEN')
 
+    external_check=external_trust_verification or {'status':'NOT_VERIFIED','failures':['SOURCE_EXTERNAL_TRUST_MACHINE_VERIFICATION_NOT_PERFORMED']}
     external_ready=(
       source_status=='SIGNED_NOT_CURRENT'
       and manifest_trust=='SIGNED_PASS'
@@ -120,9 +262,11 @@ def evaluate_snapshot(receipt:dict,source_manifest:dict,manifest_blob_sha:str,ru
       and bool(str(trust.get('signer_identity') or '').strip())
       and bool(str(trust.get('signer_authority_ref') or '').strip())
       and bool(str(trust.get('signature_or_immutable_receipt_ref') or '').strip())
+      and external_check.get('status')=='PASS'
     )
     if require_external_trust and not external_ready:
         failures.append('SOURCE_INDEPENDENT_EXTERNAL_TRUST_NOT_PROVEN')
+        failures.extend([x for x in (external_check.get('failures') or []) if x not in failures])
 
     return {
       'status':'PASS' if not failures else ('PASS_INTERNAL_UNSIGNED' if internal_ok and not require_external_trust and manifest_trust=='NOT_SIGNED' else 'BLOCKED'),
@@ -132,6 +276,7 @@ def evaluate_snapshot(receipt:dict,source_manifest:dict,manifest_blob_sha:str,ru
       'source_head_sha':expected_head,
       'source_status':source_status,
       'external_trust_status':manifest_trust,
+      'external_trust_machine_verification':external_check,
       'source_validation_run_id':run.get('id'),
       'failures':failures,
       'promotion_credit':0 if not external_ready else 1,
@@ -173,4 +318,17 @@ def validate_source_successor(repository:str,token:str|None,contract:dict,requir
         }
     manifest_blob,manifest=fetch_source_manifest(repository,manifest_path,live_before,token)
     live_after=fetch_live_head(repository,branch,token)
-    return evaluate_snapshot(receipt,manifest,manifest_blob,matching[0],live_before,live_after,require_external_trust)
+    external_check=None
+    if str((manifest.get('external_trust') or {}).get('status') or '')=='SIGNED_PASS' or require_external_trust:
+        try:
+            base_sha=str(manifest.get('parent_governance_candidate_head_at_branch_creation') or '')
+            mutation_actors=fetch_compare_mutation_actors(repository,base_sha,live_before,token)
+            source_tree_sha,_source_head_actor=fetch_commit_tree_and_actor(repository,live_before,token)
+            external_check=verify_external_trust(
+              repository,token,manifest,receipt,live_before,source_tree_sha,mutation_actors
+            )
+        except Exception as exc:
+            external_check={'status':'NOT_VERIFIED','failures':['SOURCE_EXTERNAL_TRUST_MACHINE_VERIFICATION_EXCEPTION:'+type(exc).__name__+':'+str(exc)]}
+    return evaluate_snapshot(
+      receipt,manifest,manifest_blob,matching[0],live_before,live_after,require_external_trust,external_check
+    )
