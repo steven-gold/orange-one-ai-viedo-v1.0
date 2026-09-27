@@ -320,7 +320,7 @@ def evaluate_snapshot(receipt:dict,source_manifest:dict,manifest_blob_sha:str,ru
         failures.append('SOURCE_PACKAGE_SELF_SIGN_POLICY_DRIFT')
 
     internal_ok=(
-      str(receipt.get('source_internal_status') or '') in {'PASS_INTERNAL_UNSIGNED','PASS_INTERNAL_SIGNED'}
+      str(receipt.get('source_internal_status') or '')=='PASS_INTERNAL_UNSIGNED'
       and not any(x in failures for x in (
         'SOURCE_SUCCESSOR_LIVE_HEAD_DRIFT','SOURCE_VALIDATION_RUN_HEAD_DRIFT',
         'SOURCE_VALIDATION_WORKFLOW_DRIFT','SOURCE_VALIDATION_RUN_ID_DRIFT',

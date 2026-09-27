@@ -381,7 +381,7 @@ def self_test() -> int:
     cases.append({'case':'source_internal_unsigned_valid_for_candidate_validation','expected':'PASS_INTERNAL_UNSIGNED','actual':internal.get('status'),'ok':internal.get('status')=='PASS_INTERNAL_UNSIGNED'})
     promotion=evaluate_snapshot(synthetic_receipt,synthetic_manifest,'blob1',synthetic_run,head,head,True)
     cases.append({'case':'source_unsigned_blocks_promotion','expected':'BLOCKED','actual':promotion.get('status'),'ok':promotion.get('status')=='BLOCKED'})
-    signed_receipt=dict(synthetic_receipt); signed_receipt.update({'source_internal_status':'PASS_INTERNAL_SIGNED','external_trust_status':'SIGNED_PASS','external_trust_evidence_ref':'external://receipt'})
+    signed_receipt=dict(synthetic_receipt); signed_receipt.update({'source_internal_status':'PASS_INTERNAL_UNSIGNED','external_trust_status':'SIGNED_PASS','external_trust_evidence_ref':'external://receipt'})
     signed=evaluate_snapshot(signed_receipt,synthetic_manifest,'blob1',synthetic_run,head,head,True,{'status':'PASS','signer_identity':'SIGNER-1','mutation_actor_count':2,'failures':[]})
     cases.append({'case':'external_trust_envelope_allows_frozen_source_content','expected':'PASS','actual':signed.get('status'),'ok':signed.get('status')=='PASS'})
     moved=evaluate_snapshot(synthetic_receipt,synthetic_manifest,'blob1',synthetic_run,head,'c'*40,False)
