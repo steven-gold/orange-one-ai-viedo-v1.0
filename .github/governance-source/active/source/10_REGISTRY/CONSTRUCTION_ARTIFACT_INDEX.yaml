@@ -236,6 +236,15 @@ profile_file_class_policy:
   common_policy_literal_root_prefixes: FORBIDDEN
   common_policy_literal_extension_allowlist: FORBIDDEN
 
+construction_profile_catalog_contract:
+  catalog_role: OPTIONAL_CAPABILITY_PROFILE_CATALOG
+  catalog_presence_does_not_imply_applicability: true
+  profile_selection_authority: CURRENT_AUTHORITY_AND_CURRENT_TOOLCHAIN_AUTHORITY
+  profile_selection_required_per_program_artifact: true
+  filename_or_extension_may_auto_select_profile: false
+  profile_may_enter_required_denominator_only_when_selected: true
+  unselected_profile_completion_credit: 0
+
 program_construction_profiles:
   UI_COMPONENT:
     rule_uid: REFRULE-PROFILE-01

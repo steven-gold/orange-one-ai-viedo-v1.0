@@ -89,6 +89,15 @@ def validate(root=ROOT):
     snap=(load(bp).get('semantic_snapshot') or {})
 
     # Immutable-baseline anchor: profiles / bundles must equal the semantic snapshot exactly.
+    catalog=idx.get('construction_profile_catalog_contract') or {}
+    if catalog.get('catalog_role')!='OPTIONAL_CAPABILITY_PROFILE_CATALOG': failures.append('construction_profile_catalog_role_invalid')
+    if catalog.get('catalog_presence_does_not_imply_applicability') is not True: failures.append('construction_profile_catalog_implies_applicability')
+    if catalog.get('profile_selection_authority')!='CURRENT_AUTHORITY_AND_CURRENT_TOOLCHAIN_AUTHORITY': failures.append('construction_profile_selection_authority_invalid')
+    if catalog.get('profile_selection_required_per_program_artifact') is not True: failures.append('construction_profile_selection_not_explicit')
+    if catalog.get('filename_or_extension_may_auto_select_profile') is not False: failures.append('construction_profile_filename_autoselection_not_forbidden')
+    if catalog.get('profile_may_enter_required_denominator_only_when_selected') is not True or catalog.get('unselected_profile_completion_credit')!=0:
+        failures.append('construction_profile_denominator_or_credit_contract_invalid')
+
     prules=snap.get('program_profile_reference_rules') or {}
     profiles=idx.get('program_construction_profiles') or {}
     if set(prules)!=set(profiles): failures.append('profile_reference_rule_set_mismatch')
