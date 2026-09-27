@@ -2,6 +2,8 @@
 from pathlib import Path
 import hashlib
 import json
+import re
+import subprocess
 import sys
 import yaml
 
@@ -15,6 +17,28 @@ def load_yaml(path):
     value = yaml.safe_load(path.read_text(encoding="utf-8")) or {}
     if not isinstance(value, dict):
         raise RuntimeError("mapping required: " + str(path.relative_to(ROOT)))
+    return value
+
+
+def load_yaml_at_commit(commit_sha, rel_path):
+    commit_sha = str(commit_sha or "")
+    rel_path = str(rel_path or "")
+    if not re.fullmatch(r"[0-9a-f]{40}", commit_sha):
+        raise RuntimeError("predecessor head sha invalid")
+    p = Path(rel_path)
+    if p.is_absolute() or ".." in p.parts or not rel_path:
+        raise RuntimeError("predecessor artifact path invalid")
+    try:
+        raw = subprocess.check_output(
+            ["git", "show", commit_sha + ":" + p.as_posix()],
+            cwd=ROOT,
+            stderr=subprocess.STDOUT,
+        )
+    except subprocess.CalledProcessError as exc:
+        raise RuntimeError("predecessor artifact unavailable at exact head") from exc
+    value = yaml.safe_load(raw.decode("utf-8")) or {}
+    if not isinstance(value, dict):
+        raise RuntimeError("predecessor artifact mapping required")
     return value
 
 
@@ -70,7 +94,10 @@ def resolve():
                     "predecessor_governance_revision", "authorization_record_url", "authorized_scope"):
             if identity.get(key) in (None, "", []):
                 raise RuntimeError("candidate governance identity missing: " + key)
-        root_manifest = load_yaml(ROOT / str(identity["predecessor_root_manifest_ref"]))
+        root_manifest = load_yaml_at_commit(
+            identity.get("predecessor_head_sha"),
+            identity.get("predecessor_root_manifest_ref"),
+        )
         if root_manifest.get("governance_revision") != identity.get("predecessor_governance_revision"):
             raise RuntimeError("candidate predecessor root revision drift")
         if manifest_doc.get("branch_release_state") != "CANDIDATE_NOT_PROMOTED":
@@ -93,7 +120,9 @@ def resolve():
         for forbidden_key in ("promotion_authorization_ref","candidate_predecessor_branch","candidate_predecessor_head_sha","promotion_candidate_branch","promotion_candidate_head_sha","promotion_candidate_tree_sha"):
             if forbidden_key in lineage:
                 raise RuntimeError("candidate specification manifest concrete lineage field forbidden: " + forbidden_key)
-        if lineage.get("source_bytes_changed_by_this_successor") is not False or lineage.get("source_identity_reused_only_because_source_bytes_are_unchanged") is not True:
+        source_changed = lineage.get("source_bytes_changed_by_this_successor")
+        source_reused = lineage.get("source_identity_reused_only_because_source_bytes_are_unchanged")
+        if not isinstance(source_changed, bool) or not isinstance(source_reused, bool) or source_changed == source_reused:
             raise RuntimeError("candidate specification manifest source lineage drift")
 
     digest = hashlib.sha256()
