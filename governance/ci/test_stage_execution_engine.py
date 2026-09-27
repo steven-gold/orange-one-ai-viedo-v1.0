@@ -113,7 +113,7 @@ yaml.safe_dump({
  'artifact_type':'WORK_UNIT','work_unit_uid':_synthetic_wu,'stage_uid':stage_uid,'governed_unit_uid':'synthetic:STAGE01',TASK_LAYER_FIELD:TASK_LAYER_VALUE,
  'status':'CLOSED','current_status':'CLOSED','normative_execution_matrix_ref':_matrix_rel,
  'required_outputs':list(st['outputs']),
- 'operation_bindings':{x:{'executor_owner':'synthetic.executor','result_owner':'synthetic.result'} for x in st['operations']},
+ 'operation_bindings':{x:{'applicability':'REQUIRED','executor_owner':'synthetic.executor','result_owner':'synthetic.result'} for x in st['operations']},
  'scanner_bindings':{x:{'scanner_owner':'synthetic.scanner','result_owner':'synthetic.scan'} for x in ad['scanner_dimensions']}
 },(_synthetic_dir/'WORK_UNIT.yaml').open('w',encoding='utf-8'),sort_keys=False)
 yaml.safe_dump({
@@ -304,6 +304,7 @@ work={
  'work_unit_uid':'SYNTHETIC-WU',TASK_LAYER_FIELD:TASK_LAYER_VALUE,'stage_uid':wstage,'current_status':'ACTIVE_PREEXECUTION',
  'required_outputs':list(wst['outputs']),
  'operation_bindings':{x:{
+    'applicability':'REQUIRED',
     'executor_owner':'synthetic.executor',
     'result_owner':'synthetic.results',
     'executor_protocol':'PYTHON_STAGE_OPERATION_V1',
@@ -794,6 +795,7 @@ receipt.write_text(yaml.safe_dump(obj,sort_keys=False),encoding="utf-8")
     _operation_bindings={}
     for _op in _ops:
         _operation_bindings[_op]={
+          'applicability':'REQUIRED',
           'executor_owner':_executor_rel,
           'result_owner':'SYNTHETIC_RESULT_OWNER',
           'executor_protocol':'PYTHON_STAGE_OPERATION_V1',
@@ -846,6 +848,17 @@ receipt.write_text(yaml.safe_dump(obj,sort_keys=False),encoding="utf-8")
         _bad['operation_bindings'][_ops[0]]['operation_receipt_ref']='outside-receipt.yaml'
         (_wd/'WORK_UNIT.yaml').write_text(yaml.safe_dump(_bad,sort_keys=False),encoding='utf-8')
         expect_stage_engine_block('effectful_receipt_outside_work_unit',lambda:eng.execute_active(_sid),'ACTIVE_STAGE_OPERATION_RECEIPT_OUTSIDE_WORK_UNIT')
+
+        _bad=deepcopy(_work)
+        _bad['operation_bindings'][_ops[0]].pop('applicability',None)
+        (_wd/'WORK_UNIT.yaml').write_text(yaml.safe_dump(_bad,sort_keys=False),encoding='utf-8')
+        expect_stage_engine_block('effectful_operation_applicability_missing',lambda:eng.execute_active(_sid),'ACTIVE_STAGE_OPERATION_APPLICABILITY_INVALID')
+
+        _bad=deepcopy(_work)
+        _bad['operation_bindings'][_ops[0]]['applicability']='AUTHORIZED_NOT_APPLICABLE'
+        _bad['operation_bindings'][_ops[0]].pop('authority_evidence_ref',None)
+        (_wd/'WORK_UNIT.yaml').write_text(yaml.safe_dump(_bad,sort_keys=False),encoding='utf-8')
+        expect_stage_engine_block('na_operation_without_authority_blocked',lambda:eng.execute_active(_sid),'ACTIVE_STAGE_OPERATION_NA_AUTHORITY_MISSING')
 
         (_wd/'WORK_UNIT.yaml').write_text(yaml.safe_dump(_work,sort_keys=False),encoding='utf-8')
         _no_receipt_code='''#!/usr/bin/env python3
@@ -1177,7 +1190,7 @@ def materialize_synthetic_stage_context(stage_uid,evidence,result):
       'artifact_type':'WORK_UNIT','work_unit_uid':wu,'stage_uid':stage_uid,TASK_LAYER_FIELD:TASK_LAYER_VALUE,
       'status':'CLOSED' if result=='PASS' else 'BLOCKED','current_status':'CLOSED' if result=='PASS' else 'BLOCKED',
       'normative_execution_matrix_ref':matrix_rel,'required_outputs':list(st['outputs']),
-      'operation_bindings':{x:{'executor_owner':'synthetic.executor','result_owner':'synthetic.result'} for x in st['operations']},
+      'operation_bindings':{x:{'applicability':'REQUIRED','executor_owner':'synthetic.executor','result_owner':'synthetic.result'} for x in st['operations']},
       'scanner_bindings':{x:{'scanner_owner':'synthetic.scanner','result_owner':'synthetic.scan'} for x in ad['scanner_dimensions']}
     },(wd/'WORK_UNIT.yaml').open('w',encoding='utf-8'),sort_keys=False)
     yaml.safe_dump({

@@ -174,7 +174,9 @@ def validate_definition_data(profile,adapters):
     if set(adapters.get('owner_remediation_routes') or {})!=ROUTE_KEYS: fail('OWNER_REMEDIATION_ROUTE_DENOMINATOR_DRIFT')
     driver=adapters.get('execution_driver_contract') or {}
     expected_driver={
-      'driver_binding_source':'ACTIVE_WORK_UNIT','operation_universe_source':'SELECTED_PROFILE_STAGE_OPERATIONS',
+      'driver_binding_source':'ACTIVE_WORK_UNIT','operation_universe_source':'SELECTED_PROFILE_STAGE_OPERATIONS_FILTERED_BY_CURRENT_AUTHORITY_AND_APPLICABILITY',
+      'operation_applicability_field':'applicability','allowed_operation_applicability':['REQUIRED','AUTHORIZED_NOT_APPLICABLE'],
+      'authorized_not_applicable_requires_authority_evidence':True,'authorized_not_applicable_invokes_executor':False,
       'output_producer_source':'SELECTED_PROFILE_STAGE_OUTPUT_PRODUCERS','semantic_adapter_source':'STAGE_EXECUTION_SEMANTIC_ADAPTER_REGISTRY',
       'scanner_universe_source':'STAGE_SEMANTIC_ADAPTER_SCANNER_DIMENSIONS','exact_operation_binding_coverage_required':True,
       'exact_scanner_binding_coverage_required':True,'executor_owner_required_per_operation':True,'result_owner_required_per_operation':True,
@@ -184,7 +186,7 @@ def validate_definition_data(profile,adapters):
       'operation_executor_protocol_required':True,
       'allowed_operation_executor_protocols':['PYTHON_STAGE_OPERATION_V1'],
       'operation_receipt_ref_required_per_operation':True,
-      'operation_receipt_status_required':'PASS',
+      'operation_receipt_terminal_statuses':['PASS','NOT_APPLICABLE_WITH_PROOF'],
       'operation_execution_unit':'ONE_OPERATION_PER_ENGINE_INVOCATION',
       'operation_checkpoint_after_pass_required':True,
       'stage_closure_may_be_auto_claimed_by_operation_executor':False}
@@ -631,6 +633,8 @@ def _result_map(rows,key,label):
         uid=str(row[key])
         if uid in out: fail(f'{label}_DUPLICATE:{uid}')
         if row.get('status') not in RESULT_TERMINAL_STATUSES: fail(f'{label}_STATUS_INVALID:{uid}')
+        if row.get('status')=='NOT_APPLICABLE_WITH_PROOF' and not row.get('proof'):
+            fail(f'{label}_NA_PROOF_MISSING:{uid}')
         out[uid]=row
     return out
 
@@ -1208,11 +1212,62 @@ def execute_active(stage_uid):
     binding=bindings.get(operation_uid)
     if not isinstance(binding,dict):
         fail('ACTIVE_STAGE_CURRENT_OPERATION_BINDING_MISSING:'+operation_uid)
-    owner=str(binding.get('executor_owner') or '')
-    protocol=str(binding.get('executor_protocol') or '')
+    driver=adapters.get('execution_driver_contract') or {}
+    applicability=str(binding.get(str(driver.get('operation_applicability_field') or 'applicability')) or '')
+    allowed_applicability=set(map(str,driver.get('allowed_operation_applicability') or []))
+    if applicability not in allowed_applicability:
+        fail('ACTIVE_STAGE_OPERATION_APPLICABILITY_INVALID:'+operation_uid)
     result_owner=str(binding.get('result_owner') or '')
     receipt_ref=str(binding.get('operation_receipt_ref') or '')
-    driver=adapters.get('execution_driver_contract') or {}
+    if not result_owner or not receipt_ref:
+        fail('ACTIVE_STAGE_OPERATION_BINDING_RESULT_OR_RECEIPT_MISSING:'+operation_uid)
+    receipt_rel=Path(receipt_ref)
+    if receipt_rel.is_absolute() or '..' in receipt_rel.parts:
+        fail('ACTIVE_STAGE_OPERATION_RECEIPT_REF_INVALID:'+operation_uid)
+    receipt_path=(execution_root/receipt_rel).resolve()
+    try:
+        receipt_path.relative_to(work_dir.resolve())
+    except ValueError:
+        fail('ACTIVE_STAGE_OPERATION_RECEIPT_OUTSIDE_WORK_UNIT:'+operation_uid)
+    if receipt_path.exists():
+        fail('ACTIVE_STAGE_OPERATION_RECEIPT_ALREADY_EXISTS:'+receipt_ref)
+    if applicability=='AUTHORIZED_NOT_APPLICABLE':
+        authority_ref=str(binding.get('authority_evidence_ref') or '')
+        if driver.get('authorized_not_applicable_requires_authority_evidence') is not True or not authority_ref:
+            fail('ACTIVE_STAGE_OPERATION_NA_AUTHORITY_MISSING:'+operation_uid)
+        if driver.get('authorized_not_applicable_invokes_executor') is not False:
+            fail('ACTIVE_STAGE_OPERATION_NA_EXECUTOR_POLICY_INVALID')
+        receipt_path.parent.mkdir(parents=True,exist_ok=True)
+        receipt={
+          'artifact_type':'OPERATION_EXECUTION_RECEIPT',
+          'stage_uid':stage_uid,
+          'work_unit_uid':str(work.get('work_unit_uid') or ''),
+          'operation_uid':operation_uid,
+          'governance_uid':gov,
+          'status':'NOT_APPLICABLE_WITH_PROOF',
+          'result_owner':result_owner,
+          'authority_evidence_ref':authority_ref,
+          'proof':authority_ref
+        }
+        _atomic_yaml_write(receipt_path,receipt)
+        completed.append(operation_uid)
+        next_op=expected_ops[len(completed)] if len(completed)<len(expected_ops) else 'COMPLETE'
+        state['completed_operations']=completed
+        state['current_operation']=next_op
+        state['status']='IN_PROGRESS' if next_op!='COMPLETE' else 'EXECUTION_COMPLETE_CLOSURE_PENDING'
+        if 'current_status' in state:
+            state['current_status']=state['status']
+        state['last_operation_uid']=operation_uid
+        state['last_operation_receipt_ref']=receipt_ref
+        _atomic_yaml_write(state_path,state)
+        print(json.dumps({
+          'result':'NOT_APPLICABLE_WITH_PROOF','stage_uid':stage_uid,'work_unit_uid':str(work.get('work_unit_uid') or ''),
+          'operation_uid':operation_uid,'authority_evidence_ref':authority_ref,'operation_receipt_ref':receipt_ref,
+          'next_operation':next_op,'stage_status':state['status'],'stage_closure_claimed':False
+        },sort_keys=True))
+        return True
+    owner=str(binding.get('executor_owner') or '')
+    protocol=str(binding.get('executor_protocol') or '')
     if protocol not in set(map(str,driver.get('allowed_operation_executor_protocols') or [])):
         fail('ACTIVE_STAGE_EXECUTOR_PROTOCOL_FORBIDDEN:'+protocol)
     if protocol!='PYTHON_STAGE_OPERATION_V1':
@@ -1229,16 +1284,6 @@ def execute_active(stage_uid):
         fail('ACTIVE_STAGE_EXECUTOR_OWNER_MISSING:'+owner)
     if executor.resolve()==Path(__file__).resolve():
         fail('COMMON_ENGINE_RECURSIVE_EXECUTOR_FORBIDDEN')
-    receipt_rel=Path(receipt_ref)
-    if receipt_rel.is_absolute() or '..' in receipt_rel.parts:
-        fail('ACTIVE_STAGE_OPERATION_RECEIPT_REF_INVALID:'+operation_uid)
-    receipt_path=(execution_root/receipt_rel).resolve()
-    try:
-        receipt_path.relative_to(work_dir.resolve())
-    except ValueError:
-        fail('ACTIVE_STAGE_OPERATION_RECEIPT_OUTSIDE_WORK_UNIT:'+operation_uid)
-    if receipt_path.exists():
-        fail('ACTIVE_STAGE_OPERATION_RECEIPT_ALREADY_EXISTS:'+receipt_ref)
     adapter=(adapters.get('stages') or {}).get(stage_uid) or {}
     if adapter.get('effectful_executor_owner_resolution')!='CURRENT_WORK_UNIT_OPERATION_BINDING_ONLY':
         fail('ACTIVE_STAGE_EXECUTOR_OWNER_RESOLUTION_POLICY_INVALID:'+stage_uid)
@@ -1269,7 +1314,7 @@ def execute_active(stage_uid):
       'work_unit_uid':str(work.get('work_unit_uid') or ''),
       'operation_uid':operation_uid,
       'governance_uid':gov,
-      'status':str(driver.get('operation_receipt_status_required') or 'PASS'),
+      'status':'PASS',
       'executor_owner':owner,
       'executor_protocol':protocol,
       'result_owner':result_owner

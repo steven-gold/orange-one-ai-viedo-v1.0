@@ -150,7 +150,11 @@ owner_remediation_routes:
   EXTERNAL_AUTHORITY_GAP: EXTERNAL_OR_SHARED_AUTHORITY
 execution_driver_contract:
   driver_binding_source: ACTIVE_WORK_UNIT
-  operation_universe_source: SELECTED_PROFILE_STAGE_OPERATIONS
+  operation_universe_source: SELECTED_PROFILE_STAGE_OPERATIONS_FILTERED_BY_CURRENT_AUTHORITY_AND_APPLICABILITY
+  operation_applicability_field: applicability
+  allowed_operation_applicability: [REQUIRED, AUTHORIZED_NOT_APPLICABLE]
+  authorized_not_applicable_requires_authority_evidence: true
+  authorized_not_applicable_invokes_executor: false
   output_producer_source: SELECTED_PROFILE_STAGE_OUTPUT_PRODUCERS
   semantic_adapter_source: STAGE_EXECUTION_SEMANTIC_ADAPTER_REGISTRY
   scanner_universe_source: STAGE_SEMANTIC_ADAPTER_SCANNER_DIMENSIONS
@@ -167,7 +171,7 @@ execution_driver_contract:
   operation_executor_protocol_required: true
   allowed_operation_executor_protocols: [PYTHON_STAGE_OPERATION_V1]
   operation_receipt_ref_required_per_operation: true
-  operation_receipt_status_required: PASS
+  operation_receipt_terminal_statuses: [PASS, NOT_APPLICABLE_WITH_PROOF]
   operation_execution_unit: ONE_OPERATION_PER_ENGINE_INVOCATION
   operation_checkpoint_after_pass_required: true
   stage_closure_may_be_auto_claimed_by_operation_executor: false

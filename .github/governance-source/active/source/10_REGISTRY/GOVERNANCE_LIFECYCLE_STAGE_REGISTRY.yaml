@@ -89,6 +89,15 @@ universal_stage_stepwise_execution_contract:
   bulk_stage_materialization: FORBIDDEN
   future_stage_preproduction: FORBIDDEN
   successor_stage_execution_before_predecessor_closure: FORBIDDEN
+  operation_denominator_contract:
+    registered_operation_universe_is_capability_catalog_not_required_denominator: true
+    required_denominator_source: CURRENT_STAGE_REGISTERED_OPERATIONS_FILTERED_BY_CURRENT_AUTHORITY_AND_APPLICABILITY
+    every_operation_binding_requires_explicit_applicability: true
+    allowed_applicability: [REQUIRED, AUTHORIZED_NOT_APPLICABLE]
+    authorized_not_applicable_requires_authority_evidence: true
+    not_applicable_operation_must_not_invoke_effectful_executor: true
+    not_applicable_operation_receipt_status: NOT_APPLICABLE_WITH_PROOF
+    omitted_or_unclassified_applicability: BLOCK
   operation_sequence:
   - RESOLVE_OPERATION
   - VERIFY_OPERATION_INPUTS
@@ -999,6 +1008,7 @@ stages:
   - OP-23-STORAGE_RUNTIME
   - PROGRAM_ARTIFACT_REGISTRATION
   - IMPLEMENTATION_MANIFEST_COMPILE
+  - IMPLEMENTATION_EVIDENCE_COMPILE
   outputs:
   - IMPLEMENTATION_MANIFEST
   - PROGRAM_ARTIFACT_SET
@@ -1006,7 +1016,7 @@ stages:
   output_producers:
     IMPLEMENTATION_MANIFEST: IMPLEMENTATION_MANIFEST_COMPILE
     PROGRAM_ARTIFACT_SET: PROGRAM_ARTIFACT_REGISTRATION
-    IMPLEMENTATION_EVIDENCE: OP-23-STORAGE_RUNTIME
+    IMPLEMENTATION_EVIDENCE: IMPLEMENTATION_EVIDENCE_COMPILE
   validators:
   - VAL-GOV-003
   - VAL-GOV-010
