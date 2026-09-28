@@ -859,6 +859,14 @@ def _validate_stage_entry_control_state(stage_uid,execution_root,work,scope,work
 
     work_path=(execution_root/Path(work_rel)).resolve()
     state_path=work_path.parent/'EXECUTION_STATE.yaml'
+    ledger_bindings=work.get('current_ledger_bindings') or {}
+    state_binding=ledger_bindings.get('EXECUTION_STATE') if isinstance(ledger_bindings,dict) else None
+    state_ref=str((state_binding or {}).get('artifact_ref') or '')
+    if not state_ref:
+        fail('STAGE_ENTRY_EXECUTION_STATE_LEDGER_BINDING_MISSING:'+stage_uid)
+    state_bound=(execution_root/Path(state_ref)).resolve()
+    if state_bound!=state_path:
+        fail('STAGE_ENTRY_EXECUTION_STATE_LEDGER_ALIAS_DRIFT:'+stage_uid)
     _validate_local_file_artifact(state_path,'STAGE_ENTRY_EXECUTION_STATE')
     state=_external_yaml(state_path,'STAGE_ENTRY_EXECUTION_STATE')
     if str(state.get('stage_uid') or '')!=stage_uid:
@@ -945,7 +953,12 @@ def _validate_current_stage_state_bundle(stage_uid,e,stage,gov):
         fail('CURRENT_SCOPE_STAGE_IDENTITY_DRIFT')
     work_dir=scope_path.parent
     work=_external_yaml(work_dir/'WORK_UNIT.yaml','CURRENT_WORK_UNIT')
-    state=_external_yaml(work_dir/'EXECUTION_STATE.yaml','CURRENT_EXECUTION_STATE')
+    state_path=work_dir/'EXECUTION_STATE.yaml'
+    state=_external_yaml(state_path,'CURRENT_EXECUTION_STATE')
+    state_binding=((work.get('current_ledger_bindings') or {}).get('EXECUTION_STATE') or {})
+    state_ref=str(state_binding.get('artifact_ref') or '')
+    if not state_ref or (execution_root/Path(state_ref)).resolve()!=state_path.resolve():
+        fail('CURRENT_STATE_LEDGER_ALIAS_DRIFT:'+stage_uid)
     if work.get('stage_uid')!=stage_uid or state.get('stage_uid')!=stage_uid:
         fail('CURRENT_WORK_OR_STATE_STAGE_IDENTITY_DRIFT')
     if scope.get('work_unit_uid')!=work.get('work_unit_uid') or state.get('work_unit_uid')!=work.get('work_unit_uid'):
