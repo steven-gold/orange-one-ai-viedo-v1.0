@@ -1,18 +1,16 @@
-# governance-single-branch-v2.2.33-consolidated-on-rebuild-v2.1.1-20260927
+# governance-single-branch-v2.2.34-word-derived-stage-internal-validation-20260928
 schema_version: 1
 registry_uid: GOV-RULESET-REGISTRY-IMMUTABLE
-registry_role: GOVERNANCE_REVISION_CANDIDATE_ENTRYPOINT
-status: ACTIVE_SINGLE_BRANCH_VALIDATION
+registry_role: CURRENT_GOVERNANCE_ENTRYPOINT
+status: CURRENT
 branch: rebuild-v2.1.1
 governance_identity:
-  governance_uid: GOV-REV-20260927-GOVERNANCE-IDENTITY-NEGATIVE-TRACE-AUDITOR-INDEPENDENCE-HARDENING
-  governance_revision: v2.2.33-governance-identity-negative-trace-auditor-independence-hardening-20260927
-  display_version: v2.2.33
+  governance_uid: GOV-REV-20260928-WORD-DERIVED-STAGE-INTERNAL-VALIDATION
+  governance_revision: v2.2.34-word-derived-stage-internal-validation-20260928
+  display_version: v2.2.34
   identity_authority: governance/specifications/REGISTRY.yaml
-  status: CANDIDATE
-  identity_state: PROVISIONAL_EXACT_HEAD_AND_BUNDLE_DIGEST_BOUND
-  released_immutable_identity: false
-  immutable_release_identity_assigned_only_at_explicit_promotion: true
+  status: CURRENT
+  identity_state: EXACT_HEAD_AND_BUNDLE_DIGEST_BOUND
   specification_bundle_digest_algorithm: SHA256_RELATIVE_PATH_NUL_BYTES_NUL_SORTED_V1
   specification_bundle_sha256: 7f09a6404553248e4a15ea83ecffceb15cb2a4121c8c54e32aebf95ffb73c0f4
   canonical_rule_registry_uid: GOV-CANONICAL-RULE-REGISTRY-001
@@ -21,15 +19,16 @@ governance_identity:
   predecessor_head_sha: c336a76c22a5db65080f749f26875edfa5169457
   predecessor_root_manifest_ref: .github/governance-source/active/source/10_REGISTRY/GOVERNANCE_ROOT_MANIFEST.yaml
   predecessor_governance_revision: v2.2.32-governance-projection-alignment-20260926
-  authorization_record_url: https://github.com/steven-gold/orange-one-ai-viedo-v1.0/issues/57
+  authorization_record_url: https://github.com/steven-gold/orange-one-ai-viedo-v1.0/issues/64
   authorization_record_kind: GITHUB_GOVERNANCE_CHANGE_RECORD
   authorization_preexists_normative_mutation: true
   authorized_scope:
-  - SINGLE_BRANCH_GOVERNANCE_CONSOLIDATION
-  - SOURCE_PACKAGE_REINTEGRATION
-  - ACTIVE_BRANCH_BINDING_NORMALIZATION
-  - ERRONEOUS_BRANCH_RETIREMENT
-  - CONTINUE_GAP_REMEDIATION_ON_REBUILD
+  - WORD_DERIVED_CURRENT_GOVERNANCE
+  - INTERNAL_DETERMINISTIC_STAGE_VALIDATION
+  - NON_WORD_EXTERNAL_GATE_REMOVAL
+  - CURRENT_STAGE_FLOW_DECONTAMINATION
+  - EXACT_HEAD_TRACEABILITY
+  - CONTINUE_STAGE_GAP_REMEDIATION
   supplemental_authorization_records:
   - record_url: https://github.com/steven-gold/orange-one-ai-viedo-v1.0/issues/52
     record_kind: GITHUB_GOVERNANCE_CHANGE_RECORD
@@ -40,30 +39,6 @@ governance_identity:
     - IMMUTABLE_SOURCE_PACKAGE_SUCCESSOR_RESIGN
     - PREDECESSOR_EVIDENCE_CONSUMER_MIGRATION
     - SOURCE_PACKAGE_DEFECT_REENTRY
-  - record_url: https://github.com/steven-gold/orange-one-ai-viedo-v1.0/issues/54
-    record_kind: GITHUB_GOVERNANCE_CHANGE_RECORD
-    authorization_base_head: d26ad48739c49158548dcccf95f28653185862a6
-    preexists_normative_mutation_after_base: true
-    candidate_branch: rebuild-v2.1.1
-    authorized_scope:
-    - GOVERNANCE_PROMOTION_TRANSACTION_MATERIALIZATION
-    - PROMOTION_EXACT_HEAD_AND_EVIDENCE_BINDING
-    - RELEASE_IDENTITY_MATERIALIZATION
-    - POST_PROMOTION_RECONCILIATION_AND_REVERIFY_HANDOFF
-    - PROMOTION_ABORT_AND_IDEMPOTENCY
-  - record_url: https://github.com/steven-gold/orange-one-ai-viedo-v1.0/issues/59
-    record_kind: GITHUB_GOVERNANCE_CHANGE_RECORD
-    authorization_base_head: 794ba435e1acdcb957fa5716d9ad8a9b9fac10b7
-    preexists_normative_mutation_after_base: true
-    candidate_branch: rebuild-v2.1.1
-    authorized_scope:
-    - PRODUCT_SELECTED_GOVERNANCE_RELEASE
-    - GOVERNANCE_REVISION_TRANSITION_RECEIPT
-    - CANDIDATE_GOVERNANCE_NO_PRODUCT_EXECUTION
-    - APPLICATION_BASELINE_ADMISSION_MANIFEST
-    - APPLICATION_BASELINE_MATERIALIZATION_RECEIPT
-    - STAGE04_TO_STAGE05_REENTRY
-    - WORKFLOW_BINDING_REGRESSION
   - record_url: https://github.com/steven-gold/orange-one-ai-viedo-v1.0/issues/60
     record_kind: GITHUB_GOVERNANCE_CHANGE_RECORD
     authorization_base_head: 66a77b1697c16593e6c0fc4bd755afc81b5b6101
@@ -149,89 +124,39 @@ mutation_policy:
   source_package_successor_may_be_current_before_external_resign: true
   source_package_successor_may_mutate_predecessor_branch: false
   source_package_successor_may_touch_product_execution_branch: false
-candidate_validation_contract:
-  exact_candidate_head_required: true
-  remediation_generated_successor_head_requires_fresh_exact_head_validation: true
-  remediation_producer_success_is_not_successor_head_validation: true
-  prior_head_workflow_result_may_credit_successor_head: false
-  zero_required_workflow_runs_on_successor_head: BLOCK
-  self_mutating_governance_workflow_must_declare_successor_validation_terminalization: true
-  successor_validation_terminalization_allowed_mechanisms:
-  - AUTHORIZED_COMMIT_OR_REF_UPDATE_THAT_TRIGGERS_REGISTERED_REQUIRED_PUSH_WORKFLOWS
-  - EXPLICIT_EXACT_HEAD_VALIDATION_DISPATCH_WHEN_WORKFLOW_AND_REGISTRY_ALLOW_IT
-  semantic_reference_change_transaction_required: true
-  semantic_reference_transaction_required_owners:
-  - REFERENCE_RULE_REGISTRY
-  - SEMANTIC_AUTHORITY_BASELINE
-  - REFERENCE_SEMANTICS_VALIDATOR_BINDING
-  - GOVERNANCE_ROOT_MANIFEST
-  - CHECKSUMS
-  - AUDIT_BASELINE
-  - GOVERNANCE_REQUIREMENT_INDEX
-  - REGRESSION_EXPECTATION_OWNER
-  semantic_reference_transaction_partial_sync: BLOCK
-  reusable_page_stage_core_excludes_external_product_admission: true
-  external_product_admission_contract_container: PRODUCT_EXECUTION_ENVIRONMENT_ADMISSION_REGISTRY.product_execution_admission_contracts
-  product_specific_branch_repository_or_framework_may_enter_page_stage_semantics: false
+current_validation_contract:
+  authority_model: WORD_DERIVED_INTERNAL_VALIDATION
+  word_source_is_primary_product_design_source: true
+  ai_supplementation_policy: SAME_WORD_CONTEXT_AND_EXISTING_CANONICAL_SYSTEM_RELATIONSHIPS_ONLY
+  generated_content_may_become_second_source_authority: false
+  exact_current_head_required: true
+  prior_head_workflow_result_may_credit_current_head: false
+  historical_pass_substitution: FORBIDDEN
   required_workflow_names:
-  - Current Governance Cleanup Validation
+  - Current Governance Stage Internal Validation
   - Mother Spec Neutrality Audit
   required_workflow_bindings:
-    Current Governance Cleanup Validation:
-      path: .github/workflows/current-governance-cleanup-validation.yml
+    Current Governance Stage Internal Validation:
+      path: .github/workflows/current-governance-stage-internal-validation.yml
       event: push
     Mother Spec Neutrality Audit:
       path: .github/workflows/mother-spec-neutrality-audit.yml
       event: push
-  workflow_name_only_may_grant_validation_credit: false
-  workflow_path_event_head_branch_binding_required: true
   exact_head_commit_status_receipts_required: true
   required_commit_status_contexts:
-  - Governance/Current Cleanup
+  - Governance/Stage Internal Validation
   - Governance/Mother Neutrality
   commit_status_sha_must_equal_validation_head: true
   commit_status_success_required: true
-  commit_status_receipt_is_external_evidence_not_branch_mutation: true
-  workflow_external_action_ref_mode: FULL_40_HEX_COMMIT_SHA_ONLY
-  workflow_external_action_mutable_ref: BLOCK
-  workflow_action_pinning_authorization_record: https://github.com/steven-gold/orange-one-ai-viedo-v1.0/issues/55
-  workflow_action_pinning_required_paths:
-  - .github/workflows/current-governance-cleanup-validation.yml
-  - .github/workflows/mother-spec-neutrality-audit.yml
-  - .github/workflows/common-stage-execution-engine.yml
-  - .github/workflows/source-package-successor-materialization.yml
-  - .github/workflows/source-package-successor-validation.yml
-  source_successor_workflow_action_pinning_required: true
-  governance_ci_environment_authorization_record: https://github.com/steven-gold/orange-one-ai-viedo-v1.0/issues/56
-  governance_ci_runner_label: ubuntu-24.04
-  governance_ci_python_version: 3.11.16
-  governance_ci_dependency_lock_path: governance/ci/requirements-governance.lock
-  governance_ci_dependency_install_mode: PIP_REQUIRE_HASHES
-  governance_ci_pyyaml_version: 6.0.2
-  governance_ci_pyyaml_sha256: 3ad2a3decf9aaba3d29c8f537ac4b243e36bef957511b4766cb0057d32b0be85
-  governance_ci_environment_drift: BLOCK
-  common_stage_workflow_contents_permission: read
-  source_materialization_workflow_contents_permission: write
-  source_materialization_workflow_actions_permission: none
-  source_materialization_validation_trigger_mode: PUSH_EVENT_ONLY
-  source_materialization_workflow_candidate_only: true
-  source_materialization_workflow_dispatch_ref_must_equal_active_governance_branch: true
-  source_materialization_workflow_remote_head_cas_required: true
-  source_materialization_workflow_forbidden_when_released: true
-  required_workflows_run_on_every_candidate_push: true
-  candidate_required_workflow_path_filter: FORBIDDEN
-  live_branch_head_must_equal_validation_head: true
-  live_branch_head_recheck_after_evidence_validation_required: true
-  candidate_identity_binding_mode: PROVISIONAL_EXACT_HEAD_AND_BUNDLE_DIGEST_BOUND
-  candidate_identity_may_be_reported_as_released_immutable: false
-  immutable_release_identity_must_be_assigned_during_explicit_promotion: true
-  specification_bundle_digest_algorithm: SHA256_RELATIVE_PATH_NUL_BYTES_NUL_SORTED_V1
-  specification_bundle_sha256: 7f09a6404553248e4a15ea83ecffceb15cb2a4121c8c54e32aebf95ffb73c0f4
-  canonical_rule_registry_uid: GOV-CANONICAL-RULE-REGISTRY-001
-  canonical_rule_registry_digest: 310fc6ffe85802ab730f7715a30ef023fd3fe6067ba06d88bd220b60561fd901
-  canonical_rule_binding_validator: governance/ci/validate_governance_portability.py
-  current_cleanup_required_commands:
-  - python governance/ci/governance_promotion_transaction.py --self-test
+  external_human_or_account_evidence_required: false
+  external_auditor_required: false
+  external_signer_required: false
+  detached_external_trust_required: false
+  promotion_required_before_product_stage_execution: false
+  released_governance_selection_required: false
+  product_stage_execution_governance_binding: EXACT_CURRENT_VALIDATED_GOVERNANCE_SNAPSHOT
+  current_governance_selection_artifact: STAGE_EXECUTION/SHARED_AUTHORITY/CURRENT_GOVERNANCE_SELECTION.yaml
+  validation_commands:
   - python governance/ci/stage_execution_engine.py --definition-audit-all
   - python governance/ci/validate_selected_execution_profile_integrity.py
   - python governance/ci/validate_active_consumer_reference_integrity.py
@@ -245,169 +170,20 @@ candidate_validation_contract:
   - python .github/governance-source/active/source/09_TESTS/governance/validate_product_neutral_entity_lifecycle.py
   - python governance/ci/audit_closure_engine.py --self-test
   - python governance/ci/audit_closure_engine.py
-  - python governance/ci/validate_governance_candidate_promotion_readiness.py --self-test
   - python governance/ci/test_stage_execution_engine.py
-  successor_preformal_validator: governance/ci/validate_successor_governance_preformal.py
-  predecessor_direct_preformal_current_candidate_use: FORBIDDEN
-  retired_current_state_checks_replaced_by:
-  - CURRENT_CANDIDATE_IDENTITY
-  - EXACT_HEAD_VALIDATION_CONTRACT
-  - SOURCE_PACKAGE_DEFECT_REENTRY
-  immutable_source_checks_and_mandatory_regression_denominator_preserved: true
-  source_package_successor_required: false
+  - python .github/governance-source/active/source/09_TESTS/governance/validate_external_execution_admission.py
+  - python governance/ci/test_external_execution_admission.py
   source_package_integration_mode: SINGLE_BRANCH_INTEGRATED
   source_package_integrated_branch: rebuild-v2.1.1
   source_package_integrated_validator: governance/ci/validate_source_package_candidate.py
-  source_package_integration_authorization_record: https://github.com/steven-gold/orange-one-ai-viedo-v1.0/issues/57
-  source_package_successor_branch: rebuild-v2.1.1
-  source_package_successor_workflow_name: Integrated Source Package Validation
-  source_package_successor_workflow_path: .github/workflows/source-package-successor-validation.yml
-  source_package_successor_workflow_allowed_events:
-  - push
-  - workflow_dispatch
-  source_package_successor_workflow_identity_requires_name_path_allowed_event_branch_head: true
+  source_package_external_trust_required: false
+  source_package_signature_required: false
   source_package_validation_toolchain_binding_mode: GIT_BLOB_SHA1_EXACT_SET_V1
-  source_package_validation_toolchain_exact_file_count: 51
-  source_package_validation_toolchain_exact_paths:
-  - .github/workflows/source-package-successor-validation.yml
-  - .github/workflows/source-package-successor-materialization.yml
-  - governance/ci/requirements-governance.lock
-  - governance/ci/validate_source_package_candidate.py
-  - governance/ci/stage_execution_engine.py
-  - governance/ci/stage_execution_semantic_adapters.yaml
-  - governance/ci/test_stage_execution_engine.py
-  - governance/ci/validate_selected_execution_profile_integrity.py
-  - governance/ci/external_execution_admission.py
-  - governance/ci/test_external_execution_admission.py
-  - governance/source-successor/materialize_derived_source_package.py
-  - governance/source-successor/refresh_source_checksums.py
-  source_package_validation_toolchain_subtree_prefixes:
-  - .github/governance-source/active/source/09_TESTS/governance/
-  source_package_validation_toolchain_blob_bindings:
-    "governance/ci/test_external_execution_admission.py": 176e3f8feb9f865f1829f12d1c11dba44d1c762f
-    "governance/ci/external_execution_admission.py": 286bb8d19d6d973ff1065fd6f891be932ec4f5a7
-    "governance/ci/validate_selected_execution_profile_integrity.py": 7769f4ee59d7f91f4683d37b41a4d2a0787f2914
-    "governance/ci/test_stage_execution_engine.py": 030afd256fee7a467490be68734f8c1d90337028
-    "governance/ci/stage_execution_semantic_adapters.yaml": d38b8797335c8811eea3b6a7c2a86e6130d76b63
-    "governance/ci/stage_execution_engine.py": 38e81ee8b559d50650a02badf68910ad94a9e178
-    ".github/governance-source/active/source/09_TESTS/governance/validate_external_execution_admission.py": 0b554952a90d1e61cd6db423c19d2c154d7f636f
-    ".github/governance-source/active/source/09_TESTS/governance/compile_governance_baseline.py": a67aaacac87010c22464b52ab4aa8779e138bb9a
-    ".github/governance-source/active/source/09_TESTS/governance/governance_common.py": 3d235b41512bf54c9cce3800f81de7ad434fd560
-    ".github/governance-source/active/source/09_TESTS/governance/governance_lifecycle_stage_contract_guard.py": d42e12e6b40fb980958b8f6cd4dc4f504b5a966f
-    ".github/governance-source/active/source/09_TESTS/governance/governance_management_contract_guard.py": 7aa3c3bdd62893da56a4ddca230730d778e9d78e
-    ".github/governance-source/active/source/09_TESTS/governance/governance_stage1_pipeline_guard.py": b63de70cefd9343d7015b0ebeb07bea9453d1d3e
-    ".github/governance-source/active/source/09_TESTS/governance/program_artifact_instance_guard.py": f4aadfe8a53fd1d24a960a2acf4ee84e0e1e5dc9
-    ".github/governance-source/active/source/09_TESTS/governance/refresh_governance_root_manifest.py": 34835494400ce0f8c1e2d9bc218d531ad163d8b2
-    ".github/governance-source/active/source/09_TESTS/governance/test_bugfix_regressions.py": f1d5dcd076300dd3f716d3213bf75df4b117f00d
-    ".github/governance-source/active/source/09_TESTS/governance/test_execution_load_guard.py": 9f9b7f3636156479f24f7ca82b7b2365be3664e5
-    ".github/governance-source/active/source/09_TESTS/governance/test_high_pressure_hardening.py": 64ca1e292cdbbdff0d251c0328ca4da5e0a066fc
-    ".github/governance-source/active/source/09_TESTS/governance/test_prefomal_stress_repairs.py": 776d10223dc642744dff19eea93e3710bf8e7021
-    ".github/governance-source/active/source/09_TESTS/governance/test_pytest_collection_contract.py": c06ac9b2f30d336ef5b01dfa531454dece45b723
-    ".github/governance-source/active/source/09_TESTS/governance/test_reference_semantic_guard.py": e4c36b66c63bdd8c06d4151777594f7f0cb1a5d2
-    ".github/governance-source/active/source/09_TESTS/governance/test_stage1_source_to_blueprint_minimal_control.py": 993f88fedcdee30051dc0f9ea5e49bfc45307a45
-    ".github/governance-source/active/source/09_TESTS/governance/test_v2_1_0_post_v1_8_regressions.py": baaabe1939ea5c0562ceafe9c3d605188b8bbaad
-    ".github/governance-source/active/source/09_TESTS/governance/test_v2_1_0_regressions.py": 884c467bc6d02af47f72c23a3428685d957dd5a2
-    ".github/governance-source/active/source/09_TESTS/governance/test_v2_1_10_closure_evidence_continuity.py": 814bf1382194d5cf96027d665370802a954a4ae0
-    ".github/governance-source/active/source/09_TESTS/governance/test_v2_1_11_binding_authority_receipt_schema.py": abd5ab4d86e231a39ad9ee4a01a1ad27ec7ffa53
-    ".github/governance-source/active/source/09_TESTS/governance/test_v2_1_12_successor_state_evidence_parse.py": 23a9677742fc4e058964028a5e9498462522e839
-    ".github/governance-source/active/source/09_TESTS/governance/test_v2_1_13_stage_execution_invariants.py": 0f1beb7393cb6c540e3b4537a5e311eb06db47df
-    ".github/governance-source/active/source/09_TESTS/governance/test_v2_1_14_product_neutral_entity_lifecycle.py": 1583bf84072a0334f2204b1478aed8012d181099
-    ".github/governance-source/active/source/09_TESTS/governance/test_v2_1_14_test_feedback_spec_evolution.py": 3ebab940412a600578627b347e234a85ffaae1f5
-    ".github/governance-source/active/source/09_TESTS/governance/test_v2_1_7_phase_authority_bugfix.py": 986645a33e8df58aa052e6adf45fa49ed599f810
-    ".github/governance-source/active/source/09_TESTS/governance/test_v2_1_8_successor_evidence_sync_bugfix.py": 2bd683090262e4802ca6c8583dd9cbfbd01485a3
-    ".github/governance-source/active/source/09_TESTS/governance/test_v2_1_9_evidence_state_closure.py": 5ee6bbda44729ad4339b5a38efbd85cdc7c83a59
-    ".github/governance-source/active/source/09_TESTS/governance/validate_cleanup_protection.py": 315a98a74a584b903307fa7d0c066b4f33bd5622
-    ".github/governance-source/active/source/09_TESTS/governance/validate_closure_evidence_continuity.py": f71899d5087e73ae6ed796ee041573bc04ca2bf6
-    ".github/governance-source/active/source/09_TESTS/governance/validate_construction_artifact_index.py": 7ada531863a855e97f45d8ca8f84612ddb4588ff
-    ".github/governance-source/active/source/09_TESTS/governance/validate_current_test_evidence.py": b217e3dbf97b728fb02f781b42a3919a4ff43258
-    ".github/governance-source/active/source/09_TESTS/governance/validate_evidence_state_closure.py": 9ca5acda0cc10d8e1e5a6a88343f4ce3fac1e622
-    ".github/governance-source/active/source/09_TESTS/governance/validate_execution_governance_load.py": 0ac966e21fc35ee6bac435cd80affce14f01a544
-    ".github/governance-source/active/source/09_TESTS/governance/validate_governance.py": 286d3fe6b02218825b46f5a2b57f31b19e09df48
-    ".github/governance-source/active/source/09_TESTS/governance/validate_indexed_incremental_validation.py": 461599c67e63f6f295fcb81bef90744cb38a5d45
-    ".github/governance-source/active/source/09_TESTS/governance/validate_product_neutral_entity_lifecycle.py": 37460cd7762b511437bcaa14631e5fff5d7089b8
-    ".github/governance-source/active/source/09_TESTS/governance/validate_reference_semantics.py": 90f92e12a0257f4fecce76c631079eedf0708a4c
-    ".github/governance-source/active/source/09_TESTS/governance/validate_section_registry.py": 2680069f9e718b11104b2573e8cf6bc5c7d2f27c
-    ".github/governance-source/active/source/09_TESTS/governance/validate_stage_execution_invariants.py": 5f97b9d0bb3bc5b918d0c2262dd5d6745ecf93b4
-    ".github/governance-source/active/source/09_TESTS/governance/validate_test_feedback_spec_evolution.py": 544c060358457a33b0b235ec86f39e4dd5a04dcd
-    ".github/workflows/source-package-successor-validation.yml": 57766b13f419077d98f17d33aeb782310c4b5bb5
-    ".github/workflows/source-package-successor-materialization.yml": 5bb34230a532c0f400b63b363cf2a10bca0178b3
-    "governance/ci/requirements-governance.lock": 5f87f1bf0212b67052ce1a0d0e29a8e28addb34a
-    "governance/ci/validate_source_package_candidate.py": 25cad17bf2312dd42fce8e08f3b674e7c9254b59
-    "governance/source-successor/materialize_derived_source_package.py": c574c2121f3a0d3b863bb1c44fcce5556caf2ec6
-    "governance/source-successor/refresh_source_checksums.py": b2e3f4359236e1fd09160b57d5b3d5a8e11cf641
-  source_package_validation_toolchain_missing_extra_or_blob_drift: BLOCK
-  source_package_validation_toolchain_rebind_requires_governance_candidate_review: true
-  source_package_successor_admission_receipt: governance/source-successor/SOURCE_PACKAGE_SUCCESSOR_ADMISSION.yaml
-  source_package_successor_admission_validator: governance/ci/source_package_successor_admission.py
-  source_package_successor_manifest_path: governance/source-successor/SOURCE_PACKAGE_CANDIDATE.yaml
-  source_package_successor_internal_exact_head_success_required: true
-  source_package_successor_live_head_must_equal_receipt_head: true
-  source_package_successor_live_head_recheck_required: true
-  source_package_successor_external_trust_required_for_promotion: false
-  source_package_successor_unsigned_blocks_promotion: false
-  source_package_successor_content_status: INTEGRATED_CURRENT_WORKLINE
-  source_package_successor_self_trust_status: NOT_APPLICABLE_SINGLE_BRANCH_INTEGRATED
-  source_package_successor_external_trust_projection_status: NOT_REQUIRED_SINGLE_BRANCH_CONSOLIDATION
-  source_package_external_trust_projection_owner: GOVERNANCE_CANDIDATE_ADMISSION_RECEIPT
-  source_package_external_trust_must_not_mutate_source_branch: true
-  source_package_external_trust_receipt_must_bind_frozen_source_head_and_tree: true
-  source_external_trust_mode: DETACHED_SIGNATURE_ENVELOPE
-  source_external_trust_receipt_self_reference: FORBIDDEN
-  source_external_trust_detached_signature_artifact_type: GOVERNANCE_SOURCE_DETACHED_TRUST_SIGNATURE
-  source_external_trust_payload_hash_mode: SHA256_CANONICAL_JSON_SOURCE_TRUST_PAYLOAD_V1
-  source_external_trust_authority_created_and_updated_before_signing_required: true
-  mutation_actor_inventory_pagination_complete_required: true
-  mutation_actor_inventory_count_must_match_compare_total: true
-  source_internal_pass_may_satisfy_candidate_validation_without_promotion_credit: true
-  source_internal_pass_may_imply_current_source_admission: false
-  source_internal_pass_may_imply_governance_promotion: false
-  predecessor_source_trust_materializer: governance/ci/materialize_predecessor_source_trust_root.py
-  predecessor_source_expected_hash_source: .github/governance-source/active/source/CHECKSUMS.sha256
-  predecessor_source_trust_generation_from_current_bytes: FORBIDDEN
-  predecessor_checksum_mismatch: BLOCK
-  predecessor_source_extra_or_missing_file: BLOCK
-  full_preformal_regression_denominator_source: .github/governance-source/active/source/10_REGISTRY/SEMANTIC_AUTHORITY_BASELINE.yaml#mandatory_regression_assets
   mother_neutrality_and_portability_required: true
   active_consumer_reverse_validation_required: true
-  cancelled_or_in_progress_run_may_grant_candidate_validation_credit: false
-  historical_head_run_may_grant_candidate_validation_credit: false
-  core_validation_pass_may_substitute_full_preformal_regression: false
-  formal_promotion_requires_all_required_workflows_exact_head_success: true
-  word_derived_internal_validation_only: true
-  external_human_or_account_evidence_required: false
-  promotion_readiness_validator: governance/ci/validate_governance_candidate_promotion_readiness.py
-  promotion_readiness_mode: READ_ONLY_FAIL_CLOSED
-  promotion_readiness_may_mutate_or_promote: false
-  candidate_rule_bundle_release_state: CANDIDATE_NOT_PROMOTED
-  candidate_rule_bundle_released_current_authority: false
-  candidate_manifest_projection_must_match_registry_identity: true
-  candidate_manifest_artifact_uid_expected: GOV-REV-20260927-GOVERNANCE-IDENTITY-NEGATIVE-TRACE-AUDITOR-INDEPENDENCE-HARDENING
-  candidate_manifest_display_version_expected: v2.2.33
-  explicit_promotion_action_required_after_readiness: true
-  promotion_transaction_implementation_authorization_record: https://github.com/steven-gold/orange-one-ai-viedo-v1.0/issues/64
-  promotion_transaction_executor: governance/ci/governance_promotion_transaction.py
-  promotion_transaction_mode: SAME_BRANCH_ATOMIC_PROMOTION_COMMIT
-  promotion_transaction_candidate_branch_mutation: ALLOWED_ONLY_AT_ATOMIC_PROMOTION_COMMIT
-  promotion_transaction_predecessor_history_mutation: FORBIDDEN
-  promotion_transaction_atomic_visibility_point: ACTIVE_GOVERNANCE_REF_FAST_FORWARD
-  promotion_transaction_release_receipt_path: governance/release/RELEASE_RECEIPT.yaml
-  promotion_transaction_reverify_handoff_path: governance/release/FRESH_REVERIFY_HANDOFF.yaml
-  promotion_transaction_product_completion_credit: 0
-  promotion_transaction_requires_explicit_promotion_authorization: true
-  promotion_transaction_requires_fresh_readiness: true
-  promotion_transaction_requires_source_external_trust: false
-  promotion_transaction_requires_integrated_source_validation: true
-  promotion_transaction_requires_new_release_uid: true
-  promotion_transaction_execution_authorization_must_be_distinct_from_implementation_authorization: true
-  promotion_transaction_pre_publish_reconciliation_required: true
-  promotion_transaction_post_write_reconciliation_required: true
-  promotion_transaction_release_delta_exact: true
-  promotion_transaction_fresh_reverify_handoff_required: true
-  promotion_transaction_post_promotion_same_branch_reverify_supported: true
-  promotion_transaction_branch_fanout: FORBIDDEN
-  promotion_transaction_in_place_branch: rebuild-v2.1.1
-  promotion_transaction_single_branch_authorization_record: https://github.com/steven-gold/orange-one-ai-viedo-v1.0/issues/57
-  product_completion_credit: 0
+  full_preformal_regression_denominator_source: .github/governance-source/active/source/10_REGISTRY/SEMANTIC_AUTHORITY_BASELINE.yaml#mandatory_regression_assets
+  local_audit_after_every_effectful_step: REQUIRED
+  completion_credit_requires_fresh_current_validation: true
 execution_domain_entrypoints:
   selection_required_before_rule_read: true
   recursive_governance_tree_scan: FORBIDDEN
