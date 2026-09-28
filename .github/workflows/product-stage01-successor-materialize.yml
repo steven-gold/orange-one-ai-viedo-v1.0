@@ -48,26 +48,40 @@ jobs:
           mkdir -p .github
           cp -R _governance_authority/.github/governance-source .github/governance-source
           python -m pip install --disable-pip-version-check --require-hashes -r governance/ci/requirements-governance.lock
-      - name: Inline deterministic Current-governance validation
+      - name: Verify exact-head governance receipts for pre-stage materialization
         run: |
           set -euo pipefail
-          cd _governance_authority
-          python governance/ci/stage_execution_engine.py --definition-audit-all
-          python governance/ci/validate_selected_execution_profile_integrity.py
-          python governance/ci/validate_active_consumer_reference_integrity.py
-          python governance/ci/validate_governance_layout.py
-          python governance/ci/validate_structured_mutation_safety.py --self-test
-          python governance/ci/validate_structured_mutation_safety.py
-          python governance/ci/validate_governance_portability.py
-          python governance/ci/validate_execution_domain_isolation.py
-          python governance/ci/validate_successor_governance_preformal.py
-          python .github/governance-source/active/source/09_TESTS/governance/validate_stage_execution_invariants.py
-          python .github/governance-source/active/source/09_TESTS/governance/validate_product_neutral_entity_lifecycle.py
-          python governance/ci/audit_closure_engine.py --self-test
-          python governance/ci/audit_closure_engine.py
-          python governance/ci/test_stage_execution_engine.py
-          python .github/governance-source/active/source/09_TESTS/governance/validate_external_execution_admission.py
-          python governance/ci/test_external_execution_admission.py
+          python - <<'PY'
+          from pathlib import Path
+          import hashlib, subprocess, yaml
+          product=Path('.')
+          gov=Path('_governance_authority')
+          sel=yaml.safe_load((product/'STAGE_EXECUTION/SHARED_AUTHORITY/CURRENT_GOVERNANCE_SELECTION.yaml').read_text()) or {}
+          if sel.get('status')!='SELECTED_EXACT_CURRENT_SNAPSHOT':
+              raise SystemExit('BLOCK:CURRENT_GOVERNANCE_SELECTION_NOT_SELECTED')
+          head=subprocess.check_output(['git','-C',str(gov),'rev-parse','HEAD'],text=True).strip()
+          tree=subprocess.check_output(['git','-C',str(gov),'rev-parse','HEAD^{tree}'],text=True).strip()
+          root=gov/'.github/governance-source/active/source/10_REGISTRY/GOVERNANCE_ROOT_MANIFEST.yaml'
+          root_hash=hashlib.sha256(root.read_bytes()).hexdigest()
+          expected={
+              'governance_commit_sha':head,
+              'governance_tree_sha':tree,
+              'root_manifest_sha256':root_hash,
+          }
+          for k,v in expected.items():
+              if str(sel.get(k) or '')!=v:
+                  raise SystemExit('BLOCK:PRESTAGE_EXACT_GOVERNANCE_BINDING_MISMATCH:'+k)
+          ev=sel.get('exact_head_validation') or {}
+          if ev.get('mother_neutrality_status')!='SUCCESS':
+              raise SystemExit('BLOCK:MOTHER_NEUTRALITY_EXACT_HEAD_RECEIPT_NOT_SUCCESS')
+          if ev.get('stage_internal_validation_status')!='SUCCESS' or ev.get('gate_01_08_result')!='PASS':
+              raise SystemExit('BLOCK:STAGE_INTERNAL_EXACT_HEAD_RECEIPT_NOT_SUCCESS')
+          if str(ev.get('validated_head_sha') or '')!=head:
+              raise SystemExit('BLOCK:EXACT_HEAD_VALIDATION_RECEIPT_SHA_DRIFT')
+          if not ev.get('mother_neutrality_run_id') or not ev.get('stage_internal_validation_run_id'):
+              raise SystemExit('BLOCK:EXACT_HEAD_VALIDATION_RUN_RECEIPT_MISSING')
+          print('PASS: exact-head governance receipts verified for pre-stage materialization; fresh inline validation remains required at Stage entry')
+          PY
       - name: Fresh source projection and successor registration materialization
         run: python .github/scripts/stage01_successor_materialize.py --mode materialize --product-root "$GITHUB_WORKSPACE" --governance-root "$GITHUB_WORKSPACE/_governance_authority"
       - name: Materialize exact Current governance load receipts
