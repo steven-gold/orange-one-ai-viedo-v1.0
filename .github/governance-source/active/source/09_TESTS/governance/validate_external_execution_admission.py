@@ -15,6 +15,7 @@ def validate(root=ROOT):
     c=contracts.get('PRODUCT_GOVERNANCE_RELEASE_SELECTION_AND_APPLICATION_BASELINE') or {}
     if c.get('scope_class')!='EXTERNAL_PRODUCT_EXECUTION_ENVIRONMENT_ADMISSION' or c.get('reusable_page_stage_normative_denominator_inclusion')!='EXCLUDED': failures.append('external_execution_admission_contract_scope_invalid')
     if c.get('product_specific_branch_repository_or_framework_may_enter_common_stage_semantics') is not False: failures.append('external_execution_identity_leak_not_blocked')
+    if c.get('external_precondition_applicability')!='CONDITIONAL_WHEN_PRODUCT_EXECUTION_EXPLICITLY_SELECTS_RELEASED_GOVERNANCE_MODE' or c.get('common_stage_execution_outside_released_governance_mode_blocked_by_this_contract') is not False: failures.append('released_governance_mode_applicability_not_isolated')
     if c.get('application_baseline_source_branch_may_be_auto_selected') is not False: failures.append('external_baseline_source_auto_selection_not_blocked')
     if c.get('candidate_governance_formal_product_execution_credit')!=0 or c.get('application_baseline_materialization_product_stage_completion_credit')!=0: failures.append('external_admission_completion_credit_nonzero')
     if c.get('product_released_governance_load_receipt_artifact_type')!='PRODUCT_RELEASED_GOVERNANCE_LOAD_RECEIPT': failures.append('external_product_governance_receipt_identity_not_isolated')
