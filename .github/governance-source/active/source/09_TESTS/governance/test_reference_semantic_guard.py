@@ -26,7 +26,8 @@ def sem_case(name,mutator,expected='FAIL'):
 def valid_fixture(root=PKG):
     idx=load(root/'10_REGISTRY/CONSTRUCTION_ARTIFACT_INDEX.yaml'); ref=load(root/'10_REGISTRY/REFERENCE_RULE_REGISTRY.yaml'); rm=load(root/'10_REGISTRY/GOVERNANCE_ROOT_MANIFEST.yaml')
     pa={
-      'program_artifact_uid':'PA-DEMO-GOVERNED-UNIT-RUNTIME-001','work_unit_uid':'WU-DEMO-GOVERNED-UNIT-001','governed_unit_uid_or_scope_uid':'DEMO-GOVERNED-UNIT-001','construction_profile':'RUNTIME_SERVICE',\n      'toolchain_authority_ref':'AUTHORITY-DEMO-TOOLCHAIN',
+      'program_artifact_uid':'PA-DEMO-GOVERNED-UNIT-RUNTIME-001','work_unit_uid':'WU-DEMO-GOVERNED-UNIT-001','governed_unit_uid_or_scope_uid':'DEMO-GOVERNED-UNIT-001','construction_profile':'RUNTIME_SERVICE',
+      'toolchain_authority_ref':'AUTHORITY-DEMO-TOOLCHAIN',
       'canonical_name':'EXAMPLE_RUNTIME_SERVICE','canonical_path':'implementation/example/DEMO-GOVERNED-UNIT-001/runtime-service.impl','canonical_filename':'runtime-service.impl','owner_uid':'OWNER-DEMO-RUNTIME',
       'producer_stage_uid':'STAGE-05','input_artifact_refs':[],'required_normative_section_uids':['WEB-GOV-02-S014'],'dependency_refs':[],'reverse_dependency_refs':[],
       'acceptance_audit_blueprint_ref':'BP-GOVERNANCE-ACCEPTANCE-001','required_test_refs':['TEST-DEMO-RUNTIME-001'],'current_hash':'0'*64,'status':'PLANNED'}
