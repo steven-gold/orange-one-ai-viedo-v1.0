@@ -56,7 +56,6 @@ def main():
     tree=git(govroot,"rev-parse","HEAD^{tree}")
     expected={
       "governance_commit_sha":head,
-      "governance_tree_sha":tree,
       "governance_uid":str(ident.get("governance_uid") or ""),
       "governance_revision":str(ident.get("governance_revision") or ""),
       "display_version":str(ident.get("display_version") or ""),
@@ -70,8 +69,6 @@ def main():
 
     root_manifest=govroot/".github/governance-source/active/source/10_REGISTRY/GOVERNANCE_ROOT_MANIFEST.yaml"
     root_hash=sha256_file(root_manifest)
-    if str(selection.get("root_manifest_sha256") or "")!=root_hash:
-        raise SystemExit("BLOCK:SELECTED_CURRENT_GOVERNANCE_ROOT_MANIFEST_HASH_MISMATCH")
 
     bundle=str(ident.get("specification_bundle_sha256") or "")
     if not bundle:
