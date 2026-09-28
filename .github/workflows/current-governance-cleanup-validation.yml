@@ -8,7 +8,7 @@ on:
 
 permissions:
   contents: read
-  issues: read
+  issues: write
   actions: read
 
 concurrency:
@@ -177,3 +177,31 @@ jobs:
           if [ -f /tmp/issue60-gate03b.log ]; then cat /tmp/issue60-gate03b.log; fi
           if [ -f /tmp/issue60-gate05.log ]; then cat /tmp/issue60-gate05.log; fi
           if [ -f /tmp/issue60-regression-detail.log ]; then cat /tmp/issue60-regression-detail.log; fi
+          python - <<'PY' > /tmp/issue60-comment.md
+          import os
+          from pathlib import Path
+          def tail(path,limit=10000):
+              p=Path(path)
+              if not p.is_file(): return '(not produced)'
+              t=p.read_text(encoding='utf-8',errors='replace')
+              return t[-limit:]
+          print('Issue #60 exact-head governance validation diagnostic')
+          print()
+          print('tested_head:', os.environ['VALIDATION_TESTED_HEAD'])
+          print('job_status:', os.environ['VALIDATION_JOB_STATUS'])
+          print('steps:')
+          for k in ('install','gate01','gate02','gate03a','gate03b','gate04','gate05','gate06','gate07','gate08','gate09','gate10'):
+              print(f"- {k}: {os.environ.get('OUT_'+k.upper(),'')}")
+          print()
+          print('Gate 05 log (tail):')
+          print('```text')
+          print(tail('/tmp/issue60-gate05.log'))
+          print('```')
+          if Path('/tmp/issue60-regression-detail.log').is_file():
+              print()
+              print('Regression detail (tail):')
+              print('```text')
+              print(tail('/tmp/issue60-regression-detail.log'))
+              print('```')
+          PY
+          gh api "repos/${GITHUB_REPOSITORY}/issues/60/comments" -f body=@/tmp/issue60-comment.md
