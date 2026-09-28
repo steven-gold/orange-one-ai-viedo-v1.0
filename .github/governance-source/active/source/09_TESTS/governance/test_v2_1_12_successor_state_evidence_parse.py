@@ -21,7 +21,7 @@ def successor_migration_contract():
     cycle=yaml.safe_load((REPO/'governance/specifications/current/EXECUTION_CYCLE_CONTROL.yaml').read_text(encoding='utf-8')) or {}
     candidate=yaml.safe_load((REPO/'governance/source-successor/SOURCE_PACKAGE_CANDIDATE.yaml').read_text(encoding='utf-8')) or {}
     m=mutation.get('retired_evidence_consumer_migration_control') or {}
-    s=cycle.get('successor_candidate_state_resolution') or {}
+    s=cycle.get('current_governance_state_resolution') or {}
     return {'migration':m,'state':s,'candidate':candidate}
 
 def previous(stage):
@@ -88,14 +88,14 @@ c=successor_migration_contract(); m=c['migration']; st=c['state']; cand=c['candi
 res += [
  case('historical_predecessor_evidence_reference_only',m.get('historical_predecessor_evidence_role')=='HISTORICAL_REFERENCE_ONLY'),
  case('historical_fixture_never_current_authority',m.get('legacy_fixture_may_not_be_current_authority') is True),
- case('current_candidate_truth_uses_registry_and_exact_head_receipts',
-      st.get('current_candidate_identity_source')=='governance/specifications/REGISTRY.yaml'
+ case('current_governance_truth_uses_registry_and_exact_head_receipts',
+      st.get('current_governance_identity_source')=='governance/specifications/REGISTRY.yaml'
       and st.get('current_validation_truth_source')=='EXACT_HEAD_REQUIRED_WORKFLOW_RECEIPTS'),
- case('integrated_source_has_current_authority_but_zero_promotion_credit',
+ case('integrated_source_has_current_authority_and_blocks_unregistered_non_word_prerequisite',
       cand.get('status')=='INTEGRATED_CURRENT_WORKLINE'
       and cand.get('current_authority') is True
       and (cand.get('integration') or {}).get('mode')=='SINGLE_BRANCH_INTEGRATED'
-      and cand.get('promotion_credit')==0),
+      and (cand.get('source_integrity') or {}).get('unregistered_non_word_execution_prerequisite')=='BLOCK'),
 ]
 
 out={'suite':'v2.1.12 successor-state monotonic predecessor validation / Required Evidence parse-integrity multidirection high-pressure regression','total':len(res),'passed_expectations':sum(x['ok'] for x in res),'results':res}
