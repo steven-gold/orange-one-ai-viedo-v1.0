@@ -1,5 +1,5 @@
 artifact_type: PRODUCT_STAGE01_04_CURRENT_EXECUTION_RESOLUTION
-status: CLEAN_BOOTSTRAP_IMPLEMENTATION_REMEDIATED_AWAITING_VALIDATION
+status: CLEAN_BOOTSTRAP_VALIDATED_READY_FOR_SELECTED_STAGE01_MATERIALIZATION
 normative_authority: false
 authorization_record_url: https://github.com/steven-gold/orange-one-ai-viedo-v1.0/issues/61
 clean_bootstrap_authorization_comment_id: 5877510981
@@ -14,6 +14,10 @@ historical_execution_policy:
   runtime_dependency: FORBIDDEN
   completion_credit: 0
   git_history_may_be_used_for_defect_analysis_only: true
+validation_evidence:
+  workflow_run_id: 36478178889
+  validated_implementation_head: 18fcbdeb0be85c2c60aefae0c42ec0ca89762839
+  result: SUCCESS
 chains:
 - governed_unit_uid: GLOBAL-HOME-SHELL-NAVIGATION
   source_uid: SRC-DOCX-334A4679600F092B733B
@@ -21,7 +25,7 @@ chains:
   - stage_uid: STAGE-01
     work_unit_uid: WU-STAGE01-GLOBAL-HOME-SHELL-NAVIGATION-CLEAN-001
     activation_kind: INITIAL_STAGE_WORK_UNIT
-    state: NOT_MATERIALIZED
+    state: NOT_MATERIALIZED_READY
   - stage_uid: STAGE-02
     work_unit_uid: WU-STAGE02-GLOBAL-HOME-SHELL-NAVIGATION-CLEAN-001
     activation_kind: INITIAL_STAGE_WORK_UNIT
@@ -40,7 +44,7 @@ chains:
   - stage_uid: STAGE-01
     work_unit_uid: WU-STAGE01-WB01-DASHBOARD-CLEAN-001
     activation_kind: INITIAL_STAGE_WORK_UNIT
-    state: NOT_MATERIALIZED
+    state: NOT_MATERIALIZED_READY
   - stage_uid: STAGE-02
     work_unit_uid: WU-STAGE02-WB01-DASHBOARD-CLEAN-001
     activation_kind: INITIAL_STAGE_WORK_UNIT
@@ -54,10 +58,10 @@ chains:
     activation_kind: INITIAL_STAGE_WORK_UNIT
     state: WAITING_FOR_STAGE03_CURRENT_TERMINAL_PASS
 execution_admission:
-  state: IMPLEMENTATION_VALIDATION_PENDING
-  pre_stage_materialization_admitted: false
+  state: READY_FOR_SELECTED_STAGE01_PRESTAGE_MATERIALIZATION
+  pre_stage_materialization_admitted: true
   effectful_execution_admitted: false
   auto_stage_entry: false
   blockers:
-  - CLEAN_BOOTSTRAP_IMPLEMENTATION_VALIDATION_PENDING
+  - STAGE01_CURRENT_WORK_UNITS_NOT_MATERIALIZED
 product_completion_credit: 0

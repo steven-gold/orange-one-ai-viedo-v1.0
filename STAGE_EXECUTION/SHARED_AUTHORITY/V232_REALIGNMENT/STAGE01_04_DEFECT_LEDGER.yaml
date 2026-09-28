@@ -1,5 +1,5 @@
 artifact_type: PRODUCT_STAGE01_04_DEFECT_LEDGER
-status: CLEAN_BOOTSTRAP_IMPLEMENTATION_REMEDIATED_AWAITING_VALIDATION
+status: CLEAN_BOOTSTRAP_DEFECTS_REMEDIATED_VALIDATED
 authorization_record_url: https://github.com/steven-gold/orange-one-ai-viedo-v1.0/issues/61
 clean_bootstrap_authorization_comment_id: 5877510981
 product_branch: 0921acpos
@@ -14,6 +14,11 @@ stage_range:
 - STAGE-02
 - STAGE-03
 - STAGE-04
+validation_evidence:
+  workflow_name: Product Clean Bootstrap Validation
+  workflow_run_id: 36478178889
+  validated_implementation_head: 18fcbdeb0be85c2c60aefae0c42ec0ca89762839
+  result: SUCCESS
 defects:
 - uid: DEF-CLEAN-BOOTSTRAP-PREDECESSOR-RUNTIME-DEPENDENCY
   stage_uid: STAGE-01
@@ -26,13 +31,13 @@ defects:
   - INITIAL_STAGE_WORK_UNIT
   - FRESH_STAGE01_OPERATION_OUTPUTS
   - ZERO_PREDECESSOR_RUNTIME_DEPENDENCY
-  implementation_state: REMEDIATED_PENDING_VALIDATION
+  implementation_state: REMEDIATED_VALIDATED
 - uid: DEF-SELECTED-UNIT-EXECUTION-HARDWIRED-PAIR
   stage_uid: STAGE-01
   owner: PRODUCT_WORKFLOW_SELECTION
   defect: HOME_AND_WB01_WERE_HARDWIRED_AS_ONE_EXECUTION_SET
   required_fix: EXPLICIT_GOVERNED_UNIT_SELECTION
-  implementation_state: REMEDIATED_PENDING_VALIDATION
+  implementation_state: REMEDIATED_VALIDATED
 - uid: DEF-BOTH-S02-PAGE-IDENTITY
   stage_uid: STAGE-02
   state: WAITING_FOR_STAGE01_CURRENT_PASS
@@ -49,5 +54,7 @@ pre_stage_boundary:
   generated_work_unit_count: 0
   operation_receipt_count: 0
   effectful_stage_operation_executed: false
-  clean_bootstrap_validation_status: PENDING
+  clean_bootstrap_validation_status: PASS
+  predecessor_runtime_dependency_count: 0
+  unresolved_pre_stage_defect_count: 0
 completion_credit: 0
