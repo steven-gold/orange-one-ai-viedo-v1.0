@@ -456,7 +456,7 @@ def validate_stage01_source_projection_admission(work,stage):
         seen.add(suid)
         rel=str(b.get('freeze_receipt_ref') or '')
         if not rel or rel.startswith('/') or '..' in Path(rel).parts: fail('STAGE01_SOURCE_PROJECTION_RECEIPT_REF_INVALID:'+suid)
-        fp=ROOT/rel
+        fp=_execution_artifact_root()/rel
         if not fp.is_file(): fail('STAGE01_SOURCE_PROJECTION_FREEZE_RECEIPT_MISSING:'+suid)
         fr=y(fp)
         if fr.get('artifact_type')!='SOURCE_PROJECTION_FREEZE_RECEIPT' or fr.get('source_uid')!=suid or fr.get('status')!='FROZEN_FOR_STAGE01' or fr.get('lock_state')!='SOURCE_PAIR_FROZEN' or fr.get('raw_source_writable') is not False or fr.get('projection_writable') is not False:
