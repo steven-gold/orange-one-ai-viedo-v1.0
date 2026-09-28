@@ -28,7 +28,7 @@ defects:
   remediation: FRESH_DERIVATION_FROM_REGISTERED_IMMUTABLE_SOURCE_IN_SUCCESSOR
   state: BLOCKED_PENDING_INLINE_INTERNAL_VALIDATION
 - uid: DEF-WB01-S01-PROJECTION-ZERO-BYTE
-  governed_unit_uid: WB01-DASHBOARD
+  governed_unit_uid: workspace:WB-01
   stage_uid: STAGE-01
   owner: PRE_STAGE_SOURCE_PROJECTION
   evidence: predecessor CANONICAL_SOURCE_PROJECTION.yaml length=0
@@ -42,7 +42,7 @@ defects:
   current_required_identity: governed_unit_uid
   state: BLOCKED_PENDING_INLINE_INTERNAL_VALIDATION
 - uid: DEF-WB01-S01-CONTENT-AUDIT-LEGACY-ID
-  governed_unit_uid: WB01-DASHBOARD
+  governed_unit_uid: workspace:WB-01
   stage_uid: STAGE-01
   owner: PRE_STAGE_SOURCE_PROJECTION
   evidence: predecessor SOURCE_DOCUMENT_CONTENT_AUDIT uses page_uid
@@ -102,7 +102,7 @@ verified_inputs:
   paragraph_count: 411
   table_count: 17
   media_count: 1
-- governed_unit_uid: WB01-DASHBOARD
+- governed_unit_uid: workspace:WB-01
   source_review_extract_ref: STAGE_EXECUTION/SHARED_AUTHORITY/V232_REALIGNMENT/SOURCE_REVIEW_INPUTS/WB01-DASHBOARD.json
   source_sha256: 2b1908530b5bd312a3928f80b422d0f65d7e9932ace90730df9b038666621262
   paragraph_count: 1257
