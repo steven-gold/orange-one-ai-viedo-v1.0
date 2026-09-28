@@ -1351,3 +1351,19 @@ At reconciliation and selected source-intake/base-blueprint admission, every exp
 After SOURCE_PAIR_FROZEN, the Word, Canonical YAML projection, content-readiness audit binding, and frozen binary-part set are immutable for that attempt. Mutation of any member invalidates selected source-intake/base-blueprint eligibility and requires pre-stage re-entry.
 
 Selected source-intake/base-blueprint execution may read binary pixels/bytes only through the frozen-binary resolver defined by the projection contract. Direct DOCX unzip/reparse for semantic recovery is forbidden.
+
+
+<!-- SECTION_UID: WEB-GOV-03-S073 -->
+## 73. Required Artifact Physical Integrity and Independent Validation Gate / 必要產物實體完整性與獨立驗證 Gate
+
+Any REQUIRED input, output, evidence artifact, execution matrix, state record, receipt, handoff record, or other artifact used to grant admission, execution credit, review credit, closure, successor readiness, or Current truth MUST be validated against its physical representation. Path existence, filename presence, a PASS/status field, a ledger row, a receipt, or mutually consistent metadata MUST_NOT by itself prove that the referenced artifact is valid.
+
+For a REQUIRED file-backed artifact, validation MUST establish, as applicable to its registered artifact class: the path resolves inside the authorized execution root; the object is a regular file; the physical byte length is nonzero unless Current schema explicitly authorizes an empty representation; the registered parser can parse the physical bytes; registered schema identity and REQUIRED fields validate; registered sequence/order constraints validate; and every declared content/hash/version identity that is defined as content-derived is independently recomputed from the physical artifact and matches all producer, receipt, matrix, consumer, and closure bindings.
+
+A zero-byte or parseable-but-empty REQUIRED artifact has zero completion credit unless an explicit Current schema states that an empty physical representation is the canonical valid value for that artifact type. Silence, historical behavior, producer convenience, or an unchanged receipt MUST_NOT create such authority.
+
+When Current Governance registers an independent source-rederivation, reconciliation, fidelity, or physical-integrity validator for an artifact class, every admission/closure boundary that relies on that artifact MUST invoke the registered validator or consume a fresh exact-snapshot result from that same validator. A receipt or freeze record MAY index the validated identity, but MUST_NOT replace validation of the referenced physical artifact. Self-consistent metadata with an unavailable, empty, unparsable, schema-invalid, hash-mismatched, or stale physical artifact is a blocking integrity failure.
+
+On physical-integrity failure, execution MUST stop at the earliest owning boundary. The invalid artifact and any receipt/evidence derived from its claimed identity MUST receive no Current completion credit; affected descendants MUST become REVERIFY_REQUIRED unless reverse-dependency evidence proves them unaffected. Repair MUST regenerate or rematerialize the artifact from its lawful source/owner and then re-run the registered validator; editing only the receipt/hash/summary is forbidden.
+
+Destructive regression for every applicable artifact validator MUST include, where meaningful: zero-byte required artifact while receipts remain unchanged; nonempty unparsable artifact; parseable empty or schema-incomplete artifact; physical content mutation with stale declared hash; receipt/hash drift; and consumer binding drift from the independently recomputed physical identity. Every such case MUST fail closed.
