@@ -70,6 +70,15 @@ def validate(root=ROOT):
     required_destructive={'ZERO_BYTE_REQUIRED_ARTIFACT_WITH_UNCHANGED_RECEIPTS','NONEMPTY_UNPARSEABLE_REQUIRED_ARTIFACT','PARSEABLE_EMPTY_OR_SCHEMA_INCOMPLETE_ARTIFACT','PHYSICAL_CONTENT_CHANGED_WITH_STALE_DECLARED_HASH','RECEIPT_HASH_DRIFT_FROM_PHYSICAL_ARTIFACT','CONSUMER_BINDING_DRIFT_FROM_RECOMPUTED_IDENTITY'}
     if set(pai.get('destructive_regression_required') or []) != required_destructive:
         failures.append('physical_artifact_integrity_destructive_regression_incomplete')
+    cross = inv.get('CROSS_STAGE_MATERIALIZATION_AND_CONSUMER_READINESS') or {}
+    input_fields={'input_uid','status','artifact_ref','content_sha256','external_evidence_ref','authority_evidence_ref','consumer_readiness_evidence_ref'}
+    if set(cross.get('successor_required_input_row_required_fields') or []) != input_fields:
+        failures.append('cross_stage_successor_input_physical_row_schema_incomplete')
+    for key in ('successor_materialized_input_requires_local_artifact_ref','successor_materialized_input_requires_recomputed_sha256','successor_materialized_input_requires_nonempty_parseable_artifact','successor_materialized_input_requires_consumer_readiness_evidence','successor_external_receipt_input_requires_external_evidence_ref','successor_authorized_not_applicable_input_requires_authority_evidence_ref'):
+        if cross.get(key) is not True:
+            failures.append('cross_stage_successor_input_physical_flag_missing:' + key)
+    if cross.get('successor_input_status_self_assertion_completion_credit') != 0:
+        failures.append('cross_stage_successor_input_self_assertion_credit_nonzero')
     v = inv.get('VALIDATOR_SCHEMA_SEMANTICS') or {}
     if v.get('authoritative_schema_path_required') is not True or v.get('authoritative_enum_or_status_constant_required') is not True or v.get('stale_path_or_constant_is_validator_defect_not_data_defect') is not True or (v.get('optional_sparse_zero_missing_key_equals_zero') is not True) or (v.get('mandatory_missing_field_equals_zero') is not False):
         failures.append('validator_schema_semantics_incomplete')
