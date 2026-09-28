@@ -1412,9 +1412,9 @@ Missing registry, duplicate current registry, stale hash, unresolved canonical p
 <!-- SECTION_UID: WEB-GOV-04-S073 -->
 ## 73. Pre-formal Multidirection Stress / Portability Audit
 
-Before formal release, governance MUST pass destructive mutation tests for missing required artifacts, wrong references, duplicate identity, unsafe cleanup, broken forward/reverse dependency, scope drift, source lineage drift, unresolved shared refs, stale hashes, unregistered program files, illegal profile transition, N/A misuse, duplicate owner, residual files, and baseline divergence.
+Before Current governance freeze/acceptance, governance MUST pass destructive mutation tests for missing required artifacts, wrong references, duplicate identity, unsafe cleanup, broken forward/reverse dependency, scope drift, source lineage drift, unresolved shared refs, stale hashes, unregistered program files, illegal profile transition, N/A misuse, duplicate owner, residual files, and baseline divergence.
 
-Reusable policy MUST also pass a portability test against at least two synthetic execution profiles with materially different step names and step counts. Both profiles MUST be enforceable without changing common policy semantics. Failure means the Mother Policy is profile-coupled and promotion MUST block.
+Reusable policy MUST also pass a portability test against at least two synthetic execution profiles with materially different step names and step counts. Both profiles MUST be enforceable without changing common policy semantics. Failure means the Mother Policy is profile-coupled and Current governance freeze/acceptance MUST block.
 
 A mutation test counts only when the intended semantic guard detects the violation; unrelated checksum/mirror failure is not proof of the target guard.
 
@@ -1425,16 +1425,16 @@ Audit MUST prove that every executed item has a current governance-load receipt 
 
 Section UID resolution MUST be exact through Current Section Registry and Root Manifest. Every write MUST resolve `Program Artifact UID -> canonical path/filename -> owner -> Work Unit -> expected pre-write hash`; writing another legal artifact or unregistered path is still invalid.
 
-Pre-formal acceptance MUST execute the registered destructive regression matrix and machine-check actual denominators/results. Candidate trust MUST be anchored outside candidate-local self-updatable metadata.
+Pre-formal acceptance MUST execute the registered destructive regression matrix and machine-check actual denominators/results. Current governance validation MUST be anchored to exact-head internal workflows and deterministic source evidence; mutable self-declared metadata MUST_NOT substitute for validation evidence.
 
 <!-- SECTION_UID: WEB-GOV-04-S075 -->
 ## 75. Validation Defect Ledger / Spec Evolution / Single-Authority Audit
 
 Audit MUST verify every governed validation cycle produces a complete defect/gap ledger for all discovered issues, including unplanned defects. Each record MUST include evidence, affected identity, defect owner/class, generalizability scope, disposition, blocking state, and resolving/preserving governance UID.
 
-Reusable-policy repair is valid only when explicit authorization preexists, all affected common policy projections and consumers are updated atomically, multidirection/high-pressure regression passes, stale predecessor pins are absent, and full Current validation passes. Product/local defects MUST remain at their owning layer.
+Reusable-policy repair is valid only when explicit authorization preexists, all affected common policy projections and consumers are updated atomically, multidirection/high-pressure regression passes, stale predecessor pins are absent, and full Current exact-head validation passes. Product/local defects MUST remain at their owning layer.
 
-Source-Control governance audit MUST verify exactly one Current policy entry through the configured adapter. Historical correction packages, execution-profile receipts, test evidence, and candidate files remain history/evidence only and MUST_NOT act as competing Current policy.
+Source-Control governance audit MUST verify exactly one Current policy entry through the configured adapter. Historical correction packages, execution-profile receipts, test evidence, and superseded change files remain history/evidence only and MUST_NOT act as competing Current policy.
 
 <!-- SECTION_UID: WEB-GOV-04-S076 -->
 ## 76. Product-Neutral Binding / Business Entity Lifecycle Completeness Audit
