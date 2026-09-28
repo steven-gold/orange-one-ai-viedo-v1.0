@@ -26,8 +26,8 @@ def sem_case(name,mutator,expected='FAIL'):
 def valid_fixture(root=PKG):
     idx=load(root/'10_REGISTRY/CONSTRUCTION_ARTIFACT_INDEX.yaml'); ref=load(root/'10_REGISTRY/REFERENCE_RULE_REGISTRY.yaml'); rm=load(root/'10_REGISTRY/GOVERNANCE_ROOT_MANIFEST.yaml')
     pa={
-      'program_artifact_uid':'PA-DEMO-PAGE-RUNTIME-001','work_unit_uid':'WU-DEMO-PAGE-001','page_uid_or_scope_uid':'DEMO-PAGE-001','construction_profile':'RUNTIME_SERVICE',
-      'canonical_name':'EXAMPLE_RUNTIME_SERVICE','canonical_path':'implementation/example/DEMO-PAGE-001/runtime-service.impl','canonical_filename':'runtime-service.impl','owner_uid':'OWNER-DEMO-RUNTIME',
+      'program_artifact_uid':'PA-DEMO-GOVERNED-UNIT-RUNTIME-001','work_unit_uid':'WU-DEMO-GOVERNED-UNIT-001','governed_unit_uid_or_scope_uid':'DEMO-GOVERNED-UNIT-001','construction_profile':'RUNTIME_SERVICE',\n      'toolchain_authority_ref':'AUTHORITY-DEMO-TOOLCHAIN',
+      'canonical_name':'EXAMPLE_RUNTIME_SERVICE','canonical_path':'implementation/example/DEMO-GOVERNED-UNIT-001/runtime-service.impl','canonical_filename':'runtime-service.impl','owner_uid':'OWNER-DEMO-RUNTIME',
       'producer_stage_uid':'STAGE-05','input_artifact_refs':[],'required_normative_section_uids':['WEB-GOV-02-S014'],'dependency_refs':[],'reverse_dependency_refs':[],
       'acceptance_audit_blueprint_ref':'BP-GOVERNANCE-ACCEPTANCE-001','required_test_refs':['TEST-DEMO-RUNTIME-001'],'current_hash':'0'*64,'status':'PLANNED'}
     pa['profile_contracts']={'input_contract':'CoreRuntimeInputV1','output_contract':'CoreRuntimeOutputV1','state_mutation_contract':'GOVERNED_MUTATION_ONLY','error_contract':'FAIL_CLOSED_ERROR_CONTRACT','audit_contract':'AUDIT_EVENT_REQUIRED','retry_or_recovery':'IDEMPOTENT_RETRY_OR_MANUAL_RECOVERY','test_contract':'TEST-DEMO-RUNTIME-001'}
@@ -35,7 +35,7 @@ def valid_fixture(root=PKG):
     pa['governance_load_receipt_ref']=inst.expected_receipt_uid(pa['work_unit_uid'],rm['governance_revision'],norm_hash)
     pa['write_target_binding_ref']=inst.expected_binding_uid(pa['program_artifact_uid'],pa['work_unit_uid'],pa['canonical_path'],pa['current_hash'])
     manifest={
-      'work_unit_uid':pa['work_unit_uid'],'governance_revision':rm['governance_revision'],'design_freeze_ref':'DF-DEMO-PAGE-001','program_artifacts':[pa['program_artifact_uid']],
+      'work_unit_uid':pa['work_unit_uid'],'governance_revision':rm['governance_revision'],'design_freeze_ref':'DF-DEMO-GOVERNED-UNIT-001','program_artifacts':[pa['program_artifact_uid']],
       'dependency_closure_ref':'DEP-CLOSURE-001','acceptance_audit_blueprint_ref':pa['acceptance_audit_blueprint_ref'],'naming_registry_ref':'REG-NAMING-001',
       'section_registry_ref':'REG-NORMATIVE-SECTION-001','protected_current_artifact_registry_ref':'REG-PROTECTED-CURRENT-ARTIFACT-001','typed_identity_registry_ref':'REG-PROGRAM-IDENTITY-AUTHORITY-001',
       'common_normative_bundle_refs':list(idx['mandatory_common_normative_bundles'].keys()),
@@ -43,7 +43,7 @@ def valid_fixture(root=PKG):
       'item_specific_normative_section_uids':['WEB-GOV-02-S014'],'governance_load_receipt_ref':pa['governance_load_receipt_ref'],
       'governance_load_receipt':{'receipt_uid':pa['governance_load_receipt_ref'],'status':'PASS','work_unit_uid':pa['work_unit_uid'],'governance_revision':rm['governance_revision'],'semantic_baseline_content_hash':inst.SEMANTIC_BASELINE_CONTENT_HASH,'effective_normative_set_hash':norm_hash},
       'dependency_closure':{'closure_uid':'DEP-CLOSURE-001','program_artifact_uid':pa['program_artifact_uid'],'dependency_refs':[],'reverse_dependency_refs':[],'status':'PASS'},
-      'write_target_bindings':[{'binding_uid':pa['write_target_binding_ref'],'program_artifact_uid':pa['program_artifact_uid'],'work_unit_uid':pa['work_unit_uid'],'page_uid_or_scope_uid':pa['page_uid_or_scope_uid'],
+      'write_target_bindings':[{'binding_uid':pa['write_target_binding_ref'],'program_artifact_uid':pa['program_artifact_uid'],'work_unit_uid':pa['work_unit_uid'],'governed_unit_uid_or_scope_uid':pa['governed_unit_uid_or_scope_uid'],
        'owner_uid':pa['owner_uid'],'construction_profile':pa['construction_profile'],'canonical_path':pa['canonical_path'],'canonical_filename':pa['canonical_filename'],
        'expected_current_hash':pa['current_hash'],'producer_stage_uid':pa['producer_stage_uid']}]
     }
