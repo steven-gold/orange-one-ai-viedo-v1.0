@@ -148,12 +148,7 @@ current_validation_contract:
   - Governance/Mother Neutrality
   commit_status_sha_must_equal_validation_head: true
   commit_status_success_required: true
-  external_human_or_account_evidence_required: false
-  external_auditor_required: false
-  external_signer_required: false
-  detached_external_trust_required: false
-  promotion_required_before_product_stage_execution: false
-  released_governance_selection_required: false
+  unregistered_non_word_execution_prerequisite: BLOCK
   product_stage_execution_governance_binding: EXACT_CURRENT_VALIDATED_GOVERNANCE_SNAPSHOT
   current_governance_selection_artifact: STAGE_EXECUTION/SHARED_AUTHORITY/CURRENT_GOVERNANCE_SELECTION.yaml
   validation_commands:
