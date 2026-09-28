@@ -1,12 +1,11 @@
 name: Product Stage01 Successor Materialize
 on:
-  push:
-    branches: [0921acpos]
-    paths:
-      - '.github/workflows/product-stage01-successor-materialize.yml'
-      - '.github/scripts/stage01_successor_materialize.py'
-      - '.github/scripts/stage01_operation_runtime.py'
-      - '.github/scripts/stage01_ops/**'
+  workflow_dispatch:
+    inputs:
+      reason:
+        description: Explicit operator authorization to rebuild the Stage-01 pre-stage materialization only; does not enter Stage-01
+        required: true
+        default: explicit-prestage-rematerialization
 permissions:
   contents: write
 concurrency:
