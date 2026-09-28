@@ -9,7 +9,7 @@ canonical_rule_registry_ref: governance/specifications/current/CANONICAL_RULE_RE
 canonical_rule_refs:
 - GOV-RULE-CURRENT-GOVERNANCE-IDENTITY-001
 - GOV-RULE-NEGATIVE-TEST-TRACEABILITY-001
-- GOV-RULE-AUDITOR-INDEPENDENCE-001
+- GOV-RULE-INTERNAL-AUDIT-DETERMINISM-001
 execution_context_lock:
   required_before_any_mutating_execution: true
   resolver_only_not_second_authority: true
@@ -74,7 +74,7 @@ reference_change_execution_control:
   - ACTIVE_CONSUMER_REFERENCE_INTEGRITY
   - REGISTRY_STRESS_13_OF_13
   - AFFECTED_REGRESSION
-  - FULL_LINE_WHEN_GOVERNANCE_PROMOTION_OR_SHARED_REFERENCE_OWNER_CHANGES
+  - FULL_LINE_WHEN_CURRENT_GOVERNANCE_OR_SHARED_REFERENCE_OWNER_CHANGES
   stale_reference_or_unjustified_residual: BLOCK_CLOSURE
 canonical_preflight:
   required_before_material_remediation: true
@@ -149,7 +149,7 @@ generated_output_persistence:
   tracked_and_untracked_detection_required: true
   git_diff_quiet_alone_sufficient: false
   exact_output_path_persistence_proof_required: true
-post_promotion_fresh_restart:
+post_governance_change_fresh_restart:
   old_acceptance_credit_for_affected_scope: 0
   replaceable_generated_state_reset_required: true
   immutable_predecessor_and_external_authority_preserved_at_owner: true
@@ -297,7 +297,7 @@ temporary_cycle_transition_contract:
   formal_full_line_freeze_release_deployment_closure_requires_temporary_residual_zero: true
   temporary_residual_classification: TEMPORARY_LIFECYCLE_RESIDUAL
   temporary_residual_is_candidate_semantic_failure: false
-  promotion_requires_registered_candidate_approval_materialization_path: true
+  current_governance_change_requires_registered_authorization_and_fresh_validation: true
 producer_consumer_schema_identity:
   required_before_materialization: true
   required_identity:
@@ -433,23 +433,23 @@ integrated_governance_source_defect_reentry:
   canonical_owner: CURRENT_GOVERNANCE_SOURCE_OWNER
   required_state: GOVERNANCE_SOURCE_REMEDIATION_REQUIRED
   earliest_legal_reentry: GOVERNANCE_SPECIFICATION_REMEDIATION
-  released_predecessor_mutation: FORBIDDEN
-  current_candidate_mutation: ALLOWED_ONLY_WITH_EXACT_SCOPE_PREEXISTING_AUTHORIZATION
+  predecessor_governance_history_mutation: FORBIDDEN
+  current_governance_mutation: ALLOWED_ONLY_WITH_EXPLICIT_AUTHORIZATION_AND_FRESH_VALIDATION
   derived_artifact_reconciliation_required: true
   fresh_exact_head_validation_required_after_remediation: true
   producer_transaction_success_may_validate_successor_head: false
   product_stage_execution_before_resolution: BLOCK
-  governance_promotion_before_resolution: BLOCK
+  governance_change_completion_before_resolution: BLOCK
 
-successor_candidate_state_resolution:
+current_governance_state_resolution:
   canonical_rule_uid: GOV-RULE-GOVERNANCE-CANDIDATE-BOOTSTRAP-001
-  current_candidate_identity_source: governance/specifications/REGISTRY.yaml
+  current_governance_identity_source: governance/specifications/REGISTRY.yaml
   current_validation_truth_source: EXACT_HEAD_REQUIRED_WORKFLOW_RECEIPTS
-  current_promotion_readiness_source: governance/ci/validate_governance_candidate_promotion_readiness.py
-  retired_predecessor_candidate_state_file_is_current_source: false
+  current_validation_source: .github/workflows/current-governance-stage-internal-validation.yml
+  historical_predecessor_state_file_is_current_source: false
   retired_predecessor_run_ids_are_current_evidence: false
   deleted_historical_evidence_must_be_restored_for_current_validation: false
   predecessor_history_when_needed_for_regression: ISOLATED_NON_AUTHORITY_FIXTURE
   current_consumer_reference_to_removed_predecessor_state: BLOCK_AND_MIGRATE_CONSUMER
   historical_fixture_current_completion_credit: 0
-  exact_head_external_receipt_current_completion_credit: GOVERNED_BY_PROMOTION_READINESS_ONLY
+  exact_head_internal_validation_receipt_current_completion_credit: REQUIRED
