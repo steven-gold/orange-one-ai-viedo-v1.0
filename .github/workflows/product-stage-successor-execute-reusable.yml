@@ -1,0 +1,80 @@
+name: Product Stage Successor Execute Reusable
+on:
+  workflow_call:
+    inputs:
+      stage:
+        required: true
+        type: string
+      work_units:
+        required: true
+        type: string
+permissions:
+  contents: write
+jobs:
+  execute:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout product workline
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+
+      - name: Resolve exact selected released governance
+        id: release
+        shell: bash
+        run: |
+          set -euo pipefail
+          SEL="STAGE_EXECUTION/SHARED_AUTHORITY/PRODUCT_SELECTED_GOVERNANCE_RELEASE.yaml"
+          test -s "$SEL" || { echo "BLOCK:PRODUCT_SELECTED_GOVERNANCE_RELEASE_MISSING"; exit 31; }
+          STATUS="$(awk '$1=="status:" {print $2; exit}' "$SEL")"
+          COMMIT="$(awk '$1=="governance_commit_sha:" {print $2; exit}' "$SEL")"
+          test "$STATUS" = "SELECTED_VERIFIED_RELEASE" || { echo "BLOCK:SELECTED_GOVERNANCE_NOT_VERIFIED_RELEASE"; exit 32; }
+          echo "$COMMIT" | grep -Eq '^[0-9a-f]{40}$' || { echo "BLOCK:SELECTED_GOVERNANCE_COMMIT_INVALID"; exit 33; }
+          echo "commit_sha=$COMMIT" >> "$GITHUB_OUTPUT"
+
+      - name: Checkout exact released governance
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          repository: steven-gold/orange-one-ai-viedo-v1.0
+          ref: ${{ steps.release.outputs.commit_sha }}
+          path: _governance_authority
+          fetch-depth: 1
+
+      - name: Load exact released governance
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf governance .github/governance-source
+          cp -R _governance_authority/governance ./governance
+          mkdir -p .github
+          cp -R _governance_authority/.github/governance-source .github/governance-source
+          python -m pip install --disable-pip-version-check 'PyYAML==6.0.2'
+
+      - name: Execute successor operations
+        shell: bash
+        run: |
+          set -euo pipefail
+          python .github/scripts/successor_stage_execute.py \
+            --stage "${{ inputs.stage }}" \
+            --work-units "${{ inputs.work_units }}" \
+            --product-root "$GITHUB_WORKSPACE" \
+            --governance-root "$GITHUB_WORKSPACE/_governance_authority"
+
+      - name: Commit operation artifacts only
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add "STAGE_EXECUTION/${{ inputs.stage }}"
+          git diff --cached --quiet && exit 0
+          git commit -m "${{ inputs.stage }}: execute successor operations stepwise"
+          for attempt in 1 2 3 4; do
+            git fetch origin 0921acpos
+            git rebase origin/0921acpos || { git rebase --abort || true; echo "BLOCK:REBASE_CONFLICT"; exit 51; }
+            if git push origin HEAD:0921acpos; then exit 0; fi
+            sleep 2
+          done
+          echo "BLOCK:REMOTE_ADVANCED_AFTER_RETRY_BUDGET"
+          exit 52
