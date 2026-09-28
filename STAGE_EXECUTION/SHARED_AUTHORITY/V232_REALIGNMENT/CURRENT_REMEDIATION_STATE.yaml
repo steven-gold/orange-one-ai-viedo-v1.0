@@ -59,3 +59,13 @@ pre_stage_hold:
 downstream_known_blockers:
 - STAGE02_03_DEDICATED_EXECUTOR_IMPLEMENTATIONS_MISSING
 - STAGE04_DYNAMIC_DOMAIN_CHECKPOINT_INSTANCES_MISSING
+
+pre_stage_hardening:
+  status: FROZEN_AT_STAGE01_ENTRY_BOUNDARY
+  automatic_prestage_rematerialization_enabled: false
+  prestage_rematerialization_requires_explicit_workflow_dispatch: true
+  obsolete_wb01_single_projection_producer_removed: true
+  stale_reentry_diagnostics_removed: true
+  stage01_effectful_workflow_trigger_mode: EXPLICIT_WORKFLOW_DISPATCH_ONLY
+  stale_materialization_runs_may_not_overwrite_current_head: FAST_FORWARD_PUSH_REQUIRED
+  stage01_entry_hold_preserved: true
