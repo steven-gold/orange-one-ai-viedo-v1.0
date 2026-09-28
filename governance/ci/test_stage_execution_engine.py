@@ -129,6 +129,37 @@ with tempfile.TemporaryDirectory() as _common_phys_td:
     eng._validate_local_file_artifact(_ok,'COMMON_REQUIRED_ARTIFACT')
 
 
+
+def _write_synthetic_successor_input_rows(root,base_rel,input_uids):
+    rows=[]
+    for idx,input_uid in enumerate(input_uids):
+        safe=''.join(ch if ch.isalnum() else '_' for ch in str(input_uid))[:80] or f'INPUT_{idx}'
+        artifact_rel=(Path(base_rel)/(safe+'.yaml')).as_posix()
+        readiness_rel=(Path(base_rel)/(safe+'.readiness.yaml')).as_posix()
+        artifact_path=root/artifact_rel
+        readiness_path=root/readiness_rel
+        artifact_path.parent.mkdir(parents=True,exist_ok=True)
+        artifact_path.write_text(yaml.safe_dump({
+          'artifact_type':'SYNTHETIC_SUCCESSOR_INPUT',
+          'input_uid':str(input_uid),
+          'status':'READY'
+        },sort_keys=False),encoding='utf-8')
+        readiness_path.write_text(yaml.safe_dump({
+          'artifact_type':'SYNTHETIC_CONSUMER_READINESS_EVIDENCE',
+          'input_uid':str(input_uid),
+          'status':'PASS'
+        },sort_keys=False),encoding='utf-8')
+        rows.append({
+          'input_uid':str(input_uid),
+          'status':'MATERIALIZED',
+          'artifact_ref':artifact_rel,
+          'content_sha256':eng._sha256_file(artifact_path),
+          'external_evidence_ref':'',
+          'authority_evidence_ref':'',
+          'consumer_readiness_evidence_ref':readiness_rel
+        })
+    return rows
+
 stage_uid='STAGE-01'
 st=eng.stage_map(profile)[stage_uid]
 ad=adapters['stages'][stage_uid]
@@ -213,10 +244,15 @@ yaml.safe_dump({
  'status':'PASS'
 },(_synthetic_dir/'NORMATIVE_EXECUTION_MATRIX.yaml').open('w',encoding='utf-8'),sort_keys=False)
 _successor=eng.stage_map(profile)[st['next_stage_uid']]
+_stage1_successor_inputs=_write_synthetic_successor_input_rows(
+    _sample_root,
+    f'STAGE_EXECUTION/STAGE-01/{_synthetic_wu}/HANDOFF_INPUTS',
+    _successor.get('inputs') or []
+)
 yaml.safe_dump({
  'artifact_uid':'SYNTHETIC-HANDOFF-STAGE01','artifact_type':'CROSS_STAGE_HANDOFF_READINESS_LEDGER','stage_uid':stage_uid,
  'work_unit_uid':_synthetic_wu,'successor_stage_uid':st['next_stage_uid'],
- 'successor_required_inputs':[{'input_uid':x,'status':'MATERIALIZED'} for x in _successor.get('inputs') or []],
+ 'successor_required_inputs':_stage1_successor_inputs,
  'successor_execution_bindings':[],
  'successor_execution_binding_total':0,'successor_execution_binding_ready_total':0,'successor_execution_binding_unresolved_total':0,
  'reference_resolution_complete':True,'physical_materialization_complete':True,'required_field_completeness_complete':True,
@@ -582,7 +618,11 @@ with tempfile.TemporaryDirectory() as td:
         successor_uid=str(predecessor.get('next_stage_uid') or '')
         if successor_uid in stages:
             successor=stages[successor_uid]
-            required_inputs=[{'input_uid':x,'status':'MATERIALIZED'} for x in successor.get('inputs') or []]
+            required_inputs=_write_synthetic_successor_input_rows(
+              pressure_root,
+              f'handoff-inputs/{predecessor_uid}',
+              successor.get('inputs') or []
+            )
             classes=list(map(str,binding_requirements.get(successor_uid) or []))
             op_map=binding_maps.get(successor_uid) or {}
             rows=[_binding_row(cls,str(op_map.get(cls) or successor['operations'][0])) for cls in classes]
@@ -624,6 +664,45 @@ with tempfile.TemporaryDirectory() as td:
     for predecessor_uid in [f'STAGE-{i:02d}' for i in range(4,12)]:
         predecessor,successor_uid,rel,ledger,evidence=_write_valid_handoff(predecessor_uid)
         eng._validate_cross_stage_handoff_ledger(predecessor_uid,deepcopy(evidence),predecessor,stages)
+        if ledger['successor_required_inputs']:
+            first_input=ledger['successor_required_inputs'][0]
+            broken=deepcopy(ledger)
+            broken['successor_required_inputs'][0]['artifact_ref']=''
+            (pressure_root/rel).write_text(yaml.safe_dump(broken,sort_keys=False),encoding='utf-8')
+            expect_stage_engine_block(
+              f'{predecessor_uid}_materialized_input_without_artifact_ref',
+              lambda p=predecessor_uid,e=deepcopy(evidence),st=predecessor: eng._validate_cross_stage_handoff_ledger(p,e,st,stages),
+              'CROSS_STAGE_SUCCESSOR_INPUT_ARTIFACT_REF_INVALID'
+            )
+            broken=deepcopy(ledger)
+            broken['successor_required_inputs'][0]['content_sha256']='0'*64
+            (pressure_root/rel).write_text(yaml.safe_dump(broken,sort_keys=False),encoding='utf-8')
+            expect_stage_engine_block(
+              f'{predecessor_uid}_materialized_input_stale_hash',
+              lambda p=predecessor_uid,e=deepcopy(evidence),st=predecessor: eng._validate_cross_stage_handoff_ledger(p,e,st,stages),
+              'CROSS_STAGE_SUCCESSOR_INPUT_CONTENT_HASH_DRIFT'
+            )
+            broken=deepcopy(ledger)
+            broken['successor_required_inputs'][0]['consumer_readiness_evidence_ref']=''
+            (pressure_root/rel).write_text(yaml.safe_dump(broken,sort_keys=False),encoding='utf-8')
+            expect_stage_engine_block(
+              f'{predecessor_uid}_materialized_input_without_consumer_readiness',
+              lambda p=predecessor_uid,e=deepcopy(evidence),st=predecessor: eng._validate_cross_stage_handoff_ledger(p,e,st,stages),
+              'CROSS_STAGE_SUCCESSOR_INPUT_READINESS_REF_INVALID'
+            )
+            artifact_path=pressure_root/first_input['artifact_ref']
+            original_bytes=artifact_path.read_bytes()
+            artifact_path.write_bytes(b'')
+            (pressure_root/rel).write_text(yaml.safe_dump(ledger,sort_keys=False),encoding='utf-8')
+            try:
+                expect_stage_engine_block(
+                  f'{predecessor_uid}_materialized_input_zero_byte',
+                  lambda p=predecessor_uid,e=deepcopy(evidence),st=predecessor: eng._validate_cross_stage_handoff_ledger(p,e,st,stages),
+                  'CROSS_STAGE_SUCCESSOR_INPUT_ARTIFACT:'+str(first_input['input_uid'])+'_EMPTY'
+                )
+            finally:
+                artifact_path.write_bytes(original_bytes)
+            (pressure_root/rel).write_text(yaml.safe_dump(ledger,sort_keys=False),encoding='utf-8')
         if ledger['successor_execution_bindings']:
             broken=deepcopy(ledger)
             removed=broken['successor_execution_bindings'].pop()
@@ -1338,7 +1417,11 @@ def materialize_synthetic_stage_context(stage_uid,evidence,result):
         successor_inputs=[]
         binding_classes=list(_next_requirements)
         opmap={}
-    input_rows=[{'input_uid':x,'status':'MATERIALIZED'} for x in successor_inputs]
+    input_rows=_write_synthetic_successor_input_rows(
+      _allstage_root,
+      Path('STAGE_EXECUTION')/stage_uid/wu/'HANDOFF_INPUTS',
+      successor_inputs
+    )
     binding_rows=[]
     unresolved_bindings=0
     unresolved_inputs=0
