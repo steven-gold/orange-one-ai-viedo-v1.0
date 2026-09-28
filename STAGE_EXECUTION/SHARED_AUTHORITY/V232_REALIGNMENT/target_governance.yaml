@@ -1,5 +1,5 @@
 artifact_type: V232_REALIGNMENT_TARGET_GOVERNANCE
-status: CURRENT_SELECTED_CANDIDATE
+status: CURRENT_TARGET_CANDIDATE_NOT_EXECUTION_AUTHORITY
 normative_authority: false
 source_of_truth: governance/specifications/REGISTRY.yaml
 governance_uid: GOV-REV-20260927-GOVERNANCE-IDENTITY-NEGATIVE-TRACE-AUDITOR-INDEPENDENCE-HARDENING
@@ -8,13 +8,23 @@ display_version: v2.2.33
 governance_status: CANDIDATE
 identity_state: PROVISIONAL_EXACT_HEAD_AND_BUNDLE_DIGEST_BOUND
 released_immutable_identity: false
-specification_bundle_sha256: 7f09a6404553248e4a15ea83ecffceb15cb2a4121c8c54e32aebf95ffb73c0f4
-governance_head_sha: 4eb7163f6d590ecc88155d9f74d49977df656f27
-authorization_record_url: https://github.com/steven-gold/orange-one-ai-viedo-v1.0/issues/59
-authorization_scope:
-- STAGE04_TO_STAGE05_REENTRY
-- GOVERNANCE_REVISION_TRANSITION_RECEIPT
-- PRODUCT_SELECTED_GOVERNANCE_RELEASE
-- APPLICATION_BASELINE_ADMISSION_MANIFEST
-note: Candidate governance. Realignment content is a projection target; it does not by itself grant product stage execution credit. Product execution requires the external admission conditions resolved
-  outside the common engine.
+governance_head_sha: 5f5d5f38d7054179735fc84861f826b8ef1c2875
+authorization_records:
+- https://github.com/steven-gold/orange-one-ai-viedo-v1.0/issues/59
+- https://github.com/steven-gold/orange-one-ai-viedo-v1.0/issues/61
+product_execution_admission: BLOCKED
+product_execution_blocker: PRODUCT_SELECTED_GOVERNANCE_RELEASE_MISSING
+candidate_exact_head_validation:
+  mother_neutrality: PASS
+  current_cleanup_terminal_receipt: MISSING
+  candidate_completion_credit: 0
+allowed_current_use:
+- REALIGNMENT_PLANNING
+- SUCCESSOR_REENTRY_RESOLUTION
+- DEFECT_DENOMINATOR_RECONCILIATION
+forbidden_current_use:
+- PRODUCT_STAGE_EFFECTFUL_EXECUTION
+- PRODUCT_STAGE_CLOSURE_CREDIT
+- PREDECESSOR_CLOSED_WU_RESIGN
+- OLD_GOVERNANCE_PASS_REUSE
+note: Candidate governance is a planning target only. Formal successor/re-entry execution begins only after one exact PRODUCT_SELECTED_GOVERNANCE_RELEASE selects a released immutable governance commit/UID and required transition evidence exists.
