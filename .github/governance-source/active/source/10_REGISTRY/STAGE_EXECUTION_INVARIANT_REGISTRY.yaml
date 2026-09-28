@@ -314,6 +314,25 @@ invariants:
     mutate_closed_work_unit_to_current_governance_identity: FORBIDDEN
     current_reentry_requires_new_work_unit_uid: true
     successor_or_reentry_must_bind_predecessor_work_unit_uid: true
+    work_unit_activation_kind_field: work_unit_activation_kind
+    allowed_work_unit_activation_kinds:
+    - INITIAL_STAGE_WORK_UNIT
+    - SUCCESSOR_REENTRY_WORK_UNIT
+    current_work_unit_activation_kind_required: true
+    same_work_unit_terminal_receipt_at_entry: BLOCK
+    required_successor_reentry_fields:
+    - predecessor_work_unit_uid
+    - predecessor_work_unit_ref
+    - predecessor_terminal_receipt_ref
+    - reentry_authority_ref
+    predecessor_work_unit_uid_must_differ_from_current: true
+    predecessor_work_unit_ref_must_resolve_physically: true
+    predecessor_terminal_receipt_ref_must_resolve_physically: true
+    predecessor_stage_uid_must_equal_current_stage_uid: true
+    predecessor_governed_unit_uid_must_equal_current_governed_unit_uid: true
+    predecessor_work_unit_status_required: CLOSED
+    predecessor_terminal_receipt_conclusion_required: success
+    initial_stage_work_unit_forbids_reentry_fields: true
     predecessor_artifacts_may_be_consumed_as_immutable_inputs_only: true
     predecessor_terminal_receipt_may_receive_current_execution_credit: false
     current_execution_state_must_be_materialized_under_successor_work_unit: true
