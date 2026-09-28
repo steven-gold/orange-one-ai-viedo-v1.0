@@ -1,10 +1,10 @@
 schema_version: 1
 artifact_uid: REG-PRODUCT-EXECUTION-ENVIRONMENT-ADMISSION-001
 artifact_type: PRODUCT_EXECUTION_ENVIRONMENT_ADMISSION_REGISTRY
-status: CURRENT_CANDIDATE
+status: CURRENT
 canonical_path: 10_REGISTRY/PRODUCT_EXECUTION_ENVIRONMENT_ADMISSION_REGISTRY.yaml
 owner_uid: OWNER-GOVERNANCE-PRODUCT-EXECUTION-ADMISSION
-governance_revision: v2.2.33-governance-identity-negative-trace-auditor-independence-hardening-20260927
+governance_revision: v2.2.34-word-derived-stage-internal-validation-20260928
 scope:
   layer_classification: EXTERNAL_PRODUCT_EXECUTION_ENVIRONMENT_ADMISSION
   reusable_common_stage_normative_denominator_inclusion: EXCLUDED
@@ -21,8 +21,8 @@ standard_document:
   - WEB-EXT-ADMISSION-01-S003
   - WEB-EXT-ADMISSION-01-S004
 product_execution_admission_contracts:
-  PRODUCT_GOVERNANCE_RELEASE_SELECTION_AND_APPLICATION_BASELINE:
-    contract_uid: GOV-ADMISSION-PRODUCT-GOVERNANCE-RELEASE-APPLICATION-BASELINE-001
+  PRODUCT_CURRENT_GOVERNANCE_SNAPSHOT_AND_APPLICATION_BASELINE:
+    contract_uid: GOV-ADMISSION-PRODUCT-CURRENT-GOVERNANCE-APPLICATION-BASELINE-001
     normative_section_uids:
     - WEB-EXT-ADMISSION-01-S001
     - WEB-EXT-ADMISSION-01-S002
@@ -32,45 +32,34 @@ product_execution_admission_contracts:
     reusable_common_stage_normative_denominator_inclusion: EXCLUDED
     reusable_common_stage_definition_credit: 0
     reusable_common_stage_completion_credit: 0
-    product_governance_selection_applicability: CONDITIONAL_WHEN_PRODUCT_EXECUTION_CONSUMES_RELEASED_GOVERNANCE
+    product_governance_selection_applicability: REQUIRED_FOR_PRODUCT_STAGE_EXECUTION
     application_baseline_applicability: CONDITIONAL_WHEN_CURRENT_APPLICATION_BASELINE_IS_ABSENT
     application_baseline_is_universal_page_stage_requirement: false
     product_specific_branch_repository_or_framework_may_enter_common_stage_semantics: false
-    candidate_validation_terminalization_authority_ref: governance/specifications/REGISTRY.yaml#candidate_validation_contract
-    external_precondition_applicability: CONDITIONAL_WHEN_PRODUCT_EXECUTION_EXPLICITLY_SELECTS_RELEASED_GOVERNANCE_MODE
-    common_stage_execution_outside_released_governance_mode_blocked_by_this_contract: false
-    released_governance_mode_activation_field: governance_execution_mode
-    released_governance_mode_activation_value: RELEASED_GOVERNANCE
-    absence_of_explicit_released_governance_mode_selection: NOT_APPLICABLE_WITH_ZERO_COMMON_STAGE_BLOCKING_CREDIT
-    candidate_current_governance_may_drive_common_stage_when_released_mode_not_selected: true
-    selected_governance_release_artifact_type: PRODUCT_SELECTED_GOVERNANCE_RELEASE
-    selected_governance_release_path: STAGE_EXECUTION/SHARED_AUTHORITY/PRODUCT_SELECTED_GOVERNANCE_RELEASE.yaml
-    selected_governance_release_required_fields: [artifact_type, status, governance_repository, governance_commit_sha, governance_tree_sha, governance_uid, governance_revision, display_version, release_receipt_ref, release_receipt_sha256, root_manifest_sha256, fresh_reverify_status, fresh_reverify_evidence_ref, selection_authority_ref]
-    selected_governance_release_status: SELECTED_VERIFIED_RELEASE
+    current_validation_authority_ref: governance/specifications/REGISTRY.yaml#current_validation_contract
+    external_human_or_account_precondition: false
+    current_governance_mode_activation_field: governance_execution_mode
+    current_governance_mode_activation_value: CURRENT_VALIDATED_GOVERNANCE
+    selected_governance_artifact_type: PRODUCT_SELECTED_CURRENT_GOVERNANCE
+    selected_governance_path: STAGE_EXECUTION/SHARED_AUTHORITY/CURRENT_GOVERNANCE_SELECTION.yaml
+    selected_governance_required_fields: [artifact_type, status, selection_mode, product_branch, governance_repository, governance_branch, governance_commit_sha, governance_tree_sha, governance_uid, governance_revision, display_version, root_manifest_sha256, selection_authority_ref]
+    selected_governance_status: SELECTED_EXACT_CURRENT_SNAPSHOT
+    selected_governance_selection_mode: EXACT_CURRENT_GOVERNANCE_SNAPSHOT
     governance_source_root_env: GOVERNANCE_SOURCE_ROOT
     governance_source_checkout_exact_commit_required: true
     loaded_governance_registry_must_equal_selected_checkout_registry: true
-    selected_release_registry_status: CURRENT_RELEASED
-    selected_release_branch_role: IMMUTABLE_GOVERNANCE_RULESET
-    selected_release_identity_status: RELEASED
-    selected_release_identity_state: IMMUTABLE_RELEASED
-    selected_release_released_immutable_identity_required: true
-    selected_release_fresh_reverify_status: PASS
+    selected_registry_status: CURRENT
+    selected_identity_status: CURRENT
+    selected_identity_state: EXACT_HEAD_AND_BUNDLE_DIGEST_BOUND
     moving_governance_branch_ref_may_grant_product_execution_credit: false
-    candidate_governance_released_mode_admission_credit: 0
-    product_stage_workflow_governance_checkout_mode: EXACT_SELECTED_RELEASE_COMMIT_ONLY
-    product_released_governance_load_receipt_artifact_type: PRODUCT_RELEASED_GOVERNANCE_LOAD_RECEIPT
-    product_released_governance_load_receipt_filename: PRODUCT_RELEASED_GOVERNANCE_LOAD_RECEIPT.yaml
-    product_released_governance_load_receipt_required_fields: [artifact_type, status, stage_uid, work_unit_uid, selected_governance_ref, governance_uid, governance_revision, governance_commit_sha, governance_tree_sha, governance_root_manifest_sha256, effective_normative_set_sha256, loader_uid, loaded_at]
-    product_released_governance_load_receipt_status: PASS
-    governance_revision_transition_receipt_type: GOVERNANCE_REVISION_TRANSITION_RECEIPT
-    governance_revision_transition_receipt_path: STAGE_EXECUTION/SHARED_AUTHORITY/GOVERNANCE_REVISION_TRANSITION_RECEIPT.yaml
-    governance_revision_transition_required_fields: [artifact_type, status, from_governance_uid, to_governance_uid, selected_governance_ref, affected_work_unit_uids, invalidated_artifact_classes, preserved_artifact_refs, earliest_reentry_stage_uid, reverse_dependency_evidence_ref, transition_authority_ref]
-    governance_revision_transition_status_when_old_uid_present: REVERIFY_REQUIRED
-    old_uid_without_transition_receipt: BLOCK
-    impacted_old_governance_closure_disposition: REVERIFY_REQUIRED
+    product_stage_workflow_governance_checkout_mode: EXACT_SELECTED_CURRENT_COMMIT_ONLY
+    current_governance_load_receipt_artifact_type: PRODUCT_CURRENT_GOVERNANCE_LOAD_RECEIPT
+    current_governance_load_receipt_filename: PRODUCT_CURRENT_GOVERNANCE_LOAD_RECEIPT.yaml
+    current_governance_load_receipt_required_fields: [artifact_type, status, stage_uid, work_unit_uid, selected_governance_ref, governance_uid, governance_revision, governance_commit_sha, governance_tree_sha, governance_root_manifest_sha256, effective_normative_set_sha256, loader_uid, loaded_at]
+    current_governance_load_receipt_status: PASS
+    governance_change_old_evidence_relabel_forbidden: true
+    affected_old_governance_closure_disposition: REVERIFY_REQUIRED
     unaffected_evidence_preservation_requires_reverse_dependency_proof: true
-    old_execution_evidence_may_be_relabelled_to_new_uid: false
     application_baseline_admission_required_when_current_application_root_absent: true
     application_baseline_admission_owner: PRODUCT_APPLICATION_BASELINE_FOUNDATION
     application_baseline_admission_manifest_type: APPLICATION_BASELINE_ADMISSION_MANIFEST
