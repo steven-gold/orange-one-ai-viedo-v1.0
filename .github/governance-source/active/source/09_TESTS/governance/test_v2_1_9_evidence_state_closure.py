@@ -66,7 +66,7 @@ results=[
  case('successor_migration_contract_pass',
       m.get('missing_retired_predecessor_evidence_disposition')=='MIGRATE_CONSUMER_NOT_RESTORE_ARTIFACT'
       and st.get('current_candidate_identity_source')=='governance/specifications/REGISTRY.yaml'),
- case('stage02_page_functional_contract_registered',s2.get('name')=='PAGE_FUNCTIONAL_CONTRACT'),
+ case('stage02_governed_unit_functional_contract_registered',s2.get('name')=='GOVERNED_UNIT_FUNCTIONAL_CONTRACT'),
  case('stage02_functional_chain_compile_registered','FUNCTIONAL_CHAIN_COMPILE' in (s2.get('operations') or [])),
  case('stage02_dependency_map_compile_registered','DEPENDENCY_MAP_COMPILE' in (s2.get('operations') or [])),
  case('stage02_async_provider_contract_registered','ASYNC_PROVIDER_CONTRACT_COMPILE' in (s2.get('operations') or [])),
