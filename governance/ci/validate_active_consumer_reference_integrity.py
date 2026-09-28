@@ -190,16 +190,8 @@ def main() -> int:
         errors.append("CURRENT_HISTORICAL_PASS_SUBSTITUTION_NOT_BLOCKED")
     if validation_contract.get("authority_model")!="WORD_DERIVED_INTERNAL_VALIDATION":
         errors.append("CURRENT_WORD_DERIVED_AUTHORITY_MODEL_DRIFT")
-    for key in (
-        "external_human_or_account_evidence_required",
-        "external_auditor_required",
-        "external_signer_required",
-        "detached_external_trust_required",
-        "promotion_required_before_product_stage_execution",
-        "released_governance_selection_required",
-    ):
-        if validation_contract.get(key) is not False:
-            errors.append("NON_WORD_EXTERNAL_GATE_REINTRODUCED:"+key)
+    if validation_contract.get("unregistered_non_word_execution_prerequisite")!="BLOCK":
+        errors.append("UNREGISTERED_NON_WORD_EXECUTION_PREREQUISITE_NOT_BLOCKED")
 
     if validation_contract.get("source_package_integration_mode")=="SINGLE_BRANCH_INTEGRATED":
         if validation_contract.get("source_package_integrated_branch")!=governance_branch:
