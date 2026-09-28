@@ -106,6 +106,29 @@ with tempfile.TemporaryDirectory() as _phys_td:
         else: os.environ[eng.ACTIVE_WORK_UNIT_ENV]=_old_work
 
 
+# Common physical-artifact regression: local required artifacts must be non-empty
+# and structured YAML/JSON must parse, independent of Stage/product identity.
+with tempfile.TemporaryDirectory() as _common_phys_td:
+    _common_phys_root=Path(_common_phys_td)
+    _empty=_common_phys_root/'EMPTY_REQUIRED_EVIDENCE.yaml'
+    _empty.write_bytes(b'')
+    expect_stage_engine_block(
+      'common_required_artifact_zero_byte',
+      lambda:eng._validate_local_file_artifact(_empty,'COMMON_REQUIRED_ARTIFACT'),
+      'COMMON_REQUIRED_ARTIFACT_EMPTY'
+    )
+    _bad=_common_phys_root/'UNPARSEABLE_REQUIRED_EVIDENCE.yaml'
+    _bad.write_text('a: [unterminated\n',encoding='utf-8')
+    expect_stage_engine_block(
+      'common_required_artifact_unparseable',
+      lambda:eng._validate_local_file_artifact(_bad,'COMMON_REQUIRED_ARTIFACT'),
+      'COMMON_REQUIRED_ARTIFACT_PARSE_FAILED'
+    )
+    _ok=_common_phys_root/'VALID_REQUIRED_EVIDENCE.yaml'
+    _ok.write_text('artifact_type: SYNTHETIC_REQUIRED_EVIDENCE\nstatus: PASS\n',encoding='utf-8')
+    eng._validate_local_file_artifact(_ok,'COMMON_REQUIRED_ARTIFACT')
+
+
 stage_uid='STAGE-01'
 st=eng.stage_map(profile)[stage_uid]
 ad=adapters['stages'][stage_uid]
