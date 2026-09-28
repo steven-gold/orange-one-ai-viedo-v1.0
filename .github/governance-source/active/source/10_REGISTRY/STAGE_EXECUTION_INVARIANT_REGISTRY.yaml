@@ -256,6 +256,66 @@ invariants:
     - PHYSICAL_CONTENT_CHANGED_WITH_STALE_DECLARED_HASH
     - RECEIPT_HASH_DRIFT_FROM_PHYSICAL_ARTIFACT
     - CONSUMER_BINDING_DRIFT_FROM_RECOMPUTED_IDENTITY
+  BASIC_DESIGN_DOMAIN_STEPWISE_CHECKPOINT:
+    invariant_uid: GOV-INV-BASIC-DESIGN-DOMAIN-STEPWISE-CHECKPOINT-001
+    normative_section_uids:
+    - WEB-GOV-01-S083A
+    artifact_type: BASIC_DESIGN_DOMAIN_STEPWISE_CHECKPOINT
+    artifact_class: MULTI_INSTANCE_STAGE_EVIDENCE
+    applicable_stage_uid: STAGE-04
+    producer_operation_uid: BASIC_DESIGN_PACKAGE_COMPILE
+    denominator_source: BASIC_DESIGN_PACKAGE.design_domains
+    one_checkpoint_per_applicable_domain: true
+    checkpoint_type_presence_alone_completion_credit: 0
+    aggregate_or_summary_checkpoint_may_replace_domain_instances: false
+    dependent_domain_admission_requires_predecessor_checkpoint_pass: true
+    final_freeze_requires_all_applicable_domain_checkpoints_pass: true
+    required_fields:
+    - schema_version
+    - artifact_uid
+    - artifact_type
+    - stage_uid
+    - work_unit_uid
+    - governed_unit_uid
+    - domain_uid
+    - denominator_source_ref
+    - denominator_hash
+    - current_authority_refs
+    - required_row_uids
+    - materialized_row_uids
+    - unresolved_required_row_uids
+    - missing_required_row_count
+    - conflict_count
+    - validation_result
+    - evidence_refs
+    - producer_operation_uid
+    - governance_uid
+    - source_head_sha
+    allowed_validation_results:
+    - PASS
+    - BLOCKED
+    - FAIL
+    pass_requires:
+      unresolved_required_row_count: 0
+      missing_required_row_count: 0
+      conflict_count: 0
+      exact_producer_operation_uid: BASIC_DESIGN_PACKAGE_COMPILE
+      exact_normative_section_uid: WEB-GOV-01-S083A
+    invalid_or_missing_checkpoint_disposition: BLOCK_BASIC_DESIGN_FREEZE_AND_REENTER_OWNING_DOMAIN
+  CLOSED_WORK_UNIT_SUCCESSOR_REENTRY:
+    invariant_uid: GOV-INV-CLOSED-WORK-UNIT-SUCCESSOR-REENTRY-001
+    applies_to_all_registered_stages: true
+    closed_work_unit_is_immutable_predecessor_evidence: true
+    closed_to_open_transition: FORBIDDEN
+    mutate_closed_work_unit_to_current_governance_identity: FORBIDDEN
+    current_reentry_requires_new_work_unit_uid: true
+    successor_or_reentry_must_bind_predecessor_work_unit_uid: true
+    predecessor_artifacts_may_be_consumed_as_immutable_inputs_only: true
+    predecessor_terminal_receipt_may_receive_current_execution_credit: false
+    current_execution_state_must_be_materialized_under_successor_work_unit: true
+    current_normative_execution_matrix_must_be_materialized_under_successor_work_unit: true
+    current_scope_manifest_must_be_materialized_under_successor_work_unit: true
+    invalid_reactivation_disposition: BLOCK_AND_RESOLVE_SUCCESSOR_WORK_UNIT
   IMPLEMENTATION_DEVIATION_FEEDBACK:
     deviation_record_required: true
     affected_consumers_status: REVERIFY_REQUIRED
