@@ -129,11 +129,6 @@ def _validate_stage1_projection_physical_integrity(work,bindings):
     if inv.get('invariant_uid')!='GOV-INV-PHYSICAL-ARTIFACT-INTEGRITY-001' or inv.get('independent_source_rederivation_validator_must_run_when_registered') is not True:
         fail('PHYSICAL_ARTIFACT_INTEGRITY_CONTRACT_MISSING')
     work_dir=_stage1_work_dir()
-    rawcap_path=work_dir/'00_SOURCE_INTAKE/RAW_SOURCE_REFERENCE_MANIFEST.yaml'
-    capstate_path=work_dir/'00_SOURCE_INTAKE/RAW_SOURCE_CAPTURE_STATE.yaml'
-    _require_nonempty_file(rawcap_path,'STAGE01_RAW_SOURCE_REFERENCE_MANIFEST')
-    _require_nonempty_file(capstate_path,'STAGE01_RAW_SOURCE_CAPTURE_STATE')
-    rawcap=y(rawcap_path); capstate=y(capstate_path)
     contracts=y(STAGE1_SOURCE_CONTRACTS)
     projection_contract=(contracts.get('structured_document_source_projection_contract') or {}).get('projection') or {}
     template=str(projection_contract.get('artifact_path_template') or '')
@@ -147,6 +142,11 @@ def _validate_stage1_projection_physical_integrity(work,bindings):
         projection=_external_yaml(proj_path,'STAGE01_SOURCE_PROJECTION_ARTIFACT')
         if projection.get('artifact_type')!='CANONICAL_SOURCE_PROJECTION':
             fail('STAGE01_SOURCE_PROJECTION_ARTIFACT_TYPE_INVALID:'+suid)
+    rawcap_path=work_dir/'00_SOURCE_INTAKE/RAW_SOURCE_REFERENCE_MANIFEST.yaml'
+    capstate_path=work_dir/'00_SOURCE_INTAKE/RAW_SOURCE_CAPTURE_STATE.yaml'
+    _require_nonempty_file(rawcap_path,'STAGE01_RAW_SOURCE_REFERENCE_MANIFEST')
+    _require_nonempty_file(capstate_path,'STAGE01_RAW_SOURCE_CAPTURE_STATE')
+    rawcap=y(rawcap_path); capstate=y(capstate_path)
     guard=_load_stage1_pipeline_guard()
     try:
         result=guard.validate_pre_stage_source_projection(SOURCE_PACKAGE_ROOT,work_dir,rawcap,capstate)
