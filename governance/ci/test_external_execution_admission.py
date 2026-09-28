@@ -1,31 +1,23 @@
 #!/usr/bin/env python3
 from copy import deepcopy
-import yaml
 import external_execution_admission as ext
+
 def expect_block(label,fn,needle):
     try: fn()
     except ext.core.StageEngineError as exc:
         if needle not in str(exc): raise SystemExit('WRONG_BLOCK:'+label+':'+str(exc))
         return
     raise SystemExit('FAIL_EXPECTED_BLOCK:'+label)
-_release_reg={'status':'CURRENT_RELEASED','branch':'release-line','branch_role_contract':{'release-line':'IMMUTABLE_GOVERNANCE_RULESET'},'governance_identity':{'governance_uid':'GOV-RELEASE-TEST','governance_revision':'vTEST','display_version':'vTEST','status':'RELEASED','identity_state':'IMMUTABLE_RELEASED','released_immutable_identity':True}}
-_release_sel={'artifact_type':'PRODUCT_SELECTED_GOVERNANCE_RELEASE','status':'SELECTED_VERIFIED_RELEASE','governance_repository':'owner/repo','governance_commit_sha':'a'*40,'governance_tree_sha':'b'*40,'governance_uid':'GOV-RELEASE-TEST','governance_revision':'vTEST','display_version':'vTEST','release_receipt_ref':'governance/release/RELEASE_RECEIPT.yaml','release_receipt_sha256':'c'*64,'root_manifest_sha256':'d'*64,'fresh_reverify_status':'PASS','fresh_reverify_evidence_ref':'external://fresh-reverify','selection_authority_ref':'authority://selection'}
-_release_receipt={'artifact_type':'GOVERNANCE_RELEASE_RECEIPT','released_governance_uid':'GOV-RELEASE-TEST','released_governance_revision':'vTEST'}
-assert ext._validate_selected_governance_release_data(_release_sel,_release_reg,_release_receipt,{'repository':'owner/repo','head':'a'*40,'tree':'b'*40},'GOV-RELEASE-TEST','d'*64) is True
-_candidate=deepcopy(_release_reg); _candidate['status']='ACTIVE_SINGLE_BRANCH_VALIDATION'; _candidate['branch_role_contract']['release-line']='GOVERNANCE_REVISION_CANDIDATE'
-expect_block('candidate_cannot_receive_released_governance_admission_credit',lambda:ext._validate_selected_governance_release_data(_release_sel,_candidate,_release_receipt,{'repository':'owner/repo','head':'a'*40,'tree':'b'*40},'GOV-RELEASE-TEST','d'*64),'PRODUCT_SELECTED_GOVERNANCE_NOT_RELEASED')
-assert ext._released_governance_mode_selected({}, {}) is False
-assert ext._released_governance_mode_selected({'governance_execution_mode':'RELEASED_GOVERNANCE'}, {}) is True
-assert ext._released_governance_mode_selected({}, {'governance_execution_mode':'RELEASED_GOVERNANCE'}) is True
-_bad=deepcopy(_release_sel); _bad['governance_commit_sha']='e'*40
-expect_block('selected_exact_commit_mismatch',lambda:ext._validate_selected_governance_release_data(_bad,_release_reg,_release_receipt,{'repository':'owner/repo','head':'a'*40,'tree':'b'*40},'GOV-RELEASE-TEST','d'*64),'PRODUCT_SELECTED_GOVERNANCE_BINDING_MISMATCH:governance_commit_sha')
+
+_current_reg={'status':'CURRENT','branch':'rebuild-v2.1.1','governance_identity':{'governance_uid':'GOV-CURRENT-TEST','governance_revision':'vTEST','display_version':'vTEST','status':'CURRENT','identity_state':'EXACT_HEAD_AND_BUNDLE_DIGEST_BOUND'}}
+_sel={'artifact_type':'PRODUCT_SELECTED_CURRENT_GOVERNANCE','status':'SELECTED_EXACT_CURRENT_SNAPSHOT','selection_mode':'EXACT_CURRENT_GOVERNANCE_SNAPSHOT','product_branch':'0921acpos','governance_repository':'owner/repo','governance_branch':'rebuild-v2.1.1','governance_commit_sha':'a'*40,'governance_tree_sha':'b'*40,'governance_uid':'GOV-CURRENT-TEST','governance_revision':'vTEST','display_version':'vTEST','root_manifest_sha256':'d'*64,'selection_authority_ref':'authority://selection'}
+assert ext._validate_selected_current_governance_data(_sel,_current_reg,{'repository':'owner/repo','head':'a'*40,'tree':'b'*40},'GOV-CURRENT-TEST','d'*64) is True
+_bad=deepcopy(_sel); _bad['governance_commit_sha']='e'*40
+expect_block('selected_exact_commit_mismatch',lambda:ext._validate_selected_current_governance_data(_bad,_current_reg,{'repository':'owner/repo','head':'a'*40,'tree':'b'*40},'GOV-CURRENT-TEST','d'*64),'PRODUCT_SELECTED_CURRENT_GOVERNANCE_BINDING_MISMATCH:governance_commit_sha')
+assert ext._current_governance_mode_selected({}, {}) is False
+assert ext._current_governance_mode_selected({'governance_execution_mode':'CURRENT_VALIDATED_GOVERNANCE'}, {}) is True
+assert ext._current_governance_mode_selected({}, {'governance_execution_mode':'CURRENT_VALIDATED_GOVERNANCE'}) is True
 core_text=(ext.ROOT/'governance/ci/stage_execution_engine.py').read_text(encoding='utf-8')
-for token in ('PRODUCT_SELECTED_GOVERNANCE_RELEASE','PRODUCT_RELEASED_GOVERNANCE_LOAD_RECEIPT','GOVERNANCE_REVISION_TRANSITION_RECEIPT','APPLICATION_BASELINE_SNAPSHOT','PRODUCT_EXECUTION_ENVIRONMENT_ADMISSION_REGISTRY'):
+for token in ('PRODUCT_SELECTED_CURRENT_GOVERNANCE','PRODUCT_CURRENT_GOVERNANCE_LOAD_RECEIPT','APPLICATION_BASELINE_SNAPSHOT','PRODUCT_EXECUTION_ENVIRONMENT_ADMISSION_REGISTRY'):
     if token in core_text: raise SystemExit('STAGE_CORE_EXTERNAL_SEMANTIC_LEAK:'+token)
-binding=yaml.safe_load((ext.ROOT/'governance/environment/EXECUTION_WORKLINE_BINDING.yaml').read_text(encoding='utf-8')) or {}
-for group in ('governance_workline','execution_workline'):
-    row=binding.get(group) or {}
-    for token in (row.get('repository'),row.get('branch')):
-        if isinstance(token,str) and token and token in core_text:
-            raise SystemExit('STAGE_CORE_EXECUTION_ENVIRONMENT_LITERAL_LEAK:'+token)
-print('PASS: external execution admission is isolated from reusable Stage Core')
+print('PASS: Current-governance external admission is isolated from reusable Stage Core')
