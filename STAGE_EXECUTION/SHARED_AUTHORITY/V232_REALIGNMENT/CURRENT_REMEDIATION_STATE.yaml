@@ -1,6 +1,7 @@
 artifact_type: PRODUCT_REMEDIATION_RESUME_STATE
-status: CLEAN_RESET_AWAITING_FRESH_STAGE01_REEXECUTION
+status: CLEAN_BOOTSTRAP_IMPLEMENTATION_REMEDIATED_AWAITING_VALIDATION
 authorization_record_url: https://github.com/steven-gold/orange-one-ai-viedo-v1.0/issues/61
+clean_bootstrap_authorization_comment_id: 5877510981
 product_branch: 0921acpos
 governed_units:
 - GLOBAL-HOME-SHELL-NAVIGATION
@@ -19,19 +20,30 @@ clean_reset:
   stage01_04_home_wb01_generated_work_units_present: false
   stage01_04_home_wb01_stage_resume_present: false
   stage01_04_home_wb01_stage_scope_present: false
-  derived_source_review_inputs_present: false
   predecessor_completion_credit_retained: 0
   product_completion_credit: 0
   original_word_sources_preserved: true
   governance_preserved: true
+clean_bootstrap_contract:
+  activation_kind: INITIAL_STAGE_WORK_UNIT
+  canonical_source_origin: REPOSITORY_ROOT_WORD
+  source_review_generated_from_current_canonical_source: true
+  predecessor_work_unit_required: false
+  predecessor_segment_map_required: false
+  predecessor_matrix_required: false
+  predecessor_classification_required: false
+  predecessor_blueprint_required: false
+  predecessor_terminal_receipt_required: false
+  predecessor_runtime_dependency_count_required: 0
+  historical_completion_credit: 0
+  selection_mode: EXPLICIT_GOVERNED_UNIT_SET
 resume_point:
-  last_completed_action: DELETE_STAGE01_04_HOME_WB01_PRODUCTION_DATA
-  next_action: REGENERATE_SOURCE_REVIEW_INPUTS_THEN_MATERIALIZE_STAGE01_SUCCESSORS
+  last_completed_action: CLEAN_BOOTSTRAP_IMPLEMENTATION_REMEDIATION
+  next_action: VALIDATE_CLEAN_BOOTSTRAP_IMPLEMENTATION
   next_effectful_stage: STAGE-01
   earliest_owner: PRE_STAGE_SOURCE_REVIEW_AND_PROJECTION
   stage_entry_hold: true
 current_blockers:
-- SOURCE_REVIEW_INPUTS_NOT_MATERIALIZED
-- STAGE01_SUCCESSOR_WORK_UNITS_NOT_MATERIALIZED
-pre_stage_unresolved_defect_count: 6
+- CLEAN_BOOTSTRAP_IMPLEMENTATION_VALIDATION_PENDING
+pre_stage_unresolved_defect_count: 1
 completion_credit: 0

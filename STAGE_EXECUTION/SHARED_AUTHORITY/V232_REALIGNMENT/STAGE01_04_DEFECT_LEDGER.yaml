@@ -1,6 +1,7 @@
 artifact_type: PRODUCT_STAGE01_04_DEFECT_LEDGER
-status: CLEAN_RESET_AWAITING_FRESH_REEXECUTION
+status: CLEAN_BOOTSTRAP_IMPLEMENTATION_REMEDIATED_AWAITING_VALIDATION
 authorization_record_url: https://github.com/steven-gold/orange-one-ai-viedo-v1.0/issues/61
+clean_bootstrap_authorization_comment_id: 5877510981
 product_branch: 0921acpos
 current_governance:
   head: c353d7bdb5dc7edb43c6c7453517d1df75d54ce8
@@ -14,43 +15,39 @@ stage_range:
 - STAGE-03
 - STAGE-04
 defects:
-- uid: DEF-HOME-S01-PROJECTION-ZERO-BYTE
+- uid: DEF-CLEAN-BOOTSTRAP-PREDECESSOR-RUNTIME-DEPENDENCY
   stage_uid: STAGE-01
-  state: REEXECUTION_REQUIRED
-- uid: DEF-WB01-S01-PROJECTION-ZERO-BYTE
+  owner: PRODUCT_CLEAN_BOOTSTRAP_IMPLEMENTATION
+  defect: FRESH_PRODUCTION_PATH_REQUIRED_DELETED_PREDECESSOR_EXECUTION_ARTIFACTS
+  required_fix:
+  - ROOT_WORD_SOURCE_REVIEW
+  - FRESH_SOURCE_PROJECTION
+  - FRESH_NORMATIVE_MATRIX_COMPILE
+  - INITIAL_STAGE_WORK_UNIT
+  - FRESH_STAGE01_OPERATION_OUTPUTS
+  - ZERO_PREDECESSOR_RUNTIME_DEPENDENCY
+  implementation_state: REMEDIATED_PENDING_VALIDATION
+- uid: DEF-SELECTED-UNIT-EXECUTION-HARDWIRED-PAIR
   stage_uid: STAGE-01
-  state: REEXECUTION_REQUIRED
-- uid: DEF-HOME-S01-CONTENT-AUDIT-LEGACY-ID
-  stage_uid: STAGE-01
-  state: REEXECUTION_REQUIRED
-- uid: DEF-WB01-S01-CONTENT-AUDIT-LEGACY-ID
-  stage_uid: STAGE-01
-  state: REEXECUTION_REQUIRED
-- uid: DEF-BOTH-S01-PAGE-IDENTITY
-  stage_uid: STAGE-01
-  state: REEXECUTION_REQUIRED
+  owner: PRODUCT_WORKFLOW_SELECTION
+  defect: HOME_AND_WB01_WERE_HARDWIRED_AS_ONE_EXECUTION_SET
+  required_fix: EXPLICIT_GOVERNED_UNIT_SELECTION
+  implementation_state: REMEDIATED_PENDING_VALIDATION
 - uid: DEF-BOTH-S02-PAGE-IDENTITY
   stage_uid: STAGE-02
-  state: WAITING_FOR_STAGE01_SUCCESSOR_PASS
-- uid: DEF-BOTH-S01-03-EXECUTOR
+  state: WAITING_FOR_STAGE01_CURRENT_PASS
+- uid: DEF-BOTH-S02-03-EXECUTOR
   stage_uid:
-  - STAGE-01
   - STAGE-02
   - STAGE-03
-  state: STAGE01_EXECUTORS_AVAILABLE_STAGE02_03_PENDING
-- uid: DEF-BOTH-S01-04-CURRENT-MATRIX
-  stage_uid:
-  - STAGE-01
-  - STAGE-02
-  - STAGE-03
-  - STAGE-04
-  state: FRESH_MATERIALIZATION_REQUIRED
+  state: PENDING_LATER_STAGE_IMPLEMENTATION
 - uid: DEF-BOTH-S04-S083A
   stage_uid: STAGE-04
-  state: WAITING_FOR_STAGE04_SUCCESSOR_EXECUTION
-clean_reset_verification:
-  generated_work_unit_count_expected: 0
-  stage_resume_count_expected: 0
-  stage_scope_count_expected: 0
-  source_review_extract_count_expected: 0
+  state: WAITING_FOR_STAGE04_CURRENT_EXECUTION
+pre_stage_boundary:
+  stage_uid: STAGE-01
+  generated_work_unit_count: 0
+  operation_receipt_count: 0
+  effectful_stage_operation_executed: false
+  clean_bootstrap_validation_status: PENDING
 completion_credit: 0

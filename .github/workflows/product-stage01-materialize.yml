@@ -1,7 +1,11 @@
-name: Product Stage01 Successor Step Execute
+name: Product Stage01 Current Step Execute
 on:
   workflow_dispatch:
     inputs:
+      units:
+        description: Comma-separated governed units to execute
+        required: true
+        default: GLOBAL-HOME-SHELL-NAVIGATION,WB01-DASHBOARD
       reason:
         description: Explicit operator authorization to enter Stage-01 effectful execution
         required: true
@@ -9,9 +13,33 @@ on:
 permissions:
   contents: write
 jobs:
+  resolve:
+    runs-on: ubuntu-24.04
+    outputs:
+      work_units: ${{ steps.map.outputs.work_units }}
+    steps:
+      - id: map
+        env:
+          SELECTED_UNITS: ${{ inputs.units }}
+        run: |
+          set -euo pipefail
+          WUS=()
+          IFS=',' read -ra UNITS <<< "$SELECTED_UNITS"
+          for RAW in "${UNITS[@]}"; do
+            U="$(echo "$RAW" | xargs)"
+            case "$U" in
+              GLOBAL-HOME-SHELL-NAVIGATION) WUS+=("WU-STAGE01-GLOBAL-HOME-SHELL-NAVIGATION-CLEAN-001") ;;
+              WB01-DASHBOARD) WUS+=("WU-STAGE01-WB01-DASHBOARD-CLEAN-001") ;;
+              *) echo "BLOCK:UNKNOWN_SELECTED_UNIT:$U"; exit 41 ;;
+            esac
+          done
+          test "${#WUS[@]}" -gt 0
+          CSV="$(IFS=,; echo "${WUS[*]}")"
+          echo "work_units=$CSV" >> "$GITHUB_OUTPUT"
   execute:
+    needs: resolve
     uses: ./.github/workflows/product-stage-successor-execute-reusable.yml
     with:
       stage: STAGE-01
-      work_units: WU-STAGE01-GLOBAL-HOME-SHELL-NAVIGATION-REENTRY-001,WU-STAGE01-WB01-DASHBOARD-REENTRY-001
+      work_units: ${{ needs.resolve.outputs.work_units }}
     secrets: inherit
