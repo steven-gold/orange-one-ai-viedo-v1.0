@@ -131,12 +131,12 @@ jobs:
               "gate10":os.environ.get("OUT_GATE10",""),
             },
           }
-          p=Path("governance/test/ISSUE60_CURRENT_VALIDATION_DIAGNOSTIC.json")
+          p=Path(".github/governance-diagnostics/ISSUE60_CURRENT_VALIDATION_DIAGNOSTIC.json")
           p.parent.mkdir(parents=True,exist_ok=True)
           p.write_text(json.dumps(payload,sort_keys=True,indent=2)+"\\n",encoding="utf-8")
           PY
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add governance/test/ISSUE60_CURRENT_VALIDATION_DIAGNOSTIC.json
+          git add .github/governance-diagnostics/ISSUE60_CURRENT_VALIDATION_DIAGNOSTIC.json
           git commit -m "test(governance): record Issue60 current validation diagnostic"
           git push origin HEAD:rebuild-v2.1.1
