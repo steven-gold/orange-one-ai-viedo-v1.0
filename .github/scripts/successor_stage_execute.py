@@ -46,6 +46,11 @@ def main():
         for p,label in ((work_path,"WORK_UNIT"),(scope_path,"CURRENT_SCOPE"),(state_path,"EXECUTION_STATE")):
             if not p.is_file() or p.stat().st_size<=0:
                 raise SystemExit(f"BLOCK:SUCCESSOR_{label}_MISSING:{wu}")
+        run([
+            sys.executable,".github/scripts/product_current_governance_load.py",
+            "--product-root",str(root),"--governance-root",str(govroot),
+            "--stage",args.stage,"--work-unit",str(work_path.relative_to(root))
+        ],root)
         env=dict(os.environ)
         env.update({
             "STAGE_EXECUTION_ROOT":str(root),
