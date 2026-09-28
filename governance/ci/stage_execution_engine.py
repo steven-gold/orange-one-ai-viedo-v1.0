@@ -836,15 +836,64 @@ def _validate_current_ledger_bindings(stage_uid,execution_root,work,gov):
     return True
 
 
+def _validate_stage_entry_control_state(stage_uid,execution_root,work,scope,work_rel,stage,gov):
+    compat=execution_compatibility_adapter()
+    scope_allowed_field=str(compat['scope_execution_allowed_field'])
+    resume_control_field=str(compat['resume_control_field'])
+    resume_allowed_field=str(compat['resume_execution_allowed_field'])
+
+    if str(work.get('governance_uid') or '')!=gov:
+        fail('STAGE_ENTRY_WORK_UNIT_GOVERNANCE_DRIFT:'+stage_uid)
+    if str(scope.get('governance_uid') or '')!=gov:
+        fail('STAGE_ENTRY_SCOPE_GOVERNANCE_DRIFT:'+stage_uid)
+
+    governed_work=str(work.get('governed_unit_uid') or '').strip()
+    governed_scope=str(scope.get('governed_unit_uid') or '').strip()
+    if not governed_work or not governed_scope or governed_work!=governed_scope:
+        fail('STAGE_ENTRY_GOVERNED_UNIT_IDENTITY_DRIFT:'+stage_uid)
+
+    if work.get('pre_execution_gate_status')!='PASS':
+        fail('STAGE_ENTRY_PRE_EXECUTION_GATE_NOT_PASS:'+stage_uid)
+    if scope.get(scope_allowed_field) is not True:
+        fail('STAGE_ENTRY_SCOPE_EXECUTION_NOT_ALLOWED:'+stage_uid)
+
+    work_path=(execution_root/Path(work_rel)).resolve()
+    state_path=work_path.parent/'EXECUTION_STATE.yaml'
+    _validate_local_file_artifact(state_path,'STAGE_ENTRY_EXECUTION_STATE')
+    state=_external_yaml(state_path,'STAGE_ENTRY_EXECUTION_STATE')
+    if str(state.get('stage_uid') or '')!=stage_uid:
+        fail('STAGE_ENTRY_STATE_STAGE_DRIFT:'+stage_uid)
+    if str(state.get('work_unit_uid') or '')!=str(work.get('work_unit_uid') or ''):
+        fail('STAGE_ENTRY_STATE_WORK_UNIT_DRIFT:'+stage_uid)
+    if str(state.get('governance_uid') or '')!=gov:
+        fail('STAGE_ENTRY_STATE_GOVERNANCE_DRIFT:'+stage_uid)
+    if str(state.get('governed_unit_uid') or '')!=governed_work:
+        fail('STAGE_ENTRY_STATE_GOVERNED_UNIT_DRIFT:'+stage_uid)
+
+    resume=state.get(resume_control_field)
+    if not isinstance(resume,dict) or resume.get(resume_allowed_field) is not True:
+        fail('STAGE_ENTRY_RESUME_NOT_ALLOWED:'+stage_uid)
+
+    status=str(state.get('status') or state.get('current_status') or '')
+    if status not in {'READY_FOR_EXECUTION','IN_PROGRESS'}:
+        fail('STAGE_ENTRY_STATE_NOT_EXECUTABLE:'+stage_uid+':'+status)
+
+    current_operation=str(state.get('current_operation') or '')
+    if current_operation not in set(map(str,stage.get('operations') or [])):
+        fail('STAGE_ENTRY_CURRENT_OPERATION_INVALID:'+stage_uid+':'+current_operation)
+    return state
+
+
 def active_execution(stage_uid):
     entry,reg,gov,profile,adapters,stages=validate_definition()
     execution_root,work,scope,work_rel,scope_rel=execution_context()
     work_dir=(execution_root/Path(work_rel)).resolve().parent
     validate_work_unit_bindings(stage_uid,work,stages,adapters)
-    _validate_stage_entry_input_bindings(stage_uid,execution_root,work,stages[stage_uid])
-    _validate_current_ledger_bindings(stage_uid,execution_root,work,gov)
     if scope.get('stage_uid')!=stage_uid or scope.get('work_unit_uid')!=work.get('work_unit_uid'):
         fail('CURRENT_SCOPE_WORK_UNIT_BINDING_DRIFT')
+    _validate_stage_entry_control_state(stage_uid,execution_root,work,scope,work_rel,stages[stage_uid],gov)
+    _validate_stage_entry_input_bindings(stage_uid,execution_root,work,stages[stage_uid])
+    _validate_current_ledger_bindings(stage_uid,execution_root,work,gov)
     deps=work.get('dependencies') or []
     if not isinstance(deps,list) or not deps: fail('ACTIVE_WORK_UNIT_DEPENDENCY_CLOSURE_MISSING')
     for dep in deps:
