@@ -1361,6 +1361,14 @@ receipt.write_text(yaml.safe_dump(obj,sort_keys=False),encoding="utf-8")
             if str((_st.get('output_producers') or {}).get(_atype) or '')==_ops[0]:
                 _row['applicability']='NOT_APPLICABLE_WITH_AUTHORITY'
                 _row['authority_evidence_ref']='AUTH-SYNTHETIC-OPERATION-NA-001'
+        _na_required_rows=[r for r in _na_matrix['rows'] if r.get('applicability')=='REQUIRED']
+        _na_matrix['coverage']['required_field_total']=len(_na_required_rows)
+        _na_matrix['coverage']['validator_bound_field_total']=sum(
+            1 for r in _na_required_rows if r.get('validator_uid') and r.get('validator_check_id')
+        )
+        _na_matrix['coverage']['closure_bound_field_total']=sum(
+            1 for r in _na_required_rows if r.get('closure_gate')==_st.get('exit_gate')
+        )
         (_wd/'NORMATIVE_EXECUTION_MATRIX.yaml').write_text(yaml.safe_dump(_na_matrix,sort_keys=False),encoding='utf-8')
         assert eng.execute_active(_sid) is True
         _na_receipt_path=_exec_root/_operation_bindings[_ops[0]]['operation_receipt_ref']
