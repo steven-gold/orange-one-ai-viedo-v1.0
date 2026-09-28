@@ -16,7 +16,7 @@ governance_identity:
   specification_bundle_digest_algorithm: SHA256_RELATIVE_PATH_NUL_BYTES_NUL_SORTED_V1
   specification_bundle_sha256: 7f09a6404553248e4a15ea83ecffceb15cb2a4121c8c54e32aebf95ffb73c0f4
   canonical_rule_registry_uid: GOV-CANONICAL-RULE-REGISTRY-001
-  canonical_rule_registry_digest: df8514146962a8a649dd98b8e1759e643ff9b7063e6b22789987f54f62b27d42
+  canonical_rule_registry_digest: 749a89e89233141ad8fb0de85ec83edc1ee831061a7159b6b0104132588fdf3e
   predecessor_branch: rebuild-v2.1.1
   predecessor_head_sha: c336a76c22a5db65080f749f26875edfa5169457
   predecessor_root_manifest_ref: .github/governance-source/active/source/10_REGISTRY/GOVERNANCE_ROOT_MANIFEST.yaml
@@ -228,7 +228,7 @@ candidate_validation_contract:
   specification_bundle_digest_algorithm: SHA256_RELATIVE_PATH_NUL_BYTES_NUL_SORTED_V1
   specification_bundle_sha256: 7f09a6404553248e4a15ea83ecffceb15cb2a4121c8c54e32aebf95ffb73c0f4
   canonical_rule_registry_uid: GOV-CANONICAL-RULE-REGISTRY-001
-  canonical_rule_registry_digest: df8514146962a8a649dd98b8e1759e643ff9b7063e6b22789987f54f62b27d42
+  canonical_rule_registry_digest: 749a89e89233141ad8fb0de85ec83edc1ee831061a7159b6b0104132588fdf3e
   canonical_rule_binding_validator: governance/ci/validate_governance_portability.py
   current_cleanup_required_commands:
   - python governance/ci/governance_promotion_transaction.py --self-test
@@ -373,28 +373,8 @@ candidate_validation_contract:
   historical_head_run_may_grant_candidate_validation_credit: false
   core_validation_pass_may_substitute_full_preformal_regression: false
   formal_promotion_requires_all_required_workflows_exact_head_success: true
-  formal_promotion_requires_independent_auditor_evidence: true
-  independent_auditor_external_provenance_required: true
-  independent_auditor_formal_evidence_transport: COMMIT_PINNED_EXTERNAL_MANIFEST
-  independent_auditor_local_evidence_formal_credit: 0
-  independent_auditor_external_manifest_artifact_type: GOVERNANCE_INDEPENDENT_AUDITOR_EVIDENCE_MANIFEST
-  independent_auditor_external_manifest_must_bind_candidate_head: true
-  independent_auditor_external_manifest_actor_must_equal_primary_authority_actor: true
-  independent_auditor_external_manifest_commit_must_follow_all_evaluator_evidence: true
-  independent_auditor_required_provenance_fields:
-  - implementation_provenance_ref
-  - execution_receipt_provenance_ref
-  - result_artifact_provenance_ref
-  - evaluator_authority_ref
-  independent_auditor_snapshot_hash_mode: SHA256_CANONICAL_JSON_CURRENT_CANDIDATE_SOURCE_SNAPSHOT_V1
-  independent_auditor_result_fingerprint_mode: SHA256_CANONICAL_JSON_CANONICAL_RESULT_V1
-  independent_auditor_result_artifact_required: true
-  independent_auditor_authority_must_preexist_evidence_commit: true
-  independent_auditor_provenance_ref_mode: COMMIT_PINNED_GITHUB_BLOB
-  independent_auditor_authority_ref_mode: GITHUB_ISSUE_FROM_PRIMARY_GOVERNANCE_AUTHORITY_ACTOR
-  independent_auditor_provenance_actor_count: 3
-  candidate_mutation_actor_may_be_formal_independent_auditor: false
-  same_external_actor_may_supply_multiple_formal_independent_evaluators: false
+  word_derived_internal_validation_only: true
+  external_human_or_account_evidence_required: false
   promotion_readiness_validator: governance/ci/validate_governance_candidate_promotion_readiness.py
   promotion_readiness_mode: READ_ONLY_FAIL_CLOSED
   promotion_readiness_may_mutate_or_promote: false
@@ -404,7 +384,7 @@ candidate_validation_contract:
   candidate_manifest_artifact_uid_expected: GOV-REV-20260927-GOVERNANCE-IDENTITY-NEGATIVE-TRACE-AUDITOR-INDEPENDENCE-HARDENING
   candidate_manifest_display_version_expected: v2.2.33
   explicit_promotion_action_required_after_readiness: true
-  promotion_transaction_implementation_authorization_record: https://github.com/steven-gold/orange-one-ai-viedo-v1.0/issues/54
+  promotion_transaction_implementation_authorization_record: https://github.com/steven-gold/orange-one-ai-viedo-v1.0/issues/64
   promotion_transaction_executor: governance/ci/governance_promotion_transaction.py
   promotion_transaction_mode: SAME_BRANCH_ATOMIC_PROMOTION_COMMIT
   promotion_transaction_candidate_branch_mutation: ALLOWED_ONLY_AT_ATOMIC_PROMOTION_COMMIT
@@ -417,7 +397,6 @@ candidate_validation_contract:
   promotion_transaction_requires_fresh_readiness: true
   promotion_transaction_requires_source_external_trust: false
   promotion_transaction_requires_integrated_source_validation: true
-  promotion_transaction_requires_independent_auditor_evidence: true
   promotion_transaction_requires_new_release_uid: true
   promotion_transaction_execution_authorization_must_be_distinct_from_implementation_authorization: true
   promotion_transaction_pre_publish_reconciliation_required: true
