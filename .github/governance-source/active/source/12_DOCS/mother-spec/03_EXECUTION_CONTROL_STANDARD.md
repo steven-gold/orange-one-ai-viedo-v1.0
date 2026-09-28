@@ -1016,7 +1016,7 @@ Every governed validation cycle MUST durably record reproduced bugs, gaps, valid
 
 Each issue MUST be classified by one primary owner: reusable policy, validation/harness implementation, product/contract materialization, runtime/implementation, non-normative evidence/state, or external/shared Authority. Product-specific evidence becomes a common-policy candidate only when recurrence/generalizability is proven.
 
-Reusable-policy candidates remain non-normative until explicit authorization, atomic successor promotion, multidirectional regression, active-consumer projection verification, and full Current-policy revalidation pass. A provider/project adapter MUST expose exactly one Current governance entry; historical candidates and evidence MUST remain non-current.
+Reusable-policy change proposals remain non-normative until explicit authorization, multidirectional regression, active-consumer projection verification, and full Current-policy revalidation pass. A provider/project adapter MUST expose exactly one Current governance entry; historical change proposals and evidence MUST remain non-current.
 
 <!-- SECTION_UID: WEB-GOV-03-S060 -->
 ## 60. Universal Business-Entity Completeness / Product-Neutral Execution Gate
@@ -1045,7 +1045,7 @@ Selected execution profiles MAY specialize operations and artifact schemas, but 
 
 Before remediation, the engine MUST validate `EXECUTION_CYCLE_PREFLIGHT_RECEIPT`. After each batch it MUST update the affected reverse-dependency closure and append `RESOLUTION_LEDGER`; full sweeps are mandatory after shared/common-engine changes, registered category closure, before cycle closure, and before policy/release freeze.
 
-Harness defects MUST NOT consume product blocker credit or create product Authority. Authorized normative promotion invalidates prior-cycle closure credit under the old UID; generated outputs/derived state are reset, immutable predecessor/external Authority is preserved at its owner, and fresh execution restarts under the new UID.
+Harness defects MUST NOT consume product blocker credit or create product Authority. An authorized Current governance change that alters the governing UID or affected normative denominator invalidates prior-cycle closure credit for the affected scope; generated outputs/derived state are reset, immutable predecessor/source Authority is preserved at its owner, and fresh execution restarts under the new Current UID.
 
 COMMON_STAGE12_ORDER_AND_NO_HISTORY_FALLBACK
 
@@ -1198,7 +1198,7 @@ If two or more materially distinct successor Work Units remain legal without Aut
 
 Governance maintenance and product completion are different accounting domains. The following work MAY repair governance correctness but MUST receive zero product-stage gap-reduction and zero product-completion credit unless it separately materializes an already-authorized product requirement at the canonical product owner and passes that product requirement's own acceptance gates:
 
-- Mother/Current governance repair or promotion;
+- Mother/Current governance repair or authorized Current change;
 - Registry, index, reference, checksum, source-identity, supersession, or residual cleanup;
 - validator, scanner, classifier, parser, harness, workflow, CI, gate, or test-infrastructure repair;
 - evidence, projector, Current State, Resume, ledger, report, or receipt repair;
@@ -1212,7 +1212,7 @@ A governance Work Unit MUST record its own closure evidence and MUST_NOT decreme
 <!-- SECTION_UID: WEB-GOV-03-S067 -->
 ## 67. Terminal Closure Observation / Context Continuity Gate
 
-A Work Unit, validation cycle, promotion, cleanup transaction, workflow-backed Gate, or release Gate MUST_NOT receive terminal closure credit from an inner step, job subset, generated preterminal projection, queued/in-progress workflow, timeout, cancellation, skipped terminal, or historical successful run.
+A Work Unit, validation cycle, Current governance change, cleanup transaction, workflow-backed Gate, or Stage Gate MUST_NOT receive terminal closure credit from an inner step, job subset, generated preterminal projection, queued/in-progress workflow, timeout, cancellation, skipped terminal, or historical successful run.
 
 When terminal execution is delegated to CI or another external executor, closure requires an observed outer terminal conclusion bound to the exact repository/project, commit SHA, evidence-cycle identity, required job/test denominator, and Current Governance UID. `INNER_STEP_PASS != TERMINAL_RUN_PASS`.
 
