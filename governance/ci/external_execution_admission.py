@@ -153,7 +153,20 @@ def _validate_application_baseline_snapshot(product_root,git_context,target_path
     return True
 
 
+def _released_governance_mode_selected(work,current_scope=None):
+    policy=_selection_policy()
+    field=str(policy.get('released_governance_mode_activation_field') or '')
+    value=str(policy.get('released_governance_mode_activation_value') or '')
+    if not field or not value:
+        fail('RELEASED_GOVERNANCE_MODE_ACTIVATION_CONTRACT_MISSING')
+    scope_value=(current_scope or {}).get(field) if isinstance(current_scope,dict) else None
+    work_value=work.get(field) if isinstance(work,dict) else None
+    selected=scope_value if scope_value not in (None,'') else work_value
+    return str(selected or '')==value
+
 def validate_external_stage_admission(execution_root, work_dir, work, stage_uid, current_governance_uid, current_scope=None):
+    if not _released_governance_mode_selected(work,current_scope):
+        return None
     selection=validate_product_governance_selection(execution_root,work_dir,work,stage_uid,current_governance_uid)
     if isinstance(current_scope,dict):
         prior=current_scope.get('governance_uid')
