@@ -22,22 +22,22 @@ jobs:
       with:
         ref: ${{ github.sha }}
         fetch-depth: 0
-    - name: Resolve exact selected released governance
-      id: release
+    - name: Resolve exact selected Current governance
+      id: governance
       shell: bash
       run: |
         set -euo pipefail
-        SEL="STAGE_EXECUTION/SHARED_AUTHORITY/PRODUCT_SELECTED_GOVERNANCE_RELEASE.yaml"
-        test -s "$SEL" || { echo "BLOCK:PRODUCT_SELECTED_GOVERNANCE_RELEASE_MISSING"; exit 31; }
+        SEL="STAGE_EXECUTION/SHARED_AUTHORITY/CURRENT_GOVERNANCE_SELECTION.yaml"
+        test -s "$SEL" || { echo "BLOCK:CURRENT_GOVERNANCE_SELECTION_MISSING"; exit 31; }
         STATUS="$(awk '$1=="status:" {print $2; exit}' "$SEL")"
         COMMIT="$(awk '$1=="governance_commit_sha:" {print $2; exit}' "$SEL")"
-        test "$STATUS" = "SELECTED_VERIFIED_RELEASE" || { echo "BLOCK:SELECTED_GOVERNANCE_NOT_VERIFIED_RELEASE"; exit 32; }
-        echo "$COMMIT" | grep -Eq '^[0-9a-f]{40}$' || { echo "BLOCK:SELECTED_GOVERNANCE_COMMIT_INVALID"; exit 33; }
+        test "$STATUS" = "SELECTED_VALIDATED_CURRENT" || { echo "BLOCK:CURRENT_GOVERNANCE_NOT_EXACT_HEAD_VALIDATED"; exit 32; }
+        echo "$COMMIT" | grep -Eq '^[0-9a-f]{40}$' || { echo "BLOCK:CURRENT_GOVERNANCE_COMMIT_INVALID"; exit 33; }
         echo "commit_sha=$COMMIT" >> "$GITHUB_OUTPUT"
     - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
       with:
         repository: steven-gold/orange-one-ai-viedo-v1.0
-        ref: ${{ steps.release.outputs.commit_sha }}
+        ref: ${{ steps.governance.outputs.commit_sha }}
         path: _governance_authority
         fetch-depth: 1
     - run: |
@@ -45,7 +45,7 @@ jobs:
         cp -R _governance_authority/governance ./governance
         mkdir -p .github
         cp -R _governance_authority/.github/governance-source .github/governance-source
-        python -m pip install --disable-pip-version-check 'PyYAML==6.0.2'
+        python -m pip install --disable-pip-version-check --require-hashes -r governance/ci/requirements-governance.lock
     - name: Validate Stage04 entry-gate resolution and input readiness
       env:
         WU: ${{ matrix.wu }}
