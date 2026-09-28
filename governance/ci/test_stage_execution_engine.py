@@ -160,6 +160,40 @@ def _write_synthetic_successor_input_rows(root,base_rel,input_uids):
         })
     return rows
 
+def _write_stage_entry_input_bindings(root,base_rel,stage):
+    bindings={}
+    origins={str(k):str(v) for k,v in (stage.get('input_origins') or {}).items()}
+    for idx,input_uid in enumerate(map(str,stage.get('inputs') or [])):
+        safe=''.join(ch if ch.isalnum() else '_' for ch in input_uid)[:80] or f'INPUT_{idx}'
+        artifact_rel=(Path(base_rel)/(safe+'.yaml')).as_posix()
+        readiness_rel=(Path(base_rel)/(safe+'.readiness.yaml')).as_posix()
+        artifact_path=root/artifact_rel
+        readiness_path=root/readiness_rel
+        artifact_path.parent.mkdir(parents=True,exist_ok=True)
+        artifact_path.write_text(yaml.safe_dump({
+          'artifact_type':'SYNTHETIC_STAGE_ENTRY_INPUT',
+          'input_uid':input_uid,
+          'origin':origins[input_uid],
+          'status':'READY'
+        },sort_keys=False),encoding='utf-8')
+        readiness_path.write_text(yaml.safe_dump({
+          'artifact_type':'SYNTHETIC_STAGE_ENTRY_READINESS_EVIDENCE',
+          'input_uid':input_uid,
+          'status':'PASS'
+        },sort_keys=False),encoding='utf-8')
+        bindings[input_uid]={
+          'input_uid':input_uid,
+          'origin':origins[input_uid],
+          'status':'MATERIALIZED',
+          'artifact_ref':artifact_rel,
+          'content_sha256':eng._sha256_file(artifact_path),
+          'external_evidence_ref':'',
+          'authority_evidence_ref':'',
+          'consumer_readiness_evidence_ref':readiness_rel
+        }
+    return bindings
+
+
 # Work-unit dependency regression: file-backed required dependencies inherit the
 # same common physical-integrity gate. Path presence alone cannot admit them.
 with tempfile.TemporaryDirectory() as _dep_td:
@@ -984,11 +1018,17 @@ receipt.write_text(yaml.safe_dump(obj,sort_keys=False),encoding="utf-8")
       str(_dim):{'scanner_owner':'SYNTHETIC_SCANNER_OWNER','result_owner':'SYNTHETIC_RESULT_OWNER'}
       for _dim in (_adapters['stages'][_sid].get('scanner_dimensions') or [])
     }
+    _input_bindings=_write_stage_entry_input_bindings(
+      _exec_root,
+      f'STAGE_EXECUTION/{_sid}/{_wu}/EVIDENCE/ENTRY_INPUTS',
+      _st
+    )
     _work={
       'artifact_type':'WORK_UNIT','work_unit_uid':_wu,'governance_uid':_gov,
       TASK_LAYER_FIELD:TASK_LAYER_VALUE,'stage_uid':_sid,'current_status':'ACTIVE',
       'pre_execution_gate_status':'PASS','required_outputs':list(_st.get('outputs') or []),
       'dependencies':['dependency.yaml'],'normative_execution_matrix_ref':_matrix_rel,
+      'input_bindings':_input_bindings,
       'operation_bindings':_operation_bindings,'scanner_bindings':_scanner_bindings
     }
     _work_rel=f'STAGE_EXECUTION/{_sid}/{_wu}/WORK_UNIT.yaml'
@@ -1013,6 +1053,47 @@ receipt.write_text(yaml.safe_dump(obj,sort_keys=False),encoding="utf-8")
     os.environ[eng.ACTIVE_WORK_UNIT_ENV]=_work_rel
     os.environ[eng.CURRENT_SCOPE_ENV]=_scope_rel
     try:
+        _first_input=str(_st['inputs'][0])
+        _bad=deepcopy(_work)
+        _bad['input_bindings'].pop(_first_input)
+        expect_stage_engine_block(
+          'stage_entry_input_binding_missing',
+          lambda:eng._validate_stage_entry_input_bindings(_sid,_exec_root,_bad,_st),
+          'STAGE_ENTRY_INPUT_BINDING_DENOMINATOR_DRIFT'
+        )
+
+        _bad=deepcopy(_work)
+        _bad['input_bindings']['UNREGISTERED_INPUT']={
+          'input_uid':'UNREGISTERED_INPUT','origin':'SYNTHETIC','status':'EXTERNAL_RECEIPT',
+          'artifact_ref':'','content_sha256':'','external_evidence_ref':'synthetic://external',
+          'authority_evidence_ref':'','consumer_readiness_evidence_ref':''
+        }
+        expect_stage_engine_block(
+          'stage_entry_input_binding_extra',
+          lambda:eng._validate_stage_entry_input_bindings(_sid,_exec_root,_bad,_st),
+          'STAGE_ENTRY_INPUT_BINDING_DENOMINATOR_DRIFT'
+        )
+
+        _entry_artifact=_exec_root/_input_bindings[_first_input]['artifact_ref']
+        _entry_original=_entry_artifact.read_bytes()
+        _entry_artifact.write_bytes(b'')
+        try:
+            expect_stage_engine_block(
+              'stage_entry_input_zero_byte',
+              lambda:eng._validate_stage_entry_input_bindings(_sid,_exec_root,_work,_st),
+              'STAGE_ENTRY_INPUT_ARTIFACT:'+_first_input+'_EMPTY'
+            )
+        finally:
+            _entry_artifact.write_bytes(_entry_original)
+
+        _bad=deepcopy(_work)
+        _bad['input_bindings'][_first_input]['content_sha256']='0'*64
+        expect_stage_engine_block(
+          'stage_entry_input_hash_drift',
+          lambda:eng._validate_stage_entry_input_bindings(_sid,_exec_root,_bad,_st),
+          'STAGE_ENTRY_INPUT_CONTENT_HASH_DRIFT:'+_first_input
+        )
+
         _bad=deepcopy(_work)
         _bad['operation_bindings'][_ops[0]]['executor_protocol']='SHELL'
         (_wd/'WORK_UNIT.yaml').write_text(yaml.safe_dump(_bad,sort_keys=False),encoding='utf-8')
