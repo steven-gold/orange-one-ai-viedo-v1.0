@@ -13,7 +13,7 @@ _release_sel={'artifact_type':'PRODUCT_SELECTED_GOVERNANCE_RELEASE','status':'SE
 _release_receipt={'artifact_type':'GOVERNANCE_RELEASE_RECEIPT','released_governance_uid':'GOV-RELEASE-TEST','released_governance_revision':'vTEST'}
 assert ext._validate_selected_governance_release_data(_release_sel,_release_reg,_release_receipt,{'repository':'owner/repo','head':'a'*40,'tree':'b'*40},'GOV-RELEASE-TEST','d'*64) is True
 _candidate=deepcopy(_release_reg); _candidate['status']='ACTIVE_SINGLE_BRANCH_VALIDATION'; _candidate['branch_role_contract']['release-line']='GOVERNANCE_REVISION_CANDIDATE'
-expect_block('candidate_cannot_drive_formal_execution',lambda:ext._validate_selected_governance_release_data(_release_sel,_candidate,_release_receipt,{'repository':'owner/repo','head':'a'*40,'tree':'b'*40},'GOV-RELEASE-TEST','d'*64),'PRODUCT_SELECTED_GOVERNANCE_NOT_RELEASED')
+expect_block('candidate_cannot_receive_released_governance_admission_credit',lambda:ext._validate_selected_governance_release_data(_release_sel,_candidate,_release_receipt,{'repository':'owner/repo','head':'a'*40,'tree':'b'*40},'GOV-RELEASE-TEST','d'*64),'PRODUCT_SELECTED_GOVERNANCE_NOT_RELEASED')
 _bad=deepcopy(_release_sel); _bad['governance_commit_sha']='e'*40
 expect_block('selected_exact_commit_mismatch',lambda:ext._validate_selected_governance_release_data(_bad,_release_reg,_release_receipt,{'repository':'owner/repo','head':'a'*40,'tree':'b'*40},'GOV-RELEASE-TEST','d'*64),'PRODUCT_SELECTED_GOVERNANCE_BINDING_MISMATCH:governance_commit_sha')
 core_text=(ext.ROOT/'governance/ci/stage_execution_engine.py').read_text(encoding='utf-8')
