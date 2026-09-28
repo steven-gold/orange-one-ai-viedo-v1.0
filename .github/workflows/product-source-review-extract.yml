@@ -32,7 +32,7 @@ jobs:
       - name: Assert no Stage predecessor source dependency
         run: |
           set -euo pipefail
-          ! grep -R "STAGE_EXECUTION/STAGE-01/WU-STAGE01-.*-001/00_SOURCE_INTAKE/RAW_SOURCE" .github/workflows/product-source-review-extract.yml
+          ! grep -E "STAGE_EXECUTION/STAGE-01/WU-STAGE01-.*-001/00_SOURCE_INTAKE/RAW_SOURCE" .github/scripts/stage01_successor_materialize.py
       - name: Commit fresh review extracts
         run: |
           set -euo pipefail

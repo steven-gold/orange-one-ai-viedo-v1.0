@@ -18,6 +18,7 @@ jobs:
           fetch-depth: 0
       - id: governance
         run: |
+          set -euo pipefail
           SEL="STAGE_EXECUTION/SHARED_AUTHORITY/CURRENT_GOVERNANCE_SELECTION.yaml"
           STATUS="$(awk '$1=="status:" {print $2; exit}' "$SEL")"
           COMMIT="$(awk '$1=="governance_commit_sha:" {print $2; exit}' "$SEL")"
@@ -33,27 +34,52 @@ jobs:
         uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
         with:
           python-version: '3.11.16'
-      - run: |
+      - name: Load exact Current governance
+        run: |
+          set -euo pipefail
           rm -rf governance .github/governance-source
           cp -R _governance_authority/governance ./governance
           mkdir -p .github
           cp -R _governance_authority/.github/governance-source .github/governance-source
           python -m pip install --disable-pip-version-check --require-hashes -r governance/ci/requirements-governance.lock
-      - name: Validate terminal Stage01 evidence
+      - name: Validate only current CLEAN Stage01 terminal Work Units
         run: |
           set -euo pipefail
           python governance/ci/stage_execution_engine.py --definition-audit-all
-          for WU in WU-STAGE01-GLOBAL-HOME-SHELL-NAVIGATION-REENTRY-001 WU-STAGE01-WB01-DASHBOARD-REENTRY-001; do
-            B="STAGE_EXECUTION/STAGE-01/$WU"
+          mapfile -t RECEIPTS < <(find STAGE_EXECUTION/STAGE-01 -mindepth 2 -maxdepth 2 -type f -name WORK_UNIT_TERMINAL_RECEIPT.yaml -path '*/WU-STAGE01-*-CLEAN-001/*' | sort)
+          test "${#RECEIPTS[@]}" -gt 0 || { echo "BLOCK:NO_CURRENT_CLEAN_STAGE01_TERMINAL_RECEIPT"; exit 41; }
+          for RECEIPT in "${RECEIPTS[@]}"; do
+            B="$(dirname "$RECEIPT")"
             test -f "$B/EVIDENCE/CROSS_STAGE_HANDOFF_READINESS_LEDGER.yaml"
+            test -f "$B/EVIDENCE/STAGE01_NORMALIZED_EVIDENCE.json"
             python governance/ci/stage_execution_engine.py --validate-evidence --stage STAGE-01 --evidence "$B/EVIDENCE/STAGE01_NORMALIZED_EVIDENCE.json"
+            python governance/ci/stage_execution_engine.py --validate-terminal-receipt --stage STAGE-01 --receipt "$RECEIPT"
           done
-      - name: Assert terminal resume
+      - name: Reject stale predecessor or REENTRY current identities
         run: |
+          set -euo pipefail
           python - <<'PY'
-          import yaml
           from pathlib import Path
-          r=yaml.safe_load(Path('STAGE_EXECUTION/STAGE-01/CURRENT_STAGE01_RESUME.yaml').read_text()) or {}
-          assert r.get('stage_exit_authorized') is True and r.get('status')=='STAGE01_COMPLETE_STAGE02_ELIGIBLE'
-          print('PASS: Stage01 terminal resume')
+          forbidden=(
+            'WU-STAGE01-GLOBAL-HOME-SHELL-NAVIGATION-001',
+            'WU-STAGE01-WB01-DASHBOARD-001',
+            'WU-STAGE01-GLOBAL-HOME-SHELL-NAVIGATION-REENTRY-001',
+            'WU-STAGE01-WB01-DASHBOARD-REENTRY-001',
+          )
+          for p in Path('STAGE_EXECUTION/STAGE-01').rglob('*'):
+              if not p.is_file() or p.suffix.lower() not in {'.yaml','.yml','.json'}:
+                  continue
+              body=p.read_text(encoding='utf-8')
+              for token in forbidden:
+                  if token in body:
+                      raise SystemExit(f'BLOCK:STALE_STAGE01_CURRENT_IDENTITY:{token}:{p}')
+          resume=Path('STAGE_EXECUTION/STAGE-01/CURRENT_STAGE01_RESUME.yaml')
+          if resume.is_file():
+              import yaml
+              r=yaml.safe_load(resume.read_text()) or {}
+              text=str(r)
+              for token in forbidden:
+                  if token in text:
+                      raise SystemExit('BLOCK:STALE_STAGE01_RESUME_IDENTITY:'+token)
+          print('PASS: Stage01 validation consumes only current CLEAN Work Units')
           PY
