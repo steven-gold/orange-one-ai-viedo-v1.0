@@ -24,26 +24,25 @@ import yaml
 
 STAGE = "STAGE-04"
 NEXT_STAGE = "STAGE-05"
-DOMAIN_TOTAL = 13
 ALLOWED_HUMAN_ACTIONS = ["APPROVE", "REJECT", "REQUEST_CHANGES"]
 STAGE05_INPUTS = ["DESIGN_FREEZE_PACKAGE", "ACCEPTANCE_AUDIT_BLUEPRINT", "DEPENDENCY_MAP"]
 
 UNITS = {
-    "WU-STAGE04-GLOBAL-HOME-SHELL-NAVIGATION-001": {
-        "slug": "HOME-001",
+    "WU-STAGE04-GLOBAL-HOME-SHELL-NAVIGATION-REENTRY-001": {
+        "slug": "HOME-REENTRY-001",
         "gov_unit": "GLOBAL-HOME-SHELL-NAVIGATION",
-        "s1_suffix": "GLOBAL-HOME-SHELL-NAVIGATION-001",
-        "s2_suffix": "GLOBAL-HOME-SHELL-NAVIGATION-001",
-        "s3_suffix": "GLOBAL-HOME-SHELL-NAVIGATION-001",
+        "s1_suffix": "GLOBAL-HOME-SHELL-NAVIGATION-REENTRY-001",
+        "s2_suffix": "GLOBAL-HOME-SHELL-NAVIGATION-REENTRY-001",
+        "s3_suffix": "GLOBAL-HOME-SHELL-NAVIGATION-REENTRY-001",
         "src_id": "SRC-DOCX-334A4679600F092B733B",
         "docx": "ACPOS_GLOBAL_HOME_SHELL_NAVIGATION_Mother_Basic_Design_OPTIMIZED.docx",
     },
-    "WU-STAGE04-WB01-DASHBOARD-001": {
-        "slug": "WB01-001",
-        "gov_unit": "workspace:WB-01",
-        "s1_suffix": "WB01-DASHBOARD-001",
-        "s2_suffix": "WB01-DASHBOARD-001",
-        "s3_suffix": "WB01-DASHBOARD-001",
+    "WU-STAGE04-WB01-DASHBOARD-REENTRY-001": {
+        "slug": "WB01-REENTRY-001",
+        "gov_unit": "WB01-DASHBOARD",
+        "s1_suffix": "WB01-DASHBOARD-REENTRY-001",
+        "s2_suffix": "WB01-DASHBOARD-REENTRY-001",
+        "s3_suffix": "WB01-DASHBOARD-REENTRY-001",
         "src_id": "SRC-DOCX-2B1908530B5BD312A392",
         "docx": "ACPOS_WB-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx",
     },
@@ -51,15 +50,15 @@ UNITS = {
 
 DOMAIN_BINDINGS = {
     "REQUIREMENTS": [
-        ("PAGE_CONSTRUCTION_SPEC_PACKAGE", "s2/PAGE_CONSTRUCTION_SPEC_PACKAGE.yaml"),
+        ("GOVERNED_UNIT_CONSTRUCTION_SPEC_PACKAGE", "s2/GOVERNED_UNIT_CONSTRUCTION_SPEC_PACKAGE.yaml"),
     ],
     "ARCHITECTURE": [
-        ("PAGE_CONSTRUCTION_SPEC_PACKAGE", "s2/PAGE_CONSTRUCTION_SPEC_PACKAGE.yaml"),
+        ("GOVERNED_UNIT_CONSTRUCTION_SPEC_PACKAGE", "s2/GOVERNED_UNIT_CONSTRUCTION_SPEC_PACKAGE.yaml"),
         ("DEPENDENCY_MAP", "s2/DEPENDENCY_MAP.yaml"),
     ],
     "BUSINESS_ENTITY_AND_OPERATION": [
-        ("BUSINESS_ENTITY_INVENTORY", "s2/BUSINESS_ENTITY_INVENTORY.yaml"),
-        ("BUSINESS_ENTITY_OPERATION_MATRIX", "s2/BUSINESS_ENTITY_OPERATION_MATRIX.yaml"),
+        ("GOVERNED_ENTITY_INVENTORY", "s2/GOVERNED_ENTITY_INVENTORY.yaml"),
+        ("GOVERNED_ENTITY_OPERATION_MATRIX", "s2/GOVERNED_ENTITY_OPERATION_MATRIX.yaml"),
         ("ENTITY_HIERARCHY_MATRIX", "s2/ENTITY_HIERARCHY_MATRIX.yaml"),
     ],
     "JOURNEY_WORKBENCH_TOPOLOGY": [
@@ -68,7 +67,7 @@ DOMAIN_BINDINGS = {
         ("FUNCTIONAL_CHAIN_SPEC", "s2/FUNCTIONAL_CHAIN_SPEC.yaml"),
     ],
     "PAGE_SURFACE_DESIGN": [
-        ("PAGE_CONSTRUCTION_SPEC_PACKAGE", "s2/PAGE_CONSTRUCTION_SPEC_PACKAGE.yaml"),
+        ("GOVERNED_UNIT_CONSTRUCTION_SPEC_PACKAGE", "s2/GOVERNED_UNIT_CONSTRUCTION_SPEC_PACKAGE.yaml"),
         ("VISUAL_DESIGN_SPEC_PACKAGE", "s3/VISUAL_DESIGN_SPEC_PACKAGE.yaml"),
     ],
     "VISUAL_ARCHITECTURE": [
@@ -153,6 +152,90 @@ def load_work_unit(root, wu):
     return y(unit_root(root, wu) / "WORK_UNIT.yaml")
 
 
+def _domain_hash(domain):
+    raw = yaml.safe_dump(
+        domain, allow_unicode=True, sort_keys=True, width=200
+    ).encode("utf-8")
+    return hashlib.sha256(raw).hexdigest()
+
+
+def materialize_domain_checkpoints(root, wu, pkg, governance_uid):
+    """Materialize one S083A checkpoint for every actual package domain.
+
+    The denominator is the physically materialized BASIC_DESIGN_PACKAGE.design_domains
+    list; no fixed domain count or aggregate checkpoint may substitute for these rows.
+    """
+    facts = UNITS[wu]
+    rel_base = f"STAGE_EXECUTION/{STAGE}/{wu}"
+    checkpoint_dir = (
+        Path(root) / rel_base / "EVIDENCE" / "BASIC_DESIGN_DOMAIN_STEPWISE_CHECKPOINTS"
+    )
+    refs = []
+    domains = pkg.get("design_domains") or []
+    if not isinstance(domains, list) or not domains:
+        raise SystemExit("BLOCK:BASIC_DESIGN_DOMAIN_DENOMINATOR_EMPTY")
+    seen = set()
+    for domain in domains:
+        if not isinstance(domain, dict):
+            raise SystemExit("BLOCK:BASIC_DESIGN_DOMAIN_ROW_INVALID")
+        domain_uid = str(domain.get("domain_uid") or "").strip()
+        if not domain_uid or domain_uid in seen:
+            raise SystemExit(f"BLOCK:BASIC_DESIGN_DOMAIN_IDENTITY_INVALID:{domain_uid}")
+        seen.add(domain_uid)
+        artifacts = domain.get("artifacts") or []
+        if domain.get("applicability") != "REQUIRED":
+            raise SystemExit(f"BLOCK:BASIC_DESIGN_DOMAIN_APPLICABILITY_UNRESOLVED:{domain_uid}")
+        if domain.get("resolution") != "PASS" or not isinstance(artifacts, list) or not artifacts:
+            raise SystemExit(f"BLOCK:BASIC_DESIGN_DOMAIN_NOT_COMPLETE:{domain_uid}")
+        required_row_uids = []
+        evidence_refs = []
+        current_authority_refs = []
+        for artifact in artifacts:
+            if not isinstance(artifact, dict):
+                raise SystemExit(f"BLOCK:BASIC_DESIGN_DOMAIN_ARTIFACT_INVALID:{domain_uid}")
+            row_uid = str(
+                artifact.get("artifact_uid")
+                or artifact.get("artifact_type")
+                or artifact.get("ref")
+                or ""
+            ).strip()
+            ref = str(artifact.get("ref") or "").strip()
+            if not row_uid or not ref:
+                raise SystemExit(f"BLOCK:BASIC_DESIGN_DOMAIN_BINDING_IDENTITY_MISSING:{domain_uid}")
+            full = Path(root) / ref
+            if not full.is_file() or full.stat().st_size <= 0:
+                raise SystemExit(f"BLOCK:BASIC_DESIGN_DOMAIN_BINDING_PHYSICAL_MISSING:{ref}")
+            required_row_uids.append(row_uid)
+            evidence_refs.append(ref)
+            current_authority_refs.append(ref)
+        checkpoint = {
+            "schema_version": 1,
+            "artifact_uid": f"BDDC-{STAGE}-{facts['slug']}-{domain_uid}",
+            "artifact_type": "BASIC_DESIGN_DOMAIN_STEPWISE_CHECKPOINT",
+            "stage_uid": STAGE,
+            "work_unit_uid": wu,
+            "governed_unit_uid": facts["gov_unit"],
+            "domain_uid": domain_uid,
+            "denominator_source_ref": f"{rel_base}/BASIC_DESIGN_PACKAGE.yaml#design_domains/{domain_uid}",
+            "denominator_hash": _domain_hash(domain),
+            "current_authority_refs": sorted(set(current_authority_refs)),
+            "required_row_uids": required_row_uids,
+            "materialized_row_uids": list(required_row_uids),
+            "unresolved_required_row_uids": [],
+            "missing_required_row_count": 0,
+            "conflict_count": 0,
+            "validation_result": "PASS",
+            "evidence_refs": evidence_refs,
+            "producer_operation_uid": "BASIC_DESIGN_PACKAGE_COMPILE",
+            "governance_uid": governance_uid,
+            "source_head_sha": str(pkg.get("source_head_sha") or ""),
+        }
+        rel = f"{rel_base}/EVIDENCE/BASIC_DESIGN_DOMAIN_STEPWISE_CHECKPOINTS/{domain_uid}.yaml"
+        dump(Path(root) / rel, checkpoint)
+        refs.append(rel)
+    return refs
+
+
 def head_sha(root):
     env = os.environ.get("GITHUB_SHA", "").strip()
     if env:
@@ -202,7 +285,7 @@ def write_operation_receipt(root, wu, operation, governance_uid):
     return receipt_ref
 
 
-def compile_basic_design_package(root, wu):
+def compile_basic_design_package(root, wu, governance_uid):
     facts = UNITS[wu]
     b = unit_root(root, wu)
     head = head_sha(root)
@@ -254,7 +337,7 @@ def compile_basic_design_package(root, wu):
         "governed_unit_uid": facts["gov_unit"],
         "source_head_sha": head,
         "denominator_kind": "ACCEPTED_FUNCTION_LOGIC_VISUAL_DENOMINATOR",
-        "basic_design_required_domain_total": DOMAIN_TOTAL,
+        "basic_design_required_domain_total": len(domains),
         "basic_design_bound_domain_total": len(domains),
         "basic_design_bound_artifact_total": bound_total,
         "basic_design_missing_domain_total": 0,
@@ -271,6 +354,13 @@ def compile_basic_design_package(root, wu):
         "design_review_state": "PENDING_HUMAN_FORMAL_APPROVAL",
         "status": "MATERIALIZED_PENDING_HUMAN_REVIEW",
     }
+    dump(b / "BASIC_DESIGN_PACKAGE.yaml", pkg)
+    checkpoint_refs = materialize_domain_checkpoints(
+        root, wu, pkg, governance_uid
+    )
+    pkg["basic_design_domain_checkpoint_total"] = len(checkpoint_refs)
+    pkg["basic_design_domain_checkpoint_refs"] = checkpoint_refs
+    pkg["governance_uid"] = governance_uid
     dump(b / "BASIC_DESIGN_PACKAGE.yaml", pkg)
     return pkg
 
@@ -312,7 +402,7 @@ def normalize_human_disposition(root, wu):
         "approval_scope_ref": f"STAGE_EXECUTION/{STAGE}/{wu}/BASIC_DESIGN_PACKAGE.yaml",
         "reviewer": s3.get("reviewer") or "AUTHORIZED_HUMAN_USER",
         "reviewed_at": s3.get("reviewed_at"),
-        "normalization_note": "NORMALIZED_FROM_RECORDED_HUMAN_BASIC_DESIGN_APPROVAL_UNDER_V225_FORMAL_APPROVAL_CONTRACT",
+        "normalization_note": "NORMALIZED_FROM_CURRENT_SUCCESSOR_STAGE03_HUMAN_APPROVAL; PREDECESSOR_APPROVAL_REUSE_FORBIDDEN",
         "status": "PASS",
     }
     dump(b / "EVIDENCE" / "FORMAL_HUMAN_APPROVAL_DISPOSITION.yaml", disp)
@@ -402,7 +492,7 @@ def compile_acceptance_audit_blueprint(root, wu):
         "stage_uid": STAGE,
         "work_unit_uid": wu,
         "governed_unit_uid": facts["gov_unit"],
-        "required_domain_total": DOMAIN_TOTAL,
+        "required_domain_total": len(domains),
         "covered_domain_total": len(domains),
         "acceptance_items": [
             {"domain_uid": d["domain_uid"], "acceptance_criteria": "DOMAIN_BOUND_AND_APPROVED",
