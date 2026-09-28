@@ -16,7 +16,7 @@ governance_identity:
   specification_bundle_digest_algorithm: SHA256_RELATIVE_PATH_NUL_BYTES_NUL_SORTED_V1
   specification_bundle_sha256: 7f09a6404553248e4a15ea83ecffceb15cb2a4121c8c54e32aebf95ffb73c0f4
   canonical_rule_registry_uid: GOV-CANONICAL-RULE-REGISTRY-001
-  canonical_rule_registry_digest: 749a89e89233141ad8fb0de85ec83edc1ee831061a7159b6b0104132588fdf3e
+  canonical_rule_registry_digest: ef795b7b82557f6a278bb031e19179f986ae1c0ea901e6cdc10816b7860d928e
   predecessor_branch: rebuild-v2.1.1
   predecessor_head_sha: c336a76c22a5db65080f749f26875edfa5169457
   predecessor_root_manifest_ref: .github/governance-source/active/source/10_REGISTRY/GOVERNANCE_ROOT_MANIFEST.yaml
@@ -228,7 +228,7 @@ candidate_validation_contract:
   specification_bundle_digest_algorithm: SHA256_RELATIVE_PATH_NUL_BYTES_NUL_SORTED_V1
   specification_bundle_sha256: 7f09a6404553248e4a15ea83ecffceb15cb2a4121c8c54e32aebf95ffb73c0f4
   canonical_rule_registry_uid: GOV-CANONICAL-RULE-REGISTRY-001
-  canonical_rule_registry_digest: 749a89e89233141ad8fb0de85ec83edc1ee831061a7159b6b0104132588fdf3e
+  canonical_rule_registry_digest: ef795b7b82557f6a278bb031e19179f986ae1c0ea901e6cdc10816b7860d928e
   canonical_rule_binding_validator: governance/ci/validate_governance_portability.py
   current_cleanup_required_commands:
   - python governance/ci/governance_promotion_transaction.py --self-test
