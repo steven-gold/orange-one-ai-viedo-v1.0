@@ -1,7 +1,7 @@
 schema_version: 1
 artifact_uid: REG-SEMANTIC-AUTHORITY-BASELINE-001
 artifact_type: IMMUTABLE_SEMANTIC_AUTHORITY_BASELINE
-status: CURRENT_CANDIDATE_IMMUTABLE
+status: CURRENT_INTERNAL_VALIDATION_BASELINE
 canonical_path: 10_REGISTRY/SEMANTIC_AUTHORITY_BASELINE.yaml
 owner_uid: OWNER-GOVERNANCE-SEMANTIC-ANCHOR
 governance_revision: v2.2.22-word-projection-nextstep-consumer-sync-hardening
@@ -10,8 +10,8 @@ anchor_policy:
   compiler_must_not_regenerate: true
   registry_and_consumer_joint_mutation_must_fail: true
   baseline_change_requires_explicit_governance_maintenance: true
-  external_trust_root_required: true
-  candidate_self_refresh_cannot_update_external_trust_root: true
+  word_source_integrity_required: true
+  current_validation_cannot_mutate_semantic_baseline: true
 reference_rule_registry_uid: REG-REFERENCE-RULE-001
 semantic_snapshot:
   program_profile_reference_rules:
