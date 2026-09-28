@@ -66,7 +66,12 @@ jobs:
 
       - name: Gate 05 - Single-branch source and governance preformal
         id: gate05
-        run: python governance/ci/validate_successor_governance_preformal.py
+        run: |
+          set +e
+          python governance/ci/validate_successor_governance_preformal.py > /tmp/issue60-gate05.log 2>&1
+          RC=$?
+          cat /tmp/issue60-gate05.log
+          exit "$RC"
 
       - name: Gate 06 - Source stage and product-neutral invariants
         id: gate06
@@ -119,6 +124,7 @@ jobs:
           set -euo pipefail
           mkdir -p .github/governance-diagnostics
           if [ -f /tmp/issue60-gate03b.log ]; then cp /tmp/issue60-gate03b.log .github/governance-diagnostics/ISSUE60_GATE03B.log; fi
+          if [ -f /tmp/issue60-gate05.log ]; then cp /tmp/issue60-gate05.log .github/governance-diagnostics/ISSUE60_GATE05.log; fi
           python - <<'PY'
           from pathlib import Path
           import json, os
@@ -147,6 +153,6 @@ jobs:
           PY
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add .github/governance-diagnostics/ISSUE60_CURRENT_VALIDATION_DIAGNOSTIC.json .github/governance-diagnostics/ISSUE60_GATE03B.log
+          git add .github/governance-diagnostics/ISSUE60_CURRENT_VALIDATION_DIAGNOSTIC.json .github/governance-diagnostics/ISSUE60_GATE03B.log .github/governance-diagnostics/ISSUE60_GATE05.log
           git commit -m "test(governance): record Issue60 current validation diagnostic"
           git push origin HEAD:rebuild-v2.1.1
