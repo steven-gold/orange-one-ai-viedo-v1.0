@@ -18,7 +18,7 @@ def successor_migration_contract():
     cycle=yaml.safe_load((REPO/'governance/specifications/current/EXECUTION_CYCLE_CONTROL.yaml').read_text(encoding='utf-8')) or {}
     candidate=yaml.safe_load((REPO/'governance/source-successor/SOURCE_PACKAGE_CANDIDATE.yaml').read_text(encoding='utf-8')) or {}
     m=mutation.get('retired_evidence_consumer_migration_control') or {}
-    s=cycle.get('successor_candidate_state_resolution') or {}
+    s=cycle.get('current_governance_state_resolution') or {}
     return {'migration':m,'state':s,'candidate':candidate}
 
 def validate_successor_static(root):
@@ -65,7 +65,7 @@ retired=[
 results=[
  case('successor_migration_contract_pass',
       m.get('missing_retired_predecessor_evidence_disposition')=='MIGRATE_CONSUMER_NOT_RESTORE_ARTIFACT'
-      and st.get('current_candidate_identity_source')=='governance/specifications/REGISTRY.yaml'),
+      and st.get('current_governance_identity_source')=='governance/specifications/REGISTRY.yaml'),
  case('stage02_governed_unit_functional_contract_registered',s2.get('name')=='GOVERNED_UNIT_FUNCTIONAL_CONTRACT'),
  case('stage02_functional_chain_compile_registered','FUNCTIONAL_CHAIN_COMPILE' in (s2.get('operations') or [])),
  case('stage02_dependency_map_compile_registered','DEPENDENCY_MAP_COMPILE' in (s2.get('operations') or [])),
