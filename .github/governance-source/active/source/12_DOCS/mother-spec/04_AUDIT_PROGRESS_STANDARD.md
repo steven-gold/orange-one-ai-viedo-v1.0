@@ -1441,7 +1441,7 @@ Source-Control governance audit MUST verify exactly one Current policy entry thr
 
 Audit MUST prove common Mother Policy is not bound to a product, project, repository, route, provider, database schema, department, runtime identity, fixed execution-step name, or fixed profile step count. Product/profile-specific values MAY exist only in explicitly classified profile/provenance/evidence layers that cannot weaken common invariants.
 
-Entity completeness audit MUST derive denominators from authoritative `Business Entity × Applicable REQUIRED Operation` plus hierarchy edges and prove bidirectional operation -> interaction/system trigger -> action -> payload -> runtime -> state/audit -> feedback coverage. Counts of pages/controls/actions/APIs are diagnostic only.
+When governed Business Entity semantics are applicable, Entity completeness audit MUST derive denominators from authoritative `Business Entity × Applicable REQUIRED Operation` plus hierarchy edges and prove bidirectional operation -> interaction/system trigger -> action -> payload -> runtime -> state/audit -> feedback coverage. When they are not applicable, Audit records an Authority-backed `AUTHORIZED_NOT_APPLICABLE` disposition. Counts of pages/controls/actions/APIs are diagnostic only.
 
 Before policy release, substitution of a materially different Product Profile and a materially different Execution Profile MUST NOT require common Mother Policy edits. Automatic additions require bounded minimal closure and Authority-safe admission; logic and visual completion must remain synchronized.
 
