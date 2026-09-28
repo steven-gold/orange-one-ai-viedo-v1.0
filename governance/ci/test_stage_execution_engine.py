@@ -297,7 +297,7 @@ yaml.safe_dump({
 
 # Bind the synthetic Current Ledger universe to actual physical artifacts.
 # EXECUTION_STATE is an alias to the canonical state file, not a duplicate ledger.
-_current_ledger_bindings=_write_synthetic_current_ledger_bindings(
+_current_ledger_bindings=_write_current_ledger_bindings(
     _sample_root,
     f'STAGE_EXECUTION/STAGE-01/{_synthetic_wu}/CURRENT_LEDGERS'
 )
