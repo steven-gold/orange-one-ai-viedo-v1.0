@@ -4,7 +4,7 @@ artifact_type: CANONICAL_RULE_REGISTRY
 normative_status: ACTIVE_CURRENT_GOVERNANCE_SUPPORT_AUTHORITY
 formal_current_authority: true
 layer_classification: POLICY_SUPPORT
-governance_uid: GOV-REV-20260927-GOVERNANCE-IDENTITY-NEGATIVE-TRACE-AUDITOR-INDEPENDENCE-HARDENING
+governance_uid: GOV-REV-20260928-WORD-DERIVED-STAGE-INTERNAL-VALIDATION
 registry_uid: GOV-CANONICAL-RULE-REGISTRY-001
 registry_digest_algorithm: SHA256_CANONICAL_JSON_V1
 registry_digest_scope:
@@ -84,7 +84,7 @@ semantic_types:
     - POLICY
     - VALIDATOR
     - NORMALIZER
-    - PROMOTION_TOOL
+    - INTERNAL_VALIDATOR
     - ACTIVE_WORKFLOW
     forbidden_layers: []
     lexical_hints: []
@@ -93,7 +93,7 @@ semantic_types:
     - POLICY
     - VALIDATOR
     - NORMALIZER
-    - PROMOTION_TOOL
+    - INTERNAL_VALIDATOR
     - ACTIVE_WORKFLOW
     forbidden_layers: []
     lexical_hints: []
@@ -116,7 +116,7 @@ semantic_types:
     allowed_layers:
     - POLICY
     - VALIDATOR
-    - PROMOTION_TOOL
+    - INTERNAL_VALIDATOR
     - ACTIVE_WORKFLOW
     forbidden_layers: []
     lexical_hints: []
@@ -177,7 +177,7 @@ canonical_rules:
     - POLICY
     - VALIDATOR
     - NORMALIZER
-    - PROMOTION_TOOL
+    - INTERNAL_VALIDATOR
     - ACTIVE_WORKFLOW
     constraint: REQUIRE_SINGLE_REGISTRY_OWNER
   GOV-RULE-ANTI-DRIFT-009:
@@ -186,7 +186,7 @@ canonical_rules:
     applicability:
     - VALIDATOR
     - NORMALIZER
-    - PROMOTION_TOOL
+    - INTERNAL_VALIDATOR
     - ACTIVE_WORKFLOW
     constraint: FORBID_LOCAL_FORK
   GOV-RULE-ANTI-DRIFT-010:
@@ -196,7 +196,7 @@ canonical_rules:
     - POLICY
     - VALIDATOR
     - NORMALIZER
-    - PROMOTION_TOOL
+    - INTERNAL_VALIDATOR
     - ACTIVE_WORKFLOW
     constraint: REQUIRE_UID_DIGEST_MATCH
   GOV-RULE-CURRENT-GOVERNANCE-IDENTITY-001:
@@ -206,7 +206,7 @@ canonical_rules:
     - POLICY
     - VALIDATOR
     - NORMALIZER
-    - PROMOTION_TOOL
+    - INTERNAL_VALIDATOR
     - ACTIVE_WORKFLOW
     constraint: REQUIRE_REGISTRY_SINGLE_SOURCE_AND_FAIL_CLOSED_DRIFT
   GOV-RULE-NEGATIVE-TEST-TRACEABILITY-001:
@@ -218,7 +218,7 @@ canonical_rules:
     - TEST_IMPLEMENTATION
     - ACTIVE_WORKFLOW
     constraint: REQUIRE_EXACT_CLASS_MUTATION_EXPECTED_BLOCK_OBSERVED_BLOCK_AND_RESULT
-  GOV-RULE-AUDITOR-INDEPENDENCE-001:
+  GOV-RULE-INTERNAL-AUDIT-DETERMINISM-001:
     canonical_key: INTERNAL_AUDIT_DETERMINISM_REQUIRES_REPEATABLE_RESULT
     semantic_type: INTERNAL_AUDIT_DETERMINISM
     applicability:
@@ -232,7 +232,7 @@ canonical_rules:
     applicability:
     - POLICY
     - VALIDATOR
-    - PROMOTION_TOOL
+    - INTERNAL_VALIDATOR
     - ACTIVE_WORKFLOW
     constraint: REQUIRE_IMMUTABLE_PREDECESSOR_PREEXISTING_AUTHORIZATION_EXACT_SCOPE_AND_EXACT_HEAD_VALIDATION
 consumer_contract:
@@ -278,7 +278,7 @@ binding_contract:
   - GOV-RULE-ANTI-DRIFT-010
   - GOV-RULE-CURRENT-GOVERNANCE-IDENTITY-001
   - GOV-RULE-NEGATIVE-TEST-TRACEABILITY-001
-  - GOV-RULE-AUDITOR-INDEPENDENCE-001
+  - GOV-RULE-INTERNAL-AUDIT-DETERMINISM-001
   - GOV-RULE-GOVERNANCE-CANDIDATE-BOOTSTRAP-001
   consumer_loader: governance/ci/canonical_rule_registry.py
   validator: governance/ci/validate_governance_portability.py
