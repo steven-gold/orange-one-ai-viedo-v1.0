@@ -1,11 +1,14 @@
-name: Product Stage01 Successor Execute
+name: Product Stage01 Successor Step Execute
 on:
   workflow_dispatch:
-    inputs:
-      reason:
-        description: Operator note for successor/re-entry execution
-        required: false
-        default: manual
+  push:
+    branches: [0921acpos]
+    paths:
+      - 'STAGE_EXECUTION/STAGE-01/STAGE01_SUCCESSOR_EXECUTION_TRIGGER.yaml'
+      - 'STAGE_EXECUTION/STAGE-01/WU-STAGE01-GLOBAL-HOME-SHELL-NAVIGATION-REENTRY-001/**'
+      - 'STAGE_EXECUTION/STAGE-01/WU-STAGE01-WB01-DASHBOARD-REENTRY-001/**'
+permissions:
+  contents: write
 jobs:
   execute:
     uses: ./.github/workflows/product-stage-successor-execute-reusable.yml
