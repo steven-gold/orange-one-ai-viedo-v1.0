@@ -1852,6 +1852,49 @@ def materialize_synthetic_stage_context(stage_uid,evidence,result):
           'evidence_ref':'synthetic://matrix-evidence','closure_gate':st['exit_gate'],
           'failure_disposition':'BLOCK','reentry_owner':'SYNTHETIC-OWNER'
         })
+    if stage_uid=='STAGE-04':
+        package_ref=f'STAGE_EXECUTION/{stage_uid}/{wu}/BASIC_DESIGN_PACKAGE.yaml'
+        checkpoint_positions=[idx for idx,row in enumerate(rows) if row.get('required_artifact_type')=='BASIC_DESIGN_DOMAIN_STEPWISE_CHECKPOINT']
+        if not checkpoint_positions:
+            raise SystemExit('FAIL_SYNTHETIC_STAGE04_CHECKPOINT_ROW_MISSING')
+        domains=[f'SYNTHETIC-DOMAIN-{idx+1:03d}' for idx in range(len(checkpoint_positions))]
+        package_doc={
+          'artifact_uid':'SYNTHETIC-BDP-'+wu,'artifact_type':'BASIC_DESIGN_PACKAGE',
+          'stage_uid':stage_uid,'work_unit_uid':wu,'governed_unit_uid':governed_unit_uid,
+          'source_head_sha':'3'*40,'basic_design_required_domain_total':len(domains),
+          'basic_design_bound_domain_total':len(domains),'basic_design_missing_domain_total':0,
+          'design_domains':[{'domain_uid':domain_uid,'applicability':'REQUIRED','resolution':'PASS'} for domain_uid in domains],
+        }
+        (wd/'BASIC_DESIGN_PACKAGE.yaml').write_text(yaml.safe_dump(package_doc,sort_keys=False),encoding='utf-8')
+        for row in rows:
+            if row.get('required_artifact_type')=='BASIC_DESIGN_PACKAGE':
+                row['artifact_ref']=package_ref
+                row['field_path']=['artifact_type']
+                row['row_identity']='BASIC_DESIGN_PACKAGE'
+        for ordinal,row_idx in enumerate(checkpoint_positions):
+            domain_uid=domains[ordinal]
+            next_uid=domains[ordinal+1] if ordinal+1<len(domains) else 'FINAL_FREEZE'
+            cp_rel=f'STAGE_EXECUTION/{stage_uid}/{wu}/EVIDENCE/DOMAIN_STEPWISE/{domain_uid}.yaml'
+            cp_path=_allstage_root/cp_rel
+            cp_path.parent.mkdir(parents=True,exist_ok=True)
+            cp_doc={
+              'schema_version':1,'artifact_uid':'SYNTHETIC-CP-'+domain_uid,
+              'artifact_type':'BASIC_DESIGN_DOMAIN_STEPWISE_CHECKPOINT',
+              'stage_uid':stage_uid,'work_unit_uid':wu,'governed_unit_uid':governed_unit_uid,
+              'domain_uid':domain_uid,'denominator_resolution_ref':package_ref+'#design_domains',
+              'current_authority_ref':'SYNTHETIC-CURRENT-AUTHORITY',
+              'materialized_binding_refs':['synthetic://binding/'+domain_uid],
+              'completeness_validation_result':'PASS','conflict_validation_result':'PASS',
+              'review_evidence_ref':'synthetic://review/'+domain_uid,'checkpoint_state':'PASS',
+              'next_admitted_domain_uid':next_uid,'producer_operation_uid':'BASIC_DESIGN_PACKAGE_COMPILE',
+              'governance_uid':gov,'source_head_sha':'3'*40,
+            }
+            cp_path.write_text(yaml.safe_dump(cp_doc,sort_keys=False),encoding='utf-8')
+            rows[row_idx]['artifact_ref']=cp_rel
+            rows[row_idx]['row_denominator_source']=package_ref+'#design_domains'
+            rows[row_idx]['row_identity']=domain_uid
+            rows[row_idx]['field_path']=['domain_uid']
+
     yaml.safe_dump({
       'artifact_uid':f'SYNTHETIC-NEM-{stage_uid}','artifact_type':'NORMATIVE_EXECUTION_MATRIX',
       'governance_uid':gov,'stage_uid':stage_uid,'work_unit_uid':wu,'rows':rows,
