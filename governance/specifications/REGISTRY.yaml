@@ -83,7 +83,7 @@ external_execution_admission_registry: .github/governance-source/active/source/1
 external_execution_admission_standard: .github/governance-source/active/source/12_DOCS/external-admission/PRODUCT_EXECUTION_ENVIRONMENT_ADMISSION_STANDARD.md
 rules_root: governance/specifications/current
 branch_role_contract:
-  rebuild-v2.1.1: GOVERNANCE_REVISION_CANDIDATE
+  rebuild-v2.1.1: CURRENT_GOVERNANCE_WORKLINE
 forbidden_in_ruleset_branch:
 - PRODUCT_SOURCE_DOCUMENT
 - PRODUCT_SOURCE_PROJECTION
@@ -106,12 +106,12 @@ mutation_policy:
   rebuild_v2_1_1_after_freeze: ALLOWED_ONLY_FOR_EXPLICIT_USER_AUTHORIZED_GOVERNANCE_REMEDIATION
   new_file_after_freeze: ALLOWED_ONLY_FOR_EXPLICIT_USER_AUTHORIZED_GOVERNANCE_REMEDIATION
   execution_on_governance_workline: FORBIDDEN
-  successor_candidate_branch: rebuild-v2.1.1
-  successor_candidate_exact_scope_only: true
-  successor_candidate_authorization_record: https://github.com/steven-gold/orange-one-ai-viedo-v1.0/issues/57
-  successor_candidate_may_mutate_reusable_policy: true
-  successor_candidate_product_execution: FORBIDDEN
-  successor_candidate_product_completion_credit: 0
+  current_governance_branch: rebuild-v2.1.1
+  current_governance_exact_scope_only: true
+  current_governance_change_authorization_record: https://github.com/steven-gold/orange-one-ai-viedo-v1.0/issues/64
+  current_governance_may_mutate_reusable_policy_only_when_user_authorized: true
+  current_governance_product_execution: FORBIDDEN
+  current_governance_change_product_completion_credit: 0
   predecessor_history_must_remain_immutable: true
   source_package_successor_branch: rebuild-v2.1.1
   source_package_successor_role: SINGLE_BRANCH_INTEGRATED_SOURCE
