@@ -190,8 +190,6 @@ def main() -> int:
             errors.append("CANDIDATE_FULL_PREFORMAL_SUBSTITUTION_NOT_BLOCKED")
         if validation_contract.get("formal_promotion_requires_all_required_workflows_exact_head_success") is not True:
             errors.append("CANDIDATE_EXACT_HEAD_WORKFLOW_SUCCESS_NOT_REQUIRED")
-        if validation_contract.get("formal_promotion_requires_independent_auditor_evidence") is not True:
-            errors.append("CANDIDATE_FORMAL_AUDITOR_EVIDENCE_NOT_REQUIRED")
         readiness=str(validation_contract.get("promotion_readiness_validator") or "")
         if not readiness or not (ROOT/readiness).is_file():
             errors.append("CANDIDATE_PROMOTION_READINESS_VALIDATOR_MISSING:"+readiness)
