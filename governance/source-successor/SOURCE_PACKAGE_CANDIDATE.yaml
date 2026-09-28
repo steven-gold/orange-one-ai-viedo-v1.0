@@ -3,7 +3,7 @@ artifact_uid: GOV-SOURCE-PACKAGE-INTEGRATION-20260927-001
 artifact_type: GOVERNANCE_SOURCE_PACKAGE_INTEGRATION_RECORD
 status: INTEGRATED_CURRENT_WORKLINE
 current_authority: true
-promotion_credit: 0
+governance_change_completion_credit: 0
 product_completion_credit: 0
 branch: rebuild-v2.1.1
 authorization_record: https://github.com/steven-gold/orange-one-ai-viedo-v1.0/issues/57
@@ -22,16 +22,14 @@ integration:
   branch_fanout_without_explicit_user_authorization: FORBIDDEN
   fresh_exact_head_validation_required: true
   historical_pass_may_grant_current_credit: false
-external_trust:
-  status: RETIRED_BY_SINGLE_BRANCH_CONSOLIDATION
-  independent_signer_required: false
-  candidate_self_sign: FORBIDDEN
-  signer_identity: null
-  signer_authority_ref: null
-  signature_or_immutable_receipt_ref: null
+source_integrity:
+  word_or_registered_source_integrity_required: true
+  deterministic_hash_validation_required: true
+  exact_head_internal_validation_required: true
+  external_person_or_signer_required: false
 admission:
   integrated_source_validation_required: true
-  external_trust_required_for_current: false
-  external_trust_required_for_promotion: false
+  source_integrity_required_for_current: true
+  external_person_or_signer_required: false
   exact_head_validation_required: true
   historical_pre_consolidation_heads_must_remain_reachable: true
