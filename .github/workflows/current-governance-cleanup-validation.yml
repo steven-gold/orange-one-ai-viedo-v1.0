@@ -10,6 +10,7 @@ permissions:
   contents: read
   issues: read
   actions: read
+  statuses: write
 
 concurrency:
   group: current-governance-cleanup-validation-${{ github.ref }}
@@ -177,3 +178,45 @@ jobs:
           if [ -f /tmp/issue60-gate03b.log ]; then cat /tmp/issue60-gate03b.log; fi
           if [ -f /tmp/issue60-gate05.log ]; then cat /tmp/issue60-gate05.log; fi
           if [ -f /tmp/issue60-regression-detail.log ]; then cat /tmp/issue60-regression-detail.log; fi
+
+      - name: Publish exact-head validation status
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VALIDATION_JOB_STATUS: ${{ job.status }}
+        run: |
+          set -euo pipefail
+          case "$VALIDATION_JOB_STATUS" in
+            success) STATE=success ;;
+            failure) STATE=failure ;;
+            cancelled) STATE=error ;;
+            *) STATE=error ;;
+          esac
+          python - <<'PY'
+          import json, os, urllib.request
+          repo=os.environ["GITHUB_REPOSITORY"]
+          sha=os.environ["GITHUB_SHA"]
+          state={"success":"success","failure":"failure","error":"error"}[os.environ.get("STATE","error")]
+          payload={
+            "state":state,
+            "context":"Governance/Current Cleanup",
+            "description":"Current Governance Cleanup Validation on exact HEAD",
+            "target_url":f'{os.environ["GITHUB_SERVER_URL"]}/{repo}/actions/runs/{os.environ["GITHUB_RUN_ID"]}',
+          }
+          req=urllib.request.Request(
+            f"https://api.github.com/repos/{repo}/statuses/{sha}",
+            data=json.dumps(payload).encode(),
+            headers={
+              "Authorization":f'Bearer {os.environ["GH_TOKEN"]}',
+              "Accept":"application/vnd.github+json",
+              "X-GitHub-Api-Version":"2022-11-28",
+              "Content-Type":"application/json",
+            },
+            method="POST",
+          )
+          with urllib.request.urlopen(req) as r:
+            if r.status not in (200,201):
+              raise SystemExit(f"status publish failed: {r.status}")
+          PY
+        env:
+          STATE: ${{ job.status == 'success' && 'success' || job.status == 'failure' && 'failure' || 'error' }}
