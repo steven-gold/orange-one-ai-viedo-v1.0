@@ -29,7 +29,7 @@
     {
       "document_id": "WEB-GOV-04",
       "path": "12_DOCS/mother-spec/04_AUDIT_PROGRESS_STANDARD.md",
-      "sha256": "5ef0ce63420474a886f4f86b2be7143d9c2b3d8ace7289fd00013e1ad85860df",
+      "sha256": "e6023f8058b9a05477686f751b98b62fda06366196e8b97f73fc687d9188cdd1",
       "version": "2.2.3",
       "status": "normative",
       "permanent_inheritance": true
@@ -39,8 +39,8 @@
     "total": 905,
     "must": 708,
     "must_not": 197,
-    "auto": 558,
-    "manual_evidence": 347
+    "auto": 559,
+    "manual_evidence": 346
   },
   "requirements": [
     {
@@ -11302,25 +11302,25 @@
     {
       "requirement_id": "GOV04-MUST-075",
       "source": "WEB-GOV-04",
-      "section": "68. Governance Revision Lock / Anti-Moving-Target Audit",
+      "section": "68. Governance Current Snapshot Lock / Anti-Moving-Target Audit",
       "line": 1345,
       "modality": "MUST",
-      "clause_hash": "d406279184051bb2ce14a47324c5695cab02b3dd234f5b261ff42f8891454c58",
-      "clause_excerpt": "Audit MUST distinguish immutable released policy, mutable authorized successor candidate, and frozen validation-cycle candidate. For every formal validation cycle Audit MUST verify",
+      "clause_hash": "3986d324d8aa50f9420f20bf27c42a41e4e2fbddaaa5a806f9ddb919fae61ce9",
+      "clause_excerpt": "Audit MUST distinguish the exact Current Governance snapshot used by an execution cycle from historical snapshots and from any later authorized mutation. For every formal validatio",
       "list_item_count": 0,
       "list_hash": null,
-      "validator_id": "manual_semantic_guard",
-      "automation": "MANUAL_EVIDENCE",
+      "validator_id": "execution_cycle_guard",
+      "automation": "AUTO",
       "blocking": true
     },
     {
       "requirement_id": "GOV04-MUST-076",
       "source": "WEB-GOV-04",
-      "section": "68. Governance Revision Lock / Anti-Moving-Target Audit",
+      "section": "68. Governance Current Snapshot Lock / Anti-Moving-Target Audit",
       "line": 1347,
       "modality": "MUST",
-      "clause_hash": "5fdaee892db7c38740a10fef35dc5ee733af78025ca3205eb641a6025985aa2e",
-      "clause_excerpt": "A new defect after release creates a new defect record and successor candidate; affected prior evidence becomes `REVERIFY_REQUIRED`. Website construction MUST remain blocked until ",
+      "clause_hash": "bc055678bfbcabdbb9b6016aa3c36222baeb601cbb26d836453e90840d650167",
+      "clause_excerpt": "A new governance defect creates a new defect record; affected prior evidence becomes `REVERIFY_REQUIRED`. Website construction MUST remain blocked only until the selected exact Cur",
       "list_item_count": 0,
       "list_hash": null,
       "validator_id": "current_revision_guard",
@@ -11330,11 +11330,11 @@
     {
       "requirement_id": "GOV04-MUST-077",
       "source": "WEB-GOV-04",
-      "section": "68. Governance Revision Lock / Anti-Moving-Target Audit",
+      "section": "68. Governance Current Snapshot Lock / Anti-Moving-Target Audit",
       "line": 1349,
       "modality": "MUST",
-      "clause_hash": "c1095ec5d9370950c6468a6ce9a02ecb7eb10ec3d527b18bb0d6a96198369d49",
-      "clause_excerpt": "Audit MUST verify governance-candidate successor-head terminalization. When a governance remediation or materializer creates a new candidate HEAD, required validation evidence MUST",
+      "clause_hash": "5d96db3c2f85891fba3dbe8543494b2fbe47d129c045ffea678509d49098f8cf",
+      "clause_excerpt": "Audit MUST verify Current-governance successor-head terminalization. When an authorized governance remediation or deterministic materializer creates a new Current HEAD, required va",
       "list_item_count": 0,
       "list_hash": null,
       "validator_id": "audit_binding_guard",
@@ -11344,7 +11344,7 @@
     {
       "requirement_id": "GOV04-MUST-078",
       "source": "WEB-GOV-04",
-      "section": "68. Governance Revision Lock / Anti-Moving-Target Audit",
+      "section": "68. Governance Current Snapshot Lock / Anti-Moving-Target Audit",
       "line": 1351,
       "modality": "MUST",
       "clause_hash": "ac13d5b29f871ea5b2f5897ce18ca413feb271e1863e8ca4133dd66f31d45205",
