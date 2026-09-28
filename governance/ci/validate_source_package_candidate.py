@@ -50,9 +50,8 @@ def main():
         failures.append('SOURCE_INTEGRATION_MODE_DRIFT')
     if contract.get('source_package_integrated_branch')!=current_branch:
         failures.append('SOURCE_INTEGRATION_BRANCH_DRIFT')
-    for key in ('external_human_or_account_evidence_required','external_auditor_required','external_signer_required','detached_external_trust_required'):
-        if contract.get(key) is not False:
-            failures.append('NON_WORD_EXTERNAL_GATE_REINTRODUCED:'+key)
+    if contract.get('unregistered_non_word_execution_prerequisite')!='BLOCK':
+        failures.append('UNREGISTERED_NON_WORD_EXECUTION_PREREQUISITE_NOT_BLOCKED')
 
     if meta.get('artifact_type')!='GOVERNANCE_SOURCE_PACKAGE_INTEGRATION_RECORD':
         failures.append('SOURCE_INTEGRATION_ARTIFACT_TYPE_DRIFT')
@@ -74,14 +73,14 @@ def main():
     for key in ('word_or_registered_source_integrity_required','deterministic_hash_validation_required','exact_head_internal_validation_required'):
         if integrity.get(key) is not True:
             failures.append('SOURCE_INTEGRITY_FLAG_MISSING:'+key)
-    if integrity.get('external_person_or_signer_required') is not False:
-        failures.append('SOURCE_EXTERNAL_PERSON_OR_SIGNER_GATE_REINTRODUCED')
+    if integrity.get('unregistered_non_word_execution_prerequisite')!='BLOCK':
+        failures.append('SOURCE_UNREGISTERED_NON_WORD_EXECUTION_PREREQUISITE_NOT_BLOCKED')
 
     admission=meta.get('admission') or {}
     if admission.get('integrated_source_validation_required') is not True or admission.get('source_integrity_required_for_current') is not True:
         failures.append('SOURCE_CURRENT_ADMISSION_INTEGRITY_DRIFT')
-    if admission.get('external_person_or_signer_required') is not False:
-        failures.append('SOURCE_ADMISSION_EXTERNAL_PERSON_GATE_REINTRODUCED')
+    if admission.get('unregistered_non_word_execution_prerequisite')!='BLOCK':
+        failures.append('SOURCE_ADMISSION_UNREGISTERED_NON_WORD_EXECUTION_PREREQUISITE_NOT_BLOCKED')
 
     checks=[
       check('section_registry',imp('validate_section_registry').validate),
@@ -113,7 +112,7 @@ def main():
       'status':'PASS_INTEGRATED_SOURCE' if not failures and not bad else 'FAIL',
       'single_branch_integrated':True,
       'word_or_registered_source_integrity_required':True,
-      'external_person_account_auditor_or_signer_required':False,
+      'unregistered_non_word_execution_prerequisite':'BLOCK',
       'current_authority_credit':1 if not failures and not bad else 0,
       'product_completion_credit':0,
       'checks_total':len(checks),
