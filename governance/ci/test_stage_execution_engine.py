@@ -975,14 +975,28 @@ with tempfile.TemporaryDirectory() as td:
     yaml.safe_dump(_pressure_work,(wd/'WORK_UNIT.yaml').open('w',encoding='utf-8'),sort_keys=False)
     state_e={'scope_manifest_ref':scope_rel,'result':'PASS'}
     eng._validate_current_stage_state_bundle(matrix_stage,state_e,matrix_st,gov)
+
+    # These negatives target Current-State semantics, not ledger-integrity drift.
+    # Keep the EXECUTION_STATE ledger hash synchronized after each controlled
+    # state mutation so the intended downstream invariant is the one exercised.
+    def _write_pressure_state(state_doc):
+        yaml.safe_dump(state_doc,_pressure_state_path.open('w',encoding='utf-8'),sort_keys=False)
+        pressure_work=yaml.safe_load((wd/'WORK_UNIT.yaml').read_text(encoding='utf-8')) or {}
+        bindings=pressure_work.get('current_ledger_bindings') or {}
+        state_binding=bindings.get('EXECUTION_STATE') or {}
+        state_binding['content_sha256']=eng._sha256_file(_pressure_state_path)
+        bindings['EXECUTION_STATE']=state_binding
+        pressure_work['current_ledger_bindings']=bindings
+        yaml.safe_dump(pressure_work,(wd/'WORK_UNIT.yaml').open('w',encoding='utf-8'),sort_keys=False)
+
     incomplete=deepcopy(valid_state); incomplete['completed_operations']=incomplete['completed_operations'][:-1]
-    yaml.safe_dump(incomplete,(wd/'EXECUTION_STATE.yaml').open('w',encoding='utf-8'),sort_keys=False)
+    _write_pressure_state(incomplete)
     expect_stage_engine_block('state_closed_incomplete_operations',lambda:eng._validate_current_stage_state_bundle(matrix_stage,state_e,matrix_st,gov),'CURRENT_STATE_OPERATION_SET_CONFLICT')
     pending=deepcopy(valid_state); pending['current_operation']='STAGE05_INPUT_READINESS_PENDING'
-    yaml.safe_dump(pending,(wd/'EXECUTION_STATE.yaml').open('w',encoding='utf-8'),sort_keys=False)
+    _write_pressure_state(pending)
     expect_stage_engine_block('state_closed_but_readiness_pending',lambda:eng._validate_current_stage_state_bundle(matrix_stage,state_e,matrix_st,gov),'CURRENT_STATE_CURRENT_OPERATION_CONFLICT')
     badstatus=deepcopy(valid_state); badstatus['status']='IN_PROGRESS'
-    yaml.safe_dump(badstatus,(wd/'EXECUTION_STATE.yaml').open('w',encoding='utf-8'),sort_keys=False)
+    _write_pressure_state(badstatus)
     expect_stage_engine_block('state_pass_but_in_progress',lambda:eng._validate_current_stage_state_bundle(matrix_stage,state_e,matrix_st,gov),'CURRENT_STATE_STATUS_CONFLICT')
 
     if old_root is None:
