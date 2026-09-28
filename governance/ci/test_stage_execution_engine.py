@@ -1724,3 +1724,10 @@ print(f'PASS: every common execution phase NOT_APPLICABLE proof enforcement case
 print(f'PASS: operation/output/scanner/validator/handoff/denominator/evidence element-wise negative cases {_element_negative_cases}')
 print(f'PASS: total generic high-pressure negative cases {_generic_negative_cases}')
 print('PASS: common Stage Execution Engine remains execution-context neutral across P1-P6 web-flow taxonomy; effectful execution credit=0')
+
+# Regression: Stage-01 projection receipts are product execution artifacts and must resolve from STAGE_EXECUTION_ROOT, never governance ROOT.
+_engine_text=(ROOT/'governance/ci/stage_execution_engine.py').read_text(encoding='utf-8')
+if 'fp=ROOT/rel' in _engine_text:
+    raise SystemExit('STAGE01_PROJECTION_RECEIPT_GOVERNANCE_ROOT_LEAK')
+if 'fp=_execution_artifact_root()/rel' not in _engine_text:
+    raise SystemExit('STAGE01_PROJECTION_RECEIPT_EXECUTION_ROOT_BINDING_MISSING')
