@@ -1,12 +1,11 @@
 name: Product Stage01 Successor Step Execute
 on:
   workflow_dispatch:
-  push:
-    branches: [0921acpos]
-    paths:
-      - 'STAGE_EXECUTION/STAGE-01/STAGE01_SUCCESSOR_EXECUTION_TRIGGER.yaml'
-      - 'STAGE_EXECUTION/STAGE-01/WU-STAGE01-GLOBAL-HOME-SHELL-NAVIGATION-REENTRY-001/**'
-      - 'STAGE_EXECUTION/STAGE-01/WU-STAGE01-WB01-DASHBOARD-REENTRY-001/**'
+    inputs:
+      reason:
+        description: Explicit operator authorization to enter Stage-01 effectful execution
+        required: true
+        default: explicit-stage01-entry
 permissions:
   contents: write
 jobs:
