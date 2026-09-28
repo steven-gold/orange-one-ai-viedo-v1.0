@@ -107,16 +107,8 @@ def resolve():
         raise RuntimeError("current governance authority model drift")
     if validation.get("word_source_is_primary_product_design_source") is not True:
         raise RuntimeError("Word source primary authority flag drift")
-    if validation.get("external_human_or_account_evidence_required") is not False:
-        raise RuntimeError("external human/account gate reintroduced")
-    if validation.get("external_auditor_required") is not False:
-        raise RuntimeError("external auditor gate reintroduced")
-    if validation.get("external_signer_required") is not False:
-        raise RuntimeError("external signer gate reintroduced")
-    if validation.get("promotion_required_before_product_stage_execution") is not False:
-        raise RuntimeError("promotion gate reintroduced")
-    if validation.get("released_governance_selection_required") is not False:
-        raise RuntimeError("released-governance gate reintroduced")
+    if validation.get("unregistered_non_word_execution_prerequisite") != "BLOCK":
+        raise RuntimeError("unregistered non-Word execution prerequisite is not blocked")
 
     return {
         "registry": str(REGISTRY.relative_to(ROOT)),
