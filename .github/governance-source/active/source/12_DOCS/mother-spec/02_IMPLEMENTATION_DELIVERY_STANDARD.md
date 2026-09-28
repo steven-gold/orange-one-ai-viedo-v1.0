@@ -1167,7 +1167,7 @@ Required normative refs that are missing, ambiguous, stale, non-current, or sour
 <!-- SECTION_UID: WEB-GOV-02-S071 -->
 ## 71. Product-Neutral Entity Operation Implementation / Bidirectional Coverage Gate
 
-Implementation MUST consume the frozen product-neutral Business Entity Inventory, Operation Matrix, and Hierarchy Matrix for the exact scope. Implementation MUST_NOT invent missing entity operations, omit required operations because no control was pre-drawn, or treat an Action/Control/API count as proof of usability.
+When Current frozen design declares applicable governed Business Entity semantics, Implementation MUST consume the frozen product-neutral Business Entity Inventory, Operation Matrix, and Hierarchy Matrix for the exact scope. When those semantics are Authority-backed `AUTHORIZED_NOT_APPLICABLE`, their absence does not block implementation. Implementation MUST_NOT invent missing entity operations, omit required operations because no control was pre-drawn, or treat an Action/Control/API count as proof of usability.
 
 For every `REQUIRED` Business Entity operation, implementation MUST prove a bidirectional chain from user/system entry to governed outcome: `Entity Operation -> UI Control or System Trigger -> Action -> Input/Payload -> API/Command -> Runtime Owner -> Persistence/State Transition -> Feedback/Audit`, with exact registered identities for every applicable node. A system-triggered operation MAY have no visible UI only when the Operation Matrix explicitly declares a system-trigger contract and Authority.
 
