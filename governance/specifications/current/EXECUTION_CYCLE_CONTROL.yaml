@@ -416,34 +416,14 @@ required_negative_test_class_traceability:
   required_class_pass_count_must_equal_denominator: true
   product_completion_credit: 0
 
-auditor_implementation_independence:
-  synthetic_evaluator_identity_invariance_is_formal_independence: false
-  same_evaluator_repeatability_required_count: 3
-  formal_independent_evaluator_required_count: 3
-  formal_independent_evaluator_required_fields:
-  - evaluator_uid
-  - implementation_owner_uid
-  - decision_engine_uid
-  - implementation_ref
-  - implementation_sha256
-  - execution_receipt_ref
-  - audit_snapshot_hash
-  - result_fingerprint
-  distinct_evaluator_uid_required: true
-  distinct_implementation_owner_uid_required: true
-  distinct_decision_engine_uid_required: true
-  distinct_implementation_ref_required: true
-  distinct_implementation_hash_required: true
-  identical_audit_snapshot_hash_required: true
-  identical_result_fingerprint_required: true
-  physical_implementation_required: true
-  implementation_hash_recompute_required: true
-  execution_receipt_required: true
-  execution_receipt_must_bind_evaluator_implementation_snapshot_and_result: true
-  same_implementation_with_three_runtime_identity_labels_formal_credit: 0
-  formal_independence_without_three_distinct_implementations: NOT_VERIFIED
-  formal_promotion_requires_verified_independent_implementation_evidence: true
-  mismatch_disposition: AUDIT_DETERMINISM_CONTRACT_FAILURE
+internal_audit_determinism:
+  synthetic_identity_invariance_count: 3
+  repeatability_required_count: 3
+  same_complete_input_same_complete_result: true
+  exact_snapshot_binding_required: true
+  external_human_or_account_evidence_required: false
+  generated_or_external_evidence_may_override_word_authority: false
+  product_completion_credit: 0
 integrated_governance_source_defect_reentry:
   canonical_rule_uid: GOV-RULE-GOVERNANCE-CANDIDATE-BOOTSTRAP-001
   activation: CURRENT_VALIDATION_PROVES_DEFECT_IN_CURRENT_INTEGRATED_GOVERNANCE_SOURCE
