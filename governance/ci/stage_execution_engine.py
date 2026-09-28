@@ -729,11 +729,72 @@ def validate_normative_execution_matrix(stage_uid,execution_root,work,stage,gov)
         fail('NORMATIVE_EXECUTION_MATRIX_BINDING_COVERAGE_INCOMPLETE')
     return True
 
+
+def _validate_stage_entry_input_bindings(stage_uid,execution_root,work,stage):
+    expected_inputs=list(map(str,stage.get('inputs') or []))
+    expected_origins={str(k):str(v) for k,v in (stage.get('input_origins') or {}).items()}
+    bindings=work.get('input_bindings')
+    if not isinstance(bindings,dict):
+        fail('STAGE_ENTRY_INPUT_BINDINGS_MISSING:'+stage_uid)
+    if set(map(str,bindings))!=set(expected_inputs):
+        fail('STAGE_ENTRY_INPUT_BINDING_DENOMINATOR_DRIFT:'+stage_uid+
+             ':expected='+repr(sorted(expected_inputs))+':actual='+repr(sorted(map(str,bindings))))
+    required_fields={
+      'input_uid','origin','status','artifact_ref','content_sha256',
+      'external_evidence_ref','authority_evidence_ref','consumer_readiness_evidence_ref'
+    }
+    for input_uid in expected_inputs:
+        row=bindings.get(input_uid)
+        if not isinstance(row,dict):
+            fail('STAGE_ENTRY_INPUT_BINDING_ROW_INVALID:'+input_uid)
+        missing=sorted(required_fields-set(row))
+        if missing:
+            fail('STAGE_ENTRY_INPUT_BINDING_FIELDS_MISSING:'+input_uid+':'+repr(missing))
+        if str(row.get('input_uid') or '')!=input_uid:
+            fail('STAGE_ENTRY_INPUT_BINDING_IDENTITY_DRIFT:'+input_uid)
+        if str(row.get('origin') or '')!=expected_origins.get(input_uid,''):
+            fail('STAGE_ENTRY_INPUT_ORIGIN_DRIFT:'+input_uid)
+        status=str(row.get('status') or '')
+        if status=='MATERIALIZED':
+            ref=str(row.get('artifact_ref') or '').strip()
+            rp=Path(ref)
+            if not ref or rp.is_absolute() or '..' in rp.parts:
+                fail('STAGE_ENTRY_INPUT_ARTIFACT_REF_INVALID:'+input_uid)
+            full=(execution_root/rp).resolve()
+            try:
+                full.relative_to(execution_root.resolve())
+            except ValueError:
+                fail('STAGE_ENTRY_INPUT_ARTIFACT_REF_ESCAPES_ROOT:'+input_uid)
+            _validate_local_file_artifact(full,'STAGE_ENTRY_INPUT_ARTIFACT:'+input_uid)
+            actual_hash=_sha256_file(full)
+            if str(row.get('content_sha256') or '')!=actual_hash:
+                fail('STAGE_ENTRY_INPUT_CONTENT_HASH_DRIFT:'+input_uid)
+            readiness_ref=str(row.get('consumer_readiness_evidence_ref') or '').strip()
+            rr=Path(readiness_ref)
+            if not readiness_ref or rr.is_absolute() or '..' in rr.parts:
+                fail('STAGE_ENTRY_INPUT_READINESS_REF_INVALID:'+input_uid)
+            readiness=(execution_root/rr).resolve()
+            try:
+                readiness.relative_to(execution_root.resolve())
+            except ValueError:
+                fail('STAGE_ENTRY_INPUT_READINESS_REF_ESCAPES_ROOT:'+input_uid)
+            _validate_local_file_artifact(readiness,'STAGE_ENTRY_INPUT_READINESS:'+input_uid)
+        elif status=='EXTERNAL_RECEIPT':
+            if not str(row.get('external_evidence_ref') or '').strip():
+                fail('STAGE_ENTRY_INPUT_EXTERNAL_EVIDENCE_MISSING:'+input_uid)
+        elif status=='AUTHORIZED_NOT_APPLICABLE':
+            if not str(row.get('authority_evidence_ref') or '').strip():
+                fail('STAGE_ENTRY_INPUT_NA_AUTHORITY_MISSING:'+input_uid)
+        else:
+            fail('STAGE_ENTRY_INPUT_STATUS_INVALID:'+input_uid+':'+status)
+    return True
+
 def active_execution(stage_uid):
     entry,reg,gov,profile,adapters,stages=validate_definition()
     execution_root,work,scope,work_rel,scope_rel=execution_context()
     work_dir=(execution_root/Path(work_rel)).resolve().parent
     validate_work_unit_bindings(stage_uid,work,stages,adapters)
+    _validate_stage_entry_input_bindings(stage_uid,execution_root,work,stages[stage_uid])
     if scope.get('stage_uid')!=stage_uid or scope.get('work_unit_uid')!=work.get('work_unit_uid'):
         fail('CURRENT_SCOPE_WORK_UNIT_BINDING_DRIFT')
     deps=work.get('dependencies') or []
