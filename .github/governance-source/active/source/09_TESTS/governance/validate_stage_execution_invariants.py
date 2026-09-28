@@ -71,12 +71,12 @@ def validate(root=ROOT):
     if set(pai.get('destructive_regression_required') or []) != required_destructive:
         failures.append('physical_artifact_integrity_destructive_regression_incomplete')
     bdc = inv.get('BASIC_DESIGN_DOMAIN_STEPWISE_CHECKPOINT') or {}
-    bdc_fields={'schema_version','artifact_uid','artifact_type','stage_uid','work_unit_uid','governed_unit_uid','domain_uid','denominator_source_ref','denominator_hash','current_authority_refs','required_row_uids','materialized_row_uids','unresolved_required_row_uids','missing_required_row_count','conflict_count','validation_result','evidence_refs','producer_operation_uid','governance_uid','source_head_sha'}
+    bdc_fields={'schema_version','artifact_uid','artifact_type','stage_uid','work_unit_uid','governed_unit_uid','domain_uid','denominator_resolution_ref','current_authority_ref','materialized_binding_refs','completeness_validation_result','conflict_validation_result','review_evidence_ref','checkpoint_state','next_admitted_domain_uid','producer_operation_uid','governance_uid','source_head_sha'}
     if bdc.get('invariant_uid')!='GOV-INV-BASIC-DESIGN-DOMAIN-STEPWISE-CHECKPOINT-001' or bdc.get('artifact_type')!='BASIC_DESIGN_DOMAIN_STEPWISE_CHECKPOINT' or bdc.get('applicable_stage_uid')!='STAGE-04':
         failures.append('basic_design_domain_stepwise_checkpoint_identity_missing')
     if set(bdc.get('normative_section_uids') or [])!={'WEB-GOV-01-S083A'} or set(bdc.get('required_fields') or [])!=bdc_fields:
         failures.append('basic_design_domain_stepwise_checkpoint_schema_incomplete')
-    if bdc.get('producer_operation_uid')!='BASIC_DESIGN_PACKAGE_COMPILE' or bdc.get('one_checkpoint_per_applicable_domain') is not True or bdc.get('aggregate_or_summary_checkpoint_may_replace_domain_instances') is not False or bdc.get('checkpoint_type_presence_alone_completion_credit')!=0:
+    if bdc.get('artifact_class')!='MULTI_INSTANCE_STAGE_OUTPUT' or bdc.get('producer_operation_uid')!='BASIC_DESIGN_PACKAGE_COMPILE' or bdc.get('one_checkpoint_per_applicable_domain') is not True or bdc.get('checkpoint_artifact_ref_unique_per_domain') is not True or bdc.get('checkpoint_matrix_row_identity_must_equal_domain_uid') is not True or bdc.get('exact_checkpoint_domain_set_must_equal_basic_design_package_required_domain_set') is not True or bdc.get('aggregate_or_summary_checkpoint_may_replace_domain_instances') is not False or bdc.get('checkpoint_type_presence_alone_completion_credit')!=0:
         failures.append('basic_design_domain_stepwise_checkpoint_materialization_contract_incomplete')
     cwu = inv.get('CLOSED_WORK_UNIT_SUCCESSOR_REENTRY') or {}
     if cwu.get('invariant_uid')!='GOV-INV-CLOSED-WORK-UNIT-SUCCESSOR-REENTRY-001' or cwu.get('closed_to_open_transition')!='FORBIDDEN' or cwu.get('mutate_closed_work_unit_to_current_governance_identity')!='FORBIDDEN':
@@ -299,6 +299,9 @@ def validate(root=ROOT):
         if handoff.get('successor_input_universe_scope') != 'CURRENT_GOVERNED_UNIT' or handoff.get('cross_unit_successor_input_requires_explicit_required_dependency_edge') is not True:
             failures.append('cross_stage_handoff_scope_not_current_governed_unit')
     bp = load(root, '10_REGISTRY/GOVERNANCE_ACCEPTANCE_AUDIT_BLUEPRINT.yaml')
+    bpc = bp.get('functional_visual_completeness_contract') or {}
+    if bpc.get('basic_design_domain_stepwise_checkpoint_required') is not True or bpc.get('basic_design_checkpoint_registered_stage_output_required') is not True or bpc.get('basic_design_checkpoint_exact_domain_set_reconciliation_required') is not True or bpc.get('basic_design_checkpoint_summary_or_aggregate_substitution')!='BLOCK':
+        failures.append('acceptance_blueprint_basic_design_checkpoint_contract_missing')
     bc = bp.get('stage_execution_invariant_contract') or {}
     if bc.get('registry_uid') != 'REG-STAGE-EXECUTION-INVARIANT-001' or bc.get('validator_uid') != 'VAL-GOV-035' or bc.get('observed_stage_does_not_limit_scope') is not True:
         failures.append('acceptance_blueprint_binding_missing')
@@ -324,8 +327,10 @@ def validate(root=ROOT):
     bdg = st4.get('basic_design_stepwise_checkpoint_gate') or {}
     if bdg.get('required') is not True or bdg.get('invariant_uid')!='GOV-INV-BASIC-DESIGN-DOMAIN-STEPWISE-CHECKPOINT-001' or bdg.get('artifact_type')!='BASIC_DESIGN_DOMAIN_STEPWISE_CHECKPOINT':
         failures.append('stage04_basic_design_stepwise_checkpoint_gate_missing')
-    if bdg.get('producer_operation')!='BASIC_DESIGN_PACKAGE_COMPILE' or bdg.get('one_checkpoint_per_applicable_domain') is not True or bdg.get('final_freeze_requires_all_applicable_domain_checkpoints_pass') is not True or bdg.get('checkpoint_type_presence_alone_completion_credit')!=0:
+    if bdg.get('producer_operation')!='BASIC_DESIGN_PACKAGE_COMPILE' or bdg.get('one_checkpoint_per_applicable_domain') is not True or bdg.get('checkpoint_registered_stage_output_required') is not True or bdg.get('checkpoint_matrix_exact_domain_reconciliation_required') is not True or bdg.get('final_freeze_requires_all_applicable_domain_checkpoints_pass') is not True or bdg.get('checkpoint_type_presence_alone_completion_credit')!=0:
         failures.append('stage04_basic_design_stepwise_checkpoint_gate_incomplete')
+    if 'BASIC_DESIGN_DOMAIN_STEPWISE_CHECKPOINT' not in set(st4.get('outputs') or []) or (st4.get('output_producers') or {}).get('BASIC_DESIGN_DOMAIN_STEPWISE_CHECKPOINT')!='BASIC_DESIGN_PACKAGE_COMPILE':
+        failures.append('stage04_basic_design_stepwise_checkpoint_output_binding_missing')
     universal = life.get('universal_stage_stepwise_execution_contract') or {}
     if universal.get('closed_work_unit_reactivation')!='FORBIDDEN' or universal.get('closed_work_unit_current_mutation')!='FORBIDDEN' or universal.get('reentry_requires_new_work_unit_uid') is not True or universal.get('predecessor_closed_work_unit_evidence_immutable') is not True:
         failures.append('universal_closed_work_unit_successor_reentry_binding_missing')
