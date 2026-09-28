@@ -30,7 +30,7 @@ def main():
     if a.operation != OPERATION:
         raise SystemExit(f"BLOCK:OPERATION_MISMATCH:{a.operation}")
     root, wu, work, _ = guard_operation(a.stage, a.operation, a.work_unit, a.product_root)
-    pkg = compile_basic_design_package(root, wu)
+    pkg = compile_basic_design_package(root, wu, work["current_governance_uid"])
     ref = write_operation_receipt(root, wu, OPERATION, work["current_governance_uid"])
     print(f"PASS: {OPERATION} for {wu} package={pkg['artifact_uid']} receipt={ref}")
 
