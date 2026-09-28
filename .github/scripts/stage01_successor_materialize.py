@@ -159,14 +159,88 @@ def refresh(product):
     for cfg in CONFIGS: refresh_manifest_one(product/f"STAGE_EXECUTION/STAGE-01/{cfg['successor']}")
     print("PASS: Stage01 run manifests refreshed")
 def mark_admitted(product):
-    sp=product/"STAGE_EXECUTION/SHARED_AUTHORITY/V232_REALIGNMENT/CURRENT_REMEDIATION_STATE.yaml"; s=y(sp); s["status"]="READY_AWAITING_EXPLICIT_STAGE01_ENTRY"; wr=s.get("work_unit_resolution_gate") or {}; wr["effectful_execution_admitted"]=True; s["work_unit_resolution_gate"]=wr; s["resume_point"]={"last_completed_action":"STAGE01_SUCCESSOR_MATERIALIZATION_AND_ADMISSION","next_action":"RUN_STAGE01_SUCCESSOR_EFFECTFUL_OPERATIONS","next_effectful_stage":"STAGE-01","earliest_owner":"STAGE01_OPERATION_EXECUTORS"}; s["current_blockers"]=[]; s["downstream_known_blockers"]=["STAGE02_03_DEDICATED_EXECUTOR_IMPLEMENTATIONS_MISSING","STAGE04_DYNAMIC_DOMAIN_CHECKPOINT_INSTANCES_MISSING"]; wy(sp,s)
-    rp=product/"STAGE_EXECUTION/SHARED_AUTHORITY/V232_REALIGNMENT/successor_reentry_resolution.yaml"; r=y(rp); r["status"]="READY_AWAITING_EXPLICIT_STAGE01_ENTRY"
+    sp=product/"STAGE_EXECUTION/SHARED_AUTHORITY/V232_REALIGNMENT/CURRENT_REMEDIATION_STATE.yaml"
+    s=y(sp)
+    s["status"]="READY_AWAITING_EXPLICIT_STAGE01_ENTRY"
+    wr=s.get("work_unit_resolution_gate") or {}
+    wr["effectful_execution_admitted"]=True
+    s["work_unit_resolution_gate"]=wr
+    s["resume_point"]={
+        "last_completed_action":"STAGE01_SUCCESSOR_MATERIALIZATION_AND_ADMISSION",
+        "next_action":"AWAIT_EXPLICIT_STAGE01_ENTRY_AUTHORIZATION",
+        "next_effectful_stage":"STAGE-01",
+        "earliest_owner":"STAGE01_OPERATION_EXECUTORS",
+        "stage_entry_hold":True
+    }
+    s["current_blockers"]=[]
+    s["pre_stage_hold"]={
+        "status":"READY_AWAITING_EXPLICIT_STAGE01_ENTRY",
+        "auto_stage_entry":False,
+        "effectful_stage_operation_executed":False,
+        "stage01_completed_operation_total":0,
+        "entry_requires_explicit_workflow_dispatch":True
+    }
+    s["downstream_known_blockers"]=[
+        "STAGE02_03_DEDICATED_EXECUTOR_IMPLEMENTATIONS_MISSING",
+        "STAGE04_DYNAMIC_DOMAIN_CHECKPOINT_INSTANCES_MISSING"
+    ]
+    wy(sp,s)
+
+    rp=product/"STAGE_EXECUTION/SHARED_AUTHORITY/V232_REALIGNMENT/successor_reentry_resolution.yaml"
+    r=y(rp)
+    r["status"]="READY_AWAITING_EXPLICIT_STAGE01_ENTRY"
     for ch in r.get("chains") or []:
         for row in ch.get("stages") or []:
-            if row.get("stage_uid")=="STAGE-01": row["successor_state"]="MATERIALIZED_ADMITTED"
-    ea=r.get("execution_admission") or {}; ea["state"]="ADMITTED_FOR_EFFECTFUL_WORKFLOW_RUNTIME_VALIDATION"; ea["blockers"]=[]; r["execution_admission"]=ea; wy(rp,r)
-    wy(product/"STAGE_EXECUTION/STAGE-01/STAGE01_SUCCESSOR_EXECUTION_TRIGGER.yaml",{"artifact_type":"STAGE01_SUCCESSOR_EXECUTION_TRIGGER","status":"READY_AWAITING_EXPLICIT_STAGE_ENTRY","governance_uid":GOV_UID,"successor_work_units":[c["successor"] for c in CONFIGS],"trigger_reason":"PRE_STAGE_MATERIALIZATION_AND_ADMISSION_PASS_EXPLICIT_STAGE_ENTRY_REQUIRED","auto_stage_entry":False,"product_completion_credit":0})
-    print("PASS: Stage01 successor admission persisted and execution trigger materialized")
+            if row.get("stage_uid")=="STAGE-01":
+                row["successor_state"]="MATERIALIZED_ADMITTED_AWAITING_EXPLICIT_ENTRY"
+    ea=r.get("execution_admission") or {}
+    ea["state"]="ADMITTED_AWAITING_EXPLICIT_STAGE01_ENTRY"
+    ea["blockers"]=[]
+    ea["auto_stage_entry"]=False
+    ea["effectful_stage_operation_executed"]=False
+    r["execution_admission"]=ea
+    wy(rp,r)
+
+    dp=product/"STAGE_EXECUTION/SHARED_AUTHORITY/V232_REALIGNMENT/STAGE01_04_DEFECT_LEDGER.yaml"
+    d=y(dp)
+    d["status"]="CURRENT_STAGE01_PRESTAGE_READY"
+    state_by_uid={
+        "DEF-HOME-S01-PROJECTION-ZERO-BYTE":"REMEDIATED_BY_FRESH_SUCCESSOR_SOURCE_PROJECTION",
+        "DEF-WB01-S01-PROJECTION-ZERO-BYTE":"REMEDIATED_BY_FRESH_SUCCESSOR_SOURCE_PROJECTION",
+        "DEF-HOME-S01-CONTENT-AUDIT-LEGACY-ID":"REMEDIATED_BY_FRESH_SUCCESSOR_CONTENT_AUDIT",
+        "DEF-WB01-S01-CONTENT-AUDIT-LEGACY-ID":"REMEDIATED_BY_FRESH_SUCCESSOR_CONTENT_AUDIT",
+        "DEF-BOTH-S01-PAGE-IDENTITY":"READY_FOR_STAGE01_GOVERNED_UNIT_BASE_BLUEPRINT_OPERATION",
+        "DEF-BOTH-S01-03-EXECUTOR":"STAGE01_EXECUTORS_MATERIALIZED_STAGE02_03_PENDING",
+        "DEF-BOTH-S01-04-CURRENT-MATRIX":"STAGE01_CURRENT_MATRIX_MATERIALIZED_STAGE02_04_PENDING"
+    }
+    for row in d.get("defects") or []:
+        uid=str(row.get("uid") or "")
+        if uid in state_by_uid:
+            row["state"]=state_by_uid[uid]
+    d["pre_stage_boundary"]={
+        "stage_uid":"STAGE-01",
+        "successor_work_units":[cfg["successor"] for cfg in CONFIGS],
+        "fresh_source_projection_materialized":True,
+        "fresh_content_audit_materialized":True,
+        "stage01_dedicated_executor_bindings_materialized":True,
+        "stage01_current_matrix_materialized":True,
+        "stage01_effectful_operation_executed":False,
+        "auto_stage_entry":False,
+        "status":"READY_AWAITING_EXPLICIT_STAGE01_ENTRY"
+    }
+    wy(dp,d)
+
+    wy(product/"STAGE_EXECUTION/STAGE-01/STAGE01_SUCCESSOR_EXECUTION_TRIGGER.yaml",{
+        "artifact_type":"STAGE01_SUCCESSOR_EXECUTION_TRIGGER",
+        "status":"READY_AWAITING_EXPLICIT_STAGE_ENTRY",
+        "governance_uid":GOV_UID,
+        "successor_work_units":[cfg["successor"] for cfg in CONFIGS],
+        "trigger_reason":"PRE_STAGE_MATERIALIZATION_AND_ADMISSION_PASS_EXPLICIT_STAGE_ENTRY_REQUIRED",
+        "auto_stage_entry":False,
+        "effectful_stage_operation_executed":False,
+        "product_completion_credit":0
+    })
+    print("PASS: Stage01 pre-stage admission persisted; explicit Stage01 entry remains on hold")
 def main():
     ap=argparse.ArgumentParser(); ap.add_argument("--product-root",required=True); ap.add_argument("--governance-root"); ap.add_argument("--mode",choices=["materialize","refresh-manifest","mark-admitted"],default="materialize"); a=ap.parse_args()
     product=Path(a.product_root).resolve(); govroot=Path(a.governance_root).resolve() if a.governance_root else None
