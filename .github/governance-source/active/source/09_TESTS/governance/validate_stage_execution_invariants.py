@@ -58,7 +58,7 @@ def validate(root=ROOT):
     pai = inv.get('PHYSICAL_ARTIFACT_INTEGRITY') or {}
     if pai.get('invariant_uid') != 'GOV-INV-PHYSICAL-ARTIFACT-INTEGRITY-001':
         failures.append('physical_artifact_integrity_uid_invalid')
-    if set(pai.get('normative_section_uids') or []) != {'WEB-GOV-03-S073','WEB-GOV-04-S088'}:
+    if set(pai.get('normative_section_uids') or []) != {'WEB-GOV-03-S071','WEB-GOV-04-S085'}:
         failures.append('physical_artifact_integrity_normative_binding_incomplete')
     for key in ('applies_to_all_registered_stages','applies_to_required_inputs_outputs_evidence_matrices_receipts_and_handoffs','required_file_must_be_regular','required_file_must_be_nonempty_unless_schema_explicitly_authorizes_empty_representation','registered_parser_must_parse','registered_schema_and_required_fields_must_validate','declared_content_hash_must_be_recomputed_from_physical_artifact_when_hash_is_registered','producer_receipt_consumer_binding_must_match_recomputed_identity','independent_source_rederivation_validator_must_run_when_registered'):
         if pai.get(key) is not True:
