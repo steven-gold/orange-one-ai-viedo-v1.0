@@ -622,6 +622,68 @@ with tempfile.TemporaryDirectory() as td:
     else:
         raise SystemExit('FAIL_EXPECTED_MATRIX-DESTRUCTIVE-REQUIRED-FIELD')
 
+
+# STAGE-04 Basic Design checkpoint exact-domain runtime reconciliation.
+with tempfile.TemporaryDirectory() as td:
+    _bd_root=Path(td)
+    _bd_stage=eng.stage_map(profile)['STAGE-04']
+    _bd_work={'work_unit_uid':'SYNTHETIC-WU-STAGE04-CHECKPOINT','governed_unit_uid':'SYNTHETIC-GOVERNED-UNIT'}
+    _bd_package_ref='STAGE_EXECUTION/STAGE-04/SYNTHETIC-WU-STAGE04-CHECKPOINT/BASIC_DESIGN_PACKAGE.yaml'
+    _bd_dir=_bd_root/'STAGE_EXECUTION'/'STAGE-04'/'SYNTHETIC-WU-STAGE04-CHECKPOINT'
+    _bd_dir.mkdir(parents=True,exist_ok=True)
+    _bd_head='a'*40
+    _bd_package={
+      'artifact_uid':'SYNTHETIC-BDP-001','artifact_type':'BASIC_DESIGN_PACKAGE','stage_uid':'STAGE-04',
+      'work_unit_uid':_bd_work['work_unit_uid'],'governed_unit_uid':_bd_work['governed_unit_uid'],
+      'source_head_sha':_bd_head,'basic_design_required_domain_total':2,'basic_design_bound_domain_total':2,
+      'basic_design_missing_domain_total':0,
+      'design_domains':[
+        {'domain_uid':'DOMAIN-A','applicability':'REQUIRED','resolution':'PASS'},
+        {'domain_uid':'DOMAIN-B','applicability':'REQUIRED','resolution':'PASS'},
+      ],
+    }
+    (_bd_root/_bd_package_ref).write_text(yaml.safe_dump(_bd_package,sort_keys=False),encoding='utf-8')
+    def _bd_checkpoint(domain_uid,next_uid):
+        return {
+          'schema_version':1,'artifact_uid':'SYNTH-CP-'+domain_uid,'artifact_type':'BASIC_DESIGN_DOMAIN_STEPWISE_CHECKPOINT',
+          'stage_uid':'STAGE-04','work_unit_uid':_bd_work['work_unit_uid'],'governed_unit_uid':_bd_work['governed_unit_uid'],
+          'domain_uid':domain_uid,'denominator_resolution_ref':_bd_package_ref+'#design_domains',
+          'current_authority_ref':'SYNTHETIC-AUTHORITY','materialized_binding_refs':['synthetic://binding/'+domain_uid],
+          'completeness_validation_result':'PASS','conflict_validation_result':'PASS',
+          'review_evidence_ref':'synthetic://review/'+domain_uid,'checkpoint_state':'PASS',
+          'next_admitted_domain_uid':next_uid,'producer_operation_uid':'BASIC_DESIGN_PACKAGE_COMPILE',
+          'governance_uid':gov,'source_head_sha':_bd_head,
+        }
+    _bd_rows=[]
+    for _domain,_next in [('DOMAIN-A','DOMAIN-B'),('DOMAIN-B','FINAL_FREEZE')]:
+        _ref=f'STAGE_EXECUTION/STAGE-04/{_bd_work["work_unit_uid"]}/EVIDENCE/DOMAIN_STEPWISE/{_domain}.yaml'
+        _path=_bd_root/_ref; _path.parent.mkdir(parents=True,exist_ok=True)
+        _path.write_text(yaml.safe_dump(_bd_checkpoint(_domain,_next),sort_keys=False),encoding='utf-8')
+        _bd_rows.append({
+          'required_artifact_type':'BASIC_DESIGN_DOMAIN_STEPWISE_CHECKPOINT','artifact_ref':_ref,
+          'row_identity':_domain,'row_denominator_source':_bd_package_ref+'#design_domains','applicability':'REQUIRED',
+        })
+    _bd_rows.append({
+      'required_artifact_type':'BASIC_DESIGN_PACKAGE','artifact_ref':_bd_package_ref,
+      'row_identity':'BASIC-DESIGN-PACKAGE','row_denominator_source':'SYNTHETIC','applicability':'REQUIRED',
+    })
+    eng._validate_basic_design_domain_stepwise_checkpoints('STAGE-04',_bd_root,_bd_work,_bd_stage,gov,_bd_rows,'CLOSURE',set(_bd_stage['operations']))
+    _missing_domain_rows=deepcopy(_bd_rows)
+    _missing_domain_rows.pop(1)
+    expect_stage_engine_block(
+      'basic_design_checkpoint_missing_domain',
+      lambda:eng._validate_basic_design_domain_stepwise_checkpoints('STAGE-04',_bd_root,_bd_work,_bd_stage,gov,_missing_domain_rows,'CLOSURE',set(_bd_stage['operations'])),
+      'BASIC_DESIGN_CHECKPOINT_DOMAIN_SET_MISMATCH'
+    )
+    _cp_b=_bd_root/f'STAGE_EXECUTION/STAGE-04/{_bd_work["work_unit_uid"]}/EVIDENCE/DOMAIN_STEPWISE/DOMAIN-B.yaml'
+    _cp_b_obj=yaml.safe_load(_cp_b.read_text(encoding='utf-8')); _cp_b_obj['checkpoint_state']='BLOCKED'
+    _cp_b.write_text(yaml.safe_dump(_cp_b_obj,sort_keys=False),encoding='utf-8')
+    expect_stage_engine_block(
+      'basic_design_checkpoint_blocked_state',
+      lambda:eng._validate_basic_design_domain_stepwise_checkpoints('STAGE-04',_bd_root,_bd_work,_bd_stage,gov,_bd_rows,'CLOSURE',set(_bd_stage['operations'])),
+      'BASIC_DESIGN_CHECKPOINT_NOT_PASS'
+    )
+
 def _init_synthetic_execution_git(root):
     (root/'targets').mkdir(parents=True,exist_ok=True)
     (root/'targets'/'seed.txt').write_text('synthetic tracked execution target\n',encoding='utf-8')
