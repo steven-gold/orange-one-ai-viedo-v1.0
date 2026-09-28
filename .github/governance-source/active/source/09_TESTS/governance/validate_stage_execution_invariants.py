@@ -146,6 +146,11 @@ def validate(root=ROOT):
     for key in ('every_required_normative_section_must_be_represented','every_required_artifact_must_be_represented','every_required_evidence_type_must_be_represented','every_applicable_governed_row_must_be_represented','every_required_field_requires_validator_binding','every_validator_check_requires_closure_gate_binding','validators_scanners_classifiers_materializers_and_closure_consumers_share_matrix_truth','destructive_missing_field_regression_required'):
         if matrix.get(key) is not True:
             failures.append('normative_execution_matrix_flag_missing:'+key)
+    for key in ('pre_effectful_matrix_pass_is_registration_completeness_only','future_producer_owned_target_may_be_unmaterialized_before_producer_execution','completed_producer_rows_must_be_physically_materialized_before_dependent_execution','closure_requires_all_required_rows_physically_materialized','required_evidence_may_remain_unmaterialized_only_until_registered_evidence_boundary'):
+        if matrix.get(key) is not True:
+            failures.append('normative_execution_matrix_materialization_lifecycle_flag_missing:'+key)
+    if matrix.get('future_producer_owned_target_completion_credit')!=0 or matrix.get('physical_future_operation_preproduction')!='BLOCK' or matrix.get('closure_future_target_or_to_materialize_state')!='BLOCK':
+        failures.append('normative_execution_matrix_materialization_lifecycle_disposition_incomplete')
     if matrix.get('validator_local_required_field_subset')!='BLOCK' or matrix.get('downstream_discovered_matrix_undercoverage_disposition')!='STOP_REENTER_EARLIEST_OWNER_MARK_DESCENDANTS_REVERIFY_REQUIRED':
         failures.append('normative_execution_matrix_fail_closed_disposition_missing')
     rng = inv.get('EXPLICIT_STAGE_RANGE_EXECUTION') or {}
