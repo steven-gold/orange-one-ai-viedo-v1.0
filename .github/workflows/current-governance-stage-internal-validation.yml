@@ -89,6 +89,7 @@ jobs:
             cancelled) STATE=error ;;
             *) STATE=error ;;
           esac
+          export STATE
           python - <<'PY'
           import json, os, urllib.request
           repo=os.environ["GITHUB_REPOSITORY"]
