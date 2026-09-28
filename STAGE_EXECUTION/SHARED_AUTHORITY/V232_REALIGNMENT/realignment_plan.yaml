@@ -1,9 +1,9 @@
 artifact_type: V232_REALIGNMENT_PLAN
-status: SUCCESSOR_REENTRY_RESOLVED_BLOCKED_PENDING_RELEASE_SELECTION
+status: SUCCESSOR_REENTRY_RESOLVED_READY_FOR_STAGE01_MATERIALIZATION
 normative_authority: false
 authorization_record_url: https://github.com/steven-gold/orange-one-ai-viedo-v1.0/issues/61
 supporting_authority_records:
-- https://github.com/steven-gold/orange-one-ai-viedo-v1.0/issues/59
+- https://github.com/steven-gold/orange-one-ai-viedo-v1.0/issues/64
 target_governance_ref: STAGE_EXECUTION/SHARED_AUTHORITY/V232_REALIGNMENT/target_governance.yaml
 scope_units:
 - GLOBAL-HOME-SHELL-NAVIGATION
@@ -113,7 +113,7 @@ verified_predecessor_defects:
   - STAGE-03
   - STAGE-04
   defect: PREDECESSOR_GOVERNANCE_IDENTITY_STALE
-  disposition: NEW_SUCCESSOR_MATRIX_STATE_EVIDENCE_UNDER_SELECTED_RELEASE
+  disposition: NEW_SUCCESSOR_MATRIX_STATE_EVIDENCE_UNDER_EXACT_CURRENT_GOVERNANCE
   in_place_resign: FORBIDDEN
 - defect_uid: V232-PROD-009
   applies_to:
@@ -164,10 +164,11 @@ successor_work_unit_resolution:
     predecessor_work_unit_uid: WU-STAGE04-WB01-DASHBOARD-001
     successor_work_unit_uid: WU-STAGE04-WB01-DASHBOARD-REENTRY-001
 execution_admission:
-  status: BLOCKED
-  blocker: PRODUCT_SELECTED_GOVERNANCE_RELEASE_MISSING
-  required_before_successor_work_unit_materialization:
-  - PRODUCT_SELECTED_GOVERNANCE_RELEASE
-  - GOVERNANCE_REVISION_TRANSITION_RECEIPT
-  - EXACT_RELEASED_GOVERNANCE_UID_AND_COMMIT
+  status: INLINE_INTERNAL_VALIDATION_REQUIRED_BEFORE_EFFECTFUL_OPERATION
+  current_governance_selection_ref: STAGE_EXECUTION/SHARED_AUTHORITY/CURRENT_GOVERNANCE_SELECTION.yaml
+  released_governance_mode_selected: false
+  required_before_effectful_operation:
+  - EXACT_CURRENT_GOVERNANCE_COMMIT_SELECTION
+  - INLINE_INTERNAL_GOVERNANCE_VALIDATION_PASS
+  - PREDECESSOR_LINEAGE_BINDING
 completion_credit: 0
