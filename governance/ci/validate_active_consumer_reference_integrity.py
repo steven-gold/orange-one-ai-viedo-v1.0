@@ -158,82 +158,62 @@ def main() -> int:
     required_workflow_names=set(map(str,validation_contract.get("required_workflow_names") or []))
     workflow_by_name={}
     for workflow in workflows:
-            workflow_text=workflow.read_text(encoding="utf-8")
-            m=re.search(r"(?m)^name:\s*(.+?)\s*$",workflow_text)
-            if m:
-                workflow_by_name[m.group(1).strip()]=(workflow,workflow_text)
-        missing_names=sorted(required_workflow_names-set(workflow_by_name))
-        for name in missing_names:
-            errors.append("CANDIDATE_REQUIRED_WORKFLOW_MISSING:"+name)
-        for name in required_workflow_names & set(workflow_by_name):
-            wf,wf_text=workflow_by_name[name]
-            if governance_branch not in wf_text:
-                errors.append("CANDIDATE_REQUIRED_WORKFLOW_BRANCH_NOT_WIRED:"+name+":"+governance_branch)
-            if validation_contract.get("required_workflows_run_on_every_candidate_push") is not True:
-                errors.append("CANDIDATE_REQUIRED_WORKFLOW_EVERY_PUSH_POLICY_MISSING")
-            if validation_contract.get("candidate_required_workflow_path_filter")!="FORBIDDEN":
-                errors.append("CANDIDATE_REQUIRED_WORKFLOW_PATH_FILTER_POLICY_DRIFT")
-            if re.search(r"(?m)^\s+paths(?:-ignore)?:\s*$",wf_text):
-                errors.append("CANDIDATE_REQUIRED_WORKFLOW_PATH_FILTER_PRESENT:"+name)
-        cleanup=workflow_by_name.get("Current Governance Cleanup Validation")
-        if cleanup:
-            _,cleanup_text=cleanup
-            for command in map(str,validation_contract.get("current_cleanup_required_commands") or []):
-                if command not in cleanup_text:
-                    errors.append("CANDIDATE_CURRENT_CLEANUP_REQUIRED_COMMAND_MISSING:"+command)
-        if validation_contract.get("mother_neutrality_and_portability_required") is not True:
-            errors.append("CANDIDATE_MOTHER_NEUTRALITY_PORTABILITY_NOT_REQUIRED")
-        if validation_contract.get("active_consumer_reverse_validation_required") is not True:
-            errors.append("CANDIDATE_ACTIVE_CONSUMER_REVERSE_VALIDATION_NOT_REQUIRED")
-        if validation_contract.get("core_validation_pass_may_substitute_full_preformal_regression") is not False:
-            errors.append("CANDIDATE_FULL_PREFORMAL_SUBSTITUTION_NOT_BLOCKED")
-        if validation_contract.get("formal_promotion_requires_all_required_workflows_exact_head_success") is not True:
-            errors.append("CANDIDATE_EXACT_HEAD_WORKFLOW_SUCCESS_NOT_REQUIRED")
-        readiness=str(validation_contract.get("promotion_readiness_validator") or "")
-        if not readiness or not (ROOT/readiness).is_file():
-            errors.append("CANDIDATE_PROMOTION_READINESS_VALIDATOR_MISSING:"+readiness)
-        if validation_contract.get("promotion_readiness_mode")!="READ_ONLY_FAIL_CLOSED":
-            errors.append("CANDIDATE_PROMOTION_READINESS_MODE_DRIFT")
-        if validation_contract.get("promotion_readiness_may_mutate_or_promote") is not False:
-            errors.append("CANDIDATE_PROMOTION_READINESS_MUTATION_NOT_BLOCKED")
-        if validation_contract.get("candidate_rule_bundle_release_state")!="CANDIDATE_NOT_PROMOTED":
-            errors.append("CANDIDATE_REGISTRY_RELEASE_STATE_DRIFT")
-        if validation_contract.get("candidate_rule_bundle_released_current_authority") is not False:
-            errors.append("CANDIDATE_REGISTRY_RELEASE_AUTHORITY_LEAK")
-        if validation_contract.get("live_branch_head_must_equal_validation_head") is not True:
-            errors.append("CANDIDATE_LIVE_BRANCH_HEAD_BINDING_NOT_REQUIRED")
-        if validation_contract.get("live_branch_head_recheck_after_evidence_validation_required") is not True:
-            errors.append("CANDIDATE_LIVE_BRANCH_HEAD_RECHECK_NOT_REQUIRED")
-        successor_preformal=str(validation_contract.get("successor_preformal_validator") or "")
-        if not successor_preformal or not (ROOT/successor_preformal).is_file():
-            errors.append("CANDIDATE_SUCCESSOR_PREFORMAL_VALIDATOR_MISSING:"+successor_preformal)
-        if validation_contract.get("predecessor_direct_preformal_current_candidate_use")!="FORBIDDEN":
-            errors.append("CANDIDATE_PREDECESSOR_DIRECT_PREFORMAL_NOT_FORBIDDEN")
-        replacements=set(map(str,validation_contract.get("retired_current_state_checks_replaced_by") or []))
-        if replacements!={'CURRENT_CANDIDATE_IDENTITY','EXACT_HEAD_VALIDATION_CONTRACT','SOURCE_PACKAGE_DEFECT_REENTRY'}:
-            errors.append("CANDIDATE_RETIRED_CURRENT_STATE_REPLACEMENT_DENOMINATOR_DRIFT")
-        if validation_contract.get("immutable_source_checks_and_mandatory_regression_denominator_preserved") is not True:
-            errors.append("CANDIDATE_SOURCE_CHECK_OR_REGRESSION_DENOMINATOR_NOT_PRESERVED")
-        single_source_mode=validation_contract.get("source_package_integration_mode")=="SINGLE_BRANCH_INTEGRATED"
-        if single_source_mode:
-            if validation_contract.get("source_package_successor_required") is not False:
-                errors.append("SINGLE_BRANCH_SOURCE_SUCCESSOR_MUST_BE_RETIRED")
-            if validation_contract.get("source_package_integrated_branch")!=governance_branch:
-                errors.append("SINGLE_BRANCH_SOURCE_INTEGRATED_BRANCH_DRIFT")
-            source_validator=str(validation_contract.get("source_package_integrated_validator") or "")
-            if not source_validator or not (ROOT/source_validator).is_file():
-                errors.append("SINGLE_BRANCH_SOURCE_INTEGRATED_VALIDATOR_MISSING:"+source_validator)
-            if (registry.get("mutation_policy") or {}).get("branch_fanout_without_explicit_user_authorization")!="FORBIDDEN":
-                errors.append("SINGLE_BRANCH_FANOUT_GUARD_MISSING")
-        else:
-            if validation_contract.get("source_package_successor_required") is not True:
-                errors.append("CANDIDATE_SOURCE_SUCCESSOR_NOT_REQUIRED")
+        workflow_text=workflow.read_text(encoding="utf-8")
+        m=re.search(r"(?m)^name:\\s*(.+?)\\s*$",workflow_text)
+        if m:
+            workflow_by_name[m.group(1).strip()]=(workflow,workflow_text)
+
+    missing_names=sorted(required_workflow_names-set(workflow_by_name))
+    for name in missing_names:
+        errors.append("CURRENT_REQUIRED_WORKFLOW_MISSING:"+name)
+
+    bindings=validation_contract.get("required_workflow_bindings") or {}
+    for name in required_workflow_names & set(workflow_by_name):
+        wf,wf_text=workflow_by_name[name]
+        row=bindings.get(name) or {}
+        if str(row.get("path") or "")!=rel(wf):
+            errors.append("CURRENT_REQUIRED_WORKFLOW_PATH_DRIFT:"+name)
+        if row.get("event")!="push":
+            errors.append("CURRENT_REQUIRED_WORKFLOW_EVENT_DRIFT:"+name)
+        if governance_branch not in wf_text:
+            errors.append("CURRENT_REQUIRED_WORKFLOW_BRANCH_NOT_WIRED:"+name+":"+governance_branch)
+
+    if validation_contract.get("mother_neutrality_and_portability_required") is not True:
+        errors.append("CURRENT_MOTHER_NEUTRALITY_PORTABILITY_NOT_REQUIRED")
+    if validation_contract.get("active_consumer_reverse_validation_required") is not True:
+        errors.append("CURRENT_ACTIVE_CONSUMER_REVERSE_VALIDATION_NOT_REQUIRED")
+    if validation_contract.get("exact_current_head_required") is not True:
+        errors.append("CURRENT_EXACT_HEAD_VALIDATION_NOT_REQUIRED")
+    if validation_contract.get("prior_head_workflow_result_may_credit_current_head") is not False:
+        errors.append("CURRENT_PRIOR_HEAD_CREDIT_NOT_BLOCKED")
+    if validation_contract.get("historical_pass_substitution")!="FORBIDDEN":
+        errors.append("CURRENT_HISTORICAL_PASS_SUBSTITUTION_NOT_BLOCKED")
+    if validation_contract.get("authority_model")!="WORD_DERIVED_INTERNAL_VALIDATION":
+        errors.append("CURRENT_WORD_DERIVED_AUTHORITY_MODEL_DRIFT")
+    for key in (
+        "external_human_or_account_evidence_required",
+        "external_auditor_required",
+        "external_signer_required",
+        "detached_external_trust_required",
+        "promotion_required_before_product_stage_execution",
+        "released_governance_selection_required",
+    ):
+        if validation_contract.get(key) is not False:
+            errors.append("NON_WORD_EXTERNAL_GATE_REINTRODUCED:"+key)
+
+    if validation_contract.get("source_package_integration_mode")=="SINGLE_BRANCH_INTEGRATED":
+        if validation_contract.get("source_package_integrated_branch")!=governance_branch:
+            errors.append("SINGLE_BRANCH_SOURCE_INTEGRATED_BRANCH_DRIFT")
+        source_validator=str(validation_contract.get("source_package_integrated_validator") or "")
+        if not source_validator or not (ROOT/source_validator).is_file():
+            errors.append("SINGLE_BRANCH_SOURCE_INTEGRATED_VALIDATOR_MISSING:"+source_validator)
+        if (registry.get("mutation_policy") or {}).get("branch_fanout_without_explicit_user_authorization")!="FORBIDDEN":
+            errors.append("SINGLE_BRANCH_FANOUT_GUARD_MISSING")
 
     for workflow in workflows:
         text = workflow.read_text(encoding="utf-8")
         path_rel = rel(workflow)
-        if path_rel != ".github/workflows/current-governance-cleanup-validation.yml":
-            errors.extend(current_runtime_token_findings(path_rel, text))
+        errors.extend(current_runtime_token_findings(path_rel, text))
         if path_rel == COMMON_STAGE_WORKFLOW and "stage_execution_engine.py --execute --stage" in text:
             errors.append("GOVERNANCE_BRANCH_EFFECTFUL_EXECUTE_MODE_FORBIDDEN")
         for wf_ref in LOCAL_WORKFLOW_REF.findall(text):
