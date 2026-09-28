@@ -190,6 +190,31 @@ def validate_canonical_terminology_contract(ctx: dict) -> dict:
         return {'status':'FAIL','reason':'NONCANONICAL_TERMINOLOGY_NOT_BLOCKED'}
     return {'status':'PASS'}
 
+def validate_physical_artifact_integrity_contract(ctx: dict) -> dict:
+    contract=(ctx.get('stage_invariants') or {}).get('PHYSICAL_ARTIFACT_INTEGRITY') or {}
+    if contract.get('invariant_uid')!='GOV-INV-PHYSICAL-ARTIFACT-INTEGRITY-001':
+        return {'status':'FAIL','reason':'PHYSICAL_ARTIFACT_INTEGRITY_CONTRACT_MISSING'}
+    if set(map(str,contract.get('normative_section_uids') or []))!={'WEB-GOV-03-S073','WEB-GOV-04-S088'}:
+        return {'status':'FAIL','reason':'PHYSICAL_ARTIFACT_INTEGRITY_NORMATIVE_BINDING_DRIFT'}
+    required_true=(
+      'applies_to_all_registered_stages',
+      'applies_to_required_inputs_outputs_evidence_matrices_receipts_and_handoffs',
+      'required_file_must_be_regular',
+      'required_file_must_be_nonempty_unless_schema_explicitly_authorizes_empty_representation',
+      'registered_parser_must_parse',
+      'registered_schema_and_required_fields_must_validate',
+      'declared_content_hash_must_be_recomputed_from_physical_artifact_when_hash_is_registered',
+      'producer_receipt_consumer_binding_must_match_recomputed_identity',
+      'independent_source_rederivation_validator_must_run_when_registered',
+    )
+    if any(contract.get(k) is not True for k in required_true):
+        return {'status':'FAIL','reason':'PHYSICAL_ARTIFACT_INTEGRITY_REQUIRED_FLAG_MISSING'}
+    if contract.get('path_presence_alone_completion_credit')!=0 or contract.get('metadata_or_receipt_self_consistency_completion_credit')!=0:
+        return {'status':'FAIL','reason':'PHYSICAL_ARTIFACT_FALSE_CREDIT_NONZERO'}
+    if contract.get('receipt_may_replace_physical_artifact_validation') is not False or contract.get('self_consistent_metadata_may_override_physical_artifact_failure') is not False:
+        return {'status':'FAIL','reason':'PHYSICAL_ARTIFACT_SELF_ASSERTION_NOT_BLOCKED'}
+    return {'status':'PASS'}
+
 def deterministic_contract_ok(ctx: dict) -> bool:
     det = (ctx.get("stage_invariants") or {}).get("DETERMINISTIC_STAGE_AUDIT") or {}
     statuses = set(det.get("canonical_stage_statuses") or [])
@@ -203,6 +228,7 @@ def deterministic_contract_ok(ctx: dict) -> bool:
     denominator_ok=validate_audit_denominator_contract(ctx).get('status')=='PASS'
     terminology_ok=validate_canonical_terminology_contract(ctx).get('status')=='PASS'
     severity_ok=canonical_finding_severity(ctx,'CURRENT_STATE_CONFLICT').get('severity')=='S1_BLOCKER'
+    physical_ok=validate_physical_artifact_integrity_contract(ctx).get('status')=='PASS'
     return bool(
         det.get("invariant_uid") == "GOV-INV-DETERMINISTIC-STAGE-AUDIT-001"
         and det.get("applies_to_all_registered_stages") is True
@@ -210,19 +236,27 @@ def deterministic_contract_ok(ctx: dict) -> bool:
         and statuses == required_statuses
         and (det.get("current_state_conflict_contract") or {}).get("stage_pass_allowed") is False
         and (det.get("historical_evidence_contract") or {}).get("historical_pass_is_current_pass") is False
-        and truth_ok and denominator_ok and terminology_ok and severity_ok
+        and truth_ok and denominator_ok and terminology_ok and severity_ok and physical_ok
     )
 
 
 def resolve_implementation(rec: dict) -> dict:
     rel = rec.get("implementation_path")
     if not rel:
-        return {"implementation_path": None, "exists": False, "parse_ok": False}
+        return {"implementation_path": None, "exists": False, "nonempty": False, "size_bytes": 0, "parse_ok": False, "content_sha256": None, "physical_valid": False}
     path = SOURCE / rel
+    exists=path.is_file()
+    size=path.stat().st_size if exists else 0
+    nonempty=bool(exists and size>0)
+    parsed=bool(nonempty and parse_ok(path))
     return {
         "implementation_path": rel,
-        "exists": path.is_file(),
-        "parse_ok": path.is_file() and parse_ok(path),
+        "exists": exists,
+        "nonempty": nonempty,
+        "size_bytes": size,
+        "parse_ok": parsed,
+        "content_sha256": file_sha(path) if nonempty else None,
+        "physical_valid": bool(exists and nonempty and parsed),
     }
 
 
@@ -248,7 +282,7 @@ def resolve_item(item: dict, ctx: dict) -> dict:
                 "evidence_type": ev,
                 "evidence_level": "REQUIRED",
                 "artifact_ref": impl.get("implementation_path"),
-                "resolved": bool(impl.get("exists") and impl.get("parse_ok")),
+                "resolved": bool(impl.get("physical_valid")),
             })
         else:
             governed = bool(
@@ -302,8 +336,8 @@ def check_dimension(dimension: str, resolved: dict, ctx: dict) -> tuple[bool, st
             return False, "validator identity unresolved"
         if rec.get("canonical_name") != item.get("validator_name"):
             return False, "validator canonical_name mismatch"
-        if rec.get("identity_mode") == "PHYSICAL_VALIDATOR" and not resolved["impl"].get("exists"):
-            return False, "physical validator implementation missing"
+        if rec.get("identity_mode") == "PHYSICAL_VALIDATOR" and not resolved["impl"].get("physical_valid"):
+            return False, "physical validator implementation missing, empty, or unparsable"
         return True, "operation and owner binding resolved"
 
     if dimension == "OUTPUT_SCHEMA_AND_DENOMINATOR":
@@ -719,6 +753,24 @@ def run_self_test() -> int:
         print('FAIL: canonical terminology drift escaped validation',file=sys.stderr)
         return 1
     cases.append('canonical_terminology_drift_blocked')
+
+    physical_contract=validate_physical_artifact_integrity_contract(base)
+    if physical_contract.get('status')!='PASS':
+        print('FAIL: physical artifact integrity contract invalid: '+json.dumps(physical_contract,sort_keys=True),file=sys.stderr)
+        return 1
+    cases.append('physical_artifact_integrity_contract_pass')
+    with tempfile.TemporaryDirectory() as _phys_td:
+        _old_source=globals()['SOURCE']
+        try:
+            globals()['SOURCE']=Path(_phys_td)
+            (Path(_phys_td)/'empty-validator.py').write_bytes(b'')
+            _empty_impl=resolve_implementation({'implementation_path':'empty-validator.py'})
+            if _empty_impl.get('exists') is not True or _empty_impl.get('nonempty') is not False or _empty_impl.get('physical_valid') is not False:
+                print('FAIL: zero-byte physical validator received validity credit',file=sys.stderr)
+                return 1
+            cases.append('zero_byte_physical_validator_blocked')
+        finally:
+            globals()['SOURCE']=_old_source
 
 
 
