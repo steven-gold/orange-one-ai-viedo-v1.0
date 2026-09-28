@@ -189,6 +189,11 @@ stage_execution_invariant_contract:
   producer_consumer_alias_fallback_blocked: true
   no_history_product_value_fallback_required: true
   task_layer_effectful_transition_order_required: true
+  closed_work_unit_successor_reentry_required: true
+  closed_work_unit_in_place_reactivation: BLOCK
+  successor_reentry_new_work_unit_uid_required: true
+  successor_reentry_predecessor_terminal_receipt_required: true
+  successor_reentry_predecessor_identity_match_required: true
   visual_design_profile_materialization_completeness_required: true
   stage03_visual_reference_annotation_output_required: true
   stage03_visual_inheritance_matrix_output_required: true
