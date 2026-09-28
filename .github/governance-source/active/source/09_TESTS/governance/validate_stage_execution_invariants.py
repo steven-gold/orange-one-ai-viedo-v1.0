@@ -299,7 +299,7 @@ def validate(root=ROOT):
         if handoff.get('successor_input_universe_scope') != 'CURRENT_GOVERNED_UNIT' or handoff.get('cross_unit_successor_input_requires_explicit_required_dependency_edge') is not True:
             failures.append('cross_stage_handoff_scope_not_current_governed_unit')
     bp = load(root, '10_REGISTRY/GOVERNANCE_ACCEPTANCE_AUDIT_BLUEPRINT.yaml')
-    bpc = bp.get('functional_visual_completeness_contract') or {}
+    bpc = bp.get('product_neutral_entity_lifecycle_contract') or {}
     if bpc.get('basic_design_domain_stepwise_checkpoint_required') is not True or bpc.get('basic_design_checkpoint_registered_stage_output_required') is not True or bpc.get('basic_design_checkpoint_exact_domain_set_reconciliation_required') is not True or bpc.get('basic_design_checkpoint_summary_or_aggregate_substitution')!='BLOCK':
         failures.append('acceptance_blueprint_basic_design_checkpoint_contract_missing')
     bc = bp.get('stage_execution_invariant_contract') or {}
