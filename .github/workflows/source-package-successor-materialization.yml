@@ -1,11 +1,6 @@
 name: Integrated Source Package Materialization
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - rebuild-v2.1.1
-    paths:
-      - '.github/workflows/source-package-successor-materialization.yml'
 permissions:
   contents: write
 concurrency:
