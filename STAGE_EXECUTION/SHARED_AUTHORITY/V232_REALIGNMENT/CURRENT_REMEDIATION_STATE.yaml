@@ -1,5 +1,5 @@
 artifact_type: PRODUCT_REMEDIATION_RESUME_STATE
-status: READY_FOR_STAGE01_SUCCESSOR_MATERIALIZATION
+status: READY_AWAITING_RUNTIME_INLINE_VALIDATION_AND_EXPLICIT_STAGE01_ENTRY
 authorization_record_url: https://github.com/steven-gold/orange-one-ai-viedo-v1.0/issues/61
 product_branch: 0921acpos
 governed_units:
@@ -16,15 +16,15 @@ work_unit_resolution_gate:
   successor_plan_ref: STAGE_EXECUTION/SHARED_AUTHORITY/V232_REALIGNMENT/successor_reentry_resolution.yaml
   effectful_execution_admitted: false
   exact_head_selection_admitted: true
+  pre_stage_materialization_admitted: true
 resume_point:
-  last_completed_action: EXACT_CURRENT_GOVERNANCE_SELECTED
-  next_action: MATERIALIZE_STAGE01_SUCCESSORS_THEN_RUN_EFFECTFUL_WORKFLOW_INLINE_VALIDATION
+  last_completed_action: STAGE01_PRESTAGE_SUCCESSOR_MATERIALIZATION_AND_ADMISSION
+  next_action: RUN_RUNTIME_INLINE_VALIDATION_THEN_EXPLICIT_STAGE01_ENTRY
   next_effectful_stage: STAGE-01
-  earliest_owner: PRE_STAGE_SOURCE_PROJECTION_AND_STAGE01
+  earliest_owner: STAGE01_OPERATION_EXECUTORS
+  stage_entry_hold: true
 current_blockers:
-- STAGE01_SUCCESSOR_WORK_UNITS_NOT_MATERIALIZED
 - RUNTIME_INLINE_INTERNAL_GOVERNANCE_VALIDATION_REQUIRED_BEFORE_EFFECTFUL_STAGE
-- STAGE01_03_DEDICATED_EXECUTOR_IMPLEMENTATIONS_MISSING
 verified_defects_already_resolved_in_planning:
 - NON_WORD_EXTERNAL_GATE_REMOVED
 - CURRENT_GOVERNANCE_DIRECT_STAGE_PATH_RESTORED
@@ -43,3 +43,15 @@ verified_physical_defects_pending_effectful_remediation:
 - STAGE01_04_FRESH_CURRENT_MATRIX_STATE_EVIDENCE_MISSING
 - STAGE04_DYNAMIC_DOMAIN_CHECKPOINT_INSTANCES_MISSING
 completion_credit: 0
+pre_stage_hold:
+  status: READY_AWAITING_RUNTIME_INLINE_VALIDATION_AND_EXPLICIT_STAGE01_ENTRY
+  auto_stage_entry: false
+  pre_stage_materialization_complete: true
+  effectful_execution_admitted: false
+  effectful_stage_operation_executed: false
+  stage01_completed_operation_total: 0
+  entry_requires_explicit_workflow_dispatch: true
+  runtime_inline_validation_deferred_to_stage_entry: true
+downstream_known_blockers:
+- STAGE02_03_DEDICATED_EXECUTOR_IMPLEMENTATIONS_MISSING
+- STAGE04_DYNAMIC_DOMAIN_CHECKPOINT_INSTANCES_MISSING

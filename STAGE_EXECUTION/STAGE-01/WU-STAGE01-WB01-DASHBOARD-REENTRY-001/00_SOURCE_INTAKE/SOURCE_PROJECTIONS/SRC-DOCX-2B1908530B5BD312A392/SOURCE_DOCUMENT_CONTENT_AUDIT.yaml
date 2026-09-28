@@ -1,63 +1,35 @@
 schema_version: 1
-artifact_uid: CONTENT-AUDIT-SRC-DOCX-2B1908530B5BD312A392-REENTRY-001
+artifact_uid: AUD-SOURCE-SRC-DOCX-2B1908530B5BD312A392-REENTRY-001
 artifact_type: SOURCE_DOCUMENT_CONTENT_AUDIT
 source_uid: SRC-DOCX-2B1908530B5BD312A392
 source_sha256: 2b1908530b5bd312a3928f80b422d0f65d7e9932ace90730df9b038666621262
 governed_unit_uid: workspace:WB-01
-audit_standard_uid: WEB-GOV-01-S090
+audit_standard_uid: REG-STAGE1-SOURCE-FACT-CONTRACTS-001#source_document_content_readiness_audit
 required_design_domain_uids:
-- ACTION_PERMISSION_GATE
-- API_RUNTIME_DEPENDENCY
-- ARCHITECTURE_BOUNDARY
-- DENOMINATOR_RECONCILIATION
-- ERROR_FAILURE_RECOVERY
-- FUNCTION_OPERATION
-- FUNCTION_VISUAL_TRACE
-- HANDOFF_NEXT_PREVIOUS
-- INPUT_PAYLOAD_PARAMETER_CONSTRAINT
-- JOURNEY_WORKBENCH_INTERACTION
-- PAGE_CONTROL_FIELD
-- QA_ACCEPTANCE_EVIDENCE
-- REQUIREMENT_SCOPE
-- STATE_STATUS_LIFECYCLE
-- VISUAL_LAYOUT_COMPONENT
+- GOVERNED_UNIT_CONSTRUCTION
+- VISUAL_CONSTRUCTION
 observed_design_domain_uids:
-- ACTION_PERMISSION_GATE
-- API_RUNTIME_DEPENDENCY
-- ARCHITECTURE_BOUNDARY
-- DENOMINATOR_RECONCILIATION
-- ERROR_FAILURE_RECOVERY
-- FUNCTION_OPERATION
-- FUNCTION_VISUAL_TRACE
-- HANDOFF_NEXT_PREVIOUS
-- INPUT_PAYLOAD_PARAMETER_CONSTRAINT
-- JOURNEY_WORKBENCH_INTERACTION
-- PAGE_CONTROL_FIELD
-- QA_ACCEPTANCE_EVIDENCE
-- REQUIREMENT_SCOPE
-- STATE_STATUS_LIFECYCLE
-- VISUAL_LAYOUT_COMPONENT
+- GOVERNED_UNIT_CONSTRUCTION
+- VISUAL_CONSTRUCTION
 missing_required_design_domain_uids: []
 matrix_integrity:
-  status: PASS
-  coverage_percent: 100
-  external_audit_run_id: 35888160986
-  external_audit_artifact_id: 10764320853
-  external_audit_artifact_sha256: e65edfab82807c7465d959e849155595be8ddf138279bdeaafbdd3cc59dc6fa0
-  governance_head: c411687bcd94ba2f0c8016de63c3d8b4dc3d3209
-  product_head: 5086b483da190a9e59ce645d2e9dea41917db6f3
+  source_review_extract_ref: STAGE_EXECUTION/SHARED_AUTHORITY/V232_REALIGNMENT/SOURCE_REVIEW_INPUTS/WB01-DASHBOARD.json
+  paragraph_count: 1257
+  table_count: 30
+  package_part_count: 24
+  result: PASS
 visual_source_integrity:
-  status: PASS
-  reason: null
+  media_count: 4
+  source_package_identity: HASH_MATCHED
+  result: PASS
 render_integrity:
-  status: PASS
-  pdf_page_count: 24
-  pdf_sha256: b35ee78b0be02e80d7f054a4e822ba3490fc267579c5b19222c2f04b55456507
-  extracted_text_char_count: 39480
+  docx_package_parse: PASS
+  visual_render_review: DEFERRED_TO_STAGE03
 open_downstream_states:
-  BLOCKED: 2
-  NOT_EXECUTED: 1
+- STAGE-02:NOT_EXECUTED
+- STAGE-03:NOT_EXECUTED
+- STAGE-04:NOT_EXECUTED
 unresolved_required_gap_count: 0
 contradiction_count: 0
 result: PASS
-evidence_content_hash: 5ee48bfd2e817f2dea9988b069e50e0cfbd4302ba65026e32eb1c3f2d0cbb8f8
+evidence_content_hash: 73e1e3976a0b94f91d057b76262d2c0a8adfc43b10bbf7ae5ab5f46a1284a946
