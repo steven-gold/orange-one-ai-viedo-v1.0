@@ -13,7 +13,7 @@ canonical_rule_refs:
 - GOV-RULE-GOVERNANCE-CANDIDATE-BOOTSTRAP-001
 purpose:
   statement: Current reusable policy is immutable throughout a governed execution/validation cycle. Ordinary defects are repaired at their owning layer. Normative change requires explicit
-    exact-scope authorization and atomic successor promotion.
+    exact-scope authorization and fresh exact-head Current validation.
   default_decision: DENY_MUTATION
   fail_closed: true
 non_authorities:
@@ -29,7 +29,7 @@ non_authorities:
 - AI_INFERENCE
 - AI_AUTOFILL
 - CONVENIENCE_OR_GATE_PASSING
-- CANDIDATE_LEDGER_ENTRY_BY_ITSELF
+- CHANGE_LEDGER_ENTRY_BY_ITSELF
 explicit_change_authorization:
   required: true
   authority_source: EXPLICIT_USER_DIRECTIVE
@@ -52,17 +52,17 @@ execution_cycle_freeze_control:
   evidence_state_bug_owner: NON_NORMATIVE_EVIDENCE_OR_STATE
   external_authority_gap: PRESERVE_UNRESOLVED_UNTIL_AUTHORITATIVE_RESOLUTION_OR_FORMAL_NON_APPLICABILITY
 finding_intake:
-  candidate_ledger_identity: NON_NORMATIVE_SPECIFICATION_CHANGE_CANDIDATE_LEDGER
+  change_ledger_identity: NON_NORMATIVE_SPECIFICATION_CHANGE_LEDGER
   every_suspected_reusable_defect_recorded: true
   finding_is_normative_change: false
   finding_may_auto_promote: false
-  candidate_may_be_active_rule_before_authorized_promotion: false
-successor_candidate_bootstrap_control:
-  released_predecessor_mutation: FORBIDDEN
-  candidate_branch_role: GOVERNANCE_REVISION_CANDIDATE
-  candidate_identity_must_be_distinct_from_predecessor: true
-  candidate_exact_head_must_descend_from_exact_predecessor_head: true
-  candidate_branch_may_equal_predecessor_under_registered_single_branch_mode: true
+  change_may_be_current_rule_before_fresh_validation: false
+current_governance_change_control:
+  predecessor_history_mutation: FORBIDDEN
+  current_branch_role: CURRENT_GOVERNANCE_WORKLINE
+  changed_governance_identity_must_be_distinct_from_predecessor: true
+  current_exact_head_must_descend_from_exact_predecessor_head: true
+  single_branch_current_governance_mode: true
   branch_fanout_without_explicit_authority: FORBIDDEN
   preexisting_authorization_record_required: true
   allowed_authorization_record_kinds:
@@ -72,26 +72,26 @@ successor_candidate_bootstrap_control:
   - authority_source
   - authorized_scope
   - predecessor_head_sha
-  - candidate_identity
+  - current_governance_identity
   - created_before_normative_mutation
-  candidate_registry_must_bind_authorization_record: true
-  candidate_registry_must_bind_exact_predecessor_head: true
-  candidate_registry_must_expose_candidate_governance_identity: true
-  candidate_scope_must_be_subset_of_authorized_scope: true
+  current_registry_must_bind_authorization_record: true
+  current_registry_must_bind_exact_predecessor_head: true
+  current_registry_must_expose_current_governance_identity: true
+  current_change_scope_must_be_subset_of_authorized_scope: true
   authorization_record_may_document_preexisting_external_directive: true
   authorization_record_may_create_new_authority_in_same_normative_commit: false
-  released_predecessor_history_preservation_required: true
-  candidate_product_execution: FORBIDDEN
-  candidate_product_completion_credit: 0
+  predecessor_history_preservation_required: true
+  governance_workline_product_execution: FORBIDDEN
+  governance_change_product_completion_credit: 0
   missing_or_unverifiable_bootstrap_evidence: BLOCK
 integrated_governance_source_remediation_control:
   canonical_rule_uid: GOV-RULE-GOVERNANCE-CANDIDATE-BOOTSTRAP-001
   activation: PROVEN_DEFECT_IN_CURRENT_INTEGRATED_GOVERNANCE_SOURCE
   authorization_source: governance/specifications/REGISTRY.yaml#governance_identity.supplemental_authorization_records
   exact_scope_authorization_required: true
-  released_predecessor_mutation: FORBIDDEN
-  candidate_identity_must_change_when_normative_bytes_change: true
-  candidate_exact_head_must_change_when_normative_bytes_change: true
+  predecessor_history_mutation: FORBIDDEN
+  current_governance_identity_must_change_when_normative_bytes_change: true
+  current_exact_head_must_change_when_normative_bytes_change: true
   branch_topology_source: governance/specifications/REGISTRY.yaml#mutation_policy
   separate_successor_branch_required: false
   derived_source_and_projection_reconciliation_required: true
@@ -101,7 +101,7 @@ integrated_governance_source_remediation_control:
   fresh_exact_head_required_workflow_terminal_results_required: true
   prior_head_validation_credit: 0
   product_execution_credit: 0
-  governance_promotion_credit_before_fresh_validation: 0
+  governance_change_completion_credit_before_fresh_validation: 0
   historical_predecessor_source_remains_immutable: true
 
 retired_evidence_consumer_migration_control:
@@ -110,19 +110,19 @@ retired_evidence_consumer_migration_control:
   removed_predecessor_run_state_or_evidence_may_be_recreated_as_current: false
   historical_predecessor_evidence_role: HISTORICAL_REFERENCE_ONLY
   historical_predecessor_pass_current_credit: 0
-  current_candidate_identity_source: governance/specifications/REGISTRY.yaml
-  current_candidate_validation_source: EXACT_HEAD_REQUIRED_WORKFLOW_RECEIPTS
-  current_candidate_promotion_source: GOVERNANCE_CANDIDATE_PROMOTION_READINESS
+  current_current_governance_identity_source: governance/specifications/REGISTRY.yaml
+  current_governance_validation_source: EXACT_HEAD_REQUIRED_WORKFLOW_RECEIPTS
+  current_governance_validation_source_type: WORD_DERIVED_INTERNAL_VALIDATION
   missing_retired_predecessor_evidence_disposition: MIGRATE_CONSUMER_NOT_RESTORE_ARTIFACT
   consumer_must_not_require_removed_predecessor_run_ids: true
-  consumer_must_not_require_removed_predecessor_candidate_state_file: true
+  consumer_must_not_require_removed_predecessor_state_file: true
   current_consumer_contract_must_be_current_identity_bound: true
   legacy_regression_must_use_isolated_historical_fixture_when_historical_semantics_remain_required: true
   legacy_fixture_may_not_be_current_authority: true
   denominator_reduction_to_hide_migration_failure: BLOCK
   migration_completion_requires_zero_current_consumer_reference_to_retired_predecessor_state: true
 
-consolidated_promotion_control:
+consolidated_current_validation_control:
   explicit_user_directive_required: true
   preexisting_authorization_required: true
   new_immutable_governance_uid_required: true
@@ -135,7 +135,7 @@ consolidated_promotion_control:
   projection_atomicity_required: true
   portability_validation_required: true
   policy_layer_contamination_scan_required: true
-  promotion_invalidates_affected_old_closure_evidence: true
+  governance_change_invalidates_affected_old_closure_evidence: true
   fresh_reverification_required: true
 reference_migration_atomicity_control:
   applies_to:
@@ -146,7 +146,7 @@ reference_migration_atomicity_control:
   - REPLACEMENT
   - ENTRYPOINT_CHANGE
   - EXECUTABLE_OWNER_CHANGE
-  - GOVERNANCE_PROMOTION
+  - GOVERNANCE_CHANGE_REVALIDATION
   complete_active_reverse_consumer_set_required: true
   reverse_consumer_set_must_be_frozen_against_prewrite_commit_and_tree: true
   required_inventory_classes:
@@ -167,7 +167,7 @@ reference_migration_atomicity_control:
   commit_message_or_declared_migration_count_is_closure_evidence: false
   required_machine_gate: governance/ci/validate_active_consumer_reference_integrity.py
 post_write_reconciliation_control:
-  same_transaction_as_promotion_required: true
+  same_change_transaction_revalidation_required: true
   complete_registered_current_projector_rebuild_required: true
   complete_active_and_transitive_consumer_sweep_required: true
   residual_classification_requires_content_semantic_review: true
@@ -187,7 +187,7 @@ fatal_specification_contradiction_exception:
   ordinary_product_validator_runtime_evidence_or_external_authority_gap_qualifies: false
   new_explicit_authorization_required: true
   ai_may_self_authorize: false
-promotion_gate:
+current_validation_gate:
   required_sequence:
   - RECORD_FINDING_OR_EXPLICIT_CHANGE_REQUEST
   - VERIFY_PREEXISTING_EXACT_SCOPE_AUTHORIZATION
