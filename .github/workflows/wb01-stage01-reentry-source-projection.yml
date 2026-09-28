@@ -271,10 +271,29 @@ jobs:
           (wu/"SOURCE_PROJECTION_REENTRY_RESULT.yaml").write_text(yaml.safe_dump(out,sort_keys=False,allow_unicode=True),encoding="utf-8")
           print(yaml.safe_dump(out,sort_keys=False))
           PY
-          python /tmp/rebuild_wb01_projection.py
+          set +e
+          python /tmp/rebuild_wb01_projection.py > /tmp/projection-rebuild.log 2>&1
+          rc=$?
+          set -e
           cd product
+          mkdir -p STAGE_EXECUTION/REENTRY_DIAGNOSTICS
+          {
+            echo "artifact_type: SOURCE_PROJECTION_REENTRY_DIAGNOSTIC"
+            echo "work_unit_uid: WU-STAGE01-WB01-DASHBOARD-REENTRY-001"
+            echo "exit_code: $rc"
+            if [ "$rc" -eq 0 ]; then echo "result: PASS"; else echo "result: BLOCKED"; fi
+            echo "output: |-"
+            sed 's/^/  /' /tmp/projection-rebuild.log
+          } > STAGE_EXECUTION/REENTRY_DIAGNOSTICS/WB01_STAGE01_SOURCE_PROJECTION_REENTRY.yaml
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add STAGE_EXECUTION/STAGE-01/WU-STAGE01-WB01-DASHBOARD-REENTRY-001
-          git commit -m "fix(stage01): rebuild WB01 current source projection pair"
+          git add STAGE_EXECUTION/REENTRY_DIAGNOSTICS/WB01_STAGE01_SOURCE_PROJECTION_REENTRY.yaml
+          if [ "$rc" -eq 0 ]; then
+            git add STAGE_EXECUTION/STAGE-01/WU-STAGE01-WB01-DASHBOARD-REENTRY-001
+          else
+            git reset -- STAGE_EXECUTION/STAGE-01/WU-STAGE01-WB01-DASHBOARD-REENTRY-001 2>/dev/null || true
+            git clean -fd -- STAGE_EXECUTION/STAGE-01/WU-STAGE01-WB01-DASHBOARD-REENTRY-001
+          fi
+          git commit -m "test(stage01): persist WB01 source projection reentry result"
           git push origin HEAD:0921acpos
+          exit "$rc"
