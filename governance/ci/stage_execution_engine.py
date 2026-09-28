@@ -95,6 +95,32 @@ def _require_nonempty_file(path,label):
         fail(label+'_EMPTY:'+_display_path(path))
     return size
 
+def _validate_local_file_artifact(path,label):
+    """Common file-backed artifact guard.
+
+    This is intentionally product-neutral: it validates physical existence and
+    bytes for every local required artifact, and invokes the registered
+    serialization parser for YAML/JSON artifacts. Domain-specific validators
+    remain responsible for schema/content semantics and hash re-derivation.
+    """
+    _require_nonempty_file(path,label)
+    suffix=path.suffix.lower()
+    if suffix in {'.yaml','.yml'}:
+        try:
+            obj=yaml.safe_load(path.read_text(encoding='utf-8'))
+        except Exception as exc:
+            fail(label+'_PARSE_FAILED:'+type(exc).__name__)
+        if obj is None:
+            fail(label+'_PARSED_EMPTY:'+_display_path(path))
+    elif suffix=='.json':
+        try:
+            obj=json.loads(path.read_text(encoding='utf-8'))
+        except Exception as exc:
+            fail(label+'_PARSE_FAILED:'+type(exc).__name__)
+        if obj is None:
+            fail(label+'_PARSED_EMPTY:'+_display_path(path))
+    return True
+
 def _stage1_work_dir():
     raw=os.environ.get(ACTIVE_WORK_UNIT_ENV,'').strip()
     if not raw:
@@ -945,6 +971,7 @@ def _validate_cross_stage_handoff_ledger(stage_uid,e,stage,stages):
     rp=Path(ref)
     if not ref or rp.is_absolute() or '..' in rp.parts:
         fail('CROSS_STAGE_HANDOFF_LEDGER_REF_INVALID')
+    _validate_local_file_artifact(execution_root/rp,'CROSS_STAGE_HANDOFF_READINESS_LEDGER')
     ledger=_external_yaml(execution_root/rp,'CROSS_STAGE_HANDOFF_READINESS_LEDGER')
     if ledger.get('artifact_type')!='CROSS_STAGE_HANDOFF_READINESS_LEDGER':
         fail('CROSS_STAGE_HANDOFF_LEDGER_TYPE_INVALID')
@@ -1152,14 +1179,20 @@ def validate_evidence_data(stage_uid,e):
         status=str(item.get('status') or '')
         if status=='PASS':
             if not item.get('ref'): fail('REQUIRED_EVIDENCE_PASS_REF_MISSING:'+str(item.get('evidence_type')))
-            if not item.get('external_receipt') and not (_execution_artifact_root()/str(item['ref'])).is_file():
-                fail(f'REQUIRED_EVIDENCE_PHYSICAL_REF_MISSING:{item["ref"]}')
+            if not item.get('external_receipt'):
+                _validate_local_file_artifact(
+                    _execution_artifact_root()/str(item['ref']),
+                    'REQUIRED_EVIDENCE_PHYSICAL:'+str(item.get('evidence_type'))
+                )
         elif status=='NOT_APPLICABLE_WITH_PROOF':
             proof=str(item.get('authority_evidence_ref') or item.get('proof') or '')
             if not proof:
                 fail('REQUIRED_EVIDENCE_NA_AUTHORITY_MISSING:'+str(item.get('evidence_type')))
-            if item.get('ref') and not item.get('external_receipt') and not (_execution_artifact_root()/str(item['ref'])).is_file():
-                fail(f'REQUIRED_EVIDENCE_NA_REF_STALE:{item["ref"]}')
+            if item.get('ref') and not item.get('external_receipt'):
+                _validate_local_file_artifact(
+                    _execution_artifact_root()/str(item['ref']),
+                    'REQUIRED_EVIDENCE_NA_PHYSICAL:'+str(item.get('evidence_type'))
+                )
         else:
             fail('REQUIRED_EVIDENCE_TERMINAL_DISPOSITION_INVALID:'+str(item.get('evidence_type'))+':'+status)
 
@@ -1269,8 +1302,7 @@ def validate_terminal(stage_uid,evidence,receipt):
     print(f'PASS: terminal receipt exact-head closure valid for {stage_uid} governed_unit={governed_scope} head={head}')
 
 def _load_operation_receipt(path):
-    if not path.is_file():
-        fail('ACTIVE_OPERATION_RECEIPT_MISSING:'+_display_path(path))
+    _validate_local_file_artifact(path,'ACTIVE_OPERATION_RECEIPT')
     try:
         if path.suffix.lower()=='.json':
             obj=json.loads(path.read_text(encoding='utf-8'))
