@@ -1,2 +1,6 @@
-BLOCK: CANDIDATE_MANIFEST_AUTHORIZATION_PROJECTION_DRIFT
-BLOCK: CANDIDATE_MANIFEST_PREDECESSOR_HEAD_PROJECTION_DRIFT
+PASS: REGISTRY.yaml is the single Current governance identity and rule entrypoint
+PASS: resolver identity equals Registry identity for governance_uid/revision/display_version
+PASS: successor candidate bootstrap binds predecessor and pre-existing authorization record
+PASS: governance/specifications/current is the only Current rule root
+PASS: governance branch contains no product run-state/test-state root
+PASS: runtime specification digest=7f09a6404553248e4a15ea83ecffceb15cb2a4121c8c54e32aebf95ffb73c0f4
