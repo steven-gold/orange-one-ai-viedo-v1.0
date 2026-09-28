@@ -16,7 +16,6 @@ product_execution_blocker: INLINE_INTERNAL_GOVERNANCE_VALIDATION_REQUIRED
 exact_current_validation:
   mother_neutrality: PASS
   effectful_stage_validation_mode: INLINE_BEFORE_EVERY_EFFECTFUL_STAGE
-  external_human_or_account_evidence_required: false
 allowed_current_use:
 - REALIGNMENT_PLANNING
 - SUCCESSOR_REENTRY_RESOLUTION
@@ -26,4 +25,4 @@ forbidden_current_use:
 - PRODUCT_STAGE_EXECUTION_WITHOUT_INLINE_INTERNAL_VALIDATION
 - PREDECESSOR_CLOSED_WU_RESIGN
 - OLD_GOVERNANCE_PASS_REUSE
-note: Product Stage execution uses this exact Current Governance snapshot after inline internal validation. No unrelated external person, account, manifest, or release artifact is required.
+note: Product Stage execution uses this exact Current Governance snapshot after inline internal validation and Word-derived source integrity checks.
