@@ -69,6 +69,8 @@ pre_stage_hardening:
   stale_reentry_diagnostics_removed: true
   source_review_regeneration_requires_explicit_workflow_dispatch: true
   active_workflow_moving_governance_ref_count: 0
+  active_stage01_effectful_auto_write_workflow_count: 0
+  stage01_operation_receipt_count_at_hold: 0
   stage01_effectful_workflow_trigger_mode: EXPLICIT_WORKFLOW_DISPATCH_ONLY
   stale_materialization_runs_may_not_overwrite_current_head: FAST_FORWARD_PUSH_REQUIRED
   stage01_entry_hold_preserved: true
