@@ -194,6 +194,29 @@ def _write_stage_entry_input_bindings(root,base_rel,stage):
     return bindings
 
 
+def _write_current_ledger_bindings(root,base_rel):
+    classes=list(map(str,(eng._deterministic_stage_audit_contract().get('current_ledger_synchronization') or {}).get('ledgers') or []))
+    bindings={}
+    for idx,ledger_class in enumerate(classes):
+        safe=''.join(ch if ch.isalnum() else '_' for ch in ledger_class)[:80] or f'LEDGER_{idx}'
+        rel=(Path(base_rel)/(safe+'.yaml')).as_posix()
+        path=root/rel
+        path.parent.mkdir(parents=True,exist_ok=True)
+        path.write_text(yaml.safe_dump({
+          'artifact_type':'SYNTHETIC_CURRENT_LEDGER',
+          'ledger_class':ledger_class,
+          'status':'CURRENT'
+        },sort_keys=False),encoding='utf-8')
+        bindings[ledger_class]={
+          'ledger_class':ledger_class,
+          'binding_kind':'LOCAL_ARTIFACT',
+          'artifact_ref':rel,
+          'content_sha256':eng._sha256_file(path),
+          'external_evidence_ref':''
+        }
+    return bindings
+
+
 # Work-unit dependency regression: file-backed required dependencies inherit the
 # same common physical-integrity gate. Path presence alone cannot admit them.
 with tempfile.TemporaryDirectory() as _dep_td:
@@ -909,9 +932,15 @@ with tempfile.TemporaryDirectory() as td:
     # or while current_operation still points at readiness/pending work.
     scope_rel=f'STAGE_EXECUTION/{matrix_stage}/{wu}/CURRENT_EXECUTION_SCOPE_MANIFEST.yaml'
     yaml.safe_dump({'artifact_type':'EXECUTION_SCOPE_MANIFEST','stage_uid':matrix_stage,'work_unit_uid':wu,'governance_uid':gov},(wd/'CURRENT_EXECUTION_SCOPE_MANIFEST.yaml').open('w',encoding='utf-8'),sort_keys=False)
+    _state_ledger_bindings=_write_current_ledger_bindings(
+      pressure_root,
+      f'STAGE_EXECUTION/{matrix_stage}/{wu}/EVIDENCE/CURRENT_LEDGERS'
+    )
     yaml.safe_dump({
       'artifact_type':'WORK_UNIT','work_unit_uid':wu,'stage_uid':matrix_stage,'status':'CLOSED','current_status':'CLOSED',
-      'normative_execution_matrix_ref':mwork['normative_execution_matrix_ref']
+      'governance_uid':gov,
+      'normative_execution_matrix_ref':mwork['normative_execution_matrix_ref'],
+      'current_ledger_bindings':_state_ledger_bindings
     },(wd/'WORK_UNIT.yaml').open('w',encoding='utf-8'),sort_keys=False)
     valid_state={'artifact_type':'WORK_UNIT_EXECUTION_STATE','stage_uid':matrix_stage,'work_unit_uid':wu,'completed_operations':list(matrix_st['operations']),'current_operation':'COMPLETE','status':'CLOSED'}
     yaml.safe_dump(valid_state,(wd/'EXECUTION_STATE.yaml').open('w',encoding='utf-8'),sort_keys=False)
@@ -1023,12 +1052,17 @@ receipt.write_text(yaml.safe_dump(obj,sort_keys=False),encoding="utf-8")
       f'STAGE_EXECUTION/{_sid}/{_wu}/EVIDENCE/ENTRY_INPUTS',
       _st
     )
+    _current_ledger_bindings=_write_current_ledger_bindings(
+      _exec_root,
+      f'STAGE_EXECUTION/{_sid}/{_wu}/EVIDENCE/CURRENT_LEDGERS'
+    )
     _work={
       'artifact_type':'WORK_UNIT','work_unit_uid':_wu,'governance_uid':_gov,
       TASK_LAYER_FIELD:TASK_LAYER_VALUE,'stage_uid':_sid,'current_status':'ACTIVE',
       'pre_execution_gate_status':'PASS','required_outputs':list(_st.get('outputs') or []),
       'dependencies':['dependency.yaml'],'normative_execution_matrix_ref':_matrix_rel,
       'input_bindings':_input_bindings,
+      'current_ledger_bindings':_current_ledger_bindings,
       'operation_bindings':_operation_bindings,'scanner_bindings':_scanner_bindings
     }
     _work_rel=f'STAGE_EXECUTION/{_sid}/{_wu}/WORK_UNIT.yaml'
@@ -1053,6 +1087,46 @@ receipt.write_text(yaml.safe_dump(obj,sort_keys=False),encoding="utf-8")
     os.environ[eng.ACTIVE_WORK_UNIT_ENV]=_work_rel
     os.environ[eng.CURRENT_SCOPE_ENV]=_scope_rel
     try:
+        _first_ledger=next(iter(_current_ledger_bindings))
+        _bad=deepcopy(_work)
+        _bad['current_ledger_bindings'].pop(_first_ledger)
+        expect_stage_engine_block(
+          'current_ledger_binding_missing',
+          lambda:eng._validate_current_ledger_bindings(_sid,_exec_root,_bad,_gov),
+          'CURRENT_LEDGER_BINDING_DENOMINATOR_DRIFT'
+        )
+
+        _bad=deepcopy(_work)
+        _bad['current_ledger_bindings']['UNREGISTERED_LEDGER']={
+          'ledger_class':'UNREGISTERED_LEDGER','binding_kind':'EXTERNAL_RECEIPT',
+          'artifact_ref':'','content_sha256':'','external_evidence_ref':'synthetic://external'
+        }
+        expect_stage_engine_block(
+          'current_ledger_binding_extra',
+          lambda:eng._validate_current_ledger_bindings(_sid,_exec_root,_bad,_gov),
+          'CURRENT_LEDGER_BINDING_DENOMINATOR_DRIFT'
+        )
+
+        _ledger_path=_exec_root/_current_ledger_bindings[_first_ledger]['artifact_ref']
+        _ledger_original=_ledger_path.read_bytes()
+        _ledger_path.write_bytes(b'')
+        try:
+            expect_stage_engine_block(
+              'current_ledger_zero_byte',
+              lambda:eng._validate_current_ledger_bindings(_sid,_exec_root,_work,_gov),
+              'CURRENT_LEDGER_ARTIFACT:'+_first_ledger+'_EMPTY'
+            )
+        finally:
+            _ledger_path.write_bytes(_ledger_original)
+
+        _bad=deepcopy(_work)
+        _bad['current_ledger_bindings'][_first_ledger]['content_sha256']='0'*64
+        expect_stage_engine_block(
+          'current_ledger_hash_drift',
+          lambda:eng._validate_current_ledger_bindings(_sid,_exec_root,_bad,_gov),
+          'CURRENT_LEDGER_CONTENT_HASH_DRIFT:'+_first_ledger
+        )
+
         _first_input=str(_st['inputs'][0])
         _bad=deepcopy(_work)
         _bad['input_bindings'].pop(_first_input)
