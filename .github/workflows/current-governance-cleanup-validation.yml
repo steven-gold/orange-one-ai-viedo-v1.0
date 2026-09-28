@@ -184,6 +184,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           VALIDATION_JOB_STATUS: ${{ job.status }}
+          STATE: ${{ job.status == 'success' && 'success' || job.status == 'failure' && 'failure' || 'error' }}
         run: |
           set -euo pipefail
           case "$VALIDATION_JOB_STATUS" in
@@ -218,5 +219,3 @@ jobs:
             if r.status not in (200,201):
               raise SystemExit(f"status publish failed: {r.status}")
           PY
-        env:
-          STATE: ${{ job.status == 'success' && 'success' || job.status == 'failure' && 'failure' || 'error' }}
