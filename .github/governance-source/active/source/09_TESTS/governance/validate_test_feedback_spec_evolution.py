@@ -48,8 +48,8 @@ def validate(root=ROOT):
     idx=load(root,'10_REGISTRY/CONSTRUCTION_ARTIFACT_INDEX.yaml'); ur=idx.get('universal_rules') or {}
     for k in ['stage_test_without_defect_gap_record','test_without_production_conformance_review','unclassified_defect_scope_before_governance_patch','global_shared_defect_patched_only_at_observed_stage','stage_local_defect_generalized_without_recurrence_evidence','governance_version_promotion_without_multidirection_high_pressure_pass','predecessor_backtrace_omitted_after_governance_version_promotion','freeze_without_full_current_rule_revalidation','source_control_multiple_current_governance_versions','source_control_current_promotion_before_backtrace_and_full_revalidation','next_stage_before_governance_freeze']:
         if ur.get(k)!='BLOCK': failures.append('construction_rule_not_block:'+k)
-    if ur.get('source_control_current_entry_must_be_adapter_declared') is not True: failures.append('construction_source_control_entry_invalid')
-    if ur.get('github_adapter_current_spec_path')!='docs/governance/CURRENT_GOVERNANCE_SPEC.yaml': failures.append('construction_github_adapter_profile_invalid')
+    if ur.get('source_control_current_entry_must_be_adapter_declared') is not True or ur.get('source_control_adapter_binding_source')!='CURRENT_SOURCE_CONTROL_ADAPTER': failures.append('construction_source_control_entry_invalid')
+    if 'github_adapter_current_spec_path' in ur: failures.append('construction_provider_specific_path_leaked_into_common_index')
     d3=(root/'12_DOCS/mother-spec/03_EXECUTION_CONTROL_STANDARD.md').read_text(encoding='utf-8')
     d4=(root/'12_DOCS/mother-spec/04_AUDIT_PROGRESS_STANDARD.md').read_text(encoding='utf-8')
     s3_marker='<!-- SECTION_UID: WEB-GOV-03-S059 -->'
