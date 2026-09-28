@@ -648,6 +648,119 @@ def _matrix_nonblank(value):
     if isinstance(value,(list,dict)): return len(value)>0
     return True
 
+def _validate_basic_design_domain_stepwise_checkpoints(stage_uid,execution_root,work,stage,gov,rows,phase,completed):
+    if stage_uid!='STAGE-04':
+        return
+    inv=y(INVARIANTS)
+    policy=((inv.get('invariants') or {}).get('BASIC_DESIGN_DOMAIN_STEPWISE_CHECKPOINT') or {})
+    checkpoint_type=str(policy.get('artifact_type') or '')
+    producer=str(policy.get('producer_operation_uid') or '')
+    if checkpoint_type!='BASIC_DESIGN_DOMAIN_STEPWISE_CHECKPOINT' or producer!='BASIC_DESIGN_PACKAGE_COMPILE':
+        fail('BASIC_DESIGN_CHECKPOINT_POLICY_INVALID')
+    outputs=set(map(str,stage.get('outputs') or []))
+    producers={str(k):str(v) for k,v in (stage.get('output_producers') or {}).items()}
+    if checkpoint_type not in outputs or producers.get(checkpoint_type)!=producer:
+        fail('BASIC_DESIGN_CHECKPOINT_STAGE_OUTPUT_BINDING_MISSING')
+    if phase!='CLOSURE' and not (phase=='STEP' and producer in completed):
+        return
+    checkpoint_rows=[r for r in rows if isinstance(r,dict) and r.get('required_artifact_type')==checkpoint_type and r.get('applicability')=='REQUIRED']
+    package_rows=[r for r in rows if isinstance(r,dict) and r.get('required_artifact_type')=='BASIC_DESIGN_PACKAGE' and r.get('applicability')=='REQUIRED']
+    if not checkpoint_rows:
+        fail('BASIC_DESIGN_CHECKPOINT_MATRIX_ROWS_MISSING')
+    package_refs={str(r.get('artifact_ref') or '') for r in package_rows if str(r.get('artifact_ref') or '')}
+    if len(package_refs)!=1:
+        fail('BASIC_DESIGN_CHECKPOINT_PACKAGE_REF_AMBIGUOUS')
+    package_ref=next(iter(package_refs))
+    pp=Path(package_ref)
+    if pp.is_absolute() or '..' in pp.parts:
+        fail('BASIC_DESIGN_CHECKPOINT_PACKAGE_REF_INVALID')
+    package_path=(execution_root/pp).resolve()
+    try:
+        package_path.relative_to(execution_root.resolve())
+    except ValueError:
+        fail('BASIC_DESIGN_CHECKPOINT_PACKAGE_REF_ESCAPES_ROOT')
+    _require_nonempty_file(package_path,'BASIC_DESIGN_PACKAGE')
+    package=_external_yaml(package_path,'BASIC_DESIGN_PACKAGE')
+    if package.get('artifact_type')!='BASIC_DESIGN_PACKAGE':
+        fail('BASIC_DESIGN_CHECKPOINT_PACKAGE_TYPE_INVALID')
+    if package.get('stage_uid')!=stage_uid or package.get('work_unit_uid')!=work.get('work_unit_uid') or package.get('governed_unit_uid')!=work.get('governed_unit_uid'):
+        fail('BASIC_DESIGN_CHECKPOINT_PACKAGE_IDENTITY_DRIFT')
+    domains=package.get('design_domains')
+    if not isinstance(domains,list) or not domains:
+        fail('BASIC_DESIGN_CHECKPOINT_PACKAGE_DOMAIN_DENOMINATOR_MISSING')
+    required_domains=[]
+    for idx,item in enumerate(domains):
+        if not isinstance(item,dict):
+            fail('BASIC_DESIGN_CHECKPOINT_PACKAGE_DOMAIN_ROW_INVALID:'+str(idx))
+        domain_uid=str(item.get('domain_uid') or '').strip()
+        if not domain_uid:
+            fail('BASIC_DESIGN_CHECKPOINT_PACKAGE_DOMAIN_UID_MISSING:'+str(idx))
+        applicability=str(item.get('applicability') or '')
+        if applicability=='REQUIRED':
+            if item.get('resolution')!='PASS':
+                fail('BASIC_DESIGN_CHECKPOINT_PACKAGE_REQUIRED_DOMAIN_NOT_PASS:'+domain_uid)
+            required_domains.append(domain_uid)
+        elif applicability in {'NOT_APPLICABLE_WITH_AUTHORITY','AUTHORIZED_NOT_APPLICABLE'}:
+            if not str(item.get('authority_evidence_ref') or '').strip():
+                fail('BASIC_DESIGN_CHECKPOINT_PACKAGE_NA_AUTHORITY_MISSING:'+domain_uid)
+        else:
+            fail('BASIC_DESIGN_CHECKPOINT_PACKAGE_DOMAIN_APPLICABILITY_INVALID:'+domain_uid)
+    if len(required_domains)!=len(set(required_domains)):
+        fail('BASIC_DESIGN_CHECKPOINT_PACKAGE_DOMAIN_UID_DUPLICATE')
+    if package.get('basic_design_required_domain_total')!=len(required_domains) or package.get('basic_design_bound_domain_total')!=len(required_domains) or package.get('basic_design_missing_domain_total')!=0:
+        fail('BASIC_DESIGN_CHECKPOINT_PACKAGE_DOMAIN_COUNT_DRIFT')
+    matrix_domains=[]
+    artifact_refs=[]
+    expected_denominator_ref=package_ref+str(policy.get('denominator_resolution_suffix') or '#design_domains')
+    required_fields=set(map(str,policy.get('required_fields') or []))
+    package_source_head=str(package.get('source_head_sha') or '')
+    for row in checkpoint_rows:
+        domain_uid=str(row.get('row_identity') or '').strip()
+        if not domain_uid:
+            fail('BASIC_DESIGN_CHECKPOINT_MATRIX_DOMAIN_UID_MISSING')
+        if str(row.get('row_denominator_source') or '')!=expected_denominator_ref:
+            fail('BASIC_DESIGN_CHECKPOINT_MATRIX_DENOMINATOR_REF_DRIFT:'+domain_uid)
+        ref=str(row.get('artifact_ref') or '')
+        rp=Path(ref)
+        if not ref or rp.is_absolute() or '..' in rp.parts:
+            fail('BASIC_DESIGN_CHECKPOINT_ARTIFACT_REF_INVALID:'+domain_uid)
+        full=(execution_root/rp).resolve()
+        try:
+            full.relative_to(execution_root.resolve())
+        except ValueError:
+            fail('BASIC_DESIGN_CHECKPOINT_ARTIFACT_REF_ESCAPES_ROOT:'+domain_uid)
+        _require_nonempty_file(full,'BASIC_DESIGN_DOMAIN_STEPWISE_CHECKPOINT')
+        obj=_external_yaml(full,'BASIC_DESIGN_DOMAIN_STEPWISE_CHECKPOINT')
+        missing=sorted(required_fields-set(obj))
+        if missing:
+            fail('BASIC_DESIGN_CHECKPOINT_REQUIRED_FIELDS_MISSING:'+domain_uid+':'+repr(missing))
+        if obj.get('artifact_type')!=checkpoint_type or obj.get('stage_uid')!=stage_uid or obj.get('work_unit_uid')!=work.get('work_unit_uid') or obj.get('governed_unit_uid')!=work.get('governed_unit_uid') or obj.get('domain_uid')!=domain_uid:
+            fail('BASIC_DESIGN_CHECKPOINT_IDENTITY_DRIFT:'+domain_uid)
+        if obj.get('denominator_resolution_ref')!=expected_denominator_ref:
+            fail('BASIC_DESIGN_CHECKPOINT_DENOMINATOR_REF_DRIFT:'+domain_uid)
+        if not str(obj.get('current_authority_ref') or '').strip() or not isinstance(obj.get('materialized_binding_refs'),list) or not obj.get('materialized_binding_refs'):
+            fail('BASIC_DESIGN_CHECKPOINT_BINDING_OR_AUTHORITY_MISSING:'+domain_uid)
+        if obj.get('completeness_validation_result')!='PASS' or obj.get('conflict_validation_result')!='PASS' or obj.get('checkpoint_state')!='PASS':
+            fail('BASIC_DESIGN_CHECKPOINT_NOT_PASS:'+domain_uid)
+        if not str(obj.get('review_evidence_ref') or '').strip():
+            fail('BASIC_DESIGN_CHECKPOINT_REVIEW_EVIDENCE_MISSING:'+domain_uid)
+        next_uid=str(obj.get('next_admitted_domain_uid') or '').strip()
+        if not next_uid or (next_uid!=str(policy.get('terminal_next_admitted_domain_token') or 'FINAL_FREEZE') and next_uid not in set(required_domains)):
+            fail('BASIC_DESIGN_CHECKPOINT_NEXT_DOMAIN_INVALID:'+domain_uid)
+        if obj.get('producer_operation_uid')!=producer or obj.get('governance_uid')!=gov:
+            fail('BASIC_DESIGN_CHECKPOINT_PRODUCER_OR_GOVERNANCE_DRIFT:'+domain_uid)
+        source_head=str(obj.get('source_head_sha') or '')
+        if len(source_head)!=40 or any(ch not in '0123456789abcdef' for ch in source_head.lower()) or (package_source_head and source_head!=package_source_head):
+            fail('BASIC_DESIGN_CHECKPOINT_SOURCE_HEAD_DRIFT:'+domain_uid)
+        matrix_domains.append(domain_uid)
+        artifact_refs.append(ref)
+    if len(matrix_domains)!=len(set(matrix_domains)):
+        fail('BASIC_DESIGN_CHECKPOINT_MATRIX_DOMAIN_DUPLICATE')
+    if len(artifact_refs)!=len(set(artifact_refs)):
+        fail('BASIC_DESIGN_CHECKPOINT_ARTIFACT_REF_REUSED')
+    if set(matrix_domains)!=set(required_domains):
+        fail('BASIC_DESIGN_CHECKPOINT_DOMAIN_SET_MISMATCH')
+
 def validate_normative_execution_matrix(stage_uid,execution_root,work,stage,gov,validation_phase='STATIC',completed_operations=None):
     inv=y(INVARIANTS)
     policy=((inv.get('invariants') or {}).get('NORMATIVE_EXECUTION_MATRIX') or {})
@@ -758,6 +871,7 @@ def validate_normative_execution_matrix(stage_uid,execution_root,work,stage,gov,
     required_artifacts=set(map(str,stage.get('outputs') or []))|required_evidence
     missing_artifacts=sorted(required_artifacts-artifact_types)
     if missing_artifacts: fail('NORMATIVE_EXECUTION_MATRIX_ARTIFACT_COVERAGE_MISSING:'+repr(missing_artifacts))
+    _validate_basic_design_domain_stepwise_checkpoints(stage_uid,execution_root,work,stage,gov,rows,phase,completed)
     cov=matrix.get('coverage')
     if not isinstance(cov,dict): fail('NORMATIVE_EXECUTION_MATRIX_COVERAGE_MISSING')
     expected={
