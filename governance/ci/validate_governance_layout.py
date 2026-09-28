@@ -321,10 +321,15 @@ if (reg.get('branch_role_contract') or {}).get(str(reg.get('branch') or ''))=='G
     if manifest.get('display_version')!=identity.get('display_version'):
         errors.append('CANDIDATE_MANIFEST_DISPLAY_VERSION_PROJECTION_DRIFT')
     lineage=manifest.get('source_lineage') or {}
-    if lineage.get('promotion_authorization_ref')!=identity.get('authorization_record_url'):
-        errors.append('CANDIDATE_MANIFEST_AUTHORIZATION_PROJECTION_DRIFT')
-    if lineage.get('candidate_predecessor_head_sha')!=identity.get('predecessor_head_sha'):
-        errors.append('CANDIDATE_MANIFEST_PREDECESSOR_HEAD_PROJECTION_DRIFT')
+    if lineage.get('lineage_authority_source')!='governance/specifications/REGISTRY.yaml#governance_identity':
+        errors.append('CANDIDATE_MANIFEST_LINEAGE_AUTHORITY_DRIFT')
+    if lineage.get('lineage_projection_role')!='NON_NORMATIVE_PROVENANCE_ONLY':
+        errors.append('CANDIDATE_MANIFEST_LINEAGE_ROLE_DRIFT')
+    if lineage.get('concrete_repository_branch_head_or_issue_reference_may_define_common_policy') is not False:
+        errors.append('CANDIDATE_MANIFEST_CONCRETE_WORKLINE_POLICY_LEAK')
+    for forbidden_key in ('promotion_authorization_ref','candidate_predecessor_branch','candidate_predecessor_head_sha','promotion_candidate_branch','promotion_candidate_head_sha','promotion_candidate_tree_sha'):
+        if forbidden_key in lineage:
+            errors.append('CANDIDATE_MANIFEST_CONCRETE_LINEAGE_FIELD_FORBIDDEN:'+forbidden_key)
     source_changed=lineage.get('source_bytes_changed_by_this_successor')
     source_reused=lineage.get('source_identity_reused_only_because_source_bytes_are_unchanged')
     if not isinstance(source_changed,bool) or not isinstance(source_reused,bool) or source_reused is source_changed:
