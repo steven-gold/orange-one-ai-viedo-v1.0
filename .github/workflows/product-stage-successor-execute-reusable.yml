@@ -29,8 +29,36 @@ jobs:
           test -s "$SEL" || { echo "BLOCK:CURRENT_GOVERNANCE_SELECTION_MISSING"; exit 31; }
           STATUS="$(awk '$1=="status:" {print $2; exit}' "$SEL")"
           COMMIT="$(awk '$1=="governance_commit_sha:" {print $2; exit}' "$SEL")"
-          test "$STATUS" = "SELECTED_VALIDATED_CURRENT" || { echo "BLOCK:CURRENT_GOVERNANCE_NOT_EXACT_HEAD_VALIDATED"; exit 32; }
+          test "$STATUS" = "SELECTED_CURRENT_FOR_INLINE_VALIDATION" || { echo "BLOCK:CURRENT_GOVERNANCE_SELECTION_STATUS_INVALID"; exit 32; }
           echo "$COMMIT" | grep -Eq '^[0-9a-f]{40}
+      - name: Validate exact Current governance before Product Stage
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import sys
+          sys.path.insert(0,'governance/ci')
+          from canonical_rule_registry import load_registry
+          reg=load_registry()
+          print('PASS: canonical rule registry',reg['registry_uid'],reg['registry_digest'])
+          PY
+          python governance/ci/stage_execution_engine.py --definition-audit-all
+          python governance/ci/validate_selected_execution_profile_integrity.py
+          python governance/ci/validate_active_consumer_reference_integrity.py
+          python governance/ci/validate_governance_layout.py
+          python governance/ci/validate_structured_mutation_safety.py --self-test
+          python governance/ci/validate_structured_mutation_safety.py
+          python governance/ci/validate_governance_portability.py
+          python governance/ci/validate_execution_domain_isolation.py
+          python governance/ci/validate_successor_governance_preformal.py
+          python .github/governance-source/active/source/09_TESTS/governance/validate_stage_execution_invariants.py
+          python .github/governance-source/active/source/09_TESTS/governance/validate_product_neutral_entity_lifecycle.py
+          python governance/ci/audit_closure_engine.py --self-test
+          python governance/ci/audit_closure_engine.py
+          python governance/ci/test_stage_execution_engine.py
+          python .github/governance-source/active/source/09_TESTS/governance/validate_external_execution_admission.py
+          python governance/ci/test_external_execution_admission.py
+
       - name: Execute successor operations
         shell: bash
         run: |
