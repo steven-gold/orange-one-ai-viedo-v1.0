@@ -36,7 +36,7 @@ def validate(root=ROOT):
     if 'external_execution_admission_contracts' in d or 'product_execution_admission_contracts' in d:
         failures.append('external_product_admission_embedded_in_stage_registry')
     stage_blob=yaml.safe_dump(d,sort_keys=False)
-    for token in ('PRODUCT_SELECTED_GOVERNANCE_RELEASE','GOVERNANCE_REVISION_TRANSITION_RECEIPT','APPLICATION_BASELINE_ADMISSION_MANIFEST','APPLICATION_BASELINE_MATERIALIZATION_RECEIPT','APPLICATION_BASELINE_SNAPSHOT','WEB-EXT-ADMISSION'):
+    for token in ('PRODUCT_SELECTED_CURRENT_GOVERNANCE','PRODUCT_CURRENT_GOVERNANCE_LOAD_RECEIPT','APPLICATION_BASELINE_ADMISSION_MANIFEST','APPLICATION_BASELINE_MATERIALIZATION_RECEIPT','APPLICATION_BASELINE_SNAPSHOT','WEB-EXT-ADMISSION'):
         if token in stage_blob:
             failures.append('external_admission_semantic_leak:'+token)
     r = inv.get('RELATION_SEMANTIC_SEPARATION') or {}
