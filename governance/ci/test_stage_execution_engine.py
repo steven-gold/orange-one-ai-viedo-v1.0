@@ -1732,12 +1732,15 @@ def materialize_synthetic_stage_context(stage_uid,evidence,result):
     evidence['scope_manifest_ref']=scope_rel
     evidence['cross_stage_handoff']['ledger_ref']=ledger_rel
 
+    governed_unit_uid=f'synthetic:{stage_uid}:{result}'
     yaml.safe_dump({
       'artifact_type':'EXECUTION_SCOPE_MANIFEST','stage_uid':stage_uid,'work_unit_uid':wu,
-      'governance_uid':gov,'status':'CLOSED' if result=='PASS' else 'BLOCKED'
+      'governed_unit_uid':governed_unit_uid,'governance_uid':gov,
+      'status':'CLOSED' if result=='PASS' else 'BLOCKED'
     },(wd/'CURRENT_EXECUTION_SCOPE_MANIFEST.yaml').open('w',encoding='utf-8'),sort_keys=False)
     yaml.safe_dump({
-      'artifact_type':'WORK_UNIT','work_unit_uid':wu,'stage_uid':stage_uid,TASK_LAYER_FIELD:TASK_LAYER_VALUE,
+      'artifact_type':'WORK_UNIT','work_unit_uid':wu,'stage_uid':stage_uid,
+      'governed_unit_uid':governed_unit_uid,'governance_uid':gov,TASK_LAYER_FIELD:TASK_LAYER_VALUE,
       'status':'CLOSED' if result=='PASS' else 'BLOCKED','current_status':'CLOSED' if result=='PASS' else 'BLOCKED',
       'normative_execution_matrix_ref':matrix_rel,'required_outputs':list(st['outputs']),
       'operation_bindings':{x:{'applicability':'REQUIRED','executor_owner':'synthetic.executor','result_owner':'synthetic.result'} for x in st['operations']},
@@ -1745,10 +1748,27 @@ def materialize_synthetic_stage_context(stage_uid,evidence,result):
     },(wd/'WORK_UNIT.yaml').open('w',encoding='utf-8'),sort_keys=False)
     yaml.safe_dump({
       'artifact_type':'WORK_UNIT_EXECUTION_STATE','stage_uid':stage_uid,'work_unit_uid':wu,
+      'governed_unit_uid':governed_unit_uid,'governance_uid':gov,
       'completed_operations':list(st['operations']) if result=='PASS' else [],
       'current_operation':'COMPLETE' if result=='PASS' else 'BLOCKED_HANDOFF',
       'status':'CLOSED' if result=='PASS' else 'BLOCKED'
     },(wd/'EXECUTION_STATE.yaml').open('w',encoding='utf-8'),sort_keys=False)
+
+    current_ledger_bindings=_write_current_ledger_bindings(
+      _allstage_root,
+      f'STAGE_EXECUTION/{stage_uid}/{wu}/CURRENT_LEDGERS'
+    )
+    state_rel=f'STAGE_EXECUTION/{stage_uid}/{wu}/EXECUTION_STATE.yaml'
+    state_path=wd/'EXECUTION_STATE.yaml'
+    current_ledger_bindings['EXECUTION_STATE']={
+      'ledger_class':'EXECUTION_STATE','binding_kind':'LOCAL_ARTIFACT',
+      'artifact_ref':state_rel,'content_sha256':eng._sha256_file(state_path),
+      'external_evidence_ref':''
+    }
+    work_path=wd/'WORK_UNIT.yaml'
+    work_doc=yaml.safe_load(work_path.read_text(encoding='utf-8')) or {}
+    work_doc['current_ledger_bindings']=current_ledger_bindings
+    work_path.write_text(yaml.safe_dump(work_doc,sort_keys=False,allow_unicode=True),encoding='utf-8')
 
     sections=list(map(str,st.get('required_normative_section_uids') or []))
     artifacts=list(map(str,st.get('outputs') or []))+list(map(str,st.get('required_evidence') or []))
