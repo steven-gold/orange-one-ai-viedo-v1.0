@@ -648,11 +648,27 @@ def _matrix_nonblank(value):
     if isinstance(value,(list,dict)): return len(value)>0
     return True
 
-def validate_normative_execution_matrix(stage_uid,execution_root,work,stage,gov):
+def validate_normative_execution_matrix(stage_uid,execution_root,work,stage,gov,validation_phase='STATIC',completed_operations=None):
     inv=y(INVARIANTS)
     policy=((inv.get('invariants') or {}).get('NORMATIVE_EXECUTION_MATRIX') or {})
     if policy.get('required_before_first_effectful_operation') is not True or policy.get('required_for_stage_or_capability_closure') is not True:
         fail('NORMATIVE_EXECUTION_MATRIX_POLICY_MISSING')
+    for key in (
+      'pre_effectful_matrix_pass_is_registration_completeness_only',
+      'future_producer_owned_target_may_be_unmaterialized_before_producer_execution',
+      'completed_producer_rows_must_be_physically_materialized_before_dependent_execution',
+      'closure_requires_all_required_rows_physically_materialized',
+      'required_evidence_may_remain_unmaterialized_only_until_registered_evidence_boundary'
+    ):
+        if policy.get(key) is not True:
+            fail('NORMATIVE_EXECUTION_MATRIX_MATERIALIZATION_POLICY_MISSING:'+key)
+    if policy.get('future_producer_owned_target_completion_credit')!=0 or policy.get('physical_future_operation_preproduction')!='BLOCK' or policy.get('closure_future_target_or_to_materialize_state')!='BLOCK':
+        fail('NORMATIVE_EXECUTION_MATRIX_MATERIALIZATION_DISPOSITION_DRIFT')
+    phase=str(validation_phase or 'STATIC').upper()
+    if phase not in {'STATIC','ENTRY','STEP','CLOSURE'}:
+        fail('NORMATIVE_EXECUTION_MATRIX_VALIDATION_PHASE_INVALID:'+phase)
+    completed=set(map(str,completed_operations or []))
+
     rel=str(work.get('normative_execution_matrix_ref') or '')
     if not rel: fail('NORMATIVE_EXECUTION_MATRIX_REF_MISSING')
     rp=Path(rel)
@@ -667,7 +683,23 @@ def validate_normative_execution_matrix(stage_uid,execution_root,work,stage,gov)
     rows=matrix.get('rows')
     if not isinstance(rows,list) or not rows: fail('NORMATIVE_EXECUTION_MATRIX_ROWS_EMPTY')
     required_row_fields=set(map(str,policy.get('matrix_row_required_fields') or []))
+    output_producers={str(k):str(v) for k,v in (stage.get('output_producers') or {}).items()}
+    required_evidence=set(map(str,stage.get('required_evidence') or []))
     seen=set(); section_uids=set(); artifact_types=set(); required_count=0; validator_bound=0; closure_bound=0
+
+    def validate_physical(full,row_uid,field_path):
+        _require_nonempty_file(full,'NORMATIVE_EXECUTION_MATRIX_ARTIFACT:'+row_uid)
+        try:
+            if full.suffix.lower()=='.json':
+                obj=json.loads(full.read_text(encoding='utf-8'))
+            else:
+                obj=yaml.safe_load(full.read_text(encoding='utf-8'))
+        except Exception as exc:
+            fail('NORMATIVE_EXECUTION_MATRIX_ARTIFACT_PARSE_FAILED:'+row_uid+':'+type(exc).__name__)
+        if not isinstance(obj,dict): fail('NORMATIVE_EXECUTION_MATRIX_ARTIFACT_MAPPING_REQUIRED:'+row_uid)
+        val=_matrix_get(obj,field_path)
+        if not _matrix_nonblank(val): fail('NORMATIVE_EXECUTION_MATRIX_REQUIRED_FIELD_BLANK:'+row_uid)
+
     for idx,row in enumerate(rows):
         if not isinstance(row,dict): fail(f'NORMATIVE_EXECUTION_MATRIX_ROW_INVALID:{idx}')
         missing=sorted(required_row_fields-set(row))
@@ -676,7 +708,8 @@ def validate_normative_execution_matrix(stage_uid,execution_root,work,stage,gov)
         if not uid or uid in seen: fail('NORMATIVE_EXECUTION_MATRIX_ROW_UID_INVALID:'+uid)
         seen.add(uid)
         section_uids.add(str(row.get('normative_section_uid') or ''))
-        artifact_types.add(str(row.get('required_artifact_type') or ''))
+        artifact_type=str(row.get('required_artifact_type') or '')
+        artifact_types.add(artifact_type)
         applicability=row.get('applicability')
         if applicability=='NOT_APPLICABLE_WITH_AUTHORITY':
             if not row.get('authority_evidence_ref'): fail('NORMATIVE_EXECUTION_MATRIX_NA_AUTHORITY_MISSING:'+uid)
@@ -685,24 +718,44 @@ def validate_normative_execution_matrix(stage_uid,execution_root,work,stage,gov)
         required_count+=1
         if row.get('validator_uid') and row.get('validator_check_id'): validator_bound+=1
         if row.get('closure_gate')==stage.get('exit_gate'): closure_bound+=1
+
         aref=str(row.get('artifact_ref') or '')
         ap=Path(aref)
         if not aref or ap.is_absolute() or '..' in ap.parts: fail('NORMATIVE_EXECUTION_MATRIX_ARTIFACT_REF_INVALID:'+uid)
-        full=execution_root/ap
-        _require_nonempty_file(full,'NORMATIVE_EXECUTION_MATRIX_ARTIFACT:'+uid)
-        if full.suffix.lower()=='.json':
-            obj=json.loads(full.read_text(encoding='utf-8'))
-        else:
-            obj=yaml.safe_load(full.read_text(encoding='utf-8'))
-        if not isinstance(obj,dict): fail('NORMATIVE_EXECUTION_MATRIX_ARTIFACT_MAPPING_REQUIRED:'+uid)
+        full=(execution_root/ap).resolve()
+        try:
+            full.relative_to(execution_root.resolve())
+        except ValueError:
+            fail('NORMATIVE_EXECUTION_MATRIX_ARTIFACT_REF_ESCAPES_ROOT:'+uid)
         fpath=row.get('field_path')
         if not isinstance(fpath,list) or not fpath: fail('NORMATIVE_EXECUTION_MATRIX_FIELD_PATH_INVALID:'+uid)
-        val=_matrix_get(obj,fpath)
-        if not _matrix_nonblank(val): fail('NORMATIVE_EXECUTION_MATRIX_REQUIRED_FIELD_BLANK:'+uid)
+
+        producer=output_producers.get(artifact_type)
+        is_required_evidence=artifact_type in required_evidence
+        exists=full.is_file()
+        physical_required=(phase in {'STATIC','CLOSURE'})
+        if phase in {'ENTRY','STEP'}:
+            if producer:
+                if producer in completed:
+                    physical_required=True
+                else:
+                    physical_required=False
+                    if exists:
+                        fail('NORMATIVE_EXECUTION_MATRIX_FUTURE_OUTPUT_PREPRODUCED:'+uid+':'+producer)
+            elif is_required_evidence:
+                physical_required=False
+            else:
+                physical_required=True
+
+        if physical_required:
+            validate_physical(full,uid,fpath)
+        elif exists:
+            validate_physical(full,uid,fpath)
+
     required_sections=set(map(str,stage.get('required_normative_section_uids') or []))
     missing_sections=sorted(required_sections-section_uids)
     if missing_sections: fail('NORMATIVE_EXECUTION_MATRIX_SECTION_COVERAGE_MISSING:'+repr(missing_sections))
-    required_artifacts=set(map(str,stage.get('outputs') or []))|set(map(str,stage.get('required_evidence') or []))
+    required_artifacts=set(map(str,stage.get('outputs') or []))|required_evidence
     missing_artifacts=sorted(required_artifacts-artifact_types)
     if missing_artifacts: fail('NORMATIVE_EXECUTION_MATRIX_ARTIFACT_COVERAGE_MISSING:'+repr(missing_artifacts))
     cov=matrix.get('coverage')
@@ -899,7 +952,7 @@ def active_execution(stage_uid):
     validate_work_unit_bindings(stage_uid,work,stages,adapters)
     if scope.get('stage_uid')!=stage_uid or scope.get('work_unit_uid')!=work.get('work_unit_uid'):
         fail('CURRENT_SCOPE_WORK_UNIT_BINDING_DRIFT')
-    _validate_stage_entry_control_state(stage_uid,execution_root,work,scope,work_rel,stages[stage_uid],gov)
+    entry_state=_validate_stage_entry_control_state(stage_uid,execution_root,work,scope,work_rel,stages[stage_uid],gov)
     _validate_stage_entry_input_bindings(stage_uid,execution_root,work,stages[stage_uid])
     _validate_current_ledger_bindings(stage_uid,execution_root,work,gov)
     deps=work.get('dependencies') or []
@@ -919,7 +972,10 @@ def active_execution(stage_uid):
                 fail('ACTIVE_WORK_UNIT_DEPENDENCY_MISSING:'+ref)
             if full.is_file():
                 _validate_local_file_artifact(full,'ACTIVE_WORK_UNIT_DEPENDENCY:'+ref)
-    validate_normative_execution_matrix(stage_uid,execution_root,work,stages[stage_uid],gov)
+    validate_normative_execution_matrix(
+        stage_uid,execution_root,work,stages[stage_uid],gov,
+        validation_phase='ENTRY',completed_operations=entry_state.get('completed_operations') or []
+    )
     return work
 
 def admission(stage_uid):
@@ -963,7 +1019,10 @@ def _validate_current_stage_state_bundle(stage_uid,e,stage,gov):
         fail('CURRENT_WORK_OR_STATE_STAGE_IDENTITY_DRIFT')
     if scope.get('work_unit_uid')!=work.get('work_unit_uid') or state.get('work_unit_uid')!=work.get('work_unit_uid'):
         fail('CURRENT_SCOPE_WORK_STATE_IDENTITY_DRIFT')
-    validate_normative_execution_matrix(stage_uid,execution_root,work,stage,gov)
+    validate_normative_execution_matrix(
+        stage_uid,execution_root,work,stage,gov,
+        validation_phase='CLOSURE',completed_operations=state.get('completed_operations') or []
+    )
     _validate_current_ledger_bindings(stage_uid,execution_root,work,gov)
     if e.get('result')=='PASS':
         expected=list(map(str,stage.get('operations') or []))
