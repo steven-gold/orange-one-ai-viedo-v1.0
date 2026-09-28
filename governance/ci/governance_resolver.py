@@ -2,14 +2,11 @@
 from pathlib import Path
 import hashlib
 import json
-import re
-import subprocess
 import sys
 import yaml
 
 ROOT = Path(__file__).resolve().parents[2]
 REGISTRY = ROOT / "governance/specifications/REGISTRY.yaml"
-
 
 def load_yaml(path):
     if not path.is_file():
@@ -19,111 +16,74 @@ def load_yaml(path):
         raise RuntimeError("mapping required: " + str(path.relative_to(ROOT)))
     return value
 
-
-def load_yaml_at_commit(commit_sha, rel_path):
-    commit_sha = str(commit_sha or "")
-    rel_path = str(rel_path or "")
-    if not re.fullmatch(r"[0-9a-f]{40}", commit_sha):
-        raise RuntimeError("predecessor head sha invalid")
-    p = Path(rel_path)
-    if p.is_absolute() or ".." in p.parts or not rel_path:
-        raise RuntimeError("predecessor artifact path invalid")
-    try:
-        raw = subprocess.check_output(
-            ["git", "show", commit_sha + ":" + p.as_posix()],
-            cwd=ROOT,
-            stderr=subprocess.STDOUT,
-        )
-    except subprocess.CalledProcessError as exc:
-        raise RuntimeError("predecessor artifact unavailable at exact head") from exc
-    value = yaml.safe_load(raw.decode("utf-8")) or {}
-    if not isinstance(value, dict):
-        raise RuntimeError("predecessor artifact mapping required")
-    return value
-
-
 def resolve():
     registry = load_yaml(REGISTRY)
-    spec_root_rel = registry.get("rules_root")
-    if not isinstance(spec_root_rel, str) or not spec_root_rel.strip():
-        raise RuntimeError("missing registry key: rules_root")
+    if registry.get("registry_role") != "CURRENT_GOVERNANCE_ENTRYPOINT":
+        raise RuntimeError("current governance registry role drift")
+    if registry.get("status") != "CURRENT":
+        raise RuntimeError("current governance registry status drift")
 
-    roles = registry.get("branch_role_contract") or {}
     governance_branch = str(registry.get("branch") or "")
+    roles = registry.get("branch_role_contract") or {}
     governance_role = str(roles.get(governance_branch) or "")
-    if governance_role not in {"IMMUTABLE_GOVERNANCE_RULESET", "GOVERNANCE_REVISION_CANDIDATE"}:
-        raise RuntimeError("governance branch role invalid")
+    if governance_role != "CURRENT_GOVERNANCE_WORKLINE":
+        raise RuntimeError("current governance branch role drift")
 
     identity = registry.get("governance_identity") or {}
-    required_identity = ("governance_uid", "governance_revision", "display_version", "identity_authority")
-    missing = [key for key in required_identity if not identity.get(key)]
-    if missing:
-        raise RuntimeError("registry governance identity missing: " + ",".join(missing))
+    for key in ("governance_uid","governance_revision","display_version","identity_authority",
+                "specification_bundle_sha256","specification_bundle_digest_algorithm",
+                "canonical_rule_registry_uid","canonical_rule_registry_digest"):
+        if identity.get(key) in (None,"",[]):
+            raise RuntimeError("registry governance identity missing: " + key)
+    if identity.get("status") != "CURRENT":
+        raise RuntimeError("current governance identity status drift")
+    if identity.get("identity_state") != "EXACT_HEAD_AND_BUNDLE_DIGEST_BOUND":
+        raise RuntimeError("current governance identity state drift")
     if identity.get("identity_authority") != "governance/specifications/REGISTRY.yaml":
         raise RuntimeError("registry governance identity authority drift")
 
+    spec_root_rel = str(registry.get("rules_root") or "")
+    if spec_root_rel != "governance/specifications/current":
+        raise RuntimeError("current specification root drift")
     spec_root = ROOT / spec_root_rel
     if not spec_root.is_dir():
         raise RuntimeError("specification root missing: " + spec_root_rel)
+
     manifest = spec_root / "SPECIFICATION_MANIFEST.yaml"
     manifest_doc = load_yaml(manifest)
-    canonical_rule_path=spec_root/"CANONICAL_RULE_REGISTRY.yaml"
-    canonical_rule_doc=load_yaml(canonical_rule_path)
+    if manifest_doc.get("normative_status") != "ACTIVE_CURRENT_GOVERNANCE":
+        raise RuntimeError("current specification manifest status drift")
     if manifest_doc.get("current_governance_identity_source") != "governance/specifications/REGISTRY.yaml":
         raise RuntimeError("specification manifest current identity source drift")
+    if manifest_doc.get("artifact_uid") != identity.get("governance_uid"):
+        raise RuntimeError("current specification manifest governance uid projection drift")
+    if manifest_doc.get("display_version") != identity.get("display_version"):
+        raise RuntimeError("current specification manifest display version projection drift")
+    if manifest_doc.get("branch_release_state") != "CURRENT_EXACT_HEAD_VALIDATION":
+        raise RuntimeError("current specification validation state drift")
     if manifest_doc.get("artifact_uid_may_select_current_governance") is not False:
         raise RuntimeError("specification manifest artifact uid still selects current governance")
     if manifest_doc.get("display_version_may_select_current_governance") is not False:
         raise RuntimeError("specification manifest display version still selects current governance")
     if (manifest_doc.get("resolution_contract") or {}).get("canonical_root") != spec_root_rel:
         raise RuntimeError("manifest canonical_root does not match registry rules_root")
-    expected_rule_uid=str(identity.get("canonical_rule_registry_uid") or "")
-    expected_rule_digest=str(identity.get("canonical_rule_registry_digest") or "")
-    if not expected_rule_uid or not expected_rule_digest:
-        raise RuntimeError("registry canonical rule identity missing")
-    if canonical_rule_doc.get("registry_uid")!=expected_rule_uid or canonical_rule_doc.get("registry_digest")!=expected_rule_digest:
+
+    canonical_rule_doc = load_yaml(spec_root / "CANONICAL_RULE_REGISTRY.yaml")
+    expected_rule_uid = str(identity.get("canonical_rule_registry_uid"))
+    expected_rule_digest = str(identity.get("canonical_rule_registry_digest"))
+    if canonical_rule_doc.get("registry_uid") != expected_rule_uid or canonical_rule_doc.get("registry_digest") != expected_rule_digest:
         raise RuntimeError("canonical rule registry identity drift")
-    manifest_resolution=manifest_doc.get("resolution_contract") or {}
-    if manifest_resolution.get("canonical_rule_registry_uid")!=expected_rule_uid or manifest_resolution.get("canonical_rule_registry_digest")!=expected_rule_digest:
+    resolution = manifest_doc.get("resolution_contract") or {}
+    if resolution.get("canonical_rule_registry_uid") != expected_rule_uid or resolution.get("canonical_rule_registry_digest") != expected_rule_digest:
         raise RuntimeError("manifest canonical rule binding drift")
 
-    if governance_role == "GOVERNANCE_REVISION_CANDIDATE":
-        if identity.get("status") != "CANDIDATE":
-            raise RuntimeError("candidate governance identity status drift")
-        for key in ("predecessor_branch", "predecessor_head_sha", "predecessor_root_manifest_ref",
-                    "predecessor_governance_revision", "authorization_record_url", "authorized_scope"):
-            if identity.get(key) in (None, "", []):
-                raise RuntimeError("candidate governance identity missing: " + key)
-        root_manifest = load_yaml_at_commit(
-            identity.get("predecessor_head_sha"),
-            identity.get("predecessor_root_manifest_ref"),
-        )
-        if root_manifest.get("governance_revision") != identity.get("predecessor_governance_revision"):
-            raise RuntimeError("candidate predecessor root revision drift")
-        if manifest_doc.get("branch_release_state") != "CANDIDATE_NOT_PROMOTED":
-            raise RuntimeError("candidate specification manifest release state drift")
-        if manifest_doc.get("released_current_authority") is not False:
-            raise RuntimeError("candidate specification manifest released authority leak")
-        if manifest_doc.get("release_state_authority") != "governance/specifications/REGISTRY.yaml":
-            raise RuntimeError("candidate specification manifest release-state authority drift")
-        if manifest_doc.get("artifact_uid") != identity.get("governance_uid"):
-            raise RuntimeError("candidate specification manifest governance uid projection drift")
-        if manifest_doc.get("display_version") != identity.get("display_version"):
-            raise RuntimeError("candidate specification manifest display version projection drift")
-        lineage=manifest_doc.get("source_lineage") or {}
-        if lineage.get("lineage_authority_source") != "governance/specifications/REGISTRY.yaml#governance_identity":
-            raise RuntimeError("candidate specification manifest lineage authority drift")
-        if lineage.get("lineage_projection_role") != "NON_NORMATIVE_PROVENANCE_ONLY":
-            raise RuntimeError("candidate specification manifest lineage role drift")
-        if lineage.get("concrete_repository_branch_head_or_issue_reference_may_define_common_policy") is not False:
-            raise RuntimeError("candidate specification manifest concrete workline identity leak")
-        for forbidden_key in ("promotion_authorization_ref","candidate_predecessor_branch","candidate_predecessor_head_sha","promotion_candidate_branch","promotion_candidate_head_sha","promotion_candidate_tree_sha"):
-            if forbidden_key in lineage:
-                raise RuntimeError("candidate specification manifest concrete lineage field forbidden: " + forbidden_key)
-        source_changed = lineage.get("source_bytes_changed_by_this_successor")
-        source_reused = lineage.get("source_identity_reused_only_because_source_bytes_are_unchanged")
-        if not isinstance(source_changed, bool) or not isinstance(source_reused, bool) or source_changed == source_reused:
-            raise RuntimeError("candidate specification manifest source lineage drift")
+    lineage = manifest_doc.get("source_lineage") or {}
+    if lineage.get("lineage_authority_source") != "governance/specifications/REGISTRY.yaml#governance_identity":
+        raise RuntimeError("current specification manifest lineage authority drift")
+    if lineage.get("lineage_projection_role") != "NON_NORMATIVE_PROVENANCE_ONLY":
+        raise RuntimeError("current specification manifest lineage role drift")
+    if lineage.get("concrete_repository_branch_head_or_issue_reference_may_define_common_policy") is not False:
+        raise RuntimeError("current specification manifest concrete workline identity leak")
 
     digest = hashlib.sha256()
     files = []
@@ -135,22 +95,28 @@ def resolve():
         digest.update(data)
         digest.update(b"\0")
         files.append(rel)
-
-    actual_bundle_sha256=digest.hexdigest()
-    expected_bundle_sha256=str(identity.get("specification_bundle_sha256") or "")
-    if not expected_bundle_sha256:
-        raise RuntimeError("registry specification bundle digest missing")
-    if str(identity.get("specification_bundle_digest_algorithm") or "")!="SHA256_RELATIVE_PATH_NUL_BYTES_NUL_SORTED_V1":
+    actual_bundle_sha256 = digest.hexdigest()
+    expected_bundle_sha256 = str(identity.get("specification_bundle_sha256"))
+    if identity.get("specification_bundle_digest_algorithm") != "SHA256_RELATIVE_PATH_NUL_BYTES_NUL_SORTED_V1":
         raise RuntimeError("registry specification bundle digest algorithm drift")
-    if actual_bundle_sha256!=expected_bundle_sha256:
+    if actual_bundle_sha256 != expected_bundle_sha256:
         raise RuntimeError("CURRENT_SPECIFICATION_BUNDLE_DIGEST_DRIFT expected="+expected_bundle_sha256+" actual="+actual_bundle_sha256)
-    if governance_role=="GOVERNANCE_REVISION_CANDIDATE":
-        if identity.get("identity_state")!="PROVISIONAL_EXACT_HEAD_AND_BUNDLE_DIGEST_BOUND":
-            raise RuntimeError("candidate governance identity state drift")
-        if identity.get("released_immutable_identity") is not False:
-            raise RuntimeError("candidate governance identity prematurely released")
-        if identity.get("immutable_release_identity_assigned_only_at_explicit_promotion") is not True:
-            raise RuntimeError("candidate immutable release identity timing drift")
+
+    validation = registry.get("current_validation_contract") or {}
+    if validation.get("authority_model") != "WORD_DERIVED_INTERNAL_VALIDATION":
+        raise RuntimeError("current governance authority model drift")
+    if validation.get("word_source_is_primary_product_design_source") is not True:
+        raise RuntimeError("Word source primary authority flag drift")
+    if validation.get("external_human_or_account_evidence_required") is not False:
+        raise RuntimeError("external human/account gate reintroduced")
+    if validation.get("external_auditor_required") is not False:
+        raise RuntimeError("external auditor gate reintroduced")
+    if validation.get("external_signer_required") is not False:
+        raise RuntimeError("external signer gate reintroduced")
+    if validation.get("promotion_required_before_product_stage_execution") is not False:
+        raise RuntimeError("promotion gate reintroduced")
+    if validation.get("released_governance_selection_required") is not False:
+        raise RuntimeError("released-governance gate reintroduced")
 
     return {
         "registry": str(REGISTRY.relative_to(ROOT)),
@@ -163,8 +129,7 @@ def resolve():
         "identity_authority": identity.get("identity_authority"),
         "authorization_record_url": identity.get("authorization_record_url"),
         "authorized_scope": identity.get("authorized_scope"),
-        "governance_release_state": manifest_doc.get("branch_release_state") if governance_role == "GOVERNANCE_REVISION_CANDIDATE" else "RELEASED_CURRENT",
-        "released_current_authority": manifest_doc.get("released_current_authority") if governance_role == "GOVERNANCE_REVISION_CANDIDATE" else True,
+        "governance_validation_state": manifest_doc.get("branch_release_state"),
         "specification_root": spec_root_rel,
         "specification_manifest": str(manifest.relative_to(ROOT)),
         "specification_bundle_uid": manifest_doc.get("artifact_uid"),
@@ -172,18 +137,14 @@ def resolve():
         "runtime_bundle_sha256": actual_bundle_sha256,
         "expected_runtime_bundle_sha256": expected_bundle_sha256,
         "runtime_bundle_digest_algorithm": identity.get("specification_bundle_digest_algorithm"),
-        "candidate_identity_state": identity.get("identity_state"),
-        "released_immutable_identity": identity.get("released_immutable_identity"),
+        "current_identity_state": identity.get("identity_state"),
         "canonical_rule_registry_uid": expected_rule_uid,
         "canonical_rule_registry_digest": expected_rule_digest,
         "component_files": files,
         "lifecycle_registry": registry.get("lifecycle_registry"),
         "stage_invariant_registry": registry.get("stage_invariant_registry"),
         "product_execution_branch": registry.get("product_execution_branch"),
-        "test_state_root": None,
-        "test_state_root_status": "RETIRED_NOT_PART_OF_CURRENT_GOVERNANCE_REGISTRY",
     }
-
 
 if __name__ == "__main__":
     try:
