@@ -848,6 +848,7 @@ stages:
   - DESIGN_FREEZE_PACKAGE_BIND
   outputs:
   - BASIC_DESIGN_PACKAGE
+  - BASIC_DESIGN_DOMAIN_STEPWISE_CHECKPOINT
   - ACCEPTANCE_AUDIT_BLUEPRINT
   - DESIGN_FREEZE_PACKAGE
   - FOUNDATION_BARRIER_RECORD
@@ -856,6 +857,7 @@ stages:
     DESIGN_FREEZE_PACKAGE: DESIGN_FREEZE_PACKAGE_BIND
     FOUNDATION_BARRIER_RECORD: DESIGN_FREEZE_VALIDATE
     BASIC_DESIGN_PACKAGE: BASIC_DESIGN_PACKAGE_COMPILE
+    BASIC_DESIGN_DOMAIN_STEPWISE_CHECKPOINT: BASIC_DESIGN_PACKAGE_COMPILE
   validators:
   - VAL-GOV-006
   - VAL-GOV-001
@@ -966,6 +968,8 @@ stages:
     denominator_source: BASIC_DESIGN_PACKAGE.design_domains
     one_checkpoint_per_applicable_domain: true
     checkpoint_artifact_is_multi_instance: true
+    checkpoint_registered_stage_output_required: true
+    checkpoint_matrix_exact_domain_reconciliation_required: true
     dependent_domain_admission_requires_predecessor_checkpoint_pass: true
     final_freeze_requires_all_applicable_domain_checkpoints_pass: true
     checkpoint_type_presence_alone_completion_credit: 0
