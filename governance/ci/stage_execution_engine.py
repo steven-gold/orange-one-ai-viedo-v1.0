@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 from __future__ import annotations
-import argparse, hashlib, json, os, re, subprocess, sys
+import argparse, hashlib, importlib.util, json, os, re, subprocess, sys
 from pathlib import Path
 import yaml
 
@@ -9,6 +9,9 @@ REGISTRY=ROOT/'governance/specifications/REGISTRY.yaml'
 LIFECYCLE=ROOT/'.github/governance-source/active/source/10_REGISTRY/GOVERNANCE_LIFECYCLE_STAGE_REGISTRY.yaml'
 ADAPTERS=ROOT/'governance/ci/stage_execution_semantic_adapters.yaml'
 INVARIANTS=ROOT/'.github/governance-source/active/source/10_REGISTRY/STAGE_EXECUTION_INVARIANT_REGISTRY.yaml'
+SOURCE_PACKAGE_ROOT=ROOT/'.github/governance-source/active/source'
+STAGE1_SOURCE_CONTRACTS=SOURCE_PACKAGE_ROOT/'10_REGISTRY/STAGE1_SOURCE_FACT_CONTRACTS.yaml'
+STAGE1_PIPELINE_GUARD=SOURCE_PACKAGE_ROOT/'09_TESTS/governance/governance_stage1_pipeline_guard.py'
 EXECUTION_ROOT_ENV='STAGE_EXECUTION_ROOT'
 ACTIVE_WORK_UNIT_ENV='STAGE_ACTIVE_WORK_UNIT'
 CURRENT_SCOPE_ENV='STAGE_CURRENT_SCOPE'
@@ -80,6 +83,89 @@ def _execution_artifact_root():
 def _sha256_file(path):
     if not path.is_file(): fail('HASH_TARGET_MISSING:'+str(path))
     return hashlib.sha256(path.read_bytes()).hexdigest()
+
+def _require_nonempty_file(path,label):
+    if not path.is_file():
+        fail(label+'_MISSING:'+_display_path(path))
+    try:
+        size=path.stat().st_size
+    except OSError as exc:
+        fail(label+'_STAT_FAILED:'+str(exc))
+    if size<=0:
+        fail(label+'_EMPTY:'+_display_path(path))
+    return size
+
+def _stage1_work_dir():
+    raw=os.environ.get(ACTIVE_WORK_UNIT_ENV,'').strip()
+    if not raw:
+        fail('STAGE_ACTIVE_WORK_UNIT_ENV_REQUIRED_FOR_PROJECTION_VALIDATION')
+    rel=Path(raw)
+    if rel.is_absolute() or '..' in rel.parts:
+        fail('STAGE_ACTIVE_WORK_UNIT_PATH_INVALID_FOR_PROJECTION_VALIDATION')
+    execution_root=_execution_artifact_root().resolve()
+    work_path=(execution_root/rel).resolve()
+    try:
+        work_path.relative_to(execution_root)
+    except ValueError:
+        fail('STAGE_ACTIVE_WORK_UNIT_PATH_ESCAPES_EXECUTION_ROOT')
+    return work_path.parent
+
+def _load_stage1_pipeline_guard():
+    _require_nonempty_file(STAGE1_PIPELINE_GUARD,'STAGE01_PIPELINE_GUARD')
+    spec=importlib.util.spec_from_file_location('_current_stage1_pipeline_guard',STAGE1_PIPELINE_GUARD)
+    if spec is None or spec.loader is None:
+        fail('STAGE01_PIPELINE_GUARD_IMPORT_SPEC_INVALID')
+    mod=importlib.util.module_from_spec(spec)
+    try:
+        spec.loader.exec_module(mod)
+    except Exception as exc:
+        fail('STAGE01_PIPELINE_GUARD_IMPORT_FAILED:'+repr(exc))
+    if not callable(getattr(mod,'validate_pre_stage_source_projection',None)):
+        fail('STAGE01_PIPELINE_GUARD_VALIDATOR_MISSING')
+    return mod
+
+def _validate_stage1_projection_physical_integrity(work,bindings):
+    inv=(y(INVARIANTS).get('invariants') or {}).get('PHYSICAL_ARTIFACT_INTEGRITY') or {}
+    if inv.get('invariant_uid')!='GOV-INV-PHYSICAL-ARTIFACT-INTEGRITY-001' or inv.get('independent_source_rederivation_validator_must_run_when_registered') is not True:
+        fail('PHYSICAL_ARTIFACT_INTEGRITY_CONTRACT_MISSING')
+    work_dir=_stage1_work_dir()
+    rawcap_path=work_dir/'00_SOURCE_INTAKE/RAW_SOURCE_REFERENCE_MANIFEST.yaml'
+    capstate_path=work_dir/'00_SOURCE_INTAKE/RAW_SOURCE_CAPTURE_STATE.yaml'
+    _require_nonempty_file(rawcap_path,'STAGE01_RAW_SOURCE_REFERENCE_MANIFEST')
+    _require_nonempty_file(capstate_path,'STAGE01_RAW_SOURCE_CAPTURE_STATE')
+    rawcap=y(rawcap_path); capstate=y(capstate_path)
+    contracts=y(STAGE1_SOURCE_CONTRACTS)
+    projection_contract=(contracts.get('structured_document_source_projection_contract') or {}).get('projection') or {}
+    template=str(projection_contract.get('artifact_path_template') or '')
+    if not template or '{source_uid}' not in template:
+        fail('STAGE01_SOURCE_PROJECTION_ARTIFACT_TEMPLATE_INVALID')
+    for b in bindings:
+        suid=str(b.get('source_uid') or '')
+        rel=template.replace('{source_uid}',suid)
+        proj_path=work_dir/rel
+        _require_nonempty_file(proj_path,'STAGE01_SOURCE_PROJECTION_ARTIFACT:'+suid)
+        projection=_external_yaml(proj_path,'STAGE01_SOURCE_PROJECTION_ARTIFACT')
+        if projection.get('artifact_type')!='CANONICAL_SOURCE_PROJECTION':
+            fail('STAGE01_SOURCE_PROJECTION_ARTIFACT_TYPE_INVALID:'+suid)
+    guard=_load_stage1_pipeline_guard()
+    try:
+        result=guard.validate_pre_stage_source_projection(SOURCE_PACKAGE_ROOT,work_dir,rawcap,capstate)
+    except Exception as exc:
+        fail('STAGE01_SOURCE_PROJECTION_PHYSICAL_VALIDATOR_ERROR:'+repr(exc))
+    failures=result.get('failures') or []
+    if failures:
+        fail('STAGE01_SOURCE_PROJECTION_PHYSICAL_VALIDATION_FAILED:'+repr(failures[:20]))
+    recomputed=result.get('bindings') or {}
+    expected_uids={str(b.get('source_uid') or '') for b in bindings}
+    if set(map(str,recomputed))!=expected_uids:
+        fail('STAGE01_SOURCE_PROJECTION_RECOMPUTED_SOURCE_SET_DRIFT')
+    for b in bindings:
+        suid=str(b.get('source_uid') or '')
+        physical=recomputed.get(suid) or {}
+        for key in ('pair_hash','raw_source_sha256','projection_uid','projection_content_hash'):
+            if str(physical.get(key) or '')!=str(b.get(key) or ''):
+                fail('STAGE01_SOURCE_PROJECTION_RECOMPUTED_BINDING_DRIFT:'+suid+':'+key)
+    return True
 
 def execution_compatibility_adapter():
     reg=y(REGISTRY)
@@ -463,6 +549,7 @@ def validate_stage01_source_projection_admission(work,stage):
             fail('STAGE01_SOURCE_PROJECTION_FREEZE_RECEIPT_INVALID:'+suid)
         for k in ('pair_hash','raw_source_sha256','projection_uid','projection_content_hash'):
             if fr.get(k)!=b.get(k): fail('STAGE01_SOURCE_PROJECTION_BINDING_HASH_DRIFT:'+suid+':'+k)
+    _validate_stage1_projection_physical_integrity(work,bindings)
     return True
 
 def validate_work_unit_bindings(stage_uid,work,stages,adapters):
@@ -545,6 +632,7 @@ def validate_normative_execution_matrix(stage_uid,execution_root,work,stage,gov)
     rp=Path(rel)
     if rp.is_absolute() or '..' in rp.parts: fail('NORMATIVE_EXECUTION_MATRIX_REF_INVALID')
     path=execution_root/rp
+    _require_nonempty_file(path,'NORMATIVE_EXECUTION_MATRIX')
     matrix=_external_yaml(path,'NORMATIVE_EXECUTION_MATRIX')
     if matrix.get('artifact_type')!='NORMATIVE_EXECUTION_MATRIX': fail('NORMATIVE_EXECUTION_MATRIX_TYPE_INVALID')
     if matrix.get('stage_uid')!=stage_uid or matrix.get('work_unit_uid')!=work.get('work_unit_uid') or matrix.get('governance_uid')!=gov:
@@ -575,7 +663,7 @@ def validate_normative_execution_matrix(stage_uid,execution_root,work,stage,gov)
         ap=Path(aref)
         if not aref or ap.is_absolute() or '..' in ap.parts: fail('NORMATIVE_EXECUTION_MATRIX_ARTIFACT_REF_INVALID:'+uid)
         full=execution_root/ap
-        if not full.is_file(): fail('NORMATIVE_EXECUTION_MATRIX_ARTIFACT_MISSING:'+uid+':'+aref)
+        _require_nonempty_file(full,'NORMATIVE_EXECUTION_MATRIX_ARTIFACT:'+uid)
         if full.suffix.lower()=='.json':
             obj=json.loads(full.read_text(encoding='utf-8'))
         else:
