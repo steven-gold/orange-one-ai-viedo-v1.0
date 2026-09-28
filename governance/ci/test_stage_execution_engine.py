@@ -62,6 +62,50 @@ block('missing_phase_contract',lambda p,a:a['common_execution_skeleton']['phase_
 block('phase_contract_artifact_missing',lambda p,a:a['common_execution_skeleton']['phase_contracts']['CURRENT_SCOPE'].__setitem__('required_artifact',''))
 block('execution_trace_requirement_missing',lambda p,a:a['common_requirements'].__setitem__('phase_trace_exact_order_required',False))
 
+# Regression: a self-consistent freeze receipt MUST NOT admit a zero-byte physical projection.
+with tempfile.TemporaryDirectory() as _phys_td:
+    _phys_root=Path(_phys_td)
+    _phys_wu='SYNTHETIC-ZERO-PROJECTION'
+    _phys_wu_dir=_phys_root/'STAGE_EXECUTION'/'STAGE-01'/_phys_wu
+    _phys_src='SRC-ZERO'
+    _phys_proj_dir=_phys_wu_dir/'00_SOURCE_INTAKE'/'SOURCE_PROJECTIONS'/_phys_src
+    _phys_proj_dir.mkdir(parents=True,exist_ok=True)
+    (_phys_proj_dir/'CANONICAL_SOURCE_PROJECTION.yaml').write_bytes(b'')
+    _freeze_rel=f'STAGE_EXECUTION/STAGE-01/{_phys_wu}/00_SOURCE_INTAKE/SOURCE_PROJECTIONS/{_phys_src}/SOURCE_PROJECTION_FREEZE_RECEIPT.yaml'
+    _freeze={
+      'artifact_type':'SOURCE_PROJECTION_FREEZE_RECEIPT','source_uid':_phys_src,
+      'status':'FROZEN_FOR_STAGE01','lock_state':'SOURCE_PAIR_FROZEN',
+      'raw_source_writable':False,'projection_writable':False,
+      'pair_hash':'PAIR-SYNTHETIC','raw_source_sha256':'RAW-SYNTHETIC',
+      'projection_uid':'PROJ-SYNTHETIC','projection_content_hash':'PROJ-HASH-SYNTHETIC'
+    }
+    (_phys_root/_freeze_rel).write_text(yaml.safe_dump(_freeze,sort_keys=False),encoding='utf-8')
+    _phys_work={
+      'source_projection_admission':{
+        'applicability':'REQUIRED',
+        'bindings':[{
+          'source_uid':_phys_src,'freeze_receipt_ref':_freeze_rel,
+          'pair_hash':'PAIR-SYNTHETIC','raw_source_sha256':'RAW-SYNTHETIC',
+          'projection_uid':'PROJ-SYNTHETIC','projection_content_hash':'PROJ-HASH-SYNTHETIC'
+        }]
+      }
+    }
+    _old_root=os.environ.get(eng.EXECUTION_ROOT_ENV); _old_work=os.environ.get(eng.ACTIVE_WORK_UNIT_ENV)
+    os.environ[eng.EXECUTION_ROOT_ENV]=str(_phys_root)
+    os.environ[eng.ACTIVE_WORK_UNIT_ENV]=f'STAGE_EXECUTION/STAGE-01/{_phys_wu}/WORK_UNIT.yaml'
+    try:
+        expect_stage_engine_block(
+          'stage01_zero_byte_projection_with_self_consistent_receipt',
+          lambda:eng.validate_stage01_source_projection_admission(_phys_work,eng.stage_map(profile)['STAGE-01']),
+          'STAGE01_SOURCE_PROJECTION_ARTIFACT:SRC-ZERO_EMPTY'
+        )
+    finally:
+        if _old_root is None: os.environ.pop(eng.EXECUTION_ROOT_ENV,None)
+        else: os.environ[eng.EXECUTION_ROOT_ENV]=_old_root
+        if _old_work is None: os.environ.pop(eng.ACTIVE_WORK_UNIT_ENV,None)
+        else: os.environ[eng.ACTIVE_WORK_UNIT_ENV]=_old_work
+
+
 stage_uid='STAGE-01'
 st=eng.stage_map(profile)[stage_uid]
 ad=adapters['stages'][stage_uid]
