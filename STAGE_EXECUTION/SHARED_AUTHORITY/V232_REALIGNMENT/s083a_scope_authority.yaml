@@ -1,20 +1,44 @@
-artifact_type: S083A_SCOPE_AUTHORITY
-status: ACTIVE
+artifact_type: S083A_SCOPE_APPLICABILITY_EVIDENCE
+status: CURRENT_PLANNING_EVIDENCE
 normative_authority: false
+authority_evidence_role: MECHANICALLY_DERIVED_FROM_CURRENT_NORMATIVE_AUTHORITY
 authority_for_section: WEB-GOV-01-S083A
-section_title: Basic Design Stepwise Authoring and Review Flow
-section_source: .github/governance-source/active/source/12_DOCS/mother-spec/01_BLUEPRINT_DESIGN_GOVERNANCE.md
-referenced_contract: WEB-GOV-03-S062A
-scope_statement: S083A governs Basic Design documentation authoring only. It requires that each applicable Basic Design domain resolves its denominator and Current Authority, materializes the domain's required
-  rows/bindings, validates completeness and conflicts, persists review evidence/checkpoint, and only then admits the next dependent domain.
+target_governance_uid: GOV-REV-20260927-GOVERNANCE-IDENTITY-NEGATIVE-TRACE-AUDITOR-INDEPENDENCE-HARDENING
+target_governance_head: 5f5d5f38d7054179735fc84861f826b8ef1c2875
+authority_sources:
+- section_uid: WEB-GOV-01-S083A
+  path: .github/governance-source/active/source/12_DOCS/mother-spec/01_BLUEPRINT_DESIGN_GOVERNANCE.md
+  role: BASIC_DESIGN_STEPWISE_AUTHORING_POLICY
+- registry_uid: REG-LIFECYCLE-STAGE-001
+  path: .github/governance-source/active/source/10_REGISTRY/GOVERNANCE_LIFECYCLE_STAGE_REGISTRY.yaml
+  role: STAGE_APPLICABILITY_AND_PRODUCER_BINDING
+- invariant_uid: GOV-INV-BASIC-DESIGN-DOMAIN-STEPWISE-CHECKPOINT-001
+  path: .github/governance-source/active/source/10_REGISTRY/STAGE_EXECUTION_INVARIANT_REGISTRY.yaml
+  role: CHECKPOINT_SCHEMA_AND_CLOSURE_CONTRACT
+scope_statement: >
+  WEB-GOV-01-S083A defines Basic Design stepwise authoring. Current lifecycle places
+  BASIC_DESIGN_DOMAIN_STEPWISE_CHECKPOINT production and the basic_design_stepwise_checkpoint_gate
+  at STAGE-04. STAGE-02 and STAGE-03 carry S083A in their normative read-set but do not own
+  checkpoint production; their matrix representation is therefore NOT_APPLICABLE_WITH_AUTHORITY
+  for checkpoint materialization, while STAGE-04 is REQUIRED.
 scope_resolution:
 - stage_uid: STAGE-02
   applicability: NOT_APPLICABLE_WITH_AUTHORITY
-  reason: STAGE-02 authors the functional contract; Basic Design stepwise authoring is owned by STAGE-04.
+  authority_basis:
+  - CURRENT_LIFECYCLE_STAGE_REGISTRY_STAGE02
+  - WEB-GOV-01-S083A
+  reason: GOVERNED_UNIT_FUNCTIONAL_CONTRACT does not produce BASIC_DESIGN_DOMAIN_STEPWISE_CHECKPOINT.
 - stage_uid: STAGE-03
   applicability: NOT_APPLICABLE_WITH_AUTHORITY
-  reason: STAGE-03 authors the visual design spec; Basic Design stepwise authoring is owned by STAGE-04.
+  authority_basis:
+  - CURRENT_LIFECYCLE_STAGE_REGISTRY_STAGE03
+  - WEB-GOV-01-S083A
+  reason: VISUAL_DESIGN does not produce BASIC_DESIGN_DOMAIN_STEPWISE_CHECKPOINT.
 - stage_uid: STAGE-04
   applicability: REQUIRED
-  reason: STAGE-04 produces BASIC_DESIGN_PACKAGE and owns per-domain Basic Design stepwise authoring and review.
-note: This authority artifact exists so the STAGE-02/STAGE-03 S083A row is a truthful NOT_APPLICABLE_WITH_AUTHORITY terminal disposition.
+  authority_basis:
+  - CURRENT_LIFECYCLE_STAGE_REGISTRY_STAGE04_BASIC_DESIGN_STEPWISE_CHECKPOINT_GATE
+  - GOV-INV-BASIC-DESIGN-DOMAIN-STEPWISE-CHECKPOINT-001
+  reason: FOUNDATION_FREEZE produces BASIC_DESIGN_DOMAIN_STEPWISE_CHECKPOINT through BASIC_DESIGN_PACKAGE_COMPILE.
+planning_evidence_only: true
+product_stage_completion_credit: 0
