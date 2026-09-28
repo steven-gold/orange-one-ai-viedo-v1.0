@@ -1,16 +1,10 @@
 artifact_type: PRODUCT_STAGE01_04_DEFECT_LEDGER
-status: RESET_FOR_FRESH_STAGE01_PRESTAGE_REEXECUTION
+status: CLEAN_RESET_AWAITING_FRESH_REEXECUTION
 authorization_record_url: https://github.com/steven-gold/orange-one-ai-viedo-v1.0/issues/61
-cleanup_authorization_record_url: https://github.com/steven-gold/orange-one-ai-viedo-v1.0/issues/64
 product_branch: 0921acpos
-current_product_head_at_materialization: null
 current_governance:
-  branch: rebuild-v2.1.1
   head: c353d7bdb5dc7edb43c6c7453517d1df75d54ce8
   uid: GOV-REV-20260928-WORD-DERIVED-STAGE-INTERNAL-VALIDATION
-  selection_mode: EXACT_CURRENT_GOVERNANCE_SNAPSHOT
-  mother_neutrality: PASS
-  stage_execution_validation_mode: INLINE_BEFORE_EFFECTFUL_OPERATION
 scope:
 - GLOBAL-HOME-SHELL-NAVIGATION
 - WB01-DASHBOARD
@@ -21,117 +15,42 @@ stage_range:
 - STAGE-04
 defects:
 - uid: DEF-HOME-S01-PROJECTION-ZERO-BYTE
-  governed_unit_uid: GLOBAL-HOME-SHELL-NAVIGATION
   stage_uid: STAGE-01
-  owner: PRE_STAGE_SOURCE_PROJECTION
-  evidence: predecessor CANONICAL_SOURCE_PROJECTION.yaml length=0
-  remediation: FRESH_DERIVATION_FROM_REGISTERED_IMMUTABLE_SOURCE_IN_SUCCESSOR
-  state: PRESTAGE_REEXECUTION_REQUIRED
+  state: REEXECUTION_REQUIRED
 - uid: DEF-WB01-S01-PROJECTION-ZERO-BYTE
-  governed_unit_uid: workspace:WB-01
   stage_uid: STAGE-01
-  owner: PRE_STAGE_SOURCE_PROJECTION
-  evidence: predecessor CANONICAL_SOURCE_PROJECTION.yaml length=0
-  remediation: FRESH_DERIVATION_FROM_REGISTERED_IMMUTABLE_SOURCE_IN_SUCCESSOR
-  state: PRESTAGE_REEXECUTION_REQUIRED
+  state: REEXECUTION_REQUIRED
 - uid: DEF-HOME-S01-CONTENT-AUDIT-LEGACY-ID
-  governed_unit_uid: GLOBAL-HOME-SHELL-NAVIGATION
   stage_uid: STAGE-01
-  owner: PRE_STAGE_SOURCE_PROJECTION
-  evidence: predecessor SOURCE_DOCUMENT_CONTENT_AUDIT uses page_uid
-  current_required_identity: governed_unit_uid
-  state: PRESTAGE_REEXECUTION_REQUIRED
+  state: REEXECUTION_REQUIRED
 - uid: DEF-WB01-S01-CONTENT-AUDIT-LEGACY-ID
-  governed_unit_uid: workspace:WB-01
   stage_uid: STAGE-01
-  owner: PRE_STAGE_SOURCE_PROJECTION
-  evidence: predecessor SOURCE_DOCUMENT_CONTENT_AUDIT uses page_uid
-  current_required_identity: governed_unit_uid
-  state: PRESTAGE_REEXECUTION_REQUIRED
+  state: REEXECUTION_REQUIRED
 - uid: DEF-BOTH-S01-PAGE-IDENTITY
-  governed_unit_uid: BOTH
   stage_uid: STAGE-01
-  owner: GOVERNED_UNIT_BASE_BLUEPRINT_COMPILE
-  predecessor_operation_uid: PAGE_BASE_BLUEPRINT_COMPILE
-  current_operation_uid: GOVERNED_UNIT_BASE_BLUEPRINT_COMPILE
-  predecessor_output_uid: PAGE_BASE_BLUEPRINT
-  current_output_uid: GOVERNED_UNIT_BASE_BLUEPRINT
-  state: PRESTAGE_REEXECUTION_REQUIRED
+  state: REEXECUTION_REQUIRED
 - uid: DEF-BOTH-S02-PAGE-IDENTITY
-  governed_unit_uid: BOTH
   stage_uid: STAGE-02
-  owner: GOVERNED_UNIT_CONSTRUCTION_SPEC_COMPILE
-  predecessor_operation_uid: PAGE_CONSTRUCTION_SPEC_COMPILE
-  current_operation_uid: GOVERNED_UNIT_CONSTRUCTION_SPEC_COMPILE
-  predecessor_output_uid: PAGE_CONSTRUCTION_SPEC_PACKAGE
-  current_output_uid: GOVERNED_UNIT_CONSTRUCTION_SPEC_PACKAGE
   state: WAITING_FOR_STAGE01_SUCCESSOR_PASS
 - uid: DEF-BOTH-S01-03-EXECUTOR
-  governed_unit_uid: BOTH
   stage_uid:
   - STAGE-01
   - STAGE-02
   - STAGE-03
-  owner: PRODUCT_OPERATION_EXECUTOR_IMPLEMENTATION
-  defect: DEDICATED_OPERATION_EXECUTOR_IMPLEMENTATIONS_NOT_MATERIALIZED
-  rule: COMMON_ENGINE_RECURSIVE_EXECUTOR_FORBIDDEN
-  state: PRESTAGE_REEXECUTION_REQUIRED
+  state: STAGE01_EXECUTORS_AVAILABLE_STAGE02_03_PENDING
 - uid: DEF-BOTH-S01-04-CURRENT-MATRIX
-  governed_unit_uid: BOTH
   stage_uid:
   - STAGE-01
   - STAGE-02
   - STAGE-03
   - STAGE-04
-  owner: SUCCESSOR_WORK_UNIT
-  defect: FRESH_CURRENT_MATRIX_SCOPE_STATE_EVIDENCE_NOT_MATERIALIZED
-  predecessor_credit: 0
-  state: PRESTAGE_REEXECUTION_REQUIRED
+  state: FRESH_MATERIALIZATION_REQUIRED
 - uid: DEF-BOTH-S04-S083A
-  governed_unit_uid: BOTH
   stage_uid: STAGE-04
-  owner: BASIC_DESIGN_PACKAGE_COMPILE
-  defect: CURRENT_DYNAMIC_BASIC_DESIGN_DOMAIN_CHECKPOINT_INSTANCES_NOT_MATERIALIZED
-  denominator_source: BASIC_DESIGN_PACKAGE.design_domains
-  fixed_count: FORBIDDEN
   state: WAITING_FOR_STAGE04_SUCCESSOR_EXECUTION
-verified_inputs:
-- governed_unit_uid: GLOBAL-HOME-SHELL-NAVIGATION
-  source_review_extract_ref: STAGE_EXECUTION/SHARED_AUTHORITY/V232_REALIGNMENT/SOURCE_REVIEW_INPUTS/GLOBAL-HOME-SHELL-NAVIGATION.json
-  source_sha256: 334a4679600f092b733bfd8d41a3bc44fe9078b14be2e1bc27a2bc5f4232e15e
-  paragraph_count: 411
-  table_count: 17
-  media_count: 1
-- governed_unit_uid: workspace:WB-01
-  source_review_extract_ref: STAGE_EXECUTION/SHARED_AUTHORITY/V232_REALIGNMENT/SOURCE_REVIEW_INPUTS/WB01-DASHBOARD.json
-  source_sha256: 2b1908530b5bd312a3928f80b422d0f65d7e9932ace90730df9b038666621262
-  paragraph_count: 1257
-  table_count: 30
-  media_count: 4
-execution_order:
-- RESOLVE_EXACT_CURRENT_GOVERNANCE_COMMIT
-- RUN_INLINE_INTERNAL_GOVERNANCE_VALIDATION
-- MATERIALIZE_STAGE01_SUCCESSOR_WORK_UNITS
-- FRESH_SOURCE_CONTENT_AUDIT_AND_CANONICAL_PROJECTION
-- EXECUTE_STAGE01
-- MATERIALIZE_AND_EXECUTE_STAGE02
-- MATERIALIZE_AND_EXECUTE_STAGE03
-- MATERIALIZE_AND_EXECUTE_STAGE04
-- FRESH_STAGE_CLOSURE_AND_SUCCESSOR_READINESS
+clean_reset_verification:
+  generated_work_unit_count_expected: 0
+  stage_resume_count_expected: 0
+  stage_scope_count_expected: 0
+  source_review_extract_count_expected: 0
 completion_credit: 0
-pre_stage_boundary:
-  stage_uid: STAGE-01
-  successor_work_units:
-  - WU-STAGE01-GLOBAL-HOME-SHELL-NAVIGATION-REENTRY-001
-  - WU-STAGE01-WB01-DASHBOARD-REENTRY-001
-  fresh_source_projection_materialized: false
-  fresh_content_audit_materialized: false
-  stage01_dedicated_executor_bindings_materialized: false
-  stage01_current_matrix_materialized: false
-  exact_head_governance_receipts_verified: false
-  runtime_inline_validation_required_at_stage_entry: true
-  runtime_inline_validation_completed_for_stage_entry: false
-  stage01_effectful_operation_executed: false
-  auto_stage_entry: false
-  status: RESET_AWAITING_FRESH_MATERIALIZATION
-  unresolved_pre_stage_defect_count: 6

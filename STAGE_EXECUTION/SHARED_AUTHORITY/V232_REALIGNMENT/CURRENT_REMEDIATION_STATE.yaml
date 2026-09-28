@@ -1,5 +1,5 @@
 artifact_type: PRODUCT_REMEDIATION_RESUME_STATE
-status: READY_FOR_STAGE01_SUCCESSOR_MATERIALIZATION
+status: CLEAN_RESET_AWAITING_FRESH_STAGE01_REEXECUTION
 authorization_record_url: https://github.com/steven-gold/orange-one-ai-viedo-v1.0/issues/61
 product_branch: 0921acpos
 governed_units:
@@ -11,67 +11,27 @@ requested_stage_range:
 - STAGE-03
 - STAGE-04
 primary_task_layer: PRODUCT_STAGE_EXECUTION
-work_unit_resolution_gate:
-  result: PASS_RESOLUTION_ONLY
-  successor_plan_ref: STAGE_EXECUTION/SHARED_AUTHORITY/V232_REALIGNMENT/successor_reentry_resolution.yaml
-  effectful_execution_admitted: false
-  exact_head_selection_admitted: true
-  pre_stage_materialization_admitted: false
+current_governance:
+  governance_uid: GOV-REV-20260928-WORD-DERIVED-STAGE-INTERNAL-VALIDATION
+  governance_head: c353d7bdb5dc7edb43c6c7453517d1df75d54ce8
+  selection_ref: STAGE_EXECUTION/SHARED_AUTHORITY/CURRENT_GOVERNANCE_SELECTION.yaml
+clean_reset:
+  stage01_04_home_wb01_generated_work_units_present: false
+  stage01_04_home_wb01_stage_resume_present: false
+  stage01_04_home_wb01_stage_scope_present: false
+  derived_source_review_inputs_present: false
+  predecessor_completion_credit_retained: 0
+  product_completion_credit: 0
+  original_word_sources_preserved: true
+  governance_preserved: true
 resume_point:
-  last_completed_action: STAGE01_CURRENT_SUCCESSORS_RESET_FOR_REEXECUTION
-  next_action: MATERIALIZE_STAGE01_SUCCESSORS_FROM_IMMUTABLE_SOURCE
+  last_completed_action: DELETE_STAGE01_04_HOME_WB01_PRODUCTION_DATA
+  next_action: REGENERATE_SOURCE_REVIEW_INPUTS_THEN_MATERIALIZE_STAGE01_SUCCESSORS
   next_effectful_stage: STAGE-01
-  earliest_owner: PRE_STAGE_SOURCE_PROJECTION_AND_STAGE01
+  earliest_owner: PRE_STAGE_SOURCE_REVIEW_AND_PROJECTION
   stage_entry_hold: true
 current_blockers:
+- SOURCE_REVIEW_INPUTS_NOT_MATERIALIZED
 - STAGE01_SUCCESSOR_WORK_UNITS_NOT_MATERIALIZED
 pre_stage_unresolved_defect_count: 6
-verified_defects_already_resolved_in_planning:
-- NON_WORD_EXTERNAL_GATE_REMOVED
-- CURRENT_GOVERNANCE_DIRECT_STAGE_PATH_RESTORED
-- IN_PLACE_CLOSED_WU_RESIGN_REMOVED
-- FIXED_13_S083A_DOMAIN_DENOMINATOR_REMOVED
-- S083A_NA_AUTHORITY_DERIVATION_REPAIRED
-- SUCCESSOR_UID_CHAIN_FIXED
-verified_physical_defects_resolved_before_stage01_entry:
-- HOME_STAGE01_CANONICAL_SOURCE_PROJECTION_ZERO_BYTES
-- WB01_STAGE01_CANONICAL_SOURCE_PROJECTION_ZERO_BYTES
-- HOME_STAGE01_CONTENT_AUDIT_LEGACY_PAGE_UID
-- WB01_STAGE01_CONTENT_AUDIT_LEGACY_PAGE_UID
-- STAGE01_DEDICATED_EXECUTOR_BINDINGS_MATERIALIZED
-- STAGE01_CURRENT_MATRIX_SCOPE_STATE_EVIDENCE_MATERIALIZED
-verified_physical_defects_pending_effectful_remediation:
-- STAGE01_LEGACY_PAGE_BASE_BLUEPRINT_IDENTITY
-- STAGE02_LEGACY_PAGE_CONSTRUCTION_SPEC_IDENTITY
-- STAGE02_03_DEDICATED_EXECUTOR_IMPLEMENTATIONS_MISSING
-- STAGE02_04_FRESH_CURRENT_MATRIX_STATE_EVIDENCE_MISSING
-- STAGE04_DYNAMIC_DOMAIN_CHECKPOINT_INSTANCES_MISSING
 completion_credit: 0
-pre_stage_hold:
-  status: RESET_AWAITING_FRESH_STAGE01_SUCCESSOR_MATERIALIZATION
-  auto_stage_entry: false
-  pre_stage_materialization_complete: false
-  effectful_execution_admitted: false
-  effectful_stage_operation_executed: false
-  stage01_completed_operation_total: 0
-  entry_requires_explicit_workflow_dispatch: true
-  runtime_inline_validation_deferred_to_stage_entry: true
-downstream_known_blockers:
-- STAGE02_03_DEDICATED_EXECUTOR_IMPLEMENTATIONS_MISSING
-- STAGE04_DYNAMIC_DOMAIN_CHECKPOINT_INSTANCES_MISSING
-
-pre_stage_hardening:
-  status: RESET_FOR_AUTHORIZED_HOME_WB01_REEXECUTION
-  automatic_prestage_rematerialization_enabled: false
-  prestage_rematerialization_requires_explicit_workflow_dispatch: true
-  obsolete_wb01_single_projection_producer_removed: true
-  obsolete_wb01_moving_ref_admission_probe_removed: true
-  stale_reentry_diagnostics_removed: true
-  source_review_regeneration_requires_explicit_workflow_dispatch: true
-  active_workflow_moving_governance_ref_count: 0
-  active_stage01_effectful_auto_write_workflow_count: 0
-  stage01_operation_receipt_count_at_hold: 0
-  one_time_fresh_materialization_trigger_authorized: true
-  stage01_effectful_workflow_trigger_mode: EXPLICIT_WORKFLOW_DISPATCH_ONLY
-  stale_materialization_runs_may_not_overwrite_current_head: FAST_FORWARD_PUSH_REQUIRED
-  stage01_entry_hold_preserved: true
