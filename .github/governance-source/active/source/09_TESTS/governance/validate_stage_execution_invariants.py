@@ -29,7 +29,7 @@ def validate(root=ROOT):
         failures.append('stage_scope_not_all_11')
     if scope.get('stage_specific_exception_without_registered_authority') != 'BLOCK':
         failures.append('unregistered_stage_exception_not_blocked')
-    required = ['RELATION_SEMANTIC_SEPARATION', 'GAP_REMEDIATION_ADMISSIBILITY', 'CURRENT_AUTHORITY_ADMISSIBILITY', 'REQUIRED_EVIDENCE_MATERIALIZATION', 'VALIDATOR_SCHEMA_SEMANTICS', 'UNRESOLVED_PRESERVATION', 'SUCCESSOR_CURRENT_ATOMIC_PROJECTION', 'BLOCKER_DENOMINATOR_AND_RECEIPT', 'AUTHORITY_EVIDENCE_CONSUMPTION', 'FUNCTIONAL_CONTRACT_COMPLETENESS', 'STAGE_ENTRY_PRECHECK', 'IMPLEMENTATION_DEVIATION_FEEDBACK', 'REVIEW_VS_CLOSURE_SEPARATION', 'CANONICAL_STAGE_EXECUTION_PREFLIGHT', 'EFFECTIVE_CONTRACT_OVERLAY', 'ROLE_SAFE_FUNCTIONAL_CLOSURE', 'DEPENDENCY_ORDERED_INCREMENTAL_RECONCILIATION', 'COMMON_ENGINE_DEFECT_INTERRUPT', 'GENERATED_OUTPUT_PERSISTENCE', 'CONTROL_VS_SYSTEM_TRIGGER_RESOLUTION', 'PRODUCER_CONSUMER_SCHEMA_IDENTITY', 'NO_HISTORY_PRODUCT_VALUE_FALLBACK', 'TASK_LAYER_EFFECTFUL_TRANSITION_ORDER', 'VISUAL_DESIGN_PROFILE_MATERIALIZATION_COMPLETENESS', 'NORMATIVE_EXECUTION_MATRIX', 'CROSS_STAGE_MATERIALIZATION_AND_CONSUMER_READINESS', 'DETERMINISTIC_STAGE_AUDIT']
+    required = ['RELATION_SEMANTIC_SEPARATION', 'GAP_REMEDIATION_ADMISSIBILITY', 'CURRENT_AUTHORITY_ADMISSIBILITY', 'REQUIRED_EVIDENCE_MATERIALIZATION', 'VALIDATOR_SCHEMA_SEMANTICS', 'UNRESOLVED_PRESERVATION', 'SUCCESSOR_CURRENT_ATOMIC_PROJECTION', 'BLOCKER_DENOMINATOR_AND_RECEIPT', 'AUTHORITY_EVIDENCE_CONSUMPTION', 'FUNCTIONAL_CONTRACT_COMPLETENESS', 'STAGE_ENTRY_PRECHECK', 'PHYSICAL_ARTIFACT_INTEGRITY', 'IMPLEMENTATION_DEVIATION_FEEDBACK', 'REVIEW_VS_CLOSURE_SEPARATION', 'CANONICAL_STAGE_EXECUTION_PREFLIGHT', 'EFFECTIVE_CONTRACT_OVERLAY', 'ROLE_SAFE_FUNCTIONAL_CLOSURE', 'DEPENDENCY_ORDERED_INCREMENTAL_RECONCILIATION', 'COMMON_ENGINE_DEFECT_INTERRUPT', 'GENERATED_OUTPUT_PERSISTENCE', 'CONTROL_VS_SYSTEM_TRIGGER_RESOLUTION', 'PRODUCER_CONSUMER_SCHEMA_IDENTITY', 'NO_HISTORY_PRODUCT_VALUE_FALLBACK', 'TASK_LAYER_EFFECTFUL_TRANSITION_ORDER', 'VISUAL_DESIGN_PROFILE_MATERIALIZATION_COMPLETENESS', 'NORMATIVE_EXECUTION_MATRIX', 'CROSS_STAGE_MATERIALIZATION_AND_CONSUMER_READINESS', 'DETERMINISTIC_STAGE_AUDIT']
     for k in required:
         if k not in inv:
             failures.append('missing_invariant:' + k)
@@ -55,6 +55,21 @@ def validate(root=ROOT):
     e = inv.get('REQUIRED_EVIDENCE_MATERIALIZATION') or {}
     if e.get('ledger_or_plan_claim_proves_physical_artifact') is not False or e.get('canonical_physical_artifact_required') is not True or e.get('parse_required') is not True or (e.get('schema_or_required_field_validation_required') is not True) or (e.get('review_complete_implies_stage_closed') is not False):
         failures.append('required_evidence_materialization_incomplete')
+    pai = inv.get('PHYSICAL_ARTIFACT_INTEGRITY') or {}
+    if pai.get('invariant_uid') != 'GOV-INV-PHYSICAL-ARTIFACT-INTEGRITY-001':
+        failures.append('physical_artifact_integrity_uid_invalid')
+    if set(pai.get('normative_section_uids') or []) != {'WEB-GOV-03-S073','WEB-GOV-04-S088'}:
+        failures.append('physical_artifact_integrity_normative_binding_incomplete')
+    for key in ('applies_to_all_registered_stages','applies_to_required_inputs_outputs_evidence_matrices_receipts_and_handoffs','required_file_must_be_regular','required_file_must_be_nonempty_unless_schema_explicitly_authorizes_empty_representation','registered_parser_must_parse','registered_schema_and_required_fields_must_validate','declared_content_hash_must_be_recomputed_from_physical_artifact_when_hash_is_registered','producer_receipt_consumer_binding_must_match_recomputed_identity','independent_source_rederivation_validator_must_run_when_registered'):
+        if pai.get(key) is not True:
+            failures.append('physical_artifact_integrity_flag_missing:' + key)
+    if pai.get('path_presence_alone_completion_credit') != 0 or pai.get('metadata_or_receipt_self_consistency_completion_credit') != 0:
+        failures.append('physical_artifact_integrity_false_credit_not_zero')
+    if pai.get('empty_representation_without_explicit_schema_authority') != 'BLOCK' or pai.get('receipt_may_replace_physical_artifact_validation') is not False or pai.get('self_consistent_metadata_may_override_physical_artifact_failure') is not False:
+        failures.append('physical_artifact_integrity_fail_closed_contract_missing')
+    required_destructive={'ZERO_BYTE_REQUIRED_ARTIFACT_WITH_UNCHANGED_RECEIPTS','NONEMPTY_UNPARSEABLE_REQUIRED_ARTIFACT','PARSEABLE_EMPTY_OR_SCHEMA_INCOMPLETE_ARTIFACT','PHYSICAL_CONTENT_CHANGED_WITH_STALE_DECLARED_HASH','RECEIPT_HASH_DRIFT_FROM_PHYSICAL_ARTIFACT','CONSUMER_BINDING_DRIFT_FROM_RECOMPUTED_IDENTITY'}
+    if set(pai.get('destructive_regression_required') or []) != required_destructive:
+        failures.append('physical_artifact_integrity_destructive_regression_incomplete')
     v = inv.get('VALIDATOR_SCHEMA_SEMANTICS') or {}
     if v.get('authoritative_schema_path_required') is not True or v.get('authoritative_enum_or_status_constant_required') is not True or v.get('stale_path_or_constant_is_validator_defect_not_data_defect') is not True or (v.get('optional_sparse_zero_missing_key_equals_zero') is not True) or (v.get('mandatory_missing_field_equals_zero') is not False):
         failures.append('validator_schema_semantics_incomplete')
