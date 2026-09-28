@@ -160,6 +160,25 @@ def _write_synthetic_successor_input_rows(root,base_rel,input_uids):
         })
     return rows
 
+# Work-unit dependency regression: file-backed required dependencies inherit the
+# same common physical-integrity gate. Path presence alone cannot admit them.
+with tempfile.TemporaryDirectory() as _dep_td:
+    _dep_root=Path(_dep_td)
+    _dep_file=_dep_root/'dependency.yaml'
+    _dep_file.write_bytes(b'')
+    expect_stage_engine_block(
+      'work_unit_dependency_zero_byte',
+      lambda:eng._validate_local_file_artifact(_dep_file,'ACTIVE_WORK_UNIT_DEPENDENCY:dependency.yaml'),
+      'ACTIVE_WORK_UNIT_DEPENDENCY:dependency.yaml_EMPTY'
+    )
+    _dep_file.write_text('a: [unterminated\n',encoding='utf-8')
+    expect_stage_engine_block(
+      'work_unit_dependency_unparseable',
+      lambda:eng._validate_local_file_artifact(_dep_file,'ACTIVE_WORK_UNIT_DEPENDENCY:dependency.yaml'),
+      'ACTIVE_WORK_UNIT_DEPENDENCY:dependency.yaml_PARSE_FAILED'
+    )
+
+
 stage_uid='STAGE-01'
 st=eng.stage_map(profile)[stage_uid]
 ad=adapters['stages'][stage_uid]
