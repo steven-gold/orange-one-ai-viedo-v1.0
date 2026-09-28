@@ -185,6 +185,13 @@ candidate_validation_contract:
       event: push
   workflow_name_only_may_grant_validation_credit: false
   workflow_path_event_head_branch_binding_required: true
+  exact_head_commit_status_receipts_required: true
+  required_commit_status_contexts:
+  - Governance/Current Cleanup
+  - Governance/Mother Neutrality
+  commit_status_sha_must_equal_validation_head: true
+  commit_status_success_required: true
+  commit_status_receipt_is_external_evidence_not_branch_mutation: true
   workflow_external_action_ref_mode: FULL_40_HEX_COMMIT_SHA_ONLY
   workflow_external_action_mutable_ref: BLOCK
   workflow_action_pinning_authorization_record: https://github.com/steven-gold/orange-one-ai-viedo-v1.0/issues/55
