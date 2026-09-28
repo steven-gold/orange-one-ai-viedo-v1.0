@@ -1101,7 +1101,7 @@ Every applicable matrix row MUST identify at least:
 
 - matrix row UID;
 - normative section UID and exact requirement identity;
-- required artifact type and canonical/current physical artifact reference;
+- required artifact type and canonical target artifact reference; for a producer-owned artifact whose producer has not yet executed, this reference is the registered future target and grants zero materialization/completion credit until the producer finishes and the physical artifact is independently validated;
 - artifact owner;
 - row denominator source and exact governed row identity;
 - required field path and field applicability;
@@ -1110,7 +1110,7 @@ Every applicable matrix row MUST identify at least:
 - closure gate receiving credit;
 - failure disposition and earliest owning re-entry target.
 
-A REQUIRED field MUST resolve to a physically materialized parseable value in the exact Current artifact/row. A field that is truly not applicable MUST be `NOT_APPLICABLE_WITH_AUTHORITY` and carry exact Authority evidence. Blank, omitted, implicit, summary-only, file-presence-only, path-presence-only, inferred, or historical values receive zero completeness credit.
+A REQUIRED field MUST resolve to a physically materialized parseable value in the exact Current artifact/row **before that row receives materialization/completion credit and no later than the completion boundary of its registered producer**. The pre-effectful matrix MAY register a future producer-owned target whose artifact bytes do not yet exist, because the matrix is a denominator/binding contract rather than permission to preproduce future outputs. Such a row is planning-only, receives zero completion credit, and MUST become physically materialized and validated immediately after its producer operation before any dependent successor operation may execute. Required evidence whose legal producer boundary is Stage review/closure MAY remain unmaterialized only until that registered boundary. A field that is truly not applicable MUST be `NOT_APPLICABLE_WITH_AUTHORITY` and carry exact Authority evidence. Blank, omitted, implicit, summary-only, file-presence-only, path-presence-only, inferred, historical, or prematurely preproduced values receive zero completeness credit.
 
 Before effectful execution begins, the matrix MUST prove all of the following:
 
@@ -1122,6 +1122,9 @@ Before effectful execution begins, the matrix MUST prove all of the following:
 6. Matrix denominator totals equal the Current classified applicable denominator; missing-row, missing-field, duplicate-credit, summary-only-credit, unclassified-applicability, validator-unbound, and closure-unbound counts are all zero.
 7. Validators, scanners, classifiers, materializers, and closure consumers read the same persisted matrix or a mechanically derived immutable projection of it. Consumer-local subsets are forbidden.
 8. A destructive regression must prove that deleting or blanking one REQUIRED field causes the intended validator to fail before closure credit is available.
+9. Pre-effectful Matrix PASS proves denominator, ownership, target-reference, validator, and closure-gate completeness only; it MUST_NOT claim that future producer-owned outputs or closure evidence already exist.
+10. After each operation receipt, every matrix row owned by that completed producer MUST resolve to the Current physical artifact and pass its registered field validator before the next dependent operation may execute.
+11. At Stage closure, every REQUIRED row and required evidence row MUST be physically materialized and valid unless Authority-proven `NOT_APPLICABLE_WITH_AUTHORITY`; `TO_MATERIALIZE`, missing bytes, stale bytes, or future-target-only state is blocking.
 
 No Stage/capability may start its first effectful operation, resume after a material schema change, or close when the Current matrix is missing, stale, incomplete, bound to another governance/work-unit identity, or not consumed by the applicable validator/closure path.
 
