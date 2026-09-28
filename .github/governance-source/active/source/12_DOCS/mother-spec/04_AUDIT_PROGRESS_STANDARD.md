@@ -1488,6 +1488,10 @@ Destructive regression MUST remove or blank at least one REQUIRED field from an 
 
 A matrix Audit PASS is required for Stage/capability closure credit and for successor-input readiness.
 
+Matrix audit MUST distinguish **registration completeness** from **physical materialization completeness**. Before the first effectful operation, a producer-owned future output/evidence target MAY be registered in the Current matrix without physical bytes only when its registered producer has not yet executed; that row receives zero output/evidence completion credit. Audit MUST fail future-operation preproduction, stale historical substitution, or any row that claims materialized/PASS before its producer boundary.
+
+After each completed producer operation, Audit MUST require every matrix row owned by that producer to resolve to the Current physical artifact, parse successfully, satisfy the registered REQUIRED field path, and match Current identity/hash bindings before dependent execution continues. At Stage closure, every REQUIRED matrix row and required evidence row MUST be physically materialized and valid unless exact Current Authority proves `NOT_APPLICABLE_WITH_AUTHORITY`; an unresolved future-target-only/`TO_MATERIALIZE` row is a blocking `MISSING_REQUIRED_ARTIFACT` or `MISSING_REQUIRED_FIELD`, not a closure PASS.
+
 <!-- SECTION_UID: WEB-GOV-04-S079 -->
 ## 79. Session Bootstrap / Current Primary Task Audit
 
