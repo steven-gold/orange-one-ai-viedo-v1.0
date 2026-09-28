@@ -1,0 +1,111 @@
+name: Product Immutable Source Review Extract
+on:
+  push:
+    branches: [0921acpos]
+    paths:
+      - '.github/workflows/product-source-review-extract.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: product-source-review-extract
+  cancel-in-progress: false
+jobs:
+  extract:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+      - name: Extract deterministic review inputs from immutable DOCX bytes
+        run: |
+          python - <<'PY'
+          import hashlib,json,zipfile
+          from pathlib import Path
+          import xml.etree.ElementTree as ET
+
+          ROOT=Path.cwd()
+          OUT=ROOT/'STAGE_EXECUTION/SHARED_AUTHORITY/V232_REALIGNMENT/SOURCE_REVIEW_INPUTS'
+          OUT.mkdir(parents=True,exist_ok=True)
+          NS={'w':'http://schemas.openxmlformats.org/wordprocessingml/2006/main',
+              'r':'http://schemas.openxmlformats.org/officeDocument/2006/relationships'}
+          SOURCES=[
+            ('GLOBAL-HOME-SHELL-NAVIGATION','SRC-DOCX-334A4679600F092B733B',
+             'STAGE_EXECUTION/STAGE-01/WU-STAGE01-GLOBAL-HOME-SHELL-NAVIGATION-001/00_SOURCE_INTAKE/RAW_SOURCE/SRC-DOCX-334A4679600F092B733B/ACPOS_GLOBAL_HOME_SHELL_NAVIGATION_Mother_Basic_Design_OPTIMIZED.docx'),
+            ('WB01-DASHBOARD','SRC-DOCX-2B1908530B5BD312A392',
+             'STAGE_EXECUTION/STAGE-01/WU-STAGE01-WB01-DASHBOARD-001/00_SOURCE_INTAKE/RAW_SOURCE/SRC-DOCX-2B1908530B5BD312A392/ACPOS_WB-01_MOTHER_BASIC_DESIGN_TECH_PURPLE_v1.0.docx'),
+          ]
+          for unit,suid,rel in SOURCES:
+            p=ROOT/rel
+            raw=p.read_bytes()
+            with zipfile.ZipFile(p) as z:
+              names=sorted(z.namelist())
+              doc=ET.fromstring(z.read('word/document.xml'))
+              styles={}
+              if 'word/styles.xml' in names:
+                sr=ET.fromstring(z.read('word/styles.xml'))
+                for st in sr.findall('w:style',NS):
+                  sid=st.get('{%s}styleId'%NS['w'])
+                  nm=st.find('w:name',NS)
+                  if sid and nm is not None:
+                    styles[sid]=nm.get('{%s}val'%NS['w']) or sid
+              paragraphs=[]
+              pidx=0
+              for para in doc.findall('.//w:p',NS):
+                texts=[t.text or '' for t in para.findall('.//w:t',NS)]
+                text=''.join(texts).strip()
+                if not text:
+                  continue
+                ppr=para.find('w:pPr',NS); sid=None
+                if ppr is not None:
+                  ps=ppr.find('w:pStyle',NS)
+                  if ps is not None: sid=ps.get('{%s}val'%NS['w'])
+                paragraphs.append({'index':pidx,'style_id':sid,'style_name':styles.get(sid,sid),'text':text})
+                pidx+=1
+              tables=[]
+              for ti,tbl in enumerate(doc.findall('.//w:tbl',NS)):
+                rows=[]
+                for tr in tbl.findall('./w:tr',NS):
+                  row=[]
+                  for tc in tr.findall('./w:tc',NS):
+                    row.append(' '.join(''.join(t.text or '' for t in p.findall('.//w:t',NS)).strip() for p in tc.findall('./w:p',NS)).strip())
+                  rows.append(row)
+                tables.append({'table_index':ti,'rows':rows})
+              media=[]
+              for n in names:
+                if n.startswith('word/media/') and not n.endswith('/'):
+                  b=z.read(n); media.append({'path':n,'size_bytes':len(b),'sha256':hashlib.sha256(b).hexdigest()})
+              package=[{'path':n,'size_bytes':len(z.read(n)),'sha256':hashlib.sha256(z.read(n)).hexdigest()} for n in names if not n.endswith('/')]
+            result={
+              'artifact_type':'IMMUTABLE_SOURCE_DOCUMENT_REVIEW_EXTRACT',
+              'status':'EXTRACTION_COMPLETE_NO_SEMANTIC_CONCLUSION',
+              'governed_unit_uid':unit,
+              'source_uid':suid,
+              'source_path':rel,
+              'source_commit_sha':${{ toJSON(github.sha) }},
+              'source_sha256':hashlib.sha256(raw).hexdigest(),
+              'paragraph_count':len(paragraphs),
+              'table_count':len(tables),
+              'media_count':len(media),
+              'package_part_count':len(package),
+              'paragraphs':paragraphs,
+              'tables':tables,
+              'media':media,
+              'package_parts':package,
+              'semantic_audit_result':None,
+              'completion_credit':0,
+            }
+            (OUT/f'{unit}.json').write_text(json.dumps(result,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
+            print('PASS: extracted',unit,'paragraphs',len(paragraphs),'tables',len(tables),'media',len(media))
+          PY
+      - name: Commit review extracts
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add STAGE_EXECUTION/SHARED_AUTHORITY/V232_REALIGNMENT/SOURCE_REVIEW_INPUTS
+          git diff --cached --quiet && exit 0
+          git commit -m "evidence(source): extract immutable HOME and WB01 Word review inputs"
+          git pull --rebase origin 0921acpos
+          git push origin HEAD:0921acpos
