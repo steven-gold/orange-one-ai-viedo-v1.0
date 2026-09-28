@@ -26,10 +26,10 @@ source_integrity:
   word_or_registered_source_integrity_required: true
   deterministic_hash_validation_required: true
   exact_head_internal_validation_required: true
-  external_person_or_signer_required: false
+  unregistered_non_word_execution_prerequisite: BLOCK
 admission:
   integrated_source_validation_required: true
   source_integrity_required_for_current: true
-  external_person_or_signer_required: false
+  unregistered_non_word_execution_prerequisite: BLOCK
   exact_head_validation_required: true
   historical_pre_consolidation_heads_must_remain_reachable: true
