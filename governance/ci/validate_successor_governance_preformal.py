@@ -68,13 +68,8 @@ def main():
         failures.append('AI_SUPPLEMENTATION_POLICY_DRIFT')
     if vc.get('generated_content_may_become_second_source_authority') is not False:
         failures.append('GENERATED_SECOND_AUTHORITY_NOT_BLOCKED')
-    for key in (
-      'external_human_or_account_evidence_required','external_auditor_required','external_signer_required',
-      'detached_external_trust_required','promotion_required_before_product_stage_execution',
-      'released_governance_selection_required'
-    ):
-        if vc.get(key) is not False:
-            failures.append('NON_WORD_EXTERNAL_GATE_REINTRODUCED:'+key)
+    if vc.get('unregistered_non_word_execution_prerequisite')!='BLOCK':
+        failures.append('UNREGISTERED_NON_WORD_EXECUTION_PREREQUISITE_NOT_BLOCKED')
 
     if vc.get('source_package_integration_mode')!='SINGLE_BRANCH_INTEGRATED':
         failures.append('SOURCE_PACKAGE_INTEGRATION_MODE_DRIFT')
@@ -108,8 +103,8 @@ def main():
     for key in ('word_or_registered_source_integrity_required','deterministic_hash_validation_required','exact_head_internal_validation_required'):
         if integrity.get(key) is not True:
             failures.append('SOURCE_INTEGRITY_FLAG_MISSING:'+key)
-    if integrity.get('external_person_or_signer_required') is not False:
-        failures.append('SOURCE_EXTERNAL_PERSON_GATE_REINTRODUCED')
+    if integrity.get('unregistered_non_word_execution_prerequisite')!='BLOCK':
+        failures.append('SOURCE_UNREGISTERED_NON_WORD_EXECUTION_PREREQUISITE_NOT_BLOCKED')
 
     retired=[
       SOURCE/'11_EVIDENCE/audit/GOVERNANCE_CANDIDATE_STATE.yaml',
@@ -130,8 +125,7 @@ def main():
       'failures':failures,
       'integrated_source_validation':src,
       'word_source_primary':vc.get('word_source_is_primary_product_design_source') is True,
-      'external_person_account_auditor_or_signer_required':False,
-      'promotion_or_release_gate_required':False,
+      'unregistered_non_word_execution_prerequisite':'BLOCK',
       'historical_current_credit':0,
       'product_completion_credit':0,
     }
