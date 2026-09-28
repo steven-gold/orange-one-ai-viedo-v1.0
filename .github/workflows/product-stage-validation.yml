@@ -21,21 +21,122 @@ jobs:
         with:
           ref: ${{ github.sha }}
           fetch-depth: 0
-      - name: Checkout frozen governance authority
-        uses: actions/checkout@v4
+      - name: Resolve exact selected Current governance
+        id: governance
+        shell: bash
+        run: |
+          set -euo pipefail
+          SEL="STAGE_EXECUTION/SHARED_AUTHORITY/CURRENT_GOVERNANCE_SELECTION.yaml"
+          test -s "$SEL" || { echo "BLOCK:CURRENT_GOVERNANCE_SELECTION_MISSING"; exit 31; }
+          STATUS="$(awk '$1=="status:" {print $2; exit}' "$SEL")"
+          COMMIT="$(awk '$1=="governance_commit_sha:" {print $2; exit}' "$SEL")"
+          test "$STATUS" = "SELECTED_EXACT_CURRENT_SNAPSHOT" || { echo "BLOCK:CURRENT_GOVERNANCE_SELECTION_STATUS_INVALID"; exit 32; }
+          echo "$COMMIT" | grep -Eq '^[0-9a-f]{40}      - name: Resolve active Stage-02 work unit
+        shell: bash
+        run: |
+          python - <<'PY' >> "$GITHUB_ENV"
+          import yaml
+          from pathlib import Path
+          r=yaml.safe_load(Path('STAGE_EXECUTION/STAGE-02/CURRENT_STAGE02_RESUME.yaml').read_text())
+          wu=r.get('active_work_unit_uid')
+          if not wu:
+              print('ACTIVE_STAGE02=false')
+          else:
+              print('ACTIVE_STAGE02=true')
+              print(f'ACPOS_ACTIVE_WORK_UNIT=STAGE_EXECUTION/STAGE-02/{wu}/WORK_UNIT.yaml')
+              print(f'ACPOS_CURRENT_SCOPE=STAGE_EXECUTION/STAGE-02/{wu}/CURRENT_EXECUTION_SCOPE_MANIFEST.yaml')
+              print(f'ACPOS_EVIDENCE_PATH=STAGE_EXECUTION/STAGE-02/{wu}/EVIDENCE/STAGE02_NORMALIZED_EVIDENCE.json')
+          PY
+          echo "ACPOS_PRODUCT_ROOT=$GITHUB_WORKSPACE" >> "$GITHUB_ENV"
+      - name: Validate exact Current governance definition
+        run: |
+          python governance/ci/stage_execution_engine.py --definition-audit-all
+      - name: Validate active Stage-02 admission
+        if: env.ACTIVE_STAGE02 == 'true'
+        run: |
+          python governance/ci/stage_execution_engine.py --admission-check --stage STAGE-02
+      - name: Validate current Stage-02 product contract semantics
+        if: env.ACTIVE_STAGE02 == 'true'
+        shell: bash
+        run: |
+          python - <<'PY'
+          import os, yaml
+          from pathlib import Path
+          root=Path('.')
+          wu=Path(os.environ['ACPOS_ACTIVE_WORK_UNIT']).parent
+          def y(name):
+              p=wu/name
+              if not p.is_file(): raise SystemExit(f'BLOCK:MISSING_STAGE02_ARTIFACT:{name}')
+              obj=yaml.safe_load(p.read_text()) or {}
+              if not isinstance(obj,dict): raise SystemExit(f'BLOCK:INVALID_MAPPING:{name}')
+              return obj
+          inv=y('BUSINESS_ENTITY_INVENTORY.yaml')
+          mat=y('BUSINESS_ENTITY_OPERATION_MATRIX.yaml')
+          hier=y('ENTITY_HIERARCHY_MATRIX.yaml')
+          pkg=y('PAGE_CONSTRUCTION_SPEC_PACKAGE.yaml')
+          ports=y('SHARED_OWNER_PORT_MAP.yaml')
+          chain=y('FUNCTIONAL_CHAIN_SPEC.yaml')
+          topo=y('INTERACTION_TOPOLOGY_SPEC.yaml')
+          wb=y('FUNCTIONAL_WORKBENCH_CONTRACT.yaml')
+          enum=mat.get('operation_contract',{}).get('required_enum') or []
+          if len(enum)!=23 or len(set(enum))!=23: raise SystemExit('BLOCK:OPERATION_ENUM_DENOMINATOR_INVALID')
+          entities=inv.get('entities') or []
+          rows=mat.get('rows') or []
+          if len(rows)!=len(entities): raise SystemExit('BLOCK:ENTITY_OPERATION_ROW_DENOMINATOR_DRIFT')
+          eids={x.get('entity_uid') for x in entities}
+          if {x.get('entity_uid') for x in rows}!=eids: raise SystemExit('BLOCK:ENTITY_OPERATION_IDENTITY_DRIFT')
+          eset=set(enum)
+          for row in rows:
+              req=row.get('required') or []; na=row.get('not_applicable') or []
+              if set(req)&set(na): raise SystemExit('BLOCK:OPERATION_REQUIRED_NA_OVERLAP:'+str(row.get('entity_uid')))
+              if set(req)|set(na)!=eset: raise SystemExit('BLOCK:OPERATION_COVERAGE_DRIFT:'+str(row.get('entity_uid')))
+              if na and not row.get('na_authority_ref'): raise SystemExit('BLOCK:NA_AUTHORITY_MISSING:'+str(row.get('entity_uid')))
+          if len(hier.get('edges') or []) != int(hier.get('required_edge_count') or -1): raise SystemExit('BLOCK:HIERARCHY_DENOMINATOR_DRIFT')
+          included=pkg.get('included_artifacts') or []
+          for rel in included:
+              if not (wu/rel).is_file(): raise SystemExit('BLOCK:PACKAGE_ARTIFACT_MISSING:'+rel)
+          for b in ports.get('bindings') or []:
+              if not b.get('owner_uid') or not b.get('operation_port_uid'): raise SystemExit('BLOCK:SHARED_OWNER_EXACT_BINDING_MISSING')
+          if not chain.get('chains'): raise SystemExit('BLOCK:FUNCTIONAL_CHAIN_EMPTY')
+          if not topo.get('edges'): raise SystemExit('BLOCK:INTERACTION_TOPOLOGY_EMPTY')
+          if not wb.get('workbench_regions'): raise SystemExit('BLOCK:FUNCTIONAL_WORKBENCH_EMPTY')
+          scope=yaml.safe_load((wu/'CURRENT_EXECUTION_SCOPE_MANIFEST.yaml').read_text()) or {}
+          if scope.get('partial_scope') is not False: raise SystemExit('BLOCK:PARTIAL_SCOPE_NOT_ALLOWED_FOR_UNIT_EXIT')
+          predecessor=Path('STAGE_EXECUTION/STAGE-01/WU-STAGE01-GLOBAL-HOME-SHELL-NAVIGATION-001/02_BASE_BLUEPRINT/SRC-DOCX-334A4679600F092B733B/VISUAL_BASE_BLUEPRINT.yaml')
+          if not predecessor.is_file(): raise SystemExit('BLOCK:STAGE03_VISUAL_BLUEPRINT_INPUT_MISSING')
+          for rel in ['PAGE_CONSTRUCTION_SPEC_PACKAGE.yaml','FUNCTIONAL_WORKBENCH_CONTRACT.yaml','INTERACTION_TOPOLOGY_SPEC.yaml']:
+              if not (wu/rel).is_file(): raise SystemExit('BLOCK:STAGE03_SUCCESSOR_INPUT_MISSING:'+rel)
+          print(f'PASS: entity operation denominator entities={len(entities)} operations_per_entity={len(enum)}')
+          print(f'PASS: required hierarchy edges={len(hier.get("edges") or [])}')
+          print(f'PASS: package artifacts={len(included)} all physical')
+          print('PASS: exact shared owner/port identities materialized')
+          print('PASS: Stage-03 successor required inputs materialized')
+          PY
+      - name: Validate normalized Stage-02 evidence when materialized
+        if: env.ACTIVE_STAGE02 == 'true'
+        shell: bash
+        run: |
+          if [ -f "$ACPOS_EVIDENCE_PATH" ]; then
+            python governance/ci/stage_execution_engine.py --validate-evidence --stage STAGE-02 --evidence "$ACPOS_EVIDENCE_PATH"
+          else
+            echo "EVIDENCE_NOT_YET_MATERIALIZED"
+          fi
+ || { echo "BLOCK:CURRENT_GOVERNANCE_COMMIT_INVALID"; exit 33; }
+          echo "commit_sha=$COMMIT" >> "$GITHUB_OUTPUT"
+      - name: Checkout exact Current governance
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
           repository: steven-gold/orange-one-ai-viedo-v1.0
-          ref: rebuild-v2.1.1
+          ref: ${{ steps.governance.outputs.commit_sha }}
           path: _governance_authority
           fetch-depth: 1
-      - name: Load frozen governance consumers without mutating product tree
+      - name: Load exact Current governance consumers without mutating product tree
         run: |
           rm -rf governance .github/governance-source
           cp -R _governance_authority/governance ./governance
           mkdir -p .github
           cp -R _governance_authority/.github/governance-source .github/governance-source
-      - name: Install verifier dependency
-        run: python -m pip install --disable-pip-version-check 'PyYAML==6.0.2'
+          python -m pip install --disable-pip-version-check --require-hashes -r governance/ci/requirements-governance.lock
       - name: Resolve active Stage-02 work unit
         shell: bash
         run: |
