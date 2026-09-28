@@ -90,6 +90,18 @@ universal_stage_stepwise_execution_contract:
   closed_work_unit_current_mutation: FORBIDDEN
   reentry_requires_new_work_unit_uid: true
   predecessor_closed_work_unit_evidence_immutable: true
+  work_unit_activation_kind_field: work_unit_activation_kind
+  allowed_work_unit_activation_kinds: [INITIAL_STAGE_WORK_UNIT, SUCCESSOR_REENTRY_WORK_UNIT]
+  current_work_unit_activation_kind_required: true
+  same_work_unit_terminal_receipt_at_entry: BLOCK
+  successor_reentry_required_fields:
+  - predecessor_work_unit_uid
+  - predecessor_work_unit_ref
+  - predecessor_terminal_receipt_ref
+  - reentry_authority_ref
+  successor_reentry_predecessor_stage_must_equal_current_stage: true
+  successor_reentry_predecessor_governed_unit_must_equal_current_governed_unit: true
+  initial_stage_work_unit_reentry_fields: FORBIDDEN
   bulk_stage_materialization: FORBIDDEN
   future_stage_preproduction: FORBIDDEN
   successor_stage_execution_before_predecessor_closure: FORBIDDEN
