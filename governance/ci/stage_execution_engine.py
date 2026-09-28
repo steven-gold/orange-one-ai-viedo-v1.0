@@ -990,11 +990,21 @@ def _validate_cross_stage_handoff_ledger(stage_uid,e,stage,stages):
     input_rows=ledger.get('successor_required_inputs')
     if not isinstance(input_rows,list):
         fail('CROSS_STAGE_SUCCESSOR_INPUT_ROWS_INVALID')
+    input_required_fields=set(map(str,policy.get('successor_required_input_row_required_fields') or []))
+    expected_input_fields={'input_uid','status','artifact_ref','content_sha256','external_evidence_ref','authority_evidence_ref','consumer_readiness_evidence_ref'}
+    if input_required_fields!=expected_input_fields:
+        fail('CROSS_STAGE_SUCCESSOR_INPUT_PHYSICAL_CONTRACT_DRIFT')
     seen_inputs={}
     for row in input_rows:
-        if not isinstance(row,dict) or not row.get('input_uid') or row.get('input_uid') in seen_inputs:
+        if not isinstance(row,dict):
             fail('CROSS_STAGE_SUCCESSOR_INPUT_ROW_INVALID')
-        seen_inputs[str(row['input_uid'])]=row
+        missing=sorted(input_required_fields-set(row))
+        if missing:
+            fail('CROSS_STAGE_SUCCESSOR_INPUT_FIELDS_MISSING:'+repr(missing))
+        uid=str(row.get('input_uid') or '')
+        if not uid or uid in seen_inputs:
+            fail('CROSS_STAGE_SUCCESSOR_INPUT_ROW_INVALID')
+        seen_inputs[uid]=row
     if successor_uid in stages:
         expected_inputs=set(map(str,stages[successor_uid].get('inputs') or []))
         if set(seen_inputs)!=expected_inputs:
@@ -1003,10 +1013,38 @@ def _validate_cross_stage_handoff_ledger(stage_uid,e,stage,stages):
     for uid,row in seen_inputs.items():
         status=str(row.get('status') or '')
         if status=='AUTHORIZED_NOT_APPLICABLE':
-            if not row.get('authority_evidence_ref'):
+            if policy.get('successor_authorized_not_applicable_input_requires_authority_evidence_ref') is not True or not str(row.get('authority_evidence_ref') or '').strip():
                 fail('CROSS_STAGE_SUCCESSOR_INPUT_NA_AUTHORITY_MISSING:'+uid)
-        elif status in {'MATERIALIZED','EXTERNAL_RECEIPT'}:
-            pass
+        elif status=='MATERIALIZED':
+            if policy.get('successor_materialized_input_requires_local_artifact_ref') is not True or policy.get('successor_materialized_input_requires_recomputed_sha256') is not True or policy.get('successor_materialized_input_requires_nonempty_parseable_artifact') is not True or policy.get('successor_materialized_input_requires_consumer_readiness_evidence') is not True:
+                fail('CROSS_STAGE_SUCCESSOR_INPUT_PHYSICAL_POLICY_MISSING:'+uid)
+            aref=str(row.get('artifact_ref') or '').strip()
+            ap=Path(aref)
+            if not aref or ap.is_absolute() or '..' in ap.parts:
+                fail('CROSS_STAGE_SUCCESSOR_INPUT_ARTIFACT_REF_INVALID:'+uid)
+            artifact_path=(execution_root/ap).resolve()
+            try:
+                artifact_path.relative_to(execution_root.resolve())
+            except ValueError:
+                fail('CROSS_STAGE_SUCCESSOR_INPUT_ARTIFACT_REF_ESCAPES_ROOT:'+uid)
+            _validate_local_file_artifact(artifact_path,'CROSS_STAGE_SUCCESSOR_INPUT_ARTIFACT:'+uid)
+            declared_hash=str(row.get('content_sha256') or '').strip()
+            actual_hash=_sha256_file(artifact_path)
+            if not declared_hash or declared_hash!=actual_hash:
+                fail('CROSS_STAGE_SUCCESSOR_INPUT_CONTENT_HASH_DRIFT:'+uid)
+            readiness_ref=str(row.get('consumer_readiness_evidence_ref') or '').strip()
+            rr=Path(readiness_ref)
+            if not readiness_ref or rr.is_absolute() or '..' in rr.parts:
+                fail('CROSS_STAGE_SUCCESSOR_INPUT_READINESS_REF_INVALID:'+uid)
+            readiness_path=(execution_root/rr).resolve()
+            try:
+                readiness_path.relative_to(execution_root.resolve())
+            except ValueError:
+                fail('CROSS_STAGE_SUCCESSOR_INPUT_READINESS_REF_ESCAPES_ROOT:'+uid)
+            _validate_local_file_artifact(readiness_path,'CROSS_STAGE_SUCCESSOR_INPUT_READINESS:'+uid)
+        elif status=='EXTERNAL_RECEIPT':
+            if policy.get('successor_external_receipt_input_requires_external_evidence_ref') is not True or not str(row.get('external_evidence_ref') or '').strip():
+                fail('CROSS_STAGE_SUCCESSOR_INPUT_EXTERNAL_EVIDENCE_MISSING:'+uid)
         elif not pass_result and status in {'UNRESOLVED','BLOCKED','MISSING'}:
             unresolved_input_total+=1
         else:
