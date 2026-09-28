@@ -127,6 +127,12 @@ res.append(case('stage07_to_stage11_execution_targets_registered', all(binding_r
 res.append(case('successor_binding_classes_map_to_consuming_operations', set(binding_map.get('STAGE-05') or {})==set(binding_req.get('STAGE-05') or []) and set(binding_map.get('STAGE-11') or {})==set(binding_req.get('STAGE-11') or [])))
 res.append(case('current_state_conflict_cannot_be_overridden_by_terminal_success', state_contract.get('pass_requires_completed_operation_set_exact_registered_stage_operations') is True and state_contract.get('terminal_receipt_or_outer_run_success_may_override_conflict') is False))
 res.append(case('terminal_closure_revalidates_nonempty_current_matrix', matrix_contract.get('matrix_file_must_be_nonempty_parseable_mapping') is True and matrix_contract.get('matrix_rows_must_be_nonempty') is True and matrix_contract.get('matrix_validation_must_run_again_at_terminal_closure') is True and matrix_contract.get('terminal_receipt_or_outer_run_success_may_override_invalid_matrix') is False))
+bdc=(invdoc.get('invariants') or {}).get('BASIC_DESIGN_DOMAIN_STEPWISE_CHECKPOINT') or {}
+cwu=(invdoc.get('invariants') or {}).get('CLOSED_WORK_UNIT_SUCCESSOR_REENTRY') or {}
+res.append(case('basic_design_checkpoint_artifact_type_is_canonical_registered_contract', bdc.get('artifact_type')=='BASIC_DESIGN_DOMAIN_STEPWISE_CHECKPOINT' and bdc.get('invariant_uid')=='GOV-INV-BASIC-DESIGN-DOMAIN-STEPWISE-CHECKPOINT-001'))
+res.append(case('basic_design_checkpoint_cannot_be_summary_substitution', bdc.get('one_checkpoint_per_applicable_domain') is True and bdc.get('aggregate_or_summary_checkpoint_may_replace_domain_instances') is False and bdc.get('checkpoint_type_presence_alone_completion_credit')==0))
+res.append(case('closed_work_unit_cannot_be_reopened_or_resigned_in_place', cwu.get('closed_to_open_transition')=='FORBIDDEN' and cwu.get('mutate_closed_work_unit_to_current_governance_identity')=='FORBIDDEN'))
+res.append(case('reentry_requires_new_work_unit_and_predecessor_lineage', cwu.get('current_reentry_requires_new_work_unit_uid') is True and cwu.get('successor_or_reentry_must_bind_predecessor_work_unit_uid') is True and cwu.get('predecessor_terminal_receipt_may_receive_current_execution_credit') is False))
 stage_steps_doc=yaml.safe_load((PKG.parents[3]/'governance/execution-domains/STAGE/STEPS.yaml').read_text(encoding='utf-8')) or {}
 closure_contract=stage_steps_doc.get('stage_closure_contract') or {}
 audit_catalog_doc=yaml.safe_load((PKG/'10_REGISTRY/AUDIT_CATALOG.yaml').read_text(encoding='utf-8')) or {}
@@ -144,4 +150,4 @@ out=v213.validate(PKG)
 res.append(case('package_stage_execution_invariant_contract_valid', out['status']=='PASS',out))
 out={'suite':'v2.1.13 universal Stage execution invariant multidirection regression','total':len(res),'passed_expectations':sum(x['ok'] for x in res),'results':res}
 print(json.dumps(out,ensure_ascii=False,indent=2))
-raise SystemExit(0 if out['total']==58 and out['passed_expectations']==58 else 1)
+raise SystemExit(0 if out['total']==62 and out['passed_expectations']==62 else 1)
