@@ -81,8 +81,16 @@ def validate(root=ROOT):
     cwu = inv.get('CLOSED_WORK_UNIT_SUCCESSOR_REENTRY') or {}
     if cwu.get('invariant_uid')!='GOV-INV-CLOSED-WORK-UNIT-SUCCESSOR-REENTRY-001' or cwu.get('closed_to_open_transition')!='FORBIDDEN' or cwu.get('mutate_closed_work_unit_to_current_governance_identity')!='FORBIDDEN':
         failures.append('closed_work_unit_reactivation_not_forbidden')
+    reentry_fields={'predecessor_work_unit_uid','predecessor_work_unit_ref','predecessor_terminal_receipt_ref','reentry_authority_ref'}
     if cwu.get('current_reentry_requires_new_work_unit_uid') is not True or cwu.get('predecessor_terminal_receipt_may_receive_current_execution_credit') is not False or cwu.get('successor_or_reentry_must_bind_predecessor_work_unit_uid') is not True:
         failures.append('closed_work_unit_successor_reentry_contract_incomplete')
+    if cwu.get('work_unit_activation_kind_field')!='work_unit_activation_kind' or set(cwu.get('allowed_work_unit_activation_kinds') or [])!={'INITIAL_STAGE_WORK_UNIT','SUCCESSOR_REENTRY_WORK_UNIT'} or cwu.get('current_work_unit_activation_kind_required') is not True:
+        failures.append('closed_work_unit_activation_kind_contract_incomplete')
+    if set(cwu.get('required_successor_reentry_fields') or [])!=reentry_fields or cwu.get('same_work_unit_terminal_receipt_at_entry')!='BLOCK' or cwu.get('predecessor_work_unit_uid_must_differ_from_current') is not True:
+        failures.append('closed_work_unit_successor_lineage_contract_incomplete')
+    for key in ('predecessor_work_unit_ref_must_resolve_physically','predecessor_terminal_receipt_ref_must_resolve_physically','predecessor_stage_uid_must_equal_current_stage_uid','predecessor_governed_unit_uid_must_equal_current_governed_unit_uid','initial_stage_work_unit_forbids_reentry_fields'):
+        if cwu.get(key) is not True:
+            failures.append('closed_work_unit_successor_lineage_flag_missing:'+key)
     cross = inv.get('CROSS_STAGE_MATERIALIZATION_AND_CONSUMER_READINESS') or {}
     input_fields={'input_uid','status','artifact_ref','content_sha256','external_evidence_ref','authority_evidence_ref','consumer_readiness_evidence_ref'}
     if set(cross.get('successor_required_input_row_required_fields') or []) != input_fields:
@@ -305,6 +313,8 @@ def validate(root=ROOT):
     bc = bp.get('stage_execution_invariant_contract') or {}
     if bc.get('registry_uid') != 'REG-STAGE-EXECUTION-INVARIANT-001' or bc.get('validator_uid') != 'VAL-GOV-035' or bc.get('observed_stage_does_not_limit_scope') is not True:
         failures.append('acceptance_blueprint_binding_missing')
+    if bc.get('closed_work_unit_successor_reentry_required') is not True or bc.get('closed_work_unit_in_place_reactivation')!='BLOCK' or bc.get('successor_reentry_new_work_unit_uid_required') is not True or bc.get('successor_reentry_predecessor_terminal_receipt_required') is not True or bc.get('successor_reentry_predecessor_identity_match_required') is not True:
+        failures.append('acceptance_blueprint_closed_work_unit_reentry_contract_missing')
     life = load(root, '10_REGISTRY/GOVERNANCE_LIFECYCLE_STAGE_REGISTRY.yaml')
     if life.get('stage_execution_invariant_ref') != 'REG-STAGE-EXECUTION-INVARIANT-001':
         failures.append('lifecycle_common_binding_missing')
@@ -334,6 +344,10 @@ def validate(root=ROOT):
     universal = life.get('universal_stage_stepwise_execution_contract') or {}
     if universal.get('closed_work_unit_reactivation')!='FORBIDDEN' or universal.get('closed_work_unit_current_mutation')!='FORBIDDEN' or universal.get('reentry_requires_new_work_unit_uid') is not True or universal.get('predecessor_closed_work_unit_evidence_immutable') is not True:
         failures.append('universal_closed_work_unit_successor_reentry_binding_missing')
+    if universal.get('work_unit_activation_kind_field')!='work_unit_activation_kind' or set(universal.get('allowed_work_unit_activation_kinds') or [])!={'INITIAL_STAGE_WORK_UNIT','SUCCESSOR_REENTRY_WORK_UNIT'} or universal.get('current_work_unit_activation_kind_required') is not True or universal.get('same_work_unit_terminal_receipt_at_entry')!='BLOCK':
+        failures.append('universal_closed_work_unit_runtime_binding_missing')
+    if set(universal.get('successor_reentry_required_fields') or [])!={'predecessor_work_unit_uid','predecessor_work_unit_ref','predecessor_terminal_receipt_ref','reentry_authority_ref'} or universal.get('successor_reentry_predecessor_stage_must_equal_current_stage') is not True or universal.get('successor_reentry_predecessor_governed_unit_must_equal_current_governed_unit') is not True or universal.get('initial_stage_work_unit_reentry_fields')!='FORBIDDEN':
+        failures.append('universal_closed_work_unit_lineage_binding_missing')
     st2 = next((x for x in life.get('stages') or [] if x.get('stage_uid') == 'STAGE-02'), {})
     if (st2.get('stage_execution_invariant_gate') or {}).get('required') is not True:
         failures.append('stage02_invariant_gate_binding_missing')
