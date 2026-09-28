@@ -1179,6 +1179,21 @@ receipt.write_text(yaml.safe_dump(obj,sort_keys=False),encoding="utf-8")
       for _dim in (_adapters['stages'][_sid].get('scanner_dimensions') or [])
     }
 
+    # Materialize the minimal synthetic entry artifacts before the re-entry pressure test.
+    # The pressure test validates re-entry semantics only; the full execution fixtures are
+    # populated immediately afterward for active-execution coverage.
+    _seed_work={
+      'artifact_type':'WORK_UNIT','work_unit_uid':_wu,'stage_uid':_sid,
+      'governance_uid':_gov,'governed_unit_uid':_gu,
+      'work_unit_activation_kind':'INITIAL_STAGE_WORK_UNIT','current_status':'ACTIVE'
+    }
+    _seed_scope={
+      'artifact_type':'EXECUTION_SCOPE_MANIFEST','stage_uid':_sid,'work_unit_uid':_wu,
+      'governance_uid':_gov,'governed_unit_uid':_gu
+    }
+    (_wd/'WORK_UNIT.yaml').write_text(yaml.safe_dump(_seed_work,sort_keys=False),encoding='utf-8')
+    (_wd/'CURRENT_EXECUTION_SCOPE_MANIFEST.yaml').write_text(yaml.safe_dump(_seed_scope,sort_keys=False),encoding='utf-8')
+
     # Closed Work Unit reactivation and successor/re-entry lineage pressure.
     _entry_work_rel=f'STAGE_EXECUTION/{_sid}/{_wu}/WORK_UNIT.yaml'
     _entry_work_doc=yaml.safe_load((_wd/'WORK_UNIT.yaml').read_text(encoding='utf-8')) or {}
