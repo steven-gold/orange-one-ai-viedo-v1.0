@@ -1,18 +1,18 @@
 # Product Execution Environment Admission Standard / 產品執行環境准入規範
 
-This document is an external governance standard for Product Execution Environment admission. It is intentionally separated from reusable Mother/Page Stage semantics and is loaded only when the applicable Product Execution Workline admission condition is active.
+This document is an external governance standard for Product Execution Environment admission. It is intentionally separated from reusable Mother/Common Stage semantics and is loaded only when the applicable Product Execution Workline admission condition is active.
 
 <!-- SECTION_UID: WEB-EXT-ADMISSION-01-S000 -->
 ## 0. Scope and Layer Boundary / 範圍與分層邊界
 
-This standard governs Product-governance release selection, governance-revision transition, Application Baseline admission/materialization, and their audits. It MUST_NOT enter the reusable Page Stage normative denominator, MUST_NOT alter generic Stage operation/input/output universes, and MUST_NOT make any concrete repository, branch, framework, provider, or application-source location part of Mother/Stage common semantics.
+This standard governs Product-governance release selection, governance-revision transition, Application Baseline admission/materialization, and their audits. It MUST_NOT enter the reusable Common Stage normative denominator, MUST_NOT alter generic Stage operation/input/output universes, and MUST_NOT make any concrete repository, branch, framework, provider, or application-source location part of Mother/Stage common semantics.
 
 Product-specific repository/branch/source values are runtime/admission bindings owned by the Product Execution Workline or external environment authority. The reusable Stage core may consume only the resulting admitted authority/evidence when a stage operation actually requires it.
 
 <!-- SECTION_UID: WEB-EXT-ADMISSION-01-S001 -->
 ## 1. Product Governance Release Selection and Revision Transition / 產品治理發布選擇與版本轉移
 
-**Scope isolation:** This section is an external Product Execution Environment admission contract. It is NOT part of the reusable Page Stage normative denominator, MUST_NOT change the Page Stage operation/input/output universe, and grants zero Page Stage definition or completion credit. It applies only when a concrete Product Execution Workline elects to consume a released governance revision.
+**Scope isolation:** This section is an external Product Execution Environment admission contract. It is NOT part of the reusable Common Stage normative denominator, MUST_NOT change the Common Stage operation/input/output universe, and grants zero Common Stage definition or completion credit. It applies only when a concrete Product Execution Workline elects to consume a released governance revision.
 
 When a concrete Product Execution Workline explicitly selects released-governance execution mode, effectful Product Stage execution under that mode MUST NOT follow a moving governance branch, tag, latest-tip convention, chat-selected revision, or candidate workline. Under that mode, the Product Execution Workline MUST materialize exactly one Current `PRODUCT_SELECTED_GOVERNANCE_RELEASE` and every effectful Product Stage workflow claiming released-governance admission credit MUST read that product-owned selection before loading governance. This contract MUST_NOT block Common Stage execution that is not operating under released-governance mode.
 
@@ -27,7 +27,7 @@ When the Current Product scope/matrix/evidence is still bound to an older govern
 <!-- SECTION_UID: WEB-EXT-ADMISSION-01-S002 -->
 ## 2. Application Baseline Admission and Current-Workline Materialization / 應用基線准入與目前工作線實體化
 
-**Scope isolation:** This section is a conditional external Product/Application admission contract, not a universal Page Stage requirement. It applies only when a concrete Product Execution Workline lacks an admitted Current application baseline. It MUST_NOT be included in the reusable Page Stage normative denominator, MUST_NOT make any named branch/repository/framework part of Mother semantics, and grants zero Page Stage definition or completion credit.
+**Scope isolation:** This section is a conditional external Product/Application admission contract, not a universal Common Stage requirement. It applies only when a concrete Product Execution Workline lacks an admitted Current application baseline. It MUST_NOT be included in the reusable Common Stage normative denominator, MUST_NOT make any named branch/repository/framework part of Mother semantics, and grants zero Common Stage definition or completion credit.
 
 A missing Current `APPLICATION_ROOT` is not a request for AI or the user to choose another branch. When a usable application exists only outside the Registry-selected Product Execution Workline, that source is provenance only and the implementation-capability admission result is `APPLICATION_BASELINE_ADMISSION_REQUIRED` until a governed baseline-admission transaction materializes an allowed baseline into the Current Product Execution Workline.
 
@@ -44,7 +44,7 @@ A non-Current branch containing the desired application, a non-empty target stri
 <!-- SECTION_UID: WEB-EXT-ADMISSION-01-S003 -->
 ## 3. Product Governance Release Selection and Transition Audit / 產品治理發布選擇與轉移稽核
 
-**Scope isolation:** This audit applies only to an external Product Execution Environment that consumes a released governance revision. It is excluded from the reusable Page Stage normative denominator and cannot grant or withhold generic Page Stage definition completeness by itself.
+**Scope isolation:** This audit applies only to an external Product Execution Environment that consumes a released governance revision. It is excluded from the reusable Common Stage normative denominator and cannot grant or withhold generic Common Stage definition completeness by itself.
 
 Audit MUST prove that every Product Stage execution claiming released-governance admission credit used one product-owned `PRODUCT_SELECTED_GOVERNANCE_RELEASE` bound to an exact immutable released governance commit/tree/UID/revision and fresh post-promotion reverification evidence. A workflow checkout of a moving governance branch/tag, a candidate governance identity, a selected SHA different from the actually loaded checkout, or a missing/invalid `PRODUCT_RELEASED_GOVERNANCE_LOAD_RECEIPT` is a blocker and receives zero Product Stage credit.
 
@@ -55,7 +55,7 @@ Negative regression MUST include at least: selected SHA differs from loaded gove
 <!-- SECTION_UID: WEB-EXT-ADMISSION-01-S004 -->
 ## 4. Application Baseline Admission and Materialization Audit / 應用基線准入與實體化稽核
 
-**Scope isolation:** This audit is conditional on an external Product/Application baseline-admission transaction. It is not a universal Page Stage audit dimension and MUST_NOT make a repository branch, application framework, or source-migration path part of common Page Stage semantics.
+**Scope isolation:** This audit is conditional on an external Product/Application baseline-admission transaction. It is not a universal Common Stage audit dimension and MUST_NOT make a repository branch, application framework, or source-migration path part of common Common Stage semantics.
 
 Audit MUST distinguish source provenance from Current implementation target. When an application baseline originates from a non-Current branch/repository snapshot, Audit MUST require a pre-existing `APPLICATION_BASELINE_ADMISSION_MANIFEST`, bounded materialization transaction and `APPLICATION_BASELINE_MATERIALIZATION_RECEIPT` before that content can satisfy the Current `APPLICATION_ROOT`.
 
