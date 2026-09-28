@@ -1,0 +1,295 @@
+artifact_type: V232_REALIGNMENT_PLAN
+status: PLANNED
+normative_authority: false
+target_governance_uid: GOV-REV-20260927-GOVERNANCE-IDENTITY-NEGATIVE-TRACE-AUDITOR-INDEPENDENCE-HARDENING
+target_display_version: v2.2.33
+authorization_record_url: https://github.com/steven-gold/orange-one-ai-viedo-v1.0/issues/59
+scope_units:
+- GLOBAL-HOME-SHELL-NAVIGATION
+- WB01-DASHBOARD
+scope_stages:
+- STAGE-01
+- STAGE-02
+- STAGE-03
+- STAGE-04
+finding_summary:
+  compliant:
+  - All STAGE-01..04 stage outputs are physically materialized for both governed units.
+  - STAGE-03 and STAGE-04 operation identities already match the selected profile.
+  - STAGE-02 governed entity completeness artifacts (inventory/operation matrix/hierarchy/scorecard) are present.
+  - STAGE-01 source projection admission already matches the v2.2.33 schema and freeze receipt exists.
+  - STAGE-04 basic design binds 13 domains by exact UID+hash, is frozen and human-approved, with zero hidden defects.
+  drift:
+  - STAGE-02/03/04 normative matrices do not represent WEB-GOV-01-S083A.
+  - STAGE-01 operation/output identity still uses PAGE_BASE_BLUEPRINT*; selected profile requires GOVERNED_UNIT_BASE_BLUEPRINT*.
+  - STAGE-02 operation/output identity still uses PAGE_CONSTRUCTION_SPEC_PACKAGE*; selected profile requires GOVERNED_UNIT_CONSTRUCTION_SPEC_PACKAGE*.
+  - All work unit operation bindings lack the required applicability field and STAGE-01..03 lack executor_protocol/operation_receipt_ref.
+  - Matrices and artifacts are signed with the predecessor governance_uid; current identity differs.
+  - STAGE-01/STAGE-03 bind executor_owner to the common engine, which the engine forbids as recursive executor.
+items:
+- item_uid: RA-001
+  category: MATRIX_IDENTITY_RESIGN
+  stage_uid: STAGE-01
+  governed_unit_token: GLOBAL-HOME-SHELL-NAVIGATION
+  work_unit_uid: WU-STAGE01-GLOBAL-HOME-SHELL-NAVIGATION-001
+  current_value: GOV-REV-20260925-NORMATIVE-EXECUTION-MATRIX
+  target_value: GOV-REV-20260927-GOVERNANCE-IDENTITY-NEGATIVE-TRACE-AUDITOR-INDEPENDENCE-HARDENING
+  target_ref: STAGE_EXECUTION/STAGE-01/WU-STAGE01-GLOBAL-HOME-SHELL-NAVIGATION-001/NORMATIVE_EXECUTION_MATRIX.yaml
+- item_uid: RA-002
+  category: BINDING_APPLICABILITY_COMPLETE
+  stage_uid: STAGE-01
+  governed_unit_token: GLOBAL-HOME-SHELL-NAVIGATION
+  work_unit_uid: WU-STAGE01-GLOBAL-HOME-SHELL-NAVIGATION-001
+  target_value: applicability=REQUIRED
+  plus_fields:
+  - executor_protocol=PYTHON_STAGE_OPERATION_V1
+  - operation_receipt_ref
+  target_ref: STAGE_EXECUTION/STAGE-01/WU-STAGE01-GLOBAL-HOME-SHELL-NAVIGATION-001/WORK_UNIT.yaml
+- item_uid: RA-003
+  category: MATRIX_IDENTITY_RESIGN
+  stage_uid: STAGE-01
+  governed_unit_token: WB01-DASHBOARD
+  work_unit_uid: WU-STAGE01-WB01-DASHBOARD-001
+  current_value: GOV-REV-20260925-NORMATIVE-EXECUTION-MATRIX
+  target_value: GOV-REV-20260927-GOVERNANCE-IDENTITY-NEGATIVE-TRACE-AUDITOR-INDEPENDENCE-HARDENING
+  target_ref: STAGE_EXECUTION/STAGE-01/WU-STAGE01-WB01-DASHBOARD-001/NORMATIVE_EXECUTION_MATRIX.yaml
+- item_uid: RA-004
+  category: BINDING_APPLICABILITY_COMPLETE
+  stage_uid: STAGE-01
+  governed_unit_token: WB01-DASHBOARD
+  work_unit_uid: WU-STAGE01-WB01-DASHBOARD-001
+  target_value: applicability=REQUIRED
+  plus_fields:
+  - executor_protocol=PYTHON_STAGE_OPERATION_V1
+  - operation_receipt_ref
+  target_ref: STAGE_EXECUTION/STAGE-01/WU-STAGE01-WB01-DASHBOARD-001/WORK_UNIT.yaml
+- item_uid: RA-005
+  category: MATRIX_IDENTITY_RESIGN
+  stage_uid: STAGE-02
+  governed_unit_token: GLOBAL-HOME-SHELL-NAVIGATION
+  work_unit_uid: WU-STAGE02-GLOBAL-HOME-SHELL-NAVIGATION-001
+  current_value: GOV-REV-20260925-NORMATIVE-EXECUTION-MATRIX
+  target_value: GOV-REV-20260927-GOVERNANCE-IDENTITY-NEGATIVE-TRACE-AUDITOR-INDEPENDENCE-HARDENING
+  target_ref: STAGE_EXECUTION/STAGE-02/WU-STAGE02-GLOBAL-HOME-SHELL-NAVIGATION-001/NORMATIVE_EXECUTION_MATRIX.yaml
+- item_uid: RA-006
+  category: BINDING_APPLICABILITY_COMPLETE
+  stage_uid: STAGE-02
+  governed_unit_token: GLOBAL-HOME-SHELL-NAVIGATION
+  work_unit_uid: WU-STAGE02-GLOBAL-HOME-SHELL-NAVIGATION-001
+  target_value: applicability=REQUIRED
+  plus_fields:
+  - executor_protocol=PYTHON_STAGE_OPERATION_V1
+  - operation_receipt_ref
+  target_ref: STAGE_EXECUTION/STAGE-02/WU-STAGE02-GLOBAL-HOME-SHELL-NAVIGATION-001/WORK_UNIT.yaml
+- item_uid: RA-007
+  category: MATRIX_IDENTITY_RESIGN
+  stage_uid: STAGE-02
+  governed_unit_token: WB01-DASHBOARD
+  work_unit_uid: WU-STAGE02-WB01-DASHBOARD-001
+  current_value: GOV-REV-20260925-NORMATIVE-EXECUTION-MATRIX
+  target_value: GOV-REV-20260927-GOVERNANCE-IDENTITY-NEGATIVE-TRACE-AUDITOR-INDEPENDENCE-HARDENING
+  target_ref: STAGE_EXECUTION/STAGE-02/WU-STAGE02-WB01-DASHBOARD-001/NORMATIVE_EXECUTION_MATRIX.yaml
+- item_uid: RA-008
+  category: BINDING_APPLICABILITY_COMPLETE
+  stage_uid: STAGE-02
+  governed_unit_token: WB01-DASHBOARD
+  work_unit_uid: WU-STAGE02-WB01-DASHBOARD-001
+  target_value: applicability=REQUIRED
+  plus_fields:
+  - executor_protocol=PYTHON_STAGE_OPERATION_V1
+  - operation_receipt_ref
+  target_ref: STAGE_EXECUTION/STAGE-02/WU-STAGE02-WB01-DASHBOARD-001/WORK_UNIT.yaml
+- item_uid: RA-009
+  category: MATRIX_IDENTITY_RESIGN
+  stage_uid: STAGE-03
+  governed_unit_token: GLOBAL-HOME-SHELL-NAVIGATION
+  work_unit_uid: WU-STAGE03-GLOBAL-HOME-SHELL-NAVIGATION-001
+  current_value: GOV-REV-20260925-NORMATIVE-EXECUTION-MATRIX
+  target_value: GOV-REV-20260927-GOVERNANCE-IDENTITY-NEGATIVE-TRACE-AUDITOR-INDEPENDENCE-HARDENING
+  target_ref: STAGE_EXECUTION/STAGE-03/WU-STAGE03-GLOBAL-HOME-SHELL-NAVIGATION-001/NORMATIVE_EXECUTION_MATRIX.yaml
+- item_uid: RA-010
+  category: BINDING_APPLICABILITY_COMPLETE
+  stage_uid: STAGE-03
+  governed_unit_token: GLOBAL-HOME-SHELL-NAVIGATION
+  work_unit_uid: WU-STAGE03-GLOBAL-HOME-SHELL-NAVIGATION-001
+  target_value: applicability=REQUIRED
+  plus_fields:
+  - executor_protocol=PYTHON_STAGE_OPERATION_V1
+  - operation_receipt_ref
+  target_ref: STAGE_EXECUTION/STAGE-03/WU-STAGE03-GLOBAL-HOME-SHELL-NAVIGATION-001/WORK_UNIT.yaml
+- item_uid: RA-011
+  category: MATRIX_IDENTITY_RESIGN
+  stage_uid: STAGE-03
+  governed_unit_token: WB01-DASHBOARD
+  work_unit_uid: WU-STAGE03-WB01-DASHBOARD-001
+  current_value: GOV-REV-20260925-NORMATIVE-EXECUTION-MATRIX
+  target_value: GOV-REV-20260927-GOVERNANCE-IDENTITY-NEGATIVE-TRACE-AUDITOR-INDEPENDENCE-HARDENING
+  target_ref: STAGE_EXECUTION/STAGE-03/WU-STAGE03-WB01-DASHBOARD-001/NORMATIVE_EXECUTION_MATRIX.yaml
+- item_uid: RA-012
+  category: BINDING_APPLICABILITY_COMPLETE
+  stage_uid: STAGE-03
+  governed_unit_token: WB01-DASHBOARD
+  work_unit_uid: WU-STAGE03-WB01-DASHBOARD-001
+  target_value: applicability=REQUIRED
+  plus_fields:
+  - executor_protocol=PYTHON_STAGE_OPERATION_V1
+  - operation_receipt_ref
+  target_ref: STAGE_EXECUTION/STAGE-03/WU-STAGE03-WB01-DASHBOARD-001/WORK_UNIT.yaml
+- item_uid: RA-013
+  category: MATRIX_IDENTITY_RESIGN
+  stage_uid: STAGE-04
+  governed_unit_token: GLOBAL-HOME-SHELL-NAVIGATION
+  work_unit_uid: WU-STAGE04-GLOBAL-HOME-SHELL-NAVIGATION-001
+  current_value: GOV-REV-20260925-NORMATIVE-EXECUTION-MATRIX
+  target_value: GOV-REV-20260927-GOVERNANCE-IDENTITY-NEGATIVE-TRACE-AUDITOR-INDEPENDENCE-HARDENING
+  target_ref: STAGE_EXECUTION/STAGE-04/WU-STAGE04-GLOBAL-HOME-SHELL-NAVIGATION-001/NORMATIVE_EXECUTION_MATRIX.yaml
+- item_uid: RA-014
+  category: BINDING_APPLICABILITY_COMPLETE
+  stage_uid: STAGE-04
+  governed_unit_token: GLOBAL-HOME-SHELL-NAVIGATION
+  work_unit_uid: WU-STAGE04-GLOBAL-HOME-SHELL-NAVIGATION-001
+  target_value: applicability=REQUIRED
+  plus_fields:
+  - executor_protocol=PYTHON_STAGE_OPERATION_V1
+  - operation_receipt_ref
+  target_ref: STAGE_EXECUTION/STAGE-04/WU-STAGE04-GLOBAL-HOME-SHELL-NAVIGATION-001/WORK_UNIT.yaml
+- item_uid: RA-015
+  category: MATRIX_IDENTITY_RESIGN
+  stage_uid: STAGE-04
+  governed_unit_token: WB01-DASHBOARD
+  work_unit_uid: WU-STAGE04-WB01-DASHBOARD-001
+  current_value: GOV-REV-20260925-NORMATIVE-EXECUTION-MATRIX
+  target_value: GOV-REV-20260927-GOVERNANCE-IDENTITY-NEGATIVE-TRACE-AUDITOR-INDEPENDENCE-HARDENING
+  target_ref: STAGE_EXECUTION/STAGE-04/WU-STAGE04-WB01-DASHBOARD-001/NORMATIVE_EXECUTION_MATRIX.yaml
+- item_uid: RA-016
+  category: BINDING_APPLICABILITY_COMPLETE
+  stage_uid: STAGE-04
+  governed_unit_token: WB01-DASHBOARD
+  work_unit_uid: WU-STAGE04-WB01-DASHBOARD-001
+  target_value: applicability=REQUIRED
+  plus_fields:
+  - executor_protocol=PYTHON_STAGE_OPERATION_V1
+  - operation_receipt_ref
+  target_ref: STAGE_EXECUTION/STAGE-04/WU-STAGE04-WB01-DASHBOARD-001/WORK_UNIT.yaml
+- item_uid: RA-017
+  category: SECTION_REPRESENT
+  stage_uid: STAGE-02
+  governed_unit_token: GLOBAL-HOME-SHELL-NAVIGATION
+  work_unit_uid: WU-STAGE02-GLOBAL-HOME-SHELL-NAVIGATION-001
+  normative_section_uid: WEB-GOV-01-S083A
+  applicability: NOT_APPLICABLE_WITH_AUTHORITY
+  authority_evidence_ref: STAGE_EXECUTION/SHARED_AUTHORITY/V232_REALIGNMENT/s083a_scope_authority.yaml
+  target_ref: STAGE_EXECUTION/STAGE-02/WU-STAGE02-GLOBAL-HOME-SHELL-NAVIGATION-001/NORMATIVE_EXECUTION_MATRIX.yaml
+- item_uid: RA-018
+  category: SECTION_REPRESENT
+  stage_uid: STAGE-02
+  governed_unit_token: WB01-DASHBOARD
+  work_unit_uid: WU-STAGE02-WB01-DASHBOARD-001
+  normative_section_uid: WEB-GOV-01-S083A
+  applicability: NOT_APPLICABLE_WITH_AUTHORITY
+  authority_evidence_ref: STAGE_EXECUTION/SHARED_AUTHORITY/V232_REALIGNMENT/s083a_scope_authority.yaml
+  target_ref: STAGE_EXECUTION/STAGE-02/WU-STAGE02-WB01-DASHBOARD-001/NORMATIVE_EXECUTION_MATRIX.yaml
+- item_uid: RA-019
+  category: SECTION_REPRESENT
+  stage_uid: STAGE-03
+  governed_unit_token: GLOBAL-HOME-SHELL-NAVIGATION
+  work_unit_uid: WU-STAGE03-GLOBAL-HOME-SHELL-NAVIGATION-001
+  normative_section_uid: WEB-GOV-01-S083A
+  applicability: NOT_APPLICABLE_WITH_AUTHORITY
+  authority_evidence_ref: STAGE_EXECUTION/SHARED_AUTHORITY/V232_REALIGNMENT/s083a_scope_authority.yaml
+  target_ref: STAGE_EXECUTION/STAGE-03/WU-STAGE03-GLOBAL-HOME-SHELL-NAVIGATION-001/NORMATIVE_EXECUTION_MATRIX.yaml
+- item_uid: RA-020
+  category: SECTION_REPRESENT
+  stage_uid: STAGE-03
+  governed_unit_token: WB01-DASHBOARD
+  work_unit_uid: WU-STAGE03-WB01-DASHBOARD-001
+  normative_section_uid: WEB-GOV-01-S083A
+  applicability: NOT_APPLICABLE_WITH_AUTHORITY
+  authority_evidence_ref: STAGE_EXECUTION/SHARED_AUTHORITY/V232_REALIGNMENT/s083a_scope_authority.yaml
+  target_ref: STAGE_EXECUTION/STAGE-03/WU-STAGE03-WB01-DASHBOARD-001/NORMATIVE_EXECUTION_MATRIX.yaml
+- item_uid: RA-021
+  category: SECTION_REPRESENT
+  stage_uid: STAGE-04
+  governed_unit_token: GLOBAL-HOME-SHELL-NAVIGATION
+  work_unit_uid: WU-STAGE04-GLOBAL-HOME-SHELL-NAVIGATION-001
+  normative_section_uid: WEB-GOV-01-S083A
+  applicability: REQUIRED
+  required_rows: 13
+  target_artifact_type: BASIC_DESIGN_DOMAIN_STEPWISE_CHECKPOINT
+  target_ref: STAGE_EXECUTION/STAGE-04/WU-STAGE04-GLOBAL-HOME-SHELL-NAVIGATION-001/NORMATIVE_EXECUTION_MATRIX.yaml
+  evidence_state: TO_MATERIALIZE
+- item_uid: RA-022
+  category: SECTION_REPRESENT
+  stage_uid: STAGE-04
+  governed_unit_token: WB01-DASHBOARD
+  work_unit_uid: WU-STAGE04-WB01-DASHBOARD-001
+  normative_section_uid: WEB-GOV-01-S083A
+  applicability: REQUIRED
+  required_rows: 13
+  target_artifact_type: BASIC_DESIGN_DOMAIN_STEPWISE_CHECKPOINT
+  target_ref: STAGE_EXECUTION/STAGE-04/WU-STAGE04-WB01-DASHBOARD-001/NORMATIVE_EXECUTION_MATRIX.yaml
+  evidence_state: TO_MATERIALIZE
+- item_uid: RA-023
+  category: OPERATION_OUTPUT_RENAME
+  stage_uid: STAGE-01
+  governed_unit_token: GLOBAL-HOME-SHELL-NAVIGATION
+  current_operation_uid: PAGE_BASE_BLUEPRINT_COMPILE
+  target_operation_uid: GOVERNED_UNIT_BASE_BLUEPRINT_COMPILE
+  current_output_uid: PAGE_BASE_BLUEPRINT
+  target_output_uid: GOVERNED_UNIT_BASE_BLUEPRINT
+- item_uid: RA-024
+  category: OPERATION_OUTPUT_RENAME
+  stage_uid: STAGE-01
+  governed_unit_token: WB01-DASHBOARD
+  current_operation_uid: PAGE_BASE_BLUEPRINT_COMPILE
+  target_operation_uid: GOVERNED_UNIT_BASE_BLUEPRINT_COMPILE
+  current_output_uid: PAGE_BASE_BLUEPRINT
+  target_output_uid: GOVERNED_UNIT_BASE_BLUEPRINT
+- item_uid: RA-025
+  category: OPERATION_OUTPUT_RENAME
+  stage_uid: STAGE-02
+  governed_unit_token: GLOBAL-HOME-SHELL-NAVIGATION
+  current_operation_uid: PAGE_CONSTRUCTION_SPEC_COMPILE
+  target_operation_uid: GOVERNED_UNIT_CONSTRUCTION_SPEC_COMPILE
+  current_output_uid: PAGE_CONSTRUCTION_SPEC_PACKAGE
+  target_output_uid: GOVERNED_UNIT_CONSTRUCTION_SPEC_PACKAGE
+- item_uid: RA-026
+  category: OPERATION_OUTPUT_RENAME
+  stage_uid: STAGE-02
+  governed_unit_token: WB01-DASHBOARD
+  current_operation_uid: PAGE_CONSTRUCTION_SPEC_COMPILE
+  target_operation_uid: GOVERNED_UNIT_CONSTRUCTION_SPEC_COMPILE
+  current_output_uid: PAGE_CONSTRUCTION_SPEC_PACKAGE
+  target_output_uid: GOVERNED_UNIT_CONSTRUCTION_SPEC_PACKAGE
+- item_uid: RA-027
+  category: EXECUTOR_OWNER_REPLACE
+  stage_uid: STAGE-01
+  governed_unit_token: GLOBAL-HOME-SHELL-NAVIGATION
+  current_value: governance/ci/stage_execution_engine.py
+  target_value: .github/scripts/<stage>_op_<NN>_<op>.py
+  reason: COMMON_ENGINE_RECURSIVE_EXECUTOR_FORBIDDEN
+  executor_owner_status: TO_CREATE
+- item_uid: RA-028
+  category: EXECUTOR_OWNER_REPLACE
+  stage_uid: STAGE-01
+  governed_unit_token: WB01-DASHBOARD
+  current_value: governance/ci/stage_execution_engine.py
+  target_value: .github/scripts/<stage>_op_<NN>_<op>.py
+  reason: COMMON_ENGINE_RECURSIVE_EXECUTOR_FORBIDDEN
+  executor_owner_status: TO_CREATE
+- item_uid: RA-029
+  category: EXECUTOR_OWNER_REPLACE
+  stage_uid: STAGE-03
+  governed_unit_token: GLOBAL-HOME-SHELL-NAVIGATION
+  current_value: governance/ci/stage_execution_engine.py
+  target_value: .github/scripts/<stage>_op_<NN>_<op>.py
+  reason: COMMON_ENGINE_RECURSIVE_EXECUTOR_FORBIDDEN
+  executor_owner_status: TO_CREATE
+- item_uid: RA-030
+  category: EXECUTOR_OWNER_REPLACE
+  stage_uid: STAGE-03
+  governed_unit_token: WB01-DASHBOARD
+  current_value: governance/ci/stage_execution_engine.py
+  target_value: .github/scripts/<stage>_op_<NN>_<op>.py
+  reason: COMMON_ENGINE_RECURSIVE_EXECUTOR_FORBIDDEN
+  executor_owner_status: TO_CREATE

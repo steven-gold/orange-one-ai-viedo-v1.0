@@ -1,0 +1,641 @@
+artifact_type: V232_S083A_MATRIX_ROWS
+normative_section_uid: WEB-GOV-01-S083A
+target_governance_uid: GOV-REV-20260927-GOVERNANCE-IDENTITY-NEGATIVE-TRACE-AUDITOR-INDEPENDENCE-HARDENING
+na_authority_ref: STAGE_EXECUTION/SHARED_AUTHORITY/V232_REALIGNMENT/s083a_scope_authority.yaml
+units:
+- governed_unit_token: GLOBAL-HOME-SHELL-NAVIGATION
+  rows_by_stage:
+    STAGE-02:
+    - matrix_row_uid: S083A-HOME-STAGE-02-NA
+      normative_section_uid: WEB-GOV-01-S083A
+      requirement_uid: S083A-BASIC-DESIGN-STEPWISE-SCOPE
+      required_artifact_type: S083A_SCOPE_AUTHORITY
+      artifact_ref: STAGE_EXECUTION/SHARED_AUTHORITY/V232_REALIGNMENT/s083a_scope_authority.yaml
+      artifact_owner: STAGE_EXECUTION/STAGE-02/WU-STAGE02-GLOBAL-HOME-SHELL-NAVIGATION-001/WORK_UNIT.yaml
+      row_denominator_source: CURRENT_LIFECYCLE_REQUIRED_NORMATIVE_SECTION
+      row_identity: WEB-GOV-01-S083A
+      field_path:
+      - scope_resolution
+      applicability: NOT_APPLICABLE_WITH_AUTHORITY
+      authority_evidence_ref: STAGE_EXECUTION/SHARED_AUTHORITY/V232_REALIGNMENT/s083a_scope_authority.yaml
+      validator_uid: VAL-GOV-008
+      validator_check_id: S083A_SCOPE_OWNERSHIP_AUTHORITY
+      evidence_ref: STAGE_EXECUTION/SHARED_AUTHORITY/V232_REALIGNMENT/s083a_scope_authority.yaml
+      closure_gate: CURRENT_GOVERNED_UNIT_STAGE2_CLOSED
+      failure_disposition: REPAIR_AT_OWNING_STAGE
+      reentry_owner: STAGE-04
+    STAGE-03:
+    - matrix_row_uid: S083A-HOME-STAGE-03-NA
+      normative_section_uid: WEB-GOV-01-S083A
+      requirement_uid: S083A-BASIC-DESIGN-STEPWISE-SCOPE
+      required_artifact_type: S083A_SCOPE_AUTHORITY
+      artifact_ref: STAGE_EXECUTION/SHARED_AUTHORITY/V232_REALIGNMENT/s083a_scope_authority.yaml
+      artifact_owner: STAGE_EXECUTION/STAGE-03/WU-STAGE03-GLOBAL-HOME-SHELL-NAVIGATION-001/WORK_UNIT.yaml
+      row_denominator_source: CURRENT_LIFECYCLE_REQUIRED_NORMATIVE_SECTION
+      row_identity: WEB-GOV-01-S083A
+      field_path:
+      - scope_resolution
+      applicability: NOT_APPLICABLE_WITH_AUTHORITY
+      authority_evidence_ref: STAGE_EXECUTION/SHARED_AUTHORITY/V232_REALIGNMENT/s083a_scope_authority.yaml
+      validator_uid: VAL-GOV-029
+      validator_check_id: S083A_SCOPE_OWNERSHIP_AUTHORITY
+      evidence_ref: STAGE_EXECUTION/SHARED_AUTHORITY/V232_REALIGNMENT/s083a_scope_authority.yaml
+      closure_gate: CURRENT_GOVERNED_UNIT_STAGE3_CLOSED
+      failure_disposition: REPAIR_AT_OWNING_STAGE
+      reentry_owner: STAGE-04
+    STAGE-04:
+    - matrix_row_uid: S083A-HOME-S04-DOMAIN-01
+      normative_section_uid: WEB-GOV-01-S083A
+      requirement_uid: S083A-STEPWISE-DOMAIN-ARCHITECTURE
+      required_artifact_type: BASIC_DESIGN_DOMAIN_STEPWISE_CHECKPOINT
+      artifact_ref: STAGE_EXECUTION/STAGE-04/WU-STAGE04-GLOBAL-HOME-SHELL-NAVIGATION-001/EVIDENCE/DOMAIN_STEPWISE/ARCHITECTURE.yaml
+      artifact_owner: STAGE_EXECUTION/STAGE-04/WU-STAGE04-GLOBAL-HOME-SHELL-NAVIGATION-001/EVIDENCE/OPERATION_RECEIPTS/BASIC_DESIGN_PACKAGE_COMPILE.yaml
+      row_denominator_source: STAGE_EXECUTION/STAGE-04/WU-STAGE04-GLOBAL-HOME-SHELL-NAVIGATION-001/BASIC_DESIGN_PACKAGE.yaml#design_domains
+      row_identity: ARCHITECTURE
+      field_path:
+      - domain_uid
+      applicability: REQUIRED
+      validator_uid: VAL-GOV-006
+      validator_check_id: BASIC_DESIGN_STEPWISE_DOMAIN_COMPLETE
+      evidence_ref: STAGE_EXECUTION/STAGE-04/WU-STAGE04-GLOBAL-HOME-SHELL-NAVIGATION-001/EVIDENCE/DOMAIN_STEPWISE/ARCHITECTURE.yaml
+      closure_gate: CURRENT_GOVERNED_UNIT_FOUNDATION_FROZEN
+      failure_disposition: REPAIR_AT_OWNING_BASIC_DESIGN_STEP
+      reentry_owner: BASIC_DESIGN
+      evidence_state: TO_MATERIALIZE
+      domain_current_resolution: PASS
+      domain_bound_artifact_total: 2
+    - matrix_row_uid: S083A-HOME-S04-DOMAIN-02
+      normative_section_uid: WEB-GOV-01-S083A
+      requirement_uid: S083A-STEPWISE-DOMAIN-BUSINESS_ENTITY_AND_OPERATION
+      required_artifact_type: BASIC_DESIGN_DOMAIN_STEPWISE_CHECKPOINT
+      artifact_ref: STAGE_EXECUTION/STAGE-04/WU-STAGE04-GLOBAL-HOME-SHELL-NAVIGATION-001/EVIDENCE/DOMAIN_STEPWISE/BUSINESS_ENTITY_AND_OPERATION.yaml
+      artifact_owner: STAGE_EXECUTION/STAGE-04/WU-STAGE04-GLOBAL-HOME-SHELL-NAVIGATION-001/EVIDENCE/OPERATION_RECEIPTS/BASIC_DESIGN_PACKAGE_COMPILE.yaml
+      row_denominator_source: STAGE_EXECUTION/STAGE-04/WU-STAGE04-GLOBAL-HOME-SHELL-NAVIGATION-001/BASIC_DESIGN_PACKAGE.yaml#design_domains
+      row_identity: BUSINESS_ENTITY_AND_OPERATION
+      field_path:
+      - domain_uid
+      applicability: REQUIRED
+      validator_uid: VAL-GOV-006
+      validator_check_id: BASIC_DESIGN_STEPWISE_DOMAIN_COMPLETE
+      evidence_ref: STAGE_EXECUTION/STAGE-04/WU-STAGE04-GLOBAL-HOME-SHELL-NAVIGATION-001/EVIDENCE/DOMAIN_STEPWISE/BUSINESS_ENTITY_AND_OPERATION.yaml
+      closure_gate: CURRENT_GOVERNED_UNIT_FOUNDATION_FROZEN
+      failure_disposition: REPAIR_AT_OWNING_BASIC_DESIGN_STEP
+      reentry_owner: BASIC_DESIGN
+      evidence_state: TO_MATERIALIZE
+      domain_current_resolution: PASS
+      domain_bound_artifact_total: 3
+    - matrix_row_uid: S083A-HOME-S04-DOMAIN-03
+      normative_section_uid: WEB-GOV-01-S083A
+      requirement_uid: S083A-STEPWISE-DOMAIN-DESIGN_REVIEW_AND_FREEZE_STATE
+      required_artifact_type: BASIC_DESIGN_DOMAIN_STEPWISE_CHECKPOINT
+      artifact_ref: STAGE_EXECUTION/STAGE-04/WU-STAGE04-GLOBAL-HOME-SHELL-NAVIGATION-001/EVIDENCE/DOMAIN_STEPWISE/DESIGN_REVIEW_AND_FREEZE_STATE.yaml
+      artifact_owner: STAGE_EXECUTION/STAGE-04/WU-STAGE04-GLOBAL-HOME-SHELL-NAVIGATION-001/EVIDENCE/OPERATION_RECEIPTS/BASIC_DESIGN_PACKAGE_COMPILE.yaml
+      row_denominator_source: STAGE_EXECUTION/STAGE-04/WU-STAGE04-GLOBAL-HOME-SHELL-NAVIGATION-001/BASIC_DESIGN_PACKAGE.yaml#design_domains
+      row_identity: DESIGN_REVIEW_AND_FREEZE_STATE
+      field_path:
+      - domain_uid
+      applicability: REQUIRED
+      validator_uid: VAL-GOV-006
+      validator_check_id: BASIC_DESIGN_STEPWISE_DOMAIN_COMPLETE
+      evidence_ref: STAGE_EXECUTION/STAGE-04/WU-STAGE04-GLOBAL-HOME-SHELL-NAVIGATION-001/EVIDENCE/DOMAIN_STEPWISE/DESIGN_REVIEW_AND_FREEZE_STATE.yaml
+      closure_gate: CURRENT_GOVERNED_UNIT_FOUNDATION_FROZEN
+      failure_disposition: REPAIR_AT_OWNING_BASIC_DESIGN_STEP
+      reentry_owner: BASIC_DESIGN
+      evidence_state: TO_MATERIALIZE
+      domain_current_resolution: PASS
+      domain_bound_artifact_total: 2
+    - matrix_row_uid: S083A-HOME-S04-DOMAIN-04
+      normative_section_uid: WEB-GOV-01-S083A
+      requirement_uid: S083A-STEPWISE-DOMAIN-FUNCTION_VISUAL_TRACEABILITY
+      required_artifact_type: BASIC_DESIGN_DOMAIN_STEPWISE_CHECKPOINT
+      artifact_ref: STAGE_EXECUTION/STAGE-04/WU-STAGE04-GLOBAL-HOME-SHELL-NAVIGATION-001/EVIDENCE/DOMAIN_STEPWISE/FUNCTION_VISUAL_TRACEABILITY.yaml
+      artifact_owner: STAGE_EXECUTION/STAGE-04/WU-STAGE04-GLOBAL-HOME-SHELL-NAVIGATION-001/EVIDENCE/OPERATION_RECEIPTS/BASIC_DESIGN_PACKAGE_COMPILE.yaml
+      row_denominator_source: STAGE_EXECUTION/STAGE-04/WU-STAGE04-GLOBAL-HOME-SHELL-NAVIGATION-001/BASIC_DESIGN_PACKAGE.yaml#design_domains
+      row_identity: FUNCTION_VISUAL_TRACEABILITY
+      field_path:
+      - domain_uid
+      applicability: REQUIRED
+      validator_uid: VAL-GOV-006
+      validator_check_id: BASIC_DESIGN_STEPWISE_DOMAIN_COMPLETE
+      evidence_ref: STAGE_EXECUTION/STAGE-04/WU-STAGE04-GLOBAL-HOME-SHELL-NAVIGATION-001/EVIDENCE/DOMAIN_STEPWISE/FUNCTION_VISUAL_TRACEABILITY.yaml
+      closure_gate: CURRENT_GOVERNED_UNIT_FOUNDATION_FROZEN
+      failure_disposition: REPAIR_AT_OWNING_BASIC_DESIGN_STEP
+      reentry_owner: BASIC_DESIGN
+      evidence_state: TO_MATERIALIZE
+      domain_current_resolution: PASS
+      domain_bound_artifact_total: 2
+    - matrix_row_uid: S083A-HOME-S04-DOMAIN-05
+      normative_section_uid: WEB-GOV-01-S083A
+      requirement_uid: S083A-STEPWISE-DOMAIN-HUMAN_READABLE_DESIGN_DOCUMENT
+      required_artifact_type: BASIC_DESIGN_DOMAIN_STEPWISE_CHECKPOINT
+      artifact_ref: STAGE_EXECUTION/STAGE-04/WU-STAGE04-GLOBAL-HOME-SHELL-NAVIGATION-001/EVIDENCE/DOMAIN_STEPWISE/HUMAN_READABLE_DESIGN_DOCUMENT.yaml
+      artifact_owner: STAGE_EXECUTION/STAGE-04/WU-STAGE04-GLOBAL-HOME-SHELL-NAVIGATION-001/EVIDENCE/OPERATION_RECEIPTS/BASIC_DESIGN_PACKAGE_COMPILE.yaml
+      row_denominator_source: STAGE_EXECUTION/STAGE-04/WU-STAGE04-GLOBAL-HOME-SHELL-NAVIGATION-001/BASIC_DESIGN_PACKAGE.yaml#design_domains
+      row_identity: HUMAN_READABLE_DESIGN_DOCUMENT
+      field_path:
+      - domain_uid
+      applicability: REQUIRED
+      validator_uid: VAL-GOV-006
+      validator_check_id: BASIC_DESIGN_STEPWISE_DOMAIN_COMPLETE
+      evidence_ref: STAGE_EXECUTION/STAGE-04/WU-STAGE04-GLOBAL-HOME-SHELL-NAVIGATION-001/EVIDENCE/DOMAIN_STEPWISE/HUMAN_READABLE_DESIGN_DOCUMENT.yaml
+      closure_gate: CURRENT_GOVERNED_UNIT_FOUNDATION_FROZEN
+      failure_disposition: REPAIR_AT_OWNING_BASIC_DESIGN_STEP
+      reentry_owner: BASIC_DESIGN
+      evidence_state: TO_MATERIALIZE
+      domain_current_resolution: PASS
+      domain_bound_artifact_total: 2
+    - matrix_row_uid: S083A-HOME-S04-DOMAIN-06
+      normative_section_uid: WEB-GOV-01-S083A
+      requirement_uid: S083A-STEPWISE-DOMAIN-JOURNEY_WORKBENCH_TOPOLOGY
+      required_artifact_type: BASIC_DESIGN_DOMAIN_STEPWISE_CHECKPOINT
+      artifact_ref: STAGE_EXECUTION/STAGE-04/WU-STAGE04-GLOBAL-HOME-SHELL-NAVIGATION-001/EVIDENCE/DOMAIN_STEPWISE/JOURNEY_WORKBENCH_TOPOLOGY.yaml
+      artifact_owner: STAGE_EXECUTION/STAGE-04/WU-STAGE04-GLOBAL-HOME-SHELL-NAVIGATION-001/EVIDENCE/OPERATION_RECEIPTS/BASIC_DESIGN_PACKAGE_COMPILE.yaml
+      row_denominator_source: STAGE_EXECUTION/STAGE-04/WU-STAGE04-GLOBAL-HOME-SHELL-NAVIGATION-001/BASIC_DESIGN_PACKAGE.yaml#design_domains
+      row_identity: JOURNEY_WORKBENCH_TOPOLOGY
+      field_path:
+      - domain_uid
+      applicability: REQUIRED
+      validator_uid: VAL-GOV-006
+      validator_check_id: BASIC_DESIGN_STEPWISE_DOMAIN_COMPLETE
+      evidence_ref: STAGE_EXECUTION/STAGE-04/WU-STAGE04-GLOBAL-HOME-SHELL-NAVIGATION-001/EVIDENCE/DOMAIN_STEPWISE/JOURNEY_WORKBENCH_TOPOLOGY.yaml
+      closure_gate: CURRENT_GOVERNED_UNIT_FOUNDATION_FROZEN
+      failure_disposition: REPAIR_AT_OWNING_BASIC_DESIGN_STEP
+      reentry_owner: BASIC_DESIGN
+      evidence_state: TO_MATERIALIZE
+      domain_current_resolution: PASS
+      domain_bound_artifact_total: 3
+    - matrix_row_uid: S083A-HOME-S04-DOMAIN-07
+      normative_section_uid: WEB-GOV-01-S083A
+      requirement_uid: S083A-STEPWISE-DOMAIN-PAGE_SURFACE_DESIGN
+      required_artifact_type: BASIC_DESIGN_DOMAIN_STEPWISE_CHECKPOINT
+      artifact_ref: STAGE_EXECUTION/STAGE-04/WU-STAGE04-GLOBAL-HOME-SHELL-NAVIGATION-001/EVIDENCE/DOMAIN_STEPWISE/PAGE_SURFACE_DESIGN.yaml
+      artifact_owner: STAGE_EXECUTION/STAGE-04/WU-STAGE04-GLOBAL-HOME-SHELL-NAVIGATION-001/EVIDENCE/OPERATION_RECEIPTS/BASIC_DESIGN_PACKAGE_COMPILE.yaml
+      row_denominator_source: STAGE_EXECUTION/STAGE-04/WU-STAGE04-GLOBAL-HOME-SHELL-NAVIGATION-001/BASIC_DESIGN_PACKAGE.yaml#design_domains
+      row_identity: PAGE_SURFACE_DESIGN
+      field_path:
+      - domain_uid
+      applicability: REQUIRED
+      validator_uid: VAL-GOV-006
+      validator_check_id: BASIC_DESIGN_STEPWISE_DOMAIN_COMPLETE
+      evidence_ref: STAGE_EXECUTION/STAGE-04/WU-STAGE04-GLOBAL-HOME-SHELL-NAVIGATION-001/EVIDENCE/DOMAIN_STEPWISE/PAGE_SURFACE_DESIGN.yaml
+      closure_gate: CURRENT_GOVERNED_UNIT_FOUNDATION_FROZEN
+      failure_disposition: REPAIR_AT_OWNING_BASIC_DESIGN_STEP
+      reentry_owner: BASIC_DESIGN
+      evidence_state: TO_MATERIALIZE
+      domain_current_resolution: PASS
+      domain_bound_artifact_total: 2
+    - matrix_row_uid: S083A-HOME-S04-DOMAIN-08
+      normative_section_uid: WEB-GOV-01-S083A
+      requirement_uid: S083A-STEPWISE-DOMAIN-REQUIREMENTS
+      required_artifact_type: BASIC_DESIGN_DOMAIN_STEPWISE_CHECKPOINT
+      artifact_ref: STAGE_EXECUTION/STAGE-04/WU-STAGE04-GLOBAL-HOME-SHELL-NAVIGATION-001/EVIDENCE/DOMAIN_STEPWISE/REQUIREMENTS.yaml
+      artifact_owner: STAGE_EXECUTION/STAGE-04/WU-STAGE04-GLOBAL-HOME-SHELL-NAVIGATION-001/EVIDENCE/OPERATION_RECEIPTS/BASIC_DESIGN_PACKAGE_COMPILE.yaml
+      row_denominator_source: STAGE_EXECUTION/STAGE-04/WU-STAGE04-GLOBAL-HOME-SHELL-NAVIGATION-001/BASIC_DESIGN_PACKAGE.yaml#design_domains
+      row_identity: REQUIREMENTS
+      field_path:
+      - domain_uid
+      applicability: REQUIRED
+      validator_uid: VAL-GOV-006
+      validator_check_id: BASIC_DESIGN_STEPWISE_DOMAIN_COMPLETE
+      evidence_ref: STAGE_EXECUTION/STAGE-04/WU-STAGE04-GLOBAL-HOME-SHELL-NAVIGATION-001/EVIDENCE/DOMAIN_STEPWISE/REQUIREMENTS.yaml
+      closure_gate: CURRENT_GOVERNED_UNIT_FOUNDATION_FROZEN
+      failure_disposition: REPAIR_AT_OWNING_BASIC_DESIGN_STEP
+      reentry_owner: BASIC_DESIGN
+      evidence_state: TO_MATERIALIZE
+      domain_current_resolution: PASS
+      domain_bound_artifact_total: 1
+    - matrix_row_uid: S083A-HOME-S04-DOMAIN-09
+      normative_section_uid: WEB-GOV-01-S083A
+      requirement_uid: S083A-STEPWISE-DOMAIN-VISUAL_ARCHITECTURE
+      required_artifact_type: BASIC_DESIGN_DOMAIN_STEPWISE_CHECKPOINT
+      artifact_ref: STAGE_EXECUTION/STAGE-04/WU-STAGE04-GLOBAL-HOME-SHELL-NAVIGATION-001/EVIDENCE/DOMAIN_STEPWISE/VISUAL_ARCHITECTURE.yaml
+      artifact_owner: STAGE_EXECUTION/STAGE-04/WU-STAGE04-GLOBAL-HOME-SHELL-NAVIGATION-001/EVIDENCE/OPERATION_RECEIPTS/BASIC_DESIGN_PACKAGE_COMPILE.yaml
+      row_denominator_source: STAGE_EXECUTION/STAGE-04/WU-STAGE04-GLOBAL-HOME-SHELL-NAVIGATION-001/BASIC_DESIGN_PACKAGE.yaml#design_domains
+      row_identity: VISUAL_ARCHITECTURE
+      field_path:
+      - domain_uid
+      applicability: REQUIRED
+      validator_uid: VAL-GOV-006
+      validator_check_id: BASIC_DESIGN_STEPWISE_DOMAIN_COMPLETE
+      evidence_ref: STAGE_EXECUTION/STAGE-04/WU-STAGE04-GLOBAL-HOME-SHELL-NAVIGATION-001/EVIDENCE/DOMAIN_STEPWISE/VISUAL_ARCHITECTURE.yaml
+      closure_gate: CURRENT_GOVERNED_UNIT_FOUNDATION_FROZEN
+      failure_disposition: REPAIR_AT_OWNING_BASIC_DESIGN_STEP
+      reentry_owner: BASIC_DESIGN
+      evidence_state: TO_MATERIALIZE
+      domain_current_resolution: PASS
+      domain_bound_artifact_total: 2
+    - matrix_row_uid: S083A-HOME-S04-DOMAIN-10
+      normative_section_uid: WEB-GOV-01-S083A
+      requirement_uid: S083A-STEPWISE-DOMAIN-VISUAL_INHERITANCE_MATRIX
+      required_artifact_type: BASIC_DESIGN_DOMAIN_STEPWISE_CHECKPOINT
+      artifact_ref: STAGE_EXECUTION/STAGE-04/WU-STAGE04-GLOBAL-HOME-SHELL-NAVIGATION-001/EVIDENCE/DOMAIN_STEPWISE/VISUAL_INHERITANCE_MATRIX.yaml
+      artifact_owner: STAGE_EXECUTION/STAGE-04/WU-STAGE04-GLOBAL-HOME-SHELL-NAVIGATION-001/EVIDENCE/OPERATION_RECEIPTS/BASIC_DESIGN_PACKAGE_COMPILE.yaml
+      row_denominator_source: STAGE_EXECUTION/STAGE-04/WU-STAGE04-GLOBAL-HOME-SHELL-NAVIGATION-001/BASIC_DESIGN_PACKAGE.yaml#design_domains
+      row_identity: VISUAL_INHERITANCE_MATRIX
+      field_path:
+      - domain_uid
+      applicability: REQUIRED
+      validator_uid: VAL-GOV-006
+      validator_check_id: BASIC_DESIGN_STEPWISE_DOMAIN_COMPLETE
+      evidence_ref: STAGE_EXECUTION/STAGE-04/WU-STAGE04-GLOBAL-HOME-SHELL-NAVIGATION-001/EVIDENCE/DOMAIN_STEPWISE/VISUAL_INHERITANCE_MATRIX.yaml
+      closure_gate: CURRENT_GOVERNED_UNIT_FOUNDATION_FROZEN
+      failure_disposition: REPAIR_AT_OWNING_BASIC_DESIGN_STEP
+      reentry_owner: BASIC_DESIGN
+      evidence_state: TO_MATERIALIZE
+      domain_current_resolution: PASS
+      domain_bound_artifact_total: 1
+    - matrix_row_uid: S083A-HOME-S04-DOMAIN-11
+      normative_section_uid: WEB-GOV-01-S083A
+      requirement_uid: S083A-STEPWISE-DOMAIN-VISUAL_REFERENCE_ANNOTATION
+      required_artifact_type: BASIC_DESIGN_DOMAIN_STEPWISE_CHECKPOINT
+      artifact_ref: STAGE_EXECUTION/STAGE-04/WU-STAGE04-GLOBAL-HOME-SHELL-NAVIGATION-001/EVIDENCE/DOMAIN_STEPWISE/VISUAL_REFERENCE_ANNOTATION.yaml
+      artifact_owner: STAGE_EXECUTION/STAGE-04/WU-STAGE04-GLOBAL-HOME-SHELL-NAVIGATION-001/EVIDENCE/OPERATION_RECEIPTS/BASIC_DESIGN_PACKAGE_COMPILE.yaml
+      row_denominator_source: STAGE_EXECUTION/STAGE-04/WU-STAGE04-GLOBAL-HOME-SHELL-NAVIGATION-001/BASIC_DESIGN_PACKAGE.yaml#design_domains
+      row_identity: VISUAL_REFERENCE_ANNOTATION
+      field_path:
+      - domain_uid
+      applicability: REQUIRED
+      validator_uid: VAL-GOV-006
+      validator_check_id: BASIC_DESIGN_STEPWISE_DOMAIN_COMPLETE
+      evidence_ref: STAGE_EXECUTION/STAGE-04/WU-STAGE04-GLOBAL-HOME-SHELL-NAVIGATION-001/EVIDENCE/DOMAIN_STEPWISE/VISUAL_REFERENCE_ANNOTATION.yaml
+      closure_gate: CURRENT_GOVERNED_UNIT_FOUNDATION_FROZEN
+      failure_disposition: REPAIR_AT_OWNING_BASIC_DESIGN_STEP
+      reentry_owner: BASIC_DESIGN
+      evidence_state: TO_MATERIALIZE
+      domain_current_resolution: PASS
+      domain_bound_artifact_total: 1
+    - matrix_row_uid: S083A-HOME-S04-DOMAIN-12
+      normative_section_uid: WEB-GOV-01-S083A
+      requirement_uid: S083A-STEPWISE-DOMAIN-VISUAL_SCENARIO_EVIDENCE_SET
+      required_artifact_type: BASIC_DESIGN_DOMAIN_STEPWISE_CHECKPOINT
+      artifact_ref: STAGE_EXECUTION/STAGE-04/WU-STAGE04-GLOBAL-HOME-SHELL-NAVIGATION-001/EVIDENCE/DOMAIN_STEPWISE/VISUAL_SCENARIO_EVIDENCE_SET.yaml
+      artifact_owner: STAGE_EXECUTION/STAGE-04/WU-STAGE04-GLOBAL-HOME-SHELL-NAVIGATION-001/EVIDENCE/OPERATION_RECEIPTS/BASIC_DESIGN_PACKAGE_COMPILE.yaml
+      row_denominator_source: STAGE_EXECUTION/STAGE-04/WU-STAGE04-GLOBAL-HOME-SHELL-NAVIGATION-001/BASIC_DESIGN_PACKAGE.yaml#design_domains
+      row_identity: VISUAL_SCENARIO_EVIDENCE_SET
+      field_path:
+      - domain_uid
+      applicability: REQUIRED
+      validator_uid: VAL-GOV-006
+      validator_check_id: BASIC_DESIGN_STEPWISE_DOMAIN_COMPLETE
+      evidence_ref: STAGE_EXECUTION/STAGE-04/WU-STAGE04-GLOBAL-HOME-SHELL-NAVIGATION-001/EVIDENCE/DOMAIN_STEPWISE/VISUAL_SCENARIO_EVIDENCE_SET.yaml
+      closure_gate: CURRENT_GOVERNED_UNIT_FOUNDATION_FROZEN
+      failure_disposition: REPAIR_AT_OWNING_BASIC_DESIGN_STEP
+      reentry_owner: BASIC_DESIGN
+      evidence_state: TO_MATERIALIZE
+      domain_current_resolution: PASS
+      domain_bound_artifact_total: 12
+    - matrix_row_uid: S083A-HOME-S04-DOMAIN-13
+      normative_section_uid: WEB-GOV-01-S083A
+      requirement_uid: S083A-STEPWISE-DOMAIN-VISUAL_STYLE_DEFINITION
+      required_artifact_type: BASIC_DESIGN_DOMAIN_STEPWISE_CHECKPOINT
+      artifact_ref: STAGE_EXECUTION/STAGE-04/WU-STAGE04-GLOBAL-HOME-SHELL-NAVIGATION-001/EVIDENCE/DOMAIN_STEPWISE/VISUAL_STYLE_DEFINITION.yaml
+      artifact_owner: STAGE_EXECUTION/STAGE-04/WU-STAGE04-GLOBAL-HOME-SHELL-NAVIGATION-001/EVIDENCE/OPERATION_RECEIPTS/BASIC_DESIGN_PACKAGE_COMPILE.yaml
+      row_denominator_source: STAGE_EXECUTION/STAGE-04/WU-STAGE04-GLOBAL-HOME-SHELL-NAVIGATION-001/BASIC_DESIGN_PACKAGE.yaml#design_domains
+      row_identity: VISUAL_STYLE_DEFINITION
+      field_path:
+      - domain_uid
+      applicability: REQUIRED
+      validator_uid: VAL-GOV-006
+      validator_check_id: BASIC_DESIGN_STEPWISE_DOMAIN_COMPLETE
+      evidence_ref: STAGE_EXECUTION/STAGE-04/WU-STAGE04-GLOBAL-HOME-SHELL-NAVIGATION-001/EVIDENCE/DOMAIN_STEPWISE/VISUAL_STYLE_DEFINITION.yaml
+      closure_gate: CURRENT_GOVERNED_UNIT_FOUNDATION_FROZEN
+      failure_disposition: REPAIR_AT_OWNING_BASIC_DESIGN_STEP
+      reentry_owner: BASIC_DESIGN
+      evidence_state: TO_MATERIALIZE
+      domain_current_resolution: PASS
+      domain_bound_artifact_total: 2
+  stepwise_checkpoint_schema:
+    artifact_type: BASIC_DESIGN_DOMAIN_STEPWISE_CHECKPOINT
+    required_fields:
+    - artifact_type
+    - stage_uid
+    - work_unit_uid
+    - governed_unit_uid
+    - domain_uid
+    - denominator_resolution_ref
+    - current_authority_ref
+    - materialized_binding_refs
+    - completeness_validation_result
+    - conflict_validation_result
+    - review_evidence_ref
+    - checkpoint_state
+    - next_admitted_domain_uid
+    materialization_owner_operation: BASIC_DESIGN_PACKAGE_COMPILE
+- governed_unit_token: WB01-DASHBOARD
+  rows_by_stage:
+    STAGE-02:
+    - matrix_row_uid: S083A-WB01-STAGE-02-NA
+      normative_section_uid: WEB-GOV-01-S083A
+      requirement_uid: S083A-BASIC-DESIGN-STEPWISE-SCOPE
+      required_artifact_type: S083A_SCOPE_AUTHORITY
+      artifact_ref: STAGE_EXECUTION/SHARED_AUTHORITY/V232_REALIGNMENT/s083a_scope_authority.yaml
+      artifact_owner: STAGE_EXECUTION/STAGE-02/WU-STAGE02-WB01-DASHBOARD-001/WORK_UNIT.yaml
+      row_denominator_source: CURRENT_LIFECYCLE_REQUIRED_NORMATIVE_SECTION
+      row_identity: WEB-GOV-01-S083A
+      field_path:
+      - scope_resolution
+      applicability: NOT_APPLICABLE_WITH_AUTHORITY
+      authority_evidence_ref: STAGE_EXECUTION/SHARED_AUTHORITY/V232_REALIGNMENT/s083a_scope_authority.yaml
+      validator_uid: VAL-GOV-008
+      validator_check_id: S083A_SCOPE_OWNERSHIP_AUTHORITY
+      evidence_ref: STAGE_EXECUTION/SHARED_AUTHORITY/V232_REALIGNMENT/s083a_scope_authority.yaml
+      closure_gate: CURRENT_GOVERNED_UNIT_STAGE2_CLOSED
+      failure_disposition: REPAIR_AT_OWNING_STAGE
+      reentry_owner: STAGE-04
+    STAGE-03:
+    - matrix_row_uid: S083A-WB01-STAGE-03-NA
+      normative_section_uid: WEB-GOV-01-S083A
+      requirement_uid: S083A-BASIC-DESIGN-STEPWISE-SCOPE
+      required_artifact_type: S083A_SCOPE_AUTHORITY
+      artifact_ref: STAGE_EXECUTION/SHARED_AUTHORITY/V232_REALIGNMENT/s083a_scope_authority.yaml
+      artifact_owner: STAGE_EXECUTION/STAGE-03/WU-STAGE03-WB01-DASHBOARD-001/WORK_UNIT.yaml
+      row_denominator_source: CURRENT_LIFECYCLE_REQUIRED_NORMATIVE_SECTION
+      row_identity: WEB-GOV-01-S083A
+      field_path:
+      - scope_resolution
+      applicability: NOT_APPLICABLE_WITH_AUTHORITY
+      authority_evidence_ref: STAGE_EXECUTION/SHARED_AUTHORITY/V232_REALIGNMENT/s083a_scope_authority.yaml
+      validator_uid: VAL-GOV-029
+      validator_check_id: S083A_SCOPE_OWNERSHIP_AUTHORITY
+      evidence_ref: STAGE_EXECUTION/SHARED_AUTHORITY/V232_REALIGNMENT/s083a_scope_authority.yaml
+      closure_gate: CURRENT_GOVERNED_UNIT_STAGE3_CLOSED
+      failure_disposition: REPAIR_AT_OWNING_STAGE
+      reentry_owner: STAGE-04
+    STAGE-04:
+    - matrix_row_uid: S083A-WB01-S04-DOMAIN-01
+      normative_section_uid: WEB-GOV-01-S083A
+      requirement_uid: S083A-STEPWISE-DOMAIN-ARCHITECTURE
+      required_artifact_type: BASIC_DESIGN_DOMAIN_STEPWISE_CHECKPOINT
+      artifact_ref: STAGE_EXECUTION/STAGE-04/WU-STAGE04-WB01-DASHBOARD-001/EVIDENCE/DOMAIN_STEPWISE/ARCHITECTURE.yaml
+      artifact_owner: STAGE_EXECUTION/STAGE-04/WU-STAGE04-WB01-DASHBOARD-001/EVIDENCE/OPERATION_RECEIPTS/BASIC_DESIGN_PACKAGE_COMPILE.yaml
+      row_denominator_source: STAGE_EXECUTION/STAGE-04/WU-STAGE04-WB01-DASHBOARD-001/BASIC_DESIGN_PACKAGE.yaml#design_domains
+      row_identity: ARCHITECTURE
+      field_path:
+      - domain_uid
+      applicability: REQUIRED
+      validator_uid: VAL-GOV-006
+      validator_check_id: BASIC_DESIGN_STEPWISE_DOMAIN_COMPLETE
+      evidence_ref: STAGE_EXECUTION/STAGE-04/WU-STAGE04-WB01-DASHBOARD-001/EVIDENCE/DOMAIN_STEPWISE/ARCHITECTURE.yaml
+      closure_gate: CURRENT_GOVERNED_UNIT_FOUNDATION_FROZEN
+      failure_disposition: REPAIR_AT_OWNING_BASIC_DESIGN_STEP
+      reentry_owner: BASIC_DESIGN
+      evidence_state: TO_MATERIALIZE
+      domain_current_resolution: PASS
+      domain_bound_artifact_total: 2
+    - matrix_row_uid: S083A-WB01-S04-DOMAIN-02
+      normative_section_uid: WEB-GOV-01-S083A
+      requirement_uid: S083A-STEPWISE-DOMAIN-BUSINESS_ENTITY_AND_OPERATION
+      required_artifact_type: BASIC_DESIGN_DOMAIN_STEPWISE_CHECKPOINT
+      artifact_ref: STAGE_EXECUTION/STAGE-04/WU-STAGE04-WB01-DASHBOARD-001/EVIDENCE/DOMAIN_STEPWISE/BUSINESS_ENTITY_AND_OPERATION.yaml
+      artifact_owner: STAGE_EXECUTION/STAGE-04/WU-STAGE04-WB01-DASHBOARD-001/EVIDENCE/OPERATION_RECEIPTS/BASIC_DESIGN_PACKAGE_COMPILE.yaml
+      row_denominator_source: STAGE_EXECUTION/STAGE-04/WU-STAGE04-WB01-DASHBOARD-001/BASIC_DESIGN_PACKAGE.yaml#design_domains
+      row_identity: BUSINESS_ENTITY_AND_OPERATION
+      field_path:
+      - domain_uid
+      applicability: REQUIRED
+      validator_uid: VAL-GOV-006
+      validator_check_id: BASIC_DESIGN_STEPWISE_DOMAIN_COMPLETE
+      evidence_ref: STAGE_EXECUTION/STAGE-04/WU-STAGE04-WB01-DASHBOARD-001/EVIDENCE/DOMAIN_STEPWISE/BUSINESS_ENTITY_AND_OPERATION.yaml
+      closure_gate: CURRENT_GOVERNED_UNIT_FOUNDATION_FROZEN
+      failure_disposition: REPAIR_AT_OWNING_BASIC_DESIGN_STEP
+      reentry_owner: BASIC_DESIGN
+      evidence_state: TO_MATERIALIZE
+      domain_current_resolution: PASS
+      domain_bound_artifact_total: 3
+    - matrix_row_uid: S083A-WB01-S04-DOMAIN-03
+      normative_section_uid: WEB-GOV-01-S083A
+      requirement_uid: S083A-STEPWISE-DOMAIN-DESIGN_REVIEW_AND_FREEZE_STATE
+      required_artifact_type: BASIC_DESIGN_DOMAIN_STEPWISE_CHECKPOINT
+      artifact_ref: STAGE_EXECUTION/STAGE-04/WU-STAGE04-WB01-DASHBOARD-001/EVIDENCE/DOMAIN_STEPWISE/DESIGN_REVIEW_AND_FREEZE_STATE.yaml
+      artifact_owner: STAGE_EXECUTION/STAGE-04/WU-STAGE04-WB01-DASHBOARD-001/EVIDENCE/OPERATION_RECEIPTS/BASIC_DESIGN_PACKAGE_COMPILE.yaml
+      row_denominator_source: STAGE_EXECUTION/STAGE-04/WU-STAGE04-WB01-DASHBOARD-001/BASIC_DESIGN_PACKAGE.yaml#design_domains
+      row_identity: DESIGN_REVIEW_AND_FREEZE_STATE
+      field_path:
+      - domain_uid
+      applicability: REQUIRED
+      validator_uid: VAL-GOV-006
+      validator_check_id: BASIC_DESIGN_STEPWISE_DOMAIN_COMPLETE
+      evidence_ref: STAGE_EXECUTION/STAGE-04/WU-STAGE04-WB01-DASHBOARD-001/EVIDENCE/DOMAIN_STEPWISE/DESIGN_REVIEW_AND_FREEZE_STATE.yaml
+      closure_gate: CURRENT_GOVERNED_UNIT_FOUNDATION_FROZEN
+      failure_disposition: REPAIR_AT_OWNING_BASIC_DESIGN_STEP
+      reentry_owner: BASIC_DESIGN
+      evidence_state: TO_MATERIALIZE
+      domain_current_resolution: PASS
+      domain_bound_artifact_total: 2
+    - matrix_row_uid: S083A-WB01-S04-DOMAIN-04
+      normative_section_uid: WEB-GOV-01-S083A
+      requirement_uid: S083A-STEPWISE-DOMAIN-FUNCTION_VISUAL_TRACEABILITY
+      required_artifact_type: BASIC_DESIGN_DOMAIN_STEPWISE_CHECKPOINT
+      artifact_ref: STAGE_EXECUTION/STAGE-04/WU-STAGE04-WB01-DASHBOARD-001/EVIDENCE/DOMAIN_STEPWISE/FUNCTION_VISUAL_TRACEABILITY.yaml
+      artifact_owner: STAGE_EXECUTION/STAGE-04/WU-STAGE04-WB01-DASHBOARD-001/EVIDENCE/OPERATION_RECEIPTS/BASIC_DESIGN_PACKAGE_COMPILE.yaml
+      row_denominator_source: STAGE_EXECUTION/STAGE-04/WU-STAGE04-WB01-DASHBOARD-001/BASIC_DESIGN_PACKAGE.yaml#design_domains
+      row_identity: FUNCTION_VISUAL_TRACEABILITY
+      field_path:
+      - domain_uid
+      applicability: REQUIRED
+      validator_uid: VAL-GOV-006
+      validator_check_id: BASIC_DESIGN_STEPWISE_DOMAIN_COMPLETE
+      evidence_ref: STAGE_EXECUTION/STAGE-04/WU-STAGE04-WB01-DASHBOARD-001/EVIDENCE/DOMAIN_STEPWISE/FUNCTION_VISUAL_TRACEABILITY.yaml
+      closure_gate: CURRENT_GOVERNED_UNIT_FOUNDATION_FROZEN
+      failure_disposition: REPAIR_AT_OWNING_BASIC_DESIGN_STEP
+      reentry_owner: BASIC_DESIGN
+      evidence_state: TO_MATERIALIZE
+      domain_current_resolution: PASS
+      domain_bound_artifact_total: 2
+    - matrix_row_uid: S083A-WB01-S04-DOMAIN-05
+      normative_section_uid: WEB-GOV-01-S083A
+      requirement_uid: S083A-STEPWISE-DOMAIN-HUMAN_READABLE_DESIGN_DOCUMENT
+      required_artifact_type: BASIC_DESIGN_DOMAIN_STEPWISE_CHECKPOINT
+      artifact_ref: STAGE_EXECUTION/STAGE-04/WU-STAGE04-WB01-DASHBOARD-001/EVIDENCE/DOMAIN_STEPWISE/HUMAN_READABLE_DESIGN_DOCUMENT.yaml
+      artifact_owner: STAGE_EXECUTION/STAGE-04/WU-STAGE04-WB01-DASHBOARD-001/EVIDENCE/OPERATION_RECEIPTS/BASIC_DESIGN_PACKAGE_COMPILE.yaml
+      row_denominator_source: STAGE_EXECUTION/STAGE-04/WU-STAGE04-WB01-DASHBOARD-001/BASIC_DESIGN_PACKAGE.yaml#design_domains
+      row_identity: HUMAN_READABLE_DESIGN_DOCUMENT
+      field_path:
+      - domain_uid
+      applicability: REQUIRED
+      validator_uid: VAL-GOV-006
+      validator_check_id: BASIC_DESIGN_STEPWISE_DOMAIN_COMPLETE
+      evidence_ref: STAGE_EXECUTION/STAGE-04/WU-STAGE04-WB01-DASHBOARD-001/EVIDENCE/DOMAIN_STEPWISE/HUMAN_READABLE_DESIGN_DOCUMENT.yaml
+      closure_gate: CURRENT_GOVERNED_UNIT_FOUNDATION_FROZEN
+      failure_disposition: REPAIR_AT_OWNING_BASIC_DESIGN_STEP
+      reentry_owner: BASIC_DESIGN
+      evidence_state: TO_MATERIALIZE
+      domain_current_resolution: PASS
+      domain_bound_artifact_total: 2
+    - matrix_row_uid: S083A-WB01-S04-DOMAIN-06
+      normative_section_uid: WEB-GOV-01-S083A
+      requirement_uid: S083A-STEPWISE-DOMAIN-JOURNEY_WORKBENCH_TOPOLOGY
+      required_artifact_type: BASIC_DESIGN_DOMAIN_STEPWISE_CHECKPOINT
+      artifact_ref: STAGE_EXECUTION/STAGE-04/WU-STAGE04-WB01-DASHBOARD-001/EVIDENCE/DOMAIN_STEPWISE/JOURNEY_WORKBENCH_TOPOLOGY.yaml
+      artifact_owner: STAGE_EXECUTION/STAGE-04/WU-STAGE04-WB01-DASHBOARD-001/EVIDENCE/OPERATION_RECEIPTS/BASIC_DESIGN_PACKAGE_COMPILE.yaml
+      row_denominator_source: STAGE_EXECUTION/STAGE-04/WU-STAGE04-WB01-DASHBOARD-001/BASIC_DESIGN_PACKAGE.yaml#design_domains
+      row_identity: JOURNEY_WORKBENCH_TOPOLOGY
+      field_path:
+      - domain_uid
+      applicability: REQUIRED
+      validator_uid: VAL-GOV-006
+      validator_check_id: BASIC_DESIGN_STEPWISE_DOMAIN_COMPLETE
+      evidence_ref: STAGE_EXECUTION/STAGE-04/WU-STAGE04-WB01-DASHBOARD-001/EVIDENCE/DOMAIN_STEPWISE/JOURNEY_WORKBENCH_TOPOLOGY.yaml
+      closure_gate: CURRENT_GOVERNED_UNIT_FOUNDATION_FROZEN
+      failure_disposition: REPAIR_AT_OWNING_BASIC_DESIGN_STEP
+      reentry_owner: BASIC_DESIGN
+      evidence_state: TO_MATERIALIZE
+      domain_current_resolution: PASS
+      domain_bound_artifact_total: 3
+    - matrix_row_uid: S083A-WB01-S04-DOMAIN-07
+      normative_section_uid: WEB-GOV-01-S083A
+      requirement_uid: S083A-STEPWISE-DOMAIN-PAGE_SURFACE_DESIGN
+      required_artifact_type: BASIC_DESIGN_DOMAIN_STEPWISE_CHECKPOINT
+      artifact_ref: STAGE_EXECUTION/STAGE-04/WU-STAGE04-WB01-DASHBOARD-001/EVIDENCE/DOMAIN_STEPWISE/PAGE_SURFACE_DESIGN.yaml
+      artifact_owner: STAGE_EXECUTION/STAGE-04/WU-STAGE04-WB01-DASHBOARD-001/EVIDENCE/OPERATION_RECEIPTS/BASIC_DESIGN_PACKAGE_COMPILE.yaml
+      row_denominator_source: STAGE_EXECUTION/STAGE-04/WU-STAGE04-WB01-DASHBOARD-001/BASIC_DESIGN_PACKAGE.yaml#design_domains
+      row_identity: PAGE_SURFACE_DESIGN
+      field_path:
+      - domain_uid
+      applicability: REQUIRED
+      validator_uid: VAL-GOV-006
+      validator_check_id: BASIC_DESIGN_STEPWISE_DOMAIN_COMPLETE
+      evidence_ref: STAGE_EXECUTION/STAGE-04/WU-STAGE04-WB01-DASHBOARD-001/EVIDENCE/DOMAIN_STEPWISE/PAGE_SURFACE_DESIGN.yaml
+      closure_gate: CURRENT_GOVERNED_UNIT_FOUNDATION_FROZEN
+      failure_disposition: REPAIR_AT_OWNING_BASIC_DESIGN_STEP
+      reentry_owner: BASIC_DESIGN
+      evidence_state: TO_MATERIALIZE
+      domain_current_resolution: PASS
+      domain_bound_artifact_total: 2
+    - matrix_row_uid: S083A-WB01-S04-DOMAIN-08
+      normative_section_uid: WEB-GOV-01-S083A
+      requirement_uid: S083A-STEPWISE-DOMAIN-REQUIREMENTS
+      required_artifact_type: BASIC_DESIGN_DOMAIN_STEPWISE_CHECKPOINT
+      artifact_ref: STAGE_EXECUTION/STAGE-04/WU-STAGE04-WB01-DASHBOARD-001/EVIDENCE/DOMAIN_STEPWISE/REQUIREMENTS.yaml
+      artifact_owner: STAGE_EXECUTION/STAGE-04/WU-STAGE04-WB01-DASHBOARD-001/EVIDENCE/OPERATION_RECEIPTS/BASIC_DESIGN_PACKAGE_COMPILE.yaml
+      row_denominator_source: STAGE_EXECUTION/STAGE-04/WU-STAGE04-WB01-DASHBOARD-001/BASIC_DESIGN_PACKAGE.yaml#design_domains
+      row_identity: REQUIREMENTS
+      field_path:
+      - domain_uid
+      applicability: REQUIRED
+      validator_uid: VAL-GOV-006
+      validator_check_id: BASIC_DESIGN_STEPWISE_DOMAIN_COMPLETE
+      evidence_ref: STAGE_EXECUTION/STAGE-04/WU-STAGE04-WB01-DASHBOARD-001/EVIDENCE/DOMAIN_STEPWISE/REQUIREMENTS.yaml
+      closure_gate: CURRENT_GOVERNED_UNIT_FOUNDATION_FROZEN
+      failure_disposition: REPAIR_AT_OWNING_BASIC_DESIGN_STEP
+      reentry_owner: BASIC_DESIGN
+      evidence_state: TO_MATERIALIZE
+      domain_current_resolution: PASS
+      domain_bound_artifact_total: 1
+    - matrix_row_uid: S083A-WB01-S04-DOMAIN-09
+      normative_section_uid: WEB-GOV-01-S083A
+      requirement_uid: S083A-STEPWISE-DOMAIN-VISUAL_ARCHITECTURE
+      required_artifact_type: BASIC_DESIGN_DOMAIN_STEPWISE_CHECKPOINT
+      artifact_ref: STAGE_EXECUTION/STAGE-04/WU-STAGE04-WB01-DASHBOARD-001/EVIDENCE/DOMAIN_STEPWISE/VISUAL_ARCHITECTURE.yaml
+      artifact_owner: STAGE_EXECUTION/STAGE-04/WU-STAGE04-WB01-DASHBOARD-001/EVIDENCE/OPERATION_RECEIPTS/BASIC_DESIGN_PACKAGE_COMPILE.yaml
+      row_denominator_source: STAGE_EXECUTION/STAGE-04/WU-STAGE04-WB01-DASHBOARD-001/BASIC_DESIGN_PACKAGE.yaml#design_domains
+      row_identity: VISUAL_ARCHITECTURE
+      field_path:
+      - domain_uid
+      applicability: REQUIRED
+      validator_uid: VAL-GOV-006
+      validator_check_id: BASIC_DESIGN_STEPWISE_DOMAIN_COMPLETE
+      evidence_ref: STAGE_EXECUTION/STAGE-04/WU-STAGE04-WB01-DASHBOARD-001/EVIDENCE/DOMAIN_STEPWISE/VISUAL_ARCHITECTURE.yaml
+      closure_gate: CURRENT_GOVERNED_UNIT_FOUNDATION_FROZEN
+      failure_disposition: REPAIR_AT_OWNING_BASIC_DESIGN_STEP
+      reentry_owner: BASIC_DESIGN
+      evidence_state: TO_MATERIALIZE
+      domain_current_resolution: PASS
+      domain_bound_artifact_total: 2
+    - matrix_row_uid: S083A-WB01-S04-DOMAIN-10
+      normative_section_uid: WEB-GOV-01-S083A
+      requirement_uid: S083A-STEPWISE-DOMAIN-VISUAL_INHERITANCE_MATRIX
+      required_artifact_type: BASIC_DESIGN_DOMAIN_STEPWISE_CHECKPOINT
+      artifact_ref: STAGE_EXECUTION/STAGE-04/WU-STAGE04-WB01-DASHBOARD-001/EVIDENCE/DOMAIN_STEPWISE/VISUAL_INHERITANCE_MATRIX.yaml
+      artifact_owner: STAGE_EXECUTION/STAGE-04/WU-STAGE04-WB01-DASHBOARD-001/EVIDENCE/OPERATION_RECEIPTS/BASIC_DESIGN_PACKAGE_COMPILE.yaml
+      row_denominator_source: STAGE_EXECUTION/STAGE-04/WU-STAGE04-WB01-DASHBOARD-001/BASIC_DESIGN_PACKAGE.yaml#design_domains
+      row_identity: VISUAL_INHERITANCE_MATRIX
+      field_path:
+      - domain_uid
+      applicability: REQUIRED
+      validator_uid: VAL-GOV-006
+      validator_check_id: BASIC_DESIGN_STEPWISE_DOMAIN_COMPLETE
+      evidence_ref: STAGE_EXECUTION/STAGE-04/WU-STAGE04-WB01-DASHBOARD-001/EVIDENCE/DOMAIN_STEPWISE/VISUAL_INHERITANCE_MATRIX.yaml
+      closure_gate: CURRENT_GOVERNED_UNIT_FOUNDATION_FROZEN
+      failure_disposition: REPAIR_AT_OWNING_BASIC_DESIGN_STEP
+      reentry_owner: BASIC_DESIGN
+      evidence_state: TO_MATERIALIZE
+      domain_current_resolution: PASS
+      domain_bound_artifact_total: 1
+    - matrix_row_uid: S083A-WB01-S04-DOMAIN-11
+      normative_section_uid: WEB-GOV-01-S083A
+      requirement_uid: S083A-STEPWISE-DOMAIN-VISUAL_REFERENCE_ANNOTATION
+      required_artifact_type: BASIC_DESIGN_DOMAIN_STEPWISE_CHECKPOINT
+      artifact_ref: STAGE_EXECUTION/STAGE-04/WU-STAGE04-WB01-DASHBOARD-001/EVIDENCE/DOMAIN_STEPWISE/VISUAL_REFERENCE_ANNOTATION.yaml
+      artifact_owner: STAGE_EXECUTION/STAGE-04/WU-STAGE04-WB01-DASHBOARD-001/EVIDENCE/OPERATION_RECEIPTS/BASIC_DESIGN_PACKAGE_COMPILE.yaml
+      row_denominator_source: STAGE_EXECUTION/STAGE-04/WU-STAGE04-WB01-DASHBOARD-001/BASIC_DESIGN_PACKAGE.yaml#design_domains
+      row_identity: VISUAL_REFERENCE_ANNOTATION
+      field_path:
+      - domain_uid
+      applicability: REQUIRED
+      validator_uid: VAL-GOV-006
+      validator_check_id: BASIC_DESIGN_STEPWISE_DOMAIN_COMPLETE
+      evidence_ref: STAGE_EXECUTION/STAGE-04/WU-STAGE04-WB01-DASHBOARD-001/EVIDENCE/DOMAIN_STEPWISE/VISUAL_REFERENCE_ANNOTATION.yaml
+      closure_gate: CURRENT_GOVERNED_UNIT_FOUNDATION_FROZEN
+      failure_disposition: REPAIR_AT_OWNING_BASIC_DESIGN_STEP
+      reentry_owner: BASIC_DESIGN
+      evidence_state: TO_MATERIALIZE
+      domain_current_resolution: PASS
+      domain_bound_artifact_total: 1
+    - matrix_row_uid: S083A-WB01-S04-DOMAIN-12
+      normative_section_uid: WEB-GOV-01-S083A
+      requirement_uid: S083A-STEPWISE-DOMAIN-VISUAL_SCENARIO_EVIDENCE_SET
+      required_artifact_type: BASIC_DESIGN_DOMAIN_STEPWISE_CHECKPOINT
+      artifact_ref: STAGE_EXECUTION/STAGE-04/WU-STAGE04-WB01-DASHBOARD-001/EVIDENCE/DOMAIN_STEPWISE/VISUAL_SCENARIO_EVIDENCE_SET.yaml
+      artifact_owner: STAGE_EXECUTION/STAGE-04/WU-STAGE04-WB01-DASHBOARD-001/EVIDENCE/OPERATION_RECEIPTS/BASIC_DESIGN_PACKAGE_COMPILE.yaml
+      row_denominator_source: STAGE_EXECUTION/STAGE-04/WU-STAGE04-WB01-DASHBOARD-001/BASIC_DESIGN_PACKAGE.yaml#design_domains
+      row_identity: VISUAL_SCENARIO_EVIDENCE_SET
+      field_path:
+      - domain_uid
+      applicability: REQUIRED
+      validator_uid: VAL-GOV-006
+      validator_check_id: BASIC_DESIGN_STEPWISE_DOMAIN_COMPLETE
+      evidence_ref: STAGE_EXECUTION/STAGE-04/WU-STAGE04-WB01-DASHBOARD-001/EVIDENCE/DOMAIN_STEPWISE/VISUAL_SCENARIO_EVIDENCE_SET.yaml
+      closure_gate: CURRENT_GOVERNED_UNIT_FOUNDATION_FROZEN
+      failure_disposition: REPAIR_AT_OWNING_BASIC_DESIGN_STEP
+      reentry_owner: BASIC_DESIGN
+      evidence_state: TO_MATERIALIZE
+      domain_current_resolution: PASS
+      domain_bound_artifact_total: 12
+    - matrix_row_uid: S083A-WB01-S04-DOMAIN-13
+      normative_section_uid: WEB-GOV-01-S083A
+      requirement_uid: S083A-STEPWISE-DOMAIN-VISUAL_STYLE_DEFINITION
+      required_artifact_type: BASIC_DESIGN_DOMAIN_STEPWISE_CHECKPOINT
+      artifact_ref: STAGE_EXECUTION/STAGE-04/WU-STAGE04-WB01-DASHBOARD-001/EVIDENCE/DOMAIN_STEPWISE/VISUAL_STYLE_DEFINITION.yaml
+      artifact_owner: STAGE_EXECUTION/STAGE-04/WU-STAGE04-WB01-DASHBOARD-001/EVIDENCE/OPERATION_RECEIPTS/BASIC_DESIGN_PACKAGE_COMPILE.yaml
+      row_denominator_source: STAGE_EXECUTION/STAGE-04/WU-STAGE04-WB01-DASHBOARD-001/BASIC_DESIGN_PACKAGE.yaml#design_domains
+      row_identity: VISUAL_STYLE_DEFINITION
+      field_path:
+      - domain_uid
+      applicability: REQUIRED
+      validator_uid: VAL-GOV-006
+      validator_check_id: BASIC_DESIGN_STEPWISE_DOMAIN_COMPLETE
+      evidence_ref: STAGE_EXECUTION/STAGE-04/WU-STAGE04-WB01-DASHBOARD-001/EVIDENCE/DOMAIN_STEPWISE/VISUAL_STYLE_DEFINITION.yaml
+      closure_gate: CURRENT_GOVERNED_UNIT_FOUNDATION_FROZEN
+      failure_disposition: REPAIR_AT_OWNING_BASIC_DESIGN_STEP
+      reentry_owner: BASIC_DESIGN
+      evidence_state: TO_MATERIALIZE
+      domain_current_resolution: PASS
+      domain_bound_artifact_total: 2
+  stepwise_checkpoint_schema:
+    artifact_type: BASIC_DESIGN_DOMAIN_STEPWISE_CHECKPOINT
+    required_fields:
+    - artifact_type
+    - stage_uid
+    - work_unit_uid
+    - governed_unit_uid
+    - domain_uid
+    - denominator_resolution_ref
+    - current_authority_ref
+    - materialized_binding_refs
+    - completeness_validation_result
+    - conflict_validation_result
+    - review_evidence_ref
+    - checkpoint_state
+    - next_admitted_domain_uid
+    materialization_owner_operation: BASIC_DESIGN_PACKAGE_COMPILE

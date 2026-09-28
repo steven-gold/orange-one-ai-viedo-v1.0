@@ -1,0 +1,20 @@
+artifact_type: S083A_SCOPE_AUTHORITY
+status: ACTIVE
+normative_authority: false
+authority_for_section: WEB-GOV-01-S083A
+section_title: Basic Design Stepwise Authoring and Review Flow
+section_source: .github/governance-source/active/source/12_DOCS/mother-spec/01_BLUEPRINT_DESIGN_GOVERNANCE.md
+referenced_contract: WEB-GOV-03-S062A
+scope_statement: S083A governs Basic Design documentation authoring only. It requires that each applicable Basic Design domain resolves its denominator and Current Authority, materializes the domain's required
+  rows/bindings, validates completeness and conflicts, persists review evidence/checkpoint, and only then admits the next dependent domain.
+scope_resolution:
+- stage_uid: STAGE-02
+  applicability: NOT_APPLICABLE_WITH_AUTHORITY
+  reason: STAGE-02 authors the functional contract; Basic Design stepwise authoring is owned by STAGE-04.
+- stage_uid: STAGE-03
+  applicability: NOT_APPLICABLE_WITH_AUTHORITY
+  reason: STAGE-03 authors the visual design spec; Basic Design stepwise authoring is owned by STAGE-04.
+- stage_uid: STAGE-04
+  applicability: REQUIRED
+  reason: STAGE-04 produces BASIC_DESIGN_PACKAGE and owns per-domain Basic Design stepwise authoring and review.
+note: This authority artifact exists so the STAGE-02/STAGE-03 S083A row is a truthful NOT_APPLICABLE_WITH_AUTHORITY terminal disposition.
