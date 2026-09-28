@@ -19,7 +19,7 @@ def successor_migration_contract():
     cycle=yaml.safe_load((REPO/'governance/specifications/current/EXECUTION_CYCLE_CONTROL.yaml').read_text(encoding='utf-8')) or {}
     candidate=yaml.safe_load((REPO/'governance/source-successor/SOURCE_PACKAGE_CANDIDATE.yaml').read_text(encoding='utf-8')) or {}
     m=mutation.get('retired_evidence_consumer_migration_control') or {}
-    s=cycle.get('successor_candidate_state_resolution') or {}
+    s=cycle.get('current_governance_state_resolution') or {}
     return {'migration':m,'state':s,'candidate':candidate}
 
 def phase(name,state,expect_pass):
@@ -48,7 +48,7 @@ results += [
         c['migration'].get('removed_predecessor_run_state_or_evidence_may_be_recreated_as_current') is False
         and c['migration'].get('historical_predecessor_evidence_role')=='HISTORICAL_REFERENCE_ONLY'
         and c['migration'].get('missing_retired_predecessor_evidence_disposition')=='MIGRATE_CONSUMER_NOT_RESTORE_ARTIFACT'
-        and c['state'].get('current_candidate_identity_source')=='governance/specifications/REGISTRY.yaml'
+        and c['state'].get('current_governance_identity_source')=='governance/specifications/REGISTRY.yaml'
         and c['candidate'].get('status')=='INTEGRATED_CURRENT_WORKLINE'
         and c['candidate'].get('current_authority') is True
         and (c['candidate'].get('integration') or {}).get('mode')=='SINGLE_BRANCH_INTEGRATED'
@@ -70,8 +70,8 @@ results += [
  case('missing_retired_evidence_routes_to_consumer_migration',m.get('missing_retired_predecessor_evidence_disposition')=='MIGRATE_CONSUMER_NOT_RESTORE_ARTIFACT'),
  case('legacy_regression_requires_isolated_fixture',m.get('legacy_regression_must_use_isolated_historical_fixture_when_historical_semantics_remain_required') is True),
  case('legacy_fixture_not_current_authority',m.get('legacy_fixture_may_not_be_current_authority') is True),
- case('current_candidate_identity_from_registry',st.get('current_candidate_identity_source')=='governance/specifications/REGISTRY.yaml'),
- case('current_validation_truth_external_exact_head',st.get('current_validation_truth_source')=='EXACT_HEAD_REQUIRED_WORKFLOW_RECEIPTS'),
+ case('current_governance_identity_from_registry',st.get('current_governance_identity_source')=='governance/specifications/REGISTRY.yaml'),
+ case('current_validation_truth_internal_exact_head',st.get('current_validation_truth_source')=='EXACT_HEAD_REQUIRED_WORKFLOW_RECEIPTS'),
  case('retired_run_ids_not_current_evidence',st.get('retired_predecessor_run_ids_are_current_evidence') is False),
  case('source_package_is_single_branch_integrated_current',cand.get('status')=='INTEGRATED_CURRENT_WORKLINE' and cand.get('current_authority') is True and (cand.get('integration') or {}).get('mode')=='SINGLE_BRANCH_INTEGRATED'),
  case('machine_review_registry_still_present',(ROOT/'10_REGISTRY/REVIEW_PROGRESS_LEDGER.yaml').is_file()),
