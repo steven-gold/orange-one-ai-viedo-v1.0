@@ -19,25 +19,25 @@ normative_section_uids:
 - WEB-GOV-01-S083
 rules:
   one_current_per_scope_and_type: true
-  page_visual_editable_owner_separation: true
+  governed_unit_visual_editable_owner_separation: true
   cross_domain_payload_duplication: BLOCK
   input_hash_required: true
   changed_input_marks_reverify: true
 blueprint_types:
-- blueprint_type: PAGE_BASE_BLUEPRINT
-  planning_domain: PAGE_CONSTRUCTION
+- blueprint_type: GOVERNED_UNIT_BASE_BLUEPRINT
+  planning_domain: GOVERNED_UNIT_CONSTRUCTION
   created_stage_uid: STAGE-01
-  owner_mode: PAGE
+  owner_mode: GOVERNED_UNIT
   blueprint_type_uid: BPTYPE-GOV-001
 - blueprint_type: VISUAL_BASE_BLUEPRINT
   planning_domain: VISUAL_CONSTRUCTION
   created_stage_uid: STAGE-01
   owner_mode: VISUAL
   blueprint_type_uid: BPTYPE-GOV-002
-- blueprint_type: PAGE_CONSTRUCTION_SPEC_PACKAGE
-  planning_domain: PAGE_CONSTRUCTION
+- blueprint_type: GOVERNED_UNIT_CONSTRUCTION_SPEC_PACKAGE
+  planning_domain: GOVERNED_UNIT_CONSTRUCTION
   created_stage_uid: STAGE-02
-  owner_mode: PAGE
+  owner_mode: GOVERNED_UNIT
   blueprint_type_uid: BPTYPE-GOV-003
 - blueprint_type: VISUAL_DESIGN_SPEC_PACKAGE
   planning_domain: VISUAL_CONSTRUCTION
