@@ -943,7 +943,16 @@ with tempfile.TemporaryDirectory() as td:
       'current_ledger_bindings':_state_ledger_bindings
     },(wd/'WORK_UNIT.yaml').open('w',encoding='utf-8'),sort_keys=False)
     valid_state={'artifact_type':'WORK_UNIT_EXECUTION_STATE','stage_uid':matrix_stage,'work_unit_uid':wu,'completed_operations':list(matrix_st['operations']),'current_operation':'COMPLETE','status':'CLOSED'}
-    yaml.safe_dump(valid_state,(wd/'EXECUTION_STATE.yaml').open('w',encoding='utf-8'),sort_keys=False)
+    _pressure_state_path=wd/'EXECUTION_STATE.yaml'
+    yaml.safe_dump(valid_state,_pressure_state_path.open('w',encoding='utf-8'),sort_keys=False)
+    _state_ledger_bindings['EXECUTION_STATE']={
+      'ledger_class':'EXECUTION_STATE','binding_kind':'LOCAL_ARTIFACT',
+      'artifact_ref':f'STAGE_EXECUTION/{matrix_stage}/{wu}/EXECUTION_STATE.yaml',
+      'content_sha256':eng._sha256_file(_pressure_state_path),'external_evidence_ref':''
+    }
+    _pressure_work=yaml.safe_load((wd/'WORK_UNIT.yaml').read_text(encoding='utf-8')) or {}
+    _pressure_work['current_ledger_bindings']=_state_ledger_bindings
+    yaml.safe_dump(_pressure_work,(wd/'WORK_UNIT.yaml').open('w',encoding='utf-8'),sort_keys=False)
     state_e={'scope_manifest_ref':scope_rel,'result':'PASS'}
     eng._validate_current_stage_state_bundle(matrix_stage,state_e,matrix_st,gov)
     incomplete=deepcopy(valid_state); incomplete['completed_operations']=incomplete['completed_operations'][:-1]
@@ -970,6 +979,7 @@ with tempfile.TemporaryDirectory() as _exec_td:
     _sid=next(sid for sid,row in _stages.items() if row.get('operations') and not row.get('pre_stage_source_projection_admission_gate') and (_adapters.get('stages') or {}).get(sid,{}).get('effectful_executor_owner_resolution')=='CURRENT_WORK_UNIT_OPERATION_BINDING_ONLY')
     _st=_stages[_sid]
     _wu='SYNTHETIC-EFFECTFUL-'+_sid
+    _gu='synthetic:'+_sid
     _wd=_exec_root/'STAGE_EXECUTION'/_sid/_wu
     (_wd/'EVIDENCE'/'OPERATION_RECEIPTS').mkdir(parents=True,exist_ok=True)
     (_exec_root/'tools').mkdir(parents=True,exist_ok=True)
@@ -1057,7 +1067,7 @@ receipt.write_text(yaml.safe_dump(obj,sort_keys=False),encoding="utf-8")
       f'STAGE_EXECUTION/{_sid}/{_wu}/EVIDENCE/CURRENT_LEDGERS'
     )
     _work={
-      'artifact_type':'WORK_UNIT','work_unit_uid':_wu,'governance_uid':_gov,
+      'artifact_type':'WORK_UNIT','work_unit_uid':_wu,'governance_uid':_gov,'governed_unit_uid':_gu,
       TASK_LAYER_FIELD:TASK_LAYER_VALUE,'stage_uid':_sid,'current_status':'ACTIVE',
       'pre_execution_gate_status':'PASS','required_outputs':list(_st.get('outputs') or []),
       'dependencies':['dependency.yaml'],'normative_execution_matrix_ref':_matrix_rel,
@@ -1069,16 +1079,26 @@ receipt.write_text(yaml.safe_dump(obj,sort_keys=False),encoding="utf-8")
     (_wd/'WORK_UNIT.yaml').write_text(yaml.safe_dump(_work,sort_keys=False),encoding='utf-8')
     _scope={
       'artifact_type':'EXECUTION_SCOPE_MANIFEST','stage_uid':_sid,'work_unit_uid':_wu,
-      'governance_uid':_gov,SCOPE_ALLOWED_FIELD:True
+      'governance_uid':_gov,'governed_unit_uid':_gu,SCOPE_ALLOWED_FIELD:True
     }
     _scope_rel=f'STAGE_EXECUTION/{_sid}/{_wu}/CURRENT_EXECUTION_SCOPE_MANIFEST.yaml'
     (_wd/'CURRENT_EXECUTION_SCOPE_MANIFEST.yaml').write_text(yaml.safe_dump(_scope,sort_keys=False),encoding='utf-8')
     _state={
       'artifact_type':'WORK_UNIT_EXECUTION_STATE','stage_uid':_sid,'work_unit_uid':_wu,
+      'governance_uid':_gov,'governed_unit_uid':_gu,
       'completed_operations':[],'current_operation':_ops[0],'status':'IN_PROGRESS',
       RESUME_CONTROL_FIELD:{RESUME_ALLOWED_FIELD:True}
     }
-    (_wd/'EXECUTION_STATE.yaml').write_text(yaml.safe_dump(_state,sort_keys=False),encoding='utf-8')
+    _state_path=_wd/'EXECUTION_STATE.yaml'
+    _state_path.write_text(yaml.safe_dump(_state,sort_keys=False),encoding='utf-8')
+    _state_rel=f'STAGE_EXECUTION/{_sid}/{_wu}/EXECUTION_STATE.yaml'
+    _current_ledger_bindings['EXECUTION_STATE']={
+      'ledger_class':'EXECUTION_STATE','binding_kind':'LOCAL_ARTIFACT',
+      'artifact_ref':_state_rel,'content_sha256':eng._sha256_file(_state_path),
+      'external_evidence_ref':''
+    }
+    _work['current_ledger_bindings']=_current_ledger_bindings
+    (_wd/'WORK_UNIT.yaml').write_text(yaml.safe_dump(_work,sort_keys=False),encoding='utf-8')
 
     _old_root=os.environ.get(eng.EXECUTION_ROOT_ENV)
     _old_work=os.environ.get(eng.ACTIVE_WORK_UNIT_ENV)
@@ -1087,6 +1107,61 @@ receipt.write_text(yaml.safe_dump(obj,sort_keys=False),encoding="utf-8")
     os.environ[eng.ACTIVE_WORK_UNIT_ENV]=_work_rel
     os.environ[eng.CURRENT_SCOPE_ENV]=_scope_rel
     try:
+        _bad=deepcopy(_work)
+        _bad['governance_uid']='GOVERNANCE-DRIFT'
+        expect_stage_engine_block(
+          'stage_entry_work_governance_drift',
+          lambda:eng._validate_stage_entry_control_state(_sid,_exec_root,_bad,_scope,_work_rel,_st,_gov),
+          'STAGE_ENTRY_WORK_UNIT_GOVERNANCE_DRIFT'
+        )
+
+        _bad_scope=deepcopy(_scope)
+        _bad_scope['governance_uid']='GOVERNANCE-DRIFT'
+        expect_stage_engine_block(
+          'stage_entry_scope_governance_drift',
+          lambda:eng._validate_stage_entry_control_state(_sid,_exec_root,_work,_bad_scope,_work_rel,_st,_gov),
+          'STAGE_ENTRY_SCOPE_GOVERNANCE_DRIFT'
+        )
+
+        _bad=deepcopy(_work)
+        _bad['pre_execution_gate_status']='BLOCKED'
+        expect_stage_engine_block(
+          'stage_entry_preexecution_gate_blocked',
+          lambda:eng._validate_stage_entry_control_state(_sid,_exec_root,_bad,_scope,_work_rel,_st,_gov),
+          'STAGE_ENTRY_PRE_EXECUTION_GATE_NOT_PASS'
+        )
+
+        _bad_scope=deepcopy(_scope)
+        _bad_scope[SCOPE_ALLOWED_FIELD]=False
+        expect_stage_engine_block(
+          'stage_entry_scope_execution_forbidden',
+          lambda:eng._validate_stage_entry_control_state(_sid,_exec_root,_work,_bad_scope,_work_rel,_st,_gov),
+          'STAGE_ENTRY_SCOPE_EXECUTION_NOT_ALLOWED'
+        )
+
+        _state_original=_state_path.read_text(encoding='utf-8')
+        _bad_state=deepcopy(_state)
+        _bad_state[RESUME_CONTROL_FIELD][RESUME_ALLOWED_FIELD]=False
+        _state_path.write_text(yaml.safe_dump(_bad_state,sort_keys=False),encoding='utf-8')
+        try:
+            expect_stage_engine_block(
+              'stage_entry_resume_forbidden',
+              lambda:eng._validate_stage_entry_control_state(_sid,_exec_root,_work,_scope,_work_rel,_st,_gov),
+              'STAGE_ENTRY_RESUME_NOT_ALLOWED'
+            )
+        finally:
+            _state_path.write_text(_state_original,encoding='utf-8')
+
+        _bad=deepcopy(_work)
+        _bad['current_ledger_bindings']['EXECUTION_STATE']['artifact_ref']=next(
+          row['artifact_ref'] for key,row in _bad['current_ledger_bindings'].items() if key!='EXECUTION_STATE'
+        )
+        expect_stage_engine_block(
+          'stage_entry_state_ledger_alias_drift',
+          lambda:eng._validate_stage_entry_control_state(_sid,_exec_root,_bad,_scope,_work_rel,_st,_gov),
+          'STAGE_ENTRY_EXECUTION_STATE_LEDGER_ALIAS_DRIFT'
+        )
+
         _first_ledger=next(iter(_current_ledger_bindings))
         _bad=deepcopy(_work)
         _bad['current_ledger_bindings'].pop(_first_ledger)
