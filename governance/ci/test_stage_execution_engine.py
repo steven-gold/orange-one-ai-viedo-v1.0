@@ -976,7 +976,13 @@ with tempfile.TemporaryDirectory() as td:
 with tempfile.TemporaryDirectory() as _exec_td:
     _exec_root=Path(_exec_td)
     _entry,_reg,_gov,_profile,_adapters,_stages=eng.validate_definition()
-    _sid=next(sid for sid,row in _stages.items() if row.get('operations') and not row.get('pre_stage_source_projection_admission_gate') and (_adapters.get('stages') or {}).get(sid,{}).get('effectful_executor_owner_resolution')=='CURRENT_WORK_UNIT_OPERATION_BINDING_ONLY')
+    _sid=next(
+      sid for sid,row in _stages.items()
+      if row.get('operations')
+      and not row.get('pre_stage_source_projection_admission_gate')
+      and (_adapters.get('stages') or {}).get(sid,{}).get('effectful_executor_owner_resolution')=='CURRENT_WORK_UNIT_OPERATION_BINDING_ONLY'
+      and any(str(prod)==str(row['operations'][0]) for prod in (row.get('output_producers') or {}).values())
+    )
     _st=_stages[_sid]
     _wu='SYNTHETIC-EFFECTFUL-'+_sid
     _gu='synthetic:'+_sid
@@ -986,18 +992,24 @@ with tempfile.TemporaryDirectory() as _exec_td:
     (_exec_root/'dependency.yaml').write_text('status: PASS\n',encoding='utf-8')
 
     _sections=list(map(str,_st.get('required_normative_section_uids') or []))
-    _arts=list(map(str,_st.get('outputs') or []))+list(map(str,_st.get('required_evidence') or []))
+    _outputs=list(map(str,_st.get('outputs') or []))
+    _required_evidence_types=list(map(str,_st.get('required_evidence') or []))
+    _arts=_outputs+_required_evidence_types
     _total=max(len(_sections),len(_arts))
-    _payload={'fields':{f'f{i}':f'VALUE-{i}' for i in range(_total)}}
-    (_wd/'payload.yaml').write_text(yaml.safe_dump(_payload,sort_keys=False),encoding='utf-8')
+    _artifact_targets={}
+    for _artifact_type in _arts:
+        _safe=''.join(ch if ch.isalnum() else '_' for ch in _artifact_type)
+        _subdir='OUTPUTS' if _artifact_type in _outputs else 'EVIDENCE/REQUIRED'
+        _artifact_targets[_artifact_type]=f'STAGE_EXECUTION/{_sid}/{_wu}/{_subdir}/{_safe}.yaml'
     _rows=[]
     for _i in range(_total):
+        _artifact_type=_arts[_i % len(_arts)]
         _rows.append({
           'matrix_row_uid':f'EXEC-MATRIX-{_i+1:03d}','normative_section_uid':_sections[_i % len(_sections)],
-          'requirement_uid':f'EXEC-REQ-{_i+1:03d}','required_artifact_type':_arts[_i % len(_arts)],
-          'artifact_ref':f'STAGE_EXECUTION/{_sid}/{_wu}/payload.yaml','artifact_owner':'SYNTHETIC-OWNER',
+          'requirement_uid':f'EXEC-REQ-{_i+1:03d}','required_artifact_type':_artifact_type,
+          'artifact_ref':_artifact_targets[_artifact_type],'artifact_owner':'SYNTHETIC-OWNER',
           'row_denominator_source':'SYNTHETIC-EFFECTFUL','row_identity':f'EXEC-ROW-{_i+1:03d}',
-          'field_path':['fields',f'f{_i}'],'applicability':'REQUIRED','validator_uid':_st['validators'][0],
+          'field_path':['value'],'applicability':'REQUIRED','validator_uid':_st['validators'][0],
           'validator_check_id':f'EXEC-CHECK-{_i+1:03d}','evidence_ref':'synthetic://effectful',
           'closure_gate':_st['exit_gate'],'failure_disposition':'BLOCK','reentry_owner':'SYNTHETIC-OWNER'
         })
@@ -1026,6 +1038,14 @@ a=p.parse_args()
 root=Path(a.execution_root)
 work=yaml.safe_load((root/a.work_unit).read_text(encoding="utf-8")) or {}
 binding=(work.get("operation_bindings") or {}).get(a.operation) or {}
+for artifact_type,artifact_ref in (binding.get("synthetic_output_refs") or {}).items():
+    target=root/str(artifact_ref)
+    target.parent.mkdir(parents=True,exist_ok=True)
+    target.write_text(yaml.safe_dump({
+      "artifact_type":artifact_type,
+      "producer_operation_uid":a.operation,
+      "value":"MATERIALIZED-"+a.operation
+    },sort_keys=False),encoding="utf-8")
 receipt=root/str(binding.get("operation_receipt_ref") or "")
 receipt.parent.mkdir(parents=True,exist_ok=True)
 obj={
@@ -1051,7 +1071,12 @@ receipt.write_text(yaml.safe_dump(obj,sort_keys=False),encoding="utf-8")
           'executor_owner':_executor_rel,
           'result_owner':'SYNTHETIC_RESULT_OWNER',
           'executor_protocol':'PYTHON_STAGE_OPERATION_V1',
-          'operation_receipt_ref':f'STAGE_EXECUTION/{_sid}/{_wu}/EVIDENCE/OPERATION_RECEIPTS/{_op}.yaml'
+          'operation_receipt_ref':f'STAGE_EXECUTION/{_sid}/{_wu}/EVIDENCE/OPERATION_RECEIPTS/{_op}.yaml',
+          'synthetic_output_refs':{
+            _artifact:_artifact_targets[_artifact]
+            for _artifact,_producer in (_st.get('output_producers') or {}).items()
+            if str(_producer)==_op
+          }
         }
     _scanner_bindings={
       str(_dim):{'scanner_owner':'SYNTHETIC_SCANNER_OWNER','result_owner':'SYNTHETIC_RESULT_OWNER'}
@@ -1107,6 +1132,25 @@ receipt.write_text(yaml.safe_dump(obj,sort_keys=False),encoding="utf-8")
     os.environ[eng.ACTIVE_WORK_UNIT_ENV]=_work_rel
     os.environ[eng.CURRENT_SCOPE_ENV]=_scope_rel
     try:
+        _first_op_outputs=[
+          _artifact for _artifact,_producer in (_st.get('output_producers') or {}).items()
+          if str(_producer)==_ops[0]
+        ]
+        assert _first_op_outputs
+        _future_ref=_artifact_targets[_first_op_outputs[0]]
+        _future_path=_exec_root/_future_ref
+        _future_path.parent.mkdir(parents=True,exist_ok=True)
+        _future_path.write_text(yaml.safe_dump({
+          'artifact_type':_first_op_outputs[0],
+          'producer_operation_uid':_ops[0],
+          'value':'PREPRODUCED'
+        },sort_keys=False),encoding='utf-8')
+        expect_stage_engine_block(
+          'matrix_future_output_preproduction_blocked',
+          lambda:eng.active_execution(_sid),
+          'NORMATIVE_EXECUTION_MATRIX_FUTURE_OUTPUT_PREPRODUCED'
+        )
+        _future_path.unlink()
         _bad=deepcopy(_work)
         _bad['governance_uid']='GOVERNANCE-DRIFT'
         expect_stage_engine_block(
@@ -1276,6 +1320,14 @@ receipt.write_text(yaml.safe_dump(obj,sort_keys=False),encoding="utf-8")
         _na_binding.pop('executor_owner',None)
         _na_binding.pop('executor_protocol',None)
         (_wd/'WORK_UNIT.yaml').write_text(yaml.safe_dump(_na_work,sort_keys=False),encoding='utf-8')
+        _matrix_original=deepcopy(_matrix)
+        _na_matrix=deepcopy(_matrix)
+        for _row in _na_matrix['rows']:
+            _atype=str(_row.get('required_artifact_type') or '')
+            if str((_st.get('output_producers') or {}).get(_atype) or '')==_ops[0]:
+                _row['applicability']='NOT_APPLICABLE_WITH_AUTHORITY'
+                _row['authority_evidence_ref']='AUTH-SYNTHETIC-OPERATION-NA-001'
+        (_wd/'NORMATIVE_EXECUTION_MATRIX.yaml').write_text(yaml.safe_dump(_na_matrix,sort_keys=False),encoding='utf-8')
         assert eng.execute_active(_sid) is True
         _na_receipt_path=_exec_root/_operation_bindings[_ops[0]]['operation_receipt_ref']
         _na_receipt=yaml.safe_load(_na_receipt_path.read_text(encoding='utf-8')) or {}
@@ -1283,8 +1335,40 @@ receipt.write_text(yaml.safe_dump(obj,sort_keys=False),encoding="utf-8")
         assert _na_receipt.get('authority_evidence_ref')=='AUTH-SYNTHETIC-OPERATION-NA-001'
         assert _na_receipt.get('proof')=='AUTH-SYNTHETIC-OPERATION-NA-001'
         _na_receipt_path.unlink()
+        (_wd/'NORMATIVE_EXECUTION_MATRIX.yaml').write_text(yaml.safe_dump(_matrix_original,sort_keys=False),encoding='utf-8')
         (_wd/'EXECUTION_STATE.yaml').write_text(yaml.safe_dump(_state,sort_keys=False),encoding='utf-8')
         (_wd/'WORK_UNIT.yaml').write_text(yaml.safe_dump(_work,sort_keys=False),encoding='utf-8')
+        _receipt_only_code='''#!/usr/bin/env python3
+import argparse
+from pathlib import Path
+import yaml
+p=argparse.ArgumentParser()
+p.add_argument("--stage",required=True); p.add_argument("--operation",required=True); p.add_argument("--work-unit",required=True)
+p.add_argument(__EXECUTION_ROOT_ARG__,dest="execution_root",required=True)
+a=p.parse_args()
+root=Path(a.execution_root)
+work=yaml.safe_load((root/a.work_unit).read_text(encoding="utf-8")) or {}
+binding=(work.get("operation_bindings") or {}).get(a.operation) or {}
+receipt=root/str(binding.get("operation_receipt_ref") or "")
+receipt.parent.mkdir(parents=True,exist_ok=True)
+receipt.write_text(yaml.safe_dump({
+ "artifact_type":"OPERATION_EXECUTION_RECEIPT","stage_uid":a.stage,
+ "work_unit_uid":work.get("work_unit_uid"),"operation_uid":a.operation,
+ "governance_uid":work.get("governance_uid"),"status":"PASS",
+ "executor_owner":binding.get("executor_owner"),"executor_protocol":binding.get("executor_protocol"),
+ "result_owner":binding.get("result_owner")
+},sort_keys=False),encoding="utf-8")
+'''.replace('__EXECUTION_ROOT_ARG__',repr(EXECUTION_ROOT_ARG))
+        (_exec_root/_executor_rel).write_text(_receipt_only_code,encoding='utf-8')
+        expect_stage_engine_block(
+            'operation_receipt_without_producer_output',
+            lambda:eng.execute_active(_sid),
+            'NORMATIVE_EXECUTION_MATRIX_ARTIFACT:'
+        )
+        _orphan_receipt=_exec_root/_operation_bindings[_ops[0]]['operation_receipt_ref']
+        if _orphan_receipt.exists(): _orphan_receipt.unlink()
+        (_exec_root/_executor_rel).write_text(_executor_code,encoding='utf-8')
+
         _no_receipt_code='''#!/usr/bin/env python3
 import argparse
 p=argparse.ArgumentParser()
