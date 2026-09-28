@@ -1,9 +1,9 @@
 artifact_type: PRODUCT_STAGE01_04_DEFECT_LEDGER
-status: CURRENT_STAGE01_PRESTAGE_MATERIALIZED_AWAITING_RUNTIME_INLINE_VALIDATION
+status: RESET_FOR_FRESH_STAGE01_PRESTAGE_REEXECUTION
 authorization_record_url: https://github.com/steven-gold/orange-one-ai-viedo-v1.0/issues/61
 cleanup_authorization_record_url: https://github.com/steven-gold/orange-one-ai-viedo-v1.0/issues/64
 product_branch: 0921acpos
-current_product_head_at_materialization: 4b0642c5eb719ea2d925e4892013cb01203be778
+current_product_head_at_materialization: null
 current_governance:
   branch: rebuild-v2.1.1
   head: c353d7bdb5dc7edb43c6c7453517d1df75d54ce8
@@ -26,28 +26,28 @@ defects:
   owner: PRE_STAGE_SOURCE_PROJECTION
   evidence: predecessor CANONICAL_SOURCE_PROJECTION.yaml length=0
   remediation: FRESH_DERIVATION_FROM_REGISTERED_IMMUTABLE_SOURCE_IN_SUCCESSOR
-  state: REMEDIATED_BY_FRESH_SUCCESSOR_SOURCE_PROJECTION
+  state: PRESTAGE_REEXECUTION_REQUIRED
 - uid: DEF-WB01-S01-PROJECTION-ZERO-BYTE
   governed_unit_uid: workspace:WB-01
   stage_uid: STAGE-01
   owner: PRE_STAGE_SOURCE_PROJECTION
   evidence: predecessor CANONICAL_SOURCE_PROJECTION.yaml length=0
   remediation: FRESH_DERIVATION_FROM_REGISTERED_IMMUTABLE_SOURCE_IN_SUCCESSOR
-  state: REMEDIATED_BY_FRESH_SUCCESSOR_SOURCE_PROJECTION
+  state: PRESTAGE_REEXECUTION_REQUIRED
 - uid: DEF-HOME-S01-CONTENT-AUDIT-LEGACY-ID
   governed_unit_uid: GLOBAL-HOME-SHELL-NAVIGATION
   stage_uid: STAGE-01
   owner: PRE_STAGE_SOURCE_PROJECTION
   evidence: predecessor SOURCE_DOCUMENT_CONTENT_AUDIT uses page_uid
   current_required_identity: governed_unit_uid
-  state: REMEDIATED_BY_FRESH_SUCCESSOR_CONTENT_AUDIT
+  state: PRESTAGE_REEXECUTION_REQUIRED
 - uid: DEF-WB01-S01-CONTENT-AUDIT-LEGACY-ID
   governed_unit_uid: workspace:WB-01
   stage_uid: STAGE-01
   owner: PRE_STAGE_SOURCE_PROJECTION
   evidence: predecessor SOURCE_DOCUMENT_CONTENT_AUDIT uses page_uid
   current_required_identity: governed_unit_uid
-  state: REMEDIATED_BY_FRESH_SUCCESSOR_CONTENT_AUDIT
+  state: PRESTAGE_REEXECUTION_REQUIRED
 - uid: DEF-BOTH-S01-PAGE-IDENTITY
   governed_unit_uid: BOTH
   stage_uid: STAGE-01
@@ -56,7 +56,7 @@ defects:
   current_operation_uid: GOVERNED_UNIT_BASE_BLUEPRINT_COMPILE
   predecessor_output_uid: PAGE_BASE_BLUEPRINT
   current_output_uid: GOVERNED_UNIT_BASE_BLUEPRINT
-  state: READY_FOR_STAGE01_GOVERNED_UNIT_BASE_BLUEPRINT_OPERATION
+  state: PRESTAGE_REEXECUTION_REQUIRED
 - uid: DEF-BOTH-S02-PAGE-IDENTITY
   governed_unit_uid: BOTH
   stage_uid: STAGE-02
@@ -75,7 +75,7 @@ defects:
   owner: PRODUCT_OPERATION_EXECUTOR_IMPLEMENTATION
   defect: DEDICATED_OPERATION_EXECUTOR_IMPLEMENTATIONS_NOT_MATERIALIZED
   rule: COMMON_ENGINE_RECURSIVE_EXECUTOR_FORBIDDEN
-  state: STAGE01_EXECUTORS_MATERIALIZED_STAGE02_03_PENDING
+  state: PRESTAGE_REEXECUTION_REQUIRED
 - uid: DEF-BOTH-S01-04-CURRENT-MATRIX
   governed_unit_uid: BOTH
   stage_uid:
@@ -86,7 +86,7 @@ defects:
   owner: SUCCESSOR_WORK_UNIT
   defect: FRESH_CURRENT_MATRIX_SCOPE_STATE_EVIDENCE_NOT_MATERIALIZED
   predecessor_credit: 0
-  state: STAGE01_CURRENT_MATRIX_MATERIALIZED_STAGE02_04_PENDING
+  state: PRESTAGE_REEXECUTION_REQUIRED
 - uid: DEF-BOTH-S04-S083A
   governed_unit_uid: BOTH
   stage_uid: STAGE-04
@@ -124,14 +124,14 @@ pre_stage_boundary:
   successor_work_units:
   - WU-STAGE01-GLOBAL-HOME-SHELL-NAVIGATION-REENTRY-001
   - WU-STAGE01-WB01-DASHBOARD-REENTRY-001
-  fresh_source_projection_materialized: true
-  fresh_content_audit_materialized: true
-  stage01_dedicated_executor_bindings_materialized: true
-  stage01_current_matrix_materialized: true
-  exact_head_governance_receipts_verified: true
+  fresh_source_projection_materialized: false
+  fresh_content_audit_materialized: false
+  stage01_dedicated_executor_bindings_materialized: false
+  stage01_current_matrix_materialized: false
+  exact_head_governance_receipts_verified: false
   runtime_inline_validation_required_at_stage_entry: true
   runtime_inline_validation_completed_for_stage_entry: false
   stage01_effectful_operation_executed: false
   auto_stage_entry: false
-  status: READY_AWAITING_RUNTIME_INLINE_VALIDATION_AND_EXPLICIT_STAGE01_ENTRY
-  unresolved_pre_stage_defect_count: 0
+  status: RESET_AWAITING_FRESH_MATERIALIZATION
+  unresolved_pre_stage_defect_count: 6

@@ -1,5 +1,5 @@
 artifact_type: PRODUCT_REMEDIATION_RESUME_STATE
-status: READY_AWAITING_RUNTIME_INLINE_VALIDATION_AND_EXPLICIT_STAGE01_ENTRY
+status: READY_FOR_STAGE01_SUCCESSOR_MATERIALIZATION
 authorization_record_url: https://github.com/steven-gold/orange-one-ai-viedo-v1.0/issues/61
 product_branch: 0921acpos
 governed_units:
@@ -16,16 +16,16 @@ work_unit_resolution_gate:
   successor_plan_ref: STAGE_EXECUTION/SHARED_AUTHORITY/V232_REALIGNMENT/successor_reentry_resolution.yaml
   effectful_execution_admitted: false
   exact_head_selection_admitted: true
-  pre_stage_materialization_admitted: true
+  pre_stage_materialization_admitted: false
 resume_point:
-  last_completed_action: STAGE01_PRESTAGE_SUCCESSOR_MATERIALIZATION_AND_ADMISSION
-  next_action: RUN_RUNTIME_INLINE_VALIDATION_THEN_EXPLICIT_STAGE01_ENTRY
+  last_completed_action: STAGE01_CURRENT_SUCCESSORS_RESET_FOR_REEXECUTION
+  next_action: MATERIALIZE_STAGE01_SUCCESSORS_FROM_IMMUTABLE_SOURCE
   next_effectful_stage: STAGE-01
-  earliest_owner: STAGE01_OPERATION_EXECUTORS
+  earliest_owner: PRE_STAGE_SOURCE_PROJECTION_AND_STAGE01
   stage_entry_hold: true
 current_blockers:
-- RUNTIME_INLINE_INTERNAL_GOVERNANCE_VALIDATION_REQUIRED_BEFORE_EFFECTFUL_STAGE
-pre_stage_unresolved_defect_count: 0
+- STAGE01_SUCCESSOR_WORK_UNITS_NOT_MATERIALIZED
+pre_stage_unresolved_defect_count: 6
 verified_defects_already_resolved_in_planning:
 - NON_WORD_EXTERNAL_GATE_REMOVED
 - CURRENT_GOVERNANCE_DIRECT_STAGE_PATH_RESTORED
@@ -48,9 +48,9 @@ verified_physical_defects_pending_effectful_remediation:
 - STAGE04_DYNAMIC_DOMAIN_CHECKPOINT_INSTANCES_MISSING
 completion_credit: 0
 pre_stage_hold:
-  status: READY_AWAITING_RUNTIME_INLINE_VALIDATION_AND_EXPLICIT_STAGE01_ENTRY
+  status: RESET_AWAITING_FRESH_STAGE01_SUCCESSOR_MATERIALIZATION
   auto_stage_entry: false
-  pre_stage_materialization_complete: true
+  pre_stage_materialization_complete: false
   effectful_execution_admitted: false
   effectful_stage_operation_executed: false
   stage01_completed_operation_total: 0
@@ -61,7 +61,7 @@ downstream_known_blockers:
 - STAGE04_DYNAMIC_DOMAIN_CHECKPOINT_INSTANCES_MISSING
 
 pre_stage_hardening:
-  status: FROZEN_AT_STAGE01_ENTRY_BOUNDARY
+  status: RESET_FOR_AUTHORIZED_HOME_WB01_REEXECUTION
   automatic_prestage_rematerialization_enabled: false
   prestage_rematerialization_requires_explicit_workflow_dispatch: true
   obsolete_wb01_single_projection_producer_removed: true
@@ -71,6 +71,7 @@ pre_stage_hardening:
   active_workflow_moving_governance_ref_count: 0
   active_stage01_effectful_auto_write_workflow_count: 0
   stage01_operation_receipt_count_at_hold: 0
+  one_time_fresh_materialization_trigger_authorized: true
   stage01_effectful_workflow_trigger_mode: EXPLICIT_WORKFLOW_DISPATCH_ONLY
   stale_materialization_runs_may_not_overwrite_current_head: FAST_FORWARD_PUSH_REQUIRED
   stage01_entry_hold_preserved: true

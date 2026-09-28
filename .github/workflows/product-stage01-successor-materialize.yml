@@ -1,5 +1,9 @@
 name: Product Stage01 Successor Materialize
 on:
+  push:
+    branches: [0921acpos]
+    paths:
+      - '.github/workflows/product-stage01-successor-materialize.yml'
   workflow_dispatch:
     inputs:
       reason:
