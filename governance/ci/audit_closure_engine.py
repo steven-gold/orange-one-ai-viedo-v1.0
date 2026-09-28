@@ -194,7 +194,7 @@ def validate_physical_artifact_integrity_contract(ctx: dict) -> dict:
     contract=(ctx.get('stage_invariants') or {}).get('PHYSICAL_ARTIFACT_INTEGRITY') or {}
     if contract.get('invariant_uid')!='GOV-INV-PHYSICAL-ARTIFACT-INTEGRITY-001':
         return {'status':'FAIL','reason':'PHYSICAL_ARTIFACT_INTEGRITY_CONTRACT_MISSING'}
-    if set(map(str,contract.get('normative_section_uids') or []))!={'WEB-GOV-03-S073','WEB-GOV-04-S088'}:
+    if set(map(str,contract.get('normative_section_uids') or []))!={'WEB-GOV-03-S071','WEB-GOV-04-S085'}:
         return {'status':'FAIL','reason':'PHYSICAL_ARTIFACT_INTEGRITY_NORMATIVE_BINDING_DRIFT'}
     required_true=(
       'applies_to_all_registered_stages',
