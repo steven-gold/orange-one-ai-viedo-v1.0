@@ -9,6 +9,9 @@ on:
       - '.github/scripts/stage01_ops/**'
 permissions:
   contents: write
+concurrency:
+  group: product-stage01-successor-materialize
+  cancel-in-progress: true
 jobs:
   materialize:
     runs-on: ubuntu-24.04
