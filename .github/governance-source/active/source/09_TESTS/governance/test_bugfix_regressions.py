@@ -76,7 +76,7 @@ results.append(case(
     and source_candidate.get('current_authority') is True
     and (source_candidate.get('integration') or {}).get('mode')=='SINGLE_BRANCH_INTEGRATED'
     and source_integrity.get('word_or_registered_source_integrity_required') is True
-    and source_integrity.get('external_person_or_signer_required') is False,
+    and source_integrity.get('unregistered_non_word_execution_prerequisite')=='BLOCK',
     {'candidate_status':source_candidate.get('status'),'integration':source_candidate.get('integration'),'source_integrity':source_integrity}
 ))
 
