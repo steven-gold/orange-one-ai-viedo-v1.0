@@ -1,5 +1,5 @@
 artifact_type: PRODUCT_SELECTED_CURRENT_GOVERNANCE
-status: PENDING_EXACT_HEAD_VALIDATION
+status: SELECTED_EXACT_CURRENT_SNAPSHOT
 selection_mode: EXACT_CURRENT_GOVERNANCE_SNAPSHOT
 product_branch: 0921acpos
 governance_repository: steven-gold/orange-one-ai-viedo-v1.0
@@ -19,4 +19,12 @@ word_derived_source_model:
   structured_projection_required: true
   ai_completion_when_word_insufficient: ALLOWED_ONLY_FROM_SAME_WORD_CONTEXT_AND_EXISTING_CANONICAL_SYSTEM_RELATIONSHIPS
   ai_generated_content_is_second_authority: false
+exact_head_validation:
+  mother_neutrality_status: SUCCESS
+  mother_neutrality_run_id: 36447083671
+  stage_internal_validation_status: SUCCESS
+  stage_internal_validation_run_id: 36447083377
+  gate_01_08_result: PASS
+  validated_head_sha: c353d7bdb5dc7edb43c6c7453517d1df75d54ce8
+runtime_inline_validation_required_before_effectful_stage: true
 product_completion_credit: 0

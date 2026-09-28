@@ -7,7 +7,7 @@ product_branch: 0921acpos
 target_governance_snapshot:
   governance_uid: GOV-REV-20260928-WORD-DERIVED-STAGE-INTERNAL-VALIDATION
   governance_head: c353d7bdb5dc7edb43c6c7453517d1df75d54ce8
-  execution_authority: false
+  execution_authority: true
 inline_internal_validation_required: true
 current_governance_selection_ref: STAGE_EXECUTION/SHARED_AUTHORITY/CURRENT_GOVERNANCE_SELECTION.yaml
 inline_validation_evidence_mode: EFFECTFUL_WORKFLOW_RUNTIME
@@ -83,9 +83,13 @@ stage_contract_corrections:
     one_checkpoint_per_applicable_domain: true
     fixed_checkpoint_count: FORBIDDEN
 execution_admission:
-  state: BLOCKED
+  state: READY_FOR_STAGE01_SUCCESSOR_MATERIALIZATION
+  exact_head_validation:
+    result: PASS
+    stage_internal_validation_run_id: 36447083377
+    mother_neutrality_run_id: 36447083671
+  runtime_inline_validation_required_before_effectful_stage: true
   blockers:
-  - INLINE_INTERNAL_GOVERNANCE_VALIDATION_NOT_YET_EXECUTED
   - STAGE01_SUCCESSOR_WORK_UNITS_NOT_MATERIALIZED
   - STAGE01_03_DEDICATED_EXECUTOR_IMPLEMENTATIONS_MISSING
 product_completion_credit: 0

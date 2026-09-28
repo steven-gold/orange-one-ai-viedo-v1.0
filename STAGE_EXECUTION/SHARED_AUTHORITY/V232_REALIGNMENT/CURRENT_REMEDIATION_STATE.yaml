@@ -1,5 +1,5 @@
 artifact_type: PRODUCT_REMEDIATION_RESUME_STATE
-status: BLOCKED_PENDING_INLINE_INTERNAL_VALIDATION
+status: READY_FOR_STAGE01_SUCCESSOR_MATERIALIZATION
 authorization_record_url: https://github.com/steven-gold/orange-one-ai-viedo-v1.0/issues/61
 product_branch: 0921acpos
 governed_units:
@@ -15,14 +15,15 @@ work_unit_resolution_gate:
   result: PASS_RESOLUTION_ONLY
   successor_plan_ref: STAGE_EXECUTION/SHARED_AUTHORITY/V232_REALIGNMENT/successor_reentry_resolution.yaml
   effectful_execution_admitted: false
+  exact_head_selection_admitted: true
 resume_point:
-  last_completed_action: SUCCESSOR_REENTRY_CHAIN_RESOLVED
-  next_action: RUN_INLINE_INTERNAL_GOVERNANCE_VALIDATION_THEN_MATERIALIZE_STAGE01_SUCCESSORS
+  last_completed_action: EXACT_CURRENT_GOVERNANCE_SELECTED
+  next_action: MATERIALIZE_STAGE01_SUCCESSORS_THEN_RUN_EFFECTFUL_WORKFLOW_INLINE_VALIDATION
   next_effectful_stage: STAGE-01
   earliest_owner: PRE_STAGE_SOURCE_PROJECTION_AND_STAGE01
 current_blockers:
-- INLINE_INTERNAL_GOVERNANCE_VALIDATION_NOT_YET_EXECUTED_IN_EFFECTFUL_WORKFLOW
 - STAGE01_SUCCESSOR_WORK_UNITS_NOT_MATERIALIZED
+- RUNTIME_INLINE_INTERNAL_GOVERNANCE_VALIDATION_REQUIRED_BEFORE_EFFECTFUL_STAGE
 - STAGE01_03_DEDICATED_EXECUTOR_IMPLEMENTATIONS_MISSING
 verified_defects_already_resolved_in_planning:
 - NON_WORD_EXTERNAL_GATE_REMOVED
