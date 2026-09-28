@@ -39,6 +39,10 @@ product_execution_admission_contracts:
     candidate_validation_terminalization_authority_ref: governance/specifications/REGISTRY.yaml#candidate_validation_contract
     external_precondition_applicability: CONDITIONAL_WHEN_PRODUCT_EXECUTION_EXPLICITLY_SELECTS_RELEASED_GOVERNANCE_MODE
     common_stage_execution_outside_released_governance_mode_blocked_by_this_contract: false
+    released_governance_mode_activation_field: governance_execution_mode
+    released_governance_mode_activation_value: RELEASED_GOVERNANCE
+    absence_of_explicit_released_governance_mode_selection: NOT_APPLICABLE_WITH_ZERO_COMMON_STAGE_BLOCKING_CREDIT
+    candidate_current_governance_may_drive_common_stage_when_released_mode_not_selected: true
     selected_governance_release_artifact_type: PRODUCT_SELECTED_GOVERNANCE_RELEASE
     selected_governance_release_path: STAGE_EXECUTION/SHARED_AUTHORITY/PRODUCT_SELECTED_GOVERNANCE_RELEASE.yaml
     selected_governance_release_required_fields: [artifact_type, status, governance_repository, governance_commit_sha, governance_tree_sha, governance_uid, governance_revision, display_version, release_receipt_ref, release_receipt_sha256, root_manifest_sha256, fresh_reverify_status, fresh_reverify_evidence_ref, selection_authority_ref]
