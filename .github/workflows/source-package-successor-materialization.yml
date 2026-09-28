@@ -1,6 +1,11 @@
 name: Integrated Source Package Materialization
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - rebuild-v2.1.1
+    paths:
+      - governance/source-successor/.materialize-request
 permissions:
   contents: write
 concurrency:
