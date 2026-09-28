@@ -1583,6 +1583,20 @@ Audit MUST independently resolve every REQUIRED/BOUND successor execution target
 Destructive regression MUST include, at minimum: wrong/non-Current branch; missing application/root/path; untracked path; stale product HEAD; stale product tree; target-identity/receipt mismatch; receipt bound to another Work Unit or successor; external-resource identity mismatch or failed verifier; Authority-value mismatch; and a false `physical_materialization_complete: true` ledger whose target receipt fails. Every such case MUST block successor admission even when all other handoff counters are zero.
 
 Audit MUST reconcile `WORK_UNIT`, `CURRENT_EXECUTION_STATE`, `NORMATIVE_EXECUTION_MATRIX`, normalized evidence, closure gate state, and terminal receipt before accepting Stage closure. A PASS/closed claim with an empty or invalid Current matrix is `CURRENT_MATRIX_INVALID`. A PASS/closed claim whose Current execution state has a completed-operation set different from the registered Stage operation set, or remains at an earlier/pending operation, is `CURRENT_STATE_CONFLICT`. A successful outer workflow run or terminal receipt MUST NOT override either finding.
+### Physical Artifact Audit and Anti-Self-Assertion Rule / 實體產物稽核與禁止自我宣告規則
+
+Audit MUST distinguish artifact presence from artifact validity. `path exists`, `file listed`, `receipt exists`, `status: PASS`, a matching declared hash copied across records, or a complete-looking matrix row proves only that those assertions are present. None of them may substitute for reading and validating the referenced physical artifact.
+
+For every REQUIRED file-backed artifact in the frozen audit denominator, Audit MUST independently record and evaluate, as applicable: physical existence; regular-file identity; byte length; non-empty requirement; parser result; schema/revision result; REQUIRED-field completeness; sequence/order validity; recomputed physical content hash or registered content-derived identity; producer binding; receipt binding; consumer binding; and Current snapshot identity. These dimensions MUST be evaluated from the same frozen repository/branch/head/tree and governance snapshot used by the audit.
+
+A REQUIRED artifact that is missing, zero-byte without explicit schema authority, unparsable, schema-invalid, REQUIRED-field incomplete, hash-mismatched, stale, or bound to a receipt/consumer identity that differs from the recomputed physical identity MUST be reported as a blocking failure. A self-consistent set of metadata records MUST_NOT override a physical-content failure. Historical PASS, producer-declared zero mismatch counts, freeze receipts, or terminal receipts have zero override authority over failed physical validation.
+
+When a registered independent rederivation/reconciliation validator exists, Audit MUST execute it or consume its fresh exact-snapshot result and MUST compare that recomputed result with the artifact, receipt, and consumer bindings. Sampling MAY be used only for OPTIONAL diagnostics; REQUIRED artifact integrity is denominator-complete and MAY NOT be inferred from representative samples.
+
+Audit output for applicable artifact classes MUST expose distinct counters or findings for at least: missing artifact; empty artifact; parse failure; schema/required-field failure; physical hash/content-identity mismatch; receipt drift; consumer-binding drift; and independent-rederivation mismatch. Closure requires zero blocking findings across the complete REQUIRED denominator.
+
+Mandatory destructive regression MUST preserve otherwise self-consistent metadata while independently corrupting the physical artifact, including at least a zero-byte case. The expected result is BLOCK/FAIL at physical-integrity validation. An auditor that reports PASS solely because the receipt, ledger, summary, or matrix remains internally consistent is itself non-conformant and MUST be classified as an audit/validator implementation defect.
+
 <!-- SECTION_UID: WEB-GOV-04-S086 -->
 ## 86. Typography Computed Metrics Evidence Audit / 字體計算值證據稽核
 
@@ -1617,18 +1631,3 @@ For every non-XML binary package part independently observed in the raw DOCX pac
 
 Destructive regression MUST include missing content-readiness audit and missing or hash-mismatched frozen binary source part. A source-fidelity PASS with unavailable pixels/bytes for an embedded visual is false completion and MUST be blocked.
 
-
-<!-- SECTION_UID: WEB-GOV-04-S088 -->
-## 88. Physical Artifact Audit and Anti-Self-Assertion Rule / 實體產物稽核與禁止自我宣告規則
-
-Audit MUST distinguish artifact presence from artifact validity. `path exists`, `file listed`, `receipt exists`, `status: PASS`, a matching declared hash copied across records, or a complete-looking matrix row proves only that those assertions are present. None of them may substitute for reading and validating the referenced physical artifact.
-
-For every REQUIRED file-backed artifact in the frozen audit denominator, Audit MUST independently record and evaluate, as applicable: physical existence; regular-file identity; byte length; non-empty requirement; parser result; schema/revision result; REQUIRED-field completeness; sequence/order validity; recomputed physical content hash or registered content-derived identity; producer binding; receipt binding; consumer binding; and Current snapshot identity. These dimensions MUST be evaluated from the same frozen repository/branch/head/tree and governance snapshot used by the audit.
-
-A REQUIRED artifact that is missing, zero-byte without explicit schema authority, unparsable, schema-invalid, REQUIRED-field incomplete, hash-mismatched, stale, or bound to a receipt/consumer identity that differs from the recomputed physical identity MUST be reported as a blocking failure. A self-consistent set of metadata records MUST_NOT override a physical-content failure. Historical PASS, producer-declared zero mismatch counts, freeze receipts, or terminal receipts have zero override authority over failed physical validation.
-
-When a registered independent rederivation/reconciliation validator exists, Audit MUST execute it or consume its fresh exact-snapshot result and MUST compare that recomputed result with the artifact, receipt, and consumer bindings. Sampling MAY be used only for OPTIONAL diagnostics; REQUIRED artifact integrity is denominator-complete and MAY NOT be inferred from representative samples.
-
-Audit output for applicable artifact classes MUST expose distinct counters or findings for at least: missing artifact; empty artifact; parse failure; schema/required-field failure; physical hash/content-identity mismatch; receipt drift; consumer-binding drift; and independent-rederivation mismatch. Closure requires zero blocking findings across the complete REQUIRED denominator.
-
-Mandatory destructive regression MUST preserve otherwise self-consistent metadata while independently corrupting the physical artifact, including at least a zero-byte case. The expected result is BLOCK/FAIL at physical-integrity validation. An auditor that reports PASS solely because the receipt, ledger, summary, or matrix remains internally consistent is itself non-conformant and MUST be classified as an audit/validator implementation defect.
