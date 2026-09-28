@@ -2,10 +2,10 @@ schema_version: 1
 artifact_uid: BP-GOVERNANCE-ACCEPTANCE-001
 artifact_type: GOVERNANCE_ACCEPTANCE_AUDIT_BLUEPRINT
 blueprint_type: ACCEPTANCE_AUDIT_BLUEPRINT
-status: CURRENT_CANDIDATE
+status: CURRENT
 canonical_path: 10_REGISTRY/GOVERNANCE_ACCEPTANCE_AUDIT_BLUEPRINT.yaml
 owner_uid: OWNER-GOVERNANCE-ACCEPTANCE
-governance_revision: v2.2.33-governance-identity-negative-trace-auditor-independence-hardening-20260927
+governance_revision: v2.2.34-word-derived-stage-internal-validation-20260928
 normative_section_uids:
 - WEB-GOV-04-S071
 - WEB-GOV-04-S076
@@ -213,14 +213,14 @@ test_feedback_spec_evolution_contract:
   scope_classification_required: true
   global_shared_defect_must_patch_all_affected_governance_layers: true
   stage_local_defect_must_not_be_generalized_without_evidence: true
-  multidirection_high_pressure_required_before_version_promotion: true
+  multidirection_high_pressure_required_before_version_change_closure: true
   version_family: v2.1.X
   predecessor_backtrace_required: true
   current_rule_revalidation_required: true
   freeze_requires_zero_open_unwaived_governance_defects: true
   source_control_single_spec_authority_required: true
   source_control_current_entry_path_is_adapter_defined: true
-  source_control_current_promotion_before_backtrace_and_full_revalidation: BLOCK
+  source_control_current_validation_before_backtrace_and_full_revalidation: BLOCK
   next_stage_before_freeze: BLOCK
   source_control_provider_is_common_semantic_dependency: false
   source_control_adapter_profiles:
@@ -340,7 +340,7 @@ stage_execution_optimization_contract:
   role_safe_closure_required: true
   dependency_ordered_incremental_validation_required: true
   checkpoint_full_sweep_required: true
-  post_promotion_clean_restart_required: true
+  post_governance_change_fresh_restart_required: true
 required_normative_section_uids:
 - WEB-GOV-01-S087
 - WEB-GOV-01-S089
