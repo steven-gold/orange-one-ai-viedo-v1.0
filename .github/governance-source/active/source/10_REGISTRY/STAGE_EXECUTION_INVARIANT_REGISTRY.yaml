@@ -261,11 +261,16 @@ invariants:
     normative_section_uids:
     - WEB-GOV-01-S083A
     artifact_type: BASIC_DESIGN_DOMAIN_STEPWISE_CHECKPOINT
-    artifact_class: MULTI_INSTANCE_STAGE_EVIDENCE
+    artifact_class: MULTI_INSTANCE_STAGE_OUTPUT
     applicable_stage_uid: STAGE-04
     producer_operation_uid: BASIC_DESIGN_PACKAGE_COMPILE
     denominator_source: BASIC_DESIGN_PACKAGE.design_domains
+    denominator_resolution_suffix: '#design_domains'
     one_checkpoint_per_applicable_domain: true
+    checkpoint_artifact_ref_unique_per_domain: true
+    checkpoint_matrix_row_identity_must_equal_domain_uid: true
+    exact_checkpoint_domain_set_must_equal_basic_design_package_required_domain_set: true
+    duplicate_domain_uid: BLOCK
     checkpoint_type_presence_alone_completion_credit: 0
     aggregate_or_summary_checkpoint_may_replace_domain_instances: false
     dependent_domain_admission_requires_predecessor_checkpoint_pass: true
@@ -278,16 +283,14 @@ invariants:
     - work_unit_uid
     - governed_unit_uid
     - domain_uid
-    - denominator_source_ref
-    - denominator_hash
-    - current_authority_refs
-    - required_row_uids
-    - materialized_row_uids
-    - unresolved_required_row_uids
-    - missing_required_row_count
-    - conflict_count
-    - validation_result
-    - evidence_refs
+    - denominator_resolution_ref
+    - current_authority_ref
+    - materialized_binding_refs
+    - completeness_validation_result
+    - conflict_validation_result
+    - review_evidence_ref
+    - checkpoint_state
+    - next_admitted_domain_uid
     - producer_operation_uid
     - governance_uid
     - source_head_sha
@@ -295,10 +298,11 @@ invariants:
     - PASS
     - BLOCKED
     - FAIL
+    terminal_next_admitted_domain_token: FINAL_FREEZE
     pass_requires:
-      unresolved_required_row_count: 0
-      missing_required_row_count: 0
-      conflict_count: 0
+      completeness_validation_result: PASS
+      conflict_validation_result: PASS
+      checkpoint_state: PASS
       exact_producer_operation_uid: BASIC_DESIGN_PACKAGE_COMPILE
       exact_normative_section_uid: WEB-GOV-01-S083A
     invalid_or_missing_checkpoint_disposition: BLOCK_BASIC_DESIGN_FREEZE_AND_REENTER_OWNING_DOMAIN
