@@ -4,7 +4,7 @@ artifact_type: STAGE_EXECUTION_INVARIANT_REGISTRY
 status: CURRENT_CANDIDATE
 canonical_path: 10_REGISTRY/STAGE_EXECUTION_INVARIANT_REGISTRY.yaml
 owner_uid: OWNER-GOVERNANCE-STAGE-EXECUTION-INVARIANT
-governance_revision: v2.2.33-governance-identity-negative-trace-auditor-independence-hardening-20260927
+governance_revision: v2.2.34-word-derived-stage-internal-validation-20260928
 scope:
   applies_to_stages:
   - STAGE-01
@@ -382,16 +382,16 @@ invariants:
     - DEFECT_SCOPE_CLASSIFICATION
     - SPEC_PATCH_CANDIDATE
     - MULTIDIRECTION_HIGH_PRESSURE_TEST
-    - VERSION_PROMOTION_V2_1_X
-    - SOURCE_CONTROL_VERSIONED_CANDIDATE_SYNC
+    - VERSION_CHANGE_CLOSURE_V2_1_X
+    - SOURCE_CONTROL_VERSIONED_CHANGE_SYNC
     - PREDECESSOR_BACKTRACE_REGRESSION
     - FULL_CURRENT_RULE_REVALIDATION
-    - SOURCE_CONTROL_CURRENT_AUTHORITY_PROMOTION
+    - SOURCE_CONTROL_CURRENT_AUTHORITY_VALIDATION
     - FORMAL_FREEZE
     - NEXT_STAGE_ELIGIBLE
     order_skip: BLOCK
-    version_promotion_requires_high_pressure_pass: true
-    predecessor_backtrace_required_after_version_promotion: true
+    version_change_closure_requires_high_pressure_pass: true
+    predecessor_backtrace_required_after_version_change: true
     full_revalidation_required_after_predecessor_backtrace: true
     freeze_with_open_governance_bug_or_gap: BLOCK
     next_stage_before_freeze: BLOCK
@@ -405,9 +405,9 @@ invariants:
     current_version_must_equal_frozen_governance_version: true
     current_package_sha256_required: true
     current_spec_content_hash_required: true
-    candidate_sync_before_backtrace_is_noncurrent_only: true
-    promote_current_before_predecessor_backtrace_and_full_revalidation: BLOCK
-    current_promotion_requires_full_revalidation_pass: true
+    versioned_change_sync_before_backtrace_is_noncurrent_only: true
+    validate_current_before_predecessor_backtrace_and_full_revalidation: BLOCK
+    current_authority_update_requires_full_revalidation_pass: true
     stale_source_control_current_after_local_freeze: BLOCK
     source_control_provider_is_common_semantic_dependency: false
   GITHUB_SINGLE_SPEC_AUTHORITY:
@@ -709,7 +709,7 @@ invariants:
     whole_package_rescan_allowed_for:
     - ROOT_MANIFEST_INTEGRITY
     - CHECKSUM_COVERAGE
-    - EXTERNAL_TRUST_ROOT
+    - WORD_SOURCE_INTEGRITY
     - FULL_HIGH_PRESSURE_SWEEP
     - FORMAL_FREEZE_REVALIDATION
     - INDEX_DRIFT_AUDIT
