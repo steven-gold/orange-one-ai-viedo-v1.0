@@ -46,6 +46,11 @@ normative_execution_matrix_contract:
   output_required_fields: [artifact_uid, artifact_type, governance_uid, stage_uid, work_unit_uid, rows, coverage, status]
   denominator: COMPLETE_APPLICABLE_NORMATIVE_ARTIFACT_ROW_FIELD_UNIVERSE
   completeness_and_pass_condition:
+    pre_effectful_pass_semantics: REGISTRATION_BINDING_COMPLETENESS_ONLY
+    future_producer_owned_target_materialization: MAY_REMAIN_UNMATERIALIZED_WITH_ZERO_COMPLETION_CREDIT_UNTIL_PRODUCER
+    completed_producer_row_materialization: REQUIRED_BEFORE_DEPENDENT_OPERATION
+    closure_required_row_materialization: REQUIRED_100_PERCENT
+    future_operation_preproduction: FORBIDDEN
     required_normative_section_coverage_percent: 100
     required_artifact_coverage_percent: 100
     required_row_coverage_percent: 100
@@ -92,6 +97,9 @@ stage_closure_contract:
 execution_rules:
   normative_execution_matrix_required_before_first_effectful_operation: true
   normative_execution_matrix_required_before_stage_closure: true
+  matrix_pre_effectful_pass_does_not_claim_future_output_materialization: true
+  matrix_completed_producer_rows_must_materialize_before_dependent_execution: true
+  matrix_closure_requires_all_required_rows_materialized: true
   validators_must_consume_current_matrix_truth: true
   validator_local_required_field_subset: FORBIDDEN
   expand_operations_from_lifecycle_registry: true
