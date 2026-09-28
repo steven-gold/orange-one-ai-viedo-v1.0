@@ -22,7 +22,7 @@ def _selection_policy():
     policy=(admission.get('product_execution_admission_contracts') or {}).get('PRODUCT_GOVERNANCE_RELEASE_SELECTION_AND_APPLICATION_BASELINE') or {}
     if not policy or policy.get('contract_uid')!='GOV-ADMISSION-PRODUCT-GOVERNANCE-RELEASE-APPLICATION-BASELINE-001':
         fail('PRODUCT_GOVERNANCE_SELECTION_POLICY_MISSING')
-    if policy.get('scope_class')!='EXTERNAL_PRODUCT_EXECUTION_ENVIRONMENT_ADMISSION' or policy.get('reusable_page_stage_normative_denominator_inclusion')!='EXCLUDED':
+    if policy.get('scope_class')!='EXTERNAL_PRODUCT_EXECUTION_ENVIRONMENT_ADMISSION' or policy.get('reusable_common_stage_normative_denominator_inclusion')!='EXCLUDED':
         fail('PRODUCT_GOVERNANCE_SELECTION_SCOPE_ISOLATION_INVALID')
     return policy
 
