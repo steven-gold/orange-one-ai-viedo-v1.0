@@ -1340,13 +1340,13 @@ Geometry PASS MUST 來自 Browser DOM Measurement 或等價可驗證 Runtime Cap
 - Embedded self-validation / derived-validation inside an Authority file is provenance only and MUST_NOT satisfy a current validation-run Gate.
 
 <!-- SECTION_UID: WEB-GOV-04-S068 -->
-## 68. Governance Revision Lock / Anti-Moving-Target Audit
+## 68. Governance Current Snapshot Lock / Anti-Moving-Target Audit
 
-Audit MUST distinguish immutable released policy, mutable authorized successor candidate, and frozen validation-cycle candidate. For every formal validation cycle Audit MUST verify the baseline/candidate hash at start and closure, exact authorized change scope, immutable released predecessor, fact-only fixtures, recomputed results, and zero normative mutation during the active cycle.
+Audit MUST distinguish the exact Current Governance snapshot used by an execution cycle from historical snapshots and from any later authorized mutation. For every formal validation cycle Audit MUST verify the Current snapshot hash at start and closure, exact authorized change scope, fact-only fixtures, recomputed results, and zero normative mutation during the active cycle.
 
-A new defect after release creates a new defect record and successor candidate; affected prior evidence becomes `REVERIFY_REQUIRED`. Website construction MUST remain blocked until the selected governance release and execution profile, when applicable, satisfy their release gates.
+A new governance defect creates a new defect record; affected prior evidence becomes `REVERIFY_REQUIRED`. Website construction MUST remain blocked only until the selected exact Current Governance snapshot and execution profile, when applicable, satisfy the registered internal deterministic validation gates. No unrelated external person, account, auditor, signer, manifest, promotion ceremony, or released-governance selection may be introduced as a construction prerequisite unless an explicit registered source document requires it.
 
-Audit MUST verify governance-candidate successor-head terminalization. When a governance remediation or materializer creates a new candidate HEAD, required validation evidence MUST belong to that exact successor HEAD; producer-workflow success, parent-head results, prior-head results, or zero required workflow runs/checks are non-credit. A successor HEAD without the Registry-required fresh terminal workflow set is `CANDIDATE_EXACT_HEAD_VALIDATION_MISSING` and MUST remain blocked.
+Audit MUST verify Current-governance successor-head terminalization. When an authorized governance remediation or deterministic materializer creates a new Current HEAD, required validation evidence MUST belong to that exact HEAD; producer-workflow success, parent-head results, prior-head results, or zero required workflow runs/checks are non-credit. A Current HEAD without the Registry-required fresh terminal internal validation set is `CURRENT_EXACT_HEAD_VALIDATION_MISSING` and MUST remain blocked.
 
 For any authorized Stage normative-reference change, Audit MUST reconstruct one synchronization transaction covering the canonical reference rules, semantic authority baseline/snapshot, validator binding, Root Manifest/checksums, generated requirement index and regression expectations. A legal Mother/Reference Rule expansion with stale semantic/regression consumers is not a Stage-spec closure; it is `STAGE_NORMATIVE_REFERENCE_TRANSACTION_INCOMPLETE`.
 
