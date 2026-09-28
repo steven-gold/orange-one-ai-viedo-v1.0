@@ -739,12 +739,20 @@ def active_execution(stage_uid):
     deps=work.get('dependencies') or []
     if not isinstance(deps,list) or not deps: fail('ACTIVE_WORK_UNIT_DEPENDENCY_CLOSURE_MISSING')
     for dep in deps:
-        if isinstance(dep,str) and '/' in dep and not (execution_root/dep).exists():
-            fail(f'ACTIVE_WORK_UNIT_DEPENDENCY_MISSING:{dep}')
-        if isinstance(dep,dict):
-            ref=dep.get('ref') or dep.get('path') or dep.get('source_ref')
-            if isinstance(ref,str) and '/' in ref and not (execution_root/ref).exists():
-                fail(f'ACTIVE_WORK_UNIT_DEPENDENCY_MISSING:{ref}')
+        ref=dep if isinstance(dep,str) else ((dep.get('ref') or dep.get('path') or dep.get('source_ref')) if isinstance(dep,dict) else None)
+        if isinstance(ref,str) and '/' in ref:
+            rp=Path(ref)
+            if rp.is_absolute() or '..' in rp.parts:
+                fail('ACTIVE_WORK_UNIT_DEPENDENCY_REF_INVALID:'+ref)
+            full=(execution_root/rp).resolve()
+            try:
+                full.relative_to(execution_root.resolve())
+            except ValueError:
+                fail('ACTIVE_WORK_UNIT_DEPENDENCY_REF_ESCAPES_ROOT:'+ref)
+            if not full.exists():
+                fail('ACTIVE_WORK_UNIT_DEPENDENCY_MISSING:'+ref)
+            if full.is_file():
+                _validate_local_file_artifact(full,'ACTIVE_WORK_UNIT_DEPENDENCY:'+ref)
     validate_normative_execution_matrix(stage_uid,execution_root,work,stages[stage_uid],gov)
     return work
 
