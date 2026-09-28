@@ -29,7 +29,7 @@ def validate(root=ROOT):
         failures.append('stage_scope_not_all_11')
     if scope.get('stage_specific_exception_without_registered_authority') != 'BLOCK':
         failures.append('unregistered_stage_exception_not_blocked')
-    required = ['RELATION_SEMANTIC_SEPARATION', 'GAP_REMEDIATION_ADMISSIBILITY', 'CURRENT_AUTHORITY_ADMISSIBILITY', 'REQUIRED_EVIDENCE_MATERIALIZATION', 'VALIDATOR_SCHEMA_SEMANTICS', 'UNRESOLVED_PRESERVATION', 'SUCCESSOR_CURRENT_ATOMIC_PROJECTION', 'BLOCKER_DENOMINATOR_AND_RECEIPT', 'AUTHORITY_EVIDENCE_CONSUMPTION', 'FUNCTIONAL_CONTRACT_COMPLETENESS', 'STAGE_ENTRY_PRECHECK', 'PHYSICAL_ARTIFACT_INTEGRITY', 'IMPLEMENTATION_DEVIATION_FEEDBACK', 'REVIEW_VS_CLOSURE_SEPARATION', 'CANONICAL_STAGE_EXECUTION_PREFLIGHT', 'EFFECTIVE_CONTRACT_OVERLAY', 'ROLE_SAFE_FUNCTIONAL_CLOSURE', 'DEPENDENCY_ORDERED_INCREMENTAL_RECONCILIATION', 'COMMON_ENGINE_DEFECT_INTERRUPT', 'GENERATED_OUTPUT_PERSISTENCE', 'CONTROL_VS_SYSTEM_TRIGGER_RESOLUTION', 'PRODUCER_CONSUMER_SCHEMA_IDENTITY', 'NO_HISTORY_PRODUCT_VALUE_FALLBACK', 'TASK_LAYER_EFFECTFUL_TRANSITION_ORDER', 'VISUAL_DESIGN_PROFILE_MATERIALIZATION_COMPLETENESS', 'NORMATIVE_EXECUTION_MATRIX', 'CROSS_STAGE_MATERIALIZATION_AND_CONSUMER_READINESS', 'DETERMINISTIC_STAGE_AUDIT']
+    required = ['RELATION_SEMANTIC_SEPARATION', 'GAP_REMEDIATION_ADMISSIBILITY', 'CURRENT_AUTHORITY_ADMISSIBILITY', 'REQUIRED_EVIDENCE_MATERIALIZATION', 'VALIDATOR_SCHEMA_SEMANTICS', 'UNRESOLVED_PRESERVATION', 'SUCCESSOR_CURRENT_ATOMIC_PROJECTION', 'BLOCKER_DENOMINATOR_AND_RECEIPT', 'AUTHORITY_EVIDENCE_CONSUMPTION', 'FUNCTIONAL_CONTRACT_COMPLETENESS', 'STAGE_ENTRY_PRECHECK', 'PHYSICAL_ARTIFACT_INTEGRITY', 'IMPLEMENTATION_DEVIATION_FEEDBACK', 'REVIEW_VS_CLOSURE_SEPARATION', 'CANONICAL_STAGE_EXECUTION_PREFLIGHT', 'EFFECTIVE_CONTRACT_OVERLAY', 'ROLE_SAFE_FUNCTIONAL_CLOSURE', 'DEPENDENCY_ORDERED_INCREMENTAL_RECONCILIATION', 'COMMON_ENGINE_DEFECT_INTERRUPT', 'GENERATED_OUTPUT_PERSISTENCE', 'CONTROL_VS_SYSTEM_TRIGGER_RESOLUTION', 'PRODUCER_CONSUMER_SCHEMA_IDENTITY', 'NO_HISTORY_PRODUCT_VALUE_FALLBACK', 'TASK_LAYER_EFFECTFUL_TRANSITION_ORDER', 'VISUAL_DESIGN_PROFILE_MATERIALIZATION_COMPLETENESS', 'NORMATIVE_EXECUTION_MATRIX', 'BASIC_DESIGN_DOMAIN_STEPWISE_CHECKPOINT', 'CLOSED_WORK_UNIT_SUCCESSOR_REENTRY', 'CROSS_STAGE_MATERIALIZATION_AND_CONSUMER_READINESS', 'DETERMINISTIC_STAGE_AUDIT']
     for k in required:
         if k not in inv:
             failures.append('missing_invariant:' + k)
@@ -70,6 +70,19 @@ def validate(root=ROOT):
     required_destructive={'ZERO_BYTE_REQUIRED_ARTIFACT_WITH_UNCHANGED_RECEIPTS','NONEMPTY_UNPARSEABLE_REQUIRED_ARTIFACT','PARSEABLE_EMPTY_OR_SCHEMA_INCOMPLETE_ARTIFACT','PHYSICAL_CONTENT_CHANGED_WITH_STALE_DECLARED_HASH','RECEIPT_HASH_DRIFT_FROM_PHYSICAL_ARTIFACT','CONSUMER_BINDING_DRIFT_FROM_RECOMPUTED_IDENTITY'}
     if set(pai.get('destructive_regression_required') or []) != required_destructive:
         failures.append('physical_artifact_integrity_destructive_regression_incomplete')
+    bdc = inv.get('BASIC_DESIGN_DOMAIN_STEPWISE_CHECKPOINT') or {}
+    bdc_fields={'schema_version','artifact_uid','artifact_type','stage_uid','work_unit_uid','governed_unit_uid','domain_uid','denominator_source_ref','denominator_hash','current_authority_refs','required_row_uids','materialized_row_uids','unresolved_required_row_uids','missing_required_row_count','conflict_count','validation_result','evidence_refs','producer_operation_uid','governance_uid','source_head_sha'}
+    if bdc.get('invariant_uid')!='GOV-INV-BASIC-DESIGN-DOMAIN-STEPWISE-CHECKPOINT-001' or bdc.get('artifact_type')!='BASIC_DESIGN_DOMAIN_STEPWISE_CHECKPOINT' or bdc.get('applicable_stage_uid')!='STAGE-04':
+        failures.append('basic_design_domain_stepwise_checkpoint_identity_missing')
+    if set(bdc.get('normative_section_uids') or [])!={'WEB-GOV-01-S083A'} or set(bdc.get('required_fields') or [])!=bdc_fields:
+        failures.append('basic_design_domain_stepwise_checkpoint_schema_incomplete')
+    if bdc.get('producer_operation_uid')!='BASIC_DESIGN_PACKAGE_COMPILE' or bdc.get('one_checkpoint_per_applicable_domain') is not True or bdc.get('aggregate_or_summary_checkpoint_may_replace_domain_instances') is not False or bdc.get('checkpoint_type_presence_alone_completion_credit')!=0:
+        failures.append('basic_design_domain_stepwise_checkpoint_materialization_contract_incomplete')
+    cwu = inv.get('CLOSED_WORK_UNIT_SUCCESSOR_REENTRY') or {}
+    if cwu.get('invariant_uid')!='GOV-INV-CLOSED-WORK-UNIT-SUCCESSOR-REENTRY-001' or cwu.get('closed_to_open_transition')!='FORBIDDEN' or cwu.get('mutate_closed_work_unit_to_current_governance_identity')!='FORBIDDEN':
+        failures.append('closed_work_unit_reactivation_not_forbidden')
+    if cwu.get('current_reentry_requires_new_work_unit_uid') is not True or cwu.get('predecessor_terminal_receipt_may_receive_current_execution_credit') is not False or cwu.get('successor_or_reentry_must_bind_predecessor_work_unit_uid') is not True:
+        failures.append('closed_work_unit_successor_reentry_contract_incomplete')
     cross = inv.get('CROSS_STAGE_MATERIALIZATION_AND_CONSUMER_READINESS') or {}
     input_fields={'input_uid','status','artifact_ref','content_sha256','external_evidence_ref','authority_evidence_ref','consumer_readiness_evidence_ref'}
     if set(cross.get('successor_required_input_row_required_fields') or []) != input_fields:
@@ -307,6 +320,15 @@ def validate(root=ROOT):
     va = st3.get('visual_materialization_gate') or {}
     if va.get('required') is not True or va.get('structural_only_preview_may_reach_visual_review') is not False or va.get('explicit_atomic_workbench_visual_binding_required') is not True or (va.get('unresolved_visual_authority_is_authority_absent') is not False) or (va.get('unresolved_visual_authority_must_enter_current_problem_denominator') is not True):
         failures.append('stage03_visual_materialization_gate_incomplete')
+    st4 = next((x for x in life.get('stages') or [] if x.get('stage_uid') == 'STAGE-04'), {})
+    bdg = st4.get('basic_design_stepwise_checkpoint_gate') or {}
+    if bdg.get('required') is not True or bdg.get('invariant_uid')!='GOV-INV-BASIC-DESIGN-DOMAIN-STEPWISE-CHECKPOINT-001' or bdg.get('artifact_type')!='BASIC_DESIGN_DOMAIN_STEPWISE_CHECKPOINT':
+        failures.append('stage04_basic_design_stepwise_checkpoint_gate_missing')
+    if bdg.get('producer_operation')!='BASIC_DESIGN_PACKAGE_COMPILE' or bdg.get('one_checkpoint_per_applicable_domain') is not True or bdg.get('final_freeze_requires_all_applicable_domain_checkpoints_pass') is not True or bdg.get('checkpoint_type_presence_alone_completion_credit')!=0:
+        failures.append('stage04_basic_design_stepwise_checkpoint_gate_incomplete')
+    universal = life.get('universal_stage_stepwise_execution_contract') or {}
+    if universal.get('closed_work_unit_reactivation')!='FORBIDDEN' or universal.get('closed_work_unit_current_mutation')!='FORBIDDEN' or universal.get('reentry_requires_new_work_unit_uid') is not True or universal.get('predecessor_closed_work_unit_evidence_immutable') is not True:
+        failures.append('universal_closed_work_unit_successor_reentry_binding_missing')
     st2 = next((x for x in life.get('stages') or [] if x.get('stage_uid') == 'STAGE-02'), {})
     if (st2.get('stage_execution_invariant_gate') or {}).get('required') is not True:
         failures.append('stage02_invariant_gate_binding_missing')
