@@ -58,7 +58,7 @@ def bad_producer(d): d['stages'][4]['output_producers'][d['stages'][4]['outputs'
 c('lifecycle_output_producer_invalid',lifev.validate,mut_yaml('10_REGISTRY/GOVERNANCE_LIFECYCLE_STAGE_REGISTRY.yaml',bad_producer))
 c('lifecycle_step_binding_removed',lifev.validate,mut_yaml('10_REGISTRY/GOVERNANCE_LIFECYCLE_STAGE_REGISTRY.yaml',lambda d:d.__setitem__('delivery_step_bindings',d['delivery_step_bindings'][:-1])))
 c('lifecycle_foundation_barrier_loosened',lifev.validate,mut_yaml('10_REGISTRY/GOVERNANCE_LIFECYCLE_STAGE_REGISTRY.yaml',lambda d:d['topology'].__setitem__('foundation_barrier_mode','PER_PAGE')))
-c('lifecycle_page_uid_sticky_broken',lifev.validate,mut_yaml('10_REGISTRY/GOVERNANCE_LIFECYCLE_STAGE_REGISTRY.yaml',lambda d:d['topology'].__setitem__('page_uid_sticky_through_stage','STAGE-08')))
+c('lifecycle_governed_unit_uid_sticky_broken',lifev.validate,mut_yaml('10_REGISTRY/GOVERNANCE_LIFECYCLE_STAGE_REGISTRY.yaml',lambda d:d['topology'].__setitem__('governed_unit_uid_sticky_through_stage','STAGE-08')))
 # Management materialization / closed-loop mutations
 def remove_naming(r): (r/'10_REGISTRY/NAMING_REGISTRY.yaml').unlink()
 c('management_naming_registry_missing',mgmtv.validate,remove_naming)
