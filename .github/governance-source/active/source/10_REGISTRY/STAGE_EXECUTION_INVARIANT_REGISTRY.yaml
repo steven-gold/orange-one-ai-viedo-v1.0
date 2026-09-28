@@ -181,6 +181,14 @@ invariants:
     - NOT_APPLICABLE_WITH_AUTHORITY
     not_applicable_requires_authority_evidence: true
     required_field_requires_physical_parseable_current_value: true
+    pre_effectful_matrix_pass_is_registration_completeness_only: true
+    future_producer_owned_target_may_be_unmaterialized_before_producer_execution: true
+    future_producer_owned_target_completion_credit: 0
+    physical_future_operation_preproduction: BLOCK
+    completed_producer_rows_must_be_physically_materialized_before_dependent_execution: true
+    closure_requires_all_required_rows_physically_materialized: true
+    closure_future_target_or_to_materialize_state: BLOCK
+    required_evidence_may_remain_unmaterialized_only_until_registered_evidence_boundary: true
     artifact_presence_only_completion_credit: 0
     summary_only_completion_credit: 0
     historical_value_completion_credit: 0
