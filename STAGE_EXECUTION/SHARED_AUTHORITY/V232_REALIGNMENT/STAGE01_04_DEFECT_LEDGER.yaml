@@ -1,17 +1,17 @@
 artifact_type: PRODUCT_STAGE01_04_DEFECT_LEDGER
-status: CURRENT_BLOCKED_PENDING_GOVERNANCE_RELEASE
+status: CURRENT_BLOCKED_PENDING_INLINE_INTERNAL_VALIDATION
 authorization_record_url: https://github.com/steven-gold/orange-one-ai-viedo-v1.0/issues/61
-promotion_authorization_record_url: https://github.com/steven-gold/orange-one-ai-viedo-v1.0/issues/62
+cleanup_authorization_record_url: https://github.com/steven-gold/orange-one-ai-viedo-v1.0/issues/64
 product_branch: 0921acpos
 current_product_head_at_materialization: 070285d9ea0b6c3afc00f9a10412410cc99cdd91
-governance_candidate:
+current_governance:
   branch: rebuild-v2.1.1
   head: f7ca7738b9ecf36104a0359f03fd0c0591c07f65
   uid: GOV-REV-20260927-GOVERNANCE-IDENTITY-NEGATIVE-TRACE-AUDITOR-INDEPENDENCE-HARDENING
-  release_state: CANDIDATE
+  selection_mode: EXACT_CURRENT_GOVERNANCE_SNAPSHOT
   mother_neutrality: PASS
-  current_cleanup: PENDING_NO_TERMINAL_RECEIPT
-  independent_auditor_external_evidence: MISSING
+  mother_neutrality: PASS
+  stage_execution_validation_mode: INLINE_BEFORE_EFFECTFUL_OPERATION
 scope:
 - GLOBAL-HOME-SHELL-NAVIGATION
 - WB01-DASHBOARD
@@ -27,28 +27,28 @@ defects:
   owner: PRE_STAGE_SOURCE_PROJECTION
   evidence: predecessor CANONICAL_SOURCE_PROJECTION.yaml length=0
   remediation: FRESH_DERIVATION_FROM_REGISTERED_IMMUTABLE_SOURCE_IN_SUCCESSOR
-  state: BLOCKED_PENDING_RELEASE
+  state: BLOCKED_PENDING_INLINE_INTERNAL_VALIDATION
 - uid: DEF-WB01-S01-PROJECTION-ZERO-BYTE
   governed_unit_uid: WB01-DASHBOARD
   stage_uid: STAGE-01
   owner: PRE_STAGE_SOURCE_PROJECTION
   evidence: predecessor CANONICAL_SOURCE_PROJECTION.yaml length=0
   remediation: FRESH_DERIVATION_FROM_REGISTERED_IMMUTABLE_SOURCE_IN_SUCCESSOR
-  state: BLOCKED_PENDING_RELEASE
+  state: BLOCKED_PENDING_INLINE_INTERNAL_VALIDATION
 - uid: DEF-HOME-S01-CONTENT-AUDIT-LEGACY-ID
   governed_unit_uid: GLOBAL-HOME-SHELL-NAVIGATION
   stage_uid: STAGE-01
   owner: PRE_STAGE_SOURCE_PROJECTION
   evidence: predecessor SOURCE_DOCUMENT_CONTENT_AUDIT uses page_uid
   current_required_identity: governed_unit_uid
-  state: BLOCKED_PENDING_RELEASE
+  state: BLOCKED_PENDING_INLINE_INTERNAL_VALIDATION
 - uid: DEF-WB01-S01-CONTENT-AUDIT-LEGACY-ID
   governed_unit_uid: WB01-DASHBOARD
   stage_uid: STAGE-01
   owner: PRE_STAGE_SOURCE_PROJECTION
   evidence: predecessor SOURCE_DOCUMENT_CONTENT_AUDIT uses page_uid
   current_required_identity: governed_unit_uid
-  state: BLOCKED_PENDING_RELEASE
+  state: BLOCKED_PENDING_INLINE_INTERNAL_VALIDATION
 - uid: DEF-BOTH-S01-PAGE-IDENTITY
   governed_unit_uid: BOTH
   stage_uid: STAGE-01
@@ -57,7 +57,7 @@ defects:
   current_operation_uid: GOVERNED_UNIT_BASE_BLUEPRINT_COMPILE
   predecessor_output_uid: PAGE_BASE_BLUEPRINT
   current_output_uid: GOVERNED_UNIT_BASE_BLUEPRINT
-  state: BLOCKED_PENDING_RELEASE
+  state: BLOCKED_PENDING_INLINE_INTERNAL_VALIDATION
 - uid: DEF-BOTH-S02-PAGE-IDENTITY
   governed_unit_uid: BOTH
   stage_uid: STAGE-02
@@ -66,7 +66,7 @@ defects:
   current_operation_uid: GOVERNED_UNIT_CONSTRUCTION_SPEC_COMPILE
   predecessor_output_uid: PAGE_CONSTRUCTION_SPEC_PACKAGE
   current_output_uid: GOVERNED_UNIT_CONSTRUCTION_SPEC_PACKAGE
-  state: BLOCKED_PENDING_RELEASE
+  state: BLOCKED_PENDING_INLINE_INTERNAL_VALIDATION
 - uid: DEF-BOTH-S01-03-EXECUTOR
   governed_unit_uid: BOTH
   stage_uid:
@@ -87,7 +87,7 @@ defects:
   owner: SUCCESSOR_WORK_UNIT
   defect: FRESH_CURRENT_MATRIX_SCOPE_STATE_EVIDENCE_NOT_MATERIALIZED
   predecessor_credit: 0
-  state: BLOCKED_PENDING_RELEASE
+  state: BLOCKED_PENDING_INLINE_INTERNAL_VALIDATION
 - uid: DEF-BOTH-S04-S083A
   governed_unit_uid: BOTH
   stage_uid: STAGE-04
@@ -110,11 +110,8 @@ verified_inputs:
   table_count: 30
   media_count: 4
 execution_order:
-- COMPLETE_GOVERNANCE_CURRENT_CLEANUP_EXACT_HEAD
-- SATISFY_INDEPENDENT_AUDITOR_EXTERNAL_EVIDENCE
-- EXECUTE_GOVERNANCE_PROMOTION_TRANSACTION
-- MATERIALIZE_PRODUCT_SELECTED_GOVERNANCE_RELEASE
-- MATERIALIZE_GOVERNANCE_REVISION_TRANSITION_RECEIPT
+- RESOLVE_EXACT_CURRENT_GOVERNANCE_COMMIT
+- RUN_INLINE_INTERNAL_GOVERNANCE_VALIDATION
 - MATERIALIZE_STAGE01_SUCCESSOR_WORK_UNITS
 - FRESH_SOURCE_CONTENT_AUDIT_AND_CANONICAL_PROJECTION
 - EXECUTE_STAGE01
