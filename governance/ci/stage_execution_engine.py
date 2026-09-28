@@ -1003,6 +1003,65 @@ def _validate_current_ledger_bindings(stage_uid,execution_root,work,gov):
     return True
 
 
+def _validate_closed_work_unit_successor_reentry(stage_uid,execution_root,work,scope,work_rel):
+    inv=y(INVARIANTS)
+    policy=((inv.get('invariants') or {}).get('CLOSED_WORK_UNIT_SUCCESSOR_REENTRY') or {})
+    kind_field=str(policy.get('work_unit_activation_kind_field') or 'work_unit_activation_kind')
+    allowed=set(map(str,policy.get('allowed_work_unit_activation_kinds') or []))
+    if allowed!={'INITIAL_STAGE_WORK_UNIT','SUCCESSOR_REENTRY_WORK_UNIT'}:
+        fail('WORK_UNIT_REENTRY_POLICY_ACTIVATION_KIND_INVALID')
+    current_uid=str(work.get('work_unit_uid') or '').strip()
+    current_gu=str(work.get('governed_unit_uid') or '').strip()
+    kind=str(work.get(kind_field) or '').strip()
+    if not kind or kind not in allowed:
+        fail('WORK_UNIT_ACTIVATION_KIND_INVALID:'+stage_uid+':'+kind)
+    current_dir=(execution_root/Path(work_rel)).resolve().parent
+    same_terminal=current_dir/'WORK_UNIT_TERMINAL_RECEIPT.yaml'
+    if same_terminal.exists():
+        fail('CLOSED_WORK_UNIT_REACTIVATION_FORBIDDEN:'+current_uid)
+    reentry_fields=list(map(str,policy.get('required_successor_reentry_fields') or []))
+    if set(reentry_fields)!={'predecessor_work_unit_uid','predecessor_work_unit_ref','predecessor_terminal_receipt_ref','reentry_authority_ref'}:
+        fail('WORK_UNIT_REENTRY_POLICY_FIELDS_INVALID')
+    present={key:str(work.get(key) or '').strip() for key in reentry_fields}
+    if kind=='INITIAL_STAGE_WORK_UNIT':
+        if any(present.values()):
+            fail('INITIAL_WORK_UNIT_REENTRY_FIELDS_FORBIDDEN:'+current_uid)
+        return True
+    missing=sorted(k for k,v in present.items() if not v)
+    if missing:
+        fail('SUCCESSOR_REENTRY_FIELDS_MISSING:'+current_uid+':'+repr(missing))
+    predecessor_uid=present['predecessor_work_unit_uid']
+    if predecessor_uid==current_uid:
+        fail('SUCCESSOR_REENTRY_WORK_UNIT_UID_REUSED:'+current_uid)
+    pred_work_ref=Path(present['predecessor_work_unit_ref'])
+    pred_receipt_ref=Path(present['predecessor_terminal_receipt_ref'])
+    for rp,label in ((pred_work_ref,'PREDECESSOR_WORK_UNIT'),(pred_receipt_ref,'PREDECESSOR_TERMINAL_RECEIPT')):
+        if rp.is_absolute() or '..' in rp.parts:
+            fail('SUCCESSOR_REENTRY_'+label+'_REF_INVALID:'+str(rp))
+        full=(execution_root/rp).resolve()
+        try:
+            full.relative_to(execution_root.resolve())
+        except ValueError:
+            fail('SUCCESSOR_REENTRY_'+label+'_REF_ESCAPES_ROOT:'+str(rp))
+        _require_nonempty_file(full,'SUCCESSOR_REENTRY_'+label)
+    pred_work=_external_yaml((execution_root/pred_work_ref).resolve(),'SUCCESSOR_REENTRY_PREDECESSOR_WORK_UNIT')
+    pred_receipt=_external_yaml((execution_root/pred_receipt_ref).resolve(),'SUCCESSOR_REENTRY_PREDECESSOR_TERMINAL_RECEIPT')
+    if str(pred_work.get('work_unit_uid') or '')!=predecessor_uid:
+        fail('SUCCESSOR_REENTRY_PREDECESSOR_WORK_UNIT_UID_DRIFT')
+    if str(pred_work.get('stage_uid') or '')!=stage_uid:
+        fail('SUCCESSOR_REENTRY_PREDECESSOR_STAGE_DRIFT')
+    if str(pred_work.get('governed_unit_uid') or '')!=current_gu:
+        fail('SUCCESSOR_REENTRY_PREDECESSOR_GOVERNED_UNIT_DRIFT')
+    if str(pred_work.get('status') or pred_work.get('current_status') or '')!='CLOSED':
+        fail('SUCCESSOR_REENTRY_PREDECESSOR_NOT_CLOSED')
+    if str(pred_receipt.get('work_unit_uid') or '')!=predecessor_uid or str(pred_receipt.get('stage_uid') or '')!=stage_uid:
+        fail('SUCCESSOR_REENTRY_TERMINAL_RECEIPT_IDENTITY_DRIFT')
+    if str(pred_receipt.get('conclusion') or '')!='success':
+        fail('SUCCESSOR_REENTRY_TERMINAL_RECEIPT_NOT_SUCCESS')
+    if not present['reentry_authority_ref']:
+        fail('SUCCESSOR_REENTRY_AUTHORITY_REF_MISSING')
+    return True
+
 def _validate_stage_entry_control_state(stage_uid,execution_root,work,scope,work_rel,stage,gov):
     compat=execution_compatibility_adapter()
     scope_allowed_field=str(compat['scope_execution_allowed_field'])
@@ -1018,6 +1077,8 @@ def _validate_stage_entry_control_state(stage_uid,execution_root,work,scope,work
     governed_scope=str(scope.get('governed_unit_uid') or '').strip()
     if not governed_work or not governed_scope or governed_work!=governed_scope:
         fail('STAGE_ENTRY_GOVERNED_UNIT_IDENTITY_DRIFT:'+stage_uid)
+
+    _validate_closed_work_unit_successor_reentry(stage_uid,execution_root,work,scope,work_rel)
 
     if work.get('pre_execution_gate_status')!='PASS':
         fail('STAGE_ENTRY_PRE_EXECUTION_GATE_NOT_PASS:'+stage_uid)
