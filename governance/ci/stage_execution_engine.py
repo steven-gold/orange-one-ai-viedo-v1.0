@@ -789,12 +789,60 @@ def _validate_stage_entry_input_bindings(stage_uid,execution_root,work,stage):
             fail('STAGE_ENTRY_INPUT_STATUS_INVALID:'+input_uid+':'+status)
     return True
 
+def _validate_current_ledger_bindings(stage_uid,execution_root,work,gov):
+    contract=_deterministic_stage_audit_contract().get('current_ledger_synchronization') or {}
+    expected=list(map(str,contract.get('ledgers') or []))
+    if not expected:
+        fail('CURRENT_LEDGER_SYNCHRONIZATION_DENOMINATOR_EMPTY')
+    bindings=work.get('current_ledger_bindings')
+    if not isinstance(bindings,dict):
+        fail('CURRENT_LEDGER_BINDINGS_MISSING:'+stage_uid)
+    if set(map(str,bindings))!=set(expected):
+        fail('CURRENT_LEDGER_BINDING_DENOMINATOR_DRIFT:'+stage_uid+
+             ':expected='+repr(sorted(expected))+':actual='+repr(sorted(map(str,bindings))))
+    required={'ledger_class','binding_kind','artifact_ref','content_sha256','external_evidence_ref'}
+    for ledger_class in expected:
+        row=bindings.get(ledger_class)
+        if not isinstance(row,dict):
+            fail('CURRENT_LEDGER_BINDING_ROW_INVALID:'+ledger_class)
+        missing=sorted(required-set(row))
+        if missing:
+            fail('CURRENT_LEDGER_BINDING_FIELDS_MISSING:'+ledger_class+':'+repr(missing))
+        if str(row.get('ledger_class') or '')!=ledger_class:
+            fail('CURRENT_LEDGER_BINDING_IDENTITY_DRIFT:'+ledger_class)
+        kind=str(row.get('binding_kind') or '')
+        if kind=='LOCAL_ARTIFACT':
+            ref=str(row.get('artifact_ref') or '').strip()
+            rp=Path(ref)
+            if not ref or rp.is_absolute() or '..' in rp.parts:
+                fail('CURRENT_LEDGER_ARTIFACT_REF_INVALID:'+ledger_class)
+            full=(execution_root/rp).resolve()
+            try:
+                full.relative_to(execution_root.resolve())
+            except ValueError:
+                fail('CURRENT_LEDGER_ARTIFACT_REF_ESCAPES_ROOT:'+ledger_class)
+            _validate_local_file_artifact(full,'CURRENT_LEDGER_ARTIFACT:'+ledger_class)
+            actual_hash=_sha256_file(full)
+            if str(row.get('content_sha256') or '')!=actual_hash:
+                fail('CURRENT_LEDGER_CONTENT_HASH_DRIFT:'+ledger_class)
+        elif kind=='EXTERNAL_RECEIPT':
+            if not str(row.get('external_evidence_ref') or '').strip():
+                fail('CURRENT_LEDGER_EXTERNAL_EVIDENCE_MISSING:'+ledger_class)
+        else:
+            fail('CURRENT_LEDGER_BINDING_KIND_INVALID:'+ledger_class+':'+kind)
+    declared_gov=str(work.get('governance_uid') or work.get('current_governance_uid') or '')
+    if declared_gov and declared_gov!=gov:
+        fail('CURRENT_LEDGER_WORK_UNIT_GOVERNANCE_DRIFT:'+stage_uid)
+    return True
+
+
 def active_execution(stage_uid):
     entry,reg,gov,profile,adapters,stages=validate_definition()
     execution_root,work,scope,work_rel,scope_rel=execution_context()
     work_dir=(execution_root/Path(work_rel)).resolve().parent
     validate_work_unit_bindings(stage_uid,work,stages,adapters)
     _validate_stage_entry_input_bindings(stage_uid,execution_root,work,stages[stage_uid])
+    _validate_current_ledger_bindings(stage_uid,execution_root,work,gov)
     if scope.get('stage_uid')!=stage_uid or scope.get('work_unit_uid')!=work.get('work_unit_uid'):
         fail('CURRENT_SCOPE_WORK_UNIT_BINDING_DRIFT')
     deps=work.get('dependencies') or []
@@ -854,6 +902,7 @@ def _validate_current_stage_state_bundle(stage_uid,e,stage,gov):
     if scope.get('work_unit_uid')!=work.get('work_unit_uid') or state.get('work_unit_uid')!=work.get('work_unit_uid'):
         fail('CURRENT_SCOPE_WORK_STATE_IDENTITY_DRIFT')
     validate_normative_execution_matrix(stage_uid,execution_root,work,stage,gov)
+    _validate_current_ledger_bindings(stage_uid,execution_root,work,gov)
     if e.get('result')=='PASS':
         expected=list(map(str,stage.get('operations') or []))
         completed=state.get('completed_operations')
