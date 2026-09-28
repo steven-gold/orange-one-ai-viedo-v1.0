@@ -1,10 +1,11 @@
 name: Product Immutable Source Review Extract
 on:
-  push:
-    branches: [0921acpos]
-    paths:
-      - '.github/workflows/product-source-review-extract.yml'
   workflow_dispatch:
+    inputs:
+      reason:
+        description: Explicit operator authorization to regenerate immutable source review inputs; pre-stage is otherwise frozen
+        required: true
+        default: explicit-source-review-regeneration
 permissions:
   contents: write
 concurrency:
