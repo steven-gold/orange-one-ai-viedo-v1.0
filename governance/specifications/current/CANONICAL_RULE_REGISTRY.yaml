@@ -11,7 +11,7 @@ registry_digest_scope:
 - semantic_types
 - canonical_rules
 - consumer_contract
-registry_digest: ef795b7b82557f6a278bb031e19179f986ae1c0ea901e6cdc10816b7860d928e
+registry_digest: 310fc6ffe85802ab730f7715a30ef023fd3fe6067ba06d88bd220b60561fd901
 semantic_types:
   FIXED_WORK_UNIT_ID:
     allowed_layers:
@@ -218,7 +218,7 @@ canonical_rules:
     - TEST_IMPLEMENTATION
     - ACTIVE_WORKFLOW
     constraint: REQUIRE_EXACT_CLASS_MUTATION_EXPECTED_BLOCK_OBSERVED_BLOCK_AND_RESULT
-  GOV-RULE-INTERNAL-AUDIT-DETERMINISM-001:
+  GOV-RULE-AUDITOR-INDEPENDENCE-001:
     canonical_key: INTERNAL_AUDIT_DETERMINISM_REQUIRES_REPEATABLE_RESULT
     semantic_type: INTERNAL_AUDIT_DETERMINISM
     applicability:
@@ -278,7 +278,7 @@ binding_contract:
   - GOV-RULE-ANTI-DRIFT-010
   - GOV-RULE-CURRENT-GOVERNANCE-IDENTITY-001
   - GOV-RULE-NEGATIVE-TEST-TRACEABILITY-001
-  - GOV-RULE-INTERNAL-AUDIT-DETERMINISM-001
+  - GOV-RULE-AUDITOR-INDEPENDENCE-001
   - GOV-RULE-GOVERNANCE-CANDIDATE-BOOTSTRAP-001
   consumer_loader: governance/ci/canonical_rule_registry.py
   validator: governance/ci/validate_governance_portability.py
