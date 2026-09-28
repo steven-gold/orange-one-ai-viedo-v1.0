@@ -2,15 +2,15 @@ artifact_type: PRODUCT_STAGE01_04_SUCCESSOR_REENTRY_RESOLUTION
 status: RESOLVED_NOT_MATERIALIZED
 normative_authority: false
 authorization_record_url: https://github.com/steven-gold/orange-one-ai-viedo-v1.0/issues/61
-supporting_authority_record_url: https://github.com/steven-gold/orange-one-ai-viedo-v1.0/issues/59
+cleanup_authority_record_url: https://github.com/steven-gold/orange-one-ai-viedo-v1.0/issues/64
 product_branch: 0921acpos
-target_governance_candidate:
+target_governance_snapshot:
   governance_uid: GOV-REV-20260927-GOVERNANCE-IDENTITY-NEGATIVE-TRACE-AUDITOR-INDEPENDENCE-HARDENING
-  governance_head: 5f5d5f38d7054179735fc84861f826b8ef1c2875
+  governance_head: 277278bfa7e60221834e77f7ff484253e50c6540
   execution_authority: false
-release_selection_required: true
-selected_released_governance_ref: null
-governance_transition_receipt_ref: null
+inline_internal_validation_required: true
+current_governance_selection_ref: STAGE_EXECUTION/SHARED_AUTHORITY/CURRENT_GOVERNANCE_SELECTION.yaml
+inline_validation_evidence_mode: EFFECTFUL_WORKFLOW_RUNTIME
 predecessor_policy:
   closed_work_unit_reactivation: FORBIDDEN
   in_place_resign: FORBIDDEN
@@ -85,7 +85,7 @@ stage_contract_corrections:
 execution_admission:
   state: BLOCKED
   blockers:
-  - PRODUCT_SELECTED_GOVERNANCE_RELEASE_MISSING
-  - GOVERNANCE_REVISION_TRANSITION_RECEIPT_MISSING
-  - TARGET_GOVERNANCE_CURRENT_CLEANUP_TERMINAL_PASS_MISSING
+  - INLINE_INTERNAL_GOVERNANCE_VALIDATION_NOT_YET_EXECUTED
+  - STAGE01_SUCCESSOR_WORK_UNITS_NOT_MATERIALIZED
+  - STAGE01_03_DEDICATED_EXECUTOR_IMPLEMENTATIONS_MISSING
 product_completion_credit: 0
