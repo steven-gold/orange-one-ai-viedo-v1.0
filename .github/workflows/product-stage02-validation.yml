@@ -14,15 +14,27 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - name: Checkout product workline
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
           ref: ${{ github.sha }}
           fetch-depth: 0
+      - name: Resolve exact selected released governance
+        id: release
+        shell: bash
+        run: |
+          set -euo pipefail
+          SEL="STAGE_EXECUTION/SHARED_AUTHORITY/PRODUCT_SELECTED_GOVERNANCE_RELEASE.yaml"
+          test -s "$SEL" || { echo "BLOCK:PRODUCT_SELECTED_GOVERNANCE_RELEASE_MISSING"; exit 31; }
+          STATUS="$(awk '$1=="status:" {print $2; exit}' "$SEL")"
+          COMMIT="$(awk '$1=="governance_commit_sha:" {print $2; exit}' "$SEL")"
+          test "$STATUS" = "SELECTED_VERIFIED_RELEASE" || { echo "BLOCK:SELECTED_GOVERNANCE_NOT_VERIFIED_RELEASE"; exit 32; }
+          echo "$COMMIT" | grep -Eq '^[0-9a-f]{40}$' || { echo "BLOCK:SELECTED_GOVERNANCE_COMMIT_INVALID"; exit 33; }
+          echo "commit_sha=$COMMIT" >> "$GITHUB_OUTPUT"
       - name: Checkout current governance authority
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
           repository: steven-gold/orange-one-ai-viedo-v1.0
-          ref: rebuild-v2.1.1
+          ref: ${{ steps.release.outputs.commit_sha }}
           path: _governance_authority
           fetch-depth: 1
       - name: Load current governance authority
@@ -38,7 +50,7 @@ jobs:
       - name: Validate Stage02 closure evidence and handoff ledgers
         run: |
           set -euo pipefail
-          for WU in WU-STAGE02-GLOBAL-HOME-SHELL-NAVIGATION-001 WU-STAGE02-WB01-DASHBOARD-001; do
+          for WU in WU-STAGE02-GLOBAL-HOME-SHELL-NAVIGATION-REENTRY-001 WU-STAGE02-WB01-DASHBOARD-REENTRY-001; do
             B="STAGE_EXECUTION/STAGE-02/${WU}"
             test -f "$B/EVIDENCE/PAGE_FUNCTIONAL_REVIEW_EVIDENCE.yaml" || { echo "BLOCK:STAGE02_REQUIRED_EVIDENCE_MISSING:$WU"; exit 1; }
             test -f "$B/EVIDENCE/CROSS_STAGE_HANDOFF_READINESS_LEDGER.yaml" || { echo "BLOCK:STAGE02_HANDOFF_LEDGER_MISSING:$WU"; exit 1; }
