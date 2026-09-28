@@ -294,6 +294,26 @@ yaml.safe_dump({
  'artifact_type':'WORK_UNIT_EXECUTION_STATE','stage_uid':stage_uid,'work_unit_uid':_synthetic_wu,
  'completed_operations':list(st['operations']),'current_operation':'COMPLETE','status':'CLOSED'
 },(_synthetic_dir/'EXECUTION_STATE.yaml').open('w',encoding='utf-8'),sort_keys=False)
+
+# Bind the synthetic Current Ledger universe to actual physical artifacts.
+# EXECUTION_STATE is an alias to the canonical state file, not a duplicate ledger.
+_current_ledger_bindings=_write_synthetic_current_ledger_bindings(
+    _sample_root,
+    f'STAGE_EXECUTION/STAGE-01/{_synthetic_wu}/CURRENT_LEDGERS'
+)
+_state_rel=f'STAGE_EXECUTION/STAGE-01/{_synthetic_wu}/EXECUTION_STATE.yaml'
+_current_ledger_bindings['EXECUTION_STATE']={
+  'ledger_class':'EXECUTION_STATE',
+  'binding_kind':'LOCAL_ARTIFACT',
+  'artifact_ref':_state_rel,
+  'content_sha256':eng._sha256_file(_synthetic_dir/'EXECUTION_STATE.yaml'),
+  'external_evidence_ref':''
+}
+_work_path=_synthetic_dir/'WORK_UNIT.yaml'
+_work_doc=yaml.safe_load(_work_path.read_text(encoding='utf-8')) or {}
+_work_doc['governance_uid']=gov
+_work_doc['current_ledger_bindings']=_current_ledger_bindings
+_work_path.write_text(yaml.safe_dump(_work_doc,sort_keys=False,allow_unicode=True),encoding='utf-8')
 _required_sections=list(map(str,st.get('required_normative_section_uids') or []))
 _required_artifacts=list(map(str,st.get('outputs') or []))+list(map(str,st.get('required_evidence') or []))
 _row_total=max(len(_required_sections),len(_required_artifacts))
