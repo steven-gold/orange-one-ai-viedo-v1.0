@@ -49,6 +49,14 @@ def main():
         row=bindings.get(name) or {}
         if row.get('path')!=path or row.get('event')!='push':
             failures.append('REQUIRED_WORKFLOW_BINDING_DRIFT:'+name)
+    if vc.get('exact_head_commit_status_receipts_required') is not True:
+        failures.append('EXACT_HEAD_COMMIT_STATUS_RECEIPT_CONTRACT_MISSING')
+    expected_status_contexts={'Governance/Current Cleanup','Governance/Mother Neutrality'}
+    if set(map(str,vc.get('required_commit_status_contexts') or []))!=expected_status_contexts:
+        failures.append('REQUIRED_COMMIT_STATUS_CONTEXT_DENOMINATOR_DRIFT')
+    for key in ('commit_status_sha_must_equal_validation_head','commit_status_success_required','commit_status_receipt_is_external_evidence_not_branch_mutation'):
+        if vc.get(key) is not True:
+            failures.append('COMMIT_STATUS_RECEIPT_FLAG_MISSING:'+key)
     for key in ('exact_candidate_head_required','required_workflows_run_on_every_candidate_push','live_branch_head_must_equal_validation_head','live_branch_head_recheck_after_evidence_validation_required','formal_promotion_requires_all_required_workflows_exact_head_success','formal_promotion_requires_independent_auditor_evidence','remediation_generated_successor_head_requires_fresh_exact_head_validation','remediation_producer_success_is_not_successor_head_validation','self_mutating_governance_workflow_must_declare_successor_validation_terminalization','semantic_reference_change_transaction_required'):
         if vc.get(key) is not True: failures.append('CURRENT_VALIDATION_FLAG_MISSING:'+key)
     if vc.get('prior_head_workflow_result_may_credit_successor_head') is not False: failures.append('PRIOR_HEAD_SUCCESSOR_CREDIT_NOT_BLOCKED')
