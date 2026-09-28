@@ -1178,6 +1178,48 @@ receipt.write_text(yaml.safe_dump(obj,sort_keys=False),encoding="utf-8")
       str(_dim):{'scanner_owner':'SYNTHETIC_SCANNER_OWNER','result_owner':'SYNTHETIC_RESULT_OWNER'}
       for _dim in (_adapters['stages'][_sid].get('scanner_dimensions') or [])
     }
+
+    # Closed Work Unit reactivation and successor/re-entry lineage pressure.
+    _entry_work_rel=f'STAGE_EXECUTION/{_sid}/{_wu}/WORK_UNIT.yaml'
+    _entry_work_doc=yaml.safe_load((_wd/'WORK_UNIT.yaml').read_text(encoding='utf-8')) or {}
+    _entry_scope_doc=yaml.safe_load((_wd/'CURRENT_EXECUTION_SCOPE_MANIFEST.yaml').read_text(encoding='utf-8')) or {}
+    eng._validate_closed_work_unit_successor_reentry(_sid,_exec_root,_entry_work_doc,_entry_scope_doc,_entry_work_rel)
+    _same_terminal=_wd/'WORK_UNIT_TERMINAL_RECEIPT.yaml'
+    _same_terminal.write_text(yaml.safe_dump({'work_unit_uid':_wu,'stage_uid':_sid,'conclusion':'success'},sort_keys=False),encoding='utf-8')
+    expect_stage_engine_block(
+      'closed_work_unit_same_uid_reactivation',
+      lambda:eng._validate_closed_work_unit_successor_reentry(_sid,_exec_root,_entry_work_doc,_entry_scope_doc,_entry_work_rel),
+      'CLOSED_WORK_UNIT_REACTIVATION_FORBIDDEN'
+    )
+    _same_terminal.unlink()
+    _pred_uid='SYNTHETIC-PREDECESSOR-'+_sid
+    _pred_dir=_exec_root/'STAGE_EXECUTION'/_sid/_pred_uid
+    _pred_dir.mkdir(parents=True,exist_ok=True)
+    _pred_work_rel=f'STAGE_EXECUTION/{_sid}/{_pred_uid}/WORK_UNIT.yaml'
+    _pred_receipt_rel=f'STAGE_EXECUTION/{_sid}/{_pred_uid}/WORK_UNIT_TERMINAL_RECEIPT.yaml'
+    (_exec_root/_pred_work_rel).write_text(yaml.safe_dump({
+      'artifact_type':'WORK_UNIT','work_unit_uid':_pred_uid,'stage_uid':_sid,
+      'governed_unit_uid':_gu,'status':'CLOSED','current_status':'CLOSED'
+    },sort_keys=False),encoding='utf-8')
+    (_exec_root/_pred_receipt_rel).write_text(yaml.safe_dump({
+      'provider':'SYNTHETIC','work_unit_uid':_pred_uid,'stage_uid':_sid,'conclusion':'success'
+    },sort_keys=False),encoding='utf-8')
+    _reentry_work=deepcopy(_entry_work_doc)
+    _reentry_work.update({
+      'work_unit_activation_kind':'SUCCESSOR_REENTRY_WORK_UNIT',
+      'predecessor_work_unit_uid':_pred_uid,
+      'predecessor_work_unit_ref':_pred_work_rel,
+      'predecessor_terminal_receipt_ref':_pred_receipt_rel,
+      'reentry_authority_ref':'synthetic://reentry-authority'
+    })
+    eng._validate_closed_work_unit_successor_reentry(_sid,_exec_root,_reentry_work,_entry_scope_doc,_entry_work_rel)
+    _bad_reentry=deepcopy(_reentry_work); _bad_reentry['predecessor_work_unit_uid']=_wu
+    expect_stage_engine_block(
+      'successor_reentry_reuses_current_work_unit_uid',
+      lambda:eng._validate_closed_work_unit_successor_reentry(_sid,_exec_root,_bad_reentry,_entry_scope_doc,_entry_work_rel),
+      'SUCCESSOR_REENTRY_WORK_UNIT_UID_REUSED'
+    )
+
     _input_bindings=_write_stage_entry_input_bindings(
       _exec_root,
       f'STAGE_EXECUTION/{_sid}/{_wu}/EVIDENCE/ENTRY_INPUTS',
@@ -1189,6 +1231,7 @@ receipt.write_text(yaml.safe_dump(obj,sort_keys=False),encoding="utf-8")
     )
     _work={
       'artifact_type':'WORK_UNIT','work_unit_uid':_wu,'governance_uid':_gov,'governed_unit_uid':_gu,
+      'work_unit_activation_kind':'INITIAL_STAGE_WORK_UNIT',
       TASK_LAYER_FIELD:TASK_LAYER_VALUE,'stage_uid':_sid,'current_status':'ACTIVE',
       'pre_execution_gate_status':'PASS','required_outputs':list(_st.get('outputs') or []),
       'dependencies':['dependency.yaml'],'normative_execution_matrix_ref':_matrix_rel,
