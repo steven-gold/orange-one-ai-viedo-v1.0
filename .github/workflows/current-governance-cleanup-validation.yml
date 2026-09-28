@@ -42,12 +42,13 @@ jobs:
           python governance/ci/stage_execution_engine.py --definition-audit-all
           python governance/ci/validate_selected_execution_profile_integrity.py
 
-      - name: Gate 03 - Active consumers and governance layout
-        id: gate03
-        run: |
-          set -euo pipefail
-          python governance/ci/validate_active_consumer_reference_integrity.py
-          python governance/ci/validate_governance_layout.py
+      - name: Gate 03A - Active consumer reference integrity
+        id: gate03a
+        run: python governance/ci/validate_active_consumer_reference_integrity.py
+
+      - name: Gate 03B - Governance layout
+        id: gate03b
+        run: python governance/ci/validate_governance_layout.py
 
       - name: Gate 04 - Mutation safety portability and domain isolation
         id: gate04
@@ -100,7 +101,8 @@ jobs:
           OUT_INSTALL: ${{ steps.install.outcome }}
           OUT_GATE01: ${{ steps.gate01.outcome }}
           OUT_GATE02: ${{ steps.gate02.outcome }}
-          OUT_GATE03: ${{ steps.gate03.outcome }}
+          OUT_GATE03A: ${{ steps.gate03a.outcome }}
+          OUT_GATE03B: ${{ steps.gate03b.outcome }}
           OUT_GATE04: ${{ steps.gate04.outcome }}
           OUT_GATE05: ${{ steps.gate05.outcome }}
           OUT_GATE06: ${{ steps.gate06.outcome }}
@@ -121,7 +123,8 @@ jobs:
               "install":os.environ.get("OUT_INSTALL",""),
               "gate01":os.environ.get("OUT_GATE01",""),
               "gate02":os.environ.get("OUT_GATE02",""),
-              "gate03":os.environ.get("OUT_GATE03",""),
+              "gate03a":os.environ.get("OUT_GATE03A",""),
+              "gate03b":os.environ.get("OUT_GATE03B",""),
               "gate04":os.environ.get("OUT_GATE04",""),
               "gate05":os.environ.get("OUT_GATE05",""),
               "gate06":os.environ.get("OUT_GATE06",""),
