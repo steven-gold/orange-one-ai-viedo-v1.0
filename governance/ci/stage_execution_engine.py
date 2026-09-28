@@ -1596,6 +1596,22 @@ def _atomic_yaml_write(path,obj):
     tmp.write_text(yaml.safe_dump(obj,sort_keys=False,allow_unicode=True),encoding='utf-8')
     tmp.replace(path)
 
+def _refresh_canonical_state_ledger_hash(work_path,work,state_path):
+    bindings=work.get('current_ledger_bindings')
+    if not isinstance(bindings,dict) or not isinstance(bindings.get('EXECUTION_STATE'),dict):
+        fail('CURRENT_STATE_LEDGER_BINDING_MISSING_DURING_CHECKPOINT')
+    row=bindings['EXECUTION_STATE']
+    expected_ref=state_path.resolve()
+    actual_ref=(_execution_artifact_root()/Path(str(row.get('artifact_ref') or ''))).resolve()
+    if actual_ref!=expected_ref:
+        fail('CURRENT_STATE_LEDGER_ALIAS_DRIFT_DURING_CHECKPOINT')
+    row['content_sha256']=_sha256_file(state_path)
+    bindings['EXECUTION_STATE']=row
+    work['current_ledger_bindings']=bindings
+    _atomic_yaml_write(work_path,work)
+    return True
+
+
 def execute_active(stage_uid):
     _,_,gov,_,adapters,stages=validate_definition()
     work=active_execution(stage_uid)
@@ -1675,6 +1691,10 @@ def execute_active(stage_uid):
         }
         _atomic_yaml_write(receipt_path,receipt)
         completed.append(operation_uid)
+        validate_normative_execution_matrix(
+            stage_uid,execution_root,work,stages[stage_uid],gov,
+            validation_phase='STEP',completed_operations=completed
+        )
         next_op=expected_ops[len(completed)] if len(completed)<len(expected_ops) else 'COMPLETE'
         state['completed_operations']=completed
         state['current_operation']=next_op
@@ -1684,6 +1704,7 @@ def execute_active(stage_uid):
         state['last_operation_uid']=operation_uid
         state['last_operation_receipt_ref']=receipt_ref
         _atomic_yaml_write(state_path,state)
+        _refresh_canonical_state_ledger_hash(work_path,work,state_path)
         print(json.dumps({
           'result':'NOT_APPLICABLE_WITH_PROOF','stage_uid':stage_uid,'work_unit_uid':str(work.get('work_unit_uid') or ''),
           'operation_uid':operation_uid,'authority_evidence_ref':authority_ref,'operation_receipt_ref':receipt_ref,
@@ -1747,6 +1768,10 @@ def execute_active(stage_uid):
         if receipt.get(key)!=val:
             fail('ACTIVE_STAGE_OPERATION_RECEIPT_IDENTITY_DRIFT:'+operation_uid+':'+key)
     completed.append(operation_uid)
+    validate_normative_execution_matrix(
+        stage_uid,execution_root,work,stages[stage_uid],gov,
+        validation_phase='STEP',completed_operations=completed
+    )
     next_op=expected_ops[len(completed)] if len(completed)<len(expected_ops) else 'COMPLETE'
     state['completed_operations']=completed
     state['current_operation']=next_op
@@ -1756,6 +1781,7 @@ def execute_active(stage_uid):
     state['last_operation_uid']=operation_uid
     state['last_operation_receipt_ref']=receipt_ref
     _atomic_yaml_write(state_path,state)
+    _refresh_canonical_state_ledger_hash(work_path,work,state_path)
     print(json.dumps({
       'result':'PASS',
       'stage_uid':stage_uid,
