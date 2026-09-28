@@ -159,7 +159,7 @@ def main() -> int:
     workflow_by_name={}
     for workflow in workflows:
         workflow_text=workflow.read_text(encoding="utf-8")
-        m=re.search(r"(?m)^name:\\s*(.+?)\\s*$",workflow_text)
+        m=re.search(r"(?m)^name:\s*(.+?)\s*$",workflow_text)
         if m:
             workflow_by_name[m.group(1).strip()]=(workflow,workflow_text)
 
