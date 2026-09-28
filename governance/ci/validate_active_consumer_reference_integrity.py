@@ -107,7 +107,7 @@ def main() -> int:
     roles = registry.get("branch_role_contract") or {}
     governance_branch = str(registry.get("branch") or "")
     governance_role = roles.get(governance_branch)
-    if governance_role not in {"IMMUTABLE_GOVERNANCE_RULESET", "GOVERNANCE_REVISION_CANDIDATE"}:
+    if governance_role != "CURRENT_GOVERNANCE_WORKLINE":
         errors.append("GOVERNANCE_BRANCH_IDENTITY_OR_ROLE_DRIFT")
     binding_rel = str(registry.get("execution_environment_binding") or "")
     if not binding_rel:
@@ -154,11 +154,59 @@ def main() -> int:
     if not workflows:
         errors.append("CURRENT_WORKFLOW_SET_EMPTY")
 
-    validation_contract = registry.get("candidate_validation_contract") or {}
-    if governance_role == "GOVERNANCE_REVISION_CANDIDATE":
-        required_workflow_names=set(map(str,validation_contract.get("required_workflow_names") or []))
-        workflow_by_name={}
-        for workflow in workflows:
+    validation_contract = registry.get("current_validation_contract") or {}
+    required_workflow_names=set(map(str,validation_contract.get("required_workflow_names") or []))
+    workflow_by_name={}
+    for workflow in workflows:
+        workflow_text=workflow.read_text(encoding="utf-8")
+        m=re.search(r"(?m)^name:\\s*(.+?)\\s*$",workflow_text)
+        if m:
+            workflow_by_name[m.group(1).strip()]=(workflow,workflow_text)
+    missing_names=sorted(required_workflow_names-set(workflow_by_name))
+    for name in missing_names:
+        errors.append("CURRENT_REQUIRED_WORKFLOW_MISSING:"+name)
+    bindings=validation_contract.get("required_workflow_bindings") or {}
+    for name in required_workflow_names & set(workflow_by_name):
+        wf,wf_text=workflow_by_name[name]
+        row=bindings.get(name) or {}
+        if str(row.get("path") or "")!=rel(wf):
+            errors.append("CURRENT_REQUIRED_WORKFLOW_PATH_DRIFT:"+name)
+        if row.get("event")!="push":
+            errors.append("CURRENT_REQUIRED_WORKFLOW_EVENT_DRIFT:"+name)
+        if governance_branch not in wf_text:
+            errors.append("CURRENT_REQUIRED_WORKFLOW_BRANCH_NOT_WIRED:"+name+":"+governance_branch)
+    if validation_contract.get("mother_neutrality_and_portability_required") is not True:
+        errors.append("CURRENT_MOTHER_NEUTRALITY_PORTABILITY_NOT_REQUIRED")
+    if validation_contract.get("active_consumer_reverse_validation_required") is not True:
+        errors.append("CURRENT_ACTIVE_CONSUMER_REVERSE_VALIDATION_NOT_REQUIRED")
+    if validation_contract.get("exact_current_head_required") is not True:
+        errors.append("CURRENT_EXACT_HEAD_VALIDATION_NOT_REQUIRED")
+    if validation_contract.get("prior_head_workflow_result_may_credit_current_head") is not False:
+        errors.append("CURRENT_PRIOR_HEAD_CREDIT_NOT_BLOCKED")
+    if validation_contract.get("historical_pass_substitution")!="FORBIDDEN":
+        errors.append("CURRENT_HISTORICAL_PASS_SUBSTITUTION_NOT_BLOCKED")
+    for key in (
+        "external_human_or_account_evidence_required",
+        "external_auditor_required",
+        "external_signer_required",
+        "detached_external_trust_required",
+        "promotion_required_before_product_stage_execution",
+        "released_governance_selection_required",
+    ):
+        if validation_contract.get(key) is not False:
+            errors.append("NON_WORD_EXTERNAL_GATE_REINTRODUCED:"+key)
+    if validation_contract.get("authority_model")!="WORD_DERIVED_INTERNAL_VALIDATION":
+        errors.append("CURRENT_WORD_DERIVED_AUTHORITY_MODEL_DRIFT")
+    if validation_contract.get("source_package_integration_mode")=="SINGLE_BRANCH_INTEGRATED":
+        if validation_contract.get("source_package_integrated_branch")!=governance_branch:
+            errors.append("SINGLE_BRANCH_SOURCE_INTEGRATED_BRANCH_DRIFT")
+        source_validator=str(validation_contract.get("source_package_integrated_validator") or "")
+        if not source_validator or not (ROOT/source_validator).is_file():
+            errors.append("SINGLE_BRANCH_SOURCE_INTEGRATED_VALIDATOR_MISSING:"+source_validator)
+        if (registry.get("mutation_policy") or {}).get("branch_fanout_without_explicit_user_authorization")!="FORBIDDEN":
+            errors.append("SINGLE_BRANCH_FANOUT_GUARD_MISSING")
+
+    for workflow in workflows:
             workflow_text=workflow.read_text(encoding="utf-8")
             m=re.search(r"(?m)^name:\s*(.+?)\s*$",workflow_text)
             if m:
@@ -369,8 +417,7 @@ def main() -> int:
     print("PASS: profile-specific scope schema is delegated to selected-profile validation")
     print("PASS: Governance branch has no effectful execute mode")
     print("PASS: no stale fixed execution run root or retired compatibility token in active consumers")
-    if governance_role == "GOVERNANCE_REVISION_CANDIDATE":
-        print("PASS: candidate validation workflow denominator and full preformal regression wiring complete")
+    print("PASS: Current Word-derived validation workflow denominator and exact-head wiring complete")
     print("PASS: ACTIVE_CONSUMER_REFERENCE_INTEGRITY_CURRENT_ONLY")
     return 0
 
