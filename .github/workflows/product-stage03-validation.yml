@@ -9,7 +9,6 @@ on:
     branches: [0921acpos]
     paths:
       - 'STAGE_EXECUTION/STAGE-03/**'
-      - '.github/workflows/product-stage03-validation.yml'
   workflow_dispatch:
 permissions:
   contents: read
@@ -20,17 +19,29 @@ jobs:
       fail-fast: false
       matrix:
         wu:
-        - WU-STAGE03-GLOBAL-HOME-SHELL-NAVIGATION-001
-        - WU-STAGE03-WB01-DASHBOARD-001
+        - WU-STAGE03-GLOBAL-HOME-SHELL-NAVIGATION-REENTRY-001
+        - WU-STAGE03-WB01-DASHBOARD-REENTRY-001
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
       with:
         ref: ${{ github.sha }}
         fetch-depth: 0
-    - uses: actions/checkout@v4
+    - name: Resolve exact selected released governance
+      id: release
+      shell: bash
+      run: |
+        set -euo pipefail
+        SEL="STAGE_EXECUTION/SHARED_AUTHORITY/PRODUCT_SELECTED_GOVERNANCE_RELEASE.yaml"
+        test -s "$SEL" || { echo "BLOCK:PRODUCT_SELECTED_GOVERNANCE_RELEASE_MISSING"; exit 31; }
+        STATUS="$(awk '$1=="status:" {print $2; exit}' "$SEL")"
+        COMMIT="$(awk '$1=="governance_commit_sha:" {print $2; exit}' "$SEL")"
+        test "$STATUS" = "SELECTED_VERIFIED_RELEASE" || { echo "BLOCK:SELECTED_GOVERNANCE_NOT_VERIFIED_RELEASE"; exit 32; }
+        echo "$COMMIT" | grep -Eq '^[0-9a-f]{40}$' || { echo "BLOCK:SELECTED_GOVERNANCE_COMMIT_INVALID"; exit 33; }
+        echo "commit_sha=$COMMIT" >> "$GITHUB_OUTPUT"
+    - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
       with:
         repository: steven-gold/orange-one-ai-viedo-v1.0
-        ref: rebuild-v2.1.1
+        ref: ${{ steps.release.outputs.commit_sha }}
         path: _governance_authority
         fetch-depth: 1
     - run: |
@@ -41,9 +52,9 @@ jobs:
         python -m pip install --disable-pip-version-check 'PyYAML==6.0.2'
     - name: Validate admission
       env:
-        ACPOS_PRODUCT_ROOT: ${{ github.workspace }}
-        ACPOS_ACTIVE_WORK_UNIT: STAGE_EXECUTION/STAGE-03/${{ matrix.wu }}/WORK_UNIT.yaml
-        ACPOS_CURRENT_SCOPE: STAGE_EXECUTION/STAGE-03/${{ matrix.wu }}/CURRENT_EXECUTION_SCOPE_MANIFEST.yaml
+        STAGE_EXECUTION_ROOT: ${{ github.workspace }}
+        STAGE_ACTIVE_WORK_UNIT: STAGE_EXECUTION/STAGE-03/${{ matrix.wu }}/WORK_UNIT.yaml
+        STAGE_CURRENT_SCOPE: STAGE_EXECUTION/STAGE-03/${{ matrix.wu }}/CURRENT_EXECUTION_SCOPE_MANIFEST.yaml
       run: |
         STATUS="$(python -c "import yaml; d=yaml.safe_load(open('STAGE_EXECUTION/STAGE-03/${{ matrix.wu }}/WORK_UNIT.yaml')); print(d.get('current_status') or d.get('status') or '')")"
         case "$STATUS" in
@@ -264,7 +275,7 @@ jobs:
         handoff_status=h.get('status')
         if int(h.get('unresolved_required_dependency_total') or 0)!=0 or handoff_status not in ('PASS','PASS_CURRENT_REVERIFY'):
           raise SystemExit('BLOCK:STAGE04_HANDOFF_UNRESOLVED_OR_STATUS_DRIFT:'+str(handoff_status))
-        if os.environ['WU']=='WU-STAGE03-WB01-DASHBOARD-001':
+        if os.environ['WU']=='WU-STAGE03-WB01-DASHBOARD-REENTRY-001':
           topo=y('DEPENDENCY_TOPOLOGY.yaml')
           deps=topo.get('cross_unit_required_dependencies') or []
           if len(deps)!=1 or deps[0].get('governed_unit_uid')!='GLOBAL-HOME-SHELL-NAVIGATION':
@@ -279,9 +290,9 @@ jobs:
         PY
     - name: Validate normalized Stage03 evidence when materialized
       env:
-        ACPOS_PRODUCT_ROOT: ${{ github.workspace }}
-        ACPOS_ACTIVE_WORK_UNIT: STAGE_EXECUTION/STAGE-03/${{ matrix.wu }}/WORK_UNIT.yaml
-        ACPOS_CURRENT_SCOPE: STAGE_EXECUTION/STAGE-03/${{ matrix.wu }}/CURRENT_EXECUTION_SCOPE_MANIFEST.yaml
+        STAGE_EXECUTION_ROOT: ${{ github.workspace }}
+        STAGE_ACTIVE_WORK_UNIT: STAGE_EXECUTION/STAGE-03/${{ matrix.wu }}/WORK_UNIT.yaml
+        STAGE_CURRENT_SCOPE: STAGE_EXECUTION/STAGE-03/${{ matrix.wu }}/CURRENT_EXECUTION_SCOPE_MANIFEST.yaml
         WU: ${{ matrix.wu }}
       run: |
         EVIDENCE_PATH="STAGE_EXECUTION/STAGE-03/$WU/EVIDENCE/STAGE03_NORMALIZED_EVIDENCE.json"
