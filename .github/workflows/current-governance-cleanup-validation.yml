@@ -71,6 +71,33 @@ jobs:
           python governance/ci/validate_successor_governance_preformal.py > /tmp/issue60-gate05.log 2>&1
           RC=$?
           cat /tmp/issue60-gate05.log
+          if [ "$RC" -ne 0 ]; then
+            WEB_GOVERNANCE_PREFORMAL_SUITE_CHILD=1 python - <<'PY' > /tmp/issue60-regression-detail.log 2>&1
+          import json, os, subprocess, sys
+          from pathlib import Path
+          root=Path(".github/governance-source/active/source/09_TESTS/governance")
+          suites=[
+            "test_reference_semantic_guard.py",
+            "test_prefomal_stress_repairs.py",
+            "test_bugfix_regressions.py",
+            "test_v2_1_8_successor_evidence_sync_bugfix.py",
+            "test_v2_1_9_evidence_state_closure.py",
+            "test_v2_1_13_stage_execution_invariants.py",
+          ]
+          for name in suites:
+            cp=subprocess.run([sys.executable,str(root/name)],cwd=str(root),text=True,capture_output=True,env={**os.environ,"WEB_GOVERNANCE_PREFORMAL_SUITE_CHILD":"1"})
+            print("SUITE",name,"RC",cp.returncode)
+            try:
+              d=json.loads(cp.stdout)
+              rows=d.get("results") or d.get("semantic_results") or []
+              bad=[x for x in rows if isinstance(x,dict) and x.get("ok") is False]
+              print(json.dumps({"total":d.get("total"),"passed_expectations":d.get("passed_expectations"),"semantic_cases_total":d.get("semantic_cases_total"),"semantic_passed_expectations":d.get("semantic_passed_expectations"),"failing_cases":bad},ensure_ascii=False))
+            except Exception:
+              print(cp.stdout[-4000:])
+              print(cp.stderr[-2000:])
+          PY
+            cat /tmp/issue60-regression-detail.log
+          fi
           exit "$RC"
 
       - name: Gate 06 - Source stage and product-neutral invariants
@@ -125,6 +152,7 @@ jobs:
           mkdir -p .github/governance-diagnostics
           if [ -f /tmp/issue60-gate03b.log ]; then cp /tmp/issue60-gate03b.log .github/governance-diagnostics/ISSUE60_GATE03B.log; fi
           if [ -f /tmp/issue60-gate05.log ]; then cp /tmp/issue60-gate05.log .github/governance-diagnostics/ISSUE60_GATE05.log; fi
+          if [ -f /tmp/issue60-regression-detail.log ]; then cp /tmp/issue60-regression-detail.log .github/governance-diagnostics/ISSUE60_REGRESSION_DETAIL.log; fi
           python - <<'PY'
           from pathlib import Path
           import json, os
@@ -153,6 +181,6 @@ jobs:
           PY
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add .github/governance-diagnostics/ISSUE60_CURRENT_VALIDATION_DIAGNOSTIC.json .github/governance-diagnostics/ISSUE60_GATE03B.log .github/governance-diagnostics/ISSUE60_GATE05.log
+          git add .github/governance-diagnostics/ISSUE60_CURRENT_VALIDATION_DIAGNOSTIC.json .github/governance-diagnostics/ISSUE60_GATE03B.log .github/governance-diagnostics/ISSUE60_GATE05.log .github/governance-diagnostics/ISSUE60_REGRESSION_DETAIL.log
           git commit -m "test(governance): record Issue60 current validation diagnostic"
           git push origin HEAD:rebuild-v2.1.1
