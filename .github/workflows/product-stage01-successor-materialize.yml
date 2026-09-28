@@ -48,6 +48,7 @@ jobs:
       - name: Inline deterministic Current-governance validation
         run: |
           set -euo pipefail
+          cd _governance_authority
           python governance/ci/stage_execution_engine.py --definition-audit-all
           python governance/ci/validate_selected_execution_profile_integrity.py
           python governance/ci/validate_active_consumer_reference_integrity.py
