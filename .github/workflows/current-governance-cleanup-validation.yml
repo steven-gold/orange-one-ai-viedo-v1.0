@@ -85,7 +85,7 @@ jobs:
             "test_v2_1_13_stage_execution_invariants.py",
           ]
           for name in suites:
-            cp=subprocess.run([sys.executable,str(root/name)],cwd=str(root),text=True,capture_output=True,env={**os.environ,"WEB_GOVERNANCE_PREFORMAL_SUITE_CHILD":"1"})
+            cp=subprocess.run([sys.executable,name],cwd=str(root),text=True,capture_output=True,env={**os.environ,"WEB_GOVERNANCE_PREFORMAL_SUITE_CHILD":"1"})
             print("SUITE",name,"RC",cp.returncode)
             try:
               d=json.loads(cp.stdout)
