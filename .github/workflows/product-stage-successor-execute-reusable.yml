@@ -79,6 +79,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          cd _governance_authority
           python - <<'PY'
           import sys
           sys.path.insert(0,'governance/ci')
