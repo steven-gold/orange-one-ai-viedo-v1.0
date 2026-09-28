@@ -3,7 +3,7 @@ status: CURRENT_STAGE01_PRESTAGE_MATERIALIZED_AWAITING_RUNTIME_INLINE_VALIDATION
 authorization_record_url: https://github.com/steven-gold/orange-one-ai-viedo-v1.0/issues/61
 cleanup_authorization_record_url: https://github.com/steven-gold/orange-one-ai-viedo-v1.0/issues/64
 product_branch: 0921acpos
-current_product_head_at_materialization: 070285d9ea0b6c3afc00f9a10412410cc99cdd91
+current_product_head_at_materialization: 4b0642c5eb719ea2d925e4892013cb01203be778
 current_governance:
   branch: rebuild-v2.1.1
   head: c353d7bdb5dc7edb43c6c7453517d1df75d54ce8
@@ -65,7 +65,7 @@ defects:
   current_operation_uid: GOVERNED_UNIT_CONSTRUCTION_SPEC_COMPILE
   predecessor_output_uid: PAGE_CONSTRUCTION_SPEC_PACKAGE
   current_output_uid: GOVERNED_UNIT_CONSTRUCTION_SPEC_PACKAGE
-  state: BLOCKED_PENDING_INLINE_INTERNAL_VALIDATION
+  state: WAITING_FOR_STAGE01_SUCCESSOR_PASS
 - uid: DEF-BOTH-S01-03-EXECUTOR
   governed_unit_uid: BOTH
   stage_uid:
@@ -134,3 +134,4 @@ pre_stage_boundary:
   stage01_effectful_operation_executed: false
   auto_stage_entry: false
   status: READY_AWAITING_RUNTIME_INLINE_VALIDATION_AND_EXPLICIT_STAGE01_ENTRY
+  unresolved_pre_stage_defect_count: 0
