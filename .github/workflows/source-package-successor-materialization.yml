@@ -51,9 +51,8 @@ jobs:
               errors.append('SOURCE_PACKAGE_INTEGRATION_MODE_DRIFT')
           if contract.get('source_package_integrated_branch')!='rebuild-v2.1.1':
               errors.append('SOURCE_PACKAGE_INTEGRATED_BRANCH_DRIFT')
-          for key in ('external_human_or_account_evidence_required','external_auditor_required','external_signer_required','detached_external_trust_required'):
-              if contract.get(key) is not False:
-                  errors.append('NON_WORD_EXTERNAL_GATE_REINTRODUCED:'+key)
+          if contract.get('unregistered_non_word_execution_prerequisite')!='BLOCK':
+              errors.append('UNREGISTERED_NON_WORD_EXECUTION_PREREQUISITE_NOT_BLOCKED')
           if mutation.get('single_branch_consolidation_mode') is not True:
               errors.append('SINGLE_BRANCH_CURRENT_MODE_REQUIRED')
           if mutation.get('single_active_governance_branch')!='rebuild-v2.1.1':
