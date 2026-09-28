@@ -212,6 +212,7 @@ invariants:
   STAGE_ENTRY_PRECHECK:
     current_authority_admissibility_verified: true
     required_inputs_physically_materialized: true
+    required_artifact_physical_integrity_verified: true
     validator_schema_revision_compatible: true
     current_ledgers_synchronized: true
     required_evidence_contract_registered: true
@@ -220,6 +221,33 @@ invariants:
     required_input_parse_and_required_field_validation_required: true
     required_input_denominator_inclusion_required: true
     consumer_admission_on_exact_input_required: true
+  PHYSICAL_ARTIFACT_INTEGRITY:
+    invariant_uid: GOV-INV-PHYSICAL-ARTIFACT-INTEGRITY-001
+    normative_section_uids:
+    - WEB-GOV-03-S073
+    - WEB-GOV-04-S088
+    applies_to_all_registered_stages: true
+    applies_to_required_inputs_outputs_evidence_matrices_receipts_and_handoffs: true
+    path_presence_alone_completion_credit: 0
+    metadata_or_receipt_self_consistency_completion_credit: 0
+    required_file_must_be_regular: true
+    required_file_must_be_nonempty_unless_schema_explicitly_authorizes_empty_representation: true
+    empty_representation_without_explicit_schema_authority: BLOCK
+    registered_parser_must_parse: true
+    registered_schema_and_required_fields_must_validate: true
+    declared_content_hash_must_be_recomputed_from_physical_artifact_when_hash_is_registered: true
+    producer_receipt_consumer_binding_must_match_recomputed_identity: true
+    independent_source_rederivation_validator_must_run_when_registered: true
+    receipt_may_replace_physical_artifact_validation: false
+    self_consistent_metadata_may_override_physical_artifact_failure: false
+    physical_integrity_failure_disposition: STOP_REENTER_EARLIEST_OWNER_MARK_DESCENDANTS_REVERIFY_REQUIRED
+    destructive_regression_required:
+    - ZERO_BYTE_REQUIRED_ARTIFACT_WITH_UNCHANGED_RECEIPTS
+    - NONEMPTY_UNPARSEABLE_REQUIRED_ARTIFACT
+    - PARSEABLE_EMPTY_OR_SCHEMA_INCOMPLETE_ARTIFACT
+    - PHYSICAL_CONTENT_CHANGED_WITH_STALE_DECLARED_HASH
+    - RECEIPT_HASH_DRIFT_FROM_PHYSICAL_ARTIFACT
+    - CONSUMER_BINDING_DRIFT_FROM_RECOMPUTED_IDENTITY
   IMPLEMENTATION_DEVIATION_FEEDBACK:
     deviation_record_required: true
     affected_consumers_status: REVERIFY_REQUIRED
@@ -1732,6 +1760,9 @@ invariants:
     structure_dimensions: [WORK_UNIT_SKELETON_PASS, ARTIFACT_STRUCTURE_PASS, OPERATION_STRUCTURE_PASS, EVIDENCE_STRUCTURE_PASS, CLOSURE_STRUCTURE_PASS, FULL_STAGE_STRUCTURE_PASS]
     work_unit_skeleton_pass_may_imply_full_stage_structure_pass: false
     artifact_presence_may_imply_stage_pass: false
+    artifact_physical_integrity_contract_ref: GOV-INV-PHYSICAL-ARTIFACT-INTEGRITY-001
+    required_artifact_presence_and_content_validity_must_be_separately_reported: true
+    receipt_or_metadata_may_substitute_for_physical_artifact_validation: false
     complete_status_string_may_imply_stage_pass: false
     canonical_stage_statuses: [NOT_STARTED, READY_FOR_EXECUTION, IN_PROGRESS, BLOCKED, REVERIFY_REQUIRED, CURRENT_STATE_CONFLICT, EXECUTION_COMPLETE_CLOSURE_PENDING, CLOSED_PASS, CLOSED_FAIL, SNAPSHOT_INVALIDATED]
     stage_pass_formula:
@@ -1778,6 +1809,11 @@ invariants:
       CURRENT_MATRIX_MISSING: S1_BLOCKER
       CURRENT_MATRIX_INCOMPLETE: S1_BLOCKER
       REQUIRED_INPUT_MISSING: S1_BLOCKER
+      REQUIRED_ARTIFACT_EMPTY: S1_BLOCKER
+      REQUIRED_ARTIFACT_PARSE_FAILED: S1_BLOCKER
+      REQUIRED_ARTIFACT_SCHEMA_INVALID: S1_BLOCKER
+      REQUIRED_ARTIFACT_HASH_MISMATCH: S1_BLOCKER
+      RECEIPT_PHYSICAL_ARTIFACT_DRIFT: S1_BLOCKER
       REQUIRED_OPERATION_MISSING: S1_BLOCKER
       OPERATION_ORDER_INVALID: S1_BLOCKER
       OPERATION_RECEIPT_MISSING: S1_BLOCKER
