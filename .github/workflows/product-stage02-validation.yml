@@ -26,7 +26,7 @@ jobs:
           test -s "$SEL" || { echo "BLOCK:CURRENT_GOVERNANCE_SELECTION_MISSING"; exit 31; }
           STATUS="$(awk '$1=="status:" {print $2; exit}' "$SEL")"
           COMMIT="$(awk '$1=="governance_commit_sha:" {print $2; exit}' "$SEL")"
-          test "$STATUS" = "PENDING_EXACT_HEAD_VALIDATION" || { echo "BLOCK:CURRENT_GOVERNANCE_SELECTION_STATUS_INVALID"; exit 32; }
+          test "$STATUS" = "SELECTED_EXACT_CURRENT_SNAPSHOT" || { echo "BLOCK:CURRENT_GOVERNANCE_SELECTION_STATUS_INVALID"; exit 32; }
           echo "$COMMIT" | grep -Eq '^[0-9a-f]{40}$' || { echo "BLOCK:CURRENT_GOVERNANCE_COMMIT_INVALID"; exit 33; }
           echo "commit_sha=$COMMIT" >> "$GITHUB_OUTPUT"
       - name: Checkout current governance authority
