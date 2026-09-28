@@ -4,7 +4,7 @@ artifact_type: EXECUTION_PROFILE_REGISTRY
 status: CURRENT_CANDIDATE
 canonical_path: 10_REGISTRY/GOVERNANCE_LIFECYCLE_STAGE_REGISTRY.yaml
 owner_uid: OWNER-GOVERNANCE-LIFECYCLE
-governance_revision: v2.2.33-governance-identity-negative-trace-auditor-independence-hardening-20260927
+governance_revision: v2.2.34-word-derived-stage-internal-validation-20260928
 normative_section_uids:
 - WEB-GOV-02-S004
 - WEB-GOV-02-S067
@@ -2313,11 +2313,11 @@ cross_stage_invariants:
     defect_scope_classification_required: true
     global_shared_defect_common_layer_propagation_required: true
     stage_local_defect_cross_stage_expansion_without_evidence: BLOCK
-    multidirection_high_pressure_before_version_promotion_required: true
-    predecessor_backtrace_after_version_promotion_required: true
+    multidirection_high_pressure_before_version_change_closure_required: true
+    predecessor_backtrace_after_version_change_required: true
     full_current_rule_revalidation_before_freeze_required: true
     source_control_single_current_spec_authority_required: true
-    source_control_current_promotion_before_backtrace_and_revalidation: BLOCK
+    source_control_current_validation_before_backtrace_and_revalidation: BLOCK
     next_stage_before_governance_freeze: BLOCK
     source_control_provider_is_common_semantic_dependency: false
     execution_context_neutral_common_governance_required: true
