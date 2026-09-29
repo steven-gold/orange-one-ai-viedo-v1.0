@@ -136,6 +136,28 @@ jobs:
           print('PASS: exact binding sources match Mother successor-binding denominator')
           PY
 
+      - name: Report future-stage runtime readiness without gating
+        shell: bash
+        run: |
+          set -uo pipefail
+          set +e
+          python .github/scripts/full_stage_lifecycle_guard.py \
+            --mode range-ready \
+            --start-stage STAGE-01 \
+            --end-stage STAGE-11 \
+            --product-root "$GITHUB_WORKSPACE" \
+            --governance-root "$GITHUB_WORKSPACE/_governance_authority" \
+            > /tmp/stage-range-readiness.txt 2>&1
+          RC=$?
+          set -e
+          cat /tmp/stage-range-readiness.txt
+          if [ "$RC" -eq 0 ]; then
+            echo "READINESS_DIAGNOSTIC:FULL_RANGE_READY"
+          else
+            echo "READINESS_DIAGNOSTIC:FUTURE_STAGE_RUNTIME_GAPS_REMAIN"
+          fi
+          exit 0
+
       - name: Prove execution and validation responsibilities are separated
         run: |
           set -euo pipefail
