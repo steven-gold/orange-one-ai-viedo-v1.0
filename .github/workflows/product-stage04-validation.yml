@@ -15,8 +15,8 @@ jobs:
       fail-fast: false
       matrix:
         wu:
-        - WU-STAGE04-GLOBAL-HOME-SHELL-NAVIGATION-REENTRY-001
-        - WU-STAGE04-WB01-DASHBOARD-REENTRY-001
+        - WU-STAGE04-GLOBAL-HOME-SHELL-NAVIGATION-CLEAN-001
+        - WU-STAGE04-WB01-DASHBOARD-CLEAN-001
     steps:
     - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
       with:
