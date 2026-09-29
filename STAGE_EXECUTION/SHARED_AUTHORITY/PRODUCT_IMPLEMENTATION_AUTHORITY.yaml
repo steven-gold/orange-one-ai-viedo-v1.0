@@ -1,5 +1,5 @@
 artifact_type: PRODUCT_IMPLEMENTATION_AUTHORITY
-status: CURRENT_PARTIAL_STAGE05_AUTHORITY
+status: CURRENT_STAGE05_AUTHORITY
 normative_authority: false
 authority_role: PRODUCT_EXECUTION_AUTHORITY
 product_repository: steven-gold/orange-one-ai-viedo-v1.0
@@ -126,18 +126,25 @@ execution_target_authority:
     resolution_kind: CURRENT_REPOSITORY_PATH
     target_path: src/server/queue/providerExecutionQueueRuntime.ts
   STORAGE_RUNTIME_TARGET:
-    status: UNRESOLVED
-    failure_class: SUCCESSOR_EXECUTION_TARGET_UNRESOLVED
-    reason: NO_CURRENT_AUTHORITY_FOR_DISTINCT_STORAGE_RUNTIME_PROVIDER_OR_CANONICAL_STORAGE_PATH
-    guessed_or_inferred_value_forbidden: true
+    status: AUTHORIZED_NOT_APPLICABLE
+    resolution_kind: AUTHORITY_VALUE
+    authority_value: URI_REFERENCE_ONLY_EXTERNAL_OR_PROVIDER_MANAGED
+    authority_evidence_refs:
+    - package.json
+    - database/migrations/0001_canonical_schema.sql#project_references.reference_uri
+    - database/migrations/0001_canonical_schema.sql#task_outputs.output_uri
+    - database/migrations/0001_canonical_schema.sql#dna_assets.canonical_reference
+    - src/server/aiApi/providerHttpAdapterRuntime.ts
+    applicability_basis: CURRENT_ADOPTED_RUNTIME_HAS_NO_BINARY_OBJECT_STORAGE_OWNER_OR_STORAGE_SDK_AND_PERSISTS_CANONICAL_URI_REFERENCES
+    physical_storage_credit: false
+    guessed_or_inferred_provider_forbidden: true
 
 stage05_readiness:
   required_binding_class_total: 18
-  resolved_binding_class_total: 17
-  unresolved_binding_class_total: 1
-  unresolved_binding_classes:
-  - STORAGE_RUNTIME_TARGET
-  exact_binding_source_may_be_promoted_to_current: false
-  effectful_stage05_admission_allowed: false
-  next_legal_action: RESOLVE_STORAGE_RUNTIME_TARGET_OR_AUTHORITY_PROVEN_NOT_APPLICABLE
+  resolved_binding_class_total: 18
+  unresolved_binding_class_total: 0
+  unresolved_binding_classes: []
+  exact_binding_source_may_be_promoted_to_current: true
+  effectful_stage05_admission_allowed: true
+  next_legal_action: MATERIALIZE_STAGE05_EXACT_BINDING_AND_EXECUTE_CURRENT_STAGE
   historical_runtime_completion_credit: 0
