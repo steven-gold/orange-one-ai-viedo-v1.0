@@ -74,14 +74,20 @@ def assert_work_unit(product,gov,stage,work_unit):
     d=y(wp)
     if str(d.get("stage_uid") or "")!=stage: block("WORK_UNIT_STAGE_DRIFT")
     if str(d.get("work_unit_uid") or "")!=wp.parent.name: block("WORK_UNIT_UID_DRIFT")
-    if stage!="STAGE-01":
-        required=("predecessor_work_unit_uid","predecessor_work_unit_ref","predecessor_terminal_receipt_ref")
-        missing=[k for k in required if not str(d.get(k) or "").strip()]
+    kind=str(d.get("work_unit_activation_kind") or "")
+    if kind not in {"INITIAL_STAGE_WORK_UNIT","SUCCESSOR_REENTRY_WORK_UNIT"}: block("WORK_UNIT_ACTIVATION_KIND_INVALID")
+    reentry_fields=("predecessor_work_unit_uid","predecessor_work_unit_ref","predecessor_terminal_receipt_ref","reentry_authority_ref")
+    if kind=="INITIAL_STAGE_WORK_UNIT":
+        present=[k for k in reentry_fields if str(d.get(k) or "").strip()]
+        if present: block("INITIAL_WORK_UNIT_REENTRY_FIELDS_FORBIDDEN:"+",".join(present))
+    else:
+        missing=[k for k in reentry_fields if not str(d.get(k) or "").strip()]
         if missing: block("SUCCESSOR_WORK_UNIT_PREDECESSOR_BINDING_MISSING:"+",".join(missing))
-        pr=(product/Path(str(d["predecessor_terminal_receipt_ref"]))).resolve()
-        try: pr.relative_to(product)
-        except ValueError: block("PREDECESSOR_RECEIPT_PATH_ESCAPES_PRODUCT_ROOT")
-        if not pr.is_file(): block("PREDECESSOR_TERMINAL_RECEIPT_MISSING")
+        for key,label in (("predecessor_work_unit_ref","PREDECESSOR_WORK_UNIT"),("predecessor_terminal_receipt_ref","PREDECESSOR_TERMINAL_RECEIPT"),("reentry_authority_ref","REENTRY_AUTHORITY")):
+            rp=(product/Path(str(d[key]))).resolve()
+            try: rp.relative_to(product)
+            except ValueError: block(label+"_PATH_ESCAPES_PRODUCT_ROOT")
+            if not rp.is_file(): block(label+"_MISSING")
     print("PASS: Work Unit entry bound to common lifecycle authorization",wp.parent.name)
 
 def assert_transition(product,gov,from_stage,to_stage):

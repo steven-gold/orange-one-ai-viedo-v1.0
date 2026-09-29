@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 from __future__ import annotations
-import argparse, hashlib
+import argparse, hashlib, re
 from pathlib import Path
 import yaml
 
@@ -18,6 +18,19 @@ def write(p,o):
     p=Path(p); p.parent.mkdir(parents=True,exist_ok=True)
     p.write_text(yaml.safe_dump(o,sort_keys=False,allow_unicode=True),encoding="utf-8")
 def sha(p): return hashlib.sha256(Path(p).read_bytes()).hexdigest()
+
+def successor_uid(predecessor_uid, successor_stage):
+    m=re.fullmatch(r"WU-STAGE\\d{2}-(.+)",str(predecessor_uid or ""))
+    if not m: raise SystemExit("BLOCK:PREDECESSOR_WORK_UNIT_UID_PATTERN_INVALID")
+    return "WU-"+successor_stage.replace("-","")+"-"+m.group(1)
+
+def render(obj, mapping):
+    if isinstance(obj,str):
+        for k,v in mapping.items(): obj=obj.replace("{{"+k+"}}",str(v))
+        return obj
+    if isinstance(obj,list): return [render(x,mapping) for x in obj]
+    if isinstance(obj,dict): return {str(k):render(v,mapping) for k,v in obj.items()}
+    return obj
 
 def main():
     ap=argparse.ArgumentParser()
@@ -63,21 +76,31 @@ def main():
     if nxt not in stages:
         write(out,{"artifact_type":"SUCCESSOR_EXECUTION_BINDING_RESOLUTION","predecessor_stage_uid":a.from_stage,"successor_stage_uid":nxt,"successor_execution_bindings":resolved,"ready_total":len(resolved),"unresolved_total":0,"status":"PASS"})
         print("PASS: exact next-governed-unit/scope transition bindings resolved"); return
+    governed=str(work.get("governed_unit_uid") or "")
+    suid=successor_uid(work.get("work_unit_uid"),nxt)
+    mapping={"WORK_UNIT_UID":suid,"GOVERNED_UNIT_UID":governed,"STAGE_UID":nxt}
     ops=list(map(str,stages[nxt].get("operations") or [])); rows=source.get("operation_bindings") or {}
     if set(map(str,rows))!=set(ops): raise SystemExit("BLOCK:SUCCESSOR_OPERATION_BINDING_SOURCE_COVERAGE_DRIFT:"+nxt)
     manifest_ops={}
     for op in ops:
-        b=rows.get(op) or {}; owner=str(b.get("executor_owner") or "")
+        b=render(rows.get(op) or {},mapping); owner=str(b.get("executor_owner") or "")
         if not owner or not (root/owner).is_file(): raise SystemExit("BLOCK:SUCCESSOR_EXECUTOR_OWNER_NOT_PHYSICAL:"+nxt+":"+op+":"+owner)
         result_owner=str(b.get("result_owner") or "")
         if not result_owner: raise SystemExit("BLOCK:SUCCESSOR_RESULT_OWNER_MISSING:"+nxt+":"+op)
-        manifest_ops[op]={"applicability":str(b.get("applicability") or "REQUIRED"),"executor_owner":owner,"executor_protocol":str(b.get("executor_protocol") or "PYTHON_STAGE_OPERATION_V1"),"result_owner":result_owner,"operation_receipt_ref":f"STAGE_EXECUTION/{nxt}/"+str(source.get("work_unit_uid"))+f"/EVIDENCE/OPERATION_RECEIPTS/{op}.yaml"}
+        manifest_ops[op]={"applicability":str(b.get("applicability") or "REQUIRED"),"executor_owner":owner,"executor_protocol":str(b.get("executor_protocol") or "PYTHON_STAGE_OPERATION_V1"),"result_owner":result_owner,"operation_receipt_ref":f"STAGE_EXECUTION/{nxt}/{suid}/EVIDENCE/OPERATION_RECEIPTS/{op}.yaml"}
     scanner_owner=str(source.get("scanner_owner") or "")
     if not scanner_owner or not (root/scanner_owner).is_file(): raise SystemExit("BLOCK:SUCCESSOR_SCANNER_OWNER_UNRESOLVED:"+nxt)
-    vals=list(map(str,stages[nxt].get("validators") or [])); vb=source.get("validator_bindings") or {}
+    vals=list(map(str,stages[nxt].get("validators") or [])); vb=render(source.get("validator_bindings") or {},mapping)
     if set(map(str,vb))!=set(vals): raise SystemExit("BLOCK:SUCCESSOR_VALIDATOR_BINDING_COVERAGE_DRIFT:"+nxt)
-    manifest={"artifact_type":"SUCCESSOR_EXACT_OPERATION_BINDING_MANIFEST","status":"PASS","stage_uid":nxt,"work_unit_uid":source.get("work_unit_uid"),"governed_unit_uid":work.get("governed_unit_uid"),"operation_bindings":manifest_ops,"scanner_owner":scanner_owner,"scanner_protocol":source.get("scanner_protocol"),"validator_bindings":vb,"normative_execution_matrix":source.get("normative_execution_matrix")}
-    if not manifest["work_unit_uid"] or not isinstance(manifest["normative_execution_matrix"],dict): raise SystemExit("BLOCK:SUCCESSOR_BINDING_SOURCE_MATRIX_OR_WU_MISSING:"+nxt)
+    matrix=render(source.get("normative_execution_matrix_template") or {},mapping)
+    if not isinstance(matrix,dict) or matrix.get("artifact_type")!="NORMATIVE_EXECUTION_MATRIX" or matrix.get("status")!="PASS":
+        raise SystemExit("BLOCK:SUCCESSOR_NORMATIVE_EXECUTION_MATRIX_TEMPLATE_INVALID:"+nxt)
+    for key,val in (("stage_uid",nxt),("work_unit_uid",suid),("governed_unit_uid",governed)):
+        if str(matrix.get(key) or "")!=str(val): raise SystemExit("BLOCK:SUCCESSOR_RENDERED_MATRIX_IDENTITY_DRIFT:"+key)
+    auth_ref="STAGE_EXECUTION/SHARED_AUTHORITY/CURRENT_STAGE_FLOW/FULL_STAGE_LIFECYCLE_AUTHORIZATION_CONTRACT.yaml"
+    if not (root/auth_ref).is_file(): raise SystemExit("BLOCK:SUCCESSOR_REENTRY_AUTHORITY_REF_MISSING")
+    manifest={"artifact_type":"SUCCESSOR_EXACT_OPERATION_BINDING_MANIFEST","status":"PASS","stage_uid":nxt,"work_unit_uid":suid,"governed_unit_uid":governed,"reentry_authority_ref":auth_ref,"operation_bindings":manifest_ops,"scanner_owner":scanner_owner,"scanner_protocol":str(source.get("scanner_protocol") or ""),"validator_bindings":vb,"normative_execution_matrix":matrix}
+    if not manifest["scanner_protocol"]: raise SystemExit("BLOCK:SUCCESSOR_SCANNER_PROTOCOL_MISSING:"+nxt)
     mrel=f"STAGE_EXECUTION/SHARED_AUTHORITY/CURRENT_STAGE_FLOW/GENERATED_BINDINGS/{nxt}/{str(work.get('governed_unit_uid') or 'UNKNOWN').replace(':','_')}.yaml"
     write(root/mrel,manifest)
     write(out,{"artifact_type":"SUCCESSOR_EXECUTION_BINDING_RESOLUTION","predecessor_stage_uid":a.from_stage,"successor_stage_uid":nxt,"successor_execution_bindings":resolved,"ready_total":len(resolved),"unresolved_total":0,"status":"PASS","operation_binding_manifest_ref":mrel})

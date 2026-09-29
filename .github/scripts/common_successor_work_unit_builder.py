@@ -82,6 +82,10 @@ def main():
 
     successor_uid=str(bindings.get("work_unit_uid") or "")
     governed=str(pred.get("governed_unit_uid") or "")
+    reentry_authority_ref=str(bindings.get("reentry_authority_ref") or "")
+    if not reentry_authority_ref: raise SystemExit("BLOCK:SUCCESSOR_REENTRY_AUTHORITY_REF_MISSING")
+    rap=safe(root,reentry_authority_ref,"SUCCESSOR_REENTRY_AUTHORITY")
+    if not rap.is_file(): raise SystemExit("BLOCK:SUCCESSOR_REENTRY_AUTHORITY_NOT_FOUND")
     if not successor_uid or str(bindings.get("stage_uid") or "")!=a.successor_stage:
         raise SystemExit("BLOCK:SUCCESSOR_BINDING_MANIFEST_IDENTITY_DRIFT")
     if str(bindings.get("governed_unit_uid") or "")!=governed:
@@ -97,7 +101,9 @@ def main():
 
     scanner_dims=list(map(str,((sem.get("stages") or {}).get(a.successor_stage) or {}).get("scanner_dimensions") or []))
     scanner_owner=str(bindings.get("scanner_owner") or "")
+    scanner_protocol=str(bindings.get("scanner_protocol") or "")
     if not scanner_owner: raise SystemExit("BLOCK:SUCCESSOR_SCANNER_OWNER_MISSING")
+    if not scanner_protocol: raise SystemExit("BLOCK:SUCCESSOR_SCANNER_PROTOCOL_MISSING")
     sp=safe(root,scanner_owner,"SUCCESSOR_SCANNER_OWNER")
     if not sp.is_file(): raise SystemExit("BLOCK:SUCCESSOR_SCANNER_OWNER_NOT_FOUND")
 
@@ -126,10 +132,11 @@ def main():
       "predecessor_work_unit_uid":pred.get("work_unit_uid"),
       "predecessor_work_unit_ref":str(pred_wp.relative_to(root)),
       "predecessor_terminal_receipt_ref":str(receipt.relative_to(root)),
+      "reentry_authority_ref":reentry_authority_ref,
       "predecessor_artifact_index_ref":str(handoff.get("lifecycle_artifact_index_ref") or ""),
       "pre_execution_gate_status":"PENDING_RUNTIME_INLINE_VALIDATION","current_status":"READY_FOR_EXECUTION",
       "required_outputs":stage.get("outputs") or [],"input_bindings":inputs,"operation_bindings":ops,
-      "scanner_bindings":{s:{"scanner_owner":scanner_owner,"result_owner":"OWNER-"+a.successor_stage+"-SCANNER-"+s,"result_ref":f"STAGE_EXECUTION/{a.successor_stage}/{successor_uid}/EVIDENCE/SCANNER_RESULTS/{s}.yaml"} for s in scanner_dims},
+      "scanner_bindings":{s:{"scanner_owner":scanner_owner,"scanner_protocol":scanner_protocol,"result_owner":"OWNER-"+a.successor_stage+"-SCANNER-"+s,"result_ref":f"STAGE_EXECUTION/{a.successor_stage}/{successor_uid}/EVIDENCE/SCANNER_RESULTS/{s}.yaml"} for s in scanner_dims},
       "validator_bindings":validator_bindings,
       "normative_execution_matrix_ref":matrix_rel,"completion_credit":0,
     }
