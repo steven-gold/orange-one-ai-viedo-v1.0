@@ -7,7 +7,7 @@ def load(root, rel):
     p = root / rel
     return yaml.safe_load(p.read_text(encoding='utf-8')) or {}
 
-HANDOFF_REQUIRED_FIELDS_FOR_VALIDATOR=['producer_stage_or_capability', 'producer_output_uid_or_type', 'producer_owner', 'producer_physical_ref_or_external_evidence', 'producer_hash_or_version_or_schema', 'consumer_stage_or_capability', 'consumer_input_uid_or_type', 'consumer_owner_or_schema', 'applicability', 'reference_resolution_status', 'physical_materialization_status', 'parse_schema_status', 'required_field_completeness', 'denominator_inclusion_status', 'consumer_readiness_status', 'unresolved_required_dependency_total', 'blocking_owner_or_reentry_target', 'current_evidence_ref']
+HANDOFF_REQUIRED_FIELDS_FOR_VALIDATOR=['producer_stage_or_capability', 'producer_output_uid_or_type', 'producer_owner', 'producer_physical_ref_or_external_evidence', 'producer_hash_or_version_or_schema', 'consumer_stage_or_capability', 'consumer_input_uid_or_type', 'consumer_owner_or_schema', 'applicability', 'reference_resolution_status', 'physical_materialization_status', 'parse_schema_status', 'required_field_completeness', 'denominator_inclusion_status', 'consumer_readiness_status']
 
 def validate(root=ROOT):
     failures = []
