@@ -273,9 +273,9 @@ def validate(root=ROOT):
     if mc.get('outputs')!=['NORMATIVE_EXECUTION_MATRIX'] or mc.get('denominator')!='COMPLETE_APPLICABLE_NORMATIVE_ARTIFACT_ROW_FIELD_UNIVERSE':
         failures.append('stage_steps_normative_execution_matrix_contract_missing')
     closure = steps.get('stage_closure_contract') or {}
-    required_closure_inputs={'ALL_STAGE_OPERATION_RECEIPTS','REGISTERED_STAGE_OUTPUTS','REQUIRED_STAGE_EVIDENCE','CURRENT_NORMATIVE_EXECUTION_MATRIX','CURRENT_EXECUTION_STATE','NORMALIZED_STAGE_EVIDENCE','CROSS_STAGE_HANDOFF_READINESS_LEDGER','SUCCESSOR_EXECUTION_BINDING_SET'}
-    required_closure_fields={'stage_uid','operation_receipts','output_hashes','evidence_refs','current_matrix_ref','current_execution_state_ref','normalized_stage_evidence_ref','cross_stage_handoff_readiness_ref','successor_execution_binding_set_ref'}
-    required_closure_ops={'RECONCILE_STAGE_OUTPUT_DENOMINATOR','VERIFY_REQUIRED_EVIDENCE','VERIFY_CURRENT_NORMATIVE_EXECUTION_MATRIX','VERIFY_CURRENT_STATE_EVIDENCE_TERMINAL_CONSISTENCY','VERIFY_INVARIANTS','VERIFY_SUCCESSOR_INPUT_READINESS','VERIFY_SUCCESSOR_EFFECTFUL_OPERATION_BINDINGS'}
+    required_closure_inputs={'ALL_STAGE_OPERATION_RECEIPTS','REGISTERED_STAGE_OUTPUTS','REQUIRED_STAGE_EVIDENCE','CURRENT_NORMATIVE_EXECUTION_MATRIX','CURRENT_EXECUTION_STATE','NORMALIZED_STAGE_EVIDENCE','CROSS_STAGE_HANDOFF_READINESS_LEDGER'}
+    required_closure_fields={'stage_uid','operation_receipts','output_hashes','evidence_refs','current_matrix_ref','current_execution_state_ref','normalized_stage_evidence_ref','cross_stage_handoff_readiness_ref'}
+    required_closure_ops={'RECONCILE_STAGE_OUTPUT_DENOMINATOR','VERIFY_REQUIRED_EVIDENCE','VERIFY_CURRENT_NORMATIVE_EXECUTION_MATRIX','VERIFY_CURRENT_STATE_EVIDENCE_TERMINAL_CONSISTENCY','VERIFY_INVARIANTS','VERIFY_SUCCESSOR_INPUT_READINESS'}
     if not required_closure_inputs.issubset(set(closure.get('inputs') or [])):
         failures.append('stage_closure_explicit_input_projection_incomplete')
     if not required_closure_fields.issubset(set(closure.get('input_required_fields') or [])):
@@ -352,10 +352,7 @@ def validate(root=ROOT):
     if (st2.get('stage_execution_invariant_gate') or {}).get('required') is not True:
         failures.append('stage02_invariant_gate_binding_missing')
     expected_stage_ids = {f'STAGE-{i:02d}' for i in range(1, 12)}
-    # Initialize canonical cross-stage binding denominator before lifecycle checks.
     crossmat = inv.get('CROSS_STAGE_MATERIALIZATION_AND_CONSUMER_READINESS') or {}
-    binding_requirements = crossmat.get('successor_execution_binding_requirements') or {}
-    binding_maps = crossmat.get('successor_execution_binding_operation_map') or {}
     stage_map = {s.get('stage_uid'): s for s in life.get('stages') or []}
     lifecycle_canonical_names = {s.get('stage_uid'): s.get('name') for s in life.get('stages') or []}
     for sid in expected:
@@ -365,26 +362,14 @@ def validate(root=ROOT):
     if set(stage_map) != expected_stage_ids:
         failures.append('stage_execution_optimization_stage_set_drift')
     else:
-        expected_admission={'PREDECESSOR_STAGE_TERMINAL_PASS','PREDECESSOR_CURRENT_NORMATIVE_EXECUTION_MATRIX_PASS','PREDECESSOR_CURRENT_STATE_EVIDENCE_CONSISTENCY_PASS','CROSS_STAGE_HANDOFF_READINESS_PASS','SUCCESSOR_INPUT_MATERIALIZATION_PASS','SUCCESSOR_EFFECTFUL_OPERATION_BINDING_READINESS_PASS','SUCCESSOR_ENTRY_GATE_PASS'}
+        expected_admission={'PREDECESSOR_STAGE_TERMINAL_PASS','PREDECESSOR_CURRENT_NORMATIVE_EXECUTION_MATRIX_PASS','PREDECESSOR_CURRENT_STATE_EVIDENCE_CONSISTENCY_PASS','CROSS_STAGE_HANDOFF_READINESS_PASS','SUCCESSOR_INPUT_MATERIALIZATION_PASS','SUCCESSOR_ENTRY_GATE_PASS'}
         if set((life.get('universal_stage_stepwise_execution_contract') or {}).get('stage_successor_admission_requires') or []) != expected_admission:
             failures.append('universal_stage_successor_admission_contract_incomplete')
-        for successor_sid, classes in binding_requirements.items():
-            if successor_sid not in stage_map:
-                failures.append('cross_stage_binding_requirement_unknown_successor:' + successor_sid)
-                continue
-            opmap=binding_maps.get(successor_sid) or {}
-            if successor_sid!='STAGE-02' and successor_sid not in binding_maps:
-                failures.append('cross_stage_binding_operation_map_missing:' + successor_sid)
-            if successor_sid in binding_maps and set(opmap) != set(classes):
-                failures.append('cross_stage_binding_operation_map_class_drift:' + successor_sid)
-            successor_ops=set(stage_map[successor_sid].get('operations') or [])
-            for cls,op in opmap.items():
-                if op not in successor_ops:
-                    failures.append('cross_stage_binding_operation_not_registered:' + successor_sid + ':' + cls + ':' + str(op))
         for sid in sorted(expected_stage_ids):
             sg = stage_map[sid].get('canonical_execution_optimization_gate') or {}
             if sg.get('required') is not True or sg.get('invariant_uid') != 'GOV-INV-CANONICAL-STAGE-EXECUTION-OPTIMIZATION-001' or sg.get('explicit_stage_binding_required') is not True or (sg.get('raw_plus_legal_successor_overlay_is_effective_truth') is not True) or (sg.get('authority_gap_minimum_distinct_behaviors') != 2):
                 failures.append('stage_execution_optimization_explicit_binding_missing:' + sid)
+
     opt = st2.get('canonical_execution_optimization_gate') or {}
     if opt.get('required') is not True or opt.get('raw_plus_legal_successor_overlay_is_effective_truth') is not True or opt.get('authority_gap_minimum_distinct_behaviors') != 2:
         failures.append('stage02_execution_optimization_gate_missing')
@@ -395,59 +380,38 @@ def validate(root=ROOT):
         failures.append('indexed_validation_dependency_contract_missing')
     if idxinv.get('index_may_skip_required_impacted_validator') is not False or idxinv.get('index_drift_full_sweep_required_before_freeze') is not True:
         failures.append('indexed_validation_fail_closed_contract_missing')
+
     if crossmat.get('invariant_uid') != 'GOV-INV-CROSS-STAGE-MATERIALIZATION-CONSUMER-READINESS-001':
         failures.append('cross_stage_materialization_invariant_uid_missing')
     if crossmat.get('required_artifact') != 'CROSS_STAGE_HANDOFF_READINESS_LEDGER' or crossmat.get('applies_to_all_registered_stages') is not True:
         failures.append('cross_stage_materialization_contract_missing')
     if crossmat.get('reference_presence_is_materialization') is not False or crossmat.get('physical_materialization_required') is not True:
         failures.append('reference_vs_materialization_separation_missing')
-    for key in ('parse_required','schema_version_identity_required','required_field_completeness_required','denominator_inclusion_required','successor_consumer_readiness_required','successor_required_input_universe_reconciliation_before_stage_exit','successor_effectful_operation_binding_universe_reconciliation_required','authorized_not_applicable_requires_authority_evidence','current_normative_execution_matrix_nonempty_and_valid_before_exit','current_state_evidence_terminal_consistency_required_before_exit'):
+    for key in ('parse_required','schema_version_identity_required','required_field_completeness_required','denominator_inclusion_required','successor_consumer_readiness_required','successor_required_input_universe_reconciliation_before_stage_exit','authorized_not_applicable_requires_authority_evidence','current_normative_execution_matrix_nonempty_and_valid_before_exit','current_state_evidence_terminal_consistency_required_before_exit'):
         if crossmat.get(key) is not True:
             failures.append('cross_stage_readiness_flag_missing:' + key)
     if crossmat.get('single_canonical_handoff_artifact_only') is not True or crossmat.get('parallel_readiness_ledger_or_stage_local_substitute') != 'BLOCK':
         failures.append('cross_stage_single_canonical_handoff_contract_missing')
-    if crossmat.get('successor_execution_binding_universe_source') != 'CURRENT_SUCCESSOR_LIFECYCLE_OPERATIONS_PLUS_CURRENT_AUTHORITY_AND_APPLICABILITY' or crossmat.get('successor_execution_binding_may_be_invented_by_consumer') is not False or crossmat.get('successor_execution_binding_may_be_inferred_from_governed_context_need_alone') is not False or crossmat.get('stub_placeholder_or_recommended_target_may_receive_readiness_credit') is not False:
-        failures.append('cross_stage_execution_binding_authority_contract_incomplete')
-    if crossmat.get('technology_stack_recommendation_may_create_execution_authority') is not False or crossmat.get('implementation_language_framework_or_package_manager_may_be_ai_selected_when_unbound') is not False or crossmat.get('successor_effectful_operation_prerequisite_binding_must_be_derived_from_current_authority') is not True or crossmat.get('enumerated_binding_classes_are_minimum_not_exhaustive_when_registered_operation_has_additional_authorized_prerequisites') is not True:
-        failures.append('cross_stage_dynamic_prerequisite_authority_contract_incomplete')
+    if crossmat.get('successor_stage_internal_target_resolution_is_predecessor_closure_requirement') is not False:
+        failures.append('successor_internal_target_wrongly_bound_to_predecessor_closure')
+    if crossmat.get('successor_runtime_binding_resolution_boundary') != 'AFTER_PREDECESSOR_CLOSED_PASS_BEFORE_SUCCESSOR_MATERIALIZATION':
+        failures.append('successor_runtime_binding_boundary_missing')
+    if crossmat.get('successor_operation_target_authority_required_before_consuming_operation') is not True or crossmat.get('successor_operation_target_may_be_ai_invented') is not False:
+        failures.append('operation_target_authority_boundary_incomplete')
+    if crossmat.get('technology_stack_recommendation_may_create_execution_authority') is not False or crossmat.get('implementation_language_framework_or_package_manager_may_be_ai_selected_when_unbound') is not False:
+        failures.append('operation_target_ai_invention_guard_missing')
     if crossmat.get('authorized_not_applicable_token') != 'AUTHORIZED_NOT_APPLICABLE' or crossmat.get('terminal_receipt_or_outer_run_success_may_override_matrix_or_state_conflict') is not False:
         failures.append('cross_stage_na_or_override_contract_incomplete')
     if set(crossmat.get('required_row_fields') or []) != set(HANDOFF_REQUIRED_FIELDS_FOR_VALIDATOR):
         failures.append('cross_stage_handoff_row_schema_drift')
-    binding_fields={'binding_uid','consuming_operation_uid','binding_class','applicability','canonical_owner_or_authority_ref','authority_evidence_ref','target_identity','target_resolution_ref','target_resolution_kind','resolution_status','denominator_inclusion_status','consumer_readiness_status'}
-    if set(crossmat.get('successor_execution_binding_required_row_fields') or []) != binding_fields:
-        failures.append('cross_stage_execution_binding_row_schema_drift')
-    if set(binding_requirements) != {f'STAGE-{i:02d}' for i in range(2,12)}:
-        failures.append('cross_stage_execution_binding_stage_requirement_set_drift')
-    if set(binding_maps) != {f'STAGE-{i:02d}' for i in range(3,12)}:
-        failures.append('cross_stage_execution_binding_operation_map_stage_set_drift')
-    for sid in sorted(set(binding_maps)):
-        if set((binding_maps.get(sid) or {}).keys()) != set(binding_requirements.get(sid) or []):
-            failures.append('successor_binding_operation_map_catalog_drift:'+sid)
-    target_required={f'STAGE-{i:02d}' for i in range(5,12)}
-    if set(crossmat.get('successor_execution_target_resolution_required_stage_uids') or []) != target_required:
-        failures.append('execution_target_resolution_stage_denominator_drift')
-    if crossmat.get('successor_execution_target_resolution_receipt_type')!='EXECUTION_TARGET_RESOLUTION_RECEIPT' or crossmat.get('successor_execution_target_resolution_required_for_bound') is not True or crossmat.get('successor_execution_target_resolution_required_for_next_unit') is not True:
-        failures.append('execution_target_resolution_receipt_contract_missing')
-    if crossmat.get('successor_execution_target_resolution_current_context_match_required') is not True or crossmat.get('successor_execution_target_resolution_repository_head_tree_must_match_current_execution_root') is not True or crossmat.get('successor_execution_target_resolution_repository_path_must_exist_and_be_tracked_at_head') is not True or crossmat.get('self_asserted_physical_materialization_complete_may_override_failed_target_resolution') is not False:
-        failures.append('execution_target_physical_current_context_contract_incomplete')
-    if crossmat.get('successor_execution_target_resolution_repository_branch_source')!='EXTERNAL_EXECUTION_CONTEXT.current_execution_branch' or crossmat.get('successor_execution_target_resolution_external_verifier_required') is not True or crossmat.get('successor_execution_target_resolution_authority_value_must_match_target_identity') is not True:
-        failures.append('execution_target_resolution_authority_contract_incomplete')
-    allowed_kinds={'CURRENT_REPOSITORY','CURRENT_REPOSITORY_PATH','EXTERNAL_CURRENT_TARGET','AUTHORITY_VALUE'}
-    if set(crossmat.get('successor_execution_target_resolution_allowed_kinds') or []) != allowed_kinds:
-        failures.append('execution_target_resolution_kind_set_drift')
-    kind_policy=crossmat.get('successor_execution_binding_resolution_kind_policy') or {}
-    if set(kind_policy)!=(target_required|{'NEXT_GOVERNED_UNIT'}):
-        failures.append('execution_target_resolution_policy_stage_set_drift')
-    for sid in sorted(target_required):
-        if set((kind_policy.get(sid) or {}).keys()) != set(binding_requirements.get(sid) or []):
-            failures.append('execution_target_resolution_policy_binding_denominator_drift:'+sid)
-    if set((kind_policy.get('NEXT_GOVERNED_UNIT') or {}).keys()) != set(crossmat.get('next_governed_unit_successor_binding_requirements') or []):
-        failures.append('execution_target_resolution_policy_next_unit_denominator_drift')
-    for sid,rows in kind_policy.items():
-        for cls,kinds in (rows or {}).items():
-            if not kinds or not set(map(str,kinds)).issubset(allowed_kinds):
-                failures.append('execution_target_resolution_policy_kind_invalid:'+sid+':'+cls)
+    retired_cross_stage_keys={
+        'successor_execution_binding_requirements','successor_execution_binding_operation_map',
+        'successor_execution_binding_required_row_fields','successor_execution_target_resolution_required_stage_uids',
+        'successor_execution_binding_resolution_kind_policy','successor_execution_target_resolution_receipt_type'
+    }
+    leaked=sorted(retired_cross_stage_keys & set(crossmat))
+    if leaked:
+        failures.append('retired_cross_stage_target_matrix_reintroduced:'+','.join(leaked))
     if crossmat.get('historical_or_reference_only_completion_credit') != 0:
         failures.append('reference_only_completion_credit_leak')
     if crossmat.get('downstream_discovered_upstream_gap') != 'STOP_REENTER_EARLIEST_OWNER_MARK_DESCENDANTS_REVERIFY_REQUIRED':
@@ -456,8 +420,9 @@ def validate(root=ROOT):
     bcross = bp.get('cross_stage_materialization_consumer_readiness_contract') or {}
     if bcross.get('required') is not True or bcross.get('audit_item_uid') != 'AUD-GOV-014' or bcross.get('validator_uid') != 'VAL-GOV-035':
         failures.append('acceptance_cross_stage_readiness_binding_missing')
-    if bcross.get('successor_effectful_operation_binding_denominator_required') is not True or bcross.get('artifact_input_presence_alone_may_grant_consumer_readiness') is not False or bcross.get('implementation_stack_authority_required_when_materially_constraining_program_artifacts') is not True or bcross.get('ai_recommended_framework_or_toolchain_may_receive_readiness_credit') is not False:
-        failures.append('acceptance_cross_stage_effectful_binding_authority_incomplete')
+    if bcross.get('successor_stage_internal_target_audit_occurs_at_operation_boundary') is not True or bcross.get('implementation_stack_authority_required_when_materially_constraining_program_artifacts') is not True or bcross.get('ai_recommended_framework_or_toolchain_may_receive_readiness_credit') is not False:
+        failures.append('acceptance_operation_target_authority_incomplete')
+
     catalog = load(root, '10_REGISTRY/AUDIT_CATALOG.yaml')
     if any(str(x.get('governance_revision') or '') != root_rev for x in (life, d, bp, catalog)):
         failures.append('current_governance_artifact_revision_projection_drift')
@@ -466,23 +431,29 @@ def validate(root=ROOT):
         failures.append('audit_catalog_cross_stage_item_missing')
     aud14_required_coverage={
         'REFERENCE_RESOLUTION','PHYSICAL_MATERIALIZATION','PARSE_SCHEMA_REQUIRED_FIELDS','DENOMINATOR_INCLUSION',
-        'SUCCESSOR_CONSUMER_READINESS','SUCCESSOR_EFFECTFUL_OPERATION_BINDING_DENOMINATOR',
-        'SUCCESSOR_EXECUTION_TARGET_AUTHORITY','IMPLEMENTATION_STACK_AUTHORITY',
+        'SUCCESSOR_CONSUMER_READINESS','SUCCESSOR_STAGE_INTERNAL_TARGET_CHECKS_AT_OPERATION_BOUNDARY',
         'CURRENT_NORMATIVE_EXECUTION_MATRIX_VALIDITY','CURRENT_STATE_EVIDENCE_TERMINAL_CONSISTENCY',
-        'AUTHORIZED_NOT_APPLICABLE_AUTHORITY','SUCCESSOR_OPERATION_READINESS','UPSTREAM_REENTRY'
+        'AUTHORIZED_NOT_APPLICABLE_AUTHORITY','UPSTREAM_REENTRY'
     }
     if not aud14_required_coverage.issubset(set((aud14 or {}).get('coverage_extensions') or [])):
         failures.append('audit_catalog_cross_stage_coverage_projection_incomplete')
 
+    retired_gate_keys={
+        'successor_effectful_operation_binding_reconciliation_required',
+        'successor_execution_binding_universe_source',
+        'successor_target_resolution_receipt_required_when_bound',
+        'successor_target_current_context_match_required'
+    }
     for sid, stage in stage_map.items():
         gate = stage.get('cross_stage_materialization_gate') or {}
         if gate.get('required') is not True or gate.get('invariant_uid') != 'GOV-INV-CROSS-STAGE-MATERIALIZATION-CONSUMER-READINESS-001':
             failures.append('cross_stage_gate_missing:' + str(sid))
-        for key in ('reference_resolution_required','physical_materialization_required','parse_schema_required_field_completeness_required','denominator_inclusion_required','successor_consumer_readiness_required','successor_required_input_reconciliation_before_exit','successor_effectful_operation_binding_reconciliation_required','successor_target_authority_required_before_successor_effectful_execution','successor_target_resolution_receipt_required_when_bound','successor_target_current_context_match_required','authorized_not_applicable_requires_authority_evidence','current_normative_execution_matrix_nonempty_and_valid_before_exit','current_state_evidence_terminal_consistency_required_before_exit'):
+        for key in ('reference_resolution_required','physical_materialization_required','parse_schema_required_field_completeness_required','denominator_inclusion_required','successor_consumer_readiness_required','successor_required_input_reconciliation_before_exit','successor_target_authority_required_before_successor_effectful_execution','authorized_not_applicable_requires_authority_evidence','current_normative_execution_matrix_nonempty_and_valid_before_exit','current_state_evidence_terminal_consistency_required_before_exit'):
             if gate.get(key) is not True:
                 failures.append('cross_stage_gate_flag_missing:' + str(sid) + ':' + key)
-        if gate.get('successor_execution_binding_universe_source') != 'CURRENT_SUCCESSOR_LIFECYCLE_OPERATIONS_PLUS_CURRENT_AUTHORITY_AND_APPLICABILITY':
-            failures.append('cross_stage_gate_binding_universe_source_drift:' + str(sid))
+        leaked=sorted(retired_gate_keys & set(gate))
+        if leaked:
+            failures.append('retired_cross_stage_gate_fields_reintroduced:' + str(sid) + ':' + ','.join(leaked))
         if gate.get('reference_only_completion_credit') != 0:
             failures.append('cross_stage_reference_only_credit_leak:' + str(sid))
 
