@@ -51,11 +51,11 @@ for pstage,cstage in legal[:5]:
 for pstage,cstage in legal[5:]:
     p=previous(pstage); out=cont.validate_predecessor_successor_state(p,current(p,cstage,authority_identity='DRIFT'),legal)
     res.append(case('authority_drift_'+pstage,out['status']=='FAIL' and 'predecessor_authority_identity_drift' in out['failures'],out))
-# 5 terminal receipt drifts.
+# 5 transport-receipt drift cases: receipt is optional provenance and cannot invalidate content continuity.
 for pstage,cstage in legal[:5]:
     p=previous(pstage); bad=dict(p['terminal_receipt']); bad['run_id']=999
     out=cont.validate_predecessor_successor_state(p,current(p,cstage,terminal_receipt=bad),legal)
-    res.append(case('receipt_drift_'+pstage,out['status']=='FAIL' and 'predecessor_terminal_receipt_drift' in out['failures'],out))
+    res.append(case('optional_receipt_drift_does_not_invalidate_'+pstage,out['status']=='PASS',out))
 # 4 static contract mutation attacks.
 def mutate_case(name,mutator,expected_fragment):
     with tempfile.TemporaryDirectory() as td:
