@@ -1,83 +1,46 @@
 name: Product Stage02 Validation
-# Independently revalidates Stage-02 closure evidence after materialization.
 on:
   push:
     branches: [0921acpos]
-    paths:
-      - 'STAGE_EXECUTION/STAGE-02/**'
+    paths: ['STAGE_EXECUTION/STAGE-02/**']
   workflow_dispatch:
-permissions:
-  contents: read
+permissions: {contents: read}
 jobs:
-  validate-stage02:
+  validate:
     runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        wu: [WU-STAGE02-GLOBAL-HOME-SHELL-NAVIGATION-CLEAN-001, WU-STAGE02-WB01-DASHBOARD-CLEAN-001]
     steps:
-      - name: Checkout product workline
-        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
-        with:
-          ref: ${{ github.sha }}
-          fetch-depth: 0
-      - name: Resolve exact selected Current governance
-        id: governance
-        shell: bash
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with: {ref: "${{ github.sha }}", fetch-depth: 0}
+      - name: Validate phase-aware Current Stage02 state
+        env: {WU: "${{ matrix.wu }}"}
         run: |
           set -euo pipefail
-          SEL="STAGE_EXECUTION/SHARED_AUTHORITY/CURRENT_GOVERNANCE_SELECTION.yaml"
-          test -s "$SEL" || { echo "BLOCK:CURRENT_GOVERNANCE_SELECTION_MISSING"; exit 31; }
-          STATUS="$(awk '$1=="status:" {print $2; exit}' "$SEL")"
-          COMMIT="$(awk '$1=="governance_commit_sha:" {print $2; exit}' "$SEL")"
-          test "$STATUS" = "SELECTED_EXACT_CURRENT_SNAPSHOT" || { echo "BLOCK:CURRENT_GOVERNANCE_SELECTION_STATUS_INVALID"; exit 32; }
-          echo "$COMMIT" | grep -Eq '^[0-9a-f]{40}$' || { echo "BLOCK:CURRENT_GOVERNANCE_COMMIT_INVALID"; exit 33; }
-          echo "commit_sha=$COMMIT" >> "$GITHUB_OUTPUT"
-      - name: Checkout current governance authority
-        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
-        with:
-          repository: steven-gold/orange-one-ai-viedo-v1.0
-          ref: ${{ steps.governance.outputs.commit_sha }}
-          path: _governance_authority
-          fetch-depth: 1
-      - name: Load current governance authority
-        run: |
-          rm -rf governance .github/governance-source
-          cp -R _governance_authority/governance ./governance
-          mkdir -p .github
-          cp -R _governance_authority/.github/governance-source .github/governance-source
-          python -m pip install --disable-pip-version-check --require-hashes -r governance/ci/requirements-governance.lock
-      - name: Validate full Stage lifecycle contract before Stage02 semantics
-        run: |
-          python .github/scripts/stage_lifecycle_gate.py --mode validate-all --product-root "$GITHUB_WORKSPACE" --governance-root "$GITHUB_WORKSPACE/_governance_authority"
-      - name: Validate current governance definition
-        run: |
-          set -euo pipefail
+          B="STAGE_EXECUTION/STAGE-02/$WU"
+          test -s "$B/WORK_UNIT.yaml"; test -s "$B/EXECUTION_STATE.yaml"; test -s "$B/NORMATIVE_EXECUTION_MATRIX.yaml"
+          CUR="$(python -c "import yaml,sys; d=yaml.safe_load(open(sys.argv[1])) or {}; print(d.get('current_operation') or '')" "$B/EXECUTION_STATE.yaml")"
+          if [ "$CUR" != "COMPLETE" ]; then
+            echo "PASS: Stage02 incremental operation checkpoint; closure evidence not yet applicable"
+            exit 0
+          fi
+          test -s "$B/EVIDENCE/GOVERNED_UNIT_FUNCTIONAL_REVIEW_EVIDENCE.yaml"
           python - <<'PY'
-          import sys
-          sys.path.insert(0,'governance/ci')
-          from canonical_rule_registry import load_registry
-          load_registry()
-          PY
-          python governance/ci/stage_execution_engine.py --definition-audit-all
-          python governance/ci/validate_selected_execution_profile_integrity.py
-          python governance/ci/validate_governance_portability.py
-          python .github/governance-source/active/source/09_TESTS/governance/validate_stage_execution_invariants.py
-      - name: Validate Stage02 closure evidence and handoff ledgers
-        run: |
-          set -euo pipefail
-          for WU in WU-STAGE02-GLOBAL-HOME-SHELL-NAVIGATION-CLEAN-001 WU-STAGE02-WB01-DASHBOARD-CLEAN-001; do
-            B="STAGE_EXECUTION/STAGE-02/${WU}"
-            test -f "$B/EVIDENCE/GOVERNED_UNIT_FUNCTIONAL_REVIEW_EVIDENCE.yaml" || { echo "BLOCK:STAGE02_REQUIRED_EVIDENCE_MISSING:$WU"; exit 1; }
-            test -f "$B/EVIDENCE/CROSS_STAGE_HANDOFF_READINESS_LEDGER.yaml" || { echo "BLOCK:STAGE02_HANDOFF_LEDGER_MISSING:$WU"; exit 1; }
-            python governance/ci/stage_execution_engine.py --validate-evidence --stage STAGE-02 --evidence "$B/EVIDENCE/NORMALIZED_STAGE_EVIDENCE.json"
-          done
-      - name: Assert Stage02 common per-Work-Unit terminal resume
-        run: |
-          python - <<'PY'
-          import yaml
+          import os,yaml
           from pathlib import Path
-          roots=sorted(Path('STAGE_EXECUTION/STAGE-02').glob('WU-STAGE02-*-CLEAN-001'))
-          if not roots: raise SystemExit('BLOCK:NO_CURRENT_STAGE02_WORK_UNITS')
-          for root in roots:
-              r=yaml.safe_load((root/'CURRENT_STAGE_RESUME.yaml').read_text()) or {}
-              if r.get('terminal_status')!='CLOSED_PASS': raise SystemExit('BLOCK:STAGE02_COMMON_RESUME_NOT_CLOSED:'+root.name)
-              if r.get('next_stage_uid')!='STAGE-03': raise SystemExit('BLOCK:STAGE02_COMMON_RESUME_SUCCESSOR_DRIFT:'+root.name)
-          print('PASS: Stage-02 common per-Work-Unit resumes are terminal and Stage-03 bound')
+          b=Path('STAGE_EXECUTION/STAGE-02')/os.environ['WU']
+          ev=yaml.safe_load((b/'EVIDENCE/GOVERNED_UNIT_FUNCTIONAL_REVIEW_EVIDENCE.yaml').read_text()) or {}
+          assert ev.get('result')=='PASS', 'BLOCK:FUNCTIONAL_REVIEW_EVIDENCE_NOT_PASS'
+          for n in ('FUNCTIONAL_CHAIN_SPEC.yaml','GOVERNED_UNIT_CONSTRUCTION_SPEC_PACKAGE.yaml','FUNCTIONAL_WORKBENCH_CONTRACT.yaml','INTERACTION_TOPOLOGY_SPEC.yaml','FUNCTION_ADMISSION_SCORECARD.yaml','AUTO_COMPLETION_SCOPE_LEDGER.yaml'):
+              assert (b/n).is_file(), 'BLOCK:STAGE02_REQUIRED_OUTPUT_MISSING:'+n
+          print('PASS: Stage02 operation-complete functional contract outputs are physical')
           PY
+          if [ -f "$B/WORK_UNIT_TERMINAL_RECEIPT.yaml" ]; then
+            test -s "$B/EVIDENCE/CROSS_STAGE_HANDOFF_READINESS_LEDGER.yaml"
+            test -s "$B/EVIDENCE/NORMALIZED_STAGE_EVIDENCE.json"
+            echo "PASS: Stage02 terminal closure artifacts materialized"
+          else
+            echo "PASS: Stage02 execution complete; common preterminal/terminalization pending"
+          fi

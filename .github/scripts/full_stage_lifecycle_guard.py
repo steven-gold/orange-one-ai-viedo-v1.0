@@ -163,8 +163,26 @@ def main():
         state=str(row.get("state") or "")
         if not state:
             fail("RUNTIME_ADAPTER_STATE_MISSING:"+uid)
-        if state not in {"READY","READY_STRUCTURAL"}:
-            unresolved.append(uid+":state="+state)
+        if uid in allowed:
+            if state!="READY_EFFECTFUL_CURRENT":
+                unresolved.append(uid+":authorized_state="+state)
+            if uid!="STAGE-01":
+                src=product/FLOW/"EXACT_OPERATION_BINDING_SOURCES"/(uid+".yaml")
+                if not src.is_file(): unresolved.append(uid+":exact_binding_source_missing")
+                else:
+                    sd=load(src); ops=set(map(str,(sd.get("operation_bindings") or {}).keys()))
+                    expected_ops=set(map(str,rm[uid].get("operations") or []))
+                    if ops!=expected_ops: unresolved.append(uid+":operation_binding_coverage")
+                    for op,b in (sd.get("operation_bindings") or {}).items():
+                        owner=str((b or {}).get("executor_owner") or "")
+                        if not owner or not (product/owner).is_file(): unresolved.append(uid+":executor:"+str(op))
+                    scanner=str(sd.get("scanner_owner") or "")
+                    if not scanner or not (product/scanner).is_file(): unresolved.append(uid+":scanner_owner")
+        else:
+            if state!="READY_STRUCTURAL_NOT_EFFECTFUL":
+                unresolved.append(uid+":future_state="+state)
+            if row.get("effectful_execution_authorized") is not False:
+                unresolved.append(uid+":future_effectful_authorization_not_false")
 
     if closure.get("owner")!="COMMON_STAGE_CLOSURE_PROTOCOL":
         fail("COMMON_CLOSURE_OWNER_DRIFT")

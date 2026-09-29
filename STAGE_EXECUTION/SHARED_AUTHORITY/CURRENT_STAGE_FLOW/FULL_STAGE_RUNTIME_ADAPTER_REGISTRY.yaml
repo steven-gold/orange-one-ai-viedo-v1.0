@@ -36,64 +36,64 @@ adapters:
   materializer_owner: .github/scripts/stage01_current_materialize.py
   operation_executor_owner: .github/scripts/current_stage_execute.py
   closure_adapter_owner: .github/scripts/common_stage_closure_adapter.py
-  state: READY_STRUCTURAL
+  state: READY_EFFECTFUL_CURRENT
 - stage_uid: STAGE-02
   materializer_owner: .github/scripts/common_successor_work_unit_builder.py
   operation_executor_owner: .github/scripts/current_stage_execute.py
   closure_adapter_owner: .github/scripts/common_stage_closure_adapter.py
-  state: READY_STRUCTURAL
+  state: READY_EFFECTFUL_CURRENT
 - stage_uid: STAGE-03
   materializer_owner: .github/scripts/common_successor_work_unit_builder.py
   operation_executor_owner: .github/scripts/current_stage_execute.py
   closure_adapter_owner: .github/scripts/common_stage_closure_adapter.py
-  state: READY_STRUCTURAL
+  state: READY_EFFECTFUL_CURRENT
 - stage_uid: STAGE-04
   materializer_owner: .github/scripts/common_successor_work_unit_builder.py
   operation_executor_owner: .github/scripts/current_stage_execute.py
   closure_adapter_owner: .github/scripts/common_stage_closure_adapter.py
   legacy_semantic_adapter_ref: .github/scripts/stage04_closure.py
-  legacy_semantic_adapter_role: STAGE04_DOMAIN_SPECIFIC_EVIDENCE_ONLY_NOT_LIFECYCLE_OWNER
-  state: READY_STRUCTURAL
+  legacy_semantic_adapter_role: RETIRED_HISTORICAL_NONCURRENT_NOT_EXECUTION_OWNER
+  state: READY_EFFECTFUL_CURRENT
 - stage_uid: STAGE-05
   materializer_owner: .github/scripts/common_successor_work_unit_builder.py
   operation_executor_owner: .github/scripts/current_stage_execute.py
   closure_adapter_owner: .github/scripts/common_stage_closure_adapter.py
   effectful_execution_authorized: false
-  state: READY_STRUCTURAL
+  state: READY_STRUCTURAL_NOT_EFFECTFUL
 - stage_uid: STAGE-06
   materializer_owner: .github/scripts/common_successor_work_unit_builder.py
   operation_executor_owner: .github/scripts/current_stage_execute.py
   closure_adapter_owner: .github/scripts/common_stage_closure_adapter.py
   effectful_execution_authorized: false
-  state: READY_STRUCTURAL
+  state: READY_STRUCTURAL_NOT_EFFECTFUL
 - stage_uid: STAGE-07
   materializer_owner: .github/scripts/common_successor_work_unit_builder.py
   operation_executor_owner: .github/scripts/current_stage_execute.py
   closure_adapter_owner: .github/scripts/common_stage_closure_adapter.py
   effectful_execution_authorized: false
-  state: READY_STRUCTURAL
+  state: READY_STRUCTURAL_NOT_EFFECTFUL
 - stage_uid: STAGE-08
   materializer_owner: .github/scripts/common_successor_work_unit_builder.py
   operation_executor_owner: .github/scripts/current_stage_execute.py
   closure_adapter_owner: .github/scripts/common_stage_closure_adapter.py
   effectful_execution_authorized: false
-  state: READY_STRUCTURAL
+  state: READY_STRUCTURAL_NOT_EFFECTFUL
 - stage_uid: STAGE-09
   materializer_owner: .github/scripts/common_successor_work_unit_builder.py
   operation_executor_owner: .github/scripts/current_stage_execute.py
   closure_adapter_owner: .github/scripts/common_stage_closure_adapter.py
   effectful_execution_authorized: false
-  state: READY_STRUCTURAL
+  state: READY_STRUCTURAL_NOT_EFFECTFUL
 - stage_uid: STAGE-10
   materializer_owner: .github/scripts/common_successor_work_unit_builder.py
   operation_executor_owner: .github/scripts/current_stage_execute.py
   closure_adapter_owner: .github/scripts/common_stage_closure_adapter.py
   effectful_execution_authorized: false
-  state: READY_STRUCTURAL
+  state: READY_STRUCTURAL_NOT_EFFECTFUL
 - stage_uid: STAGE-11
   materializer_owner: .github/scripts/common_successor_work_unit_builder.py
   operation_executor_owner: .github/scripts/current_stage_execute.py
   closure_adapter_owner: .github/scripts/common_stage_closure_adapter.py
   effectful_execution_authorized: false
-  state: READY_STRUCTURAL
+  state: READY_STRUCTURAL_NOT_EFFECTFUL
 completion_credit: 0

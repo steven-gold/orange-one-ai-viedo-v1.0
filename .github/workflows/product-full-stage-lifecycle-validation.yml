@@ -82,6 +82,23 @@ jobs:
           grep -q "sys.path.insert(0,'governance/ci')" .github/scripts/current_stage_execute.py
           grep -q "BLOCK:SUBPROCESS_TIMEOUT" .github/scripts/current_stage_execute.py
           python .github/scripts/stage02_operation_runtime.py --help | grep -q -- "--product-root"
+          python .github/scripts/stage03_operation_runtime.py --help | grep -q -- "--product-root"
+          python .github/scripts/stage04_current_operation_runtime.py --help | grep -q -- "--product-root"
+          python - <<'PY'
+          import yaml
+          from pathlib import Path
+          flow=Path('STAGE_EXECUTION/SHARED_AUTHORITY/CURRENT_STAGE_FLOW')
+          reg=yaml.safe_load((flow/'FULL_STAGE_RUNTIME_ADAPTER_REGISTRY.yaml').read_text()) or {}
+          rows={x['stage_uid']:x for x in reg.get('adapters') or []}
+          for i in range(1,5):
+              s=f'STAGE-{i:02d}'
+              assert rows[s].get('state')=='READY_EFFECTFUL_CURRENT', (s,rows[s].get('state'))
+          for i in range(5,12):
+              s=f'STAGE-{i:02d}'
+              assert rows[s].get('state')=='READY_STRUCTURAL_NOT_EFFECTFUL', (s,rows[s].get('state'))
+              assert rows[s].get('effectful_execution_authorized') is False
+          print('PASS: runtime readiness states distinguish authorized executable range from structural future stages')
+          PY
           grep -q "def rebind_run_manifest_hash" .github/scripts/current_stage_execute.py
           grep -q "WORK_UNIT ledger hash rebinding is owned by current_stage_execute.py" .github/scripts/stage01_operation_runtime.py
           ! grep -q "CURRENT_STAGE02_RESUME.yaml" .github/workflows/product-stage02-validation.yml
