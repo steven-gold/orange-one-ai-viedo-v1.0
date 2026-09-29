@@ -86,6 +86,12 @@ def main():
     write(root/index_rel,{"artifact_type":"LIFECYCLE_ARTIFACT_INDEX","stage_uid":a.stage,"work_unit_uid":work.get("work_unit_uid"),"governed_unit_uid":work.get("governed_unit_uid"),"artifacts":artifacts,"status":"CURRENT_CLOSURE_CANDIDATE","completion_credit":0})
 
     inputs=[]
+    if successor_uid=="NEXT_GOVERNED_UNIT_STAGE05_OR_SCOPE_COMPLETE":
+        resolution=load(wd/"EVIDENCE/SUCCESSOR_EXECUTION_BINDING_RESOLUTION.yaml")
+        if resolution.get("status")!="PASS" or str(resolution.get("successor_stage_uid") or "")!=successor_uid: raise SystemExit("BLOCK:TERMINAL_SCOPE_TRANSITION_RESOLUTION_NOT_PASS")
+        write(wd/"EVIDENCE/CROSS_STAGE_HANDOFF_READINESS_LEDGER.yaml",{"artifact_type":"CROSS_STAGE_HANDOFF_READINESS_LEDGER","stage_uid":a.stage,"work_unit_uid":work.get("work_unit_uid"),"governed_unit_uid":work.get("governed_unit_uid"),"successor_stage_uid":successor_uid,"transition_kind":"NEXT_GOVERNED_UNIT_OR_SCOPE_COMPLETE","successor_required_inputs":[],"successor_execution_bindings":[],"successor_execution_binding_total":0,"successor_execution_binding_ready_total":0,"successor_execution_binding_unresolved_total":0,"status":"PASS"})
+        print("PASS: terminal Stage11 handoff resolved to next governed unit or scope complete")
+        return
     if successor_uid in stages:
         for uid in map(str,stages[successor_uid].get("inputs") or []):
             candidates=merged.get(uid) or []

@@ -65,12 +65,15 @@ def main():
     except ValueError: raise SystemExit("BLOCK:TERMINALIZER_WORK_UNIT_ESCAPES_ROOT")
     work=load(wp); wd=wp.parent
     if str(work.get("stage_uid") or "")!=a.stage: raise SystemExit("BLOCK:TERMINALIZER_WORK_UNIT_STAGE_DRIFT")
+    stage=stages[a.stage]; next_stage=str(stage.get("next_stage_uid") or "")
+    gate_rel=f"STAGE_EXECUTION/{a.stage}/{wd.name}/EVIDENCE/EXACT_HEAD_GATE_RECEIPTS.yaml"
+    write(root/gate_rel,{"artifact_type":"EXACT_HEAD_GATE_RECEIPTS","stage_uid":a.stage,"work_unit_uid":work.get("work_unit_uid"),"receipts":[{"gate_uid":"PRETERMINAL_EXACT_HEAD_VALIDATION","head_sha":a.validated_head,"run_id":str(a.validation_run_id),"conclusion":"success"}],"status":"PASS"})
+    run([sys.executable,".github/scripts/common_stage_closure.py","--mode","close","--stage",a.stage,"--work-unit",a.work_unit,"--product-root",str(root),"--governance-root",str(gov)],root)
     ev_rel=f"STAGE_EXECUTION/{a.stage}/{wd.name}/EVIDENCE/NORMALIZED_STAGE_EVIDENCE.json"
     ev_path=root/ev_rel
     if not ev_path.is_file(): raise SystemExit("BLOCK:TERMINALIZER_NORMALIZED_EVIDENCE_MISSING")
     handoff_path=wd/"EVIDENCE/CROSS_STAGE_HANDOFF_READINESS_LEDGER.yaml"
     handoff=load(handoff_path)
-    stage=stages[a.stage]; next_stage=str(stage.get("next_stage_uid") or "")
     if str(handoff.get("successor_stage_uid") or "")!=next_stage or handoff.get("status")!="PASS":
         raise SystemExit("BLOCK:TERMINALIZER_HANDOFF_NOT_PASS")
 

@@ -312,5 +312,6 @@ jobs:
         if [ -f "$EVIDENCE_PATH" ]; then
           python governance/ci/stage_execution_engine.py --validate-evidence --stage STAGE-03 --evidence "$EVIDENCE_PATH"
         else
-          echo "STAGE03_NORMALIZED_EVIDENCE_NOT_YET_MATERIALIZED"
+          echo "BLOCK:STAGE03_NORMALIZED_EVIDENCE_MISSING"
+          exit 1
         fi

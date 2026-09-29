@@ -26,6 +26,11 @@ def main():
     if a.from_stage not in stages: raise SystemExit("BLOCK:UNREGISTERED_PREDECESSOR_STAGE")
     to=str(stages[a.from_stage].get("next_stage_uid") or "")
     wp=(root/Path(a.predecessor_work_unit)).resolve(); work=y(wp)
+    if to=="NEXT_GOVERNED_UNIT_STAGE05_OR_SCOPE_COMPLETE":
+        r=y(wp.parent/"EVIDENCE/SUCCESSOR_EXECUTION_BINDING_RESOLUTION.yaml")
+        if r.get("status")!="PASS" or str(r.get("successor_stage_uid") or "")!=to: raise SystemExit("BLOCK:TERMINAL_SCOPE_TRANSITION_RESOLUTION_NOT_PASS")
+        print("PASS: Stage11 terminal transition resolved; no registered successor Work Unit is materialized")
+        return
     if str(work.get("stage_uid") or "")!=a.from_stage: raise SystemExit("BLOCK:PREDECESSOR_WORK_UNIT_STAGE_DRIFT")
     receipt=wp.parent/"WORK_UNIT_TERMINAL_RECEIPT.yaml"
     if not receipt.is_file(): raise SystemExit("BLOCK:PREDECESSOR_TERMINAL_RECEIPT_MISSING")

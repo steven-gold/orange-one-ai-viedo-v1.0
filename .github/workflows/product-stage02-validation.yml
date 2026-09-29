@@ -68,15 +68,16 @@ jobs:
             test -f "$B/EVIDENCE/CROSS_STAGE_HANDOFF_READINESS_LEDGER.yaml" || { echo "BLOCK:STAGE02_HANDOFF_LEDGER_MISSING:$WU"; exit 1; }
             python governance/ci/stage_execution_engine.py --validate-evidence --stage STAGE-02 --evidence "$B/EVIDENCE/NORMALIZED_STAGE_EVIDENCE.json"
           done
-      - name: Assert Stage02 stage-exit authorized
+      - name: Assert Stage02 common per-Work-Unit terminal resume
         run: |
           python - <<'PY'
           import yaml
           from pathlib import Path
-          r = yaml.safe_load(Path('STAGE_EXECUTION/STAGE-02/CURRENT_STAGE02_RESUME.yaml').read_text()) or {}
-          if r.get('stage_exit_authorized') is not True:
-              raise SystemExit('BLOCK:STAGE02_STAGE_EXIT_NOT_AUTHORIZED')
-          if r.get('status') != 'STAGE02_COMPLETE_STAGE03_ELIGIBLE':
-              raise SystemExit('BLOCK:STAGE02_RESUME_STATUS_DRIFT')
-          print('PASS: Stage-02 stage exit authorized and Stage-03 eligible')
+          roots=sorted(Path('STAGE_EXECUTION/STAGE-02').glob('WU-STAGE02-*-CLEAN-001'))
+          if not roots: raise SystemExit('BLOCK:NO_CURRENT_STAGE02_WORK_UNITS')
+          for root in roots:
+              r=yaml.safe_load((root/'CURRENT_STAGE_RESUME.yaml').read_text()) or {}
+              if r.get('terminal_status')!='CLOSED_PASS': raise SystemExit('BLOCK:STAGE02_COMMON_RESUME_NOT_CLOSED:'+root.name)
+              if r.get('next_stage_uid')!='STAGE-03': raise SystemExit('BLOCK:STAGE02_COMMON_RESUME_SUCCESSOR_DRIFT:'+root.name)
+          print('PASS: Stage-02 common per-Work-Unit resumes are terminal and Stage-03 bound')
           PY

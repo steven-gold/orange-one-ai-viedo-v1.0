@@ -93,8 +93,9 @@ def main():
             "GOVERNANCE_SOURCE_ROOT":str(govroot),
         })
         code=(
-            "from pathlib import Path; import os,yaml;"
-            "from governance.ci.external_execution_admission import validate_external_stage_admission;"
+            "from pathlib import Path; import os,yaml,sys;"
+            "sys.path.insert(0,'governance/ci');"
+            "from external_execution_admission import validate_external_stage_admission;"
             "root=Path(os.environ['STAGE_EXECUTION_ROOT']).resolve();"
             "wp=root/Path(os.environ['STAGE_ACTIVE_WORK_UNIT']);"
             "sp=root/Path(os.environ['STAGE_CURRENT_SCOPE']);"

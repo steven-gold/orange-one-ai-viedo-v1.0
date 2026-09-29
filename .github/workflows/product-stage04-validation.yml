@@ -144,7 +144,8 @@ jobs:
         if [ -f "$EVIDENCE_PATH" ]; then
           python governance/ci/stage_execution_engine.py --validate-evidence --stage STAGE-04 --evidence "$EVIDENCE_PATH"
         else
-          echo "STAGE04_NORMALIZED_EVIDENCE_NOT_YET_MATERIALIZED"
+          echo "BLOCK:STAGE04_NORMALIZED_EVIDENCE_MISSING"
+          exit 1
         fi
     - name: Assert Stage04 terminal receipt bound to the materialize run
       env:
