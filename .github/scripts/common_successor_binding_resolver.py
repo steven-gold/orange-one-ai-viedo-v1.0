@@ -110,6 +110,11 @@ def main():
     resolved=[]
     for cls in expected_classes:
         row=render(exec_rows.get(cls) or {},mapping); app=str(row.get("applicability") or ""); rs=str(row.get("resolution_status") or "")
+        if rs=="RESOLVE_CURRENT_IMPLEMENTATION_TARGET":
+            tr=load(wd/"EVIDENCE/STAGE05_CURRENT_TARGET_RESOLUTION.yaml")
+            match=[x for x in (tr.get("bindings") or []) if isinstance(x,dict) and str(x.get("binding_class") or "")==cls]
+            if len(match)!=1: raise SystemExit("BLOCK:STAGE05_TARGET_RESOLUTION_DENOMINATOR_DRIFT:"+cls)
+            row=dict(match[0]); app=str(row.get("applicability") or ""); rs=str(row.get("resolution_status") or "")
         if rs=="RESOLVE_FROM_PREDECESSOR_ARTIFACT_INDEX":
             idxref=str(work.get("predecessor_artifact_index_ref") or "")
             if not idxref: raise SystemExit("BLOCK:PREDECESSOR_ARTIFACT_INDEX_REF_MISSING:"+nxt+":"+cls)
@@ -141,6 +146,9 @@ def main():
         print("PASS: exact next-governed-unit/scope transition bindings resolved")
         return
 
+    if str(source.get("runtime_readiness") or "EFFECTFUL_READY")!="EFFECTFUL_READY":
+        write(out,{"artifact_type":"SUCCESSOR_EXECUTION_BINDING_RESOLUTION","predecessor_stage_uid":a.from_stage,"successor_stage_uid":nxt,"successor_execution_bindings":resolved,"ready_total":len(resolved),"unresolved_total":0,"status":"BLOCKED_SUCCESSOR_EFFECTFUL_RUNTIME_NOT_MATERIALIZED","target_resolution_pass":True})
+        raise SystemExit("BLOCK:SUCCESSOR_EFFECTFUL_RUNTIME_NOT_AUTHORIZED_OR_MATERIALIZED:"+nxt)
     stage=stages[nxt]; ops=list(map(str,stage.get("operations") or []))
     source_ops=source.get("operation_bindings") or {}
     if set(map(str,source_ops))!=set(ops): raise SystemExit("BLOCK:SUCCESSOR_OPERATION_BINDING_SOURCE_COVERAGE_DRIFT:"+nxt)
