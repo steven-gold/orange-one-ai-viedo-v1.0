@@ -1,5 +1,5 @@
 artifact_type: STAGE01_PRESTAGE_EXECUTION_REQUEST
-status: HELD_FOR_FULL_STAGE_PREENTRY_CONVERGENCE
+status: REQUESTED
 product_branch: 0921acpos
 units:
 - GLOBAL-HOME-SHELL-NAVIGATION
@@ -7,11 +7,11 @@ units:
 authorization_ref: https://github.com/steven-gold/orange-one-ai-viedo-v1.0/issues/61
 request_basis: USER_DIRECTIVE_AFTER_FULL_STAGE_01_11_STRUCTURAL_CONVERGENCE
 pre_stage_only_first: true
-auto_enter_stage01: false
+auto_enter_stage01: true
 exact_head_full_stage_validation_required: true
 pre_request_validation:
-  validated_head_sha: 79eaf2f685e11f10153d9bb60bc46ff00b2284dd
-  full_stage_validation_run_id: "36522243475"
+  validated_head_sha: a2ee17648db9e2bd4683bbc866067a6c99c43dc6
+  full_stage_validation_run_id: "36524752549"
   full_stage_validation_result: SUCCESS
   clean_bootstrap_validation_run_id: "36522243523"
   clean_bootstrap_validation_result: SUCCESS
@@ -24,4 +24,6 @@ future_stage_preproduction: FORBIDDEN
 historical_completion_credit: 0
 completion_credit: 0
 
-hold_reason: STAGE01_ENTRY_FORBIDDEN_UNTIL_STAGE01_11_STRUCTURE_PERMISSION_TRANSITION_CONVERGENCE_IS_FINAL_AND_USER_DIRECTIVE_RESUMES_ENTRY
+
+request_head_revalidation_required: true
+request_head_revalidation_mode: FULL_STAGE_01_11_EXECUTION_READY_GATE_BEFORE_STAGE01_MATERIALIZATION

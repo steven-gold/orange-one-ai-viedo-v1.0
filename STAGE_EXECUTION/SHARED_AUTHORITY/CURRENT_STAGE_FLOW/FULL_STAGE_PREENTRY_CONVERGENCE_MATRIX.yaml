@@ -1,5 +1,5 @@
 artifact_type: PRODUCT_FULL_STAGE_PREENTRY_CONVERGENCE_MATRIX
-status: COMMON_PROTOCOL_SCHEMA_CONVERGENCE_PENDING_EXACT_HEAD_VALIDATION
+status: FULL_STAGE_COMMON_PROTOCOL_CONVERGENCE_VALIDATED_STAGE01_ENTRY_RELEASED
 normative_authority: false
 scope: STAGE-01_THROUGH_STAGE-11
 dimensions:
@@ -23,7 +23,7 @@ dimensions:
   v232_static_stage05_target_authority: PASS_REPLACED_WITH_DYNAMIC_RESOLUTION_PROTOCOL
 effectful_preentry:
   stage01_structurally_admissible: true
-  stage01_entry_hold: FULL_STAGE_COMMON_PROTOCOL_EXACT_HEAD_VALIDATION_PENDING
+  stage01_entry_hold: RELEASED
   exact_head_full_stage_validation_required: true
   exact_head_validation_workflow: Product Full Stage Lifecycle Validation
   stage01_effectful_entry_before_exact_head_validation: FORBIDDEN
@@ -31,3 +31,8 @@ effectful_preentry:
   unresolved_future_binding_disposition: BLOCK_AT_STAGE_BOUNDARY_BEFORE_SUCCESSOR_WORK_UNIT_CREATION
   rule: STRUCTURAL_CONVERGENCE_DOES_NOT_FABRICATE_STAGE_SPECIFIC_BUSINESS_EXECUTORS
 completion_credit: 0
+last_exact_head_validation:
+  validated_head_sha: a2ee17648db9e2bd4683bbc866067a6c99c43dc6
+  workflow_run_id: "36524752549"
+  result: SUCCESS
+  request_head_must_revalidate_before_stage01_materialization: true

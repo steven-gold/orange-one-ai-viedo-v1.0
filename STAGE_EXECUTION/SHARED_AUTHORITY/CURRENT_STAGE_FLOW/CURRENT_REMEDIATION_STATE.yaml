@@ -1,5 +1,5 @@
 artifact_type: PRODUCT_FULL_LIFECYCLE_REMEDIATION_RESUME_STATE
-status: COMMON_PROTOCOL_SCHEMA_RECONCILIATION_PENDING_EXACT_HEAD_VALIDATION
+status: FULL_STAGE_CONVERGENCE_VALIDATED_STAGE01_REQUEST_HEAD_REVALIDATION_REQUIRED
 authorization_record_url: https://github.com/steven-gold/orange-one-ai-viedo-v1.0/issues/61
 decontamination_authorization_record_url: https://github.com/steven-gold/orange-one-ai-viedo-v1.0/issues/64
 product_branch: 0921acpos
@@ -23,15 +23,18 @@ permission_lifecycle:
   final_reconciliation: STAGE-11
   downstream_local_redefinition: FORBIDDEN
 current_head_validation:
-  status: REQUIRED_BEFORE_EFFECTFUL_ENTRY
+  status: STRUCTURAL_BASE_VALIDATED_REQUEST_HEAD_REVALIDATION_REQUIRED
   required_workflow: Product Full Stage Lifecycle Validation
   historical_run_credit: 0
+  last_validated_head_sha: a2ee17648db9e2bd4683bbc866067a6c99c43dc6
+  last_validation_run_id: "36524752549"
+  last_validation_result: SUCCESS
 resume_point:
-  last_completed_action: COMMON_CLOSURE_HANDOFF_EVIDENCE_TERMINAL_SUCCESSOR_PROTOCOLS_RECONCILED
-  next_action: RUN_FRESH_EXACT_HEAD_FULL_STAGE_VALIDATION_WITH_COMMON_PROTOCOL_CONSUMERS
+  last_completed_action: FULL_STAGE_COMMON_PROTOCOL_EXACT_HEAD_VALIDATION_PASS
+  next_action: REVALIDATE_REQUEST_HEAD_THEN_MATERIALIZE_STAGE01
   after_validation_success: STAGE01_CURRENT_WORD_DERIVED_PRESTAGE_MATERIALIZATION
   next_effectful_stage: STAGE-01
   earliest_owner: FULL_STAGE_LIFECYCLE_VALIDATION
-  stage_entry_hold: FULL_STAGE_COMMON_PROTOCOL_EXACT_HEAD_VALIDATION_PENDING
+  stage_entry_hold: REQUEST_HEAD_REVALIDATION_ONLY
 current_blockers: []
 completion_credit: 0
