@@ -105,6 +105,19 @@ jobs:
           for p in "${forbidden[@]}"; do
             test ! -e "$p" || { echo "BLOCK:DUPLICATE_ORCHESTRATION_STATE_REMAINS:$p"; exit 41; }
           done
+          test -z "$(find STAGE_EXECUTION -type f \( -name 'CURRENT_STAGE_RESUME.yaml' -o -name 'CLOSURE_RESUME_POINT.yaml' -o -name 'EXACT_HEAD_GATE_RECEIPTS.yaml' \) -print -quit)" || {
+            echo "BLOCK:DUPLICATE_RESUME_STATE_REMAINS"; exit 42;
+          }
+          python - <<'PY'
+          import yaml
+          from pathlib import Path
+          p=Path('STAGE_EXECUTION/SHARED_AUTHORITY/CURRENT_STAGE_FLOW/FULL_STAGE_LIFECYCLE_AUTHORIZATION_CONTRACT.yaml')
+          d=yaml.safe_load(p.read_text(encoding='utf-8')) or {}
+          forbidden={'lifecycle_stage_uids','lifecycle_topology','authorization_layers','global_transition_order','forbidden_transition_patterns','stage_contracts','permission_continuity_contract','closure_and_handoff_contract','known_runtime_blockers'}
+          present=sorted(forbidden & set(d))
+          assert not present, 'BLOCK:AUTHORIZATION_DUPLICATES_MOTHER_SPEC:'+','.join(present)
+          print('PASS: authorization contract contains execution range only')
+          PY
 
       - name: Prove execution and validation responsibilities are separated
         run: |
