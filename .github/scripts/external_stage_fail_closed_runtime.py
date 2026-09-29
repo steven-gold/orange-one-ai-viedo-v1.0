@@ -74,6 +74,6 @@ def main():
   elif a.operation=="GOVERNED_UNIT_CLOSURE":
    write(wd/"GOVERNED_UNIT_CLOSED.yaml",{"artifact_type":"GOVERNED_UNIT_CLOSED","stage_uid":a.stage,"work_unit_uid":work["work_unit_uid"],"governed_unit_uid":work["governed_unit_uid"],"status":"PASS","historical_completion_credit":0})
   elif a.operation=="NEXT_GOVERNED_UNIT_ELIGIBILITY_EVALUATE":
-   write(wd/"NEXT_GOVERNED_UNIT_ELIGIBILITY.yaml",{"artifact_type":"NEXT_GOVERNED_UNIT_ELIGIBILITY","stage_uid":a.stage,"work_unit_uid":work["work_unit_uid"],"decision":"REQUIRES_REGISTERED_SUCCESSOR_AUTHORITY_RESOLUTION","status":"PASS","historical_completion_credit":0})
+   write(wd/"NEXT_GOVERNED_UNIT_ELIGIBILITY.yaml",{"artifact_type":"NEXT_GOVERNED_UNIT_ELIGIBILITY","stage_uid":a.stage,"work_unit_uid":work["work_unit_uid"],"eligibility_result":"REQUIRES_REGISTERED_SUCCESSOR_AUTHORITY_RESOLUTION","next_governed_unit_identity_when_ready":None,"legal_stage_admission_target_when_ready":None,"ai_may_select_next_governed_unit":False,"status":"PASS","historical_completion_credit":0})
  receipt(root,work,a.stage,a.operation); print("PASS:",a.stage,a.operation,work["work_unit_uid"])
 if __name__=="__main__": main()
