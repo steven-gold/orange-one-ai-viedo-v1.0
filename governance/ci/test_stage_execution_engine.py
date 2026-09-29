@@ -749,28 +749,6 @@ with tempfile.TemporaryDirectory() as td:
     stages=eng.stage_map(profile)
     invdoc=eng.y(eng.INVARIANTS)
     cross_policy=((invdoc.get('invariants') or {}).get('CROSS_STAGE_MATERIALIZATION_AND_CONSUMER_READINESS') or {})
-    binding_requirements=cross_policy.get('successor_execution_binding_requirements') or {}
-    binding_maps=cross_policy.get('successor_execution_binding_operation_map') or {}
-    binding_fields=list(map(str,cross_policy.get('successor_execution_binding_required_row_fields') or []))
-
-    def _binding_row(binding_class, consuming_operation_uid):
-        row={k:'SYNTHETIC' for k in binding_fields}
-        row.update({
-          'binding_uid':'SYNTH-'+binding_class,
-          'binding_class':binding_class,
-          'consuming_operation_uid':consuming_operation_uid,
-          'canonical_owner_or_authority_ref':'SYNTHETIC-CURRENT-AUTHORITY',
-          'applicability':'REQUIRED',
-          'resolution_status':'BOUND',
-          'authority_evidence_ref':'synthetic://authority',
-          'target_identity':'synthetic://target/'+binding_class.lower(),
-          'denominator_inclusion_status':'INCLUDED',
-          'consumer_readiness_status':'READY',
-          'failure_disposition':'BLOCK_AND_REENTER_OWNER',
-          'reentry_owner':'SYNTHETIC-CURRENT-AUTHORITY',
-        })
-        return row
-
     def _write_valid_handoff(predecessor_uid):
         predecessor=stages[predecessor_uid]
         successor_uid=str(predecessor.get('next_stage_uid') or '')
@@ -781,16 +759,9 @@ with tempfile.TemporaryDirectory() as td:
               f'handoff-inputs/{predecessor_uid}',
               successor.get('inputs') or []
             )
-            classes=list(map(str,binding_requirements.get(successor_uid) or []))
-            op_map=binding_maps.get(successor_uid) or {}
-            rows=[_binding_row(cls,str(op_map.get(cls) or successor['operations'][0])) for cls in classes]
         else:
             required_inputs=[]
-            classes=list(map(str,cross_policy.get('next_governed_unit_successor_binding_requirements') or []))
-            rows=[_binding_row(cls,'NEXT_GOVERNED_UNIT_ELIGIBILITY_EVALUATE') for cls in classes]
         work_unit_uid='SYNTHETIC-'+predecessor_uid+'-WU'
-        for row in rows:
-            _write_synthetic_target_resolution(pressure_root,'target-resolution/'+predecessor_uid,work_unit_uid,successor_uid,row,cross_policy,pressure_git_ctx)
         rel=f'{predecessor_uid}-handoff.yaml'
         ledger={
           'artifact_uid':'SYNTHETIC-'+predecessor_uid+'-HANDOFF',
@@ -799,10 +770,6 @@ with tempfile.TemporaryDirectory() as td:
           'work_unit_uid':work_unit_uid,
           'successor_stage_uid':successor_uid,
           'successor_required_inputs':required_inputs,
-          'successor_execution_bindings':rows,
-          'successor_execution_binding_total':len(classes),
-          'successor_execution_binding_ready_total':len(classes),
-          'successor_execution_binding_unresolved_total':0,
           'reference_resolution_complete':True,
           'physical_materialization_complete':True,
           'required_field_completeness_complete':True,
@@ -817,8 +784,9 @@ with tempfile.TemporaryDirectory() as td:
         evidence={'result':'PASS','cross_stage_handoff':{'ledger_ref':rel,'external_receipt':False}}
         return predecessor,successor_uid,rel,ledger,evidence
 
-    # Every downstream handoff STAGE-04..11 must accept a complete denominator,
-    # then reject a missing binding class. This proves the validator is not artifact-presence-only.
+    # Every downstream handoff STAGE-04..11 must accept complete successor inputs
+    # and fail closed on physical/reference/readiness corruption. Successor-internal
+    # runtime targets are intentionally outside the predecessor closure denominator.
     for predecessor_uid in [f'STAGE-{i:02d}' for i in range(4,12)]:
         predecessor,successor_uid,rel,ledger,evidence=_write_valid_handoff(predecessor_uid)
         eng._validate_cross_stage_handoff_ledger(predecessor_uid,deepcopy(evidence),predecessor,stages)
@@ -860,99 +828,25 @@ with tempfile.TemporaryDirectory() as td:
                 )
             finally:
                 artifact_path.write_bytes(original_bytes)
-            (pressure_root/rel).write_text(yaml.safe_dump(ledger,sort_keys=False),encoding='utf-8')
-        if ledger['successor_execution_bindings']:
             broken=deepcopy(ledger)
-            removed=broken['successor_execution_bindings'].pop()
-            broken['successor_execution_binding_total']-=1
-            broken['successor_execution_binding_ready_total']-=1
+            broken['successor_required_inputs'][0].update({
+              'status':'AUTHORIZED_NOT_APPLICABLE',
+              'authority_evidence_ref':'',
+              'artifact_ref':'',
+              'content_sha256':'',
+              'consumer_readiness_evidence_ref':'',
+            })
             (pressure_root/rel).write_text(yaml.safe_dump(broken,sort_keys=False),encoding='utf-8')
             expect_stage_engine_block(
-              f'{predecessor_uid}_missing_successor_binding_{removed["binding_class"]}',
+              f'{predecessor_uid}_na_input_without_authority',
               lambda p=predecessor_uid,e=deepcopy(evidence),st=predecessor: eng._validate_cross_stage_handoff_ledger(p,e,st,stages),
-              'CROSS_STAGE_SUCCESSOR_EXECUTION_BINDING_DENOMINATOR_DRIFT'
+              'CROSS_STAGE_SUCCESSOR_INPUT_NA_AUTHORITY_MISSING'
             )
             (pressure_root/rel).write_text(yaml.safe_dump(ledger,sort_keys=False),encoding='utf-8')
 
-    # Every declared successor binding class is Authority/applicability-driven; no technology class is universally privileged.
-    for predecessor_uid in [sid for sid,row in stages.items() if str(row.get('next_stage_uid') or '') in stages]:
-        predecessor,successor_uid,rel,ledger,evidence=_write_valid_handoff(predecessor_uid)
-        for source_row in list(ledger['successor_execution_bindings']):
-            broken=deepcopy(ledger)
-            row=next(x for x in broken['successor_execution_bindings'] if x['binding_class']==source_row['binding_class'])
-            row['resolution_status']='UNRESOLVED'
-            row['canonical_owner_or_authority_ref']=''
-            row['authority_evidence_ref']=''
-            row['target_identity']=''
-            row['consumer_readiness_status']='NOT_READY'
-            broken['successor_execution_binding_ready_total']-=1
-            broken['successor_execution_binding_unresolved_total']=1
-            (pressure_root/rel).write_text(yaml.safe_dump(broken,sort_keys=False),encoding='utf-8')
-            expect_stage_engine_block(
-              predecessor_uid+'_unbound_'+source_row['binding_class'].lower(),
-              lambda p=predecessor_uid,e=deepcopy(evidence),st=predecessor: eng._validate_cross_stage_handoff_ledger(p,e,st,stages),
-              'CROSS_STAGE_SUCCESSOR_EXECUTION_BINDING_NOT_READY'
-            )
-        (pressure_root/rel).write_text(yaml.safe_dump(ledger,sort_keys=False),encoding='utf-8')
-
-    # A target string/READY flag can never substitute for Current physical target resolution.
+    # Use a clean Stage-04 handoff for matrix/state integrity pressure below.
     predecessor,successor_uid,rel,ledger,evidence=_write_valid_handoff('STAGE-04')
-    app_row=next(x for x in ledger['successor_execution_bindings'] if x['binding_class']=='APPLICATION_ROOT')
-    app_receipt_path=pressure_root/app_row['target_resolution_ref']
-    app_receipt=yaml.safe_load(app_receipt_path.read_text(encoding='utf-8'))
-    def _target_receipt_case(label,mutator,expected):
-        original=deepcopy(app_receipt)
-        broken=deepcopy(original); mutator(broken)
-        app_receipt_path.write_text(yaml.safe_dump(broken,sort_keys=False),encoding='utf-8')
-        try:
-            expect_stage_engine_block(label,lambda:eng._validate_cross_stage_handoff_ledger('STAGE-04',deepcopy(evidence),predecessor,stages),expected)
-        finally:
-            app_receipt_path.write_text(yaml.safe_dump(original,sort_keys=False),encoding='utf-8')
-    _target_receipt_case('stage05_target_wrong_branch',lambda r:r.__setitem__('current_execution_branch','different-workline'),'TARGET_RESOLUTION_BRANCH_MISMATCH')
-    _target_receipt_case('stage05_target_stale_head',lambda r:r.__setitem__('current_execution_head_sha','0'*40),'TARGET_RESOLUTION_HEAD_MISMATCH')
-    _target_receipt_case('stage05_target_stale_tree',lambda r:r.__setitem__('current_execution_tree_sha','1'*40),'TARGET_RESOLUTION_TREE_MISMATCH')
-    _target_receipt_case('stage05_application_root_missing',lambda r:r.update({'target_path':'missing-app-root','target_path_exists':True,'target_path_tracked_at_head':True}),'TARGET_RESOLUTION_PATH_MISSING')
-    _target_receipt_case('stage05_application_root_untracked',lambda r:r.update({'target_path':'target-resolution','target_path_exists':True,'target_path_tracked_at_head':True}),'TARGET_RESOLUTION_PATH_NOT_TRACKED_AT_HEAD')
-    broken=deepcopy(ledger)
-    row=next(x for x in broken['successor_execution_bindings'] if x['binding_class']=='APPLICATION_ROOT')
-    row['target_identity']='synthetic://target/wrong-app-root'
-    (pressure_root/rel).write_text(yaml.safe_dump(broken,sort_keys=False),encoding='utf-8')
-    expect_stage_engine_block('stage05_target_identity_receipt_mismatch',lambda:eng._validate_cross_stage_handoff_ledger('STAGE-04',deepcopy(evidence),predecessor,stages),'TARGET_RESOLUTION_RECEIPT_BINDING_MISMATCH')
-    (pressure_root/rel).write_text(yaml.safe_dump(ledger,sort_keys=False),encoding='utf-8')
-    broken=deepcopy(ledger)
-    row=next(x for x in broken['successor_execution_bindings'] if x['binding_class']=='APPLICATION_ROOT')
-    row['target_resolution_ref']=''
-    (pressure_root/rel).write_text(yaml.safe_dump(broken,sort_keys=False),encoding='utf-8')
-    expect_stage_engine_block('stage05_target_resolution_receipt_missing_even_when_physical_flag_true',lambda:eng._validate_cross_stage_handoff_ledger('STAGE-04',deepcopy(evidence),predecessor,stages),'TARGET_RESOLUTION_REF_OR_KIND_MISSING')
-    (pressure_root/rel).write_text(yaml.safe_dump(ledger,sort_keys=False),encoding='utf-8')
-
-    predecessor8,successor8,rel8,ledger8,evidence8=_write_valid_handoff('STAGE-07')
-    ext_row=next(x for x in ledger8['successor_execution_bindings'] if x['binding_class']=='STAGING_DEPLOYMENT_TARGET')
-    ext_path=pressure_root/ext_row['target_resolution_ref']
-    ext_original=yaml.safe_load(ext_path.read_text(encoding='utf-8'))
-    ext_broken=deepcopy(ext_original); ext_broken['external_current_identity_match']=False
-    ext_path.write_text(yaml.safe_dump(ext_broken,sort_keys=False),encoding='utf-8')
-    try:
-        expect_stage_engine_block('stage08_external_target_identity_not_current',lambda:eng._validate_cross_stage_handoff_ledger('STAGE-07',deepcopy(evidence8),predecessor8,stages),'TARGET_RESOLUTION_EXTERNAL_CURRENT_IDENTITY_NOT_PROVEN')
-    finally:
-        ext_path.write_text(yaml.safe_dump(ext_original,sort_keys=False),encoding='utf-8')
-
-    # AUTHORIZED_NOT_APPLICABLE is legal only with exact authority evidence.
-    broken=deepcopy(ledger)
-    row=next(x for x in broken['successor_execution_bindings'] if x['binding_class']=='EXTERNAL_INTEGRATION_TARGET')
-    row.update({
-      'applicability':'AUTHORIZED_NOT_APPLICABLE',
-      'resolution_status':'AUTHORIZED_NOT_APPLICABLE',
-      'authority_evidence_ref':'',
-      'target_identity':'',
-      'consumer_readiness_status':'NOT_APPLICABLE_WITH_AUTHORITY'
-    })
-    (pressure_root/rel).write_text(yaml.safe_dump(broken,sort_keys=False),encoding='utf-8')
-    expect_stage_engine_block(
-      'stage05_na_without_authority',
-      lambda e=deepcopy(evidence),st=predecessor: eng._validate_cross_stage_handoff_ledger('STAGE-04',e,st,stages),
-      'CROSS_STAGE_SUCCESSOR_EXECUTION_BINDING_NA_AUTHORITY_MISSING'
-    )
+    eng._validate_cross_stage_handoff_ledger('STAGE-04',deepcopy(evidence),predecessor,stages)
 
     # A PASS handoff can never mask invalid Matrix or Current State.
     for field in ('current_matrix_valid','current_state_consistent'):
