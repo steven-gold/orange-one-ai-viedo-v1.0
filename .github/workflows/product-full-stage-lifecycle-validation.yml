@@ -5,6 +5,8 @@ on:
     paths:
       - 'STAGE_EXECUTION/SHARED_AUTHORITY/CURRENT_STAGE_FLOW/**'
       - '.github/scripts/full_stage_lifecycle_guard.py'
+      - '.github/scripts/stage01_current_materialize.py'
+      - '.github/workflows/product-clean-bootstrap-validation.yml'
       - '.github/scripts/stage_lifecycle_gate.py'
       - '.github/scripts/current_stage_execute.py'
       - '.github/scripts/common_stage_closure.py'
