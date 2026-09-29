@@ -211,3 +211,55 @@ stage06_readiness:
   current_safe_selection_is_execution_time_deterministic: true
   legacy_reference_tests_may_receive_completion_credit: false
   historical_runtime_completion_credit: 0
+
+build_target_authority:
+  BUILD_ROOT:
+    status: RESOLVED
+    resolution_kind: CURRENT_REPOSITORY_PATH
+    target_path: .
+    authority_evidence_refs:
+    - package.json
+    - Dockerfile
+  BUILD_TOOLCHAIN:
+    status: RESOLVED
+    resolution_kind: AUTHORITY_VALUE
+    authority_value: Node.js 22 + npm + Next.js 16.3.3
+    authority_evidence_refs:
+    - Dockerfile
+    - package.json
+  BUILD_COMMAND:
+    status: RESOLVED
+    resolution_kind: AUTHORITY_VALUE
+    authority_value: npm run build
+    authority_evidence_refs:
+    - package.json#scripts.build
+    - Dockerfile
+  BUILD_ARTIFACT_TARGET:
+    status: RESOLVED
+    resolution_kind: AUTHORITY_VALUE
+    authority_value: NEXT_BUILD_OUTPUT_VARIANT_BY_ENVIRONMENT
+    output_contract:
+      non_vercel:
+      - .next/standalone
+      - .next/static
+      vercel:
+      - VERCEL_NEXT_BUILD_OUTPUT
+    authority_evidence_refs:
+    - next.config.ts
+    - Dockerfile
+  MIGRATION_COMPATIBILITY_TARGET:
+    status: RESOLVED
+    resolution_kind: CURRENT_REPOSITORY_PATH
+    target_path: tests/release/neon-runtime-migration-ceiling.test.mjs
+    authority_evidence_refs:
+    - database/migrations/
+    - tests/release/neon-runtime-migration-ceiling.test.mjs
+
+stage07_readiness:
+  required_binding_class_total: 5
+  resolved_binding_class_total: 5
+  unresolved_binding_class_total: 0
+  unresolved_binding_classes: []
+  exact_binding_source_may_be_promoted_to_current: true
+  effectful_stage07_admission_allowed_after_stage06_closed_pass: true
+  historical_runtime_completion_credit: 0
