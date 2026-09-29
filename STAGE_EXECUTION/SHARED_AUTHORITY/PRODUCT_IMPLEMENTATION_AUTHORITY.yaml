@@ -1,5 +1,5 @@
 artifact_type: PRODUCT_IMPLEMENTATION_AUTHORITY
-status: CURRENT_STAGE05_AUTHORITY
+status: CURRENT_PRODUCT_EXECUTION_AUTHORITY
 normative_authority: false
 authority_role: PRODUCT_EXECUTION_AUTHORITY
 product_repository: steven-gold/orange-one-ai-viedo-v1.0
@@ -147,4 +147,67 @@ stage05_readiness:
   exact_binding_source_may_be_promoted_to_current: true
   effectful_stage05_admission_allowed: true
   next_legal_action: MATERIALIZE_STAGE05_EXACT_BINDING_AND_EXECUTE_CURRENT_STAGE
+  historical_runtime_completion_credit: 0
+
+verification_target_authority:
+  TEST_HARNESS_TARGET:
+    status: RESOLVED
+    resolution_kind: CURRENT_REPOSITORY_PATH
+    target_path: tests/release
+    authority_evidence_refs:
+    - package.json#scripts.test
+    - adoption_source.exact_commit_sha
+    current_test_selection_policy: INCLUDE_ONLY_TESTS_WITHOUT_UNRESOLVED_REFERENCES_TO_EXPLICITLY_EXCLUDED_LEGACY_AUTHORITY_OR_DOCS
+    adopted_test_corpus_commit: bc28d83a7e4044f4b89ccee87d69f813954cfdcb
+  DATABASE_TEST_TARGET:
+    status: RESOLVED
+    resolution_kind: CURRENT_REPOSITORY_PATH
+    target_path: tests/release
+    selected_test_refs:
+    - tests/release/neon-runtime-migration-ceiling.test.mjs
+    - tests/release/rls-runtime.test.mjs
+    - tests/release/dag-edge-rls-runtime-closure.test.mjs
+  PERMISSION_TEST_TARGET:
+    status: RESOLVED
+    resolution_kind: CURRENT_REPOSITORY_PATH
+    target_path: tests/release
+    selected_test_refs:
+    - tests/release/compiler-rls-permission-foundation.test.mjs
+    - tests/release/dev-discovery-permission-migration.test.mjs
+  BROWSER_E2E_TARGET:
+    status: RESOLVED
+    resolution_kind: CURRENT_REPOSITORY_PATH
+    target_path: scripts/release-browser-e2e.mjs
+    browser_toolchain_authority:
+      source_ref: main@1e081935b96d5b539e29eb16a6b067c4489ef2dd:.github/workflows/release-gate.yml
+      playwright_version: 1.62.1
+      browser: chromium
+      install_mode: npm_install_no_save_package_lock_false_then_playwright_install_with_deps
+  LOCALIZATION_TARGET:
+    status: RESOLVED
+    resolution_kind: CURRENT_REPOSITORY_PATH
+    target_path: tests/release/i18n-visible-ui.test.mjs
+  ACCESSIBILITY_TARGET:
+    status: RESOLVED
+    resolution_kind: CURRENT_REPOSITORY_PATH
+    target_path: scripts/release-browser-e2e.mjs
+    applicability_basis: CURRENT_BROWSER_E2E_ASSERTS_ACCESSIBLE_CONTROL_LABELS_AND_VISIBLE_CONTROL_SEMANTICS
+    excluded_noncurrent_target_ref: scripts/release-control-acceptance.mjs
+    excluded_reason: REFERENCES_EXPLICITLY_NOT_ADOPTED_DOCS_CONSTRUCTION_EVIDENCE
+  SECURITY_TEST_TARGET:
+    status: RESOLVED
+    resolution_kind: CURRENT_REPOSITORY_PATH
+    target_path: tests/release/security-config.test.mjs
+    additional_command_authority: npm audit --audit-level=high
+
+stage06_readiness:
+  required_binding_class_total: 9
+  resolved_binding_class_total: 9
+  unresolved_binding_class_total: 0
+  unresolved_binding_classes: []
+  exact_binding_source_may_be_promoted_to_current: true
+  effectful_stage06_admission_allowed_after_stage05_closed_pass: true
+  current_test_corpus_total: 77
+  current_safe_selection_is_execution_time_deterministic: true
+  legacy_reference_tests_may_receive_completion_credit: false
   historical_runtime_completion_credit: 0
