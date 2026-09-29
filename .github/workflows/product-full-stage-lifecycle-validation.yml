@@ -27,7 +27,8 @@ on:
       - '.github/workflows/product-stage-current-execute-reusable.yml'
   workflow_dispatch:
 permissions:
-  contents: read
+  contents: write
+  actions: write
 jobs:
   validate-full-lifecycle-plan:
     runs-on: ubuntu-24.04
@@ -173,3 +174,11 @@ jobs:
           assert d.get('execution_authorization',{}).get('future_effectful_stage_policy') == 'BLOCK_UNTIL_EXPLICIT_USER_OR_GOVERNED_CALLER_RANGE_AUTHORIZATION'
           print('PASS: planning validation cannot create Stage completion or future-stage execution authority')
           PY
+
+  stage01-resume-once:
+    needs: validate-full-lifecycle-plan
+    uses: ./.github/workflows/product-stage-lifecycle-driver.yml
+    with:
+      stage: STAGE-01
+      work_units: WU-STAGE01-GLOBAL-HOME-SHELL-NAVIGATION-CLEAN-001,WU-STAGE01-WB01-DASHBOARD-CLEAN-001
+    secrets: inherit
