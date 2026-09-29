@@ -118,6 +118,10 @@ jobs:
           print('PASS: authorization contract contains execution range only')
 
           root=Path('STAGE_EXECUTION/SHARED_AUTHORITY/CURRENT_STAGE_FLOW/EXACT_OPERATION_BINDING_SOURCES')
+          inv_path=Path('_governance_authority/.github/governance-source/active/source/10_REGISTRY/STAGE_EXECUTION_INVARIANT_REGISTRY.yaml')
+          inv=yaml.safe_load(inv_path.read_text(encoding='utf-8')) or {}
+          policy=((inv.get('invariants') or {}).get('CROSS_STAGE_MATERIALIZATION_AND_CONSUMER_READINESS') or {})
+          reqs=policy.get('successor_execution_binding_requirements') or {}
           for src in sorted(root.glob('STAGE-*.yaml')):
               row=yaml.safe_load(src.read_text(encoding='utf-8')) or {}
               if row.get('status')=='CURRENT_EXACT_BINDINGS':
@@ -125,7 +129,11 @@ jobs:
                   scanner=str(row.get('scanner_owner') or '')
                   vals=row.get('validator_bindings') or {}
                   assert ops and scanner and vals, 'BLOCK:EXACT_BINDING_SOURCE_CLAIMS_READY_WITHOUT_OPERATIONS:'+src.name
-          print('PASS: no fake exact-binding source claims runtime readiness')
+                  stage=str(row.get('stage_uid') or '')
+                  expected=set(map(str,reqs.get(stage) or []))
+                  actual=set(map(str,(row.get('successor_execution_bindings') or {}).keys()))
+                  assert actual==expected, 'BLOCK:SUCCESSOR_BINDING_SOURCE_DENOMINATOR_DRIFT:'+stage+':expected='+repr(sorted(expected))+':actual='+repr(sorted(actual))
+          print('PASS: exact binding sources match Mother successor-binding denominator')
           PY
 
       - name: Prove execution and validation responsibilities are separated
