@@ -116,3 +116,35 @@ jobs:
           git diff --cached --quiet && { echo "BLOCK:NO_TERMINALIZATION_DELTA"; exit 56; }
           git commit -m "$STAGE: persist Mother-validated terminal closure"
           git push origin HEAD:0921acpos || { echo "BLOCK:REMOTE_ADVANCED_BEFORE_TERMINALIZATION"; exit 57; }
+
+      - name: Materialize and auto-continue only the authorized registered successor
+        run: |
+          set -euo pipefail
+          NEXT="$(python -c "import yaml,sys; d=yaml.safe_load(open(sys.argv[1])) or {}; print(d.get('next_stage_uid') or '')" "STAGE_EXECUTION/$STAGE/$(echo "$WORK_UNITS" | cut -d, -f1)/CURRENT_STAGE_RESUME.yaml")"
+          case "$NEXT" in
+            STAGE-*)
+              AUTH="$(python -c "import yaml,sys; d=yaml.safe_load(open(sys.argv[1])) or {}; print('yes' if sys.argv[2] in (d.get('execution_authorization',{}).get('authorized_effectful_range') or []) else 'no')" STAGE_EXECUTION/SHARED_AUTHORITY/CURRENT_STAGE_FLOW/FULL_STAGE_LIFECYCLE_AUTHORIZATION_CONTRACT.yaml "$NEXT")"
+              [ "$AUTH" = yes ] || { echo "PASS: successor $NEXT is outside current effectful authorization; stop at boundary"; exit 0; }
+              NWUS=""
+              IFS=',' read -ra WUS <<< "$WORK_UNITS"
+              for WU in "${WUS[@]}"; do
+                PRED="STAGE_EXECUTION/$STAGE/$WU/WORK_UNIT.yaml"
+                RES="STAGE_EXECUTION/$STAGE/$WU/EVIDENCE/SUCCESSOR_EXECUTION_BINDING_RESOLUTION.yaml"
+                MREF="$(python -c "import yaml,sys; d=yaml.safe_load(open(sys.argv[1])) or {}; print(d.get('operation_binding_manifest_ref') or '')" "$RES")"
+                [ -n "$MREF" ] || { echo "BLOCK:SUCCESSOR_OPERATION_BINDING_MANIFEST_REF_MISSING:$WU"; exit 58; }
+                python .github/scripts/common_successor_materialize.py --mode materialize --from-stage "$STAGE" --predecessor-work-unit "$PRED" --operation-binding-manifest "$MREF" --product-root "$GITHUB_WORKSPACE" --governance-root "$GITHUB_WORKSPACE/_governance_authority"
+                NWU="$(python -c "import yaml,sys; d=yaml.safe_load(open(sys.argv[1])) or {}; print(d.get('work_unit_uid') or '')" "$MREF")"
+                NWUS="${NWUS:+$NWUS,}$NWU"
+              done
+              git add "STAGE_EXECUTION/$NEXT"
+              git diff --cached --quiet && { echo "BLOCK:NO_SUCCESSOR_MATERIALIZATION_DELTA"; exit 59; }
+              git commit -m "$NEXT: materialize authorized successor Work Units"
+              git push origin HEAD:0921acpos || { echo "BLOCK:REMOTE_ADVANCED_BEFORE_SUCCESSOR"; exit 60; }
+              gh workflow run product-stage-lifecycle-driver.yml --ref 0921acpos -f stage="$NEXT" -f work_units="$NWUS"
+              ;;
+            NEXT_GOVERNED_UNIT_STAGE05_OR_SCOPE_COMPLETE)
+              echo "PASS: Stage11 terminal next-unit/scope transition persisted; no synthetic Stage successor"
+              ;;
+            *)
+              echo "BLOCK:UNREGISTERED_SUCCESSOR:$NEXT"; exit 61 ;;
+          esac
