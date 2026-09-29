@@ -5,7 +5,6 @@ from pathlib import Path
 import yaml
 
 LIFECYCLE=Path(".github/governance-source/active/source/10_REGISTRY/GOVERNANCE_LIFECYCLE_STAGE_REGISTRY.yaml")
-INVARIANTS=Path(".github/governance-source/active/source/10_REGISTRY/STAGE_EXECUTION_INVARIANT_REGISTRY.yaml")
 
 def load(p):
     p=Path(p)
@@ -66,7 +65,7 @@ def main():
     ap.add_argument("--governance-root",required=True)
     a=ap.parse_args()
     root=Path(a.product_root).resolve(); gov=Path(a.governance_root).resolve()
-    life=load(gov/LIFECYCLE); inv=load(gov/INVARIANTS)
+    life=load(gov/LIFECYCLE)
     stages={str(x.get("stage_uid")):x for x in life.get("stages") or [] if isinstance(x,dict)}
     if a.stage not in stages: raise SystemExit("BLOCK:HANDOFF_STAGE_UNREGISTERED")
     wp=safe(root,a.work_unit,"WORK_UNIT"); wd=wp.parent; work=load(wp)
