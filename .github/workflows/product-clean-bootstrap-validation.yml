@@ -6,11 +6,9 @@ on:
       - '.github/scripts/stage01_current_materialize.py'
       - '.github/scripts/stage01_operation_runtime.py'
       - '.github/scripts/stage01_ops/**'
-      - '.github/workflows/product-source-review-extract.yml'
-      - '.github/workflows/product-stage01-current-materialize.yml'
-      - '.github/workflows/product-stage01-materialize.yml'
       - '.github/workflows/product-clean-bootstrap-validation.yml'
       - '.github/workflows/product-full-stage-lifecycle-validation.yml'
+      - '.github/workflows/product-stage01-validated-entry.yml'
 permissions:
   contents: read
 jobs:
