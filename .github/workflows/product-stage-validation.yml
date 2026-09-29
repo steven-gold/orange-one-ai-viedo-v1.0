@@ -89,7 +89,7 @@ jobs:
           inv=y('BUSINESS_ENTITY_INVENTORY.yaml')
           mat=y('BUSINESS_ENTITY_OPERATION_MATRIX.yaml')
           hier=y('ENTITY_HIERARCHY_MATRIX.yaml')
-          pkg=y('PAGE_CONSTRUCTION_SPEC_PACKAGE.yaml')
+          pkg=y('GOVERNED_UNIT_CONSTRUCTION_SPEC_PACKAGE.yaml')
           ports=y('SHARED_OWNER_PORT_MAP.yaml')
           chain=y('FUNCTIONAL_CHAIN_SPEC.yaml')
           topo=y('INTERACTION_TOPOLOGY_SPEC.yaml')
@@ -118,15 +118,15 @@ jobs:
           if not wb.get('workbench_regions'): raise SystemExit('BLOCK:FUNCTIONAL_WORKBENCH_EMPTY')
           scope=yaml.safe_load((wu/'CURRENT_EXECUTION_SCOPE_MANIFEST.yaml').read_text()) or {}
           if scope.get('partial_scope') is not False: raise SystemExit('BLOCK:PARTIAL_SCOPE_NOT_ALLOWED_FOR_UNIT_EXIT')
-          predecessor=Path('STAGE_EXECUTION/STAGE-01/WU-STAGE01-GLOBAL-HOME-SHELL-NAVIGATION-001/02_BASE_BLUEPRINT/SRC-DOCX-334A4679600F092B733B/VISUAL_BASE_BLUEPRINT.yaml')
+          predecessor=Path('STAGE_EXECUTION/STAGE-01/WU-STAGE01-GLOBAL-HOME-SHELL-NAVIGATION-CLEAN-001/02_BASE_BLUEPRINT/GLOBAL-HOME-SHELL-NAVIGATION/VISUAL_BASE_BLUEPRINT.yaml')
           if not predecessor.is_file(): raise SystemExit('BLOCK:STAGE03_VISUAL_BLUEPRINT_INPUT_MISSING')
-          for rel in ['PAGE_CONSTRUCTION_SPEC_PACKAGE.yaml','FUNCTIONAL_WORKBENCH_CONTRACT.yaml','INTERACTION_TOPOLOGY_SPEC.yaml']:
-              if not (wu/rel).is_file(): raise SystemExit('BLOCK:STAGE03_SUCCESSOR_INPUT_MISSING:'+rel)
+          for rel in ['GOVERNED_UNIT_CONSTRUCTION_SPEC_PACKAGE.yaml','FUNCTIONAL_WORKBENCH_CONTRACT.yaml','INTERACTION_TOPOLOGY_SPEC.yaml']:
+              if not (wu/rel).is_file(): raise SystemExit('BLOCK:STAGE03_CURRENT_INPUT_MISSING:'+rel)
           print(f'PASS: entity operation denominator entities={len(entities)} operations_per_entity={len(enum)}')
           print(f'PASS: required hierarchy edges={len(hier.get("edges") or [])}')
           print(f'PASS: package artifacts={len(included)} all physical')
           print('PASS: exact shared owner/port identities materialized')
-          print('PASS: Stage-03 successor required inputs materialized')
+          print('PASS: Stage-03 Current required inputs materialized')
           PY
       - name: Validate normalized Stage-02 evidence when materialized
         if: env.ACTIVE_STAGE02 == 'true'
