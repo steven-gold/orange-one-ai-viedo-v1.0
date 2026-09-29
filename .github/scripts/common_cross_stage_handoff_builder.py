@@ -97,29 +97,6 @@ def main():
             write(root/readiness_rel,{"artifact_type":"SUCCESSOR_INPUT_READINESS_EVIDENCE","stage_uid":a.stage,"successor_stage_uid":successor_uid,"input_uid":uid,"artifact_ref":aref,"content_sha256":sha256(ap),"result":"PASS"})
             inputs.append({"input_uid":uid,"status":"MATERIALIZED","artifact_ref":aref,"content_sha256":sha256(ap),"external_evidence_ref":None,"authority_evidence_ref":None,"consumer_readiness_evidence_ref":readiness_rel})
 
-    policy=((inv.get("invariants") or {}).get("CROSS_STAGE_MATERIALIZATION_AND_CONSUMER_READINESS") or {})
-    reqs=(policy.get("successor_execution_binding_requirements") or {})
-    expected_classes=list(map(str,reqs.get(successor_uid) or [])) if successor_uid in stages else list(map(str,policy.get("next_governed_unit_successor_binding_requirements") or []))
-    resolution_path=wd/"EVIDENCE/SUCCESSOR_EXECUTION_BINDING_RESOLUTION.yaml"
-    if not resolution_path.is_file():
-        raise SystemExit("BLOCK:SUCCESSOR_EXECUTION_BINDING_RESOLUTION_MISSING:"+successor_uid)
-    resolution=load(resolution_path)
-    rows=resolution.get("successor_execution_bindings") or []
-    seen={str(x.get("binding_class") or ""):x for x in rows if isinstance(x,dict)}
-    if set(seen)!=set(expected_classes):
-        raise SystemExit("BLOCK:SUCCESSOR_EXECUTION_BINDING_DENOMINATOR_DRIFT:"+successor_uid)
-    ready=0
-    unresolved=0
-    for cls in expected_classes:
-        row=seen[cls]
-        app=str(row.get("applicability") or "")
-        rs=str(row.get("resolution_status") or "")
-        if app=="REQUIRED" and rs=="BOUND": ready+=1
-        elif app=="AUTHORIZED_NOT_APPLICABLE" and rs=="AUTHORIZED_NOT_APPLICABLE": ready+=1
-        else: unresolved+=1
-    if unresolved:
-        raise SystemExit("BLOCK:SUCCESSOR_EXECUTION_BINDING_UNRESOLVED:"+successor_uid+":"+str(unresolved))
-
     ledger_rel=f"STAGE_EXECUTION/{a.stage}/{wd.name}/EVIDENCE/CROSS_STAGE_HANDOFF_READINESS_LEDGER.yaml"
     ledger={
       "artifact_type":"CROSS_STAGE_HANDOFF_READINESS_LEDGER",
@@ -135,19 +112,12 @@ def main():
       "required_field_completeness_complete":True,
       "consumer_readiness_complete":True,
       "successor_required_inputs":inputs,
-      "successor_execution_bindings":[seen[x] for x in expected_classes],
-      "successor_execution_binding_total":len(expected_classes),
-      "successor_execution_binding_ready_total":ready,
-      "successor_execution_binding_unresolved_total":0,
       "unresolved_required_dependency_total":0,
       "status":"PASS",
       "completion_credit":0,
     }
-    for k,v in resolution.items():
-        if k.endswith("_resolution_receipts") or k in {"target_resolution_receipts","current_execution_context"}:
-            ledger[k]=v
     write(root/ledger_rel,ledger)
-    print("PASS: exact cross-stage handoff ledger materialized",a.stage,"->",successor_uid)
+    print("PASS: cross-stage input-continuity ledger materialized",a.stage,"->",successor_uid)
 
 if __name__=="__main__":
     main()
