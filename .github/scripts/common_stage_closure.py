@@ -22,6 +22,8 @@ def main():
     ap.add_argument("--product-root",required=True)
     ap.add_argument("--governance-root",required=True)
     ap.add_argument("--mode",choices=["preflight","close"],default="preflight")
+    ap.add_argument("--validated-head")
+    ap.add_argument("--validation-run-id")
     a=ap.parse_args()
     root=Path(a.product_root).resolve(); gov=Path(a.governance_root).resolve()
     run([sys.executable,".github/scripts/full_stage_lifecycle_guard.py","--mode","execution-ready","--stage",a.stage,"--product-root",str(root),"--governance-root",str(gov)],root)
@@ -46,11 +48,13 @@ def main():
             raise SystemExit("BLOCK:COMMON_CLOSURE_OPERATION_RECEIPT_INVALID:"+op)
     print("PASS: common closure preflight operation receipt chain complete",a.stage,work.get("work_unit_uid"))
     if a.mode=="close":
+        if not a.validated_head or not a.validation_run_id:
+            raise SystemExit("BLOCK:CLOSURE_VALIDATION_ID_REQUIRED")
         run([sys.executable,".github/scripts/common_cross_stage_handoff_builder.py","--stage",a.stage,"--work-unit",a.work_unit,"--product-root",str(root),"--governance-root",str(gov)],root)
-        run([sys.executable,".github/scripts/common_stage_closure_adapter.py","--mode","candidate","--stage",a.stage,"--work-unit",a.work_unit,"--product-root",str(root),"--governance-root",str(gov)],root)
+        run([sys.executable,".github/scripts/common_stage_closure_adapter.py","--mode","candidate","--stage",a.stage,"--work-unit",a.work_unit,"--validated-head",a.validated_head,"--validation-run-id",a.validation_run_id,"--product-root",str(root),"--governance-root",str(gov)],root)
         ev=f"STAGE_EXECUTION/{a.stage}/{wd.name}/EVIDENCE/NORMALIZED_STAGE_EVIDENCE.json"
         run([sys.executable,"governance/ci/stage_execution_engine.py","--validate-evidence","--stage",a.stage,"--evidence",ev],root)
-        print("PASS: normalized evidence validated; terminal receipt still requires prior outer terminal-success run")
+        print("PASS: normalized content evidence validated")
 
 if __name__=="__main__":
     main()
