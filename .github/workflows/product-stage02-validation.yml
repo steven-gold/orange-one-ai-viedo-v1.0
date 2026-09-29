@@ -59,7 +59,7 @@ jobs:
       - name: Validate Stage02 closure evidence and handoff ledgers
         run: |
           set -euo pipefail
-          for WU in WU-STAGE02-GLOBAL-HOME-SHELL-NAVIGATION-REENTRY-001 WU-STAGE02-WB01-DASHBOARD-REENTRY-001; do
+          for WU in WU-STAGE02-GLOBAL-HOME-SHELL-NAVIGATION-CLEAN-001 WU-STAGE02-WB01-DASHBOARD-CLEAN-001; do
             B="STAGE_EXECUTION/STAGE-02/${WU}"
             test -f "$B/EVIDENCE/PAGE_FUNCTIONAL_REVIEW_EVIDENCE.yaml" || { echo "BLOCK:STAGE02_REQUIRED_EVIDENCE_MISSING:$WU"; exit 1; }
             test -f "$B/EVIDENCE/CROSS_STAGE_HANDOFF_READINESS_LEDGER.yaml" || { echo "BLOCK:STAGE02_HANDOFF_LEDGER_MISSING:$WU"; exit 1; }
