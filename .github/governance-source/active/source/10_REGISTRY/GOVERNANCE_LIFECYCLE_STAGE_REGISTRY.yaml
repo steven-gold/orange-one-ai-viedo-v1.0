@@ -37,6 +37,33 @@ topology:
   governed_unit_uid_sticky_from_stage: STAGE-05
   governed_unit_uid_sticky_through_stage: STAGE-11
 
+stage_execution_architecture_contract:
+  authority_ref: WEB-GOV-03-S073
+  audit_ref: WEB-GOV-04-S088
+  current_state_authority: EXECUTION_STATE
+  work_unit_status_role: NON_AUTHORITATIVE_PROJECTION_ONLY
+  separate_resume_state_authority: FORBIDDEN
+  effectful_stage_executor_count_per_stage: 1
+  lifecycle_orchestrator_count: 1
+  validator_mutation: FORBIDDEN
+  validator_effectful_execution: FORBIDDEN
+  closure_basis: REQUIRED_CONTENT_EVIDENCE
+  git_head_as_stage_completion_gate: false
+  workflow_terminal_status_as_stage_completion_gate: false
+  transport_receipt_as_stage_completion_gate: false
+  predecessor_may_require_successor_owned_runtime_binding: false
+  successor_runtime_binding_validation_boundary: SUCCESSOR_OWNING_OPERATION
+  successor_materialization_owner: SAME_LIFECYCLE_ORCHESTRATOR
+  normal_pass_auto_continue: true
+  normal_stage_boundary_human_continue_prompt: false
+  stop_only_on:
+  - REGISTERED_HUMAN_GATE
+  - TRUE_REQUIRED_INPUT_OR_AUTHORITY_MISSING
+  - VALIDATION_FAIL_OR_BLOCKED
+  - EFFECTFUL_EXECUTION_FAILURE
+  - EXPLICIT_USER_STOP
+  - MATERIAL_CURRENT_SOURCE_INVALIDATION
+
 explicit_stage_range_execution_contract:
   invariant_uid: GOV-INV-EXPLICIT-STAGE-RANGE-EXECUTION-001
   applies_to_all_registered_stages: true
