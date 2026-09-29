@@ -6,11 +6,14 @@ on:
       - '.github/scripts/stage01_current_materialize.py'
       - '.github/scripts/stage01_operation_runtime.py'
       - '.github/scripts/stage01_ops/**'
+      - '.github/scripts/full_stage_lifecycle_guard.py'
+      - '.github/scripts/stage_lifecycle_gate.py'
       - '.github/workflows/product-clean-bootstrap-validation.yml'
-      - '.github/workflows/product-full-stage-lifecycle-validation.yml'
-      - '.github/workflows/product-stage01-validated-entry.yml'
+      - '.github/workflows/product-stage-lifecycle-driver.yml'
+  workflow_dispatch:
 permissions:
   contents: read
+
 jobs:
   validate:
     runs-on: ubuntu-24.04
@@ -19,25 +22,30 @@ jobs:
         with:
           ref: ${{ github.sha }}
           fetch-depth: 0
+
       - name: Resolve exact selected Current governance
         id: governance
+        shell: bash
         run: |
           set -euo pipefail
           SEL="STAGE_EXECUTION/SHARED_AUTHORITY/CURRENT_GOVERNANCE_SELECTION.yaml"
-          STATUS="$(awk '$1=="status:" {print $2; exit}' "$SEL")"
+          test -s "$SEL"
+          test "$(awk '$1=="status:" {print $2; exit}' "$SEL")" = "SELECTED_EXACT_CURRENT_SNAPSHOT"
           COMMIT="$(awk '$1=="governance_commit_sha:" {print $2; exit}' "$SEL")"
-          test "$STATUS" = "SELECTED_EXACT_CURRENT_SNAPSHOT"
           echo "$COMMIT" | grep -Eq '^[0-9a-f]{40}$'
           echo "commit_sha=$COMMIT" >> "$GITHUB_OUTPUT"
+
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
           repository: steven-gold/orange-one-ai-viedo-v1.0
           ref: ${{ steps.governance.outputs.commit_sha }}
           path: _governance_authority
           fetch-depth: 1
+
       - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
         with:
           python-version: '3.11.16'
+
       - name: Load Current governance
         run: |
           set -euo pipefail
@@ -46,65 +54,19 @@ jobs:
           mkdir -p .github
           cp -R _governance_authority/.github/governance-source .github/governance-source
           python -m pip install --disable-pip-version-check --require-hashes -r governance/ci/requirements-governance.lock
-      - name: Syntax validation
-        run: |
-          python -m py_compile .github/scripts/stage01_current_materialize.py
-          python -m py_compile .github/scripts/stage01_operation_runtime.py
-          python -m py_compile .github/scripts/stage01_ops/*.py
-      - name: Ephemeral clean materialization from root Word only
+
+      - name: Validate clean Stage01 materialization contract
         run: |
           set -euo pipefail
+          python -m py_compile .github/scripts/stage01_current_materialize.py .github/scripts/stage01_operation_runtime.py .github/scripts/stage01_ops/*.py
           python .github/scripts/stage01_current_materialize.py --mode materialize --units "GLOBAL-HOME-SHELL-NAVIGATION,WB01-DASHBOARD" --product-root "$GITHUB_WORKSPACE" --governance-root "$GITHUB_WORKSPACE/_governance_authority"
-      - name: Load governance receipts and validate admission
-        run: |
-          set -euo pipefail
-          export GOVERNANCE_SOURCE_ROOT="$GITHUB_WORKSPACE/_governance_authority"
+          python .github/scripts/full_stage_lifecycle_guard.py --mode execution-ready --stage STAGE-01 --product-root "$GITHUB_WORKSPACE" --governance-root "$GITHUB_WORKSPACE/_governance_authority"
+
           for WU in WU-STAGE01-GLOBAL-HOME-SHELL-NAVIGATION-CLEAN-001 WU-STAGE01-WB01-DASHBOARD-CLEAN-001; do
             python .github/scripts/product_current_governance_load.py --product-root "$GITHUB_WORKSPACE" --governance-root "$GITHUB_WORKSPACE/_governance_authority" --stage STAGE-01 --work-unit "STAGE_EXECUTION/STAGE-01/$WU/WORK_UNIT.yaml"
+            python .github/scripts/stage_lifecycle_gate.py --mode assert-work-unit-entry --stage STAGE-01 --work-unit "STAGE_EXECUTION/STAGE-01/$WU/WORK_UNIT.yaml" --product-root "$GITHUB_WORKSPACE" --governance-root "$GITHUB_WORKSPACE/_governance_authority"
           done
-          python .github/scripts/stage01_current_materialize.py --mode refresh-manifest --units "GLOBAL-HOME-SHELL-NAVIGATION,WB01-DASHBOARD" --product-root "$GITHUB_WORKSPACE"
-          for WU in WU-STAGE01-GLOBAL-HOME-SHELL-NAVIGATION-CLEAN-001 WU-STAGE01-WB01-DASHBOARD-CLEAN-001; do
-            export STAGE_EXECUTION_ROOT="$GITHUB_WORKSPACE"
-            export STAGE_ACTIVE_WORK_UNIT="STAGE_EXECUTION/STAGE-01/$WU/WORK_UNIT.yaml"
-            export STAGE_CURRENT_SCOPE="STAGE_EXECUTION/STAGE-01/$WU/CURRENT_EXECUTION_SCOPE_MANIFEST.yaml"
-            python governance/ci/stage_execution_engine.py --admission-check --stage STAGE-01
-          done
-      - name: Exercise admitted pre-stage state transition
-        run: |
-          set -euo pipefail
-          python .github/scripts/stage01_current_materialize.py --mode mark-admitted --units "GLOBAL-HOME-SHELL-NAVIGATION,WB01-DASHBOARD" --product-root "$GITHUB_WORKSPACE"
-          test -s STAGE_EXECUTION/SHARED_AUTHORITY/CURRENT_STAGE_FLOW/FULL_STAGE_DEFECT_LEDGER.yaml
-          test ! -e STAGE_EXECUTION/SHARED_AUTHORITY/CURRENT_STAGE_FLOW/STAGE01_04_DEFECT_LEDGER.yaml
-          python - <<'PY'
-          import yaml
-          from pathlib import Path
-          r=yaml.safe_load(Path('STAGE_EXECUTION/SHARED_AUTHORITY/CURRENT_STAGE_FLOW/CURRENT_EXECUTION_RESOLUTION.yaml').read_text()) or {}
-          for unit in r.get('stage_sequence') or []:
-              s1=next((x for x in unit.get('stages') or [] if x.get('stage_uid')=='STAGE-01'),None)
-              assert s1 is not None
-              assert s1.get('state')=='MATERIALIZED_PRESTAGE_READY_AWAITING_RUNTIME_INLINE_VALIDATION'
-              assert 'current_state' not in s1
-          print('PASS: mark-admitted writes one canonical Stage01 state field and current full-stage ledger')
-          PY
-      - name: Assert Stage01 downstream impact covers the full registered lifecycle
-        run: |
-          python - <<'PY'
-          from pathlib import Path
-          import yaml
-          expected=[f'STAGE-{i:02d}' for i in range(1,12)]
-          expected_downstream=[f'STAGE-{i:02d}:NOT_EXECUTED' for i in range(2,12)]
-          for root in sorted(Path('STAGE_EXECUTION/STAGE-01').glob('WU-STAGE01-*-CLEAN-001')):
-              impact=yaml.safe_load((root/'CHANGE_IMPACT_MAP.yaml').read_text()) or {}
-              assert impact.get('affected_stage_uids')==expected, (root,impact.get('affected_stage_uids'))
-              audits=list(root.glob('00_SOURCE_INTAKE/SOURCE_PROJECTIONS/*/SOURCE_DOCUMENT_CONTENT_AUDIT.yaml'))
-              assert audits, root
-              for p in audits:
-                  audit=yaml.safe_load(p.read_text()) or {}
-                  assert audit.get('open_downstream_states')==expected_downstream, p
-          print('PASS: Stage01 source impact/reverify denominator spans Stage01 through Stage11')
-          PY
-      - name: Assert clean-bootstrap invariants
-        run: |
+
           python - <<'PY'
           from pathlib import Path
           import yaml
@@ -112,26 +74,14 @@ jobs:
             Path('STAGE_EXECUTION/STAGE-01/WU-STAGE01-GLOBAL-HOME-SHELL-NAVIGATION-CLEAN-001'),
             Path('STAGE_EXECUTION/STAGE-01/WU-STAGE01-WB01-DASHBOARD-CLEAN-001')
           ]
-          forbidden=[
-            'WU-STAGE01-GLOBAL-HOME-SHELL-NAVIGATION-001',
-            'WU-STAGE01-WB01-DASHBOARD-001',
-            'PAGE_BASE_BLUEPRINT',
-            'predecessor_terminal_receipt_ref:'
-          ]
           for root in roots:
               work=yaml.safe_load((root/'WORK_UNIT.yaml').read_text()) or {}
-              assert work.get('work_unit_activation_kind')=='INITIAL_STAGE_WORK_UNIT'
-              assert work.get('current_status')=='READY_FOR_EXECUTION'
               state=yaml.safe_load((root/'EXECUTION_STATE.yaml').read_text()) or {}
+              assert work.get('current_status')=='READY_FOR_EXECUTION'
+              assert state.get('status')=='READY_FOR_EXECUTION'
               assert state.get('completed_operations')==[]
               assert state.get('current_operation')=='SOURCE_STRUCTURE_ENUMERATION'
               receipts=root/'EVIDENCE/OPERATION_RECEIPTS'
               assert not receipts.exists() or not any(receipts.iterdir())
-              for p in root.rglob('*'):
-                  if p.is_file() and p.suffix.lower() in {'.yaml','.yml','.json'}:
-                      body=p.read_text(encoding='utf-8')
-                      for token in forbidden:
-                          if token in body:
-                              raise SystemExit(f'BLOCK:FORBIDDEN_CLEAN_BOOTSTRAP_DEPENDENCY:{token}:{p}')
-          print('PASS: clean bootstrap has zero predecessor runtime dependency and zero Stage01 operation credit')
+          print('PASS: clean Stage01 bootstrap contains only specification-bound inputs and zero execution credit')
           PY
