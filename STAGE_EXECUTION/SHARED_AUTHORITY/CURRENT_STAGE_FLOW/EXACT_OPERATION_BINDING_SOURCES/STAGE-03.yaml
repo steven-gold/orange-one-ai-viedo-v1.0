@@ -1,6 +1,11 @@
 artifact_type: EXACT_OPERATION_BINDING_SOURCE
 stage_uid: STAGE-03
 status: CURRENT_EXACT_BINDINGS
+successor_execution_bindings:
+  VISUAL_AUTHORITY_TARGET:
+    applicability: REQUIRED
+    resolution_status: RESOLVE_FROM_PREDECESSOR_ARTIFACT_INDEX
+    required_artifact_uid: VISUAL_BASE_BLUEPRINT
 operation_bindings:
   VISUAL_SPEC_COMPILE:
     applicability: REQUIRED
