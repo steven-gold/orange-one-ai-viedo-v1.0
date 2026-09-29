@@ -1306,6 +1306,21 @@ invariants:
     denominator_inclusion_required: true
     successor_consumer_readiness_required: true
     successor_required_input_universe_reconciliation_before_stage_exit: true
+    successor_required_input_row_required_fields:
+    - input_uid
+    - status
+    - artifact_ref
+    - content_sha256
+    - external_evidence_ref
+    - authority_evidence_ref
+    - consumer_readiness_evidence_ref
+    successor_materialized_input_requires_local_artifact_ref: true
+    successor_materialized_input_requires_recomputed_sha256: true
+    successor_materialized_input_requires_nonempty_parseable_artifact: true
+    successor_materialized_input_requires_consumer_readiness_evidence: true
+    successor_external_receipt_input_requires_external_evidence_ref: true
+    successor_authorized_not_applicable_input_requires_authority_evidence_ref: true
+    successor_input_status_self_assertion_completion_credit: 0
     successor_stage_internal_target_resolution_is_predecessor_closure_requirement: false
     successor_runtime_binding_resolution_boundary: AFTER_PREDECESSOR_CLOSED_PASS_BEFORE_SUCCESSOR_MATERIALIZATION
     successor_operation_target_authority_required_before_consuming_operation: true
