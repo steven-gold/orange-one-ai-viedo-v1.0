@@ -1,0 +1,118 @@
+name: Product Stage Lifecycle Driver
+on:
+  workflow_call:
+    inputs:
+      stage:
+        required: true
+        type: string
+      work_units:
+        required: true
+        type: string
+  workflow_dispatch:
+    inputs:
+      stage:
+        description: Exact registered stage
+        required: true
+        type: string
+      work_units:
+        description: Comma-separated Current Work Unit UIDs
+        required: true
+        type: string
+permissions:
+  contents: write
+  actions: write
+concurrency:
+  group: product-stage-lifecycle-driver
+  cancel-in-progress: false
+jobs:
+  drive:
+    runs-on: ubuntu-24.04
+    env:
+      GH_TOKEN: ${{ github.token }}
+      STAGE: ${{ inputs.stage }}
+      WORK_UNITS: ${{ inputs.work_units }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: 0921acpos
+          fetch-depth: 0
+      - name: Resolve exact Current governance
+        id: governance
+        run: |
+          set -euo pipefail
+          COMMIT="$(awk '$1=="governance_commit_sha:" {print $2; exit}' STAGE_EXECUTION/SHARED_AUTHORITY/CURRENT_GOVERNANCE_SELECTION.yaml)"
+          echo "$COMMIT" | grep -Eq '^[0-9a-f]{40}$'
+          echo "commit_sha=$COMMIT" >> "$GITHUB_OUTPUT"
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          repository: steven-gold/orange-one-ai-viedo-v1.0
+          ref: ${{ steps.governance.outputs.commit_sha }}
+          path: _governance_authority
+          fetch-depth: 1
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with:
+          python-version: '3.11.16'
+      - name: Load exact governance runtime
+        run: |
+          rm -rf governance .github/governance-source
+          cp -R _governance_authority/governance ./governance
+          mkdir -p .github
+          cp -R _governance_authority/.github/governance-source .github/governance-source
+          python -m pip install --disable-pip-version-check --require-hashes -r governance/ci/requirements-governance.lock
+      - name: Drive one-operation checkpoints until operation-complete
+        run: |
+          set -euo pipefail
+          git config user.name github-actions
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          python .github/scripts/stage_lifecycle_gate.py --mode assert-stage-authorized --stage "$STAGE" --product-root "$GITHUB_WORKSPACE" --governance-root "$GITHUB_WORKSPACE/_governance_authority"
+          while true; do
+            PENDING=0
+            IFS=',' read -ra WUS <<< "$WORK_UNITS"
+            for WU in "${WUS[@]}"; do
+              CUR="$(python -c "import yaml,sys; d=yaml.safe_load(open(sys.argv[1])) or {}; print(d.get('current_operation') or '')" "STAGE_EXECUTION/$STAGE/$WU/EXECUTION_STATE.yaml")"
+              [ "$CUR" = COMPLETE ] || PENDING=1
+            done
+            [ "$PENDING" -eq 1 ] || break
+            python .github/scripts/current_stage_execute.py --stage "$STAGE" --work-units "$WORK_UNITS" --product-root "$GITHUB_WORKSPACE" --governance-root "$GITHUB_WORKSPACE/_governance_authority"
+            git add "STAGE_EXECUTION/$STAGE"
+            git diff --cached --quiet && { echo "BLOCK:OPERATION_CHECKPOINT_NO_DELTA"; exit 51; }
+            git commit -m "$STAGE: persist one-operation Current checkpoint"
+            git push origin HEAD:0921acpos || { echo "BLOCK:REMOTE_ADVANCED_COMPARE_AND_SWAP"; exit 52; }
+          done
+      - name: Materialize preterminal physical evidence
+        run: |
+          set -euo pipefail
+          IFS=',' read -ra WUS <<< "$WORK_UNITS"
+          for WU in "${WUS[@]}"; do
+            python .github/scripts/common_stage_preterminal.py --mode materialize --stage "$STAGE" --work-unit "STAGE_EXECUTION/$STAGE/$WU/WORK_UNIT.yaml" --product-root "$GITHUB_WORKSPACE" --governance-root "$GITHUB_WORKSPACE/_governance_authority"
+          done
+          git add "STAGE_EXECUTION/$STAGE" STAGE_EXECUTION/SHARED_AUTHORITY/CURRENT_STAGE_FLOW/GENERATED_BINDINGS 2>/dev/null || true
+          git diff --cached --quiet && { echo "BLOCK:PRETERMINAL_NO_DELTA"; exit 53; }
+          git commit -m "$STAGE: persist preterminal physical evidence"
+          git push origin HEAD:0921acpos || { echo "BLOCK:REMOTE_ADVANCED_BEFORE_PRETERMINAL"; exit 54; }
+          echo "candidate_head=$(git rev-parse HEAD)" >> "$GITHUB_ENV"
+      - name: Dispatch and wait independent exact-head validation
+        run: |
+          set -euo pipefail
+          gh workflow run product-stage-preterminal-validation.yml --ref 0921acpos -f stage="$STAGE" -f work_units="$WORK_UNITS" -f expected_head="$candidate_head"
+          RID=""
+          for i in $(seq 1 30); do
+            RID="$(gh run list --workflow product-stage-preterminal-validation.yml --branch 0921acpos --event workflow_dispatch --json databaseId,headSha --jq '.[] | select(.headSha=="'"$candidate_head"'") | .databaseId' | head -1)"
+            [ -n "$RID" ] && break
+            sleep 2
+          done
+          [ -n "$RID" ] || { echo "BLOCK:PRETERMINAL_VALIDATION_RUN_NOT_FOUND"; exit 55; }
+          gh run watch "$RID" --exit-status
+          echo "validation_run_id=$RID" >> "$GITHUB_ENV"
+      - name: Terminalize exact validated head
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$candidate_head"
+          IFS=',' read -ra WUS <<< "$WORK_UNITS"
+          for WU in "${WUS[@]}"; do
+            python .github/scripts/common_stage_terminalizer.py --mode terminalize --stage "$STAGE" --work-unit "STAGE_EXECUTION/$STAGE/$WU/WORK_UNIT.yaml" --validated-head "$candidate_head" --validation-run-id "$validation_run_id" --product-root "$GITHUB_WORKSPACE" --governance-root "$GITHUB_WORKSPACE/_governance_authority"
+          done
+          git add "STAGE_EXECUTION/$STAGE"
+          git diff --cached --quiet && { echo "BLOCK:NO_TERMINALIZATION_DELTA"; exit 56; }
+          git commit -m "$STAGE: persist Mother-validated terminal closure"
+          git push origin HEAD:0921acpos || { echo "BLOCK:REMOTE_ADVANCED_BEFORE_TERMINALIZATION"; exit 57; }

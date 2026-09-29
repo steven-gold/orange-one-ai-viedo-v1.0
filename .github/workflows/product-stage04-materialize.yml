@@ -1,4 +1,4 @@
-name: Product Stage04 Current Execute
+name: Product STAGE-04 Current Execute
 on:
   workflow_dispatch:
     inputs:
@@ -8,7 +8,7 @@ on:
         default: manual
 jobs:
   execute:
-    uses: ./.github/workflows/product-stage-current-execute-reusable.yml
+    uses: ./.github/workflows/product-stage-lifecycle-driver.yml
     with:
       stage: STAGE-04
       work_units: WU-STAGE04-GLOBAL-HOME-SHELL-NAVIGATION-CLEAN-001,WU-STAGE04-WB01-DASHBOARD-CLEAN-001

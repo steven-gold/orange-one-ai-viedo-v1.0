@@ -16,6 +16,10 @@ rules:
   common_terminalizer: .github/scripts/common_stage_terminalizer.py
   common_successor_orchestrator: .github/scripts/common_successor_materialize.py
   common_successor_work_unit_builder: .github/scripts/common_successor_work_unit_builder.py
+  common_successor_binding_resolver: .github/scripts/common_successor_binding_resolver.py
+  common_preterminal_evidence_producer: .github/scripts/common_stage_preterminal.py
+  common_lifecycle_driver_workflow: .github/workflows/product-stage-lifecycle-driver.yml
+  common_preterminal_validation_workflow: .github/workflows/product-stage-preterminal-validation.yml
   stage_specific_adapter_may_define_authorization: false
   stage_specific_adapter_may_define_permission_semantics: false
   stage_specific_adapter_may_define_next_stage: false

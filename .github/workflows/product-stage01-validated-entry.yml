@@ -8,6 +8,7 @@ on:
   workflow_dispatch:
 permissions:
   contents: write
+  actions: write
 concurrency:
   group: product-stage01-validated-entry
   cancel-in-progress: false
@@ -307,3 +308,12 @@ jobs:
           echo "STAGE01_PRESTAGE_HEAD=${{ steps.persist_prestage.outputs.materialized_head }}"
           echo "STAGE01_OPERATION_HEAD=${{ steps.persist_operation.outputs.operation_head }}"
           echo "STAGE01_FIRST_OPERATION=SOURCE_STRUCTURE_ENUMERATION"
+
+      - name: Continue Stage01 through the common lifecycle driver
+        if: steps.request.outputs.requested == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          WUS: ${{ steps.request.outputs.work_units }}
+        run: |
+          set -euo pipefail
+          gh workflow run product-stage-lifecycle-driver.yml --ref 0921acpos -f stage=STAGE-01 -f work_units="$WUS"

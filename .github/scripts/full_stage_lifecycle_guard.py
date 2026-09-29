@@ -143,6 +143,10 @@ def main():
         fail("ADAPTER_STAGE_LOCAL_PERMISSION_NOT_FORBIDDEN")
     local_owner(product,arules.get("common_closure_orchestrator"),"COMMON_CLOSURE")
     local_owner(product,arules.get("common_successor_orchestrator"),"COMMON_SUCCESSOR")
+    local_owner(product,arules.get("common_successor_binding_resolver"),"COMMON_SUCCESSOR_BINDING_RESOLVER")
+    local_owner(product,arules.get("common_preterminal_evidence_producer"),"COMMON_PRETERMINAL_EVIDENCE")
+    local_owner(product,arules.get("common_lifecycle_driver_workflow"),"COMMON_LIFECYCLE_DRIVER_WORKFLOW")
+    local_owner(product,arules.get("common_preterminal_validation_workflow"),"COMMON_PRETERMINAL_VALIDATION_WORKFLOW")
 
     adapter_rows=adapters.get("adapters") or []
     if [str(x.get("stage_uid") or "") for x in adapter_rows]!=EXPECTED:
