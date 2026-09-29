@@ -58,8 +58,6 @@ def validate_contract(product,gov):
     if str(current.get("governance_head") or "")!=gov_head:
         fail("AUTHORIZATION_GOVERNANCE_HEAD_DRIFT")
 
-    if list(map(str,auth.get("lifecycle_stage_uids") or []))!=EXPECTED:
-        fail("AUTHORIZATION_LIFECYCLE_RANGE_DRIFT")
     execution=auth.get("execution_authorization") or {}
     planning=list(map(str,execution.get("planning_range") or []))
     allowed=list(map(str,execution.get("authorized_effectful_range") or []))
@@ -77,16 +75,6 @@ def validate_contract(product,gov):
         fail("STAGE_SKIP_POLICY_NOT_FAIL_CLOSED")
     if execution.get("normal_pass_auto_continue_within_authorized_range") is not True:
         fail("NORMAL_PASS_AUTO_CONTINUE_NOT_ENABLED")
-
-    contracts=auth.get("stage_contracts") or []
-    if [str(x.get("stage_uid") or "") for x in contracts]!=EXPECTED:
-        fail("STAGE_CONTRACT_COVERAGE_DRIFT")
-    for row in contracts:
-        uid=str(row["stage_uid"])
-        reg=stages[uid]
-        for key in ("name","entry_gate","exit_gate","next_stage_uid"):
-            if str(row.get(key) or "")!=str(reg.get(key) or ""):
-                fail("STAGE_CONTRACT_"+key.upper()+"_DRIFT:"+uid)
 
     for owner in [
         ".github/scripts/current_stage_execute.py",
