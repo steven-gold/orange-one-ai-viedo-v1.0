@@ -1,15 +1,5 @@
 name: Product Stage01 Current Step Execute
 on:
-  workflow_dispatch:
-    inputs:
-      units:
-        description: Comma-separated governed units to execute
-        required: true
-        default: GLOBAL-HOME-SHELL-NAVIGATION,WB01-DASHBOARD
-      reason:
-        description: Explicit operator authorization to enter Stage-01 effectful execution
-        required: true
-        default: explicit-stage01-entry
   workflow_run:
     workflows: ["Product Full Stage Lifecycle Validation"]
     types: [completed]
@@ -17,7 +7,7 @@ permissions:
   contents: write
 jobs:
   resolve:
-    if: github.event_name == 'workflow_dispatch' || (github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.head_branch == '0921acpos')
+    if: github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.head_branch == '0921acpos'
     runs-on: ubuntu-24.04
     outputs:
       work_units: ${{ steps.map.outputs.work_units }}
@@ -25,18 +15,17 @@ jobs:
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
-          ref: ${{ github.event_name == 'workflow_run' && github.event.workflow_run.head_sha || github.sha }}
+          ref: ${{ github.event.workflow_run.head_sha }}
           fetch-depth: 0
       - id: map
         env:
-          EVENT_NAME: ${{ github.event_name }}
-          DISPATCH_UNITS: ${{ inputs.units }}
+          CURRENT_VALIDATED_HEAD: ${{ github.event.workflow_run.head_sha }}
+          CURRENT_VALIDATION_RUN_ID: ${{ github.event.workflow_run.id }}
         run: |
           set -euo pipefail
-          if [ "$EVENT_NAME" = "workflow_run" ]; then
-            python - <<'PY' >> "$GITHUB_OUTPUT"
+          python - <<'PY' >> "$GITHUB_OUTPUT"
           from pathlib import Path
-          import yaml
+          import os,yaml
           reqp=Path('STAGE_EXECUTION/SHARED_AUTHORITY/CURRENT_STAGE_FLOW/STAGE01_PRESTAGE_EXECUTION_REQUEST.yaml')
           trigp=Path('STAGE_EXECUTION/STAGE-01/STAGE01_CURRENT_EXECUTION_TRIGGER.yaml')
           if not reqp.is_file() or not trigp.is_file():
@@ -47,35 +36,27 @@ jobs:
           if req.get('status')!='CONSUMED' or req.get('auto_enter_stage01') is not True:
               print('skip=true')
               raise SystemExit(0)
-          allowed={
-            'READY_AWAITING_RUNTIME_INLINE_VALIDATION_AND_VALIDATED_STAGE_ENTRY',
-            'READY_AWAITING_RUNTIME_INLINE_VALIDATION_AND_EXPLICIT_STAGE_ENTRY',
-          }
-          if trig.get('status') not in allowed:
+          source_validated_head=str(req.get('validated_head_sha') or '')
+          source_validation_run_id=str(req.get('validation_run_id') or '')
+          if not source_validated_head or not source_validation_run_id:
+              raise SystemExit('BLOCK:STAGE01_PRESTAGE_SOURCE_VALIDATION_BINDING_MISSING')
+          if trig.get('status')!='READY_AWAITING_RUNTIME_INLINE_VALIDATION_AND_VALIDATED_STAGE_ENTRY':
               print('skip=true')
               raise SystemExit(0)
+          current_head=os.environ['CURRENT_VALIDATED_HEAD']
+          current_run=os.environ['CURRENT_VALIDATION_RUN_ID']
+          if not current_head or not current_run:
+              raise SystemExit('BLOCK:STAGE01_EFFECTFUL_CURRENT_VALIDATION_BINDING_MISSING')
           wus=trig.get('work_units') or []
           if not wus:
               raise SystemExit('BLOCK:STAGE01_TRIGGER_WORK_UNITS_EMPTY')
           print('skip=false')
           print('work_units='+','.join(map(str,wus)))
+          print('prestage_source_validated_head='+source_validated_head)
+          print('prestage_source_validation_run_id='+source_validation_run_id)
+          print('effectful_entry_validated_head='+current_head)
+          print('effectful_entry_validation_run_id='+current_run)
           PY
-          else
-            WUS=()
-            IFS=',' read -ra UNITS <<< "$DISPATCH_UNITS"
-            for RAW in "${UNITS[@]}"; do
-              U="$(echo "$RAW" | xargs)"
-              case "$U" in
-                GLOBAL-HOME-SHELL-NAVIGATION) WUS+=("WU-STAGE01-GLOBAL-HOME-SHELL-NAVIGATION-CLEAN-001") ;;
-                WB01-DASHBOARD) WUS+=("WU-STAGE01-WB01-DASHBOARD-CLEAN-001") ;;
-                *) echo "BLOCK:UNKNOWN_SELECTED_UNIT:$U"; exit 41 ;;
-              esac
-            done
-            test "${#WUS[@]}" -gt 0
-            CSV="$(IFS=,; echo "${WUS[*]}")"
-            echo "skip=false" >> "$GITHUB_OUTPUT"
-            echo "work_units=$CSV" >> "$GITHUB_OUTPUT"
-          fi
   execute:
     needs: resolve
     if: needs.resolve.outputs.skip != 'true'
