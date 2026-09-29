@@ -9,9 +9,10 @@
 2. Stage 01→11 的正式規格：
    Current Governance 內的 `GOVERNANCE_LIFECYCLE_STAGE_REGISTRY.yaml` 與 Mother 01→04。
 3. 本次執行範圍：
-   `FULL_STAGE_LIFECYCLE_AUTHORIZATION_CONTRACT.yaml`
-4. 每個 Work Unit 的執行進度：
-   各 Work Unit 內的 `WORK_UNIT.yaml` + `EXECUTION_STATE.yaml`。
+   `FULL_STAGE_LIFECYCLE_AUTHORIZATION_CONTRACT.yaml`。此檔只允許保存執行範圍，不得複製 Mother 的 Stage topology、Stage contract、permission 或 closure 規格。
+4. 每個 Work Unit 的唯一執行／續作狀態：
+   `EXECUTION_STATE.yaml`。
+   `WORK_UNIT.yaml.current_status` 僅為目前 Governance Engine 的相容投影，不得作為第二 Resume Authority。
 5. Stage successor 的 exact runtime binding：
    `EXACT_OPERATION_BINDING_SOURCES/`，到達該 Stage 前必須完整。
 6. 執行中由 predecessor 解析出的 successor binding：
@@ -65,6 +66,9 @@ Git HEAD、workflow 名稱或歷史 PASS 只能作為 evidence identity，不能
 - CURRENT_REMEDIATION_STATE
 - CURRENT_STAGE*_RESUME_REQUEST
 - CURRENT_STAGE_EXECUTION_REQUEST
+- CURRENT_STAGE_RESUME.yaml
+- CLOSURE_RESUME_POINT.yaml
+- EXACT_HEAD_GATE_RECEIPTS.yaml
 - FULL_STAGE_DEFECT_LEDGER
 - product-side transition/permission/runtime-adapter projection matrices
 - product-side common closure/successor protocol copies
