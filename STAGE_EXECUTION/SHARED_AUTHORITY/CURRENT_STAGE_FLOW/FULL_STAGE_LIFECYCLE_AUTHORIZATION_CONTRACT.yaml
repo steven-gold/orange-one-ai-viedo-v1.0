@@ -1,5 +1,5 @@
 artifact_type: PRODUCT_FULL_STAGE_LIFECYCLE_AUTHORIZATION_CONTRACT
-status: CURRENT_FULL_STAGE_STRUCTURAL_CONVERGENCE_EFFECTFUL_RANGE_BOUNDED
+status: CURRENT_EXPLICIT_STAGE01_TO_STAGE11_RANGE
 normative_authority: false
 authority_role: PRODUCT_EXECUTION_COORDINATION_AUTHORITY
 product_branch: 0921acpos
@@ -9,7 +9,7 @@ current_governance:
   lifecycle_registry_ref: .github/governance-source/active/source/10_REGISTRY/GOVERNANCE_LIFECYCLE_STAGE_REGISTRY.yaml
   invariant_registry_ref: .github/governance-source/active/source/10_REGISTRY/STAGE_EXECUTION_INVARIANT_REGISTRY.yaml
 authorization_records:
-  current_effectful_range: https://github.com/steven-gold/orange-one-ai-viedo-v1.0/issues/61
+  current_effectful_range: USER_EXPLICIT_REQUEST_2026-09-29_STAGE01_TO_STAGE11
   decontamination: https://github.com/steven-gold/orange-one-ai-viedo-v1.0/issues/64
 lifecycle_stage_uids: [STAGE-01, STAGE-02, STAGE-03, STAGE-04, STAGE-05, STAGE-06, STAGE-07, STAGE-08, STAGE-09, STAGE-10, STAGE-11]
 lifecycle_topology:
@@ -23,14 +23,15 @@ lifecycle_topology:
   stage_local_successor_rules: FORBIDDEN
 execution_authorization:
   planning_range: [STAGE-01, STAGE-02, STAGE-03, STAGE-04, STAGE-05, STAGE-06, STAGE-07, STAGE-08, STAGE-09, STAGE-10, STAGE-11]
-  authorized_effectful_range: [STAGE-01, STAGE-02, STAGE-03, STAGE-04]
-  future_effectful_stage_policy: BLOCK_UNTIL_EXPLICIT_USER_OR_GOVERNED_CALLER_RANGE_AUTHORIZATION
+  authorized_effectful_range: [STAGE-01, STAGE-02, STAGE-03, STAGE-04, STAGE-05, STAGE-06, STAGE-07, STAGE-08, STAGE-09, STAGE-10, STAGE-11]
+  requested_range_authority: USER_EXPLICIT_REQUEST_2026-09-29_STAGE01_TO_STAGE11
+  future_effectful_stage_policy: NO_STAGE_OUTSIDE_REQUESTED_RANGE
   system_may_expand_range: false
   system_may_shrink_range: false
   system_may_skip_stage_inside_authorized_range: false
   system_may_split_authorized_range_into_stage_local_authorization_batches: false
   normal_pass_auto_continue_within_authorized_range: true
-  current_stage04_boundary_behavior: CLOSE_FOUNDATION_AND_PERSIST_STAGE05_ELIGIBILITY_WITHOUT_EXECUTING_STAGE05
+  current_stage04_boundary_behavior: AUTO_CONTINUE_TO_STAGE05_ON_PASS_WITHIN_REQUESTED_RANGE
 authorization_layers:
 - {ordinal: 1, uid: AUTH-LAYER-CURRENT-GOVERNANCE, purpose: BIND_EXACT_CURRENT_GOVERNANCE}
 - {ordinal: 2, uid: AUTH-LAYER-STAGE-RANGE, purpose: BIND_EXACT_INCLUSIVE_EXECUTION_RANGE}
