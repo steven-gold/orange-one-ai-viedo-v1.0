@@ -74,7 +74,6 @@ jobs:
             .github/scripts/common_successor_work_unit_builder.py
 
           python .github/scripts/full_stage_lifecycle_guard.py --mode plan --product-root "$GITHUB_WORKSPACE" --governance-root "$GITHUB_WORKSPACE/_governance_authority"
-          python .github/scripts/full_stage_lifecycle_guard.py --mode range-ready --product-root "$GITHUB_WORKSPACE" --governance-root "$GITHUB_WORKSPACE/_governance_authority"
           python .github/scripts/stage_lifecycle_gate.py --mode validate-all --product-root "$GITHUB_WORKSPACE" --governance-root "$GITHUB_WORKSPACE/_governance_authority"
           python .github/scripts/common_stage_closure_adapter.py --mode validate-contract --product-root "$GITHUB_WORKSPACE" --governance-root "$GITHUB_WORKSPACE/_governance_authority"
           python .github/scripts/common_stage_terminalizer.py --mode validate-contract --product-root "$GITHUB_WORKSPACE" --governance-root "$GITHUB_WORKSPACE/_governance_authority"
@@ -152,3 +151,8 @@ jobs:
           test ! -e STAGE_EXECUTION/SHARED_AUTHORITY/IMPLEMENTATION_EXECUTION_TARGET_AUTHORITY.yaml
           ! grep -q "RESOLVE_CURRENT_IMPLEMENTATION_TARGET" .github/scripts/common_successor_binding_resolver.py
           echo "PASS: validation is read-only and lifecycle execution has one driver"
+
+      - name: Validate authorized Stage runtime readiness
+        run: |
+          set -euo pipefail
+          python .github/scripts/full_stage_lifecycle_guard.py --mode range-ready --product-root "$GITHUB_WORKSPACE" --governance-root "$GITHUB_WORKSPACE/_governance_authority"
