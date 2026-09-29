@@ -1,6 +1,11 @@
 artifact_type: EXACT_OPERATION_BINDING_SOURCE
 stage_uid: STAGE-04
 status: CURRENT_EXACT_BINDINGS
+successor_execution_bindings:
+  FORMAL_DESIGN_APPROVAL_AUTHORITY:
+    applicability: REQUIRED
+    resolution_status: RESOLVE_FROM_PREDECESSOR_LOCAL_REF
+    local_ref: EVIDENCE/FORMAL_HUMAN_APPROVAL_DISPOSITION.yaml
 operation_bindings:
   BASIC_DESIGN_PACKAGE_COMPILE:
     applicability: REQUIRED
