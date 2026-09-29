@@ -364,7 +364,7 @@ def mark_admitted(product,cfgs):
     resolution=y(rp)
     resolution["status"]="READY_AWAITING_RUNTIME_INLINE_VALIDATION_AND_EXPLICIT_STAGE01_ENTRY"
     resolution["execution_mode"]="CLEAN_INITIAL_STAGE_WORK_UNIT"
-    for ch in resolution.get("chains") or []:
+    for ch in resolution.get("stage_sequence") or []:
         unit=ch.get("governed_unit_uid")
         match=next((c for c in cfgs if c["governed_unit_uid"]==unit),None)
         if not match: continue
