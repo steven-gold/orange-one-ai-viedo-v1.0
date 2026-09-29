@@ -38,7 +38,7 @@ jobs:
           echo "work_units=$CSV" >> "$GITHUB_OUTPUT"
   execute:
     needs: resolve
-    uses: ./.github/workflows/product-stage-successor-execute-reusable.yml
+    uses: ./.github/workflows/product-stage-current-execute-reusable.yml
     with:
       stage: STAGE-01
       work_units: ${{ needs.resolve.outputs.work_units }}
