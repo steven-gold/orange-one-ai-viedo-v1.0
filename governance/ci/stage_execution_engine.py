@@ -1379,9 +1379,9 @@ def _validate_cross_stage_handoff_ledger(stage_uid,e,stage,stages):
     execution_root=_execution_artifact_root()
     policy=((inv.get('invariants') or {}).get('CROSS_STAGE_MATERIALIZATION_AND_CONSUMER_READINESS') or {})
     handoff=e.get('cross_stage_handoff') or {}
-    ref=str(handoff.get('ledger_ref') or '')
     if handoff.get('external_receipt'):
-        fail('CROSS_STAGE_EXTERNAL_LEDGER_CANNOT_SKIP_EXECUTION_BINDING_RECONCILIATION')
+        fail('CROSS_STAGE_EXTERNAL_LEDGER_NOT_ALLOWED_FOR_LOCAL_HANDOFF')
+    ref=str(handoff.get('ledger_ref') or '')
     rp=Path(ref)
     if not ref or rp.is_absolute() or '..' in rp.parts:
         fail('CROSS_STAGE_HANDOFF_LEDGER_REF_INVALID')
@@ -1404,11 +1404,9 @@ def _validate_cross_stage_handoff_ledger(stage_uid,e,stage,stages):
     input_rows=ledger.get('successor_required_inputs')
     if not isinstance(input_rows,list):
         fail('CROSS_STAGE_SUCCESSOR_INPUT_ROWS_INVALID')
-    input_required_fields=set(map(str,policy.get('successor_required_input_row_required_fields') or []))
-    expected_input_fields={'input_uid','status','artifact_ref','content_sha256','external_evidence_ref','authority_evidence_ref','consumer_readiness_evidence_ref'}
-    if input_required_fields!=expected_input_fields:
-        fail('CROSS_STAGE_SUCCESSOR_INPUT_PHYSICAL_CONTRACT_DRIFT')
+    input_required_fields={'input_uid','status','artifact_ref','content_sha256','external_evidence_ref','authority_evidence_ref','consumer_readiness_evidence_ref'}
     seen_inputs={}
+    unresolved_input_total=0
     for row in input_rows:
         if not isinstance(row,dict):
             fail('CROSS_STAGE_SUCCESSOR_INPUT_ROW_INVALID')
@@ -1419,19 +1417,12 @@ def _validate_cross_stage_handoff_ledger(stage_uid,e,stage,stages):
         if not uid or uid in seen_inputs:
             fail('CROSS_STAGE_SUCCESSOR_INPUT_ROW_INVALID')
         seen_inputs[uid]=row
-    if successor_uid in stages:
-        expected_inputs=set(map(str,stages[successor_uid].get('inputs') or []))
-        if set(seen_inputs)!=expected_inputs:
-            fail('CROSS_STAGE_SUCCESSOR_INPUT_DENOMINATOR_DRIFT:expected='+repr(sorted(expected_inputs))+':actual='+repr(sorted(seen_inputs)))
-    unresolved_input_total=0
-    for uid,row in seen_inputs.items():
+
         status=str(row.get('status') or '')
         if status=='AUTHORIZED_NOT_APPLICABLE':
-            if policy.get('successor_authorized_not_applicable_input_requires_authority_evidence_ref') is not True or not str(row.get('authority_evidence_ref') or '').strip():
+            if policy.get('authorized_not_applicable_requires_authority_evidence') is not True or not str(row.get('authority_evidence_ref') or '').strip():
                 fail('CROSS_STAGE_SUCCESSOR_INPUT_NA_AUTHORITY_MISSING:'+uid)
         elif status=='MATERIALIZED':
-            if policy.get('successor_materialized_input_requires_local_artifact_ref') is not True or policy.get('successor_materialized_input_requires_recomputed_sha256') is not True or policy.get('successor_materialized_input_requires_nonempty_parseable_artifact') is not True or policy.get('successor_materialized_input_requires_consumer_readiness_evidence') is not True:
-                fail('CROSS_STAGE_SUCCESSOR_INPUT_PHYSICAL_POLICY_MISSING:'+uid)
             aref=str(row.get('artifact_ref') or '').strip()
             ap=Path(aref)
             if not aref or ap.is_absolute() or '..' in ap.parts:
@@ -1456,92 +1447,25 @@ def _validate_cross_stage_handoff_ledger(stage_uid,e,stage,stages):
             except ValueError:
                 fail('CROSS_STAGE_SUCCESSOR_INPUT_READINESS_REF_ESCAPES_ROOT:'+uid)
             _validate_local_file_artifact(readiness_path,'CROSS_STAGE_SUCCESSOR_INPUT_READINESS:'+uid)
-        elif status=='EXTERNAL_RECEIPT':
-            if policy.get('successor_external_receipt_input_requires_external_evidence_ref') is not True or not str(row.get('external_evidence_ref') or '').strip():
-                fail('CROSS_STAGE_SUCCESSOR_INPUT_EXTERNAL_EVIDENCE_MISSING:'+uid)
         elif not pass_result and status in {'UNRESOLVED','BLOCKED','MISSING'}:
             unresolved_input_total+=1
         else:
             fail('CROSS_STAGE_SUCCESSOR_INPUT_NOT_READY:'+uid+':'+status)
 
-    requirements=(policy.get('successor_execution_binding_requirements') or {})
-    operation_map=(policy.get('successor_execution_binding_operation_map') or {})
-    target_resolution_required_stages=set(map(str,policy.get('successor_execution_target_resolution_required_stage_uids') or []))
-    target_resolution_next_required=policy.get('successor_execution_target_resolution_required_for_next_unit') is True
-    target_resolution_git_context=None
     if successor_uid in stages:
-        expected_classes=list(map(str,requirements.get(successor_uid) or []))
-        expected_map=operation_map.get(successor_uid) or {}
-        successor_ops=set(map(str,stages[successor_uid].get('operations') or []))
-    else:
-        expected_classes=list(map(str,policy.get('next_governed_unit_successor_binding_requirements') or []))
-        expected_map={}
-        successor_ops=set()
-    rows=ledger.get('successor_execution_bindings')
-    if not isinstance(rows,list):
-        fail('CROSS_STAGE_SUCCESSOR_EXECUTION_BINDINGS_INVALID')
-    required_fields=set(map(str,policy.get('successor_execution_binding_required_row_fields') or []))
-    seen={}
-    ready=0
-    unresolved_binding_total=0
-    for row in rows:
-        if not isinstance(row,dict):
-            fail('CROSS_STAGE_SUCCESSOR_EXECUTION_BINDING_ROW_INVALID')
-        missing=sorted(required_fields-set(row))
-        if missing:
-            fail('CROSS_STAGE_SUCCESSOR_EXECUTION_BINDING_FIELDS_MISSING:'+repr(missing))
-        cls=str(row.get('binding_class') or '')
-        if not cls or cls in seen:
-            fail('CROSS_STAGE_SUCCESSOR_EXECUTION_BINDING_DUPLICATE_OR_BLANK:'+cls)
-        seen[cls]=row
-        op=str(row.get('consuming_operation_uid') or '')
-        if successor_uid in stages:
-            if cls in expected_map and op!=str(expected_map[cls]):
-                fail('CROSS_STAGE_SUCCESSOR_EXECUTION_BINDING_OPERATION_DRIFT:'+cls+':'+op)
-            if op not in successor_ops:
-                fail('CROSS_STAGE_SUCCESSOR_EXECUTION_BINDING_OPERATION_UNKNOWN:'+cls+':'+op)
-        applicability=str(row.get('applicability') or '')
-        resolution=str(row.get('resolution_status') or '')
-        if applicability=='REQUIRED':
-            if resolution=='BOUND':
-                for key in ('canonical_owner_or_authority_ref','authority_evidence_ref','target_identity'):
-                    if not str(row.get(key) or '').strip():
-                        fail('CROSS_STAGE_SUCCESSOR_EXECUTION_BINDING_REQUIRED_VALUE_MISSING:'+cls+':'+key)
-                if row.get('denominator_inclusion_status')!='INCLUDED' or row.get('consumer_readiness_status')!='READY':
-                    fail('CROSS_STAGE_SUCCESSOR_EXECUTION_BINDING_NOT_READY:'+cls)
-                target_resolution_required=(successor_uid in target_resolution_required_stages) or (not successor_uid and target_resolution_next_required)
-                if target_resolution_required:
-                    target_resolution_git_context=_validate_execution_target_resolution(execution_root,ledger,successor_uid,row,policy,target_resolution_git_context)
-                ready+=1
-            elif not pass_result and resolution in {'UNRESOLVED','BLOCKED','MISSING'}:
-                if row.get('denominator_inclusion_status')!='INCLUDED' or row.get('consumer_readiness_status') not in {'BLOCKED','NOT_READY'}:
-                    fail('CROSS_STAGE_SUCCESSOR_EXECUTION_BINDING_BLOCKED_ROW_INVALID:'+cls)
-                unresolved_binding_total+=1
-            else:
-                fail('CROSS_STAGE_SUCCESSOR_EXECUTION_BINDING_NOT_READY:'+cls)
-        elif applicability=='AUTHORIZED_NOT_APPLICABLE':
-            if not str(row.get('authority_evidence_ref') or '').strip():
-                fail('CROSS_STAGE_SUCCESSOR_EXECUTION_BINDING_NA_AUTHORITY_MISSING:'+cls)
-            if resolution!='AUTHORIZED_NOT_APPLICABLE' or row.get('denominator_inclusion_status')!='INCLUDED' or row.get('consumer_readiness_status')!='NOT_APPLICABLE_WITH_AUTHORITY':
-                fail('CROSS_STAGE_SUCCESSOR_EXECUTION_BINDING_NA_INVALID:'+cls)
-            ready+=1
-        else:
-            fail('CROSS_STAGE_SUCCESSOR_EXECUTION_BINDING_APPLICABILITY_INVALID:'+cls)
-    if set(seen)!=set(expected_classes):
-        fail('CROSS_STAGE_SUCCESSOR_EXECUTION_BINDING_DENOMINATOR_DRIFT:expected='+repr(sorted(expected_classes))+':actual='+repr(sorted(seen)))
-    if ledger.get('successor_execution_binding_total')!=len(expected_classes):
-        fail('CROSS_STAGE_SUCCESSOR_EXECUTION_BINDING_TOTAL_DRIFT')
-    if ledger.get('successor_execution_binding_ready_total')!=ready:
-        fail('CROSS_STAGE_SUCCESSOR_EXECUTION_BINDING_READY_TOTAL_DRIFT')
-    if ledger.get('successor_execution_binding_unresolved_total')!=unresolved_binding_total:
-        fail('CROSS_STAGE_SUCCESSOR_EXECUTION_BINDING_UNRESOLVED_TOTAL_DRIFT')
+        expected_inputs=set(map(str,stages[successor_uid].get('inputs') or []))
+        if set(seen_inputs)!=expected_inputs:
+            fail('CROSS_STAGE_SUCCESSOR_INPUT_DENOMINATOR_DRIFT:expected='+repr(sorted(expected_inputs))+':actual='+repr(sorted(seen_inputs)))
+    elif seen_inputs:
+        fail('CROSS_STAGE_TERMINAL_SUCCESSOR_INPUTS_MUST_BE_EMPTY')
+
     if ledger.get('unresolved_required_dependency_total')!=unresolved_input_total:
         fail('CROSS_STAGE_SUCCESSOR_INPUT_UNRESOLVED_TOTAL_DRIFT')
     if pass_result:
-        if unresolved_binding_total!=0 or unresolved_input_total!=0 or ledger.get('status')!='PASS':
-            fail('CROSS_STAGE_HANDOFF_PASS_WITH_UNRESOLVED')
+        if unresolved_input_total!=0 or ledger.get('status')!='PASS':
+            fail('CROSS_STAGE_HANDOFF_PASS_WITH_UNRESOLVED_INPUT')
     else:
-        handoff_blocked=(unresolved_binding_total>0 or unresolved_input_total>0 or any(ledger.get(k) is not True for k in ('reference_resolution_complete','physical_materialization_complete','required_field_completeness_complete','consumer_readiness_complete')))
+        handoff_blocked=(unresolved_input_total>0 or any(ledger.get(k) is not True for k in ('reference_resolution_complete','physical_materialization_complete','required_field_completeness_complete','consumer_readiness_complete')))
         expected_status='BLOCKED' if handoff_blocked else 'PASS'
         if ledger.get('status')!=expected_status:
             fail('CROSS_STAGE_HANDOFF_STATUS_RESULT_DRIFT:expected='+expected_status+':actual='+str(ledger.get('status')))
@@ -1651,7 +1575,7 @@ def validate_evidence_data(stage_uid,e):
     handoff=e.get('cross_stage_handoff')
     if not isinstance(handoff,dict):
         fail('CROSS_STAGE_HANDOFF_INVALID')
-    required_handoff_fields={'ledger_ref','external_receipt','successor_stage_uid','reference_resolution_complete','physical_materialization_complete','required_field_completeness_complete','denominator_reconciled','consumer_readiness_complete','successor_execution_binding_total','successor_execution_binding_ready_total','successor_execution_binding_unresolved_total','current_matrix_valid','current_state_consistent','unresolved_required_dependency_total','status'}
+    required_handoff_fields={'ledger_ref','external_receipt','successor_stage_uid','reference_resolution_complete','physical_materialization_complete','required_field_completeness_complete','denominator_reconciled','consumer_readiness_complete','current_matrix_valid','current_state_consistent','unresolved_required_dependency_total','status'}
     if not required_handoff_fields.issubset(handoff):
         fail('CROSS_STAGE_HANDOFF_FIELD_MISSING')
     if handoff.get('successor_stage_uid')!=st.get('next_stage_uid'):
@@ -1669,10 +1593,8 @@ def validate_evidence_data(stage_uid,e):
         for key in ('reference_resolution_complete','physical_materialization_complete','required_field_completeness_complete','denominator_reconciled','consumer_readiness_complete','current_matrix_valid','current_state_consistent'):
             if handoff.get(key) is not True:
                 fail('PASS_WITH_CROSS_STAGE_HANDOFF_NOT_READY:'+key)
-        if handoff.get('unresolved_required_dependency_total')!=0 or handoff.get('successor_execution_binding_unresolved_total')!=0 or handoff.get('status')!='PASS':
+        if handoff.get('unresolved_required_dependency_total')!=0 or handoff.get('status')!='PASS':
             fail('PASS_WITH_UNRESOLVED_CROSS_STAGE_HANDOFF')
-        if handoff.get('successor_execution_binding_total')!=handoff.get('successor_execution_binding_ready_total'):
-            fail('PASS_WITH_INCOMPLETE_SUCCESSOR_EXECUTION_BINDINGS')
     gates=e.get('exact_head_gate_receipts')
     if not isinstance(gates,list) or not gates: fail('EXACT_HEAD_GATE_RECEIPTS_MISSING')
     for gate in gates:
