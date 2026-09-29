@@ -100,13 +100,41 @@ def main():
     expected_classes=list(map(str,reqs.get(nxt) or [])) if nxt in stages else list(map(str,policy.get("next_governed_unit_successor_binding_requirements") or []))
     src=root/SOURCE_ROOT/(f"{nxt}.yaml" if nxt in stages else "NEXT_GOVERNED_UNIT_STAGE05_OR_SCOPE_COMPLETE.yaml")
     if not src.is_file():
-        write(out,{"artifact_type":"SUCCESSOR_EXECUTION_BINDING_RESOLUTION","predecessor_stage_uid":a.from_stage,"successor_stage_uid":nxt,"successor_execution_bindings":[],"ready_total":0,"unresolved_total":len(expected_classes),"status":"BLOCKED_EXACT_BINDING_SOURCE_MISSING","required_binding_source_ref":str(src.relative_to(root))})
-        raise SystemExit("BLOCK:SUCCESSOR_EXACT_BINDING_SOURCE_MISSING:"+nxt)
+        write(out,{
+          "artifact_type":"SUCCESSOR_EXECUTION_BINDING_RESOLUTION",
+          "predecessor_stage_uid":a.from_stage,
+          "successor_stage_uid":nxt,
+          "successor_execution_bindings":[],
+          "required_binding_classes":expected_classes,
+          "ready_total":0,
+          "unresolved_total":len(expected_classes),
+          "unresolved_binding_classes":expected_classes,
+          "status":"BLOCKED_EXACT_BINDING_SOURCE_MISSING",
+          "required_binding_source_ref":str(src.relative_to(root)),
+          "failure_class":"SUCCESSOR_EXECUTION_BINDING_MISSING",
+        })
+        raise SystemExit("BLOCK:SUCCESSOR_EXACT_BINDING_SOURCE_MISSING:"+nxt+":"+(",".join(expected_classes) if expected_classes else "NO_CLASS_DENOMINATOR"))
     source=load(src)
     if str(source.get("stage_uid") or source.get("transition_uid") or "")!=nxt or source.get("status")!="CURRENT_EXACT_BINDINGS":
         raise SystemExit("BLOCK:SUCCESSOR_BINDING_SOURCE_NOT_CURRENT:"+nxt)
     exec_rows=source.get("successor_execution_bindings") or {}
-    if set(map(str,exec_rows))!=set(expected_classes): raise SystemExit("BLOCK:SUCCESSOR_EXECUTION_BINDING_SOURCE_DENOMINATOR_DRIFT:"+nxt)
+    if set(map(str,exec_rows))!=set(expected_classes):
+        missing=sorted(set(expected_classes)-set(map(str,exec_rows)))
+        extra=sorted(set(map(str,exec_rows))-set(expected_classes))
+        write(out,{
+          "artifact_type":"SUCCESSOR_EXECUTION_BINDING_RESOLUTION",
+          "predecessor_stage_uid":a.from_stage,
+          "successor_stage_uid":nxt,
+          "required_binding_classes":expected_classes,
+          "ready_total":0,
+          "unresolved_total":len(missing),
+          "unresolved_binding_classes":missing,
+          "unexpected_binding_classes":extra,
+          "status":"BLOCKED_BINDING_DENOMINATOR_DRIFT",
+          "failure_class":"SUCCESSOR_EXECUTION_BINDING_MISSING",
+          "required_binding_source_ref":str(src.relative_to(root)),
+        })
+        raise SystemExit("BLOCK:SUCCESSOR_EXECUTION_BINDING_SOURCE_DENOMINATOR_DRIFT:"+nxt)
     resolved=[]
     for cls in expected_classes:
         row=render(exec_rows.get(cls) or {},mapping); app=str(row.get("applicability") or ""); rs=str(row.get("resolution_status") or "")
