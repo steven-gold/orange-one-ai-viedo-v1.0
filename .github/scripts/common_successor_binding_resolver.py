@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 from __future__ import annotations
-import argparse, hashlib, re
+import argparse, hashlib, re, subprocess
 from pathlib import Path
 import yaml
 
@@ -8,6 +8,7 @@ LIFECYCLE=".github/governance-source/active/source/10_REGISTRY/GOVERNANCE_LIFECY
 INVARIANTS=".github/governance-source/active/source/10_REGISTRY/STAGE_EXECUTION_INVARIANT_REGISTRY.yaml"
 SOURCE_ROOT="STAGE_EXECUTION/SHARED_AUTHORITY/CURRENT_STAGE_FLOW/EXACT_OPERATION_BINDING_SOURCES"
 AUTH_REF="STAGE_EXECUTION/SHARED_AUTHORITY/CURRENT_STAGE_FLOW/FULL_STAGE_LIFECYCLE_AUTHORIZATION_CONTRACT.yaml"
+PRODUCT_AUTH="STAGE_EXECUTION/SHARED_AUTHORITY/PRODUCT_IMPLEMENTATION_AUTHORITY.yaml"
 
 def load(p):
     p=Path(p)
@@ -21,6 +22,18 @@ def write(p,o):
     p.write_text(yaml.safe_dump(o,sort_keys=False,allow_unicode=True),encoding="utf-8")
 
 def sha(p): return hashlib.sha256(Path(p).read_bytes()).hexdigest()
+def git(root,*args):
+    cp=subprocess.run(["git","-C",str(root),*args],text=True,capture_output=True)
+    if cp.returncode!=0: raise SystemExit("BLOCK:GIT:"+cp.stderr.strip())
+    return cp.stdout.strip()
+def tracked(root,rel):
+    rel=str(rel or "").strip()
+    if rel in {"",".","./"}:
+        return bool(git(root,"ls-files").strip())
+    p=root/rel
+    if not p.exists(): return False
+    cp=subprocess.run(["git","-C",str(root),"ls-files","--",rel],text=True,capture_output=True)
+    return cp.returncode==0 and bool(cp.stdout.strip())
 
 def successor_uid(predecessor_uid, successor_stage):
     m=re.fullmatch(r"WU-STAGE\d{2}-(.+)",str(predecessor_uid or ""))
@@ -160,6 +173,60 @@ def main():
             ref=str(p.relative_to(root))
             row.update({"applicability":"REQUIRED","resolution_status":"BOUND","target_ref":ref,"authority_evidence_ref":ref})
             app="REQUIRED"; rs="BOUND"
+        elif rs=="RESOLVE_FROM_PRODUCT_IMPLEMENTATION_AUTHORITY":
+            auth_path=root/PRODUCT_AUTH
+            auth=load(auth_path)
+            if auth.get("status")!="CURRENT_STAGE05_AUTHORITY":
+                raise SystemExit("BLOCK:PRODUCT_IMPLEMENTATION_AUTHORITY_NOT_CURRENT")
+            source=(auth.get("toolchain_authority") or {}).get(cls)
+            if source is None: source=(auth.get("execution_target_authority") or {}).get(cls)
+            if not isinstance(source,dict):
+                raise SystemExit("BLOCK:PRODUCT_IMPLEMENTATION_AUTHORITY_CLASS_MISSING:"+cls)
+            status=str(source.get("status") or "")
+            authority_ref=PRODUCT_AUTH+"#"+cls
+            if status=="AUTHORIZED_NOT_APPLICABLE":
+                row.update({"applicability":"AUTHORIZED_NOT_APPLICABLE","resolution_status":"AUTHORIZED_NOT_APPLICABLE","authority_evidence_ref":authority_ref,"target_identity":str(source.get("authority_value") or "NOT_APPLICABLE")})
+                app="AUTHORIZED_NOT_APPLICABLE"; rs="AUTHORIZED_NOT_APPLICABLE"
+            elif status in {"RESOLVED","RESOLVED_BY_AUTHORIZED_TEMPLATE"}:
+                kind=str(source.get("resolution_kind") or "")
+                if kind not in {"CURRENT_REPOSITORY","CURRENT_REPOSITORY_PATH","AUTHORITY_VALUE"}:
+                    raise SystemExit("BLOCK:PRODUCT_IMPLEMENTATION_AUTHORITY_RESOLUTION_KIND_INVALID:"+cls+":"+kind)
+                if kind=="CURRENT_REPOSITORY":
+                    identity=str(source.get("target_identity") or "")
+                    if identity!=str(auth.get("product_repository") or ""):
+                        raise SystemExit("BLOCK:PRODUCT_REPOSITORY_TARGET_DRIFT:"+cls)
+                elif kind=="CURRENT_REPOSITORY_PATH":
+                    identity=str(source.get("target_path") or "")
+                    p=(root/identity).resolve()
+                    try: p.relative_to(root)
+                    except ValueError: raise SystemExit("BLOCK:PRODUCT_RUNTIME_TARGET_ESCAPES_ROOT:"+cls)
+                    if not p.exists() or not tracked(root,identity):
+                        raise SystemExit("BLOCK:PRODUCT_RUNTIME_TARGET_NOT_CURRENT_TRACKED:"+cls+":"+identity)
+                else:
+                    identity=str(source.get("authority_value") or "")
+                    if not identity and source.get("authority_value_template"):
+                        identity=render(str(source.get("authority_value_template")),mapping)
+                    if not identity: raise SystemExit("BLOCK:PRODUCT_AUTHORITY_VALUE_EMPTY:"+cls)
+                head=git(root,"rev-parse","HEAD"); tree=git(root,"rev-parse","HEAD^{tree}")
+                receipt_rel=f"STAGE_EXECUTION/{a.from_stage}/{wd.name}/EVIDENCE/SUCCESSOR_TARGET_RESOLUTION/{nxt}/{cls}.yaml"
+                receipt={
+                  "artifact_type":"EXECUTION_TARGET_RESOLUTION_RECEIPT","binding_uid":f"{nxt}::{cls}","consuming_operation_uid":str(row.get("consuming_operation_uid") or cls),
+                  "binding_class":cls,"target_identity":identity,"canonical_owner_or_authority_ref":authority_ref,"authority_evidence_ref":authority_ref,
+                  "work_unit_uid":str(work.get("work_unit_uid") or ""),"successor_stage_uid":nxt,"resolution_kind":kind,"resolution_status":"RESOLVED_CURRENT",
+                  "current_execution_repository":str(auth.get("product_repository") or ""),"current_execution_branch":str(auth.get("current_execution_branch") or ""),
+                  "current_execution_head_sha":head,"current_execution_tree_sha":tree,"current_context_match":True,"status":"PASS"
+                }
+                if kind=="CURRENT_REPOSITORY":
+                    receipt.update({"repository_identity":identity,"branch_ref_head_sha":head})
+                elif kind=="CURRENT_REPOSITORY_PATH":
+                    receipt.update({"target_path":identity,"target_path_exists":True,"target_path_tracked_at_head":True})
+                else:
+                    receipt.update({"authority_value":identity,"authority_current_identity_match":True})
+                write(root/receipt_rel,receipt)
+                row.update({"applicability":"REQUIRED","resolution_status":"BOUND","target_identity":identity,"authority_evidence_ref":authority_ref,"target_resolution_ref":receipt_rel,"target_resolution_kind":kind})
+                app="REQUIRED"; rs="BOUND"
+            else:
+                raise SystemExit("BLOCK:PRODUCT_IMPLEMENTATION_AUTHORITY_CLASS_UNRESOLVED:"+cls+":"+status)
         if app=="REQUIRED" and rs!="BOUND": raise SystemExit("BLOCK:SUCCESSOR_REQUIRED_BINDING_UNRESOLVED:"+nxt+":"+cls)
         if app=="AUTHORIZED_NOT_APPLICABLE" and (rs!="AUTHORIZED_NOT_APPLICABLE" or not row.get("authority_evidence_ref")): raise SystemExit("BLOCK:SUCCESSOR_NA_BINDING_EVIDENCE_INVALID:"+nxt+":"+cls)
         if app not in {"REQUIRED","AUTHORIZED_NOT_APPLICABLE"}: raise SystemExit("BLOCK:SUCCESSOR_BINDING_APPLICABILITY_INVALID:"+nxt+":"+cls)
@@ -177,11 +244,19 @@ def main():
     if set(map(str,source_ops))!=set(ops): raise SystemExit("BLOCK:SUCCESSOR_OPERATION_BINDING_SOURCE_COVERAGE_DRIFT:"+nxt)
     manifest_ops={}
     for op in ops:
-        b=render(source_ops.get(op) or {},mapping); owner=str(b.get("executor_owner") or "")
-        if not owner or not (root/owner).is_file(): raise SystemExit("BLOCK:SUCCESSOR_EXECUTOR_OWNER_NOT_PHYSICAL:"+nxt+":"+op+":"+owner)
+        b=render(source_ops.get(op) or {},mapping); app=str(b.get("applicability") or "REQUIRED")
         result_owner=str(b.get("result_owner") or "")
         if not result_owner: raise SystemExit("BLOCK:SUCCESSOR_RESULT_OWNER_MISSING:"+nxt+":"+op)
-        manifest_ops[op]={"applicability":str(b.get("applicability") or "REQUIRED"),"executor_owner":owner,"executor_protocol":str(b.get("executor_protocol") or "PYTHON_STAGE_OPERATION_V1"),"result_owner":result_owner,"operation_receipt_ref":f"STAGE_EXECUTION/{nxt}/{suid}/EVIDENCE/OPERATION_RECEIPTS/{op}.yaml"}
+        receipt_ref=f"STAGE_EXECUTION/{nxt}/{suid}/EVIDENCE/OPERATION_RECEIPTS/{op}.yaml"
+        if app=="AUTHORIZED_NOT_APPLICABLE":
+            authority_ref=str(b.get("authority_evidence_ref") or "")
+            if not authority_ref: raise SystemExit("BLOCK:SUCCESSOR_OPERATION_NA_AUTHORITY_MISSING:"+nxt+":"+op)
+            manifest_ops[op]={"applicability":app,"result_owner":result_owner,"authority_evidence_ref":authority_ref,"operation_receipt_ref":receipt_ref}
+            continue
+        if app!="REQUIRED": raise SystemExit("BLOCK:SUCCESSOR_OPERATION_APPLICABILITY_INVALID:"+nxt+":"+op+":"+app)
+        owner=str(b.get("executor_owner") or "")
+        if not owner or not (root/owner).is_file(): raise SystemExit("BLOCK:SUCCESSOR_EXECUTOR_OWNER_NOT_PHYSICAL:"+nxt+":"+op+":"+owner)
+        manifest_ops[op]={"applicability":"REQUIRED","executor_owner":owner,"executor_protocol":str(b.get("executor_protocol") or "PYTHON_STAGE_OPERATION_V1"),"result_owner":result_owner,"operation_receipt_ref":receipt_ref}
 
     scanner_owner=str(source.get("scanner_owner") or ""); scanner_protocol=str(source.get("scanner_protocol") or "")
     if not scanner_owner or not (root/scanner_owner).is_file(): raise SystemExit("BLOCK:SUCCESSOR_SCANNER_OWNER_UNRESOLVED:"+nxt)
