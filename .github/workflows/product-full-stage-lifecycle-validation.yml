@@ -143,7 +143,15 @@ jobs:
                   expected=set(map(str,reqs.get(stage) or []))
                   actual=set(map(str,(row.get('successor_execution_bindings') or {}).keys()))
                   assert actual==expected, 'BLOCK:SUCCESSOR_BINDING_SOURCE_DENOMINATOR_DRIFT:'+stage+':expected='+repr(sorted(expected))+':actual='+repr(sorted(actual))
-          print('PASS: exact binding sources match Mother successor-binding denominator')
+          tail=root/'NEXT_GOVERNED_UNIT_STAGE05_OR_SCOPE_COMPLETE.yaml'
+          assert tail.is_file(), 'BLOCK:NEXT_GOVERNED_UNIT_TAIL_BINDING_SOURCE_MISSING'
+          tail_row=yaml.safe_load(tail.read_text(encoding='utf-8')) or {}
+          assert tail_row.get('status')=='CURRENT_EXACT_BINDINGS', 'BLOCK:NEXT_GOVERNED_UNIT_TAIL_BINDING_SOURCE_NOT_CURRENT'
+          assert tail_row.get('transition_uid')=='NEXT_GOVERNED_UNIT_STAGE05_OR_SCOPE_COMPLETE', 'BLOCK:NEXT_GOVERNED_UNIT_TAIL_IDENTITY_DRIFT'
+          expected_tail=set(map(str,policy.get('next_governed_unit_successor_binding_requirements') or []))
+          actual_tail=set(map(str,(tail_row.get('successor_execution_bindings') or {}).keys()))
+          assert actual_tail==expected_tail, 'BLOCK:NEXT_GOVERNED_UNIT_TAIL_DENOMINATOR_DRIFT:expected='+repr(sorted(expected_tail))+':actual='+repr(sorted(actual_tail))
+          print('PASS: exact binding sources and lifecycle tail match Mother successor-binding denominator')
           PY
 
       - name: Report future-stage runtime readiness without gating
