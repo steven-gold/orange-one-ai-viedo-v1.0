@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 from __future__ import annotations
-import argparse
+import argparse, subprocess, sys
 from pathlib import Path
 import yaml
 
@@ -60,6 +60,20 @@ def main():
     if a.successor_stage not in stages or a.successor_stage=="STAGE-01":
         raise SystemExit("BLOCK:SUCCESSOR_BUILDER_INVALID_SUCCESSOR_STAGE")
     pred_wp=safe(root,a.predecessor_work_unit,"PREDECESSOR_WORK_UNIT"); pred=load(pred_wp)
+    predecessor_stage=str(pred.get("stage_uid") or "")
+    if predecessor_stage not in stages:
+        raise SystemExit("BLOCK:SUCCESSOR_BUILDER_PREDECESSOR_STAGE_UNREGISTERED")
+    expected_successor=str(stages[predecessor_stage].get("next_stage_uid") or "")
+    if expected_successor!=a.successor_stage:
+        raise SystemExit("BLOCK:SUCCESSOR_BUILDER_TRANSITION_DRIFT:"+predecessor_stage+"->"+str(a.successor_stage))
+    subprocess.check_call([
+        sys.executable,".github/scripts/stage_lifecycle_gate.py",
+        "--mode","assert-transition",
+        "--from-stage",predecessor_stage,
+        "--to-stage",a.successor_stage,
+        "--product-root",str(root),
+        "--governance-root",str(gov)
+    ],cwd=root)
     receipt=pred_wp.parent/"WORK_UNIT_TERMINAL_RECEIPT.yaml"
     if not receipt.is_file(): raise SystemExit("BLOCK:SUCCESSOR_BUILDER_PREDECESSOR_TERMINAL_RECEIPT_MISSING")
     terminal=load(receipt)
