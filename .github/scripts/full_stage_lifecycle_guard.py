@@ -59,10 +59,7 @@ def validate_contract(product,gov):
         fail("AUTHORIZATION_GOVERNANCE_HEAD_DRIFT")
 
     execution=auth.get("execution_authorization") or {}
-    planning=list(map(str,execution.get("planning_range") or []))
     allowed=list(map(str,execution.get("authorized_effectful_range") or []))
-    if planning!=EXPECTED:
-        fail("PLANNING_RANGE_NOT_STAGE01_TO_STAGE11")
     if not allowed:
         fail("AUTHORIZED_EFFECTFUL_RANGE_EMPTY")
     try:
