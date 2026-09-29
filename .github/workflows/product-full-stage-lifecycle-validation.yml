@@ -116,6 +116,16 @@ jobs:
           present=sorted(forbidden & set(d))
           assert not present, 'BLOCK:AUTHORIZATION_DUPLICATES_MOTHER_SPEC:'+','.join(present)
           print('PASS: authorization contract contains execution range only')
+
+          root=Path('STAGE_EXECUTION/SHARED_AUTHORITY/CURRENT_STAGE_FLOW/EXACT_OPERATION_BINDING_SOURCES')
+          for src in sorted(root.glob('STAGE-*.yaml')):
+              row=yaml.safe_load(src.read_text(encoding='utf-8')) or {}
+              if row.get('status')=='CURRENT_EXACT_BINDINGS':
+                  ops=row.get('operation_bindings') or {}
+                  scanner=str(row.get('scanner_owner') or '')
+                  vals=row.get('validator_bindings') or {}
+                  assert ops and scanner and vals, 'BLOCK:EXACT_BINDING_SOURCE_CLAIMS_READY_WITHOUT_OPERATIONS:'+src.name
+          print('PASS: no fake exact-binding source claims runtime readiness')
           PY
 
       - name: Prove execution and validation responsibilities are separated
