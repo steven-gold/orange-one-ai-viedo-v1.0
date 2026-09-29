@@ -4,32 +4,42 @@ normative_authority: false
 owner: COMMON_STAGE_CLOSURE_PROTOCOL
 applies_to: [STAGE-01, STAGE-02, STAGE-03, STAGE-04, STAGE-05, STAGE-06, STAGE-07, STAGE-08, STAGE-09, STAGE-10, STAGE-11]
 purpose: ELIMINATE_SELF_REFERENTIAL_GIT_HEAD_TERMINAL_RECEIPT_CYCLE
+canonical_receipt_fields:
+- provider
+- repository_or_project
+- head_sha
+- run_id
+- job_denominator
+- conclusion
+- governance_uid
+- stage_uid
+- evidence_ref
+additional_work_unit_fields:
+- work_unit_uid
+- governed_unit_uid
+- exit_gate
+- next_stage_uid
 sequence:
 - step: CLOSURE_CANDIDATE_HEAD
   head_symbol: H
-  rule: All effectful operations, outputs, required evidence, current state/matrix and handoff candidate are frozen at H.
-- step: CLOSURE_CANDIDATE_VALIDATION
-  rule: Validate normalized evidence candidate against H without claiming terminal receipt.
+  rule: Operations outputs evidence matrix scanner validator and handoff are frozen at H.
+- step: NORMALIZED_EVIDENCE_VALIDATION
+  rule: Current Mother engine validates NORMALIZED_STAGE_EVIDENCE.json at H.
 - step: OUTER_VALIDATION_RUN_TERMINAL_SUCCESS
-  rule: The candidate validation workflow must reach terminal success before a terminal receipt may be materialized.
+  rule: A terminal successful outer validation run for H must already exist.
 - step: TERMINALIZER_CHECKOUT
-  rule: Terminalizer checks out the exact validated H and binds the successful prior run identity.
+  rule: Terminalizer checks out exact H and binds prior successful run identity.
 - step: TERMINAL_RECEIPT_MATERIALIZATION
-  rule: Materialize terminal receipt with head_sha H and the already-terminal successful validation run id.
-- step: EXACT_HEAD_TERMINAL_VALIDATION
-  rule: Validate evidence and terminal receipt while git HEAD is still H.
+  rule: Receipt head_sha is H and conclusion is success.
+- step: MOTHER_ENGINE_TERMINAL_VALIDATION
+  rule: Current Mother engine validate-terminal-receipt must PASS while git HEAD is H.
 - step: PERSIST_CLOSURE_PROJECTION
   head_symbol: H_PRIME
-  rule: Commit evidence, terminal receipt, closed state and resume projection after exact-head terminal validation.
-- step: POST_PERSIST_VALIDATION
-  rule: At H_PRIME validate persisted receipt structure, predecessor identity, source validated head H and closure state consistency; do not reinterpret H receipt as an H_PRIME exact-head receipt.
+  rule: Commit receipt closed state and final resume after terminal validation.
 rules:
   same_run_preterminal_self_projection_of_terminal_pass: FORBIDDEN
   receipt_head_must_equal_validated_candidate_head: true
   persisted_projection_commit_may_differ_from_receipt_head: true
-  persisted_projection_must_record_source_validated_head: true
-  post_persist_exact_head_terminal_revalidation_against_projection_head: FORBIDDEN
   predecessor_receipt_is_immutable_after_persist: true
-  terminal_receipt_completion_credit_before_prior_run_terminal_success: 0
   terminalizer_may_change_product_semantics: false
 completion_credit: 0

@@ -100,7 +100,7 @@ jobs:
         print('PASS: Stage04 entry gate resolved by Stage03 terminal closure')
         print('PASS: Stage04 input denominator cleared gap=0 blocker=0')
         print('PASS: Stage04 ready-state structure valid')
-        ev=b/'EVIDENCE/STAGE04_NORMALIZED_EVIDENCE.json'
+        ev=b/'EVIDENCE/NORMALIZED_STAGE_EVIDENCE.json'
         if ev.is_file():
           e=json.loads(ev.read_text())
           items=[x for x in (e.get('required_evidence') or []) if isinstance(x,dict)]
@@ -140,7 +140,7 @@ jobs:
         STAGE_CURRENT_SCOPE: STAGE_EXECUTION/STAGE-04/${{ matrix.wu }}/CURRENT_EXECUTION_SCOPE_MANIFEST.yaml
         WU: ${{ matrix.wu }}
       run: |
-        EVIDENCE_PATH="STAGE_EXECUTION/STAGE-04/$WU/EVIDENCE/STAGE04_NORMALIZED_EVIDENCE.json"
+        EVIDENCE_PATH="STAGE_EXECUTION/STAGE-04/$WU/EVIDENCE/NORMALIZED_STAGE_EVIDENCE.json"
         if [ -f "$EVIDENCE_PATH" ]; then
           python governance/ci/stage_execution_engine.py --validate-evidence --stage STAGE-04 --evidence "$EVIDENCE_PATH"
         else

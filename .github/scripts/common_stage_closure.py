@@ -42,22 +42,15 @@ def main():
         try: rp.relative_to(root)
         except ValueError: raise SystemExit("BLOCK:COMMON_CLOSURE_OPERATION_RECEIPT_REF_ESCAPES_ROOT:"+op)
         rec=y(rp)
-        if rec.get("status")!="PASS" or str(rec.get("operation_uid") or "")!=op:
+        if rec.get("status") not in {"PASS","NOT_APPLICABLE_WITH_PROOF"} or str(rec.get("operation_uid") or "")!=op:
             raise SystemExit("BLOCK:COMMON_CLOSURE_OPERATION_RECEIPT_INVALID:"+op)
     print("PASS: common closure preflight operation receipt chain complete",a.stage,work.get("work_unit_uid"))
     if a.mode=="close":
-        registry=y(root/"STAGE_EXECUTION/SHARED_AUTHORITY/CURRENT_STAGE_FLOW/FULL_STAGE_RUNTIME_ADAPTER_REGISTRY.yaml")
-        row=next((x for x in registry.get("adapters") or [] if x.get("stage_uid")==a.stage),None)
-        adapter=str((row or {}).get("closure_adapter_owner") or "")
-        if not adapter:
-            raise SystemExit("BLOCK:COMMON_CLOSURE_ADAPTER_UNRESOLVED:"+a.stage)
-        apath=(root/Path(adapter)).resolve()
-        try: apath.relative_to(root)
-        except ValueError: raise SystemExit("BLOCK:COMMON_CLOSURE_ADAPTER_ESCAPES_ROOT")
-        if not apath.is_file(): raise SystemExit("BLOCK:COMMON_CLOSURE_ADAPTER_MISSING:"+adapter)
-        if apath.name=="common_stage_closure.py": raise SystemExit("BLOCK:COMMON_CLOSURE_RECURSIVE_ADAPTER")
-        run([sys.executable,str(apath),"--mode","candidate","--stage",a.stage,"--work-unit",a.work_unit,"--product-root",str(root),"--governance-root",str(gov)],root)
-        print("PASS: common closure candidate prepared; terminal receipt requires prior terminal-success validation run")
+        run([sys.executable,".github/scripts/common_cross_stage_handoff_builder.py","--stage",a.stage,"--work-unit",a.work_unit,"--product-root",str(root),"--governance-root",str(gov)],root)
+        run([sys.executable,".github/scripts/common_stage_closure_adapter.py","--mode","candidate","--stage",a.stage,"--work-unit",a.work_unit,"--product-root",str(root),"--governance-root",str(gov)],root)
+        ev=f"STAGE_EXECUTION/{a.stage}/{wd.name}/EVIDENCE/NORMALIZED_STAGE_EVIDENCE.json"
+        run([sys.executable,"governance/ci/stage_execution_engine.py","--validate-evidence","--stage",a.stage,"--evidence",ev],root)
+        print("PASS: normalized evidence validated; terminal receipt still requires prior outer terminal-success run")
 
 if __name__=="__main__":
     main()

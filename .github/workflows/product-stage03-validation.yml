@@ -308,7 +308,7 @@ jobs:
         STAGE_CURRENT_SCOPE: STAGE_EXECUTION/STAGE-03/${{ matrix.wu }}/CURRENT_EXECUTION_SCOPE_MANIFEST.yaml
         WU: ${{ matrix.wu }}
       run: |
-        EVIDENCE_PATH="STAGE_EXECUTION/STAGE-03/$WU/EVIDENCE/STAGE03_NORMALIZED_EVIDENCE.json"
+        EVIDENCE_PATH="STAGE_EXECUTION/STAGE-03/$WU/EVIDENCE/NORMALIZED_STAGE_EVIDENCE.json"
         if [ -f "$EVIDENCE_PATH" ]; then
           python governance/ci/stage_execution_engine.py --validate-evidence --stage STAGE-03 --evidence "$EVIDENCE_PATH"
         else

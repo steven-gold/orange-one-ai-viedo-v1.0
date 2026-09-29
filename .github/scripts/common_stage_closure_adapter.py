@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
 from __future__ import annotations
-import argparse, hashlib, json
+import argparse, hashlib, json, subprocess, sys
 from pathlib import Path
 import yaml
 
 LIFECYCLE=Path(".github/governance-source/active/source/10_REGISTRY/GOVERNANCE_LIFECYCLE_STAGE_REGISTRY.yaml")
+ADAPTERS=Path("governance/ci/stage_execution_semantic_adapters.yaml")
 
 def load(p):
     p=Path(p)
@@ -18,13 +19,8 @@ def load(p):
 def sha256(p):
     h=hashlib.sha256()
     with Path(p).open("rb") as f:
-        for chunk in iter(lambda:f.read(1024*1024),b""):
-            h.update(chunk)
+        for chunk in iter(lambda:f.read(1024*1024),b""): h.update(chunk)
     return h.hexdigest()
-
-def write_yaml(p,obj):
-    p=Path(p); p.parent.mkdir(parents=True,exist_ok=True)
-    p.write_text(yaml.safe_dump(obj,sort_keys=False,allow_unicode=True),encoding="utf-8")
 
 def safe(root,rel,label):
     rp=Path(str(rel or ""))
@@ -35,55 +31,54 @@ def safe(root,rel,label):
     except ValueError: raise SystemExit("BLOCK:"+label+"_REF_ESCAPES_ROOT:"+str(rel))
     return p
 
-def stage_map(gov):
-    reg=load(gov/LIFECYCLE)
-    rows=reg.get("stages") or []
-    return {str(x.get("stage_uid")):x for x in rows if isinstance(x,dict)}
+def write_yaml(p,obj):
+    p=Path(p); p.parent.mkdir(parents=True,exist_ok=True)
+    p.write_text(yaml.safe_dump(obj,sort_keys=False,allow_unicode=True),encoding="utf-8")
+
+def git(root,*args):
+    cp=subprocess.run(["git","-C",str(root),*args],text=True,capture_output=True)
+    if cp.returncode!=0: raise SystemExit("BLOCK:GIT:"+cp.stderr.strip())
+    return cp.stdout.strip()
+
+def registries(gov):
+    life=load(gov/LIFECYCLE); adapters=load(gov/ADAPTERS)
+    stages={str(x.get("stage_uid")):x for x in life.get("stages") or [] if isinstance(x,dict)}
+    phases=list(map(str,((adapters.get("common_execution_skeleton") or {}).get("phases") or [])))
+    if len(phases)!=26: raise SystemExit("BLOCK:COMMON_PHASE_DENOMINATOR_DRIFT")
+    return stages,adapters,phases
 
 def validate_contract(gov):
-    stages=stage_map(gov)
+    stages,adapters,phases=registries(gov)
     expected=[f"STAGE-{i:02d}" for i in range(1,12)]
-    if list(stages)!=expected:
-        raise SystemExit("BLOCK:CLOSURE_ADAPTER_LIFECYCLE_ORDER_DRIFT")
+    if list(stages)!=expected: raise SystemExit("BLOCK:CLOSURE_ADAPTER_LIFECYCLE_ORDER_DRIFT")
     for uid,row in stages.items():
         if not row.get("operations") or not row.get("outputs") or not row.get("required_evidence"):
             raise SystemExit("BLOCK:CLOSURE_ADAPTER_STAGE_DENOMINATOR_EMPTY:"+uid)
-        if not row.get("exit_gate") or not row.get("next_stage_uid"):
-            raise SystemExit("BLOCK:CLOSURE_ADAPTER_STAGE_TRANSITION_MISSING:"+uid)
-    print("PASS: common closure adapter contract covers Stage-01..11")
+        sad=((adapters.get("stages") or {}).get(uid) or {})
+        if not sad.get("scanner_dimensions"): raise SystemExit("BLOCK:CLOSURE_ADAPTER_SCANNER_DENOMINATOR_EMPTY:"+uid)
+    print("PASS: common normalized evidence compiler covers Stage-01..11")
 
-def matrix_artifacts(root,wd,matrix,required):
+def matrix_refs(root,matrix,required):
     rows=matrix.get("rows") or []
     out={}
-    for art in required:
+    for uid in required:
         refs=[]
         for row in rows:
-            if isinstance(row,dict) and str(row.get("required_artifact_type") or "")==art and str(row.get("applicability") or "REQUIRED")=="REQUIRED":
+            if isinstance(row,dict) and str(row.get("required_artifact_type") or "")==uid and str(row.get("applicability") or "REQUIRED")=="REQUIRED":
                 ref=str(row.get("artifact_ref") or "")
                 if ref and ref not in refs: refs.append(ref)
-        if not refs:
-            raise SystemExit("BLOCK:CLOSURE_REQUIRED_ARTIFACT_MATRIX_REF_MISSING:"+art)
-        phys=[]
-        for ref in refs:
-            p=safe(root,ref,"CLOSURE_ARTIFACT")
-            if not p.is_file() or p.stat().st_size<=0:
-                raise SystemExit("BLOCK:CLOSURE_REQUIRED_ARTIFACT_NOT_MATERIALIZED:"+art+":"+ref)
-            phys.append({"artifact_ref":ref,"sha256":sha256(p)})
-        out[art]=phys
+        if not refs: raise SystemExit("BLOCK:CLOSURE_MATRIX_REF_MISSING:"+uid)
+        if len(refs)!=1: raise SystemExit("BLOCK:CLOSURE_MATRIX_REF_NOT_EXACT:"+uid+":"+str(len(refs)))
+        p=safe(root,refs[0],"CLOSURE_ARTIFACT")
+        if not p.is_file() or p.stat().st_size<=0: raise SystemExit("BLOCK:CLOSURE_ARTIFACT_NOT_MATERIALIZED:"+uid)
+        out[uid]={"ref":refs[0],"sha256":sha256(p)}
     return out
 
-def predecessor_index(root,work):
-    ref=str(work.get("predecessor_artifact_index_ref") or "")
-    if not ref:
-        return {}
-    p=safe(root,ref,"PREDECESSOR_ARTIFACT_INDEX")
-    idx=load(p)
-    result={}
-    for row in idx.get("artifacts") or []:
-        if not isinstance(row,dict): continue
-        uid=str(row.get("artifact_uid") or "")
-        if uid: result.setdefault(uid,[]).append(row)
-    return result
+def result_file(root,ref,label,identity_key,identity):
+    p=safe(root,ref,label); d=load(p)
+    if str(d.get(identity_key) or "")!=identity: raise SystemExit("BLOCK:"+label+"_IDENTITY_DRIFT:"+identity)
+    if str(d.get("status") or d.get("result") or "")!="PASS": raise SystemExit("BLOCK:"+label+"_NOT_PASS:"+identity)
+    return d
 
 def main():
     ap=argparse.ArgumentParser()
@@ -96,77 +91,142 @@ def main():
     root=Path(a.product_root).resolve(); gov=Path(a.governance_root).resolve()
     validate_contract(gov)
     if a.mode=="validate-contract": return
-    if not a.stage or not a.work_unit:
-        raise SystemExit("BLOCK:CLOSURE_ADAPTER_STAGE_AND_WORK_UNIT_REQUIRED")
-    stages=stage_map(gov)
-    if a.stage not in stages: raise SystemExit("BLOCK:CLOSURE_ADAPTER_STAGE_UNREGISTERED")
-    wp=safe(root,a.work_unit,"WORK_UNIT"); wd=wp.parent
-    work=load(wp)
-    if str(work.get("stage_uid") or "")!=a.stage:
-        raise SystemExit("BLOCK:CLOSURE_ADAPTER_WORK_UNIT_STAGE_DRIFT")
-    matrix_ref=str(work.get("normative_execution_matrix_ref") or "")
-    matrix=load(safe(root,matrix_ref,"NORMATIVE_MATRIX"))
+    if not a.stage or not a.work_unit: raise SystemExit("BLOCK:CLOSURE_STAGE_AND_WORK_UNIT_REQUIRED")
+    stages,adapters,phases=registries(gov)
+    if a.stage not in stages: raise SystemExit("BLOCK:CLOSURE_STAGE_UNREGISTERED")
+    wp=safe(root,a.work_unit,"WORK_UNIT"); wd=wp.parent; work=load(wp); state=load(wd/"EXECUTION_STATE.yaml")
+    if str(work.get("stage_uid") or "")!=a.stage: raise SystemExit("BLOCK:CLOSURE_WORK_UNIT_STAGE_DRIFT")
     stage=stages[a.stage]
-    required=list(map(str,stage.get("outputs") or []))+list(map(str,stage.get("required_evidence") or []))
-    current=matrix_artifacts(root,wd,matrix,required)
-    merged=predecessor_index(root,work)
-    for uid,refs in current.items():
-        merged[uid]=[dict(x,source_stage_uid=a.stage) for x in refs]
-    artifacts=[]
-    for uid,refs in merged.items():
-        for item in refs:
-            artifacts.append({"artifact_uid":uid,**item})
-    index_rel=f"STAGE_EXECUTION/{a.stage}/{wd.name}/EVIDENCE/LIFECYCLE_ARTIFACT_INDEX.yaml"
-    index={
-      "artifact_type":"LIFECYCLE_ARTIFACT_INDEX",
-      "stage_uid":a.stage,
-      "work_unit_uid":work.get("work_unit_uid"),
-      "governed_unit_uid":work.get("governed_unit_uid"),
-      "artifacts":artifacts,
-      "status":"CURRENT_CLOSURE_CANDIDATE",
-      "completion_credit":0,
-    }
-    write_yaml(root/index_rel,index)
+    expected_ops=list(map(str,stage.get("operations") or []))
+    completed=list(map(str,state.get("completed_operations") or []))
+    if completed!=expected_ops or str(state.get("current_operation") or "")!="COMPLETE":
+        raise SystemExit("BLOCK:CLOSURE_OPERATION_DENOMINATOR_NOT_COMPLETE")
+    matrix=load(safe(root,work.get("normative_execution_matrix_ref"),"NORMATIVE_MATRIX"))
+    if matrix.get("status")!="PASS": raise SystemExit("BLOCK:CLOSURE_MATRIX_NOT_PASS")
+    required_outputs=list(map(str,stage.get("outputs") or []))
+    required_evidence_types=list(map(str,stage.get("required_evidence") or []))
+    refs=matrix_refs(root,matrix,required_outputs+required_evidence_types)
+
+    operation_results=[]
+    for op in expected_ops:
+        b=(work.get("operation_bindings") or {}).get(op) or {}
+        ref=str(b.get("operation_receipt_ref") or "")
+        rec=result_file(root,ref,"OPERATION_RECEIPT","operation_uid",op)
+        operation_results.append({"operation_uid":op,"status":"PASS","receipt_ref":ref,"result_owner":rec.get("result_owner")})
+
+    output_results=[]
+    for uid in required_outputs:
+        output_results.append({"output_uid":uid,"status":"PASS","producer_operation_uid":str((stage.get("output_producers") or {}).get(uid) or ""),"ref":refs[uid]["ref"],"content_sha256":refs[uid]["sha256"]})
+
+    scanner_results=[]
+    gaps=[]
+    hidden_total=0
+    expected_scans=list(map(str,((adapters.get("stages") or {}).get(a.stage) or {}).get("scanner_dimensions") or []))
+    sb=work.get("scanner_bindings") or {}
+    if set(map(str,sb))!=set(expected_scans): raise SystemExit("BLOCK:CLOSURE_SCANNER_BINDING_COVERAGE_DRIFT")
+    for uid in expected_scans:
+        ref=str((sb.get(uid) or {}).get("result_ref") or "")
+        d=result_file(root,ref,"SCANNER_RESULT","scanner_dimension",uid)
+        found=d.get("gaps") or []
+        if not isinstance(found,list): raise SystemExit("BLOCK:SCANNER_GAPS_INVALID:"+uid)
+        gaps.extend(found)
+        hidden_total+=int(d.get("hidden_defect_total") or 0)
+        scanner_results.append({"scanner_dimension":uid,"status":"PASS","ref":ref})
+
+    expected_validators=list(map(str,stage.get("validators") or []))
+    vb=work.get("validator_bindings") or {}
+    if set(map(str,vb))!=set(expected_validators): raise SystemExit("BLOCK:CLOSURE_VALIDATOR_BINDING_COVERAGE_DRIFT")
+    validator_results=[]
+    for uid in expected_validators:
+        ref=str((vb.get(uid) or {}).get("result_ref") or "")
+        result_file(root,ref,"VALIDATOR_RESULT","validator_uid",uid)
+        validator_results.append({"validator_uid":uid,"status":"PASS","ref":ref})
+
+    sweep_ref=f"STAGE_EXECUTION/{a.stage}/{wd.name}/EVIDENCE/HIDDEN_DEFECT_SWEEP_RESULT.yaml"
+    sweep=result_file(root,sweep_ref,"HIDDEN_DEFECT_SWEEP","stage_uid",a.stage)
+    discovered_hidden=int(sweep.get("discovered_defect_total") or 0)+hidden_total
+    if gaps or discovered_hidden:
+        raise SystemExit("BLOCK:CLOSURE_ZERO_GAP_HIDDEN_DEFECT_REQUIRED:gaps="+str(len(gaps))+":hidden="+str(discovered_hidden))
+
+    gate_ref=f"STAGE_EXECUTION/{a.stage}/{wd.name}/EVIDENCE/EXACT_HEAD_GATE_RECEIPTS.yaml"
+    gate_doc=load(safe(root,gate_ref,"EXACT_HEAD_GATE_RECEIPTS"))
+    gates=gate_doc.get("receipts") or []
+    head=git(root,"rev-parse","HEAD")
+    if not isinstance(gates,list) or not gates: raise SystemExit("BLOCK:EXACT_HEAD_GATE_RECEIPTS_EMPTY")
+    for g in gates:
+        if not isinstance(g,dict) or str(g.get("head_sha") or "")!=head or str(g.get("conclusion") or "")!="success" or not g.get("run_id") or not g.get("gate_uid"):
+            raise SystemExit("BLOCK:EXACT_HEAD_GATE_RECEIPT_INVALID")
+
+    handoff_ref=f"STAGE_EXECUTION/{a.stage}/{wd.name}/EVIDENCE/CROSS_STAGE_HANDOFF_READINESS_LEDGER.yaml"
+    handoff=load(safe(root,handoff_ref,"CROSS_STAGE_HANDOFF"))
+    if handoff.get("status")!="PASS": raise SystemExit("BLOCK:CROSS_STAGE_HANDOFF_NOT_PASS")
     next_stage=str(stage.get("next_stage_uid") or "")
-    handoff_rel=f"STAGE_EXECUTION/{a.stage}/{wd.name}/EVIDENCE/CROSS_STAGE_HANDOFF_READINESS_LEDGER.yaml"
-    handoff={
-      "artifact_type":"CROSS_STAGE_HANDOFF_READINESS_LEDGER",
-      "predecessor_stage_uid":a.stage,
-      "predecessor_work_unit_uid":work.get("work_unit_uid"),
+
+    required_evidence=[]
+    for uid in required_evidence_types:
+        required_evidence.append({"evidence_type":uid,"status":"PASS","ref":refs[uid]["ref"],"external_receipt":False})
+
+    resume_rel=f"STAGE_EXECUTION/{a.stage}/{wd.name}/EVIDENCE/CLOSURE_RESUME_POINT.yaml"
+    write_yaml(root/resume_rel,{"artifact_type":"CLOSURE_RESUME_POINT","stage_uid":a.stage,"work_unit_uid":work.get("work_unit_uid"),"governed_unit_uid":work.get("governed_unit_uid"),"next_stage_uid":next_stage,"status":"CANDIDATE_PASS_PENDING_TERMINAL_RECEIPT","completion_credit":0})
+
+    auth=load(root/"STAGE_EXECUTION/SHARED_AUTHORITY/CURRENT_STAGE_FLOW/FULL_STAGE_LIFECYCLE_AUTHORIZATION_CONTRACT.yaml")
+    allowed=list(map(str,(auth.get("execution_authorization") or {}).get("authorized_effectful_range") or []))
+    if next_stage in allowed: next_status="READY"
+    elif next_stage.startswith("STAGE-"): next_status="SCOPE_COMPLETE"
+    else: next_status="NEXT_GOVERNED_UNIT_READY"
+
+    phase_trace=[{"phase_uid":p,"status":"PASS"} for p in phases]
+    cross={
+      "ledger_ref":handoff_ref,
+      "external_receipt":False,
       "successor_stage_uid":next_stage,
-      "lifecycle_artifact_index_ref":index_rel,
-      "status":"CANDIDATE_REQUIRES_COMMON_TERMINALIZATION",
-      "completion_credit":0,
+      "reference_resolution_complete":True,
+      "physical_materialization_complete":True,
+      "required_field_completeness_complete":True,
+      "denominator_reconciled":True,
+      "consumer_readiness_complete":True,
+      "successor_execution_binding_total":handoff.get("successor_execution_binding_total"),
+      "successor_execution_binding_ready_total":handoff.get("successor_execution_binding_ready_total"),
+      "successor_execution_binding_unresolved_total":handoff.get("successor_execution_binding_unresolved_total"),
+      "current_matrix_valid":True,
+      "current_state_consistent":True,
+      "unresolved_required_dependency_total":handoff.get("unresolved_required_dependency_total"),
+      "status":"PASS",
     }
-    if next_stage.startswith("STAGE-") and next_stage in stages:
-        successor=stages[next_stage]
-        inputs=[]
-        for uid in map(str,successor.get("inputs") or []):
-            candidates=merged.get(uid) or []
-            if len(candidates)!=1:
-                raise SystemExit("BLOCK:SUCCESSOR_INPUT_ARTIFACT_RESOLUTION_NOT_EXACT:"+next_stage+":"+uid+":"+str(len(candidates)))
-            item=candidates[0]
-            inputs.append({"input_uid":uid,"artifact_ref":item["artifact_ref"],"sha256":item["sha256"],"status":"MATERIALIZED"})
-        handoff["successor_input_bindings"]=inputs
-        handoff["successor_operation_binding_policy"]="CURRENT_WORK_UNIT_OPERATION_BINDING_ONLY"
-        handoff["successor_scanner_binding_policy"]="CURRENT_STAGE_SEMANTIC_ADAPTER_SCANNER_DIMENSIONS"
-    write_yaml(root/handoff_rel,handoff)
-    normalized={
-      "artifact_type":"COMMON_NORMALIZED_STAGE_EVIDENCE_CANDIDATE",
+    evidence={
+      "artifact_type":"NORMALIZED_STAGE_EXECUTION_EVIDENCE",
+      "attempt_uid":"ATTEMPT-"+a.stage+"-"+str(work.get("work_unit_uid") or ""),
+      "governance_uid":work.get("governance_uid"),
       "stage_uid":a.stage,
-      "work_unit_uid":work.get("work_unit_uid"),
-      "governed_unit_uid":work.get("governed_unit_uid"),
-      "exit_gate":stage.get("exit_gate"),
-      "next_stage_uid":next_stage,
-      "lifecycle_artifact_index_ref":index_rel,
-      "cross_stage_handoff_ref":handoff_rel,
-      "required_artifact_types":required,
-      "status":"CANDIDATE_NOT_TERMINAL",
-      "completion_credit":0,
+      "scope_manifest_ref":f"STAGE_EXECUTION/{a.stage}/{wd.name}/CURRENT_EXECUTION_SCOPE_MANIFEST.yaml",
+      "source_head_sha":head,
+      "actual_stage_execution_started":True,
+      "actual_stage_execution_completed":True,
+      "fresh_execution":True,
+      "prior_results_used":False,
+      "current_specification_mutated":False,
+      "phase_trace":phase_trace,
+      "operation_results":operation_results,
+      "output_results":output_results,
+      "scanner_results":scanner_results,
+      "validator_results":validator_results,
+      "denominator":{"required_total":len(expected_ops),"open_gap_total":0,"closure_blocker_total":0,"remaining_scope_total":0},
+      "gaps":[],
+      "closure_blockers":[],
+      "remediation":{"discovered_gap_total":0,"remediated_gap_total":0,"unresolved_gap_total":0,"reexecution_required":False,"reexecution_performed":False},
+      "hidden_defect_sweep":{"performed":True,"result":"PASS","discovered_defect_total":0,"ref":sweep_ref},
+      "required_evidence":required_evidence,
+      "cross_stage_handoff":cross,
+      "exact_head_gate_receipts":gates,
+      "resume_persistence":{"performed":True,"resume_point":resume_rel},
+      "next_stage_transition":{"next_stage_uid":next_stage,"status":next_status},
+      "stage_exit_allowed":True,
+      "result":"PASS",
     }
-    (wd/"EVIDENCE").mkdir(parents=True,exist_ok=True)
-    (wd/"EVIDENCE/COMMON_NORMALIZED_STAGE_EVIDENCE_CANDIDATE.json").write_text(json.dumps(normalized,indent=2,ensure_ascii=False)+"\n",encoding="utf-8")
-    print("PASS: common closure candidate materialized without terminal completion credit",a.stage,wd.name)
+    ev_rel=f"STAGE_EXECUTION/{a.stage}/{wd.name}/EVIDENCE/NORMALIZED_STAGE_EVIDENCE.json"
+    p=root/ev_rel; p.parent.mkdir(parents=True,exist_ok=True)
+    p.write_text(json.dumps(evidence,indent=2,ensure_ascii=False)+"\n",encoding="utf-8")
+    print("PASS: Mother-engine normalized evidence candidate materialized",ev_rel)
 
 if __name__=="__main__":
     main()

@@ -11,6 +11,9 @@ rules:
   common_operation_orchestrator: .github/scripts/current_stage_execute.py
   common_closure_orchestrator: .github/scripts/common_stage_closure.py
   common_closure_adapter: .github/scripts/common_stage_closure_adapter.py
+  common_cross_stage_handoff_builder: .github/scripts/common_cross_stage_handoff_builder.py
+  common_normalized_evidence_compiler: .github/scripts/common_stage_closure_adapter.py
+  common_terminalizer: .github/scripts/common_stage_terminalizer.py
   common_successor_orchestrator: .github/scripts/common_successor_materialize.py
   common_successor_work_unit_builder: .github/scripts/common_successor_work_unit_builder.py
   stage_specific_adapter_may_define_authorization: false

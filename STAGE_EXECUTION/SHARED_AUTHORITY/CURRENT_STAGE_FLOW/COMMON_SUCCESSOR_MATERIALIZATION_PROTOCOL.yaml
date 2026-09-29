@@ -3,24 +3,37 @@ status: CURRENT
 normative_authority: false
 owner: COMMON_SUCCESSOR_WORK_UNIT_MATERIALIZER
 applies_to_predecessors: [STAGE-01, STAGE-02, STAGE-03, STAGE-04, STAGE-05, STAGE-06, STAGE-07, STAGE-08, STAGE-09, STAGE-10, STAGE-11]
+implementation:
+  orchestrator: .github/scripts/common_successor_materialize.py
+  work_unit_builder: .github/scripts/common_successor_work_unit_builder.py
+binding_contract:
+  exact_operation_binding_manifest_is_boundary_input: true
+  binding_manifest_is_not_successor_execution_result: true
+  binding_manifest_may_be_materialized_only_at_authorized_successor_boundary: true
+  binding_manifest_must_include:
+  - stage_uid
+  - work_unit_uid
+  - governed_unit_uid
+  - operation_bindings
+  - scanner_owner
+  - validator_bindings
+  - normative_execution_matrix
 materialization_order:
-- VALIDATE_PREDECESSOR_TERMINAL_RECEIPT_EXACT_HEAD
+- VALIDATE_PREDECESSOR_TERMINAL_RECEIPT
 - VALIDATE_PREDECESSOR_CROSS_STAGE_HANDOFF
 - RESOLVE_REGISTERED_SUCCESSOR_FROM_CURRENT_LIFECYCLE
 - VERIFY_SUCCESSOR_INSIDE_AUTHORIZED_EFFECTFUL_RANGE
 - VERIFY_SUCCESSOR_INPUT_DENOMINATOR_EXACT
-- VERIFY_SUCCESSOR_EXECUTION_BINDINGS_EXACT
-- VERIFY_SUCCESSOR_OPERATION_EXECUTOR_BINDINGS_RESOLVABLE
-- ALLOCATE_NEW_SUCCESSOR_WORK_UNIT_UID
-- BIND_PREDECESSOR_WORK_UNIT_UID
-- BIND_PREDECESSOR_WORK_UNIT_REF
-- BIND_PREDECESSOR_TERMINAL_RECEIPT_REF
+- VERIFY_EXACT_OPERATION_BINDING_MANIFEST
+- VERIFY_OPERATION_EXECUTOR_OWNERS_PHYSICAL
+- VERIFY_SCANNER_AND_VALIDATOR_BINDINGS
+- MATERIALIZE_NORMATIVE_EXECUTION_MATRIX
+- MATERIALIZE_WORK_UNIT
 - MATERIALIZE_CURRENT_EXECUTION_SCOPE
 - MATERIALIZE_CURRENT_EXECUTION_STATE
-- MATERIALIZE_NORMATIVE_EXECUTION_MATRIX
-- MATERIALIZE_WORK_UNIT_OPERATION_AND_SCANNER_BINDINGS
-- MATERIALIZE_RESUME_POINT
-- RUN_STAGE_LIFECYCLE_ENTRY_GATE
+- MATERIALIZE_CURRENT_STAGE_RESUME
+- MATERIALIZE_SUCCESSOR_WORK_UNIT_MATERIALIZATION_RECEIPT
+- RUN_CURRENT_GOVERNANCE_LOAD_AND_STAGE_ADMISSION_BEFORE_FIRST_OPERATION
 rules:
   closed_predecessor_is_immutable: true
   mutate_predecessor_into_successor: FORBIDDEN
@@ -29,6 +42,7 @@ rules:
   successor_outside_authorized_range: BLOCK
   missing_executor_binding: BLOCK
   missing_input_binding: BLOCK
+  missing_matrix_payload: BLOCK
   stage_local_successor_logic: FORBIDDEN
   historical_successor_work_unit_reuse: FORBIDDEN
 completion_credit: 0

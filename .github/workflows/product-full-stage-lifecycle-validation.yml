@@ -60,7 +60,7 @@ jobs:
           python .github/governance-source/active/source/09_TESTS/governance/validate_stage_execution_invariants.py
       - name: Syntax-check lifecycle runtime guards
         run: |
-          python -m py_compile .github/scripts/full_stage_lifecycle_guard.py .github/scripts/stage_lifecycle_gate.py .github/scripts/current_stage_execute.py .github/scripts/common_stage_closure.py .github/scripts/common_stage_closure_adapter.py .github/scripts/common_stage_terminalizer.py .github/scripts/common_successor_materialize.py .github/scripts/common_successor_work_unit_builder.py
+          python -m py_compile .github/scripts/full_stage_lifecycle_guard.py .github/scripts/stage_lifecycle_gate.py .github/scripts/current_stage_execute.py .github/scripts/common_stage_closure.py .github/scripts/common_stage_closure_adapter.py .github/scripts/common_cross_stage_handoff_builder.py .github/scripts/common_stage_terminalizer.py .github/scripts/common_successor_materialize.py .github/scripts/common_successor_work_unit_builder.py
       - name: Parse all current Product Stage workflows
         run: |
           python - <<'PY'

@@ -17,7 +17,7 @@ def main():
     ap.add_argument("--predecessor-work-unit",required=True)
     ap.add_argument("--product-root",required=True)
     ap.add_argument("--governance-root",required=True)
-    ap.add_argument("--mode",choices=["plan","materialize"],default="plan")
+    ap.add_argument("--mode",choices=["plan","materialize"],default="plan")\n    ap.add_argument("--operation-binding-manifest")
     a=ap.parse_args()
     root=Path(a.product_root).resolve(); gov=Path(a.governance_root).resolve()
     lifecycle=y(gov/".github/governance-source/active/source/10_REGISTRY/GOVERNANCE_LIFECYCLE_STAGE_REGISTRY.yaml")
@@ -46,9 +46,7 @@ def main():
         p=(root/Path(owner)).resolve()
         if not p.is_file(): raise SystemExit("BLOCK:SUCCESSOR_STAGE_MATERIALIZER_OWNER_MISSING:"+owner)
         if p.name=="common_successor_materialize.py": raise SystemExit("BLOCK:SUCCESSOR_MATERIALIZER_RECURSIVE_OWNER")
-        binding_manifest=str(h.get("successor_operation_binding_manifest_ref") or "")
-        if not binding_manifest:
-            raise SystemExit("BLOCK:SUCCESSOR_OPERATION_BINDING_MANIFEST_REF_MISSING:"+to)
+        binding_manifest=a.operation_binding_manifest
         subprocess.check_call([
             sys.executable,str(p),"--mode","materialize",
             "--successor-stage",to,

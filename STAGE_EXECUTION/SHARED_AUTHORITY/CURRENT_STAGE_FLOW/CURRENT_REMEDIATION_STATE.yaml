@@ -1,5 +1,5 @@
 artifact_type: PRODUCT_FULL_LIFECYCLE_REMEDIATION_RESUME_STATE
-status: STRUCTURAL_CONVERGENCE_COMPLETE_AWAITING_FRESH_EXACT_HEAD_VALIDATION
+status: COMMON_PROTOCOL_SCHEMA_RECONCILIATION_PENDING_EXACT_HEAD_VALIDATION
 authorization_record_url: https://github.com/steven-gold/orange-one-ai-viedo-v1.0/issues/61
 decontamination_authorization_record_url: https://github.com/steven-gold/orange-one-ai-viedo-v1.0/issues/64
 product_branch: 0921acpos
@@ -27,11 +27,11 @@ current_head_validation:
   required_workflow: Product Full Stage Lifecycle Validation
   historical_run_credit: 0
 resume_point:
-  last_completed_action: FULL_STAGE_STRUCTURAL_CONVERGENCE_MATERIALIZED
-  next_action: RUN_FRESH_EXACT_HEAD_FULL_STAGE_VALIDATION
+  last_completed_action: COMMON_CLOSURE_HANDOFF_EVIDENCE_TERMINAL_SUCCESSOR_PROTOCOLS_RECONCILED
+  next_action: RUN_FRESH_EXACT_HEAD_FULL_STAGE_VALIDATION_WITH_COMMON_PROTOCOL_CONSUMERS
   after_validation_success: STAGE01_CURRENT_WORD_DERIVED_PRESTAGE_MATERIALIZATION
   next_effectful_stage: STAGE-01
   earliest_owner: FULL_STAGE_LIFECYCLE_VALIDATION
-  stage_entry_hold: EXACT_HEAD_VALIDATION_ONLY
+  stage_entry_hold: FULL_STAGE_COMMON_PROTOCOL_EXACT_HEAD_VALIDATION_PENDING
 current_blockers: []
 completion_credit: 0

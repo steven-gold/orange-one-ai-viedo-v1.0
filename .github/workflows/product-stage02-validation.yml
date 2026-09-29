@@ -66,7 +66,7 @@ jobs:
             B="STAGE_EXECUTION/STAGE-02/${WU}"
             test -f "$B/EVIDENCE/GOVERNED_UNIT_FUNCTIONAL_REVIEW_EVIDENCE.yaml" || { echo "BLOCK:STAGE02_REQUIRED_EVIDENCE_MISSING:$WU"; exit 1; }
             test -f "$B/EVIDENCE/CROSS_STAGE_HANDOFF_READINESS_LEDGER.yaml" || { echo "BLOCK:STAGE02_HANDOFF_LEDGER_MISSING:$WU"; exit 1; }
-            python governance/ci/stage_execution_engine.py --validate-evidence --stage STAGE-02 --evidence "$B/EVIDENCE/STAGE02_NORMALIZED_EVIDENCE.json"
+            python governance/ci/stage_execution_engine.py --validate-evidence --stage STAGE-02 --evidence "$B/EVIDENCE/NORMALIZED_STAGE_EVIDENCE.json"
           done
       - name: Assert Stage02 stage-exit authorized
         run: |

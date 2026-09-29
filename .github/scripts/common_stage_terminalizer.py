@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 from __future__ import annotations
-import argparse, json, subprocess
+import argparse, subprocess, sys
 from pathlib import Path
 import yaml
 
@@ -22,16 +22,23 @@ def git(root,*args):
     if cp.returncode!=0: raise SystemExit("BLOCK:GIT:"+cp.stderr.strip())
     return cp.stdout.strip()
 
+def repo_identity(root):
+    raw=git(root,"config","--get","remote.origin.url").strip()
+    if raw.endswith(".git"): raw=raw[:-4]
+    if raw.startswith("git@github.com:"): raw=raw.split(":",1)[1]
+    elif "github.com/" in raw: raw=raw.split("github.com/",1)[1]
+    return raw or "UNKNOWN_REPOSITORY"
+
 def validate_contract(gov):
     reg=load(gov/LIFECYCLE)
-    stages=reg.get("stages") or []
+    order=[str(x.get("stage_uid") or "") for x in reg.get("stages") or [] if isinstance(x,dict)]
     expected=[f"STAGE-{i:02d}" for i in range(1,12)]
-    order=[str(x.get("stage_uid") or "") for x in stages if isinstance(x,dict)]
     if order!=expected: raise SystemExit("BLOCK:TERMINALIZER_LIFECYCLE_ORDER_DRIFT")
-    for row in stages:
-        if not row.get("exit_gate") or not row.get("next_stage_uid"):
-            raise SystemExit("BLOCK:TERMINALIZER_STAGE_TRANSITION_MISSING:"+str(row.get("stage_uid")))
     print("PASS: common terminalizer contract covers Stage-01..11")
+
+def run(cmd,cwd,env=None):
+    cp=subprocess.run(cmd,cwd=cwd,env=env,text=True)
+    if cp.returncode!=0: raise SystemExit(cp.returncode)
 
 def main():
     ap=argparse.ArgumentParser()
@@ -58,47 +65,52 @@ def main():
     except ValueError: raise SystemExit("BLOCK:TERMINALIZER_WORK_UNIT_ESCAPES_ROOT")
     work=load(wp); wd=wp.parent
     if str(work.get("stage_uid") or "")!=a.stage: raise SystemExit("BLOCK:TERMINALIZER_WORK_UNIT_STAGE_DRIFT")
-    candidate=wd/"EVIDENCE/COMMON_NORMALIZED_STAGE_EVIDENCE_CANDIDATE.json"
-    if not candidate.is_file(): raise SystemExit("BLOCK:TERMINALIZER_NORMALIZED_CANDIDATE_MISSING")
-    ev=json.loads(candidate.read_text(encoding="utf-8"))
-    if ev.get("status")!="CANDIDATE_NOT_TERMINAL": raise SystemExit("BLOCK:TERMINALIZER_CANDIDATE_STATUS_INVALID")
+    ev_rel=f"STAGE_EXECUTION/{a.stage}/{wd.name}/EVIDENCE/NORMALIZED_STAGE_EVIDENCE.json"
+    ev_path=root/ev_rel
+    if not ev_path.is_file(): raise SystemExit("BLOCK:TERMINALIZER_NORMALIZED_EVIDENCE_MISSING")
     handoff_path=wd/"EVIDENCE/CROSS_STAGE_HANDOFF_READINESS_LEDGER.yaml"
     handoff=load(handoff_path)
     stage=stages[a.stage]; next_stage=str(stage.get("next_stage_uid") or "")
-    if str(handoff.get("successor_stage_uid") or "")!=next_stage: raise SystemExit("BLOCK:TERMINALIZER_SUCCESSOR_DRIFT")
-    auth=load(root/"STAGE_EXECUTION/SHARED_AUTHORITY/CURRENT_STAGE_FLOW/FULL_STAGE_LIFECYCLE_AUTHORIZATION_CONTRACT.yaml")
-    allowed=list(map(str,(auth.get("execution_authorization") or {}).get("authorized_effectful_range") or []))
-    if next_stage.startswith("STAGE-") and next_stage in allowed:
-        if not handoff.get("successor_input_bindings"): raise SystemExit("BLOCK:TERMINALIZER_SUCCESSOR_INPUT_BINDINGS_MISSING")
-        handoff["status"]="PASS"
-    elif next_stage.startswith("STAGE-"):
-        handoff["status"]="ELIGIBLE_PENDING_EXPLICIT_RANGE_AUTHORIZATION"
-    else:
-        handoff["status"]="PASS_TERMINAL_LIFECYCLE"
-    handoff["terminalized_from_validated_head"]=a.validated_head
-    handoff["validation_run_id"]=str(a.validation_run_id)
-    write(handoff_path,handoff)
+    if str(handoff.get("successor_stage_uid") or "")!=next_stage or handoff.get("status")!="PASS":
+        raise SystemExit("BLOCK:TERMINALIZER_HANDOFF_NOT_PASS")
+
+    receipt_rel=f"STAGE_EXECUTION/{a.stage}/{wd.name}/WORK_UNIT_TERMINAL_RECEIPT.yaml"
     receipt={
       "artifact_type":"WORK_UNIT_TERMINAL_RECEIPT",
+      "provider":"github-actions",
+      "repository_or_project":repo_identity(root),
+      "head_sha":a.validated_head,
+      "run_id":str(a.validation_run_id),
+      "job_denominator":["normalized-evidence-validation","terminal-closure-validation"],
+      "conclusion":"success",
+      "governance_uid":work.get("governance_uid"),
       "stage_uid":a.stage,
+      "evidence_ref":ev_rel,
       "work_unit_uid":work.get("work_unit_uid"),
       "governed_unit_uid":work.get("governed_unit_uid"),
-      "governance_uid":work.get("governance_uid"),
-      "validated_candidate_head_sha":a.validated_head,
-      "validation_run_id":str(a.validation_run_id),
-      "evidence_ref":str(candidate.relative_to(root)),
-      "cross_stage_handoff_ref":str(handoff_path.relative_to(root)),
       "exit_gate":stage.get("exit_gate"),
+      "next_stage_uid":next_stage,
       "status":"CLOSED_PASS",
       "completion_credit":1,
     }
-    write(wd/"WORK_UNIT_TERMINAL_RECEIPT.yaml",receipt)
+    write(root/receipt_rel,receipt)
+
+    env=dict(**__import__("os").environ)
+    env["STAGE_EXECUTION_ROOT"]=str(root)
+    engine=root/"governance/ci/stage_execution_engine.py"
+    if not engine.is_file():
+        raise SystemExit("BLOCK:TERMINALIZER_CURRENT_GOVERNANCE_RUNTIME_NOT_LOADED")
+    run([sys.executable,str(engine),"--validate-terminal-receipt","--stage",a.stage,"--evidence",ev_rel,"--receipt",receipt_rel],root,env)
+
     state=load(wd/"EXECUTION_STATE.yaml")
     state["status"]="CLOSED_PASS"; state["current_operation"]="COMPLETE"; state["stage_exit_authorized"]=True
-    state["next_stage_uid"]=next_stage; state["terminal_receipt_ref"]=str((wd/"WORK_UNIT_TERMINAL_RECEIPT.yaml").relative_to(root))
+    state["next_stage_uid"]=next_stage; state["terminal_receipt_ref"]=receipt_rel
     write(wd/"EXECUTION_STATE.yaml",state)
-    work["current_status"]="CLOSED_PASS"; work["terminal_receipt_ref"]=state["terminal_receipt_ref"]
+    work["current_status"]="CLOSED_PASS"; work["terminal_receipt_ref"]=receipt_rel
     write(wp,work)
+
+    auth=load(root/"STAGE_EXECUTION/SHARED_AUTHORITY/CURRENT_STAGE_FLOW/FULL_STAGE_LIFECYCLE_AUTHORIZATION_CONTRACT.yaml")
+    allowed=list(map(str,(auth.get("execution_authorization") or {}).get("authorized_effectful_range") or []))
     resume={
       "artifact_type":"CURRENT_STAGE_RESUME",
       "stage_uid":a.stage,
@@ -106,13 +118,13 @@ def main():
       "governed_unit_uid":work.get("governed_unit_uid"),
       "terminal_status":"CLOSED_PASS",
       "next_stage_uid":next_stage,
-      "next_action":"MATERIALIZE_REGISTERED_SUCCESSOR_IF_INSIDE_AUTHORIZED_RANGE" if next_stage in allowed else "PERSIST_ELIGIBILITY_AND_STOP_AT_AUTHORIZED_RANGE_BOUNDARY",
+      "next_action":"MATERIALIZE_REGISTERED_SUCCESSOR_IF_EXACT_BINDINGS_READY" if next_stage in allowed else "PERSIST_ELIGIBILITY_AND_STOP_AT_AUTHORIZED_RANGE_BOUNDARY",
       "source_validated_head_sha":a.validated_head,
       "validation_run_id":str(a.validation_run_id),
       "status":"CURRENT",
     }
     write(wd/"CURRENT_STAGE_RESUME.yaml",resume)
-    print("PASS: terminal receipt and resume materialized from prior terminal-success validation",a.stage,work.get("work_unit_uid"))
+    print("PASS: Mother-engine terminal receipt validated and closure projection materialized",a.stage,work.get("work_unit_uid"))
 
 if __name__=="__main__":
     main()

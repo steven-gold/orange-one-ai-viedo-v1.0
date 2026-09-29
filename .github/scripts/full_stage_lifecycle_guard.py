@@ -50,6 +50,8 @@ def main():
     pmat=load(product/FLOW/"FULL_STAGE_PERMISSION_CONTINUITY_MATRIX.yaml")
     adapters=load(product/FLOW/"FULL_STAGE_RUNTIME_ADAPTER_REGISTRY.yaml")
     closure=load(product/FLOW/"COMMON_STAGE_CLOSURE_PROTOCOL.yaml")
+    terminal=load(product/FLOW/"COMMON_TERMINAL_RECEIPT_PERSISTENCE_PROTOCOL.yaml")
+    normalized=load(product/FLOW/"COMMON_NORMALIZED_EVIDENCE_PROTOCOL.yaml")
     successor=load(product/FLOW/"COMMON_SUCCESSOR_MATERIALIZATION_PROTOCOL.yaml")
     handoff=load(product/FLOW/"FULL_STAGE_HANDOFF_INPUT_ORIGIN_MATRIX.yaml")
     op_profiles=load(product/FLOW/"FULL_STAGE_OPERATION_BINDING_PROFILE_REGISTRY.yaml")
@@ -162,6 +164,18 @@ def main():
 
     if closure.get("owner")!="COMMON_STAGE_CLOSURE_PROTOCOL":
         fail("COMMON_CLOSURE_OWNER_DRIFT")
+    impl=closure.get("implementation") or {}
+    for key in ("closure_orchestrator","cross_stage_handoff_builder","normalized_evidence_compiler","terminalizer"):
+        if local_owner(product,impl.get(key),"COMMON_CLOSURE_"+key.upper()) is None:
+            fail("COMMON_CLOSURE_IMPLEMENTATION_OWNER_UNRESOLVED:"+key)
+    if impl.get("canonical_normalized_evidence_filename")!="EVIDENCE/NORMALIZED_STAGE_EVIDENCE.json":
+        fail("COMMON_NORMALIZED_EVIDENCE_FILENAME_DRIFT")
+    if normalized.get("canonical_path_pattern")!="STAGE_EXECUTION/<STAGE_UID>/<WORK_UNIT_UID>/EVIDENCE/NORMALIZED_STAGE_EVIDENCE.json":
+        fail("COMMON_NORMALIZED_EVIDENCE_PATH_DRIFT")
+    terminal_fields=set(map(str,terminal.get("canonical_receipt_fields") or []))
+    required_terminal_fields={"provider","repository_or_project","head_sha","run_id","job_denominator","conclusion","governance_uid","stage_uid","evidence_ref"}
+    if terminal_fields!=required_terminal_fields:
+        fail("COMMON_TERMINAL_RECEIPT_SCHEMA_DRIFT")
     if list(map(str,closure.get("applies_to") or []))!=EXPECTED:
         fail("COMMON_CLOSURE_STAGE_COVERAGE_DRIFT")
     if (closure.get("rules") or {}).get("stage_specific_closure_semantics")!="FORBIDDEN":
@@ -169,6 +183,10 @@ def main():
 
     if successor.get("owner")!="COMMON_SUCCESSOR_WORK_UNIT_MATERIALIZER":
         fail("COMMON_SUCCESSOR_OWNER_DRIFT")
+    simpl=successor.get("implementation") or {}
+    for key in ("orchestrator","work_unit_builder"):
+        if local_owner(product,simpl.get(key),"COMMON_SUCCESSOR_"+key.upper()) is None:
+            fail("COMMON_SUCCESSOR_IMPLEMENTATION_OWNER_UNRESOLVED:"+key)
     if list(map(str,successor.get("applies_to_predecessors") or []))!=EXPECTED:
         fail("COMMON_SUCCESSOR_STAGE_COVERAGE_DRIFT")
     if (successor.get("rules") or {}).get("stage_local_successor_logic")!="FORBIDDEN":
@@ -254,6 +272,8 @@ def main():
             fail("STAGE01_PREENTRY_STRUCTURAL_ADMISSION_NOT_PASS")
         if effectful.get("exact_head_full_stage_validation_required") is not True:
             fail("STAGE01_EXACT_HEAD_VALIDATION_REQUIREMENT_MISSING")
+        if effectful.get("stage01_entry_hold")!="RELEASED":
+            fail("STAGE01_ENTRY_HOLD_NOT_RELEASED:"+str(effectful.get("stage01_entry_hold")))
 
     print("PASS: full lifecycle 01-11 uses one authorization contract")
     print("PASS: transition, permission, closure and successor protocols cover all registered stages")

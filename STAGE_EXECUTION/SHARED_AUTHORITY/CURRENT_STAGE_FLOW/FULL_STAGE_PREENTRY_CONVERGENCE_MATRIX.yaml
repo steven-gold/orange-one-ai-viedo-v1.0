@@ -1,5 +1,5 @@
 artifact_type: PRODUCT_FULL_STAGE_PREENTRY_CONVERGENCE_MATRIX
-status: STRUCTURAL_CONVERGENCE_COMPLETE_EXACT_HEAD_VALIDATION_REQUIRED
+status: COMMON_PROTOCOL_SCHEMA_CONVERGENCE_PENDING_EXACT_HEAD_VALIDATION
 normative_authority: false
 scope: STAGE-01_THROUGH_STAGE-11
 dimensions:
@@ -9,6 +9,9 @@ dimensions:
   permission_continuity_model: PASS
   common_closure_protocol: PASS
   common_terminal_receipt_protocol: PASS
+  common_normalized_evidence_schema: PASS_IMPLEMENTED
+  common_cross_stage_handoff_builder: PASS_IMPLEMENTED
+  successor_matrix_scope_state_resume_materialization: PASS_IMPLEMENTED
   common_successor_materialization_protocol: PASS
   cross_stage_input_origin_matrix: PASS
   full_stage_transition_matrix: PASS
@@ -20,6 +23,7 @@ dimensions:
   v232_static_stage05_target_authority: PASS_REPLACED_WITH_DYNAMIC_RESOLUTION_PROTOCOL
 effectful_preentry:
   stage01_structurally_admissible: true
+  stage01_entry_hold: FULL_STAGE_COMMON_PROTOCOL_EXACT_HEAD_VALIDATION_PENDING
   exact_head_full_stage_validation_required: true
   exact_head_validation_workflow: Product Full Stage Lifecycle Validation
   stage01_effectful_entry_before_exact_head_validation: FORBIDDEN
