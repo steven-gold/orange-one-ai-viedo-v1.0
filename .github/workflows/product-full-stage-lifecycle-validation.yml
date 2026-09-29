@@ -55,6 +55,21 @@ jobs:
       - name: Syntax-check lifecycle runtime guards
         run: |
           python -m py_compile .github/scripts/full_stage_lifecycle_guard.py .github/scripts/stage_lifecycle_gate.py .github/scripts/current_stage_execute.py .github/scripts/common_stage_closure.py .github/scripts/common_successor_materialize.py
+      - name: Parse all current Product Stage workflows
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import yaml
+          paths=sorted(Path('.github/workflows').glob('product-stage*.yml'))+[Path('.github/workflows/product-full-stage-lifecycle-validation.yml')]
+          for p in paths:
+              try:
+                  obj=yaml.safe_load(p.read_text(encoding='utf-8'))
+              except Exception as exc:
+                  raise SystemExit(f'BLOCK:WORKFLOW_YAML_PARSE_FAILED:{p}:{type(exc).__name__}:{exc}')
+              if not isinstance(obj,dict) or not obj.get('jobs'):
+                  raise SystemExit(f'BLOCK:WORKFLOW_STRUCTURE_INVALID:{p}')
+          print('PASS: current Product Stage workflows parse and expose jobs',len(paths))
+          PY
       - name: Validate transition and permission skeleton with negative tests
         run: |
           python .github/scripts/stage_lifecycle_gate.py --mode self-test --product-root "$GITHUB_WORKSPACE" --governance-root "$GITHUB_WORKSPACE/_governance_authority"
