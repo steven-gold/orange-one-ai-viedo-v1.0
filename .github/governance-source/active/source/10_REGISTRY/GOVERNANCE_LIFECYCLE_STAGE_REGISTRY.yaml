@@ -138,7 +138,6 @@ universal_stage_stepwise_execution_contract:
   - PREDECESSOR_CURRENT_STATE_EVIDENCE_CONSISTENCY_PASS
   - CROSS_STAGE_HANDOFF_READINESS_PASS
   - SUCCESSOR_INPUT_MATERIALIZATION_PASS
-  - SUCCESSOR_EFFECTFUL_OPERATION_BINDING_READINESS_PASS
   - SUCCESSOR_ENTRY_GATE_PASS
   historical_execution_output_as_missing_current_input: FORBIDDEN
 
@@ -322,11 +321,7 @@ stages:
     successor_consumer_readiness_required: true
     reference_only_completion_credit: 0
     successor_required_input_reconciliation_before_exit: true
-    successor_effectful_operation_binding_reconciliation_required: true
-    successor_execution_binding_universe_source: CURRENT_SUCCESSOR_LIFECYCLE_OPERATIONS_PLUS_CURRENT_AUTHORITY_AND_APPLICABILITY
     successor_target_authority_required_before_successor_effectful_execution: true
-    successor_target_resolution_receipt_required_when_bound: true
-    successor_target_current_context_match_required: true
     authorized_not_applicable_requires_authority_evidence: true
     current_normative_execution_matrix_nonempty_and_valid_before_exit: true
     current_state_evidence_terminal_consistency_required_before_exit: true
@@ -610,11 +605,7 @@ stages:
     successor_consumer_readiness_required: true
     reference_only_completion_credit: 0
     successor_required_input_reconciliation_before_exit: true
-    successor_effectful_operation_binding_reconciliation_required: true
-    successor_execution_binding_universe_source: CURRENT_SUCCESSOR_LIFECYCLE_OPERATIONS_PLUS_CURRENT_AUTHORITY_AND_APPLICABILITY
     successor_target_authority_required_before_successor_effectful_execution: true
-    successor_target_resolution_receipt_required_when_bound: true
-    successor_target_current_context_match_required: true
     authorized_not_applicable_requires_authority_evidence: true
     current_normative_execution_matrix_nonempty_and_valid_before_exit: true
     current_state_evidence_terminal_consistency_required_before_exit: true
@@ -825,11 +816,7 @@ stages:
     successor_consumer_readiness_required: true
     reference_only_completion_credit: 0
     successor_required_input_reconciliation_before_exit: true
-    successor_effectful_operation_binding_reconciliation_required: true
-    successor_execution_binding_universe_source: CURRENT_SUCCESSOR_LIFECYCLE_OPERATIONS_PLUS_CURRENT_AUTHORITY_AND_APPLICABILITY
     successor_target_authority_required_before_successor_effectful_execution: true
-    successor_target_resolution_receipt_required_when_bound: true
-    successor_target_current_context_match_required: true
     authorized_not_applicable_requires_authority_evidence: true
     current_normative_execution_matrix_nonempty_and_valid_before_exit: true
     current_state_evidence_terminal_consistency_required_before_exit: true
@@ -995,11 +982,7 @@ stages:
     successor_consumer_readiness_required: true
     reference_only_completion_credit: 0
     successor_required_input_reconciliation_before_exit: true
-    successor_effectful_operation_binding_reconciliation_required: true
-    successor_execution_binding_universe_source: CURRENT_SUCCESSOR_LIFECYCLE_OPERATIONS_PLUS_CURRENT_AUTHORITY_AND_APPLICABILITY
     successor_target_authority_required_before_successor_effectful_execution: true
-    successor_target_resolution_receipt_required_when_bound: true
-    successor_target_current_context_match_required: true
     authorized_not_applicable_requires_authority_evidence: true
     current_normative_execution_matrix_nonempty_and_valid_before_exit: true
     current_state_evidence_terminal_consistency_required_before_exit: true
@@ -1164,11 +1147,7 @@ stages:
     successor_consumer_readiness_required: true
     reference_only_completion_credit: 0
     successor_required_input_reconciliation_before_exit: true
-    successor_effectful_operation_binding_reconciliation_required: true
-    successor_execution_binding_universe_source: CURRENT_SUCCESSOR_LIFECYCLE_OPERATIONS_PLUS_CURRENT_AUTHORITY_AND_APPLICABILITY
     successor_target_authority_required_before_successor_effectful_execution: true
-    successor_target_resolution_receipt_required_when_bound: true
-    successor_target_current_context_match_required: true
     authorized_not_applicable_requires_authority_evidence: true
     current_normative_execution_matrix_nonempty_and_valid_before_exit: true
     current_state_evidence_terminal_consistency_required_before_exit: true
@@ -1321,11 +1300,7 @@ stages:
     successor_consumer_readiness_required: true
     reference_only_completion_credit: 0
     successor_required_input_reconciliation_before_exit: true
-    successor_effectful_operation_binding_reconciliation_required: true
-    successor_execution_binding_universe_source: CURRENT_SUCCESSOR_LIFECYCLE_OPERATIONS_PLUS_CURRENT_AUTHORITY_AND_APPLICABILITY
     successor_target_authority_required_before_successor_effectful_execution: true
-    successor_target_resolution_receipt_required_when_bound: true
-    successor_target_current_context_match_required: true
     authorized_not_applicable_requires_authority_evidence: true
     current_normative_execution_matrix_nonempty_and_valid_before_exit: true
     current_state_evidence_terminal_consistency_required_before_exit: true
@@ -1450,11 +1425,7 @@ stages:
     successor_consumer_readiness_required: true
     reference_only_completion_credit: 0
     successor_required_input_reconciliation_before_exit: true
-    successor_effectful_operation_binding_reconciliation_required: true
-    successor_execution_binding_universe_source: CURRENT_SUCCESSOR_LIFECYCLE_OPERATIONS_PLUS_CURRENT_AUTHORITY_AND_APPLICABILITY
     successor_target_authority_required_before_successor_effectful_execution: true
-    successor_target_resolution_receipt_required_when_bound: true
-    successor_target_current_context_match_required: true
     authorized_not_applicable_requires_authority_evidence: true
     current_normative_execution_matrix_nonempty_and_valid_before_exit: true
     current_state_evidence_terminal_consistency_required_before_exit: true
@@ -1562,11 +1533,7 @@ stages:
     successor_consumer_readiness_required: true
     reference_only_completion_credit: 0
     successor_required_input_reconciliation_before_exit: true
-    successor_effectful_operation_binding_reconciliation_required: true
-    successor_execution_binding_universe_source: CURRENT_SUCCESSOR_LIFECYCLE_OPERATIONS_PLUS_CURRENT_AUTHORITY_AND_APPLICABILITY
     successor_target_authority_required_before_successor_effectful_execution: true
-    successor_target_resolution_receipt_required_when_bound: true
-    successor_target_current_context_match_required: true
     authorized_not_applicable_requires_authority_evidence: true
     current_normative_execution_matrix_nonempty_and_valid_before_exit: true
     current_state_evidence_terminal_consistency_required_before_exit: true
@@ -1679,11 +1646,7 @@ stages:
     successor_consumer_readiness_required: true
     reference_only_completion_credit: 0
     successor_required_input_reconciliation_before_exit: true
-    successor_effectful_operation_binding_reconciliation_required: true
-    successor_execution_binding_universe_source: CURRENT_SUCCESSOR_LIFECYCLE_OPERATIONS_PLUS_CURRENT_AUTHORITY_AND_APPLICABILITY
     successor_target_authority_required_before_successor_effectful_execution: true
-    successor_target_resolution_receipt_required_when_bound: true
-    successor_target_current_context_match_required: true
     authorized_not_applicable_requires_authority_evidence: true
     current_normative_execution_matrix_nonempty_and_valid_before_exit: true
     current_state_evidence_terminal_consistency_required_before_exit: true
@@ -1827,11 +1790,7 @@ stages:
     successor_consumer_readiness_required: true
     reference_only_completion_credit: 0
     successor_required_input_reconciliation_before_exit: true
-    successor_effectful_operation_binding_reconciliation_required: true
-    successor_execution_binding_universe_source: CURRENT_SUCCESSOR_LIFECYCLE_OPERATIONS_PLUS_CURRENT_AUTHORITY_AND_APPLICABILITY
     successor_target_authority_required_before_successor_effectful_execution: true
-    successor_target_resolution_receipt_required_when_bound: true
-    successor_target_current_context_match_required: true
     authorized_not_applicable_requires_authority_evidence: true
     current_normative_execution_matrix_nonempty_and_valid_before_exit: true
     current_state_evidence_terminal_consistency_required_before_exit: true
@@ -1958,11 +1917,7 @@ stages:
     successor_consumer_readiness_required: true
     reference_only_completion_credit: 0
     successor_required_input_reconciliation_before_exit: true
-    successor_effectful_operation_binding_reconciliation_required: true
-    successor_execution_binding_universe_source: CURRENT_SUCCESSOR_LIFECYCLE_OPERATIONS_PLUS_CURRENT_AUTHORITY_AND_APPLICABILITY
     successor_target_authority_required_before_successor_effectful_execution: true
-    successor_target_resolution_receipt_required_when_bound: true
-    successor_target_current_context_match_required: true
     authorized_not_applicable_requires_authority_evidence: true
     current_normative_execution_matrix_nonempty_and_valid_before_exit: true
     current_state_evidence_terminal_consistency_required_before_exit: true
