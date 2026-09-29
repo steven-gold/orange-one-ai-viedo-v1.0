@@ -41,7 +41,7 @@ def main():
     work_path=(product/a.work_unit).resolve()
     work_dir=work_path.parent
     if not work_path.is_file():
-        raise SystemExit("BLOCK:SUCCESSOR_WORK_UNIT_MISSING:"+a.work_unit)
+        raise SystemExit("BLOCK:CURRENT_WORK_UNIT_MISSING:"+a.work_unit)
 
     selection_path=product/SELECTION_REL
     if not selection_path.is_file():
@@ -76,11 +76,11 @@ def main():
 
     work=load(work_path)
     if work.get("stage_uid")!=a.stage or work.get("work_unit_uid")!=work_dir.name:
-        raise SystemExit("BLOCK:SUCCESSOR_WORK_UNIT_IDENTITY_DRIFT")
+        raise SystemExit("BLOCK:CURRENT_WORK_UNIT_IDENTITY_DRIFT")
     if work.get("governance_execution_mode")!="CURRENT_VALIDATED_GOVERNANCE":
-        raise SystemExit("BLOCK:SUCCESSOR_WORK_UNIT_CURRENT_GOVERNANCE_MODE_REQUIRED")
+        raise SystemExit("BLOCK:CURRENT_WORK_UNIT_GOVERNANCE_MODE_REQUIRED")
     if str(work.get("governance_uid") or work.get("current_governance_uid") or "")!=str(selection.get("governance_uid") or ""):
-        raise SystemExit("BLOCK:SUCCESSOR_WORK_UNIT_GOVERNANCE_UID_DRIFT")
+        raise SystemExit("BLOCK:CURRENT_WORK_UNIT_GOVERNANCE_UID_DRIFT")
 
     receipt={
       "artifact_type":"PRODUCT_CURRENT_GOVERNANCE_LOAD_RECEIPT",
