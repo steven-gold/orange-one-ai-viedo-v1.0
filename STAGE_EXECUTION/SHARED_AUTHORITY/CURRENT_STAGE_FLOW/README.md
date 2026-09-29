@@ -30,6 +30,8 @@
 → `common_stage_preterminal.py`
 → read-only validation
 → `common_stage_terminalizer.py`
+→ predecessor `CLOSED_PASS`
+→ `common_successor_binding_resolver.py`（只解析下一 Stage 的 operation/scanner/validator exact binding）
 → `common_successor_work_unit_builder.py`
 → 下一個 registered Stage。
 
@@ -53,7 +55,8 @@ Stage closure 只由目前 Work Unit 的實體內容與稽核結果決定：
 - scanner / validator / hidden-defect result 符合 Mother；
 - normalized evidence PASS；
 - Work Unit / EXECUTION_STATE / matrix 一致；
-- cross-stage handoff 與 successor binding 可用；
+- cross-stage handoff 的 successor REQUIRED inputs 完整可用；
+- successor runtime binding 只在 predecessor `CLOSED_PASS` 後解析，不屬於 predecessor closure；
 - 若 Mother 定義 human gate，必須有正式 approval evidence。
 
 Git HEAD、workflow 名稱或歷史 PASS 只能作為 evidence identity，不能取代內容稽核本身。
