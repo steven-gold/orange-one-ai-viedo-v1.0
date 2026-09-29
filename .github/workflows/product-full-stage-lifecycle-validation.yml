@@ -16,7 +16,6 @@ on:
       - '.github/scripts/common_successor_work_unit_builder.py'
       - '.github/scripts/common_successor_binding_resolver.py'
       - '.github/scripts/common_stage_preterminal.py'
-      - '.github/scripts/common_declared_stage_validator.py .github/scripts/stage02_operation_runtime.py .github/scripts/stage02_scanner.py'
       - '.github/scripts/stage02_operation_runtime.py'
       - '.github/scripts/stage02_scanner.py'
       - '.github/workflows/product-stage-lifecycle-driver.yml'
@@ -67,7 +66,7 @@ jobs:
           python .github/governance-source/active/source/09_TESTS/governance/validate_stage_execution_invariants.py
       - name: Syntax-check lifecycle runtime guards
         run: |
-          python -m py_compile .github/scripts/full_stage_lifecycle_guard.py .github/scripts/stage_lifecycle_gate.py .github/scripts/current_stage_execute.py .github/scripts/common_stage_closure.py .github/scripts/common_stage_closure_adapter.py .github/scripts/common_cross_stage_handoff_builder.py .github/scripts/common_stage_terminalizer.py .github/scripts/common_successor_materialize.py .github/scripts/common_successor_work_unit_builder.py .github/scripts/common_successor_binding_resolver.py .github/scripts/common_stage_preterminal.py .github/scripts/common_declared_stage_validator.py
+          python -m py_compile .github/scripts/full_stage_lifecycle_guard.py .github/scripts/stage_lifecycle_gate.py .github/scripts/current_stage_execute.py .github/scripts/common_stage_closure.py .github/scripts/common_stage_closure_adapter.py .github/scripts/common_cross_stage_handoff_builder.py .github/scripts/common_stage_terminalizer.py .github/scripts/common_successor_materialize.py .github/scripts/common_successor_work_unit_builder.py .github/scripts/common_successor_binding_resolver.py .github/scripts/common_stage_preterminal.py .github/scripts/common_declared_stage_validator.py .github/scripts/stage02_operation_runtime.py .github/scripts/stage02_scanner.py
       - name: Regression-test shared runtime import and retired consumer paths
         run: |
           set -euo pipefail
@@ -109,6 +108,22 @@ jobs:
           python .github/scripts/common_stage_terminalizer.py --mode validate-contract --product-root "$GITHUB_WORKSPACE" --governance-root "$GITHUB_WORKSPACE/_governance_authority"
           python .github/scripts/common_successor_binding_resolver.py --mode validate-contract --product-root "$GITHUB_WORKSPACE" --governance-root "$GITHUB_WORKSPACE/_governance_authority"
           python .github/scripts/common_stage_preterminal.py --mode validate-contract --product-root "$GITHUB_WORKSPACE" --governance-root "$GITHUB_WORKSPACE/_governance_authority"
+      - name: Validate Stage02 exact binding source against Current lifecycle
+        run: |
+          python - <<'PY'
+          import yaml
+          from pathlib import Path
+          life=yaml.safe_load(Path('_governance_authority/.github/governance-source/active/source/10_REGISTRY/GOVERNANCE_LIFECYCLE_STAGE_REGISTRY.yaml').read_text()) or {}
+          stage=next(x for x in life.get('stages',[]) if x.get('stage_uid')=='STAGE-02')
+          src=yaml.safe_load(Path('STAGE_EXECUTION/SHARED_AUTHORITY/CURRENT_STAGE_FLOW/EXACT_OPERATION_BINDING_SOURCES/STAGE-02.yaml').read_text()) or {}
+          assert src.get('status')=='CURRENT_EXACT_BINDINGS'
+          assert list((src.get('operation_bindings') or {}).keys())==list(stage.get('operations') or []), 'BLOCK:STAGE02_BINDING_OPERATION_ORDER_DRIFT'
+          expected=set(stage.get('outputs') or [])|set(stage.get('required_evidence') or [])
+          assert set((src.get('artifact_specs') or {}).keys())==expected, 'BLOCK:STAGE02_ARTIFACT_SPEC_DENOMINATOR_DRIFT'
+          assert src.get('scanner_protocol')=='PYTHON_STAGE_SCANNER_V1'
+          assert set((src.get('validator_bindings') or {}).keys())==set(stage.get('validators') or [])
+          print('PASS: Stage02 exact binding source matches Current lifecycle denominator')
+          PY
       - name: Validate transition and permission skeleton with negative tests
         run: |
           python .github/scripts/stage_lifecycle_gate.py --mode self-test --product-root "$GITHUB_WORKSPACE" --governance-root "$GITHUB_WORKSPACE/_governance_authority"
