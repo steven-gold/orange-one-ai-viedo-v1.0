@@ -1,10 +1,6 @@
 name: Product Stage01 Validated Entry Orchestrator
 on:
-  push:
-    branches: [0921acpos]
-    paths:
-      - 'STAGE_EXECUTION/SHARED_AUTHORITY/CURRENT_STAGE_FLOW/STAGE01_PRESTAGE_EXECUTION_REQUEST.yaml'
-      - '.github/workflows/product-stage01-validated-entry.yml'
+  workflow_dispatch:
 permissions:
   contents: write
 concurrency:
