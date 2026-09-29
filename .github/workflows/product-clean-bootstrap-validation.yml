@@ -3,11 +3,11 @@ on:
   push:
     branches: [0921acpos]
     paths:
-      - '.github/scripts/stage01_successor_materialize.py'
+      - '.github/scripts/stage01_current_materialize.py'
       - '.github/scripts/stage01_operation_runtime.py'
       - '.github/scripts/stage01_ops/**'
       - '.github/workflows/product-source-review-extract.yml'
-      - '.github/workflows/product-stage01-successor-materialize.yml'
+      - '.github/workflows/product-stage01-current-materialize.yml'
       - '.github/workflows/product-stage01-materialize.yml'
       - '.github/workflows/product-clean-bootstrap-validation.yml'
 permissions:
@@ -49,13 +49,13 @@ jobs:
           python -m pip install --disable-pip-version-check --require-hashes -r governance/ci/requirements-governance.lock
       - name: Syntax validation
         run: |
-          python -m py_compile .github/scripts/stage01_successor_materialize.py
+          python -m py_compile .github/scripts/stage01_current_materialize.py
           python -m py_compile .github/scripts/stage01_operation_runtime.py
           python -m py_compile .github/scripts/stage01_ops/*.py
       - name: Ephemeral clean materialization from root Word only
         run: |
           set -euo pipefail
-          python .github/scripts/stage01_successor_materialize.py --mode materialize --units "GLOBAL-HOME-SHELL-NAVIGATION,WB01-DASHBOARD" --product-root "$GITHUB_WORKSPACE" --governance-root "$GITHUB_WORKSPACE/_governance_authority"
+          python .github/scripts/stage01_current_materialize.py --mode materialize --units "GLOBAL-HOME-SHELL-NAVIGATION,WB01-DASHBOARD" --product-root "$GITHUB_WORKSPACE" --governance-root "$GITHUB_WORKSPACE/_governance_authority"
       - name: Load governance receipts and validate admission
         run: |
           set -euo pipefail
@@ -63,7 +63,7 @@ jobs:
           for WU in WU-STAGE01-GLOBAL-HOME-SHELL-NAVIGATION-CLEAN-001 WU-STAGE01-WB01-DASHBOARD-CLEAN-001; do
             python .github/scripts/product_current_governance_load.py --product-root "$GITHUB_WORKSPACE" --governance-root "$GITHUB_WORKSPACE/_governance_authority" --stage STAGE-01 --work-unit "STAGE_EXECUTION/STAGE-01/$WU/WORK_UNIT.yaml"
           done
-          python .github/scripts/stage01_successor_materialize.py --mode refresh-manifest --units "GLOBAL-HOME-SHELL-NAVIGATION,WB01-DASHBOARD" --product-root "$GITHUB_WORKSPACE"
+          python .github/scripts/stage01_current_materialize.py --mode refresh-manifest --units "GLOBAL-HOME-SHELL-NAVIGATION,WB01-DASHBOARD" --product-root "$GITHUB_WORKSPACE"
           for WU in WU-STAGE01-GLOBAL-HOME-SHELL-NAVIGATION-CLEAN-001 WU-STAGE01-WB01-DASHBOARD-CLEAN-001; do
             export STAGE_EXECUTION_ROOT="$GITHUB_WORKSPACE"
             export STAGE_ACTIVE_WORK_UNIT="STAGE_EXECUTION/STAGE-01/$WU/WORK_UNIT.yaml"
