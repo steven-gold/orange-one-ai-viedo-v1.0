@@ -319,3 +319,121 @@ stage08_readiness:
   - EXTERNAL_CURRENT_TARGET_IDENTITY_UNRESOLVED
   - EFFECTFUL_STAGING_DEPLOYMENT_OWNER_UNRESOLVED
   historical_runtime_completion_credit: 0
+
+production_target_authority:
+  PRODUCTION_PROVIDER_PROJECT:
+    status: UNRESOLVED_EXTERNAL_CURRENT_TARGET
+    resolution_kind: EXTERNAL_CURRENT_TARGET
+    provider: Vercel
+    current_project_count: 0
+    ai_may_create_or_select_project_without_explicit_authority: false
+  PRODUCTION_ENVIRONMENT:
+    status: UNRESOLVED_EXTERNAL_CURRENT_TARGET
+    resolution_kind: EXTERNAL_CURRENT_TARGET
+    provider: Vercel
+    required_environment_kind: production
+  PRODUCTION_CONFIGURATION_AUTHORITY:
+    status: RESOLVED
+    resolution_kind: AUTHORITY_VALUE
+    authority_value: VERCEL_GIT_MAIN_ONLY_PRODUCTION_CUTOVER_POLICY
+    authority_evidence_refs:
+    - vercel.json#git.deploymentEnabled
+  PRODUCTION_MIGRATION_TARGET:
+    status: UNRESOLVED_EXTERNAL_CURRENT_TARGET
+    resolution_kind: EXTERNAL_CURRENT_TARGET
+    provider: Neon
+    current_project_identity_status: UNRESOLVED_UNSCOPED_CONNECTION
+  PRODUCTION_DEPLOYMENT_TARGET:
+    status: UNRESOLVED_EXTERNAL_CURRENT_TARGET
+    resolution_kind: EXTERNAL_CURRENT_TARGET
+    provider: Vercel
+  PRODUCTION_SMOKE_TARGET:
+    status: UNRESOLVED_EXTERNAL_CURRENT_TARGET
+    resolution_kind: EXTERNAL_CURRENT_TARGET
+    provider: Vercel
+    acceptance_script_refs:
+    - scripts/post-deploy-smoke.mjs
+  ROLLBACK_TARGET:
+    status: UNRESOLVED_EXTERNAL_CURRENT_TARGET
+    resolution_kind: EXTERNAL_CURRENT_TARGET
+    provider: Vercel
+
+stage09_readiness:
+  required_binding_class_total: 7
+  resolved_binding_class_total: 1
+  unresolved_binding_class_total: 6
+  unresolved_binding_classes:
+  - PRODUCTION_PROVIDER_PROJECT
+  - PRODUCTION_ENVIRONMENT
+  - PRODUCTION_MIGRATION_TARGET
+  - PRODUCTION_DEPLOYMENT_TARGET
+  - PRODUCTION_SMOKE_TARGET
+  - ROLLBACK_TARGET
+  effectful_stage09_admission_allowed: false
+  historical_runtime_completion_credit: 0
+
+production_acceptance_target_authority:
+  CURRENT_PRODUCTION_RUNTIME_TARGET:
+    status: UNRESOLVED_EXTERNAL_CURRENT_TARGET
+    resolution_kind: EXTERNAL_CURRENT_TARGET
+    provider: Vercel
+  PRODUCTION_GOVERNED_UNIT_TARGET:
+    status: UNRESOLVED_EXTERNAL_CURRENT_TARGET
+    resolution_kind: EXTERNAL_CURRENT_TARGET
+    provider: Vercel
+  PRODUCTION_DATABASE_TARGET:
+    status: UNRESOLVED_EXTERNAL_CURRENT_TARGET
+    resolution_kind: EXTERNAL_CURRENT_TARGET
+    provider: Neon
+  PRODUCTION_PERMISSION_TARGET:
+    status: UNRESOLVED_EXTERNAL_CURRENT_TARGET
+    resolution_kind: EXTERNAL_CURRENT_TARGET
+    provider: Vercel
+  PRODUCTION_EXTERNAL_INTEGRATION_TARGET:
+    status: UNRESOLVED_EXTERNAL_CURRENT_TARGET
+    resolution_kind: EXTERNAL_CURRENT_TARGET
+    provider: Vercel
+  PRODUCTION_ASYNC_RUNTIME_TARGET:
+    status: UNRESOLVED_EXTERNAL_CURRENT_TARGET
+    resolution_kind: EXTERNAL_CURRENT_TARGET
+    provider: Vercel
+  PRODUCTION_VISUAL_ACCEPTANCE_TARGET:
+    status: UNRESOLVED_EXTERNAL_CURRENT_TARGET
+    resolution_kind: EXTERNAL_CURRENT_TARGET
+    provider: Vercel
+
+stage10_readiness:
+  required_binding_class_total: 7
+  resolved_binding_class_total: 0
+  unresolved_binding_class_total: 7
+  effectful_stage10_admission_allowed: false
+  historical_runtime_completion_credit: 0
+
+operations_target_authority:
+  MONITORING_TARGET:
+    status: UNRESOLVED_EXTERNAL_CURRENT_TARGET
+    resolution_kind: EXTERNAL_CURRENT_TARGET
+  BACKUP_TARGET:
+    status: UNRESOLVED_EXTERNAL_CURRENT_TARGET
+    resolution_kind: EXTERNAL_CURRENT_TARGET
+    provider: Neon
+  ROLLBACK_TARGET:
+    status: UNRESOLVED_EXTERNAL_CURRENT_TARGET
+    resolution_kind: EXTERNAL_CURRENT_TARGET
+    provider: Vercel
+  OPERATIONS_OWNER:
+    status: RESOLVED_BY_AUTHORIZED_TEMPLATE
+    resolution_kind: AUTHORITY_VALUE
+    authority_value_template: OWNER-STAGE11-{{GOVERNED_UNIT_UID}}
+    owner_scope: CURRENT_GOVERNED_UNIT
+
+stage11_readiness:
+  required_binding_class_total: 4
+  resolved_binding_class_total: 1
+  unresolved_binding_class_total: 3
+  unresolved_binding_classes:
+  - MONITORING_TARGET
+  - BACKUP_TARGET
+  - ROLLBACK_TARGET
+  effectful_stage11_admission_allowed: false
+  historical_runtime_completion_credit: 0
