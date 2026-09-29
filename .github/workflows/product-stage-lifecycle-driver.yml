@@ -81,6 +81,15 @@ jobs:
             git commit -m "$STAGE: persist one-operation Current checkpoint"
             git push origin HEAD:0921acpos || { echo "BLOCK:REMOTE_ADVANCED_COMPARE_AND_SWAP"; exit 52; }
           done
+      - name: Reconcile Work Unit status projection before closure
+        run: |
+          set -euo pipefail
+          PYTHONUNBUFFERED=1 python .github/scripts/current_stage_execute.py --reconcile-only --stage "$STAGE" --work-units "$WORK_UNITS" --product-root "$GITHUB_WORKSPACE" --governance-root "$GITHUB_WORKSPACE/_governance_authority"
+          git add "STAGE_EXECUTION/$STAGE"
+          if ! git diff --cached --quiet; then
+            git commit -m "$STAGE: reconcile Work Unit status projection"
+            git push origin HEAD:0921acpos || { echo "BLOCK:REMOTE_ADVANCED_BEFORE_STATUS_RECONCILE"; exit 62; }
+          fi
       - name: Detect governed human approval boundary
         id: human_gate
         run: |
