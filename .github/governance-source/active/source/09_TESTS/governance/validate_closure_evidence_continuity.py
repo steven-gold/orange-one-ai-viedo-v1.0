@@ -39,6 +39,43 @@ def validate(root=ROOT):
     for tok in ['EXECUTION_STATE','only mutable Current execution-state authority','MUST_NOT be required to prove Product Stage content closure','content closure PASS']:
         if tok not in section: failures.append('normative_content_closure_text_missing:'+tok)
     return {'status':'PASS' if not failures else 'FAIL','stage_count':len(life.get('stages') or []),'failures':failures}
+def validate_predecessor_successor_state(previous,current,legal_edges):
+    failures=[]
+    pstage=str(previous.get('stage_uid') or '')
+    cstage=str(current.get('current_stage_uid') or '')
+    legal=set((str(a),str(b)) for a,b in legal_edges)
+    if (pstage,cstage) not in legal:
+        failures.append('illegal_successor_or_stage_skip')
+    if current.get('predecessor_completed') is not True:
+        failures.append('predecessor_completion_reverted')
+    if str(current.get('proof_identity') or '')!=str(previous.get('proof_identity') or ''):
+        failures.append('predecessor_proof_identity_drift')
+    if str(current.get('authority_identity') or '')!=str(previous.get('authority_identity') or ''):
+        failures.append('predecessor_authority_identity_drift')
+    # Terminal CI receipt is optional transport provenance, not Product Stage closure truth.
+    return {'status':'PASS' if not failures else 'FAIL','failures':failures}
+
+def validate_required_evidence_bytes(text,fmt,required_fields):
+    failures=[]
+    if not isinstance(text,str) or not text.strip():
+        return {'status':'FAIL','failures':['required_evidence_empty']}
+    try:
+        if fmt=='yaml':
+            obj=yaml.safe_load(text)
+        elif fmt=='json':
+            obj=json.loads(text)
+        else:
+            return {'status':'FAIL','failures':['required_evidence_parser_unsupported']}
+    except Exception:
+        return {'status':'FAIL','failures':['required_evidence_parse_failed']}
+    if not isinstance(obj,dict):
+        failures.append('required_evidence_mapping_required')
+    else:
+        for field in required_fields:
+            if field not in obj:
+                failures.append('required_evidence_field_missing:'+str(field))
+    return {'status':'PASS' if not failures else 'FAIL','failures':failures}
+
 def validate_transition(previous,current):
     failures=[]; prev=previous.get('predecessor_facts') or {}; cur=current.get('predecessor_facts') or {}
     for k,v in prev.items():
