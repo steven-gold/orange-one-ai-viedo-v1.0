@@ -145,6 +145,14 @@ common_requirements:
   terminal_closure_requires_content_evidence: true
   execution_state_checkpoint_before_next_stage_required: true
   next_stage_must_match_profile: true
+  single_current_state_owner: EXECUTION_STATE
+  work_unit_status_role: NON_AUTHORITATIVE_PROJECTION_ONLY
+  separate_resume_state_authority: FORBIDDEN
+  validator_mode: READ_ONLY
+  validator_may_mutate: false
+  stage_closure_basis: REQUIRED_CONTENT_EVIDENCE
+  successor_materialization_owner: SAME_LIFECYCLE_ORCHESTRATOR
+  future_stage_runtime_precondition_on_predecessor: FORBIDDEN
 owner_remediation_routes:
   GOVERNANCE_DEFECT: GOVERNANCE_MAINTENANCE
   AUTHORITY_GAP: AUTHORITY_OWNER
