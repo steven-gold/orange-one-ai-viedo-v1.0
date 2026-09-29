@@ -24,7 +24,7 @@ def main():
     ap.add_argument("--mode",choices=["preflight","close"],default="preflight")
     a=ap.parse_args()
     root=Path(a.product_root).resolve(); gov=Path(a.governance_root).resolve()
-    run([sys.executable,".github/scripts/full_stage_lifecycle_guard.py","--mode","execution-ready","--product-root",str(root),"--governance-root",str(gov)],root)
+    run([sys.executable,".github/scripts/full_stage_lifecycle_guard.py","--mode","execution-ready","--stage",a.stage,"--product-root",str(root),"--governance-root",str(gov)],root)
     run([sys.executable,".github/scripts/stage_lifecycle_gate.py","--mode","assert-work-unit-entry","--stage",a.stage,"--work-unit",a.work_unit,"--product-root",str(root),"--governance-root",str(gov)],root)
     wp=(root/Path(a.work_unit)).resolve(); wd=wp.parent
     work=y(wp); state=y(wd/"EXECUTION_STATE.yaml")
