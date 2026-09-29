@@ -176,10 +176,11 @@ def main():
         elif rs=="RESOLVE_FROM_PRODUCT_IMPLEMENTATION_AUTHORITY":
             auth_path=root/PRODUCT_AUTH
             auth=load(auth_path)
-            if auth.get("status")!="CURRENT_STAGE05_AUTHORITY":
+            if auth.get("status") not in {"CURRENT_PRODUCT_EXECUTION_AUTHORITY","CURRENT_STAGE05_AUTHORITY"}:
                 raise SystemExit("BLOCK:PRODUCT_IMPLEMENTATION_AUTHORITY_NOT_CURRENT")
             source=(auth.get("toolchain_authority") or {}).get(cls)
             if source is None: source=(auth.get("execution_target_authority") or {}).get(cls)
+            if source is None: source=(auth.get("verification_target_authority") or {}).get(cls)
             if not isinstance(source,dict):
                 raise SystemExit("BLOCK:PRODUCT_IMPLEMENTATION_AUTHORITY_CLASS_MISSING:"+cls)
             status=str(source.get("status") or "")
