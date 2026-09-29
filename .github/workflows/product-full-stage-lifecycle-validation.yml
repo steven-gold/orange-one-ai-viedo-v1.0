@@ -7,6 +7,8 @@ on:
       - '.github/scripts/full_stage_lifecycle_guard.py'
       - '.github/scripts/stage_lifecycle_gate.py'
       - '.github/scripts/current_stage_execute.py'
+      - '.github/scripts/common_stage_closure.py'
+      - '.github/scripts/common_successor_materialize.py'
       - '.github/workflows/product-full-stage-lifecycle-validation.yml'
       - '.github/workflows/product-stage*-materialize.yml'
       - '.github/workflows/product-stage*-validation.yml'
@@ -52,7 +54,7 @@ jobs:
           python .github/governance-source/active/source/09_TESTS/governance/validate_stage_execution_invariants.py
       - name: Syntax-check lifecycle runtime guards
         run: |
-          python -m py_compile .github/scripts/full_stage_lifecycle_guard.py .github/scripts/stage_lifecycle_gate.py .github/scripts/current_stage_execute.py
+          python -m py_compile .github/scripts/full_stage_lifecycle_guard.py .github/scripts/stage_lifecycle_gate.py .github/scripts/current_stage_execute.py .github/scripts/common_stage_closure.py .github/scripts/common_successor_materialize.py
       - name: Validate transition and permission skeleton with negative tests
         run: |
           python .github/scripts/stage_lifecycle_gate.py --mode self-test --product-root "$GITHUB_WORKSPACE" --governance-root "$GITHUB_WORKSPACE/_governance_authority"

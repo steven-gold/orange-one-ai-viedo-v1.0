@@ -24,10 +24,28 @@ def main():
     args=ap.parse_args()
     root=Path(args.product_root).resolve()
     govroot=Path(args.governance_root).resolve()
-    run([sys.executable,".github/scripts/stage_lifecycle_gate.py","--mode","assert-stage-authorized","--stage",args.stage,"--product-root",str(root),"--governance-root",str(govroot)],root)\n    reg=load(root/"governance/specifications/REGISTRY.yaml")
+
+    # Full lifecycle hard gate: no Stage, including STAGE-01, may execute while
+    # the common 01-11 lifecycle skeleton still has unresolved execution-ready blockers.
+    run([
+        sys.executable,".github/scripts/full_stage_lifecycle_guard.py",
+        "--mode","execution-ready",
+        "--product-root",str(root),
+        "--governance-root",str(govroot),
+    ],root)
+    run([
+        sys.executable,".github/scripts/stage_lifecycle_gate.py",
+        "--mode","assert-stage-authorized",
+        "--stage",args.stage,
+        "--product-root",str(root),
+        "--governance-root",str(govroot),
+    ],root)
+
+    reg=load(root/"governance/specifications/REGISTRY.yaml")
     gov_uid=str((reg.get("governance_identity") or {}).get("governance_uid") or "")
     if not gov_uid:
         raise SystemExit("BLOCK:CURRENT_GOVERNANCE_UID_MISSING")
+
     plan=json.loads(subprocess.check_output(
         [sys.executable,"governance/ci/stage_execution_engine.py","--plan","--stage",args.stage],
         cwd=root,text=True
@@ -35,9 +53,11 @@ def main():
     op_total=len(plan.get("operations") or [])
     if op_total<=0:
         raise SystemExit("BLOCK:EMPTY_OPERATION_UNIVERSE")
+
     wus=[x.strip() for x in args.work_units.split(",") if x.strip()]
     if not wus:
         raise SystemExit("BLOCK:CURRENT_WORK_UNIT_SET_EMPTY")
+
     for wu in wus:
         wudir=root/"STAGE_EXECUTION"/args.stage/wu
         work_path=wudir/"WORK_UNIT.yaml"
@@ -46,11 +66,22 @@ def main():
         for p,label in ((work_path,"WORK_UNIT"),(scope_path,"CURRENT_SCOPE"),(state_path,"EXECUTION_STATE")):
             if not p.is_file() or p.stat().st_size<=0:
                 raise SystemExit(f"BLOCK:CURRENT_{label}_MISSING:{wu}")
-        run([sys.executable,".github/scripts/stage_lifecycle_gate.py","--mode","assert-work-unit-entry","--stage",args.stage,"--work-unit",str(work_path.relative_to(root)),"--product-root",str(root),"--governance-root",str(govroot)],root)\n        run([
+
+        run([
+            sys.executable,".github/scripts/stage_lifecycle_gate.py",
+            "--mode","assert-work-unit-entry",
+            "--stage",args.stage,
+            "--work-unit",str(work_path.relative_to(root)),
+            "--product-root",str(root),
+            "--governance-root",str(govroot),
+        ],root)
+
+        run([
             sys.executable,".github/scripts/product_current_governance_load.py",
             "--product-root",str(root),"--governance-root",str(govroot),
             "--stage",args.stage,"--work-unit",str(work_path.relative_to(root))
         ],root)
+
         env=dict(os.environ)
         env.update({
             "STAGE_EXECUTION_ROOT":str(root),
@@ -74,11 +105,13 @@ def main():
         )
         run([sys.executable,"-c",code],root,env)
         run([sys.executable,"governance/ci/stage_execution_engine.py","--admission-check","--stage",args.stage],root,env)
+
         state=load(state_path)
         current=str(state.get("current_operation") or "")
         if current=="COMPLETE":
             print(f"PASS: {args.stage} already operation-complete for {wu}; no effectful invocation")
             continue
+
         run([sys.executable,"governance/ci/stage_execution_engine.py","--execute","--stage",args.stage],root,env)
         state=load(state_path)
         completed=list(map(str,state.get("completed_operations") or []))
@@ -86,10 +119,16 @@ def main():
         if completed!=expected[:len(completed)]:
             raise SystemExit(f"BLOCK:COMPLETED_OPERATION_PREFIX_DRIFT:{wu}")
         print(f"PASS: {args.stage} persisted one operation checkpoint for {wu}; next={state.get('current_operation')}")
+
     if args.stage=="STAGE-01":
         states=[load(root/"STAGE_EXECUTION"/args.stage/wu/"EXECUTION_STATE.yaml") for wu in wus]
         if all(str(s.get("current_operation") or "")=="COMPLETE" for s in states):
-            run([sys.executable,".github/scripts/stage01_current_materialize.py","--mode","refresh-manifest","--product-root",str(root)],root)
+            run([
+                sys.executable,".github/scripts/stage01_current_materialize.py",
+                "--mode","refresh-manifest",
+                "--product-root",str(root),
+            ],root)
             print("PASS: Stage01 operation universe complete for all Current clean Work Units; run manifest refreshed")
+
 if __name__=="__main__":
     main()
