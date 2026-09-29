@@ -8,220 +8,211 @@ on:
       work_units:
         required: true
         type: string
+      end_stage:
+        required: false
+        type: string
+        default: STAGE-11
+      stage01_units:
+        required: false
+        type: string
+        default: ''
   workflow_dispatch:
     inputs:
       stage:
-        description: Exact registered stage
+        description: Start registered stage
         required: true
         type: string
+        default: STAGE-01
       work_units:
         description: Comma-separated Current Work Unit UIDs
         required: true
         type: string
+      end_stage:
+        description: Inclusive end stage
+        required: true
+        type: string
+        default: STAGE-11
+      stage01_units:
+        description: Optional Stage01 governed-unit selector for clean materialization
+        required: false
+        type: string
+        default: ''
 permissions:
   contents: write
-  actions: write
 concurrency:
-  group: product-stage-lifecycle-driver-${{ inputs.stage }}
-  cancel-in-progress: true
+  group: product-stage-lifecycle-driver
+  cancel-in-progress: false
+
 jobs:
   drive:
     runs-on: ubuntu-24.04
     env:
-      GH_TOKEN: ${{ github.token }}
-      STAGE: ${{ inputs.stage }}
-      WORK_UNITS: ${{ inputs.work_units }}
+      START_STAGE: ${{ inputs.stage }}
+      END_STAGE: ${{ inputs.end_stage }}
+      INITIAL_WORK_UNITS: ${{ inputs.work_units }}
+      STAGE01_UNITS: ${{ inputs.stage01_units }}
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
           ref: 0921acpos
           fetch-depth: 0
+
       - name: Resolve exact Current governance
         id: governance
+        shell: bash
         run: |
           set -euo pipefail
-          COMMIT="$(awk '$1=="governance_commit_sha:" {print $2; exit}' STAGE_EXECUTION/SHARED_AUTHORITY/CURRENT_GOVERNANCE_SELECTION.yaml)"
+          SEL="STAGE_EXECUTION/SHARED_AUTHORITY/CURRENT_GOVERNANCE_SELECTION.yaml"
+          test -s "$SEL"
+          STATUS="$(awk '$1=="status:" {print $2; exit}' "$SEL")"
+          COMMIT="$(awk '$1=="governance_commit_sha:" {print $2; exit}' "$SEL")"
+          test "$STATUS" = "SELECTED_EXACT_CURRENT_SNAPSHOT"
           echo "$COMMIT" | grep -Eq '^[0-9a-f]{40}$'
           echo "commit_sha=$COMMIT" >> "$GITHUB_OUTPUT"
+
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
           repository: steven-gold/orange-one-ai-viedo-v1.0
           ref: ${{ steps.governance.outputs.commit_sha }}
           path: _governance_authority
           fetch-depth: 1
+
       - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
         with:
           python-version: '3.11.16'
+
       - name: Load exact governance runtime
         run: |
+          set -euo pipefail
           rm -rf governance .github/governance-source
           cp -R _governance_authority/governance ./governance
           mkdir -p .github
           cp -R _governance_authority/.github/governance-source .github/governance-source
           python -m pip install --disable-pip-version-check --require-hashes -r governance/ci/requirements-governance.lock
-      - name: Drive one-operation checkpoints until operation-complete
+
+      - name: Execute requested lifecycle range
+        shell: bash
         run: |
           set -euo pipefail
-          git config user.name github-actions
-          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
-          python .github/scripts/full_stage_lifecycle_guard.py --mode execution-ready --product-root "$GITHUB_WORKSPACE" --governance-root "$GITHUB_WORKSPACE/_governance_authority"
-          python .github/scripts/stage_lifecycle_gate.py --mode assert-stage-authorized --stage "$STAGE" --product-root "$GITHUB_WORKSPACE" --governance-root "$GITHUB_WORKSPACE/_governance_authority"
-          test "$(git rev-parse HEAD)" = "$(git rev-parse origin/0921acpos)" || { echo "BLOCK:DRIVER_CHECKOUT_NOT_CURRENT_REMOTE_HEAD"; exit 50; }
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          STAGE="$START_STAGE"
+          WORK_UNITS="$INITIAL_WORK_UNITS"
+
+          python - "$START_STAGE" "$END_STAGE" <<'PY'
+          import sys,yaml
+          from pathlib import Path
+          start,end=sys.argv[1:3]
+          p=Path('_governance_authority/.github/governance-source/active/source/10_REGISTRY/GOVERNANCE_LIFECYCLE_STAGE_REGISTRY.yaml')
+          d=yaml.safe_load(p.read_text(encoding='utf-8')) or {}
+          order=[str(x.get('stage_uid') or '') for x in d.get('stages') or []]
+          if start not in order or end not in order:
+              raise SystemExit('BLOCK:REQUESTED_STAGE_RANGE_UNREGISTERED')
+          if order.index(start)>order.index(end):
+              raise SystemExit('BLOCK:REQUESTED_STAGE_RANGE_REVERSED')
+          print('PASS: requested lifecycle range',start,'->',end)
+          PY
+
+          persist_stage() {
+            local msg="$1"
+            shift
+            git add "$@"
+            if git diff --cached --quiet; then
+              return 0
+            fi
+            git commit -m "$msg"
+            git push origin HEAD:0921acpos || { echo "BLOCK:REMOTE_ADVANCED_DURING_LIFECYCLE"; exit 70; }
+          }
+
           while true; do
-            PENDING=0
+            echo "=== CURRENT $STAGE | WUS=$WORK_UNITS | END=$END_STAGE ==="
+            test -n "$WORK_UNITS" || { echo "BLOCK:CURRENT_WORK_UNIT_SET_EMPTY"; exit 71; }
+
+            if [ "$STAGE" = "STAGE-01" ]; then
+              FIRST_WU="${WORK_UNITS%%,*}"
+              if [ ! -s "STAGE_EXECUTION/STAGE-01/$FIRST_WU/WORK_UNIT.yaml" ]; then
+                if [ -n "$STAGE01_UNITS" ]; then
+                  python .github/scripts/stage01_current_materialize.py --mode materialize --units "$STAGE01_UNITS" --product-root "$GITHUB_WORKSPACE" --governance-root "$GITHUB_WORKSPACE/_governance_authority"
+                else
+                  python .github/scripts/stage01_current_materialize.py --mode materialize --product-root "$GITHUB_WORKSPACE" --governance-root "$GITHUB_WORKSPACE/_governance_authority"
+                fi
+                persist_stage "STAGE-01: materialize clean Work Units" "STAGE_EXECUTION/STAGE-01"
+              fi
+            fi
+
+            python .github/scripts/full_stage_lifecycle_guard.py --mode execution-ready --stage "$STAGE" --product-root "$GITHUB_WORKSPACE" --governance-root "$GITHUB_WORKSPACE/_governance_authority"
+            python .github/scripts/stage_lifecycle_gate.py --mode assert-stage-authorized --stage "$STAGE" --product-root "$GITHUB_WORKSPACE" --governance-root "$GITHUB_WORKSPACE/_governance_authority"
+
             IFS=',' read -ra WUS <<< "$WORK_UNITS"
             for WU in "${WUS[@]}"; do
-              CUR="$(python -c "import yaml,sys; d=yaml.safe_load(open(sys.argv[1])) or {}; print(d.get('current_operation') or '')" "STAGE_EXECUTION/$STAGE/$WU/EXECUTION_STATE.yaml")"
-              [ "$CUR" = COMPLETE ] || PENDING=1
+              python .github/scripts/stage_lifecycle_gate.py --mode assert-work-unit-entry --stage "$STAGE" --work-unit "STAGE_EXECUTION/$STAGE/$WU/WORK_UNIT.yaml" --product-root "$GITHUB_WORKSPACE" --governance-root "$GITHUB_WORKSPACE/_governance_authority"
             done
-            [ "$PENDING" -eq 1 ] || break
-            PYTHONUNBUFFERED=1 ACPOS_OPERATION_SUBPROCESS_TIMEOUT_SECONDS=900 python .github/scripts/current_stage_execute.py --stage "$STAGE" --work-units "$WORK_UNITS" --product-root "$GITHUB_WORKSPACE" --governance-root "$GITHUB_WORKSPACE/_governance_authority"
-            git add "STAGE_EXECUTION/$STAGE"
-            git diff --cached --quiet && { echo "BLOCK:OPERATION_CHECKPOINT_NO_DELTA"; exit 51; }
-            git commit -m "$STAGE: persist one-operation Current checkpoint"
-            git push origin HEAD:0921acpos || { echo "BLOCK:REMOTE_ADVANCED_COMPARE_AND_SWAP"; exit 52; }
-          done
-      - name: Reconcile Work Unit status projection before closure
-        run: |
-          set -euo pipefail
-          PYTHONUNBUFFERED=1 python .github/scripts/current_stage_execute.py --reconcile-only --stage "$STAGE" --work-units "$WORK_UNITS" --product-root "$GITHUB_WORKSPACE" --governance-root "$GITHUB_WORKSPACE/_governance_authority"
-          git add "STAGE_EXECUTION/$STAGE"
-          if ! git diff --cached --quiet; then
-            git commit -m "$STAGE: reconcile Work Unit status projection"
-            git push origin HEAD:0921acpos || { echo "BLOCK:REMOTE_ADVANCED_BEFORE_STATUS_RECONCILE"; exit 62; }
-          fi
-      - name: Detect governed human approval boundary
-        id: human_gate
-        run: |
-          set +e
-          python .github/scripts/common_stage_human_gate.py --stage "$STAGE" --work-units "$WORK_UNITS" --product-root "$GITHUB_WORKSPACE"
-          RC=$?
-          set -e
-          if [ "$RC" -eq 75 ]; then
-            echo "pause=true" >> "$GITHUB_OUTPUT"
-            echo "PASS: lifecycle paused at governed human approval boundary"
-            exit 0
-          fi
-          [ "$RC" -eq 0 ] || exit "$RC"
-          echo "pause=false" >> "$GITHUB_OUTPUT"
-      - name: Reuse or materialize preterminal physical evidence
-        if: steps.human_gate.outputs.pause != 'true'
-        run: |
-          set -euo pipefail
-          IFS=',' read -ra WUS <<< "$WORK_UNITS"
-          READY=1
-          set +e
-          for WU in "${WUS[@]}"; do
-            python .github/scripts/common_stage_preterminal.py --mode validate --stage "$STAGE" --work-unit "STAGE_EXECUTION/$STAGE/$WU/WORK_UNIT.yaml" --product-root "$GITHUB_WORKSPACE" --governance-root "$GITHUB_WORKSPACE/_governance_authority"
-            [ "$?" -eq 0 ] || { READY=0; break; }
-          done
-          set -e
-          if [ "$READY" -eq 1 ]; then
-            echo "PASS: reuse persisted preterminal evidence at exact Current HEAD"
-            echo "candidate_head=$(git rev-parse HEAD)" >> "$GITHUB_ENV"
-          else
+
+            while true; do
+              PENDING=0
+              for WU in "${WUS[@]}"; do
+                CUR="$(python -c "import yaml,sys; d=yaml.safe_load(open(sys.argv[1])) or {}; print(d.get('current_operation') or '')" "STAGE_EXECUTION/$STAGE/$WU/EXECUTION_STATE.yaml")"
+                [ "$CUR" = "COMPLETE" ] || PENDING=1
+              done
+              [ "$PENDING" -eq 1 ] || break
+              PYTHONUNBUFFERED=1 ACPOS_OPERATION_SUBPROCESS_TIMEOUT_SECONDS=900 python .github/scripts/current_stage_execute.py --stage "$STAGE" --work-units "$WORK_UNITS" --product-root "$GITHUB_WORKSPACE" --governance-root "$GITHUB_WORKSPACE/_governance_authority"
+              persist_stage "$STAGE: persist operation checkpoint" "STAGE_EXECUTION/$STAGE"
+            done
+
+            set +e
+            python .github/scripts/common_stage_human_gate.py --stage "$STAGE" --work-units "$WORK_UNITS" --product-root "$GITHUB_WORKSPACE"
+            RC=$?
+            set -e
+            if [ "$RC" -eq 75 ]; then
+              echo "PAUSE: formal human gate reached at $STAGE"
+              exit 0
+            fi
+            [ "$RC" -eq 0 ] || exit "$RC"
+
             for WU in "${WUS[@]}"; do
               python .github/scripts/common_stage_preterminal.py --mode materialize --stage "$STAGE" --work-unit "STAGE_EXECUTION/$STAGE/$WU/WORK_UNIT.yaml" --product-root "$GITHUB_WORKSPACE" --governance-root "$GITHUB_WORKSPACE/_governance_authority"
             done
-            python - <<'PY'
-          from pathlib import Path
-          import os,yaml
-          p=Path('STAGE_EXECUTION/SHARED_AUTHORITY/CURRENT_STAGE_FLOW/CURRENT_STAGE_EXECUTION_REQUEST.yaml')
-          d=yaml.safe_load(p.read_text(encoding='utf-8')) if p.is_file() else {}
-          d=d or {}
-          d.update({
-            'artifact_type':'PRODUCT_CURRENT_STAGE_EXECUTION_REQUEST',
-            'status':'AWAITING_EXTERNAL_EXACT_HEAD_VALIDATION_REARM',
-            'product_branch':'0921acpos',
-            'stage_uid':os.environ['STAGE'],
-            'work_units_csv':os.environ['WORK_UNITS'],
-            'historical_completion_credit':0,
-          })
-          p.write_text(yaml.safe_dump(d,sort_keys=False,allow_unicode=True),encoding='utf-8')
-          PY
-            git add "STAGE_EXECUTION/$STAGE" STAGE_EXECUTION/SHARED_AUTHORITY/CURRENT_STAGE_FLOW/GENERATED_BINDINGS STAGE_EXECUTION/SHARED_AUTHORITY/CURRENT_STAGE_FLOW/CURRENT_STAGE_EXECUTION_REQUEST.yaml 2>/dev/null || true
-            git diff --cached --quiet && { echo "BLOCK:PRETERMINAL_NO_DELTA"; exit 53; }
-            git commit -m "$STAGE: persist preterminal physical evidence"
-            git push origin HEAD:0921acpos || { echo "BLOCK:REMOTE_ADVANCED_BEFORE_PRETERMINAL"; exit 54; }
-            echo "candidate_head=$(git rev-parse HEAD)" >> "$GITHUB_ENV"
-          fi
-      - name: Wait for independent exact-head outer validation
-        if: steps.human_gate.outputs.pause != 'true'
-        run: |
-          set -euo pipefail
-          RID=""
-          for i in $(seq 1 180); do
-            RID="$(gh run list --branch 0921acpos --event push --limit 100 --json databaseId,headSha,name,status,conclusion --jq '.[] | select(.headSha=="'"$candidate_head"'" and .name=="Product Full Stage Lifecycle Validation") | .databaseId' | head -1)"
-            [ -n "$RID" ] && break
-            sleep 2
-          done
-          [ -n "$RID" ] || {
-            echo "BLOCK:OUTER_EXACT_HEAD_VALIDATION_RUN_NOT_FOUND_REARM_REQUIRED:$candidate_head"
-            exit 55
-          }
-          gh run watch "$RID" --exit-status
-          echo "validation_run_id=$RID" >> "$GITHUB_ENV"
-      - name: Terminalize exact validated head
-        if: steps.human_gate.outputs.pause != 'true'
-        run: |
-          set -euo pipefail
-          test "$(git rev-parse HEAD)" = "$candidate_head"
-          IFS=',' read -ra WUS <<< "$WORK_UNITS"
-          for WU in "${WUS[@]}"; do
-            python .github/scripts/common_stage_terminalizer.py --mode terminalize --stage "$STAGE" --work-unit "STAGE_EXECUTION/$STAGE/$WU/WORK_UNIT.yaml" --validated-head "$candidate_head" --validation-run-id "$validation_run_id" --product-root "$GITHUB_WORKSPACE" --governance-root "$GITHUB_WORKSPACE/_governance_authority"
-          done
-          git add "STAGE_EXECUTION/$STAGE"
-          git diff --cached --quiet && { echo "BLOCK:NO_TERMINALIZATION_DELTA"; exit 56; }
-          git commit -m "$STAGE: persist Mother-validated terminal closure"
-          git push origin HEAD:0921acpos || { echo "BLOCK:REMOTE_ADVANCED_BEFORE_TERMINALIZATION"; exit 57; }
+            persist_stage "$STAGE: persist deterministic validation evidence" "STAGE_EXECUTION/$STAGE" "STAGE_EXECUTION/SHARED_AUTHORITY/CURRENT_STAGE_FLOW/GENERATED_BINDINGS"
 
-      - name: Materialize and auto-continue only the authorized registered successor
-        if: steps.human_gate.outputs.pause != 'true'
-        run: |
-          set -euo pipefail
-          NEXT="$(python -c "import yaml,sys; d=yaml.safe_load(open(sys.argv[1])) or {}; print(d.get('next_stage_uid') or '')" "STAGE_EXECUTION/$STAGE/$(echo "$WORK_UNITS" | cut -d, -f1)/CURRENT_STAGE_RESUME.yaml")"
-          case "$NEXT" in
-            STAGE-*)
-              AUTH="$(python -c "import yaml,sys; d=yaml.safe_load(open(sys.argv[1])) or {}; print('yes' if sys.argv[2] in (d.get('execution_authorization',{}).get('authorized_effectful_range') or []) else 'no')" STAGE_EXECUTION/SHARED_AUTHORITY/CURRENT_STAGE_FLOW/FULL_STAGE_LIFECYCLE_AUTHORIZATION_CONTRACT.yaml "$NEXT")"
-              [ "$AUTH" = yes ] || { echo "PASS: successor $NEXT is outside current effectful authorization; stop at boundary"; exit 0; }
-              NWUS=""
-              IFS=',' read -ra WUS <<< "$WORK_UNITS"
-              for WU in "${WUS[@]}"; do
-                PRED="STAGE_EXECUTION/$STAGE/$WU/WORK_UNIT.yaml"
-                RES="STAGE_EXECUTION/$STAGE/$WU/EVIDENCE/SUCCESSOR_EXECUTION_BINDING_RESOLUTION.yaml"
-                MREF="$(python -c "import yaml,sys; d=yaml.safe_load(open(sys.argv[1])) or {}; print(d.get('operation_binding_manifest_ref') or '')" "$RES")"
-                [ -n "$MREF" ] || { echo "BLOCK:SUCCESSOR_OPERATION_BINDING_MANIFEST_REF_MISSING:$WU"; exit 58; }
-                python .github/scripts/common_successor_materialize.py --mode materialize --from-stage "$STAGE" --predecessor-work-unit "$PRED" --operation-binding-manifest "$MREF" --product-root "$GITHUB_WORKSPACE" --governance-root "$GITHUB_WORKSPACE/_governance_authority"
-                NWU="$(python -c "import yaml,sys; d=yaml.safe_load(open(sys.argv[1])) or {}; print(d.get('work_unit_uid') or '')" "$MREF")"
-                NWUS="${NWUS:+$NWUS,}$NWU"
-              done
-              export NEXT NWUS
-              python - <<'PY'
-          from pathlib import Path
-          import os,yaml
-          p=Path('STAGE_EXECUTION/SHARED_AUTHORITY/CURRENT_STAGE_FLOW/CURRENT_STAGE_EXECUTION_REQUEST.yaml')
-          req={
-            'artifact_type':'PRODUCT_CURRENT_STAGE_EXECUTION_REQUEST',
-            'status':'AWAITING_EXTERNAL_REARM',
-            'product_branch':'0921acpos',
-            'stage_uid':os.environ['NEXT'],
-            'work_units_csv':os.environ['NWUS'],
-            'predecessor_stage_uid':os.environ['STAGE'],
-            'predecessor_terminal_head_sha':__import__('subprocess').check_output(['git','rev-parse','HEAD'],text=True).strip(),
-            'historical_completion_credit':0,
-            'rearm_rule':'EXTERNAL_COMMIT_MUST_SET_REQUESTED_CURRENT_STAGE_EXECUTION_AND_BIND_REQUEST_PARENT_HEAD_SHA',
-          }
-          p.write_text(yaml.safe_dump(req,sort_keys=False,allow_unicode=True),encoding='utf-8')
-          PY
-              git add "STAGE_EXECUTION/$NEXT" STAGE_EXECUTION/SHARED_AUTHORITY/CURRENT_STAGE_FLOW/CURRENT_STAGE_EXECUTION_REQUEST.yaml
-              git diff --cached --quiet && { echo "BLOCK:NO_SUCCESSOR_MATERIALIZATION_DELTA"; exit 59; }
-              git commit -m "$NEXT: materialize authorized successor Work Units and persist rearm boundary"
-              git push origin HEAD:0921acpos || { echo "BLOCK:REMOTE_ADVANCED_BEFORE_SUCCESSOR"; exit 60; }
-              echo "PASS: successor $NEXT materialized; persisted external exact-head rearm boundary"
-              ;;
-            NEXT_GOVERNED_UNIT_STAGE05_OR_SCOPE_COMPLETE)
-              echo "PASS: Stage11 terminal next-unit/scope transition persisted; no synthetic Stage successor"
-              ;;
-            *)
-              echo "BLOCK:UNREGISTERED_SUCCESSOR:$NEXT"; exit 61 ;;
-          esac
+            CANDIDATE_HEAD="$(git rev-parse HEAD)"
+            python .github/scripts/full_stage_lifecycle_guard.py --mode execution-ready --stage "$STAGE" --product-root "$GITHUB_WORKSPACE" --governance-root "$GITHUB_WORKSPACE/_governance_authority"
+            for WU in "${WUS[@]}"; do
+              python .github/scripts/common_stage_preterminal.py --mode validate --stage "$STAGE" --work-unit "STAGE_EXECUTION/$STAGE/$WU/WORK_UNIT.yaml" --product-root "$GITHUB_WORKSPACE" --governance-root "$GITHUB_WORKSPACE/_governance_authority"
+              python .github/scripts/common_stage_closure.py --mode preflight --stage "$STAGE" --work-unit "STAGE_EXECUTION/$STAGE/$WU/WORK_UNIT.yaml" --product-root "$GITHUB_WORKSPACE" --governance-root "$GITHUB_WORKSPACE/_governance_authority"
+            done
+
+            for WU in "${WUS[@]}"; do
+              python .github/scripts/common_stage_terminalizer.py --mode terminalize --stage "$STAGE" --work-unit "STAGE_EXECUTION/$STAGE/$WU/WORK_UNIT.yaml" --validated-head "$CANDIDATE_HEAD" --validation-run-id "$GITHUB_RUN_ID:$STAGE" --product-root "$GITHUB_WORKSPACE" --governance-root "$GITHUB_WORKSPACE/_governance_authority"
+            done
+            persist_stage "$STAGE: persist validated terminal closure" "STAGE_EXECUTION/$STAGE"
+
+            if [ "$STAGE" = "$END_STAGE" ]; then
+              echo "PASS: requested lifecycle range completed at $END_STAGE"
+              break
+            fi
+
+            FIRST_WU="${WUS[0]}"
+            NEXT="$(python -c "import yaml,sys; d=yaml.safe_load(open(sys.argv[1])) or {}; print(d.get('next_stage_uid') or '')" "STAGE_EXECUTION/$STAGE/$FIRST_WU/CURRENT_STAGE_RESUME.yaml")"
+            if [ "$NEXT" = "NEXT_GOVERNED_UNIT_STAGE05_OR_SCOPE_COMPLETE" ]; then
+              echo "PASS: Stage11 governed-unit lifecycle closed"
+              break
+            fi
+            echo "$NEXT" | grep -Eq '^STAGE-(0[1-9]|1[01])$' || { echo "BLOCK:UNREGISTERED_SUCCESSOR:$NEXT"; exit 72; }
+
+            NWUS=""
+            for WU in "${WUS[@]}"; do
+              PRED="STAGE_EXECUTION/$STAGE/$WU/WORK_UNIT.yaml"
+              RES="STAGE_EXECUTION/$STAGE/$WU/EVIDENCE/SUCCESSOR_EXECUTION_BINDING_RESOLUTION.yaml"
+              MREF="$(python -c "import yaml,sys; d=yaml.safe_load(open(sys.argv[1])) or {}; print(d.get('operation_binding_manifest_ref') or '')" "$RES")"
+              [ -n "$MREF" ] || { echo "BLOCK:SUCCESSOR_OPERATION_BINDING_MANIFEST_REF_MISSING:$WU"; exit 73; }
+              python .github/scripts/common_successor_materialize.py --mode materialize --from-stage "$STAGE" --predecessor-work-unit "$PRED" --operation-binding-manifest "$MREF" --product-root "$GITHUB_WORKSPACE" --governance-root "$GITHUB_WORKSPACE/_governance_authority"
+              NWU="$(python -c "import yaml,sys; d=yaml.safe_load(open(sys.argv[1])) or {}; print(d.get('work_unit_uid') or '')" "$MREF")"
+              [ -n "$NWU" ] || { echo "BLOCK:SUCCESSOR_WORK_UNIT_UID_MISSING:$MREF"; exit 74; }
+              NWUS="${NWUS:+$NWUS,}$NWU"
+            done
+
+            persist_stage "$NEXT: materialize successor Work Units" "STAGE_EXECUTION/$NEXT"
+            STAGE="$NEXT"
+            WORK_UNITS="$NWUS"
+          done
