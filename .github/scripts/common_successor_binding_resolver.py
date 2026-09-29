@@ -160,6 +160,25 @@ def main():
             ref=str(matches[0].get("artifact_ref") or "")
             if not ref or not (root/ref).is_file(): raise SystemExit("BLOCK:SUCCESSOR_AUTHORITY_ARTIFACT_NOT_PHYSICAL:"+nxt+":"+cls)
             row.update({"applicability":"REQUIRED","resolution_status":"BOUND","target_ref":ref,"authority_evidence_ref":ref})
+            receipt_stages=set(map(str,policy.get("successor_execution_target_resolution_required_stage_uids") or []))
+            if nxt in receipt_stages:
+                if not tracked(root,ref): raise SystemExit("BLOCK:SUCCESSOR_AUTHORITY_ARTIFACT_NOT_CURRENT_TRACKED:"+nxt+":"+cls+":"+ref)
+                auth=load(root/PRODUCT_AUTH)
+                head=git(root,"rev-parse","HEAD"); tree=git(root,"rev-parse","HEAD^{tree}")
+                receipt_rel=f"STAGE_EXECUTION/{a.from_stage}/{wd.name}/EVIDENCE/SUCCESSOR_TARGET_RESOLUTION/{nxt}/{cls}.yaml"
+                receipt={
+                  "artifact_type":"EXECUTION_TARGET_RESOLUTION_RECEIPT","binding_uid":f"{nxt}::{cls}",
+                  "consuming_operation_uid":str(row.get("consuming_operation_uid") or cls),"binding_class":cls,
+                  "target_identity":ref,"canonical_owner_or_authority_ref":ref,"authority_evidence_ref":ref,
+                  "work_unit_uid":str(work.get("work_unit_uid") or ""),"successor_stage_uid":nxt,
+                  "resolution_kind":"CURRENT_REPOSITORY_PATH","resolution_status":"RESOLVED_CURRENT",
+                  "current_execution_repository":str(auth.get("product_repository") or ""),
+                  "current_execution_branch":str(auth.get("current_execution_branch") or ""),
+                  "current_execution_head_sha":head,"current_execution_tree_sha":tree,"current_context_match":True,
+                  "target_path":ref,"target_path_exists":True,"target_path_tracked_at_head":True,"status":"PASS"
+                }
+                write(root/receipt_rel,receipt)
+                row.update({"target_identity":ref,"target_resolution_ref":receipt_rel,"target_resolution_kind":"CURRENT_REPOSITORY_PATH"})
             app="REQUIRED"; rs="BOUND"
         elif rs=="RESOLVE_FROM_PREDECESSOR_LOCAL_REF":
             local=str(row.get("local_ref") or "")
