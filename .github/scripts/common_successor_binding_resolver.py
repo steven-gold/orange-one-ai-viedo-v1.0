@@ -121,6 +121,9 @@ def main():
     if str(work.get("stage_uid"))!=a.from_stage: raise SystemExit("BLOCK:BINDING_RESOLVER_PREDECESSOR_STAGE_DRIFT")
     nxt=str(stages[a.from_stage].get("next_stage_uid") or "")
     out=wd/"EVIDENCE/SUCCESSOR_EXECUTION_BINDING_RESOLUTION.yaml"
+    governed=str(work.get("governed_unit_uid") or "")
+    suid=successor_uid(work.get("work_unit_uid"),nxt) if nxt in stages else ""
+    mapping={"WORK_UNIT_UID":suid,"GOVERNED_UNIT_UID":governed,"STAGE_UID":nxt,"PREDECESSOR_WORK_UNIT_UID":str(work.get("work_unit_uid") or "")}
     reqs=policy.get("successor_execution_binding_requirements") or {}
     expected_classes=list(map(str,reqs.get(nxt) or [])) if nxt in stages else list(map(str,policy.get("next_governed_unit_successor_binding_requirements") or []))
     src=root/SOURCE_ROOT/(f"{nxt}.yaml" if nxt in stages else "NEXT_GOVERNED_UNIT_STAGE05_OR_SCOPE_COMPLETE.yaml")
@@ -134,7 +137,29 @@ def main():
     if set(map(str,exec_rows))!=set(expected_classes): raise SystemExit("BLOCK:SUCCESSOR_EXECUTION_BINDING_SOURCE_DENOMINATOR_DRIFT:"+nxt)
     resolved=[]
     for cls in expected_classes:
-        row=exec_rows.get(cls) or {}; app=str(row.get("applicability") or ""); rs=str(row.get("resolution_status") or "")
+        row=render(exec_rows.get(cls) or {},mapping); app=str(row.get("applicability") or ""); rs=str(row.get("resolution_status") or "")
+        if rs=="RESOLVE_FROM_PREDECESSOR_ARTIFACT_INDEX":
+            idxref=str(work.get("predecessor_artifact_index_ref") or "")
+            if not idxref: raise SystemExit("BLOCK:PREDECESSOR_ARTIFACT_INDEX_REF_MISSING:"+nxt+":"+cls)
+            idxdoc=load(root/idxref); auid=str(row.get("required_artifact_uid") or "")
+            matches=[x for x in (idxdoc.get("artifacts") or []) if isinstance(x,dict) and str(x.get("artifact_uid") or "")==auid]
+            if len(matches)!=1: raise SystemExit("BLOCK:SUCCESSOR_AUTHORITY_ARTIFACT_RESOLUTION_NOT_EXACT:"+nxt+":"+cls+":"+str(len(matches)))
+            ref=str(matches[0].get("artifact_ref") or "")
+            if not ref or not (root/ref).is_file(): raise SystemExit("BLOCK:SUCCESSOR_AUTHORITY_ARTIFACT_NOT_PHYSICAL:"+nxt+":"+cls)
+            row.update({"applicability":"REQUIRED","resolution_status":"BOUND","target_ref":ref,"authority_evidence_ref":ref})
+            app="REQUIRED"; rs="BOUND"
+        elif rs=="RESOLVE_FROM_PREDECESSOR_LOCAL_REF":
+            local=str(row.get("local_ref") or "")
+            p=(wd/local).resolve()
+            try: p.relative_to(root)
+            except ValueError: raise SystemExit("BLOCK:SUCCESSOR_LOCAL_AUTHORITY_REF_ESCAPES_ROOT:"+nxt+":"+cls)
+            if not p.is_file(): raise SystemExit("BLOCK:FORMAL_HUMAN_APPROVAL_REQUIRED:"+str(p.relative_to(root)))
+            d=load(p)
+            if str(d.get("human_action_selected") or d.get("decision") or "") not in {"APPROVE","VISUAL_APPROVED"}:
+                raise SystemExit("BLOCK:FORMAL_HUMAN_APPROVAL_NOT_APPROVED:"+nxt+":"+cls)
+            ref=str(p.relative_to(root))
+            row.update({"applicability":"REQUIRED","resolution_status":"BOUND","target_ref":ref,"authority_evidence_ref":ref})
+            app="REQUIRED"; rs="BOUND"
         if app=="REQUIRED" and rs!="BOUND": raise SystemExit("BLOCK:SUCCESSOR_REQUIRED_BINDING_UNRESOLVED:"+nxt+":"+cls)
         if app=="AUTHORIZED_NOT_APPLICABLE" and (rs!="AUTHORIZED_NOT_APPLICABLE" or not row.get("authority_evidence_ref")): raise SystemExit("BLOCK:SUCCESSOR_NA_BINDING_EVIDENCE_INVALID:"+nxt+":"+cls)
         if app not in {"REQUIRED","AUTHORIZED_NOT_APPLICABLE"}: raise SystemExit("BLOCK:SUCCESSOR_BINDING_APPLICABILITY_INVALID:"+nxt+":"+cls)
@@ -144,8 +169,6 @@ def main():
         print("PASS: exact next-governed-unit/scope transition bindings resolved")
         return
 
-    governed=str(work.get("governed_unit_uid") or ""); suid=successor_uid(work.get("work_unit_uid"),nxt)
-    mapping={"WORK_UNIT_UID":suid,"GOVERNED_UNIT_UID":governed,"STAGE_UID":nxt}
     stage=stages[nxt]; ops=list(map(str,stage.get("operations") or []))
     source_ops=source.get("operation_bindings") or {}
     if set(map(str,source_ops))!=set(ops): raise SystemExit("BLOCK:SUCCESSOR_OPERATION_BINDING_SOURCE_COVERAGE_DRIFT:"+nxt)

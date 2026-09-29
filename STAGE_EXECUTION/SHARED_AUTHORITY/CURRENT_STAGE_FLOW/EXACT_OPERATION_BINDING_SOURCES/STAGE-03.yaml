@@ -1,0 +1,76 @@
+artifact_type: EXACT_OPERATION_BINDING_SOURCE
+stage_uid: STAGE-03
+status: CURRENT_EXACT_BINDINGS
+successor_execution_bindings:
+  VISUAL_AUTHORITY_TARGET:
+    applicability: REQUIRED
+    resolution_status: RESOLVE_FROM_PREDECESSOR_ARTIFACT_INDEX
+    required_artifact_uid: VISUAL_BASE_BLUEPRINT
+operation_bindings:
+  VISUAL_SPEC_COMPILE:
+    applicability: REQUIRED
+    executor_owner: .github/scripts/stage03_operation_runtime.py
+    executor_protocol: PYTHON_STAGE_OPERATION_V1
+    result_owner: OWNER-STAGE03-VISUAL_SPEC_COMPILE
+  GEOMETRY_CONTRACT_COMPILE:
+    applicability: REQUIRED
+    executor_owner: .github/scripts/stage03_operation_runtime.py
+    executor_protocol: PYTHON_STAGE_OPERATION_V1
+    result_owner: OWNER-STAGE03-GEOMETRY_CONTRACT_COMPILE
+  VISUAL_PREVIEW_RENDER:
+    applicability: REQUIRED
+    executor_owner: .github/scripts/stage03_operation_runtime.py
+    executor_protocol: PYTHON_STAGE_OPERATION_V1
+    result_owner: OWNER-STAGE03-VISUAL_PREVIEW_RENDER
+  VISUAL_CHANGESET_COMPILE:
+    applicability: REQUIRED
+    executor_owner: .github/scripts/stage03_operation_runtime.py
+    executor_protocol: PYTHON_STAGE_OPERATION_V1
+    result_owner: OWNER-STAGE03-VISUAL_CHANGESET_COMPILE
+  VISUAL_INTERACTION_TOPOLOGY_BIND:
+    applicability: REQUIRED
+    executor_owner: .github/scripts/stage03_operation_runtime.py
+    executor_protocol: PYTHON_STAGE_OPERATION_V1
+    result_owner: OWNER-STAGE03-VISUAL_INTERACTION_TOPOLOGY_BIND
+  FUNCTIONAL_WORKBENCH_LAYOUT_BIND:
+    applicability: REQUIRED
+    executor_owner: .github/scripts/stage03_operation_runtime.py
+    executor_protocol: PYTHON_STAGE_OPERATION_V1
+    result_owner: OWNER-STAGE03-FUNCTIONAL_WORKBENCH_LAYOUT_BIND
+  VISUAL_REFERENCE_ANNOTATION_COMPILE:
+    applicability: REQUIRED
+    executor_owner: .github/scripts/stage03_operation_runtime.py
+    executor_protocol: PYTHON_STAGE_OPERATION_V1
+    result_owner: OWNER-STAGE03-VISUAL_REFERENCE_ANNOTATION_COMPILE
+  VISUAL_INHERITANCE_MATRIX_COMPILE:
+    applicability: REQUIRED
+    executor_owner: .github/scripts/stage03_operation_runtime.py
+    executor_protocol: PYTHON_STAGE_OPERATION_V1
+    result_owner: OWNER-STAGE03-VISUAL_INHERITANCE_MATRIX_COMPILE
+  VISUAL_SCENARIO_EVIDENCE_COMPILE:
+    applicability: REQUIRED
+    executor_owner: .github/scripts/stage03_operation_runtime.py
+    executor_protocol: PYTHON_STAGE_OPERATION_V1
+    result_owner: OWNER-STAGE03-VISUAL_SCENARIO_EVIDENCE_COMPILE
+scanner_owner: .github/scripts/stage03_scanner.py
+scanner_protocol: PYTHON_STAGE_SCANNER_V1
+validator_bindings:
+  VAL-GOV-029:
+    validator_kind: DECLARED_STAGE_GUARD
+    validator_protocol: DECLARED_STAGE_GUARD_AGGREGATE_V1
+    result_ref: STAGE_EXECUTION/STAGE-03/{{WORK_UNIT_UID}}/EVIDENCE/VALIDATOR_RESULTS/VAL-GOV-029.yaml
+  VAL-GOV-030:
+    validator_kind: DECLARED_STAGE_GUARD
+    validator_protocol: DECLARED_STAGE_GUARD_AGGREGATE_V1
+    result_ref: STAGE_EXECUTION/STAGE-03/{{WORK_UNIT_UID}}/EVIDENCE/VALIDATOR_RESULTS/VAL-GOV-030.yaml
+artifact_specs:
+  VISUAL_DESIGN_SPEC_PACKAGE: {artifact_ref: STAGE_EXECUTION/STAGE-03/{{WORK_UNIT_UID}}/VISUAL_DESIGN_SPEC_PACKAGE.yaml, field_path: [status]}
+  VISUAL_GEOMETRY_CONTRACT: {artifact_ref: STAGE_EXECUTION/STAGE-03/{{WORK_UNIT_UID}}/VISUAL_GEOMETRY_CONTRACT.yaml, field_path: [status]}
+  VISUAL_PREVIEW_EVIDENCE: {artifact_ref: STAGE_EXECUTION/STAGE-03/{{WORK_UNIT_UID}}/VISUAL_PREVIEW_EVIDENCE.yaml, field_path: [status]}
+  VISUAL_CHANGESET: {artifact_ref: STAGE_EXECUTION/STAGE-03/{{WORK_UNIT_UID}}/VISUAL_CHANGESET.yaml, field_path: [status]}
+  VISUAL_INTERACTION_TOPOLOGY_BINDING: {artifact_ref: STAGE_EXECUTION/STAGE-03/{{WORK_UNIT_UID}}/VISUAL_INTERACTION_TOPOLOGY_BINDING.yaml, field_path: [status]}
+  FUNCTIONAL_WORKBENCH_LAYOUT_CONTRACT: {artifact_ref: STAGE_EXECUTION/STAGE-03/{{WORK_UNIT_UID}}/FUNCTIONAL_WORKBENCH_LAYOUT_CONTRACT.yaml, field_path: [status]}
+  VISUAL_REFERENCE_ANNOTATION: {artifact_ref: STAGE_EXECUTION/STAGE-03/{{WORK_UNIT_UID}}/VISUAL_REFERENCE_ANNOTATION.yaml, field_path: [status]}
+  VISUAL_INHERITANCE_MATRIX: {artifact_ref: STAGE_EXECUTION/STAGE-03/{{WORK_UNIT_UID}}/VISUAL_INHERITANCE_MATRIX.yaml, field_path: [status]}
+  VISUAL_SCENARIO_EVIDENCE_SET: {artifact_ref: STAGE_EXECUTION/STAGE-03/{{WORK_UNIT_UID}}/VISUAL_SCENARIO_EVIDENCE_SET.yaml, field_path: [status]}
+  VISUAL_REVIEW_EVIDENCE: {artifact_ref: STAGE_EXECUTION/STAGE-03/{{WORK_UNIT_UID}}/EVIDENCE/VISUAL_REVIEW_EVIDENCE.yaml, field_path: [decision]}
