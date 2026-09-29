@@ -79,6 +79,8 @@ jobs:
           PY
           )
           grep -q "sys.path.insert(0,'governance/ci')" .github/scripts/current_stage_execute.py
+          grep -q "def rebind_run_manifest_hash" .github/scripts/current_stage_execute.py
+          grep -q "WORK_UNIT ledger hash rebinding is owned by current_stage_execute.py" .github/scripts/stage01_operation_runtime.py
           ! grep -q "CURRENT_STAGE02_RESUME.yaml" .github/workflows/product-stage02-validation.yml
           ! grep -q "STAGE03_NORMALIZED_EVIDENCE_NOT_YET_MATERIALIZED" .github/workflows/product-stage03-validation.yml
           ! grep -q "STAGE04_NORMALIZED_EVIDENCE_NOT_YET_MATERIALIZED" .github/workflows/product-stage04-validation.yml

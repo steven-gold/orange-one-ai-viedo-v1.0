@@ -83,12 +83,9 @@ def refresh_run_manifest(wd,work_path):
     m=y(mpath)
     m["current_files"]=sorted(p.relative_to(wd).as_posix() for p in wd.rglob("*") if p.is_file())
     wy(mpath,m)
-    work=y(work_path)
-    row=(work.get("current_ledger_bindings") or {}).get("RUN_MANIFEST")
-    if isinstance(row,dict):
-        row["content_sha256"]=sha(mpath)
-        work["current_ledger_bindings"]["RUN_MANIFEST"]=row
-        wy(work_path,work)
+    # WORK_UNIT ledger hash rebinding is owned by current_stage_execute.py
+    # after the Mother engine has persisted its state update. Updating it here
+    # would be overwritten by the engine's pre-executor WORK_UNIT snapshot.
 
 def op_structure(product,wd,work,guard):
     proj=projection(wd,work); suid=source_uid(work); observed=[]; dispositions=[]; semantic=0

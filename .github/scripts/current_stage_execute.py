@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 from __future__ import annotations
-import argparse, json, os, subprocess, sys
+import argparse, hashlib, json, os, subprocess, sys
 from pathlib import Path
 import yaml
 
@@ -14,6 +14,25 @@ def run(cmd,cwd,env=None):
     cp=subprocess.run(cmd,cwd=cwd,env=env,text=True)
     if cp.returncode!=0:
         raise SystemExit(cp.returncode)
+
+def rebind_run_manifest_hash(root, work_path):
+    work=load(work_path)
+    row=(work.get("current_ledger_bindings") or {}).get("RUN_MANIFEST")
+    if not isinstance(row,dict):
+        return
+    ref=str(row.get("artifact_ref") or "")
+    if not ref:
+        raise SystemExit("BLOCK:RUN_MANIFEST_LEDGER_REF_MISSING:"+str(work.get("work_unit_uid") or ""))
+    p=(root/Path(ref)).resolve()
+    try:
+        p.relative_to(root)
+    except ValueError:
+        raise SystemExit("BLOCK:RUN_MANIFEST_LEDGER_REF_ESCAPES_ROOT:"+ref)
+    if not p.is_file() or p.stat().st_size<=0:
+        raise SystemExit("BLOCK:RUN_MANIFEST_LEDGER_TARGET_MISSING:"+ref)
+    row["content_sha256"]=hashlib.sha256(p.read_bytes()).hexdigest()
+    work["current_ledger_bindings"]["RUN_MANIFEST"]=row
+    Path(work_path).write_text(yaml.safe_dump(work,allow_unicode=True,sort_keys=False,width=180),encoding="utf-8")
 
 def main():
     ap=argparse.ArgumentParser()
@@ -76,6 +95,12 @@ def main():
             "--governance-root",str(govroot),
         ],root)
 
+        # Recovery reconcile for a previously persisted operation checkpoint. The
+        # Mother engine owns state mutation and can rewrite WORK_UNIT from the
+        # pre-executor snapshot; RUN_MANIFEST itself remains executor-owned, so
+        # rebind its exact persisted SHA before Current admission.
+        rebind_run_manifest_hash(root,work_path)
+
         run([
             sys.executable,".github/scripts/product_current_governance_load.py",
             "--product-root",str(root),"--governance-root",str(govroot),
@@ -114,6 +139,9 @@ def main():
             continue
 
         run([sys.executable,"governance/ci/stage_execution_engine.py","--execute","--stage",args.stage],root,env)
+        # Reconcile after Mother engine state persistence so its stale in-memory
+        # WORK_UNIT snapshot cannot erase the executor-refreshed RUN_MANIFEST hash.
+        rebind_run_manifest_hash(root,work_path)
         state=load(state_path)
         completed=list(map(str,state.get("completed_operations") or []))
         expected=list(map(str,plan.get("operations") or []))
