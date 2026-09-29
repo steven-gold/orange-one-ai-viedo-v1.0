@@ -66,9 +66,7 @@ def main():
     work=load(wp); wd=wp.parent
     if str(work.get("stage_uid") or "")!=a.stage: raise SystemExit("BLOCK:TERMINALIZER_WORK_UNIT_STAGE_DRIFT")
     stage=stages[a.stage]; next_stage=str(stage.get("next_stage_uid") or "")
-    gate_rel=f"STAGE_EXECUTION/{a.stage}/{wd.name}/EVIDENCE/EXACT_HEAD_GATE_RECEIPTS.yaml"
-    write(root/gate_rel,{"artifact_type":"EXACT_HEAD_GATE_RECEIPTS","stage_uid":a.stage,"work_unit_uid":work.get("work_unit_uid"),"receipts":[{"gate_uid":"PRETERMINAL_EXACT_HEAD_VALIDATION","head_sha":a.validated_head,"run_id":str(a.validation_run_id),"conclusion":"success"}],"status":"PASS"})
-    run([sys.executable,".github/scripts/common_stage_closure.py","--mode","close","--stage",a.stage,"--work-unit",a.work_unit,"--product-root",str(root),"--governance-root",str(gov)],root)
+    run([sys.executable,".github/scripts/common_stage_closure.py","--mode","close","--stage",a.stage,"--work-unit",a.work_unit,"--validated-head",a.validated_head,"--validation-run-id",str(a.validation_run_id),"--product-root",str(root),"--governance-root",str(gov)],root)
     ev_rel=f"STAGE_EXECUTION/{a.stage}/{wd.name}/EVIDENCE/NORMALIZED_STAGE_EVIDENCE.json"
     ev_path=root/ev_rel
     if not ev_path.is_file(): raise SystemExit("BLOCK:TERMINALIZER_NORMALIZED_EVIDENCE_MISSING")
@@ -108,26 +106,14 @@ def main():
     state=load(wd/"EXECUTION_STATE.yaml")
     state["status"]="CLOSED_PASS"; state["current_operation"]="COMPLETE"; state["stage_exit_authorized"]=True
     state["next_stage_uid"]=next_stage; state["terminal_receipt_ref"]=receipt_rel
+    state["next_action"]="MATERIALIZE_REGISTERED_SUCCESSOR"
+    state["validated_head_sha"]=a.validated_head
+    state["validation_run_id"]=str(a.validation_run_id)
+    state["resume_status"]="CURRENT"
     write(wd/"EXECUTION_STATE.yaml",state)
     work["current_status"]="CLOSED_PASS"; work["terminal_receipt_ref"]=receipt_rel
     write(wp,work)
-
-    auth=load(root/"STAGE_EXECUTION/SHARED_AUTHORITY/CURRENT_STAGE_FLOW/FULL_STAGE_LIFECYCLE_AUTHORIZATION_CONTRACT.yaml")
-    allowed=list(map(str,(auth.get("execution_authorization") or {}).get("authorized_effectful_range") or []))
-    resume={
-      "artifact_type":"CURRENT_STAGE_RESUME",
-      "stage_uid":a.stage,
-      "work_unit_uid":work.get("work_unit_uid"),
-      "governed_unit_uid":work.get("governed_unit_uid"),
-      "terminal_status":"CLOSED_PASS",
-      "next_stage_uid":next_stage,
-      "next_action":"MATERIALIZE_REGISTERED_SUCCESSOR_IF_EXACT_BINDINGS_READY" if next_stage in allowed else "PERSIST_ELIGIBILITY_AND_STOP_AT_AUTHORIZED_RANGE_BOUNDARY",
-      "source_validated_head_sha":a.validated_head,
-      "validation_run_id":str(a.validation_run_id),
-      "status":"CURRENT",
-    }
-    write(wd/"CURRENT_STAGE_RESUME.yaml",resume)
-    print("PASS: Mother-engine terminal receipt validated and closure projection materialized",a.stage,work.get("work_unit_uid"))
+    print("PASS: Mother-engine terminal receipt validated; EXECUTION_STATE is the persisted resume point",a.stage,work.get("work_unit_uid"))
 
 if __name__=="__main__":
     main()
