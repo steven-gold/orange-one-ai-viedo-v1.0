@@ -1,0 +1,80 @@
+artifact_type: EXACT_OPERATION_BINDING_SOURCE
+stage_uid: STAGE-09
+status: CURRENT_EXACT_BINDINGS
+runtime_readiness: BLOCKED_EXTERNAL_AUTHORITY
+successor_execution_bindings:
+  PRODUCTION_PROVIDER_PROJECT:
+    applicability: REQUIRED
+    resolution_status: RESOLVE_FROM_PRODUCT_IMPLEMENTATION_AUTHORITY
+    consuming_operation_uid: OP-39-PRODUCTION_CONFIGURATION
+  PRODUCTION_ENVIRONMENT:
+    applicability: REQUIRED
+    resolution_status: RESOLVE_FROM_PRODUCT_IMPLEMENTATION_AUTHORITY
+    consuming_operation_uid: OP-39-PRODUCTION_CONFIGURATION
+  PRODUCTION_CONFIGURATION_AUTHORITY:
+    applicability: REQUIRED
+    resolution_status: RESOLVE_FROM_PRODUCT_IMPLEMENTATION_AUTHORITY
+    consuming_operation_uid: OP-39-PRODUCTION_CONFIGURATION
+  PRODUCTION_MIGRATION_TARGET:
+    applicability: REQUIRED
+    resolution_status: RESOLVE_FROM_PRODUCT_IMPLEMENTATION_AUTHORITY
+    consuming_operation_uid: OP-40-PRODUCTION_MIGRATION
+  PRODUCTION_DEPLOYMENT_TARGET:
+    applicability: REQUIRED
+    resolution_status: RESOLVE_FROM_PRODUCT_IMPLEMENTATION_AUTHORITY
+    consuming_operation_uid: OP-41-PRODUCTION_DEPLOYMENT
+  PRODUCTION_SMOKE_TARGET:
+    applicability: REQUIRED
+    resolution_status: RESOLVE_FROM_PRODUCT_IMPLEMENTATION_AUTHORITY
+    consuming_operation_uid: OP-42-PRODUCTION_SMOKE
+  ROLLBACK_TARGET:
+    applicability: REQUIRED
+    resolution_status: RESOLVE_FROM_PRODUCT_IMPLEMENTATION_AUTHORITY
+    consuming_operation_uid: OP-41-PRODUCTION_DEPLOYMENT
+operation_bindings:
+  OP-39-PRODUCTION_CONFIGURATION:
+    applicability: REQUIRED
+    executor_owner: .github/scripts/external_stage_fail_closed_runtime.py
+    executor_protocol: PYTHON_STAGE_OPERATION_V1
+    result_owner: OWNER-STAGE-09-OP-39-PRODUCTION_CONFIGURATION
+  OP-40-PRODUCTION_MIGRATION:
+    applicability: REQUIRED
+    executor_owner: .github/scripts/external_stage_fail_closed_runtime.py
+    executor_protocol: PYTHON_STAGE_OPERATION_V1
+    result_owner: OWNER-STAGE-09-OP-40-PRODUCTION_MIGRATION
+  OP-41-PRODUCTION_DEPLOYMENT:
+    applicability: REQUIRED
+    executor_owner: .github/scripts/external_stage_fail_closed_runtime.py
+    executor_protocol: PYTHON_STAGE_OPERATION_V1
+    result_owner: OWNER-STAGE-09-OP-41-PRODUCTION_DEPLOYMENT
+  OP-42-PRODUCTION_SMOKE:
+    applicability: REQUIRED
+    executor_owner: .github/scripts/external_stage_fail_closed_runtime.py
+    executor_protocol: PYTHON_STAGE_OPERATION_V1
+    result_owner: OWNER-STAGE-09-OP-42-PRODUCTION_SMOKE
+  CURRENT_RELEASE_IDENTITY_CAPTURE:
+    applicability: REQUIRED
+    executor_owner: .github/scripts/external_stage_fail_closed_runtime.py
+    executor_protocol: PYTHON_STAGE_OPERATION_V1
+    result_owner: OWNER-STAGE-09-CURRENT_RELEASE_IDENTITY_CAPTURE
+scanner_owner: .github/scripts/external_stage_fail_closed_scanner.py
+scanner_protocol: PYTHON_STAGE_SCANNER_V1
+validator_bindings:
+  VAL-GOV-015:
+    validator_kind: DECLARED_STAGE_GUARD
+    validator_protocol: DECLARED_STAGE_GUARD_AGGREGATE_V1
+    result_ref: "STAGE_EXECUTION/STAGE-09/{{WORK_UNIT_UID}}/EVIDENCE/VALIDATOR_RESULTS/VAL-GOV-015.yaml"
+  VAL-GOV-005:
+    validator_kind: DECLARED_STAGE_GUARD
+    validator_protocol: DECLARED_STAGE_GUARD_AGGREGATE_V1
+    result_ref: "STAGE_EXECUTION/STAGE-09/{{WORK_UNIT_UID}}/EVIDENCE/VALIDATOR_RESULTS/VAL-GOV-005.yaml"
+artifact_specs:
+  PRODUCTION_DEPLOYMENT_RECORD:
+    artifact_ref: "STAGE_EXECUTION/STAGE-09/{{WORK_UNIT_UID}}/PRODUCTION_DEPLOYMENT_RECORD.yaml"
+    field_path: [status]
+  CURRENT_RELEASE_IDENTITY:
+    artifact_ref: "STAGE_EXECUTION/STAGE-09/{{WORK_UNIT_UID}}/CURRENT_RELEASE_IDENTITY.yaml"
+    field_path: [status]
+  PRODUCTION_SMOKE_EVIDENCE:
+    artifact_ref: "STAGE_EXECUTION/STAGE-09/{{WORK_UNIT_UID}}/PRODUCTION_SMOKE_EVIDENCE.yaml"
+    field_path: [status]
