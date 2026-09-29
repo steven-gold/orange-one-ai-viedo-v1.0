@@ -815,30 +815,18 @@ Gap MUST_NOT 只存在聊天文字而不進正式狀態。
 <!-- SECTION_UID: WEB-GOV-04-S049 -->
 ## 49. Current State Ledger
 
-專案 SHOULD 維持單一 Current State，至少保存：
+Project-level Current State reports MAY exist only as read projections.
 
-- Current Source Revision
-- Current Release
-- Current Production Revision
-- Active Work Unit
-- Last Closed Work Unit
-- Open Critical Gaps
-- Open Blockers
-- Implementation Completeness
-- Production Readiness
+For an active Product Stage / Work Unit, `EXECUTION_STATE` is the single mutable execution-state authority. A project dashboard MAY aggregate Current Source Revision, Current Release, Active Work Unit, Open Critical Gaps, Open Blockers, Implementation Completeness, and Production Readiness, but the aggregation MUST be recomputable from canonical Authority/evidence and MUST_NOT override `EXECUTION_STATE`.
 
 <!-- SECTION_UID: WEB-GOV-04-S050 -->
 ## 50. Resume Ledger
 
-至少保存：
+The heading is retained only for stable Section UID compatibility. Audit MUST_NOT require a separate Resume Ledger.
 
-- Current Work Unit
-- Current Step
-- Last PASS Gate
-- Current FAIL Gate
-- Current Blocker
-- Exact Next Action
-- Current Source Revision
+The legal continuation point MUST be read from the active Work Unit's `EXECUTION_STATE`, which at minimum carries Current operation, completed operations, Current blocker/re-entry disposition, exact next action, and legal successor/range information when applicable.
+
+Any separate resume/request/rearm/progress file is a non-authoritative projection and MUST_NOT select execution.
 
 <!-- SECTION_UID: WEB-GOV-04-S051 -->
 ## 51. Progress Report 必填區塊
@@ -1493,11 +1481,15 @@ Matrix audit MUST distinguish **registration completeness** from **physical mate
 After each completed producer operation, Audit MUST require every matrix row owned by that producer to resolve to the Current physical artifact, parse successfully, satisfy the registered REQUIRED field path, and match Current identity/hash bindings before dependent execution continues. At Stage closure, every REQUIRED matrix row and required evidence row MUST be physically materialized and valid unless exact Current Authority proves `NOT_APPLICABLE_WITH_AUTHORITY`; an unresolved future-target-only/`TO_MATERIALIZE` row is a blocking `MISSING_REQUIRED_ARTIFACT` or `MISSING_REQUIRED_FIELD`, not a closure PASS.
 
 <!-- SECTION_UID: WEB-GOV-04-S079 -->
-## 79. Session Bootstrap / Current Primary Task Audit
+## 79. Session Bootstrap / Resume Audit
 
-Every `PRE_WORK_AUDIT` and every resumed execution MUST verify the complete `SESSION_BOOTSTRAP_RESUME_GATE` defined by WEB-GOV-03-S063 before accepting Current State. Audit MUST record at least live repository/branch/commit/tree, Current Governance UID, Mother read-set identity, Current Canonical Authority, Current Primary Task Layer, Active Work Unit or Work Unit Resolution disposition, Canonical Owner, Resume Point, Current evidence identity, selected profile when applicable, and pre-write identity recheck state.
+Every PRE_WORK_AUDIT and resumed execution MUST verify WEB-GOV-03-S063.
 
-Audit MUST FAIL when Current State was selected from chat memory, a historical summary, Stage/profile/run identity, stale evidence, or a superseded/deleted reference instead of the formal Current chain.
+Audit MUST record the inspected repository/branch/commit/tree, Current Governance UID, Mother read-set, Current Canonical Authority, Primary Task Layer, Active Work Unit, Canonical Owner, and the exact `EXECUTION_STATE` used for continuation.
+
+Audit MUST FAIL when continuation is selected from chat memory, a historical summary, workflow runtime state, request/rearm file, duplicated status field, separate Resume ledger, stale evidence, or a superseded/deleted reference.
+
+Other manifests/receipts MAY be audited as evidence/projections but MUST_NOT override `EXECUTION_STATE`.
 
 <!-- SECTION_UID: WEB-GOV-04-S080 -->
 ## 80. Work Unit Resolution / Task-Layer Credit Isolation Audit
@@ -1507,11 +1499,15 @@ Audit MUST prove the Active Work Unit belongs to the locked Current Primary Task
 For governance, test/harness, evidence/state, reference, residual, CI, or gate maintenance, Audit MUST separately report governance-maintenance closure and product-stage status. Product gap/blocker denominators MUST remain unchanged unless fresh product-owner evidence proves an authorized product remediation. Governance cleanup, successful validator repair, successful workflow repair, or source/reference hygiene MUST_NOT be reported as product completion.
 
 <!-- SECTION_UID: WEB-GOV-04-S081 -->
-## 81. Outer Terminal Conclusion / Resume Continuity Audit
+## 81. Exact-Head / Terminal-Result / Outer-Workflow Audit
 
-Terminal Audit MUST distinguish inner-step/job success from the outer terminal execution result. Closure credit requires the exact terminal conclusion and required denominator for the exact tested commit/evidence cycle; queued, in-progress, timed-out, cancelled, skipped, failed, ambiguous, or historical runs are not Current terminal PASS.
+For Product Stage closure, audit MUST decide from the registered content denominator: required inputs, operation results/receipts, outputs and required fields, scanners, validators, required evidence, unresolved gaps/blockers, Current `EXECUTION_STATE`, and the registered Human Gate.
 
-Audit MUST prove closure state, evidence references, unresolved blockers, exact Resume Point, and legal next transition were persisted before task-layer or Work Unit movement. A resumed session that cannot reconcile these facts to the Current Governance UID and live repository identity MUST be `NOT_VERIFIED` or `BLOCKED`, never inferred PASS.
+Generic CI/workflow result, Git HEAD rearm, terminal CI receipt, or push-trigger state is transport/automation provenance only unless the Stage specification explicitly declares that external system result as Product evidence. Such transport state MUST_NOT create, deny, or override Product Stage content closure.
+
+For Governance specification validation, exact candidate snapshot identity remains mandatory so Audit can prove which normative bytes were validated; the validators themselves MUST be read-only.
+
+A restarted session that cannot reconcile physical content evidence with the Current `EXECUTION_STATE` is `NOT_VERIFIED` or `BLOCKED`; Audit MUST_NOT invent a second state source.
 
 <!-- SECTION_UID: WEB-GOV-04-S082 -->
 ## 82. Semantic Residual Classification / Cleanup Cohort Audit
@@ -1541,7 +1537,7 @@ Audit MUST verify one exact EXECUTION_SCOPE_MANIFEST for every governed Work Uni
 
 For every reusable validator, scanner, classifier, remediation executor, projector, or common workflow helper, Audit MUST prove that concrete product page/module identities, fixed product page combinations, blocker/gap counts, and historical run denominators do not define the common scope or expected completion denominator. Product/profile adapters may contain concrete identities only when their local-adapter role is explicit and the values are checked against the Current scope/identity authority.
 
-Audit MUST distinguish Work Unit closure from Stage/capability closure and MUST bind both to one Current governed Page or System-Logic Unit. A partial-scope PASS with remaining REQUIRED items of that same governed Unit MUST have zero Stage-exit credit. Other Pages, other System-Logic Units, unrelated captured sources, or project-wide same-Stage cohorts MUST_NOT be treated as remaining scope for this Unit. Remaining scope of the Unit MUST be persisted and recoverable through Resume/Work Unit Resolution.
+Audit MUST distinguish Work Unit closure from Stage/capability closure and MUST bind both to one Current governed Page or System-Logic Unit. A partial-scope PASS with remaining REQUIRED items of that same governed Unit MUST have zero Stage-exit credit. Other Pages, other System-Logic Units, unrelated captured sources, or project-wide same-Stage cohorts MUST_NOT be treated as remaining scope for this Unit. Remaining scope of the Unit MUST be persisted in the authoritative `EXECUTION_STATE` and recoverable through Work Unit Resolution.
 
 Audit MUST prove each discovered gap was routed to its owning capability. Re-running an earlier capability without a defect/change in that owner MUST NOT be credited as repairing a later-owned semantic gap. Downstream discovery of an upstream-owned defect MUST show: downstream stop, owner re-entry, impacted reverse-dependency set, REVERIFY_REQUIRED descendants, preserved unaffected evidence where proven, owner remediation, and fresh successor verification.
 
@@ -1579,7 +1575,7 @@ Stage closure requires zero unresolved REQUIRED predecessor-to-successor input e
 
 Destructive regression MUST include at least: missing referenced input bytes; parse/schema/required-field failure; omitted required input edge; consumer unable to parse/admit the exact input; downstream discovery of an upstream-owned defect; and a successor operation attempting to execute with an unresolved or invented Stage-local target.
 
-The audit MUST reconcile `WORK_UNIT`, `CURRENT_EXECUTION_STATE`, `NORMATIVE_EXECUTION_MATRIX`, normalized evidence, closure state and terminal receipt before accepting Stage closure. A successful outer workflow or terminal receipt cannot override a Current matrix/state conflict.
+The audit MUST reconcile the immutable Work Unit definition, the single authoritative `EXECUTION_STATE`, `NORMATIVE_EXECUTION_MATRIX`, normalized content evidence, and cross-Stage input handoff before accepting Stage closure. `WORK_UNIT` status projections, generic workflow conclusions, Git rearm state, or terminal CI receipts are non-authoritative and MUST_NOT override `EXECUTION_STATE` or content evidence.
 
 ### Physical Artifact Audit and Anti-Self-Assertion Rule / 實體產物稽核與禁止自我宣告規則
 

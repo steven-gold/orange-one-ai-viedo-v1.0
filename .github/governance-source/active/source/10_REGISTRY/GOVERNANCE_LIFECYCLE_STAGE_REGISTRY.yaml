@@ -55,6 +55,16 @@ explicit_stage_range_execution_contract:
   checkpoint_after_each_stage: true
   resume_must_preserve_original_requested_range: true
   resume_requires_new_range_instruction: false
+  current_state_authority: EXECUTION_STATE
+  parallel_mutable_stage_state_authority: FORBIDDEN
+  validator_product_mutation: FORBIDDEN
+  validator_successor_materialization: FORBIDDEN
+  stage_closure_authority: REQUIRED_CONTENT_EVIDENCE
+  generic_ci_terminal_receipt_required_for_stage_closure: false
+  generic_workflow_state_required_for_stage_closure: false
+  future_stage_runtime_binding_required_before_predecessor_closure: false
+  successor_runtime_binding_resolution_boundary: SUCCESSOR_ENTRY_OR_OWNING_OPERATION
+  successor_materialization_owner: SAME_CANONICAL_ORCHESTRATOR
   stop_conditions:
   - FORMAL_HUMAN_APPROVAL_REQUIRED
   - USER_DECISION_REQUIRED
@@ -72,6 +82,9 @@ explicit_stage_range_execution_contract:
   execution_mode_separation:
     STAGE_VALIDATION_MODE:
       purpose: VERIFY_STAGE_RULES_OR_EVIDENCE_ONLY
+      read_only: true
+      product_or_stage_state_mutation: FORBIDDEN
+      successor_materialization: FORBIDDEN
       effectful_execution_credit: 0
       may_redefine_requested_execution_range: false
     GOVERNED_UNIT_LIFECYCLE_EXECUTION_MODE:
@@ -133,9 +146,9 @@ universal_stage_stepwise_execution_contract:
   operation_failure_disposition: STOP_AND_REENTER_EARLIEST_OWNING_OPERATION
   stage_closure_requires_all_operation_receipts: true
   stage_successor_admission_requires:
-  - PREDECESSOR_STAGE_TERMINAL_PASS
+  - PREDECESSOR_STAGE_CONTENT_CLOSED_PASS
   - PREDECESSOR_CURRENT_NORMATIVE_EXECUTION_MATRIX_PASS
-  - PREDECESSOR_CURRENT_STATE_EVIDENCE_CONSISTENCY_PASS
+  - PREDECESSOR_EXECUTION_STATE_CLOSED_PASS
   - CROSS_STAGE_HANDOFF_READINESS_PASS
   - SUCCESSOR_INPUT_MATERIALIZATION_PASS
   - SUCCESSOR_ENTRY_GATE_PASS
@@ -2161,51 +2174,20 @@ cross_stage_invariants:
     - SOURCE_OR_CHECKPOINT_IDENTITY
     - GATE_RESULT
     - REPLAY_OR_CONTENT_AUDIT_PROOF
-    - RUN_OR_EVIDENCE_IDENTITY
-    current_ledger_synchronization_required: true
-    current_ledgers:
-    - EXECUTION_STATE
-    - RUN_MANIFEST
-    - ARTIFACT_PLAN
-    - GOVERNANCE_CURRENT
-    - BRANCH_BASELINE
-    - GOVERNANCE_STAGE_LOCK
-    - SEALED_GOVERNANCE_TEST_BASELINE
-    - STAGE_EVIDENCE
-    - DEPENDENCY_INDEX
-    - REVERSE_DEPENDENCY_INDEX
-    synchronization_dimensions:
-    - CURRENT_PHASE
-    - ARTIFACT_COUNT
-    - AUTHORITATIVE_HASH
-    - UNRESOLVED_AUTHORITY_IDENTITY
-    - GATE_STATUS
-    - NEXT_LEGAL_TRANSITION
-    - PREDECESSOR_PROOF
-    synchronization_drift: BLOCK
-    terminal_ci_receipt:
-      model: EXTERNAL_IMMUTABLE_RECEIPT
-      materialization_and_terminal_receipt_are_distinct: true
-      self_write_same_commit_run_identity: FORBIDDEN
-      required_fields:
-      - provider
-      - repository_or_project
-      - head_sha
-      - run_id
-      - job_denominator
-      - conclusion
-      receipt_must_bind_exact_head: true
-      later_reference_creates_new_head_and_must_not_relabel_prior_receipt: true
-      canonical_projection_required: true
-      ledger_projection_required_fields:
-      - provider
-      - repository_or_project
-      - head_sha
-      - run_id
-      - job_denominator
-      - conclusion
-      alias_field_substitution: BLOCK
-      abbreviated_jobs_or_result_is_not_canonical_receipt: true
+    current_state_authority: EXECUTION_STATE
+    parallel_mutable_current_state_authority: FORBIDDEN
+    projection_state_may_override_execution_state: false
+    cross_ledger_state_synchronization_required: false
+    terminal_ci_receipt_required_for_stage_closure: false
+    terminal_ci_receipt_role: OPTIONAL_TRANSPORT_ATTESTATION
+    content_closure_required_facts:
+    - REQUIRED_OPERATION_RESULTS
+    - REQUIRED_OUTPUTS_AND_FIELDS
+    - REQUIRED_SCANNER_RESULTS
+    - REQUIRED_VALIDATOR_RESULTS
+    - REQUIRED_EVIDENCE
+    - ZERO_REQUIRED_GAPS_AND_BLOCKERS
+    - REGISTERED_HUMAN_GATE_IF_APPLICABLE
     downstream_revalidation_required: true
     unresolved_authority_identity:
       source_of_truth: SOURCE_DEPENDENCY_MAP_OR_EXPLICIT_SUCCESSOR_AUTHORITY_LEDGER
@@ -2219,16 +2201,13 @@ cross_stage_invariants:
       authority_evidence_ref_required: true
       explicit_supersession_required_for_tuple_change: true
     predecessor_validator_successor_state_contract:
-      current_state_exact_predecessor_terminal_equality_as_pass_condition: FORBIDDEN
-      successor_started_false_as_permanent_pass_condition: FORBIDDEN
-      registered_legal_successor_presence: ALLOW_IF_PREDECESSOR_INVARIANTS_HOLD
+      registered_legal_successor_presence: ALLOW_IF_PREDECESSOR_CONTENT_INVARIANTS_HOLD
       illegal_successor_or_stage_skip: BLOCK
       predecessor_completion_must_remain_true: true
       predecessor_proof_identity_must_remain_resolvable: true
       predecessor_authority_identity_must_remain_stable: true
-      predecessor_terminal_receipt_must_remain_stable: true
-      phase_order_owner: PHASE_BOUNDARY_GATE
-      validator_scope: PREDECESSOR_CLOSURE_INVARIANTS_NOT_GLOBAL_CURRENT_STATE
+      predecessor_content_closure_evidence_must_remain_stable: true
+      validator_scope: PREDECESSOR_CONTENT_INVARIANTS_NOT_GLOBAL_CURRENT_STATE
       registered_successor_edge_coverage_required: true
   required_evidence_integrity:
     invariant_uid: GOV-INV-REQUIRED-EVIDENCE-INTEGRITY-001

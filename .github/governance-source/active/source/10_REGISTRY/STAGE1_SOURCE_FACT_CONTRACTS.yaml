@@ -221,27 +221,20 @@ closure_evidence_continuity_contract:
   - BLUEPRINT_BINDING_COMPILE
   predecessor_started_completed_proofs_monotonic: true
   replay_and_content_audit_proofs_monotonic: true
-  destructive_current_ledger_rewrite: BLOCK
-  current_ledger_synchronization_required: true
-  terminal_ci_receipt_model: EXTERNAL_IMMUTABLE_RECEIPT
+  current_state_authority: EXECUTION_STATE
+  parallel_mutable_current_state_authority: FORBIDDEN
+  destructive_execution_state_rewrite: BLOCK
+  cross_ledger_state_synchronization_required: false
+  terminal_ci_receipt_required_for_stage_closure: false
+  terminal_ci_receipt_role: OPTIONAL_TRANSPORT_ATTESTATION
   unresolved_authority_exact_tuple_required: true
   unresolved_authority_canonical_tuple_fields:
   - gap_uid
   - authority_ref
   - disposition
   - authority_evidence_ref
-  terminal_receipt_canonical_projection_required: true
-  terminal_receipt_required_fields:
-  - provider
-  - repository_or_project
-  - head_sha
-  - run_id
-  - job_denominator
-  - conclusion
-  terminal_receipt_alias_substitution: BLOCK
   predecessor_validator_current_state_lock: FORBIDDEN
   legal_successor_must_not_retroactively_fail_predecessor: true
-  phase_order_owner: PHASE_BOUNDARY_GATE
 predecessor_validator_successor_policy:
   current_state_exact_predecessor_terminal_equality_as_pass_condition: FORBIDDEN
   successor_started_false_as_permanent_pass_condition: FORBIDDEN

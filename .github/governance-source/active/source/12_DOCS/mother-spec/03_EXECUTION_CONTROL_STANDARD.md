@@ -539,36 +539,31 @@ MUST_NOT 使用無法理解內容的模糊 Revision Description。
 <!-- SECTION_UID: WEB-GOV-03-S029 -->
 ## 29. Resume Ledger
 
-長任務 MUST 維持 Resume Ledger，至少包含：
+The heading is retained only for stable Section UID compatibility. Normatively, there is no separate Resume Ledger.
 
-- Current Work Unit UID
-- Current Source Revision
-- Current Owner
-- Current Step
-- Last Successful Gate
-- Last Failed Gate
-- Current Blocker
-- Pending Tests
-- Pending Deployment
-- Exact Next Action
+Every active Work Unit / Stage MUST have exactly one mutable execution-state authority: `EXECUTION_STATE`.
 
-新執行不得依賴 AI 臨時記憶猜斷點。
+`EXECUTION_STATE` MUST contain the minimum deterministic continuation facts: Current operation, completed operations, canonical status, blocker/re-entry disposition, exact next action, authorized Stage range when applicable, and legal successor or terminal disposition.
+
+`WORK_UNIT`, scope manifests, audit reports, workflow runtime state, Git metadata, request/rearm files, receipts, dashboards, progress reports, and other projections MAY describe or prove facts but MUST_NOT become a second mutable Current-state authority and MUST_NOT independently determine Stage status or Resume truth.
+
+A checkpoint MUST update `EXECUTION_STATE` atomically only after the corresponding operation output and its required read-only validation have completed.
 
 <!-- SECTION_UID: WEB-GOV-03-S030 -->
 ## 30. Context Recovery
 
-恢復施工 MUST：
+Resume MUST:
 
-1. Resolve Current Source。
-2. Resolve Current Revision。
-3. Read Resume Ledger。
-4. Verify Last Completed Effectful Action。
-5. Resolve Active Work Unit。
-6. Run Duplicate Guard。
-7. Run Conflict Guard。
-8. Continue Exact Next Action。
+1. Resolve live repository/branch and selected Current Governance.
+2. Resolve the legal Active Work Unit from Current Authority and Current scope.
+3. Read that Work Unit's single `EXECUTION_STATE`.
+4. Verify the last completed operation against its physical output/receipt evidence.
+5. Verify required inputs for `EXECUTION_STATE.current_operation`.
+6. Continue exactly that operation, registered Human Gate, content-closure decision, or registered successor transition.
 
-MUST_NOT 因對話中斷重新規劃整個專案。
+Chat memory, workflow runtime state, a historical commit, a separate Resume file, or a duplicated `WORK_UNIT.current_status` MUST_NOT select the continuation point.
+
+MUST_NOT re-plan the whole project merely because the conversation or execution process restarted.
 
 <!-- SECTION_UID: WEB-GOV-03-S031 -->
 ## 31. Idempotent Execution
@@ -680,7 +675,7 @@ Foreground、Background、Scheduled、Event-triggered 執行都 MUST 遵守相�
 - `EXTERNAL_APPROVAL_REQUIRED`
 - `PLATFORM_BLOCKED`
 
-停止時 MUST 寫入 Resume Ledger。
+停止時 MUST 將 blocker 與 exact next action 原子寫入唯一 `EXECUTION_STATE`。
 
 <!-- SECTION_UID: WEB-GOV-03-S038 -->
 ## 38. 非必要確認不得阻塞
@@ -754,7 +749,7 @@ MUST_NOT 以：
 
 1. Resolve Current Source。
 2. Resolve Current Revision。
-3. Read Resume Ledger。
+3. Read the Active Work Unit's `EXECUTION_STATE`。
 4. Resolve Active Work Unit。
 5. Read Definition of Done。
 6. Read Acceptance Matrix。
@@ -902,15 +897,15 @@ Cross-page Flow、Provider、Deployment、State Machine、Field Identity 等 Gat
 
 Current Governance MAY change reusable policy only under explicit, pre-existing scope authorization and MUST preserve predecessor history.
 
-Every formal validation cycle MUST freeze the Current governance UID/hash and immutable input baseline before execution. Normative mutation during that validation cycle invalidates its acceptance result. Test fixtures carry observable facts only; expected outcomes belong to the validation harness and MUST_NOT instruct validators what conclusion to return.
+Governance-policy validation MUST be read-only against the candidate normative bytes. A validator MAY read the repository, parse artifacts, execute deterministic tests, and return `PASS / FAIL + findings`; it MUST_NOT modify normative content, materialize Product Stage outputs, advance Product Stage state, create a successor Stage, commit fixes, or create another validation HEAD as a side effect.
 
-Reproduced defects MUST be recorded, classified by owning layer, repaired in the Current governance change transaction or non-policy owning layer as applicable, and freshly revalidated. Product-specific evidence MAY be test input but MUST_NOT become a common-policy dependency.
+A governance-remediation transaction that creates a new candidate HEAD MUST_NOT treat the mutation transaction itself as validation. The candidate becomes Current-validated only after the Registry-required read-only validation set has fresh results bound to that exact candidate snapshot. If validation fails, remediation creates a new explicit mutation transaction and validators run again against the resulting snapshot. Validation MUST_NOT self-mutate or create a rearm/push loop.
 
-A governance-remediation transaction that creates a new Current governance HEAD MUST NOT treat the producer transaction's own success as validation of that HEAD. The new HEAD remains unvalidated until every Registry-required internal governance validation workflow has a fresh terminal result bound to that exact HEAD, branch, registered workflow path and allowed event. Parent-head PASS/FAIL, prior-head validation, producer-job success, or a zero-run/check state MUST_NOT receive exact-head validation credit.
+Exact repository/head identity is governance-validation provenance: it proves which governance snapshot was validated. It MUST_NOT become a Product Stage content-closure requirement and MUST_NOT override Product Stage content evidence.
 
-A self-mutating governance workflow MUST declare an exact-head validation terminalization path before mutation. The terminalization path MUST either end on an authorized commit/ref update that deterministically triggers the Registry-required internal validations, or use an explicitly Registry-authorized exact-head validation dispatch mechanism supported by both the workflow and validation contract. Token/event recursion suppression, bot-authored push behavior, or an assumed downstream trigger MUST_NOT be treated as evidence that validation occurred.
+Reproduced defects MUST be classified by owning layer and repaired at that owner. Product-specific evidence MAY be regression input but MUST_NOT become common-policy Authority.
 
-Any authorized change to a Stage normative-reference set MUST be synchronized as one bounded governance transaction across the canonical reference owner, semantic authority snapshot/baseline, validator hash/binding, Root Manifest/checksum projections, generated audit requirement index and registered regression expectations. Partial synchronization, consumer-local expected-count repair, or a semantic baseline that still represents the predecessor Stage reference set is `STAGE_NORMATIVE_REFERENCE_TRANSACTION_INCOMPLETE` and blocks Current validation closure.
+Any authorized change to a Stage normative-reference set MUST be synchronized across the canonical reference owner and all derived indexes/checksums/regression expectations as one bounded governance transaction. Partial synchronization is `STAGE_NORMATIVE_REFERENCE_TRANSACTION_INCOMPLETE` and blocks governance validation.
 
 <!-- SECTION_UID: WEB-GOV-03-S051 -->
 ## 51. Validation-Cycle Retry / Relock Execution Control
@@ -1001,13 +996,17 @@ The executor MUST persist a resolution receipt for every normative Section UID a
 <!-- SECTION_UID: WEB-GOV-03-S058 -->
 ## 58. Universal Closure Evidence Continuity / Ledger Synchronization / Terminal CI Receipt
 
-Closure continuity applies to every governed work unit and selected execution-profile step. A legal successor MUST NOT erase, revert, or silently rewrite proven predecessor facts. Closure mutation semantics are `MERGE_APPEND_OR_EXPLICIT_SUPERSEDE`.
+This heading is retained for stable Section UID compatibility. The normative model is content-driven closure with one mutable state authority.
 
-Current execution/evidence ledgers MUST synchronize as one logical transaction for the affected scope, including immutable baseline identity, governance UID, work-unit/profile-step identity when applicable, artifact/evidence plans, dependency indexes, unresolved Authority identity, gate state, and next legal transition. Material drift MUST block closure.
+Stage closure MUST be decided from Current content evidence. A Stage MAY become `CLOSED_PASS` only when every applicable registered requirement is satisfied: predecessor inputs, REQUIRED operation results, REQUIRED outputs and fields, scanners, validators, required evidence, zero unresolved REQUIRED gaps/blockers, and the registered Human Gate when one exists.
 
-Materialization evidence and terminal CI receipt are separate identities. Terminal receipt MUST externally bind provider, repository/project, head SHA, evidence-cycle identity, job denominator, and conclusion without requiring self-writing into the same commit. Required evidence must parse and pass its schema/field validator; presence alone is not evidence validity.
+`EXECUTION_STATE` is the only mutable Current execution-state authority. Other ledgers/receipts are immutable evidence or non-authoritative projections and MUST_NOT require cross-ledger status synchronization as a second source of truth.
 
-Unresolved Authority continuity is exact, not count-only. AI inference, alias substitution, default filling, or evidence-reference drift MUST_NOT resolve external Authority.
+Materialization/run/CI receipts MAY be retained as transport provenance. A generic CI conclusion, Git HEAD rearm, terminal CI receipt, workflow state, request file, or duplicated status projection MUST_NOT be required to prove Product Stage content closure and MUST_NOT override failed content validation or `EXECUTION_STATE`.
+
+Predecessor content evidence that has already been accepted MUST remain resolvable and MUST_NOT be destructively rewritten by a legal successor. Required evidence must physically exist, parse, satisfy required fields/schema, and preserve exact Authority identity where applicable. Count-only or metadata-only evidence is insufficient.
+
+The canonical orchestrator updates `EXECUTION_STATE` to `CLOSED_PASS` only after content closure PASS, then materializes the registered successor. Historical outputs/receipts receive zero Current completion credit unless revalidated as Current required evidence.
 
 <!-- SECTION_UID: WEB-GOV-03-S059 -->
 ## 59. Validation Feedback / Specification Evolution Closed Loop
@@ -1039,19 +1038,24 @@ Verification/Production acceptance MUST prove actual journey continuity, context
 <!-- SECTION_UID: WEB-GOV-03-S062 -->
 ## 62. Canonical Execution Engine / Checkpoint Control / Clean-Restart Rule
 
-Every governed execution cycle MUST use one canonical engine contract: `Global Preflight -> Frozen Canonical Manifests -> Dependency-Ordered Batch Execution -> Local Impact Validation -> Checkpoint Reconciliation -> Final Fresh Full Sweep`.
+Every Product Stage MUST use one canonical deterministic orchestration chain:
 
-Selected execution profiles MAY specialize operations and artifact schemas, but MUST consume the same common required-field, applicability, classification, effective-overlay, denominator, Authority, and evidence rules. Profile-local copies MUST_NOT diverge from common policy.
+`LOAD STAGE SPEC -> LOAD EXECUTION_STATE -> VERIFY CURRENT OP INPUTS -> EXECUTE ONE OPERATION -> MATERIALIZE OUTPUTS -> READ-ONLY VALIDATE -> CHECKPOINT EXECUTION_STATE -> REPEAT -> CONTENT CLOSURE -> HUMAN GATE IF REGISTERED -> MATERIALIZE REGISTERED SUCCESSOR`.
 
-Before remediation, the engine MUST validate `EXECUTION_CYCLE_PREFLIGHT_RECEIPT`. After each batch it MUST update the affected reverse-dependency closure and append `RESOLUTION_LEDGER`; full sweeps are mandatory after shared/common-engine changes, registered category closure, before cycle closure, and before policy/release freeze.
+Permanent rules:
 
-Harness defects MUST NOT consume product blocker credit or create product Authority. An authorized Current governance change that alters the governing UID or affected normative denominator invalidates prior-cycle closure credit for the affected scope; generated outputs/derived state are reset, immutable predecessor/source Authority is preserved at its owner, and fresh execution restarts under the new Current UID.
+1. Mother/Lifecycle Registry defines Stage inputs, ordered operations, outputs, required fields, validators, evidence, Human Gate, and next Stage.
+2. Exactly one effectful operation is Current at a time.
+3. `EXECUTION_STATE` is the only mutable Stage/Work Unit execution-state authority.
+4. Validators are read-only with respect to Product Authority, Product outputs, and Stage state. They return results/findings only; the orchestrator MAY persist their returned evidence.
+5. Stage closure is content-evidence driven under WEB-GOV-03-S058.
+6. The same canonical orchestrator that closes the Stage materializes the registered successor. Workflow-to-workflow push chains MUST_NOT be required for normal continuation.
+7. Future Stage specifications MUST already exist, but future Stage runtime/executor/provider bindings MUST_NOT be a predecessor-closure prerequisite. They are resolved at the successor Stage entry or the owning operation boundary.
+8. Normal PASS inside an authorized Stage range MUST auto-continue. Only a registered Human Gate, unresolved REQUIRED input/Authority, Current-state conflict, re-entry requirement, or actual execution failure may stop continuation.
+9. Historical outputs MUST_NOT fill missing Current values.
+10. A governance change affecting an applicable Stage denominator invalidates affected generated outputs/state and requires fresh execution from immutable/current legal inputs.
 
-COMMON_STAGE12_ORDER_AND_NO_HISTORY_FALLBACK
-
-Effectful Product Stage execution MUST preserve the governed task-layer order: terminalize or legally suspend the current Work Unit -> persist Resume -> execute WORK_UNIT_RESOLUTION_GATE when the primary Work Unit changes -> activate the resolved Work Unit -> rerun SESSION_BOOTSTRAP_RESUME_GATE -> execute. A materializer, validator, workflow input, environment variable, retry path, or nearby Stage identity MUST_NOT bypass this order or force a product Work Unit into the foreground.
-
-Historical commits, historical Stage outputs, superseded candidates, prior generated artifacts, and old run directories MAY be used only for provenance or registered negative regression. They MUST_NOT supply a missing Current product value, contract field, trigger, Authority binding, denominator, or completion credit. Fresh replay MUST begin from registered immutable inputs and Current Authority; if those Current inputs are insufficient, execution must expose the owning gap instead of reading history to manufacture the missing product data.
+Selected profiles MAY specialize schemas and operations but MUST consume this same single-state/single-orchestrator contract.
 
 <!-- SECTION_UID: WEB-GOV-03-S062A -->
 ## 62A. Universal Stepwise Execution / No Bulk Preproduction Contract
@@ -1137,24 +1141,24 @@ If a downstream Stage discovers that an earlier Stage passed without complete ma
 <!-- SECTION_UID: WEB-GOV-03-S063 -->
 ## 63. Mandatory Session Bootstrap / Resume Gate
 
-Before any Current State judgment, planning, mutation, test, commit, workflow execution, deployment decision, closure claim, or continuation decision, the executor MUST complete one `SESSION_BOOTSTRAP_RESUME_GATE` in this exact dependency order:
+Before Current State judgment, planning, mutation, test, commit, workflow execution, deployment decision, closure claim, or continuation decision, resolve in order:
 
-1. Resolve the live repository, target branch, commit SHA, and tree SHA from the repository itself.
-2. Resolve the formal Registry / Current Governance entry and immutable Current Governance UID; chat memory, historical summaries, Stage labels, profile labels, and run labels MUST_NOT select Current Governance.
-3. Read the Current Mother Governance in canonical order `WEB-GOV-01 -> WEB-GOV-02 -> WEB-GOV-03 -> WEB-GOV-04` through the Current Section/Root registries.
-4. Resolve Current Canonical Authority for the requested semantic concern.
-5. Classify and lock the Current Primary Task Layer under WEB-GOV-03-S064.
-6. Resolve the one legal Active Primary Work Unit for that task layer; if none exists, enter `WORK_UNIT_RESOLUTION_GATE` under WEB-GOV-03-S065 before doing effectful work.
-7. Resolve Canonical Owner Mapping, exact write target, forward dependencies, reverse dependencies, and impacted consumers.
-8. Resolve the persisted Current Resume Point and verify the last completed effectful action.
-9. Resolve Current Audit / Evidence State and prove that evidence belongs to the Current Governance UID/revision or is explicitly classified historical/non-current evidence.
-10. Resolve the selected Execution Profile only when applicable; profile-local Stage/step identity MUST remain subordinate to the Current Primary Task Layer and common Mother Policy.
-11. Resolve Entry Conditions, Dependencies, Definition of Done, required Gates, terminal transition, and closure evidence requirements.
-12. Recheck live commit/tree and Current Governance identity immediately before the first write or effectful action.
+1. live repository, target branch, commit/tree;
+2. formal Current Governance Registry and Mother 01 -> 04;
+3. Current Canonical Authority for the requested concern;
+4. Current Primary Task Layer;
+5. legal Active Work Unit or Work Unit Resolution;
+6. Canonical Owner and dependency/reverse-dependency set;
+7. that Work Unit's single `EXECUTION_STATE`;
+8. Current evidence required by the exact operation/closure boundary;
+9. Entry Conditions, Definition of Done, Human Gate, and legal successor;
+10. recheck live repository/governance identity immediately before the first write.
 
-The gate MUST fail closed when any required Current identity, Authority, task layer, Work Unit, owner, Resume Point, evidence identity, dependency, reference, revision, or transition is missing, stale, ambiguous, conflicting, or points to a superseded/deleted owner.
+The gate fails closed when required Authority, owner, dependency, state, evidence, or transition is missing, stale, ambiguous, conflicting, or superseded.
 
-`CHAT_MEMORY != CURRENT_TRUTH` and `INNER_STAGE_IDENTITY != PRIMARY_TASK_SELECTION` are permanent invariants.
+`CHAT_MEMORY != CURRENT_TRUTH`, `WORKFLOW_RUNTIME != CURRENT_STAGE_STATE`, and `PROJECTION_STATUS != EXECUTION_STATE` are permanent invariants.
+
+Git commit/tree identity prevents stale writes and identifies the inspected snapshot. It is not a substitute for Product Stage content evidence and is not by itself a Stage-closure gate.
 
 <!-- SECTION_UID: WEB-GOV-03-S064 -->
 ## 64. Task Layer Classification / Primary Task Lock
@@ -1171,7 +1175,7 @@ The classification MUST derive from the explicit user directive, Current Authori
 
 When `GOVERNANCE_MAINTENANCE` is primary, product Stage artifacts MAY be read only as evidence, regression provenance, dependency context, or impacted-consumer context unless a separately authorized product Work Unit becomes the legal primary task. Governance maintenance MUST_NOT drift into product materialization merely because a product Stage remains blocked.
 
-Task-layer changes MUST be explicit, evidence-backed, recorded in Resume/Current State, and re-run the full Session Bootstrap / Resume Gate before effectful work continues.
+Task-layer changes MUST be explicit, evidence-backed, recorded in the authoritative `EXECUTION_STATE`, and re-run the full Session Bootstrap / Resume Gate before effectful work continues.
 
 <!-- SECTION_UID: WEB-GOV-03-S065 -->
 ## 65. Work Unit Resolution Gate

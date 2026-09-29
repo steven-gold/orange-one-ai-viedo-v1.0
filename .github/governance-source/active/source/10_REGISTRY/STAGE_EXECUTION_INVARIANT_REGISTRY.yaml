@@ -1536,6 +1536,25 @@ invariants:
         default_mode: NONE
         next_governed_unit_eligibility_must_come_from_registered_operation: true
         project_completion_may_be_ai_invented: false
+  SINGLE_STAGE_CURRENT_STATE_AND_READ_ONLY_VALIDATION:
+    invariant_uid: GOV-INV-SINGLE-STAGE-CURRENT-STATE-001
+    applies_to_all_registered_stages: true
+    current_state_authority: EXECUTION_STATE
+    parallel_mutable_state_authority: FORBIDDEN
+    work_unit_status_projection_authoritative: false
+    separate_resume_file_authoritative: false
+    workflow_runtime_state_authoritative: false
+    validator_mode: READ_ONLY
+    validator_may_mutate_product_or_state: false
+    validator_may_materialize_successor: false
+    stage_closure_authority: REQUIRED_CONTENT_EVIDENCE
+    generic_ci_terminal_receipt_required: false
+    successor_materialization_owner: SAME_CANONICAL_ORCHESTRATOR
+    future_stage_runtime_binding_required_before_predecessor_closure: false
+    runtime_binding_resolution_boundary: SUCCESSOR_ENTRY_OR_OWNING_OPERATION
+    normal_pass_auto_continue_within_authorized_range: true
+    stop_conditions: [FORMAL_HUMAN_APPROVAL_REQUIRED, USER_DECISION_REQUIRED, BLOCKED, CURRENT_STATE_CONFLICT, REVERIFY_REQUIRED, EXECUTION_FAILURE]
+
   DETERMINISTIC_STAGE_AUDIT:
     invariant_uid: GOV-INV-DETERMINISTIC-STAGE-AUDIT-001
     purpose: SAME_COMPLETE_AUDIT_INPUT_MUST_PRODUCE_SAME_COMPLETE_AUDIT_RESULT
@@ -1585,16 +1604,19 @@ invariants:
     - CURRENT_MOTHER_STANDARD
     - CURRENT_LIFECYCLE_AND_INVARIANT_REGISTRIES
     - CURRENT_CANONICAL_AUTHORITY
-    - CURRENT_EXECUTION_SCOPE_MANIFEST
     - CURRENT_WORK_UNIT_DEFINITION
     - CURRENT_EXECUTION_STATE
-    - CURRENT_RESUME_POINT
+    - CURRENT_EXECUTION_SCOPE_MANIFEST
     - OPERATION_RECEIPTS
     - REQUIRED_OUTPUTS
     - VALIDATION_EVIDENCE
-    - TERMINAL_RECEIPT
     - SUCCESSOR_ADMISSION_RECORD
+    - OPTIONAL_TRANSPORT_ATTESTATION
     - HISTORICAL_EVIDENCE
+    single_mutable_stage_state_authority: EXECUTION_STATE
+    work_unit_status_is_non_authoritative_projection: true
+    separate_resume_state_authority: FORBIDDEN
+    workflow_runtime_state_is_stage_state_authority: false
     same_rank_current_state_conflict_must_not_be_precedence_overridden: true
     current_state_conflict_contract:
       canonical_finding: CURRENT_STATE_CONFLICT
@@ -1632,7 +1654,7 @@ invariants:
       validators_pass: true
       evidence_complete: true
       current_state_consistent: true
-      terminal_receipt_valid: true
+      content_closure_evidence_valid: true
       closure_gate_pass: true
       successor_binding_valid: true
       unresolved_gap_count: 0
@@ -1676,8 +1698,8 @@ invariants:
       VALIDATOR_NOT_EXECUTED: S1_BLOCKER
       VALIDATOR_FAILED: S1_BLOCKER
       EVIDENCE_MISSING: S1_BLOCKER
-      TERMINAL_RECEIPT_MISSING: S1_BLOCKER
-      TERMINAL_RECEIPT_SCHEMA_INVALID: S1_BLOCKER
+      TERMINAL_RECEIPT_MISSING: S4_INFO
+      TERMINAL_RECEIPT_SCHEMA_INVALID: S4_INFO
       CLOSURE_NOT_AUTHORIZED: S1_BLOCKER
       SUCCESSOR_STAGE_EXECUTED_BEFORE_PREDECESSOR_CLOSURE: S1_BLOCKER
       VERTICAL_SCOPE_IDENTITY_DRIFT: S1_BLOCKER
@@ -1707,7 +1729,7 @@ invariants:
     audit_output_required_fields: [audit_run_uid, snapshot_uid, repository, branch, head_sha, governance_uid, governance_revision, stage_uid, work_unit_uid, governed_unit_uid, denominator_hash, source_pass, authority_pass, structure_pass, input_pass, operation_pass, output_pass, validator_pass, evidence_pass, state_pass, closure_pass, successor_pass, current_governance_pass, stage_pass, canonical_status, expected_operation_count, completed_operation_count, expected_output_count, valid_output_count, unresolved_gap_count, blocker_count, current_state_conflict_count, stale_binding_count, reverify_required, earliest_reentry_stage, canonical_owner_uid, finding_codes, evidence_refs]
     deterministic_decision_table:
       artifact_complete_operation_receipt_incomplete: CLOSED_FAIL
-      operations_complete_terminal_receipt_missing: CLOSED_FAIL
+      operations_complete_terminal_receipt_missing: CONTENT_EVIDENCE_DECIDES
       historical_pass_current_governance_impacted: REVERIFY_REQUIRED
       current_scope_resume_conflict: CURRENT_STATE_CONFLICT
       work_unit_ready_zero_operations: READY_FOR_EXECUTION
@@ -1740,8 +1762,8 @@ invariants:
         lifecycle_registry_is_denominator_source: true
         functional_contract_exact_denominator_reconciliation_required: true
         ui_mock_placeholder_or_future_note_may_receive_execution_credit: false
-        closed_state_requires_terminal_receipt: true
-        closed_without_terminal_receipt_finding: TERMINAL_RECEIPT_MISSING
+        closed_state_requires_terminal_receipt: false
+        closed_without_terminal_receipt_finding: NONE
         closed_vs_active_state_conflict_finding: CURRENT_STATE_CONFLICT
         impacted_old_governance_closure_disposition: REVERIFY_REQUIRED
       STAGE-03:
@@ -1760,7 +1782,7 @@ invariants:
         lifecycle_registry_is_denominator_source: true
         work_unit_skeleton_ready_equals_stage_pass: false
         zero_completed_operations_when_operations_required_status: READY_FOR_EXECUTION
-        freeze_requires_design_validation_and_approval_and_outputs_and_matrix_and_terminal_receipt: true
+        freeze_requires_design_validation_and_approval_and_outputs_and_matrix: true
         successor_admission_requires_foundation_frozen: true
       STAGE-05:
         capability: IMPLEMENTATION
@@ -1853,13 +1875,16 @@ invariants:
       cross_environment_substitution: BLOCK
       production_redeploy_invalidates_prior_release_acceptance: REVERIFY_REQUIRED
     current_ledger_synchronization:
-      ledgers: [EXECUTION_STATE, RUN_MANIFEST, ARTIFACT_PLAN, GOVERNANCE_CURRENT, BRANCH_BASELINE, GOVERNANCE_STAGE_LOCK, STAGE_EVIDENCE, DEPENDENCY_INDEX, REVERSE_DEPENDENCY_INDEX]
+      mutable_state_authority: EXECUTION_STATE
+      non_authoritative_projections: [RUN_MANIFEST, ARTIFACT_PLAN, GOVERNANCE_CURRENT, BRANCH_BASELINE, GOVERNANCE_STAGE_LOCK, STAGE_EVIDENCE, DEPENDENCY_INDEX, REVERSE_DEPENDENCY_INDEX]
+      projection_disagreement_may_override_execution_state: false
       disagreement_finding: CURRENT_LEDGER_SYNCHRONIZATION_DRIFT
     terminal_receipt_contract:
-      required_for_stage_closure: true
-      external_immutable_receipt_required_fields: [provider, repository_or_project, head_sha, run_id, job_denominator, conclusion]
-      closure_projection_must_prove: [stage_uid, governed_unit_uid, denominator_identity, operation_receipt_chain, evidence_refs, result, successor_eligibility]
-      alias_substitution: BLOCK
+      required_for_stage_closure: false
+      role: OPTIONAL_TRANSPORT_ATTESTATION
+      may_override_content_evidence: false
+      may_override_execution_state: false
+      optional_fields: [provider, repository_or_project, head_sha, run_id, job_denominator, conclusion]
     auditor_independence_acceptance:
       independent_evaluator_count: 3
       identical_finding_set_percent: 100
@@ -1872,7 +1897,7 @@ invariants:
     repeatability_acceptance:
       same_evaluator_repeat_count: 3
       identical_result_required: true
-    required_negative_test_classes: [REMOVE_TERMINAL_RECEIPT, CHANGE_GOVERNANCE_UID, CHANGE_HEAD_SHA, CLOSED_TO_ACTIVE_STATE_CONFLICT, REMOVE_OPERATION_RECEIPT, REMOVE_REQUIRED_OUTPUT, CREATE_SCOPE_RESUME_CONFLICT, INSERT_STALE_EVIDENCE, INSERT_DUPLICATE_EVIDENCE, INSERT_HISTORICAL_PASS, REMOVE_CURRENT_MATRIX, CHANGE_DENOMINATOR]
+    required_negative_test_classes: [CHANGE_GOVERNANCE_UID, CLOSED_TO_ACTIVE_STATE_CONFLICT, REMOVE_OPERATION_RECEIPT, REMOVE_REQUIRED_OUTPUT, CREATE_SCOPE_STATE_CONFLICT, INSERT_DUPLICATE_EVIDENCE, INSERT_HISTORICAL_PASS, REMOVE_CURRENT_MATRIX, CHANGE_DENOMINATOR, REMOVE_VALIDATOR_RESULT, REMOVE_REQUIRED_EVIDENCE, SUCCESSOR_INPUT_NOT_READY]
     full_lifecycle_closure_contract:
       all_registered_stages_must_close_under_current_governance: true
       impacted_reverify_count_required: 0

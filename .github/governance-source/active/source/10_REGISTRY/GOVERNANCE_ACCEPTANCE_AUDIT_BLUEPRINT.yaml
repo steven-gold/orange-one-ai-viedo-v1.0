@@ -102,34 +102,19 @@ closure_evidence_continuity_contract:
   - STAGE-10
   - STAGE-11
   destructive_closure_rewrite: BLOCK
-  cross_ledger_drift: BLOCK
   predecessor_proof_loss: BLOCK
-  terminal_ci_self_reference: BLOCK
-  external_terminal_receipt_required_fields:
-  - provider
-  - repository_or_project
-  - head_sha
-  - run_id
-  - job_denominator
-  - conclusion
+  current_state_authority: EXECUTION_STATE
+  parallel_mutable_current_state_authority: FORBIDDEN
+  cross_ledger_state_synchronization_required: false
+  terminal_ci_receipt_required_for_product_stage_closure: false
+  terminal_ci_receipt_role: OPTIONAL_TRANSPORT_ATTESTATION
   unresolved_authority_canonical_identity_fields:
   - gap_uid
   - authority_ref
   - disposition
   - authority_evidence_ref
   count_only_or_uid_only_authority_validation: BLOCK
-  terminal_receipt_canonical_projection_required: true
-  terminal_receipt_alias_substitution: BLOCK
-  ledger_terminal_receipt_required_fields:
-  - provider
-  - repository_or_project
-  - head_sha
-  - run_id
-  - job_denominator
-  - conclusion
-  predecessor_validator_current_state_lock: BLOCK
   legal_successor_presence_may_not_retroactively_fail_predecessor: true
-  phase_order_owner: PHASE_BOUNDARY_GATE
   registered_successor_edge_coverage_required: true
 required_evidence_integrity_contract:
   required: true
