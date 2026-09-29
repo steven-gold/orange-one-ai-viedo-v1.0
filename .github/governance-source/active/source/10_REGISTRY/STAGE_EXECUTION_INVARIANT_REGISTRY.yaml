@@ -45,6 +45,45 @@ provenance:
   execution_target_specific_marker_in_rule_definition: FORBIDDEN
   generalization_rule: REPEATABLE_DEFECT_MUST_BE_REPAIRED_AT_COMMON_INVARIANT_LAYER
 invariants:
+  SINGLE_STATE_SINGLE_ORCHESTRATOR_STAGE_CORE:
+    invariant_uid: GOV-INV-SINGLE-STATE-SINGLE-ORCHESTRATOR-STAGE-CORE-001
+    normative_section_uids:
+    - WEB-GOV-03-S073
+    - WEB-GOV-04-S088
+    applies_to_all_registered_stages: true
+    current_state_authority: EXECUTION_STATE
+    work_unit_status_is_authority: false
+    work_unit_status_role: NON_AUTHORITATIVE_PROJECTION_ONLY
+    separate_resume_state_authority: FORBIDDEN
+    request_file_as_current_state_authority: FORBIDDEN
+    workflow_runtime_as_current_state_authority: FORBIDDEN
+    terminal_receipt_as_current_state_authority: FORBIDDEN
+    effectful_executor_count_per_stage: 1
+    lifecycle_orchestrator_count: 1
+    validator_mode: READ_ONLY
+    validator_may_mutate_content: false
+    validator_may_materialize_successor: false
+    validator_may_execute_effectful_operation: false
+    validator_may_commit_or_push_for_pass: false
+    stage_closure_basis: REQUIRED_CONTENT_EVIDENCE
+    exact_git_head_required_for_product_stage_closure: false
+    workflow_terminal_status_required_for_product_stage_closure: false
+    transport_receipt_required_for_product_stage_closure: false
+    source_control_snapshot_identity_role: PROVENANCE_AND_REPRODUCIBILITY_ONLY
+    successor_runtime_binding_required_before_predecessor_closure: false
+    successor_runtime_binding_validation_boundary: SUCCESSOR_OWNING_OPERATION
+    successor_materialization_after_predecessor_closed_pass: true
+    successor_materialization_owner: SAME_LIFECYCLE_ORCHESTRATOR
+    normal_pass_auto_continue: true
+    normal_stage_boundary_human_continue_prompt: false
+    projection_drift_disposition: GOVERNANCE_MAINTENANCE_FINDING_NOT_SECOND_STATE_AUTHORITY
+    stop_conditions:
+    - REGISTERED_HUMAN_GATE
+    - TRUE_REQUIRED_INPUT_OR_AUTHORITY_MISSING
+    - VALIDATION_FAIL_OR_BLOCKED
+    - EFFECTFUL_EXECUTION_FAILURE
+    - EXPLICIT_USER_STOP
+    - MATERIAL_CURRENT_SOURCE_INVALIDATION
   RELATION_SEMANTIC_SEPARATION:
     port_exposure_is_trigger: false
     state_event_is_trigger_without_explicit_binding: false
@@ -1656,7 +1695,6 @@ invariants:
       current_state_consistent: true
       content_closure_evidence_valid: true
       closure_gate_pass: true
-      successor_binding_valid: true
       unresolved_gap_count: 0
       current_state_conflict_count: 0
       stale_governance_binding_count: 0
