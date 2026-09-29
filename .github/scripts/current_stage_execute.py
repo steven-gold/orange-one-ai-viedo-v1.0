@@ -89,7 +89,7 @@ def main():
     if args.stage=="STAGE-01":
         states=[load(root/"STAGE_EXECUTION"/args.stage/wu/"EXECUTION_STATE.yaml") for wu in wus]
         if all(str(s.get("current_operation") or "")=="COMPLETE" for s in states):
-            run([sys.executable,".github/scripts/stage01_successor_materialize.py","--mode","refresh-manifest","--product-root",str(root)],root)
-            print("PASS: Stage01 operation universe complete for all successor work units; run manifest refreshed")
+            run([sys.executable,".github/scripts/stage01_current_materialize.py","--mode","refresh-manifest","--product-root",str(root)],root)
+            print("PASS: Stage01 operation universe complete for all Current clean Work Units; run manifest refreshed")
 if __name__=="__main__":
     main()
