@@ -71,7 +71,6 @@ jobs:
             .github/scripts/common_stage_closure_adapter.py \
             .github/scripts/common_stage_terminalizer.py \
             .github/scripts/common_successor_binding_resolver.py \
-            .github/scripts/common_successor_materialize.py \
             .github/scripts/common_successor_work_unit_builder.py
 
           python .github/scripts/full_stage_lifecycle_guard.py --mode plan --product-root "$GITHUB_WORKSPACE" --governance-root "$GITHUB_WORKSPACE/_governance_authority"
@@ -126,5 +125,5 @@ jobs:
           ! grep -q "gh run watch" .github/workflows/product-stage-lifecycle-driver.yml
           ! grep -q "Wait for independent exact-head outer validation" .github/workflows/product-stage-lifecycle-driver.yml
           ! grep -q "current_stage_execute.py" .github/workflows/product-full-stage-lifecycle-validation.yml
-          ! grep -q "common_successor_materialize.py --mode materialize" .github/workflows/product-full-stage-lifecycle-validation.yml
+          test ! -e .github/scripts/common_successor_materialize.py
           echo "PASS: validation is read-only and lifecycle execution has one driver"
