@@ -1,0 +1,107 @@
+artifact_type: EXACT_OPERATION_BINDING_SOURCE
+stage_uid: STAGE-10
+status: CURRENT_EXACT_BINDINGS
+runtime_readiness: BLOCKED_EXTERNAL_AUTHORITY
+successor_execution_bindings:
+  CURRENT_PRODUCTION_RUNTIME_TARGET:
+    applicability: REQUIRED
+    resolution_status: RESOLVE_FROM_PRODUCT_IMPLEMENTATION_AUTHORITY
+    consuming_operation_uid: OP-43-PRODUCTION_BROWSER_ACCEPTANCE
+  PRODUCTION_GOVERNED_UNIT_TARGET:
+    applicability: REQUIRED
+    resolution_status: RESOLVE_FROM_PRODUCT_IMPLEMENTATION_AUTHORITY
+    consuming_operation_uid: OP-44-PRODUCTION_GOVERNED_UNIT_ACCEPTANCE
+  PRODUCTION_DATABASE_TARGET:
+    applicability: REQUIRED
+    resolution_status: RESOLVE_FROM_PRODUCT_IMPLEMENTATION_AUTHORITY
+    consuming_operation_uid: OP-46-PRODUCTION_DATABASE_ACCEPTANCE
+  PRODUCTION_PERMISSION_TARGET:
+    applicability: REQUIRED
+    resolution_status: RESOLVE_FROM_PRODUCT_IMPLEMENTATION_AUTHORITY
+    consuming_operation_uid: OP-47-PRODUCTION_EFFECTFUL_ACCEPTANCE
+  PRODUCTION_EXTERNAL_INTEGRATION_TARGET:
+    applicability: REQUIRED
+    resolution_status: RESOLVE_FROM_PRODUCT_IMPLEMENTATION_AUTHORITY
+    consuming_operation_uid: OP-48-EXTERNAL_INTEGRATION_ACCEPTANCE
+  PRODUCTION_ASYNC_RUNTIME_TARGET:
+    applicability: REQUIRED
+    resolution_status: RESOLVE_FROM_PRODUCT_IMPLEMENTATION_AUTHORITY
+    consuming_operation_uid: OP-49-ASYNC_RUNTIME_ACCEPTANCE
+  PRODUCTION_VISUAL_ACCEPTANCE_TARGET:
+    applicability: REQUIRED
+    resolution_status: RESOLVE_FROM_PRODUCT_IMPLEMENTATION_AUTHORITY
+    consuming_operation_uid: PRODUCTION_VISUAL_GEOMETRY_ACCEPTANCE
+operation_bindings:
+  OP-43-PRODUCTION_BROWSER_ACCEPTANCE:
+    applicability: REQUIRED
+    executor_owner: .github/scripts/external_stage_fail_closed_runtime.py
+    executor_protocol: PYTHON_STAGE_OPERATION_V1
+    result_owner: OWNER-STAGE-10-OP-43-PRODUCTION_BROWSER_ACCEPTANCE
+  OP-44-PRODUCTION_GOVERNED_UNIT_ACCEPTANCE:
+    applicability: REQUIRED
+    executor_owner: .github/scripts/external_stage_fail_closed_runtime.py
+    executor_protocol: PYTHON_STAGE_OPERATION_V1
+    result_owner: OWNER-STAGE-10-OP-44-PRODUCTION_GOVERNED_UNIT_ACCEPTANCE
+  OP-45-PRODUCTION_CONTROL_ACCEPTANCE:
+    applicability: REQUIRED
+    executor_owner: .github/scripts/external_stage_fail_closed_runtime.py
+    executor_protocol: PYTHON_STAGE_OPERATION_V1
+    result_owner: OWNER-STAGE-10-OP-45-PRODUCTION_CONTROL_ACCEPTANCE
+  OP-46-PRODUCTION_DATABASE_ACCEPTANCE:
+    applicability: REQUIRED
+    executor_owner: .github/scripts/external_stage_fail_closed_runtime.py
+    executor_protocol: PYTHON_STAGE_OPERATION_V1
+    result_owner: OWNER-STAGE-10-OP-46-PRODUCTION_DATABASE_ACCEPTANCE
+  OP-47-PRODUCTION_EFFECTFUL_ACCEPTANCE:
+    applicability: REQUIRED
+    executor_owner: .github/scripts/external_stage_fail_closed_runtime.py
+    executor_protocol: PYTHON_STAGE_OPERATION_V1
+    result_owner: OWNER-STAGE-10-OP-47-PRODUCTION_EFFECTFUL_ACCEPTANCE
+  OP-48-EXTERNAL_INTEGRATION_ACCEPTANCE:
+    applicability: REQUIRED
+    executor_owner: .github/scripts/external_stage_fail_closed_runtime.py
+    executor_protocol: PYTHON_STAGE_OPERATION_V1
+    result_owner: OWNER-STAGE-10-OP-48-EXTERNAL_INTEGRATION_ACCEPTANCE
+  OP-49-ASYNC_RUNTIME_ACCEPTANCE:
+    applicability: REQUIRED
+    executor_owner: .github/scripts/external_stage_fail_closed_runtime.py
+    executor_protocol: PYTHON_STAGE_OPERATION_V1
+    result_owner: OWNER-STAGE-10-OP-49-ASYNC_RUNTIME_ACCEPTANCE
+  PRODUCTION_VISUAL_GEOMETRY_ACCEPTANCE:
+    applicability: REQUIRED
+    executor_owner: .github/scripts/external_stage_fail_closed_runtime.py
+    executor_protocol: PYTHON_STAGE_OPERATION_V1
+    result_owner: OWNER-STAGE-10-PRODUCTION_VISUAL_GEOMETRY_ACCEPTANCE
+  PRODUCTION_STALE_RENDER_ACCEPTANCE:
+    applicability: REQUIRED
+    executor_owner: .github/scripts/external_stage_fail_closed_runtime.py
+    executor_protocol: PYTHON_STAGE_OPERATION_V1
+    result_owner: OWNER-STAGE-10-PRODUCTION_STALE_RENDER_ACCEPTANCE
+  PRODUCTION_CROSS_GOVERNED_UNIT_SLICE_ACCEPTANCE:
+    applicability: REQUIRED
+    executor_owner: .github/scripts/external_stage_fail_closed_runtime.py
+    executor_protocol: PYTHON_STAGE_OPERATION_V1
+    result_owner: OWNER-STAGE-10-PRODUCTION_CROSS_GOVERNED_UNIT_SLICE_ACCEPTANCE
+  PRODUCTION_ACCEPTANCE_RECONCILIATION:
+    applicability: REQUIRED
+    executor_owner: .github/scripts/external_stage_fail_closed_runtime.py
+    executor_protocol: PYTHON_STAGE_OPERATION_V1
+    result_owner: OWNER-STAGE-10-PRODUCTION_ACCEPTANCE_RECONCILIATION
+scanner_owner: .github/scripts/external_stage_fail_closed_scanner.py
+scanner_protocol: PYTHON_STAGE_SCANNER_V1
+validator_bindings:
+  VAL-GOV-014:
+    validator_kind: DECLARED_STAGE_GUARD
+    validator_protocol: DECLARED_STAGE_GUARD_AGGREGATE_V1
+    result_ref: "STAGE_EXECUTION/STAGE-10/{{WORK_UNIT_UID}}/EVIDENCE/VALIDATOR_RESULTS/VAL-GOV-014.yaml"
+  VAL-GOV-017:
+    validator_kind: DECLARED_STAGE_GUARD
+    validator_protocol: DECLARED_STAGE_GUARD_AGGREGATE_V1
+    result_ref: "STAGE_EXECUTION/STAGE-10/{{WORK_UNIT_UID}}/EVIDENCE/VALIDATOR_RESULTS/VAL-GOV-017.yaml"
+artifact_specs:
+  PRODUCTION_ACCEPTANCE_RESULT:
+    artifact_ref: "STAGE_EXECUTION/STAGE-10/{{WORK_UNIT_UID}}/PRODUCTION_ACCEPTANCE_RESULT.yaml"
+    field_path: [status]
+  PRODUCTION_ACCEPTANCE_EVIDENCE_SET:
+    artifact_ref: "STAGE_EXECUTION/STAGE-10/{{WORK_UNIT_UID}}/PRODUCTION_ACCEPTANCE_EVIDENCE_SET.yaml"
+    field_path: [status]
