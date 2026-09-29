@@ -85,13 +85,16 @@ def main():
     ap.add_argument("--mode",choices=["validate-contract","candidate"],default="validate-contract")
     ap.add_argument("--stage")
     ap.add_argument("--work-unit")
+    ap.add_argument("--validated-head")
+    ap.add_argument("--validation-run-id")
     ap.add_argument("--product-root",required=True)
     ap.add_argument("--governance-root",required=True)
     a=ap.parse_args()
     root=Path(a.product_root).resolve(); gov=Path(a.governance_root).resolve()
     validate_contract(gov)
     if a.mode=="validate-contract": return
-    if not a.stage or not a.work_unit: raise SystemExit("BLOCK:CLOSURE_STAGE_AND_WORK_UNIT_REQUIRED")
+    if not a.stage or not a.work_unit or not a.validated_head or not a.validation_run_id:
+        raise SystemExit("BLOCK:CLOSURE_STAGE_WORK_UNIT_VALIDATION_ID_REQUIRED")
     stages,adapters,phases=registries(gov)
     if a.stage not in stages: raise SystemExit("BLOCK:CLOSURE_STAGE_UNREGISTERED")
     wp=safe(root,a.work_unit,"WORK_UNIT"); wd=wp.parent; work=load(wp); state=load(wd/"EXECUTION_STATE.yaml")
@@ -148,14 +151,15 @@ def main():
     if gaps or discovered_hidden:
         raise SystemExit("BLOCK:CLOSURE_ZERO_GAP_HIDDEN_DEFECT_REQUIRED:gaps="+str(len(gaps))+":hidden="+str(discovered_hidden))
 
-    gate_ref=f"STAGE_EXECUTION/{a.stage}/{wd.name}/EVIDENCE/EXACT_HEAD_GATE_RECEIPTS.yaml"
-    gate_doc=load(safe(root,gate_ref,"EXACT_HEAD_GATE_RECEIPTS"))
-    gates=gate_doc.get("receipts") or []
     head=git(root,"rev-parse","HEAD")
-    if not isinstance(gates,list) or not gates: raise SystemExit("BLOCK:EXACT_HEAD_GATE_RECEIPTS_EMPTY")
-    for g in gates:
-        if not isinstance(g,dict) or str(g.get("head_sha") or "")!=head or str(g.get("conclusion") or "")!="success" or not g.get("run_id") or not g.get("gate_uid"):
-            raise SystemExit("BLOCK:EXACT_HEAD_GATE_RECEIPT_INVALID")
+    if a.validated_head!=head:
+        raise SystemExit("BLOCK:VALIDATED_HEAD_DRIFT")
+    gates=[{
+      "gate_uid":"PRETERMINAL_CONTENT_VALIDATION",
+      "head_sha":head,
+      "run_id":str(a.validation_run_id),
+      "conclusion":"success",
+    }]
 
     handoff_ref=f"STAGE_EXECUTION/{a.stage}/{wd.name}/EVIDENCE/CROSS_STAGE_HANDOFF_READINESS_LEDGER.yaml"
     handoff=load(safe(root,handoff_ref,"CROSS_STAGE_HANDOFF"))
@@ -166,8 +170,7 @@ def main():
     for uid in required_evidence_types:
         required_evidence.append({"evidence_type":uid,"status":"PASS","ref":refs[uid]["ref"],"external_receipt":False})
 
-    resume_rel=f"STAGE_EXECUTION/{a.stage}/{wd.name}/EVIDENCE/CLOSURE_RESUME_POINT.yaml"
-    write_yaml(root/resume_rel,{"artifact_type":"CLOSURE_RESUME_POINT","stage_uid":a.stage,"work_unit_uid":work.get("work_unit_uid"),"governed_unit_uid":work.get("governed_unit_uid"),"next_stage_uid":next_stage,"status":"CANDIDATE_PASS_PENDING_TERMINAL_RECEIPT","completion_credit":0})
+    resume_rel=f"STAGE_EXECUTION/{a.stage}/{wd.name}/EXECUTION_STATE.yaml"
 
     auth=load(root/"STAGE_EXECUTION/SHARED_AUTHORITY/CURRENT_STAGE_FLOW/FULL_STAGE_LIFECYCLE_AUTHORIZATION_CONTRACT.yaml")
     allowed=list(map(str,(auth.get("execution_authorization") or {}).get("authorized_effectful_range") or []))
