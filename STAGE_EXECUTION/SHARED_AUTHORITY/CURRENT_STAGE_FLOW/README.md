@@ -30,7 +30,7 @@
 → `common_stage_preterminal.py`
 → read-only validation
 → `common_stage_terminalizer.py`
-→ `common_successor_materialize.py`
+→ `common_successor_work_unit_builder.py`
 → 下一個 registered Stage。
 
 正常 PASS 必須在使用者要求的 inclusive Stage range 內自動繼續，不再依賴 branch-local workflow dispatch、external rearm、第二個 Current Resume request 或另一個 workflow 的 exact-head handshake。
@@ -72,6 +72,7 @@ Git HEAD、workflow 名稱或歷史 PASS 只能作為 evidence identity，不能
 - FULL_STAGE_DEFECT_LEDGER
 - product-side transition/permission/runtime-adapter projection matrices
 - product-side common closure/successor protocol copies
+- thin successor/materialize wrapper scripts that only re-dispatch another owner
 - Stage-specific resume/materialize/validation/execute wrapper workflows
 - push → wait another workflow → rearm 的控制鏈
 
