@@ -1,0 +1,42 @@
+artifact_uid: CL-GLOBAL-HOME-SHELL-NAVIGATION-VISUAL_CONSTRUCTION-VISUAL_STYLE
+governed_unit_uid: GLOBAL-HOME-SHELL-NAVIGATION
+planning_domain: VISUAL_CONSTRUCTION
+responsibility_uid: VISUAL_STYLE
+responsibility_class: VISUAL
+canonical_owner_uid: OWNER-GLOBAL-HOME-SHELL-NAVIGATION-VISUAL_STYLE
+lifecycle_uid: LIFECYCLE-STAGE01-CLEAN
+approval_scope_uid: APPROVAL-GLOBAL-HOME-SHELL-NAVIGATION
+version_scope_uid: VERSION-GLOBAL-HOME-SHELL-NAVIGATION
+test_scope_uid: TEST-GLOBAL-HOME-SHELL-NAVIGATION
+source_lineage:
+- source_uid: SRC-DOCX-334A4679600F092B733B
+  source_segment_uids:
+  - SEG-SS-SN-0B1CC98E639438544019E5CC
+  - SEG-SS-SN-317153F09A8B4B34A9BD3772
+  - SEG-SS-SN-65844927800AD6C64940F939
+  - SEG-SS-SN-C53ABE53224561318AE7BE0B
+  - SEG-SS-SN-D3B8EB799F20C0AEB2E6B364
+source_requirements:
+- source_segment_uid: SEG-SS-SN-C53ABE53224561318AE7BE0B
+  source_node_uid: SS-SN-C53ABE53224561318AE7BE0B
+  direct_text: Dark Tech Purple；沿用全站 Violet Token
+  document_order_index: 358
+- source_segment_uid: SEG-SS-SN-0B1CC98E639438544019E5CC
+  source_node_uid: SS-SN-0B1CC98E639438544019E5CC
+  direct_text: 工作區最大化；僅顯示 9 個 Icon
+  document_order_index: 634
+- source_segment_uid: SEG-SS-SN-317153F09A8B4B34A9BD3772
+  source_node_uid: SS-SN-317153F09A8B4B34A9BD3772
+  direct_text: Icon 20px；Keyboard focus 可見；Label 展開後可讀
+  document_order_index: 4016
+- source_segment_uid: SEG-SS-SN-65844927800AD6C64940F939
+  source_node_uid: SS-SN-65844927800AD6C64940F939
+  direct_text: Focus 不得只靠顏色；Selected/Active 同時使用背景／邊框／狀態屬性。
+  document_order_index: 4245
+- source_segment_uid: SEG-SS-SN-D3B8EB799F20C0AEB2E6B364
+  source_node_uid: SS-SN-D3B8EB799F20C0AEB2E6B364
+  direct_text: 收合 Sidebar 時 Nav Label 可視上隱藏，但 Icon 必須具有完整 aria-label。
+  document_order_index: 4251
+target_path: 01_CLASSIFIED/VISUAL_CONSTRUCTION/CL-GLOBAL-HOME-SHELL-NAVIGATION-VISUAL_CONSTRUCTION-VISUAL_STYLE.yaml
+status: CURRENT_CLASSIFICATION
+content_hash: e7a44e1881def3e9471a658bd2dc483a389dab731a793fe2b0790eb127b13b1e

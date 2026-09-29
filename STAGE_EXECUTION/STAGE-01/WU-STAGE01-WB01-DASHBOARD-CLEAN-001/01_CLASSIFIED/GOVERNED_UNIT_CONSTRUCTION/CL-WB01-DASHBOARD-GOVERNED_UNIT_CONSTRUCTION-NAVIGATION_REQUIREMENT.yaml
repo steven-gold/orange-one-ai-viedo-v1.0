@@ -1,0 +1,37 @@
+artifact_uid: CL-WB01-DASHBOARD-GOVERNED_UNIT_CONSTRUCTION-NAVIGATION_REQUIREMENT
+governed_unit_uid: workspace:WB-01
+planning_domain: GOVERNED_UNIT_CONSTRUCTION
+responsibility_uid: NAVIGATION_REQUIREMENT
+responsibility_class: GOVERNED_UNIT
+canonical_owner_uid: OWNER-WB01-DASHBOARD-NAVIGATION_REQUIREMENT
+lifecycle_uid: LIFECYCLE-STAGE01-CLEAN
+approval_scope_uid: APPROVAL-WB01-DASHBOARD
+version_scope_uid: VERSION-WB01-DASHBOARD
+test_scope_uid: TEST-WB01-DASHBOARD
+source_lineage:
+- source_uid: SRC-DOCX-2B1908530B5BD312A392
+  source_segment_uids:
+  - SEG-SS-SN-4C37D651AA958514E001C81D
+  - SEG-SS-SN-7383CD26FCC6EF13CE16F4F3
+  - SEG-SS-SN-99C10C41088FBBCEE147F3AC
+  - SEG-SS-SN-D55A74521333203D53D4C103
+source_requirements:
+- source_segment_uid: SEG-SS-SN-D55A74521333203D53D4C103
+  source_node_uid: SS-SN-D55A74521333203D53D4C103
+  direct_text: Architecture / Module / Dependency / Navigation / User Flow / State / Data / FE-BE boundary
+  document_order_index: 977
+- source_segment_uid: SEG-SS-SN-4C37D651AA958514E001C81D
+  source_node_uid: SS-SN-4C37D651AA958514E001C81D
+  direct_text: Registered navigation only
+  document_order_index: 5595
+- source_segment_uid: SEG-SS-SN-99C10C41088FBBCEE147F3AC
+  source_node_uid: SS-SN-99C10C41088FBBCEE147F3AC
+  direct_text: No external link / no invented route
+  document_order_index: 5645
+- source_segment_uid: SEG-SS-SN-7383CD26FCC6EF13CE16F4F3
+  source_node_uid: SS-SN-7383CD26FCC6EF13CE16F4F3
+  direct_text: Industry News：沒有 registered external-navigation action，所以 row 不可直接開外部連結。
+  document_order_index: 12533
+target_path: 01_CLASSIFIED/GOVERNED_UNIT_CONSTRUCTION/CL-WB01-DASHBOARD-GOVERNED_UNIT_CONSTRUCTION-NAVIGATION_REQUIREMENT.yaml
+status: CURRENT_CLASSIFICATION
+content_hash: 5733f43ae86be8299dcb8d7d073d2347cd9f1c2321d558328c7a14641aec4a8d
