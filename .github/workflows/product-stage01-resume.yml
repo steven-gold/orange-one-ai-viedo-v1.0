@@ -1,16 +1,11 @@
-name: Product Stage01 Lifecycle Resume
+name: Product Stage01 Lifecycle Resume (Retired Compatibility)
 on:
-  push:
-    branches: [0921acpos]
-    paths:
-      - 'STAGE_EXECUTION/SHARED_AUTHORITY/CURRENT_STAGE_FLOW/STAGE01_LIFECYCLE_DRIVER_REQUEST.yaml'
+  workflow_dispatch:
 permissions:
-  contents: write
-  actions: write
+  contents: read
 jobs:
-  execute:
-    uses: ./.github/workflows/product-stage-lifecycle-driver.yml
-    with:
-      stage: STAGE-01
-      work_units: WU-STAGE01-GLOBAL-HOME-SHELL-NAVIGATION-CLEAN-001,WU-STAGE01-WB01-DASHBOARD-CLEAN-001
-    secrets: inherit
+  retired:
+    runs-on: ubuntu-24.04
+    steps:
+      - run: |
+          echo "PASS: retired Stage01-specific lifecycle resume; use Product Current Stage Resume"

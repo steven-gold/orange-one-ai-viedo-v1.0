@@ -27,6 +27,11 @@ on:
       - '.github/workflows/product-stage*-validation.yml'
       - '.github/workflows/product-stage*-execute.yml'
       - '.github/workflows/product-stage-current-execute-reusable.yml'
+      - '.github/workflows/product-stage-current-resume.yml'
+      - 'STAGE_EXECUTION/STAGE-*/WU-*/EVIDENCE/SCANNER_RESULTS/**'
+      - 'STAGE_EXECUTION/STAGE-*/WU-*/EVIDENCE/VALIDATOR_RESULTS/**'
+      - 'STAGE_EXECUTION/STAGE-*/WU-*/EVIDENCE/HIDDEN_DEFECT_SWEEP_RESULT.yaml'
+      - 'STAGE_EXECUTION/STAGE-*/WU-*/EVIDENCE/SUCCESSOR_EXECUTION_BINDING_RESOLUTION.yaml'
   workflow_dispatch:
 permissions:
   contents: read
@@ -193,3 +198,35 @@ jobs:
             grep -q "stage: STAGE-${S}" "$F"
           done
           echo "PASS: Stage-05..11 top-level entries all route through the common lifecycle driver"
+
+      - name: Validate exact-head persisted preterminal candidates
+        run: |
+          set -euo pipefail
+          rm -rf governance .github/governance-source
+          cp -R _governance_authority/governance ./governance
+          mkdir -p .github
+          cp -R _governance_authority/.github/governance-source .github/governance-source
+          python - <<'PY' > /tmp/acpos_preterminal_candidates
+          from pathlib import Path
+          import yaml
+          root=Path('STAGE_EXECUTION')
+          for state_path in sorted(root.glob('STAGE-*/WU-*/EXECUTION_STATE.yaml')):
+              d=yaml.safe_load(state_path.read_text(encoding='utf-8')) or {}
+              if str(d.get('current_operation') or '')!='COMPLETE':
+                  continue
+              wd=state_path.parent
+              if (wd/'WORK_UNIT_TERMINAL_RECEIPT.yaml').is_file():
+                  continue
+              if not (wd/'EVIDENCE/SUCCESSOR_EXECUTION_BINDING_RESOLUTION.yaml').is_file():
+                  continue
+              print(f"{wd.parent.name}|{wd.name}")
+          PY
+          COUNT=0
+          while IFS='|' read -r STAGE WU; do
+            [ -n "$STAGE" ] || continue
+            COUNT=$((COUNT+1))
+            python .github/scripts/common_stage_preterminal.py --mode validate --stage "$STAGE" --work-unit "STAGE_EXECUTION/$STAGE/$WU/WORK_UNIT.yaml" --product-root "$GITHUB_WORKSPACE" --governance-root "$GITHUB_WORKSPACE/_governance_authority"
+            python .github/scripts/common_stage_closure.py --mode preflight --stage "$STAGE" --work-unit "STAGE_EXECUTION/$STAGE/$WU/WORK_UNIT.yaml" --product-root "$GITHUB_WORKSPACE" --governance-root "$GITHUB_WORKSPACE/_governance_authority"
+          done < /tmp/acpos_preterminal_candidates
+          echo "PASS: exact-head preterminal candidate denominator validated count=$COUNT"
+          git diff --exit-code

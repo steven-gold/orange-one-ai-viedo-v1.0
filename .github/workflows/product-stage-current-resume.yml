@@ -1,0 +1,54 @@
+name: Product Current Stage Resume
+on:
+  push:
+    branches: [0921acpos]
+    paths:
+      - 'STAGE_EXECUTION/SHARED_AUTHORITY/CURRENT_STAGE_FLOW/CURRENT_STAGE_EXECUTION_REQUEST.yaml'
+permissions:
+  contents: write
+  actions: write
+jobs:
+  prepare:
+    runs-on: ubuntu-24.04
+    outputs:
+      requested: ${{ steps.request.outputs.requested }}
+      stage: ${{ steps.request.outputs.stage }}
+      work_units: ${{ steps.request.outputs.work_units }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+      - id: request
+        name: Resolve exact external rearm request
+        shell: bash
+        run: |
+          set -euo pipefail
+          P="STAGE_EXECUTION/SHARED_AUTHORITY/CURRENT_STAGE_FLOW/CURRENT_STAGE_EXECUTION_REQUEST.yaml"
+          test -s "$P" || { echo "BLOCK:CURRENT_STAGE_EXECUTION_REQUEST_MISSING"; exit 30; }
+          STATUS="$(awk '$1=="status:" {print $2; exit}' "$P")"
+          if [ "$STATUS" != "REQUESTED_CURRENT_STAGE_EXECUTION" ]; then
+            echo "requested=false" >> "$GITHUB_OUTPUT"
+            echo "PASS: no effectful resume; request status=$STATUS"
+            exit 0
+          fi
+          BRANCH="$(awk '$1=="product_branch:" {print $2; exit}' "$P")"
+          STAGE="$(awk '$1=="stage_uid:" {print $2; exit}' "$P")"
+          WUS="$(awk '$1=="work_units_csv:" {sub(/^work_units_csv:[[:space:]]*/,""); print; exit}' "$P")"
+          PARENT="$(awk '$1=="request_parent_head_sha:" {print $2; exit}' "$P")"
+          test "$BRANCH" = "0921acpos" || { echo "BLOCK:CURRENT_STAGE_REQUEST_BRANCH_DRIFT"; exit 31; }
+          echo "$STAGE" | grep -Eq '^STAGE-(0[1-9]|1[01])$' || { echo "BLOCK:CURRENT_STAGE_REQUEST_STAGE_INVALID:$STAGE"; exit 32; }
+          test -n "$WUS" || { echo "BLOCK:CURRENT_STAGE_REQUEST_WORK_UNITS_EMPTY"; exit 33; }
+          test "$PARENT" = "${{ github.event.before }}" || { echo "BLOCK:CURRENT_STAGE_REQUEST_PARENT_HEAD_DRIFT:$PARENT:${{ github.event.before }}"; exit 34; }
+          test "$(git rev-parse HEAD)" = "${{ github.sha }}" || { echo "BLOCK:CURRENT_STAGE_REQUEST_CHECKOUT_NOT_EXACT_HEAD"; exit 35; }
+          echo "requested=true" >> "$GITHUB_OUTPUT"
+          echo "stage=$STAGE" >> "$GITHUB_OUTPUT"
+          echo "work_units=$WUS" >> "$GITHUB_OUTPUT"
+  execute:
+    needs: prepare
+    if: needs.prepare.outputs.requested == 'true'
+    uses: ./.github/workflows/product-stage-lifecycle-driver.yml
+    with:
+      stage: ${{ needs.prepare.outputs.stage }}
+      work_units: ${{ needs.prepare.outputs.work_units }}
+    secrets: inherit

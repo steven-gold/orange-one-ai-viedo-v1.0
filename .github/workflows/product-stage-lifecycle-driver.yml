@@ -22,7 +22,7 @@ permissions:
   contents: write
   actions: write
 concurrency:
-  group: product-stage-lifecycle-driver
+  group: product-stage-lifecycle-driver-${{ inputs.stage }}
   cancel-in-progress: true
 jobs:
   drive:
@@ -95,31 +95,61 @@ jobs:
           fi
           [ "$RC" -eq 0 ] || exit "$RC"
           echo "pause=false" >> "$GITHUB_OUTPUT"
-      - name: Materialize preterminal physical evidence
+      - name: Reuse or materialize preterminal physical evidence
         if: steps.human_gate.outputs.pause != 'true'
         run: |
           set -euo pipefail
           IFS=',' read -ra WUS <<< "$WORK_UNITS"
+          READY=1
+          set +e
           for WU in "${WUS[@]}"; do
-            python .github/scripts/common_stage_preterminal.py --mode materialize --stage "$STAGE" --work-unit "STAGE_EXECUTION/$STAGE/$WU/WORK_UNIT.yaml" --product-root "$GITHUB_WORKSPACE" --governance-root "$GITHUB_WORKSPACE/_governance_authority"
+            python .github/scripts/common_stage_preterminal.py --mode validate --stage "$STAGE" --work-unit "STAGE_EXECUTION/$STAGE/$WU/WORK_UNIT.yaml" --product-root "$GITHUB_WORKSPACE" --governance-root "$GITHUB_WORKSPACE/_governance_authority"
+            [ "$?" -eq 0 ] || { READY=0; break; }
           done
-          git add "STAGE_EXECUTION/$STAGE" STAGE_EXECUTION/SHARED_AUTHORITY/CURRENT_STAGE_FLOW/GENERATED_BINDINGS 2>/dev/null || true
-          git diff --cached --quiet && { echo "BLOCK:PRETERMINAL_NO_DELTA"; exit 53; }
-          git commit -m "$STAGE: persist preterminal physical evidence"
-          git push origin HEAD:0921acpos || { echo "BLOCK:REMOTE_ADVANCED_BEFORE_PRETERMINAL"; exit 54; }
-          echo "candidate_head=$(git rev-parse HEAD)" >> "$GITHUB_ENV"
-      - name: Dispatch and wait independent exact-head validation
+          set -e
+          if [ "$READY" -eq 1 ]; then
+            echo "PASS: reuse persisted preterminal evidence at exact Current HEAD"
+            echo "candidate_head=$(git rev-parse HEAD)" >> "$GITHUB_ENV"
+          else
+            for WU in "${WUS[@]}"; do
+              python .github/scripts/common_stage_preterminal.py --mode materialize --stage "$STAGE" --work-unit "STAGE_EXECUTION/$STAGE/$WU/WORK_UNIT.yaml" --product-root "$GITHUB_WORKSPACE" --governance-root "$GITHUB_WORKSPACE/_governance_authority"
+            done
+            python - <<'PY'
+          from pathlib import Path
+          import os,yaml
+          p=Path('STAGE_EXECUTION/SHARED_AUTHORITY/CURRENT_STAGE_FLOW/CURRENT_STAGE_EXECUTION_REQUEST.yaml')
+          d=yaml.safe_load(p.read_text(encoding='utf-8')) if p.is_file() else {}
+          d=d or {}
+          d.update({
+            'artifact_type':'PRODUCT_CURRENT_STAGE_EXECUTION_REQUEST',
+            'status':'AWAITING_EXTERNAL_EXACT_HEAD_VALIDATION_REARM',
+            'product_branch':'0921acpos',
+            'stage_uid':os.environ['STAGE'],
+            'work_units_csv':os.environ['WORK_UNITS'],
+            'historical_completion_credit':0,
+          })
+          p.write_text(yaml.safe_dump(d,sort_keys=False,allow_unicode=True),encoding='utf-8')
+          PY
+            git add "STAGE_EXECUTION/$STAGE" STAGE_EXECUTION/SHARED_AUTHORITY/CURRENT_STAGE_FLOW/GENERATED_BINDINGS STAGE_EXECUTION/SHARED_AUTHORITY/CURRENT_STAGE_FLOW/CURRENT_STAGE_EXECUTION_REQUEST.yaml 2>/dev/null || true
+            git diff --cached --quiet && { echo "BLOCK:PRETERMINAL_NO_DELTA"; exit 53; }
+            git commit -m "$STAGE: persist preterminal physical evidence"
+            git push origin HEAD:0921acpos || { echo "BLOCK:REMOTE_ADVANCED_BEFORE_PRETERMINAL"; exit 54; }
+            echo "candidate_head=$(git rev-parse HEAD)" >> "$GITHUB_ENV"
+          fi
+      - name: Wait for independent exact-head outer validation
         if: steps.human_gate.outputs.pause != 'true'
         run: |
           set -euo pipefail
-          gh workflow run product-stage-preterminal-validation.yml --ref 0921acpos -f stage="$STAGE" -f work_units="$WORK_UNITS" -f expected_head="$candidate_head"
           RID=""
-          for i in $(seq 1 30); do
-            RID="$(gh run list --workflow product-stage-preterminal-validation.yml --branch 0921acpos --event workflow_dispatch --json databaseId,headSha --jq '.[] | select(.headSha=="'"$candidate_head"'") | .databaseId' | head -1)"
+          for i in $(seq 1 180); do
+            RID="$(gh run list --branch 0921acpos --event push --limit 100 --json databaseId,headSha,name,status,conclusion --jq '.[] | select(.headSha=="'"$candidate_head"'" and .name=="Product Full Stage Lifecycle Validation") | .databaseId' | head -1)"
             [ -n "$RID" ] && break
             sleep 2
           done
-          [ -n "$RID" ] || { echo "BLOCK:PRETERMINAL_VALIDATION_RUN_NOT_FOUND"; exit 55; }
+          [ -n "$RID" ] || {
+            echo "BLOCK:OUTER_EXACT_HEAD_VALIDATION_RUN_NOT_FOUND_REARM_REQUIRED:$candidate_head"
+            exit 55
+          }
           gh run watch "$RID" --exit-status
           echo "validation_run_id=$RID" >> "$GITHUB_ENV"
       - name: Terminalize exact validated head
@@ -156,11 +186,29 @@ jobs:
                 NWU="$(python -c "import yaml,sys; d=yaml.safe_load(open(sys.argv[1])) or {}; print(d.get('work_unit_uid') or '')" "$MREF")"
                 NWUS="${NWUS:+$NWUS,}$NWU"
               done
-              git add "STAGE_EXECUTION/$NEXT"
+              export NEXT NWUS
+              python - <<'PY'
+          from pathlib import Path
+          import os,yaml
+          p=Path('STAGE_EXECUTION/SHARED_AUTHORITY/CURRENT_STAGE_FLOW/CURRENT_STAGE_EXECUTION_REQUEST.yaml')
+          req={
+            'artifact_type':'PRODUCT_CURRENT_STAGE_EXECUTION_REQUEST',
+            'status':'AWAITING_EXTERNAL_REARM',
+            'product_branch':'0921acpos',
+            'stage_uid':os.environ['NEXT'],
+            'work_units_csv':os.environ['NWUS'],
+            'predecessor_stage_uid':os.environ['STAGE'],
+            'predecessor_terminal_head_sha':__import__('subprocess').check_output(['git','rev-parse','HEAD'],text=True).strip(),
+            'historical_completion_credit':0,
+            'rearm_rule':'EXTERNAL_COMMIT_MUST_SET_REQUESTED_CURRENT_STAGE_EXECUTION_AND_BIND_REQUEST_PARENT_HEAD_SHA',
+          }
+          p.write_text(yaml.safe_dump(req,sort_keys=False,allow_unicode=True),encoding='utf-8')
+          PY
+              git add "STAGE_EXECUTION/$NEXT" STAGE_EXECUTION/SHARED_AUTHORITY/CURRENT_STAGE_FLOW/CURRENT_STAGE_EXECUTION_REQUEST.yaml
               git diff --cached --quiet && { echo "BLOCK:NO_SUCCESSOR_MATERIALIZATION_DELTA"; exit 59; }
-              git commit -m "$NEXT: materialize authorized successor Work Units"
+              git commit -m "$NEXT: materialize authorized successor Work Units and persist rearm boundary"
               git push origin HEAD:0921acpos || { echo "BLOCK:REMOTE_ADVANCED_BEFORE_SUCCESSOR"; exit 60; }
-              gh workflow run product-stage-lifecycle-driver.yml --ref 0921acpos -f stage="$NEXT" -f work_units="$NWUS"
+              echo "PASS: successor $NEXT materialized; persisted external exact-head rearm boundary"
               ;;
             NEXT_GOVERNED_UNIT_STAGE05_OR_SCOPE_COMPLETE)
               echo "PASS: Stage11 terminal next-unit/scope transition persisted; no synthetic Stage successor"

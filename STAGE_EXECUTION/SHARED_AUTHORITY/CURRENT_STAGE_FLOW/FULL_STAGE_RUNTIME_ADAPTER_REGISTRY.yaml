@@ -19,7 +19,9 @@ rules:
   common_successor_binding_resolver: .github/scripts/common_successor_binding_resolver.py
   common_preterminal_evidence_producer: .github/scripts/common_stage_preterminal.py
   common_lifecycle_driver_workflow: .github/workflows/product-stage-lifecycle-driver.yml
-  common_preterminal_validation_workflow: .github/workflows/product-stage-preterminal-validation.yml
+  common_preterminal_validation_workflow: .github/workflows/product-full-stage-lifecycle-validation.yml
+  common_stage_resume_trigger_workflow: .github/workflows/product-stage-current-resume.yml
+  branch_local_dispatch_policy: EXTERNAL_REARM_COMMIT_PLUS_EXACT_HEAD_OUTER_VALIDATION
   stage_specific_adapter_may_define_authorization: false
   stage_specific_adapter_may_define_permission_semantics: false
   stage_specific_adapter_may_define_next_stage: false

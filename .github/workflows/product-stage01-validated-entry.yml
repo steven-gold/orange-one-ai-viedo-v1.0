@@ -4,7 +4,7 @@ on:
     branches: [0921acpos]
     paths:
       - 'STAGE_EXECUTION/SHARED_AUTHORITY/CURRENT_STAGE_FLOW/STAGE01_PRESTAGE_EXECUTION_REQUEST.yaml'
-      - '.github/workflows/product-stage01-validated-entry.yml'
+
   workflow_dispatch:
 permissions:
   contents: write
@@ -309,11 +309,31 @@ jobs:
           echo "STAGE01_OPERATION_HEAD=${{ steps.persist_operation.outputs.operation_head }}"
           echo "STAGE01_FIRST_OPERATION=SOURCE_STRUCTURE_ENUMERATION"
 
-      - name: Continue Stage01 through the common lifecycle driver
+      - name: Persist common Stage01 resume boundary
         if: steps.request.outputs.requested == 'true'
         env:
-          GH_TOKEN: ${{ github.token }}
           WUS: ${{ steps.request.outputs.work_units }}
         run: |
           set -euo pipefail
-          gh workflow run product-stage-lifecycle-driver.yml --ref 0921acpos -f stage=STAGE-01 -f work_units="$WUS"
+          python - <<'PY'
+          from pathlib import Path
+          import os,subprocess,yaml
+          p=Path('STAGE_EXECUTION/SHARED_AUTHORITY/CURRENT_STAGE_FLOW/CURRENT_STAGE_EXECUTION_REQUEST.yaml')
+          req={
+            'artifact_type':'PRODUCT_CURRENT_STAGE_EXECUTION_REQUEST',
+            'status':'AWAITING_EXTERNAL_REARM',
+            'product_branch':'0921acpos',
+            'stage_uid':'STAGE-01',
+            'work_units_csv':os.environ['WUS'],
+            'predecessor_stage_uid':None,
+            'predecessor_terminal_head_sha':subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip(),
+            'historical_completion_credit':0,
+            'rearm_rule':'EXTERNAL_COMMIT_MUST_SET_REQUESTED_CURRENT_STAGE_EXECUTION_AND_BIND_REQUEST_PARENT_HEAD_SHA',
+          }
+          p.write_text(yaml.safe_dump(req,sort_keys=False,allow_unicode=True),encoding='utf-8')
+          PY
+          git add STAGE_EXECUTION/SHARED_AUTHORITY/CURRENT_STAGE_FLOW/CURRENT_STAGE_EXECUTION_REQUEST.yaml
+          git diff --cached --quiet && { echo "BLOCK:COMMON_STAGE01_REARM_REQUEST_NO_DELTA"; exit 56; }
+          git commit -m "stage01: persist common resume boundary"
+          git push origin HEAD:0921acpos || { echo "BLOCK:REMOTE_ADVANCED_BEFORE_COMMON_STAGE01_REARM"; exit 57; }
+          echo "PASS: Stage01 common resume boundary persisted"

@@ -1,82 +1,11 @@
-name: Product Stage01 Current Resume
+name: Product Stage01 Current Resume (Retired Compatibility)
 on:
-  push:
-    branches: [0921acpos]
-    paths:
-      - 'STAGE_EXECUTION/SHARED_AUTHORITY/CURRENT_STAGE_FLOW/CURRENT_STAGE01_RESUME_REQUEST.yaml'
   workflow_dispatch:
 permissions:
-  contents: write
-  actions: write
+  contents: read
 jobs:
-  exact-head-preflight:
+  retired:
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
-        with:
-          ref: ${{ github.sha }}
-          fetch-depth: 0
-      - name: Prove exact request head
-        run: test "$(git rev-parse HEAD)" = "${{ github.sha }}"
-      - name: Resolve exact Current governance
-        id: governance
-        run: |
-          set -euo pipefail
-          COMMIT="$(awk '$1=="governance_commit_sha:" {print $2; exit}' STAGE_EXECUTION/SHARED_AUTHORITY/CURRENT_GOVERNANCE_SELECTION.yaml)"
-          echo "$COMMIT" | grep -Eq '^[0-9a-f]{40}$'
-          echo "commit_sha=$COMMIT" >> "$GITHUB_OUTPUT"
-      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
-        with:
-          repository: steven-gold/orange-one-ai-viedo-v1.0
-          ref: ${{ steps.governance.outputs.commit_sha }}
-          path: _governance_authority
-          fetch-depth: 1
-      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
-        with:
-          python-version: '3.11.16'
-      - name: Load exact governance runtime and validate lifecycle
-        run: |
-          set -euo pipefail
-          python -m pip install --disable-pip-version-check --require-hashes -r _governance_authority/governance/ci/requirements-governance.lock
-          rm -rf governance .github/governance-source
-          cp -R _governance_authority/governance ./governance
-          mkdir -p .github
-          cp -R _governance_authority/.github/governance-source .github/governance-source
-          python governance/ci/stage_execution_engine.py --definition-audit-all
-          python .github/governance-source/active/source/09_TESTS/governance/validate_stage_execution_invariants.py
-          python .github/scripts/full_stage_lifecycle_guard.py --mode execution-ready --product-root "$GITHUB_WORKSPACE" --governance-root "$GITHUB_WORKSPACE/_governance_authority"
-          python .github/scripts/stage_lifecycle_gate.py --mode assert-stage-authorized --stage STAGE-01 --product-root "$GITHUB_WORKSPACE" --governance-root "$GITHUB_WORKSPACE/_governance_authority"
-      - name: Assert exact resumable Stage01 checkpoint
-        run: |
-          set -euo pipefail
-          python - <<'PY'
-          import json, subprocess, yaml
-          from pathlib import Path
-          wus=[
-            'WU-STAGE01-GLOBAL-HOME-SHELL-NAVIGATION-CLEAN-001',
-            'WU-STAGE01-WB01-DASHBOARD-CLEAN-001',
-          ]
-          plan=json.loads(subprocess.check_output(['python','governance/ci/stage_execution_engine.py','--plan','--stage','STAGE-01'],text=True))
-          ops=list(map(str,plan.get('operations') or []))
-          assert ops, 'BLOCK:STAGE01_REGISTERED_OPERATION_DENOMINATOR_EMPTY'
-          checkpoint=None
-          for wu in wus:
-              p=Path('STAGE_EXECUTION/STAGE-01')/wu/'EXECUTION_STATE.yaml'
-              d=yaml.safe_load(p.read_text()) or {}
-              completed=list(map(str,d.get('completed_operations') or []))
-              current=str(d.get('current_operation') or '')
-              assert completed==ops[:len(completed)],(wu,'NON_PREFIX_COMPLETION',completed,ops)
-              expected_current='COMPLETE' if len(completed)==len(ops) else ops[len(completed)]
-              assert current==expected_current,(wu,current,expected_current)
-              this=(tuple(completed),current)
-              if checkpoint is None: checkpoint=this
-              assert this==checkpoint,(wu,'CROSS_WU_CHECKPOINT_DRIFT',this,checkpoint)
-          print('PASS: both Current Stage01 Work Units share exact dynamic checkpoint',len(checkpoint[0]),'/',len(ops),'next=',checkpoint[1])
-          PY
-  execute:
-    needs: exact-head-preflight
-    uses: ./.github/workflows/product-stage-lifecycle-driver.yml
-    with:
-      stage: STAGE-01
-      work_units: WU-STAGE01-GLOBAL-HOME-SHELL-NAVIGATION-CLEAN-001,WU-STAGE01-WB01-DASHBOARD-CLEAN-001
-    secrets: inherit
+      - run: |
+          echo "PASS: retired automatic Stage01 resume entry; use Product Current Stage Resume via CURRENT_STAGE_EXECUTION_REQUEST.yaml"
