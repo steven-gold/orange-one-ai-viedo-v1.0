@@ -110,13 +110,6 @@ def main():
     resolved=[]
     for cls in expected_classes:
         row=render(exec_rows.get(cls) or {},mapping); app=str(row.get("applicability") or ""); rs=str(row.get("resolution_status") or "")
-        if rs=="RESOLVE_CURRENT_IMPLEMENTATION_TARGET":
-            tr=load(wd/"EVIDENCE/STAGE05_CURRENT_TARGET_RESOLUTION.yaml")
-            match=[x for x in (tr.get("bindings") or []) if isinstance(x,dict) and str(x.get("binding_class") or "")==cls]
-            if len(match)!=1: raise SystemExit("BLOCK:STAGE05_TARGET_RESOLUTION_DENOMINATOR_DRIFT:"+cls)
-            row=dict(match[0]); app=str(row.get("applicability") or ""); rs=str(row.get("resolution_status") or "")
-            if rs=="RESOLVED_CURRENT":
-                row["target_resolution_status"]="RESOLVED_CURRENT"; row["resolution_status"]="BOUND"; rs="BOUND"
         if rs=="RESOLVE_FROM_PREDECESSOR_ARTIFACT_INDEX":
             idxref=str(work.get("predecessor_artifact_index_ref") or "")
             if not idxref: raise SystemExit("BLOCK:PREDECESSOR_ARTIFACT_INDEX_REF_MISSING:"+nxt+":"+cls)
