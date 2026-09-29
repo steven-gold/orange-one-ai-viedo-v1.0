@@ -1,0 +1,71 @@
+artifact_type: EXACT_OPERATION_BINDING_SOURCE
+stage_uid: STAGE-04
+status: CURRENT_EXACT_BINDINGS
+successor_execution_bindings:
+  FORMAL_DESIGN_APPROVAL_AUTHORITY:
+    applicability: REQUIRED
+    resolution_status: RESOLVE_FROM_PREDECESSOR_LOCAL_REF
+    local_ref: EVIDENCE/FORMAL_HUMAN_APPROVAL_DISPOSITION.yaml
+operation_bindings:
+  BASIC_DESIGN_PACKAGE_COMPILE:
+    applicability: REQUIRED
+    executor_owner: .github/scripts/stage04_current_operation_runtime.py
+    executor_protocol: PYTHON_STAGE_OPERATION_V1
+    result_owner: OWNER-STAGE04-BASIC_DESIGN_PACKAGE_COMPILE
+  DESIGN_FREEZE_VALIDATE:
+    applicability: REQUIRED
+    executor_owner: .github/scripts/stage04_current_operation_runtime.py
+    executor_protocol: PYTHON_STAGE_OPERATION_V1
+    result_owner: OWNER-STAGE04-DESIGN_FREEZE_VALIDATE
+  ACCEPTANCE_AUDIT_BLUEPRINT_COMPILE:
+    applicability: REQUIRED
+    executor_owner: .github/scripts/stage04_current_operation_runtime.py
+    executor_protocol: PYTHON_STAGE_OPERATION_V1
+    result_owner: OWNER-STAGE04-ACCEPTANCE_AUDIT_BLUEPRINT_COMPILE
+  DESIGN_FREEZE_PACKAGE_BIND:
+    applicability: REQUIRED
+    executor_owner: .github/scripts/stage04_current_operation_runtime.py
+    executor_protocol: PYTHON_STAGE_OPERATION_V1
+    result_owner: OWNER-STAGE04-DESIGN_FREEZE_PACKAGE_BIND
+scanner_owner: .github/scripts/stage04_current_scanner.py
+scanner_protocol: PYTHON_STAGE_SCANNER_V1
+validator_bindings:
+  VAL-GOV-006:
+    validator_kind: DECLARED_STAGE_GUARD
+    validator_protocol: DECLARED_STAGE_GUARD_AGGREGATE_V1
+    result_ref: STAGE_EXECUTION/STAGE-04/{{WORK_UNIT_UID}}/EVIDENCE/VALIDATOR_RESULTS/VAL-GOV-006.yaml
+  VAL-GOV-001:
+    validator_kind: DECLARED_STAGE_GUARD
+    validator_protocol: DECLARED_STAGE_GUARD_AGGREGATE_V1
+    result_ref: STAGE_EXECUTION/STAGE-04/{{WORK_UNIT_UID}}/EVIDENCE/VALIDATOR_RESULTS/VAL-GOV-001.yaml
+basic_design_domains:
+  - domain_uid: REQUIREMENTS
+    required_artifact_uids: [GOVERNED_UNIT_CONSTRUCTION_SPEC_PACKAGE]
+  - domain_uid: ARCHITECTURE
+    required_artifact_uids: [GOVERNED_UNIT_CONSTRUCTION_SPEC_PACKAGE, DEPENDENCY_MAP]
+  - domain_uid: SOURCE_DESIGN_BASIS
+    required_artifact_uids: [VISUAL_BASE_BLUEPRINT]
+  - domain_uid: JOURNEY_WORKBENCH_TOPOLOGY
+    required_artifact_uids: [FUNCTIONAL_WORKBENCH_CONTRACT, INTERACTION_TOPOLOGY_SPEC]
+  - domain_uid: PAGE_SURFACE_DESIGN
+    required_artifact_uids: [VISUAL_DESIGN_SPEC_PACKAGE]
+  - domain_uid: VISUAL_ARCHITECTURE
+    required_artifact_uids: [VISUAL_DESIGN_SPEC_PACKAGE, VISUAL_GEOMETRY_CONTRACT]
+  - domain_uid: VISUAL_INHERITANCE
+    required_artifact_uids: [VISUAL_INHERITANCE_MATRIX]
+  - domain_uid: VISUAL_STYLE_DEFINITION
+    required_artifact_uids: [VISUAL_DESIGN_SPEC_PACKAGE]
+  - domain_uid: FUNCTION_VISUAL_TRACEABILITY
+    required_artifact_uids: [VISUAL_INTERACTION_TOPOLOGY_BINDING]
+  - domain_uid: VISUAL_SCENARIO_EVIDENCE
+    required_artifact_uids: [VISUAL_SCENARIO_EVIDENCE_SET, VISUAL_PREVIEW_EVIDENCE]
+  - domain_uid: VISUAL_REFERENCE_ANNOTATION
+    required_artifact_uids: [VISUAL_REFERENCE_ANNOTATION]
+  - domain_uid: DESIGN_REVIEW_AND_FREEZE_STATE
+    required_artifact_uids: [VISUAL_CHANGESET, VISUAL_REVIEW_EVIDENCE]
+artifact_specs:
+  BASIC_DESIGN_PACKAGE: {artifact_ref: STAGE_EXECUTION/STAGE-04/{{WORK_UNIT_UID}}/BASIC_DESIGN_PACKAGE.yaml, field_path: [status]}
+  ACCEPTANCE_AUDIT_BLUEPRINT: {artifact_ref: STAGE_EXECUTION/STAGE-04/{{WORK_UNIT_UID}}/ACCEPTANCE_AUDIT_BLUEPRINT.yaml, field_path: [status]}
+  DESIGN_FREEZE_PACKAGE: {artifact_ref: STAGE_EXECUTION/STAGE-04/{{WORK_UNIT_UID}}/DESIGN_FREEZE_PACKAGE.yaml, field_path: [status]}
+  FOUNDATION_BARRIER_RECORD: {artifact_ref: STAGE_EXECUTION/STAGE-04/{{WORK_UNIT_UID}}/FOUNDATION_BARRIER_RECORD.yaml, field_path: [status]}
+  DESIGN_APPROVAL_EVIDENCE: {artifact_ref: STAGE_EXECUTION/STAGE-04/{{WORK_UNIT_UID}}/EVIDENCE/DESIGN_APPROVAL_EVIDENCE.yaml, field_path: [status]}
