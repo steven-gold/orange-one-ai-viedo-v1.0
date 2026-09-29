@@ -116,7 +116,22 @@ def stage_runtime_gaps(product,gov,stage,stages,allowed):
 
     src=product/FLOW/"EXACT_OPERATION_BINDING_SOURCES"/(stage+".yaml")
     if not src.is_file() or src.stat().st_size<=0:
-        return ["EXACT_BINDING_SOURCE_MISSING:"+stage]
+        inv=load(gov/INVARIANTS)
+        policy=((inv.get("invariants") or {}).get("CROSS_STAGE_MATERIALIZATION_AND_CONSUMER_READINESS") or {})
+        reqs=policy.get("successor_execution_binding_requirements") or {}
+        ops=list(map(str,stages[stage].get("operations") or []))
+        vals=list(map(str,stages[stage].get("validators") or []))
+        arts=list(map(str,stages[stage].get("outputs") or []))+list(map(str,stages[stage].get("required_evidence") or []))
+        if stage=="STAGE-04":
+            arts=[x for x in arts if x!="BASIC_DESIGN_DOMAIN_STEPWISE_CHECKPOINT"]
+        succ=list(map(str,reqs.get(stage) or []))
+        return [
+          "EXACT_BINDING_SOURCE_MISSING:"+stage,
+          "REQUIRED_OPERATIONS:"+stage+":"+(",".join(ops) if ops else "NONE"),
+          "REQUIRED_VALIDATORS:"+stage+":"+(",".join(vals) if vals else "NONE"),
+          "REQUIRED_ARTIFACT_SPECS:"+stage+":"+(",".join(arts) if arts else "NONE"),
+          "REQUIRED_SUCCESSOR_BINDING_CLASSES:"+stage+":"+(",".join(succ) if succ else "NONE"),
+        ]
     try:
         data=load(src)
     except SystemExit as e:
