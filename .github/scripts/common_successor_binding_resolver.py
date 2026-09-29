@@ -197,14 +197,21 @@ def main():
             auth=load(auth_path)
             if auth.get("status") not in {"CURRENT_PRODUCT_EXECUTION_AUTHORITY","CURRENT_STAGE05_AUTHORITY"}:
                 raise SystemExit("BLOCK:PRODUCT_IMPLEMENTATION_AUTHORITY_NOT_CURRENT")
-            source=(auth.get("toolchain_authority") or {}).get(cls)
-            if source is None: source=(auth.get("execution_target_authority") or {}).get(cls)
-            if source is None: source=(auth.get("verification_target_authority") or {}).get(cls)
-            if source is None: source=(auth.get("build_target_authority") or {}).get(cls)
-            if source is None: source=(auth.get("staging_target_authority") or {}).get(cls)
-            if source is None: source=(auth.get("production_target_authority") or {}).get(cls)
-            if source is None: source=(auth.get("production_acceptance_target_authority") or {}).get(cls)
-            if source is None: source=(auth.get("operations_target_authority") or {}).get(cls)
+            stage_sections={
+              "STAGE-05":["toolchain_authority","execution_target_authority"],
+              "STAGE-06":["verification_target_authority"],
+              "STAGE-07":["build_target_authority"],
+              "STAGE-08":["staging_target_authority"],
+              "STAGE-09":["production_target_authority"],
+              "STAGE-10":["production_acceptance_target_authority"],
+              "STAGE-11":["operations_target_authority"],
+            }
+            source=None
+            for section in stage_sections.get(nxt,[]):
+                candidate=(auth.get(section) or {}).get(cls)
+                if candidate is not None:
+                    source=candidate
+                    break
             if not isinstance(source,dict):
                 raise SystemExit("BLOCK:PRODUCT_IMPLEMENTATION_AUTHORITY_CLASS_MISSING:"+cls)
             status=str(source.get("status") or "")
