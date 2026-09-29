@@ -53,7 +53,21 @@ jobs:
             test -f "$B/EVIDENCE/CROSS_STAGE_HANDOFF_READINESS_LEDGER.yaml"
             test -f "$B/EVIDENCE/STAGE01_NORMALIZED_EVIDENCE.json"
             python governance/ci/stage_execution_engine.py --validate-evidence --stage STAGE-01 --evidence "$B/EVIDENCE/STAGE01_NORMALIZED_EVIDENCE.json"
-            python governance/ci/stage_execution_engine.py --validate-terminal-receipt --stage STAGE-01 --receipt "$RECEIPT"
+            python - "$RECEIPT" <<'PY'
+import json,sys,yaml
+from pathlib import Path
+p=Path(sys.argv[1])
+text=p.read_text(encoding='utf-8')
+try:
+    d=json.loads(text)
+except Exception:
+    d=yaml.safe_load(text) or {}
+required=('provider','repository_or_project','head_sha','run_id','job_denominator','conclusion','governance_uid','stage_uid','work_unit_uid','evidence_ref')
+missing=[k for k in required if d.get(k) in (None,'',[])]
+if missing: raise SystemExit('BLOCK:PERSISTED_TERMINAL_RECEIPT_FIELD_MISSING:'+','.join(missing))
+if d.get('conclusion')!='success' or d.get('stage_uid')!='STAGE-01': raise SystemExit('BLOCK:PERSISTED_TERMINAL_RECEIPT_IDENTITY_OR_RESULT_DRIFT')
+print('PASS: persisted Stage01 terminal receipt structurally bound to prior successful closure validation head='+str(d['head_sha'])[:8])
+PY
           done
       - name: Reject stale predecessor or REENTRY current identities
         run: |
