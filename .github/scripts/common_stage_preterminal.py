@@ -77,6 +77,7 @@ def main():
             refresh_stage1_manifests(root)
             assert_stage1_manifest_fresh(wd)
         write(wd/"EVIDENCE/HIDDEN_DEFECT_SWEEP_RESULT.yaml",{"artifact_type":"HIDDEN_DEFECT_SWEEP","stage_uid":a.stage,"work_unit_uid":work.get("work_unit_uid"),"status":"PASS","discovered_defect_total":0,"basis":"FRESH_SCANNER_REEXECUTION_OR_EXACT_CURRENT_SCANNER_RESULTS"})
+        run([sys.executable,".github/scripts/common_successor_binding_resolver.py","--mode","resolve","--from-stage",a.stage,"--predecessor-work-unit",str(wp.relative_to(root)),"--product-root",str(root),"--governance-root",str(gov)],root)
         if a.stage=="STAGE-01":
             refresh_stage1_manifests(root)
             assert_stage1_manifest_fresh(wd)
@@ -87,5 +88,6 @@ def main():
         if load(root/str(((work.get("validator_bindings") or {}).get(uid) or {}).get("result_ref") or "")).get("status")!="PASS": raise SystemExit("BLOCK:PRETERMINAL_VALIDATOR_RESULT_NOT_PASS:"+uid)
     sweep=load(wd/"EVIDENCE/HIDDEN_DEFECT_SWEEP_RESULT.yaml")
     if sweep.get("status")!="PASS" or int(sweep.get("discovered_defect_total") or 0)!=0: raise SystemExit("BLOCK:PRETERMINAL_HIDDEN_DEFECT_SWEEP_NOT_PASS")
-    print("PASS: preterminal physical evidence ready; successor runtime resolves after CLOSED_PASS",a.stage,work.get("work_unit_uid"))
+    if load(wd/"EVIDENCE/SUCCESSOR_EXECUTION_BINDING_RESOLUTION.yaml").get("status")!="PASS": raise SystemExit("BLOCK:PRETERMINAL_SUCCESSOR_BINDING_NOT_PASS")
+    print("PASS: preterminal physical evidence ready",a.stage,work.get("work_unit_uid"))
 if __name__=="__main__": main()
