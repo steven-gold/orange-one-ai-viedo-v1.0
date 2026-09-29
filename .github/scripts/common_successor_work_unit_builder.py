@@ -89,8 +89,17 @@ def main():
     ops=bindings.get("operation_bindings") or {}
     if list(map(str,ops))!=expected: raise SystemExit("BLOCK:SUCCESSOR_OPERATION_BINDING_COVERAGE_DRIFT")
     for uid,b in ops.items():
-        if not isinstance(b,dict) or not b.get("executor_owner") or not b.get("executor_protocol") or not b.get("result_owner") or not b.get("operation_receipt_ref"):
+        if not isinstance(b,dict) or not b.get("result_owner") or not b.get("operation_receipt_ref"):
             raise SystemExit("BLOCK:SUCCESSOR_OPERATION_BINDING_INCOMPLETE:"+str(uid))
+        app=str(b.get("applicability") or "")
+        if app=="AUTHORIZED_NOT_APPLICABLE":
+            if not b.get("authority_evidence_ref"):
+                raise SystemExit("BLOCK:SUCCESSOR_OPERATION_NA_AUTHORITY_MISSING:"+str(uid))
+            if b.get("executor_owner") or b.get("executor_protocol"):
+                raise SystemExit("BLOCK:SUCCESSOR_OPERATION_NA_EXECUTOR_FORBIDDEN:"+str(uid))
+            continue
+        if app!="REQUIRED" or not b.get("executor_owner") or not b.get("executor_protocol"):
+            raise SystemExit("BLOCK:SUCCESSOR_OPERATION_REQUIRED_EXECUTOR_MISSING:"+str(uid))
         ep=safe(root,b.get("executor_owner"),"SUCCESSOR_EXECUTOR_OWNER")
         if not ep.is_file(): raise SystemExit("BLOCK:SUCCESSOR_EXECUTOR_OWNER_MISSING:"+str(uid))
 
