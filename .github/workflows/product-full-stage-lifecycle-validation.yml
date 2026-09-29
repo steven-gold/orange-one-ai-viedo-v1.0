@@ -79,7 +79,9 @@ jobs:
             .github/scripts/stage07_current_operation_runtime.py \
             .github/scripts/stage07_current_scanner.py \
             .github/scripts/stage08_current_operation_runtime.py \
-            .github/scripts/stage08_current_scanner.py
+            .github/scripts/stage08_current_scanner.py \
+            .github/scripts/external_stage_fail_closed_runtime.py \
+            .github/scripts/external_stage_fail_closed_scanner.py
 
           python .github/scripts/full_stage_lifecycle_guard.py --mode plan --product-root "$GITHUB_WORKSPACE" --governance-root "$GITHUB_WORKSPACE/_governance_authority"
           python .github/scripts/stage_lifecycle_gate.py --mode validate-all --product-root "$GITHUB_WORKSPACE" --governance-root "$GITHUB_WORKSPACE/_governance_authority"
