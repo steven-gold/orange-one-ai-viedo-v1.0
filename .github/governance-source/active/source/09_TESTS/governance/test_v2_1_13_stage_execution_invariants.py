@@ -120,7 +120,7 @@ matrix_contract=det_contract.get('normative_execution_matrix_contract') or {}
 res.append(case('handoff_single_canonical_ledger_no_parallel_system', crossmat.get('single_canonical_handoff_artifact_only') is True and crossmat.get('parallel_readiness_ledger_or_stage_local_substitute')=='BLOCK'))
 res.append(case('predecessor_handoff_is_input_continuity_only', crossmat.get('successor_stage_internal_target_resolution_is_predecessor_closure_requirement') is False))
 res.append(case('successor_binding_authority_cannot_be_ai_selected', crossmat.get('technology_stack_recommendation_may_create_execution_authority') is False and crossmat.get('implementation_language_framework_or_package_manager_may_be_ai_selected_when_unbound') is False))
-res.append(case('successor_runtime_binding_resolves_after_predecessor_close', crossmat.get('successor_runtime_binding_resolution_boundary')=='AFTER_PREDECESSOR_CLOSED_PASS_BEFORE_SUCCESSOR_MATERIALIZATION'))
+res.append(case('successor_runtime_binding_resolves_after_predecessor_close', crossmat.get('successor_runtime_binding_resolution_boundary')=='AFTER_SUCCESSOR_MATERIALIZATION_AT_OWNING_OPERATION'))
 res.append(case('stage_local_target_authority_checked_before_consuming_operation', crossmat.get('successor_operation_target_authority_required_before_consuming_operation') is True))
 res.append(case('stage_local_target_may_not_be_ai_invented', crossmat.get('successor_operation_target_may_be_ai_invented') is False))
 res.append(case('current_state_conflict_cannot_be_overridden_by_transport_success', state_contract.get('pass_requires_completed_operation_set_exact_registered_stage_operations') is True and state_contract.get('terminal_receipt_or_outer_run_success_may_override_conflict') is False))
