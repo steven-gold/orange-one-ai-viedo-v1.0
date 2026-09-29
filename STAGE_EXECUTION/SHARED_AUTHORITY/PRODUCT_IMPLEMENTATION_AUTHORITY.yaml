@@ -1,0 +1,143 @@
+artifact_type: PRODUCT_IMPLEMENTATION_AUTHORITY
+status: CURRENT_PARTIAL_STAGE05_AUTHORITY
+normative_authority: false
+authority_role: PRODUCT_EXECUTION_AUTHORITY
+product_repository: steven-gold/orange-one-ai-viedo-v1.0
+current_execution_branch: 0921acpos
+current_governance_uid: GOV-REV-20260928-WORD-DERIVED-STAGE-INTERNAL-VALIDATION
+authorization_basis:
+  kind: EXPLICIT_USER_CONTINUATION_AFTER_STAGE05_AUTHORITY_PLAN
+  authorized_date: 2026-09-30
+  scope: ADOPT_EXISTING_VALIDATED_ACPOS_RUNTIME_AS_STAGE05_IMPLEMENTATION_BASELINE
+  ai_may_invent_alternate_stack: false
+adoption_source:
+  repository: steven-gold/orange-one-ai-viedo-v1.0
+  branch: main
+  exact_commit_sha: 1e081935b96d5b539e29eb16a6b067c4489ef2dd
+  source_commit_message: Merge current validated ACPOS staging to main
+  validation_evidence_label: Release Gate #1260
+  historical_completion_credit: 0
+  adopted_into_current_branch_commit: 0ebf325b26af666eabe0d64ca846e6080bb2e912
+  adopted_paths:
+  - src/
+  - public/
+  - database/
+  - scripts/
+  - package.json
+  - package-lock.json
+  - next-env.d.ts
+  - next.config.ts
+  - tsconfig.json
+  - vercel.json
+  - Dockerfile
+  - .dockerignore
+  - .env.example
+  explicitly_not_adopted:
+  - authority/
+  - docs/
+  - CURRENT_EXECUTION_STATE.json
+  - .github/
+  - .monkeycode/
+  reason: KEEP_CURRENT_WORD_DERIVED_AUTHORITY_AND_STAGE_GOVERNANCE_UNPOLLUTED
+
+toolchain_authority:
+  IMPLEMENTATION_LANGUAGE_AUTHORITY:
+    status: RESOLVED
+    resolution_kind: AUTHORITY_VALUE
+    authority_value: TypeScript
+    version_evidence: package.json#devDependencies.typescript
+    version_constraint: ^5.9.0
+  FRONTEND_FRAMEWORK_AUTHORITY:
+    status: RESOLVED
+    resolution_kind: AUTHORITY_VALUE
+    authority_value: Next.js 16.3.3 + React 19.2.0
+    evidence_refs:
+    - package.json#dependencies.next
+    - package.json#dependencies.react
+    - package.json#dependencies.react-dom
+  BACKEND_FRAMEWORK_AUTHORITY:
+    status: RESOLVED
+    resolution_kind: AUTHORITY_VALUE
+    authority_value: Next.js App Router Route Handlers on Node.js 22
+    evidence_refs:
+    - src/app/v1/
+    - Dockerfile
+  PACKAGE_MANAGER_AUTHORITY:
+    status: RESOLVED
+    resolution_kind: AUTHORITY_VALUE
+    authority_value: npm
+    evidence_refs:
+    - package-lock.json
+    - Dockerfile
+  IMPLEMENTATION_OWNER:
+    status: RESOLVED_BY_AUTHORIZED_TEMPLATE
+    resolution_kind: AUTHORITY_VALUE
+    authority_value_template: OWNER-STAGE05-{{GOVERNED_UNIT_UID}}
+    owner_scope: CURRENT_GOVERNED_UNIT
+    owner_materialization_stage: STAGE-05
+
+execution_target_authority:
+  REPOSITORY_TARGET:
+    status: RESOLVED
+    resolution_kind: CURRENT_REPOSITORY
+    target_identity: steven-gold/orange-one-ai-viedo-v1.0
+  APPLICATION_ROOT:
+    status: RESOLVED
+    resolution_kind: CURRENT_REPOSITORY_PATH
+    target_path: .
+  FRONTEND_RUNTIME_TARGET:
+    status: RESOLVED
+    resolution_kind: CURRENT_REPOSITORY_PATH
+    target_path: src/app
+  BACKEND_RUNTIME_TARGET:
+    status: RESOLVED
+    resolution_kind: CURRENT_REPOSITORY_PATH
+    target_path: src/server
+  DATA_ACCESS_TARGET:
+    status: RESOLVED
+    resolution_kind: CURRENT_REPOSITORY_PATH
+    target_path: src/server/database
+  DATABASE_TARGET:
+    status: RESOLVED
+    resolution_kind: CURRENT_REPOSITORY_PATH
+    target_path: database
+  AUTHENTICATION_TARGET:
+    status: RESOLVED
+    resolution_kind: CURRENT_REPOSITORY_PATH
+    target_path: src/server/identity
+  AUTHORIZATION_TARGET:
+    status: RESOLVED
+    resolution_kind: CURRENT_REPOSITORY_PATH
+    target_path: src/server/iam
+  DATA_SECURITY_TARGET:
+    status: RESOLVED
+    resolution_kind: CURRENT_REPOSITORY_PATH
+    target_path: src/server/database/rlsRuntime.ts
+  AUDIT_LOGGING_TARGET:
+    status: RESOLVED
+    resolution_kind: CURRENT_REPOSITORY_PATH
+    target_path: src/server/shared/observability.ts
+  EXTERNAL_INTEGRATION_TARGET:
+    status: RESOLVED
+    resolution_kind: CURRENT_REPOSITORY_PATH
+    target_path: src/server/aiApi/providerHttpAdapterRuntime.ts
+  ASYNC_RUNTIME_TARGET:
+    status: RESOLVED
+    resolution_kind: CURRENT_REPOSITORY_PATH
+    target_path: src/server/queue/providerExecutionQueueRuntime.ts
+  STORAGE_RUNTIME_TARGET:
+    status: UNRESOLVED
+    failure_class: SUCCESSOR_EXECUTION_TARGET_UNRESOLVED
+    reason: NO_CURRENT_AUTHORITY_FOR_DISTINCT_STORAGE_RUNTIME_PROVIDER_OR_CANONICAL_STORAGE_PATH
+    guessed_or_inferred_value_forbidden: true
+
+stage05_readiness:
+  required_binding_class_total: 18
+  resolved_binding_class_total: 17
+  unresolved_binding_class_total: 1
+  unresolved_binding_classes:
+  - STORAGE_RUNTIME_TARGET
+  exact_binding_source_may_be_promoted_to_current: false
+  effectful_stage05_admission_allowed: false
+  next_legal_action: RESOLVE_STORAGE_RUNTIME_TARGET_OR_AUTHORITY_PROVEN_NOT_APPLICABLE
+  historical_runtime_completion_credit: 0
