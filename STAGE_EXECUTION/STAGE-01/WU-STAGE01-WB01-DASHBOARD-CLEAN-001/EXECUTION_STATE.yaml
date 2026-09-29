@@ -3,9 +3,12 @@ stage_uid: STAGE-01
 work_unit_uid: WU-STAGE01-WB01-DASHBOARD-CLEAN-001
 governed_unit_uid: workspace:WB-01
 governance_uid: GOV-REV-20260928-WORD-DERIVED-STAGE-INTERNAL-VALIDATION
-status: READY_FOR_EXECUTION
-current_operation: SOURCE_STRUCTURE_ENUMERATION
-completed_operations: []
+status: IN_PROGRESS
+current_operation: SOURCE_SEGMENT_MAPPING
+completed_operations:
+- SOURCE_STRUCTURE_ENUMERATION
 resume_control:
   product_execution_allowed: true
 completion_credit: 0
+last_operation_uid: SOURCE_STRUCTURE_ENUMERATION
+last_operation_receipt_ref: STAGE_EXECUTION/STAGE-01/WU-STAGE01-WB01-DASHBOARD-CLEAN-001/EVIDENCE/OPERATION_RECEIPTS/SOURCE_STRUCTURE_ENUMERATION.yaml
