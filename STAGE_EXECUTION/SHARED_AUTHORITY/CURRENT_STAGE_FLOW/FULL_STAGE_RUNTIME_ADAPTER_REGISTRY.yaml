@@ -8,24 +8,69 @@ rules:
   output_universe_source: CURRENT_LIFECYCLE_REGISTRY
   required_evidence_source: CURRENT_LIFECYCLE_REGISTRY
   operation_executor_source: CURRENT_WORK_UNIT_OPERATION_BINDINGS
-  closure_protocol: COMMON_STAGE_CLOSURE_PROTOCOL
-  successor_materializer: COMMON_SUCCESSOR_WORK_UNIT_MATERIALIZER
+  common_closure_orchestrator: .github/scripts/common_stage_closure.py
+  common_successor_orchestrator: .github/scripts/common_successor_materialize.py
   stage_specific_adapter_may_define_authorization: false
   stage_specific_adapter_may_define_permission_semantics: false
   stage_specific_adapter_may_define_next_stage: false
   stage_specific_adapter_may_claim_closure: false
   unresolved_executor_before_stage_admission: BLOCK
-  unresolved_materializer_before_predecessor_closure: BLOCK
+  unresolved_materializer_before_predecessor_effectful_entry: BLOCK
+  unresolved_closure_adapter_before_stage01_effectful_entry: BLOCK
 adapters:
-- {stage_uid: STAGE-01, materializer_protocol: WORD_DERIVED_INITIAL_WORK_UNIT, executor_protocol: WORK_UNIT_BOUND_EXECUTOR, closure_protocol: COMMON_STAGE_CLOSURE_PROTOCOL, validation_protocol: COMMON_PLUS_STAGE_SEMANTIC}
-- {stage_uid: STAGE-02, materializer_protocol: PREDECESSOR_HANDOFF_SUCCESSOR_WORK_UNIT, executor_protocol: WORK_UNIT_BOUND_EXECUTOR, closure_protocol: COMMON_STAGE_CLOSURE_PROTOCOL, validation_protocol: COMMON_PLUS_STAGE_SEMANTIC}
-- {stage_uid: STAGE-03, materializer_protocol: PREDECESSOR_HANDOFF_SUCCESSOR_WORK_UNIT, executor_protocol: WORK_UNIT_BOUND_EXECUTOR, closure_protocol: COMMON_STAGE_CLOSURE_PROTOCOL, validation_protocol: COMMON_PLUS_STAGE_SEMANTIC}
-- {stage_uid: STAGE-04, materializer_protocol: PREDECESSOR_HANDOFF_SUCCESSOR_WORK_UNIT, executor_protocol: WORK_UNIT_BOUND_EXECUTOR, closure_protocol: COMMON_STAGE_CLOSURE_PROTOCOL, validation_protocol: COMMON_PLUS_STAGE_SEMANTIC}
-- {stage_uid: STAGE-05, materializer_protocol: PREDECESSOR_HANDOFF_SUCCESSOR_WORK_UNIT, executor_protocol: WORK_UNIT_BOUND_EXECUTOR, closure_protocol: COMMON_STAGE_CLOSURE_PROTOCOL, validation_protocol: COMMON_PLUS_STAGE_SEMANTIC}
-- {stage_uid: STAGE-06, materializer_protocol: PREDECESSOR_HANDOFF_SUCCESSOR_WORK_UNIT, executor_protocol: WORK_UNIT_BOUND_EXECUTOR, closure_protocol: COMMON_STAGE_CLOSURE_PROTOCOL, validation_protocol: COMMON_PLUS_STAGE_SEMANTIC}
-- {stage_uid: STAGE-07, materializer_protocol: PREDECESSOR_HANDOFF_SUCCESSOR_WORK_UNIT, executor_protocol: WORK_UNIT_BOUND_EXECUTOR, closure_protocol: COMMON_STAGE_CLOSURE_PROTOCOL, validation_protocol: COMMON_PLUS_STAGE_SEMANTIC}
-- {stage_uid: STAGE-08, materializer_protocol: PREDECESSOR_HANDOFF_SUCCESSOR_WORK_UNIT, executor_protocol: WORK_UNIT_BOUND_EXECUTOR, closure_protocol: COMMON_STAGE_CLOSURE_PROTOCOL, validation_protocol: COMMON_PLUS_STAGE_SEMANTIC}
-- {stage_uid: STAGE-09, materializer_protocol: PREDECESSOR_HANDOFF_SUCCESSOR_WORK_UNIT, executor_protocol: WORK_UNIT_BOUND_EXECUTOR, closure_protocol: COMMON_STAGE_CLOSURE_PROTOCOL, validation_protocol: COMMON_PLUS_STAGE_SEMANTIC}
-- {stage_uid: STAGE-10, materializer_protocol: PREDECESSOR_HANDOFF_SUCCESSOR_WORK_UNIT, executor_protocol: WORK_UNIT_BOUND_EXECUTOR, closure_protocol: COMMON_STAGE_CLOSURE_PROTOCOL, validation_protocol: COMMON_PLUS_STAGE_SEMANTIC}
-- {stage_uid: STAGE-11, materializer_protocol: PREDECESSOR_HANDOFF_SUCCESSOR_WORK_UNIT, executor_protocol: WORK_UNIT_BOUND_EXECUTOR, closure_protocol: COMMON_STAGE_CLOSURE_PROTOCOL, validation_protocol: COMMON_PLUS_STAGE_SEMANTIC}
+- stage_uid: STAGE-01
+  materializer_owner: .github/scripts/stage01_current_materialize.py
+  operation_executor_owner: .github/scripts/stage01_operation_runtime.py
+  closure_adapter_owner: UNRESOLVED
+  state: CLOSURE_ADAPTER_UNRESOLVED
+- stage_uid: STAGE-02
+  materializer_owner: UNRESOLVED
+  operation_executor_owner: UNRESOLVED
+  closure_adapter_owner: UNRESOLVED
+  state: RUNTIME_ADAPTERS_UNRESOLVED
+- stage_uid: STAGE-03
+  materializer_owner: UNRESOLVED
+  operation_executor_owner: UNRESOLVED
+  closure_adapter_owner: UNRESOLVED
+  state: RUNTIME_ADAPTERS_UNRESOLVED
+- stage_uid: STAGE-04
+  materializer_owner: UNRESOLVED
+  operation_executor_owner: .github/scripts/stage04_operation_lib.py
+  closure_adapter_owner: .github/scripts/stage04_closure.py
+  state: MATERIALIZER_UNRESOLVED_CLOSURE_NEEDS_COMMON_PROTOCOL_REFACTOR
+- stage_uid: STAGE-05
+  materializer_owner: UNRESOLVED
+  operation_executor_owner: UNRESOLVED
+  closure_adapter_owner: UNRESOLVED
+  state: FUTURE_VERTICAL_RUNTIME_UNRESOLVED
+- stage_uid: STAGE-06
+  materializer_owner: UNRESOLVED
+  operation_executor_owner: UNRESOLVED
+  closure_adapter_owner: UNRESOLVED
+  state: FUTURE_VERTICAL_RUNTIME_UNRESOLVED
+- stage_uid: STAGE-07
+  materializer_owner: UNRESOLVED
+  operation_executor_owner: UNRESOLVED
+  closure_adapter_owner: UNRESOLVED
+  state: FUTURE_VERTICAL_RUNTIME_UNRESOLVED
+- stage_uid: STAGE-08
+  materializer_owner: UNRESOLVED
+  operation_executor_owner: UNRESOLVED
+  closure_adapter_owner: UNRESOLVED
+  state: FUTURE_VERTICAL_RUNTIME_UNRESOLVED
+- stage_uid: STAGE-09
+  materializer_owner: UNRESOLVED
+  operation_executor_owner: UNRESOLVED
+  closure_adapter_owner: UNRESOLVED
+  state: FUTURE_VERTICAL_RUNTIME_UNRESOLVED
+- stage_uid: STAGE-10
+  materializer_owner: UNRESOLVED
+  operation_executor_owner: UNRESOLVED
+  closure_adapter_owner: UNRESOLVED
+  state: FUTURE_VERTICAL_RUNTIME_UNRESOLVED
+- stage_uid: STAGE-11
+  materializer_owner: UNRESOLVED
+  operation_executor_owner: UNRESOLVED
+  closure_adapter_owner: UNRESOLVED
+  state: FUTURE_VERTICAL_RUNTIME_UNRESOLVED
 completion_credit: 0
