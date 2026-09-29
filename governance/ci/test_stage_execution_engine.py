@@ -1490,6 +1490,7 @@ _required_negative_trace={
   'REMOVE_VALIDATOR_RESULT':{'executed_test_label':'validator_coverage_drift','injected_mutation':'REMOVE_VALIDATOR_RESULT','expected_blocking_semantics':'VALIDATOR_RESULT_COVERAGE_DRIFT'},
   'REMOVE_REQUIRED_EVIDENCE':{'executed_test_label':'required_evidence_missing','injected_mutation':'REMOVE_REQUIRED_EVIDENCE','expected_blocking_semantics':'REQUIRED_EVIDENCE_DENOMINATOR_DRIFT'},
   'SUCCESSOR_INPUT_NOT_READY':{'executed_test_label':'handoff_consumer_not_ready','injected_mutation':'SET_SUCCESSOR_CONSUMER_NOT_READY','expected_blocking_semantics':'PASS_WITH_CROSS_STAGE_HANDOFF_NOT_READY:consumer_readiness_complete'},
+}
 if set(_required_negative_trace)!=set(_required_negative_classes):
     raise SystemExit('FAIL_REQUIRED_NEGATIVE_CLASS_TRACEABILITY_DENOMINATOR:required='+repr(sorted(_required_negative_classes))+':mapped='+repr(sorted(_required_negative_trace)))
 _trace_rows=[]
