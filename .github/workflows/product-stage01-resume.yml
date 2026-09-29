@@ -1,0 +1,16 @@
+name: Product Stage01 Lifecycle Resume
+on:
+  push:
+    branches: [0921acpos]
+    paths:
+      - 'STAGE_EXECUTION/SHARED_AUTHORITY/CURRENT_STAGE_FLOW/STAGE01_LIFECYCLE_DRIVER_REQUEST.yaml'
+permissions:
+  contents: write
+  actions: write
+jobs:
+  execute:
+    uses: ./.github/workflows/product-stage-lifecycle-driver.yml
+    with:
+      stage: STAGE-01
+      work_units: WU-STAGE01-GLOBAL-HOME-SHELL-NAVIGATION-CLEAN-001,WU-STAGE01-WB01-DASHBOARD-CLEAN-001
+    secrets: inherit
