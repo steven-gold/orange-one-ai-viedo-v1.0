@@ -135,9 +135,9 @@ jobs:
           ! grep -q "gh run watch" .github/workflows/product-stage-lifecycle-driver.yml
           ! grep -q "Wait for independent exact-head outer validation" .github/workflows/product-stage-lifecycle-driver.yml
           ! grep -q "current_stage_execute.py" .github/workflows/product-full-stage-lifecycle-validation.yml
-          ! grep -q "common_successor_binding_resolver.py" .github/scripts/common_stage_preterminal.py || { echo "BLOCK:PRETERMINAL_MUST_NOT_RESOLVE_SUCCESSOR_RUNTIME"; exit 43; }
-          ! grep -q "successor_execution_binding_requirements" .github/scripts/common_cross_stage_handoff_builder.py || { echo "BLOCK:HANDOFF_MUST_BE_INPUT_CONTINUITY_ONLY"; exit 44; }
-          grep -q "common_successor_binding_resolver.py --mode resolve" .github/workflows/product-stage-lifecycle-driver.yml
+          grep -q "common_successor_binding_resolver.py" .github/scripts/common_stage_preterminal.py || { echo "BLOCK:PRETERMINAL_SUCCESSOR_READINESS_GATE_MISSING"; exit 43; }
+          grep -q "successor_execution_binding_requirements" .github/scripts/common_cross_stage_handoff_builder.py || { echo "BLOCK:HANDOFF_SUCCESSOR_BINDING_DENOMINATOR_MISSING"; exit 44; }
+          ! grep -q "common_successor_binding_resolver.py --mode resolve" .github/workflows/product-stage-lifecycle-driver.yml || { echo "BLOCK:DUPLICATE_POST_CLOSURE_SUCCESSOR_RESOLUTION"; exit 45; }
           test ! -e .github/scripts/common_successor_materialize.py
           test ! -e .github/scripts/stage05_current_target_resolver.py
           test ! -e STAGE_EXECUTION/SHARED_AUTHORITY/IMPLEMENTATION_EXECUTION_TARGET_AUTHORITY.yaml
