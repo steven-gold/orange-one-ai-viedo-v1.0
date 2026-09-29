@@ -1,112 +1,28 @@
 artifact_type: PRODUCT_FULL_STAGE_LIFECYCLE_AUTHORIZATION_CONTRACT
 status: CURRENT_EXPLICIT_STAGE01_TO_STAGE11_RANGE
 normative_authority: false
-authority_role: PRODUCT_EXECUTION_COORDINATION_AUTHORITY
+authority_role: PRODUCT_EXECUTION_RANGE_ONLY
 product_branch: 0921acpos
 current_governance:
   governance_uid: GOV-REV-20260928-WORD-DERIVED-STAGE-INTERNAL-VALIDATION
   governance_head: c353d7bdb5dc7edb43c6c7453517d1df75d54ce8
   lifecycle_registry_ref: .github/governance-source/active/source/10_REGISTRY/GOVERNANCE_LIFECYCLE_STAGE_REGISTRY.yaml
-  invariant_registry_ref: .github/governance-source/active/source/10_REGISTRY/STAGE_EXECUTION_INVARIANT_REGISTRY.yaml
-authorization_records:
-  current_effectful_range: USER_EXPLICIT_REQUEST_2026-09-29_STAGE01_TO_STAGE11
-  decontamination: https://github.com/steven-gold/orange-one-ai-viedo-v1.0/issues/64
-lifecycle_stage_uids: [STAGE-01, STAGE-02, STAGE-03, STAGE-04, STAGE-05, STAGE-06, STAGE-07, STAGE-08, STAGE-09, STAGE-10, STAGE-11]
-lifecycle_topology:
-  foundation_stages: [STAGE-01, STAGE-02, STAGE-03, STAGE-04]
-  vertical_stages: [STAGE-05, STAGE-06, STAGE-07, STAGE-08, STAGE-09, STAGE-10, STAGE-11]
-  true_governed_unit_closure_stage: STAGE-11
-  stage04_is_full_lifecycle_closure: false
-  stage04_meaning: FOUNDATION_FROZEN_AND_STAGE05_ELIGIBLE_WHEN_AUTHORIZED
-  stage_local_authorization_logic: FORBIDDEN
-  stage_local_permission_model: FORBIDDEN
-  stage_local_successor_rules: FORBIDDEN
 execution_authorization:
-  planning_range: [STAGE-01, STAGE-02, STAGE-03, STAGE-04, STAGE-05, STAGE-06, STAGE-07, STAGE-08, STAGE-09, STAGE-10, STAGE-11]
-  authorized_effectful_range: [STAGE-01, STAGE-02, STAGE-03, STAGE-04, STAGE-05, STAGE-06, STAGE-07, STAGE-08, STAGE-09, STAGE-10, STAGE-11]
+  authorized_effectful_range:
+  - STAGE-01
+  - STAGE-02
+  - STAGE-03
+  - STAGE-04
+  - STAGE-05
+  - STAGE-06
+  - STAGE-07
+  - STAGE-08
+  - STAGE-09
+  - STAGE-10
+  - STAGE-11
   requested_range_authority: USER_EXPLICIT_REQUEST_2026-09-29_STAGE01_TO_STAGE11
-  future_effectful_stage_policy: NO_STAGE_OUTSIDE_REQUESTED_RANGE
   system_may_expand_range: false
   system_may_shrink_range: false
   system_may_skip_stage_inside_authorized_range: false
-  system_may_split_authorized_range_into_stage_local_authorization_batches: false
   normal_pass_auto_continue_within_authorized_range: true
-  current_stage04_boundary_behavior: AUTO_CONTINUE_TO_STAGE05_ON_PASS_WITHIN_REQUESTED_RANGE
-authorization_layers:
-- {ordinal: 1, uid: AUTH-LAYER-CURRENT-GOVERNANCE, purpose: BIND_EXACT_CURRENT_GOVERNANCE}
-- {ordinal: 2, uid: AUTH-LAYER-STAGE-RANGE, purpose: BIND_EXACT_INCLUSIVE_EXECUTION_RANGE}
-- {ordinal: 3, uid: AUTH-LAYER-WORK-UNIT, purpose: RESOLVE_ONE_CURRENT_WORK_UNIT_AND_SCOPE}
-- {ordinal: 4, uid: AUTH-LAYER-STAGE-ENTRY, purpose: PROVE_REGISTERED_ENTRY_GATE_AND_PREDECESSOR_CLOSURE}
-- {ordinal: 5, uid: AUTH-LAYER-OPERATION, purpose: EXECUTE_REGISTERED_OPERATION_WITH_EXACT_PERMISSION_GATE_BINDING}
-- {ordinal: 6, uid: AUTH-LAYER-HUMAN-BOUNDARY, purpose: CONSUME_FORMAL_APPROVAL_ONLY_WHEN_CURRENT_GOVERNANCE_REQUIRES_IT}
-- {ordinal: 7, uid: AUTH-LAYER-STAGE-CLOSURE, purpose: RECONCILE_DENOMINATOR_EVIDENCE_STATE_MATRIX_AND_EXIT_GATE}
-- {ordinal: 8, uid: AUTH-LAYER-SUCCESSOR-HANDOFF, purpose: PROVE_SUCCESSOR_INPUT_TARGET_AND_CONSUMER_READINESS}
-- {ordinal: 9, uid: AUTH-LAYER-SUCCESSOR-MATERIALIZATION, purpose: MATERIALIZE_SUCCESSOR_ONLY_AFTER_TERMINAL_PASS_AND_RANGE_AUTHORIZATION}
-- {ordinal: 10, uid: AUTH-LAYER-NEXT-STAGE-ADMISSION, purpose: ADMIT_NEXT_REGISTERED_STAGE}
-global_transition_order:
-- TERMINALIZE_OR_LEGALLY_SUSPEND_CURRENT_WORK_UNIT
-- PERSIST_RESUME
-- RECONCILE_STAGE_CLOSURE
-- MATERIALIZE_CROSS_STAGE_HANDOFF
-- VERIFY_SUCCESSOR_ELIGIBILITY
-- VERIFY_SUCCESSOR_INSIDE_AUTHORIZED_RANGE
-- MATERIALIZE_SUCCESSOR_WORK_UNIT
-- ACTIVATE_RESOLVED_WORK_UNIT
-- SESSION_BOOTSTRAP_RESUME_GATE
-- NEXT_STAGE_ADMISSION
-forbidden_transition_patterns:
-- STAGE_LOCAL_AUTHORIZATION_RESULT_USED_AS_GLOBAL_AUTHORITY
-- SUCCESSOR_PREPRODUCTION_BEFORE_PREDECESSOR_CLOSURE
-- FUTURE_STAGE_PREPRODUCTION_OUTSIDE_AUTHORIZED_RANGE
-- CLOSED_WORK_UNIT_REOPEN
-- CURRENT_STAGE_SKIP
-- PERMISSION_REDEFINITION_AFTER_FOUNDATION_FREEZE
-- HISTORICAL_PASS_AS_CURRENT_COMPLETION_CREDIT
-- TERMINAL_RECEIPT_WITHOUT_CURRENT_STATE_RECONCILIATION
-- SUCCESSOR_HANDOFF_WITHOUT_TARGET_RESOLUTION_WHEN_REQUIRED
-stop_conditions: [FORMAL_HUMAN_APPROVAL_REQUIRED, USER_DECISION_REQUIRED, BLOCKED, CURRENT_STATE_CONFLICT, REVERIFY_REQUIRED, SNAPSHOT_INVALIDATED, EXECUTION_FAILURE]
-stage_contracts:
-- {stage_uid: STAGE-01, name: SOURCE_INTAKE_AND_BASE_BLUEPRINT, phase: FOUNDATION, entry_gate: GOVERNANCE_PREFORMAL_READY, exit_gate: CURRENT_GOVERNED_UNIT_STAGE1_CLOSED, next_stage_uid: STAGE-02, permission_lifecycle_role: CAPTURE_PERMISSION_ROLE_GATE_REQUIREMENTS_AS_SOURCE_FACTS_WITHOUT_INVENTION}
-- {stage_uid: STAGE-02, name: GOVERNED_UNIT_FUNCTIONAL_CONTRACT, phase: FOUNDATION, entry_gate: CURRENT_GOVERNED_UNIT_STAGE1_CLOSED, exit_gate: CURRENT_GOVERNED_UNIT_STAGE2_CLOSED, next_stage_uid: STAGE-03, permission_lifecycle_role: MATERIALIZE_CANONICAL_PERMISSION_GATE_ROLE_ACTION_AND_STATE_TRANSITION_CONTRACTS}
-- {stage_uid: STAGE-03, name: VISUAL_DESIGN, phase: FOUNDATION, entry_gate: CURRENT_GOVERNED_UNIT_STAGE2_CLOSED, exit_gate: CURRENT_GOVERNED_UNIT_STAGE3_CLOSED, next_stage_uid: STAGE-04, permission_lifecycle_role: RENDER_PERMISSION_ENABLED_DISABLED_HIDDEN_PENDING_ERROR_AND_RECOVERY_STATES_WITHOUT_REDEFINING_SEMANTICS}
-- {stage_uid: STAGE-04, name: FOUNDATION_FREEZE, phase: FOUNDATION, entry_gate: CURRENT_GOVERNED_UNIT_STAGE3_CLOSED, exit_gate: CURRENT_GOVERNED_UNIT_FOUNDATION_FROZEN, next_stage_uid: STAGE-05, permission_lifecycle_role: FREEZE_PERMISSION_GATE_ROLE_ACTION_STATE_AND_ACCEPTANCE_DENOMINATOR}
-- {stage_uid: STAGE-05, name: IMPLEMENTATION, phase: VERTICAL, entry_gate: CURRENT_GOVERNED_UNIT_FOUNDATION_FROZEN_AND_PREDECESSOR_STAGE_CLOSED, exit_gate: GOVERNED_UNIT_IMPLEMENTATION_COMPLETE, next_stage_uid: STAGE-06, permission_lifecycle_role: IMPLEMENT_AUTHENTICATION_AUTHORIZATION_DATA_SECURITY_AUDIT_AND_RUNTIME_BINDINGS_FROM_FROZEN_CONTRACT}
-- {stage_uid: STAGE-06, name: VERIFICATION_QA, phase: VERTICAL, entry_gate: GOVERNED_UNIT_IMPLEMENTATION_COMPLETE, exit_gate: PRE_RELEASE_VERIFICATION_CLOSED, next_stage_uid: STAGE-07, permission_lifecycle_role: EXECUTE_PERMISSION_TESTS_AND_E2E_FOR_EVERY_APPLICABLE_REQUIRED_PATH}
-- {stage_uid: STAGE-07, name: BUILD_RELEASE_CANDIDATE, phase: VERTICAL, entry_gate: PRE_RELEASE_VERIFICATION_CLOSED, exit_gate: RELEASE_CANDIDATE_ACCEPTED, next_stage_uid: STAGE-08, permission_lifecycle_role: PRESERVE_VERIFIED_PERMISSION_IDENTITY_IN_RELEASE_CANDIDATE_WITHOUT_MUTATION}
-- {stage_uid: STAGE-08, name: STAGING, phase: VERTICAL, entry_gate: RELEASE_CANDIDATE_ACCEPTED, exit_gate: STAGING_CLOSED_ACCEPTED_OR_AUTHORITY_PROVEN_NOT_APPLICABLE, next_stage_uid: STAGE-09, permission_lifecycle_role: VERIFY_STAGING_PERMISSION_BEHAVIOR_OR_AUTHORIZED_NOT_APPLICABLE_WITH_EVIDENCE}
-- {stage_uid: STAGE-09, name: PRODUCTION_CUTOVER, phase: VERTICAL, entry_gate: STAGING_CLOSED_ACCEPTED_OR_AUTHORITY_PROVEN_NOT_APPLICABLE, exit_gate: PRODUCTION_CUTOVER_CLOSED, next_stage_uid: STAGE-10, permission_lifecycle_role: DEPLOY_FROZEN_PERMISSION_IMPLEMENTATION_WITHOUT_CONTRACT_DRIFT}
-- {stage_uid: STAGE-10, name: PRODUCTION_ACCEPTANCE, phase: VERTICAL, entry_gate: PRODUCTION_CUTOVER_CLOSED, exit_gate: PRODUCTION_ACCEPTANCE_EVIDENCE_CLOSED, next_stage_uid: STAGE-11, permission_lifecycle_role: VERIFY_PRODUCTION_EFFECTFUL_CHAIN_INPUT_ACTION_API_PERMISSION_DB_OR_RUNTIME_RESPONSE_STATE_MUTATION_AUDIT_LOG_UI_RESULT}
-- {stage_uid: STAGE-11, name: CLOSURE_OPERATIONS, phase: VERTICAL, entry_gate: PRODUCTION_ACCEPTANCE_EVIDENCE_CLOSED, exit_gate: GOVERNED_UNIT_CLOSED, next_stage_uid: NEXT_GOVERNED_UNIT_STAGE05_OR_SCOPE_COMPLETE, permission_lifecycle_role: FINAL_RECONCILIATION_OF_PERMISSION_EVIDENCE_STALE_BINDINGS_REVERIFY_STATE_AND_SCOPE_ELIGIBILITY}
-permission_continuity_contract:
-  semantic_owner_stage: STAGE-02
-  visual_projection_stage: STAGE-03
-  immutable_freeze_stage: STAGE-04
-  implementation_stage: STAGE-05
-  verification_stage: STAGE-06
-  release_preservation_stages: [STAGE-07, STAGE-08, STAGE-09]
-  production_acceptance_stage: STAGE-10
-  final_reconciliation_stage: STAGE-11
-  downstream_may_redefine_permission_semantics: false
-  downstream_missing_permission_semantics_disposition: REENTER_EARLIEST_OWNER_AND_MARK_DESCENDANTS_REVERIFY_REQUIRED
-  required_chain_fields: [permission_or_gate, permission_or_role, action_or_operation, prerequisite_state, resulting_state_or_transition, runtime_owner, audit_event, failure_and_recovery, user_or_system_feedback, next_action_or_terminal_disposition]
-  permission_na_token: AUTHORIZED_NOT_APPLICABLE
-  permission_na_requires_authority_evidence: true
-closure_and_handoff_contract:
-  one_common_closure_protocol_for_all_stages: true
-  stage_operation_executor_may_claim_closure: false
-  normalized_evidence_required: true
-  current_state_reconciliation_required: true
-  current_matrix_reconciliation_required: true
-  terminal_receipt_required: true
-  resume_persistence_required: true
-  cross_stage_handoff_required: true
-  successor_input_reconciliation_required: true
-  successor_target_resolution_required_when_registered: true
-  successor_materialization_before_predecessor_terminal_pass: BLOCK
-  successor_materialization_outside_authorized_range: BLOCK
-  deterministic_successor_inside_authorized_range_auto_continues: true
-known_runtime_blockers: []
-validation_gate:
-  exact_head_full_stage_validation_required_before_effectful_stage: true
-  validation_success_grants_stage_completion_credit: false
 completion_credit: 0
