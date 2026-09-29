@@ -69,6 +69,7 @@ def main():
     run([
         sys.executable,".github/scripts/full_stage_lifecycle_guard.py",
         "--mode","execution-ready",
+        "--stage",args.stage,
         "--product-root",str(root),
         "--governance-root",str(govroot),
     ],root)
