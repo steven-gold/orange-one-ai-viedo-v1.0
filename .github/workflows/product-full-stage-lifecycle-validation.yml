@@ -71,7 +71,9 @@ jobs:
             .github/scripts/common_stage_closure_adapter.py \
             .github/scripts/common_stage_terminalizer.py \
             .github/scripts/common_successor_binding_resolver.py \
-            .github/scripts/common_successor_work_unit_builder.py
+            .github/scripts/common_successor_work_unit_builder.py \
+            .github/scripts/stage05_current_operation_runtime.py \
+            .github/scripts/stage05_current_scanner.py
 
           python .github/scripts/full_stage_lifecycle_guard.py --mode plan --product-root "$GITHUB_WORKSPACE" --governance-root "$GITHUB_WORKSPACE/_governance_authority"
           python .github/scripts/stage_lifecycle_gate.py --mode validate-all --product-root "$GITHUB_WORKSPACE" --governance-root "$GITHUB_WORKSPACE/_governance_authority"
