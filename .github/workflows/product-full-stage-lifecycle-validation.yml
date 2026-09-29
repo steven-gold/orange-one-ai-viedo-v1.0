@@ -99,6 +99,18 @@ jobs:
               assert rows[s].get('effectful_execution_authorized') is False
           print('PASS: runtime readiness states distinguish authorized executable range from structural future stages')
           PY
+          python - <<'PY'
+          import yaml
+          from pathlib import Path
+          root=Path('STAGE_EXECUTION/SHARED_AUTHORITY/CURRENT_STAGE_FLOW/EXACT_OPERATION_BINDING_SOURCES')
+          rows=sorted(root.glob('*.yaml'))
+          assert rows, 'BLOCK:NO_EXACT_OPERATION_BINDING_SOURCES'
+          for p in rows:
+              obj=yaml.safe_load(p.read_text(encoding='utf-8'))
+              assert isinstance(obj,dict), 'BLOCK:EXACT_BINDING_SOURCE_NOT_MAPPING:'+str(p)
+              assert obj.get('status')=='CURRENT_EXACT_BINDINGS', 'BLOCK:EXACT_BINDING_SOURCE_NOT_CURRENT:'+str(p)
+          print('PASS: exact operation binding source YAML parse denominator='+str(len(rows)))
+          PY
           grep -q "def rebind_run_manifest_hash" .github/scripts/current_stage_execute.py
           grep -q "WORK_UNIT ledger hash rebinding is owned by current_stage_execute.py" .github/scripts/stage01_operation_runtime.py
           ! grep -q "CURRENT_STAGE02_RESUME.yaml" .github/workflows/product-stage02-validation.yml
