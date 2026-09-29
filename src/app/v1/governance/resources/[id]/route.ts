@@ -1,0 +1,1 @@
+import{createIamPatchRoute}from"@/server/iam/iamRouteFactory";export const PATCH=createIamPatchRoute("configureGovernedResource");
