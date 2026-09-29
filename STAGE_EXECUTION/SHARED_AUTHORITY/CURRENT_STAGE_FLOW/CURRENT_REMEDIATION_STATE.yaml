@@ -1,60 +1,48 @@
-artifact_type: PRODUCT_REMEDIATION_RESUME_STATE
-status: CLEAN_BOOTSTRAP_IMPLEMENTATION_VALIDATED_READY_FOR_SELECTED_STAGE01_MATERIALIZATION
+artifact_type: PRODUCT_FULL_LIFECYCLE_REMEDIATION_RESUME_STATE
+status: FULL_LIFECYCLE_AUTHORIZATION_PLAN_MATERIALIZED_RUNTIME_REMEDIATION_PENDING
 authorization_record_url: https://github.com/steven-gold/orange-one-ai-viedo-v1.0/issues/61
 decontamination_authorization_record_url: https://github.com/steven-gold/orange-one-ai-viedo-v1.0/issues/64
 product_branch: 0921acpos
-governed_units:
-- GLOBAL-HOME-SHELL-NAVIGATION
-- WB01-DASHBOARD
-requested_stage_range:
-- STAGE-01
-- STAGE-02
-- STAGE-03
-- STAGE-04
+governed_units: [GLOBAL-HOME-SHELL-NAVIGATION, WB01-DASHBOARD]
+planned_lifecycle_range: [STAGE-01, STAGE-02, STAGE-03, STAGE-04, STAGE-05, STAGE-06, STAGE-07, STAGE-08, STAGE-09, STAGE-10, STAGE-11]
+authorized_effectful_stage_range: [STAGE-01, STAGE-02, STAGE-03, STAGE-04]
 primary_task_layer: PRODUCT_STAGE_EXECUTION
 current_governance:
   governance_uid: GOV-REV-20260928-WORD-DERIVED-STAGE-INTERNAL-VALIDATION
   governance_head: c353d7bdb5dc7edb43c6c7453517d1df75d54ce8
   selection_ref: STAGE_EXECUTION/SHARED_AUTHORITY/CURRENT_GOVERNANCE_SELECTION.yaml
-source_model:
-  primary_product_source: WORD_DOCUMENT
-  ai_completion_when_word_insufficient: SAME_WORD_CONTEXT_AND_EXISTING_CANONICAL_SYSTEM_RELATIONSHIPS_ONLY
-  generated_content_second_authority: false
-clean_reset:
-  stage01_04_home_wb01_generated_work_units_present: false
-  stage01_04_home_wb01_stage_resume_present: false
-  stage01_04_home_wb01_stage_scope_present: false
-  predecessor_runtime_dependency_count: 0
-  historical_completion_credit: 0
-  product_completion_credit: 0
-  original_word_sources_preserved: true
-clean_bootstrap_contract:
-  activation_kind: INITIAL_STAGE_WORK_UNIT
-  canonical_source_origin: REPOSITORY_ROOT_WORD
-  source_review_generated_from_current_canonical_source: true
-  predecessor_work_unit_required: false
-  predecessor_terminal_receipt_required: false
-  predecessor_matrix_required: false
-  predecessor_classification_required: false
-  predecessor_blueprint_required: false
-  selection_mode: EXPLICIT_GOVERNED_UNIT_SET
-  external_human_or_auditor_prerequisite: false
-validation_evidence:
+full_lifecycle_contract_ref: STAGE_EXECUTION/SHARED_AUTHORITY/CURRENT_STAGE_FLOW/FULL_STAGE_LIFECYCLE_AUTHORIZATION_CONTRACT.yaml
+permission_lifecycle:
+  semantic_owner: STAGE-02
+  visual_projection: STAGE-03
+  freeze: STAGE-04
+  implementation: STAGE-05
+  verification: STAGE-06
+  release_identity_preservation: [STAGE-07, STAGE-08, STAGE-09]
+  production_effectful_acceptance: STAGE-10
+  final_reconciliation: STAGE-11
+  downstream_local_redefinition: FORBIDDEN
+historical_validation:
   workflow_name: Product Clean Bootstrap Validation
   workflow_run_id: 36478178889
   validated_implementation_head: 18fcbdeb0be85c2c60aefae0c42ec0ca89762839
-  result: SUCCESS
-  source_review_and_fresh_materialization: PASS
-  current_governance_load_and_admission: PASS
-  zero_predecessor_runtime_dependency: PASS
-  zero_stage01_operation_credit: PASS
+  status: HISTORICAL_ONLY_ZERO_CURRENT_CREDIT
+current_head_validation:
+  status: REVERIFY_REQUIRED
+  required_workflow: Product Full Stage Lifecycle Validation
 resume_point:
-  last_completed_action: CLEAN_BOOTSTRAP_IMPLEMENTATION_VALIDATED
-  next_action: MATERIALIZE_SELECTED_STAGE01_CURRENT_WORK_UNITS_FROM_CANONICAL_WORD
+  last_completed_action: FULL_STAGE_LIFECYCLE_AUTHORIZATION_CONTRACT_MATERIALIZED
+  next_action: REMEDIATE_COMMON_CLOSURE_SUCCESSOR_AND_FULL_STAGE_RUNTIME_BRIDGES_BEFORE_STAGE_EXECUTION
   next_effectful_stage: STAGE-01
-  earliest_owner: PRE_STAGE_SOURCE_REVIEW_AND_PROJECTION
+  earliest_owner: COMMON_STAGE_LIFECYCLE_ORCHESTRATION
   stage_entry_hold: true
 current_blockers:
-- STAGE01_CURRENT_WORK_UNITS_NOT_MATERIALIZED
-pre_stage_unresolved_defect_count: 0
+- BLOCK-STAGE01-03-CLOSURE-PRODUCER
+- BLOCK-STAGE01-04-SUCCESSOR-MATERIALIZER
+- BLOCK-STAGE04-CLOSURE-WORKFLOW-BINDING
+- BLOCK-STAGE04-05-EXECUTION-TARGET-CURRENT_CONTEXT
+- BLOCK-STAGE05-11-PRODUCT-RUNTIME-ADAPTERS
+- BLOCK-STALE-STAGE03-WRITE-WORKFLOWS
+- BLOCK-STAGE02-DUAL-VALIDATOR-SEMANTIC-DRIFT
+- BLOCK-PRODUCT-EXACT-HEAD-REVERIFY
 completion_credit: 0

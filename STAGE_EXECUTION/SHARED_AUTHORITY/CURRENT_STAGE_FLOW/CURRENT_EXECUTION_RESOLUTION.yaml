@@ -1,57 +1,56 @@
-artifact_type: PRODUCT_STAGE01_04_CURRENT_EXECUTION_RESOLUTION
-status: CLEAN_BOOTSTRAP_VALIDATED_READY_FOR_SELECTED_STAGE01_MATERIALIZATION
+artifact_type: PRODUCT_FULL_STAGE_CURRENT_EXECUTION_RESOLUTION
+status: FULL_LIFECYCLE_PLANNED_CURRENT_EFFECTFUL_RANGE_STAGE01_04_STAGE01_ENTRY_PENDING
 normative_authority: false
-authorization_record_url: https://github.com/steven-gold/orange-one-ai-viedo-v1.0/issues/61
 product_branch: 0921acpos
+current_governance_selection_ref: STAGE_EXECUTION/SHARED_AUTHORITY/CURRENT_GOVERNANCE_SELECTION.yaml
+full_lifecycle_authorization_contract_ref: STAGE_EXECUTION/SHARED_AUTHORITY/CURRENT_STAGE_FLOW/FULL_STAGE_LIFECYCLE_AUTHORIZATION_CONTRACT.yaml
+authorization_record_url: https://github.com/steven-gold/orange-one-ai-viedo-v1.0/issues/61
 target_governance_snapshot:
   governance_uid: GOV-REV-20260928-WORD-DERIVED-STAGE-INTERNAL-VALIDATION
   governance_head: c353d7bdb5dc7edb43c6c7453517d1df75d54ce8
-  execution_authority: true
-execution_mode: CLEAN_INITIAL_STAGE_WORK_UNIT
-current_governance_selection_ref: STAGE_EXECUTION/SHARED_AUTHORITY/CURRENT_GOVERNANCE_SELECTION.yaml
-historical_execution_policy:
-  runtime_dependency: FORBIDDEN
-  completion_credit: 0
-  git_history_may_be_used_for_defect_analysis_only: true
+planned_lifecycle_range: [STAGE-01, STAGE-02, STAGE-03, STAGE-04, STAGE-05, STAGE-06, STAGE-07, STAGE-08, STAGE-09, STAGE-10, STAGE-11]
+authorized_effectful_range: [STAGE-01, STAGE-02, STAGE-03, STAGE-04]
+global_rules:
+  one_full_stage_authorization_contract: true
+  stage_local_authorization_logic: FORBIDDEN
+  stage_local_permission_model: FORBIDDEN
+  common_closure_protocol_required: true
+  common_successor_materializer_required: true
+  successor_preproduction: FORBIDDEN
+  future_stage_effectful_execution_outside_authorized_range: FORBIDDEN
 stage_sequence:
 - governed_unit_uid: GLOBAL-HOME-SHELL-NAVIGATION
   source_uid: SRC-DOCX-334A4679600F092B733B
   stages:
-  - stage_uid: STAGE-01
-    work_unit_uid: WU-STAGE01-GLOBAL-HOME-SHELL-NAVIGATION-CLEAN-001
-    activation_kind: INITIAL_STAGE_WORK_UNIT
-    state: NOT_MATERIALIZED_READY
-  - stage_uid: STAGE-02
-    work_unit_uid: WU-STAGE02-GLOBAL-HOME-SHELL-NAVIGATION-CLEAN-001
-    state: WAITING_FOR_STAGE01_CURRENT_TERMINAL_PASS
-  - stage_uid: STAGE-03
-    work_unit_uid: WU-STAGE03-GLOBAL-HOME-SHELL-NAVIGATION-CLEAN-001
-    state: WAITING_FOR_STAGE02_CURRENT_TERMINAL_PASS
-  - stage_uid: STAGE-04
-    work_unit_uid: WU-STAGE04-GLOBAL-HOME-SHELL-NAVIGATION-CLEAN-001
-    state: WAITING_FOR_STAGE03_CURRENT_TERMINAL_PASS
+  - {stage_uid: STAGE-01, work_unit_uid: WU-STAGE01-GLOBAL-HOME-SHELL-NAVIGATION-CLEAN-001, state: NOT_MATERIALIZED_READY, effectful_execution_admitted: true}
+  - {stage_uid: STAGE-02, work_unit_uid: WU-STAGE02-GLOBAL-HOME-SHELL-NAVIGATION-CLEAN-001, state: WAITING_FOR_STAGE01_CURRENT_TERMINAL_PASS, effectful_execution_admitted: true}
+  - {stage_uid: STAGE-03, work_unit_uid: WU-STAGE03-GLOBAL-HOME-SHELL-NAVIGATION-CLEAN-001, state: WAITING_FOR_STAGE02_CURRENT_TERMINAL_PASS, effectful_execution_admitted: true}
+  - {stage_uid: STAGE-04, work_unit_uid: WU-STAGE04-GLOBAL-HOME-SHELL-NAVIGATION-CLEAN-001, state: WAITING_FOR_STAGE03_CURRENT_TERMINAL_PASS, effectful_execution_admitted: true}
+  - {stage_uid: STAGE-05, work_unit_uid: null, state: OUTSIDE_CURRENT_EFFECTFUL_AUTHORIZATION_WAITING_FOR_STAGE04_FOUNDATION_FROZEN, effectful_execution_admitted: false}
+  - {stage_uid: STAGE-06, work_unit_uid: null, state: OUTSIDE_CURRENT_EFFECTFUL_AUTHORIZATION_WAITING_FOR_STAGE05_CLOSED, effectful_execution_admitted: false}
+  - {stage_uid: STAGE-07, work_unit_uid: null, state: OUTSIDE_CURRENT_EFFECTFUL_AUTHORIZATION_WAITING_FOR_STAGE06_CLOSED, effectful_execution_admitted: false}
+  - {stage_uid: STAGE-08, work_unit_uid: null, state: OUTSIDE_CURRENT_EFFECTFUL_AUTHORIZATION_WAITING_FOR_STAGE07_CLOSED, effectful_execution_admitted: false}
+  - {stage_uid: STAGE-09, work_unit_uid: null, state: OUTSIDE_CURRENT_EFFECTFUL_AUTHORIZATION_WAITING_FOR_STAGE08_CLOSED, effectful_execution_admitted: false}
+  - {stage_uid: STAGE-10, work_unit_uid: null, state: OUTSIDE_CURRENT_EFFECTFUL_AUTHORIZATION_WAITING_FOR_STAGE09_CLOSED, effectful_execution_admitted: false}
+  - {stage_uid: STAGE-11, work_unit_uid: null, state: OUTSIDE_CURRENT_EFFECTFUL_AUTHORIZATION_WAITING_FOR_STAGE10_CLOSED, effectful_execution_admitted: false}
 - governed_unit_uid: workspace:WB-01
   source_uid: SRC-DOCX-2B1908530B5BD312A392
   stages:
-  - stage_uid: STAGE-01
-    work_unit_uid: WU-STAGE01-WB01-DASHBOARD-CLEAN-001
-    activation_kind: INITIAL_STAGE_WORK_UNIT
-    state: NOT_MATERIALIZED_READY
-  - stage_uid: STAGE-02
-    work_unit_uid: WU-STAGE02-WB01-DASHBOARD-CLEAN-001
-    state: WAITING_FOR_STAGE01_CURRENT_TERMINAL_PASS
-  - stage_uid: STAGE-03
-    work_unit_uid: WU-STAGE03-WB01-DASHBOARD-CLEAN-001
-    state: WAITING_FOR_STAGE02_CURRENT_TERMINAL_PASS
-  - stage_uid: STAGE-04
-    work_unit_uid: WU-STAGE04-WB01-DASHBOARD-CLEAN-001
-    state: WAITING_FOR_STAGE03_CURRENT_TERMINAL_PASS
+  - {stage_uid: STAGE-01, work_unit_uid: WU-STAGE01-WB01-DASHBOARD-CLEAN-001, state: NOT_MATERIALIZED_READY, effectful_execution_admitted: true}
+  - {stage_uid: STAGE-02, work_unit_uid: WU-STAGE02-WB01-DASHBOARD-CLEAN-001, state: WAITING_FOR_STAGE01_CURRENT_TERMINAL_PASS, effectful_execution_admitted: true}
+  - {stage_uid: STAGE-03, work_unit_uid: WU-STAGE03-WB01-DASHBOARD-CLEAN-001, state: WAITING_FOR_STAGE02_CURRENT_TERMINAL_PASS, effectful_execution_admitted: true}
+  - {stage_uid: STAGE-04, work_unit_uid: WU-STAGE04-WB01-DASHBOARD-CLEAN-001, state: WAITING_FOR_STAGE03_CURRENT_TERMINAL_PASS, effectful_execution_admitted: true}
+  - {stage_uid: STAGE-05, work_unit_uid: null, state: OUTSIDE_CURRENT_EFFECTFUL_AUTHORIZATION_WAITING_FOR_STAGE04_FOUNDATION_FROZEN, effectful_execution_admitted: false}
+  - {stage_uid: STAGE-06, work_unit_uid: null, state: OUTSIDE_CURRENT_EFFECTFUL_AUTHORIZATION_WAITING_FOR_STAGE05_CLOSED, effectful_execution_admitted: false}
+  - {stage_uid: STAGE-07, work_unit_uid: null, state: OUTSIDE_CURRENT_EFFECTFUL_AUTHORIZATION_WAITING_FOR_STAGE06_CLOSED, effectful_execution_admitted: false}
+  - {stage_uid: STAGE-08, work_unit_uid: null, state: OUTSIDE_CURRENT_EFFECTFUL_AUTHORIZATION_WAITING_FOR_STAGE07_CLOSED, effectful_execution_admitted: false}
+  - {stage_uid: STAGE-09, work_unit_uid: null, state: OUTSIDE_CURRENT_EFFECTFUL_AUTHORIZATION_WAITING_FOR_STAGE08_CLOSED, effectful_execution_admitted: false}
+  - {stage_uid: STAGE-10, work_unit_uid: null, state: OUTSIDE_CURRENT_EFFECTFUL_AUTHORIZATION_WAITING_FOR_STAGE09_CLOSED, effectful_execution_admitted: false}
+  - {stage_uid: STAGE-11, work_unit_uid: null, state: OUTSIDE_CURRENT_EFFECTFUL_AUTHORIZATION_WAITING_FOR_STAGE10_CLOSED, effectful_execution_admitted: false}
 execution_admission:
   state: READY_FOR_SELECTED_STAGE01_PRESTAGE_MATERIALIZATION
-  pre_stage_materialization_admitted: true
-  effectful_execution_admitted: false
-  auto_stage_entry: false
-  blockers:
-  - STAGE01_CURRENT_WORK_UNITS_NOT_MATERIALIZED
-external_auditor_or_promotion_prerequisite: false
+  current_effectful_stage: STAGE-01
+  future_vertical_effectful_execution_admitted: false
+  auto_stage_entry_within_authorized_range_after_predecessor_pass: true
+  blockers: [STAGE01_CURRENT_WORK_UNITS_NOT_MATERIALIZED, COMMON_STAGE_CLOSURE_PROTOCOL_NOT_YET_COMPLETE, COMMON_SUCCESSOR_WORK_UNIT_MATERIALIZER_NOT_YET_COMPLETE]
 product_completion_credit: 0
