@@ -20,6 +20,20 @@ def run(cmd,cwd,env=None):
     if cp.returncode!=0:
         raise SystemExit(cp.returncode)
 
+def reconcile_work_status_from_state(root, work_path, state_path):
+    work=load(work_path)
+    state=load(state_path)
+    state_status=str(state.get("status") or "")
+    if state_status not in {"READY_FOR_EXECUTION","IN_PROGRESS","EXECUTION_COMPLETE_CLOSURE_PENDING","CLOSED_PASS"}:
+        raise SystemExit("BLOCK:UNSUPPORTED_EXECUTION_STATE_STATUS:"+state_status)
+    work_status=str(work.get("current_status") or "")
+    if work_status.startswith("CLOSED") and state_status!="CLOSED_PASS":
+        raise SystemExit("BLOCK:CLOSED_WORK_UNIT_STATUS_REENTRY_CONFLICT:"+work_status+":"+state_status)
+    if work_status!=state_status:
+        work["current_status"]=state_status
+        Path(work_path).write_text(yaml.safe_dump(work,allow_unicode=True,sort_keys=False,width=180),encoding="utf-8")
+        print("PASS: reconciled Work Unit status from execution state",work.get("work_unit_uid"),work_status,"->",state_status,flush=True)
+
 def rebind_run_manifest_hash(root, work_path):
     work=load(work_path)
     row=(work.get("current_ledger_bindings") or {}).get("RUN_MANIFEST")
@@ -45,6 +59,7 @@ def main():
     ap.add_argument("--work-units",required=True)
     ap.add_argument("--product-root",required=True)
     ap.add_argument("--governance-root",required=True)
+    ap.add_argument("--reconcile-only",action="store_true")
     args=ap.parse_args()
     root=Path(args.product_root).resolve()
     govroot=Path(args.governance_root).resolve()
@@ -81,6 +96,16 @@ def main():
     wus=[x.strip() for x in args.work_units.split(",") if x.strip()]
     if not wus:
         raise SystemExit("BLOCK:CURRENT_WORK_UNIT_SET_EMPTY")
+
+    if args.reconcile_only:
+        for wu in wus:
+            wudir=root/"STAGE_EXECUTION"/args.stage/wu
+            work_path=wudir/"WORK_UNIT.yaml"
+            state_path=wudir/"EXECUTION_STATE.yaml"
+            if not work_path.is_file() or not state_path.is_file():
+                raise SystemExit("BLOCK:RECONCILE_TARGET_MISSING:"+wu)
+            reconcile_work_status_from_state(root,work_path,state_path)
+        return
 
     for wu in wus:
         wudir=root/"STAGE_EXECUTION"/args.stage/wu
@@ -140,6 +165,7 @@ def main():
         state=load(state_path)
         current=str(state.get("current_operation") or "")
         if current=="COMPLETE":
+            reconcile_work_status_from_state(root,work_path,state_path)
             print(f"PASS: {args.stage} already operation-complete for {wu}; no effectful invocation")
             continue
 
@@ -147,6 +173,7 @@ def main():
         # Reconcile after Mother engine state persistence so its stale in-memory
         # WORK_UNIT snapshot cannot erase the executor-refreshed RUN_MANIFEST hash.
         rebind_run_manifest_hash(root,work_path)
+        reconcile_work_status_from_state(root,work_path,state_path)
         state=load(state_path)
         completed=list(map(str,state.get("completed_operations") or []))
         expected=list(map(str,plan.get("operations") or []))
