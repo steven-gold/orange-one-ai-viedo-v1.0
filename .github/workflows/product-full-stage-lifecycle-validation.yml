@@ -119,6 +119,9 @@ jobs:
           print('PASS: exact operation binding source YAML parse denominator='+str(len(rows)))
           PY
           grep -q "def rebind_run_manifest_hash" .github/scripts/current_stage_execute.py
+          grep -q "def reconcile_work_status_from_state" .github/scripts/current_stage_execute.py
+          grep -q -- "--reconcile-only" .github/scripts/current_stage_execute.py
+          grep -q "Reconcile Work Unit status projection before closure" .github/workflows/product-stage-lifecycle-driver.yml
           grep -q "WORK_UNIT ledger hash rebinding is owned by current_stage_execute.py" .github/scripts/stage01_operation_runtime.py
           ! grep -q "CURRENT_STAGE02_RESUME.yaml" .github/workflows/product-stage02-validation.yml
           ! grep -q "STAGE03_NORMALIZED_EVIDENCE_NOT_YET_MATERIALIZED" .github/workflows/product-stage03-validation.yml
