@@ -1,0 +1,231 @@
+artifact_type: EXACT_OPERATION_BINDING_SOURCE
+stage_uid: STAGE-05
+status: CURRENT_EXACT_BINDINGS
+runtime_readiness: EFFECTFUL_READY
+successor_execution_bindings:
+  REPOSITORY_TARGET:
+    applicability: REQUIRED
+    resolution_status: RESOLVE_FROM_PRODUCT_IMPLEMENTATION_AUTHORITY
+    consuming_operation_uid: OP-08-REPOSITORY_OWNER_RESOLUTION
+  APPLICATION_ROOT:
+    applicability: REQUIRED
+    resolution_status: RESOLVE_FROM_PRODUCT_IMPLEMENTATION_AUTHORITY
+    consuming_operation_uid: OP-08-REPOSITORY_OWNER_RESOLUTION
+  IMPLEMENTATION_OWNER:
+    applicability: REQUIRED
+    resolution_status: RESOLVE_FROM_PRODUCT_IMPLEMENTATION_AUTHORITY
+    consuming_operation_uid: OP-08-REPOSITORY_OWNER_RESOLUTION
+  IMPLEMENTATION_LANGUAGE_AUTHORITY:
+    applicability: REQUIRED
+    resolution_status: RESOLVE_FROM_PRODUCT_IMPLEMENTATION_AUTHORITY
+    consuming_operation_uid: OP-08-REPOSITORY_OWNER_RESOLUTION
+  FRONTEND_FRAMEWORK_AUTHORITY:
+    applicability: REQUIRED
+    resolution_status: RESOLVE_FROM_PRODUCT_IMPLEMENTATION_AUTHORITY
+    consuming_operation_uid: OP-10-FRONTEND_IMPLEMENTATION
+  BACKEND_FRAMEWORK_AUTHORITY:
+    applicability: REQUIRED
+    resolution_status: RESOLVE_FROM_PRODUCT_IMPLEMENTATION_AUTHORITY
+    consuming_operation_uid: OP-13-BACKEND_RUNTIME
+  PACKAGE_MANAGER_AUTHORITY:
+    applicability: REQUIRED
+    resolution_status: RESOLVE_FROM_PRODUCT_IMPLEMENTATION_AUTHORITY
+    consuming_operation_uid: OP-08-REPOSITORY_OWNER_RESOLUTION
+  FRONTEND_RUNTIME_TARGET:
+    applicability: REQUIRED
+    resolution_status: RESOLVE_FROM_PRODUCT_IMPLEMENTATION_AUTHORITY
+    consuming_operation_uid: OP-10-FRONTEND_IMPLEMENTATION
+  BACKEND_RUNTIME_TARGET:
+    applicability: REQUIRED
+    resolution_status: RESOLVE_FROM_PRODUCT_IMPLEMENTATION_AUTHORITY
+    consuming_operation_uid: OP-13-BACKEND_RUNTIME
+  DATA_ACCESS_TARGET:
+    applicability: REQUIRED
+    resolution_status: RESOLVE_FROM_PRODUCT_IMPLEMENTATION_AUTHORITY
+    consuming_operation_uid: OP-14-REPOSITORY_DATA_ACCESS_LAYER
+  DATABASE_TARGET:
+    applicability: REQUIRED
+    resolution_status: RESOLVE_FROM_PRODUCT_IMPLEMENTATION_AUTHORITY
+    consuming_operation_uid: OP-15-DATABASE_SCHEMA_MIGRATION
+  AUTHENTICATION_TARGET:
+    applicability: REQUIRED
+    resolution_status: RESOLVE_FROM_PRODUCT_IMPLEMENTATION_AUTHORITY
+    consuming_operation_uid: OP-16-AUTHENTICATION
+  AUTHORIZATION_TARGET:
+    applicability: REQUIRED
+    resolution_status: RESOLVE_FROM_PRODUCT_IMPLEMENTATION_AUTHORITY
+    consuming_operation_uid: OP-17-AUTHORIZATION
+  DATA_SECURITY_TARGET:
+    applicability: REQUIRED
+    resolution_status: RESOLVE_FROM_PRODUCT_IMPLEMENTATION_AUTHORITY
+    consuming_operation_uid: OP-18-DATA_SECURITY
+  AUDIT_LOGGING_TARGET:
+    applicability: REQUIRED
+    resolution_status: RESOLVE_FROM_PRODUCT_IMPLEMENTATION_AUTHORITY
+    consuming_operation_uid: OP-19-AUDIT_LOGGING
+  EXTERNAL_INTEGRATION_TARGET:
+    applicability: REQUIRED
+    resolution_status: RESOLVE_FROM_PRODUCT_IMPLEMENTATION_AUTHORITY
+    consuming_operation_uid: OP-21-EXTERNAL_INTEGRATION
+  ASYNC_RUNTIME_TARGET:
+    applicability: REQUIRED
+    resolution_status: RESOLVE_FROM_PRODUCT_IMPLEMENTATION_AUTHORITY
+    consuming_operation_uid: OP-22-ASYNC_RUNTIME
+  STORAGE_RUNTIME_TARGET:
+    applicability: REQUIRED
+    resolution_status: RESOLVE_FROM_PRODUCT_IMPLEMENTATION_AUTHORITY
+    consuming_operation_uid: OP-23-STORAGE_RUNTIME
+operation_bindings:
+  OP-01-BLUEPRINT_INTAKE:
+    applicability: REQUIRED
+    executor_owner: .github/scripts/stage05_current_operation_runtime.py
+    executor_protocol: PYTHON_STAGE_OPERATION_V1
+    result_owner: OWNER-STAGE05-OP-01-BLUEPRINT_INTAKE
+  OP-02-BLUEPRINT_VALIDATION:
+    applicability: REQUIRED
+    executor_owner: .github/scripts/stage05_current_operation_runtime.py
+    executor_protocol: PYTHON_STAGE_OPERATION_V1
+    result_owner: OWNER-STAGE05-OP-02-BLUEPRINT_VALIDATION
+  OP-03-AUDIT_BASELINE_INTAKE:
+    applicability: REQUIRED
+    executor_owner: .github/scripts/stage05_current_operation_runtime.py
+    executor_protocol: PYTHON_STAGE_OPERATION_V1
+    result_owner: OWNER-STAGE05-OP-03-AUDIT_BASELINE_INTAKE
+  OP-04-ACCEPTANCE_MATRIX_VALIDATION:
+    applicability: REQUIRED
+    executor_owner: .github/scripts/stage05_current_operation_runtime.py
+    executor_protocol: PYTHON_STAGE_OPERATION_V1
+    result_owner: OWNER-STAGE05-OP-04-ACCEPTANCE_MATRIX_VALIDATION
+  OP-05-DEPENDENCY_MAPPING:
+    applicability: REQUIRED
+    executor_owner: .github/scripts/stage05_current_operation_runtime.py
+    executor_protocol: PYTHON_STAGE_OPERATION_V1
+    result_owner: OWNER-STAGE05-OP-05-DEPENDENCY_MAPPING
+  OP-06-DUPLICATE_CONFLICT_PRECHECK:
+    applicability: REQUIRED
+    executor_owner: .github/scripts/stage05_current_operation_runtime.py
+    executor_protocol: PYTHON_STAGE_OPERATION_V1
+    result_owner: OWNER-STAGE05-OP-06-DUPLICATE_CONFLICT_PRECHECK
+  OP-07-CONTRACT_MATERIALIZATION:
+    applicability: REQUIRED
+    executor_owner: .github/scripts/stage05_current_operation_runtime.py
+    executor_protocol: PYTHON_STAGE_OPERATION_V1
+    result_owner: OWNER-STAGE05-OP-07-CONTRACT_MATERIALIZATION
+  OP-08-REPOSITORY_OWNER_RESOLUTION:
+    applicability: REQUIRED
+    executor_owner: .github/scripts/stage05_current_operation_runtime.py
+    executor_protocol: PYTHON_STAGE_OPERATION_V1
+    result_owner: OWNER-STAGE05-OP-08-REPOSITORY_OWNER_RESOLUTION
+  OP-09-SHARED_FOUNDATION_VERIFICATION:
+    applicability: REQUIRED
+    executor_owner: .github/scripts/stage05_current_operation_runtime.py
+    executor_protocol: PYTHON_STAGE_OPERATION_V1
+    result_owner: OWNER-STAGE05-OP-09-SHARED_FOUNDATION_VERIFICATION
+  OP-10-FRONTEND_IMPLEMENTATION:
+    applicability: REQUIRED
+    executor_owner: .github/scripts/stage05_current_operation_runtime.py
+    executor_protocol: PYTHON_STAGE_OPERATION_V1
+    result_owner: OWNER-STAGE05-OP-10-FRONTEND_IMPLEMENTATION
+  OP-11-CONTROL_FIELD_IMPLEMENTATION:
+    applicability: REQUIRED
+    executor_owner: .github/scripts/stage05_current_operation_runtime.py
+    executor_protocol: PYTHON_STAGE_OPERATION_V1
+    result_owner: OWNER-STAGE05-OP-11-CONTROL_FIELD_IMPLEMENTATION
+  OP-12-ACTION_LAYER:
+    applicability: REQUIRED
+    executor_owner: .github/scripts/stage05_current_operation_runtime.py
+    executor_protocol: PYTHON_STAGE_OPERATION_V1
+    result_owner: OWNER-STAGE05-OP-12-ACTION_LAYER
+  OP-13-BACKEND_RUNTIME:
+    applicability: REQUIRED
+    executor_owner: .github/scripts/stage05_current_operation_runtime.py
+    executor_protocol: PYTHON_STAGE_OPERATION_V1
+    result_owner: OWNER-STAGE05-OP-13-BACKEND_RUNTIME
+  OP-14-REPOSITORY_DATA_ACCESS_LAYER:
+    applicability: REQUIRED
+    executor_owner: .github/scripts/stage05_current_operation_runtime.py
+    executor_protocol: PYTHON_STAGE_OPERATION_V1
+    result_owner: OWNER-STAGE05-OP-14-REPOSITORY_DATA_ACCESS_LAYER
+  OP-15-DATABASE_SCHEMA_MIGRATION:
+    applicability: REQUIRED
+    executor_owner: .github/scripts/stage05_current_operation_runtime.py
+    executor_protocol: PYTHON_STAGE_OPERATION_V1
+    result_owner: OWNER-STAGE05-OP-15-DATABASE_SCHEMA_MIGRATION
+  OP-16-AUTHENTICATION:
+    applicability: REQUIRED
+    executor_owner: .github/scripts/stage05_current_operation_runtime.py
+    executor_protocol: PYTHON_STAGE_OPERATION_V1
+    result_owner: OWNER-STAGE05-OP-16-AUTHENTICATION
+  OP-17-AUTHORIZATION:
+    applicability: REQUIRED
+    executor_owner: .github/scripts/stage05_current_operation_runtime.py
+    executor_protocol: PYTHON_STAGE_OPERATION_V1
+    result_owner: OWNER-STAGE05-OP-17-AUTHORIZATION
+  OP-18-DATA_SECURITY:
+    applicability: REQUIRED
+    executor_owner: .github/scripts/stage05_current_operation_runtime.py
+    executor_protocol: PYTHON_STAGE_OPERATION_V1
+    result_owner: OWNER-STAGE05-OP-18-DATA_SECURITY
+  OP-19-AUDIT_LOGGING:
+    applicability: REQUIRED
+    executor_owner: .github/scripts/stage05_current_operation_runtime.py
+    executor_protocol: PYTHON_STAGE_OPERATION_V1
+    result_owner: OWNER-STAGE05-OP-19-AUDIT_LOGGING
+  OP-20-ERROR_CONTRACT:
+    applicability: REQUIRED
+    executor_owner: .github/scripts/stage05_current_operation_runtime.py
+    executor_protocol: PYTHON_STAGE_OPERATION_V1
+    result_owner: OWNER-STAGE05-OP-20-ERROR_CONTRACT
+  OP-21-EXTERNAL_INTEGRATION:
+    applicability: REQUIRED
+    executor_owner: .github/scripts/stage05_current_operation_runtime.py
+    executor_protocol: PYTHON_STAGE_OPERATION_V1
+    result_owner: OWNER-STAGE05-OP-21-EXTERNAL_INTEGRATION
+  OP-22-ASYNC_RUNTIME:
+    applicability: REQUIRED
+    executor_owner: .github/scripts/stage05_current_operation_runtime.py
+    executor_protocol: PYTHON_STAGE_OPERATION_V1
+    result_owner: OWNER-STAGE05-OP-22-ASYNC_RUNTIME
+  OP-23-STORAGE_RUNTIME:
+    applicability: AUTHORIZED_NOT_APPLICABLE
+    authority_evidence_ref: STAGE_EXECUTION/SHARED_AUTHORITY/PRODUCT_IMPLEMENTATION_AUTHORITY.yaml#STORAGE_RUNTIME_TARGET
+    result_owner: OWNER-STAGE05-OP-23-STORAGE_RUNTIME
+  PROGRAM_ARTIFACT_REGISTRATION:
+    applicability: REQUIRED
+    executor_owner: .github/scripts/stage05_current_operation_runtime.py
+    executor_protocol: PYTHON_STAGE_OPERATION_V1
+    result_owner: OWNER-STAGE05-PROGRAM_ARTIFACT_REGISTRATION
+  IMPLEMENTATION_MANIFEST_COMPILE:
+    applicability: REQUIRED
+    executor_owner: .github/scripts/stage05_current_operation_runtime.py
+    executor_protocol: PYTHON_STAGE_OPERATION_V1
+    result_owner: OWNER-STAGE05-IMPLEMENTATION_MANIFEST_COMPILE
+  IMPLEMENTATION_EVIDENCE_COMPILE:
+    applicability: REQUIRED
+    executor_owner: .github/scripts/stage05_current_operation_runtime.py
+    executor_protocol: PYTHON_STAGE_OPERATION_V1
+    result_owner: OWNER-STAGE05-IMPLEMENTATION_EVIDENCE_COMPILE
+scanner_owner: .github/scripts/stage05_current_scanner.py
+scanner_protocol: PYTHON_STAGE_SCANNER_V1
+validator_bindings:
+  VAL-GOV-003:
+    validator_kind: DECLARED_STAGE_GUARD
+    validator_protocol: DECLARED_STAGE_GUARD_AGGREGATE_V1
+    result_ref: "STAGE_EXECUTION/STAGE-05/{{WORK_UNIT_UID}}/EVIDENCE/VALIDATOR_RESULTS/VAL-GOV-003.yaml"
+  VAL-GOV-010:
+    validator_kind: DECLARED_STAGE_GUARD
+    validator_protocol: DECLARED_STAGE_GUARD_AGGREGATE_V1
+    result_ref: "STAGE_EXECUTION/STAGE-05/{{WORK_UNIT_UID}}/EVIDENCE/VALIDATOR_RESULTS/VAL-GOV-010.yaml"
+artifact_specs:
+  IMPLEMENTATION_MANIFEST:
+    artifact_ref: "STAGE_EXECUTION/STAGE-05/{{WORK_UNIT_UID}}/IMPLEMENTATION_MANIFEST.yaml"
+    field_path: [status]
+  PROGRAM_ARTIFACT_SET:
+    artifact_ref: "STAGE_EXECUTION/STAGE-05/{{WORK_UNIT_UID}}/PROGRAM_ARTIFACT_SET.yaml"
+    field_path: [status]
+  IMPLEMENTATION_EVIDENCE:
+    artifact_ref: "STAGE_EXECUTION/STAGE-05/{{WORK_UNIT_UID}}/IMPLEMENTATION_EVIDENCE.yaml"
+    field_path: [status]
+  IMPLEMENTATION_DIFF_EVIDENCE:
+    artifact_ref: "STAGE_EXECUTION/STAGE-05/{{WORK_UNIT_UID}}/IMPLEMENTATION_DIFF_EVIDENCE.yaml"
+    field_path: [status]
