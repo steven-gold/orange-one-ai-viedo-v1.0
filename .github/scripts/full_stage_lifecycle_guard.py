@@ -51,6 +51,10 @@ def main():
     adapters=load(product/FLOW/"FULL_STAGE_RUNTIME_ADAPTER_REGISTRY.yaml")
     closure=load(product/FLOW/"COMMON_STAGE_CLOSURE_PROTOCOL.yaml")
     successor=load(product/FLOW/"COMMON_SUCCESSOR_MATERIALIZATION_PROTOCOL.yaml")
+    handoff=load(product/FLOW/"FULL_STAGE_HANDOFF_INPUT_ORIGIN_MATRIX.yaml")
+    op_profiles=load(product/FLOW/"FULL_STAGE_OPERATION_BINDING_PROFILE_REGISTRY.yaml")
+    preentry=load(product/FLOW/"FULL_STAGE_PREENTRY_CONVERGENCE_MATRIX.yaml")
+    target=load(product/"STAGE_EXECUTION/SHARED_AUTHORITY/IMPLEMENTATION_EXECUTION_TARGET_AUTHORITY.yaml")
     lr=load(gov/LIFECYCLE)
 
     stages=lr.get("stages") or []
@@ -153,7 +157,7 @@ def main():
         state=str(row.get("state") or "")
         if not state:
             fail("RUNTIME_ADAPTER_STATE_MISSING:"+uid)
-        if state!="READY":
+        if state not in {"READY","READY_STRUCTURAL"}:
             unresolved.append(uid+":state="+state)
 
     if closure.get("owner")!="COMMON_STAGE_CLOSURE_PROTOCOL":
@@ -169,6 +173,54 @@ def main():
         fail("COMMON_SUCCESSOR_STAGE_COVERAGE_DRIFT")
     if (successor.get("rules") or {}).get("stage_local_successor_logic")!="FORBIDDEN":
         fail("COMMON_SUCCESSOR_STAGE_LOCAL_LOGIC_NOT_FORBIDDEN")
+
+    handoff_rows=handoff.get("stages") or []
+    if [str(x.get("stage_uid") or "") for x in handoff_rows]!=EXPECTED:
+        fail("HANDOFF_INPUT_ORIGIN_STAGE_COVERAGE_DRIFT")
+    for row in handoff_rows:
+        uid=str(row.get("stage_uid") or "")
+        registered=rm[uid]
+        expected_inputs=list(map(str,registered.get("inputs") or []))
+        matrix_inputs=[str(x.get("input_uid") or "") for x in row.get("inputs") or [] if isinstance(x,dict)]
+        if matrix_inputs!=expected_inputs:
+            fail("HANDOFF_INPUT_DENOMINATOR_DRIFT:"+uid)
+        origins={str(x.get("input_uid") or ""):str(x.get("origin") or "") for x in row.get("inputs") or [] if isinstance(x,dict)}
+        registered_origins={str(k):str(v) for k,v in (registered.get("input_origins") or {}).items()}
+        if origins!=registered_origins:
+            fail("HANDOFF_INPUT_ORIGIN_DRIFT:"+uid)
+
+    profiles=op_profiles.get("profiles") or []
+    if [str(x.get("stage_uid") or "") for x in profiles]!=EXPECTED:
+        fail("OPERATION_BINDING_PROFILE_STAGE_COVERAGE_DRIFT")
+    for row in profiles:
+        owner=local_owner(product,row.get("binding_manifest_owner"),"OP_BINDING_PROFILE_"+str(row.get("stage_uid")))
+        if owner is None:
+            fail("OPERATION_BINDING_PROFILE_OWNER_UNRESOLVED:"+str(row.get("stage_uid")))
+    oprules=op_profiles.get("rules") or {}
+    if oprules.get("binding_manifest_required_before_successor_work_unit_materialization") is not True:
+        fail("SUCCESSOR_OPERATION_BINDING_MANIFEST_NOT_REQUIRED")
+    if oprules.get("unresolved_binding_disposition")!="BLOCK_AT_STAGE_BOUNDARY_BEFORE_SUCCESSOR_WORK_UNIT_CREATION":
+        fail("UNRESOLVED_OPERATION_BINDING_NOT_BOUNDARY_BLOCK")
+
+    dims=preentry.get("dimensions") or {}
+    structural_required=[
+      "lifecycle_registry_alignment","stage_order_and_entry_exit_gate_alignment","explicit_range_authority_model",
+      "permission_continuity_model","common_closure_protocol","common_terminal_receipt_protocol",
+      "common_successor_materialization_protocol","cross_stage_input_origin_matrix","full_stage_transition_matrix",
+      "runtime_adapter_orchestration_model","stage04_not_full_closure_semantics","stage11_true_closure_semantics"
+    ]
+    for key in structural_required:
+        if not str(dims.get(key) or "").startswith("PASS"):
+            fail("PREENTRY_STRUCTURAL_CONVERGENCE_NOT_PASS:"+key)
+
+    authority=target.get("authority") or {}
+    if authority.get("status")!="CURRENT_DYNAMIC_RESOLUTION_CONTRACT":
+        fail("STAGE05_TARGET_AUTHORITY_NOT_DYNAMIC_CURRENT_PROTOCOL")
+    if authority.get("static_historical_branch_or_head_binding")!="FORBIDDEN":
+        fail("STAGE05_TARGET_STATIC_HISTORY_NOT_FORBIDDEN")
+    serialized=yaml.safe_dump(target,sort_keys=True)
+    if "V232_STAGE04_SUCCESSOR_BINDING_CONFORMANCE" in serialized or "construction_branch: new" in serialized or "production_branch: main" in serialized:
+        fail("STAGE05_TARGET_HISTORICAL_BINDING_RESIDUE")
 
     if list(map(str,r.get("planned_lifecycle_range") or []))!=EXPECTED:
         fail("RESOLUTION_TRUNCATES_LIFECYCLE")
@@ -197,6 +249,9 @@ def main():
             fail("FULL_STAGE_RUNTIME_NOT_READY:"+",".join(sorted(cb)))
         if unresolved:
             fail("FULL_STAGE_RUNTIME_ADAPTERS_NOT_READY:"+",".join(sorted(set(unresolved))))
+        effectful=preentry.get("effectful_preentry") or {}
+        if effectful.get("stage01_may_start_now") is not True:
+            fail("STAGE01_PREENTRY_HOLD:"+str(effectful.get("hold_reason") or "UNSPECIFIED"))
 
     print("PASS: full lifecycle 01-11 uses one authorization contract")
     print("PASS: transition, permission, closure and successor protocols cover all registered stages")

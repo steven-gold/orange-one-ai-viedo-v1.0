@@ -37,3 +37,23 @@ Every Stage uses one closure/successor pattern:
 operations complete -> normalized evidence -> state/matrix reconciliation -> closure gate -> terminal receipt -> resume persistence -> handoff -> successor eligibility -> successor Work Unit materialization -> next-stage admission.
 
 Current known runtime blockers are recorded in FULL_STAGE_DEFECT_LEDGER.yaml. Historical Stage data and previous PASS results have zero Current completion credit.
+
+
+## Full-stage structural convergence
+
+The complete STAGE-01 through STAGE-11 skeleton is represented by:
+- FULL_STAGE_TRANSITION_MATRIX.yaml
+- FULL_STAGE_PERMISSION_CONTINUITY_MATRIX.yaml
+- FULL_STAGE_HANDOFF_INPUT_ORIGIN_MATRIX.yaml
+- FULL_STAGE_RUNTIME_ADAPTER_REGISTRY.yaml
+- FULL_STAGE_OPERATION_BINDING_PROFILE_REGISTRY.yaml
+- COMMON_STAGE_CLOSURE_PROTOCOL.yaml
+- COMMON_TERMINAL_RECEIPT_PERSISTENCE_PROTOCOL.yaml
+- COMMON_SUCCESSOR_MATERIALIZATION_PROTOCOL.yaml
+- FULL_STAGE_PREENTRY_CONVERGENCE_MATRIX.yaml
+
+All successor Work Units must be created by the common successor builder from a terminal predecessor and an exact operation binding manifest. Missing business executors block at the stage boundary before successor Work Unit creation; they may not be invented by the lifecycle orchestrator.
+
+The Stage-05 target authority is a dynamic Current-context resolution protocol. Historical main/new fixed SHAs and V232-derived target identities are forbidden.
+
+STAGE-01 effectful entry remains forbidden until a fresh exact-head Product Full Stage Lifecycle Validation succeeds on the current product HEAD. Structural validation creates zero Stage completion credit.

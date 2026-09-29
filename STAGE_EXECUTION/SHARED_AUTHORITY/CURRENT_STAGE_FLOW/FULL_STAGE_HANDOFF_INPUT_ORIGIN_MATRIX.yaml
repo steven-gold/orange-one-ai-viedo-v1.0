@@ -1,0 +1,64 @@
+artifact_type: PRODUCT_FULL_STAGE_HANDOFF_INPUT_ORIGIN_MATRIX
+status: CURRENT
+normative_authority: false
+source: CURRENT_GOVERNANCE_LIFECYCLE_STAGE_REGISTRY
+rules:
+  stage_local_input_origin_override: FORBIDDEN
+  successor_input_must_resolve_from_current_lifecycle_artifact_index: true
+  persisted_upstream_artifact_may_cross_more_than_one_stage_only_when_registry_input_origin_declares_persisted_or_immutable_reference: true
+  missing_required_input_disposition: BLOCK_AND_REENTER_REGISTERED_OWNER
+  duplicate_artifact_identity_disposition: BLOCK
+  historical_artifact_substitution: FORBIDDEN
+stages:
+- stage_uid: STAGE-01
+  inputs:
+  - {input_uid: RAW_SOURCE_SET, origin: SOURCE_INTAKE}
+  - {input_uid: CURRENT_AUTHORITY_SET, origin: CURRENT_AUTHORITY}
+- stage_uid: STAGE-02
+  inputs:
+  - {input_uid: GOVERNED_UNIT_BASE_BLUEPRINT, origin: STAGE-01}
+  - {input_uid: SOURCE_CONTEXT_MANIFEST, origin: STAGE-01}
+  - {input_uid: CONTENT_SUPERSESSION_CONFLICT_LEDGER, origin: STAGE-01}
+  - {input_uid: SOURCE_DEPENDENCY_MAP, origin: STAGE-01}
+- stage_uid: STAGE-03
+  inputs:
+  - {input_uid: VISUAL_BASE_BLUEPRINT, origin: STAGE-01}
+  - {input_uid: GOVERNED_UNIT_CONSTRUCTION_SPEC_PACKAGE, origin: STAGE-02_IMMUTABLE_REFERENCE_ONLY}
+  - {input_uid: FUNCTIONAL_WORKBENCH_CONTRACT, origin: STAGE-02_IMMUTABLE_REFERENCE_ONLY}
+  - {input_uid: INTERACTION_TOPOLOGY_SPEC, origin: STAGE-02_IMMUTABLE_REFERENCE_ONLY}
+- stage_uid: STAGE-04
+  inputs:
+  - {input_uid: GOVERNED_UNIT_CONSTRUCTION_SPEC_PACKAGE, origin: STAGE-02_IMMUTABLE_REFERENCE_ONLY}
+  - {input_uid: VISUAL_DESIGN_SPEC_PACKAGE, origin: STAGE-03_IMMUTABLE_REFERENCE_ONLY}
+  - {input_uid: DEPENDENCY_MAP, origin: STAGE-02}
+- stage_uid: STAGE-05
+  inputs:
+  - {input_uid: DESIGN_FREEZE_PACKAGE, origin: STAGE-04}
+  - {input_uid: ACCEPTANCE_AUDIT_BLUEPRINT, origin: STAGE-04}
+  - {input_uid: DEPENDENCY_MAP, origin: STAGE-02_PERSISTED}
+- stage_uid: STAGE-06
+  inputs:
+  - {input_uid: IMPLEMENTATION_MANIFEST, origin: STAGE-05}
+  - {input_uid: PROGRAM_ARTIFACT_SET, origin: STAGE-05}
+  - {input_uid: ACCEPTANCE_AUDIT_BLUEPRINT, origin: STAGE-04_PERSISTED}
+- stage_uid: STAGE-07
+  inputs:
+  - {input_uid: VERIFIED_SOURCE_REVISION, origin: STAGE-06}
+  - {input_uid: WORK_UNIT_CLOSURE_RECORD, origin: STAGE-06}
+- stage_uid: STAGE-08
+  inputs:
+  - {input_uid: RELEASE_CANDIDATE, origin: STAGE-07}
+  - {input_uid: STAGING_APPLICABILITY_DECISION, origin: STAGE-07}
+- stage_uid: STAGE-09
+  inputs:
+  - {input_uid: STAGING_CLOSURE_RECORD, origin: STAGE-08}
+  - {input_uid: BUILD_IDENTITY_MANIFEST, origin: STAGE-07_PERSISTED}
+- stage_uid: STAGE-10
+  inputs:
+  - {input_uid: CURRENT_RELEASE_IDENTITY, origin: STAGE-09}
+  - {input_uid: ACCEPTANCE_AUDIT_BLUEPRINT, origin: STAGE-04_PERSISTED}
+- stage_uid: STAGE-11
+  inputs:
+  - {input_uid: PRODUCTION_ACCEPTANCE_RESULT, origin: STAGE-10}
+  - {input_uid: CURRENT_RELEASE_IDENTITY, origin: STAGE-09_PERSISTED}
+completion_credit: 0

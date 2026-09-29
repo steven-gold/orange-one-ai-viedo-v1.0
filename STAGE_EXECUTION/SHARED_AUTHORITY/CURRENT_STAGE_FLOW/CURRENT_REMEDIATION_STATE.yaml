@@ -1,5 +1,5 @@
 artifact_type: PRODUCT_FULL_LIFECYCLE_REMEDIATION_RESUME_STATE
-status: FULL_LIFECYCLE_AUTHORIZATION_PLAN_MATERIALIZED_RUNTIME_REMEDIATION_PENDING
+status: STRUCTURAL_CONVERGENCE_COMPLETE_AWAITING_FRESH_EXACT_HEAD_VALIDATION
 authorization_record_url: https://github.com/steven-gold/orange-one-ai-viedo-v1.0/issues/61
 decontamination_authorization_record_url: https://github.com/steven-gold/orange-one-ai-viedo-v1.0/issues/64
 product_branch: 0921acpos
@@ -22,25 +22,16 @@ permission_lifecycle:
   production_effectful_acceptance: STAGE-10
   final_reconciliation: STAGE-11
   downstream_local_redefinition: FORBIDDEN
-historical_validation:
-  workflow_name: Product Clean Bootstrap Validation
-  workflow_run_id: 36478178889
-  validated_implementation_head: 18fcbdeb0be85c2c60aefae0c42ec0ca89762839
-  status: HISTORICAL_ONLY_ZERO_CURRENT_CREDIT
 current_head_validation:
-  status: REVERIFY_REQUIRED
+  status: REQUIRED_BEFORE_EFFECTFUL_ENTRY
   required_workflow: Product Full Stage Lifecycle Validation
+  historical_run_credit: 0
 resume_point:
-  last_completed_action: FULL_STAGE_LIFECYCLE_AUTHORIZATION_CONTRACT_MATERIALIZED
-  next_action: REMEDIATE_COMMON_CLOSURE_SUCCESSOR_AND_FULL_STAGE_RUNTIME_BRIDGES_BEFORE_STAGE_EXECUTION
+  last_completed_action: FULL_STAGE_STRUCTURAL_CONVERGENCE_MATERIALIZED
+  next_action: RUN_FRESH_EXACT_HEAD_FULL_STAGE_VALIDATION
+  after_validation_success: STAGE01_CURRENT_WORD_DERIVED_PRESTAGE_MATERIALIZATION
   next_effectful_stage: STAGE-01
-  earliest_owner: COMMON_STAGE_LIFECYCLE_ORCHESTRATION
-  stage_entry_hold: true
-current_blockers:
-- BLOCK-STAGE01-03-CLOSURE-PRODUCER
-- BLOCK-STAGE01-04-SUCCESSOR-MATERIALIZER
-- BLOCK-STAGE04-CLOSURE-WORKFLOW-BINDING
-- BLOCK-STAGE04-05-EXECUTION-TARGET-CURRENT_CONTEXT
-- BLOCK-STAGE05-11-PRODUCT-RUNTIME-ADAPTERS
-- BLOCK-PRODUCT-EXACT-HEAD-REVERIFY
+  earliest_owner: FULL_STAGE_LIFECYCLE_VALIDATION
+  stage_entry_hold: EXACT_HEAD_VALIDATION_ONLY
+current_blockers: []
 completion_credit: 0

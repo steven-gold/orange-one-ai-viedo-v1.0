@@ -8,69 +8,85 @@ rules:
   output_universe_source: CURRENT_LIFECYCLE_REGISTRY
   required_evidence_source: CURRENT_LIFECYCLE_REGISTRY
   operation_executor_source: CURRENT_WORK_UNIT_OPERATION_BINDINGS
+  common_operation_orchestrator: .github/scripts/current_stage_execute.py
   common_closure_orchestrator: .github/scripts/common_stage_closure.py
+  common_closure_adapter: .github/scripts/common_stage_closure_adapter.py
   common_successor_orchestrator: .github/scripts/common_successor_materialize.py
+  common_successor_work_unit_builder: .github/scripts/common_successor_work_unit_builder.py
   stage_specific_adapter_may_define_authorization: false
   stage_specific_adapter_may_define_permission_semantics: false
   stage_specific_adapter_may_define_next_stage: false
   stage_specific_adapter_may_claim_closure: false
-  unresolved_executor_before_stage_admission: BLOCK
-  unresolved_materializer_before_predecessor_effectful_entry: BLOCK
-  unresolved_closure_adapter_before_stage01_effectful_entry: BLOCK
+  stage_specific_business_executor_resolution: CURRENT_WORK_UNIT_OPERATION_BINDING_ONLY
+  successor_materialization_requires_exact_operation_binding_manifest: true
+  unresolved_effectful_executor_binding_at_successor_materialization: BLOCK
+  unresolved_input_binding_at_successor_materialization: BLOCK
+  unresolved_scanner_binding_at_successor_materialization: BLOCK
+  structural_adapter_contract_must_be_complete_before_stage01_entry: true
+  semantic_business_executor_may_be_materialized_only_for_the_current_or_authorized_successor_work_unit: true
 adapters:
 - stage_uid: STAGE-01
   materializer_owner: .github/scripts/stage01_current_materialize.py
-  operation_executor_owner: .github/scripts/stage01_operation_runtime.py
-  closure_adapter_owner: UNRESOLVED
-  state: CLOSURE_ADAPTER_UNRESOLVED
+  operation_executor_owner: .github/scripts/current_stage_execute.py
+  closure_adapter_owner: .github/scripts/common_stage_closure_adapter.py
+  state: READY_STRUCTURAL
 - stage_uid: STAGE-02
-  materializer_owner: UNRESOLVED
-  operation_executor_owner: UNRESOLVED
-  closure_adapter_owner: UNRESOLVED
-  state: RUNTIME_ADAPTERS_UNRESOLVED
+  materializer_owner: .github/scripts/common_successor_work_unit_builder.py
+  operation_executor_owner: .github/scripts/current_stage_execute.py
+  closure_adapter_owner: .github/scripts/common_stage_closure_adapter.py
+  state: READY_STRUCTURAL
 - stage_uid: STAGE-03
-  materializer_owner: UNRESOLVED
-  operation_executor_owner: UNRESOLVED
-  closure_adapter_owner: UNRESOLVED
-  state: RUNTIME_ADAPTERS_UNRESOLVED
+  materializer_owner: .github/scripts/common_successor_work_unit_builder.py
+  operation_executor_owner: .github/scripts/current_stage_execute.py
+  closure_adapter_owner: .github/scripts/common_stage_closure_adapter.py
+  state: READY_STRUCTURAL
 - stage_uid: STAGE-04
-  materializer_owner: UNRESOLVED
-  operation_executor_owner: .github/scripts/stage04_operation_lib.py
-  closure_adapter_owner: .github/scripts/stage04_closure.py
-  state: MATERIALIZER_UNRESOLVED_CLOSURE_NEEDS_COMMON_PROTOCOL_REFACTOR
+  materializer_owner: .github/scripts/common_successor_work_unit_builder.py
+  operation_executor_owner: .github/scripts/current_stage_execute.py
+  closure_adapter_owner: .github/scripts/common_stage_closure_adapter.py
+  legacy_semantic_adapter_ref: .github/scripts/stage04_closure.py
+  legacy_semantic_adapter_role: STAGE04_DOMAIN_SPECIFIC_EVIDENCE_ONLY_NOT_LIFECYCLE_OWNER
+  state: READY_STRUCTURAL
 - stage_uid: STAGE-05
-  materializer_owner: UNRESOLVED
-  operation_executor_owner: UNRESOLVED
-  closure_adapter_owner: UNRESOLVED
-  state: FUTURE_VERTICAL_RUNTIME_UNRESOLVED
+  materializer_owner: .github/scripts/common_successor_work_unit_builder.py
+  operation_executor_owner: .github/scripts/current_stage_execute.py
+  closure_adapter_owner: .github/scripts/common_stage_closure_adapter.py
+  effectful_execution_authorized: false
+  state: READY_STRUCTURAL
 - stage_uid: STAGE-06
-  materializer_owner: UNRESOLVED
-  operation_executor_owner: UNRESOLVED
-  closure_adapter_owner: UNRESOLVED
-  state: FUTURE_VERTICAL_RUNTIME_UNRESOLVED
+  materializer_owner: .github/scripts/common_successor_work_unit_builder.py
+  operation_executor_owner: .github/scripts/current_stage_execute.py
+  closure_adapter_owner: .github/scripts/common_stage_closure_adapter.py
+  effectful_execution_authorized: false
+  state: READY_STRUCTURAL
 - stage_uid: STAGE-07
-  materializer_owner: UNRESOLVED
-  operation_executor_owner: UNRESOLVED
-  closure_adapter_owner: UNRESOLVED
-  state: FUTURE_VERTICAL_RUNTIME_UNRESOLVED
+  materializer_owner: .github/scripts/common_successor_work_unit_builder.py
+  operation_executor_owner: .github/scripts/current_stage_execute.py
+  closure_adapter_owner: .github/scripts/common_stage_closure_adapter.py
+  effectful_execution_authorized: false
+  state: READY_STRUCTURAL
 - stage_uid: STAGE-08
-  materializer_owner: UNRESOLVED
-  operation_executor_owner: UNRESOLVED
-  closure_adapter_owner: UNRESOLVED
-  state: FUTURE_VERTICAL_RUNTIME_UNRESOLVED
+  materializer_owner: .github/scripts/common_successor_work_unit_builder.py
+  operation_executor_owner: .github/scripts/current_stage_execute.py
+  closure_adapter_owner: .github/scripts/common_stage_closure_adapter.py
+  effectful_execution_authorized: false
+  state: READY_STRUCTURAL
 - stage_uid: STAGE-09
-  materializer_owner: UNRESOLVED
-  operation_executor_owner: UNRESOLVED
-  closure_adapter_owner: UNRESOLVED
-  state: FUTURE_VERTICAL_RUNTIME_UNRESOLVED
+  materializer_owner: .github/scripts/common_successor_work_unit_builder.py
+  operation_executor_owner: .github/scripts/current_stage_execute.py
+  closure_adapter_owner: .github/scripts/common_stage_closure_adapter.py
+  effectful_execution_authorized: false
+  state: READY_STRUCTURAL
 - stage_uid: STAGE-10
-  materializer_owner: UNRESOLVED
-  operation_executor_owner: UNRESOLVED
-  closure_adapter_owner: UNRESOLVED
-  state: FUTURE_VERTICAL_RUNTIME_UNRESOLVED
+  materializer_owner: .github/scripts/common_successor_work_unit_builder.py
+  operation_executor_owner: .github/scripts/current_stage_execute.py
+  closure_adapter_owner: .github/scripts/common_stage_closure_adapter.py
+  effectful_execution_authorized: false
+  state: READY_STRUCTURAL
 - stage_uid: STAGE-11
-  materializer_owner: UNRESOLVED
-  operation_executor_owner: UNRESOLVED
-  closure_adapter_owner: UNRESOLVED
-  state: FUTURE_VERTICAL_RUNTIME_UNRESOLVED
+  materializer_owner: .github/scripts/common_successor_work_unit_builder.py
+  operation_executor_owner: .github/scripts/current_stage_execute.py
+  closure_adapter_owner: .github/scripts/common_stage_closure_adapter.py
+  effectful_execution_authorized: false
+  state: READY_STRUCTURAL
 completion_credit: 0

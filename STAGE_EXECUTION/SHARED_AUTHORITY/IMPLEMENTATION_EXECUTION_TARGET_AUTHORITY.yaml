@@ -1,95 +1,65 @@
 authority:
   id: ACPOS_IMPLEMENTATION_EXECUTION_TARGET_AUTHORITY
-  version: V1.0
-  status: CURRENT_CONTRACT
-  artifact_type: IMPLEMENTATION_EXECUTION_TARGET_AUTHORITY_PROJECTION
-  authority_role: EXISTING_CURRENT_IMPLEMENTATION_AUTHORITY_MACHINE_PROJECTION
-  projection_policy: SOURCE_GROUNDED_ONLY_NO_NEW_IMPLEMENTATION_SYSTEM
-  created_by: V232_STAGE04_SUCCESSOR_BINDING_CONFORMANCE
-  scope: STAGE-05_IMPLEMENTATION_ADMISSION_TARGET_BINDING
-  undefined_behavior: BLOCK + REPORT_AUTHORITY_GAP
+  version: V2.0
+  status: CURRENT_DYNAMIC_RESOLUTION_CONTRACT
+  artifact_type: IMPLEMENTATION_EXECUTION_TARGET_AUTHORITY_PROTOCOL
+  normative_authority: false
+  authority_role: STAGE05_SUCCESSOR_EXECUTION_TARGET_RESOLUTION_PROTOCOL
+  created_by: FULL_STAGE_LIFECYCLE_CONVERGENCE
+  scope: STAGE-04_TO_STAGE-05_HANDOFF_AND_STAGE-05_ADMISSION
+  static_historical_branch_or_head_binding: FORBIDDEN
+  undefined_behavior: BLOCK_AND_REPORT_AUTHORITY_GAP
   rule: >
-    This projection does not create, replace or recommend any framework, tool,
-    runtime or service. Every target identity is a machine projection of an
-    authority that already exists in the current implementation repository. When
-    a class has no distinct authority in the current set, the projection states
-    the governed absence instead of inventing a component. Any class that cannot
-    be grounded stays UNRESOLVED and keeps the producing stage BLOCKED.
-  source_evidence:
-    repository: steven-gold/orange-one-ai-viedo-v1.0
-    construction_branch: new
-    production_branch: main
-    main_head_sha: 1e081935b96d5b539e29eb16a6b067c4489ef2dd
-    new_head_sha: f25a79111bbf1da47fe55f4fc8967b2148558317
-    source_authorities:
-      - authority/ACPOS_CURRENT_AUTHORITY_MANIFEST_FINAL_LOCKED.yaml
-      - authority/global/ACPOS_SYSTEM_AUTHORITY_FINAL_LOCKED_CURRENT.yaml
-      - authority/global/ACPOS_DATABASE_MIGRATION_AUTHORITY_FINAL_LOCKED_V1.0.yaml
-      - authority/global/ACPOS_CURRENT_NAVIGATION_PERMISSION_AUTHORITY_FINAL_LOCKED.yaml
-      - authority/global/ACPOS_PRODUCTION_SCRIPT_CONTENT_AND_PROVIDER_ADAPTER_CONTRACT_FINAL_LOCKED_V1.3.yaml
-      - authority/runtime/ACPOS_PRODUCTION_DATABASE_RUNTIME_CONTRACT_FINAL_LOCKED_V1.0.yaml
-      - authority/runtime/ACPOS_PRODUCTION_IDENTITY_RUNTIME_CONTRACT_FINAL_LOCKED_V1.0.yaml
-      - authority/runtime/ACPOS_PRODUCTION_ASYNC_QUEUE_RUNTIME_CONTRACT_FINAL_LOCKED_V1.0.yaml
-      - authority/runtime/ACPOS_PRODUCTION_DEPLOYMENT_EXECUTION_POLICY_FINAL_LOCKED_V1.0.yaml
-      - package.json
-      - package-lock.json
-      - tsconfig.json
-      - next.config.ts
-      - vercel.json
-      - 06_permission/account_permission_catalog.yaml
-      - database/migrations
-targets:
-  REPOSITORY_TARGET:
-    target_identity: "GITHUB_REPOSITORY:steven-gold/orange-one-ai-viedo-v1.0"
-    source_ref: "git remote origin; authority/ACPOS_CURRENT_AUTHORITY_MANIFEST_FINAL_LOCKED.yaml@main#L0-L10"
-  APPLICATION_ROOT:
-    target_identity: "REPO_ROOT_NEXTJS_APP:/ (App Router src/app; construction branch new)"
-    source_ref: "next.config.ts; tsconfig.json; src/app@main"
-  IMPLEMENTATION_OWNER:
-    target_identity: "GITHUB_OWNER:steven-gold (construction branch new, production branch main)"
-    source_ref: "git remote origin; .github/workflows@main"
-  IMPLEMENTATION_LANGUAGE_AUTHORITY:
-    target_identity: "TypeScript@^5.9.0"
-    source_ref: "package.json@main/devDependencies.typescript; tsconfig.json@main"
-  FRONTEND_FRAMEWORK_AUTHORITY:
-    target_identity: "Next.js@16.3.3 + React@19.2.0 + react-dom@19.2.0"
-    source_ref: "package.json@main/dependencies"
-  BACKEND_FRAMEWORK_AUTHORITY:
-    target_identity: "Next.js@16.3.3 Route Handlers (src/app/v1/** server route handlers)"
-    source_ref: "package.json@main/dependencies.next; src/app/v1@main"
-  PACKAGE_MANAGER_AUTHORITY:
-    target_identity: "npm (package-lock.json lockfile v3)"
-    source_ref: "package.json@main/scripts; package-lock.json@main"
-  FRONTEND_RUNTIME_TARGET:
-    target_identity: "Vercel Node.js serverless runtime (Next.js framework preset)"
-    source_ref: "vercel.json@main; next.config.ts@main"
-  BACKEND_RUNTIME_TARGET:
-    target_identity: "Vercel Node.js serverless functions + Vercel Cron (/v1/internal/queue/provider-execution/drain)"
-    source_ref: "vercel.json@main/crons; authority/runtime/ACPOS_PRODUCTION_ASYNC_QUEUE_RUNTIME_CONTRACT_FINAL_LOCKED_V1.0.yaml@main#topology.workers"
-  DATA_ACCESS_TARGET:
-    target_identity: "SQL via @neondatabase/serverless@^1.1.0 against database/migrations (0001..0052)"
-    source_ref: "package.json@main/dependencies; authority/global/ACPOS_DATABASE_MIGRATION_AUTHORITY_FINAL_LOCKED_V1.0.yaml@main; database/migrations@main"
-  DATABASE_TARGET:
-    target_identity: "PostgreSQL (Neon project wild-wave-25661146, database neondb; schemas public + acpos_runtime; RLS enabled)"
-    source_ref: "authority/runtime/ACPOS_PRODUCTION_DATABASE_RUNTIME_CONTRACT_FINAL_LOCKED_V1.0.yaml@main; database/migrations/0016_postgresql_rls_runtime_foundation.sql@main"
-  AUTHENTICATION_TARGET:
-    target_identity: "Internal cookie session (acpos_session; acpos_runtime.sessions) + canonical actor app_users.user_id"
-    source_ref: "authority/runtime/ACPOS_PRODUCTION_IDENTITY_RUNTIME_CONTRACT_FINAL_LOCKED_V1.0.yaml@main#canonical_actor; src/app/v1/identity/session/route.ts@main"
-  AUTHORIZATION_TARGET:
-    target_identity: "06_permission/account_permission_catalog.yaml + ACPOS_CURRENT_NAVIGATION_PERMISSION_AUTHORITY + PostgreSQL RLS"
-    source_ref: "06_permission/account_permission_catalog.yaml@main; authority/global/ACPOS_CURRENT_NAVIGATION_PERMISSION_AUTHORITY_FINAL_LOCKED.yaml@main"
-  DATA_SECURITY_TARGET:
-    target_identity: "PostgreSQL Row-Level Security (deny-by-default) across public + acpos_runtime"
-    source_ref: "authority/runtime/ACPOS_PRODUCTION_DATABASE_RUNTIME_CONTRACT_FINAL_LOCKED_V1.0.yaml@main; database/migrations/*_rls_*.sql@main"
-  AUDIT_LOGGING_TARGET:
-    target_identity: "ACPOS Permission / Policy / Audit domain + per-page audit RLS closure migrations"
-    source_ref: "authority/global/ACPOS_SYSTEM_AUTHORITY_FINAL_LOCKED_CURRENT.yaml@main#domain.ACPOS Permission / Policy / Audit; database/migrations/*audit*.sql@main"
-  EXTERNAL_INTEGRATION_TARGET:
-    target_identity: "Governed ProviderGateway/adapters via AIAPI Router (provider_model_profiles; no parallel provider registry)"
-    source_ref: "authority/global/ACPOS_PRODUCTION_SCRIPT_CONTENT_AND_PROVIDER_ADAPTER_CONTRACT_FINAL_LOCKED_V1.3.yaml@main; authority/ACPOS_CURRENT_AUTHORITY_MANIFEST_FINAL_LOCKED.yaml@main#cross_authority_bindings.production_script_v1_3"
-  ASYNC_RUNTIME_TARGET:
-    target_identity: "Canonical outbox/queue/worker/DLQ (public.queues, workers, outbox_events, inbox_events, dead_letters, replay_candidates)"
-    source_ref: "authority/runtime/ACPOS_PRODUCTION_ASYNC_QUEUE_RUNTIME_CONTRACT_FINAL_LOCKED_V1.0.yaml@main#reuse_contract; database/migrations/0019_async_queue_delivery_runtime.sql@main"
-  STORAGE_RUNTIME_TARGET:
-    target_identity: "NO_DISTINCT_OBJECT_STORAGE_AUTHORITY (canonical asset/media artifacts persist in the governed PostgreSQL runtime; no object-storage package in dependencies)"
-    source_ref: "authority/ACPOS_CURRENT_AUTHORITY_MANIFEST_FINAL_LOCKED.yaml@main#current_authority_set (no storage runtime contract); package.json@main/dependencies (no blob/s3 dependency)"
+    This protocol defines how Stage-05 execution targets are resolved from the exact
+    Current product repository context at the time Stage-05 becomes authorized.
+    It does not preserve historical main/new branch identities, old fixed SHAs, or
+    V232-derived target values. No target identity is granted completion credit
+    until a Current target-resolution receipt binds repository, branch, head, tree,
+    work unit, successor stage, binding class, authority evidence and context match.
+  current_resolution_contract:
+    resolution_timing: STAGE04_CLOSURE_ELIGIBILITY_CHECK_AND_STAGE05_ADMISSION_RECHECK
+    stage05_effectful_authorization_required_before_execution: true
+    current_repository_context_required: true
+    required_receipt_fields:
+    - artifact_type
+    - binding_uid
+    - consuming_operation_uid
+    - binding_class
+    - target_identity
+    - canonical_owner_or_authority_ref
+    - authority_evidence_ref
+    - work_unit_uid
+    - successor_stage_uid
+    - resolution_kind
+    - resolution_status
+    - current_execution_repository
+    - current_execution_branch
+    - current_execution_head_sha
+    - current_execution_tree_sha
+    - current_context_match
+    allowed_resolution_statuses: [RESOLVED_CURRENT, AUTHORIZED_NOT_APPLICABLE]
+    authorized_not_applicable_requires_authority_evidence: true
+    stale_head_or_tree: BLOCK
+    historical_branch_target: BLOCK
+    v232_derived_target: BLOCK
+  minimum_binding_classes:
+  - REPOSITORY_TARGET
+  - APPLICATION_ROOT
+  - IMPLEMENTATION_OWNER
+  - IMPLEMENTATION_LANGUAGE_AUTHORITY
+  - FRONTEND_FRAMEWORK_AUTHORITY
+  - BACKEND_FRAMEWORK_AUTHORITY
+  - PACKAGE_MANAGER_AUTHORITY
+  - FRONTEND_RUNTIME_TARGET
+  - BACKEND_RUNTIME_TARGET
+  - DATA_ACCESS_TARGET
+  - DATABASE_TARGET
+  - AUTHENTICATION_TARGET
+  - AUTHORIZATION_TARGET
+  - DATA_SECURITY_TARGET
+  - AUDIT_LOGGING_TARGET
+  - EXTERNAL_INTEGRATION_TARGET
+  - ASYNC_RUNTIME_TARGET
+  - STORAGE_RUNTIME_TARGET
+  current_resolved_targets: []
+  completion_credit: 0

@@ -1,0 +1,29 @@
+artifact_type: PRODUCT_FULL_STAGE_OPERATION_BINDING_PROFILE_REGISTRY
+status: CURRENT
+normative_authority: false
+rules:
+  operation_universe_source: CURRENT_LIFECYCLE_REGISTRY
+  exact_operation_binding_coverage_required: true
+  binding_manifest_required_before_successor_work_unit_materialization: true
+  each_required_operation_requires_executor_owner: true
+  executor_owner_must_exist_physically_before_successor_materialization: true
+  each_required_operation_requires_result_owner: true
+  each_required_operation_requires_operation_receipt_ref: true
+  executor_protocol: PYTHON_STAGE_OPERATION_V1
+  historical_executor_binding_reuse_without_current_validation: FORBIDDEN
+  stage_local_operation_universe_override: FORBIDDEN
+  future_stage_operation_result_preproduction: FORBIDDEN
+  unresolved_binding_disposition: BLOCK_AT_STAGE_BOUNDARY_BEFORE_SUCCESSOR_WORK_UNIT_CREATION
+profiles:
+- {stage_uid: STAGE-01, binding_manifest_owner: .github/scripts/stage01_current_materialize.py, materialization_mode: INITIAL_STAGE_WORK_UNIT_CURRENT_WORD_DERIVED}
+- {stage_uid: STAGE-02, binding_manifest_owner: .github/scripts/common_successor_work_unit_builder.py, materialization_mode: SUCCESSOR_EXACT_BINDING_MANIFEST_REQUIRED}
+- {stage_uid: STAGE-03, binding_manifest_owner: .github/scripts/common_successor_work_unit_builder.py, materialization_mode: SUCCESSOR_EXACT_BINDING_MANIFEST_REQUIRED}
+- {stage_uid: STAGE-04, binding_manifest_owner: .github/scripts/common_successor_work_unit_builder.py, materialization_mode: SUCCESSOR_EXACT_BINDING_MANIFEST_REQUIRED}
+- {stage_uid: STAGE-05, binding_manifest_owner: .github/scripts/common_successor_work_unit_builder.py, materialization_mode: SUCCESSOR_EXACT_BINDING_MANIFEST_REQUIRED}
+- {stage_uid: STAGE-06, binding_manifest_owner: .github/scripts/common_successor_work_unit_builder.py, materialization_mode: SUCCESSOR_EXACT_BINDING_MANIFEST_REQUIRED}
+- {stage_uid: STAGE-07, binding_manifest_owner: .github/scripts/common_successor_work_unit_builder.py, materialization_mode: SUCCESSOR_EXACT_BINDING_MANIFEST_REQUIRED}
+- {stage_uid: STAGE-08, binding_manifest_owner: .github/scripts/common_successor_work_unit_builder.py, materialization_mode: SUCCESSOR_EXACT_BINDING_MANIFEST_REQUIRED}
+- {stage_uid: STAGE-09, binding_manifest_owner: .github/scripts/common_successor_work_unit_builder.py, materialization_mode: SUCCESSOR_EXACT_BINDING_MANIFEST_REQUIRED}
+- {stage_uid: STAGE-10, binding_manifest_owner: .github/scripts/common_successor_work_unit_builder.py, materialization_mode: SUCCESSOR_EXACT_BINDING_MANIFEST_REQUIRED}
+- {stage_uid: STAGE-11, binding_manifest_owner: .github/scripts/common_successor_work_unit_builder.py, materialization_mode: SUCCESSOR_EXACT_BINDING_MANIFEST_REQUIRED}
+completion_credit: 0

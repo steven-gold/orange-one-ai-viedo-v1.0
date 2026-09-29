@@ -1,5 +1,5 @@
 artifact_type: PRODUCT_FULL_STAGE_LIFECYCLE_AUTHORIZATION_CONTRACT
-status: CURRENT_PLANNING_AUTHORITY_EXECUTION_RANGE_BOUNDED
+status: CURRENT_FULL_STAGE_STRUCTURAL_CONVERGENCE_EFFECTFUL_RANGE_BOUNDED
 normative_authority: false
 authority_role: PRODUCT_EXECUTION_COORDINATION_AUTHORITY
 product_branch: 0921acpos
@@ -104,11 +104,8 @@ closure_and_handoff_contract:
   successor_materialization_before_predecessor_terminal_pass: BLOCK
   successor_materialization_outside_authorized_range: BLOCK
   deterministic_successor_inside_authorized_range_auto_continues: true
-known_runtime_blockers:
-- {uid: BLOCK-STAGE01-03-CLOSURE-PRODUCER, status: OPEN, owner: COMMON_STAGE_CLOSURE_PROTOCOL}
-- {uid: BLOCK-STAGE01-04-SUCCESSOR-MATERIALIZER, status: OPEN, owner: COMMON_SUCCESSOR_WORK_UNIT_MATERIALIZER}
-- {uid: BLOCK-STAGE04-CLOSURE-WORKFLOW-BINDING, status: OPEN, owner: COMMON_STAGE_CLOSURE_PROTOCOL}
-- {uid: BLOCK-STAGE04-05-EXECUTION-TARGET-CURRENT_CONTEXT, status: OPEN, owner: CURRENT_EXECUTION_TARGET_AUTHORITY}
-- {uid: BLOCK-STAGE05-11-PRODUCT-RUNTIME-ADAPTERS, status: OPEN, owner: PRODUCT_VERTICAL_LIFECYCLE_RUNTIME}
-- {uid: BLOCK-PRODUCT-EXACT-HEAD-REVERIFY, status: OPEN, owner: FULL_STAGE_LIFECYCLE_VALIDATION}
+known_runtime_blockers: []
+validation_gate:
+  exact_head_full_stage_validation_required_before_effectful_stage: true
+  validation_success_grants_stage_completion_credit: false
 completion_credit: 0

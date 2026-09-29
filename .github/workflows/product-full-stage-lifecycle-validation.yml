@@ -8,7 +8,10 @@ on:
       - '.github/scripts/stage_lifecycle_gate.py'
       - '.github/scripts/current_stage_execute.py'
       - '.github/scripts/common_stage_closure.py'
+      - '.github/scripts/common_stage_closure_adapter.py'
+      - '.github/scripts/common_stage_terminalizer.py'
       - '.github/scripts/common_successor_materialize.py'
+      - '.github/scripts/common_successor_work_unit_builder.py'
       - '.github/workflows/product-full-stage-lifecycle-validation.yml'
       - '.github/workflows/product-stage*-materialize.yml'
       - '.github/workflows/product-stage*-validation.yml'
@@ -54,7 +57,7 @@ jobs:
           python .github/governance-source/active/source/09_TESTS/governance/validate_stage_execution_invariants.py
       - name: Syntax-check lifecycle runtime guards
         run: |
-          python -m py_compile .github/scripts/full_stage_lifecycle_guard.py .github/scripts/stage_lifecycle_gate.py .github/scripts/current_stage_execute.py .github/scripts/common_stage_closure.py .github/scripts/common_successor_materialize.py
+          python -m py_compile .github/scripts/full_stage_lifecycle_guard.py .github/scripts/stage_lifecycle_gate.py .github/scripts/current_stage_execute.py .github/scripts/common_stage_closure.py .github/scripts/common_stage_closure_adapter.py .github/scripts/common_stage_terminalizer.py .github/scripts/common_successor_materialize.py .github/scripts/common_successor_work_unit_builder.py
       - name: Parse all current Product Stage workflows
         run: |
           python - <<'PY'
@@ -70,6 +73,12 @@ jobs:
                   raise SystemExit(f'BLOCK:WORKFLOW_STRUCTURE_INVALID:{p}')
           print('PASS: current Product Stage workflows parse and expose jobs',len(paths))
           PY
+      - name: Validate common closure successor and terminalizer contracts
+        run: |
+          set -euo pipefail
+          python .github/scripts/common_stage_closure_adapter.py --mode validate-contract --product-root "$GITHUB_WORKSPACE" --governance-root "$GITHUB_WORKSPACE/_governance_authority"
+          python .github/scripts/common_successor_work_unit_builder.py --mode validate-contract --product-root "$GITHUB_WORKSPACE" --governance-root "$GITHUB_WORKSPACE/_governance_authority"
+          python .github/scripts/common_stage_terminalizer.py --mode validate-contract --product-root "$GITHUB_WORKSPACE" --governance-root "$GITHUB_WORKSPACE/_governance_authority"
       - name: Validate transition and permission skeleton with negative tests
         run: |
           python .github/scripts/stage_lifecycle_gate.py --mode self-test --product-root "$GITHUB_WORKSPACE" --governance-root "$GITHUB_WORKSPACE/_governance_authority"

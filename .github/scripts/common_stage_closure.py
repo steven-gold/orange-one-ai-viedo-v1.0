@@ -46,15 +46,18 @@ def main():
             raise SystemExit("BLOCK:COMMON_CLOSURE_OPERATION_RECEIPT_INVALID:"+op)
     print("PASS: common closure preflight operation receipt chain complete",a.stage,work.get("work_unit_uid"))
     if a.mode=="close":
-        adapter=str(work.get("closure_adapter_owner") or "")
+        registry=y(root/"STAGE_EXECUTION/SHARED_AUTHORITY/CURRENT_STAGE_FLOW/FULL_STAGE_RUNTIME_ADAPTER_REGISTRY.yaml")
+        row=next((x for x in registry.get("adapters") or [] if x.get("stage_uid")==a.stage),None)
+        adapter=str((row or {}).get("closure_adapter_owner") or "")
         if not adapter:
-            raise SystemExit("BLOCK:COMMON_CLOSURE_SEMANTIC_ADAPTER_UNRESOLVED:"+a.stage)
+            raise SystemExit("BLOCK:COMMON_CLOSURE_ADAPTER_UNRESOLVED:"+a.stage)
         apath=(root/Path(adapter)).resolve()
         try: apath.relative_to(root)
         except ValueError: raise SystemExit("BLOCK:COMMON_CLOSURE_ADAPTER_ESCAPES_ROOT")
         if not apath.is_file(): raise SystemExit("BLOCK:COMMON_CLOSURE_ADAPTER_MISSING:"+adapter)
         if apath.name=="common_stage_closure.py": raise SystemExit("BLOCK:COMMON_CLOSURE_RECURSIVE_ADAPTER")
-        run([sys.executable,str(apath),"--stage",a.stage,"--work-unit",a.work_unit,"--product-root",str(root)],root)
+        run([sys.executable,str(apath),"--mode","candidate","--stage",a.stage,"--work-unit",a.work_unit,"--product-root",str(root),"--governance-root",str(gov)],root)
+        print("PASS: common closure candidate prepared; terminal receipt requires prior terminal-success validation run")
 
 if __name__=="__main__":
     main()

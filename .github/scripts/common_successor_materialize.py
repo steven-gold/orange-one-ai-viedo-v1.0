@@ -40,13 +40,23 @@ def main():
     if a.mode=="materialize":
         registry=y(root/"STAGE_EXECUTION/SHARED_AUTHORITY/CURRENT_STAGE_FLOW/FULL_STAGE_RUNTIME_ADAPTER_REGISTRY.yaml")
         row=next((x for x in registry.get("adapters") or [] if x.get("stage_uid")==to),None)
-        owner=str((row or {}).get("successor_materializer_owner") or "")
+        owner=str((row or {}).get("materializer_owner") or "")
         if not owner:
             raise SystemExit("BLOCK:SUCCESSOR_STAGE_MATERIALIZER_OWNER_UNRESOLVED:"+to)
         p=(root/Path(owner)).resolve()
         if not p.is_file(): raise SystemExit("BLOCK:SUCCESSOR_STAGE_MATERIALIZER_OWNER_MISSING:"+owner)
         if p.name=="common_successor_materialize.py": raise SystemExit("BLOCK:SUCCESSOR_MATERIALIZER_RECURSIVE_OWNER")
-        subprocess.check_call([sys.executable,str(p),"--from-stage",a.from_stage,"--predecessor-work-unit",a.predecessor_work_unit,"--product-root",str(root),"--governance-root",str(gov)],cwd=root)
+        binding_manifest=str(h.get("successor_operation_binding_manifest_ref") or "")
+        if not binding_manifest:
+            raise SystemExit("BLOCK:SUCCESSOR_OPERATION_BINDING_MANIFEST_REF_MISSING:"+to)
+        subprocess.check_call([
+            sys.executable,str(p),"--mode","materialize",
+            "--successor-stage",to,
+            "--predecessor-work-unit",a.predecessor_work_unit,
+            "--operation-binding-manifest",binding_manifest,
+            "--product-root",str(root),
+            "--governance-root",str(gov)
+        ],cwd=root)
 
 if __name__=="__main__":
     main()
