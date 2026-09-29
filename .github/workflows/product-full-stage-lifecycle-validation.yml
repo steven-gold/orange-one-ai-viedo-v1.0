@@ -1,5 +1,5 @@
 name: Product Full Stage Lifecycle Validation
-# stage01-resume-trigger-v2
+# validation-only-v3
 on:
   push:
     branches: [0921acpos]
@@ -25,11 +25,11 @@ on:
       - '.github/workflows/product-stage01-validated-entry.yml'
       - '.github/workflows/product-stage*-materialize.yml'
       - '.github/workflows/product-stage*-validation.yml'
+      - '.github/workflows/product-stage*-execute.yml'
       - '.github/workflows/product-stage-current-execute-reusable.yml'
   workflow_dispatch:
 permissions:
-  contents: write
-  actions: write
+  contents: read
 jobs:
   validate-full-lifecycle-plan:
     runs-on: ubuntu-24.04
@@ -176,10 +176,20 @@ jobs:
           print('PASS: planning validation cannot create Stage completion or future-stage execution authority')
           PY
 
-  stage01-resume-once:
-    needs: validate-full-lifecycle-plan
-    uses: ./.github/workflows/product-stage-lifecycle-driver.yml
-    with:
-      stage: STAGE-01
-      work_units: WU-STAGE01-GLOBAL-HOME-SHELL-NAVIGATION-CLEAN-001,WU-STAGE01-WB01-DASHBOARD-CLEAN-001
-    secrets: inherit
+      - name: Assert validation mode is non-effectful
+        run: |
+          set -euo pipefail
+          ! grep -q "uses: ./.github/workflows/product-stage-lifecycle-driver.yml" .github/workflows/product-full-stage-lifecycle-validation.yml
+          ! grep -q "gh workflow run product-stage-lifecycle-driver.yml" .github/workflows/product-full-stage-lifecycle-validation.yml
+          grep -q "refresh_stage1_manifests" .github/scripts/common_stage_preterminal.py
+          echo "PASS: full lifecycle validation is read-only and preterminal manifest freshness remediation is present"
+      - name: Validate registered vertical Stage entry continuity
+        run: |
+          set -euo pipefail
+          for S in 05 06 07 08 09 10 11; do
+            F=".github/workflows/product-stage${S}-execute.yml"
+            test -s "$F"
+            grep -q "uses: ./.github/workflows/product-stage-lifecycle-driver.yml" "$F"
+            grep -q "stage: STAGE-${S}" "$F"
+          done
+          echo "PASS: Stage-05..11 top-level entries all route through the common lifecycle driver"
