@@ -250,8 +250,10 @@ def main():
         if unresolved:
             fail("FULL_STAGE_RUNTIME_ADAPTERS_NOT_READY:"+",".join(sorted(set(unresolved))))
         effectful=preentry.get("effectful_preentry") or {}
-        if effectful.get("stage01_may_start_now") is not True:
-            fail("STAGE01_PREENTRY_HOLD:"+str(effectful.get("hold_reason") or "UNSPECIFIED"))
+        if effectful.get("stage01_structurally_admissible") is not True:
+            fail("STAGE01_PREENTRY_STRUCTURAL_ADMISSION_NOT_PASS")
+        if effectful.get("exact_head_full_stage_validation_required") is not True:
+            fail("STAGE01_EXACT_HEAD_VALIDATION_REQUIREMENT_MISSING")
 
     print("PASS: full lifecycle 01-11 uses one authorization contract")
     print("PASS: transition, permission, closure and successor protocols cover all registered stages")

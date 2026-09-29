@@ -353,10 +353,10 @@ def mark_admitted(product,cfgs):
     state["selected_governed_units"]=selected
     state["selected_stage01_work_units"]=wus
     state["work_unit_resolution_gate"]={"result":"PASS_INITIAL_STAGE_WORK_UNIT_CLEAN_BOOTSTRAP","effectful_execution_admitted":False,"exact_head_selection_admitted":True,"pre_stage_materialization_admitted":True}
-    state["resume_point"]={"last_completed_action":"STAGE01_CLEAN_PRESTAGE_MATERIALIZATION_AND_ADMISSION","next_action":"RUN_RUNTIME_INLINE_VALIDATION_THEN_EXPLICIT_STAGE01_ENTRY","next_effectful_stage":"STAGE-01","earliest_owner":"STAGE01_OPERATION_EXECUTORS","stage_entry_hold":True}
+    state["resume_point"]={"last_completed_action":"STAGE01_CLEAN_PRESTAGE_MATERIALIZATION_AND_ADMISSION","next_action":"RUN_RUNTIME_INLINE_VALIDATION_THEN_VALIDATED_STAGE01_ENTRY","next_effectful_stage":"STAGE-01","earliest_owner":"STAGE01_OPERATION_EXECUTORS","stage_entry_hold":True}
     state["current_blockers"]=["RUNTIME_INLINE_INTERNAL_GOVERNANCE_VALIDATION_REQUIRED_BEFORE_EFFECTFUL_STAGE"]
     state["pre_stage_unresolved_defect_count"]=0
-    state["pre_stage_hold"]={"status":"READY_AWAITING_RUNTIME_INLINE_VALIDATION_AND_EXPLICIT_STAGE01_ENTRY","auto_stage_entry":False,"pre_stage_materialization_complete":True,"effectful_execution_admitted":False,"effectful_stage_operation_executed":False,"stage01_completed_operation_total":0,"entry_requires_explicit_workflow_dispatch":True,"runtime_inline_validation_deferred_to_stage_entry":True}
+    state["pre_stage_hold"]={"status":"READY_AWAITING_RUNTIME_INLINE_VALIDATION_AND_VALIDATED_STAGE01_ENTRY","auto_stage_entry":False,"pre_stage_materialization_complete":True,"effectful_execution_admitted":False,"effectful_stage_operation_executed":False,"stage01_completed_operation_total":0,"entry_requires_validated_execution_request":True,"runtime_inline_validation_deferred_to_stage_entry":True}
     state["clean_bootstrap_contract"]={"activation_kind":"INITIAL_STAGE_WORK_UNIT","predecessor_runtime_dependency_count":0,"historical_completion_credit":0,"canonical_root_word_source_required":True,"selected_unit_only":True}
     wy(sp,state)
 
@@ -371,19 +371,20 @@ def mark_admitted(product,cfgs):
         for row in ch.get("stages") or []:
             if row.get("stage_uid")=="STAGE-01":
                 row["work_unit_uid"]=match["work_unit_uid"]; row.pop("successor_work_unit_uid",None)
-                row["current_state"]="MATERIALIZED_PRESTAGE_READY_AWAITING_RUNTIME_INLINE_VALIDATION"
+                row["state"]="MATERIALIZED_PRESTAGE_READY_AWAITING_RUNTIME_INLINE_VALIDATION"
+                row.pop("current_state",None)
     resolution["execution_admission"]={"state":"PRESTAGE_ADMISSION_PASS_RUNTIME_INLINE_VALIDATION_REQUIRED","blockers":["RUNTIME_INLINE_INTERNAL_GOVERNANCE_VALIDATION_REQUIRED_BEFORE_EFFECTFUL_STAGE"],"pre_stage_materialization_admitted":True,"effectful_execution_admitted":False,"auto_stage_entry":False,"effectful_stage_operation_executed":False}
     wy(rp,resolution)
 
-    dp=product/"STAGE_EXECUTION/SHARED_AUTHORITY/CURRENT_STAGE_FLOW/STAGE01_04_DEFECT_LEDGER.yaml"
+    dp=product/"STAGE_EXECUTION/SHARED_AUTHORITY/CURRENT_STAGE_FLOW/FULL_STAGE_DEFECT_LEDGER.yaml"
     ledger=y(dp)
-    ledger["status"]="CURRENT_STAGE01_CLEAN_PRESTAGE_MATERIALIZED_AWAITING_RUNTIME_INLINE_VALIDATION"
+    ledger["status"]="FULL_STAGE_STRUCTURAL_CONVERGENCE_STAGE01_PRESTAGE_MATERIALIZED"
     ledger["selected_stage01_work_units"]=wus
     ledger["predecessor_runtime_dependency_count"]=0
-    ledger["pre_stage_boundary"]={"stage_uid":"STAGE-01","work_units":wus,"fresh_source_projection_materialized":True,"fresh_content_audit_materialized":True,"stage01_dedicated_executor_bindings_materialized":True,"stage01_current_matrix_materialized":True,"exact_head_governance_receipts_verified":True,"runtime_inline_validation_required_at_stage_entry":True,"runtime_inline_validation_completed_for_stage_entry":False,"stage01_effectful_operation_executed":False,"auto_stage_entry":False,"status":"READY_AWAITING_RUNTIME_INLINE_VALIDATION_AND_EXPLICIT_STAGE01_ENTRY","unresolved_pre_stage_defect_count":0}
+    ledger["pre_stage_boundary"]={"stage_uid":"STAGE-01","work_units":wus,"fresh_source_projection_materialized":True,"fresh_content_audit_materialized":True,"stage01_dedicated_executor_bindings_materialized":True,"stage01_current_matrix_materialized":True,"exact_head_governance_receipts_verified":True,"runtime_inline_validation_required_at_stage_entry":True,"runtime_inline_validation_completed_for_stage_entry":False,"stage01_effectful_operation_executed":False,"auto_stage_entry":False,"status":"READY_AWAITING_RUNTIME_INLINE_VALIDATION_AND_VALIDATED_STAGE01_ENTRY","unresolved_pre_stage_defect_count":0}
     wy(dp,ledger)
 
-    wy(product/"STAGE_EXECUTION/STAGE-01/STAGE01_CURRENT_EXECUTION_TRIGGER.yaml",{"artifact_type":"STAGE01_CURRENT_EXECUTION_TRIGGER","status":"READY_AWAITING_RUNTIME_INLINE_VALIDATION_AND_EXPLICIT_STAGE_ENTRY","governance_uid":GOV_UID,"work_units":wus,"activation_kind":"INITIAL_STAGE_WORK_UNIT","predecessor_runtime_dependency_count":0,"auto_stage_entry":False,"runtime_inline_validation_required":True,"effectful_stage_operation_executed":False,"product_completion_credit":0})
+    wy(product/"STAGE_EXECUTION/STAGE-01/STAGE01_CURRENT_EXECUTION_TRIGGER.yaml",{"artifact_type":"STAGE01_CURRENT_EXECUTION_TRIGGER","status":"READY_AWAITING_RUNTIME_INLINE_VALIDATION_AND_VALIDATED_STAGE_ENTRY","governance_uid":GOV_UID,"work_units":wus,"activation_kind":"INITIAL_STAGE_WORK_UNIT","predecessor_runtime_dependency_count":0,"auto_stage_entry":False,"runtime_inline_validation_required":True,"effectful_stage_operation_executed":False,"product_completion_credit":0})
     print("PASS: clean Stage01 pre-stage materialization persisted; effectful Stage01 remains on explicit hold")
 
 def main():

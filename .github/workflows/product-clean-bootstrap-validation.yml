@@ -70,6 +70,23 @@ jobs:
             export STAGE_CURRENT_SCOPE="STAGE_EXECUTION/STAGE-01/$WU/CURRENT_EXECUTION_SCOPE_MANIFEST.yaml"
             python governance/ci/stage_execution_engine.py --admission-check --stage STAGE-01
           done
+      - name: Exercise admitted pre-stage state transition
+        run: |
+          set -euo pipefail
+          python .github/scripts/stage01_current_materialize.py --mode mark-admitted --units "GLOBAL-HOME-SHELL-NAVIGATION,WB01-DASHBOARD" --product-root "$GITHUB_WORKSPACE"
+          test -s STAGE_EXECUTION/SHARED_AUTHORITY/CURRENT_STAGE_FLOW/FULL_STAGE_DEFECT_LEDGER.yaml
+          test ! -e STAGE_EXECUTION/SHARED_AUTHORITY/CURRENT_STAGE_FLOW/STAGE01_04_DEFECT_LEDGER.yaml
+          python - <<'PY'
+          import yaml
+          from pathlib import Path
+          r=yaml.safe_load(Path('STAGE_EXECUTION/SHARED_AUTHORITY/CURRENT_STAGE_FLOW/CURRENT_EXECUTION_RESOLUTION.yaml').read_text()) or {}
+          for unit in r.get('stage_sequence') or []:
+              s1=next((x for x in unit.get('stages') or [] if x.get('stage_uid')=='STAGE-01'),None)
+              assert s1 is not None
+              assert s1.get('state')=='MATERIALIZED_PRESTAGE_READY_AWAITING_RUNTIME_INLINE_VALIDATION'
+              assert 'current_state' not in s1
+          print('PASS: mark-admitted writes one canonical Stage01 state field and current full-stage ledger')
+          PY
       - name: Assert clean-bootstrap invariants
         run: |
           python - <<'PY'
