@@ -170,10 +170,10 @@ def topology(wd,work,p,refs):
 def main():
     ap=argparse.ArgumentParser()
     ap.add_argument("--stage",required=True); ap.add_argument("--operation",required=True)
-    ap.add_argument("--work-unit",required=True); ap.add_argument("--execution-root",required=True)
+    ap.add_argument("--work-unit",required=True); ap.add_argument("--product-root",required=True)
     a=ap.parse_args()
     if a.stage!="STAGE-02" or a.operation not in OPS: raise SystemExit("BLOCK:STAGE02_EXECUTOR_OPERATION_IDENTITY_DRIFT")
-    root=Path(a.execution_root).resolve(); wp=root/Path(a.work_unit); wd=wp.parent; work=load(wp)
+    root=Path(a.product_root).resolve(); wp=root/Path(a.work_unit); wd=wp.parent; work=load(wp)
     if str(work.get("stage_uid"))!="STAGE-02": raise SystemExit("BLOCK:STAGE02_WORK_UNIT_STAGE_DRIFT")
     bp,ctx,conflicts,deps,refs,p=common(root,work)
     op=a.operation

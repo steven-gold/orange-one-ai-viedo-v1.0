@@ -66,7 +66,7 @@ jobs:
           python .github/governance-source/active/source/09_TESTS/governance/validate_stage_execution_invariants.py
       - name: Syntax-check lifecycle runtime guards
         run: |
-          python -m py_compile .github/scripts/full_stage_lifecycle_guard.py .github/scripts/stage_lifecycle_gate.py .github/scripts/current_stage_execute.py .github/scripts/common_stage_closure.py .github/scripts/common_stage_closure_adapter.py .github/scripts/common_cross_stage_handoff_builder.py .github/scripts/common_stage_terminalizer.py .github/scripts/common_successor_materialize.py .github/scripts/common_successor_work_unit_builder.py .github/scripts/common_successor_binding_resolver.py .github/scripts/common_stage_preterminal.py .github/scripts/common_declared_stage_validator.py .github/scripts/stage02_operation_runtime.py .github/scripts/stage02_scanner.py
+          python -m py_compile .github/scripts/full_stage_lifecycle_guard.py .github/scripts/stage_lifecycle_gate.py .github/scripts/current_stage_execute.py .github/scripts/common_stage_human_gate.py .github/scripts/common_stage_closure.py .github/scripts/common_stage_closure_adapter.py .github/scripts/common_cross_stage_handoff_builder.py .github/scripts/common_stage_terminalizer.py .github/scripts/common_successor_materialize.py .github/scripts/common_successor_work_unit_builder.py .github/scripts/common_successor_binding_resolver.py .github/scripts/common_stage_preterminal.py .github/scripts/common_declared_stage_validator.py .github/scripts/stage02_operation_runtime.py .github/scripts/stage02_scanner.py
       - name: Regression-test shared runtime import and retired consumer paths
         run: |
           set -euo pipefail
@@ -80,6 +80,8 @@ jobs:
           PY
           )
           grep -q "sys.path.insert(0,'governance/ci')" .github/scripts/current_stage_execute.py
+          grep -q "BLOCK:SUBPROCESS_TIMEOUT" .github/scripts/current_stage_execute.py
+          python .github/scripts/stage02_operation_runtime.py --help | grep -q -- "--product-root"
           grep -q "def rebind_run_manifest_hash" .github/scripts/current_stage_execute.py
           grep -q "WORK_UNIT ledger hash rebinding is owned by current_stage_execute.py" .github/scripts/stage01_operation_runtime.py
           ! grep -q "CURRENT_STAGE02_RESUME.yaml" .github/workflows/product-stage02-validation.yml

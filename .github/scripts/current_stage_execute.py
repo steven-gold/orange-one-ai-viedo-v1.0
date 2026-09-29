@@ -11,7 +11,12 @@ def load(path):
     return obj
 
 def run(cmd,cwd,env=None):
-    cp=subprocess.run(cmd,cwd=cwd,env=env,text=True)
+    timeout=int(os.environ.get("ACPOS_OPERATION_SUBPROCESS_TIMEOUT_SECONDS","900"))
+    print("RUN:", " ".join(map(str,cmd)), flush=True)
+    try:
+        cp=subprocess.run(cmd,cwd=cwd,env=env,text=True,timeout=timeout)
+    except subprocess.TimeoutExpired:
+        raise SystemExit("BLOCK:SUBPROCESS_TIMEOUT:"+str(timeout)+":"+str(cmd[0]))
     if cp.returncode!=0:
         raise SystemExit(cp.returncode)
 
@@ -67,7 +72,7 @@ def main():
 
     plan=json.loads(subprocess.check_output(
         [sys.executable,"governance/ci/stage_execution_engine.py","--plan","--stage",args.stage],
-        cwd=root,text=True
+        cwd=root,text=True,timeout=int(os.environ.get("ACPOS_OPERATION_SUBPROCESS_TIMEOUT_SECONDS","900"))
     ))
     op_total=len(plan.get("operations") or [])
     if op_total<=0:
