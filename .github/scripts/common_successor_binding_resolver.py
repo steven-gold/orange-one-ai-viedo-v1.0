@@ -200,6 +200,7 @@ def main():
             source=(auth.get("toolchain_authority") or {}).get(cls)
             if source is None: source=(auth.get("execution_target_authority") or {}).get(cls)
             if source is None: source=(auth.get("verification_target_authority") or {}).get(cls)
+            if source is None: source=(auth.get("build_target_authority") or {}).get(cls)
             if not isinstance(source,dict):
                 raise SystemExit("BLOCK:PRODUCT_IMPLEMENTATION_AUTHORITY_CLASS_MISSING:"+cls)
             status=str(source.get("status") or "")
