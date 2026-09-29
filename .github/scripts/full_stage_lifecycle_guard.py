@@ -80,7 +80,6 @@ def validate_contract(product,gov):
         ".github/scripts/common_stage_closure_adapter.py",
         ".github/scripts/common_stage_terminalizer.py",
         ".github/scripts/common_successor_binding_resolver.py",
-        ".github/scripts/common_successor_materialize.py",
         ".github/scripts/common_successor_work_unit_builder.py",
         ".github/scripts/common_stage_human_gate.py",
         ".github/scripts/stage_lifecycle_gate.py",
