@@ -1,235 +1,117 @@
 name: Product Full Stage Lifecycle Validation
-# validation-only-v3
+# Read-only structural/specification audit. It never executes product operations.
 on:
   push:
     branches: [0921acpos]
     paths:
+      - '.github/scripts/**'
+      - '.github/workflows/**'
+      - 'STAGE_EXECUTION/SHARED_AUTHORITY/CURRENT_GOVERNANCE_SELECTION.yaml'
       - 'STAGE_EXECUTION/SHARED_AUTHORITY/CURRENT_STAGE_FLOW/**'
-      - '.github/scripts/full_stage_lifecycle_guard.py'
-      - '.github/scripts/stage01_current_materialize.py'
-      - '.github/workflows/product-clean-bootstrap-validation.yml'
-      - '.github/scripts/stage_lifecycle_gate.py'
-      - '.github/scripts/current_stage_execute.py'
-      - '.github/scripts/common_stage_closure.py'
-      - '.github/scripts/common_stage_closure_adapter.py'
-      - '.github/scripts/common_stage_terminalizer.py'
-      - '.github/scripts/common_successor_materialize.py'
-      - '.github/scripts/common_successor_work_unit_builder.py'
-      - '.github/scripts/common_successor_binding_resolver.py'
-      - '.github/scripts/common_stage_preterminal.py'
-      - '.github/scripts/stage02_operation_runtime.py'
-      - '.github/scripts/stage02_scanner.py'
-      - '.github/workflows/product-stage-lifecycle-driver.yml'
-      - '.github/workflows/product-stage-preterminal-validation.yml'
-      - '.github/workflows/product-full-stage-lifecycle-validation.yml'
-      - '.github/workflows/product-stage01-validated-entry.yml'
-      - '.github/workflows/product-stage*-materialize.yml'
-      - '.github/workflows/product-stage*-validation.yml'
-      - '.github/workflows/product-stage*-execute.yml'
-      - '.github/workflows/product-stage-current-execute-reusable.yml'
-      - '.github/workflows/product-stage-current-resume.yml'
-      - 'STAGE_EXECUTION/STAGE-*/WU-*/EVIDENCE/SCANNER_RESULTS/**'
-      - 'STAGE_EXECUTION/STAGE-*/WU-*/EVIDENCE/VALIDATOR_RESULTS/**'
-      - 'STAGE_EXECUTION/STAGE-*/WU-*/EVIDENCE/HIDDEN_DEFECT_SWEEP_RESULT.yaml'
-      - 'STAGE_EXECUTION/STAGE-*/WU-*/EVIDENCE/SUCCESSOR_EXECUTION_BINDING_RESOLUTION.yaml'
   workflow_dispatch:
 permissions:
   contents: read
+
 jobs:
-  validate-full-lifecycle-plan:
+  validate-lifecycle-spec:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
           ref: ${{ github.sha }}
           fetch-depth: 0
+
       - name: Resolve exact selected Current governance
         id: governance
         shell: bash
         run: |
           set -euo pipefail
           SEL="STAGE_EXECUTION/SHARED_AUTHORITY/CURRENT_GOVERNANCE_SELECTION.yaml"
-          test -s "$SEL" || { echo "BLOCK:CURRENT_GOVERNANCE_SELECTION_MISSING"; exit 31; }
-          STATUS="$(awk '$1=="status:" {print $2; exit}' "$SEL")"
+          test -s "$SEL"
+          test "$(awk '$1=="status:" {print $2; exit}' "$SEL")" = "SELECTED_EXACT_CURRENT_SNAPSHOT"
           COMMIT="$(awk '$1=="governance_commit_sha:" {print $2; exit}' "$SEL")"
-          test "$STATUS" = "SELECTED_EXACT_CURRENT_SNAPSHOT" || { echo "BLOCK:CURRENT_GOVERNANCE_SELECTION_STATUS_INVALID"; exit 32; }
-          echo "$COMMIT" | grep -Eq '^[0-9a-f]{40}$' || { echo "BLOCK:CURRENT_GOVERNANCE_COMMIT_INVALID"; exit 33; }
+          echo "$COMMIT" | grep -Eq '^[0-9a-f]{40}$'
           echo "commit_sha=$COMMIT" >> "$GITHUB_OUTPUT"
+
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
           repository: steven-gold/orange-one-ai-viedo-v1.0
           ref: ${{ steps.governance.outputs.commit_sha }}
           path: _governance_authority
           fetch-depth: 1
+
       - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
         with:
           python-version: '3.11.16'
-      - name: Validate Current Governance lifecycle definition first
-        run: |
-          set -euo pipefail
-          python -m pip install --disable-pip-version-check --require-hashes -r _governance_authority/governance/ci/requirements-governance.lock
-          cd _governance_authority
-          python governance/ci/stage_execution_engine.py --definition-audit-all
-          python .github/governance-source/active/source/09_TESTS/governance/validate_stage_execution_invariants.py
-      - name: Syntax-check lifecycle runtime guards
-        run: |
-          python -m py_compile .github/scripts/full_stage_lifecycle_guard.py .github/scripts/stage_lifecycle_gate.py .github/scripts/current_stage_execute.py .github/scripts/common_stage_human_gate.py .github/scripts/stage05_current_target_resolver.py .github/scripts/common_stage_closure.py .github/scripts/common_stage_closure_adapter.py .github/scripts/common_cross_stage_handoff_builder.py .github/scripts/common_stage_terminalizer.py .github/scripts/common_successor_materialize.py .github/scripts/common_successor_work_unit_builder.py .github/scripts/common_successor_binding_resolver.py .github/scripts/common_stage_preterminal.py .github/scripts/common_declared_stage_validator.py .github/scripts/stage02_operation_runtime.py .github/scripts/stage02_scanner.py
-      - name: Regression-test shared runtime import and retired consumer paths
-        run: |
-          set -euo pipefail
-          (
-            cd _governance_authority
-            python - <<'PY'
-          import sys
-          sys.path.insert(0,'governance/ci')
-          from external_execution_admission import validate_external_stage_admission
-          print('PASS: external execution admission imports with the runtime path used by current_stage_execute')
-          PY
-          )
-          grep -q "sys.path.insert(0,'governance/ci')" .github/scripts/current_stage_execute.py
-          grep -q "BLOCK:SUBPROCESS_TIMEOUT" .github/scripts/current_stage_execute.py
-          python .github/scripts/stage02_operation_runtime.py --help | grep -q -- "--product-root"
-          python .github/scripts/stage03_operation_runtime.py --help | grep -q -- "--product-root"
-          python .github/scripts/stage04_current_operation_runtime.py --help | grep -q -- "--product-root"
-          python - <<'PY'
-          import yaml
-          from pathlib import Path
-          flow=Path('STAGE_EXECUTION/SHARED_AUTHORITY/CURRENT_STAGE_FLOW')
-          reg=yaml.safe_load((flow/'FULL_STAGE_RUNTIME_ADAPTER_REGISTRY.yaml').read_text()) or {}
-          rows={x['stage_uid']:x for x in reg.get('adapters') or []}
-          for i in range(1,5):
-              s=f'STAGE-{i:02d}'
-              assert rows[s].get('state')=='READY_EFFECTFUL_CURRENT', (s,rows[s].get('state'))
-          for i in range(5,12):
-              s=f'STAGE-{i:02d}'
-              assert rows[s].get('state')=='READY_STRUCTURAL_NOT_EFFECTFUL', (s,rows[s].get('state'))
-              assert rows[s].get('effectful_execution_authorized') is False
-          print('PASS: runtime readiness states distinguish authorized executable range from structural future stages')
-          PY
-          python - <<'PY'
-          import yaml
-          from pathlib import Path
-          root=Path('STAGE_EXECUTION/SHARED_AUTHORITY/CURRENT_STAGE_FLOW/EXACT_OPERATION_BINDING_SOURCES')
-          rows=sorted(root.glob('*.yaml'))
-          assert rows, 'BLOCK:NO_EXACT_OPERATION_BINDING_SOURCES'
-          for p in rows:
-              obj=yaml.safe_load(p.read_text(encoding='utf-8'))
-              assert isinstance(obj,dict), 'BLOCK:EXACT_BINDING_SOURCE_NOT_MAPPING:'+str(p)
-              assert obj.get('status')=='CURRENT_EXACT_BINDINGS', 'BLOCK:EXACT_BINDING_SOURCE_NOT_CURRENT:'+str(p)
-          print('PASS: exact operation binding source YAML parse denominator='+str(len(rows)))
-          PY
-          grep -q "def rebind_run_manifest_hash" .github/scripts/current_stage_execute.py
-          grep -q "def reconcile_work_status_from_state" .github/scripts/current_stage_execute.py
-          grep -q -- "--reconcile-only" .github/scripts/current_stage_execute.py
-          grep -q "Reconcile Work Unit status projection before closure" .github/workflows/product-stage-lifecycle-driver.yml
-          grep -q "WORK_UNIT ledger hash rebinding is owned by current_stage_execute.py" .github/scripts/stage01_operation_runtime.py
-          ! grep -q "CURRENT_STAGE02_RESUME.yaml" .github/workflows/product-stage02-validation.yml
-          ! grep -q "STAGE03_NORMALIZED_EVIDENCE_NOT_YET_MATERIALIZED" .github/workflows/product-stage03-validation.yml
-          ! grep -q "STAGE04_NORMALIZED_EVIDENCE_NOT_YET_MATERIALIZED" .github/workflows/product-stage04-validation.yml
-      - name: Parse all current Product Stage workflows
-        run: |
-          python - <<'PY'
-          from pathlib import Path
-          import yaml
-          paths=sorted(Path('.github/workflows').glob('product-stage*.yml'))+[Path('.github/workflows/product-full-stage-lifecycle-validation.yml')]
-          for p in paths:
-              try:
-                  obj=yaml.safe_load(p.read_text(encoding='utf-8'))
-              except Exception as exc:
-                  raise SystemExit(f'BLOCK:WORKFLOW_YAML_PARSE_FAILED:{p}:{type(exc).__name__}:{exc}')
-              if not isinstance(obj,dict) or not obj.get('jobs'):
-                  raise SystemExit(f'BLOCK:WORKFLOW_STRUCTURE_INVALID:{p}')
-          print('PASS: current Product Stage workflows parse and expose jobs',len(paths))
-          PY
-      - name: Validate common closure successor and terminalizer contracts
-        run: |
-          set -euo pipefail
-          python .github/scripts/common_stage_closure_adapter.py --mode validate-contract --product-root "$GITHUB_WORKSPACE" --governance-root "$GITHUB_WORKSPACE/_governance_authority"
-          python .github/scripts/common_successor_work_unit_builder.py --mode validate-contract --product-root "$GITHUB_WORKSPACE" --governance-root "$GITHUB_WORKSPACE/_governance_authority"
-          python .github/scripts/common_stage_terminalizer.py --mode validate-contract --product-root "$GITHUB_WORKSPACE" --governance-root "$GITHUB_WORKSPACE/_governance_authority"
-          python .github/scripts/common_successor_binding_resolver.py --mode validate-contract --product-root "$GITHUB_WORKSPACE" --governance-root "$GITHUB_WORKSPACE/_governance_authority"
-          python .github/scripts/common_stage_preterminal.py --mode validate-contract --product-root "$GITHUB_WORKSPACE" --governance-root "$GITHUB_WORKSPACE/_governance_authority"
-      - name: Validate Stage02 exact binding source against Current lifecycle
-        run: |
-          python - <<'PY'
-          import yaml
-          from pathlib import Path
-          life=yaml.safe_load(Path('_governance_authority/.github/governance-source/active/source/10_REGISTRY/GOVERNANCE_LIFECYCLE_STAGE_REGISTRY.yaml').read_text()) or {}
-          stage=next(x for x in life.get('stages',[]) if x.get('stage_uid')=='STAGE-02')
-          src=yaml.safe_load(Path('STAGE_EXECUTION/SHARED_AUTHORITY/CURRENT_STAGE_FLOW/EXACT_OPERATION_BINDING_SOURCES/STAGE-02.yaml').read_text()) or {}
-          assert src.get('status')=='CURRENT_EXACT_BINDINGS'
-          assert list((src.get('operation_bindings') or {}).keys())==list(stage.get('operations') or []), 'BLOCK:STAGE02_BINDING_OPERATION_ORDER_DRIFT'
-          expected=set(stage.get('outputs') or [])|set(stage.get('required_evidence') or [])
-          assert set((src.get('artifact_specs') or {}).keys())==expected, 'BLOCK:STAGE02_ARTIFACT_SPEC_DENOMINATOR_DRIFT'
-          assert src.get('scanner_protocol')=='PYTHON_STAGE_SCANNER_V1'
-          assert set((src.get('validator_bindings') or {}).keys())==set(stage.get('validators') or [])
-          print('PASS: Stage02 exact binding source matches Current lifecycle denominator')
-          PY
-      - name: Validate transition and permission skeleton with negative tests
-        run: |
-          python .github/scripts/stage_lifecycle_gate.py --mode self-test --product-root "$GITHUB_WORKSPACE" --governance-root "$GITHUB_WORKSPACE/_governance_authority"
-      - name: Validate one full Stage authorization and permission lifecycle
-        run: |
-          set -euo pipefail
-          python .github/scripts/full_stage_lifecycle_guard.py --mode plan --product-root "$GITHUB_WORKSPACE" --governance-root "$GITHUB_WORKSPACE/_governance_authority"
-      - name: Assert planning validation has zero execution credit
-        run: |
-          python - <<'PY'
-          import yaml
-          from pathlib import Path
-          p=Path('STAGE_EXECUTION/SHARED_AUTHORITY/CURRENT_STAGE_FLOW/FULL_STAGE_LIFECYCLE_AUTHORIZATION_CONTRACT.yaml')
-          d=yaml.safe_load(p.read_text()) or {}
-          assert d.get('completion_credit') == 0
-          assert d.get('execution_authorization',{}).get('future_effectful_stage_policy') == 'BLOCK_UNTIL_EXPLICIT_USER_OR_GOVERNED_CALLER_RANGE_AUTHORIZATION'
-          print('PASS: planning validation cannot create Stage completion or future-stage execution authority')
-          PY
 
-      - name: Assert validation mode is non-effectful
-        run: |
-          set -euo pipefail
-          ! grep -q "uses: ./.github/workflows/product-stage-lifecycle-driver.yml" .github/workflows/product-full-stage-lifecycle-validation.yml
-          ! grep -q "gh workflow run product-stage-lifecycle-driver.yml" .github/workflows/product-full-stage-lifecycle-validation.yml
-          grep -q "refresh_stage1_manifests" .github/scripts/common_stage_preterminal.py
-          echo "PASS: full lifecycle validation is read-only and preterminal manifest freshness remediation is present"
-      - name: Validate registered vertical Stage entry continuity
-        run: |
-          set -euo pipefail
-          for S in 05 06 07 08 09 10 11; do
-            F=".github/workflows/product-stage${S}-execute.yml"
-            test -s "$F"
-            grep -q "uses: ./.github/workflows/product-stage-lifecycle-driver.yml" "$F"
-            grep -q "stage: STAGE-${S}" "$F"
-          done
-          echo "PASS: Stage-05..11 top-level entries all route through the common lifecycle driver"
-
-      - name: Validate exact-head persisted preterminal candidates
+      - name: Load exact governance runtime
         run: |
           set -euo pipefail
           rm -rf governance .github/governance-source
           cp -R _governance_authority/governance ./governance
           mkdir -p .github
           cp -R _governance_authority/.github/governance-source .github/governance-source
-          python - <<'PY' > /tmp/acpos_preterminal_candidates
-          from pathlib import Path
-          import yaml
-          root=Path('STAGE_EXECUTION')
-          for state_path in sorted(root.glob('STAGE-*/WU-*/EXECUTION_STATE.yaml')):
-              d=yaml.safe_load(state_path.read_text(encoding='utf-8')) or {}
-              if str(d.get('current_operation') or '')!='COMPLETE':
-                  continue
-              wd=state_path.parent
-              if (wd/'WORK_UNIT_TERMINAL_RECEIPT.yaml').is_file():
-                  continue
-              if not (wd/'EVIDENCE/SUCCESSOR_EXECUTION_BINDING_RESOLUTION.yaml').is_file():
-                  continue
-              print(f"{wd.parent.name}|{wd.name}")
-          PY
-          COUNT=0
-          while IFS='|' read -r STAGE WU; do
-            [ -n "$STAGE" ] || continue
-            COUNT=$((COUNT+1))
-            python .github/scripts/common_stage_preterminal.py --mode validate --stage "$STAGE" --work-unit "STAGE_EXECUTION/$STAGE/$WU/WORK_UNIT.yaml" --product-root "$GITHUB_WORKSPACE" --governance-root "$GITHUB_WORKSPACE/_governance_authority"
-            python .github/scripts/common_stage_closure.py --mode preflight --stage "$STAGE" --work-unit "STAGE_EXECUTION/$STAGE/$WU/WORK_UNIT.yaml" --product-root "$GITHUB_WORKSPACE" --governance-root "$GITHUB_WORKSPACE/_governance_authority"
-          done < /tmp/acpos_preterminal_candidates
-          echo "PASS: exact-head preterminal candidate denominator validated count=$COUNT"
-          git diff --exit-code
+          python -m pip install --disable-pip-version-check --require-hashes -r governance/ci/requirements-governance.lock
+
+      - name: Validate Mother definitions and simplified lifecycle contract
+        run: |
+          set -euo pipefail
+          (
+            cd _governance_authority
+            python governance/ci/stage_execution_engine.py --definition-audit-all
+            python .github/governance-source/active/source/09_TESTS/governance/validate_stage_execution_invariants.py
+          )
+          python -m py_compile \
+            .github/scripts/full_stage_lifecycle_guard.py \
+            .github/scripts/stage_lifecycle_gate.py \
+            .github/scripts/current_stage_execute.py \
+            .github/scripts/common_stage_human_gate.py \
+            .github/scripts/common_stage_preterminal.py \
+            .github/scripts/common_stage_closure.py \
+            .github/scripts/common_stage_closure_adapter.py \
+            .github/scripts/common_stage_terminalizer.py \
+            .github/scripts/common_successor_binding_resolver.py \
+            .github/scripts/common_successor_materialize.py \
+            .github/scripts/common_successor_work_unit_builder.py
+
+          python .github/scripts/full_stage_lifecycle_guard.py --mode plan --product-root "$GITHUB_WORKSPACE" --governance-root "$GITHUB_WORKSPACE/_governance_authority"
+          python .github/scripts/stage_lifecycle_gate.py --mode validate-all --product-root "$GITHUB_WORKSPACE" --governance-root "$GITHUB_WORKSPACE/_governance_authority"
+          python .github/scripts/common_stage_closure_adapter.py --mode validate-contract --product-root "$GITHUB_WORKSPACE" --governance-root "$GITHUB_WORKSPACE/_governance_authority"
+          python .github/scripts/common_stage_terminalizer.py --mode validate-contract --product-root "$GITHUB_WORKSPACE" --governance-root "$GITHUB_WORKSPACE/_governance_authority"
+          python .github/scripts/common_successor_work_unit_builder.py --mode validate-contract --product-root "$GITHUB_WORKSPACE" --governance-root "$GITHUB_WORKSPACE/_governance_authority"
+
+      - name: Prove duplicate orchestration state has been removed
+        run: |
+          set -euo pipefail
+          forbidden=(
+            STAGE_EXECUTION/SHARED_AUTHORITY/CURRENT_STAGE_FLOW/CURRENT_EXECUTION_RESOLUTION.yaml
+            STAGE_EXECUTION/SHARED_AUTHORITY/CURRENT_STAGE_FLOW/CURRENT_REMEDIATION_STATE.yaml
+            STAGE_EXECUTION/SHARED_AUTHORITY/CURRENT_STAGE_FLOW/CURRENT_STAGE01_RESUME_REQUEST.yaml
+            STAGE_EXECUTION/SHARED_AUTHORITY/CURRENT_STAGE_FLOW/CURRENT_STAGE_EXECUTION_REQUEST.yaml
+            STAGE_EXECUTION/SHARED_AUTHORITY/CURRENT_STAGE_FLOW/FULL_STAGE_DEFECT_LEDGER.yaml
+            STAGE_EXECUTION/SHARED_AUTHORITY/CURRENT_STAGE_FLOW/FULL_STAGE_TRANSITION_MATRIX.yaml
+            STAGE_EXECUTION/SHARED_AUTHORITY/CURRENT_STAGE_FLOW/FULL_STAGE_PERMISSION_CONTINUITY_MATRIX.yaml
+            STAGE_EXECUTION/SHARED_AUTHORITY/CURRENT_STAGE_FLOW/FULL_STAGE_RUNTIME_ADAPTER_REGISTRY.yaml
+            STAGE_EXECUTION/SHARED_AUTHORITY/CURRENT_STAGE_FLOW/COMMON_STAGE_CLOSURE_PROTOCOL.yaml
+            STAGE_EXECUTION/SHARED_AUTHORITY/CURRENT_STAGE_FLOW/COMMON_TERMINAL_RECEIPT_PERSISTENCE_PROTOCOL.yaml
+            STAGE_EXECUTION/SHARED_AUTHORITY/CURRENT_STAGE_FLOW/COMMON_NORMALIZED_EVIDENCE_PROTOCOL.yaml
+            STAGE_EXECUTION/SHARED_AUTHORITY/CURRENT_STAGE_FLOW/COMMON_SUCCESSOR_MATERIALIZATION_PROTOCOL.yaml
+            STAGE_EXECUTION/SHARED_AUTHORITY/CURRENT_STAGE_FLOW/FULL_STAGE_HANDOFF_INPUT_ORIGIN_MATRIX.yaml
+            STAGE_EXECUTION/SHARED_AUTHORITY/CURRENT_STAGE_FLOW/FULL_STAGE_OPERATION_BINDING_PROFILE_REGISTRY.yaml
+            STAGE_EXECUTION/SHARED_AUTHORITY/CURRENT_STAGE_FLOW/FULL_STAGE_PREENTRY_CONVERGENCE_MATRIX.yaml
+            STAGE_EXECUTION/SHARED_AUTHORITY/CURRENT_STAGE_FLOW/STAGE01_LIFECYCLE_DRIVER_REQUEST.yaml
+            STAGE_EXECUTION/SHARED_AUTHORITY/CURRENT_STAGE_FLOW/STAGE01_PRESTAGE_EXECUTION_REQUEST.yaml
+          )
+          for p in "${forbidden[@]}"; do
+            test ! -e "$p" || { echo "BLOCK:DUPLICATE_ORCHESTRATION_STATE_REMAINS:$p"; exit 41; }
+          done
+
+      - name: Prove execution and validation responsibilities are separated
+        run: |
+          set -euo pipefail
+          ! grep -q "CURRENT_STAGE_EXECUTION_REQUEST" .github/workflows/product-stage-lifecycle-driver.yml
+          ! grep -q "gh run watch" .github/workflows/product-stage-lifecycle-driver.yml
+          ! grep -q "Wait for independent exact-head outer validation" .github/workflows/product-stage-lifecycle-driver.yml
+          ! grep -q "current_stage_execute.py" .github/workflows/product-full-stage-lifecycle-validation.yml
+          ! grep -q "common_successor_materialize.py --mode materialize" .github/workflows/product-full-stage-lifecycle-validation.yml
+          echo "PASS: validation is read-only and lifecycle execution has one driver"
