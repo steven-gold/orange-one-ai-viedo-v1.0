@@ -151,18 +151,16 @@ def main():
     write(wd/"EXECUTION_STATE.yaml",{
       "artifact_type":"WORK_UNIT_EXECUTION_STATE","stage_uid":a.successor_stage,"work_unit_uid":successor_uid,
       "governed_unit_uid":governed,"governance_uid":gov_uid,"status":"READY_FOR_EXECUTION",
-      "current_operation":expected[0],"completed_operations":[],"resume_control":{"product_execution_allowed":True},"completion_credit":0})
-    write(wd/"CURRENT_STAGE_RESUME.yaml",{
-      "artifact_type":"CURRENT_STAGE_RESUME","stage_uid":a.successor_stage,"work_unit_uid":successor_uid,
-      "governed_unit_uid":governed,"terminal_status":"NOT_STARTED","predecessor_work_unit_uid":pred.get("work_unit_uid"),
-      "next_action":"RUN_CURRENT_GOVERNANCE_LOAD_AND_STAGE_ADMISSION","status":"CURRENT","completion_credit":0})
+      "current_operation":expected[0],"completed_operations":[],"resume_control":{"product_execution_allowed":True},
+      "predecessor_work_unit_uid":pred.get("work_unit_uid"),
+      "next_action":"RUN_CURRENT_GOVERNANCE_LOAD_AND_STAGE_ADMISSION","resume_status":"CURRENT","completion_credit":0})
     write(wd/"SUCCESSOR_WORK_UNIT_MATERIALIZATION_RECEIPT.yaml",{
       "artifact_type":"SUCCESSOR_WORK_UNIT_MATERIALIZATION_RECEIPT","stage_uid":a.successor_stage,
       "work_unit_uid":successor_uid,"governed_unit_uid":governed,
       "predecessor_terminal_receipt_ref":str(receipt.relative_to(root)),
       "operation_binding_manifest_ref":a.operation_binding_manifest,
       "normative_execution_matrix_ref":matrix_rel,"status":"MATERIALIZED_PENDING_ADMISSION","completion_credit":0})
-    print("PASS: successor Work Unit matrix/scope/state/resume/bindings materialized",successor_uid)
+    print("PASS: successor Work Unit matrix/scope/state/bindings materialized; EXECUTION_STATE is resume truth",successor_uid)
 
 if __name__=="__main__":
     main()
