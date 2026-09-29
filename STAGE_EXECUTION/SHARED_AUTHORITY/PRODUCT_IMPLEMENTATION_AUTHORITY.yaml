@@ -263,3 +263,59 @@ stage07_readiness:
   exact_binding_source_may_be_promoted_to_current: true
   effectful_stage07_admission_allowed_after_stage06_closed_pass: true
   historical_runtime_completion_credit: 0
+
+staging_target_authority:
+  STAGING_PROVIDER_PROJECT:
+    status: UNRESOLVED_EXTERNAL_CURRENT_TARGET
+    resolution_kind: EXTERNAL_CURRENT_TARGET
+    provider: Vercel
+    connected_team_slug: gold5757
+    connected_team_project_count: 0
+    current_repository_binding_ref: .vercel/project.json
+    current_repository_binding_present: false
+    authority_evidence:
+    - VERCEL_CONNECTED_TEAM_PROJECT_LIST_EMPTY_2026-09-30
+    - CURRENT_REPOSITORY_HAS_VERCEL_JSON_BUT_NO_DOT_VERCEL_PROJECT_JSON
+    ai_may_create_or_select_project_without_explicit_authority: false
+  STAGING_ENVIRONMENT:
+    status: UNRESOLVED_EXTERNAL_CURRENT_TARGET
+    resolution_kind: EXTERNAL_CURRENT_TARGET
+    provider: Vercel
+    required_environment_kind: preview_or_staging
+    current_project_required_first: true
+    ai_may_invent_environment: false
+  STAGING_DEPLOYMENT_TARGET:
+    status: UNRESOLVED_EXTERNAL_CURRENT_TARGET
+    resolution_kind: EXTERNAL_CURRENT_TARGET
+    provider: Vercel
+    deployment_owner_status: UNRESOLVED
+    current_runtime_only_contains_post_deploy_acceptance_scripts: true
+    current_vercel_git_policy:
+      deployment_enabled_branch:
+      - main
+      non_main_branches_enabled: false
+    ai_may_use_production_main_deploy_as_staging_substitute: false
+  STAGING_ACCEPTANCE_TARGET:
+    status: UNRESOLVED_EXTERNAL_CURRENT_TARGET
+    resolution_kind: EXTERNAL_CURRENT_TARGET
+    provider: Vercel
+    acceptance_script_refs:
+    - scripts/post-deploy-smoke.mjs
+    - scripts/post-deploy-browser-smoke.mjs
+    acceptance_target_requires_resolved_deployment_url: true
+
+stage08_readiness:
+  required_binding_class_total: 4
+  resolved_binding_class_total: 0
+  unresolved_binding_class_total: 4
+  unresolved_binding_classes:
+  - STAGING_PROVIDER_PROJECT
+  - STAGING_ENVIRONMENT
+  - STAGING_DEPLOYMENT_TARGET
+  - STAGING_ACCEPTANCE_TARGET
+  exact_binding_source_may_be_materialized_fail_closed: true
+  effectful_stage08_admission_allowed: false
+  blocker_classes:
+  - EXTERNAL_CURRENT_TARGET_IDENTITY_UNRESOLVED
+  - EFFECTFUL_STAGING_DEPLOYMENT_OWNER_UNRESOLVED
+  historical_runtime_completion_credit: 0
