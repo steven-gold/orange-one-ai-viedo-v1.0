@@ -24,7 +24,7 @@ def main():
     args=ap.parse_args()
     root=Path(args.product_root).resolve()
     govroot=Path(args.governance_root).resolve()
-    reg=load(root/"governance/specifications/REGISTRY.yaml")
+    run([sys.executable,".github/scripts/stage_lifecycle_gate.py","--mode","assert-stage-authorized","--stage",args.stage,"--product-root",str(root),"--governance-root",str(govroot)],root)\n    reg=load(root/"governance/specifications/REGISTRY.yaml")
     gov_uid=str((reg.get("governance_identity") or {}).get("governance_uid") or "")
     if not gov_uid:
         raise SystemExit("BLOCK:CURRENT_GOVERNANCE_UID_MISSING")
@@ -46,7 +46,7 @@ def main():
         for p,label in ((work_path,"WORK_UNIT"),(scope_path,"CURRENT_SCOPE"),(state_path,"EXECUTION_STATE")):
             if not p.is_file() or p.stat().st_size<=0:
                 raise SystemExit(f"BLOCK:CURRENT_{label}_MISSING:{wu}")
-        run([
+        run([sys.executable,".github/scripts/stage_lifecycle_gate.py","--mode","assert-work-unit-entry","--stage",args.stage,"--work-unit",str(work_path.relative_to(root)),"--product-root",str(root),"--governance-root",str(govroot)],root)\n        run([
             sys.executable,".github/scripts/product_current_governance_load.py",
             "--product-root",str(root),"--governance-root",str(govroot),
             "--stage",args.stage,"--work-unit",str(work_path.relative_to(root))

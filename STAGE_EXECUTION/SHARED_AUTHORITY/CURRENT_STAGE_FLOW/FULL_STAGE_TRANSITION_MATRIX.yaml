@@ -1,0 +1,30 @@
+artifact_type: PRODUCT_FULL_STAGE_TRANSITION_MATRIX
+status: CURRENT
+normative_authority: false
+transition_owner: COMMON_STAGE_LIFECYCLE_ORCHESTRATOR
+governance_uid: GOV-REV-20260928-WORD-DERIVED-STAGE-INTERNAL-VALIDATION
+governance_head: c353d7bdb5dc7edb43c6c7453517d1df75d54ce8
+rules:
+  predecessor_terminal_pass_required: true
+  predecessor_handoff_pass_required: true
+  successor_inside_authorized_effectful_range_required_for_materialization: true
+  successor_preproduction: FORBIDDEN
+  stage_skip: FORBIDDEN
+  closed_work_unit_reactivation: FORBIDDEN
+  current_resume_persist_before_successor: true
+  successor_materialization_owner: COMMON_SUCCESSOR_WORK_UNIT_MATERIALIZER
+  closure_owner: COMMON_STAGE_CLOSURE_PROTOCOL
+  next_stage_admission_owner: COMMON_STAGE_LIFECYCLE_ORCHESTRATOR
+transitions:
+- {stage_uid: STAGE-01, predecessor_stage_uid: null, entry_gate: GOVERNANCE_PREFORMAL_READY, exit_gate: CURRENT_GOVERNED_UNIT_STAGE1_CLOSED, next_stage_uid: STAGE-02, current_effectful_authorized: true, human_boundary: NONE}
+- {stage_uid: STAGE-02, predecessor_stage_uid: STAGE-01, entry_gate: CURRENT_GOVERNED_UNIT_STAGE1_CLOSED, exit_gate: CURRENT_GOVERNED_UNIT_STAGE2_CLOSED, next_stage_uid: STAGE-03, current_effectful_authorized: true, human_boundary: AUTHORITY_AMBIGUITY_ONLY}
+- {stage_uid: STAGE-03, predecessor_stage_uid: STAGE-02, entry_gate: CURRENT_GOVERNED_UNIT_STAGE2_CLOSED, exit_gate: CURRENT_GOVERNED_UNIT_STAGE3_CLOSED, next_stage_uid: STAGE-04, current_effectful_authorized: true, human_boundary: FORMAL_VISUAL_REVIEW_WHEN_REGISTERED}
+- {stage_uid: STAGE-04, predecessor_stage_uid: STAGE-03, entry_gate: CURRENT_GOVERNED_UNIT_STAGE3_CLOSED, exit_gate: CURRENT_GOVERNED_UNIT_FOUNDATION_FROZEN, next_stage_uid: STAGE-05, current_effectful_authorized: true, human_boundary: FORMAL_DESIGN_APPROVAL_WHEN_APPLICABLE}
+- {stage_uid: STAGE-05, predecessor_stage_uid: STAGE-04, entry_gate: CURRENT_GOVERNED_UNIT_FOUNDATION_FROZEN_AND_PREDECESSOR_STAGE_CLOSED, exit_gate: GOVERNED_UNIT_IMPLEMENTATION_COMPLETE, next_stage_uid: STAGE-06, current_effectful_authorized: false, human_boundary: AUTHORITY_AMBIGUITY_ONLY}
+- {stage_uid: STAGE-06, predecessor_stage_uid: STAGE-05, entry_gate: GOVERNED_UNIT_IMPLEMENTATION_COMPLETE, exit_gate: PRE_RELEASE_VERIFICATION_CLOSED, next_stage_uid: STAGE-07, current_effectful_authorized: false, human_boundary: BLOCKED_REENTRY_ON_FAILED_TEST}
+- {stage_uid: STAGE-07, predecessor_stage_uid: STAGE-06, entry_gate: PRE_RELEASE_VERIFICATION_CLOSED, exit_gate: RELEASE_CANDIDATE_ACCEPTED, next_stage_uid: STAGE-08, current_effectful_authorized: false, human_boundary: STAGING_APPLICABILITY_AMBIGUITY_ONLY}
+- {stage_uid: STAGE-08, predecessor_stage_uid: STAGE-07, entry_gate: RELEASE_CANDIDATE_ACCEPTED, exit_gate: STAGING_CLOSED_ACCEPTED_OR_AUTHORITY_PROVEN_NOT_APPLICABLE, next_stage_uid: STAGE-09, current_effectful_authorized: false, human_boundary: BLOCKED_REENTRY_IF_NA_AUTHORITY_MISSING}
+- {stage_uid: STAGE-09, predecessor_stage_uid: STAGE-08, entry_gate: STAGING_CLOSED_ACCEPTED_OR_AUTHORITY_PROVEN_NOT_APPLICABLE, exit_gate: PRODUCTION_CUTOVER_CLOSED, next_stage_uid: STAGE-10, current_effectful_authorized: false, human_boundary: BLOCKED_REENTRY_ON_CUTOVER_FAILURE}
+- {stage_uid: STAGE-10, predecessor_stage_uid: STAGE-09, entry_gate: PRODUCTION_CUTOVER_CLOSED, exit_gate: PRODUCTION_ACCEPTANCE_EVIDENCE_CLOSED, next_stage_uid: STAGE-11, current_effectful_authorized: false, human_boundary: BLOCKED_REENTRY_ON_ACCEPTANCE_FAILURE}
+- {stage_uid: STAGE-11, predecessor_stage_uid: STAGE-10, entry_gate: PRODUCTION_ACCEPTANCE_EVIDENCE_CLOSED, exit_gate: GOVERNED_UNIT_CLOSED, next_stage_uid: NEXT_GOVERNED_UNIT_STAGE05_OR_SCOPE_COMPLETE, current_effectful_authorized: false, human_boundary: NONE}
+completion_credit: 0

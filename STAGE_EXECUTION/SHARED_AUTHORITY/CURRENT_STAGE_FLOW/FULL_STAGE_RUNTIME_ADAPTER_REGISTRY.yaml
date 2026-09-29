@@ -1,0 +1,31 @@
+artifact_type: PRODUCT_FULL_STAGE_RUNTIME_ADAPTER_REGISTRY
+status: CURRENT_STRUCTURAL_CONTRACT
+normative_authority: false
+governance_uid: GOV-REV-20260928-WORD-DERIVED-STAGE-INTERNAL-VALIDATION
+rules:
+  operation_universe_source: CURRENT_LIFECYCLE_REGISTRY
+  input_universe_source: CURRENT_LIFECYCLE_REGISTRY
+  output_universe_source: CURRENT_LIFECYCLE_REGISTRY
+  required_evidence_source: CURRENT_LIFECYCLE_REGISTRY
+  operation_executor_source: CURRENT_WORK_UNIT_OPERATION_BINDINGS
+  closure_protocol: COMMON_STAGE_CLOSURE_PROTOCOL
+  successor_materializer: COMMON_SUCCESSOR_WORK_UNIT_MATERIALIZER
+  stage_specific_adapter_may_define_authorization: false
+  stage_specific_adapter_may_define_permission_semantics: false
+  stage_specific_adapter_may_define_next_stage: false
+  stage_specific_adapter_may_claim_closure: false
+  unresolved_executor_before_stage_admission: BLOCK
+  unresolved_materializer_before_predecessor_closure: BLOCK
+adapters:
+- {stage_uid: STAGE-01, materializer_protocol: WORD_DERIVED_INITIAL_WORK_UNIT, executor_protocol: WORK_UNIT_BOUND_EXECUTOR, closure_protocol: COMMON_STAGE_CLOSURE_PROTOCOL, validation_protocol: COMMON_PLUS_STAGE_SEMANTIC}
+- {stage_uid: STAGE-02, materializer_protocol: PREDECESSOR_HANDOFF_SUCCESSOR_WORK_UNIT, executor_protocol: WORK_UNIT_BOUND_EXECUTOR, closure_protocol: COMMON_STAGE_CLOSURE_PROTOCOL, validation_protocol: COMMON_PLUS_STAGE_SEMANTIC}
+- {stage_uid: STAGE-03, materializer_protocol: PREDECESSOR_HANDOFF_SUCCESSOR_WORK_UNIT, executor_protocol: WORK_UNIT_BOUND_EXECUTOR, closure_protocol: COMMON_STAGE_CLOSURE_PROTOCOL, validation_protocol: COMMON_PLUS_STAGE_SEMANTIC}
+- {stage_uid: STAGE-04, materializer_protocol: PREDECESSOR_HANDOFF_SUCCESSOR_WORK_UNIT, executor_protocol: WORK_UNIT_BOUND_EXECUTOR, closure_protocol: COMMON_STAGE_CLOSURE_PROTOCOL, validation_protocol: COMMON_PLUS_STAGE_SEMANTIC}
+- {stage_uid: STAGE-05, materializer_protocol: PREDECESSOR_HANDOFF_SUCCESSOR_WORK_UNIT, executor_protocol: WORK_UNIT_BOUND_EXECUTOR, closure_protocol: COMMON_STAGE_CLOSURE_PROTOCOL, validation_protocol: COMMON_PLUS_STAGE_SEMANTIC}
+- {stage_uid: STAGE-06, materializer_protocol: PREDECESSOR_HANDOFF_SUCCESSOR_WORK_UNIT, executor_protocol: WORK_UNIT_BOUND_EXECUTOR, closure_protocol: COMMON_STAGE_CLOSURE_PROTOCOL, validation_protocol: COMMON_PLUS_STAGE_SEMANTIC}
+- {stage_uid: STAGE-07, materializer_protocol: PREDECESSOR_HANDOFF_SUCCESSOR_WORK_UNIT, executor_protocol: WORK_UNIT_BOUND_EXECUTOR, closure_protocol: COMMON_STAGE_CLOSURE_PROTOCOL, validation_protocol: COMMON_PLUS_STAGE_SEMANTIC}
+- {stage_uid: STAGE-08, materializer_protocol: PREDECESSOR_HANDOFF_SUCCESSOR_WORK_UNIT, executor_protocol: WORK_UNIT_BOUND_EXECUTOR, closure_protocol: COMMON_STAGE_CLOSURE_PROTOCOL, validation_protocol: COMMON_PLUS_STAGE_SEMANTIC}
+- {stage_uid: STAGE-09, materializer_protocol: PREDECESSOR_HANDOFF_SUCCESSOR_WORK_UNIT, executor_protocol: WORK_UNIT_BOUND_EXECUTOR, closure_protocol: COMMON_STAGE_CLOSURE_PROTOCOL, validation_protocol: COMMON_PLUS_STAGE_SEMANTIC}
+- {stage_uid: STAGE-10, materializer_protocol: PREDECESSOR_HANDOFF_SUCCESSOR_WORK_UNIT, executor_protocol: WORK_UNIT_BOUND_EXECUTOR, closure_protocol: COMMON_STAGE_CLOSURE_PROTOCOL, validation_protocol: COMMON_PLUS_STAGE_SEMANTIC}
+- {stage_uid: STAGE-11, materializer_protocol: PREDECESSOR_HANDOFF_SUCCESSOR_WORK_UNIT, executor_protocol: WORK_UNIT_BOUND_EXECUTOR, closure_protocol: COMMON_STAGE_CLOSURE_PROTOCOL, validation_protocol: COMMON_PLUS_STAGE_SEMANTIC}
+completion_credit: 0

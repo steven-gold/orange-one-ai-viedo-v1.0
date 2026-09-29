@@ -43,6 +43,9 @@ jobs:
           mkdir -p .github
           cp -R _governance_authority/.github/governance-source .github/governance-source
           python -m pip install --disable-pip-version-check --require-hashes -r governance/ci/requirements-governance.lock
+      - name: Validate full Stage lifecycle contract before Stage02 semantics
+        run: |
+          python .github/scripts/stage_lifecycle_gate.py --mode validate-all --product-root "$GITHUB_WORKSPACE" --governance-root "$GITHUB_WORKSPACE/_governance_authority"
       - name: Validate current governance definition
         run: |
           set -euo pipefail
@@ -61,7 +64,7 @@ jobs:
           set -euo pipefail
           for WU in WU-STAGE02-GLOBAL-HOME-SHELL-NAVIGATION-CLEAN-001 WU-STAGE02-WB01-DASHBOARD-CLEAN-001; do
             B="STAGE_EXECUTION/STAGE-02/${WU}"
-            test -f "$B/EVIDENCE/PAGE_FUNCTIONAL_REVIEW_EVIDENCE.yaml" || { echo "BLOCK:STAGE02_REQUIRED_EVIDENCE_MISSING:$WU"; exit 1; }
+            test -f "$B/EVIDENCE/GOVERNED_UNIT_FUNCTIONAL_REVIEW_EVIDENCE.yaml" || { echo "BLOCK:STAGE02_REQUIRED_EVIDENCE_MISSING:$WU"; exit 1; }
             test -f "$B/EVIDENCE/CROSS_STAGE_HANDOFF_READINESS_LEDGER.yaml" || { echo "BLOCK:STAGE02_HANDOFF_LEDGER_MISSING:$WU"; exit 1; }
             python governance/ci/stage_execution_engine.py --validate-evidence --stage STAGE-02 --evidence "$B/EVIDENCE/STAGE02_NORMALIZED_EVIDENCE.json"
           done
