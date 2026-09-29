@@ -1625,3 +1625,63 @@ For every non-XML binary package part independently observed in the raw DOCX pac
 
 Destructive regression MUST include missing content-readiness audit and missing or hash-mismatched frozen binary source part. A source-fidelity PASS with unavailable pixels/bytes for an embedded visual is false completion and MUST be blocked.
 
+<!-- SECTION_UID: WEB-GOV-04-S088 -->
+## 88. 單一 Stage 內容稽核 / Read-Only Stage Content Audit
+
+Stage Audit MUST 對應 WEB-GOV-03-S073 的單一生產主鏈。
+
+### 88.1 稽核器只能讀取
+
+正式 validator / scanner / audit 在稽核期間 MUST_NOT mutation、materialize、commit、push、改寫 Current State、建立 successor、執行 effectful operation 或觸發另一個 effectful workflow 來完成被檢查內容。
+
+若檢查失敗，Audit 只輸出 deterministic finding、owner、re-entry boundary 與 evidence reference。修正由 owning executor 執行，再由 validator fresh re-run。
+
+### 88.2 Current State 唯一性
+
+Audit MUST 將 `EXECUTION_STATE` 視為 Active Stage Work Unit 唯一 Current State Authority。
+
+`WORK_UNIT`、Resume/request files、runtime workflow state、reports、ledgers、receipts 與 generated bindings 只能作 identity/binding/evidence/projection 使用，不得與 `EXECUTION_STATE` 並列為 Current State truth。
+
+Projection 與 canonical state 不一致時，Audit MUST 產生 projection maintenance finding；除非該 projection 本身是 required content evidence 或其 drift 使 required artifact 無法解析/驗證，否則 projection drift MUST_NOT 單獨否定已被完整內容證據證明的 Stage completion。
+
+### 88.3 Stage PASS 公式以內容為核心
+
+Stage PASS 必須由完整 denominator 的內容事實重建：
+
+- required input coverage；
+- required operation disposition / receipt coverage；
+- required output coverage；
+- required-field completeness；
+- schema / parser validity；
+- scanner result；
+- validator result；
+- required evidence；
+- unresolved content blocker；
+- applicable Human Gate。
+
+Audit MUST_NOT 以 Git HEAD、workflow terminal status、push/rearm event、CAS、branch movement 或 transport-layer receipt 代替任何上述內容事實。
+
+Source-control/CI identity MAY 證明「哪個 snapshot 被測過」，但 snapshot provenance 與 Stage content completion 是兩個不同維度。
+
+### 88.4 Successor 稽核時點
+
+Predecessor closure audit 只驗證 predecessor 自己的 denominator 與 successor REQUIRED artifact inputs 的可消費性。
+
+Successor-owned executor/runtime/provider/environment/deployment/monitoring binding MUST 在 successor 被 materialize 後、到達 owning operation boundary 時驗證。
+
+Audit MUST FAIL 任何「用未來 Stage runtime 尚未實體化」回頭否定合法 predecessor completion 的實作。
+
+### 88.5 Orchestrator 稽核
+
+Audit MUST 證明：
+
+1. 只有一個 lifecycle orchestrator 決定正常 Stage continuation；
+2. 每個 Stage 只有一個 effectful Stage executor；
+3. validator 為 read-only；
+4. successor 只在 predecessor content closure PASS 後由同一 orchestrator materialize；
+5. normal PASS 自動前進；
+6. registered Human Gate / real blocker / execution failure 才停止。
+
+任何 workflow-to-workflow trigger chain、rearm chain、validator-effectful recursion 或第二 Current State Authority MUST 判定為 governance architecture defect。
+
+
