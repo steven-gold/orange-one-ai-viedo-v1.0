@@ -150,6 +150,17 @@ jobs:
           test ! -e .github/scripts/stage05_current_target_resolver.py
           test ! -e STAGE_EXECUTION/SHARED_AUTHORITY/IMPLEMENTATION_EXECUTION_TARGET_AUTHORITY.yaml
           ! grep -q "RESOLVE_CURRENT_IMPLEMENTATION_TARGET" .github/scripts/common_successor_binding_resolver.py
+          python - <<'PY'
+          from pathlib import Path
+          text=Path('.github/workflows/product-stage-lifecycle-driver.yml').read_text(encoding='utf-8')
+          pre=text.find('full_stage_lifecycle_guard.py --mode range-ready')
+          mat=text.find('stage01_current_materialize.py --mode materialize')
+          loop=text.find('while true; do')
+          assert pre>=0, 'BLOCK:RANGE_READINESS_PREFLIGHT_MISSING'
+          assert mat<0 or pre<mat, 'BLOCK:RANGE_READINESS_PREFLIGHT_AFTER_STAGE01_MATERIALIZATION'
+          assert loop<0 or pre<loop, 'BLOCK:RANGE_READINESS_PREFLIGHT_AFTER_EXECUTION_LOOP'
+          print('PASS: full requested range readiness is proven before Stage01 materialization or operation execution')
+          PY
           echo "PASS: validation is read-only and lifecycle execution has one driver"
 
       - name: Validate authorized Stage runtime readiness
