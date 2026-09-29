@@ -82,3 +82,12 @@ Git HEAD、workflow 名稱或歷史 PASS 只能作為 evidence identity，不能
 - push → wait another workflow → rearm 的控制鏈
 
 如果真正缺少的是 operation executor、scanner、validator、required input 或 runtime target，應直接標示為該 Stage 的 specification/runtime readiness gap；不得再用新的狀態檔或 workflow 包住缺口。
+
+
+## Readiness 時點
+
+- `range-ready` 只允許作為診斷／盤點，不得成為 Stage-01 啟動前硬 Gate。
+- 每一 Stage 在進入 effectful execution 前執行 current-stage `execution-ready`。
+- successor REQUIRED inputs、effectful binding 與 execution target readiness 必須在 predecessor Stage exit 前完成。
+- successor Work Unit 只在 predecessor `CLOSED_PASS` 後 materialize。
+- 不得在 Stage-01 啟動前要求 Stage-05→11 的 build / staging / production / monitoring target 全部預先存在；這些 Authority 應在其合法 predecessor boundary 前完成。
