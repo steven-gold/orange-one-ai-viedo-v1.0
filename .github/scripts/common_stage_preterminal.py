@@ -77,8 +77,6 @@ def main():
             refresh_stage1_manifests(root)
             assert_stage1_manifest_fresh(wd)
         write(wd/"EVIDENCE/HIDDEN_DEFECT_SWEEP_RESULT.yaml",{"artifact_type":"HIDDEN_DEFECT_SWEEP","stage_uid":a.stage,"work_unit_uid":work.get("work_unit_uid"),"status":"PASS","discovered_defect_total":0,"basis":"FRESH_SCANNER_REEXECUTION_OR_EXACT_CURRENT_SCANNER_RESULTS"})
-        if a.stage=="STAGE-04":
-            run([sys.executable,".github/scripts/stage05_current_target_resolver.py","--predecessor-work-unit",str(wp.relative_to(root)),"--product-root",str(root)],root)
         run([sys.executable,".github/scripts/common_successor_binding_resolver.py","--mode","resolve","--from-stage",a.stage,"--predecessor-work-unit",str(wp.relative_to(root)),"--product-root",str(root),"--governance-root",str(gov)],root)
         if a.stage=="STAGE-01":
             refresh_stage1_manifests(root)
