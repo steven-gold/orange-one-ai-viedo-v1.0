@@ -81,7 +81,7 @@ res.append(case('out_of_frozen_closure_stops_design', unique_closure(True,1,True
 res.append(case('deterministic_system_trigger_is_auto_remediable', trigger_resolution(source_derived=True,exact_port=True,gate=True,permission=True,success=True)=='SYSTEM_TRIGGER_BINDING_MISSING_AUTO_REMEDIABLE'))
 res.append(case('audit_event_uid_schema_identity_rejects_event_uid_alias', schema_identity('audit_event_uid','audit_event_uid') and not schema_identity('audit_event_uid','event_uid')))
 res.append(case('historical_product_value_fallback_forbidden', history_fallback_allowed('CURRENT_PRODUCT_VALUE') is False))
-res.append(case('task_layer_transition_requires_terminal_resume_wur_active_bootstrap', task_layer_transition_allowed(True,True,True,True,True) and not task_layer_transition_allowed(False,True,True,True,True)))
+res.append(case('task_layer_transition_requires_terminal_state_checkpoint_wur_active_bootstrap', task_layer_transition_allowed(True,True,True,True,True) and not task_layer_transition_allowed(False,True,True,True,True)))
 
 # Static package contract must be intact, including physical-evidence and consumption rules.
 def handoff_ready(reference=True, physical=True, complete=True, denominator=True, consumer=True, unresolved=0):
@@ -123,8 +123,8 @@ res.append(case('successor_binding_authority_cannot_be_ai_selected', crossmat.ge
 res.append(case('successor_runtime_binding_resolves_after_predecessor_close', crossmat.get('successor_runtime_binding_resolution_boundary')=='AFTER_PREDECESSOR_CLOSED_PASS_BEFORE_SUCCESSOR_MATERIALIZATION'))
 res.append(case('stage_local_target_authority_checked_before_consuming_operation', crossmat.get('successor_operation_target_authority_required_before_consuming_operation') is True))
 res.append(case('stage_local_target_may_not_be_ai_invented', crossmat.get('successor_operation_target_may_be_ai_invented') is False))
-res.append(case('current_state_conflict_cannot_be_overridden_by_terminal_success', state_contract.get('pass_requires_completed_operation_set_exact_registered_stage_operations') is True and state_contract.get('terminal_receipt_or_outer_run_success_may_override_conflict') is False))
-res.append(case('terminal_closure_revalidates_nonempty_current_matrix', matrix_contract.get('matrix_file_must_be_nonempty_parseable_mapping') is True and matrix_contract.get('matrix_rows_must_be_nonempty') is True and matrix_contract.get('matrix_validation_must_run_again_at_terminal_closure') is True and matrix_contract.get('terminal_receipt_or_outer_run_success_may_override_invalid_matrix') is False))
+res.append(case('current_state_conflict_cannot_be_overridden_by_transport_success', state_contract.get('pass_requires_completed_operation_set_exact_registered_stage_operations') is True and state_contract.get('terminal_receipt_or_outer_run_success_may_override_conflict') is False))
+res.append(case('content_closure_revalidates_nonempty_current_matrix', matrix_contract.get('matrix_file_must_be_nonempty_parseable_mapping') is True and matrix_contract.get('matrix_rows_must_be_nonempty') is True and matrix_contract.get('matrix_validation_must_run_again_at_terminal_closure') is True and matrix_contract.get('terminal_receipt_or_outer_run_success_may_override_invalid_matrix') is False))
 stage_steps_doc=yaml.safe_load((PKG.parents[3]/'governance/execution-domains/STAGE/STEPS.yaml').read_text(encoding='utf-8')) or {}
 closure_contract=stage_steps_doc.get('stage_closure_contract') or {}
 audit_catalog_doc=yaml.safe_load((PKG/'10_REGISTRY/AUDIT_CATALOG.yaml').read_text(encoding='utf-8')) or {}

@@ -29,7 +29,7 @@ def validate(root=ROOT):
         failures.append('stage_scope_not_all_11')
     if scope.get('stage_specific_exception_without_registered_authority') != 'BLOCK':
         failures.append('unregistered_stage_exception_not_blocked')
-    required = ['RELATION_SEMANTIC_SEPARATION', 'GAP_REMEDIATION_ADMISSIBILITY', 'CURRENT_AUTHORITY_ADMISSIBILITY', 'REQUIRED_EVIDENCE_MATERIALIZATION', 'VALIDATOR_SCHEMA_SEMANTICS', 'UNRESOLVED_PRESERVATION', 'SUCCESSOR_CURRENT_ATOMIC_PROJECTION', 'BLOCKER_DENOMINATOR_AND_RECEIPT', 'AUTHORITY_EVIDENCE_CONSUMPTION', 'FUNCTIONAL_CONTRACT_COMPLETENESS', 'STAGE_ENTRY_PRECHECK', 'PHYSICAL_ARTIFACT_INTEGRITY', 'IMPLEMENTATION_DEVIATION_FEEDBACK', 'REVIEW_VS_CLOSURE_SEPARATION', 'CANONICAL_STAGE_EXECUTION_PREFLIGHT', 'EFFECTIVE_CONTRACT_OVERLAY', 'ROLE_SAFE_FUNCTIONAL_CLOSURE', 'DEPENDENCY_ORDERED_INCREMENTAL_RECONCILIATION', 'COMMON_ENGINE_DEFECT_INTERRUPT', 'GENERATED_OUTPUT_PERSISTENCE', 'CONTROL_VS_SYSTEM_TRIGGER_RESOLUTION', 'PRODUCER_CONSUMER_SCHEMA_IDENTITY', 'NO_HISTORY_PRODUCT_VALUE_FALLBACK', 'TASK_LAYER_EFFECTFUL_TRANSITION_ORDER', 'VISUAL_DESIGN_PROFILE_MATERIALIZATION_COMPLETENESS', 'NORMATIVE_EXECUTION_MATRIX', 'BASIC_DESIGN_DOMAIN_STEPWISE_CHECKPOINT', 'CLOSED_WORK_UNIT_SUCCESSOR_REENTRY', 'CROSS_STAGE_MATERIALIZATION_AND_CONSUMER_READINESS', 'DETERMINISTIC_STAGE_AUDIT']
+    required = ['RELATION_SEMANTIC_SEPARATION', 'GAP_REMEDIATION_ADMISSIBILITY', 'CURRENT_AUTHORITY_ADMISSIBILITY', 'REQUIRED_EVIDENCE_MATERIALIZATION', 'VALIDATOR_SCHEMA_SEMANTICS', 'UNRESOLVED_PRESERVATION', 'SUCCESSOR_CURRENT_ATOMIC_PROJECTION', 'BLOCKER_DENOMINATOR_AND_RECEIPT', 'AUTHORITY_EVIDENCE_CONSUMPTION', 'FUNCTIONAL_CONTRACT_COMPLETENESS', 'STAGE_ENTRY_PRECHECK', 'PHYSICAL_ARTIFACT_INTEGRITY', 'IMPLEMENTATION_DEVIATION_FEEDBACK', 'REVIEW_VS_CLOSURE_SEPARATION', 'CANONICAL_STAGE_EXECUTION_PREFLIGHT', 'EFFECTIVE_CONTRACT_OVERLAY', 'ROLE_SAFE_FUNCTIONAL_CLOSURE', 'DEPENDENCY_ORDERED_INCREMENTAL_RECONCILIATION', 'COMMON_ENGINE_DEFECT_INTERRUPT', 'GENERATED_OUTPUT_PERSISTENCE', 'CONTROL_VS_SYSTEM_TRIGGER_RESOLUTION', 'PRODUCER_CONSUMER_SCHEMA_IDENTITY', 'NO_HISTORY_PRODUCT_VALUE_FALLBACK', 'TASK_LAYER_EFFECTFUL_TRANSITION_ORDER', 'VISUAL_DESIGN_PROFILE_MATERIALIZATION_COMPLETENESS', 'NORMATIVE_EXECUTION_MATRIX', 'BASIC_DESIGN_DOMAIN_STEPWISE_CHECKPOINT', 'CLOSED_WORK_UNIT_SUCCESSOR_REENTRY', 'CROSS_STAGE_MATERIALIZATION_AND_CONSUMER_READINESS', 'SINGLE_STAGE_CURRENT_STATE_AND_READ_ONLY_VALIDATION', 'DETERMINISTIC_STAGE_AUDIT']
     for k in required:
         if k not in inv:
             failures.append('missing_invariant:' + k)
@@ -208,6 +208,15 @@ def validate(root=ROOT):
             failures.append('stage04_formal_approval_applicability_contract_drift')
         if set(s4.get('formal_review_actions') or []) != {'APPROVE','REJECT','REQUEST_CHANGES'}:
             failures.append('stage04_formal_approval_action_set_drift')
+    single = inv.get('SINGLE_STAGE_CURRENT_STATE_AND_READ_ONLY_VALIDATION') or {}
+    if single.get('invariant_uid')!='GOV-INV-SINGLE-STAGE-CURRENT-STATE-001' or single.get('current_state_authority')!='EXECUTION_STATE' or single.get('parallel_mutable_state_authority')!='FORBIDDEN':
+        failures.append('single_current_state_contract_missing')
+    if single.get('validator_mode')!='READ_ONLY' or single.get('validator_may_mutate_product_or_state') is not False or single.get('validator_may_materialize_successor') is not False:
+        failures.append('read_only_validation_contract_missing')
+    if single.get('stage_closure_authority')!='REQUIRED_CONTENT_EVIDENCE' or single.get('generic_ci_terminal_receipt_required') is not False:
+        failures.append('content_driven_stage_closure_contract_missing')
+    if single.get('future_stage_runtime_binding_required_before_predecessor_closure') is not False or single.get('runtime_binding_resolution_boundary')!='SUCCESSOR_ENTRY_OR_OWNING_OPERATION':
+        failures.append('future_stage_runtime_boundary_contract_missing')
     det = inv.get('DETERMINISTIC_STAGE_AUDIT') or {}
     expected_statuses = {'NOT_STARTED','READY_FOR_EXECUTION','IN_PROGRESS','BLOCKED','REVERIFY_REQUIRED','CURRENT_STATE_CONFLICT','EXECUTION_COMPLETE_CLOSURE_PENDING','CLOSED_PASS','CLOSED_FAIL','SNAPSHOT_INVALIDATED'}
     snapshot_required = {'repository','branch','exact_head_sha','tree_sha','governance_branch','governance_head_sha','governance_uid','governance_revision','registry_revision','lifecycle_registry_revision','stage_uid','work_unit_uid','governed_unit_uid','source_authority_uid','audit_scope','audit_started_at','denominator_hash','authority_set_hash','evidence_set_hash','validator_set_hash','audit_engine_version','audit_contract_version'}

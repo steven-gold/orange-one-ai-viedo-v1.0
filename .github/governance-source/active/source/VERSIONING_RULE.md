@@ -7,10 +7,10 @@
 - Unresolved Authority carry-forward identity is the exact tuple `(gap_uid, authority_ref, disposition, authority_evidence_ref)`. Count-only, GAP-UID-only, or alias-based validation MUST NOT satisfy continuity.
 - Every ledger-local terminal CI receipt projection MUST preserve the canonical six fields `provider`, `repository_or_project`, `head_sha`, `run_id`, `job_denominator`, and `conclusion`. Abbreviated `jobs` or `result` fields MAY be display aliases but MUST NOT substitute for the canonical receipt.
 - Closure metadata MUST remain monotonic for already-proven predecessor facts. A later legal successor MAY add evidence, supersede it with explicit provenance, or mark affected consumers REVERIFY_REQUIRED, but MUST NOT silently delete or revert established predecessor start/completion/proof/run identities.
-- Materialization CI evidence and terminal closure CI receipt are distinct evidence identities. A terminal external CI receipt MUST NOT require self-writing its own run identity into the same commit it validates.
+- Product Stage closure is determined by registered content evidence and the single EXECUTION_STATE. CI/workflow receipts are optional transport provenance and MUST NOT act as closure or state authority.
 - Website/page authority versions remain independent from governance-package versions.
 
-- A predecessor validator MUST_NOT hard-code global Current state equality to its own terminal state after a registered legal successor begins. Legal successor presence is accepted only while predecessor completion/proofs/Authority identity/terminal receipts remain intact; illegal skip remains BLOCKED by the Phase Boundary Gate.
+- A predecessor validator MUST_NOT hard-code global Current state equality to its own terminal state after a registered legal successor begins. Legal successor presence is accepted only while predecessor completion/proofs/Authority identity/content-closure evidence remain intact; illegal skip remains BLOCKED by the registered successor gate.
 - Every registered predecessor→successor edge MUST have positive legal-successor regression and negative illegal-skip/reversion/drift regression.
 - Required Evidence presence is not acceptance. Exact evidence bytes MUST pass parser plus applicable schema/required-field validation before MATERIALIZED/PASS/CLOSED or Stage exit-gate use; malformed or unparseable Required Evidence MUST BLOCK.
 

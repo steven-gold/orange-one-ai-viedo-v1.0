@@ -31,9 +31,9 @@ common_execution_skeleton:
   - FRESH_REEXECUTION
   - HIDDEN_DEFECT_SWEEP
   - REQUIRED_EVIDENCE
-  - EXACT_HEAD_GATES
+  - CONTENT_VALIDATION
   - TERMINAL_CLOSURE
-  - PERSIST_RESUME
+  - STATE_CHECKPOINT
   - NEXT_STAGE
   phase_contracts:
     SESSION_BOOTSTRAP_RESUME_GATE:
@@ -102,15 +102,15 @@ common_execution_skeleton:
     REQUIRED_EVIDENCE:
       required_artifact: REQUIRED_EVIDENCE_SET
       pass_condition: ALL_REQUIRED_EVIDENCE_PARSED_AND_VALID
-    EXACT_HEAD_GATES:
-      required_artifact: EXACT_HEAD_GATE_RECEIPTS
-      pass_condition: OUTER_TERMINAL_RECEIPTS_BIND_EXACT_HEAD
+    CONTENT_VALIDATION:
+      required_artifact: NORMALIZED_STAGE_EVIDENCE
+      pass_condition: REQUIRED_CONTENT_VALIDATORS_PASS
     TERMINAL_CLOSURE:
       required_artifact: TERMINAL_CLOSURE_RECORD
       pass_condition: ZERO_GAP_ZERO_BLOCKER_ZERO_REMAINING_SCOPE
-    PERSIST_RESUME:
-      required_artifact: RESUME_PERSISTENCE_RECORD
-      pass_condition: NEXT_RESUME_PERSISTED
+    STATE_CHECKPOINT:
+      required_artifact: EXECUTION_STATE
+      pass_condition: SINGLE_CURRENT_STATE_CHECKPOINT_PERSISTED
     NEXT_STAGE:
       required_artifact: NEXT_STAGE_TRANSITION_RECORD
       pass_condition: LEGAL_PROFILE_SUCCESSOR_ONLY
@@ -123,7 +123,10 @@ common_requirements:
   fresh_reexecution_after_remediation_required: true
   hidden_defect_sweep_required: true
   required_evidence_presence_only_is_pass: false
-  exact_head_outer_terminal_conclusion_required: true
+  exact_head_outer_terminal_conclusion_required: false
+  generic_ci_or_workflow_state_is_stage_closure_authority: false
+  validation_product_mutation_forbidden: true
+  single_current_stage_state_authority: EXECUTION_STATE
   stage_exit_requires_zero_open_gap_zero_blocker_zero_remaining_scope: true
   missing_stage_specific_scanner_contract: BLOCK
   missing_semantic_adapter: BLOCK
@@ -138,8 +141,9 @@ common_requirements:
   remediation_reexecution_pair_required_when_gap_found: true
   zero_gap_remediation_may_be_not_applicable_with_proof: true
   hidden_defect_sweep_after_reexecution_required: true
-  terminal_closure_requires_exact_head_gate_receipts: true
-  persist_resume_before_next_stage_required: true
+  terminal_closure_requires_exact_head_gate_receipts: false
+  terminal_closure_requires_content_evidence: true
+  execution_state_checkpoint_before_next_stage_required: true
   next_stage_must_match_profile: true
 owner_remediation_routes:
   GOVERNANCE_DEFECT: GOVERNANCE_MAINTENANCE
