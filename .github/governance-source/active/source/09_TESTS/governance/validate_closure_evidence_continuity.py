@@ -26,7 +26,21 @@ def validate(root=ROOT):
     ua=inv.get('unresolved_authority_identity') or {}
     if ua.get('canonical_tuple_fields')!=EXPECTED_AUTHORITY_TUPLE or ua.get('count_only_or_uid_only_validation')!='BLOCK': failures.append('authority_identity_tuple_contract_drift')
     ps=inv.get('predecessor_validator_successor_state_contract') or {}
-    if ps.get('registered_legal_successor_presence')!='ALLOW_IF_PREDECESSOR_CONTENT_INVARIANTS_HOLD' or ps.get('illegal_successor_or_stage_skip')!='BLOCK': failures.append('successor_continuity_contract_incomplete')
+    if ps.get('registered_legal_successor_presence')!='ALLOW_IF_PREDECESSOR_CONTENT_INVARIANTS_HOLD' or ps.get('illegal_successor_or_stage_skip')!='BLOCK':
+        failures.append('predecessor_successor_state_contract_drift')
+    if ps.get('current_state_exact_predecessor_terminal_equality_as_pass_condition') not in (None,'FORBIDDEN'):
+        failures.append('predecessor_successor_state_contract_drift')
+    if ps.get('successor_started_false_as_permanent_pass_condition') not in (None,'FORBIDDEN'):
+        failures.append('predecessor_successor_state_contract_drift')
+    if ps.get('phase_order_owner') not in (None,'PHASE_BOUNDARY_GATE','LIFECYCLE_ORCHESTRATOR'):
+        failures.append('predecessor_successor_state_contract_drift')
+    rei=((life.get('cross_stage_invariants') or {}).get('required_evidence_integrity') or {})
+    if rei.get('presence_only_acceptance')!='FORBIDDEN':
+        failures.append('required_evidence_integrity_contract_incomplete')
+    if rei.get('parser_validation_before_materialized_or_closed') is not True or rei.get('schema_or_required_field_validation_before_materialized_or_closed') is not True:
+        failures.append('required_evidence_integrity_contract_incomplete')
+    if rei.get('malformed_required_evidence')!='BLOCK' or rei.get('unparseable_required_evidence')!='BLOCK':
+        failures.append('required_evidence_integrity_contract_incomplete')
     ab=bp.get('closure_evidence_continuity_contract') or {}
     if ab.get('current_state_authority')!='EXECUTION_STATE' or ab.get('parallel_mutable_current_state_authority')!='FORBIDDEN': failures.append('acceptance_single_state_missing')
     if ab.get('terminal_ci_receipt_required_for_product_stage_closure') is not False: failures.append('acceptance_terminal_ci_still_required')
