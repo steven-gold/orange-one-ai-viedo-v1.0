@@ -1,15 +1,15 @@
-name: Product Stage04 Successor Execute
+name: Product Stage04 Current Execute
 on:
   workflow_dispatch:
     inputs:
       reason:
-        description: Operator note for successor/re-entry execution
+        description: Operator note for Current sequential Stage execution
         required: false
         default: manual
 jobs:
   execute:
-    uses: ./.github/workflows/product-stage-successor-execute-reusable.yml
+    uses: ./.github/workflows/product-stage-current-execute-reusable.yml
     with:
       stage: STAGE-04
-      work_units: WU-STAGE04-GLOBAL-HOME-SHELL-NAVIGATION-REENTRY-001,WU-STAGE04-WB01-DASHBOARD-REENTRY-001
+      work_units: WU-STAGE04-GLOBAL-HOME-SHELL-NAVIGATION-CLEAN-001,WU-STAGE04-WB01-DASHBOARD-CLEAN-001
     secrets: inherit
