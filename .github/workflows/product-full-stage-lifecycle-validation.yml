@@ -66,6 +66,22 @@ jobs:
       - name: Syntax-check lifecycle runtime guards
         run: |
           python -m py_compile .github/scripts/full_stage_lifecycle_guard.py .github/scripts/stage_lifecycle_gate.py .github/scripts/current_stage_execute.py .github/scripts/common_stage_closure.py .github/scripts/common_stage_closure_adapter.py .github/scripts/common_cross_stage_handoff_builder.py .github/scripts/common_stage_terminalizer.py .github/scripts/common_successor_materialize.py .github/scripts/common_successor_work_unit_builder.py .github/scripts/common_successor_binding_resolver.py .github/scripts/common_stage_preterminal.py .github/scripts/common_declared_stage_validator.py
+      - name: Regression-test shared runtime import and retired consumer paths
+        run: |
+          set -euo pipefail
+          (
+            cd _governance_authority
+            python - <<'PY'
+          import sys
+          sys.path.insert(0,'governance/ci')
+          from external_execution_admission import validate_external_stage_admission
+          print('PASS: external execution admission imports with the runtime path used by current_stage_execute')
+          PY
+          )
+          grep -q "sys.path.insert(0,'governance/ci')" .github/scripts/current_stage_execute.py
+          ! grep -q "CURRENT_STAGE02_RESUME.yaml" .github/workflows/product-stage02-validation.yml
+          ! grep -q "STAGE03_NORMALIZED_EVIDENCE_NOT_YET_MATERIALIZED" .github/workflows/product-stage03-validation.yml
+          ! grep -q "STAGE04_NORMALIZED_EVIDENCE_NOT_YET_MATERIALIZED" .github/workflows/product-stage04-validation.yml
       - name: Parse all current Product Stage workflows
         run: |
           python - <<'PY'
