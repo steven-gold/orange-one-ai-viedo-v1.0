@@ -36,15 +36,18 @@ def context(product,gov):
 
 def validate_all(product,gov):
     auth,order,stages,allowed=context(product,gov)
-    contracts=auth.get("stage_contracts") or []
-    if [str(x.get("stage_uid") or "") for x in contracts]!=EXPECTED:
-        block("AUTHORIZATION_STAGE_CONTRACT_COVERAGE_DRIFT")
-    for row in contracts:
-        uid=str(row["stage_uid"]); reg=stages[uid]
-        for key in ("entry_gate","exit_gate","next_stage_uid"):
-            if str(row.get(key) or "")!=str(reg.get(key) or ""):
-                block("AUTHORIZATION_"+key.upper()+"_DRIFT:"+uid)
-    print("PASS: lifecycle gates derive directly from Mother registry and one authorization contract")
+    try:
+        idx=[order.index(x) for x in allowed]
+    except ValueError:
+        block("AUTHORIZED_RANGE_CONTAINS_UNREGISTERED_STAGE")
+    if idx!=list(range(min(idx),max(idx)+1)):
+        block("AUTHORIZED_RANGE_NOT_CONTIGUOUS")
+    execution=auth.get("execution_authorization") or {}
+    if execution.get("system_may_skip_stage_inside_authorized_range") is not False:
+        block("STAGE_SKIP_POLICY_NOT_FAIL_CLOSED")
+    if execution.get("normal_pass_auto_continue_within_authorized_range") is not True:
+        block("NORMAL_PASS_AUTO_CONTINUE_NOT_ENABLED")
+    print("PASS: lifecycle gates derive from Mother registry; product contract only supplies requested range")
     return auth,order,stages,allowed
 
 def assert_authorized(product,gov,stage):
@@ -63,11 +66,15 @@ def assert_work_unit(product,gov,stage,work_unit):
     except ValueError:
         block("WORK_UNIT_PATH_ESCAPES_PRODUCT_ROOT")
     d=load(wp)
-    if str(d.get("stage_uid") or "")!=stage:
+    state=load(wp.parent/"EXECUTION_STATE.yaml")
+    if str(d.get("stage_uid") or "")!=stage or str(state.get("stage_uid") or "")!=stage:
         block("WORK_UNIT_STAGE_DRIFT")
-    if str(d.get("work_unit_uid") or "")!=wp.parent.name:
+    if str(d.get("work_unit_uid") or "")!=wp.parent.name or str(state.get("work_unit_uid") or "")!=wp.parent.name:
         block("WORK_UNIT_UID_DRIFT")
-    status=str(d.get("current_status") or "")
+    status=str(state.get("status") or "")
+    projected=str(d.get("current_status") or "")
+    if projected and projected!=status:
+        block("WORK_UNIT_STATE_PROJECTION_DRIFT:"+projected+":"+status)
     if status.startswith("CLOSED"):
         block("CLOSED_WORK_UNIT_REENTRY_FORBIDDEN")
     if status not in {"READY_FOR_EXECUTION","IN_PROGRESS","EXECUTION_COMPLETE_CLOSURE_PENDING"}:
