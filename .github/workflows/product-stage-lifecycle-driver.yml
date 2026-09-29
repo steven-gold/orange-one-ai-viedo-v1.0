@@ -64,7 +64,9 @@ jobs:
           set -euo pipefail
           git config user.name github-actions
           git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          python .github/scripts/full_stage_lifecycle_guard.py --mode execution-ready --product-root "$GITHUB_WORKSPACE" --governance-root "$GITHUB_WORKSPACE/_governance_authority"
           python .github/scripts/stage_lifecycle_gate.py --mode assert-stage-authorized --stage "$STAGE" --product-root "$GITHUB_WORKSPACE" --governance-root "$GITHUB_WORKSPACE/_governance_authority"
+          test "$(git rev-parse HEAD)" = "$(git rev-parse origin/0921acpos)" || { echo "BLOCK:DRIVER_CHECKOUT_NOT_CURRENT_REMOTE_HEAD"; exit 50; }
           while true; do
             PENDING=0
             IFS=',' read -ra WUS <<< "$WORK_UNITS"
