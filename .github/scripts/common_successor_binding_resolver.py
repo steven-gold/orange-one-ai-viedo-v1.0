@@ -192,6 +192,32 @@ def main():
             ref=str(p.relative_to(root))
             row.update({"applicability":"REQUIRED","resolution_status":"BOUND","target_ref":ref,"authority_evidence_ref":ref})
             app="REQUIRED"; rs="BOUND"
+        elif rs=="RESOLVE_FROM_STAGE11_ELIGIBILITY_OUTPUT":
+            local=str(row.get("local_ref") or "NEXT_GOVERNED_UNIT_ELIGIBILITY.yaml")
+            p=(wd/local).resolve()
+            try: p.relative_to(root)
+            except ValueError: raise SystemExit("BLOCK:NEXT_GOVERNED_UNIT_ELIGIBILITY_REF_ESCAPES_ROOT:"+cls)
+            if not p.is_file(): raise SystemExit("BLOCK:NEXT_GOVERNED_UNIT_ELIGIBILITY_OUTPUT_MISSING:"+cls)
+            d=load(p); result=str(d.get("eligibility_result") or "")
+            if result=="REQUIRES_REGISTERED_SUCCESSOR_AUTHORITY_RESOLUTION":
+                raise SystemExit("BLOCK:NEXT_GOVERNED_UNIT_AUTHORITY_UNRESOLVED:"+cls)
+            if result not in {"NEXT_GOVERNED_UNIT_READY","SCOPE_COMPLETE"}:
+                raise SystemExit("BLOCK:NEXT_GOVERNED_UNIT_ELIGIBILITY_RESULT_INVALID:"+result)
+            ref=str(p.relative_to(root))
+            if cls=="NEXT_GOVERNED_UNIT_ELIGIBILITY_RESULT":
+                row.update({"applicability":"REQUIRED","resolution_status":"BOUND","target_identity":result,"authority_evidence_ref":ref,"target_resolution_kind":"AUTHORITY_VALUE"})
+                app="REQUIRED"; rs="BOUND"
+            elif result=="SCOPE_COMPLETE":
+                row.update({"applicability":"AUTHORIZED_NOT_APPLICABLE","resolution_status":"AUTHORIZED_NOT_APPLICABLE","authority_evidence_ref":ref,"target_identity":"SCOPE_COMPLETE"})
+                app="AUTHORIZED_NOT_APPLICABLE"; rs="AUTHORIZED_NOT_APPLICABLE"
+            else:
+                field="next_governed_unit_identity_when_ready" if cls=="NEXT_GOVERNED_UNIT_IDENTITY_WHEN_READY" else "legal_stage_admission_target_when_ready"
+                identity=str(d.get(field) or "")
+                if not identity: raise SystemExit("BLOCK:NEXT_GOVERNED_UNIT_REQUIRED_VALUE_MISSING:"+cls)
+                if cls=="NEXT_GOVERNED_UNIT_LEGAL_STAGE_ADMISSION_TARGET_WHEN_READY" and identity!="STAGE-05":
+                    raise SystemExit("BLOCK:NEXT_GOVERNED_UNIT_LEGAL_STAGE_TARGET_INVALID:"+identity)
+                row.update({"applicability":"REQUIRED","resolution_status":"BOUND","target_identity":identity,"authority_evidence_ref":ref,"target_resolution_kind":"AUTHORITY_VALUE"})
+                app="REQUIRED"; rs="BOUND"
         elif rs=="RESOLVE_FROM_PRODUCT_IMPLEMENTATION_AUTHORITY":
             auth_path=root/PRODUCT_AUTH
             auth=load(auth_path)
