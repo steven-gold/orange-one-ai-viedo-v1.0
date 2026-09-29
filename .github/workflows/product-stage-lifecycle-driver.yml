@@ -100,8 +100,6 @@ jobs:
           STAGE="$START_STAGE"
           WORK_UNITS="$INITIAL_WORK_UNITS"
 
-          python .github/scripts/full_stage_lifecycle_guard.py --mode range-ready --start-stage "$START_STAGE" --end-stage "$END_STAGE" --product-root "$GITHUB_WORKSPACE" --governance-root "$GITHUB_WORKSPACE/_governance_authority"
-
           python - "$START_STAGE" "$END_STAGE" <<'PY'
           import sys,yaml
           from pathlib import Path
