@@ -1358,3 +1358,110 @@ After SOURCE_PAIR_FROZEN, the Word, Canonical YAML projection, content-readiness
 
 Selected source-intake/base-blueprint execution may read binary pixels/bytes only through the frozen-binary resolver defined by the projection contract. Direct DOCX unzip/reparse for semantic recovery is forbidden.
 
+<!-- SECTION_UID: WEB-GOV-03-S073 -->
+## 73. 單一 Stage 生產主鏈 / Single-State Stage Production Chain
+
+每個註冊 Stage 的正式執行 MUST 收斂為一條單一、可預測的主鏈：
+
+`Mother / Lifecycle Contract -> Deterministic Executor -> Read-only Validator -> Content Closure -> Same Orchestrator Successor Materialization`.
+
+本節為 Stage 執行控制的優先解釋規則。既有條文中任何為相容、追蹤、CI、Source Control、歷史證據、外部執行器或投影而存在的機制，MUST_NOT 被解讀成第二套 Stage 狀態機、第二個流程 Authority，或與內容完成無關的 Stage closure 前置條件。
+
+### 73.1 Mother 是唯一 Stage 規格 Authority
+
+每個 Stage 的正式規格只由 Current Mother、Current Lifecycle Registry 與其明確引用的 Current Invariant / Authority 定義。每個 Stage MUST 明確定義：
+
+- inputs
+- operations
+- outputs
+- required fields
+- validators
+- evidence
+- human gate
+- next stage
+
+執行器與稽核器 MUST 消費同一份規格，不得各自維護第二份 operation、field、closure 或 successor 真相。
+
+### 73.2 每個 Stage 只有一份 Current State
+
+每個 Active Stage Work Unit 的唯一可寫 Current State Authority 是 `EXECUTION_STATE`。
+
+`WORK_UNIT` 只保存 Work Unit identity、scope、owner、binding 與 immutable/structural metadata；其中任何 status 欄位若為相容目的保留，只能是由 `EXECUTION_STATE` 機械投影的 non-authoritative projection。
+
+Resume、request、workflow runtime、report、ledger、terminal receipt、generated binding 或其他相容檔案 MUST_NOT 成為第二份 Current State Authority。需要 resume 的資訊 MUST 存在於 `EXECUTION_STATE` 的 canonical resume fields，或由其機械推導。
+
+Projection drift MUST 被回報為 projection/governance maintenance finding，但在 `EXECUTION_STATE` 與 required content evidence 本身一致且有效時，MUST_NOT 單獨推翻內容完成。
+
+### 73.3 每個 Stage 只有一個 effectful executor 與一個 orchestrator
+
+同一 Stage 的 effectful operations MUST 由一個 deterministic Stage executor 依註冊 operation 順序執行；跨 Stage 的正常 continuation MUST 由同一 lifecycle orchestrator 控制。
+
+Workflow、CI job、helper script、adapter 或 callback MAY 作為執行載體，但 MUST_NOT 各自決定 Stage 順序、Current State、closure、successor 或授權範圍。
+
+逐 operation checkpoint REQUIRED；多 workflow 接力、push-trigger chain、rearm chain 或以 Git event 決定業務流程順序 FORBIDDEN。
+
+### 73.4 Validation 必須純讀取
+
+正式 validator / scanner / audit MUST 為 read-only。
+
+Validation MUST_NOT：
+
+- 修改產品或治理內容；
+- materialize 下一 Stage；
+- 改寫 Current State；
+- commit 或 push 以取得 PASS；
+- 因自己造成 HEAD 變更而要求重新驗證；
+- 觸發 effectful operation 以完成被驗證內容。
+
+Validation 的唯一正式輸出是 `PASS / FAIL / BLOCKED + deterministic findings + evidence references`。
+
+需要修正時，修正 MUST 回到合法 owner/executor；修正完成後重新執行 validator。
+
+### 73.5 Stage closure 只看 Stage 內容證據
+
+Stage closure MUST 由目前 Stage 的完整內容證據決定，至少包含：
+
+- required inputs 已滿足；
+- required operations 有合法 receipts/dispositions；
+- required outputs 已實體化；
+- required fields 完整且 schema-valid；
+- registered scanners PASS；
+- registered validators PASS；
+- required evidence 完整；
+- unresolved required content blocker = 0；
+- applicable human gate 已滿足。
+
+Git HEAD、workflow run、push event、rearm、CAS、branch movement 或 CI transport 狀態 MAY 作為 snapshot/provenance/audit metadata，但 MUST_NOT 代替內容驗證，也 MUST_NOT 在 required content evidence 已完整時單獨阻止 Stage closure。
+
+### 73.6 未來 Stage 規格完整，不等於未來 Runtime 必須預先實體化
+
+Current Governance MUST 完整定義所有註冊 Stage 的 schema、operations、outputs、validators、evidence 與 transition contract。
+
+但目前 Stage 執行時 MUST_NOT 要求未來 Stage 的 executable runtime binding、provider、environment、deployment target、monitoring target 或其他 successor-owned runtime target 已先實體化。
+
+合法 predecessor closure 後，由同一 orchestrator 依 predecessor 正式輸出與 Current Authority materialize successor Work Unit 與該 Stage 所需 executable bindings。未來 Stage 自己擁有的 runtime prerequisite 只在到達該 Stage / operation boundary 時驗證。
+
+### 73.7 正常 PASS 自動前進；只有真實 Gate 停止
+
+Stage PASS 後，同一 orchestrator MUST 自動 materialize registered successor 並繼續原授權範圍。
+
+正常 Stage boundary MUST_NOT 要求人工輸入「繼續」。
+
+只有以下情況可停止：
+
+- registered Human Approval；
+- true Authority / required input missing；
+- deterministic validation FAIL / BLOCKED；
+- effectful execution failure；
+- explicit user stop/cancel；
+- material Current source invalidation requiring owner re-entry。
+
+不得以 governance projection drift、workflow orchestration artifact、歷史 HEAD、缺少非必要 receipt 或未來 Stage 尚未 materialize 作為假停止點。
+
+### 73.8 Source Control 與 CI 的正確角色
+
+Source Control 用於版本化與可追溯性；CI 用於可重現 validation 與 regression。兩者都不是 Stage 業務 Current State Authority。
+
+治理規範本身的版本接受 MAY 要求 exact snapshot validation；但此要求 MUST 與產品 Stage 內容 closure 分離，MUST_NOT 形成「validator mutation -> HEAD change -> validation invalidation -> rearm」循環。
+
+
