@@ -4,7 +4,6 @@ on:
     branches: [0921acpos]
     paths:
       - '.github/scripts/stage01_current_materialize.py'
-      - '.github/scripts/stage01_operation_runtime.py'
       - '.github/scripts/stage01_ops/**'
       - '.github/scripts/full_stage_lifecycle_guard.py'
       - '.github/scripts/stage_lifecycle_gate.py'
@@ -58,7 +57,7 @@ jobs:
       - name: Validate clean Stage01 materialization contract
         run: |
           set -euo pipefail
-          python -m py_compile .github/scripts/stage01_current_materialize.py .github/scripts/stage01_operation_runtime.py .github/scripts/stage01_ops/*.py
+          python -m py_compile .github/scripts/stage01_current_materialize.py .github/scripts/stage01_ops/*.py
           python .github/scripts/stage01_current_materialize.py --mode materialize --units "GLOBAL-HOME-SHELL-NAVIGATION,WB01-DASHBOARD" --product-root "$GITHUB_WORKSPACE" --governance-root "$GITHUB_WORKSPACE/_governance_authority"
           python .github/scripts/full_stage_lifecycle_guard.py --mode execution-ready --stage STAGE-01 --product-root "$GITHUB_WORKSPACE" --governance-root "$GITHUB_WORKSPACE/_governance_authority"
 
