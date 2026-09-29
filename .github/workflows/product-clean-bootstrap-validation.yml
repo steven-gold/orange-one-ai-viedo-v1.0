@@ -87,6 +87,23 @@ jobs:
               assert 'current_state' not in s1
           print('PASS: mark-admitted writes one canonical Stage01 state field and current full-stage ledger')
           PY
+      - name: Assert Stage01 downstream impact covers the full registered lifecycle
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import yaml
+          expected=[f'STAGE-{i:02d}' for i in range(1,12)]
+          expected_downstream=[f'STAGE-{i:02d}:NOT_EXECUTED' for i in range(2,12)]
+          for root in sorted(Path('STAGE_EXECUTION/STAGE-01').glob('WU-STAGE01-*-CLEAN-001')):
+              impact=yaml.safe_load((root/'CHANGE_IMPACT_MAP.yaml').read_text()) or {}
+              assert impact.get('affected_stage_uids')==expected, (root,impact.get('affected_stage_uids'))
+              audits=list(root.glob('00_SOURCE_INTAKE/SOURCE_PROJECTIONS/*/SOURCE_DOCUMENT_CONTENT_AUDIT.yaml'))
+              assert audits, root
+              for p in audits:
+                  audit=yaml.safe_load(p.read_text()) or {}
+                  assert audit.get('open_downstream_states')==expected_downstream, p
+          print('PASS: Stage01 source impact/reverify denominator spans Stage01 through Stage11')
+          PY
       - name: Assert clean-bootstrap invariants
         run: |
           python - <<'PY'
