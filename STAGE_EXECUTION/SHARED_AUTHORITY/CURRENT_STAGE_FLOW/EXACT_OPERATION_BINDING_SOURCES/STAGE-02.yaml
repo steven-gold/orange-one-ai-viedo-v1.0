@@ -1,0 +1,162 @@
+artifact_type: EXACT_OPERATION_BINDING_SOURCE
+stage_uid: STAGE-02
+status: CURRENT_EXACT_BINDINGS
+successor_execution_bindings: {}
+operation_bindings:
+  STAGE_EXECUTION_PREFLIGHT_COMPILE:
+    applicability: REQUIRED
+    executor_owner: .github/scripts/stage02_operation_runtime.py
+    executor_protocol: PYTHON_STAGE_OPERATION_V1
+    result_owner: OWNER-STAGE02-STAGE_EXECUTION_PREFLIGHT_COMPILE
+  EFFECTIVE_CONTRACT_OVERLAY_COMPILE:
+    applicability: REQUIRED
+    executor_owner: .github/scripts/stage02_operation_runtime.py
+    executor_protocol: PYTHON_STAGE_OPERATION_V1
+    result_owner: OWNER-STAGE02-EFFECTIVE_CONTRACT_OVERLAY_COMPILE
+  DEPENDENCY_TOPOLOGY_COMPILE:
+    applicability: REQUIRED
+    executor_owner: .github/scripts/stage02_operation_runtime.py
+    executor_protocol: PYTHON_STAGE_OPERATION_V1
+    result_owner: OWNER-STAGE02-DEPENDENCY_TOPOLOGY_COMPILE
+  CHANGE_IMPACT_MAP_COMPILE:
+    applicability: REQUIRED
+    executor_owner: .github/scripts/stage02_operation_runtime.py
+    executor_protocol: PYTHON_STAGE_OPERATION_V1
+    result_owner: OWNER-STAGE02-CHANGE_IMPACT_MAP_COMPILE
+  FUNCTIONAL_CHAIN_COMPILE:
+    applicability: REQUIRED
+    executor_owner: .github/scripts/stage02_operation_runtime.py
+    executor_protocol: PYTHON_STAGE_OPERATION_V1
+    result_owner: OWNER-STAGE02-FUNCTIONAL_CHAIN_COMPILE
+  DEPENDENCY_MAP_COMPILE:
+    applicability: REQUIRED
+    executor_owner: .github/scripts/stage02_operation_runtime.py
+    executor_protocol: PYTHON_STAGE_OPERATION_V1
+    result_owner: OWNER-STAGE02-DEPENDENCY_MAP_COMPILE
+  GOVERNED_UNIT_CONSTRUCTION_SPEC_COMPILE:
+    applicability: REQUIRED
+    executor_owner: .github/scripts/stage02_operation_runtime.py
+    executor_protocol: PYTHON_STAGE_OPERATION_V1
+    result_owner: OWNER-STAGE02-GOVERNED_UNIT_CONSTRUCTION_SPEC_COMPILE
+  ASYNC_PROVIDER_CONTRACT_COMPILE:
+    applicability: REQUIRED
+    executor_owner: .github/scripts/stage02_operation_runtime.py
+    executor_protocol: PYTHON_STAGE_OPERATION_V1
+    result_owner: OWNER-STAGE02-ASYNC_PROVIDER_CONTRACT_COMPILE
+  SHARED_OWNER_PORT_RESOLVE:
+    applicability: REQUIRED
+    executor_owner: .github/scripts/stage02_operation_runtime.py
+    executor_protocol: PYTHON_STAGE_OPERATION_V1
+    result_owner: OWNER-STAGE02-SHARED_OWNER_PORT_RESOLVE
+  FUNCTIONAL_WORKBENCH_CONTRACT_COMPILE:
+    applicability: REQUIRED
+    executor_owner: .github/scripts/stage02_operation_runtime.py
+    executor_protocol: PYTHON_STAGE_OPERATION_V1
+    result_owner: OWNER-STAGE02-FUNCTIONAL_WORKBENCH_CONTRACT_COMPILE
+  INTERACTION_TOPOLOGY_COMPILE:
+    applicability: REQUIRED
+    executor_owner: .github/scripts/stage02_operation_runtime.py
+    executor_protocol: PYTHON_STAGE_OPERATION_V1
+    result_owner: OWNER-STAGE02-INTERACTION_TOPOLOGY_COMPILE
+  FUNCTION_ADMISSION_SCORECARD_COMPILE:
+    applicability: REQUIRED
+    executor_owner: .github/scripts/stage02_operation_runtime.py
+    executor_protocol: PYTHON_STAGE_OPERATION_V1
+    result_owner: OWNER-STAGE02-FUNCTION_ADMISSION_SCORECARD_COMPILE
+  AUTO_COMPLETION_SCOPE_LEDGER_COMPILE:
+    applicability: REQUIRED
+    executor_owner: .github/scripts/stage02_operation_runtime.py
+    executor_protocol: PYTHON_STAGE_OPERATION_V1
+    result_owner: OWNER-STAGE02-AUTO_COMPLETION_SCOPE_LEDGER_COMPILE
+scanner_owner: .github/scripts/stage02_scanner.py
+scanner_protocol: PYTHON_STAGE_SCANNER_V1
+validator_bindings:
+  VAL-GOV-008:
+    validator_kind: DECLARED_STAGE_GUARD
+    validator_protocol: DECLARED_STAGE_GUARD_AGGREGATE_V1
+    result_ref: STAGE_EXECUTION/STAGE-02/{{WORK_UNIT_UID}}/EVIDENCE/VALIDATOR_RESULTS/VAL-GOV-008.yaml
+  VAL-GOV-004:
+    validator_kind: DECLARED_STAGE_GUARD
+    validator_protocol: DECLARED_STAGE_GUARD_AGGREGATE_V1
+    result_ref: STAGE_EXECUTION/STAGE-02/{{WORK_UNIT_UID}}/EVIDENCE/VALIDATOR_RESULTS/VAL-GOV-004.yaml
+artifact_specs:
+  FUNCTIONAL_CHAIN_SPEC:
+    artifact_ref: STAGE_EXECUTION/STAGE-02/{{WORK_UNIT_UID}}/FUNCTIONAL_CHAIN_SPEC.yaml
+    field_path:
+      - status
+  DEPENDENCY_MAP:
+    artifact_ref: STAGE_EXECUTION/STAGE-02/{{WORK_UNIT_UID}}/DEPENDENCY_MAP.yaml
+    field_path:
+      - status
+  GOVERNED_UNIT_CONSTRUCTION_SPEC_PACKAGE:
+    artifact_ref: STAGE_EXECUTION/STAGE-02/{{WORK_UNIT_UID}}/GOVERNED_UNIT_CONSTRUCTION_SPEC_PACKAGE.yaml
+    field_path:
+      - status
+  ASYNC_PROVIDER_CONTRACT:
+    artifact_ref: STAGE_EXECUTION/STAGE-02/{{WORK_UNIT_UID}}/ASYNC_PROVIDER_CONTRACT.yaml
+    field_path:
+      - status
+  SHARED_OWNER_PORT_MAP:
+    artifact_ref: STAGE_EXECUTION/STAGE-02/{{WORK_UNIT_UID}}/SHARED_OWNER_PORT_MAP.yaml
+    field_path:
+      - status
+  FUNCTIONAL_WORKBENCH_CONTRACT:
+    artifact_ref: STAGE_EXECUTION/STAGE-02/{{WORK_UNIT_UID}}/FUNCTIONAL_WORKBENCH_CONTRACT.yaml
+    field_path:
+      - status
+  INTERACTION_TOPOLOGY_SPEC:
+    artifact_ref: STAGE_EXECUTION/STAGE-02/{{WORK_UNIT_UID}}/INTERACTION_TOPOLOGY_SPEC.yaml
+    field_path:
+      - status
+  REQUIRED_FIELD_MANIFEST:
+    artifact_ref: STAGE_EXECUTION/STAGE-02/{{WORK_UNIT_UID}}/REQUIRED_FIELD_MANIFEST.yaml
+    field_path:
+      - status
+  FUNCTIONAL_CHAIN_MANIFEST:
+    artifact_ref: STAGE_EXECUTION/STAGE-02/{{WORK_UNIT_UID}}/FUNCTIONAL_CHAIN_MANIFEST.yaml
+    field_path:
+      - status
+  EFFECTIVE_CONTRACT_OVERLAY:
+    artifact_ref: STAGE_EXECUTION/STAGE-02/{{WORK_UNIT_UID}}/EFFECTIVE_CONTRACT_OVERLAY.yaml
+    field_path:
+      - status
+  DEPENDENCY_TOPOLOGY:
+    artifact_ref: STAGE_EXECUTION/STAGE-02/{{WORK_UNIT_UID}}/DEPENDENCY_TOPOLOGY.yaml
+    field_path:
+      - status
+  DENOMINATOR_SNAPSHOT:
+    artifact_ref: STAGE_EXECUTION/STAGE-02/{{WORK_UNIT_UID}}/DENOMINATOR_SNAPSHOT.yaml
+    field_path:
+      - status
+  CLASSIFICATION_RULESET:
+    artifact_ref: STAGE_EXECUTION/STAGE-02/{{WORK_UNIT_UID}}/CLASSIFICATION_RULESET.yaml
+    field_path:
+      - status
+  CHANGE_IMPACT_MAP:
+    artifact_ref: STAGE_EXECUTION/STAGE-02/{{WORK_UNIT_UID}}/CHANGE_IMPACT_MAP.yaml
+    field_path:
+      - status
+  STAGE_EXECUTION_PREFLIGHT_RECEIPT:
+    artifact_ref: STAGE_EXECUTION/STAGE-02/{{WORK_UNIT_UID}}/STAGE_EXECUTION_PREFLIGHT_RECEIPT.yaml
+    field_path:
+      - result
+  CURRENT_PROBLEM_REGISTER:
+    artifact_ref: STAGE_EXECUTION/STAGE-02/{{WORK_UNIT_UID}}/CURRENT_PROBLEM_REGISTER.yaml
+    field_path:
+      - status
+  RESOLUTION_LEDGER:
+    artifact_ref: STAGE_EXECUTION/STAGE-02/{{WORK_UNIT_UID}}/RESOLUTION_LEDGER.yaml
+    field_path:
+      - status
+  FUNCTION_ADMISSION_SCORECARD:
+    artifact_ref: STAGE_EXECUTION/STAGE-02/{{WORK_UNIT_UID}}/FUNCTION_ADMISSION_SCORECARD.yaml
+    field_path:
+      - status
+  AUTO_COMPLETION_SCOPE_LEDGER:
+    artifact_ref: STAGE_EXECUTION/STAGE-02/{{WORK_UNIT_UID}}/AUTO_COMPLETION_SCOPE_LEDGER.yaml
+    field_path:
+      - status
+  GOVERNED_UNIT_FUNCTIONAL_REVIEW_EVIDENCE:
+    artifact_ref: STAGE_EXECUTION/STAGE-02/{{WORK_UNIT_UID}}/EVIDENCE/GOVERNED_UNIT_FUNCTIONAL_REVIEW_EVIDENCE.yaml
+    field_path:
+      - result
