@@ -201,16 +201,22 @@ def main():
             if source is None: source=(auth.get("execution_target_authority") or {}).get(cls)
             if source is None: source=(auth.get("verification_target_authority") or {}).get(cls)
             if source is None: source=(auth.get("build_target_authority") or {}).get(cls)
+            if source is None: source=(auth.get("staging_target_authority") or {}).get(cls)
+            if source is None: source=(auth.get("production_target_authority") or {}).get(cls)
+            if source is None: source=(auth.get("production_acceptance_target_authority") or {}).get(cls)
+            if source is None: source=(auth.get("operations_target_authority") or {}).get(cls)
             if not isinstance(source,dict):
                 raise SystemExit("BLOCK:PRODUCT_IMPLEMENTATION_AUTHORITY_CLASS_MISSING:"+cls)
             status=str(source.get("status") or "")
             authority_ref=PRODUCT_AUTH+"#"+cls
+            if status=="UNRESOLVED_EXTERNAL_CURRENT_TARGET":
+                raise SystemExit("BLOCK:EXTERNAL_CURRENT_TARGET_UNRESOLVED:"+nxt+":"+cls)
             if status=="AUTHORIZED_NOT_APPLICABLE":
                 row.update({"applicability":"AUTHORIZED_NOT_APPLICABLE","resolution_status":"AUTHORIZED_NOT_APPLICABLE","authority_evidence_ref":authority_ref,"target_identity":str(source.get("authority_value") or "NOT_APPLICABLE")})
                 app="AUTHORIZED_NOT_APPLICABLE"; rs="AUTHORIZED_NOT_APPLICABLE"
             elif status in {"RESOLVED","RESOLVED_BY_AUTHORIZED_TEMPLATE"}:
                 kind=str(source.get("resolution_kind") or "")
-                if kind not in {"CURRENT_REPOSITORY","CURRENT_REPOSITORY_PATH","AUTHORITY_VALUE"}:
+                if kind not in {"CURRENT_REPOSITORY","CURRENT_REPOSITORY_PATH","AUTHORITY_VALUE","EXTERNAL_CURRENT_TARGET"}:
                     raise SystemExit("BLOCK:PRODUCT_IMPLEMENTATION_AUTHORITY_RESOLUTION_KIND_INVALID:"+cls+":"+kind)
                 if kind=="CURRENT_REPOSITORY":
                     identity=str(source.get("target_identity") or "")
@@ -223,6 +229,11 @@ def main():
                     except ValueError: raise SystemExit("BLOCK:PRODUCT_RUNTIME_TARGET_ESCAPES_ROOT:"+cls)
                     if not p.exists() or not tracked(root,identity):
                         raise SystemExit("BLOCK:PRODUCT_RUNTIME_TARGET_NOT_CURRENT_TRACKED:"+cls+":"+identity)
+                elif kind=="EXTERNAL_CURRENT_TARGET":
+                    identity=str(source.get("external_target_identity") or source.get("target_identity") or "")
+                    if not identity: raise SystemExit("BLOCK:EXTERNAL_CURRENT_TARGET_IDENTITY_EMPTY:"+cls)
+                    if not source.get("authority_evidence_ref") and not source.get("authority_evidence_refs"):
+                        raise SystemExit("BLOCK:EXTERNAL_CURRENT_TARGET_EVIDENCE_MISSING:"+cls)
                 else:
                     identity=str(source.get("authority_value") or "")
                     if not identity and source.get("authority_value_template"):
@@ -241,6 +252,15 @@ def main():
                     receipt.update({"repository_identity":identity,"branch_ref_head_sha":head})
                 elif kind=="CURRENT_REPOSITORY_PATH":
                     receipt.update({"target_path":identity,"target_path_exists":True,"target_path_tracked_at_head":True})
+                elif kind=="EXTERNAL_CURRENT_TARGET":
+                    receipt.update({
+                      "external_target_identity":identity,
+                      "external_provider":source.get("provider"),
+                      "external_environment":source.get("environment") or source.get("required_environment_kind"),
+                      "external_target_evidence_ref":source.get("authority_evidence_ref"),
+                      "external_target_evidence_refs":source.get("authority_evidence_refs") or source.get("authority_evidence"),
+                      "authority_current_identity_match":True
+                    })
                 else:
                     receipt.update({"authority_value":identity,"authority_current_identity_match":True})
                 write(root/receipt_rel,receipt)
