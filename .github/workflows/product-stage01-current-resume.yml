@@ -50,24 +50,28 @@ jobs:
         run: |
           set -euo pipefail
           python - <<'PY'
-          import yaml
+          import json, subprocess, yaml
           from pathlib import Path
           wus=[
             'WU-STAGE01-GLOBAL-HOME-SHELL-NAVIGATION-CLEAN-001',
             'WU-STAGE01-WB01-DASHBOARD-CLEAN-001',
           ]
-          expected=[
-            'SOURCE_STRUCTURE_ENUMERATION',
-            'SOURCE_SEGMENT_MAPPING',
-            'SOURCE_CONTEXT_COMPILATION',
-            'SOURCE_SUPERSESSION_CONFLICT_RESOLUTION',
-          ]
+          plan=json.loads(subprocess.check_output(['python','governance/ci/stage_execution_engine.py','--plan','--stage','STAGE-01'],text=True))
+          ops=list(map(str,plan.get('operations') or []))
+          assert ops, 'BLOCK:STAGE01_REGISTERED_OPERATION_DENOMINATOR_EMPTY'
+          checkpoint=None
           for wu in wus:
               p=Path('STAGE_EXECUTION/STAGE-01')/wu/'EXECUTION_STATE.yaml'
               d=yaml.safe_load(p.read_text()) or {}
-              assert d.get('completed_operations')==expected,(wu,d.get('completed_operations'))
-              assert d.get('current_operation')=='SOURCE_DEPENDENCY_EXTRACTION',(wu,d.get('current_operation'))
-          print('PASS: both Current Stage01 Work Units resume from exact 4/9 checkpoint')
+              completed=list(map(str,d.get('completed_operations') or []))
+              current=str(d.get('current_operation') or '')
+              assert completed==ops[:len(completed)],(wu,'NON_PREFIX_COMPLETION',completed,ops)
+              expected_current='COMPLETE' if len(completed)==len(ops) else ops[len(completed)]
+              assert current==expected_current,(wu,current,expected_current)
+              this=(tuple(completed),current)
+              if checkpoint is None: checkpoint=this
+              assert this==checkpoint,(wu,'CROSS_WU_CHECKPOINT_DRIFT',this,checkpoint)
+          print('PASS: both Current Stage01 Work Units share exact dynamic checkpoint',len(checkpoint[0]),'/',len(ops),'next=',checkpoint[1])
           PY
   execute:
     needs: exact-head-preflight
