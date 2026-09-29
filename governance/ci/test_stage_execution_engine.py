@@ -259,8 +259,7 @@ sample={
  'remediation':{'discovered_gap_total':0,'remediated_gap_total':0,'unresolved_gap_total':0,'reexecution_required':False,'reexecution_performed':False},
  'hidden_defect_sweep':{'performed':True,'result':'PASS','discovered_defect_total':0},
  'required_evidence':[{'evidence_type':x,'status':'PASS','ref':'synthetic://external','external_receipt':True} for x in st['required_evidence']],
- 'exact_head_gate_receipts':[{'gate_uid':'SYNTHETIC-GATE','head_sha':head,'run_id':'1','conclusion':'success'}],
- 'resume_persistence':{'performed':True,'resume_point':'SYNTHETIC_NEXT'},
+ 'state_checkpoint':{'performed':True,'state_ref':'STAGE_EXECUTION/<STAGE_UID>/<WORK_UNIT_UID>/EXECUTION_STATE.yaml'},
  'next_stage_transition':{'next_stage_uid':st['next_stage_uid'],'status':'READY'},
  'result':'PASS','stage_exit_allowed':True
 }
@@ -275,6 +274,7 @@ _scope_rel=f'STAGE_EXECUTION/STAGE-01/{_synthetic_wu}/CURRENT_EXECUTION_SCOPE_MA
 _matrix_rel=f'STAGE_EXECUTION/STAGE-01/{_synthetic_wu}/NORMATIVE_EXECUTION_MATRIX.yaml'
 _handoff_rel=f'STAGE_EXECUTION/STAGE-01/{_synthetic_wu}/CROSS_STAGE_HANDOFF_READINESS_LEDGER.yaml'
 sample['scope_manifest_ref']=_scope_rel
+sample['state_checkpoint']={'performed':True,'state_ref':f'STAGE_EXECUTION/STAGE-01/{_synthetic_wu}/EXECUTION_STATE.yaml'}
 sample['cross_stage_handoff']={
  'ledger_ref':_handoff_rel,'external_receipt':False,'successor_stage_uid':st['next_stage_uid'],
  'reference_resolution_complete':True,'physical_materialization_complete':True,'required_field_completeness_complete':True,
@@ -404,8 +404,7 @@ if sample.get('required_evidence'):
         x['required_evidence'][0].pop('authority_evidence_ref',None)
         x['required_evidence'][0].pop('proof',None)
     block_evidence('required_evidence_na_without_authority',_na_evidence_without_authority,'REQUIRED_EVIDENCE_NA_AUTHORITY_MISSING')
-block_evidence('exact_head_gate_drift',lambda x:x['exact_head_gate_receipts'][0].__setitem__('head_sha','2'*40))
-block_evidence('resume_persistence_missing',lambda x:x.__setitem__('resume_persistence',{'performed':False,'resume_point':None}))
+block_evidence('state_checkpoint_missing',lambda x:x.__setitem__('state_checkpoint',{'performed':False,'state_ref':None}))
 block_evidence('pass_nonzero_denominator',lambda x:x['denominator'].__setitem__('remaining_scope_total',1))
 def make_blocked_without_phase(x):
     x['result']='BLOCKED'; x['stage_exit_allowed']=False
@@ -419,7 +418,7 @@ block_evidence('handoff_unresolved_required_dependency',lambda x:x['cross_stage_
 
 block_evidence('required_class_change_governance_uid',lambda x:x.__setitem__('governance_uid','GOVERNANCE-UID-DRIFT'),'EVIDENCE_IDENTITY_DRIFT')
 block_evidence('required_class_remove_required_output',lambda x:x['output_results'].pop(),'OUTPUT_RESULT_COVERAGE_DRIFT')
-block_evidence('required_class_insert_stale_evidence',lambda x:x.__setitem__('source_head_sha','3'*40),'EXACT_HEAD_GATE_RECEIPT_INVALID')
+block_evidence('source_snapshot_identity_invalid',lambda x:x.__setitem__('source_head_sha','stale'),'EVIDENCE_SOURCE_HEAD_SHA_INVALID')
 block_evidence('required_class_insert_duplicate_evidence',lambda x:x['required_evidence'].append(deepcopy(x['required_evidence'][0])),'REQUIRED_EVIDENCE_DUPLICATE')
 def _historical_pass_mutation(x):
     x['fresh_execution']=False
@@ -1479,67 +1478,18 @@ for node in ast.walk(tree):
                 raise AssertionError('COMMON_ENGINE_STAGE02_ONLY_REJECTION')
 _required_negative_classes=list(map(str,(eng._deterministic_stage_audit_contract().get('required_negative_test_classes') or [])))
 _required_negative_trace={
-  'REMOVE_TERMINAL_RECEIPT':{
-    'executed_test_label':'terminal_receipt_missing',
-    'injected_mutation':'DELETE_TERMINAL_RECEIPT_ARTIFACT',
-    'expected_blocking_semantics':'MISSING_FILE',
-  },
-  'CHANGE_GOVERNANCE_UID':{
-    'executed_test_label':'required_class_change_governance_uid',
-    'injected_mutation':'MUTATE_NORMALIZED_EVIDENCE_GOVERNANCE_UID',
-    'expected_blocking_semantics':'EVIDENCE_IDENTITY_DRIFT',
-  },
-  'CHANGE_HEAD_SHA':{
-    'executed_test_label':'terminal_receipt_wrong_head',
-    'injected_mutation':'MUTATE_TERMINAL_RECEIPT_HEAD_SHA',
-    'expected_blocking_semantics':'TERMINAL_RECEIPT_HEAD_MISMATCH',
-  },
-  'CLOSED_TO_ACTIVE_STATE_CONFLICT':{
-    'executed_test_label':'state_pass_but_in_progress',
-    'injected_mutation':'SET_CURRENT_EXECUTION_STATE_IN_PROGRESS_WHILE_EVIDENCE_PASS',
-    'expected_blocking_semantics':'CURRENT_STATE_STATUS_CONFLICT',
-  },
-  'REMOVE_OPERATION_RECEIPT':{
-    'executed_test_label':'required_class_remove_operation_receipt',
-    'injected_mutation':'EXECUTOR_RETURNS_ZERO_WITHOUT_OPERATION_RECEIPT',
-    'expected_blocking_semantics':'ACTIVE_OPERATION_RECEIPT_MISSING',
-  },
-  'REMOVE_REQUIRED_OUTPUT':{
-    'executed_test_label':'required_class_remove_required_output',
-    'injected_mutation':'REMOVE_ONE_REGISTERED_OUTPUT_RESULT',
-    'expected_blocking_semantics':'OUTPUT_RESULT_COVERAGE_DRIFT',
-  },
-  'CREATE_SCOPE_RESUME_CONFLICT':{
-    'executed_test_label':'required_class_create_scope_resume_conflict',
-    'injected_mutation':'MUTATE_SCOPE_WORK_UNIT_UID_AGAINST_WORK_AND_STATE',
-    'expected_blocking_semantics':'CURRENT_SCOPE_WORK_STATE_IDENTITY_DRIFT',
-  },
-  'INSERT_STALE_EVIDENCE':{
-    'executed_test_label':'required_class_insert_stale_evidence',
-    'injected_mutation':'MUTATE_EVIDENCE_SOURCE_HEAD_WITHOUT_MATCHING_GATE_RECEIPT',
-    'expected_blocking_semantics':'EXACT_HEAD_GATE_RECEIPT_INVALID',
-  },
-  'INSERT_DUPLICATE_EVIDENCE':{
-    'executed_test_label':'required_class_insert_duplicate_evidence',
-    'injected_mutation':'DUPLICATE_REQUIRED_EVIDENCE_ROW',
-    'expected_blocking_semantics':'REQUIRED_EVIDENCE_DUPLICATE',
-  },
-  'INSERT_HISTORICAL_PASS':{
-    'executed_test_label':'required_class_insert_historical_pass',
-    'injected_mutation':'MARK_PRIOR_RESULT_AS_CURRENT_WITHOUT_FRESH_EXECUTION',
-    'expected_blocking_semantics':'EVIDENCE_FRESH_EXECUTION_PROVENANCE_INVALID',
-  },
-  'REMOVE_CURRENT_MATRIX':{
-    'executed_test_label':'required_class_remove_current_matrix',
-    'injected_mutation':'DELETE_CURRENT_NORMATIVE_EXECUTION_MATRIX',
-    'expected_blocking_semantics':'NORMATIVE_EXECUTION_MATRIX_MISSING',
-  },
-  'CHANGE_DENOMINATOR':{
-    'executed_test_label':'terminal_closure_denominator_identity_drift',
-    'injected_mutation':'CHANGE_REQUIRED_TOTAL_AFTER_TERMINAL_RECEIPT',
-    'expected_blocking_semantics':'TERMINAL_CLOSURE_DENOMINATOR_IDENTITY_DRIFT',
-  },
-}
+  'CHANGE_GOVERNANCE_UID':{'executed_test_label':'required_class_change_governance_uid','injected_mutation':'MUTATE_NORMALIZED_EVIDENCE_GOVERNANCE_UID','expected_blocking_semantics':'EVIDENCE_IDENTITY_DRIFT'},
+  'CLOSED_TO_ACTIVE_STATE_CONFLICT':{'executed_test_label':'state_pass_but_in_progress','injected_mutation':'SET_EXECUTION_STATE_IN_PROGRESS_WHILE_EVIDENCE_PASS','expected_blocking_semantics':'CURRENT_STATE_STATUS_CONFLICT'},
+  'REMOVE_OPERATION_RECEIPT':{'executed_test_label':'required_class_remove_operation_receipt','injected_mutation':'REMOVE_OPERATION_RECEIPT','expected_blocking_semantics':'ACTIVE_OPERATION_RECEIPT_MISSING'},
+  'REMOVE_REQUIRED_OUTPUT':{'executed_test_label':'required_class_remove_required_output','injected_mutation':'REMOVE_REGISTERED_OUTPUT','expected_blocking_semantics':'OUTPUT_RESULT_COVERAGE_DRIFT'},
+  'CREATE_SCOPE_STATE_CONFLICT':{'executed_test_label':'required_class_create_scope_resume_conflict','injected_mutation':'MUTATE_SCOPE_WORK_UNIT_UID_AGAINST_EXECUTION_STATE','expected_blocking_semantics':'CURRENT_SCOPE_WORK_STATE_IDENTITY_DRIFT'},
+  'INSERT_DUPLICATE_EVIDENCE':{'executed_test_label':'required_class_insert_duplicate_evidence','injected_mutation':'DUPLICATE_REQUIRED_EVIDENCE_ROW','expected_blocking_semantics':'REQUIRED_EVIDENCE_DUPLICATE'},
+  'INSERT_HISTORICAL_PASS':{'executed_test_label':'required_class_insert_historical_pass','injected_mutation':'MARK_PRIOR_RESULT_AS_CURRENT','expected_blocking_semantics':'EVIDENCE_FRESH_EXECUTION_PROVENANCE_INVALID'},
+  'REMOVE_CURRENT_MATRIX':{'executed_test_label':'required_class_remove_current_matrix','injected_mutation':'DELETE_CURRENT_NORMATIVE_EXECUTION_MATRIX','expected_blocking_semantics':'NORMATIVE_EXECUTION_MATRIX_MISSING'},
+  'CHANGE_DENOMINATOR':{'executed_test_label':'pass_nonzero_denominator','injected_mutation':'SET_REMAINING_SCOPE_NONZERO','expected_blocking_semantics':'PASS_WITH_NONZERO_DENOMINATOR'},
+  'REMOVE_VALIDATOR_RESULT':{'executed_test_label':'validator_coverage_drift','injected_mutation':'REMOVE_VALIDATOR_RESULT','expected_blocking_semantics':'VALIDATOR_RESULT_COVERAGE_DRIFT'},
+  'REMOVE_REQUIRED_EVIDENCE':{'executed_test_label':'required_evidence_missing','injected_mutation':'REMOVE_REQUIRED_EVIDENCE','expected_blocking_semantics':'REQUIRED_EVIDENCE_DENOMINATOR_DRIFT'},
+  'SUCCESSOR_INPUT_NOT_READY':{'executed_test_label':'handoff_consumer_not_ready','injected_mutation':'SET_SUCCESSOR_CONSUMER_NOT_READY','expected_blocking_semantics':'PASS_WITH_CROSS_STAGE_HANDOFF_NOT_READY:consumer_readiness_complete'},
 if set(_required_negative_trace)!=set(_required_negative_classes):
     raise SystemExit('FAIL_REQUIRED_NEGATIVE_CLASS_TRACEABILITY_DENOMINATOR:required='+repr(sorted(_required_negative_classes))+':mapped='+repr(sorted(_required_negative_trace)))
 _trace_rows=[]
@@ -1683,7 +1633,7 @@ def synthetic_evidence(stage_uid,result):
       'fresh_execution':True,'prior_results_used':False,'current_specification_mutated':False,
       'source_head_sha':head,
       'denominator':{
-        'required_total':len(st['outputs']),
+        'required_total':len(st['operations']),
         'open_gap_total':1 if blocked else 0,
         'closure_blocker_total':1 if blocked else 0,
         'remaining_scope_total':1 if blocked else 0,
@@ -1718,8 +1668,7 @@ def synthetic_evidence(stage_uid,result):
         'unresolved_required_dependency_total':0,
         'status':'BLOCKED' if blocked else 'PASS',
       },
-      'exact_head_gate_receipts':[{'gate_uid':'SYNTHETIC-GATE','head_sha':head,'run_id':'1','conclusion':'success'}],
-      'resume_persistence':{'performed':True,'resume_point':f'SYNTH-{stage_uid}-NEXT'},
+      'state_checkpoint':{'performed':True,'state_ref':f'STAGE_EXECUTION/{stage_uid}/SYNTH-WU-{stage_uid}-{result}/EXECUTION_STATE.yaml'},
       'next_stage_transition':{'next_stage_uid':st['next_stage_uid'],'status':next_status},
       'result':result,'stage_exit_allowed':not blocked,
     }

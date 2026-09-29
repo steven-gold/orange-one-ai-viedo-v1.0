@@ -14,7 +14,7 @@ fixed_audit_dimensions:
 - FUNCTIONAL_VISUAL_BINDING_WHEN_APPLICABLE
 - EVIDENCE_SCHEMA_AND_BYTES
 - DUPLICATE_CONFLICT_ORPHAN_GAP
-- CHECKPOINT_RESUME
+- STATE_CHECKPOINT
 - LOCAL_REGRESSION_IMPACT
 - NEXT_STEP_AUTHORIZATION
 allowed_results: [PASS, PARTIAL, FAIL, BLOCKED, NOT_APPLICABLE, NOT_VERIFIED]
@@ -38,5 +38,7 @@ deterministic_stage_pass_rule:
   stale_binding_count: 0
   missing_required_evidence_count: 0
   unresolved_required_gap_count: 0
-  terminal_receipt_required: true
+  terminal_receipt_required: false
+  content_closure_evidence_required: true
+  current_state_authority: EXECUTION_STATE
   successor_binding_required: true

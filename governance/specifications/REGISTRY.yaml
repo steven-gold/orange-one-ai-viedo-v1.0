@@ -30,6 +30,18 @@ governance_identity:
   - EXACT_HEAD_TRACEABILITY
   - CONTINUE_STAGE_GAP_REMEDIATION
   supplemental_authorization_records:
+  - record_url: https://github.com/steven-gold/orange-one-ai-viedo-v1.0/issues/67
+    record_kind: GITHUB_GOVERNANCE_CHANGE_RECORD
+    authorization_base_head: a4924deeb89d8cb19d4c9338604cfdd3181afe69
+    preexists_normative_mutation_after_base: true
+    candidate_branch: rebuild-v2.1.1
+    authorized_scope:
+    - SINGLE_CURRENT_STAGE_STATE
+    - READ_ONLY_VALIDATION
+    - CONTENT_DRIVEN_STAGE_CLOSURE
+    - SINGLE_CANONICAL_STAGE_ORCHESTRATOR
+    - SUCCESSOR_RUNTIME_BINDING_AT_OWNING_BOUNDARY
+    - REMOVE_PRODUCT_STAGE_EXACT_HEAD_REARM_DEPENDENCY
   - record_url: https://github.com/steven-gold/orange-one-ai-viedo-v1.0/issues/52
     record_kind: GITHUB_GOVERNANCE_CHANGE_RECORD
     authorization_base_head: efccf0c525903b4f11f452dee04211d0d2e3901f
@@ -108,7 +120,7 @@ mutation_policy:
   execution_on_governance_workline: FORBIDDEN
   current_governance_branch: rebuild-v2.1.1
   current_governance_exact_scope_only: true
-  current_governance_change_authorization_record: https://github.com/steven-gold/orange-one-ai-viedo-v1.0/issues/64
+  current_governance_change_authorization_record: https://github.com/steven-gold/orange-one-ai-viedo-v1.0/issues/67
   current_governance_may_mutate_reusable_policy_only_when_user_authorized: true
   current_governance_product_execution: FORBIDDEN
   current_governance_change_product_completion_credit: 0

@@ -112,12 +112,12 @@ steps:
   validators_and_evidence: [AUDIT_RECEIPT_SCHEMA_VALIDATION, AUDIT_RECEIPT]
   failure_reentry_checkpoint_next_step: {failure: STOP, reentry: AU-07-DENOMINATOR_RECONCILIATION, checkpoint: AU-08, next_step: AU-09-CHECKPOINT_SUCCESSOR_DECISION}
 - step_uid: AU-09-CHECKPOINT_SUCCESSOR_DECISION
-  purpose: Persist resume state and authorize exactly one successor only when audit result is PASS.
+  purpose: Persist the single EXECUTION_STATE checkpoint and authorize exactly one successor only when audit result is PASS.
   prerequisites: [AU-08-PASS]
   entry_gate: AUDIT_RECEIPT_VALID
-  inputs: [AUDIT_RECEIPT, CURRENT_EXECUTION_CHECKPOINT]
+  inputs: [AUDIT_RECEIPT, EXECUTION_STATE]
   input_required_fields: [audit_uid, result, owning_step_uid]
-  operations: [PERSIST_CHECKPOINT, RESOLVE_LEGAL_SUCCESSOR, AUTHORIZE_OR_BLOCK_SUCCESSOR]
+  operations: [VERIFY_EXECUTION_STATE_CHECKPOINT, RESOLVE_LEGAL_SUCCESSOR, AUTHORIZE_OR_BLOCK_SUCCESSOR]
   outputs: [AUDIT_CHECKPOINT_RECEIPT, SUCCESSOR_AUTHORIZATION]
   output_required_fields: [checkpoint_uid, audit_uid, result, next_step_uid, authorization_state]
   denominator: EXACT_CURRENT_AUDIT_AND_REGISTERED_SUCCESSOR_EDGE
@@ -143,7 +143,7 @@ deterministic_audit_contract:
   same_rank_current_state_conflict_disposition: CURRENT_STATE_CONFLICT
   historical_pass_default_role: HISTORICAL_REFERENCE_ONLY
   current_matrix_missing_disposition: BLOCKED
-  closed_without_terminal_receipt_disposition: CLOSED_FAIL
+  closed_without_content_evidence_disposition: CLOSED_FAIL
   structure_pass_is_multi_dimensional: true
   stage_result_must_use_canonical_status: true
   canonical_finding_and_severity_mapping_required: true

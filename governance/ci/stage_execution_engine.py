@@ -24,7 +24,7 @@ EXPECTED_PHASES=[
 'PERSIST_RESUME','NEXT_STAGE']
 REQUIRED_PREFLIGHT={'REQUIRED_FIELD_MANIFEST','FUNCTIONAL_CHAIN_MANIFEST','EFFECTIVE_CONTRACT_OVERLAY','DEPENDENCY_TOPOLOGY','DENOMINATOR_SNAPSHOT','CLASSIFICATION_RULESET','CHANGE_IMPACT_MAP','STAGE_EXECUTION_PREFLIGHT_RECEIPT'}
 ROUTE_KEYS={'GOVERNANCE_DEFECT','AUTHORITY_GAP','EXECUTION_CONTRACT_GAP','RUNTIME_IMPLEMENTATION_GAP','EVIDENCE_STATE_GAP','EXTERNAL_AUTHORITY_GAP'}
-EVIDENCE_FIELDS={'actual_stage_execution_completed','actual_stage_execution_started','artifact_type','attempt_uid','closure_blockers','cross_stage_handoff','current_specification_mutated','denominator','exact_head_gate_receipts','fresh_execution','gaps','governance_uid','hidden_defect_sweep','next_stage_transition','operation_results','output_results','phase_trace','prior_results_used','remediation','required_evidence','result','resume_persistence','scanner_results','scope_manifest_ref','source_head_sha','stage_exit_allowed','stage_uid','validator_results'}
+EVIDENCE_FIELDS={'actual_stage_execution_completed','actual_stage_execution_started','artifact_type','attempt_uid','closure_blockers','cross_stage_handoff','current_specification_mutated','denominator','fresh_execution','gaps','governance_uid','hidden_defect_sweep','next_stage_transition','operation_results','output_results','phase_trace','prior_results_used','remediation','required_evidence','result','state_checkpoint','scanner_results','scope_manifest_ref','source_head_sha','stage_exit_allowed','stage_uid','validator_results'}
 PHASE_TERMINAL_STATUSES={'PASS','BLOCKED','NOT_APPLICABLE_WITH_PROOF','NOT_EXECUTED_AFTER_BLOCK'}
 RESULT_TERMINAL_STATUSES={'PASS','BLOCKED','NOT_APPLICABLE_WITH_PROOF'}
 
@@ -273,14 +273,14 @@ def validate_definition_data(profile,adapters):
       'actual_execution_requires_active_work_unit':True,'fresh_execution_required':True,
       'prior_result_may_replace_fresh_execution':False,'fresh_reexecution_after_remediation_required':True,
       'hidden_defect_sweep_required':True,'required_evidence_presence_only_is_pass':False,
-      'exact_head_outer_terminal_conclusion_required':True,'stage_exit_requires_zero_open_gap_zero_blocker_zero_remaining_scope':True,
+      'exact_head_outer_terminal_conclusion_required':False,'generic_ci_or_workflow_state_is_stage_closure_authority':False,'validation_product_mutation_forbidden':True,'single_current_stage_state_authority':'EXECUTION_STATE','stage_exit_requires_zero_open_gap_zero_blocker_zero_remaining_scope':True,
       'missing_stage_specific_scanner_contract':'BLOCK','missing_semantic_adapter':'BLOCK','missing_execution_evidence_in_execution_mode':'BLOCK',
       'downstream_owned_gap_requires_owner_reentry':True,'phase_trace_exact_order_required':True,
       'phase_trace_terminal_status_required':True,'operation_result_coverage_required':True,'output_result_coverage_required':True,
       'scanner_result_coverage_required':True,'validator_result_coverage_required':True,
       'remediation_reexecution_pair_required_when_gap_found':True,'zero_gap_remediation_may_be_not_applicable_with_proof':True,
-      'hidden_defect_sweep_after_reexecution_required':True,'terminal_closure_requires_exact_head_gate_receipts':True,
-      'persist_resume_before_next_stage_required':True,'next_stage_must_match_profile':True}
+      'hidden_defect_sweep_after_reexecution_required':True,'terminal_closure_requires_exact_head_gate_receipts':False,
+      'terminal_closure_requires_content_evidence':True,'execution_state_checkpoint_before_next_stage_required':True,'next_stage_must_match_profile':True}
     for k,v in expected.items():
         if req.get(k)!=v: fail(f'COMMON_REQUIREMENT_DRIFT:{k}')
     if set(adapters.get('owner_remediation_routes') or {})!=ROUTE_KEYS: fail('OWNER_REMEDIATION_ROUTE_DENOMINATOR_DRIFT')
@@ -1212,9 +1212,8 @@ def _validate_current_stage_state_bundle(stage_uid,e,stage,gov):
         current_op=str(state.get('current_operation') or '')
         if current_op in set(expected) or 'READINESS' in current_op or 'PENDING' in current_op:
             fail('CURRENT_STATE_CURRENT_OPERATION_CONFLICT:'+current_op)
-        work_status=str(work.get('current_status') or work.get('status') or '')
-        if work_status not in {'CLOSED','EXECUTION_COMPLETE_CLOSURE_PENDING'}:
-            fail('CURRENT_WORK_UNIT_STATUS_CONFLICT:'+work_status)
+        # WORK_UNIT status is a non-authoritative projection. EXECUTION_STATE is
+        # the only mutable Current Stage/Work Unit state authority.
     return scope,work,state,work_dir
 
 def _git_optional(root,*args):
@@ -1520,6 +1519,7 @@ def validate_evidence_data(stage_uid,e):
     if not isinstance(d,dict): fail('EVIDENCE_DENOMINATOR_INVALID')
     for k in ('required_total','open_gap_total','closure_blocker_total','remaining_scope_total'):
         if not isinstance(d.get(k),int) or d.get(k)<0: fail(f'EVIDENCE_DENOMINATOR_FIELD_INVALID:{k}')
+    if d['required_total']!=len(expected_ops): fail('EVIDENCE_REQUIRED_TOTAL_DRIFT')
     if not isinstance(e.get('gaps'),list) or len(e['gaps'])!=d['open_gap_total']: fail('EVIDENCE_OPEN_GAP_DENOMINATOR_DRIFT')
     if not isinstance(e.get('closure_blockers'),list) or len(e['closure_blockers'])!=d['closure_blocker_total']: fail('EVIDENCE_BLOCKER_DENOMINATOR_DRIFT')
 
@@ -1595,14 +1595,18 @@ def validate_evidence_data(stage_uid,e):
                 fail('PASS_WITH_CROSS_STAGE_HANDOFF_NOT_READY:'+key)
         if handoff.get('unresolved_required_dependency_total')!=0 or handoff.get('status')!='PASS':
             fail('PASS_WITH_UNRESOLVED_CROSS_STAGE_HANDOFF')
-    gates=e.get('exact_head_gate_receipts')
-    if not isinstance(gates,list) or not gates: fail('EXACT_HEAD_GATE_RECEIPTS_MISSING')
-    for gate in gates:
-        if not isinstance(gate,dict) or gate.get('head_sha')!=head or gate.get('conclusion')!='success' or not gate.get('run_id') or not gate.get('gate_uid'):
-            fail('EXACT_HEAD_GATE_RECEIPT_INVALID')
-    resume=e.get('resume_persistence')
-    if not isinstance(resume,dict) or resume.get('performed') is not True or not resume.get('resume_point'):
-        fail('RESUME_PERSISTENCE_INVALID')
+    # Generic CI/workflow exact-head receipts are not Product Stage closure authority.
+    # source_head_sha remains snapshot provenance only.
+    checkpoint=e.get('state_checkpoint')
+    if not isinstance(checkpoint,dict) or checkpoint.get('performed') is not True:
+        fail('STATE_CHECKPOINT_INVALID')
+    state_ref=str(checkpoint.get('state_ref') or '')
+    if not state_ref:
+        fail('STATE_CHECKPOINT_REF_MISSING')
+    cp=(_execution_artifact_root()/Path(state_ref)).resolve()
+    expected_cp=(_work_dir/'EXECUTION_STATE.yaml').resolve()
+    if cp!=expected_cp:
+        fail('STATE_CHECKPOINT_REF_DRIFT')
     nxt=e.get('next_stage_transition')
     if not isinstance(nxt,dict) or nxt.get('next_stage_uid')!=st.get('next_stage_uid'):
         fail('NEXT_STAGE_TRANSITION_INVALID')
@@ -1907,7 +1911,7 @@ def main():
             _,_,_,profile,_,stages=validate_definition()
             print(f'PASS: common Stage Execution Engine definition audit stages={len(stages)}/{profile.get("profile_local_denominator")} phases={len(EXPECTED_PHASES)}/{len(EXPECTED_PHASES)}')
             print('PASS: all profile stages have semantic adapters, scanner dimensions, denominator, operations, outputs, evidence and closure contracts')
-            print('PASS: definition audit effectful_execution_credit=0; execution PASS requires fresh evidence and exact-head terminal receipt')
+            print('PASS: definition audit effectful_execution_credit=0; execution PASS requires fresh content evidence and single EXECUTION_STATE')
             return
         if not a.stage: fail('STAGE_REQUIRED')
         if a.plan: print(json.dumps(plan(a.stage),ensure_ascii=False,indent=2)); return

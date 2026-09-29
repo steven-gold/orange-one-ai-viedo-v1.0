@@ -73,13 +73,13 @@ normative_execution_matrix_contract:
 
 stage_closure_contract:
   step_uid: ST-{stage_uid}-CLOSURE
-  purpose: Close one Stage only after every applicable operation receipt, Current matrix/state truth, cross-stage readiness and Stage denominator pass.
+  purpose: Close one Stage only after registered content evidence, the authoritative EXECUTION_STATE, cross-stage input readiness and Stage denominator pass.
   prerequisites: [ALL_APPLICABLE_STAGE_OPERATION_RECEIPTS_PASS]
   entry_gate: ALL_REGISTERED_STAGE_OPERATIONS_TERMINAL
   inputs: [ALL_STAGE_OPERATION_RECEIPTS, REGISTERED_STAGE_OUTPUTS, REQUIRED_STAGE_EVIDENCE, CURRENT_NORMATIVE_EXECUTION_MATRIX, CURRENT_EXECUTION_STATE, NORMALIZED_STAGE_EVIDENCE, CROSS_STAGE_HANDOFF_READINESS_LEDGER]
   input_required_fields: [stage_uid, operation_receipts, output_hashes, evidence_refs, current_matrix_ref, current_execution_state_ref, normalized_stage_evidence_ref, cross_stage_handoff_readiness_ref]
   operations: [RECONCILE_STAGE_OUTPUT_DENOMINATOR, VERIFY_REQUIRED_EVIDENCE, VERIFY_CURRENT_NORMATIVE_EXECUTION_MATRIX, VERIFY_CURRENT_STATE_EVIDENCE_TERMINAL_CONSISTENCY, VERIFY_INVARIANTS, VERIFY_SUCCESSOR_INPUT_READINESS]
-  outputs: [REGISTERED_STAGE_TERMINAL_RECEIPT]
+  outputs: [STAGE_CONTENT_CLOSURE_RESULT]
   output_required_fields: [stage_uid, denominator_hash, operation_receipt_chain, evidence_refs, result, next_stage_uid]
   denominator: COMPLETE_REGISTERED_APPLICABLE_STAGE_UNIVERSE
   completeness_and_pass_condition:
@@ -88,7 +88,7 @@ stage_closure_contract:
     missing_required_evidence_count: 0
     unresolved_required_gap_count: 0
     invariant_failure_count: 0
-  validators_and_evidence: [REGISTERED_STAGE_VALIDATORS, CROSS_STAGE_INVARIANTS, STAGE_CLOSURE_AUDIT, REGISTERED_STAGE_TERMINAL_RECEIPT]
+  validators_and_evidence: [REGISTERED_STAGE_VALIDATORS, CROSS_STAGE_INVARIANTS, STAGE_CLOSURE_AUDIT]
   failure_reentry_checkpoint_next_step:
     failure: STOP_AND_REENTER_EARLIEST_OWNING_OPERATION
     reentry: EARLIEST_OWNING_OPERATION
@@ -123,8 +123,10 @@ deterministic_stage_audit_binding:
   historical_pass_may_not_be_current_pass: true
   stage_pass_requires_all_mandatory_dimensions: true
   current_matrix_required_before_effectful_operation_and_closure: true
-  terminal_receipt_required_for_closure: true
-  successor_requires_predecessor_terminal_pass_and_handoff_readiness: true
+  terminal_receipt_required_for_closure: false
+  content_closure_evidence_required: true
+  single_mutable_state_authority: EXECUTION_STATE
+  successor_requires_predecessor_content_closed_pass_and_handoff_readiness: true
   deterministic_result_fields: [finding_codes, severity, canonical_status, canonical_owner_uid, earliest_reentry_stage, stage_pass]
 
 stage_range_execution_contract:
@@ -137,11 +139,13 @@ stage_range_execution_contract:
   normal_stage_pass_behavior: AUTO_CONTINUE_TO_NEXT_STAGE_WITHIN_REQUESTED_RANGE
   normal_stage_boundary_user_prompt: FORBIDDEN
   checkpoint_after_each_stage: REQUIRED
-  checkpoint_resume_preserves_original_requested_range: true
+  execution_state_checkpoint_preserves_original_requested_range: true
   stop_conditions: [FORMAL_HUMAN_APPROVAL_REQUIRED, USER_DECISION_REQUIRED, BLOCKED, CURRENT_STATE_CONFLICT, REVERIFY_REQUIRED, SNAPSHOT_INVALIDATED, EXECUTION_FAILURE]
   invalid_endpoint_disposition: FAIL_CLOSED_WITH_EXACT_RANGE_ERROR
   silent_range_clamp: FORBIDDEN
   stage_validation_mode:
+    read_only: true
+    product_or_state_mutation: FORBIDDEN
     product_execution_credit: 0
     may_change_requested_execution_range: false
   page_lifecycle_execution_mode:
