@@ -420,10 +420,17 @@ def _deterministic_stage_audit_contract():
 
 def validate_current_ledger_synchronization_contract():
     contract=_deterministic_stage_audit_contract().get('current_ledger_synchronization') or {}
-    expected={'EXECUTION_STATE'}
-    actual=set(map(str,contract.get('ledgers') or []))
-    if actual!=expected:
-        fail('CURRENT_LEDGER_SYNCHRONIZATION_LEDGER_DENOMINATOR_DRIFT:expected='+repr(sorted(expected))+':actual='+repr(sorted(actual)))
+    if str(contract.get('mutable_state_authority') or '')!='EXECUTION_STATE':
+        fail('CURRENT_STATE_AUTHORITY_DRIFT')
+    expected_projections={
+      'RUN_MANIFEST','ARTIFACT_PLAN','GOVERNANCE_CURRENT','BRANCH_BASELINE',
+      'GOVERNANCE_STAGE_LOCK','STAGE_EVIDENCE','DEPENDENCY_INDEX','REVERSE_DEPENDENCY_INDEX'
+    }
+    actual=set(map(str,contract.get('non_authoritative_projections') or []))
+    if actual!=expected_projections:
+        fail('CURRENT_STATE_PROJECTION_DENOMINATOR_DRIFT:expected='+repr(sorted(expected_projections))+':actual='+repr(sorted(actual)))
+    if contract.get('projection_disagreement_may_override_execution_state') is not False:
+        fail('CURRENT_STATE_PROJECTION_OVERRIDE_NOT_FORBIDDEN')
     if str(contract.get('disagreement_finding') or '')!='CURRENT_LEDGER_SYNCHRONIZATION_DRIFT':
         fail('CURRENT_LEDGER_SYNCHRONIZATION_FINDING_DRIFT')
     return True
