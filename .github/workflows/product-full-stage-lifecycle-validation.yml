@@ -136,4 +136,7 @@ jobs:
           ! grep -q "Wait for independent exact-head outer validation" .github/workflows/product-stage-lifecycle-driver.yml
           ! grep -q "current_stage_execute.py" .github/workflows/product-full-stage-lifecycle-validation.yml
           test ! -e .github/scripts/common_successor_materialize.py
+          test ! -e .github/scripts/stage05_current_target_resolver.py
+          test ! -e STAGE_EXECUTION/SHARED_AUTHORITY/IMPLEMENTATION_EXECUTION_TARGET_AUTHORITY.yaml
+          ! grep -q "RESOLVE_CURRENT_IMPLEMENTATION_TARGET" .github/scripts/common_successor_binding_resolver.py
           echo "PASS: validation is read-only and lifecycle execution has one driver"
