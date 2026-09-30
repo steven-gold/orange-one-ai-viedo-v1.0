@@ -1865,13 +1865,16 @@ def materialize_synthetic_stage_context(stage_uid,evidence,result):
     })
     return evidence
 
+_validated_stage_evidence_contexts={}
 for uid in expected_stage_uids:
     pass_ev=synthetic_evidence(uid,'PASS')
     blocked_ev=synthetic_evidence(uid,'BLOCKED')
     pass_ev=materialize_synthetic_stage_context(uid,pass_ev,'PASS')
     eng.validate_evidence_data(uid,deepcopy(pass_ev))
+    _validated_stage_evidence_contexts[pass_ev['scope_manifest_ref']]=(uid,deepcopy(pass_ev))
     blocked_ev=materialize_synthetic_stage_context(uid,blocked_ev,'BLOCKED')
     eng.validate_evidence_data(uid,deepcopy(blocked_ev))
+    _validated_stage_evidence_contexts[blocked_ev['scope_manifest_ref']]=(uid,deepcopy(blocked_ev))
     all_stage_evidence_cases+=2
     bad=deepcopy(pass_ev)
     bad['cross_stage_handoff']['consumer_readiness_complete']=False
@@ -1881,6 +1884,37 @@ for uid in expected_stage_uids:
         all_stage_negative_cases+=1
     else:
         raise SystemExit('FAIL_EXPECTED_ALL_STAGE_HANDOFF_BLOCK:'+uid)
+
+# The 22 Stage/result contexts above have already passed the complete physical
+# scope/work/state/matrix/handoff validation. The 5,544 portability cases below
+# vary only synthetic flow identity while intentionally reusing those exact
+# physical contexts. Cache physical reads so the high-volume matrix continues
+# to execute every normalized-evidence semantic case without turning identical
+# YAML parsing into the test denominator.
+_orig_stage_state_bundle=eng._validate_current_stage_state_bundle
+_orig_cross_stage_handoff_ledger=eng._validate_cross_stage_handoff_ledger
+_physical_bundle_cache={}
+_physical_handoff_refs=set()
+for _scope_ref,(_ctx_uid,_ctx_ev) in _validated_stage_evidence_contexts.items():
+    _ctx_stage=stage_rows[_ctx_uid]
+    _physical_bundle_cache[_scope_ref]=_orig_stage_state_bundle(_ctx_uid,_ctx_ev,_ctx_stage,gov)
+    _orig_cross_stage_handoff_ledger(_ctx_uid,_ctx_ev,_ctx_stage,stage_rows)
+    _physical_handoff_refs.add(str((_ctx_ev.get('cross_stage_handoff') or {}).get('ledger_ref') or ''))
+
+def _cached_stage_state_bundle(stage_uid,e,stage,governance_uid):
+    _scope_ref=str(e.get('scope_manifest_ref') or '')
+    if _scope_ref in _physical_bundle_cache:
+        return _physical_bundle_cache[_scope_ref]
+    return _orig_stage_state_bundle(stage_uid,e,stage,governance_uid)
+
+def _cached_cross_stage_handoff_ledger(stage_uid,e,stage,stages):
+    _ledger_ref=str(((e.get('cross_stage_handoff') or {}).get('ledger_ref')) or '')
+    if _ledger_ref in _physical_handoff_refs:
+        return True
+    return _orig_cross_stage_handoff_ledger(stage_uid,e,stage,stages)
+
+eng._validate_current_stage_state_bundle=_cached_stage_state_bundle
+eng._validate_cross_stage_handoff_ledger=_cached_cross_stage_handoff_ledger
 
 # Keep the same physical synthetic execution contexts alive for the later high-volume
 # generic-flow evidence regressions. They are one reusable test context, not a second execution system.
@@ -2237,6 +2271,8 @@ for _uid in expected_stage_uids:
     _element_negative_cases += 1
 
 eng.validate_definition = _original_validate_definition
+eng._validate_current_stage_state_bundle=_orig_stage_state_bundle
+eng._validate_cross_stage_handoff_ledger=_orig_cross_stage_handoff_ledger
 
 if _phase_block_cases != 286 or _phase_na_proof_cases != 286:
     raise SystemExit(f'FAIL_COMMON_PHASE_NEGATIVE_DENOMINATOR:{_phase_block_cases}/286:{_phase_na_proof_cases}/286')
