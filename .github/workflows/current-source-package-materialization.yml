@@ -1,20 +1,11 @@
-# materialization trigger: governance hygiene source integration refresh 2026-09-30
-# materialization trigger: audit truth precedence single-state alignment
-# materialization trigger: corrected common semantic reference location
-# materialization trigger: section-anchor and semantic-reference synchronization
-# materialization trigger: registered single-state mother sections and guards
-# materialization trigger: evidence-integrity validator completion
-# materialization trigger: single-state gate04 regression alignment
-# materialization trigger: post-neutrality-fix simplified stage core
-# materialization trigger: simplified single-state stage core
-# Issue-67 single-state governance remediation: refresh derived source package once
+# Current integrated source-package derived-artifact maintenance.
 name: Current Source Package Materialization
 on:
   workflow_dispatch:
   push:
     branches: [rebuild-v2.1.1]
     paths:
-      - '.github/workflows/source-package-successor-materialization.yml'
+      - '.github/workflows/current-source-package-materialization.yml'
 permissions:
   contents: write
 concurrency:
@@ -23,7 +14,7 @@ concurrency:
 jobs:
   materialize:
     runs-on: ubuntu-24.04
-    if: github.actor != 'github-actions[bot]' && github.ref_name == 'rebuild-v2.1.1'
+    if: github.actor != 'github-actions[bot]'
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
@@ -92,6 +83,6 @@ jobs:
           git add             .github/governance-source/active/source/10_REGISTRY/SEMANTIC_AUTHORITY_BASELINE.yaml             .github/governance-source/active/source/09_TESTS/governance/validate_reference_semantics.py             .github/governance-source/active/source/11_EVIDENCE/audit/AUDIT_BASELINE.yaml             .github/governance-source/active/source/11_EVIDENCE/audit/generated/GOVERNANCE_REQUIREMENT_INDEX.json             .github/governance-source/active/source/10_REGISTRY/GOVERNANCE_ROOT_MANIFEST.yaml             .github/governance-source/active/source/CHECKSUMS.sha256
           git commit -m "chore(source): materialize Current Word-derived derived package"
 
-          REMOTE_HEAD_BEFORE_PUSH="$(git ls-remote origin refs/heads/rebuild-v2.1.1 | awk '{print $1}')"
+          REMOTE_HEAD_BEFORE_PUSH="$(git ls-remote origin refs/heads/${GITHUB_REF_NAME} | awk '{print $1}')"
           test "$REMOTE_HEAD_BEFORE_PUSH" = "$BASE_HEAD"
           git push origin HEAD:${GITHUB_REF_NAME}
