@@ -112,9 +112,6 @@ mutation_policy:
   single_active_governance_branch: rebuild-v2.1.1
   single_branch_consolidation_authorization_record: https://github.com/steven-gold/orange-one-ai-viedo-v1.0/issues/57
   branch_fanout_without_explicit_user_authorization: FORBIDDEN
-  retired_erroneous_branches:
-  - governance-v2.2.33-candidate
-  - governance-source-v2.2.33-candidate
   rebuild_v2_1_1_after_freeze: ALLOWED_ONLY_FOR_EXPLICIT_USER_AUTHORIZED_GOVERNANCE_REMEDIATION
   new_file_after_freeze: ALLOWED_ONLY_FOR_EXPLICIT_USER_AUTHORIZED_GOVERNANCE_REMEDIATION
   execution_on_governance_workline: FORBIDDEN
@@ -125,17 +122,9 @@ mutation_policy:
   current_governance_product_execution: FORBIDDEN
   current_governance_change_product_completion_credit: 0
   predecessor_history_must_remain_immutable: true
-  source_package_successor_branch: rebuild-v2.1.1
-  source_package_successor_role: SINGLE_BRANCH_INTEGRATED_SOURCE
-  source_package_successor_authorization_record: https://github.com/steven-gold/orange-one-ai-viedo-v1.0/issues/57
-  source_package_successor_allowed_scope:
-  - .github/governance-source/active/source/**
-  - governance/source-successor/**
-  - .github/workflows/source-package-successor-validation.yml
-  source_package_successor_status_before_external_resign: RETIRED_BY_SINGLE_BRANCH_CONSOLIDATION
-  source_package_successor_may_be_current_before_external_resign: true
-  source_package_successor_may_mutate_predecessor_branch: false
-  source_package_successor_may_touch_product_execution_branch: false
+  source_package_integration_root: governance/source-package
+  source_package_materialization_workflow: .github/workflows/current-source-package-materialization.yml
+  source_package_validation_workflow: .github/workflows/current-source-package-validation.yml
 current_validation_contract:
   authority_model: WORD_DERIVED_INTERNAL_VALIDATION
   word_source_is_primary_product_design_source: true
@@ -182,9 +171,7 @@ current_validation_contract:
   - python governance/ci/test_external_execution_admission.py
   source_package_integration_mode: SINGLE_BRANCH_INTEGRATED
   source_package_integrated_branch: rebuild-v2.1.1
-  source_package_integrated_validator: governance/ci/validate_source_package_candidate.py
-  source_package_external_trust_required: false
-  source_package_signature_required: false
+  source_package_integrated_validator: governance/ci/validate_current_source_package.py
   source_package_validation_toolchain_binding_mode: GIT_BLOB_SHA1_EXACT_SET_V1
   mother_neutrality_and_portability_required: true
   active_consumer_reverse_validation_required: true
