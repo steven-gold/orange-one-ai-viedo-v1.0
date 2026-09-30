@@ -1,0 +1,41 @@
+artifact_uid: SCOPE-WU-STAGE03-GLOBAL-HOME-SHELL-NAVIGATION-001
+artifact_type: EXECUTION_SCOPE_MANIFEST
+stage_uid: STAGE-03
+work_unit_uid: WU-STAGE03-GLOBAL-HOME-SHELL-NAVIGATION-001
+governed_unit_uid: GLOBAL-HOME-SHELL-NAVIGATION
+governed_unit_type: SYSTEM_LOGIC_UNIT
+governance_uid: GOV-REV-20260928-WORD-DERIVED-STAGE-INTERNAL-VALIDATION
+included_units:
+- GLOBAL-HOME-SHELL-NAVIGATION
+excluded_units: []
+remaining_units: []
+partial_scope: false
+stage_exit_credit_allowed: true
+scope_selection_authority: WORK_UNIT_RESOLUTION_GATE.yaml
+owning_capability: VISUAL_DESIGN
+dependency_closure_refs:
+- WU-STAGE02-GLOBAL-HOME-SHELL-NAVIGATION-001
+denominator_sources:
+- DENOMINATOR_SNAPSHOT.yaml
+- VISUAL_INTERACTION_TOPOLOGY_BINDING.yaml
+- VISUAL_GEOMETRY_CONTRACT.yaml
+current_closure_validation:
+  result: PASS
+  stage_exit_credit: 1
+  head_sha: bda0ab5411c22df8c926fb377580c8e717c5b2c5
+  workflow_run_id: '36229325891'
+  conclusion: success
+  governance_uid: GOV-REV-20260928-WORD-DERIVED-STAGE-INTERNAL-VALIDATION
+  governance_head: 5a1d67909ec438b3d886f1ee822edd36f05546f6
+prior_closure_validation:
+  head_sha: af16dad81adca977da8a8aecf1084331cd3f653e
+  workflow_run_id: 36029115482
+  workflow_job_id: 107733061922
+  result: PASS
+prior_terminal_receipt_ref: WORK_UNIT_TERMINAL_RECEIPT.yaml
+status: OPEN
+governance_head: 5a1d67909ec438b3d886f1ee822edd36f05546f6
+current_reverify_required: false
+current_normative_execution_matrix_ref: STAGE_EXECUTION/STAGE-03/WU-STAGE03-GLOBAL-HOME-SHELL-NAVIGATION-001/NORMATIVE_EXECUTION_MATRIX.yaml
+prior_terminal_receipt_disposition: HISTORICAL_PREDECESSOR_EVIDENCE_ONLY
+product_stage_execution_allowed: true

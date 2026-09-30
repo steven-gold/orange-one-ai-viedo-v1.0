@@ -1,0 +1,21 @@
+artifact_uid: RESOLUTION-STAGE04-HOME-001
+artifact_type: RESOLUTION_LEDGER
+stage_uid: STAGE-04
+governed_unit_uid: GLOBAL-HOME-SHELL-NAVIGATION
+entries:
+- resolution_uid: RES-STAGE04-HOME-UPSTREAM-REENTRY-001
+  class: OWNER_REENTRY_REQUIRED
+  finding_count: 4
+  owner_capability: VISUAL_DESIGN
+  owner_stage_uid: STAGE-03
+  required_disposition: STOP_STAGE04_REENTER_STAGE03_REPAIR_REVERIFY_RETURN_TO_STAGE04_INPUT_READINESS
+  product_completion_credit: 0
+  resolution_evidence:
+    stage03_terminal_closure_run_id: 36227587296
+    stage03_terminal_closure_head_sha: b7dc362faf195e5645871dff583fc92ef8cfeab2
+    predecessor_receipts:
+    - STAGE_EXECUTION/STAGE-03/WU-STAGE03-GLOBAL-HOME-SHELL-NAVIGATION-001/WORK_UNIT_TERMINAL_RECEIPT.yaml
+    - STAGE_EXECUTION/STAGE-03/WU-STAGE03-WB01-DASHBOARD-001/WORK_UNIT_TERMINAL_RECEIPT.yaml
+  status: RESOLVED
+append_only: true
+status: CURRENT_RESOLVED
