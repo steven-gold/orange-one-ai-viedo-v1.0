@@ -1630,12 +1630,14 @@ Destructive regression MUST include missing content-readiness audit and missing 
 
 Stage Audit MUST 對應 WEB-GOV-03-S073 的單一生產主鏈。
 
+<!-- SECTION_UID: WEB-GOV-04-S088-01 -->
 ### 88.1 稽核器只能讀取
 
 正式 validator / scanner / audit 在稽核期間 MUST_NOT mutation、materialize、commit、push、改寫 Current State、建立 successor、執行 effectful operation 或觸發另一個 effectful workflow 來完成被檢查內容。
 
 若檢查失敗，Audit 只輸出 deterministic finding、owner、re-entry boundary 與 evidence reference。修正由 owning executor 執行，再由 validator fresh re-run。
 
+<!-- SECTION_UID: WEB-GOV-04-S088-02 -->
 ### 88.2 Current State 唯一性
 
 Audit MUST 將 `EXECUTION_STATE` 視為 Active Stage Work Unit 唯一 Current State Authority。
@@ -1644,6 +1646,7 @@ Audit MUST 將 `EXECUTION_STATE` 視為 Active Stage Work Unit 唯一 Current St
 
 Projection 與 canonical state 不一致時，Audit MUST 產生 projection maintenance finding；除非該 projection 本身是 required content evidence 或其 drift 使 required artifact 無法解析/驗證，否則 projection drift MUST_NOT 單獨否定已被完整內容證據證明的 Stage completion。
 
+<!-- SECTION_UID: WEB-GOV-04-S088-03 -->
 ### 88.3 Stage PASS 公式以內容為核心
 
 Stage PASS 必須由完整 denominator 的內容事實重建：
@@ -1663,6 +1666,7 @@ Audit MUST_NOT 以 Git HEAD、workflow terminal status、push/rearm event、CAS�
 
 Source-control/CI identity MAY 證明「哪個 snapshot 被測過」，但 snapshot provenance 與 Stage content completion 是兩個不同維度。
 
+<!-- SECTION_UID: WEB-GOV-04-S088-04 -->
 ### 88.4 Successor 稽核時點
 
 Predecessor closure audit 只驗證 predecessor 自己的 denominator 與 successor REQUIRED artifact inputs 的可消費性。
@@ -1671,6 +1675,7 @@ Successor-owned executor/runtime/provider/environment/deployment/monitoring bind
 
 Audit MUST FAIL 任何「用未來 Stage runtime 尚未實體化」回頭否定合法 predecessor completion 的實作。
 
+<!-- SECTION_UID: WEB-GOV-04-S088-05 -->
 ### 88.5 Orchestrator 稽核
 
 Audit MUST 證明：
