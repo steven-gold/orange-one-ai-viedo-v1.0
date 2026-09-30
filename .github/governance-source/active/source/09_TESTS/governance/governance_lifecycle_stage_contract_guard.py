@@ -85,12 +85,17 @@ def validate(root=ROOT):
     if cinv.get('closure_mutation_semantics')!='MERGE_APPEND_OR_EXPLICIT_SUPERSEDE': failures.append('closure_continuity_mutation_semantics_wrong')
     ua=cinv.get('unresolved_authority_identity') or {}
     if ua.get('canonical_tuple_fields')!=['gap_uid','authority_ref','disposition','authority_evidence_ref'] or ua.get('carry_forward_exact_tuple_required') is not True or ua.get('count_only_or_uid_only_validation')!='BLOCK': failures.append('closure_authority_identity_tuple_contract_wrong')
-    tr=cinv.get('terminal_ci_receipt') or {}
-    if tr.get('ledger_projection_required_fields')!=['provider','repository_or_project','head_sha','run_id','job_denominator','conclusion'] or tr.get('canonical_projection_required') is not True or tr.get('alias_field_substitution')!='BLOCK': failures.append('closure_terminal_receipt_projection_contract_wrong')
-    if cinv.get('retroactive_predecessor_invalidation')!='FORBIDDEN' or cinv.get('established_predecessor_fact_deletion')!='BLOCK' or cinv.get('established_predecessor_fact_reversion')!='BLOCK': failures.append('closure_continuity_not_fail_closed')
-    if cinv.get('current_ledger_synchronization_required') is not True or cinv.get('synchronization_drift')!='BLOCK': failures.append('closure_ledger_sync_not_fail_closed')
-    tr=cinv.get('terminal_ci_receipt') or {}
-    if tr.get('model')!='EXTERNAL_IMMUTABLE_RECEIPT' or tr.get('self_write_same_commit_run_identity')!='FORBIDDEN' or tr.get('materialization_and_terminal_receipt_are_distinct') is not True: failures.append('terminal_receipt_contract_invalid')
+    if cinv.get('current_state_authority')!='EXECUTION_STATE' or cinv.get('parallel_mutable_current_state_authority')!='FORBIDDEN':
+        failures.append('closure_single_current_state_contract_wrong')
+    if cinv.get('cross_ledger_state_synchronization_required') is not False:
+        failures.append('closure_cross_ledger_state_sync_not_removed')
+    if cinv.get('terminal_ci_receipt_required_for_stage_closure') is not False or cinv.get('terminal_ci_receipt_role')!='OPTIONAL_TRANSPORT_ATTESTATION':
+        failures.append('closure_terminal_ci_role_wrong')
+    expected_content={'REQUIRED_OPERATION_RESULTS','REQUIRED_OUTPUTS_AND_FIELDS','REQUIRED_SCANNER_RESULTS','REQUIRED_VALIDATOR_RESULTS','REQUIRED_EVIDENCE','ZERO_REQUIRED_GAPS_AND_BLOCKERS','REGISTERED_HUMAN_GATE_IF_APPLICABLE'}
+    if set(cinvs for cinvs in (cinv.get('content_closure_required_facts') or []))!=expected_content:
+        failures.append('closure_content_denominator_wrong')
+    if cinv.get('retroactive_predecessor_invalidation')!='FORBIDDEN' or cinv.get('established_predecessor_fact_deletion')!='BLOCK' or cinv.get('established_predecessor_fact_reversion')!='BLOCK':
+        failures.append('closure_continuity_not_fail_closed')
     for st in stages:
         g=st.get('closure_evidence_continuity_gate') or {}
         if g.get('mode')!='REQUIRED' or g.get('invariant_uid')!='GOV-INV-CLOSURE-EVIDENCE-CONTINUITY-001' or g.get('normative_section_uid')!='WEB-GOV-03-S058': failures.append('closure_continuity_stage_gate_missing:'+str(st.get('stage_uid')))
