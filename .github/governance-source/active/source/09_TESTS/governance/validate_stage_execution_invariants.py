@@ -371,7 +371,7 @@ def validate(root=ROOT):
     if set(stage_map) != expected_stage_ids:
         failures.append('stage_execution_optimization_stage_set_drift')
     else:
-        expected_admission={'PREDECESSOR_STAGE_TERMINAL_PASS','PREDECESSOR_CURRENT_NORMATIVE_EXECUTION_MATRIX_PASS','PREDECESSOR_CURRENT_STATE_EVIDENCE_CONSISTENCY_PASS','CROSS_STAGE_HANDOFF_READINESS_PASS','SUCCESSOR_INPUT_MATERIALIZATION_PASS','SUCCESSOR_ENTRY_GATE_PASS'}
+        expected_admission={'PREDECESSOR_STAGE_CONTENT_CLOSED_PASS','PREDECESSOR_CURRENT_NORMATIVE_EXECUTION_MATRIX_PASS','PREDECESSOR_EXECUTION_STATE_CLOSED_PASS','CROSS_STAGE_HANDOFF_READINESS_PASS','SUCCESSOR_INPUT_MATERIALIZATION_PASS','SUCCESSOR_ENTRY_GATE_PASS'}
         if set((life.get('universal_stage_stepwise_execution_contract') or {}).get('stage_successor_admission_requires') or []) != expected_admission:
             failures.append('universal_stage_successor_admission_contract_incomplete')
         for sid in sorted(expected_stage_ids):
@@ -403,7 +403,7 @@ def validate(root=ROOT):
         failures.append('cross_stage_single_canonical_handoff_contract_missing')
     if crossmat.get('successor_stage_internal_target_resolution_is_predecessor_closure_requirement') is not False:
         failures.append('successor_internal_target_wrongly_bound_to_predecessor_closure')
-    if crossmat.get('successor_runtime_binding_resolution_boundary') != 'AFTER_PREDECESSOR_CLOSED_PASS_BEFORE_SUCCESSOR_MATERIALIZATION':
+    if crossmat.get('successor_runtime_binding_resolution_boundary') != 'AFTER_SUCCESSOR_MATERIALIZATION_AT_OWNING_OPERATION':
         failures.append('successor_runtime_binding_boundary_missing')
     if crossmat.get('successor_operation_target_authority_required_before_consuming_operation') is not True or crossmat.get('successor_operation_target_may_be_ai_invented') is not False:
         failures.append('operation_target_authority_boundary_incomplete')
