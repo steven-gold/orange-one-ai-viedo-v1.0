@@ -195,7 +195,7 @@ def _write_stage_entry_input_bindings(root,base_rel,stage):
 
 
 def _write_current_ledger_bindings(root,base_rel):
-    classes=list(map(str,(eng._deterministic_stage_audit_contract().get('current_ledger_synchronization') or {}).get('ledgers') or []))
+    classes=list(map(str,(eng._deterministic_stage_audit_contract().get('current_ledger_synchronization') or {}).get('non_authoritative_projections') or []))
     bindings={}
     for idx,ledger_class in enumerate(classes):
         safe=''.join(ch if ch.isalnum() else '_' for ch in ledger_class)[:80] or f'LEDGER_{idx}'
