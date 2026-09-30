@@ -38,13 +38,16 @@ def validate(root=ROOT):
     m3=(root/'12_DOCS/mother-spec/03_EXECUTION_CONTROL_STANDARD.md').read_text(encoding='utf-8')
     m4=(root/'12_DOCS/mother-spec/04_AUDIT_PROGRESS_STANDARD.md').read_text(encoding='utf-8')
     required_m3=[
-      'WEB-GOV-03-S063','SESSION_BOOTSTRAP_RESUME_GATE','live repository, target branch, commit SHA, and tree SHA',
-      'WEB-GOV-03-S064','GOVERNANCE_MAINTENANCE','PRODUCT_STAGE_EXECUTION','INNER_STAGE_IDENTITY != PRIMARY_TASK_SELECTION',
-      'WEB-GOV-03-S065','WORK_UNIT_RESOLUTION_GATE','WORK_UNIT_RESOLUTION_AMBIGUOUS',
-      'WEB-GOV-03-S066','GOVERNANCE_MAINTENANCE_PASS != PRODUCT_STAGE_PASS','zero product-stage gap-reduction',
-      'WEB-GOV-03-S067','INNER_STEP_PASS != TERMINAL_RUN_PASS','outer terminal conclusion',
+      'WEB-GOV-03-S073','EXECUTION_STATE','唯一可寫 Current State Authority',
+      '每個 Stage 只有一個 effectful executor 與一個 orchestrator',
+      'Validation 必須純讀取','Stage closure 只看 Stage 內容證據',
+      '未來 Stage 規格完整，不等於未來 Runtime 必須預先實體化',
+      '正常 PASS 自動前進；只有真實 Gate 停止',
     ]
-    required_m4=['WEB-GOV-04-S079','WEB-GOV-04-S080','WEB-GOV-04-S081','Current Primary Task Layer','Product gap/blocker denominators MUST remain unchanged','outer terminal execution result']
+    required_m4=[
+      'WEB-GOV-04-S088','稽核器只能讀取','Current State 唯一性',
+      'Stage PASS 公式以內容為核心','Successor 稽核時點','Orchestrator 稽核'
+    ]
     for token in required_m3:
         if token not in m3: failures.append('mother_context_task_layer_rule_missing:WEB-GOV-03:'+token)
     for token in required_m4:
