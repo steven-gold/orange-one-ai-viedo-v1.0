@@ -1,0 +1,35 @@
+schema_version: 1
+artifact_uid: CONTENT-AUDIT-SRC-05-CREATIVE-PRODUCTION
+artifact_type: SOURCE_DOCUMENT_CONTENT_AUDIT
+source_uid: SRC-05-CREATIVE-PRODUCTION
+source_sha256: 81ddb7b678e0dcfafcd4a6f530591aa84871841fe3df584f8359ff2e1bae9a29
+governed_unit_uid: GOVERNED-UNIT-05-CREATIVE-PRODUCTION
+audit_standard_uid: WEB-GOV-01-S090
+required_design_domain_uids: &id001
+- REQUIREMENT_ARCHITECTURE
+- ENTITY_OPERATION
+- JOURNEY_WORKBENCH_TOPOLOGY
+- PAGE_CONTROL_STATE_CONTRACT
+- FUNCTION_VISUAL_TRACE
+- VISUAL_AUTHORITY_STYLE
+- VISUAL_SCENARIO_DESIGN
+- HUMAN_READABLE_DELIVERABLE
+- DENOMINATOR_RECONCILIATION
+observed_design_domain_uids: *id001
+missing_required_design_domain_uids: []
+matrix_integrity:
+  required_rows: 9
+  complete_rows: 9
+  missing_rows: 0
+  duplicate_uid_count: 0
+visual_source_integrity:
+  embedded_visual_count: 0
+  missing_visual_count: 0
+render_integrity:
+  render_required: true
+  render_result: RENDER_READABLE
+open_downstream_states: []
+unresolved_required_gap_count: 0
+contradiction_count: 0
+result: PASS
+evidence_content_hash: d3a97499ac66e2571dc09e6171879f6165e95cea0317f278311c8c2da1b21d25

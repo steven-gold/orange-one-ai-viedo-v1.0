@@ -1,0 +1,35 @@
+schema_version: 1
+artifact_uid: CONTENT-AUDIT-SRC-ACPOS-ADMIN-STR-01-MOTHER-BASIC-DESIGN-OPTIMIZED
+artifact_type: SOURCE_DOCUMENT_CONTENT_AUDIT
+source_uid: SRC-ACPOS-ADMIN-STR-01-MOTHER-BASIC-DESIGN-OPTIMIZED
+source_sha256: 761409cbf660cdb225812ce2aaf6f90cc4fce8c88dacb2324e5464351ff46f2b
+governed_unit_uid: GOVERNED-UNIT-ACPOS-ADMIN-STR-01-MOTHER-BASIC-DESIGN-OPTIMIZED
+audit_standard_uid: WEB-GOV-01-S090
+required_design_domain_uids: &id001
+- REQUIREMENT_ARCHITECTURE
+- ENTITY_OPERATION
+- JOURNEY_WORKBENCH_TOPOLOGY
+- PAGE_CONTROL_STATE_CONTRACT
+- FUNCTION_VISUAL_TRACE
+- VISUAL_AUTHORITY_STYLE
+- VISUAL_SCENARIO_DESIGN
+- HUMAN_READABLE_DELIVERABLE
+- DENOMINATOR_RECONCILIATION
+observed_design_domain_uids: *id001
+missing_required_design_domain_uids: []
+matrix_integrity:
+  required_rows: 9
+  complete_rows: 9
+  missing_rows: 0
+  duplicate_uid_count: 0
+visual_source_integrity:
+  embedded_visual_count: 0
+  missing_visual_count: 0
+render_integrity:
+  render_required: true
+  render_result: RENDER_READABLE
+open_downstream_states: []
+unresolved_required_gap_count: 0
+contradiction_count: 0
+result: PASS
+evidence_content_hash: f1206306e4bfbd3bacb5a65ffaddb3bfa0eeaeb1b2b17ce80fc4b4e43cc9e096

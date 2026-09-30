@@ -1,0 +1,35 @@
+schema_version: 1
+artifact_uid: CONTENT-AUDIT-SRC-ACPOS-QA-01-MOTHER-BASIC-DESIGN-TECH-PURPLE-V1-0
+artifact_type: SOURCE_DOCUMENT_CONTENT_AUDIT
+source_uid: SRC-ACPOS-QA-01-MOTHER-BASIC-DESIGN-TECH-PURPLE-V1-0
+source_sha256: b212a3f1c4ff823e84b06524c3e9591ddc3753b711d1bd576426632f1a6c54b4
+governed_unit_uid: GOVERNED-UNIT-ACPOS-QA-01-MOTHER-BASIC-DESIGN-TECH-PURPLE-V1-0
+audit_standard_uid: WEB-GOV-01-S090
+required_design_domain_uids: &id001
+- REQUIREMENT_ARCHITECTURE
+- ENTITY_OPERATION
+- JOURNEY_WORKBENCH_TOPOLOGY
+- PAGE_CONTROL_STATE_CONTRACT
+- FUNCTION_VISUAL_TRACE
+- VISUAL_AUTHORITY_STYLE
+- VISUAL_SCENARIO_DESIGN
+- HUMAN_READABLE_DELIVERABLE
+- DENOMINATOR_RECONCILIATION
+observed_design_domain_uids: *id001
+missing_required_design_domain_uids: []
+matrix_integrity:
+  required_rows: 9
+  complete_rows: 9
+  missing_rows: 0
+  duplicate_uid_count: 0
+visual_source_integrity:
+  embedded_visual_count: 0
+  missing_visual_count: 0
+render_integrity:
+  render_required: true
+  render_result: RENDER_READABLE
+open_downstream_states: []
+unresolved_required_gap_count: 0
+contradiction_count: 0
+result: PASS
+evidence_content_hash: 0cb39eadc1e8a321aadfa527ad617c4db2ed9f6c5cfee7fc65c52106899289b8
