@@ -1919,7 +1919,7 @@ def execute_active(stage_uid):
 
 def main():
     p=argparse.ArgumentParser(); g=p.add_mutually_exclusive_group(required=True)
-    g.add_argument('--definition-audit-all',action='store_true'); g.add_argument('--plan',action='store_true'); g.add_argument('--plan-range',action='store_true'); g.add_argument('--admission-check',action='store_true'); g.add_argument('--validate-evidence',action='store_true'); g.add_argument('--validate-terminal-receipt',action='store_true'); g.add_argument('--execute',action='store_true')
+    g.add_argument('--definition-audit-all',action='store_true'); g.add_argument('--plan',action='store_true'); g.add_argument('--plan-range',action='store_true'); g.add_argument('--admission-check',action='store_true'); g.add_argument('--validate-evidence',action='store_true'); g.add_argument('--validate-closure',action='store_true'); g.add_argument('--execute',action='store_true')
     p.add_argument('--stage'); p.add_argument('--start-stage'); p.add_argument('--end-stage'); p.add_argument('--evidence'); p.add_argument('--receipt'); a=p.parse_args()
     try:
         if a.execute:
@@ -1940,9 +1940,10 @@ def main():
         if a.validate_evidence:
             if not a.evidence: fail('EVIDENCE_PATH_REQUIRED')
             validate_evidence(a.stage,ROOT/a.evidence); print(f'PASS: normalized fresh execution evidence valid for {a.stage}'); return
-        if a.validate_terminal_receipt:
-            if not a.evidence or not a.receipt: fail('EVIDENCE_AND_RECEIPT_REQUIRED')
-            validate_terminal(a.stage,ROOT/a.evidence,ROOT/a.receipt); return
+        if a.validate_closure:
+            if not a.evidence: fail('EVIDENCE_PATH_REQUIRED')
+            receipt_path=(ROOT/a.receipt) if a.receipt else None
+            validate_terminal(a.stage,ROOT/a.evidence,receipt_path); return
     except StageEngineError as exc:
         print(f'BLOCK: {exc}',file=sys.stderr); raise SystemExit(1)
 if __name__=='__main__': main()
