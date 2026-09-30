@@ -68,7 +68,7 @@ with tempfile.TemporaryDirectory() as td:
     r=Path(td)/'pkg'; shutil.copytree(PKG,r); ip=r/'10_REGISTRY/CONSTRUCTION_ARTIFACT_INDEX.yaml'; idx=load(ip); idx['mandatory_common_normative_bundles']['BUNDLE-GOV-COMMON-CORE']['section_uids'].remove('WEB-GOV-03-S052'); dump(ip,idx); out=life.validate(r); results.append(case('semantic_granularity_rule_must_load_in_common_bundle',out['status']=='FAIL',{'failures':out.get('failures',[])[:5]}))
 
 REPO=PKG.parents[3]
-source_candidate=load(REPO/'governance/source-successor/SOURCE_PACKAGE_CANDIDATE.yaml')
+source_candidate=load(REPO/'governance/source-package/CURRENT_SOURCE_PACKAGE_INTEGRATION.yaml')
 source_integrity=source_candidate.get('source_integrity') or {}
 results.append(case(
     'single_branch_integrated_source_requires_internal_source_integrity',
