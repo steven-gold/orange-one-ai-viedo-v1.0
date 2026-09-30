@@ -24,7 +24,10 @@ def validate(root=ROOT):
     expected={'REQUIRED_OPERATION_RESULTS','REQUIRED_OUTPUTS_AND_FIELDS','REQUIRED_SCANNER_RESULTS','REQUIRED_VALIDATOR_RESULTS','REQUIRED_EVIDENCE','ZERO_REQUIRED_GAPS_AND_BLOCKERS','REGISTERED_HUMAN_GATE_IF_APPLICABLE'}
     if facts!=expected: failures.append('content_closure_denominator_incomplete')
     ua=inv.get('unresolved_authority_identity') or {}
-    if ua.get('canonical_tuple_fields')!=EXPECTED_AUTHORITY_TUPLE or ua.get('count_only_or_uid_only_validation')!='BLOCK': failures.append('authority_identity_tuple_contract_drift')
+    if ua.get('canonical_tuple_fields')!=EXPECTED_AUTHORITY_TUPLE or ua.get('count_only_or_uid_only_validation')!='BLOCK':
+        failures.append('authority_identity_tuple_contract_drift')
+    if ua.get('carry_forward_exact_tuple_required') is not True or ua.get('authority_evidence_ref_required') is not True or ua.get('explicit_supersession_required_for_tuple_change') is not True:
+        failures.append('authority_identity_tuple_contract_drift')
     ps=inv.get('predecessor_validator_successor_state_contract') or {}
     if ps.get('registered_legal_successor_presence')!='ALLOW_IF_PREDECESSOR_CONTENT_INVARIANTS_HOLD' or ps.get('illegal_successor_or_stage_skip')!='BLOCK':
         failures.append('predecessor_successor_state_contract_drift')
