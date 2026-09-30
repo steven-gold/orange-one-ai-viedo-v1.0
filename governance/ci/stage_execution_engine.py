@@ -321,10 +321,10 @@ def validate_definition_data(profile,adapters):
         bad=sorted(set(map(str,producers.values()))-ops)
         if bad: fail(f'STAGE_OUTPUT_PRODUCER_NOT_OPERATION:{uid}:{bad}')
         if st.get('pre_execution_gate')!='GOVERNANCE_LOAD_RECEIPT_PASS': fail(f'STAGE_PREEXECUTION_GATE_DRIFT:{uid}')
-        if uid=='STAGE-01':
-            pg=st.get('pre_stage_source_projection_admission_gate') or {}
-            if pg.get('required') is not True or pg.get('evaluation_boundary')!='BEFORE_PROFILE_FIRST_STAGE_WORK_UNIT_ACTIVATION' or pg.get('freeze_state')!='SOURCE_PAIR_FROZEN' or pg.get('validator_uid')!='VAL-GOV-026':
-                fail('PRE_STAGE_SOURCE_PROJECTION_GATE_INVALID')
+        pg=st.get('pre_stage_source_projection_admission_gate')
+        if pg is not None:
+            if not isinstance(pg,dict) or pg.get('required') is not True or pg.get('evaluation_boundary')!='BEFORE_PROFILE_FIRST_STAGE_WORK_UNIT_ACTIVATION' or pg.get('freeze_state')!='SOURCE_PAIR_FROZEN' or pg.get('validator_uid')!='VAL-GOV-026':
+                fail('PRE_STAGE_SOURCE_PROJECTION_GATE_INVALID:'+uid)
         if (st.get('semantic_granularity_gate') or {}).get('mode')!='REQUIRED': fail(f'SEMANTIC_GRANULARITY_GATE_MISSING:{uid}')
         if (st.get('closure_evidence_continuity_gate') or {}).get('mode')!='REQUIRED': fail(f'CLOSURE_EVIDENCE_CONTINUITY_GATE_MISSING:{uid}')
         opt=st.get('canonical_execution_optimization_gate') or {}
@@ -505,11 +505,14 @@ def validate_vertical_scope_identity(stage_records):
     contract=_deterministic_stage_audit_contract().get('vertical_lifecycle_contract') or {}
     fields=list(map(str,contract.get('sticky_identity_fields') or []))
     finding=str(contract.get('drift_finding') or 'VERTICAL_SCOPE_IDENTITY_DRIFT')
-    start=str(contract.get('applies_from_stage') or 'STAGE-05')
-    end_stage=str(contract.get('applies_through_stage') or 'STAGE-11')
+    start=str(contract.get('applies_from_stage') or '').strip()
+    end_stage=str(contract.get('applies_through_stage') or '').strip()
     _,_,_,_,_,stages=validate_definition()
     order=list(stages)
-    if start not in stages or end_stage not in stages: fail('VERTICAL_SCOPE_STAGE_RANGE_INVALID')
+    if not start or not end_stage:
+        fail('VERTICAL_SCOPE_STAGE_RANGE_UNDECLARED')
+    if start not in stages or end_stage not in stages:
+        fail('VERTICAL_SCOPE_STAGE_RANGE_INVALID')
     selected=order[order.index(start):order.index(end_stage)+1]
     if not isinstance(stage_records,dict): fail(finding+':STAGE_RECORD_MAPPING_REQUIRED')
     for sid in selected:
@@ -590,7 +593,8 @@ def validate_work_unit_bindings(stage_uid,work,stages,adapters):
     layer_value=str(compat['active_work_unit_task_layer_value'])
     if work.get(layer_field)!=layer_value: fail('ACTIVE_WORK_UNIT_TASK_LAYER_MISMATCH')
     if work.get('stage_uid')!=stage_uid: fail('ACTIVE_WORK_UNIT_STAGE_MISMATCH')
-    if stage_uid=='STAGE-01': validate_stage01_source_projection_admission(work,stages[stage_uid])
+    if stages[stage_uid].get('pre_stage_source_projection_admission_gate') is not None:
+        validate_stage01_source_projection_admission(work,stages[stage_uid])
     if str(work.get('current_status') or '').startswith('CLOSED'): fail('ACTIVE_WORK_UNIT_ALREADY_CLOSED')
     req=set(map(str,work.get('required_outputs') or [])); prof=set(map(str,stages[stage_uid].get('outputs') or []))
     if req and not prof.issubset(req): fail('ACTIVE_WORK_UNIT_OUTPUT_DENOMINATOR_INCOMPLETE')
@@ -653,10 +657,13 @@ def _matrix_nonblank(value):
     return True
 
 def _validate_basic_design_domain_stepwise_checkpoints(stage_uid,execution_root,work,stage,gov,rows,phase,completed):
-    if stage_uid!='STAGE-04':
-        return
     inv=y(INVARIANTS)
     policy=((inv.get('invariants') or {}).get('BASIC_DESIGN_DOMAIN_STEPWISE_CHECKPOINT') or {})
+    applicable_stage=str(policy.get('applicable_stage_uid') or '').strip()
+    if not applicable_stage:
+        fail('BASIC_DESIGN_CHECKPOINT_APPLICABLE_STAGE_UNDECLARED')
+    if stage_uid!=applicable_stage:
+        return
     checkpoint_type=str(policy.get('artifact_type') or '')
     producer=str(policy.get('producer_operation_uid') or '')
     if checkpoint_type!='BASIC_DESIGN_DOMAIN_STEPWISE_CHECKPOINT' or producer!='BASIC_DESIGN_PACKAGE_COMPILE':
