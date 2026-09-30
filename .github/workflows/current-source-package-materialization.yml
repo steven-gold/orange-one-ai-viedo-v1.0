@@ -1,0 +1,96 @@
+# materialization trigger: audit truth precedence single-state alignment
+# materialization trigger: corrected common semantic reference location
+# materialization trigger: section-anchor and semantic-reference synchronization
+# materialization trigger: registered single-state mother sections and guards
+# materialization trigger: evidence-integrity validator completion
+# materialization trigger: single-state gate04 regression alignment
+# materialization trigger: post-neutrality-fix simplified stage core
+# materialization trigger: simplified single-state stage core
+# Issue-67 single-state governance remediation: refresh derived source package once
+name: Current Source Package Materialization
+on:
+  workflow_dispatch:
+  push:
+    branches: [rebuild-v2.1.1]
+    paths:
+      - '.github/workflows/source-package-successor-materialization.yml'
+permissions:
+  contents: write
+concurrency:
+  group: integrated-current-source-materialization-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  materialize:
+    runs-on: ubuntu-24.04
+    if: github.actor != 'github-actions[bot]' && github.ref_name == 'rebuild-v2.1.1'
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          fetch-depth: 0
+          ref: ${{ github.ref_name }}
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with:
+          python-version: '3.11.16'
+      - run: python -m pip install --disable-pip-version-check --require-hashes -r governance/ci/requirements-governance.lock
+
+      - name: Validate Current Word-derived materialization gate
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+          import os,sys,yaml
+          p=Path('governance/specifications/REGISTRY.yaml')
+          d=yaml.safe_load(p.read_text(encoding='utf-8')) or {}
+          roles=d.get('branch_role_contract') or {}
+          mutation=d.get('mutation_policy') or {}
+          contract=d.get('current_validation_contract') or {}
+          ident=d.get('governance_identity') or {}
+          branch=str(d.get('branch') or '')
+          errors=[]
+          if branch!=os.environ.get('GITHUB_REF_NAME',''):
+              errors.append('CURRENT_GOVERNANCE_BRANCH_DRIFT')
+          if roles.get(branch)!='CURRENT_GOVERNANCE_WORKLINE':
+              errors.append('SOURCE_MATERIALIZATION_REQUIRES_CURRENT_GOVERNANCE_WORKLINE')
+          if d.get('status')!='CURRENT' or ident.get('status')!='CURRENT':
+              errors.append('SOURCE_MATERIALIZATION_REQUIRES_CURRENT_GOVERNANCE')
+          if contract.get('authority_model')!='WORD_DERIVED_INTERNAL_VALIDATION':
+              errors.append('WORD_DERIVED_AUTHORITY_MODEL_DRIFT')
+          if contract.get('source_package_integration_mode')!='SINGLE_BRANCH_INTEGRATED':
+              errors.append('SOURCE_PACKAGE_INTEGRATION_MODE_DRIFT')
+          if contract.get('source_package_integrated_branch')!=branch:
+              errors.append('SOURCE_PACKAGE_INTEGRATED_BRANCH_DRIFT')
+          if contract.get('unregistered_non_word_execution_prerequisite')!='BLOCK':
+              errors.append('UNREGISTERED_NON_WORD_EXECUTION_PREREQUISITE_NOT_BLOCKED')
+          if mutation.get('single_branch_consolidation_mode') is not True:
+              errors.append('SINGLE_BRANCH_CURRENT_MODE_REQUIRED')
+          if mutation.get('single_active_governance_branch')!=branch:
+              errors.append('SINGLE_ACTIVE_GOVERNANCE_BRANCH_DRIFT')
+          if errors:
+              print('BLOCK: '+','.join(errors),file=sys.stderr)
+              raise SystemExit(1)
+          print('PASS: Current Word-derived integrated source materialization gate')
+          PY
+
+      - name: Materialize deterministic derived source artifacts
+        run: |
+          set -euo pipefail
+          BASE_HEAD="$(git rev-parse HEAD)"
+          REMOTE_HEAD="$(git ls-remote origin refs/heads/${GITHUB_REF_NAME} | awk '{print $1}')"
+          test -n "$REMOTE_HEAD"
+          test "$REMOTE_HEAD" = "$BASE_HEAD"
+
+          python governance/source-package/materialize_derived_source_package.py
+
+          if git diff --quiet; then
+            echo "No derived changes"
+            exit 0
+          fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add             .github/governance-source/active/source/10_REGISTRY/SEMANTIC_AUTHORITY_BASELINE.yaml             .github/governance-source/active/source/09_TESTS/governance/validate_reference_semantics.py             .github/governance-source/active/source/11_EVIDENCE/audit/AUDIT_BASELINE.yaml             .github/governance-source/active/source/11_EVIDENCE/audit/generated/GOVERNANCE_REQUIREMENT_INDEX.json             .github/governance-source/active/source/10_REGISTRY/GOVERNANCE_ROOT_MANIFEST.yaml             .github/governance-source/active/source/CHECKSUMS.sha256
+          git commit -m "chore(source): materialize Current Word-derived derived package"
+
+          REMOTE_HEAD_BEFORE_PUSH="$(git ls-remote origin refs/heads/rebuild-v2.1.1 | awk '{print $1}')"
+          test "$REMOTE_HEAD_BEFORE_PUSH" = "$BASE_HEAD"
+          git push origin HEAD:${GITHUB_REF_NAME}
