@@ -437,7 +437,8 @@ expect_stage_engine_block(
 )
 _scope_path.write_text(yaml.safe_dump(_scope_original,sort_keys=False),encoding='utf-8')
 
-# Terminal receipt pressure: missing receipt, wrong exact HEAD, and failed conclusion must never close a PASS stage.
+# Terminal closure pressure: Product closure is content-evidence driven.
+# Transport/CI receipts are optional provenance and may neither grant nor deny closure.
 _sample_evidence_path=_synthetic_dir/'SYNTHETIC_NORMALIZED_EVIDENCE.json'
 _sample_receipt_path=_synthetic_dir/'SYNTHETIC_TERMINAL_RECEIPT.json'
 _sample_evidence_path.write_text(json.dumps(sample,ensure_ascii=False,indent=2),encoding='utf-8')
@@ -455,20 +456,24 @@ _valid_receipt={
 }
 _sample_receipt_path.write_text(json.dumps(_valid_receipt,ensure_ascii=False,indent=2),encoding='utf-8')
 eng.validate_terminal(stage_uid,_sample_evidence_path,_sample_receipt_path)
-_missing_evidence_ref=deepcopy(_valid_receipt); _missing_evidence_ref.pop('evidence_ref')
-_sample_receipt_path.write_text(json.dumps(_missing_evidence_ref,ensure_ascii=False,indent=2),encoding='utf-8')
-expect_stage_engine_block(
-  'terminal_receipt_evidence_ref_missing',
-  lambda:eng.validate_terminal(stage_uid,_sample_evidence_path,_sample_receipt_path),
-  'TERMINAL_RECEIPT_FIELD_MISSING:evidence_ref'
-)
+
+# Missing transport receipt cannot deny a content-complete Stage.
+_sample_receipt_path.unlink()
+eng.validate_terminal(stage_uid,_sample_evidence_path,_sample_receipt_path)
+
+# Wrong transport HEAD / failed workflow conclusion / stale evidence pointer are
+# provenance defects outside the Product Stage content-completion denominator.
+_wrong_head=deepcopy(_valid_receipt); _wrong_head['head_sha']='0'*40
+_sample_receipt_path.write_text(json.dumps(_wrong_head,ensure_ascii=False,indent=2),encoding='utf-8')
+eng.validate_terminal(stage_uid,_sample_evidence_path,_sample_receipt_path)
+_wrong_result=deepcopy(_valid_receipt); _wrong_result['conclusion']='failure'
+_sample_receipt_path.write_text(json.dumps(_wrong_result,ensure_ascii=False,indent=2),encoding='utf-8')
+eng.validate_terminal(stage_uid,_sample_evidence_path,_sample_receipt_path)
 _wrong_evidence_ref=deepcopy(_valid_receipt); _wrong_evidence_ref['evidence_ref']='STAGE_EXECUTION/STAGE-01/WRONG/EVIDENCE.json'
 _sample_receipt_path.write_text(json.dumps(_wrong_evidence_ref,ensure_ascii=False,indent=2),encoding='utf-8')
-expect_stage_engine_block(
-  'terminal_receipt_evidence_ref_drift',
-  lambda:eng.validate_terminal(stage_uid,_sample_evidence_path,_sample_receipt_path),
-  'TERMINAL_RECEIPT_EVIDENCE_REF_DRIFT'
-)
+eng.validate_terminal(stage_uid,_sample_evidence_path,_sample_receipt_path)
+
+# Actual content-denominator drift remains a terminal blocker.
 _sample_receipt_path.write_text(json.dumps(_valid_receipt,ensure_ascii=False,indent=2),encoding='utf-8')
 _bad_denominator_evidence=deepcopy(sample)
 _bad_denominator_evidence['denominator']['required_total']+=1
@@ -479,26 +484,7 @@ expect_stage_engine_block(
   'TERMINAL_CLOSURE_DENOMINATOR_IDENTITY_DRIFT'
 )
 _sample_evidence_path.write_text(json.dumps(sample,ensure_ascii=False,indent=2),encoding='utf-8')
-_sample_receipt_path.unlink()
-expect_stage_engine_block(
-  'terminal_receipt_missing',
-  lambda:eng.validate_terminal(stage_uid,_sample_evidence_path,_sample_receipt_path),
-  'MISSING_FILE'
-)
-_wrong_head=deepcopy(_valid_receipt); _wrong_head['head_sha']='0'*40
-_sample_receipt_path.write_text(json.dumps(_wrong_head,ensure_ascii=False,indent=2),encoding='utf-8')
-expect_stage_engine_block(
-  'terminal_receipt_wrong_head',
-  lambda:eng.validate_terminal(stage_uid,_sample_evidence_path,_sample_receipt_path),
-  'TERMINAL_RECEIPT_HEAD_MISMATCH'
-)
-_wrong_result=deepcopy(_valid_receipt); _wrong_result['conclusion']='failure'
-_sample_receipt_path.write_text(json.dumps(_wrong_result,ensure_ascii=False,indent=2),encoding='utf-8')
-expect_stage_engine_block(
-  'terminal_receipt_wrong_conclusion',
-  lambda:eng.validate_terminal(stage_uid,_sample_evidence_path,_sample_receipt_path),
-  'TERMINAL_RECEIPT_IDENTITY_OR_RESULT_DRIFT'
-)
+
 if _orig_execution_root is None:
     os.environ.pop(eng.EXECUTION_ROOT_ENV,None)
 else:
