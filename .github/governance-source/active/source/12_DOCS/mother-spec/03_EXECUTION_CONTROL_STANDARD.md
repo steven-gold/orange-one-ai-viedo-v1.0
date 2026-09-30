@@ -1367,6 +1367,7 @@ Selected source-intake/base-blueprint execution may read binary pixels/bytes onl
 
 本節為 Stage 執行控制的優先解釋規則。既有條文中任何為相容、追蹤、CI、Source Control、歷史證據、外部執行器或投影而存在的機制，MUST_NOT 被解讀成第二套 Stage 狀態機、第二個流程 Authority，或與內容完成無關的 Stage closure 前置條件。
 
+<!-- SECTION_UID: WEB-GOV-03-S073-01 -->
 ### 73.1 Mother 是唯一 Stage 規格 Authority
 
 每個 Stage 的正式規格只由 Current Mother、Current Lifecycle Registry 與其明確引用的 Current Invariant / Authority 定義。每個 Stage MUST 明確定義：
@@ -1382,6 +1383,7 @@ Selected source-intake/base-blueprint execution may read binary pixels/bytes onl
 
 執行器與稽核器 MUST 消費同一份規格，不得各自維護第二份 operation、field、closure 或 successor 真相。
 
+<!-- SECTION_UID: WEB-GOV-03-S073-02 -->
 ### 73.2 每個 Stage 只有一份 Current State
 
 每個 Active Stage Work Unit 的唯一可寫 Current State Authority 是 `EXECUTION_STATE`。
@@ -1392,6 +1394,7 @@ Resume、request、workflow runtime、report、ledger、terminal receipt、gener
 
 Projection drift MUST 被回報為 projection/governance maintenance finding，但在 `EXECUTION_STATE` 與 required content evidence 本身一致且有效時，MUST_NOT 單獨推翻內容完成。
 
+<!-- SECTION_UID: WEB-GOV-03-S073-03 -->
 ### 73.3 每個 Stage 只有一個 effectful executor 與一個 orchestrator
 
 同一 Stage 的 effectful operations MUST 由一個 deterministic Stage executor 依註冊 operation 順序執行；跨 Stage 的正常 continuation MUST 由同一 lifecycle orchestrator 控制。
@@ -1400,6 +1403,7 @@ Workflow、CI job、helper script、adapter 或 callback MAY 作為執行載體�
 
 逐 operation checkpoint REQUIRED；多 workflow 接力、push-trigger chain、rearm chain 或以 Git event 決定業務流程順序 FORBIDDEN。
 
+<!-- SECTION_UID: WEB-GOV-03-S073-04 -->
 ### 73.4 Validation 必須純讀取
 
 正式 validator / scanner / audit MUST 為 read-only。
@@ -1417,6 +1421,7 @@ Validation 的唯一正式輸出是 `PASS / FAIL / BLOCKED + deterministic findi
 
 需要修正時，修正 MUST 回到合法 owner/executor；修正完成後重新執行 validator。
 
+<!-- SECTION_UID: WEB-GOV-03-S073-05 -->
 ### 73.5 Stage closure 只看 Stage 內容證據
 
 Stage closure MUST 由目前 Stage 的完整內容證據決定，至少包含：
@@ -1433,6 +1438,7 @@ Stage closure MUST 由目前 Stage 的完整內容證據決定，至少包含：
 
 Git HEAD、workflow run、push event、rearm、CAS、branch movement 或 CI transport 狀態 MAY 作為 snapshot/provenance/audit metadata，但 MUST_NOT 代替內容驗證，也 MUST_NOT 在 required content evidence 已完整時單獨阻止 Stage closure。
 
+<!-- SECTION_UID: WEB-GOV-03-S073-06 -->
 ### 73.6 未來 Stage 規格完整，不等於未來 Runtime 必須預先實體化
 
 Current Governance MUST 完整定義所有註冊 Stage 的 schema、operations、outputs、validators、evidence 與 transition contract。
@@ -1441,6 +1447,7 @@ Current Governance MUST 完整定義所有註冊 Stage 的 schema、operations�
 
 合法 predecessor closure 後，由同一 orchestrator 依 predecessor 正式輸出與 Current Authority materialize successor Work Unit 與該 Stage 所需 executable bindings。未來 Stage 自己擁有的 runtime prerequisite 只在到達該 Stage / operation boundary 時驗證。
 
+<!-- SECTION_UID: WEB-GOV-03-S073-07 -->
 ### 73.7 正常 PASS 自動前進；只有真實 Gate 停止
 
 Stage PASS 後，同一 orchestrator MUST 自動 materialize registered successor 並繼續原授權範圍。
@@ -1458,6 +1465,7 @@ Stage PASS 後，同一 orchestrator MUST 自動 materialize registered successo
 
 不得以 governance projection drift、workflow orchestration artifact、歷史 HEAD、缺少非必要 receipt 或未來 Stage 尚未 materialize 作為假停止點。
 
+<!-- SECTION_UID: WEB-GOV-03-S073-08 -->
 ### 73.8 Source Control 與 CI 的正確角色
 
 Source Control 用於版本化與可追溯性；CI 用於可重現 validation 與 regression。兩者都不是 Stage 業務 Current State Authority。
