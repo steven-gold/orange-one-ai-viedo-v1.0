@@ -16,7 +16,7 @@ REPO=ROOT.parents[3]
 def successor_migration_contract():
     mutation=yaml.safe_load((REPO/'governance/specifications/current/SPECIFICATION_MUTATION_CONTROL.yaml').read_text(encoding='utf-8')) or {}
     cycle=yaml.safe_load((REPO/'governance/specifications/current/EXECUTION_CYCLE_CONTROL.yaml').read_text(encoding='utf-8')) or {}
-    candidate=yaml.safe_load((REPO/'governance/source-successor/SOURCE_PACKAGE_CANDIDATE.yaml').read_text(encoding='utf-8')) or {}
+    candidate=yaml.safe_load((REPO/'governance/source-package/CURRENT_SOURCE_PACKAGE_INTEGRATION.yaml').read_text(encoding='utf-8')) or {}
     m=mutation.get('retired_evidence_consumer_migration_control') or {}
     s=cycle.get('current_governance_state_resolution') or {}
     return {'migration':m,'state':s,'candidate':candidate}
