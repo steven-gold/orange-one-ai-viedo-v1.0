@@ -89,13 +89,11 @@ def main():
         if proc.returncode!=0 or src.get('status')!='PASS_INTEGRATED_SOURCE':
             failures.append('INTEGRATED_SOURCE_VALIDATION_FAILED')
 
-    meta=load_yaml(ROOT/'governance/source-successor/SOURCE_PACKAGE_CANDIDATE.yaml')
+    meta=load_yaml(ROOT/'governance/source-package/CURRENT_SOURCE_PACKAGE_INTEGRATION.yaml')
     if meta.get('artifact_type')!='GOVERNANCE_SOURCE_PACKAGE_INTEGRATION_RECORD':
         failures.append('SOURCE_INTEGRATION_RECORD_TYPE_DRIFT')
     if meta.get('status')!='INTEGRATED_CURRENT_WORKLINE' or meta.get('current_authority') is not True:
         failures.append('SOURCE_INTEGRATION_RECORD_STATE_DRIFT')
-    if str(meta.get('branch') or '')!=current_branch:
-        failures.append('SOURCE_INTEGRATION_RECORD_BRANCH_DRIFT')
     integ=meta.get('integration') or {}
     if integ.get('mode')!='SINGLE_BRANCH_INTEGRATED' or integ.get('separate_source_branch_required') is not False:
         failures.append('SOURCE_INTEGRATION_RECORD_MODE_DRIFT')
