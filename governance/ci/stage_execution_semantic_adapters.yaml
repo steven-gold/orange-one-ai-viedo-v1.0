@@ -257,7 +257,7 @@ stages:
     current_execution_state_source: EXECUTION_WORKLINE_CURRENT_SCOPE_AND_RESUME
     packaged_required_artifact_contract:
       owner_output: GOVERNED_UNIT_CONSTRUCTION_SPEC_PACKAGE
-      materializer_owner: governance/ci/materialize_current_stage2_closure_artifacts.py
+      materializer_owner: governance/ci/materialize_governed_unit_construction_spec_package.py
       package_manifest_field: included_artifacts
       artifacts:
         GOVERNED_ENTITY_INVENTORY: GOVERNED_ENTITY_INVENTORY.yaml
