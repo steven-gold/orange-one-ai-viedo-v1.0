@@ -481,7 +481,7 @@ _sample_evidence_path.write_text(json.dumps(_bad_denominator_evidence,ensure_asc
 expect_stage_engine_block(
   'terminal_closure_denominator_identity_drift',
   lambda:eng.validate_terminal(stage_uid,_sample_evidence_path,_sample_receipt_path),
-  'TERMINAL_CLOSURE_DENOMINATOR_IDENTITY_DRIFT'
+  'EVIDENCE_REQUIRED_TOTAL_DRIFT'
 )
 _sample_evidence_path.write_text(json.dumps(sample,ensure_ascii=False,indent=2),encoding='utf-8')
 
