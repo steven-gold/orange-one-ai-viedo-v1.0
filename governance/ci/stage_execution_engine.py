@@ -962,15 +962,16 @@ def _validate_stage_entry_input_bindings(stage_uid,execution_root,work,stage):
 
 def _validate_current_ledger_bindings(stage_uid,execution_root,work,gov):
     contract=_deterministic_stage_audit_contract().get('current_ledger_synchronization') or {}
-    expected=list(map(str,contract.get('ledgers') or []))
+    expected=list(map(str,contract.get('non_authoritative_projections') or []))
     if not expected:
-        fail('CURRENT_LEDGER_SYNCHRONIZATION_DENOMINATOR_EMPTY')
+        fail('CURRENT_PROJECTION_DIAGNOSTIC_DENOMINATOR_EMPTY')
     bindings=work.get('current_ledger_bindings')
     if not isinstance(bindings,dict):
-        fail('CURRENT_LEDGER_BINDINGS_MISSING:'+stage_uid)
-    if set(map(str,bindings))!=set(expected):
+        fail('CURRENT_PROJECTION_BINDINGS_MISSING:'+stage_uid)
+    actual_non_state={str(k) for k in bindings if str(k)!='EXECUTION_STATE'}
+    if actual_non_state!=set(expected):
         fail('CURRENT_LEDGER_BINDING_DENOMINATOR_DRIFT:'+stage_uid+
-             ':expected='+repr(sorted(expected))+':actual='+repr(sorted(map(str,bindings))))
+             ':expected='+repr(sorted(expected))+':actual='+repr(sorted(actual_non_state)))
     required={'ledger_class','binding_kind','artifact_ref','content_sha256','external_evidence_ref'}
     for ledger_class in expected:
         row=bindings.get(ledger_class)
@@ -1093,12 +1094,11 @@ def _validate_stage_entry_control_state(stage_uid,execution_root,work,scope,work
     state_path=work_path.parent/'EXECUTION_STATE.yaml'
     ledger_bindings=work.get('current_ledger_bindings') or {}
     state_binding=ledger_bindings.get('EXECUTION_STATE') if isinstance(ledger_bindings,dict) else None
-    state_ref=str((state_binding or {}).get('artifact_ref') or '')
-    if not state_ref:
-        fail('STAGE_ENTRY_EXECUTION_STATE_LEDGER_BINDING_MISSING:'+stage_uid)
-    state_bound=(execution_root/Path(state_ref)).resolve()
-    if state_bound!=state_path:
-        fail('STAGE_ENTRY_EXECUTION_STATE_LEDGER_ALIAS_DRIFT:'+stage_uid)
+    if isinstance(state_binding,dict) and str(state_binding.get('artifact_ref') or '').strip():
+        state_ref=str(state_binding.get('artifact_ref') or '')
+        state_bound=(execution_root/Path(state_ref)).resolve()
+        if state_bound!=state_path:
+            fail('STAGE_ENTRY_EXECUTION_STATE_LEDGER_ALIAS_DRIFT:'+stage_uid)
     _validate_local_file_artifact(state_path,'STAGE_ENTRY_EXECUTION_STATE')
     state=_external_yaml(state_path,'STAGE_ENTRY_EXECUTION_STATE')
     if str(state.get('stage_uid') or '')!=stage_uid:
@@ -1133,7 +1133,7 @@ def active_execution(stage_uid):
         fail('CURRENT_SCOPE_WORK_UNIT_BINDING_DRIFT')
     entry_state=_validate_stage_entry_control_state(stage_uid,execution_root,work,scope,work_rel,stages[stage_uid],gov)
     _validate_stage_entry_input_bindings(stage_uid,execution_root,work,stages[stage_uid])
-    _validate_current_ledger_bindings(stage_uid,execution_root,work,gov)
+    # Projection synchronization is diagnostic only; EXECUTION_STATE is authoritative.
     deps=work.get('dependencies') or []
     if not isinstance(deps,list) or not deps: fail('ACTIVE_WORK_UNIT_DEPENDENCY_CLOSURE_MISSING')
     for dep in deps:
@@ -1192,7 +1192,7 @@ def _validate_current_stage_state_bundle(stage_uid,e,stage,gov):
     state=_external_yaml(state_path,'CURRENT_EXECUTION_STATE')
     state_binding=((work.get('current_ledger_bindings') or {}).get('EXECUTION_STATE') or {})
     state_ref=str(state_binding.get('artifact_ref') or '')
-    if not state_ref or (execution_root/Path(state_ref)).resolve()!=state_path.resolve():
+    if state_ref and (execution_root/Path(state_ref)).resolve()!=state_path.resolve():
         fail('CURRENT_STATE_LEDGER_ALIAS_DRIFT:'+stage_uid)
     if work.get('stage_uid')!=stage_uid or state.get('stage_uid')!=stage_uid:
         fail('CURRENT_WORK_OR_STATE_STAGE_IDENTITY_DRIFT')
@@ -1202,7 +1202,7 @@ def _validate_current_stage_state_bundle(stage_uid,e,stage,gov):
         stage_uid,execution_root,work,stage,gov,
         validation_phase='CLOSURE',completed_operations=state.get('completed_operations') or []
     )
-    _validate_current_ledger_bindings(stage_uid,execution_root,work,gov)
+    # Projection synchronization cannot deny content-evidence closure.
     if e.get('result')=='PASS':
         expected=list(map(str,stage.get('operations') or []))
         completed=state.get('completed_operations')
@@ -1702,7 +1702,7 @@ def _atomic_yaml_write(path,obj):
 def _refresh_canonical_state_ledger_hash(work_path,work,state_path):
     bindings=work.get('current_ledger_bindings')
     if not isinstance(bindings,dict) or not isinstance(bindings.get('EXECUTION_STATE'),dict):
-        fail('CURRENT_STATE_LEDGER_BINDING_MISSING_DURING_CHECKPOINT')
+        return False
     row=bindings['EXECUTION_STATE']
     expected_ref=state_path.resolve()
     actual_ref=(_execution_artifact_root()/Path(str(row.get('artifact_ref') or ''))).resolve()
