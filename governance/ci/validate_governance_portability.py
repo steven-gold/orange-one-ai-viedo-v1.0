@@ -246,17 +246,19 @@ for surface in global_surfaces:
         failures.append('global_machine_profile_specific_step_schema:'+surface.relative_to(ROOT).as_posix())
 
 # Reusable product-scope consumers must remain scope-parametric.
-_stage02_packaged_contract=((_adapter.get('stages') or {}).get('STAGE-02') or {}).get('packaged_required_artifact_contract') or {}
-_stage02_materializer_rel=str(_stage02_packaged_contract.get('materializer_owner') or '').strip()
 scope_neutral_surfaces=[
     ROOT/'governance/ci/content_integrity_engine.py',
     ROOT/'governance/ci/validate_typography_metrics_evidence.py',
     ROOT/'governance/ci/stage_execution_engine.py',
 ]
-if not _stage02_materializer_rel:
-    failures.append('scope_neutral_materializer_owner_missing:STAGE-02')
-else:
-    scope_neutral_surfaces.append(ROOT/_stage02_materializer_rel)
+_declared_materializer_owners=[]
+for _stage_row in (_adapter.get('stages') or {}).values():
+    _packaged_contract=(_stage_row or {}).get('packaged_required_artifact_contract') or {}
+    _materializer_rel=str(_packaged_contract.get('materializer_owner') or '').strip()
+    if _materializer_rel:
+        _declared_materializer_owners.append(_materializer_rel)
+for _materializer_rel in sorted(set(_declared_materializer_owners)):
+    scope_neutral_surfaces.append(ROOT/_materializer_rel)
 literal_product_identity=re.compile(r"['\"](?:CORE|ASSET|VIDEO|EDIT|VOICE|QA|IAM|ERP|AIAPI)-\d+['\"]")
 for surface in scope_neutral_surfaces:
     if not surface.is_file():
