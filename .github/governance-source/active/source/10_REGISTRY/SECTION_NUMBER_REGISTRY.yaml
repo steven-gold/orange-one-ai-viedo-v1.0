@@ -1963,6 +1963,63 @@ documents:
     heading: '## 73. 單一 Stage 生產主鏈 / Single-State Stage Production Chain'
     path: 12_DOCS/mother-spec/03_EXECUTION_CONTROL_STANDARD.md
     binding_sha256: 628e0947992ea3d6f46d35046c074d4f3287ea6ebb543effaf83745f6026f1fa
+
+  - section_uid: WEB-GOV-03-S073-01
+    level: 3
+    canonical_number: '73.1'
+    title: Mother 是唯一 Stage 規格 Authority
+    heading: '### 73.1 Mother 是唯一 Stage 規格 Authority'
+    path: 12_DOCS/mother-spec/03_EXECUTION_CONTROL_STANDARD.md
+    binding_sha256: 5b3f2b55d75f4ed600ffaacb56b8707bc8ea673974c89c019d5d0c741ac966d8
+  - section_uid: WEB-GOV-03-S073-02
+    level: 3
+    canonical_number: '73.2'
+    title: 每個 Stage 只有一份 Current State
+    heading: '### 73.2 每個 Stage 只有一份 Current State'
+    path: 12_DOCS/mother-spec/03_EXECUTION_CONTROL_STANDARD.md
+    binding_sha256: 2c9faf6a80aca0de582cc44a7ce575334a0f12b04a4410135ab55b13431e76f0
+  - section_uid: WEB-GOV-03-S073-03
+    level: 3
+    canonical_number: '73.3'
+    title: 每個 Stage 只有一個 effectful executor 與一個 orchestrator
+    heading: '### 73.3 每個 Stage 只有一個 effectful executor 與一個 orchestrator'
+    path: 12_DOCS/mother-spec/03_EXECUTION_CONTROL_STANDARD.md
+    binding_sha256: be37439a9aa74f9e0af7cab3705d2b0ae9ef2c585b1d31457656a3f311a22d4c
+  - section_uid: WEB-GOV-03-S073-04
+    level: 3
+    canonical_number: '73.4'
+    title: Validation 必須純讀取
+    heading: '### 73.4 Validation 必須純讀取'
+    path: 12_DOCS/mother-spec/03_EXECUTION_CONTROL_STANDARD.md
+    binding_sha256: e6df1ae39c8bf4c49aedfbae44c7441016f4afff848fa732e08630b2a1368155
+  - section_uid: WEB-GOV-03-S073-05
+    level: 3
+    canonical_number: '73.5'
+    title: Stage closure 只看 Stage 內容證據
+    heading: '### 73.5 Stage closure 只看 Stage 內容證據'
+    path: 12_DOCS/mother-spec/03_EXECUTION_CONTROL_STANDARD.md
+    binding_sha256: 2b41324cb1076052afbbb671c52a75eab218bab65afc97db799c8cf2cc2ef918
+  - section_uid: WEB-GOV-03-S073-06
+    level: 3
+    canonical_number: '73.6'
+    title: 未來 Stage 規格完整，不等於未來 Runtime 必須預先實體化
+    heading: '### 73.6 未來 Stage 規格完整，不等於未來 Runtime 必須預先實體化'
+    path: 12_DOCS/mother-spec/03_EXECUTION_CONTROL_STANDARD.md
+    binding_sha256: f0f128900e488cbebbe1dd08e93cbda7a14e54d044a04f14b81370493a957aa4
+  - section_uid: WEB-GOV-03-S073-07
+    level: 3
+    canonical_number: '73.7'
+    title: 正常 PASS 自動前進；只有真實 Gate 停止
+    heading: '### 73.7 正常 PASS 自動前進；只有真實 Gate 停止'
+    path: 12_DOCS/mother-spec/03_EXECUTION_CONTROL_STANDARD.md
+    binding_sha256: eef2841e03fc12b44e767964cb72a20df001f023a262257689afa58ee1e89695
+  - section_uid: WEB-GOV-03-S073-08
+    level: 3
+    canonical_number: '73.8'
+    title: Source Control 與 CI 的正確角色
+    heading: '### 73.8 Source Control 與 CI 的正確角色'
+    path: 12_DOCS/mother-spec/03_EXECUTION_CONTROL_STANDARD.md
+    binding_sha256: a6a72a9cca478b0622598b6e386c25bcb33571b6d93c142e1eab6243a4b63e2b
 - document_id: WEB-GOV-04
   path: 12_DOCS/mother-spec/04_AUDIT_PROGRESS_STANDARD.md
   sections:
@@ -2592,10 +2649,10 @@ documents:
   - section_uid: WEB-GOV-04-S079
     level: 2
     canonical_number: '79'
-    title: Session Bootstrap / Current Primary Task Audit
-    heading: '## 79. Session Bootstrap / Current Primary Task Audit'
+    title: Session Bootstrap / Resume Audit
+    heading: '## 79. Session Bootstrap / Resume Audit'
     path: 12_DOCS/mother-spec/04_AUDIT_PROGRESS_STANDARD.md
-    binding_sha256: e26c09c11899f0fa6ed8517c9f0fa7812dd2259a3a846b08fd7aac074516bfea
+    binding_sha256: b7cfcdd6788e76714ecf91a10ef0312593dd3ae9ee47767e4f7d05ecaba66fe7
   - section_uid: WEB-GOV-04-S080
     level: 2
     canonical_number: '80'
@@ -2606,10 +2663,10 @@ documents:
   - section_uid: WEB-GOV-04-S081
     level: 2
     canonical_number: '81'
-    title: Outer Terminal Conclusion / Resume Continuity Audit
-    heading: '## 81. Outer Terminal Conclusion / Resume Continuity Audit'
+    title: Exact-Head / Terminal-Result / Outer-Workflow Audit
+    heading: '## 81. Exact-Head / Terminal-Result / Outer-Workflow Audit'
     path: 12_DOCS/mother-spec/04_AUDIT_PROGRESS_STANDARD.md
-    binding_sha256: 44322b7f4136729e0eb1d4f8b3d5db041bb10eebcc6f1489d00a6cd1155af76f
+    binding_sha256: 64959c2ea348bb284f88e188dd316fb4a95494cb1bfda3fed1827516e07e2004
   - section_uid: WEB-GOV-04-S082
     level: 2
     canonical_number: '82'
@@ -2659,6 +2716,42 @@ documents:
     heading: '## 88. 單一 Stage 內容稽核 / Read-Only Stage Content Audit'
     path: 12_DOCS/mother-spec/04_AUDIT_PROGRESS_STANDARD.md
     binding_sha256: bc35dff07c1ccc2a925145e2f55d8fb43e879917c8b87499f02441b4672c9638
+
+  - section_uid: WEB-GOV-04-S088-01
+    level: 3
+    canonical_number: '88.1'
+    title: 稽核器只能讀取
+    heading: '### 88.1 稽核器只能讀取'
+    path: 12_DOCS/mother-spec/04_AUDIT_PROGRESS_STANDARD.md
+    binding_sha256: 040b7bea70c3e350100cd93ff69ba94b58adf116a15e9306937d2a7bb696ee43
+  - section_uid: WEB-GOV-04-S088-02
+    level: 3
+    canonical_number: '88.2'
+    title: Current State 唯一性
+    heading: '### 88.2 Current State 唯一性'
+    path: 12_DOCS/mother-spec/04_AUDIT_PROGRESS_STANDARD.md
+    binding_sha256: f21b9ba585ac536ead849ee0b48225ff0c1c38f882113758e8e0141dee5a5724
+  - section_uid: WEB-GOV-04-S088-03
+    level: 3
+    canonical_number: '88.3'
+    title: Stage PASS 公式以內容為核心
+    heading: '### 88.3 Stage PASS 公式以內容為核心'
+    path: 12_DOCS/mother-spec/04_AUDIT_PROGRESS_STANDARD.md
+    binding_sha256: 3c8bacf33cdfec3514b5523062f3d3203d41d15afd79ffb9e266aaaaf67708a0
+  - section_uid: WEB-GOV-04-S088-04
+    level: 3
+    canonical_number: '88.4'
+    title: Successor 稽核時點
+    heading: '### 88.4 Successor 稽核時點'
+    path: 12_DOCS/mother-spec/04_AUDIT_PROGRESS_STANDARD.md
+    binding_sha256: fe7f012315c79d0428ff81f112938b11b117069ada521f0c3711b7b36c33be01
+  - section_uid: WEB-GOV-04-S088-05
+    level: 3
+    canonical_number: '88.5'
+    title: Orchestrator 稽核
+    heading: '### 88.5 Orchestrator 稽核'
+    path: 12_DOCS/mother-spec/04_AUDIT_PROGRESS_STANDARD.md
+    binding_sha256: 9af1085f66536aba2138be7e330900c431325e2ca51e65c98f49d5e6c531e1e2
 - document_id: WEB-EXT-ADMISSION-01
   path: 12_DOCS/external-admission/PRODUCT_EXECUTION_ENVIRONMENT_ADMISSION_STANDARD.md
   sections:
