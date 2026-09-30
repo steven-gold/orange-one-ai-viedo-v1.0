@@ -4,26 +4,23 @@ on:
   workflow_dispatch:
     inputs:
       stage_uid:
-        description: Single selected-profile Stage for single-stage validation modes
+        description: Stage UID; validated against Current lifecycle registry
         required: false
-        type: choice
-        options: [STAGE-01, STAGE-02, STAGE-03, STAGE-04, STAGE-05, STAGE-06, STAGE-07, STAGE-08, STAGE-09, STAGE-10, STAGE-11]
+        type: string
       start_stage_uid:
-        description: Exact inclusive range start for range-plan mode
+        description: Inclusive range start UID; validated against Current lifecycle registry
         required: false
-        type: choice
-        options: [STAGE-01, STAGE-02, STAGE-03, STAGE-04, STAGE-05, STAGE-06, STAGE-07, STAGE-08, STAGE-09, STAGE-10, STAGE-11]
+        type: string
       end_stage_uid:
-        description: Exact inclusive range end for range-plan mode
+        description: Inclusive range end UID; validated against Current lifecycle registry
         required: false
-        type: choice
-        options: [STAGE-01, STAGE-02, STAGE-03, STAGE-04, STAGE-05, STAGE-06, STAGE-07, STAGE-08, STAGE-09, STAGE-10, STAGE-11]
+        type: string
       mode:
         description: Common engine mode
         required: true
         default: plan
         type: choice
-        options: [plan, plan-range, admission-check, validate-evidence, validate-terminal]
+        options: [plan, plan-range, admission-check, validate-evidence, validate-closure]
       execution_root:
         description: Execution-workline root for context-dependent modes
         required: false
@@ -38,10 +35,6 @@ on:
         type: string
       evidence_path:
         description: Repo-relative normalized evidence path for validation modes
-        required: false
-        type: string
-      receipt_path:
-        description: Repo-relative exact-head terminal receipt path
         required: false
         type: string
 
@@ -79,7 +72,6 @@ jobs:
           STAGE_ACTIVE_WORK_UNIT: ${{ inputs.active_work_unit }}
           STAGE_CURRENT_SCOPE: ${{ inputs.current_scope }}
           EVIDENCE_PATH: ${{ inputs.evidence_path }}
-          RECEIPT_PATH: ${{ inputs.receipt_path }}
         run: |
           set -euo pipefail
           case "$MODE" in
@@ -99,10 +91,9 @@ jobs:
               test -n "$EVIDENCE_PATH"
               python governance/ci/stage_execution_engine.py --validate-evidence --stage "$STAGE_UID" --evidence "$EVIDENCE_PATH"
               ;;
-            validate-terminal)
+            validate-closure)
               test -n "$EVIDENCE_PATH"
-              test -n "$RECEIPT_PATH"
-              python governance/ci/stage_execution_engine.py --validate-terminal-receipt --stage "$STAGE_UID" --evidence "$EVIDENCE_PATH" --receipt "$RECEIPT_PATH"
+              python governance/ci/stage_execution_engine.py --validate-closure --stage "$STAGE_UID" --evidence "$EVIDENCE_PATH"
               ;;
             *)
               echo "BLOCK: unsupported common engine mode $MODE" >&2
