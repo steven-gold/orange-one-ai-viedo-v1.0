@@ -376,7 +376,7 @@ def check_dimension(dimension: str, resolved: dict, ctx: dict) -> tuple[bool, st
         ok = not uid_dup and not type_dup and not orphan
         return ok, "no duplicate or orphan finding" if ok else "duplicate or orphan finding detected"
 
-    if dimension == "CHECKPOINT_RESUME":
+    if dimension == "STATE_CHECKPOINT":
         for step in ctx["steps"]:
             recovery = step.get("failure_reentry_checkpoint_next_step") or {}
             if not recovery.get("checkpoint"):
