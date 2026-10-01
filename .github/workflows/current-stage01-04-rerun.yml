@@ -24,10 +24,28 @@ jobs:
       - name: Checkout exact Current governance
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
-          ref: f91b5073bb9a4429f9a74c8503c977907f6f2a7c
+          ref: rebuild-v2.1.1
           fetch-depth: 0
           path: gov
           persist-credentials: false
+
+      - name: Resolve Current governance directly from 2.1.1 workline
+        shell: bash
+        run: |
+          set -euo pipefail
+          CURRENT_HEAD="$(git -C gov rev-parse HEAD)"
+          test -n "$CURRENT_HEAD"
+          python - <<'PY'
+          from pathlib import Path
+          import yaml
+          reg=yaml.safe_load(Path('gov/governance/specifications/REGISTRY.yaml').read_text(encoding='utf-8')) or {}
+          if reg.get('branch')!='rebuild-v2.1.1' or reg.get('status')!='CURRENT':
+              raise SystemExit('CURRENT_GOVERNANCE_REGISTRY_NOT_CURRENT_2_1_1')
+          if (reg.get('current_validation_contract') or {}).get('product_execution_may_define_or_copy_governance_authority') is not False:
+              raise SystemExit('PRODUCT_GOVERNANCE_AUTHORITY_COPY_NOT_FORBIDDEN')
+          PY
+          test ! -e product/STAGE_EXECUTION/SHARED_AUTHORITY
+          echo "CURRENT_GOVERNANCE_HEAD=$CURRENT_HEAD" >> "$GITHUB_ENV"
 
       - name: Set up Python
         uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
@@ -43,11 +61,11 @@ jobs:
           set -euo pipefail
           python - <<'PY'
           from pathlib import Path
-          import hashlib, shutil, yaml
+          import hashlib, os, shutil, yaml
 
           root=Path('product')
           gov=Path('gov')
-          current_head='f91b5073bb9a4429f9a74c8503c977907f6f2a7c'
+          current_head=os.environ['CURRENT_GOVERNANCE_HEAD']
           # Governance is resolved only from the exact Current governance checkout.
           # The product branch must not carry a governance Authority or version selector.
           life=yaml.safe_load((gov/'.github/governance-source/active/source/10_REGISTRY/GOVERNANCE_LIFECYCLE_STAGE_REGISTRY.yaml').read_text(encoding='utf-8')) or {}
@@ -182,10 +200,10 @@ jobs:
           set -euo pipefail
           python - <<'PY'
           from pathlib import Path
-          import hashlib, json, yaml
+          import hashlib, json, os, yaml
           root=Path('product')
           gov=Path('gov')
-          current_head='f91b5073bb9a4429f9a74c8503c977907f6f2a7c'
+          current_head=os.environ['CURRENT_GOVERNANCE_HEAD']
           life=yaml.safe_load((gov/'.github/governance-source/active/source/10_REGISTRY/GOVERNANCE_LIFECYCLE_STAGE_REGISTRY.yaml').read_text(encoding='utf-8')) or {}
           raw=life.get('stages') or []
           stages={str(x['stage_uid']):x for x in raw} if isinstance(raw,list) else {str(k):v for k,v in raw.items()}
@@ -246,9 +264,9 @@ jobs:
           set -euo pipefail
           python - <<'PY'
           from pathlib import Path
-          import hashlib, json, yaml
+          import hashlib, json, os, yaml
           root=Path('product')
-          current_head='f91b5073bb9a4429f9a74c8503c977907f6f2a7c'
+          current_head=os.environ['CURRENT_GOVERNANCE_HEAD']
           for n in range(1,5):
               sid=f'STAGE-{n:02d}'
               wu=f'WU-STAGE{n:02d}-GLOBAL-HOME-SHELL-NAVIGATION-001'
