@@ -2,12 +2,12 @@
 """Per-operation executor (PYTHON_STAGE_OPERATION_V1)."""
 from __future__ import annotations
 import argparse
+import os
 import shutil
 import hashlib
 from pathlib import Path
 import yaml
 
-GOV_UID = 'GOV-REV-20260928-WORD-DERIVED-STAGE-INTERNAL-VALIDATION'
 EXECUTOR_REL = 'STAGE_EXECUTION/STAGE-03/stage03_operation_executor.py'
 WU_REL = 'STAGE_EXECUTION/STAGE-03/WU-STAGE03-GLOBAL-HOME-SHELL-NAVIGATION-001'
 HERE = Path(__file__).resolve().parent
@@ -92,10 +92,13 @@ def main():
         _copy(rel)
     if a.operation == 'VISUAL_SPEC_COMPILE':
         _materialize_visual_review_evidence(Path(a.work_unit).parent.as_posix())
+    gov_uid = os.environ.get('ACPOS_CURRENT_GOVERNANCE_UID', '').strip()
+    if not gov_uid:
+        raise SystemExit('CURRENT_GOVERNANCE_UID_ENV_MISSING')
     receipt = {
         'artifact_type': 'OPERATION_EXECUTION_RECEIPT', 'stage_uid': a.stage,
         'work_unit_uid': Path(a.work_unit).parent.name, 'operation_uid': a.operation,
-        'governance_uid': GOV_UID, 'status': 'PASS', 'executor_owner': EXECUTOR_REL,
+        'governance_uid': gov_uid, 'status': 'PASS', 'executor_owner': EXECUTOR_REL,
         'executor_protocol': 'PYTHON_STAGE_OPERATION_V1',
         'result_owner': Path(a.work_unit).parent.as_posix() + '/EVIDENCE/OPERATION_RECEIPTS/' + a.operation + '.yaml',
     }
