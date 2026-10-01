@@ -12,6 +12,7 @@ INVARIANTS=ROOT/'.github/governance-source/active/source/10_REGISTRY/STAGE_EXECU
 SOURCE_PACKAGE_ROOT=ROOT/'.github/governance-source/active/source'
 STAGE1_SOURCE_CONTRACTS=SOURCE_PACKAGE_ROOT/'10_REGISTRY/STAGE1_SOURCE_FACT_CONTRACTS.yaml'
 STAGE1_PIPELINE_GUARD=SOURCE_PACKAGE_ROOT/'09_TESTS/governance/governance_stage1_pipeline_guard.py'
+MASTER_PLAN=SOURCE_PACKAGE_ROOT/'10_REGISTRY/STAGE_EXECUTION_MASTER_PLAN.yaml'
 EXECUTION_ROOT_ENV='STAGE_EXECUTION_ROOT'
 ACTIVE_WORK_UNIT_ENV='STAGE_ACTIVE_WORK_UNIT'
 CURRENT_SCOPE_ENV='STAGE_CURRENT_SCOPE'
@@ -395,7 +396,63 @@ def validate_definition_data(profile,adapters):
             )
             if not exact_or_stricter:
                 fail(f'SUCCESSOR_GATE_MISMATCH:{uid}->{nxt}:{predecessor_exit}:{successor_entry}')
+    validate_master_plan(stages)
     return stages
+
+def validate_master_plan(stages):
+    """Definition-time validation of the single STAGE_EXECUTION_MASTER_PLAN.
+
+    The master plan is the one-line authoritative declaration of every stage
+    contract. The lifecycle registry must remain a projection of it (superset
+    rule: plan may add approved declarations, but may never drop registry
+    authority). Fail-closed.
+    """
+    mp=y(MASTER_PLAN)
+    if mp.get('artifact_type')!='STAGE_EXECUTION_MASTER_PLAN': fail('MASTER_PLAN_ARTIFACT_TYPE_INVALID')
+    if mp.get('authority_mode')!='EXECUTION_PROJECTION_ONLY': fail('MASTER_PLAN_AUTHORITY_MODE_DRIFT')
+    if mp.get('may_create_new_normative_requirement') is not False: fail('MASTER_PLAN_NORMATIVE_REQUIREMENT_CREATION_NOT_FORBIDDEN')
+    pstages={s.get('stage_uid'):s for s in (mp.get('stages') or [])}
+    if set(pstages)!=set(stages): fail('MASTER_PLAN_STAGE_DENOMINATOR_DRIFT')
+    common=mp.get('common') or {}
+    envelope=common.get('construction_envelope') or {}
+    if envelope.get('fixed_structure_across_pages_and_systems') is not True or envelope.get('page_specific_schema_variation')!='FORBIDDEN':
+        fail('MASTER_PLAN_CONSTRUCTION_ENVELOPE_DRIFT')
+    for sid,st in stages.items():
+        ps=pstages[sid]
+        for _f,_k in (('operations','operation_uid'),('outputs','output_uid'),('required_evidence','evidence_uid')):
+            _u=[x.get(_k) for x in (ps.get(_f) or [])]
+            _d=sorted({x for x in _u if _u.count(x)>1})
+            if _d: fail(f'MASTER_PLAN_DUPLICATE_MEMBER:{sid}:{_f}:{_d}')
+        pops={o.get('operation_uid') for o in ps.get('operations') or []}
+        pouts={o.get('output_uid') for o in ps.get('outputs') or []}
+        pevid={e.get('evidence_uid') for e in ps.get('required_evidence') or []}
+        psecs=set(map(str,ps.get('required_normative_sections') or []))
+        miss=set(map(str,st.get('operations') or []))-pops
+        if miss: fail(f'MASTER_PLAN_PROJECTION_DRIFT:{sid}:operations:{sorted(miss)}')
+        miss=set(map(str,st.get('outputs') or []))-pouts
+        if miss: fail(f'MASTER_PLAN_PROJECTION_DRIFT:{sid}:outputs:{sorted(miss)}')
+        miss=set(map(str,st.get('required_evidence') or []))-pevid
+        if miss: fail(f'MASTER_PLAN_PROJECTION_DRIFT:{sid}:evidence:{sorted(miss)}')
+        miss=set(map(str,st.get('required_normative_section_uids') or []))-psecs
+        if miss: fail(f'MASTER_PLAN_PROJECTION_DRIFT:{sid}:sections:{sorted(miss)}')
+        for o in ps.get('outputs') or []:
+            if not o.get('producer_operation_uid') or o.get('producer_operation_uid') not in pops:
+                fail(f'MASTER_PLAN_DANGLING_PRODUCER:{sid}:{o.get("output_uid")}')
+            if o.get('classification') not in {'HANDOFF','INTERNAL'}:
+                fail(f'MASTER_PLAN_CLASSIFICATION_INVALID:{sid}:{o.get("output_uid")}')
+        for op in ps.get('operations') or []:
+            for po in op.get('producer_outputs') or []:
+                if po not in pouts: fail(f'MASTER_PLAN_DANGLING_PRODUCER_OUTPUT:{sid}:{po}')
+        for e in ps.get('required_evidence') or []:
+            if not e.get('producer_operation_uid') or e.get('producer_operation_uid') not in pops:
+                fail(f'MASTER_PLAN_EVIDENCE_PRODUCER_INVALID:{sid}:{e.get("evidence_uid")}')
+        nxt=str(st.get('next_stage_uid') or '')
+        if nxt in pstages and (ps.get('handoff') or {}).get('successor_stage_uid')!=nxt:
+            fail(f'MASTER_PLAN_HANDOFF_STAGE_DRIFT:{sid}')
+    binding=mp.get('orphan_invariant_binding') or {}
+    if not binding.get('SINGLE_STATE_SINGLE_ORCHESTRATOR_STAGE_CORE'):
+        fail('MASTER_PLAN_ORPHAN_INVARIANT_UNBOUND')
+    return True
 
 def validate_definition():
     entry,reg,gov,profile,adapters=data()

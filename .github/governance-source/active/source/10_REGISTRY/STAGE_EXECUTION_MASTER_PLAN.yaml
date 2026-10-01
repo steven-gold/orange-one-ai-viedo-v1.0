@@ -1,0 +1,1565 @@
+schema_version: 1
+artifact_uid: REG-STAGE-EXECUTION-MASTER-PLAN-001
+artifact_type: STAGE_EXECUTION_MASTER_PLAN
+status: CURRENT_CANDIDATE
+canonical_path: 10_REGISTRY/STAGE_EXECUTION_MASTER_PLAN.yaml
+owner_uid: OWNER-GOVERNANCE-STAGE-EXECUTION-MASTER-PLAN
+governance_revision: v2.2.34-word-derived-stage-internal-validation-20260928
+authority_mode: EXECUTION_PROJECTION_ONLY
+may_create_new_normative_requirement: false
+derived_from:
+  lifecycle_registry: 10_REGISTRY/GOVERNANCE_LIFECYCLE_STAGE_REGISTRY.yaml
+  invariant_registry: 10_REGISTRY/STAGE_EXECUTION_INVARIANT_REGISTRY.yaml
+  section_registry: 10_REGISTRY/SECTION_NUMBER_REGISTRY.yaml
+  semantic_adapters: governance/ci/stage_execution_semantic_adapters.yaml
+profile_uid: REUSABLE-GOVERNED-UNIT-LIFECYCLE-PROFILE-11
+common:
+  phases:
+  - SESSION_BOOTSTRAP_RESUME_GATE
+  - CURRENT_GOVERNANCE
+  - CURRENT_SCOPE
+  - WORK_UNIT
+  - AUTHORITY
+  - APPLICABILITY
+  - DEPENDENCY
+  - REQUIRED_FIELD_MANIFEST
+  - STAGE_INPUT_CONTRACT
+  - STAGE_OPERATIONS
+  - OUTPUT_PRODUCER
+  - CURRENT_PROBLEM_REGISTER
+  - DENOMINATOR_SNAPSHOT
+  - CHANGE_IMPACT
+  - RESOLUTION_LEDGER
+  - FRESH_EXECUTION
+  - STAGE_SPECIFIC_SCANNER
+  - GAP_CLASSIFICATION
+  - OWNER_REMEDIATION
+  - FRESH_REEXECUTION
+  - HIDDEN_DEFECT_SWEEP
+  - REQUIRED_EVIDENCE
+  - CONTENT_VALIDATION
+  - TERMINAL_CLOSURE
+  - STATE_CHECKPOINT
+  - NEXT_STAGE
+  construction_envelope:
+    schema_path: governance/execution-domains/STEP_CONTRACT_SCHEMA.yaml
+    fixed_structure_across_pages_and_systems: true
+    page_specific_schema_variation: FORBIDDEN
+  output_classification_vocabulary:
+  - HANDOFF
+  - INTERNAL
+  applicability_vocabulary:
+    always_token: ALWAYS_FOR_TARGET_SCOPE
+    conditional_prefix: when_
+stages:
+- stage_uid: STAGE-01
+  order: 1
+  name: SOURCE_INTAKE_AND_BASE_BLUEPRINT
+  scope_mode: CURRENT_GOVERNED_UNIT
+  entry_gate: GOVERNANCE_PREFORMAL_READY
+  entry_gate_terms:
+  - GOVERNANCE_PREFORMAL_READY
+  exit_gate: CURRENT_GOVERNED_UNIT_STAGE1_CLOSED
+  exit_gate_terms:
+  - CURRENT_GOVERNED_UNIT_STAGE1_CLOSED
+  next_stage_uid: STAGE-02
+  inputs:
+  - input_uid: RAW_SOURCE_SET
+    origin_stage_uid: SOURCE_INTAKE
+    origin_role: SOURCE_INTAKE
+  - input_uid: CURRENT_AUTHORITY_SET
+    origin_stage_uid: CURRENT_AUTHORITY
+    origin_role: CURRENT_AUTHORITY
+  operations:
+  - operation_uid: SOURCE_STRUCTURE_ENUMERATION
+    applicability: REQUIRED
+    producer_outputs:
+    - SOURCE_STRUCTURE_MANIFEST
+  - operation_uid: SOURCE_SEGMENT_MAPPING
+    applicability: REQUIRED
+    producer_outputs:
+    - SOURCE_SEGMENT_MAP
+  - operation_uid: SOURCE_CONTEXT_COMPILATION
+    applicability: REQUIRED
+    producer_outputs:
+    - SOURCE_CONTEXT_MANIFEST
+  - operation_uid: SOURCE_SUPERSESSION_CONFLICT_RESOLUTION
+    applicability: REQUIRED
+    producer_outputs:
+    - CONTENT_SUPERSESSION_CONFLICT_LEDGER
+  - operation_uid: SOURCE_DEPENDENCY_EXTRACTION
+    applicability: REQUIRED
+    producer_outputs:
+    - SOURCE_DEPENDENCY_MAP
+  - operation_uid: RESPONSIBILITY_CLASSIFICATION
+    applicability: REQUIRED
+    producer_outputs:
+    - CLASSIFIED_ARTIFACT_SET
+  - operation_uid: GOVERNED_UNIT_BASE_BLUEPRINT_COMPILE
+    applicability: REQUIRED
+    producer_outputs:
+    - GOVERNED_UNIT_BASE_BLUEPRINT
+  - operation_uid: VISUAL_BASE_BLUEPRINT_COMPILE
+    applicability: REQUIRED
+    producer_outputs:
+    - VISUAL_BASE_BLUEPRINT
+  - operation_uid: BLUEPRINT_BINDING_COMPILE
+    applicability: REQUIRED
+    producer_outputs:
+    - BLUEPRINT_BINDING_MANIFEST
+  - operation_uid: SOURCE_ENUMERATION_EVIDENCE_COMPILE
+    applicability: REQUIRED
+    producer_outputs: []
+  outputs:
+  - output_uid: SOURCE_STRUCTURE_MANIFEST
+    producer_operation_uid: SOURCE_STRUCTURE_ENUMERATION
+    classification: INTERNAL
+    applicability: ALWAYS_FOR_TARGET_SCOPE
+  - output_uid: SOURCE_SEGMENT_MAP
+    producer_operation_uid: SOURCE_SEGMENT_MAPPING
+    classification: INTERNAL
+    applicability: ALWAYS_FOR_TARGET_SCOPE
+  - output_uid: SOURCE_CONTEXT_MANIFEST
+    producer_operation_uid: SOURCE_CONTEXT_COMPILATION
+    classification: HANDOFF
+    applicability: ALWAYS_FOR_TARGET_SCOPE
+  - output_uid: CONTENT_SUPERSESSION_CONFLICT_LEDGER
+    producer_operation_uid: SOURCE_SUPERSESSION_CONFLICT_RESOLUTION
+    classification: HANDOFF
+    applicability: ALWAYS_FOR_TARGET_SCOPE
+  - output_uid: SOURCE_DEPENDENCY_MAP
+    producer_operation_uid: SOURCE_DEPENDENCY_EXTRACTION
+    classification: HANDOFF
+    applicability: ALWAYS_FOR_TARGET_SCOPE
+  - output_uid: CLASSIFIED_ARTIFACT_SET
+    producer_operation_uid: RESPONSIBILITY_CLASSIFICATION
+    classification: INTERNAL
+    applicability: ALWAYS_FOR_TARGET_SCOPE
+  - output_uid: GOVERNED_UNIT_BASE_BLUEPRINT
+    producer_operation_uid: GOVERNED_UNIT_BASE_BLUEPRINT_COMPILE
+    classification: HANDOFF
+    applicability: ALWAYS_FOR_TARGET_SCOPE
+  - output_uid: VISUAL_BASE_BLUEPRINT
+    producer_operation_uid: VISUAL_BASE_BLUEPRINT_COMPILE
+    classification: HANDOFF
+    applicability: ALWAYS_FOR_TARGET_SCOPE
+  - output_uid: BLUEPRINT_BINDING_MANIFEST
+    producer_operation_uid: BLUEPRINT_BINDING_COMPILE
+    classification: INTERNAL
+    applicability: ALWAYS_FOR_TARGET_SCOPE
+  required_evidence:
+  - evidence_uid: SOURCE_ENUMERATION_EVIDENCE
+    producer_operation_uid: SOURCE_STRUCTURE_ENUMERATION
+  - evidence_uid: CONFLICT_DECISION_EVIDENCE
+    producer_operation_uid: SOURCE_SUPERSESSION_CONFLICT_RESOLUTION
+  required_normative_sections: &id001
+  - WEB-GOV-01-S040A
+  - WEB-GOV-01-S058
+  - WEB-GOV-01-S063
+  - WEB-GOV-01-S064
+  - WEB-GOV-01-S065
+  - WEB-GOV-01-S069
+  - WEB-GOV-03-S052
+  - WEB-GOV-04-S059A
+  - WEB-GOV-04-S067
+  - WEB-GOV-04-S069
+  - WEB-GOV-04-S070
+  - WEB-GOV-01-S075
+  - WEB-GOV-03-S069
+  - WEB-GOV-04-S083
+  - WEB-GOV-02-S075
+  - WEB-GOV-03-S071
+  - WEB-GOV-04-S085
+  - WEB-GOV-01-S088
+  - WEB-GOV-01-S090
+  - WEB-GOV-02-S077
+  - WEB-GOV-03-S072
+  - WEB-GOV-04-S087
+  validators:
+  - VAL-GOV-026
+  - VAL-GOV-025
+  validator_names:
+  - STAGE1_SOURCE_PIPELINE_GUARD
+  - SOURCE_FACT_CONTRACT_GUARD
+  scanners:
+  - SOURCE_COMPLETENESS
+  - SOURCE_IDENTITY
+  - CLASSIFICATION_COMPLETENESS
+  - BLUEPRINT_BINDING
+  - UNRESOLVED_AUTHORITY_PRESERVATION
+  - SOURCE_PROJECTION_LOCK
+  handoff:
+    successor_stage_uid: STAGE-02
+    successor_required_inputs:
+    - GOVERNED_UNIT_BASE_BLUEPRINT
+    - SOURCE_CONTEXT_MANIFEST
+    - CONTENT_SUPERSESSION_CONFLICT_LEDGER
+    - SOURCE_DEPENDENCY_MAP
+  production_readiness:
+    required_outputs:
+    - SOURCE_CONTEXT_MANIFEST
+    - CONTENT_SUPERSESSION_CONFLICT_LEDGER
+    - SOURCE_DEPENDENCY_MAP
+    - GOVERNED_UNIT_BASE_BLUEPRINT
+    - VISUAL_BASE_BLUEPRINT
+    required_sections: *id001
+- stage_uid: STAGE-02
+  order: 2
+  name: GOVERNED_UNIT_FUNCTIONAL_CONTRACT
+  scope_mode: CURRENT_GOVERNED_UNIT
+  entry_gate: CURRENT_GOVERNED_UNIT_STAGE1_CLOSED
+  entry_gate_terms:
+  - CURRENT_GOVERNED_UNIT_STAGE1_CLOSED
+  exit_gate: CURRENT_GOVERNED_UNIT_STAGE2_CLOSED
+  exit_gate_terms:
+  - CURRENT_GOVERNED_UNIT_STAGE2_CLOSED
+  next_stage_uid: STAGE-03
+  inputs:
+  - input_uid: GOVERNED_UNIT_BASE_BLUEPRINT
+    origin_stage_uid: STAGE-01
+    origin_role: STAGE-01
+  - input_uid: SOURCE_CONTEXT_MANIFEST
+    origin_stage_uid: STAGE-01
+    origin_role: STAGE-01
+  - input_uid: CONTENT_SUPERSESSION_CONFLICT_LEDGER
+    origin_stage_uid: STAGE-01
+    origin_role: STAGE-01
+  - input_uid: SOURCE_DEPENDENCY_MAP
+    origin_stage_uid: STAGE-01
+    origin_role: STAGE-01
+  operations:
+  - operation_uid: STAGE_EXECUTION_PREFLIGHT_COMPILE
+    applicability: REQUIRED
+    producer_outputs:
+    - REQUIRED_FIELD_MANIFEST
+    - FUNCTIONAL_CHAIN_MANIFEST
+    - DENOMINATOR_SNAPSHOT
+    - CLASSIFICATION_RULESET
+    - STAGE_EXECUTION_PREFLIGHT_RECEIPT
+    - CURRENT_PROBLEM_REGISTER
+    - RESOLUTION_LEDGER
+  - operation_uid: EFFECTIVE_CONTRACT_OVERLAY_COMPILE
+    applicability: REQUIRED
+    producer_outputs:
+    - EFFECTIVE_CONTRACT_OVERLAY
+  - operation_uid: DEPENDENCY_TOPOLOGY_COMPILE
+    applicability: REQUIRED
+    producer_outputs:
+    - DEPENDENCY_TOPOLOGY
+  - operation_uid: CHANGE_IMPACT_MAP_COMPILE
+    applicability: REQUIRED
+    producer_outputs:
+    - CHANGE_IMPACT_MAP
+  - operation_uid: FUNCTIONAL_CHAIN_COMPILE
+    applicability: REQUIRED
+    producer_outputs:
+    - FUNCTIONAL_CHAIN_SPEC
+  - operation_uid: DEPENDENCY_MAP_COMPILE
+    applicability: REQUIRED
+    producer_outputs:
+    - DEPENDENCY_MAP
+  - operation_uid: GOVERNED_UNIT_CONSTRUCTION_SPEC_COMPILE
+    applicability: REQUIRED
+    producer_outputs:
+    - GOVERNED_UNIT_CONSTRUCTION_SPEC_PACKAGE
+  - operation_uid: ASYNC_PROVIDER_CONTRACT_COMPILE
+    applicability: REQUIRED
+    producer_outputs:
+    - ASYNC_PROVIDER_CONTRACT
+  - operation_uid: SHARED_OWNER_PORT_RESOLVE
+    applicability: REQUIRED
+    producer_outputs:
+    - SHARED_OWNER_PORT_MAP
+  - operation_uid: FUNCTIONAL_WORKBENCH_CONTRACT_COMPILE
+    applicability: REQUIRED
+    producer_outputs:
+    - FUNCTIONAL_WORKBENCH_CONTRACT
+  - operation_uid: INTERACTION_TOPOLOGY_COMPILE
+    applicability: REQUIRED
+    producer_outputs:
+    - INTERACTION_TOPOLOGY_SPEC
+  - operation_uid: FUNCTION_ADMISSION_SCORECARD_COMPILE
+    applicability: REQUIRED
+    producer_outputs:
+    - FUNCTION_ADMISSION_SCORECARD
+  - operation_uid: AUTO_COMPLETION_SCOPE_LEDGER_COMPILE
+    applicability: REQUIRED
+    producer_outputs:
+    - AUTO_COMPLETION_SCOPE_LEDGER
+  - operation_uid: AI_INTERACTION_CONTINUITY_COMPILE
+    applicability: CONDITIONAL
+    condition: &id002
+    - AI_CONVERSATION
+    - AI_ASSISTED_WORKSPACE
+    - MULTI_AGENT_INTERACTION
+    producer_outputs:
+    - AI_INTERACTION_CONTINUITY_CONTRACT
+  - operation_uid: GOVERNED_ENTITY_INVENTORY_COMPILE
+    applicability: REQUIRED
+    producer_outputs:
+    - GOVERNED_ENTITY_INVENTORY
+  - operation_uid: GOVERNED_ENTITY_OPERATION_MATRIX_COMPILE
+    applicability: REQUIRED
+    producer_outputs:
+    - GOVERNED_ENTITY_OPERATION_MATRIX
+  - operation_uid: ENTITY_HIERARCHY_MATRIX_COMPILE
+    applicability: REQUIRED
+    producer_outputs:
+    - ENTITY_HIERARCHY_MATRIX
+  - operation_uid: FUNCTION_VISUAL_IMPACT_MATRIX_COMPILE
+    applicability: REQUIRED
+    producer_outputs:
+    - FUNCTION_VISUAL_IMPACT_MATRIX
+  outputs:
+  - output_uid: FUNCTIONAL_CHAIN_SPEC
+    producer_operation_uid: FUNCTIONAL_CHAIN_COMPILE
+    classification: INTERNAL
+    applicability: ALWAYS_FOR_TARGET_SCOPE
+  - output_uid: DEPENDENCY_MAP
+    producer_operation_uid: DEPENDENCY_MAP_COMPILE
+    classification: HANDOFF
+    applicability: ALWAYS_FOR_TARGET_SCOPE
+  - output_uid: GOVERNED_UNIT_CONSTRUCTION_SPEC_PACKAGE
+    producer_operation_uid: GOVERNED_UNIT_CONSTRUCTION_SPEC_COMPILE
+    classification: HANDOFF
+    applicability: ALWAYS_FOR_TARGET_SCOPE
+  - output_uid: ASYNC_PROVIDER_CONTRACT
+    producer_operation_uid: ASYNC_PROVIDER_CONTRACT_COMPILE
+    classification: INTERNAL
+    applicability: ALWAYS_FOR_TARGET_SCOPE
+  - output_uid: SHARED_OWNER_PORT_MAP
+    producer_operation_uid: SHARED_OWNER_PORT_RESOLVE
+    classification: INTERNAL
+    applicability: ALWAYS_FOR_TARGET_SCOPE
+  - output_uid: FUNCTIONAL_WORKBENCH_CONTRACT
+    producer_operation_uid: FUNCTIONAL_WORKBENCH_CONTRACT_COMPILE
+    classification: HANDOFF
+    applicability: CONDITIONAL
+    condition: when_continuous_work_unit_applies
+  - output_uid: INTERACTION_TOPOLOGY_SPEC
+    producer_operation_uid: INTERACTION_TOPOLOGY_COMPILE
+    classification: HANDOFF
+    applicability: CONDITIONAL
+    condition: when_continuous_work_unit_applies
+  - output_uid: REQUIRED_FIELD_MANIFEST
+    producer_operation_uid: STAGE_EXECUTION_PREFLIGHT_COMPILE
+    classification: INTERNAL
+    applicability: ALWAYS_FOR_TARGET_SCOPE
+  - output_uid: FUNCTIONAL_CHAIN_MANIFEST
+    producer_operation_uid: STAGE_EXECUTION_PREFLIGHT_COMPILE
+    classification: INTERNAL
+    applicability: ALWAYS_FOR_TARGET_SCOPE
+  - output_uid: EFFECTIVE_CONTRACT_OVERLAY
+    producer_operation_uid: EFFECTIVE_CONTRACT_OVERLAY_COMPILE
+    classification: INTERNAL
+    applicability: ALWAYS_FOR_TARGET_SCOPE
+  - output_uid: DEPENDENCY_TOPOLOGY
+    producer_operation_uid: DEPENDENCY_TOPOLOGY_COMPILE
+    classification: INTERNAL
+    applicability: ALWAYS_FOR_TARGET_SCOPE
+  - output_uid: DENOMINATOR_SNAPSHOT
+    producer_operation_uid: STAGE_EXECUTION_PREFLIGHT_COMPILE
+    classification: INTERNAL
+    applicability: ALWAYS_FOR_TARGET_SCOPE
+  - output_uid: CLASSIFICATION_RULESET
+    producer_operation_uid: STAGE_EXECUTION_PREFLIGHT_COMPILE
+    classification: INTERNAL
+    applicability: ALWAYS_FOR_TARGET_SCOPE
+  - output_uid: CHANGE_IMPACT_MAP
+    producer_operation_uid: CHANGE_IMPACT_MAP_COMPILE
+    classification: INTERNAL
+    applicability: ALWAYS_FOR_TARGET_SCOPE
+  - output_uid: STAGE_EXECUTION_PREFLIGHT_RECEIPT
+    producer_operation_uid: STAGE_EXECUTION_PREFLIGHT_COMPILE
+    classification: INTERNAL
+    applicability: ALWAYS_FOR_TARGET_SCOPE
+  - output_uid: CURRENT_PROBLEM_REGISTER
+    producer_operation_uid: STAGE_EXECUTION_PREFLIGHT_COMPILE
+    classification: INTERNAL
+    applicability: ALWAYS_FOR_TARGET_SCOPE
+  - output_uid: RESOLUTION_LEDGER
+    producer_operation_uid: STAGE_EXECUTION_PREFLIGHT_COMPILE
+    classification: INTERNAL
+    applicability: ALWAYS_FOR_TARGET_SCOPE
+  - output_uid: FUNCTION_ADMISSION_SCORECARD
+    producer_operation_uid: FUNCTION_ADMISSION_SCORECARD_COMPILE
+    classification: INTERNAL
+    applicability: CONDITIONAL
+    condition: when_missing_required_function_or_contract_is_analyzed
+  - output_uid: AUTO_COMPLETION_SCOPE_LEDGER
+    producer_operation_uid: AUTO_COMPLETION_SCOPE_LEDGER_COMPILE
+    classification: INTERNAL
+    applicability: CONDITIONAL
+    condition: when_missing_required_function_or_contract_is_analyzed
+  - output_uid: AI_INTERACTION_CONTINUITY_CONTRACT
+    producer_operation_uid: AI_INTERACTION_CONTINUITY_COMPILE
+    classification: INTERNAL
+    applicability: CONDITIONAL
+    condition: *id002
+  - output_uid: GOVERNED_ENTITY_INVENTORY
+    producer_operation_uid: GOVERNED_ENTITY_INVENTORY_COMPILE
+    classification: INTERNAL
+    applicability: CONDITIONAL
+    condition: when_governed_governed_entity_scope_present
+  - output_uid: GOVERNED_ENTITY_OPERATION_MATRIX
+    producer_operation_uid: GOVERNED_ENTITY_OPERATION_MATRIX_COMPILE
+    classification: INTERNAL
+    applicability: CONDITIONAL
+    condition: when_governed_governed_entity_scope_present
+  - output_uid: ENTITY_HIERARCHY_MATRIX
+    producer_operation_uid: ENTITY_HIERARCHY_MATRIX_COMPILE
+    classification: INTERNAL
+    applicability: CONDITIONAL
+    condition: when_entity_hierarchy_applies
+  - output_uid: FUNCTION_VISUAL_IMPACT_MATRIX
+    producer_operation_uid: FUNCTION_VISUAL_IMPACT_MATRIX_COMPILE
+    classification: INTERNAL
+    applicability: CONDITIONAL
+    condition: when_user_visible_or_observable_required_operation_applies
+  required_evidence:
+  - evidence_uid: GOVERNED_UNIT_FUNCTIONAL_REVIEW_EVIDENCE
+    producer_operation_uid: FUNCTION_ADMISSION_SCORECARD_COMPILE
+  required_normative_sections: &id003
+  - WEB-GOV-01-S040C
+  - WEB-GOV-01-S059
+  - WEB-GOV-01-S061
+  - WEB-GOV-01-S062
+  - WEB-GOV-02-S008
+  - WEB-GOV-02-S009
+  - WEB-GOV-02-S054B
+  - WEB-GOV-02-S066
+  - WEB-GOV-04-S059C
+  - WEB-GOV-01-S072
+  - WEB-GOV-03-S061
+  - WEB-GOV-01-S073
+  - WEB-GOV-02-S073
+  - WEB-GOV-03-S062
+  - WEB-GOV-04-S078
+  - WEB-GOV-01-S075
+  - WEB-GOV-03-S069
+  - WEB-GOV-04-S083
+  - WEB-GOV-01-S077
+  - WEB-GOV-01-S083A
+  - WEB-GOV-01-S084
+  - WEB-GOV-02-S075
+  - WEB-GOV-03-S071
+  - WEB-GOV-04-S085
+  - WEB-GOV-01-S088
+  validators:
+  - VAL-GOV-008
+  - VAL-GOV-004
+  validator_names:
+  - FUNCTIONAL_CONTRACT_GUARD
+  - DEPENDENCY_CONTINUITY_GUARD
+  scanners:
+  - ENTITY_OPERATION_DENOMINATOR
+  - CONTROL_ACTION_RUNTIME_CHAIN
+  - PAYLOAD_INPUT
+  - STATE_TRANSITION
+  - ERROR_RECOVERY
+  - AUDIT_EVENT
+  - WORKBENCH_COHESION
+  - INTERACTION_CONTINUITY
+  - AI_CONTEXT_CONTINUITY
+  - VERSION_FINALIZATION
+  handoff:
+    successor_stage_uid: STAGE-03
+    successor_required_inputs:
+    - VISUAL_BASE_BLUEPRINT
+    - GOVERNED_UNIT_CONSTRUCTION_SPEC_PACKAGE
+    - FUNCTIONAL_WORKBENCH_CONTRACT
+    - INTERACTION_TOPOLOGY_SPEC
+  production_readiness:
+    required_outputs:
+    - DEPENDENCY_MAP
+    - GOVERNED_UNIT_CONSTRUCTION_SPEC_PACKAGE
+    - FUNCTIONAL_WORKBENCH_CONTRACT
+    - INTERACTION_TOPOLOGY_SPEC
+    - INTERACTION_TOPOLOGY_SPEC
+    required_sections: *id003
+- stage_uid: STAGE-03
+  order: 3
+  name: VISUAL_DESIGN
+  scope_mode: CURRENT_GOVERNED_UNIT
+  entry_gate: CURRENT_GOVERNED_UNIT_STAGE2_CLOSED
+  entry_gate_terms:
+  - CURRENT_GOVERNED_UNIT_STAGE2_CLOSED
+  exit_gate: CURRENT_GOVERNED_UNIT_STAGE3_CLOSED
+  exit_gate_terms:
+  - CURRENT_GOVERNED_UNIT_STAGE3_CLOSED
+  next_stage_uid: STAGE-04
+  inputs:
+  - input_uid: VISUAL_BASE_BLUEPRINT
+    origin_stage_uid: STAGE-01
+    origin_role: STAGE-01
+  - input_uid: GOVERNED_UNIT_CONSTRUCTION_SPEC_PACKAGE
+    origin_stage_uid: STAGE-02
+    origin_role: STAGE-02_IMMUTABLE_REFERENCE_ONLY
+  - input_uid: FUNCTIONAL_WORKBENCH_CONTRACT
+    origin_stage_uid: STAGE-02
+    origin_role: STAGE-02_IMMUTABLE_REFERENCE_ONLY
+  - input_uid: INTERACTION_TOPOLOGY_SPEC
+    origin_stage_uid: STAGE-02
+    origin_role: STAGE-02_IMMUTABLE_REFERENCE_ONLY
+  operations:
+  - operation_uid: VISUAL_SPEC_COMPILE
+    applicability: REQUIRED
+    producer_outputs:
+    - VISUAL_DESIGN_SPEC_PACKAGE
+  - operation_uid: GEOMETRY_CONTRACT_COMPILE
+    applicability: REQUIRED
+    producer_outputs:
+    - VISUAL_GEOMETRY_CONTRACT
+  - operation_uid: VISUAL_PREVIEW_RENDER
+    applicability: REQUIRED
+    producer_outputs:
+    - VISUAL_PREVIEW_EVIDENCE
+  - operation_uid: VISUAL_CHANGESET_COMPILE
+    applicability: REQUIRED
+    producer_outputs:
+    - VISUAL_CHANGESET
+  - operation_uid: VISUAL_INTERACTION_TOPOLOGY_BIND
+    applicability: REQUIRED
+    producer_outputs:
+    - VISUAL_INTERACTION_TOPOLOGY_BINDING
+  - operation_uid: FUNCTIONAL_WORKBENCH_LAYOUT_BIND
+    applicability: REQUIRED
+    producer_outputs:
+    - FUNCTIONAL_WORKBENCH_LAYOUT_CONTRACT
+  - operation_uid: VISUAL_REFERENCE_ANNOTATION_COMPILE
+    applicability: REQUIRED
+    producer_outputs:
+    - VISUAL_REFERENCE_ANNOTATION
+  - operation_uid: VISUAL_INHERITANCE_MATRIX_COMPILE
+    applicability: REQUIRED
+    producer_outputs:
+    - VISUAL_INHERITANCE_MATRIX
+  - operation_uid: VISUAL_SCENARIO_EVIDENCE_COMPILE
+    applicability: REQUIRED
+    producer_outputs:
+    - VISUAL_SCENARIO_EVIDENCE_SET
+  outputs:
+  - output_uid: VISUAL_DESIGN_SPEC_PACKAGE
+    producer_operation_uid: VISUAL_SPEC_COMPILE
+    classification: HANDOFF
+    applicability: ALWAYS_FOR_TARGET_SCOPE
+  - output_uid: VISUAL_GEOMETRY_CONTRACT
+    producer_operation_uid: GEOMETRY_CONTRACT_COMPILE
+    classification: INTERNAL
+    applicability: ALWAYS_FOR_TARGET_SCOPE
+  - output_uid: VISUAL_PREVIEW_EVIDENCE
+    producer_operation_uid: VISUAL_PREVIEW_RENDER
+    classification: INTERNAL
+    applicability: ALWAYS_FOR_TARGET_SCOPE
+  - output_uid: VISUAL_CHANGESET
+    producer_operation_uid: VISUAL_CHANGESET_COMPILE
+    classification: INTERNAL
+    applicability: ALWAYS_FOR_TARGET_SCOPE
+  - output_uid: VISUAL_INTERACTION_TOPOLOGY_BINDING
+    producer_operation_uid: VISUAL_INTERACTION_TOPOLOGY_BIND
+    classification: INTERNAL
+    applicability: ALWAYS_FOR_TARGET_SCOPE
+  - output_uid: FUNCTIONAL_WORKBENCH_LAYOUT_CONTRACT
+    producer_operation_uid: FUNCTIONAL_WORKBENCH_LAYOUT_BIND
+    classification: INTERNAL
+    applicability: ALWAYS_FOR_TARGET_SCOPE
+  - output_uid: VISUAL_REFERENCE_ANNOTATION
+    producer_operation_uid: VISUAL_REFERENCE_ANNOTATION_COMPILE
+    classification: INTERNAL
+    applicability: ALWAYS_FOR_TARGET_SCOPE
+  - output_uid: VISUAL_INHERITANCE_MATRIX
+    producer_operation_uid: VISUAL_INHERITANCE_MATRIX_COMPILE
+    classification: INTERNAL
+    applicability: ALWAYS_FOR_TARGET_SCOPE
+  - output_uid: VISUAL_SCENARIO_EVIDENCE_SET
+    producer_operation_uid: VISUAL_SCENARIO_EVIDENCE_COMPILE
+    classification: INTERNAL
+    applicability: ALWAYS_FOR_TARGET_SCOPE
+  required_evidence:
+  - evidence_uid: VISUAL_REVIEW_EVIDENCE
+    producer_operation_uid: VISUAL_SCENARIO_EVIDENCE_COMPILE
+  required_normative_sections: &id004
+  - WEB-GOV-01-S016
+  - WEB-GOV-01-S020
+  - WEB-GOV-01-S021
+  - WEB-GOV-01-S022
+  - WEB-GOV-01-S023
+  - WEB-GOV-01-S031
+  - WEB-GOV-01-S033
+  - WEB-GOV-01-S040E
+  - WEB-GOV-02-S031
+  - WEB-GOV-02-S054C
+  - WEB-GOV-04-S024
+  - WEB-GOV-04-S059D
+  - WEB-GOV-01-S072
+  - WEB-GOV-03-S061
+  - WEB-GOV-01-S075
+  - WEB-GOV-03-S069
+  - WEB-GOV-04-S083
+  - WEB-GOV-01-S077
+  - WEB-GOV-01-S078
+  - WEB-GOV-01-S079
+  - WEB-GOV-01-S081
+  - WEB-GOV-01-S083A
+  - WEB-GOV-01-S084
+  - WEB-GOV-01-S080
+  - WEB-GOV-01-S087
+  - WEB-GOV-02-S075
+  - WEB-GOV-03-S071
+  - WEB-GOV-04-S085
+  - WEB-GOV-01-S088
+  - WEB-GOV-01-S089
+  validators:
+  - VAL-GOV-029
+  - VAL-GOV-030
+  validator_names:
+  - VISUAL_DOMAIN_GUARD
+  - VISUAL_GEOMETRY_GUARD
+  scanners:
+  - VISUAL_DOMAIN
+  - GEOMETRY
+  - PREVIEW_IDENTITY
+  - FUNCTION_TO_VISUAL_BINDING
+  - ATOMIC_WORKBENCH_COHESION
+  - TOPOLOGY_EQUIVALENCE
+  - RESPONSIVE_ORDER
+  handoff:
+    successor_stage_uid: STAGE-04
+    successor_required_inputs:
+    - GOVERNED_UNIT_CONSTRUCTION_SPEC_PACKAGE
+    - VISUAL_DESIGN_SPEC_PACKAGE
+    - DEPENDENCY_MAP
+  production_readiness:
+    required_outputs:
+    - VISUAL_DESIGN_SPEC_PACKAGE
+    required_sections: *id004
+- stage_uid: STAGE-04
+  order: 4
+  name: FOUNDATION_FREEZE
+  scope_mode: CURRENT_GOVERNED_UNIT
+  entry_gate: CURRENT_GOVERNED_UNIT_STAGE3_CLOSED
+  entry_gate_terms:
+  - CURRENT_GOVERNED_UNIT_STAGE3_CLOSED
+  exit_gate: CURRENT_GOVERNED_UNIT_FOUNDATION_FROZEN
+  exit_gate_terms:
+  - CURRENT_GOVERNED_UNIT_FOUNDATION_FROZEN
+  next_stage_uid: STAGE-05
+  inputs:
+  - input_uid: GOVERNED_UNIT_CONSTRUCTION_SPEC_PACKAGE
+    origin_stage_uid: STAGE-02
+    origin_role: STAGE-02_IMMUTABLE_REFERENCE_ONLY
+  - input_uid: VISUAL_DESIGN_SPEC_PACKAGE
+    origin_stage_uid: STAGE-03
+    origin_role: STAGE-03_IMMUTABLE_REFERENCE_ONLY
+  - input_uid: DEPENDENCY_MAP
+    origin_stage_uid: STAGE-02
+    origin_role: STAGE-02
+  operations:
+  - operation_uid: BASIC_DESIGN_PACKAGE_COMPILE
+    applicability: REQUIRED
+    producer_outputs:
+    - BASIC_DESIGN_PACKAGE
+    - BASIC_DESIGN_DOMAIN_STEPWISE_CHECKPOINT
+  - operation_uid: DESIGN_FREEZE_VALIDATE
+    applicability: REQUIRED
+    producer_outputs:
+    - FOUNDATION_BARRIER_RECORD
+  - operation_uid: ACCEPTANCE_AUDIT_BLUEPRINT_COMPILE
+    applicability: REQUIRED
+    producer_outputs:
+    - ACCEPTANCE_AUDIT_BLUEPRINT
+  - operation_uid: DESIGN_FREEZE_PACKAGE_BIND
+    applicability: REQUIRED
+    producer_outputs:
+    - DESIGN_FREEZE_PACKAGE
+  outputs:
+  - output_uid: BASIC_DESIGN_PACKAGE
+    producer_operation_uid: BASIC_DESIGN_PACKAGE_COMPILE
+    classification: INTERNAL
+    applicability: ALWAYS_FOR_TARGET_SCOPE
+  - output_uid: BASIC_DESIGN_DOMAIN_STEPWISE_CHECKPOINT
+    producer_operation_uid: BASIC_DESIGN_PACKAGE_COMPILE
+    classification: INTERNAL
+    applicability: ALWAYS_FOR_TARGET_SCOPE
+  - output_uid: ACCEPTANCE_AUDIT_BLUEPRINT
+    producer_operation_uid: ACCEPTANCE_AUDIT_BLUEPRINT_COMPILE
+    classification: HANDOFF
+    applicability: ALWAYS_FOR_TARGET_SCOPE
+  - output_uid: DESIGN_FREEZE_PACKAGE
+    producer_operation_uid: DESIGN_FREEZE_PACKAGE_BIND
+    classification: HANDOFF
+    applicability: ALWAYS_FOR_TARGET_SCOPE
+  - output_uid: FOUNDATION_BARRIER_RECORD
+    producer_operation_uid: DESIGN_FREEZE_VALIDATE
+    classification: INTERNAL
+    applicability: ALWAYS_FOR_TARGET_SCOPE
+  required_evidence:
+  - evidence_uid: DESIGN_APPROVAL_EVIDENCE
+    producer_operation_uid: DESIGN_FREEZE_VALIDATE
+  required_normative_sections: &id005
+  - WEB-GOV-01-S034
+  - WEB-GOV-01-S035
+  - WEB-GOV-01-S036
+  - WEB-GOV-01-S037
+  - WEB-GOV-01-S038
+  - WEB-GOV-03-S022
+  - WEB-GOV-04-S023
+  - WEB-GOV-01-S075
+  - WEB-GOV-03-S069
+  - WEB-GOV-04-S083
+  - WEB-GOV-01-S076
+  - WEB-GOV-01-S077
+  - WEB-GOV-01-S080
+  - WEB-GOV-01-S081
+  - WEB-GOV-01-S082
+  - WEB-GOV-01-S083
+  - WEB-GOV-01-S078
+  - WEB-GOV-01-S079
+  - WEB-GOV-01-S083A
+  - WEB-GOV-01-S084
+  - WEB-GOV-01-S085
+  - WEB-GOV-01-S086
+  - WEB-GOV-02-S075
+  - WEB-GOV-03-S071
+  - WEB-GOV-04-S085
+  - WEB-GOV-01-S088
+  - WEB-GOV-01-S089
+  validators:
+  - VAL-GOV-006
+  - VAL-GOV-001
+  validator_names:
+  - DESIGN_FREEZE_GUARD
+  - ACCEPTANCE_BLUEPRINT_GUARD
+  scanners:
+  - FREEZE_COMPLETENESS
+  - ACCEPTANCE_BLUEPRINT
+  - DENOMINATOR_IDENTITY
+  - IMMUTABILITY
+  - UPSTREAM_CHANGE_INVALIDATION
+  handoff:
+    successor_stage_uid: STAGE-05
+    successor_required_inputs:
+    - DESIGN_FREEZE_PACKAGE
+    - ACCEPTANCE_AUDIT_BLUEPRINT
+    - DEPENDENCY_MAP
+  production_readiness:
+    required_outputs:
+    - ACCEPTANCE_AUDIT_BLUEPRINT
+    - DESIGN_FREEZE_PACKAGE
+    required_sections: *id005
+- stage_uid: STAGE-05
+  order: 5
+  name: IMPLEMENTATION
+  scope_mode: SINGLE_GOVERNED_UNIT_VERTICAL
+  entry_gate:
+    base: CURRENT_GOVERNED_UNIT_FOUNDATION_FROZEN
+    requires:
+    - PREDECESSOR_STAGE_CLOSED
+    declared_token: CURRENT_GOVERNED_UNIT_FOUNDATION_FROZEN_AND_PREDECESSOR_STAGE_CLOSED
+  entry_gate_terms:
+  - CURRENT_GOVERNED_UNIT_FOUNDATION_FROZEN
+  - PREDECESSOR_STAGE_CLOSED
+  exit_gate: GOVERNED_UNIT_IMPLEMENTATION_COMPLETE
+  exit_gate_terms:
+  - GOVERNED_UNIT_IMPLEMENTATION_COMPLETE
+  next_stage_uid: STAGE-06
+  inputs:
+  - input_uid: DESIGN_FREEZE_PACKAGE
+    origin_stage_uid: STAGE-04
+    origin_role: STAGE-04
+  - input_uid: ACCEPTANCE_AUDIT_BLUEPRINT
+    origin_stage_uid: STAGE-04
+    origin_role: STAGE-04
+  - input_uid: DEPENDENCY_MAP
+    origin_stage_uid: STAGE-02
+    origin_role: STAGE-02_PERSISTED
+  operations:
+  - operation_uid: OP-01-BLUEPRINT_INTAKE
+    applicability: REQUIRED
+    producer_outputs: []
+  - operation_uid: OP-02-BLUEPRINT_VALIDATION
+    applicability: REQUIRED
+    producer_outputs: []
+  - operation_uid: OP-03-AUDIT_BASELINE_INTAKE
+    applicability: REQUIRED
+    producer_outputs: []
+  - operation_uid: OP-04-ACCEPTANCE_MATRIX_VALIDATION
+    applicability: REQUIRED
+    producer_outputs: []
+  - operation_uid: OP-05-DEPENDENCY_MAPPING
+    applicability: REQUIRED
+    producer_outputs: []
+  - operation_uid: OP-06-DUPLICATE_CONFLICT_PRECHECK
+    applicability: REQUIRED
+    producer_outputs: []
+  - operation_uid: OP-07-CONTRACT_MATERIALIZATION
+    applicability: REQUIRED
+    producer_outputs: []
+  - operation_uid: OP-08-REPOSITORY_OWNER_RESOLUTION
+    applicability: REQUIRED
+    producer_outputs: []
+  - operation_uid: OP-09-SHARED_FOUNDATION_VERIFICATION
+    applicability: REQUIRED
+    producer_outputs: []
+  - operation_uid: OP-10-FRONTEND_IMPLEMENTATION
+    applicability: REQUIRED
+    producer_outputs: []
+  - operation_uid: OP-11-CONTROL_FIELD_IMPLEMENTATION
+    applicability: REQUIRED
+    producer_outputs: []
+  - operation_uid: OP-12-ACTION_LAYER
+    applicability: REQUIRED
+    producer_outputs: []
+  - operation_uid: OP-13-BACKEND_RUNTIME
+    applicability: REQUIRED
+    producer_outputs: []
+  - operation_uid: OP-14-REPOSITORY_DATA_ACCESS_LAYER
+    applicability: REQUIRED
+    producer_outputs: []
+  - operation_uid: OP-15-DATABASE_SCHEMA_MIGRATION
+    applicability: REQUIRED
+    producer_outputs: []
+  - operation_uid: OP-16-AUTHENTICATION
+    applicability: REQUIRED
+    producer_outputs: []
+  - operation_uid: OP-17-AUTHORIZATION
+    applicability: REQUIRED
+    producer_outputs: []
+  - operation_uid: OP-18-DATA_SECURITY
+    applicability: REQUIRED
+    producer_outputs: []
+  - operation_uid: OP-19-AUDIT_LOGGING
+    applicability: REQUIRED
+    producer_outputs: []
+  - operation_uid: OP-20-ERROR_CONTRACT
+    applicability: REQUIRED
+    producer_outputs: []
+  - operation_uid: OP-21-EXTERNAL_INTEGRATION
+    applicability: REQUIRED
+    producer_outputs: []
+  - operation_uid: OP-22-ASYNC_RUNTIME
+    applicability: REQUIRED
+    producer_outputs: []
+  - operation_uid: OP-23-STORAGE_RUNTIME
+    applicability: REQUIRED
+    producer_outputs: []
+  - operation_uid: PROGRAM_ARTIFACT_REGISTRATION
+    applicability: REQUIRED
+    producer_outputs:
+    - PROGRAM_ARTIFACT_SET
+  - operation_uid: IMPLEMENTATION_MANIFEST_COMPILE
+    applicability: REQUIRED
+    producer_outputs:
+    - IMPLEMENTATION_MANIFEST
+  - operation_uid: IMPLEMENTATION_EVIDENCE_COMPILE
+    applicability: REQUIRED
+    producer_outputs:
+    - IMPLEMENTATION_EVIDENCE
+  outputs:
+  - output_uid: IMPLEMENTATION_MANIFEST
+    producer_operation_uid: IMPLEMENTATION_MANIFEST_COMPILE
+    classification: HANDOFF
+    applicability: ALWAYS_FOR_TARGET_SCOPE
+  - output_uid: PROGRAM_ARTIFACT_SET
+    producer_operation_uid: PROGRAM_ARTIFACT_REGISTRATION
+    classification: HANDOFF
+    applicability: ALWAYS_FOR_TARGET_SCOPE
+  - output_uid: IMPLEMENTATION_EVIDENCE
+    producer_operation_uid: IMPLEMENTATION_EVIDENCE_COMPILE
+    classification: INTERNAL
+    applicability: ALWAYS_FOR_TARGET_SCOPE
+  required_evidence:
+  - evidence_uid: IMPLEMENTATION_DIFF_EVIDENCE
+    producer_operation_uid: IMPLEMENTATION_EVIDENCE_COMPILE
+  required_normative_sections: &id006
+  - WEB-GOV-02-S005
+  - WEB-GOV-02-S006
+  - WEB-GOV-02-S007
+  - WEB-GOV-02-S008
+  - WEB-GOV-02-S009
+  - WEB-GOV-02-S010
+  - WEB-GOV-02-S057
+  - WEB-GOV-02-S058
+  - WEB-GOV-03-S002
+  - WEB-GOV-03-S005
+  - WEB-GOV-03-S015
+  - WEB-GOV-02-S072
+  - WEB-GOV-03-S061
+  - WEB-GOV-01-S075
+  - WEB-GOV-03-S069
+  - WEB-GOV-04-S083
+  - WEB-GOV-02-S075
+  - WEB-GOV-03-S071
+  - WEB-GOV-04-S085
+  validators:
+  - VAL-GOV-003
+  - VAL-GOV-010
+  validator_names:
+  - INDEXED_INCREMENTAL_VALIDATION_GUARD
+  - IMPLEMENTATION_CONTRACT_GUARD
+  scanners:
+  - ENTITY_OPERATION_TO_UI_RUNTIME_BIDIRECTIONAL_CHAIN
+  - FRONTEND
+  - BACKEND
+  - API_COMMAND
+  - DATABASE
+  - PERMISSION
+  - SECURITY
+  - AUDIT
+  - ERROR_RECOVERY
+  - ASYNC
+  - STORAGE
+  - VISUAL_LOGIC_SYNC
+  handoff:
+    successor_stage_uid: STAGE-06
+    successor_required_inputs:
+    - IMPLEMENTATION_MANIFEST
+    - PROGRAM_ARTIFACT_SET
+    - ACCEPTANCE_AUDIT_BLUEPRINT
+  production_readiness:
+    required_outputs:
+    - IMPLEMENTATION_MANIFEST
+    - PROGRAM_ARTIFACT_SET
+    required_sections: *id006
+- stage_uid: STAGE-06
+  order: 6
+  name: VERIFICATION_QA
+  scope_mode: SAME_SELECTED_GOVERNED_UNIT
+  entry_gate: GOVERNED_UNIT_IMPLEMENTATION_COMPLETE
+  entry_gate_terms:
+  - GOVERNED_UNIT_IMPLEMENTATION_COMPLETE
+  exit_gate: PRE_RELEASE_VERIFICATION_CLOSED
+  exit_gate_terms:
+  - PRE_RELEASE_VERIFICATION_CLOSED
+  next_stage_uid: STAGE-07
+  inputs:
+  - input_uid: IMPLEMENTATION_MANIFEST
+    origin_stage_uid: STAGE-05
+    origin_role: STAGE-05
+  - input_uid: PROGRAM_ARTIFACT_SET
+    origin_stage_uid: STAGE-05
+    origin_role: STAGE-05
+  - input_uid: ACCEPTANCE_AUDIT_BLUEPRINT
+    origin_stage_uid: STAGE-04
+    origin_role: STAGE-04_PERSISTED
+  operations:
+  - operation_uid: OP-24-UNIT_TEST
+    applicability: REQUIRED
+    producer_outputs: []
+  - operation_uid: OP-25-INTEGRATION_TEST
+    applicability: REQUIRED
+    producer_outputs: []
+  - operation_uid: OP-26-DATABASE_TEST
+    applicability: REQUIRED
+    producer_outputs: []
+  - operation_uid: OP-27-PERMISSION_TEST
+    applicability: REQUIRED
+    producer_outputs: []
+  - operation_uid: OP-28-BROWSER_E2E
+    applicability: REQUIRED
+    producer_outputs: []
+  - operation_uid: OP-29-CONTROL_ACCEPTANCE
+    applicability: REQUIRED
+    producer_outputs: []
+  - operation_uid: OP-30-VISUAL_REGRESSION
+    applicability: REQUIRED
+    producer_outputs: []
+  - operation_uid: OP-31-RESPONSIVE_VERIFICATION
+    applicability: REQUIRED
+    producer_outputs: []
+  - operation_uid: OP-32-LOCALIZATION_VERIFICATION
+    applicability: REQUIRED
+    producer_outputs: []
+  - operation_uid: OP-33-ACCESSIBILITY_VERIFICATION
+    applicability: REQUIRED
+    producer_outputs: []
+  - operation_uid: OP-34-SECURITY_VERIFICATION
+    applicability: REQUIRED
+    producer_outputs: []
+  - operation_uid: OP-35-AUDIT_MATRIX_RECONCILIATION
+    applicability: REQUIRED
+    producer_outputs:
+    - AUDIT_MATRIX
+  - operation_uid: PROGRAM_PROFILE_COMPLIANCE_VERIFY
+    applicability: REQUIRED
+    producer_outputs:
+    - VERIFICATION_RESULT
+  - operation_uid: WORK_UNIT_CLOSURE_PRE_RELEASE
+    applicability: REQUIRED
+    producer_outputs:
+    - WORK_UNIT_CLOSURE_RECORD
+  - operation_uid: MODULE_CLOSURE_PRE_RELEASE
+    applicability: REQUIRED
+    producer_outputs: []
+  - operation_uid: VERIFIED_SOURCE_REVISION_CAPTURE
+    applicability: REQUIRED
+    producer_outputs:
+    - VERIFIED_SOURCE_REVISION
+  - operation_uid: TEST_EVIDENCE_COMPILE_COMPILE
+    applicability: REQUIRED
+    producer_outputs: []
+  outputs:
+  - output_uid: VERIFICATION_RESULT
+    producer_operation_uid: PROGRAM_PROFILE_COMPLIANCE_VERIFY
+    classification: INTERNAL
+    applicability: ALWAYS_FOR_TARGET_SCOPE
+  - output_uid: AUDIT_MATRIX
+    producer_operation_uid: OP-35-AUDIT_MATRIX_RECONCILIATION
+    classification: INTERNAL
+    applicability: ALWAYS_FOR_TARGET_SCOPE
+  - output_uid: WORK_UNIT_CLOSURE_RECORD
+    producer_operation_uid: WORK_UNIT_CLOSURE_PRE_RELEASE
+    classification: HANDOFF
+    applicability: ALWAYS_FOR_TARGET_SCOPE
+  - output_uid: VERIFIED_SOURCE_REVISION
+    producer_operation_uid: VERIFIED_SOURCE_REVISION_CAPTURE
+    classification: HANDOFF
+    applicability: ALWAYS_FOR_TARGET_SCOPE
+  required_evidence:
+  - evidence_uid: TEST_EVIDENCE_SET
+    producer_operation_uid: PROGRAM_PROFILE_COMPLIANCE_VERIFY
+  required_normative_sections: &id007
+  - WEB-GOV-02-S027
+  - WEB-GOV-02-S028
+  - WEB-GOV-02-S029
+  - WEB-GOV-02-S030
+  - WEB-GOV-02-S031
+  - WEB-GOV-02-S032
+  - WEB-GOV-02-S033
+  - WEB-GOV-02-S034
+  - WEB-GOV-02-S035
+  - WEB-GOV-02-S036
+  - WEB-GOV-02-S072
+  - WEB-GOV-03-S061
+  - WEB-GOV-01-S075
+  - WEB-GOV-03-S069
+  - WEB-GOV-04-S083
+  - WEB-GOV-02-S075
+  - WEB-GOV-03-S071
+  - WEB-GOV-04-S085
+  - WEB-GOV-02-S076
+  - WEB-GOV-04-S086
+  validators:
+  - VAL-GOV-020
+  - VAL-GOV-019
+  - VAL-GOV-031
+  validator_names:
+  - QA_ACCEPTANCE_GUARD
+  - PROGRAM_PROFILE_GUARD
+  - WORK_UNIT_CLOSURE_GUARD
+  scanners:
+  - TEST_DENOMINATOR
+  - ENTITY_OPERATION_E2E
+  - INTERACTION_TOPOLOGY_E2E
+  - ATOMIC_WORKBENCH_E2E
+  - AI_CONTINUITY_WHEN_APPLICABLE
+  - VISUAL_RESPONSIVE_I18N_A11Y_SECURITY
+  handoff:
+    successor_stage_uid: STAGE-07
+    successor_required_inputs:
+    - VERIFIED_SOURCE_REVISION
+    - WORK_UNIT_CLOSURE_RECORD
+  production_readiness:
+    required_outputs:
+    - WORK_UNIT_CLOSURE_RECORD
+    - VERIFIED_SOURCE_REVISION
+    required_sections: *id007
+- stage_uid: STAGE-07
+  order: 7
+  name: BUILD_RELEASE_CANDIDATE
+  scope_mode: SAME_SELECTED_GOVERNED_UNIT
+  entry_gate: PRE_RELEASE_VERIFICATION_CLOSED
+  entry_gate_terms:
+  - PRE_RELEASE_VERIFICATION_CLOSED
+  exit_gate: RELEASE_CANDIDATE_ACCEPTED
+  exit_gate_terms:
+  - RELEASE_CANDIDATE_ACCEPTED
+  next_stage_uid: STAGE-08
+  inputs:
+  - input_uid: VERIFIED_SOURCE_REVISION
+    origin_stage_uid: STAGE-06
+    origin_role: STAGE-06
+  - input_uid: WORK_UNIT_CLOSURE_RECORD
+    origin_stage_uid: STAGE-06
+    origin_role: STAGE-06
+  operations:
+  - operation_uid: OP-36-PRODUCTION_BUILD
+    applicability: REQUIRED
+    producer_outputs:
+    - BUILD_IDENTITY_MANIFEST
+  - operation_uid: RELEASE_CANDIDATE_COMPILE
+    applicability: REQUIRED
+    producer_outputs:
+    - RELEASE_CANDIDATE
+  - operation_uid: MIGRATION_COMPATIBILITY_VERIFY
+    applicability: REQUIRED
+    producer_outputs: []
+  - operation_uid: SECURITY_FRESHNESS_VERIFY
+    applicability: REQUIRED
+    producer_outputs: []
+  - operation_uid: STAGING_APPLICABILITY_DECIDE
+    applicability: REQUIRED
+    producer_outputs:
+    - STAGING_APPLICABILITY_DECISION
+  - operation_uid: BUILD_TEST_EVIDENCE_COMPILE
+    applicability: REQUIRED
+    producer_outputs: []
+  outputs:
+  - output_uid: BUILD_IDENTITY_MANIFEST
+    producer_operation_uid: OP-36-PRODUCTION_BUILD
+    classification: HANDOFF
+    applicability: ALWAYS_FOR_TARGET_SCOPE
+  - output_uid: RELEASE_CANDIDATE
+    producer_operation_uid: RELEASE_CANDIDATE_COMPILE
+    classification: HANDOFF
+    applicability: ALWAYS_FOR_TARGET_SCOPE
+  - output_uid: STAGING_APPLICABILITY_DECISION
+    producer_operation_uid: STAGING_APPLICABILITY_DECIDE
+    classification: HANDOFF
+    applicability: ALWAYS_FOR_TARGET_SCOPE
+  required_evidence:
+  - evidence_uid: BUILD_TEST_EVIDENCE
+    producer_operation_uid: OP-36-PRODUCTION_BUILD
+  required_normative_sections: &id008
+  - WEB-GOV-02-S037
+  - WEB-GOV-02-S052
+  - WEB-GOV-02-S054D
+  - WEB-GOV-02-S059
+  - WEB-GOV-02-S062
+  - WEB-GOV-01-S075
+  - WEB-GOV-03-S069
+  - WEB-GOV-04-S083
+  - WEB-GOV-02-S075
+  - WEB-GOV-03-S071
+  - WEB-GOV-04-S085
+  validators:
+  - VAL-GOV-022
+  - VAL-GOV-013
+  - VAL-GOV-024
+  validator_names:
+  - RELEASE_CANDIDATE_GUARD
+  - MIGRATION_COMPATIBILITY_GUARD
+  - SECURITY_FRESHNESS_GUARD
+  scanners:
+  - BUILD_REPRODUCIBILITY
+  - RELEASE_IDENTITY
+  - MIGRATION_COMPATIBILITY
+  - SECURITY_FRESHNESS
+  - STAGING_APPLICABILITY
+  handoff:
+    successor_stage_uid: STAGE-08
+    successor_required_inputs:
+    - RELEASE_CANDIDATE
+    - STAGING_APPLICABILITY_DECISION
+  production_readiness:
+    required_outputs:
+    - BUILD_IDENTITY_MANIFEST
+    - RELEASE_CANDIDATE
+    - STAGING_APPLICABILITY_DECISION
+    required_sections: *id008
+- stage_uid: STAGE-08
+  order: 8
+  name: STAGING
+  scope_mode: SAME_SELECTED_GOVERNED_UNIT
+  entry_gate: RELEASE_CANDIDATE_ACCEPTED
+  entry_gate_terms:
+  - RELEASE_CANDIDATE_ACCEPTED
+  exit_gate: STAGING_CLOSED_ACCEPTED_OR_AUTHORITY_PROVEN_NOT_APPLICABLE
+  exit_gate_terms:
+  - STAGING_CLOSED_ACCEPTED_OR_AUTHORITY_PROVEN_NOT_APPLICABLE
+  next_stage_uid: STAGE-09
+  inputs:
+  - input_uid: RELEASE_CANDIDATE
+    origin_stage_uid: STAGE-07
+    origin_role: STAGE-07
+  - input_uid: STAGING_APPLICABILITY_DECISION
+    origin_stage_uid: STAGE-07
+    origin_role: STAGE-07
+  operations:
+  - operation_uid: OP-37-STAGING_DEPLOYMENT
+    applicability: REQUIRED
+    producer_outputs: []
+  - operation_uid: OP-38-STAGING_ACCEPTANCE
+    applicability: REQUIRED
+    producer_outputs: []
+  - operation_uid: STAGING_NA_AUTHORITY_VERIFY
+    applicability: REQUIRED
+    producer_outputs: []
+  - operation_uid: STAGING_CLOSURE_RECONCILE
+    applicability: REQUIRED
+    producer_outputs:
+    - STAGING_CLOSURE_RECORD
+  - operation_uid: STAGING_ACCEPTANCE_OR_NA_EVIDENCE_COMPILE
+    applicability: REQUIRED
+    producer_outputs: []
+  outputs:
+  - output_uid: STAGING_CLOSURE_RECORD
+    producer_operation_uid: STAGING_CLOSURE_RECONCILE
+    classification: HANDOFF
+    applicability: ALWAYS_FOR_TARGET_SCOPE
+  required_evidence:
+  - evidence_uid: STAGING_ACCEPTANCE_OR_NA_EVIDENCE
+    producer_operation_uid: OP-38-STAGING_ACCEPTANCE
+  required_normative_sections: &id009
+  - WEB-GOV-02-S038
+  - WEB-GOV-02-S063
+  - WEB-GOV-01-S075
+  - WEB-GOV-03-S069
+  - WEB-GOV-04-S083
+  - WEB-GOV-02-S075
+  - WEB-GOV-03-S071
+  - WEB-GOV-04-S085
+  validators:
+  - VAL-GOV-028
+  - VAL-GOV-027
+  validator_names:
+  - STAGING_APPLICABILITY_GUARD
+  - STAGING_ACCEPTANCE_GUARD
+  scanners:
+  - STAGING_IDENTITY
+  - STAGING_RUNTIME
+  - STAGING_ACCEPTANCE_OR_AUTHORITY_NA
+  - STAGING_CLOSURE
+  handoff:
+    successor_stage_uid: STAGE-09
+    successor_required_inputs:
+    - STAGING_CLOSURE_RECORD
+    - BUILD_IDENTITY_MANIFEST
+  production_readiness:
+    required_outputs:
+    - STAGING_CLOSURE_RECORD
+    required_sections: *id009
+- stage_uid: STAGE-09
+  order: 9
+  name: PRODUCTION_CUTOVER
+  scope_mode: SAME_SELECTED_GOVERNED_UNIT
+  entry_gate: STAGING_CLOSED_ACCEPTED_OR_AUTHORITY_PROVEN_NOT_APPLICABLE
+  entry_gate_terms:
+  - STAGING_CLOSED_ACCEPTED_OR_AUTHORITY_PROVEN_NOT_APPLICABLE
+  exit_gate: PRODUCTION_CUTOVER_CLOSED
+  exit_gate_terms:
+  - PRODUCTION_CUTOVER_CLOSED
+  next_stage_uid: STAGE-10
+  inputs:
+  - input_uid: STAGING_CLOSURE_RECORD
+    origin_stage_uid: STAGE-08
+    origin_role: STAGE-08
+  - input_uid: BUILD_IDENTITY_MANIFEST
+    origin_stage_uid: STAGE-07
+    origin_role: STAGE-07_PERSISTED
+  operations:
+  - operation_uid: OP-39-PRODUCTION_CONFIGURATION
+    applicability: REQUIRED
+    producer_outputs: []
+  - operation_uid: OP-40-PRODUCTION_MIGRATION
+    applicability: REQUIRED
+    producer_outputs: []
+  - operation_uid: OP-41-PRODUCTION_DEPLOYMENT
+    applicability: REQUIRED
+    producer_outputs:
+    - PRODUCTION_DEPLOYMENT_RECORD
+  - operation_uid: OP-42-PRODUCTION_SMOKE
+    applicability: REQUIRED
+    producer_outputs: []
+  - operation_uid: CURRENT_RELEASE_IDENTITY_CAPTURE
+    applicability: REQUIRED
+    producer_outputs:
+    - CURRENT_RELEASE_IDENTITY
+  - operation_uid: PRODUCTION_SMOKE_EVIDENCE_COMPILE
+    applicability: REQUIRED
+    producer_outputs: []
+  outputs:
+  - output_uid: PRODUCTION_DEPLOYMENT_RECORD
+    producer_operation_uid: OP-41-PRODUCTION_DEPLOYMENT
+    classification: INTERNAL
+    applicability: ALWAYS_FOR_TARGET_SCOPE
+  - output_uid: CURRENT_RELEASE_IDENTITY
+    producer_operation_uid: CURRENT_RELEASE_IDENTITY_CAPTURE
+    classification: HANDOFF
+    applicability: ALWAYS_FOR_TARGET_SCOPE
+  required_evidence:
+  - evidence_uid: PRODUCTION_SMOKE_EVIDENCE
+    producer_operation_uid: OP-42-PRODUCTION_SMOKE
+  required_normative_sections: &id010
+  - WEB-GOV-02-S039
+  - WEB-GOV-02-S040
+  - WEB-GOV-02-S041
+  - WEB-GOV-02-S054D
+  - WEB-GOV-01-S075
+  - WEB-GOV-03-S069
+  - WEB-GOV-04-S083
+  - WEB-GOV-02-S075
+  - WEB-GOV-03-S071
+  - WEB-GOV-04-S085
+  validators:
+  - VAL-GOV-015
+  - VAL-GOV-005
+  validator_names:
+  - PRODUCTION_CUTOVER_GUARD
+  - DEPLOYMENT_IDENTITY_GUARD
+  scanners:
+  - CONFIG_BINDING
+  - MIGRATION
+  - EXACT_RELEASE_DEPLOYMENT
+  - PRODUCTION_SMOKE
+  - RELEASE_IDENTITY
+  handoff:
+    successor_stage_uid: STAGE-10
+    successor_required_inputs:
+    - CURRENT_RELEASE_IDENTITY
+    - ACCEPTANCE_AUDIT_BLUEPRINT
+  production_readiness:
+    required_outputs:
+    - CURRENT_RELEASE_IDENTITY
+    required_sections: *id010
+- stage_uid: STAGE-10
+  order: 10
+  name: PRODUCTION_ACCEPTANCE
+  scope_mode: SAME_SELECTED_GOVERNED_UNIT
+  entry_gate: PRODUCTION_CUTOVER_CLOSED
+  entry_gate_terms:
+  - PRODUCTION_CUTOVER_CLOSED
+  exit_gate: PRODUCTION_ACCEPTANCE_EVIDENCE_CLOSED
+  exit_gate_terms:
+  - PRODUCTION_ACCEPTANCE_EVIDENCE_CLOSED
+  next_stage_uid: STAGE-11
+  inputs:
+  - input_uid: CURRENT_RELEASE_IDENTITY
+    origin_stage_uid: STAGE-09
+    origin_role: STAGE-09
+  - input_uid: ACCEPTANCE_AUDIT_BLUEPRINT
+    origin_stage_uid: STAGE-04
+    origin_role: STAGE-04_PERSISTED
+  operations:
+  - operation_uid: OP-43-PRODUCTION_BROWSER_ACCEPTANCE
+    applicability: REQUIRED
+    producer_outputs: []
+  - operation_uid: OP-44-PRODUCTION_GOVERNED_UNIT_ACCEPTANCE
+    applicability: REQUIRED
+    producer_outputs: []
+  - operation_uid: OP-45-PRODUCTION_CONTROL_ACCEPTANCE
+    applicability: REQUIRED
+    producer_outputs: []
+  - operation_uid: OP-46-PRODUCTION_DATABASE_ACCEPTANCE
+    applicability: REQUIRED
+    producer_outputs: []
+  - operation_uid: OP-47-PRODUCTION_EFFECTFUL_ACCEPTANCE
+    applicability: REQUIRED
+    producer_outputs: []
+  - operation_uid: OP-48-EXTERNAL_INTEGRATION_ACCEPTANCE
+    applicability: REQUIRED
+    producer_outputs: []
+  - operation_uid: OP-49-ASYNC_RUNTIME_ACCEPTANCE
+    applicability: REQUIRED
+    producer_outputs: []
+  - operation_uid: PRODUCTION_VISUAL_GEOMETRY_ACCEPTANCE
+    applicability: REQUIRED
+    producer_outputs: []
+  - operation_uid: PRODUCTION_STALE_RENDER_ACCEPTANCE
+    applicability: REQUIRED
+    producer_outputs: []
+  - operation_uid: PRODUCTION_CROSS_GOVERNED_UNIT_SLICE_ACCEPTANCE
+    applicability: REQUIRED
+    producer_outputs: []
+  - operation_uid: PRODUCTION_ACCEPTANCE_RECONCILIATION
+    applicability: REQUIRED
+    producer_outputs:
+    - PRODUCTION_ACCEPTANCE_RESULT
+  - operation_uid: PRODUCTION_ACCEPTANCE_EVIDENCE_COMPILE_COMPILE
+    applicability: REQUIRED
+    producer_outputs: []
+  outputs:
+  - output_uid: PRODUCTION_ACCEPTANCE_RESULT
+    producer_operation_uid: PRODUCTION_ACCEPTANCE_RECONCILIATION
+    classification: HANDOFF
+    applicability: ALWAYS_FOR_TARGET_SCOPE
+  required_evidence:
+  - evidence_uid: PRODUCTION_ACCEPTANCE_EVIDENCE_SET
+    producer_operation_uid: PRODUCTION_ACCEPTANCE_RECONCILIATION
+  required_normative_sections: &id011
+  - WEB-GOV-02-S042
+  - WEB-GOV-02-S043
+  - WEB-GOV-02-S044
+  - WEB-GOV-02-S045
+  - WEB-GOV-02-S046
+  - WEB-GOV-02-S054E
+  - WEB-GOV-02-S054F
+  - WEB-GOV-04-S036
+  - WEB-GOV-04-S059E
+  - WEB-GOV-04-S059F
+  - WEB-GOV-02-S012
+  - WEB-GOV-02-S016
+  - WEB-GOV-02-S025
+  - WEB-GOV-02-S030
+  - WEB-GOV-02-S031
+  - WEB-GOV-02-S072
+  - WEB-GOV-03-S061
+  - WEB-GOV-04-S077
+  - WEB-GOV-01-S075
+  - WEB-GOV-03-S069
+  - WEB-GOV-04-S083
+  - WEB-GOV-02-S075
+  - WEB-GOV-03-S071
+  - WEB-GOV-04-S085
+  - WEB-GOV-02-S076
+  - WEB-GOV-04-S086
+  validators:
+  - VAL-GOV-014
+  - VAL-GOV-017
+  validator_names:
+  - PRODUCTION_ACCEPTANCE_DIMENSION_GUARD
+  - PRODUCTION_RENDER_IDENTITY_GUARD
+  scanners:
+  - PRODUCTION_USER_JOURNEY
+  - UI_CONTROL
+  - API_EFFECT
+  - DATABASE_PERSISTENCE
+  - PERMISSION
+  - QUEUE_ASYNC
+  - PROVIDER_INTEGRATION
+  - VISUAL_GEOMETRY
+  - CONTEXT_HANDOFF
+  - AUDIT_EVIDENCE
+  handoff:
+    successor_stage_uid: STAGE-11
+    successor_required_inputs:
+    - PRODUCTION_ACCEPTANCE_RESULT
+    - CURRENT_RELEASE_IDENTITY
+  production_readiness:
+    required_outputs:
+    - PRODUCTION_ACCEPTANCE_RESULT
+    required_sections: *id011
+- stage_uid: STAGE-11
+  order: 11
+  name: CLOSURE_OPERATIONS
+  scope_mode: SAME_SELECTED_GOVERNED_UNIT
+  entry_gate: PRODUCTION_ACCEPTANCE_EVIDENCE_CLOSED
+  entry_gate_terms:
+  - PRODUCTION_ACCEPTANCE_EVIDENCE_CLOSED
+  exit_gate: GOVERNED_UNIT_CLOSED
+  exit_gate_terms:
+  - GOVERNED_UNIT_CLOSED
+  next_stage_uid: NEXT_GOVERNED_UNIT_STAGE05_OR_SCOPE_COMPLETE
+  inputs:
+  - input_uid: PRODUCTION_ACCEPTANCE_RESULT
+    origin_stage_uid: STAGE-10
+    origin_role: STAGE-10
+  - input_uid: CURRENT_RELEASE_IDENTITY
+    origin_stage_uid: STAGE-09
+    origin_role: STAGE-09_PERSISTED
+  operations:
+  - operation_uid: OP-50-MONITORING_VERIFICATION
+    applicability: REQUIRED
+    producer_outputs: []
+  - operation_uid: OP-51-BACKUP_VERIFICATION
+    applicability: REQUIRED
+    producer_outputs: []
+  - operation_uid: OP-52-ROLLBACK_VERIFICATION
+    applicability: REQUIRED
+    producer_outputs: []
+  - operation_uid: OP-53-FINAL_AUDIT_MATRIX_RECONCILIATION
+    applicability: REQUIRED
+    producer_outputs: []
+  - operation_uid: OP-54-FINAL_PRODUCTION_ACCEPTANCE
+    applicability: REQUIRED
+    producer_outputs:
+    - FINAL_PRODUCTION_ACCEPTANCE_RESULT
+  - operation_uid: GOVERNED_UNIT_CLOSURE
+    applicability: REQUIRED
+    producer_outputs:
+    - GOVERNED_UNIT_CLOSED
+  - operation_uid: NEXT_GOVERNED_UNIT_ELIGIBILITY_EVALUATE
+    applicability: REQUIRED
+    producer_outputs:
+    - NEXT_GOVERNED_UNIT_ELIGIBILITY
+  - operation_uid: FINAL_AUDIT_EVIDENCE_COMPILE
+    applicability: REQUIRED
+    producer_outputs: []
+  outputs:
+  - output_uid: FINAL_PRODUCTION_ACCEPTANCE_RESULT
+    producer_operation_uid: OP-54-FINAL_PRODUCTION_ACCEPTANCE
+    classification: INTERNAL
+    applicability: ALWAYS_FOR_TARGET_SCOPE
+  - output_uid: GOVERNED_UNIT_CLOSED
+    producer_operation_uid: GOVERNED_UNIT_CLOSURE
+    classification: INTERNAL
+    applicability: ALWAYS_FOR_TARGET_SCOPE
+  - output_uid: NEXT_GOVERNED_UNIT_ELIGIBILITY
+    producer_operation_uid: NEXT_GOVERNED_UNIT_ELIGIBILITY_EVALUATE
+    classification: INTERNAL
+    applicability: ALWAYS_FOR_TARGET_SCOPE
+  required_evidence:
+  - evidence_uid: FINAL_AUDIT_EVIDENCE
+    producer_operation_uid: OP-53-FINAL_AUDIT_MATRIX_RECONCILIATION
+  - evidence_uid: OPERATIONS_EVIDENCE
+    producer_operation_uid: OP-50-MONITORING_VERIFICATION
+  required_normative_sections: &id012
+  - WEB-GOV-02-S047
+  - WEB-GOV-02-S048
+  - WEB-GOV-02-S049
+  - WEB-GOV-02-S053
+  - WEB-GOV-04-S055
+  - WEB-GOV-04-S056
+  - WEB-GOV-04-S057
+  - WEB-GOV-01-S075
+  - WEB-GOV-03-S069
+  - WEB-GOV-04-S083
+  - WEB-GOV-02-S075
+  - WEB-GOV-03-S071
+  - WEB-GOV-04-S085
+  validators:
+  - VAL-GOV-007
+  - VAL-GOV-016
+  validator_names:
+  - FINAL_PRODUCTION_ACCEPTANCE_GUARD
+  - GOVERNED_UNIT_CLOSURE_GUARD
+  scanners:
+  - OPERATIONS_READINESS
+  - MONITORING
+  - BACKUP
+  - ROLLBACK
+  - FINAL_AUDIT_RECONCILIATION
+  - FINAL_ACCEPTANCE
+  - CLOSURE_CONTINUITY
+  - NEXT_GOVERNED_UNIT_TRANSITION
+  handoff:
+    successor_stage_uid: null
+    successor_required_inputs: []
+  production_readiness:
+    required_outputs: []
+    required_sections: *id012
+orphan_invariant_binding:
+  SINGLE_STATE_SINGLE_ORCHESTRATOR_STAGE_CORE: VAL-GOV-035
+declared_additions:
+- STAGE-02 registered conditional output AI_INTERACTION_CONTINUITY_CONTRACT
+- STAGE-02 registered conditional operation AI_INTERACTION_CONTINUITY_COMPILE
+- STAGE-02 registered applicability output GOVERNED_ENTITY_INVENTORY (via when_governed_governed_entity_scope_present)
+- STAGE-02 registered applicability output GOVERNED_ENTITY_OPERATION_MATRIX (via when_governed_governed_entity_scope_present)
+- STAGE-02 registered applicability output ENTITY_HIERARCHY_MATRIX (via when_entity_hierarchy_applies)
+- STAGE-02 registered applicability output INTERACTION_TOPOLOGY_MATRIX (via when_continuous_work_unit_applies)
+- STAGE-02 registered applicability output FUNCTION_VISUAL_IMPACT_MATRIX (via when_user_visible_or_observable_required_operation_applies)
+- STAGE-02 aligned INTERACTION_TOPOLOGY_MATRIX -> INTERACTION_TOPOLOGY_SPEC
+- STAGE-02 added producer operation GOVERNED_ENTITY_INVENTORY_COMPILE
+- STAGE-02 bound producer GOVERNED_ENTITY_INVENTORY_COMPILE -> GOVERNED_ENTITY_INVENTORY
+- STAGE-02 added producer operation GOVERNED_ENTITY_OPERATION_MATRIX_COMPILE
+- STAGE-02 bound producer GOVERNED_ENTITY_OPERATION_MATRIX_COMPILE -> GOVERNED_ENTITY_OPERATION_MATRIX
+- STAGE-02 added producer operation ENTITY_HIERARCHY_MATRIX_COMPILE
+- STAGE-02 bound producer ENTITY_HIERARCHY_MATRIX_COMPILE -> ENTITY_HIERARCHY_MATRIX
+- STAGE-02 added producer operation FUNCTION_VISUAL_IMPACT_MATRIX_COMPILE
+- STAGE-02 bound producer FUNCTION_VISUAL_IMPACT_MATRIX_COMPILE -> FUNCTION_VISUAL_IMPACT_MATRIX
+- STAGE-05 entry_gate modeled as composite {base, requires[]}
+- STAGE-01 added evidence operation SOURCE_ENUMERATION_EVIDENCE_COMPILE
+- STAGE-01 bound evidence producer SOURCE_ENUMERATION_EVIDENCE_COMPILE -> SOURCE_ENUMERATION_EVIDENCE
+- STAGE-06 added evidence operation TEST_EVIDENCE_COMPILE_COMPILE
+- STAGE-06 bound evidence producer TEST_EVIDENCE_COMPILE_COMPILE -> TEST_EVIDENCE_SET
+- STAGE-07 added evidence operation BUILD_TEST_EVIDENCE_COMPILE
+- STAGE-07 bound evidence producer BUILD_TEST_EVIDENCE_COMPILE -> BUILD_TEST_EVIDENCE
+- STAGE-08 added evidence operation STAGING_ACCEPTANCE_OR_NA_EVIDENCE_COMPILE
+- STAGE-08 bound evidence producer STAGING_ACCEPTANCE_OR_NA_EVIDENCE_COMPILE -> STAGING_ACCEPTANCE_OR_NA_EVIDENCE
+- STAGE-09 added evidence operation PRODUCTION_SMOKE_EVIDENCE_COMPILE
+- STAGE-09 bound evidence producer PRODUCTION_SMOKE_EVIDENCE_COMPILE -> PRODUCTION_SMOKE_EVIDENCE
+- STAGE-10 added evidence operation PRODUCTION_ACCEPTANCE_EVIDENCE_COMPILE_COMPILE
+- STAGE-10 bound evidence producer PRODUCTION_ACCEPTANCE_EVIDENCE_COMPILE_COMPILE -> PRODUCTION_ACCEPTANCE_EVIDENCE_SET
+- STAGE-11 added evidence operation FINAL_AUDIT_EVIDENCE_COMPILE
+- STAGE-11 bound evidence producer FINAL_AUDIT_EVIDENCE_COMPILE -> FINAL_AUDIT_EVIDENCE
+- bound SINGLE_STATE_SINGLE_ORCHESTRATOR_STAGE_CORE to VAL-GOV-035
