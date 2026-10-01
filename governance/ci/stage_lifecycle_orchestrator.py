@@ -466,11 +466,15 @@ def _successor_resolution(root,stage_uid,wp,work):
       'next_stage_uid':next_stage,
       'idempotency_key':key,
       'successor_work_unit_uid':successor_uid,
+      'deterministic_successor_work_unit_uid':successor_uid,
       'status':'INTENT_PERSISTED',
     }
     if ip.is_file():
         old=load_yaml(ip)
-        if old.get('idempotency_key')!=key or old.get('successor_work_unit_uid')!=successor_uid:
+        if old.get('idempotency_key')!=key:
+            fail('SUCCESSOR_INTENT_CONFLICT:'+next_stage)
+        recorded_deterministic=str(old.get('deterministic_successor_work_unit_uid') or '')
+        if recorded_deterministic and recorded_deterministic!=successor_uid:
             fail('SUCCESSOR_INTENT_CONFLICT:'+next_stage)
     else:
         atomic_yaml(ip,intent)
