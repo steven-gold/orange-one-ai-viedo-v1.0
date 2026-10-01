@@ -13,10 +13,6 @@ GUARDS={
 'VAL-GOV-027':'STAGING_ACCEPTANCE_COMPLETE','VAL-GOV-028':'STAGING_APPLICABILITY_RESOLVED','VAL-GOV-029':'VISUAL_DOMAIN_COMPLETE',
 'VAL-GOV-030':'VISUAL_GEOMETRY_VALID','VAL-GOV-031':'WORK_UNIT_CLOSURE_VALID'}
 
-def _out(work_dir,uid):
-    a=work_dir/(uid+'.yaml'); b=work_dir/'OUTPUTS'/(uid+'.yaml')
-    return a if a.is_file() else b
-
 def _identity(uid):
     rr=load_yaml(REFERENCE_RULES)
     for row in rr.get('validator_identities') or []:
@@ -47,7 +43,8 @@ def evaluate(stage_uid,validator_uid,phase,work_ref=None,root_arg=None):
             if d.get('status') not in {'PASS','NOT_APPLICABLE_WITH_PROOF'}: findings.append('OPERATION_NOT_PASS:'+op)
         except RuntimeContractError as e: findings.append(str(e))
     for uid in map(str,stage.get('outputs') or []):
-        try: required_file(_out(wp.parent,uid),'OUTPUT:'+uid)
+        try:
+            registered_output_paths(root,wp.parent,work,uid)
         except RuntimeContractError as e: findings.append(str(e))
     for dim,b in (work.get('scanner_bindings') or {}).items():
         try:
