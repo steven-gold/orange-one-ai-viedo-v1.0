@@ -891,7 +891,7 @@ with tempfile.TemporaryDirectory() as td:
     expect_stage_engine_block('matrix_stale_count',lambda:eng.validate_normative_execution_matrix(matrix_stage,pressure_root,mwork,matrix_st,gov),'NORMATIVE_EXECUTION_MATRIX_COVERAGE_DRIFT')
     mpath.write_text(yaml.safe_dump(matrix,sort_keys=False),encoding='utf-8')
 
-    # Current-state pressure: a PASS stage cannot be CLOSED while operations are incomplete
+    # Current-state pressure: a PASS pre-close candidate cannot be closure-pending while operations are incomplete
     # or while current_operation still points at readiness/pending work.
     scope_rel=f'STAGE_EXECUTION/{matrix_stage}/{wu}/CURRENT_EXECUTION_SCOPE_MANIFEST.yaml'
     yaml.safe_dump({'artifact_type':'EXECUTION_SCOPE_MANIFEST','stage_uid':matrix_stage,'work_unit_uid':wu,'governance_uid':gov},(wd/'CURRENT_EXECUTION_SCOPE_MANIFEST.yaml').open('w',encoding='utf-8'),sort_keys=False)
@@ -905,7 +905,7 @@ with tempfile.TemporaryDirectory() as td:
       'normative_execution_matrix_ref':mwork['normative_execution_matrix_ref'],
       'current_ledger_bindings':_state_ledger_bindings
     },(wd/'WORK_UNIT.yaml').open('w',encoding='utf-8'),sort_keys=False)
-    valid_state={'artifact_type':'WORK_UNIT_EXECUTION_STATE','stage_uid':matrix_stage,'work_unit_uid':wu,'completed_operations':list(matrix_st['operations']),'current_operation':'COMPLETE','status':'CLOSED'}
+    valid_state={'artifact_type':'WORK_UNIT_EXECUTION_STATE','stage_uid':matrix_stage,'work_unit_uid':wu,'completed_operations':list(matrix_st['operations']),'current_operation':'COMPLETE','status':'EXECUTION_COMPLETE_CLOSURE_PENDING'}
     _pressure_state_path=wd/'EXECUTION_STATE.yaml'
     yaml.safe_dump(valid_state,_pressure_state_path.open('w',encoding='utf-8'),sort_keys=False)
     _state_ledger_bindings['EXECUTION_STATE']={
