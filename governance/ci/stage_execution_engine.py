@@ -1942,7 +1942,10 @@ def execute_active(stage_uid):
         fail('ACTIVE_STAGE_SUCCESSOR_OPERATION_PASS_NOT_REQUIRED:'+stage_uid)
     execution_root_arg=str(compat['operation_executor_execution_root_argument'])
     cmd=[sys.executable,str(executor),'--stage',stage_uid,'--operation',operation_uid,'--work-unit',work_rel,execution_root_arg,str(execution_root)]
-    proc=subprocess.run(cmd,cwd=execution_root,text=True,capture_output=True)
+    executor_env=os.environ.copy()
+    executor_env['ACPOS_CURRENT_GOVERNANCE_UID']=gov
+    executor_env['ACPOS_CURRENT_GOVERNANCE_HEAD']=_git_required(ROOT,'CURRENT_GOVERNANCE_HEAD_UNRESOLVED','rev-parse','HEAD')
+    proc=subprocess.run(cmd,cwd=execution_root,text=True,capture_output=True,env=executor_env)
     if proc.returncode!=0:
         msg=(proc.stderr or proc.stdout or '').strip().replace('\n',' ')[:800]
         fail('ACTIVE_STAGE_OPERATION_EXECUTOR_FAILED:'+operation_uid+':'+str(proc.returncode)+':'+msg)
