@@ -366,6 +366,80 @@ def preflight(stage_uid,work_ref=None,root_arg=None):
     return {'status':out['status'],'stage_uid':stage_uid,'work_unit_uid':work.get('work_unit_uid')}
 
 
+def _sync_successor_input_bindings_from_handoff(root,predecessor_wp,successor_wp,next_stage):
+    """Refresh successor-owned input bindings from the predecessor's fresh handoff.
+
+    This runs only after predecessor CLOSED_PASS and at successor resolution.
+    It never invents authority or changes input origins/denominators.
+    """
+    hp=predecessor_wp.parent/'CROSS_STAGE_HANDOFF_READINESS_LEDGER.yaml'
+    required_file(hp,'SUCCESSOR_HANDOFF_LEDGER')
+    handoff=load_yaml(hp)
+    if handoff.get('status')!='PASS' or str(handoff.get('successor_stage_uid') or '')!=next_stage:
+        fail('SUCCESSOR_HANDOFF_NOT_READY:'+next_stage)
+    stage=stage_definition(next_stage)
+    expected=list(map(str,stage.get('inputs') or []))
+    origins={str(k):str(v) for k,v in (stage.get('input_origins') or {}).items()}
+    rows={}
+    for row in handoff.get('successor_required_inputs') or []:
+        if not isinstance(row,dict) or not row.get('input_uid'):
+            fail('SUCCESSOR_HANDOFF_INPUT_ROW_INVALID:'+next_stage)
+        uid=str(row.get('input_uid'))
+        if uid in rows: fail('SUCCESSOR_HANDOFF_INPUT_DUPLICATE:'+uid)
+        rows[uid]=row
+    if set(rows)!=set(expected):
+        fail('SUCCESSOR_HANDOFF_INPUT_DENOMINATOR_DRIFT:'+next_stage+
+             ':expected='+repr(sorted(expected))+':actual='+repr(sorted(rows)))
+    successor=load_yaml(successor_wp)
+    bindings=successor.get('input_bindings')
+    if not isinstance(bindings,dict) or set(map(str,bindings))!=set(expected):
+        fail('SUCCESSOR_INPUT_BINDING_DENOMINATOR_DRIFT:'+next_stage)
+    for uid in expected:
+        old=bindings.get(uid)
+        if not isinstance(old,dict):
+            fail('SUCCESSOR_INPUT_BINDING_ROW_INVALID:'+uid)
+        if str(old.get('input_uid') or '')!=uid:
+            fail('SUCCESSOR_INPUT_BINDING_IDENTITY_DRIFT:'+uid)
+        if str(old.get('origin') or '')!=origins.get(uid,''):
+            fail('SUCCESSOR_INPUT_ORIGIN_DRIFT:'+uid)
+        row=rows[uid]
+        status=str(row.get('status') or '')
+        if status=='MATERIALIZED':
+            ref=str(row.get('artifact_ref') or '')
+            p=safe_ref(root,ref); required_file(p,'SUCCESSOR_INPUT:'+uid)
+            digest=sha256_file(p)
+            if str(row.get('content_sha256') or '')!=digest:
+                fail('SUCCESSOR_HANDOFF_HASH_DRIFT:'+uid)
+            readiness=str(row.get('consumer_readiness_evidence_ref') or '')
+            required_file(safe_ref(root,readiness),'SUCCESSOR_INPUT_READINESS:'+uid)
+            old.update({
+              'status':'MATERIALIZED',
+              'artifact_ref':ref,
+              'content_sha256':digest,
+              'external_evidence_ref':str(row.get('external_evidence_ref') or ''),
+              'authority_evidence_ref':str(row.get('authority_evidence_ref') or ''),
+              'consumer_readiness_evidence_ref':readiness,
+            })
+        elif status=='AUTHORIZED_NOT_APPLICABLE':
+            auth=str(row.get('authority_evidence_ref') or '')
+            if not auth: fail('SUCCESSOR_HANDOFF_NA_AUTHORITY_MISSING:'+uid)
+            old.update({
+              'status':'AUTHORIZED_NOT_APPLICABLE',
+              'artifact_ref':'',
+              'content_sha256':'',
+              'external_evidence_ref':str(row.get('external_evidence_ref') or ''),
+              'authority_evidence_ref':auth,
+              'consumer_readiness_evidence_ref':'',
+            })
+        else:
+            fail('SUCCESSOR_HANDOFF_INPUT_STATUS_INVALID:'+uid+':'+status)
+        bindings[uid]=old
+    successor['input_bindings']=bindings
+    successor['input_binding_refresh_owner']='governance/ci/stage_lifecycle_orchestrator.py'
+    successor['input_binding_refresh_source_ref']=str(hp.relative_to(root))
+    atomic_yaml(successor_wp,successor)
+    return successor
+
 def _successor_resolution(root,stage_uid,wp,work):
     stage=stage_definition(stage_uid)
     next_stage=str(stage.get('next_stage_uid') or '')
@@ -440,6 +514,9 @@ def _successor_resolution(root,stage_uid,wp,work):
     sd=load_yaml(state_path)
     if sd.get('stage_uid')!=next_stage or sd.get('work_unit_uid')!=swuid:
         fail('SUCCESSOR_STATE_IDENTITY_DRIFT:'+next_stage)
+    # The predecessor handoff owns fresh physical hashes/readiness evidence.
+    # Rebind the already-existing successor only at this owning transition boundary.
+    sw=_sync_successor_input_bindings_from_handoff(root,wp,swp,next_stage)
     commit=idir/'SUCCESSOR_MATERIALIZATION_COMMIT.yaml'
     atomic_yaml(commit,{
       'artifact_type':'SUCCESSOR_MATERIALIZATION_COMMIT',
