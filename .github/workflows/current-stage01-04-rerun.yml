@@ -24,7 +24,7 @@ jobs:
       - name: Checkout exact Current governance
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
-          ref: d20c2437668046ae97b58c4e62143d75da45aab7
+          ref: f91b5073bb9a4429f9a74c8503c977907f6f2a7c
           fetch-depth: 0
           path: gov
           persist-credentials: false
@@ -47,7 +47,7 @@ jobs:
 
           root=Path('product')
           gov=Path('gov')
-          current_head='d20c2437668046ae97b58c4e62143d75da45aab7'
+          current_head='f91b5073bb9a4429f9a74c8503c977907f6f2a7c'
           # Governance is resolved only from the exact Current governance checkout.
           # The product branch must not carry a governance Authority or version selector.
           life=yaml.safe_load((gov/'.github/governance-source/active/source/10_REGISTRY/GOVERNANCE_LIFECYCLE_STAGE_REGISTRY.yaml').read_text(encoding='utf-8')) or {}
@@ -185,7 +185,7 @@ jobs:
           import hashlib, json, yaml
           root=Path('product')
           gov=Path('gov')
-          current_head='d20c2437668046ae97b58c4e62143d75da45aab7'
+          current_head='f91b5073bb9a4429f9a74c8503c977907f6f2a7c'
           life=yaml.safe_load((gov/'.github/governance-source/active/source/10_REGISTRY/GOVERNANCE_LIFECYCLE_STAGE_REGISTRY.yaml').read_text(encoding='utf-8')) or {}
           raw=life.get('stages') or []
           stages={str(x['stage_uid']):x for x in raw} if isinstance(raw,list) else {str(k):v for k,v in raw.items()}
@@ -248,7 +248,7 @@ jobs:
           from pathlib import Path
           import hashlib, json, yaml
           root=Path('product')
-          current_head='d20c2437668046ae97b58c4e62143d75da45aab7'
+          current_head='f91b5073bb9a4429f9a74c8503c977907f6f2a7c'
           for n in range(1,5):
               sid=f'STAGE-{n:02d}'
               wu=f'WU-STAGE{n:02d}-GLOBAL-HOME-SHELL-NAVIGATION-001'
