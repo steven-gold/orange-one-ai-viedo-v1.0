@@ -126,8 +126,10 @@ current_validation_contract:
   commit_status_sha_must_equal_validation_head: true
   commit_status_success_required: true
   unregistered_non_word_execution_prerequisite: BLOCK
-  product_stage_execution_governance_binding: EXACT_CURRENT_VALIDATED_GOVERNANCE_SNAPSHOT
-  current_governance_selection_artifact: STAGE_EXECUTION/SHARED_AUTHORITY/CURRENT_GOVERNANCE_SELECTION.yaml
+  product_stage_execution_governance_binding: CURRENT_GOVERNANCE_WORKLINE_REGISTRY_ONLY
+  product_execution_may_define_or_copy_governance_authority: false
+  product_execution_resolves_governance_from: governance/specifications/REGISTRY.yaml
+  product_execution_governance_branch_source: governance/environment/EXECUTION_WORKLINE_BINDING.yaml
   validation_commands:
   - python governance/ci/stage_execution_engine.py --definition-audit-all
   - python governance/ci/validate_selected_execution_profile_integrity.py
