@@ -85,14 +85,20 @@ def _normalize_identity(value, governed_unit_uid):
 
 def _refresh_stage1_linked_contracts():
     governed_unit_uid = _canonical_governed_unit_uid()
-    roots = [
-        WORK_DIR / '00_SOURCE_INTAKE',
+    yaml_paths = [
+        p for p in [
+            WORK_DIR / '00_SOURCE_INTAKE/SOURCE_STRUCTURE_MANIFEST.yaml',
+            WORK_DIR / '00_SOURCE_INTAKE/SOURCE_SEGMENT_MAP.yaml',
+            WORK_DIR / '00_SOURCE_INTAKE/SOURCE_CONTEXT_MANIFEST.yaml',
+            WORK_DIR / '00_SOURCE_INTAKE/CONTENT_SUPERSESSION_CONFLICT_LEDGER.yaml',
+            WORK_DIR / '00_SOURCE_INTAKE/SOURCE_DEPENDENCY_MAP.yaml',
+        ] if p.is_file()
+    ]
+    for root in [
         WORK_DIR / '01_CLASSIFIED',
         WORK_DIR / '02_BASE_BLUEPRINT',
         WORK_DIR / '03_BLUEPRINT_BINDING',
-    ]
-    yaml_paths = []
-    for root in roots:
+    ]:
         if root.is_dir():
             yaml_paths.extend(sorted(root.rglob('*.yaml')))
     for path in yaml_paths:
