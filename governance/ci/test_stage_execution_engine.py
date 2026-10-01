@@ -506,7 +506,8 @@ work={
     'executor_owner':'synthetic.executor',
     'result_owner':'synthetic.results',
     'executor_protocol':'PYTHON_STAGE_OPERATION_V1',
-    'operation_receipt_ref':f'STAGE_EXECUTION/{wstage}/SYNTHETIC-WU/EVIDENCE/OPERATION_RECEIPTS/{x}.yaml'
+    'operation_receipt_ref':f'STAGE_EXECUTION/{wstage}/SYNTHETIC-WU/EVIDENCE/OPERATION_RECEIPTS/{x}.yaml',
+    'governance_load_receipt_ref':f'STAGE_EXECUTION/{wstage}/SYNTHETIC-WU/EVIDENCE/GOVERNANCE_LOAD_RECEIPTS/{x}.yaml'
   } for x in wst['operations']},
  'scanner_bindings':{x:{'scanner_owner':'synthetic.scanner','result_owner':'synthetic.scan.results'} for x in wad['scanner_dimensions']},
 }
@@ -525,6 +526,7 @@ block_work('missing_scanner_binding',lambda x:x['scanner_bindings'].pop(next(ite
 block_work('operation_executor_owner_missing',lambda x:x['operation_bindings'][next(iter(x['operation_bindings']))].pop('executor_owner'))
 block_work('operation_executor_protocol_missing',lambda x:x['operation_bindings'][next(iter(x['operation_bindings']))].pop('executor_protocol'))
 block_work('operation_receipt_ref_missing',lambda x:x['operation_bindings'][next(iter(x['operation_bindings']))].pop('operation_receipt_ref'))
+block_work('governance_load_receipt_ref_missing',lambda x:x['operation_bindings'][next(iter(x['operation_bindings']))].pop('governance_load_receipt_ref'))
 block_work('scanner_owner_missing',lambda x:x['scanner_bindings'][next(iter(x['scanner_bindings']))].pop('scanner_owner'))
 
 # Normative execution matrix admission + destructive required-field regression.
