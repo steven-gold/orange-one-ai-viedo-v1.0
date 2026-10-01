@@ -55,8 +55,8 @@ def _materialize_stage1_pipeline_guard_context(root,wp):
       source_root/'12_DOCS/mother-spec/04_AUDIT_PROGRESS_STANDARD.md',
     ]
     for p in mother: required_file(p,'STAGE1_GUARD_MOTHER_SOURCE')
-    rows=[f"{p.relative_to(source_root).as_posix()}\\0{sha256_file(p)}" for p in mother]
-    normative_hash=hashlib.sha256("\\n".join(rows).encode('utf-8')).hexdigest()
+    rows=[f"{p.relative_to(source_root).as_posix()}\0{sha256_file(p)}" for p in mother]
+    normative_hash=hashlib.sha256("\n".join(rows).encode('utf-8')).hexdigest()
     work=load_yaml(wp)
     run_uid='RUN-'+str(work.get('work_unit_uid') or 'STAGE01')
     ctx={
