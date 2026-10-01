@@ -120,6 +120,33 @@ jobs:
               scope.pop('content_hash',None)
               sp.write_text(yaml.safe_dump(scope,sort_keys=False,allow_unicode=True),encoding='utf-8')
 
+              # A fresh rerun must not inherit registered Stage outputs from the
+              # previous attempt. Resolve their physical paths from the Current
+              # Normative Execution Matrix and delete only output-owned artifacts
+              # inside this Work Unit. Immutable source/input artifacts are preserved.
+              matrix=yaml.safe_load((wd/'NORMATIVE_EXECUTION_MATRIX.yaml').read_text(encoding='utf-8')) or {}
+              stage_outputs=set(map(str,stage.get('outputs') or []))
+              output_paths=set()
+              for row in matrix.get('rows') or matrix.get('matrix_rows') or []:
+                  if not isinstance(row,dict):
+                      continue
+                  if str(row.get('required_artifact_type') or '') not in stage_outputs:
+                      continue
+                  aref=str(row.get('artifact_ref') or '').strip()
+                  if not aref:
+                      continue
+                  ap=(root/aref).resolve()
+                  try:
+                      ap.relative_to(wd.resolve())
+                  except ValueError:
+                      raise SystemExit(f'OUTPUT_REF_ESCAPES_WORK_UNIT:{sid}:{aref}')
+                  output_paths.add(ap)
+              for ap in sorted(output_paths,key=lambda x:len(x.parts),reverse=True):
+                  if ap.is_dir():
+                      shutil.rmtree(ap)
+                  elif ap.exists():
+                      ap.unlink()
+
               ev=wd/'EVIDENCE'
               for sub in ('OPERATION_RECEIPTS','GOVERNANCE_LOAD_RECEIPTS','VALIDATORS','CLOSURE_TRANSACTION','SUCCESSOR','REQUIRED','SUCCESSOR_INPUTS'):
                   shutil.rmtree(ev/sub,ignore_errors=True)
