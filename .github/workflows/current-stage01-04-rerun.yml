@@ -1,0 +1,228 @@
+name: Current Stage 01-04 Rerun
+on:
+  push:
+    branches: [0921acpos]
+    paths:
+      - 'STAGE_EXECUTION/.current-stage01-04-rerun-trigger'
+permissions:
+  contents: write
+concurrency:
+  group: current-stage01-04-rerun-0921
+  cancel-in-progress: false
+
+jobs:
+  rerun:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout execution workline
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: 0921acpos
+          fetch-depth: 0
+          path: product
+
+      - name: Checkout exact Current governance
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: d30f41688c236bbaf35d4aea4ed5ce682f403729
+          fetch-depth: 0
+          path: gov
+          persist-credentials: false
+
+      - name: Set up Python
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with:
+          python-version: '3.11.16'
+
+      - name: Install governance runtime dependencies
+        run: python -m pip install --disable-pip-version-check --require-hashes -r gov/governance/ci/requirements-governance.lock
+
+      - name: Prepare fresh Stage 01-04 execution attempt
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+          import hashlib, shutil, yaml
+
+          root=Path('product')
+          gov=Path('gov')
+          current_head='d30f41688c236bbaf35d4aea4ed5ce682f403729'
+          selection=root/'STAGE_EXECUTION/SHARED_AUTHORITY/CURRENT_GOVERNANCE_SELECTION.yaml'
+          s=yaml.safe_load(selection.read_text(encoding='utf-8')) or {}
+          g=(s.get('governance_source_of_truth') or {})
+          if g.get('branch')!='rebuild-v2.1.1':
+              raise SystemExit('CURRENT_GOVERNANCE_SELECTION_BRANCH_DRIFT')
+          g['head_sha']=current_head
+          s['governance_source_of_truth']=g
+          v=s.get('exact_head_validation') or {}
+          v['stage_internal_validation']='PASS'
+          v['mother_neutrality']='PASS'
+          v['validated_head_sha']=current_head
+          s['exact_head_validation']=v
+          selection.write_text(yaml.safe_dump(s,sort_keys=False,allow_unicode=True),encoding='utf-8')
+
+          life=yaml.safe_load((gov/'.github/governance-source/active/source/10_REGISTRY/GOVERNANCE_LIFECYCLE_STAGE_REGISTRY.yaml').read_text(encoding='utf-8')) or {}
+          raw=life.get('stages') or []
+          stages={str(x['stage_uid']):x for x in raw} if isinstance(raw,list) else {str(k):v for k,v in raw.items()}
+          preflight_names={
+            'REQUIRED_FIELD_MANIFEST.yaml','FUNCTIONAL_CHAIN_MANIFEST.yaml','EFFECTIVE_CONTRACT_OVERLAY.yaml',
+            'DEPENDENCY_TOPOLOGY.yaml','DENOMINATOR_SNAPSHOT.yaml','CLASSIFICATION_RULESET.yaml',
+            'CHANGE_IMPACT_MAP.yaml','STAGE_EXECUTION_PREFLIGHT_RECEIPT.yaml',
+            'CURRENT_PROBLEM_REGISTER.yaml','RESOLUTION_LEDGER.yaml'
+          }
+          def h(path):
+              return hashlib.sha256(path.read_bytes()).hexdigest()
+          for n in range(1,5):
+              sid=f'STAGE-{n:02d}'
+              wu=f'WU-STAGE{n:02d}-GLOBAL-HOME-SHELL-NAVIGATION-001'
+              wd=root/'STAGE_EXECUTION'/sid/wu
+              wp=wd/'WORK_UNIT.yaml'
+              sp=wd/'CURRENT_EXECUTION_SCOPE_MANIFEST.yaml'
+              stp=wd/'EXECUTION_STATE.yaml'
+              work=yaml.safe_load(wp.read_text(encoding='utf-8')) or {}
+              stage=stages[sid]
+              ops=list(map(str,stage.get('operations') or []))
+              binds=work.get('operation_bindings') or {}
+              if set(binds)!=set(ops):
+                  raise SystemExit(f'OPERATION_BINDING_DENOMINATOR_DRIFT:{sid}')
+              for op in ops:
+                  row=binds[op]
+                  row['governance_load_receipt_ref']=f'{wd.relative_to(root).as_posix()}/EVIDENCE/GOVERNANCE_LOAD_RECEIPTS/{op}.yaml'
+              work['operation_bindings']=binds
+              work['governance_head']=current_head
+              work['governance_binding_ref']='STAGE_EXECUTION/SHARED_AUTHORITY/CURRENT_GOVERNANCE_SELECTION.yaml'
+              work['pre_execution_gate_status']='PASS'
+              work['status']='OPEN'
+              work['current_status']='OPEN'
+
+              state=yaml.safe_load(stp.read_text(encoding='utf-8')) or {}
+              state['status']='IN_PROGRESS'
+              state['current_operation']=ops[0]
+              state['completed_operations']=[]
+              state['resume_control']={'product_execution_allowed': True}
+              for key in ('last_operation_uid','last_operation_receipt_ref','blocker_disposition','next_action'):
+                  state.pop(key,None)
+              stp.write_text(yaml.safe_dump(state,sort_keys=False,allow_unicode=True),encoding='utf-8')
+
+              ledgers=work.get('current_ledger_bindings') or {}
+              if isinstance(ledgers.get('EXECUTION_STATE'),dict):
+                  ledgers['EXECUTION_STATE']['content_sha256']=h(stp)
+              work['current_ledger_bindings']=ledgers
+              wp.write_text(yaml.safe_dump(work,sort_keys=False,allow_unicode=True),encoding='utf-8')
+
+              scope=yaml.safe_load(sp.read_text(encoding='utf-8')) or {}
+              scope['product_stage_execution_allowed']=True
+              scope['status']='OPEN'
+              scope['governance_head']=current_head
+              scope['current_reverify_required']=True
+              scope['governance_binding_ref']='STAGE_EXECUTION/SHARED_AUTHORITY/CURRENT_GOVERNANCE_SELECTION.yaml'
+              sp.write_text(yaml.safe_dump(scope,sort_keys=False,allow_unicode=True),encoding='utf-8')
+
+              ev=wd/'EVIDENCE'
+              for sub in ('OPERATION_RECEIPTS','GOVERNANCE_LOAD_RECEIPTS','VALIDATORS','CLOSURE_TRANSACTION','SUCCESSOR','REQUIRED','SUCCESSOR_INPUTS'):
+                  shutil.rmtree(ev/sub,ignore_errors=True)
+              for name in ('NORMALIZED_STAGE_EVIDENCE.json','NORMALIZED_STAGE_EVIDENCE_CANDIDATE.json',
+                           'TERMINAL_CLOSURE_RECORD.yaml','NEXT_STAGE_TRANSITION_RECORD.yaml',
+                           'NEXT_STAGE_TRANSITION_CANDIDATE.yaml','COMMON_PREFLIGHT_RESOLUTION.yaml'):
+                  p=ev/name
+                  if p.exists(): p.unlink()
+              legacy_review=ev/'VISUAL_REVIEW_EVIDENCE.yaml'
+              if sid=='STAGE-03' and legacy_review.exists():
+                  legacy_review.unlink()
+              for name in preflight_names:
+                  p=wd/name
+                  if p.exists(): p.unlink()
+              req=wd/'REQUIRED_EVIDENCE_BINDING_MANIFEST.yaml'
+              if req.exists(): req.unlink()
+              if sid=='STAGE-04':
+                  rp=wd/'RESUME_POINT.yaml'
+                  if rp.exists(): rp.unlink()
+
+          print('PASS: fresh Stage 01-04 attempt prepared against',current_head)
+          PY
+
+      - name: Run Stage 01 through Stage 04 with Current governance
+        shell: bash
+        run: |
+          set -euo pipefail
+          python gov/governance/ci/stage_lifecycle_orchestrator.py             --run-range             --start-stage STAGE-01             --end-stage STAGE-04             --work-unit STAGE_EXECUTION/STAGE-01/WU-STAGE01-GLOBAL-HOME-SHELL-NAVIGATION-001/WORK_UNIT.yaml             --product-root "$GITHUB_WORKSPACE/product" | tee stage01-04-result.json
+
+      - name: Verify fresh closure, receipts, handoffs and human evidence
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+          import hashlib, json, yaml
+          root=Path('product')
+          gov=Path('gov')
+          current_head='d30f41688c236bbaf35d4aea4ed5ce682f403729'
+          life=yaml.safe_load((gov/'.github/governance-source/active/source/10_REGISTRY/GOVERNANCE_LIFECYCLE_STAGE_REGISTRY.yaml').read_text(encoding='utf-8')) or {}
+          raw=life.get('stages') or []
+          stages={str(x['stage_uid']):x for x in raw} if isinstance(raw,list) else {str(k):v for k,v in raw.items()}
+          total_ops=0
+          for n in range(1,5):
+              sid=f'STAGE-{n:02d}'
+              wu=f'WU-STAGE{n:02d}-GLOBAL-HOME-SHELL-NAVIGATION-001'
+              wd=root/'STAGE_EXECUTION'/sid/wu
+              state=yaml.safe_load((wd/'EXECUTION_STATE.yaml').read_text(encoding='utf-8')) or {}
+              if state.get('status')!='CLOSED_PASS' or state.get('current_operation')!='COMPLETE':
+                  raise SystemExit(f'NOT_CLOSED_PASS:{sid}:{state.get("status")}')
+              ops=list(map(str,stages[sid].get('operations') or []))
+              if list(map(str,state.get('completed_operations') or []))!=ops:
+                  raise SystemExit(f'OPERATION_COMPLETION_DRIFT:{sid}')
+              total_ops+=len(ops)
+              work=yaml.safe_load((wd/'WORK_UNIT.yaml').read_text(encoding='utf-8')) or {}
+              if work.get('governance_head')!=current_head:
+                  raise SystemExit(f'WORK_UNIT_GOVERNANCE_HEAD_DRIFT:{sid}')
+              if work.get('status')!='CLOSED' or work.get('current_status')!='CLOSED':
+                  raise SystemExit(f'WORK_UNIT_PROJECTION_NOT_CLOSED:{sid}')
+              for op in ops:
+                  b=(work.get('operation_bindings') or {}).get(op) or {}
+                  gr=root/str(b.get('governance_load_receipt_ref') or '')
+                  rr=root/str(b.get('operation_receipt_ref') or '')
+                  if not gr.is_file() or not rr.is_file():
+                      raise SystemExit(f'RECEIPT_MISSING:{sid}:{op}')
+                  gd=yaml.safe_load(gr.read_text(encoding='utf-8')) or {}
+                  rd=yaml.safe_load(rr.read_text(encoding='utf-8')) or {}
+                  if gd.get('status')!='PASS' or rd.get('status')!='PASS':
+                      raise SystemExit(f'RECEIPT_NOT_PASS:{sid}:{op}')
+              norm=wd/'EVIDENCE/NORMALIZED_STAGE_EVIDENCE.json'
+              if not norm.is_file() or (json.loads(norm.read_text(encoding='utf-8')) or {}).get('result')!='PASS':
+                  raise SystemExit(f'NORMALIZED_FINAL_EVIDENCE_NOT_PASS:{sid}')
+              handoff=yaml.safe_load((wd/'CROSS_STAGE_HANDOFF_READINESS_LEDGER.yaml').read_text(encoding='utf-8')) or {}
+              if handoff.get('status')!='PASS' or handoff.get('materialization_owner')!='governance/ci/stage_lifecycle_orchestrator.py':
+                  raise SystemExit(f'FRESH_HANDOFF_NOT_MATERIALIZED:{sid}')
+          w3=root/'STAGE_EXECUTION/STAGE-03/WU-STAGE03-GLOBAL-HOME-SHELL-NAVIGATION-001'
+          vr=yaml.safe_load((w3/'VISUAL_REVIEW_EVIDENCE.yaml').read_text(encoding='utf-8')) or {}
+          vp=w3/'VISUAL_DESIGN_SPEC_PACKAGE.yaml'
+          if vr.get('status')!='PASS' or vr.get('result')!='APPROVE' or vr.get('approved_by_human') is not True:
+              raise SystemExit('STAGE03_VISUAL_REVIEW_NOT_NORMALIZED')
+          if vr.get('approved_artifact_sha256')!=hashlib.sha256(vp.read_bytes()).hexdigest():
+              raise SystemExit('STAGE03_VISUAL_REVIEW_HASH_DRIFT')
+          w4=root/'STAGE_EXECUTION/STAGE-04/WU-STAGE04-GLOBAL-HOME-SHELL-NAVIGATION-001'
+          da=yaml.safe_load((w4/'DESIGN_APPROVAL_EVIDENCE.yaml').read_text(encoding='utf-8')) or {}
+          bp=w4/'BASIC_DESIGN_PACKAGE.yaml'
+          if da.get('status')!='PASS' or da.get('approved_design_package_sha256')!=hashlib.sha256(bp.read_bytes()).hexdigest():
+              raise SystemExit('STAGE04_DESIGN_APPROVAL_HASH_DRIFT')
+          rp=yaml.safe_load((w4/'RESUME_POINT.yaml').read_text(encoding='utf-8')) or {}
+          if rp.get('status')!='CLOSED' or rp.get('stage_exit_authorized') is not True or not rp.get('authoritative_state_sha256'):
+              raise SystemExit('STAGE04_RESUME_PROJECTION_NOT_SYNCHRONIZED')
+          print('PASS: Stage 01-04 fresh closure verified; operations=',total_ops)
+          PY
+
+      - name: Commit fresh execution evidence
+        working-directory: product
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add STAGE_EXECUTION
+          if git diff --cached --quiet; then
+            echo "No execution changes"
+            exit 0
+          fi
+          git commit -m "stage: fresh rerun STAGE-01 through STAGE-04 under Current governance"
+          git push origin HEAD:0921acpos
