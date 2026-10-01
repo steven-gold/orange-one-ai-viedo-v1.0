@@ -46,6 +46,7 @@ def main():
     engine=texts.get('stage_execution_engine.py','')
     for token in ['PRE_CLOSE_CANDIDATE','POST_CLOSE_FINAL','terminal_disposition','governance_load_receipt_ref']:
         if token not in engine: failures.append('engine_contract_token_missing:'+token)
+    # Matrix-bound registered output resolution is a Layer-3 runtime invariant.
     common=texts.get('stage_runtime_common.py','')
     for token in ['def registered_output_paths','normative_execution_matrix_ref','REGISTERED_OUTPUT_BINDING_MISSING','REGISTERED_OUTPUT_ESCAPES_WORK_UNIT']:
         if token not in common: failures.append('registered_output_resolution_contract_missing:'+token)
