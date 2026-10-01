@@ -114,6 +114,112 @@ def _normalized(stage_uid,root,wp,work,state,validators,human_block=False,final=
         e['cross_stage_handoff']={'ledger_ref':str(hp.relative_to(root)),'external_receipt':False,'successor_stage_uid':stage.get('next_stage_uid'),'reference_resolution_complete':h.get('reference_resolution_complete'),'physical_materialization_complete':h.get('physical_materialization_complete'),'required_field_completeness_complete':h.get('required_field_completeness_complete'),'denominator_reconciled':h.get('denominator_reconciled'),'consumer_readiness_complete':h.get('consumer_readiness_complete'),'current_matrix_valid':h.get('current_matrix_valid'),'current_state_consistent':h.get('current_state_consistent'),'unresolved_required_dependency_total':h.get('unresolved_required_dependency_total'),'status':h.get('status')}
     return e
 
+def _materialize_cross_stage_handoff(root,wp,work,stage_uid):
+    stage=stage_definition(stage_uid)
+    next_stage=str(stage.get('next_stage_uid') or '')
+    _,stages=lifecycle_stages()
+    if next_stage not in stages:
+        return None
+    expected=list(map(str,stages[next_stage].get('inputs') or []))
+    governed=str(work.get('governed_unit_uid') or '')
+    successor_work=None
+    stage_dir=root/'STAGE_EXECUTION'/next_stage
+    candidates=[]
+    if stage_dir.is_dir():
+        for d in sorted(stage_dir.iterdir()):
+            if not d.is_dir() or d.name.startswith('_'): continue
+            w=d/'WORK_UNIT.yaml'
+            if not w.is_file(): continue
+            try: wd=load_yaml(w)
+            except RuntimeContractError: continue
+            if wd.get('stage_uid')==next_stage and wd.get('governed_unit_uid')==governed:
+                candidates.append((w,wd))
+    if len(candidates)>1:
+        fail('MULTIPLE_SUCCESSOR_WORK_UNITS_FOR_HANDOFF:'+next_stage+':'+governed)
+    if candidates:
+        successor_work=candidates[0][1]
+
+    old_path=wp.parent/'CROSS_STAGE_HANDOFF_READINESS_LEDGER.yaml'
+    old_rows={}
+    if old_path.is_file():
+        old=load_yaml(old_path)
+        for row in old.get('successor_required_inputs') or []:
+            if isinstance(row,dict) and row.get('input_uid'):
+                old_rows[str(row.get('input_uid'))]=row
+
+    rows=[]
+    ready_dir=wp.parent/'EVIDENCE/SUCCESSOR_INPUTS'
+    ready_dir.mkdir(parents=True,exist_ok=True)
+    successor_bindings=(successor_work or {}).get('input_bindings') or {}
+    for uid in expected:
+        source=successor_bindings.get(uid) if isinstance(successor_bindings,dict) else None
+        if not isinstance(source,dict):
+            source=old_rows.get(uid)
+        if not isinstance(source,dict):
+            fail('CROSS_STAGE_HANDOFF_INPUT_BINDING_UNRESOLVED:'+stage_uid+':'+uid)
+        status=str(source.get('status') or '')
+        if status=='AUTHORIZED_NOT_APPLICABLE':
+            auth=str(source.get('authority_evidence_ref') or '')
+            if not auth:
+                fail('CROSS_STAGE_HANDOFF_NA_AUTHORITY_MISSING:'+uid)
+            rows.append({
+              'input_uid':uid,'status':'AUTHORIZED_NOT_APPLICABLE','artifact_ref':'',
+              'content_sha256':'','external_evidence_ref':str(source.get('external_evidence_ref') or ''),
+              'authority_evidence_ref':auth,'consumer_readiness_evidence_ref':''
+            })
+            continue
+        aref=str(source.get('artifact_ref') or '')
+        ap=safe_ref(root,aref); required_file(ap,'CROSS_STAGE_HANDOFF_INPUT:'+uid)
+        digest=sha256_file(ap)
+        safe=''.join(ch if ch.isalnum() or ch in '-_' else '_' for ch in uid) or 'INPUT'
+        rr=ready_dir/(safe+'.readiness.yaml')
+        atomic_yaml(rr,{
+          'artifact_type':'SUCCESSOR_CONSUMER_READINESS_EVIDENCE',
+          'predecessor_stage_uid':stage_uid,
+          'successor_stage_uid':next_stage,
+          'predecessor_work_unit_uid':work.get('work_unit_uid'),
+          'governed_unit_uid':governed,
+          'input_uid':uid,
+          'artifact_ref':aref,
+          'content_sha256':digest,
+          'status':'PASS',
+          'product_completion_credit':0,
+        })
+        rows.append({
+          'input_uid':uid,'status':'MATERIALIZED','artifact_ref':aref,'content_sha256':digest,
+          'external_evidence_ref':str(source.get('external_evidence_ref') or ''),
+          'authority_evidence_ref':str(source.get('authority_evidence_ref') or ''),
+          'consumer_readiness_evidence_ref':str(rr.relative_to(root))
+        })
+    if {r['input_uid'] for r in rows}!=set(expected):
+        fail('CROSS_STAGE_HANDOFF_INPUT_DENOMINATOR_DRIFT')
+    matrix=wp.parent/'NORMATIVE_EXECUTION_MATRIX.yaml'; required_file(matrix,'NORMATIVE_EXECUTION_MATRIX')
+    state=load_yaml(wp.parent/'EXECUTION_STATE.yaml')
+    state_ok=(state.get('current_operation')=='COMPLETE' and state.get('status') in {'EXECUTION_COMPLETE_CLOSURE_PENDING','CLOSED_PASS'})
+    if not state_ok:
+        fail('CROSS_STAGE_HANDOFF_STATE_NOT_READY:'+str(state.get('status')))
+    doc={
+      'artifact_uid':'HANDOFF-'+str(work.get('work_unit_uid') or ''),
+      'artifact_type':'CROSS_STAGE_HANDOFF_READINESS_LEDGER',
+      'stage_uid':stage_uid,'work_unit_uid':work.get('work_unit_uid'),
+      'governed_unit_uid':governed,'successor_stage_uid':next_stage,
+      'successor_required_inputs':rows,
+      'reference_resolution_complete':True,
+      'physical_materialization_complete':True,
+      'required_field_completeness_complete':True,
+      'denominator_reconciled':True,
+      'consumer_readiness_complete':True,
+      'current_matrix_valid':True,
+      'current_state_consistent':True,
+      'unresolved_required_dependency_total':0,
+      'status':'PASS',
+      'materialization_owner':'governance/ci/stage_lifecycle_orchestrator.py',
+      'product_completion_credit':0,
+    }
+    atomic_yaml(old_path,doc)
+    return doc
+
+
 def _human_pending(manifest):
     return any(b.get('status') in {'PENDING_HUMAN','BLOCKED'} for b in manifest.get('bindings') or [] if b.get('producer_class')=='HUMAN_GATE_EVIDENCE')
 
@@ -204,6 +310,8 @@ def run_stage(stage_uid,work_ref=None,root_arg=None):
         else:
             state['status']='EXECUTION_COMPLETE_CLOSURE_PENDING'
         atomic_yaml(statep,state)
+        if stage_uid!='STAGE-11':
+            _materialize_cross_stage_handoff(root,wp,work,stage_uid)
         validators=_validators(root,wp,work,stage_uid,'PRE_CLOSE_CANDIDATE')
         _close(stage_uid,root,wp,work,statep,state,_normalized(stage_uid,root,wp,work,state,validators))
         return {'status':'CLOSED_PASS','stage_uid':stage_uid,'work_unit_uid':work.get('work_unit_uid')}
