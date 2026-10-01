@@ -46,6 +46,11 @@ def main():
     engine=texts.get('stage_execution_engine.py','')
     for token in ['PRE_CLOSE_CANDIDATE','POST_CLOSE_FINAL','terminal_disposition','governance_load_receipt_ref']:
         if token not in engine: failures.append('engine_contract_token_missing:'+token)
+    common=texts.get('stage_runtime_common.py','')
+    for token in ['def registered_output_paths','normative_execution_matrix_ref','REGISTERED_OUTPUT_BINDING_MISSING','REGISTERED_OUTPUT_ESCAPES_WORK_UNIT']:
+        if token not in common: failures.append('registered_output_resolution_contract_missing:'+token)
+    if 'registered_output_paths(root,wp.parent,work,uid)' not in disp:
+        failures.append('declared_guard_registered_output_resolution_missing')
     orch=texts.get('stage_lifecycle_orchestrator.py','')
     # Stage-1 physical guard and its runtime context must hash the four Mother files
     # with the exact same byte separators: NUL between path/hash and LF between rows.
