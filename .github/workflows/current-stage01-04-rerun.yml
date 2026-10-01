@@ -68,7 +68,7 @@ jobs:
           current_head=os.environ['CURRENT_GOVERNANCE_HEAD']
           # Governance is resolved only from the exact Current governance checkout.
           # The product branch must not carry a governance Authority or version selector.
-          life=yaml.safe_load((gov/'.github/governance-source/active/source/10_REGISTRY/GOVERNANCE_LIFECYCLE_STAGE_REGISTRY.yaml').read_text(encoding='utf-8')) or {}
+          life=yaml.safe_load((gov/'.github/governance-source/active/source/10_REGISTRY/STAGE_EXECUTION_MASTER_PLAN.yaml').read_text(encoding='utf-8')) or {}
           raw=life.get('stages') or []
           stages={str(x['stage_uid']):x for x in raw} if isinstance(raw,list) else {str(k):v for k,v in raw.items()}
           preflight_names={
@@ -206,7 +206,7 @@ jobs:
           root=Path('product')
           gov=Path('gov')
           current_head=os.environ['CURRENT_GOVERNANCE_HEAD']
-          life=yaml.safe_load((gov/'.github/governance-source/active/source/10_REGISTRY/GOVERNANCE_LIFECYCLE_STAGE_REGISTRY.yaml').read_text(encoding='utf-8')) or {}
+          life=yaml.safe_load((gov/'.github/governance-source/active/source/10_REGISTRY/STAGE_EXECUTION_MASTER_PLAN.yaml').read_text(encoding='utf-8')) or {}
           raw=life.get('stages') or []
           stages={str(x['stage_uid']):x for x in raw} if isinstance(raw,list) else {str(k):v for k,v in raw.items()}
           total_ops=0
