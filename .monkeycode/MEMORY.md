@@ -32,3 +32,12 @@ This file records user instructions and project knowledge for future work in thi
   - The governed unit program is an npm workspace at the product root: `apps/web` (React + TypeScript + Vite) and `apps/api` (Node.js + Express).
   - Web dev server runs on port 5173 and proxies `/api` to the API at `http://localhost:3001`; expose port 5173 for preview.
   - Both services must run together for the shell to resolve navigation (frontend calls `/api/navigation`).
+
+[Project Knowledge Summary]
+- Date: 2026-10-01
+- Context: Discovered by Agent while completing STAGE-11 after a mid-operation engine failure.
+- Category: Troubleshooting & Debugging
+- Instructions:
+  - Operation receipts are write-once: `stage_execution_engine.execute_active` fails with `ACTIVE_STAGE_OPERATION_RECEIPT_ALREADY_EXISTS` if a receipt exists while `EXECUTION_STATE.completed_operations` does not yet list that operation (e.g. a prior step-validation failure left an orphan receipt). Do not delete the receipt; reconcile `EXECUTION_STATE.yaml` by moving that operation into `completed_operations`, advancing `current_operation` to the next master-plan operation, and updating `last_operation_uid` / `last_operation_receipt_ref`.
+  - The engine validates every existing NEM artifact's required `field_path` after each operation, so an operation must write its output artifact with ALL of that artifact's NEM-required fields in one shot; a partially-populated artifact blocks the step.
+  - Each stage executor only needs to write operation outputs + receipts; preflight, scanners, validators, required-evidence assembly, cross-stage handoff and closure are done by the orchestrator.

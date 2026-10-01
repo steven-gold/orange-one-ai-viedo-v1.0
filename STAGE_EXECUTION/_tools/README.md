@@ -65,6 +65,28 @@ Copy an existing `stage_specs/STAGE-0X.yaml` and update the `nem` list so every
 `required_normative_section_uids` entry from the master plan has exactly one row.
 The generator fails loudly if the section universe and the spec rows diverge.
 
+## Per-operation executors
+
+Each stage has one executor at `STAGE_EXECUTION/<STAGE>/stage<NN>_operation_executor.py`
+implementing the `PYTHON_STAGE_OPERATION_V1` protocol: `--stage --operation
+--work-unit --product-root`. The executor writes the operation's result artifact
+and its `EVIDENCE/OPERATION_RECEIPTS/<operation>.yaml` receipt. The orchestrator
+(not the executor) owns preflight, scanners, validators, required-evidence
+assembly, cross-stage handoff and terminal closure.
+
+Two rules make a run resumable:
+
+1. An operation must write its result artifact with ALL of that artifact's
+   NEM-required fields in one write. The engine validates existing artifacts'
+   required fields after every operation, so a partially-populated artifact
+   blocks the step.
+2. Operation receipts are write-once. If a step-validation failure leaves a
+   receipt while `EXECUTION_STATE.completed_operations` does not list it,
+   reconcile the state (move the operation into `completed_operations`, advance
+   `current_operation`) instead of deleting the receipt.
+
+Stage specs currently available: `STAGE-05` through `STAGE-11`.
+
 ## Safety
 
 - `materialize_stage_work_unit.py` refuses to overwrite an existing Work Unit
