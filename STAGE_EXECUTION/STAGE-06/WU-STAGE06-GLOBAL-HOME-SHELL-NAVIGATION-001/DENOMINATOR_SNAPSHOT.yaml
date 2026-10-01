@@ -1,12 +1,10 @@
-artifact_type: EXECUTION_STATE
+artifact_type: DENOMINATOR_SNAPSHOT
 stage_uid: STAGE-06
 work_unit_uid: WU-STAGE06-GLOBAL-HOME-SHELL-NAVIGATION-001
 governed_unit_uid: GLOBAL-HOME-SHELL-NAVIGATION
 governance_uid: GOV-REV-20260928-WORD-DERIVED-STAGE-INTERNAL-VALIDATION
-status: CLOSED_PASS
-current_status: EXECUTION_COMPLETE_CLOSURE_PENDING
-current_operation: COMPLETE
-completed_operations:
+product_completion_credit: 0
+required_operation_uids:
 - OP-24-UNIT_TEST
 - OP-25-INTEGRATION_TEST
 - OP-26-DATABASE_TEST
@@ -23,9 +21,8 @@ completed_operations:
 - WORK_UNIT_CLOSURE_PRE_RELEASE
 - MODULE_CLOSURE_PRE_RELEASE
 - VERIFIED_SOURCE_REVISION_CAPTURE
-resume_control:
-  product_execution_allowed: true
-last_operation_uid: VERIFIED_SOURCE_REVISION_CAPTURE
-last_operation_receipt_ref: STAGE_EXECUTION/STAGE-06/WU-STAGE06-GLOBAL-HOME-SHELL-NAVIGATION-001/EVIDENCE/OPERATION_RECEIPTS/VERIFIED_SOURCE_REVISION_CAPTURE.yaml
-blocker_disposition: null
-next_action: MATERIALIZE_REGISTERED_SUCCESSOR
+required_operation_count: 16
+scope_included_units:
+- GLOBAL-HOME-SHELL-NAVIGATION
+partial_scope: false
+denominator_sha256: 1fc75916cbc7476521ae66d54164bafcd05b21e1f4644e80140c34e137469698

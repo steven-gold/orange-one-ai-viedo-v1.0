@@ -58,13 +58,16 @@ def work_unit_path(root: Path, stage_uid: str, governed: str) -> Path:
     return None
 
 
-def ensure_work_unit(root: Path, plan: Path, stage_uid: str, governed: str) -> Path:
+def ensure_work_unit(root: Path, plan: Path, stage_uid: str, governed: str,
+                     allow_pending: bool = False) -> Path:
     existing = work_unit_path(root, stage_uid, governed)
     if existing is not None:
         return existing
     cmd = [sys.executable, str(GENERATOR), '--stage', stage_uid,
            '--governed-unit', governed, '--product-root', str(root),
            '--master-plan', str(plan)]
+    if allow_pending:
+        cmd.append('--allow-pending-inputs')
     print(f'[run_stage] materializing {stage_uid} work unit for {governed}')
     subprocess.run(cmd, check=True)
     created = work_unit_path(root, stage_uid, governed)
@@ -93,7 +96,10 @@ def main() -> None:
 
     next_stage = str(st.get('next_stage_uid') or '')
     if next_stage and next_stage in stages:
-        ensure_work_unit(root, plan, next_stage, a.governed_unit)
+        # The successor's declared inputs are produced by the CURRENT stage (still
+        # unexecuted here), so its bindings are allowed to be producer-pending;
+        # the orchestrator refreshes them from the cross-stage handoff at closure.
+        ensure_work_unit(root, plan, next_stage, a.governed_unit, allow_pending=True)
 
     orch = Path(a.orchestrator)
     if not orch.is_file():

@@ -79,13 +79,24 @@ def find_work_unit(root: Path, stage_uid: str, governed: str) -> Path:
     return candidates[0] if candidates else None
 
 
-def resolve_input_binding(root: Path, governed: str, stage_uid: str, input_uid: str, origin: str) -> dict:
+def resolve_input_binding(root: Path, governed: str, stage_uid: str, input_uid: str, origin: str,
+                          allow_pending: bool = False) -> dict:
+    """Build one stage-input binding from the owning predecessor Work Unit.
+
+    When materializing a SUCCESSOR scaffold before the producing stage has run,
+    the producer-owned artifact does not exist yet. `allow_pending` then emits a
+    producer-pending binding: the artifact_ref is still the authoritative future
+    path, the hash is left empty, and the orchestrator refreshes it from the
+    predecessor's cross-stage handoff at the owning transition boundary. This is
+    never used for inputs whose producer has already closed.
+    """
     origin_stage = origin.split('_')[0]
     owner = find_work_unit(root, origin_stage, governed)
     if owner is None:
         raise SystemExit(f'INPUT_ORIGIN_WORK_UNIT_MISSING:{input_uid}:{origin_stage}')
     art = owner.parent / f'{input_uid}.yaml'
-    if not art.is_file():
+    pending = not art.is_file()
+    if pending and not allow_pending:
         raise SystemExit(f'INPUT_ARTIFACT_MISSING:{input_uid}:{art}')
     readiness = ''
     pred = find_work_unit(root, f'STAGE-{int(stage_uid.split("-")[1]) - 1:02d}', governed)
@@ -98,7 +109,7 @@ def resolve_input_binding(root: Path, governed: str, stage_uid: str, input_uid: 
         'origin': origin,
         'status': 'MATERIALIZED',
         'artifact_ref': str(art.relative_to(root)).replace('\\', '/'),
-        'content_sha256': sha(art),
+        'content_sha256': '' if pending else sha(art),
         'external_evidence_ref': '',
         'authority_evidence_ref': '',
         'consumer_readiness_evidence_ref': readiness,
@@ -181,6 +192,7 @@ def main() -> None:
     p.add_argument('--master-plan', default=None)
     p.add_argument('--spec', default=None)
     p.add_argument('--work-unit-uid', default=None)
+    p.add_argument('--allow-pending-inputs', action='store_true')
     p.add_argument('--force', action='store_true')
     a = p.parse_args()
 
@@ -295,7 +307,7 @@ def main() -> None:
     }
 
     input_bindings = {
-        uid: resolve_input_binding(root, governed, stage_uid, uid, origins[uid]) for uid in inputs
+        uid: resolve_input_binding(root, governed, stage_uid, uid, origins[uid], a.allow_pending_inputs) for uid in inputs
     }
     dependencies = [row['artifact_ref'] for row in input_bindings.values()]
 

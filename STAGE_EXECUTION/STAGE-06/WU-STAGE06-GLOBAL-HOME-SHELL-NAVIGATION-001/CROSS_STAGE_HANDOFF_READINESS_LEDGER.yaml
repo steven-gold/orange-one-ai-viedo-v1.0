@@ -1,0 +1,32 @@
+artifact_uid: HANDOFF-WU-STAGE06-GLOBAL-HOME-SHELL-NAVIGATION-001
+artifact_type: CROSS_STAGE_HANDOFF_READINESS_LEDGER
+stage_uid: STAGE-06
+work_unit_uid: WU-STAGE06-GLOBAL-HOME-SHELL-NAVIGATION-001
+governed_unit_uid: GLOBAL-HOME-SHELL-NAVIGATION
+successor_stage_uid: STAGE-07
+successor_required_inputs:
+- input_uid: VERIFIED_SOURCE_REVISION
+  status: MATERIALIZED
+  artifact_ref: STAGE_EXECUTION/STAGE-06/WU-STAGE06-GLOBAL-HOME-SHELL-NAVIGATION-001/VERIFIED_SOURCE_REVISION.yaml
+  content_sha256: 06c0f992c4a58e71465829bbd2155b89d58624893585165cff99d6dd398ee76b
+  external_evidence_ref: ''
+  authority_evidence_ref: ''
+  consumer_readiness_evidence_ref: STAGE_EXECUTION/STAGE-06/WU-STAGE06-GLOBAL-HOME-SHELL-NAVIGATION-001/EVIDENCE/SUCCESSOR_INPUTS/VERIFIED_SOURCE_REVISION.readiness.yaml
+- input_uid: WORK_UNIT_CLOSURE_RECORD
+  status: MATERIALIZED
+  artifact_ref: STAGE_EXECUTION/STAGE-06/WU-STAGE06-GLOBAL-HOME-SHELL-NAVIGATION-001/WORK_UNIT_CLOSURE_RECORD.yaml
+  content_sha256: a1542fd3c91da2cfe397bda4207c184b690be554b6128ab4b01e619f0f2f780d
+  external_evidence_ref: ''
+  authority_evidence_ref: ''
+  consumer_readiness_evidence_ref: STAGE_EXECUTION/STAGE-06/WU-STAGE06-GLOBAL-HOME-SHELL-NAVIGATION-001/EVIDENCE/SUCCESSOR_INPUTS/WORK_UNIT_CLOSURE_RECORD.readiness.yaml
+reference_resolution_complete: true
+physical_materialization_complete: true
+required_field_completeness_complete: true
+denominator_reconciled: true
+consumer_readiness_complete: true
+current_matrix_valid: true
+current_state_consistent: true
+unresolved_required_dependency_total: 0
+status: PASS
+materialization_owner: governance/ci/stage_lifecycle_orchestrator.py
+product_completion_credit: 0

@@ -4,6 +4,13 @@ This file records user instructions and project knowledge for future work in thi
 
 ## Entries
 
+[User Instruction Summary]
+- Date: 2026-10-01
+- Context: User observed a paused turn during governed stage execution and required the failure to be diagnosed before continuing.
+- Instructions:
+  - When a model call fails or the execution appears stuck, STOP advancing the task and first diagnose the failure cause and the resolution, instead of silently continuing.
+  - Always report the concrete diagnosis (what is actually running, what state the pipeline is in, why it paused) before resuming any long-running step.
+
 [Project Knowledge Summary]
 - Date: 2026-10-01
 - Context: Discovered by Agent while executing the governed stage lifecycle (STAGE-05 IMPLEMENTATION of GLOBAL-HOME-SHELL-NAVIGATION).

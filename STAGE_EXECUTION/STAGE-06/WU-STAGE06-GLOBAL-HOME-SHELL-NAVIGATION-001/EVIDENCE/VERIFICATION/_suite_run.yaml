@@ -1,0 +1,16 @@
+artifact_type: TEST_SUITE_RUN
+stage_uid: STAGE-06
+work_unit_uid: WU-STAGE06-GLOBAL-HOME-SHELL-NAVIGATION-001
+command: npm run test
+exit_code: 0
+status: PASS
+stdout_tail: "\n> acpos@0.1.0 test\n> npm --workspace @acpos/web run test && npm --workspace\
+  \ @acpos/api run test\n\n\n> @acpos/web@0.1.0 test\n> vitest run\n\n\n RUN  v2.1.9\
+  \ /workspace/apps/web\n\n ✓ src/__tests__/shell.test.ts (5 tests) 87ms\n\n Test\
+  \ Files  1 passed (1)\n      Tests  5 passed (5)\n   Start at  21:39:09\n   Duration\
+  \  1.45s (transform 161ms, setup 0ms, collect 304ms, tests 87ms, environment 769ms,\
+  \ prepare 159ms)\n\n\n> @acpos/api@0.1.0 test\n> vitest run\n\n\n RUN  v2.1.9 /workspace/apps/api\n\
+  \n ✓ src/__tests__/navigation.test.ts (5 tests) 37ms\n\n Test Files  1 passed (1)\n\
+  \      Tests  5 passed (5)\n   Start at  21:39:11\n   Duration  414ms (transform\
+  \ 102ms, setup 0ms, collect 210ms, tests 37ms, environment 0ms, prepare 44ms)\n\n"
+stderr_tail: ''
