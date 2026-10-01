@@ -45,12 +45,53 @@ def _validator_identity(uid):
         if isinstance(row,dict) and row.get('validator_uid')==uid: return row
     fail('VALIDATOR_IDENTITY_NOT_FOUND:'+uid)
 
+def _materialize_stage1_pipeline_guard_context(root,wp):
+    work_dir=wp.parent
+    source_root=GOV_ROOT/'.github/governance-source/active/source'
+    mother=[
+      source_root/'12_DOCS/mother-spec/01_BLUEPRINT_DESIGN_GOVERNANCE.md',
+      source_root/'12_DOCS/mother-spec/02_IMPLEMENTATION_DELIVERY_STANDARD.md',
+      source_root/'12_DOCS/mother-spec/03_EXECUTION_CONTROL_STANDARD.md',
+      source_root/'12_DOCS/mother-spec/04_AUDIT_PROGRESS_STANDARD.md',
+    ]
+    for p in mother: required_file(p,'STAGE1_GUARD_MOTHER_SOURCE')
+    rows=[f"{p.relative_to(source_root).as_posix()}\\0{sha256_file(p)}" for p in mother]
+    normative_hash=hashlib.sha256("\\n".join(rows).encode('utf-8')).hexdigest()
+    work=load_yaml(wp)
+    run_uid='RUN-'+str(work.get('work_unit_uid') or 'STAGE01')
+    ctx={
+      'artifact_type':'STAGE1_RUN_CONTEXT',
+      'run_uid':run_uid,
+      'stage_uid':'STAGE-01',
+      'candidate_normative_hash':normative_hash,
+      'clean_start_verified':True,
+      'website_reconstruction':False,
+      'formal_source_intake_closure_claim':False,
+      'runtime_context_materializer':'governance/ci/stage_lifecycle_orchestrator.py',
+      'status':'CURRENT',
+    }
+    atomic_yaml(work_dir/'RUN_CONTEXT.yaml',ctx)
+    manifest_path=work_dir/'CURRENT_RUN_MANIFEST.yaml'
+    current=[p.relative_to(work_dir).as_posix() for p in sorted(work_dir.rglob('*')) if p.is_file()]
+    if 'CURRENT_RUN_MANIFEST.yaml' not in current: current.append('CURRENT_RUN_MANIFEST.yaml')
+    atomic_yaml(manifest_path,{
+      'artifact_type':'CURRENT_RUN_MANIFEST',
+      'run_uid':run_uid,
+      'stage_uid':'STAGE-01',
+      'current_files':sorted(set(current)),
+      'manifest_scope':'CURRENT_STAGE1_WORK_UNIT_PHYSICAL_FILES',
+      'runtime_context_materializer':'governance/ci/stage_lifecycle_orchestrator.py',
+      'status':'CURRENT',
+    })
+
 def _physical_validator(stage_uid,uid,root,wp):
     ident=_validator_identity(uid); rel=str(ident.get('implementation_path') or '')
     if not rel: fail('PHYSICAL_VALIDATOR_PATH_MISSING:'+uid)
     p=GOV_ROOT/'.github/governance-source/active/source'/rel
     if not p.is_file(): fail('PHYSICAL_VALIDATOR_MISSING:'+uid)
-    if uid=='VAL-GOV-026': cmd=[sys.executable,str(p),str(GOV_ROOT/'.github/governance-source/active/source'),str(wp.parent)]
+    if uid=='VAL-GOV-026':
+        _materialize_stage1_pipeline_guard_context(root,wp)
+        cmd=[sys.executable,str(p),str(GOV_ROOT/'.github/governance-source/active/source'),str(wp.parent)]
     else: cmd=[sys.executable,str(p)]
     proc=subprocess.run(cmd,cwd=GOV_ROOT,text=True,capture_output=True)
     try: payload=json.loads(proc.stdout) if proc.stdout.strip().startswith('{') else {'raw':proc.stdout.strip()}
@@ -68,7 +109,9 @@ def _validators(root,wp,work,stage_uid,phase):
         else: fail('VALIDATOR_IDENTITY_MODE_UNSUPPORTED:'+uid)
         rp=wp.parent/'EVIDENCE/VALIDATORS'/(uid+'.yaml'); atomic_yaml(rp,out)
         rows.append({'validator_uid':uid,'status':out.get('status'),'result_ref':str(rp.relative_to(root))})
-        if out.get('status')!='PASS': fail('VALIDATOR_FAILED:'+uid)
+        if out.get('status')!='PASS':
+            detail=(out.get('result') or {}).get('failures') if isinstance(out.get('result'),dict) else None
+            fail('VALIDATOR_FAILED:'+uid+(':'+repr((detail or [])[:12]) if detail else ''))
     return rows
 
 def _output_path(work_dir,uid):
