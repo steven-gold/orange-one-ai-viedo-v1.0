@@ -150,6 +150,8 @@ def _load_stage1_pipeline_guard():
         fail('STAGE01_PIPELINE_GUARD_VALIDATOR_MISSING')
     return mod
 
+_STAGE1_PROJECTION_PHYSICAL_CACHE=set()
+
 def _validate_stage1_projection_physical_integrity(work,bindings):
     inv=(y(INVARIANTS).get('invariants') or {}).get('PHYSICAL_ARTIFACT_INTEGRITY') or {}
     if inv.get('invariant_uid')!='GOV-INV-PHYSICAL-ARTIFACT-INTEGRITY-001' or inv.get('independent_source_rederivation_validator_must_run_when_registered') is not True:
@@ -173,6 +175,24 @@ def _validate_stage1_projection_physical_integrity(work,bindings):
     _require_nonempty_file(rawcap_path,'STAGE01_RAW_SOURCE_REFERENCE_MANIFEST')
     _require_nonempty_file(capstate_path,'STAGE01_RAW_SOURCE_CAPTURE_STATE')
     rawcap=y(rawcap_path); capstate=y(capstate_path)
+    cache_rows=[sha256_file(rawcap_path),sha256_file(capstate_path)]
+    raw_records={str(row.get('source_uid') or ''):row for row in rawcap.get('records') or [] if isinstance(row,dict)}
+    for b in bindings:
+        suid=str(b.get('source_uid') or '')
+        rel=template.replace('{source_uid}',suid)
+        cache_rows.append(sha256_file(work_dir/rel))
+        freeze_rel=str(b.get('freeze_receipt_ref') or '')
+        cache_rows.append(sha256_file(_execution_artifact_root()/freeze_rel))
+        raw_row=raw_records.get(suid) or {}
+        target=str(raw_row.get('target_path') or '')
+        if not target:
+            fail('STAGE01_RAW_CAPTURE_TARGET_PATH_MISSING:'+suid)
+        raw_path=work_dir/target
+        _require_nonempty_file(raw_path,'STAGE01_RAW_CAPTURE_TARGET:'+suid)
+        cache_rows.append(sha256_file(raw_path))
+    cache_key=hashlib.sha256('\0'.join(cache_rows).encode('utf-8')).hexdigest()
+    if cache_key in _STAGE1_PROJECTION_PHYSICAL_CACHE:
+        return True
     guard=_load_stage1_pipeline_guard()
     try:
         result=guard.validate_pre_stage_source_projection(SOURCE_PACKAGE_ROOT,work_dir,rawcap,capstate)
@@ -191,6 +211,7 @@ def _validate_stage1_projection_physical_integrity(work,bindings):
         for key in ('pair_hash','raw_source_sha256','projection_uid','projection_content_hash'):
             if str(physical.get(key) or '')!=str(b.get(key) or ''):
                 fail('STAGE01_SOURCE_PROJECTION_RECOMPUTED_BINDING_DRIFT:'+suid+':'+key)
+    _STAGE1_PROJECTION_PHYSICAL_CACHE.add(cache_key)
     return True
 
 def execution_compatibility_adapter():
