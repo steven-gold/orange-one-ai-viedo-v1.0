@@ -55,8 +55,10 @@ def main():
     if '"\\\\n".join(rows)' in orch: failures.append('stage1_normative_hash_literal_backslash_newline')
     if '}\\0{' not in orch: failures.append('stage1_normative_hash_nul_separator_missing')
     if '"\\n".join(rows)' not in orch: failures.append('stage1_normative_hash_newline_separator_missing')
-    for token in ['SUCCESSOR_MATERIALIZATION_INTENT','CLOSURE_COMMIT_CANDIDATE','EXTERNAL_APPROVAL_REQUIRED','WORK_UNIT_RESOLUTION_REQUIRED']:
+    for token in ['SUCCESSOR_MATERIALIZATION_INTENT','CLOSURE_COMMIT_CANDIDATE','EXTERNAL_APPROVAL_REQUIRED','WORK_UNIT_RESOLUTION_REQUIRED','governance_head']:
         if token not in orch: failures.append('orchestrator_contract_token_missing:'+token)
+    if "ACPOS_CURRENT_GOVERNANCE_UID" not in engine or "ACPOS_CURRENT_GOVERNANCE_HEAD" not in engine:
+        failures.append('executor_current_governance_environment_binding_missing')
     result={'artifact_type':'THREE_LAYER_CONTRACT_VALIDATION','stage_count':len(stage_rows),'required_evidence_identity_count':len(evid),'declared_guard_count':len(DECLARED),'runtime_file_count':len(FILES),'failures':failures,'status':'PASS' if not failures else 'FAIL'}
     print(json.dumps(result,ensure_ascii=False,indent=2))
     raise SystemExit(0 if not failures else 1)
