@@ -47,6 +47,14 @@ def main():
     for token in ['PRE_CLOSE_CANDIDATE','POST_CLOSE_FINAL','terminal_disposition','governance_load_receipt_ref']:
         if token not in engine: failures.append('engine_contract_token_missing:'+token)
     orch=texts.get('stage_lifecycle_orchestrator.py','')
+    # Stage-1 physical guard and its runtime context must hash the four Mother files
+    # with the exact same byte separators: NUL between path/hash and LF between rows.
+    # A double-escaped separator hashes literal backslash characters and will always
+    # drift from governance_stage1_pipeline_guard.py.
+    if '}\\\\0{' in orch: failures.append('stage1_normative_hash_literal_backslash_nul')
+    if '"\\\\n".join(rows)' in orch: failures.append('stage1_normative_hash_literal_backslash_newline')
+    if '}\\0{' not in orch: failures.append('stage1_normative_hash_nul_separator_missing')
+    if '"\\n".join(rows)' not in orch: failures.append('stage1_normative_hash_newline_separator_missing')
     for token in ['SUCCESSOR_MATERIALIZATION_INTENT','CLOSURE_COMMIT_CANDIDATE','EXTERNAL_APPROVAL_REQUIRED','WORK_UNIT_RESOLUTION_REQUIRED']:
         if token not in orch: failures.append('orchestrator_contract_token_missing:'+token)
     result={'artifact_type':'THREE_LAYER_CONTRACT_VALIDATION','stage_count':len(stage_rows),'required_evidence_identity_count':len(evid),'declared_guard_count':len(DECLARED),'runtime_file_count':len(FILES),'failures':failures,'status':'PASS' if not failures else 'FAIL'}
