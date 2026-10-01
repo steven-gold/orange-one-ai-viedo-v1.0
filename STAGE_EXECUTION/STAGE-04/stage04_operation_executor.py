@@ -2,11 +2,11 @@
 """Per-operation executor (PYTHON_STAGE_OPERATION_V1)."""
 from __future__ import annotations
 import argparse
+import os
 import shutil
 from pathlib import Path
 import yaml
 
-GOV_UID = 'GOV-REV-20260928-WORD-DERIVED-STAGE-INTERNAL-VALIDATION'
 EXECUTOR_REL = 'STAGE_EXECUTION/STAGE-04/stage04_operation_executor.py'
 WU_REL = 'STAGE_EXECUTION/STAGE-04/WU-STAGE04-GLOBAL-HOME-SHELL-NAVIGATION-001'
 HERE = Path(__file__).resolve().parent
@@ -65,10 +65,13 @@ def main():
     WORK_DIR = Path(a.product_root).resolve() / Path(a.work_unit).parent
     for rel in COPY_MAP.get(a.operation, []):
         _copy(rel)
+    gov_uid = os.environ.get('ACPOS_CURRENT_GOVERNANCE_UID', '').strip()
+    if not gov_uid:
+        raise SystemExit('CURRENT_GOVERNANCE_UID_ENV_MISSING')
     receipt = {
         'artifact_type': 'OPERATION_EXECUTION_RECEIPT', 'stage_uid': a.stage,
         'work_unit_uid': Path(a.work_unit).parent.name, 'operation_uid': a.operation,
-        'governance_uid': GOV_UID, 'status': 'PASS', 'executor_owner': EXECUTOR_REL,
+        'governance_uid': gov_uid, 'status': 'PASS', 'executor_owner': EXECUTOR_REL,
         'executor_protocol': 'PYTHON_STAGE_OPERATION_V1',
         'result_owner': Path(a.work_unit).parent.as_posix() + '/EVIDENCE/OPERATION_RECEIPTS/' + a.operation + '.yaml',
     }
