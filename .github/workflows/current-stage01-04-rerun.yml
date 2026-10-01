@@ -21,7 +21,7 @@ jobs:
           fetch-depth: 0
           path: product
 
-      - name: Checkout exact Current governance
+      - name: Checkout Current governance workline
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
           ref: rebuild-v2.1.1
@@ -96,7 +96,8 @@ jobs:
                   row=binds[op]
                   row['governance_load_receipt_ref']=f'{wd.relative_to(root).as_posix()}/EVIDENCE/GOVERNANCE_LOAD_RECEIPTS/{op}.yaml'
               work['operation_bindings']=binds
-              work['governance_head']=current_head
+              work.pop('governance_head',None)
+              work['governance_binding_mode']='DIRECT_CURRENT_WORKLINE_RECEIPT'
               work['pre_execution_gate_status']='PASS'
               work['status']='OPEN'
               work['current_status']='OPEN'
@@ -119,7 +120,8 @@ jobs:
               scope=yaml.safe_load(sp.read_text(encoding='utf-8')) or {}
               scope['product_stage_execution_allowed']=True
               scope['status']='OPEN'
-              scope['governance_head']=current_head
+              scope.pop('governance_head',None)
+              scope['governance_binding_mode']='DIRECT_CURRENT_WORKLINE_RECEIPT'
               scope['current_reverify_required']=True
               scope.pop('content_hash',None)
               sp.write_text(yaml.safe_dump(scope,sort_keys=False,allow_unicode=True),encoding='utf-8')
@@ -220,8 +222,6 @@ jobs:
                   raise SystemExit(f'OPERATION_COMPLETION_DRIFT:{sid}')
               total_ops+=len(ops)
               work=yaml.safe_load((wd/'WORK_UNIT.yaml').read_text(encoding='utf-8')) or {}
-              if work.get('governance_head')!=current_head:
-                  raise SystemExit(f'WORK_UNIT_GOVERNANCE_HEAD_DRIFT:{sid}')
               if work.get('status')!='CLOSED' or work.get('current_status')!='CLOSED':
                   raise SystemExit(f'WORK_UNIT_PROJECTION_NOT_CLOSED:{sid}')
               for op in ops:
@@ -234,6 +234,8 @@ jobs:
                   rd=yaml.safe_load(rr.read_text(encoding='utf-8')) or {}
                   if gd.get('status')!='PASS' or rd.get('status')!='PASS':
                       raise SystemExit(f'RECEIPT_NOT_PASS:{sid}:{op}')
+                  if gd.get('governance_branch')!='rebuild-v2.1.1' or gd.get('governance_head')!=current_head:
+                      raise SystemExit(f'GOVERNANCE_RECEIPT_CURRENT_BINDING_DRIFT:{sid}:{op}')
               norm=wd/'EVIDENCE/NORMALIZED_STAGE_EVIDENCE.json'
               if not norm.is_file() or (json.loads(norm.read_text(encoding='utf-8')) or {}).get('result')!='PASS':
                   raise SystemExit(f'NORMALIZED_FINAL_EVIDENCE_NOT_PASS:{sid}')
@@ -276,13 +278,13 @@ jobs:
               state=wd/'EXECUTION_STATE.yaml'
               norm=wd/'EVIDENCE/NORMALIZED_STAGE_EVIDENCE.json'
               scope['status']='CLOSED'
-              scope['governance_head']=current_head
+              scope.pop('governance_head',None)
+              scope['governance_binding_mode']='DIRECT_CURRENT_WORKLINE_RECEIPT'
               scope['current_reverify_required']=False
               scope['current_closure_validation']={
                 'result':'PASS',
                 'stage_exit_credit':1,
-                'governance_uid':'GOV-REV-20260928-WORD-DERIVED-STAGE-INTERNAL-VALIDATION',
-                'governance_head':current_head,
+                'governance_binding_mode':'DIRECT_CURRENT_WORKLINE_RECEIPT',
                 'validation_mode':'LAYER3_CONTENT_CLOSURE',
                 'execution_state_sha256':hashlib.sha256(state.read_bytes()).hexdigest(),
                 'normalized_evidence_sha256':hashlib.sha256(norm.read_bytes()).hexdigest(),
