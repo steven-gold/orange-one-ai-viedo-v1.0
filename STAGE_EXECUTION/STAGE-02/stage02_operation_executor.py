@@ -102,7 +102,7 @@ def main():
         'status': 'PASS',
         'executor_owner': EXECUTOR_REL,
         'executor_protocol': 'PYTHON_STAGE_OPERATION_V1',
-        'result_owner': WU_REL + '/EVIDENCE/OPERATION_RECEIPTS/' + a.operation + '.yaml',
+        'result_owner': Path(a.work_unit).parent.as_posix() + '/EVIDENCE/OPERATION_RECEIPTS/' + a.operation + '.yaml',
     }
     out = WORK_DIR / 'EVIDENCE/OPERATION_RECEIPTS' / (a.operation + '.yaml')
     out.parent.mkdir(parents=True, exist_ok=True)
