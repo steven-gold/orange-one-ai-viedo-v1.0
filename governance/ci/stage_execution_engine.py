@@ -80,7 +80,7 @@ def _execution_artifact_root():
     return root
 
 
-def __sha256_file(path):
+def _sha256_file(path):
     if not path.is_file(): fail('HASH_TARGET_MISSING:'+str(path))
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
@@ -972,7 +972,7 @@ def _validate_stage_entry_input_bindings(stage_uid,execution_root,work,stage):
             except ValueError:
                 fail('STAGE_ENTRY_INPUT_ARTIFACT_REF_ESCAPES_ROOT:'+input_uid)
             _validate_local_file_artifact(full,'STAGE_ENTRY_INPUT_ARTIFACT:'+input_uid)
-            actual_hash=__sha256_file(full)
+            actual_hash=_sha256_file(full)
             if str(row.get('content_sha256') or '')!=actual_hash:
                 fail('STAGE_ENTRY_INPUT_CONTENT_HASH_DRIFT:'+input_uid)
             readiness_ref=str(row.get('consumer_readiness_evidence_ref') or '').strip()
@@ -1029,7 +1029,7 @@ def _validate_current_ledger_bindings(stage_uid,execution_root,work,gov):
             except ValueError:
                 fail('CURRENT_LEDGER_ARTIFACT_REF_ESCAPES_ROOT:'+ledger_class)
             _validate_local_file_artifact(full,'CURRENT_LEDGER_ARTIFACT:'+ledger_class)
-            actual_hash=__sha256_file(full)
+            actual_hash=_sha256_file(full)
             if str(row.get('content_sha256') or '')!=actual_hash:
                 fail('CURRENT_LEDGER_CONTENT_HASH_DRIFT:'+ledger_class)
         elif kind=='EXTERNAL_RECEIPT':
@@ -1485,7 +1485,7 @@ def _validate_cross_stage_handoff_ledger(stage_uid,e,stage,stages):
                 fail('CROSS_STAGE_SUCCESSOR_INPUT_ARTIFACT_REF_ESCAPES_ROOT:'+uid)
             _validate_local_file_artifact(artifact_path,'CROSS_STAGE_SUCCESSOR_INPUT_ARTIFACT:'+uid)
             declared_hash=str(row.get('content_sha256') or '').strip()
-            actual_hash=__sha256_file(artifact_path)
+            actual_hash=_sha256_file(artifact_path)
             if not declared_hash or declared_hash!=actual_hash:
                 fail('CROSS_STAGE_SUCCESSOR_INPUT_CONTENT_HASH_DRIFT:'+uid)
             readiness_ref=str(row.get('consumer_readiness_evidence_ref') or '').strip()
@@ -1817,7 +1817,7 @@ def _refresh_canonical_state_ledger_hash(work_path,work,state_path):
     actual_ref=(_execution_artifact_root()/Path(str(row.get('artifact_ref') or ''))).resolve()
     if actual_ref!=expected_ref:
         fail('CURRENT_STATE_LEDGER_ALIAS_DRIFT_DURING_CHECKPOINT')
-    row['content_sha256']=__sha256_file(state_path)
+    row['content_sha256']=_sha256_file(state_path)
     bindings['EXECUTION_STATE']=row
     work['current_ledger_bindings']=bindings
     _atomic_yaml_write(work_path,work)
