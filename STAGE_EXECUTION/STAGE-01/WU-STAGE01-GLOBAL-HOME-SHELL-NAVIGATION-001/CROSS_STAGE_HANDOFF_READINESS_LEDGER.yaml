@@ -1,0 +1,46 @@
+artifact_uid: HANDOFF-WU-STAGE01-GLOBAL-HOME-SHELL-NAVIGATION-001
+artifact_type: CROSS_STAGE_HANDOFF_READINESS_LEDGER
+stage_uid: STAGE-01
+work_unit_uid: WU-STAGE01-GLOBAL-HOME-SHELL-NAVIGATION-001
+governed_unit_uid: GLOBAL-HOME-SHELL-NAVIGATION
+successor_stage_uid: STAGE-02
+successor_required_inputs:
+- input_uid: GOVERNED_UNIT_BASE_BLUEPRINT
+  status: MATERIALIZED
+  artifact_ref: STAGE_EXECUTION/STAGE-01/WU-STAGE01-GLOBAL-HOME-SHELL-NAVIGATION-001/02_BASE_BLUEPRINT/SRC-ACPOS-GLOBAL-HOME-SHELL-NAVIGATION-MOTHER-BASIC-DESIGN-OPTIMIZED/GOVERNED_UNIT_BASE_BLUEPRINT.yaml
+  content_sha256: 73d287b5525095d2b9541b5cd5adf21eaaf2d6703f288b2117538133fe56d5ea
+  external_evidence_ref: ''
+  authority_evidence_ref: ''
+  consumer_readiness_evidence_ref: STAGE_EXECUTION/STAGE-01/WU-STAGE01-GLOBAL-HOME-SHELL-NAVIGATION-001/EVIDENCE/SUCCESSOR_INPUTS/GOVERNED_UNIT_BASE_BLUEPRINT.readiness.yaml
+- input_uid: SOURCE_CONTEXT_MANIFEST
+  status: MATERIALIZED
+  artifact_ref: STAGE_EXECUTION/STAGE-01/WU-STAGE01-GLOBAL-HOME-SHELL-NAVIGATION-001/00_SOURCE_INTAKE/SOURCE_CONTEXT_MANIFEST.yaml
+  content_sha256: 908cd75647ad0df622537670c1205c406558ed8fc43392e7bad4a373c3dc139b
+  external_evidence_ref: ''
+  authority_evidence_ref: ''
+  consumer_readiness_evidence_ref: STAGE_EXECUTION/STAGE-01/WU-STAGE01-GLOBAL-HOME-SHELL-NAVIGATION-001/EVIDENCE/SUCCESSOR_INPUTS/SOURCE_CONTEXT_MANIFEST.readiness.yaml
+- input_uid: CONTENT_SUPERSESSION_CONFLICT_LEDGER
+  status: MATERIALIZED
+  artifact_ref: STAGE_EXECUTION/STAGE-01/WU-STAGE01-GLOBAL-HOME-SHELL-NAVIGATION-001/00_SOURCE_INTAKE/CONTENT_SUPERSESSION_CONFLICT_LEDGER.yaml
+  content_sha256: 90bf99476bb71f50b034c5859bad9eaf999932cafdd3520c8c08589602d4cfd8
+  external_evidence_ref: ''
+  authority_evidence_ref: ''
+  consumer_readiness_evidence_ref: STAGE_EXECUTION/STAGE-01/WU-STAGE01-GLOBAL-HOME-SHELL-NAVIGATION-001/EVIDENCE/SUCCESSOR_INPUTS/CONTENT_SUPERSESSION_CONFLICT_LEDGER.readiness.yaml
+- input_uid: SOURCE_DEPENDENCY_MAP
+  status: MATERIALIZED
+  artifact_ref: STAGE_EXECUTION/STAGE-01/WU-STAGE01-GLOBAL-HOME-SHELL-NAVIGATION-001/00_SOURCE_INTAKE/SOURCE_DEPENDENCY_MAP.yaml
+  content_sha256: 6b86c17f90139939680403cb879d7d38e8bfca6c1c54d66e5401565c3f5944d5
+  external_evidence_ref: ''
+  authority_evidence_ref: ''
+  consumer_readiness_evidence_ref: STAGE_EXECUTION/STAGE-01/WU-STAGE01-GLOBAL-HOME-SHELL-NAVIGATION-001/EVIDENCE/SUCCESSOR_INPUTS/SOURCE_DEPENDENCY_MAP.readiness.yaml
+reference_resolution_complete: true
+physical_materialization_complete: true
+required_field_completeness_complete: true
+denominator_reconciled: true
+consumer_readiness_complete: true
+current_matrix_valid: true
+current_state_consistent: true
+unresolved_required_dependency_total: 0
+status: PASS
+materialization_owner: governance/ci/stage_lifecycle_orchestrator.py
+product_completion_credit: 0

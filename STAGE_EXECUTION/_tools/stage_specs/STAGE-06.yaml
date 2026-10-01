@@ -1,0 +1,77 @@
+stage_uid: STAGE-06
+governance_uid: GOV-REV-20260928-WORD-DERIVED-STAGE-INTERNAL-VALIDATION
+governed_unit_type: SYSTEM_LOGIC_UNIT
+stage_role: VERIFICATION_QA
+nem_validator_uid: VAL-GOV-020
+nem_check_prefix: VERIFICATION_CONTRACT_COMPLETE
+scanner_owner: STAGE06_SEMANTIC_SCANNER
+ledger_classes:
+- RUN_MANIFEST
+- ARTIFACT_PLAN
+- GOVERNANCE_CURRENT
+- BRANCH_BASELINE
+- GOVERNANCE_STAGE_LOCK
+- STAGE_EVIDENCE
+- DEPENDENCY_INDEX
+- REVERSE_DEPENDENCY_INDEX
+nem:
+- section: WEB-GOV-02-S027
+  artifact_type: TEST_EVIDENCE_SET
+  field_path: [unit_test_result]
+- section: WEB-GOV-02-S028
+  artifact_type: TEST_EVIDENCE_SET
+  field_path: [integration_test_result]
+- section: WEB-GOV-02-S029
+  artifact_type: TEST_EVIDENCE_SET
+  field_path: [database_test_result]
+- section: WEB-GOV-02-S030
+  artifact_type: TEST_EVIDENCE_SET
+  field_path: [permission_test_result]
+- section: WEB-GOV-02-S031
+  artifact_type: TEST_EVIDENCE_SET
+  field_path: [browser_e2e_result]
+- section: WEB-GOV-02-S032
+  artifact_type: TEST_EVIDENCE_SET
+  field_path: [control_acceptance_result]
+- section: WEB-GOV-02-S033
+  artifact_type: TEST_EVIDENCE_SET
+  field_path: [visual_regression_result]
+- section: WEB-GOV-02-S034
+  artifact_type: TEST_EVIDENCE_SET
+  field_path: [responsive_verification_result]
+- section: WEB-GOV-02-S035
+  artifact_type: TEST_EVIDENCE_SET
+  field_path: [localization_verification_result]
+- section: WEB-GOV-02-S036
+  artifact_type: TEST_EVIDENCE_SET
+  field_path: [accessibility_verification_result]
+- section: WEB-GOV-02-S072
+  artifact_type: VERIFICATION_RESULT
+  field_path: [cohesive_interaction_result]
+- section: WEB-GOV-03-S061
+  artifact_type: VERIFICATION_RESULT
+  field_path: [interaction_topology_result]
+- section: WEB-GOV-01-S075
+  artifact_type: VERIFICATION_RESULT
+  field_path: [execution_scope_authority_state]
+- section: WEB-GOV-03-S069
+  artifact_type: VERIFICATION_RESULT
+  field_path: [dynamic_denominator_state]
+- section: WEB-GOV-04-S083
+  artifact_type: VERIFICATION_RESULT
+  field_path: [ownership_portability_audit_result]
+- section: WEB-GOV-02-S075
+  artifact_type: AUDIT_MATRIX
+  field_path: [successor_input_readiness_state]
+- section: WEB-GOV-03-S071
+  artifact_type: AUDIT_MATRIX
+  field_path: [cross_stage_handoff_state]
+- section: WEB-GOV-04-S085
+  artifact_type: AUDIT_MATRIX
+  field_path: [false_completion_audit_result]
+- section: WEB-GOV-02-S076
+  artifact_type: WORK_UNIT_CLOSURE_RECORD
+  field_path: [work_unit_closure_state]
+- section: WEB-GOV-04-S086
+  artifact_type: VERIFIED_SOURCE_REVISION
+  field_path: [verified_source_revision_state]

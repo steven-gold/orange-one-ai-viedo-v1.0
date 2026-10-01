@@ -1,0 +1,29 @@
+artifact_type: REQUIRED_EVIDENCE_BINDING_MANIFEST
+stage_uid: STAGE-01
+work_unit_uid: WU-STAGE01-GLOBAL-HOME-SHELL-NAVIGATION-001
+governance_uid: GOV-REV-20260928-WORD-DERIVED-STAGE-INTERNAL-VALIDATION
+denominator_source: .github/governance-source/active/source/10_REGISTRY/STAGE_EXECUTION_MASTER_PLAN.yaml#stages[*].required_evidence
+bindings:
+- evidence_uid: SOURCE_ENUMERATION_EVIDENCE
+  producer_class: COMMON_REQUIRED_EVIDENCE_ASSEMBLER
+  physical_ref: STAGE_EXECUTION/STAGE-01/WU-STAGE01-GLOBAL-HOME-SHELL-NAVIGATION-001/EVIDENCE/REQUIRED/SOURCE_ENUMERATION_EVIDENCE.yaml
+  source_operations:
+  - SOURCE_STRUCTURE_ENUMERATION
+  - SOURCE_SEGMENT_MAPPING
+  prerequisites: []
+  assembler_owner: governance/ci/stage_required_evidence_assembler.py
+  status: PASS
+  sha256: c94916ef908afa2830ffc21263e388a8f0ec5bb24dad9ed04904988aff331742
+  authority_evidence_ref: ''
+- evidence_uid: CONFLICT_DECISION_EVIDENCE
+  producer_class: COMMON_REQUIRED_EVIDENCE_ASSEMBLER
+  physical_ref: STAGE_EXECUTION/STAGE-01/WU-STAGE01-GLOBAL-HOME-SHELL-NAVIGATION-001/EVIDENCE/REQUIRED/CONFLICT_DECISION_EVIDENCE.yaml
+  source_operations:
+  - SOURCE_SUPERSESSION_CONFLICT_RESOLUTION
+  prerequisites: []
+  assembler_owner: governance/ci/stage_required_evidence_assembler.py
+  status: PASS
+  sha256: 8326ef18482cc6cb432f8a5971729e359de6071d1454374f9893053e78fc6441
+  authority_evidence_ref: ''
+required_evidence_count: 2
+status: PASS

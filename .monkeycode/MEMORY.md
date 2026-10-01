@@ -1,0 +1,27 @@
+# User Instruction Memory
+
+This file records user instructions and project knowledge for future work in this repository.
+
+## Entries
+
+[Project Knowledge Summary]
+- Date: 2026-10-01
+- Context: Discovered by Agent while executing the governed stage lifecycle (STAGE-05 IMPLEMENTATION of GLOBAL-HOME-SHELL-NAVIGATION).
+- Category: Workflow & Collaboration
+- Instructions:
+  - The authoritative governance engine lives outside this repo at `/tmp/opencode/rebuild-v2.1.1/governance/ci/`.
+  - Run a stage: `python3 stage_lifecycle_orchestrator.py --run-stage --stage STAGE-05 --work-unit STAGE_EXECUTION/STAGE-05/<WU>/WORK_UNIT.yaml --product-root /workspace`.
+  - Engine admission check: `python3 stage_execution_engine.py --admission-check --stage <STAGE>` with env `STAGE_EXECUTION_ROOT=/workspace`, `STAGE_ACTIVE_WORK_UNIT=<wu rel path>`, `STAGE_CURRENT_SCOPE=<scope rel path>`.
+  - A stage can only reach `CLOSED_PASS` if the successor stage's Work Unit already exists: the predecessor's `_materialize_cross_stage_handoff` reads the successor's `input_bindings` (or an existing `CROSS_STAGE_HANDOFF_READINESS_LEDGER.yaml`) to bind the successor's declared inputs. Materialize the next stage WU scaffold before closing the current stage.
+  - Successor WU directory must contain exactly one `WORK_UNIT.yaml` with matching `stage_uid` + `governed_unit_uid`; the orchestrator adopts it and returns successor status `READY`.
+  - Stage scaffolds are generated deterministically (see `/tmp/opencode/build_stage05_scaffold.py`, `/tmp/opencode/build_stage06_scaffold.py`) and are non-authoritative until the stage runs.
+  - The normative `input_origins` mapping per stage is defined in `.github/governance-source/active/source/10_REGISTRY/STAGE_EXECUTION_MASTER_PLAN.yaml`; successor input bindings must match these origins exactly.
+
+[Project Knowledge Summary]
+- Date: 2026-10-01
+- Context: Discovered by Agent while verifying the materialized GLOBAL-HOME-SHELL-NAVIGATION homepage.
+- Category: Operations & Deployment
+- Instructions:
+  - The governed unit program is an npm workspace at the product root: `apps/web` (React + TypeScript + Vite) and `apps/api` (Node.js + Express).
+  - Web dev server runs on port 5173 and proxies `/api` to the API at `http://localhost:3001`; expose port 5173 for preview.
+  - Both services must run together for the shell to resolve navigation (frontend calls `/api/navigation`).

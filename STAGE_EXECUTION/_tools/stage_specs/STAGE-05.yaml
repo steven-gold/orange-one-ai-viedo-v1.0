@@ -1,0 +1,74 @@
+stage_uid: STAGE-05
+governance_uid: GOV-REV-20260928-WORD-DERIVED-STAGE-INTERNAL-VALIDATION
+governed_unit_type: SYSTEM_LOGIC_UNIT
+stage_role: IMPLEMENTATION
+nem_validator_uid: VAL-GOV-010
+nem_check_prefix: IMPLEMENTATION_CONTRACT_COMPLETE
+scanner_owner: STAGE05_SEMANTIC_SCANNER
+ledger_classes:
+- RUN_MANIFEST
+- ARTIFACT_PLAN
+- GOVERNANCE_CURRENT
+- BRANCH_BASELINE
+- GOVERNANCE_STAGE_LOCK
+- STAGE_EVIDENCE
+- DEPENDENCY_INDEX
+- REVERSE_DEPENDENCY_INDEX
+nem:
+- section: WEB-GOV-02-S005
+  artifact_type: IMPLEMENTATION_MANIFEST
+  field_path: [blueprint_intake_state]
+- section: WEB-GOV-02-S006
+  artifact_type: IMPLEMENTATION_EVIDENCE
+  field_path: [blueprint_validation_result]
+- section: WEB-GOV-02-S007
+  artifact_type: IMPLEMENTATION_EVIDENCE
+  field_path: [acceptance_matrix_validation_result]
+- section: WEB-GOV-02-S008
+  artifact_type: IMPLEMENTATION_EVIDENCE
+  field_path: [dependency_mapping_result]
+- section: WEB-GOV-02-S009
+  artifact_type: IMPLEMENTATION_MANIFEST
+  field_path: [contract_materialization_state]
+- section: WEB-GOV-02-S010
+  artifact_type: PROGRAM_ARTIFACT_SET
+  field_path: [repository_governance_state]
+- section: WEB-GOV-02-S057
+  artifact_type: IMPLEMENTATION_MANIFEST
+  field_path: [program_construction_profile_result]
+- section: WEB-GOV-02-S058
+  artifact_type: PROGRAM_ARTIFACT_SET
+  field_path: [filename_path_gate_result]
+- section: WEB-GOV-03-S002
+  artifact_type: IMPLEMENTATION_MANIFEST
+  field_path: [work_unit_binding_state]
+- section: WEB-GOV-03-S005
+  artifact_type: PROGRAM_ARTIFACT_SET
+  field_path: [duplicate_precheck_result]
+- section: WEB-GOV-03-S015
+  artifact_type: PROGRAM_ARTIFACT_SET
+  field_path: [new_file_guard_result]
+- section: WEB-GOV-02-S072
+  artifact_type: IMPLEMENTATION_EVIDENCE
+  field_path: [cohesive_interaction_result]
+- section: WEB-GOV-03-S061
+  artifact_type: IMPLEMENTATION_EVIDENCE
+  field_path: [interaction_topology_result]
+- section: WEB-GOV-01-S075
+  artifact_type: IMPLEMENTATION_MANIFEST
+  field_path: [execution_scope_authority_state]
+- section: WEB-GOV-03-S069
+  artifact_type: IMPLEMENTATION_EVIDENCE
+  field_path: [dynamic_denominator_state]
+- section: WEB-GOV-04-S083
+  artifact_type: IMPLEMENTATION_EVIDENCE
+  field_path: [ownership_portability_audit_result]
+- section: WEB-GOV-02-S075
+  artifact_type: IMPLEMENTATION_DIFF_EVIDENCE
+  field_path: [successor_input_readiness_state]
+- section: WEB-GOV-03-S071
+  artifact_type: IMPLEMENTATION_DIFF_EVIDENCE
+  field_path: [cross_stage_handoff_state]
+- section: WEB-GOV-04-S085
+  artifact_type: IMPLEMENTATION_DIFF_EVIDENCE
+  field_path: [false_completion_audit_result]

@@ -1,0 +1,46 @@
+artifact_uid: HANDOFF-WU-STAGE02-GLOBAL-HOME-SHELL-NAVIGATION-001
+artifact_type: CROSS_STAGE_HANDOFF_READINESS_LEDGER
+stage_uid: STAGE-02
+work_unit_uid: WU-STAGE02-GLOBAL-HOME-SHELL-NAVIGATION-001
+governed_unit_uid: GLOBAL-HOME-SHELL-NAVIGATION
+successor_stage_uid: STAGE-03
+successor_required_inputs:
+- input_uid: VISUAL_BASE_BLUEPRINT
+  status: MATERIALIZED
+  artifact_ref: STAGE_EXECUTION/STAGE-01/WU-STAGE01-GLOBAL-HOME-SHELL-NAVIGATION-001/02_BASE_BLUEPRINT/SRC-ACPOS-GLOBAL-HOME-SHELL-NAVIGATION-MOTHER-BASIC-DESIGN-OPTIMIZED/VISUAL_BASE_BLUEPRINT.yaml
+  content_sha256: c4866c4524474dff632f400493bd7169509ddf0bf93c9957c96d06460f4af6de
+  external_evidence_ref: ''
+  authority_evidence_ref: ''
+  consumer_readiness_evidence_ref: STAGE_EXECUTION/STAGE-02/WU-STAGE02-GLOBAL-HOME-SHELL-NAVIGATION-001/EVIDENCE/SUCCESSOR_INPUTS/VISUAL_BASE_BLUEPRINT.readiness.yaml
+- input_uid: GOVERNED_UNIT_CONSTRUCTION_SPEC_PACKAGE
+  status: MATERIALIZED
+  artifact_ref: STAGE_EXECUTION/STAGE-02/WU-STAGE02-GLOBAL-HOME-SHELL-NAVIGATION-001/GOVERNED_UNIT_CONSTRUCTION_SPEC_PACKAGE.yaml
+  content_sha256: ee6a4afa40960212754dbddb8cfaaa9e54b8ec6c080e0effa1e7f3b3e076d57f
+  external_evidence_ref: ''
+  authority_evidence_ref: ''
+  consumer_readiness_evidence_ref: STAGE_EXECUTION/STAGE-02/WU-STAGE02-GLOBAL-HOME-SHELL-NAVIGATION-001/EVIDENCE/SUCCESSOR_INPUTS/GOVERNED_UNIT_CONSTRUCTION_SPEC_PACKAGE.readiness.yaml
+- input_uid: FUNCTIONAL_WORKBENCH_CONTRACT
+  status: MATERIALIZED
+  artifact_ref: STAGE_EXECUTION/STAGE-02/WU-STAGE02-GLOBAL-HOME-SHELL-NAVIGATION-001/FUNCTIONAL_WORKBENCH_CONTRACT.yaml
+  content_sha256: faf32a343dc8664e40b37535b399011e12e31fc4b52cb48c8f0dcb3f510af827
+  external_evidence_ref: ''
+  authority_evidence_ref: ''
+  consumer_readiness_evidence_ref: STAGE_EXECUTION/STAGE-02/WU-STAGE02-GLOBAL-HOME-SHELL-NAVIGATION-001/EVIDENCE/SUCCESSOR_INPUTS/FUNCTIONAL_WORKBENCH_CONTRACT.readiness.yaml
+- input_uid: INTERACTION_TOPOLOGY_SPEC
+  status: MATERIALIZED
+  artifact_ref: STAGE_EXECUTION/STAGE-02/WU-STAGE02-GLOBAL-HOME-SHELL-NAVIGATION-001/INTERACTION_TOPOLOGY_SPEC.yaml
+  content_sha256: 50840e3a0cfe630875c8bf4bf4f561817dcd6ec755d966434c1d3eb52c8d8f93
+  external_evidence_ref: ''
+  authority_evidence_ref: ''
+  consumer_readiness_evidence_ref: STAGE_EXECUTION/STAGE-02/WU-STAGE02-GLOBAL-HOME-SHELL-NAVIGATION-001/EVIDENCE/SUCCESSOR_INPUTS/INTERACTION_TOPOLOGY_SPEC.readiness.yaml
+reference_resolution_complete: true
+physical_materialization_complete: true
+required_field_completeness_complete: true
+denominator_reconciled: true
+consumer_readiness_complete: true
+current_matrix_valid: true
+current_state_consistent: true
+unresolved_required_dependency_total: 0
+status: PASS
+materialization_owner: governance/ci/stage_lifecycle_orchestrator.py
+product_completion_credit: 0

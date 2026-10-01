@@ -1,0 +1,23 @@
+artifact_uid: VRE-STAGE03-HOME-001
+artifact_type: VISUAL_REVIEW_EVIDENCE
+stage_uid: STAGE-03
+governed_unit_uid: GLOBAL-HOME-SHELL-NAVIGATION
+candidate_uid: VIS-CANDIDATE-HOME-001
+review_required: true
+reviewer: AUTHORIZED_HUMAN_USER
+reviewed_at: '2026-09-25T00:02:00+08:00'
+decision: VISUAL_APPROVED
+visual_approved: true
+stage_exit_credit: 0
+status: PASS
+stepwise_control:
+  mode: OPERATION_BY_OPERATION
+  checkpoint_after_each_operation: true
+  bulk_stage_materialization: FORBIDDEN
+  successor_requires_operation_pass: true
+result: APPROVE
+approved_by_human: true
+approved_artifact_ref: STAGE_EXECUTION/STAGE-03/WU-STAGE03-GLOBAL-HOME-SHELL-NAVIGATION-001/VISUAL_DESIGN_SPEC_PACKAGE.yaml
+approved_artifact_sha256: cf68aa9469e36a617724f0065c0f2ff7e005eada80af3ccf34bf40222865dc08
+materialization_source: RECORDED_HUMAN_REVIEW_NORMALIZATION
+materialized_by: SYSTEM
