@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 from __future__ import annotations
-import argparse, datetime as dt, importlib.util, json, os, subprocess, sys, uuid
+import argparse, datetime as dt, hashlib, importlib.util, json, os, subprocess, sys, uuid
 from pathlib import Path
 from stage_runtime_common import *
 from stage_common_preflight_materializer import materialize as materialize_preflight
