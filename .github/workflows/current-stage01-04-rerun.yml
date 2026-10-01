@@ -24,7 +24,7 @@ jobs:
       - name: Checkout exact Current governance
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
-          ref: d30f41688c236bbaf35d4aea4ed5ce682f403729
+          ref: d20c2437668046ae97b58c4e62143d75da45aab7
           fetch-depth: 0
           path: gov
           persist-credentials: false
@@ -47,21 +47,9 @@ jobs:
 
           root=Path('product')
           gov=Path('gov')
-          current_head='d30f41688c236bbaf35d4aea4ed5ce682f403729'
-          selection=root/'STAGE_EXECUTION/SHARED_AUTHORITY/CURRENT_GOVERNANCE_SELECTION.yaml'
-          s=yaml.safe_load(selection.read_text(encoding='utf-8')) or {}
-          g=(s.get('governance_source_of_truth') or {})
-          if g.get('branch')!='rebuild-v2.1.1':
-              raise SystemExit('CURRENT_GOVERNANCE_SELECTION_BRANCH_DRIFT')
-          g['head_sha']=current_head
-          s['governance_source_of_truth']=g
-          v=s.get('exact_head_validation') or {}
-          v['stage_internal_validation']='PASS'
-          v['mother_neutrality']='PASS'
-          v['validated_head_sha']=current_head
-          s['exact_head_validation']=v
-          selection.write_text(yaml.safe_dump(s,sort_keys=False,allow_unicode=True),encoding='utf-8')
-
+          current_head='d20c2437668046ae97b58c4e62143d75da45aab7'
+          # Governance is resolved only from the exact Current governance checkout.
+          # The product branch must not carry a governance Authority or version selector.
           life=yaml.safe_load((gov/'.github/governance-source/active/source/10_REGISTRY/GOVERNANCE_LIFECYCLE_STAGE_REGISTRY.yaml').read_text(encoding='utf-8')) or {}
           raw=life.get('stages') or []
           stages={str(x['stage_uid']):x for x in raw} if isinstance(raw,list) else {str(k):v for k,v in raw.items()}
@@ -91,7 +79,6 @@ jobs:
                   row['governance_load_receipt_ref']=f'{wd.relative_to(root).as_posix()}/EVIDENCE/GOVERNANCE_LOAD_RECEIPTS/{op}.yaml'
               work['operation_bindings']=binds
               work['governance_head']=current_head
-              work['governance_binding_ref']='STAGE_EXECUTION/SHARED_AUTHORITY/CURRENT_GOVERNANCE_SELECTION.yaml'
               work['pre_execution_gate_status']='PASS'
               work['status']='OPEN'
               work['current_status']='OPEN'
@@ -116,7 +103,6 @@ jobs:
               scope['status']='OPEN'
               scope['governance_head']=current_head
               scope['current_reverify_required']=True
-              scope['governance_binding_ref']='STAGE_EXECUTION/SHARED_AUTHORITY/CURRENT_GOVERNANCE_SELECTION.yaml'
               scope.pop('content_hash',None)
               sp.write_text(yaml.safe_dump(scope,sort_keys=False,allow_unicode=True),encoding='utf-8')
 
@@ -176,6 +162,20 @@ jobs:
           set -euo pipefail
           python gov/governance/ci/stage_lifecycle_orchestrator.py             --run-range             --start-stage STAGE-01             --end-stage STAGE-04             --work-unit STAGE_EXECUTION/STAGE-01/WU-STAGE01-GLOBAL-HOME-SHELL-NAVIGATION-001/WORK_UNIT.yaml             --product-root "$GITHUB_WORKSPACE/product" | tee stage01-04-result.json
 
+      - name: Diagnose Stage runtime blocker
+        if: failure()
+        shell: bash
+        run: |
+          set +e
+          echo "=== Stage states ==="
+          for n in 01 02 03 04; do
+            find "product/STAGE_EXECUTION/STAGE-$n" -name EXECUTION_STATE.yaml -print -exec cat {} \;
+          done
+          echo "=== Validator failures ==="
+          find product/STAGE_EXECUTION/STAGE-01 -path '*/EVIDENCE/VALIDATORS/*.yaml' -print -exec cat {} \; || true
+          echo "=== Required evidence manifests ==="
+          find product/STAGE_EXECUTION/STAGE-01 -name REQUIRED_EVIDENCE_BINDING_MANIFEST.yaml -print -exec cat {} \; || true
+
       - name: Verify fresh closure, receipts, handoffs and human evidence
         shell: bash
         run: |
@@ -185,7 +185,7 @@ jobs:
           import hashlib, json, yaml
           root=Path('product')
           gov=Path('gov')
-          current_head='d30f41688c236bbaf35d4aea4ed5ce682f403729'
+          current_head='d20c2437668046ae97b58c4e62143d75da45aab7'
           life=yaml.safe_load((gov/'.github/governance-source/active/source/10_REGISTRY/GOVERNANCE_LIFECYCLE_STAGE_REGISTRY.yaml').read_text(encoding='utf-8')) or {}
           raw=life.get('stages') or []
           stages={str(x['stage_uid']):x for x in raw} if isinstance(raw,list) else {str(k):v for k,v in raw.items()}
@@ -248,7 +248,7 @@ jobs:
           from pathlib import Path
           import hashlib, json, yaml
           root=Path('product')
-          current_head='d30f41688c236bbaf35d4aea4ed5ce682f403729'
+          current_head='d20c2437668046ae97b58c4e62143d75da45aab7'
           for n in range(1,5):
               sid=f'STAGE-{n:02d}'
               wu=f'WU-STAGE{n:02d}-GLOBAL-HOME-SHELL-NAVIGATION-001'
