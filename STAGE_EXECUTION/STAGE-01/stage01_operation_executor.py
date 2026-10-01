@@ -2,13 +2,13 @@
 """STAGE-01 HOME governed-unit per-operation executor (PYTHON_STAGE_OPERATION_V1)."""
 from __future__ import annotations
 import argparse
+import os
 import hashlib
 import shutil
 import sys
 from pathlib import Path
 import yaml
 
-GOV_UID = 'GOV-REV-20260928-WORD-DERIVED-STAGE-INTERNAL-VALIDATION'
 EXECUTOR_REL = 'STAGE_EXECUTION/STAGE-01/stage01_operation_executor.py'
 WU_REL = 'STAGE_EXECUTION/STAGE-01/WU-STAGE01-GLOBAL-HOME-SHELL-NAVIGATION-001'
 
@@ -194,12 +194,15 @@ def main():
     for rel in COPY_MAP.get(a.operation, []):
         _copy(rel)
     _refresh_stage1_linked_contracts()
+    gov_uid = os.environ.get('ACPOS_CURRENT_GOVERNANCE_UID', '').strip()
+    if not gov_uid:
+        raise SystemExit('CURRENT_GOVERNANCE_UID_ENV_MISSING')
     receipt = {
         'artifact_type': 'OPERATION_EXECUTION_RECEIPT',
         'stage_uid': a.stage,
         'work_unit_uid': Path(a.work_unit).parent.name,
         'operation_uid': a.operation,
-        'governance_uid': GOV_UID,
+        'governance_uid': gov_uid,
         'status': 'PASS',
         'executor_owner': EXECUTOR_REL,
         'executor_protocol': 'PYTHON_STAGE_OPERATION_V1',
