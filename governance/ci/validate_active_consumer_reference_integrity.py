@@ -12,7 +12,7 @@ import yaml
 ROOT = Path(__file__).resolve().parents[2]
 WORKFLOW_ROOT = ROOT / ".github" / "workflows"
 REGISTRY = ROOT / "governance" / "specifications" / "REGISTRY.yaml"
-ADAPTERS = ROOT / "governance" / "ci" / "stage_execution_semantic_adapters.yaml"
+ADAPTERS = ROOT / ".github" / "governance-source" / "active" / "source" / "10_REGISTRY" / "STAGE_EXECUTION_MASTER_PLAN.yaml"
 COMMON_STAGE_WORKFLOW = ".github/workflows/common-stage-execution-engine.yml"
 
 EXEC_REF = re.compile(
@@ -144,7 +144,8 @@ def main() -> int:
     # Profile-specific stage schema is validated by the selected-profile validator.
     # This global consumer-integrity validator remains profile-neutral and only
     # verifies that the registered adapter surface exists and is parseable.
-    adapters = load_yaml(ADAPTERS)
+    plan = load_yaml(ADAPTERS)
+    adapters = plan.get("semantic_adapters") or {}
     if not isinstance(adapters.get("stages") or {}, dict):
         errors.append("STAGE_ADAPTER_REGISTRY_INVALID")
 
@@ -282,10 +283,9 @@ def main() -> int:
         "APPLICATION_BASELINE_SNAPSHOT","WEB-EXT-ADMISSION",
     )
     stage_denominator_paths={
-        ".github/governance-source/active/source/10_REGISTRY/GOVERNANCE_LIFECYCLE_STAGE_REGISTRY.yaml",
+        ".github/governance-source/active/source/10_REGISTRY/STAGE_EXECUTION_MASTER_PLAN.yaml",
         ".github/governance-source/active/source/10_REGISTRY/STAGE_EXECUTION_INVARIANT_REGISTRY.yaml",
         ".github/governance-source/active/source/10_REGISTRY/REFERENCE_RULE_REGISTRY.yaml",
-        "governance/ci/stage_execution_semantic_adapters.yaml",
         "governance/ci/stage_execution_engine.py",
     }
     for path_rel in sorted(semantic_paths):
@@ -311,7 +311,7 @@ def main() -> int:
 
     # Derived profile projection and common-invariant history neutrality guards.
     baseline_path=ROOT/'.github/governance-source/active/source/10_REGISTRY/SEMANTIC_AUTHORITY_BASELINE.yaml'
-    lifecycle_path=ROOT/'.github/governance-source/active/source/10_REGISTRY/GOVERNANCE_LIFECYCLE_STAGE_REGISTRY.yaml'
+    lifecycle_path=ROOT/'.github/governance-source/active/source/10_REGISTRY/STAGE_EXECUTION_MASTER_PLAN.yaml'
     invariant_path=ROOT/'.github/governance-source/active/source/10_REGISTRY/STAGE_EXECUTION_INVARIANT_REGISTRY.yaml'
     if baseline_path.is_file() and lifecycle_path.is_file():
         baseline_doc=yaml.safe_load(baseline_path.read_text(encoding='utf-8')) or {}

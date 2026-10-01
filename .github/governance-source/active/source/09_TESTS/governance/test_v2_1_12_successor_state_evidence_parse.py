@@ -60,7 +60,7 @@ for pstage,cstage in legal[:5]:
 def mutate_case(name,mutator,expected_fragment):
     with tempfile.TemporaryDirectory() as td:
         r=Path(td)/'pkg'; shutil.copytree(PKG,r)
-        p=r/'10_REGISTRY/GOVERNANCE_LIFECYCLE_STAGE_REGISTRY.yaml'; d=yaml.safe_load(p.read_text())
+        p=r/'10_REGISTRY/STAGE_EXECUTION_MASTER_PLAN.yaml'; d=yaml.safe_load(p.read_text())
         mutator(d); p.write_text(yaml.safe_dump(d,allow_unicode=True,sort_keys=False,width=180))
         out=cont.validate(r); ok=out['status']=='FAIL' and any(expected_fragment in x for x in out['failures'])
         res.append(case(name,ok,{'failures':out['failures'][:8]}))

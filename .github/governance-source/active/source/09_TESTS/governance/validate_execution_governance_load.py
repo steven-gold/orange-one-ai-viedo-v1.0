@@ -62,7 +62,7 @@ def resolve_section(root, uid, sections=None):
 def validate_definition(root=ROOT):
     failures=[]
     idx=load(root/'10_REGISTRY/CONSTRUCTION_ARTIFACT_INDEX.yaml')
-    life=load(root/'10_REGISTRY/GOVERNANCE_LIFECYCLE_STAGE_REGISTRY.yaml')
+    life=load(root/'10_REGISTRY/STAGE_EXECUTION_MASTER_PLAN.yaml')
     sections=section_map(root)
     rules=idx.get('universal_rules') or {}
     for k in ['governance_load_receipt_required_before_execution','common_plus_specific_normative_load_required','typed_uid_resolution_required','normative_section_uid_read_only','write_target_exact_binding_required']:

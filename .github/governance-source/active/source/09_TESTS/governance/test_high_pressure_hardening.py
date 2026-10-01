@@ -35,12 +35,12 @@ def case(name,ok,details=None): return {'case':name,'ok':bool(ok),'details':deta
 REPO=PKG.parents[3]
 
 def joint_mutations(root):
-    ref=load(root/'10_REGISTRY/REFERENCE_RULE_REGISTRY.yaml'); idx=load(root/'10_REGISTRY/CONSTRUCTION_ARTIFACT_INDEX.yaml'); life=load(root/'10_REGISTRY/GOVERNANCE_LIFECYCLE_STAGE_REGISTRY.yaml')
+    ref=load(root/'10_REGISTRY/REFERENCE_RULE_REGISTRY.yaml'); idx=load(root/'10_REGISTRY/CONSTRUCTION_ARTIFACT_INDEX.yaml'); life=load(root/'10_REGISTRY/STAGE_EXECUTION_MASTER_PLAN.yaml')
     wrong=['WEB-GOV-01-S002']
     ref['program_profile_reference_rules']['RUNTIME_SERVICE']['exact_required_normative_section_uids']=wrong; idx['program_construction_profiles']['RUNTIME_SERVICE']['required_normative_section_uids']=wrong
     ref['stage_reference_rules']['STAGE-10']['exact_required_normative_section_uids']=wrong; next(x for x in life['stages'] if x['stage_uid']=='STAGE-10')['required_normative_section_uids']=wrong
     ref['common_bundle_reference_rules']['BUNDLE-GOV-COMMON-CORE']['exact_section_uids']=['WEB-GOV-02-S014']; idx['mandatory_common_normative_bundles']['BUNDLE-GOV-COMMON-CORE']['section_uids']=['WEB-GOV-02-S014']
-    dump(root/'10_REGISTRY/REFERENCE_RULE_REGISTRY.yaml',ref); dump(root/'10_REGISTRY/CONSTRUCTION_ARTIFACT_INDEX.yaml',idx); dump(root/'10_REGISTRY/GOVERNANCE_LIFECYCLE_STAGE_REGISTRY.yaml',life)
+    dump(root/'10_REGISTRY/REFERENCE_RULE_REGISTRY.yaml',ref); dump(root/'10_REGISTRY/CONSTRUCTION_ARTIFACT_INDEX.yaml',idx); dump(root/'10_REGISTRY/STAGE_EXECUTION_MASTER_PLAN.yaml',life)
 def typed_mutations(root):
     ref=load(root/'10_REGISTRY/REFERENCE_RULE_REGISTRY.yaml'); cat=load(root/'10_REGISTRY/AUDIT_CATALOG.yaml'); rev=load(root/'10_REGISTRY/REVIEW_PROGRESS_LEDGER.yaml'); bpr=load(root/'10_REGISTRY/BLUEPRINT_REGISTRY.yaml'); naming=load(root/'10_REGISTRY/NAMING_REGISTRY.yaml')
     ref['validator_identities'][1]['canonical_name']='WRONG_CLEANUP_GUARD'; ref['validator_identities'][1]['allowed_usage']=ref['validator_identities'][1]['allowed_usage']+['WRONG_USAGE']; next(x for x in cat['items'] if x['validator_uid']=='VAL-GOV-002')['validator_name']='WRONG_CLEANUP_GUARD'

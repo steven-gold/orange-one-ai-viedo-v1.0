@@ -69,7 +69,7 @@ def _resolve(identity_map, uid, expected_types, failures, field):
 def validate_instance(program_artifact, manifest, root=ROOT):
     failures=[]
     idx=load(root/'10_REGISTRY/CONSTRUCTION_ARTIFACT_INDEX.yaml'); ref=load(root/'10_REGISTRY/REFERENCE_RULE_REGISTRY.yaml')
-    life=load(root/'10_REGISTRY/GOVERNANCE_LIFECYCLE_STAGE_REGISTRY.yaml'); bpr=load(root/'10_REGISTRY/BLUEPRINT_REGISTRY.yaml'); rm=load(root/'10_REGISTRY/GOVERNANCE_ROOT_MANIFEST.yaml')
+    life=load(root/'10_REGISTRY/STAGE_EXECUTION_MASTER_PLAN.yaml'); bpr=load(root/'10_REGISTRY/BLUEPRINT_REGISTRY.yaml'); rm=load(root/'10_REGISTRY/GOVERNANCE_ROOT_MANIFEST.yaml')
     baseline=load(root/'10_REGISTRY/SEMANTIC_AUTHORITY_BASELINE.yaml')
     pa=program_artifact or {}; man=manifest or {}
 

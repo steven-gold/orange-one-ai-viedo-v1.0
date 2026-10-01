@@ -41,13 +41,12 @@ def validate(root=ROOT):
     if not plan.get('stages'):
         return {'status': 'FAIL', 'failures': failures + ['master_plan_stages_missing']}
 
-    life = load(root, '10_REGISTRY/GOVERNANCE_LIFECYCLE_STAGE_REGISTRY.yaml')
     sections = load(root, '10_REGISTRY/SECTION_NUMBER_REGISTRY.yaml')
     sec_uids = {s['section_uid'] for d in sections.get('documents', []) for s in d.get('sections', [])}
-    life_stages = {s['stage_uid']: s for s in life.get('stages', [])}
+    authoritative_stages = {s['stage_uid']: s for s in plan.get('stages', [])}
 
     order = [s['stage_uid'] for s in plan['stages']]
-    stages = {s['stage_uid']: s for s in plan['stages']}
+    stages = {s['stage_uid']: (s.get('projection') or {}) for s in plan['stages']}
 
     # C-A intra-stage reference closure
     for sid in order:
@@ -134,8 +133,8 @@ def validate(root=ROOT):
         if not pr.get('required_sections'):
             failures.append(f'PRODUCTION_READINESS_INCOMPLETE:{sid}:no_required_sections')
 
-    # C-I projection superset: nothing in lifecycle registry may be absent from plan
-    for sid, ls in life_stages.items():
+    # C-I projection superset: nothing in the authoritative top-level may be absent from the projection
+    for sid, ls in authoritative_stages.items():
         ps = stages.get(sid)
         if not ps:
             failures.append(f'MASTER_PLAN_PROJECTION_DRIFT:{sid}:stage_missing')

@@ -2,12 +2,12 @@
 from pathlib import Path
 import json,yaml
 ROOT=Path(__file__).resolve().parents[2]
-P=ROOT/'10_REGISTRY/GOVERNANCE_LIFECYCLE_STAGE_REGISTRY.yaml'
+P=ROOT/'10_REGISTRY/STAGE_EXECUTION_MASTER_PLAN.yaml'
 INDEX=ROOT/'10_REGISTRY/CONSTRUCTION_ARTIFACT_INDEX.yaml'
 def load(p): return yaml.safe_load(p.read_text(encoding='utf-8')) or {}
 def validate(root=ROOT):
     failures=[]
-    pp=root/'10_REGISTRY/GOVERNANCE_LIFECYCLE_STAGE_REGISTRY.yaml'
+    pp=root/'10_REGISTRY/STAGE_EXECUTION_MASTER_PLAN.yaml'
     if not pp.exists(): return {'status':'FAIL','failures':['lifecycle_stage_registry_missing']}
     d=load(pp); stages=d.get('stages') or []
     if len(stages)!=11: failures.append(f'stage_count:{len(stages)}')

@@ -51,14 +51,14 @@ with tempfile.TemporaryDirectory() as td:
     out=clnv.validate(r,[{'path':'10_REGISTRY/NAMING_REGISTRY.yaml','proofs':proofs}]); cases.append({'case':'protected_current_delete_blocked','actual':out['status'],'expected':'FAIL','ok':out['status']=='FAIL','sample_failures':out.get('failures',[])[:3]})
 c('cleanup_default_allow_detected',clnv.validate,mut_yaml('10_REGISTRY/PROTECTED_CURRENT_ARTIFACT_REGISTRY.yaml',lambda d:d['delete_gate'].__setitem__('default','ALLOW')))
 # Lifecycle semantic mutations
-c('lifecycle_stage_removed',lifev.validate,mut_yaml('10_REGISTRY/GOVERNANCE_LIFECYCLE_STAGE_REGISTRY.yaml',lambda d:d.__setitem__('stages',d['stages'][:-1])))
+c('lifecycle_stage_removed',lifev.validate,mut_yaml('10_REGISTRY/STAGE_EXECUTION_MASTER_PLAN.yaml',lambda d:d.__setitem__('stages',d['stages'][:-1])))
 def drop_input_origin(d): d['stages'][1]['input_origins'].pop(d['stages'][1]['inputs'][0],None)
-c('lifecycle_input_origin_missing',lifev.validate,mut_yaml('10_REGISTRY/GOVERNANCE_LIFECYCLE_STAGE_REGISTRY.yaml',drop_input_origin))
+c('lifecycle_input_origin_missing',lifev.validate,mut_yaml('10_REGISTRY/STAGE_EXECUTION_MASTER_PLAN.yaml',drop_input_origin))
 def bad_producer(d): d['stages'][4]['output_producers'][d['stages'][4]['outputs'][0]]='MISSING-OP'
-c('lifecycle_output_producer_invalid',lifev.validate,mut_yaml('10_REGISTRY/GOVERNANCE_LIFECYCLE_STAGE_REGISTRY.yaml',bad_producer))
-c('lifecycle_step_binding_removed',lifev.validate,mut_yaml('10_REGISTRY/GOVERNANCE_LIFECYCLE_STAGE_REGISTRY.yaml',lambda d:d.__setitem__('delivery_step_bindings',d['delivery_step_bindings'][:-1])))
-c('lifecycle_foundation_barrier_loosened',lifev.validate,mut_yaml('10_REGISTRY/GOVERNANCE_LIFECYCLE_STAGE_REGISTRY.yaml',lambda d:d['topology'].__setitem__('foundation_barrier_mode','PER_PAGE')))
-c('lifecycle_governed_unit_uid_sticky_broken',lifev.validate,mut_yaml('10_REGISTRY/GOVERNANCE_LIFECYCLE_STAGE_REGISTRY.yaml',lambda d:d['topology'].__setitem__('governed_unit_uid_sticky_through_stage','STAGE-08')))
+c('lifecycle_output_producer_invalid',lifev.validate,mut_yaml('10_REGISTRY/STAGE_EXECUTION_MASTER_PLAN.yaml',bad_producer))
+c('lifecycle_step_binding_removed',lifev.validate,mut_yaml('10_REGISTRY/STAGE_EXECUTION_MASTER_PLAN.yaml',lambda d:d.__setitem__('delivery_step_bindings',d['delivery_step_bindings'][:-1])))
+c('lifecycle_foundation_barrier_loosened',lifev.validate,mut_yaml('10_REGISTRY/STAGE_EXECUTION_MASTER_PLAN.yaml',lambda d:d['topology'].__setitem__('foundation_barrier_mode','PER_PAGE')))
+c('lifecycle_governed_unit_uid_sticky_broken',lifev.validate,mut_yaml('10_REGISTRY/STAGE_EXECUTION_MASTER_PLAN.yaml',lambda d:d['topology'].__setitem__('governed_unit_uid_sticky_through_stage','STAGE-08')))
 # Management materialization / closed-loop mutations
 def remove_naming(r): (r/'10_REGISTRY/NAMING_REGISTRY.yaml').unlink()
 c('management_naming_registry_missing',mgmtv.validate,remove_naming)

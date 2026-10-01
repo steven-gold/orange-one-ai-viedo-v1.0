@@ -61,9 +61,9 @@ with tempfile.TemporaryDirectory() as td:
 life_base=life.validate(PKG); results.append(case('cross_lifecycle_semantic_granularity_baseline',life_base['status']=='PASS',{'failures':life_base.get('failures',[])[:6]}))
 for sid in [f'STAGE-{i:02d}' for i in range(1,12)]:
     with tempfile.TemporaryDirectory() as td:
-        r=Path(td)/'pkg'; shutil.copytree(PKG,r); lp=r/'10_REGISTRY/GOVERNANCE_LIFECYCLE_STAGE_REGISTRY.yaml'; ld=load(lp); st=next(x for x in ld['stages'] if x['stage_uid']==sid); st.pop('semantic_granularity_gate',None); dump(lp,ld); out=life.validate(r); results.append(case('semantic_granularity_gate_required_'+sid,out['status']=='FAIL',{'failures':out.get('failures',[])[:5]}))
+        r=Path(td)/'pkg'; shutil.copytree(PKG,r); lp=r/'10_REGISTRY/STAGE_EXECUTION_MASTER_PLAN.yaml'; ld=load(lp); st=next(x for x in ld['stages'] if x['stage_uid']==sid); st.pop('semantic_granularity_gate',None); dump(lp,ld); out=life.validate(r); results.append(case('semantic_granularity_gate_required_'+sid,out['status']=='FAIL',{'failures':out.get('failures',[])[:5]}))
 with tempfile.TemporaryDirectory() as td:
-    r=Path(td)/'pkg'; shutil.copytree(PKG,r); lp=r/'10_REGISTRY/GOVERNANCE_LIFECYCLE_STAGE_REGISTRY.yaml'; ld=load(lp); ld['cross_stage_invariants']['semantic_granularity']['mixed_terminal_unit']='ALLOW'; dump(lp,ld); out=life.validate(r); results.append(case('mixed_terminal_unit_must_fail_closed_all_stages',out['status']=='FAIL',{'failures':out.get('failures',[])[:5]}))
+    r=Path(td)/'pkg'; shutil.copytree(PKG,r); lp=r/'10_REGISTRY/STAGE_EXECUTION_MASTER_PLAN.yaml'; ld=load(lp); ld['cross_stage_invariants']['semantic_granularity']['mixed_terminal_unit']='ALLOW'; dump(lp,ld); out=life.validate(r); results.append(case('mixed_terminal_unit_must_fail_closed_all_stages',out['status']=='FAIL',{'failures':out.get('failures',[])[:5]}))
 with tempfile.TemporaryDirectory() as td:
     r=Path(td)/'pkg'; shutil.copytree(PKG,r); ip=r/'10_REGISTRY/CONSTRUCTION_ARTIFACT_INDEX.yaml'; idx=load(ip); idx['mandatory_common_normative_bundles']['BUNDLE-GOV-COMMON-CORE']['section_uids'].remove('WEB-GOV-03-S052'); dump(ip,idx); out=life.validate(r); results.append(case('semantic_granularity_rule_must_load_in_common_bundle',out['status']=='FAIL',{'failures':out.get('failures',[])[:5]}))
 

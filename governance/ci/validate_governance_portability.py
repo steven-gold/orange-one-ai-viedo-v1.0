@@ -92,7 +92,7 @@ else:
     else:
         prof=yaml.safe_load(profile_path.read_text(encoding='utf-8')) or {}
 
-if prof.get('artifact_type')!='EXECUTION_PROFILE_REGISTRY':
+if prof.get('artifact_type') not in ('EXECUTION_PROFILE_REGISTRY','STAGE_EXECUTION_MASTER_PLAN'):
     failures.append('profile_registry_type_invalid')
 if prof.get('layer_classification')!='EXECUTION_PROFILE' or prof.get('global_normative_authority') is not False:
     failures.append('profile_layer_classification_invalid')
@@ -135,7 +135,7 @@ if _binding:
         _row=_binding.get(_group) or {}
         for _v in (_row.get('repository'),_row.get('branch')):
             if isinstance(_v,str) and len(_v)>=4: _env_literals.add(_v)
-    _stage_core_paths=[profile_path,ROOT/'governance/ci/stage_execution_engine.py',ROOT/'governance/ci/stage_execution_semantic_adapters.yaml',ROOT/'.github/governance-source/active/source/10_REGISTRY/STAGE_EXECUTION_INVARIANT_REGISTRY.yaml']
+    _stage_core_paths=[profile_path,ROOT/'governance/ci/stage_execution_engine.py',ROOT/'.github/governance-source/active/source/10_REGISTRY/STAGE_EXECUTION_INVARIANT_REGISTRY.yaml']
     for _surface in _stage_core_paths:
         _body=_surface.read_text(encoding='utf-8')
         for _literal in sorted(_env_literals):
@@ -148,7 +148,6 @@ _stage_core_surfaces=[
     ROOT/'.github/governance-source/active/source/10_REGISTRY/STAGE_EXECUTION_INVARIANT_REGISTRY.yaml',
     ROOT/'.github/governance-source/active/source/10_REGISTRY/PROGRAM_IDENTITY_AUTHORITY_REGISTRY.yaml',
     ROOT/'.github/governance-source/active/source/10_REGISTRY/CONSTRUCTION_ARTIFACT_INDEX.yaml',
-    ROOT/'governance/ci/stage_execution_semantic_adapters.yaml',
     ROOT/'governance/ci/stage_execution_engine.py',
 ]
 _stage_core_forbidden_legacy_tokens={
@@ -194,8 +193,8 @@ if _evden.get('not_applicable_requires_authority_evidence') is not True or _evde
 if _evden.get('omitted_or_unclassified_evidence_disposition')!='BLOCK':
     failures.append('stage_required_evidence_unclassified_not_blocked')
 
-_adapter_path=ROOT/'governance/ci/stage_execution_semantic_adapters.yaml'
-_adapter=yaml.safe_load(_adapter_path.read_text(encoding='utf-8')) or {}
+_adapter_path=ROOT/'.github/governance-source/active/source/10_REGISTRY/STAGE_EXECUTION_MASTER_PLAN.yaml'
+_adapter=(yaml.safe_load(_adapter_path.read_text(encoding='utf-8')) or {}).get('semantic_adapters') or {}
 _driver=_adapter.get('execution_driver_contract') or {}
 if _driver.get('operation_universe_source')!='SELECTED_PROFILE_STAGE_OPERATIONS_FILTERED_BY_CURRENT_AUTHORITY_AND_APPLICABILITY':
     failures.append('stage_driver_operation_universe_not_applicability_filtered')

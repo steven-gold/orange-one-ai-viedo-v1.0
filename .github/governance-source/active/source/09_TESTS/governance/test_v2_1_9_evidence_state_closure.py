@@ -26,7 +26,7 @@ def validate_successor_static(root):
     readme=(root/'README.md').read_text(encoding='utf-8')
     review=yaml.safe_load((root/'10_REGISTRY/REVIEW_PROGRESS_LEDGER.yaml').read_text(encoding='utf-8')) or {}
     bp=yaml.safe_load((root/'10_REGISTRY/GOVERNANCE_ACCEPTANCE_AUDIT_BLUEPRINT.yaml').read_text(encoding='utf-8')) or {}
-    stage=yaml.safe_load((root/'10_REGISTRY/GOVERNANCE_LIFECYCLE_STAGE_REGISTRY.yaml').read_text(encoding='utf-8')) or {}
+    stage=yaml.safe_load((root/'10_REGISTRY/STAGE_EXECUTION_MASTER_PLAN.yaml').read_text(encoding='utf-8')) or {}
     bdoc=(root/'12_DOCS/mother-spec/01_BLUEPRINT_DESIGN_GOVERNANCE.md').read_text(encoding='utf-8')
     idoc=(root/'12_DOCS/mother-spec/02_IMPLEMENTATION_DELIVERY_STANDARD.md').read_text(encoding='utf-8')
     edoc=(root/'12_DOCS/mother-spec/03_EXECUTION_CONTROL_STANDARD.md').read_text(encoding='utf-8')
@@ -54,7 +54,7 @@ def mutate_text(name,rel,mut):
         r=Path(td)/'pkg'; shutil.copytree(ROOT,r)
         p=r/rel; p.write_text(mut(p.read_text(encoding='utf-8')),encoding='utf-8')
         out=validate_successor_static(r); return case(name,out['status']=='FAIL',{'failures':out.get('failures',[])[:6]})
-stage=yaml.safe_load((ROOT/'10_REGISTRY/GOVERNANCE_LIFECYCLE_STAGE_REGISTRY.yaml').read_text()) or {}
+stage=yaml.safe_load((ROOT/'10_REGISTRY/STAGE_EXECUTION_MASTER_PLAN.yaml').read_text()) or {}
 s2={x.get('stage_uid'):x for x in stage.get('stages') or []}.get('STAGE-02') or {}
 c=successor_migration_contract(); m=c['migration']; st=c['state']; cand=c['candidate']
 retired=[
@@ -85,7 +85,7 @@ results=[
  case('source_package_single_branch_current_authority',cand.get('status')=='INTEGRATED_CURRENT_WORKLINE' and cand.get('current_authority') is True and (cand.get('integration') or {}).get('mode')=='SINGLE_BRANCH_INTEGRATED'),
  mutate_yaml('human_review_auto_pass_blocked','10_REGISTRY/REVIEW_PROGRESS_LEDGER.yaml',lambda d:d['required_review_plan'][0].__setitem__('status','APPROVED')),
  mutate_yaml('sync_contract_disabled_blocked','10_REGISTRY/GOVERNANCE_ACCEPTANCE_AUDIT_BLUEPRINT.yaml',lambda d:d['current_test_evidence_sync_contract'].__setitem__('exact_head_required_workflow_receipts_required',False)),
- mutate_yaml('stage02_functional_compile_missing_blocked','10_REGISTRY/GOVERNANCE_LIFECYCLE_STAGE_REGISTRY.yaml',lambda d:[s['operations'].remove('FUNCTIONAL_CHAIN_COMPILE') for s in d['stages'] if s.get('stage_uid')=='STAGE-02']),
+ mutate_yaml('stage02_functional_compile_missing_blocked','10_REGISTRY/STAGE_EXECUTION_MASTER_PLAN.yaml',lambda d:[s['operations'].remove('FUNCTIONAL_CHAIN_COMPILE') for s in d['stages'] if s.get('stage_uid')=='STAGE-02']),
  mutate_text('functional_chain_runtime_owner_missing_blocked','12_DOCS/mother-spec/01_BLUEPRINT_DESIGN_GOVERNANCE.md',lambda t:t.replace(' -> Runtime Owner -> ',' -> ')),
  mutate_text('cross_page_system_slice_missing_blocked','12_DOCS/mother-spec/02_IMPLEMENTATION_DELIVERY_STANDARD.md',lambda t:t.replace('Cross-page / System Logic Slice Test','Cross-page Slice')),
  mutate_text('second_system_guard_missing_blocked','12_DOCS/mother-spec/03_EXECUTION_CONTROL_STANDARD.md',lambda t:t.replace('SECOND_SYSTEM_GUARD','SECOND_SYSTEM_DISABLED')),

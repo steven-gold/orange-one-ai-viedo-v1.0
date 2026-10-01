@@ -43,7 +43,7 @@ def validate():
     if c.get('index_drift_full_sweep_required_before_freeze') is not True:
         failures.append('acceptance_full_sweep_before_freeze_missing')
 
-    life=load('GOVERNANCE_LIFECYCLE_STAGE_REGISTRY.yaml')
+    life=load('STAGE_EXECUTION_MASTER_PLAN.yaml')
     cs=(life.get('cross_stage_invariants') or {}).get('stage_execution_invariant_hardening') or {}
     if cs.get('indexed_incremental_validation_required') is not True:
         failures.append('lifecycle_indexed_validation_missing')

@@ -4,7 +4,7 @@ import json,re,yaml,sys,hashlib,copy
 import ast
 sys.dont_write_bytecode=True
 ROOT=Path(__file__).resolve().parents[2]
-SEMANTIC_BASELINE_CONTENT_HASH = 'ffc2177ad09a7a0c33ae6ab2d8dbdaa8b633873be34943875627a39374452ead'
+SEMANTIC_BASELINE_CONTENT_HASH = '7d2dc61353943ee1506d22b9b9cfaed0927fc21d8bc93670ae37e963ae4bb122'
 
 _YAML_CACHE={}
 _FRONTMATTER_CACHE={}
@@ -58,7 +58,7 @@ def validate(root=ROOT):
     for key in ['program_profile_reference_rules','stage_reference_rules','common_bundle_reference_rules','validator_identities','audit_type_identities','review_type_identities','blueprint_type_identities','normative_document_rules','naming_registry_contract']:
         if ref.get(key)!=snap.get(key): failures.append('reference_rule_registry_drift_from_immutable_baseline:'+key)
 
-    idx=load(root/'10_REGISTRY/CONSTRUCTION_ARTIFACT_INDEX.yaml'); life=load(root/'10_REGISTRY/GOVERNANCE_LIFECYCLE_STAGE_REGISTRY.yaml')
+    idx=load(root/'10_REGISTRY/CONSTRUCTION_ARTIFACT_INDEX.yaml'); life=load(root/'10_REGISTRY/STAGE_EXECUTION_MASTER_PLAN.yaml')
     naming=load(root/'10_REGISTRY/NAMING_REGISTRY.yaml'); cat=load(root/'10_REGISTRY/AUDIT_CATALOG.yaml'); review=load(root/'10_REGISTRY/REVIEW_PROGRESS_LEDGER.yaml')
     bpr=load(root/'10_REGISTRY/BLUEPRINT_REGISTRY.yaml'); bp=load(root/'10_REGISTRY/GOVERNANCE_ACCEPTANCE_AUDIT_BLUEPRINT.yaml')
     known_sections=section_uids(root)

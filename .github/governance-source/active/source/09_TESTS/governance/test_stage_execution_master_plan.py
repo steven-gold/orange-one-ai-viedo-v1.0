@@ -19,7 +19,6 @@ import validate_stage_execution_master_plan as v  # noqa: E402
 
 NEEDED = [
     '10_REGISTRY/STAGE_EXECUTION_MASTER_PLAN.yaml',
-    '10_REGISTRY/GOVERNANCE_LIFECYCLE_STAGE_REGISTRY.yaml',
     '10_REGISTRY/SECTION_NUMBER_REGISTRY.yaml',
 ]
 
@@ -43,7 +42,7 @@ def test_current_plan_passes():
 
 def test_dangling_producer_fails():
     def m(doc):
-        doc['stages'][0]['outputs'][0]['producer_operation_uid'] = 'NO_SUCH_OPERATION'
+        doc['stages'][0]['projection']['outputs'][0]['producer_operation_uid'] = 'NO_SUCH_OPERATION'
     r = v.validate(_temp_root(m))
     assert r['status'] == 'FAIL'
     assert any('DANGLING_REF' in f for f in r['failures'])
@@ -51,7 +50,7 @@ def test_dangling_producer_fails():
 
 def test_dropped_registry_operation_fails():
     def m(doc):
-        doc['stages'][0]['operations'] = [o for o in doc['stages'][0]['operations'] if o['operation_uid'] != 'SOURCE_SEGMENT_MAPPING']
+        doc['stages'][0]['projection']['operations'] = [o for o in doc['stages'][0]['projection']['operations'] if o['operation_uid'] != 'SOURCE_SEGMENT_MAPPING']
     r = v.validate(_temp_root(m))
     assert r['status'] == 'FAIL'
     assert any('PROJECTION_DRIFT' in f for f in r['failures'])
@@ -59,7 +58,7 @@ def test_dropped_registry_operation_fails():
 
 def test_invalid_classification_fails():
     def m(doc):
-        doc['stages'][0]['outputs'][0]['classification'] = 'NOT_A_CLASS'
+        doc['stages'][0]['projection']['outputs'][0]['classification'] = 'NOT_A_CLASS'
     r = v.validate(_temp_root(m))
     assert r['status'] == 'FAIL'
     assert any('CLASSIFICATION_INVALID' in f for f in r['failures'])
@@ -67,7 +66,7 @@ def test_invalid_classification_fails():
 
 def test_dropped_evidence_fails():
     def m(doc):
-        doc['stages'][5]['required_evidence'] = []
+        doc['stages'][5]['projection']['required_evidence'] = []
     r = v.validate(_temp_root(m))
     assert r['status'] == 'FAIL'
     assert any('PROJECTION_DRIFT' in f for f in r['failures'])
@@ -75,7 +74,7 @@ def test_dropped_evidence_fails():
 
 def test_gate_break_fails():
     def m(doc):
-        doc['stages'][1]['entry_gate'] = 'TOTALLY_WRONG_GATE'
+        doc['stages'][1]['projection']['entry_gate'] = 'TOTALLY_WRONG_GATE'
     r = v.validate(_temp_root(m))
     assert r['status'] == 'FAIL'
     assert any('CONTINUITY_BREAK' in f for f in r['failures'])

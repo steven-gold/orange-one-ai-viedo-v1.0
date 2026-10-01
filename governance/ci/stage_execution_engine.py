@@ -6,8 +6,7 @@ import yaml
 
 ROOT=Path(__file__).resolve().parents[2]
 REGISTRY=ROOT/'governance/specifications/REGISTRY.yaml'
-LIFECYCLE=ROOT/'.github/governance-source/active/source/10_REGISTRY/GOVERNANCE_LIFECYCLE_STAGE_REGISTRY.yaml'
-ADAPTERS=ROOT/'governance/ci/stage_execution_semantic_adapters.yaml'
+LIFECYCLE=ROOT/'.github/governance-source/active/source/10_REGISTRY/STAGE_EXECUTION_MASTER_PLAN.yaml'
 INVARIANTS=ROOT/'.github/governance-source/active/source/10_REGISTRY/STAGE_EXECUTION_INVARIANT_REGISTRY.yaml'
 SOURCE_PACKAGE_ROOT=ROOT/'.github/governance-source/active/source'
 STAGE1_SOURCE_CONTRACTS=SOURCE_PACKAGE_ROOT/'10_REGISTRY/STAGE1_SOURCE_FACT_CONTRACTS.yaml'
@@ -66,7 +65,8 @@ def identity():
     return manifest,reg,gov
 def data():
     entry,reg,gov=identity()
-    return entry,reg,gov,y(LIFECYCLE),y(ADAPTERS)
+    plan=y(LIFECYCLE)
+    return entry,reg,gov,plan,plan.get('semantic_adapters') or {}
 
 def _external_yaml(path,label):
     if not path.is_file(): fail(label+'_MISSING:'+str(path))
@@ -403,15 +403,17 @@ def validate_master_plan(stages):
     """Definition-time validation of the single STAGE_EXECUTION_MASTER_PLAN.
 
     The master plan is the one-line authoritative declaration of every stage
-    contract. The lifecycle registry must remain a projection of it (superset
-    rule: plan may add approved declarations, but may never drop registry
-    authority). Fail-closed.
+    contract. Its top level carries the authoritative lifecycle registry
+    schema (absorbed), and each stage carries an enriched ``projection`` block.
+    The projection must remain a superset of the authoritative declarations
+    (it may add approved declarations, but may never drop authority).
+    Fail-closed.
     """
     mp=y(MASTER_PLAN)
     if mp.get('artifact_type')!='STAGE_EXECUTION_MASTER_PLAN': fail('MASTER_PLAN_ARTIFACT_TYPE_INVALID')
-    if mp.get('authority_mode')!='EXECUTION_PROJECTION_ONLY': fail('MASTER_PLAN_AUTHORITY_MODE_DRIFT')
+    if mp.get('authority_mode')!='AUTHORITATIVE_SINGLE_STAGE_EXECUTION_SOURCE': fail('MASTER_PLAN_AUTHORITY_MODE_DRIFT')
     if mp.get('may_create_new_normative_requirement') is not False: fail('MASTER_PLAN_NORMATIVE_REQUIREMENT_CREATION_NOT_FORBIDDEN')
-    pstages={s.get('stage_uid'):s for s in (mp.get('stages') or [])}
+    pstages={s.get('stage_uid'):(s.get('projection') or {}) for s in (mp.get('stages') or [])}
     if set(pstages)!=set(stages): fail('MASTER_PLAN_STAGE_DENOMINATOR_DRIFT')
     common=mp.get('common') or {}
     envelope=common.get('construction_envelope') or {}

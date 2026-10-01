@@ -30,7 +30,7 @@ def mutate_case(name, rel, mut):
 
 def build_valid_runtime_fixture():
     idx=load(ROOT/'10_REGISTRY/CONSTRUCTION_ARTIFACT_INDEX.yaml')
-    life=load(ROOT/'10_REGISTRY/GOVERNANCE_LIFECYCLE_STAGE_REGISTRY.yaml')
+    life=load(ROOT/'10_REGISTRY/STAGE_EXECUTION_MASTER_PLAN.yaml')
     st5=[s for s in life['stages'] if s['stage_uid']=='STAGE-05'][0]
     pa={
       'program_artifact_uid':'PA-DEMO-GOVERNED-UNIT-RUNTIME-001','work_unit_uid':'WU-DEMO-GOVERNED-UNIT-001','governed_unit_uid_or_scope_uid':'DEMO-GOVERNED-UNIT-001',
@@ -95,8 +95,8 @@ cases += [
  mutate_case('receipt_not_required','10_REGISTRY/CONSTRUCTION_ARTIFACT_INDEX.yaml',lambda d:d['governance_load_receipt_contract'].__setitem__('required_before_any_stage_operation',False)),
  mutate_case('normative_uid_write_enabled','10_REGISTRY/CONSTRUCTION_ARTIFACT_INDEX.yaml',lambda d:d['typed_uid_resolution_contract']['uid_types']['NORMATIVE_SECTION_UID'].__setitem__('write_target',True)),
  mutate_case('write_other_registered_target_allowed','10_REGISTRY/CONSTRUCTION_ARTIFACT_INDEX.yaml',lambda d:d['write_target_lock_contract'].__setitem__('valid_other_registered_artifact_is_not_valid_target',False)),
- mutate_case('stage_preload_gate_removed','10_REGISTRY/GOVERNANCE_LIFECYCLE_STAGE_REGISTRY.yaml',lambda d:d['stages'][4].pop('pre_execution_gate')),
- mutate_case('stage_normative_refs_removed','10_REGISTRY/GOVERNANCE_LIFECYCLE_STAGE_REGISTRY.yaml',lambda d:d['stages'][4].__setitem__('required_normative_section_uids',[])),
+ mutate_case('stage_preload_gate_removed','10_REGISTRY/STAGE_EXECUTION_MASTER_PLAN.yaml',lambda d:d['stages'][4].pop('pre_execution_gate')),
+ mutate_case('stage_normative_refs_removed','10_REGISTRY/STAGE_EXECUTION_MASTER_PLAN.yaml',lambda d:d['stages'][4].__setitem__('required_normative_section_uids',[])),
 ]
 cases += [
  runtime_case('runtime_valid',lambda r,m,p:None,'PASS'),

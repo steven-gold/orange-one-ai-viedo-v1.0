@@ -54,7 +54,7 @@ def inst_case(name,mut,expected='FAIL'):
     return {'case':name,'expected':expected,'actual':out['status'],'ok':out['status']==expected,'failures':out.get('failures',[])[:4]}
 
 # Five positive baselines: overall semantic authority plus focused invariant checks.
-base=sem.validate(PKG); ref=load(PKG/'10_REGISTRY/REFERENCE_RULE_REGISTRY.yaml'); idx=load(PKG/'10_REGISTRY/CONSTRUCTION_ARTIFACT_INDEX.yaml'); life=load(PKG/'10_REGISTRY/GOVERNANCE_LIFECYCLE_STAGE_REGISTRY.yaml'); naming=load(PKG/'10_REGISTRY/NAMING_REGISTRY.yaml')
+base=sem.validate(PKG); ref=load(PKG/'10_REGISTRY/REFERENCE_RULE_REGISTRY.yaml'); idx=load(PKG/'10_REGISTRY/CONSTRUCTION_ARTIFACT_INDEX.yaml'); life=load(PKG/'10_REGISTRY/STAGE_EXECUTION_MASTER_PLAN.yaml'); naming=load(PKG/'10_REGISTRY/NAMING_REGISTRY.yaml')
 pa,man=valid_fixture(); instbase=inst.validate_instance(pa,man,PKG)
 positive=[
  {'case':'baseline_reference_semantics','expected':'PASS','actual':base['status'],'ok':base['status']=='PASS'},
@@ -69,7 +69,7 @@ neg += [
  sem_case('profile_runtime_legal_wrong_ref',mutate_yaml('10_REGISTRY/CONSTRUCTION_ARTIFACT_INDEX.yaml',lambda d:d['program_construction_profiles']['RUNTIME_SERVICE'].__setitem__('required_normative_section_uids',['WEB-GOV-01-S002']))),
  sem_case('profile_repository_legal_wrong_ref',mutate_yaml('10_REGISTRY/CONSTRUCTION_ARTIFACT_INDEX.yaml',lambda d:d['program_construction_profiles']['REPOSITORY_DATA_ACCESS'].__setitem__('required_normative_section_uids',['WEB-GOV-04-S001']))),
  sem_case('profile_test_missing_test_layers',mutate_yaml('10_REGISTRY/CONSTRUCTION_ARTIFACT_INDEX.yaml',lambda d:d['program_construction_profiles']['TEST_IMPLEMENTATION'].__setitem__('required_normative_section_uids',['WEB-GOV-03-S046','WEB-GOV-04-S073']))),
- sem_case('stage10_legal_wrong_ref',mutate_yaml('10_REGISTRY/GOVERNANCE_LIFECYCLE_STAGE_REGISTRY.yaml',lambda d:next(s for s in d['stages'] if s['stage_uid']=='STAGE-10').__setitem__('required_normative_section_uids',['WEB-GOV-01-S002']))),
+ sem_case('stage10_legal_wrong_ref',mutate_yaml('10_REGISTRY/STAGE_EXECUTION_MASTER_PLAN.yaml',lambda d:next(s for s in d['stages'] if s['stage_uid']=='STAGE-10').__setitem__('required_normative_section_uids',['WEB-GOV-01-S002']))),
  sem_case('naming_duplicate_canonical_name',mutate_yaml('10_REGISTRY/NAMING_REGISTRY.yaml',lambda d:d['items'][1].__setitem__('canonical_name',d['items'][0]['canonical_name']))),
  sem_case('naming_required_field_missing',mutate_yaml('10_REGISTRY/NAMING_REGISTRY.yaml',lambda d:d['items'][0].pop('owner_file'))),
  sem_case('naming_bad_canonical_name',mutate_yaml('10_REGISTRY/NAMING_REGISTRY.yaml',lambda d:d['items'][0].__setitem__('canonical_name','bad-name'))),
@@ -79,7 +79,7 @@ neg += [
  sem_case('blueprint_unknown_type_uid',mutate_yaml('10_REGISTRY/BLUEPRINT_REGISTRY.yaml',lambda d:d['blueprint_types'][0].__setitem__('blueprint_type_uid','BPTYPE-GOV-999'))),
  sem_case('acceptance_second_audit_logic',mutate_yaml('10_REGISTRY/GOVERNANCE_ACCEPTANCE_AUDIT_BLUEPRINT.yaml',lambda d:d.__setitem__('audit_items',[{'audit_item_uid':'SECOND-SYSTEM'}]))),
  sem_case('common_bundle_legal_wrong_ref',mutate_yaml('10_REGISTRY/CONSTRUCTION_ARTIFACT_INDEX.yaml',lambda d:d['mandatory_common_normative_bundles']['BUNDLE-GOV-COMMON-CORE'].__setitem__('section_uids',['WEB-GOV-02-S014']))),
- sem_case('lifecycle_unknown_validator_uid',mutate_yaml('10_REGISTRY/GOVERNANCE_LIFECYCLE_STAGE_REGISTRY.yaml',lambda d:d['stages'][0]['validators'].__setitem__(0,'VAL-GOV-999'))),
+ sem_case('lifecycle_unknown_validator_uid',mutate_yaml('10_REGISTRY/STAGE_EXECUTION_MASTER_PLAN.yaml',lambda d:d['stages'][0]['validators'].__setitem__(0,'VAL-GOV-999'))),
  sem_case('reference_rule_profile_drift',mutate_yaml('10_REGISTRY/REFERENCE_RULE_REGISTRY.yaml',lambda d:d['program_profile_reference_rules']['UI_COMPONENT'].__setitem__('exact_required_normative_section_uids',['WEB-GOV-01-S002']))),
 ]
 # normative doc category mutation (case 16)
@@ -105,7 +105,7 @@ for name in profiles:
     fuzz.append(sem_case('fuzz_profile_wrong_semantic_'+name,mutate_yaml('10_REGISTRY/CONSTRUCTION_ARTIFACT_INDEX.yaml',lambda d,n=name:d['program_construction_profiles'][n].__setitem__('required_normative_section_uids',['WEB-GOV-01-S002']))))
 stage_ids=[s['stage_uid'] for s in life['stages']]
 for sid in stage_ids:
-    fuzz.append(sem_case('fuzz_stage_wrong_semantic_'+sid,mutate_yaml('10_REGISTRY/GOVERNANCE_LIFECYCLE_STAGE_REGISTRY.yaml',lambda d,sid=sid:next(s for s in d['stages'] if s['stage_uid']==sid).__setitem__('required_normative_section_uids',['WEB-GOV-01-S002']))))
+    fuzz.append(sem_case('fuzz_stage_wrong_semantic_'+sid,mutate_yaml('10_REGISTRY/STAGE_EXECUTION_MASTER_PLAN.yaml',lambda d,sid=sid:next(s for s in d['stages'] if s['stage_uid']==sid).__setitem__('required_normative_section_uids',['WEB-GOV-01-S002']))))
 for i in range(1,11):
     fuzz.append(sem_case('fuzz_naming_duplicate_'+str(i),mutate_yaml('10_REGISTRY/NAMING_REGISTRY.yaml',lambda d,i=i:d['items'][i].__setitem__('canonical_name',d['items'][0]['canonical_name']))))
 for i in range(12):

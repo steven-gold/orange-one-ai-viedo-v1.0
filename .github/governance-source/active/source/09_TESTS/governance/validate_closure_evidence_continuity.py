@@ -7,7 +7,7 @@ EXPECTED_AUTHORITY_TUPLE=['gap_uid','authority_ref','disposition','authority_evi
 def load(p): return yaml.safe_load(Path(p).read_text(encoding='utf-8')) or {}
 def validate(root=ROOT):
     root=Path(root); failures=[]
-    life=load(root/'10_REGISTRY/GOVERNANCE_LIFECYCLE_STAGE_REGISTRY.yaml')
+    life=load(root/'10_REGISTRY/STAGE_EXECUTION_MASTER_PLAN.yaml')
     bp=load(root/'10_REGISTRY/GOVERNANCE_ACCEPTANCE_AUDIT_BLUEPRINT.yaml')
     s1=load(root/'10_REGISTRY/STAGE1_SOURCE_FACT_CONTRACTS.yaml')
     doc=(root/'12_DOCS/mother-spec/03_EXECUTION_CONTROL_STANDARD.md').read_text(encoding='utf-8')

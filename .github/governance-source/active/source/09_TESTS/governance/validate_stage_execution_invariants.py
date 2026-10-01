@@ -324,7 +324,7 @@ def validate(root=ROOT):
         failures.append('acceptance_blueprint_binding_missing')
     if bc.get('closed_work_unit_successor_reentry_required') is not True or bc.get('closed_work_unit_in_place_reactivation')!='BLOCK' or bc.get('successor_reentry_new_work_unit_uid_required') is not True or bc.get('successor_reentry_predecessor_terminal_receipt_required') is not True or bc.get('successor_reentry_predecessor_identity_match_required') is not True:
         failures.append('acceptance_blueprint_closed_work_unit_reentry_contract_missing')
-    life = load(root, '10_REGISTRY/GOVERNANCE_LIFECYCLE_STAGE_REGISTRY.yaml')
+    life = load(root, '10_REGISTRY/STAGE_EXECUTION_MASTER_PLAN.yaml')
     if life.get('stage_execution_invariant_ref') != 'REG-STAGE-EXECUTION-INVARIANT-001':
         failures.append('lifecycle_common_binding_missing')
     cs = (life.get('cross_stage_invariants') or {}).get('stage_execution_invariant_hardening') or {}

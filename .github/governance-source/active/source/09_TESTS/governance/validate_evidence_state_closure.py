@@ -11,7 +11,7 @@ def validate(root=ROOT):
     readme=(root/'README.md').read_text(encoding='utf-8')
     review=load_yaml(root/'10_REGISTRY/REVIEW_PROGRESS_LEDGER.yaml')
     bp=load_yaml(root/'10_REGISTRY/GOVERNANCE_ACCEPTANCE_AUDIT_BLUEPRINT.yaml')
-    stage=load_yaml(root/'10_REGISTRY/GOVERNANCE_LIFECYCLE_STAGE_REGISTRY.yaml')
+    stage=load_yaml(root/'10_REGISTRY/STAGE_EXECUTION_MASTER_PLAN.yaml')
     bdoc=(root/'12_DOCS/mother-spec/01_BLUEPRINT_DESIGN_GOVERNANCE.md').read_text(encoding='utf-8')
     idoc=(root/'12_DOCS/mother-spec/02_IMPLEMENTATION_DELIVERY_STANDARD.md').read_text(encoding='utf-8')
     edoc=(root/'12_DOCS/mother-spec/03_EXECUTION_CONTROL_STANDARD.md').read_text(encoding='utf-8')

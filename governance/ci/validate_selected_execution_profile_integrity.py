@@ -39,7 +39,7 @@ profile = load_yaml(profile_path)
 
 if manifest.get('policy_scope') != 'GOVERNED_UNIT_AND_EXECUTION_PROFILE_NEUTRAL':
     die('CURRENT_POLICY_SCOPE_NOT_PROFILE_NEUTRAL')
-if profile.get('artifact_type') != 'EXECUTION_PROFILE_REGISTRY':
+if profile.get('artifact_type') not in ('EXECUTION_PROFILE_REGISTRY','STAGE_EXECUTION_MASTER_PLAN'):
     die('SELECTED_PROFILE_REGISTRY_TYPE_INVALID')
 if profile.get('layer_classification') != 'EXECUTION_PROFILE':
     die('SELECTED_PROFILE_REGISTRY_LAYER_INVALID')

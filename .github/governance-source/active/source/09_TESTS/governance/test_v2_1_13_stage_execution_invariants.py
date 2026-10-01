@@ -130,7 +130,7 @@ closure_contract=stage_steps_doc.get('stage_closure_contract') or {}
 audit_catalog_doc=yaml.safe_load((PKG/'10_REGISTRY/AUDIT_CATALOG.yaml').read_text(encoding='utf-8')) or {}
 audit14=next((x for x in audit_catalog_doc.get('items') or [] if x.get('audit_item_uid')=='AUD-GOV-014'),{})
 root_manifest_doc=yaml.safe_load((PKG/'10_REGISTRY/GOVERNANCE_ROOT_MANIFEST.yaml').read_text(encoding='utf-8')) or {}
-life_doc=yaml.safe_load((PKG/'10_REGISTRY/GOVERNANCE_LIFECYCLE_STAGE_REGISTRY.yaml').read_text(encoding='utf-8')) or {}
+life_doc=yaml.safe_load((PKG/'10_REGISTRY/STAGE_EXECUTION_MASTER_PLAN.yaml').read_text(encoding='utf-8')) or {}
 bp_doc=yaml.safe_load((PKG/'10_REGISTRY/GOVERNANCE_ACCEPTANCE_AUDIT_BLUEPRINT.yaml').read_text(encoding='utf-8')) or {}
 required_aud14={'SUCCESSOR_STAGE_INTERNAL_TARGET_CHECKS_AT_OPERATION_BOUNDARY','CURRENT_NORMATIVE_EXECUTION_MATRIX_VALIDITY','CURRENT_STATE_EVIDENCE_TERMINAL_CONSISTENCY','AUTHORIZED_NOT_APPLICABLE_AUTHORITY','UPSTREAM_REENTRY'}
 res.append(case('audit_catalog_projects_current_cross_stage_audit_dimensions', required_aud14.issubset(set(audit14.get('coverage_extensions') or []))))

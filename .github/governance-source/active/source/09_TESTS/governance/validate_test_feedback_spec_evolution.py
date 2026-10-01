@@ -40,7 +40,7 @@ def validate(root=ROOT):
     if c.get('source_control_current_validation_before_backtrace_and_full_revalidation')!='BLOCK' or c.get('source_control_provider_is_common_semantic_dependency') is not False: failures.append('acceptance_source_control_current_validation_guard_missing')
     ghp=((c.get('source_control_adapter_profiles') or {}).get('GITHUB') or {})
     if ghp.get('canonical_current_entry_path')!='docs/governance/CURRENT_GOVERNANCE_SPEC.yaml': failures.append('acceptance_github_adapter_profile_invalid')
-    life=load(root,'10_REGISTRY/GOVERNANCE_LIFECYCLE_STAGE_REGISTRY.yaml')
+    life=load(root,'10_REGISTRY/STAGE_EXECUTION_MASTER_PLAN.yaml')
     cs=(life.get('cross_stage_invariants') or {}).get('stage_execution_invariant_hardening') or {}
     for k in ['stage_test_defect_gap_record_required','production_conformance_review_required','defect_scope_classification_required','global_shared_defect_common_layer_propagation_required','multidirection_high_pressure_before_version_change_closure_required','predecessor_backtrace_after_version_change_required','full_current_rule_revalidation_before_freeze_required','source_control_single_current_spec_authority_required']:
         if cs.get(k) is not True: failures.append('lifecycle_rule_missing:'+k)

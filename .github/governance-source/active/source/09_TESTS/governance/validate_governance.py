@@ -243,7 +243,7 @@ def preformal(root):
 def stage_exec(root,stage_uid,evidence_root):
     pre=preformal(root)
     if pre['status']!='PASS': return {'mode':'STAGE_EXECUTION_VALIDATION','status':'FAIL','reason':'preformal_definition_audit_failed','preformal':pre}
-    reg=load_yaml(root/'10_REGISTRY/GOVERNANCE_LIFECYCLE_STAGE_REGISTRY.yaml'); ids={s.get('stage_uid') for s in reg.get('stages') or []}
+    reg=load_yaml(root/'10_REGISTRY/STAGE_EXECUTION_MASTER_PLAN.yaml'); ids={s.get('stage_uid') for s in reg.get('stages') or []}
     failures=[]
     if stage_uid not in ids: failures.append('unknown_stage_uid:'+str(stage_uid))
     er=Path(evidence_root) if evidence_root else None

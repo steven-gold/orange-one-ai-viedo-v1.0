@@ -12,11 +12,11 @@ def case(name,ok,detail=None): return {'case':name,'ok':bool(ok),'detail':detail
 def mutate(name,mut):
     with tempfile.TemporaryDirectory() as td:
         rr=Path(td)/'pkg'; shutil.copytree(ROOT,rr)
-        p=rr/'10_REGISTRY/GOVERNANCE_LIFECYCLE_STAGE_REGISTRY.yaml'
+        p=rr/'10_REGISTRY/STAGE_EXECUTION_MASTER_PLAN.yaml'
         d=yaml.safe_load(p.read_text(encoding='utf-8')) or {}; mut(d)
         p.write_text(yaml.safe_dump(d,allow_unicode=True,sort_keys=False,width=180),encoding='utf-8')
         out=v.validate(rr); return case(name,out['status']=='FAIL',out)
-life=yaml.safe_load((ROOT/'10_REGISTRY/GOVERNANCE_LIFECYCLE_STAGE_REGISTRY.yaml').read_text(encoding='utf-8')) or {}
+life=yaml.safe_load((ROOT/'10_REGISTRY/STAGE_EXECUTION_MASTER_PLAN.yaml').read_text(encoding='utf-8')) or {}
 inv=((life.get('cross_stage_invariants') or {}).get('closure_evidence_continuity') or {})
 ua=inv.get('unresolved_authority_identity') or {}
 facts=set(inv.get('content_closure_required_facts') or [])

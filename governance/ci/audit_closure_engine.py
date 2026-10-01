@@ -37,6 +37,7 @@ PROFILE_PATH = DOMAINS / "AUDIT_PROFILE.yaml"
 BINDINGS_PATH = DOMAINS / "AUTHORITY_BINDINGS.yaml"
 SCHEMA_PATH = DOMAINS / "STEP_CONTRACT_SCHEMA.yaml"
 INVARIANT_PATH = SOURCE / "10_REGISTRY" / "STAGE_EXECUTION_INVARIANT_REGISTRY.yaml"
+MASTER_PLAN_PATH = SOURCE / "10_REGISTRY" / "STAGE_EXECUTION_MASTER_PLAN.yaml"
 CURRENT_POLICY_PATH = ROOT / "governance" / "specifications" / "current" / "EXECUTION_CYCLE_CONTROL.yaml"
 
 AUDIT_TARGET_UID = "GOVERNANCE_PACKAGE"
@@ -89,6 +90,7 @@ def load_context() -> dict:
     bindings = load_yaml(BINDINGS_PATH)
     schema = load_yaml(SCHEMA_PATH)
     invariant_registry = load_yaml(INVARIANT_PATH)
+    master_plan = load_yaml(MASTER_PLAN_PATH)
     current_policy = load_yaml(CURRENT_POLICY_PATH)
     current_identity = resolve_governance()
 
@@ -110,6 +112,7 @@ def load_context() -> dict:
         "validators": validators,
         "audit_types": audit_types,
         "stage_invariants": invariant_registry.get("invariants") or {},
+        "master_plan": master_plan,
         "current_policy": current_policy,
         "current_identity": current_identity,
     }
@@ -391,6 +394,69 @@ def check_dimension(dimension: str, resolved: dict, ctx: dict) -> tuple[bool, st
         step_ids = {s.get("step_uid") for s in ctx["steps"]}
         ok = any(str(uid).startswith("AU-09") for uid in step_ids)
         return ok, "successor authorization gate registered" if ok else "successor authorization gate missing"
+
+    # Neutral, page-agnostic structure dimensions derived from the authoritative
+    # STAGE_EXECUTION_MASTER_PLAN. They validate the shape of governed-unit page
+    # data (operations, outputs, evidence, gates) for every catalog item without
+    # binding to any single page or fixed content.
+    if dimension == "OUTPUT_PRODUCER_COVERAGE":
+        problems = []
+        for stage in ctx.get("master_plan", {}).get("stages") or []:
+            sid = stage.get("stage_uid")
+            outputs = list(stage.get("outputs") or [])
+            producers = stage.get("output_producers") or {}
+            operations = set(stage.get("operations") or [])
+            for output in outputs:
+                producer = producers.get(output)
+                if not producer:
+                    problems.append(f"{sid}:{output}:NO_PRODUCER")
+                elif producer not in operations:
+                    problems.append(f"{sid}:{output}:PRODUCER_NOT_AN_OPERATION")
+            for output in producers:
+                if output not in outputs:
+                    problems.append(f"{sid}:{output}:PRODUCER_WITHOUT_DECLARED_OUTPUT")
+        return (not problems), "output producer coverage complete" if not problems else "producer coverage gap:" + ",".join(problems[:8])
+
+    if dimension == "REQUIRED_EVIDENCE_DECLARATION":
+        problems = []
+        for stage in ctx.get("master_plan", {}).get("stages") or []:
+            sid = stage.get("stage_uid")
+            evidence = list(stage.get("required_evidence") or [])
+            if not evidence:
+                problems.append(f"{sid}:NO_REQUIRED_EVIDENCE")
+            elif len(evidence) != len(set(evidence)):
+                problems.append(f"{sid}:DUPLICATE_REQUIRED_EVIDENCE")
+        return (not problems), "required evidence declaration complete" if not problems else "evidence declaration gap:" + ",".join(problems[:8])
+
+    if dimension == "GATE_CHAIN_TERMINAL_CONTINUITY":
+        stages = ctx.get("master_plan", {}).get("stages") or []
+        problems = []
+        stage_uids = [s.get("stage_uid") for s in stages]
+        if len(stage_uids) != len(set(stage_uids)):
+            problems.append("DUPLICATE_STAGE_UID")
+        for index, stage in enumerate(stages):
+            sid = stage.get("stage_uid")
+            if not stage.get("entry_gate") or not stage.get("exit_gate"):
+                problems.append(f"{sid}:MISSING_GATE")
+            if index < len(stages) - 1:
+                expected_next = stages[index + 1].get("stage_uid")
+                if stage.get("next_stage_uid") != expected_next:
+                    problems.append(f"{sid}:NEXT_STAGE_NOT_CONTINUOUS:{stage.get('next_stage_uid')}")
+        return (not problems), "gate chain terminal continuity intact" if not problems else "gate chain gap:" + ",".join(problems[:8])
+
+    if dimension == "OPERATION_DECLARATION_AND_UNIQUENESS":
+        problems = []
+        for stage in ctx.get("master_plan", {}).get("stages") or []:
+            sid = stage.get("stage_uid")
+            operations = list(stage.get("operations") or [])
+            inputs = list(stage.get("inputs") or [])
+            if not operations:
+                problems.append(f"{sid}:NO_OPERATION")
+            elif len(operations) != len(set(operations)):
+                problems.append(f"{sid}:DUPLICATE_OPERATION")
+            if not inputs:
+                problems.append(f"{sid}:NO_INPUT")
+        return (not problems), "operation and input declaration complete" if not problems else "operation declaration gap:" + ",".join(problems[:8])
 
     return False, "unknown dimension"
 
