@@ -6,11 +6,10 @@ from typing import Any
 import yaml
 
 GOV_ROOT = Path(__file__).resolve().parents[2]
-LIFECYCLE = GOV_ROOT/'.github/governance-source/active/source/10_REGISTRY/GOVERNANCE_LIFECYCLE_STAGE_REGISTRY.yaml'
+LIFECYCLE = GOV_ROOT/'.github/governance-source/active/source/10_REGISTRY/STAGE_EXECUTION_MASTER_PLAN.yaml'
 INVARIANTS = GOV_ROOT/'.github/governance-source/active/source/10_REGISTRY/STAGE_EXECUTION_INVARIANT_REGISTRY.yaml'
 REFERENCE_RULES = GOV_ROOT/'.github/governance-source/active/source/10_REGISTRY/REFERENCE_RULE_REGISTRY.yaml'
 REGISTRY = GOV_ROOT/'governance/specifications/REGISTRY.yaml'
-ADAPTERS = GOV_ROOT/'governance/ci/stage_execution_semantic_adapters.yaml'
 ROOT_MANIFEST = GOV_ROOT/'.github/governance-source/active/source/10_REGISTRY/GOVERNANCE_ROOT_MANIFEST.yaml'
 ACCEPTANCE_BLUEPRINT = GOV_ROOT/'.github/governance-source/active/source/10_REGISTRY/GOVERNANCE_ACCEPTANCE_AUDIT_BLUEPRINT.yaml'
 
@@ -102,6 +101,9 @@ def stage_definition(stage_uid: str) -> dict:
     _,stages=lifecycle_stages()
     if stage_uid not in stages: fail('UNKNOWN_STAGE:'+stage_uid)
     return stages[stage_uid]
+
+def semantic_adapters() -> dict:
+    return load_yaml(LIFECYCLE).get('semantic_adapters') or {}
 
 def work_unit_context(stage_uid: str, work_unit_ref: str|None=None, root: Path|None=None):
     root=root or execution_root()

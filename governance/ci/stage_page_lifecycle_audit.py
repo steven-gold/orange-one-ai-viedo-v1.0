@@ -29,7 +29,7 @@ def audit(root_arg,governed_unit_uid,stage_work_units,final=False):
             status='MISSING_RECEIPT'; digest=''
         out.append({**row,'status':status,'upstream_evidence_ref':rref,'downstream_evidence_ref':'','step_revision':digest,'skipped':False,'skip_reason':''})
     passed=sum(1 for r in out if r['status']=='PASS'); total=len(out)
-    return {'artifact_type':'PAGE_LIFECYCLE_AUDIT' if final else 'PAGE_LIFECYCLE_AUDIT_CANDIDATE','governed_unit_uid':governed_unit_uid,'denominator_source':'.github/governance-source/active/source/10_REGISTRY/GOVERNANCE_LIFECYCLE_STAGE_REGISTRY.yaml#stages[*].operations','ordered_rows':out,'total_required_lifecycle_steps':total,'passed_required_lifecycle_steps':passed,'status':'PASS' if passed==total else 'BLOCKED','product_completion_credit':0}
+    return {'artifact_type':'PAGE_LIFECYCLE_AUDIT' if final else 'PAGE_LIFECYCLE_AUDIT_CANDIDATE','governed_unit_uid':governed_unit_uid,'denominator_source':'.github/governance-source/active/source/10_REGISTRY/STAGE_EXECUTION_MASTER_PLAN.yaml#stages[*].operations','ordered_rows':out,'total_required_lifecycle_steps':total,'passed_required_lifecycle_steps':passed,'status':'PASS' if passed==total else 'BLOCKED','product_completion_credit':0}
 
 def main():
     p=argparse.ArgumentParser(); p.add_argument('--execution-root',required=True); p.add_argument('--governed-unit',required=True); p.add_argument('--stage-work-unit',action='append',default=[]); p.add_argument('--output',required=True); p.add_argument('--final',action='store_true'); a=p.parse_args()

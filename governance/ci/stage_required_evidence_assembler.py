@@ -49,7 +49,7 @@ def assemble(stage_uid,work_ref=None,root_arg=None):
         p=outdir/(uid+'.yaml')
         atomic_yaml(p,{'artifact_type':uid,'evidence_uid':uid,'stage_uid':stage_uid,'work_unit_uid':work.get('work_unit_uid'),'governed_unit_uid':work.get('governed_unit_uid'),'governance_uid':work.get('governance_uid'),'producer_class':'COMMON_REQUIRED_EVIDENCE_ASSEMBLER','source_operation_receipts':recs,'status':'PASS','product_completion_credit':0})
         bindings.append({'evidence_uid':uid,'producer_class':'COMMON_REQUIRED_EVIDENCE_ASSEMBLER','physical_ref':str(p.relative_to(root)),'source_operations':ops,'prerequisites':[],'assembler_owner':'governance/ci/stage_required_evidence_assembler.py','status':'PASS','sha256':sha256_file(p),'authority_evidence_ref':''})
-    manifest={'artifact_type':'REQUIRED_EVIDENCE_BINDING_MANIFEST','stage_uid':stage_uid,'work_unit_uid':work.get('work_unit_uid'),'governance_uid':work.get('governance_uid'),'denominator_source':'.github/governance-source/active/source/10_REGISTRY/GOVERNANCE_LIFECYCLE_STAGE_REGISTRY.yaml#required_evidence','bindings':bindings,'required_evidence_count':len(required),'status':'PASS' if all(b['status']=='PASS' for b in bindings) else 'BLOCKED'}
+    manifest={'artifact_type':'REQUIRED_EVIDENCE_BINDING_MANIFEST','stage_uid':stage_uid,'work_unit_uid':work.get('work_unit_uid'),'governance_uid':work.get('governance_uid'),'denominator_source':'.github/governance-source/active/source/10_REGISTRY/STAGE_EXECUTION_MASTER_PLAN.yaml#stages[*].required_evidence','bindings':bindings,'required_evidence_count':len(required),'status':'PASS' if all(b['status']=='PASS' for b in bindings) else 'BLOCKED'}
     atomic_yaml(wp.parent/'REQUIRED_EVIDENCE_BINDING_MANIFEST.yaml',manifest); return manifest
 
 def main():

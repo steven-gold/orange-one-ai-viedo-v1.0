@@ -6,7 +6,7 @@ import yaml
 
 ROOT=Path(__file__).resolve().parents[2]
 CI=ROOT/'governance/ci'
-LIFE=ROOT/'.github/governance-source/active/source/10_REGISTRY/GOVERNANCE_LIFECYCLE_STAGE_REGISTRY.yaml'
+LIFE=ROOT/'.github/governance-source/active/source/10_REGISTRY/STAGE_EXECUTION_MASTER_PLAN.yaml'
 REF=ROOT/'.github/governance-source/active/source/10_REGISTRY/REFERENCE_RULE_REGISTRY.yaml'
 FILES=[
  'stage_runtime_common.py','stage_common_preflight_materializer.py','stage_required_evidence_assembler.py',

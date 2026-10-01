@@ -115,7 +115,7 @@ def _validators(root,wp,work,stage_uid,phase):
     return rows
 
 def _normalized(stage_uid,root,wp,work,state,validators,human_block=False,final=False):
-    stage=stage_definition(stage_uid); adapters=load_yaml(ADAPTERS)
+    stage=stage_definition(stage_uid); adapters=semantic_adapters()
     dims=list(map(str,((adapters.get('stages') or {}).get(stage_uid) or {}).get('scanner_dimensions') or []))
     ops=[]
     for op in map(str,stage.get('operations') or []):
