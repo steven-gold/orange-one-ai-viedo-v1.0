@@ -1,0 +1,25 @@
+schema_version: 1
+artifact_uid: GOVERNANCE-REBIND-RECONCILIATION-20261001-001
+artifact_type: GOVERNANCE_REBIND_RECONCILIATION
+status: REVALIDATION_REQUIRED
+normative_authority: false
+product_completion_credit: 0
+current_governance_selection_ref: STAGE_EXECUTION/SHARED_AUTHORITY/CURRENT_GOVERNANCE_SELECTION.yaml
+current_governance_head: 4da5164df4a668577b06630b1b254db702e0b166
+prior_execution_governance_head: f5284108ed38a60a9a89cec7d36fa0cbbddf0a69
+active_execution_context:
+  stage_uid: STAGE-04
+  work_unit_uid: WU-STAGE04-GLOBAL-HOME-SHELL-NAVIGATION-001
+  authoritative_state_ref: STAGE_EXECUTION/STAGE-04/WU-STAGE04-GLOBAL-HOME-SHELL-NAVIGATION-001/EXECUTION_STATE.yaml
+  projection_ref: STAGE_EXECUTION/STAGE-04/WU-STAGE04-GLOBAL-HOME-SHELL-NAVIGATION-001/RESUME_POINT.yaml
+  observed_authoritative_state: EXECUTION_COMPLETE_CLOSURE_PENDING
+  observed_projection_state: CLOSED
+reconciliation_rules:
+  historical_execution_artifacts_must_not_be_rewritten_to_new_governance_head: true
+  historical_governance_head_is_execution_provenance_only: true
+  next_effectful_execution_requires_current_governance_revalidation: true
+  closure_reconciliation_must_use_current_layer3_runtime: true
+  direct_manual_closed_pass_credit: FORBIDDEN
+  successor_stage_materialization_before_reconciliation: FORBIDDEN
+  current_rules_must_be_loaded_from_rebuild_v2_1_1: true
+next_required_action: REVALIDATE_ACTIVE_STAGE04_UNDER_CURRENT_GOVERNANCE_BEFORE_STAGE05
