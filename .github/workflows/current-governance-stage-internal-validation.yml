@@ -68,8 +68,11 @@ jobs:
           python governance/ci/audit_closure_engine.py --self-test
           python governance/ci/audit_closure_engine.py
 
-      - name: Gate 07 - Full high-pressure Stage regression
-        run: python governance/ci/test_stage_execution_engine.py
+      - name: Gate 07 - Three-layer runtime contract and full high-pressure Stage regression
+        run: |
+          set -euo pipefail
+          python governance/ci/validate_stage_three_layer_contract.py
+          python governance/ci/test_stage_execution_engine.py
 
       - name: Gate 08 - External admission layer isolation
         run: |

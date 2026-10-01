@@ -292,7 +292,7 @@ yaml.safe_dump({
 },(_synthetic_dir/'WORK_UNIT.yaml').open('w',encoding='utf-8'),sort_keys=False)
 yaml.safe_dump({
  'artifact_type':'WORK_UNIT_EXECUTION_STATE','stage_uid':stage_uid,'work_unit_uid':_synthetic_wu,
- 'completed_operations':list(st['operations']),'current_operation':'COMPLETE','status':'CLOSED'
+ 'completed_operations':list(st['operations']),'current_operation':'COMPLETE','status':'EXECUTION_COMPLETE_CLOSURE_PENDING'
 },(_synthetic_dir/'EXECUTION_STATE.yaml').open('w',encoding='utf-8'),sort_keys=False)
 
 # Bind the synthetic Current Ledger universe to actual physical artifacts.
@@ -769,10 +769,10 @@ with tempfile.TemporaryDirectory() as td:
         evidence={'result':'PASS','cross_stage_handoff':{'ledger_ref':rel,'external_receipt':False}}
         return predecessor,successor_uid,rel,ledger,evidence
 
-    # Every downstream handoff STAGE-04..11 must accept complete successor inputs
+    # Every downstream handoff STAGE-04..10 must accept complete successor inputs
     # and fail closed on physical/reference/readiness corruption. Successor-internal
     # runtime targets are intentionally outside the predecessor closure denominator.
-    for predecessor_uid in [f'STAGE-{i:02d}' for i in range(4,12)]:
+    for predecessor_uid in [f'STAGE-{i:02d}' for i in range(4,11)]:
         predecessor,successor_uid,rel,ledger,evidence=_write_valid_handoff(predecessor_uid)
         eng._validate_cross_stage_handoff_ledger(predecessor_uid,deepcopy(evidence),predecessor,stages)
         if ledger['successor_required_inputs']:
@@ -1047,6 +1047,7 @@ receipt.write_text(yaml.safe_dump(obj,sort_keys=False),encoding="utf-8")
           'result_owner':'SYNTHETIC_RESULT_OWNER',
           'executor_protocol':'PYTHON_STAGE_OPERATION_V1',
           'operation_receipt_ref':f'STAGE_EXECUTION/{_sid}/{_wu}/EVIDENCE/OPERATION_RECEIPTS/{_op}.yaml',
+          'governance_load_receipt_ref':f'STAGE_EXECUTION/{_sid}/{_wu}/EVIDENCE/GOVERNANCE_LOAD_RECEIPTS/{_op}.yaml',
           'synthetic_output_refs':{
             _artifact:_artifact_targets[_artifact]
             for _artifact,_producer in (_st.get('output_producers') or {}).items()
@@ -1057,6 +1058,16 @@ receipt.write_text(yaml.safe_dump(obj,sort_keys=False),encoding="utf-8")
       str(_dim):{'scanner_owner':'SYNTHETIC_SCANNER_OWNER','result_owner':'SYNTHETIC_RESULT_OWNER'}
       for _dim in (_adapters['stages'][_sid].get('scanner_dimensions') or [])
     }
+    for _op,_binding in _operation_bindings.items():
+        _glr_path=_exec_root/_binding['governance_load_receipt_ref']
+        _glr_path.parent.mkdir(parents=True,exist_ok=True)
+        _glr_path.write_text(yaml.safe_dump({
+          'artifact_type':'GOVERNANCE_LOAD_RECEIPT','stage_uid':_sid,'work_unit_uid':_wu,
+          'current_operation':_op,'governance_uid':_gov,'status':'PASS',
+          'execution_head':'1'*40,'execution_tree':'2'*40,'root_manifest_sha256':'3'*64,
+          'effective_normative_set_sha256':'4'*64,'dependency_hashes':{},
+          'timestamp':'2026-10-01T00:00:00Z','loader_identity':'SYNTHETIC_TEST_LOADER'
+        },sort_keys=False),encoding='utf-8')
 
     # Materialize the minimal synthetic entry artifacts before the re-entry pressure test.
     # The pressure test validates re-entry semantics only; the full execution fixtures are
@@ -1612,7 +1623,7 @@ def synthetic_evidence(stage_uid,result):
     gap=[{'problem_uid':f'SYNTH-{stage_uid}-BLOCKER'}] if blocked else []
     closure=[f'SYNTH-{stage_uid}-BLOCKER'] if blocked else []
     next_status='BLOCKED' if blocked else ('NEXT_GOVERNED_UNIT_READY' if stage_uid=='STAGE-11' else 'READY')
-    return {
+    evidence={
       'artifact_type':'NORMALIZED_STAGE_EXECUTION_EVIDENCE',
       'governance_uid':gov,'stage_uid':stage_uid,'attempt_uid':f'SYNTH-{stage_uid}',
       'scope_manifest_ref':f'STAGE_EXECUTION/{stage_uid}/SYNTH-WU-{stage_uid}-{result}/CURRENT_EXECUTION_SCOPE_MANIFEST.yaml',
@@ -1659,6 +1670,15 @@ def synthetic_evidence(stage_uid,result):
       'next_stage_transition':{'next_stage_uid':st['next_stage_uid'],'status':next_status},
       'result':result,'stage_exit_allowed':not blocked,
     }
+    if stage_uid=='STAGE-11':
+        evidence.pop('cross_stage_handoff',None)
+        evidence['terminal_disposition']={
+          'status':'BLOCKED' if blocked else 'PASS',
+          'next_governed_unit_eligibility_ref':'',
+          'scope_complete_or_next_governed_unit':'BLOCKED' if blocked else 'SCOPE_COMPLETE',
+          'unresolved_required_dependency_total':1 if blocked else 0,
+        }
+    return evidence
 
 _allstage_orig_execution_root=os.environ.get(eng.EXECUTION_ROOT_ENV)
 _allstage_tmp=tempfile.TemporaryDirectory()
@@ -1680,7 +1700,8 @@ def materialize_synthetic_stage_context(stage_uid,evidence,result):
     matrix_rel=f'STAGE_EXECUTION/{stage_uid}/{wu}/NORMATIVE_EXECUTION_MATRIX.yaml'
     ledger_rel=f'STAGE_EXECUTION/{stage_uid}/{wu}/CROSS_STAGE_HANDOFF_READINESS_LEDGER.yaml'
     evidence['scope_manifest_ref']=scope_rel
-    evidence['cross_stage_handoff']['ledger_ref']=ledger_rel
+    if stage_uid!='STAGE-11':
+        evidence['cross_stage_handoff']['ledger_ref']=ledger_rel
 
     governed_unit_uid=f'synthetic:{stage_uid}:{result}'
     yaml.safe_dump({
@@ -1701,7 +1722,7 @@ def materialize_synthetic_stage_context(stage_uid,evidence,result):
       'governed_unit_uid':governed_unit_uid,'governance_uid':gov,
       'completed_operations':list(st['operations']) if result=='PASS' else [],
       'current_operation':'COMPLETE' if result=='PASS' else 'BLOCKED_HANDOFF',
-      'status':'CLOSED' if result=='PASS' else 'BLOCKED'
+      'status':'EXECUTION_COMPLETE_CLOSURE_PENDING' if result=='PASS' else 'BLOCKED'
     },(wd/'EXECUTION_STATE.yaml').open('w',encoding='utf-8'),sort_keys=False)
 
     current_ledger_bindings=_write_current_ledger_bindings(
@@ -1797,6 +1818,22 @@ def materialize_synthetic_stage_context(stage_uid,evidence,result):
     },(wd/'NORMATIVE_EXECUTION_MATRIX.yaml').open('w',encoding='utf-8'),sort_keys=False)
 
     successor_uid=str(st['next_stage_uid'])
+    if stage_uid=='STAGE-11':
+        eligibility_rel=f'STAGE_EXECUTION/{stage_uid}/{wu}/OUTPUTS/NEXT_GOVERNED_UNIT_ELIGIBILITY.yaml'
+        eligibility_path=_allstage_root/eligibility_rel
+        eligibility_path.parent.mkdir(parents=True,exist_ok=True)
+        eligibility_path.write_text(yaml.safe_dump({
+          'artifact_type':'NEXT_GOVERNED_UNIT_ELIGIBILITY','stage_uid':stage_uid,
+          'work_unit_uid':wu,'governed_unit_uid':governed_unit_uid,
+          'status':'PASS' if result=='PASS' else 'BLOCKED'
+        },sort_keys=False),encoding='utf-8')
+        evidence['terminal_disposition'].update({
+          'next_governed_unit_eligibility_ref':eligibility_rel,
+          'scope_complete_or_next_governed_unit':'SCOPE_COMPLETE' if result=='PASS' else 'BLOCKED',
+          'unresolved_required_dependency_total':0 if result=='PASS' else 1,
+          'status':'PASS' if result=='PASS' else 'BLOCKED',
+        })
+        return evidence
     if successor_uid in stage_rows:
         successor_inputs=list(map(str,stage_rows[successor_uid].get('inputs') or []))
         binding_classes=list(map(str,_cross_requirements.get(successor_uid) or []))
@@ -1877,13 +1914,16 @@ for uid in expected_stage_uids:
     _validated_stage_evidence_contexts[blocked_ev['scope_manifest_ref']]=(uid,deepcopy(blocked_ev))
     all_stage_evidence_cases+=2
     bad=deepcopy(pass_ev)
-    bad['cross_stage_handoff']['consumer_readiness_complete']=False
+    if uid=='STAGE-11':
+        bad['terminal_disposition']['unresolved_required_dependency_total']=1
+    else:
+        bad['cross_stage_handoff']['consumer_readiness_complete']=False
     try:
         eng.validate_evidence_data(uid,bad)
     except eng.StageEngineError:
         all_stage_negative_cases+=1
     else:
-        raise SystemExit('FAIL_EXPECTED_ALL_STAGE_HANDOFF_BLOCK:'+uid)
+        raise SystemExit('FAIL_EXPECTED_ALL_STAGE_SUCCESSOR_OR_TERMINAL_BLOCK:'+uid)
 
 # The 22 Stage/result contexts above have already passed the complete physical
 # scope/work/state/matrix/handoff validation. The 5,544 portability cases below
@@ -1898,14 +1938,15 @@ _physical_handoff_refs=set()
 for _scope_ref,(_ctx_uid,_ctx_ev) in _validated_stage_evidence_contexts.items():
     _ctx_stage=stage_rows[_ctx_uid]
     _physical_bundle_cache[_scope_ref]=_orig_stage_state_bundle(_ctx_uid,_ctx_ev,_ctx_stage,gov)
-    _orig_cross_stage_handoff_ledger(_ctx_uid,_ctx_ev,_ctx_stage,stage_rows)
-    _physical_handoff_refs.add(str((_ctx_ev.get('cross_stage_handoff') or {}).get('ledger_ref') or ''))
+    if _ctx_uid!='STAGE-11':
+        _orig_cross_stage_handoff_ledger(_ctx_uid,_ctx_ev,_ctx_stage,stage_rows)
+        _physical_handoff_refs.add(str((_ctx_ev.get('cross_stage_handoff') or {}).get('ledger_ref') or ''))
 
-def _cached_stage_state_bundle(stage_uid,e,stage,governance_uid):
+def _cached_stage_state_bundle(stage_uid,e,stage,governance_uid,validation_phase='PRE_CLOSE_CANDIDATE'):
     _scope_ref=str(e.get('scope_manifest_ref') or '')
-    if _scope_ref in _physical_bundle_cache:
+    if _scope_ref in _physical_bundle_cache and validation_phase=='PRE_CLOSE_CANDIDATE':
         return _physical_bundle_cache[_scope_ref]
-    return _orig_stage_state_bundle(stage_uid,e,stage,governance_uid)
+    return _orig_stage_state_bundle(stage_uid,e,stage,governance_uid,validation_phase)
 
 def _cached_cross_stage_handoff_ledger(stage_uid,e,stage,stages):
     _ledger_ref=str(((e.get('cross_stage_handoff') or {}).get('ledger_ref')) or '')
@@ -2233,19 +2274,25 @@ for _uid in expected_stage_uids:
             _expect_generic_block(f'{_label}_blocked:{_uid}:{_idx}',_uid,_bad)
             _element_negative_cases += 1
 
-    # Cross-stage materialization/consumer-readiness fields must each independently block PASS.
-    for _key in (
-        'reference_resolution_complete','physical_materialization_complete',
-        'required_field_completeness_complete','denominator_reconciled','consumer_readiness_complete',
-    ):
+    # Stage-01..10 use handoff; Stage-11 uses terminal disposition.
+    if _uid=='STAGE-11':
         _bad=deepcopy(_base)
-        _bad['cross_stage_handoff'][_key]=False
-        _expect_generic_block(f'handoff_not_ready:{_uid}:{_key}',_uid,_bad)
+        _bad['terminal_disposition']['unresolved_required_dependency_total']=1
+        _expect_generic_block(f'terminal_unresolved:{_uid}',_uid,_bad)
         _element_negative_cases += 1
-    _bad=deepcopy(_base)
-    _bad['cross_stage_handoff']['unresolved_required_dependency_total']=1
-    _expect_generic_block(f'handoff_unresolved:{_uid}',_uid,_bad)
-    _element_negative_cases += 1
+    else:
+        for _key in (
+            'reference_resolution_complete','physical_materialization_complete',
+            'required_field_completeness_complete','denominator_reconciled','consumer_readiness_complete',
+        ):
+            _bad=deepcopy(_base)
+            _bad['cross_stage_handoff'][_key]=False
+            _expect_generic_block(f'handoff_not_ready:{_uid}:{_key}',_uid,_bad)
+            _element_negative_cases += 1
+        _bad=deepcopy(_base)
+        _bad['cross_stage_handoff']['unresolved_required_dependency_total']=1
+        _expect_generic_block(f'handoff_unresolved:{_uid}',_uid,_bad)
+        _element_negative_cases += 1
 
     # Every closure denominator independently blocks a false PASS.
     for _key in ('open_gap_total','closure_blocker_total','remaining_scope_total'):

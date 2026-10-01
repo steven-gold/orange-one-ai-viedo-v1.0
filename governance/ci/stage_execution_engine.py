@@ -1230,7 +1230,13 @@ def _validate_current_stage_state_bundle(stage_uid,e,stage,gov,validation_phase=
             if state_status!='CLOSED_PASS':
                 fail('CURRENT_STATE_STATUS_CONFLICT:'+state_status)
         elif validation_phase=='PRE_CLOSE_CANDIDATE':
-            if state_status!='EXECUTION_COMPLETE_CLOSURE_PENDING':
+            if e.get('result')=='PASS':
+                if state_status!='EXECUTION_COMPLETE_CLOSURE_PENDING':
+                    fail('CURRENT_STATE_STATUS_CONFLICT:'+state_status)
+            elif e.get('result')=='BLOCKED':
+                if state_status not in {'BLOCKED','EXECUTION_COMPLETE_CLOSURE_PENDING'}:
+                    fail('CURRENT_STATE_STATUS_CONFLICT:'+state_status)
+            else:
                 fail('CURRENT_STATE_STATUS_CONFLICT:'+state_status)
         else:
             fail('VALIDATION_PHASE_INVALID:'+str(validation_phase))
@@ -1609,11 +1615,14 @@ def validate_evidence_data(stage_uid,e,validation_phase='PRE_CLOSE_CANDIDATE'):
         if not isinstance(terminal.get('unresolved_required_dependency_total'),int) or terminal.get('unresolved_required_dependency_total')<0:
             fail('TERMINAL_DISPOSITION_UNRESOLVED_COUNT_INVALID')
         elig_ref=str(terminal.get('next_governed_unit_eligibility_ref') or '')
-        if elig_ref:
-            _validate_local_file_artifact(_execution_artifact_root()/Path(elig_ref),'NEXT_GOVERNED_UNIT_ELIGIBILITY')
         if e.get('result')=='PASS':
+            if not elig_ref:
+                fail('TERMINAL_DISPOSITION_ELIGIBILITY_REF_MISSING')
+            _validate_local_file_artifact(_execution_artifact_root()/Path(elig_ref),'NEXT_GOVERNED_UNIT_ELIGIBILITY')
             if terminal.get('status')!='PASS' or terminal.get('unresolved_required_dependency_total')!=0:
                 fail('PASS_WITH_TERMINAL_DISPOSITION_NOT_READY')
+        elif elig_ref:
+            _validate_local_file_artifact(_execution_artifact_root()/Path(elig_ref),'NEXT_GOVERNED_UNIT_ELIGIBILITY')
     else:
         handoff=e.get('cross_stage_handoff')
         if not isinstance(handoff,dict):
