@@ -11,9 +11,9 @@ ARTIFACTS = [
 ]
 GOVERNED_CYCLE={'CURRENT_PROBLEM_REGISTER','RESOLUTION_LEDGER'}
 
-def _matrix_rows(work_dir:Path, work:dict):
+def _matrix_rows(root:Path, work_dir:Path, work:dict):
     ref=str(work.get('normative_execution_matrix_ref') or '')
-    p=safe_ref(execution_root(),ref) if ref else work_dir/'NORMATIVE_EXECUTION_MATRIX.yaml'
+    p=safe_ref(root,ref) if ref else work_dir/'NORMATIVE_EXECUTION_MATRIX.yaml'
     m=load_yaml(p)
     rows=m.get('rows') or m.get('matrix_rows') or []
     if not isinstance(rows,list): fail('NORMATIVE_MATRIX_ROWS_INVALID')
@@ -49,7 +49,7 @@ def materialize(stage_uid:str,work_ref:str|None=None,root_arg:str|None=None):
     root=execution_root(root_arg)
     root,wp,work,sp,scope,statep,state=work_unit_context(stage_uid,work_ref,root)
     stage=stage_definition(stage_uid); outputs=set(map(str,stage.get('outputs') or []))
-    mp,matrix,rows=_matrix_rows(wp.parent,work)
+    mp,matrix,rows=_matrix_rows(root,wp.parent,work)
     resolutions=[]
     for uid in ARTIFACTS:
         path=wp.parent/(uid+'.yaml')
