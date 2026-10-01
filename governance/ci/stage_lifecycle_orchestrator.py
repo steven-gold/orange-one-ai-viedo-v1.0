@@ -117,6 +117,46 @@ def _normalized(stage_uid,root,wp,work,state,validators,human_block=False,final=
 def _human_pending(manifest):
     return any(b.get('status') in {'PENDING_HUMAN','BLOCKED'} for b in manifest.get('bindings') or [] if b.get('producer_class')=='HUMAN_GATE_EVIDENCE')
 
+def _refresh_post_close_state_binding(root,wp,statep):
+    work=load_yaml(wp)
+    bindings=work.get('current_ledger_bindings') or {}
+    row=bindings.get('EXECUTION_STATE')
+    if not isinstance(row,dict):
+        fail('CURRENT_STATE_LEDGER_BINDING_MISSING_AFTER_CLOSE')
+    ref=str(row.get('artifact_ref') or '')
+    if safe_ref(root,ref).resolve()!=statep.resolve():
+        fail('CURRENT_STATE_LEDGER_BINDING_DRIFT_AFTER_CLOSE')
+    row['content_sha256']=sha256_file(statep)
+    bindings['EXECUTION_STATE']=row
+    work['current_ledger_bindings']=bindings
+    atomic_yaml(wp,work)
+    return work
+
+def _sync_post_close_projections(root,wp,statep,stage_uid):
+    state=load_yaml(statep)
+    if state.get('status')!='CLOSED_PASS':
+        fail('POST_CLOSE_PROJECTION_SYNC_REQUIRES_CLOSED_PASS')
+    work=load_yaml(wp)
+    if 'status' in work: work['status']='CLOSED'
+    if 'current_status' in work: work['current_status']='CLOSED'
+    work['current_state_authority_ref']=str(statep.relative_to(root))
+    work['current_state_authority_sha256']=sha256_file(statep)
+    work['projection_role']='NON_AUTHORITATIVE'
+    atomic_yaml(wp,work)
+    rp=wp.parent/'RESUME_POINT.yaml'
+    if rp.is_file():
+        resume=load_yaml(rp)
+        resume['completed_operations']=list(state.get('completed_operations') or [])
+        resume['stage_exit_authorized']=True
+        resume['return_gate']='TERMINAL_CLOSURE'
+        resume['next_stage_uid']=stage_definition(stage_uid).get('next_stage_uid')
+        resume['status']='CLOSED'
+        resume['terminal_receipt_ref']=str((wp.parent/'EVIDENCE/TERMINAL_CLOSURE_RECORD.yaml').relative_to(root))
+        resume['authoritative_state_ref']=str(statep.relative_to(root))
+        resume['authoritative_state_sha256']=sha256_file(statep)
+        resume['projection_role']='NON_AUTHORITATIVE'
+        atomic_yaml(rp,resume)
+
 def _close(stage_uid,root,wp,work,statep,state,e):
     candidate=wp.parent/'EVIDENCE/NORMALIZED_STAGE_EVIDENCE_CANDIDATE.json'; atomic_json(candidate,e)
     eng=_engine(); eng.validate_evidence(stage_uid,candidate,'PRE_CLOSE_CANDIDATE')
@@ -129,12 +169,15 @@ def _close(stage_uid,root,wp,work,statep,state,e):
     atomic_yaml(cc,{'artifact_type':'CLOSURE_COMMIT_CANDIDATE','transaction_uid':'CLOSE-'+uuid.uuid4().hex,'stage_uid':stage_uid,'work_unit_uid':work.get('work_unit_uid'),'pre_close_state_sha256':prehash,'candidate_evidence_sha256':sha256_file(candidate),'target_state_sha256':sha256_obj(target),'status':'PREPARED'})
     if sha256_file(statep)!=prehash: fail('CLOSURE_CAS_STATE_DRIFT')
     atomic_yaml(statep,target)
+    work=_refresh_post_close_state_binding(root,wp,statep)
     atomic_yaml(wp.parent/'EVIDENCE/CLOSURE_TRANSACTION/CLOSURE_COMMIT_RECORD.yaml',{**load_yaml(cc),'status':'COMMITTED','committed_state_sha256':sha256_file(statep)})
     atomic_yaml(wp.parent/'EVIDENCE/TERMINAL_CLOSURE_RECORD.yaml',{'artifact_type':'TERMINAL_CLOSURE_RECORD','stage_uid':stage_uid,'work_unit_uid':work.get('work_unit_uid'),'evidence_hash':sha256_file(candidate),'execution_state_sha256':sha256_file(statep),'status':'CLOSED_PASS'})
     atomic_yaml(wp.parent/'EVIDENCE/NEXT_STAGE_TRANSITION_RECORD.yaml',{'artifact_type':'NEXT_STAGE_TRANSITION_RECORD','stage_uid':stage_uid,'work_unit_uid':work.get('work_unit_uid'),'next_stage_uid':stage_definition(stage_uid).get('next_stage_uid'),'status':'READY' if stage_uid!='STAGE-11' else 'SCOPE_COMPLETE'})
     final=_normalized(stage_uid,root,wp,work,target,e.get('validator_results') or [],final=True)
     finalp=wp.parent/'EVIDENCE/NORMALIZED_STAGE_EVIDENCE.json'; atomic_json(finalp,final)
-    eng.validate_evidence(stage_uid,finalp,'POST_CLOSE_FINAL'); return target
+    eng.validate_evidence(stage_uid,finalp,'POST_CLOSE_FINAL')
+    _sync_post_close_projections(root,wp,statep,stage_uid)
+    return target
 
 def run_stage(stage_uid,work_ref=None,root_arg=None):
     root=execution_root(root_arg); root,wp,work,sp,scope,statep,state=work_unit_context(stage_uid,work_ref,root)
