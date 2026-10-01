@@ -8,7 +8,7 @@ permissions:
   contents: write
 concurrency:
   group: current-stage01-04-rerun-0921
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 jobs:
   rerun:
