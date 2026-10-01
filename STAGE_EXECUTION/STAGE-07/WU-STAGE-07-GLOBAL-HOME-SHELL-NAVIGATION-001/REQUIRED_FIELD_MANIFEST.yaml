@@ -1,0 +1,62 @@
+artifact_type: REQUIRED_FIELD_MANIFEST
+stage_uid: STAGE-07
+work_unit_uid: WU-STAGE-07-GLOBAL-HOME-SHELL-NAVIGATION-001
+governed_unit_uid: GLOBAL-HOME-SHELL-NAVIGATION
+governance_uid: GOV-REV-20260928-WORD-DERIVED-STAGE-INTERNAL-VALIDATION
+product_completion_credit: 0
+required_fields:
+- matrix_row_uid: NEM-S07-0001
+  artifact_ref: STAGE_EXECUTION/STAGE-07/WU-STAGE-07-GLOBAL-HOME-SHELL-NAVIGATION-001/BUILD_IDENTITY_MANIFEST.yaml
+  field_path:
+  - production_build_gate_state
+  applicability: REQUIRED
+- matrix_row_uid: NEM-S07-0002
+  artifact_ref: STAGE_EXECUTION/STAGE-07/WU-STAGE-07-GLOBAL-HOME-SHELL-NAVIGATION-001/RELEASE_CANDIDATE.yaml
+  field_path:
+  - release_candidate_gate_state
+  applicability: REQUIRED
+- matrix_row_uid: NEM-S07-0003
+  artifact_ref: STAGE_EXECUTION/STAGE-07/WU-STAGE-07-GLOBAL-HOME-SHELL-NAVIGATION-001/BUILD_IDENTITY_MANIFEST.yaml
+  field_path:
+  - deployment_build_identity_state
+  applicability: REQUIRED
+- matrix_row_uid: NEM-S07-0004
+  artifact_ref: STAGE_EXECUTION/STAGE-07/WU-STAGE-07-GLOBAL-HOME-SHELL-NAVIGATION-001/EVIDENCE/BUILD_TEST_EVIDENCE.yaml
+  field_path:
+  - validation_run_freshness_state
+  applicability: REQUIRED
+- matrix_row_uid: NEM-S07-0005
+  artifact_ref: STAGE_EXECUTION/STAGE-07/WU-STAGE-07-GLOBAL-HOME-SHELL-NAVIGATION-001/EVIDENCE/BUILD_TEST_EVIDENCE.yaml
+  field_path:
+  - repository_boundary_install_safety_state
+  applicability: REQUIRED
+- matrix_row_uid: NEM-S07-0006
+  artifact_ref: STAGE_EXECUTION/STAGE-07/WU-STAGE-07-GLOBAL-HOME-SHELL-NAVIGATION-001/RELEASE_CANDIDATE.yaml
+  field_path:
+  - execution_scope_authority_state
+  applicability: REQUIRED
+- matrix_row_uid: NEM-S07-0007
+  artifact_ref: STAGE_EXECUTION/STAGE-07/WU-STAGE-07-GLOBAL-HOME-SHELL-NAVIGATION-001/RELEASE_CANDIDATE.yaml
+  field_path:
+  - dynamic_denominator_state
+  applicability: REQUIRED
+- matrix_row_uid: NEM-S07-0008
+  artifact_ref: STAGE_EXECUTION/STAGE-07/WU-STAGE-07-GLOBAL-HOME-SHELL-NAVIGATION-001/RELEASE_CANDIDATE.yaml
+  field_path:
+  - ownership_portability_audit_result
+  applicability: REQUIRED
+- matrix_row_uid: NEM-S07-0009
+  artifact_ref: STAGE_EXECUTION/STAGE-07/WU-STAGE-07-GLOBAL-HOME-SHELL-NAVIGATION-001/STAGING_APPLICABILITY_DECISION.yaml
+  field_path:
+  - successor_input_readiness_state
+  applicability: REQUIRED
+- matrix_row_uid: NEM-S07-0010
+  artifact_ref: STAGE_EXECUTION/STAGE-07/WU-STAGE-07-GLOBAL-HOME-SHELL-NAVIGATION-001/STAGING_APPLICABILITY_DECISION.yaml
+  field_path:
+  - cross_stage_handoff_state
+  applicability: REQUIRED
+- matrix_row_uid: NEM-S07-0011
+  artifact_ref: STAGE_EXECUTION/STAGE-07/WU-STAGE-07-GLOBAL-HOME-SHELL-NAVIGATION-001/STAGING_APPLICABILITY_DECISION.yaml
+  field_path:
+  - false_completion_audit_result
+  applicability: REQUIRED

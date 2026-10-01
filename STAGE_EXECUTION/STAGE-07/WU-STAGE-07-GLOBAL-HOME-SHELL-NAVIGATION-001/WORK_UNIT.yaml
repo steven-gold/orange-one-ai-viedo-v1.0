@@ -6,8 +6,8 @@ governed_unit_uid: GLOBAL-HOME-SHELL-NAVIGATION
 governed_unit_type: SYSTEM_LOGIC_UNIT
 primary_task_layer: PRODUCT_STAGE_EXECUTION
 work_unit_activation_kind: INITIAL_STAGE_WORK_UNIT
-status: OPEN
-current_status: OPEN
+status: CLOSED
+current_status: CLOSED
 governance_uid: GOV-REV-20260928-WORD-DERIVED-STAGE-INTERNAL-VALIDATION
 pre_execution_gate_status: PASS
 normative_execution_matrix_ref: STAGE_EXECUTION/STAGE-07/WU-STAGE-07-GLOBAL-HOME-SHELL-NAVIGATION-001/NORMATIVE_EXECUTION_MATRIX.yaml
@@ -149,14 +149,14 @@ current_ledger_bindings:
     ledger_class: EXECUTION_STATE
     binding_kind: LOCAL_ARTIFACT
     artifact_ref: STAGE_EXECUTION/STAGE-07/WU-STAGE-07-GLOBAL-HOME-SHELL-NAVIGATION-001/EXECUTION_STATE.yaml
-    content_sha256: e33f0e9d94437aa66b55b34ee497f669c9c6c8e9573a5708b2a14f0258cab216
+    content_sha256: fc48fe9e9884c59bd5b9f35673861c5a48add5549f822d57e4161e061872a639
     external_evidence_ref: ''
 dependencies:
 - STAGE_EXECUTION/STAGE-06/WU-STAGE06-GLOBAL-HOME-SHELL-NAVIGATION-001/VERIFIED_SOURCE_REVISION.yaml
 - STAGE_EXECUTION/STAGE-06/WU-STAGE06-GLOBAL-HOME-SHELL-NAVIGATION-001/WORK_UNIT_CLOSURE_RECORD.yaml
 governance_binding_mode: DIRECT_CURRENT_WORKLINE_RECEIPT
 current_state_authority_ref: STAGE_EXECUTION/STAGE-07/WU-STAGE-07-GLOBAL-HOME-SHELL-NAVIGATION-001/EXECUTION_STATE.yaml
-current_state_authority_sha256: e33f0e9d94437aa66b55b34ee497f669c9c6c8e9573a5708b2a14f0258cab216
+current_state_authority_sha256: fc48fe9e9884c59bd5b9f35673861c5a48add5549f822d57e4161e061872a639
 projection_role: NON_AUTHORITATIVE
 input_binding_refresh_owner: governance/ci/stage_lifecycle_orchestrator.py
 input_binding_refresh_source_ref: STAGE_EXECUTION/STAGE-06/WU-STAGE06-GLOBAL-HOME-SHELL-NAVIGATION-001/CROSS_STAGE_HANDOFF_READINESS_LEDGER.yaml

@@ -1,0 +1,57 @@
+artifact_type: REQUIRED_FIELD_MANIFEST
+stage_uid: STAGE-09
+work_unit_uid: WU-STAGE-09-GLOBAL-HOME-SHELL-NAVIGATION-001
+governed_unit_uid: GLOBAL-HOME-SHELL-NAVIGATION
+governance_uid: GOV-REV-20260928-WORD-DERIVED-STAGE-INTERNAL-VALIDATION
+product_completion_credit: 0
+required_fields:
+- matrix_row_uid: NEM-S09-0001
+  artifact_ref: STAGE_EXECUTION/STAGE-09/WU-STAGE-09-GLOBAL-HOME-SHELL-NAVIGATION-001/PRODUCTION_DEPLOYMENT_RECORD.yaml
+  field_path:
+  - production_configuration_gate_state
+  applicability: REQUIRED
+- matrix_row_uid: NEM-S09-0002
+  artifact_ref: STAGE_EXECUTION/STAGE-09/WU-STAGE-09-GLOBAL-HOME-SHELL-NAVIGATION-001/PRODUCTION_DEPLOYMENT_RECORD.yaml
+  field_path:
+  - production_migration_gate_state
+  applicability: REQUIRED
+- matrix_row_uid: NEM-S09-0003
+  artifact_ref: STAGE_EXECUTION/STAGE-09/WU-STAGE-09-GLOBAL-HOME-SHELL-NAVIGATION-001/EVIDENCE/PRODUCTION_SMOKE_EVIDENCE.yaml
+  field_path:
+  - production_smoke_state
+  applicability: REQUIRED
+- matrix_row_uid: NEM-S09-0004
+  artifact_ref: STAGE_EXECUTION/STAGE-09/WU-STAGE-09-GLOBAL-HOME-SHELL-NAVIGATION-001/CURRENT_RELEASE_IDENTITY.yaml
+  field_path:
+  - deployment_build_identity_state
+  applicability: REQUIRED
+- matrix_row_uid: NEM-S09-0005
+  artifact_ref: STAGE_EXECUTION/STAGE-09/WU-STAGE-09-GLOBAL-HOME-SHELL-NAVIGATION-001/CURRENT_RELEASE_IDENTITY.yaml
+  field_path:
+  - execution_scope_authority_state
+  applicability: REQUIRED
+- matrix_row_uid: NEM-S09-0006
+  artifact_ref: STAGE_EXECUTION/STAGE-09/WU-STAGE-09-GLOBAL-HOME-SHELL-NAVIGATION-001/CURRENT_RELEASE_IDENTITY.yaml
+  field_path:
+  - dynamic_denominator_state
+  applicability: REQUIRED
+- matrix_row_uid: NEM-S09-0007
+  artifact_ref: STAGE_EXECUTION/STAGE-09/WU-STAGE-09-GLOBAL-HOME-SHELL-NAVIGATION-001/CURRENT_RELEASE_IDENTITY.yaml
+  field_path:
+  - ownership_portability_audit_result
+  applicability: REQUIRED
+- matrix_row_uid: NEM-S09-0008
+  artifact_ref: STAGE_EXECUTION/STAGE-09/WU-STAGE-09-GLOBAL-HOME-SHELL-NAVIGATION-001/PRODUCTION_DEPLOYMENT_RECORD.yaml
+  field_path:
+  - successor_input_readiness_state
+  applicability: REQUIRED
+- matrix_row_uid: NEM-S09-0009
+  artifact_ref: STAGE_EXECUTION/STAGE-09/WU-STAGE-09-GLOBAL-HOME-SHELL-NAVIGATION-001/PRODUCTION_DEPLOYMENT_RECORD.yaml
+  field_path:
+  - cross_stage_handoff_state
+  applicability: REQUIRED
+- matrix_row_uid: NEM-S09-0010
+  artifact_ref: STAGE_EXECUTION/STAGE-09/WU-STAGE-09-GLOBAL-HOME-SHELL-NAVIGATION-001/PRODUCTION_DEPLOYMENT_RECORD.yaml
+  field_path:
+  - false_completion_audit_result
+  applicability: REQUIRED

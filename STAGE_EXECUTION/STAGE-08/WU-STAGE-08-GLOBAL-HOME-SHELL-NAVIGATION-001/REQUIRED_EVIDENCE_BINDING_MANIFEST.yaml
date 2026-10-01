@@ -1,0 +1,21 @@
+artifact_type: REQUIRED_EVIDENCE_BINDING_MANIFEST
+stage_uid: STAGE-08
+work_unit_uid: WU-STAGE-08-GLOBAL-HOME-SHELL-NAVIGATION-001
+governance_uid: GOV-REV-20260928-WORD-DERIVED-STAGE-INTERNAL-VALIDATION
+denominator_source: .github/governance-source/active/source/10_REGISTRY/STAGE_EXECUTION_MASTER_PLAN.yaml#stages[*].required_evidence
+bindings:
+- evidence_uid: STAGING_ACCEPTANCE_OR_NA_EVIDENCE
+  producer_class: COMMON_REQUIRED_EVIDENCE_ASSEMBLER
+  physical_ref: STAGE_EXECUTION/STAGE-08/WU-STAGE-08-GLOBAL-HOME-SHELL-NAVIGATION-001/EVIDENCE/REQUIRED/STAGING_ACCEPTANCE_OR_NA_EVIDENCE.yaml
+  source_operations:
+  - OP-37-STAGING_DEPLOYMENT
+  - OP-38-STAGING_ACCEPTANCE
+  - STAGING_NA_AUTHORITY_VERIFY
+  - STAGING_CLOSURE_RECONCILE
+  prerequisites: []
+  assembler_owner: governance/ci/stage_required_evidence_assembler.py
+  status: PASS
+  sha256: 1c653f907a98f46e1be47c8127149a21ab543919e8903c74680cab8e04cf87b7
+  authority_evidence_ref: ''
+required_evidence_count: 1
+status: PASS

@@ -1,0 +1,16 @@
+artifact_type: OPERATION_EXECUTION_RECEIPT
+stage_uid: STAGE-07
+work_unit_uid: WU-STAGE-07-GLOBAL-HOME-SHELL-NAVIGATION-001
+operation_uid: MIGRATION_COMPATIBILITY_VERIFY
+governance_uid: GOV-REV-20260928-WORD-DERIVED-STAGE-INTERNAL-VALIDATION
+status: PASS
+executor_owner: STAGE_EXECUTION/STAGE-07/stage07_operation_executor.py
+executor_protocol: PYTHON_STAGE_OPERATION_V1
+result_owner: STAGE_EXECUTION/STAGE-07/WU-STAGE-07-GLOBAL-HOME-SHELL-NAVIGATION-001/EVIDENCE/OPERATION_RECEIPTS/MIGRATION_COMPATIBILITY_VERIFY.yaml
+result:
+  migration_present: true
+  schema_matches_migration: true
+  tables:
+  - navigation_authority
+  - account_permission_assignment
+  - navigation_audit_event

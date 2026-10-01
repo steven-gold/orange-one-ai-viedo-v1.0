@@ -1,0 +1,72 @@
+artifact_type: REQUIRED_FIELD_MANIFEST
+stage_uid: STAGE-11
+work_unit_uid: WU-STAGE-11-GLOBAL-HOME-SHELL-NAVIGATION-001
+governed_unit_uid: GLOBAL-HOME-SHELL-NAVIGATION
+governance_uid: GOV-REV-20260928-WORD-DERIVED-STAGE-INTERNAL-VALIDATION
+product_completion_credit: 0
+required_fields:
+- matrix_row_uid: NEM-S11-0001
+  artifact_ref: STAGE_EXECUTION/STAGE-11/WU-STAGE-11-GLOBAL-HOME-SHELL-NAVIGATION-001/EVIDENCE/OPERATIONS_EVIDENCE.yaml
+  field_path:
+  - monitoring_state
+  applicability: REQUIRED
+- matrix_row_uid: NEM-S11-0002
+  artifact_ref: STAGE_EXECUTION/STAGE-11/WU-STAGE-11-GLOBAL-HOME-SHELL-NAVIGATION-001/EVIDENCE/OPERATIONS_EVIDENCE.yaml
+  field_path:
+  - backup_state
+  applicability: REQUIRED
+- matrix_row_uid: NEM-S11-0003
+  artifact_ref: STAGE_EXECUTION/STAGE-11/WU-STAGE-11-GLOBAL-HOME-SHELL-NAVIGATION-001/EVIDENCE/OPERATIONS_EVIDENCE.yaml
+  field_path:
+  - rollback_state
+  applicability: REQUIRED
+- matrix_row_uid: NEM-S11-0004
+  artifact_ref: STAGE_EXECUTION/STAGE-11/WU-STAGE-11-GLOBAL-HOME-SHELL-NAVIGATION-001/FINAL_PRODUCTION_ACCEPTANCE_RESULT.yaml
+  field_path:
+  - final_production_acceptance_state
+  applicability: REQUIRED
+- matrix_row_uid: NEM-S11-0005
+  artifact_ref: STAGE_EXECUTION/STAGE-11/WU-STAGE-11-GLOBAL-HOME-SHELL-NAVIGATION-001/FINAL_PRODUCTION_ACCEPTANCE_RESULT.yaml
+  field_path:
+  - final_acceptance_checklist_state
+  applicability: REQUIRED
+- matrix_row_uid: NEM-S11-0006
+  artifact_ref: STAGE_EXECUTION/STAGE-11/WU-STAGE-11-GLOBAL-HOME-SHELL-NAVIGATION-001/GOVERNED_UNIT_CLOSED.yaml
+  field_path:
+  - project_complete_state
+  applicability: REQUIRED
+- matrix_row_uid: NEM-S11-0007
+  artifact_ref: STAGE_EXECUTION/STAGE-11/WU-STAGE-11-GLOBAL-HOME-SHELL-NAVIGATION-001/EVIDENCE/FINAL_AUDIT_EVIDENCE.yaml
+  field_path:
+  - post_audit_remediation_state
+  applicability: REQUIRED
+- matrix_row_uid: NEM-S11-0008
+  artifact_ref: STAGE_EXECUTION/STAGE-11/WU-STAGE-11-GLOBAL-HOME-SHELL-NAVIGATION-001/GOVERNED_UNIT_CLOSED.yaml
+  field_path:
+  - execution_scope_authority_state
+  applicability: REQUIRED
+- matrix_row_uid: NEM-S11-0009
+  artifact_ref: STAGE_EXECUTION/STAGE-11/WU-STAGE-11-GLOBAL-HOME-SHELL-NAVIGATION-001/GOVERNED_UNIT_CLOSED.yaml
+  field_path:
+  - dynamic_denominator_state
+  applicability: REQUIRED
+- matrix_row_uid: NEM-S11-0010
+  artifact_ref: STAGE_EXECUTION/STAGE-11/WU-STAGE-11-GLOBAL-HOME-SHELL-NAVIGATION-001/GOVERNED_UNIT_CLOSED.yaml
+  field_path:
+  - ownership_portability_audit_result
+  applicability: REQUIRED
+- matrix_row_uid: NEM-S11-0011
+  artifact_ref: STAGE_EXECUTION/STAGE-11/WU-STAGE-11-GLOBAL-HOME-SHELL-NAVIGATION-001/NEXT_GOVERNED_UNIT_ELIGIBILITY.yaml
+  field_path:
+  - successor_input_readiness_state
+  applicability: REQUIRED
+- matrix_row_uid: NEM-S11-0012
+  artifact_ref: STAGE_EXECUTION/STAGE-11/WU-STAGE-11-GLOBAL-HOME-SHELL-NAVIGATION-001/NEXT_GOVERNED_UNIT_ELIGIBILITY.yaml
+  field_path:
+  - cross_stage_handoff_state
+  applicability: REQUIRED
+- matrix_row_uid: NEM-S11-0013
+  artifact_ref: STAGE_EXECUTION/STAGE-11/WU-STAGE-11-GLOBAL-HOME-SHELL-NAVIGATION-001/NEXT_GOVERNED_UNIT_ELIGIBILITY.yaml
+  field_path:
+  - false_completion_audit_result
+  applicability: REQUIRED

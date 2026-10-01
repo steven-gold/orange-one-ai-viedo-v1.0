@@ -1,0 +1,164 @@
+artifact_uid: NEM-STAGE-08-WU-STAGE-08-GLOBAL-HOME-SHELL-NAVIGATION-001
+artifact_type: NORMATIVE_EXECUTION_MATRIX
+governance_uid: GOV-REV-20260928-WORD-DERIVED-STAGE-INTERNAL-VALIDATION
+stage_uid: STAGE-08
+work_unit_uid: WU-STAGE-08-GLOBAL-HOME-SHELL-NAVIGATION-001
+governed_unit_uid: GLOBAL-HOME-SHELL-NAVIGATION
+matrix_contract: Normative Section -> Required Artifact -> Required Row -> Required
+  Field -> Validator -> Closure Gate
+denominator_policy: COMPLETE_APPLICABLE_NORMATIVE_ARTIFACT_ROW_FIELD_UNIVERSE
+binding_basis: PRE_EXECUTION_CURRENT_AUTHORITY_ANCHOR
+rows:
+- matrix_row_uid: NEM-S08-0001
+  normative_section_uid: WEB-GOV-02-S038
+  requirement_uid: WEB-GOV-02-S038:NORMATIVE_REQUIRED_FIELD
+  required_artifact_type: STAGING_ACCEPTANCE_OR_NA_EVIDENCE
+  artifact_ref: STAGE_EXECUTION/STAGE-08/WU-STAGE-08-GLOBAL-HOME-SHELL-NAVIGATION-001/EVIDENCE/STAGING_ACCEPTANCE_OR_NA_EVIDENCE.yaml
+  artifact_owner: GOVERNED_UNIT:GLOBAL-HOME-SHELL-NAVIGATION
+  row_denominator_source: STAGE_EXECUTION/STAGE-08/WU-STAGE-08-GLOBAL-HOME-SHELL-NAVIGATION-001/DENOMINATOR_SNAPSHOT.yaml
+  row_identity: NORMATIVE_REQUIRED_FIELD:WEB-GOV-02-S038
+  field_path:
+  - staging_acceptance_or_na_state
+  applicability: REQUIRED
+  validator_uid: VAL-GOV-028
+  validator_check_id: STAGING_CONTRACT_COMPLETE:WEB-GOV-02-S038
+  evidence_ref: STAGE_EXECUTION/STAGE-08/WU-STAGE-08-GLOBAL-HOME-SHELL-NAVIGATION-001/EVIDENCE/STAGING_ACCEPTANCE_OR_NA_EVIDENCE.yaml
+  closure_gate: STAGING_CLOSED_ACCEPTED_OR_AUTHORITY_PROVEN_NOT_APPLICABLE
+  failure_disposition: BLOCK_STAGE-08_CLOSURE_AND_REVERIFY
+  reentry_owner: STAGE-08:STAGING
+- matrix_row_uid: NEM-S08-0002
+  normative_section_uid: WEB-GOV-02-S063
+  requirement_uid: WEB-GOV-02-S063:NORMATIVE_REQUIRED_FIELD
+  required_artifact_type: STAGING_CLOSURE_RECORD
+  artifact_ref: STAGE_EXECUTION/STAGE-08/WU-STAGE-08-GLOBAL-HOME-SHELL-NAVIGATION-001/STAGING_CLOSURE_RECORD.yaml
+  artifact_owner: GOVERNED_UNIT:GLOBAL-HOME-SHELL-NAVIGATION
+  row_denominator_source: STAGE_EXECUTION/STAGE-08/WU-STAGE-08-GLOBAL-HOME-SHELL-NAVIGATION-001/DENOMINATOR_SNAPSHOT.yaml
+  row_identity: NORMATIVE_REQUIRED_FIELD:WEB-GOV-02-S063
+  field_path:
+  - deployment_applicability_coherence_state
+  applicability: REQUIRED
+  validator_uid: VAL-GOV-028
+  validator_check_id: STAGING_CONTRACT_COMPLETE:WEB-GOV-02-S063
+  evidence_ref: STAGE_EXECUTION/STAGE-08/WU-STAGE-08-GLOBAL-HOME-SHELL-NAVIGATION-001/STAGING_CLOSURE_RECORD.yaml
+  closure_gate: STAGING_CLOSED_ACCEPTED_OR_AUTHORITY_PROVEN_NOT_APPLICABLE
+  failure_disposition: BLOCK_STAGE-08_CLOSURE_AND_REVERIFY
+  reentry_owner: STAGE-08:STAGING
+- matrix_row_uid: NEM-S08-0003
+  normative_section_uid: WEB-GOV-01-S075
+  requirement_uid: WEB-GOV-01-S075:NORMATIVE_REQUIRED_FIELD
+  required_artifact_type: STAGING_CLOSURE_RECORD
+  artifact_ref: STAGE_EXECUTION/STAGE-08/WU-STAGE-08-GLOBAL-HOME-SHELL-NAVIGATION-001/STAGING_CLOSURE_RECORD.yaml
+  artifact_owner: GOVERNED_UNIT:GLOBAL-HOME-SHELL-NAVIGATION
+  row_denominator_source: STAGE_EXECUTION/STAGE-08/WU-STAGE-08-GLOBAL-HOME-SHELL-NAVIGATION-001/DENOMINATOR_SNAPSHOT.yaml
+  row_identity: NORMATIVE_REQUIRED_FIELD:WEB-GOV-01-S075
+  field_path:
+  - execution_scope_authority_state
+  applicability: REQUIRED
+  validator_uid: VAL-GOV-028
+  validator_check_id: STAGING_CONTRACT_COMPLETE:WEB-GOV-01-S075
+  evidence_ref: STAGE_EXECUTION/STAGE-08/WU-STAGE-08-GLOBAL-HOME-SHELL-NAVIGATION-001/STAGING_CLOSURE_RECORD.yaml
+  closure_gate: STAGING_CLOSED_ACCEPTED_OR_AUTHORITY_PROVEN_NOT_APPLICABLE
+  failure_disposition: BLOCK_STAGE-08_CLOSURE_AND_REVERIFY
+  reentry_owner: STAGE-08:STAGING
+- matrix_row_uid: NEM-S08-0004
+  normative_section_uid: WEB-GOV-03-S069
+  requirement_uid: WEB-GOV-03-S069:NORMATIVE_REQUIRED_FIELD
+  required_artifact_type: STAGING_CLOSURE_RECORD
+  artifact_ref: STAGE_EXECUTION/STAGE-08/WU-STAGE-08-GLOBAL-HOME-SHELL-NAVIGATION-001/STAGING_CLOSURE_RECORD.yaml
+  artifact_owner: GOVERNED_UNIT:GLOBAL-HOME-SHELL-NAVIGATION
+  row_denominator_source: STAGE_EXECUTION/STAGE-08/WU-STAGE-08-GLOBAL-HOME-SHELL-NAVIGATION-001/DENOMINATOR_SNAPSHOT.yaml
+  row_identity: NORMATIVE_REQUIRED_FIELD:WEB-GOV-03-S069
+  field_path:
+  - dynamic_denominator_state
+  applicability: REQUIRED
+  validator_uid: VAL-GOV-028
+  validator_check_id: STAGING_CONTRACT_COMPLETE:WEB-GOV-03-S069
+  evidence_ref: STAGE_EXECUTION/STAGE-08/WU-STAGE-08-GLOBAL-HOME-SHELL-NAVIGATION-001/STAGING_CLOSURE_RECORD.yaml
+  closure_gate: STAGING_CLOSED_ACCEPTED_OR_AUTHORITY_PROVEN_NOT_APPLICABLE
+  failure_disposition: BLOCK_STAGE-08_CLOSURE_AND_REVERIFY
+  reentry_owner: STAGE-08:STAGING
+- matrix_row_uid: NEM-S08-0005
+  normative_section_uid: WEB-GOV-04-S083
+  requirement_uid: WEB-GOV-04-S083:NORMATIVE_REQUIRED_FIELD
+  required_artifact_type: STAGING_CLOSURE_RECORD
+  artifact_ref: STAGE_EXECUTION/STAGE-08/WU-STAGE-08-GLOBAL-HOME-SHELL-NAVIGATION-001/STAGING_CLOSURE_RECORD.yaml
+  artifact_owner: GOVERNED_UNIT:GLOBAL-HOME-SHELL-NAVIGATION
+  row_denominator_source: STAGE_EXECUTION/STAGE-08/WU-STAGE-08-GLOBAL-HOME-SHELL-NAVIGATION-001/DENOMINATOR_SNAPSHOT.yaml
+  row_identity: NORMATIVE_REQUIRED_FIELD:WEB-GOV-04-S083
+  field_path:
+  - ownership_portability_audit_result
+  applicability: REQUIRED
+  validator_uid: VAL-GOV-028
+  validator_check_id: STAGING_CONTRACT_COMPLETE:WEB-GOV-04-S083
+  evidence_ref: STAGE_EXECUTION/STAGE-08/WU-STAGE-08-GLOBAL-HOME-SHELL-NAVIGATION-001/STAGING_CLOSURE_RECORD.yaml
+  closure_gate: STAGING_CLOSED_ACCEPTED_OR_AUTHORITY_PROVEN_NOT_APPLICABLE
+  failure_disposition: BLOCK_STAGE-08_CLOSURE_AND_REVERIFY
+  reentry_owner: STAGE-08:STAGING
+- matrix_row_uid: NEM-S08-0006
+  normative_section_uid: WEB-GOV-02-S075
+  requirement_uid: WEB-GOV-02-S075:NORMATIVE_REQUIRED_FIELD
+  required_artifact_type: STAGING_CLOSURE_RECORD
+  artifact_ref: STAGE_EXECUTION/STAGE-08/WU-STAGE-08-GLOBAL-HOME-SHELL-NAVIGATION-001/STAGING_CLOSURE_RECORD.yaml
+  artifact_owner: GOVERNED_UNIT:GLOBAL-HOME-SHELL-NAVIGATION
+  row_denominator_source: STAGE_EXECUTION/STAGE-08/WU-STAGE-08-GLOBAL-HOME-SHELL-NAVIGATION-001/DENOMINATOR_SNAPSHOT.yaml
+  row_identity: NORMATIVE_REQUIRED_FIELD:WEB-GOV-02-S075
+  field_path:
+  - successor_input_readiness_state
+  applicability: REQUIRED
+  validator_uid: VAL-GOV-028
+  validator_check_id: STAGING_CONTRACT_COMPLETE:WEB-GOV-02-S075
+  evidence_ref: STAGE_EXECUTION/STAGE-08/WU-STAGE-08-GLOBAL-HOME-SHELL-NAVIGATION-001/STAGING_CLOSURE_RECORD.yaml
+  closure_gate: STAGING_CLOSED_ACCEPTED_OR_AUTHORITY_PROVEN_NOT_APPLICABLE
+  failure_disposition: BLOCK_STAGE-08_CLOSURE_AND_REVERIFY
+  reentry_owner: STAGE-08:STAGING
+- matrix_row_uid: NEM-S08-0007
+  normative_section_uid: WEB-GOV-03-S071
+  requirement_uid: WEB-GOV-03-S071:NORMATIVE_REQUIRED_FIELD
+  required_artifact_type: STAGING_CLOSURE_RECORD
+  artifact_ref: STAGE_EXECUTION/STAGE-08/WU-STAGE-08-GLOBAL-HOME-SHELL-NAVIGATION-001/STAGING_CLOSURE_RECORD.yaml
+  artifact_owner: GOVERNED_UNIT:GLOBAL-HOME-SHELL-NAVIGATION
+  row_denominator_source: STAGE_EXECUTION/STAGE-08/WU-STAGE-08-GLOBAL-HOME-SHELL-NAVIGATION-001/DENOMINATOR_SNAPSHOT.yaml
+  row_identity: NORMATIVE_REQUIRED_FIELD:WEB-GOV-03-S071
+  field_path:
+  - cross_stage_handoff_state
+  applicability: REQUIRED
+  validator_uid: VAL-GOV-028
+  validator_check_id: STAGING_CONTRACT_COMPLETE:WEB-GOV-03-S071
+  evidence_ref: STAGE_EXECUTION/STAGE-08/WU-STAGE-08-GLOBAL-HOME-SHELL-NAVIGATION-001/STAGING_CLOSURE_RECORD.yaml
+  closure_gate: STAGING_CLOSED_ACCEPTED_OR_AUTHORITY_PROVEN_NOT_APPLICABLE
+  failure_disposition: BLOCK_STAGE-08_CLOSURE_AND_REVERIFY
+  reentry_owner: STAGE-08:STAGING
+- matrix_row_uid: NEM-S08-0008
+  normative_section_uid: WEB-GOV-04-S085
+  requirement_uid: WEB-GOV-04-S085:NORMATIVE_REQUIRED_FIELD
+  required_artifact_type: STAGING_CLOSURE_RECORD
+  artifact_ref: STAGE_EXECUTION/STAGE-08/WU-STAGE-08-GLOBAL-HOME-SHELL-NAVIGATION-001/STAGING_CLOSURE_RECORD.yaml
+  artifact_owner: GOVERNED_UNIT:GLOBAL-HOME-SHELL-NAVIGATION
+  row_denominator_source: STAGE_EXECUTION/STAGE-08/WU-STAGE-08-GLOBAL-HOME-SHELL-NAVIGATION-001/DENOMINATOR_SNAPSHOT.yaml
+  row_identity: NORMATIVE_REQUIRED_FIELD:WEB-GOV-04-S085
+  field_path:
+  - false_completion_audit_result
+  applicability: REQUIRED
+  validator_uid: VAL-GOV-028
+  validator_check_id: STAGING_CONTRACT_COMPLETE:WEB-GOV-04-S085
+  evidence_ref: STAGE_EXECUTION/STAGE-08/WU-STAGE-08-GLOBAL-HOME-SHELL-NAVIGATION-001/STAGING_CLOSURE_RECORD.yaml
+  closure_gate: STAGING_CLOSED_ACCEPTED_OR_AUTHORITY_PROVEN_NOT_APPLICABLE
+  failure_disposition: BLOCK_STAGE-08_CLOSURE_AND_REVERIFY
+  reentry_owner: STAGE-08:STAGING
+coverage:
+  required_normative_section_total: 8
+  represented_normative_section_total: 8
+  required_artifact_total: 2
+  represented_artifact_total: 2
+  required_field_total: 8
+  validator_bound_field_total: 8
+  closure_bound_field_total: 8
+  missing_required_row_count: 0
+  missing_required_field_count: 0
+  duplicate_credit_count: 0
+  summary_only_credit_count: 0
+  unclassified_applicability_count: 0
+  validator_unbound_count: 0
+  closure_unbound_count: 0
+  stale_matrix_count: 0
+status: PASS

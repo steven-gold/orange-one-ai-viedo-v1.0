@@ -1,0 +1,30 @@
+stage_uid: STAGE-11
+governance_uid: GOV-REV-20260928-WORD-DERIVED-STAGE-INTERNAL-VALIDATION
+governed_unit_type: SYSTEM_LOGIC_UNIT
+stage_role: CLOSURE_OPERATIONS
+nem_validator_uid: VAL-GOV-016
+nem_check_prefix: CLOSURE_CONTRACT_COMPLETE
+scanner_owner: STAGE11_SEMANTIC_SCANNER
+ledger_classes:
+- RUN_MANIFEST
+- ARTIFACT_PLAN
+- GOVERNANCE_CURRENT
+- BRANCH_BASELINE
+- GOVERNANCE_STAGE_LOCK
+- STAGE_EVIDENCE
+- DEPENDENCY_INDEX
+- REVERSE_DEPENDENCY_INDEX
+nem:
+- {section: WEB-GOV-02-S047, artifact_type: OPERATIONS_EVIDENCE, field_path: [monitoring_state]}
+- {section: WEB-GOV-02-S048, artifact_type: OPERATIONS_EVIDENCE, field_path: [backup_state]}
+- {section: WEB-GOV-02-S049, artifact_type: OPERATIONS_EVIDENCE, field_path: [rollback_state]}
+- {section: WEB-GOV-02-S053, artifact_type: FINAL_PRODUCTION_ACCEPTANCE_RESULT, field_path: [final_production_acceptance_state]}
+- {section: WEB-GOV-04-S055, artifact_type: FINAL_PRODUCTION_ACCEPTANCE_RESULT, field_path: [final_acceptance_checklist_state]}
+- {section: WEB-GOV-04-S056, artifact_type: GOVERNED_UNIT_CLOSED, field_path: [project_complete_state]}
+- {section: WEB-GOV-04-S057, artifact_type: FINAL_AUDIT_EVIDENCE, field_path: [post_audit_remediation_state]}
+- {section: WEB-GOV-01-S075, artifact_type: GOVERNED_UNIT_CLOSED, field_path: [execution_scope_authority_state]}
+- {section: WEB-GOV-03-S069, artifact_type: GOVERNED_UNIT_CLOSED, field_path: [dynamic_denominator_state]}
+- {section: WEB-GOV-04-S083, artifact_type: GOVERNED_UNIT_CLOSED, field_path: [ownership_portability_audit_result]}
+- {section: WEB-GOV-02-S075, artifact_type: NEXT_GOVERNED_UNIT_ELIGIBILITY, field_path: [successor_input_readiness_state]}
+- {section: WEB-GOV-03-S071, artifact_type: NEXT_GOVERNED_UNIT_ELIGIBILITY, field_path: [cross_stage_handoff_state]}
+- {section: WEB-GOV-04-S085, artifact_type: NEXT_GOVERNED_UNIT_ELIGIBILITY, field_path: [false_completion_audit_result]}

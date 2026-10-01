@@ -1,0 +1,254 @@
+{
+  "artifact_type": "NORMALIZED_STAGE_EXECUTION_EVIDENCE",
+  "governance_uid": "GOV-REV-20260928-WORD-DERIVED-STAGE-INTERNAL-VALIDATION",
+  "stage_uid": "STAGE-07",
+  "attempt_uid": "WU-STAGE-07-GLOBAL-HOME-SHELL-NAVIGATION-001-CANDIDATE",
+  "scope_manifest_ref": "STAGE_EXECUTION/STAGE-07/WU-STAGE-07-GLOBAL-HOME-SHELL-NAVIGATION-001/CURRENT_EXECUTION_SCOPE_MANIFEST.yaml",
+  "actual_stage_execution_started": true,
+  "actual_stage_execution_completed": true,
+  "fresh_execution": true,
+  "prior_results_used": false,
+  "current_specification_mutated": false,
+  "source_head_sha": "0eec5c714ec3364f2339017d3854c02d0b7a8eb6",
+  "denominator": {
+    "required_total": 5,
+    "open_gap_total": 0,
+    "closure_blocker_total": 0,
+    "remaining_scope_total": 0
+  },
+  "gaps": [],
+  "closure_blockers": [],
+  "phase_trace": [
+    {
+      "phase_uid": "SESSION_BOOTSTRAP_RESUME_GATE",
+      "status": "PASS"
+    },
+    {
+      "phase_uid": "CURRENT_GOVERNANCE",
+      "status": "PASS"
+    },
+    {
+      "phase_uid": "CURRENT_SCOPE",
+      "status": "PASS"
+    },
+    {
+      "phase_uid": "WORK_UNIT",
+      "status": "PASS"
+    },
+    {
+      "phase_uid": "AUTHORITY",
+      "status": "PASS"
+    },
+    {
+      "phase_uid": "APPLICABILITY",
+      "status": "PASS"
+    },
+    {
+      "phase_uid": "DEPENDENCY",
+      "status": "PASS"
+    },
+    {
+      "phase_uid": "REQUIRED_FIELD_MANIFEST",
+      "status": "PASS"
+    },
+    {
+      "phase_uid": "STAGE_INPUT_CONTRACT",
+      "status": "PASS"
+    },
+    {
+      "phase_uid": "STAGE_OPERATIONS",
+      "status": "PASS"
+    },
+    {
+      "phase_uid": "OUTPUT_PRODUCER",
+      "status": "PASS"
+    },
+    {
+      "phase_uid": "CURRENT_PROBLEM_REGISTER",
+      "status": "PASS"
+    },
+    {
+      "phase_uid": "DENOMINATOR_SNAPSHOT",
+      "status": "PASS"
+    },
+    {
+      "phase_uid": "CHANGE_IMPACT",
+      "status": "PASS"
+    },
+    {
+      "phase_uid": "RESOLUTION_LEDGER",
+      "status": "PASS"
+    },
+    {
+      "phase_uid": "FRESH_EXECUTION",
+      "status": "PASS"
+    },
+    {
+      "phase_uid": "STAGE_SPECIFIC_SCANNER",
+      "status": "PASS"
+    },
+    {
+      "phase_uid": "GAP_CLASSIFICATION",
+      "status": "PASS"
+    },
+    {
+      "phase_uid": "OWNER_REMEDIATION",
+      "status": "PASS"
+    },
+    {
+      "phase_uid": "FRESH_REEXECUTION",
+      "status": "PASS"
+    },
+    {
+      "phase_uid": "HIDDEN_DEFECT_SWEEP",
+      "status": "PASS"
+    },
+    {
+      "phase_uid": "REQUIRED_EVIDENCE",
+      "status": "PASS"
+    },
+    {
+      "phase_uid": "CONTENT_VALIDATION",
+      "status": "PASS"
+    },
+    {
+      "phase_uid": "TERMINAL_CLOSURE",
+      "status": "PASS"
+    },
+    {
+      "phase_uid": "STATE_CHECKPOINT",
+      "status": "PASS"
+    },
+    {
+      "phase_uid": "NEXT_STAGE",
+      "status": "PASS"
+    }
+  ],
+  "operation_results": [
+    {
+      "operation_uid": "OP-36-PRODUCTION_BUILD",
+      "status": "PASS",
+      "proof": null
+    },
+    {
+      "operation_uid": "RELEASE_CANDIDATE_COMPILE",
+      "status": "PASS",
+      "proof": null
+    },
+    {
+      "operation_uid": "MIGRATION_COMPATIBILITY_VERIFY",
+      "status": "PASS",
+      "proof": null
+    },
+    {
+      "operation_uid": "SECURITY_FRESHNESS_VERIFY",
+      "status": "PASS",
+      "proof": null
+    },
+    {
+      "operation_uid": "STAGING_APPLICABILITY_DECIDE",
+      "status": "PASS",
+      "proof": null
+    }
+  ],
+  "output_results": [
+    {
+      "output_uid": "BUILD_IDENTITY_MANIFEST",
+      "producer_operation_uid": "OP-36-PRODUCTION_BUILD",
+      "status": "PASS"
+    },
+    {
+      "output_uid": "RELEASE_CANDIDATE",
+      "producer_operation_uid": "RELEASE_CANDIDATE_COMPILE",
+      "status": "PASS"
+    },
+    {
+      "output_uid": "STAGING_APPLICABILITY_DECISION",
+      "producer_operation_uid": "STAGING_APPLICABILITY_DECIDE",
+      "status": "PASS"
+    }
+  ],
+  "scanner_results": [
+    {
+      "scanner_dimension": "BUILD_REPRODUCIBILITY",
+      "status": "PASS"
+    },
+    {
+      "scanner_dimension": "RELEASE_IDENTITY",
+      "status": "PASS"
+    },
+    {
+      "scanner_dimension": "MIGRATION_COMPATIBILITY",
+      "status": "PASS"
+    },
+    {
+      "scanner_dimension": "SECURITY_FRESHNESS",
+      "status": "PASS"
+    },
+    {
+      "scanner_dimension": "STAGING_APPLICABILITY",
+      "status": "PASS"
+    }
+  ],
+  "validator_results": [
+    {
+      "validator_uid": "VAL-GOV-022",
+      "status": "PASS",
+      "result_ref": "STAGE_EXECUTION/STAGE-07/WU-STAGE-07-GLOBAL-HOME-SHELL-NAVIGATION-001/EVIDENCE/VALIDATORS/VAL-GOV-022.yaml"
+    },
+    {
+      "validator_uid": "VAL-GOV-013",
+      "status": "PASS",
+      "result_ref": "STAGE_EXECUTION/STAGE-07/WU-STAGE-07-GLOBAL-HOME-SHELL-NAVIGATION-001/EVIDENCE/VALIDATORS/VAL-GOV-013.yaml"
+    },
+    {
+      "validator_uid": "VAL-GOV-024",
+      "status": "PASS",
+      "result_ref": "STAGE_EXECUTION/STAGE-07/WU-STAGE-07-GLOBAL-HOME-SHELL-NAVIGATION-001/EVIDENCE/VALIDATORS/VAL-GOV-024.yaml"
+    }
+  ],
+  "remediation": {
+    "discovered_gap_total": 0,
+    "remediated_gap_total": 0,
+    "unresolved_gap_total": 0,
+    "reexecution_required": false,
+    "reexecution_performed": false
+  },
+  "hidden_defect_sweep": {
+    "performed": true,
+    "result": "PASS",
+    "discovered_defect_total": 0
+  },
+  "required_evidence": [
+    {
+      "evidence_type": "BUILD_TEST_EVIDENCE",
+      "status": "PASS",
+      "ref": "STAGE_EXECUTION/STAGE-07/WU-STAGE-07-GLOBAL-HOME-SHELL-NAVIGATION-001/EVIDENCE/REQUIRED/BUILD_TEST_EVIDENCE.yaml",
+      "external_receipt": false
+    }
+  ],
+  "state_checkpoint": {
+    "performed": true,
+    "state_ref": "STAGE_EXECUTION/STAGE-07/WU-STAGE-07-GLOBAL-HOME-SHELL-NAVIGATION-001/EXECUTION_STATE.yaml"
+  },
+  "next_stage_transition": {
+    "next_stage_uid": "STAGE-08",
+    "status": "READY"
+  },
+  "result": "PASS",
+  "stage_exit_allowed": true,
+  "cross_stage_handoff": {
+    "ledger_ref": "STAGE_EXECUTION/STAGE-07/WU-STAGE-07-GLOBAL-HOME-SHELL-NAVIGATION-001/CROSS_STAGE_HANDOFF_READINESS_LEDGER.yaml",
+    "external_receipt": false,
+    "successor_stage_uid": "STAGE-08",
+    "reference_resolution_complete": true,
+    "physical_materialization_complete": true,
+    "required_field_completeness_complete": true,
+    "denominator_reconciled": true,
+    "consumer_readiness_complete": true,
+    "current_matrix_valid": true,
+    "current_state_consistent": true,
+    "unresolved_required_dependency_total": 0,
+    "status": "PASS"
+  }
+}

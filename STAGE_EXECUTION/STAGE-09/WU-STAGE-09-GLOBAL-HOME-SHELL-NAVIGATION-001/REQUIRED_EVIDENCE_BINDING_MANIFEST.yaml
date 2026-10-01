@@ -1,0 +1,22 @@
+artifact_type: REQUIRED_EVIDENCE_BINDING_MANIFEST
+stage_uid: STAGE-09
+work_unit_uid: WU-STAGE-09-GLOBAL-HOME-SHELL-NAVIGATION-001
+governance_uid: GOV-REV-20260928-WORD-DERIVED-STAGE-INTERNAL-VALIDATION
+denominator_source: .github/governance-source/active/source/10_REGISTRY/STAGE_EXECUTION_MASTER_PLAN.yaml#stages[*].required_evidence
+bindings:
+- evidence_uid: PRODUCTION_SMOKE_EVIDENCE
+  producer_class: COMMON_REQUIRED_EVIDENCE_ASSEMBLER
+  physical_ref: STAGE_EXECUTION/STAGE-09/WU-STAGE-09-GLOBAL-HOME-SHELL-NAVIGATION-001/EVIDENCE/REQUIRED/PRODUCTION_SMOKE_EVIDENCE.yaml
+  source_operations:
+  - OP-39-PRODUCTION_CONFIGURATION
+  - OP-40-PRODUCTION_MIGRATION
+  - OP-41-PRODUCTION_DEPLOYMENT
+  - OP-42-PRODUCTION_SMOKE
+  - CURRENT_RELEASE_IDENTITY_CAPTURE
+  prerequisites: []
+  assembler_owner: governance/ci/stage_required_evidence_assembler.py
+  status: PASS
+  sha256: f2c351504bed4f536c0843a171b38bfdf63116eff8877942072a645f2ba1aac3
+  authority_evidence_ref: ''
+required_evidence_count: 1
+status: PASS

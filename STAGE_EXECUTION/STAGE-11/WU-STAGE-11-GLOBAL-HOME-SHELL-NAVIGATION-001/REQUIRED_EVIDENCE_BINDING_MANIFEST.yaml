@@ -1,0 +1,38 @@
+artifact_type: REQUIRED_EVIDENCE_BINDING_MANIFEST
+stage_uid: STAGE-11
+work_unit_uid: WU-STAGE-11-GLOBAL-HOME-SHELL-NAVIGATION-001
+governance_uid: GOV-REV-20260928-WORD-DERIVED-STAGE-INTERNAL-VALIDATION
+denominator_source: .github/governance-source/active/source/10_REGISTRY/STAGE_EXECUTION_MASTER_PLAN.yaml#stages[*].required_evidence
+bindings:
+- evidence_uid: FINAL_AUDIT_EVIDENCE
+  producer_class: FINAL_AUDIT_EVIDENCE_ASSEMBLER
+  physical_ref: STAGE_EXECUTION/STAGE-11/WU-STAGE-11-GLOBAL-HOME-SHELL-NAVIGATION-001/EVIDENCE/REQUIRED/FINAL_AUDIT_EVIDENCE.yaml
+  source_operations:
+  - OP-50-MONITORING_VERIFICATION
+  - OP-51-BACKUP_VERIFICATION
+  - OP-52-ROLLBACK_VERIFICATION
+  - OP-53-FINAL_AUDIT_MATRIX_RECONCILIATION
+  - OP-54-FINAL_PRODUCTION_ACCEPTANCE
+  - GOVERNED_UNIT_CLOSURE
+  - NEXT_GOVERNED_UNIT_ELIGIBILITY_EVALUATE
+  prerequisites:
+  - PAGE_LIFECYCLE_AUDIT
+  - OPERATIONS_EVIDENCE
+  assembler_owner: governance/ci/stage_final_audit_evidence_assembler.py
+  status: PASS
+  sha256: 8218a145f51d6622995e514b82d889cae1d8450d2a8e065c7d9421280bfcff35
+  authority_evidence_ref: ''
+- evidence_uid: OPERATIONS_EVIDENCE
+  producer_class: COMMON_REQUIRED_EVIDENCE_ASSEMBLER
+  physical_ref: STAGE_EXECUTION/STAGE-11/WU-STAGE-11-GLOBAL-HOME-SHELL-NAVIGATION-001/EVIDENCE/REQUIRED/OPERATIONS_EVIDENCE.yaml
+  source_operations:
+  - OP-50-MONITORING_VERIFICATION
+  - OP-51-BACKUP_VERIFICATION
+  - OP-52-ROLLBACK_VERIFICATION
+  prerequisites: []
+  assembler_owner: governance/ci/stage_required_evidence_assembler.py
+  status: PASS
+  sha256: e19fc67933d4649e40973a85f820dce7aa50cf02cd1a92617b3a9d3226b673b5
+  authority_evidence_ref: ''
+required_evidence_count: 2
+status: PASS
