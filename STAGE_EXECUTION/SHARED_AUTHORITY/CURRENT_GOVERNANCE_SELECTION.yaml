@@ -1,0 +1,41 @@
+schema_version: 1
+artifact_uid: CURRENT-GOVERNANCE-SELECTION-20261001-001
+artifact_type: CURRENT_GOVERNANCE_SELECTION
+status: CURRENT
+authority_class: EXECUTION_CONTEXT_BINDING_ONLY
+normative_authority: false
+product_completion_credit: 0
+governance_source_of_truth:
+  repository: steven-gold/orange-one-ai-viedo-v1.0
+  branch: rebuild-v2.1.1
+  registry_ref: governance/specifications/REGISTRY.yaml
+  head_sha: 4da5164df4a668577b06630b1b254db702e0b166
+  governance_uid: GOV-REV-20260928-WORD-DERIVED-STAGE-INTERNAL-VALIDATION
+  governance_revision: v2.2.34-word-derived-stage-internal-validation-20260928
+  display_version: v2.2.34
+  specification_bundle_sha256: 13d9a54a00f8c1a8dd812dc909c12c376fdb63cb745b57e69174b534952774b3
+exact_head_validation:
+  stage_internal_validation: PASS
+  mother_neutrality: PASS
+  validated_head_sha: 4da5164df4a668577b06630b1b254db702e0b166
+execution_workline:
+  repository: steven-gold/orange-one-ai-viedo-v1.0
+  branch: 0921acpos
+selection_rules:
+  product_branch_may_define_governance_version: false
+  product_branch_may_override_governance_head: false
+  product_branch_may_materialize_governance_rules: false
+  historical_work_unit_governance_head_is_provenance_only: true
+  runtime_must_resolve_normative_rules_from_governance_workline: true
+  current_selection_is_pointer_not_rule_copy: true
+validation_evidence:
+  neutral_stage_sandbox:
+    artifact_name: ACPOS_NEUTRAL_STAGE_SANDBOX_CURRENT_20261001.zip
+    artifact_sha256: c008ad5f0ba30da6195b782aa9894f6a2ea0332bb6fe69ea5001d9c2e363af03
+    scope: COMMON_STAGE_RUNTIME_CONFORMANCE_ONLY
+    product_completion_credit: 0
+  stage_executable_standard_word:
+    artifact_name: ACPOS_STAGE_EXECUTABLE_STANDARD_REBUILD_2_1_1_THREE_LAYER_COMPLETE.docx
+    artifact_sha256: f2511abfac78dc82eefa1c87f2d315ab339e357ba5e855b86373bd52334fa981
+    binding_role: SOURCE_DOCUMENT_HASH_REFERENCE_ONLY
+    product_completion_credit: 0
