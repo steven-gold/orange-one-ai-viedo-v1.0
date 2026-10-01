@@ -24,7 +24,7 @@ EXPECTED_PHASES=[
 'STATE_CHECKPOINT','NEXT_STAGE']
 REQUIRED_PREFLIGHT={'REQUIRED_FIELD_MANIFEST','FUNCTIONAL_CHAIN_MANIFEST','EFFECTIVE_CONTRACT_OVERLAY','DEPENDENCY_TOPOLOGY','DENOMINATOR_SNAPSHOT','CLASSIFICATION_RULESET','CHANGE_IMPACT_MAP','STAGE_EXECUTION_PREFLIGHT_RECEIPT'}
 ROUTE_KEYS={'GOVERNANCE_DEFECT','AUTHORITY_GAP','EXECUTION_CONTRACT_GAP','RUNTIME_IMPLEMENTATION_GAP','EVIDENCE_STATE_GAP','EXTERNAL_AUTHORITY_GAP'}
-EVIDENCE_FIELDS={'actual_stage_execution_completed','actual_stage_execution_started','artifact_type','attempt_uid','closure_blockers','cross_stage_handoff','current_specification_mutated','denominator','fresh_execution','gaps','governance_uid','hidden_defect_sweep','next_stage_transition','operation_results','output_results','phase_trace','prior_results_used','remediation','required_evidence','result','state_checkpoint','scanner_results','scope_manifest_ref','source_head_sha','stage_exit_allowed','stage_uid','validator_results'}
+EVIDENCE_FIELDS={'actual_stage_execution_completed','actual_stage_execution_started','artifact_type','attempt_uid','closure_blockers','current_specification_mutated','denominator','fresh_execution','gaps','governance_uid','hidden_defect_sweep','next_stage_transition','operation_results','output_results','phase_trace','prior_results_used','remediation','required_evidence','result','state_checkpoint','scanner_results','scope_manifest_ref','source_head_sha','stage_exit_allowed','stage_uid','validator_results'}
 PHASE_TERMINAL_STATUSES={'PASS','BLOCKED','NOT_APPLICABLE_WITH_PROOF','NOT_EXECUTED_AFTER_BLOCK'}
 RESULT_TERMINAL_STATUSES={'PASS','BLOCKED','NOT_APPLICABLE_WITH_PROOF'}
 
@@ -612,6 +612,13 @@ def validate_work_unit_bindings(stage_uid,work,stages,adapters):
         applicability=str(binding.get(applicability_field) or '')
         if applicability not in allowed_applicability:
             fail(f'ACTIVE_WORK_UNIT_OPERATION_APPLICABILITY_INVALID:{uid}')
+        if applicability=='REQUIRED':
+            governance_receipt_ref=str(binding.get('governance_load_receipt_ref') or '')
+            if not governance_receipt_ref:
+                fail(f'ACTIVE_WORK_UNIT_GOVERNANCE_LOAD_RECEIPT_REF_MISSING:{uid}')
+            governance_receipt_path=Path(governance_receipt_ref)
+            if governance_receipt_path.is_absolute() or '..' in governance_receipt_path.parts:
+                fail(f'ACTIVE_WORK_UNIT_GOVERNANCE_LOAD_RECEIPT_REF_INVALID:{uid}')
         receipt_rel=Path(str(binding.get('operation_receipt_ref') or ''))
         if receipt_rel.is_absolute() or '..' in receipt_rel.parts:
             fail(f'ACTIVE_WORK_UNIT_OPERATION_RECEIPT_REF_PATH_INVALID:{uid}')
@@ -1183,7 +1190,7 @@ def _result_map(rows,key,label):
         out[uid]=row
     return out
 
-def _validate_current_stage_state_bundle(stage_uid,e,stage,gov):
+def _validate_current_stage_state_bundle(stage_uid,e,stage,gov,validation_phase='PRE_CLOSE_CANDIDATE'):
     scope_ref=str(e.get('scope_manifest_ref') or '')
     rp=Path(scope_ref)
     if not scope_ref or rp.is_absolute() or '..' in rp.parts:
@@ -1218,8 +1225,15 @@ def _validate_current_stage_state_bundle(stage_uid,e,stage,gov):
         completed=list(map(str,completed))
         if len(completed)!=len(expected) or set(completed)!=set(expected):
             fail('CURRENT_STATE_OPERATION_SET_CONFLICT:expected='+repr(expected)+':actual='+repr(completed))
-        if str(state.get('status') or '') not in {'CLOSED','EXECUTION_COMPLETE_CLOSURE_PENDING'}:
-            fail('CURRENT_STATE_STATUS_CONFLICT:'+str(state.get('status')))
+        state_status=str(state.get('status') or '')
+        if validation_phase=='POST_CLOSE_FINAL':
+            if state_status!='CLOSED_PASS':
+                fail('CURRENT_STATE_STATUS_CONFLICT:'+state_status)
+        elif validation_phase=='PRE_CLOSE_CANDIDATE':
+            if state_status!='EXECUTION_COMPLETE_CLOSURE_PENDING':
+                fail('CURRENT_STATE_STATUS_CONFLICT:'+state_status)
+        else:
+            fail('VALIDATION_PHASE_INVALID:'+str(validation_phase))
         current_op=str(state.get('current_operation') or '')
         if current_op in set(expected) or 'READINESS' in current_op or 'PENDING' in current_op:
             fail('CURRENT_STATE_CURRENT_OPERATION_CONFLICT:'+current_op)
@@ -1481,7 +1495,7 @@ def _validate_cross_stage_handoff_ledger(stage_uid,e,stage,stages):
             fail('CROSS_STAGE_HANDOFF_STATUS_RESULT_DRIFT:expected='+expected_status+':actual='+str(ledger.get('status')))
     return True
 
-def validate_evidence_data(stage_uid,e):
+def validate_evidence_data(stage_uid,e,validation_phase='PRE_CLOSE_CANDIDATE'):
     entry,reg,gov,profile,adapters,stages=validate_definition()
     if stage_uid not in stages: fail(f'UNKNOWN_STAGE:{stage_uid}')
     st=stages[stage_uid]; ad=adapters['stages'][stage_uid]
@@ -1491,7 +1505,7 @@ def validate_evidence_data(stage_uid,e):
     scope_ref=str(e.get('scope_manifest_ref') or '')
     if not scope_ref: fail('EVIDENCE_SCOPE_MANIFEST_REF_MISSING')
     if scope_ref.startswith('governance/test/'): fail('LEGACY_GOVERNANCE_TEST_SCOPE_REF_FORBIDDEN')
-    _scope,_work,_state,_work_dir=_validate_current_stage_state_bundle(stage_uid,e,st,gov)
+    _scope,_work,_state,_work_dir=_validate_current_stage_state_bundle(stage_uid,e,st,gov,validation_phase)
     if e.get('actual_stage_execution_started') is not True or e.get('actual_stage_execution_completed') is not True: fail('EVIDENCE_ACTUAL_EXECUTION_NOT_COMPLETE')
     if e.get('fresh_execution') is not True or e.get('prior_results_used') is not False: fail('EVIDENCE_FRESH_EXECUTION_PROVENANCE_INVALID')
     if e.get('current_specification_mutated') is not False: fail('EVIDENCE_CURRENT_SPECIFICATION_MUTATION_FORBIDDEN')
@@ -1583,29 +1597,47 @@ def validate_evidence_data(stage_uid,e):
         else:
             fail('REQUIRED_EVIDENCE_TERMINAL_DISPOSITION_INVALID:'+str(item.get('evidence_type'))+':'+status)
 
-    handoff=e.get('cross_stage_handoff')
-    if not isinstance(handoff,dict):
-        fail('CROSS_STAGE_HANDOFF_INVALID')
-    required_handoff_fields={'ledger_ref','external_receipt','successor_stage_uid','reference_resolution_complete','physical_materialization_complete','required_field_completeness_complete','denominator_reconciled','consumer_readiness_complete','current_matrix_valid','current_state_consistent','unresolved_required_dependency_total','status'}
-    if not required_handoff_fields.issubset(handoff):
-        fail('CROSS_STAGE_HANDOFF_FIELD_MISSING')
-    if handoff.get('successor_stage_uid')!=st.get('next_stage_uid'):
-        fail('CROSS_STAGE_HANDOFF_SUCCESSOR_DRIFT')
-    if handoff.get('status') not in {'PASS','BLOCKED'}:
-        fail('CROSS_STAGE_HANDOFF_STATUS_INVALID')
-    if not isinstance(handoff.get('unresolved_required_dependency_total'),int) or handoff.get('unresolved_required_dependency_total')<0:
-        fail('CROSS_STAGE_HANDOFF_UNRESOLVED_COUNT_INVALID')
-    if not handoff.get('external_receipt'):
-        ref=str(handoff.get('ledger_ref') or '')
-        if not ref or not (_execution_artifact_root()/ref).is_file():
-            fail('CROSS_STAGE_HANDOFF_LEDGER_PHYSICAL_REF_MISSING')
-    _validate_cross_stage_handoff_ledger(stage_uid,e,st,stages)
-    if e.get('result')=='PASS':
-        for key in ('reference_resolution_complete','physical_materialization_complete','required_field_completeness_complete','denominator_reconciled','consumer_readiness_complete','current_matrix_valid','current_state_consistent'):
-            if handoff.get(key) is not True:
-                fail('PASS_WITH_CROSS_STAGE_HANDOFF_NOT_READY:'+key)
-        if handoff.get('unresolved_required_dependency_total')!=0 or handoff.get('status')!='PASS':
-            fail('PASS_WITH_UNRESOLVED_CROSS_STAGE_HANDOFF')
+    if stage_uid=='STAGE-11':
+        terminal=e.get('terminal_disposition')
+        if not isinstance(terminal,dict):
+            fail('TERMINAL_DISPOSITION_INVALID')
+        required_terminal_fields={'status','next_governed_unit_eligibility_ref','scope_complete_or_next_governed_unit','unresolved_required_dependency_total'}
+        if not required_terminal_fields.issubset(terminal):
+            fail('TERMINAL_DISPOSITION_FIELD_MISSING')
+        if terminal.get('status') not in {'PASS','BLOCKED'}:
+            fail('TERMINAL_DISPOSITION_STATUS_INVALID')
+        if not isinstance(terminal.get('unresolved_required_dependency_total'),int) or terminal.get('unresolved_required_dependency_total')<0:
+            fail('TERMINAL_DISPOSITION_UNRESOLVED_COUNT_INVALID')
+        elig_ref=str(terminal.get('next_governed_unit_eligibility_ref') or '')
+        if elig_ref:
+            _validate_local_file_artifact(_execution_artifact_root()/Path(elig_ref),'NEXT_GOVERNED_UNIT_ELIGIBILITY')
+        if e.get('result')=='PASS':
+            if terminal.get('status')!='PASS' or terminal.get('unresolved_required_dependency_total')!=0:
+                fail('PASS_WITH_TERMINAL_DISPOSITION_NOT_READY')
+    else:
+        handoff=e.get('cross_stage_handoff')
+        if not isinstance(handoff,dict):
+            fail('CROSS_STAGE_HANDOFF_INVALID')
+        required_handoff_fields={'ledger_ref','external_receipt','successor_stage_uid','reference_resolution_complete','physical_materialization_complete','required_field_completeness_complete','denominator_reconciled','consumer_readiness_complete','current_matrix_valid','current_state_consistent','unresolved_required_dependency_total','status'}
+        if not required_handoff_fields.issubset(handoff):
+            fail('CROSS_STAGE_HANDOFF_FIELD_MISSING')
+        if handoff.get('successor_stage_uid')!=st.get('next_stage_uid'):
+            fail('CROSS_STAGE_HANDOFF_SUCCESSOR_DRIFT')
+        if handoff.get('status') not in {'PASS','BLOCKED'}:
+            fail('CROSS_STAGE_HANDOFF_STATUS_INVALID')
+        if not isinstance(handoff.get('unresolved_required_dependency_total'),int) or handoff.get('unresolved_required_dependency_total')<0:
+            fail('CROSS_STAGE_HANDOFF_UNRESOLVED_COUNT_INVALID')
+        if not handoff.get('external_receipt'):
+            ref=str(handoff.get('ledger_ref') or '')
+            if not ref or not (_execution_artifact_root()/ref).is_file():
+                fail('CROSS_STAGE_HANDOFF_LEDGER_PHYSICAL_REF_MISSING')
+        _validate_cross_stage_handoff_ledger(stage_uid,e,st,stages)
+        if e.get('result')=='PASS':
+            for key in ('reference_resolution_complete','physical_materialization_complete','required_field_completeness_complete','denominator_reconciled','consumer_readiness_complete','current_matrix_valid','current_state_consistent'):
+                if handoff.get(key) is not True:
+                    fail('PASS_WITH_CROSS_STAGE_HANDOFF_NOT_READY:'+key)
+            if handoff.get('unresolved_required_dependency_total')!=0 or handoff.get('status')!='PASS':
+                fail('PASS_WITH_UNRESOLVED_CROSS_STAGE_HANDOFF')
     # Generic CI/workflow exact-head receipts are not Product Stage closure authority.
     # source_head_sha remains snapshot provenance only.
     checkpoint=e.get('state_checkpoint')
@@ -1641,11 +1673,11 @@ def validate_evidence_data(stage_uid,e):
         if 'BLOCKED' not in seen: fail('BLOCKED_WITHOUT_BLOCKED_PHASE')
     return e
 
-def validate_evidence(stage_uid,path):
-    return validate_evidence_data(stage_uid,j(path))
+def validate_evidence(stage_uid,path,validation_phase='PRE_CLOSE_CANDIDATE'):
+    return validate_evidence_data(stage_uid,j(path),validation_phase)
 
-def validate_terminal(stage_uid,evidence,receipt=None):
-    e=validate_evidence(stage_uid,evidence)
+def validate_terminal(stage_uid,evidence,receipt=None,validation_phase='PRE_CLOSE_CANDIDATE'):
+    e=validate_evidence(stage_uid,evidence,validation_phase)
     if e.get('result')!='PASS':
         fail('TERMINAL_CLOSURE_REQUIRES_PASS_EVIDENCE')
 
@@ -1699,6 +1731,34 @@ def validate_terminal(stage_uid,evidence,receipt=None):
     if gov!=e.get('governance_uid'):
         fail('TERMINAL_CLOSURE_CURRENT_GOVERNANCE_DRIFT')
     print(f'PASS: content-evidence terminal closure valid for {stage_uid} governed_unit={governed_scope}')
+
+def _validate_governance_load_receipt(execution_root,ref,work,stage_uid,operation_uid,gov):
+    receipt_path=Path(str(ref or ''))
+    if not ref or receipt_path.is_absolute() or '..' in receipt_path.parts:
+        fail('GOVERNANCE_LOAD_RECEIPT_REF_INVALID:'+operation_uid)
+    full=(execution_root/receipt_path).resolve()
+    try:
+        full.relative_to(execution_root.resolve())
+    except ValueError:
+        fail('GOVERNANCE_LOAD_RECEIPT_REF_ESCAPES_ROOT:'+operation_uid)
+    receipt=_external_yaml(full,'GOVERNANCE_LOAD_RECEIPT')
+    expected={
+      'artifact_type':'GOVERNANCE_LOAD_RECEIPT',
+      'stage_uid':stage_uid,
+      'work_unit_uid':str(work.get('work_unit_uid') or ''),
+      'current_operation':operation_uid,
+      'governance_uid':gov,
+      'status':'PASS',
+    }
+    for key,val in expected.items():
+        if receipt.get(key)!=val:
+            fail('GOVERNANCE_LOAD_RECEIPT_IDENTITY_DRIFT:'+operation_uid+':'+key)
+    for key in ('execution_head','execution_tree','root_manifest_sha256','effective_normative_set_sha256','timestamp','loader_identity'):
+        if not str(receipt.get(key) or '').strip():
+            fail('GOVERNANCE_LOAD_RECEIPT_FIELD_MISSING:'+operation_uid+':'+key)
+    if not isinstance(receipt.get('dependency_hashes'),dict):
+        fail('GOVERNANCE_LOAD_RECEIPT_DEPENDENCY_HASHES_INVALID:'+operation_uid)
+    return receipt
 
 def _load_operation_receipt(path):
     _validate_local_file_artifact(path,'ACTIVE_OPERATION_RECEIPT')
@@ -1793,6 +1853,9 @@ def execute_active(stage_uid):
         fail('ACTIVE_STAGE_OPERATION_RECEIPT_OUTSIDE_WORK_UNIT:'+operation_uid)
     if receipt_path.exists():
         fail('ACTIVE_STAGE_OPERATION_RECEIPT_ALREADY_EXISTS:'+receipt_ref)
+    if applicability=='REQUIRED':
+        governance_receipt_ref=str(binding.get('governance_load_receipt_ref') or '')
+        _validate_governance_load_receipt(execution_root,governance_receipt_ref,work,stage_uid,operation_uid,gov)
     if applicability=='AUTHORIZED_NOT_APPLICABLE':
         authority_ref=str(binding.get('authority_evidence_ref') or '')
         if driver.get('authorized_not_applicable_requires_authority_evidence') is not True or not authority_ref:
@@ -1920,7 +1983,7 @@ def execute_active(stage_uid):
 def main():
     p=argparse.ArgumentParser(); g=p.add_mutually_exclusive_group(required=True)
     g.add_argument('--definition-audit-all',action='store_true'); g.add_argument('--plan',action='store_true'); g.add_argument('--plan-range',action='store_true'); g.add_argument('--admission-check',action='store_true'); g.add_argument('--validate-evidence',action='store_true'); g.add_argument('--validate-closure',action='store_true'); g.add_argument('--execute',action='store_true')
-    p.add_argument('--stage'); p.add_argument('--start-stage'); p.add_argument('--end-stage'); p.add_argument('--evidence'); p.add_argument('--receipt'); a=p.parse_args()
+    p.add_argument('--stage'); p.add_argument('--start-stage'); p.add_argument('--end-stage'); p.add_argument('--evidence'); p.add_argument('--receipt'); p.add_argument('--validation-phase',choices=['PRE_CLOSE_CANDIDATE','POST_CLOSE_FINAL'],default='PRE_CLOSE_CANDIDATE'); a=p.parse_args()
     try:
         if a.execute:
             if not a.stage: fail('STAGE_REQUIRED')
@@ -1939,11 +2002,11 @@ def main():
         if a.admission_check: admission(a.stage); return
         if a.validate_evidence:
             if not a.evidence: fail('EVIDENCE_PATH_REQUIRED')
-            validate_evidence(a.stage,ROOT/a.evidence); print(f'PASS: normalized fresh execution evidence valid for {a.stage}'); return
+            validate_evidence(a.stage,ROOT/a.evidence,a.validation_phase); print(f'PASS: normalized fresh execution evidence valid for {a.stage} phase={a.validation_phase}'); return
         if a.validate_closure:
             if not a.evidence: fail('EVIDENCE_PATH_REQUIRED')
             receipt_path=(ROOT/a.receipt) if a.receipt else None
-            validate_terminal(a.stage,ROOT/a.evidence,receipt_path); return
+            validate_terminal(a.stage,ROOT/a.evidence,receipt_path,a.validation_phase); return
     except StageEngineError as exc:
         print(f'BLOCK: {exc}',file=sys.stderr); raise SystemExit(1)
 if __name__=='__main__': main()

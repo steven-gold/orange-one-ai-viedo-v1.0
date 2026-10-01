@@ -1,0 +1,35 @@
+schema_version: 1
+artifact_type: STAGE_THREE_LAYER_ADOPTION_MANIFEST
+status: CURRENT_ADOPTION
+governance_branch: rebuild-v2.1.1
+governance_base_head: f5284108ed38a60a9a89cec7d36fa0cbbddf0a69
+source_contract: ACPOS_STAGE_EXECUTABLE_STANDARD_REBUILD_2_1_1_THREE_LAYER_COMPLETE.docx
+registered_stage_authority_mutation: FORBIDDEN
+product_completion_credit: 0
+runtime_files:
+  - path: governance/ci/stage_runtime_common.py
+    role: SHARED_ATOMIC_PARSE_HASH_IDENTITY_UTILITY
+  - path: governance/ci/stage_common_preflight_materializer.py
+    role: COMMON_PREFLIGHT_AND_GOVERNED_CYCLE_RESOLVER
+  - path: governance/ci/stage_required_evidence_assembler.py
+    role: REQUIRED_EVIDENCE_BINDING_AND_ASSEMBLY
+  - path: governance/ci/stage_declared_guard_dispatcher.py
+    role: DECLARED_STAGE_GUARD_DISPATCH
+  - path: governance/ci/stage_page_lifecycle_audit.py
+    role: PAGE_LIFECYCLE_DENOMINATOR_AND_AUDIT
+  - path: governance/ci/stage_final_audit_evidence_assembler.py
+    role: FINAL_AUDIT_EVIDENCE_ASSEMBLY
+  - path: governance/ci/stage_lifecycle_orchestrator.py
+    role: SINGLE_SHARED_LIFECYCLE_ORCHESTRATOR
+  - path: governance/ci/stage_execution_engine.py
+    role: LOWER_LEVEL_DETERMINISTIC_ENGINE_PATCH
+validation:
+  contract_validator: governance/ci/validate_stage_three_layer_contract.py
+  required:
+    - PRE_CLOSE_CANDIDATE_AND_POST_CLOSE_FINAL_SEPARATED
+    - STAGE11_TERMINAL_DISPOSITION_UNION
+    - OPERATION_SCOPED_GOVERNANCE_LOAD_RECEIPT
+    - REGISTERED_OUTPUT_FIRST_PRODUCER_PRECEDENCE
+    - HUMAN_GATE_NOT_AUTO_GENERATED
+    - SUCCESSOR_INTENT_IDEMPOTENCY
+    - NO_SECOND_PRODUCT_PRODUCER
