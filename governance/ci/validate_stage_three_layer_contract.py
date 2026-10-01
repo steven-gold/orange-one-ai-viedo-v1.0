@@ -61,6 +61,8 @@ def main():
     if '"\\\\n".join(rows)' in orch: failures.append('stage1_normative_hash_literal_backslash_newline')
     if '}\\0{' not in orch: failures.append('stage1_normative_hash_nul_separator_missing')
     if '"\\n".join(rows)' not in orch: failures.append('stage1_normative_hash_newline_separator_missing')
+    for token in ['def _sync_successor_input_bindings_from_handoff','SUCCESSOR_HANDOFF_INPUT_DENOMINATOR_DRIFT','input_binding_refresh_source_ref','_sync_successor_input_bindings_from_handoff(root,wp,swp,next_stage)']:
+        if token not in orch: failures.append('successor_handoff_refresh_contract_missing:'+token)
     for token in ['SUCCESSOR_MATERIALIZATION_INTENT','CLOSURE_COMMIT_CANDIDATE','EXTERNAL_APPROVAL_REQUIRED','WORK_UNIT_RESOLUTION_REQUIRED','governance_head']:
         if token not in orch: failures.append('orchestrator_contract_token_missing:'+token)
     if "ACPOS_CURRENT_GOVERNANCE_UID" not in engine or "ACPOS_CURRENT_GOVERNANCE_HEAD" not in engine:
