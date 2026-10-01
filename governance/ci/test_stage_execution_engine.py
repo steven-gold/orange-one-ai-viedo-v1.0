@@ -1676,7 +1676,7 @@ def synthetic_evidence(stage_uid,result):
         evidence.pop('cross_stage_handoff',None)
         evidence['terminal_disposition']={
           'status':'BLOCKED' if blocked else 'PASS',
-          'next_governed_unit_eligibility_ref':'',
+          'next_governed_unit_eligibility_ref':f'STAGE_EXECUTION/{stage_uid}/SYNTH-WU-{stage_uid}-{result}/OUTPUTS/NEXT_GOVERNED_UNIT_ELIGIBILITY.yaml',
           'scope_complete_or_next_governed_unit':'BLOCKED' if blocked else 'SCOPE_COMPLETE',
           'unresolved_required_dependency_total':1 if blocked else 0,
         }
