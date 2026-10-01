@@ -125,6 +125,43 @@ def required_file(path: Path, label: str):
     elif path.suffix.lower()=='.json': load_json(path)
     return path
 
+def registered_output_paths(root: Path, work_dir: Path, work: dict, output_uid: str) -> list[Path]:
+    """Resolve a lifecycle output to its registered physical artifact(s).
+
+    The Current Normative Execution Matrix is authoritative for product-specific
+    physical output placement. Top-level/OUTPUTS naming is only a compatibility
+    fallback when no REQUIRED matrix row binds this output identity.
+    """
+    matrix_ref=str(work.get('normative_execution_matrix_ref') or '')
+    paths=[]
+    if matrix_ref:
+        matrix_path=safe_ref(root,matrix_ref)
+        matrix=load_yaml(matrix_path)
+        rows=matrix.get('rows') or matrix.get('matrix_rows') or []
+        if not isinstance(rows,list):
+            fail('NORMATIVE_MATRIX_ROWS_INVALID')
+        refs=[]
+        for row in rows:
+            if not isinstance(row,dict): continue
+            if str(row.get('required_artifact_type') or '')!=str(output_uid): continue
+            if str(row.get('applicability') or '')!='REQUIRED': continue
+            ref=str(row.get('artifact_ref') or '').strip()
+            if not ref: fail('REGISTERED_OUTPUT_ARTIFACT_REF_MISSING:'+str(output_uid))
+            if ref not in refs: refs.append(ref)
+        for ref in refs:
+            p=safe_ref(root,ref)
+            try: p.resolve().relative_to(work_dir.resolve())
+            except ValueError: fail('REGISTERED_OUTPUT_ESCAPES_WORK_UNIT:'+str(output_uid)+':'+ref)
+            required_file(p,'OUTPUT:'+str(output_uid))
+            paths.append(p)
+        if paths:
+            return paths
+    for p in (work_dir/(str(output_uid)+'.yaml'),work_dir/'OUTPUTS'/(str(output_uid)+'.yaml')):
+        if p.is_file():
+            required_file(p,'OUTPUT:'+str(output_uid))
+            return [p]
+    fail('REGISTERED_OUTPUT_BINDING_MISSING:'+str(output_uid))
+
 def current_git_identity(root: Path) -> dict:
     import subprocess
     def run(*args):
