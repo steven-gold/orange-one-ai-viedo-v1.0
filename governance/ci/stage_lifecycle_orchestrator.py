@@ -114,10 +114,6 @@ def _validators(root,wp,work,stage_uid,phase):
             fail('VALIDATOR_FAILED:'+uid+(':'+repr((detail or [])[:12]) if detail else ''))
     return rows
 
-def _output_path(work_dir,uid):
-    a=work_dir/(uid+'.yaml'); b=work_dir/'OUTPUTS'/(uid+'.yaml')
-    return a if a.is_file() else b
-
 def _normalized(stage_uid,root,wp,work,state,validators,human_block=False,final=False):
     stage=stage_definition(stage_uid); adapters=load_yaml(ADAPTERS)
     dims=list(map(str,((adapters.get('stages') or {}).get(stage_uid) or {}).get('scanner_dimensions') or []))
@@ -127,7 +123,7 @@ def _normalized(stage_uid,root,wp,work,state,validators,human_block=False,final=
         rec=load_yaml(safe_ref(root,ref)); ops.append({'operation_uid':op,'status':rec.get('status'),'proof':rec.get('proof')})
     outs=[]
     for uid in map(str,stage.get('outputs') or []):
-        p=_output_path(wp.parent,uid); required_file(p,'OUTPUT:'+uid)
+        registered_output_paths(root,wp.parent,work,uid)
         outs.append({'output_uid':uid,'producer_operation_uid':(stage.get('output_producers') or {}).get(uid),'status':'PASS'})
     scans=[]
     for dim in dims:
@@ -149,7 +145,8 @@ def _normalized(stage_uid,root,wp,work,state,validators,human_block=False,final=
     if stage_uid=='STAGE-11':
         td=wp.parent/'EVIDENCE/TERMINAL_DISPOSITION.yaml'
         if not human_block and not td.exists():
-            elig=_output_path(wp.parent,'NEXT_GOVERNED_UNIT_ELIGIBILITY'); required_file(elig,'NEXT_GOVERNED_UNIT_ELIGIBILITY')
+            elig_paths=registered_output_paths(root,wp.parent,work,'NEXT_GOVERNED_UNIT_ELIGIBILITY')
+            elig=elig_paths[0]
             atomic_yaml(td,{'artifact_type':'TERMINAL_DISPOSITION','stage_uid':'STAGE-11','work_unit_uid':work.get('work_unit_uid'),'next_governed_unit_eligibility_ref':str(elig.relative_to(root)),'scope_complete_or_next_governed_unit':'RESOLVED','unresolved_required_dependency_total':0,'status':'PASS'})
         e['terminal_disposition']=load_yaml(td) if td.exists() else {'status':'BLOCKED'}
     else:
