@@ -54,8 +54,16 @@ if validation.get('ai_supplementation_policy')!='SAME_WORD_CONTEXT_AND_EXISTING_
     errors.append('AI_SUPPLEMENTATION_POLICY_DRIFT')
 if validation.get('generated_content_may_become_second_source_authority') is not False:
     errors.append('AI_SECOND_AUTHORITY_FORBIDDEN_FLAG_DRIFT')
-if validation.get('product_stage_execution_governance_binding')!='EXACT_CURRENT_VALIDATED_GOVERNANCE_SNAPSHOT':
+if validation.get('product_stage_execution_governance_binding')!='CURRENT_GOVERNANCE_WORKLINE_REGISTRY_ONLY':
     errors.append('PRODUCT_STAGE_CURRENT_GOVERNANCE_BINDING_DRIFT')
+if validation.get('product_execution_may_define_or_copy_governance_authority') is not False:
+    errors.append('PRODUCT_EXECUTION_GOVERNANCE_AUTHORITY_COPY_NOT_FORBIDDEN')
+if validation.get('product_execution_resolves_governance_from')!='governance/specifications/REGISTRY.yaml':
+    errors.append('PRODUCT_EXECUTION_REGISTRY_SOURCE_DRIFT')
+if validation.get('product_execution_governance_branch_source')!='governance/environment/EXECUTION_WORKLINE_BINDING.yaml':
+    errors.append('PRODUCT_EXECUTION_WORKLINE_SOURCE_DRIFT')
+if 'current_governance_selection_artifact' in validation:
+    errors.append('PRODUCT_LOCAL_GOVERNANCE_SELECTION_REINTRODUCED')
 
 expected_workflows={
     'Current Governance Stage Internal Validation':('.github/workflows/current-governance-stage-internal-validation.yml','push'),
