@@ -59,6 +59,8 @@ def main():
         if token not in orch: failures.append('orchestrator_contract_token_missing:'+token)
     if "ACPOS_CURRENT_GOVERNANCE_UID" not in engine or "ACPOS_CURRENT_GOVERNANCE_HEAD" not in engine:
         failures.append('executor_current_governance_environment_binding_missing')
+    for token in ['_STAGE1_PROJECTION_PHYSICAL_CACHE','sha256_file(raw_path)','sha256_file(work_dir/rel)']:
+        if token not in engine: failures.append('stage1_projection_cache_invalidation_binding_missing:'+token)
     result={'artifact_type':'THREE_LAYER_CONTRACT_VALIDATION','stage_count':len(stage_rows),'required_evidence_identity_count':len(evid),'declared_guard_count':len(DECLARED),'runtime_file_count':len(FILES),'failures':failures,'status':'PASS' if not failures else 'FAIL'}
     print(json.dumps(result,ensure_ascii=False,indent=2))
     raise SystemExit(0 if not failures else 1)
