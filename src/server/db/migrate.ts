@@ -2,12 +2,12 @@ import { CANONICAL_NAVIGATION_AUTHORITY } from "../domain/schema";
 import { openSqlClient, type SqlClient } from "./client";
 
 const DDL = [
-  `CREATE TABLE IF NOT EXISTS schema_migration_history (
+  `CREATE TABLE IF NOT EXISTS ghsn_schema_migration_history (
     filename TEXT PRIMARY KEY,
     applied_at TEXT NOT NULL,
     checksum TEXT NOT NULL
   )`,
-  `CREATE TABLE IF NOT EXISTS navigation_authority (
+  `CREATE TABLE IF NOT EXISTS ghsn_navigation_authority (
     navigation_uid TEXT PRIMARY KEY,
     area TEXT NOT NULL CHECK (area IN ('FRONT', 'ADMIN')),
     label_key TEXT NOT NULL,
@@ -16,12 +16,12 @@ const DDL = [
     icon TEXT NOT NULL,
     aria_label_key TEXT NOT NULL
   )`,
-  `CREATE TABLE IF NOT EXISTS account_permission_assignment (
+  `CREATE TABLE IF NOT EXISTS ghsn_account_permission_assignment (
     account_uid TEXT NOT NULL,
     navigation_uid TEXT NOT NULL,
     PRIMARY KEY (account_uid, navigation_uid)
   )`,
-  `CREATE TABLE IF NOT EXISTS navigation_audit_event (
+  `CREATE TABLE IF NOT EXISTS ghsn_navigation_audit_event (
     event_uid TEXT PRIMARY KEY,
     account_uid TEXT NOT NULL,
     area TEXT NOT NULL,
@@ -29,7 +29,7 @@ const DDL = [
     route TEXT NOT NULL,
     occurred_at TEXT NOT NULL
   )`,
-  `CREATE TABLE IF NOT EXISTS account_session (
+  `CREATE TABLE IF NOT EXISTS ghsn_account_session (
     session_uid TEXT PRIMARY KEY,
     account_uid TEXT NOT NULL,
     issued_at TEXT NOT NULL
@@ -46,7 +46,7 @@ export interface MigrationResult {
 async function seedCanonicalData(client: SqlClient): Promise<void> {
   for (const item of CANONICAL_NAVIGATION_AUTHORITY.items) {
     await client.run(
-      `INSERT INTO navigation_authority (navigation_uid, area, label_key, route, display_order, icon, aria_label_key)
+      `INSERT INTO ghsn_navigation_authority (navigation_uid, area, label_key, route, display_order, icon, aria_label_key)
        VALUES (?, ?, ?, ?, ?, ?, ?)
        ON CONFLICT (navigation_uid) DO UPDATE SET
          area = EXCLUDED.area,
@@ -63,7 +63,7 @@ async function seedCanonicalData(client: SqlClient): Promise<void> {
   const limitedGrants = ["FRONT-01", "FRONT-02"];
   for (const uid of demoGrants) {
     await client.run(
-      `INSERT INTO account_permission_assignment (account_uid, navigation_uid)
+      `INSERT INTO ghsn_account_permission_assignment (account_uid, navigation_uid)
        VALUES (?, ?)
        ON CONFLICT (account_uid, navigation_uid) DO NOTHING`,
       ["ACC-DEMO", uid],
@@ -71,7 +71,7 @@ async function seedCanonicalData(client: SqlClient): Promise<void> {
   }
   for (const uid of limitedGrants) {
     await client.run(
-      `INSERT INTO account_permission_assignment (account_uid, navigation_uid)
+      `INSERT INTO ghsn_account_permission_assignment (account_uid, navigation_uid)
        VALUES (?, ?)
        ON CONFLICT (account_uid, navigation_uid) DO NOTHING`,
       ["ACC-LIMITED", uid],
@@ -80,13 +80,13 @@ async function seedCanonicalData(client: SqlClient): Promise<void> {
 
   const now = new Date().toISOString();
   await client.run(
-    `INSERT INTO account_session (session_uid, account_uid, issued_at)
+    `INSERT INTO ghsn_account_session (session_uid, account_uid, issued_at)
      VALUES (?, ?, ?)
      ON CONFLICT (session_uid) DO UPDATE SET account_uid = EXCLUDED.account_uid`,
     ["sess-demo-001", "ACC-DEMO", now],
   );
   await client.run(
-    `INSERT INTO account_session (session_uid, account_uid, issued_at)
+    `INSERT INTO ghsn_account_session (session_uid, account_uid, issued_at)
      VALUES (?, ?, ?)
      ON CONFLICT (session_uid) DO UPDATE SET account_uid = EXCLUDED.account_uid`,
     ["sess-limited-001", "ACC-LIMITED", now],
@@ -98,7 +98,7 @@ export async function bootstrapDatabase(): Promise<MigrationResult> {
   for (const statement of DDL) {
     await client.exec(statement);
   }
-  const existing = await client.all<{ filename: string }>("SELECT filename FROM schema_migration_history");
+  const existing = await client.all<{ filename: string }>("SELECT filename FROM ghsn_schema_migration_history");
   const applied = new Set(existing.map((row) => row.filename));
   const files = ["001_init.sql", "002_sessions_and_history.sql"];
   const newlyApplied: string[] = [];
@@ -109,7 +109,7 @@ export async function bootstrapDatabase(): Promise<MigrationResult> {
       continue;
     }
     await client.run(
-      `INSERT INTO schema_migration_history (filename, applied_at, checksum)
+      `INSERT INTO ghsn_schema_migration_history (filename, applied_at, checksum)
        VALUES (?, ?, ?)
        ON CONFLICT (filename) DO NOTHING`,
       [filename, new Date().toISOString(), filename],
@@ -117,7 +117,7 @@ export async function bootstrapDatabase(): Promise<MigrationResult> {
     newlyApplied.push(filename);
   }
   await seedCanonicalData(client);
-  const countRows = await client.all<{ n: number }>("SELECT count(*)::int AS n FROM schema_migration_history");
+  const countRows = await client.all<{ n: number }>("SELECT count(*)::int AS n FROM ghsn_schema_migration_history");
   return {
     applied: newlyApplied,
     alreadyApplied,

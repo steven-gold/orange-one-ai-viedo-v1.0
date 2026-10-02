@@ -43,14 +43,14 @@ function toItem(row: AuthorityRow): CanonicalNavigationItem {
 
 export async function persistListItems(): Promise<CanonicalNavigationItem[]> {
   const rows = await getSqlClient().all<AuthorityRow>(
-    "SELECT navigation_uid, area, label_key, route, display_order, icon, aria_label_key FROM navigation_authority ORDER BY area, display_order",
+    "SELECT navigation_uid, area, label_key, route, display_order, icon, aria_label_key FROM ghsn_navigation_authority ORDER BY area, display_order",
   );
   return rows.map(toItem);
 }
 
 export async function persistGetItem(uid: string): Promise<CanonicalNavigationItem | undefined> {
   const rows = await getSqlClient().all<AuthorityRow>(
-    "SELECT navigation_uid, area, label_key, route, display_order, icon, aria_label_key FROM navigation_authority WHERE navigation_uid = ?",
+    "SELECT navigation_uid, area, label_key, route, display_order, icon, aria_label_key FROM ghsn_navigation_authority WHERE navigation_uid = ?",
     [uid],
   );
   return rows[0] ? toItem(rows[0]) : undefined;
@@ -58,7 +58,7 @@ export async function persistGetItem(uid: string): Promise<CanonicalNavigationIt
 
 export async function persistGetAssignment(accountUid: string): Promise<PermissionAssignment | undefined> {
   const rows = await getSqlClient().all<AssignmentRow>(
-    "SELECT navigation_uid FROM account_permission_assignment WHERE account_uid = ?",
+    "SELECT navigation_uid FROM ghsn_account_permission_assignment WHERE account_uid = ?",
     [accountUid],
   );
   if (rows.length === 0) return undefined;
@@ -70,7 +70,7 @@ export async function persistGetAssignment(accountUid: string): Promise<Permissi
 
 export async function persistRecordAuditEvent(event: NavigationEvent): Promise<NavigationEvent> {
   await getSqlClient().run(
-    `INSERT INTO navigation_audit_event (event_uid, account_uid, area, navigation_uid, route, occurred_at)
+    `INSERT INTO ghsn_navigation_audit_event (event_uid, account_uid, area, navigation_uid, route, occurred_at)
      VALUES (?, ?, ?, ?, ?, ?)`,
     [event.eventUid, event.accountUid, event.area, event.itemUid, event.route, event.occurredAt],
   );
@@ -79,7 +79,7 @@ export async function persistRecordAuditEvent(event: NavigationEvent): Promise<N
 
 export async function persistFindSession(sessionUid: string): Promise<SessionRow | undefined> {
   const rows = await getSqlClient().all<SessionRow>(
-    "SELECT session_uid, account_uid FROM account_session WHERE session_uid = ?",
+    "SELECT session_uid, account_uid FROM ghsn_account_session WHERE session_uid = ?",
     [sessionUid],
   );
   return rows[0];
