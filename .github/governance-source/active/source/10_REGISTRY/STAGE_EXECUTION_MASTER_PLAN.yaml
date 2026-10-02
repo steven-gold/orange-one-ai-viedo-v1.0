@@ -4,7 +4,7 @@ artifact_type: STAGE_EXECUTION_MASTER_PLAN
 status: CURRENT
 canonical_path: 10_REGISTRY/STAGE_EXECUTION_MASTER_PLAN.yaml
 owner_uid: OWNER-GOVERNANCE-STAGE-EXECUTION-MASTER-PLAN
-governance_revision: v2.2.34-word-derived-stage-internal-validation-20260928
+governance_revision: v2.2.35-frozen-design-program-field-binding-20261002
 authority_mode: AUTHORITATIVE_SINGLE_STAGE_EXECUTION_SOURCE
 may_create_new_normative_requirement: false
 derived_from:
@@ -1816,6 +1816,9 @@ stages:
   - WEB-GOV-02-S075
   - WEB-GOV-03-S071
   - WEB-GOV-04-S085
+  - WEB-GOV-02-S078
+  - WEB-GOV-03-S074
+  - WEB-GOV-04-S089
   pre_execution_gate: GOVERNANCE_LOAD_RECEIPT_PASS
   validator_names:
   - INDEXED_INCREMENTAL_VALIDATION_GUARD
@@ -1851,6 +1854,18 @@ stages:
     implement_frozen_interaction_topology_without_fragmentation: true
     preserve_context_handoff_and_identity_continuity: true
     new_surface_transition_outside_frozen_topology_reopens_design: true
+  frozen_design_program_field_binding_gate:
+    required: true
+    invariant_uid: GOV-INV-FROZEN-DESIGN-PROGRAM-FIELD-BINDING-001
+    normative_section_uids:
+    - WEB-GOV-02-S078
+    - WEB-GOV-03-S074
+    - WEB-GOV-04-S089
+    frozen_design_is_sole_implementation_authority: true
+    generic_operation_template_substitution: BLOCK
+    every_frozen_row_requires_exact_program_field_binding: true
+    count_only_implementation_diff_evidence: BLOCK
+    invented_value_without_frozen_authority: BLOCK
   canonical_execution_optimization_gate:
     required: true
     normative_section_uids:
@@ -2047,6 +2062,9 @@ stages:
     - WEB-GOV-02-S075
     - WEB-GOV-03-S071
     - WEB-GOV-04-S085
+    - WEB-GOV-02-S078
+    - WEB-GOV-03-S074
+    - WEB-GOV-04-S089
     validators:
     - VAL-GOV-003
     - VAL-GOV-010
@@ -2145,6 +2163,9 @@ stages:
   - WEB-GOV-04-S085
   - WEB-GOV-02-S076
   - WEB-GOV-04-S086
+  - WEB-GOV-02-S078
+  - WEB-GOV-03-S074
+  - WEB-GOV-04-S089
   pre_execution_gate: GOVERNANCE_LOAD_RECEIPT_PASS
   validator_names:
   - QA_ACCEPTANCE_GUARD
@@ -2179,6 +2200,17 @@ stages:
     interaction_topology_e2e_required: true
     atomic_workbench_continuity_e2e_required: true
     ai_interaction_identity_and_decision_boundary_e2e_when_applicable: true
+  frozen_design_program_field_binding_gate:
+    required: true
+    invariant_uid: GOV-INV-FROZEN-DESIGN-PROGRAM-FIELD-BINDING-001
+    normative_section_uids:
+    - WEB-GOV-02-S078
+    - WEB-GOV-03-S074
+    - WEB-GOV-04-S089
+    frozen_vs_program_semantic_diff_required: true
+    generic_template_values_remaining_in_frozen_fields: BLOCK
+    user_visible_frozen_field_computed_visual_evidence_required: true
+    screenshot_or_build_success_may_substitute_semantic_diff: false
   canonical_execution_optimization_gate:
     required: true
     normative_section_uids:
@@ -2356,6 +2388,9 @@ stages:
     - WEB-GOV-04-S085
     - WEB-GOV-02-S076
     - WEB-GOV-04-S086
+    - WEB-GOV-02-S078
+    - WEB-GOV-03-S074
+    - WEB-GOV-04-S089
     validators:
     - VAL-GOV-020
     - VAL-GOV-019
@@ -3829,6 +3864,10 @@ cross_stage_invariants:
     typography_computed_metrics_required: true
     typography_target_denominator_must_be_dynamic: true
     typography_representative_sample_completion: BLOCK
+    frozen_design_program_field_binding_required: true
+    generic_operation_template_substitution: BLOCK
+    count_only_implementation_diff_evidence: BLOCK
+    frozen_vs_program_semantic_diff_required: true
   canonical_stage_execution_optimization:
     invariant_uid: GOV-INV-CANONICAL-STAGE-EXECUTION-OPTIMIZATION-001
     normative_section_uid: WEB-GOV-03-S062

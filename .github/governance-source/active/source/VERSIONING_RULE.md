@@ -139,3 +139,12 @@ The candidate package cannot self-prove integrity. The trust-root hash set is an
 - Reusable projection consumers MUST resolve structured-document next-step identity from the canonical source contract.
 - Legacy local next-step literals are forbidden when a canonical contract field exists.
 - Positive and negative regression fixtures MUST consume the same canonical sequence.
+
+## v2.2.35 frozen-design to program-field binding rule
+- v2.2.34 remains the immutable predecessor evidence baseline; v2.2.35 is a successor governance hardening revision.
+- A generic operation template, scaffold, or starter program MUST NOT replace Frozen Design as implementation authority.
+- Every Frozen Design row that declares a program-observable value MUST bind to an exact program field before Stage-05 closure.
+- Stage-05 and Stage-06 MUST fail-closed on template substitution, omitted Frozen rows, invented values, and missing Frozen-vs-program semantic diff.
+- File presence, artifact count, or template-copy identity MUST NOT satisfy implementation or verification completion.
+- User-visible Frozen geometry, theme, navigation, i18n, and control identity require program-field coverage and computed visual evidence.
+- This defect class can recur in every implementation/verification Stage and is repaired at the common invariant layer.

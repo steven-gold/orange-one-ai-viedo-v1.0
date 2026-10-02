@@ -85,3 +85,6 @@ The page-neutral Word/DOCX projection contract now has a materialized regression
 
 ## v2.2.22 Word projection next-step consumer sync hardening
 The DOCX projection validator now resolves the structured-document raw-capture next step from the canonical Stage-01 source contract instead of retaining a legacy literal. Producer, validator and regression fixture therefore share one owner.
+
+## v2.2.35 Frozen Design to program field binding hardening
+This successor closes the reproduced Stage-05/06 defect in which a generic operation template was copied as the implemented program while Frozen Design values were omitted. Frozen Design remains the sole implementation authority. Template substitution, omitted Frozen-row bindings, invented values, and count-only IMPLEMENTATION_DIFF evidence are blocking. Stage-06 must produce Frozen Design versus program semantic diff, including user-visible computed visual evidence. The rule is repaired at the common invariant layer for every affected Stage.

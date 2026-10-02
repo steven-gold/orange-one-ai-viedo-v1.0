@@ -5,7 +5,7 @@ artifact_type: SECTION_NUMBER_REGISTRY
 status: CURRENT
 canonical_path: 10_REGISTRY/SECTION_NUMBER_REGISTRY.yaml
 owner_uid: OWNER-GOVERNANCE-SECTION-REGISTRY
-governance_revision: v2.2.34-word-derived-stage-internal-validation-20260928
+governance_revision: v2.2.35-frozen-design-program-field-binding-20261002
 policy:
   unique_numeric_h2_per_document: true
   section_uid_is_canonical_reference: true
@@ -1393,6 +1393,13 @@ documents:
     heading: '## 77. Pre-Execution Source Projection Admission and Immutable Pair Consumption / 前置來源投影准入與雙鎖消費'
     path: 12_DOCS/mother-spec/02_IMPLEMENTATION_DELIVERY_STANDARD.md
     binding_sha256: a62701a6677ab5773229b225f93821ea4c661f4cc515ab06e882b28c1f90c229
+  - section_uid: WEB-GOV-02-S078
+    level: 2
+    canonical_number: '78'
+    title: Frozen Design to Program Field Binding / Frozen Design 到程式欄位綁定
+    heading: '## 78. Frozen Design to Program Field Binding / Frozen Design 到程式欄位綁定'
+    path: 12_DOCS/mother-spec/02_IMPLEMENTATION_DELIVERY_STANDARD.md
+    binding_sha256: baa2e6b552229b9df2b2bdd18670bcf4e1c1fe1a23aab4881e3ffb30351a4d12
 - document_id: WEB-GOV-03
   path: 12_DOCS/mother-spec/03_EXECUTION_CONTROL_STANDARD.md
   sections:
@@ -2020,6 +2027,13 @@ documents:
     heading: '### 73.8 Source Control 與 CI 的正確角色'
     path: 12_DOCS/mother-spec/03_EXECUTION_CONTROL_STANDARD.md
     binding_sha256: a6a72a9cca478b0622598b6e386c25bcb33571b6d93c142e1eab6243a4b63e2b
+  - section_uid: WEB-GOV-03-S074
+    level: 2
+    canonical_number: '74'
+    title: Template Substitution Block / 模板替代封鎖
+    heading: '## 74. Template Substitution Block / 模板替代封鎖'
+    path: 12_DOCS/mother-spec/03_EXECUTION_CONTROL_STANDARD.md
+    binding_sha256: 51c0b867d9a9bc340556edd41ebd6d0e6280aa3e8703ec61100f83a33032bbcd
 - document_id: WEB-GOV-04
   path: 12_DOCS/mother-spec/04_AUDIT_PROGRESS_STANDARD.md
   sections:
@@ -2752,6 +2766,13 @@ documents:
     heading: '### 88.5 Orchestrator 稽核'
     path: 12_DOCS/mother-spec/04_AUDIT_PROGRESS_STANDARD.md
     binding_sha256: 9af1085f66536aba2138be7e330900c431325e2ca51e65c98f49d5e6c531e1e2
+  - section_uid: WEB-GOV-04-S089
+    level: 2
+    canonical_number: '89'
+    title: Frozen Design vs Program Semantic Diff Audit / Frozen Design 與程式語意差異稽核
+    heading: '## 89. Frozen Design vs Program Semantic Diff Audit / Frozen Design 與程式語意差異稽核'
+    path: 12_DOCS/mother-spec/04_AUDIT_PROGRESS_STANDARD.md
+    binding_sha256: a73987b1239ec1485e354acc6bec8d25e0335750abc3de3588a88b9bbc9769c9
 - document_id: WEB-EXT-ADMISSION-01
   path: 12_DOCS/external-admission/PRODUCT_EXECUTION_ENVIRONMENT_ADMISSION_STANDARD.md
   sections:

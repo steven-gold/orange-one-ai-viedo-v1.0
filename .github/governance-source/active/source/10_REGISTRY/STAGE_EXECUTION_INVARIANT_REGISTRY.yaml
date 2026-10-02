@@ -4,7 +4,7 @@ artifact_type: STAGE_EXECUTION_INVARIANT_REGISTRY
 status: CURRENT_CANDIDATE
 canonical_path: 10_REGISTRY/STAGE_EXECUTION_INVARIANT_REGISTRY.yaml
 owner_uid: OWNER-GOVERNANCE-STAGE-EXECUTION-INVARIANT
-governance_revision: v2.2.34-word-derived-stage-internal-validation-20260928
+governance_revision: v2.2.35-frozen-design-program-field-binding-20261002
 scope:
   applies_to_stages:
   - STAGE-01
@@ -1377,6 +1377,46 @@ invariants:
     unaffected_evidence_preservation_requires_reverse_dependency_proof: true
     execution_stage_credit_from_governance_validation: 0
 
+  FROZEN_DESIGN_PROGRAM_FIELD_BINDING:
+    invariant_uid: GOV-INV-FROZEN-DESIGN-PROGRAM-FIELD-BINDING-001
+    normative_section_uids:
+    - WEB-GOV-02-S078
+    - WEB-GOV-03-S074
+    - WEB-GOV-04-S089
+    applies_to_stages:
+    - STAGE-05
+    - STAGE-06
+    frozen_design_is_sole_implementation_authority: true
+    generic_operation_template_may_replace_frozen_design: false
+    scaffold_or_starter_program_completion_credit: 0
+    template_copy_identity_completion_credit: 0
+    file_presence_or_artifact_count_completion_credit: 0
+    every_frozen_row_requires_exact_program_field_binding: true
+    required_program_field_classes:
+    - LAYOUT_OR_GEOMETRY_TOKEN
+    - COLOR_SCHEME_OR_THEME_TOKEN
+    - NAVIGATION_IDENTITY_UID
+    - LOCALIZATION_OR_I18N_IDENTITY
+    - CONTROL_IDENTITY_UID
+    - DOM_IDENTITY
+    - VISUAL_COMPUTED_STYLE_TARGET
+    omitted_frozen_row: BLOCK
+    invented_value_without_frozen_authority: BLOCK
+    template_value_contradicting_frozen_design: BLOCK
+    unresolved_frozen_value_ai_invention: BLOCK
+    implementation_diff_must_trace_frozen_row_to_program_field: true
+    count_only_implementation_diff_evidence: BLOCK
+    stage06_frozen_vs_program_semantic_diff_required: true
+    user_visible_frozen_field_requires_computed_visual_evidence: true
+    screenshot_or_build_success_may_substitute_semantic_diff: false
+    generic_geometry_theme_navigation_or_control_uid_remaining: BLOCK
+    destructive_regression_required:
+    - TEMPLATE_COPY_AS_IMPLEMENTATION
+    - FROZEN_ROW_WITHOUT_PROGRAM_FIELD
+    - GENERIC_GEOMETRY_TOKEN_REMAINING
+    - COUNT_ONLY_IMPLEMENTATION_DIFF
+    - MISSING_COMPUTED_VISUAL_DIFF_FOR_USER_VISIBLE_FROZEN_FIELD
+
   TYPOGRAPHY_COMPUTED_METRICS:
     invariant_uid: GOV-INV-TYPOGRAPHY-COMPUTED-METRICS-001
     target_denominator: EVERY_APPLICABLE_TEXT_BEARING_TARGET_FROM_CURRENT_DESIGN_AUTHORITY
@@ -1835,6 +1875,9 @@ invariants:
         external_integration_runtime_required_when_applicable: true
         async_runtime_required_when_applicable: true
         implementation_diff_exact_trace_required: true
+        frozen_design_program_field_binding_required: true
+        generic_operation_template_substitution: BLOCK
+        count_only_implementation_diff_evidence: BLOCK
       STAGE-06:
         capability: VERIFICATION_QA
         lifecycle_registry_is_denominator_source: true
@@ -1844,6 +1887,9 @@ invariants:
         allowed_test_results: [PASS, FAIL, BLOCKED, AUTHORIZED_NOT_APPLICABLE]
         audit_matrix_bidirectional_reconciliation_required: true
         required_item_untested_finding: UNVERIFIED_REQUIRED_DENOMINATOR
+        frozen_design_vs_program_semantic_diff_required: true
+        generic_template_values_remaining_in_frozen_fields: BLOCK
+        user_visible_frozen_field_computed_visual_evidence_required: true
       STAGE-07:
         capability: BUILD_RELEASE_CANDIDATE
         lifecycle_registry_is_denominator_source: true

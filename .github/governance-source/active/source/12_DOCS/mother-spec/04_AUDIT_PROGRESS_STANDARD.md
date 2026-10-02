@@ -1689,4 +1689,15 @@ Audit MUST 證明：
 
 任何 workflow-to-workflow trigger chain、rearm chain、validator-effectful recursion 或第二 Current State Authority MUST 判定為 governance architecture defect。
 
+<!-- SECTION_UID: WEB-GOV-04-S089 -->
+## 89. Frozen Design vs Program Semantic Diff Audit / Frozen Design 與程式語意差異稽核
+
+Audit MUST rebuild Frozen Design row coverage against Current program fields before Stage-05 or Stage-06 closure credit.
+
+For every applicable Frozen Design row, Audit MUST record frozen_row_uid, frozen_authority_ref, program_field_path, expected_frozen_value, actual_program_value, actual_dom_or_computed_value when the field is user-visible, and reconciliation_result.
+
+Audit MUST FAIL when a Frozen row has no program field binding, a program field contradicts Frozen Design, generic template values remain in Frozen-bound fields, only file-count or template-copy evidence is presented, or visual computed evidence is missing for a user-visible Frozen geometry, theme, typography, or navigation target.
+
+A successful build, screenshot, or IMPLEMENTATION_DIFF_EVIDENCE file-count MUST_NOT substitute for Frozen-row-to-program-field semantic diff. Template substitution is a GLOBAL_SHARED defect and MUST be repaired at the common invariant layer.
+
 

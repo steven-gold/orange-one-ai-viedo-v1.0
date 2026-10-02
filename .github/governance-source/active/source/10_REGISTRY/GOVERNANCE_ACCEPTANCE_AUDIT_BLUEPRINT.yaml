@@ -5,7 +5,7 @@ blueprint_type: ACCEPTANCE_AUDIT_BLUEPRINT
 status: CURRENT
 canonical_path: 10_REGISTRY/GOVERNANCE_ACCEPTANCE_AUDIT_BLUEPRINT.yaml
 owner_uid: OWNER-GOVERNANCE-ACCEPTANCE
-governance_revision: v2.2.34-word-derived-stage-internal-validation-20260928
+governance_revision: v2.2.35-frozen-design-program-field-binding-20261002
 normative_section_uids:
 - WEB-GOV-04-S071
 - WEB-GOV-04-S076
@@ -28,6 +28,9 @@ normative_section_uids:
 - WEB-GOV-02-S077
 - WEB-GOV-03-S072
 - WEB-GOV-04-S087
+- WEB-GOV-02-S078
+- WEB-GOV-03-S074
+- WEB-GOV-04-S089
 audit_catalog_ref: REG-AUDIT-CATALOG-001
 audit_item_uids:
 - AUD-GOV-001
@@ -189,6 +192,11 @@ stage_execution_invariant_contract:
   cross_stage_materialization_invariant_uid: GOV-INV-CROSS-STAGE-MATERIALIZATION-CONSUMER-READINESS-001
   reference_only_required_dependency_completion: BLOCK
   successor_readiness_required_before_stage_exit: true
+  frozen_design_program_field_binding_required: true
+  frozen_design_program_field_binding_invariant_uid: GOV-INV-FROZEN-DESIGN-PROGRAM-FIELD-BINDING-001
+  generic_operation_template_substitution: BLOCK
+  count_only_implementation_diff_evidence: BLOCK
+  frozen_vs_program_semantic_diff_required: true
 test_feedback_spec_evolution_contract:
   required: true
   applies_to_all_stages: true
@@ -335,6 +343,9 @@ required_normative_section_uids:
 - WEB-GOV-02-S077
 - WEB-GOV-03-S072
 - WEB-GOV-04-S087
+- WEB-GOV-02-S078
+- WEB-GOV-03-S074
+- WEB-GOV-04-S089
 cross_stage_materialization_consumer_readiness_contract:
   required: true
   audit_item_uid: AUD-GOV-014
@@ -381,4 +392,18 @@ structured_document_source_projection_audit_contract:
   zero_unresolved_required_word_content_gap_required: true
   frozen_binary_source_parts_required_when_present: true
   frozen_binary_exact_hash_required: true
+frozen_design_program_field_binding_contract:
+  required: true
+  audit_item_uid: AUD-GOV-014
+  validator_uid: VAL-GOV-035
+  invariant_uid: GOV-INV-FROZEN-DESIGN-PROGRAM-FIELD-BINDING-001
+  applies_to_stages:
+  - STAGE-05
+  - STAGE-06
+  frozen_design_is_sole_implementation_authority: true
+  generic_operation_template_substitution: BLOCK
+  every_frozen_row_requires_exact_program_field_binding: true
+  count_only_implementation_diff_evidence: BLOCK
+  frozen_vs_program_semantic_diff_required: true
+  user_visible_frozen_field_computed_visual_evidence_required: true
   stage01_direct_docx_binary_reextract: BLOCK

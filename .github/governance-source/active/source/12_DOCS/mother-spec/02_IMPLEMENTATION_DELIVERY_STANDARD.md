@@ -1270,3 +1270,16 @@ The immutable source lock MUST bind the PASS content-readiness audit UID. No pro
 Frozen binary source parts are projection-owned evidence. The delivery producer MUST copy exact source bytes, never screenshot/re-render/re-encode them, and MUST create exactly one deterministic frozen binary path per binary package-part hash. Derived thumbnails, OCR text, image descriptions, annotations, or AI visual interpretations are separate derived evidence and MUST NOT replace the exact frozen binary bytes.
 
 The common DOCX projection producer MUST be product/page neutral. It MUST derive every count and source row from the current immutable document and MUST NOT contain page-specific field vocabularies, page IDs, function names, control names, or expected content counts.
+
+<!-- SECTION_UID: WEB-GOV-02-S078 -->
+## 78. Frozen Design to Program Field Binding / Frozen Design 到程式欄位綁定
+
+After DESIGN_FROZEN, Implementation MUST consume the Frozen Design / Frozen Operation Matrix as the sole implementation authority for every applicable program field.
+
+Every Frozen Design row that declares a program-observable value MUST bind to an exact program field. Applicable field classes include layout or geometry tokens, color-scheme or theme tokens, navigation identity UID, localization or i18n identity, control identity UID, DOM identity used by Runtime or verification, and visual computed-style targets.
+
+A generic operation template, scaffold, placeholder layout, or copied starter program MAY exist only as a non-authoritative bootstrap. It MUST_NOT replace Frozen Design, MUST_NOT receive implementation completion credit, and MUST_NOT satisfy IMPLEMENTATION_DIFF_EVIDENCE.
+
+File presence, artifact count, or template-copy identity MUST_NOT prove Frozen Design coverage. Missing Frozen-row-to-program-field bindings, invented values, omitted Frozen rows, or template values that contradict Frozen Design MUST FAIL and remain BLOCKED until the owning Frozen Design row is implemented exactly.
+
+UNRESOLVED Frozen Design values remain UNRESOLVED. AI MUST_NOT invent substitute geometry, theme, navigation, copy, or control identity.

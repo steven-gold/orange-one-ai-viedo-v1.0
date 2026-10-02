@@ -29,7 +29,7 @@ def validate(root=ROOT):
         failures.append('stage_scope_not_all_11')
     if scope.get('stage_specific_exception_without_registered_authority') != 'BLOCK':
         failures.append('unregistered_stage_exception_not_blocked')
-    required = ['RELATION_SEMANTIC_SEPARATION', 'GAP_REMEDIATION_ADMISSIBILITY', 'CURRENT_AUTHORITY_ADMISSIBILITY', 'REQUIRED_EVIDENCE_MATERIALIZATION', 'VALIDATOR_SCHEMA_SEMANTICS', 'UNRESOLVED_PRESERVATION', 'SUCCESSOR_CURRENT_ATOMIC_PROJECTION', 'BLOCKER_DENOMINATOR_AND_RECEIPT', 'AUTHORITY_EVIDENCE_CONSUMPTION', 'FUNCTIONAL_CONTRACT_COMPLETENESS', 'STAGE_ENTRY_PRECHECK', 'PHYSICAL_ARTIFACT_INTEGRITY', 'IMPLEMENTATION_DEVIATION_FEEDBACK', 'REVIEW_VS_CLOSURE_SEPARATION', 'CANONICAL_STAGE_EXECUTION_PREFLIGHT', 'EFFECTIVE_CONTRACT_OVERLAY', 'ROLE_SAFE_FUNCTIONAL_CLOSURE', 'DEPENDENCY_ORDERED_INCREMENTAL_RECONCILIATION', 'COMMON_ENGINE_DEFECT_INTERRUPT', 'GENERATED_OUTPUT_PERSISTENCE', 'CONTROL_VS_SYSTEM_TRIGGER_RESOLUTION', 'PRODUCER_CONSUMER_SCHEMA_IDENTITY', 'NO_HISTORY_PRODUCT_VALUE_FALLBACK', 'TASK_LAYER_EFFECTFUL_TRANSITION_ORDER', 'VISUAL_DESIGN_PROFILE_MATERIALIZATION_COMPLETENESS', 'NORMATIVE_EXECUTION_MATRIX', 'BASIC_DESIGN_DOMAIN_STEPWISE_CHECKPOINT', 'CLOSED_WORK_UNIT_SUCCESSOR_REENTRY', 'CROSS_STAGE_MATERIALIZATION_AND_CONSUMER_READINESS', 'SINGLE_STAGE_CURRENT_STATE_AND_READ_ONLY_VALIDATION', 'DETERMINISTIC_STAGE_AUDIT']
+    required = ['RELATION_SEMANTIC_SEPARATION', 'GAP_REMEDIATION_ADMISSIBILITY', 'CURRENT_AUTHORITY_ADMISSIBILITY', 'REQUIRED_EVIDENCE_MATERIALIZATION', 'VALIDATOR_SCHEMA_SEMANTICS', 'UNRESOLVED_PRESERVATION', 'SUCCESSOR_CURRENT_ATOMIC_PROJECTION', 'BLOCKER_DENOMINATOR_AND_RECEIPT', 'AUTHORITY_EVIDENCE_CONSUMPTION', 'FUNCTIONAL_CONTRACT_COMPLETENESS', 'STAGE_ENTRY_PRECHECK', 'PHYSICAL_ARTIFACT_INTEGRITY', 'IMPLEMENTATION_DEVIATION_FEEDBACK', 'REVIEW_VS_CLOSURE_SEPARATION', 'CANONICAL_STAGE_EXECUTION_PREFLIGHT', 'EFFECTIVE_CONTRACT_OVERLAY', 'ROLE_SAFE_FUNCTIONAL_CLOSURE', 'DEPENDENCY_ORDERED_INCREMENTAL_RECONCILIATION', 'COMMON_ENGINE_DEFECT_INTERRUPT', 'GENERATED_OUTPUT_PERSISTENCE', 'CONTROL_VS_SYSTEM_TRIGGER_RESOLUTION', 'PRODUCER_CONSUMER_SCHEMA_IDENTITY', 'NO_HISTORY_PRODUCT_VALUE_FALLBACK', 'TASK_LAYER_EFFECTFUL_TRANSITION_ORDER', 'VISUAL_DESIGN_PROFILE_MATERIALIZATION_COMPLETENESS', 'NORMATIVE_EXECUTION_MATRIX', 'BASIC_DESIGN_DOMAIN_STEPWISE_CHECKPOINT', 'CLOSED_WORK_UNIT_SUCCESSOR_REENTRY', 'CROSS_STAGE_MATERIALIZATION_AND_CONSUMER_READINESS', 'SINGLE_STAGE_CURRENT_STATE_AND_READ_ONLY_VALIDATION', 'DETERMINISTIC_STAGE_AUDIT', 'FROZEN_DESIGN_PROGRAM_FIELD_BINDING']
     for k in required:
         if k not in inv:
             failures.append('missing_invariant:' + k)
@@ -478,6 +478,60 @@ def validate(root=ROOT):
     s3g = st3x.get('visual_materialization_gate') or {}
     if s3g.get('applicable_visual_anchor_registry_must_be_nonempty') is not True or s3g.get('declared_visual_candidate_requires_physical_evidence') is not True or s3g.get('single_overview_may_substitute_required_scenarios') is not False or s3g.get('missing_required_anchor_or_candidate_blocks_human_visual_review') is not True:
         failures.append('stage03_anchor_candidate_scenario_readiness_gate_incomplete')
+
+    fbind = inv.get('FROZEN_DESIGN_PROGRAM_FIELD_BINDING') or {}
+    if fbind.get('invariant_uid') != 'GOV-INV-FROZEN-DESIGN-PROGRAM-FIELD-BINDING-001':
+        failures.append('frozen_design_program_field_binding_uid_missing')
+    if set(fbind.get('normative_section_uids') or []) != {'WEB-GOV-02-S078','WEB-GOV-03-S074','WEB-GOV-04-S089'}:
+        failures.append('frozen_design_program_field_binding_normative_binding_incomplete')
+    if set(fbind.get('applies_to_stages') or []) != {'STAGE-05','STAGE-06'}:
+        failures.append('frozen_design_program_field_binding_stage_scope_incomplete')
+    if fbind.get('frozen_design_is_sole_implementation_authority') is not True or fbind.get('generic_operation_template_may_replace_frozen_design') is not False:
+        failures.append('frozen_design_sole_authority_contract_missing')
+    if fbind.get('scaffold_or_starter_program_completion_credit') != 0 or fbind.get('template_copy_identity_completion_credit') != 0 or fbind.get('file_presence_or_artifact_count_completion_credit') != 0:
+        failures.append('frozen_design_false_credit_not_zero')
+    if fbind.get('every_frozen_row_requires_exact_program_field_binding') is not True or fbind.get('implementation_diff_must_trace_frozen_row_to_program_field') is not True:
+        failures.append('frozen_row_program_field_binding_required_missing')
+    required_field_classes={'LAYOUT_OR_GEOMETRY_TOKEN','COLOR_SCHEME_OR_THEME_TOKEN','NAVIGATION_IDENTITY_UID','LOCALIZATION_OR_I18N_IDENTITY','CONTROL_IDENTITY_UID','DOM_IDENTITY','VISUAL_COMPUTED_STYLE_TARGET'}
+    if set(fbind.get('required_program_field_classes') or []) != required_field_classes:
+        failures.append('frozen_design_program_field_class_denominator_incomplete')
+    for key in ('omitted_frozen_row','invented_value_without_frozen_authority','template_value_contradicting_frozen_design','unresolved_frozen_value_ai_invention','count_only_implementation_diff_evidence','generic_geometry_theme_navigation_or_control_uid_remaining'):
+        if fbind.get(key) != 'BLOCK':
+            failures.append('frozen_design_fail_closed_missing:' + key)
+    if fbind.get('stage06_frozen_vs_program_semantic_diff_required') is not True or fbind.get('user_visible_frozen_field_requires_computed_visual_evidence') is not True or fbind.get('screenshot_or_build_success_may_substitute_semantic_diff') is not False:
+        failures.append('frozen_vs_program_semantic_diff_contract_incomplete')
+    required_destructive={'TEMPLATE_COPY_AS_IMPLEMENTATION','FROZEN_ROW_WITHOUT_PROGRAM_FIELD','GENERIC_GEOMETRY_TOKEN_REMAINING','COUNT_ONLY_IMPLEMENTATION_DIFF','MISSING_COMPUTED_VISUAL_DIFF_FOR_USER_VISIBLE_FROZEN_FIELD'}
+    if set(fbind.get('destructive_regression_required') or []) != required_destructive:
+        failures.append('frozen_design_destructive_regression_incomplete')
+    st5 = stage_map.get('STAGE-05') or {}
+    s5g = st5.get('frozen_design_program_field_binding_gate') or {}
+    if s5g.get('required') is not True or s5g.get('invariant_uid') != 'GOV-INV-FROZEN-DESIGN-PROGRAM-FIELD-BINDING-001' or s5g.get('generic_operation_template_substitution') != 'BLOCK' or s5g.get('every_frozen_row_requires_exact_program_field_binding') is not True or s5g.get('count_only_implementation_diff_evidence') != 'BLOCK':
+        failures.append('stage05_frozen_design_program_field_binding_gate_incomplete')
+    if not {'WEB-GOV-02-S078','WEB-GOV-03-S074','WEB-GOV-04-S089'}.issubset(set(st5.get('required_normative_section_uids') or [])):
+        failures.append('stage05_frozen_design_normative_binding_missing')
+    s5c = (det.get('stage_contracts') or {}).get('STAGE-05') or {}
+    if s5c.get('frozen_design_program_field_binding_required') is not True or s5c.get('generic_operation_template_substitution') != 'BLOCK' or s5c.get('count_only_implementation_diff_evidence') != 'BLOCK':
+        failures.append('stage05_deterministic_frozen_design_contract_incomplete')
+    st6 = stage_map.get('STAGE-06') or {}
+    s6g = st6.get('frozen_design_program_field_binding_gate') or {}
+    if s6g.get('required') is not True or s6g.get('invariant_uid') != 'GOV-INV-FROZEN-DESIGN-PROGRAM-FIELD-BINDING-001' or s6g.get('frozen_vs_program_semantic_diff_required') is not True or s6g.get('generic_template_values_remaining_in_frozen_fields') != 'BLOCK' or s6g.get('user_visible_frozen_field_computed_visual_evidence_required') is not True:
+        failures.append('stage06_frozen_design_program_field_binding_gate_incomplete')
+    if not {'WEB-GOV-02-S078','WEB-GOV-03-S074','WEB-GOV-04-S089'}.issubset(set(st6.get('required_normative_section_uids') or [])):
+        failures.append('stage06_frozen_design_normative_binding_missing')
+    s6c = (det.get('stage_contracts') or {}).get('STAGE-06') or {}
+    if s6c.get('frozen_design_vs_program_semantic_diff_required') is not True or s6c.get('generic_template_values_remaining_in_frozen_fields') != 'BLOCK' or s6c.get('user_visible_frozen_field_computed_visual_evidence_required') is not True:
+        failures.append('stage06_deterministic_frozen_design_contract_incomplete')
+    cs_hard = (life.get('cross_stage_invariants') or {}).get('stage_execution_invariant_hardening') or {}
+    if cs_hard.get('frozen_design_program_field_binding_required') is not True or cs_hard.get('generic_operation_template_substitution') != 'BLOCK' or cs_hard.get('count_only_implementation_diff_evidence') != 'BLOCK' or cs_hard.get('frozen_vs_program_semantic_diff_required') is not True:
+        failures.append('lifecycle_frozen_design_hardening_missing')
+    bfd = bp.get('frozen_design_program_field_binding_contract') or {}
+    if bfd.get('required') is not True or bfd.get('validator_uid') != 'VAL-GOV-035' or bfd.get('invariant_uid') != 'GOV-INV-FROZEN-DESIGN-PROGRAM-FIELD-BINDING-001' or bfd.get('generic_operation_template_substitution') != 'BLOCK':
+        failures.append('acceptance_frozen_design_binding_contract_missing')
+    aud14_required_coverage.add('FROZEN_DESIGN_PROGRAM_FIELD_BINDING')
+    aud14_required_coverage.add('TEMPLATE_SUBSTITUTION_BLOCK')
+    aud14_required_coverage.add('FROZEN_VS_PROGRAM_SEMANTIC_DIFF')
+    if not aud14_required_coverage.issubset(set((aud14 or {}).get('coverage_extensions') or [])):
+        failures.append('audit_catalog_frozen_design_coverage_incomplete')
 
     return {'status': 'PASS' if not failures else 'FAIL', 'invariant_count': len(inv), 'stage_count': len(scope.get('applies_to_stages') or []), 'failures': failures}
 if __name__ == '__main__':
