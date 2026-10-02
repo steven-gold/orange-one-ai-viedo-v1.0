@@ -38,7 +38,7 @@ body {
   margin: 0;
   background: var(--bg-page);
   color: var(--text-primary);
-  font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans TC", "PingFang TC", sans-serif;
+  font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans TC", "PingFang TC", sans-serif;
   overflow: hidden;
 }
 button, input, select, textarea { font: inherit; }
@@ -50,18 +50,28 @@ a:focus-visible {
 }
 
 .acpos-shell {
-  position: relative;
+  --sidebar-width: 64px;
+  --sidebar-gap: 14px;
+  --workspace-right: 16px;
+  --workspace-bottom: 16px;
+  --header-height: 58px;
+  --workspace-top: 68px;
+  display: grid;
+  grid-template-columns: var(--sidebar-width) minmax(0, 1fr);
+  grid-template-rows: var(--header-height) minmax(0, 1fr);
   width: 100vw;
   height: 100vh;
   min-width: 1024px;
   background: var(--bg-page);
+  transition: grid-template-columns 180ms ease;
 }
 
 .global-header {
-  position: fixed;
+  grid-column: 1 / -1;
+  position: sticky;
   z-index: 100;
-  inset: 0 0 auto 0;
-  height: 58px;
+  top: 0;
+  height: var(--header-height);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -118,6 +128,11 @@ a:focus-visible {
   padding: 0 10px;
   font-size: 12px;
   cursor: default;
+}
+.quick-button:disabled {
+  opacity: 0.48;
+  cursor: not-allowed;
+  color: var(--text-muted);
 }
 .language-button {
   width: 72px;
@@ -222,34 +237,31 @@ button.account-popover-link {
 }
 
 .global-sidebar {
-  position: fixed;
+  grid-column: 1;
+  grid-row: 2;
+  position: relative;
   z-index: 90;
-  left: 0;
-  top: 58px;
-  bottom: 0;
-  width: 64px;
+  width: var(--sidebar-width);
+  min-height: 0;
   padding: 16px 10px 0;
   background: transparent;
   border: 0;
   box-shadow: none;
-  overflow: visible;
+  overflow: hidden;
+  transition: width 180ms ease;
 }
 .sidebar-surface {
   position: absolute;
   z-index: -1;
-  inset: 0 auto 0 0;
-  width: 221px;
-  opacity: 0;
-  pointer-events: none;
+  inset: 0;
+  width: 100%;
   background: rgba(5, 7, 24, 0.92);
   border-right: 1px solid var(--border-normal);
-  box-shadow: inset -12px 0 26px rgba(139, 92, 255, 0.05), 12px 0 30px rgba(0, 0, 0, 0.25);
+  box-shadow: inset -12px 0 26px rgba(139, 92, 255, 0.05);
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
-  transition: opacity 120ms ease;
 }
 .global-sidebar.is-expanded { width: 221px; padding-left: 15px; padding-right: 15px; }
-.global-sidebar.is-expanded .sidebar-surface { opacity: 1; }
 .nav-list {
   position: relative;
   display: flex;
@@ -314,27 +326,20 @@ button.account-popover-link {
 
 
 .workspace-slot {
-  position: fixed;
+  grid-column: 2;
+  grid-row: 2;
   z-index: 1;
-  left: 78px;
-  top: 68px;
-  right: 16px;
-  bottom: 16px;
   min-width: 0;
   min-height: 0;
+  margin: 10px var(--workspace-right) var(--workspace-bottom) var(--sidebar-gap);
   background: transparent;
   padding: 0;
   border: 0;
   border-radius: 0;
   overflow: auto;
-  transition: left 160ms ease;
 }
 
-.acpos-shell[data-sidebar-expanded="true"] .workspace-slot {
-  left: 235px;
-}
-
-.workspace-canvas {
+.page-slot {
   min-height: 100%;
   padding: 28px 24px 24px;
   border: 1px solid var(--border-normal);
@@ -343,32 +348,23 @@ button.account-popover-link {
   box-shadow: inset 0 0 0 1px rgba(139, 92, 255, 0.08);
 }
 
-.workspace-hero h1 {
-  margin: 0 0 22px;
-  font-size: 28px;
-  font-weight: 720;
-  letter-spacing: 0.02em;
+.page-slot-header {
+  margin: 0 0 18px;
 }
 
-.workspace-row {
-  margin-bottom: 16px;
-  padding: 22px 24px;
-  border: 1px solid var(--border-normal);
-  border-radius: 18px;
-  background: rgba(12, 16, 38, 0.92);
+.page-slot-title {
+  margin: 0;
+  font-size: 32px;
+  font-weight: 700;
+  line-height: 1.20;
+  letter-spacing: -0.02em;
 }
 
-.workspace-row h2 {
-  margin: 0 0 8px;
-  font-size: 20px;
-  font-weight: 680;
-}
-
-.workspace-row p {
+.page-slot-reason {
   margin: 0;
   color: var(--text-secondary);
   font-size: 14px;
-  line-height: 1.6;
+  line-height: 1.55;
 }
 
 @media (max-width: 1180px) {
@@ -379,7 +375,9 @@ button.account-popover-link {
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { scroll-behavior: auto !important; transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; }
-  .workspace-slot { transition: none; }
+  .acpos-shell { transition: none; }
+  .global-sidebar { transition: none; }
+  .nav-item, .nav-label, .sidebar-surface { transition: none; }
 }
 
 .login-page {

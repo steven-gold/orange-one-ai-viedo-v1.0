@@ -44,23 +44,19 @@ export interface MigrationResult {
 }
 
 async function seedCanonicalData(client: SqlClient): Promise<void> {
+  await client.exec("DELETE FROM ghsn_account_permission_assignment");
+  await client.exec("DELETE FROM ghsn_navigation_authority");
+
   for (const item of CANONICAL_NAVIGATION_AUTHORITY.items) {
     await client.run(
       `INSERT INTO ghsn_navigation_authority (navigation_uid, area, label_key, route, display_order, icon, aria_label_key)
-       VALUES (?, ?, ?, ?, ?, ?, ?)
-       ON CONFLICT (navigation_uid) DO UPDATE SET
-         area = EXCLUDED.area,
-         label_key = EXCLUDED.label_key,
-         route = EXCLUDED.route,
-         display_order = EXCLUDED.display_order,
-         icon = EXCLUDED.icon,
-         aria_label_key = EXCLUDED.aria_label_key`,
+       VALUES (?, ?, ?, ?, ?, ?, ?)`,
       [item.uid, item.area, item.labelKey, item.route, item.order, item.icon, item.ariaLabelKey],
     );
   }
 
   const demoGrants = CANONICAL_NAVIGATION_AUTHORITY.items.map((item) => item.uid);
-  const limitedGrants = ["FRONT-01", "FRONT-02"];
+  const limitedGrants = ["workspace:WB-01", "CORE-01"];
   for (const uid of demoGrants) {
     await client.run(
       `INSERT INTO ghsn_account_permission_assignment (account_uid, navigation_uid)

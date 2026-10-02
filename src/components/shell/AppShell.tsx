@@ -1,11 +1,12 @@
 "use client";
 
-import type { ReactNode } from "react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { activateNavigation, fetchNavigationContext } from "@/lib/client";
 import type { NavigationArea, ResolvedNavigationItem } from "@/lib/navigation";
 import { LOCALES, LOCALE_LABELS, type TranslationKey } from "@/i18n/catalog";
 import { useI18n } from "@/i18n/LocaleProvider";
+import { WorkspacePage } from "@/components/pages/WorkspacePage";
+import { findPageByRoute, findPageByUid } from "@/components/pages/pageRegistry";
 import brandStyles from "./BrandLogo.module.css";
 import languageStyles from "./LanguageSelector.module.css";
 
@@ -21,10 +22,9 @@ type IconName =
   | "info";
 
 type AppShellProps = {
-  children?: ReactNode;
   accountUid?: string;
   sessionUid?: string;
-  surface?: "front" | "admin";
+  initialRoute?: string;
 };
 
 const DEFAULT_ACCOUNT = "ACC-DEMO";
@@ -97,19 +97,28 @@ function HeaderIcon({ kind }: { kind: "bell" | "todo" | "running" }) {
   return <svg {...common}><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>;
 }
 
+function currentPath(): string {
+  if (typeof window === "undefined") return "/";
+  return window.location.pathname || "/";
+}
+
 export function AppShell({
-  children,
   accountUid = DEFAULT_ACCOUNT,
   sessionUid = DEFAULT_SESSION,
-  surface = "front",
+  initialRoute = "/",
 }: AppShellProps) {
   const { locale, setLocale, t } = useI18n();
+  const initialPage = findPageByRoute(initialRoute);
   const [expanded, setExpanded] = useState(false);
   const [languageOpen, setLanguageOpen] = useState(false);
   const [accountOpen, setAccountOpen] = useState(false);
-  const [area, setArea] = useState<NavigationArea>(surface === "admin" ? "ADMIN" : "FRONT");
-  const [items, setItems] = useState<ResolvedNavigationItem[]>([]);
-  const [activeUid, setActiveUid] = useState<string | null>(null);
+  const [area, setArea] = useState<NavigationArea>(initialPage?.surface === "admin" ? "ADMIN" : "FRONT");
+  const [frontItems, setFrontItems] = useState<ResolvedNavigationItem[]>([]);
+  const [adminItems, setAdminItems] = useState<ResolvedNavigationItem[]>([]);
+  const [activeUid, setActiveUid] = useState<string | null>(initialPage?.pageUid ?? null);
+  const [route, setRoute] = useState(initialRoute);
+  const identityBound = true;
+  const items = area === "ADMIN" ? adminItems : frontItems;
   const collapseTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const sidebarRef = useRef<HTMLElement | null>(null);
   const languageRef = useRef<HTMLDivElement | null>(null);
@@ -134,22 +143,47 @@ export function AppShell({
     }, 180);
   };
 
+  const collapseNow = () => {
+    cancelCollapse();
+    setExpanded(false);
+  };
+
   useEffect(() => {
     const controller = new AbortController();
-    fetchNavigationContext(
-      { area, accountUid, sessionUid, activePath: window.location.pathname },
-      controller.signal,
-    )
-      .then((context) => {
-        setItems(context.items);
-        const match = context.items.find((item) => item.route === window.location.pathname);
-        setActiveUid(match?.uid ?? context.items[0]?.uid ?? null);
-      })
-      .catch(() => {
-        setItems([]);
-      });
+    Promise.all([
+      fetchNavigationContext({ area: "FRONT", accountUid, sessionUid, activePath: route }, controller.signal).catch(() => null),
+      fetchNavigationContext({ area: "ADMIN", accountUid, sessionUid, activePath: route }, controller.signal).catch(() => null),
+    ]).then(([front, admin]) => {
+      const nextFront = front?.items ?? [];
+      const nextAdmin = admin?.items ?? [];
+      setFrontItems(nextFront);
+      setAdminItems(nextAdmin);
+      const current = findPageByRoute(route);
+      if (area === "ADMIN") {
+        const exact = nextAdmin.find((item) => item.uid === current?.pageUid);
+        setActiveUid(exact?.uid ?? nextAdmin[0]?.uid ?? null);
+      } else {
+        const ancestry = current ? [current.pageUid] : [];
+        const match = nextFront.find((item) => ancestry.includes(item.uid))
+          ?? nextFront.find((item) => item.route === route)
+          ?? nextFront[0];
+        setActiveUid(match?.uid ?? null);
+      }
+    });
     return () => controller.abort();
-  }, [area, accountUid, sessionUid]);
+  }, [accountUid, sessionUid, route, area]);
+
+  useEffect(() => {
+    const onPop = () => {
+      const next = currentPath();
+      const page = findPageByRoute(next);
+      setRoute(next);
+      setArea(page?.surface === "admin" ? "ADMIN" : "FRONT");
+      collapseNow();
+    };
+    window.addEventListener("popstate", onPop);
+    return () => window.removeEventListener("popstate", onPop);
+  }, []);
 
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
@@ -176,27 +210,54 @@ export function AppShell({
   const go = useCallback((item: ResolvedNavigationItem) => {
     void activateNavigation(accountUid, sessionUid, item.uid);
     setActiveUid(item.uid);
+    setRoute(item.route);
+    collapseNow();
     if (window.location.pathname !== item.route) {
       window.history.pushState({}, "", item.route);
     }
   }, [accountUid, sessionUid]);
 
   const switchArea = (next: NavigationArea) => {
+    const destination = next === "ADMIN" ? adminItems[0] : frontItems[0];
+    if (!destination) return;
     setArea(next);
-    setExpanded(false);
+    collapseNow();
+    setActiveUid(destination.uid);
+    setRoute(destination.route);
+    if (window.location.pathname !== destination.route) {
+      window.history.pushState({}, "", destination.route);
+    }
   };
 
+  const frontTarget = frontItems[0];
+  const adminTarget = adminItems[0];
+
+  const quickReason = t("global.header.quick_status_unavailable");
+  const activePage = findPageByUid(activeUid) ?? findPageByRoute(route);
+
   return (
-    <div className="acpos-shell" data-vis-step="VIS-00" data-sidebar-expanded={expanded ? "true" : "false"}>
+    <div
+      className="acpos-shell"
+      data-layout-uid="GHS-LAYOUT-ADAPTIVE-COUPLED-SHELL"
+      data-vis-step="VIS-00"
+      data-sidebar-expanded={expanded ? "true" : "false"}
+      style={{ ["--sidebar-width" as string]: expanded ? "221px" : "64px" }}
+    >
       <header className="global-header" aria-label={t("global.shell.header")}>
         <div className={brandStyles.wrapper} aria-label={t("global.brand.name")}>
           <img className={brandStyles.logo} src="/brand/orange-one-logo.png" alt="ORANGE ONE" />
         </div>
 
         <div className="header-cluster">
-          <button className="quick-button" type="button" aria-label={t("global.header.notifications")} aria-disabled="true" disabled><HeaderIcon kind="bell"/><span>0</span></button>
-          <button className="quick-button" type="button" aria-label={t("global.header.todo")} aria-disabled="true" disabled><HeaderIcon kind="todo"/><span>0</span></button>
-          <button className="quick-button" type="button" aria-label={t("global.header.running")} aria-disabled="true" disabled><HeaderIcon kind="running"/><span>0</span></button>
+          <button className="quick-button" type="button" aria-label={quickReason} title={quickReason} aria-disabled="true" disabled>
+            <HeaderIcon kind="bell"/>
+          </button>
+          <button className="quick-button" type="button" aria-label={quickReason} title={quickReason} aria-disabled="true" disabled>
+            <HeaderIcon kind="todo"/>
+          </button>
+          <button className="quick-button" type="button" aria-label={quickReason} title={quickReason} aria-disabled="true" disabled>
+            <HeaderIcon kind="running"/>
+          </button>
 
           <div className={languageStyles.control} ref={languageRef}>
             <button
@@ -232,35 +293,52 @@ export function AppShell({
           </div>
 
           <div className="surface-switch-group" role="tablist" aria-label={`${t("global.header.frontend")} / ${t("global.header.admin")}`}>
-            <button
-              type="button"
-              role="tab"
-              className="surface-switch-button"
-              aria-label={t("global.header.frontend")}
-              aria-current={area === "FRONT" ? "page" : undefined}
-              onClick={() => switchArea("FRONT")}
-            >
-              {t("global.header.frontend")}
-            </button>
-            <button
-              type="button"
-              role="tab"
-              className="surface-switch-button"
-              aria-label={t("global.header.admin")}
-              aria-current={area === "ADMIN" ? "page" : undefined}
-              onClick={() => switchArea("ADMIN")}
-            >
-              {t("global.header.admin")}
-            </button>
+            {frontTarget && (
+              <button
+                type="button"
+                role="tab"
+                className="surface-switch-button"
+                data-control-uid="GHS-CTL-SURFACE-FRONT"
+                data-target-page-uid={frontTarget.uid}
+                data-navigation-target={frontTarget.route}
+                aria-label={t("global.header.frontend")}
+                aria-current={area === "FRONT" ? "page" : undefined}
+                onClick={() => switchArea("FRONT")}
+              >
+                {t("global.header.frontend")}
+              </button>
+            )}
+            {adminTarget && (
+              <button
+                type="button"
+                role="tab"
+                className="surface-switch-button"
+                data-control-uid="GHS-CTL-SURFACE-ADMIN"
+                data-target-page-uid={adminTarget.uid}
+                data-navigation-target={adminTarget.route}
+                aria-label={t("global.header.admin")}
+                aria-current={area === "ADMIN" ? "page" : undefined}
+                onClick={() => switchArea("ADMIN")}
+              >
+                {t("global.header.admin")}
+              </button>
+            )}
           </div>
 
-          <div ref={accountRef} className="account-menu">
-            <button className="account-button" type="button" aria-label={t("global.header.account")} onClick={() => setAccountOpen((open) => !open)} aria-expanded={accountOpen}>
-              <span className="avatar-placeholder" aria-hidden="true"/>
-              <span className="account-label">{accountUid}</span>
-              <span className="caret" aria-hidden="true">⌄</span>
-            </button>
-            {accountOpen && (
+          <div ref={accountRef} className="account-menu" data-port-uid="GHS-PORT-IDENTITY">
+            {identityBound ? (
+              <button className="account-button" type="button" aria-label={t("global.header.account")} onClick={() => setAccountOpen((open) => !open)} aria-expanded={accountOpen}>
+                <span className="avatar-placeholder" aria-hidden="true"/>
+                <span className="account-label">{accountUid}</span>
+                <span className="caret" aria-hidden="true">⌄</span>
+              </button>
+            ) : (
+              <a className="account-button" href="/login" aria-label={t("global.header.login")}>
+                <span className="avatar-placeholder" aria-hidden="true"/>
+                <span className="account-label">{t("global.header.login")}</span>
+              </a>
+            )}
+            {identityBound && accountOpen && (
               <div className="account-popover">
                 <div className="account-popover-link" aria-hidden="true">{accountUid}</div>
               </div>
@@ -291,6 +369,7 @@ export function AppShell({
                 aria-label={label}
                 aria-current={isActive ? "page" : undefined}
                 data-nav-id={item.uid}
+                data-target-page-uid={item.uid}
                 data-navigation-target={item.route}
                 onClick={() => go(item)}
               >
@@ -302,7 +381,9 @@ export function AppShell({
         </nav>
       </aside>
 
-      <main className="workspace-slot deployment-shell" aria-label={t("global.shell.page_content")}>{children}</main>
+      <main className="workspace-slot" aria-label={t("global.shell.page_content")}>
+        {activePage ? <WorkspacePage pageUid={activePage.pageUid} /> : null}
+      </main>
     </div>
   );
 }
