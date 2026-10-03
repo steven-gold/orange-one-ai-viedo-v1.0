@@ -204,18 +204,20 @@ def _compile_implementation_evidence(gov: str) -> tuple[Path, Path]:
     return out, dpath
 
 
-def _write_receipt(stage: str, op: str, gov: str, result_owner: str, copied: list[str]) -> None:
+def _write_receipt(stage: str, op: str, gov: str, result_owner: str, copied: list[str], ok: bool) -> None:
     receipt = {
         'artifact_type': 'OPERATION_EXECUTION_RECEIPT',
         'stage_uid': stage,
         'work_unit_uid': _wu_uid(),
         'operation_uid': op,
         'governance_uid': gov,
-        'status': 'PASS',
+        'status': 'PASS' if ok else 'FAIL',
         'executor_owner': EXECUTOR_REL,
         'executor_protocol': 'PYTHON_STAGE_OPERATION_V1',
         'result_owner': result_owner,
         'copied_program_artifacts': copied,
+        'fail_closed': True,
+        'gate_status': 'PASS' if ok else 'FAIL',
     }
     out = WORK_DIR / 'EVIDENCE' / 'OPERATION_RECEIPTS' / (op + '.yaml')
     _write_yaml(out, receipt)
@@ -241,6 +243,13 @@ def main() -> None:
     result_owner = str(binding.get('result_owner') or '')
 
     copied = _copy_program(a.operation)
+    missing = [rel for rel in copied if not (PRODUCT_ROOT / rel).is_file()]
+    ok = not missing
+    if a.operation == 'OP-23-STORAGE_RUNTIME':
+        store = (PRODUCT_ROOT / 'apps/api/src/storage/runtimeStore.ts').read_text(encoding='utf-8') if (PRODUCT_ROOT / 'apps/api/src/storage/runtimeStore.ts').is_file() else ''
+        persist = (PRODUCT_ROOT / 'apps/api/src/db/persist.ts').is_file()
+        map_authority = 'new Map' in store and 'persistGetAssignment' not in store
+        ok = ok and persist and not map_authority
 
     if a.operation == 'PROGRAM_ARTIFACT_REGISTRATION':
         _compile_program_artifact_set(gov)
@@ -249,7 +258,9 @@ def main() -> None:
     elif a.operation == 'IMPLEMENTATION_EVIDENCE_COMPILE':
         _compile_implementation_evidence(gov)
 
-    _write_receipt(a.stage, a.operation, gov, result_owner, copied)
+    _write_receipt(a.stage, a.operation, gov, result_owner, copied, ok)
+    if not ok:
+        raise SystemExit('OPERATION_FAIL_CLOSED:' + a.operation)
     print('OK', a.operation)
 
 

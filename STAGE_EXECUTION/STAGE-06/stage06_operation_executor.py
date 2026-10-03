@@ -20,10 +20,15 @@ real test-suite run; nothing is pre-baked.
 from __future__ import annotations
 import argparse
 import hashlib
+import json
 import os
 import subprocess
+import sys
 from pathlib import Path
 import yaml
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / '_shared'))
+from fail_closed import as_status, checks_ok
 
 EXECUTOR_REL = 'STAGE_EXECUTION/STAGE-06/stage06_operation_executor.py'
 GOVERNED = 'GLOBAL-HOME-SHELL-NAVIGATION'
@@ -133,23 +138,34 @@ def _probe(dimension: str, suite: dict) -> tuple[str, dict]:
             'suite_status': suite.get('status'),
         }
     elif dimension == 'database_test_result':
+        probe = subprocess.run(
+            ['npm', '--workspace', '@acpos/api', 'run', 'probe'],
+            cwd=str(PRODUCT_ROOT), text=True, capture_output=True, timeout=120,
+        )
+        persist = (api / 'src/db/persist.ts').is_file()
+        store = _read(api / 'src/storage/runtimeStore.ts')
         migration = _read(api / 'src/db/migrations/001_init.sql')
-        schema = _read(api / 'src/db/schema.ts')
         tables = ['navigation_authority', 'account_permission_assignment', 'navigation_audit_event']
         checks = {
+            'probe_passed': probe.returncode == 0,
+            'persist_module_present': persist,
+            'runtime_uses_persist': 'persistGetAssignment' in store,
             'migration_tables_present': all(('TABLE IF NOT EXISTS ' + t) in migration for t in tables),
-            'schema_matches_migration': all(t in schema for t in tables),
         }
     elif dimension == 'permission_test_result':
         authz = _read(api / 'src/auth/authorization.ts')
+        authn = _read(api / 'src/auth/requireAuth.ts')
         ctrl = _read(api / 'src/controllers/navigationController.ts')
         checks = {
             'authorization_guard_present': 'authorizeNavigationAction' in authz,
+            'auth_middleware_present': 'requireAuth' in authn and 'UNAUTHENTICATED' in authn,
             'controller_enforces_visibility': 'resolveVisibleNavigation' in ctrl,
+            'auth_test_present': (api / 'src/__tests__/auth.test.ts').is_file(),
             'suite_status': suite.get('status'),
         }
     elif dimension == 'browser_e2e_result':
         checks = {
+            'e2e_test_present': (web / 'src/__tests__/app.e2e.test.ts').is_file(),
             'web_entry_present': (web / 'index.html').is_file() and (web / 'src/main.tsx').is_file(),
             'app_shell_present': (web / 'src/App.tsx').is_file(),
             'suite_status': suite.get('status'),
@@ -165,9 +181,11 @@ def _probe(dimension: str, suite: dict) -> tuple[str, dict]:
     elif dimension == 'visual_regression_result':
         css = _read(web / 'src/styles/shell.css')
         checks = {
+            'visual_test_present': (web / 'src/__tests__/visual.test.ts').is_file(),
             'sidebar_tokens': '--sidebar-expanded-width' in css and '--sidebar-collapsed-width' in css,
             'shell_grid': '.shell-body' in css and 'grid-template-columns' in css,
             'active_state': 'nav-link--active' in css,
+            'suite_status': suite.get('status'),
         }
     elif dimension == 'responsive_verification_result':
         css = _read(web / 'src/styles/shell.css')
@@ -217,7 +235,7 @@ def _probe(dimension: str, suite: dict) -> tuple[str, dict]:
             return not v
         return False
 
-    status = 'PASS' if all(_ok(v) for v in checks.values()) else 'FAIL'
+    status = as_status(all(_ok(v) for v in checks.values()) and checks_ok(checks))
     detail['checks'] = checks
     return status, detail
 
@@ -262,7 +280,12 @@ def _compose_test_evidence_set() -> Path:
     return out
 
 
+def _test_set_status() -> str:
+    return str((_read_yaml(WORK_DIR / EVIDENCE_PATH) or {}).get('status') or 'MISSING')
+
+
 def _compile_verification_result() -> Path:
+    tests_ok = _test_set_status() == 'PASS'
     doc = {
         'artifact_uid': 'VERIFICATION-RESULT-STAGE-06-' + GOVERNED,
         'artifact_type': 'VERIFICATION_RESULT',
@@ -270,12 +293,12 @@ def _compile_verification_result() -> Path:
         'work_unit_uid': _wu_uid(),
         'governed_unit_uid': GOVERNED,
         'governance_uid': _governance_uid(),
-        'cohesive_interaction_result': 'PASS',
-        'interaction_topology_result': 'PASS',
-        'execution_scope_authority_state': 'AUTHORIZED',
-        'dynamic_denominator_state': 'RECONCILED',
-        'ownership_portability_audit_result': 'PASS',
-        'status': 'PASS',
+        'cohesive_interaction_result': 'PASS' if tests_ok else 'FAIL',
+        'interaction_topology_result': 'PASS' if tests_ok else 'FAIL',
+        'execution_scope_authority_state': 'AUTHORIZED' if tests_ok else 'BLOCKED',
+        'dynamic_denominator_state': 'RECONCILED' if tests_ok else 'UNRECONCILED',
+        'ownership_portability_audit_result': 'PASS' if tests_ok else 'FAIL',
+        'status': 'PASS' if tests_ok else 'FAIL',
         'product_completion_credit': 0,
     }
     out = WORK_DIR / 'VERIFICATION_RESULT.yaml'
@@ -284,6 +307,7 @@ def _compile_verification_result() -> Path:
 
 
 def _compile_audit_matrix() -> Path:
+    tests_ok = _test_set_status() == 'PASS'
     doc = {
         'artifact_uid': 'AUDIT-MATRIX-STAGE-06-' + GOVERNED,
         'artifact_type': 'AUDIT_MATRIX',
@@ -291,10 +315,10 @@ def _compile_audit_matrix() -> Path:
         'work_unit_uid': _wu_uid(),
         'governed_unit_uid': GOVERNED,
         'governance_uid': _governance_uid(),
-        'successor_input_readiness_state': 'PREPARED',
-        'cross_stage_handoff_state': 'READY',
-        'false_completion_audit_result': 'PASS',
-        'status': 'PASS',
+        'successor_input_readiness_state': 'PREPARED' if tests_ok else 'BLOCKED',
+        'cross_stage_handoff_state': 'READY' if tests_ok else 'BLOCKED',
+        'false_completion_audit_result': 'PASS' if tests_ok else 'FAIL',
+        'status': 'PASS' if tests_ok else 'FAIL',
         'product_completion_credit': 0,
     }
     out = WORK_DIR / 'AUDIT_MATRIX.yaml'
@@ -303,6 +327,7 @@ def _compile_audit_matrix() -> Path:
 
 
 def _compile_work_unit_closure_record() -> Path:
+    tests_ok = _test_set_status() == 'PASS'
     doc = {
         'artifact_uid': 'WORK-UNIT-CLOSURE-STAGE-06-' + GOVERNED,
         'artifact_type': 'WORK_UNIT_CLOSURE_RECORD',
@@ -310,8 +335,8 @@ def _compile_work_unit_closure_record() -> Path:
         'work_unit_uid': _wu_uid(),
         'governed_unit_uid': GOVERNED,
         'governance_uid': _governance_uid(),
-        'work_unit_closure_state': 'PRE_RELEASE_VERIFICATION_CLOSED',
-        'status': 'PASS',
+        'work_unit_closure_state': 'PRE_RELEASE_VERIFICATION_CLOSED' if tests_ok else 'BLOCKED',
+        'status': 'PASS' if tests_ok else 'FAIL',
         'product_completion_credit': 0,
     }
     out = WORK_DIR / 'WORK_UNIT_CLOSURE_RECORD.yaml'
@@ -322,7 +347,8 @@ def _compile_work_unit_closure_record() -> Path:
 def _compile_verified_source_revision() -> Path:
     proc = subprocess.run(['git', '-C', str(PRODUCT_ROOT), 'rev-parse', 'HEAD'],
                           text=True, capture_output=True)
-    head = proc.stdout.strip() if proc.returncode == 0 else '0' * 40
+    head = proc.stdout.strip() if proc.returncode == 0 else ''
+    ok = proc.returncode == 0 and len(head) == 40
     doc = {
         'artifact_uid': 'VERIFIED-SOURCE-REVISION-STAGE-06-' + GOVERNED,
         'artifact_type': 'VERIFIED_SOURCE_REVISION',
@@ -330,9 +356,9 @@ def _compile_verified_source_revision() -> Path:
         'work_unit_uid': _wu_uid(),
         'governed_unit_uid': GOVERNED,
         'governance_uid': _governance_uid(),
-        'verified_source_revision_state': 'CAPTURED',
+        'verified_source_revision_state': 'CAPTURED' if ok else 'UNCAPTURED',
         'source_revision_sha': head,
-        'status': 'PASS',
+        'status': 'PASS' if ok else 'FAIL',
         'product_completion_credit': 0,
     }
     out = WORK_DIR / 'VERIFIED_SOURCE_REVISION.yaml'
@@ -347,10 +373,11 @@ def _write_receipt(stage: str, op: str, gov: str, result_owner: str, extra: dict
         'work_unit_uid': _wu_uid(),
         'operation_uid': op,
         'governance_uid': gov,
-        'status': 'PASS',
+        'status': extra.get('gate_status') or 'FAIL',
         'executor_owner': EXECUTOR_REL,
         'executor_protocol': 'PYTHON_STAGE_OPERATION_V1',
         'result_owner': result_owner,
+        'fail_closed': True,
     }
     receipt.update(extra)
     _write_yaml(WORK_DIR / 'EVIDENCE' / 'OPERATION_RECEIPTS' / (op + '.yaml'), receipt)
@@ -375,6 +402,7 @@ def main() -> None:
     binding = ((work.get('operation_bindings') or {}).get(a.operation) or {})
     result_owner = str(binding.get('result_owner') or 'UNBOUND')
     extra: dict = {}
+    gate = 'FAIL'
 
     if a.operation in TEST_OPS or a.operation == 'OP-34-SECURITY_VERIFICATION':
         suite = _suite_run() if a.operation in TEST_OPS else {'status': 'NOT_RUN'}
@@ -383,23 +411,32 @@ def main() -> None:
         _write_dimension(a.operation, status, detail)
         extra['dimension'] = dimension
         extra['dimension_status'] = status
+        gate = status
         if a.operation == LAST_TEST_OP:
             out = _compose_test_evidence_set()
             extra['evidence_set_ref'] = str(out.relative_to(PRODUCT_ROOT)).replace(os.sep, '/')
+            gate = str((_read_yaml(out) or {}).get('status') or 'FAIL')
     elif a.operation == 'OP-35-AUDIT_MATRIX_RECONCILIATION':
         out = _compile_audit_matrix()
         extra['materialized_output'] = str(out.relative_to(PRODUCT_ROOT)).replace(os.sep, '/')
+        gate = str((_read_yaml(out) or {}).get('status') or 'FAIL')
     elif a.operation == 'PROGRAM_PROFILE_COMPLIANCE_VERIFY':
         out = _compile_verification_result()
         extra['materialized_output'] = str(out.relative_to(PRODUCT_ROOT)).replace(os.sep, '/')
+        gate = str((_read_yaml(out) or {}).get('status') or 'FAIL')
     elif a.operation == 'WORK_UNIT_CLOSURE_PRE_RELEASE':
         out = _compile_work_unit_closure_record()
         extra['materialized_output'] = str(out.relative_to(PRODUCT_ROOT)).replace(os.sep, '/')
+        gate = str((_read_yaml(out) or {}).get('status') or 'FAIL')
     elif a.operation == 'VERIFIED_SOURCE_REVISION_CAPTURE':
         out = _compile_verified_source_revision()
         extra['materialized_output'] = str(out.relative_to(PRODUCT_ROOT)).replace(os.sep, '/')
+        gate = str((_read_yaml(out) or {}).get('status') or 'FAIL')
 
+    extra['gate_status'] = gate
     _write_receipt(a.stage, a.operation, gov, result_owner, extra)
+    if gate != 'PASS':
+        raise SystemExit('OPERATION_FAIL_CLOSED:' + a.operation)
     print('OK', a.operation)
 
 

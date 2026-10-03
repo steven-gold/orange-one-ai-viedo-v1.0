@@ -8,7 +8,7 @@ export interface AuditRecordInput {
   route: string;
 }
 
-export function recordNavigationEvent(input: AuditRecordInput): NavigationEvent {
+export async function recordNavigationEvent(input: AuditRecordInput): Promise<NavigationEvent> {
   const occurredAt = new Date().toISOString();
   return persistNavigationEvent({
     eventUid: `EVT-${occurredAt}-${input.itemUid}`,
@@ -20,6 +20,6 @@ export function recordNavigationEvent(input: AuditRecordInput): NavigationEvent 
   });
 }
 
-export function listAuditEvents(): NavigationEvent[] {
+export async function listAuditEvents(): Promise<NavigationEvent[]> {
   return readNavigationEvents();
 }

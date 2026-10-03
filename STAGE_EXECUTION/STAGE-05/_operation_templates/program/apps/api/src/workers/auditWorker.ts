@@ -11,7 +11,6 @@ export interface AuditDrainResult {
  * events to downstream sinks without blocking the request path.
  */
 export async function drainAuditEvents(): Promise<AuditDrainResult> {
-  const events = listAuditEvents();
-  await Promise.resolve();
+  const events = await listAuditEvents();
   return { drained: events.length, events };
 }

@@ -29,8 +29,8 @@ export class NavigationResolutionError extends Error {
  * Front/L1 visibility is the intersection of Canonical Navigation Authority
  * and the account's permission assignment. No other rule may widen it.
  */
-export function resolveVisibleNavigation(accountUid: string): NavigationResolution {
-  const assignment: PermissionAssignment | undefined = getAssignment(accountUid);
+export async function resolveVisibleNavigation(accountUid: string): Promise<NavigationResolution> {
+  const assignment: PermissionAssignment | undefined = await getAssignment(accountUid);
   if (!assignment) {
     throw new NavigationResolutionError(
       'NAVIGATION_TARGET_UNRESOLVABLE',
@@ -38,7 +38,7 @@ export function resolveVisibleNavigation(accountUid: string): NavigationResoluti
     );
   }
   const granted = new Set(assignment.grantedNavigationUids);
-  const items = listNavigationItems()
+  const items = (await listNavigationItems())
     .filter((entry) => granted.has(entry.uid))
     .map((entry) => ({ ...entry, active: false }));
   if (items.length === 0) {

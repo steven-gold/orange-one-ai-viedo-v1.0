@@ -1,39 +1,32 @@
 import { CANONICAL_NAVIGATION_AUTHORITY } from '../db/schema';
+import {
+  persistGetAssignment,
+  persistGetItem,
+  persistListAuditEvents,
+  persistListItems,
+  persistRecordAuditEvent,
+} from '../db/persist';
 import type { CanonicalNavigationItem, NavigationEvent, PermissionAssignment } from '../domain/types';
 
-const items = new Map<string, CanonicalNavigationItem>(
-  CANONICAL_NAVIGATION_AUTHORITY.items.map((entry) => [entry.uid, entry]),
-);
-
-const assignments = new Map<string, PermissionAssignment>([
-  [
-    'ACC-DEMO',
-    {
-      accountUid: 'ACC-DEMO',
-      grantedNavigationUids: CANONICAL_NAVIGATION_AUTHORITY.items.map((entry) => entry.uid),
-    },
-  ],
-  ['ACC-LIMITED', { accountUid: 'ACC-LIMITED', grantedNavigationUids: ['FRONT-01', 'FRONT-02'] }],
-]);
-
-const auditEvents: NavigationEvent[] = [];
-
+/**
+ * Persistent runtime facade. Navigation, permission and audit state live in
+ * SQLite or Neon; this module never keeps an in-memory Map as authority.
+ */
 export const runtimeStore = {
   authorityUid: CANONICAL_NAVIGATION_AUTHORITY.authorityUid,
-  listItems(): CanonicalNavigationItem[] {
-    return [...items.values()];
+  listItems(): Promise<CanonicalNavigationItem[]> {
+    return persistListItems();
   },
-  getItem(uid: string): CanonicalNavigationItem | undefined {
-    return items.get(uid);
+  getItem(uid: string): Promise<CanonicalNavigationItem | undefined> {
+    return persistGetItem(uid);
   },
-  getAssignment(accountUid: string): PermissionAssignment | undefined {
-    return assignments.get(accountUid);
+  getAssignment(accountUid: string): Promise<PermissionAssignment | undefined> {
+    return persistGetAssignment(accountUid);
   },
-  listAuditEvents(): NavigationEvent[] {
-    return [...auditEvents];
+  listAuditEvents(): Promise<NavigationEvent[]> {
+    return persistListAuditEvents();
   },
-  recordAuditEvent(event: NavigationEvent): NavigationEvent {
-    auditEvents.push(event);
-    return event;
+  recordAuditEvent(event: NavigationEvent): Promise<NavigationEvent> {
+    return persistRecordAuditEvent(event);
   },
 };

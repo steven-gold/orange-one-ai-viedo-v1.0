@@ -10,6 +10,8 @@
     "dev:web": "npm --workspace @acpos/web run dev",
     "dev:api": "npm --workspace @acpos/api run dev",
     "build": "npm --workspace @acpos/web run build && npm --workspace @acpos/api run build",
-    "test": "npm --workspace @acpos/web run test && npm --workspace @acpos/api run test"
+    "test": "npm --workspace @acpos/web run test && npm --workspace @acpos/api run test",
+    "migrate": "npm --workspace @acpos/api run migrate",
+    "smoke": "node scripts/live-smoke.mjs"
   }
 }

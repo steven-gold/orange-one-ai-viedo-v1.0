@@ -5,31 +5,24 @@ Producer operations materialize the stage outputs:
   * OP-38-STAGING_ACCEPTANCE     -> STAGING_ACCEPTANCE_OR_NA_EVIDENCE
   * STAGING_CLOSURE_RECONCILE    -> STAGING_CLOSURE_RECORD
 
-Staging targets the locally built release candidate (apps/web/dist, apps/api).
-No external deployment is performed; acceptance is proven against the local
-staging runtime and every value is derived from physical state.
+Staging boots the local staging runtime, applies migrations, and proves
+acceptance with a live HTTP smoke against health, auth and navigation.
 """
 from __future__ import annotations
 import argparse
-import hashlib
 import os
-import subprocess
+import sys
 from pathlib import Path
 import yaml
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / '_shared'))
+from fail_closed import as_status, run_live_smoke
 
 EXECUTOR_REL = 'STAGE_EXECUTION/STAGE-08/stage08_operation_executor.py'
 GOVERNED = 'GLOBAL-HOME-SHELL-NAVIGATION'
 
 WORK_DIR: Path | None = None
 PRODUCT_ROOT: Path | None = None
-
-
-def _sha256(path: Path) -> str:
-    return hashlib.sha256(path.read_bytes()).hexdigest()
-
-
-def _read(path: Path) -> str:
-    return path.read_text(encoding='utf-8') if path.is_file() else ''
 
 
 def _read_yaml(path: Path) -> dict:
@@ -50,6 +43,7 @@ def _wu() -> str:
 
 
 def _base(atype: str, extra: dict) -> dict:
+    status = extra.pop('status', 'FAIL')
     return {
         'artifact_uid': f'{atype}-STAGE-08-{GOVERNED}',
         'artifact_type': atype,
@@ -58,7 +52,7 @@ def _base(atype: str, extra: dict) -> dict:
         'governed_unit_uid': GOVERNED,
         'governance_uid': _gov(),
         **extra,
-        'status': 'PASS',
+        'status': status,
         'product_completion_credit': 0,
     }
 
@@ -67,61 +61,78 @@ def _release_candidate_ref() -> str:
     return _read_yaml(WORK_DIR / 'WORK_UNIT.yaml').get('input_bindings', {}).get('RELEASE_CANDIDATE', {}).get('artifact_ref', '')
 
 
-def _op_staging_deployment() -> None:
+def _op_staging_deployment() -> dict:
     web_dist = PRODUCT_ROOT / 'apps/web/dist'
     rc = _read_yaml(PRODUCT_ROOT / _release_candidate_ref()) if _release_candidate_ref() else {}
-    _write_yaml(WORK_DIR / 'EVIDENCE' / 'STAGING_DEPLOYMENT.yaml', {
+    smoke = run_live_smoke(PRODUCT_ROOT, {'ACPOS_DEPLOYMENT_ENV': 'staging'})
+    ok = bool(smoke.get('ok')) and web_dist.is_dir()
+    doc = {
         'artifact_type': 'STAGING_DEPLOYMENT_RECORD',
-        'stage_uid': 'STAGE-08', 'work_unit_uid': _wu(), 'governed_unit_uid': GOVERNED, 'governance_uid': _gov(),
+        'stage_uid': 'STAGE-08',
+        'work_unit_uid': _wu(),
+        'governed_unit_uid': GOVERNED,
+        'governance_uid': _gov(),
         'release_candidate_uid': rc.get('release_candidate_uid'),
         'web_dist_present': web_dist.is_dir(),
         'staging_target': 'LOCAL_STAGING_RUNTIME',
-        'status': 'PASS', 'product_completion_credit': 0,
-    })
-
-
-def _op_staging_acceptance() -> None:
-    web = PRODUCT_ROOT / 'apps/web'
-    api = PRODUCT_ROOT / 'apps/api'
-    checks = {
-        'staging_build_present': (web / 'dist').is_dir(),
-        'api_entry_present': (api / 'src/server.ts').is_file(),
-        'navigation_route_present': '/api/navigation' in _read(api / 'src/app.ts'),
+        'live_smoke': smoke,
+        'status': as_status(ok),
+        'product_completion_credit': 0,
     }
-    _write_yaml(WORK_DIR / 'EVIDENCE' / 'STAGING_ACCEPTANCE_OR_NA_EVIDENCE.yaml', _base(
-        'STAGING_ACCEPTANCE_OR_NA_EVIDENCE', {
-            'staging_acceptance_or_na_state': 'PASS' if all(checks.values()) else 'FAIL',
-            'checks': checks,
-            'staging_acceptance_result': 'ACCEPTED' if all(checks.values()) else 'REJECTED',
-        }))
+    _write_yaml(WORK_DIR / 'EVIDENCE' / 'STAGING_DEPLOYMENT.yaml', doc)
+    return doc
+
+
+def _op_staging_acceptance() -> dict:
+    smoke = run_live_smoke(PRODUCT_ROOT, {'ACPOS_DEPLOYMENT_ENV': 'staging'})
+    checks = dict(smoke.get('checks') or {})
+    checks['staging_build_present'] = (PRODUCT_ROOT / 'apps/web/dist').is_dir()
+    ok = bool(smoke.get('ok')) and checks.get('health') is True and checks.get('authenticated_navigation') is True
+    doc = _base('STAGING_ACCEPTANCE_OR_NA_EVIDENCE', {
+        'staging_acceptance_or_na_state': as_status(ok),
+        'checks': checks,
+        'live_smoke': smoke,
+        'staging_acceptance_result': 'ACCEPTED' if ok else 'REJECTED',
+        'status': as_status(ok),
+    })
+    _write_yaml(WORK_DIR / 'EVIDENCE' / 'STAGING_ACCEPTANCE_OR_NA_EVIDENCE.yaml', doc)
+    return doc
 
 
 def _op_na_authority_verify() -> dict:
     return {'staging_applicability': 'APPLICABLE', 'na_authority_required': False, 'na_authority_verified': True}
 
 
-def _op_staging_closure() -> None:
+def _op_staging_closure() -> dict:
     ev = _read_yaml(WORK_DIR / 'EVIDENCE' / 'STAGING_ACCEPTANCE_OR_NA_EVIDENCE.yaml')
-    accepted = ev.get('staging_acceptance_or_na_state') == 'PASS'
-    _write_yaml(WORK_DIR / 'STAGING_CLOSURE_RECORD.yaml', _base('STAGING_CLOSURE_RECORD', {
-        'deployment_applicability_coherence_state': 'COHERENT',
-        'execution_scope_authority_state': 'AUTHORIZED',
-        'dynamic_denominator_state': 'RECONCILED',
-        'ownership_portability_audit_result': 'PASS',
-        'successor_input_readiness_state': 'PREPARED',
-        'cross_stage_handoff_state': 'READY',
-        'false_completion_audit_result': 'PASS',
+    accepted = ev.get('staging_acceptance_or_na_state') == 'PASS' and ev.get('status') == 'PASS'
+    doc = _base('STAGING_CLOSURE_RECORD', {
+        'deployment_applicability_coherence_state': 'COHERENT' if accepted else 'INCOHERENT',
+        'execution_scope_authority_state': 'AUTHORIZED' if accepted else 'BLOCKED',
+        'dynamic_denominator_state': 'RECONCILED' if accepted else 'UNRECONCILED',
+        'ownership_portability_audit_result': as_status(accepted),
+        'successor_input_readiness_state': 'PREPARED' if accepted else 'BLOCKED',
+        'cross_stage_handoff_state': 'READY' if accepted else 'BLOCKED',
+        'false_completion_audit_result': as_status(accepted),
         'staging_closure_state': 'CLOSED_ACCEPTED' if accepted else 'BLOCKED',
-    }))
+        'status': as_status(accepted),
+    })
+    _write_yaml(WORK_DIR / 'STAGING_CLOSURE_RECORD.yaml', doc)
+    return doc
 
 
 def _write_receipt(op: str, result_owner: str, extra: dict) -> None:
     rec = {
         'artifact_type': 'OPERATION_EXECUTION_RECEIPT',
-        'stage_uid': 'STAGE-08', 'work_unit_uid': _wu(), 'operation_uid': op,
-        'governance_uid': _gov(), 'status': 'PASS',
-        'executor_owner': EXECUTOR_REL, 'executor_protocol': 'PYTHON_STAGE_OPERATION_V1',
+        'stage_uid': 'STAGE-08',
+        'work_unit_uid': _wu(),
+        'operation_uid': op,
+        'governance_uid': _gov(),
+        'status': extra.get('gate_status') or 'FAIL',
+        'executor_owner': EXECUTOR_REL,
+        'executor_protocol': 'PYTHON_STAGE_OPERATION_V1',
         'result_owner': result_owner,
+        'fail_closed': True,
     }
     rec.update(extra)
     _write_yaml(WORK_DIR / 'EVIDENCE' / 'OPERATION_RECEIPTS' / (op + '.yaml'), rec)
@@ -145,17 +156,25 @@ def main() -> None:
     binding = ((work.get('operation_bindings') or {}).get(a.operation) or {})
     result_owner = str(binding.get('result_owner') or 'UNBOUND')
     extra: dict = {}
+    gate = 'FAIL'
 
     if a.operation == 'OP-37-STAGING_DEPLOYMENT':
-        _op_staging_deployment()
+        extra['result'] = _op_staging_deployment()
+        gate = extra['result'].get('status') or 'FAIL'
     elif a.operation == 'OP-38-STAGING_ACCEPTANCE':
-        _op_staging_acceptance()
+        extra['result'] = _op_staging_acceptance()
+        gate = extra['result'].get('status') or 'FAIL'
     elif a.operation == 'STAGING_NA_AUTHORITY_VERIFY':
         extra['result'] = _op_na_authority_verify()
+        gate = 'PASS'
     elif a.operation == 'STAGING_CLOSURE_RECONCILE':
-        _op_staging_closure()
+        extra['result'] = _op_staging_closure()
+        gate = extra['result'].get('status') or 'FAIL'
 
+    extra['gate_status'] = gate
     _write_receipt(a.operation, result_owner, extra)
+    if gate != 'PASS':
+        raise SystemExit('OPERATION_FAIL_CLOSED:' + a.operation)
     print('OK', a.operation)
 
 

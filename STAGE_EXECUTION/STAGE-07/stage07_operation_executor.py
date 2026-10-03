@@ -113,13 +113,15 @@ def _op_production_build() -> None:
 
 def _op_release_candidate() -> None:
     manifest = _read_yaml(WORK_DIR / 'BUILD_IDENTITY_MANIFEST.yaml')
+    built = manifest.get('production_build_gate_state') == 'PASS'
     candidate = _base('RELEASE_CANDIDATE', {
-        'release_candidate_gate_state': 'PASS',
-        'execution_scope_authority_state': 'AUTHORIZED',
-        'dynamic_denominator_state': 'RECONCILED',
-        'ownership_portability_audit_result': 'PASS',
+        'release_candidate_gate_state': 'PASS' if built else 'FAIL',
+        'execution_scope_authority_state': 'AUTHORIZED' if built else 'BLOCKED',
+        'dynamic_denominator_state': 'RECONCILED' if built else 'UNRECONCILED',
+        'ownership_portability_audit_result': 'PASS' if built else 'FAIL',
         'release_candidate_uid': 'RC-' + str(manifest.get('build_id') or 'UNBUILT'),
         'build_identity_ref': 'STAGE_EXECUTION/STAGE-07/WU-STAGE-07-GLOBAL-HOME-SHELL-NAVIGATION-001/BUILD_IDENTITY_MANIFEST.yaml',
+        'status': 'PASS' if built else 'FAIL',
     })
     _write_yaml(WORK_DIR / 'RELEASE_CANDIDATE.yaml', candidate)
 
@@ -159,10 +161,11 @@ def _write_receipt(op: str, result_owner: str, extra: dict) -> None:
         'work_unit_uid': _wu(),
         'operation_uid': op,
         'governance_uid': _gov(),
-        'status': 'PASS',
+        'status': extra.get('gate_status') or 'FAIL',
         'executor_owner': EXECUTOR_REL,
         'executor_protocol': 'PYTHON_STAGE_OPERATION_V1',
         'result_owner': result_owner,
+        'fail_closed': True,
     }
     rec.update(extra)
     _write_yaml(WORK_DIR / 'EVIDENCE' / 'OPERATION_RECEIPTS' / (op + '.yaml'), rec)
@@ -186,19 +189,28 @@ def main() -> None:
     binding = ((work.get('operation_bindings') or {}).get(a.operation) or {})
     result_owner = str(binding.get('result_owner') or 'UNBOUND')
     extra: dict = {}
+    gate = 'FAIL'
 
     if a.operation == 'OP-36-PRODUCTION_BUILD':
         _op_production_build()
+        gate = str((_read_yaml(WORK_DIR / 'BUILD_IDENTITY_MANIFEST.yaml') or {}).get('production_build_gate_state') or 'FAIL')
     elif a.operation == 'RELEASE_CANDIDATE_COMPILE':
         _op_release_candidate()
+        gate = str((_read_yaml(WORK_DIR / 'RELEASE_CANDIDATE.yaml') or {}).get('status') or 'FAIL')
     elif a.operation == 'MIGRATION_COMPATIBILITY_VERIFY':
         extra['result'] = _op_migration_compatibility()
+        gate = 'PASS' if extra['result'].get('schema_matches_migration') else 'FAIL'
     elif a.operation == 'SECURITY_FRESHNESS_VERIFY':
         extra['result'] = _op_security_freshness()
+        gate = 'PASS' if extra['result'].get('redaction_present') and extra['result'].get('dependency_lock_present') else 'FAIL'
     elif a.operation == 'STAGING_APPLICABILITY_DECIDE':
         _op_staging_applicability()
+        gate = str((_read_yaml(WORK_DIR / 'STAGING_APPLICABILITY_DECISION.yaml') or {}).get('status') or 'FAIL')
 
+    extra['gate_status'] = gate
     _write_receipt(a.operation, result_owner, extra)
+    if gate != 'PASS':
+        raise SystemExit('OPERATION_FAIL_CLOSED:' + a.operation)
     print('OK', a.operation)
 
 

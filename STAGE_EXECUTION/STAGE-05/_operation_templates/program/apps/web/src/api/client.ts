@@ -15,6 +15,7 @@ export class NavigationClientError extends Error {
 interface NavigationQuery {
   area: NavigationArea;
   accountUid: string;
+  sessionUid?: string;
   activePath?: string;
   activePageUid?: string | null;
 }
@@ -30,7 +31,13 @@ export async function fetchNavigationContext(
   if (query.activePath) params.set('activePath', query.activePath);
   if (query.activePageUid) params.set('activePageUid', query.activePageUid);
 
-  const response = await fetch(`${API_BASE}/navigation?${params.toString()}`, { signal });
+  const response = await fetch(`${API_BASE}/navigation?${params.toString()}`, {
+    signal,
+    headers: {
+      'x-account-uid': query.accountUid,
+      'x-session-uid': query.sessionUid ?? 'sess-demo-001',
+    },
+  });
   if (!response.ok) {
     throw new NavigationClientError('NAVIGATION_AUTHORITY_UNAVAILABLE', `navigation request failed: ${response.status}`);
   }

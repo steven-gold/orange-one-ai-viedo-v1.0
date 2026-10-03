@@ -7,9 +7,15 @@
     "dev": "tsx watch src/server.ts",
     "build": "tsc --noEmit",
     "start": "tsx src/server.ts",
-    "test": "vitest run"
+    "migrate": "tsx src/db/runMigrate.ts",
+    "probe": "tsx src/db/probe.ts",
+    "backup": "tsx src/ops/runBackup.ts",
+    "rollback": "tsx src/ops/runRollback.ts",
+    "monitor": "tsx src/ops/runMonitor.ts",
+    "test": "vitest run --fileParallelism=false"
   },
   "dependencies": {
+    "@neondatabase/serverless": "^1.1.0",
     "express": "^4.19.2"
   },
   "devDependencies": {

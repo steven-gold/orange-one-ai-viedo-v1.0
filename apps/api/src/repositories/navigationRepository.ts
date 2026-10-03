@@ -1,13 +1,13 @@
 import type { CanonicalNavigationItem, NavigationArea } from '../domain/types';
 import { runtimeStore } from '../storage/runtimeStore';
 
-export function listNavigationItems(area?: NavigationArea): CanonicalNavigationItem[] {
-  const items = runtimeStore.listItems();
+export async function listNavigationItems(area?: NavigationArea): Promise<CanonicalNavigationItem[]> {
+  const items = await runtimeStore.listItems();
   const scoped = area ? items.filter((entry) => entry.area === area) : items;
   return scoped.sort((a, b) => a.order - b.order);
 }
 
-export function getNavigationItem(uid: string): CanonicalNavigationItem | undefined {
+export async function getNavigationItem(uid: string): Promise<CanonicalNavigationItem | undefined> {
   return runtimeStore.getItem(uid);
 }
 
