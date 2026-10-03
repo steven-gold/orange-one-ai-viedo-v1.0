@@ -1475,13 +1475,13 @@ Source Control 用於版本化與可追溯性；CI 用於可重現 validation �
 <!-- SECTION_UID: WEB-GOV-03-S074 -->
 ## 74. Template Substitution Block / 模板替代封鎖
 
-Stage-05 and Stage-06 execution MUST treat Frozen Design as Current Implementation Authority.
+Implementation-stage and verification-stage execution MUST treat Frozen Design as Current Implementation Authority.
 
 Copying a generic operation template, starter scaffold, generic program tree, or any non-Current Frozen Design artifact into the product tree MUST_NOT close an implementation or verification operation.
 
 An executor MAY copy a template only when every copied path is immediately overwritten by Frozen-Design-bound values before the operation receipt is written. A receipt whose program bytes still equal the generic template for any Frozen-bound field MUST FAIL.
 
-Generic geometry, generic header or sidebar tokens, generic light or dark scheme, generic navigation labels or UIDs, or generic control UIDs that are not the Current Frozen Design values are template substitution and MUST BLOCK Stage-05 closure and Stage-06 verification credit.
+Generic geometry, generic header or sidebar tokens, generic light or dark scheme, generic navigation labels or UIDs, or generic control UIDs that are not the Current Frozen Design values are template substitution and MUST BLOCK implementation-stage closure and verification-stage credit.
 
 Indexed validation, artifact-count evidence, and IMPLEMENTATION_CONTRACT_COMPLETE claims MUST_NOT hide template substitution. The common invariant layer owns this rule for every affected Stage.
 

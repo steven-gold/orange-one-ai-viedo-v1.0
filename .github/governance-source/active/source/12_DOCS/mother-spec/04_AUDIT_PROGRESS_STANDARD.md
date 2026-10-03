@@ -1692,7 +1692,7 @@ Audit MUST 證明：
 <!-- SECTION_UID: WEB-GOV-04-S089 -->
 ## 89. Frozen Design vs Program Semantic Diff Audit / Frozen Design 與程式語意差異稽核
 
-Audit MUST rebuild Frozen Design row coverage against Current program fields before Stage-05 or Stage-06 closure credit.
+Audit MUST rebuild Frozen Design row coverage against Current program fields before implementation-stage or verification-stage closure credit.
 
 For every applicable Frozen Design row, Audit MUST record frozen_row_uid, frozen_authority_ref, program_field_path, expected_frozen_value, actual_program_value, actual_dom_or_computed_value when the field is user-visible, and reconciliation_result.
 

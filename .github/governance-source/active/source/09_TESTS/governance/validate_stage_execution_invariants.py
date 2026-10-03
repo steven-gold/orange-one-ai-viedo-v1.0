@@ -507,7 +507,7 @@ def validate(root=ROOT):
     s5g = st5.get('frozen_design_program_field_binding_gate') or {}
     if s5g.get('required') is not True or s5g.get('invariant_uid') != 'GOV-INV-FROZEN-DESIGN-PROGRAM-FIELD-BINDING-001' or s5g.get('generic_operation_template_substitution') != 'BLOCK' or s5g.get('every_frozen_row_requires_exact_program_field_binding') is not True or s5g.get('count_only_implementation_diff_evidence') != 'BLOCK':
         failures.append('stage05_frozen_design_program_field_binding_gate_incomplete')
-    if not {'WEB-GOV-02-S078','WEB-GOV-03-S074','WEB-GOV-04-S089'}.issubset(set(st5.get('required_normative_section_uids') or [])):
+    if set(s5g.get('normative_section_uids') or []) != {'WEB-GOV-02-S078','WEB-GOV-03-S074','WEB-GOV-04-S089'} or not {'WEB-GOV-02-S078','WEB-GOV-03-S074','WEB-GOV-04-S089'}.issubset(set((st5.get('projection') or {}).get('required_normative_sections') or [])):
         failures.append('stage05_frozen_design_normative_binding_missing')
     s5c = (det.get('stage_contracts') or {}).get('STAGE-05') or {}
     if s5c.get('frozen_design_program_field_binding_required') is not True or s5c.get('generic_operation_template_substitution') != 'BLOCK' or s5c.get('count_only_implementation_diff_evidence') != 'BLOCK':
@@ -516,7 +516,7 @@ def validate(root=ROOT):
     s6g = st6.get('frozen_design_program_field_binding_gate') or {}
     if s6g.get('required') is not True or s6g.get('invariant_uid') != 'GOV-INV-FROZEN-DESIGN-PROGRAM-FIELD-BINDING-001' or s6g.get('frozen_vs_program_semantic_diff_required') is not True or s6g.get('generic_template_values_remaining_in_frozen_fields') != 'BLOCK' or s6g.get('user_visible_frozen_field_computed_visual_evidence_required') is not True:
         failures.append('stage06_frozen_design_program_field_binding_gate_incomplete')
-    if not {'WEB-GOV-02-S078','WEB-GOV-03-S074','WEB-GOV-04-S089'}.issubset(set(st6.get('required_normative_section_uids') or [])):
+    if set(s6g.get('normative_section_uids') or []) != {'WEB-GOV-02-S078','WEB-GOV-03-S074','WEB-GOV-04-S089'} or not {'WEB-GOV-02-S078','WEB-GOV-03-S074','WEB-GOV-04-S089'}.issubset(set((st6.get('projection') or {}).get('required_normative_sections') or [])):
         failures.append('stage06_frozen_design_normative_binding_missing')
     s6c = (det.get('stage_contracts') or {}).get('STAGE-06') or {}
     if s6c.get('frozen_design_vs_program_semantic_diff_required') is not True or s6c.get('generic_template_values_remaining_in_frozen_fields') != 'BLOCK' or s6c.get('user_visible_frozen_field_computed_visual_evidence_required') is not True:
