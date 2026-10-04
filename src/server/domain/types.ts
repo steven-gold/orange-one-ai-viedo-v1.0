@@ -32,3 +32,20 @@ export interface NavigationEvent {
 export interface ResolvedNavigationItem extends CanonicalNavigationItem {
   active: boolean;
 }
+
+export interface DashboardSectionValue {
+  sectionUid: string;
+  controlUid: string;
+  value: string | null;
+  detail: string;
+}
+
+export interface DashboardReadModel {
+  projectionUid: "CompanyDashboardProjection";
+  pageUid: "workspace:WB-01";
+  route: "/";
+  permission: "workspace.dashboard.view";
+  chainUid: "WB-01-FWC-DASHBOARD-READ-01";
+  authorized: boolean;
+  sections: DashboardSectionValue[];
+}

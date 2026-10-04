@@ -72,3 +72,64 @@ export async function activateNavigation(
     body: JSON.stringify({ itemUid }),
   });
 }
+
+export interface DashboardSectionValue {
+  sectionUid: string;
+  controlUid: string;
+  value: string | null;
+  detail: string;
+}
+
+export interface DashboardReadModel {
+  projectionUid: "CompanyDashboardProjection";
+  pageUid: "workspace:WB-01";
+  route: "/";
+  permission: "workspace.dashboard.view";
+  chainUid: "WB-01-FWC-DASHBOARD-READ-01";
+  authorized: boolean;
+  sections: DashboardSectionValue[];
+}
+
+export class DashboardClientError extends Error {
+  readonly code: string;
+  constructor(code: string, message: string) {
+    super(message);
+    this.code = code;
+    this.name = "DashboardClientError";
+  }
+}
+
+export async function fetchDashboardReadModel(
+  accountUid: string,
+  sessionUid = "sess-demo-001",
+  signal?: AbortSignal,
+): Promise<DashboardReadModel> {
+  const response = await fetch("/api/dashboard", {
+    signal,
+    headers: {
+      "x-account-uid": accountUid,
+      "x-session-uid": sessionUid,
+    },
+  });
+  if (!response.ok) {
+    throw new DashboardClientError("DASHBOARD_READ_UNAVAILABLE", `dashboard request failed: ${response.status}`);
+  }
+  return (await response.json()) as DashboardReadModel;
+}
+
+export async function openDashboardSection(
+  accountUid: string,
+  sectionUid: string,
+  controlUid: string,
+  sessionUid = "sess-demo-001",
+): Promise<void> {
+  await fetch("/api/dashboard/open", {
+    method: "POST",
+    headers: {
+      "content-type": "application/json",
+      "x-account-uid": accountUid,
+      "x-session-uid": sessionUid,
+    },
+    body: JSON.stringify({ sectionUid, controlUid }),
+  });
+}

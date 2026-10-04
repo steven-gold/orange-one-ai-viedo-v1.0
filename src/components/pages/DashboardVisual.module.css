@@ -65,11 +65,18 @@
   font-size: 14px;
   font-weight: 600;
   line-height: 1;
-  cursor: not-allowed;
+  cursor: pointer;
+}
+
+.viewButton:hover {
+  border-color: var(--border-active);
+  background: var(--purple-hover);
+  color: var(--text-primary);
 }
 
 .viewButton:disabled {
   opacity: 0.42;
+  cursor: not-allowed;
 }
 
 .cardBody {
@@ -84,6 +91,84 @@
   display: grid;
   place-items: center;
   text-align: center;
+  color: var(--text-muted);
+  font-size: 14px;
+  line-height: 1.55;
+}
+
+.valueState {
+  height: 100%;
+  display: grid;
+  place-items: center;
+  text-align: center;
+  color: var(--text-primary);
+  font-size: 28px;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.errorBanner {
+  margin: 16px 16px 0;
+  padding: 10px 12px;
+  border: 1px solid var(--status-error);
+  border-radius: var(--button-radius);
+  color: var(--status-error);
+  font-size: 14px;
+}
+
+.drawerBackdrop {
+  position: fixed;
+  inset: 0;
+  border: 0;
+  padding: 0;
+  background: transparent;
+  z-index: 34;
+  cursor: default;
+}
+
+.drawer {
+  position: fixed;
+  top: 58px;
+  right: 0;
+  bottom: 0;
+  width: 520px;
+  background: var(--surface-l2);
+  border-left: 1px solid var(--border-normal);
+  padding: 20px;
+  z-index: 35;
+  overflow: auto;
+}
+
+.drawerClose {
+  height: 40px;
+  min-width: 88px;
+  margin-bottom: 16px;
+  padding: 0 14px;
+  border: 1px solid var(--border-normal);
+  border-radius: var(--button-radius);
+  background: var(--surface-l1);
+  color: var(--text-secondary);
+  cursor: pointer;
+}
+
+.drawerTitle {
+  margin: 0 0 12px;
+  color: var(--text-primary);
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.drawerValue {
+  margin: 0 0 12px;
+  color: var(--text-primary);
+  font-size: 28px;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.drawerDetail {
+  margin: 0;
   color: var(--text-muted);
   font-size: 14px;
   line-height: 1.55;

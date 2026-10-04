@@ -55,6 +55,8 @@ const catalog = {
   "global.state.no_data": { "zh-TW": "目前無資料", "zh-CN": "目前无数据", en: "No data" },
   "global.state.load_failed": { "zh-TW": "資料載入失敗", "zh-CN": "数据载入失败", en: "Data load failed" },
   "global.common.view": { "zh-TW": "查看", "zh-CN": "查看", en: "View" },
+  "global.common.close": { "zh-TW": "關閉", "zh-CN": "关闭", en: "Close" },
+  "global.state.empty_value": { "zh-TW": "—", "zh-CN": "—", en: "—" },
   "global.page.projection_unbound": {
     "zh-TW": "此頁 Page Authority 尚未綁定 Runtime Projection，工作區維持空槽。",
     "zh-CN": "此页 Page Authority 尚未绑定 Runtime Projection，工作区维持空槽。",
@@ -79,6 +81,11 @@ const catalog = {
     "zh-TW": "儀表板讀模型尚未綁定，查看維持停用",
     "zh-CN": "仪表板读模型尚未绑定，查看维持停用",
     en: "Dashboard read model is unbound; view stays disabled",
+  },
+  "wb01.control.denied": {
+    "zh-TW": "無權查看此區塊",
+    "zh-CN": "无权查看此区块",
+    en: "No permission to view this section",
   },
 } as const;
 

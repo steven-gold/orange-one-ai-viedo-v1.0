@@ -1,5 +1,6 @@
+import { DASHBOARD_CHAIN, DASHBOARD_PAGE_UID, DASHBOARD_PERMISSION, DASHBOARD_PROJECTION, DASHBOARD_ROUTE } from "../domain/dashboard";
 import { getSqlClient } from "./client";
-import type { CanonicalNavigationItem, NavigationEvent, PermissionAssignment } from "../domain/types";
+import type { CanonicalNavigationItem, DashboardReadModel, DashboardSectionValue, NavigationEvent, PermissionAssignment } from "../domain/types";
 
 interface AuthorityRow {
   navigation_uid: string;
@@ -83,4 +84,59 @@ export async function persistFindSession(sessionUid: string): Promise<SessionRow
     [sessionUid],
   );
   return rows[0];
+}
+
+interface DashboardSectionRow {
+  section_uid: string;
+  control_uid: string;
+  value_text: string | null;
+  detail_text: string;
+}
+
+export async function persistHasDashboardPermission(accountUid: string): Promise<boolean> {
+  const rows = await getSqlClient().all<{ n: number }>(
+    "SELECT count(*)::int AS n FROM ghsn_account_dashboard_permission WHERE account_uid = ? AND permission_uid = ?",
+    [accountUid, DASHBOARD_PERMISSION],
+  );
+  return Number(rows[0]?.n ?? 0) > 0;
+}
+
+export async function persistListDashboardSections(): Promise<DashboardSectionValue[]> {
+  const rows = await getSqlClient().all<DashboardSectionRow>(
+    "SELECT section_uid, control_uid, value_text, detail_text FROM ghsn_dashboard_section_projection",
+  );
+  return rows.map((row) => ({
+    sectionUid: row.section_uid,
+    controlUid: row.control_uid,
+    value: row.value_text === "" ? null : row.value_text,
+    detail: row.detail_text,
+  }));
+}
+
+export async function persistGetDashboardReadModel(accountUid: string): Promise<DashboardReadModel> {
+  const authorized = await persistHasDashboardPermission(accountUid);
+  const sections = authorized ? await persistListDashboardSections() : [];
+  return {
+    projectionUid: DASHBOARD_PROJECTION,
+    pageUid: DASHBOARD_PAGE_UID,
+    route: DASHBOARD_ROUTE,
+    permission: DASHBOARD_PERMISSION,
+    chainUid: DASHBOARD_CHAIN,
+    authorized,
+    sections,
+  };
+}
+
+export async function persistRecordSectionOpen(
+  accountUid: string,
+  sectionUid: string,
+  controlUid: string,
+): Promise<string> {
+  const eventUid = `EVT-SECTION-OPEN-${Date.now()}-${sectionUid}`;
+  await getSqlClient().run(
+    `INSERT INTO ghsn_dashboard_audit_event (event_uid, account_uid, section_uid, control_uid, occurred_at)
+     VALUES (?, ?, ?, ?, ?)`,
+    [eventUid, accountUid, sectionUid, controlUid, new Date().toISOString()],
+  );
+  return eventUid;
 }

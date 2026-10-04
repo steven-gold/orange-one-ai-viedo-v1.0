@@ -1,3 +1,4 @@
+import { DASHBOARD_PERMISSION, DASHBOARD_SECTION_SEEDS } from "../domain/dashboard";
 import { CANONICAL_NAVIGATION_AUTHORITY } from "../domain/schema";
 import { openSqlClient, type SqlClient } from "./client";
 
@@ -33,6 +34,25 @@ const DDL = [
     session_uid TEXT PRIMARY KEY,
     account_uid TEXT NOT NULL,
     issued_at TEXT NOT NULL
+  )`,
+  `CREATE TABLE IF NOT EXISTS ghsn_dashboard_section_projection (
+    section_uid TEXT PRIMARY KEY,
+    control_uid TEXT NOT NULL,
+    label TEXT NOT NULL,
+    value_text TEXT,
+    detail_text TEXT NOT NULL
+  )`,
+  `CREATE TABLE IF NOT EXISTS ghsn_account_dashboard_permission (
+    account_uid TEXT NOT NULL,
+    permission_uid TEXT NOT NULL,
+    PRIMARY KEY (account_uid, permission_uid)
+  )`,
+  `CREATE TABLE IF NOT EXISTS ghsn_dashboard_audit_event (
+    event_uid TEXT PRIMARY KEY,
+    account_uid TEXT NOT NULL,
+    section_uid TEXT NOT NULL,
+    control_uid TEXT NOT NULL,
+    occurred_at TEXT NOT NULL
   )`,
 ];
 
@@ -87,6 +107,25 @@ async function seedCanonicalData(client: SqlClient): Promise<void> {
      ON CONFLICT (session_uid) DO UPDATE SET account_uid = EXCLUDED.account_uid`,
     ["sess-limited-001", "ACC-LIMITED", now],
   );
+
+  for (const section of DASHBOARD_SECTION_SEEDS) {
+    await client.run(
+      `INSERT INTO ghsn_dashboard_section_projection (section_uid, control_uid, label, value_text, detail_text)
+       VALUES (?, ?, ?, ?, ?)
+       ON CONFLICT (section_uid) DO UPDATE SET
+         control_uid = EXCLUDED.control_uid,
+         label = EXCLUDED.label`,
+      [section.sectionUid, section.controlUid, section.label, null, ""],
+    );
+  }
+  for (const accountUid of ["ACC-DEMO", "ACC-LIMITED"]) {
+    await client.run(
+      `INSERT INTO ghsn_account_dashboard_permission (account_uid, permission_uid)
+       VALUES (?, ?)
+       ON CONFLICT (account_uid, permission_uid) DO NOTHING`,
+      [accountUid, DASHBOARD_PERMISSION],
+    );
+  }
 }
 
 export async function bootstrapDatabase(): Promise<MigrationResult> {
@@ -96,7 +135,7 @@ export async function bootstrapDatabase(): Promise<MigrationResult> {
   }
   const existing = await client.all<{ filename: string }>("SELECT filename FROM ghsn_schema_migration_history");
   const applied = new Set(existing.map((row) => row.filename));
-  const files = ["001_init.sql", "002_sessions_and_history.sql"];
+  const files = ["001_init.sql", "002_sessions_and_history.sql", "003_dashboard.sql"];
   const newlyApplied: string[] = [];
   const alreadyApplied: string[] = [];
   for (const filename of files) {
