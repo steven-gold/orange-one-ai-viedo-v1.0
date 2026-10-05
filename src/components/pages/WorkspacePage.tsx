@@ -1,5 +1,6 @@
 "use client";
 
+import { CoreVisual } from "./CoreVisual";
 import { DashboardVisual } from "./DashboardVisual";
 import { findPageByUid, type PageAuthority } from "./pageRegistry";
 import { useI18n } from "@/i18n/LocaleProvider";
@@ -16,6 +17,9 @@ export function WorkspacePage({ pageUid }: { pageUid: string }) {
   }
   if (page.pageUid === "workspace:WB-01") {
     return <DashboardVisual />;
+  }
+  if (page.pageUid === "CORE-01") {
+    return <CoreVisual />;
   }
   return (
     <article className="page-slot" data-page-uid={page.pageUid} data-page-state="EMPTY">

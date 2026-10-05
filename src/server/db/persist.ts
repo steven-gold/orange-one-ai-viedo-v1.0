@@ -1,6 +1,23 @@
 import { DASHBOARD_CHAIN, DASHBOARD_PAGE_UID, DASHBOARD_PERMISSION, DASHBOARD_PROJECTION, DASHBOARD_ROUTE } from "../domain/dashboard";
+import {
+  CORE_CHAIN,
+  CORE_CONTROL_ACTIONS,
+  CORE_PAGE_UID,
+  CORE_PERMISSION,
+  CORE_PROJECTION,
+  CORE_ROUTE,
+  CORE_VISIBLE_CONTROLS,
+} from "../domain/core";
 import { getSqlClient } from "./client";
-import type { CanonicalNavigationItem, DashboardReadModel, DashboardSectionValue, NavigationEvent, PermissionAssignment } from "../domain/types";
+import type {
+  CanonicalNavigationItem,
+  CoreFieldValue,
+  CoreReadModel,
+  DashboardReadModel,
+  DashboardSectionValue,
+  NavigationEvent,
+  PermissionAssignment,
+} from "../domain/types";
 
 interface AuthorityRow {
   navigation_uid: string;
@@ -137,6 +154,66 @@ export async function persistRecordSectionOpen(
     `INSERT INTO ghsn_dashboard_audit_event (event_uid, account_uid, section_uid, control_uid, occurred_at)
      VALUES (?, ?, ?, ?, ?)`,
     [eventUid, accountUid, sectionUid, controlUid, new Date().toISOString()],
+  );
+  return eventUid;
+}
+
+interface CoreFieldRow {
+  control_uid: string;
+  value_text: string | null;
+}
+
+export async function persistHasCorePermission(accountUid: string): Promise<boolean> {
+  const rows = await getSqlClient().all<{ n: number }>(
+    "SELECT count(*)::int AS n FROM ghsn_account_core_permission WHERE account_uid = ? AND permission_uid = ?",
+    [accountUid, CORE_PERMISSION],
+  );
+  return Number(rows[0]?.n ?? 0) > 0;
+}
+
+export async function persistListCoreFields(): Promise<CoreFieldValue[]> {
+  const rows = await getSqlClient().all<CoreFieldRow>(
+    "SELECT control_uid, value_text FROM ghsn_core_field_projection",
+  );
+  const byUid = new Map(rows.map((row) => [row.control_uid, row.value_text === "" ? null : row.value_text]));
+  return CORE_VISIBLE_CONTROLS.map((controlUid) => ({
+    controlUid,
+    value: byUid.has(controlUid) ? (byUid.get(controlUid) ?? null) : null,
+  }));
+}
+
+export async function persistGetCoreReadModel(accountUid: string): Promise<CoreReadModel> {
+  const authorized = await persistHasCorePermission(accountUid);
+  const fields = authorized ? await persistListCoreFields() : [];
+  const pageModeRow = fields.find((row) => row.controlUid === "CORE-01-FLD-PAGE-MODE");
+  const pageMode =
+    pageModeRow?.value === "TOPIC_PRODUCTION" || pageModeRow?.value === "PROJECT_CORE" ? pageModeRow.value : null;
+  return {
+    projectionUid: CORE_PROJECTION,
+    pageUid: CORE_PAGE_UID,
+    route: CORE_ROUTE,
+    permission: CORE_PERMISSION,
+    chainUid: CORE_CHAIN,
+    authorized,
+    pageMode,
+    fields,
+  };
+}
+
+export function knownCoreAction(controlUid: string, actionUid: string): boolean {
+  return CORE_CONTROL_ACTIONS[controlUid] === actionUid;
+}
+
+export async function persistRecordCoreAction(
+  accountUid: string,
+  controlUid: string,
+  actionUid: string,
+): Promise<string> {
+  const eventUid = `EVT-PAGE-ACTION-${Date.now()}-${controlUid}`;
+  await getSqlClient().run(
+    `INSERT INTO ghsn_core_audit_event (event_uid, account_uid, control_uid, action_uid, occurred_at)
+     VALUES (?, ?, ?, ?, ?)`,
+    [eventUid, accountUid, controlUid, actionUid, new Date().toISOString()],
   );
   return eventUid;
 }

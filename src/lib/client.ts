@@ -133,3 +133,63 @@ export async function openDashboardSection(
     body: JSON.stringify({ sectionUid, controlUid }),
   });
 }
+
+export interface CoreFieldValue {
+  controlUid: string;
+  value: string | null;
+}
+
+export interface CoreReadModel {
+  projectionUid: "CoreWorkbenchProjection";
+  pageUid: "CORE-01";
+  route: "/core";
+  permission: "entity.write";
+  chainUid: "CORE-01-FWC-PAGE-01";
+  authorized: boolean;
+  pageMode: "PROJECT_CORE" | "TOPIC_PRODUCTION" | null;
+  fields: CoreFieldValue[];
+}
+
+export class CoreClientError extends Error {
+  readonly code: string;
+  constructor(code: string, message: string) {
+    super(message);
+    this.code = code;
+    this.name = "CoreClientError";
+  }
+}
+
+export async function fetchCoreReadModel(
+  accountUid: string,
+  sessionUid = "sess-demo-001",
+  signal?: AbortSignal,
+): Promise<CoreReadModel> {
+  const response = await fetch("/api/core", {
+    signal,
+    headers: {
+      "x-account-uid": accountUid,
+      "x-session-uid": sessionUid,
+    },
+  });
+  if (!response.ok) {
+    throw new CoreClientError("CORE_READ_UNAVAILABLE", `core request failed: ${response.status}`);
+  }
+  return (await response.json()) as CoreReadModel;
+}
+
+export async function postCoreAction(
+  accountUid: string,
+  controlUid: string,
+  actionUid: string,
+  sessionUid = "sess-demo-001",
+): Promise<void> {
+  await fetch("/api/core/action", {
+    method: "POST",
+    headers: {
+      "content-type": "application/json",
+      "x-account-uid": accountUid,
+      "x-session-uid": sessionUid,
+    },
+    body: JSON.stringify({ controlUid, actionUid }),
+  });
+}

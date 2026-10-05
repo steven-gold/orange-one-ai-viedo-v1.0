@@ -49,3 +49,19 @@ export interface DashboardReadModel {
   authorized: boolean;
   sections: DashboardSectionValue[];
 }
+
+export interface CoreFieldValue {
+  controlUid: string;
+  value: string | null;
+}
+
+export interface CoreReadModel {
+  projectionUid: "CoreWorkbenchProjection";
+  pageUid: "CORE-01";
+  route: "/core";
+  permission: "entity.write";
+  chainUid: "CORE-01-FWC-PAGE-01";
+  authorized: boolean;
+  pageMode: "PROJECT_CORE" | "TOPIC_PRODUCTION" | null;
+  fields: CoreFieldValue[];
+}
