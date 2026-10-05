@@ -65,3 +65,18 @@ export interface CoreReadModel {
   pageMode: "PROJECT_CORE" | "TOPIC_PRODUCTION" | null;
   fields: CoreFieldValue[];
 }
+
+export interface AssetFieldValue {
+  controlUid: string;
+  value: string | null;
+}
+
+export interface AssetReadModel {
+  projectionUid: "AssetWorkbenchProjection";
+  pageUid: "ASSET-01";
+  route: "/assets";
+  permission: "asset.01.view";
+  chainUid: "ASSET-01-FWC-PAGE-01";
+  authorized: boolean;
+  fields: AssetFieldValue[];
+}

@@ -8,8 +8,19 @@ import {
   CORE_ROUTE,
   CORE_VISIBLE_CONTROLS,
 } from "../domain/core";
+import {
+  ASSET_CHAIN,
+  ASSET_CONTROL_ACTIONS,
+  ASSET_PAGE_UID,
+  ASSET_PERMISSION,
+  ASSET_PROJECTION,
+  ASSET_ROUTE,
+  ASSET_VISIBLE_CONTROLS,
+} from "../domain/asset";
 import { getSqlClient } from "./client";
 import type {
+  AssetFieldValue,
+  AssetReadModel,
   CanonicalNavigationItem,
   CoreFieldValue,
   CoreReadModel,
@@ -212,6 +223,62 @@ export async function persistRecordCoreAction(
   const eventUid = `EVT-PAGE-ACTION-${Date.now()}-${controlUid}`;
   await getSqlClient().run(
     `INSERT INTO ghsn_core_audit_event (event_uid, account_uid, control_uid, action_uid, occurred_at)
+     VALUES (?, ?, ?, ?, ?)`,
+    [eventUid, accountUid, controlUid, actionUid, new Date().toISOString()],
+  );
+  return eventUid;
+}
+
+interface AssetFieldRow {
+  control_uid: string;
+  value_text: string | null;
+}
+
+export async function persistHasAssetPermission(accountUid: string): Promise<boolean> {
+  const rows = await getSqlClient().all<{ n: number }>(
+    "SELECT count(*)::int AS n FROM ghsn_account_asset_permission WHERE account_uid = ? AND permission_uid = ?",
+    [accountUid, ASSET_PERMISSION],
+  );
+  return Number(rows[0]?.n ?? 0) > 0;
+}
+
+export async function persistListAssetFields(): Promise<AssetFieldValue[]> {
+  const rows = await getSqlClient().all<AssetFieldRow>(
+    "SELECT control_uid, value_text FROM ghsn_asset_field_projection",
+  );
+  const byUid = new Map(rows.map((row) => [row.control_uid, row.value_text === "" ? null : row.value_text]));
+  return ASSET_VISIBLE_CONTROLS.map((controlUid) => ({
+    controlUid,
+    value: byUid.has(controlUid) ? (byUid.get(controlUid) ?? null) : null,
+  }));
+}
+
+export async function persistGetAssetReadModel(accountUid: string): Promise<AssetReadModel> {
+  const authorized = await persistHasAssetPermission(accountUid);
+  const fields = authorized ? await persistListAssetFields() : [];
+  return {
+    projectionUid: ASSET_PROJECTION,
+    pageUid: ASSET_PAGE_UID,
+    route: ASSET_ROUTE,
+    permission: ASSET_PERMISSION,
+    chainUid: ASSET_CHAIN,
+    authorized,
+    fields,
+  };
+}
+
+export function knownAssetAction(controlUid: string, actionUid: string): boolean {
+  return ASSET_CONTROL_ACTIONS[controlUid] === actionUid;
+}
+
+export async function persistRecordAssetAction(
+  accountUid: string,
+  controlUid: string,
+  actionUid: string,
+): Promise<string> {
+  const eventUid = `EVT-PAGE-ACTION-${Date.now()}-${controlUid}`;
+  await getSqlClient().run(
+    `INSERT INTO ghsn_asset_audit_event (event_uid, account_uid, control_uid, action_uid, occurred_at)
      VALUES (?, ?, ?, ?, ?)`,
     [eventUid, accountUid, controlUid, actionUid, new Date().toISOString()],
   );

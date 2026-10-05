@@ -1,5 +1,6 @@
 "use client";
 
+import { AssetVisual } from "./AssetVisual";
 import { CoreVisual } from "./CoreVisual";
 import { DashboardVisual } from "./DashboardVisual";
 import { findPageByUid, type PageAuthority } from "./pageRegistry";
@@ -20,6 +21,9 @@ export function WorkspacePage({ pageUid }: { pageUid: string }) {
   }
   if (page.pageUid === "CORE-01") {
     return <CoreVisual />;
+  }
+  if (page.pageUid === "ASSET-01") {
+    return <AssetVisual />;
   }
   return (
     <article className="page-slot" data-page-uid={page.pageUid} data-page-state="EMPTY">

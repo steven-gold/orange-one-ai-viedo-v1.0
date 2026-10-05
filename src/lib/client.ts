@@ -193,3 +193,62 @@ export async function postCoreAction(
     body: JSON.stringify({ controlUid, actionUid }),
   });
 }
+
+export interface AssetFieldValue {
+  controlUid: string;
+  value: string | null;
+}
+
+export interface AssetReadModel {
+  projectionUid: "AssetWorkbenchProjection";
+  pageUid: "ASSET-01";
+  route: "/assets";
+  permission: "asset.01.view";
+  chainUid: "ASSET-01-FWC-PAGE-01";
+  authorized: boolean;
+  fields: AssetFieldValue[];
+}
+
+export class AssetClientError extends Error {
+  readonly code: string;
+  constructor(code: string, message: string) {
+    super(message);
+    this.code = code;
+    this.name = "AssetClientError";
+  }
+}
+
+export async function fetchAssetReadModel(
+  accountUid: string,
+  sessionUid = "sess-demo-001",
+  signal?: AbortSignal,
+): Promise<AssetReadModel> {
+  const response = await fetch("/api/assets", {
+    signal,
+    headers: {
+      "x-account-uid": accountUid,
+      "x-session-uid": sessionUid,
+    },
+  });
+  if (!response.ok) {
+    throw new AssetClientError("ASSET_READ_UNAVAILABLE", `asset request failed: ${response.status}`);
+  }
+  return (await response.json()) as AssetReadModel;
+}
+
+export async function postAssetAction(
+  accountUid: string,
+  controlUid: string,
+  actionUid: string,
+  sessionUid = "sess-demo-001",
+): Promise<void> {
+  await fetch("/api/assets/action", {
+    method: "POST",
+    headers: {
+      "content-type": "application/json",
+      "x-account-uid": accountUid,
+      "x-session-uid": sessionUid,
+    },
+    body: JSON.stringify({ controlUid, actionUid }),
+  });
+}
