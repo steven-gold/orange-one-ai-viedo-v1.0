@@ -107,17 +107,20 @@ export function CoreVisual() {
       data-control-count="44"
       aria-label={tx("core.title")}
     >
-      {error ? <div className={styles.error} role="alert">{tx("core.error")}</div> : null}
+      <header className={styles.heading}>
+        <h1 className={styles.pageTitle}>{tx("core.title")}</h1>
+        {error ? <div className={styles.error} role="alert">{tx("core.error")}</div> : null}
+      </header>
 
       <section className={styles.context} data-component-uid="CORE-01-CMP-CONTEXT">
         <Field uid="CORE-01-CTL-PROJECT" label={tx("core.project")} value={valueOf("CORE-01-CTL-PROJECT")} loading={loading} onAct={act} disabled={disabled} />
         <button type="button" className={`${styles.btn} ${styles.btnPrimary}`} data-control-uid="CORE-01-BTN-PROJECT-CREATE" disabled={disabled} onClick={() => void act("CORE-01-BTN-PROJECT-CREATE")}>{tx("core.create_project")}</button>
         <Field uid="CORE-01-CTL-TOPIC" label={tx("core.topic")} value={valueOf("CORE-01-CTL-TOPIC")} loading={loading} onAct={act} disabled={disabled} />
         <button type="button" className={styles.btn} data-control-uid="CORE-01-BTN-TOPIC-CREATE" disabled={disabled} onClick={() => void act("CORE-01-BTN-TOPIC-CREATE")}>{tx("core.create_topic")}</button>
-        <button type="button" className={topicMode ? `${styles.btn} ${styles.active}` : styles.btn} data-control-uid="CORE-01-FLD-PAGE-MODE" disabled={disabled} onClick={() => void act("CORE-01-FLD-PAGE-MODE")}>
-          {displayCoreValue(valueOf("CORE-01-FLD-PAGE-MODE"), loading)}
+        <button type="button" className={topicMode ? styles.btn : `${styles.btn} ${styles.active}`} data-control-uid="CORE-01-FLD-PAGE-MODE" disabled={disabled} onClick={() => void act("CORE-01-FLD-PAGE-MODE")}>
+          {displayCoreValue(valueOf("CORE-01-FLD-PAGE-MODE"), loading) === "—" ? tx("core.page_mode_project") : displayCoreValue(valueOf("CORE-01-FLD-PAGE-MODE"), loading)}
         </button>
-        <Field uid="CORE-01-FLD-NAMING-AUTHORITY" label={tx("core.naming")} value={valueOf("CORE-01-FLD-NAMING-AUTHORITY")} loading={loading} onAct={act} disabled={disabled} />
+        <Field uid="CORE-01-FLD-NAMING-AUTHORITY" label={tx("core.naming")} value={valueOf("CORE-01-FLD-NAMING-AUTHORITY") ?? "ACPOS_SYSTEM"} loading={false} onAct={act} disabled={disabled} />
         <div className={styles.field}>
           <span className={styles.label}>{tx("core.current_context")}</span>
           <span className={styles.value}>{tx("core.current_context_value")}</span>
@@ -163,9 +166,9 @@ export function CoreVisual() {
                 <strong>{topicMode ? "PRODUCTION_SCRIPT" : "STORY"}</strong>
               </div>
               <div className={styles.headerControls}>
-                <button type="button" className={`${styles.btn} ${styles.active}`} data-control-uid="CORE-01-BTN-SINGLE-AI" disabled={disabled} onClick={() => void act("CORE-01-BTN-SINGLE-AI")}>{tx("core.single_ai")}</button>
-                <button type="button" className={styles.btn} data-control-uid="CORE-01-BTN-MULTI-AI" disabled={disabled} onClick={() => void act("CORE-01-BTN-MULTI-AI")}>{tx("core.multi_ai")}</button>
-                <Field uid="CORE-01-FLD-ASSIGNED-AI" label={tx("core.assigned_ai")} value={valueOf("CORE-01-FLD-ASSIGNED-AI")} loading={loading} onAct={act} disabled={disabled} />
+                <button type="button" className={styles.btn} data-control-uid="CORE-01-BTN-SINGLE-AI" disabled={disabled} onClick={() => void act("CORE-01-BTN-SINGLE-AI")}>{tx("core.single_ai")}</button>
+                <button type="button" className={`${styles.btn} ${styles.active}`} data-control-uid="CORE-01-BTN-MULTI-AI" disabled={disabled} onClick={() => void act("CORE-01-BTN-MULTI-AI")}>{tx("core.multi_ai")}</button>
+                <Field uid="CORE-01-FLD-ASSIGNED-AI" label={tx("core.assigned_ai")} value={valueOf("CORE-01-FLD-ASSIGNED-AI") ?? tx("core.assigned_ai_hint")} loading={false} onAct={act} disabled={disabled} />
                 <button type="button" className={styles.btn} data-control-uid="CORE-01-BTN-ASSISTANT-RECORD" disabled={disabled} onClick={() => void act("CORE-01-BTN-ASSISTANT-RECORD")}>{tx("core.assistant_record")}</button>
               </div>
             </div>
@@ -176,18 +179,19 @@ export function CoreVisual() {
               <h2 className={styles.title}>{tx("core.messages")}</h2>
               <span>{tx("core.right_click_only")}</span>
             </div>
-            <article className={styles.bubble}>
-              <div className={styles.bubbleRole}>USER</div>
-              <p>{tx("core.user_placeholder")}</p>
-            </article>
-            <article className={`${styles.bubble} ${styles.bubbleAlt}`}>
-              <div className={styles.bubbleRole}>AI RESPONSE</div>
-              <p>{tx("core.ai_placeholder")}</p>
-            </article>
-            <article className={`${styles.bubble} ${styles.bubbleAlt}`}>
-              <div className={styles.bubbleRole}>SYSTEM / ASSISTANT RECORD</div>
-              <p>{tx("core.system_placeholder")} {displayCoreValue(null, loading)}</p>
-            </article>
+            <div className={styles.messageGrid}>
+              {["1", "2", "3"].map((n) => (
+                <article key={n} className={styles.bubble}>
+                  <div className={styles.bubbleRole}>{tx("core.ai_response_n")} {n}</div>
+                  <p>{tx("core.ai_placeholder")}</p>
+                  <span className={styles.meta}>{tx("core.source_refs")}</span>
+                </article>
+              ))}
+            </div>
+            <div className={styles.summaryInline}>
+              <span className={styles.summaryLabel}>{tx("core.summary_inline")}</span>
+              <p>{tx("core.summary_hint")}</p>
+            </div>
             <div data-component-uid="CORE-01-CMP-MESSAGE-MENU" hidden>
               {CORE_MESSAGE_ACTIONS.map((uid) => <span key={uid} data-action-uid={uid} />)}
             </div>
@@ -218,8 +222,8 @@ export function CoreVisual() {
               </button>
             </div>
             <div className={styles.candidateRow}>
-              <button type="button" className={styles.btn} data-control-uid="CORE-01-BTN-CANDIDATE-CREATE" disabled={disabled} onClick={() => void act("CORE-01-BTN-CANDIDATE-CREATE")}>{tx("core.create_candidate")}</button>
-              <button type="button" className={styles.btn} data-control-uid="CORE-01-BTN-CANDIDATE-CONFIRM" disabled={disabled} onClick={() => void act("CORE-01-BTN-CANDIDATE-CONFIRM")}>{tx("core.confirm_candidate")}</button>
+              <button type="button" className={`${styles.btn} ${styles.btnPrimary}`} data-control-uid="CORE-01-BTN-CANDIDATE-CREATE" disabled={disabled} onClick={() => void act("CORE-01-BTN-CANDIDATE-CREATE")}>{tx("core.create_candidate")}</button>
+              <button type="button" className={`${styles.btn} ${styles.btnPrimary}`} data-control-uid="CORE-01-BTN-CANDIDATE-CONFIRM" disabled={disabled} onClick={() => void act("CORE-01-BTN-CANDIDATE-CONFIRM")}>{tx("core.confirm_candidate")}</button>
               <button type="button" className={styles.btn} data-control-uid="CORE-01-BTN-RETURN-MODIFY" disabled={disabled} onClick={() => void act("CORE-01-BTN-RETURN-MODIFY")}>{tx("core.return_modify")}</button>
               <span className={styles.hint}>{tx("core.decision_flow")}</span>
             </div>
@@ -256,7 +260,7 @@ export function CoreVisual() {
               <button type="button" className={styles.btn} data-control-uid="CORE-01-BTN-ATTACHMENT" disabled={disabled} onClick={() => void act("CORE-01-BTN-ATTACHMENT")}>{tx("core.attachment")}</button>
               <button type="button" className={styles.btn} data-control-uid="CORE-01-BTN-REFERENCE" disabled={disabled} onClick={() => void act("CORE-01-BTN-REFERENCE")}>{tx("core.reference")}</button>
               <label className={styles.composerInput}>
-                <span className={styles.label}>{tx("core.message")}</span>
+                <span className={styles.srOnly}>{tx("core.message")}</span>
                 <input data-control-uid="CORE-01-FLD-MESSAGE" disabled={disabled} placeholder={tx("core.message_placeholder")} defaultValue="" />
               </label>
               <button type="button" className={`${styles.btn} ${styles.btnSend}`} data-control-uid="CORE-01-BTN-SEND" disabled={disabled} onClick={() => void act("CORE-01-BTN-SEND")}>{tx("core.send")}</button>
@@ -315,6 +319,7 @@ export function CoreVisual() {
             <div className={styles.kv} data-component-uid="CORE-01-CMP-LOCK-REVIEW" data-control-uid="CORE-01-FLD-LOCK-REVIEW"><span>{tx("core.lock_review")}</span><span>{displayCoreValue(valueOf("CORE-01-FLD-LOCK-REVIEW"), loading)}</span></div>
             <div className={styles.kv}><span>{tx("core.block_reason")}</span><span>{displayCoreValue(null, loading)}</span></div>
             <button type="button" className={`${styles.btn} ${styles.btnWide}`} data-control-uid="CORE-01-BTN-CANDIDATE-COMPARE" disabled={disabled} onClick={() => void act("CORE-01-BTN-CANDIDATE-COMPARE")}>{tx("core.compare_candidate")}</button>
+            <p className={styles.overwrite}>{tx("core.no_overwrite")}</p>
           </section>
         </aside>
       </div>

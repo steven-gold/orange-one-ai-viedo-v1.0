@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { activateNavigation, fetchNavigationContext } from "@/lib/client";
-import type { NavigationArea, ResolvedNavigationItem } from "@/lib/navigation";
+import { canonicalNavigationItems, type NavigationArea, type ResolvedNavigationItem } from "@/lib/navigation";
 import { LOCALES, LOCALE_LABELS, type TranslationKey } from "@/i18n/catalog";
 import { useI18n } from "@/i18n/LocaleProvider";
 import { WorkspacePage } from "@/components/pages/WorkspacePage";
@@ -113,8 +113,8 @@ export function AppShell({
   const [languageOpen, setLanguageOpen] = useState(false);
   const [accountOpen, setAccountOpen] = useState(false);
   const [area, setArea] = useState<NavigationArea>(initialPage?.surface === "admin" ? "ADMIN" : "FRONT");
-  const [frontItems, setFrontItems] = useState<ResolvedNavigationItem[]>([]);
-  const [adminItems, setAdminItems] = useState<ResolvedNavigationItem[]>([]);
+  const [frontItems, setFrontItems] = useState<ResolvedNavigationItem[]>(() => canonicalNavigationItems("FRONT", initialRoute));
+  const [adminItems, setAdminItems] = useState<ResolvedNavigationItem[]>(() => canonicalNavigationItems("ADMIN", initialRoute));
   const [activeUid, setActiveUid] = useState<string | null>(initialPage?.pageUid ?? null);
   const [route, setRoute] = useState(initialRoute);
   const identityBound = true;
@@ -150,27 +150,31 @@ export function AppShell({
 
   useEffect(() => {
     const controller = new AbortController();
+    let cancelled = false;
     Promise.all([
       fetchNavigationContext({ area: "FRONT", accountUid, sessionUid, activePath: route }, controller.signal).catch(() => null),
       fetchNavigationContext({ area: "ADMIN", accountUid, sessionUid, activePath: route }, controller.signal).catch(() => null),
     ]).then(([front, admin]) => {
-      const nextFront = front?.items ?? [];
-      const nextAdmin = admin?.items ?? [];
+      if (cancelled) return;
+      const nextFront = front?.items?.length ? front.items : canonicalNavigationItems("FRONT", route);
+      const nextAdmin = admin?.items?.length ? admin.items : canonicalNavigationItems("ADMIN", route);
       setFrontItems(nextFront);
       setAdminItems(nextAdmin);
       const current = findPageByRoute(route);
       if (area === "ADMIN") {
         const exact = nextAdmin.find((item) => item.uid === current?.pageUid);
-        setActiveUid(exact?.uid ?? nextAdmin[0]?.uid ?? null);
+        setActiveUid(exact?.uid ?? current?.pageUid ?? nextAdmin[0]?.uid ?? null);
       } else {
-        const ancestry = current ? [current.pageUid] : [];
-        const match = nextFront.find((item) => ancestry.includes(item.uid))
+        const match = nextFront.find((item) => item.uid === current?.pageUid)
           ?? nextFront.find((item) => item.route === route)
           ?? nextFront[0];
-        setActiveUid(match?.uid ?? null);
+        setActiveUid(match?.uid ?? current?.pageUid ?? null);
       }
     });
-    return () => controller.abort();
+    return () => {
+      cancelled = true;
+      controller.abort();
+    };
   }, [accountUid, sessionUid, route, area]);
 
   useEffect(() => {

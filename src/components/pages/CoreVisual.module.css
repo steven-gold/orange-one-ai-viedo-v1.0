@@ -13,34 +13,62 @@
   min-width: 1280px;
   min-height: calc(100vh - 84px);
   display: grid;
-  grid-template-rows: auto 1fr;
+  grid-template-rows: auto auto 1fr;
   gap: 12px;
   padding: 0;
   color: var(--core-text);
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 400;
+}
+
+.pageTitle {
+  margin: 0;
+  max-width: 360px;
+  color: var(--core-text);
+  font-size: 20px;
+  line-height: 26px;
+  font-weight: 600;
+  letter-spacing: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.heading {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 26px;
 }
 
 .error {
-  margin: 0 0 8px;
-  padding: 10px 12px;
+  margin: 0;
+  padding: 8px 12px;
   border: 1px solid var(--core-danger);
   border-radius: 10px;
   color: var(--core-danger);
+  font-size: 14px;
+  line-height: 20px;
 }
 
 .context {
   display: grid;
   grid-template-columns: minmax(180px, 1.2fr) auto minmax(160px, 1fr) auto auto minmax(180px, 1.1fr) minmax(220px, 1.4fr);
   gap: 8px;
-  align-items: end;
+  align-items: center;
+  min-height: 72px;
 }
 
 .field,
 .composerInput {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  justify-content: center;
+  gap: 2px;
   min-width: 0;
-  padding: 8px 12px;
+  min-height: 40px;
+  padding: 6px 12px;
   border: 1px solid var(--core-border);
   border-radius: 12px;
   background: var(--core-input);
@@ -49,17 +77,24 @@
 .label {
   color: var(--core-muted);
   font-size: 11px;
+  line-height: 14px;
   letter-spacing: 0.02em;
 }
 
 .value,
 .composerInput input {
-  min-height: 22px;
+  min-height: 18px;
   color: var(--core-text);
   font-size: 14px;
+  line-height: 18px;
+  font-weight: 400;
+  letter-spacing: 0;
   background: transparent;
   border: 0;
   outline: none;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .btn {
@@ -70,6 +105,7 @@
   background: var(--core-surface-2);
   color: var(--core-secondary);
   font-size: 13px;
+  line-height: 16px;
   font-weight: 600;
   cursor: pointer;
   white-space: nowrap;
@@ -123,8 +159,14 @@
 
 .title {
   margin: 0 0 8px;
-  font-size: 16px;
-  font-weight: 700;
+  max-width: 240px;
+  font-size: 14px;
+  line-height: 18px;
+  font-weight: 600;
+  letter-spacing: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .workList,
@@ -198,6 +240,18 @@
   min-width: 0;
 }
 
+.convHeader {
+  min-height: 56px;
+}
+
+.messages {
+  min-height: 420px;
+}
+
+.composerBar[data-component-uid="CORE-01-CMP-COMPOSER"] {
+  min-height: 104px;
+}
+
 .convHeader,
 .messages,
 .eval,
@@ -219,25 +273,70 @@
 }
 
 .headerRow { justify-content: space-between; }
+.headerRow strong { font-size: 14px; line-height: 18px; font-weight: 600; }
 .headerControls { display: flex; flex-direction: row; flex-wrap: wrap; gap: 8px; }
 
 .messagesHead {
   display: flex;
   justify-content: space-between;
+  align-items: baseline;
   color: var(--core-muted);
   font-size: 12px;
 }
 
-.bubble {
+.messageGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 10px;
+  min-height: 220px;
   margin-top: 10px;
+}
+
+.bubble {
+  display: flex;
+  flex-direction: column;
+  min-height: 220px;
   padding: 12px 14px;
   border-radius: 12px;
-  background: #1a1240;
+  background: #121833;
   border: 1px solid rgba(139, 92, 255, 0.22);
 }
 
-.bubbleAlt {
-  background: #121833;
+.bubble p { flex: 1; }
+.bubble .meta { margin-top: auto; }
+
+.summaryInline {
+  margin-top: 10px;
+  padding: 10px 12px;
+  border: 1px solid var(--core-border);
+  border-radius: 10px;
+  background: var(--core-input);
+}
+
+.summaryLabel {
+  color: var(--core-purple);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.overwrite {
+  margin: 8px 0 0;
+  text-align: right;
+  color: var(--core-danger);
+  font-size: 12px;
+  font-weight: 600;
 }
 
 .bubbleRole {
@@ -252,7 +351,9 @@
 .hint {
   margin: 6px 0 0;
   color: var(--core-secondary);
-  font-size: 13px;
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 400;
 }
 
 .evalGrid {
@@ -300,11 +401,11 @@
   min-height: 40px;
 }
 
-.runtime { flex-direction: row; flex-wrap: wrap; }
+.runtime { flex-direction: row; flex-wrap: wrap; min-height: 40px; }
 .runtimeBtn { flex: 1; min-width: 110px; }
 
-.composer { flex-direction: row; }
-.composerInput { flex: 1; }
+.composer { flex-direction: row; min-height: 40px; }
+.composerInput { flex: 1; min-height: 40px; }
 .btnSend { min-width: 88px; }
 
 .rail { display: flex; flex-direction: column; gap: 12px; }
