@@ -107,10 +107,7 @@ export function CoreVisual() {
       data-control-count="44"
       aria-label={tx("core.title")}
     >
-      <header className={styles.heading}>
-        <h1 className={styles.pageTitle}>{tx("core.title")}</h1>
-        {error ? <div className={styles.error} role="alert">{tx("core.error")}</div> : null}
-      </header>
+      {error ? <div className={styles.error} role="alert">{tx("core.error")}</div> : null}
 
       <section className={styles.context} data-component-uid="CORE-01-CMP-CONTEXT">
         <Field uid="CORE-01-CTL-PROJECT" label={tx("core.project")} value={valueOf("CORE-01-CTL-PROJECT")} loading={loading} onAct={act} disabled={disabled} />

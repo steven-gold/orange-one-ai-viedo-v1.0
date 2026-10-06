@@ -13,33 +13,13 @@
   min-width: 1280px;
   min-height: calc(100vh - 84px);
   display: grid;
-  grid-template-rows: auto auto 1fr;
+  grid-template-rows: auto 1fr;
   gap: 12px;
   padding: 0;
   color: var(--core-text);
-  font-size: 14px;
-  line-height: 20px;
+  font-size: 13px;
+  line-height: 18px;
   font-weight: 400;
-}
-
-.pageTitle {
-  margin: 0;
-  max-width: 360px;
-  color: var(--core-text);
-  font-size: 20px;
-  line-height: 26px;
-  font-weight: 600;
-  letter-spacing: 0;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.heading {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  min-height: 26px;
 }
 
 .error {
@@ -48,8 +28,8 @@
   border: 1px solid var(--core-danger);
   border-radius: 10px;
   color: var(--core-danger);
-  font-size: 14px;
-  line-height: 20px;
+  font-size: 13px;
+  line-height: 18px;
 }
 
 .context {
@@ -85,7 +65,7 @@
 .composerInput input {
   min-height: 18px;
   color: var(--core-text);
-  font-size: 14px;
+  font-size: 13px;
   line-height: 18px;
   font-weight: 400;
   letter-spacing: 0;
@@ -137,7 +117,7 @@
 
 .body {
   display: grid;
-  grid-template-columns: 260px minmax(0, 1fr) 300px;
+  grid-template-columns: minmax(260px, 1fr) minmax(720px, 3fr) minmax(300px, 1fr);
   gap: 16px;
   min-height: 0;
 }
@@ -159,14 +139,11 @@
 
 .title {
   margin: 0 0 8px;
-  max-width: 240px;
-  font-size: 14px;
-  line-height: 18px;
-  font-weight: 600;
+  font-size: 16px;
+  line-height: 21px;
+  font-weight: 700;
   letter-spacing: 0;
   white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
 
 .workList,
@@ -187,6 +164,9 @@
   border-radius: 10px;
   background: var(--core-surface-2);
   color: var(--core-secondary);
+  font-size: 13px;
+  line-height: 16px;
+  font-weight: 600;
   cursor: pointer;
 }
 
@@ -219,6 +199,8 @@
 .integrity h3 {
   margin: 0 0 8px;
   font-size: 13px;
+  line-height: 16px;
+  font-weight: 600;
 }
 
 .integrityRow {
@@ -273,7 +255,7 @@
 }
 
 .headerRow { justify-content: space-between; }
-.headerRow strong { font-size: 14px; line-height: 18px; font-weight: 600; }
+.headerRow strong { font-size: 16px; line-height: 21px; font-weight: 700; }
 .headerControls { display: flex; flex-direction: row; flex-wrap: wrap; gap: 8px; }
 
 .messagesHead {
@@ -282,6 +264,11 @@
   align-items: baseline;
   color: var(--core-muted);
   font-size: 12px;
+  line-height: 16px;
+}
+
+.messagesHead .title {
+  margin: 0;
 }
 
 .messageGrid {
@@ -316,6 +303,7 @@
 .summaryLabel {
   color: var(--core-purple);
   font-size: 13px;
+  line-height: 16px;
   font-weight: 600;
 }
 
@@ -351,8 +339,8 @@
 .hint {
   margin: 6px 0 0;
   color: var(--core-secondary);
-  font-size: 14px;
-  line-height: 20px;
+  font-size: 13px;
+  line-height: 18px;
   font-weight: 400;
 }
 
@@ -381,6 +369,8 @@
   margin: 0;
   color: var(--core-purple);
   font-size: 13px;
+  line-height: 16px;
+  font-weight: 600;
 }
 
 .meta {
@@ -406,6 +396,7 @@
 
 .composer { flex-direction: row; min-height: 40px; }
 .composerInput { flex: 1; min-height: 40px; }
+.composerInput input { font-size: 13px; line-height: 18px; }
 .btnSend { min-width: 88px; }
 
 .rail { display: flex; flex-direction: column; gap: 12px; }
@@ -422,6 +413,7 @@
   gap: 8px;
   margin: 6px 0;
   font-size: 12px;
+  line-height: 16px;
   color: var(--core-secondary);
 }
 
