@@ -252,3 +252,121 @@ export async function postAssetAction(
     body: JSON.stringify({ controlUid, actionUid }),
   });
 }
+
+export interface VideoFieldValue {
+  controlUid: string;
+  value: string | null;
+}
+
+export interface VideoReadModel {
+  projectionUid: "VideoWorkbenchProjection";
+  pageUid: "VIDEO-01";
+  route: "/video";
+  permission: "video.01.view";
+  chainUid: "VIDEO-01-FWC-PAGE-01";
+  authorized: boolean;
+  fields: VideoFieldValue[];
+}
+
+export class VideoClientError extends Error {
+  readonly code: string;
+  constructor(code: string, message: string) {
+    super(message);
+    this.code = code;
+    this.name = "VideoClientError";
+  }
+}
+
+export async function fetchVideoReadModel(
+  accountUid: string,
+  sessionUid = "sess-demo-001",
+  signal?: AbortSignal,
+): Promise<VideoReadModel> {
+  const response = await fetch("/api/video", {
+    signal,
+    headers: {
+      "x-account-uid": accountUid,
+      "x-session-uid": sessionUid,
+    },
+  });
+  if (!response.ok) {
+    throw new VideoClientError("VIDEO_READ_UNAVAILABLE", `video request failed: ${response.status}`);
+  }
+  return (await response.json()) as VideoReadModel;
+}
+
+export async function postVideoAction(
+  accountUid: string,
+  controlUid: string,
+  actionUid: string,
+  sessionUid = "sess-demo-001",
+): Promise<void> {
+  await fetch("/api/video/action", {
+    method: "POST",
+    headers: {
+      "content-type": "application/json",
+      "x-account-uid": accountUid,
+      "x-session-uid": sessionUid,
+    },
+    body: JSON.stringify({ controlUid, actionUid }),
+  });
+}
+
+export interface EditFieldValue {
+  controlUid: string;
+  value: string | null;
+}
+
+export interface EditReadModel {
+  projectionUid: "EditWorkbenchProjection";
+  pageUid: "EDIT-01";
+  route: "/edit";
+  permission: "department.handoff.create";
+  chainUid: "EDIT-01-FWC-PAGE-01";
+  authorized: boolean;
+  fields: EditFieldValue[];
+}
+
+export class EditClientError extends Error {
+  readonly code: string;
+  constructor(code: string, message: string) {
+    super(message);
+    this.code = code;
+    this.name = "EditClientError";
+  }
+}
+
+export async function fetchEditReadModel(
+  accountUid: string,
+  sessionUid = "sess-demo-001",
+  signal?: AbortSignal,
+): Promise<EditReadModel> {
+  const response = await fetch("/api/edit", {
+    signal,
+    headers: {
+      "x-account-uid": accountUid,
+      "x-session-uid": sessionUid,
+    },
+  });
+  if (!response.ok) {
+    throw new EditClientError("EDIT_READ_UNAVAILABLE", `edit request failed: ${response.status}`);
+  }
+  return (await response.json()) as EditReadModel;
+}
+
+export async function postEditAction(
+  accountUid: string,
+  controlUid: string,
+  actionUid: string,
+  sessionUid = "sess-demo-001",
+): Promise<void> {
+  await fetch("/api/edit/action", {
+    method: "POST",
+    headers: {
+      "content-type": "application/json",
+      "x-account-uid": accountUid,
+      "x-session-uid": sessionUid,
+    },
+    body: JSON.stringify({ controlUid, actionUid }),
+  });
+}

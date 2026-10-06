@@ -3,6 +3,8 @@
 import { AssetVisual } from "./AssetVisual";
 import { CoreVisual } from "./CoreVisual";
 import { DashboardVisual } from "./DashboardVisual";
+import { EditVisual } from "./EditVisual";
+import { VideoVisual } from "./VideoVisual";
 import { findPageByUid, type PageAuthority } from "./pageRegistry";
 import { useI18n } from "@/i18n/LocaleProvider";
 
@@ -24,6 +26,12 @@ export function WorkspacePage({ pageUid }: { pageUid: string }) {
   }
   if (page.pageUid === "ASSET-01") {
     return <AssetVisual />;
+  }
+  if (page.pageUid === "VIDEO-01") {
+    return <VideoVisual />;
+  }
+  if (page.pageUid === "EDIT-01") {
+    return <EditVisual />;
   }
   return (
     <article className="page-slot" data-page-uid={page.pageUid} data-page-state="EMPTY">

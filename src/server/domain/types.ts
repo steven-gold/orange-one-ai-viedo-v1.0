@@ -80,3 +80,33 @@ export interface AssetReadModel {
   authorized: boolean;
   fields: AssetFieldValue[];
 }
+
+export interface VideoFieldValue {
+  controlUid: string;
+  value: string | null;
+}
+
+export interface VideoReadModel {
+  projectionUid: "VideoWorkbenchProjection";
+  pageUid: "VIDEO-01";
+  route: "/video";
+  permission: "video.01.view";
+  chainUid: "VIDEO-01-FWC-PAGE-01";
+  authorized: boolean;
+  fields: VideoFieldValue[];
+}
+
+export interface EditFieldValue {
+  controlUid: string;
+  value: string | null;
+}
+
+export interface EditReadModel {
+  projectionUid: "EditWorkbenchProjection";
+  pageUid: "EDIT-01";
+  route: "/edit";
+  permission: "department.handoff.create";
+  chainUid: "EDIT-01-FWC-PAGE-01";
+  authorized: boolean;
+  fields: EditFieldValue[];
+}

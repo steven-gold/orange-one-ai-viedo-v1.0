@@ -17,6 +17,24 @@ import {
   ASSET_ROUTE,
   ASSET_VISIBLE_CONTROLS,
 } from "../domain/asset";
+import {
+  VIDEO_CHAIN,
+  VIDEO_CONTROL_ACTIONS,
+  VIDEO_PAGE_UID,
+  VIDEO_PERMISSION,
+  VIDEO_PROJECTION,
+  VIDEO_ROUTE,
+  VIDEO_VISIBLE_CONTROLS,
+} from "../domain/video";
+import {
+  EDIT_CHAIN,
+  EDIT_CONTROL_ACTIONS,
+  EDIT_PAGE_UID,
+  EDIT_PERMISSION,
+  EDIT_PROJECTION,
+  EDIT_ROUTE,
+  EDIT_VISIBLE_CONTROLS,
+} from "../domain/edit";
 import { getSqlClient } from "./client";
 import type {
   AssetFieldValue,
@@ -26,8 +44,12 @@ import type {
   CoreReadModel,
   DashboardReadModel,
   DashboardSectionValue,
+  EditFieldValue,
+  EditReadModel,
   NavigationEvent,
   PermissionAssignment,
+  VideoFieldValue,
+  VideoReadModel,
 } from "../domain/types";
 
 interface AuthorityRow {
@@ -279,6 +301,118 @@ export async function persistRecordAssetAction(
   const eventUid = `EVT-PAGE-ACTION-${Date.now()}-${controlUid}`;
   await getSqlClient().run(
     `INSERT INTO ghsn_asset_audit_event (event_uid, account_uid, control_uid, action_uid, occurred_at)
+     VALUES (?, ?, ?, ?, ?)`,
+    [eventUid, accountUid, controlUid, actionUid, new Date().toISOString()],
+  );
+  return eventUid;
+}
+
+interface VideoFieldRow {
+  control_uid: string;
+  value_text: string | null;
+}
+
+export async function persistHasVideoPermission(accountUid: string): Promise<boolean> {
+  const rows = await getSqlClient().all<{ n: number }>(
+    "SELECT count(*)::int AS n FROM ghsn_account_video_permission WHERE account_uid = ? AND permission_uid = ?",
+    [accountUid, VIDEO_PERMISSION],
+  );
+  return Number(rows[0]?.n ?? 0) > 0;
+}
+
+export async function persistListVideoFields(): Promise<VideoFieldValue[]> {
+  const rows = await getSqlClient().all<VideoFieldRow>(
+    "SELECT control_uid, value_text FROM ghsn_video_field_projection",
+  );
+  const byUid = new Map(rows.map((row) => [row.control_uid, row.value_text === "" ? null : row.value_text]));
+  return VIDEO_VISIBLE_CONTROLS.map((controlUid) => ({
+    controlUid,
+    value: byUid.has(controlUid) ? (byUid.get(controlUid) ?? null) : null,
+  }));
+}
+
+export async function persistGetVideoReadModel(accountUid: string): Promise<VideoReadModel> {
+  const authorized = await persistHasVideoPermission(accountUid);
+  const fields = authorized ? await persistListVideoFields() : [];
+  return {
+    projectionUid: VIDEO_PROJECTION,
+    pageUid: VIDEO_PAGE_UID,
+    route: VIDEO_ROUTE,
+    permission: VIDEO_PERMISSION,
+    chainUid: VIDEO_CHAIN,
+    authorized,
+    fields,
+  };
+}
+
+export function knownVideoAction(controlUid: string, actionUid: string): boolean {
+  return VIDEO_CONTROL_ACTIONS[controlUid] === actionUid;
+}
+
+export async function persistRecordVideoAction(
+  accountUid: string,
+  controlUid: string,
+  actionUid: string,
+): Promise<string> {
+  const eventUid = `EVT-PAGE-ACTION-${Date.now()}-${controlUid}`;
+  await getSqlClient().run(
+    `INSERT INTO ghsn_video_audit_event (event_uid, account_uid, control_uid, action_uid, occurred_at)
+     VALUES (?, ?, ?, ?, ?)`,
+    [eventUid, accountUid, controlUid, actionUid, new Date().toISOString()],
+  );
+  return eventUid;
+}
+
+interface EditFieldRow {
+  control_uid: string;
+  value_text: string | null;
+}
+
+export async function persistHasEditPermission(accountUid: string): Promise<boolean> {
+  const rows = await getSqlClient().all<{ n: number }>(
+    "SELECT count(*)::int AS n FROM ghsn_account_edit_permission WHERE account_uid = ? AND permission_uid = ?",
+    [accountUid, EDIT_PERMISSION],
+  );
+  return Number(rows[0]?.n ?? 0) > 0;
+}
+
+export async function persistListEditFields(): Promise<EditFieldValue[]> {
+  const rows = await getSqlClient().all<EditFieldRow>(
+    "SELECT control_uid, value_text FROM ghsn_edit_field_projection",
+  );
+  const byUid = new Map(rows.map((row) => [row.control_uid, row.value_text === "" ? null : row.value_text]));
+  return EDIT_VISIBLE_CONTROLS.map((controlUid) => ({
+    controlUid,
+    value: byUid.has(controlUid) ? (byUid.get(controlUid) ?? null) : null,
+  }));
+}
+
+export async function persistGetEditReadModel(accountUid: string): Promise<EditReadModel> {
+  const authorized = await persistHasEditPermission(accountUid);
+  const fields = authorized ? await persistListEditFields() : [];
+  return {
+    projectionUid: EDIT_PROJECTION,
+    pageUid: EDIT_PAGE_UID,
+    route: EDIT_ROUTE,
+    permission: EDIT_PERMISSION,
+    chainUid: EDIT_CHAIN,
+    authorized,
+    fields,
+  };
+}
+
+export function knownEditAction(controlUid: string, actionUid: string): boolean {
+  return EDIT_CONTROL_ACTIONS[controlUid] === actionUid;
+}
+
+export async function persistRecordEditAction(
+  accountUid: string,
+  controlUid: string,
+  actionUid: string,
+): Promise<string> {
+  const eventUid = `EVT-PAGE-ACTION-${Date.now()}-${controlUid}`;
+  await getSqlClient().run(
+    `INSERT INTO ghsn_edit_audit_event (event_uid, account_uid, control_uid, action_uid, occurred_at)
      VALUES (?, ?, ?, ?, ?)`,
     [eventUid, accountUid, controlUid, actionUid, new Date().toISOString()],
   );
