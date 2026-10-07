@@ -429,3 +429,62 @@ export async function postQaAction(
     body: JSON.stringify({ controlUid, actionUid }),
   });
 }
+
+export interface DbFieldValue {
+  controlUid: string;
+  value: string | null;
+}
+
+export interface DbReadModel {
+  projectionUid: "DbWorkbenchProjection";
+  pageUid: "admin:DB-01";
+  route: "/db";
+  permission: "database.metadata.read";
+  chainUid: "DB-01-FWC-PAGE-01";
+  authorized: boolean;
+  fields: DbFieldValue[];
+}
+
+export class DbClientError extends Error {
+  readonly code: string;
+  constructor(code: string, message: string) {
+    super(message);
+    this.code = code;
+    this.name = "DbClientError";
+  }
+}
+
+export async function fetchDbReadModel(
+  accountUid: string,
+  sessionUid = "sess-demo-001",
+  signal?: AbortSignal,
+): Promise<DbReadModel> {
+  const response = await fetch("/api/db", {
+    signal,
+    headers: {
+      "x-account-uid": accountUid,
+      "x-session-uid": sessionUid,
+    },
+  });
+  if (!response.ok) {
+    throw new DbClientError("DB_READ_UNAVAILABLE", `db request failed: ${response.status}`);
+  }
+  return (await response.json()) as DbReadModel;
+}
+
+export async function postDbAction(
+  accountUid: string,
+  controlUid: string,
+  actionUid: string,
+  sessionUid = "sess-demo-001",
+): Promise<void> {
+  await fetch("/api/db/action", {
+    method: "POST",
+    headers: {
+      "content-type": "application/json",
+      "x-account-uid": accountUid,
+      "x-session-uid": sessionUid,
+    },
+    body: JSON.stringify({ controlUid, actionUid }),
+  });
+}

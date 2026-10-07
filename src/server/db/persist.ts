@@ -44,6 +44,15 @@ import {
   QA_ROUTE,
   QA_VISIBLE_CONTROLS,
 } from "../domain/qa";
+import {
+  DB_CHAIN,
+  DB_CONTROL_ACTIONS,
+  DB_PAGE_UID,
+  DB_PERMISSION,
+  DB_PROJECTION,
+  DB_ROUTE,
+  DB_VISIBLE_CONTROLS,
+} from "../domain/db";
 import { getSqlClient } from "./client";
 import type {
   AssetFieldValue,
@@ -53,6 +62,8 @@ import type {
   CoreReadModel,
   DashboardReadModel,
   DashboardSectionValue,
+  DbFieldValue,
+  DbReadModel,
   EditFieldValue,
   EditReadModel,
   NavigationEvent,
@@ -480,6 +491,62 @@ export async function persistRecordQaAction(
   const eventUid = `EVT-PAGE-ACTION-${Date.now()}-${controlUid}`;
   await getSqlClient().run(
     `INSERT INTO ghsn_qa_audit_event (event_uid, account_uid, control_uid, action_uid, occurred_at)
+     VALUES (?, ?, ?, ?, ?)`,
+    [eventUid, accountUid, controlUid, actionUid, new Date().toISOString()],
+  );
+  return eventUid;
+}
+
+interface DbFieldRow {
+  control_uid: string;
+  value_text: string | null;
+}
+
+export async function persistHasDbPermission(accountUid: string): Promise<boolean> {
+  const rows = await getSqlClient().all<{ n: number }>(
+    "SELECT count(*)::int AS n FROM ghsn_account_db_permission WHERE account_uid = ? AND permission_uid = ?",
+    [accountUid, DB_PERMISSION],
+  );
+  return Number(rows[0]?.n ?? 0) > 0;
+}
+
+export async function persistListDbFields(): Promise<DbFieldValue[]> {
+  const rows = await getSqlClient().all<DbFieldRow>(
+    "SELECT control_uid, value_text FROM ghsn_db_field_projection",
+  );
+  const byUid = new Map(rows.map((row) => [row.control_uid, row.value_text === "" ? null : row.value_text]));
+  return DB_VISIBLE_CONTROLS.map((controlUid) => ({
+    controlUid,
+    value: byUid.has(controlUid) ? (byUid.get(controlUid) ?? null) : null,
+  }));
+}
+
+export async function persistGetDbReadModel(accountUid: string): Promise<DbReadModel> {
+  const authorized = await persistHasDbPermission(accountUid);
+  const fields = authorized ? await persistListDbFields() : [];
+  return {
+    projectionUid: DB_PROJECTION,
+    pageUid: DB_PAGE_UID,
+    route: DB_ROUTE,
+    permission: DB_PERMISSION,
+    chainUid: DB_CHAIN,
+    authorized,
+    fields,
+  };
+}
+
+export function knownDbAction(controlUid: string, actionUid: string): boolean {
+  return DB_CONTROL_ACTIONS[controlUid] === actionUid;
+}
+
+export async function persistRecordDbAction(
+  accountUid: string,
+  controlUid: string,
+  actionUid: string,
+): Promise<string> {
+  const eventUid = `EVT-PAGE-ACTION-${Date.now()}-${controlUid}`;
+  await getSqlClient().run(
+    `INSERT INTO ghsn_db_audit_event (event_uid, account_uid, control_uid, action_uid, occurred_at)
      VALUES (?, ?, ?, ?, ?)`,
     [eventUid, accountUid, controlUid, actionUid, new Date().toISOString()],
   );

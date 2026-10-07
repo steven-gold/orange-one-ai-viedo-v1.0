@@ -125,3 +125,18 @@ export interface QaReadModel {
   authorized: boolean;
   fields: QaFieldValue[];
 }
+
+export interface DbFieldValue {
+  controlUid: string;
+  value: string | null;
+}
+
+export interface DbReadModel {
+  projectionUid: "DbWorkbenchProjection";
+  pageUid: "admin:DB-01";
+  route: "/db";
+  permission: "database.metadata.read";
+  chainUid: "DB-01-FWC-PAGE-01";
+  authorized: boolean;
+  fields: DbFieldValue[];
+}

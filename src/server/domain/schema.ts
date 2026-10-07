@@ -9,7 +9,7 @@ export const CANONICAL_NAVIGATION_AUTHORITY: NavigationAuthority = {
     { uid: "VIDEO-01", area: "FRONT", labelKey: "global.nav.video", route: "/video", order: 4, icon: "video", ariaLabelKey: "global.nav.video" },
     { uid: "EDIT-01", area: "FRONT", labelKey: "global.nav.edit_voice", route: "/edit", order: 5, icon: "edit", ariaLabelKey: "global.nav.edit_voice" },
     { uid: "QA-01", area: "FRONT", labelKey: "global.nav.qa", route: "/qa", order: 6, icon: "qa", ariaLabelKey: "global.nav.qa" },
-    { uid: "admin:DB-01", area: "FRONT", labelKey: "global.nav.database", route: "/database", order: 7, icon: "database", ariaLabelKey: "global.nav.database" },
+    { uid: "admin:DB-01", area: "FRONT", labelKey: "global.nav.database", route: "/db", order: 7, icon: "database", ariaLabelKey: "global.nav.database" },
     { uid: "workspace:STR-01", area: "FRONT", labelKey: "global.nav.strategy", route: "/strategy", order: 8, icon: "strategy", ariaLabelKey: "global.nav.strategy" },
     { uid: "workspace:INFO-01", area: "FRONT", labelKey: "global.nav.latest_information", route: "/info", order: 9, icon: "info", ariaLabelKey: "global.nav.latest_information" },
     { uid: "admin:SYS-01", area: "ADMIN", labelKey: "global.admin.system", route: "/admin/system", order: 1, icon: "strategy", ariaLabelKey: "global.admin.system" },
