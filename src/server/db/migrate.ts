@@ -1,6 +1,7 @@
 import { ASSET_PERMISSION, ASSET_VISIBLE_CONTROLS } from "../domain/asset";
 import { CORE_PERMISSION, CORE_VISIBLE_CONTROLS } from "../domain/core";
 import { EDIT_PERMISSION, EDIT_VISIBLE_CONTROLS } from "../domain/edit";
+import { QA_PERMISSION, QA_VISIBLE_CONTROLS } from "../domain/qa";
 import { VIDEO_PERMISSION, VIDEO_VISIBLE_CONTROLS } from "../domain/video";
 import { DASHBOARD_PERMISSION, DASHBOARD_SECTION_SEEDS } from "../domain/dashboard";
 import { CANONICAL_NAVIGATION_AUTHORITY } from "../domain/schema";
@@ -116,6 +117,22 @@ const DDL = [
     PRIMARY KEY (account_uid, permission_uid)
   )`,
   `CREATE TABLE IF NOT EXISTS ghsn_edit_audit_event (
+    event_uid TEXT PRIMARY KEY,
+    account_uid TEXT NOT NULL,
+    control_uid TEXT NOT NULL,
+    action_uid TEXT NOT NULL,
+    occurred_at TEXT NOT NULL
+  )`,
+  `CREATE TABLE IF NOT EXISTS ghsn_qa_field_projection (
+    control_uid TEXT PRIMARY KEY,
+    value_text TEXT
+  )`,
+  `CREATE TABLE IF NOT EXISTS ghsn_account_qa_permission (
+    account_uid TEXT NOT NULL,
+    permission_uid TEXT NOT NULL,
+    PRIMARY KEY (account_uid, permission_uid)
+  )`,
+  `CREATE TABLE IF NOT EXISTS ghsn_qa_audit_event (
     event_uid TEXT PRIMARY KEY,
     account_uid TEXT NOT NULL,
     control_uid TEXT NOT NULL,
@@ -254,6 +271,21 @@ async function seedCanonicalData(client: SqlClient): Promise<void> {
      ON CONFLICT (account_uid, permission_uid) DO NOTHING`,
     ["ACC-DEMO", EDIT_PERMISSION],
   );
+
+  for (const controlUid of QA_VISIBLE_CONTROLS) {
+    await client.run(
+      `INSERT INTO ghsn_qa_field_projection (control_uid, value_text)
+       VALUES (?, ?)
+       ON CONFLICT (control_uid) DO NOTHING`,
+      [controlUid, null],
+    );
+  }
+  await client.run(
+    `INSERT INTO ghsn_account_qa_permission (account_uid, permission_uid)
+     VALUES (?, ?)
+     ON CONFLICT (account_uid, permission_uid) DO NOTHING`,
+    ["ACC-DEMO", QA_PERMISSION],
+  );
 }
 
 export async function bootstrapDatabase(): Promise<MigrationResult> {
@@ -271,6 +303,7 @@ export async function bootstrapDatabase(): Promise<MigrationResult> {
     "005_asset.sql",
     "006_video.sql",
     "007_edit.sql",
+    "008_qa.sql",
   ];
   const newlyApplied: string[] = [];
   const alreadyApplied: string[] = [];

@@ -35,6 +35,15 @@ import {
   EDIT_ROUTE,
   EDIT_VISIBLE_CONTROLS,
 } from "../domain/edit";
+import {
+  QA_CHAIN,
+  QA_CONTROL_ACTIONS,
+  QA_PAGE_UID,
+  QA_PERMISSION,
+  QA_PROJECTION,
+  QA_ROUTE,
+  QA_VISIBLE_CONTROLS,
+} from "../domain/qa";
 import { getSqlClient } from "./client";
 import type {
   AssetFieldValue,
@@ -48,6 +57,8 @@ import type {
   EditReadModel,
   NavigationEvent,
   PermissionAssignment,
+  QaFieldValue,
+  QaReadModel,
   VideoFieldValue,
   VideoReadModel,
 } from "../domain/types";
@@ -413,6 +424,62 @@ export async function persistRecordEditAction(
   const eventUid = `EVT-PAGE-ACTION-${Date.now()}-${controlUid}`;
   await getSqlClient().run(
     `INSERT INTO ghsn_edit_audit_event (event_uid, account_uid, control_uid, action_uid, occurred_at)
+     VALUES (?, ?, ?, ?, ?)`,
+    [eventUid, accountUid, controlUid, actionUid, new Date().toISOString()],
+  );
+  return eventUid;
+}
+
+interface QaFieldRow {
+  control_uid: string;
+  value_text: string | null;
+}
+
+export async function persistHasQaPermission(accountUid: string): Promise<boolean> {
+  const rows = await getSqlClient().all<{ n: number }>(
+    "SELECT count(*)::int AS n FROM ghsn_account_qa_permission WHERE account_uid = ? AND permission_uid = ?",
+    [accountUid, QA_PERMISSION],
+  );
+  return Number(rows[0]?.n ?? 0) > 0;
+}
+
+export async function persistListQaFields(): Promise<QaFieldValue[]> {
+  const rows = await getSqlClient().all<QaFieldRow>(
+    "SELECT control_uid, value_text FROM ghsn_qa_field_projection",
+  );
+  const byUid = new Map(rows.map((row) => [row.control_uid, row.value_text === "" ? null : row.value_text]));
+  return QA_VISIBLE_CONTROLS.map((controlUid) => ({
+    controlUid,
+    value: byUid.has(controlUid) ? (byUid.get(controlUid) ?? null) : null,
+  }));
+}
+
+export async function persistGetQaReadModel(accountUid: string): Promise<QaReadModel> {
+  const authorized = await persistHasQaPermission(accountUid);
+  const fields = authorized ? await persistListQaFields() : [];
+  return {
+    projectionUid: QA_PROJECTION,
+    pageUid: QA_PAGE_UID,
+    route: QA_ROUTE,
+    permission: QA_PERMISSION,
+    chainUid: QA_CHAIN,
+    authorized,
+    fields,
+  };
+}
+
+export function knownQaAction(controlUid: string, actionUid: string): boolean {
+  return QA_CONTROL_ACTIONS[controlUid] === actionUid;
+}
+
+export async function persistRecordQaAction(
+  accountUid: string,
+  controlUid: string,
+  actionUid: string,
+): Promise<string> {
+  const eventUid = `EVT-PAGE-ACTION-${Date.now()}-${controlUid}`;
+  await getSqlClient().run(
+    `INSERT INTO ghsn_qa_audit_event (event_uid, account_uid, control_uid, action_uid, occurred_at)
      VALUES (?, ?, ?, ?, ?)`,
     [eventUid, accountUid, controlUid, actionUid, new Date().toISOString()],
   );

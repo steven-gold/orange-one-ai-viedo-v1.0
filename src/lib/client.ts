@@ -370,3 +370,62 @@ export async function postEditAction(
     body: JSON.stringify({ controlUid, actionUid }),
   });
 }
+
+export interface QaFieldValue {
+  controlUid: string;
+  value: string | null;
+}
+
+export interface QaReadModel {
+  projectionUid: "QaWorkbenchProjection";
+  pageUid: "QA-01";
+  route: "/qa";
+  permission: "qa.01.view";
+  chainUid: "QA-01-FWC-PAGE-01";
+  authorized: boolean;
+  fields: QaFieldValue[];
+}
+
+export class QaClientError extends Error {
+  readonly code: string;
+  constructor(code: string, message: string) {
+    super(message);
+    this.code = code;
+    this.name = "QaClientError";
+  }
+}
+
+export async function fetchQaReadModel(
+  accountUid: string,
+  sessionUid = "sess-demo-001",
+  signal?: AbortSignal,
+): Promise<QaReadModel> {
+  const response = await fetch("/api/qa", {
+    signal,
+    headers: {
+      "x-account-uid": accountUid,
+      "x-session-uid": sessionUid,
+    },
+  });
+  if (!response.ok) {
+    throw new QaClientError("QA_READ_UNAVAILABLE", `qa request failed: ${response.status}`);
+  }
+  return (await response.json()) as QaReadModel;
+}
+
+export async function postQaAction(
+  accountUid: string,
+  controlUid: string,
+  actionUid: string,
+  sessionUid = "sess-demo-001",
+): Promise<void> {
+  await fetch("/api/qa/action", {
+    method: "POST",
+    headers: {
+      "content-type": "application/json",
+      "x-account-uid": accountUid,
+      "x-session-uid": sessionUid,
+    },
+    body: JSON.stringify({ controlUid, actionUid }),
+  });
+}
