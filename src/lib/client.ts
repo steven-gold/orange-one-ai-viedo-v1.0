@@ -488,3 +488,62 @@ export async function postDbAction(
     body: JSON.stringify({ controlUid, actionUid }),
   });
 }
+
+export interface StrFieldValue {
+  controlUid: string;
+  value: string | null;
+}
+
+export interface StrReadModel {
+  projectionUid: "StrWorkbenchProjection";
+  pageUid: "workspace:STR-01";
+  route: "/strategy";
+  permission: "strategy.read";
+  chainUid: "STR-01-FWC-PAGE-01";
+  authorized: boolean;
+  fields: StrFieldValue[];
+}
+
+export class StrClientError extends Error {
+  readonly code: string;
+  constructor(code: string, message: string) {
+    super(message);
+    this.code = code;
+    this.name = "StrClientError";
+  }
+}
+
+export async function fetchStrReadModel(
+  accountUid: string,
+  sessionUid = "sess-demo-001",
+  signal?: AbortSignal,
+): Promise<StrReadModel> {
+  const response = await fetch("/api/strategy", {
+    signal,
+    headers: {
+      "x-account-uid": accountUid,
+      "x-session-uid": sessionUid,
+    },
+  });
+  if (!response.ok) {
+    throw new StrClientError("STR_READ_UNAVAILABLE", `strategy request failed: ${response.status}`);
+  }
+  return (await response.json()) as StrReadModel;
+}
+
+export async function postStrAction(
+  accountUid: string,
+  controlUid: string,
+  actionUid: string,
+  sessionUid = "sess-demo-001",
+): Promise<void> {
+  await fetch("/api/strategy/action", {
+    method: "POST",
+    headers: {
+      "content-type": "application/json",
+      "x-account-uid": accountUid,
+      "x-session-uid": sessionUid,
+    },
+    body: JSON.stringify({ controlUid, actionUid }),
+  });
+}

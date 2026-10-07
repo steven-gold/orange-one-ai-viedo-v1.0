@@ -140,3 +140,18 @@ export interface DbReadModel {
   authorized: boolean;
   fields: DbFieldValue[];
 }
+
+export interface StrFieldValue {
+  controlUid: string;
+  value: string | null;
+}
+
+export interface StrReadModel {
+  projectionUid: "StrWorkbenchProjection";
+  pageUid: "workspace:STR-01";
+  route: "/strategy";
+  permission: "strategy.read";
+  chainUid: "STR-01-FWC-PAGE-01";
+  authorized: boolean;
+  fields: StrFieldValue[];
+}
